@@ -42,6 +42,17 @@ push_open
 
 Properties use snake_case.
 
+## Ingestion boundary
+
+- The browser sends allowlisted events to `/api/v1/analytics` only in production.
+- The endpoint accepts only the official app/admin origins and an 8 KiB bounded payload.
+- Event and property names are allowlisted; property values are primitive and bounded.
+- Authenticated activity is stored against the verified user. Anonymous activity receives
+  a first-party HttpOnly identifier.
+- `request_id` is unique so browser retries do not create duplicate events.
+- Client roles cannot insert analytics rows directly; the server performs the insert.
+- Analytics failure never blocks the product flow.
+
 ## Core conversion metrics
 - signup → trial start
 - trial start → first result
