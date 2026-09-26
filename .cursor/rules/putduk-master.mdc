@@ -5,6 +5,46 @@ alwaysApply: true
 
 # PUTDUK MINING
 
+## ABSOLUTE TARGET LOCK — CHECK BEFORE ALL OTHER RULES
+
+Authorized targets only:
+- Local workspace: `C:\Users\PC\Desktop\putduk-mining`
+- GitHub repository: `goldeget/putduk-mining`
+- GitHub remote: `https://github.com/goldeget/putduk-mining.git`
+- Supabase project: `putduk-mining`
+- Supabase project ref: `osrmyjgmpdspdcwqjwuv`
+- Supabase region: `ap-northeast-2`
+- Cloudflare account: the brand-new account created exclusively for PUTDUK MINING
+- Cloudflare account ID: `UNKNOWN` until uniquely verified
+- Future hostnames: `mining.putduk.com`, `admin.mining.putduk.com`
+
+Hard-stop boundary:
+1. Never open, list, search, inspect, query, clone, compare, or modify any other GitHub repository or Supabase project.
+2. Never open or use any previous project, repository, database, schema, migration, document, screenshot, design, code, asset, configuration, deployment, or remembered implementation as a reference.
+3. Do not copy, port, infer, or resurrect decisions from any previous PUTDUK or unrelated project. This repository is the only project source of truth.
+4. Before every GitHub or Supabase operation, verify the exact repository identity or Supabase project ref. If it is unknown, ambiguous, or different, stop before opening it and report `BLOCKED_TARGET_SCOPE`.
+5. Authentication to a different account, organization, or project is not authorization to inspect it and must never be used as a fallback.
+6. All project searches must remain inside the authorized local workspace. No parent-directory, home-directory, cross-workspace, account-wide, organization-wide, or project-list discovery is allowed for implementation context.
+7. Only an explicit user instruction may change these targets. Until this rule is deliberately updated, the boundary is immutable.
+8. This is a true greenfield system. Prior local/remote implementations, shell/editor history, caches, prior agent memory/output, old Docker state, and similarly named projects are forbidden evidence.
+9. Repository documents are specifications, not proof of an existing implementation.
+
+Docker isolation:
+1. Never run unscoped Docker container, image, volume, network, or Compose-project listings.
+2. Never inspect, start, stop, remove, reuse, migrate, or read logs from historical Docker resources.
+3. Docker commands must target only fresh resources deterministically named for this repository's `putduk-mining` local project.
+4. Never attach existing volumes or copy database files. Resolve conflicts by changing this project's ports, not by inspecting or altering old resources.
+5. Never run Docker prune commands.
+
+Cloudflare isolation:
+1. Only the brand-new PUTDUK MINING Cloudflare account is authorized.
+2. Until its exact account ID is verified, no account-scoped API call or provisioning is allowed.
+3. The account and zone currently holding `putduk.com` are forbidden: do not inspect, modify, transfer, or configure them.
+4. Do not create DNS records. The existing domain owner will later point `mining.putduk.com` and `admin.mining.putduk.com` to the new infrastructure.
+5. Document every Cloudflare resource before provisioning. Do not create D1, KV, R2, Queues, Durable Objects, Vectorize, or Workers AI without an approved V1 requirement, and never duplicate Supabase.
+
+This target lock overrides convenience, historical context, cached knowledge, prior task history, and generic discovery instructions.
+
 Read and obey:
 - docs/architecture/PUTDUK-MINING-MASTER-ARCHITECTURE.md
 - docs/product/PUTDUK-START.md

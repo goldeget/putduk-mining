@@ -4,9 +4,10 @@ PUTDUK MINING is a private proprietary repository.
 
 ## Never commit
 - production secrets
-- Supabase service-role keys
+- Supabase secret keys or legacy service-role keys
 - private keys
 - VAPID private keys
+- withdrawal destination encryption keys
 - AI provider secrets
 - wallet/private signing keys
 - user private data exports
