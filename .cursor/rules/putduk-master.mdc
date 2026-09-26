@@ -1,0 +1,25 @@
+---
+description: PUTDUK MINING master engineering and product rules
+alwaysApply: true
+---
+
+# PUTDUK MINING
+
+Read and obey:
+- docs/architecture/PUTDUK-MINING-MASTER-ARCHITECTURE.md
+- docs/product/PUTDUK-START.md
+- docs/design/PUTDUK-DESIGN-SYSTEM.md
+- docs/development/CONVENTIONS.md
+
+Hard constraints:
+1. Do not use emoji as core production UI icons. Use the PUTDUK SVG system.
+2. Do not let the client determine mining, settlement, ledger or balance values.
+3. Use server time for trial/mining/event/rule calculations.
+4. Do not write mining progress every second.
+5. Trial ledger and real wallet ledger are separate.
+6. Asset mutations must be ledger-first and idempotent.
+7. Economic rules are versioned with effective timestamps.
+8. AI cannot directly mutate balances, approve funding/withdrawals or determine mining rewards.
+9. User-facing UI is Korean-first and must remain simple enough for broad age ranges.
+10. Premium quality is required: polished loading/empty/error states, responsive behavior, accessibility and restrained motion.
+11. New features must identify their owning domain, audit impact, analytics impact and admin controls before implementation.
