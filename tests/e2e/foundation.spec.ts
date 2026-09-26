@@ -19,6 +19,15 @@ test("renders the PUTDUK foundation with accessible primary navigation", async (
 test("exposes install and discovery metadata", async ({ page }) => {
   const manifestResponse = await page.request.get("/manifest.webmanifest");
   expect(manifestResponse.ok()).toBe(true);
+  await expect(manifestResponse.json()).resolves.toMatchObject({
+    icons: expect.arrayContaining([
+      expect.objectContaining({
+        purpose: "maskable",
+        src: "/brand/pwa/putduk-pwa-maskable-512.png",
+      }),
+    ]),
+    name: "퍼뜩 채굴",
+  });
 
   const robotsResponse = await page.request.get("/robots.txt");
   expect(robotsResponse.ok()).toBe(true);
@@ -39,6 +48,26 @@ test("exposes install and discovery metadata", async ({ page }) => {
   const llmsResponse = await page.request.get("/llms.txt");
   expect(llmsResponse.ok()).toBe(true);
   expect(await llmsResponse.text()).toContain("# PUTDUK MINING");
+});
+
+test("renders canonical real copy and persists an explicit theme", async ({
+  page,
+}) => {
+  await page.goto("/");
+
+  await expect(page.getByText("지금, 퍼뜩.")).toBeVisible();
+  await expect(
+    page.getByRole("img", {
+      name: "금빛 광부 헬멧과 새싹을 쓴 퍼뜩 마스코트",
+    }),
+  ).toBeVisible();
+
+  const theme = page.getByLabel("화면 테마");
+  await theme.selectOption("dark");
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  await page.reload();
+  await expect(theme).toHaveValue("dark");
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
 });
 
 test("renders canonical trust content without claiming a production launch", async ({
@@ -72,4 +101,29 @@ test("renders a clean account entry state without a phantom status message", asy
   await expect(
     page.getByRole("button", { name: "새 계정 만들기" }),
   ).toBeVisible();
+});
+
+test("preserves a safe protected return path and rejects an external one", async ({
+  page,
+}) => {
+  await page.goto("/wallet/withdraw?receipt=one");
+  await expect(page).toHaveURL(
+    /\/login\?next=%2Fwallet%2Fwithdraw%3Freceipt%3Done$/,
+  );
+  await expect(page.locator('input[name="next"]')).toHaveValue(
+    "/wallet/withdraw?receipt=one",
+  );
+
+  await page.goto("/login?next=https%3A%2F%2Fattacker.invalid%2Fwallet");
+  await expect(page.locator('input[name="next"]')).toHaveValue("/start");
+});
+
+test("marks account and protected surfaces as non-indexable", async ({
+  page,
+}) => {
+  const login = await page.request.get("/login");
+  expect(login.headers()["x-robots-tag"]).toBe("noindex, nofollow");
+
+  const wallet = await page.request.get("/wallet", { maxRedirects: 0 });
+  expect(wallet.headers()["location"]).toContain("/login?next=%2Fwallet");
 });

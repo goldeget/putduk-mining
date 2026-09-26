@@ -7,6 +7,9 @@ export const ANALYTICS_EVENT_NAMES = [
   "trial_first_reward",
   "trial_progress",
   "trial_complete",
+  "trial_conversion_start",
+  "trial_conversion_complete",
+  "trial_conversion_blocked",
   "mining_world_view",
   "mining_start",
   "mining_stop",
@@ -15,6 +18,14 @@ export const ANALYTICS_EVENT_NAMES = [
   "deposit_complete",
   "withdrawal_start",
   "withdrawal_complete",
+  "welcome_withdrawal_start",
+  "welcome_withdrawal_requested",
+  "referral_invite_shared",
+  "referral_stage_qualified",
+  "referral_reward_paid",
+  "funding_promotion_view",
+  "funding_promotion_qualified",
+  "funding_promotion_reward_paid",
   "event_view",
   "event_join",
   "notice_view",
@@ -22,6 +33,8 @@ export const ANALYTICS_EVENT_NAMES = [
   "ai_open",
   "ai_question",
   "push_open",
+  "notification_delivered",
+  "notification_dismissed",
 ] as const;
 
 export type AnalyticsEventName = (typeof ANALYTICS_EVENT_NAMES)[number];

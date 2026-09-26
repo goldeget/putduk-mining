@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import type { Route } from "next";
 import { z } from "zod";
 
+import { safeProtectedReturnPath } from "@/lib/auth/return-path";
 import { getPublicEnv } from "@/lib/env/public";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -19,10 +20,6 @@ export type AuthActionState = {
   message: string;
   status: "idle" | "error" | "confirmation";
 };
-
-function safeNextPath(value: string): "/admin" | "/start" {
-  return value === "/admin" ? "/admin" : "/start";
-}
 
 async function bootstrapUser(userId: string) {
   const admin = createSupabaseAdminClient();
@@ -54,7 +51,7 @@ export async function authenticateAction(
   }
 
   const { email, intent, password } = parsed.data;
-  const nextPath = safeNextPath(parsed.data.next);
+  const nextPath = safeProtectedReturnPath(parsed.data.next);
   let env: ReturnType<typeof getPublicEnv>;
   let supabase: Awaited<ReturnType<typeof createSupabaseServerClient>>;
   try {

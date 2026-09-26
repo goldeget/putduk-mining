@@ -1,15 +1,14 @@
 import { NextResponse, type NextRequest } from "next/server";
 
+import { safeProtectedReturnPath } from "@/lib/auth/return-path";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
-function safeNextPath(value: string | null) {
-  return value === "/admin" ? "/admin" : "/start";
-}
-
 export async function GET(request: NextRequest) {
   const code = request.nextUrl.searchParams.get("code");
-  const nextPath = safeNextPath(request.nextUrl.searchParams.get("next"));
+  const nextPath = safeProtectedReturnPath(
+    request.nextUrl.searchParams.get("next"),
+  );
 
   if (!code) {
     return NextResponse.redirect(new URL("/auth/error", request.url));

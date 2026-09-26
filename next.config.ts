@@ -41,6 +41,7 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   allowedDevOrigins: ["127.0.0.1"],
+  productionBrowserSourceMaps: false,
   reactStrictMode: true,
   poweredByHeader: false,
   typedRoutes: true,
@@ -58,6 +59,16 @@ const nextConfig: NextConfig = {
         source: "/admin/:path*",
         headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
       },
+      {
+        source: "/login",
+        headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
+      },
+      ...["/start", "/mining", "/wallet/:path*", "/events", "/menu/:path*"].map(
+        (source) => ({
+          source,
+          headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
+        }),
+      ),
     ];
   },
 };

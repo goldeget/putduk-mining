@@ -4,6 +4,7 @@ import Link from "next/link";
 import { AuthForm } from "@/app/login/auth-form";
 import { BrandMark } from "@/components/brand/brand-mark";
 import { PutdukIcon } from "@/components/icons/putduk-icon";
+import { safeProtectedReturnPath } from "@/lib/auth/return-path";
 
 export const metadata: Metadata = {
   title: "로그인",
@@ -16,7 +17,8 @@ export default async function LoginPage({
   searchParams: Promise<{ next?: string }>;
 }) {
   const requestedNext = (await searchParams).next;
-  const nextPath = requestedNext === "/admin" ? "/admin" : "/start";
+  const nextPath = safeProtectedReturnPath(requestedNext);
+  const isAdminDestination = nextPath.startsWith("/admin");
 
   return (
     <main className="auth-page">
@@ -54,9 +56,7 @@ export default async function LoginPage({
       <section className="auth-page__panel" aria-label="계정 로그인 및 가입">
         <div className="auth-page__panel-header">
           <p className="eyebrow">ACCOUNT</p>
-          <h2>
-            {nextPath === "/admin" ? "운영자 로그인" : "계정으로 시작하기"}
-          </h2>
+          <h2>{isAdminDestination ? "운영자 로그인" : "계정으로 시작하기"}</h2>
           <p>가입과 로그인 모두 동일한 안전한 계정 경계를 사용합니다.</p>
         </div>
         <AuthForm nextPath={nextPath} />

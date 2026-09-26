@@ -1,6 +1,7 @@
 import type { EmailOtpType } from "@supabase/supabase-js";
 import { NextResponse, type NextRequest } from "next/server";
 
+import { safeProtectedReturnPath } from "@/lib/auth/return-path";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -13,14 +14,12 @@ const EMAIL_OTP_TYPES = new Set<EmailOtpType>([
   "signup",
 ]);
 
-function safeNextPath(value: string | null) {
-  return value === "/admin" ? "/admin" : "/start";
-}
-
 export async function GET(request: NextRequest) {
   const tokenHash = request.nextUrl.searchParams.get("token_hash");
   const requestedType = request.nextUrl.searchParams.get("type");
-  const nextPath = safeNextPath(request.nextUrl.searchParams.get("next"));
+  const nextPath = safeProtectedReturnPath(
+    request.nextUrl.searchParams.get("next"),
+  );
 
   if (
     !tokenHash ||

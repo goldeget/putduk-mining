@@ -4,6 +4,10 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Route } from "next";
 import { redirect } from "next/navigation";
 
+import {
+  buildLoginPath,
+  safeProtectedReturnPath,
+} from "@/lib/auth/return-path";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const ADMIN_ROLES = [
@@ -33,10 +37,12 @@ export async function getVerifiedIdentity(): Promise<VerifiedIdentity | null> {
   return { supabase, userId: subject };
 }
 
-export async function requirePageUser(): Promise<VerifiedIdentity> {
+export async function requirePageUser(
+  returnPath = "/start",
+): Promise<VerifiedIdentity> {
   const identity = await getVerifiedIdentity();
   if (!identity) {
-    redirect("/login?next=/start" as Route);
+    redirect(buildLoginPath(safeProtectedReturnPath(returnPath)) as Route);
   }
   return identity;
 }
@@ -71,7 +77,7 @@ export async function getAdminIdentity(
 export async function requireAdminPage() {
   const identity = await getVerifiedIdentity();
   if (!identity) {
-    redirect("/login?next=/admin" as Route);
+    redirect(buildLoginPath("/admin") as Route);
   }
 
   const admin = await getAdminIdentity(identity);
