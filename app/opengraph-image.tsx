@@ -1,41 +1,42 @@
+import { readFile } from "node:fs/promises";
+import path from "node:path";
+
 import { ImageResponse } from "next/og";
 
-export const alt = "PUTDUK MINING — 채굴의 시간을 신뢰 가능한 기록으로";
+export const alt = "퍼뜩 채굴 — 작은 행동을 신뢰 가능한 기록으로";
 export const size = { height: 630, width: 1200 };
 export const contentType = "image/png";
 
-export default function OpenGraphImage() {
+export default async function OpenGraphImage() {
+  const background = await readFile(
+    path.join(process.cwd(), "public", "brand", "og", "putduk-og-base-v1.png"),
+  );
+  const backgroundUrl = `data:image/png;base64,${background.toString("base64")}`;
+
   return new ImageResponse(
     <div
       style={{
         alignItems: "stretch",
-        background: "#070a0d",
-        color: "#f4f7f5",
+        backgroundColor: "#070706",
+        backgroundImage: `linear-gradient(90deg, rgba(7,7,6,.96) 0%, rgba(7,7,6,.77) 45%, rgba(7,7,6,.12) 78%), url(${backgroundUrl})`,
+        backgroundPosition: "center",
+        backgroundSize: "cover",
+        color: "#f8f2e4",
         display: "flex",
         fontFamily: "sans-serif",
         height: "100%",
-        padding: "64px",
+        padding: "64px 70px",
         position: "relative",
         width: "100%",
       }}
     >
       <div
         style={{
-          backgroundImage:
-            "linear-gradient(rgba(221,235,229,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(221,235,229,.06) 1px, transparent 1px)",
-          backgroundSize: "48px 48px",
-          display: "flex",
-          inset: 0,
-          position: "absolute",
-        }}
-      />
-      <div
-        style={{
-          border: "1px solid rgba(221,235,229,.16)",
-          borderRadius: "28px 8px 28px 8px",
+          border: "1px solid rgba(246,200,91,.38)",
+          borderRadius: "34px 10px 34px 10px",
           display: "flex",
           flex: 1,
-          padding: "54px",
+          padding: "52px",
           position: "relative",
         }}
       >
@@ -44,83 +45,54 @@ export default function OpenGraphImage() {
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
-            width: "72%",
+            width: "68%",
           }}
         >
           <div
             style={{
-              color: "#7ce7bd",
+              color: "#f6c85b",
               display: "flex",
-              fontSize: 22,
-              letterSpacing: 5,
+              fontSize: 20,
+              fontWeight: 700,
+              letterSpacing: 6,
             }}
           >
-            PUTDUK VIRTUAL MINING SYSTEM
+            PUTDUK MINING
           </div>
           <div style={{ display: "flex", flexDirection: "column" }}>
             <div
               style={{
                 display: "flex",
-                fontSize: 74,
-                fontWeight: 650,
-                letterSpacing: -4,
+                fontSize: 88,
+                fontWeight: 800,
+                letterSpacing: -7,
+                lineHeight: 1,
               }}
             >
-              채굴의 시간을,
+              퍼뜩
             </div>
             <div
               style={{
-                color: "#7ce7bd",
+                color: "#f6c85b",
                 display: "flex",
-                fontSize: 74,
+                fontSize: 54,
                 fontWeight: 650,
-                letterSpacing: -4,
+                letterSpacing: -3,
+                marginTop: 18,
               }}
             >
-              신뢰 가능한 기록으로.
+              지금, 더 나은 다음으로.
             </div>
           </div>
-          <div style={{ color: "#74817c", display: "flex", fontSize: 22 }}>
-            SERVER TIME · LEDGER FIRST · VERSIONED RULES
-          </div>
-        </div>
-        <div
-          style={{
-            alignItems: "center",
-            display: "flex",
-            flex: 1,
-            justifyContent: "center",
-          }}
-        >
           <div
             style={{
-              alignItems: "center",
-              border: "2px solid rgba(124,231,189,.5)",
-              borderRadius: 999,
+              color: "#b8ad98",
               display: "flex",
-              height: 230,
-              justifyContent: "center",
-              width: 230,
+              fontSize: 18,
+              letterSpacing: 2,
             }}
           >
-            <div
-              style={{
-                alignItems: "center",
-                background: "rgba(124,231,189,.09)",
-                border: "2px solid #7ce7bd",
-                clipPath:
-                  "polygon(50% 0, 94% 25%, 94% 75%, 50% 100%, 6% 75%, 6% 25%)",
-                color: "#7ce7bd",
-                display: "flex",
-                fontSize: 48,
-                fontWeight: 700,
-                height: 138,
-                justifyContent: "center",
-                width: 138,
-              }}
-            >
-              P
-            </div>
+            SERVER TIME · LEDGER FIRST · VERSIONED RULES
           </div>
         </div>
       </div>

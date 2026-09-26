@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 160" role="img" aria-labelledby="title desc">
+  <title id="title">퍼뜩 워드마크</title>
+  <desc id="desc">어두운 배경용 퍼뜩 한글 워드마크와 PUTDUK 영문 표기</desc>
+  <g fill="none" stroke="#F6C85B" stroke-linecap="round" stroke-width="8">
+    <path d="M226 30c-25-2-39-13-43-29 24-2 41 8 48 27"/>
+    <path d="M235 28c7-17 24-27 48-25-4 16-19 27-44 29"/>
+  </g>
+  <text x="240" y="102" fill="#F8F3E8" font-family="Pretendard Variable, Pretendard, SUIT, Noto Sans KR, sans-serif" font-size="92" font-weight="800" letter-spacing="-7" text-anchor="middle">퍼뜩</text>
+  <text x="240" y="144" fill="#F6C85B" font-family="Arial, sans-serif" font-size="20" font-weight="700" letter-spacing="9" text-anchor="middle">PUTDUK</text>
+</svg>

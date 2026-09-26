@@ -19,8 +19,10 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
+    "test:load": "k6 run tests/load/core-api.k6.js",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "assets:verify": "node scripts/verify-brand-assets.mjs",
     "db:start": "supabase db start",
     "db:stop": "supabase stop",
     "db:reset": "supabase db reset",
@@ -29,7 +31,7 @@
     "db:test": "supabase test db",
     "db:verify": "pnpm db:reset && pnpm db:test && pnpm db:lint && pnpm db:advisors",
     "admin:bootstrap": "node --env-file-if-exists=.env.local scripts/bootstrap-first-admin.mjs",
-    "verify": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+    "verify": "pnpm assets:verify && pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build"
   },
   "dependencies": {
     "@supabase/ssr": "0.12.7",

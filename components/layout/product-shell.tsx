@@ -4,6 +4,7 @@ import Link from "next/link";
 import { BrandMark } from "@/components/brand/brand-mark";
 import { PutdukIcon } from "@/components/icons/putduk-icon";
 import { ProductNavigation } from "@/components/navigation/product-navigation";
+import { ThemeControl } from "@/components/system/theme-control";
 
 export function ProductShell({
   children,
@@ -36,14 +37,17 @@ export function ProductShell({
           <Link className="product-header__brand" href="/start">
             <BrandMark title="퍼뜩 채굴" />
           </Link>
-          <div className="product-header__identity">
-            <span>
-              <small>MEMBER</small>
-              {displayName}
-            </span>
-            <span className="product-header__avatar" aria-hidden="true">
-              <PutdukIcon name="user" size={18} />
-            </span>
+          <div className="product-header__tools">
+            <ThemeControl />
+            <div className="product-header__identity">
+              <span>
+                <small>MEMBER</small>
+                {displayName}
+              </span>
+              <span className="product-header__avatar" aria-hidden="true">
+                <PutdukIcon name="user" size={18} />
+              </span>
+            </div>
           </div>
         </header>
         <main className="product-main">{children}</main>

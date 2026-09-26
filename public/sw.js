@@ -1,7 +1,11 @@
 /* global self, clients */
 
-const CACHE_NAME = "putduk-shell-v2";
-const APP_SHELL = ["/offline", "/icons/putduk-mark.svg"];
+const CACHE_NAME = "putduk-shell-v3";
+const APP_SHELL = [
+  "/offline",
+  "/brand/favicon/favicon.svg",
+  "/brand/pwa/putduk-pwa-dark-192.png",
+];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -50,8 +54,8 @@ self.addEventListener("push", (event) => {
   event.waitUntil(
     self.registration.showNotification(payload.title, {
       body: payload.body,
-      icon: "/icons/putduk-mark.svg",
-      badge: "/icons/putduk-mark.svg",
+      icon: "/brand/pwa/putduk-pwa-dark-192.png",
+      badge: "/brand/notification/putduk-notification-badge-96.png",
       data: { url: payload.url },
     }),
   );

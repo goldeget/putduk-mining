@@ -1,31 +1,31 @@
 export const designTokens = {
   background: {
-    canvas: "#070a0d",
-    subtle: "#0b1015",
-    elevated: "#10171e",
+    canvas: "#070706",
+    subtle: "#0e0c09",
+    elevated: "#15120d",
   },
   surface: {
-    default: "#111920",
-    raised: "#172129",
-    sunken: "#0b1116",
-    interactive: "#1b272f",
+    default: "#15120d",
+    raised: "#1d1811",
+    sunken: "#0a0907",
+    interactive: "#241c11",
   },
   text: {
-    primary: "#f4f7f5",
-    secondary: "#aab6b1",
-    tertiary: "#74817c",
-    inverse: "#07110d",
+    primary: "#f8f2e4",
+    secondary: "#b8ad98",
+    tertiary: "#817765",
+    inverse: "#17130d",
   },
   border: {
-    subtle: "rgba(221, 235, 229, 0.09)",
-    default: "rgba(221, 235, 229, 0.16)",
-    strong: "rgba(221, 235, 229, 0.28)",
+    subtle: "rgba(246, 224, 174, 0.09)",
+    default: "rgba(246, 224, 174, 0.17)",
+    strong: "rgba(246, 200, 91, 0.36)",
   },
   brand: {
-    primary: "#7ce7bd",
-    strong: "#48c99a",
-    quiet: "#173a2f",
-    mineral: "#d9b873",
+    primary: "#f6c85b",
+    strong: "#d99a2b",
+    quiet: "#3a2810",
+    mineral: "#fff0a6",
   },
   status: {
     success: "#65d8a8",
@@ -34,7 +34,7 @@ export const designTokens = {
     info: "#79b8e8",
   },
   world: {
-    korea: "#7ce7bd",
+    korea: "#f6c85b",
     usa: "#78aee8",
     gold: "#d9b873",
     silver: "#b9c4ca",
@@ -62,7 +62,7 @@ export const designTokens = {
   },
   shadow: {
     lift: "0 18px 60px rgba(0, 0, 0, 0.28)",
-    focus: "0 0 0 3px rgba(124, 231, 189, 0.3)",
+    focus: "0 0 0 3px rgba(246, 200, 91, 0.34)",
   },
   motion: {
     fast: "140ms",
@@ -76,6 +76,32 @@ export const designTokens = {
     navigation: 40,
     modal: 60,
     toast: 80,
+  },
+} as const;
+
+export const lightThemeTokens = {
+  background: {
+    canvas: "#f8f4ea",
+    subtle: "#f1eadb",
+    elevated: "#fffdf8",
+  },
+  surface: {
+    default: "#fffdf8",
+    raised: "#ffffff",
+    sunken: "#eee5d4",
+    interactive: "#f5ead0",
+  },
+  text: {
+    primary: "#17130d",
+    secondary: "#605643",
+    tertiary: "#81745e",
+    inverse: "#fffdf8",
+  },
+  brand: {
+    primary: "#9b650d",
+    strong: "#7c4b06",
+    quiet: "#f0ddb0",
+    mineral: "#b77a17",
   },
 } as const;
 

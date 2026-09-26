@@ -1,7 +1,7 @@
 import { BrandMark } from "@/components/brand/brand-mark";
-import { MiningCore } from "@/components/foundation/mining-core";
 import { PutdukIcon } from "@/components/icons/putduk-icon";
 import { MobileNavigation } from "@/components/navigation/mobile-navigation";
+import { ThemeControl } from "@/components/system/theme-control";
 import { Surface } from "@/components/ui/surface";
 
 const principles = [
@@ -64,9 +64,12 @@ export default function HomePage() {
             <small>MINING</small>
           </span>
         </a>
-        <div className="header-status" aria-label="프로젝트 상태">
-          <span />
-          FOUNDATION 01
+        <div className="site-header__tools">
+          <ThemeControl />
+          <div className="header-status" aria-label="프로젝트 상태">
+            <span />
+            FOUNDATION 01
+          </div>
         </div>
       </header>
 
@@ -109,12 +112,54 @@ export default function HomePage() {
         </div>
 
         <div className="hero__visual">
-          <div className="hero__index" aria-hidden="true">
-            01 / CORE
+          <picture className="hero__world">
+            <source
+              type="image/avif"
+              srcSet="/brand/worlds/orbital-earth-960-v1.avif 960w, /brand/worlds/orbital-earth-1600-v1.avif 1600w"
+              sizes="(min-width: 980px) 46vw, 100vw"
+            />
+            <source
+              type="image/webp"
+              srcSet="/brand/worlds/orbital-earth-960-v1.webp 960w, /brand/worlds/orbital-earth-1600-v1.webp 1600w"
+              sizes="(min-width: 980px) 46vw, 100vw"
+            />
+            <img
+              src="/brand/worlds/orbital-earth-960-v1.webp"
+              alt=""
+              width="960"
+              height="540"
+              fetchPriority="high"
+            />
+          </picture>
+          <div className="hero__signal">
+            <span>SMALL STEPS · REAL RECORDS</span>
+            <strong>지금, 퍼뜩.</strong>
+            <p>작은 행동이 더 나은 내일을 만듭니다.</p>
           </div>
-          <MiningCore />
+          <picture className="hero__mascot">
+            <source
+              type="image/avif"
+              srcSet="/brand/mascot/putduk-miner-384-v1.avif 384w, /brand/mascot/putduk-miner-768-v1.avif 768w"
+              sizes="(min-width: 980px) 27vw, 58vw"
+            />
+            <source
+              type="image/webp"
+              srcSet="/brand/mascot/putduk-miner-384-v1.webp 384w, /brand/mascot/putduk-miner-768-v1.webp 768w"
+              sizes="(min-width: 980px) 27vw, 58vw"
+            />
+            <img
+              src="/brand/mascot/putduk-miner-384-v1.webp"
+              alt="금빛 광부 헬멧과 새싹을 쓴 퍼뜩 마스코트"
+              width="384"
+              height="487"
+              fetchPriority="high"
+            />
+          </picture>
+          <div className="hero__index" aria-hidden="true">
+            01 / PUTDUK WORLD
+          </div>
           <div className="visual-caption">
-            <span>2.5D SYSTEM LANGUAGE</span>
+            <span>BLACK · GOLD · EARTH</span>
             <span>REDUCED MOTION READY</span>
           </div>
         </div>

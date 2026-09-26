@@ -1,0 +1,832 @@
+{
+  "schemaVersion": 1,
+  "assetVersion": "2026.09.27-v1",
+  "generatedAt": "2026-09-27T00:00:00Z",
+  "sourcePolicy": "Canonical references live under docs/design/visual-references; lossless generated masters live under docs/design/generated-masters; public files are optimized derivatives and generated pixels contain no production copy.",
+  "assets": [
+    {
+      "path": "/brand/favicon/favicon-16.png",
+      "bytes": 780,
+      "sha256": "c294f82281b5b4205411863d3b263fdc4932baa116dfe5cf8a3be1718416792c",
+      "mimeType": "image/png",
+      "alt": "퍼뜩 브랜드 자산",
+      "width": 16,
+      "height": 16,
+      "theme": "system"
+    },
+    {
+      "path": "/brand/favicon/favicon-32.png",
+      "bytes": 2166,
+      "sha256": "4bdaab0ed29a69b64929d574629f0ea3367f286737cb99c8efd125325b0425dc",
+      "mimeType": "image/png",
+      "alt": "퍼뜩 브랜드 자산",
+      "width": 32,
+      "height": 32,
+      "theme": "system"
+    },
+    {
+      "path": "/brand/favicon/favicon-48.png",
+      "bytes": 3738,
+      "sha256": "97552f4d5b963b41450cde485b612b764a4b78d7dc63dd77dd234bf6e2ef9718",
+      "mimeType": "image/png",
+      "alt": "퍼뜩 브랜드 자산",
+      "width": 48,
+      "height": 48,
+      "theme": "system"
+    },
+    {
+      "path": "/brand/favicon/favicon-dark-512.png",
+      "bytes": 11359,
+      "sha256": "bf1de1a68582f9f20ed3f078e3a4a1f512e27b0b9563193067a6711bd2651004",
+      "mimeType": "image/png",
+      "alt": "퍼뜩 브랜드 자산",
+      "width": 512,
+      "height": 512,
+      "theme": "dark"
+    },
+    {
+      "path": "/brand/favicon/favicon-light-512.png",
+      "bytes": 14279,
+      "sha256": "db51d1e1c35b0c87935c3ee239c50d5fdd995cd4f78ad0c5732aad5c1d74bd78",
+      "mimeType": "image/png",
+      "alt": "퍼뜩 브랜드 자산",
+      "width": 512,
+      "height": 512,
+      "theme": "light"
+    },
+    {
+      "path": "/brand/favicon/favicon.ico",
+      "bytes": 6622,
+      "sha256": "e75aa9a280f7ceddb240f3eaaaf1e05cfd0f06afca79d9eb2deeaf94c7417317",
+      "mimeType": "image/x-icon",
+      "alt": "퍼뜩 브랜드 자산",
+      "width": 48,
+      "height": 48,
+      "theme": "system"
+    },
+    {
+      "path": "/brand/favicon/favicon.svg",
+      "bytes": 654,
+      "sha256": "97aec2dde7e57926398cf80b766694ad02ca4ae85ebb8cae02b66544d08174c2",
+      "mimeType": "image/svg+xml",
+      "alt": "퍼뜩 브랜드 자산",
+      "theme": "system"
+    },
+    {
+      "path": "/brand/logo/putduk-logo-lockup-dark.svg",
+      "bytes": 1365,
+      "sha256": "a017a529e9266e7717825c3d815614a333a60263146880db3ce2226f1ee088f8",
+      "mimeType": "image/svg+xml",
+      "alt": "퍼뜩 브랜드 자산",
+      "theme": "dark"
+    },
+    {
+      "path": "/brand/logo/putduk-logo-lockup-light.svg",
+      "bytes": 1363,
+      "sha256": "1704a10644a1433f6db34de1e4a07c9afdcac15134f6b1d57b3c30ae47325f4c",
+      "mimeType": "image/svg+xml",
+      "alt": "퍼뜩 브랜드 자산",
+      "theme": "light"
+    },
+    {
+      "path": "/brand/mascot/putduk-miner-1024-v1.avif",
+      "bytes": 124154,
+      "sha256": "3e80f84e943a66a156b408ca2300ab03ed9a62350ac61a3312a2586c9322d306",
+      "mimeType": "image/avif",
+      "alt": "금빛 광부 헬멧과 새싹을 쓴 퍼뜩 마스코트",
+      "width": 1024,
+      "height": 1298,
+      "theme": "system"
+    },
+    {
+      "path": "/brand/mascot/putduk-miner-1024-v1.webp",
+      "bytes": 204480,
+      "sha256": "a22f7986e12769d1081edca798bae0246f4cd2274322f20d7092f1075ec6bf72",
+      "mimeType": "image/webp",
+      "alt": "금빛 광부 헬멧과 새싹을 쓴 퍼뜩 마스코트",
+      "width": 1024,
+      "height": 1298,
+      "theme": "system"
+    },
+    {
+      "path": "/brand/mascot/putduk-miner-384-v1.avif",
+      "bytes": 28311,
+      "sha256": "b4d076d58dfe845e9249c0388be655690d07aafd8fcf22d0704af2ddb100c14a",
+      "mimeType": "image/avif",
+      "alt": "금빛 광부 헬멧과 새싹을 쓴 퍼뜩 마스코트",
+      "width": 384,
+      "height": 487,
+      "theme": "system"
+    },
+    {
+      "path": "/brand/mascot/putduk-miner-384-v1.webp",
+      "bytes": 46286,
+      "sha256": "98a66957ddffb264842f9c17d022d41a7e2633ddba1f304585ab86492a1e975f",
+      "mimeType": "image/webp",
+      "alt": "금빛 광부 헬멧과 새싹을 쓴 퍼뜩 마스코트",
+      "width": 384,
+      "height": 487,
+      "theme": "system"
+    },
+    {
+      "path": "/brand/mascot/putduk-miner-768-v1.avif",
+      "bytes": 81121,
+      "sha256": "8267920a1a60f3da2de04d05df64d4a6ad998954b3533e0657b5d24c27da94e9",
+      "mimeType": "image/avif",
+      "alt": "금빛 광부 헬멧과 새싹을 쓴 퍼뜩 마스코트",
+      "width": 768,
+      "height": 974,
+      "theme": "system"
+    },
+    {
+      "path": "/brand/mascot/putduk-miner-768-v1.webp",
+      "bytes": 136282,
+      "sha256": "e1ab3e9b22029e7a03488ffcff51f8de829735a98359b2396e346cfa06075cf6",
+      "mimeType": "image/webp",
+      "alt": "금빛 광부 헬멧과 새싹을 쓴 퍼뜩 마스코트",
+      "width": 768,
+      "height": 974,
+      "theme": "system"
+    },
+    {
+      "path": "/brand/mascot/putduk-miner-dark-v1.avif",
+      "bytes": 124154,
+      "sha256": "3e80f84e943a66a156b408ca2300ab03ed9a62350ac61a3312a2586c9322d306",
+      "mimeType": "image/avif",
+      "alt": "금빛 광부 헬멧과 새싹을 쓴 퍼뜩 마스코트",
+      "width": 1024,
+      "height": 1298,
+      "theme": "dark"
+    },
+    {
+      "path": "/brand/mascot/putduk-miner-dark-v1.webp",
+      "bytes": 204480,
+      "sha256": "a22f7986e12769d1081edca798bae0246f4cd2274322f20d7092f1075ec6bf72",
+      "mimeType": "image/webp",
+      "alt": "금빛 광부 헬멧과 새싹을 쓴 퍼뜩 마스코트",
+      "width": 1024,
+      "height": 1298,
+      "theme": "dark"
+    },
+    {
+      "path": "/brand/mascot/putduk-miner-light-v1.avif",
+      "bytes": 97764,
+      "sha256": "73971e727fc7bb1e91713d65d1c8ed73c186c5ffa6d696900c2c76d2c09eca49",
+      "mimeType": "image/avif",
+      "alt": "금빛 광부 헬멧과 새싹을 쓴 퍼뜩 마스코트",
+      "width": 1024,
+      "height": 1298,
+      "theme": "light"
+    },
+    {
+      "path": "/brand/mascot/putduk-miner-light-v1.webp",
+      "bytes": 171206,
+      "sha256": "0e16f82f70369a2ba71139606fef2a9680b1f24e2df219317fd2d22e8fa710d6",
+      "mimeType": "image/webp",
+      "alt": "금빛 광부 헬멧과 새싹을 쓴 퍼뜩 마스코트",
+      "width": 1024,
+      "height": 1298,
+      "theme": "light"
+    },
+    {
+      "path": "/brand/notification/putduk-badge-monochrome.svg",
+      "bytes": 421,
+      "sha256": "ca9a9ff3d693a97db51afc5df06bfc18600ea652f29e6709ea1b7130b2ccadaf",
+      "mimeType": "image/svg+xml",
+      "alt": "퍼뜩 알림 배지",
+      "theme": "system"
+    },
+    {
+      "path": "/brand/notification/putduk-notification-badge-96.png",
+      "bytes": 3242,
+      "sha256": "5397a6ddd118c1efce7641a55803793806d82a2b591a8a25069edbe0c26988db",
+      "mimeType": "image/png",
+      "alt": "퍼뜩 알림 배지",
+      "width": 96,
+      "height": 96,
+      "theme": "system"
+    },
+    {
+      "path": "/brand/og/putduk-og-base-v1.avif",
+      "bytes": 85540,
+      "sha256": "3a8bcbd61fca1efb131e115956ad7378eb9967779f3a5aa2339f9094e9117a95",
+      "mimeType": "image/avif",
+      "alt": "금빛 궤도와 광물이 빛나는 밤의 지구 채굴 세계",
+      "width": 1200,
+      "height": 630,
+      "theme": "system"
+    },
+    {
+      "path": "/brand/og/putduk-og-base-v1.png",
+      "bytes": 964028,
+      "sha256": "90d28683f4a620e20a19c7705a36739240e6f65364d222013a0b4bb56875dce5",
+      "mimeType": "image/png",
+      "alt": "금빛 궤도와 광물이 빛나는 밤의 지구 채굴 세계",
+      "width": 1200,
+      "height": 630,
+      "theme": "system"
+    },
+    {
+      "path": "/brand/og/putduk-og-base-v1.webp",
+      "bytes": 116922,
+      "sha256": "7622c106ca34c0df5085ab3df27ccd9861148d43e44d60e41f17e02a78394d59",
+      "mimeType": "image/webp",
+      "alt": "금빛 궤도와 광물이 빛나는 밤의 지구 채굴 세계",
+      "width": 1200,
+      "height": 630,
+      "theme": "system"
+    },
+    {
+      "path": "/brand/pwa/putduk-pwa-dark-192.png",
+      "bytes": 26618,
+      "sha256": "4fbd44b822696298e8942a066bce69a2f766b0b35c07e2858e51072fe3d7d4a1",
+      "mimeType": "image/png",
+      "alt": "금빛 광부 헬멧과 새싹을 쓴 퍼뜩 마스코트",
+      "width": 192,
+      "height": 192,
+      "theme": "dark"
+    },
+    {
+      "path": "/brand/pwa/putduk-pwa-dark-512.png",
+      "bytes": 122480,
+      "sha256": "61d5af855030eeda756a7149481c5c6b20360aab8d7da6ef82399449130d2bbc",
+      "mimeType": "image/png",
+      "alt": "금빛 광부 헬멧과 새싹을 쓴 퍼뜩 마스코트",
+      "width": 512,
+      "height": 512,
+      "theme": "dark"
+    },
+    {
+      "path": "/brand/pwa/putduk-pwa-light-192.png",
+      "bytes": 28569,
+      "sha256": "cf03028db9360ab259575c961a4950740349526938439718f9ab217f7dc326b5",
+      "mimeType": "image/png",
+      "alt": "금빛 광부 헬멧과 새싹을 쓴 퍼뜩 마스코트",
+      "width": 192,
+      "height": 192,
+      "theme": "light"
+    },
+    {
+      "path": "/brand/pwa/putduk-pwa-light-512.png",
+      "bytes": 125691,
+      "sha256": "b493a171dea8fd2bcd0d40855c7b2d0532d9e874687bf48923613251e6c389b6",
+      "mimeType": "image/png",
+      "alt": "금빛 광부 헬멧과 새싹을 쓴 퍼뜩 마스코트",
+      "width": 512,
+      "height": 512,
+      "theme": "light"
+    },
+    {
+      "path": "/brand/pwa/putduk-pwa-maskable-512.png",
+      "bytes": 81855,
+      "sha256": "c19dddaf3757aae37485849638e9448724601fd85102d89bd305e87a61b5e3d7",
+      "mimeType": "image/png",
+      "alt": "금빛 광부 헬멧과 새싹을 쓴 퍼뜩 마스코트",
+      "width": 512,
+      "height": 512,
+      "purpose": "maskable"
+    },
+    {
+      "path": "/brand/social/putduk-social-square-v1.avif",
+      "bytes": 108304,
+      "sha256": "a47522b493b97fce02613f1612e68b8ed99ded319eed251efdbe7b3a5799550e",
+      "mimeType": "image/avif",
+      "alt": "금빛 궤도와 광물이 빛나는 밤의 지구 채굴 세계",
+      "width": 1080,
+      "height": 1080,
+      "theme": "system"
+    },
+    {
+      "path": "/brand/social/putduk-social-square-v1.png",
+      "bytes": 1305295,
+      "sha256": "c7976b2ba2fa78879a06286528faaabc539081d3e10a18128aadab6a6b5491b4",
+      "mimeType": "image/png",
+      "alt": "금빛 궤도와 광물이 빛나는 밤의 지구 채굴 세계",
+      "width": 1080,
+      "height": 1080,
+      "theme": "system"
+    },
+    {
+      "path": "/brand/social/putduk-social-square-v1.webp",
+      "bytes": 143898,
+      "sha256": "e090fc013bd3d239a5ad45b54534057d93ffbf5b19bd61c72088f932305510f3",
+      "mimeType": "image/webp",
+      "alt": "금빛 궤도와 광물이 빛나는 밤의 지구 채굴 세계",
+      "width": 1080,
+      "height": 1080,
+      "theme": "system"
+    },
+    {
+      "path": "/brand/splash/putduk-splash-desktop-v1.avif",
+      "bytes": 260138,
+      "sha256": "4a578977a3850059a6efde2042dcc213ee40a53b996d0752404887060fc18d35",
+      "mimeType": "image/avif",
+      "alt": "금빛 궤도와 광물이 빛나는 밤의 지구 채굴 세계",
+      "width": 2560,
+      "height": 1600,
+      "theme": "system"
+    },
+    {
+      "path": "/brand/splash/putduk-splash-desktop-v1.webp",
+      "bytes": 339636,
+      "sha256": "78c13736f2b29101879c8afc97413b295f7403d604d7b2096fa9957e8c75e8d5",
+      "mimeType": "image/webp",
+      "alt": "금빛 궤도와 광물이 빛나는 밤의 지구 채굴 세계",
+      "width": 2560,
+      "height": 1600,
+      "theme": "system"
+    },
+    {
+      "path": "/brand/splash/putduk-splash-mobile-v1.avif",
+      "bytes": 197956,
+      "sha256": "a3b2c5551f30a0a2f7a143de2f26fdb8f568dcec93bb72cc78d48e34847904b8",
+      "mimeType": "image/avif",
+      "alt": "금빛 궤도와 광물이 빛나는 밤의 지구 채굴 세계",
+      "width": 1290,
+      "height": 2796,
+      "theme": "system"
+    },
+    {
+      "path": "/brand/splash/putduk-splash-mobile-v1.webp",
+      "bytes": 269708,
+      "sha256": "70d7cd654b5efa717353cc36a5a7b5b7b3c0fd29671c4cf9f105c365f43b8a75",
+      "mimeType": "image/webp",
+      "alt": "금빛 궤도와 광물이 빛나는 밤의 지구 채굴 세계",
+      "width": 1290,
+      "height": 2796,
+      "theme": "system"
+    },
+    {
+      "path": "/brand/splash/putduk-splash-tablet-v1.avif",
+      "bytes": 292514,
+      "sha256": "016157275fd906faeaa1caabbdfd2303423cf6d17763373f3f2c9d1a5e918121",
+      "mimeType": "image/avif",
+      "alt": "금빛 궤도와 광물이 빛나는 밤의 지구 채굴 세계",
+      "width": 2048,
+      "height": 2732,
+      "theme": "system"
+    },
+    {
+      "path": "/brand/splash/putduk-splash-tablet-v1.webp",
+      "bytes": 398200,
+      "sha256": "abc9f366b34fbbe2a4e8e43fcf515bd58dd28f27577965e1941644d4b1404be5",
+      "mimeType": "image/webp",
+      "alt": "금빛 궤도와 광물이 빛나는 밤의 지구 채굴 세계",
+      "width": 2048,
+      "height": 2732,
+      "theme": "system"
+    },
+    {
+      "path": "/brand/symbol/putduk-symbol-dark.svg",
+      "bytes": 1179,
+      "sha256": "862e9d656d1bfe1da4ec4ce2111646144742f4ad35a8a6e96c523d8f19796368",
+      "mimeType": "image/svg+xml",
+      "alt": "퍼뜩 브랜드 자산",
+      "theme": "dark"
+    },
+    {
+      "path": "/brand/symbol/putduk-symbol-light.svg",
+      "bytes": 1192,
+      "sha256": "3ee9da6556fb5b4cf0705bca956310ae9fa9ee6cffe6015182af020b743962d0",
+      "mimeType": "image/svg+xml",
+      "alt": "퍼뜩 브랜드 자산",
+      "theme": "light"
+    },
+    {
+      "path": "/brand/wordmark/putduk-wordmark-dark.svg",
+      "bytes": 815,
+      "sha256": "7e647ac74d7d2bcbab8f87b3dc665f3fd47f403d6d78311cf992dd85c92877f9",
+      "mimeType": "image/svg+xml",
+      "alt": "퍼뜩 브랜드 자산",
+      "theme": "dark"
+    },
+    {
+      "path": "/brand/wordmark/putduk-wordmark-light.svg",
+      "bytes": 812,
+      "sha256": "1ace12143fa8fa8e4c24089c14ea3654460cb0ce22a487a8438f389c7c1960fd",
+      "mimeType": "image/svg+xml",
+      "alt": "퍼뜩 브랜드 자산",
+      "theme": "light"
+    },
+    {
+      "path": "/brand/worlds/orbital-earth-1600-v1.avif",
+      "bytes": 166541,
+      "sha256": "85fe3814bb4e12a203c23e8dcb06dca8814b895bbc8f7cc37ec7392741f73cb5",
+      "mimeType": "image/avif",
+      "alt": "금빛 궤도와 광물이 빛나는 밤의 지구 채굴 세계",
+      "width": 1600,
+      "height": 900,
+      "theme": "system"
+    },
+    {
+      "path": "/brand/worlds/orbital-earth-1600-v1.webp",
+      "bytes": 216182,
+      "sha256": "b6f2da0510bb752a3da9133e9249117ebd1b27ebe32376efb9e29c1ed8bab011",
+      "mimeType": "image/webp",
+      "alt": "금빛 궤도와 광물이 빛나는 밤의 지구 채굴 세계",
+      "width": 1600,
+      "height": 900,
+      "theme": "system"
+    },
+    {
+      "path": "/brand/worlds/orbital-earth-2400-v1.avif",
+      "bytes": 274491,
+      "sha256": "f1e82d9ebef8ca56eb9fea72d57fba9fc51028662affa161e0d30a8a68d644d0",
+      "mimeType": "image/avif",
+      "alt": "금빛 궤도와 광물이 빛나는 밤의 지구 채굴 세계",
+      "width": 2400,
+      "height": 1350,
+      "theme": "system"
+    },
+    {
+      "path": "/brand/worlds/orbital-earth-2400-v1.webp",
+      "bytes": 357456,
+      "sha256": "9674822dc90ac06456e6ee30eb6f78c3e8d1a3464dc4fe72412eb6da000fb5ca",
+      "mimeType": "image/webp",
+      "alt": "금빛 궤도와 광물이 빛나는 밤의 지구 채굴 세계",
+      "width": 2400,
+      "height": 1350,
+      "theme": "system"
+    },
+    {
+      "path": "/brand/worlds/orbital-earth-960-v1.avif",
+      "bytes": 76281,
+      "sha256": "486ab27a4dddcc91ff8836ae2acb10d40cf481fadcff7162e9346b96765ddd6f",
+      "mimeType": "image/avif",
+      "alt": "금빛 궤도와 광물이 빛나는 밤의 지구 채굴 세계",
+      "width": 960,
+      "height": 540,
+      "theme": "system"
+    },
+    {
+      "path": "/brand/worlds/orbital-earth-960-v1.webp",
+      "bytes": 106822,
+      "sha256": "217f2e845626215e8976fd3611c97a13b580146d0640aaed96b007a415ddb6fc",
+      "mimeType": "image/webp",
+      "alt": "금빛 궤도와 광물이 빛나는 밤의 지구 채굴 세계",
+      "width": 960,
+      "height": 540,
+      "theme": "system"
+    },
+    {
+      "path": "/ranks/rank-01/planet-128-v1.avif",
+      "bytes": 4981,
+      "sha256": "962e212762a3293f6d62c47d17df86e7cdc77ceb887401c1e6270bd303e8fe07",
+      "mimeType": "image/avif",
+      "alt": "퍼뜩 rank-01 행성 랭크 엠블럼",
+      "width": 128,
+      "height": 128,
+      "theme": "system"
+    },
+    {
+      "path": "/ranks/rank-01/planet-128-v1.webp",
+      "bytes": 7464,
+      "sha256": "7ca814ffbf0c523e3904474aef4306995a22977a9ab712f511beba738ca26a1b",
+      "mimeType": "image/webp",
+      "alt": "퍼뜩 rank-01 행성 랭크 엠블럼",
+      "width": 128,
+      "height": 128,
+      "theme": "system"
+    },
+    {
+      "path": "/ranks/rank-01/planet-256-v1.avif",
+      "bytes": 14210,
+      "sha256": "603b71b370b39d1eefb23355ffc7a95f75740a5aa983a83c82dfeebc63e777d3",
+      "mimeType": "image/avif",
+      "alt": "퍼뜩 rank-01 행성 랭크 엠블럼",
+      "width": 256,
+      "height": 256,
+      "theme": "system"
+    },
+    {
+      "path": "/ranks/rank-01/planet-256-v1.webp",
+      "bytes": 22836,
+      "sha256": "5c27f2cc1185f3f6401150e339e1d8d67aa6ccc8eab1443e2d8f63c6912f787e",
+      "mimeType": "image/webp",
+      "alt": "퍼뜩 rank-01 행성 랭크 엠블럼",
+      "width": 256,
+      "height": 256,
+      "theme": "system"
+    },
+    {
+      "path": "/ranks/rank-01/planet-512-v1.avif",
+      "bytes": 46720,
+      "sha256": "82121f658564a00e722d141909eb57689228f561f48c9004ffe89439c287d79d",
+      "mimeType": "image/avif",
+      "alt": "퍼뜩 rank-01 행성 랭크 엠블럼",
+      "width": 512,
+      "height": 512,
+      "theme": "system"
+    },
+    {
+      "path": "/ranks/rank-01/planet-512-v1.webp",
+      "bytes": 78272,
+      "sha256": "eb81c30085311588524e6e1b468268746bbf56d723c9713b1dc12b78c904adda",
+      "mimeType": "image/webp",
+      "alt": "퍼뜩 rank-01 행성 랭크 엠블럼",
+      "width": 512,
+      "height": 512,
+      "theme": "system"
+    },
+    {
+      "path": "/ranks/rank-02/planet-128-v1.avif",
+      "bytes": 5207,
+      "sha256": "fac59a3b93512d6854203a2e8752efa4d6412ef4114d8cbfbc08e90219577393",
+      "mimeType": "image/avif",
+      "alt": "퍼뜩 rank-02 행성 랭크 엠블럼",
+      "width": 128,
+      "height": 128,
+      "theme": "system"
+    },
+    {
+      "path": "/ranks/rank-02/planet-128-v1.webp",
+      "bytes": 7308,
+      "sha256": "01bd7ba499baa361a2b41b24002141a85cf151618ecb5c8d830e8f65e6602cad",
+      "mimeType": "image/webp",
+      "alt": "퍼뜩 rank-02 행성 랭크 엠블럼",
+      "width": 128,
+      "height": 128,
+      "theme": "system"
+    },
+    {
+      "path": "/ranks/rank-02/planet-256-v1.avif",
+      "bytes": 14215,
+      "sha256": "7a414ac13494796175dc3c5e66c6a10e1f257f5632f10f19eb5e8165563fc3b1",
+      "mimeType": "image/avif",
+      "alt": "퍼뜩 rank-02 행성 랭크 엠블럼",
+      "width": 256,
+      "height": 256,
+      "theme": "system"
+    },
+    {
+      "path": "/ranks/rank-02/planet-256-v1.webp",
+      "bytes": 21794,
+      "sha256": "d034d60b9f28fb7333f0db66c380231a1f8dad5a4bfc73612800b939be9f792e",
+      "mimeType": "image/webp",
+      "alt": "퍼뜩 rank-02 행성 랭크 엠블럼",
+      "width": 256,
+      "height": 256,
+      "theme": "system"
+    },
+    {
+      "path": "/ranks/rank-02/planet-512-v1.avif",
+      "bytes": 42898,
+      "sha256": "61a5a20da7b2bd5409e2ee43882babf545987be7c4b39899c1780940792e8ecf",
+      "mimeType": "image/avif",
+      "alt": "퍼뜩 rank-02 행성 랭크 엠블럼",
+      "width": 512,
+      "height": 512,
+      "theme": "system"
+    },
+    {
+      "path": "/ranks/rank-02/planet-512-v1.webp",
+      "bytes": 69202,
+      "sha256": "cdf8ec66d3fe4e8725093353e21233c2b38e4b2301c43f33572e5a0bc4c39698",
+      "mimeType": "image/webp",
+      "alt": "퍼뜩 rank-02 행성 랭크 엠블럼",
+      "width": 512,
+      "height": 512,
+      "theme": "system"
+    },
+    {
+      "path": "/ranks/rank-03/planet-128-v1.avif",
+      "bytes": 5541,
+      "sha256": "91c9118b3a0f5a70edf5eb7dd688537ea9c965e0822aa2d4f1382246f47d58e3",
+      "mimeType": "image/avif",
+      "alt": "퍼뜩 rank-03 행성 랭크 엠블럼",
+      "width": 128,
+      "height": 128,
+      "theme": "system"
+    },
+    {
+      "path": "/ranks/rank-03/planet-128-v1.webp",
+      "bytes": 8146,
+      "sha256": "9cb50adf100182b40757651fac11bfadf69548d849491d309575662761b3ffdb",
+      "mimeType": "image/webp",
+      "alt": "퍼뜩 rank-03 행성 랭크 엠블럼",
+      "width": 128,
+      "height": 128,
+      "theme": "system"
+    },
+    {
+      "path": "/ranks/rank-03/planet-256-v1.avif",
+      "bytes": 15196,
+      "sha256": "15b7a61d451fdfc5e4dc2d763c25ae617428f63cb8f96bf840eb1aeeda62c85a",
+      "mimeType": "image/avif",
+      "alt": "퍼뜩 rank-03 행성 랭크 엠블럼",
+      "width": 256,
+      "height": 256,
+      "theme": "system"
+    },
+    {
+      "path": "/ranks/rank-03/planet-256-v1.webp",
+      "bytes": 23770,
+      "sha256": "8c094e05ad71e4a6c456302cfa9cdb8518110b71c6155aa5f1719f7458962e27",
+      "mimeType": "image/webp",
+      "alt": "퍼뜩 rank-03 행성 랭크 엠블럼",
+      "width": 256,
+      "height": 256,
+      "theme": "system"
+    },
+    {
+      "path": "/ranks/rank-03/planet-512-v1.avif",
+      "bytes": 47080,
+      "sha256": "092e1fe05aa0523b1a63158cf3c8d406d5538c01a126bea2020fb246b7f6bd3f",
+      "mimeType": "image/avif",
+      "alt": "퍼뜩 rank-03 행성 랭크 엠블럼",
+      "width": 512,
+      "height": 512,
+      "theme": "system"
+    },
+    {
+      "path": "/ranks/rank-03/planet-512-v1.webp",
+      "bytes": 75942,
+      "sha256": "a6f57dcb57f0134425b549ec84fabbedfd7d05ad52e43ddb92ceb6fc0aed9d57",
+      "mimeType": "image/webp",
+      "alt": "퍼뜩 rank-03 행성 랭크 엠블럼",
+      "width": 512,
+      "height": 512,
+      "theme": "system"
+    },
+    {
+      "path": "/ranks/rank-04/planet-128-v1.avif",
+      "bytes": 5600,
+      "sha256": "59d4e496cdb9e4619ae584f0f1178ef1197f97dd0852124d8aabcc7bc9f90050",
+      "mimeType": "image/avif",
+      "alt": "퍼뜩 rank-04 행성 랭크 엠블럼",
+      "width": 128,
+      "height": 128,
+      "theme": "system"
+    },
+    {
+      "path": "/ranks/rank-04/planet-128-v1.webp",
+      "bytes": 8434,
+      "sha256": "7253f7a63644ff15b7d9d4dacc78f26121af61556f62eb8124b2c8cf5c4ebc63",
+      "mimeType": "image/webp",
+      "alt": "퍼뜩 rank-04 행성 랭크 엠블럼",
+      "width": 128,
+      "height": 128,
+      "theme": "system"
+    },
+    {
+      "path": "/ranks/rank-04/planet-256-v1.avif",
+      "bytes": 16158,
+      "sha256": "a390667c40488a793d47fc218666ba0516a1347c210215ddb7587e3fba8cf564",
+      "mimeType": "image/avif",
+      "alt": "퍼뜩 rank-04 행성 랭크 엠블럼",
+      "width": 256,
+      "height": 256,
+      "theme": "system"
+    },
+    {
+      "path": "/ranks/rank-04/planet-256-v1.webp",
+      "bytes": 26524,
+      "sha256": "06ac4c5ae8ac74737c14f432c17994e45ec17b42bb6cd6dcad2c262457be2b15",
+      "mimeType": "image/webp",
+      "alt": "퍼뜩 rank-04 행성 랭크 엠블럼",
+      "width": 256,
+      "height": 256,
+      "theme": "system"
+    },
+    {
+      "path": "/ranks/rank-04/planet-512-v1.avif",
+      "bytes": 51318,
+      "sha256": "81ec8ecafd449a9fda04f4f6c2fac84d671b882aa6f7c348d5bb1065f4c9ed41",
+      "mimeType": "image/avif",
+      "alt": "퍼뜩 rank-04 행성 랭크 엠블럼",
+      "width": 512,
+      "height": 512,
+      "theme": "system"
+    },
+    {
+      "path": "/ranks/rank-04/planet-512-v1.webp",
+      "bytes": 87668,
+      "sha256": "34c2a74c777a5aea1f7239bce608d8911d3015817755b2b4a0b6e5edcc760987",
+      "mimeType": "image/webp",
+      "alt": "퍼뜩 rank-04 행성 랭크 엠블럼",
+      "width": 512,
+      "height": 512,
+      "theme": "system"
+    },
+    {
+      "path": "/ranks/rank-05/planet-128-v1.avif",
+      "bytes": 5889,
+      "sha256": "5ef8aa50c7bc8a0b11ff6b6724f4a05ed53c57d78562d9abd681fe2646c1e368",
+      "mimeType": "image/avif",
+      "alt": "퍼뜩 rank-05 행성 랭크 엠블럼",
+      "width": 128,
+      "height": 128,
+      "theme": "system"
+    },
+    {
+      "path": "/ranks/rank-05/planet-128-v1.webp",
+      "bytes": 8534,
+      "sha256": "f19fc61303fd9daf3fb9e0ee0e6912f87a7b528cf65ddb5f7ad8dfda04e01e1c",
+      "mimeType": "image/webp",
+      "alt": "퍼뜩 rank-05 행성 랭크 엠블럼",
+      "width": 128,
+      "height": 128,
+      "theme": "system"
+    },
+    {
+      "path": "/ranks/rank-05/planet-256-v1.avif",
+      "bytes": 16671,
+      "sha256": "eac70f63837bcaaca5c3bb12ba44ecba5d9b50e65953ebbf8ae5a0e0e8d60d53",
+      "mimeType": "image/avif",
+      "alt": "퍼뜩 rank-05 행성 랭크 엠블럼",
+      "width": 256,
+      "height": 256,
+      "theme": "system"
+    },
+    {
+      "path": "/ranks/rank-05/planet-256-v1.webp",
+      "bytes": 26106,
+      "sha256": "727a4deb566791a14194f6b3a12b7af59c8f6d1251f9d94fb7100bac321f32e9",
+      "mimeType": "image/webp",
+      "alt": "퍼뜩 rank-05 행성 랭크 엠블럼",
+      "width": 256,
+      "height": 256,
+      "theme": "system"
+    },
+    {
+      "path": "/ranks/rank-05/planet-512-v1.avif",
+      "bytes": 51878,
+      "sha256": "99e174ceea822e31cd2b9ff1741794d7a8efcf4972449bc35faaaf5af7ad5b17",
+      "mimeType": "image/avif",
+      "alt": "퍼뜩 rank-05 행성 랭크 엠블럼",
+      "width": 512,
+      "height": 512,
+      "theme": "system"
+    },
+    {
+      "path": "/ranks/rank-05/planet-512-v1.webp",
+      "bytes": 86220,
+      "sha256": "9a9fc38e8eaefa0e9adfeeab8b69cc81d1f0f8c3c19d1850a38c81c6f4baaebb",
+      "mimeType": "image/webp",
+      "alt": "퍼뜩 rank-05 행성 랭크 엠블럼",
+      "width": 512,
+      "height": 512,
+      "theme": "system"
+    },
+    {
+      "path": "/ranks/rank-06/planet-128-v1.avif",
+      "bytes": 6741,
+      "sha256": "99392f7f2c792434c6423e50bb62bea4e68feed05e7313013814a50822ee31d6",
+      "mimeType": "image/avif",
+      "alt": "퍼뜩 rank-06 행성 랭크 엠블럼",
+      "width": 128,
+      "height": 128,
+      "theme": "system"
+    },
+    {
+      "path": "/ranks/rank-06/planet-128-v1.webp",
+      "bytes": 9450,
+      "sha256": "de4b38eb5735aee4ea91cf0fc5bf6ccb7f133ade5ef7d3e99d9cd02a5ec236da",
+      "mimeType": "image/webp",
+      "alt": "퍼뜩 rank-06 행성 랭크 엠블럼",
+      "width": 128,
+      "height": 128,
+      "theme": "system"
+    },
+    {
+      "path": "/ranks/rank-06/planet-256-v1.avif",
+      "bytes": 17939,
+      "sha256": "97d838265a10faa11326b71b4ae9adcaf486f28fb5ef0f56533777e4cac59f53",
+      "mimeType": "image/avif",
+      "alt": "퍼뜩 rank-06 행성 랭크 엠블럼",
+      "width": 256,
+      "height": 256,
+      "theme": "system"
+    },
+    {
+      "path": "/ranks/rank-06/planet-256-v1.webp",
+      "bytes": 28006,
+      "sha256": "b473b3e209f8be199c2f6862dba6569ff6571a9ced4645f9522b92617b4634f2",
+      "mimeType": "image/webp",
+      "alt": "퍼뜩 rank-06 행성 랭크 엠블럼",
+      "width": 256,
+      "height": 256,
+      "theme": "system"
+    },
+    {
+      "path": "/ranks/rank-06/planet-512-v1.avif",
+      "bytes": 53362,
+      "sha256": "b398ceca6a34a61a0c585aa33782bcd2a9824c19535b06ecb277a130f43aef15",
+      "mimeType": "image/avif",
+      "alt": "퍼뜩 rank-06 행성 랭크 엠블럼",
+      "width": 512,
+      "height": 512,
+      "theme": "system"
+    },
+    {
+      "path": "/ranks/rank-06/planet-512-v1.webp",
+      "bytes": 87324,
+      "sha256": "8da8b3c767277ace3b6b50683895903aa3bef7f7e688e0d801da11feb8f07d14",
+      "mimeType": "image/webp",
+      "alt": "퍼뜩 rank-06 행성 랭크 엠블럼",
+      "width": 512,
+      "height": 512,
+      "theme": "system"
+    }
+  ]
+}

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { signOutAdminAction } from "@/app/admin/actions";
 import { BrandMark } from "@/components/brand/brand-mark";
 import { PutdukIcon } from "@/components/icons/putduk-icon";
+import { ThemeControl } from "@/components/system/theme-control";
 import type { AdminRole } from "@/lib/auth/session";
 
 const sections = [
@@ -62,6 +63,7 @@ export function AdminShell({
             <span>CONTROL PLANE</span>
           </div>
           <div>
+            <ThemeControl />
             <span className="admin-role">{role}</span>
             <form action={signOutAdminAction}>
               <button type="submit">로그아웃</button>

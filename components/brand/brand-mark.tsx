@@ -9,7 +9,7 @@ export function BrandMark({ title = "PUTDUK", ...props }: BrandMarkProps) {
 
   return (
     <svg
-      viewBox="0 0 44 44"
+      viewBox="0 0 128 128"
       role={title ? "img" : undefined}
       aria-hidden={title ? undefined : true}
       aria-labelledby={titleId}
@@ -18,23 +18,41 @@ export function BrandMark({ title = "PUTDUK", ...props }: BrandMarkProps) {
     >
       {title ? <title id={titleId}>{title}</title> : null}
       <path
-        d="M22 3.75 37.8 12.9v18.2L22 40.25 6.2 31.1V12.9L22 3.75Z"
-        stroke="currentColor"
-        strokeWidth="1.5"
-      />
-      <path
-        d="m22 9.5 10.8 6.2v12.6L22 34.5l-10.8-6.2V15.7L22 9.5Z"
         fill="currentColor"
-        fillOpacity=".12"
+        d="M61 31C43 30 31 19 30 5c17-1 29 8 34 22C68 13 80 4 97 6c-2 14-14 25-31 25v13h-5V31Z"
       />
       <path
-        d="M14.6 25.4V18l7.4-4.2 7.4 4.2v5.6L22 27.8l-3.7-2.1v4.2"
+        fill="currentColor"
+        d="M22 75c0-24 18-43 42-43s42 19 42 43v25H22V75Z"
+      />
+      <rect
+        x="29"
+        y="58"
+        width="70"
+        height="48"
+        rx="22"
+        fill="#050607"
         stroke="currentColor"
-        strokeWidth="2.4"
+        strokeWidth="4"
+      />
+      <ellipse cx="54" cy="81" rx="6" ry="12" fill="#fffdf7" />
+      <path
+        d="m81 74-11 7 11 7"
+        fill="none"
+        stroke="#fffdf7"
         strokeLinecap="round"
         strokeLinejoin="round"
+        strokeWidth="7"
       />
-      <circle cx="29.4" cy="29.2" r="2.1" fill="currentColor" />
+      <circle
+        cx="100"
+        cy="52"
+        r="16"
+        fill="#17130c"
+        stroke="currentColor"
+        strokeWidth="5"
+      />
+      <circle cx="100" cy="52" r="8" fill="#fff7d0" />
     </svg>
   );
 }

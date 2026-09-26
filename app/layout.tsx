@@ -49,6 +49,18 @@ export const metadata: Metadata = {
   description:
     "서버 기준 채굴, 정산, 원장을 하나의 신뢰 가능한 흐름으로 설계한 PUTDUK의 가상 채굴 플랫폼입니다.",
   applicationName: "PUTDUK MINING",
+  icons: {
+    icon: [
+      { url: "/brand/favicon/favicon.svg", type: "image/svg+xml" },
+      {
+        url: "/brand/favicon/favicon-32.png",
+        sizes: "32x32",
+        type: "image/png",
+      },
+    ],
+    shortcut: "/brand/favicon/favicon.ico",
+    apple: "/brand/pwa/putduk-pwa-dark-192.png",
+  },
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
@@ -62,8 +74,11 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  colorScheme: "dark",
-  themeColor: "#070a0d",
+  colorScheme: "light dark",
+  themeColor: [
+    { color: "#070706", media: "(prefers-color-scheme: dark)" },
+    { color: "#f8f4ea", media: "(prefers-color-scheme: light)" },
+  ],
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
@@ -73,7 +88,15 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: ReactNode }>) {
   return (
-    <html lang="ko">
+    <html lang="ko" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              'try{var t=localStorage.getItem("putduk-theme");if(t==="light"||t==="dark"){document.documentElement.dataset.theme=t;document.documentElement.style.colorScheme=t}}catch(e){}',
+          }}
+        />
+      </head>
       <body>
         <script
           type="application/ld+json"
