@@ -15,6 +15,13 @@ This document is the mandatory decision record that must be approved before any 
 
 ## 2. V1 responsibility boundary
 
+### Tooling inspection (2026-09-27)
+
+- The Cloudflare architecture/documentation skill and current official documentation are available for read-only design work.
+- This repository does not currently include Wrangler, a Cloudflare adapter, account bindings, Worker configuration or an authenticated account-scoped deployment integration.
+- No exact account ID has been verified. Therefore no account listing, API call, compatibility migration, Worker preview tied to the account or resource provisioning was executed.
+- The first executable Cloudflare step remains a separately authorized identity/account preflight, followed by a local non-destructive runtime compatibility check.
+
 | Capability | System of record | Cloudflare V1 decision |
 | --- | --- | --- |
 | PostgreSQL data and transactions | Supabase PostgreSQL | Do not create D1 |
@@ -68,7 +75,7 @@ Adding one of these products requires a new architecture decision covering owner
 
 ## 5. Framework gate
 
-Current Cloudflare documentation recommends `vinext` for new Next.js deployments on Workers, while also describing it as beta. PUTDUK must not adopt a beta runtime path solely to make deployment convenient.
+Current Cloudflare documentation (checked 2026-09-27) recommends `vinext` as the default Next.js-on-Workers path while also describing it as beta. PUTDUK must not adopt a beta runtime path solely to make deployment convenient.
 
 Before adding Wrangler or a Cloudflare adapter:
 
@@ -108,4 +115,8 @@ Provisioning is allowed only after all of the following are known:
 - explicit user authorization to provision.
 
 Until then, Cloudflare state is intentionally unchanged.
+
+## 8. WS-02 confirmation
+
+Transactional outbox, consumer deduplication, leased durable jobs, retry history and dead-letter state are owned by PostgreSQL/Supabase in V1. This removes any speculative reason to create Cloudflare Queues, KV, D1, R2 or Durable Objects. A future measured throughput or isolation requirement must produce a new approved decision record before that boundary changes.
 

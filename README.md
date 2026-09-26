@@ -12,7 +12,14 @@ application state. It currently includes:
 - a responsive premium Korean user application and protected admin control
   plane;
 - Supabase migrations with forced RLS, server-only mutation commands,
-  append-only ledgers, versioned economics and atomic trial settlement;
+  a true balanced journal, wallet projections, versioned economics and atomic
+  trial settlement;
+- PUTDUK START qualification and one-time real KRW conversion capped at 5,000,
+  with a verified first withdrawal that does not require prior funding;
+- a transactional versioned outbox, consumer deduplication, leased durable jobs,
+  bounded retries, attempt history, dead-letter and reconciliation foundations;
+- referral, funding-promotion, event-reward, KYC/security, Member 360 lifecycle,
+  feature-flag and sourced product-catalog foundations;
 - KRW/USDT request boundaries, policy-bound encrypted withdrawal destinations
   and audited deposit approval;
 - PWA manifest, offline shell, opt-in push subscription controls and notification
@@ -73,13 +80,27 @@ Admin / Audit / Analytics / System
 
 ## Documentation
 - [Master architecture](docs/architecture/PUTDUK-MINING-MASTER-ARCHITECTURE.md)
+- [Architecture closure audit](docs/architecture/ARCHITECTURE-CLOSURE-AUDIT.md)
+- [Balanced ledger and reconciliation](docs/architecture/LEDGER-RECONCILIATION.md)
+- [Domain events and outbox](docs/architecture/DOMAIN-EVENTS-OUTBOX.md)
+- [Notification and PWA architecture](docs/architecture/NOTIFICATION-PWA.md)
 - [24-hour trial system](docs/product/PUTDUK-START.md)
+- [Welcome conversion and first withdrawal](docs/product/TRIAL-WELCOME-WITHDRAWAL.md)
+- [Referral auto payout](docs/product/REFERRAL-AUTO-PAYOUT.md)
+- [Funding promotions](docs/product/FUNDING-PROMOTIONS.md)
+- [Event reward architecture](docs/product/EVENT-REWARD-ARCHITECTURE.md)
+- [Product catalog](docs/product/PRODUCT-CATALOG.md)
 - [Design system](docs/design/PUTDUK-DESIGN-SYSTEM.md)
 - [Development conventions](docs/development/CONVENTIONS.md)
 - [Admin & operations](docs/operations/ADMIN-OPERATIONS.md)
 - [PUTDUK AI V1](docs/ai/PUTDUK-AI.md)
 - [Cloudflare infrastructure decision](docs/operations/CLOUDFLARE-INFRASTRUCTURE.md)
+- [Backup and restore drill](docs/operations/BACKUP-RESTORE-DRILL.md)
 - [Trust & discovery](docs/trust/TRUST-DISCOVERY.md)
+- [Trust, search and AI discovery policy](docs/trust/TRUST-SEARCH-AI-DISCOVERY.md)
+- [Technology protection](docs/security/TECHNOLOGY-PROTECTION.md)
+- [Definition of Done](docs/quality/DEFINITION-OF-DONE.md)
+- [SLI, SLO and load testing](docs/quality/SLI-SLO-LOAD-TESTING.md)
 
 ## Local development
 

@@ -8,6 +8,10 @@ landing_view
 → trial_first_reward
 → trial_50_percent
 → trial_complete
+→ welcome_reward_qualified
+→ welcome_reward_converted
+→ welcome_withdrawal_complete
+→ withdrawal_complete_no_funding
 → deposit_start
 → deposit_complete
 → real_mining_start
@@ -23,6 +27,21 @@ trial_start
 trial_first_reward
 trial_progress
 trial_complete
+welcome_reward_qualified
+welcome_reward_auto_hold
+welcome_reward_converted
+welcome_withdrawal_start
+welcome_withdrawal_complete
+withdrawal_complete_no_funding
+first_funding
+first_real_mining
+active_7d
+active_30d
+long_term_active
+referral_stage_qualified
+referral_reward_paid
+funding_promotion_reward_paid
+event_reward_granted
 mining_world_view
 mining_start
 mining_stop
@@ -58,8 +77,17 @@ Properties use snake_case.
 - trial start → first result
 - first result → 50% quota
 - 50% quota → completion
-- completion → funding screen
+- completion → welcome reward qualification
+- qualification → real-wallet conversion
+- conversion → first welcome withdrawal
+- welcome withdrawal → completed with no funding
+- no-funding withdrawal → first funding (non-spam re-engagement cohort)
 - funding screen → deposit request
 - deposit request → deposit completion
 - deposit completion → real mining
 - first real mining → return visit
+
+Server-confirmed money/lifecycle events originate from committed domain/outbox
+facts, never browser self-report. Attribution follows campaign/creative/landing
+through signup, trial, welcome withdrawal, first funding, first real mining and
+7/30-day activity without storing sensitive query parameters.

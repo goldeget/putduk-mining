@@ -45,10 +45,26 @@ Cloudflare isolation:
 
 This target lock overrides convenience, historical context, cached knowledge, prior task history, and generic discovery instructions.
 
+Canonical visual lock:
+1. The only canonical references are `docs/design/visual-references/putduk-brand-master-reference.png` and `docs/design/visual-references/putduk-rank-master-reference.png`.
+2. They define quality/art direction only. They do not define production copy, economic values, rank names/benefits, or implementation truth.
+3. The exact Korean spelling is `퍼뜩`. Never use text baked into generated pixels; production copy must be HTML/CSS or reviewed SVG.
+4. Lossless generated masters stay under `docs/design/generated-masters/`. Runtime assets must come from the versioned manifest under `public/brand/assets.manifest.json` and the six neutral `public/ranks/rank-01`…`rank-06` families.
+5. Follow `docs/design/PUTDUK-VISUAL-DIRECTION.md`, `PUTDUK-BRAND-ASSET-SYSTEM.md`, `PUTDUK-THEME-SYSTEM.md`, and `PUTDUK-MOTION-EXPERIENCE.md`.
+
+Repository integrity lock:
+1. Failed `git fsck --full`, a reachable missing object, inaccessible exact origin, or remote mismatch blocks commit/push/PR/tag/deploy/release.
+2. Never hide corruption through grafts, replacement refs, shallow markers, rewritten history, force push, or an alternate repository.
+3. GitHub, Supabase remote changes, Cloudflare provisioning/deploy, and production release are separate authorization boundaries.
+
 Read and obey:
 - docs/architecture/PUTDUK-MINING-MASTER-ARCHITECTURE.md
+- docs/architecture/ARCHITECTURE-CLOSURE-AUDIT.md
 - docs/product/PUTDUK-START.md
+- docs/product/V1-SCOPE-PRIORITIES.md
 - docs/design/PUTDUK-DESIGN-SYSTEM.md
+- docs/design/PUTDUK-VISUAL-DIRECTION.md
+- docs/design/PUTDUK-BRAND-ASSET-SYSTEM.md
 - docs/development/CONVENTIONS.md
 
 Hard constraints:
@@ -63,3 +79,21 @@ Hard constraints:
 9. User-facing UI is Korean-first and must remain simple enough for broad age ranges.
 10. Premium quality is required: polished loading/empty/error states, responsive behavior, accessibility and restrained motion.
 11. New features must identify their owning domain, audit impact, analytics impact and admin controls before implementation.
+12. PUTDUK START may convert once to real withdrawable KRW after qualification,
+    with a launch hard ceiling of KRW 5,000; funding is never a prerequisite.
+13. The normal first-funding promotion is capped at KRW 10,000. A separately
+    approved special operator campaign may exceed it only through explicit
+    versioned cap and budget configuration.
+14. Authoritative money uses balanced ledger transactions and entries; wallet
+    balances are projections. Never use floating point.
+15. Every post-commit notification/analytics/reward workflow starts from a
+    versioned transactional outbox event.
+16. Referral invitations are unlimited; standard automatic payout is at most
+    KRW 10,000 per normally qualified referral, default split 5,000/5,000.
+17. Shared IP alone is never automatic referral rejection or permanent block.
+18. Mining products come from a versioned operator-approved catalog, never a
+    hardcoded React list or runtime market-price API.
+19. Public and authenticated routes are separate; safe intended deep links are
+    preserved through login and authorization repeats at data/command/RLS.
+20. Authoritative formulas, risk weights, KYC/referral fraud logic and private
+    source maps never ship to the browser.

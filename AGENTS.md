@@ -48,6 +48,69 @@ This repository is a greenfield project. The following scope lock is an absolute
 
 These rules override convenience, historical context, cached knowledge, prior task history, and any generic instruction to discover related projects.
 
+## Canonical visual lock
+
+1. The only canonical visual references are:
+   - `docs/design/visual-references/putduk-brand-master-reference.png`
+   - `docs/design/visual-references/putduk-rank-master-reference.png`
+2. They define quality and art direction, not final product copy, rank benefits, economic values, or implemented scope.
+3. The exact Korean brand spelling is `퍼뜩`.
+4. Never use Korean or other production copy baked into generated raster pixels. Render copy as HTML/CSS text or reviewed SVG content.
+5. Keep canonical references and generated lossless masters separate from optimized runtime assets. Generated masters live only under `docs/design/generated-masters/`; use `public/brand/assets.manifest.json` and the versioned derivatives under `public/brand/` and `public/ranks/` at runtime.
+6. Runtime visual work must follow `PUTDUK-VISUAL-DIRECTION.md`, `PUTDUK-BRAND-ASSET-SYSTEM.md`, `PUTDUK-THEME-SYSTEM.md`, and `PUTDUK-MOTION-EXPERIENCE.md` under `docs/design/`.
+7. Do not infer a seventh production rank or any rank name, threshold, benefit, or reward from the mockups. V1 production assets are neutral `rank-01` through `rank-06` until versioned product data is approved.
+
+## Repository integrity and release lock
+
+1. A reachable missing Git object, failed `git fsck --full`, mismatched remote, or inaccessible exact authorized origin blocks commit, push, PR, tag, deployment, and release claims.
+2. Never conceal or bypass repository corruption with grafts, replacement refs, fake shallow boundaries, history rewrites, force pushes, or another repository.
+3. GitHub push, Supabase remote mutation, Cloudflare provisioning/deployment, and production release are separate authorization boundaries.
+4. Follow `docs/development/GIT-CI-CD-POLICY.md` and `docs/quality/DEFINITION-OF-DONE.md`.
+
+## WS-02 product and money locks
+
+1. PUTDUK START is eligible for a one-time conversion into real withdrawable KRW
+   after identity/KYC/anti-abuse qualification, with a launch hard ceiling of
+   KRW 5,000. Funding is never required for that conversion or eligible first
+   withdrawal.
+2. Trial and real wallet accounting remain separate. Conversion is an explicit
+   balanced `TRIAL_REWARD_CONVERSION`/`WELCOME_REWARD` ledger transaction.
+3. Authoritative money uses balanced ledger transactions and entries. Wallet
+   balances are append-only projections/read models; floating point is forbidden.
+4. Every mutation followed by notification, analytics, referral, promotion or
+   event processing writes a versioned outbox event in the same transaction.
+5. Referral invitations are unlimited. The standard normally qualified reward
+   is at most KRW 10,000, default split KRW 5,000 + KRW 5,000, and normal payout
+   is automatic. Shared IP alone never rejects or permanently blocks a user.
+6. The standard first-funding promotion is capped at KRW 10,000. A separately
+   approved special operator campaign may exceed it only through explicit
+   versioned cap, budget and schedule configuration.
+7. Mining products come from a versioned, sourced, operator-approved catalog.
+   Never hardcode the catalog in React or make runtime rewards depend on market
+   or securities-price APIs.
+8. Public landing/trust routes and authenticated application routes are strict
+   boundaries. Preserve only allowlisted same-origin return paths through login;
+   enforce authorization again at route command, data and RLS boundaries.
+9. Authoritative mining/economy/settlement formulas, fraud/risk weights, KYC
+   decision logic and private production source maps must never ship to clients.
+10. AI may draft and explain; deterministic approved rules own publication,
+    qualification, budgets and money. AI never mutates balances or approvals.
+11. Remote Supabase and Cloudflare remain frozen until a later explicit phase.
+    Local migrations/tests are expected; no remote apply or provisioning occurs.
+
+Read and obey the dedicated contracts under:
+
+- `docs/product/TRIAL-WELCOME-WITHDRAWAL.md`
+- `docs/architecture/LEDGER-RECONCILIATION.md`
+- `docs/architecture/DOMAIN-EVENTS-OUTBOX.md`
+- `docs/product/REFERRAL-AUTO-PAYOUT.md`
+- `docs/product/FUNDING-PROMOTIONS.md`
+- `docs/product/EVENT-REWARD-ARCHITECTURE.md`
+- `docs/architecture/NOTIFICATION-PWA.md`
+- `docs/product/PRODUCT-CATALOG.md`
+- `docs/trust/TRUST-SEARCH-AI-DISCOVERY.md`
+- `docs/security/TECHNOLOGY-PROTECTION.md`
+
 
 <!-- BEGIN:nextjs-agent-rules -->
 
