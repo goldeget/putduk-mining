@@ -56,14 +56,14 @@ begin
     owner_user_id
   ) values
     (
-      'USER:' || p_user_id::text || ':KRW:LIABILITY',
+      'USER:' || upper(p_user_id::text) || ':KRW:LIABILITY',
       'KRW',
       'LIABILITY',
       'CREDIT',
       p_user_id
     ),
     (
-      'USER:' || p_user_id::text || ':USDT:LIABILITY',
+      'USER:' || upper(p_user_id::text) || ':USDT:LIABILITY',
       'USDT',
       'LIABILITY',
       'CREDIT',
@@ -225,7 +225,7 @@ begin
     normal_side,
     owner_user_id
   ) values (
-    'USER:' || p_user_id::text || ':KRW:LIABILITY',
+    'USER:' || upper(p_user_id::text) || ':KRW:LIABILITY',
     'KRW',
     'LIABILITY',
     'CREDIT',
@@ -239,7 +239,7 @@ begin
 
   select account.id into v_member_ledger_account_id
   from public.ledger_accounts as account
-  where account.code = 'USER:' || p_user_id::text || ':KRW:LIABILITY';
+  where account.code = 'USER:' || upper(p_user_id::text) || ':KRW:LIABILITY';
 
   select wallet.id into v_wallet_account_id
   from public.wallet_accounts as wallet
