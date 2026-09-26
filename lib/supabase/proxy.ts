@@ -6,6 +6,7 @@ import {
   isSafeProtectedReturnPath,
 } from "@/lib/auth/return-path";
 import { getPublicEnv } from "@/lib/env/public";
+import { supabaseServerFetch } from "@/lib/supabase/server-fetch";
 
 export async function updateSupabaseSession(request: NextRequest) {
   const env = getPublicEnv();
@@ -15,6 +16,7 @@ export async function updateSupabaseSession(request: NextRequest) {
     env.NEXT_PUBLIC_SUPABASE_URL,
     env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
     {
+      global: { fetch: supabaseServerFetch },
       cookies: {
         getAll() {
           return request.cookies.getAll();

@@ -1,11 +1,14 @@
 import { defineConfig, devices } from "@playwright/test";
 
+const isCI = Boolean(process.env.CI);
+
 export default defineConfig({
   testDir: "./tests/e2e",
   fullyParallel: true,
-  forbidOnly: Boolean(process.env.CI),
-  retries: process.env.CI ? 2 : 0,
-  reporter: process.env.CI ? "github" : "list",
+  forbidOnly: isCI,
+  globalTimeout: isCI ? 3 * 60_000 : 0,
+  retries: isCI ? 2 : 0,
+  reporter: isCI ? [["line"], ["github"]] : "list",
   use: {
     baseURL: "http://127.0.0.1:3000",
     trace: "on-first-retry",
@@ -23,7 +26,9 @@ export default defineConfig({
         "local-playwright-publishable-key-not-a-secret",
       NEXT_PUBLIC_SUPABASE_URL: "http://127.0.0.1:58421",
     },
+    gracefulShutdown: { signal: "SIGTERM", timeout: 5_000 },
     url: "http://127.0.0.1:3000",
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: !isCI,
+    stdout: isCI ? "pipe" : "ignore",
   },
 });
