@@ -1,0 +1,63 @@
+{
+  "name": "putduk-mining",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "PUTDUK MINING production web and PWA foundation",
+  "packageManager": "pnpm@12.6.0",
+  "engines": {
+    "node": ">=24.19.0 <25",
+    "pnpm": "12.6.0"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint . --max-warnings=0",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test",
+    "test:load": "k6 run tests/load/core-api.k6.js",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "assets:verify": "node scripts/verify-brand-assets.mjs",
+    "db:start": "supabase db start",
+    "db:stop": "supabase stop",
+    "db:reset": "supabase db reset",
+    "db:lint": "supabase db lint --local --schema public,app_private --level warning --fail-on warning",
+    "db:advisors": "supabase db advisors --local --type security --level warn --fail-on warn",
+    "db:test": "supabase test db",
+    "db:verify": "pnpm db:reset && pnpm db:test && pnpm db:lint && pnpm db:advisors",
+    "admin:bootstrap": "node --env-file-if-exists=.env.local scripts/bootstrap-first-admin.mjs",
+    "verify": "pnpm assets:verify && pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+  },
+  "dependencies": {
+    "@supabase/ssr": "0.12.7",
+    "@supabase/supabase-js": "2.117.2",
+    "motion": "13.4.4",
+    "next": "16.3.6",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "zod": "4.6.5"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.63.0",
+    "@tailwindcss/postcss": "4.3.3",
+    "@types/node": "24.19.0",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitest/coverage-v8": "5.0.2",
+    "eslint": "9.39.5",
+    "eslint-config-next": "16.3.6",
+    "jsdom": "30.1.1",
+    "postcss": "8.5.28",
+    "prettier": "3.9.9",
+    "prettier-plugin-tailwindcss": "0.8.1",
+    "tailwindcss": "4.3.3",
+    "typescript": "5.9.3",
+    "vite": "8.3.1",
+    "vitest": "5.0.2"
+  }
+}

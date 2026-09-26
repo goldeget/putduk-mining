@@ -1,0 +1,8 @@
+.next
+**/*.md
+coverage
+node_modules
+playwright-report
+pnpm-lock.yaml
+supabase/.temp
+test-results

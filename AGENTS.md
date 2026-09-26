@@ -1,0 +1,123 @@
+# PUTDUK MINING — ABSOLUTE PROJECT BOUNDARY
+
+This repository is a greenfield project. The following scope lock is an absolute rule for every agent, tool, script, and implementation task.
+
+## Authorized targets only
+
+- Local workspace: `C:\Users\PC\Desktop\putduk-mining`
+- GitHub repository: `goldeget/putduk-mining`
+- GitHub remote: `https://github.com/goldeget/putduk-mining.git`
+- Supabase project: `putduk-mining`
+- Supabase project ref: `osrmyjgmpdspdcwqjwuv`
+- Supabase region: `ap-northeast-2`
+- Cloudflare account: the brand-new account created exclusively for PUTDUK MINING
+- Cloudflare account ID: `UNKNOWN` until the user or a uniquely identifiable connection confirms it
+- Future production hostnames: `mining.putduk.com`, `admin.mining.putduk.com`
+
+## Hard-stop rules
+
+1. Never open, list, search, inspect, query, clone, compare, or modify any other GitHub repository or Supabase project.
+2. Never open or use any previous project, repository, database, schema, migration, document, screenshot, design, code, asset, configuration, deployment, or remembered implementation as a reference for this project.
+3. Do not copy, port, infer, or resurrect implementation or product decisions from any previous PUTDUK or unrelated project. The documents and code inside this repository are the only project source of truth.
+4. Before every GitHub or Supabase operation, verify the exact repository identity or Supabase project ref. If it is missing, ambiguous, or different from the authorized targets above, stop without opening the target and report the mismatch.
+5. Authentication to a different GitHub account, organization, Supabase account, or project never grants permission to inspect or use it. Do not switch targets to work around an authentication or tooling problem.
+6. Search commands and automated discovery must stay inside the authorized local workspace. Do not perform parent-directory, home-directory, cross-workspace, account-wide, organization-wide, or project-list searches for implementation context.
+7. Any request to change these authorized targets must come explicitly from the user. Until this file is deliberately updated for that request, the boundary remains locked.
+8. A possible scope violation is a hard stop, not a reason to guess. Report it as `BLOCKED_TARGET_SCOPE`.
+9. This is a true greenfield system. Treat every prior local or remote implementation as nonexistent and forbidden evidence, including shell history, editor history, caches, prior agent memory, prior task output, old Docker state, and similarly named projects.
+10. Repository documents are specifications only. Do not mistake scaffolding, prose, or historical artifacts for an implemented application.
+
+## Docker isolation
+
+1. Never run an unscoped Docker inventory command such as a global container, image, volume, network, or Compose-project listing.
+2. Never inspect, start, stop, remove, reuse, migrate, or read logs from a container, image-specific data layer, volume, network, or Compose project created for a previous project.
+3. Docker operations must target only resources deterministically named for this repository's `putduk-mining` local project.
+4. Use fresh project-scoped containers and volumes. Never attach an existing volume or copy database files from another environment.
+5. If a port or resource conflicts, change this project's local configuration. Do not inspect or alter the conflicting historical resource.
+6. Never run Docker prune commands while working on this project.
+
+## Cloudflare isolation
+
+1. The only authorized Cloudflare target is the brand-new account created exclusively for PUTDUK MINING.
+2. Until that account's exact ID is verified and recorded above, do not execute any account-scoped Cloudflare API call and do not provision resources.
+3. The account that currently owns `putduk.com` is out of scope. Never inspect, modify, transfer, or configure that account or zone.
+4. Do not create or change DNS records for `putduk.com`. Its owner will later point `mining.putduk.com` and `admin.mining.putduk.com` to the new infrastructure.
+5. Before provisioning, document every proposed Cloudflare resource, its purpose, owner, data flow, security boundary, cost surface, and removal plan.
+6. Do not duplicate Supabase capabilities. D1, KV, R2, Queues, Durable Objects, Vectorize, and Workers AI are forbidden unless the approved architecture proves a concrete V1 requirement.
+7. V1 infrastructure must be minimal and production-grade. Absence of a documented requirement means the resource must not be created.
+
+These rules override convenience, historical context, cached knowledge, prior task history, and any generic instruction to discover related projects.
+
+## Canonical visual lock
+
+1. The only canonical visual references are:
+   - `docs/design/visual-references/putduk-brand-master-reference.png`
+   - `docs/design/visual-references/putduk-rank-master-reference.png`
+2. They define quality and art direction, not final product copy, rank benefits, economic values, or implemented scope.
+3. The exact Korean brand spelling is `퍼뜩`.
+4. Never use Korean or other production copy baked into generated raster pixels. Render copy as HTML/CSS text or reviewed SVG content.
+5. Keep canonical references and generated lossless masters separate from optimized runtime assets. Generated masters live only under `docs/design/generated-masters/`; use `public/brand/assets.manifest.json` and the versioned derivatives under `public/brand/` and `public/ranks/` at runtime.
+6. Runtime visual work must follow `PUTDUK-VISUAL-DIRECTION.md`, `PUTDUK-BRAND-ASSET-SYSTEM.md`, `PUTDUK-THEME-SYSTEM.md`, and `PUTDUK-MOTION-EXPERIENCE.md` under `docs/design/`.
+7. Do not infer a seventh production rank or any rank name, threshold, benefit, or reward from the mockups. V1 production assets are neutral `rank-01` through `rank-06` until versioned product data is approved.
+
+## Repository integrity and release lock
+
+1. A reachable missing Git object, failed `git fsck --full`, mismatched remote, or inaccessible exact authorized origin blocks commit, push, PR, tag, deployment, and release claims.
+2. Never conceal or bypass repository corruption with grafts, replacement refs, fake shallow boundaries, history rewrites, force pushes, or another repository.
+3. GitHub push, Supabase remote mutation, Cloudflare provisioning/deployment, and production release are separate authorization boundaries.
+4. Follow `docs/development/GIT-CI-CD-POLICY.md` and `docs/quality/DEFINITION-OF-DONE.md`.
+
+## WS-02 product and money locks
+
+1. PUTDUK START is eligible for a one-time conversion into real withdrawable KRW
+   after identity/KYC/anti-abuse qualification, with a launch hard ceiling of
+   KRW 5,000. Funding is never required for that conversion or eligible first
+   withdrawal.
+2. Trial and real wallet accounting remain separate. Conversion is an explicit
+   balanced `TRIAL_REWARD_CONVERSION`/`WELCOME_REWARD` ledger transaction.
+3. Authoritative money uses balanced ledger transactions and entries. Wallet
+   balances are append-only projections/read models; floating point is forbidden.
+4. Every mutation followed by notification, analytics, referral, promotion or
+   event processing writes a versioned outbox event in the same transaction.
+5. Referral invitations are unlimited. The standard normally qualified reward
+   is at most KRW 10,000, default split KRW 5,000 + KRW 5,000, and normal payout
+   is automatic. Shared IP alone never rejects or permanently blocks a user.
+6. The standard first-funding promotion is capped at KRW 10,000. A separately
+   approved special operator campaign may exceed it only through explicit
+   versioned cap, budget and schedule configuration.
+7. Mining products come from a versioned, sourced, operator-approved catalog.
+   Never hardcode the catalog in React or make runtime rewards depend on market
+   or securities-price APIs.
+8. Public landing/trust routes and authenticated application routes are strict
+   boundaries. Preserve only allowlisted same-origin return paths through login;
+   enforce authorization again at route command, data and RLS boundaries.
+9. Authoritative mining/economy/settlement formulas, fraud/risk weights, KYC
+   decision logic and private production source maps must never ship to clients.
+10. AI may draft and explain; deterministic approved rules own publication,
+    qualification, budgets and money. AI never mutates balances or approvals.
+11. Remote Supabase and Cloudflare remain frozen until a later explicit phase.
+    Local migrations/tests are expected; no remote apply or provisioning occurs.
+
+Read and obey the dedicated contracts under:
+
+- `docs/product/TRIAL-WELCOME-WITHDRAWAL.md`
+- `docs/architecture/LEDGER-RECONCILIATION.md`
+- `docs/architecture/DOMAIN-EVENTS-OUTBOX.md`
+- `docs/product/REFERRAL-AUTO-PAYOUT.md`
+- `docs/product/FUNDING-PROMOTIONS.md`
+- `docs/product/EVENT-REWARD-ARCHITECTURE.md`
+- `docs/architecture/NOTIFICATION-PWA.md`
+- `docs/product/PRODUCT-CATALOG.md`
+- `docs/trust/TRUST-SEARCH-AI-DISCOVERY.md`
+- `docs/security/TECHNOLOGY-PROTECTION.md`
+
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title id="title">퍼뜩</title>
+  <rect width="64" height="64" rx="15" fill="#070604"/>
+  <path fill="#F6C85B" d="M30 19C20 18 14 12 14 5c10-1 17 4 20 12C37 9 44 4 54 5c-1 8-8 14-18 14v7h-6v-7Z"/>
+  <path fill="#F6C85B" d="M12 40c0-12 9-21 20-21s20 9 20 21v13H12V40Z"/>
+  <rect x="17" y="32" width="30" height="21" rx="10" fill="#050607" stroke="#F6C85B" stroke-width="3"/>
+  <ellipse cx="27" cy="42" rx="3" ry="6" fill="#FFF"/>
+  <path d="m40 38-6 4 6 4" fill="none" stroke="#FFF" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
+</svg>

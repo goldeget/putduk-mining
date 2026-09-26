@@ -14,8 +14,11 @@ Sign up
 → Usage quota progresses
 → Trial completes at quota 100% or 24h
 → Completion summary
-→ "내 채굴 시작하기"
-→ Funding
+→ Identity/KYC and anti-abuse qualification
+→ Up to KRW 5,000 converts exactly once to the real KRW wallet
+→ First withdrawal WITHOUT funding
+→ Receipt and trust confirmation
+→ Optional funding decision
 → Real wallet
 → Real mining
 → Auto settlement
@@ -30,3 +33,27 @@ Sign up
 6. USDT appears only when the user deliberately selects it.
 7. Push permission is requested only after product value is understood.
 8. Emoji are not used as the production navigation language; PUTDUK SVG assets are.
+9. Trial and real wallet balances remain visibly and technically separate.
+10. No onboarding tutorial or first welcome withdrawal requires funding.
+11. Unauthenticated protected deep links preserve an allowlisted intended path
+    through login and return safely after authentication.
+
+## Lifecycle segments
+
+```text
+visitor
+→ signup
+→ trial_started
+→ first_mining
+→ trial_completed
+→ first_welcome_withdrawal
+→ withdrawal_completed_no_funding
+→ first_funding
+→ first_real_mining
+→ active_7d
+→ active_30d
+→ long_term_active
+```
+
+`withdrawal_completed_no_funding` may receive preference-aware, capped
+re-engagement. Already-earned money is never made conditional on later funding.

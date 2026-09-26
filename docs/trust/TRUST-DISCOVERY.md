@@ -26,6 +26,12 @@ The goal is not to force an external AI to give a predetermined verdict. The goa
 ```
 
 ## Canonical truth
+The executable V1 public truth registry is `lib/trust/public-content.ts`. Public
+pages, sitemap, `llms.txt`, structured data and the machine-readable facts API
+are generated from this registry. Database trust tables are the versioned
+publication model for operator-managed content and must not silently diverge
+from the currently published registry.
+
 Core tables:
 ```text
 trust_facts

@@ -13,7 +13,9 @@ Start mining → see the first result → close the app → return → see accum
 - Trial ledger and real wallet ledger are separate
 - Server time is authoritative
 - Trial continues while the app/browser/device is closed
-- Operator-configurable target experience: KRW 3,000–10,000 equivalent
+- Operator-configurable virtual trial presentation target
+- Eligible real KRW conversion: maximum KRW 5,000 exactly once
+- Funding is never required before withdrawing the eligible welcome reward
 - First trial world: KOREA
 
 ## User experience
@@ -68,13 +70,20 @@ Completion screen:
 - usage 100%
 - one primary CTA: "내 채굴 시작하기"
 
-The next step leads naturally into funding; it must not visually resemble an aggressive pop-up ad.
+The next step is qualification for the real KRW welcome reward and a transparent
+first-withdrawal trust flow. Funding is optional and appears only after the
+earned welcome-withdrawal path is understandable. It must never be presented as
+a prerequisite or an aggressive pop-up.
+
+The authoritative conversion and withdrawal contract is
+`docs/product/TRIAL-WELCOME-WITHDRAWAL.md`.
 
 ## Admin configuration
 Operator controls:
 - enabled
 - duration
 - target reward
+- welcome conversion cap (never above KRW 5,000)
 - first-result timing
 - quota speed
 - auto-mining enabled

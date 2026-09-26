@@ -1,0 +1,21 @@
+packages:
+  - .
+
+allowBuilds:
+  unrs-resolver: true
+minimumReleaseAgeStrict: true
+minimumReleaseAgeExclude:
+  - "@supabase/auth-js@2.117.2"
+  - "@supabase/functions-js@2.117.2"
+  - "@supabase/postgrest-js@2.117.2"
+  - "@supabase/realtime-js@2.117.2"
+  - "@supabase/storage-js@2.117.2"
+  - "@supabase/supabase-js@2.117.2"
+  - "@types/node@24.19.0"
+  - "@vitest/coverage-v8@5.0.2"
+  - "@vitest/mocker@5.0.2"
+  - "@vitest/spy@5.0.2"
+  - framer-motion@13.4.4
+  - motion-dom@13.4.4
+  - motion@13.4.4
+  - vitest@5.0.2

@@ -1,1 +1,7 @@
 * @goldeget
+
+# High-risk production boundaries require repository-owner review.
+/supabase/migrations/ @goldeget
+/app/api/ @goldeget
+/lib/security/ @goldeget
+/.github/workflows/ @goldeget
