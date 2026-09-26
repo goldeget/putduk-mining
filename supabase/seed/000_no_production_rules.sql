@@ -1,0 +1,3 @@
+-- Intentionally no economic, reward, rate, or admin seed data.
+-- Canonical V1 world identities are created by versioned migration.
+-- Trial programs and economic rules must be explicitly reviewed before insertion.
