@@ -31,10 +31,10 @@ export default async function MembersPage({
       <>
         <section className="page-intro">
           <p className="eyebrow">MEMBER 360</p>
-          <h1>회원 한 사람의 맥락을 한 화면에.</h1>
+          <h1>회원 한 사람의 맥락</h1>
           <p>
-            정확한 회원 UUID로만 조회합니다. 비밀번호와 문서 원문, 출금 목적지
-            원문은 표시하지 않습니다. 가장하기도 없습니다.
+            정확한 회원 UUID로만 조회합니다. 비밀번호·문서 원문·출금 목적지
+            원문은 보이지 않습니다.
           </p>
         </section>
         <form className="member-search">
@@ -56,10 +56,9 @@ export default async function MembersPage({
         </form>
         <section className="member-empty">
           <span>360°</span>
-          <h2>조회할 회원을 선택해 주세요.</h2>
+          <h2>조회할 회원을 선택하세요.</h2>
           <p>
-            이름이나 전화번호로 무차별 검색하지 않습니다. 최소 권한 원칙에 따라
-            정확한 식별자만 받습니다.
+            이름이나 전화번호로 검색하지 않습니다. 정확한 식별자만 받습니다.
           </p>
         </section>
       </>
@@ -220,7 +219,7 @@ export default async function MembersPage({
   const modules = [
     ["PUTDUK START", trial],
     ["채굴 · 정산", mining],
-    ["지갑 · 원장", wallet],
+    ["지갑 · 거래", wallet],
     ["입금", deposits],
     ["출금", withdrawals],
     ["이벤트", events],
