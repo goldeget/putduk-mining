@@ -87,7 +87,9 @@ export default function HomePage() {
           <h1>
             작은 시작이,
             <br />
-            <span>나만의 채굴 세계</span>를 엽니다.
+            <span>나만의 채굴 세계</span>를
+            <br />
+            엽니다.
           </h1>
           <p className="hero__lead">
             KOREA에서 채굴을 시작해요. 앱을 닫아도 채굴은 계속돼요.
