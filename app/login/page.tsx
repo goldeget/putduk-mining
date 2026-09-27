@@ -4,6 +4,7 @@ import Link from "next/link";
 import { AuthForm } from "@/app/login/auth-form";
 import { BrandMark } from "@/components/brand/brand-mark";
 import { PutdukIcon } from "@/components/icons/putduk-icon";
+import { ThemeControl } from "@/components/system/theme-control";
 import { safeProtectedReturnPath } from "@/lib/auth/return-path";
 
 export const metadata: Metadata = {
@@ -14,55 +15,77 @@ export const metadata: Metadata = {
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ next?: string }>;
+  searchParams: Promise<{
+    logout?: string;
+    next?: string;
+    password?: string;
+  }>;
 }) {
-  const requestedNext = (await searchParams).next;
+  const params = await searchParams;
+  const requestedNext = params.next;
   const nextPath = safeProtectedReturnPath(requestedNext);
-  const isAdminDestination = nextPath.startsWith("/admin");
+  const statusMessage =
+    params.password === "updated"
+      ? "비밀번호를 변경했습니다. 새 비밀번호로 로그인해 주세요."
+      : params.logout === "global"
+        ? "모든 기기에서 안전하게 로그아웃했습니다."
+        : params.logout === "local"
+          ? "이 기기에서 로그아웃했습니다."
+          : null;
 
   return (
     <main className="auth-page">
       <section className="auth-page__brand" aria-labelledby="auth-title">
-        <Link className="brand-lockup" href="/" aria-label="퍼뜩 채굴 홈">
-          <BrandMark title="" />
-          <span>
-            <strong>PUTDUK</strong>
-            <small>MINING</small>
-          </span>
-        </Link>
+        <div className="auth-page__top">
+          <Link className="brand-lockup" href="/" aria-label="퍼뜩 채굴 홈">
+            <BrandMark title="" />
+            <span>
+              <strong>PUTDUK</strong>
+              <small>MINING</small>
+            </span>
+          </Link>
+          <ThemeControl />
+        </div>
         <div>
           <p className="eyebrow">SECURE ENTRY</p>
-          <h1 id="auth-title">복잡한 시스템은 안쪽에, 시작은 분명하게.</h1>
+          <h1 id="auth-title">멈춘 화면 너머에서도, 나의 채굴은 이어집니다.</h1>
           <p>
-            계정과 자산 정보는 서버에서 검증됩니다. 로그인 후 PUTDUK START의 첫
-            채굴 흐름으로 이어집니다.
+            로그인하면 최근 채굴 상태, 실제 지갑과 처리 중인 요청을 확인한
+            자리에서 이어갈 수 있어요.
           </p>
         </div>
         <ul className="auth-trust-list">
           <li>
             <PutdukIcon name="shield" size={19} />
-            서버 검증 세션
+            안전한 계정 확인
           </li>
           <li>
             <PutdukIcon name="pulse" size={19} />
-            원장 기반 자산 기록
+            확인된 내역만 잔액 반영
           </li>
           <li>
             <PutdukIcon name="clock" size={19} />
-            서버 시간 기준 정산
+            앱을 닫아도 이어지는 채굴
           </li>
         </ul>
       </section>
-      <section className="auth-page__panel" aria-label="계정 로그인 및 가입">
+      <section className="auth-page__panel" aria-label="계정 로그인">
         <div className="auth-page__panel-header">
           <p className="eyebrow">ACCOUNT</p>
-          <h2>{isAdminDestination ? "운영자 로그인" : "계정으로 시작하기"}</h2>
-          <p>가입과 로그인 모두 동일한 안전한 계정 경계를 사용합니다.</p>
+          <h2>다시 만나 반가워요.</h2>
+          <p>아이디 또는 가입할 때 등록한 복구 이메일로 로그인하세요.</p>
         </div>
+        {statusMessage ? (
+          <p
+            className="auth-form__message auth-form__message--success"
+            role="status"
+          >
+            {statusMessage}
+          </p>
+        ) : null}
         <AuthForm nextPath={nextPath} />
         <p className="auth-page__legal">
-          가입을 진행하면 서비스 운영 원칙과 개인정보 처리 기준에 동의한 것으로
-          간주됩니다.
+          로그인에 문제가 있더라도 계정 존재 여부는 응답에서 공개하지 않습니다.
         </p>
       </section>
     </main>

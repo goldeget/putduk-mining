@@ -1,32 +1,57 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import type { Route } from "next";
+import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import { safeProtectedReturnPath } from "@/lib/auth/return-path";
-import { getPublicEnv } from "@/lib/env/public";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 const credentialsSchema = z.object({
-  email: z.email(),
-  intent: z.enum(["sign-in", "sign-up"]),
+  identifier: z.string().trim().min(4).max(254),
   next: z.string(),
   password: z.string().min(10).max(128),
 });
 
 export type AuthActionState = {
   message: string;
-  status: "idle" | "error" | "confirmation";
+  status: "idle" | "error";
 };
+
+async function resolveLoginEmail(identifier: string) {
+  const normalized = identifier.toLowerCase();
+  const email = z.email().safeParse(normalized);
+  if (email.success) {
+    return { email: email.data, serviceAvailable: true } as const;
+  }
+
+  if (!/^[a-z][a-z0-9_]{3,19}$/.test(normalized)) {
+    return { email: null, serviceAvailable: true } as const;
+  }
+
+  try {
+    const admin = createSupabaseAdminClient();
+    const { data, error } = await admin.rpc("resolve_login_email", {
+      p_login_id: normalized,
+    });
+
+    if (error) {
+      return { email: null, serviceAvailable: false } as const;
+    }
+
+    return {
+      email: typeof data === "string" && data ? data : null,
+      serviceAvailable: true,
+    } as const;
+  } catch {
+    return { email: null, serviceAvailable: false } as const;
+  }
+}
 
 async function bootstrapUser(userId: string) {
   const admin = createSupabaseAdminClient();
-  const { error } = await admin.rpc("bootstrap_user", {
-    p_user_id: userId,
-  });
-
+  const { error } = await admin.rpc("bootstrap_user", { p_user_id: userId });
   if (error) {
     throw new Error("USER_BOOTSTRAP_FAILED");
   }
@@ -37,89 +62,70 @@ export async function authenticateAction(
   formData: FormData,
 ): Promise<AuthActionState> {
   const parsed = credentialsSchema.safeParse({
-    email: formData.get("email"),
-    intent: formData.get("intent"),
-    next: formData.get("next") ?? "/start",
+    identifier: formData.get("identifier"),
+    next: formData.get("next") ?? "/home",
     password: formData.get("password"),
   });
 
   if (!parsed.success) {
     return {
-      message: "이메일과 10자 이상의 비밀번호를 확인해 주세요.",
+      message: "아이디 또는 복구 이메일과 비밀번호를 확인해 주세요.",
       status: "error",
     };
   }
 
-  const { email, intent, password } = parsed.data;
   const nextPath = safeProtectedReturnPath(parsed.data.next);
-  let env: ReturnType<typeof getPublicEnv>;
   let supabase: Awaited<ReturnType<typeof createSupabaseServerClient>>;
   try {
-    env = getPublicEnv();
     supabase = await createSupabaseServerClient();
   } catch {
     return {
-      message: "계정 서비스 구성이 아직 완료되지 않았습니다.",
+      message: "계정 서비스를 연결하지 못했어요. 잠시 후 다시 시도해 주세요.",
       status: "error",
     };
   }
 
-  if (intent === "sign-in") {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (error || !data.user) {
-      return {
-        message: "로그인 정보를 확인해 주세요.",
-        status: "error",
-      };
-    }
-
-    try {
-      await bootstrapUser(data.user.id);
-    } catch {
-      return {
-        message:
-          "계정 초기화를 완료하지 못했습니다. 잠시 후 다시 시도해 주세요.",
-        status: "error",
-      };
-    }
-
-    redirect(nextPath as Route);
-  }
-
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      emailRedirectTo: `${env.NEXT_PUBLIC_APP_URL}/auth/callback?next=${encodeURIComponent(nextPath)}`,
-    },
-  });
-
-  if (error || !data.user) {
+  const resolution = await resolveLoginEmail(parsed.data.identifier);
+  if (!resolution.serviceAvailable) {
     return {
-      message: "가입을 완료하지 못했습니다. 입력 정보를 확인해 주세요.",
+      message: "계정 서비스를 연결하지 못했어요. 잠시 후 다시 시도해 주세요.",
       status: "error",
     };
+  }
+
+  let authResult: Awaited<ReturnType<typeof supabase.auth.signInWithPassword>>;
+  try {
+    authResult = await supabase.auth.signInWithPassword({
+      email:
+        resolution.email ?? `unavailable-${crypto.randomUUID()}@putduk.invalid`,
+      password: parsed.data.password,
+    });
+  } catch {
+    return {
+      message: "계정 서비스를 연결하지 못했어요. 잠시 후 다시 시도해 주세요.",
+      status: "error",
+    };
+  }
+
+  const { data, error } = authResult;
+
+  if (error || !data.user || !resolution.email) {
+    return { message: "로그인 정보를 확인해 주세요.", status: "error" };
   }
 
   try {
     await bootstrapUser(data.user.id);
   } catch {
+    try {
+      await supabase.auth.signOut({ scope: "local" });
+    } catch {
+      // The generic error below avoids exposing bootstrap internals.
+    }
     return {
-      message: "계정 초기화를 완료하지 못했습니다. 잠시 후 다시 시도해 주세요.",
+      message: "계정 준비를 마치지 못했어요. 잠시 후 다시 시도해 주세요.",
       status: "error",
     };
   }
 
-  if (data.session) {
-    redirect(nextPath as Route);
-  }
-
-  return {
-    message: "확인 메일을 보냈습니다. 이메일 인증 후 로그인해 주세요.",
-    status: "confirmation",
-  };
+  redirect(nextPath as Route);
 }
