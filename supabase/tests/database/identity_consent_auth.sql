@@ -107,8 +107,14 @@ select ok(
     'service_role',
     'app_private.capture_public_signup_identity()',
     'EXECUTE'
-  ),
-  'the signup capture function is trigger-only'
+  )
+    and (
+      select prosecdef
+        and proconfig @> array['search_path=pg_catalog']::text[]
+      from pg_catalog.pg_proc
+      where oid = 'app_private.capture_public_signup_identity()'::regprocedure
+    ),
+  'the signup capture function is trigger-only with a pinned privileged search path'
 );
 
 select ok(
