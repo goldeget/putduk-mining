@@ -24,11 +24,6 @@ const sharedEnv = {
   WITHDRAWAL_DATA_KEY: withdrawalDataKey,
 };
 
-const memberServer =
-  "node scripts/e2e-web-server.mjs pnpm exec next dev --hostname 127.0.0.1 --port 3000";
-const adminServer =
-  "node scripts/e2e-web-server.mjs pnpm --dir apps/admin exec next dev --hostname 127.0.0.1 --port 3100";
-
 export default defineConfig({
   testDir: "./tests/typography",
   testMatch: ["**/*protected*", "**/*.setup.ts"],
@@ -37,7 +32,22 @@ export default defineConfig({
   retries: 0,
   timeout: 120_000,
   workers: 1,
-  reporter: isCI ? [["line"], ["github"]] : "list",
+  reporter: isCI
+    ? [
+        ["line"],
+        ["github"],
+        [
+          "json",
+          { outputFile: "test-results/typography-protected/report.json" },
+        ],
+      ]
+    : [
+        ["list"],
+        [
+          "json",
+          { outputFile: "test-results/typography-protected/report.json" },
+        ],
+      ],
   use: {
     baseURL: "http://127.0.0.1:3000",
     screenshot: "off",
@@ -48,10 +58,12 @@ export default defineConfig({
     {
       name: "setup-member",
       testMatch: "**/protected-member.setup.ts",
+      use: { ...devices["Desktop Chrome"] },
     },
     {
       name: "setup-admin",
       testMatch: "**/protected-admin.setup.ts",
+      use: { ...devices["Desktop Chrome"] },
     },
     {
       name: "user",
@@ -73,31 +85,16 @@ export default defineConfig({
     },
   ],
   outputDir: "test-results/typography-protected",
-  webServer: [
-    {
-      command: memberServer,
-      url: "http://127.0.0.1:3000",
-      reuseExistingServer: false,
-      timeout: 180_000,
-      gracefulShutdown: { signal: "SIGTERM" as const, timeout: 5_000 },
-      env: {
-        ...process.env,
-        ...sharedEnv,
-        NEXT_PUBLIC_APP_URL: "http://127.0.0.1:3000",
-      },
+  webServer: {
+    // 3199는 두 앱과 Auth 조회가 준비된 뒤에만 열린다.
+    command: "node scripts/typography-protected-servers.mjs",
+    url: "http://127.0.0.1:3199/ready",
+    reuseExistingServer: false,
+    timeout: 600_000,
+    gracefulShutdown: { signal: "SIGTERM" as const, timeout: 5_000 },
+    env: {
+      ...process.env,
+      ...sharedEnv,
     },
-    {
-      command: adminServer,
-      url: "http://127.0.0.1:3100/login",
-      reuseExistingServer: false,
-      timeout: 180_000,
-      gracefulShutdown: { signal: "SIGTERM" as const, timeout: 5_000 },
-      env: {
-        ...process.env,
-        ...sharedEnv,
-        ADMIN_APP_URL: "http://127.0.0.1:3100",
-        NEXT_PUBLIC_APP_URL: "http://127.0.0.1:3100",
-      },
-    },
-  ],
+  },
 });
