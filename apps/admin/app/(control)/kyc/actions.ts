@@ -8,6 +8,7 @@ import {
   requireHighImpactPrincipal,
   type CommandActionResult,
 } from "@/app/(control)/_lib/command-gate";
+import { ADMIN_COMMAND_FAMILIES } from "@/lib/auth/command-families";
 import { createAdminServiceClient } from "@/lib/supabase/service";
 
 const reviewSchema = z.object({
@@ -27,7 +28,10 @@ export async function reviewKycCaseAction(
   _prev: CommandActionResult | null,
   formData: FormData,
 ): Promise<CommandActionResult> {
-  const access = await requireHighImpactPrincipal();
+  const access = await requireHighImpactPrincipal(
+    ADMIN_COMMAND_FAMILIES.KYC_REVIEW,
+    formData,
+  );
   if (!access.ok) return access.result;
 
   const parsed = reviewSchema.safeParse({

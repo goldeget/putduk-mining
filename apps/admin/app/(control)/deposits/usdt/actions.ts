@@ -8,6 +8,7 @@ import {
   requireHighImpactPrincipal,
   type CommandActionResult,
 } from "@/app/(control)/_lib/command-gate";
+import { ADMIN_COMMAND_FAMILIES } from "@/lib/auth/command-families";
 import { createAdminServiceClient } from "@/lib/supabase/service";
 
 const confirmSchema = z.object({
@@ -24,7 +25,10 @@ export async function confirmUsdtManualDepositAction(
   _prev: CommandActionResult | null,
   formData: FormData,
 ): Promise<CommandActionResult> {
-  const access = await requireHighImpactPrincipal();
+  const access = await requireHighImpactPrincipal(
+    ADMIN_COMMAND_FAMILIES.DEPOSIT_CONFIRM,
+    formData,
+  );
   if (!access.ok) return access.result;
 
   const parsed = confirmSchema.safeParse({

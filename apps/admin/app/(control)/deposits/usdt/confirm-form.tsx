@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 
+import type { CommandActionResult } from "@/app/(control)/_lib/command-gate";
 import {
   ConfirmCheckbox,
   ReasonField,
@@ -9,8 +10,8 @@ import {
   TextField,
 } from "@/components/operator-fields";
 import { QueueFlash } from "@/components/queue-shell";
-
-import type { CommandActionResult } from "@/app/(control)/_lib/command-gate";
+import { StepUpTokenField } from "@/components/step-up-token-field";
+import { ADMIN_COMMAND_FAMILIES } from "@/lib/auth/command-families";
 
 import { confirmUsdtManualDepositAction } from "./actions";
 
@@ -41,6 +42,9 @@ export function ConfirmUsdtDepositForm({
         label="외부 이체를 확인했고, 원화 입금만 반영합니다. 출금과는 별개입니다."
         name="confirmation"
         value="CONFIRM_USDT_DEPOSIT"
+      />
+      <StepUpTokenField
+        commandFamily={ADMIN_COMMAND_FAMILIES.DEPOSIT_CONFIRM}
       />
       <SubmitButton pendingLabel="확인 중…">입금 확인 · 원화 반영</SubmitButton>
       <QueueFlash result={result} />

@@ -686,6 +686,11 @@ input:focus-visible {
 .operator-check input {
   margin-top: 3px;
 }
+.operator-step-up {
+  display: grid;
+  gap: 10px;
+  padding: 12px 0 2px;
+}
 .ghost-button,
 .danger-button {
   display: inline-flex;

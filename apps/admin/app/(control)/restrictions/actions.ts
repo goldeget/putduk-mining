@@ -8,6 +8,7 @@ import {
   requireHighImpactPrincipal,
   type CommandActionResult,
 } from "@/app/(control)/_lib/command-gate";
+import { ADMIN_COMMAND_FAMILIES } from "@/lib/auth/command-families";
 import { createAdminServiceClient } from "@/lib/supabase/service";
 
 const safeModeSchema = z.object({
@@ -33,7 +34,11 @@ export async function setSafeModeAction(
   _prev: CommandActionResult | null,
   formData: FormData,
 ): Promise<CommandActionResult> {
-  const access = await requireHighImpactPrincipal(["SUPER_ADMIN", "ADMIN"]);
+  const access = await requireHighImpactPrincipal(
+    ADMIN_COMMAND_FAMILIES.SAFE_MODE,
+    formData,
+    ["SUPER_ADMIN", "ADMIN"],
+  );
   if (!access.ok) return access.result;
 
   const parsed = safeModeSchema.safeParse({
@@ -59,7 +64,7 @@ export async function setSafeModeAction(
       reason: parsed.data.reason,
       starts_at: new Date().toISOString(),
       changed_by: access.principal.userId,
-      request_id: randomUUID(),
+      request_id: access.requestId,
     },
     { onConflict: "component" },
   );

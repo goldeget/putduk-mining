@@ -2,8 +2,10 @@ import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
+import { ADMIN_COMMAND_FAMILIES } from "@/lib/auth/command-families";
 import { HIGH_IMPACT_ROLES } from "@/lib/auth/policy";
 import { requireAdminCommand } from "@/lib/auth/principal";
+import { consumeAdminStepUpGrant } from "@/lib/auth/step-up";
 import { createAdminServiceClient } from "@/lib/supabase/service";
 
 const bodySchema = z.object({
@@ -11,6 +13,7 @@ const bodySchema = z.object({
   depositRequestId: z.uuid(),
   reason: z.string().trim().min(10).max(500),
   receivedAmountAtomic: z.string().regex(/^[1-9][0-9]{0,23}$/),
+  stepUpToken: z.string().min(16),
 });
 const idempotencyPattern = /^[A-Za-z0-9][A-Za-z0-9._:-]{7,179}$/;
 
@@ -44,6 +47,21 @@ export async function POST(request: Request) {
       400,
     );
 
+  const requestId = randomUUID();
+  const stepUpOk = await consumeAdminStepUpGrant({
+    userId: access.principal.userId,
+    token: parsed.data.stepUpToken,
+    commandFamily: ADMIN_COMMAND_FAMILIES.DEPOSIT_APPROVE,
+    requestId,
+  });
+  if (!stepUpOk) {
+    return error(
+      "STEP_UP_REQUIRED",
+      "고위험 작업입니다. 인증 앱으로 다시 확인한 뒤 시도해 주세요.",
+      403,
+    );
+  }
+
   const { data, error: commandError } = await createAdminServiceClient().rpc(
     "approve_deposit_request",
     {
@@ -52,7 +70,7 @@ export async function POST(request: Request) {
       p_operator_id: access.principal.userId,
       p_reason: parsed.data.reason,
       p_received_amount_atomic: parsed.data.receivedAmountAtomic,
-      p_request_id: randomUUID(),
+      p_request_id: requestId,
     },
   );
   if (commandError) {

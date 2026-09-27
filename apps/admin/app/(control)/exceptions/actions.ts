@@ -8,6 +8,7 @@ import {
   requireHighImpactPrincipal,
   type CommandActionResult,
 } from "@/app/(control)/_lib/command-gate";
+import { ADMIN_COMMAND_FAMILIES } from "@/lib/auth/command-families";
 import { createAdminServiceClient } from "@/lib/supabase/service";
 
 const acknowledgeSchema = z.object({
@@ -21,7 +22,10 @@ export async function acknowledgeReconciliationExceptionAction(
   _prev: CommandActionResult | null,
   formData: FormData,
 ): Promise<CommandActionResult> {
-  const access = await requireHighImpactPrincipal();
+  const access = await requireHighImpactPrincipal(
+    ADMIN_COMMAND_FAMILIES.RECONCILIATION_ACK,
+    formData,
+  );
   if (!access.ok) return access.result;
 
   const parsed = acknowledgeSchema.safeParse({
@@ -56,7 +60,6 @@ export async function acknowledgeReconciliationExceptionAction(
     .in("status", ["OPEN", "INVESTIGATING"]);
 
   if (error) {
-    // 도메인 명령이 생기면 대체. 현재는 감사 로그라도 남긴다.
     await db.from("audit_logs").insert({
       actor_user_id: access.principal.userId,
       actor_role: access.principal.role,
@@ -83,7 +86,7 @@ export async function acknowledgeReconciliationExceptionAction(
     target_type: "RECONCILIATION_MISMATCH",
     target_id: parsed.data.mismatchId,
     reason: parsed.data.reason,
-    request_id: randomUUID(),
+    request_id: access.requestId,
     metadata: { result: parsed.data.result, auto_repair: false },
   });
 
