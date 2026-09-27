@@ -128,7 +128,7 @@ jobs:
   authenticated:
     name: Authenticated product gates
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 70
     steps:
       - name: Check out source
         uses: actions/checkout@v4

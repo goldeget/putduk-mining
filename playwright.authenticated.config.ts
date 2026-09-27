@@ -38,6 +38,7 @@ const sharedEnv = {
 export default defineConfig({
   testDir: "./tests/e2e/authenticated",
   fullyParallel: false,
+  workers: 1,
   forbidOnly: isCI,
   retries: isCI ? 1 : 0,
   timeout: 120_000,

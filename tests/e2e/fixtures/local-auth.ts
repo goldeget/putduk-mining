@@ -32,13 +32,33 @@ export async function createConfirmedMember(
   label: string,
 ): Promise<ConfirmedMember> {
   const client = createLocalServiceRoleClient();
-  const suffix = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-  const email = `${label}.${suffix}@putduk.test`;
+  const suffix =
+    `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`.replace(
+      /[^a-z0-9]/g,
+      "",
+    );
+  const email = `${label}.${suffix}@putduk.test`.toLowerCase();
   const password = `Putduk-test-${suffix}-Aa1`;
+  const loginId = `u${suffix}`.slice(0, 20);
+  const phone = `+8210${String(Date.now()).slice(-8)}${Math.floor(Math.random() * 90 + 10)}`;
   const { data, error } = await client.auth.admin.createUser({
     email,
     password,
     email_confirm: true,
+    user_metadata: {
+      signup_source: "PUBLIC_V1",
+      login_id: loginId,
+      legal_name: "퍼뜩테스트",
+      date_of_birth: "1990-01-15",
+      phone_e164: phone,
+      recovery_email: email,
+      service_terms_version: "TERMS-KO-2026-09-27",
+      privacy_version: "PRIVACY-KO-2026-09-27",
+      marketing_version: "MARKETING-KO-2026-09-27",
+      service_terms_granted: true,
+      privacy_granted: true,
+      marketing_granted: false,
+    },
   });
   if (error || !data.user) {
     throw new Error(error?.message ?? "CONFIRMED_MEMBER_CREATE_FAILED");
