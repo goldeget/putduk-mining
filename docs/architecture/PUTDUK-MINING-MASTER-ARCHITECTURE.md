@@ -82,6 +82,8 @@ Every user/admin capability is tracked independently as:
 
 Only `PRODUCT COMPLETE` contributes to launch readiness. A route, API, schema, component, attractive static screen or green unit test cannot substitute for the final state. Product completeness requires actual browser-rendered review across mobile/tablet/desktop and System/Light/Dark, state coverage, Korean production copy, reduced motion, accessibility, benchmark comparison and visual regression where appropriate.
 
+Korean content is an architectural acceptance gate, not a late polish pass. One screen carries one primary message; one paragraph carries one idea; one button carries one action. Reject long multi-clause Korean sentences, paragraphs stretched across wide desktop containers, and 4–6 line explanations inside ordinary cards. User and admin UI must not expose developer/architecture language, unnecessary English, or jargon. CTA labels stay short; reading max-width and line breaks are deliberate. Copy must be respectful human Korean readable from ages 20s through 70s—not childish, slang-heavy, or overly casual. Phone UI speaks only signup availability / already used—never `휴대폰 인증`, SMS verified, or phone ownership verified. USDT deposit is a manual deposit; USDT withdrawal is a withdrawal against KRW balance; neither is a user USDT balance. Tone examples: "앱을 닫아도 채굴은 계속돼요. 다시 접속하면 결과를 확인할 수 있어요." and "최대 5,000원까지 출금할 수 있어요. 출금 전 본인 확인이 필요해요."
+
 Generic dashboards, default SaaS templates, unmodified component-library styling, placeholder cards, bare forms, raw CRUD tables, random gradients, generic chat clones, stacked-desktop mobile, fake/unconnected data, `coming soon` in place of V1 flow and engineering copy in consumer UI are architectural acceptance failures.
 
 ```text
@@ -585,7 +587,7 @@ Before implementation, answer:
 8. What loading/error/offline/retry/recovery states exist?
 9. What can the operator inspect, pause, replay or roll back?
 10. How do mobile/tablet/desktop, Light/Dark/System, accessibility and reduced motion behave?
-11. What is the Korean source copy and future localization seam?
+11. What is the Korean source copy and future localization seam? Does it pass the Korean content gate (one screen / one message, one paragraph / one idea, one button / one action; no jargon or engineering language; short CTAs; deliberate reading width; respectful 20s–70s tone; phone = signup availability only; USDT deposit/withdrawal never framed as a user USDT balance)?
 12. What tests and target-environment evidence close the work?
 13. Does it duplicate an existing platform capability or increase cost/blast radius?
 14. Could it contradict the public truth layer or imply an unapproved value?

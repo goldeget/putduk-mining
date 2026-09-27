@@ -83,7 +83,10 @@ Hard constraints:
 6. Asset mutations must be ledger-first and idempotent.
 7. Economic rules are versioned with effective timestamps.
 8. AI cannot directly mutate balances, approve funding/withdrawals or determine mining rewards.
-9. User-facing UI is Korean-first and must remain simple enough for broad age ranges.
+9. User-facing UI is Korean-first and must remain simple enough for broad age ranges (20s–70s). Respectful human Korean only—not childish, slang-heavy, or overly casual.
+9a. Korean content gate: one screen, one primary message; one paragraph, one idea; one button, one action. No long multi-clause Korean sentences, no paragraphs stretched across wide desktop containers, no 4–6 line explanations inside ordinary cards. No developer/architecture language, unnecessary English, or jargon in user/admin UI. Short CTA labels; deliberate reading max-width and line breaks.
+9b. Phone UI copy is signup availability / already used. Never `휴대폰 인증`, never SMS verified, never phone ownership verified.
+9c. USDT deposit copy is a manual deposit. USDT withdrawal copy is a withdrawal against KRW balance. Never call either a user USDT balance. Example tone: "앱을 닫아도 채굴은 계속돼요. 다시 접속하면 결과를 확인할 수 있어요." and "최대 5,000원까지 출금할 수 있어요. 출금 전 본인 확인이 필요해요."
 10. Premium quality is required: polished loading/empty/error states, responsive behavior, accessibility and restrained motion.
 11. New features must identify their owning domain, audit impact, analytics impact and admin controls before implementation.
 12. PUTDUK START may convert once to real withdrawable KRW after qualification,

@@ -113,9 +113,34 @@ The following are explicitly rejected as final output: generic dashboards, defau
 11. Remote Supabase and Cloudflare remain frozen until a later explicit phase.
     Local migrations/tests are expected; no remote apply or provisioning occurs.
 
+## Korean content design gate
+
+User and admin production copy must stay simple enough for ages 20s through 70s
+without becoming childish, slang-heavy, or overly casual.
+
+1. One screen, one primary message. One paragraph, one idea. One button, one
+   action.
+2. No long multi-clause Korean sentences, no paragraphs stretched across wide
+   desktop containers, and no 4–6 line explanations inside ordinary cards.
+3. No developer/architecture language, unnecessary English, or jargon in
+   user/admin UI.
+4. Short CTA labels. Deliberate reading max-width and line breaks.
+5. Phone UI copy is signup availability / already used. Never `휴대폰 인증`,
+   never SMS verified, never phone ownership verified.
+6. USDT deposit copy is a manual deposit. USDT withdrawal copy is a withdrawal
+   against KRW balance. Never call either a user USDT balance.
+7. Example tone: "앱을 닫아도 채굴은 계속돼요. 다시 접속하면 결과를 확인할 수
+   있어요." and "최대 5,000원까지 출금할 수 있어요. 출금 전 본인 확인이
+   필요해요."
+
+WS-04 domain command names and separation rules are frozen in
+`docs/architecture/WS-04-DOMAIN-COMMAND-CONTRACT.md`. Later agents must consume
+those names and must not invent schema or public function aliases.
+
 Read and obey the dedicated contracts under:
 
 - `docs/product/TRIAL-WELCOME-WITHDRAWAL.md`
+- `docs/architecture/WS-04-DOMAIN-COMMAND-CONTRACT.md`
 - `docs/architecture/LEDGER-RECONCILIATION.md`
 - `docs/architecture/DOMAIN-EVENTS-OUTBOX.md`
 - `docs/product/REFERRAL-AUTO-PAYOUT.md`

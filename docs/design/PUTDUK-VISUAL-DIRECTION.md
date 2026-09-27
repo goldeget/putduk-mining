@@ -21,6 +21,17 @@ The exact Korean brand spelling is **퍼뜩**.
 
 Generated pixels are never a copy source. All Korean copy—including `퍼뜩`, slogans, buttons, rank names, notices and labels—must be rendered as real HTML/CSS text or, where a fixed identity mark is required, as reviewed SVG text/path content. Do not crop, trace or reuse misspelled text from a generated mockup.
 
+Beyond spelling and render method, production Korean must pass the content design gate:
+
+- One screen, one primary message. One paragraph, one idea. One button, one action.
+- No long multi-clause Korean sentences, no paragraphs stretched across wide desktop containers, and no 4–6 line explanations inside ordinary cards.
+- No developer/architecture language, unnecessary English, or jargon in user/admin UI.
+- Short CTA labels. Deliberate reading max-width and line breaks so Korean lines remain scannable on phone and desktop.
+- Respectful human Korean readable from ages 20s through 70s. Not childish, slang-heavy, or overly casual.
+- Phone UI copy is signup availability / already used. Never `휴대폰 인증`, never SMS verified, never phone ownership verified.
+- USDT deposit copy is a manual deposit. USDT withdrawal copy is a withdrawal against KRW balance. Never call either a user USDT balance.
+- Example tone: "앱을 닫아도 채굴은 계속돼요. 다시 접속하면 결과를 확인할 수 있어요." and "최대 5,000원까지 출금할 수 있어요. 출금 전 본인 확인이 필요해요."
+
 ## 3. Brand thesis
 
 PUTDUK is a trusted digital mining world, not a speculative-crypto theme. Its visual language joins:
