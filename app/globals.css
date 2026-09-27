@@ -333,6 +333,13 @@ select {
   margin-top: 2rem;
 }
 
+.hero__actions .button {
+  min-width: 0;
+  max-width: 100%;
+  line-break: strict;
+  word-break: keep-all;
+}
+
 .button {
   display: inline-flex;
   min-height: 48px;
@@ -406,8 +413,11 @@ select {
 }
 
 .hero__facts dt {
+  min-width: 0;
   color: var(--text-tertiary);
   font-size: 0.72rem;
+  line-break: strict;
+  word-break: keep-all;
 }
 
 .hero__facts dd {

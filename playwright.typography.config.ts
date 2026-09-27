@@ -10,6 +10,13 @@ const localSupabaseEnv = {
   SUPABASE_SECRET_KEY: "local-typography-secret-key-not-a-secret",
 };
 
+const memberServer = isCI
+  ? "pnpm exec next build && pnpm exec next start --hostname 127.0.0.1 --port 3000"
+  : "pnpm dev";
+const adminServer = isCI
+  ? "pnpm --dir apps/admin exec next build && pnpm --dir apps/admin exec next start --hostname 127.0.0.1 --port 3100"
+  : "pnpm dev:admin";
+
 export default defineConfig({
   testDir: "./tests/typography",
   testIgnore: ["**/*protected*", "**/*.setup.ts"],
@@ -36,20 +43,20 @@ export default defineConfig({
   outputDir: "test-results/typography",
   webServer: [
     {
-      command: "pnpm dev",
+      command: memberServer,
       url: "http://127.0.0.1:3000",
       reuseExistingServer: !isCI,
-      timeout: 180_000,
+      timeout: isCI ? 360_000 : 180_000,
       env: {
         ...localSupabaseEnv,
         NEXT_PUBLIC_APP_URL: "http://127.0.0.1:3000",
       },
     },
     {
-      command: "pnpm dev:admin",
+      command: adminServer,
       url: "http://127.0.0.1:3100/login",
       reuseExistingServer: !isCI,
-      timeout: 180_000,
+      timeout: isCI ? 360_000 : 180_000,
       env: {
         ...localSupabaseEnv,
         ADMIN_APP_URL: "http://127.0.0.1:3100",
