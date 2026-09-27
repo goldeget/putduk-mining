@@ -249,3 +249,105 @@ jobs:
           name: worker-runtime
           path: test-results
           if-no-files-found: ignore
+
+  # 공개 화면 감사. 로컬 가짜 키만 쓰고 Supabase는 시작하지 않는다.
+  typography-public:
+    name: Korean typography public gates
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 12.6.0
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Chromium
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run public Korean typography
+        timeout-minutes: 15
+        run: pnpm exec playwright test --config playwright.typography.config.ts
+
+      - name: Assert public typography evidence
+        if: always()
+        run: node scripts/assert-typography-report.mjs test-results/typography/report.json --passed 70 --screenshots 70 --redact
+
+      - name: Preserve public typography evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: typography-public
+          path: |
+            test-results/typography/report.json
+            test-results/typography/**/*.png
+          if-no-files-found: ignore
+
+  # 보호 화면 감사. 로컬 Supabase만 쓰고, 빌드 후 next start로 띄운다.
+  typography-protected:
+    name: Korean typography protected gates
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 12.6.0
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: 2.113.0
+
+      - name: Start local Supabase
+        run: supabase start --yes
+
+      - name: Rebuild migrations from zero
+        run: pnpm db:reset
+
+      - name: Export local Supabase env
+        run: node scripts/capture-local-supabase-env.mjs
+
+      - name: Install Chromium
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run protected Korean typography
+        timeout-minutes: 20
+        run: pnpm exec playwright test --config playwright.typography.protected.config.ts
+
+      - name: Assert protected typography evidence
+        if: always()
+        run: node scripts/assert-typography-report.mjs test-results/typography-protected/report.json --passed 128 --screenshots 126 --hydration 0 --redact
+
+      - name: Preserve protected typography evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: typography-protected
+          path: |
+            test-results/typography-protected/report.json
+            test-results/typography-protected/**/*.png
+          if-no-files-found: ignore

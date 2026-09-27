@@ -15,11 +15,17 @@ export default defineConfig({
   testIgnore: ["**/*protected*", "**/*.setup.ts"],
   fullyParallel: false,
   forbidOnly: isCI,
-  globalTimeout: isCI ? 20 * 60_000 : 0,
+  globalTimeout: isCI ? 14 * 60_000 : 0,
   retries: 0,
   timeout: 120_000,
   workers: 1,
-  reporter: isCI ? [["line"], ["github"]] : "list",
+  reporter: isCI
+    ? [
+        ["line"],
+        ["github"],
+        ["json", { outputFile: "test-results/typography/report.json" }],
+      ]
+    : "list",
   use: {
     baseURL: "http://127.0.0.1:3000",
     screenshot: "off",

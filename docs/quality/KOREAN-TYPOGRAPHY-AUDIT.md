@@ -4,7 +4,7 @@ Baseline: `ws05/integration` at `4f55c4a1d6ef28181cc05b3de5403e471b2ac578`, merg
 
 Branch: `ws05/korean-line-break-audit`.
 
-The branch started from the older integration head `869809f8132011ff7ad3aaaa0b3f6adf213021a4` and was updated with a normal merge. It does not edit migrations, money commands, CI workflows, `package.json`, `develop`, `main`, remote Supabase, Cloudflare, or DNS.
+The branch started from the older integration head `869809f8132011ff7ad3aaaa0b3f6adf213021a4` and was updated with a normal merge. It does not edit migrations, money commands, `package.json`, `develop`, `main`, remote Supabase, Cloudflare, or DNS. The workflow change is only the two Korean typography jobs.
 
 ## Current finding
 
@@ -35,7 +35,7 @@ The audit now lives under `tests/typography/`, and `playwright.typography.config
 - `pnpm test:e2e` does not collect typography tests;
 - the typography config starts both the public and admin applications;
 - the audit uses one Chromium worker, no retries, and a bounded CI global timeout;
-- no active WS-05 workflow or package script is changed.
+- public and protected suites are separate workflow jobs, not part of Browser foundation or Authenticated.
 
 This isolates the audit from PR #7 without weakening assertions or skipping failing routes.
 
@@ -98,7 +98,7 @@ These older notes are not the acceptance record. The isolated suite on the merge
 
 Public matrix: 70 independent route × viewport × theme cases, including reduced motion on every case and a 390 light 200% pass for landing, login, signup, and admin login.
 
-First isolated run: 29 failed, 41 passed, 9.5m. After the prose patch: 70 passed, 5.5m. Formatter and typecheck passed. Assertions were not relaxed.
+First isolated run: 29 failed, 41 passed, 9.5m. After the prose patch: 70 passed, 5.5m. Formatter and typecheck passed. Assertions were not relaxed. The public CI job expects this 70 passed result.
 
 Reproduced Hangul splits:
 
@@ -125,7 +125,7 @@ The patch adds `.ko-heading` and `.ko-copy` (`word-break: keep-all`) only on the
 
 The earlier failure was the harness, not a broken product login. Two cold `next dev` processes compiled while GoTrue looked up the user, and the local Auth database call returned `request_timeout` (`AuthRetryableFetchError` on the member server action). Direct invalid-credential grants stayed fast. The protected harness now builds both apps and serves them with `next start`, and it opens `127.0.0.1:3199` only after both login pages and a local password-grant probe are ready. Setup projects use the same Desktop Chrome device as the matrix so the admin session fingerprint matches. No remote Supabase project is used.
 
-Local result after that harness and the confirmed wrapping patch: **128 passed** (2 session setups + 70 member cases + 56 admin cases), 9.4m. The 126 rendered cases each attached a full-page screenshot. Exported copies are under `test-results/typography-protected/screenshots/`. Console hydration annotations: 0. This suite is still not a CI gate.
+Local result after that harness and the confirmed wrapping patch: **128 passed** (2 session setups + 70 member cases + 56 admin cases), 9.4m. The 126 rendered cases each attached a full-page screenshot. Exported copies are under `test-results/typography-protected/screenshots/`. Console hydration annotations: 0. The protected CI job expects this matrix. A green run is not `PRODUCT COMPLETE`, and the launch verdict stays **NOT LAUNCH READY**.
 
 Confirmed wrapping that was patched:
 
@@ -148,7 +148,7 @@ The admin document now applies the saved theme before paint and suppresses the h
 5. Only then make a separate, reviewed CSS patch for confirmed failures.
 6. Do not apply `overflow-wrap: anywhere` globally. Reserve it for machine values.
 7. Do not apply `word-break: keep-all` blindly to hashes, UUIDs, addresses, codes, or other unspaced machine values.
-8. Protected user/admin screens passed the local matrix recorded above. That pass is not a CI gate and does not merge PR #8.
+8. Protected user/admin screens passed the local matrix recorded above. The CI gate checks that same matrix. It does not merge PR #8.
 
 ## Completion language
 
