@@ -4,14 +4,19 @@ import { z } from "zod";
 const cachedResponseSchema = z.object({
   answer: z.string().min(1).max(32_000),
   model: z.string().min(1).max(120),
+  scope: z.literal("PUBLIC_KNOWLEDGE"),
 });
 
-export type CachedAiResponse = z.infer<typeof cachedResponseSchema>;
+export type CachedAiResponse = Omit<
+  z.infer<typeof cachedResponseSchema>,
+  "scope"
+>;
 
 export async function readAiCache(
   supabase: SupabaseClient,
   cacheKey: string,
   knowledgeVersion: string,
+  scope: "PUBLIC_KNOWLEDGE",
 ): Promise<CachedAiResponse | null> {
   const { data, error } = await supabase
     .from("ai_cache")
@@ -26,7 +31,10 @@ export async function readAiCache(
   }
 
   const parsed = cachedResponseSchema.safeParse(data.response_payload);
-  return parsed.success ? parsed.data : null;
+  if (!parsed.success || parsed.data.scope !== scope) {
+    return null;
+  }
+  return { answer: parsed.data.answer, model: parsed.data.model };
 }
 
 export async function writeAiCache(
@@ -36,12 +44,14 @@ export async function writeAiCache(
     cacheKey,
     knowledgeVersion,
     model,
+    scope,
     ttlSeconds,
   }: {
     answer: string;
     cacheKey: string;
     knowledgeVersion: string;
     model: string;
+    scope: "PUBLIC_KNOWLEDGE";
     ttlSeconds: number;
   },
 ) {
@@ -50,6 +60,6 @@ export async function writeAiCache(
     cache_key: cacheKey,
     expires_at: expiresAt,
     knowledge_version: knowledgeVersion,
-    response_payload: { answer, model },
+    response_payload: { answer, model, scope },
   });
 }
