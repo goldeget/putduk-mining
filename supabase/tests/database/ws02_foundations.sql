@@ -421,7 +421,8 @@ select ok(
   (
     select request.amount_atomic = 5000
       and request.fee_atomic = 0
-      and request.status = 'REQUESTED'
+      and request.status = 'HELD'
+      and request.hold_ledger_transaction_id is not null
     from public.withdrawal_requests as request
     where request.id = (select withdrawal_id from ws02_context)
   ),
