@@ -778,17 +778,21 @@
   justify-content: space-between;
 }
 
+.auth-form__password-field,
 .auth-form__password {
   position: relative;
 }
 
+.auth-form__password-field input,
 .auth-form__password input {
+  width: 100%;
   padding-right: 4.5rem;
 }
 
+.auth-form__password-field > button,
 .auth-form__password button {
   position: absolute;
-  top: 50%;
+  top: calc(1.35rem + 1.1em);
   right: 0.45rem;
   min-height: 2.4rem;
   padding-inline: 0.7rem;
@@ -801,6 +805,7 @@
   transform: translateY(-50%);
 }
 
+.auth-form__password-field > button:focus-visible,
 .auth-form__password button:focus-visible {
   outline: none;
   box-shadow: var(--shadow-focus);

@@ -40,7 +40,10 @@ export async function createConfirmedMember(
   const email = `${label}.${suffix}@putduk.test`.toLowerCase();
   const password = `Putduk-test-${suffix}-Aa1`;
   const loginId = `u${suffix}`.slice(0, 20);
-  const phone = `+8210${String(Date.now()).slice(-8)}${Math.floor(Math.random() * 90 + 10)}`;
+  // E.164 한국 휴대폰(+8210XXXXXXXX) — 빠른 연속 생성에서도 충돌을 피한다.
+  const phone = `+8210${String(Date.now()).slice(-7)}${Math.floor(
+    Math.random() * 90 + 10,
+  )}${Math.floor(Math.random() * 10)}`;
   const { data, error } = await client.auth.admin.createUser({
     email,
     password,
@@ -62,6 +65,13 @@ export async function createConfirmedMember(
   });
   if (error || !data.user) {
     throw new Error(error?.message ?? "CONFIRMED_MEMBER_CREATE_FAILED");
+  }
+  // Auth 트리거가 지갑/원장을 만들지만, 누락 시 전환이 KRW_WALLET_NOT_FOUND로 실패한다.
+  const { error: bootstrapError } = await client.rpc("bootstrap_user", {
+    p_user_id: data.user.id,
+  });
+  if (bootstrapError) {
+    throw new Error(`BOOTSTRAP_USER_FAILED:${bootstrapError.message}`);
   }
   return { userId: data.user.id, email, password };
 }

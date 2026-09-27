@@ -33,7 +33,18 @@ const sharedEnv = {
   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: publishableKey,
   SUPABASE_SECRET_KEY: secretKey,
   WITHDRAWAL_DATA_KEY: withdrawalDataKey,
+  // Next가 gitignored .env.local의 원격 값을 읽지 않도록 로컬 값을 강제한다.
+  FORCE_COLOR: process.env.FORCE_COLOR ?? "0",
 };
+
+if (
+  supabaseUrl.includes("osrmyjgmpdspdcwqjwuv") ||
+  !supabaseUrl.startsWith("http://")
+) {
+  throw new Error(
+    "Authenticated Playwright refuses non-local Supabase credentials.",
+  );
+}
 
 export default defineConfig({
   testDir: "./tests/e2e/authenticated",
@@ -41,7 +52,8 @@ export default defineConfig({
   workers: 1,
   forbidOnly: isCI,
   retries: isCI ? 1 : 0,
-  timeout: 120_000,
+  // 로컬 Docker·콜드 Next 기동을 고려. CI job timeout-minutes는 변경하지 않는다.
+  timeout: 180_000,
   reporter: isCI ? [["line"], ["github"]] : "list",
   use: {
     baseURL: "http://127.0.0.1:3000",
@@ -68,21 +80,26 @@ export default defineConfig({
   ],
   webServer: [
     {
-      command: "pnpm dev",
+      // 프로세스 그룹 래퍼로 next-server 고아 프로세스가 남아 CI가 멈추는 것을 방지
+      command:
+        "node scripts/e2e-web-server.mjs pnpm exec next dev --hostname 127.0.0.1 --port 3000",
       url: "http://127.0.0.1:3000",
       reuseExistingServer: !isCI,
       timeout: 180_000,
       env: {
+        ...process.env,
         ...sharedEnv,
         NEXT_PUBLIC_APP_URL: "http://127.0.0.1:3000",
       },
     },
     {
-      command: "pnpm dev:admin",
+      command:
+        "node scripts/e2e-web-server.mjs pnpm --dir apps/admin exec next dev --hostname 127.0.0.1 --port 3100",
       url: "http://127.0.0.1:3100/login",
       reuseExistingServer: !isCI,
       timeout: 180_000,
       env: {
+        ...process.env,
         ...sharedEnv,
         ADMIN_APP_URL: "http://127.0.0.1:3100",
         NEXT_PUBLIC_APP_URL: "http://127.0.0.1:3100",

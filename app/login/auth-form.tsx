@@ -47,9 +47,9 @@ export function AuthForm({ nextPath }: { nextPath: string }) {
           required
         />
       </label>
-      <label>
-        <span>비밀번호</span>
-        <div className="auth-form__password">
+      <div className="auth-form__password-field">
+        <label htmlFor="login-password">
+          <span>비밀번호</span>
           <input
             id="login-password"
             name="password"
@@ -61,16 +61,16 @@ export function AuthForm({ nextPath }: { nextPath: string }) {
             aria-describedby={hasError ? "login-error" : undefined}
             required
           />
-          <button
-            type="button"
-            aria-controls="login-password"
-            aria-pressed={showPassword}
-            onClick={() => setShowPassword((value) => !value)}
-          >
-            {showPassword ? "숨기기" : "보기"}
-          </button>
-        </div>
-      </label>
+        </label>
+        <button
+          type="button"
+          aria-controls="login-password"
+          aria-pressed={showPassword}
+          onClick={() => setShowPassword((value) => !value)}
+        >
+          {showPassword ? "숨기기" : "보기"}
+        </button>
+      </div>
       <nav className="auth-form__recovery" aria-label="계정 찾기">
         <Link href="/find-id">아이디 찾기</Link>
         <Link href="/recover">비밀번호 재설정</Link>
