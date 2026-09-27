@@ -1,3 +1,4 @@
+import { randomBytes } from "node:crypto";
 import { defineConfig, devices } from "@playwright/test";
 
 const isCI = Boolean(process.env.CI);
@@ -18,6 +19,8 @@ function required(name: string) {
 const supabaseUrl = required("NEXT_PUBLIC_SUPABASE_URL");
 const publishableKey = required("NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY");
 const secretKey = required("SUPABASE_SECRET_KEY");
+const withdrawalDataKey =
+  process.env.WITHDRAWAL_DATA_KEY?.trim() || randomBytes(32).toString("base64");
 
 const sharedEnv = {
   APP_ENV: "test",
@@ -25,6 +28,7 @@ const sharedEnv = {
   NEXT_PUBLIC_SUPABASE_URL: supabaseUrl,
   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: publishableKey,
   SUPABASE_SECRET_KEY: secretKey,
+  WITHDRAWAL_DATA_KEY: withdrawalDataKey,
 };
 
 export default defineConfig({
