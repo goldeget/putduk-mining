@@ -152,14 +152,11 @@ jobs:
         with:
           version: 2.113.0
 
-      - name: Start isolated PostgreSQL
-        run: pnpm db:start
+      - name: Start local Supabase
+        run: supabase start --yes
 
       - name: Rebuild migrations from zero
         run: pnpm db:reset
-
-      - name: Start local API
-        run: supabase start --yes
 
       - name: Export local Supabase env
         run: node scripts/capture-local-supabase-env.mjs
@@ -210,14 +207,11 @@ jobs:
         with:
           version: 2.113.0
 
-      - name: Start isolated PostgreSQL
-        run: pnpm db:start
+      - name: Start local Supabase
+        run: supabase start --yes
 
       - name: Rebuild migrations from zero
         run: pnpm db:reset
-
-      - name: Start local API
-        run: supabase start --yes
 
       - name: Export local Supabase env
         run: node scripts/capture-local-supabase-env.mjs
