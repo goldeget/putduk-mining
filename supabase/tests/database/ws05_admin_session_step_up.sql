@@ -93,7 +93,7 @@ select lives_ok(
 
 select lives_ok(
   $$
-    perform public.issue_admin_step_up(
+    select public.issue_admin_step_up(
       (select admin_session_id from ws05_admin_ctx),
       (select user_id from ws05_admin_ctx),
       'WITHDRAWAL_OPERATOR',
@@ -106,11 +106,11 @@ select lives_ok(
 
 select lives_ok(
   $$
-    perform public.consume_admin_step_up(
+    select public.consume_admin_step_up(
       (select user_id from ws05_admin_ctx),
       (select step_token from ws05_admin_ctx),
       'WITHDRAWAL_OPERATOR',
-      'bbbbbbbb-cccc-4ddd-8eee-ffffffffffff0001'::uuid
+      'bbbbbbbb-cccc-4ddd-8eee-ffffffff0001'::uuid
     )
   $$,
   'first consume_admin_step_up succeeds'
@@ -122,7 +122,7 @@ select throws_ok(
       (select user_id from ws05_admin_ctx),
       (select step_token from ws05_admin_ctx),
       'WITHDRAWAL_OPERATOR',
-      'bbbbbbbb-cccc-4ddd-8eee-ffffffffffff0002'::uuid
+      'bbbbbbbb-cccc-4ddd-8eee-ffffffff0002'::uuid
     )
   $$,
   '42501',
@@ -132,7 +132,7 @@ select throws_ok(
 
 select lives_ok(
   $$
-    perform public.revoke_admin_session(
+    select public.revoke_admin_session(
       (select admin_session_id from ws05_admin_ctx),
       (select user_id from ws05_admin_ctx),
       'TEST_REVOKE'

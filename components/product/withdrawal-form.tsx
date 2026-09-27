@@ -529,8 +529,8 @@ export function WithdrawalForm({
       <div className={styles.formNotice} id="withdrawal-amount-help">
         <PutdukIcon name="shield" size={19} />
         <p>
-          요청하면 금액이 사용 가능에서 보류로 옮겨집니다. USDT 출금도 KRW 잔액
-          기준이며, 별도 USDT 잔액은 없습니다.
+          요청한 금액이 사용 가능에서 보류로 옮겨집니다. USDT 주소 출금도 KRW
+          기준이며, USDT를 따로 보관하지 않습니다.
         </p>
       </div>
 

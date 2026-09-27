@@ -5,11 +5,10 @@
  * Browser is not the runner. Cloudflare Queues are not used.
  *
  * Durable lease ownership comes from claim / complete / fail RPCs.
+ * Each claimed row refreshes its lease through extend_*_lease.
  * Stdout heartbeats are operational logs only — not lease evidence.
- * Missing RPCs (report to Agent A / parent; do not invent migrations here):
- *   - extend_outbox_event_lease / heartbeat_outbox_event_lease
- *   - extend_system_job_lease / heartbeat_system_job_lease
- *   - replay_outbox_event / replay_system_job (operator reset)
+ * Still missing:
+ *   - in-handler interval while one item runs longer than the lease
  *   - permanent reject for unsupported outbox (today exhausts to DEAD_LETTER)
  *   - outbox delivery / notification fanout commands
  */
@@ -107,6 +106,7 @@ export async function processOutboxBatch(
     workerId = WORKER_ID,
     batchSize = 25,
     leaseSeconds = 60,
+    retryDelaySeconds,
     outboxHandlers = SUPPORTED_OUTBOX_HANDLERS,
   } = {},
 ) {
@@ -129,6 +129,19 @@ export async function processOutboxBatch(
 
   for (const event of data ?? []) {
     summary.claimed += 1;
+    const { error: extendError } = await client.rpc(
+      "extend_outbox_event_lease",
+      {
+        p_event_id: event.id,
+        p_worker_id: workerId,
+        p_lease_seconds: leaseSeconds,
+      },
+    );
+    if (extendError) {
+      summary.failed += 1;
+      console.error("extend_outbox_event_lease failed", extendError.message);
+      continue;
+    }
     const handler = outboxHandlers[event.event_type];
 
     if (typeof handler !== "function") {
@@ -137,7 +150,10 @@ export async function processOutboxBatch(
         p_event_id: event.id,
         p_worker_id: workerId,
         p_error_code: "UNSUPPORTED_EVENT_TYPE",
-        p_retry_delay_seconds: backoffSeconds(event.attempt_count),
+        p_retry_delay_seconds:
+          typeof retryDelaySeconds === "number"
+            ? retryDelaySeconds
+            : backoffSeconds(event.attempt_count),
       });
       if (failError) {
         console.error("fail_outbox_event failed", failError.message);
@@ -165,7 +181,10 @@ export async function processOutboxBatch(
         p_event_id: event.id,
         p_worker_id: workerId,
         p_error_code: errorCode(cause, "OUTBOX_HANDLER_FAILED"),
-        p_retry_delay_seconds: backoffSeconds(event.attempt_count),
+        p_retry_delay_seconds:
+          typeof retryDelaySeconds === "number"
+            ? retryDelaySeconds
+            : backoffSeconds(event.attempt_count),
       });
       if (failError) {
         console.error("fail_outbox_event failed", failError.message);
@@ -209,6 +228,16 @@ export async function processJobBatch(
 
   for (const job of data ?? []) {
     summary.claimed += 1;
+    const { error: extendError } = await client.rpc("extend_system_job_lease", {
+      p_job_id: job.id,
+      p_worker_id: workerId,
+      p_lease_seconds: leaseSeconds,
+    });
+    if (extendError) {
+      summary.failed += 1;
+      console.error("extend_system_job_lease failed", extendError.message);
+      continue;
+    }
     const handler = jobHandlers[job.job_type];
 
     if (typeof handler !== "function") {
@@ -326,7 +355,10 @@ export async function runDurableLoop({
   }
 }
 
-export function isRunnerEntrypoint(metaUrl = import.meta.url, argv1 = process.argv[1]) {
+export function isRunnerEntrypoint(
+  metaUrl = import.meta.url,
+  argv1 = process.argv[1],
+) {
   if (!argv1) {
     return false;
   }

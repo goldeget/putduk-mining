@@ -1,9 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-import {
-  isAdminCommandFamily,
-} from "@/lib/auth/command-families";
+import { isAdminCommandFamily } from "@/lib/auth/command-families";
 import { hasRecentTotpStepUp, HIGH_IMPACT_ROLES } from "@/lib/auth/policy";
 import { requireAdminCommand } from "@/lib/auth/principal";
 import { issueAdminStepUpGrant } from "@/lib/auth/step-up";

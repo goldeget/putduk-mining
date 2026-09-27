@@ -258,9 +258,7 @@ export default async function EventsPage() {
 
       <span className={styles.formNotice}>
         <PutdukIcon name="shield" size={19} />
-        <p>
-          이벤트 조건과 지급 상태는 화면의 실제 기록을 기준으로 확인하세요.
-        </p>
+        <p>이벤트 조건과 지급 상태는 화면의 실제 기록을 기준으로 확인하세요.</p>
       </span>
     </div>
   );

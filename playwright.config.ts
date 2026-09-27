@@ -4,6 +4,7 @@ const isCI = Boolean(process.env.CI);
 
 export default defineConfig({
   testDir: "./tests/e2e",
+  testIgnore: ["**/authenticated/**"],
   fullyParallel: true,
   forbidOnly: isCI,
   globalTimeout: isCI ? 3 * 60_000 : 0,

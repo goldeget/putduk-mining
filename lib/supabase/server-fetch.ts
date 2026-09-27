@@ -1,4 +1,8 @@
-export const SUPABASE_SERVER_FETCH_TIMEOUT_MS = 5_000;
+// 로컬 Docker Auth는 콜드 스타트에서 5초를 넘길 수 있어 테스트/개발은 여유를 둔다.
+export const SUPABASE_SERVER_FETCH_TIMEOUT_MS =
+  process.env.APP_ENV === "test" || process.env.NODE_ENV === "development"
+    ? 15_000
+    : 5_000;
 
 type ServerFetchOptions = {
   fetchImpl?: typeof fetch;

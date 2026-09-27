@@ -106,10 +106,10 @@ export async function loginAction(
 
 export async function logoutAction() {
   const supabase = await createAdminServerClient();
-  const [
-    { data: claimsData },
-    { data: userData },
-  ] = await Promise.all([supabase.auth.getClaims(), supabase.auth.getUser()]);
+  const [{ data: claimsData }, { data: userData }] = await Promise.all([
+    supabase.auth.getClaims(),
+    supabase.auth.getUser(),
+  ]);
   const userId = userData.user?.id;
   const authSessionId =
     typeof claimsData?.claims?.session_id === "string"

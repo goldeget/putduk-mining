@@ -1,6 +1,9 @@
 import { randomUUID } from "node:crypto";
 
-import { toWelcomeConversionResult } from "@/domain/trial/conversion-response";
+import {
+  normalizeTrialConversionRpcData,
+  toWelcomeConversionResult,
+} from "@/domain/trial/conversion-response";
 import { apiError, apiSuccess } from "@/lib/api/http";
 import { readIdempotencyKey } from "@/lib/api/idempotency";
 import { getVerifiedIdentity } from "@/lib/auth/session";
@@ -40,12 +43,16 @@ export async function POST(request: Request) {
   });
 
   if (error) {
-    const kycRequired = error.message.includes("WELCOME_REWARD_KYC_REQUIRED");
-    const riskReview = error.message.includes(
-      "WELCOME_REWARD_RISK_REVIEW_REQUIRED",
+    const message = error.message;
+    const kycRequired = message.includes("WELCOME_REWARD_KYC_REQUIRED");
+    const riskReview = message.includes("WELCOME_REWARD_RISK_REVIEW_REQUIRED");
+    const trialIncomplete = message.includes("TRIAL_NOT_COMPLETED");
+    const paused = message.includes("WELCOME_REWARD_CONVERSION_PAUSED");
+    const walletMissing = message.includes("KRW_WALLET_NOT_FOUND");
+    const amountUnavailable = message.includes(
+      "WELCOME_REWARD_AMOUNT_UNAVAILABLE",
     );
-    const trialIncomplete = error.message.includes("TRIAL_NOT_COMPLETED");
-    const paused = error.message.includes("WELCOME_REWARD_CONVERSION_PAUSED");
+    const trialMissing = message.includes("TRIAL_ACCOUNT_NOT_FOUND");
 
     return apiError({
       code: kycRequired
@@ -56,7 +63,13 @@ export async function POST(request: Request) {
             ? "TRIAL_NOT_COMPLETED"
             : paused
               ? "WELCOME_REWARD_CONVERSION_PAUSED"
-              : "WELCOME_REWARD_CONVERSION_FAILED",
+              : walletMissing
+                ? "KRW_WALLET_NOT_FOUND"
+                : amountUnavailable
+                  ? "WELCOME_REWARD_AMOUNT_UNAVAILABLE"
+                  : trialMissing
+                    ? "TRIAL_ACCOUNT_NOT_FOUND"
+                    : "WELCOME_REWARD_CONVERSION_FAILED",
       message: kycRequired
         ? "실명 확인을 완료하면 환영 보상을 전환할 수 있습니다."
         : riskReview
@@ -66,11 +79,23 @@ export async function POST(request: Request) {
             : paused
               ? "현재 안전 점검으로 환영 보상 전환이 잠시 중단되었습니다."
               : "환영 보상을 전환하지 못했습니다.",
-      status: kycRequired || riskReview || trialIncomplete ? 409 : 503,
+      status:
+        kycRequired || riskReview || trialIncomplete || amountUnavailable
+          ? 409
+          : 503,
     });
   }
 
-  return apiSuccess({
-    conversion: toWelcomeConversionResult(data?.[0] ?? null),
-  });
+  const conversion = toWelcomeConversionResult(
+    normalizeTrialConversionRpcData(data),
+  );
+  if (!conversion?.id) {
+    return apiError({
+      code: "WELCOME_REWARD_CONVERSION_FAILED",
+      message: "환영 보상을 전환하지 못했습니다.",
+      status: 503,
+    });
+  }
+
+  return apiSuccess({ conversion });
 }

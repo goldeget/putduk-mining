@@ -59,8 +59,7 @@ export async function assertAndTouchAdminAppSession(input: {
   authSessionId: string;
   userAgent: string | null;
 }): Promise<
-  | { ok: true; adminSessionId: string }
-  | { ok: false; code: AdminSessionDenial }
+  { ok: true; adminSessionId: string } | { ok: false; code: AdminSessionDenial }
 > {
   if (!input.authSessionId) {
     return { ok: false, code: "ADMIN_SESSION_REQUIRED" };

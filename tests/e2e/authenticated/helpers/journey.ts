@@ -51,6 +51,17 @@ export async function prepareMemberThroughStart(
 
   await loginAsMember(page, member, "/start");
   await startTrialFromUi(page);
+  const trialClient = createLocalServiceRoleClient();
+  const { data: trialRow, error: trialReadError } = await trialClient
+    .from("trial_accounts")
+    .select("status")
+    .eq("user_id", member.userId)
+    .maybeSingle();
+  if (trialReadError || trialRow?.status !== "ACTIVE") {
+    throw new Error(
+      `TRIAL_NOT_ACTIVE_AFTER_UI:${trialReadError?.message ?? trialRow?.status ?? "missing"}`,
+    );
+  }
   await advanceTrialToCompleted(member.userId);
   await approveKycEligibility(member.userId, operator.userId);
   await page.goto("/start");

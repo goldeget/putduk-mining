@@ -1,97 +1,16 @@
-import { createHmac, randomUUID } from "node:crypto";
+import { randomUUID } from "node:crypto";
 
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 import { createClient } from "@supabase/supabase-js";
 
 import { createConfirmedMember } from "../fixtures/local-auth";
-
-const ADMIN_ORIGIN = "http://127.0.0.1:3100";
-const REMOTE_PROJECT_REF = "osrmyjgmpdspdcwqjwuv";
-
-function requiredEnv(name: string) {
-  const value = process.env[name]?.trim();
-  if (!value) throw new Error(`${name} is required.`);
-  if (value.includes(REMOTE_PROJECT_REF)) {
-    throw new Error(`${name} points at the remote Supabase project.`);
-  }
-  return value;
-}
-
-function base32Decode(secret: string): Buffer {
-  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
-  const cleaned = secret
-    .replace(/=+$/g, "")
-    .toUpperCase()
-    .replace(/[^A-Z2-7]/g, "");
-  let bits = "";
-  for (const char of cleaned) {
-    const value = alphabet.indexOf(char);
-    if (value < 0) throw new Error("Invalid base32 secret.");
-    bits += value.toString(2).padStart(5, "0");
-  }
-  const bytes: number[] = [];
-  for (let i = 0; i + 8 <= bits.length; i += 8) {
-    bytes.push(Number.parseInt(bits.slice(i, i + 8), 2));
-  }
-  return Buffer.from(bytes);
-}
-
-/** RFC 6238 TOTP (SHA-1, 30s step, 6 digits). No mock AAL2. */
-function generateTotp(secret: string, nowMs = Date.now()): string {
-  const key = base32Decode(secret);
-  const counter = Math.floor(nowMs / 1000 / 30);
-  const buffer = Buffer.alloc(8);
-  buffer.writeUInt32BE(Math.floor(counter / 0x1_0000_0000), 0);
-  buffer.writeUInt32BE(counter & 0xffff_ffff, 4);
-  const digest = createHmac("sha1", key).update(buffer).digest();
-  const offset = digest[digest.length - 1]! & 0x0f;
-  const code =
-    ((digest[offset]! & 0x7f) << 24) |
-    ((digest[offset + 1]! & 0xff) << 16) |
-    ((digest[offset + 2]! & 0xff) << 8) |
-    (digest[offset + 3]! & 0xff);
-  return String(code % 1_000_000).padStart(6, "0");
-}
-
-async function grantAdminRole(userId: string) {
-  const url = requiredEnv("NEXT_PUBLIC_SUPABASE_URL");
-  if (!url.startsWith("http://")) {
-    throw new Error("Admin E2E is limited to local Supabase.");
-  }
-  const service = createClient(url, requiredEnv("SUPABASE_SECRET_KEY"), {
-    auth: { autoRefreshToken: false, persistSession: false },
-  });
-  const { error } = await service.from("user_roles").insert({
-    user_id: userId,
-    role: "ADMIN",
-    granted_by: userId,
-  });
-  if (error) throw new Error(error.message);
-}
-
-async function completeAdminLoginWithTotp(
-  page: Page,
-  email: string,
-  password: string,
-): Promise<string> {
-  await page.goto(`${ADMIN_ORIGIN}/login`);
-  await page.locator('input[name="email"]').fill(email);
-  await page.locator('input[name="password"]').fill(password);
-  await page.getByRole("button", { name: "보안 로그인" }).click();
-  await page.waitForURL(/\/mfa/);
-
-  const secretCode = page.locator(".mfa-enrolment code");
-  await expect(secretCode).toBeVisible({ timeout: 60_000 });
-  const secret = (await secretCode.textContent())?.trim();
-  if (!secret) throw new Error("TOTP enrolment secret missing.");
-
-  await page.locator('input[inputmode="numeric"]').fill(generateTotp(secret));
-  await page.getByRole("button", { name: "인증 완료" }).click();
-  await page.waitForURL((url) => !url.pathname.includes("/mfa"), {
-    timeout: 60_000,
-  });
-  return secret;
-}
+import {
+  ADMIN_ORIGIN,
+  completeAdminLoginWithTotp,
+  generateTotp,
+  grantAdminRole,
+  requiredEnv,
+} from "./helpers/admin-totp";
 
 test.describe("admin app-owned session and real TOTP", () => {
   test("enrolls TOTP, registers admin session, and rejects normal members", async ({
@@ -111,7 +30,7 @@ test.describe("admin app-owned session and real TOTP", () => {
     });
 
     await page.getByRole("button", { name: "이 기기 로그아웃" }).click();
-    await page.waitForURL(/\/login/);
+    await page.waitForURL(/\/login/, { timeout: 60_000 });
 
     const member = await createConfirmedMember("ws05-admin-member");
     const memberContext = await browser.newContext();
@@ -120,16 +39,17 @@ test.describe("admin app-owned session and real TOTP", () => {
     await memberPage.locator('input[name="email"]').fill(member.email);
     await memberPage.locator('input[name="password"]').fill(member.password);
     await memberPage.getByRole("button", { name: "보안 로그인" }).click();
-    await expect(memberPage.getByRole("alert")).toContainText(
-      "입력한 정보로 운영자 로그인을 완료할 수 없습니다.",
-      { timeout: 30_000 },
-    );
+    // Next route announcer도 role=alert라서 로그인 오류 문구로 한정한다.
+    await expect(
+      memberPage.getByRole("alert").filter({
+        hasText: "입력한 정보로 운영자 로그인을 완료할 수 없습니다.",
+      }),
+    ).toBeVisible({ timeout: 30_000 });
     await memberContext.close();
   });
 
   test("issues and single-consumes a step-up grant against the session registry", async ({
     page,
-    request,
   }) => {
     const operator = await createConfirmedMember("ws05-admin-step");
     await grantAdminRole(operator.userId);
@@ -147,22 +67,28 @@ test.describe("admin app-owned session and real TOTP", () => {
       timeout: 60_000,
     });
 
-    const cookies = await page.context().cookies(ADMIN_ORIGIN);
-    const cookieHeader = cookies.map((c) => `${c.name}=${c.value}`).join("; ");
-    const issue = await request.post(
-      `${ADMIN_ORIGIN}/api/v1/admin/session/step-up`,
-      {
-        headers: {
-          Origin: ADMIN_ORIGIN,
-          "Content-Type": "application/json",
-          Cookie: cookieHeader,
-        },
-        data: { commandFamily: "DEPOSIT_CONFIRM" },
-      },
-    );
-    expect(issue.status()).toBe(200);
-    const issued = (await issue.json()) as { data?: { token?: string } };
-    const token = issued.data?.token;
+    // 브라우저 fetch는 운영 UI와 동일하게 쿠키·Origin을 실어 보낸다.
+    const issue = await page.evaluate(async () => {
+      const response = await fetch("/api/v1/admin/session/step-up", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ commandFamily: "DEPOSIT_CONFIRM" }),
+      });
+      const payload = (await response.json().catch(() => null)) as {
+        data?: { token?: string };
+        error?: { code?: string };
+      } | null;
+      return {
+        status: response.status,
+        token: payload?.data?.token ?? null,
+        errorCode: payload?.error?.code ?? null,
+      };
+    });
+    expect(
+      issue,
+      `STEP_UP_ISSUE_FAILED:status=${issue.status};code=${issue.errorCode}`,
+    ).toMatchObject({ status: 200 });
+    const token = issue.token;
     expect(typeof token === "string" && token.length >= 16).toBe(true);
 
     const service = createClient(

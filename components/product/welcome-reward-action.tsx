@@ -33,7 +33,7 @@ export function WelcomeRewardAction({
       });
       const payload = (await response.json()) as {
         data?: { conversion?: ConversionResult | null };
-        error?: { message?: string };
+        error?: { code?: string; message?: string };
       };
 
       if (!response.ok) {
@@ -44,7 +44,15 @@ export function WelcomeRewardAction({
         return;
       }
 
-      setResult(payload.data?.conversion ?? null);
+      const conversion = payload.data?.conversion ?? null;
+      if (!conversion?.id || conversion.status !== "CONVERTED") {
+        setMessage(
+          "환영 보상 자격을 확인하지 못했어요. 잠시 후 다시 시도해 주세요.",
+        );
+        return;
+      }
+
+      setResult(conversion);
       setMessage("자격 확인 결과를 안전하게 반영했어요.");
     } catch {
       setMessage("인터넷 연결을 확인한 뒤 다시 시도해 주세요.");

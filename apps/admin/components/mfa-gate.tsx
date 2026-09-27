@@ -20,16 +20,28 @@ export function MfaGate({ returnTo }: { returnTo: string }) {
     let active = true;
     async function prepare() {
       const supabase = createAdminBrowserClient();
+      const {
+        data: { session },
+        error: sessionError,
+      } = await supabase.auth.getSession();
+      if (!active) return;
+      if (sessionError || !session) {
+        setMessage("로그인 세션을 확인하지 못했습니다. 다시 로그인해 주세요.");
+        setBusy(false);
+        return;
+      }
       const { data: factors, error } = await supabase.auth.mfa.listFactors();
       if (!active) return;
-      if (error) {
+      if (error || !factors) {
         setMessage(
           "다중 인증 정보를 불러오지 못했습니다. 다시 로그인해 주세요.",
         );
         setBusy(false);
         return;
       }
-      const verified = factors.totp.find(
+      const totpFactors = factors.totp ?? [];
+      const allFactors = factors.all ?? [];
+      const verified = totpFactors.find(
         (factor) => factor.status === "verified",
       );
       if (verified) {
@@ -38,7 +50,7 @@ export function MfaGate({ returnTo }: { returnTo: string }) {
         setBusy(false);
         return;
       }
-      const staleUnverified = factors.all.filter(
+      const staleUnverified = allFactors.filter(
         (factor) =>
           factor.factor_type === "totp" && factor.status === "unverified",
       );
@@ -54,15 +66,18 @@ export function MfaGate({ returnTo }: { returnTo: string }) {
         setBusy(false);
         return;
       }
+      // 재시도마다 고유 friendlyName → GoTrue 이름 충돌로 enroll UI가 비는 것을 방지
       const { data, error: enrollError } = await supabase.auth.mfa.enroll({
         factorType: "totp",
-        friendlyName: "PUTDUK Admin",
+        friendlyName: `PUTDUK Admin ${Date.now().toString(36)}`,
         issuer: "PUTDUK MINING",
       });
       if (!active) return;
-      if (enrollError || data.type !== "totp") {
+      if (enrollError || !data || data.type !== "totp") {
         setMessage(
-          "인증 앱 등록을 시작하지 못했습니다. 잠시 후 다시 시도해 주세요.",
+          enrollError?.message?.trim()
+            ? `인증 앱 등록을 시작하지 못했습니다. (${enrollError.message})`
+            : "인증 앱 등록을 시작하지 못했습니다. 잠시 후 다시 시도해 주세요.",
         );
       } else {
         setFactorId(data.id);
