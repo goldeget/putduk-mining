@@ -75,7 +75,8 @@ export function DepositForm() {
       }
 
       setFeedback({
-        message: "입금 요청을 접수했어요. 안내 계좌로 본인 명의 이체를 진행해 주세요.",
+        message:
+          "입금 요청을 접수했어요. 안내 계좌로 본인 명의 이체를 진행해 주세요.",
         tone: "success",
       });
       setAmount("");

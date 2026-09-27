@@ -8,11 +8,7 @@ import {
   formatUsdt,
   shortId,
 } from "@/app/(control)/_lib/format";
-import {
-  EmptyQueue,
-  QueueCard,
-  QueueShell,
-} from "@/components/queue-shell";
+import { EmptyQueue, QueueCard, QueueShell } from "@/components/queue-shell";
 import { requireAdminPage } from "@/lib/auth/principal";
 import { createAdminServiceClient } from "@/lib/supabase/service";
 

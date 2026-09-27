@@ -355,7 +355,10 @@ export default async function MembersPage({
           </Link>
         </article>
 
-        <article className="detail-panel detail-panel--wide" id="evidence-money">
+        <article
+          className="detail-panel detail-panel--wide"
+          id="evidence-money"
+        >
           <header>
             <p className="eyebrow">FUNDING EVIDENCE</p>
             <h2>입금 · 출금 증거</h2>

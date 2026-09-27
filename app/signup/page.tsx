@@ -36,8 +36,7 @@ export default function SignupPage() {
             최대 5,000원 환영 보상
           </li>
           <li>
-            <PutdukIcon name="wallet" size={19} />
-            첫 출금은 입금 없이 가능
+            <PutdukIcon name="wallet" size={19} />첫 출금은 입금 없이 가능
           </li>
         </ul>
       </section>

@@ -15,12 +15,14 @@ const memoryBuckets = new Map<string, Bucket>();
  * 프로세스 로컬 보조 한도. 권위 있는 한도는 SQL `ADMIN_AUTH` rate limit이며
  * `register_admin_session` 호출 시 적용됩니다. user_metadata는 사용하지 않습니다.
  */
-export function enforceAdminAuthRateLimit(bucketKey: string): {
-  ok: true;
-} | {
-  ok: false;
-  code: "RATE_LIMITED";
-} {
+export function enforceAdminAuthRateLimit(bucketKey: string):
+  | {
+      ok: true;
+    }
+  | {
+      ok: false;
+      code: "RATE_LIMITED";
+    } {
   const now = Date.now();
   const current = memoryBuckets.get(bucketKey);
   if (!current || now - current.windowStartedAt > WINDOW_MS) {

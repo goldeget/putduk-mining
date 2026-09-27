@@ -9,19 +9,11 @@ import {
   shortId,
   withdrawalStatusLabel,
 } from "@/app/(control)/_lib/format";
-import {
-  EmptyQueue,
-  QueueCard,
-  QueueShell,
-} from "@/components/queue-shell";
+import { EmptyQueue, QueueCard, QueueShell } from "@/components/queue-shell";
 import { requireAdminPage } from "@/lib/auth/principal";
 import { createAdminServiceClient } from "@/lib/supabase/service";
 
-import {
-  FinalizeLedgerForm,
-  KrwBankSendForm,
-  ReleaseHoldForm,
-} from "./forms";
+import { FinalizeLedgerForm, KrwBankSendForm, ReleaseHoldForm } from "./forms";
 
 type WithdrawalRow = {
   id: string;
@@ -104,8 +96,7 @@ export default async function KrwBankWithdrawalQueuePage() {
               : typeof snap.external_bank_reference === "string"
                 ? snap.external_bank_reference
                 : null;
-          const sentAt =
-            typeof snap.sent_at === "string" ? snap.sent_at : null;
+          const sentAt = typeof snap.sent_at === "string" ? snap.sent_at : null;
           const sent = hasExternalSendRecorded({
             status: row.status,
             bankReference: bankRef,

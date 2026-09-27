@@ -163,7 +163,10 @@ export default async function WithdrawalPage() {
       .order("created_at", { ascending: false }),
   ]);
 
-  const latestPolicies = new Map<WithdrawalDestinationMethod, WithdrawalPolicy>();
+  const latestPolicies = new Map<
+    WithdrawalDestinationMethod,
+    WithdrawalPolicy
+  >();
   for (const row of policyRows ?? []) {
     const method = normalizeDestinationMethod(row.destination_type);
     if (!method || latestPolicies.has(method)) continue;
@@ -203,7 +206,9 @@ export default async function WithdrawalPage() {
         row.allows_welcome_reward,
     );
     const verified = (destinations ?? []).find((destination) => {
-      const destMethod = normalizeDestinationMethod(destination.destination_type);
+      const destMethod = normalizeDestinationMethod(
+        destination.destination_type,
+      );
       return (
         destMethod === method &&
         destination.verification_status === "VERIFIED" &&

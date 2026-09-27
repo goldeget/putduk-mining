@@ -9,19 +9,11 @@ import {
   shortId,
   withdrawalStatusLabel,
 } from "@/app/(control)/_lib/format";
-import {
-  EmptyQueue,
-  QueueCard,
-  QueueShell,
-} from "@/components/queue-shell";
+import { EmptyQueue, QueueCard, QueueShell } from "@/components/queue-shell";
 import { requireAdminPage } from "@/lib/auth/principal";
 import { createAdminServiceClient } from "@/lib/supabase/service";
 
-import {
-  UsdtFinalizeForm,
-  UsdtReleaseForm,
-  UsdtSendForm,
-} from "./forms";
+import { UsdtFinalizeForm, UsdtReleaseForm, UsdtSendForm } from "./forms";
 
 type WithdrawalRow = {
   id: string;
@@ -120,12 +112,11 @@ export default async function UsdtWithdrawalQueuePage() {
           const networkHint =
             crypto?.network ??
             (typeof snap.network === "string" ? snap.network : undefined);
-          const addressMask =
-            crypto?.destination_address
-              ? `${crypto.destination_address.slice(0, 6)}…${crypto.destination_address.slice(-4)}`
-              : typeof snap.address_mask === "string"
-                ? snap.address_mask
-                : "주소(마스킹)";
+          const addressMask = crypto?.destination_address
+            ? `${crypto.destination_address.slice(0, 6)}…${crypto.destination_address.slice(-4)}`
+            : typeof snap.address_mask === "string"
+              ? snap.address_mask
+              : "주소(마스킹)";
           const sent = hasExternalSendRecorded({
             status: row.status,
             txHash: crypto?.transaction_hash,

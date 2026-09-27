@@ -130,10 +130,7 @@ export default async function WalletPage() {
               <div>
                 <dt>전체</dt>
                 <dd>
-                  {formatAtomicAmount(
-                    String(krwAccount.balance_atomic),
-                    "KRW",
-                  )}
+                  {formatAtomicAmount(String(krwAccount.balance_atomic), "KRW")}
                 </dd>
               </div>
             </dl>
@@ -243,10 +240,7 @@ export default async function WalletPage() {
                     {receiptTypeLabels[receipt.transaction_type] ?? "거래 요청"}
                   </small>
                   <strong>
-                    {formatAtomicAmount(
-                      String(receipt.amount_atomic),
-                      "KRW",
-                    )}
+                    {formatAtomicAmount(String(receipt.amount_atomic), "KRW")}
                   </strong>
                 </span>
                 <span>

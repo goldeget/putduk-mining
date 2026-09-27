@@ -1,12 +1,5 @@
-import {
-  formatKst,
-  shortId,
-} from "@/app/(control)/_lib/format";
-import {
-  EmptyQueue,
-  QueueCard,
-  QueueShell,
-} from "@/components/queue-shell";
+import { formatKst, shortId } from "@/app/(control)/_lib/format";
+import { EmptyQueue, QueueCard, QueueShell } from "@/components/queue-shell";
 import { requireAdminPage } from "@/lib/auth/principal";
 import { createAdminServiceClient } from "@/lib/supabase/service";
 
@@ -93,10 +86,7 @@ export default async function RestrictionsPage() {
               ) : (
                 <p className="panel-note">아직 기록이 없습니다.</p>
               )}
-              <SafeModeForm
-                component={component}
-                currentlyPaused={paused}
-              />
+              <SafeModeForm component={component} currentlyPaused={paused} />
             </QueueCard>
           );
         })}

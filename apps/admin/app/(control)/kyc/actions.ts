@@ -53,7 +53,10 @@ export async function reviewKycCaseAction(
   });
 
   if (error) {
-    return mapRpcFailure(error.message, "본인 확인 검토를 저장하지 못했습니다.");
+    return mapRpcFailure(
+      error.message,
+      "본인 확인 검토를 저장하지 못했습니다.",
+    );
   }
   return { ok: true, message: "본인 확인 검토 결과를 저장했습니다." };
 }

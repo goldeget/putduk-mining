@@ -46,9 +46,7 @@ export async function acknowledgeReconciliationExceptionAction(
       status: parsed.data.result,
       resolution_reason: parsed.data.reason,
       resolved_by:
-        parsed.data.result === "INVESTIGATING"
-          ? null
-          : access.principal.userId,
+        parsed.data.result === "INVESTIGATING" ? null : access.principal.userId,
       resolved_at:
         parsed.data.result === "INVESTIGATING"
           ? null

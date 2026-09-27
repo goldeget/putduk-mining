@@ -1,12 +1,5 @@
-import {
-  formatKst,
-  shortId,
-} from "@/app/(control)/_lib/format";
-import {
-  EmptyQueue,
-  QueueCard,
-  QueueShell,
-} from "@/components/queue-shell";
+import { formatKst, shortId } from "@/app/(control)/_lib/format";
+import { EmptyQueue, QueueCard, QueueShell } from "@/components/queue-shell";
 import { requireAdminPage } from "@/lib/auth/principal";
 import { createAdminServiceClient } from "@/lib/supabase/service";
 
@@ -58,10 +51,7 @@ export default async function ExceptionsPage() {
       </section>
 
       {!mismatches.error && mismatchRows.length === 0 ? (
-        <EmptyQueue
-          body="열린 대사 차이가 없습니다."
-          title="대사 예외 없음"
-        />
+        <EmptyQueue body="열린 대사 차이가 없습니다." title="대사 예외 없음" />
       ) : null}
 
       <section className="queue-list" aria-label="대사 예외">
@@ -109,8 +99,8 @@ export default async function ExceptionsPage() {
               <time dateTime={row.updated_at}>{formatKst(row.updated_at)}</time>
             </header>
             <p className="panel-note">
-              시도 {row.attempts}회 · {shortId(row.id)}. 이 화면에서 잔액을
-              직접 고치지 않습니다.
+              시도 {row.attempts}회 · {shortId(row.id)}. 이 화면에서 잔액을 직접
+              고치지 않습니다.
             </p>
           </QueueCard>
         ))}

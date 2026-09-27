@@ -29,7 +29,8 @@ const journey = [
     icon: "wallet" as const,
     step: "03",
     title: "자격 확인 후 환영 보상",
-    description: "최대 5,000원까지 출금할 수 있어요. 출금 전 본인 확인이 필요해요.",
+    description:
+      "최대 5,000원까지 출금할 수 있어요. 출금 전 본인 확인이 필요해요.",
   },
 ] as const;
 

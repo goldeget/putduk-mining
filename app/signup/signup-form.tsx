@@ -17,12 +17,7 @@ const INITIAL_STATE: SignupActionState = {
 };
 
 type AvailabilityState =
-  | "idle"
-  | "checking"
-  | "available"
-  | "unavailable"
-  | "invalid"
-  | "error";
+  "idle" | "checking" | "available" | "unavailable" | "invalid" | "error";
 
 function SignupSubmit() {
   const { pending } = useFormStatus();

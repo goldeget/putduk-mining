@@ -9,9 +9,7 @@ import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 const requestSchema = z.object({
   network: z.string().trim(),
   txHash: z.string().trim().min(8).max(128),
-  sentUsdtAmount: z
-    .string()
-    .regex(/^[0-9]+(\.[0-9]{1,6})?$/),
+  sentUsdtAmount: z.string().regex(/^[0-9]+(\.[0-9]{1,6})?$/),
 });
 
 export const dynamic = "force-dynamic";

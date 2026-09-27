@@ -7,27 +7,12 @@
 
 import { createClient } from "@supabase/supabase-js";
 
-type OutboxEvent = {
-  id: string;
-  event_type: string;
-  attempt_count: number;
-  max_attempts: number;
-};
-
-type SystemJob = {
-  id: string;
-  job_type: string;
-  attempts: number;
-  max_attempts: number;
-  payload: Record<string, unknown>;
-};
-
 const WORKER_ID =
   process.env.PUTDUK_WORKER_ID?.trim() || `putduk-worker-${process.pid}`;
 const HEARTBEAT_MS = 15_000;
 const POLL_MS = 3_000;
 
-function requireEnv(name: string): string {
+function requireEnv(name) {
   const value = process.env[name]?.trim();
   if (!value) {
     throw new Error(`${name} is required for the worker.`);
@@ -45,12 +30,12 @@ function createServiceClient() {
   );
 }
 
-function backoffSeconds(attempt: number): number {
+function backoffSeconds(attempt) {
   const base = Math.min(3600, 2 ** Math.max(0, attempt - 1));
   return Math.max(5, base);
 }
 
-async function heartbeat(startedAt: number): Promise<void> {
+async function heartbeat(startedAt) {
   const uptimeSec = Math.floor((Date.now() - startedAt) / 1000);
   console.info(
     JSON.stringify({
@@ -62,9 +47,7 @@ async function heartbeat(startedAt: number): Promise<void> {
   );
 }
 
-async function processOutbox(
-  client: ReturnType<typeof createServiceClient>,
-): Promise<void> {
+async function processOutbox(client) {
   const { data, error } = await client.rpc("claim_outbox_events", {
     p_worker_id: WORKER_ID,
     p_batch_size: 25,
@@ -75,19 +58,24 @@ async function processOutbox(
     return;
   }
 
-  for (const event of (data ?? []) as OutboxEvent[]) {
+  for (const event of data ?? []) {
     try {
       // Delivery adapters remain domain-owned; worker only leases/completes.
-      const { error: completeError } = await client.rpc("complete_outbox_event", {
-        p_event_id: event.id,
-        p_worker_id: WORKER_ID,
-      });
+      const { error: completeError } = await client.rpc(
+        "complete_outbox_event",
+        {
+          p_event_id: event.id,
+          p_worker_id: WORKER_ID,
+        },
+      );
       if (completeError) {
         throw new Error(completeError.message);
       }
     } catch (cause) {
       const code =
-        cause instanceof Error ? cause.message.slice(0, 80) : "OUTBOX_HANDLER_FAILED";
+        cause instanceof Error
+          ? cause.message.slice(0, 80)
+          : "OUTBOX_HANDLER_FAILED";
       await client.rpc("fail_outbox_event", {
         p_event_id: event.id,
         p_worker_id: WORKER_ID,
@@ -98,9 +86,7 @@ async function processOutbox(
   }
 }
 
-async function processJobs(
-  client: ReturnType<typeof createServiceClient>,
-): Promise<void> {
+async function processJobs(client) {
   const { data, error } = await client.rpc("claim_system_jobs", {
     p_worker_id: WORKER_ID,
     p_batch_size: 10,
@@ -111,7 +97,7 @@ async function processJobs(
     return;
   }
 
-  for (const job of (data ?? []) as SystemJob[]) {
+  for (const job of data ?? []) {
     try {
       if (job.job_type === "FINANCIAL_RECONCILIATION") {
         const { error: reconError } = await client.rpc(
@@ -133,7 +119,9 @@ async function processJobs(
       }
     } catch (cause) {
       const code =
-        cause instanceof Error ? cause.message.slice(0, 80) : "JOB_HANDLER_FAILED";
+        cause instanceof Error
+          ? cause.message.slice(0, 80)
+          : "JOB_HANDLER_FAILED";
       await client.rpc("fail_system_job", {
         p_job_id: job.id,
         p_worker_id: WORKER_ID,
@@ -145,7 +133,7 @@ async function processJobs(
   }
 }
 
-async function main(): Promise<void> {
+async function main() {
   const client = createServiceClient();
   const startedAt = Date.now();
   let lastHeartbeat = 0;

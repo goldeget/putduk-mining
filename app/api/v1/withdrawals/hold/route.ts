@@ -55,7 +55,9 @@ export async function POST(request: Request) {
   });
 
   if (error) {
-    const insufficient = error.message.includes("INSUFFICIENT_AVAILABLE_BALANCE");
+    const insufficient = error.message.includes(
+      "INSUFFICIENT_AVAILABLE_BALANCE",
+    );
     return apiError({
       code: insufficient
         ? "INSUFFICIENT_AVAILABLE_BALANCE"

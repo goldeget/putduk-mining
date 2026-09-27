@@ -193,7 +193,12 @@ function createWithdrawalLedger() {
 
   return {
     journal,
-    credit(userId: string, amount: bigint, kind: "WELCOME" | "DEPOSIT", ref: string) {
+    credit(
+      userId: string,
+      amount: bigint,
+      kind: "WELCOME" | "DEPOSIT",
+      ref: string,
+    ) {
       available.set(userId, (available.get(userId) ?? 0n) + amount);
       journal.push({ kind, userId, amount, ref });
     },
@@ -235,7 +240,9 @@ function createWithdrawalLedger() {
   };
 }
 
-function createWithdrawalService(ledger: ReturnType<typeof createWithdrawalLedger>) {
+function createWithdrawalService(
+  ledger: ReturnType<typeof createWithdrawalLedger>,
+) {
   const byId = new Map<string, Withdrawal>();
   const byIdempotency = new Map<string, string>();
   let seq = 0;
@@ -286,16 +293,27 @@ function createWithdrawalService(ledger: ReturnType<typeof createWithdrawalLedge
       if (!row) {
         throw new Error("WITHDRAWAL_NOT_FOUND");
       }
-      if (row.userId && actor.startsWith("user:") && actor !== `user:${row.userId}`) {
+      if (
+        row.userId &&
+        actor.startsWith("user:") &&
+        actor !== `user:${row.userId}`
+      ) {
         throw new Error("USER_ISOLATION_DENIED");
       }
-      if (row.status === "EXTERNAL_SENT_RECORDED" || row.status === "LEDGER_FINALIZED" || row.status === "COMPLETED") {
+      if (
+        row.status === "EXTERNAL_SENT_RECORDED" ||
+        row.status === "LEDGER_FINALIZED" ||
+        row.status === "COMPLETED"
+      ) {
         return row;
       }
       if (row.method !== "KRW_BANK") {
         throw new Error("KRW_EVIDENCE_METHOD_MISMATCH");
       }
-      if ("network" in (evidence as object) || "tx_hash" in (evidence as object)) {
+      if (
+        "network" in (evidence as object) ||
+        "tx_hash" in (evidence as object)
+      ) {
         throw new Error("KRW_EVIDENCE_MUST_NOT_REQUIRE_CHAIN_FIELDS");
       }
       row.krwEvidence = evidence;
@@ -303,15 +321,16 @@ function createWithdrawalService(ledger: ReturnType<typeof createWithdrawalLedge
       row.status = "EXTERNAL_SENT_RECORDED";
       return row;
     },
-    recordUsdtExternalSend(
-      withdrawalId: string,
-      evidence: UsdtEvidence,
-    ) {
+    recordUsdtExternalSend(withdrawalId: string, evidence: UsdtEvidence) {
       const row = byId.get(withdrawalId);
       if (!row) {
         throw new Error("WITHDRAWAL_NOT_FOUND");
       }
-      if (row.status === "EXTERNAL_SENT_RECORDED" || row.status === "LEDGER_FINALIZED" || row.status === "COMPLETED") {
+      if (
+        row.status === "EXTERNAL_SENT_RECORDED" ||
+        row.status === "LEDGER_FINALIZED" ||
+        row.status === "COMPLETED"
+      ) {
         return row;
       }
       if (row.method !== "USDT_ADDRESS") {
@@ -328,7 +347,11 @@ function createWithdrawalService(ledger: ReturnType<typeof createWithdrawalLedge
       if (!row) {
         throw new Error("WITHDRAWAL_NOT_FOUND");
       }
-      if (row.status !== "EXTERNAL_SENT_RECORDED" && row.status !== "LEDGER_FINALIZED" && row.status !== "COMPLETED") {
+      if (
+        row.status !== "EXTERNAL_SENT_RECORDED" &&
+        row.status !== "LEDGER_FINALIZED" &&
+        row.status !== "COMPLETED"
+      ) {
         throw new Error("EXTERNAL_SEND_REQUIRED");
       }
       if (row.finalizeLedgerId) {
@@ -422,7 +445,9 @@ describe("WS-04 phone availability contract", () => {
       .map((relative) => readFileSync(join(root, relative), "utf8"))
       .join("\n");
     expect(signupSources).not.toMatch(/휴대폰 인증/);
-    expect(signupSources).not.toMatch(/SMS\s*verified|phone ownership verified/i);
+    expect(signupSources).not.toMatch(
+      /SMS\s*verified|phone ownership verified/i,
+    );
     expect(signupSources).toMatch(/휴대전화/);
   });
 });
@@ -557,7 +582,9 @@ describe("WS-04 EXTERNAL_SENT_RECORDED then ledger retry", () => {
     expect(wd.get(row.id)?.status).toBe("EXTERNAL_SENT_RECORDED");
 
     wd.forceNextFinalizeFailure();
-    expect(() => wd.finalize(row.id, "admin-1")).toThrow("LEDGER_FINALIZE_TRANSIENT");
+    expect(() => wd.finalize(row.id, "admin-1")).toThrow(
+      "LEDGER_FINALIZE_TRANSIENT",
+    );
     expect(wd.get(row.id)?.externalSendCount).toBe(1);
 
     // Retry after EXTERNAL_SENT must not instruct another send.
@@ -605,7 +632,9 @@ describe("WS-04 method-specific evidence shapes", () => {
       ...withConversion,
       conversionEvidence: null,
     };
-    assertUsdtEvidenceShape(withConversion as unknown as Record<string, unknown>);
+    assertUsdtEvidenceShape(
+      withConversion as unknown as Record<string, unknown>,
+    );
     assertUsdtEvidenceShape(
       withoutConversion as unknown as Record<string, unknown>,
     );
@@ -703,7 +732,9 @@ describe("WS-04 user isolation and admin command denial", () => {
   });
 
   it("documents that public app must not accept admin money commands", () => {
-    expect(contractDoc).toMatch(/Admin sessions are separate from public user sessions/);
+    expect(contractDoc).toMatch(
+      /Admin sessions are separate from public user sessions/,
+    );
     expect(contractDoc).toMatch(/Never authorize from\s*`user_metadata`/);
   });
 });
@@ -711,7 +742,9 @@ describe("WS-04 user isolation and admin command denial", () => {
 describe("WS-04 worker / reconciliation contract (no auto-repair)", () => {
   it("keeps run_financial_reconciliation as mismatch recorder without balance mutation verbs", () => {
     const migrations = loadMigrationSources();
-    expect(migrations).toMatch(/create function public\.run_financial_reconciliation/);
+    expect(migrations).toMatch(
+      /create function public\.run_financial_reconciliation/,
+    );
     expect(migrations).toMatch(/never auto-repairs money/i);
 
     const fnMatch = migrations.match(
@@ -737,10 +770,9 @@ describe("WS-04 frozen public command presence (Agent A gate)", () => {
     const migrations = loadMigrationSources();
     const missing = FROZEN_PUBLIC_COMMANDS.filter(
       (name) =>
-        !new RegExp(
-          `create\\s+function\\s+public\\.${name}\\s*\\(`,
-          "i",
-        ).test(migrations),
+        !new RegExp(`create\\s+function\\s+public\\.${name}\\s*\\(`, "i").test(
+          migrations,
+        ),
     );
     // Strict: expected FAIL until Agent A lands WS-04 migration.
     expect(missing).toEqual([]);

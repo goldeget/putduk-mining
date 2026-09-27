@@ -158,7 +158,10 @@ export default async function TodayPage() {
         </div>
         <span>요청 시점 조회</span>
       </section>
-      <section className="attention-grid attention-grid--six" aria-label="운영 확인 항목">
+      <section
+        className="attention-grid attention-grid--six"
+        aria-label="운영 확인 항목"
+      >
         {attention.map((item, index) => (
           <Link
             key={item.code}

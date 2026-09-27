@@ -14,10 +14,12 @@ test.describe("WS-04 phone signup copy contract", () => {
 
     await expect(page.getByLabel("휴대전화")).toBeVisible();
     await expect(page.getByText("휴대폰 인증")).toHaveCount(0);
-    await expect(page.getByText(/SMS\s*인증|소유\s*확인|본인\s*인증\s*완료/)).toHaveCount(
+    await expect(
+      page.getByText(/SMS\s*인증|소유\s*확인|본인\s*인증\s*완료/),
+    ).toHaveCount(0);
+    await expect(page.getByText(/verified_phone_at|SMS verified/i)).toHaveCount(
       0,
     );
-    await expect(page.getByText(/verified_phone_at|SMS verified/i)).toHaveCount(0);
   });
 });
 

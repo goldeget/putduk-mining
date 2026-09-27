@@ -89,10 +89,7 @@ function normalizePhone(value: FormDataEntryValue | null) {
 }
 
 export type PhoneAvailabilityResult =
-  | "AVAILABLE"
-  | "UNAVAILABLE"
-  | "INVALID"
-  | "ERROR";
+  "AVAILABLE" | "UNAVAILABLE" | "INVALID" | "ERROR";
 
 /** 가입용 휴대전화 사용 가능 여부. 인증이 아니라 사용/이미 사용만 안내한다. */
 export async function checkSignupPhoneAvailability(

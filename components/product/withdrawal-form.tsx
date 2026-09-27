@@ -243,9 +243,7 @@ export function WithdrawalForm({
       <dl className={styles.policySummary} aria-label="현재 출금 조건">
         <div>
           <dt>사용 가능</dt>
-          <dd>
-            {formatAtomicAmount(account.availableBalanceAtomic, "KRW")}
-          </dd>
+          <dd>{formatAtomicAmount(account.availableBalanceAtomic, "KRW")}</dd>
         </div>
         <div>
           <dt>출금 보류</dt>
@@ -312,9 +310,7 @@ export function WithdrawalForm({
       <header className={styles.stepHeader}>
         <span className={styles.stepNumber}>02</span>
         <span>
-          <h2>
-            {method === "KRW_BANK" ? "받을 계좌" : "받을 USDT 주소"}
-          </h2>
+          <h2>{method === "KRW_BANK" ? "받을 계좌" : "받을 USDT 주소"}</h2>
           <p>
             {method === "KRW_BANK"
               ? "본인 명의 계좌만 사용할 수 있어요."
@@ -408,23 +404,19 @@ export function WithdrawalForm({
         </div>
         <div>
           <dt>수수료</dt>
-          <dd>
-            {policy ? formatAtomicAmount(policy.feeAtomic, "KRW") : "—"}
-          </dd>
+          <dd>{policy ? formatAtomicAmount(policy.feeAtomic, "KRW") : "—"}</dd>
         </div>
         <div>
           <dt>총 차감 예정</dt>
-          <dd>
-            {totalAtomic ? formatAtomicAmount(totalAtomic, "KRW") : "—"}
-          </dd>
+          <dd>{totalAtomic ? formatAtomicAmount(totalAtomic, "KRW") : "—"}</dd>
         </div>
       </dl>
 
       <div className={styles.formNotice} id="withdrawal-amount-help">
         <PutdukIcon name="shield" size={19} />
         <p>
-          요청하면 금액이 사용 가능에서 보류로 옮겨집니다. USDT 출금도 KRW
-          잔액 기준이며, 별도 USDT 잔액은 없습니다.
+          요청하면 금액이 사용 가능에서 보류로 옮겨집니다. USDT 출금도 KRW 잔액
+          기준이며, 별도 USDT 잔액은 없습니다.
         </p>
       </div>
 

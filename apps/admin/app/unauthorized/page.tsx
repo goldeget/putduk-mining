@@ -26,11 +26,17 @@ export default async function UnauthorizedPage({
           <Link className="gold-button" href={"/" as Route}>
             오늘의 퍼뜩
           </Link>
-          <Link className="ghost-button" href={"/reauth?reason=step-up" as Route}>
+          <Link
+            className="ghost-button"
+            href={"/reauth?reason=step-up" as Route}
+          >
             다시 확인
           </Link>
         </div>
-        <footer>거절된 명령은 보안 기록에 남습니다. 존재 여부는 과도하게 드러내지 않습니다.</footer>
+        <footer>
+          거절된 명령은 보안 기록에 남습니다. 존재 여부는 과도하게 드러내지
+          않습니다.
+        </footer>
       </section>
     </main>
   );

@@ -8,14 +8,10 @@ import {
   HIGH_IMPACT_ROLES,
   type AdminRole,
 } from "@/lib/auth/policy";
-import {
-  getAdminIdentity,
-  type AdminPrincipal,
-} from "@/lib/auth/principal";
+import { getAdminIdentity, type AdminPrincipal } from "@/lib/auth/principal";
 
 export type CommandActionResult =
-  | { ok: true; message: string }
-  | { ok: false; code: string; message: string };
+  { ok: true; message: string } | { ok: false; code: string; message: string };
 
 const DENIAL_COPY: Record<string, string> = {
   UNAUTHENTICATED: "세션이 만료되었습니다. 다시 로그인해 주세요.",

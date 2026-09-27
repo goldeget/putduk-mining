@@ -6,11 +6,7 @@ import {
   kycStatusLabel,
   shortId,
 } from "@/app/(control)/_lib/format";
-import {
-  EmptyQueue,
-  QueueCard,
-  QueueShell,
-} from "@/components/queue-shell";
+import { EmptyQueue, QueueCard, QueueShell } from "@/components/queue-shell";
 import { requireAdminPage } from "@/lib/auth/principal";
 import { createAdminServiceClient } from "@/lib/supabase/service";
 
@@ -25,12 +21,7 @@ export default async function KycQueuePage() {
     .select(
       "id, user_id, status, risk_level, opened_at, decided_at, decision_reason",
     )
-    .in("status", [
-      "PENDING",
-      "IN_REVIEW",
-      "ON_HOLD",
-      "REQUIRES_RESUBMISSION",
-    ])
+    .in("status", ["PENDING", "IN_REVIEW", "ON_HOLD", "REQUIRES_RESUBMISSION"])
     .order("opened_at", { ascending: true })
     .limit(40);
 

@@ -133,7 +133,9 @@ export function UsdtManualDepositForm({
       ) : (
         <div className={styles.formNotice}>
           <PutdukIcon name="clock" size={19} />
-          <p>입금 주소 안내를 준비하고 있어요. 준비되면 이 화면에 표시됩니다.</p>
+          <p>
+            입금 주소 안내를 준비하고 있어요. 준비되면 이 화면에 표시됩니다.
+          </p>
         </div>
       )}
 

@@ -47,12 +47,18 @@ export const dynamic = "force-dynamic";
 export async function POST(request: Request) {
   const access = await requireAdminCommand(request, HIGH_IMPACT_ROLES);
   if (!access.ok) {
-    return Response.json({ ok: false, code: access.code }, { status: access.status });
+    return Response.json(
+      { ok: false, code: access.code },
+      { status: access.status },
+    );
   }
 
   const parsed = bodySchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) {
-    return Response.json({ ok: false, code: "INVALID_COMMAND" }, { status: 400 });
+    return Response.json(
+      { ok: false, code: "INVALID_COMMAND" },
+      { status: 400 },
+    );
   }
 
   const requestId = randomUUID();
@@ -63,7 +69,10 @@ export async function POST(request: Request) {
     requestId,
   });
   if (!stepUpOk) {
-    return Response.json({ ok: false, code: "STEP_UP_REQUIRED" }, { status: 403 });
+    return Response.json(
+      { ok: false, code: "STEP_UP_REQUIRED" },
+      { status: 403 },
+    );
   }
 
   const db = createAdminServiceClient();
@@ -79,7 +88,10 @@ export async function POST(request: Request) {
       p_idempotency_key: body.idempotencyKey,
     });
     if (error) {
-      return Response.json({ ok: false, code: "COMMAND_FAILED" }, { status: 503 });
+      return Response.json(
+        { ok: false, code: "COMMAND_FAILED" },
+        { status: 503 },
+      );
     }
     return Response.json({ ok: true, sendId: data }, { status: 200 });
   }
@@ -96,7 +108,10 @@ export async function POST(request: Request) {
       p_idempotency_key: body.idempotencyKey,
     });
     if (error) {
-      return Response.json({ ok: false, code: "COMMAND_FAILED" }, { status: 503 });
+      return Response.json(
+        { ok: false, code: "COMMAND_FAILED" },
+        { status: 503 },
+      );
     }
     return Response.json({ ok: true, sendId: data }, { status: 200 });
   }
@@ -108,9 +123,15 @@ export async function POST(request: Request) {
       p_idempotency_key: body.idempotencyKey,
     });
     if (error) {
-      return Response.json({ ok: false, code: "COMMAND_FAILED" }, { status: 503 });
+      return Response.json(
+        { ok: false, code: "COMMAND_FAILED" },
+        { status: 503 },
+      );
     }
-    return Response.json({ ok: true, ledgerTransactionId: data }, { status: 200 });
+    return Response.json(
+      { ok: true, ledgerTransactionId: data },
+      { status: 200 },
+    );
   }
 
   const { data, error } = await db.rpc("release_withdrawal_hold", {
@@ -120,7 +141,13 @@ export async function POST(request: Request) {
     p_idempotency_key: body.idempotencyKey,
   });
   if (error) {
-    return Response.json({ ok: false, code: "COMMAND_FAILED" }, { status: 503 });
+    return Response.json(
+      { ok: false, code: "COMMAND_FAILED" },
+      { status: 503 },
+    );
   }
-  return Response.json({ ok: true, releaseLedgerTransactionId: data }, { status: 200 });
+  return Response.json(
+    { ok: true, releaseLedgerTransactionId: data },
+    { status: 200 },
+  );
 }
