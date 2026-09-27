@@ -1,4 +1,16 @@
-const SAFE_ADMIN_PATHS = ["/", "/members"] as const;
+const SAFE_ADMIN_PATHS = [
+  "/",
+  "/members",
+  "/deposits/usdt",
+  "/withdrawals/krw-bank",
+  "/withdrawals/usdt",
+  "/kyc",
+  "/exceptions",
+  "/restrictions",
+  "/session-expired",
+  "/reauth",
+  "/unauthorized",
+] as const;
 
 export function safeAdminReturnPath(value: unknown): string {
   if (
