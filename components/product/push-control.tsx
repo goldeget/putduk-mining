@@ -43,7 +43,9 @@ export function PushControl() {
   async function enablePush() {
     const vapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
     if (!vapidKey) {
-      setMessage("푸시 발송 키가 아직 운영 설정되지 않았습니다.");
+      setMessage(
+        "지금은 이 기기 알림을 켤 수 없어요. 앱 안의 알림 센터에서 소식을 확인해 주세요.",
+      );
       return;
     }
 
@@ -119,9 +121,7 @@ export function PushControl() {
     <div className="push-control">
       <div>
         <strong>이 기기 푸시 알림</strong>
-        <p>
-          제품 가치를 확인한 뒤 직접 선택할 때만 브라우저 권한을 요청합니다.
-        </p>
+        <p>이 버튼을 선택할 때만 브라우저의 알림 권한을 요청합니다.</p>
       </div>
       <button
         className="button button--secondary"

@@ -5,6 +5,7 @@ import { BrandMark } from "@/components/brand/brand-mark";
 import { PutdukIcon } from "@/components/icons/putduk-icon";
 import { ProductNavigation } from "@/components/navigation/product-navigation";
 import { ThemeControl } from "@/components/system/theme-control";
+import { ConnectivityStatus } from "@/components/system/connectivity-status";
 
 export function ProductShell({
   children,
@@ -15,8 +16,9 @@ export function ProductShell({
 }) {
   return (
     <div className="product-shell">
+      <ConnectivityStatus />
       <aside className="product-sidebar">
-        <Link className="brand-lockup" href="/start" aria-label="퍼뜩 채굴 홈">
+        <Link className="brand-lockup" href="/home" aria-label="퍼뜩 채굴 홈">
           <BrandMark title="" />
           <span>
             <strong>PUTDUK</strong>
@@ -27,17 +29,24 @@ export function ProductShell({
         <div className="product-sidebar__principle">
           <PutdukIcon name="shield" size={18} />
           <span>
-            <small>LEDGER FIRST</small>
-            모든 자산 변화는 기록됩니다
+            <small>VERIFIED BALANCE</small>
+            확인된 내역만 잔액에 반영됩니다
           </span>
         </div>
       </aside>
       <div className="product-workspace">
         <header className="product-header">
-          <Link className="product-header__brand" href="/start">
+          <Link className="product-header__brand" href="/home">
             <BrandMark title="퍼뜩 채굴" />
           </Link>
           <div className="product-header__tools">
+            <Link
+              className="product-header__notification"
+              href="/notifications"
+              aria-label="알림 센터"
+            >
+              <PutdukIcon name="bell" size={19} />
+            </Link>
             <ThemeControl />
             <div className="product-header__identity">
               <span>

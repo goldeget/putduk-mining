@@ -24,7 +24,7 @@ const options: readonly {
   {
     key: "wallet_enabled",
     label: "자산과 입출금",
-    description: "입금 확인, 출금 상태와 원장 반영을 알립니다.",
+    description: "입금 확인, 출금 상태와 지갑 반영을 알립니다.",
   },
   {
     key: "events_enabled",
@@ -33,8 +33,8 @@ const options: readonly {
   },
   {
     key: "service_enabled",
-    label: "서비스 운영",
-    description: "점검과 보안 등 반드시 확인할 운영 정보를 알립니다.",
+    label: "중요 안내",
+    description: "점검과 계정 보안 등 반드시 확인할 소식을 알립니다.",
   },
   {
     key: "marketing_enabled",

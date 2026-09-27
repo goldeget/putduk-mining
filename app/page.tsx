@@ -1,40 +1,40 @@
+import Link from "next/link";
+
 import { BrandMark } from "@/components/brand/brand-mark";
 import { PutdukIcon } from "@/components/icons/putduk-icon";
-import { MobileNavigation } from "@/components/navigation/mobile-navigation";
 import { ThemeControl } from "@/components/system/theme-control";
-import { Surface } from "@/components/ui/surface";
-
-const principles = [
-  {
-    icon: "clock" as const,
-    eyebrow: "SERVER TIME",
-    title: "시간은 서버가 판정합니다",
-    description:
-      "앱을 닫아도 경과 시간은 사라지지 않고 다음 정산에 반영됩니다.",
-  },
-  {
-    icon: "shield" as const,
-    eyebrow: "LEDGER FIRST",
-    title: "모든 변화는 기록을 남깁니다",
-    description:
-      "잔액을 임의로 덮어쓰지 않고 원장과 감사 흐름을 기준으로 처리합니다.",
-  },
-  {
-    icon: "pulse" as const,
-    eyebrow: "VERSIONED RULES",
-    title: "규칙의 시간까지 보존합니다",
-    description:
-      "변경된 규칙은 과거에 소급하지 않고 적용 시점에 따라 구간 정산합니다.",
-  },
-];
 
 const worlds = [
-  { code: "KR", label: "KOREA", state: "첫 체험 월드", tone: "korea" },
-  { code: "US", label: "USA", state: "V1 월드", tone: "usa" },
-  { code: "AU", label: "GOLD", state: "V1 월드", tone: "gold" },
-  { code: "AG", label: "SILVER", state: "V1 월드", tone: "silver" },
-  { code: "CX", label: "CRYPTO", state: "V1 월드", tone: "crypto" },
-];
+  { code: "KR", label: "KOREA", state: "첫 여정", tone: "korea" },
+  { code: "US", label: "USA", state: "확장 월드", tone: "usa" },
+  { code: "AU", label: "GOLD", state: "금빛 월드", tone: "gold" },
+  { code: "AG", label: "SILVER", state: "은빛 월드", tone: "silver" },
+  { code: "CX", label: "CRYPTO", state: "디지털 월드", tone: "crypto" },
+] as const;
+
+const journey = [
+  {
+    icon: "mining" as const,
+    step: "01",
+    title: "KOREA에서 첫 채굴",
+    description:
+      "신규 사용자는 PUTDUK START로 가상 채굴의 핵심 흐름을 경험합니다.",
+  },
+  {
+    icon: "clock" as const,
+    step: "02",
+    title: "앱을 닫아도 이어지는 시간",
+    description:
+      "화면이 아니라 서버 시간을 기준으로 상태가 이어지고, 돌아오면 결과를 확인합니다.",
+  },
+  {
+    icon: "wallet" as const,
+    step: "03",
+    title: "자격 확인 후 환영 보상",
+    description:
+      "신원·KYC·이상 이용 방지 확인을 통과하면 최대 5,000원의 실제 환영 보상으로 전환될 수 있습니다.",
+  },
+] as const;
 
 const structuredData = {
   "@context": "https://schema.org",
@@ -45,73 +45,92 @@ const structuredData = {
   operatingSystem: "Web, PWA",
   url: "https://mining.putduk.com",
   description:
-    "PUTDUK의 내부 규칙을 기반으로 운영되는 서버 권위형 가상 채굴 플랫폼입니다.",
+    "KOREA에서 시작해 서버 기준으로 채굴 상태와 결과를 확인하는 PUTDUK의 가상 채굴 플랫폼입니다.",
 };
 
 export default function HomePage() {
   return (
-    <main>
+    <main className="consumer-landing">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
 
-      <header className="site-header shell">
-        <a className="brand-lockup" href="#top" aria-label="퍼뜩 채굴 홈">
+      <header className="site-header shell landing-header">
+        <Link className="brand-lockup" href="/" aria-label="퍼뜩 채굴 홈">
           <BrandMark title="" />
           <span>
             <strong>PUTDUK</strong>
             <small>MINING</small>
           </span>
-        </a>
+        </Link>
+        <nav className="landing-header__nav" aria-label="공개 메뉴">
+          <a href="#start">PUTDUK START</a>
+          <a href="#worlds">월드</a>
+          <Link href="/verification">검증 원칙</Link>
+        </nav>
         <div className="site-header__tools">
           <ThemeControl />
-          <div className="header-status" aria-label="프로젝트 상태">
-            <span />
-            FOUNDATION 01
-          </div>
+          <Link className="landing-header__login" href="/login">
+            로그인
+          </Link>
+          <Link
+            className="button button--primary landing-header__signup"
+            href="/signup"
+          >
+            무료로 시작
+          </Link>
         </div>
       </header>
 
-      <section className="hero shell" id="top">
+      <section className="hero shell landing-hero" id="top">
         <div className="hero__copy">
-          <p className="eyebrow">PUTDUK VIRTUAL MINING SYSTEM</p>
+          <p className="eyebrow">VIRTUAL MINING, MADE CLEAR</p>
           <h1>
-            채굴의 시간을,
+            작은 시작이,
             <br />
-            <span>신뢰 가능한 기록</span>으로.
+            <span>나만의 채굴 세계</span>를 엽니다.
           </h1>
           <p className="hero__lead">
-            퍼뜩 채굴은 서버 기준의 채굴·정산·원장을 하나의 흐름으로 설계합니다.
-            복잡한 경제 시스템은 안쪽에 두고, 사용자는 분명한 다음 행동만
-            만납니다.
+            PUTDUK MINING은 KOREA에서 시작하는 가상 채굴 플랫폼입니다. 채굴은
+            서버에서 이어지고, 돌아온 순간 결과와 다음 행동을 분명하게
+            보여드립니다.
           </p>
           <div className="hero__actions">
-            <a className="button button--primary" href="#start">
-              PUTDUK START 보기
+            <Link className="button button--primary" href="/signup">
+              PUTDUK START 시작하기
               <PutdukIcon name="arrow-right" size={19} />
-            </a>
-            <a className="button button--secondary" href="#principles">
-              운영 원칙
-            </a>
+            </Link>
+            <Link className="button button--secondary" href="/login">
+              내 채굴로 돌아가기
+            </Link>
+          </div>
+          <div className="landing-welcome-proof" role="note">
+            <PutdukIcon name="shield" size={21} />
+            <p>
+              <strong>최대 5,000원 환영 보상 기회</strong>
+              자격 확인을 통과한 신규 사용자는 체험 결과를 실제 출금 가능한 환영
+              보상으로 전환할 수 있습니다. 해당 첫 출금에 사전 입금은 필요하지
+              않습니다.
+            </p>
           </div>
           <dl className="hero__facts">
-            <div>
-              <dt>체험 시간</dt>
-              <dd>최대 24시간</dd>
-            </div>
-            <div>
-              <dt>기본 단위</dt>
-              <dd>KRW</dd>
-            </div>
             <div>
               <dt>첫 월드</dt>
               <dd>KOREA</dd>
             </div>
+            <div>
+              <dt>채굴 기준</dt>
+              <dd>SERVER</dd>
+            </div>
+            <div>
+              <dt>기본 지갑</dt>
+              <dd>KRW</dd>
+            </div>
           </dl>
         </div>
 
-        <div className="hero__visual">
+        <div className="hero__visual landing-hero__visual">
           <picture className="hero__world">
             <source
               type="image/avif"
@@ -132,9 +151,9 @@ export default function HomePage() {
             />
           </picture>
           <div className="hero__signal">
-            <span>SMALL STEPS · REAL RECORDS</span>
+            <span>YOUR MINING WORLD</span>
             <strong>지금, 퍼뜩.</strong>
-            <p>작은 행동이 더 나은 내일을 만듭니다.</p>
+            <p>앱을 닫아도 서버에서 이어지는 채굴 여정</p>
           </div>
           <picture className="hero__mascot">
             <source
@@ -156,115 +175,60 @@ export default function HomePage() {
             />
           </picture>
           <div className="hero__index" aria-hidden="true">
-            01 / PUTDUK WORLD
-          </div>
-          <div className="visual-caption">
-            <span>BLACK · GOLD · EARTH</span>
-            <span>REDUCED MOTION READY</span>
+            01 / KOREA
           </div>
         </div>
       </section>
 
       <section
-        className="principles shell"
-        id="principles"
-        aria-labelledby="principles-title"
-      >
-        <div className="section-heading">
-          <p className="eyebrow">SYSTEM PRINCIPLES</p>
-          <h2 id="principles-title">보이는 경험보다 먼저, 지켜지는 원칙.</h2>
-        </div>
-        <div className="principle-grid">
-          {principles.map((principle, index) => (
-            <Surface
-              as="article"
-              className="principle-card"
-              key={principle.eyebrow}
-            >
-              <div className="principle-card__topline">
-                <span>0{index + 1}</span>
-                <PutdukIcon name={principle.icon} />
-              </div>
-              <p className="eyebrow">{principle.eyebrow}</p>
-              <h3>{principle.title}</h3>
-              <p>{principle.description}</p>
-            </Surface>
-          ))}
-        </div>
-      </section>
-
-      <section
-        className="start-section shell"
+        className="landing-journey shell"
         id="start"
-        aria-labelledby="start-title"
+        aria-labelledby="journey-title"
       >
-        <div className="start-panel">
-          <div className="start-panel__copy">
-            <p className="eyebrow">PUTDUK START / 24H</p>
-            <h2 id="start-title">첫 결과까지는 짧게, 신뢰는 처음부터.</h2>
-            <p>
-              신규 사용자는 KOREA 월드에서 시작합니다. 체험은 사용량 100% 또는
-              24시간 중 먼저 도달한 조건에서 끝나며, 실제 지갑과 완전히
-              분리됩니다.
-            </p>
-            <ul className="start-rules">
-              <li>
-                <span>01</span>
-                브라우저를 닫아도 서버 시간으로 계속
-              </li>
-              <li>
-                <span>02</span>
-                보상 곡선은 화면이 아닌 버전 설정으로
-              </li>
-              <li>
-                <span>03</span>
-                체험 원장과 실제 자산 원장은 완전히 분리
-              </li>
-            </ul>
-          </div>
-
-          <div
-            className="trial-blueprint"
-            aria-label="PUTDUK START 화면 설계 예시"
-          >
-            <div className="trial-blueprint__header">
-              <div>
-                <span>PUTDUK START</span>
-                <strong>KOREA / TRIAL</strong>
-              </div>
-              <span className="trial-badge">설계 예시</span>
-            </div>
-            <div className="trial-blueprint__core">
-              <span className="trial-blueprint__ring" aria-hidden="true" />
-              <div>
-                <small>무료 체험 상태</small>
-                <strong>서버 연결 전</strong>
-                <span>실제 수치는 서버 정산 후 표시됩니다</span>
-              </div>
-            </div>
-            <div className="trial-blueprint__meter">
-              <div>
-                <span>사용량</span>
-                <strong>정산 대기</strong>
-              </div>
-              <div className="meter-track" aria-hidden="true">
-                <span />
-              </div>
-            </div>
-            <MobileNavigation />
-          </div>
-        </div>
-      </section>
-
-      <section className="worlds shell" aria-labelledby="worlds-title">
         <div className="section-heading section-heading--row">
           <div>
-            <p className="eyebrow">INTERNAL WORLDS</p>
-            <h2 id="worlds-title">외부 시세가 아닌, PUTDUK의 규칙으로.</h2>
+            <p className="eyebrow">PUTDUK START</p>
+            <h2 id="journey-title">
+              첫 결과까지는 가깝게, 가치의 경계는 정확하게.
+            </h2>
           </div>
           <p>
-            다섯 월드는 독립된 규칙 버전과 적용 시점을 가집니다. 새 규칙은 과거
-            채굴 시간에 소급 적용되지 않습니다.
+            체험 값은 실제 지갑과 분리되어 있으며, 승인된 자격 확인과 전환이
+            끝난 뒤에만 실제 KRW 환영 보상이 됩니다.
+          </p>
+        </div>
+        <div className="landing-journey__grid">
+          {journey.map((item) => (
+            <article key={item.step}>
+              <span>{item.step}</span>
+              <PutdukIcon name={item.icon} size={26} />
+              <h3>{item.title}</h3>
+              <p>{item.description}</p>
+            </article>
+          ))}
+        </div>
+        <div className="landing-journey__action">
+          <Link className="button button--primary" href="/signup">
+            내 첫 채굴 시작하기
+            <PutdukIcon name="arrow-right" size={19} />
+          </Link>
+          <p>가입 후 KOREA 월드의 안내에 따라 시작합니다.</p>
+        </div>
+      </section>
+
+      <section
+        className="worlds shell landing-worlds"
+        id="worlds"
+        aria-labelledby="worlds-title"
+      >
+        <div className="section-heading section-heading--row">
+          <div>
+            <p className="eyebrow">FIVE MINING WORLDS</p>
+            <h2 id="worlds-title">한 번의 시작, 다섯 개의 채굴 세계.</h2>
+          </div>
+          <p>
+            KOREA에서 첫 여정을 시작하고 USA, GOLD, SILVER, CRYPTO로 나만의 채굴
+            경험을 넓혀갑니다.
           </p>
         </div>
         <div className="world-list">
@@ -284,16 +248,33 @@ export default function HomePage() {
         </div>
       </section>
 
-      <footer className="site-footer shell">
+      <section className="landing-trust shell" aria-labelledby="trust-title">
+        <div>
+          <p className="eyebrow">TRUST &amp; VERIFICATION</p>
+          <h2 id="trust-title">보이는 숫자보다, 확인 가능한 과정.</h2>
+          <p>
+            실제 잔액, 채굴 상태와 처리 결과는 서버에서 확인된 정보만
+            표시합니다. 화면 효과가 금액이나 완료를 대신하지 않습니다.
+          </p>
+        </div>
+        <nav aria-label="신뢰 정보">
+          <Link href="/verification">검증 원칙</Link>
+          <Link href="/trial">PUTDUK START 안내</Link>
+          <Link href="/withdrawal">출금 안내</Link>
+          <Link href="/status">서비스 상태</Link>
+        </nav>
+      </section>
+
+      <footer className="site-footer shell landing-footer">
         <div className="brand-lockup brand-lockup--footer">
           <BrandMark title="" />
           <span>
             <strong>PUTDUK</strong>
-            <small>MINING SYSTEM</small>
+            <small>MINING</small>
           </span>
         </div>
-        <p>서버 권위형 채굴 · 원장 우선 자산 처리 · 버전 기반 경제 규칙</p>
-        <span>FOUNDATION / 2026</span>
+        <p>작은 행동이 더 나은 내일을 만듭니다.</p>
+        <span>© 2026 PUTDUK</span>
       </footer>
     </main>
   );

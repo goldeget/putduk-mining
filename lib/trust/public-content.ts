@@ -1,4 +1,4 @@
-export const TRUST_CONTENT_VERSION = "2026.09-foundation";
+export const TRUST_CONTENT_VERSION = "2026.09";
 export const TRUST_LAST_UPDATED = "2026-09-26";
 
 export type PublicFact = {
@@ -23,7 +23,7 @@ export const PUBLIC_FACTS: readonly PublicFact[] = [
     key: "OFFICIAL_DOMAIN",
     value: "mining.putduk.com",
     description:
-      "사용자용 공식 서비스 도메인입니다. 프로덕션 연결 전에는 준비 상태로 표시됩니다.",
+      "사용자용 공식 서비스 도메인입니다. 정식 서비스 연결 전에는 준비 상태로 표시됩니다.",
   },
   {
     key: "ADMIN_DOMAIN",
@@ -304,7 +304,7 @@ export const TRUST_DOCUMENTS: readonly TrustDocument[] = [
       {
         heading: "V1 운영",
         body: [
-          "KRW와 USDT 모두 승인된 운영 절차에 따라 처리됩니다. 실제 출금 기능은 계좌·네트워크·보안 정책이 프로덕션 승인된 뒤 활성화됩니다.",
+          "KRW와 USDT 모두 승인된 운영 절차에 따라 처리됩니다. 실제 출금 기능은 계좌·네트워크·보안 정책이 최종 운영 승인을 마친 뒤 활성화됩니다.",
         ],
       },
     ],
@@ -345,14 +345,14 @@ export const TRUST_DOCUMENTS: readonly TrustDocument[] = [
   {
     path: "/status",
     eyebrow: "SERVICE STATUS",
-    title: "현재 프로덕션 서비스는 준비 중입니다.",
+    title: "현재 정식 서비스 오픈을 준비하고 있습니다.",
     summary:
-      "신규 인프라와 애플리케이션 기반을 구축하고 검증하는 단계이며, 프로덕션 도메인 활성화 전입니다.",
+      "사용자의 자산과 개인정보를 안전하게 다룰 수 있도록 핵심 기능과 운영 절차를 순서대로 검증하고 있습니다.",
     sections: [
       {
         heading: "현재 상태",
         body: [
-          "데이터 모델, 권한 경계, 서버 명령, 사용자·관리자 화면과 배포 전 검증 체계를 순차 구축하고 있습니다. 실제 운영 가능 상태는 원격 데이터베이스 적용, 인프라 프로비저닝, 비밀 키 등록, 도메인 연결과 출시 승인을 모두 통과한 뒤에만 선언합니다.",
+          "가입, 채굴, 지갑, 입출금, 알림과 운영 안전 절차를 차례로 확인하고 있습니다. 실제 이용 가능 상태는 보안·복구·성능·운영 검증과 최종 출시 승인을 모두 통과한 뒤에만 안내합니다.",
         ],
       },
       {
@@ -371,9 +371,9 @@ export const TRUST_DOCUMENTS: readonly TrustDocument[] = [
       "공개 변경 내역은 기능 출시와 경제·운영 정책의 적용 시점을 구분해 기록합니다.",
     sections: [
       {
-        heading: "2026.09 — Foundation",
+        heading: "2026.09 — 서비스 준비",
         body: [
-          "PUTDUK MINING의 신규 아키텍처, 데이터 보안 경계, 디자인 시스템, 사용자 흐름, 관리자 기반과 신뢰 콘텐츠 체계를 구축 중입니다. 아직 프로덕션 출시를 의미하지 않습니다.",
+          "PUTDUK MINING의 가입, 채굴, 지갑, 운영 안전 절차와 사용자 경험을 준비하고 있습니다. 아직 정식 서비스 오픈을 의미하지 않습니다.",
         ],
       },
       {
@@ -385,7 +385,7 @@ export const TRUST_DOCUMENTS: readonly TrustDocument[] = [
     ],
   },
   {
-    path: "/ai",
+    path: "/ai/about",
     eyebrow: "PUTDUK AI",
     title: "설명은 깊게, 권한은 좁게.",
     summary:
@@ -460,7 +460,7 @@ export const TRUST_DOCUMENTS: readonly TrustDocument[] = [
   },
   {
     path: "/ai/how-it-works",
-    eyebrow: "AI ARCHITECTURE",
+    eyebrow: "HOW PUTDUK AI WORKS",
     title: "질문, 근거, 응답과 사용량을 서로 분리해 기록합니다.",
     summary:
       "AI 요청은 인증, 정책, 지식 버전, 제공자 호출과 감사 가능한 사용량 기록의 경계를 통과합니다.",

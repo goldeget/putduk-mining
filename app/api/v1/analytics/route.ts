@@ -30,10 +30,7 @@ export async function POST(request: NextRequest) {
   }
 
   const origin = request.headers.get("origin");
-  const allowedOrigins = new Set([
-    new URL(env.NEXT_PUBLIC_APP_URL).origin,
-    new URL(env.NEXT_PUBLIC_ADMIN_URL).origin,
-  ]);
+  const allowedOrigins = new Set([new URL(env.NEXT_PUBLIC_APP_URL).origin]);
   if (!origin || !allowedOrigins.has(origin)) {
     return errorResponse(
       "ORIGIN_REJECTED",

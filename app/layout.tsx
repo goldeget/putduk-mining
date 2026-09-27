@@ -5,6 +5,7 @@ import { AnalyticsBeacon } from "@/components/system/analytics-beacon";
 import { PwaRegistrar } from "@/components/system/pwa-registrar";
 
 import "./globals.css";
+import "./productization.css";
 
 const siteUrl = "https://mining.putduk.com";
 
@@ -31,7 +32,7 @@ const platformStructuredData = {
       alternateName: "퍼뜩 채굴",
       applicationCategory: "FinanceApplication",
       description:
-        "서버 기준 채굴, 정산, 원장을 하나의 흐름으로 설계한 가상 채굴 플랫폼입니다.",
+        "KOREA에서 시작해 앱을 닫아도 이어지는 채굴 상태와 결과를 확인하는 가상 채굴 플랫폼입니다.",
       inLanguage: "ko-KR",
       name: "PUTDUK MINING",
       operatingSystem: "Web, PWA",
@@ -47,7 +48,7 @@ export const metadata: Metadata = {
     template: "%s | 퍼뜩 채굴",
   },
   description:
-    "서버 기준 채굴, 정산, 원장을 하나의 신뢰 가능한 흐름으로 설계한 PUTDUK의 가상 채굴 플랫폼입니다.",
+    "KOREA에서 시작해 앱을 닫아도 이어지는 채굴 상태와 결과를 확인하는 PUTDUK의 가상 채굴 플랫폼입니다.",
   applicationName: "PUTDUK MINING",
   icons: {
     icon: [
@@ -88,7 +89,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: ReactNode }>) {
   return (
-    <html lang="ko" suppressHydrationWarning>
+    <html lang="ko" data-scroll-behavior="smooth" suppressHydrationWarning>
       <head>
         <script
           dangerouslySetInnerHTML={{

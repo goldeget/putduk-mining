@@ -1,8 +1,10 @@
 "use client";
 
-import { useMemo, useState, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
+import { useRouter } from "next/navigation";
 
 import { PutdukIcon } from "@/components/icons/putduk-icon";
+import styles from "@/components/product/product-experience.module.css";
 import {
   formatAtomicAmount,
   parseDisplayAmount,
@@ -25,6 +27,31 @@ export type WithdrawalPolicy = {
   minimumAmountAtomic: string;
 };
 
+type Feedback = { message: string; tone: "error" | "success" } | null;
+
+const bankNames: Record<string, string> = {
+  IBK: "IBK기업은행",
+  KB: "KB국민은행",
+  KAKAO: "카카오뱅크",
+  KEB_HANA: "하나은행",
+  NH: "NH농협은행",
+  SC: "SC제일은행",
+  SHINHAN: "신한은행",
+  TOSS: "토스뱅크",
+  WOORI: "우리은행",
+};
+
+function atomicToInput(value: string, currency: DisplayCurrency) {
+  if (currency === "KRW") {
+    return BigInt(value).toString();
+  }
+
+  const padded = BigInt(value).toString().padStart(7, "0");
+  const whole = padded.slice(0, -6);
+  const fraction = padded.slice(-6).replace(/0+$/, "");
+  return fraction ? `${whole}.${fraction}` : whole;
+}
+
 export function WithdrawalForm({
   accounts,
   policies,
@@ -32,51 +59,101 @@ export function WithdrawalForm({
   accounts: readonly WithdrawalAccount[];
   policies: readonly WithdrawalPolicy[];
 }) {
-  const [currency, setCurrency] = useState<DisplayCurrency>(
-    policies[0]?.currency ?? "KRW",
-  );
-  const [message, setMessage] = useState("");
+  const initialCurrency =
+    policies.find((candidate) =>
+      accounts.some((account) => account.currency === candidate.currency),
+    )?.currency ?? "KRW";
+  const router = useRouter();
+  const [amount, setAmount] = useState("");
+  const [currency, setCurrency] = useState<DisplayCurrency>(initialCurrency);
+  const [feedback, setFeedback] = useState<Feedback>(null);
   const [pending, setPending] = useState(false);
-  const policy = useMemo(
-    () => policies.find((candidate) => candidate.currency === currency),
-    [currency, policies],
+  const policy = policies.find((candidate) => candidate.currency === currency);
+  const account = accounts.find((candidate) => candidate.currency === currency);
+
+  let amountAtomic: string | null = null;
+  try {
+    amountAtomic = amount ? parseDisplayAmount(amount, currency) : null;
+  } catch {
+    amountAtomic = null;
+  }
+
+  const totalAtomic =
+    amountAtomic && policy
+      ? (BigInt(amountAtomic) + BigInt(policy.feeAtomic)).toString()
+      : null;
+  const meetsMinimum = Boolean(
+    amountAtomic &&
+    policy &&
+    BigInt(amountAtomic) >= BigInt(policy.minimumAmountAtomic),
   );
-  const account = useMemo(
-    () => accounts.find((candidate) => candidate.currency === currency),
-    [accounts, currency],
+  const hasEnoughBalance = Boolean(
+    totalAtomic &&
+    account &&
+    BigInt(totalAtomic) <= BigInt(account.availableBalanceAtomic),
   );
+  const canSubmit = Boolean(
+    amountAtomic && policy && account && meetsMinimum && hasEnoughBalance,
+  );
+
+  function changeCurrency(nextCurrency: DisplayCurrency) {
+    setCurrency(nextCurrency);
+    setAmount("");
+    setFeedback(null);
+  }
+
+  function chooseMinimum() {
+    if (policy) {
+      setAmount(atomicToInput(policy.minimumAmountAtomic, currency));
+    }
+  }
+
+  function chooseAll() {
+    if (!account || !policy) {
+      return;
+    }
+    const available = BigInt(account.availableBalanceAtomic);
+    const fee = BigInt(policy.feeAtomic);
+    if (available > fee) {
+      setAmount(atomicToInput((available - fee).toString(), currency));
+    }
+  }
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!policy || !account) {
-      setMessage("선택한 자산의 출금 정책 또는 지갑을 찾을 수 없습니다.");
+    if (!policy || !account || !amountAtomic || !canSubmit) {
+      setFeedback({
+        message: !meetsMinimum
+          ? "최소 출금 금액을 확인해 주세요."
+          : !hasEnoughBalance
+            ? "수수료를 포함한 사용 가능 금액을 확인해 주세요."
+            : "출금 정보를 다시 확인해 주세요.",
+        tone: "error",
+      });
       return;
     }
 
     const form = event.currentTarget;
     const formData = new FormData(form);
     setPending(true);
-    setMessage("");
+    setFeedback(null);
+
+    const destination =
+      currency === "KRW"
+        ? {
+            accountHolder: String(formData.get("accountHolder") ?? ""),
+            accountNumber: String(formData.get("accountNumber") ?? ""),
+            bankCode: String(formData.get("bankCode") ?? ""),
+          }
+        : {
+            address: String(formData.get("address") ?? ""),
+            network: String(formData.get("network") ?? ""),
+          };
 
     try {
-      const amountAtomic = parseDisplayAmount(
-        String(formData.get("amount") ?? ""),
-        currency,
-      );
-      const destination =
-        currency === "KRW"
-          ? {
-              accountHolder: String(formData.get("accountHolder") ?? ""),
-              accountNumber: String(formData.get("accountNumber") ?? ""),
-              bankCode: String(formData.get("bankCode") ?? ""),
-            }
-          : {
-              address: String(formData.get("address") ?? ""),
-              network: String(formData.get("network") ?? ""),
-            };
-
       const response = await fetch("/api/v1/withdrawals", {
         method: "POST",
+        credentials: "same-origin",
         headers: {
           "Content-Type": "application/json",
           "Idempotency-Key": crypto.randomUUID(),
@@ -89,128 +166,210 @@ export function WithdrawalForm({
           walletAccountId: account.id,
         }),
       });
-      const payload = (await response.json()) as {
+      const payload = (await response.json().catch(() => null)) as {
         error?: { message?: string };
-      };
+      } | null;
 
       if (!response.ok) {
-        setMessage(
-          payload.error?.message ?? "출금 요청을 생성하지 못했습니다.",
-        );
+        setFeedback({
+          message:
+            payload?.error?.message ??
+            "출금 요청을 접수하지 못했어요. 잠시 후 다시 시도해 주세요.",
+          tone: "error",
+        });
         return;
       }
 
-      setMessage("출금 요청이 생성되었습니다. 운영 검증 후 상태가 갱신됩니다.");
+      setFeedback({
+        message:
+          "출금 요청을 접수했어요. 아래 처리 내역에서 현재 상태를 확인할 수 있어요.",
+        tone: "success",
+      });
+      setAmount("");
+      form.reset();
       void trackAnalyticsEvent("withdrawal_start", { currency }).catch(
         () => undefined,
       );
-      form.reset();
-    } catch (error) {
-      setMessage(
-        error instanceof RangeError
-          ? "0보다 큰 금액을 입력해 주세요."
-          : currency === "KRW"
-            ? "원 단위의 정수 금액을 입력해 주세요."
-            : "USDT는 소수점 6자리까지 입력할 수 있습니다.",
-      );
+      router.refresh();
+    } catch {
+      setFeedback({
+        message: "인터넷 연결을 확인한 뒤 다시 시도해 주세요.",
+        tone: "error",
+      });
     } finally {
       setPending(false);
     }
   }
 
   return (
-    <form className="funding-form withdrawal-form" onSubmit={submit}>
-      <fieldset>
-        <legend>출금 자산</legend>
-        <div className="segmented-control">
-          {policies.map((candidate) => (
-            <label key={candidate.id}>
-              <input
-                type="radio"
-                name="currency"
-                value={candidate.currency}
-                checked={currency === candidate.currency}
-                onChange={() => setCurrency(candidate.currency)}
-              />
-              <span>{candidate.currency}</span>
-            </label>
-          ))}
-        </div>
-      </fieldset>
+    <form className={styles.form} onSubmit={submit} noValidate>
+      <header className={styles.stepHeader}>
+        <span className={styles.stepNumber}>01</span>
+        <span>
+          <h2>출금할 금액을 입력해 주세요</h2>
+          <p>사용 가능한 실제 잔액과 현재 출금 조건을 기준으로 확인합니다.</p>
+        </span>
+      </header>
 
-      {policy && account ? (
-        <dl className="withdrawal-policy-summary">
-          <div>
-            <dt>사용 가능</dt>
-            <dd>
-              {formatAtomicAmount(account.availableBalanceAtomic, currency)}
-            </dd>
+      {policies.length > 1 ? (
+        <fieldset>
+          <legend className={styles.assetLegend}>출금 자산</legend>
+          <div className={styles.segmented}>
+            {policies.map((candidate) => (
+              <label key={candidate.id}>
+                <input
+                  type="radio"
+                  name="currency"
+                  value={candidate.currency}
+                  checked={currency === candidate.currency}
+                  onChange={() => changeCurrency(candidate.currency)}
+                  disabled={pending}
+                />
+                <span>
+                  {candidate.currency === "KRW" ? "원화 출금" : "USDT 출금"}
+                </span>
+              </label>
+            ))}
           </div>
-          <div>
-            <dt>최소 금액</dt>
-            <dd>{formatAtomicAmount(policy.minimumAmountAtomic, currency)}</dd>
-          </div>
-          <div>
-            <dt>수수료</dt>
-            <dd>{formatAtomicAmount(policy.feeAtomic, currency)}</dd>
-          </div>
-        </dl>
+        </fieldset>
       ) : null}
 
-      <label className="funding-form__amount">
-        <span>출금 금액</span>
+      <dl className={styles.policySummary} aria-label="현재 출금 조건">
         <div>
+          <dt>사용 가능</dt>
+          <dd>
+            {account
+              ? formatAtomicAmount(account.availableBalanceAtomic, currency)
+              : "—"}
+          </dd>
+        </div>
+        <div>
+          <dt>최소 출금</dt>
+          <dd>
+            {policy
+              ? formatAtomicAmount(policy.minimumAmountAtomic, currency)
+              : "—"}
+          </dd>
+        </div>
+        <div>
+          <dt>수수료</dt>
+          <dd>
+            {policy ? formatAtomicAmount(policy.feeAtomic, currency) : "—"}
+          </dd>
+        </div>
+      </dl>
+
+      <label className={styles.fieldGroup} htmlFor="withdrawal-amount">
+        <span>출금 금액</span>
+        <span className={styles.amountField}>
           <input
+            id="withdrawal-amount"
             name="amount"
             type="text"
-            inputMode="decimal"
+            inputMode={currency === "KRW" ? "numeric" : "decimal"}
             autoComplete="off"
+            placeholder="0"
+            value={amount}
+            onChange={(event) =>
+              setAmount(
+                currency === "KRW"
+                  ? event.target.value.replace(/[^0-9]/g, "")
+                  : event.target.value.replace(/[^0-9.]/g, ""),
+              )
+            }
+            aria-invalid={Boolean(
+              amount && (!amountAtomic || !meetsMinimum || !hasEnoughBalance),
+            )}
+            aria-describedby="withdrawal-amount-help"
+            disabled={pending}
             required
           />
-          <strong>{currency}</strong>
-        </div>
+          <strong className={styles.currencySuffix}>{currency}</strong>
+        </span>
       </label>
 
+      <div className={styles.quickAmounts} aria-label="빠른 금액 선택">
+        <button type="button" onClick={chooseMinimum} disabled={pending}>
+          최소 금액
+        </button>
+        {currency === "KRW" ? (
+          <>
+            <button
+              type="button"
+              onClick={() => setAmount("5000")}
+              disabled={pending}
+            >
+              5천원
+            </button>
+            <button
+              type="button"
+              onClick={() => setAmount("10000")}
+              disabled={pending}
+            >
+              1만원
+            </button>
+          </>
+        ) : null}
+        <button type="button" onClick={chooseAll} disabled={pending}>
+          전액
+        </button>
+      </div>
+
+      <header className={styles.stepHeader}>
+        <span className={styles.stepNumber}>02</span>
+        <span>
+          <h2>{currency === "KRW" ? "받을 계좌" : "받을 주소"}</h2>
+          <p>
+            {currency === "KRW"
+              ? "본인 명의와 일치하는 계좌를 정확히 입력해 주세요."
+              : "선택한 네트워크와 주소가 일치하는지 다시 확인해 주세요."}
+          </p>
+        </span>
+      </header>
+
       {currency === "KRW" ? (
-        <div className="withdrawal-destination-grid">
-          <label>
-            <span>은행 코드</span>
-            <select name="bankCode" required defaultValue="">
+        <div className={styles.destinationGrid}>
+          <label className={styles.field}>
+            <span>은행</span>
+            <select name="bankCode" required defaultValue="" disabled={pending}>
               <option value="" disabled>
                 은행 선택
               </option>
               {policy?.allowedDestinations.map((bankCode) => (
                 <option value={bankCode} key={bankCode}>
-                  {bankCode}
+                  {bankNames[bankCode] ?? bankCode}
                 </option>
               ))}
             </select>
           </label>
-          <label>
+          <label className={styles.field}>
             <span>예금주</span>
             <input
               name="accountHolder"
               maxLength={60}
               autoComplete="name"
+              disabled={pending}
               required
             />
           </label>
-          <label className="withdrawal-destination-grid__wide">
+          <label className={`${styles.field} ${styles.wideField}`}>
             <span>계좌번호</span>
             <input
               name="accountNumber"
               inputMode="numeric"
               autoComplete="off"
               pattern="[0-9-]{6,32}"
+              placeholder="숫자만 입력"
+              disabled={pending}
               required
             />
           </label>
         </div>
       ) : (
-        <div className="withdrawal-destination-grid">
-          <label>
+        <div className={styles.destinationGrid}>
+          <label className={styles.field}>
             <span>네트워크</span>
-            <select name="network" required defaultValue="">
+            <select name="network" required defaultValue="" disabled={pending}>
               <option value="" disabled>
                 네트워크 선택
               </option>
@@ -221,38 +380,68 @@ export function WithdrawalForm({
               ))}
             </select>
           </label>
-          <label className="withdrawal-destination-grid__wide">
+          <label className={`${styles.field} ${styles.wideField}`}>
             <span>받을 주소</span>
             <input
               name="address"
               minLength={20}
               maxLength={128}
               autoComplete="off"
+              disabled={pending}
               required
             />
           </label>
         </div>
       )}
 
-      <div className="funding-form__notice">
+      <dl className={styles.summaryList} aria-label="출금 요청 요약">
+        <div>
+          <dt>출금 금액</dt>
+          <dd>
+            {amountAtomic ? formatAtomicAmount(amountAtomic, currency) : "—"}
+          </dd>
+        </div>
+        <div>
+          <dt>수수료</dt>
+          <dd>
+            {policy ? formatAtomicAmount(policy.feeAtomic, currency) : "—"}
+          </dd>
+        </div>
+        <div>
+          <dt>총 차감 예정</dt>
+          <dd>
+            {totalAtomic ? formatAtomicAmount(totalAtomic, currency) : "—"}
+          </dd>
+        </div>
+      </dl>
+
+      <div className={styles.formNotice} id="withdrawal-amount-help">
         <PutdukIcon name="shield" size={19} />
         <p>
-          목적지 원문은 서버에서 암호화되고 화면에는 마스킹된 값만 남습니다.
-          요청 금액과 수수료는 완료 또는 거절 전까지 사용 가능 잔액에서
-          분리됩니다.
+          요청 금액과 수수료는 처리 중 사용할 수 있는 금액에서 분리됩니다.
+          계좌·주소 정보는 안전하게 보호되며 확인 가능한 일부만 표시됩니다.
         </p>
       </div>
+
       <button
-        className="button button--primary"
+        className={`button button--primary ${styles.submitButton}`}
         type="submit"
-        disabled={pending}
+        disabled={pending || !canSubmit}
       >
-        {pending ? "요청 생성 중" : "출금 요청 만들기"}
+        {pending ? "출금 요청 접수 중" : "출금 내용 확인"}
         <PutdukIcon name="arrow-right" size={18} />
       </button>
-      {message ? (
-        <p className="funding-form__message" role="status">
-          {message}
+
+      {feedback ? (
+        <p
+          className={`${styles.feedback} ${
+            feedback.tone === "success"
+              ? styles.feedbackSuccess
+              : styles.feedbackError
+          }`}
+          role="status"
+        >
+          {feedback.message}
         </p>
       ) : null}
     </form>
