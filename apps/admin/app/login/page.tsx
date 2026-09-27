@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import type { Route } from "next";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { LoginForm } from "@/components/login-form";
@@ -12,9 +13,9 @@ export const dynamic = "force-dynamic";
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ returnTo?: string }>;
+  searchParams: Promise<{ returnTo?: string; denied?: string }>;
 }) {
-  const { returnTo } = await searchParams;
+  const { returnTo, denied } = await searchParams;
   const safeReturn = safeAdminReturnPath(returnTo);
   const identity = await getAdminIdentity();
   if (identity?.role) {
@@ -35,7 +36,19 @@ export default async function LoginPage({
         <p className="eyebrow">DEDICATED OPERATOR ACCESS</p>
         <h1>운영자 전용 보안 로그인</h1>
         <p>일반 회원 계정과 분리된 운영자 권한 및 다중 인증을 확인합니다.</p>
+        {denied ? (
+          <p className="form-error" role="alert">
+            운영 권한이 없거나 세션이 거절되었습니다. 다시 시도해 주세요.
+          </p>
+        ) : null}
         <LoginForm returnTo={safeReturn} />
+        <p className="form-note">
+          세션이 만료되면{" "}
+          <Link className="text-link" href={"/session-expired" as Route}>
+            안내 화면
+          </Link>
+          으로 이동합니다.
+        </p>
         <footer>접근 시도와 고위험 작업은 보안 기록 및 감사 대상입니다.</footer>
       </section>
     </main>
