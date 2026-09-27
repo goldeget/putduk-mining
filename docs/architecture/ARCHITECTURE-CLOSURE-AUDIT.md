@@ -34,17 +34,17 @@ This pass added local production foundations rather than treating architecture p
 
 | Foundation | Local implementation | Current proof | Remaining proof |
 | --- | --- | --- | --- |
-| PUTDUK START real conversion | KYC/risk-gated, idempotent RPC; KRW 5,000 hard cap; `funding_required = false` | TypeScript rule tests pass | pgTAP blocked because the local Docker daemon is unavailable |
-| First welcome withdrawal | verified destination, cooldown, zero-fee welcome policy, receipt and outbox; no deposit query | unit policy test passes | local DB RPC and authenticated browser journey pending |
-| Authoritative money journal | account/header/line model, deferred debit=credit and currency constraints, wallet projection link | unit balance tests pass | migration reset, pgTAP, lint and advisors pending |
+| PUTDUK START real conversion | KYC/risk-gated, idempotent RPC; KRW 5,000 hard cap; `funding_required = false` | TypeScript rules and exact-head isolated CI pgTAP pass | authenticated conversion/browser journey and production-target verification pending |
+| First welcome withdrawal | verified destination, cooldown, zero-fee welcome policy, receipt and outbox; no deposit query | unit policy and exact-head isolated CI database tests pass | authenticated completed-withdrawal journey and production-target verification pending |
+| Authoritative money journal | account/header/line model, deferred debit=credit and currency constraints, wallet projection link | unit balance tests and exact-head isolated CI database suite pass | treasury reconciliation, reversal and authenticated receipt evidence pending |
 | Event propagation | version-matched transactional outbox, consumer dedupe table, leased claim/complete/fail commands | unit version/dedupe tests pass | worker integration and operator backlog UI pending |
-| Durable jobs | priority, bounded attempts, leases, attempt history and dead-letter commands | schema/pgTAP test authored | local database execution and worker heartbeat pending |
+| Durable jobs | priority, bounded attempts, leases, attempt history and dead-letter commands | schema and pgTAP pass in exact-head isolated CI | worker heartbeat, backpressure and operator replay evidence pending |
 | Referral and promotions | versioned qualification/claim/campaign data plus 5,000+5,000 cap and first-funding cap rules | unit rule tests pass | event consumer and operator workflow pending |
-| Catalog governance | sourced dated DRAFT proposal, 11 neutral products, approval state machine and immutable post-approval children | source review complete | operator approval command/UI and database execution pending |
+| Catalog governance | sourced dated DRAFT proposal, 11 neutral products, approval state machine and immutable post-approval children | source review and exact-head isolated CI database suite pass | operator approval command/UI and reviewed production values pending |
 | Member/security operations | physically isolated admin app, server-owned roles, AAL2/recent-TOTP gates, KYC/security/risk/block data and exact-UUID Member 360 reference | 12 admin unit tests plus public admin-path browser denial pass | app-owned sessions, action queues and authenticated role/MFA/revocation E2E pending |
 | Access return | protected-route allowlist and safe post-login return preservation | unit routing tests pass | authenticated browser matrix pending |
 
-Current application evidence from this pass: the full `pnpm verify` gate passed, including 84 asset checks, formatting, ESLint, TypeScript, 163 web unit tests, 12 admin unit tests and both Next.js production builds. Playwright passed 28/28 desktop/mobile tests, including ordinary public-app 404 behavior for reserved admin aliases. Eighteen production screenshots and 42 canonical benchmark captures are hashed and reviewed; bounded loopback performance evidence is recorded separately and is not production acceptance. The database gate could not start because the Docker Desktop Linux engine pipe was unavailable; no unrelated Docker inventory or historical resource was inspected.
+Current application evidence from this pass: exact-head GitHub Actions run `36284465615` at `a28bad387af21e9c7aaf6ffc185a4e594b42c122` passed all three jobs. The application gate covered 84 asset checks, formatting, ESLint, TypeScript, 163 web unit tests, 12 admin unit tests and both Next.js production builds. Playwright passed 28/28 desktop/mobile tests, including ordinary public-app 404 behavior for reserved admin aliases. Isolated PostgreSQL rebuilt from zero through the latest migration and passed all 222 pgTAP assertions, schema lint and security advisors. Eighteen production screenshots and 42 canonical benchmark captures are hashed and reviewed; bounded loopback performance evidence is recorded separately and is not production acceptance. The local Docker Desktop Linux engine remained unavailable, so local database execution is still marked `BLOCKED_LOCAL_DB_RUNTIME`; no unrelated Docker inventory or historical resource was inspected.
 
 Dimension codes:
 
@@ -140,7 +140,7 @@ An accessible Korean spotlight/coach-mark flow now supports skip and replay and 
 
 ### 07 — PUTDUK START trial
 
-Trial tables/functions/routes now include a separate trial ledger plus a one-time KYC/risk-gated real KRW conversion capped at 5,000, a balanced journal, wallet projection and outbox event in one transaction. It never queries funding eligibility. Full authenticated browser proof, database execution, operator visibility and terminal-state UX are missing. **Close when:** local/target pgTAP plus concurrency, refresh/offline, duplicate, abuse and expiration tests pass.
+Trial tables/functions/routes now include a separate trial ledger plus a one-time KYC/risk-gated real KRW conversion capped at 5,000, a balanced journal, wallet projection and outbox event in one transaction. It never queries funding eligibility. Exact-head isolated CI database tests pass; full authenticated browser proof, target verification, operator visibility and terminal-state UX are missing. **Close when:** authorized target verification plus concurrency, refresh/offline, duplicate, abuse and expiration journeys pass.
 
 ### 08 — Mining engine and authoritative session state
 
@@ -168,7 +168,7 @@ Trial and wallet settlement paths are present locally. Leased durable job/outbox
 
 ### 14 — Wallet and append-only ledger
 
-An authoritative balanced account/header/line journal now sits behind the wallet projection. Deferred constraints reject empty, mixed-currency and debit/credit-imbalanced postings; the welcome conversion posts both sides atomically. Local unit tests pass, while pgTAP execution is Docker-blocked. Production reconciliation, pagination/load, reversal workflow and admin evidence remain incomplete. **Close when:** database gates and concurrent mutation/reversal/reconciliation scenarios pass.
+An authoritative balanced account/header/line journal now sits behind the wallet projection. Deferred constraints reject empty, mixed-currency and debit/credit-imbalanced postings; the welcome conversion posts both sides atomically. Local unit tests and the exact-head isolated CI pgTAP suite pass; production-target verification, reconciliation, pagination/load, reversal workflow and admin evidence remain incomplete. **Close when:** authorized target verification and concurrent mutation/reversal/reconciliation scenarios pass.
 
 ### 15 — Funding and withdrawals
 
@@ -228,11 +228,11 @@ Responsive AVIF/WebP assets and manifest integrity exist. Bounded one-run loopba
 
 ### 29 — Security, RLS and privilege boundary
 
-RLS/policies/functions, separate server-only admin helpers, mandatory AAL2/TOTP gates and current-role denial tests exist locally. Exact-project advisors, authenticated browser role/revocation proof, abuse review, app-owned admin session controls and secret-rotation evidence are unavailable. **Close when:** migration tests, Supabase advisors and authenticated cross-user/admin denial tests pass in an authorized production-like environment and later on the exact authorized target.
+RLS/policies/functions, separate server-only admin helpers, mandatory AAL2/TOTP gates and current-role denial tests exist. Exact-head isolated CI passed the full migration/pgTAP suite, schema lint and security advisors. Exact-project advisors, authenticated browser role/revocation proof, abuse review, app-owned admin session controls and secret-rotation evidence are unavailable. **Close when:** authenticated cross-user/admin denial tests pass in an authorized production-like environment and the complete security gate is later verified on the exact authorized target.
 
 ### 30 — Jobs, retry, leases and dead-letter handling
 
-Job/outbox attempt schemas and service-only `SKIP LOCKED` lease claim, complete and fail commands now exist with bounded attempts and dead-letter exhaustion. No worker process, heartbeat extension, operator DLQ or replay UI is proven. **Close when:** migration tests plus concurrent claim, lease expiry, backoff, terminal quarantine, replay and idempotency tests pass.
+Job/outbox attempt schemas and service-only `SKIP LOCKED` lease claim, complete and fail commands now exist with bounded attempts and dead-letter exhaustion, and their authored database assertions pass in isolated exact-head CI. No worker process, heartbeat extension, operator DLQ or replay UI is proven. **Close when:** concurrent claim, lease expiry, backoff, terminal quarantine, replay and idempotency tests pass with the deployed worker and operator controls.
 
 ### 31 — Observability, audit and correlation IDs
 
@@ -248,7 +248,7 @@ Supabase Pro is stated, but entitlement/retention and restore evidence were not 
 
 ### 34 — Git integrity, CI and artifact provenance
 
-The exact authorized origin is reachable. A normal fetch initially left reachable parent `c27b7c542ccb8808a2656a62c9d0536dffd87f06` missing because local negotiation advertised its descendants; `git fetch --refetch origin develop` recovered the original object graph without rewriting history. `git fsck --full` now exits successfully with no missing/broken objects. The preflight archive is `.ws02-recovery/20260927-041213/workspace-preflight.zip` (SHA-256 `C53EC07CF64A73037D6116559B5A5D91665762E4408AA8536E36046A6B4D605E`, locally excluded). **Close when:** feature commits are on the exact remote, CI succeeds for that SHA and PR integration completes.
+The exact authorized origin is reachable. A normal fetch initially left reachable parent `c27b7c542ccb8808a2656a62c9d0536dffd87f06` missing because local negotiation advertised its descendants; `git fetch --refetch origin develop` recovered the original object graph without rewriting history. `git fsck --full` now exits successfully with no missing/broken objects. The preflight archive is `.ws02-recovery/20260927-041213/workspace-preflight.zip` (SHA-256 `C53EC07CF64A73037D6116559B5A5D91665762E4408AA8536E36046A6B4D605E`, locally excluded). PR [#2](https://github.com/goldeget/putduk-mining/pull/2) passed all three CI workflow jobs at exact head `a28bad387af21e9c7aaf6ffc185a4e594b42c122` in run `36284465615`, merged to `develop` as `eaaf7616be9b8f627a44d59510909068b023ed0c`, and its feature branch was deleted. **Close when:** reproducible immutable deploy-artifact provenance and the separately authorized deployment/version evidence are recorded.
 
 ### 35 — Cross-browser E2E and visual regression
 
@@ -293,5 +293,8 @@ P2/P3 domains remain explicit seams, not launch blockers and not a reason to pro
 
 1. **Cloudflare:** account ID remains `UNKNOWN`; account-scoped calls/provisioning are forbidden.
 2. **Production database truth:** remote Supabase mutation/verification is intentionally frozen for this architecture closure pass.
-3. **Local database verification:** Docker Desktop Linux engine is not running, so migration reset, pgTAP, lint and advisors are currently unverified.
-4. **Product values:** economic/rank/event values remain unapproved and must not be inferred from visual mockups.
+3. **Product values:** economic/rank/event values remain unapproved and must not be inferred from visual mockups.
+
+## 6. Current environment constraint
+
+The local Docker Desktop Linux engine is not running, so local database execution remains `BLOCKED_LOCAL_DB_RUNTIME`. Exact-head isolated GitHub CI independently passed 0→latest migrations, all 222 pgTAP assertions, schema lint and security advisors; the frozen production target remains unverified.
