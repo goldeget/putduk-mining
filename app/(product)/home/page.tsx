@@ -9,6 +9,13 @@ import { formatAtomicAmount } from "@/domain/wallet/format-amount";
 import { requirePageUser } from "@/lib/auth/session";
 import { safeProtectedReturnPath } from "@/lib/auth/return-path";
 
+const trialStatusLabel: Record<string, string> = {
+  READY: "준비됨",
+  ACTIVE: "진행 중",
+  COMPLETED: "완료",
+  EXPIRED: "종료",
+};
+
 export default async function ProductHomePage() {
   const identity = await requirePageUser("/home");
   const [
@@ -52,13 +59,16 @@ export default async function ProductHomePage() {
     trial?.status === "ACTIVE" ? "/start" : mining ? "/mining" : "/start";
   const primaryLabel =
     trialError || miningError
-      ? "상태 다시 확인하기"
+      ? "상태 다시 확인"
       : trial?.status === "ACTIVE"
-        ? "PUTDUK START 계속하기"
+        ? "START 계속하기"
         : mining
           ? "채굴 월드 보기"
-          : "첫 채굴 시작하기";
+          : "첫 채굴 시작";
   const worldStateUnavailable = Boolean(trialError && miningError);
+  const trialLabel = trialError
+    ? "확인 필요"
+    : trialStatusLabel[trial?.status ?? "READY"] ?? "준비됨";
 
   return (
     <div className="product-home">
@@ -66,7 +76,7 @@ export default async function ProductHomePage() {
         <div>
           <p className="eyebrow">TODAY IN PUTDUK</p>
           <h1>오늘도 채굴이 이어지고 있어요.</h1>
-          <p>확인된 상태와 다음 행동만 모았습니다.</p>
+          <p>지금 상태와 다음에 할 일만 모았어요.</p>
         </div>
         <Link className="button button--primary" href={primaryHref}>
           {primaryLabel}
@@ -93,7 +103,7 @@ export default async function ProductHomePage() {
           </div>
           <div className="living-world__status">
             <span
-              className={`live-status${worldStateUnavailable ? "is-unavailable" : ""}`}
+              className={`live-status${worldStateUnavailable ? " is-unavailable" : ""}`}
             >
               <i />
               {worldStateUnavailable
@@ -111,9 +121,9 @@ export default async function ProductHomePage() {
             </h2>
             <p>
               {worldStateUnavailable
-                ? "연결을 확인한 뒤 다시 열어 주세요. 화면 표시 오류가 채굴 기록을 바꾸지는 않습니다."
+                ? "연결을 확인한 뒤 다시 열어 주세요."
                 : mining
-                  ? `다음 확인 전까지 기록된 시간 ${Number(mining.unsettled_seconds).toLocaleString("ko-KR")}초`
+                  ? `다음 확인 전 ${Number(mining.unsettled_seconds).toLocaleString("ko-KR")}초`
                   : "안내에 따라 첫 채굴 결과를 만나보세요."}
             </p>
           </div>
@@ -123,7 +133,7 @@ export default async function ProductHomePage() {
           <Surface as="article" className="home-balance-card">
             <span>
               <PutdukIcon name="wallet" size={18} />
-              실제 사용 가능 KRW
+              사용 가능 KRW
             </span>
             <strong>
               {walletError
@@ -135,18 +145,16 @@ export default async function ProductHomePage() {
             </strong>
             <p>
               {walletError
-                ? "지갑 연결을 확인한 뒤 다시 시도해 주세요."
-                : "체험 값은 이 금액에 포함되지 않습니다."}
+                ? "지갑을 잠시 후 다시 확인해 주세요."
+                : "체험 값은 포함되지 않습니다."}
             </p>
             <Link href="/wallet">
-              지갑과 거래 내역 보기 <PutdukIcon name="arrow-right" size={16} />
+              지갑 보기 <PutdukIcon name="arrow-right" size={16} />
             </Link>
           </Surface>
           <Surface as="article" className="home-start-card">
             <span>PUTDUK START</span>
-            <strong>
-              {trialError ? "확인 필요" : (trial?.status ?? "READY")}
-            </strong>
+            <strong>{trialLabel}</strong>
             <div
               className="product-progress"
               aria-label={
@@ -159,7 +167,7 @@ export default async function ProductHomePage() {
             </div>
             <p>
               {trialError
-                ? "현재 체험 상태를 불러오지 못했어요."
+                ? "체험 상태를 불러오지 못했어요."
                 : `체험 결과 ${formatTrialValue(String(trial?.reward_atomic ?? "0"))}`}
             </p>
           </Surface>
@@ -212,15 +220,15 @@ export default async function ProductHomePage() {
           ) : (
             <div className="home-notifications__empty">
               <PutdukIcon name="bell" size={24} />
-              <p>새 알림이 없어요. 중요한 변화가 생기면 바로 알려드릴게요.</p>
+              <p>새 알림이 없어요. 중요한 변화가 생기면 알려드릴게요.</p>
             </div>
           )}
         </div>
         <Surface as="aside" className="home-ai-card" tone="raised">
           <PutdukIcon name="ai" size={26} />
           <p className="eyebrow">PUTDUK AI</p>
-          <h2>내 채굴과 지갑, 궁금한 점을 편하게 물어보세요.</h2>
-          <p>확인할 수 없는 계정 정보나 금액은 추측하지 않습니다.</p>
+          <h2>채굴과 지갑, 궁금한 점을 물어보세요.</h2>
+          <p>확인할 수 없는 금액은 추측하지 않습니다.</p>
           <Link className="button button--secondary" href="/ai">
             PUTDUK AI 열기
           </Link>

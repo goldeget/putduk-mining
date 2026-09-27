@@ -19,25 +19,25 @@ const menuItems: ReadonlyArray<{
     href: "/menu/account" as Route,
     icon: "user",
     label: "계정 관리",
-    description: "내 계정과 로그인 기기, 로그아웃 설정을 확인합니다.",
+    description: "계정, 로그인 기기, 로그아웃을 확인합니다.",
   },
   {
     href: "/notifications",
     icon: "bell",
     label: "알림 센터",
-    description: "채굴·자산·이벤트 소식과 수신 설정을 확인합니다.",
+    description: "채굴·자산·이벤트 소식과 수신 설정입니다.",
   },
   {
     href: "/ai",
     icon: "ai",
     label: "PUTDUK AI",
-    description: "내 상태와 퍼뜩 이용 방법을 자연스럽게 물어봅니다.",
+    description: "내 상태와 이용 방법을 자연스럽게 물어봅니다.",
   },
   {
     href: "/putduk-facts" as Route,
     icon: "shield",
     label: "신뢰 센터",
-    description: "공식 정보와 자산·채굴의 기본 원칙을 확인합니다.",
+    description: "공식 정보와 채굴의 기본 원칙을 확인합니다.",
   },
 ];
 
@@ -47,7 +47,7 @@ export default function MenuPage() {
       <PageHeading
         eyebrow="MY PUTDUK"
         title="내 퍼뜩"
-        lead="계정, 알림, 도움말과 공식 안내를 한곳에서 빠르게 확인하세요."
+        lead="계정, 알림, 도움말을 한곳에서 확인하세요."
       />
 
       <Surface as="section" className={styles.menuIntro} tone="raised">
@@ -55,11 +55,8 @@ export default function MenuPage() {
           <PutdukIcon name="menu" size={28} />
         </span>
         <span>
-          <h2>필요한 기능을 짧고 분명하게</h2>
-          <p>
-            자주 확인하는 항목을 바로 찾을 수 있도록 계정과 도움 기능을
-            모았습니다.
-          </p>
+          <h2>필요한 기능을 짧게</h2>
+          <p>자주 쓰는 계정과 도움 기능을 모았어요.</p>
         </span>
       </Surface>
 

@@ -268,7 +268,7 @@ export default async function WithdrawalPage() {
       <PageHeading
         eyebrow="WITHDRAWAL"
         title="출금하기"
-        lead="정산된 실제 잔액만 출금할 수 있어요. 은행 계좌와 USDT 주소 모두 지원합니다."
+        lead="정산된 실제 잔액만 출금할 수 있어요. 은행 계좌와 USDT 주소를 지원합니다."
       />
 
       <Surface as="section" className={styles.balanceStrip} tone="raised">
@@ -287,10 +287,7 @@ export default async function WithdrawalPage() {
           <PutdukIcon name="shield" size={24} />
           <span>
             <h2>입금 없이도 가능한 첫 출금</h2>
-            <p>
-              환영 보상은 최대 5,000원까지, 은행 계좌 또는 USDT 주소로 요청할 수
-              있어요.
-            </p>
+            <p>환영 보상은 최대 5,000원까지 출금할 수 있어요. 출금 전 본인 확인이 필요해요.</p>
           </span>
         </header>
 

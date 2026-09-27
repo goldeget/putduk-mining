@@ -90,7 +90,7 @@ export default async function MiningPage() {
     <div className={styles.worldPage}>
       <PageHeading
         eyebrow="MINING WORLDS"
-        title="당신의 채굴 월드"
+        title="채굴 월드"
         lead="앱을 닫아도 채굴은 계속돼요. 다시 접속하면 결과를 확인할 수 있어요."
       />
 
@@ -136,13 +136,13 @@ export default async function MiningPage() {
             </div>
             <h2 id="world-hero-title">
               {currentSession
-                ? `${currentSession.world_name_ko}에서 여정이 이어지고 있어요`
-                : "첫 월드에서 채굴 여정을 시작해 보세요"}
+                ? `${currentSession.world_name_ko}에서 채굴이 이어지고 있어요`
+                : "첫 월드에서 채굴을 시작해 보세요"}
             </h2>
             <p>
               {currentSession
-                ? "화면의 숫자를 임의로 늘리지 않습니다. 정산 전 경과 시간과 세션 상태는 확인된 값으로만 표시됩니다."
-                : "PUTDUK START로 첫 채굴 흐름을 경험한 뒤, 이용 가능한 채굴 상품을 확인할 수 있어요."}
+                ? "정산 전 경과와 상태는 확인된 값만 보여 드려요."
+                : "PUTDUK START로 첫 채굴을 시작해 보세요."}
             </p>
             {currentSession ? (
               <div className={styles.worldHeroFacts}>
@@ -184,10 +184,7 @@ export default async function MiningPage() {
               <p className="eyebrow">LIVE SESSIONS</p>
               <h2>현재 채굴 상태</h2>
             </span>
-            <p>
-              표시 값은 페이지를 연 시점의 상태입니다. 금액은 정산이 완료된 뒤
-              지갑에서 확인할 수 있어요.
-            </p>
+            <p>지금 보이는 상태예요. 금액은 정산 후 지갑에서 확인하세요.</p>
           </header>
           <section className={styles.sessionList} aria-label="현재 채굴 세션">
             {sessions.map((session) => {
@@ -238,10 +235,7 @@ export default async function MiningPage() {
           <p className="eyebrow">WORLD DIRECTORY</p>
           <h2>채굴 월드</h2>
         </span>
-        <p>
-          월드는 채굴 경험의 테마입니다. 시장 가격이나 투자 수익을 추종하지
-          않습니다.
-        </p>
+        <p>월드는 채굴 테마예요. 시세나 투자 수익을 따르지 않습니다.</p>
       </header>
 
       {worldsError ? (

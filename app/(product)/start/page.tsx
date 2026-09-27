@@ -9,6 +9,14 @@ import { Surface } from "@/components/ui/surface";
 import { formatTrialValue } from "@/domain/trial/format-trial-value";
 import { requirePageUser } from "@/lib/auth/session";
 
+const trialStatusLabel: Record<string, string> = {
+  READY: "준비됨",
+  ACTIVE: "진행 중",
+  COMPLETED: "완료",
+  EXPIRED: "종료",
+  UNAVAILABLE: "확인 불가",
+};
+
 export default async function StartPage() {
   const identity = await requirePageUser();
   const [
@@ -51,17 +59,17 @@ export default async function StartPage() {
         eyebrow="PUTDUK START"
         title={
           trialError
-            ? "현재 PUTDUK START 상태를 확인할 수 없어요."
+            ? "START 상태를 확인할 수 없어요."
             : isComplete
               ? "첫 채굴을 마쳤어요."
-              : "첫 결과까지, 분명한 시작."
+              : "첫 채굴, 분명한 시작."
         }
         lead={
           trialError
-            ? "연결을 확인하고 다시 열어 주세요."
+            ? "연결을 확인한 뒤 다시 열어 주세요."
             : isComplete
-              ? "체험 결과는 실제 돈이 아닙니다. 자격 확인 후 최대 5,000원까지 환영 보상으로 전환될 수 있어요."
-              : "KOREA 월드에서 핵심 채굴 흐름을 경험합니다. 체험 값은 실제 지갑과 분리됩니다."
+              ? "체험 값은 실제 돈이 아니에요. 자격 확인 후 최대 5,000원까지 전환될 수 있어요."
+              : "KOREA 월드에서 첫 채굴을 경험해요. 체험 값은 실제 지갑과 분리됩니다."
         }
       />
 
@@ -73,7 +81,9 @@ export default async function StartPage() {
         >
           <div className="product-mining-stage__meta">
             <span>TRIAL / KOREA</span>
-            <strong>{trialStatus}</strong>
+            <strong>
+              {trialStatusLabel[trialStatus] ?? "상태 확인 중"}
+            </strong>
           </div>
           <div className="product-mining-stage__visual">
             <MiningCore />
@@ -123,15 +133,15 @@ export default async function StartPage() {
               {isActive
                 ? "채굴이 진행 중이에요"
                 : isComplete
-                  ? "PUTDUK START가 완료되었습니다"
+                  ? "PUTDUK START가 끝났어요"
                   : "PUTDUK START를 준비하세요"}
             </h2>
             <p>
               {isActive
                 ? "앱을 닫아도 채굴은 계속돼요. 다시 접속하면 결과를 확인할 수 있어요."
                 : isComplete
-                  ? "체험 결과와 실제 KRW는 아직 분리되어 있어요. 전환된 환영 보상은 입금 없이 첫 출금할 수 있어요."
-                  : "준비가 되면 이곳에서 첫 채굴을 시작할 수 있어요."}
+                  ? "체험 값과 실제 KRW는 분리돼요. 전환된 환영 보상은 입금 없이 첫 출금할 수 있어요."
+                  : "준비가 되면 여기서 첫 채굴을 시작하세요."}
             </p>
             {trialError ? (
               <StatePanel
@@ -177,9 +187,9 @@ export default async function StartPage() {
             <p className="eyebrow">TRIAL BOUNDARY</p>
             <ul>
               <li>앱을 닫아도 채굴은 계속돼요</li>
-              <li>체험 값과 실제 KRW 지갑 분리</li>
-              <li>사용량 100% 또는 24시간에 종료</li>
-              <li>환영 보상 첫 출금에 사전 입금 불필요</li>
+              <li>체험 값과 실제 KRW는 분리돼요</li>
+              <li>사용량 100% 또는 24시간에 끝나요</li>
+              <li>환영 보상 첫 출금에 입금은 필요 없어요</li>
             </ul>
           </Surface>
         </div>

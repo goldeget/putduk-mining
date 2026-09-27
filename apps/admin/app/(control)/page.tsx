@@ -83,14 +83,14 @@ export default async function TodayPage() {
       label: "계좌 출금",
       href: "/withdrawals/krw-bank" as Route,
       result: krwWithdrawals,
-      description: "은행 송금·거절·원장 확정",
+      description: "은행 송금·거절·잔액 반영",
     },
     {
       code: "USDT_WD",
       label: "USDT 출금",
       href: "/withdrawals/usdt" as Route,
       result: usdtWithdrawals,
-      description: "외부 송금 기록 후 원장만 확정",
+      description: "외부 송금 기록 후 잔액만 반영",
     },
     {
       code: "KYC",
@@ -139,7 +139,7 @@ export default async function TodayPage() {
         <div>
           <p className="eyebrow">OPERATIONS BRIEFING · KST</p>
           <h1>오늘의 퍼뜩</h1>
-          <p>지금 판단해야 할 일과 서비스 상태를 한 화면에 모았습니다.</p>
+          <p>지금 확인할 일과 서비스 상태를 한 화면에 모았어요.</p>
           <small className="hero-meta">{kstNow}</small>
         </div>
         <div className="attention-orbit">
@@ -207,8 +207,8 @@ export default async function TodayPage() {
             </div>
           </div>
           <p className="panel-note">
-            Basic Mode입니다. 기술 용어 없이 대기열로 바로 이동합니다. Member
-            360에서 회원 맥락을 확인하세요.
+            Basic Mode입니다. 대기열로 바로 이동합니다. Member 360에서 회원
+            맥락을 확인하세요.
           </p>
           <Link className="text-link" href={"/members" as Route}>
             Member 360 열기
@@ -238,7 +238,7 @@ export default async function TodayPage() {
               ))}
             </ol>
           ) : (
-            <p className="empty-state">아직 생성된 감사 기록이 없습니다.</p>
+            <p className="empty-state">아직 감사 기록이 없습니다.</p>
           )}
         </article>
       </section>

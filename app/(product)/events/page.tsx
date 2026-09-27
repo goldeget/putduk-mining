@@ -91,8 +91,8 @@ export default async function EventsPage() {
     <div className={styles.eventPage}>
       <PageHeading
         eyebrow="EVENTS & MISSIONS"
-        title="지금 참여할 수 있는 여정"
-        lead="기간과 참여 상태를 확인한 뒤 선택하세요. 보상은 조건을 달성했을 때만 반영됩니다."
+        title="참여할 수 있는 여정"
+        lead="기간과 참여 상태를 확인한 뒤 선택하세요."
       />
 
       {eventsError ? (
@@ -221,7 +221,7 @@ export default async function EventsPage() {
           <p className="eyebrow">OFFICIAL UPDATES</p>
           <h2>공지</h2>
         </span>
-        <p>퍼뜩 채굴의 중요한 변경과 이용 안내를 확인하세요.</p>
+        <p>퍼뜩 채굴의 중요한 변경과 이용 안내예요.</p>
       </header>
 
       {noticesError ? (
@@ -259,8 +259,7 @@ export default async function EventsPage() {
       <span className={styles.formNotice}>
         <PutdukIcon name="shield" size={19} />
         <p>
-          이벤트 조건과 지급 상태는 화면에 표시된 실제 기록을 기준으로
-          확인하세요. 확인되지 않은 보상이나 진행률은 표시하지 않습니다.
+          이벤트 조건과 지급 상태는 화면의 실제 기록을 기준으로 확인하세요.
         </p>
       </span>
     </div>
