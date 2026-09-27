@@ -25,7 +25,7 @@ This document is the mandatory decision record that must be approved before any 
 | Capability | System of record | Cloudflare V1 decision |
 | --- | --- | --- |
 | PostgreSQL data and transactions | Supabase PostgreSQL | Do not create D1 |
-| Identity and sessions | Supabase Auth | Do not duplicate in Access or KV |
+| Identity and sessions | Supabase Auth | Keep Supabase canonical; a future Access gate may add outer defense in depth, never session or role authority |
 | User files and product objects | Supabase Storage | Do not create R2 without a separate approved requirement |
 | Realtime user updates | Supabase Realtime | Do not create Durable Objects |
 | Scheduled database work | Supabase-owned job path | Do not create Queues merely for scheduling |
@@ -52,14 +52,26 @@ No resource below is approved for provisioning yet.
 ### B. Admin web runtime
 
 - Proposed name: `putduk-mining-admin`
-- Product: Cloudflare Workers with static assets, or an isolated entrypoint from the same reviewed source
+- Product: a separate Cloudflare Worker with static assets, built from the isolated `apps/admin` application
 - Purpose: serve the admin interface independently from the public hostname
 - Data flow: authorized operator → admin Worker → server-side authorization → Supabase
 - Security boundary: every operation requires server-side role checks; hostname separation is not authorization
 - Cost surface: Worker requests, CPU time, logs, and asset delivery
 - Removal plan: remove only after admin traffic and operational access are safely migrated
 
-The final choice between two Workers and one Worker with strict hostname routing is deferred until the admin authentication flow and framework adapter pass integration tests. Separate Workers are preferred when they materially reduce blast radius without duplicating application logic.
+The public and admin builds must remain separate Workers/deployments. A one-Worker hostname switch or public-path rewrite would weaken the required bundle and blast-radius boundary.
+
+### C. Admin edge access gate
+
+- Proposed name: `putduk-mining-admin-access`
+- Product: Cloudflare Access self-hosted application for `admin.mining.putduk.com`
+- Purpose: reject operators who do not satisfy the approved organization/identity/device policy before traffic reaches the admin runtime
+- Data flow: operator → Access policy/identity provider → dedicated admin Worker → dedicated Supabase authentication/MFA → server role/capability checks → domain command
+- Security boundary: Access is defense in depth only; it never grants an application role, replaces Supabase AAL2, step-up, DB permissions or immutable audit
+- Cost surface: Zero Trust seats/features, identity-provider integration, Access logs and optional device posture
+- Removal plan: detach the Access application only under an approved replacement gate while retaining application authentication and authorization
+
+This resource is documented but not approved or provisioned. Exact account ID, plan eligibility, identity provider, operator allowlist, session duration, device policy, emergency access and log retention must be approved first.
 
 ## 4. Explicitly rejected for V1
 
@@ -68,8 +80,8 @@ The final choice between two Workers and one Worker with strict hostname routing
 - **R2:** Supabase Storage owns V1 object storage.
 - **Queues:** no approved workload currently requires Cloudflare-native queue semantics; database jobs must not be duplicated.
 - **Durable Objects:** no V1 real-time coordination domain requires them.
-- **Vectorize / Workers AI / AI Gateway:** PUTDUK AI provider and retrieval design are not approved yet.
-- **Zero Trust:** not assumed or provisioned. Admin authorization remains an application and database responsibility.
+- **Vectorize / Workers AI / AI Gateway:** the current PUTDUK AI architecture has no approved Cloudflare-specific storage, retrieval, inference or gateway requirement.
+- **Access as authorization:** rejected. A future Access application may be an outer admin traffic gate, but application MFA, role/capability authorization and database/domain checks remain mandatory.
 
 Adding one of these products requires a new architecture decision covering ownership, consistency, failure recovery, security, cost, observability, and deletion.
 
@@ -119,4 +131,3 @@ Until then, Cloudflare state is intentionally unchanged.
 ## 8. WS-02 confirmation
 
 Transactional outbox, consumer deduplication, leased durable jobs, retry history and dead-letter state are owned by PostgreSQL/Supabase in V1. This removes any speculative reason to create Cloudflare Queues, KV, D1, R2 or Durable Objects. A future measured throughput or isolation requirement must produce a new approved decision record before that boundary changes.
-

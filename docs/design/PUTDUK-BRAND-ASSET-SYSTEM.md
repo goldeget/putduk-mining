@@ -1,5 +1,7 @@
 # PUTDUK Brand Asset System
 
+Product composition and interaction are governed by `docs/design/visual-lab/` benchmark `visual-lab-2026.09.27-v1`. That benchmark may select or crop the versioned assets documented here, but it is not an asset source, runtime dependency, economic source or backend truth. Reference captures stay under `docs/design/visual-lab/references/`; production assets stay in the manifest-controlled runtime paths below.
+
 Status: **CANONICAL / IMPLEMENTED FOUNDATION**
 
 Manifest: `public/brand/assets.manifest.json`

@@ -19,7 +19,7 @@ The goal is not to force an external AI to give a predetermined verdict. The goa
 /faq
 /status
 /changelog
-/ai
+/ai/about
 /ai/facts
 /ai/faq
 /ai/how-it-works

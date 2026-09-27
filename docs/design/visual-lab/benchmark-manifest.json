@@ -1,0 +1,120 @@
+{
+  "schemaVersion": 1,
+  "benchmarkVersion": "visual-lab-2026.09.27-v1",
+  "reviewedAt": "2026-09-27T00:00:00+09:00",
+  "site": {
+    "url": "https://putduk-mining-visual-lab-2026.ai-ptk.chatgpt.site/?theme=dark#/landing",
+    "sourceCommit": "a8206957b1cb540291ad4e840e7f8835487e0380",
+    "deploymentId": "appgdep_6ab84fdd747c81919198ed1968163109",
+    "access": "private"
+  },
+  "authority": {
+    "visualUx": true,
+    "backendDomain": false,
+    "productionCopy": false,
+    "economicValues": false
+  },
+  "viewports": {
+    "mobile": { "width": 390, "height": 844 },
+    "tablet": { "width": 834, "height": 1112 },
+    "desktop": { "width": 1440, "height": 1024 }
+  },
+  "themes": ["system", "dark", "light"],
+  "states": [
+    "default",
+    "loading",
+    "empty",
+    "error",
+    "success",
+    "disabled",
+    "unauthorized",
+    "offline",
+    "reconnecting"
+  ],
+  "screens": [
+    { "id": "landing", "surface": "public", "productionRoute": "/" },
+    { "id": "login", "surface": "public", "productionRoute": "/login" },
+    { "id": "signup", "surface": "public", "productionRoute": "/signup" },
+    { "id": "start-active", "surface": "product", "productionRoute": "/start" },
+    {
+      "id": "start-complete",
+      "surface": "product",
+      "productionRoute": "/start"
+    },
+    { "id": "home", "surface": "product", "productionRoute": "/home" },
+    { "id": "worlds", "surface": "product", "productionRoute": "/mining" },
+    { "id": "wallet", "surface": "product", "productionRoute": "/wallet" },
+    {
+      "id": "deposit",
+      "surface": "product",
+      "productionRoute": "/wallet/deposit"
+    },
+    {
+      "id": "withdrawal",
+      "surface": "product",
+      "productionRoute": "/wallet/withdraw"
+    },
+    { "id": "events", "surface": "product", "productionRoute": "/events" },
+    {
+      "id": "notifications",
+      "surface": "product",
+      "productionRoute": "/notifications"
+    },
+    { "id": "ai", "surface": "product", "productionRoute": "/ai" },
+    { "id": "admin-today", "surface": "admin", "productionRoute": "/" },
+    {
+      "id": "member-360",
+      "surface": "admin",
+      "productionRoute": "/members?id={memberUuid}"
+    }
+  ],
+  "references": {
+    "directory": "docs/design/visual-lab/references",
+    "index": "docs/design/visual-lab/references/README.md",
+    "captureIndex": "docs/design/visual-lab/references/capture-index.json",
+    "captureDirectory": "docs/design/visual-lab/references/benchmark-v2026-09-27",
+    "captureCount": 42,
+    "captureBytes": 8062580,
+    "captureFormat": "webp",
+    "coverage": {
+      "allScreens": ["desktop-1440/dark/default"],
+      "keyScreens": [
+        "desktop-1440/light/default",
+        "mobile-390/dark/default",
+        "mobile-390/light/default"
+      ],
+      "keyScreenIds": [
+        "landing",
+        "login",
+        "signup",
+        "start-active",
+        "start-complete",
+        "wallet",
+        "ai",
+        "admin-today",
+        "member-360"
+      ],
+      "stateEvidence": "State obligations are specified; additional stable-state captures require reviewed production evidence."
+    },
+    "productionEvidence": [
+      {
+        "surface": "public-web",
+        "directory": "docs/design/visual-lab/references/production-ws03-2026-09-27",
+        "captureIndex": "docs/design/visual-lab/references/production-ws03-2026-09-27/capture-index.json",
+        "review": "docs/design/visual-lab/references/production-ws03-2026-09-27/REVIEW.md",
+        "captureCount": 14,
+        "captureBytes": 1220552
+      },
+      {
+        "surface": "admin-login",
+        "directory": "docs/design/visual-lab/references/production-admin-ws03-2026-09-27",
+        "captureIndex": "docs/design/visual-lab/references/production-admin-ws03-2026-09-27/capture-index.json",
+        "review": "docs/design/visual-lab/references/production-admin-ws03-2026-09-27/REVIEW.md",
+        "captureCount": 4,
+        "captureBytes": 83666,
+        "authenticatedEvidence": "blocked-without-approved-operator-fixtures"
+      }
+    ],
+    "containsPrivateData": false
+  }
+}

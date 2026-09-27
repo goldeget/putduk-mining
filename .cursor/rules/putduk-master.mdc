@@ -46,16 +46,23 @@ Cloudflare isolation:
 This target lock overrides convenience, historical context, cached knowledge, prior task history, and generic discovery instructions.
 
 Canonical visual lock:
-1. The only canonical references are `docs/design/visual-references/putduk-brand-master-reference.png` and `docs/design/visual-references/putduk-rank-master-reference.png`.
-2. They define quality/art direction only. They do not define production copy, economic values, rank names/benefits, or implementation truth.
-3. The exact Korean spelling is `퍼뜩`. Never use text baked into generated pixels; production copy must be HTML/CSS or reviewed SVG.
-4. Lossless generated masters stay under `docs/design/generated-masters/`. Runtime assets must come from the versioned manifest under `public/brand/assets.manifest.json` and the six neutral `public/ranks/rank-01`…`rank-06` families.
-5. Follow `docs/design/PUTDUK-VISUAL-DIRECTION.md`, `PUTDUK-BRAND-ASSET-SYSTEM.md`, `PUTDUK-THEME-SYSTEM.md`, and `PUTDUK-MOTION-EXPERIENCE.md`.
+1. Canonical art-direction masters are `docs/design/visual-references/putduk-brand-master-reference.png` and `docs/design/visual-references/putduk-rank-master-reference.png`.
+2. The canonical product visual/UX benchmark is `docs/design/visual-lab/` version `visual-lab-2026.09.27-v1` (Sites source `a8206957b1cb540291ad4e840e7f8835487e0380`, deployment `appgdep_6ab84fdd747c81919198ed1968163109`). The private Site is never runtime or backend truth.
+3. These sources define quality/art direction/composition/interaction only. They do not define production copy, economic values, rank names/benefits, implementation truth or backend state.
+4. The exact Korean spelling is `퍼뜩`. Never use text baked into generated pixels; production copy must be HTML/CSS or reviewed SVG.
+5. Lossless generated masters stay under `docs/design/generated-masters/`. Runtime assets must come from the versioned manifest under `public/brand/assets.manifest.json` and the six neutral `public/ranks/rank-01`…`rank-06` families.
+6. Follow `docs/design/PUTDUK-VISUAL-DIRECTION.md`, `PUTDUK-BRAND-ASSET-SYSTEM.md`, `PUTDUK-THEME-SYSTEM.md`, `PUTDUK-MOTION-EXPERIENCE.md`, and `docs/design/visual-lab/`.
 
 Repository integrity lock:
 1. Failed `git fsck --full`, a reachable missing object, inaccessible exact origin, or remote mismatch blocks commit/push/PR/tag/deploy/release.
 2. Never hide corruption through grafts, replacement refs, shallow markers, rewritten history, force push, or an alternate repository.
 3. GitHub, Supabase remote changes, Cloudflare provisioning/deploy, and production release are separate authorization boundaries.
+
+Permanent completion lock:
+1. Track every user/admin feature separately as `FOUNDATION COMPLETE`, `FUNCTIONALLY COMPLETE`, and `PRODUCT COMPLETE`.
+2. Only `PRODUCT COMPLETE` counts toward launch readiness. Route/API/schema/component existence is not completion.
+3. Product completion requires applicable real domain integration, premium PUTDUK UI, Korean production copy, mobile/tablet/desktop, System/Light/Dark, loading/empty/error/recovery/success/unauthorized, interaction/focus, offline/reconnect, accessibility, reduced motion, browser E2E, rendered screenshot review, Visual Lab comparison, visual regression, and performance acceptance.
+4. Reject generic dashboards, default SaaS templates, unmodified shadcn appearance, placeholder cards, bare forms, raw CRUD tables, generic gradients/chat clones, stacked-desktop mobile, fake/unconnected UI, `coming soon` replacing V1 UX, and engineering/foundation language visible to users.
 
 Read and obey:
 - docs/architecture/PUTDUK-MINING-MASTER-ARCHITECTURE.md

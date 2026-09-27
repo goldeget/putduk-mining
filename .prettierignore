@@ -1,4 +1,7 @@
 .next
+.sites-work
+**/.next
+**/dist
 **/*.md
 coverage
 node_modules

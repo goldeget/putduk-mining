@@ -100,4 +100,4 @@ Record:
 
 The exact authorized origin is reachable under the verified `goldeget` GitHub identity. The original missing parent object (`c27b7c542ccb8808a2656a62c9d0536dffd87f06`) and its reachable graph were restored from that origin with `git fetch --refetch origin develop`; no graft, replacement ref, fake shallow boundary, history rewrite or force push was used.
 
-`git fsck --full` now completes without missing or broken objects. WS-02 integration proceeds on `codex/ws-02-foundations`; push, pull request and merge remain subject to the exact-origin preflight and all required CI checks. This integrity result does not authorize deployment, Supabase remote mutation or Cloudflare provisioning.
+`git fsck --full` now completes without missing or broken objects. WS-03 work uses the bounded `codex/ws-03-productization` branch; any push, pull request and merge remains subject to exact-origin/baseline preflight and all required CI checks. This integrity result does not authorize deployment, Supabase remote mutation or Cloudflare provisioning.
