@@ -107,11 +107,14 @@ export default defineConfig({
   ],
   webServer: [
     {
-      // 프로세스 그룹 래퍼로 next-server 고아 프로세스가 남아 CI가 멈추는 것을 방지
+      // e2e-web-server는 손자를 Playwright 프로세스 그룹 안에 둔다.
+      // Linux teardown은 gracefulShutdown → 실패 시 kill(-pid) 순이다.
       command: memberWebCommand,
       url: "http://127.0.0.1:3000",
       reuseExistingServer: !isCI,
       timeout: 180_000,
+      gracefulShutdown: { signal: "SIGTERM" as const, timeout: 5_000 },
+      stdout: (isCI ? "pipe" : "ignore") as "pipe" | "ignore",
       env: {
         ...process.env,
         ...sharedEnv,
@@ -125,6 +128,8 @@ export default defineConfig({
             url: "http://127.0.0.1:3100/login",
             reuseExistingServer: !isCI,
             timeout: 180_000,
+            gracefulShutdown: { signal: "SIGTERM" as const, timeout: 5_000 },
+            stdout: (isCI ? "pipe" : "ignore") as "pipe" | "ignore",
             env: {
               ...process.env,
               ...sharedEnv,

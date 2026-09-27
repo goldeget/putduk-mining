@@ -125,10 +125,32 @@ jobs:
       - name: Run browser tests
         run: pnpm test:e2e
 
+  # Authenticated suite와 분리된 webServer teardown 증거.
+  # full 29 suite를 대체하거나 skip하지 않는다.
+  webserver-lifecycle:
+    name: WebServer lifecycle probe
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+
+      - name: Probe e2e-web-server process-group teardown
+        run: node scripts/run-with-watchdog.mjs 120 -- node scripts/e2e-web-server-lifecycle-harness.mjs
+
+      - name: Reproduce detached grandchild leak (informational)
+        run: node scripts/e2e-web-server-detached-regression.mjs
+
   authenticated:
     name: Authenticated product gates
     runs-on: ubuntu-latest
     timeout-minutes: 70
+    needs: [webserver-lifecycle]
     steps:
       - name: Check out source
         uses: actions/checkout@v4
@@ -168,6 +190,7 @@ jobs:
         run: pnpm exec playwright install --with-deps chromium
 
       - name: Run authenticated browser tests
+        timeout-minutes: 15
         run: pnpm test:e2e:authenticated
 
       - name: Preserve authenticated browser evidence
