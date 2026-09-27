@@ -25,8 +25,8 @@ Keep Application gates, Database security gates, and Browser foundation.
 
 Add:
 
-- Authenticated product gates: local `pnpm db:start`, `pnpm db:reset`, `node scripts/capture-local-supabase-env.mjs`, Chromium, public app `127.0.0.1:3000`, admin app `127.0.0.1:3100`, `pnpm test:e2e:authenticated`.
-- Worker runtime gates: the same local database reset, then `pnpm test:worker`.
+- Authenticated product gates: local `pnpm db:start`, `pnpm db:reset`, `supabase start`, `node scripts/capture-local-supabase-env.mjs`, one ephemeral `WITHDRAWAL_DATA_KEY`, Chromium, public app `127.0.0.1:3000`, admin app `127.0.0.1:3100`, `pnpm test:e2e:authenticated`.
+- Worker runtime gates: the same local database reset and `supabase start`, then `pnpm test:worker`.
 
 `playwright.config.ts` does not collect `tests/e2e/authenticated/**`. Authenticated product gates use `playwright.authenticated.config.ts` only.
 

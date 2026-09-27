@@ -158,6 +158,9 @@ jobs:
       - name: Rebuild migrations from zero
         run: pnpm db:reset
 
+      - name: Start local API
+        run: supabase start --yes
+
       - name: Export local Supabase env
         run: node scripts/capture-local-supabase-env.mjs
 
@@ -212,6 +215,9 @@ jobs:
 
       - name: Rebuild migrations from zero
         run: pnpm db:reset
+
+      - name: Start local API
+        run: supabase start --yes
 
       - name: Export local Supabase env
         run: node scripts/capture-local-supabase-env.mjs
