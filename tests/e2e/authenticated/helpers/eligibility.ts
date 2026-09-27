@@ -1,7 +1,6 @@
 import { randomUUID } from "node:crypto";
 
 import {
-  createConfirmedMember,
   createLocalServiceRoleClient,
   type ConfirmedMember,
 } from "../../fixtures/local-auth";
@@ -116,49 +115,91 @@ export async function ensureLocalTrialProgram(): Promise<void> {
   }
 }
 
+/** 로컬 E2E 전용 운영자 — 매 스펙마다 신규 Auth 사용자를 만들지 않는다. */
+const E2E_OPERATOR_EMAIL = "ws05.operator@putduk.test";
+const E2E_OPERATOR_PASSWORD = "Putduk-e2e-Operator-Aa1!";
+
 /**
  * Bootstraps or reuses a local operator for KYC review and money RPCs.
  * Does not create admin browser sessions (Agent A ownership).
  */
 export async function ensureOperatorActor(): Promise<OperatorActor> {
   const client = createLocalServiceRoleClient();
-  const { count } = await client
-    .from("user_roles")
-    .select("id", { count: "exact", head: true });
 
-  if ((count ?? 0) === 0) {
-    const member = await createConfirmedMember("ws05-operator");
-    const { error } = await client.rpc("bootstrap_first_super_admin", {
-      p_user_id: member.userId,
-      p_reason: "WS-05 local authenticated e2e operator bootstrap",
-      p_confirmation: "BOOTSTRAP_FIRST_SUPER_ADMIN",
-      p_request_id: randomUUID(),
-    });
-    if (error) {
-      throw new Error(error.message);
-    }
-    return { ...member, role: "SUPER_ADMIN" };
-  }
-
-  const granter = await client
+  const { data: existingRole } = await client
     .from("user_roles")
-    .select("user_id")
+    .select("user_id, role")
     .in("role", ["SUPER_ADMIN", "ADMIN"])
     .is("revoked_at", null)
     .order("granted_at", { ascending: true })
     .limit(1)
     .maybeSingle();
 
-  const member = await createConfirmedMember("ws05-operator");
-  const { error: grantError } = await client.from("user_roles").insert({
-    user_id: member.userId,
-    role: "ADMIN",
-    granted_by: granter.data?.user_id ?? member.userId,
-  });
-  if (grantError) {
-    throw new Error(grantError.message);
+  if (existingRole?.user_id) {
+    const { error: passwordError } = await client.auth.admin.updateUserById(
+      existingRole.user_id,
+      { password: E2E_OPERATOR_PASSWORD, email_confirm: true },
+    );
+    if (passwordError) {
+      throw new Error(passwordError.message);
+    }
+    const { data: userData, error: userError } =
+      await client.auth.admin.getUserById(existingRole.user_id);
+    if (userError || !userData.user) {
+      throw new Error(userError?.message ?? "OPERATOR_USER_MISSING");
+    }
+    return {
+      userId: existingRole.user_id,
+      email: userData.user.email ?? E2E_OPERATOR_EMAIL,
+      password: E2E_OPERATOR_PASSWORD,
+      role: existingRole.role as "SUPER_ADMIN" | "ADMIN",
+    };
   }
-  return { ...member, role: "ADMIN" };
+
+  const { data: created, error: createError } =
+    await client.auth.admin.createUser({
+      email: E2E_OPERATOR_EMAIL,
+      password: E2E_OPERATOR_PASSWORD,
+      email_confirm: true,
+      user_metadata: {
+        signup_source: "PUBLIC_V1",
+        login_id: "ws05operator",
+        legal_name: "퍼뜩운영",
+        date_of_birth: "1990-01-15",
+        phone_e164: "+821099990001",
+        recovery_email: E2E_OPERATOR_EMAIL,
+        service_terms_version: "TERMS-KO-2026-09-27",
+        privacy_version: "PRIVACY-KO-2026-09-27",
+        marketing_version: "MARKETING-KO-2026-09-27",
+        service_terms_granted: true,
+        privacy_granted: true,
+        marketing_granted: false,
+      },
+    });
+  if (createError || !created.user) {
+    throw new Error(createError?.message ?? "OPERATOR_CREATE_FAILED");
+  }
+  const { error: bootstrapError } = await client.rpc("bootstrap_user", {
+    p_user_id: created.user.id,
+  });
+  if (bootstrapError) {
+    throw new Error(`BOOTSTRAP_USER_FAILED:${bootstrapError.message}`);
+  }
+  const { error } = await client.rpc("bootstrap_first_super_admin", {
+    p_user_id: created.user.id,
+    p_reason: "WS-05 local authenticated e2e operator bootstrap",
+    p_confirmation: "BOOTSTRAP_FIRST_SUPER_ADMIN",
+    p_request_id: randomUUID(),
+  });
+  if (error) {
+    throw new Error(error.message);
+  }
+  return {
+    userId: created.user.id,
+    email: E2E_OPERATOR_EMAIL,
+    password: E2E_OPERATOR_PASSWORD,
+    role: "SUPER_ADMIN",
+  };
 }
 
 /**
@@ -357,24 +398,31 @@ export async function approveKycEligibility(
   operatorId: string,
 ): Promise<void> {
   const client = createLocalServiceRoleClient();
-  const { data: caseId, error: openError } = await client.rpc("open_kyc_case", {
-    p_user_id: userId,
-    p_request_id: randomUUID(),
+  const open = await withTimeoutRetry("KYC_OPEN", async () => {
+    const { data: caseId, error } = await client.rpc("open_kyc_case", {
+      p_user_id: userId,
+      p_request_id: randomUUID(),
+    });
+    if (error) return { error, caseId: null as string | null };
+    if (!caseId) {
+      return {
+        error: { message: "KYC_CASE_MISSING" },
+        caseId: null as string | null,
+      };
+    }
+    return { error: null, caseId: caseId as string };
   });
-  if (openError) {
-    throw new Error(openError.message);
-  }
 
-  const { error: reviewError } = await client.rpc("review_kyc_case", {
-    p_case_id: caseId,
-    p_actor: operatorId,
-    p_to_status: "APPROVED",
-    p_reason: "WS-05 e2e eligibility approval",
-    p_request_id: randomUUID(),
+  await withTimeoutRetry("KYC_REVIEW", async () => {
+    const { error } = await client.rpc("review_kyc_case", {
+      p_case_id: open.caseId,
+      p_actor: operatorId,
+      p_to_status: "APPROVED",
+      p_reason: "WS-05 e2e eligibility approval",
+      p_request_id: randomUUID(),
+    });
+    return { error };
   });
-  if (reviewError) {
-    throw new Error(reviewError.message);
-  }
 }
 
 export async function assertNoDepositRows(userId: string): Promise<void> {

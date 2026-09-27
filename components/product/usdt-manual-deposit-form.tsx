@@ -126,8 +126,8 @@ export function UsdtManualDepositForm({
         <div className={styles.formNotice}>
           <PutdukIcon name="shield" size={19} />
           <p>
-            전체 주소는 송금 전에만 확인하세요. USDT 잔액은 없으며, 확인된
-            금액만 KRW로 반영됩니다.
+            전체 주소는 송금 전에만 확인하세요. USDT를 따로 보관하지 않으며,
+            확인된 금액만 KRW로 반영됩니다.
           </p>
         </div>
       ) : (

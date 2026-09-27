@@ -30,7 +30,7 @@ test.describe("admin app-owned session and real TOTP", () => {
     });
 
     await page.getByRole("button", { name: "이 기기 로그아웃" }).click();
-    await page.waitForURL(/\/login/);
+    await page.waitForURL(/\/login/, { timeout: 60_000 });
 
     const member = await createConfirmedMember("ws05-admin-member");
     const memberContext = await browser.newContext();
@@ -39,16 +39,17 @@ test.describe("admin app-owned session and real TOTP", () => {
     await memberPage.locator('input[name="email"]').fill(member.email);
     await memberPage.locator('input[name="password"]').fill(member.password);
     await memberPage.getByRole("button", { name: "보안 로그인" }).click();
-    await expect(memberPage.getByRole("alert")).toContainText(
-      "입력한 정보로 운영자 로그인을 완료할 수 없습니다.",
-      { timeout: 30_000 },
-    );
+    // Next route announcer도 role=alert라서 로그인 오류 문구로 한정한다.
+    await expect(
+      memberPage.getByRole("alert").filter({
+        hasText: "입력한 정보로 운영자 로그인을 완료할 수 없습니다.",
+      }),
+    ).toBeVisible({ timeout: 30_000 });
     await memberContext.close();
   });
 
   test("issues and single-consumes a step-up grant against the session registry", async ({
     page,
-    request,
   }) => {
     const operator = await createConfirmedMember("ws05-admin-step");
     await grantAdminRole(operator.userId);
@@ -66,22 +67,28 @@ test.describe("admin app-owned session and real TOTP", () => {
       timeout: 60_000,
     });
 
-    const cookies = await page.context().cookies(ADMIN_ORIGIN);
-    const cookieHeader = cookies.map((c) => `${c.name}=${c.value}`).join("; ");
-    const issue = await request.post(
-      `${ADMIN_ORIGIN}/api/v1/admin/session/step-up`,
-      {
-        headers: {
-          Origin: ADMIN_ORIGIN,
-          "Content-Type": "application/json",
-          Cookie: cookieHeader,
-        },
-        data: { commandFamily: "DEPOSIT_CONFIRM" },
-      },
-    );
-    expect(issue.status()).toBe(200);
-    const issued = (await issue.json()) as { data?: { token?: string } };
-    const token = issued.data?.token;
+    // 브라우저 fetch는 운영 UI와 동일하게 쿠키·Origin을 실어 보낸다.
+    const issue = await page.evaluate(async () => {
+      const response = await fetch("/api/v1/admin/session/step-up", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ commandFamily: "DEPOSIT_CONFIRM" }),
+      });
+      const payload = (await response.json().catch(() => null)) as {
+        data?: { token?: string };
+        error?: { code?: string };
+      } | null;
+      return {
+        status: response.status,
+        token: payload?.data?.token ?? null,
+        errorCode: payload?.error?.code ?? null,
+      };
+    });
+    expect(
+      issue,
+      `STEP_UP_ISSUE_FAILED:status=${issue.status};code=${issue.errorCode}`,
+    ).toMatchObject({ status: 200 });
+    const token = issue.token;
     expect(typeof token === "string" && token.length >= 16).toBe(true);
 
     const service = createClient(

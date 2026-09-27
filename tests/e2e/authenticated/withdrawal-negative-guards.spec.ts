@@ -40,9 +40,15 @@ test.describe("welcome withdrawal negative guards", () => {
     const button = page.getByRole("button", {
       name: /입금 없이 첫 출금 요청/,
     });
-    await Promise.all([button.click(), button.click()]);
+    await button.waitFor({ state: "visible" });
+    // 첫 클릭 직후 버튼이 disabled 되어도 이중 제출을 보내 서버 멱등을 검증한다.
+    await button.evaluate((el: HTMLButtonElement) => {
+      el.click();
+      el.click();
+    });
+    // 이중 클릭 후 refresh되면 성공 문구 대신 '이미 접수된…'이 올 수 있어 완료 버튼으로 확인한다.
     await page
-      .getByText(/첫 출금 요청을 접수했어요|첫 출금 접수 완료/)
+      .getByRole("button", { name: "첫 출금 접수 완료" })
       .waitFor({ timeout: 60_000 });
 
     const client = createLocalServiceRoleClient();
@@ -178,7 +184,10 @@ test.describe("welcome withdrawal negative guards", () => {
     });
 
     await page.goto("/wallet/withdraw");
-    await expect(page.getByText(/보호 대기 시간이|보호 시간이/)).toBeVisible();
+    // 보호 안내가 요약·상세 두 곳에 있을 수 있다.
+    await expect(
+      page.getByText(/보호 대기 시간이|보호 시간이/).first(),
+    ).toBeVisible();
 
     const conversion = await readConversionAmount(member.userId);
     const client = createLocalServiceRoleClient();

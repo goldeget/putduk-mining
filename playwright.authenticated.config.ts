@@ -37,6 +37,33 @@ const sharedEnv = {
   FORCE_COLOR: process.env.FORCE_COLOR ?? "0",
 };
 
+/** 회원 머니 포커스 스펙은 admin 앱을 기동하지 않아 로컬 콜드스타트 경쟁을 줄인다. */
+function needsAdminWebServer() {
+  if (process.env.E2E_WITH_ADMIN_SERVER === "1") return true;
+  if (process.env.E2E_SKIP_ADMIN_SERVER === "1") return false;
+  const args = process.argv.join(" ");
+  const memberMoneyOnly =
+    /first-krw-withdrawal|first-usdt-withdrawal|withdrawal-negative-guards|public-admin-boundary/.test(
+      args,
+    );
+  const adminSpecs =
+    /admin-session-totp|success-visual-evidence/.test(args) ||
+    args.includes("test:e2e:auth:admin") ||
+    args.includes("test:e2e:auth:visual");
+  if (memberMoneyOnly && !adminSpecs) return false;
+  return true;
+}
+
+const adminWebServerNeeded = needsAdminWebServer();
+/** next build 후 start면 컴파일 I/O가 Auth password grant와 경합하지 않는다. */
+const useNextStart = process.env.E2E_NEXT_START === "1";
+const memberWebCommand = useNextStart
+  ? "node scripts/e2e-web-server.mjs pnpm exec next start --hostname 127.0.0.1 --port 3000"
+  : "node scripts/e2e-web-server.mjs pnpm exec next dev --hostname 127.0.0.1 --port 3000";
+const adminWebCommand = useNextStart
+  ? "node scripts/e2e-web-server.mjs pnpm --dir apps/admin exec next start --hostname 127.0.0.1 --port 3100"
+  : "node scripts/e2e-web-server.mjs pnpm --dir apps/admin exec next dev --hostname 127.0.0.1 --port 3100";
+
 if (
   supabaseUrl.includes("osrmyjgmpdspdcwqjwuv") ||
   !supabaseUrl.startsWith("http://")
@@ -81,8 +108,7 @@ export default defineConfig({
   webServer: [
     {
       // 프로세스 그룹 래퍼로 next-server 고아 프로세스가 남아 CI가 멈추는 것을 방지
-      command:
-        "node scripts/e2e-web-server.mjs pnpm exec next dev --hostname 127.0.0.1 --port 3000",
+      command: memberWebCommand,
       url: "http://127.0.0.1:3000",
       reuseExistingServer: !isCI,
       timeout: 180_000,
@@ -92,18 +118,21 @@ export default defineConfig({
         NEXT_PUBLIC_APP_URL: "http://127.0.0.1:3000",
       },
     },
-    {
-      command:
-        "node scripts/e2e-web-server.mjs pnpm --dir apps/admin exec next dev --hostname 127.0.0.1 --port 3100",
-      url: "http://127.0.0.1:3100/login",
-      reuseExistingServer: !isCI,
-      timeout: 180_000,
-      env: {
-        ...process.env,
-        ...sharedEnv,
-        ADMIN_APP_URL: "http://127.0.0.1:3100",
-        NEXT_PUBLIC_APP_URL: "http://127.0.0.1:3100",
-      },
-    },
+    ...(adminWebServerNeeded
+      ? [
+          {
+            command: adminWebCommand,
+            url: "http://127.0.0.1:3100/login",
+            reuseExistingServer: !isCI,
+            timeout: 180_000,
+            env: {
+              ...process.env,
+              ...sharedEnv,
+              ADMIN_APP_URL: "http://127.0.0.1:3100",
+              NEXT_PUBLIC_APP_URL: "http://127.0.0.1:3100",
+            },
+          },
+        ]
+      : []),
   ],
 });

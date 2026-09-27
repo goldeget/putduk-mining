@@ -1017,8 +1017,10 @@ input:focus-visible {
     margin-top: 16px;
     overflow-x: auto;
   }
+  /* 좁은 화면에서도 세션 종료를 숨기지 않는다. */
   .operator-card {
-    display: none;
+    grid-column: 1 / -1;
+    margin-top: 12px;
   }
   .control-topbar {
     display: none;
