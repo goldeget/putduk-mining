@@ -6,6 +6,7 @@ import { PwaRegistrar } from "@/components/system/pwa-registrar";
 
 import "./globals.css";
 import "./productization.css";
+import "./korean-typography.css";
 
 const siteUrl = "https://mining.putduk.com";
 

@@ -1,0 +1,96 @@
+name: Typography fix evidence
+
+on:
+  push:
+    branches:
+      - ws05/typography-fix-evidence
+
+permissions:
+  contents: read
+
+concurrency:
+  group: typography-fix-evidence-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 12.6.0
+          run_install: false
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Format evidence source
+        run: >-
+          pnpm exec prettier --write
+          app/layout.tsx
+          app/korean-typography.css
+          playwright.typography.config.ts
+          tests/typography/helpers.ts
+          tests/typography/korean-line-break.spec.ts
+
+      - name: Verify evidence formatting
+        run: >-
+          pnpm exec prettier --check
+          app/layout.tsx
+          app/korean-typography.css
+          playwright.typography.config.ts
+          tests/typography/helpers.ts
+          tests/typography/korean-line-break.spec.ts
+
+      - name: Typecheck complete source
+        run: pnpm typecheck
+
+      - name: Preserve formatted source
+        uses: actions/upload-artifact@v4
+        with:
+          name: formatted-typography-fix-source
+          if-no-files-found: error
+          retention-days: 3
+          path: |
+            app/layout.tsx
+            app/korean-typography.css
+            playwright.typography.config.ts
+            tests/typography/helpers.ts
+            tests/typography/korean-line-break.spec.ts
+
+      - name: Install Chromium
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run isolated typography audit
+        shell: bash
+        run: |
+          set +e
+          pnpm exec playwright test --config playwright.typography.config.ts 2>&1 | tee typography-fix-audit.log
+          status=${PIPESTATUS[0]}
+          set -e
+          printf '%s\n' "$status" > typography-fix-audit-exit-code.txt
+          exit 0
+
+      - name: Preserve typography fix evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: typography-fix-audit-evidence
+          if-no-files-found: warn
+          retention-days: 3
+          path: |
+            typography-fix-audit.log
+            typography-fix-audit-exit-code.txt
+            test-results/typography
