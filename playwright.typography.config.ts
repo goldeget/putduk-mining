@@ -12,26 +12,23 @@ const localSupabaseEnv = {
 
 export default defineConfig({
   testDir: "./tests/typography",
-  fullyParallel: false,
+  fullyParallel: true,
   forbidOnly: isCI,
-  globalTimeout: isCI ? 20 * 60_000 : 0,
+  globalTimeout: isCI ? 15 * 60_000 : 0,
   retries: 0,
   timeout: 120_000,
-  workers: 1,
+  workers: 2,
   reporter: isCI
     ? [
         ["line"],
         ["github"],
-        [
-          "json",
-          { outputFile: "test-results/typography/results.json" },
-        ],
+        ["json", { outputFile: "test-results/typography/results.json" }],
       ]
     : "list",
   use: {
     baseURL: "http://127.0.0.1:3000",
     screenshot: "off",
-    trace: "retain-on-failure",
+    trace: "off",
     video: "off",
   },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],

@@ -362,15 +362,26 @@ describe("worker process execution against local Supabase", () => {
   it("replays a dead-lettered event through replay_outbox_event", async () => {
     const db = client();
     const workerId = `ws05-replay-${randomUUID().slice(0, 8)}`;
-    const operator = await db.auth.admin.createUser({
-      email: `worker.replay.${randomUUID().slice(0, 8)}@putduk.test`,
-      password: `Putduk-test-${randomUUID()}-Aa1`,
-      email_confirm: true,
-    });
-    if (operator.error || !operator.data.user) {
-      throw new Error(operator.error?.message ?? "OPERATOR_CREATE_FAILED");
-    }
-    const actorId = operator.data.user.id;
+    const actorId = randomUUID();
+    const email = `worker.replay.${actorId.slice(0, 8)}@putduk.test`;
+    sql(`
+insert into auth.users (
+  id, instance_id, aud, role, email, encrypted_password, email_confirmed_at,
+  raw_app_meta_data, raw_user_meta_data, created_at, updated_at
+) values (
+  '${actorId}'::uuid,
+  '00000000-0000-0000-0000-000000000000',
+  'authenticated',
+  'authenticated',
+  '${email}',
+  '',
+  statement_timestamp(),
+  '{}'::jsonb,
+  '{}'::jsonb,
+  statement_timestamp(),
+  statement_timestamp()
+);
+`);
     const { error: roleError } = await db.from("user_roles").insert({
       user_id: actorId,
       role: "ADMIN",
