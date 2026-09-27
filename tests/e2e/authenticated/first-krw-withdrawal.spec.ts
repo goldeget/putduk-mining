@@ -84,7 +84,9 @@ test.describe("first KRW_BANK welcome withdrawal", () => {
 
     await page.goto("/wallet");
     await expect(page.getByText("PUTDUK START 전환").first()).toBeVisible();
-    await expect(page.getByText(/환영 보상 첫 출금|출금/).first()).toBeVisible();
+    await expect(
+      page.getByText(/환영 보상 첫 출금|출금/).first(),
+    ).toBeVisible();
     await expect(page.getByText(/채굴/).first()).toBeVisible();
     await expect(page.getByText(/가상 채굴/)).toHaveCount(0);
 

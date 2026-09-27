@@ -81,9 +81,7 @@ export default async function StartPage() {
         >
           <div className="product-mining-stage__meta">
             <span>TRIAL / KOREA</span>
-            <strong>
-              {trialStatusLabel[trialStatus] ?? "상태 확인 중"}
-            </strong>
+            <strong>{trialStatusLabel[trialStatus] ?? "상태 확인 중"}</strong>
           </div>
           <div className="product-mining-stage__visual">
             <MiningCore />

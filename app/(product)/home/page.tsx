@@ -68,7 +68,7 @@ export default async function ProductHomePage() {
   const worldStateUnavailable = Boolean(trialError && miningError);
   const trialLabel = trialError
     ? "확인 필요"
-    : trialStatusLabel[trial?.status ?? "READY"] ?? "준비됨";
+    : (trialStatusLabel[trial?.status ?? "READY"] ?? "준비됨");
 
   return (
     <div className="product-home">
@@ -103,7 +103,7 @@ export default async function ProductHomePage() {
           </div>
           <div className="living-world__status">
             <span
-              className={`live-status${worldStateUnavailable ? " is-unavailable" : ""}`}
+              className={`live-status${worldStateUnavailable ? "is-unavailable" : ""}`}
             >
               <i />
               {worldStateUnavailable

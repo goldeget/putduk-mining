@@ -287,7 +287,10 @@ export default async function WithdrawalPage() {
           <PutdukIcon name="shield" size={24} />
           <span>
             <h2>입금 없이도 가능한 첫 출금</h2>
-            <p>환영 보상은 최대 5,000원까지 출금할 수 있어요. 출금 전 본인 확인이 필요해요.</p>
+            <p>
+              환영 보상은 최대 5,000원까지 출금할 수 있어요. 출금 전 본인 확인이
+              필요해요.
+            </p>
           </span>
         </header>
 

@@ -63,8 +63,7 @@ export async function finalizeWithdrawalLedger(input: {
   const { data, error } = await client.rpc("finalize_withdrawal_ledger", {
     p_withdrawal_id: input.withdrawalId,
     p_actor: input.actorId,
-    p_idempotency_key:
-      input.idempotencyKey ?? `ws05-finalize-${randomUUID()}`,
+    p_idempotency_key: input.idempotencyKey ?? `ws05-finalize-${randomUUID()}`,
   });
   if (error) {
     throw new Error(error.message);

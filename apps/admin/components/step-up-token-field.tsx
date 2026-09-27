@@ -36,7 +36,9 @@ export function StepUpTokenField({
       setMessage("인증 수단을 불러오지 못했습니다.");
       return;
     }
-    const verified = factors.totp.find((factor) => factor.status === "verified");
+    const verified = factors.totp.find(
+      (factor) => factor.status === "verified",
+    );
     if (!verified) {
       setBusy(false);
       setMessage("등록된 인증 앱이 없습니다. 먼저 MFA를 완료해 주세요.");

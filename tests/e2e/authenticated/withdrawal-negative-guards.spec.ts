@@ -136,11 +136,13 @@ test.describe("welcome withdrawal negative guards", () => {
       }),
     ]);
     const statuses = [a.status(), b.status()].sort();
-    expect(statuses.filter((status) => status === 201 || status === 200).length).toBeGreaterThanOrEqual(
-      1,
-    );
     expect(
-      statuses.some((status) => status === 409 || status === 201 || status === 200),
+      statuses.filter((status) => status === 201 || status === 200).length,
+    ).toBeGreaterThanOrEqual(1);
+    expect(
+      statuses.some(
+        (status) => status === 409 || status === 201 || status === 200,
+      ),
     ).toBe(true);
 
     const { count } = await client
@@ -176,9 +178,7 @@ test.describe("welcome withdrawal negative guards", () => {
     });
 
     await page.goto("/wallet/withdraw");
-    await expect(
-      page.getByText(/보호 대기 시간이|보호 시간이/),
-    ).toBeVisible();
+    await expect(page.getByText(/보호 대기 시간이|보호 시간이/)).toBeVisible();
 
     const conversion = await readConversionAmount(member.userId);
     const client = createLocalServiceRoleClient();

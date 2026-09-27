@@ -22,11 +22,7 @@ export default async function NotificationCenterPage() {
     <>
       <PageHeading
         eyebrow="NOTIFICATION CENTER"
-        title={
-          unread
-            ? `새 소식 ${unread}개`
-            : "중요한 변화를 놓치지 않도록."
-        }
+        title={unread ? `새 소식 ${unread}개` : "중요한 변화를 놓치지 않도록."}
         lead="채굴·지갑·이벤트 안내를 한곳에서 확인하세요."
         action={
           <Link className="button button--secondary" href="/menu/notifications">
@@ -67,7 +63,9 @@ export default async function NotificationCenterPage() {
         <Surface as="aside" className="notification-center__push" tone="raised">
           <p className="eyebrow">PWA PUSH</p>
           <h2>필요한 소식만 기기로 받기</h2>
-          <p>권한은 선택한 뒤에만 요청해요. 마케팅 알림은 기본으로 꺼져 있어요.</p>
+          <p>
+            권한은 선택한 뒤에만 요청해요. 마케팅 알림은 기본으로 꺼져 있어요.
+          </p>
           <PushControl />
         </Surface>
       </div>

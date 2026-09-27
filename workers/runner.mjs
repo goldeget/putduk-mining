@@ -326,7 +326,10 @@ export async function runDurableLoop({
   }
 }
 
-export function isRunnerEntrypoint(metaUrl = import.meta.url, argv1 = process.argv[1]) {
+export function isRunnerEntrypoint(
+  metaUrl = import.meta.url,
+  argv1 = process.argv[1],
+) {
   if (!argv1) {
     return false;
   }

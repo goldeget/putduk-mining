@@ -14,8 +14,7 @@ import { assertAndTouchAdminAppSession } from "@/lib/auth/session-registry";
 import { consumeAdminStepUpGrant } from "@/lib/auth/step-up";
 
 export type CommandActionResult =
-  | { ok: true; message: string }
-  | { ok: false; code: string; message: string };
+  { ok: true; message: string } | { ok: false; code: string; message: string };
 
 const DENIAL_COPY: Record<string, string> = {
   UNAUTHENTICATED: "세션이 만료되었습니다. 다시 로그인해 주세요.",

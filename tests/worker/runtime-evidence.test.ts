@@ -71,7 +71,22 @@ function requireLocalWorkerEnv() {
 function sql(statement: string): string {
   return execFileSync(
     "docker",
-    ["exec", "-i", DB_CONTAINER, "psql", "-U", "postgres", "-d", "postgres", "-v", "ON_ERROR_STOP=1", "-t", "-A", "-c", statement],
+    [
+      "exec",
+      "-i",
+      DB_CONTAINER,
+      "psql",
+      "-U",
+      "postgres",
+      "-d",
+      "postgres",
+      "-v",
+      "ON_ERROR_STOP=1",
+      "-t",
+      "-A",
+      "-c",
+      statement,
+    ],
     { encoding: "utf8" },
   ).trim();
 }

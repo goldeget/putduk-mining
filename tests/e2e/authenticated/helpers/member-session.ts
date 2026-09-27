@@ -11,10 +11,9 @@ export async function loginAsMember(
   await page.getByLabel("아이디 또는 복구 이메일").fill(member.email);
   await page.getByLabel("비밀번호").fill(member.password);
   await page.getByRole("button", { name: /^로그인$/ }).click();
-  await page.waitForURL(
-    (url) => !url.pathname.startsWith("/login"),
-    { timeout: 60_000 },
-  );
+  await page.waitForURL((url) => !url.pathname.startsWith("/login"), {
+    timeout: 60_000,
+  });
 }
 
 export async function startTrialFromUi(page: Page) {

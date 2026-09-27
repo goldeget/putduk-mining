@@ -103,8 +103,7 @@ export async function requireAdminIdentity(
 async function bindAdminSession(
   identity: AdminIdentity,
 ): Promise<
-  | { ok: true; principal: AdminPrincipal }
-  | { ok: false; code: string }
+  { ok: true; principal: AdminPrincipal } | { ok: false; code: string }
 > {
   if (!identity.role || identity.aal !== "aal2") {
     return { ok: false, code: "MFA_REQUIRED" };
