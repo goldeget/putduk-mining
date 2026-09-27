@@ -603,6 +603,7 @@
 .menuPage,
 .aiPage {
   display: grid;
+  min-width: 0;
   gap: 1rem;
 }
 
@@ -973,14 +974,17 @@
 }
 
 .menuGrid {
+  min-width: 0;
   margin-top: 0.25rem;
 }
 
 .menuCard {
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   gap: 0.85rem;
   align-items: center;
+  min-width: 0;
+  max-width: 100%;
   min-height: 6rem;
   padding: 1rem;
   color: inherit;
@@ -1009,6 +1013,7 @@
 
 .menuCard span:nth-child(2) {
   display: grid;
+  min-width: 0;
   gap: 0.3rem;
 }
 
@@ -1016,6 +1021,8 @@
   color: var(--text-tertiary);
   font-size: 0.72rem;
   line-height: 1.5;
+  line-break: strict;
+  word-break: keep-all;
 }
 
 .menuCard > svg:last-child {

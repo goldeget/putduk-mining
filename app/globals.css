@@ -1320,6 +1320,8 @@ select {
   letter-spacing: -0.062em;
   line-height: 1.02;
   text-wrap: balance;
+  line-break: strict;
+  word-break: keep-all;
 }
 
 .auth-page__brand > div > p:last-child {
@@ -1343,6 +1345,8 @@ select {
 
 .auth-trust-list li {
   display: inline-flex;
+  min-width: 0;
+  max-width: 100%;
   min-height: 38px;
   align-items: center;
   gap: 0.55rem;
@@ -1351,6 +1355,8 @@ select {
   border-radius: var(--radius-full);
   color: var(--text-secondary);
   font-size: 0.76rem;
+  line-break: strict;
+  word-break: keep-all;
 }
 
 .auth-trust-list svg {
@@ -1369,6 +1375,8 @@ select {
   font-size: clamp(1.8rem, 4vw, 2.5rem);
   font-weight: 620;
   letter-spacing: -0.045em;
+  line-break: strict;
+  word-break: keep-all;
 }
 
 .auth-page__panel-header > p:last-child,
@@ -1376,6 +1384,8 @@ select {
   color: var(--text-tertiary);
   font-size: 0.84rem;
   line-height: 1.7;
+  line-break: strict;
+  word-break: keep-all;
 }
 
 .auth-form {
@@ -3076,7 +3086,7 @@ select {
 
 .trust-document__body > div > section {
   display: grid;
-  grid-template-columns: 2.5rem 1fr;
+  grid-template-columns: 2.5rem minmax(0, 1fr);
   gap: clamp(1rem, 3vw, 2rem);
   padding: 0 0 3rem;
 }
@@ -3124,11 +3134,14 @@ select {
 
 .trust-document__body section li {
   position: relative;
+  min-width: 0;
   padding: 0.9rem 0 0.9rem 1.2rem;
   border-bottom: 1px solid var(--border-subtle);
   color: var(--text-secondary);
   font-size: 0.86rem;
   line-height: 1.6;
+  line-break: strict;
+  word-break: keep-all;
 }
 
 .trust-document__body section li::before {
@@ -3397,7 +3410,7 @@ select {
 
   .product-sidebar__principle {
     display: grid;
-    grid-template-columns: auto 1fr;
+    grid-template-columns: auto minmax(0, 1fr);
     gap: 0.65rem;
     align-items: start;
     margin-top: auto;
@@ -3412,9 +3425,12 @@ select {
 
   .product-sidebar__principle span {
     display: grid;
+    min-width: 0;
     gap: 0.3rem;
     font-size: 0.67rem;
     line-height: 1.5;
+    line-break: strict;
+    word-break: keep-all;
   }
 
   .product-sidebar__principle small {
@@ -3481,10 +3497,25 @@ select {
 
   .site-header {
     min-height: 68px;
+    flex-wrap: wrap;
+    row-gap: 0.35rem;
   }
 
   .site-header__tools {
+    min-width: 0;
+    max-width: 100%;
+    flex-wrap: wrap;
+    justify-content: flex-end;
     gap: 0.5rem;
+  }
+
+  .theme-control {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .theme-control select {
+    max-width: 100%;
   }
 
   .theme-control > span,
@@ -3518,8 +3549,8 @@ select {
   }
 
   .hero__mascot {
-    width: min(84%, 430px);
-    right: -13%;
+    width: min(78%, 320px);
+    right: 0;
     bottom: -7%;
   }
 

@@ -948,6 +948,13 @@
   }
 }
 
+.signup-form small,
+.signup-form__availability {
+  min-width: 0;
+  line-break: strict;
+  word-break: keep-all;
+}
+
 .signup-form {
   display: grid;
   gap: 1.5rem;

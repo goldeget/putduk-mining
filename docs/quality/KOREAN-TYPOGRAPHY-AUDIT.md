@@ -127,6 +127,8 @@ The earlier failure was the harness, not a broken product login. Two cold `next 
 
 Local result after that harness and the confirmed wrapping patch: **128 passed** (2 session setups + 70 member cases + 56 admin cases), 9.4m. The 126 rendered cases each attached a full-page screenshot. Exported copies are under `test-results/typography-protected/screenshots/`. Console hydration annotations: 0. The protected CI job expects this matrix. A green run is not `PRODUCT COMPLETE`, and the launch verdict stays **NOT LAUNCH READY**.
 
+The first CI gate did not pass. Public failures were verification list items at 390, plus 200% overflow on the landing header and mascot and 200% splits on login and signup. Protected failures were the desktop sidebar phrase `반영됩니다` at 1440 and a 5px menu overflow at 390 with 200% text. The follow-up patch keeps `word-break: keep-all` on those elements only.
+
 Confirmed wrapping that was patched:
 
 - member home heading `있어요` on `.product-home__welcome h1`
