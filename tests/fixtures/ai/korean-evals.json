@@ -3,7 +3,22 @@
     "category": "formal_korean",
     "question": "PUTDUK MINING이 어떤 서비스인지 설명해 주세요.",
     "expectedKind": "static",
-    "expectedRouteKey": "product_identity"
+    "expectedRouteKey": "product_identity",
+    "expectedUserAnswer": "퍼뜩 채굴은 KOREA에서 시작하는 채굴 서비스입니다. 앱을 닫아도 채굴은 계속되고, 다시 접속하면 결과를 확인할 수 있어요."
+  },
+  {
+    "category": "mining_language",
+    "question": "채굴은 어떻게 되나요?",
+    "expectedKind": "low_cost",
+    "expectedClassification": "PUTDUK_KNOWLEDGE",
+    "expectedUserAnswer": "앱을 닫아도 채굴은 계속돼요. 다시 접속하면 결과를 확인할 수 있어요."
+  },
+  {
+    "category": "mining_language",
+    "question": "지금 내 채굴 돌아가고 있어?",
+    "expectedKind": "tool",
+    "expectedTool": "mining.status",
+    "expectedUserAnswer": "지금 채굴이 이어지고 있어요. 채굴 화면에서 현재 상태를 확인할 수 있어요."
   },
   {
     "category": "casual_korean",
@@ -39,13 +54,8 @@
     "category": "money",
     "question": "오늘 채굴 보상 얼마야?",
     "expectedKind": "tool",
-    "expectedTool": "mining.today_reward"
-  },
-  {
-    "category": "mining",
-    "question": "지금 내 채굴 돌아가고 있어?",
-    "expectedKind": "tool",
-    "expectedTool": "mining.status"
+    "expectedTool": "mining.today_reward",
+    "expectedUserAnswer": "오늘 확정된 채굴 보상을 확인해 드릴게요."
   },
   {
     "category": "deposit",
