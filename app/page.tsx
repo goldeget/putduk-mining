@@ -43,7 +43,7 @@ const structuredData = {
   operatingSystem: "Web, PWA",
   url: "https://mining.putduk.com",
   description:
-    "KOREA에서 시작해 서버 기준으로 채굴 상태와 결과를 확인하는 PUTDUK의 가상 채굴 플랫폼입니다.",
+    "KOREA에서 시작해 채굴 상태와 결과를 확인하는 PUTDUK의 채굴 서비스입니다.",
 };
 
 export default function HomePage() {
@@ -83,14 +83,14 @@ export default function HomePage() {
 
       <section className="hero shell landing-hero" id="top">
         <div className="hero__copy">
-          <p className="eyebrow">VIRTUAL MINING, MADE CLEAR</p>
+          <p className="eyebrow">MINING, MADE CLEAR</p>
           <h1>
             작은 시작이,
             <br />
             <span>나만의 채굴 세계</span>를 엽니다.
           </h1>
           <p className="hero__lead">
-            KOREA에서 시작하는 가상 채굴입니다. 앱을 닫아도 채굴은 계속돼요.
+            KOREA에서 채굴을 시작해요. 앱을 닫아도 채굴은 계속돼요.
           </p>
           <div className="hero__actions">
             <Link className="button button--primary" href="/signup">
@@ -114,8 +114,8 @@ export default function HomePage() {
               <dd>KOREA</dd>
             </div>
             <div>
-              <dt>채굴 기준</dt>
-              <dd>SERVER</dd>
+              <dt>채굴 결과</dt>
+              <dd>확인 가능</dd>
             </div>
             <div>
               <dt>기본 지갑</dt>
@@ -147,7 +147,7 @@ export default function HomePage() {
           <div className="hero__signal">
             <span>YOUR MINING WORLD</span>
             <strong>지금, 퍼뜩.</strong>
-            <p>앱을 닫아도 서버에서 이어지는 채굴 여정</p>
+            <p>앱을 닫아도 채굴은 계속돼요</p>
           </div>
           <picture className="hero__mascot">
             <source
@@ -245,8 +245,8 @@ export default function HomePage() {
           <p className="eyebrow">TRUST &amp; VERIFICATION</p>
           <h2 id="trust-title">보이는 숫자보다, 확인 가능한 과정.</h2>
           <p>
-            실제 잔액, 채굴 상태와 처리 결과는 서버에서 확인된 정보만
-            표시합니다. 화면 효과가 금액이나 완료를 대신하지 않습니다.
+            잔액, 채굴 상태와 처리 결과는 확인된 정보만 표시합니다. 화면 효과가
+            금액이나 완료를 대신하지 않습니다.
           </p>
         </div>
         <nav aria-label="신뢰 정보">

@@ -20,6 +20,17 @@ import {
   assertAiToolBoundary,
 } from "@/lib/ai/tools";
 import { TRUST_CONTENT_VERSION } from "@/lib/trust/public-content";
+import { assertPlainMiningUserAnswer } from "@/tests/helpers/mining-language-gate";
+
+type KoreanEvalCase = {
+  category: string;
+  question: string;
+  expectedKind: string;
+  expectedRouteKey?: string;
+  expectedClassification?: string;
+  expectedTool?: string;
+  expectedUserAnswer?: string;
+};
 
 describe("PUTDUK AI request boundary", () => {
   it("accepts a bounded question and trims outer whitespace", () => {
@@ -318,7 +329,7 @@ describe("PUTDUK AI request boundary", () => {
 });
 
 describe("PUTDUK AI Korean policy evaluations", () => {
-  for (const evaluation of koreanEvals) {
+  for (const evaluation of koreanEvals as KoreanEvalCase[]) {
     it(`${evaluation.category}: ${evaluation.question}`, () => {
       const route = routeAiQuestion(evaluation.question);
 
@@ -335,8 +346,39 @@ describe("PUTDUK AI Korean policy evaluations", () => {
           evaluation.expectedTool,
         );
       }
+      if (evaluation.expectedUserAnswer) {
+        assertPlainMiningUserAnswer(
+          evaluation.expectedUserAnswer,
+          `fixture:${evaluation.category}`,
+        );
+      }
+      if (route.kind === "static" && evaluation.expectedUserAnswer) {
+        assertPlainMiningUserAnswer(
+          route.answer,
+          `live-answer:${evaluation.category}`,
+        );
+      }
     });
   }
+
+  it("locks every mining-language fixture answer to plain 채굴 wording", () => {
+    const miningFixtures = (koreanEvals as KoreanEvalCase[]).filter(
+      (evaluation) =>
+        evaluation.expectedUserAnswer &&
+        (evaluation.category === "mining_language" ||
+          evaluation.category === "mining" ||
+          evaluation.category === "money" ||
+          evaluation.category === "formal_korean"),
+    );
+
+    expect(miningFixtures.length).toBeGreaterThan(0);
+    for (const evaluation of miningFixtures) {
+      assertPlainMiningUserAnswer(
+        evaluation.expectedUserAnswer ?? "",
+        `corpus:${evaluation.category}:${evaluation.question}`,
+      );
+    }
+  });
 });
 
 describe("OpenAI Responses stream parser", () => {

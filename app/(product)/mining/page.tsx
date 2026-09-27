@@ -31,11 +31,11 @@ const worldColors: Record<string, string> = {
 };
 
 const worldDescriptions: Record<string, string> = {
-  CRYPTO: "디지털 자산 테마를 담은 가상 채굴 월드",
-  GOLD: "금빛 광맥과 깊은 채굴감을 담은 가상 월드",
+  CRYPTO: "디지털 자산 테마를 담은 채굴 월드",
+  GOLD: "금빛 광맥과 깊은 채굴감을 담은 월드",
   KOREA: "퍼뜩의 첫 여정이 시작되는 기본 채굴 월드",
-  SILVER: "차분한 금속성과 정밀한 흐름을 담은 가상 월드",
-  USA: "넓은 스케일과 역동성을 담은 가상 채굴 월드",
+  SILVER: "차분한 금속성과 정밀한 흐름을 담은 월드",
+  USA: "넓은 스케일과 역동성을 담은 채굴 월드",
 };
 
 function formatDuration(secondsValue: number | string) {
@@ -98,7 +98,7 @@ export default async function MiningPage() {
         <StatePanel
           tone="error"
           title="채굴 상태를 불러오지 못했어요"
-          description="인터넷 연결을 확인한 뒤 다시 시도해 주세요. 화면을 닫아도 서버에서 이어지는 세션에는 영향이 없습니다."
+          description="인터넷 연결을 확인한 뒤 다시 시도해 주세요. 화면을 닫아도 채굴은 계속돼요."
         />
       ) : (
         <section
@@ -141,8 +141,8 @@ export default async function MiningPage() {
             </h2>
             <p>
               {currentSession
-                ? "화면의 숫자를 임의로 늘리지 않습니다. 정산 전 경과 시간과 세션 상태는 서버에서 확인된 값으로만 표시됩니다."
-                : "PUTDUK START로 첫 채굴 흐름을 경험한 뒤, 이용 가능한 실제 채굴 상품을 확인할 수 있어요."}
+                ? "화면의 숫자를 임의로 늘리지 않습니다. 정산 전 경과 시간과 세션 상태는 확인된 값으로만 표시됩니다."
+                : "PUTDUK START로 첫 채굴 흐름을 경험한 뒤, 이용 가능한 채굴 상품을 확인할 수 있어요."}
             </p>
             {currentSession ? (
               <div className={styles.worldHeroFacts}>
@@ -185,8 +185,8 @@ export default async function MiningPage() {
               <h2>현재 채굴 상태</h2>
             </span>
             <p>
-              표시 값은 페이지를 연 시점의 서버 상태입니다. 금액은 정산이 완료된
-              뒤 지갑에서 확인할 수 있어요.
+              표시 값은 페이지를 연 시점의 상태입니다. 금액은 정산이 완료된 뒤
+              지갑에서 확인할 수 있어요.
             </p>
           </header>
           <section className={styles.sessionList} aria-label="현재 채굴 세션">
@@ -239,7 +239,7 @@ export default async function MiningPage() {
           <h2>채굴 월드</h2>
         </span>
         <p>
-          월드는 가상 채굴 경험의 테마입니다. 시장 가격이나 투자 수익을 추종하지
+          월드는 채굴 경험의 테마입니다. 시장 가격이나 투자 수익을 추종하지
           않습니다.
         </p>
       </header>
@@ -277,7 +277,7 @@ export default async function MiningPage() {
                     {active
                       ? "현재 활성 세션이 이어지고 있어요."
                       : (worldDescriptions[world.code] ??
-                        "퍼뜩의 가상 채굴 테마 월드")}
+                        "퍼뜩의 채굴 테마 월드")}
                   </p>
                 </span>
               </article>

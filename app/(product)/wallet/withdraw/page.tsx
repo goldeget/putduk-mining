@@ -66,7 +66,7 @@ const statusCopy: Record<
     tone: "info",
   },
   LEDGER_FINALIZED: {
-    description: "원장 반영이 끝났어요.",
+    description: "잔액에 반영됐어요.",
     label: "반영 완료",
     tone: "success",
   },

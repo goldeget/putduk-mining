@@ -11,7 +11,7 @@ export default function OfflinePage() {
       <StatePanel
         tone="offline"
         title="현재 네트워크에 연결되지 않았습니다."
-        description="연결이 복구되면 서버 기준의 최신 채굴·정산 상태를 다시 불러옵니다. 오프라인 화면의 수치는 자산 근거로 사용하지 않습니다."
+        description="연결이 복구되면 최신 채굴·정산 상태를 다시 불러옵니다. 오프라인 화면의 수치는 자산 근거로 사용하지 않습니다."
         action={
           <Link className="button button--secondary" href="/">
             연결 다시 확인

@@ -115,7 +115,7 @@ async function walletSummary(supabase: SupabaseClient, now: Date) {
           }
           return `${row.currency} 총 ${formatAtomicAmount(row.balance_atomic, row.currency)}, 사용 가능 ${formatAtomicAmount(row.available_balance_atomic, row.currency)}, 예약·보류 ${formatAtomicAmount(heldAtomic.toString(), row.currency)}`;
         })
-        .join(" / ")}입니다. 원장에 확정된 값만 표시했습니다.`
+        .join(" / ")}입니다. 확정된 잔액만 표시했습니다.`
     : "아직 확인할 수 있는 본인 지갑이 없습니다.";
   return success("wallet.summary", answer, now, [
     "available",
@@ -141,7 +141,7 @@ async function todayMiningReward(supabase: SupabaseClient, now: Date) {
   if (!walletData) {
     return success(
       "mining.today_reward",
-      `${window.date} KST 기준 본인 KRW 지갑에 확정 기록된 채굴 보상은 0 KRW입니다. 화면의 애니메이션 값이 아니라 원장 기록만 합산했습니다.`,
+      `${window.date} KST 기준 본인 KRW 지갑에 확정 기록된 채굴 보상은 0 KRW입니다. 화면의 애니메이션 값이 아니라 확정된 기록만 합산했습니다.`,
       now,
       ["amount", "currency", "kst_date"],
     );
@@ -164,7 +164,7 @@ async function todayMiningReward(supabase: SupabaseClient, now: Date) {
         : -BigInt(row.amount_atomic)),
     0n,
   );
-  const answer = `${window.date} KST 기준 본인 KRW 지갑에 확정 기록된 채굴 보상은 ${formatAtomicAmount(total.toString(), "KRW")}입니다. 화면의 애니메이션 값이 아니라 원장 기록만 합산했습니다.`;
+  const answer = `${window.date} KST 기준 본인 KRW 지갑에 확정 기록된 채굴 보상은 ${formatAtomicAmount(total.toString(), "KRW")}입니다. 화면의 애니메이션 값이 아니라 확정된 기록만 합산했습니다.`;
   return success("mining.today_reward", answer, now, [
     "amount",
     "currency",
