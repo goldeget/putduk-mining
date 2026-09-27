@@ -1,0 +1,87 @@
+name: Typography evidence
+
+on:
+  push:
+    branches:
+      - ws05/typography-audit-evidence
+
+permissions:
+  contents: read
+
+concurrency:
+  group: typography-evidence-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 12.6.0
+          run_install: false
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Format isolated typography source
+        run: >-
+          pnpm exec prettier --write
+          playwright.typography.config.ts
+          tests/typography/helpers.ts
+          tests/typography/korean-line-break.spec.ts
+
+      - name: Verify isolated typography formatting
+        run: >-
+          pnpm exec prettier --check
+          playwright.typography.config.ts
+          tests/typography/helpers.ts
+          tests/typography/korean-line-break.spec.ts
+
+      - name: Preserve formatted source
+        uses: actions/upload-artifact@v4
+        with:
+          name: formatted-typography-source
+          if-no-files-found: error
+          retention-days: 3
+          path: |
+            playwright.typography.config.ts
+            tests/typography/helpers.ts
+            tests/typography/korean-line-break.spec.ts
+
+      - name: Install Chromium
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run isolated typography audit
+        shell: bash
+        run: |
+          set +e
+          pnpm exec playwright test --config playwright.typography.config.ts 2>&1 | tee typography-audit.log
+          status=${PIPESTATUS[0]}
+          set -e
+          printf '%s\n' "$status" > typography-audit-exit-code.txt
+          exit 0
+
+      - name: Preserve typography evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: typography-audit-evidence
+          if-no-files-found: warn
+          retention-days: 3
+          path: |
+            typography-audit.log
+            typography-audit-exit-code.txt
+            test-results/typography
