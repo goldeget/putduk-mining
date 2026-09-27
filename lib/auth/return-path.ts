@@ -1,11 +1,13 @@
-export const PROTECTED_PAGE_PREFIXES = [
+export const PROTECTED_PAGE_PATHS = [
+  "/home",
   "/start",
   "/mining",
-  "/wallet",
   "/events",
-  "/menu",
-  "/admin",
+  "/notifications",
+  "/ai",
 ] as const;
+
+export const PROTECTED_PAGE_PREFIXES = ["/wallet", "/menu"] as const;
 
 export function isSafeProtectedReturnPath(value: string): boolean {
   if (
@@ -29,15 +31,18 @@ export function isSafeProtectedReturnPath(value: string): boolean {
     return false;
   }
 
-  return PROTECTED_PAGE_PREFIXES.some(
-    (prefix) =>
-      parsed.pathname === prefix || parsed.pathname.startsWith(`${prefix}/`),
+  return (
+    PROTECTED_PAGE_PATHS.some((path) => parsed.pathname === path) ||
+    PROTECTED_PAGE_PREFIXES.some(
+      (prefix) =>
+        parsed.pathname === prefix || parsed.pathname.startsWith(`${prefix}/`),
+    )
   );
 }
 
 export function safeProtectedReturnPath(
   value: string | null | undefined,
-  fallback = "/start",
+  fallback = "/home",
 ): string {
   return value && isSafeProtectedReturnPath(value) ? value : fallback;
 }

@@ -1,9 +1,15 @@
 "use client";
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
 
 import { AI_QUESTION_MAX_CHARACTERS } from "@/domain/ai/chat";
 import { trackAnalyticsEvent } from "@/lib/analytics/client";
+
+import {
+  buildPutdukAiScreenContext,
+  type PutdukAiExplicitScreenContext,
+} from "./putduk-ai-screen-context";
 
 type MessageState = "cancelled" | "complete" | "error" | "streaming";
 
@@ -37,12 +43,16 @@ function getDataFromSseBlock(block: string) {
 }
 
 export function PutdukAiChat({
+  initialScreenContext,
   knowledgeVersion,
   providerConfigured,
 }: {
+  initialScreenContext?: PutdukAiExplicitScreenContext;
   knowledgeVersion: string;
   providerConfigured: boolean;
 }) {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [messages, setMessages] = useState<Message[]>([]);
   const [pending, setPending] = useState(false);
   const [question, setQuestion] = useState("");
@@ -98,6 +108,13 @@ export function PutdukAiChat({
     }).catch(() => undefined);
 
     let terminalEventReceived = false;
+    const screenContext = buildPutdukAiScreenContext({
+      ...(initialScreenContext
+        ? { explicitContext: initialScreenContext }
+        : {}),
+      pathname,
+      searchParams,
+    });
 
     try {
       const response = await fetch("/api/v1/ai/chat", {
@@ -107,6 +124,7 @@ export function PutdukAiChat({
         body: JSON.stringify({
           clientMessageId,
           question: trimmedQuestion,
+          ...(screenContext ? { screenContext } : {}),
         }),
         signal: abortController.signal,
       });
@@ -115,9 +133,7 @@ export function PutdukAiChat({
         const payload = (await response
           .json()
           .catch(() => null)) as ApiErrorPayload | null;
-        throw new Error(
-          payload?.error?.message ?? "AI 응답을 시작하지 못했습니다.",
-        );
+        throw new Error(payload?.error?.message ?? "답변을 시작하지 못했어요.");
       }
 
       const reader = response.body.getReader();
@@ -161,7 +177,7 @@ export function PutdukAiChat({
               text:
                 typeof data.message === "string"
                   ? data.message
-                  : "AI 응답을 완료하지 못했습니다.",
+                  : "답변을 완료하지 못했어요.",
             }));
           }
         }
@@ -172,7 +188,7 @@ export function PutdukAiChat({
       }
 
       if (!terminalEventReceived) {
-        throw new Error("응답 연결이 완전히 종료되지 않았습니다.");
+        throw new Error("연결이 예기치 않게 종료됐어요. 다시 시도해 주세요.");
       }
     } catch (error) {
       const cancelled = abortController.signal.aborted;
@@ -180,10 +196,10 @@ export function PutdukAiChat({
         ...message,
         state: cancelled ? "cancelled" : "error",
         text: cancelled
-          ? message.text || "응답 생성을 중단했습니다."
+          ? message.text || "답변 생성을 중단했어요."
           : error instanceof Error
             ? error.message
-            : "AI 응답을 완료하지 못했습니다.",
+            : "답변을 완료하지 못했어요.",
       }));
     } finally {
       if (abortRef.current === abortController) {
@@ -203,20 +219,21 @@ export function PutdukAiChat({
         <span className="ai-chat__indicator is-ready" aria-hidden="true" />
         <span>
           <strong>
-            {providerConfigured ? "라우팅 활성" : "공식 사실 모드"}
+            {providerConfigured ? "계정·일반 질문 도움말" : "계정·퍼뜩 도움말"}
           </strong>
-          <small>STATIC → CACHE → MODEL · {knowledgeVersion}</small>
+          <small>확인된 정보만 사용하고, 찾지 못하면 추측하지 않아요</small>
         </span>
       </header>
 
       <div className="ai-chat__messages" role="log" aria-live="polite">
         {messages.length === 0 ? (
           <div className="ai-chat__welcome">
-            <p className="eyebrow">ASK WITH EVIDENCE</p>
-            <h2>공식 정보 안에서, 근거 있는 답을 드립니다.</h2>
+            <p className="eyebrow">ASK PUTDUK</p>
+            <h2>궁금한 내용을 편하게 물어보세요.</h2>
             <p>
-              체험 방식, 채굴 원칙, 입출금 경계처럼 공개된 PUTDUK 정보를 질문해
-              보세요. 확인되지 않은 수치나 운영 상태는 추측하지 않습니다.
+              오늘 채굴 상태, 입출금 진행 상황, 이벤트 참여 조건이나 퍼뜩 이용
+              방법을 질문할 수 있어요. 확인할 수 없는 수치는 만들어 답하지
+              않습니다.
             </p>
           </div>
         ) : (
@@ -225,11 +242,14 @@ export function PutdukAiChat({
               className={`ai-message ai-message--${message.role}`}
               key={message.id}
             >
-              <span>{message.role === "assistant" ? "PUTDUK AI" : "YOU"}</span>
+              <span>{message.role === "assistant" ? "PUTDUK AI" : "나"}</span>
               {message.role === "assistant" &&
               message.state === "streaming" &&
               !message.text ? (
-                <div className="ai-message__thinking" aria-label="응답 연결 중">
+                <div
+                  className="ai-message__thinking"
+                  aria-label="확인 가능한 정보를 찾는 중"
+                >
                   <i />
                   <i />
                   <i />
@@ -240,9 +260,7 @@ export function PutdukAiChat({
               {message.role === "assistant" &&
               ["cancelled", "error"].includes(message.state) ? (
                 <small>
-                  {message.state === "cancelled"
-                    ? "CANCELLED"
-                    : "NOT COMPLETED"}
+                  {message.state === "cancelled" ? "답변 중단됨" : "연결 실패"}
                 </small>
               ) : null}
             </article>
@@ -251,20 +269,20 @@ export function PutdukAiChat({
       </div>
 
       <form className="ai-composer" onSubmit={submit}>
-        <label htmlFor="putduk-ai-question">공식 제품 정보 질문</label>
+        <label htmlFor="putduk-ai-question">질문 입력</label>
         <textarea
           id="putduk-ai-question"
           value={question}
           onChange={(event) => setQuestion(event.target.value)}
           maxLength={AI_QUESTION_MAX_CHARACTERS}
-          placeholder="예: PUTDUK START 결과가 실제 잔액으로 전환되나요?"
+          placeholder="예: 체험 보상 5,000원은 언제 출금할 수 있어?"
           disabled={pending}
           required
         />
         <footer>
           <p>
-            원문은 PUTDUK DB에 저장하지 않습니다. 모델이 필요한 경우에만 응답
-            객체 저장 기능을 끈 제공자 요청을 사용합니다.
+            PUTDUK AI는 확인과 설명을 돕지만 송금·승인·보상 지급이나 잔액 변경을
+            대신하지 않습니다.
           </p>
           <span>
             <small>
@@ -277,7 +295,7 @@ export function PutdukAiChat({
                 type="button"
                 onClick={cancel}
               >
-                생성 중단
+                답변 중단
               </button>
             ) : (
               <button

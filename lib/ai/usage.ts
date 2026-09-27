@@ -1,26 +1,51 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
+import type { AiRoute } from "./router";
+import type { AiToolName } from "./tools";
+
+export type AiAuditContextScope =
+  "ACCOUNT_STATE" | "GENERAL_SAFE" | "PUBLIC_FACTS_ONLY" | "UI_HELP";
+
+export type AiAuditRouteKind =
+  | "cache"
+  | "general_safe"
+  | "high_capability"
+  | "low_cost"
+  | "static"
+  | "tool"
+  | "ui_help";
+
 export async function beginAiRequest(
   supabase: SupabaseClient,
   input: {
     clientMessageId: string;
+    contextScope: AiAuditContextScope;
     inputRedacted: Record<string, boolean | number | string>;
     knowledgeVersion: string;
     model: string;
     perDayLimit: number;
     perMinuteLimit: number;
     promptHash: string;
+    routeKey: string;
+    routeKind: AiAuditRouteKind;
+    safetyClassification: AiRoute["classification"];
+    toolName?: AiToolName;
     userId: string;
   },
 ) {
-  return supabase.rpc("begin_ai_request", {
+  return supabase.rpc("begin_ai_request_v2", {
     p_client_message_id: input.clientMessageId,
+    p_context_scope: input.contextScope,
     p_input_redacted: input.inputRedacted,
     p_knowledge_version: input.knowledgeVersion,
     p_model_key: input.model,
     p_per_day_limit: input.perDayLimit,
     p_per_minute_limit: input.perMinuteLimit,
     p_prompt_hash: input.promptHash,
+    p_route_key: input.routeKey,
+    p_route_kind: input.routeKind,
+    p_safety_classification: input.safetyClassification,
+    p_tool_name: input.toolName ?? null,
     p_user_id: input.userId,
   });
 }

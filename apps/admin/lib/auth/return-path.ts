@@ -1,0 +1,31 @@
+const SAFE_ADMIN_PATHS = ["/", "/members"] as const;
+
+export function safeAdminReturnPath(value: unknown): string {
+  if (
+    typeof value !== "string" ||
+    !value.startsWith("/") ||
+    value.startsWith("//")
+  ) {
+    return "/";
+  }
+  try {
+    const url = new URL(value, "https://admin.mining.putduk.com");
+    if (url.origin !== "https://admin.mining.putduk.com") return "/";
+    return SAFE_ADMIN_PATHS.some(
+      (path) =>
+        url.pathname === path ||
+        (path !== "/" && url.pathname.startsWith(`${path}/`)),
+    )
+      ? `${url.pathname}${url.search}`
+      : "/";
+  } catch {
+    return "/";
+  }
+}
+
+export function adminLoginPath(returnPath: string): string {
+  const safe = safeAdminReturnPath(returnPath);
+  return safe === "/"
+    ? "/login"
+    : `/login?returnTo=${encodeURIComponent(safe)}`;
+}

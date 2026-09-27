@@ -24,7 +24,7 @@ describe("public trust registry", () => {
         "/faq",
         "/status",
         "/changelog",
-        "/ai",
+        "/ai/about",
         "/ai/facts",
         "/ai/faq",
         "/ai/how-it-works",

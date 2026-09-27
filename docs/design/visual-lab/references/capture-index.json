@@ -1,0 +1,744 @@
+{
+  "benchmarkVersion": "visual-lab-2026.09.27-v1",
+  "captureSession": {
+    "animationPolicy": "CSS animation and transition disabled",
+    "browser": "Chromium 153.0.8010.12",
+    "capturedAt": "2026-09-26T23:26:39.423Z",
+    "dataPolicy": "Synthetic visual-lab data only; no private account data",
+    "imageReadiness": "document.fonts.ready plus decoded document images",
+    "loopbackOnly": true,
+    "outputEncoding": {
+      "effort": 6,
+      "format": "webp",
+      "nearLossless": true,
+      "quality": 88
+    },
+    "renderer": "local authorized Sites source"
+  },
+  "captures": [
+    {
+      "bytes": 144216,
+      "file": "docs/design/visual-lab/references/benchmark-v2026-09-27/benchmark--admin-today--desktop-1440--dark--default.webp",
+      "format": "webp",
+      "fullPage": true,
+      "height": 1475,
+      "screen": "admin-today",
+      "sha256": "e7eeebd8f4ed1912de244db318e2171489c199eedd5132d908874ee860a4869d",
+      "state": "default",
+      "theme": "dark",
+      "viewport": {
+        "height": 1024,
+        "name": "desktop-1440",
+        "width": 1440
+      },
+      "width": 1440
+    },
+    {
+      "bytes": 142432,
+      "file": "docs/design/visual-lab/references/benchmark-v2026-09-27/benchmark--admin-today--desktop-1440--light--default.webp",
+      "format": "webp",
+      "fullPage": true,
+      "height": 1475,
+      "screen": "admin-today",
+      "sha256": "bd5427f468045cb9874e7268d7c9188c5592ee71d514523be4a0ecd244d4ab2e",
+      "state": "default",
+      "theme": "light",
+      "viewport": {
+        "height": 1024,
+        "name": "desktop-1440",
+        "width": 1440
+      },
+      "width": 1440
+    },
+    {
+      "bytes": 121244,
+      "file": "docs/design/visual-lab/references/benchmark-v2026-09-27/benchmark--admin-today--mobile-390--dark--default.webp",
+      "format": "webp",
+      "fullPage": true,
+      "height": 2943,
+      "screen": "admin-today",
+      "sha256": "66b5d869a33901d7f3ff1e1b6b29d7cc1fc8870bfc1ae138799635750560dae3",
+      "state": "default",
+      "theme": "dark",
+      "viewport": {
+        "height": 844,
+        "name": "mobile-390",
+        "width": 390
+      },
+      "width": 390
+    },
+    {
+      "bytes": 118428,
+      "file": "docs/design/visual-lab/references/benchmark-v2026-09-27/benchmark--admin-today--mobile-390--light--default.webp",
+      "format": "webp",
+      "fullPage": true,
+      "height": 2943,
+      "screen": "admin-today",
+      "sha256": "89d59734fb792f9ef649f70e69553400120c49fab8caf2cc4a38196fb2f24d60",
+      "state": "default",
+      "theme": "light",
+      "viewport": {
+        "height": 844,
+        "name": "mobile-390",
+        "width": 390
+      },
+      "width": 390
+    },
+    {
+      "bytes": 67344,
+      "file": "docs/design/visual-lab/references/benchmark-v2026-09-27/benchmark--ai--desktop-1440--dark--default.webp",
+      "format": "webp",
+      "fullPage": true,
+      "height": 1131,
+      "screen": "ai",
+      "sha256": "96839ae1a20e4bb808f74b266b72178f3845025c928585223ac4edecea0b8f10",
+      "state": "default",
+      "theme": "dark",
+      "viewport": {
+        "height": 1024,
+        "name": "desktop-1440",
+        "width": 1440
+      },
+      "width": 1440
+    },
+    {
+      "bytes": 67898,
+      "file": "docs/design/visual-lab/references/benchmark-v2026-09-27/benchmark--ai--desktop-1440--light--default.webp",
+      "format": "webp",
+      "fullPage": true,
+      "height": 1131,
+      "screen": "ai",
+      "sha256": "fb8065aac3a80088586b6f1698f74911200809841e83e87b931d0a3555773121",
+      "state": "default",
+      "theme": "light",
+      "viewport": {
+        "height": 1024,
+        "name": "desktop-1440",
+        "width": 1440
+      },
+      "width": 1440
+    },
+    {
+      "bytes": 55912,
+      "file": "docs/design/visual-lab/references/benchmark-v2026-09-27/benchmark--ai--mobile-390--dark--default.webp",
+      "format": "webp",
+      "fullPage": true,
+      "height": 1884,
+      "screen": "ai",
+      "sha256": "40b283c2778555b06e0528c778ecbbfa4bf5fe3c089b4e72b5f51aef8bb3ca2d",
+      "state": "default",
+      "theme": "dark",
+      "viewport": {
+        "height": 844,
+        "name": "mobile-390",
+        "width": 390
+      },
+      "width": 390
+    },
+    {
+      "bytes": 57066,
+      "file": "docs/design/visual-lab/references/benchmark-v2026-09-27/benchmark--ai--mobile-390--light--default.webp",
+      "format": "webp",
+      "fullPage": true,
+      "height": 1884,
+      "screen": "ai",
+      "sha256": "eae8b6e5a2145a8366b23b0253ab8eef43f8dc6364d5ff7bd2c273840344d57e",
+      "state": "default",
+      "theme": "light",
+      "viewport": {
+        "height": 844,
+        "name": "mobile-390",
+        "width": 390
+      },
+      "width": 390
+    },
+    {
+      "bytes": 50416,
+      "file": "docs/design/visual-lab/references/benchmark-v2026-09-27/benchmark--deposit--desktop-1440--dark--default.webp",
+      "format": "webp",
+      "fullPage": true,
+      "height": 1024,
+      "screen": "deposit",
+      "sha256": "41e9773a32ef1422e3cfba98a74c2b77a7c9cff60088cd4f9ce324d1ecbf08b6",
+      "state": "default",
+      "theme": "dark",
+      "viewport": {
+        "height": 1024,
+        "name": "desktop-1440",
+        "width": 1440
+      },
+      "width": 1440
+    },
+    {
+      "bytes": 330348,
+      "file": "docs/design/visual-lab/references/benchmark-v2026-09-27/benchmark--events--desktop-1440--dark--default.webp",
+      "format": "webp",
+      "fullPage": true,
+      "height": 1240,
+      "screen": "events",
+      "sha256": "7cd3d545371cc7be2e300d3eadab479d7d1fbda3dbce14945ac4a98ca5b55fab",
+      "state": "default",
+      "theme": "dark",
+      "viewport": {
+        "height": 1024,
+        "name": "desktop-1440",
+        "width": 1440
+      },
+      "width": 1440
+    },
+    {
+      "bytes": 402490,
+      "file": "docs/design/visual-lab/references/benchmark-v2026-09-27/benchmark--home--desktop-1440--dark--default.webp",
+      "format": "webp",
+      "fullPage": true,
+      "height": 1325,
+      "screen": "home",
+      "sha256": "fd37f330ac97584d76fe9d0f5c427542bc5cbcc06c132ee719c0c25cd28f4aab",
+      "state": "default",
+      "theme": "dark",
+      "viewport": {
+        "height": 1024,
+        "name": "desktop-1440",
+        "width": 1440
+      },
+      "width": 1440
+    },
+    {
+      "bytes": 438422,
+      "file": "docs/design/visual-lab/references/benchmark-v2026-09-27/benchmark--landing--desktop-1440--dark--default.webp",
+      "format": "webp",
+      "fullPage": true,
+      "height": 1024,
+      "screen": "landing",
+      "sha256": "4881887cd8cf6b72f69ca59aca00545f1788c787ccce52008eb0b64f32b3e72f",
+      "state": "default",
+      "theme": "dark",
+      "viewport": {
+        "height": 1024,
+        "name": "desktop-1440",
+        "width": 1440
+      },
+      "width": 1440
+    },
+    {
+      "bytes": 469244,
+      "file": "docs/design/visual-lab/references/benchmark-v2026-09-27/benchmark--landing--desktop-1440--light--default.webp",
+      "format": "webp",
+      "fullPage": true,
+      "height": 1024,
+      "screen": "landing",
+      "sha256": "c9042314d7cde613d36fcdcde743cd201222c2eb12f5922e1ebdb2a5f336c076",
+      "state": "default",
+      "theme": "light",
+      "viewport": {
+        "height": 1024,
+        "name": "desktop-1440",
+        "width": 1440
+      },
+      "width": 1440
+    },
+    {
+      "bytes": 226512,
+      "file": "docs/design/visual-lab/references/benchmark-v2026-09-27/benchmark--landing--mobile-390--dark--default.webp",
+      "format": "webp",
+      "fullPage": true,
+      "height": 1333,
+      "screen": "landing",
+      "sha256": "e209d0d7fa7be01683a2f98704a37a651340b912d92f3ae71436490d6d84e113",
+      "state": "default",
+      "theme": "dark",
+      "viewport": {
+        "height": 844,
+        "name": "mobile-390",
+        "width": 390
+      },
+      "width": 390
+    },
+    {
+      "bytes": 237110,
+      "file": "docs/design/visual-lab/references/benchmark-v2026-09-27/benchmark--landing--mobile-390--light--default.webp",
+      "format": "webp",
+      "fullPage": true,
+      "height": 1333,
+      "screen": "landing",
+      "sha256": "881c0a461dc4aed73c6dba70957c6d2a64d68b350dd3a525746a6505c8794800",
+      "state": "default",
+      "theme": "light",
+      "viewport": {
+        "height": 844,
+        "name": "mobile-390",
+        "width": 390
+      },
+      "width": 390
+    },
+    {
+      "bytes": 364662,
+      "file": "docs/design/visual-lab/references/benchmark-v2026-09-27/benchmark--login--desktop-1440--dark--default.webp",
+      "format": "webp",
+      "fullPage": true,
+      "height": 1024,
+      "screen": "login",
+      "sha256": "94e34a8b76e429d0f06b5f6c5a8520f0205e92ab1c0fd4302ed933fa1f161607",
+      "state": "default",
+      "theme": "dark",
+      "viewport": {
+        "height": 1024,
+        "name": "desktop-1440",
+        "width": 1440
+      },
+      "width": 1440
+    },
+    {
+      "bytes": 448024,
+      "file": "docs/design/visual-lab/references/benchmark-v2026-09-27/benchmark--login--desktop-1440--light--default.webp",
+      "format": "webp",
+      "fullPage": true,
+      "height": 1024,
+      "screen": "login",
+      "sha256": "397f86a708328901236bbe1eb7ecec5aa355a8bae94c437fd65c87b37b6eba31",
+      "state": "default",
+      "theme": "light",
+      "viewport": {
+        "height": 1024,
+        "name": "desktop-1440",
+        "width": 1440
+      },
+      "width": 1440
+    },
+    {
+      "bytes": 36246,
+      "file": "docs/design/visual-lab/references/benchmark-v2026-09-27/benchmark--login--mobile-390--dark--default.webp",
+      "format": "webp",
+      "fullPage": true,
+      "height": 844,
+      "screen": "login",
+      "sha256": "32cc994b3928dd469f97d83baac9020475de4689bdd3ccbe0de6be5ec022c2ff",
+      "state": "default",
+      "theme": "dark",
+      "viewport": {
+        "height": 844,
+        "name": "mobile-390",
+        "width": 390
+      },
+      "width": 390
+    },
+    {
+      "bytes": 45706,
+      "file": "docs/design/visual-lab/references/benchmark-v2026-09-27/benchmark--login--mobile-390--light--default.webp",
+      "format": "webp",
+      "fullPage": true,
+      "height": 844,
+      "screen": "login",
+      "sha256": "d5f58d7e0da45642fe8bf752a017af63098da7c21a99182c6e9d3111768e7cde",
+      "state": "default",
+      "theme": "light",
+      "viewport": {
+        "height": 844,
+        "name": "mobile-390",
+        "width": 390
+      },
+      "width": 390
+    },
+    {
+      "bytes": 89974,
+      "file": "docs/design/visual-lab/references/benchmark-v2026-09-27/benchmark--member-360--desktop-1440--dark--default.webp",
+      "format": "webp",
+      "fullPage": true,
+      "height": 1419,
+      "screen": "member-360",
+      "sha256": "78668266bbf2f58312302aade3e6a4be02dd18d0d7229967ea0c8453316a4cd4",
+      "state": "default",
+      "theme": "dark",
+      "viewport": {
+        "height": 1024,
+        "name": "desktop-1440",
+        "width": 1440
+      },
+      "width": 1440
+    },
+    {
+      "bytes": 84874,
+      "file": "docs/design/visual-lab/references/benchmark-v2026-09-27/benchmark--member-360--desktop-1440--light--default.webp",
+      "format": "webp",
+      "fullPage": true,
+      "height": 1419,
+      "screen": "member-360",
+      "sha256": "79dc6f7bb5838e3d98a7f57c5c5b52b44d8f944e9d45f8f439d699fafeebbfac",
+      "state": "default",
+      "theme": "light",
+      "viewport": {
+        "height": 1024,
+        "name": "desktop-1440",
+        "width": 1440
+      },
+      "width": 1440
+    },
+    {
+      "bytes": 73512,
+      "file": "docs/design/visual-lab/references/benchmark-v2026-09-27/benchmark--member-360--mobile-390--dark--default.webp",
+      "format": "webp",
+      "fullPage": true,
+      "height": 2631,
+      "screen": "member-360",
+      "sha256": "3a17ce39a697e8a76e5113c9967e0afb729c7102fd44e815896a00820f2d8086",
+      "state": "default",
+      "theme": "dark",
+      "viewport": {
+        "height": 844,
+        "name": "mobile-390",
+        "width": 390
+      },
+      "width": 390
+    },
+    {
+      "bytes": 69404,
+      "file": "docs/design/visual-lab/references/benchmark-v2026-09-27/benchmark--member-360--mobile-390--light--default.webp",
+      "format": "webp",
+      "fullPage": true,
+      "height": 2631,
+      "screen": "member-360",
+      "sha256": "1f9617d80e2a36261bb4899198018cad771951a28f65a5ac03de7c3a60b1e9e7",
+      "state": "default",
+      "theme": "light",
+      "viewport": {
+        "height": 844,
+        "name": "mobile-390",
+        "width": 390
+      },
+      "width": 390
+    },
+    {
+      "bytes": 37226,
+      "file": "docs/design/visual-lab/references/benchmark-v2026-09-27/benchmark--notifications--desktop-1440--dark--default.webp",
+      "format": "webp",
+      "fullPage": true,
+      "height": 1024,
+      "screen": "notifications",
+      "sha256": "8794f21e6001683a4e25298ac53b46c650694190a0a85cb710b1a3de069c8d00",
+      "state": "default",
+      "theme": "dark",
+      "viewport": {
+        "height": 1024,
+        "name": "desktop-1440",
+        "width": 1440
+      },
+      "width": 1440
+    },
+    {
+      "bytes": 101302,
+      "file": "docs/design/visual-lab/references/benchmark-v2026-09-27/benchmark--signup--desktop-1440--dark--default.webp",
+      "format": "webp",
+      "fullPage": true,
+      "height": 1589,
+      "screen": "signup",
+      "sha256": "f035b2d940824ceabe6c58af88ffde202a5e71fa1fb92b7d5b5a224b38656d5e",
+      "state": "default",
+      "theme": "dark",
+      "viewport": {
+        "height": 1024,
+        "name": "desktop-1440",
+        "width": 1440
+      },
+      "width": 1440
+    },
+    {
+      "bytes": 110824,
+      "file": "docs/design/visual-lab/references/benchmark-v2026-09-27/benchmark--signup--desktop-1440--light--default.webp",
+      "format": "webp",
+      "fullPage": true,
+      "height": 1589,
+      "screen": "signup",
+      "sha256": "2dbf37eb1625778b37e3ea8e7ab7247bb2ecbb51e9a2425f95476e0b2a8c4913",
+      "state": "default",
+      "theme": "light",
+      "viewport": {
+        "height": 1024,
+        "name": "desktop-1440",
+        "width": 1440
+      },
+      "width": 1440
+    },
+    {
+      "bytes": 68544,
+      "file": "docs/design/visual-lab/references/benchmark-v2026-09-27/benchmark--signup--mobile-390--dark--default.webp",
+      "format": "webp",
+      "fullPage": true,
+      "height": 1632,
+      "screen": "signup",
+      "sha256": "33d6486e9fcd9eb8cac1b99e1def5f27247b4e00f757b792fc7898c8b425d24c",
+      "state": "default",
+      "theme": "dark",
+      "viewport": {
+        "height": 844,
+        "name": "mobile-390",
+        "width": 390
+      },
+      "width": 390
+    },
+    {
+      "bytes": 72606,
+      "file": "docs/design/visual-lab/references/benchmark-v2026-09-27/benchmark--signup--mobile-390--light--default.webp",
+      "format": "webp",
+      "fullPage": true,
+      "height": 1632,
+      "screen": "signup",
+      "sha256": "b5af11f4d5c83b995de52ab441e003017dbfa41ce712b7de539bbfdb48a2c55d",
+      "state": "default",
+      "theme": "light",
+      "viewport": {
+        "height": 844,
+        "name": "mobile-390",
+        "width": 390
+      },
+      "width": 390
+    },
+    {
+      "bytes": 569686,
+      "file": "docs/design/visual-lab/references/benchmark-v2026-09-27/benchmark--start-active--desktop-1440--dark--default.webp",
+      "format": "webp",
+      "fullPage": true,
+      "height": 1025,
+      "screen": "start-active",
+      "sha256": "f1337ee055c242c73d0f18e00417b9707037bfdc9324183eaf5f1d5959128cf9",
+      "state": "default",
+      "theme": "dark",
+      "viewport": {
+        "height": 1024,
+        "name": "desktop-1440",
+        "width": 1440
+      },
+      "width": 1440
+    },
+    {
+      "bytes": 696480,
+      "file": "docs/design/visual-lab/references/benchmark-v2026-09-27/benchmark--start-active--desktop-1440--light--default.webp",
+      "format": "webp",
+      "fullPage": true,
+      "height": 1025,
+      "screen": "start-active",
+      "sha256": "c8b8f6edc3c0dd592507b7a0f327f927a447c2b7653e7d1c9a3e7763c2fd5c17",
+      "state": "default",
+      "theme": "light",
+      "viewport": {
+        "height": 1024,
+        "name": "desktop-1440",
+        "width": 1440
+      },
+      "width": 1440
+    },
+    {
+      "bytes": 214174,
+      "file": "docs/design/visual-lab/references/benchmark-v2026-09-27/benchmark--start-active--mobile-390--dark--default.webp",
+      "format": "webp",
+      "fullPage": true,
+      "height": 1523,
+      "screen": "start-active",
+      "sha256": "162f23215413fe4d4b2339fe8dc999857df6c48ceec55a9c11a1bbede6480a40",
+      "state": "default",
+      "theme": "dark",
+      "viewport": {
+        "height": 844,
+        "name": "mobile-390",
+        "width": 390
+      },
+      "width": 390
+    },
+    {
+      "bytes": 268490,
+      "file": "docs/design/visual-lab/references/benchmark-v2026-09-27/benchmark--start-active--mobile-390--light--default.webp",
+      "format": "webp",
+      "fullPage": true,
+      "height": 1523,
+      "screen": "start-active",
+      "sha256": "e667bbf893447f66977d6bae434cc5a01f83dd685447e264518fa17f29e00658",
+      "state": "default",
+      "theme": "light",
+      "viewport": {
+        "height": 844,
+        "name": "mobile-390",
+        "width": 390
+      },
+      "width": 390
+    },
+    {
+      "bytes": 350680,
+      "file": "docs/design/visual-lab/references/benchmark-v2026-09-27/benchmark--start-complete--desktop-1440--dark--default.webp",
+      "format": "webp",
+      "fullPage": true,
+      "height": 1024,
+      "screen": "start-complete",
+      "sha256": "3abf74b7b64ee1a47da5a96d699d66f2f97d5c63480377298ce747b143d0a3d3",
+      "state": "default",
+      "theme": "dark",
+      "viewport": {
+        "height": 1024,
+        "name": "desktop-1440",
+        "width": 1440
+      },
+      "width": 1440
+    },
+    {
+      "bytes": 341852,
+      "file": "docs/design/visual-lab/references/benchmark-v2026-09-27/benchmark--start-complete--desktop-1440--light--default.webp",
+      "format": "webp",
+      "fullPage": true,
+      "height": 1024,
+      "screen": "start-complete",
+      "sha256": "2b461991ec2b5e5b311bfd89296f4e71fb06f78847610a7e7cad7d8deeca0f0f",
+      "state": "default",
+      "theme": "light",
+      "viewport": {
+        "height": 1024,
+        "name": "desktop-1440",
+        "width": 1440
+      },
+      "width": 1440
+    },
+    {
+      "bytes": 164438,
+      "file": "docs/design/visual-lab/references/benchmark-v2026-09-27/benchmark--start-complete--mobile-390--dark--default.webp",
+      "format": "webp",
+      "fullPage": true,
+      "height": 1203,
+      "screen": "start-complete",
+      "sha256": "156aee00a6f2b1497f81729a07fa8c3031403f3976059770322538a946cf7317",
+      "state": "default",
+      "theme": "dark",
+      "viewport": {
+        "height": 844,
+        "name": "mobile-390",
+        "width": 390
+      },
+      "width": 390
+    },
+    {
+      "bytes": 161510,
+      "file": "docs/design/visual-lab/references/benchmark-v2026-09-27/benchmark--start-complete--mobile-390--light--default.webp",
+      "format": "webp",
+      "fullPage": true,
+      "height": 1203,
+      "screen": "start-complete",
+      "sha256": "0e18c89bff9077875f81c73474fc6e3deca00d01a58aaa088706fd42e090c865",
+      "state": "default",
+      "theme": "light",
+      "viewport": {
+        "height": 844,
+        "name": "mobile-390",
+        "width": 390
+      },
+      "width": 390
+    },
+    {
+      "bytes": 112506,
+      "file": "docs/design/visual-lab/references/benchmark-v2026-09-27/benchmark--wallet--desktop-1440--dark--default.webp",
+      "format": "webp",
+      "fullPage": true,
+      "height": 1190,
+      "screen": "wallet",
+      "sha256": "809205e66bd8b3c4ef737f96db188d86c605ea62d63ee25face33a6f249682e7",
+      "state": "default",
+      "theme": "dark",
+      "viewport": {
+        "height": 1024,
+        "name": "desktop-1440",
+        "width": 1440
+      },
+      "width": 1440
+    },
+    {
+      "bytes": 107404,
+      "file": "docs/design/visual-lab/references/benchmark-v2026-09-27/benchmark--wallet--desktop-1440--light--default.webp",
+      "format": "webp",
+      "fullPage": true,
+      "height": 1190,
+      "screen": "wallet",
+      "sha256": "94d60154d1fac153f59aedf72a6c0e38afae4c966937f69cc59a0872559ad812",
+      "state": "default",
+      "theme": "light",
+      "viewport": {
+        "height": 1024,
+        "name": "desktop-1440",
+        "width": 1440
+      },
+      "width": 1440
+    },
+    {
+      "bytes": 79054,
+      "file": "docs/design/visual-lab/references/benchmark-v2026-09-27/benchmark--wallet--mobile-390--dark--default.webp",
+      "format": "webp",
+      "fullPage": true,
+      "height": 1558,
+      "screen": "wallet",
+      "sha256": "780826d12635e6d373cc16316cb406946c92a84470f3f5eeae470d6af17e4bb6",
+      "state": "default",
+      "theme": "dark",
+      "viewport": {
+        "height": 844,
+        "name": "mobile-390",
+        "width": 390
+      },
+      "width": 390
+    },
+    {
+      "bytes": 75106,
+      "file": "docs/design/visual-lab/references/benchmark-v2026-09-27/benchmark--wallet--mobile-390--light--default.webp",
+      "format": "webp",
+      "fullPage": true,
+      "height": 1558,
+      "screen": "wallet",
+      "sha256": "2d58f1246426a130e141c00fbdcf11e96f8d68a805862900ba2eb855f265c412",
+      "state": "default",
+      "theme": "light",
+      "viewport": {
+        "height": 844,
+        "name": "mobile-390",
+        "width": 390
+      },
+      "width": 390
+    },
+    {
+      "bytes": 52818,
+      "file": "docs/design/visual-lab/references/benchmark-v2026-09-27/benchmark--withdrawal--desktop-1440--dark--default.webp",
+      "format": "webp",
+      "fullPage": true,
+      "height": 1024,
+      "screen": "withdrawal",
+      "sha256": "7948756a861f089e1f7776074d6bffe9c0086ab2fc90d2bb8ea9a554049b3f46",
+      "state": "default",
+      "theme": "dark",
+      "viewport": {
+        "height": 1024,
+        "name": "desktop-1440",
+        "width": 1440
+      },
+      "width": 1440
+    },
+    {
+      "bytes": 336396,
+      "file": "docs/design/visual-lab/references/benchmark-v2026-09-27/benchmark--worlds--desktop-1440--dark--default.webp",
+      "format": "webp",
+      "fullPage": true,
+      "height": 1263,
+      "screen": "worlds",
+      "sha256": "de63958d70b1e32b5461b814c1f78e1f704b1a3689a424d41e938974fa63e672",
+      "state": "default",
+      "theme": "dark",
+      "viewport": {
+        "height": 1024,
+        "name": "desktop-1440",
+        "width": 1440
+      },
+      "width": 1440
+    }
+  ],
+  "source": {
+    "benchmarkVersion": "visual-lab-2026.09.27-v1",
+    "deploymentId": "appgdep_6ab84fdd747c81919198ed1968163109",
+    "siteUrl": "https://putduk-mining-visual-lab-2026.ai-ptk.chatgpt.site/?theme=dark#/landing",
+    "sourceCommit": "a8206957b1cb540291ad4e840e7f8835487e0380"
+  },
+  "totals": {
+    "bytes": 8062580,
+    "captures": 42
+  }
+}

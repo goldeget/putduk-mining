@@ -9,13 +9,13 @@ import {
 } from "@/components/icons/putduk-icon";
 
 const items = [
-  { href: "/start", icon: "home", label: "홈" },
+  { href: "/home", icon: "home", label: "홈" },
   { href: "/mining", icon: "mining", label: "채굴" },
   { href: "/wallet", icon: "wallet", label: "자산" },
   { href: "/events", icon: "event", label: "이벤트" },
   { href: "/menu", icon: "menu", label: "메뉴" },
 ] as const satisfies ReadonlyArray<{
-  href: "/events" | "/menu" | "/mining" | "/start" | "/wallet";
+  href: "/events" | "/home" | "/menu" | "/mining" | "/wallet";
   icon: PutdukIconName;
   label: string;
 }>;

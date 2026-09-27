@@ -1,19 +1,27 @@
 import { expect, test } from "@playwright/test";
 
-test("renders the PUTDUK foundation with accessible primary navigation", async ({
+test("renders the productized PUTDUK landing with accessible primary navigation", async ({
   page,
 }) => {
   await page.goto("/");
 
   await expect(
-    page.getByRole("heading", { name: /채굴의 시간을.*신뢰 가능한 기록/ }),
+    page.getByRole("heading", { name: /작은 시작이.*나만의 채굴 세계/ }),
   ).toBeVisible();
   await expect(
-    page.getByRole("link", { name: "PUTDUK START 보기" }),
+    page.getByRole("link", { name: /PUTDUK START 시작하기/ }),
   ).toBeVisible();
-  await expect(
-    page.getByRole("navigation", { name: "주요 메뉴 디자인 예시" }),
-  ).toBeVisible();
+  const publicNavigation = page.locator('nav[aria-label="공개 메뉴"]');
+  await expect(publicNavigation).toHaveCount(1);
+  if ((page.viewportSize()?.width ?? 1440) < 980) {
+    await expect(publicNavigation).toBeHidden();
+    await expect(
+      page.getByRole("link", { name: "내 채굴로 돌아가기" }),
+    ).toBeVisible();
+  } else {
+    await expect(publicNavigation).toBeVisible();
+  }
+  await expect(page.getByText(/FOUNDATION|READ-MOSTLY/)).toHaveCount(0);
 });
 
 test("exposes install and discovery metadata", async ({ page }) => {
@@ -42,7 +50,7 @@ test("exposes install and discovery metadata", async ({ page }) => {
   const factsResponse = await page.request.get("/api/v1/public/facts");
   expect(factsResponse.ok()).toBe(true);
   await expect(factsResponse.json()).resolves.toMatchObject({
-    data: { version: "2026.09-foundation" },
+    data: { version: "2026.09" },
   });
 
   const llmsResponse = await page.request.get("/llms.txt");
@@ -77,30 +85,42 @@ test("renders canonical trust content without claiming a production launch", asy
 
   await expect(
     page.getByRole("heading", {
-      name: "현재 프로덕션 서비스는 준비 중입니다.",
+      name: "현재 정식 서비스 오픈을 준비하고 있습니다.",
     }),
   ).toBeVisible();
-  await expect(page.getByText("2026.09-foundation").first()).toBeVisible();
+  await expect(page.getByText("2026.09").first()).toBeVisible();
   await expect(
     page.getByRole("link", { name: "검증 원칙 보기" }),
   ).toBeVisible();
 });
 
-test("renders a clean account entry state without a phantom status message", async ({
-  page,
-}) => {
+test("renders distinct product login and signup states", async ({ page }) => {
   await page.goto("/login");
 
   await expect(
-    page.getByRole("heading", { name: "계정으로 시작하기" }),
+    page.getByRole("heading", { name: "다시 만나 반가워요." }),
   ).toBeVisible();
-  await expect(page.getByLabel("이메일")).toBeVisible();
+  await expect(page.getByLabel("아이디 또는 복구 이메일")).toBeVisible();
   await expect(page.getByLabel("비밀번호")).toBeVisible();
   await expect(page.locator(".auth-form__message")).toHaveCount(0);
   await expect(page.getByRole("button", { name: /로그인/ })).toBeVisible();
   await expect(
-    page.getByRole("button", { name: "새 계정 만들기" }),
+    page.getByRole("link", { name: "새 계정 만들기" }),
   ).toBeVisible();
+
+  await page.getByRole("link", { name: "새 계정 만들기" }).click();
+  await expect(page).toHaveURL(/\/signup$/);
+  await expect(
+    page.getByRole("heading", { name: "계정 만들기" }),
+  ).toBeVisible();
+  await expect(page.getByLabel("이름")).toBeVisible();
+  await expect(page.getByLabel("생년월일")).toBeVisible();
+  await expect(page.getByLabel("휴대전화")).toBeVisible();
+  await expect(page.getByLabel("복구 이메일")).toBeVisible();
+  await expect(page.getByLabel("로그인 아이디")).toBeVisible();
+  await expect(page.getByLabel("서비스 이용약관")).toBeVisible();
+  await expect(page.getByLabel("개인정보 수집·이용")).toBeVisible();
+  await expect(page.getByLabel("혜택·이벤트 소식 받기")).toBeVisible();
 });
 
 test("preserves a safe protected return path and rejects an external one", async ({
@@ -115,7 +135,22 @@ test("preserves a safe protected return path and rejects an external one", async
   );
 
   await page.goto("/login?next=https%3A%2F%2Fattacker.invalid%2Fwallet");
-  await expect(page.locator('input[name="next"]')).toHaveValue("/start");
+  await expect(page.locator('input[name="next"]')).toHaveValue("/home");
+});
+
+test("shows only allowlisted account status after password or logout actions", async ({
+  page,
+}) => {
+  await page.goto("/login?password=updated&logout=untrusted");
+  await expect(page.getByRole("status")).toHaveText(
+    "비밀번호를 변경했습니다. 새 비밀번호로 로그인해 주세요.",
+  );
+  await expect(page.getByText("untrusted")).toHaveCount(0);
+
+  await page.goto("/login?logout=global");
+  await expect(page.getByRole("status")).toHaveText(
+    "모든 기기에서 안전하게 로그아웃했습니다.",
+  );
 });
 
 test("marks account and protected surfaces as non-indexable", async ({
@@ -123,6 +158,9 @@ test("marks account and protected surfaces as non-indexable", async ({
 }) => {
   const login = await page.request.get("/login");
   expect(login.headers()["x-robots-tag"]).toBe("noindex, nofollow");
+
+  const signup = await page.request.get("/signup");
+  expect(signup.headers()["x-robots-tag"]).toBe("noindex, nofollow");
 
   const wallet = await page.request.get("/wallet", { maxRedirects: 0 });
   expect(wallet.headers()["location"]).toContain("/login?next=%2Fwallet");

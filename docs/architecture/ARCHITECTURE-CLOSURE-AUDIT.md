@@ -8,6 +8,14 @@ Remote Supabase/Cloudflare validation: **not performed; mutation freeze preserve
 
 Overall state: **FOUNDATION PARTIAL / NOT RELEASE READY**
 
+## Permanent closure interpretation
+
+Closure is reported in three separate columns: `FOUNDATION COMPLETE`, `FUNCTIONALLY COMPLETE` and `PRODUCT COMPLETE`. Only the third state contributes to launch readiness. Existing prose, schema, routes, APIs, components or isolated tests prove at most the evidence they directly exercise.
+
+`PRODUCT COMPLETE` additionally requires real domain integration; premium benchmark-matched PUTDUK UI; complete Korean flow; mobile/tablet/desktop and System/Light/Dark; loading, empty, validation/error/recovery, success, disabled/unauthorized and applicable offline/reconnect states; interaction/focus/accessibility/reduced motion; browser E2E; actual rendered screenshot review; visual gap comparison/regression; and performance acceptance.
+
+Generic dashboards/templates, unmodified shadcn appearance, placeholder cards, bare forms, raw CRUD tables, generic gradients/chat clones, stacked-desktop mobile, fake data/UI, required V1 work replaced by `coming soon`, and engineering/foundation copy shown to users can never close a product row.
+
 ## 1. Evidence rules
 
 This audit distinguishes specification from implementation. Repository prose is not proof that a production capability exists. Local source is not proof that a remote database, deployment or operator workflow exists.
@@ -20,7 +28,7 @@ Status vocabulary:
 - `ABSENT` — no adequate contract or implementation existed at audit time.
 - `BLOCKED` — verification/action requires a named external condition.
 
-## 1.1 WS-02 implementation delta and evidence
+## 1.1 WS-03 implementation delta and evidence
 
 This pass added local production foundations rather than treating architecture prose as implementation:
 
@@ -33,10 +41,10 @@ This pass added local production foundations rather than treating architecture p
 | Durable jobs | priority, bounded attempts, leases, attempt history and dead-letter commands | schema/pgTAP test authored | local database execution and worker heartbeat pending |
 | Referral and promotions | versioned qualification/claim/campaign data plus 5,000+5,000 cap and first-funding cap rules | unit rule tests pass | event consumer and operator workflow pending |
 | Catalog governance | sourced dated DRAFT proposal, 11 neutral products, approval state machine and immutable post-approval children | source review complete | operator approval command/UI and database execution pending |
-| Member/security operations | KYC, security/risk/block, lifecycle/timeline, destination and receipt foundations | schema authored | Member 360 UI and full denial/E2E pending |
+| Member/security operations | physically isolated admin app, server-owned roles, AAL2/recent-TOTP gates, KYC/security/risk/block data and exact-UUID Member 360 reference | 12 admin unit tests plus public admin-path browser denial pass | app-owned sessions, action queues and authenticated role/MFA/revocation E2E pending |
 | Access return | protected-route allowlist and safe post-login return preservation | unit routing tests pass | authenticated browser matrix pending |
 
-Current application evidence from this pass: the full `pnpm verify` gate passed, including 84 asset checks, formatting, ESLint, TypeScript, 82/82 unit tests and the Next.js production build. Playwright passed 14/14 desktop/mobile tests, `git diff --check` passed, and the production browser bundle contains no `.map` files or lossless master assets. This is not release acceptance. The database gate could not start because the Docker Desktop Linux engine pipe was unavailable; no unrelated Docker inventory or historical resource was inspected.
+Current application evidence from this pass: the full `pnpm verify` gate passed, including 84 asset checks, formatting, ESLint, TypeScript, 163 web unit tests, 12 admin unit tests and both Next.js production builds. Playwright passed 28/28 desktop/mobile tests, including ordinary public-app 404 behavior for reserved admin aliases. Eighteen production screenshots and 42 canonical benchmark captures are hashed and reviewed; bounded loopback performance evidence is recorded separately and is not production acceptance. The database gate could not start because the Docker Desktop Linux engine pipe was unavailable; no unrelated Docker inventory or historical resource was inspected.
 
 Dimension codes:
 
@@ -68,7 +76,7 @@ Columns:
 | 03 | Theme system and design tokens | P1 | PARTIAL | Y | P | P | P | — | — | — | — | P | N | P |
 | 04 | Responsive web, PWA and native boundary | P0 | PARTIAL | Y | P | P | P | P | P | P | P | P | P | P |
 | 05 | Identity, account lifecycle and consent | P0 | PARTIAL | P | P | P | P | P | Y | P | P | P | P | P |
-| 06 | Guided onboarding quest | P1 | SPEC_ONLY | P | N | N | N | N | N | N | N | N | N | P |
+| 06 | Guided onboarding quest | P1 | PARTIAL | Y | P | P | P | N | N | P | N | P | P | P |
 | 07 | PUTDUK START trial | P0 | PARTIAL | Y | P | P | P | P | Y | Y | P | Y | P | P |
 | 08 | Mining engine and authoritative session state | P0 | PARTIAL | Y | P | P | P | P | Y | Y | P | P | P | P |
 | 09 | Premium mining experience / selective 3D | P1 | PARTIAL | Y | P | P | P | — | P | P | P | P | N | P |
@@ -99,7 +107,7 @@ Columns:
 | 34 | Git integrity, CI and artifact provenance | P0 | PARTIAL | Y | P | — | — | — | — | P | P | Y | P | — |
 | 35 | Cross-browser E2E and visual regression | P0/P1 | PARTIAL | Y | P | P | P | P | P | P | P | P | P | P |
 | 36 | End-to-end user journey acceptance | P0 | PARTIAL | Y | P | P | P | P | P | P | P | P | P | P |
-| 37 | Admin journey acceptance | P0 | ABSENT | Y | N | N | N | P | P | P | P | N | N | P |
+| 37 | Admin journey acceptance | P0 | PARTIAL | Y | P | P | P | P | P | P | P | P | P | P |
 | 38 | PWA/install/offline/push acceptance | P0/P1 | PARTIAL | Y | P | P | P | P | P | P | P | P | N | P |
 | 39 | Animation, WebGL, FPS and memory acceptance | P1 | SPEC_ONLY | Y | N | P | P | — | — | P | P | P | N | — |
 | 40 | Production deploy, rollback and disaster recovery | P0 | SPEC_ONLY | Y | N | — | — | P | P | P | P | P | N | — |
@@ -108,7 +116,7 @@ Columns:
 
 ### 01 — Product definition and information architecture
 
-The five-world loop and domain map are documented; routes cover public, login, trial/mining/wallet/events/menu and a narrow admin. There is no proven production navigation/state map for every role and terminal state. **Close when:** signed-off route/state inventory, role visibility, responsive navigation and critical-journey E2E are current.
+The five-world loop and domain map are documented; routes cover public, login, trial/mining/wallet/events/menu and the physically separate `apps/admin` control plane. The public build proves ordinary 404 behavior for reserved admin aliases. A signed-off production navigation/state map and authenticated critical-journey evidence for every role and terminal state are still missing. **Close when:** role visibility, responsive navigation and critical-journey E2E are current.
 
 ### 02 — Brand, visual references and asset pipeline
 
@@ -116,7 +124,7 @@ Canonical references, hashes, custom SVGs, mascot/world/rank masters, AVIF/WebP/
 
 ### 03 — Theme system and design tokens
 
-The semantic contract is now defined, while current application styling was originally dark/mint and has no persisted user selector. **Close when:** all components consume the black/gold semantic tokens, System/Light/Dark selection is pre-paint safe and the full state matrix passes.
+The semantic contract, black/gold product styling and persisted System/Light/Dark selector are implemented on current reference surfaces. App-wide token adoption, pre-paint verification and the complete protected/state matrix remain open. **Close when:** every component consumes the semantic tokens and the full state matrix passes without flash or contrast regressions.
 
 ### 04 — Responsive web, PWA and native boundary
 
@@ -124,11 +132,11 @@ Manifest, service worker, offline route and responsive CSS foundations exist. In
 
 ### 05 — Identity, account lifecycle and consent
 
-Email/password UI, Supabase SSR session helpers, callback/confirm routes and profile foundations exist. Username/name/DOB policy, confirmation, full terms-version capture, duplicate resolution, account deletion/export, MFA and recovery completion are incomplete. **Close when:** lifecycle schema/UI/admin/E2E and abuse controls pass with exact-project RLS evidence.
+Separate login/signup, username/name/DOB/phone/recovery-email capture, password confirmation, versioned required/optional consent evidence, ID availability, recovery, local/global logout and account UI are implemented locally. The new identity migration is not remotely applied, and authenticated E2E, abuse/rate controls, legal approval, account deletion/export and production recovery delivery evidence remain incomplete. **Close when:** lifecycle schema/UI/admin/E2E and abuse controls pass with exact-project RLS evidence.
 
 ### 06 — Guided onboarding quest
 
-The desired first-value journey is described only at loop level. No resumable quest state, step analytics or operator view exists. **Close when:** a versioned, skippable, resumable Korean quest leads from account completion to a real first trial result without fabricating progress.
+An accessible Korean spotlight/coach-mark flow now supports skip and replay and keys its dismissal to the server trial stage. It does not durably persist the current step, advance from domain events, emit step analytics or expose an operator view. **Close when:** a versioned, skippable and durably resumable quest leads from account completion to a real first trial result without fabricating progress.
 
 ### 07 — PUTDUK START trial
 
@@ -180,11 +188,11 @@ Subscription/preferences routes, manifest/service worker and safe relative click
 
 ### 19 — User AI, Operations AI and Growth AI
 
-The user AI route has guard/context/tool/usage/streaming code and non-mutation rules. Authenticated E2E, durable conversation recovery and provider evidence are not complete; operations/growth AI are P2 advisory specs only. **Close when:** genuine deltas, ownership isolation, cancel/retry/refresh and factual citations pass, with all mutations denied.
+The user AI route has typed safety, intent, screen-context, owned read-only tool, knowledge and safe-general routes; financial/account answers fail closed when a tool is unavailable. Provider streaming, cancellation, audit and Korean evaluation foundations exist. Authenticated E2E, durable PUTDUK-owned conversation recovery and production provider evidence are not complete; operations/growth AI are P2 advisory specs only. **Close when:** genuine deltas, ownership isolation, cancel/retry/refresh and factual citations pass, with all mutations denied.
 
 ### 20 — One-person admin cockpit
 
-Role schema, protected layout, dashboard and deposit approval exist. MFA, withdrawal/settlement/job/support queues, global search, safe mode, flags and SLA/reconciliation views are missing. **Close when:** the daily loop can be completed without direct SQL and every high-impact action is confirmed/audited.
+The separately built `apps/admin` application now has a dedicated cookie/login, active server-owned role validation, mandatory AAL2 TOTP, recent step-up for its deposit command, enumeration-resistant responses, security-event capture, responsive 오늘의 퍼뜩 and permissioned Member 360 reference UI. Public aliases and the former public admin API return ordinary 404s. App-owned idle/absolute session enforcement, single-use database-bound step-up grants, auth/MFA rate limiting, full queues/actions and authenticated operator fixtures remain P0. **Close when:** `docs/security/ADMIN-CONTROL-PLANE-SECURITY.md` is fully satisfied and the daily loop can be completed without direct SQL.
 
 ### 21 — Emergency stop and safe mode
 
@@ -192,7 +200,7 @@ Global/domain safe-mode and typed feature-flag schemas now exist, but evaluation
 
 ### 22 — Support, user search and case evidence
 
-Member lifecycle state, immutable timeline, KYC/security/risk/block, destination and receipt foundations now exist. A complete case-management and Member 360 operator surface does not. **Close when:** authorized lookup produces the evidence timeline without exposing secrets, records case notes/actions and separates explanation from financial mutation.
+Member lifecycle, immutable timeline, KYC/security/risk/block, destination and receipt foundations feed a permissioned exact-UUID Member 360 reference surface in the isolated admin app. Sensitive KYC summary access is role-gated and audited; password, document, destination value and impersonation are excluded. Complete case notes/actions, support workflow and authenticated operator browser proof remain. **Close when:** the evidence timeline and cases work end to end without exposing secrets or coupling explanation to financial mutation.
 
 ### 23 — Growth, attribution and ads boundary
 
@@ -216,11 +224,11 @@ ARIA/reduced-motion foundations exist, but no complete audit or production copy 
 
 ### 28 — Performance, media delivery and 3D budgets
 
-Responsive AVIF/WebP assets and manifest integrity exist. Route budgets, field/lab monitoring, critical preload decisions, cache policy and 3D measurements do not. **Close when:** budgets are recorded and enforced without lowering visual quality.
+Responsive AVIF/WebP assets and manifest integrity exist. Bounded one-run loopback measurements now record Landing transfer, LCP, CLS, one interaction and long tasks, including a 106 ms mobile long task. Field data, representative throttled percentiles, real INP, memory/FPS, cache-policy acceptance and future 3D lifecycle measurements do not exist. **Close when:** production-like budgets are recorded and enforced without lowering visual quality.
 
 ### 29 — Security, RLS and privilege boundary
 
-RLS/policies/functions and server-only admin helpers exist locally. Exact production-project advisors, penetration/abuse review, MFA and secret-rotation evidence are unavailable. **Close when:** migration tests, Supabase advisors and authenticated cross-user/admin denial tests pass on the exact authorized target.
+RLS/policies/functions, separate server-only admin helpers, mandatory AAL2/TOTP gates and current-role denial tests exist locally. Exact-project advisors, authenticated browser role/revocation proof, abuse review, app-owned admin session controls and secret-rotation evidence are unavailable. **Close when:** migration tests, Supabase advisors and authenticated cross-user/admin denial tests pass in an authorized production-like environment and later on the exact authorized target.
 
 ### 30 — Jobs, retry, leases and dead-letter handling
 

@@ -4,6 +4,18 @@ Status: **REQUIRED RELEASE GATE**
 
 “Implemented” means source exists. “Done” means the feature is specified, secure, observable, operable, recoverable and proven in the target environment.
 
+## Three-state completion gate
+
+- `FOUNDATION COMPLETE` proves the approved architecture and implementation seams exist.
+- `FUNCTIONALLY COMPLETE` proves the authorized real backend/domain flow works end to end.
+- `PRODUCT COMPLETE` proves the functional flow is a finished production experience.
+
+Only `PRODUCT COMPLETE` counts toward launch readiness. Route, API, schema, component, screenshot or isolated test existence cannot be relabelled as completion.
+
+In addition to the gates below, `PRODUCT COMPLETE` requires all applicable premium PUTDUK UI/UX, Korean production copy, mobile/tablet/desktop, System/Light/Dark, loading/skeleton, empty, validation/error/recovery, success, disabled/unauthorized, hover/press/focus, offline/reconnect, accessibility, reduced motion, browser E2E, actual rendered screenshot review, canonical Visual Lab comparison, visual regression and performance acceptance.
+
+Reject as final output: generic dashboards, default SaaS templates, unmodified shadcn appearance, placeholder cards, bare forms, raw CRUD tables, generic gradients, generic ChatGPT clones, desktop merely stacked on mobile, fake/unconnected UI, `coming soon` in place of required V1 UX and engineering/foundation copy exposed to end users.
+
 ## Feature-level gate
 
 Every feature must satisfy all applicable items:
@@ -77,6 +89,13 @@ Production release is allowed only when:
     account, wallet, KYC and admin content is non-indexable.
 15. no public source map, secret, authoritative formula or lossless master asset
     is present in the production artifact.
+16. the public and admin applications build as separate artifacts; the public
+    route graph, navigation and bundle contain no privileged admin surface;
+17. operator access proves dedicated authentication, current server-owned role,
+    AAL2 MFA, bounded session policy and step-up for high-impact commands as
+    defined in `docs/security/ADMIN-CONTROL-PLANE-SECURITY.md`;
+18. `/admin`, `/administrator`, `/manage`, `/backoffice` and former public admin
+    command paths behave like ordinary nonexistent routes on the public app.
 
 ## Evidence labels
 

@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 1,
+  "captureSession": {
+    "source": "production-admin",
+    "capturedAt": "2026-09-27T00:17:27.2110878Z",
+    "repository": "goldeget/putduk-mining",
+    "repositoryHead": "d90e43f411f7dbbb07484eb62b85ea453d76ef3e",
+    "workingTreeState": "ws-03-uncommitted",
+    "application": "admin-control-plane",
+    "build": "Next.js 16.3.6 production build",
+    "serverBoundary": "loopback-only 127.0.0.1:4318 with synthetic non-production environment values",
+    "externalRequests": "blocked",
+    "authentication": "not attempted; login surface only",
+    "motion": "reduced; CSS animations and transitions disabled for deterministic evidence",
+    "readiness": "document.fonts.ready before capture",
+    "format": "webp",
+    "encoder": "ffmpeg libwebp picture preset quality 90 compression level 6",
+    "containsSensitiveData": false
+  },
+  "captures": [
+    {
+      "file": "production-admin--login--desktop-1440--dark--default.webp",
+      "route": "/login",
+      "screen": "admin-login",
+      "viewport": { "name": "desktop-1440", "width": 1440, "height": 1000 },
+      "rendered": { "width": 1440, "height": 1000 },
+      "theme": "dark",
+      "state": "default",
+      "httpStatus": 200,
+      "bytes": 23936,
+      "sha256": "c5840c3ad8ae5bf1ecdb58bb35f61504aa0084015a49f49b84d1feb84d1adc18",
+      "reviewed": true
+    },
+    {
+      "file": "production-admin--login--desktop-1440--light--default.webp",
+      "route": "/login",
+      "screen": "admin-login",
+      "viewport": { "name": "desktop-1440", "width": 1440, "height": 1000 },
+      "rendered": { "width": 1440, "height": 1000 },
+      "theme": "light",
+      "state": "default",
+      "httpStatus": 200,
+      "bytes": 21392,
+      "sha256": "e6916e866a6acc2e134b4f63aea28dcdb8cf62de8afcf38dac7eb89d67c8d581",
+      "reviewed": true
+    },
+    {
+      "file": "production-admin--login--mobile-390--dark--default.webp",
+      "route": "/login",
+      "screen": "admin-login",
+      "viewport": { "name": "mobile-390", "width": 390, "height": 844 },
+      "rendered": { "width": 390, "height": 844 },
+      "theme": "dark",
+      "state": "default",
+      "httpStatus": 200,
+      "bytes": 19994,
+      "sha256": "66e879eb7d14d08adaf96ba9cd7aeb0b6797886b3cb930387b47cbfa6c9db8b3",
+      "reviewed": true
+    },
+    {
+      "file": "production-admin--login--mobile-390--light--default.webp",
+      "route": "/login",
+      "screen": "admin-login",
+      "viewport": { "name": "mobile-390", "width": 390, "height": 844 },
+      "rendered": { "width": 390, "height": 844 },
+      "theme": "light",
+      "state": "default",
+      "httpStatus": 200,
+      "bytes": 18344,
+      "sha256": "97224bb40a7eeb0c6f7d10a0f92d152283d7cab88de3430aca6907cfa102a3f7",
+      "reviewed": true
+    }
+  ],
+  "blockedAuthenticatedEvidence": [
+    {
+      "screen": "오늘의 퍼뜩",
+      "reason": "No approved synthetic operator identity, MFA session, or deterministic admin-domain fixture was available."
+    },
+    {
+      "screen": "Member 360",
+      "reason": "No approved synthetic operator identity, MFA session, permission-scoped member fixture, or audited KYC-access fixture was available."
+    }
+  ],
+  "totals": {
+    "captures": 4,
+    "bytes": 83666,
+    "http200": 4,
+    "reviewed": 4
+  }
+}

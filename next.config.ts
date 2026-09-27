@@ -55,20 +55,29 @@ const nextConfig: NextConfig = {
         source: "/api/:path*",
         headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
       },
-      {
-        source: "/admin/:path*",
+      ...[
+        "/login",
+        "/signup",
+        "/find-id",
+        "/recover",
+        "/auth/update-password",
+      ].map((source) => ({
+        source,
         headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
-      },
-      {
-        source: "/login",
+      })),
+      ...[
+        "/home",
+        "/start",
+        "/mining",
+        "/wallet/:path*",
+        "/events",
+        "/notifications",
+        "/ai",
+        "/menu/:path*",
+      ].map((source) => ({
+        source,
         headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
-      },
-      ...["/start", "/mining", "/wallet/:path*", "/events", "/menu/:path*"].map(
-        (source) => ({
-          source,
-          headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
-        }),
-      ),
+      })),
     ];
   },
 };

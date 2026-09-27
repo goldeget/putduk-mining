@@ -20,7 +20,6 @@ export default defineConfig({
   webServer: {
     command: "pnpm dev",
     env: {
-      NEXT_PUBLIC_ADMIN_URL: "http://127.0.0.1:3000/admin",
       NEXT_PUBLIC_APP_URL: "http://127.0.0.1:3000",
       NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:
         "local-playwright-publishable-key-not-a-secret",

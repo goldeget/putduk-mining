@@ -50,15 +50,16 @@ These rules override convenience, historical context, cached knowledge, prior ta
 
 ## Canonical visual lock
 
-1. The only canonical visual references are:
+1. The canonical art-direction master references are:
    - `docs/design/visual-references/putduk-brand-master-reference.png`
    - `docs/design/visual-references/putduk-rank-master-reference.png`
-2. They define quality and art direction, not final product copy, rank benefits, economic values, or implemented scope.
-3. The exact Korean brand spelling is `퍼뜩`.
-4. Never use Korean or other production copy baked into generated raster pixels. Render copy as HTML/CSS text or reviewed SVG content.
-5. Keep canonical references and generated lossless masters separate from optimized runtime assets. Generated masters live only under `docs/design/generated-masters/`; use `public/brand/assets.manifest.json` and the versioned derivatives under `public/brand/` and `public/ranks/` at runtime.
-6. Runtime visual work must follow `PUTDUK-VISUAL-DIRECTION.md`, `PUTDUK-BRAND-ASSET-SYSTEM.md`, `PUTDUK-THEME-SYSTEM.md`, and `PUTDUK-MOTION-EXPERIENCE.md` under `docs/design/`.
-7. Do not infer a seventh production rank or any rank name, threshold, benefit, or reward from the mockups. V1 production assets are neutral `rank-01` through `rank-06` until versioned product data is approved.
+2. The canonical product visual/UX benchmark is the durable specification under `docs/design/visual-lab/`, identified as `visual-lab-2026.09.27-v1` with Sites source commit `a8206957b1cb540291ad4e840e7f8835487e0380` and deployment `appgdep_6ab84fdd747c81919198ed1968163109`. The private Site is never a runtime dependency or backend truth.
+3. The art references and Visual Lab define quality, art direction, composition and interaction intent, not final product copy, rank benefits, economic values, implemented scope or backend truth.
+4. The exact Korean brand spelling is `퍼뜩`.
+5. Never use Korean or other production copy baked into generated raster pixels. Render copy as HTML/CSS text or reviewed SVG content.
+6. Keep canonical references and generated lossless masters separate from optimized runtime assets. Generated masters live only under `docs/design/generated-masters/`; use `public/brand/assets.manifest.json` and the versioned derivatives under `public/brand/` and `public/ranks/` at runtime.
+7. Runtime visual work must follow `PUTDUK-VISUAL-DIRECTION.md`, `PUTDUK-BRAND-ASSET-SYSTEM.md`, `PUTDUK-THEME-SYSTEM.md`, `PUTDUK-MOTION-EXPERIENCE.md` and `docs/design/visual-lab/`.
+8. Do not infer a seventh production rank or any rank name, threshold, benefit, or reward from the mockups. V1 production assets are neutral `rank-01` through `rank-06` until versioned product data is approved.
 
 ## Repository integrity and release lock
 
@@ -66,6 +67,20 @@ These rules override convenience, historical context, cached knowledge, prior ta
 2. Never conceal or bypass repository corruption with grafts, replacement refs, fake shallow boundaries, history rewrites, force pushes, or another repository.
 3. GitHub push, Supabase remote mutation, Cloudflare provisioning/deployment, and production release are separate authorization boundaries.
 4. Follow `docs/development/GIT-CI-CD-POLICY.md` and `docs/quality/DEFINITION-OF-DONE.md`.
+
+## Permanent product-completion lock
+
+Every user-facing and admin-facing feature has three separate evidence states:
+
+1. `FOUNDATION COMPLETE` — architecture, contracts, schema, routes or component foundations exist.
+2. `FUNCTIONALLY COMPLETE` — the real domain/backend flow works with authorization, validation and recovery.
+3. `PRODUCT COMPLETE` — the function is delivered as a benchmark-matched, production-quality experience and all applicable product evidence passes.
+
+Only `PRODUCT COMPLETE` counts toward launch readiness. Route, API, schema, component or test existence is never completion by itself.
+
+`PRODUCT COMPLETE` requires, as applicable: real backend/domain integration; premium PUTDUK UI and complete Korean UX; mobile/tablet/desktop; System/Light/Dark; loading/skeleton, empty, validation/error/recovery, success and disabled/unauthorized states; hover/press/focus; offline/reconnect; accessibility; reduced motion; browser E2E; actual rendered screenshot review; comparison against the canonical Visual Lab benchmark; visual regression; and performance acceptance.
+
+The following are explicitly rejected as final output: generic dashboards, default SaaS templates, unmodified shadcn appearance, placeholder cards, bare forms, raw CRUD tables, generic gradients, generic ChatGPT-clone UI, desktop merely stacked vertically on mobile, fake or unconnected UI, `coming soon` replacing required V1 UX, and engineering/foundation language visible to end users.
 
 ## WS-02 product and money locks
 

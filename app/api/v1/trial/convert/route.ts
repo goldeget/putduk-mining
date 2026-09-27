@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 
+import { toWelcomeConversionResult } from "@/domain/trial/conversion-response";
 import { apiError, apiSuccess } from "@/lib/api/http";
 import { readIdempotencyKey } from "@/lib/api/idempotency";
 import { getVerifiedIdentity } from "@/lib/auth/session";
@@ -69,5 +70,7 @@ export async function POST(request: Request) {
     });
   }
 
-  return apiSuccess({ conversion: data?.[0] ?? null });
+  return apiSuccess({
+    conversion: toWelcomeConversionResult(data?.[0] ?? null),
+  });
 }

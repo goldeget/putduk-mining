@@ -2,7 +2,7 @@
 
 Status: **CANONICAL TARGET ARCHITECTURE / IMPLEMENTATION PARTIAL**
 
-Architecture version: `2026.09.27-WS-02`
+Architecture version: `2026.09.27-WS-03`
 
 Product state: **greenfield 0→1; not production ready**
 
@@ -72,6 +72,18 @@ P0/P1/P2/P3 ownership is defined in `docs/product/V1-SCOPE-PRIORITIES.md`. Scope
 
 ## 5. Domain ownership
 
+### Permanent completion model
+
+Every user/admin capability is tracked independently as:
+
+- `FOUNDATION COMPLETE`: architecture, schema, route, component and test seams exist;
+- `FUNCTIONALLY COMPLETE`: the authorized real domain flow works end to end, including validation and recovery;
+- `PRODUCT COMPLETE`: the functional flow meets the canonical visual benchmark and all applicable production UX, browser, accessibility, state, motion and performance gates.
+
+Only `PRODUCT COMPLETE` contributes to launch readiness. A route, API, schema, component, attractive static screen or green unit test cannot substitute for the final state. Product completeness requires actual browser-rendered review across mobile/tablet/desktop and System/Light/Dark, state coverage, Korean production copy, reduced motion, accessibility, benchmark comparison and visual regression where appropriate.
+
+Generic dashboards, default SaaS templates, unmodified component-library styling, placeholder cards, bare forms, raw CRUD tables, random gradients, generic chat clones, stacked-desktop mobile, fake/unconnected data, `coming soon` in place of V1 flow and engineering copy in consumer UI are architectural acceptance failures.
+
 ```text
 Identity ─ account, profile, consent, session, roles
 Trial ─ eligibility, quota, trial session, trial ledger and welcome conversion
@@ -103,23 +115,26 @@ A domain owns its invariants and commands. UI route or admin page location does 
 ## 6. Runtime topology
 
 ```text
-Browser / installed PWA
-  │ HTTPS, Supabase session cookie/token
-  ▼
-Next.js application runtime
-  ├─ public/user UI
-  ├─ admin UI (separate hostname and authorization surface)
-  ├─ route handlers/server actions
-  └─ static/PWA assets
-  │
-  ├────────► Supabase Auth
-  ├────────► Supabase PostgreSQL (RLS + domain RPC)
-  ├────────► Supabase Realtime where a proven UX needs it
-  ├────────► Supabase Storage for approved product objects
-  └────────► approved external AI/push provider through server boundary
+Public browser / installed PWA             Operator browser
+  │ HTTPS                                   │ HTTPS
+  ▼                                         ▼
+Root Next.js public application             apps/admin Next.js application
+  mining.putduk.com                           admin.mining.putduk.com
+  ├─ public/user UI                           ├─ dedicated operator login + MFA
+  ├─ user route handlers/actions              ├─ role/capability/step-up boundary
+  └─ static/PWA assets                        └─ admin-only commands and UI
+  │                                         │
+  └──────────────────┬──────────────────────┘
+                     ▼
+  Supabase Auth + PostgreSQL (RLS + domain RPC + immutable audit)
+  ├─ Realtime only where a proven UX needs it
+  ├─ Storage for approved product objects
+  └─ approved external AI/push provider through server boundary
 ```
 
 Candidate edge runtime is Cloudflare Workers plus static assets, subject to a compatibility gate. Cloudflare is not the economic source of truth. PostgreSQL remains authoritative.
+
+The two applications are separate builds and deployments. The public application does not register `/admin`, `/administrator`, `/manage`, `/backoffice` or an admin command API and does not import privileged admin UI. Those paths are ordinary public-app 404s. Shared code may contain neutral primitives and domain contracts only; it cannot collapse the authentication, cookie, runtime or bundle boundary.
 
 ## 7. Frontend architecture
 
@@ -136,7 +151,7 @@ The Next.js version in this repository is authoritative. Agents must read its in
 
 ## 8. Canonical visual architecture
 
-The two files in `docs/design/visual-references/` are the canonical quality and art-direction sources. They establish:
+The two files in `docs/design/visual-references/` are the canonical art-direction masters. The durable specification in `docs/design/visual-lab/` (`visual-lab-2026.09.27-v1`) is the canonical product visual/UX benchmark. Its private Site source commit is `a8206957b1cb540291ad4e840e7f8835487e0380` and deployment ID is `appgdep_6ab84fdd747c81919198ed1968163109`; neither the Site nor its prototype state is a production runtime or backend dependency. Together these sources establish:
 
 - cinematic black/gold identity;
 - Earth/space atmosphere and warm gold lighting;
@@ -144,6 +159,7 @@ The two files in `docs/design/visual-references/` are the canonical quality and 
 - the sprout-miner PUTDUK mascot;
 - planetary rank-emblem direction;
 - premium app/PWA production quality.
+- canonical screen composition, responsive priority and interaction intent.
 
 They do not establish final copy or economics. The only exact Korean brand spelling is `퍼뜩`. All production copy is real application typography or reviewed SVG content; text baked into generated images is forbidden.
 
@@ -412,7 +428,7 @@ Roles:
 - `SUPPORT_ADMIN`;
 - `VIEWER`.
 
-The admin hostname is a routing/blast-radius boundary, not authorization. Production operators require MFA. The cockpit owns deposit, withdrawal, settlement/job exception, support, content, security and audit queues with SLA/age/severity.
+The admin hostname is a routing/blast-radius boundary, not authorization. The separately built `apps/admin` control plane uses its own authentication cookie and requires live user verification, an active server-owned `user_roles` record and AAL2 TOTP MFA. High-impact commands additionally require recent TOTP step-up, exact origin, capability, idempotency, explicit confirmation and reason. `user_metadata` never grants authority. The cockpit owns deposit, withdrawal, settlement/job exception, support, content, security and audit queues with SLA/age/severity.
 
 High-impact commands require:
 
@@ -423,7 +439,7 @@ High-impact commands require:
 5. immutable audit diff and correlated result;
 6. notification/reconciliation where applicable.
 
-Full model: `docs/operations/AUTONOMOUS-ONE-PERSON-OPERATIONS.md`.
+Full operating model: `docs/operations/AUTONOMOUS-ONE-PERSON-OPERATIONS.md`. Implemented and remaining security truth: `docs/security/ADMIN-CONTROL-PLANE-SECURITY.md`.
 
 ## 22. Safe mode, feature flags and experiments
 
@@ -578,4 +594,4 @@ Unanswered gates mean the feature is not ready to build or provision.
 
 ## 34. Current truth
 
-This repository contains meaningful application, schema, test and visual-asset foundations, but most domains are partial and no production deployment is established. Access to the exact authorized GitHub origin is verified, the previously missing reachable object was restored from that origin without rewriting history, and `git fsck --full` passes without missing or broken objects. WS-02 integration still requires the feature-branch verification, pull-request CI and merge gates defined by repository policy. Remote Supabase and Cloudflare remain untouched, and the Cloudflare account ID is unknown. No production-readiness claim is valid until the closure-audit P0 conditions and release definition of done pass.
+This repository contains meaningful application, schema, test, isolated-admin and visual-benchmark foundations, but most domains are partial and no production deployment is established. Access to the exact authorized GitHub origin is verified, the previously missing reachable object was restored from that origin without rewriting history, and `git fsck --full` passes without missing or broken objects. Every WS-03 integration remains subject to exact-baseline verification, pull-request CI and merge evidence under repository policy. Remote Supabase and Cloudflare remain untouched, and the Cloudflare account ID is unknown. No production-readiness claim is valid until every P0 row in the release-readiness matrix and the release definition of done passes.

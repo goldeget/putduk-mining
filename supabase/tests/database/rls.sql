@@ -110,8 +110,27 @@ select ok(
     join pg_namespace as namespace on namespace.oid = procedure.pronamespace
     where namespace.nspname in ('public', 'app_private')
       and procedure.prosecdef
-  ),
-  'application schemas contain no SECURITY DEFINER functions'
+      and procedure.oid not in (
+        'public.bootstrap_user(uuid)'::regprocedure,
+        'public.is_login_id_available(text)'::regprocedure,
+        'public.resolve_login_email(text)'::regprocedure,
+        'app_private.capture_public_signup_identity()'::regprocedure
+      )
+  )
+    and (
+      select count(*) = 4
+        and coalesce(
+          bool_and(
+            procedure.proconfig @> array['search_path=pg_catalog']::text[]
+          ),
+          false
+        )
+      from pg_proc as procedure
+      join pg_namespace as namespace on namespace.oid = procedure.pronamespace
+      where namespace.nspname in ('public', 'app_private')
+        and procedure.prosecdef
+    ),
+  'application schemas contain only the four reviewed fixed-search-path SECURITY DEFINER functions'
 );
 
 select ok(

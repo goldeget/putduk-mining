@@ -5,10 +5,11 @@ import {
   aiChatRequestSchema,
 } from "@/domain/ai/chat";
 import { readAiCache, writeAiCache } from "@/lib/ai/cache";
-import { createPublicAiContext } from "@/lib/ai/context";
 import { extractSseData, parseOpenAiSseData } from "@/lib/ai/openai-stream";
+import { planAiTurn } from "@/lib/ai/orchestrator";
 import { buildAiInstructions, hashAiPrompt } from "@/lib/ai/prompt";
-import { routeAiQuestion } from "@/lib/ai/router";
+import { createAiProviderOutputGuard } from "@/lib/ai/response-guard";
+import { executeAiTool } from "@/lib/ai/tool-executor";
 import { assertAiToolBoundary } from "@/lib/ai/tools";
 import {
   beginAiRequest,
@@ -26,11 +27,12 @@ const MAX_RESPONSE_CHARACTERS = 32_000;
 const PROVIDER_TIMEOUT_MS = 90_000;
 const OPENAI_RESPONSES_URL = "https://api.openai.com/v1/responses";
 const STATIC_MODEL_KEY = "putduk-static-v1";
+const TOOL_MODEL_KEY = "putduk-owned-read-tool-v1";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-type StreamSource = "cache" | "provider" | "static";
+type StreamSource = "cache" | "provider" | "static" | "tool";
 
 function sseEvent(event: AiClientStreamEvent) {
   return `event: ${event.type}\ndata: ${JSON.stringify(event)}\n\n`;
@@ -146,45 +148,80 @@ export async function POST(request: Request) {
   }
 
   assertAiToolBoundary();
-  const aiContext = createPublicAiContext();
-  const aiRoute = routeAiQuestion(parsed.data.question);
+  const aiPlan = planAiTurn({
+    question: parsed.data.question,
+    ...(parsed.data.screenContext
+      ? { screenContext: parsed.data.screenContext }
+      : {}),
+  });
+  const aiContext = aiPlan.context;
+  const aiRoute = aiPlan.route;
   const providerConfigured = Boolean(
     env.AI_PROVIDER && env.AI_API_KEY && env.AI_MODEL_LOW_COST,
   );
+  const needsHighCapability =
+    aiRoute.kind === "high_capability" ||
+    (aiRoute.kind === "general_safe" &&
+      aiRoute.modelTier === "high_capability");
   const selectedModel =
     aiRoute.kind === "static"
       ? STATIC_MODEL_KEY
-      : aiRoute.kind === "high_capability" && env.AI_MODEL_HIGH_CAPABILITY
-        ? env.AI_MODEL_HIGH_CAPABILITY
-        : (env.AI_MODEL_LOW_COST ?? "provider-unconfigured");
+      : aiRoute.kind === "tool"
+        ? TOOL_MODEL_KEY
+        : needsHighCapability && env.AI_MODEL_HIGH_CAPABILITY
+          ? env.AI_MODEL_HIGH_CAPABILITY
+          : (env.AI_MODEL_LOW_COST ?? "provider-unconfigured");
   const instructions = buildAiInstructions(aiContext);
   const promptHash = hashAiPrompt({
     instructions,
     model: selectedModel,
     question: parsed.data.question,
+    ...(aiRoute.kind === "tool" && parsed.data.screenContext
+      ? { requestContext: parsed.data.screenContext }
+      : {}),
   });
   const admin = createSupabaseAdminClient();
   const cachedResponse =
-    aiRoute.kind !== "static" && providerConfigured
-      ? await readAiCache(admin, promptHash, TRUST_CONTENT_VERSION)
+    aiPlan.cacheable && providerConfigured
+      ? await readAiCache(
+          admin,
+          promptHash,
+          TRUST_CONTENT_VERSION,
+          "PUBLIC_KNOWLEDGE",
+        )
       : null;
   const source: StreamSource =
     aiRoute.kind === "static"
       ? "static"
-      : cachedResponse
-        ? "cache"
-        : "provider";
+      : aiRoute.kind === "tool"
+        ? "tool"
+        : cachedResponse
+          ? "cache"
+          : "provider";
+  const auditContextScope =
+    aiRoute.kind === "tool"
+      ? "ACCOUNT_STATE"
+      : aiRoute.kind === "general_safe"
+        ? "GENERAL_SAFE"
+        : aiRoute.kind === "ui_help"
+          ? "UI_HELP"
+          : "PUBLIC_FACTS_ONLY";
+  const auditRouteKind = cachedResponse ? "cache" : aiRoute.kind;
 
   const { data: admissionRows, error: admissionError } = await beginAiRequest(
     admin,
     {
       clientMessageId: parsed.data.clientMessageId,
+      contextScope: auditContextScope,
       inputRedacted: {
         character_count: parsed.data.question.length,
         classification: aiRoute.classification,
         knowledge_version: TRUST_CONTENT_VERSION,
         locale: "ko-KR",
         provider_configured: providerConfigured,
+        screen_context_fields: parsed.data.screenContext
+          ? Object.keys(parsed.data.screenContext).sort().join(",")
+          : "none",
         route_kind: cachedResponse ? "cache" : aiRoute.kind,
         route_key: aiRoute.routeKey,
       },
@@ -193,6 +230,10 @@ export async function POST(request: Request) {
       perDayLimit: env.AI_MAX_REQUESTS_PER_DAY,
       perMinuteLimit: env.AI_MAX_REQUESTS_PER_MINUTE,
       promptHash,
+      routeKey: aiRoute.routeKey,
+      routeKind: auditRouteKind,
+      safetyClassification: aiRoute.classification,
+      ...(aiRoute.kind === "tool" ? { toolName: aiRoute.tool } : {}),
       userId,
     },
   );
@@ -242,9 +283,14 @@ export async function POST(request: Request) {
 
   async function returnAuditedImmediateAnswer(
     answer: string,
-    responseSource: "cache" | "static",
+    responseSource: "cache" | "static" | "tool",
     model: string,
     providerRequestId: string,
+    grounding?: {
+      asOf: string;
+      source: "domain_tool";
+      tool: string;
+    },
   ) {
     const { error } = await completeAiRequest(admin, {
       cachedInputTokens: 0,
@@ -266,14 +312,17 @@ export async function POST(request: Request) {
       });
     }
 
+    const doneEvent: AiClientStreamEvent = {
+      knowledgeVersion: TRUST_CONTENT_VERSION,
+      requestId: aiRequestId,
+      type: "done",
+      ...(grounding ? { grounding } : {}),
+    };
+
     return streamResponse([
       { requestId: aiRequestId, source: responseSource, type: "ready" },
       { text: answer, type: "delta" },
-      {
-        knowledgeVersion: TRUST_CONTENT_VERSION,
-        requestId: aiRequestId,
-        type: "done",
-      },
+      doneEvent,
     ]);
   }
 
@@ -283,6 +332,38 @@ export async function POST(request: Request) {
       "static",
       STATIC_MODEL_KEY,
       `static:${aiRoute.routeKey}`,
+    );
+  }
+
+  if (aiRoute.kind === "tool") {
+    const toolResult = await executeAiTool(identity.supabase, aiRoute.tool, {
+      ...(parsed.data.screenContext
+        ? { screenContext: parsed.data.screenContext }
+        : {}),
+    });
+
+    if (!toolResult.ok) {
+      await recordFailure("FAILED", toolResult.code);
+      return streamResponse([
+        { requestId: aiRequestId, source: "tool", type: "ready" },
+        {
+          code: toolResult.code,
+          message: toolResult.answer,
+          type: "error",
+        },
+      ]);
+    }
+
+    return returnAuditedImmediateAnswer(
+      toolResult.answer,
+      "tool",
+      TOOL_MODEL_KEY,
+      `tool:${toolResult.tool}`,
+      {
+        asOf: toolResult.asOf,
+        source: "domain_tool",
+        tool: toolResult.tool,
+      },
     );
   }
 
@@ -395,6 +476,7 @@ export async function POST(request: Request) {
       let responseCharacterCount = 0;
       let responseText = "";
       const decoder = new TextDecoder();
+      const outputGuard = createAiProviderOutputGuard();
 
       const emit = (event: AiClientStreamEvent) => {
         if (!clientStreamCancelled) {
@@ -431,6 +513,14 @@ export async function POST(request: Request) {
 
             const event = parseOpenAiSseData(data);
             if (event.kind === "delta") {
+              const outputDecision = outputGuard.inspect(event.text);
+              if (!outputDecision.allowed) {
+                await failStream(
+                  outputDecision.code,
+                  "안전 정책에 맞는 응답을 완료하지 못했습니다.",
+                );
+                break;
+              }
               responseCharacterCount += event.text.length;
               if (responseCharacterCount > MAX_RESPONSE_CHARACTERS) {
                 await failStream(
@@ -477,12 +567,13 @@ export async function POST(request: Request) {
               }
 
               terminalStateRecorded = true;
-              if (responseText) {
+              if (responseText && aiPlan.cacheable) {
                 await writeAiCache(admin, {
                   answer: responseText,
                   cacheKey: promptHash,
                   knowledgeVersion: TRUST_CONTENT_VERSION,
                   model: providerModel,
+                  scope: "PUBLIC_KNOWLEDGE",
                   ttlSeconds: env.AI_CACHE_TTL_SECONDS,
                 });
               }

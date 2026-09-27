@@ -1,121 +1,189 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { useRouter } from "next/navigation";
 
 import { PutdukIcon } from "@/components/icons/putduk-icon";
+import styles from "@/components/product/product-experience.module.css";
 import {
+  formatAtomicAmount,
   parseDisplayAmount,
-  type DisplayCurrency,
 } from "@/domain/wallet/format-amount";
 import { trackAnalyticsEvent } from "@/lib/analytics/client";
 
+type Feedback = { message: string; tone: "error" | "success" } | null;
+
+const quickAmounts = ["10000", "30000", "50000", "100000"] as const;
+
 export function DepositForm() {
-  const [currency, setCurrency] = useState<DisplayCurrency>("KRW");
-  const [message, setMessage] = useState("");
+  const router = useRouter();
+  const [amount, setAmount] = useState("");
+  const [feedback, setFeedback] = useState<Feedback>(null);
   const [pending, setPending] = useState(false);
+
+  let amountAtomic: string | null = null;
+  if (amount) {
+    try {
+      amountAtomic = parseDisplayAmount(amount, "KRW");
+    } catch {
+      amountAtomic = null;
+    }
+  }
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const form = event.currentTarget;
-    setPending(true);
-    setMessage("");
+    setFeedback(null);
 
-    const formData = new FormData(form);
-    const displayAmount = String(formData.get("amount") ?? "");
+    let parsedAmount: string;
+    try {
+      parsedAmount = parseDisplayAmount(amount, "KRW");
+    } catch (error) {
+      setFeedback({
+        message:
+          error instanceof RangeError
+            ? "0원보다 큰 금액을 입력해 주세요."
+            : "원 단위 숫자로 금액을 입력해 주세요.",
+        tone: "error",
+      });
+      return;
+    }
+
+    setPending(true);
 
     try {
-      const amountAtomic = parseDisplayAmount(displayAmount, currency);
       const response = await fetch("/api/v1/deposits", {
         method: "POST",
+        credentials: "same-origin",
         headers: {
           "Content-Type": "application/json",
           "Idempotency-Key": crypto.randomUUID(),
         },
-        body: JSON.stringify({ amountAtomic, currency }),
+        body: JSON.stringify({ amountAtomic: parsedAmount, currency: "KRW" }),
       });
-      const payload = (await response.json()) as {
-        data?: { requestId?: string };
+      const payload = (await response.json().catch(() => null)) as {
         error?: { message?: string };
-      };
+      } | null;
 
       if (!response.ok) {
-        setMessage(payload.error?.message ?? "입금 요청을 만들지 못했습니다.");
+        setFeedback({
+          message:
+            payload?.error?.message ??
+            "입금 요청을 접수하지 못했어요. 잠시 후 다시 시도해 주세요.",
+          tone: "error",
+        });
         return;
       }
 
-      setMessage(
-        currency === "KRW"
-          ? "입금 요청이 생성되었습니다. 운영자가 확인할 계좌 안내는 승인된 운영 설정에서 표시됩니다."
-          : "USDT 요청이 생성되었습니다. 네트워크와 주소는 운영 확인 후 안내됩니다.",
-      );
-      void trackAnalyticsEvent("deposit_start", { currency }).catch(
+      setFeedback({
+        message:
+          "입금 요청을 접수했어요. 확인 가능한 계좌 안내가 제공된 뒤 본인 명의로 이체해 주세요.",
+        tone: "success",
+      });
+      setAmount("");
+      void trackAnalyticsEvent("deposit_start", { currency: "KRW" }).catch(
         () => undefined,
       );
-      form.reset();
-    } catch (error) {
-      setMessage(
-        error instanceof RangeError
-          ? "0보다 큰 금액을 입력해 주세요."
-          : currency === "KRW"
-            ? "원 단위의 정수 금액을 입력해 주세요."
-            : "USDT는 소수점 6자리까지 입력할 수 있습니다.",
-      );
+      router.refresh();
+    } catch {
+      setFeedback({
+        message: "인터넷 연결을 확인한 뒤 다시 시도해 주세요.",
+        tone: "error",
+      });
     } finally {
       setPending(false);
     }
   }
 
   return (
-    <form className="funding-form" onSubmit={submit}>
-      <fieldset>
-        <legend>입금 방식</legend>
-        <div className="segmented-control">
-          {(["KRW", "USDT"] as const).map((value) => (
-            <label key={value}>
-              <input
-                type="radio"
-                name="currency"
-                value={value}
-                checked={currency === value}
-                onChange={() => setCurrency(value)}
-              />
-              <span>{value === "KRW" ? "원화 계좌이체" : "USDT"}</span>
-            </label>
-          ))}
-        </div>
-      </fieldset>
-      <label className="funding-form__amount">
-        <span>요청 금액</span>
-        <div>
+    <form className={styles.form} onSubmit={submit} noValidate>
+      <header className={styles.stepHeader}>
+        <span className={styles.stepNumber}>01</span>
+        <span>
+          <h2>입금할 금액을 입력해 주세요</h2>
+          <p>V1 원화 입금은 본인 명의 계좌이체 후 확인 방식으로 진행됩니다.</p>
+        </span>
+      </header>
+
+      <label className={styles.fieldGroup} htmlFor="deposit-amount">
+        <span>입금 요청 금액</span>
+        <span className={styles.amountField}>
           <input
+            id="deposit-amount"
             name="amount"
             type="text"
-            inputMode="decimal"
+            inputMode="numeric"
             autoComplete="off"
-            placeholder={currency === "KRW" ? "예: 10000" : "예: 10.5"}
+            placeholder="0"
+            value={amount}
+            onChange={(event) =>
+              setAmount(event.target.value.replace(/[^0-9]/g, ""))
+            }
+            aria-invalid={Boolean(amount && !amountAtomic)}
+            aria-describedby="deposit-amount-help"
+            disabled={pending}
             required
           />
-          <strong>{currency}</strong>
-        </div>
+          <strong className={styles.currencySuffix}>KRW</strong>
+        </span>
       </label>
-      <div className="funding-form__notice">
+
+      <div className={styles.quickAmounts} aria-label="빠른 금액 선택">
+        {quickAmounts.map((value) => (
+          <button
+            key={value}
+            type="button"
+            onClick={() => setAmount(value)}
+            disabled={pending}
+          >
+            +{Number(value).toLocaleString("ko-KR")}
+          </button>
+        ))}
+      </div>
+
+      <dl className={styles.policySummary} aria-label="입금 요청 요약">
+        <div>
+          <dt>입금 방식</dt>
+          <dd>원화 계좌이체</dd>
+        </div>
+        <div>
+          <dt>요청 금액</dt>
+          <dd>
+            {amountAtomic ? formatAtomicAmount(amountAtomic, "KRW") : "—"}
+          </dd>
+        </div>
+        <div>
+          <dt>잔액 반영</dt>
+          <dd>입금 확인 후</dd>
+        </div>
+      </dl>
+
+      <div className={styles.formNotice} id="deposit-amount-help">
         <PutdukIcon name="shield" size={19} />
         <p>
-          요청 생성만으로 잔액이 증가하지 않습니다. 운영 확인과 원장 기록이
-          완료된 뒤 반영됩니다.
+          요청만으로 자산이 늘어나지 않습니다. 안내된 계좌·금액과 실제 입금이
+          확인된 뒤 KRW 지갑에 반영됩니다.
         </p>
       </div>
+
       <button
-        className="button button--primary"
+        className={`button button--primary ${styles.submitButton}`}
         type="submit"
-        disabled={pending}
+        disabled={pending || !amountAtomic}
       >
-        {pending ? "요청 생성 중" : "입금 요청 만들기"}
+        {pending ? "입금 요청 접수 중" : "입금 요청 확인"}
         <PutdukIcon name="arrow-right" size={18} />
       </button>
-      {message ? (
-        <p className="funding-form__message" role="status">
-          {message}
+
+      {feedback ? (
+        <p
+          className={`${styles.feedback} ${
+            feedback.tone === "success"
+              ? styles.feedbackSuccess
+              : styles.feedbackError
+          }`}
+          role="status"
+        >
+          {feedback.message}
         </p>
       ) : null}
     </form>
