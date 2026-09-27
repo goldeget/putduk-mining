@@ -6,7 +6,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "퍼뜩 채굴",
     short_name: "퍼뜩 채굴",
     description:
-      "앱을 닫아도 이어지고, 돌아오면 결과를 확인하는 가상 채굴 경험",
+      "앱을 닫아도 이어지고, 돌아오면 결과를 확인하는 채굴 경험",
     start_url: "/",
     display: "standalone",
     background_color: "#070706",

@@ -121,7 +121,7 @@ export default async function StartPage() {
             <p className="eyebrow">NEXT ACTION</p>
             <h2>
               {isActive
-                ? "서버에서 채굴 시간을 기록하고 있습니다"
+                ? "채굴이 진행 중이에요"
                 : isComplete
                   ? "PUTDUK START가 완료되었습니다"
                   : "PUTDUK START를 준비하세요"}
@@ -176,7 +176,7 @@ export default async function StartPage() {
           >
             <p className="eyebrow">TRIAL BOUNDARY</p>
             <ul>
-              <li>서버 시간만 사용</li>
+              <li>앱을 닫아도 채굴은 계속돼요</li>
               <li>체험 값과 실제 KRW 지갑 분리</li>
               <li>사용량 100% 또는 24시간에 종료</li>
               <li>환영 보상 첫 출금에 사전 입금 불필요</li>

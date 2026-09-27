@@ -32,7 +32,7 @@ const STEPS: readonly QuestStep[] = [
     id: "progress",
     target: "[data-quest-target='progress']",
     title: "진행 상황은 돌아와도 이어져요",
-    body: "앱을 닫아도 서버 시간을 기준으로 상태가 이어집니다. 화면을 켜 둔다고 보상이 늘어나지는 않아요.",
+    body: "앱을 닫아도 채굴은 계속돼요. 화면을 켜 둔다고 보상이 늘어나지는 않아요.",
   },
   {
     id: "action",

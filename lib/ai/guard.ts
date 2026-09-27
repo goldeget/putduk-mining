@@ -91,7 +91,7 @@ export function guardAiQuestion(question: string): AiGuardResult {
     return {
       allowed: false,
       answer:
-        "PUTDUK AI는 설명과 본인 상태 확인만 제공하며 잔액, 원장, 입출금 승인, 채굴 결과, 보상, 인증 또는 권한을 변경할 수 없습니다.",
+        "PUTDUK AI는 설명과 본인 상태 확인만 제공하며 잔액, 입출금 승인, 채굴 결과, 보상, 인증 또는 권한을 변경할 수 없습니다.",
       classification: "ACTION_BOUNDARY",
     };
   }

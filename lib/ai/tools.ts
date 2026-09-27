@@ -79,7 +79,7 @@ export const AI_TOOL_REGISTRY: readonly AiToolDefinition[] = [
     returns: ["completed_at", "quota", "reward", "status", "world"],
   },
   {
-    description: "본인의 원장 파생 지갑 잔액을 확인합니다.",
+    description: "본인의 확정된 지갑 잔액을 확인합니다.",
     name: "wallet.summary",
     readOnly: true,
     returns: ["available", "balance", "currency", "held"],

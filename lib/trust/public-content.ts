@@ -11,13 +11,13 @@ export const PUBLIC_FACTS: readonly PublicFact[] = [
   {
     key: "PRODUCT_NAME",
     value: "퍼뜩 채굴 / PUTDUK MINING",
-    description: "PUTDUK의 서버 권위형 가상 채굴 플랫폼입니다.",
+    description: "PUTDUK의 채굴 서비스입니다.",
   },
   {
     key: "PRODUCT_TYPE",
-    value: "Virtual mining platform",
+    value: "Mining service",
     description:
-      "다섯 개의 내부 월드에서 가상 채굴 흐름을 제공하며 외부 증권·거래소 시세를 채굴 계산에 사용하지 않습니다.",
+      "다섯 개의 월드에서 채굴 흐름을 제공하며 외부 증권·거래소 시세를 채굴 계산에 사용하지 않습니다.",
   },
   {
     key: "OFFICIAL_DOMAIN",
@@ -33,7 +33,7 @@ export const PUBLIC_FACTS: readonly PublicFact[] = [
   {
     key: "SUPPORTED_WORLDS",
     value: "KOREA, USA, GOLD, SILVER, CRYPTO",
-    description: "V1에서 정의된 다섯 개의 가상 채굴 월드입니다.",
+    description: "V1에서 정의된 다섯 개의 채굴 월드입니다.",
   },
   {
     key: "TRIAL_DURATION",
@@ -44,7 +44,7 @@ export const PUBLIC_FACTS: readonly PublicFact[] = [
   {
     key: "TRIAL_LEDGER",
     value: "실제 지갑과 완전 분리",
-    description: "체험 결과는 체험 전용 계정과 원장에만 기록됩니다.",
+    description: "체험 결과는 체험 전용 계정에만 기록됩니다.",
   },
   {
     key: "SUPPORTED_FUNDING_METHODS",
@@ -54,15 +54,15 @@ export const PUBLIC_FACTS: readonly PublicFact[] = [
   },
   {
     key: "SETTLEMENT_AUTHORITY",
-    value: "Server time and versioned rules",
+    value: "Confirmed time and versioned rules",
     description:
-      "채굴·정산은 서버 시간과 적용 시점이 명시된 규칙 버전을 사용합니다.",
+      "채굴·정산은 확인된 시간과 적용 시점이 명시된 규칙 버전을 사용합니다.",
   },
   {
     key: "AI_BOUNDARY",
     value: "Explain and analyze only",
     description:
-      "PUTDUK AI는 잔액, 승인, 원장, 채굴 결과를 직접 변경하지 않습니다.",
+      "PUTDUK AI는 잔액, 승인, 채굴 결과를 직접 변경하지 않습니다.",
   },
 ] as const;
 
@@ -87,22 +87,22 @@ export const TRUST_DOCUMENTS: readonly TrustDocument[] = [
     eyebrow: "ABOUT PUTDUK",
     title: "채굴의 시간을, 검증 가능한 기록으로.",
     summary:
-      "퍼뜩 채굴은 복잡한 경제 시스템을 사용자에게는 명확한 경험으로, 운영에는 추적 가능한 기록으로 제공하도록 설계된 가상 채굴 플랫폼입니다.",
+      "퍼뜩 채굴은 복잡한 경제 시스템을 사용자에게는 명확한 경험으로, 운영에는 추적 가능한 기록으로 제공하도록 설계된 채굴 서비스입니다.",
     factKeys: ["PRODUCT_NAME", "PRODUCT_TYPE", "SUPPORTED_WORLDS"],
     sections: [
       {
         heading: "무엇을 만드는가",
         body: [
-          "사용자는 KOREA, USA, GOLD, SILVER, CRYPTO 월드에서 가상 채굴 농장을 운영합니다. 월드의 경제는 PUTDUK 내부 규칙으로 정의되며 외부 증권이나 거래소의 실시간 시세에 의존하지 않습니다.",
-          "제품의 핵심은 화려한 숫자가 아니라 그 숫자가 언제, 어떤 규칙으로, 왜 생겼는지 설명할 수 있는 구조입니다.",
+          "사용자는 KOREA, USA, GOLD, SILVER, CRYPTO 월드에서 채굴을 진행합니다. 월드 보상은 외부 증권이나 거래소의 실시간 시세에 의존하지 않습니다.",
+          "제품의 핵심은 화려한 숫자가 아니라 그 숫자가 언제, 어떤 기준으로, 왜 생겼는지 설명할 수 있는 구조입니다.",
         ],
       },
       {
         heading: "설계 원칙",
         body: [],
         items: [
-          "모든 채굴과 정산은 서버 시간으로 계산합니다.",
-          "자산 변화는 덮어쓰지 않고 원장 이벤트로 남깁니다.",
+          "모든 채굴과 정산은 확인된 시간으로 계산합니다.",
+          "자산 변화는 덮어쓰지 않고 거래 기록으로 남깁니다.",
           "체험 자산과 실제 자산은 섞이지 않습니다.",
           "운영 변경은 적용 시점과 감사 기록을 가집니다.",
         ],
@@ -112,29 +112,29 @@ export const TRUST_DOCUMENTS: readonly TrustDocument[] = [
   {
     path: "/how-it-works",
     eyebrow: "PRODUCT FLOW",
-    title: "사용은 단순하게, 계산은 서버에서 엄격하게.",
+    title: "사용은 단순하게, 결과는 확인된 값으로.",
     summary:
-      "가입부터 체험, 입금, 실제 채굴과 정산까지 각 단계의 책임과 데이터 경계를 분리합니다.",
+      "가입부터 체험, 입금, 채굴과 정산까지 각 단계의 책임과 데이터 경계를 분리합니다.",
     factKeys: ["TRIAL_DURATION", "SETTLEMENT_AUTHORITY", "TRIAL_LEDGER"],
     sections: [
       {
         heading: "핵심 흐름",
         body: [
-          "가입 후 PUTDUK START에서 첫 채굴 결과를 확인하고, 체험을 마친 뒤 사용자가 원할 때 입금과 실제 채굴로 이어집니다.",
+          "가입 후 PUTDUK START에서 첫 채굴 결과를 확인하고, 체험을 마친 뒤 사용자가 원할 때 입금과 채굴로 이어집니다.",
         ],
         items: [
           "가입 및 계정 검증",
           "PUTDUK START 체험 시작",
-          "서버 시간 기반 체험 정산",
+          "체험 정산",
           "입금 요청과 운영 확인",
-          "실제 채굴과 자동 정산",
-          "원장과 알림을 통한 결과 확인",
+          "채굴과 자동 정산",
+          "거래 기록과 알림을 통한 결과 확인",
         ],
       },
       {
         heading: "화면을 닫아도 이어지는 이유",
         body: [
-          "브라우저가 매초 숫자를 저장하는 방식이 아닙니다. 서버가 마지막 정산 시점과 현재 시점 사이의 유효 시간을 계산하고, 해당 구간에 적용된 규칙 버전으로 결과를 확정합니다.",
+          "앱을 닫아도 채굴은 계속돼요. 다시 접속하면 마지막 확인 이후의 결과를 확인할 수 있어요.",
         ],
       },
     ],
@@ -164,17 +164,17 @@ export const TRUST_DOCUMENTS: readonly TrustDocument[] = [
     factKeys: ["SETTLEMENT_AUTHORITY", "TRIAL_LEDGER", "AI_BOUNDARY"],
     sections: [
       {
-        heading: "서버 권위",
+        heading: "확인된 결과",
         body: [
-          "클라이언트 화면은 잔액이나 채굴 보상을 결정하지 않습니다. 서버는 사용자 권한, 요청 중복 여부, 적용 규칙과 시간을 검증한 뒤 결과를 기록합니다.",
+          "화면의 효과만으로 잔액이나 채굴 보상이 결정되지 않습니다. 권한, 중복 요청, 적용 기준과 시간을 확인한 뒤 결과를 기록합니다.",
         ],
       },
       {
-        heading: "원장과 감사",
+        heading: "기록과 감사",
         body: [],
         items: [
-          "동일한 금융성 요청은 멱등 키로 중복 처리를 방지합니다.",
-          "잔액은 원장 항목의 합으로 계산합니다.",
+          "동일한 금융성 요청은 중복 처리를 방지합니다.",
+          "잔액은 확정된 거래 기록의 합으로 계산합니다.",
           "운영자 조정에는 사유와 감사 이벤트가 필요합니다.",
           "경제 규칙 변경은 버전과 적용 시점을 가집니다.",
         ],
@@ -186,7 +186,7 @@ export const TRUST_DOCUMENTS: readonly TrustDocument[] = [
     eyebrow: "MINING RULES",
     title: "정산 규칙은 시간 구간과 버전으로 고정됩니다.",
     summary:
-      "경과 시간, 기본 채굴률, 장비 효율, 월드·이벤트·상태 배율을 서버가 계산합니다.",
+      "경과 시간, 기본 채굴률, 장비 효율, 월드·이벤트·상태 배율을 확인해 계산합니다.",
     factKeys: ["SETTLEMENT_AUTHORITY", "SUPPORTED_WORLDS"],
     sections: [
       {
@@ -195,8 +195,8 @@ export const TRUST_DOCUMENTS: readonly TrustDocument[] = [
           "개념적으로 정산량은 유효 경과 시간과 승인된 각 배율의 곱으로 계산됩니다. 구체적인 생산 값은 운영 승인 전 공개 숫자로 간주하지 않습니다.",
         ],
         items: [
-          "서버 시간만 사용",
-          "매초 데이터베이스 쓰기 금지",
+          "확인된 시간만 사용",
+          "매초 기록을 남기지 않음",
           "마지막 정산 시점을 기준점으로 사용",
           "규칙 변경 시 시간 구간을 분리",
           "동일 구간 정산 중복 방지",
@@ -221,13 +221,13 @@ export const TRUST_DOCUMENTS: readonly TrustDocument[] = [
       {
         heading: "종료 조건",
         body: [
-          "체험은 사용량 100% 또는 시작 후 24시간 중 먼저 도달한 시점에 종료됩니다. 앱을 닫은 시간도 서버 기준 유효 구간으로 처리됩니다.",
+          "체험은 사용량 100% 또는 시작 후 24시간 중 먼저 도달한 시점에 종료됩니다. 앱을 닫아도 채굴은 계속돼요.",
         ],
       },
       {
         heading: "분리 원칙",
         body: [
-          "체험 계정, 세션과 원장은 실제 지갑과 별도입니다. 체험 결과가 실제 잔액으로 자동 전환되거나 섞이지 않습니다.",
+          "체험 계정과 세션은 실제 지갑과 별도입니다. 체험 결과가 실제 잔액으로 자동 전환되거나 섞이지 않습니다.",
         ],
       },
     ],
@@ -235,7 +235,7 @@ export const TRUST_DOCUMENTS: readonly TrustDocument[] = [
   {
     path: "/economy",
     eyebrow: "INTERNAL ECONOMY",
-    title: "경제는 내부 규칙이며, 변경은 미래 시점부터 적용됩니다.",
+    title: "경제 규칙은 버전으로 관리되며, 변경은 미래 시점부터 적용됩니다.",
     summary:
       "월드별 생산 규칙은 버전 관리되며 운영 승인과 적용 시점 없이 변경되지 않습니다.",
     factKeys: ["PRODUCT_TYPE", "SETTLEMENT_AUTHORITY"],
@@ -243,7 +243,7 @@ export const TRUST_DOCUMENTS: readonly TrustDocument[] = [
       {
         heading: "외부 시세와의 경계",
         body: [
-          "월드 이름은 제품 안의 가상 분류입니다. 채굴 경제는 외부 증권, 거래소 또는 실시간 시장 데이터에 연동되지 않습니다.",
+          "월드 이름은 제품 안의 분류입니다. 채굴 보상은 외부 증권, 거래소 또는 실시간 시장 데이터에 연동되지 않습니다.",
         ],
       },
       {
@@ -251,7 +251,7 @@ export const TRUST_DOCUMENTS: readonly TrustDocument[] = [
         body: [],
         items: [
           "초안 작성",
-          "테스트 월드 시뮬레이션",
+          "테스트 월드에서 사전 확인",
           "변경 전후 비교",
           "권한 있는 운영자 승인",
           "미래 적용 시점 지정",
@@ -271,7 +271,7 @@ export const TRUST_DOCUMENTS: readonly TrustDocument[] = [
       {
         heading: "KRW 흐름",
         body: [
-          "사용자가 요청을 생성하면 승인된 계좌 안내와 운영 확인 단계를 거칩니다. 실제 입금이 검증되고 DEPOSIT 원장 항목이 만들어진 뒤에만 표시 잔액이 변합니다.",
+          "사용자가 요청을 생성하면 승인된 계좌 안내와 운영 확인 단계를 거칩니다. 실제 입금이 검증된 뒤에만 표시 잔액이 변합니다.",
         ],
       },
       {
@@ -287,7 +287,7 @@ export const TRUST_DOCUMENTS: readonly TrustDocument[] = [
     eyebrow: "WITHDRAWAL",
     title: "출금은 가용 금액, 검증, 승인을 분리합니다.",
     summary:
-      "출금 요청 금액은 사용 가능 잔액과 분리해 보류하고, 처리 결과는 독립된 원장 이벤트로 남깁니다.",
+      "출금 요청 금액은 사용 가능 잔액과 분리해 보류하고, 처리 결과는 별도 거래 기록으로 남깁니다.",
     factKeys: ["SUPPORTED_FUNDING_METHODS"],
     sections: [
       {
@@ -319,25 +319,25 @@ export const TRUST_DOCUMENTS: readonly TrustDocument[] = [
       {
         heading: "실제 컴퓨터로 코인을 채굴하나요?",
         body: [
-          "아닙니다. PUTDUK MINING은 내부 규칙으로 운영되는 가상 채굴 플랫폼입니다. 사용자의 기기 자원으로 암호화폐를 채굴하지 않습니다.",
+          "아닙니다. 퍼뜩의 채굴은 앱에서 진행돼요. 기기로 암호화폐를 채굴하지 않아요.",
         ],
       },
       {
         heading: "체험 결과가 실제 잔액이 되나요?",
         body: [
-          "아닙니다. PUTDUK START의 계정과 원장은 실제 지갑과 완전히 분리됩니다.",
+          "아닙니다. PUTDUK START의 계정은 실제 지갑과 완전히 분리됩니다.",
         ],
       },
       {
         heading: "화면을 닫으면 채굴이 멈추나요?",
         body: [
-          "유효한 세션이라면 서버가 마지막 정산 시점 이후의 시간을 계산합니다. 브라우저가 백그라운드에서 숫자를 조작하는 방식은 아닙니다.",
+          "앱을 닫아도 채굴은 계속돼요. 다시 접속하면 결과를 확인할 수 있어요.",
         ],
       },
       {
         heading: "AI가 자산을 대신 움직일 수 있나요?",
         body: [
-          "아닙니다. PUTDUK AI는 설명과 분석만 제공하며 잔액, 승인, 원장 또는 채굴 결과를 직접 변경할 권한이 없습니다.",
+          "아닙니다. PUTDUK AI는 설명과 분석만 제공하며 잔액, 승인 또는 채굴 결과를 직접 변경할 권한이 없습니다.",
         ],
       },
     ],
@@ -398,7 +398,7 @@ export const TRUST_DOCUMENTS: readonly TrustDocument[] = [
         items: [
           "공식 규칙과 상태 설명",
           "허용된 사용자 정보 요약",
-          "채굴·원장 기록 이해 지원",
+          "채굴·거래 기록 이해 지원",
           "다음 행동 선택지 제안",
         ],
       },
@@ -406,7 +406,7 @@ export const TRUST_DOCUMENTS: readonly TrustDocument[] = [
         heading: "할 수 없는 일",
         body: [],
         items: [
-          "잔액 변경 또는 원장 생성",
+          "잔액 변경 또는 거래 생성",
           "입금·출금 승인",
           "채굴 결과 결정",
           "경제 규칙 또는 관리자 권한 변경",
@@ -441,13 +441,13 @@ export const TRUST_DOCUMENTS: readonly TrustDocument[] = [
       {
         heading: "AI 제공자는 언제 연결되나요?",
         body: [
-          "모델 제공자, 보존 정책, 비용 한도와 지식 버전이 모두 운영 승인되고 서버 구성이 완료된 경우에만 연결됩니다. 구성되지 않은 환경에서는 사용자 질문을 외부 AI 제공자에게 보내지 않습니다.",
+          "모델 제공자, 보존 정책, 비용 한도와 지식 버전이 모두 운영 승인되고 구성이 완료된 경우에만 연결됩니다. 구성되지 않은 환경에서는 사용자 질문을 외부 AI 제공자에게 보내지 않습니다.",
         ],
       },
       {
         heading: "답변이 자산을 바꿀 수 있나요?",
         body: [
-          "아닙니다. AI 실행 경로는 원장, 승인, 정산과 권한 변경 명령에서 분리됩니다.",
+          "아닙니다. AI는 잔액, 승인, 정산과 권한 변경을 직접 수행하지 않습니다.",
         ],
       },
       {
