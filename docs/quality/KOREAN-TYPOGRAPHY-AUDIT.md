@@ -121,9 +121,23 @@ The patch adds `.ko-heading` and `.ko-copy` (`word-break: keep-all`) only on the
 
 ## Protected screens
 
-`playwright.typography.protected.config.ts` adds the same matrix for the signed-in user and admin routes, using the local authenticated fixture. Each case is independent. Public `playwright.typography.config.ts` ignores those files, so the fake-key public suite stays unchanged.
+`playwright.typography.protected.config.ts` runs the same matrix for the signed-in user and admin routes. Public `playwright.typography.config.ts` ignores those files, so the fake-key public suite stays unchanged.
 
-That protected run did not finish. Local Auth accepted a direct password sign-in, but the member login server action aborted its Auth fetch (`AuthRetryableFetchError`) and the admin login did not reach MFA. No protected screenshot is acceptance evidence. The admin theme hydration mismatch stays a separate follow-up and was not mixed into this patch.
+The earlier failure was the harness, not a broken product login. Two cold `next dev` processes compiled while GoTrue looked up the user, and the local Auth database call returned `request_timeout` (`AuthRetryableFetchError` on the member server action). Direct invalid-credential grants stayed fast. The protected harness now builds both apps and serves them with `next start`, and it opens `127.0.0.1:3199` only after both login pages and a local password-grant probe are ready. Setup projects use the same Desktop Chrome device as the matrix so the admin session fingerprint matches. No remote Supabase project is used.
+
+Local result after that harness and the confirmed wrapping patch: **128 passed** (2 session setups + 70 member cases + 56 admin cases), 9.4m. The 126 rendered cases each attached a full-page screenshot. Exported copies are under `test-results/typography-protected/screenshots/`. Console hydration annotations: 0. This suite is still not a CI gate.
+
+Confirmed wrapping that was patched:
+
+- member home heading `있어요` on `.product-home__welcome h1`
+- member wallet, deposit, withdraw, events, and AI prose that split at 390–1440
+- 390 light 200% splits across signed-in member `main.product-main` and admin `main.control-main`
+- 390 light 200% header identity overflow, contained with `min-width: 0` on `.product-header__tools`
+- admin restrictions 200% queue cards, contained with wrapping on `.queue-card__head`
+
+`word-break: keep-all` is on those content roots, not on `body`. `.machine-token` remains `overflow-wrap: anywhere`.
+
+The admin document now applies the saved theme before paint and suppresses the html hydration warning, matching the member document. The matrix recorded no hydration console error.
 
 ## Integration protocol
 
@@ -134,7 +148,7 @@ That protected run did not finish. Local Auth accepted a direct password sign-in
 5. Only then make a separate, reviewed CSS patch for confirmed failures.
 6. Do not apply `overflow-wrap: anywhere` globally. Reserve it for machine values.
 7. Do not apply `word-break: keep-all` blindly to hashes, UUIDs, addresses, codes, or other unspaced machine values.
-8. Protected user/admin screens use the local authenticated fixture and are not acceptance evidence until that suite passes.
+8. Protected user/admin screens passed the local matrix recorded above. That pass is not a CI gate and does not merge PR #8.
 
 ## Completion language
 
