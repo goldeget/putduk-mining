@@ -1174,6 +1174,8 @@
   font-size: clamp(1.85rem, 3.8vw, 3.4rem);
   line-height: 1.06;
   letter-spacing: -0.07em;
+  line-break: strict;
+  word-break: keep-all;
 }
 
 .product-home__welcome p:last-child {

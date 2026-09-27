@@ -1473,6 +1473,7 @@ select {
   z-index: var(--z-sticky);
   top: 0;
   display: flex;
+  min-width: 0;
   min-height: 66px;
   align-items: center;
   justify-content: space-between;
@@ -1484,7 +1485,10 @@ select {
 
 .product-header__tools {
   display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
   align-items: center;
+  justify-content: flex-end;
   gap: 1rem;
 }
 
@@ -1500,13 +1504,16 @@ select {
 
 .product-header__identity {
   display: flex;
+  min-width: 0;
+  max-width: 100%;
   align-items: center;
   gap: 0.7rem;
 }
 
 .product-header__identity > span:first-child {
   display: grid;
-  max-width: 170px;
+  min-width: 0;
+  max-width: min(170px, 100%);
   gap: 0.14rem;
   overflow: hidden;
   font-size: 0.76rem;
@@ -1542,6 +1549,8 @@ select {
   margin-inline: auto;
   padding-block: clamp(2.2rem, 6vw, 5.5rem)
     calc(7rem + env(safe-area-inset-bottom));
+  line-break: strict;
+  word-break: keep-all;
 }
 
 .product-navigation {
@@ -2030,6 +2039,8 @@ select {
 
 .balance-card__note {
   max-width: 28rem;
+  line-break: strict;
+  word-break: keep-all;
 }
 
 .balance-card .text-link {
@@ -2043,6 +2054,12 @@ select {
 
 .ledger-principle {
   margin-top: 1rem;
+}
+
+.ledger-principle h2,
+.ledger-history > p {
+  line-break: strict;
+  word-break: keep-all;
 }
 
 .ledger-history {
@@ -2854,6 +2871,8 @@ select {
   color: var(--text-tertiary);
   font-size: 0.64rem;
   line-height: 1.5;
+  line-break: strict;
+  word-break: keep-all;
 }
 
 .ai-composer footer > span {

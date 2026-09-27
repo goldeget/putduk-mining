@@ -293,6 +293,8 @@
   margin: 0;
   font-size: 0.77rem;
   line-height: 1.65;
+  line-break: strict;
+  word-break: keep-all;
 }
 
 .summaryList,
@@ -546,6 +548,11 @@
 .welcomePanelHeader > svg {
   margin-top: 0.1rem;
   color: var(--status-success);
+}
+
+.welcomePanelHeader p {
+  line-break: strict;
+  word-break: keep-all;
 }
 
 .welcomePanel h2 {

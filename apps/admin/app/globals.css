@@ -334,6 +334,8 @@ input:focus-visible {
   width: min(1500px, 100%);
   margin: 0 auto;
   padding: clamp(32px, 5vw, 70px) clamp(18px, 4vw, 56px) 80px;
+  line-break: strict;
+  word-break: keep-all;
 }
 .hero-console {
   position: relative;
@@ -567,10 +569,13 @@ input:focus-visible {
 }
 .queue-list {
   display: grid;
+  min-width: 0;
   gap: 16px;
   margin-top: 24px;
 }
 .queue-card {
+  min-width: 0;
+  max-width: 100%;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 18px;
   background: var(--surface);
@@ -584,12 +589,15 @@ input:focus-visible {
 }
 .queue-card__head {
   display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
   align-items: start;
   justify-content: space-between;
   gap: 16px;
   margin-bottom: 16px;
 }
 .queue-card__head h2 {
+  min-width: 0;
   margin: 4px 0 0;
   font-size: 1.2rem;
 }
@@ -1014,6 +1022,8 @@ input:focus-visible {
   .control-rail nav {
     grid-column: 1 / -1;
     display: flex;
+    min-width: 0;
+    max-width: 100%;
     margin-top: 16px;
     overflow-x: auto;
   }
