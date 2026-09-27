@@ -47,7 +47,7 @@ pnpm test
 pnpm build
 ```
 
-Schema changes additionally require project-scoped local Supabase reset/tests/lint/advisors. Docker commands remain deterministically scoped to this repository; no global inventory or prune is permitted.
+Schema changes additionally require a project-scoped isolated Supabase reset/tests/lint/advisors gate on the developer host or at the exact target SHA in CI. An unavailable local runtime is reported as an environment limitation and never converted into a pass; exact-head CI may provide independent execution evidence. Docker commands remain deterministically scoped to this repository; no global inventory or prune is permitted.
 
 Critical UI changes add browser E2E, accessibility, visual and performance evidence. A green sub-job is not release acceptance unless the workflow ran the exact target SHA and all required jobs/artifacts are present.
 
@@ -100,4 +100,4 @@ Record:
 
 The exact authorized origin is reachable under the verified `goldeget` GitHub identity. The original missing parent object (`c27b7c542ccb8808a2656a62c9d0536dffd87f06`) and its reachable graph were restored from that origin with `git fetch --refetch origin develop`; no graft, replacement ref, fake shallow boundary, history rewrite or force push was used.
 
-`git fsck --full` now completes without missing or broken objects. WS-03 work uses the bounded `codex/ws-03-productization` branch; any push, pull request and merge remains subject to exact-origin/baseline preflight and all required CI checks. This integrity result does not authorize deployment, Supabase remote mutation or Cloudflare provisioning.
+`git fsck --full` now completes without missing or broken objects. WS-03 PR [#2](https://github.com/goldeget/putduk-mining/pull/2) passed all three CI workflow jobs in GitHub Actions run `36284465615` at exact head `a28bad387af21e9c7aaf6ffc185a4e594b42c122`; its isolated database job rebuilt PostgreSQL from zero, passed 222 pgTAP assertions, schema lint and security advisors. The PR merged only to `develop` as `eaaf7616be9b8f627a44d59510909068b023ed0c`, and the remote feature branch was deleted. `main` remained unchanged at `fbea85eebf1084bfc02bf1c452392b20f2f497ce`. This integration evidence does not establish deploy-artifact provenance and does not authorize deployment, Supabase remote mutation or Cloudflare provisioning.

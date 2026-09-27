@@ -6,13 +6,14 @@ This matrix separates architecture presence, working domain flow and production 
 
 | Priority | Capability | FOUNDATION COMPLETE | FUNCTIONALLY COMPLETE | PRODUCT COMPLETE | Current evidence / next gate |
 | --- | --- | --- | --- | --- | --- |
-| P0 | Repository integrity, CI and release artifacts | PASS | PARTIAL | BLOCKED | Exact origin/baseline and local Git integrity are verified; the current PR, required remote jobs, merge SHA and reproducible artifact provenance must still close. |
-| P0 | Database 0→latest, pgTAP, RLS, lint and advisors | PASS | BLOCKED | BLOCKED | Migrations and database tests exist, but the project-scoped local Docker engine was unavailable. `BLOCKED_LOCAL_DB_RUNTIME` remains an environment limitation; exact-SHA GitHub CI may separately supply database execution evidence. |
+| P0 | Repository integrity and CI integration | PASS | PASS | PASS | PR [#2](https://github.com/goldeget/putduk-mining/pull/2) passed all three CI workflow jobs at exact head `a28bad387af21e9c7aaf6ffc185a4e594b42c122` in run `36284465615` and merged to `develop` as `eaaf7616be9b8f627a44d59510909068b023ed0c`; `main` remained unchanged and the remote feature branch was deleted. |
+| P0 | Immutable release artifact and deployment provenance | PASS | BLOCKED | BLOCKED | The release policy defines the required evidence, but CI did not publish an immutable deploy artifact/version/digest and no production deployment was authorized. |
+| P0 | Database 0→latest, pgTAP, RLS, lint and advisors | PASS | PASS | BLOCKED | Exact-head isolated GitHub CI run `36284465615` rebuilt PostgreSQL from zero through the latest migration and passed all 222 pgTAP assertions, schema lint and security advisors. `BLOCKED_LOCAL_DB_RUNTIME` remains only a local-environment limitation; the production Supabase target is unverified and was not mutated by WS-03. |
 | P0 | Login, signup, identity, consent and recovery | PASS | PARTIAL | BLOCKED | ID/email login, required profile fields, consent history, safe return, recovery and local/global logout exist. Connected auth E2E, abuse/rate controls, legal approval and production mail/template/redirect evidence remain. |
 | P0 | Responsive Korean shell, themes, states and accessibility | PASS | PARTIAL | PARTIAL | System/Light/Dark, reduced-motion and responsive public references exist; tablet, protected states, keyboard/screen-reader and full error/offline evidence remain. |
 | P0 | PUTDUK START, conversion and first welcome withdrawal | PASS | PARTIAL | BLOCKED | Trial/real accounting separation and deterministic capped conversion exist. Real KYC qualification, destination registration/verification and completed no-funding first-withdrawal E2E remain. |
 | P0 | Mining, settlement and effective-time economy rules | PASS | PARTIAL | BLOCKED | Server-derived session/settlement foundations exist; approved production rules, worker execution, segment/concurrency tests and operator pause evidence remain. |
-| P0 | Balanced ledger, wallet projections and reconciliation | PASS | PARTIAL | BLOCKED | Balanced journal and append-only projection foundations exist; database execution, treasury reconciliation runner, mismatch queue and authenticated receipt evidence remain. |
+| P0 | Balanced ledger, wallet projections and reconciliation | PASS | PARTIAL | BLOCKED | Balanced journal and append-only projection invariants pass in isolated exact-head CI; treasury reconciliation runner, mismatch queue, production-target verification and authenticated receipt evidence remain. |
 | P0 | Transactional outbox, jobs, leases, DLQ and replay | PASS | PARTIAL | BLOCKED | Versioned outbox/job schemas and bounded lease/fail commands exist. No continuously running worker, heartbeat, backpressure proof, operator DLQ or idempotent replay evidence exists. |
 | P0 | KRW deposit request and operator approval | PASS | PARTIAL | BLOCKED | User request and deterministic approval command exist; isolated admin action UI plus user/operator completed E2E and audit linkage remain. |
 | P0 | KRW withdrawal, destinations and operator review | PASS | PARTIAL | BLOCKED | Request commands and a safe destination-status projection exist. Destination onboarding, verification, KYC, operator review/completion and receipt E2E remain. |
@@ -42,17 +43,27 @@ This matrix separates architecture presence, working domain flow and production 
 
 `NOT LAUNCH READY`. No launch-critical exception is allowed: every P0 row must have `PRODUCT COMPLETE = PASS`, current evidence and an owner before production traffic or real-value flows.
 
+### WS-03 Git/CI closure evidence
+
+- PR: [#2](https://github.com/goldeget/putduk-mining/pull/2)
+- Exact PR head: `a28bad387af21e9c7aaf6ffc185a4e594b42c122`
+- GitHub Actions run: [`36284465615`](https://github.com/goldeget/putduk-mining/actions/runs/36284465615)
+- CI workflow jobs: `Application gates`, `Browser foundation`, `Database security gates` — all `success`
+- `develop` merge: `eaaf7616be9b8f627a44d59510909068b023ed0c`
+- `main`: unchanged at `fbea85eebf1084bfc02bf1c452392b20f2f497ce`
+- Remote feature branch: deleted after merge
+- Boundary: no deploy artifact/version/digest, Supabase remote mutation or Cloudflare provisioning was produced by this evidence
+
 ## Current P0 blockers
 
-1. Execute the complete local/CI database gate from zero and close every migration, pgTAP/RLS, lint and advisor failure.
-2. Complete KYC/qualification and KRW destination registration/verification, then prove START conversion through a completed first withdrawal without prior funding.
-3. Deploy and verify the settlement/outbox/job workers, bounded retries, DLQ/replay, reconciliation and mismatch operator queues.
-4. Complete deposit, withdrawal and settlement operator actions plus safe-mode/emergency enforcement; prove request/trace/job/ledger/audit linkage end to end.
-5. Complete the admin-owned session registry, idle/absolute lifetime, per-session revocation, single-use action-bound step-up grants, authentication rate limits and authenticated role/MFA/revocation browser suite.
-6. Approve and activate versioned production economic/catalog values, monitoring/alerts/runbooks and privacy-safe lifecycle analytics.
-7. Verify exact-project backup/PITR, isolated restore and app/config/database rollback with recorded RPO/RTO.
-8. Complete connected authentication/recovery delivery, abuse controls and authenticated P0 browser fixtures without real member/KYC data.
-9. Close the current GitHub PR, required CI, merge and artifact provenance, then perform separately authorized Supabase and Cloudflare production phases. Remote mutation remains forbidden in WS-03.
+1. Complete KYC/qualification and KRW destination registration/verification, then prove START conversion through a completed first withdrawal without prior funding.
+2. Deploy and verify the settlement/outbox/job workers, bounded retries, DLQ/replay, reconciliation and mismatch operator queues.
+3. Complete deposit, withdrawal and settlement operator actions plus safe-mode/emergency enforcement; prove request/trace/job/ledger/audit linkage end to end.
+4. Complete the admin-owned session registry, idle/absolute lifetime, per-session revocation, single-use action-bound step-up grants, authentication rate limits and authenticated role/MFA/revocation browser suite.
+5. Approve and activate versioned production economic/catalog values, monitoring/alerts/runbooks and privacy-safe lifecycle analytics.
+6. Verify exact-project backup/PITR, isolated restore and app/config/database rollback with recorded RPO/RTO.
+7. Complete connected authentication/recovery delivery, abuse controls and authenticated P0 browser fixtures without real member/KYC data.
+8. Produce reproducible deploy-artifact provenance, then perform separately authorized Supabase and Cloudflare production phases. Remote mutation remains forbidden in WS-03.
 
 ## Current P1 gaps
 
