@@ -161,6 +161,9 @@ jobs:
       - name: Export local Supabase env
         run: node scripts/capture-local-supabase-env.mjs
 
+      - name: Create ephemeral withdrawal data key
+        run: node scripts/write-ephemeral-withdrawal-key.mjs
+
       - name: Install Chromium
         run: pnpm exec playwright install --with-deps chromium
 

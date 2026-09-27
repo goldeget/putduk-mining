@@ -16,42 +16,6 @@ import {
 const REMOTE_PROJECT_REF = "osrmyjgmpdspdcwqjwuv";
 const DB_CONTAINER = "supabase_db_putduk-mining";
 
-/**
- * Missing from authored migrations (Agent A): service_role table DML for
- * worker claim/complete/fail paths. SECURITY INVOKER RPCs need these grants.
- * Tests apply them locally only; do not treat this as a substitute migration.
- */
-const REQUIRED_SERVICE_ROLE_GRANTS_SQL = `
-grant select, insert, update on table public.outbox_events to service_role;
-grant select, insert, update on table public.system_jobs to service_role;
-grant select, insert, update on table public.system_job_attempts to service_role;
-grant select, insert, update on table public.reconciliation_runs to service_role;
-grant select, insert, update on table public.reconciliation_mismatches to service_role;
-grant select, insert, update on table public.ledger_transactions to service_role;
-grant select, insert on table public.ledger_entries to service_role;
-grant select, insert, update on table public.ledger_accounts to service_role;
-grant select, insert, update on table public.wallet_accounts to service_role;
-grant select, insert on table public.wallet_ledger to service_role;
-grant select on table public.trial_reward_conversions to service_role;
-grant select, insert, update on table public.withdrawal_policies to service_role;
-grant select, insert, update on table public.withdrawal_requests to service_role;
-grant select, insert, update on table public.withdrawal_destinations to service_role;
-grant select, insert on table public.withdrawal_destination_history to service_role;
-grant select, insert on table public.withdrawal_external_sends to service_role;
-grant select, insert, update on table public.user_roles to service_role;
-grant select, insert, update on table public.transaction_receipts to service_role;
-grant select, insert, update on table public.safe_mode_controls to service_role;
-grant select, insert on table public.security_events to service_role;
-grant select, insert on table public.member_timeline_events to service_role;
-grant select, insert, update on table public.member_lifecycle_states to service_role;
-grant execute on function app_private.assert_not_safe_mode(text[]) to service_role;
-grant execute on function app_private.touch_command_rate_limit(text, text, integer, integer, integer) to service_role;
-grant execute on function app_private.ensure_withdrawal_hold_accounts(uuid) to service_role;
-grant execute on function app_private.available_krw_balance(uuid) to service_role;
-grant execute on function app_private.post_withdrawal_hold(uuid, uuid, bigint, text, uuid) to service_role;
-grant execute on function app_private.request_withdrawal_with_hold(uuid, uuid, bigint, text, text, uuid) to service_role;
-`;
-
 function requireLocalWorkerEnv() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim();
   const secret = process.env.SUPABASE_SECRET_KEY?.trim();
@@ -197,6 +161,8 @@ describe("worker runtime evidence seam", () => {
     expect(source).toContain("UNSUPPORTED_EVENT_TYPE");
     expect(source).toContain("Browser is not the runner");
     expect(source).toContain("stdout_only_not_lease_evidence");
+    expect(source).toContain("extend_outbox_event_lease");
+    expect(source).toContain("extend_system_job_lease");
     expect(source).not.toContain("queues.send");
   });
 
@@ -215,12 +181,14 @@ describe("worker process execution against local Supabase", () => {
 
   beforeAll(() => {
     requireLocalWorkerEnv();
-    // Contract gap: migrations never granted service_role DML on worker tables.
-    sql(REQUIRED_SERVICE_ROLE_GRANTS_SQL);
     const canUpdate = sql(
       "select has_table_privilege('service_role','public.outbox_events','UPDATE')::text",
     );
     expect(canUpdate).toBe("true");
+    const canReplay = sql(
+      "select has_function_privilege('service_role','public.replay_outbox_event(uuid,uuid,text,uuid)','EXECUTE')::text",
+    );
+    expect(canReplay).toBe("true");
   });
 
   afterAll(() => {
@@ -303,6 +271,7 @@ describe("worker process execution against local Supabase", () => {
 
     const first = await processOutboxBatch(db, {
       workerId,
+      retryDelaySeconds: 0,
       outboxHandlers: {
         "WORKER_RUNTIME_RETRY.v1": async () => {
           throw new Error("TRANSIENT_PROBE");
@@ -316,16 +285,9 @@ describe("worker process execution against local Supabase", () => {
     expect(afterFail.last_error_code).toMatch(/TRANSIENT_PROBE/);
     expect(afterFail.attempt_count).toBe(1);
 
-    const { error: dueError } = await db
-      .from("outbox_events")
-      .update({ available_at: new Date().toISOString() })
-      .eq("id", event.id);
-    if (dueError) {
-      throw new Error(dueError.message);
-    }
-
     const second = await processOutboxBatch(db, {
       workerId: `${workerId}-b`,
+      retryDelaySeconds: 0,
       outboxHandlers: {
         "WORKER_RUNTIME_RETRY.v1": async () => {
           throw new Error("TRANSIENT_PROBE");
@@ -339,9 +301,85 @@ describe("worker process execution against local Supabase", () => {
     expect(dead.attempt_count).toBeGreaterThanOrEqual(2);
   });
 
-  it("replays a dead-lettered event after operator reset without inventing a replay RPC", async () => {
+  it("extends an owned outbox lease without resetting the attempt", async () => {
+    const db = client();
+    const workerId = `ws05-lease-${randomUUID().slice(0, 8)}`;
+    const event = await insertOutboxEvent(db, {
+      event_type: "WORKER_RUNTIME_ACK.v1",
+    });
+    const { data: claimed, error: claimError } = await db.rpc(
+      "claim_outbox_events",
+      {
+        p_worker_id: workerId,
+        p_batch_size: 20,
+        p_lease_seconds: 30,
+      },
+    );
+    if (claimError) {
+      throw new Error(claimError.message);
+    }
+    const owned = (
+      (claimed ?? []) as Array<{
+        id: string;
+        status: string;
+        attempt_count: number;
+        lease_expires_at: string;
+      }>
+    ).find((row) => row.id === event.id);
+    if (!owned) {
+      throw new Error("expected outbox event was not claimed");
+    }
+    expect(owned.status).toBe("PROCESSING");
+
+    const { error: extendError } = await db.rpc("extend_outbox_event_lease", {
+      p_event_id: event.id,
+      p_worker_id: workerId,
+      p_lease_seconds: 600,
+    });
+    expect(extendError).toBeNull();
+
+    const after = await readOutbox(db, event.id);
+    expect(new Date(after.lease_expires_at).getTime()).toBeGreaterThan(
+      new Date(owned.lease_expires_at).getTime(),
+    );
+    expect(after.attempt_count).toBe(owned.attempt_count);
+    expect(after.status).toBe("PROCESSING");
+
+    const { error: strangerError } = await db.rpc("extend_outbox_event_lease", {
+      p_event_id: event.id,
+      p_worker_id: `stranger-${randomUUID().slice(0, 8)}`,
+      p_lease_seconds: 600,
+    });
+    expect(strangerError?.message ?? "").toMatch(/OUTBOX_LEASE_NOT_OWNED/);
+
+    const { error: completeError } = await db.rpc("complete_outbox_event", {
+      p_event_id: event.id,
+      p_worker_id: workerId,
+    });
+    expect(completeError).toBeNull();
+  });
+
+  it("replays a dead-lettered event through replay_outbox_event", async () => {
     const db = client();
     const workerId = `ws05-replay-${randomUUID().slice(0, 8)}`;
+    const operator = await db.auth.admin.createUser({
+      email: `worker.replay.${randomUUID().slice(0, 8)}@putduk.test`,
+      password: `Putduk-test-${randomUUID()}-Aa1`,
+      email_confirm: true,
+    });
+    if (operator.error || !operator.data.user) {
+      throw new Error(operator.error?.message ?? "OPERATOR_CREATE_FAILED");
+    }
+    const actorId = operator.data.user.id;
+    const { error: roleError } = await db.from("user_roles").insert({
+      user_id: actorId,
+      role: "ADMIN",
+      granted_by: actorId,
+    });
+    if (roleError) {
+      throw new Error(roleError.message);
+    }
+
     const event = await insertOutboxEvent(db, {
       event_type: "WORKER_RUNTIME_REPLAY.v1",
       max_attempts: 1,
@@ -357,24 +395,34 @@ describe("worker process execution against local Supabase", () => {
     });
     expect((await readOutbox(db, event.id)).status).toBe("DEAD_LETTER");
 
-    // Missing public.replay_outbox_event — operator-style reset until Agent A adds it.
-    const { error: resetError } = await db
-      .from("outbox_events")
-      .update({
-        status: "PENDING",
-        attempt_count: 0,
-        last_error_code: null,
-        available_at: new Date().toISOString(),
-        lease_owner: null,
-        lease_expires_at: null,
-        processed_at: null,
-      })
-      .eq("id", event.id);
-    if (resetError) {
-      throw new Error(
-        `replay reset failed (missing replay_outbox_event RPC): ${resetError.message}`,
-      );
+    const requestId = randomUUID();
+    const { error: replayError } = await db.rpc("replay_outbox_event", {
+      p_event_id: event.id,
+      p_actor_id: actorId,
+      p_reason: "WS-05 operator replay",
+      p_request_id: requestId,
+    });
+    if (replayError) {
+      throw new Error(replayError.message);
     }
+    const { error: replayAgainError } = await db.rpc("replay_outbox_event", {
+      p_event_id: event.id,
+      p_actor_id: actorId,
+      p_reason: "WS-05 operator replay",
+      p_request_id: requestId,
+    });
+    expect(replayAgainError).toBeNull();
+
+    const { count: auditCount, error: auditError } = await db
+      .from("audit_logs")
+      .select("id", { count: "exact", head: true })
+      .eq("action", "outbox.replay")
+      .eq("request_id", requestId);
+    if (auditError) {
+      throw new Error(auditError.message);
+    }
+    expect(auditCount).toBe(1);
+    expect((await readOutbox(db, event.id)).status).toBe("PENDING");
 
     const replay = await processOutboxBatch(db, {
       workerId: `${workerId}-replay`,

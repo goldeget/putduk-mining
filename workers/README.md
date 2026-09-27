@@ -16,18 +16,15 @@ that Cloudflare Queues or additional Cloudflare Workers should be created.
 - Reconciliation records mismatches and does **not** auto-repair
 - The browser is never the runner
 
-Stdout heartbeats are operational logs only. Durable lease ownership is proven
-only through claim/complete/fail RPCs. The following commands are **missing**
-and must not be invented in this worker branch (report to Agent A):
+Stdout heartbeats are operational logs only. Durable lease ownership is
+`claim_*`, `extend_*_lease`, `complete_*`, and `fail_*`. Operator replay is
+`replay_outbox_event` and `replay_system_job` (audited, no direct table update).
 
-- `extend_outbox_event_lease` / `heartbeat_outbox_event_lease`
-- `extend_system_job_lease` / `heartbeat_system_job_lease`
-- `replay_outbox_event` / `replay_system_job`
+Still missing:
+
+- a timer that extends a lease again while one handler runs longer than the lease
 - permanent unsupported reject (today exhausts attempts into `DEAD_LETTER`)
 - outbox delivery / notification fanout commands
-- **service_role DML grants** on `outbox_events`, `system_jobs`,
-  `system_job_attempts`, reconciliation tables, and related worker fixtures
-  (claim/complete/fail are `SECURITY INVOKER` and currently cannot touch rows)
 
 ```bash
 node --env-file-if-exists=.env.local workers/runner.mjs

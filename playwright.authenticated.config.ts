@@ -1,13 +1,18 @@
-import { randomBytes } from "node:crypto";
 import { defineConfig, devices } from "@playwright/test";
 
 const isCI = Boolean(process.env.CI);
+const isListing = process.argv.includes("--list");
 
 function required(name: string) {
   const value = process.env[name]?.trim();
   if (!value) {
+    if (isListing) {
+      return name === "NEXT_PUBLIC_SUPABASE_URL"
+        ? "http://127.0.0.1:54321"
+        : "list-only-not-a-credential";
+    }
     throw new Error(
-      `${name} is required. Run scripts/capture-local-supabase-env.mjs after pnpm db:start.`,
+      `${name} is required. CI must provide it. Do not generate a separate fallback key.`,
     );
   }
   if (value.includes("osrmyjgmpdspdcwqjwuv")) {
@@ -19,8 +24,7 @@ function required(name: string) {
 const supabaseUrl = required("NEXT_PUBLIC_SUPABASE_URL");
 const publishableKey = required("NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY");
 const secretKey = required("SUPABASE_SECRET_KEY");
-const withdrawalDataKey =
-  process.env.WITHDRAWAL_DATA_KEY?.trim() || randomBytes(32).toString("base64");
+const withdrawalDataKey = required("WITHDRAWAL_DATA_KEY");
 
 const sharedEnv = {
   APP_ENV: "test",
@@ -45,8 +49,21 @@ export default defineConfig({
     video: "retain-on-failure",
   },
   projects: [
-    { name: "chromium", use: { ...devices["Desktop Chrome"] } },
-    { name: "mobile-chrome", use: { ...devices["Pixel 7"] } },
+    {
+      name: "chromium",
+      testIgnore: "**/success-visual-evidence.spec.ts",
+      use: { ...devices["Desktop Chrome"] },
+    },
+    {
+      name: "mobile-chrome",
+      testIgnore: "**/success-visual-evidence.spec.ts",
+      use: { ...devices["Pixel 7"] },
+    },
+    {
+      name: "visual-evidence",
+      testMatch: "**/success-visual-evidence.spec.ts",
+      use: { ...devices["Desktop Chrome"] },
+    },
   ],
   webServer: [
     {

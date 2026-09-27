@@ -28,7 +28,11 @@ Add:
 - Authenticated product gates: local `pnpm db:start`, `pnpm db:reset`, `node scripts/capture-local-supabase-env.mjs`, Chromium, public app `127.0.0.1:3000`, admin app `127.0.0.1:3100`, `pnpm test:e2e:authenticated`.
 - Worker runtime gates: the same local database reset, then `pnpm test:worker`.
 
-`capture-local-supabase-env.mjs` reads `supabase status -o env` and exports only the local API URL, publishable key, and service-role key. It refuses `osrmyjgmpdspdcwqjwuv`. Keys are not committed.
+`playwright.config.ts` does not collect `tests/e2e/authenticated/**`. Authenticated product gates use `playwright.authenticated.config.ts` only.
+
+`capture-local-supabase-env.mjs` reads `supabase status -o env` from stdout and stderr, maps the Supabase CLI 2.113.0 status names (`API_URL` / `api.url`, `PUBLISHABLE_KEY` / `auth.publishable_key`, `SECRET_KEY` / `auth.secret_key`, plus the deprecated anon and service-role tags from that CLI), and writes `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, and `SUPABASE_SECRET_KEY` to `GITHUB_ENV`. It refuses `osrmyjgmpdspdcwqjwuv`, non-local hosts, and https. Secret values are not printed.
+
+Authenticated product gates generate one `WITHDRAWAL_DATA_KEY` with `crypto.randomBytes(32)` base64, store it only in `GITHUB_ENV`, and pass that same value to Playwright, the public app, and the admin app. Playwright does not create a second random key.
 
 Service role may create confirmed users, seed roles, and move test clocks. It must not insert the final welcome conversion, hold, external send, or ledger finalization and then call that a browser result.
 
