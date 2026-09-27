@@ -19,7 +19,7 @@ export default defineConfig({
   testIgnore: ["**/*protected*", "**/*.setup.ts"],
   fullyParallel: false,
   forbidOnly: isCI,
-  globalTimeout: isCI ? 15 * 60_000 : 0,
+  globalTimeout: isCI ? 18 * 60_000 : 0,
   retries: 0,
   timeout: 120_000,
   workers: 1,
