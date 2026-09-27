@@ -293,6 +293,12 @@ select ok(
   ),
   'welcome conversion posts a balanced authoritative journal'
 );
+
+-- Restore deferred balance checks so later WS-04 hold scenarios can insert
+-- a ledger header before entries in the same transaction.
+set constraints ledger_entries_balanced_at_commit,
+  ledger_transactions_balanced_at_commit deferred;
+
 select is(
   (
     select count(*)::integer
@@ -415,7 +421,8 @@ select ok(
   (
     select request.amount_atomic = 5000
       and request.fee_atomic = 0
-      and request.status = 'REQUESTED'
+      and request.status = 'HELD'
+      and request.hold_ledger_transaction_id is not null
     from public.withdrawal_requests as request
     where request.id = (select withdrawal_id from ws02_context)
   ),

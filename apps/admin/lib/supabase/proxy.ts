@@ -32,10 +32,14 @@ export async function updateAdminSession(request: NextRequest) {
   );
 
   const path = `${request.nextUrl.pathname}${request.nextUrl.search}`;
+  const pathname = request.nextUrl.pathname;
   const publicPath =
-    request.nextUrl.pathname === "/login" ||
-    request.nextUrl.pathname.startsWith("/mfa");
-  const apiPath = request.nextUrl.pathname.startsWith("/api/");
+    pathname === "/login" ||
+    pathname.startsWith("/mfa") ||
+    pathname === "/session-expired" ||
+    pathname === "/reauth" ||
+    pathname === "/unauthorized";
+  const apiPath = pathname.startsWith("/api/");
   if (!publicPath && !apiPath) {
     const { data, error } = await supabase.auth.getClaims();
     if (error || typeof data?.claims?.sub !== "string") {

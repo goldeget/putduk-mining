@@ -24,6 +24,14 @@ Every feature must satisfy all applicable items:
 
 - owner, user outcome, P0/P1/P2/P3 priority and out-of-scope behavior are explicit;
 - Korean copy is reviewed and generated-image text is not used;
+- Korean content gate: one screen, one primary message; one paragraph, one idea; one button, one action;
+- no long multi-clause Korean sentences, no paragraphs stretched across wide desktop containers, and no 4–6 line explanations inside ordinary cards;
+- no developer/architecture language, unnecessary English, or jargon in user/admin UI;
+- CTA labels stay short; reading max-width and line breaks are deliberate;
+- respectful human Korean readable from ages 20s through 70s—not childish, slang-heavy, or overly casual;
+- phone UI copy is signup availability / already used; never `휴대폰 인증`, never SMS verified, never phone ownership verified;
+- USDT deposit copy is a manual deposit; USDT withdrawal copy is a withdrawal against KRW balance; never call either a user USDT balance;
+- example tone: "앱을 닫아도 채굴은 계속돼요. 다시 접속하면 결과를 확인할 수 있어요." and "최대 5,000원까지 출금할 수 있어요. 출금 전 본인 확인이 필요해요.";
 - mobile (320 px+), tablet and desktop layouts are complete;
 - loading, empty, success, warning, error, disabled, offline and reconnect states are deliberate;
 - Light, Dark and System behavior is verified;

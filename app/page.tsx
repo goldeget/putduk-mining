@@ -17,22 +17,20 @@ const journey = [
     icon: "mining" as const,
     step: "01",
     title: "KOREA에서 첫 채굴",
-    description:
-      "신규 사용자는 PUTDUK START로 가상 채굴의 핵심 흐름을 경험합니다.",
+    description: "PUTDUK START로 핵심 채굴 흐름을 경험합니다.",
   },
   {
     icon: "clock" as const,
     step: "02",
     title: "앱을 닫아도 이어지는 시간",
-    description:
-      "화면이 아니라 서버 시간을 기준으로 상태가 이어지고, 돌아오면 결과를 확인합니다.",
+    description: "다시 접속하면 결과를 확인할 수 있어요.",
   },
   {
     icon: "wallet" as const,
     step: "03",
     title: "자격 확인 후 환영 보상",
     description:
-      "신원·KYC·이상 이용 방지 확인을 통과하면 최대 5,000원의 실제 환영 보상으로 전환될 수 있습니다.",
+      "최대 5,000원까지 출금할 수 있어요. 출금 전 본인 확인이 필요해요.",
   },
 ] as const;
 
@@ -92,9 +90,7 @@ export default function HomePage() {
             <span>나만의 채굴 세계</span>를 엽니다.
           </h1>
           <p className="hero__lead">
-            PUTDUK MINING은 KOREA에서 시작하는 가상 채굴 플랫폼입니다. 채굴은
-            서버에서 이어지고, 돌아온 순간 결과와 다음 행동을 분명하게
-            보여드립니다.
+            KOREA에서 시작하는 가상 채굴입니다. 앱을 닫아도 채굴은 계속돼요.
           </p>
           <div className="hero__actions">
             <Link className="button button--primary" href="/signup">
@@ -108,10 +104,8 @@ export default function HomePage() {
           <div className="landing-welcome-proof" role="note">
             <PutdukIcon name="shield" size={21} />
             <p>
-              <strong>최대 5,000원 환영 보상 기회</strong>
-              자격 확인을 통과한 신규 사용자는 체험 결과를 실제 출금 가능한 환영
-              보상으로 전환할 수 있습니다. 해당 첫 출금에 사전 입금은 필요하지
-              않습니다.
+              <strong>최대 5,000원 환영 보상</strong>
+              자격 확인 후 전환되며, 첫 출금에 사전 입금은 필요하지 않습니다.
             </p>
           </div>
           <dl className="hero__facts">
@@ -188,13 +182,11 @@ export default function HomePage() {
         <div className="section-heading section-heading--row">
           <div>
             <p className="eyebrow">PUTDUK START</p>
-            <h2 id="journey-title">
-              첫 결과까지는 가깝게, 가치의 경계는 정확하게.
-            </h2>
+            <h2 id="journey-title">첫 결과까지, 가치의 경계는 정확히.</h2>
           </div>
           <p>
-            체험 값은 실제 지갑과 분리되어 있으며, 승인된 자격 확인과 전환이
-            끝난 뒤에만 실제 KRW 환영 보상이 됩니다.
+            체험 값은 실제 지갑과 분리됩니다. 전환된 환영 보상만 실제 KRW가
+            됩니다.
           </p>
         </div>
         <div className="landing-journey__grid">

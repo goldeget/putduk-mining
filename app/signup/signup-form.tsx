@@ -3,7 +3,11 @@
 import { useActionState, useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
 
-import { signupAction, type SignupActionState } from "@/app/signup/actions";
+import {
+  checkSignupPhoneAvailability,
+  signupAction,
+  type SignupActionState,
+} from "@/app/signup/actions";
 import { PutdukIcon } from "@/components/icons/putduk-icon";
 
 const INITIAL_STATE: SignupActionState = {
@@ -20,9 +24,7 @@ function SignupSubmit() {
 
   return (
     <button className="button button--primary" type="submit" disabled={pending}>
-      {pending
-        ? "안전하게 계정을 만들고 있어요"
-        : "가입하고 PUTDUK START 시작하기"}
+      {pending ? "계정을 만들고 있어요" : "가입하고 시작하기"}
       <PutdukIcon name="arrow-right" size={18} />
     </button>
   );
@@ -31,12 +33,16 @@ function SignupSubmit() {
 export function SignupForm() {
   const [state, action] = useActionState(signupAction, INITIAL_STATE);
   const [loginId, setLoginId] = useState("");
+  const [phone, setPhone] = useState("");
   const [availability, setAvailability] = useState<AvailabilityState>("idle");
+  const [phoneAvailability, setPhoneAvailability] =
+    useState<AvailabilityState>("idle");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const availabilityRequest = useRef(0);
+  const phoneRequest = useRef(0);
   const [consents, setConsents] = useState({
     marketing: false,
     privacy: false,
@@ -75,6 +81,24 @@ export function SignupForm() {
     } catch {
       if (availabilityRequest.current === requestId) {
         setAvailability("error");
+      }
+    }
+  }
+
+  async function checkPhone() {
+    const requestId = phoneRequest.current + 1;
+    phoneRequest.current = requestId;
+    setPhoneAvailability("checking");
+    try {
+      const result = await checkSignupPhoneAvailability(phone);
+      if (phoneRequest.current !== requestId) return;
+      if (result === "AVAILABLE") setPhoneAvailability("available");
+      else if (result === "UNAVAILABLE") setPhoneAvailability("unavailable");
+      else if (result === "INVALID") setPhoneAvailability("invalid");
+      else setPhoneAvailability("error");
+    } catch {
+      if (phoneRequest.current === requestId) {
+        setPhoneAvailability("error");
       }
     }
   }
@@ -130,22 +154,59 @@ export function SignupForm() {
           </label>
           <label>
             <span>휴대전화</span>
-            <input
-              id="signup-phone"
-              name="phone"
-              type="tel"
-              inputMode="tel"
-              autoComplete="tel"
-              placeholder="010-1234-5678"
-              required
-              aria-invalid={Boolean(state.fieldErrors.phoneE164)}
-              aria-describedby={
-                state.fieldErrors.phoneE164 ? "phone-error" : undefined
-              }
-            />
-            {state.fieldErrors.phoneE164 ? (
-              <small id="phone-error">{state.fieldErrors.phoneE164}</small>
-            ) : null}
+            <div className="signup-form__inline">
+              <input
+                id="signup-phone"
+                name="phone"
+                type="tel"
+                inputMode="tel"
+                autoComplete="tel"
+                placeholder="010-1234-5678"
+                required
+                value={phone}
+                onChange={(event) => {
+                  phoneRequest.current += 1;
+                  setPhone(event.target.value);
+                  setPhoneAvailability("idle");
+                }}
+                aria-invalid={
+                  Boolean(state.fieldErrors.phoneE164) ||
+                  phoneAvailability === "unavailable" ||
+                  phoneAvailability === "invalid"
+                }
+                aria-describedby="phone-status"
+              />
+              <button
+                type="button"
+                onClick={checkPhone}
+                disabled={phoneAvailability === "checking"}
+              >
+                {phoneAvailability === "checking"
+                  ? "확인 중"
+                  : "사용 가능 확인"}
+              </button>
+            </div>
+            <small
+              id="phone-status"
+              className={`signup-form__availability is-${
+                phoneAvailability === "invalid" ||
+                phoneAvailability === "unavailable"
+                  ? "error"
+                  : phoneAvailability
+              }`}
+              role="status"
+            >
+              {state.fieldErrors.phoneE164 ??
+                (phoneAvailability === "available"
+                  ? "사용할 수 있는 번호예요."
+                  : phoneAvailability === "unavailable"
+                    ? "이미 사용된 번호예요."
+                    : phoneAvailability === "invalid"
+                      ? "휴대전화 번호를 확인해 주세요."
+                      : phoneAvailability === "error"
+                        ? "지금은 번호를 확인하지 못했어요. 잠시 후 다시 시도해 주세요."
+                        : "가입에 사용할 수 있는지 확인해 주세요.")}
+            </small>
           </label>
           <label>
             <span>복구 이메일</span>
@@ -165,7 +226,7 @@ export function SignupForm() {
               </small>
             ) : (
               <small id="recovery-email-help">
-                이메일 인증과 비밀번호 복구에 사용합니다.
+                이메일 확인과 비밀번호 찾기에 사용합니다.
               </small>
             )}
           </label>
@@ -259,10 +320,7 @@ export function SignupForm() {
                 {state.fieldErrors.password}
               </small>
             ) : (
-              <small id="signup-password-help">
-                10자 이상 입력해 주세요. 붙여넣기와 비밀번호 관리자를
-                지원합니다.
-              </small>
+              <small id="signup-password-help">10자 이상 입력해 주세요.</small>
             )}
           </label>
           <label>
@@ -348,8 +406,8 @@ export function SignupForm() {
         <details>
           <summary>핵심 내용 보기</summary>
           <p>
-            PUTDUK START의 체험 값은 실제 자산이 아니며, 자격 확인과 전환을 거친
-            금액만 실제 KRW 지갑에 반영됩니다.
+            체험 값은 실제 자산이 아닙니다. 자격 확인 후 전환된 금액만 실제 KRW
+            지갑에 반영됩니다.
           </p>
         </details>
         <label className="signup-form__check">
@@ -380,7 +438,7 @@ export function SignupForm() {
           <summary>수집 항목 보기</summary>
           <p>
             이름, 생년월일, 휴대전화, 로그인 아이디, 복구 이메일과 동의 이력을
-            계정 운영·본인 확인·복구 목적으로 기록합니다.
+            계정 운영·복구 목적으로 기록합니다.
           </p>
         </details>
         <label className="signup-form__check">

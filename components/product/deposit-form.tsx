@@ -76,7 +76,7 @@ export function DepositForm() {
 
       setFeedback({
         message:
-          "입금 요청을 접수했어요. 확인 가능한 계좌 안내가 제공된 뒤 본인 명의로 이체해 주세요.",
+          "입금 요청을 접수했어요. 안내 계좌로 본인 명의 이체를 진행해 주세요.",
         tone: "success",
       });
       setAmount("");
@@ -97,10 +97,10 @@ export function DepositForm() {
   return (
     <form className={styles.form} onSubmit={submit} noValidate>
       <header className={styles.stepHeader}>
-        <span className={styles.stepNumber}>01</span>
+        <span className={styles.stepNumber}>KRW</span>
         <span>
-          <h2>입금할 금액을 입력해 주세요</h2>
-          <p>V1 원화 입금은 본인 명의 계좌이체 후 확인 방식으로 진행됩니다.</p>
+          <h2>원화 입금 금액</h2>
+          <p>본인 명의 계좌로 이체한 뒤 확인됩니다.</p>
         </span>
       </header>
 
@@ -170,7 +170,7 @@ export function DepositForm() {
         type="submit"
         disabled={pending || !amountAtomic}
       >
-        {pending ? "입금 요청 접수 중" : "입금 요청 확인"}
+        {pending ? "입금 요청 접수 중" : "입금 요청하기"}
         <PutdukIcon name="arrow-right" size={18} />
       </button>
 

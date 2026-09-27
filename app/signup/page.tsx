@@ -23,11 +23,8 @@ export default function SignupPage() {
         </Link>
         <div>
           <p className="eyebrow">YOUR FIRST MINING WORLD</p>
-          <h1 id="signup-title">KOREA에서 시작하는 나만의 첫 채굴.</h1>
-          <p>
-            가입을 마치면 PUTDUK START가 핵심 흐름을 안내합니다. 체험 값과 실제
-            지갑은 자격 확인과 전환 전까지 분리됩니다.
-          </p>
+          <h1 id="signup-title">KOREA에서 시작하는 첫 채굴.</h1>
+          <p>가입을 마치면 PUTDUK START가 이어서 안내합니다.</p>
         </div>
         <ul className="auth-trust-list">
           <li>
@@ -36,11 +33,10 @@ export default function SignupPage() {
           </li>
           <li>
             <PutdukIcon name="shield" size={19} />
-            최대 5,000원 자격 확인
+            최대 5,000원 환영 보상
           </li>
           <li>
-            <PutdukIcon name="wallet" size={19} />
-            해당 첫 출금은 사전 입금 불필요
+            <PutdukIcon name="wallet" size={19} />첫 출금은 입금 없이 가능
           </li>
         </ul>
       </section>
@@ -51,7 +47,7 @@ export default function SignupPage() {
         <div className="auth-page__panel-header">
           <p className="eyebrow">CREATE ACCOUNT</p>
           <h2>계정 만들기</h2>
-          <p>본인 확인과 계정 복구에 필요한 정보를 정확히 입력해 주세요.</p>
+          <p>이름, 생년월일, 휴대전화와 로그인 정보를 입력해 주세요.</p>
         </div>
         <SignupForm />
         <p className="auth-page__legal">

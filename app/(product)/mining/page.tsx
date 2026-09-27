@@ -91,7 +91,7 @@ export default async function MiningPage() {
       <PageHeading
         eyebrow="MINING WORLDS"
         title="당신의 채굴 월드"
-        lead="가상 테마 월드에서 채굴 여정을 이어갑니다. 앱을 닫아도 활성 세션의 경과 시간은 서버 기준으로 기록되며, 화면은 확인된 상태만 보여드립니다."
+        lead="앱을 닫아도 채굴은 계속돼요. 다시 접속하면 결과를 확인할 수 있어요."
       />
 
       {sessionsError ? (

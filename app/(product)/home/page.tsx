@@ -65,8 +65,8 @@ export default async function ProductHomePage() {
       <header className="product-home__welcome">
         <div>
           <p className="eyebrow">TODAY IN PUTDUK</p>
-          <h1>오늘도, 나의 채굴 세계는 이어지고 있어요.</h1>
-          <p>서버에서 확인된 상태와 다음 행동만 한눈에 모았습니다.</p>
+          <h1>오늘도 채굴이 이어지고 있어요.</h1>
+          <p>확인된 상태와 다음 행동만 모았습니다.</p>
         </div>
         <Link className="button button--primary" href={primaryHref}>
           {primaryLabel}

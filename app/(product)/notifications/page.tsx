@@ -27,7 +27,7 @@ export default async function NotificationCenterPage() {
             ? `확인할 새 소식이 ${unread}개 있어요.`
             : "중요한 변화를 놓치지 않도록."
         }
-        lead="채굴, 지갑, 이벤트와 서비스 안내를 이유와 다음 행동까지 함께 보여드립니다."
+        lead="채굴·지갑·이벤트 안내를 한곳에서 확인하세요."
         action={
           <Link className="button button--secondary" href="/menu/notifications">
             알림 설정
