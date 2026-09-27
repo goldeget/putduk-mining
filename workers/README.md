@@ -1,12 +1,25 @@
 # Workers
 
-The `workers/` directory is reserved for approved background adapters. It is not a signal that Cloudflare Queues or additional Workers should be created.
+The `workers/` directory holds approved background adapters. It is not a signal
+that Cloudflare Queues or additional Cloudflare Workers should be created.
 
-V1 rules:
+## V1 runner
 
-- authoritative mining, settlement, wallet, and ledger logic remains server-side and PostgreSQL-backed;
-- no per-second mining writes;
-- no worker may maintain a shadow balance or economic rule set;
-- every asset mutation is idempotent, ledger-first, and auditable;
-- a worker is added only after its retry, deduplication, observability, and recovery contract is documented;
-- Cloudflare resources remain unprovisioned until the gate in `docs/operations/CLOUDFLARE-INFRASTRUCTURE.md` is satisfied.
+- Entrypoint: `workers/runner.mjs`
+- Uses existing SQL commands: `claim_outbox_events`, `complete_outbox_event`,
+  `fail_outbox_event`, `claim_system_jobs`, `complete_system_job`,
+  `fail_system_job`, `run_financial_reconciliation`
+- Heartbeat, exponential backoff, lease-based idempotency, and dead-letter
+  transitions are enforced in Postgres
+- Reconciliation records mismatches and does **not** auto-repair
+- The browser is never the runner
+
+```bash
+node --env-file-if-exists=.env.local workers/runner.mjs
+```
+
+Required env:
+
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `SUPABASE_SECRET_KEY`
+- optional `PUTDUK_WORKER_ID`
