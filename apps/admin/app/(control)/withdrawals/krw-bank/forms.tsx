@@ -93,16 +93,28 @@ export function ReleaseHoldForm({ withdrawalId }: { withdrawalId: string }) {
     null,
   );
   return (
-    <form action={action} className="operator-form operator-form--danger">
-      <input name="withdrawalId" type="hidden" value={withdrawalId} />
-      <ReasonField label="거절·해제 사유" />
-      <ConfirmCheckbox
-        label="외부 송금 전에만 가능합니다. 보류 금액을 되돌립니다."
-        name="confirmation"
-        value="RELEASE_HOLD"
-      />
-      <SubmitButton variant="danger">거절 · 보류 해제</SubmitButton>
+    <div className="operator-form-stack">
+      <form action={action} className="operator-form operator-form--danger">
+        <input name="withdrawalId" type="hidden" value={withdrawalId} />
+        <ReasonField label="거절 사유" />
+        <ConfirmCheckbox
+          label="운영 거절입니다. 외부 송금 전에만 가능합니다."
+          name="confirmation"
+          value="REJECT_HOLD"
+        />
+        <SubmitButton variant="danger">거절 · 보류 해제</SubmitButton>
+      </form>
+      <form action={action} className="operator-form operator-form--danger">
+        <input name="withdrawalId" type="hidden" value={withdrawalId} />
+        <ReasonField label="취소 사유" />
+        <ConfirmCheckbox
+          label="운영 취소입니다. 외부 송금 전에만 가능합니다."
+          name="confirmation"
+          value="CANCEL_HOLD"
+        />
+        <SubmitButton variant="danger">취소 · 보류 해제</SubmitButton>
+      </form>
       <QueueFlash result={result} />
-    </form>
+    </div>
   );
 }

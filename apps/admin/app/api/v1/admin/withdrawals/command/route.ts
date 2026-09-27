@@ -37,6 +37,7 @@ const bodySchema = z.discriminatedUnion("action", [
     action: z.literal("RELEASE_HOLD"),
     withdrawalId: z.string().uuid(),
     reason: z.string().trim().min(4).max(500),
+    disposition: z.enum(["REJECTED", "CANCELLED"]),
     stepUpToken: z.string().min(16),
     idempotencyKey: z.string().min(8).max(200),
   }),
@@ -139,6 +140,7 @@ export async function POST(request: Request) {
     p_actor: access.principal.userId,
     p_reason: body.reason,
     p_idempotency_key: body.idempotencyKey,
+    p_disposition: body.disposition,
   });
   if (error) {
     return Response.json(
@@ -147,7 +149,11 @@ export async function POST(request: Request) {
     );
   }
   return Response.json(
-    { ok: true, releaseLedgerTransactionId: data },
+    {
+      ok: true,
+      releaseLedgerTransactionId: data,
+      disposition: body.disposition,
+    },
     { status: 200 },
   );
 }

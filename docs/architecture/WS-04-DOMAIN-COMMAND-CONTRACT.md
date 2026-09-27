@@ -273,10 +273,12 @@ public.release_withdrawal_hold(
   p_withdrawal_id uuid,
   p_actor uuid,
   p_reason text,
-  p_idempotency_key text
+  p_idempotency_key text,
+  p_disposition text
 )
-  -- Reject/cancel only before EXTERNAL_SENT_RECORDED.
-  -- After external send, release is forbidden.
+  -- p_disposition is REJECTED (operator rejection) or CANCELLED
+  -- (user/operator cancellation). Reject/cancel only before
+  -- EXTERNAL_SENT_RECORDED. After external send, release is forbidden.
 ```
 
 ### KYC

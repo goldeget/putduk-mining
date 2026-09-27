@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(27);
+select plan(39);
 
 create temporary table ws04_ctx (
   user_a uuid not null,
@@ -56,6 +56,39 @@ where account.user_id = ws04_ctx.user_a
   and account.currency = 'KRW';
 
 -- Phone availability shape
+select ok(
+  (
+    select count(*) = 5
+      and bool_and(procedure.proconfig @> array['search_path=pg_catalog']::text[])
+    from pg_proc as procedure
+    join pg_namespace as namespace on namespace.oid = procedure.pronamespace
+    where namespace.nspname in ('public', 'app_private')
+      and procedure.prosecdef
+      and procedure.oid in (
+        'public.bootstrap_user(uuid)'::regprocedure,
+        'public.is_login_id_available(text)'::regprocedure,
+        'public.resolve_login_email(text)'::regprocedure,
+        'app_private.capture_public_signup_identity()'::regprocedure,
+        'public.signup_phone_availability(text)'::regprocedure
+      )
+  )
+    and not exists (
+      select 1
+      from pg_proc as procedure
+      join pg_namespace as namespace on namespace.oid = procedure.pronamespace
+      where namespace.nspname in ('public', 'app_private')
+        and procedure.prosecdef
+        and procedure.oid not in (
+          'public.bootstrap_user(uuid)'::regprocedure,
+          'public.is_login_id_available(text)'::regprocedure,
+          'public.resolve_login_email(text)'::regprocedure,
+          'app_private.capture_public_signup_identity()'::regprocedure,
+          'public.signup_phone_availability(text)'::regprocedure
+        )
+    ),
+  'application schemas allow exactly five reviewed SECURITY DEFINER functions'
+);
+
 select is(
   public.normalize_signup_phone('010-9876-5432'),
   '+821098765432',
@@ -138,10 +171,14 @@ set destination_a = public.register_krw_bank_destination(
   1
 );
 
--- Cooldown: protection_until is now+1h with default; override for tests
-update public.withdrawal_destinations
-set protection_until = statement_timestamp() - interval '1 minute'
-where id = (select destination_a from ws04_ctx);
+select ok(
+  (
+    select destination.protection_until <= statement_timestamp()
+    from public.withdrawal_destinations as destination
+    where destination.id = (select destination_a from ws04_ctx)
+  ),
+  'first KRW_BANK destination registration does not apply cooldown'
+);
 
 update ws04_ctx
 set withdrawal_id = public.request_krw_withdrawal(
@@ -165,6 +202,17 @@ select is(
   ),
   'HELD',
   'withdrawal is HELD after ledger reservation'
+);
+
+select ok(
+  (
+    select hold_ledger_transaction_id is not null
+      and currency = 'KRW'
+      and destination_type = 'KRW_BANK'
+    from public.withdrawal_requests
+    where id = (select withdrawal_id from ws04_ctx)
+  ),
+  'normal KRW withdrawal uses held KRW'
 );
 
 select is(
@@ -254,12 +302,28 @@ select throws_ok(
       (select withdrawal_id from ws04_ctx),
       (select operator_id from ws04_ctx),
       'too late to release',
-      'ws04-release-late-0001'
+      'ws04-release-late-0001',
+      'CANCELLED'
     )
   $$,
   '55000',
   'WITHDRAWAL_RELEASE_FORBIDDEN_AFTER_EXTERNAL_SEND',
-  'release is forbidden after EXTERNAL_SENT_RECORDED'
+  'cancel is forbidden after EXTERNAL_SENT_RECORDED'
+);
+
+select throws_ok(
+  $$
+    select public.release_withdrawal_hold(
+      (select withdrawal_id from ws04_ctx),
+      (select operator_id from ws04_ctx),
+      'too late to reject',
+      'ws04-release-late-reject',
+      'REJECTED'
+    )
+  $$,
+  '55000',
+  'WITHDRAWAL_RELEASE_FORBIDDEN_AFTER_EXTERNAL_SEND',
+  'reject is forbidden after EXTERNAL_SENT_RECORDED'
 );
 
 update ws04_ctx
@@ -289,7 +353,7 @@ select is(
   'finalize completes the withdrawal without another external send'
 );
 
--- Release-once path on a fresh withdrawal
+-- CANCELLED release-once path
 update ws04_ctx
 set withdrawal_id = public.request_krw_withdrawal(
   user_a,
@@ -303,7 +367,8 @@ set release_tx = public.release_withdrawal_hold(
   withdrawal_id,
   operator_id,
   'user cancelled before send',
-  'ws04-release-once-key'
+  'ws04-release-once-key',
+  'CANCELLED'
 );
 
 select is(
@@ -311,7 +376,8 @@ select is(
     (select withdrawal_id from ws04_ctx),
     (select operator_id from ws04_ctx),
     'user cancelled before send',
-    'ws04-release-once-key'
+    'ws04-release-once-key',
+    'CANCELLED'
   ),
   (select release_tx from ws04_ctx),
   'release_withdrawal_hold runs exactly once under idempotency'
@@ -324,7 +390,167 @@ select is(
     where id = (select withdrawal_id from ws04_ctx)
   ),
   'CANCELLED',
-  'released withdrawal is cancelled'
+  'user/operator cancellation ends CANCELLED'
+);
+
+select is(
+  (
+    select count(*)::integer
+    from public.ledger_transactions
+    where idempotency_key = 'ws04-release-once-key:release'
+  ),
+  1,
+  'each release posts exactly one release ledger effect'
+);
+
+-- REJECTED is distinct from CANCELLED
+update ws04_ctx
+set withdrawal_id = public.request_krw_withdrawal(
+  user_a,
+  destination_a,
+  2000,
+  'ws04-release-reject-0001'
+);
+
+update ws04_ctx
+set release_tx = public.release_withdrawal_hold(
+  withdrawal_id,
+  operator_id,
+  'operator rejected after review',
+  'ws04-release-reject-key',
+  'REJECTED'
+);
+
+select is(
+  (
+    select status::text
+    from public.withdrawal_requests
+    where id = (select withdrawal_id from ws04_ctx)
+  ),
+  'REJECTED',
+  'operator rejection ends REJECTED'
+);
+
+select is(
+  public.release_withdrawal_hold(
+    (select withdrawal_id from ws04_ctx),
+    (select operator_id from ws04_ctx),
+    'operator rejected after review',
+    'ws04-release-reject-key',
+    'REJECTED'
+  ),
+  (select release_tx from ws04_ctx),
+  'rejected release stays idempotent with one effect'
+);
+
+-- Replacement destination is protected during cooldown
+update ws04_ctx
+set destination_a = public.register_krw_bank_destination(
+  user_a,
+  decode('ffeeddccbbaa99887766554433221100', 'hex'),
+  'fp-ws04-bank-a-replaced',
+  '국민 **9999',
+  'step-up-token-ws04-a2',
+  'd4444444-4444-4444-8444-444444444445',
+  24
+);
+
+select ok(
+  (
+    select destination.protection_until > statement_timestamp()
+    from public.withdrawal_destinations as destination
+    where destination.id = (select destination_a from ws04_ctx)
+  ),
+  'replacement KRW_BANK destination is protected during cooldown'
+);
+
+select throws_ok(
+  $$
+    select public.request_krw_withdrawal(
+      (select user_a from ws04_ctx),
+      (select destination_a from ws04_ctx),
+      1000,
+      'ws04-protected-dest-0001'
+    )
+  $$,
+  '55000',
+  'VERIFIED_WITHDRAWAL_DESTINATION_REQUIRED',
+  'protected replacement destination cannot withdraw during cooldown'
+);
+
+-- USDT_ADDRESS first destination + held KRW withdrawal
+insert into public.withdrawal_policies (
+  currency, destination_type, version, is_enabled, minimum_amount_atomic,
+  fee_atomic, destination_config, effective_at, approved_by, allows_welcome_reward
+)
+select
+  'KRW', 'USDT_ADDRESS', 9102, true, 1000, 0,
+  '{"allowed_networks":["TRC20"]}'::jsonb,
+  statement_timestamp(), operator_id, false
+from ws04_ctx;
+
+update ws04_ctx
+set destination_a = public.register_usdt_withdrawal_destination(
+  user_a,
+  'TRC20',
+  'TXYZaBcDeFgHiJkLmNoPqRsTuVwXyZ1234',
+  decode('aabbccddeeff00112233445566778899', 'hex'),
+  'fp-ws04-usdt-a',
+  'TRC20 TXYZ…1234',
+  'step-up-token-ws04-usdt',
+  'd4444444-4444-4444-8444-444444444446',
+  1
+);
+
+select ok(
+  (
+    select destination.protection_until <= statement_timestamp()
+    from public.withdrawal_destinations as destination
+    where destination.id = (select destination_a from ws04_ctx)
+  ),
+  'first USDT_ADDRESS destination registration does not apply cooldown'
+);
+
+update ws04_ctx
+set withdrawal_id = public.request_usdt_withdrawal(
+  user_a,
+  destination_a,
+  1500,
+  'ws04-usdt-hold-0001'
+);
+
+select ok(
+  (
+    select hold_ledger_transaction_id is not null
+      and currency = 'KRW'
+      and destination_type = 'USDT_ADDRESS'
+      and status = 'HELD'
+    from public.withdrawal_requests
+    where id = (select withdrawal_id from ws04_ctx)
+  ),
+  'normal USDT withdrawal uses held KRW'
+);
+
+update ws04_ctx
+set destination_a = public.register_usdt_withdrawal_destination(
+  user_a,
+  'TRC20',
+  'TNEWaBcDeFgHiJkLmNoPqRsTuVwXyZ9999',
+  decode('99887766554433221100ffeeddccbbaa', 'hex'),
+  'fp-ws04-usdt-a2',
+  'TRC20 TNEW…9999',
+  'step-up-token-ws04-usdt2',
+  'd4444444-4444-4444-8444-444444444447',
+  24
+);
+
+select ok(
+  (
+    select destination.protection_until > statement_timestamp()
+    from public.withdrawal_destinations as destination
+    where destination.id = (select destination_a from ws04_ctx)
+  ),
+  'replacement USDT_ADDRESS destination is protected during cooldown'
 );
 
 -- USDT deposit snapshot stability

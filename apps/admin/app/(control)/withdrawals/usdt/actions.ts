@@ -31,8 +31,14 @@ const finalizeSchema = z.object({
 const releaseSchema = z.object({
   withdrawalId: z.uuid(),
   reason: z.string().trim().min(10).max(500),
-  confirmation: z.literal("RELEASE_HOLD"),
+  confirmation: z.enum(["REJECT_HOLD", "CANCEL_HOLD"]),
 });
+
+function releaseDisposition(
+  confirmation: "REJECT_HOLD" | "CANCEL_HOLD",
+): "REJECTED" | "CANCELLED" {
+  return confirmation === "REJECT_HOLD" ? "REJECTED" : "CANCELLED";
+}
 
 export async function recordUsdtExternalSendAction(
   _prev: CommandActionResult | null,
@@ -146,9 +152,11 @@ export async function releaseUsdtWithdrawalHoldAction(
     return {
       ok: false,
       code: "INVALID_INPUT",
-      message: "거절·해제 사유를 확인해 주세요.",
+      message: "거절 또는 취소 사유를 확인해 주세요.",
     };
   }
+
+  const disposition = releaseDisposition(parsed.data.confirmation);
 
   const { error } = await createAdminServiceClient().rpc(
     "release_withdrawal_hold",
@@ -157,11 +165,18 @@ export async function releaseUsdtWithdrawalHoldAction(
       p_actor: access.principal.userId,
       p_reason: parsed.data.reason,
       p_idempotency_key: newIdempotencyKey("usdt_rel"),
+      p_disposition: disposition,
     },
   );
 
   if (error) {
     return mapRpcFailure(error.message, "보류 금액을 해제하지 못했습니다.");
   }
-  return { ok: true, message: "출금을 거절하고 보류 금액을 해제했습니다." };
+  return {
+    ok: true,
+    message:
+      disposition === "REJECTED"
+        ? "출금을 거절하고 보류 금액을 해제했습니다."
+        : "출금을 취소하고 보류 금액을 해제했습니다.",
+  };
 }

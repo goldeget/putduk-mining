@@ -114,11 +114,12 @@ select ok(
         'public.bootstrap_user(uuid)'::regprocedure,
         'public.is_login_id_available(text)'::regprocedure,
         'public.resolve_login_email(text)'::regprocedure,
-        'app_private.capture_public_signup_identity()'::regprocedure
+        'app_private.capture_public_signup_identity()'::regprocedure,
+        'public.signup_phone_availability(text)'::regprocedure
       )
   )
     and (
-      select count(*) = 4
+      select count(*) = 5
         and coalesce(
           bool_and(
             procedure.proconfig @> array['search_path=pg_catalog']::text[]
@@ -130,7 +131,7 @@ select ok(
       where namespace.nspname in ('public', 'app_private')
         and procedure.prosecdef
     ),
-  'application schemas contain only the four reviewed fixed-search-path SECURITY DEFINER functions'
+  'application schemas contain only the five reviewed fixed-search-path SECURITY DEFINER functions'
 );
 
 select ok(

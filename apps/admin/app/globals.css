@@ -646,6 +646,10 @@ input:focus-visible {
   padding-top: 14px;
   border-top: 1px solid rgba(255, 255, 255, 0.07);
 }
+.operator-form-stack {
+  display: grid;
+  gap: 8px;
+}
 .operator-form--danger {
   border-top-color: rgba(239, 144, 127, 0.28);
 }

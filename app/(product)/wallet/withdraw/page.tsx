@@ -17,6 +17,7 @@ import {
 } from "@/components/product/welcome-withdrawal-action";
 import {
   WithdrawalForm,
+  type RegisteredWithdrawalDestination,
   type WithdrawalPolicy,
 } from "@/components/product/withdrawal-form";
 import { StatePanel } from "@/components/ui/states";
@@ -371,6 +372,31 @@ export default async function WithdrawalPage() {
                 heldBalanceAtomic: heldAtomic,
                 id: accounts.wallet_account_id,
               }}
+              destinations={(destinations ?? [])
+                .map((destination) => {
+                  const destMethod = normalizeDestinationMethod(
+                    destination.destination_type,
+                  );
+                  if (
+                    !destMethod ||
+                    destination.verification_status !== "VERIFIED"
+                  ) {
+                    return null;
+                  }
+                  return {
+                    displayHint: destination.display_hint,
+                    id: destination.id,
+                    method: destMethod,
+                    protectionActive:
+                      new Date(destination.protection_until) > now,
+                  } satisfies RegisteredWithdrawalDestination;
+                })
+                .filter(
+                  (
+                    destination,
+                  ): destination is RegisteredWithdrawalDestination =>
+                    destination !== null,
+                )}
               policies={policies}
             />
           )}

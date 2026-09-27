@@ -30,6 +30,13 @@ export type WithdrawalPolicy = {
   minimumAmountAtomic: string;
 };
 
+export type RegisteredWithdrawalDestination = {
+  displayHint: string;
+  id: string;
+  method: WithdrawalDestinationMethod;
+  protectionActive: boolean;
+};
+
 type Feedback = { message: string; tone: "error" | "success" } | null;
 
 const bankNames: Record<string, string> = {
@@ -44,15 +51,23 @@ const bankNames: Record<string, string> = {
   WOORI: "우리은행",
 };
 
+/** Normal withdrawals must use the hold command path — never the legacy money route. */
+export const WITHDRAWAL_HOLD_SUBMIT_URL = "/api/v1/withdrawals/hold";
+export const WITHDRAWAL_DESTINATION_REGISTER_URL =
+  "/api/v1/withdrawals/destinations";
+export const LEGACY_WITHDRAWAL_SUBMIT_URL = "/api/v1/withdrawals";
+
 function atomicToInput(value: string) {
   return BigInt(value).toString();
 }
 
 export function WithdrawalForm({
   account,
+  destinations = [],
   policies,
 }: {
   account: WithdrawalAccount | null;
+  destinations?: readonly RegisteredWithdrawalDestination[];
   policies: readonly WithdrawalPolicy[];
 }) {
   const router = useRouter();
@@ -66,11 +81,32 @@ export function WithdrawalForm({
   const [feedback, setFeedback] = useState<Feedback>(null);
   const [pending, setPending] = useState(false);
   const [revealAddress, setRevealAddress] = useState(false);
+  const [useNewDestination, setUseNewDestination] = useState(false);
 
   const policy = useMemo(
     () => policies.find((candidate) => candidate.method === method),
     [method, policies],
   );
+
+  const eligibleDestination = useMemo(
+    () =>
+      destinations.find(
+        (destination) =>
+          destination.method === method && !destination.protectionActive,
+      ),
+    [destinations, method],
+  );
+
+  const protectedDestination = useMemo(
+    () =>
+      destinations.find(
+        (destination) =>
+          destination.method === method && destination.protectionActive,
+      ),
+    [destinations, method],
+  );
+
+  const needsNewDestination = !eligibleDestination || useNewDestination;
 
   let amountAtomic: string | null = null;
   try {
@@ -94,7 +130,12 @@ export function WithdrawalForm({
     BigInt(totalAtomic) <= BigInt(account.availableBalanceAtomic),
   );
   const canSubmit = Boolean(
-    amountAtomic && policy && account && meetsMinimum && hasEnoughBalance,
+    amountAtomic &&
+    policy &&
+    account &&
+    meetsMinimum &&
+    hasEnoughBalance &&
+    (needsNewDestination || eligibleDestination),
   );
 
   function changeMethod(next: WithdrawalDestinationMethod) {
@@ -102,6 +143,7 @@ export function WithdrawalForm({
     setAmount("");
     setFeedback(null);
     setRevealAddress(false);
+    setUseNewDestination(false);
   }
 
   function chooseMinimum() {
@@ -119,6 +161,49 @@ export function WithdrawalForm({
     }
   }
 
+  async function resolveDestinationId(form: HTMLFormElement) {
+    if (!needsNewDestination && eligibleDestination) {
+      return eligibleDestination.id;
+    }
+
+    const formData = new FormData(form);
+    const body =
+      method === "KRW_BANK"
+        ? {
+            method: "KRW_BANK" as const,
+            accountHolder: String(formData.get("accountHolder") ?? ""),
+            accountNumber: String(formData.get("accountNumber") ?? ""),
+            bankCode: String(formData.get("bankCode") ?? ""),
+          }
+        : {
+            method: "USDT_ADDRESS" as const,
+            address: String(formData.get("address") ?? ""),
+            network: String(formData.get("network") ?? ""),
+          };
+
+    const registerResponse = await fetch(WITHDRAWAL_DESTINATION_REGISTER_URL, {
+      method: "POST",
+      credentials: "same-origin",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    const registerPayload = (await registerResponse
+      .json()
+      .catch(() => null)) as {
+      data?: { destinationId?: string };
+      error?: { message?: string };
+    } | null;
+
+    if (!registerResponse.ok || !registerPayload?.data?.destinationId) {
+      throw new Error(
+        registerPayload?.error?.message ??
+          "출금 목적지를 등록하지 못했어요. 잠시 후 다시 시도해 주세요.",
+      );
+    }
+
+    return registerPayload.data.destinationId;
+  }
+
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!policy || !account || !amountAtomic || !canSubmit) {
@@ -127,33 +212,21 @@ export function WithdrawalForm({
           ? "최소 출금 금액을 확인해 주세요."
           : !hasEnoughBalance
             ? "수수료를 포함한 사용 가능 금액을 확인해 주세요."
-            : "출금 정보를 다시 확인해 주세요.",
+            : protectedDestination && !eligibleDestination
+              ? "등록한 목적지 보호 시간이 끝난 뒤 출금할 수 있어요."
+              : "출금 정보를 다시 확인해 주세요.",
         tone: "error",
       });
       return;
     }
 
     const form = event.currentTarget;
-    const formData = new FormData(form);
     setPending(true);
     setFeedback(null);
 
-    // 기존 API는 currency로 경로를 가른다. 금액·표시는 항상 KRW.
-    // BANK_ACCOUNT 표기는 서버 측에서 Agent A가 KRW_BANK로 정렬한다.
-    const isBank = method === "KRW_BANK";
-    const destination = isBank
-      ? {
-          accountHolder: String(formData.get("accountHolder") ?? ""),
-          accountNumber: String(formData.get("accountNumber") ?? ""),
-          bankCode: String(formData.get("bankCode") ?? ""),
-        }
-      : {
-          address: String(formData.get("address") ?? ""),
-          network: String(formData.get("network") ?? ""),
-        };
-
     try {
-      const response = await fetch("/api/v1/withdrawals", {
+      const destinationId = await resolveDestinationId(form);
+      const response = await fetch(WITHDRAWAL_HOLD_SUBMIT_URL, {
         method: "POST",
         credentials: "same-origin",
         headers: {
@@ -161,11 +234,9 @@ export function WithdrawalForm({
           "Idempotency-Key": crypto.randomUUID(),
         },
         body: JSON.stringify({
-          amountAtomic,
-          currency: isBank ? "KRW" : "USDT",
-          destination,
-          policyId: policy.id,
-          walletAccountId: account.id,
+          method,
+          destinationId,
+          amountKrw: amountAtomic,
         }),
       });
       const payload = (await response.json().catch(() => null)) as {
@@ -190,13 +261,17 @@ export function WithdrawalForm({
       setAmount("");
       form.reset();
       setRevealAddress(false);
+      setUseNewDestination(false);
       void trackAnalyticsEvent("withdrawal_start", { currency: "KRW" }).catch(
         () => undefined,
       );
       router.refresh();
-    } catch {
+    } catch (error) {
       setFeedback({
-        message: "인터넷 연결을 확인한 뒤 다시 시도해 주세요.",
+        message:
+          error instanceof Error
+            ? error.message
+            : "인터넷 연결을 확인한 뒤 다시 시도해 주세요.",
         tone: "error",
       });
     } finally {
@@ -319,81 +394,120 @@ export function WithdrawalForm({
         </span>
       </header>
 
-      {method === "KRW_BANK" ? (
-        <div className={styles.destinationGrid}>
-          <label className={styles.field}>
-            <span>은행</span>
-            <select name="bankCode" required defaultValue="" disabled={pending}>
-              <option value="" disabled>
-                은행 선택
-              </option>
-              {policy?.allowedDestinations.map((bankCode) => (
-                <option value={bankCode} key={bankCode}>
-                  {bankNames[bankCode] ?? bankCode}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className={styles.field}>
-            <span>예금주</span>
-            <input
-              name="accountHolder"
-              maxLength={60}
-              autoComplete="name"
-              disabled={pending}
-              required
-            />
-          </label>
-          <label className={`${styles.field} ${styles.wideField}`}>
-            <span>계좌번호</span>
-            <input
-              name="accountNumber"
-              inputMode="numeric"
-              autoComplete="off"
-              pattern="[0-9-]{6,32}"
-              placeholder="숫자만 입력"
-              disabled={pending}
-              required
-            />
-          </label>
-        </div>
-      ) : (
-        <div className={styles.destinationGrid}>
-          <label className={styles.field}>
-            <span>네트워크</span>
-            <select name="network" required defaultValue="" disabled={pending}>
-              <option value="" disabled>
-                네트워크 선택
-              </option>
-              {policy?.allowedDestinations.map((network) => (
-                <option value={network} key={network}>
-                  {network}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className={`${styles.field} ${styles.wideField}`}>
-            <span>받을 주소</span>
-            <input
-              name="address"
-              minLength={20}
-              maxLength={128}
-              autoComplete="off"
-              type={revealAddress ? "text" : "password"}
-              disabled={pending}
-              required
-            />
+      {eligibleDestination && !useNewDestination ? (
+        <div className={styles.formNotice}>
+          <PutdukIcon name="shield" size={19} />
+          <p>
+            등록된 목적지: {eligibleDestination.displayHint}
             <button
               type="button"
               className={styles.inlineReveal}
-              onClick={() => setRevealAddress((value) => !value)}
+              onClick={() => setUseNewDestination(true)}
               disabled={pending}
             >
-              {revealAddress ? "주소 가리기" : "확인 시 전체 보기"}
+              다른 목적지로 변경
             </button>
-          </label>
+          </p>
         </div>
-      )}
+      ) : null}
+
+      {protectedDestination && !eligibleDestination && !useNewDestination ? (
+        <div className={styles.formNotice}>
+          <PutdukIcon name="shield" size={19} />
+          <p>
+            방금 변경한 목적지는 보호 시간이 끝난 뒤 출금할 수 있어요. (
+            {protectedDestination.displayHint})
+          </p>
+        </div>
+      ) : null}
+
+      {needsNewDestination ? (
+        method === "KRW_BANK" ? (
+          <div className={styles.destinationGrid}>
+            <label className={styles.field}>
+              <span>은행</span>
+              <select
+                name="bankCode"
+                required
+                defaultValue=""
+                disabled={pending}
+              >
+                <option value="" disabled>
+                  은행 선택
+                </option>
+                {policy?.allowedDestinations.map((bankCode) => (
+                  <option value={bankCode} key={bankCode}>
+                    {bankNames[bankCode] ?? bankCode}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className={styles.field}>
+              <span>예금주</span>
+              <input
+                name="accountHolder"
+                maxLength={60}
+                autoComplete="name"
+                disabled={pending}
+                required
+              />
+            </label>
+            <label className={`${styles.field} ${styles.wideField}`}>
+              <span>계좌번호</span>
+              <input
+                name="accountNumber"
+                inputMode="numeric"
+                autoComplete="off"
+                pattern="[0-9-]{6,32}"
+                placeholder="숫자만 입력"
+                disabled={pending}
+                required
+              />
+            </label>
+          </div>
+        ) : (
+          <div className={styles.destinationGrid}>
+            <label className={styles.field}>
+              <span>네트워크</span>
+              <select
+                name="network"
+                required
+                defaultValue=""
+                disabled={pending}
+              >
+                <option value="" disabled>
+                  네트워크 선택
+                </option>
+                {policy?.allowedDestinations.map((network) => (
+                  <option value={network} key={network}>
+                    {network}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className={`${styles.field} ${styles.wideField}`}>
+              <span>받을 주소</span>
+              <input
+                name="address"
+                minLength={20}
+                maxLength={128}
+                autoComplete="off"
+                type={revealAddress ? "text" : "password"}
+                disabled={pending}
+                required
+              />
+              <button
+                type="button"
+                className={styles.inlineReveal}
+                onClick={() => setRevealAddress((value) => !value)}
+                disabled={pending}
+              >
+                {revealAddress ? "주소 가리기" : "확인 시 전체 보기"}
+              </button>
+            </label>
+          </div>
+        )
+      ) : null}
 
       <dl className={styles.summaryList} aria-label="출금 요청 요약">
         <div>

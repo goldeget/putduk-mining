@@ -365,7 +365,11 @@ function createWithdrawalService(
       row.status = "COMPLETED";
       return row;
     },
-    release(withdrawalId: string, idempotencyKey: string) {
+    release(
+      withdrawalId: string,
+      idempotencyKey: string,
+      disposition: "REJECTED" | "CANCELLED" = "CANCELLED",
+    ) {
       void idempotencyKey;
       const row = byId.get(withdrawalId);
       if (!row) {
@@ -382,7 +386,7 @@ function createWithdrawalService(
         return row;
       }
       row.releaseLedgerId = ledger.release(row.userId, row.amountKrw, row.id);
-      row.status = "CANCELLED";
+      row.status = disposition;
       return row;
     },
     get(id: string) {

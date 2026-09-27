@@ -48,4 +48,41 @@ test.describe("WS-04 wallet isolation and admin command denial", () => {
     });
     expect(approve.status()).toBe(404);
   });
+
+  test("hold and destination register routes exist; legacy withdrawals is not the form path", async ({
+    request,
+  }) => {
+    const hold = await request.post("/api/v1/withdrawals/hold", {
+      data: {
+        method: "KRW_BANK",
+        destinationId: "00000000-0000-4000-8000-000000000001",
+        amountKrw: "1000",
+      },
+      maxRedirects: 0,
+    });
+    // Unauthenticated callers are rejected before money mutation.
+    expect([401, 400]).toContain(hold.status());
+
+    const destinations = await request.post(
+      "/api/v1/withdrawals/destinations",
+      {
+        data: {
+          method: "KRW_BANK",
+          accountHolder: "테스트",
+          accountNumber: "1234567890",
+          bankCode: "KB",
+        },
+        maxRedirects: 0,
+      },
+    );
+    expect([401, 400, 503]).toContain(destinations.status());
+
+    const legacy = await request.post("/api/v1/withdrawals", {
+      data: { amountAtomic: "1000" },
+      maxRedirects: 0,
+    });
+    // Legacy route may still exist for compatibility, but must not be the
+    // authenticated form submit URL (asserted in unit source lock).
+    expect([401, 400, 503]).toContain(legacy.status());
+  });
 });
