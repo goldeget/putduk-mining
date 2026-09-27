@@ -4,6 +4,7 @@ const isCI = Boolean(process.env.CI);
 
 const localSupabaseEnv = {
   APP_ENV: "test",
+  APP_TIMEZONE: "UTC",
   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:
     "local-typography-publishable-key-not-a-secret",
   NEXT_PUBLIC_SUPABASE_URL: "http://127.0.0.1:58421",

@@ -129,7 +129,7 @@ Local result after that harness and the confirmed wrapping patch: **128 passed**
 
 The first CI gate did not pass. Public failures were verification list items at 390, plus 200% overflow on the landing header and mascot and 200% splits on login and signup. Protected failures were the desktop sidebar phrase `반영됩니다` at 1440 and a 5px menu overflow at 390 with 200% text. The follow-up patch keeps `word-break: keep-all` on those elements only.
 
-The protected rerun then passed: 128 passed, 126 screenshots, hydration 0, 3.2m. Public still had one 200% landing split (`시작하기`, `돌아가기`, `결과`, `지갑`) and the dev server used the whole 14 minute budget, so teardown timed out. CI now builds and serves the public apps with `next start`, and those landing labels keep whole words.
+The protected rerun then passed: 128 passed, 126 screenshots, hydration 0, 3.2m. Public dev mode still had one 200% landing split and used the 14 minute budget. The next CI attempt serves public apps with `next start`, but startup rejected a missing `APP_TIMEZONE=UTC` before any test ran. The public server env now sets that timezone and does not use the remote project.
 
 Confirmed wrapping that was patched:
 
