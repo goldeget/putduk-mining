@@ -29,9 +29,7 @@ export type ForbiddenMiningHit = {
   index: number;
 };
 
-export function findForbiddenMiningPhrases(
-  text: string,
-): ForbiddenMiningHit[] {
+export function findForbiddenMiningPhrases(text: string): ForbiddenMiningHit[] {
   const hits: ForbiddenMiningHit[] = [];
   for (const phrase of FORBIDDEN_MINING_PHRASES) {
     let from = 0;

@@ -61,8 +61,7 @@ export const PUBLIC_FACTS: readonly PublicFact[] = [
   {
     key: "AI_BOUNDARY",
     value: "Explain and analyze only",
-    description:
-      "PUTDUK AI는 잔액, 승인, 채굴 결과를 직접 변경하지 않습니다.",
+    description: "PUTDUK AI는 잔액, 승인, 채굴 결과를 직접 변경하지 않습니다.",
   },
 ] as const;
 

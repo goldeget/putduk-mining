@@ -127,10 +127,7 @@ describe("user-facing mining language gate", () => {
   it("rejects internal or simulated mining wording in user-facing sources", () => {
     const hits = scanUserFacingSources();
     const summary = hits
-      .map(
-        (hit) =>
-          `${hit.file}:${hit.line} [${hit.phrase}] ${hit.excerpt}`,
-      )
+      .map((hit) => `${hit.file}:${hit.line} [${hit.phrase}] ${hit.excerpt}`)
       .join("\n");
 
     expect(
