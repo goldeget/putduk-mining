@@ -1489,3 +1489,17 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* 한국어 문장은 어절 경계에서만 줄바꿈한다. UUID, 주소, 해시, 멱등 키는 machine-token을 쓴다. */
+.ko-heading,
+.ko-copy {
+  line-break: strict;
+  overflow-wrap: normal;
+  word-break: keep-all;
+}
+
+.machine-token {
+  line-break: auto;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}

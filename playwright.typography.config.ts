@@ -12,6 +12,7 @@ const localSupabaseEnv = {
 
 export default defineConfig({
   testDir: "./tests/typography",
+  testIgnore: ["**/*protected*", "**/*.setup.ts"],
   fullyParallel: false,
   forbidOnly: isCI,
   globalTimeout: isCI ? 20 * 60_000 : 0,
@@ -25,9 +26,7 @@ export default defineConfig({
     trace: "retain-on-failure",
     video: "off",
   },
-  projects: [
-    { name: "chromium", use: { ...devices["Desktop Chrome"] } },
-  ],
+  projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
   outputDir: "test-results/typography",
   webServer: [
     {

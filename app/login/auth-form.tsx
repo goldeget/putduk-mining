@@ -71,7 +71,7 @@ export function AuthForm({ nextPath }: { nextPath: string }) {
           {showPassword ? "숨기기" : "보기"}
         </button>
       </div>
-      <nav className="auth-form__recovery" aria-label="계정 찾기">
+      <nav className="auth-form__recovery ko-copy" aria-label="계정 찾기">
         <Link href="/find-id">아이디 찾기</Link>
         <Link href="/recover">비밀번호 재설정</Link>
       </nav>

@@ -150,7 +150,7 @@ export default async function TrustDocumentPage({ params }: PageProps) {
           <PutdukIcon name="shield" size={24} />
           <p className="eyebrow">TRUST PRINCIPLE</p>
           <strong>확인되지 않은 값을 운영 사실처럼 표시하지 않습니다.</strong>
-          <p>
+          <p className="ko-copy">
             현재 준비 상태와 실제 활성 상태를 구분하며, 변경은 버전과 적용일을
             함께 공개합니다.
           </p>

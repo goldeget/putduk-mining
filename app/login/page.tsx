@@ -48,7 +48,9 @@ export default async function LoginPage({
         </div>
         <div>
           <p className="eyebrow">SECURE ENTRY</p>
-          <h1 id="auth-title">나의 채굴로 돌아가기</h1>
+          <h1 className="ko-heading" id="auth-title">
+            나의 채굴로 돌아가기
+          </h1>
           <p>로그인하면 채굴 상태와 지갑을 이어서 확인할 수 있어요.</p>
         </div>
         <ul className="auth-trust-list">
@@ -69,8 +71,8 @@ export default async function LoginPage({
       <section className="auth-page__panel" aria-label="계정 로그인">
         <div className="auth-page__panel-header">
           <p className="eyebrow">ACCOUNT</p>
-          <h2>다시 만나 반가워요.</h2>
-          <p>아이디 또는 복구 이메일로 로그인해 주세요.</p>
+          <h2 className="ko-heading">다시 만나 반가워요.</h2>
+          <p className="ko-copy">아이디 또는 복구 이메일로 로그인해 주세요.</p>
         </div>
         {statusMessage ? (
           <p
@@ -81,7 +83,7 @@ export default async function LoginPage({
           </p>
         ) : null}
         <AuthForm nextPath={nextPath} />
-        <p className="auth-page__legal">
+        <p className="auth-page__legal ko-copy">
           로그인에 문제가 있어도 계정 존재 여부는 알려 드리지 않습니다.
         </p>
       </section>

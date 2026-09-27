@@ -48,12 +48,7 @@ function evidenceName(input: {
   viewport: TypographyViewport;
 }) {
   const scale = input.textScale === 1 ? "100" : String(input.textScale * 100);
-  return [
-    input.routeName,
-    input.viewport.label,
-    input.theme,
-    `text-${scale}`,
-  ]
+  return [input.routeName, input.viewport.label, input.theme, `text-${scale}`]
     .join("-")
     .replace(/[^a-zA-Z0-9가-힣_-]+/g, "-")
     .toLowerCase();
@@ -177,9 +172,7 @@ async function readTypographyAudit(page: Page): Promise<TypographyAudit> {
                 width: Math.round(rect.width),
               };
             })
-            .filter(
-              (item) => item.left < -1 || item.right > clientWidth + 1,
-            )
+            .filter((item) => item.left < -1 || item.right > clientWidth + 1)
             .slice(0, 20)
         : [];
 
@@ -207,20 +200,42 @@ export async function installTypographyTheme(
 }
 
 export async function auditTypographyRoute(input: {
+  origin?: string;
   page: Page;
+  pathname?: string;
+  readySelector?: string;
   routeName: string;
   testInfo: TestInfo;
   textScale?: number;
   theme: TypographyTheme;
   url: string;
   viewport: TypographyViewport;
+  waitUntil?: "domcontentloaded" | "networkidle";
 }) {
   const textScale = input.textScale ?? 1;
   await input.page.setViewportSize({
     width: input.viewport.width,
     height: input.viewport.height,
   });
-  await input.page.goto(input.url, { waitUntil: "networkidle" });
+  await input.page.goto(input.url, {
+    waitUntil: input.waitUntil ?? "networkidle",
+  });
+  if (input.origin) {
+    await expect
+      .poll(() => new URL(input.page.url()).origin, { timeout: 60_000 })
+      .toBe(input.origin);
+  }
+  if (input.pathname) {
+    await expect
+      .poll(() => new URL(input.page.url()).pathname, { timeout: 60_000 })
+      .toBe(input.pathname);
+  }
+  if (input.readySelector) {
+    await input.page.locator(input.readySelector).first().waitFor({
+      state: "visible",
+      timeout: 60_000,
+    });
+  }
   await input.page.evaluate(async (scale) => {
     await document.fonts.ready;
     if (scale !== 1) {

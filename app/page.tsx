@@ -105,7 +105,7 @@ export default function HomePage() {
           </div>
           <div className="landing-welcome-proof" role="note">
             <PutdukIcon name="shield" size={21} />
-            <p>
+            <p className="ko-copy">
               <strong>최대 5,000원 환영 보상</strong>
               자격 확인 후 전환되며, 첫 출금에 사전 입금은 필요하지 않습니다.
             </p>
@@ -117,7 +117,7 @@ export default function HomePage() {
             </div>
             <div>
               <dt>채굴 결과</dt>
-              <dd>확인 가능</dd>
+              <dd className="ko-copy">확인 가능</dd>
             </div>
             <div>
               <dt>기본 지갑</dt>
@@ -196,8 +196,8 @@ export default function HomePage() {
             <article key={item.step}>
               <span>{item.step}</span>
               <PutdukIcon name={item.icon} size={26} />
-              <h3>{item.title}</h3>
-              <p>{item.description}</p>
+              <h3 className="ko-heading">{item.title}</h3>
+              <p className="ko-copy">{item.description}</p>
             </article>
           ))}
         </div>
@@ -206,7 +206,9 @@ export default function HomePage() {
             내 첫 채굴 시작하기
             <PutdukIcon name="arrow-right" size={19} />
           </Link>
-          <p>가입 후 KOREA 월드의 안내에 따라 시작합니다.</p>
+          <p className="ko-copy">
+            가입 후 KOREA 월드의 안내에 따라 시작합니다.
+          </p>
         </div>
       </section>
 
@@ -245,17 +247,27 @@ export default function HomePage() {
       <section className="landing-trust shell" aria-labelledby="trust-title">
         <div>
           <p className="eyebrow">TRUST &amp; VERIFICATION</p>
-          <h2 id="trust-title">보이는 숫자보다, 확인 가능한 과정.</h2>
-          <p>
+          <h2 className="ko-heading" id="trust-title">
+            보이는 숫자보다, 확인 가능한 과정.
+          </h2>
+          <p className="ko-copy">
             잔액, 채굴 상태와 처리 결과는 확인된 정보만 표시합니다. 화면 효과가
             금액이나 완료를 대신하지 않습니다.
           </p>
         </div>
         <nav aria-label="신뢰 정보">
-          <Link href="/verification">검증 원칙</Link>
-          <Link href="/trial">PUTDUK START 안내</Link>
-          <Link href="/withdrawal">출금 안내</Link>
-          <Link href="/status">서비스 상태</Link>
+          <Link className="ko-copy" href="/verification">
+            검증 원칙
+          </Link>
+          <Link className="ko-copy" href="/trial">
+            PUTDUK START 안내
+          </Link>
+          <Link className="ko-copy" href="/withdrawal">
+            출금 안내
+          </Link>
+          <Link className="ko-copy" href="/status">
+            서비스 상태
+          </Link>
         </nav>
       </section>
 
@@ -267,7 +279,7 @@ export default function HomePage() {
             <small>MINING</small>
           </span>
         </div>
-        <p>작은 행동이 더 나은 내일을 만듭니다.</p>
+        <p className="ko-copy">작은 행동이 더 나은 내일을 만듭니다.</p>
         <span>© 2026 PUTDUK</span>
       </footer>
     </main>
