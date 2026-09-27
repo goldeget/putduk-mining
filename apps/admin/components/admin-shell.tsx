@@ -1,7 +1,23 @@
 import Link from "next/link";
+import type { Route } from "next";
 
 import { logoutAction, logoutAllAction } from "@/app/actions";
 import type { AdminPrincipal } from "@/lib/auth/principal";
+
+const NAV = [
+  { href: "/" as Route, label: "오늘의 퍼뜩", index: "01" },
+  { href: "/deposits/usdt" as Route, label: "USDT 입금 확인", index: "02" },
+  {
+    href: "/withdrawals/krw-bank" as Route,
+    label: "계좌 출금",
+    index: "03",
+  },
+  { href: "/withdrawals/usdt" as Route, label: "USDT 출금", index: "04" },
+  { href: "/kyc" as Route, label: "본인 확인 검토", index: "05" },
+  { href: "/exceptions" as Route, label: "정산·대사 예외", index: "06" },
+  { href: "/restrictions" as Route, label: "제한·안전 모드", index: "07" },
+  { href: "/members" as Route, label: "Member 360", index: "08" },
+] as const;
 
 export function AdminShell({
   children,
@@ -19,12 +35,12 @@ export function AdminShell({
           <small>CONTROL</small>
         </Link>
         <nav aria-label="운영자 주 메뉴">
-          <Link href="/">
-            <span>01</span>오늘의 퍼뜩
-          </Link>
-          <Link href="/members">
-            <span>02</span>Member 360
-          </Link>
+          {NAV.map((item) => (
+            <Link href={item.href} key={item.href}>
+              <span>{item.index}</span>
+              {item.label}
+            </Link>
+          ))}
         </nav>
         <div className="operator-card">
           <span>보안 세션</span>
