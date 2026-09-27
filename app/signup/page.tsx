@@ -29,7 +29,7 @@ export default function SignupPage() {
         <ul className="auth-trust-list">
           <li>
             <PutdukIcon name="mining" size={19} />
-            서버 시간 기준 채굴
+            앱을 닫아도 이어지는 채굴
           </li>
           <li>
             <PutdukIcon name="shield" size={19} />
