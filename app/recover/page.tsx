@@ -22,8 +22,8 @@ export default function RecoverPage() {
         </Link>
         <div>
           <p className="eyebrow">ACCOUNT RECOVERY</p>
-          <h1 id="recover-title">다시 안전하게 이어가세요.</h1>
-          <p>가입할 때 등록한 복구 이메일로 본인 확인 안내를 보냅니다.</p>
+          <h1 id="recover-title">비밀번호 다시 설정하기</h1>
+          <p>가입할 때 등록한 복구 이메일로 안내를 보냅니다.</p>
         </div>
       </section>
       <section className="auth-page__panel" aria-label="비밀번호 재설정 요청">

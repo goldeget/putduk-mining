@@ -1,23 +1,27 @@
 import Link from "next/link";
 
 import { PutdukIcon } from "@/components/icons/putduk-icon";
+import {
+  normalizeDestinationMethod,
+  type WithdrawalDestinationMethod,
+} from "@/components/product/destination-type";
 import styles from "@/components/product/product-experience.module.css";
 import { PageHeading } from "@/components/product/page-heading";
 import {
   ProductStatusPill,
   type ProductStatusTone,
 } from "@/components/product/product-status-pill";
-import { WelcomeWithdrawalAction } from "@/components/product/welcome-withdrawal-action";
+import {
+  WelcomeWithdrawalAction,
+  type WelcomeDestinationOption,
+} from "@/components/product/welcome-withdrawal-action";
 import {
   WithdrawalForm,
   type WithdrawalPolicy,
 } from "@/components/product/withdrawal-form";
 import { StatePanel } from "@/components/ui/states";
 import { Surface } from "@/components/ui/surface";
-import {
-  formatAtomicAmount,
-  type DisplayCurrency,
-} from "@/domain/wallet/format-amount";
+import { formatAtomicAmount } from "@/domain/wallet/format-amount";
 import { requirePageUser } from "@/lib/auth/session";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
@@ -29,6 +33,16 @@ const statusCopy: Record<
     description: "출금 내용을 접수했어요.",
     label: "접수 완료",
     tone: "info",
+  },
+  HELD: {
+    description: "금액이 보류되어 처리 대기 중이에요.",
+    label: "보류",
+    tone: "warning",
+  },
+  ADMIN_PROCESSING: {
+    description: "운영에서 송금을 준비하고 있어요.",
+    label: "처리 중",
+    tone: "warning",
   },
   REVIEWING: {
     description: "본인 확인과 출금 조건을 확인하고 있어요.",
@@ -45,6 +59,16 @@ const statusCopy: Record<
     label: "송금 중",
     tone: "warning",
   },
+  EXTERNAL_SENT_RECORDED: {
+    description: "외부 송금 기록을 확인했어요.",
+    label: "송금 기록",
+    tone: "info",
+  },
+  LEDGER_FINALIZED: {
+    description: "원장 반영이 끝났어요.",
+    label: "반영 완료",
+    tone: "success",
+  },
   COMPLETED: {
     description: "출금 처리가 완료됐어요.",
     label: "완료",
@@ -56,7 +80,7 @@ const statusCopy: Record<
     tone: "danger",
   },
   CANCELLED: {
-    description: "취소된 요청이며 보류 금액은 다시 사용할 수 있어요.",
+    description: "취소되어 보류 금액을 다시 사용할 수 있어요.",
     label: "취소",
     tone: "neutral",
   },
@@ -78,6 +102,10 @@ function stringArray(value: unknown, key: string) {
     : [];
 }
 
+function destinationConfigKey(method: WithdrawalDestinationMethod) {
+  return method === "KRW_BANK" ? "allowed_bank_codes" : "allowed_networks";
+}
+
 export default async function WithdrawalPage() {
   const identity = await requirePageUser();
   const now = new Date();
@@ -92,22 +120,26 @@ export default async function WithdrawalPage() {
   ] = await Promise.all([
     identity.supabase
       .from("wallet_balance_snapshots")
-      .select("wallet_account_id, currency, available_balance_atomic")
+      .select(
+        "wallet_account_id, currency, available_balance_atomic, balance_atomic",
+      )
       .eq("user_id", identity.userId)
-      .order("currency"),
+      .eq("currency", "KRW")
+      .maybeSingle(),
     admin
       .from("withdrawal_policies")
       .select(
         "id, currency, destination_type, minimum_amount_atomic, fee_atomic, destination_config, allows_welcome_reward, effective_at",
       )
       .eq("is_enabled", true)
+      .eq("currency", "KRW")
       .lte("effective_at", nowIso)
       .or(`expires_at.is.null,expires_at.gt.${nowIso}`)
       .order("effective_at", { ascending: false }),
     identity.supabase
       .from("withdrawal_requests")
       .select(
-        "id, currency, amount_atomic, fee_atomic, status, requested_at, updated_at, welcome_reward_conversion_id",
+        "id, currency, amount_atomic, fee_atomic, status, requested_at, updated_at, welcome_reward_conversion_id, destination_type",
       )
       .eq("user_id", identity.userId)
       .order("requested_at", { ascending: false })
@@ -126,56 +158,68 @@ export default async function WithdrawalPage() {
       .select(
         "id, destination_type, display_hint, verification_status, verified_at, protection_until, created_at",
       )
-      .eq("destination_type", "KRW_BANK")
+      .in("destination_type", ["KRW_BANK", "USDT_ADDRESS"])
       .is("replaced_at", null)
       .order("created_at", { ascending: false }),
   ]);
 
-  const latestPolicies = new Map<DisplayCurrency, WithdrawalPolicy>();
+  const latestPolicies = new Map<WithdrawalDestinationMethod, WithdrawalPolicy>();
   for (const row of policyRows ?? []) {
-    const currency = row.currency as DisplayCurrency;
-    const destinationType = row.destination_type as
-      "BANK_ACCOUNT" | "USDT_ADDRESS";
-    if (
-      latestPolicies.has(currency) ||
-      !["BANK_ACCOUNT", "USDT_ADDRESS"].includes(destinationType)
-    ) {
+    const method = normalizeDestinationMethod(row.destination_type);
+    if (!method || latestPolicies.has(method)) continue;
+    const allowedDestinations = stringArray(
+      row.destination_config,
+      destinationConfigKey(method),
+    );
+    if (!allowedDestinations.length && method === "KRW_BANK") {
+      // 환영 보상 전용 정책 등 config가 비어 있을 수 있음 → 일반 폼에서는 건너뜀
       continue;
     }
-    const configKey =
-      destinationType === "BANK_ACCOUNT"
-        ? "allowed_bank_codes"
-        : "allowed_networks";
-    const allowedDestinations = stringArray(row.destination_config, configKey);
-    if (!allowedDestinations.length) {
-      continue;
-    }
-    latestPolicies.set(currency, {
+    if (!allowedDestinations.length && method === "USDT_ADDRESS") continue;
+    latestPolicies.set(method, {
       allowedDestinations,
-      currency,
-      destinationType,
       feeAtomic: String(row.fee_atomic),
       id: row.id,
+      method,
       minimumAmountAtomic: String(row.minimum_amount_atomic),
     });
   }
 
   const policies = [...latestPolicies.values()];
-  const usableAccounts = (accounts ?? []).filter((account) =>
-    latestPolicies.has(account.currency as DisplayCurrency),
-  );
   const securityReady = Boolean(process.env.WITHDRAWAL_DATA_KEY);
-  const welcomePolicy = (policyRows ?? []).find(
-    (row) =>
-      row.currency === "KRW" &&
-      row.destination_type === "KRW_BANK" &&
-      row.allows_welcome_reward,
-  );
-  const verifiedDestination = (destinations ?? []).find(
-    (destination) =>
-      destination.verification_status === "VERIFIED" &&
-      new Date(destination.protection_until) <= now,
-  );
+  const availableAtomic = String(accounts?.available_balance_atomic ?? "0");
+  const heldAtomic = accounts
+    ? (
+        BigInt(String(accounts.balance_atomic)) -
+        BigInt(String(accounts.available_balance_atomic))
+      ).toString()
+    : "0";
+
+  const welcomeOptions: WelcomeDestinationOption[] = [];
+  for (const method of ["KRW_BANK", "USDT_ADDRESS"] as const) {
+    const welcomePolicy = (policyRows ?? []).find(
+      (row) =>
+        normalizeDestinationMethod(row.destination_type) === method &&
+        row.allows_welcome_reward,
+    );
+    const verified = (destinations ?? []).find((destination) => {
+      const destMethod = normalizeDestinationMethod(destination.destination_type);
+      return (
+        destMethod === method &&
+        destination.verification_status === "VERIFIED" &&
+        new Date(destination.protection_until) <= now
+      );
+    });
+    if (welcomePolicy && verified) {
+      welcomeOptions.push({
+        displayHint: verified.display_hint,
+        id: verified.id,
+        method,
+        policyId: welcomePolicy.id,
+      });
+    }
+  }
+
   const protectedDestination = (destinations ?? []).find(
     (destination) =>
       destination.verification_status === "VERIFIED" &&
@@ -197,16 +241,16 @@ export default async function WithdrawalPage() {
   if (welcomeConverted && !welcomeRequested) {
     if (destinationsError) {
       welcomeDisabledReason =
-        "등록한 계좌 정보를 확인하지 못했어요. 잠시 후 다시 시도해 주세요.";
-    } else if (!welcomePolicy) {
-      welcomeDisabledReason =
-        "현재 첫 출금 접수를 준비하고 있어요. 이용 가능해지면 이 버튼이 활성화됩니다.";
-    } else if (protectedDestination) {
-      welcomeDisabledReason = `등록한 계좌의 보호 대기 시간이 ${dateFormatter.format(
-        new Date(protectedDestination.protection_until),
-      )}에 끝나요.`;
-    } else if (!verifiedDestination) {
-      welcomeDisabledReason = "첫 출금 전 본인 명의 KRW 계좌 확인이 필요해요.";
+        "등록한 출금 정보를 확인하지 못했어요. 잠시 후 다시 시도해 주세요.";
+    } else if (welcomeOptions.length === 0) {
+      if (protectedDestination) {
+        welcomeDisabledReason = `등록한 목적지의 보호 대기 시간이 ${dateFormatter.format(
+          new Date(protectedDestination.protection_until),
+        )}에 끝나요.`;
+      } else {
+        welcomeDisabledReason =
+          "첫 출금 전 본인 명의 은행 계좌 또는 USDT 주소 확인이 필요해요.";
+      }
     }
   }
 
@@ -218,29 +262,40 @@ export default async function WithdrawalPage() {
       <PageHeading
         eyebrow="WITHDRAWAL"
         title="출금하기"
-        lead="정산이 끝난 실제 사용 가능 금액만 등록한 본인 목적지로 출금할 수 있습니다. 요청 후 단계별 처리 상태를 계속 확인할 수 있어요."
+        lead="정산된 실제 잔액만 출금할 수 있어요. 은행 계좌와 USDT 주소 모두 지원합니다."
       />
+
+      <Surface as="section" className={styles.balanceStrip} tone="raised">
+        <div>
+          <small>사용 가능</small>
+          <strong>{formatAtomicAmount(availableAtomic, "KRW")}</strong>
+        </div>
+        <div>
+          <small>출금 보류</small>
+          <strong>{formatAtomicAmount(heldAtomic, "KRW")}</strong>
+        </div>
+      </Surface>
 
       <Surface as="section" className={styles.welcomePanel}>
         <header className={styles.welcomePanelHeader}>
           <PutdukIcon name="shield" size={24} />
           <span>
-            <h2>PUTDUK START 첫 출금은 사전 입금이 필요하지 않아요</h2>
+            <h2>입금 없이도 가능한 첫 출금</h2>
             <p>
-              자격 확인을 거쳐 실제 KRW 환영 보상으로 전환된 금액은 본인 확인과
-              출금 조건을 충족하면 입금 이력 없이도 출금할 수 있습니다.
+              환영 보상은 최대 5,000원까지, 은행 계좌 또는 USDT 주소로 요청할 수
+              있어요.
             </p>
           </span>
         </header>
 
         <dl className={styles.welcomeFacts}>
           <div>
-            <dt>환영 보상 상태</dt>
+            <dt>환영 보상</dt>
             <dd>
               {conversionError
                 ? "상태 확인 불가"
                 : welcomeConverted
-                  ? "실제 KRW 전환 완료"
+                  ? "KRW 전환 완료"
                   : "자격 확인 전"}
             </dd>
           </div>
@@ -249,12 +304,8 @@ export default async function WithdrawalPage() {
             <dd>필요 없음</dd>
           </div>
           <div>
-            <dt>첫 출금 수수료</dt>
-            <dd>
-              {welcomePolicy
-                ? formatAtomicAmount(String(welcomePolicy.fee_atomic), "KRW")
-                : "이용 시 확인"}
-            </dd>
+            <dt>한도</dt>
+            <dd>최대 5,000원</dd>
           </div>
         </dl>
 
@@ -275,14 +326,11 @@ export default async function WithdrawalPage() {
             </strong>
             <WelcomeWithdrawalAction
               conversionId={conversion.id}
+              destinations={welcomeOptions}
               requested={welcomeRequested}
-              {...(verifiedDestination?.id
-                ? { destinationId: verifiedDestination.id }
-                : {})}
               {...(welcomeDisabledReason
                 ? { disabledReason: welcomeDisabledReason }
                 : {})}
-              {...(welcomePolicy?.id ? { policyId: welcomePolicy.id } : {})}
             />
           </>
         ) : (
@@ -299,25 +347,25 @@ export default async function WithdrawalPage() {
             <StatePanel
               tone="error"
               title="출금 정보를 불러오지 못했어요"
-              description="인터넷 연결을 확인한 뒤 다시 시도해 주세요. 이미 접수된 출금에는 영향이 없습니다."
+              description="인터넷 연결을 확인한 뒤 다시 시도해 주세요."
             />
           ) : !securityReady ? (
             <StatePanel
               title="일반 출금 접수를 잠시 이용할 수 없어요"
-              description="계좌 정보를 안전하게 처리할 준비가 끝나면 다시 이용할 수 있어요. 이미 접수된 출금에는 영향이 없습니다."
+              description="준비가 끝나면 다시 이용할 수 있어요."
             />
-          ) : policies.length === 0 || usableAccounts.length === 0 ? (
+          ) : policies.length === 0 || !accounts ? (
             <StatePanel
-              title="현재 이용할 수 있는 일반 출금 수단이 없어요"
-              description="출금 가능한 자산과 이용 조건이 준비되면 이곳에서 바로 확인할 수 있어요."
+              title="지금 이용할 수 있는 출금 수단이 없어요"
+              description="출금 조건이 준비되면 이곳에 표시됩니다."
             />
           ) : (
             <WithdrawalForm
-              accounts={usableAccounts.map((account) => ({
-                availableBalanceAtomic: account.available_balance_atomic,
-                currency: account.currency as DisplayCurrency,
-                id: account.wallet_account_id,
-              }))}
+              account={{
+                availableBalanceAtomic: availableAtomic,
+                heldBalanceAtomic: heldAtomic,
+                id: accounts.wallet_account_id,
+              }}
               policies={policies}
             />
           )}
@@ -325,27 +373,24 @@ export default async function WithdrawalPage() {
 
         <Surface as="aside" className={styles.summaryPanel}>
           <p className="eyebrow">SAFE WITHDRAWAL</p>
-          <h2>출금 처리 순서</h2>
-          <p>
-            접수된 금액은 처리 중 사용할 수 있는 금액과 분리되고, 완료 또는 취소
-            결과가 지갑에 반영됩니다.
-          </p>
+          <h2>요청 후 처리 순서</h2>
+          <p>접수된 금액은 보류되며, 완료 또는 취소 결과가 반영됩니다.</p>
           <ol className={styles.flowList}>
             <li>
               <span>01</span>
-              금액·목적지 확인
+              금액·방법 확인
             </li>
             <li>
               <span>02</span>
-              요청 접수 및 금액 보류
+              요청 접수 및 보류
             </li>
             <li>
               <span>03</span>
-              본인 확인과 송금 처리
+              송금 처리
             </li>
             <li>
               <span>04</span>
-              완료 내역과 영수증 확인
+              완료 확인
             </li>
           </ol>
         </Surface>
@@ -359,7 +404,7 @@ export default async function WithdrawalPage() {
           <span>
             <p className="eyebrow">WITHDRAWAL STATUS</p>
             <h2 id="withdrawal-history">최근 출금 요청</h2>
-            <p>요청별 금액과 현재 처리 단계를 확인할 수 있어요.</p>
+            <p>요청별 금액과 처리 단계를 확인할 수 있어요.</p>
           </span>
           <PutdukIcon name="clock" size={22} aria-hidden="true" />
         </header>
@@ -369,7 +414,7 @@ export default async function WithdrawalPage() {
             <StatePanel
               tone="error"
               title="출금 요청 내역을 불러오지 못했어요"
-              description="잠시 후 다시 확인해 주세요. 이미 접수된 출금은 그대로 유지됩니다."
+              description="잠시 후 다시 확인해 주세요."
             />
           </div>
         ) : requests?.length ? (
@@ -380,6 +425,9 @@ export default async function WithdrawalPage() {
                 label: "확인 중",
                 tone: "info" as const,
               };
+              const method = normalizeDestinationMethod(
+                request.destination_type,
+              );
               return (
                 <article className={styles.historyItem} key={request.id}>
                   <span>
@@ -392,13 +440,19 @@ export default async function WithdrawalPage() {
                         <strong>
                           {formatAtomicAmount(
                             String(request.amount_atomic),
-                            request.currency as DisplayCurrency,
+                            "KRW",
                           )}
                         </strong>
                         <small>
                           {request.welcome_reward_conversion_id
-                            ? `환영 보상 첫 출금 · ${status.description}`
-                            : status.description}
+                            ? "환영 보상 첫 출금 · "
+                            : ""}
+                          {method === "USDT_ADDRESS"
+                            ? "USDT 주소 · "
+                            : method === "KRW_BANK"
+                              ? "은행 계좌 · "
+                              : ""}
+                          {status.description}
                         </small>
                       </span>
                     </span>
@@ -416,7 +470,7 @@ export default async function WithdrawalPage() {
           <div className={styles.emptyInset}>
             <StatePanel
               title="아직 출금 요청이 없어요"
-              description="출금할 금액과 받을 목적지를 확인해 요청하면 진행 상태가 이곳에 표시됩니다."
+              description="금액과 받을 방법을 정해 요청하면 이곳에 표시됩니다."
             />
           </div>
         )}

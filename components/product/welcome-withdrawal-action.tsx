@@ -4,30 +4,47 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { PutdukIcon } from "@/components/icons/putduk-icon";
+import {
+  destinationMethodHint,
+  destinationMethodLabel,
+  type WithdrawalDestinationMethod,
+} from "@/components/product/destination-type";
 import styles from "@/components/product/product-experience.module.css";
 
 type Feedback = { message: string; tone: "error" | "success" } | null;
 
+export type WelcomeDestinationOption = {
+  id: string;
+  method: WithdrawalDestinationMethod;
+  displayHint: string;
+  policyId: string;
+};
+
 export function WelcomeWithdrawalAction({
   conversionId,
-  destinationId,
+  destinations,
   disabledReason,
-  policyId,
   requested,
 }: {
   conversionId?: string;
-  destinationId?: string;
+  destinations: readonly WelcomeDestinationOption[];
   disabledReason?: string;
-  policyId?: string;
   requested: boolean;
 }) {
   const router = useRouter();
+  const [method, setMethod] = useState<WithdrawalDestinationMethod>(
+    destinations.find((item) => item.method === "KRW_BANK")?.method ??
+      destinations[0]?.method ??
+      "KRW_BANK",
+  );
   const [feedback, setFeedback] = useState<Feedback>(null);
   const [pending, setPending] = useState(false);
-  const ready = Boolean(conversionId && destinationId && policyId);
+
+  const selected = destinations.find((item) => item.method === method);
+  const ready = Boolean(conversionId && selected?.id && selected.policyId);
 
   async function requestWithdrawal() {
-    if (!conversionId || !destinationId || !policyId || pending || requested) {
+    if (!conversionId || !selected || pending || requested) {
       return;
     }
 
@@ -42,7 +59,11 @@ export function WelcomeWithdrawalAction({
           "Content-Type": "application/json",
           "Idempotency-Key": crypto.randomUUID(),
         },
-        body: JSON.stringify({ conversionId, destinationId, policyId }),
+        body: JSON.stringify({
+          conversionId,
+          destinationId: selected.id,
+          policyId: selected.policyId,
+        }),
       });
       const payload = (await response.json().catch(() => null)) as {
         error?: { message?: string };
@@ -76,6 +97,32 @@ export function WelcomeWithdrawalAction({
 
   return (
     <div className={styles.welcomeAction}>
+      {destinations.length > 0 && !requested ? (
+        <fieldset className={styles.welcomeMethodField}>
+          <legend>받을 방법</legend>
+          <div className={styles.segmented}>
+            {destinations.map((option) => (
+              <label key={option.id}>
+                <input
+                  type="radio"
+                  name="welcomeMethod"
+                  value={option.method}
+                  checked={method === option.method}
+                  onChange={() => setMethod(option.method)}
+                  disabled={pending}
+                />
+                <span>
+                  {destinationMethodLabel(option.method)}
+                  <small>
+                    {option.displayHint || destinationMethodHint(option.method)}
+                  </small>
+                </span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+      ) : null}
+
       <button
         className="button button--primary"
         type="button"
@@ -86,7 +133,7 @@ export function WelcomeWithdrawalAction({
           ? "첫 출금 접수 완료"
           : pending
             ? "첫 출금 접수 중"
-            : "입금 없이 첫 출금 요청하기"}
+            : "입금 없이 첫 출금 요청"}
         <PutdukIcon name="arrow-right" size={18} />
       </button>
       {!requested && disabledReason ? <p>{disabledReason}</p> : null}

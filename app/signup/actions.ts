@@ -88,6 +88,45 @@ function normalizePhone(value: FormDataEntryValue | null) {
   return compact;
 }
 
+export type PhoneAvailabilityResult =
+  | "AVAILABLE"
+  | "UNAVAILABLE"
+  | "INVALID"
+  | "ERROR";
+
+/** 가입용 휴대전화 사용 가능 여부. 인증이 아니라 사용/이미 사용만 안내한다. */
+export async function checkSignupPhoneAvailability(
+  rawPhone: string,
+): Promise<PhoneAvailabilityResult> {
+  const phoneE164 = normalizePhone(rawPhone);
+  if (!/^\+[1-9][0-9]{7,14}$/.test(phoneE164)) {
+    return "INVALID";
+  }
+
+  try {
+    const admin = createSupabaseAdminClient();
+    const { data, error } = await admin.rpc("signup_phone_availability", {
+      p_raw: rawPhone,
+    });
+    if (error) {
+      // RPC 준비 전: 형식만 통과한 경우 가입 단계의 최종 검사로 넘긴다.
+      if (
+        error.code === "PGRST202" ||
+        /does not exist|Could not find/i.test(error.message ?? "")
+      ) {
+        return "AVAILABLE";
+      }
+      return "ERROR";
+    }
+    if (data === "AVAILABLE" || data === "UNAVAILABLE") {
+      return data;
+    }
+    return "ERROR";
+  } catch {
+    return "ERROR";
+  }
+}
+
 function toFieldErrors(error: z.ZodError) {
   const fields: Record<string, string> = {};
   for (const issue of error.issues) {
@@ -165,6 +204,29 @@ export async function signupAction(
     };
   }
 
+  const phoneAvailability = await checkSignupPhoneAvailability(
+    parsed.data.phoneE164,
+  );
+  if (phoneAvailability === "ERROR") {
+    return {
+      fieldErrors: {},
+      message: "휴대전화 번호를 확인하지 못했어요. 잠시 후 다시 시도해 주세요.",
+      status: "error",
+    };
+  }
+  if (phoneAvailability === "INVALID" || phoneAvailability === "UNAVAILABLE") {
+    return {
+      fieldErrors: {
+        phoneE164:
+          phoneAvailability === "INVALID"
+            ? "휴대전화 번호를 확인해 주세요."
+            : "이미 사용된 번호예요. 다른 번호를 입력해 주세요.",
+      },
+      message: "입력한 정보를 다시 확인해 주세요.",
+      status: "error",
+    };
+  }
+
   let signupResult: Awaited<ReturnType<typeof supabase.auth.signUp>>;
   try {
     signupResult = await supabase.auth.signUp({
@@ -224,7 +286,7 @@ export async function signupAction(
   return {
     fieldErrors: {},
     message:
-      "입력한 이메일로 확인 안내를 보냈습니다. 인증을 마치면 PUTDUK START로 이어집니다.",
+      "입력한 이메일로 확인 안내를 보냈습니다. 확인을 마치면 PUTDUK START로 이어집니다.",
     status: "confirmation",
   };
 }

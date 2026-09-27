@@ -2005,6 +2005,27 @@ select {
   font-size: 0.76rem;
 }
 
+.balance-card--trial {
+  border-color: color-mix(in srgb, var(--border-strong) 70%, transparent);
+}
+
+.balance-card--trial > strong {
+  font-size: clamp(1.35rem, 3.5vw, 1.9rem);
+}
+
+.balance-card__note {
+  max-width: 28rem;
+}
+
+.balance-card .text-link {
+  display: inline-flex;
+  margin-top: 0.85rem;
+  color: var(--brand-primary);
+  font-size: 0.82rem;
+  font-weight: 750;
+  text-decoration: none;
+}
+
 .ledger-principle {
   margin-top: 1rem;
 }

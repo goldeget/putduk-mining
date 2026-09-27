@@ -3,10 +3,8 @@ import Link from "next/link";
 import { PageHeading } from "@/components/product/page-heading";
 import { StatePanel } from "@/components/ui/states";
 import { Surface } from "@/components/ui/surface";
-import {
-  formatAtomicAmount,
-  type DisplayCurrency,
-} from "@/domain/wallet/format-amount";
+import { formatTrialValue } from "@/domain/trial/format-trial-value";
+import { formatAtomicAmount } from "@/domain/wallet/format-amount";
 import { requirePageUser } from "@/lib/auth/session";
 
 const entryLabels: Record<string, string> = {
@@ -42,14 +40,24 @@ const receiptTypeLabels: Record<string, string> = {
 
 export default async function WalletPage() {
   const identity = await requirePageUser();
-  const { data: accounts, error: accountsError } = await identity.supabase
-    .from("wallet_balance_snapshots")
-    .select("*")
-    .eq("user_id", identity.userId)
-    .order("currency");
-  const accountIds = (accounts ?? []).map(
-    (account) => account.wallet_account_id,
-  );
+  const [
+    { data: krwAccount, error: accountsError },
+    { data: trial, error: trialError },
+  ] = await Promise.all([
+    identity.supabase
+      .from("wallet_balance_snapshots")
+      .select("*")
+      .eq("user_id", identity.userId)
+      .eq("currency", "KRW")
+      .maybeSingle(),
+    identity.supabase
+      .from("trial_account_snapshots")
+      .select("status, reward_atomic")
+      .eq("user_id", identity.userId)
+      .maybeSingle(),
+  ]);
+
+  const accountIds = krwAccount ? [krwAccount.wallet_account_id] : [];
   const [{ data: ledgerEntries, error: ledgerError }, { data: receipts }] =
     await Promise.all([
       accountIds.length
@@ -72,97 +80,101 @@ export default async function WalletPage() {
         .order("requested_at", { ascending: false })
         .limit(6),
     ]);
-  const currencyByAccount = new Map(
-    (accounts ?? []).map((account) => [
-      account.wallet_account_id,
-      account.currency as DisplayCurrency,
-    ]),
-  );
+
+  const availableAtomic = String(krwAccount?.available_balance_atomic ?? "0");
+  const heldAtomic = krwAccount
+    ? (
+        BigInt(String(krwAccount.balance_atomic)) -
+        BigInt(String(krwAccount.available_balance_atomic))
+      ).toString()
+    : "0";
 
   return (
     <>
       <PageHeading
         eyebrow="MY WALLET"
-        title="지금 쓸 수 있는 금액부터, 어디서 왔는지까지."
-        lead="KRW를 중심으로 사용 가능 금액, 처리 중인 금액과 최근 보상·입출금 내역을 분명하게 보여드립니다."
+        title="실제 출금 가능 잔액을 확인하세요."
+        lead="사용 가능 원화와 출금 보류를 나누어 보여 드립니다. 체험 값은 아래에 따로 표시됩니다."
         action={
           <div className="wallet-actions">
-            <Link className="button button--primary" href="/wallet/deposit">
-              입금
+            <Link className="button button--primary" href="/wallet/withdraw">
+              출금하기
             </Link>
-            <Link className="button button--secondary" href="/wallet/withdraw">
-              출금
+            <Link className="button button--secondary" href="/wallet/deposit">
+              입금하기
             </Link>
           </div>
         }
       />
-      <section className="balance-grid" aria-label="자산 계정">
+
+      <section className="balance-grid" aria-label="실제 KRW 지갑">
         {accountsError ? (
           <StatePanel
             tone="error"
             title="지갑을 불러오지 못했어요"
-            description="연결을 확인한 뒤 다시 시도해 주세요. 표시 오류가 실제 잔액을 바꾸지는 않습니다."
+            description="연결을 확인한 뒤 다시 시도해 주세요."
           />
-        ) : accounts?.length ? (
-          accounts.map((account) => (
-            <Surface
-              as="article"
-              className="balance-card"
-              key={account.wallet_account_id}
-            >
+        ) : krwAccount ? (
+          <Surface as="article" className="balance-card balance-card--primary">
+            <div>
+              <span>실제 지갑</span>
+              <small>출금 가능</small>
+            </div>
+            <small>사용 가능 잔액</small>
+            <strong>{formatAtomicAmount(availableAtomic, "KRW")}</strong>
+            <dl className="balance-card__breakdown">
               <div>
-                <span>{account.currency}</span>
-                <small>
-                  {account.currency === "KRW" ? "기본 지갑" : "보조 지갑"}
-                </small>
+                <dt>출금 보류</dt>
+                <dd>{formatAtomicAmount(heldAtomic, "KRW")}</dd>
               </div>
-              <small>전체 잔액</small>
-              <strong>
-                {formatAtomicAmount(
-                  account.balance_atomic,
-                  account.currency as DisplayCurrency,
-                )}
-              </strong>
-              <dl className="balance-card__breakdown">
-                <div>
-                  <dt>사용 가능</dt>
-                  <dd>
-                    {formatAtomicAmount(
-                      account.available_balance_atomic,
-                      account.currency as DisplayCurrency,
-                    )}
-                  </dd>
-                </div>
-                <div>
-                  <dt>처리 중·보류</dt>
-                  <dd>
-                    {formatAtomicAmount(
-                      (
-                        BigInt(String(account.balance_atomic)) -
-                        BigInt(String(account.available_balance_atomic))
-                      ).toString(),
-                      account.currency as DisplayCurrency,
-                    )}
-                  </dd>
-                </div>
-              </dl>
-            </Surface>
-          ))
+              <div>
+                <dt>전체</dt>
+                <dd>
+                  {formatAtomicAmount(
+                    String(krwAccount.balance_atomic),
+                    "KRW",
+                  )}
+                </dd>
+              </div>
+            </dl>
+          </Surface>
         ) : (
           <StatePanel
             title="아직 표시할 지갑이 없어요"
             description="계정 준비가 끝나면 KRW 지갑이 이곳에 표시됩니다."
           />
         )}
+
+        <Surface as="article" className="balance-card balance-card--trial">
+          <div>
+            <span>체험 보상</span>
+            <small>분리 보관</small>
+          </div>
+          <small>PUTDUK START</small>
+          <strong>
+            {trialError
+              ? "확인할 수 없음"
+              : formatTrialValue(String(trial?.reward_atomic ?? "0"))}
+          </strong>
+          <p className="balance-card__note">
+            체험 값은 원화가 아닙니다. 자격 확인 후 전환된 금액만 실제 지갑에
+            반영됩니다.
+          </p>
+          <Link className="text-link" href="/start">
+            전환 자격 안내
+          </Link>
+        </Surface>
       </section>
+
       <Surface as="section" className="ledger-principle">
         <p className="eyebrow">CLEAR MONEY HISTORY</p>
-        <h2>모든 금액 변화는 이유와 처리 상태를 함께 남깁니다.</h2>
+        <h2>금액 변화는 이유와 상태를 함께 남깁니다.</h2>
         <p>
-          출금 대기 금액은 사용할 수 있는 금액과 분리됩니다. 완료·취소·환불도
-          기존 기록을 지우지 않고 새 기록으로 확인할 수 있습니다.
+          출금 보류는 사용 가능 금액과 분리됩니다. USDT 입출금도 사용자 USDT
+          잔액이 아니라 KRW 기준으로 처리됩니다.
         </p>
       </Surface>
+
       <section
         className="ledger-history"
         aria-labelledby="ledger-history-title"
@@ -175,39 +187,35 @@ export default async function WalletPage() {
           <StatePanel
             tone="error"
             title="거래 내역을 불러오지 못했어요"
-            description="잠시 후 다시 확인해 주세요. 이미 접수된 요청은 그대로 유지됩니다."
+            description="잠시 후 다시 확인해 주세요."
           />
         ) : ledgerEntries?.length ? (
           <div>
-            {ledgerEntries.map((entry) => {
-              const currency =
-                currencyByAccount.get(entry.wallet_account_id) ?? "KRW";
-              return (
-                <article key={entry.id}>
-                  <span
-                    className={`ledger-direction ledger-direction--${entry.direction.toLowerCase()}`}
-                  >
-                    {entry.direction === "CREDIT" ? "+" : "−"}
-                  </span>
-                  <span>
-                    <strong>
-                      {entryLabels[entry.entry_type] ?? "지갑 변동"}
-                    </strong>
-                    <time dateTime={entry.created_at}>
-                      {new Intl.DateTimeFormat("ko-KR", {
-                        dateStyle: "medium",
-                        timeStyle: "short",
-                        timeZone: "Asia/Seoul",
-                      }).format(new Date(entry.created_at))}
-                    </time>
-                  </span>
+            {ledgerEntries.map((entry) => (
+              <article key={entry.id}>
+                <span
+                  className={`ledger-direction ledger-direction--${entry.direction.toLowerCase()}`}
+                >
+                  {entry.direction === "CREDIT" ? "+" : "−"}
+                </span>
+                <span>
                   <strong>
-                    {entry.direction === "CREDIT" ? "+" : "−"}
-                    {formatAtomicAmount(String(entry.amount_atomic), currency)}
+                    {entryLabels[entry.entry_type] ?? "지갑 변동"}
                   </strong>
-                </article>
-              );
-            })}
+                  <time dateTime={entry.created_at}>
+                    {new Intl.DateTimeFormat("ko-KR", {
+                      dateStyle: "medium",
+                      timeStyle: "short",
+                      timeZone: "Asia/Seoul",
+                    }).format(new Date(entry.created_at))}
+                  </time>
+                </span>
+                <strong>
+                  {entry.direction === "CREDIT" ? "+" : "−"}
+                  {formatAtomicAmount(String(entry.amount_atomic), "KRW")}
+                </strong>
+              </article>
+            ))}
           </div>
         ) : (
           <p>
@@ -237,7 +245,7 @@ export default async function WalletPage() {
                   <strong>
                     {formatAtomicAmount(
                       String(receipt.amount_atomic),
-                      receipt.currency as DisplayCurrency,
+                      "KRW",
                     )}
                   </strong>
                 </span>
@@ -266,7 +274,7 @@ export default async function WalletPage() {
         ) : (
           <StatePanel
             title="아직 입출금 처리 내역이 없어요"
-            description="입금 또는 출금 요청을 만들면 요청 번호와 진행 상태가 이곳에 표시됩니다."
+            description="입금 또는 출금 요청을 만들면 이곳에 표시됩니다."
           />
         )}
       </section>
