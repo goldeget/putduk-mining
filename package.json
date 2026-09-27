@@ -27,6 +27,8 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
+    "test:e2e:authenticated": "playwright test --config playwright.authenticated.config.ts",
+    "test:worker": "vitest run --config vitest.worker.config.ts",
     "test:load": "k6 run tests/load/core-api.k6.js",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
