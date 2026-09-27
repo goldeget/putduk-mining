@@ -18,16 +18,23 @@ export default defineConfig({
   retries: 0,
   timeout: 120_000,
   workers: 1,
-  reporter: isCI ? [["line"], ["github"]] : "list",
+  reporter: isCI
+    ? [
+        ["line"],
+        ["github"],
+        [
+          "json",
+          { outputFile: "test-results/typography/results.json" },
+        ],
+      ]
+    : "list",
   use: {
     baseURL: "http://127.0.0.1:3000",
     screenshot: "off",
     trace: "retain-on-failure",
     video: "off",
   },
-  projects: [
-    { name: "chromium", use: { ...devices["Desktop Chrome"] } },
-  ],
+  projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
   outputDir: "test-results/typography",
   webServer: [
     {

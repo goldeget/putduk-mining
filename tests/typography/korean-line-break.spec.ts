@@ -33,68 +33,64 @@ const ADMIN_PUBLIC_ROUTES = [
   },
 ] as const;
 
+const TEXT_SCALE_ROUTES = [
+  PUBLIC_ROUTES[0],
+  PUBLIC_ROUTES[1],
+  PUBLIC_ROUTES[2],
+  ADMIN_PUBLIC_ROUTES[0],
+] as const;
+
 test.describe("Korean-friendly line breaking", () => {
   for (const viewport of TYPOGRAPHY_VIEWPORTS) {
     for (const theme of TYPOGRAPHY_THEMES) {
-      test(
-        `public surfaces ${viewport.label}px ${theme}`,
-        async ({ page }, testInfo) => {
+      for (const route of PUBLIC_ROUTES) {
+        test(`public ${route.name} ${viewport.label}px ${theme}`, async ({
+          page,
+        }, testInfo) => {
           await installTypographyTheme(page, theme);
-          for (const route of PUBLIC_ROUTES) {
-            await auditTypographyRoute({
-              page,
-              routeName: route.name,
-              testInfo,
-              theme,
-              url: route.url,
-              viewport,
-            });
-          }
-        },
-      );
+          await auditTypographyRoute({
+            page,
+            routeName: route.name,
+            testInfo,
+            theme,
+            url: route.url,
+            viewport,
+          });
+        });
+      }
 
-      test(
-        `admin public surfaces ${viewport.label}px ${theme}`,
-        async ({ page }, testInfo) => {
+      for (const route of ADMIN_PUBLIC_ROUTES) {
+        test(`admin ${route.name} ${viewport.label}px ${theme}`, async ({
+          page,
+        }, testInfo) => {
           await installTypographyTheme(page, theme);
-          for (const route of ADMIN_PUBLIC_ROUTES) {
-            await auditTypographyRoute({
-              page,
-              routeName: route.name,
-              testInfo,
-              theme,
-              url: route.url,
-              viewport,
-            });
-          }
-        },
-      );
+          await auditTypographyRoute({
+            page,
+            routeName: route.name,
+            testInfo,
+            theme,
+            url: route.url,
+            viewport,
+          });
+        });
+      }
     }
   }
 
-  test(
-    "390px light surfaces remain readable at 200% root text size",
-    async ({ page }, testInfo) => {
+  for (const route of TEXT_SCALE_ROUTES) {
+    test(`200% text ${route.name} 390px light`, async ({ page }, testInfo) => {
       const viewport = TYPOGRAPHY_VIEWPORTS[0];
       const theme = "light" as const;
       await installTypographyTheme(page, theme);
-
-      for (const route of [
-        PUBLIC_ROUTES[0],
-        PUBLIC_ROUTES[1],
-        PUBLIC_ROUTES[2],
-        ADMIN_PUBLIC_ROUTES[0],
-      ]) {
-        await auditTypographyRoute({
-          page,
-          routeName: route.name,
-          testInfo,
-          textScale: 2,
-          theme,
-          url: route.url,
-          viewport,
-        });
-      }
-    },
-  );
+      await auditTypographyRoute({
+        page,
+        routeName: route.name,
+        testInfo,
+        textScale: 2,
+        theme,
+        url: route.url,
+        viewport,
+      });
+    });
+  }
 });

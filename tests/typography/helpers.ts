@@ -48,12 +48,7 @@ function evidenceName(input: {
   viewport: TypographyViewport;
 }) {
   const scale = input.textScale === 1 ? "100" : String(input.textScale * 100);
-  return [
-    input.routeName,
-    input.viewport.label,
-    input.theme,
-    `text-${scale}`,
-  ]
+  return [input.routeName, input.viewport.label, input.theme, `text-${scale}`]
     .join("-")
     .replace(/[^a-zA-Z0-9가-힣_-]+/g, "-")
     .toLowerCase();
@@ -177,9 +172,7 @@ async function readTypographyAudit(page: Page): Promise<TypographyAudit> {
                 width: Math.round(rect.width),
               };
             })
-            .filter(
-              (item) => item.left < -1 || item.right > clientWidth + 1,
-            )
+            .filter((item) => item.left < -1 || item.right > clientWidth + 1)
             .slice(0, 20)
         : [];
 
@@ -220,7 +213,7 @@ export async function auditTypographyRoute(input: {
     width: input.viewport.width,
     height: input.viewport.height,
   });
-  await input.page.goto(input.url, { waitUntil: "networkidle" });
+  await input.page.goto(input.url, { waitUntil: "load" });
   await input.page.evaluate(async (scale) => {
     await document.fonts.ready;
     if (scale !== 1) {
@@ -242,11 +235,28 @@ export async function auditTypographyRoute(input: {
   });
 
   const result = await readTypographyAudit(input.page);
-  expect(
+  await input.testInfo.attach(`${name}-audit`, {
+    body: JSON.stringify(
+      {
+        requestedUrl: input.url,
+        renderedUrl: input.page.url(),
+        routeName: input.routeName,
+        textScale,
+        theme: input.theme,
+        viewport: input.viewport,
+        ...result,
+      },
+      null,
+      2,
+    ),
+    contentType: "application/json",
+  });
+
+  expect.soft(
     result.overflow.scrollWidth,
     `${input.routeName} ${input.viewport.label}px ${input.theme}: horizontal overflow\n${JSON.stringify(result.overflow.offenders, null, 2)}`,
   ).toBeLessThanOrEqual(result.overflow.clientWidth + 1);
-  expect(
+  expect.soft(
     result.koreanBreaks,
     `${input.routeName} ${input.viewport.label}px ${input.theme}: Korean token split across lines`,
   ).toEqual([]);
