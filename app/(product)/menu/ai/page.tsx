@@ -38,7 +38,7 @@ export default function PutdukAiPage() {
       <PageHeading
         eyebrow="PUTDUK AI"
         title="무엇을 함께 확인할까요?"
-        lead="채굴, 자산, 입출금, 이벤트와 퍼뜩 이용 방법을 자연스러운 한국어로 물어보세요. 확인된 정보와 일반 안내를 구분해 답합니다."
+        lead="채굴·지갑·입출금 궁금한 점을 물어보세요. 확인된 정보만 답합니다."
       />
 
       <Surface as="section" className={styles.aiIntro} tone="raised">

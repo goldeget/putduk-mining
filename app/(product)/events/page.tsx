@@ -92,7 +92,7 @@ export default async function EventsPage() {
       <PageHeading
         eyebrow="EVENTS & MISSIONS"
         title="지금 참여할 수 있는 여정"
-        lead="기간과 참여 상태를 먼저 확인하고 선택할 수 있도록 안내합니다. 보상은 공개된 조건을 달성한 경우에만 실제 처리 결과로 반영됩니다."
+        lead="기간과 참여 상태를 확인한 뒤 선택하세요. 보상은 조건을 달성했을 때만 반영됩니다."
       />
 
       {eventsError ? (

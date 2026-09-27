@@ -48,11 +48,8 @@ export default async function LoginPage({
         </div>
         <div>
           <p className="eyebrow">SECURE ENTRY</p>
-          <h1 id="auth-title">멈춘 화면 너머에서도, 나의 채굴은 이어집니다.</h1>
-          <p>
-            로그인하면 최근 채굴 상태, 실제 지갑과 처리 중인 요청을 확인한
-            자리에서 이어갈 수 있어요.
-          </p>
+          <h1 id="auth-title">나의 채굴로 돌아가기</h1>
+          <p>로그인하면 채굴 상태와 지갑을 이어서 확인할 수 있어요.</p>
         </div>
         <ul className="auth-trust-list">
           <li>
@@ -73,7 +70,7 @@ export default async function LoginPage({
         <div className="auth-page__panel-header">
           <p className="eyebrow">ACCOUNT</p>
           <h2>다시 만나 반가워요.</h2>
-          <p>아이디 또는 가입할 때 등록한 복구 이메일로 로그인하세요.</p>
+          <p>아이디 또는 복구 이메일로 로그인해 주세요.</p>
         </div>
         {statusMessage ? (
           <p
@@ -85,7 +82,7 @@ export default async function LoginPage({
         ) : null}
         <AuthForm nextPath={nextPath} />
         <p className="auth-page__legal">
-          로그인에 문제가 있더라도 계정 존재 여부는 응답에서 공개하지 않습니다.
+          로그인에 문제가 있어도 계정 존재 여부는 알려 드리지 않습니다.
         </p>
       </section>
     </main>
