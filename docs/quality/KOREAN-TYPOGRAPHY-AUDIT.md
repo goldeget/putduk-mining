@@ -4,7 +4,7 @@ Baseline: `ws05/integration` at `869809f8132011ff7ad3aaaa0b3f6adf213021a4`.
 
 Branch: `ws05/korean-line-break-audit`.
 
-This branch is intentionally isolated from the active WS-05 CI/auth/worker repair. It adds tests and evidence only. It does not edit product CSS, pages, migrations, money commands, CI workflows, `develop`, `main`, remote Supabase, Cloudflare, or DNS.
+This branch is intentionally isolated from the active WS-05 CI/auth/worker repair. It adds tests and evidence only. It does not edit product CSS, pages, migrations, money commands, CI workflows, `package.json`, `develop`, `main`, remote Supabase, Cloudflare, or DNS.
 
 ## Current finding
 
@@ -25,6 +25,19 @@ Remaining uncertainty:
 - Several Korean heading widths use `ch`, which measures the `0` glyph rather than a CJK ideograph. A future targeted review may prefer an `ic` fallback pattern where the intent is a Korean character count.
 - Long UUID, address, transaction-hash, bank-reference, and idempotency values need a separate machine-token overflow policy and must not inherit Korean prose wrapping.
 - Authenticated protected screens still require successful local-auth evidence and are not declared `PRODUCT COMPLETE`.
+
+## Isolation repair after the first CI run
+
+The first PR run exposed that placing this suite under `tests/e2e/` caused the default Browser foundation job to collect it. That job starts only the public application, while this audit intentionally visits the separate admin application on port 3100.
+
+The audit now lives under `tests/typography/`, and `playwright.typography.config.ts` owns that directory exclusively. Therefore:
+
+- `pnpm test:e2e` does not collect typography tests;
+- the typography config starts both the public and admin applications;
+- the audit uses one Chromium worker, no retries, and a bounded CI global timeout;
+- no active WS-05 workflow or package script is changed.
+
+This isolates the audit from PR #7 without weakening assertions or skipping failing routes.
 
 ## Added audit coverage
 
@@ -62,12 +75,24 @@ Matrix:
 - reduced motion enabled
 - an additional 390 light pass at 200% root text size for landing, login, signup, and admin login
 
-Each route produces a successful screenshot attachment. The test fails when:
+Each audited route attaches a full-page screenshot before assertions. The test fails when:
 
 1. document width exceeds viewport width; or
 2. a visible contiguous Hangul token is rendered on more than one line.
 
 The token check uses rendered character rectangles rather than source-text guessing. Korean words separated by spaces may wrap between words; a single Hangul token may not split between syllables.
+
+## Preliminary evidence from the mixed-suite run
+
+The first CI run is not acceptance evidence because it used the default Playwright config and did not start the admin application. It still produced repeatable public-render findings that the isolated run must confirm:
+
+- 390 light/dark landing: split tokens included `경험합니다`, `정보만`, and `완료를`.
+- 834 light/dark landing: split tokens included `확인이`, `가능한`, and `대신하지`.
+- 1440 light/dark landing: split tokens included `경험합니다`, `가능한`, and `완료를`.
+- 390 light at 200% root text size: document width reached 408 px for a 390 px viewport. Reported offenders included the header theme control and hero mascot.
+- Admin public-state checks were blocked by `ERR_CONNECTION_REFUSED` on port 3100 because the wrong Playwright config owned that run.
+
+These are `PARTIAL` findings only. They must be reproduced by the isolated typography config before a product CSS patch is reviewed.
 
 ## Integration protocol
 
