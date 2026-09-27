@@ -6,7 +6,9 @@ export default defineConfig([
   ...nextCoreWebVitals,
   ...nextTypeScript,
   globalIgnores([
-    ".next/**",
+    "**/.next/**",
+    ".sites-work/**",
+    "**/dist/**",
     "coverage/**",
     "playwright-report/**",
     "test-results/**",

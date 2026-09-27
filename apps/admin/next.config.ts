@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const scriptSource =
   process.env.NODE_ENV === "development"
-    ? "script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval'"
+    ? "script-src 'self' 'unsafe-inline' 'unsafe-eval'"
     : "script-src 'self' 'unsafe-inline'";
 
 const securityHeaders = [
@@ -15,12 +15,10 @@ const securityHeaders = [
       "font-src 'self' data:",
       "form-action 'self'",
       "frame-ancestors 'none'",
-      "img-src 'self' data: blob: https://*.supabase.co",
-      "manifest-src 'self'",
+      "img-src 'self' data: blob:",
       "object-src 'none'",
       scriptSource,
       "style-src 'self' 'unsafe-inline'",
-      "worker-src 'self' blob:",
       "upgrade-insecure-requests",
     ].join("; "),
   },
@@ -28,57 +26,26 @@ const securityHeaders = [
   { key: "Cross-Origin-Resource-Policy", value: "same-origin" },
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "X-Frame-Options", value: "DENY" },
-  { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+  { key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" },
+  { key: "Referrer-Policy", value: "no-referrer" },
   {
     key: "Strict-Transport-Security",
     value: "max-age=63072000; includeSubDomains; preload",
   },
   {
     key: "Permissions-Policy",
-    value: "camera=(), microphone=(), geolocation=(), payment=()",
+    value: "camera=(), microphone=(), geolocation=(), payment=(), usb=()",
   },
 ];
 
 const nextConfig: NextConfig = {
   allowedDevOrigins: ["127.0.0.1"],
   productionBrowserSourceMaps: false,
-  reactStrictMode: true,
   poweredByHeader: false,
+  reactStrictMode: true,
   typedRoutes: true,
-  experimental: {
-    optimizePackageImports: ["motion"],
-  },
   async headers() {
-    return [
-      { source: "/:path*", headers: securityHeaders },
-      {
-        source: "/api/:path*",
-        headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
-      },
-      ...[
-        "/login",
-        "/signup",
-        "/find-id",
-        "/recover",
-        "/auth/update-password",
-      ].map((source) => ({
-        source,
-        headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
-      })),
-      ...[
-        "/home",
-        "/start",
-        "/mining",
-        "/wallet/:path*",
-        "/events",
-        "/notifications",
-        "/ai",
-        "/menu/:path*",
-      ].map((source) => ({
-        source,
-        headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
-      })),
-    ];
+    return [{ source: "/:path*", headers: securityHeaders }];
   },
 };
 

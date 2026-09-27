@@ -1,0 +1,43 @@
+import type { Metadata } from "next";
+import type { Route } from "next";
+import { redirect } from "next/navigation";
+
+import { LoginForm } from "@/components/login-form";
+import { getAdminIdentity } from "@/lib/auth/principal";
+import { safeAdminReturnPath } from "@/lib/auth/return-path";
+
+export const metadata: Metadata = { title: "운영자 로그인" };
+export const dynamic = "force-dynamic";
+
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ returnTo?: string }>;
+}) {
+  const { returnTo } = await searchParams;
+  const safeReturn = safeAdminReturnPath(returnTo);
+  const identity = await getAdminIdentity();
+  if (identity?.role) {
+    const destination =
+      identity.aal === "aal2"
+        ? safeReturn
+        : `/mfa?returnTo=${encodeURIComponent(safeReturn)}`;
+    redirect(destination as Route);
+  }
+  return (
+    <main className="auth-stage">
+      <section className="auth-card">
+        <div className="brand-lockup">
+          <span className="brand-symbol">P</span>
+          <strong>퍼뜩</strong>
+          <small>ADMIN CONTROL PLANE</small>
+        </div>
+        <p className="eyebrow">DEDICATED OPERATOR ACCESS</p>
+        <h1>운영자 전용 보안 로그인</h1>
+        <p>일반 회원 계정과 분리된 운영자 권한 및 다중 인증을 확인합니다.</p>
+        <LoginForm returnTo={safeReturn} />
+        <footer>접근 시도와 고위험 작업은 보안 기록 및 감사 대상입니다.</footer>
+      </section>
+    </main>
+  );
+}
