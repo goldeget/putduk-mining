@@ -122,3 +122,28 @@ export async function completeAdminLoginWithTotp(
   });
   return secret;
 }
+
+/** 이미 등록된 인증 앱으로 별도 브라우저 세션을 연다. */
+export async function completeAdminLoginWithExistingTotp(
+  page: Page,
+  email: string,
+  password: string,
+  secret: string,
+) {
+  await page.goto(`${ADMIN_ORIGIN}/login`);
+  await page.locator('input[name="email"]').fill(email);
+  await page.locator('input[name="password"]').fill(password);
+  await page.getByRole("button", { name: "보안 로그인" }).click();
+  await page.waitForURL(/\/mfa/);
+  await expect(
+    page.getByText("인증 앱에 표시된 6자리 코드를 입력해 주세요."),
+  ).toBeVisible({ timeout: 60_000 });
+  await expect(page.locator(".mfa-enrolment code")).toHaveCount(0);
+  await page
+    .locator('input[inputmode="numeric"]')
+    .fill(await nextTotpCode(secret));
+  await page.getByRole("button", { name: "인증 완료" }).click();
+  await page.waitForURL((url) => !url.pathname.includes("/mfa"), {
+    timeout: 60_000,
+  });
+}

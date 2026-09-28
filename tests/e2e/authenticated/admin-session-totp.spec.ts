@@ -96,11 +96,22 @@ test.describe("admin app-owned session and real TOTP", () => {
       requiredEnv("SUPABASE_SECRET_KEY"),
       { auth: { autoRefreshToken: false, persistSession: false } },
     );
+    const { data: sessions, error: sessionError } = await service
+      .from("admin_sessions")
+      .select("id")
+      .eq("user_id", operator.userId)
+      .is("revoked_at", null);
+    expect(sessionError).toBeNull();
+    expect(sessions).toHaveLength(1);
+    const adminSessionId = sessions?.[0]?.id;
+    expect(typeof adminSessionId).toBe("string");
+
     const { error: firstError } = await service.rpc("consume_admin_step_up", {
       p_user_id: operator.userId,
       p_token: token,
       p_command_family: "DEPOSIT_CONFIRM",
       p_request_id: randomUUID(),
+      p_admin_session_id: adminSessionId,
     });
     expect(firstError).toBeNull();
 
@@ -109,6 +120,7 @@ test.describe("admin app-owned session and real TOTP", () => {
       p_token: token,
       p_command_family: "DEPOSIT_CONFIRM",
       p_request_id: randomUUID(),
+      p_admin_session_id: adminSessionId,
     });
     expect(reuseError?.message ?? "").toContain("STEP_UP_REQUIRED");
   });

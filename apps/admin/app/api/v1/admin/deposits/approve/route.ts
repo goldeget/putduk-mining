@@ -50,6 +50,7 @@ export async function POST(request: Request) {
   const requestId = randomUUID();
   const stepUpOk = await consumeAdminStepUpGrant({
     userId: access.principal.userId,
+    adminSessionId: access.principal.adminSessionId,
     token: parsed.data.stepUpToken,
     commandFamily: ADMIN_COMMAND_FAMILIES.DEPOSIT_APPROVE,
     requestId,

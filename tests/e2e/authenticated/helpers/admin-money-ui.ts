@@ -1,3 +1,5 @@
+import { createHash } from "node:crypto";
+
 import { expect, type Locator, type Page } from "@playwright/test";
 
 import { createLocalServiceRoleClient } from "../../fixtures/local-auth";
@@ -115,6 +117,26 @@ export async function readWithdrawalLedger(withdrawalId: string) {
         ? data.finalize_ledger_transaction_id
         : null,
     withdrawalLedgerCount: count ?? 0,
+  };
+}
+
+export async function readStepUpGrantState(token: string) {
+  const client = createLocalServiceRoleClient();
+  const tokenHash = createHash("sha256").update(token).digest("hex");
+  const { data, error } = await client
+    .from("admin_step_up_grants")
+    .select("consumed_at, command_family")
+    .eq("token_hash", tokenHash)
+    .maybeSingle();
+  if (error) {
+    throw new Error(error.message);
+  }
+  if (!data) {
+    throw new Error("STEP_UP_GRANT_MISSING");
+  }
+  return {
+    consumed: data.consumed_at != null,
+    commandFamily: String(data.command_family),
   };
 }
 
