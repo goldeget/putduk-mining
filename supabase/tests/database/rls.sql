@@ -208,6 +208,16 @@ select ok(
 );
 
 select ok(
+  has_table_privilege('service_role', 'public.analytics_events', 'INSERT'),
+  'service role can insert server-ingested analytics events'
+);
+
+select ok(
+  has_table_privilege('service_role', 'public.analytics_events', 'SELECT'),
+  'service role can return inserted analytics events'
+);
+
+select ok(
   to_regclass('public.analytics_events_request_id_unique') is not null,
   'analytics request ids have a database deduplication boundary'
 );

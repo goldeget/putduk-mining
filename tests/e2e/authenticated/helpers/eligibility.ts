@@ -382,14 +382,24 @@ export async function advanceTrialToCompleted(userId: string): Promise<void> {
     return { error };
   });
 
-  const { data: account } = await client
-    .from("trial_accounts")
-    .select("status")
-    .eq("user_id", userId)
-    .maybeSingle();
-  if (account?.status !== "COMPLETED" && account?.status !== "EXPIRED") {
-    throw new Error(`TRIAL_NOT_TERMINAL:${account?.status ?? "missing"}`);
-  }
+  await withTimeoutRetry("TRIAL_TERMINAL_READ", async () => {
+    const { data: account, error } = await client
+      .from("trial_accounts")
+      .select("status")
+      .eq("user_id", userId)
+      .maybeSingle();
+    if (error) {
+      return { error };
+    }
+    if (account?.status !== "COMPLETED" && account?.status !== "EXPIRED") {
+      return {
+        error: {
+          message: `TRIAL_NOT_TERMINAL:${account?.status ?? "missing"}`,
+        },
+      };
+    }
+    return { error: null };
+  });
 }
 
 /** Opens and approves KYC through production commands (eligibility only). */

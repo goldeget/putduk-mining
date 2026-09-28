@@ -390,8 +390,12 @@ deno_version = 2
 # [edge_runtime.secrets]
 # secret_key = "env(SECRET_VALUE)"
 
+# Logflare와 Vector는 앱과 같은 Postgres를 쓴다.
+# Windows Docker에서는 Vector가 도커 소켓에 연결되지 않아 재시작을 반복하고,
+# 그 부하로 authenticator statement_timeout(8s)이 START 조회를 취소한다.
+# 제품 analytics_events와는 별개다. CI도 이 파이프라인에 의존하지 않는다.
 [analytics]
-enabled = true
+enabled = false
 port = 58427
 # Configure one of the supported backends: `postgres`, `bigquery`.
 backend = "postgres"
