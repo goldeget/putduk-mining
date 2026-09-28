@@ -1,8 +1,10 @@
 # Product Complete matrix
 
-Status date: `2026-09-28`
+Status date: `2026-09-29`
 
 기준 develop: `d3e5949eb86a7c82dcf8def33896f1b9a30d362c`
+
+hydration evidence develop: `87e567244297e30de05ca674dcacbd3498caf696`
 
 이 문서는 출시 판정이 아니다.
 `PRODUCT COMPLETE`인 route는 없다.
@@ -37,16 +39,20 @@ Home, Mining, Deposit, Events, Notifications, AI, Menu의 domain 완료 증거�
 | Mining `/mining` | PARTIAL | 타이포그래피 | 채굴 동작, 상태, Visual Lab, 성능 |
 | Wallet `/wallet` | PARTIAL | 타이포그래피 | 원장 읽기 상태, 빈 화면, 오류 |
 | Deposit `/wallet/deposit` | PARTIAL | 타이포그래피 | 수동 입금 브라우저 여정, 상태 |
-| Withdrawal `/wallet/withdraw` | PARTIAL | 타이포그래피, 첫 KRW/USDT 브라우저, negative guard | hydration 경고, 상태, Visual Lab, 성능 |
+| Withdrawal `/wallet/withdraw` | PARTIAL | 타이포그래피, 첫 KRW/USDT 브라우저, negative guard, hydration evidence CLOSED | 상태, Visual Lab, 성능 |
 | Events `/events` | PARTIAL | 타이포그래피 | 게시·만료·빈 화면 |
 | Notifications `/notifications` | PARTIAL | 타이포그래피 | 알림 동작, 빈 화면, 오류 |
 | AI `/ai` | PARTIAL | 타이포그래피 | 대화 연속성, 도구 호출 브라우저 |
 | Menu `/menu` | PARTIAL | 타이포그래피 | 계정·설정 상태 |
 | Support `/support` | PARTIAL | 익명 fallback, 회원 해시, 신원 전환 테스트 | 타이포그래피, live 계정, 대시보드 FAQ |
 
-`/wallet/withdraw` hydration은 Channel Talk 이전 develop CI에도 있었다.
-분류는 `PRE-EXISTING PRODUCT COMPLETE DEBT`다.
-수정은 이 문서의 SHA에 포함되지 않는다.
+`/wallet/withdraw` hydration evidence는 CLOSED다.
+분류는 제품 hydration 결함이 아니다.
+Playwright screenshot의 기본 caret 숨김이 입력 칸에 `caret-color: transparent`를 넣는 계측 경쟁이었다.
+증거는 develop `87e567244297e30de05ca674dcacbd3498caf696`의 merge CI [run 36490394913](https://github.com/goldeget/putduk-mining/actions/runs/36490394913)이다.
+Authenticated는 41 passed다.
+그 WebServer 로그의 `hydration-mismatch`는 0이다.
+출금 route 자체는 PARTIAL이다.
 
 ## Admin
 
@@ -68,24 +74,23 @@ KRW 관리자 입금 route는 이 목록에 없다.
 
 다음 순서로 다룬다. 한 번에 모든 화면을 고치지 않는다.
 
-1. `/wallet/withdraw` hydration
-2. Mining
-3. Deposit
-4. Events
-5. Notifications
-6. AI
-7. Menu
-8. Admin Members
-9. KYC
-10. Admin Deposits
-11. Exceptions
-12. Restrictions
-13. loading, error, recovery
-14. keyboard, focus
-15. reduced motion을 타이포그래피 밖으로
-16. Visual Lab 비교
-17. visual regression
-18. performance acceptance
+1. Mining
+2. Deposit
+3. Events
+4. Notifications
+5. AI
+6. Menu
+7. Admin Members
+8. KYC
+9. Admin Deposits
+10. Exceptions
+11. Restrictions
+12. loading, error, recovery
+13. keyboard, focus
+14. reduced motion을 타이포그래피 밖으로
+15. Visual Lab 비교
+16. visual regression
+17. performance acceptance
 
 WS-06 출금 돈 경로는 다시 작성하지 않는다.
 economy, catalog, rank 실값은 사람이 정한다.
