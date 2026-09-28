@@ -6,10 +6,14 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import {
+  activeLeaseRenewalCount,
   backoffSeconds,
   processJobBatch,
   processOutboxBatch,
+  resolveLeaseRenewIntervalMs,
   runWorkerCycle,
+  startPeriodicLeaseRenewal,
+  stopAllLeaseRenewals,
   wantsOnce,
 } from "../../workers/runner.mjs";
 
@@ -761,5 +765,355 @@ insert into auth.users (
     const failed = await readJob(db, job.id);
     expect(["FAILED", "DEAD_LETTER"]).toContain(failed.status);
     expect(failed.last_error_code).toBe("UNSUPPORTED_JOB_TYPE");
+  });
+
+  it("renews an outbox lease while the handler outlives the original lease", async () => {
+    const db = client();
+    const workerId = `ws06-long-${randomUUID().slice(0, 8)}`;
+    const stranger = `ws06-stranger-${randomUUID().slice(0, 8)}`;
+    const event = await insertOutboxEvent(db, {
+      event_type: "WORKER_RUNTIME_LONG.v1",
+      max_attempts: 3,
+    });
+    let periodicExtends = 0;
+    let handlerStarted = false;
+    let completes = 0;
+    const originalRpc = db.rpc.bind(db);
+    db.rpc = (async (fn: string, args?: Record<string, unknown>) => {
+      if (fn === "extend_outbox_event_lease" && handlerStarted) {
+        periodicExtends += 1;
+      }
+      if (fn === "complete_outbox_event" && args?.p_event_id === event.id) {
+        completes += 1;
+      }
+      return originalRpc(fn, args);
+    }) as unknown as typeof db.rpc;
+
+    const summary = await processOutboxBatch(db, {
+      workerId,
+      batchSize: 20,
+      leaseSeconds: 10,
+      leaseRenewIntervalMs: 1_000,
+      outboxHandlers: {
+        "WORKER_RUNTIME_LONG.v1": async () => {
+          handlerStarted = true;
+          const started = Date.now();
+          await delay(11_000);
+          expect(Date.now() - started).toBeGreaterThan(10_000);
+          expect(periodicExtends).toBeGreaterThanOrEqual(1);
+
+          const { data: claimedByStranger, error: strangerError } =
+            await originalRpc("claim_outbox_events", {
+              p_worker_id: stranger,
+              p_batch_size: 20,
+              p_lease_seconds: 10,
+            });
+          expect(strangerError).toBeNull();
+          const stolen = (
+            (claimedByStranger ?? []) as Array<{ id: string }>
+          ).some((row) => row.id === event.id);
+          expect(stolen).toBe(false);
+
+          const mid = await readOutbox(db, event.id);
+          expect(mid.status).toBe("PROCESSING");
+          expect(mid.lease_owner).toBe(workerId);
+          expect(new Date(mid.lease_expires_at).getTime()).toBeGreaterThan(
+            Date.now() + 3_000,
+          );
+        },
+      },
+    });
+
+    expect(summary.completed).toBeGreaterThanOrEqual(1);
+    expect(completes).toBe(1);
+    const done = await readOutbox(db, event.id);
+    expect(done.status).toBe("PROCESSED");
+    expect(done.lease_owner).toBeNull();
+
+    const { error: secondComplete } = await originalRpc(
+      "complete_outbox_event",
+      {
+        p_event_id: event.id,
+        p_worker_id: workerId,
+      },
+    );
+    expect(secondComplete?.message ?? "").toMatch(/OUTBOX_LEASE_NOT_OWNED/);
+    expect(activeLeaseRenewalCount()).toBe(0);
+  }, 30_000);
+
+  it("fails a throwing long handler exactly once and does not complete it", async () => {
+    const db = client();
+    const workerId = `ws06-throw-${randomUUID().slice(0, 8)}`;
+    const event = await insertOutboxEvent(db, {
+      event_type: "WORKER_RUNTIME_LONG_FAIL.v1",
+      max_attempts: 3,
+    });
+    let fails = 0;
+    let completes = 0;
+    let periodicExtends = 0;
+    let handlerStarted = false;
+    const originalRpc = db.rpc.bind(db);
+    db.rpc = (async (fn: string, args?: Record<string, unknown>) => {
+      if (fn === "extend_outbox_event_lease" && handlerStarted) {
+        periodicExtends += 1;
+      }
+      if (fn === "fail_outbox_event" && args?.p_event_id === event.id) {
+        fails += 1;
+      }
+      if (fn === "complete_outbox_event" && args?.p_event_id === event.id) {
+        completes += 1;
+      }
+      return originalRpc(fn, args);
+    }) as unknown as typeof db.rpc;
+
+    const summary = await processOutboxBatch(db, {
+      workerId,
+      batchSize: 20,
+      leaseSeconds: 10,
+      leaseRenewIntervalMs: 400,
+      outboxHandlers: {
+        "WORKER_RUNTIME_LONG_FAIL.v1": async () => {
+          handlerStarted = true;
+          await delay(1_200);
+          throw new Error("LONG_HANDLER_FAILED");
+        },
+      },
+    });
+
+    expect(periodicExtends).toBeGreaterThanOrEqual(1);
+    expect(fails).toBe(1);
+    expect(completes).toBe(0);
+    expect(summary.failed).toBeGreaterThanOrEqual(1);
+    expect(summary.completed).toBe(0);
+    const failed = await readOutbox(db, event.id);
+    expect(failed.status).toBe("FAILED");
+    expect(failed.last_error_code).toMatch(/LONG_HANDLER_FAILED/);
+    expect(failed.attempt_count).toBe(1);
+    expect(activeLeaseRenewalCount()).toBe(0);
+  }, 20_000);
+
+  it("renews a system job lease and rejects another worker during the handler", async () => {
+    const db = client();
+    const workerId = `ws06-job-long-${randomUUID().slice(0, 8)}`;
+    const stranger = `ws06-job-stranger-${randomUUID().slice(0, 8)}`;
+    const job = await insertSystemJob(db, {
+      job_type: "WORKER_RUNTIME_LONG_JOB",
+      max_attempts: 3,
+    });
+    let periodicExtends = 0;
+    let handlerStarted = false;
+    let completes = 0;
+    const originalRpc = db.rpc.bind(db);
+    db.rpc = (async (fn: string, args?: Record<string, unknown>) => {
+      if (fn === "extend_system_job_lease" && handlerStarted) {
+        periodicExtends += 1;
+      }
+      if (fn === "complete_system_job" && args?.p_job_id === job.id) {
+        completes += 1;
+      }
+      return originalRpc(fn, args);
+    }) as unknown as typeof db.rpc;
+
+    const summary = await processJobBatch(db, {
+      workerId,
+      batchSize: 20,
+      leaseSeconds: 10,
+      leaseRenewIntervalMs: 1_000,
+      jobHandlers: {
+        WORKER_RUNTIME_LONG_JOB: async () => {
+          handlerStarted = true;
+          const started = Date.now();
+          await delay(11_000);
+          expect(Date.now() - started).toBeGreaterThan(10_000);
+          expect(periodicExtends).toBeGreaterThanOrEqual(1);
+          const { data: claimedByStranger, error: strangerError } =
+            await originalRpc("claim_system_jobs", {
+              p_worker_id: stranger,
+              p_batch_size: 20,
+              p_lease_seconds: 10,
+            });
+          expect(strangerError).toBeNull();
+          const stolen = (
+            (claimedByStranger ?? []) as Array<{ id: string }>
+          ).some((row) => row.id === job.id);
+          expect(stolen).toBe(false);
+          const mid = await readJob(db, job.id);
+          expect(mid.lease_owner).toBe(workerId);
+          expect(new Date(mid.lease_expires_at).getTime()).toBeGreaterThan(
+            Date.now() + 3_000,
+          );
+        },
+      },
+    });
+
+    expect(summary.completed).toBeGreaterThanOrEqual(1);
+    expect(completes).toBe(1);
+    const done = await readJob(db, job.id);
+    expect(done.status).toBe("SUCCEEDED");
+    expect(activeLeaseRenewalCount()).toBe(0);
+  }, 30_000);
+});
+
+function delay(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+describe("periodic lease renewal without a database", () => {
+  it("uses a shorter interval than the lease by default", () => {
+    expect(resolveLeaseRenewIntervalMs(60)).toBe(20_000);
+    expect(resolveLeaseRenewIntervalMs(10)).toBe(3_333);
+    expect(resolveLeaseRenewIntervalMs(60, 1_000)).toBe(1_000);
+    expect(() => resolveLeaseRenewIntervalMs(60, 10)).toThrow(
+      /INVALID_LEASE_RENEW_INTERVAL/,
+    );
+  });
+
+  it("fails the outbox item once when renewal fails and does not complete it", async () => {
+    let extendCalls = 0;
+    let completes = 0;
+    let fails = 0;
+    const client = {
+      rpc: async (name: string) => {
+        if (name === "claim_outbox_events") {
+          return {
+            data: [
+              {
+                id: "11111111-1111-4111-8111-111111111111",
+                event_type: "LEASE_EXTEND_FAIL.v1",
+                attempt_count: 1,
+              },
+            ],
+            error: null,
+          };
+        }
+        if (name === "extend_outbox_event_lease") {
+          extendCalls += 1;
+          if (extendCalls === 1) {
+            return { data: new Date().toISOString(), error: null };
+          }
+          return { error: { message: "OUTBOX_LEASE_NOT_OWNED" } };
+        }
+        if (name === "complete_outbox_event") {
+          completes += 1;
+          return { error: null };
+        }
+        if (name === "fail_outbox_event") {
+          fails += 1;
+          return { error: null };
+        }
+        return { error: { message: `UNEXPECTED_${name}` } };
+      },
+    };
+
+    const summary = await processOutboxBatch(
+      client as unknown as SupabaseClient,
+      {
+        workerId: "ws06-extend-fail",
+        leaseSeconds: 10,
+        leaseRenewIntervalMs: 50,
+        outboxHandlers: {
+          "LEASE_EXTEND_FAIL.v1": async () => {
+            await delay(300);
+          },
+        },
+      },
+    );
+
+    expect(extendCalls).toBeGreaterThanOrEqual(2);
+    expect(completes).toBe(0);
+    expect(fails).toBe(1);
+    expect(summary.completed).toBe(0);
+    expect(summary.failed).toBe(1);
+    expect(activeLeaseRenewalCount()).toBe(0);
+  });
+
+  it("fails the job once when renewal fails and does not complete it", async () => {
+    let extendCalls = 0;
+    let completes = 0;
+    let fails = 0;
+    const client = {
+      rpc: async (name: string) => {
+        if (name === "claim_system_jobs") {
+          return {
+            data: [
+              {
+                id: "22222222-2222-4222-8222-222222222222",
+                job_type: "LEASE_EXTEND_FAIL_JOB",
+                attempts: 1,
+              },
+            ],
+            error: null,
+          };
+        }
+        if (name === "extend_system_job_lease") {
+          extendCalls += 1;
+          if (extendCalls === 1) {
+            return { data: new Date().toISOString(), error: null };
+          }
+          return { error: { message: "JOB_LEASE_NOT_OWNED" } };
+        }
+        if (name === "complete_system_job") {
+          completes += 1;
+          return { error: null };
+        }
+        if (name === "fail_system_job") {
+          fails += 1;
+          return { error: null };
+        }
+        return { error: { message: `UNEXPECTED_${name}` } };
+      },
+    };
+
+    const summary = await processJobBatch(client as unknown as SupabaseClient, {
+      workerId: "ws06-job-extend-fail",
+      leaseSeconds: 10,
+      leaseRenewIntervalMs: 50,
+      jobHandlers: {
+        LEASE_EXTEND_FAIL_JOB: async () => {
+          await delay(300);
+        },
+      },
+    });
+
+    expect(extendCalls).toBeGreaterThanOrEqual(2);
+    expect(completes).toBe(0);
+    expect(fails).toBe(1);
+    expect(summary.completed).toBe(0);
+    expect(summary.failed).toBe(1);
+    expect(activeLeaseRenewalCount()).toBe(0);
+  });
+
+  it("clears timers after settle and worker shutdown", async () => {
+    let calls = 0;
+    const renewal = startPeriodicLeaseRenewal({
+      intervalMs: 60,
+      extend: async () => {
+        calls += 1;
+      },
+    });
+    await delay(200);
+    expect(calls).toBeGreaterThan(0);
+    expect(renewal.stats.extensions).toBe(calls);
+    const seen = renewal.stats.extensions;
+    await renewal.settle();
+    await delay(120);
+    expect(renewal.stats.extensions).toBe(seen);
+    expect(activeLeaseRenewalCount()).toBe(0);
+
+    const first = startPeriodicLeaseRenewal({
+      intervalMs: 50,
+      extend: async () => undefined,
+    });
+    const second = startPeriodicLeaseRenewal({
+      intervalMs: 50,
+      extend: async () => undefined,
+    });
+    expect(activeLeaseRenewalCount()).toBe(2);
+    expect(first.stats.aborted).toBe(false);
+    expect(second.stats.aborted).toBe(false);
+    stopAllLeaseRenewals();
+    expect(activeLeaseRenewalCount()).toBe(0);
+    await delay(120);
+    expect(activeLeaseRenewalCount()).toBe(0);
   });
 });

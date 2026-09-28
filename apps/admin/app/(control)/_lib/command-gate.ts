@@ -78,6 +78,7 @@ export async function requireHighImpactPrincipal(
   const requestId = randomUUID();
   const consumed = await consumeAdminStepUpGrant({
     userId: identity.userId,
+    adminSessionId: session.adminSessionId,
     token: stepUpToken,
     commandFamily,
     requestId,

@@ -47,7 +47,9 @@ function needsAdminWebServer() {
       args,
     );
   const adminSpecs =
-    /admin-session-totp|success-visual-evidence/.test(args) ||
+    /admin-session-totp|success-visual-evidence|admin-krw-browser-money|admin-usdt-browser-money|admin-withdrawal-step-up/.test(
+      args,
+    ) ||
     args.includes("test:e2e:auth:admin") ||
     args.includes("test:e2e:auth:visual");
   if (memberMoneyOnly && !adminSpecs) return false;
@@ -55,8 +57,14 @@ function needsAdminWebServer() {
 }
 
 const adminWebServerNeeded = needsAdminWebServer();
-/** next build 후 start면 컴파일 I/O가 Auth password grant와 경합하지 않는다. */
-const useNextStart = process.env.E2E_NEXT_START === "1";
+/**
+ * 로컬에서 회원 앱과 관리자 앱을 동시에 next dev로 컴파일하면
+ * authenticator statement_timeout(8s)이 START 조회와 체험 시계 갱신을 취소한다.
+ * CI는 러너 여유가 있어 next dev를 유지한다. 로컬 관리자 E2E는 빌드된 next start를 쓴다.
+ */
+const useNextStart =
+  process.env.E2E_NEXT_START === "1" ||
+  (process.env.E2E_NEXT_START !== "0" && adminWebServerNeeded && !isCI);
 const memberWebCommand = useNextStart
   ? "node scripts/e2e-web-server.mjs pnpm exec next start --hostname 127.0.0.1 --port 3000"
   : "node scripts/e2e-web-server.mjs pnpm exec next dev --hostname 127.0.0.1 --port 3000";

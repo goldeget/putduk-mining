@@ -37,7 +37,11 @@ export function KrwBankSendForm({
     null,
   );
   return (
-    <form action={action} className="operator-form">
+    <form
+      action={action}
+      className="operator-form"
+      onReset={(event) => event.preventDefault()}
+    >
       <input name="withdrawalId" type="hidden" value={withdrawalId} />
       <TextField
         label="은행 이체 참조(증빙)"
@@ -76,7 +80,11 @@ export function FinalizeLedgerForm({ withdrawalId }: { withdrawalId: string }) {
     null,
   );
   return (
-    <form action={action} className="operator-form">
+    <form
+      action={action}
+      className="operator-form"
+      onReset={(event) => event.preventDefault()}
+    >
       <input name="withdrawalId" type="hidden" value={withdrawalId} />
       <p className="panel-note">
         외부 송금은 이미 기록됐습니다. 다시 보내지 말고 원장만 확정하세요.
@@ -102,7 +110,11 @@ export function ReleaseHoldForm({ withdrawalId }: { withdrawalId: string }) {
   );
   return (
     <div className="operator-form-stack">
-      <form action={action} className="operator-form operator-form--danger">
+      <form
+        action={action}
+        className="operator-form operator-form--danger"
+        onReset={(event) => event.preventDefault()}
+      >
         <input name="withdrawalId" type="hidden" value={withdrawalId} />
         <ReasonField label="거절 사유" />
         <ConfirmCheckbox
@@ -115,7 +127,11 @@ export function ReleaseHoldForm({ withdrawalId }: { withdrawalId: string }) {
         />
         <SubmitButton variant="danger">거절 · 보류 해제</SubmitButton>
       </form>
-      <form action={action} className="operator-form operator-form--danger">
+      <form
+        action={action}
+        className="operator-form operator-form--danger"
+        onReset={(event) => event.preventDefault()}
+      >
         <input name="withdrawalId" type="hidden" value={withdrawalId} />
         <ReasonField label="취소 사유" />
         <ConfirmCheckbox

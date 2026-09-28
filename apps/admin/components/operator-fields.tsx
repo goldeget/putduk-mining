@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useFormStatus } from "react-dom";
 
 export function SubmitButton({
@@ -36,6 +37,7 @@ export function ReasonField({
   minLength?: number;
   placeholder?: string;
 }) {
+  const [value, setValue] = useState("");
   return (
     <label className="operator-field">
       <span>{label}</span>
@@ -43,9 +45,11 @@ export function ReasonField({
         maxLength={500}
         minLength={minLength}
         name={name}
+        onChange={(event) => setValue(event.target.value)}
         placeholder={placeholder}
         required
         rows={3}
+        value={value}
       />
     </label>
   );
@@ -68,16 +72,19 @@ export function TextField({
   inputMode?: React.HTMLAttributes<HTMLInputElement>["inputMode"];
   defaultValue?: string | undefined;
 }) {
+  // 거절된 서버 액션 뒤 React가 폼을 비워도 운영자가 적은 증빙은 남긴다.
+  const [value, setValue] = useState(defaultValue ?? "");
   return (
     <label className="operator-field">
       <span>{label}</span>
       <input
-        defaultValue={defaultValue}
         inputMode={inputMode}
         name={name}
+        onChange={(event) => setValue(event.target.value)}
         placeholder={placeholder}
         required={required}
         type={type}
+        value={value}
       />
     </label>
   );
@@ -92,9 +99,17 @@ export function ConfirmCheckbox({
   value: string;
   label: string;
 }) {
+  const [checked, setChecked] = useState(false);
   return (
     <label className="operator-check">
-      <input name={name} required type="checkbox" value={value} />
+      <input
+        checked={checked}
+        name={name}
+        onChange={(event) => setChecked(event.target.checked)}
+        required
+        type="checkbox"
+        value={value}
+      />
       <span>{label}</span>
     </label>
   );

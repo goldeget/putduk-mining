@@ -110,7 +110,8 @@ select lives_ok(
       (select user_id from ws05_admin_ctx),
       (select step_token from ws05_admin_ctx),
       'WITHDRAWAL_OPERATOR',
-      'bbbbbbbb-cccc-4ddd-8eee-ffffffff0001'::uuid
+      'bbbbbbbb-cccc-4ddd-8eee-ffffffff0001'::uuid,
+      (select admin_session_id from ws05_admin_ctx)
     )
   $$,
   'first consume_admin_step_up succeeds'
@@ -122,7 +123,8 @@ select throws_ok(
       (select user_id from ws05_admin_ctx),
       (select step_token from ws05_admin_ctx),
       'WITHDRAWAL_OPERATOR',
-      'bbbbbbbb-cccc-4ddd-8eee-ffffffff0002'::uuid
+      'bbbbbbbb-cccc-4ddd-8eee-ffffffff0002'::uuid,
+      (select admin_session_id from ws05_admin_ctx)
     )
   $$,
   '42501',

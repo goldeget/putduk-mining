@@ -6,9 +6,10 @@
  *
  * Durable lease ownership comes from claim / complete / fail RPCs.
  * Each claimed row refreshes its lease through extend_*_lease.
+ * A handler that outlives the original lease renews it on an interval.
+ * The interval is cleared on success, failure, and worker shutdown.
  * Stdout heartbeats are operational logs only — not lease evidence.
  * Still missing:
- *   - in-handler interval while one item runs longer than the lease
  *   - permanent reject for unsupported outbox (today exhausts to DEAD_LETTER)
  *   - outbox delivery / notification fanout commands
  */
@@ -64,6 +65,134 @@ export function wantsOnce(argv = process.argv.slice(2), env = process.env) {
   return flag === "1" || flag === "true" || flag === "yes";
 }
 
+const activeLeaseRenewals = new Set();
+
+export function activeLeaseRenewalCount() {
+  return activeLeaseRenewals.size;
+}
+
+export function resolveLeaseRenewIntervalMs(leaseSeconds, override) {
+  if (override === undefined) {
+    return Math.max(1_000, Math.floor((Number(leaseSeconds) * 1000) / 3));
+  }
+  if (!Number.isFinite(override) || override < 50) {
+    throw new Error("INVALID_LEASE_RENEW_INTERVAL");
+  }
+  return override;
+}
+
+/**
+ * 처리 중 lease를 주기적으로 늘린다.
+ * stop/settle은 타이머를 제거하고, 진행 중인 연장 호출이 끝난 뒤에 반환한다.
+ */
+export function startPeriodicLeaseRenewal({
+  intervalMs,
+  extend,
+  onExtensionFailure,
+}) {
+  if (!Number.isFinite(intervalMs) || intervalMs < 50) {
+    throw new Error("INVALID_LEASE_RENEW_INTERVAL");
+  }
+
+  let timer = null;
+  let stopped = false;
+  let inFlight = Promise.resolve();
+  const stats = { extensions: 0, failures: 0, aborted: false };
+  let record = null;
+
+  async function tick() {
+    if (stopped) {
+      return;
+    }
+    try {
+      await extend();
+      stats.extensions += 1;
+    } catch (error) {
+      stats.failures += 1;
+      const decision = onExtensionFailure
+        ? await onExtensionFailure(error)
+        : "abort";
+      if (decision !== "continue") {
+        stats.aborted = true;
+        stop();
+      }
+    }
+  }
+
+  function stop() {
+    stopped = true;
+    if (timer) {
+      clearInterval(timer);
+      timer = null;
+    }
+    if (record) {
+      activeLeaseRenewals.delete(record);
+    }
+  }
+
+  async function settle() {
+    stop();
+    await inFlight;
+  }
+
+  record = { stop, settle, stats };
+  timer = setInterval(() => {
+    if (stopped) {
+      return;
+    }
+    inFlight = inFlight.then(() => tick());
+  }, intervalMs);
+  if (typeof timer.unref === "function") {
+    timer.unref();
+  }
+  activeLeaseRenewals.add(record);
+  return record;
+}
+
+export function stopAllLeaseRenewals() {
+  for (const renewal of [...activeLeaseRenewals]) {
+    renewal.stop();
+  }
+}
+
+function installLeaseShutdownOnce() {
+  if (installLeaseShutdownOnce.installed) {
+    return;
+  }
+  installLeaseShutdownOnce.installed = true;
+  const shutdown = (signal) => {
+    stopAllLeaseRenewals();
+    process.exit(signal === "SIGINT" ? 130 : 143);
+  };
+  process.once("SIGINT", () => shutdown("SIGINT"));
+  process.once("SIGTERM", () => shutdown("SIGTERM"));
+}
+
+installLeaseShutdownOnce.installed = false;
+
+async function runHandlerWithLeaseRenewal({
+  leaseSeconds,
+  leaseRenewIntervalMs,
+  extend,
+  handler,
+}) {
+  const renewal = startPeriodicLeaseRenewal({
+    intervalMs: resolveLeaseRenewIntervalMs(leaseSeconds, leaseRenewIntervalMs),
+    extend,
+    onExtensionFailure: () => "abort",
+  });
+  try {
+    await handler();
+    await renewal.settle();
+    if (renewal.stats.aborted) {
+      throw new Error("LEASE_EXTENSION_FAILED");
+    }
+  } catch (cause) {
+    await renewal.settle();
+    throw cause;
+  }
+}
+
 /** Operational stdout only — not durable lease heartbeat evidence. */
 export async function emitStdoutHeartbeat(workerId, startedAt) {
   const uptimeSec = Math.floor((Date.now() - startedAt) / 1000);
@@ -108,6 +237,7 @@ export async function processOutboxBatch(
     leaseSeconds = 60,
     retryDelaySeconds,
     outboxHandlers = SUPPORTED_OUTBOX_HANDLERS,
+    leaseRenewIntervalMs,
   } = {},
 ) {
   const summary = {
@@ -164,7 +294,23 @@ export async function processOutboxBatch(
     }
 
     try {
-      await handler(client, event);
+      await runHandlerWithLeaseRenewal({
+        leaseSeconds,
+        leaseRenewIntervalMs,
+        extend: async () => {
+          const { error } = await client.rpc("extend_outbox_event_lease", {
+            p_event_id: event.id,
+            p_worker_id: workerId,
+            p_lease_seconds: leaseSeconds,
+          });
+          if (error) {
+            throw new Error(error.message);
+          }
+        },
+        handler: async () => {
+          await handler(client, event);
+        },
+      });
       const { error: completeError } = await client.rpc(
         "complete_outbox_event",
         {
@@ -207,6 +353,7 @@ export async function processJobBatch(
     batchSize = 10,
     leaseSeconds = 120,
     jobHandlers = SUPPORTED_JOB_HANDLERS,
+    leaseRenewIntervalMs,
   } = {},
 ) {
   const summary = {
@@ -258,7 +405,23 @@ export async function processJobBatch(
     }
 
     try {
-      await handler(client, job);
+      await runHandlerWithLeaseRenewal({
+        leaseSeconds,
+        leaseRenewIntervalMs,
+        extend: async () => {
+          const { error } = await client.rpc("extend_system_job_lease", {
+            p_job_id: job.id,
+            p_worker_id: workerId,
+            p_lease_seconds: leaseSeconds,
+          });
+          if (error) {
+            throw new Error(error.message);
+          }
+        },
+        handler: async () => {
+          await handler(client, job);
+        },
+      });
       const { error: completeError } = await client.rpc("complete_system_job", {
         p_job_id: job.id,
         p_worker_id: workerId,
@@ -306,6 +469,7 @@ export async function runDurableLoop({
   heartbeatMs = HEARTBEAT_MS,
   once = false,
 } = {}) {
+  installLeaseShutdownOnce();
   const startedAt = Date.now();
   let lastHeartbeat = 0;
 
@@ -333,6 +497,7 @@ export async function runDurableLoop({
     );
 
     if (once) {
+      stopAllLeaseRenewals();
       console.info(
         JSON.stringify({
           type: "worker.once.summary",

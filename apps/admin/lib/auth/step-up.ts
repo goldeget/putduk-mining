@@ -31,6 +31,7 @@ export async function issueAdminStepUpGrant(input: {
 
 export async function consumeAdminStepUpGrant(input: {
   userId: string;
+  adminSessionId: string;
   token: string;
   commandFamily: string;
   requestId: string;
@@ -38,6 +39,7 @@ export async function consumeAdminStepUpGrant(input: {
   const service = createAdminServiceClient();
   const { error } = await service.rpc("consume_admin_step_up", {
     p_user_id: input.userId,
+    p_admin_session_id: input.adminSessionId,
     p_token: input.token,
     p_command_family: input.commandFamily,
     p_request_id: input.requestId,

@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(61);
+select plan(63);
 
 select ok(
   (
@@ -205,6 +205,16 @@ select ok(
 select ok(
   not has_table_privilege('authenticated', 'public.analytics_events', 'INSERT'),
   'analytics events are ingested by the server only'
+);
+
+select ok(
+  has_table_privilege('service_role', 'public.analytics_events', 'INSERT'),
+  'service role can insert server-ingested analytics events'
+);
+
+select ok(
+  has_table_privilege('service_role', 'public.analytics_events', 'SELECT'),
+  'service role can return inserted analytics events'
 );
 
 select ok(
