@@ -32,6 +32,50 @@ type Shot = {
 
 const shots: Shot[] = [];
 
+function isHydrationMismatch(text: string) {
+  return (
+    text.includes("react.dev/link/hydration-mismatch") ||
+    text.includes("hydration-mismatch") ||
+    text.includes("Hydration failed because") ||
+    text.includes("A tree hydrated but some attributes") ||
+    /Text content did not match/i.test(text)
+  );
+}
+
+async function waitForHydratedControls(page: Page) {
+  await page.waitForFunction(
+    () => {
+      const hydrated = (node: Element) =>
+        Object.getOwnPropertyNames(node).some(
+          (key) =>
+            key.startsWith("__reactFiber") ||
+            key.startsWith("__reactProps") ||
+            key.startsWith("__reactContainer"),
+        );
+      const settled = (node: Element) => {
+        let current: Element | null = node;
+        while (current) {
+          if (hydrated(current)) return true;
+          current = current.parentElement;
+        }
+        return false;
+      };
+      // Playwright caret:hide 가 바꾸는 요소와 같다.
+      const targets = Array.from(
+        document.querySelectorAll("input, textarea, [contenteditable]"),
+      );
+      if (targets.length > 0) {
+        return targets.every(settled);
+      }
+      const main = document.querySelector("main") ?? document.body;
+      if (hydrated(main)) return true;
+      return Array.from(main.querySelectorAll("*")).some(hydrated);
+    },
+    undefined,
+    { timeout: 60_000 },
+  );
+}
+
 function shotName(
   audience: Shot["audience"],
   route: string,
@@ -70,6 +114,7 @@ async function captureSuccess(
   await expect(page.getByText(input.ready).first()).toBeVisible({
     timeout: 60_000,
   });
+  await waitForHydratedControls(page);
   const fileName = shotName(
     input.audience,
     input.route,
@@ -78,10 +123,13 @@ async function captureSuccess(
   );
   const file = path.join(OUTPUT_DIR, fileName);
   mkdirSync(OUTPUT_DIR, { recursive: true });
+  // 기본 caret:hide 는 input 에 caret-color:transparent 를 넣는다.
+  // 개발 빌드 hydration 이 그 변경을 mismatch 로 기록하므로, 증거 캡처는 caret 를 바꾸지 않는다.
   await page.screenshot({
-    path: file,
-    fullPage: true,
     animations: "disabled",
+    caret: "initial",
+    fullPage: true,
+    path: file,
   });
   shots.push({
     audience: input.audience,
@@ -98,6 +146,13 @@ test.describe("authenticated success visual evidence", () => {
     page,
   }) => {
     test.setTimeout(600_000);
+    const hydration: string[] = [];
+    page.on("console", (message) => {
+      const text = message.text();
+      if (isHydrationMismatch(text)) {
+        hydration.push(text);
+      }
+    });
     await prepareMemberThroughStart(page, "ws05-visual");
 
     const userScreens = [
@@ -173,5 +228,6 @@ test.describe("authenticated success visual evidence", () => {
       )}\n`,
     );
     expect(shots).toHaveLength(30);
+    expect(hydration).toEqual([]);
   });
 });
