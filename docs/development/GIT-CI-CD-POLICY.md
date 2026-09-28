@@ -96,7 +96,15 @@ Record:
 - QA environment, browser matrix and raw failures;
 - rollback decision/owner and monitoring window.
 
-## 9. Current integrity state (2026-09-27)
+## 9. Temporary public visibility
+
+On 2026-09-29 the owner changed `goldeget/putduk-mining` from private to public so GitHub Actions could run. Private Actions jobs were not starting because recent account payments failed or the spending limit had to be increased.
+
+This visibility is temporary. It is not a launch, and it does not authorize Supabase remote mutation, Cloudflare provisioning, DNS changes, or a wider target scope.
+
+When platform work is finished and the product is ready to launch, the owner switches this repository back to private before production traffic. Agents do not change repository visibility unless the user explicitly asks for that change.
+
+## 10. Current integrity state (2026-09-27)
 
 The exact authorized origin is reachable under the verified `goldeget` GitHub identity. The original missing parent object (`c27b7c542ccb8808a2656a62c9d0536dffd87f06`) and its reachable graph were restored from that origin with `git fetch --refetch origin develop`; no graft, replacement ref, fake shallow boundary, history rewrite or force push was used.
 
