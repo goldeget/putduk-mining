@@ -82,6 +82,8 @@ export function WithdrawalForm({
   const [pending, setPending] = useState(false);
   const [revealAddress, setRevealAddress] = useState(false);
   const [useNewDestination, setUseNewDestination] = useState(false);
+  const [bankCode, setBankCode] = useState("");
+  const [network, setNetwork] = useState("");
 
   const policy = useMemo(
     () => policies.find((candidate) => candidate.method === method),
@@ -144,6 +146,8 @@ export function WithdrawalForm({
     setFeedback(null);
     setRevealAddress(false);
     setUseNewDestination(false);
+    setBankCode("");
+    setNetwork("");
   }
 
   function chooseMinimum() {
@@ -262,6 +266,8 @@ export function WithdrawalForm({
       form.reset();
       setRevealAddress(false);
       setUseNewDestination(false);
+      setBankCode("");
+      setNetwork("");
       void trackAnalyticsEvent("withdrawal_start", { currency: "KRW" }).catch(
         () => undefined,
       );
@@ -287,10 +293,10 @@ export function WithdrawalForm({
     <form className={styles.form} onSubmit={submit} noValidate>
       <header className={styles.stepHeader}>
         <span className={styles.stepNumber}>01</span>
-        <span>
+        <div>
           <h2>출금 방법과 금액</h2>
           <p>사용 가능한 원화에서만 출금할 수 있어요.</p>
-        </span>
+        </div>
       </header>
 
       <fieldset>
@@ -384,20 +390,20 @@ export function WithdrawalForm({
 
       <header className={styles.stepHeader}>
         <span className={styles.stepNumber}>02</span>
-        <span>
+        <div>
           <h2>{method === "KRW_BANK" ? "받을 계좌" : "받을 USDT 주소"}</h2>
           <p>
             {method === "KRW_BANK"
               ? "본인 명의 계좌만 사용할 수 있어요."
               : "주소는 평소 일부만 보이고, 확인 시에만 전체를 열어 주세요."}
           </p>
-        </span>
+        </div>
       </header>
 
       {eligibleDestination && !useNewDestination ? (
         <div className={styles.formNotice}>
           <PutdukIcon name="shield" size={19} />
-          <p>
+          <div className={styles.formNoticeBody}>
             등록된 목적지: {eligibleDestination.displayHint}
             <button
               type="button"
@@ -407,7 +413,7 @@ export function WithdrawalForm({
             >
               다른 목적지로 변경
             </button>
-          </p>
+          </div>
         </div>
       ) : null}
 
@@ -429,7 +435,8 @@ export function WithdrawalForm({
               <select
                 name="bankCode"
                 required
-                defaultValue=""
+                value={bankCode}
+                onChange={(event) => setBankCode(event.target.value)}
                 disabled={pending}
               >
                 <option value="" disabled>
@@ -472,7 +479,8 @@ export function WithdrawalForm({
               <select
                 name="network"
                 required
-                defaultValue=""
+                value={network}
+                onChange={(event) => setNetwork(event.target.value)}
                 disabled={pending}
               >
                 <option value="" disabled>
