@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(61);
+select plan(63);
 
 select ok(
   (
