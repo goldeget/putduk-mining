@@ -254,7 +254,7 @@ jobs:
   typography-public:
     name: Korean typography public gates
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 25
     steps:
       - name: Check out source
         uses: actions/checkout@v4
@@ -277,7 +277,7 @@ jobs:
         run: pnpm exec playwright install --with-deps chromium
 
       - name: Run public Korean typography
-        timeout-minutes: 18
+        timeout-minutes: 15
         run: pnpm exec playwright test --config playwright.typography.config.ts
 
       - name: Assert public typography evidence
