@@ -82,7 +82,15 @@ export function SupportRuntime() {
   return (
     <button
       id="putduk-support-launcher"
-      className={`button button--primary support-launcher putduk-support-launcher${aboveNavigation ? " support-launcher--raised" : ""}`}
+      className={[
+        "button",
+        "button--primary",
+        "support-launcher",
+        "putduk-support-launcher",
+        aboveNavigation ? "support-launcher--raised" : "",
+      ]
+        .filter(Boolean)
+        .join(" ")}
       type="button"
       aria-label="상담 열기"
       data-support-state={pluginKey && booted ? "ready" : "unavailable"}
