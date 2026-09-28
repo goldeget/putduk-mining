@@ -12,7 +12,7 @@
   "scripts": {
     "dev": "next dev",
     "dev:admin": "pnpm --dir apps/admin dev",
-    "build": "pnpm build:web && pnpm build:admin",
+    "build": "pnpm build:web && pnpm build:admin && node scripts/assert-channel-talk-bundles.mjs",
     "build:web": "next build",
     "build:admin": "pnpm --dir apps/admin build",
     "start": "next start",
