@@ -289,7 +289,8 @@
   color: var(--brand-primary);
 }
 
-.formNotice p {
+.formNotice p,
+.formNoticeBody {
   margin: 0;
   font-size: 0.77rem;
   line-height: 1.65;
@@ -1287,6 +1288,8 @@
 }
 
 .inlineReveal {
+  display: block;
+  width: fit-content;
   margin-top: 0.45rem;
   border: 0;
   background: transparent;
