@@ -64,6 +64,7 @@ This matrix separates architecture presence, working domain flow and production 
 6. Verify exact-project backup/PITR, isolated restore and app/config/database rollback with recorded RPO/RTO.
 7. Complete connected authentication/recovery delivery, abuse controls and authenticated P0 browser fixtures without real member/KYC data.
 8. Produce reproducible deploy-artifact provenance, then perform separately authorized Supabase and Cloudflare production phases. Remote mutation remains forbidden in WS-03.
+9. Before production launch, switch `goldeget/putduk-mining` back to private. Public visibility on 2026-09-29 is only a temporary GitHub Actions billing workaround.
 
 ## Current P1 gaps
 
