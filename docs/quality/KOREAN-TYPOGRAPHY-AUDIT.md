@@ -129,7 +129,7 @@ Local result after that harness and the confirmed wrapping patch: **128 passed**
 
 The first CI gate did not pass. Public failures were verification list items at 390, plus 200% overflow on the landing header and mascot and 200% splits on login and signup. Protected failures were the desktop sidebar phrase `반영됩니다` at 1440 and a 5px menu overflow at 390 with 200% text. The follow-up patch keeps `word-break: keep-all` on those elements only.
 
-The protected rerun then passed: 128 passed, 126 screenshots, hydration 0, 3.2m. The public dev run passed 70 tests and 70 screenshots, then teardown hit the 15 minute global cap. The public cap is 18 minutes so shutdown can finish. Assertions are unchanged.
+The protected rerun then passed: 128 passed, 126 screenshots, hydration 0, 3.2m. The public dev run passed 70 tests and 70 screenshots, then the dev process group did not exit and the global cap fired during teardown. Public servers now use the same process-group wrapper as the authenticated suite. Assertions are unchanged.
 
 Confirmed wrapping that was patched:
 

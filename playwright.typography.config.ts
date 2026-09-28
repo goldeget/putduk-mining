@@ -11,8 +11,10 @@ const localSupabaseEnv = {
   SUPABASE_SECRET_KEY: "local-typography-secret-key-not-a-secret",
 };
 
-const memberServer = "pnpm dev";
-const adminServer = "pnpm dev:admin";
+const memberServer =
+  "node scripts/e2e-web-server.mjs pnpm exec next dev --hostname 127.0.0.1 --port 3000";
+const adminServer =
+  "node scripts/e2e-web-server.mjs pnpm --dir apps/admin exec next dev --hostname 127.0.0.1 --port 3100";
 
 export default defineConfig({
   testDir: "./tests/typography",
@@ -44,7 +46,10 @@ export default defineConfig({
       url: "http://127.0.0.1:3000",
       reuseExistingServer: !isCI,
       timeout: 180_000,
+      gracefulShutdown: { signal: "SIGTERM" as const, timeout: 5_000 },
+      stdout: (isCI ? "pipe" : "ignore") as "pipe" | "ignore",
       env: {
+        ...process.env,
         ...localSupabaseEnv,
         NEXT_PUBLIC_APP_URL: "http://127.0.0.1:3000",
       },
@@ -54,7 +59,10 @@ export default defineConfig({
       url: "http://127.0.0.1:3100/login",
       reuseExistingServer: !isCI,
       timeout: 180_000,
+      gracefulShutdown: { signal: "SIGTERM" as const, timeout: 5_000 },
+      stdout: (isCI ? "pipe" : "ignore") as "pipe" | "ignore",
       env: {
+        ...process.env,
         ...localSupabaseEnv,
         ADMIN_APP_URL: "http://127.0.0.1:3100",
         NEXT_PUBLIC_APP_URL: "http://127.0.0.1:3100",
