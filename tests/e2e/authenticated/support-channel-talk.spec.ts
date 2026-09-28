@@ -180,13 +180,14 @@ test("member support identity does not leak across login", async ({ page }) => {
   await page.goto("/home");
   const launcher = page.locator("#putduk-support-launcher");
   await expect(launcher).toBeVisible();
-  const launcherBox = await launcher.boundingBox();
-  expect(launcherBox).not.toBeNull();
-  if (width < 980 && launcherBox) {
+  if (width < 980) {
     const navigation = page.locator(".product-workspace > .product-navigation");
+    await expect(navigation).toBeVisible();
+    const launcherBox = await launcher.boundingBox();
     const navigationBox = await navigation.boundingBox();
+    expect(launcherBox).not.toBeNull();
     expect(navigationBox).not.toBeNull();
-    if (navigationBox) {
+    if (launcherBox && navigationBox) {
       expect(boxesOverlap(launcherBox, navigationBox)).toBe(false);
     }
   }
