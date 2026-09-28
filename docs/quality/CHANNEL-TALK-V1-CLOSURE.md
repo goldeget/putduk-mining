@@ -55,7 +55,7 @@ SDK: `@channel.io/channel-web-sdk-loader` `2.0.2`. 공개/회원 앱에만 있�
 | identity transition | CLOSED | 회원 A → logout → 회원 B에서 shutdown 후 reboot. 브라우저 테스트가 격리 확인 |
 | mobile launcher | CLOSED | `hideChannelButtonOnBoot`와 `customLauncherSelector`. 하단 메뉴와 겹침 테스트 |
 | light/dark | CLOSED | boot `appearance`와 `setAppearance` |
-| CSP | PARTIAL | 공개 앱에만 Channel Talk 호스트를 추가함. 2026-09-28 공식 CSP 페이지에는 `wss://*.desk-ws.channel.io`가 없음. 구현 allowlist에는 있음. `img-src`의 `blob:`와 `script-src`의 `'unsafe-inline'`은 공개 앱 CSP 헤더에 있음 |
+| CSP | PARTIAL | 2026-09-28 감사에서 allowlist를 고쳤다. 아래 CSP audit. CLOSED는 이 변경의 develop merge CI가 green인 뒤에만 올린다 |
 | failure-safe | CLOSED | SDK를 불러오지 못해도 상담 화면과 앱 핵심 경로는 남음 |
 | privacy allowlist | CLOSED | opaque memberId, 선택 display name, language, 가입일. 잔액, 계좌, USDT 주소, tx, 출금 금액, KYC 원문, 비밀번호, OTP, 토큰은 프로필에 넣지 않음 |
 | admin bundle isolation | CLOSED | admin 소스와 CSP에 Channel Talk SDK를 넣지 않음 |
@@ -103,6 +103,51 @@ CI 로그는 “some attributes”가 다르다는 일반 문구만 남기고, �
 타이포그래피 게이트 hydration 0은 그 스위트의 console annotation이며, Authenticated 로그의 이 경고를 지운 증거가 아니다.
 이번 closure commit에서 출금 화면 hydration을 고치지 않는다.
 
+## CSP audit 2026-09-28
+
+이전 문장의 “공식 CSP에는 `wss://*.desk-ws.channel.io`가 없다”는 현재 한국어 공식 문서와 다르다.
+같은 날 다시 읽은 페이지:
+
+- 한국어: `https://developers.channel.io/ko/articles/Content-Security-Policy-0c068399`
+- 레퍼런스: `https://developers.channel.io/reference/content-security-policy-kr`
+
+이 두 페이지의 connect-src에는 `wss://*.desk-ws.channel.io`와 `wss://*.front-ws.channel.io`가 있다.
+영어 페이지 `https://developers.channel.io/en/articles/Content-Security-Policy-0c068399`에는 desk-ws가 빠져 있다.
+allowlist는 한국어 공식 목록을 따른다.
+
+SDK는 `@channel.io/channel-web-sdk-loader` `2.0.2`다.
+`loadScript()`는 `https://cdn.channel.io/plugin/ch-plugin-web.js`를 넣는다.
+그 로더가 같은 출처 iframe에 `ch-plugin-core-20260917193237.js`를 쓴다.
+알림음은 `new Audio`로 `https://cdn.channel.io/plugin/files/person.mp3`와 `meet-ringtone.mp3`를 가리킨다.
+
+| 출처 | 분류 | 처리 | 이유 |
+| --- | --- | --- | --- |
+| connect `https://*.channel.io` `https://*.channel.app` `https://*.sentry.io` | 공식 connect-src | 유지 | 한국어 공식 목록 |
+| `wss://*.channel.io` `wss://*.desk-ws.channel.io` `wss://*.front-ws.channel.io` | 공식 connect-src | 유지 | 한국어 공식 목록. 영어 페이지만 desk-ws가 빠짐 |
+| script `https://*.channel.io` `https://*.sentry-cdn.com` | 공식 script-src | 유지 | loader가 `cdn.channel.io` 스크립트를 넣음 |
+| img `https://*.channel.io` `https://*.cdninstagram.com` `blob:` | 공식 img-src | 유지 | `blob:`는 Channel Talk 이전 공개 CSP에도 있었음 |
+| media `https://*.channel.io` | SDK 동작 | 유지 | 공식 페이지에 media-src 줄은 없음. Audio.src가 cdn mp3라서 필요 |
+| font `https://*.channel.io` | 근거 없음 | 제거 | 공식 font-src 없음. 코어 번들에 웹폰트 파일 없음 |
+| frame `https://*.channel.io` `https://*.channel.app` | 근거 없음 | 제거 | 공식 frame-src 없음. iframe은 src 없는 같은 출처 문서. meet는 `window.open` |
+| script `'unsafe-inline'` | 기존 PUTDUK CSP | 유지, Channel Talk 책임 아님 | `cd9fa3aa`부터 있었음. nonce 전환은 아래 follow-up |
+| style `'unsafe-inline'` worker `blob:` | 기존 PUTDUK CSP | 유지 | Channel Talk 이전에 있었음 |
+
+관리자 CSP와 관리자 번들에는 Channel Talk 출처를 넣지 않는다.
+`*` 단독과 스킴 전체 와일드카드는 넣지 않는다.
+production script-src에 `'unsafe-eval'`은 없다.
+
+### SECURITY HARDENING FOLLOW-UP
+
+production `script-src 'unsafe-inline'`을 이번 closure에서 제거하지 않는다.
+Next.js `16.3.6` 공개 앱은 nonce를 연결하지 않았고, `proxy.ts`도 CSP nonce를 만들지 않는다.
+공식 문서는 inline 설치 스크립트를 쓸 때만 `'unsafe-inline'`이 필요하고 nonce로 바꿀 수 있다고 한다.
+npm loader는 그 inline 설치 조각을 페이지에 직접 쓰지 않고 `cdn.channel.io` 외부 스크립트를 넣는다.
+그래도 Next 문서 부트스트랩의 inline script까지 이번 변경에서 빼면 범위가 커진다.
+nonce 전환은 별도 security hardening이다.
+
+이 절의 allowlist 정정만으로 CSP를 CLOSED로 올리지 않는다.
+web/admin build, 번들 경계, 관련 unit, support browser, develop merge CI가 green일 때 CLOSED로 고친다.
+
 ## NOT YET LIVE
 
 CHANNEL TALK LIVE ACCOUNT: **USER_ACTION_REQUIRED**
@@ -121,8 +166,10 @@ CHANNEL TALK LIVE ACCOUNT: **USER_ACTION_REQUIRED**
 - member boot는 `memberId`와 `memberHash`를 함께 보낸다. 익명 boot는 둘 다 보내지 않는다.
 - SPA는 URL 변경 시 `setPage` 다음 `PageView`다.
 
-live 연결 전에 CSP의 `wss://*.desk-ws.channel.io`를 현재 공식 목록과 맞춘다.
-그 전에는 production 값을 넣지 않는다.
+한국어 공식 connect-src에는 `wss://*.desk-ws.channel.io`가 있고, 공개 CSP도 그 호스트를 포함한다.
+production plugin key와 Member Hash secret은 아직 없다. 값을 만들거나 Git에 넣지 않는다.
+Member Hash를 대시보드에서 켜기 전에, 배포된 코드가 member boot에서 `memberId`와 `memberHash`를 함께 보내는지 확인한다.
+익명 boot는 둘 다 보내지 않는다.
 
 환경 계약:
 

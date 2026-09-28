@@ -3,7 +3,16 @@ import { join, relative, resolve } from "node:path";
 
 import { describe, expect, it } from "vitest";
 
-import { channelTalkCsp } from "@/lib/support/csp";
+import { buildAdminContentSecurityPolicy } from "@/apps/admin/lib/content-security-policy";
+import {
+  buildPublicContentSecurityPolicy,
+  channelTalkConnectSources,
+  channelTalkImageSources,
+  channelTalkMediaSources,
+  channelTalkScriptSources,
+  findUnsupportedCspWildcard,
+  parseContentSecurityPolicy,
+} from "@/lib/support/csp";
 import { buildMemberSession } from "@/lib/support/member-session";
 import {
   buildBootOption,
@@ -345,19 +354,78 @@ describe("Channel Talk boundaries", () => {
     }
   });
 
-  it("adds only the documented Channel Talk hosts to public CSP", () => {
-    const header = readFileSync(resolve(root, "next.config.ts"), "utf8");
-    const adminHeader = readFileSync(
+  it("matches the current official Channel Talk connect, image, and script hosts", () => {
+    const policy = buildPublicContentSecurityPolicy({
+      appEnv: "production",
+      nodeEnv: "production",
+      supabaseUrl: "https://project.supabase.co",
+    });
+    const directives = parseContentSecurityPolicy(policy);
+    const connect = directives.get("connect-src") ?? [];
+    const image = directives.get("img-src") ?? [];
+    const media = directives.get("media-src") ?? [];
+    const script = directives.get("script-src") ?? [];
+
+    expect(connect).toEqual([
+      "'self'",
+      "https://*.supabase.co",
+      "wss://*.supabase.co",
+      ...channelTalkConnectSources,
+    ]);
+    expect(connect).toEqual(
+      expect.arrayContaining([
+        "wss://*.desk-ws.channel.io",
+        "wss://*.front-ws.channel.io",
+      ]),
+    );
+    expect(image).toEqual([
+      "'self'",
+      "data:",
+      "blob:",
+      "https://*.supabase.co",
+      ...channelTalkImageSources,
+    ]);
+    expect(media).toEqual(["'self'", ...channelTalkMediaSources]);
+    expect(script).toEqual([
+      "'self'",
+      "'unsafe-inline'",
+      ...channelTalkScriptSources,
+    ]);
+    expect(script).not.toContain("'unsafe-eval'");
+    expect(directives.get("font-src")).toEqual(["'self'", "data:"]);
+    expect(directives.has("frame-src")).toBe(false);
+    expect(
+      findUnsupportedCspWildcard([...directives.values()].flat()),
+    ).toBeNull();
+  });
+
+  it("keeps Channel Talk origins out of the admin CSP", () => {
+    const policy = buildAdminContentSecurityPolicy({
+      appEnv: "production",
+      nodeEnv: "production",
+      supabaseUrl: "https://project.supabase.co",
+    });
+    const adminSource = readFileSync(
       resolve(root, "apps/admin/next.config.ts"),
       "utf8",
     );
-    expect(header).toContain("channelTalkCsp");
-    expect(adminHeader).not.toContain("channel.io");
-    expect(channelTalkCsp.script).not.toContain("unsafe-eval");
-    expect(channelTalkCsp.connect).toContain("https://*.channel.io");
-    expect(channelTalkCsp.connect).not.toContain(" * ");
-    expect(Object.values(channelTalkCsp).join(" ")).not.toContain(
-      "'unsafe-eval'",
-    );
+    const forbidden = [
+      "channel.io",
+      "channel.app",
+      "cdninstagram.com",
+      "sentry.io",
+      "sentry-cdn.com",
+    ];
+
+    expect(adminSource).not.toContain("channel.io");
+    for (const token of forbidden) {
+      expect(policy, token).not.toContain(token);
+    }
+    const adminDirectives = parseContentSecurityPolicy(policy);
+    expect(adminDirectives.has("frame-src")).toBe(false);
+    for (const source of [...adminDirectives.values()].flat()) {
+      if (!source.includes("*")) continue;
+      expect(source).toMatch(/^(?:https|wss):\/\/\*\.supabase\.co$/);
+    }
   });
 });
