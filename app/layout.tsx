@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 
+import { SupportRuntime } from "@/components/support/support-runtime";
 import { AnalyticsBeacon } from "@/components/system/analytics-beacon";
 import { PwaRegistrar } from "@/components/system/pwa-registrar";
 
@@ -110,6 +111,7 @@ export default function RootLayout({
         />
         <PwaRegistrar />
         <AnalyticsBeacon />
+        <SupportRuntime />
         {children}
       </body>
     </html>

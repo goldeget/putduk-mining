@@ -43,7 +43,7 @@ function needsAdminWebServer() {
   if (process.env.E2E_SKIP_ADMIN_SERVER === "1") return false;
   const args = process.argv.join(" ");
   const memberMoneyOnly =
-    /first-krw-withdrawal|first-usdt-withdrawal|withdrawal-negative-guards|public-admin-boundary/.test(
+    /first-krw-withdrawal|first-usdt-withdrawal|withdrawal-negative-guards|public-admin-boundary|support-channel-talk/.test(
       args,
     );
   const adminSpecs =
@@ -127,6 +127,8 @@ export default defineConfig({
         ...process.env,
         ...sharedEnv,
         NEXT_PUBLIC_APP_URL: "http://127.0.0.1:3000",
+        NEXT_PUBLIC_CHANNEL_TALK_PLUGIN_KEY: "putduk-e2e-plugin-key",
+        CHANNEL_TALK_MEMBER_HASH_SECRET: "aa".repeat(32),
       },
     },
     ...(adminWebServerNeeded
@@ -143,6 +145,8 @@ export default defineConfig({
               ...sharedEnv,
               ADMIN_APP_URL: "http://127.0.0.1:3100",
               NEXT_PUBLIC_APP_URL: "http://127.0.0.1:3100",
+              NEXT_PUBLIC_CHANNEL_TALK_PLUGIN_KEY: "",
+              CHANNEL_TALK_MEMBER_HASH_SECRET: "",
             },
           },
         ]

@@ -268,6 +268,9 @@ export default function HomePage() {
           <Link className="ko-copy" href="/status">
             서비스 상태
           </Link>
+          <Link className="ko-copy" href="/support">
+            상담 안내
+          </Link>
         </nav>
       </section>
 

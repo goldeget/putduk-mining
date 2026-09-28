@@ -25,6 +25,8 @@ export default defineConfig({
       NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:
         "local-playwright-publishable-key-not-a-secret",
       NEXT_PUBLIC_SUPABASE_URL: "http://127.0.0.1:58421",
+      NEXT_PUBLIC_CHANNEL_TALK_PLUGIN_KEY: "",
+      CHANNEL_TALK_MEMBER_HASH_SECRET: "",
     },
     gracefulShutdown: { signal: "SIGTERM", timeout: 5_000 },
     url: "http://127.0.0.1:3000",
