@@ -24,5 +24,6 @@ export const config = {
     "/api/v1/notifications/:path*",
     "/api/v1/analytics/:path*",
     "/api/v1/ai/:path*",
+    "/api/v1/support/:path*",
   ],
 };

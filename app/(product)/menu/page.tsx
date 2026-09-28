@@ -39,6 +39,12 @@ const menuItems: ReadonlyArray<{
     label: "신뢰 센터",
     description: "공식 정보와 채굴의 기본 원칙을 확인합니다.",
   },
+  {
+    href: "/support" as Route,
+    icon: "spark",
+    label: "상담",
+    description: "가입, 채굴, 입금과 출금 안내를 확인해요.",
+  },
 ];
 
 export default function MenuPage() {

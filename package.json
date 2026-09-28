@@ -55,6 +55,7 @@
     "verify": "pnpm assets:verify && pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build"
   },
   "dependencies": {
+    "@channel.io/channel-web-sdk-loader": "2.0.2",
     "@supabase/ssr": "0.12.7",
     "@supabase/supabase-js": "2.117.2",
     "motion": "13.4.4",
