@@ -55,7 +55,7 @@ SDK: `@channel.io/channel-web-sdk-loader` `2.0.2`. 공개/회원 앱에만 있�
 | identity transition | CLOSED | 회원 A → logout → 회원 B에서 shutdown 후 reboot. 브라우저 테스트가 격리 확인 |
 | mobile launcher | CLOSED | `hideChannelButtonOnBoot`와 `customLauncherSelector`. 하단 메뉴와 겹침 테스트 |
 | light/dark | CLOSED | boot `appearance`와 `setAppearance` |
-| CSP | PARTIAL | 2026-09-28 감사에서 allowlist를 고쳤다. 아래 CSP audit. CLOSED는 이 변경의 develop merge CI가 green인 뒤에만 올린다 |
+| CSP | CLOSED | develop merge [run 36409784150](https://github.com/goldeget/putduk-mining/actions/runs/36409784150), SHA `4f06c5044ec68b78b0915c92c10414a383951dce`. 아래 CSP audit |
 | failure-safe | CLOSED | SDK를 불러오지 못해도 상담 화면과 앱 핵심 경로는 남음 |
 | privacy allowlist | CLOSED | opaque memberId, 선택 display name, language, 가입일. 잔액, 계좌, USDT 주소, tx, 출금 금액, KYC 원문, 비밀번호, OTP, 토큰은 프로필에 넣지 않음 |
 | admin bundle isolation | CLOSED | admin 소스와 CSP에 Channel Talk SDK를 넣지 않음 |
@@ -145,8 +145,20 @@ npm loader는 그 inline 설치 조각을 페이지에 직접 쓰지 않고 `cdn
 그래도 Next 문서 부트스트랩의 inline script까지 이번 변경에서 빼면 범위가 커진다.
 nonce 전환은 별도 security hardening이다.
 
-이 절의 allowlist 정정만으로 CSP를 CLOSED로 올리지 않는다.
-web/admin build, 번들 경계, 관련 unit, support browser, develop merge CI가 green일 때 CLOSED로 고친다.
+이 절의 allowlist는 develop merge CI에서 닫혔다.
+
+| 항목 | 값 |
+| --- | --- |
+| PR | [#15](https://github.com/goldeget/putduk-mining/pull/15) |
+| PR head | `9a70bd53cc7ab80551a6ad09d0910a9eceb186f9` |
+| PR CI | [run 36407326097](https://github.com/goldeget/putduk-mining/actions/runs/36407326097). 8 jobs success |
+| merge SHA | `4f06c5044ec68b78b0915c92c10414a383951dce` |
+| develop merge CI | [run 36409784150](https://github.com/goldeget/putduk-mining/actions/runs/36409784150). 8 jobs success |
+| main | `fbea85eebf1084bfc02bf1c452392b20f2f497ce` (변경 없음) |
+
+merge CI 숫자: Application success, Database `All tests successful.`, Browser foundation 40 passed, WebServer success, Authenticated 41 passed, Worker 17 passed, typography public 70 passed / screenshots 70 / hydration 0 / unexpected 0, typography protected 128 passed / screenshots 126 / hydration 0 / unexpected 0.
+
+CSP: **CLOSED**
 
 ## NOT YET LIVE
 
@@ -183,7 +195,7 @@ CHANNEL TALK CODE V1: **CLOSED**
 
 CHANNEL TALK LIVE ACCOUNT: **USER_ACTION_REQUIRED**
 
-CSP 공식 목록 일치: **PARTIAL**
+CSP 공식 목록 일치: **CLOSED**
 
 PRODUCT COMPLETE: 아님
 
