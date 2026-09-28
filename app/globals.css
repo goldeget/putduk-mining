@@ -333,6 +333,13 @@ select {
   margin-top: 2rem;
 }
 
+.hero__actions .button {
+  min-width: 0;
+  max-width: 100%;
+  line-break: strict;
+  word-break: keep-all;
+}
+
 .button {
   display: inline-flex;
   min-height: 48px;
@@ -406,8 +413,11 @@ select {
 }
 
 .hero__facts dt {
+  min-width: 0;
   color: var(--text-tertiary);
   font-size: 0.72rem;
+  line-break: strict;
+  word-break: keep-all;
 }
 
 .hero__facts dd {
@@ -1105,11 +1115,11 @@ select {
 
 .state-panel {
   display: grid;
-  max-width: 520px;
+  max-width: 28rem;
   justify-items: start;
-  gap: 0.9rem;
-  margin: 10svh auto;
-  padding: 2rem;
+  gap: 0.65rem;
+  margin: 6svh auto;
+  padding: clamp(1.2rem, 3vw, 1.7rem);
   border: 1px solid var(--border-default);
   border-radius: var(--radius-xl);
   background: var(--surface-default);
@@ -1132,11 +1142,21 @@ select {
 .state-panel h2,
 .state-panel p {
   margin: 0;
+  word-break: keep-all;
+}
+
+.state-panel h2 {
+  max-width: 16ch;
+  font-size: clamp(1.15rem, 2.8vw, 1.45rem);
+  letter-spacing: -0.04em;
+  line-height: 1.25;
 }
 
 .state-panel p {
+  max-width: 26rem;
   color: var(--text-secondary);
-  line-height: 1.7;
+  font-size: 0.9rem;
+  line-height: 1.6;
 }
 
 .state-panel__action {
@@ -1310,6 +1330,8 @@ select {
   letter-spacing: -0.062em;
   line-height: 1.02;
   text-wrap: balance;
+  line-break: strict;
+  word-break: keep-all;
 }
 
 .auth-page__brand > div > p:last-child {
@@ -1333,6 +1355,8 @@ select {
 
 .auth-trust-list li {
   display: inline-flex;
+  min-width: 0;
+  max-width: 100%;
   min-height: 38px;
   align-items: center;
   gap: 0.55rem;
@@ -1341,6 +1365,8 @@ select {
   border-radius: var(--radius-full);
   color: var(--text-secondary);
   font-size: 0.76rem;
+  line-break: strict;
+  word-break: keep-all;
 }
 
 .auth-trust-list svg {
@@ -1359,6 +1385,8 @@ select {
   font-size: clamp(1.8rem, 4vw, 2.5rem);
   font-weight: 620;
   letter-spacing: -0.045em;
+  line-break: strict;
+  word-break: keep-all;
 }
 
 .auth-page__panel-header > p:last-child,
@@ -1366,6 +1394,8 @@ select {
   color: var(--text-tertiary);
   font-size: 0.84rem;
   line-height: 1.7;
+  line-break: strict;
+  word-break: keep-all;
 }
 
 .auth-form {
@@ -1463,6 +1493,7 @@ select {
   z-index: var(--z-sticky);
   top: 0;
   display: flex;
+  min-width: 0;
   min-height: 66px;
   align-items: center;
   justify-content: space-between;
@@ -1474,7 +1505,10 @@ select {
 
 .product-header__tools {
   display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
   align-items: center;
+  justify-content: flex-end;
   gap: 1rem;
 }
 
@@ -1490,13 +1524,16 @@ select {
 
 .product-header__identity {
   display: flex;
+  min-width: 0;
+  max-width: 100%;
   align-items: center;
   gap: 0.7rem;
 }
 
 .product-header__identity > span:first-child {
   display: grid;
-  max-width: 170px;
+  min-width: 0;
+  max-width: min(170px, 100%);
   gap: 0.14rem;
   overflow: hidden;
   font-size: 0.76rem;
@@ -1532,6 +1569,8 @@ select {
   margin-inline: auto;
   padding-block: clamp(2.2rem, 6vw, 5.5rem)
     calc(7rem + env(safe-area-inset-bottom));
+  line-break: strict;
+  word-break: keep-all;
 }
 
 .product-navigation {
@@ -1585,31 +1624,32 @@ select {
 
 .product-page-heading {
   display: grid;
-  gap: 1.5rem;
+  gap: 1.15rem;
   align-items: end;
-  margin-bottom: clamp(2rem, 6vw, 4rem);
+  margin-bottom: clamp(1.6rem, 4.5vw, 3rem);
 }
 
 .product-page-heading > div:first-child {
-  max-width: 810px;
+  max-width: 36rem;
 }
 
 .product-page-heading h1 {
-  margin: 0.8rem 0 1rem;
-  font-size: clamp(2.15rem, 6.4vw, 4.8rem);
+  max-width: 18ch;
+  margin: 0.55rem 0 0.7rem;
+  font-size: clamp(1.95rem, 5.4vw, 3.6rem);
   font-weight: 640;
-  letter-spacing: -0.058em;
-  line-height: 1.05;
+  letter-spacing: -0.055em;
+  line-height: 1.08;
   text-wrap: balance;
   word-break: keep-all;
 }
 
 .product-page-heading > div:first-child > p:last-child {
-  max-width: 680px;
+  max-width: 28rem;
   margin: 0;
   color: var(--text-secondary);
-  font-size: clamp(0.92rem, 2vw, 1.04rem);
-  line-height: 1.8;
+  font-size: clamp(0.88rem, 1.8vw, 0.98rem);
+  line-height: 1.65;
   word-break: keep-all;
 }
 
@@ -1766,20 +1806,23 @@ select {
 .product-command-card h2,
 .ledger-principle h2,
 .ai-foundation__panel h2 {
-  margin: 0.75rem 0 0.85rem;
-  font-size: clamp(1.4rem, 4vw, 2.2rem);
+  max-width: 18ch;
+  margin: 0.55rem 0 0.65rem;
+  font-size: clamp(1.25rem, 3.2vw, 1.85rem);
   font-weight: 620;
   letter-spacing: -0.045em;
-  line-height: 1.2;
+  line-height: 1.22;
   text-wrap: balance;
 }
 
 .product-command-card > p:not(.eyebrow),
 .ledger-principle > p:last-child,
 .ai-foundation__panel > p:last-child {
+  max-width: 28rem;
   margin: 0;
   color: var(--text-secondary);
-  line-height: 1.75;
+  font-size: 0.9rem;
+  line-height: 1.65;
   word-break: keep-all;
 }
 
@@ -2016,6 +2059,8 @@ select {
 
 .balance-card__note {
   max-width: 28rem;
+  line-break: strict;
+  word-break: keep-all;
 }
 
 .balance-card .text-link {
@@ -2029,6 +2074,12 @@ select {
 
 .ledger-principle {
   margin-top: 1rem;
+}
+
+.ledger-principle h2,
+.ledger-history > p {
+  line-break: strict;
+  word-break: keep-all;
 }
 
 .ledger-history {
@@ -2840,6 +2891,8 @@ select {
   color: var(--text-tertiary);
   font-size: 0.64rem;
   line-height: 1.5;
+  line-break: strict;
+  word-break: keep-all;
 }
 
 .ai-composer footer > span {
@@ -3043,7 +3096,7 @@ select {
 
 .trust-document__body > div > section {
   display: grid;
-  grid-template-columns: 2.5rem 1fr;
+  grid-template-columns: 2.5rem minmax(0, 1fr);
   gap: clamp(1rem, 3vw, 2rem);
   padding: 0 0 3rem;
 }
@@ -3091,11 +3144,14 @@ select {
 
 .trust-document__body section li {
   position: relative;
+  min-width: 0;
   padding: 0.9rem 0 0.9rem 1.2rem;
   border-bottom: 1px solid var(--border-subtle);
   color: var(--text-secondary);
   font-size: 0.86rem;
   line-height: 1.6;
+  line-break: strict;
+  word-break: keep-all;
 }
 
 .trust-document__body section li::before {
@@ -3364,7 +3420,7 @@ select {
 
   .product-sidebar__principle {
     display: grid;
-    grid-template-columns: auto 1fr;
+    grid-template-columns: auto minmax(0, 1fr);
     gap: 0.65rem;
     align-items: start;
     margin-top: auto;
@@ -3379,9 +3435,12 @@ select {
 
   .product-sidebar__principle span {
     display: grid;
+    min-width: 0;
     gap: 0.3rem;
     font-size: 0.67rem;
     line-height: 1.5;
+    line-break: strict;
+    word-break: keep-all;
   }
 
   .product-sidebar__principle small {
@@ -3448,10 +3507,25 @@ select {
 
   .site-header {
     min-height: 68px;
+    flex-wrap: wrap;
+    row-gap: 0.35rem;
   }
 
   .site-header__tools {
+    min-width: 0;
+    max-width: 100%;
+    flex-wrap: wrap;
+    justify-content: flex-end;
     gap: 0.5rem;
+  }
+
+  .theme-control {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .theme-control select {
+    max-width: 100%;
   }
 
   .theme-control > span,
@@ -3485,8 +3559,8 @@ select {
   }
 
   .hero__mascot {
-    width: min(84%, 430px);
-    right: -13%;
+    width: min(78%, 320px);
+    right: 0;
     bottom: -7%;
   }
 

@@ -23,7 +23,9 @@ export default function SignupPage() {
         </Link>
         <div>
           <p className="eyebrow">YOUR FIRST MINING WORLD</p>
-          <h1 id="signup-title">KOREA에서 시작하는 첫 채굴.</h1>
+          <h1 className="ko-heading" id="signup-title">
+            KOREA에서 시작하는 첫 채굴.
+          </h1>
           <p>가입을 마치면 PUTDUK START가 이어서 안내합니다.</p>
         </div>
         <ul className="auth-trust-list">
@@ -47,7 +49,9 @@ export default function SignupPage() {
         <div className="auth-page__panel-header">
           <p className="eyebrow">CREATE ACCOUNT</p>
           <h2>계정 만들기</h2>
-          <p>이름, 생년월일, 휴대전화와 로그인 정보를 입력해 주세요.</p>
+          <p className="ko-copy">
+            이름, 생년월일, 휴대전화와 로그인 정보를 입력해 주세요.
+          </p>
         </div>
         <SignupForm />
         <p className="auth-page__legal">

@@ -93,8 +93,8 @@ export default async function WalletPage() {
     <>
       <PageHeading
         eyebrow="MY WALLET"
-        title="실제 출금 가능 잔액을 확인하세요."
-        lead="사용 가능 원화와 출금 보류를 나누어 보여 드립니다. 체험 값은 아래에 따로 표시됩니다."
+        title="출금 가능 잔액"
+        lead="사용 가능 원화와 출금 보류를 나눠 보여 드려요. 체험 값은 아래에 따로 있어요."
         action={
           <div className="wallet-actions">
             <Link className="button button--primary" href="/wallet/withdraw">
@@ -154,8 +154,7 @@ export default async function WalletPage() {
               : formatTrialValue(String(trial?.reward_atomic ?? "0"))}
           </strong>
           <p className="balance-card__note">
-            체험 값은 원화가 아닙니다. 자격 확인 후 전환된 금액만 실제 지갑에
-            반영됩니다.
+            체험 값은 원화가 아니에요. 전환된 금액만 실제 지갑에 반영됩니다.
           </p>
           <Link className="text-link" href="/start">
             전환 자격 안내
@@ -165,10 +164,10 @@ export default async function WalletPage() {
 
       <Surface as="section" className="ledger-principle">
         <p className="eyebrow">CLEAR MONEY HISTORY</p>
-        <h2>금액 변화는 이유와 상태를 함께 남깁니다.</h2>
+        <h2>금액 변화는 이유와 상태를 함께 남겨요.</h2>
         <p>
-          출금 보류는 사용 가능 금액과 분리됩니다. USDT 입출금도 사용자 USDT
-          잔액이 아니라 KRW 기준으로 처리됩니다.
+          출금 보류는 사용 가능 금액과 분리됩니다. USDT 입출금도 KRW 기준으로
+          처리됩니다.
         </p>
       </Surface>
 
@@ -216,8 +215,8 @@ export default async function WalletPage() {
           </div>
         ) : (
           <p>
-            아직 거래 내역이 없어요. 채굴 보상이나 입출금이 반영되면 이곳에서
-            확인할 수 있습니다.
+            아직 거래 내역이 없어요. 채굴 보상이나 입출금이 생기면 이곳에
+            표시됩니다.
           </p>
         )}
       </section>

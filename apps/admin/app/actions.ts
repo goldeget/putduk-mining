@@ -7,6 +7,12 @@ import { z } from "zod";
 
 import { pickHighestRole } from "@/lib/auth/policy";
 import { safeAdminReturnPath } from "@/lib/auth/return-path";
+import {
+  findActiveAdminSessionId,
+  registerAdminAppSession,
+  revokeAllAdminAppSessions,
+  revokeCurrentAdminAppSession,
+} from "@/lib/auth/session-registry";
 import { createAdminServerClient } from "@/lib/supabase/server";
 import { recordAdminSecurityEvent } from "@/lib/security/events";
 
@@ -75,17 +81,68 @@ export async function loginAction(
   if (assurance?.currentLevel !== "aal2") {
     redirect(`/mfa?returnTo=${encodeURIComponent(returnTo)}` as Route);
   }
+
+  const { data: claimsData } = await supabase.auth.getClaims();
+  const authSessionId =
+    typeof claimsData?.claims?.session_id === "string"
+      ? claimsData.claims.session_id
+      : "";
+  if (!authSessionId) {
+    await supabase.auth.signOut({ scope: "local" });
+    return { message: genericLoginError };
+  }
+  const registered = await registerAdminAppSession({
+    userId: data.user.id,
+    authSessionId,
+    userAgent,
+  });
+  if (!registered) {
+    await supabase.auth.signOut({ scope: "local" });
+    return { message: genericLoginError };
+  }
+
   redirect(returnTo as Route);
 }
 
 export async function logoutAction() {
   const supabase = await createAdminServerClient();
+  const [{ data: claimsData }, { data: userData }] = await Promise.all([
+    supabase.auth.getClaims(),
+    supabase.auth.getUser(),
+  ]);
+  const userId = userData.user?.id;
+  const authSessionId =
+    typeof claimsData?.claims?.session_id === "string"
+      ? claimsData.claims.session_id
+      : "";
+  if (userId && authSessionId) {
+    const adminSessionId = await findActiveAdminSessionId({
+      userId,
+      authSessionId,
+    });
+    if (adminSessionId) {
+      await revokeCurrentAdminAppSession({
+        adminSessionId,
+        actorUserId: userId,
+        reason: "OPERATOR_LOGOUT",
+      });
+    }
+  }
   await supabase.auth.signOut({ scope: "local" });
   redirect("/login" as Route);
 }
 
 export async function logoutAllAction() {
   const supabase = await createAdminServerClient();
+  const [{ data: userData }] = await Promise.all([supabase.auth.getUser()]);
+  const userId = userData.user?.id;
+  if (userId) {
+    await revokeAllAdminAppSessions({
+      userId,
+      actorUserId: userId,
+      reason: "OPERATOR_LOGOUT_ALL",
+    });
+  }
   await supabase.auth.signOut({ scope: "global" });
   redirect("/login" as Route);
 }

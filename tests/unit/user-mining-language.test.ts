@@ -6,6 +6,7 @@ import { describe, expect, it } from "vitest";
 import {
   FORBIDDEN_MINING_PHRASES,
   findForbiddenMiningPhrases,
+  findMiningImplementationExplainHits,
 } from "@/tests/helpers/mining-language-gate";
 
 const root = process.cwd();
@@ -151,5 +152,17 @@ describe("user-facing mining language gate", () => {
       "deterministic mining",
     ]);
     expect(findForbiddenMiningPhrases("가상 채굴 플랫폼")).toHaveLength(2);
+  });
+
+  it("flags mining explained with internal implementation words", () => {
+    expect(
+      findMiningImplementationExplainHits("채굴은 서버 원장으로 계산돼요"),
+    ).not.toEqual([]);
+    expect(findMiningImplementationExplainHits("채굴이 진행 중이에요")).toEqual(
+      [],
+    );
+    expect(findMiningImplementationExplainHits("잔액을 확인해 주세요")).toEqual(
+      [],
+    );
   });
 });

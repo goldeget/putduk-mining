@@ -5,13 +5,38 @@ const scriptSource =
     ? "script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval'"
     : "script-src 'self' 'unsafe-inline'";
 
+// 로컬 Auth/API(E2E·개발)는 http://127.0.0.1 — 브라우저 MFA/세션 호출이 CSP에 막히지 않게 한다.
+const localSupabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
+const isLocalRuntime =
+  process.env.APP_ENV === "test" ||
+  process.env.NODE_ENV === "development" ||
+  localSupabaseUrl.startsWith("http://127.0.0.1") ||
+  localSupabaseUrl.startsWith("http://localhost");
+
+let localConnectOrigins =
+  "http://127.0.0.1:58421 http://localhost:58421 ws://127.0.0.1:58421 ws://localhost:58421";
+try {
+  if (localSupabaseUrl.startsWith("http://")) {
+    const parsed = new URL(localSupabaseUrl);
+    const origin = `${parsed.protocol}//${parsed.host}`;
+    const wsOrigin = origin.replace(/^http/, "ws");
+    localConnectOrigins = `${origin} ${origin.replace("127.0.0.1", "localhost")} ${wsOrigin} ${wsOrigin.replace("127.0.0.1", "localhost")}`;
+  }
+} catch {
+  // keep default local Auth port from config.toml
+}
+
+const connectSrc = isLocalRuntime
+  ? `connect-src 'self' ${localConnectOrigins} https://*.supabase.co wss://*.supabase.co`
+  : "connect-src 'self' https://*.supabase.co wss://*.supabase.co";
+
 const securityHeaders = [
   {
     key: "Content-Security-Policy",
     value: [
       "default-src 'self'",
       "base-uri 'self'",
-      "connect-src 'self' https://*.supabase.co wss://*.supabase.co",
+      connectSrc,
       "font-src 'self' data:",
       "form-action 'self'",
       "frame-ancestors 'none'",
@@ -21,7 +46,7 @@ const securityHeaders = [
       scriptSource,
       "style-src 'self' 'unsafe-inline'",
       "worker-src 'self' blob:",
-      "upgrade-insecure-requests",
+      ...(isLocalRuntime ? [] : ["upgrade-insecure-requests"]),
     ].join("; "),
   },
   { key: "Cross-Origin-Opener-Policy", value: "same-origin" },

@@ -1,14 +1,17 @@
 import "server-only";
 
 import { randomUUID } from "node:crypto";
+import { headers } from "next/headers";
 
+import type { AdminCommandFamily } from "@/lib/auth/command-families";
 import {
   decideAdminAccess,
-  hasRecentTotpStepUp,
   HIGH_IMPACT_ROLES,
   type AdminRole,
 } from "@/lib/auth/policy";
 import { getAdminIdentity, type AdminPrincipal } from "@/lib/auth/principal";
+import { assertAndTouchAdminAppSession } from "@/lib/auth/session-registry";
+import { consumeAdminStepUpGrant } from "@/lib/auth/step-up";
 
 export type CommandActionResult =
   { ok: true; message: string } | { ok: false; code: string; message: string };
@@ -20,12 +23,30 @@ const DENIAL_COPY: Record<string, string> = {
   ROLE_FORBIDDEN: "현재 역할로는 이 작업을 할 수 없습니다.",
   STEP_UP_REQUIRED:
     "고위험 작업입니다. 인증 앱으로 다시 확인한 뒤 시도해 주세요.",
+  ADMIN_SESSION_REQUIRED: "운영 세션을 다시 확인해 주세요.",
+  ADMIN_SESSION_EXPIRED: "세션이 만료되었습니다. 다시 로그인해 주세요.",
+  ADMIN_SESSION_IDLE_EXPIRED: "세션이 만료되었습니다. 다시 로그인해 주세요.",
+  ADMIN_SESSION_ABSOLUTE_EXPIRED:
+    "세션이 만료되었습니다. 다시 로그인해 주세요.",
+  ADMIN_SESSION_FINGERPRINT_MISMATCH:
+    "세션이 만료되었습니다. 다시 로그인해 주세요.",
+  ADMIN_SESSION_REVOKED: "세션이 만료되었습니다. 다시 로그인해 주세요.",
 };
 
+function denial(code: string): CommandActionResult {
+  return {
+    ok: false,
+    code,
+    message: DENIAL_COPY[code] ?? "이 작업을 실행할 수 없습니다.",
+  };
+}
+
 export async function requireHighImpactPrincipal(
+  commandFamily: AdminCommandFamily,
+  formData: FormData,
   allowedRoles: readonly AdminRole[] = HIGH_IMPACT_ROLES,
 ): Promise<
-  | { ok: true; principal: AdminPrincipal }
+  | { ok: true; principal: AdminPrincipal; requestId: string }
   | { ok: false; result: CommandActionResult }
 > {
   const identity = await getAdminIdentity();
@@ -34,19 +55,46 @@ export async function requireHighImpactPrincipal(
     role: identity?.role ?? null,
     aal: identity?.aal ?? null,
     allowedRoles,
-    ...(identity ? { recentTotp: hasRecentTotpStepUp(identity.amr) } : {}),
   });
   if (decision !== "ALLOW" || !identity?.role) {
-    return {
-      ok: false,
-      result: {
-        ok: false,
-        code: decision,
-        message: DENIAL_COPY[decision] ?? "이 작업을 실행할 수 없습니다.",
-      },
-    };
+    return { ok: false, result: denial(decision) };
   }
-  return { ok: true, principal: identity as AdminPrincipal };
+
+  const userAgent = (await headers()).get("user-agent");
+  const session = await assertAndTouchAdminAppSession({
+    userId: identity.userId,
+    authSessionId: identity.sessionId,
+    userAgent,
+  });
+  if (!session.ok) {
+    return { ok: false, result: denial(session.code) };
+  }
+
+  const stepUpToken = String(formData.get("stepUpToken") ?? "").trim();
+  if (stepUpToken.length < 16) {
+    return { ok: false, result: denial("STEP_UP_REQUIRED") };
+  }
+
+  const requestId = randomUUID();
+  const consumed = await consumeAdminStepUpGrant({
+    userId: identity.userId,
+    token: stepUpToken,
+    commandFamily,
+    requestId,
+  });
+  if (!consumed) {
+    return { ok: false, result: denial("STEP_UP_REQUIRED") };
+  }
+
+  return {
+    ok: true,
+    requestId,
+    principal: {
+      ...identity,
+      role: identity.role,
+      adminSessionId: session.adminSessionId,
+    },
+  };
 }
 
 export function newIdempotencyKey(prefix: string): string {

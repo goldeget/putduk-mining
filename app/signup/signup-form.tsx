@@ -23,7 +23,11 @@ function SignupSubmit() {
   const { pending } = useFormStatus();
 
   return (
-    <button className="button button--primary" type="submit" disabled={pending}>
+    <button
+      className="button button--primary ko-copy"
+      type="submit"
+      disabled={pending}
+    >
       {pending ? "계정을 만들고 있어요" : "가입하고 시작하기"}
       <PutdukIcon name="arrow-right" size={18} />
     </button>
@@ -367,7 +371,7 @@ export function SignupForm() {
         </div>
       </fieldset>
 
-      <fieldset className="signup-form__consents">
+      <fieldset className="signup-form__consents ko-copy">
         <legend>약관 동의</legend>
         <label className="signup-form__check signup-form__check--all">
           <input

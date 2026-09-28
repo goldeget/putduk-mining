@@ -1,13 +1,17 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { POST } from "@/app/api/v1/admin/deposits/approve/route";
-import { requireAdminCommand } from "@/lib/auth/principal";
-import { createAdminServiceClient } from "@/lib/supabase/service";
-
+vi.mock("server-only", () => ({}));
 vi.mock("@/lib/auth/principal", () => ({ requireAdminCommand: vi.fn() }));
+vi.mock("@/lib/auth/step-up", () => ({
+  consumeAdminStepUpGrant: vi.fn(),
+}));
 vi.mock("@/lib/supabase/service", () => ({
   createAdminServiceClient: vi.fn(),
 }));
+
+import { POST } from "@/app/api/v1/admin/deposits/approve/route";
+import { requireAdminCommand } from "@/lib/auth/principal";
+import { createAdminServiceClient } from "@/lib/supabase/service";
 
 const authorize = vi.mocked(requireAdminCommand);
 const service = vi.mocked(createAdminServiceClient);

@@ -8,10 +8,7 @@ export default function SessionExpiredPage() {
       <section className="auth-card">
         <p className="eyebrow">SESSION ENDED</p>
         <h1>세션이 만료되었습니다</h1>
-        <p>
-          보안을 위해 다시 로그인해 주세요. 진행 중이던 작업은 저장되지 않았을
-          수 있습니다.
-        </p>
+        <p>보안을 위해 다시 로그인해 주세요.</p>
         <Link className="gold-button" href="/login">
           다시 로그인
         </Link>

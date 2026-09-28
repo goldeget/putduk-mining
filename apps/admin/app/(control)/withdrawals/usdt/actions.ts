@@ -8,6 +8,7 @@ import {
   requireHighImpactPrincipal,
   type CommandActionResult,
 } from "@/app/(control)/_lib/command-gate";
+import { ADMIN_COMMAND_FAMILIES } from "@/lib/auth/command-families";
 import { createAdminServiceClient } from "@/lib/supabase/service";
 
 const recordSchema = z.object({
@@ -44,7 +45,10 @@ export async function recordUsdtExternalSendAction(
   _prev: CommandActionResult | null,
   formData: FormData,
 ): Promise<CommandActionResult> {
-  const access = await requireHighImpactPrincipal();
+  const access = await requireHighImpactPrincipal(
+    ADMIN_COMMAND_FAMILIES.WITHDRAWAL_OPERATOR,
+    formData,
+  );
   if (!access.ok) return access.result;
 
   const conversionRaw = String(formData.get("conversionEvidence") ?? "").trim();
@@ -106,7 +110,10 @@ export async function finalizeUsdtWithdrawalLedgerAction(
   _prev: CommandActionResult | null,
   formData: FormData,
 ): Promise<CommandActionResult> {
-  const access = await requireHighImpactPrincipal();
+  const access = await requireHighImpactPrincipal(
+    ADMIN_COMMAND_FAMILIES.WITHDRAWAL_OPERATOR,
+    formData,
+  );
   if (!access.ok) return access.result;
 
   const parsed = finalizeSchema.safeParse({
@@ -140,7 +147,10 @@ export async function releaseUsdtWithdrawalHoldAction(
   _prev: CommandActionResult | null,
   formData: FormData,
 ): Promise<CommandActionResult> {
-  const access = await requireHighImpactPrincipal();
+  const access = await requireHighImpactPrincipal(
+    ADMIN_COMMAND_FAMILIES.WITHDRAWAL_OPERATOR,
+    formData,
+  );
   if (!access.ok) return access.result;
 
   const parsed = releaseSchema.safeParse({

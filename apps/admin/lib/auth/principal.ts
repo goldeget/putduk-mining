@@ -2,16 +2,17 @@ import "server-only";
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Route } from "next";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { adminLoginPath, safeAdminReturnPath } from "@/lib/auth/return-path";
 import {
   decideAdminAccess,
-  hasRecentTotpStepUp,
   pickHighestRole,
   type AdminRole,
   type AuthenticationMethod,
 } from "@/lib/auth/policy";
+import { assertAndTouchAdminAppSession } from "@/lib/auth/session-registry";
 import { getAdminEnv } from "@/lib/env";
 import { createAdminServerClient } from "@/lib/supabase/server";
 
@@ -26,13 +27,15 @@ export type AdminPrincipal = {
   supabase: SupabaseClient;
   userId: string;
   sessionId: string;
+  adminSessionId: string;
   role: AdminRole;
   aal: string;
   amr: AuthenticationMethod[];
 };
 
-export type AdminIdentity = Omit<AdminPrincipal, "role"> & {
+export type AdminIdentity = Omit<AdminPrincipal, "role" | "adminSessionId"> & {
   role: AdminRole | null;
+  adminSessionId: string | null;
 };
 
 function parseAmr(value: unknown): AuthenticationMethod[] {
@@ -42,6 +45,10 @@ function parseAmr(value: unknown): AuthenticationMethod[] {
           Boolean(item) && typeof item === "object",
       )
     : [];
+}
+
+async function requestUserAgent(): Promise<string | null> {
+  return (await headers()).get("user-agent");
 }
 
 export async function getAdminIdentity(): Promise<AdminIdentity | null> {
@@ -73,6 +80,7 @@ export async function getAdminIdentity(): Promise<AdminIdentity | null> {
     supabase,
     userId: subject,
     sessionId: typeof claims.session_id === "string" ? claims.session_id : "",
+    adminSessionId: null,
     role: pickHighestRole((roleRows ?? []).map(({ role }) => role)),
     aal: typeof claims.aal === "string" ? claims.aal : "aal1",
     amr: parseAmr(claims.amr),
@@ -92,6 +100,41 @@ export async function requireAdminIdentity(
   return identity;
 }
 
+async function bindAdminSession(
+  identity: AdminIdentity,
+): Promise<
+  { ok: true; principal: AdminPrincipal } | { ok: false; code: string }
+> {
+  if (!identity.role || identity.aal !== "aal2") {
+    return { ok: false, code: "MFA_REQUIRED" };
+  }
+  const session = await assertAndTouchAdminAppSession({
+    userId: identity.userId,
+    authSessionId: identity.sessionId,
+    userAgent: await requestUserAgent(),
+  });
+  if (!session.ok) {
+    return { ok: false, code: session.code };
+  }
+  return {
+    ok: true,
+    principal: {
+      ...identity,
+      role: identity.role,
+      adminSessionId: session.adminSessionId,
+    },
+  };
+}
+
+function sessionDenialRedirect(code: string, returnPath: string): never {
+  if (code === "ADMIN_SESSION_REQUIRED" || code === "MFA_REQUIRED") {
+    redirect(
+      `/mfa?returnTo=${encodeURIComponent(safeAdminReturnPath(returnPath))}` as Route,
+    );
+  }
+  redirect("/session-expired" as Route);
+}
+
 export async function requireAdminPage(
   returnPath = "/",
 ): Promise<AdminPrincipal> {
@@ -101,7 +144,9 @@ export async function requireAdminPage(
       `/mfa?returnTo=${encodeURIComponent(safeAdminReturnPath(returnPath))}` as Route,
     );
   }
-  return identity as AdminPrincipal;
+  const bound = await bindAdminSession(identity);
+  if (!bound.ok) sessionDenialRedirect(bound.code, returnPath);
+  return bound.principal;
 }
 
 export async function requireAdminCommand(
@@ -121,7 +166,6 @@ export async function requireAdminCommand(
     role: identity?.role ?? null,
     aal: identity?.aal ?? null,
     allowedRoles,
-    ...(identity ? { recentTotp: hasRecentTotpStepUp(identity.amr) } : {}),
   });
   if (decision !== "ALLOW" || !identity?.role) {
     return {
@@ -130,5 +174,25 @@ export async function requireAdminCommand(
       code: decision,
     };
   }
-  return { ok: true, principal: identity as AdminPrincipal };
+  const userAgent = request.headers.get("user-agent");
+  const session = await assertAndTouchAdminAppSession({
+    userId: identity.userId,
+    authSessionId: identity.sessionId,
+    userAgent,
+  });
+  if (!session.ok) {
+    return {
+      ok: false,
+      status: 403,
+      code: session.code,
+    };
+  }
+  return {
+    ok: true,
+    principal: {
+      ...identity,
+      role: identity.role,
+      adminSessionId: session.adminSessionId,
+    },
+  };
 }

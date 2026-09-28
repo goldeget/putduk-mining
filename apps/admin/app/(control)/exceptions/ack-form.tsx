@@ -9,6 +9,8 @@ import {
   SubmitButton,
 } from "@/components/operator-fields";
 import { QueueFlash } from "@/components/queue-shell";
+import { StepUpTokenField } from "@/components/step-up-token-field";
+import { ADMIN_COMMAND_FAMILIES } from "@/lib/auth/command-families";
 
 import { acknowledgeReconciliationExceptionAction } from "./actions";
 
@@ -33,6 +35,9 @@ export function ExceptionAckForm({ mismatchId }: { mismatchId: string }) {
         label="자동으로 원장이나 잔액을 고치지 않습니다."
         name="confirmation"
         value="ACK_EXCEPTION"
+      />
+      <StepUpTokenField
+        commandFamily={ADMIN_COMMAND_FAMILIES.RECONCILIATION_ACK}
       />
       <SubmitButton>예외 확인 저장</SubmitButton>
       <QueueFlash result={result} />

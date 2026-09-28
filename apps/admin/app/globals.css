@@ -137,22 +137,29 @@ input:focus-visible {
   margin-bottom: 42px;
 }
 .auth-card h1 {
-  margin: 0 0 12px;
-  font-size: clamp(1.8rem, 5vw, 2.6rem);
+  max-width: 12ch;
+  margin: 0 0 10px;
+  font-size: clamp(1.7rem, 4.5vw, 2.3rem);
   letter-spacing: -0.045em;
+  word-break: keep-all;
 }
 .auth-card > p:not(.eyebrow) {
+  max-width: 26rem;
   margin: 0;
   color: var(--muted);
-  line-height: 1.7;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  word-break: keep-all;
 }
 .auth-card footer {
-  margin-top: 28px;
+  max-width: 26rem;
+  margin-top: 24px;
   border-top: 1px solid var(--line);
-  padding-top: 18px;
+  padding-top: 16px;
   color: var(--muted);
-  font-size: 0.78rem;
-  line-height: 1.6;
+  font-size: 0.76rem;
+  line-height: 1.5;
+  word-break: keep-all;
 }
 .auth-form {
   display: grid;
@@ -327,6 +334,8 @@ input:focus-visible {
   width: min(1500px, 100%);
   margin: 0 auto;
   padding: clamp(32px, 5vw, 70px) clamp(18px, 4vw, 56px) 80px;
+  line-break: strict;
+  word-break: keep-all;
 }
 .hero-console {
   position: relative;
@@ -362,16 +371,20 @@ input:focus-visible {
 }
 .hero-console h1,
 .page-intro h1 {
+  max-width: 12ch;
   margin: 0;
-  font-size: clamp(2.3rem, 5vw, 4.5rem);
-  letter-spacing: -0.065em;
+  font-size: clamp(2rem, 4.4vw, 3.6rem);
+  letter-spacing: -0.06em;
+  word-break: keep-all;
 }
 .hero-console p:not(.eyebrow),
 .page-intro p:not(.eyebrow) {
-  max-width: 620px;
-  margin: 16px 0 0;
+  max-width: 28rem;
+  margin: 12px 0 0;
   color: var(--muted);
-  line-height: 1.7;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  word-break: keep-all;
 }
 .attention-orbit {
   position: relative;
@@ -450,10 +463,12 @@ input:focus-visible {
   font-size: 1rem;
 }
 .attention-card p {
+  max-width: 16rem;
   margin: 0;
   color: var(--muted);
-  font-size: 0.76rem;
-  line-height: 1.55;
+  font-size: 0.74rem;
+  line-height: 1.45;
+  word-break: keep-all;
 }
 .attention-card--unknown {
   border-color: rgba(239, 144, 127, 0.35);
@@ -507,9 +522,11 @@ input:focus-visible {
   font-size: 1.25rem;
 }
 .panel-note {
+  max-width: 28rem;
   color: var(--muted);
   font-size: 0.76rem;
-  line-height: 1.7;
+  line-height: 1.5;
+  word-break: keep-all;
 }
 .audit-panel ol {
   list-style: none;
@@ -552,10 +569,13 @@ input:focus-visible {
 }
 .queue-list {
   display: grid;
+  min-width: 0;
   gap: 16px;
   margin-top: 24px;
 }
 .queue-card {
+  min-width: 0;
+  max-width: 100%;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 18px;
   background: var(--surface);
@@ -569,12 +589,15 @@ input:focus-visible {
 }
 .queue-card__head {
   display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
   align-items: start;
   justify-content: space-between;
   gap: 16px;
   margin-bottom: 16px;
 }
 .queue-card__head h2 {
+  min-width: 0;
   margin: 4px 0 0;
   font-size: 1.2rem;
 }
@@ -685,6 +708,11 @@ input:focus-visible {
 }
 .operator-check input {
   margin-top: 3px;
+}
+.operator-step-up {
+  display: grid;
+  gap: 10px;
+  padding: 12px 0 2px;
 }
 .ghost-button,
 .danger-button {
@@ -821,13 +849,17 @@ input:focus-visible {
   font-weight: 900;
 }
 .member-empty h2 {
+  max-width: 16ch;
   margin: 22px 0 8px;
+  word-break: keep-all;
 }
 .member-empty p {
-  max-width: 520px;
+  max-width: 26rem;
   margin: 0;
   color: var(--muted);
-  line-height: 1.65;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  word-break: keep-all;
 }
 .text-link {
   display: inline-flex;
@@ -990,11 +1022,15 @@ input:focus-visible {
   .control-rail nav {
     grid-column: 1 / -1;
     display: flex;
+    min-width: 0;
+    max-width: 100%;
     margin-top: 16px;
     overflow-x: auto;
   }
+  /* 좁은 화면에서도 세션 종료를 숨기지 않는다. */
   .operator-card {
-    display: none;
+    grid-column: 1 / -1;
+    margin-top: 12px;
   }
   .control-topbar {
     display: none;

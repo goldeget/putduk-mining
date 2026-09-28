@@ -9,6 +9,8 @@ import {
   SubmitButton,
 } from "@/components/operator-fields";
 import { QueueFlash } from "@/components/queue-shell";
+import { StepUpTokenField } from "@/components/step-up-token-field";
+import { ADMIN_COMMAND_FAMILIES } from "@/lib/auth/command-families";
 
 import { reviewKycCaseAction } from "./actions";
 
@@ -36,6 +38,7 @@ export function KycReviewForm({ caseId }: { caseId: string }) {
         name="confirmation"
         value="REVIEW_KYC"
       />
+      <StepUpTokenField commandFamily={ADMIN_COMMAND_FAMILIES.KYC_REVIEW} />
       <SubmitButton>검토 결과 저장</SubmitButton>
       <QueueFlash result={result} />
     </form>

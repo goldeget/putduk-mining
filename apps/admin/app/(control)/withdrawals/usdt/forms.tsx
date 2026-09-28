@@ -10,6 +10,8 @@ import {
   TextField,
 } from "@/components/operator-fields";
 import { QueueFlash } from "@/components/queue-shell";
+import { StepUpTokenField } from "@/components/step-up-token-field";
+import { ADMIN_COMMAND_FAMILIES } from "@/lib/auth/command-families";
 
 import {
   finalizeUsdtWithdrawalLedgerAction,
@@ -74,6 +76,9 @@ export function UsdtSendForm({
         name="confirmation"
         value="RECORD_USDT_SEND"
       />
+      <StepUpTokenField
+        commandFamily={ADMIN_COMMAND_FAMILIES.WITHDRAWAL_OPERATOR}
+      />
       <SubmitButton>USDT 외부 송금 기록</SubmitButton>
       <QueueFlash result={result} />
     </form>
@@ -97,6 +102,9 @@ export function UsdtFinalizeForm({ withdrawalId }: { withdrawalId: string }) {
         name="confirmation"
         value="FINALIZE_LEDGER"
       />
+      <StepUpTokenField
+        commandFamily={ADMIN_COMMAND_FAMILIES.WITHDRAWAL_OPERATOR}
+      />
       <SubmitButton>원장 확정 (재시도)</SubmitButton>
       <QueueFlash result={result} />
     </form>
@@ -118,6 +126,9 @@ export function UsdtReleaseForm({ withdrawalId }: { withdrawalId: string }) {
           name="confirmation"
           value="REJECT_HOLD"
         />
+        <StepUpTokenField
+          commandFamily={ADMIN_COMMAND_FAMILIES.WITHDRAWAL_OPERATOR}
+        />
         <SubmitButton variant="danger">거절 · 보류 해제</SubmitButton>
       </form>
       <form action={action} className="operator-form operator-form--danger">
@@ -127,6 +138,9 @@ export function UsdtReleaseForm({ withdrawalId }: { withdrawalId: string }) {
           label="운영 취소입니다. 외부 송금 전에만 가능합니다."
           name="confirmation"
           value="CANCEL_HOLD"
+        />
+        <StepUpTokenField
+          commandFamily={ADMIN_COMMAND_FAMILIES.WITHDRAWAL_OPERATOR}
         />
         <SubmitButton variant="danger">취소 · 보류 해제</SubmitButton>
       </form>

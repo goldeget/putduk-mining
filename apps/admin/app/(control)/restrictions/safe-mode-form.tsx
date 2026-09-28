@@ -9,6 +9,8 @@ import {
   SubmitButton,
 } from "@/components/operator-fields";
 import { QueueFlash } from "@/components/queue-shell";
+import { StepUpTokenField } from "@/components/step-up-token-field";
+import { ADMIN_COMMAND_FAMILIES } from "@/lib/auth/command-families";
 
 import { setSafeModeAction } from "./actions";
 
@@ -38,6 +40,7 @@ export function SafeModeForm({
         name="confirmation"
         value="SAFE_MODE"
       />
+      <StepUpTokenField commandFamily={ADMIN_COMMAND_FAMILIES.SAFE_MODE} />
       <SubmitButton variant={currentlyPaused ? "gold" : "danger"}>
         {currentlyPaused ? "제한 해제" : "안전 모드 적용"}
       </SubmitButton>

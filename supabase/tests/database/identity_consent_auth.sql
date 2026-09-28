@@ -346,11 +346,18 @@ select ok(
       where user_id = '3f7be82f-785a-4074-bc53-e8be020ceb4d'
     )
     and (
-      select count(*)
+      select count(*) = 1
+        and bool_and(currency = 'KRW')
       from public.wallet_accounts
       where user_id = '3f7be82f-785a-4074-bc53-e8be020ceb4d'
-    ) = 2,
-  'signup bootstraps all application account foundations in the same transaction'
+    )
+    and not exists (
+      select 1
+      from public.wallet_accounts
+      where user_id = '3f7be82f-785a-4074-bc53-e8be020ceb4d'
+        and currency = 'USDT'
+    ),
+  'signup bootstraps profile, settings, and a KRW wallet only'
 );
 
 select is(

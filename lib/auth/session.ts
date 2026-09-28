@@ -20,11 +20,17 @@ export async function getVerifiedIdentity(): Promise<VerifiedIdentity | null> {
   const { data, error } = await supabase.auth.getClaims();
   const subject = data?.claims?.sub;
 
-  if (error || typeof subject !== "string" || !subject) {
+  if (!error && typeof subject === "string" && subject) {
+    return { supabase, userId: subject };
+  }
+
+  // getClaims가 JWKS/타임아웃으로 비면 getUser로 한 번 더 확인한다(로컬 Auth·API 경로).
+  const { data: userData, error: userError } = await supabase.auth.getUser();
+  if (userError || !userData.user?.id) {
     return null;
   }
 
-  return { supabase, userId: subject };
+  return { supabase, userId: userData.user.id };
 }
 
 export async function requirePageUser(

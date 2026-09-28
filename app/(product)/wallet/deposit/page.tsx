@@ -237,7 +237,7 @@ export default async function DepositPage() {
           <span>
             <p className="eyebrow">USDT MANUAL DEPOSIT</p>
             <h2 id="usdt-deposit-history">최근 USDT 입금</h2>
-            <p>USDT 잔액이 아니라 KRW 반영을 기다리는 요청이에요.</p>
+            <p>코인을 따로 보관하지 않아요. KRW 반영을 기다리는 요청이에요.</p>
           </span>
           <PutdukIcon name="wallet" size={22} aria-hidden="true" />
         </header>

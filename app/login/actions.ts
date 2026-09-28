@@ -110,6 +110,26 @@ export async function authenticateAction(
   const { data, error } = authResult;
 
   if (error || !data.user || !resolution.email) {
+    // Auth 타임아웃·게이트웨이 오류를 잘못된 비밀번호로 오인하지 않는다.
+    const status =
+      typeof error === "object" && error && "status" in error
+        ? Number((error as { status?: number }).status)
+        : NaN;
+    const code =
+      typeof error === "object" && error && "code" in error
+        ? String((error as { code?: string }).code ?? "")
+        : "";
+    if (
+      status === 504 ||
+      status === 408 ||
+      code === "request_timeout" ||
+      /timeout|timed out|abort/i.test(error?.message ?? "")
+    ) {
+      return {
+        message: "계정 서비스를 연결하지 못했어요. 잠시 후 다시 시도해 주세요.",
+        status: "error",
+      };
+    }
     return { message: "로그인 정보를 확인해 주세요.", status: "error" };
   }
 
