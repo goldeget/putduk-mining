@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import type { AdminCommandFamily } from "@/lib/auth/command-families";
 import { createAdminBrowserClient } from "@/lib/supabase/browser";
@@ -15,6 +15,7 @@ export function StepUpTokenField({
   commandFamily: AdminCommandFamily;
 }) {
   const [token, setToken] = useState("");
+  const tokenInputRef = useRef<HTMLInputElement>(null);
   const [code, setCode] = useState("");
   const [message, setMessage] = useState(
     "인증 앱 코드로 작업 확인을 완료해 주세요.",
@@ -64,22 +65,35 @@ export function StepUpTokenField({
     } | null;
     setBusy(false);
     if (!response.ok || !payload?.data?.token) {
+      writeToken("");
       setMessage(
         payload?.error?.code === "STEP_UP_REQUIRED"
           ? "인증 앱으로 다시 확인한 뒤 시도해 주세요."
           : "작업 확인 토큰을 발급하지 못했습니다.",
       );
-      setToken("");
       return;
     }
-    setToken(payload.data.token);
+    // 성공 문구보다 먼저 DOM에 넣는다. useEffect면 제출이 빈 토큰을 보낸다.
+    writeToken(payload.data.token);
     setCode("");
     setMessage("작업 확인이 완료되었습니다. 이제 명령을 실행할 수 있습니다.");
   }
 
+  function writeToken(next: string) {
+    if (tokenInputRef.current) {
+      tokenInputRef.current.value = next;
+    }
+    setToken(next);
+  }
+
   return (
     <div className="operator-step-up">
-      <input name="stepUpToken" type="hidden" value={token} />
+      <input
+        ref={tokenInputRef}
+        name="stepUpToken"
+        type="hidden"
+        value={token}
+      />
       <label className="operator-field">
         <span>인증 앱 코드 (작업 확인)</span>
         <input

@@ -73,17 +73,28 @@ export async function recordKrwExternalSendAction(
     };
   }
 
-  const { error } = await createAdminServiceClient().rpc(
-    "record_krw_external_send",
-    {
-      p_withdrawal_id: parsed.data.withdrawalId,
-      p_bank_reference: parsed.data.bankReference,
-      p_actual_krw_amount: Number.parseInt(parsed.data.actualKrw, 10),
-      p_actor: access.principal.userId,
-      p_sent_at: sentAt.toISOString(),
-      p_idempotency_key: newIdempotencyKey("krw_send"),
-    },
-  );
+  const service = createAdminServiceClient();
+  const { data: existingSends, error: existingError } = await service
+    .from("withdrawal_external_sends")
+    .select("id")
+    .eq("withdrawal_id", parsed.data.withdrawalId)
+    .limit(1);
+  if (!existingError && existingSends && existingSends.length > 0) {
+    return {
+      ok: true,
+      message:
+        "외부 송금은 이미 기록되어 있습니다. 다시 보내지 말고 원장만 확정하세요.",
+    };
+  }
+
+  const { error } = await service.rpc("record_krw_external_send", {
+    p_withdrawal_id: parsed.data.withdrawalId,
+    p_bank_reference: parsed.data.bankReference,
+    p_actual_krw_amount: Number.parseInt(parsed.data.actualKrw, 10),
+    p_actor: access.principal.userId,
+    p_sent_at: sentAt.toISOString(),
+    p_idempotency_key: newIdempotencyKey("krw_send"),
+  });
 
   if (error) {
     return mapRpcFailure(error.message, "계좌 송금 기록을 남기지 못했습니다.");
@@ -116,14 +127,21 @@ export async function finalizeWithdrawalLedgerAction(
     };
   }
 
-  const { error } = await createAdminServiceClient().rpc(
-    "finalize_withdrawal_ledger",
-    {
-      p_withdrawal_id: parsed.data.withdrawalId,
-      p_actor: access.principal.userId,
-      p_idempotency_key: newIdempotencyKey("wd_fin"),
-    },
-  );
+  const service = createAdminServiceClient();
+  const { data: current, error: currentError } = await service
+    .from("withdrawal_requests")
+    .select("finalize_ledger_transaction_id")
+    .eq("id", parsed.data.withdrawalId)
+    .maybeSingle();
+  if (!currentError && current?.finalize_ledger_transaction_id) {
+    return { ok: true, message: "출금 원장은 이미 확정되어 있습니다." };
+  }
+
+  const { error } = await service.rpc("finalize_withdrawal_ledger", {
+    p_withdrawal_id: parsed.data.withdrawalId,
+    p_actor: access.principal.userId,
+    p_idempotency_key: newIdempotencyKey("wd_fin"),
+  });
 
   if (error) {
     return mapRpcFailure(

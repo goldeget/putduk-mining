@@ -34,6 +34,28 @@ function base32Decode(secret: string): Buffer {
   return Buffer.from(bytes);
 }
 
+const usedTotpCodes = new Map<string, Set<string>>();
+
+export function rememberTotpUse(secret: string, code: string) {
+  const used = usedTotpCodes.get(secret) ?? new Set<string>();
+  used.add(code);
+  usedTotpCodes.set(secret, used);
+}
+
+/** 같은 비밀키에서 아직 쓰지 않은 TOTP가 나올 때까지 기다린다. */
+export async function nextTotpCode(secret: string) {
+  const started = Date.now();
+  while (Date.now() - started < 40_000) {
+    const code = generateTotp(secret);
+    if (!usedTotpCodes.get(secret)?.has(code)) {
+      rememberTotpUse(secret, code);
+      return code;
+    }
+    await new Promise((resolve) => setTimeout(resolve, 500));
+  }
+  throw new Error("TOTP_WINDOW_DID_NOT_ADVANCE");
+}
+
 /** RFC 6238 TOTP (SHA-1, 30초, 6자리). 모의 AAL2를 쓰지 않는다. */
 export function generateTotp(secret: string, nowMs = Date.now()): string {
   const key = base32Decode(secret);
@@ -91,7 +113,9 @@ export async function completeAdminLoginWithTotp(
   const secret = (await secretCode.textContent())?.trim();
   if (!secret) throw new Error("TOTP enrolment secret missing.");
 
-  await page.locator('input[inputmode="numeric"]').fill(generateTotp(secret));
+  const code = generateTotp(secret);
+  rememberTotpUse(secret, code);
+  await page.locator('input[inputmode="numeric"]').fill(code);
   await page.getByRole("button", { name: "인증 완료" }).click();
   await page.waitForURL((url) => !url.pathname.includes("/mfa"), {
     timeout: 60_000,

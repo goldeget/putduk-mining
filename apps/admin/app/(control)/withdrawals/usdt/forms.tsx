@@ -37,7 +37,11 @@ export function UsdtSendForm({
     null,
   );
   return (
-    <form action={action} className="operator-form">
+    <form
+      action={action}
+      className="operator-form"
+      onReset={(event) => event.preventDefault()}
+    >
       <input name="withdrawalId" type="hidden" value={withdrawalId} />
       <TextField
         defaultValue={networkHint}
@@ -91,7 +95,11 @@ export function UsdtFinalizeForm({ withdrawalId }: { withdrawalId: string }) {
     null,
   );
   return (
-    <form action={action} className="operator-form">
+    <form
+      action={action}
+      className="operator-form"
+      onReset={(event) => event.preventDefault()}
+    >
       <input name="withdrawalId" type="hidden" value={withdrawalId} />
       <p className="panel-note warn-note">
         외부 송금은 이미 기록됐습니다. 「다시 보내기」는 제공하지 않습니다.
@@ -118,7 +126,11 @@ export function UsdtReleaseForm({ withdrawalId }: { withdrawalId: string }) {
   );
   return (
     <div className="operator-form-stack">
-      <form action={action} className="operator-form operator-form--danger">
+      <form
+        action={action}
+        className="operator-form operator-form--danger"
+        onReset={(event) => event.preventDefault()}
+      >
         <input name="withdrawalId" type="hidden" value={withdrawalId} />
         <ReasonField label="거절 사유" />
         <ConfirmCheckbox
@@ -131,7 +143,11 @@ export function UsdtReleaseForm({ withdrawalId }: { withdrawalId: string }) {
         />
         <SubmitButton variant="danger">거절 · 보류 해제</SubmitButton>
       </form>
-      <form action={action} className="operator-form operator-form--danger">
+      <form
+        action={action}
+        className="operator-form operator-form--danger"
+        onReset={(event) => event.preventDefault()}
+      >
         <input name="withdrawalId" type="hidden" value={withdrawalId} />
         <ReasonField label="취소 사유" />
         <ConfirmCheckbox
