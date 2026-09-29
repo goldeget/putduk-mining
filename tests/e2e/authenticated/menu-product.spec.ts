@@ -110,9 +110,9 @@ test("unsigned visitors keep menu return paths", async ({ page }) => {
   await page.goto("/menu");
   await expect(page).toHaveURL(/\/login\?next=%2Fmenu$/);
   await expect(page.locator('input[name="next"]')).toHaveValue("/menu");
-  await expect(page.getByRole("heading", { name: "내 퍼뜩", level: 1 })).toHaveCount(
-    0,
-  );
+  await expect(
+    page.getByRole("heading", { name: "내 퍼뜩", level: 1 }),
+  ).toHaveCount(0);
 
   await page.goto("/menu/account");
   await expect(page).toHaveURL(/\/login\?next=%2Fmenu%2Faccount$/);
@@ -176,9 +176,7 @@ test("menu hub, account, and settings cover states and navigation", async ({
   await expect(
     page.getByRole("heading", { name: "알림 설정", level: 1 }),
   ).toBeVisible();
-  await expect(
-    page.getByRole("button", { name: "설정 저장" }),
-  ).toBeVisible();
+  await expect(page.getByRole("button", { name: "설정 저장" })).toBeVisible();
   await expectKoreanSafe(page);
 
   await page.getByRole("link", { name: "알림 센터" }).click();
@@ -261,9 +259,7 @@ test("logout failure query shows recovery without ending the session", async ({
   await expect(
     page.getByRole("heading", { name: "로그아웃을 완료하지 못했어요" }),
   ).toBeVisible();
-  await expect(
-    page.getByRole("link", { name: "다시 시도" }),
-  ).toBeVisible();
+  await expect(page.getByRole("link", { name: "다시 시도" })).toBeVisible();
   await expect(
     page.getByRole("button", { name: "이 기기에서 로그아웃" }),
   ).toBeVisible();

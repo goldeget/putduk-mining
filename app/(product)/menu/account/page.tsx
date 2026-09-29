@@ -32,7 +32,7 @@ export default async function AccountPage({
     <div className={menuStyles.accountPage}>
       <Link className={menuStyles.backLink} href="/menu">
         <PutdukIcon name="arrow-right" size={16} aria-hidden="true" />
-        내 퍼뜩으로
+        <span>내 퍼뜩으로</span>
       </Link>
 
       <PageHeading
@@ -95,7 +95,11 @@ export default async function AccountPage({
         </section>
       )}
 
-      <Surface as="section" className={menuStyles.sessions} aria-label="로그아웃">
+      <Surface
+        as="section"
+        className={menuStyles.sessions}
+        aria-label="로그아웃"
+      >
         <div className={menuStyles.sessionsCopy}>
           <p className="eyebrow">로그아웃</p>
           <h2>기기에서 나가기</h2>

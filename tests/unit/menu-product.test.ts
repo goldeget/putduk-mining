@@ -31,9 +31,7 @@ describe("menu hub navigation", () => {
 
 describe("account masking", () => {
   it("masks email local-part while keeping the domain", () => {
-    expect(maskEmail("putduk.member@example.com")).toBe(
-      "pu••••••@example.com",
-    );
+    expect(maskEmail("putduk.member@example.com")).toBe("pu••••••@example.com");
     expect(maskEmail("ab@example.com")).toBe("ab••@example.com");
     expect(maskEmail("not-an-email")).toBe("등록됨");
   });
@@ -45,15 +43,13 @@ describe("account masking", () => {
 });
 
 describe("menu protected return paths", () => {
-  it.each([
-    "/menu",
-    "/menu/account",
-    "/menu/notifications",
-    "/menu/ai",
-  ])("preserves menu return path: %s", (path) => {
-    expect(isSafeProtectedReturnPath(path)).toBe(true);
-    expect(buildLoginPath(path)).toBe(
-      `/login?next=${encodeURIComponent(path)}`,
-    );
-  });
+  it.each(["/menu", "/menu/account", "/menu/notifications", "/menu/ai"])(
+    "preserves menu return path: %s",
+    (path) => {
+      expect(isSafeProtectedReturnPath(path)).toBe(true);
+      expect(buildLoginPath(path)).toBe(
+        `/login?next=${encodeURIComponent(path)}`,
+      );
+    },
+  );
 });
