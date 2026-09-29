@@ -192,3 +192,53 @@ test("member support identity does not leak across login", async ({ page }) => {
     }
   }
 });
+
+test("signed-in support route keeps Korean guidance and ready state", async ({
+  page,
+}) => {
+  const hydration: string[] = [];
+  page.on("console", (message) => {
+    const text = message.text();
+    if (
+      text.includes("hydration-mismatch") ||
+      text.includes("Hydration failed because") ||
+      text.includes("A tree hydrated but some attributes")
+    ) {
+      hydration.push(text.slice(0, 500));
+    }
+  });
+
+  const member = await createConfirmedMember("support-ready");
+  await installSupportPort(page);
+  await loginAsMember(page, member, "/support");
+  await waitForBoot(page, member.userId);
+
+  await expect(
+    page.getByRole("heading", { name: "필요한 도움을 바로 확인해요." }),
+  ).toBeVisible();
+  await expect(
+    page.getByText("상담 창을 열 준비가 되었어요."),
+  ).toBeVisible();
+  await expect(page.getByText("앱을 닫아도 채굴은 계속돼요.")).toBeVisible();
+  await expect(
+    page.getByText("잔액과 출금은 상담 창에서 바뀌지 않아요."),
+  ).toBeVisible();
+
+  const launcher = page.locator("#putduk-support-launcher");
+  await expect(launcher).toHaveAttribute("data-support-state", "ready");
+  await launcher.focus();
+  await expect(launcher).toBeFocused();
+
+  await page.getByLabel("화면 테마").selectOption("dark");
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  await page.getByLabel("화면 테마").selectOption("system");
+  await expect(page.getByLabel("화면 테마")).toHaveValue("system");
+
+  const overflow = await page.evaluate(
+    () =>
+      document.documentElement.scrollWidth -
+      document.documentElement.clientWidth,
+  );
+  expect(overflow).toBeLessThanOrEqual(1);
+  expect(hydration).toEqual([]);
+});

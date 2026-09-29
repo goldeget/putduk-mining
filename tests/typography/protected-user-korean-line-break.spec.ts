@@ -48,4 +48,10 @@ registerProtectedTypographyMatrix([
   },
   { name: "user-ai", origin: USER_ORIGIN, pathname: "/ai", url: "/ai" },
   { name: "user-menu", origin: USER_ORIGIN, pathname: "/menu", url: "/menu" },
+  {
+    name: "user-support",
+    origin: USER_ORIGIN,
+    pathname: "/support",
+    url: "/support",
+  },
 ]);

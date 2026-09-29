@@ -72,6 +72,7 @@ export default function SupportPage() {
         className="shell support-center__guide"
         id="support-guide"
         aria-labelledby="support-guide-title"
+        tabIndex={-1}
       >
         <h2 id="support-guide-title">자주 확인하는 안내</h2>
         <div className="support-center__topics">
