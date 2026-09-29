@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState } from "react";
 
 import type { CommandActionResult } from "@/app/(control)/_lib/command-gate";
 import {
@@ -23,28 +23,23 @@ const DECISIONS = [
 ] as const;
 
 /**
- * 입금·출금 step-up 폼과 같이 형제 DOM 을 고정한다.
- * stepUpToken 은 폼 부모가 제어해 StepUpTokenField remount 와 분리한다.
- * confirmation 도 ConfirmCheckbox 로 DOM 에 항상 둔다.
+ * 계좌 출금·USDT 입금 step-up 폼과 동일한 DOM 안정 구조.
+ * confirmation 을 체크 여부로 넣었다 빼면 StepUpTokenField 가 remount 될 수 있다.
  */
 export function KycReviewForm({ caseId }: { caseId: string }) {
   const [result, action] = useActionState<CommandActionResult | null, FormData>(
     reviewKycCaseAction,
     null,
   );
-  // 일회성 토큰은 폼 부모가 소유. 발급 UI remount 와 FormData 를 분리한다.
-  const [stepUpToken, setStepUpToken] = useState("");
 
   return (
     <form
       action={action}
       aria-label="본인 확인 검토"
       className="operator-form"
-      noValidate
       onReset={(event) => event.preventDefault()}
     >
       <input name="caseId" type="hidden" value={caseId} />
-      <input name="stepUpToken" type="hidden" value={stepUpToken} readOnly />
       <label className="operator-field">
         <span>결과</span>
         <select name="decision" required defaultValue="IN_REVIEW">
@@ -64,17 +59,9 @@ export function KycReviewForm({ caseId }: { caseId: string }) {
         name="confirmation"
         value="REVIEW_KYC"
       />
-      <StepUpTokenField
-        commandFamily={ADMIN_COMMAND_FAMILIES.KYC_REVIEW}
-        onTokenIssued={setStepUpToken}
-      />
+      <StepUpTokenField commandFamily={ADMIN_COMMAND_FAMILIES.KYC_REVIEW} />
       <SubmitButton pendingLabel="저장 중…">검토 결과 저장</SubmitButton>
       <QueueFlash result={result} />
-      {result && !result.ok ? (
-        <p className="panel-note">
-          저장에 실패했습니다. 사유와 작업 확인을 점검한 뒤 다시 시도해 주세요.
-        </p>
-      ) : null}
     </form>
   );
 }

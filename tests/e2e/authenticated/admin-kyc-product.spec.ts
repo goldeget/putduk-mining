@@ -31,13 +31,8 @@ async function fillKycReview(
 async function submitKycWithStepUp(
   form: ReturnType<typeof kycReviewForm>,
   secret: string,
-  decision: "APPROVED" | "REJECTED",
-  reason: string,
 ) {
-  // 입금·출금과 동일: 입력·확인 체크를 먼저 고정한 뒤 step-up, 바로 제출한다.
-  await fillKycReview(form, decision, reason);
-  await expect(form.locator('input[name="confirmation"]')).toHaveCount(1);
-  await expect(form.getByRole("checkbox")).toBeChecked();
+  // 출금 E2E와 동일: 이미 채워진 폼에 step-up만 한 뒤 바로 제출한다.
   await confirmOperatorStepUp(form, secret);
   await expect
     .poll(async () => form.locator('input[name="stepUpToken"]').inputValue())
@@ -143,18 +138,8 @@ test.describe("admin KYC product queue", () => {
       "인증 앱으로 다시 확인",
     );
     expect((await readKycCase(approve.caseId)).status).not.toBe("APPROVED");
-    await expect(
-      approveForm.getByText(
-        "저장에 실패했습니다. 사유와 작업 확인을 점검한 뒤",
-      ),
-    ).toBeVisible();
 
-    await submitKycWithStepUp(
-      approveForm,
-      secret,
-      "APPROVED",
-      "서류 요약과 회원 상태가 일치해 승인합니다.",
-    );
+    await submitKycWithStepUp(approveForm, secret);
     const approved = await readKycCase(approve.caseId);
     expect(approved.status).toBe("APPROVED");
     expect(approved.decision_reason).toContain("승인합니다");
@@ -167,12 +152,7 @@ test.describe("admin KYC product queue", () => {
       "REJECTED",
       "제출 내용이 부족해 반려합니다. 재신청이 필요합니다.",
     );
-    await submitKycWithStepUp(
-      rejectForm,
-      secret,
-      "REJECTED",
-      "제출 내용이 부족해 반려합니다. 재신청이 필요합니다.",
-    );
+    await submitKycWithStepUp(rejectForm, secret);
     const rejected = await readKycCase(reject.caseId);
     expect(rejected.status).toBe("REJECTED");
     expect(rejected.decision_reason).toContain("반려합니다");
