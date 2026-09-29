@@ -18,6 +18,12 @@ const acknowledgeSchema = z.object({
   confirmation: z.literal("ACK_EXCEPTION"),
 });
 
+const OPEN_QUEUE_STATUSES = ["OPEN", "INVESTIGATING"] as const;
+
+/**
+ * 대사 예외 확인만 한다. 원장·잔액·투영을 고치지 않는다.
+ * 동시 처리·이미 닫힌 건은 0건 갱신으로 실패 처리한다.
+ */
 export async function acknowledgeReconciliationExceptionAction(
   _prev: CommandActionResult | null,
   formData: FormData,
@@ -38,26 +44,28 @@ export async function acknowledgeReconciliationExceptionAction(
     return {
       ok: false,
       code: "INVALID_INPUT",
-      message: "예외 확인 입력값을 확인해 주세요.",
+      message: "확인 사유(10자 이상)와 결과를 확인해 주세요.",
     };
   }
 
-  // 자동 수리는 금지. 상태·사유만 남긴다.
+  const nowIso = new Date().toISOString();
+  const terminal =
+    parsed.data.result === "RESOLVED" || parsed.data.result === "ACCEPTED";
+
+  // 자동 수리는 금지. 상태·사유·감사만 남긴다.
   const db = createAdminServiceClient();
-  const { error } = await db
+  const { data: updated, error } = await db
     .from("reconciliation_mismatches")
     .update({
       status: parsed.data.result,
       resolution_reason: parsed.data.reason,
-      resolved_by:
-        parsed.data.result === "INVESTIGATING" ? null : access.principal.userId,
-      resolved_at:
-        parsed.data.result === "INVESTIGATING"
-          ? null
-          : new Date().toISOString(),
+      resolved_by: terminal ? access.principal.userId : null,
+      resolved_at: terminal ? nowIso : null,
     })
     .eq("id", parsed.data.mismatchId)
-    .in("status", ["OPEN", "INVESTIGATING"]);
+    .in("status", [...OPEN_QUEUE_STATUSES])
+    .select("id, status, expected_value, actual_value")
+    .maybeSingle();
 
   if (error) {
     await db.from("audit_logs").insert({
@@ -71,12 +79,36 @@ export async function acknowledgeReconciliationExceptionAction(
       metadata: {
         result: parsed.data.result,
         update_error: error.message,
+        auto_repair: false,
       },
     });
     return mapRpcFailure(
       error.message,
       "예외 확인을 저장하지 못했습니다. 자동 수정은 하지 않습니다.",
     );
+  }
+
+  if (!updated) {
+    await db.from("audit_logs").insert({
+      actor_user_id: access.principal.userId,
+      actor_role: access.principal.role,
+      action: "RECONCILIATION_EXCEPTION_ACK_ATTEMPT",
+      target_type: "RECONCILIATION_MISMATCH",
+      target_id: parsed.data.mismatchId,
+      reason: parsed.data.reason,
+      request_id: randomUUID(),
+      metadata: {
+        result: parsed.data.result,
+        outcome: "STALE_OR_CLOSED",
+        auto_repair: false,
+      },
+    });
+    return {
+      ok: false,
+      code: "STALE_OR_CLOSED",
+      message:
+        "이미 처리됐거나 목록에서 사라진 예외입니다. 새로고침 후 다시 확인해 주세요.",
+    };
   }
 
   await db.from("audit_logs").insert({
@@ -87,8 +119,21 @@ export async function acknowledgeReconciliationExceptionAction(
     target_id: parsed.data.mismatchId,
     reason: parsed.data.reason,
     request_id: access.requestId,
-    metadata: { result: parsed.data.result, auto_repair: false },
+    metadata: {
+      result: parsed.data.result,
+      auto_repair: false,
+      expected_value: updated.expected_value ?? null,
+      actual_value: updated.actual_value ?? null,
+    },
   });
+
+  if (parsed.data.result === "INVESTIGATING") {
+    return {
+      ok: true,
+      message:
+        "조사 중으로 남겼습니다. 차이 증거는 그대로 보이며 숫자는 고치지 않았습니다.",
+    };
+  }
 
   return {
     ok: true,

@@ -91,6 +91,53 @@ export function kycStatusLabel(status: string): string {
   }
 }
 
+/** 대사 차이 상태 → 운영자용 한국어 */
+export function mismatchStatusLabel(status: string): string {
+  switch (status) {
+    case "OPEN":
+      return "열림";
+    case "INVESTIGATING":
+      return "조사 중";
+    case "RESOLVED":
+      return "조사 완료";
+    case "ACCEPTED":
+      return "차이 인정";
+    default:
+      return status;
+  }
+}
+
+/** 대사 차이 유형 → 짧은 한국어 안내 (원본 코드는 별도 표시) */
+export function mismatchTypeLabel(mismatchType: string): string {
+  switch (mismatchType) {
+    case "UNBALANCED_JOURNAL":
+      return "원장 대차 불일치";
+    case "WELCOME_REWARD_PROJECTION_MISMATCH":
+      return "환영 보상 투영 불일치";
+    case "WORKER_RUNTIME_PROBE_MISMATCH":
+      return "작업 검증용 차이";
+    default:
+      return "대사 차이";
+  }
+}
+
+/** JSON 증거를 운영자가 읽을 짧은 문자열로 만든다. */
+export function formatMismatchEvidence(
+  value: unknown,
+  emptyLabel = "기록 없음",
+): string {
+  if (value === null || value === undefined) return emptyLabel;
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    return trimmed.length > 0 ? trimmed : emptyLabel;
+  }
+  try {
+    return JSON.stringify(value);
+  } catch {
+    return emptyLabel;
+  }
+}
+
 /**
  * 외부 송금이 이미 기록된 상태면 true.
  * 계약 상태 EXTERNAL_SENT_RECORDED 또는 기존 PROCESSING+증거.
