@@ -383,30 +383,32 @@ test("shows the mining loading status while the route payload is slow", async ({
 }) => {
   test.setTimeout(240_000);
   const hydration = trackHydration(page);
-  let releaseGate = () => {};
-  const gate = new Promise<void>((resolve) => {
-    releaseGate = resolve;
-  });
-  const releaseTimer = setTimeout(() => releaseGate(), 12_000);
+  const member = await createConfirmedMember("mining-loading");
+  await loginAsMember(page, member, "/home");
+  await expect(
+    page.getByRole("heading", { name: "오늘도 채굴이 이어지고 있어요." }),
+  ).toBeVisible();
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  // 응답을 고정 시간만 늦춘다. 로딩 문구가 보일 때까지 붙잡으면 문구 자체가 나오지 않는다.
   await page.route("**/*", async (route) => {
     const request = route.request();
-    if (request.url().includes("/mining") && request.headers().rsc === "1") {
-      await gate;
+    const nextUrl = request.headers()["next-url"] ?? "";
+    const miningFlight =
+      request.url().includes("/mining") || nextUrl.includes("/mining");
+    if (miningFlight && request.headers().rsc === "1") {
+      await new Promise((resolve) => setTimeout(resolve, 2_500));
     }
     await route.continue();
   });
 
-  const member = await createConfirmedMember("mining-loading");
-  await loginAsMember(page, member, "/home");
-  await page.emulateMedia({ reducedMotion: "reduce" });
   const loading = page.getByRole("status", { name: "채굴 월드 불러오는 중" });
-  const navigation = page
+  const loadingSeen = loading.waitFor({ state: "visible", timeout: 15_000 });
+  await page
     .getByRole("navigation", { name: "주요 메뉴" })
-    .first();
-  await navigation
+    .first()
     .getByRole("link", { name: "채굴" })
     .click({ noWaitAfter: true });
-  await expect(loading).toBeVisible({ timeout: 10_000 });
+  await loadingSeen;
   const runningSkeletonAnimations = await loading.evaluate(
     (node) =>
       node
@@ -414,8 +416,6 @@ test("shows the mining loading status while the route payload is slow", async ({
         .filter((animation) => animation.playState === "running").length,
   );
   expect(runningSkeletonAnimations).toBe(0);
-  releaseGate();
-  clearTimeout(releaseTimer);
   await expect(
     page.getByRole("heading", { name: "채굴 월드", level: 1 }),
   ).toBeVisible({ timeout: 30_000 });
