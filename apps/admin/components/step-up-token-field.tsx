@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { flushSync } from "react-dom";
+import { useRef, useState } from "react";
 
 import type { AdminCommandFamily } from "@/lib/auth/command-families";
 import { createAdminBrowserClient } from "@/lib/supabase/browser";
@@ -9,19 +8,14 @@ import { createAdminBrowserClient } from "@/lib/supabase/browser";
 /**
  * 고위험 명령용 일회성 step-up 토큰.
  * 최근 TOTP AMR만으로는 머니 RPC를 호출하지 않습니다.
- *
- * onTokenIssued 가 있으면 부모가 FormData 토큰을 소유한다.
- * hidden 은 E2E·접근성용 미러이며, 발급 epoch 로 defaultValue 를 고정한다.
  */
 export function StepUpTokenField({
   commandFamily,
-  onTokenIssued,
 }: {
   commandFamily: AdminCommandFamily;
-  onTokenIssued?: (token: string) => void;
 }) {
   const [token, setToken] = useState("");
-  const [tokenEpoch, setTokenEpoch] = useState(0);
+  const tokenInputRef = useRef<HTMLInputElement>(null);
   const [code, setCode] = useState("");
   const [message, setMessage] = useState(
     "인증 앱 코드로 작업 확인을 완료해 주세요.",
@@ -79,26 +73,26 @@ export function StepUpTokenField({
       );
       return;
     }
+    // 성공 문구보다 먼저 DOM에 넣는다. useEffect면 제출이 빈 토큰을 보낸다.
     writeToken(payload.data.token);
     setCode("");
     setMessage("작업 확인이 완료되었습니다. 이제 명령을 실행할 수 있습니다.");
   }
 
   function writeToken(next: string) {
-    flushSync(() => {
-      setToken(next);
-      setTokenEpoch((epoch) => epoch + 1);
-      onTokenIssued?.(next);
-    });
+    if (tokenInputRef.current) {
+      tokenInputRef.current.value = next;
+    }
+    setToken(next);
   }
 
   return (
     <div className="operator-step-up">
       <input
-        key={`step-up-token-${tokenEpoch}`}
+        ref={tokenInputRef}
         name="stepUpToken"
         type="hidden"
-        defaultValue={token}
+        value={token}
       />
       <label className="operator-field">
         <span>인증 앱 코드 (작업 확인)</span>

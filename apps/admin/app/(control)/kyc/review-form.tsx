@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useRef, startTransition } from "react";
+import { useActionState, useState } from "react";
 
 import type { CommandActionResult } from "@/app/(control)/_lib/command-gate";
 import {
@@ -23,43 +23,34 @@ const DECISIONS = [
 ] as const;
 
 /**
- * ConfirmCheckbox 로 confirmation DOM 을 고정한다.
- * step-up 토큰은 부모 ref 에 두고 onSubmit 에서 FormData 에 직접 넣는다.
- * (이전 Server Action 이후 hidden 필드가 DOM 에는 있어도 FormData 에서 빠지는 CI 증거)
+ * 출금/입금 운영 폼과 동일: ConfirmCheckbox 로 confirmation DOM 을 고정하고,
+ * StepUpTokenField 형제를 조건부 삽입으로 remount 하지 않는다.
+ * decision 은 TextField 와 같이 상태로 유지해 Action 재시도에도 값이 남는다.
  */
 export function KycReviewForm({ caseId }: { caseId: string }) {
-  const stepUpTokenRef = useRef("");
   const [result, dispatch] = useActionState<
     CommandActionResult | null,
     FormData
   >(reviewKycCaseAction, null);
-
-  function onSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    const token = stepUpTokenRef.current.trim();
-    if (token.length >= 16) {
-      formData.set("stepUpToken", token);
-    } else {
-      formData.delete("stepUpToken");
-    }
-    startTransition(() => {
-      dispatch(formData);
-    });
-  }
+  const [decision, setDecision] = useState<string>("IN_REVIEW");
 
   return (
     <form
+      action={dispatch}
       aria-label="본인 확인 검토"
       className="operator-form"
       noValidate
       onReset={(event) => event.preventDefault()}
-      onSubmit={onSubmit}
     >
       <input name="caseId" type="hidden" value={caseId} />
       <label className="operator-field">
         <span>결과</span>
-        <select name="decision" required defaultValue="IN_REVIEW">
+        <select
+          name="decision"
+          required
+          value={decision}
+          onChange={(event) => setDecision(event.target.value)}
+        >
           {DECISIONS.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}
@@ -78,9 +69,6 @@ export function KycReviewForm({ caseId }: { caseId: string }) {
       />
       <StepUpTokenField
         commandFamily={ADMIN_COMMAND_FAMILIES.KYC_REVIEW}
-        onTokenIssued={(token) => {
-          stepUpTokenRef.current = token;
-        }}
       />
       <SubmitButton pendingLabel="저장 중…">검토 결과 저장</SubmitButton>
       <QueueFlash result={result} />
