@@ -3,11 +3,7 @@
 import { useActionState, useEffect, useRef, useState } from "react";
 
 import type { CommandActionResult } from "@/app/(control)/_lib/command-gate";
-import {
-  ConfirmCheckbox,
-  ReasonField,
-  SubmitButton,
-} from "@/components/operator-fields";
+import { ReasonField, SubmitButton } from "@/components/operator-fields";
 import { QueueFlash } from "@/components/queue-shell";
 import { StepUpTokenField } from "@/components/step-up-token-field";
 import { ADMIN_COMMAND_FAMILIES } from "@/lib/auth/command-families";
@@ -27,8 +23,9 @@ export function KycReviewForm({ caseId }: { caseId: string }) {
     reviewKycCaseAction,
     null,
   );
-  // Server Action 제출 뒤 uncontrolled select 가 초기값으로 돌아가 승인이 빠지지 않게 한다.
+  // Server Action 제출 뒤 uncontrolled 필드가 초기화되어도 검토 값이 유지되게 한다.
   const [decision, setDecision] = useState<string>("IN_REVIEW");
+  const [confirmed, setConfirmed] = useState(false);
   const statusRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -45,6 +42,10 @@ export function KycReviewForm({ caseId }: { caseId: string }) {
       noValidate
     >
       <input name="caseId" type="hidden" value={caseId} />
+      {/* 브라우저 checkbox name 이 Action 이후 FormData 에서 빠지지 않게 React 상태로 보낸다. */}
+      {confirmed ? (
+        <input name="confirmation" type="hidden" value="REVIEW_KYC" />
+      ) : null}
       <label className="operator-field">
         <span>결과</span>
         <select
@@ -64,11 +65,14 @@ export function KycReviewForm({ caseId }: { caseId: string }) {
         label="결정 사유"
         placeholder="왜 이 결정을 했는지 10자 이상 적어 주세요."
       />
-      <ConfirmCheckbox
-        label="문서 원문·비밀번호·식별 번호는 이 화면에 표시되지 않습니다."
-        name="confirmation"
-        value="REVIEW_KYC"
-      />
+      <label className="operator-check">
+        <input
+          checked={confirmed}
+          onChange={(event) => setConfirmed(event.target.checked)}
+          type="checkbox"
+        />
+        <span>문서 원문·비밀번호·식별 번호는 이 화면에 표시되지 않습니다.</span>
+      </label>
       <StepUpTokenField commandFamily={ADMIN_COMMAND_FAMILIES.KYC_REVIEW} />
       <SubmitButton pendingLabel="저장 중…">검토 결과 저장</SubmitButton>
       <div

@@ -31,8 +31,19 @@ async function fillKycReview(
 async function submitKycWithStepUp(
   form: ReturnType<typeof kycReviewForm>,
   secret: string,
+  decision: "APPROVED" | "REJECTED",
+  reason: string,
 ) {
+  // MFA 작업 확인이 폼을 다시 그리면 입력·토큰이 비울 수 있어, 확인 직후 값을 다시 고정한다.
   await confirmOperatorStepUp(form, secret);
+  await fillKycReview(form, decision, reason);
+  const tokenAfterFill = await form
+    .locator('input[name="stepUpToken"]')
+    .inputValue();
+  if (tokenAfterFill.length < 16) {
+    await confirmOperatorStepUp(form, secret);
+    await fillKycReview(form, decision, reason);
+  }
   await expect
     .poll(async () => form.locator('input[name="stepUpToken"]').inputValue())
     .toMatch(/^.{16,}$/);
@@ -142,7 +153,12 @@ test.describe("admin KYC product queue", () => {
       ),
     ).toBeVisible();
 
-    await submitKycWithStepUp(approveForm, secret);
+    await submitKycWithStepUp(
+      approveForm,
+      secret,
+      "APPROVED",
+      "서류 요약과 회원 상태가 일치해 승인합니다.",
+    );
     const approved = await readKycCase(approve.caseId);
     expect(approved.status).toBe("APPROVED");
     expect(approved.decision_reason).toContain("승인합니다");
@@ -155,7 +171,12 @@ test.describe("admin KYC product queue", () => {
       "REJECTED",
       "제출 내용이 부족해 반려합니다. 재신청이 필요합니다.",
     );
-    await submitKycWithStepUp(rejectForm, secret);
+    await submitKycWithStepUp(
+      rejectForm,
+      secret,
+      "REJECTED",
+      "제출 내용이 부족해 반려합니다. 재신청이 필요합니다.",
+    );
     const rejected = await readKycCase(reject.caseId);
     expect(rejected.status).toBe("REJECTED");
     expect(rejected.decision_reason).toContain("반려합니다");
