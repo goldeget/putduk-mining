@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useId, useState } from "react";
+import { useActionState, useId } from "react";
 
 import type { CommandActionResult } from "@/app/(control)/_lib/command-gate";
 import {
@@ -25,18 +25,11 @@ export function SafeModeForm({
   canMutate: boolean;
 }) {
   const formId = useId();
-  const [formKey, setFormKey] = useState(0);
   const [result, action] = useActionState<CommandActionResult | null, FormData>(
     setSafeModeAction,
     null,
   );
   const nextPause = currentlyPaused ? "false" : "true";
-
-  useEffect(() => {
-    if (result?.ok) {
-      setFormKey((value) => value + 1);
-    }
-  }, [result]);
 
   if (!canMutate) {
     return (
@@ -51,7 +44,7 @@ export function SafeModeForm({
       action={action}
       aria-label={`${component} 안전 모드`}
       className="operator-form"
-      key={`${formId}-${formKey}-${currentlyPaused ? "paused" : "open"}`}
+      key={`${component}-${currentlyPaused ? "paused" : "open"}`}
     >
       <input name="component" type="hidden" value={component} />
       <input name="pause" type="hidden" value={nextPause} />
