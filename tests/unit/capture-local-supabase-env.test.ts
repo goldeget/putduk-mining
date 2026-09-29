@@ -9,6 +9,8 @@ import {
 const LOCAL_URL = "http://127.0.0.1:54321";
 const PUBLISHABLE = "sb_publishable_local_fixture";
 const SECRET = "sb_secret_local_fixture";
+const LOCAL_DB =
+  "postgresql://postgres:unit-test-password@127.0.0.1:65432/postgres";
 
 describe("supabase status env parser", () => {
   it("parses KEY=value, quoted values, and export prefixes", () => {
@@ -30,7 +32,7 @@ SECRET_KEY=${SECRET}
         `API_URL="${LOCAL_URL}"`,
         `PUBLISHABLE_KEY="${PUBLISHABLE}"`,
         `SECRET_KEY="${SECRET}"`,
-        `DB_URL="postgresql://postgres:postgres@127.0.0.1:54322/postgres"`,
+        `DB_URL="${LOCAL_DB}"`,
       ].join("\n"),
       stderr: "",
       error: undefined,
@@ -38,10 +40,11 @@ SECRET_KEY=${SECRET}
     expect(captured.apiUrl).toBe(LOCAL_URL);
     expect(captured.publishableKey).toBe(PUBLISHABLE);
     expect(captured.secretKey).toBe(SECRET);
-    expect(formatGithubEnv(captured)).not.toContain("postgresql://");
-    expect(formatGithubEnv(captured)).toContain(
-      `NEXT_PUBLIC_SUPABASE_URL=${LOCAL_URL}`,
-    );
+    expect(captured.dbUrl).toBe(LOCAL_DB);
+    const payload = formatGithubEnv(captured);
+    expect(payload).toContain(`LOCAL_SUPABASE_DB_URL=${LOCAL_DB}`);
+    expect(payload).toContain(`NEXT_PUBLIC_SUPABASE_URL=${LOCAL_URL}`);
+    expect(payload).toContain(`SUPABASE_SECRET_KEY=${SECRET}`);
   });
 
   it("maps dotted override names and reads env lines from stderr", () => {
@@ -52,6 +55,7 @@ SECRET_KEY=${SECRET}
         `api.url=${LOCAL_URL}`,
         `auth.publishable_key="${PUBLISHABLE}"`,
         `auth.secret_key='${SECRET}'`,
+        `db.url=${LOCAL_DB}`,
       ].join("\n"),
       error: undefined,
     });
@@ -67,6 +71,7 @@ SECRET_KEY=${SECRET}
         `export API_URL=${LOCAL_URL}`,
         `export ANON_KEY=${PUBLISHABLE}`,
         `export SERVICE_ROLE_KEY=${SECRET}`,
+        `DB_URL=${LOCAL_DB}`,
       ].join("\n"),
       stderr: "",
       error: undefined,
@@ -83,11 +88,13 @@ SECRET_KEY=${SECRET}
         `PUBLISHABLE_KEY=current-publishable`,
         `ANON_KEY=deprecated-anon`,
         `SECRET_KEY=${SECRET}`,
+        `DB_URL=${LOCAL_DB}`,
       ].join("\n"),
       stderr: "",
       error: undefined,
     });
     expect(captured.publishableKey).toBe("current-publishable");
+    expect(captured.dbUrl).toBe(LOCAL_DB);
   });
 
   it("rejects the remote project ref without echoing the secret", () => {
@@ -151,10 +158,56 @@ SECRET_KEY=${SECRET}
   it("accepts localhost as a local API host", () => {
     const captured = captureFromCliResult({
       status: 0,
-      stdout: `API_URL="http://localhost:54321/"\nPUBLISHABLE_KEY=${PUBLISHABLE}\nSECRET_KEY=${SECRET}\n`,
+      stdout: `API_URL="http://localhost:54321/"\nPUBLISHABLE_KEY=${PUBLISHABLE}\nSECRET_KEY=${SECRET}\nDB_URL=${LOCAL_DB}\n`,
       stderr: "",
       error: undefined,
     });
     expect(captured.apiUrl).toBe("http://localhost:54321");
+  });
+
+  it("rejects a remote database URL without echoing the password", () => {
+    expect(() =>
+      captureFromCliResult({
+        status: 0,
+        stdout: [
+          `API_URL=${LOCAL_URL}`,
+          `PUBLISHABLE_KEY=${PUBLISHABLE}`,
+          `SECRET_KEY=${SECRET}`,
+          "DB_URL=postgresql://postgres:unit-test-password@db.osrmyjgmpdspdcwqjwuv.supabase.co:5432/postgres",
+        ].join("\n"),
+        stderr: "",
+        error: undefined,
+      }),
+    ).toThrow(/Refusing remote Supabase database URL/);
+
+    try {
+      captureFromCliResult({
+        status: 0,
+        stdout: [
+          `API_URL=${LOCAL_URL}`,
+          `PUBLISHABLE_KEY=${PUBLISHABLE}`,
+          `SECRET_KEY=${SECRET}`,
+          "DB_URL=postgresql://postgres:unit-test-password@example.com:5432/postgres",
+        ].join("\n"),
+        stderr:
+          "DB_URL=postgresql://postgres:unit-test-password@example.com/db",
+        error: undefined,
+      });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "";
+      expect(message).toMatch(/127\.0\.0\.1 and localhost/);
+      expect(message).not.toContain("unit-test-password");
+    }
+  });
+
+  it("rejects a non-postgres database URL", () => {
+    expect(() =>
+      captureFromCliResult({
+        status: 0,
+        stdout: `API_URL=${LOCAL_URL}\nPUBLISHABLE_KEY=${PUBLISHABLE}\nSECRET_KEY=${SECRET}\nDB_URL=mysql://127.0.0.1:3306/postgres\n`,
+        stderr: "",
+        error: undefined,
+      }),
+    ).toThrow(/postgres and postgresql/);
   });
 });

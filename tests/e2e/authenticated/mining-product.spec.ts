@@ -349,6 +349,7 @@ test("renders an active session and a maintenance session from the server snapsh
   expect(hydration).toEqual([]);
 });
 
+// 빈 디렉터리는 로컬 데이터베이스의 월드 표시만 잠깐 끈다. 운영 권한은 쓰지 않는다.
 test("shows an empty world directory and restores the shared worlds", async ({
   page,
 }) => {

@@ -2,6 +2,7 @@ export const CLI_STATUS_ENV_FIELDS: {
   apiUrl: readonly string[];
   publishableKey: readonly string[];
   secretKey: readonly string[];
+  dbUrl: readonly string[];
 };
 
 export function parseShellEnv(text: string): Record<string, string>;
@@ -13,10 +14,13 @@ export function mergeStatusStreams(
 
 export function assertLocalApiUrl(apiUrl: string): string;
 
+export function assertLocalDbUrl(dbUrl: string): string;
+
 export function selectLocalCredentials(values: Record<string, string>): {
   apiUrl: string;
   publishableKey: string;
   secretKey: string;
+  dbUrl: string;
 };
 
 export function redactStatusText(text: string): string;
@@ -30,16 +34,19 @@ export function captureFromCliResult(result: {
   apiUrl: string;
   publishableKey: string;
   secretKey: string;
+  dbUrl: string;
 };
 
 export function formatGithubEnv(credentials: {
   apiUrl: string;
   publishableKey: string;
   secretKey: string;
+  dbUrl: string;
 }): string;
 
 export function readSupabaseStatus(): {
   apiUrl: string;
   publishableKey: string;
   secretKey: string;
+  dbUrl: string;
 };
