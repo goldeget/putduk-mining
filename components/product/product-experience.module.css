@@ -45,11 +45,13 @@
 }
 
 .fundingPanel {
+  min-width: 0;
   padding: clamp(1.15rem, 3vw, 2rem);
 }
 
 .form {
   display: grid;
+  min-width: 0;
   gap: 1.35rem;
 }
 
@@ -410,6 +412,7 @@
 }
 
 .historyPanel {
+  min-width: 0;
   margin-top: clamp(2.2rem, 6vw, 4.5rem);
   border: 1px solid var(--border-default);
   background: var(--surface-default);
@@ -430,6 +433,9 @@
 
 .historyList {
   display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .historyItem {
@@ -469,6 +475,11 @@
 .historyMeta {
   color: var(--text-tertiary);
   font-size: 0.68rem;
+}
+
+.historyDetail {
+  overflow-wrap: anywhere;
+  word-break: break-all;
 }
 
 .historyMeta {
@@ -1280,6 +1291,38 @@
 .monoHint {
   font-family: var(--font-mono);
   font-size: 0.85em;
+  word-break: break-all;
+}
+
+.field input.monoInput {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+}
+
+.depositAddressBlock {
+  display: grid;
+  min-width: 0;
+  gap: 0.55rem;
+}
+
+.depositAddressBlock > p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 750;
+}
+
+.depositAddress {
+  display: block;
+  max-width: 100%;
+  margin: 0;
+  padding: 0.85rem 0.95rem;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  background: var(--surface-sunken);
+  font: 650 0.82rem/1.45 var(--font-mono);
+  overflow-wrap: anywhere;
   word-break: break-all;
 }
 

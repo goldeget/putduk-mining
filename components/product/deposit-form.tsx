@@ -13,7 +13,16 @@ import { trackAnalyticsEvent } from "@/lib/analytics/client";
 
 type Feedback = { message: string; tone: "error" | "success" } | null;
 
+/** 화면에서 고르기 쉬운 예시 금액이다. 운영 최소·최대 한도가 아니다. */
 const quickAmounts = ["10000", "30000", "50000", "100000"] as const;
+
+const DEPOSIT_REQUEST_ERRORS: Record<string, string> = {
+  DEPOSIT_REQUEST_FAILED:
+    "입금 요청을 접수하지 못했어요. 잠시 후 다시 시도해 주세요.",
+  INVALID_DEPOSIT_REQUEST: "입금 요청 정보를 확인해 주세요.",
+  INVALID_IDEMPOTENCY_KEY: "요청을 다시 시도해 주세요.",
+  UNAUTHENTICATED: "로그인이 필요해요. 다시 로그인해 주세요.",
+};
 
 export function DepositForm() {
   const router = useRouter();
@@ -61,13 +70,14 @@ export function DepositForm() {
         body: JSON.stringify({ amountAtomic: parsedAmount, currency: "KRW" }),
       });
       const payload = (await response.json().catch(() => null)) as {
-        error?: { message?: string };
+        error?: { code?: string };
       } | null;
 
       if (!response.ok) {
+        const code = payload?.error?.code;
         setFeedback({
           message:
-            payload?.error?.message ??
+            (code && DEPOSIT_REQUEST_ERRORS[code]) ||
             "입금 요청을 접수하지 못했어요. 잠시 후 다시 시도해 주세요.",
           tone: "error",
         });
@@ -75,8 +85,7 @@ export function DepositForm() {
       }
 
       setFeedback({
-        message:
-          "입금 요청을 접수했어요. 안내 계좌로 본인 명의 이체를 진행해 주세요.",
+        message: "입금 요청을 접수했어요. 확인이 끝나면 KRW 지갑에 반영돼요.",
         tone: "success",
       });
       setAmount("");
@@ -160,8 +169,8 @@ export function DepositForm() {
       <div className={styles.formNotice} id="deposit-amount-help">
         <PutdukIcon name="shield" size={19} />
         <p>
-          요청만으로 자산이 늘어나지 않습니다. 안내된 계좌·금액과 실제 입금이
-          확인된 뒤 KRW 지갑에 반영됩니다.
+          요청만으로 자산이 늘어나지 않습니다. 실제 입금이 확인된 뒤 KRW
+          지갑에 반영됩니다.
         </p>
       </div>
 
@@ -176,12 +185,13 @@ export function DepositForm() {
 
       {feedback ? (
         <p
+          id="deposit-request-feedback"
           className={`${styles.feedback} ${
             feedback.tone === "success"
               ? styles.feedbackSuccess
               : styles.feedbackError
           }`}
-          role="status"
+          role={feedback.tone === "error" ? "alert" : "status"}
         >
           {feedback.message}
         </p>
