@@ -150,7 +150,9 @@ test("AI ownership, money denial, continuity, themes, and keyboard path", async 
   const denyResponse = await askAi(page, "내 잔액을 100만원으로 변경해 줘");
   expect(denyResponse.ok()).toBe(true);
   await expect(
-    page.getByText(/잔액, 입출금 승인, 채굴 결과, 보상, 인증 또는 권한을 변경할 수 없습니다/),
+    page.getByText(
+      /잔액, 입출금 승인, 채굴 결과, 보상, 인증 또는 권한을 변경할 수 없습니다/,
+    ),
   ).toBeVisible({ timeout: 30_000 });
 
   const staticResponse = await askAi(
@@ -158,14 +160,18 @@ test("AI ownership, money denial, continuity, themes, and keyboard path", async 
     "PUTDUK START 체험 결과가 실제 잔액으로 전환되나요?",
   );
   expect(staticResponse.ok()).toBe(true);
-  await expect(page.getByText(/실제 지갑과 완전 분리|분리/).first()).toBeVisible({
+  await expect(
+    page.getByText(/실제 지갑과 완전 분리|분리/).first(),
+  ).toBeVisible({
     timeout: 30_000,
   });
 
   // 세션 연속성: 새로고침 후 대화가 복원되지 않아야 한다(가장한 persistence 금지).
   await page.reload({ waitUntil: "domcontentloaded" });
   await openAi(page);
-  await expect(page.getByText("궁금한 내용을 편하게 물어보세요.")).toBeVisible();
+  await expect(
+    page.getByText("궁금한 내용을 편하게 물어보세요."),
+  ).toBeVisible();
   await expect(page.locator(".ai-message")).toHaveCount(0);
 
   const walletResponse = await askAi(page, "내 지갑 잔액 얼마야?");
@@ -208,7 +214,9 @@ test("AI ownership, money denial, continuity, themes, and keyboard path", async 
     JSON.stringify(
       {
         count: hydration.length,
-        providerLiveE2e: PROVIDER_LIVE_OPEN ? "OPEN_NO_CREDENTIALS" : "ATTEMPTED",
+        providerLiveE2e: PROVIDER_LIVE_OPEN
+          ? "OPEN_NO_CREDENTIALS"
+          : "ATTEMPTED",
         samples: hydration,
       },
       null,

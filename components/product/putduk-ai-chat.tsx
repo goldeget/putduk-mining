@@ -295,7 +295,9 @@ export function PutdukAiChat({
               ["cancelled", "error"].includes(message.state) ? (
                 <>
                   <small>
-                    {message.state === "cancelled" ? "답변 중단됨" : "연결 실패"}
+                    {message.state === "cancelled"
+                      ? "답변 중단됨"
+                      : "연결 실패"}
                   </small>
                   {message.state === "error" ? (
                     <button
