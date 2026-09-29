@@ -58,7 +58,10 @@ export default async function EventsDetailPage({
           title="이벤트를 불러오지 못했어요"
           description="인터넷 연결을 확인한 뒤 다시 시도해 주세요."
           action={
-            <Link className="button button--secondary" href={returnPath as Route}>
+            <Link
+              className="button button--secondary"
+              href={returnPath as Route}
+            >
               다시 불러오기
             </Link>
           }
@@ -80,7 +83,10 @@ export default async function EventsDetailPage({
           title="공개된 이벤트를 찾을 수 없어요"
           description="주소가 바뀌었거나 아직 공개되지 않은 이벤트일 수 있어요."
           action={
-            <Link className="button button--secondary" href={"/events" as Route}>
+            <Link
+              className="button button--secondary"
+              href={"/events" as Route}
+            >
               이벤트 목록으로
             </Link>
           }
@@ -109,7 +115,10 @@ export default async function EventsDetailPage({
         lead="기간과 내 참여 상태만 표시합니다. 보상 금액은 추측하지 않습니다."
       />
 
-      <section className={styles.eventHero} aria-labelledby="event-detail-title">
+      <section
+        className={styles.eventHero}
+        aria-labelledby="event-detail-title"
+      >
         <picture className={styles.eventHeroPicture}>
           <source
             type="image/avif"
@@ -150,7 +159,10 @@ export default async function EventsDetailPage({
             </span>
           </div>
           <p>
-            <Link className="button button--secondary" href={"/events" as Route}>
+            <Link
+              className="button button--secondary"
+              href={"/events" as Route}
+            >
               목록으로
             </Link>
           </p>

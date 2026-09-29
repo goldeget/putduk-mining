@@ -97,7 +97,10 @@ export default async function EventsPage() {
           title="이벤트를 불러오지 못했어요"
           description="인터넷 연결을 확인한 뒤 다시 시도해 주세요. 이미 달성한 기록에는 영향이 없습니다."
           action={
-            <Link className="button button--secondary" href={"/events" as Route}>
+            <Link
+              className="button button--secondary"
+              href={"/events" as Route}
+            >
               다시 불러오기
             </Link>
           }
@@ -239,7 +242,10 @@ export default async function EventsPage() {
           title="공지를 불러오지 못했어요"
           description="잠시 후 다시 확인해 주세요."
           action={
-            <Link className="button button--secondary" href={"/events" as Route}>
+            <Link
+              className="button button--secondary"
+              href={"/events" as Route}
+            >
               다시 불러오기
             </Link>
           }
@@ -272,7 +278,9 @@ export default async function EventsPage() {
 
       <span className={styles.formNotice}>
         <PutdukIcon name="shield" size={19} />
-        <p>이벤트 조건과 지급 상태는 서버에 기록된 내 참여 결과만 보여 줍니다.</p>
+        <p>
+          이벤트 조건과 지급 상태는 서버에 기록된 내 참여 결과만 보여 줍니다.
+        </p>
       </span>
     </div>
   );

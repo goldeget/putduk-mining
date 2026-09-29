@@ -21,10 +21,7 @@ export type MemberVisibleEventStatus =
   (typeof MEMBER_VISIBLE_EVENT_STATUSES)[number];
 
 export type EventParticipantStatus =
-  | "JOINED"
-  | "COMPLETED"
-  | "REWARDED"
-  | "DISQUALIFIED";
+  "JOINED" | "COMPLETED" | "REWARDED" | "DISQUALIFIED";
 
 export type MemberEventRow = {
   ends_at: string;

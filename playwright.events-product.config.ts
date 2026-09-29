@@ -38,9 +38,7 @@ if (
   supabaseUrl.includes("osrmyjgmpdspdcwqjwuv") ||
   !supabaseUrl.startsWith("http://")
 ) {
-  throw new Error(
-    "Events Playwright refuses non-local Supabase credentials.",
-  );
+  throw new Error("Events Playwright refuses non-local Supabase credentials.");
 }
 
 const sharedEnv = {

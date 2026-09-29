@@ -107,9 +107,7 @@ test("unsigned visitors keep an events detail return path", async ({
   page,
 }) => {
   await page.goto("/events/local-live-check");
-  await expect(page).toHaveURL(
-    /\/login\?next=%2Fevents%2Flocal-live-check$/,
-  );
+  await expect(page).toHaveURL(/\/login\?next=%2Fevents%2Flocal-live-check$/);
   await expect(page.locator('input[name="next"]')).toHaveValue(
     "/events/local-live-check",
   );
@@ -139,8 +137,7 @@ test("shows empty events and notices without invented content", async ({
   expect(mainText).not.toContain("로컬 진행 이벤트");
   expect(mainText).not.toContain("로컬 초안 이벤트");
 
-  const canProveGlobalEmpty =
-    publishedEvents === 0 && publishedNotices === 0;
+  const canProveGlobalEmpty = publishedEvents === 0 && publishedNotices === 0;
   if (canProveGlobalEmpty) {
     await expect(
       page.getByRole("heading", { name: "현재 공개된 이벤트가 없어요" }),
@@ -262,7 +259,9 @@ test("shows LIVE SCHEDULED ENDED notices isolation and detail", async ({
     page.getByRole("heading", { name: "로컬 진행 이벤트" }),
   ).toBeVisible();
   await expect(page.getByText("참여 중").first()).toBeVisible();
-  await expect(page.getByText("다른 회원의 참여 기록은 보이지 않습니다.")).toBeVisible();
+  await expect(
+    page.getByText("다른 회원의 참여 기록은 보이지 않습니다."),
+  ).toBeVisible();
   await expect(page.getByText("보상 반영 완료")).toHaveCount(0);
   await shoot(page, "detail-live-390-dark.png");
 

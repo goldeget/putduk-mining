@@ -22,9 +22,8 @@ describe("protected return paths", () => {
     "/ai?question=wallet",
     "/events",
     "/events/live-sample",
-  ])(
-    "preserves a product return path: %s",
-    (path) => expect(safeProtectedReturnPath(path)).toBe(path),
+  ])("preserves a product return path: %s", (path) =>
+    expect(safeProtectedReturnPath(path)).toBe(path),
   );
 
   it.each(["/ai/about", "/ai/facts", "/ai/faq", "/ai/how-it-works"])(
