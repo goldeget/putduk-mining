@@ -3,6 +3,7 @@ import { afterEach, describe, expect, test } from "vitest";
 import {
   formatMiningClock,
   formatMiningElapsed,
+  miningRouteLoadingLabel,
   presentMiningStatus,
 } from "@/lib/product/mining-display";
 
@@ -14,6 +15,10 @@ afterEach(() => {
   } else {
     process.env.TZ = originalTz;
   }
+});
+
+test("mining route loading status is a short Korean announcement", () => {
+  expect(miningRouteLoadingLabel).toBe("채굴 월드 불러오는 중");
 });
 
 describe("presentMiningStatus", () => {

@@ -1,3 +1,5 @@
+export const miningRouteLoadingLabel = "채굴 월드 불러오는 중";
+
 export type MiningStatusTone =
   "danger" | "info" | "neutral" | "success" | "warning";
 
