@@ -154,6 +154,22 @@ test("빈 이력·검증·오류 복구와 KRW 기준 복사를 확인한다", a
   await expect(amount).toHaveAttribute("aria-invalid", "true");
   await expect(submit).toBeDisabled();
 
+  await page.route(/\/api\/v1\/withdrawals\/destinations$/, async (route) => {
+    if (route.request().method() !== "POST") {
+      await route.continue();
+      return;
+    }
+    await route.fulfill({
+      status: 503,
+      contentType: "application/json",
+      body: JSON.stringify({
+        error: {
+          code: "DESTINATION_REGISTER_FAILED",
+          message: 'relation "withdrawal_destinations" does not exist',
+        },
+      }),
+    });
+  });
   await page.route(/\/api\/v1\/withdrawals\/hold$/, async (route) => {
     if (route.request().method() !== "POST") {
       await route.continue();
@@ -176,7 +192,19 @@ test("빈 이력·검증·오류 복구와 KRW 기준 복사를 확인한다", a
     "출금 요청을 접수하지 못했어요. 잠시 후 다시 시도해 주세요.",
   );
   await expect(page.getByText("withdrawal_requests")).toHaveCount(0);
+
+  await page.getByRole("button", { name: "다른 목적지로 변경" }).click();
+  await page.locator('select[name="bankCode"]').selectOption("KB");
+  await page.locator('input[name="accountHolder"]').fill("홍길동");
+  await page.locator('input[name="accountNumber"]').fill("123456789012");
+  await submit.click();
+  await expect(page.locator("#withdrawal-request-feedback")).toContainText(
+    "출금 목적지를 등록하지 못했어요. 잠시 후 다시 시도해 주세요.",
+  );
+  await expect(page.getByText("withdrawal_requests")).toHaveCount(0);
+  await expect(page.getByText("withdrawal_destinations")).toHaveCount(0);
   await page.unroute(/\/api\/v1\/withdrawals\/hold$/);
+  await page.unroute(/\/api\/v1\/withdrawals\/destinations$/);
   expect(hydration).toEqual([]);
 });
 
@@ -318,9 +346,7 @@ test("레이아웃·테마·포커스·모션 감소를 확인한다", async ({ 
       const iterations = effect.getTiming().iterations;
       if (iterations === Infinity && animation.playState === "running") {
         return [
-          effect.target instanceof Element
-            ? effect.target.tagName
-            : "unknown",
+          effect.target instanceof Element ? effect.target.tagName : "unknown",
         ];
       }
       return [];
@@ -330,8 +356,7 @@ test("레이아웃·테마·포커스·모션 감소를 확인한다", async ({ 
 
   const sample = await page.evaluate(() => {
     const navigation = performance.getEntriesByType("navigation")[0] as
-      | PerformanceNavigationTiming
-      | undefined;
+      PerformanceNavigationTiming | undefined;
     const resources = performance.getEntriesByType("resource").map((entry) => {
       const resource = entry as PerformanceResourceTiming;
       return {

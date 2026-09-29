@@ -1,10 +1,18 @@
-import { appendFileSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
+import {
+  appendFileSync,
+  readFileSync,
+  unlinkSync,
+  writeFileSync,
+} from "node:fs";
 import { randomBytes } from "node:crypto";
 import { spawnSync } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { readSupabaseStatus, formatGithubEnv } from "./capture-local-supabase-env.mjs";
+import {
+  readSupabaseStatus,
+  formatGithubEnv,
+} from "./capture-local-supabase-env.mjs";
 
 /**
  * 로컬 출금 product E2E 러너.

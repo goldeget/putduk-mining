@@ -9,6 +9,12 @@ import {
   destinationMethodLabel,
   type WithdrawalDestinationMethod,
 } from "@/components/product/destination-type";
+import {
+  isMemberFacingWithdrawalCopy,
+  memberDestinationRegisterMessage,
+  MEMBER_WITHDRAWAL_NETWORK_FALLBACK,
+  memberWithdrawalSubmitMessage,
+} from "@/components/product/member-withdrawal-errors";
 import styles from "@/components/product/product-experience.module.css";
 import {
   formatAtomicAmount,
@@ -195,14 +201,12 @@ export function WithdrawalForm({
       .json()
       .catch(() => null)) as {
       data?: { destinationId?: string };
-      error?: { message?: string };
+      error?: { code?: string; message?: string };
     } | null;
 
     if (!registerResponse.ok || !registerPayload?.data?.destinationId) {
-      throw new Error(
-        registerPayload?.error?.message ??
-          "출금 목적지를 등록하지 못했어요. 잠시 후 다시 시도해 주세요.",
-      );
+      // 서버 message는 무시하고 허용 코드→한국어만 사용한다.
+      throw new Error(memberDestinationRegisterMessage(registerPayload));
     }
 
     return registerPayload.data.destinationId;
@@ -244,14 +248,13 @@ export function WithdrawalForm({
         }),
       });
       const payload = (await response.json().catch(() => null)) as {
-        error?: { message?: string };
+        error?: { code?: string; message?: string };
       } | null;
 
       if (!response.ok) {
+        // 고장 주입·내부 DB 문구가 message에 실려도 회원 UI에는 노출하지 않는다.
         setFeedback({
-          message:
-            payload?.error?.message ??
-            "출금 요청을 접수하지 못했어요. 잠시 후 다시 시도해 주세요.",
+          message: memberWithdrawalSubmitMessage(payload),
           tone: "error",
         });
         return;
@@ -273,11 +276,14 @@ export function WithdrawalForm({
       );
       router.refresh();
     } catch (error) {
+      const candidate =
+        error instanceof Error
+          ? error.message
+          : MEMBER_WITHDRAWAL_NETWORK_FALLBACK;
       setFeedback({
-        message:
-          error instanceof Error
-            ? error.message
-            : "인터넷 연결을 확인한 뒤 다시 시도해 주세요.",
+        message: isMemberFacingWithdrawalCopy(candidate)
+          ? candidate
+          : MEMBER_WITHDRAWAL_NETWORK_FALLBACK,
         tone: "error",
       });
     } finally {
