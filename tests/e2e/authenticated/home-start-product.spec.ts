@@ -3,12 +3,17 @@ import path from "node:path";
 
 import { expect, test, type Page } from "@playwright/test";
 
+import { E2E_FORCE_REST_FAILURE_COOKIE } from "@/lib/supabase/server-fetch";
+
 import { createConfirmedMember } from "../fixtures/local-auth";
 import {
   dismissGuidedQuestIfPresent,
   loginAsMember,
   startTrialFromUi,
 } from "./helpers/member-session";
+
+const HOME_READ_FAULT_TABLES =
+  "trial_account_snapshots,mining_active_session_snapshots";
 
 const VIEWPORTS = [
   { height: 844, name: "390", width: 390 },
@@ -171,29 +176,31 @@ test("홈·START 오류 복구와 키보드·축소 모션을 확인한다", asy
   const member = await createConfirmedMember("home-start-recovery");
   await loginAsMember(page, member, "/home");
 
-  await page.route("**/rest/v1/trial_account_snapshots*", (route) =>
-    route.fulfill({
-      status: 500,
-      contentType: "application/json",
-      body: JSON.stringify({ message: "forced-read-failure" }),
-    }),
-  );
-  await page.route("**/rest/v1/mining_active_session_snapshots*", (route) =>
-    route.fulfill({
-      status: 500,
-      contentType: "application/json",
-      body: JSON.stringify({ message: "forced-read-failure" }),
-    }),
-  );
+  // 홈은 서버 컴포넌트가 identity.supabase로 읽는다. 브라우저 page.route는 먹지 않는다.
+  // APP_ENV=test에서만 동작하는 SSR fetch 고장 쿠키로 기존 부분 실패 UI를 증명한다.
+  await page.context().addCookies([
+    {
+      name: E2E_FORCE_REST_FAILURE_COOKIE,
+      value: HOME_READ_FAULT_TABLES,
+      url: "http://127.0.0.1:3000",
+    },
+  ]);
 
   await page.goto("/home");
-  await expect(page.getByText("일부 정보를 불러오지 못했어요")).toBeVisible();
+  await expect(
+    page.getByRole("heading", {
+      name: "일부 정보를 불러오지 못했어요",
+      exact: true,
+    }),
+  ).toBeVisible();
   await expect(
     page.getByRole("button", { name: /다시 확인/ }).first(),
   ).toBeVisible();
 
-  await page.unroute("**/rest/v1/trial_account_snapshots*");
-  await page.unroute("**/rest/v1/mining_active_session_snapshots*");
+  // 인증 세션은 유지하고 SSR 고장 쿠키만 제거한 뒤 복구 버튼을 검증한다.
+  await page.context().clearCookies({
+    name: E2E_FORCE_REST_FAILURE_COOKIE,
+  });
   await page
     .getByRole("button", { name: /다시 확인/ })
     .first()
