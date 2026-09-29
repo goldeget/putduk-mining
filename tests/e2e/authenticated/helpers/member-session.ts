@@ -75,7 +75,9 @@ export async function startTrialFromUi(page: Page) {
     await activeCopy.waitFor({ timeout: 20_000 });
   } catch {
     const statusLocator = page
-      .locator("[data-start-stage-meta] strong, .product-mining-stage__meta strong")
+      .locator(
+        "[data-start-stage-meta] strong, .product-mining-stage__meta strong",
+      )
       .first();
     const status = (await statusLocator.textContent())?.trim();
     if (status !== "진행 중") {

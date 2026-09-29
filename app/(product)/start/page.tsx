@@ -158,7 +158,9 @@ export default async function StartPage() {
                 tone="error"
                 title="상태를 불러오지 못했어요"
                 description="연결을 확인한 뒤 다시 열어 주세요."
-                action={<RouteReloadButton className="button button--secondary" />}
+                action={
+                  <RouteReloadButton className="button button--secondary" />
+                }
               />
             ) : isActive && trial ? (
               <dl className={styles.facts}>

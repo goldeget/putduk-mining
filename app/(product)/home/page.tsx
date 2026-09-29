@@ -83,7 +83,8 @@ export default async function ProductHomePage() {
   } else if (trial?.status === "ACTIVE") {
     liveLabel = "PUTDUK START 진행 중";
     worldTitle = trial.world_name_ko ?? "KOREA";
-    worldLead = "앱을 닫아도 채굴은 계속돼요. 다시 접속하면 결과를 확인할 수 있어요.";
+    worldLead =
+      "앱을 닫아도 채굴은 계속돼요. 다시 접속하면 결과를 확인할 수 있어요.";
   } else if (trial?.status === "COMPLETED" || trial?.status === "EXPIRED") {
     liveLabel = "PUTDUK START 완료";
     worldTitle = trial.world_name_ko ?? "KOREA";
@@ -95,11 +96,17 @@ export default async function ProductHomePage() {
       <header className={styles.welcome}>
         <div className={styles.welcomeCopy}>
           <p className="eyebrow">오늘</p>
-          <h1 className={styles.welcomeTitle}>오늘도 채굴이 이어지고 있어요.</h1>
-          <p className={styles.welcomeLead}>지금 상태와 다음에 할 일만 모았어요.</p>
+          <h1 className={styles.welcomeTitle}>
+            오늘도 채굴이 이어지고 있어요.
+          </h1>
+          <p className={styles.welcomeLead}>
+            지금 상태와 다음에 할 일만 모았어요.
+          </p>
         </div>
         {worldStateUnavailable ? (
-          <RouteReloadButton className={`button button--primary ${styles.primaryAction}`} />
+          <RouteReloadButton
+            className={`button button--primary ${styles.primaryAction}`}
+          />
         ) : (
           <Link
             className={`button button--primary ${styles.primaryAction}`}
@@ -247,7 +254,9 @@ export default async function ProductHomePage() {
                   <strong className={styles.notificationTitle}>
                     {notification.title_ko}
                   </strong>
-                  <p className={styles.notificationBody}>{notification.body_ko}</p>
+                  <p className={styles.notificationBody}>
+                    {notification.body_ko}
+                  </p>
                 </span>
                 <time
                   className={styles.notificationTime}

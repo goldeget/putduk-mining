@@ -42,17 +42,20 @@ const conversionStatusCopy: Record<
   },
   CONVERTED: {
     label: "전환 완료",
-    description: "실제 KRW로 전환됐어요. 입금 없이 첫 출금으로 이어갈 수 있어요.",
+    description:
+      "실제 KRW로 전환됐어요. 입금 없이 첫 출금으로 이어갈 수 있어요.",
     tone: "success",
   },
   REJECTED: {
     label: "전환 불가",
-    description: "지금은 전환할 수 없어요. 안내가 있으면 알림에서 확인해 주세요.",
+    description:
+      "지금은 전환할 수 없어요. 안내가 있으면 알림에서 확인해 주세요.",
     tone: "danger",
   },
   REVERSED: {
     label: "전환 취소됨",
-    description: "이전 전환이 보정됐어요. 자세한 내용은 지갑과 알림을 확인해 주세요.",
+    description:
+      "이전 전환이 보정됐어요. 자세한 내용은 지갑과 알림을 확인해 주세요.",
     tone: "warning",
   },
 };

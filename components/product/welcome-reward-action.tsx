@@ -125,8 +125,8 @@ export function WelcomeRewardAction({
         <PutdukIcon name="arrow-right" size={18} />
       </button>
       <p className={styles.actionMessage}>
-        자격을 통과하면 최대 5,000원이 실제 KRW 지갑으로 전환될 수 있어요.
-        해당 첫 출금에 사전 입금은 필요하지 않습니다.
+        자격을 통과하면 최대 5,000원이 실제 KRW 지갑으로 전환될 수 있어요. 해당
+        첫 출금에 사전 입금은 필요하지 않습니다.
       </p>
       {result?.status === "REJECTED" ? (
         <p className={`${styles.actionMessage} ${styles.actionMessageError}`}>
