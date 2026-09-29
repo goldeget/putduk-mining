@@ -73,10 +73,7 @@ export function UsdtManualDepositForm({
     }
 
     const fingerprint = `${selected.network}|${trimmedTx}|${normalizedAmount}`;
-    if (
-      !attemptRef.current ||
-      attemptRef.current.fingerprint !== fingerprint
-    ) {
+    if (!attemptRef.current || attemptRef.current.fingerprint !== fingerprint) {
       attemptRef.current = { fingerprint, key: crypto.randomUUID() };
     }
 
@@ -147,7 +144,10 @@ export function UsdtManualDepositForm({
       <dl className={styles.policySummary} aria-label="입금 안내">
         <div>
           <dt>네트워크</dt>
-          <dd>{selected?.network ?? (loadFailed ? "불러오지 못함" : "안내 준비 중")}</dd>
+          <dd>
+            {selected?.network ??
+              (loadFailed ? "불러오지 못함" : "안내 준비 중")}
+          </dd>
         </div>
         <div>
           <dt>반영</dt>

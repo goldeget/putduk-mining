@@ -187,7 +187,9 @@ test("rejects invalid KRW input and keeps one idempotent request", async ({
     await route.continue();
   });
   await page.getByRole("button", { name: "+30,000" }).click();
-  const pendingClick = page.getByRole("button", { name: "입금 요청하기" }).click();
+  const pendingClick = page
+    .getByRole("button", { name: "입금 요청하기" })
+    .click();
   await expect(
     page.getByRole("button", { name: "입금 요청 접수 중" }),
   ).toBeDisabled();
@@ -383,7 +385,9 @@ test("submits manual USDT through the server and hides other members", async ({
         }
       }
       await expect(submittedRow).toBeVisible({ timeout: 60_000 });
-      await expect(usdtHistory.getByText("접수", { exact: true })).toBeVisible();
+      await expect(
+        usdtHistory.getByText("접수", { exact: true }),
+      ).toBeVisible();
       expect(bodies).toHaveLength(1);
       const submitted = JSON.parse(bodies[0] ?? "{}") as Record<string, string>;
       expect(Object.keys(submitted).sort()).toEqual([
@@ -501,7 +505,9 @@ test("covers deposit layout, theme, focus, and reduced motion", async ({
           await expect(
             page.getByRole("heading", { name: "입금하기", level: 1 }),
           ).toBeVisible();
-          await expect(page.getByText(FIXTURE_LONG_TRC20_ADDRESS)).toBeVisible();
+          await expect(
+            page.getByText(FIXTURE_LONG_TRC20_ADDRESS),
+          ).toBeVisible();
           await expectNoHorizontalOverflow(page);
           if (viewport.width < 980) {
             const navigation = page.locator(
@@ -541,7 +547,10 @@ test("covers deposit layout, theme, focus, and reduced motion", async ({
         "data-theme",
         "light",
       );
-      await page.emulateMedia({ colorScheme: "light", reducedMotion: "reduce" });
+      await page.emulateMedia({
+        colorScheme: "light",
+        reducedMotion: "reduce",
+      });
       await expect
         .poll(() =>
           page.evaluate(
@@ -593,16 +602,17 @@ test("covers deposit layout, theme, focus, and reduced motion", async ({
 
       const sample = await page.evaluate(() => {
         const navigation = performance.getEntriesByType("navigation")[0] as
-          | PerformanceNavigationTiming
-          | undefined;
-        const resources = performance.getEntriesByType("resource").map((entry) => {
-          const resource = entry as PerformanceResourceTiming;
-          return {
-            encodedBodySize: resource.encodedBodySize,
-            name: resource.name.split("/").slice(-1)[0]?.slice(0, 80) ?? "",
-            transferSize: resource.transferSize,
-          };
-        });
+          PerformanceNavigationTiming | undefined;
+        const resources = performance
+          .getEntriesByType("resource")
+          .map((entry) => {
+            const resource = entry as PerformanceResourceTiming;
+            return {
+              encodedBodySize: resource.encodedBodySize,
+              name: resource.name.split("/").slice(-1)[0]?.slice(0, 80) ?? "",
+              transferSize: resource.transferSize,
+            };
+          });
         const scriptTransfer = resources
           .filter((entry) => entry.name.endsWith(".js"))
           .reduce((sum, entry) => sum + entry.transferSize, 0);

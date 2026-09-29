@@ -248,7 +248,10 @@ export default async function DepositPage() {
         />
       </Surface>
 
-      <section className={styles.historyPanel} aria-labelledby="deposit-history">
+      <section
+        className={styles.historyPanel}
+        aria-labelledby="deposit-history"
+      >
         <header className={styles.historyHeader}>
           <span>
             <p className="eyebrow">KRW BANK TRANSFER</p>
@@ -322,7 +325,9 @@ export default async function DepositPage() {
           <span>
             <p className="eyebrow">USDT MANUAL DEPOSIT</p>
             <h2 id="usdt-deposit-history">최근 USDT 입금</h2>
-            <p>코인을 따로 보관하지 않아요. 확인 후 KRW로 반영되는 요청이에요.</p>
+            <p>
+              코인을 따로 보관하지 않아요. 확인 후 KRW로 반영되는 요청이에요.
+            </p>
           </span>
           <PutdukIcon name="wallet" size={22} aria-hidden="true" />
         </header>
@@ -357,8 +362,8 @@ export default async function DepositPage() {
                       />
                       <span>
                         <strong>
-                          {formatSentUsdtDisplay(request.sent_usdt_amount)}{" "}
-                          USDT 송금
+                          {formatSentUsdtDisplay(request.sent_usdt_amount)} USDT
+                          송금
                         </strong>
                         <small>{status.description}</small>
                         <small className={styles.historyDetail}>

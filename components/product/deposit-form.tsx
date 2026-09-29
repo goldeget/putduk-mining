@@ -169,8 +169,8 @@ export function DepositForm() {
       <div className={styles.formNotice} id="deposit-amount-help">
         <PutdukIcon name="shield" size={19} />
         <p>
-          요청만으로 자산이 늘어나지 않습니다. 실제 입금이 확인된 뒤 KRW
-          지갑에 반영됩니다.
+          요청만으로 자산이 늘어나지 않습니다. 실제 입금이 확인된 뒤 KRW 지갑에
+          반영됩니다.
         </p>
       </div>
 
