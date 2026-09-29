@@ -1,18 +1,14 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useRef, useState, useTransition } from "react";
 
 import type { CommandActionResult } from "@/app/(control)/_lib/command-gate";
-import {
-  ConfirmCheckbox,
-  ReasonField,
-  SubmitButton,
-} from "@/components/operator-fields";
+import { ConfirmCheckbox, ReasonField } from "@/components/operator-fields";
 import { QueueFlash } from "@/components/queue-shell";
 import { StepUpTokenField } from "@/components/step-up-token-field";
 import { ADMIN_COMMAND_FAMILIES } from "@/lib/auth/command-families";
 
-import { reviewKycCaseAction } from "./actions";
+import { reviewKycCaseFromFields } from "./actions";
 
 const DECISIONS = [
   { value: "IN_REVIEW", label: "검토 중으로 유지" },
@@ -23,24 +19,41 @@ const DECISIONS = [
 ] as const;
 
 /**
- * 출금/입금 운영 폼과 동일: ConfirmCheckbox 로 confirmation DOM 을 고정하고,
- * StepUpTokenField 형제를 조건부 삽입으로 remount 하지 않는다.
- * decision 은 TextField 와 같이 상태로 유지해 Action 재시도에도 값이 남는다.
+ * ConfirmCheckbox 로 confirmation DOM 을 고정한다.
+ * step-up 토큰은 제출 이벤트(클라이언트)에서 ref 로 읽어 서버 액션 인자로 넘긴다.
+ * useActionState 래퍼가 FormData/ref 를 서버 쪽에서 비우는 경로를 피한다.
  */
 export function KycReviewForm({ caseId }: { caseId: string }) {
-  const [result, dispatch] = useActionState<
-    CommandActionResult | null,
-    FormData
-  >(reviewKycCaseAction, null);
+  const stepUpTokenRef = useRef("");
   const [decision, setDecision] = useState<string>("IN_REVIEW");
+  const [result, setResult] = useState<CommandActionResult | null>(null);
+  const [pending, startTransition] = useTransition();
+
+  function onSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const fromRef = stepUpTokenRef.current.trim();
+    const fromDom = String(formData.get("stepUpToken") ?? "").trim();
+    const stepUpToken = fromRef.length >= 16 ? fromRef : fromDom;
+    startTransition(async () => {
+      const next = await reviewKycCaseFromFields({
+        caseId,
+        decision: String(formData.get("decision") ?? decision),
+        reason: String(formData.get("reason") ?? ""),
+        confirmation: String(formData.get("confirmation") ?? ""),
+        stepUpToken,
+      });
+      setResult(next);
+    });
+  }
 
   return (
     <form
-      action={dispatch}
       aria-label="본인 확인 검토"
       className="operator-form"
       noValidate
       onReset={(event) => event.preventDefault()}
+      onSubmit={onSubmit}
     >
       <input name="caseId" type="hidden" value={caseId} />
       <label className="operator-field">
@@ -67,8 +80,15 @@ export function KycReviewForm({ caseId }: { caseId: string }) {
         name="confirmation"
         value="REVIEW_KYC"
       />
-      <StepUpTokenField commandFamily={ADMIN_COMMAND_FAMILIES.KYC_REVIEW} />
-      <SubmitButton pendingLabel="저장 중…">검토 결과 저장</SubmitButton>
+      <StepUpTokenField
+        commandFamily={ADMIN_COMMAND_FAMILIES.KYC_REVIEW}
+        onTokenIssued={(token) => {
+          stepUpTokenRef.current = token;
+        }}
+      />
+      <button className="gold-button" disabled={pending} type="submit">
+        {pending ? "저장 중…" : "검토 결과 저장"}
+      </button>
       <QueueFlash result={result} />
     </form>
   );
