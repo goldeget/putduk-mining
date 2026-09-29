@@ -11,23 +11,30 @@ import {
 import { UsdtManualDepositForm } from "@/components/product/usdt-manual-deposit-form";
 import { StatePanel } from "@/components/ui/states";
 import { Surface } from "@/components/ui/surface";
+import { classifyDepositRead } from "@/domain/wallet/deposit-read";
 import {
   formatAtomicAmount,
   type DisplayCurrency,
 } from "@/domain/wallet/format-amount";
+import {
+  formatSentUsdtDisplay,
+  isUsdtDepositNetwork,
+  type UsdtDepositInstruction,
+} from "@/domain/wallet/usdt-manual-deposit";
+import { formatProductDateTime } from "@/lib/i18n/date-time";
 import { requirePageUser } from "@/lib/auth/session";
 
-const statusCopy: Record<
+const krwStatusCopy: Record<
   string,
   { description: string; label: string; tone: ProductStatusTone }
 > = {
   REQUESTED: {
-    description: "입금 안내를 확인하는 단계예요.",
+    description: "요청을 접수한 단계예요.",
     label: "요청 접수",
     tone: "info",
   },
   AWAITING_TRANSFER: {
-    description: "안내된 계좌로 본인 명의 이체를 진행해 주세요.",
+    description: "본인 명의 이체를 기다리는 단계예요.",
     label: "이체 대기",
     tone: "warning",
   },
@@ -53,14 +60,105 @@ const statusCopy: Record<
   },
 };
 
-const dateFormatter = new Intl.DateTimeFormat("ko-KR", {
-  dateStyle: "medium",
-  timeStyle: "short",
-  timeZone: "Asia/Seoul",
-});
+const usdtStatusCopy: Record<
+  string,
+  { description: string; label: string; tone: ProductStatusTone }
+> = {
+  SUBMITTED: {
+    description: "확인을 기다리고 있어요.",
+    label: "접수",
+    tone: "info",
+  },
+  CONFIRMED: {
+    description: "확인이 끝나 KRW 지갑에 반영됐어요.",
+    label: "KRW 반영 완료",
+    tone: "success",
+  },
+  REJECTED: {
+    description: "입금 정보를 다시 확인해 주세요.",
+    label: "확인 필요",
+    tone: "danger",
+  },
+};
+
+function formatSeoul(value: string | null | undefined) {
+  if (!value) {
+    return "시간 확인 중";
+  }
+  try {
+    return formatProductDateTime(value);
+  } catch {
+    return "시간 확인 중";
+  }
+}
+
+function validTimestamp(value: string | null | undefined) {
+  if (!value) {
+    return null;
+  }
+  const date = new Date(value);
+  return Number.isFinite(date.getTime()) ? value : null;
+}
+
+function formatKrwAmount(amount: unknown, currency: unknown) {
+  const atomic =
+    typeof amount === "string" && /^-?\d+$/.test(amount)
+      ? amount
+      : typeof amount === "bigint"
+        ? amount.toString()
+        : typeof amount === "number" && Number.isSafeInteger(amount)
+          ? String(amount)
+          : null;
+  if (!atomic || (currency !== "KRW" && currency !== "USDT")) {
+    return "금액 확인 중";
+  }
+  try {
+    return formatAtomicAmount(atomic, currency as DisplayCurrency);
+  } catch {
+    return "금액 확인 중";
+  }
+}
+
+function readInstructions(rows: unknown): UsdtDepositInstruction[] {
+  if (!Array.isArray(rows)) {
+    return [];
+  }
+  const instructions: UsdtDepositInstruction[] = [];
+  for (const row of rows) {
+    if (!row || typeof row !== "object") {
+      continue;
+    }
+    const network = "network" in row ? String(row.network) : "";
+    const depositAddress =
+      "deposit_address" in row ? String(row.deposit_address).trim() : "";
+    if (!isUsdtDepositNetwork(network) || depositAddress.length < 8) {
+      continue;
+    }
+    if (instructions.some((item) => item.network === network)) {
+      continue;
+    }
+    instructions.push({ depositAddress, network });
+  }
+  return instructions;
+}
+
+function maskTx(value: string) {
+  if (value.length <= 14) {
+    return value;
+  }
+  return `${value.slice(0, 8)}…${value.slice(-6)}`;
+}
+
+function reopenDeposit() {
+  return (
+    <Link className="button button--secondary" href="/wallet/deposit">
+      다시 열기
+    </Link>
+  );
+}
 
 export default async function DepositPage() {
-  const identity = await requirePageUser();
+  const identity = await requirePageUser("/wallet/deposit");
 
   const { data: requests, error } = await identity.supabase
     .from("deposit_requests")
@@ -69,53 +167,38 @@ export default async function DepositPage() {
     .order("requested_at", { ascending: false })
     .limit(8);
 
-  // USDT 안내·요청 테이블/읽기 경로는 Agent A 스키마에 따름.
-  // 동결 RPC submit_usdt_manual_deposit만 호출하고, 안내는 준비되면 표시.
-  let usdtInstructions: { address: string; network: string } | null = null;
-  let usdtRequests: Array<{
-    id: string;
-    network_snapshot: string;
-    tx_hash: string;
-    sent_usdt_amount: string | number;
-    status: string;
-    created_at: string;
-    updated_at: string | null;
-  }> | null = null;
-  let usdtHistoryReady = false;
+  const instructionResult = await identity.supabase
+    .from("usdt_deposit_instructions")
+    .select("deposit_address, network")
+    .eq("is_active", true)
+    .order("network", { ascending: true });
+  const instructions = instructionResult.error
+    ? []
+    : readInstructions(instructionResult.data);
+  const instructionRead = classifyDepositRead({
+    count: instructions.length,
+    error: Boolean(instructionResult.error),
+  });
 
-  try {
-    const { data: instructionRow } = await identity.supabase
-      .from("usdt_deposit_instructions")
-      .select("address, network, is_active")
-      .eq("is_active", true)
-      .limit(1)
-      .maybeSingle();
-    if (instructionRow?.address && instructionRow?.network) {
-      usdtInstructions = {
-        address: String(instructionRow.address),
-        network: String(instructionRow.network),
-      };
-    }
-  } catch {
-    usdtInstructions = null;
-  }
-
-  try {
-    const { data, error: usdtError } = await identity.supabase
-      .from("usdt_manual_deposit_requests")
-      .select(
-        "id, network_snapshot, tx_hash, sent_usdt_amount, status, created_at, updated_at",
-      )
-      .eq("user_id", identity.userId)
-      .order("created_at", { ascending: false })
-      .limit(6);
-    if (!usdtError) {
-      usdtHistoryReady = true;
-      usdtRequests = data ?? [];
-    }
-  } catch {
-    usdtHistoryReady = false;
-  }
+  const usdtHistoryResult = await identity.supabase
+    .from("usdt_manual_deposits")
+    .select(
+      "id, network_snapshot, tx_hash, sent_usdt_amount, status, created_at, updated_at",
+    )
+    .eq("user_id", identity.userId)
+    .order("created_at", { ascending: false })
+    .limit(6);
+  const usdtRequests = usdtHistoryResult.error
+    ? []
+    : (usdtHistoryResult.data ?? []);
+  const usdtHistoryRead = classifyDepositRead({
+    count: usdtRequests.length,
+    error: Boolean(usdtHistoryResult.error),
+  });
+  const krwHistoryRead = classifyDepositRead({
+    count: requests?.length ?? 0,
+    error: Boolean(error),
+  });
 
   return (
     <>
@@ -140,7 +223,7 @@ export default async function DepositPage() {
           <ol className={styles.flowList}>
             <li>
               <span>01</span>
-              입금 요청·안내 확인
+              입금 요청
             </li>
             <li>
               <span>02</span>
@@ -159,7 +242,10 @@ export default async function DepositPage() {
       </div>
 
       <Surface as="section" className={styles.fundingPanel} tone="raised">
-        <UsdtManualDepositForm instructions={usdtInstructions} />
+        <UsdtManualDepositForm
+          instructions={instructions}
+          loadFailed={instructionRead === "error"}
+        />
       </Surface>
 
       <section
@@ -175,24 +261,28 @@ export default async function DepositPage() {
           <PutdukIcon name="clock" size={22} aria-hidden="true" />
         </header>
 
-        {error ? (
+        {krwHistoryRead === "error" ? (
           <div className={styles.emptyInset}>
             <StatePanel
               tone="error"
               title="입금 요청 내역을 불러오지 못했어요"
-              description="인터넷 연결을 확인한 뒤 다시 시도해 주세요."
+              description="인터넷 연결을 확인한 뒤 다시 열어 주세요."
+              action={reopenDeposit()}
             />
           </div>
-        ) : requests?.length ? (
-          <div className={styles.historyList}>
+        ) : krwHistoryRead === "ready" && requests ? (
+          <ul className={styles.historyList}>
             {requests.map((request) => {
-              const status = statusCopy[request.status] ?? {
+              const status = krwStatusCopy[request.status] ?? {
                 description: "현재 처리 상태를 확인하고 있어요.",
                 label: "확인 중",
                 tone: "info" as const,
               };
+              const timestamp = validTimestamp(
+                request.updated_at ?? request.requested_at,
+              );
               return (
-                <article className={styles.historyItem} key={request.id}>
+                <li className={styles.historyItem} key={request.id}>
                   <span>
                     <span className={styles.historyPrimary}>
                       <ProductStatusPill
@@ -201,24 +291,22 @@ export default async function DepositPage() {
                       />
                       <span>
                         <strong>
-                          {formatAtomicAmount(
-                            String(request.amount_atomic),
-                            request.currency as DisplayCurrency,
+                          {formatKrwAmount(
+                            request.amount_atomic,
+                            request.currency,
                           )}
                         </strong>
                         <small>{status.description}</small>
                       </span>
                     </span>
                   </span>
-                  <time dateTime={request.updated_at ?? request.requested_at}>
-                    {dateFormatter.format(
-                      new Date(request.updated_at ?? request.requested_at),
-                    )}
+                  <time {...(timestamp ? { dateTime: timestamp } : {})}>
+                    {formatSeoul(timestamp)}
                   </time>
-                </article>
+                </li>
               );
             })}
-          </div>
+          </ul>
         ) : (
           <div className={styles.emptyInset}>
             <StatePanel
@@ -237,59 +325,61 @@ export default async function DepositPage() {
           <span>
             <p className="eyebrow">USDT MANUAL DEPOSIT</p>
             <h2 id="usdt-deposit-history">최근 USDT 입금</h2>
-            <p>코인을 따로 보관하지 않아요. KRW 반영을 기다리는 요청이에요.</p>
+            <p>
+              코인을 따로 보관하지 않아요. 확인 후 KRW로 반영되는 요청이에요.
+            </p>
           </span>
           <PutdukIcon name="wallet" size={22} aria-hidden="true" />
         </header>
 
-        {!usdtHistoryReady ? (
+        {usdtHistoryRead === "error" ? (
           <div className={styles.emptyInset}>
             <StatePanel
-              title="USDT 입금 내역을 준비하고 있어요"
-              description="접수 기능이 열리면 상태·네트워크·거래 해시가 이곳에 표시됩니다."
+              tone="error"
+              title="USDT 입금 내역을 불러오지 못했어요"
+              description="인터넷 연결을 확인한 뒤 다시 열어 주세요."
+              action={reopenDeposit()}
             />
           </div>
-        ) : usdtRequests?.length ? (
-          <div className={styles.historyList}>
-            {usdtRequests.map((request) => (
-              <article className={styles.historyItem} key={request.id}>
-                <span>
-                  <span className={styles.historyPrimary}>
-                    <ProductStatusPill
-                      label={
-                        request.status === "APPROVED"
-                          ? "KRW 반영"
-                          : request.status === "REVIEWING"
-                            ? "확인 중"
-                            : "접수"
-                      }
-                      tone={
-                        request.status === "APPROVED"
-                          ? "success"
-                          : request.status === "REJECTED"
-                            ? "danger"
-                            : "info"
-                      }
-                    />
-                    <span>
-                      <strong>
-                        {String(request.sent_usdt_amount)} USDT 송금
-                      </strong>
-                      <small>
-                        {request.network_snapshot} ·{" "}
-                        {maskTx(String(request.tx_hash))}
-                      </small>
+        ) : usdtHistoryRead === "ready" ? (
+          <ul className={styles.historyList}>
+            {usdtRequests.map((request) => {
+              const status = usdtStatusCopy[request.status] ?? {
+                description: "현재 처리 상태를 확인하고 있어요.",
+                label: "확인 중",
+                tone: "info" as const,
+              };
+              const timestamp = validTimestamp(
+                request.updated_at ?? request.created_at,
+              );
+              return (
+                <li className={styles.historyItem} key={request.id}>
+                  <span>
+                    <span className={styles.historyPrimary}>
+                      <ProductStatusPill
+                        label={status.label}
+                        tone={status.tone}
+                      />
+                      <span>
+                        <strong>
+                          {formatSentUsdtDisplay(request.sent_usdt_amount)} USDT
+                          송금
+                        </strong>
+                        <small>{status.description}</small>
+                        <small className={styles.historyDetail}>
+                          {request.network_snapshot} ·{" "}
+                          {maskTx(String(request.tx_hash))}
+                        </small>
+                      </span>
                     </span>
                   </span>
-                </span>
-                <time dateTime={request.updated_at ?? request.created_at}>
-                  {dateFormatter.format(
-                    new Date(request.updated_at ?? request.created_at),
-                  )}
-                </time>
-              </article>
-            ))}
-          </div>
+                  <time {...(timestamp ? { dateTime: timestamp } : {})}>
+                    {formatSeoul(timestamp)}
+                  </time>
+                </li>
+              );
+            })}
+          </ul>
         ) : (
           <div className={styles.emptyInset}>
             <StatePanel
@@ -301,9 +391,4 @@ export default async function DepositPage() {
       </section>
     </>
   );
-}
-
-function maskTx(value: string) {
-  if (value.length <= 14) return value;
-  return `${value.slice(0, 8)}…${value.slice(-6)}`;
 }

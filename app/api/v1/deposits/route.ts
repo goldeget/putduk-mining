@@ -7,7 +7,8 @@ import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 const requestSchema = z.object({
   amountAtomic: z.string().regex(/^[1-9][0-9]{0,23}$/),
-  currency: z.enum(["KRW", "USDT"]),
+  // 회원 원화 입금 요청만 받는다. USDT는 /api/v1/deposits/usdt 수동 확인 경로다.
+  currency: z.literal("KRW"),
 });
 
 export const dynamic = "force-dynamic";
