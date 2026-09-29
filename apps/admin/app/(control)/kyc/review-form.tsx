@@ -24,8 +24,7 @@ const DECISIONS = [
 
 /**
  * ConfirmCheckbox 로 confirmation DOM 을 고정한다.
- * step-up 토큰은 부모 ref 로 보관해 서버 액션 인자(일반 객체)로 넘긴다.
- * 클라이언트 FormData 의 hidden stepUpToken 유실 경로를 피한다.
+ * step-up 토큰은 부모 ref 와 FormData 를 함께 읽어 재시도 후에도 유지한다.
  */
 export function KycReviewForm({ caseId }: { caseId: string }) {
   const stepUpTokenRef = useRef("");
@@ -34,12 +33,14 @@ export function KycReviewForm({ caseId }: { caseId: string }) {
     CommandActionResult | null,
     FormData
   >(async (_prev, formData) => {
+    const fromRef = stepUpTokenRef.current.trim();
+    const fromDom = String(formData.get("stepUpToken") ?? "").trim();
     return reviewKycCaseFromFields({
       caseId,
       decision: String(formData.get("decision") ?? decision),
       reason: String(formData.get("reason") ?? ""),
       confirmation: String(formData.get("confirmation") ?? ""),
-      stepUpToken: stepUpTokenRef.current,
+      stepUpToken: fromRef.length >= 16 ? fromRef : fromDom,
     });
   }, null);
 
