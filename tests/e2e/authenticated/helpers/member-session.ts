@@ -74,9 +74,10 @@ export async function startTrialFromUi(page: Page) {
   try {
     await activeCopy.waitFor({ timeout: 20_000 });
   } catch {
-    const status = (
-      await page.locator(".product-mining-stage__meta strong").textContent()
-    )?.trim();
+    const statusLocator = page
+      .locator("[data-start-stage-meta] strong, .product-mining-stage__meta strong")
+      .first();
+    const status = (await statusLocator.textContent())?.trim();
     if (status !== "진행 중") {
       throw new Error(
         `TRIAL_START_UI_NOT_ACTIVE: status=${status ?? "none"} (API was ok)`,

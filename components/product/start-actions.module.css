@@ -1,0 +1,43 @@
+.actionBlock {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.actionMessage {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  line-height: 1.5;
+  word-break: keep-all;
+}
+
+.actionMessageError {
+  color: var(--status-danger);
+}
+
+.convertedBlock {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.convertedBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--status-success);
+  font-size: 0.86rem;
+  font-weight: 800;
+  word-break: keep-all;
+}
+
+.pendingBlock {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.pendingStatus {
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  font-weight: 800;
+  word-break: keep-all;
+}
