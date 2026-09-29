@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { flushSync } from "react-dom";
 
 import type { AdminCommandFamily } from "@/lib/auth/command-families";
 import { createAdminBrowserClient } from "@/lib/supabase/browser";
@@ -73,17 +74,19 @@ export function StepUpTokenField({
       );
       return;
     }
-    // 성공 문구보다 먼저 DOM에 넣는다. useEffect면 제출이 빈 토큰을 보낸다.
+    // 제어 value 를 제출 전에 동기 커밋한다.
     writeToken(payload.data.token);
     setCode("");
     setMessage("작업 확인이 완료되었습니다. 이제 명령을 실행할 수 있습니다.");
   }
 
   function writeToken(next: string) {
+    flushSync(() => {
+      setToken(next);
+    });
     if (tokenInputRef.current) {
       tokenInputRef.current.value = next;
     }
-    setToken(next);
   }
 
   return (

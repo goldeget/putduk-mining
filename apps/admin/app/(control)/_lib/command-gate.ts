@@ -23,6 +23,8 @@ const DENIAL_COPY: Record<string, string> = {
   ROLE_FORBIDDEN: "현재 역할로는 이 작업을 할 수 없습니다.",
   STEP_UP_REQUIRED:
     "고위험 작업입니다. 인증 앱으로 다시 확인한 뒤 시도해 주세요.",
+  STEP_UP_INVALID:
+    "작업 확인이 만료되었거나 이미 사용되었습니다. 인증 앱으로 다시 확인한 뒤 시도해 주세요.",
   ADMIN_SESSION_REQUIRED: "운영 세션을 다시 확인해 주세요.",
   ADMIN_SESSION_EXPIRED: "세션이 만료되었습니다. 다시 로그인해 주세요.",
   ADMIN_SESSION_IDLE_EXPIRED: "세션이 만료되었습니다. 다시 로그인해 주세요.",
@@ -84,7 +86,7 @@ export async function requireHighImpactPrincipal(
     requestId,
   });
   if (!consumed) {
-    return { ok: false, result: denial("STEP_UP_REQUIRED") };
+    return { ok: false, result: denial("STEP_UP_INVALID") };
   }
 
   return {

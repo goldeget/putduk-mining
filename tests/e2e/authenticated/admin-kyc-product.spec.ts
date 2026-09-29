@@ -139,7 +139,18 @@ test.describe("admin KYC product queue", () => {
     );
     expect((await readKycCase(approve.caseId)).status).not.toBe("APPROVED");
 
-    await submitKycWithStepUp(approveForm, secret);
+    // 출금 E2E와 같이 입력은 유지한 채 step-up 후 바로 제출한다.
+    await confirmOperatorStepUp(approveForm, secret);
+    await expect
+      .poll(async () =>
+        approveForm.locator('input[name="stepUpToken"]').inputValue(),
+      )
+      .toMatch(/^.{16,}$/);
+    await approveForm.getByRole("button", { name: "검토 결과 저장" }).click();
+    await expect(approveForm.getByRole("status")).toContainText(
+      "본인 확인 검토 결과를 저장했습니다",
+      { timeout: 30_000 },
+    );
     const approved = await readKycCase(approve.caseId);
     expect(approved.status).toBe("APPROVED");
     expect(approved.decision_reason).toContain("승인합니다");

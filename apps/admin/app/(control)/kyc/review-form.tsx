@@ -37,6 +37,7 @@ export function KycReviewForm({ caseId }: { caseId: string }) {
       action={action}
       aria-label="본인 확인 검토"
       className="operator-form"
+      noValidate
       onReset={(event) => event.preventDefault()}
     >
       <input name="caseId" type="hidden" value={caseId} />
