@@ -358,7 +358,9 @@ test.describe("admin exceptions product queue", () => {
     const audit = await readLatestExceptionAckAudit(seeded.mismatch.id);
     expect(audit?.action).toBe("RECONCILIATION_EXCEPTION_ACK");
     expect(audit?.reason).toContain("원장 수리");
-    expect(JSON.stringify(audit?.metadata ?? {})).toContain('"auto_repair":false');
+    expect(JSON.stringify(audit?.metadata ?? {})).toContain(
+      '"auto_repair":false',
+    );
 
     expect(await countLedgerTransactions()).toBe(ledgerBefore);
 
@@ -430,7 +432,9 @@ test.describe("admin exceptions product queue", () => {
     const finalRow = await readMismatch(concurrent.mismatch.id);
     expect(finalRow?.status).toBe("RESOLVED");
     expect(finalRow?.resolution_reason).toBe("다른 세션에서 먼저 닫힘");
-    expect(finalRow?.expected_value).toEqual(concurrent.mismatch.expected_value);
+    expect(finalRow?.expected_value).toEqual(
+      concurrent.mismatch.expected_value,
+    );
     expect(finalRow?.actual_value).toEqual(concurrent.mismatch.actual_value);
   });
 });
