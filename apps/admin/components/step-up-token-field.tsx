@@ -10,20 +10,23 @@ import { createAdminBrowserClient } from "@/lib/supabase/browser";
  * 고위험 명령용 일회성 step-up 토큰.
  * 최근 TOTP AMR만으로는 머니 RPC를 호출하지 않습니다.
  *
- * tokenInputRef 를 넘기면 hidden 은 부모 폼에 고정하고, 이 컴포넌트는
- * 발급 UI만 담당한다. 형제 DOM 변화로 필드가 remount 되어도 토큰이 남는다.
+ * onTokenIssued / tokenInputRef 로 부모가 FormData 토큰을 소유하면
+ * 이 컴포넌트가 remount 되어도 제출 값이 유지된다.
  */
 export function StepUpTokenField({
   commandFamily,
   tokenInputRef: externalTokenRef,
+  onTokenIssued,
 }: {
   commandFamily: AdminCommandFamily;
   tokenInputRef?: RefObject<HTMLInputElement | null>;
+  onTokenIssued?: (token: string) => void;
 }) {
   const [token, setToken] = useState("");
   const internalTokenRef = useRef<HTMLInputElement>(null);
   const tokenInputRef = externalTokenRef ?? internalTokenRef;
-  const omitInternalHidden = Boolean(externalTokenRef);
+  const omitInternalHidden =
+    Boolean(externalTokenRef) || Boolean(onTokenIssued);
   const [code, setCode] = useState("");
   const [message, setMessage] = useState(
     "인증 앱 코드로 작업 확인을 완료해 주세요.",
@@ -88,7 +91,13 @@ export function StepUpTokenField({
   }
 
   function writeToken(next: string) {
-    // 외부 폼 루트 hidden 은 비제어라 리렌더에 덮이지 않게 ref 로만 쓴다.
+    if (onTokenIssued) {
+      // 부모 제어 FormData 값이 성공 문구·제출보다 먼저 커밋되게 한다.
+      flushSync(() => {
+        onTokenIssued(next);
+      });
+      return;
+    }
     if (omitInternalHidden) {
       if (tokenInputRef.current) {
         tokenInputRef.current.value = next;
