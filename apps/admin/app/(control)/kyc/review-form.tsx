@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useRef } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 
 import type { CommandActionResult } from "@/app/(control)/_lib/command-gate";
 import {
@@ -14,11 +14,21 @@ import { ADMIN_COMMAND_FAMILIES } from "@/lib/auth/command-families";
 
 import { reviewKycCaseAction } from "./actions";
 
+const DECISIONS = [
+  { value: "IN_REVIEW", label: "검토 중으로 유지" },
+  { value: "APPROVED", label: "승인" },
+  { value: "ON_HOLD", label: "보류" },
+  { value: "REQUIRES_RESUBMISSION", label: "재제출 요청" },
+  { value: "REJECTED", label: "반려" },
+] as const;
+
 export function KycReviewForm({ caseId }: { caseId: string }) {
   const [result, action] = useActionState<CommandActionResult | null, FormData>(
     reviewKycCaseAction,
     null,
   );
+  // Server Action 제출 뒤 uncontrolled select 가 초기값으로 돌아가 승인이 빠지지 않게 한다.
+  const [decision, setDecision] = useState<string>("IN_REVIEW");
   const statusRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -37,12 +47,17 @@ export function KycReviewForm({ caseId }: { caseId: string }) {
       <input name="caseId" type="hidden" value={caseId} />
       <label className="operator-field">
         <span>결과</span>
-        <select name="decision" required defaultValue="IN_REVIEW">
-          <option value="IN_REVIEW">검토 중으로 유지</option>
-          <option value="APPROVED">승인</option>
-          <option value="ON_HOLD">보류</option>
-          <option value="REQUIRES_RESUBMISSION">재제출 요청</option>
-          <option value="REJECTED">반려</option>
+        <select
+          name="decision"
+          required
+          value={decision}
+          onChange={(event) => setDecision(event.target.value)}
+        >
+          {DECISIONS.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
         </select>
       </label>
       <ReasonField
