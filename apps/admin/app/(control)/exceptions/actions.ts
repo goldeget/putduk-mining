@@ -111,7 +111,7 @@ export async function acknowledgeReconciliationExceptionAction(
     };
   }
 
-  await db.from("audit_logs").insert({
+  const { error: auditError } = await db.from("audit_logs").insert({
     actor_user_id: access.principal.userId,
     actor_role: access.principal.role,
     action: "RECONCILIATION_EXCEPTION_ACK",
@@ -126,6 +126,17 @@ export async function acknowledgeReconciliationExceptionAction(
       actual_value: updated.actual_value ?? null,
     },
   });
+
+  // 상태 변경과 감사 기록은 별도 요청이다. 감사 실패를 성공으로 숨기지 않고,
+  // 애플리케이션에서 행을 되돌리지 않는다. 원장 자동 수리도 하지 않는다.
+  if (auditError) {
+    return {
+      ok: false,
+      code: "AUDIT_WRITE_FAILED",
+      message:
+        "예외 상태는 반영됐을 수 있지만 감사 기록을 남기지 못했습니다. 목록을 새로고침해 현재 상태를 확인한 뒤 다시 처리해 주세요. 원장이나 잔액은 자동으로 고치지 않았습니다.",
+    };
+  }
 
   if (parsed.data.result === "INVESTIGATING") {
     return {

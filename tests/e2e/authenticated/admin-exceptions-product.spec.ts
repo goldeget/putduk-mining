@@ -162,27 +162,57 @@ async function readMismatch(id: string) {
   return data;
 }
 
-async function countLedgerTransactions() {
+async function countRows(table: string) {
   const db = createLocalServiceRoleClient();
   const { count, error } = await db
-    .from("ledger_transactions")
+    .from(table)
     .select("id", { count: "exact", head: true });
   if (error) throw new Error(error.message);
   return count ?? 0;
 }
 
-async function readLatestExceptionAckAudit(targetId: string) {
+async function moneySnapshot() {
+  const db = createLocalServiceRoleClient();
+  const { data: ledgerRows, error: ledgerError } = await db
+    .from("wallet_ledger")
+    .select("id, amount_atomic, direction, entry_type")
+    .order("id", { ascending: true });
+  if (ledgerError) throw new Error(ledgerError.message);
+  const { data: balances, error: balanceError } = await db
+    .from("wallet_balance_snapshots")
+    .select("wallet_account_id, balance_atomic, available_balance_atomic")
+    .order("wallet_account_id", { ascending: true });
+  if (balanceError) throw new Error(balanceError.message);
+  return {
+    ledgerTransactions: await countRows("ledger_transactions"),
+    ledgerEntries: await countRows("ledger_entries"),
+    walletLedger: ledgerRows ?? [],
+    balances: balances ?? [],
+  };
+}
+
+async function readExceptionAckAudits(targetId: string) {
   const db = createLocalServiceRoleClient();
   const { data, error } = await db
     .from("audit_logs")
-    .select("action, reason, metadata, target_id")
+    .select("action, reason, metadata, target_id, request_id, actor_user_id")
     .eq("target_id", targetId)
     .eq("action", "RECONCILIATION_EXCEPTION_ACK")
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
+    .order("created_at", { ascending: true });
   if (error) throw new Error(error.message);
-  return data;
+  return data ?? [];
+}
+
+async function readConsumedAckRequestIds(userId: string) {
+  const db = createLocalServiceRoleClient();
+  const { data, error } = await db
+    .from("admin_step_up_grants")
+    .select("command_family, consume_request_id")
+    .eq("user_id", userId)
+    .eq("command_family", "RECONCILIATION_ACK")
+    .not("consume_request_id", "is", null);
+  if (error) throw new Error(error.message);
+  return (data ?? []).map((row) => String(row.consume_request_id));
 }
 
 function mismatchCard(page: Page, mismatchId: string) {
@@ -242,7 +272,7 @@ test.describe("admin exceptions product queue", () => {
   }) => {
     test.setTimeout(420_000);
     const hydration = trackHydration(page);
-    const ledgerBefore = await countLedgerTransactions();
+    const moneyBefore = await moneySnapshot();
 
     const admin = await createConfirmedMember("exc-admin");
     await grantAdminRoleVerified(admin.userId);
@@ -355,14 +385,22 @@ test.describe("admin exceptions product queue", () => {
     expect(afterAccept?.actual_value).toEqual(seeded.mismatch.actual_value);
     expect(afterAccept?.resolution_reason).toContain("원장 수리");
 
-    const audit = await readLatestExceptionAckAudit(seeded.mismatch.id);
-    expect(audit?.action).toBe("RECONCILIATION_EXCEPTION_ACK");
-    expect(audit?.reason).toContain("원장 수리");
-    expect(JSON.stringify(audit?.metadata ?? {})).toContain(
+    const audits = await readExceptionAckAudits(seeded.mismatch.id);
+    expect(audits.length).toBeGreaterThanOrEqual(2);
+    const acceptedAudit = audits[audits.length - 1];
+    expect(acceptedAudit?.action).toBe("RECONCILIATION_EXCEPTION_ACK");
+    expect(acceptedAudit?.actor_user_id).toBe(admin.userId);
+    expect(acceptedAudit?.reason).toContain("원장 수리");
+    expect(JSON.stringify(acceptedAudit?.metadata ?? {})).toContain(
       '"auto_repair":false',
     );
+    const consumedRequestIds = await readConsumedAckRequestIds(admin.userId);
+    for (const row of audits) {
+      expect(row.actor_user_id).toBe(admin.userId);
+      expect(consumedRequestIds).toContain(row.request_id);
+    }
 
-    expect(await countLedgerTransactions()).toBe(ledgerBefore);
+    expect(await moneySnapshot()).toEqual(moneyBefore);
 
     await openAdminQueue(page, "/exceptions");
     await expect(mismatchCard(page, seeded.mismatch.id)).toHaveCount(0);
@@ -389,6 +427,7 @@ test.describe("admin exceptions product queue", () => {
     page,
   }) => {
     test.setTimeout(240_000);
+    const moneyBefore = await moneySnapshot();
     const admin = await createConfirmedMember("exc-stale");
     await grantAdminRoleVerified(admin.userId);
     const secret = await completeAdminLoginWithTotp(
@@ -436,5 +475,7 @@ test.describe("admin exceptions product queue", () => {
       concurrent.mismatch.expected_value,
     );
     expect(finalRow?.actual_value).toEqual(concurrent.mismatch.actual_value);
+    expect(await readExceptionAckAudits(concurrent.mismatch.id)).toEqual([]);
+    expect(await moneySnapshot()).toEqual(moneyBefore);
   });
 });
