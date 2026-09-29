@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useRef, useState } from "react";
 
 import type { CommandActionResult } from "@/app/(control)/_lib/command-gate";
 import {
@@ -12,7 +12,7 @@ import { QueueFlash } from "@/components/queue-shell";
 import { StepUpTokenField } from "@/components/step-up-token-field";
 import { ADMIN_COMMAND_FAMILIES } from "@/lib/auth/command-families";
 
-import { reviewKycCaseAction } from "./actions";
+import { reviewKycCaseFromFields } from "./actions";
 
 const DECISIONS = [
   { value: "IN_REVIEW", label: "검토 중으로 유지" },
@@ -23,16 +23,25 @@ const DECISIONS = [
 ] as const;
 
 /**
- * 출금/입금 운영 폼과 동일: ConfirmCheckbox 로 confirmation DOM 을 고정하고,
- * StepUpTokenField 형제를 조건부 삽입으로 remount 하지 않는다.
- * decision 은 TextField 와 같이 상태로 유지해 Action 재시도에도 값이 남는다.
+ * ConfirmCheckbox 로 confirmation DOM 을 고정한다.
+ * step-up 토큰은 부모 ref 로 보관해 서버 액션 인자(일반 객체)로 넘긴다.
+ * 클라이언트 FormData 의 hidden stepUpToken 유실 경로를 피한다.
  */
 export function KycReviewForm({ caseId }: { caseId: string }) {
+  const stepUpTokenRef = useRef("");
+  const [decision, setDecision] = useState<string>("IN_REVIEW");
   const [result, dispatch] = useActionState<
     CommandActionResult | null,
     FormData
-  >(reviewKycCaseAction, null);
-  const [decision, setDecision] = useState<string>("IN_REVIEW");
+  >(async (_prev, formData) => {
+    return reviewKycCaseFromFields({
+      caseId,
+      decision: String(formData.get("decision") ?? decision),
+      reason: String(formData.get("reason") ?? ""),
+      confirmation: String(formData.get("confirmation") ?? ""),
+      stepUpToken: stepUpTokenRef.current,
+    });
+  }, null);
 
   return (
     <form
@@ -69,6 +78,9 @@ export function KycReviewForm({ caseId }: { caseId: string }) {
       />
       <StepUpTokenField
         commandFamily={ADMIN_COMMAND_FAMILIES.KYC_REVIEW}
+        onTokenIssued={(token) => {
+          stepUpTokenRef.current = token;
+        }}
       />
       <SubmitButton pendingLabel="저장 중…">검토 결과 저장</SubmitButton>
       <QueueFlash result={result} />
