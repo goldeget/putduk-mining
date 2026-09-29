@@ -23,6 +23,7 @@ WS-06 명령·원장·step-up 경로는 재작성하지 않았다.
 - Field Web Vitals / production-device performance acceptance — **OPEN**
 - PRODUCT-COMPLETE-MATRIX / RELEASE-READINESS-MATRIX 갱신 — 공유 파일이라 이 레인에서 수정하지 않음 (**SHARED_FILE_REQUEST**)
 - `playwright.authenticated.config.ts`에 `admin-withdrawals-product`를 adminSpecs 정규식·mobile ignore에 명시 — **SHARED_FILE_REQUEST** (전체 auth suite에서는 자동 수집됨)
+- Authenticated 스위트 공유 로컬 DB에서 **전역** 빈 대기열 UI — 이전 스펙 잔여 출금 때문에 원장/상태를 건드리지 않고는 보장할 수 없으면 **OPEN** (`*-empty-isolation.json`). 픽스처 네임스페이스(`wd-product-empty`) 0건은 결정적으로 단언한다.
 
 ## WS-06
 
@@ -44,3 +45,4 @@ USDT 카피는 KRW 잔액 기준 출금이며 회원 USDT 잔액이 아님을 �
 
 - `test-results/admin-withdrawals-product/*.png`
 - `test-results/admin-withdrawals-product/*-route-timing.json`
+- `test-results/admin-withdrawals-product/*-empty-isolation.json`

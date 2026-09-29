@@ -17,6 +17,10 @@ import {
   requireWithdrawalDataKey,
 } from "./helpers/journey";
 import { requestWelcomeWithdrawalFromUi } from "./helpers/member-session";
+import {
+  expectEmptyQueueOrOpenIsolation,
+  WD_PRODUCT_EMPTY_NAMESPACE,
+} from "./helpers/withdrawal-queue-fixture";
 
 const VIEWPORTS = [
   { height: 844, name: "390", width: 390 },
@@ -40,12 +44,20 @@ const QUEUES = [
     path: "/withdrawals/krw-bank",
     title: "계좌 출금 대기열",
     emptyTitle: "대기 중인 계좌 출금 없음",
+    emptyBody: "처리할 계좌 출금이 없습니다.",
+    nextStep: /새 요청이 접수되면 여기에 나타납니다/,
+    listAriaLabel: "계좌 출금 대기",
+    destinationType: "KRW_BANK" as const,
     shotPrefix: "krw",
   },
   {
     path: "/withdrawals/usdt",
     title: "USDT 출금 대기열",
     emptyTitle: "대기 중인 USDT 출금 없음",
+    emptyBody: "처리할 USDT 출금이 없습니다.",
+    nextStep: /새 요청이 접수되면 여기에 나타납니다/,
+    listAriaLabel: "USDT 출금 대기",
+    destinationType: "USDT_ADDRESS" as const,
     shotPrefix: "usdt",
   },
 ] as const;
@@ -115,11 +127,15 @@ test.describe("admin withdrawals product evidence", () => {
     await context.close();
   });
 
-  test("empty queues, themes, focus, reduced motion, and timing evidence", async ({
+  test("queue shells, themes, focus, reduced motion, and timing evidence", async ({
     browser,
   }) => {
     test.setTimeout(300_000);
-    const admin = await createConfirmedMember("wd-product-empty-admin");
+    // 공유 Authenticated DB에서 전역 빈 대기열을 강제하지 않는다.
+    // 이 네임스페이스가 만든 출금 행이 0건인지만 결정적으로 단언한다.
+    const admin = await createConfirmedMember(
+      `${WD_PRODUCT_EMPTY_NAMESPACE}-admin`,
+    );
     await grantAdminRole(admin.userId);
     const context = await browser.newContext();
     const page = await context.newPage();
@@ -131,9 +147,19 @@ test.describe("admin withdrawals product evidence", () => {
       await expect(
         page.getByRole("heading", { name: queue.title, level: 1 }),
       ).toBeVisible();
-      await expect(
-        page.getByRole("heading", { name: queue.emptyTitle, level: 2 }),
-      ).toBeVisible();
+      const emptyState = await expectEmptyQueueOrOpenIsolation({
+        page,
+        emptyTitle: queue.emptyTitle,
+        emptyBody: queue.emptyBody,
+        nextStep: queue.nextStep,
+        listAriaLabel: queue.listAriaLabel,
+        emailPrefix: WD_PRODUCT_EMPTY_NAMESPACE,
+        destinationType: queue.destinationType,
+        evidencePath: path.join(
+          OUTPUT_DIR,
+          `${queue.shotPrefix}-empty-isolation.json`,
+        ),
+      });
       await expect(page.getByText("퍼뜩").first()).toBeVisible();
       await expectForbiddenCopyAbsent(page);
       if (queue.path === "/withdrawals/usdt") {
@@ -158,6 +184,7 @@ test.describe("admin withdrawals product evidence", () => {
       );
       expect(keyboardFocus.outline).not.toBe("none");
 
+      const shotState = emptyState.globalEmptyVisible ? "empty" : "queue";
       for (const viewport of VIEWPORTS) {
         for (const theme of ["dark", "light"] as const) {
           await page.setViewportSize({
@@ -171,7 +198,7 @@ test.describe("admin withdrawals product evidence", () => {
           await expectNoHorizontalOverflow(page);
           await shoot(
             page,
-            `${queue.shotPrefix}-empty-${viewport.name}-${theme}.png`,
+            `${queue.shotPrefix}-${shotState}-${viewport.name}-${theme}.png`,
           );
         }
       }
