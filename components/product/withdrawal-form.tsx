@@ -553,6 +553,7 @@ export function WithdrawalForm({
 
       {feedback ? (
         <p
+          id="withdrawal-request-feedback"
           className={`${styles.feedback} ${
             feedback.tone === "success"
               ? styles.feedbackSuccess

@@ -33,6 +33,7 @@
     "test:e2e:auth:krw": "playwright test --config playwright.authenticated.config.ts --project=chromium tests/e2e/authenticated/first-krw-withdrawal.spec.ts",
     "test:e2e:auth:usdt": "playwright test --config playwright.authenticated.config.ts --project=chromium tests/e2e/authenticated/first-usdt-withdrawal.spec.ts",
     "test:e2e:auth:guards": "playwright test --config playwright.authenticated.config.ts --project=chromium tests/e2e/authenticated/withdrawal-negative-guards.spec.ts",
+    "test:e2e:auth:withdrawal-product": "node scripts/run-withdrawal-product-e2e.mjs",
     "test:e2e:auth:admin-krw": "playwright test --config playwright.authenticated.config.ts --project=chromium tests/e2e/authenticated/admin-krw-browser-money.spec.ts",
     "test:e2e:auth:admin-usdt": "playwright test --config playwright.authenticated.config.ts --project=chromium tests/e2e/authenticated/admin-usdt-browser-money.spec.ts",
     "test:e2e:auth:step-up": "playwright test --config playwright.authenticated.config.ts --project=chromium tests/e2e/authenticated/admin-withdrawal-step-up.spec.ts",
