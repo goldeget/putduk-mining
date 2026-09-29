@@ -188,7 +188,26 @@ test("shows empty events and notices without invented content", async ({
 
   await page.setViewportSize({ height: 844, width: 390 });
   await page.getByLabel("화면 테마").selectOption("system");
-  await expect(page.locator("html")).toHaveAttribute("data-theme", "system");
+  // 시스템 모드: data-theme를 light/dark(또는 system)로 강제하지 않음.
+  // OS prefers-color-scheme이 실제 색을 구동한다.
+  await expect(page.locator("html")).not.toHaveAttribute("data-theme", "dark");
+  await expect(page.locator("html")).not.toHaveAttribute("data-theme", "light");
+  await page.emulateMedia({ colorScheme: "light", reducedMotion: "reduce" });
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () => getComputedStyle(document.documentElement).backgroundColor,
+      ),
+    )
+    .toBe("rgb(248, 244, 234)");
+  await page.emulateMedia({ colorScheme: "dark", reducedMotion: "reduce" });
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () => getComputedStyle(document.documentElement).backgroundColor,
+      ),
+    )
+    .toBe("rgb(7, 7, 6)");
   await expectNoHorizontalOverflow(page);
   await shoot(
     page,
