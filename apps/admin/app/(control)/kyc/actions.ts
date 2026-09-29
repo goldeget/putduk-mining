@@ -58,30 +58,6 @@ function mapKycReviewFailure(message: string | undefined): CommandActionResult {
   );
 }
 
-/**
- * 클라이언트가 일반 객체로 step-up 토큰을 넘긴다.
- * DOM FormData 에서 hidden stepUpToken 이 빠지는 CI 경로를 우회하며,
- * 게이트·소비·RPC 규칙은 reviewKycCaseAction 과 동일하다.
- */
-export async function reviewKycCaseFromFields(input: {
-  caseId: string;
-  decision: string;
-  reason: string;
-  confirmation: string;
-  stepUpToken: string;
-}): Promise<CommandActionResult> {
-  const formData = new FormData();
-  formData.set("caseId", input.caseId);
-  formData.set("decision", input.decision);
-  formData.set("reason", input.reason);
-  formData.set("confirmation", input.confirmation);
-  const token = input.stepUpToken.trim();
-  if (token.length >= 16) {
-    formData.set("stepUpToken", token);
-  }
-  return reviewKycCaseAction(null, formData);
-}
-
 export async function reviewKycCaseAction(
   _prev: CommandActionResult | null,
   formData: FormData,
