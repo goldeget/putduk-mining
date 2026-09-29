@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useRef } from "react";
+import { useActionState, useRef, startTransition } from "react";
 
 import type { CommandActionResult } from "@/app/(control)/_lib/command-gate";
 import {
@@ -23,30 +23,38 @@ const DECISIONS = [
 ] as const;
 
 /**
- * 계좌 출금 step-up 폼과 같이 ConfirmCheckbox 로 DOM 을 고정한다.
- * step-up 토큰은 부모 ref 로 보관해 Server Action FormData 에 직접 넣는다.
- * (이전 Action 이후 제어/비제어 hidden 모두 FormData 에서 빠지는 CI 증거가 있다.)
+ * ConfirmCheckbox 로 confirmation DOM 을 고정한다.
+ * step-up 토큰은 부모 ref 에 두고 onSubmit 에서 FormData 에 직접 넣는다.
+ * (이전 Server Action 이후 hidden 필드가 DOM 에는 있어도 FormData 에서 빠지는 CI 증거)
  */
 export function KycReviewForm({ caseId }: { caseId: string }) {
   const stepUpTokenRef = useRef("");
-  const [result, action] = useActionState<CommandActionResult | null, FormData>(
-    async (prev, formData) => {
-      const token = stepUpTokenRef.current.trim();
-      if (token.length >= 16) {
-        formData.set("stepUpToken", token);
-      }
-      return reviewKycCaseAction(prev, formData);
-    },
-    null,
-  );
+  const [result, dispatch] = useActionState<
+    CommandActionResult | null,
+    FormData
+  >(reviewKycCaseAction, null);
+
+  function onSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const token = stepUpTokenRef.current.trim();
+    if (token.length >= 16) {
+      formData.set("stepUpToken", token);
+    } else {
+      formData.delete("stepUpToken");
+    }
+    startTransition(() => {
+      dispatch(formData);
+    });
+  }
 
   return (
     <form
-      action={action}
       aria-label="본인 확인 검토"
       className="operator-form"
       noValidate
       onReset={(event) => event.preventDefault()}
+      onSubmit={onSubmit}
     >
       <input name="caseId" type="hidden" value={caseId} />
       <label className="operator-field">
