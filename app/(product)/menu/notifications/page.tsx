@@ -5,7 +5,7 @@ import { Surface } from "@/components/ui/surface";
 import { requirePageUser } from "@/lib/auth/session";
 
 export default async function NotificationSettingsPage() {
-  const identity = await requirePageUser();
+  const identity = await requirePageUser("/menu/notifications");
   const { data: preferences } = await identity.supabase
     .from("notification_preferences")
     .select(
@@ -17,9 +17,9 @@ export default async function NotificationSettingsPage() {
   return (
     <>
       <PageHeading
-        eyebrow="NOTIFICATIONS"
+        eyebrow="알림 설정"
         title="필요한 순간에만, 명확한 알림."
-        lead="첫 화면에서 권한을 요구하지 않습니다. 사용자가 직접 선택한 기기에만 푸시 구독을 저장합니다."
+        lead="첫 화면에서 권한을 요구하지 않습니다. 직접 선택한 기기에만 푸시를 저장합니다."
       />
       <Surface as="section" className="settings-panel" tone="raised">
         <PushControl />
@@ -29,11 +29,9 @@ export default async function NotificationSettingsPage() {
         className="settings-panel settings-panel--preferences"
       >
         <div className="settings-panel__heading">
-          <p className="eyebrow">CHANNEL POLICY</p>
-          <h2>알림 종류</h2>
-          <p>
-            마케팅 알림은 기본으로 꺼져 있으며 언제든 다시 선택할 수 있습니다.
-          </p>
+          <p className="eyebrow">알림 종류</p>
+          <h2>받고 싶은 소식</h2>
+          <p>마케팅 알림은 기본으로 꺼져 있으며 언제든 다시 선택할 수 있습니다.</p>
         </div>
         <NotificationPreferencesForm
           initial={{

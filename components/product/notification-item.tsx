@@ -6,7 +6,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import { PutdukIcon } from "@/components/icons/putduk-icon";
-import { isSafeProtectedReturnPath } from "@/lib/auth/return-path";
+import {
+  notificationCategoryLabelKo,
+  resolveSafeNotificationRoute,
+} from "@/domain/notifications/member-inbox";
 
 export function NotificationItem({
   notification,
@@ -24,10 +27,8 @@ export function NotificationItem({
   const router = useRouter();
   const [pending, setPending] = useState(false);
   const [message, setMessage] = useState("");
-  const safeRoute =
-    notification.route && isSafeProtectedReturnPath(notification.route)
-      ? (notification.route as Route)
-      : null;
+  const safeRoute = resolveSafeNotificationRoute(notification.route);
+  const categoryLabel = notificationCategoryLabelKo(notification.category);
 
   async function markRead() {
     setPending(true);
@@ -40,6 +41,10 @@ export function NotificationItem({
           headers: { "Idempotency-Key": crypto.randomUUID() },
         },
       );
+      if (response.status === 404 || response.status === 410) {
+        setMessage("이 알림은 더 이상 확인할 수 없어요.");
+        return;
+      }
       if (!response.ok) {
         setMessage("읽음 상태를 저장하지 못했어요.");
         return;
@@ -54,14 +59,17 @@ export function NotificationItem({
 
   return (
     <article
-      className={`notification-center__item${notification.read ? "" : "is-unread"}`}
+      className={`notification-center__item${notification.read ? "" : " is-unread"}`}
+      data-notification-id={notification.id}
+      data-read={notification.read ? "true" : "false"}
+      aria-labelledby={`notification-title-${notification.id}`}
     >
-      <span className="notification-center__icon">
+      <span className="notification-center__icon" aria-hidden="true">
         <PutdukIcon name="bell" size={18} />
       </span>
       <div>
         <div className="notification-center__meta">
-          <span>{notification.category}</span>
+          <span>{categoryLabel}</span>
           <time dateTime={notification.createdAt}>
             {new Intl.DateTimeFormat("ko-KR", {
               dateStyle: "medium",
@@ -69,16 +77,23 @@ export function NotificationItem({
             }).format(new Date(notification.createdAt))}
           </time>
         </div>
-        <h2>{notification.title}</h2>
+        <h2 id={`notification-title-${notification.id}`}>
+          {notification.title}
+        </h2>
         <p>{notification.body}</p>
         <div className="notification-center__actions">
           {safeRoute ? (
-            <Link href={safeRoute}>
+            <Link href={safeRoute as Route}>
               내용 확인 <PutdukIcon name="arrow-right" size={15} />
             </Link>
           ) : null}
           {!notification.read ? (
-            <button type="button" disabled={pending} onClick={markRead}>
+            <button
+              type="button"
+              disabled={pending}
+              onClick={markRead}
+              aria-label={`${notification.title} 읽음 처리`}
+            >
               {pending ? "저장 중" : "읽음 처리"}
             </button>
           ) : (
@@ -86,7 +101,7 @@ export function NotificationItem({
           )}
         </div>
         {message ? (
-          <p className="notification-center__error" role="status">
+          <p className="notification-center__error" role="status" aria-live="polite">
             {message}
           </p>
         ) : null}

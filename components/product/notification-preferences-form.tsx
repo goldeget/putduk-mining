@@ -69,22 +69,27 @@ export function NotificationPreferencesForm({
           : "알림 설정을 저장하지 못했습니다.",
       );
     } catch {
-      setMessage("네트워크 연결을 확인해 주세요.");
+      setMessage("연결을 확인한 뒤 다시 시도해 주세요.");
     } finally {
       setPending(false);
     }
   }
 
   return (
-    <form className="preference-form" onSubmit={submit}>
+    <form
+      className="preference-form"
+      onSubmit={submit}
+      aria-label="알림 종류 설정"
+    >
       <div>
         {options.map((option) => (
-          <label key={option.key}>
+          <label key={option.key} htmlFor={`pref-${option.key}`}>
             <span>
               <strong>{option.label}</strong>
               <small>{option.description}</small>
             </span>
             <input
+              id={`pref-${option.key}`}
               type="checkbox"
               checked={preferences[option.key]}
               onChange={(event) =>
@@ -106,7 +111,11 @@ export function NotificationPreferencesForm({
         >
           {pending ? "저장 중" : "설정 저장"}
         </button>
-        {message ? <p role="status">{message}</p> : null}
+        {message ? (
+          <p role="status" aria-live="polite">
+            {message}
+          </p>
+        ) : null}
       </footer>
     </form>
   );
