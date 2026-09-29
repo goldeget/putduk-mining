@@ -23,7 +23,9 @@ test.describe("admin today operational snapshot", () => {
     await expect(page.getByTestId("admin-today")).toBeVisible({
       timeout: 60_000,
     });
-    await expect(page.getByRole("heading", { name: "오늘의 퍼뜩" })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "오늘의 퍼뜩" }),
+    ).toBeVisible();
 
     // 영어 운영 재깅/개발 문구가 사용자에게 보이지 않아야 한다.
     await expect(page.getByText("OPERATIONS BRIEFING")).toHaveCount(0);
@@ -59,7 +61,9 @@ test.describe("admin today operational snapshot", () => {
       }
     }
 
-    const memberTotal = (await page.getByTestId("today-member-total").innerText()).trim();
+    const memberTotal = (
+      await page.getByTestId("today-member-total").innerText()
+    ).trim();
     expect(memberTotal === "확인 필요" || /^\d[\d,]*$/.test(memberTotal)).toBe(
       true,
     );

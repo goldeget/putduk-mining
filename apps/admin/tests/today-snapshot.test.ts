@@ -109,6 +109,8 @@ describe("today snapshot counts", () => {
     expect(todayLoaderSource).not.toContain(".from('deposit_requests')");
     expect(todayLoaderSource).not.toContain('.from("crypto_deposits")');
     expect(todayLoaderSource).not.toContain("AWAITING_TRANSFER");
-    expect(todayLoaderSource).toContain("usdtDeposits: asCountSource(usdtDeposits)");
+    expect(todayLoaderSource).toContain(
+      "usdtDeposits: asCountSource(usdtDeposits)",
+    );
   });
 });

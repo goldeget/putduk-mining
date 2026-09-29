@@ -9,16 +9,10 @@ export type CountSource = {
 };
 
 export type CountStatus =
-  | { kind: "ready"; count: number }
-  | { kind: "unavailable" };
+  { kind: "ready"; count: number } | { kind: "unavailable" };
 
 export type AttentionCode =
-  | "USDT_DEPOSIT"
-  | "KRW_BANK"
-  | "USDT_WD"
-  | "KYC"
-  | "EXCEPTION"
-  | "SAFE";
+  "USDT_DEPOSIT" | "KRW_BANK" | "USDT_WD" | "KYC" | "EXCEPTION" | "SAFE";
 
 export type AttentionItem = {
   code: AttentionCode;
@@ -58,9 +52,7 @@ export function toCountStatus(source: CountSource): CountStatus {
   return { kind: "ready", count: source.count };
 }
 
-export function combineCounts(
-  ...sources: CountSource[]
-): CountStatus {
+export function combineCounts(...sources: CountSource[]): CountStatus {
   const statuses = sources.map(toCountStatus);
   if (statuses.some((status) => status.kind === "unavailable")) {
     return { kind: "unavailable" };
@@ -173,9 +165,10 @@ export function buildTodaySnapshot(input: {
   safePaused: CountSource;
   users: CountSource;
   trials: CountSource;
-  audits:
-    | { error: { message: string } | null; data: AuditEntry[] | null }
-    | null;
+  audits: {
+    error: { message: string } | null;
+    data: AuditEntry[] | null;
+  } | null;
   observedAt?: Date;
 }): TodaySnapshot {
   const attention = buildAttentionItems(input);

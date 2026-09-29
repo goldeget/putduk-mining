@@ -74,7 +74,9 @@ export function TodayView({ snapshot }: { snapshot: TodaySnapshot }) {
           data-testid="today-empty-queues"
         >
           <strong>지금 확인할 일이 없어요</strong>
-          <p>대기열이 비어 있어요. 서비스 요약과 최근 기록만 확인하면 됩니다.</p>
+          <p>
+            대기열이 비어 있어요. 서비스 요약과 최근 기록만 확인하면 됩니다.
+          </p>
         </section>
       ) : null}
 
@@ -93,8 +95,7 @@ export function TodayView({ snapshot }: { snapshot: TodaySnapshot }) {
       >
         {snapshot.attention.map((item, index) => {
           const unavailable = item.status.kind === "unavailable";
-          const empty =
-            item.status.kind === "ready" && item.status.count === 0;
+          const empty = item.status.kind === "ready" && item.status.count === 0;
           return (
             <Link
               key={item.code}
@@ -113,11 +114,19 @@ export function TodayView({ snapshot }: { snapshot: TodaySnapshot }) {
             >
               <header>
                 <span>{String(index + 1).padStart(2, "0")}</span>
-                <small>{unavailable ? "확인 필요" : empty ? "비어 있음" : "대기"}</small>
+                <small>
+                  {unavailable ? "확인 필요" : empty ? "비어 있음" : "대기"}
+                </small>
               </header>
               <strong>{formatCountDisplay(item.status)}</strong>
               <h3>{item.label}</h3>
-              <p>{unavailable ? "이 대기열을 불러오지 못했어요." : empty ? item.emptyHint : item.description}</p>
+              <p>
+                {unavailable
+                  ? "이 대기열을 불러오지 못했어요."
+                  : empty
+                    ? item.emptyHint
+                    : item.description}
+              </p>
             </Link>
           );
         })}
@@ -151,7 +160,8 @@ export function TodayView({ snapshot }: { snapshot: TodaySnapshot }) {
             </div>
           </div>
           <p className={styles.note}>
-            대기열로 바로 이동할 수 있어요. 회원 맥락은 회원 상세에서 확인하세요.
+            대기열로 바로 이동할 수 있어요. 회원 맥락은 회원 상세에서
+            확인하세요.
           </p>
           <Link className={styles.textLink} href={"/members" as Route}>
             회원 상세 열기
@@ -165,7 +175,9 @@ export function TodayView({ snapshot }: { snapshot: TodaySnapshot }) {
           </header>
           {snapshot.audits === "unavailable" ? (
             <div className={styles.unavailableBlock}>
-              <p className={styles.emptyState}>감사 기록을 확인할 수 없습니다.</p>
+              <p className={styles.emptyState}>
+                감사 기록을 확인할 수 없습니다.
+              </p>
               <TodayRefreshButton label="기록 다시 불러오기" />
             </div>
           ) : snapshot.audits.length ? (
