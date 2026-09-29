@@ -4,8 +4,13 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 
 import { AI_QUESTION_MAX_CHARACTERS } from "@/domain/ai/chat";
+import {
+  AI_CONVERSATION_CONTINUITY_COPY,
+  AI_CONVERSATION_CONTINUITY_MODE,
+} from "@/domain/ai/continuity";
 import { trackAnalyticsEvent } from "@/lib/analytics/client";
 
+import styles from "./putduk-ai-chat.module.css";
 import {
   buildPutdukAiScreenContext,
   type PutdukAiExplicitScreenContext,
@@ -56,10 +61,13 @@ export function PutdukAiChat({
   const [messages, setMessages] = useState<Message[]>([]);
   const [pending, setPending] = useState(false);
   const [question, setQuestion] = useState("");
+  const [reducedMotion, setReducedMotion] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
+  const questionInputRef = useRef<HTMLTextAreaElement | null>(null);
 
   useEffect(() => {
     void trackAnalyticsEvent("ai_open", {
+      continuity_mode: AI_CONVERSATION_CONTINUITY_MODE,
       knowledge_version: knowledgeVersion,
       provider_configured: providerConfigured,
     }).catch(() => undefined);
@@ -67,10 +75,22 @@ export function PutdukAiChat({
     return () => abortRef.current?.abort();
   }, [knowledgeVersion, providerConfigured]);
 
+  useEffect(() => {
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const sync = () => setReducedMotion(media.matches);
+    sync();
+    media.addEventListener("change", sync);
+    return () => media.removeEventListener("change", sync);
+  }, []);
+
   function updateMessage(id: string, update: (message: Message) => Message) {
     setMessages((current) =>
       current.map((message) => (message.id === id ? update(message) : message)),
     );
+  }
+
+  function focusComposer() {
+    questionInputRef.current?.focus();
   }
 
   async function submit(event: FormEvent<HTMLFormElement>) {
@@ -214,7 +234,12 @@ export function PutdukAiChat({
   }
 
   return (
-    <section className="ai-chat" aria-label="PUTDUK AI 질문">
+    <section
+      className="ai-chat"
+      aria-label="PUTDUK AI 질문"
+      data-ai-continuity={AI_CONVERSATION_CONTINUITY_MODE}
+      data-provider-configured={providerConfigured ? "true" : "false"}
+    >
       <header className="ai-chat__status">
         <span className="ai-chat__indicator is-ready" aria-hidden="true" />
         <span>
@@ -224,6 +249,10 @@ export function PutdukAiChat({
           <small>확인된 정보만 사용하고, 찾지 못하면 추측하지 않아요</small>
         </span>
       </header>
+
+      <p className={styles.continuityNotice} data-testid="ai-continuity-notice">
+        {AI_CONVERSATION_CONTINUITY_COPY}
+      </p>
 
       <div className="ai-chat__messages" role="log" aria-live="polite">
         {messages.length === 0 ? (
@@ -241,27 +270,43 @@ export function PutdukAiChat({
             <article
               className={`ai-message ai-message--${message.role}`}
               key={message.id}
+              data-message-state={message.state}
             >
               <span>{message.role === "assistant" ? "PUTDUK AI" : "나"}</span>
               {message.role === "assistant" &&
               message.state === "streaming" &&
               !message.text ? (
-                <div
-                  className="ai-message__thinking"
-                  aria-label="확인 가능한 정보를 찾는 중"
-                >
-                  <i />
-                  <i />
-                  <i />
-                </div>
+                reducedMotion ? (
+                  <p className={styles.thinkingStatic}>확인 중</p>
+                ) : (
+                  <div
+                    className="ai-message__thinking"
+                    aria-label="확인 가능한 정보를 찾는 중"
+                  >
+                    <i />
+                    <i />
+                    <i />
+                  </div>
+                )
               ) : (
                 <p>{message.text}</p>
               )}
               {message.role === "assistant" &&
               ["cancelled", "error"].includes(message.state) ? (
-                <small>
-                  {message.state === "cancelled" ? "답변 중단됨" : "연결 실패"}
-                </small>
+                <>
+                  <small>
+                    {message.state === "cancelled" ? "답변 중단됨" : "연결 실패"}
+                  </small>
+                  {message.state === "error" ? (
+                    <button
+                      className={`button button--secondary ${styles.recoveryButton}`}
+                      type="button"
+                      onClick={focusComposer}
+                    >
+                      다시 질문하기
+                    </button>
+                  ) : null}
+                </>
               ) : null}
             </article>
           ))
@@ -272,6 +317,7 @@ export function PutdukAiChat({
         <label htmlFor="putduk-ai-question">질문 입력</label>
         <textarea
           id="putduk-ai-question"
+          ref={questionInputRef}
           value={question}
           onChange={(event) => setQuestion(event.target.value)}
           maxLength={AI_QUESTION_MAX_CHARACTERS}

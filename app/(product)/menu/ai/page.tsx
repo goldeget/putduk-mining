@@ -21,7 +21,7 @@ const promises = [
     title: "설명은 돕고 결정은 대신하지 않기",
     description: "송금·승인·잔액 변경은 PUTDUK AI가 직접 실행하지 않습니다.",
   },
-];
+] as const;
 
 export default function PutdukAiPage() {
   const providerConfigured = Boolean(
