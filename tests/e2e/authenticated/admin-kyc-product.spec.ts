@@ -130,12 +130,11 @@ test.describe("admin KYC product queue", () => {
     ).toBeVisible();
 
     await confirmOperatorStepUp(approveForm, secret);
-    // 이전 실패 제출 뒤 제어 필드가 비면 다시 채운다.
-    await approveForm.getByLabel("결과").selectOption("APPROVED");
-    await approveForm
-      .getByLabel("결정 사유")
-      .fill("서류 요약과 회원 상태가 일치해 승인합니다.");
-    await approveForm.getByRole("checkbox").check();
+    await expect
+      .poll(async () =>
+        approveForm.locator('input[name="stepUpToken"]').inputValue(),
+      )
+      .toMatch(/^.{16,}$/);
     await approveForm.getByRole("button", { name: "검토 결과 저장" }).click();
     await expect(approveForm.getByRole("status")).toContainText(
       "본인 확인 검토 결과를 저장했습니다",
@@ -155,11 +154,11 @@ test.describe("admin KYC product queue", () => {
       .fill("제출 내용이 부족해 반려합니다. 재신청이 필요합니다.");
     await rejectForm.getByRole("checkbox").check();
     await confirmOperatorStepUp(rejectForm, secret);
-    await rejectForm.getByLabel("결과").selectOption("REJECTED");
-    await rejectForm
-      .getByLabel("결정 사유")
-      .fill("제출 내용이 부족해 반려합니다. 재신청이 필요합니다.");
-    await rejectForm.getByRole("checkbox").check();
+    await expect
+      .poll(async () =>
+        rejectForm.locator('input[name="stepUpToken"]').inputValue(),
+      )
+      .toMatch(/^.{16,}$/);
     await rejectForm.getByRole("button", { name: "검토 결과 저장" }).click();
     await expect(rejectForm.getByRole("status")).toContainText(
       "본인 확인 검토 결과를 저장했습니다",
