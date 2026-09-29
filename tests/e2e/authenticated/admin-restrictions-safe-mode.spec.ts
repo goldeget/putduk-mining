@@ -11,7 +11,6 @@ import {
 } from "./helpers/admin-totp";
 import {
   confirmOperatorStepUp,
-  formWithSubmit,
   openAdminQueue,
   readConsumedStepUpFamilies,
 } from "./helpers/admin-money-ui";
@@ -42,6 +41,24 @@ async function readSafeMode(component: string) {
     .maybeSingle();
   if (error) throw new Error(error.message);
   return data;
+}
+
+/** 재시도·이전 실행으로 이미 정지된 상태를 풀어 적용 여정을 고정한다. */
+async function clearSafeModePause(component: string) {
+  const existing = await readSafeMode(component);
+  if (!existing?.is_paused) return;
+  const service = createLocalServiceRoleClient();
+  // changed_by·request_id는 NOT NULL라 유지하고 pause만 해제한다.
+  const { error } = await service
+    .from("safe_mode_controls")
+    .update({
+      is_paused: false,
+      reason: "e2e baseline: open before admin mutation",
+      starts_at: new Date().toISOString(),
+      review_at: null,
+    })
+    .eq("component", component);
+  if (error) throw new Error(error.message);
 }
 
 async function readLatestSafeModeAudit(component: string) {
@@ -81,7 +98,10 @@ test.describe("admin restrictions · safe mode", () => {
     ).toBeVisible();
     await viewerContext.close();
 
+    // 성공 후 버튼이 「제한 해제」로 바뀌어도 폼을 잃지 않도록 aria-label로 고정한다.
+    await clearSafeModePause("NOTIFICATION");
     const before = await readSafeMode("NOTIFICATION");
+    expect(before?.is_paused ?? false).toBe(false);
 
     const admin = await createConfirmedMember("restrict-admin");
     await grantAdminRole(admin.userId);
@@ -99,7 +119,10 @@ test.describe("admin restrictions · safe mode", () => {
     const card = adminPage.locator("article.queue-card", {
       has: adminPage.locator('input[name="component"][value="NOTIFICATION"]'),
     });
-    const applyForm = formWithSubmit(card, "안전 모드 적용");
+    const applyForm = card.locator('form[aria-label="NOTIFICATION 안전 모드"]');
+    await expect(
+      applyForm.getByRole("button", { name: "안전 모드 적용" }),
+    ).toBeVisible();
     await applyForm
       .getByLabel("확인 사유")
       .fill("알림 지연을 확인해 잠시 멈춥니다.");
@@ -112,9 +135,7 @@ test.describe("admin restrictions · safe mode", () => {
     );
 
     const stillBefore = await readSafeMode("NOTIFICATION");
-    expect(stillBefore?.is_paused ?? before?.is_paused ?? false).toBe(
-      before?.is_paused ?? false,
-    );
+    expect(stillBefore?.is_paused ?? false).toBe(false);
 
     await confirmOperatorStepUp(applyForm, secret);
     await applyForm.getByRole("button", { name: "안전 모드 적용" }).click();
@@ -122,6 +143,10 @@ test.describe("admin restrictions · safe mode", () => {
       "알림 기능을 잠시 멈췄습니다",
       { timeout: 60_000 },
     );
+    await expect(card.getByText("정지 중")).toBeVisible();
+    await expect(
+      applyForm.getByRole("button", { name: "제한 해제" }),
+    ).toBeVisible();
 
     const after = await readSafeMode("NOTIFICATION");
     expect(after?.is_paused).toBe(true);
