@@ -27,8 +27,9 @@ hydration evidence develop: `87e567244297e30de05ca674dcacbd3498caf696`
 이 증거는 아래 route의 타이포그래피만 덮는다.
 system theme, loading, skeleton, empty, validation, error, recovery, success, disabled, unauthorized, focus, keyboard, Visual Lab, visual regression, performance는 이 게이트로 닫히지 않는다.
 
-Authenticated product gates 39 passed는 출금·관리자 세션·상담 신원 시나리오다.
-Home, Mining, Deposit, Events, Notifications, AI, Menu의 domain 완료 증거가 아니다.
+Authenticated product gates의 이전 39 passed는 출금·관리자 세션·상담 신원 시나리오다.
+Home, Deposit, Events, Notifications, AI, Menu의 domain 완료 증거는 아니다.
+Mining `/mining` 증거는 아래 행과 develop `a708965fe6ed99007f78f4ef7d0eef60d4dc21da` CI에 있다.
 
 ## Member
 
@@ -36,7 +37,7 @@ Home, Mining, Deposit, Events, Notifications, AI, Menu의 domain 완료 증거�
 | --- | --- | --- | --- |
 | Home `/`, `/home` | PARTIAL | 공개 `/`와 회원 `/home` 타이포그래피 | 상태 매트릭스, Visual Lab, 성능, domain E2E |
 | START `/start` | PARTIAL | 타이포그래피. 출금 여정이 START를 거쳐 감 | START 단독 상태·시각 수용 |
-| Mining `/mining` | PARTIAL | 타이포그래피 | 채굴 동작, 상태, Visual Lab, 성능 |
+| Mining `/mining` | PARTIAL | 타이포그래피. develop `a708965fe6ed99007f78f4ef7d0eef60d4dc21da` CI [run 36518852696](https://github.com/goldeget/putduk-mining/actions/runs/36518852696) Authenticated 45 passed, hydration-mismatch 0: 비로그인 return path, 세션 없음, NORMAL, MAINTENANCE, 세션 여러 개, 월드 목록, 빈 목록 복구, 390/834/1440, light/dark/system, keyboard/focus, reduced motion, 가로 overflow, 스크린샷 | 세션 조회 실패 브라우저, 월드 조회 실패 브라우저, 라우트 오류 경계 브라우저, REDUCED/PARTIAL_STOP/STOPPED 개별 브라우저, 성능 수용 기준, Visual Lab 차이, PRODUCT COMPLETE |
 | Wallet `/wallet` | PARTIAL | 타이포그래피 | 원장 읽기 상태, 빈 화면, 오류 |
 | Deposit `/wallet/deposit` | PARTIAL | 타이포그래피 | 수동 입금 브라우저 여정, 상태 |
 | Withdrawal `/wallet/withdraw` | PARTIAL | 타이포그래피, 첫 KRW/USDT 브라우저, negative guard, hydration evidence CLOSED | 상태, Visual Lab, 성능 |
@@ -45,6 +46,10 @@ Home, Mining, Deposit, Events, Notifications, AI, Menu의 domain 완료 증거�
 | AI `/ai` | PARTIAL | 타이포그래피 | 대화 연속성, 도구 호출 브라우저 |
 | Menu `/menu` | PARTIAL | 타이포그래피 | 계정·설정 상태 |
 | Support `/support` | PARTIAL | 익명 fallback, 회원 해시, 신원 전환 테스트 | 타이포그래피, live 계정, 대시보드 FAQ |
+
+Mining `/mining` 판정은 PARTIAL이다.
+채굴 fixture는 로컬 데이터베이스 admin 연결만 쓰고, 운영 service_role 쓰기 권한은 넓히지 않았다.
+관리자 회원 화면의 채굴 건수 SELECT는 `ADMIN_MEMBER_MINING_COUNT_READ`로 남긴다.
 
 `/wallet/withdraw` hydration evidence는 CLOSED다.
 분류는 제품 hydration 결함이 아니다.
