@@ -142,8 +142,13 @@ test("menu hub, account, and settings cover states and navigation", async ({
   await expectKoreanSafe(page);
 
   const menuNav = page.getByRole("navigation", { name: "내 퍼뜩 메뉴" });
+  const headerNotificationLink = page
+    .locator("header.product-header")
+    .getByRole("link", { name: "알림 센터", exact: true });
+  const menuNotificationLink = menuNav.locator('a[href="/notifications"]');
   await expect(menuNav.getByRole("link", { name: /계정 관리/ })).toBeVisible();
-  await expect(menuNav.getByRole("link", { name: /알림 센터/ })).toBeVisible();
+  await expect(headerNotificationLink).toBeVisible();
+  await expect(menuNotificationLink).toHaveAccessibleName(/알림 센터/);
   await expect(menuNav.getByRole("link", { name: /알림 설정/ })).toBeVisible();
   await expect(menuNav.getByRole("link", { name: /퍼뜩 AI/ })).toBeVisible();
 
@@ -174,12 +179,16 @@ test("menu hub, account, and settings cover states and navigation", async ({
   await menuNav.getByRole("link", { name: /알림 설정/ }).click();
   await expect(page).toHaveURL(/\/menu\/notifications$/);
   await expect(
-    page.getByRole("heading", { name: "알림 설정", level: 1 }),
+    page.getByRole("heading", {
+      name: "필요한 순간에만, 명확한 알림.",
+      level: 1,
+    }),
   ).toBeVisible();
   await expect(page.getByRole("button", { name: "설정 저장" })).toBeVisible();
   await expectKoreanSafe(page);
 
-  await page.getByRole("link", { name: "알림 센터" }).click();
+  // 헤더와 메뉴 카드가 같은 이름을 쓰므로 설정 화면에서는 헤더 href로 이동한다.
+  await headerNotificationLink.click();
   await expect(page).toHaveURL(/\/notifications$/);
 
   expect(hydration).toEqual([]);
@@ -238,7 +247,10 @@ test("menu account keyboard focus, themes, and viewports", async ({ page }) => {
 
     await page.goto("/menu/notifications");
     await expect(
-      page.getByRole("heading", { name: "알림 설정", level: 1 }),
+      page.getByRole("heading", {
+        name: "필요한 순간에만, 명확한 알림.",
+        level: 1,
+      }),
     ).toBeVisible();
     await expectNoHorizontalOverflow(page);
     await shoot(page, `menu-settings-${viewport.name}.png`);
