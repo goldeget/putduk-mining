@@ -98,7 +98,11 @@ test("unsigned visitors keep the events return path", async ({ page }) => {
   await expect(page).toHaveURL(/\/login\?next=%2Fevents$/);
   await expect(page.locator('input[name="next"]')).toHaveValue("/events");
   await expect(
-    page.getByRole("heading", { name: "참여할 수 있는 여정" }),
+    page.getByRole("heading", {
+      exact: true,
+      level: 1,
+      name: "참여할 수 있는 여정",
+    }),
   ).toHaveCount(0);
   expect(hydration).toEqual([]);
 });
@@ -126,7 +130,11 @@ test("shows empty events and notices without invented content", async ({
   await dismissGuidedQuestIfPresent(page);
 
   await expect(
-    page.getByRole("heading", { name: "참여할 수 있는 여정", level: 1 }),
+    page.getByRole("heading", {
+      exact: true,
+      level: 1,
+      name: "참여할 수 있는 여정",
+    }),
   ).toBeVisible();
 
   const mainText = await page.locator("main").innerText();
@@ -140,10 +148,18 @@ test("shows empty events and notices without invented content", async ({
   const canProveGlobalEmpty = publishedEvents === 0 && publishedNotices === 0;
   if (canProveGlobalEmpty) {
     await expect(
-      page.getByRole("heading", { name: "현재 공개된 이벤트가 없어요" }),
+      page.getByRole("heading", {
+        exact: true,
+        level: 2,
+        name: "현재 공개된 이벤트가 없어요",
+      }),
     ).toBeVisible();
     await expect(
-      page.getByRole("heading", { name: "새로운 공지가 없어요" }),
+      page.getByRole("heading", {
+        exact: true,
+        level: 2,
+        name: "새로운 공지가 없어요",
+      }),
     ).toBeVisible();
   } else {
     mkdirSync(OUTPUT_DIR, { recursive: true });
@@ -171,11 +187,19 @@ test("shows empty events and notices without invented content", async ({
       });
       await applyTheme(page, theme);
       await expect(
-        page.getByRole("heading", { name: "참여할 수 있는 여정", level: 1 }),
+        page.getByRole("heading", {
+          exact: true,
+          level: 1,
+          name: "참여할 수 있는 여정",
+        }),
       ).toBeVisible();
       if (canProveGlobalEmpty) {
         await expect(
-          page.getByRole("heading", { name: "현재 공개된 이벤트가 없어요" }),
+          page.getByRole("heading", {
+            exact: true,
+            level: 2,
+            name: "현재 공개된 이벤트가 없어요",
+          }),
         ).toBeVisible();
       }
       await expectNoHorizontalOverflow(page);
@@ -238,14 +262,31 @@ test("shows LIVE SCHEDULED ENDED notices isolation and detail", async ({
   await dismissGuidedQuestIfPresent(page);
 
   const startedAt = Date.now();
+  // 목록: 대표(h2) + 나머지(h3). substring/비-exact heading은 strict 실패를 유발한다.
   await expect(
-    page.getByRole("heading", { name: "로컬 진행 이벤트" }),
+    page.getByRole("heading", {
+      exact: true,
+      level: 2,
+      name: "로컬 진행 이벤트",
+    }),
   ).toBeVisible();
   await expect(page.getByText("진행 중").first()).toBeVisible();
   await expect(page.getByText("참여 중").first()).toBeVisible();
-  await expect(page.getByText("로컬 예정 이벤트")).toBeVisible();
+  await expect(
+    page.getByRole("heading", {
+      exact: true,
+      level: 3,
+      name: "로컬 예정 이벤트",
+    }),
+  ).toBeVisible();
   await expect(page.getByText("예정").first()).toBeVisible();
-  await expect(page.getByText("로컬 종료 이벤트")).toBeVisible();
+  await expect(
+    page.getByRole("heading", {
+      exact: true,
+      level: 3,
+      name: "로컬 종료 이벤트",
+    }),
+  ).toBeVisible();
   await expect(page.getByText("종료").first()).toBeVisible();
   await expect(page.getByText("조건 달성")).toBeVisible();
 
@@ -274,8 +315,22 @@ test("shows LIVE SCHEDULED ENDED notices isolation and detail", async ({
   expect(focusShadow).not.toBe("none");
   await page.keyboard.press("Enter");
   await page.waitForURL(new RegExp(`/events/${seeded.liveSlug}$`));
+  // 상세: PageHeading(h1)과 hero(h2)가 같은 title_ko를 공유한다. 페이지 제목(h1)만 집는다.
   await expect(
-    page.getByRole("heading", { name: "로컬 진행 이벤트" }),
+    page.getByRole("heading", {
+      exact: true,
+      level: 1,
+      name: "로컬 진행 이벤트",
+    }),
+  ).toBeVisible();
+  await expect(
+    page
+      .locator('section[aria-labelledby="event-detail-title"]')
+      .getByRole("heading", {
+        exact: true,
+        level: 2,
+        name: "로컬 진행 이벤트",
+      }),
   ).toBeVisible();
   await expect(page.getByText("참여 중").first()).toBeVisible();
   await expect(
@@ -286,7 +341,11 @@ test("shows LIVE SCHEDULED ENDED notices isolation and detail", async ({
 
   await page.goto(`/events/${seeded.draftSlug}`);
   await expect(
-    page.getByRole("heading", { name: "공개된 이벤트를 찾을 수 없어요" }),
+    page.getByRole("heading", {
+      exact: true,
+      level: 2,
+      name: "공개된 이벤트를 찾을 수 없어요",
+    }),
   ).toBeVisible();
 
   await page.goto("/events");
@@ -297,7 +356,13 @@ test("shows LIVE SCHEDULED ENDED notices isolation and detail", async ({
         width: viewport.width,
       });
       await applyTheme(page, theme);
-      await expect(page.getByText("로컬 진행 이벤트")).toBeVisible();
+      await expect(
+        page.getByRole("heading", {
+          exact: true,
+          level: 2,
+          name: "로컬 진행 이벤트",
+        }),
+      ).toBeVisible();
       await expectNoHorizontalOverflow(page);
       if (viewport.width < 980) {
         const navigation = page.locator(
