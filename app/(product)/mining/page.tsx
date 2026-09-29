@@ -4,23 +4,14 @@ import Link from "next/link";
 import { PutdukIcon } from "@/components/icons/putduk-icon";
 import styles from "@/components/product/product-experience.module.css";
 import { PageHeading } from "@/components/product/page-heading";
-import {
-  ProductStatusPill,
-  type ProductStatusTone,
-} from "@/components/product/product-status-pill";
+import { ProductStatusPill } from "@/components/product/product-status-pill";
 import { StatePanel } from "@/components/ui/states";
 import { requirePageUser } from "@/lib/auth/session";
-
-const miningStatusCopy: Record<
-  string,
-  { label: string; tone: ProductStatusTone }
-> = {
-  NORMAL: { label: "채굴 중", tone: "success" },
-  REDUCED: { label: "속도 조정 중", tone: "warning" },
-  MAINTENANCE: { label: "점검 중", tone: "warning" },
-  PARTIAL_STOP: { label: "일부 기능 중지", tone: "warning" },
-  STOPPED: { label: "중지", tone: "danger" },
-};
+import {
+  formatMiningClock,
+  formatMiningElapsed,
+  presentMiningStatus,
+} from "@/lib/product/mining-display";
 
 const worldColors: Record<string, string> = {
   CRYPTO: "#a28ce8",
@@ -38,30 +29,8 @@ const worldDescriptions: Record<string, string> = {
   USA: "넓은 스케일과 역동성을 담은 채굴 월드",
 };
 
-function formatDuration(secondsValue: number | string) {
-  const seconds = Math.max(0, Number(secondsValue));
-  if (!Number.isFinite(seconds)) {
-    return "확인 중";
-  }
-  if (seconds < 60) {
-    return "1분 미만";
-  }
-  if (seconds < 3600) {
-    return `${Math.floor(seconds / 60)}분`;
-  }
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
-  return minutes ? `${hours}시간 ${minutes}분` : `${hours}시간`;
-}
-
-const timeFormatter = new Intl.DateTimeFormat("ko-KR", {
-  hour: "2-digit",
-  minute: "2-digit",
-  timeZone: "Asia/Seoul",
-});
-
 export default async function MiningPage() {
-  const identity = await requirePageUser();
+  const identity = await requirePageUser("/mining");
   const [
     { data: sessions, error: sessionsError },
     { data: worlds, error: worldsError },
@@ -80,16 +49,13 @@ export default async function MiningPage() {
   ]);
   const currentSession = sessions?.[0];
   const currentStatus = currentSession
-    ? (miningStatusCopy[currentSession.status] ?? {
-        label: "상태 확인 중",
-        tone: "info" as const,
-      })
+    ? presentMiningStatus(currentSession.status)
     : null;
 
   return (
     <div className={styles.worldPage}>
       <PageHeading
-        eyebrow="MINING WORLDS"
+        eyebrow="채굴"
         title="채굴 월드"
         lead="앱을 닫아도 채굴은 계속돼요. 다시 접속하면 결과를 확인할 수 있어요."
       />
@@ -141,7 +107,7 @@ export default async function MiningPage() {
             </h2>
             <p>
               {currentSession
-                ? "정산 전 경과와 상태는 확인된 값만 보여 드려요."
+                ? "지금 상태와 지난 시간만 보여 드려요."
                 : "PUTDUK START로 첫 채굴을 시작해 보세요."}
             </p>
             {currentSession ? (
@@ -149,7 +115,7 @@ export default async function MiningPage() {
                 <span>
                   정산 전 경과{" "}
                   <strong>
-                    {formatDuration(currentSession.unsettled_seconds)}
+                    {formatMiningElapsed(currentSession.unsettled_seconds)}
                   </strong>
                 </span>
                 <span>
@@ -159,9 +125,7 @@ export default async function MiningPage() {
                 <span>
                   최근 정산{" "}
                   <strong>
-                    {timeFormatter.format(
-                      new Date(currentSession.last_settled_at),
-                    )}
+                    {formatMiningClock(currentSession.last_settled_at)}
                   </strong>
                 </span>
               </div>
@@ -181,17 +145,14 @@ export default async function MiningPage() {
         <>
           <header className={styles.sectionHeader}>
             <span>
-              <p className="eyebrow">LIVE SESSIONS</p>
+              <p className="eyebrow">현재 상태</p>
               <h2>현재 채굴 상태</h2>
             </span>
             <p>지금 보이는 상태예요. 금액은 정산 후 지갑에서 확인하세요.</p>
           </header>
           <section className={styles.sessionList} aria-label="현재 채굴 세션">
             {sessions.map((session) => {
-              const status = miningStatusCopy[session.status] ?? {
-                label: "상태 확인 중",
-                tone: "info" as const,
-              };
+              const status = presentMiningStatus(session.status);
               return (
                 <article
                   className={styles.sessionCard}
@@ -210,7 +171,7 @@ export default async function MiningPage() {
                   <dl className={styles.sessionFacts}>
                     <div>
                       <dt>정산 전 경과</dt>
-                      <dd>{formatDuration(session.unsettled_seconds)}</dd>
+                      <dd>{formatMiningElapsed(session.unsettled_seconds)}</dd>
                     </div>
                     <div>
                       <dt>활성 장비</dt>
@@ -218,9 +179,7 @@ export default async function MiningPage() {
                     </div>
                     <div>
                       <dt>시작 시각</dt>
-                      <dd>
-                        {timeFormatter.format(new Date(session.started_at))}
-                      </dd>
+                      <dd>{formatMiningClock(session.started_at)}</dd>
                     </div>
                   </dl>
                 </article>
@@ -232,8 +191,8 @@ export default async function MiningPage() {
 
       <header className={styles.sectionHeader}>
         <span>
-          <p className="eyebrow">WORLD DIRECTORY</p>
-          <h2>채굴 월드</h2>
+          <p className="eyebrow">월드</p>
+          <h2>월드 목록</h2>
         </span>
         <p>월드는 채굴 테마예요. 시세나 투자 수익을 따르지 않습니다.</p>
       </header>

@@ -43,7 +43,7 @@ function needsAdminWebServer() {
   if (process.env.E2E_SKIP_ADMIN_SERVER === "1") return false;
   const args = process.argv.join(" ");
   const memberMoneyOnly =
-    /first-krw-withdrawal|first-usdt-withdrawal|withdrawal-negative-guards|public-admin-boundary|support-channel-talk/.test(
+    /first-krw-withdrawal|first-usdt-withdrawal|withdrawal-negative-guards|public-admin-boundary|support-channel-talk|mining-product/.test(
       args,
     );
   const adminSpecs =
@@ -104,7 +104,11 @@ export default defineConfig({
     },
     {
       name: "mobile-chrome",
-      testIgnore: "**/success-visual-evidence.spec.ts",
+      // 채굴 스펙이 390/834/1440을 직접 연다. Pixel 7에서 같은 매트릭스를 한 번 더 돌리지 않는다.
+      testIgnore: [
+        "**/success-visual-evidence.spec.ts",
+        "**/mining-product.spec.ts",
+      ],
       use: { ...devices["Pixel 7"] },
     },
     {

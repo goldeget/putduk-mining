@@ -25,6 +25,7 @@ export const CLI_STATUS_ENV_FIELDS = {
     "SERVICE_ROLE_KEY",
     "auth.service_role_key",
   ],
+  dbUrl: ["DB_URL", "db.url"],
 };
 
 export function parseShellEnv(text) {
@@ -100,6 +101,29 @@ export function assertLocalApiUrl(apiUrl) {
   return parsed.toString().replace(/\/$/, "");
 }
 
+export function assertLocalDbUrl(dbUrl) {
+  const value = String(dbUrl ?? "").trim();
+  if (!value) {
+    throw new Error("Local Supabase database URL is empty.");
+  }
+  if (/[\r\n]/.test(value) || value.includes(REMOTE_PROJECT_REF)) {
+    throw new Error("Refusing remote Supabase database URL.");
+  }
+  let parsed;
+  try {
+    parsed = new URL(value);
+  } catch {
+    throw new Error("Local Supabase database URL is not a valid URL.");
+  }
+  if (parsed.protocol !== "postgres:" && parsed.protocol !== "postgresql:") {
+    throw new Error("Refusing database URL outside postgres and postgresql.");
+  }
+  if (!LOCAL_HOSTS.has(parsed.hostname)) {
+    throw new Error("Refusing database URL outside 127.0.0.1 and localhost.");
+  }
+  return value;
+}
+
 export function selectLocalCredentials(values) {
   const apiUrl = firstPresent(values, CLI_STATUS_ENV_FIELDS.apiUrl);
   const publishableKey = firstPresent(
@@ -112,6 +136,7 @@ export function selectLocalCredentials(values) {
       `Local Supabase status is missing ${CLI_STATUS_ENV_FIELDS.apiUrl.join(" or ")}. Detected keys: ${detectedKeys(values)}.`,
     );
   }
+  const localApiUrl = assertLocalApiUrl(apiUrl);
   if (!publishableKey) {
     throw new Error(
       `Local Supabase status is missing ${CLI_STATUS_ENV_FIELDS.publishableKey.join(" or ")}. Detected keys: ${detectedKeys(values)}.`,
@@ -122,10 +147,17 @@ export function selectLocalCredentials(values) {
       `Local Supabase status is missing ${CLI_STATUS_ENV_FIELDS.secretKey.join(" or ")}. Detected keys: ${detectedKeys(values)}.`,
     );
   }
+  const dbUrl = firstPresent(values, CLI_STATUS_ENV_FIELDS.dbUrl);
+  if (!dbUrl) {
+    throw new Error(
+      `Local Supabase status is missing ${CLI_STATUS_ENV_FIELDS.dbUrl.join(" or ")}. Detected keys: ${detectedKeys(values)}.`,
+    );
+  }
   return {
-    apiUrl: assertLocalApiUrl(apiUrl),
+    apiUrl: localApiUrl,
     publishableKey,
     secretKey,
+    dbUrl: assertLocalDbUrl(dbUrl),
   };
 }
 
@@ -182,6 +214,7 @@ export function formatGithubEnv(credentials) {
     `NEXT_PUBLIC_SUPABASE_URL=${requireSingleLine(credentials.apiUrl, "NEXT_PUBLIC_SUPABASE_URL")}`,
     `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=${requireSingleLine(credentials.publishableKey, "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY")}`,
     `SUPABASE_SECRET_KEY=${requireSingleLine(credentials.secretKey, "SUPABASE_SECRET_KEY")}`,
+    `LOCAL_SUPABASE_DB_URL=${requireSingleLine(credentials.dbUrl, "LOCAL_SUPABASE_DB_URL")}`,
   ];
   return `${lines.join("\n")}\n`;
 }
@@ -230,7 +263,7 @@ function main() {
   }
   appendFileSync(process.env.GITHUB_ENV, payload);
   process.stdout.write(
-    "captured local supabase env keys: NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY, SUPABASE_SECRET_KEY\n",
+    "captured local supabase env keys: NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY, SUPABASE_SECRET_KEY, LOCAL_SUPABASE_DB_URL\n",
   );
 }
 

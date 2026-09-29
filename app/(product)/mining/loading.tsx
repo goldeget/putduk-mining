@@ -1,5 +1,6 @@
 import { ProductRouteLoading } from "@/components/product/product-route-feedback";
+import { miningRouteLoadingLabel } from "@/lib/product/mining-display";
 
 export default function MiningLoading() {
-  return <ProductRouteLoading label="채굴 월드 불러오는 중" />;
+  return <ProductRouteLoading label={miningRouteLoadingLabel} />;
 }
