@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { flushSync } from "react-dom";
 
 import type { AdminCommandFamily } from "@/lib/auth/command-families";
@@ -9,6 +9,9 @@ import { createAdminBrowserClient } from "@/lib/supabase/browser";
 /**
  * 고위험 명령용 일회성 step-up 토큰.
  * 최근 TOTP AMR만으로는 머니 RPC를 호출하지 않습니다.
+ *
+ * hidden 은 발급 epoch 로 remount 하는 비제어 defaultValue 를 쓴다.
+ * 제어 value={token} 은 Server Action FormData 에서 빈 값으로 읽히는 경우가 있다.
  */
 export function StepUpTokenField({
   commandFamily,
@@ -16,7 +19,7 @@ export function StepUpTokenField({
   commandFamily: AdminCommandFamily;
 }) {
   const [token, setToken] = useState("");
-  const tokenInputRef = useRef<HTMLInputElement>(null);
+  const [tokenEpoch, setTokenEpoch] = useState(0);
   const [code, setCode] = useState("");
   const [message, setMessage] = useState(
     "인증 앱 코드로 작업 확인을 완료해 주세요.",
@@ -74,7 +77,6 @@ export function StepUpTokenField({
       );
       return;
     }
-    // 제어 value 를 제출 전에 동기 커밋한다.
     writeToken(payload.data.token);
     setCode("");
     setMessage("작업 확인이 완료되었습니다. 이제 명령을 실행할 수 있습니다.");
@@ -83,19 +85,17 @@ export function StepUpTokenField({
   function writeToken(next: string) {
     flushSync(() => {
       setToken(next);
+      setTokenEpoch((epoch) => epoch + 1);
     });
-    if (tokenInputRef.current) {
-      tokenInputRef.current.value = next;
-    }
   }
 
   return (
     <div className="operator-step-up">
       <input
-        ref={tokenInputRef}
+        key={`step-up-token-${tokenEpoch}`}
         name="stepUpToken"
         type="hidden"
-        value={token}
+        defaultValue={token}
       />
       <label className="operator-field">
         <span>인증 앱 코드 (작업 확인)</span>
