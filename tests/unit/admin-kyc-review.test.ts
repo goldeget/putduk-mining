@@ -4,7 +4,7 @@ import { buildReviewKycRpcArgs } from "../../apps/admin/app/(control)/kyc/review
 import {
   kycRiskLabel,
   kycStatusLabel,
-} from "../../apps/admin/app/(control)/_lib/format";
+} from "../../apps/admin/app/(control)/kyc/labels";
 
 describe("admin KYC review contract", () => {
   it("maps UI decision fields onto review_kyc_case RPC names", () => {

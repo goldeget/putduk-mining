@@ -1,16 +1,12 @@
 ﻿import Link from "next/link";
 import type { Route } from "next";
 
-import {
-  formatKst,
-  kycRiskLabel,
-  kycStatusLabel,
-  shortId,
-} from "@/app/(control)/_lib/format";
+import { formatKst, shortId } from "@/app/(control)/_lib/format";
 import { EmptyQueue, QueueCard, QueueShell } from "@/components/queue-shell";
 import { requireAdminPage } from "@/lib/auth/principal";
 import { createAdminServiceClient } from "@/lib/supabase/service";
 
+import { kycRiskLabel, kycStatusLabel } from "./labels";
 import { KycReviewForm } from "./review-form";
 
 type KycQueueRow = {

@@ -34,19 +34,15 @@ async function submitKycWithStepUp(
   decision: "APPROVED" | "REJECTED",
   reason: string,
 ) {
-  // MFA 작업 확인이 폼을 다시 그리면 입력·토큰이 비울 수 있어, 확인 직후 값을 다시 고정한다.
-  await confirmOperatorStepUp(form, secret);
+  // 입금·출금과 동일: 입력·확인 체크를 먼저 고정한 뒤 step-up, 바로 제출한다.
   await fillKycReview(form, decision, reason);
-  const tokenAfterFill = await form
-    .locator('input[name="stepUpToken"]')
-    .inputValue();
-  if (tokenAfterFill.length < 16) {
-    await confirmOperatorStepUp(form, secret);
-    await fillKycReview(form, decision, reason);
-  }
+  await expect(form.locator('input[name="confirmation"]')).toHaveCount(1);
+  await expect(form.getByRole("checkbox")).toBeChecked();
+  await confirmOperatorStepUp(form, secret);
   await expect
     .poll(async () => form.locator('input[name="stepUpToken"]').inputValue())
     .toMatch(/^.{16,}$/);
+  await expect(form.getByRole("checkbox")).toBeChecked();
   await form.getByRole("button", { name: "검토 결과 저장" }).click();
   await expect(form.getByRole("status")).toContainText(
     "본인 확인 검토 결과를 저장했습니다",
