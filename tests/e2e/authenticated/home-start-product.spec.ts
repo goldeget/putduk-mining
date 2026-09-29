@@ -144,7 +144,13 @@ test("START ACTIVE 상태는 서버 동기화 안내와 진행 문구를 유지�
   await loginAsMember(page, member, "/start");
   await startTrialFromUi(page);
 
-  await expect(page.getByText("채굴이 진행 중이에요")).toBeVisible();
+  await expect(
+    page.getByRole("heading", {
+      level: 2,
+      name: "채굴이 진행 중이에요",
+      exact: true,
+    }),
+  ).toBeVisible();
   await expect(
     page.getByText(
       "앱을 닫아도 채굴은 계속돼요. 다시 접속하면 결과를 확인할 수 있어요.",
