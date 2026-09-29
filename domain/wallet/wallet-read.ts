@@ -73,7 +73,10 @@ export const walletReceiptTypeLabels: Record<string, string> = {
 };
 
 /** 원본 atomic 문자열이 정수인지 확인한다. 소수·빈 값은 거부한다. */
-export function requireAtomicIntegerString(value: string, field: string): string {
+export function requireAtomicIntegerString(
+  value: string,
+  field: string,
+): string {
   if (!ATOMIC_INTEGER.test(value)) {
     throw new TypeError(`${field} must be an integer string.`);
   }

@@ -49,12 +49,12 @@ describe("wallet-read 투영", () => {
 
 describe("wallet-read 상태 분류", () => {
   it("잔액 조회 실패·빈·0·준비 상태를 구분한다", () => {
-    expect(
-      classifyWalletBalanceRead({ error: true, hasAccount: false }),
-    ).toBe("error");
-    expect(
-      classifyWalletBalanceRead({ error: false, hasAccount: false }),
-    ).toBe("empty");
+    expect(classifyWalletBalanceRead({ error: true, hasAccount: false })).toBe(
+      "error",
+    );
+    expect(classifyWalletBalanceRead({ error: false, hasAccount: false })).toBe(
+      "empty",
+    );
     expect(
       classifyWalletBalanceRead({
         availableAtomic: "0",
@@ -74,19 +74,13 @@ describe("wallet-read 상태 분류", () => {
   });
 
   it("원장·영수증 증거를 빈·오류·준비로 구분한다", () => {
-    expect(classifyLedgerHistoryRead({ count: 0, error: false })).toBe(
-      "empty",
-    );
+    expect(classifyLedgerHistoryRead({ count: 0, error: false })).toBe("empty");
     expect(classifyLedgerHistoryRead({ count: 2, error: true })).toBe("error");
-    expect(classifyLedgerHistoryRead({ count: 2, error: false })).toBe(
-      "ready",
-    );
+    expect(classifyLedgerHistoryRead({ count: 2, error: false })).toBe("ready");
     expect(classifyReceiptHistoryRead({ count: 0, error: false })).toBe(
       "empty",
     );
-    expect(classifyReceiptHistoryRead({ count: 1, error: true })).toBe(
-      "error",
-    );
+    expect(classifyReceiptHistoryRead({ count: 1, error: true })).toBe("error");
   });
 });
 

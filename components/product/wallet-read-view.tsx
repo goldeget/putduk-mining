@@ -89,8 +89,8 @@ export function WalletReadView({
             </dl>
             {balanceState === "zero" ? (
               <p className="balance-card__note">
-                지금 사용 가능한 원화는 0원이에요. 입금하거나 전환이 끝나면 여기에
-                반영됩니다.
+                지금 사용 가능한 원화는 0원이에요. 입금하거나 전환이 끝나면
+                여기에 반영됩니다.
               </p>
             ) : null}
           </Surface>
@@ -204,9 +204,7 @@ export function WalletReadView({
                 </span>
                 <span>
                   <small>상태</small>
-                  <strong>
-                    {labelWalletReceiptStatus(receipt.status)}
-                  </strong>
+                  <strong>{labelWalletReceiptStatus(receipt.status)}</strong>
                 </span>
                 <span>
                   <small>요청 번호</small>
