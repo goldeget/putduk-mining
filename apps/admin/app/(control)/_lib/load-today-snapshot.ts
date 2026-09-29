@@ -50,10 +50,11 @@ export async function loadTodaySnapshot(
         "ON_HOLD",
         "REQUIRES_RESUBMISSION",
       ]),
+    // USDT 입금 확인 대기열은 canonical usdt_manual_deposits(SUBMITTED)만 센다.
     db
-      .from("deposit_requests")
+      .from("usdt_manual_deposits")
       .select("id", { count: "exact", head: true })
-      .in("status", ["REQUESTED", "AWAITING_TRANSFER", "REVIEWING"]),
+      .eq("status", "SUBMITTED"),
     db
       .from("withdrawal_requests")
       .select("id", { count: "exact", head: true })

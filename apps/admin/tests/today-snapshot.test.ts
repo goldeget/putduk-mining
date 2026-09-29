@@ -1,3 +1,7 @@
+import { readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+
 import { describe, expect, it } from "vitest";
 
 import {
@@ -10,6 +14,12 @@ import {
   toCountStatus,
   type CountSource,
 } from "@/app/(control)/_lib/today-snapshot";
+
+const adminRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
+const todayLoaderSource = readFileSync(
+  join(adminRoot, "app/(control)/_lib/load-today-snapshot.ts"),
+  "utf8",
+);
 
 const ok = (count: number): CountSource => ({ count, error: null });
 const fail = (): CountSource => ({
@@ -88,5 +98,17 @@ describe("today snapshot counts", () => {
   it("maps audit actions to Korean operator labels", () => {
     expect(auditActionLabel("APPROVE_DEPOSIT")).toBe("입금 확인");
     expect(auditActionLabel("UNKNOWN_RPC")).toBe("운영 조치");
+  });
+
+  it("counts USDT deposit attention from usdt_manual_deposits SUBMITTED only", () => {
+    // 레거시 deposit_requests / crypto_deposits로 되돌리면 이 테스트가 실패한다.
+    expect(todayLoaderSource).toMatch(
+      /\.from\(\s*"usdt_manual_deposits"\s*\)[\s\S]*?\.eq\(\s*"status"\s*,\s*"SUBMITTED"\s*\)/,
+    );
+    expect(todayLoaderSource).not.toContain('.from("deposit_requests")');
+    expect(todayLoaderSource).not.toContain(".from('deposit_requests')");
+    expect(todayLoaderSource).not.toContain('.from("crypto_deposits")');
+    expect(todayLoaderSource).not.toContain("AWAITING_TRANSFER");
+    expect(todayLoaderSource).toContain("usdtDeposits: asCountSource(usdtDeposits)");
   });
 });
