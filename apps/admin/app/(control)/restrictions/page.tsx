@@ -23,7 +23,9 @@ export default async function RestrictionsPage() {
   const [safeMode, blocks, flags] = await Promise.all([
     db
       .from("safe_mode_controls")
-      .select("id, component, is_paused, reason, starts_at, review_at, changed_by")
+      .select(
+        "id, component, is_paused, reason, starts_at, review_at, changed_by",
+      )
       .order("component"),
     db
       .from("block_rules")
@@ -118,9 +120,7 @@ export default async function RestrictionsPage() {
                   </div>
                   <div>
                     <dt>변경자</dt>
-                    <dd>
-                      {row.changed_by ? shortId(row.changed_by) : "—"}
-                    </dd>
+                    <dd>{row.changed_by ? shortId(row.changed_by) : "—"}</dd>
                   </div>
                 </dl>
               ) : (

@@ -5,10 +5,8 @@ import {
   createLocalServiceRoleClient,
 } from "../fixtures/local-auth";
 import {
-  ADMIN_ORIGIN,
   completeAdminLoginWithTotp,
   grantAdminRole,
-  nextTotpCode,
   requiredEnv,
 } from "./helpers/admin-totp";
 import {
@@ -89,22 +87,13 @@ test.describe("admin restrictions · safe mode", () => {
     await grantAdminRole(admin.userId);
     const adminContext = await browser.newContext();
     const adminPage = await adminContext.newPage();
+    // 로그인 TOTP(AAL2)만 수행한다. 추가 /mfa는 세션을 다시 묶고
+    // 폼의 작업 확인(challengeAndVerify) 토큰과 어긋날 수 있다.
     const secret = await completeAdminLoginWithTotp(
       adminPage,
       admin.email,
       admin.password,
     );
-
-    await adminPage.goto(
-      `${ADMIN_ORIGIN}/mfa?returnTo=${encodeURIComponent("/restrictions")}`,
-    );
-    await adminPage
-      .locator('input[inputmode="numeric"]')
-      .fill(await nextTotpCode(secret));
-    await adminPage.getByRole("button", { name: "인증 완료" }).click();
-    await adminPage.waitForURL((url) => !url.pathname.includes("/mfa"), {
-      timeout: 60_000,
-    });
 
     await openAdminQueue(adminPage, "/restrictions");
     const card = adminPage.locator("article.queue-card", {

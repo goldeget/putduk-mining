@@ -39,12 +39,13 @@ export function SafeModeForm({
     );
   }
 
+  // pause 키로 폼을 다시 만들면 성공 메시지가 사라지고, 토큰도 날아간다.
   return (
     <form
       action={action}
       aria-label={`${component} 안전 모드`}
       className="operator-form"
-      key={`${component}-${currentlyPaused ? "paused" : "open"}`}
+      onReset={(event) => event.preventDefault()}
     >
       <input name="component" type="hidden" value={component} />
       <input name="pause" type="hidden" value={nextPause} />

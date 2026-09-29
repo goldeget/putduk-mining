@@ -5,10 +5,13 @@ import {
   decideSafeModeMutationAccess,
   parseSafeModeFormInput,
   SAFE_MODE_COMPONENTS,
+  SAFE_MODE_MUTATION_ROLES,
   safeModeAuditAction,
   safeModeStateLabel,
   safeModeSuccessMessage,
 } from "@/app/(control)/restrictions/safe-mode-policy";
+import { ADMIN_COMMAND_FAMILIES } from "@/lib/auth/command-families";
+import { HIGH_IMPACT_ROLES } from "@/lib/auth/policy";
 
 describe("admin restrictions · safe mode policy", () => {
   it("allows only SUPER_ADMIN and ADMIN to mutate safe mode", () => {
@@ -18,6 +21,8 @@ describe("admin restrictions · safe mode policy", () => {
     expect(canMutateSafeMode("SUPPORT_ADMIN")).toBe(false);
     expect(canMutateSafeMode("VIEWER")).toBe(false);
     expect(canMutateSafeMode(null)).toBe(false);
+    expect(SAFE_MODE_MUTATION_ROLES).toEqual(HIGH_IMPACT_ROLES);
+    expect(ADMIN_COMMAND_FAMILIES.SAFE_MODE).toBe("SAFE_MODE");
   });
 
   it("never treats cleared safe mode or an enabled feature flag as authorization", () => {
@@ -147,6 +152,9 @@ describe("admin restrictions · safe mode policy", () => {
     );
     expect(safeModeSuccessMessage("TRIAL", false)).toBe(
       "퍼뜩 시작 기능 제한을 해제했습니다.",
+    );
+    expect(safeModeSuccessMessage("NOTIFICATION", true)).toBe(
+      "알림 기능을 잠시 멈췄습니다.",
     );
   });
 });
