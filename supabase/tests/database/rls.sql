@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(63);
+select plan(65);
 
 select ok(
   (
@@ -339,6 +339,14 @@ select ok(
     'EXECUTE'
   ),
   'authenticated clients cannot execute create_deposit_request'
+);
+select ok(
+  has_table_privilege('service_role', 'public.deposit_requests', 'INSERT'),
+  'service role can insert deposit requests for the invoker command'
+);
+select ok(
+  not has_table_privilege('authenticated', 'public.deposit_requests', 'INSERT'),
+  'authenticated clients cannot insert deposit requests'
 );
 
 select ok(
