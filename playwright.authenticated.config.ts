@@ -43,7 +43,7 @@ function needsAdminWebServer() {
   if (process.env.E2E_SKIP_ADMIN_SERVER === "1") return false;
   const args = process.argv.join(" ");
   const memberMoneyOnly =
-    /first-krw-withdrawal|first-usdt-withdrawal|withdrawal-negative-guards|public-admin-boundary|support-channel-talk|mining-product/.test(
+    /first-krw-withdrawal|first-usdt-withdrawal|withdrawal-negative-guards|public-admin-boundary|support-channel-talk|mining-product|deposit-product/.test(
       args,
     );
   const adminSpecs =
@@ -108,6 +108,7 @@ export default defineConfig({
       testIgnore: [
         "**/success-visual-evidence.spec.ts",
         "**/mining-product.spec.ts",
+        "**/deposit-product.spec.ts",
       ],
       use: { ...devices["Pixel 7"] },
     },
