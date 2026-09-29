@@ -1,7 +1,6 @@
 "use server";
 
-import { randomUUID } from "node:crypto";
-import { z } from "zod";
+import { revalidatePath } from "next/cache";
 
 import {
   mapRpcFailure,
@@ -11,47 +10,37 @@ import {
 import { ADMIN_COMMAND_FAMILIES } from "@/lib/auth/command-families";
 import { createAdminServiceClient } from "@/lib/supabase/service";
 
-const safeModeSchema = z.object({
-  component: z.enum([
-    "GLOBAL",
-    "SIGNUP",
-    "TRIAL",
-    "NEW_MINING",
-    "SETTLEMENT",
-    "DEPOSIT",
-    "WITHDRAWAL",
-    "REFERRAL_PAYOUT",
-    "EVENT_PAYOUT",
-    "NOTIFICATION",
-    "AI",
-  ]),
-  pause: z.enum(["true", "false"]),
-  reason: z.string().trim().min(10).max(500),
-  confirmation: z.literal("SAFE_MODE"),
-});
+import {
+  parseSafeModeFormInput,
+  SAFE_MODE_MUTATION_ROLES,
+  safeModeAuditAction,
+  safeModeSuccessMessage,
+} from "./safe-mode-policy";
 
 export async function setSafeModeAction(
   _prev: CommandActionResult | null,
   formData: FormData,
 ): Promise<CommandActionResult> {
+  // 역할·스텝업·세션을 먼저 검사한다. 안전 모드/플래그는 인가가 아니다.
   const access = await requireHighImpactPrincipal(
     ADMIN_COMMAND_FAMILIES.SAFE_MODE,
     formData,
-    ["SUPER_ADMIN", "ADMIN"],
+    SAFE_MODE_MUTATION_ROLES,
   );
   if (!access.ok) return access.result;
 
-  const parsed = safeModeSchema.safeParse({
+  const parsed = parseSafeModeFormInput({
     component: formData.get("component"),
     pause: formData.get("pause"),
     reason: formData.get("reason"),
     confirmation: formData.get("confirmation"),
+    reviewAt: formData.get("reviewAt"),
   });
-  if (!parsed.success) {
+  if (!parsed.ok) {
     return {
       ok: false,
-      code: "INVALID_INPUT",
-      message: "안전 모드 입력값을 확인해 주세요.",
+      code: parsed.code,
+      message: parsed.message,
     };
   }
 
@@ -63,6 +52,7 @@ export async function setSafeModeAction(
       is_paused: isPaused,
       reason: parsed.data.reason,
       starts_at: new Date().toISOString(),
+      review_at: parsed.data.reviewAt,
       changed_by: access.principal.userId,
       request_id: access.requestId,
     },
@@ -73,21 +63,35 @@ export async function setSafeModeAction(
     return mapRpcFailure(error.message, "안전 모드를 저장하지 못했습니다.");
   }
 
-  await db.from("audit_logs").insert({
+  // 감사 기록은 같은 request_id로 남긴다. 실패 시 성공으로 보고하지 않는다.
+  const { error: auditError } = await db.from("audit_logs").insert({
     actor_user_id: access.principal.userId,
     actor_role: access.principal.role,
-    action: isPaused ? "SAFE_MODE_ENABLED" : "SAFE_MODE_DISABLED",
+    action: safeModeAuditAction(isPaused),
     target_type: "SAFE_MODE",
     target_id: parsed.data.component,
     reason: parsed.data.reason,
-    request_id: randomUUID(),
-    metadata: { component: parsed.data.component, is_paused: isPaused },
+    request_id: access.requestId,
+    metadata: {
+      component: parsed.data.component,
+      is_paused: isPaused,
+      review_at: parsed.data.reviewAt,
+    },
   });
+
+  if (auditError) {
+    return {
+      ok: false,
+      code: "AUDIT_WRITE_FAILED",
+      message:
+        "제한은 반영됐을 수 있으나 감사 기록을 남기지 못했습니다. 다시 확인한 뒤 재시도해 주세요.",
+    };
+  }
+
+  revalidatePath("/restrictions");
 
   return {
     ok: true,
-    message: isPaused
-      ? `${parsed.data.component} 기능을 잠시 멈췄습니다.`
-      : `${parsed.data.component} 기능 제한을 해제했습니다.`,
+    message: safeModeSuccessMessage(parsed.data.component, isPaused),
   };
 }
