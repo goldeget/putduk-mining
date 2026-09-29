@@ -47,7 +47,10 @@ export default async function NotificationCenterPage() {
               title="알림을 불러오지 못했어요"
               description="연결을 확인한 뒤 다시 시도해 주세요. 처리 중인 금전 요청에는 영향을 주지 않습니다."
               action={
-                <Link className="button button--secondary" href="/notifications">
+                <Link
+                  className="button button--secondary"
+                  href="/notifications"
+                >
                   다시 시도
                 </Link>
               }

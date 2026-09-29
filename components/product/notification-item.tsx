@@ -59,7 +59,7 @@ export function NotificationItem({
 
   return (
     <article
-      className={`notification-center__item${notification.read ? "" : " is-unread"}`}
+      className={`notification-center__item${notification.read ? "" : "is-unread"}`}
       data-notification-id={notification.id}
       data-read={notification.read ? "true" : "false"}
       aria-labelledby={`notification-title-${notification.id}`}
@@ -101,7 +101,11 @@ export function NotificationItem({
           )}
         </div>
         {message ? (
-          <p className="notification-center__error" role="status" aria-live="polite">
+          <p
+            className="notification-center__error"
+            role="status"
+            aria-live="polite"
+          >
             {message}
           </p>
         ) : null}

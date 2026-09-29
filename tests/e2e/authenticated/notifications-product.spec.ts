@@ -219,10 +219,9 @@ test("lists own notifications, marks read, hides expired and unsafe links", asyn
     `article[data-notification-id="${unread.id}"]`,
   );
   await expect(unreadCard).toHaveAttribute("data-read", "false");
-  await expect(unreadCard.getByRole("link", { name: /내용 확인/ })).toHaveAttribute(
-    "href",
-    "/wallet/deposit",
-  );
+  await expect(
+    unreadCard.getByRole("link", { name: /내용 확인/ }),
+  ).toHaveAttribute("href", "/wallet/deposit");
 
   const unsafeCard = page.locator(
     `article[data-notification-id="${unsafe.id}"]`,
