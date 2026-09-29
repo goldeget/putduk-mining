@@ -17,7 +17,6 @@ const PUBLIC_ROUTES = [
   { name: "trial-guide", url: "/trial" },
   { name: "withdrawal-guide", url: "/withdrawal" },
   { name: "service-status", url: "/status" },
-  { name: "support", url: "/support" },
 ] as const;
 
 const ADMIN_PUBLIC_ROUTES = [

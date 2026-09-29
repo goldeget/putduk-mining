@@ -27,8 +27,8 @@ Status: route product evidence **PARTIAL CLOSED** without live Channel Talk cred
 | light / dark / system | CLOSED | 공개·회원 브라우저 |
 | keyboard / focus | CLOSED | 상담 시작·로그인 focus, Enter로 안내 이동 |
 | hydration | CLOSED | `/support` console hydration 0 (공개·회원 케이스) |
-| public typography `/support` | CLOSED | `tests/typography/korean-line-break.spec.ts`에 route 추가 |
-| protected typography `/support` | CLOSED | `tests/typography/protected-user-korean-line-break.spec.ts`에 route 추가 |
+| public typography `/support` | CLOSED | 전역 public 매트릭스(70)에 넣지 않음. `tests/e2e/support-typography.spec.ts` + `playwright.support-product.config.ts` |
+| protected typography `/support` | CLOSED | 전역 protected 매트릭스(128)에 넣지 않음. 회원 세션 후 `/support` 이동 후 390 light/dark/200% 단언 |
 | identity isolation | CLOSED | 기존 `support-channel-talk.spec.ts` (재작성 없음, ready 케이스만 추가) |
 
 ## Still open / external
@@ -48,7 +48,7 @@ Status: route product evidence **PARTIAL CLOSED** without live Channel Talk cred
 - `docs/quality/PRODUCT-COMPLETE-MATRIX.md` — Support 행의 있는 증거/OPEN 갱신 요청
 - `docs/quality/RELEASE-READINESS-MATRIX.md` — 해당 시 갱신 요청
 
-CSS는 `app/globals.css`를 건드리지 않고 `components/support/support-runtime.module.css`만 사용했다.
+CSS는 `app/globals.css`를 건드리지 않고 `components/support/support-runtime.module.css`와 `app/support/support-page.module.css`만 사용했다.
 
 ## Money / GRANT / RLS / outbox
 
@@ -60,8 +60,8 @@ CSS는 `app/globals.css`를 건드리지 않고 `components/support/support-runt
 | --- | --- |
 | `playwright.support-product.config.ts` (port 3424) | **3 passed** — anonymous unavailable, viewport/theme/keyboard/recovery, admin alias 404 |
 | `vitest tests/unit/channel-talk.test.ts` | **16 passed** (slow FS에서 CLI `--testTimeout=60000`) |
-| Authenticated `support-channel-talk` ready case | 코드 추가. 로컬 DB 없이 이 레인에서 실행하지 않음 → CI |
-| Typography `/support` public + protected | route 등록. 전체 typography suite는 CI |
+| Authenticated `support-channel-talk` ready case | 보호 경로 `/home` 로그인 후 `page.goto("/support")`. `/support`는 return-path에 넣지 않음 |
+| Typography `/support` | 전용 focused suite. 전역 70/128 카운트 유지 |
 | Visual Lab / performance | OPEN |
 | CHANNEL TALK LIVE ACCOUNT | USER_ACTION_REQUIRED |
 

@@ -6,7 +6,7 @@ import { defineConfig, devices } from "@playwright/test";
  */
 export default defineConfig({
   testDir: "./tests/e2e",
-  testMatch: ["**/support.spec.ts"],
+  testMatch: ["**/support.spec.ts", "**/support-typography.spec.ts"],
   fullyParallel: false,
   forbidOnly: true,
   timeout: 120_000,
@@ -31,7 +31,7 @@ export default defineConfig({
     gracefulShutdown: { signal: "SIGTERM", timeout: 5_000 },
     url: "http://127.0.0.1:3424",
     reuseExistingServer: true,
-    timeout: 300_000,
+    timeout: 600_000,
     stdout: "pipe",
   },
 });

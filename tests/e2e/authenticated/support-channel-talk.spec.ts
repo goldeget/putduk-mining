@@ -2,6 +2,7 @@ import { expect, type Page, test } from "@playwright/test";
 
 import { createChannelMemberHash } from "../../../lib/support/member-hash";
 import { createConfirmedMember } from "../fixtures/local-auth";
+import { assertTypographyClean } from "../../typography/helpers";
 import { loginAsMember } from "./helpers/member-session";
 
 const secret = "aa".repeat(32);
@@ -210,15 +211,16 @@ test("signed-in support route keeps Korean guidance and ready state", async ({
 
   const member = await createConfirmedMember("support-ready");
   await installSupportPort(page);
-  await loginAsMember(page, member, "/support");
+  await loginAsMember(page, member, "/home");
+  await expect(page.getByText("MEMBER").first()).toBeVisible();
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/support");
   await waitForBoot(page, member.userId);
 
   await expect(
     page.getByRole("heading", { name: "필요한 도움을 바로 확인해요." }),
   ).toBeVisible();
-  await expect(
-    page.getByText("상담 창을 열 준비가 되었어요."),
-  ).toBeVisible();
+  await expect(page.getByText("상담 창을 열 준비가 되었어요.")).toBeVisible();
   await expect(page.getByText("앱을 닫아도 채굴은 계속돼요.")).toBeVisible();
   await expect(
     page.getByText("잔액과 출금은 상담 창에서 바뀌지 않아요."),
@@ -229,8 +231,19 @@ test("signed-in support route keeps Korean guidance and ready state", async ({
   await launcher.focus();
   await expect(launcher).toBeFocused();
 
+  await page.getByLabel("화면 테마").selectOption("light");
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+  await assertTypographyClean(page, "signed-in support 390 light");
+
   await page.getByLabel("화면 테마").selectOption("dark");
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  await assertTypographyClean(page, "signed-in support 390 dark");
+
+  await page.evaluate(() => {
+    document.documentElement.style.fontSize = "200%";
+  });
+  await assertTypographyClean(page, "signed-in support 390 dark 200%");
+
   await page.getByLabel("화면 테마").selectOption("system");
   await expect(page.getByLabel("화면 테마")).toHaveValue("system");
 

@@ -3,6 +3,8 @@ import path from "node:path";
 
 import { expect, test, type Page } from "@playwright/test";
 
+import { assertTypographyClean } from "../typography/helpers";
+
 const VIEWPORTS = [
   { height: 844, name: "390", width: 390 },
   { height: 1112, name: "834", width: 834 },
@@ -77,10 +79,7 @@ async function shoot(page: Page, fileName: string) {
   });
 }
 
-async function applyTheme(
-  page: Page,
-  theme: "dark" | "light" | "system",
-) {
+async function applyTheme(page: Page, theme: "dark" | "light" | "system") {
   await page.emulateMedia({
     colorScheme: theme === "system" ? "light" : theme,
     reducedMotion: "reduce",
@@ -199,6 +198,12 @@ test("support route covers viewports, themes, keyboard, and recovery", async ({
     await page.getByRole("link", { name: "로그인" }).focus();
     await expect(page.getByRole("link", { name: "로그인" })).toBeFocused();
     await expectNoHorizontalOverflow(page);
+    if (viewport.name === "390") {
+      await assertTypographyClean(
+        page,
+        `support public ${viewport.name} light`,
+      );
+    }
     await shoot(page, `support-unavailable-${viewport.name}-light.png`);
 
     await applyTheme(page, "dark");
@@ -206,6 +211,9 @@ test("support route covers viewports, themes, keyboard, and recovery", async ({
       page.getByRole("heading", { name: "필요한 도움을 바로 확인해요." }),
     ).toBeVisible();
     await expectNoHorizontalOverflow(page);
+    if (viewport.name === "390") {
+      await assertTypographyClean(page, `support public ${viewport.name} dark`);
+    }
     await shoot(page, `support-unavailable-${viewport.name}-dark.png`);
 
     await applyTheme(page, "system");

@@ -266,3 +266,19 @@ export async function auditTypographyRoute(input: {
     `${input.routeName} ${input.viewport.label}px ${input.theme}: Korean token split across lines`,
   ).toEqual([]);
 }
+
+/** 현재 페이지 타이포 청결도만 검사한다(전역 매트릭스 카운트에 포함되지 않음). */
+export async function assertTypographyClean(page: Page, label: string) {
+  await page.evaluate(async () => {
+    await document.fonts.ready;
+  });
+  const result = await readTypographyAudit(page);
+  expect(
+    result.overflow.scrollWidth,
+    `${label}: horizontal overflow\n${JSON.stringify(result.overflow.offenders, null, 2)}`,
+  ).toBeLessThanOrEqual(result.overflow.clientWidth + 1);
+  expect(
+    result.koreanBreaks,
+    `${label}: Korean token split across lines`,
+  ).toEqual([]);
+}
