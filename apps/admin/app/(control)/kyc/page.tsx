@@ -100,7 +100,9 @@ export default async function KycQueuePage() {
                   <p className="eyebrow">본인 확인 · {shortId(row.id)}</p>
                   <h2>{kycStatusLabel(row.status)}</h2>
                 </div>
-                <span className="risk-chip">{kycRiskLabel(row.risk_level)}</span>
+                <span className="risk-chip">
+                  {kycRiskLabel(row.risk_level)}
+                </span>
               </header>
               <dl className="evidence-grid">
                 <div>

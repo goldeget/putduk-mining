@@ -4,11 +4,7 @@ import { randomUUID } from "node:crypto";
 export function buildReviewKycRpcArgs(input: {
   caseId: string;
   decision:
-    | "APPROVED"
-    | "REJECTED"
-    | "ON_HOLD"
-    | "REQUIRES_RESUBMISSION"
-    | "IN_REVIEW";
+    "APPROVED" | "REJECTED" | "ON_HOLD" | "REQUIRES_RESUBMISSION" | "IN_REVIEW";
   reason: string;
   actorUserId: string;
   requestId: string;

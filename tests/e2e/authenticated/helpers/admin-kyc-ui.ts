@@ -33,12 +33,7 @@ export async function closeOpenKycQueueForEmptyProof() {
       decision_reason: "lane-f empty-queue fixture close",
       decided_at: new Date().toISOString(),
     })
-    .in("status", [
-      "PENDING",
-      "IN_REVIEW",
-      "ON_HOLD",
-      "REQUIRES_RESUBMISSION",
-    ]);
+    .in("status", ["PENDING", "IN_REVIEW", "ON_HOLD", "REQUIRES_RESUBMISSION"]);
   if (error) throw new Error(error.message);
 }
 

@@ -35,7 +35,9 @@ test.describe("admin KYC product queue", () => {
     expect(secret.length).toBeGreaterThanOrEqual(16);
 
     await openKycQueue(page);
-    await expect(page.getByRole("heading", { name: "대기 건 없음" })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "대기 건 없음" }),
+    ).toBeVisible();
     await expect(
       page.getByText("지금 검토할 본인 확인 건이 없습니다."),
     ).toBeVisible();
@@ -122,7 +124,9 @@ test.describe("admin KYC product queue", () => {
       "인증 앱으로 다시 확인",
     );
     await expect(
-      approveForm.getByText("저장에 실패했습니다. 사유와 작업 확인을 점검한 뒤"),
+      approveForm.getByText(
+        "저장에 실패했습니다. 사유와 작업 확인을 점검한 뒤",
+      ),
     ).toBeVisible();
 
     await confirmOperatorStepUp(approveForm, secret);
