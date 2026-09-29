@@ -36,6 +36,7 @@
     "test:e2e:auth:admin-krw": "playwright test --config playwright.authenticated.config.ts --project=chromium tests/e2e/authenticated/admin-krw-browser-money.spec.ts",
     "test:e2e:auth:admin-usdt": "playwright test --config playwright.authenticated.config.ts --project=chromium tests/e2e/authenticated/admin-usdt-browser-money.spec.ts",
     "test:e2e:auth:step-up": "playwright test --config playwright.authenticated.config.ts --project=chromium tests/e2e/authenticated/admin-withdrawal-step-up.spec.ts",
+    "test:e2e:auth:admin-withdrawals-product": "playwright test --config playwright.authenticated.config.ts --project=chromium tests/e2e/authenticated/admin-withdrawals-product.spec.ts",
     "test:e2e:auth:visual": "playwright test --config playwright.authenticated.config.ts --project=visual-evidence tests/e2e/authenticated/success-visual-evidence.spec.ts",
     "test:e2e:auth:full": "playwright test --config playwright.authenticated.config.ts",
     "test:e2e:auth:one": "playwright test --config playwright.authenticated.config.ts --project=chromium",
