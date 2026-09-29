@@ -23,10 +23,10 @@ describe("admin KYC review contract", () => {
       p_to_status: "REJECTED",
       p_reason: "서류가 부족해 반려합니다.",
       p_request_id: requestId,
-      p_view_submission_id: null,
     });
     expect(args).not.toHaveProperty("p_decision");
     expect(args).not.toHaveProperty("p_idempotency_key");
+    expect(args).not.toHaveProperty("p_view_submission_id");
   });
 
   it("never requests document view audit from the approved review surface", () => {
@@ -37,7 +37,7 @@ describe("admin KYC review contract", () => {
       actorUserId: "33333333-3333-4333-8333-333333333333",
       requestId: "44444444-4444-4444-8444-444444444444",
     });
-    expect(args.p_view_submission_id).toBeNull();
+    expect(args).not.toHaveProperty("p_view_submission_id");
   });
 
   it("keeps Korean status and risk labels for existing enum values only", () => {
