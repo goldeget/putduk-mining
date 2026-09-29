@@ -10,13 +10,15 @@ import { createAdminBrowserClient } from "@/lib/supabase/browser";
  * 고위험 명령용 일회성 step-up 토큰.
  * 최근 TOTP AMR만으로는 머니 RPC를 호출하지 않습니다.
  *
- * hidden 은 발급 epoch 로 remount 하는 비제어 defaultValue 를 쓴다.
- * 제어 value={token} 은 Server Action FormData 에서 빈 값으로 읽히는 경우가 있다.
+ * onTokenIssued 가 있으면 부모가 FormData 토큰을 소유한다.
+ * hidden 은 E2E·접근성용 미러이며, 발급 epoch 로 defaultValue 를 고정한다.
  */
 export function StepUpTokenField({
   commandFamily,
+  onTokenIssued,
 }: {
   commandFamily: AdminCommandFamily;
+  onTokenIssued?: (token: string) => void;
 }) {
   const [token, setToken] = useState("");
   const [tokenEpoch, setTokenEpoch] = useState(0);
@@ -86,6 +88,7 @@ export function StepUpTokenField({
     flushSync(() => {
       setToken(next);
       setTokenEpoch((epoch) => epoch + 1);
+      onTokenIssued?.(next);
     });
   }
 
