@@ -2,12 +2,16 @@ export const PROTECTED_PAGE_PATHS = [
   "/home",
   "/start",
   "/mining",
-  "/events",
   "/notifications",
   "/ai",
 ] as const;
 
-export const PROTECTED_PAGE_PREFIXES = ["/wallet", "/menu"] as const;
+/** `/events`와 `/events/[slug]` 딥링크 반환을 함께 보존한다. */
+export const PROTECTED_PAGE_PREFIXES = [
+  "/wallet",
+  "/menu",
+  "/events",
+] as const;
 
 export function isSafeProtectedReturnPath(value: string): boolean {
   if (

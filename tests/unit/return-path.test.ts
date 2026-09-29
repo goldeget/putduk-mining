@@ -16,7 +16,13 @@ describe("protected return paths", () => {
     );
   });
 
-  it.each(["/home", "/notifications", "/ai?question=wallet"])(
+  it.each([
+    "/home",
+    "/notifications",
+    "/ai?question=wallet",
+    "/events",
+    "/events/live-sample",
+  ])(
     "preserves a product return path: %s",
     (path) => expect(safeProtectedReturnPath(path)).toBe(path),
   );
