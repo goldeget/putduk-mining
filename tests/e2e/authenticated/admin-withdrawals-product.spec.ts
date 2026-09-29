@@ -160,11 +160,22 @@ test.describe("admin withdrawals product evidence", () => {
           `${queue.shotPrefix}-empty-isolation.json`,
         ),
       });
-      await expect(page.getByText("퍼뜩").first()).toBeVisible();
+      // QueueShell 뒤로가기 접근명에 브랜드가 포함된다.
+      await expect(
+        page.getByRole("link", { name: "← 오늘의 퍼뜩" }),
+      ).toBeVisible();
       await expectForbiddenCopyAbsent(page);
       if (queue.path === "/withdrawals/usdt") {
-        await expect(page.getByText(/KRW 잔액/)).toBeVisible();
-        await expect(page.getByText(/회원 USDT 잔액은 없습니다/)).toBeVisible();
+        // 리드 카피는 page-intro에만 있다. 잔여 카드 확인란·빈 힌트와 분리한다.
+        const intro = page.locator("section.page-intro").filter({
+          has: page.getByRole("heading", { name: queue.title, level: 1 }),
+        });
+        await expect(
+          intro.getByText(
+            "KRW 잔액에서 빠져나가는 USDT 주소 출금입니다. 회원 USDT 잔액은 없습니다. 외부 송금 기록 뒤에는 다시 보내기를 제공하지 않습니다.",
+            { exact: true },
+          ),
+        ).toBeVisible();
       }
 
       await page.getByRole("heading", { name: queue.title, level: 1 }).click();
