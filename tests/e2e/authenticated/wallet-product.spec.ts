@@ -19,17 +19,48 @@ test.describe("지갑 제품 읽기 화면", () => {
 
     await page.goto("/wallet");
     await expect(
-      page.getByRole("heading", { name: "출금 가능 잔액" }),
+      page.getByRole("heading", {
+        name: "출금 가능 잔액",
+        exact: true,
+        level: 1,
+      }),
     ).toBeVisible({
       timeout: 60_000,
     });
     await expect(page.getByLabel("실제 KRW 지갑")).toBeVisible();
+
+    const ledgerHistory = page.getByRole("region", {
+      name: "최근 거래 내역",
+      exact: true,
+    });
     await expect(
-      page.getByRole("heading", { name: "최근 거래 내역" }),
+      ledgerHistory.getByRole("heading", {
+        name: "최근 거래 내역",
+        exact: true,
+        level: 2,
+      }),
+    ).toBeVisible();
+
+    // empty StatePanel h2 includes this substring — use exact + region, not UI change
+    const receipts = page.getByRole("region", {
+      name: "입출금 처리 내역",
+      exact: true,
+    });
+    await expect(
+      receipts.getByRole("heading", {
+        name: "입출금 처리 내역",
+        exact: true,
+        level: 2,
+      }),
     ).toBeVisible();
     await expect(
-      page.getByRole("heading", { name: "입출금 처리 내역" }),
+      receipts.getByRole("heading", {
+        name: "아직 입출금 처리 내역이 없어요",
+        exact: true,
+        level: 2,
+      }),
     ).toBeVisible();
+
     await expect(page.getByRole("link", { name: "출금하기" })).toHaveAttribute(
       "href",
       "/wallet/withdraw",
@@ -45,14 +76,22 @@ test.describe("지갑 제품 읽기 화면", () => {
     for (const width of [390, 834, 1440] as const) {
       await page.setViewportSize({ width, height: 900 });
       await expect(
-        page.getByRole("heading", { name: "출금 가능 잔액" }),
+        page.getByRole("heading", {
+          name: "출금 가능 잔액",
+          exact: true,
+          level: 1,
+        }),
       ).toBeVisible();
     }
 
     for (const theme of ["light", "dark"] as const) {
       await page.emulateMedia({ colorScheme: theme });
       await expect(
-        page.getByRole("heading", { name: "출금 가능 잔액" }),
+        page.getByRole("heading", {
+          name: "출금 가능 잔액",
+          exact: true,
+          level: 1,
+        }),
       ).toBeVisible();
     }
 
