@@ -1,6 +1,7 @@
 import { MiningCore } from "@/components/foundation/mining-core";
 import { GuidedQuest } from "@/components/product/guided-quest";
 import { PageHeading } from "@/components/product/page-heading";
+import { RouteReloadButton } from "@/components/product/route-reload-button";
 import { StartTrialButton } from "@/components/product/start-trial-button";
 import { TrialSynchronizer } from "@/components/product/trial-synchronizer";
 import { WelcomeRewardAction } from "@/components/product/welcome-reward-action";
@@ -8,14 +9,14 @@ import { StatePanel } from "@/components/ui/states";
 import { Surface } from "@/components/ui/surface";
 import { formatTrialValue } from "@/domain/trial/format-trial-value";
 import { requirePageUser } from "@/lib/auth/session";
+import {
+  formatTrialQuotaPercent,
+  formatTrialRemaining,
+  presentConversionStatus,
+  presentTrialStatus,
+} from "@/lib/product/home-start-display";
 
-const trialStatusLabel: Record<string, string> = {
-  READY: "준비됨",
-  ACTIVE: "진행 중",
-  COMPLETED: "완료",
-  EXPIRED: "종료",
-  UNAVAILABLE: "확인 불가",
-};
+import styles from "./start.module.css";
 
 export default async function StartPage() {
   const identity = await requirePageUser();
@@ -26,7 +27,9 @@ export default async function StartPage() {
   ] = await Promise.all([
     identity.supabase
       .from("trial_account_snapshots")
-      .select("*")
+      .select(
+        "status, world_name_ko, reward_atomic, quota_consumed_bps, remaining_seconds",
+      )
       .eq("user_id", identity.userId)
       .maybeSingle(),
     identity.supabase
@@ -43,58 +46,72 @@ export default async function StartPage() {
       .maybeSingle(),
   ]);
 
-  const quota = trial?.quota_consumed_bps ?? 0;
-  const quotaPercent = Math.min(100, Math.max(0, quota / 100));
   const trialStatus = trialError ? "UNAVAILABLE" : (trial?.status ?? "READY");
+  const trialPresentation = presentTrialStatus(trialStatus);
+  const conversionPresentation = presentConversionStatus(conversion?.status);
+  const quotaPercent = formatTrialQuotaPercent(trial?.quota_consumed_bps);
   const isActive = trialStatus === "ACTIVE";
   const isComplete = trialStatus === "COMPLETED" || trialStatus === "EXPIRED";
+  const headingTitle = trialError
+    ? "START 상태를 확인할 수 없어요."
+    : isComplete
+      ? "첫 채굴을 마쳤어요."
+      : isActive
+        ? "첫 채굴이 진행 중이에요."
+        : "첫 채굴, 분명한 시작.";
+  const headingLead = trialError
+    ? "연결을 확인한 뒤 다시 열어 주세요."
+    : isComplete
+      ? "체험 값은 실제 돈이 아니에요. 자격 확인 후 최대 5,000원까지 전환될 수 있어요."
+      : "KOREA 월드에서 첫 채굴을 경험해요. 체험 값은 실제 지갑과 분리됩니다.";
+
+  let commandTitle = "PUTDUK START를 준비하세요";
+  let commandLead = "준비가 되면 여기서 첫 채굴을 시작하세요.";
+  if (isActive) {
+    commandTitle = "채굴이 진행 중이에요";
+    commandLead =
+      "앱을 닫아도 채굴은 계속돼요. 다시 접속하면 결과를 확인할 수 있어요.";
+  } else if (isComplete) {
+    commandTitle = "PUTDUK START가 끝났어요";
+    commandLead =
+      "체험 값과 실제 KRW는 분리돼요. 전환된 환영 보상은 입금 없이 첫 출금할 수 있어요.";
+  }
 
   return (
-    <>
+    <div className={styles.layout}>
       <TrialSynchronizer active={isActive} />
       <GuidedQuest
         serverStage={`${lifecycle?.stage ?? "SIGNED_UP"}:${trialStatus}:${conversion?.status ?? "NONE"}`}
       />
       <PageHeading
         eyebrow="PUTDUK START"
-        title={
-          trialError
-            ? "START 상태를 확인할 수 없어요."
-            : isComplete
-              ? "첫 채굴을 마쳤어요."
-              : "첫 채굴, 분명한 시작."
-        }
-        lead={
-          trialError
-            ? "연결을 확인한 뒤 다시 열어 주세요."
-            : isComplete
-              ? "체험 값은 실제 돈이 아니에요. 자격 확인 후 최대 5,000원까지 전환될 수 있어요."
-              : "KOREA 월드에서 첫 채굴을 경험해요. 체험 값은 실제 지갑과 분리됩니다."
-        }
+        title={headingTitle}
+        lead={headingLead}
       />
 
-      <section className="product-feature-grid">
+      <section className={styles.grid}>
         <Surface
           as="article"
-          className="product-mining-stage"
+          className={styles.stage}
           data-quest-target="world"
         >
-          <div className="product-mining-stage__meta">
-            <span>TRIAL / KOREA</span>
-            <strong>{trialStatusLabel[trialStatus] ?? "상태 확인 중"}</strong>
+          <div className={styles.stageMeta} data-start-stage-meta>
+            <span className={styles.stageMetaLabel}>체험 · KOREA</span>
+            <strong className={styles.stageStatus} data-start-status>
+              {trialPresentation.label}
+            </strong>
           </div>
-          <div className="product-mining-stage__visual">
+          <div className={styles.stageVisual}>
             <MiningCore />
           </div>
-          <div
-            className="product-mining-stage__footer"
-            data-quest-target="progress"
-          >
-            <div className="product-mining-stage__values">
+          <div className={styles.stageFooter} data-quest-target="progress">
+            <div className={styles.values}>
               <span>
                 <small>무료 체험 사용량</small>
                 <strong>
-                  {trialError ? "—" : `${quotaPercent.toFixed(0)}%`}
+                  {trialError || quotaPercent === null
+                    ? "—"
+                    : `${quotaPercent.toFixed(0)}%`}
                 </strong>
               </span>
               <span>
@@ -102,64 +119,58 @@ export default async function StartPage() {
                 <strong>
                   {trialError
                     ? "확인할 수 없음"
-                    : formatTrialValue(trial?.reward_atomic ?? "0")}
+                    : formatTrialValue(String(trial?.reward_atomic ?? "0"))}
                 </strong>
               </span>
             </div>
             <div
-              className="product-progress"
+              className={styles.progress}
               aria-label={
-                trialError
+                trialError || quotaPercent === null
                   ? "체험 사용량을 불러오지 못함"
-                  : `체험 사용량 ${quotaPercent}%`
+                  : `체험 사용량 ${quotaPercent.toFixed(0)}%`
               }
             >
-              <span style={{ width: trialError ? "0%" : `${quotaPercent}%` }} />
+              <span
+                style={{
+                  width:
+                    trialError || quotaPercent === null
+                      ? "0%"
+                      : `${quotaPercent}%`,
+                }}
+              />
             </div>
           </div>
         </Surface>
 
-        <div className="product-stack">
+        <div className={styles.stack}>
           <Surface
             as="article"
-            className="product-command-card"
+            className={styles.commandCard}
             tone="raised"
             data-quest-target="action"
           >
-            <p className="eyebrow">NEXT ACTION</p>
-            <h2>
-              {isActive
-                ? "채굴이 진행 중이에요"
-                : isComplete
-                  ? "PUTDUK START가 끝났어요"
-                  : "PUTDUK START를 준비하세요"}
-            </h2>
-            <p>
-              {isActive
-                ? "앱을 닫아도 채굴은 계속돼요. 다시 접속하면 결과를 확인할 수 있어요."
-                : isComplete
-                  ? "체험 값과 실제 KRW는 분리돼요. 전환된 환영 보상은 입금 없이 첫 출금할 수 있어요."
-                  : "준비가 되면 여기서 첫 채굴을 시작하세요."}
-            </p>
+            <p className="eyebrow">다음 행동</p>
+            <h2>{commandTitle}</h2>
+            <p>{commandLead}</p>
             {trialError ? (
               <StatePanel
                 tone="error"
                 title="상태를 불러오지 못했어요"
-                description="연결을 확인한 뒤 페이지를 다시 열어 주세요."
+                description="연결을 확인한 뒤 다시 열어 주세요."
+                action={
+                  <RouteReloadButton className="button button--secondary" />
+                }
               />
-            ) : trial?.status === "ACTIVE" ? (
-              <dl className="compact-facts">
+            ) : isActive && trial ? (
+              <dl className={styles.facts}>
                 <div>
                   <dt>월드</dt>
                   <dd>{trial.world_name_ko}</dd>
                 </div>
                 <div>
                   <dt>남은 시간</dt>
-                  <dd>
-                    {trial.remaining_seconds === null
-                      ? "정산 대기"
-                      : `${Math.ceil(Number(trial.remaining_seconds) / 3600)}시간 이내`}
-                  </dd>
+                  <dd>{formatTrialRemaining(trial.remaining_seconds)}</dd>
                 </div>
               </dl>
             ) : isComplete ? (
@@ -168,6 +179,9 @@ export default async function StartPage() {
                   tone="error"
                   title="환영 보상 상태를 확인하지 못했어요"
                   description="잠시 후 다시 확인해 주세요. 중복 전환은 허용되지 않습니다."
+                  action={
+                    <RouteReloadButton className="button button--secondary" />
+                  }
                 />
               ) : (
                 <WelcomeRewardAction conversion={conversion} />
@@ -175,14 +189,19 @@ export default async function StartPage() {
             ) : (
               <StartTrialButton />
             )}
+            {isComplete && conversion?.status ? (
+              <p className={styles.actionMessage}>
+                {conversionPresentation.description}
+              </p>
+            ) : null}
           </Surface>
 
           <Surface
             as="article"
-            className="product-rule-card"
+            className={styles.ruleCard}
             data-quest-target="boundary"
           >
-            <p className="eyebrow">TRIAL BOUNDARY</p>
+            <p className="eyebrow">체험과 실제 잔액</p>
             <ul>
               <li>앱을 닫아도 채굴은 계속돼요</li>
               <li>체험 값과 실제 KRW는 분리돼요</li>
@@ -192,6 +211,6 @@ export default async function StartPage() {
           </Surface>
         </div>
       </section>
-    </>
+    </div>
   );
 }

@@ -3,18 +3,20 @@ import type { Route } from "next";
 
 import { MiningCore } from "@/components/foundation/mining-core";
 import { PutdukIcon } from "@/components/icons/putduk-icon";
+import { RouteReloadButton } from "@/components/product/route-reload-button";
+import { StatePanel } from "@/components/ui/states";
 import { Surface } from "@/components/ui/surface";
 import { formatTrialValue } from "@/domain/trial/format-trial-value";
 import { formatAtomicAmount } from "@/domain/wallet/format-amount";
 import { requirePageUser } from "@/lib/auth/session";
 import { safeProtectedReturnPath } from "@/lib/auth/return-path";
+import {
+  formatTrialQuotaPercent,
+  presentTrialStatus,
+  resolveHomePrimaryAction,
+} from "@/lib/product/home-start-display";
 
-const trialStatusLabel: Record<string, string> = {
-  READY: "준비됨",
-  ACTIVE: "진행 중",
-  COMPLETED: "완료",
-  EXPIRED: "종료",
-};
+import styles from "./home.module.css";
 
 export default async function ProductHomePage() {
   const identity = await requirePageUser("/home");
@@ -51,42 +53,83 @@ export default async function ProductHomePage() {
 
   const krw = accounts?.find((account) => account.currency === "KRW");
   const mining = sessions?.[0];
-  const trialPercent = Math.min(
-    100,
-    Math.max(0, Number(trial?.quota_consumed_bps ?? 0) / 100),
+  const trialPercent = formatTrialQuotaPercent(trial?.quota_consumed_bps);
+  const trialPresentation = presentTrialStatus(
+    trialError ? "UNAVAILABLE" : trial?.status,
   );
-  const primaryHref =
-    trial?.status === "ACTIVE" ? "/start" : mining ? "/mining" : "/start";
-  const primaryLabel =
-    trialError || miningError
-      ? "상태 다시 확인"
-      : trial?.status === "ACTIVE"
-        ? "START 계속하기"
-        : mining
-          ? "채굴 월드 보기"
-          : "첫 채굴 시작";
   const worldStateUnavailable = Boolean(trialError && miningError);
-  const trialLabel = trialError
-    ? "확인 필요"
-    : (trialStatusLabel[trial?.status ?? "READY"] ?? "준비됨");
+  const primary = resolveHomePrimaryAction({
+    hasMiningSession: Boolean(mining),
+    miningUnavailable: Boolean(miningError),
+    trialStatus: trial?.status,
+    trialUnavailable: Boolean(trialError),
+  });
+  const partialFailure = Boolean(
+    trialError || walletError || miningError || notificationError,
+  );
+
+  let liveLabel = "시작 준비 완료";
+  let worldTitle = trial?.world_name_ko ?? "KOREA";
+  let worldLead = "안내에 따라 첫 채굴 결과를 만나보세요.";
+
+  if (worldStateUnavailable) {
+    liveLabel = "상태를 불러오지 못했어요";
+    worldTitle = "다시 확인해 주세요";
+    worldLead = "연결을 확인한 뒤 다시 열어 주세요.";
+  } else if (mining) {
+    liveLabel = "채굴 진행 중";
+    worldTitle = mining.world_name_ko;
+    worldLead = "앱을 닫아도 채굴은 계속돼요.";
+  } else if (trial?.status === "ACTIVE") {
+    liveLabel = "PUTDUK START 진행 중";
+    worldTitle = trial.world_name_ko ?? "KOREA";
+    worldLead =
+      "앱을 닫아도 채굴은 계속돼요. 다시 접속하면 결과를 확인할 수 있어요.";
+  } else if (trial?.status === "COMPLETED" || trial?.status === "EXPIRED") {
+    liveLabel = "PUTDUK START 완료";
+    worldTitle = trial.world_name_ko ?? "KOREA";
+    worldLead = "체험은 끝났어요. 환영 보상은 START에서 이어가요.";
+  }
 
   return (
-    <div className="product-home">
-      <header className="product-home__welcome">
-        <div>
-          <p className="eyebrow">TODAY IN PUTDUK</p>
-          <h1>오늘도 채굴이 이어지고 있어요.</h1>
-          <p>지금 상태와 다음에 할 일만 모았어요.</p>
+    <div className={styles.page}>
+      <header className={styles.welcome}>
+        <div className={styles.welcomeCopy}>
+          <p className="eyebrow">오늘</p>
+          <h1 className={styles.welcomeTitle}>
+            오늘도 채굴이 이어지고 있어요.
+          </h1>
+          <p className={styles.welcomeLead}>
+            지금 상태와 다음에 할 일만 모았어요.
+          </p>
         </div>
-        <Link className="button button--primary" href={primaryHref}>
-          {primaryLabel}
-          <PutdukIcon name="arrow-right" size={18} />
-        </Link>
+        {worldStateUnavailable ? (
+          <RouteReloadButton
+            className={`button button--primary ${styles.primaryAction}`}
+          />
+        ) : (
+          <Link
+            className={`button button--primary ${styles.primaryAction}`}
+            href={primary.href}
+          >
+            {primary.label}
+            <PutdukIcon name="arrow-right" size={18} />
+          </Link>
+        )}
       </header>
 
-      <section className="product-home__hero" aria-label="오늘의 채굴 상태">
-        <Surface as="article" className="living-world" tone="raised">
-          <div className="living-world__visual">
+      {partialFailure ? (
+        <StatePanel
+          tone="error"
+          title="일부 정보를 불러오지 못했어요"
+          description="보이는 값은 서버에서 확인된 내용만 보여 드려요. 잠시 후 다시 확인해 주세요."
+          action={<RouteReloadButton className="button button--secondary" />}
+        />
+      ) : null}
+
+      <section className={styles.hero} aria-label="오늘의 채굴 상태">
+        <Surface as="article" className={styles.livingWorld} tone="raised">
+          <div className={styles.livingVisual}>
             <picture>
               <source
                 type="image/avif"
@@ -97,45 +140,31 @@ export default async function ProductHomePage() {
                 alt="우주에서 바라본 퍼뜩 채굴 월드"
                 width="960"
                 height="540"
+                decoding="async"
+                fetchPriority="high"
               />
             </picture>
             <MiningCore />
           </div>
-          <div className="living-world__status">
+          <div className={styles.livingStatus}>
             <span
-              className={`live-status${worldStateUnavailable ? "is-unavailable" : ""}`}
+              className={`${styles.liveStatus}${worldStateUnavailable ? ` ${styles.liveStatusUnavailable}` : ""}`}
             >
-              <i />
-              {worldStateUnavailable
-                ? "상태를 불러오지 못했어요"
-                : mining
-                  ? "채굴 진행 중"
-                  : trial?.status === "ACTIVE"
-                    ? "PUTDUK START 진행 중"
-                    : "시작 준비 완료"}
+              <i className={styles.liveStatusDot} aria-hidden="true" />
+              {liveLabel}
             </span>
-            <h2>
-              {worldStateUnavailable
-                ? "다시 확인해 주세요"
-                : (mining?.world_name_ko ?? trial?.world_name_ko ?? "KOREA")}
-            </h2>
-            <p>
-              {worldStateUnavailable
-                ? "연결을 확인한 뒤 다시 열어 주세요."
-                : mining
-                  ? `다음 확인 전 ${Number(mining.unsettled_seconds).toLocaleString("ko-KR")}초`
-                  : "안내에 따라 첫 채굴 결과를 만나보세요."}
-            </p>
+            <h2 className={styles.livingStatusTitle}>{worldTitle}</h2>
+            <p className={styles.livingStatusLead}>{worldLead}</p>
           </div>
         </Surface>
 
-        <div className="product-home__summary">
-          <Surface as="article" className="home-balance-card">
-            <span>
+        <div className={styles.summary}>
+          <Surface as="article" className={styles.summaryCard}>
+            <span className={styles.summaryLabel}>
               <PutdukIcon name="wallet" size={18} />
               사용 가능 KRW
             </span>
-            <strong>
+            <strong className={styles.summaryValue}>
               {walletError
                 ? "확인할 수 없음"
                 : formatAtomicAmount(
@@ -143,54 +172,69 @@ export default async function ProductHomePage() {
                     "KRW",
                   )}
             </strong>
-            <p>
+            <p className={styles.summaryHint}>
               {walletError
                 ? "지갑을 잠시 후 다시 확인해 주세요."
                 : "체험 값은 포함되지 않습니다."}
             </p>
-            <Link href="/wallet">
+            <Link className={styles.summaryLink} href="/wallet">
               지갑 보기 <PutdukIcon name="arrow-right" size={16} />
             </Link>
           </Surface>
-          <Surface as="article" className="home-start-card">
-            <span>PUTDUK START</span>
-            <strong>{trialLabel}</strong>
+          <Surface as="article" className={styles.summaryCard}>
+            <span className={styles.summaryLabel}>PUTDUK START</span>
+            <strong className={styles.summaryValue}>
+              {trialPresentation.label}
+            </strong>
             <div
-              className="product-progress"
+              className={styles.progress}
               aria-label={
-                trialError
+                trialError || trialPercent === null
                   ? "체험 진행률을 불러오지 못함"
                   : `체험 진행률 ${trialPercent.toFixed(0)}%`
               }
             >
-              <span style={{ width: trialError ? "0%" : `${trialPercent}%` }} />
+              <span
+                style={{
+                  width:
+                    trialError || trialPercent === null
+                      ? "0%"
+                      : `${trialPercent}%`,
+                }}
+              />
             </div>
-            <p>
+            <p className={styles.summaryHint}>
               {trialError
                 ? "체험 상태를 불러오지 못했어요."
                 : `체험 결과 ${formatTrialValue(String(trial?.reward_atomic ?? "0"))}`}
             </p>
+            <Link className={styles.summaryLink} href="/start">
+              START 보기 <PutdukIcon name="arrow-right" size={16} />
+            </Link>
           </Surface>
         </div>
       </section>
 
-      <section className="product-home__lower">
-        <div className="home-notifications">
-          <header>
+      <section className={styles.lower}>
+        <div className={styles.notifications}>
+          <header className={styles.notificationsHeader}>
             <div>
-              <p className="eyebrow">RECENT UPDATES</p>
+              <p className="eyebrow">알림</p>
               <h2>최근 알림</h2>
             </div>
             <Link href="/notifications">전체 보기</Link>
           </header>
           {notificationError ? (
-            <div className="home-notifications__empty is-error">
+            <div
+              className={`${styles.notificationsEmpty} ${styles.notificationsEmptyError}`}
+            >
               <PutdukIcon name="bell" size={24} />
               <p>알림을 불러오지 못했어요. 잠시 후 다시 확인해 주세요.</p>
             </div>
           ) : notifications?.length ? (
             notifications.map((notification) => (
               <Link
+                className={styles.notificationRow}
                 href={
                   safeProtectedReturnPath(
                     notification.route,
@@ -200,15 +244,24 @@ export default async function ProductHomePage() {
                 key={notification.id}
               >
                 <span
-                  className={notification.read_at ? undefined : "is-unread"}
+                  className={`${styles.notificationDot}${notification.read_at ? "" : ` ${styles.notificationDotUnread}`}`}
                   aria-hidden="true"
                 />
                 <span>
-                  <small>{notification.category}</small>
-                  <strong>{notification.title_ko}</strong>
-                  <p>{notification.body_ko}</p>
+                  <small className={styles.notificationMeta}>
+                    {notification.category}
+                  </small>
+                  <strong className={styles.notificationTitle}>
+                    {notification.title_ko}
+                  </strong>
+                  <p className={styles.notificationBody}>
+                    {notification.body_ko}
+                  </p>
                 </span>
-                <time dateTime={notification.created_at}>
+                <time
+                  className={styles.notificationTime}
+                  dateTime={notification.created_at}
+                >
                   {new Intl.DateTimeFormat("ko-KR", {
                     month: "short",
                     day: "numeric",
@@ -218,22 +271,38 @@ export default async function ProductHomePage() {
               </Link>
             ))
           ) : (
-            <div className="home-notifications__empty">
+            <div className={styles.notificationsEmpty}>
               <PutdukIcon name="bell" size={24} />
               <p>새 알림이 없어요. 중요한 변화가 생기면 알려드릴게요.</p>
             </div>
           )}
         </div>
-        <Surface as="aside" className="home-ai-card" tone="raised">
+        <Surface as="aside" className={styles.aiCard} tone="raised">
           <PutdukIcon name="ai" size={26} />
-          <p className="eyebrow">PUTDUK AI</p>
+          <p className="eyebrow">퍼뜩 AI</p>
           <h2>채굴과 지갑, 궁금한 점을 물어보세요.</h2>
-          <p>확인할 수 없는 금액은 추측하지 않습니다.</p>
+          <p className={styles.aiCardLead}>
+            확인할 수 없는 금액은 추측하지 않습니다.
+          </p>
           <Link className="button button--secondary" href="/ai">
-            PUTDUK AI 열기
+            퍼뜩 AI 열기
           </Link>
         </Surface>
       </section>
+
+      {!trial && !trialError ? (
+        <StatePanel
+          tone="empty"
+          title="아직 시작 전이에요"
+          description="PUTDUK START에서 첫 채굴을 시작해 보세요."
+          action={
+            <Link className="button button--primary" href="/start">
+              첫 채굴 시작
+              <PutdukIcon name="arrow-right" size={18} />
+            </Link>
+          }
+        />
+      ) : null}
     </div>
   );
 }

@@ -1,0 +1,412 @@
+.page {
+  display: grid;
+  gap: clamp(1.25rem, 2.5vw, 2.2rem);
+}
+
+.welcome {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.welcomeCopy {
+  min-width: 0;
+}
+
+.welcomeTitle {
+  max-width: 16ch;
+  margin: 0.35rem 0 0.45rem;
+  color: var(--text-primary);
+  font-size: clamp(1.85rem, 3.8vw, 3.4rem);
+  line-height: 1.06;
+  letter-spacing: -0.07em;
+  line-break: strict;
+  word-break: keep-all;
+}
+
+.welcomeLead {
+  max-width: 24rem;
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.55;
+  word-break: keep-all;
+}
+
+.primaryAction {
+  flex-shrink: 0;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(17rem, 0.75fr);
+  gap: 1rem;
+}
+
+.livingWorld {
+  position: relative;
+  min-height: 29rem;
+  overflow: hidden;
+  padding: 0;
+  isolation: isolate;
+}
+
+.livingWorld::after {
+  position: absolute;
+  inset: auto 0 0;
+  z-index: -1;
+  height: 60%;
+  background: linear-gradient(
+    transparent,
+    color-mix(in srgb, var(--surface-sunken) 94%, transparent)
+  );
+  content: "";
+}
+
+.livingVisual {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+}
+
+.livingVisual picture,
+.livingVisual picture img {
+  width: 100%;
+  height: 100%;
+}
+
+.livingVisual picture img {
+  object-fit: cover;
+  object-position: 64% center;
+  opacity: 0.82;
+}
+
+.livingVisual :global(.mining-core) {
+  position: absolute;
+  top: 3.5rem;
+  right: clamp(1rem, 8%, 5rem);
+  transform: scale(0.82);
+  transform-origin: center;
+}
+
+.livingStatus {
+  position: absolute;
+  right: clamp(1.2rem, 4vw, 2.8rem);
+  bottom: clamp(1.2rem, 4vw, 2.6rem);
+  left: clamp(1.2rem, 4vw, 2.8rem);
+}
+
+.liveStatus {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.42rem 0.7rem;
+  border: 1px solid color-mix(in srgb, var(--status-success) 35%, transparent);
+  border-radius: var(--radius-full);
+  color: var(--status-success);
+  background: color-mix(in srgb, var(--surface-sunken) 75%, transparent);
+  font-size: 0.74rem;
+  font-weight: 800;
+}
+
+.liveStatusDot {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 0.8rem currentColor;
+}
+
+.liveStatusUnavailable {
+  border-color: color-mix(in srgb, var(--status-danger) 40%, transparent);
+  color: var(--status-danger);
+}
+
+.livingStatusTitle {
+  margin: 0.8rem 0 0.4rem;
+  color: #fff8ea;
+  font-size: clamp(2.4rem, 5vw, 5rem);
+  letter-spacing: -0.07em;
+  line-break: strict;
+  word-break: keep-all;
+}
+
+.livingStatusLead {
+  max-width: 24rem;
+  margin: 0;
+  color: rgba(255, 248, 234, 0.74);
+  font-size: 0.9rem;
+  line-height: 1.55;
+  word-break: keep-all;
+}
+
+.summary {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  gap: 1rem;
+}
+
+.summaryCard {
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1.4rem;
+}
+
+.summaryLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.summaryValue {
+  display: block;
+  margin-block: 1rem 0.35rem;
+  color: var(--text-primary);
+  font-size: clamp(1.8rem, 3.5vw, 3rem);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.06em;
+}
+
+.summaryHint {
+  margin: 0;
+  color: var(--text-tertiary);
+  font-size: 0.8rem;
+  line-height: 1.5;
+  word-break: keep-all;
+}
+
+.summaryLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 1rem;
+  color: var(--brand-primary);
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.summaryLink:focus-visible {
+  outline: none;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-focus);
+}
+
+.progress {
+  display: block;
+  overflow: hidden;
+  width: 100%;
+  height: 0.55rem;
+  margin: 0.85rem 0 0.55rem;
+  border-radius: var(--radius-full);
+  background: color-mix(in srgb, var(--border-default) 70%, transparent);
+}
+
+.progress > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--brand-primary) 78%, #fff),
+    var(--brand-primary)
+  );
+}
+
+.lower {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(17rem, 0.55fr);
+  gap: 1rem;
+}
+
+.notifications {
+  overflow: hidden;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-xl);
+  background: var(--surface-default);
+}
+
+.notificationsHeader {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem 1.35rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.notificationsHeader h2 {
+  margin: 0.25rem 0 0;
+  font-size: 1.25rem;
+  line-break: strict;
+  word-break: keep-all;
+}
+
+.notificationsHeader a {
+  color: var(--brand-primary);
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.notificationsHeader a:focus-visible {
+  outline: none;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-focus);
+}
+
+.notificationRow {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 0.8rem;
+  align-items: start;
+  padding: 1rem 1.35rem;
+  border-bottom: 1px solid var(--border-subtle);
+  color: inherit;
+  text-decoration: none;
+}
+
+.notificationRow:focus-visible {
+  outline: none;
+  box-shadow: inset var(--shadow-focus);
+}
+
+.notificationDot {
+  width: 0.4rem;
+  height: 0.4rem;
+  margin-top: 0.45rem;
+  border-radius: 50%;
+  background: var(--border-default);
+}
+
+.notificationDotUnread {
+  background: var(--brand-primary);
+  box-shadow: 0 0 0.7rem
+    color-mix(in srgb, var(--brand-primary) 55%, transparent);
+}
+
+.notificationMeta,
+.notificationTime {
+  color: var(--text-tertiary);
+  font-size: 0.7rem;
+}
+
+.notificationTitle {
+  display: block;
+  margin: 0.2rem 0;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  line-break: strict;
+  word-break: keep-all;
+}
+
+.notificationBody {
+  margin: 0;
+  overflow: hidden;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.notificationsEmpty {
+  display: flex;
+  gap: 0.7rem;
+  align-items: center;
+  min-height: 8rem;
+  padding: 1.35rem;
+  color: var(--text-tertiary);
+  line-break: strict;
+  word-break: keep-all;
+}
+
+.notificationsEmptyError {
+  color: var(--status-danger);
+}
+
+.aiCard {
+  padding: 1.45rem;
+}
+
+.aiCard svg {
+  color: var(--brand-primary);
+}
+
+.aiCard h2 {
+  max-width: 14ch;
+  margin: 0.65rem 0 0.5rem;
+  font-size: 1.2rem;
+  line-height: 1.3;
+  letter-spacing: -0.04em;
+  word-break: keep-all;
+}
+
+.aiCardLead {
+  max-width: 22rem;
+  margin: 0 0 1.15rem;
+  color: var(--text-secondary);
+  font-size: 0.84rem;
+  line-height: 1.55;
+  word-break: keep-all;
+}
+
+.partialWarning {
+  margin: 0;
+}
+
+@media (max-width: 1099px) {
+  .hero,
+  .lower {
+    grid-template-columns: 1fr;
+  }
+
+  .summary {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: none;
+  }
+}
+
+@media (max-width: 759px) {
+  .welcome {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .primaryAction {
+    width: 100%;
+  }
+
+  .hero {
+    display: contents;
+  }
+
+  .livingWorld {
+    min-height: 25rem;
+  }
+
+  .livingVisual :global(.mining-core) {
+    top: 2.2rem;
+    right: -1.5rem;
+    transform: scale(0.62);
+  }
+
+  .summary {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .liveStatusDot {
+    box-shadow: none;
+  }
+
+  .progress > span {
+    background: var(--brand-primary);
+  }
+}
