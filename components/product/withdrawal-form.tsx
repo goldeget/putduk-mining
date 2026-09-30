@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, type FormEvent } from "react";
+import { useMemo, useRef, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 
 import { PutdukIcon } from "@/components/icons/putduk-icon";
@@ -21,6 +21,17 @@ import {
   parseDisplayAmount,
 } from "@/domain/wallet/format-amount";
 import { trackAnalyticsEvent } from "@/lib/analytics/client";
+import {
+  adoptWithdrawalLogicalKey,
+  browserWithdrawalLogicalRequestStore,
+  classifyWithdrawalHoldResponse,
+  fingerprintDestinationMaterial,
+  fingerprintWithdrawalLogicalRequest,
+  finishWithdrawalLogicalKey,
+  normalizeWithdrawalDestinationParts,
+  registeredDestinationRef,
+  type WithdrawalLogicalOutcome,
+} from "@/lib/wallet/withdrawal-logical-request";
 
 export type WithdrawalAccount = {
   availableBalanceAtomic: string;
@@ -77,6 +88,7 @@ export function WithdrawalForm({
   policies: readonly WithdrawalPolicy[];
 }) {
   const router = useRouter();
+  const submittingRef = useRef(false);
   const initialMethod =
     policies.find((policy) => policy.method === "KRW_BANK")?.method ??
     policies[0]?.method ??
@@ -145,6 +157,51 @@ export function WithdrawalForm({
     hasEnoughBalance &&
     (needsNewDestination || eligibleDestination),
   );
+
+  function resetLogicalRequest() {
+    // 폼 재설정은 진행 중 논리 요청을 버린다. 불확실 실패만으로는 호출되지 않는다.
+    finishWithdrawalLogicalKey(
+      browserWithdrawalLogicalRequestStore(),
+      "cancelled",
+    );
+  }
+
+  async function destinationRefFor(form: HTMLFormElement) {
+    if (!needsNewDestination && eligibleDestination) {
+      return registeredDestinationRef(eligibleDestination.id);
+    }
+    const formData = new FormData(form);
+    const parts =
+      method === "KRW_BANK"
+        ? normalizeWithdrawalDestinationParts({
+            method: "KRW_BANK",
+            accountHolder: String(formData.get("accountHolder") ?? ""),
+            accountNumber: String(formData.get("accountNumber") ?? ""),
+            bankCode: String(formData.get("bankCode") ?? ""),
+          })
+        : normalizeWithdrawalDestinationParts({
+            method: "USDT_ADDRESS",
+            address: String(formData.get("address") ?? ""),
+            network: String(formData.get("network") ?? ""),
+          });
+    return `material:${await fingerprintDestinationMaterial(parts)}`;
+  }
+
+  async function readHoldBody(response: Response) {
+    try {
+      const text = await response.text();
+      if (!text.trim()) {
+        return { bodyParsed: false, payload: null };
+      }
+      const payload = JSON.parse(text) as unknown;
+      return {
+        bodyParsed: payload !== null && typeof payload === "object",
+        payload,
+      };
+    } catch {
+      return { bodyParsed: false, payload: null };
+    }
+  }
 
   function changeMethod(next: WithdrawalDestinationMethod) {
     setMethod(next);
@@ -228,18 +285,37 @@ export function WithdrawalForm({
       return;
     }
 
+    if (submittingRef.current) {
+      return;
+    }
+
     const form = event.currentTarget;
+    const requestStore = browserWithdrawalLogicalRequestStore();
+    submittingRef.current = true;
     setPending(true);
     setFeedback(null);
+    let keyAdopted = false;
 
     try {
       const destinationId = await resolveDestinationId(form);
+      const fingerprint = await fingerprintWithdrawalLogicalRequest({
+        amountKrw: amountAtomic,
+        destinationRef: await destinationRefFor(form),
+        method,
+        policyId: policy.id,
+      });
+      // 전송 전에 키를 고정한다. 응답 유실·단절·파싱 실패는 이 키를 유지한다.
+      const idempotencyKey = adoptWithdrawalLogicalKey(
+        requestStore,
+        fingerprint,
+      );
+      keyAdopted = true;
       const response = await fetch(WITHDRAWAL_HOLD_SUBMIT_URL, {
         method: "POST",
         credentials: "same-origin",
         headers: {
           "Content-Type": "application/json",
-          "Idempotency-Key": crypto.randomUUID(),
+          "Idempotency-Key": idempotencyKey,
         },
         body: JSON.stringify({
           method,
@@ -247,11 +323,17 @@ export function WithdrawalForm({
           amountKrw: amountAtomic,
         }),
       });
-      const payload = (await response.json().catch(() => null)) as {
-        error?: { code?: string; message?: string };
-      } | null;
+      const { bodyParsed, payload } = await readHoldBody(response);
+      const outcome: WithdrawalLogicalOutcome = classifyWithdrawalHoldResponse({
+        bodyParsed,
+        ok: response.ok,
+        payload,
+        status: response.status,
+      });
+      finishWithdrawalLogicalKey(requestStore, outcome);
+      keyAdopted = false;
 
-      if (!response.ok) {
+      if (outcome !== "confirmed_success") {
         // 고장 주입·내부 DB 문구가 message에 실려도 회원 UI에는 노출하지 않는다.
         setFeedback({
           message: memberWithdrawalSubmitMessage(payload),
@@ -276,6 +358,9 @@ export function WithdrawalForm({
       );
       router.refresh();
     } catch (error) {
+      if (keyAdopted) {
+        finishWithdrawalLogicalKey(requestStore, "uncertain");
+      }
       const candidate =
         error instanceof Error
           ? error.message
@@ -287,6 +372,7 @@ export function WithdrawalForm({
         tone: "error",
       });
     } finally {
+      submittingRef.current = false;
       setPending(false);
     }
   }
@@ -296,7 +382,12 @@ export function WithdrawalForm({
   }
 
   return (
-    <form className={styles.form} onSubmit={submit} noValidate>
+    <form
+      className={styles.form}
+      onSubmit={submit}
+      onReset={resetLogicalRequest}
+      noValidate
+    >
       <header className={styles.stepHeader}>
         <span className={styles.stepNumber}>01</span>
         <div>
