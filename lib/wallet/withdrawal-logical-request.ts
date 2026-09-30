@@ -1,31 +1,37 @@
-/**
- * 회원 출금 한 건의 논리 요청 멱등 키.
- * 서버가 커밋한 뒤 응답만 유실돼도 재시도가 같은 키를 다시 보낸다.
- * 키는 난수다. 계좌번호·주소 원문은 지문 입력으로만 쓰고 저장하지 않는다.
- */
-
+/** Safe owner-scoped recovery record. Destination material is NEVER persisted. */
 export const WITHDRAWAL_LOGICAL_REQUEST_STORAGE_KEY =
+  "putduk.withdrawal.logical-request.v2";
+export const LEGACY_WITHDRAWAL_LOGICAL_REQUEST_STORAGE_KEY =
   "putduk.withdrawal.logical-request.v1";
+export const WITHDRAWAL_STORAGE_FAILURE_COPY =
+  "출금 요청을 안전하게 저장하지 못했어요. 브라우저 저장 설정을 확인한 뒤 다시 시도해 주세요.";
+export const WITHDRAWAL_RECONCILIATION_COPY =
+  "이전 출금 요청을 먼저 확인해 주세요. 확인하기 전에는 새 요청을 보내지 않아요.";
 
-const OPAQUE_KEY_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._:-]{7,179}$/;
-const FINGERPRINT_PATTERN = /^[a-f0-9]{64}$/;
+export type WithdrawalLogicalState =
+  | "PREPARED"
+  | "DESTINATION_REGISTERED"
+  | "OUTCOME_UNCERTAIN"
+  | "CONFIRMED"
+  | "DEFINITIVELY_REJECTED"
+  | "CANCELLED";
 
-/** 커밋 전에 거절된 것이 확정된 응답. 이 쌍만 definitive_rejection 이다. */
-const DEFINITIVE_REJECTIONS = [
-  { status: 400, code: "INVALID_IDEMPOTENCY_KEY" },
-  { status: 400, code: "INVALID_WITHDRAWAL_REQUEST" },
-  { status: 401, code: "UNAUTHENTICATED" },
-  { status: 409, code: "INSUFFICIENT_AVAILABLE_BALANCE" },
-] as const;
-
-export type WithdrawalLogicalOutcome =
-  "confirmed_success" | "definitive_rejection" | "cancelled" | "uncertain";
-
-export type PersistedWithdrawalLogicalRequest = {
-  fingerprint: string;
+export type PersistedWithdrawalLogicalRequest = Readonly<{
+  v: 2;
+  ownerId: string;
   key: string;
-  v: 1;
-};
+  method: "KRW_BANK" | "USDT_ADDRESS";
+  amountKrw: string;
+  policyId: string;
+  policyVersion: number;
+  destinationIdentity: string;
+  destinationId: string | null;
+  withdrawalId: string | null;
+  state: WithdrawalLogicalState;
+  createdAt: string;
+  updatedAt: string;
+  expiresAt: string;
+}>;
 
 export type LogicalRequestStore = {
   read(key: string): string | null;
@@ -35,308 +41,333 @@ export type LogicalRequestStore = {
 
 export type WithdrawalDestinationMaterial =
   | {
+      method: "KRW_BANK";
       accountHolder: string;
       accountNumber: string;
       bankCode: string;
-      method: "KRW_BANK";
     }
-  | {
-      address: string;
-      method: "USDT_ADDRESS";
-      network: string;
-    };
+  | { method: "USDT_ADDRESS"; address: string; network: string };
 
-type LogicalIdentity = {
+export type WithdrawalInputSnapshot = Readonly<{
+  method: "KRW_BANK" | "USDT_ADDRESS";
   amountKrw: string;
-  destinationRef: string;
-  method: string;
   policyId: string;
-};
+  policyVersion: number;
+  destinationId: string | null;
+  destination: Readonly<WithdrawalDestinationMaterial> | null;
+}>;
 
-const memoryFallback = new Map<string, string>();
-
-function bytesToHex(bytes: Uint8Array) {
-  return [...bytes].map((byte) => byte.toString(16).padStart(2, "0")).join("");
+/** Called synchronously BEFORE pending/disabled/await. No later FormData reads. */
+export function snapshotWithdrawalInput(
+  form: HTMLFormElement,
+  input: {
+    method: "KRW_BANK" | "USDT_ADDRESS";
+    amountKrw: string;
+    policyId: string;
+    policyVersion: number;
+    destinationId: string | null;
+  },
+): WithdrawalInputSnapshot {
+  const data = new FormData(form);
+  const destination = input.destinationId
+    ? null
+    : input.method === "KRW_BANK"
+      ? {
+          method: "KRW_BANK" as const,
+          accountHolder: String(data.get("accountHolder") ?? ""),
+          accountNumber: String(data.get("accountNumber") ?? ""),
+          bankCode: String(data.get("bankCode") ?? ""),
+        }
+      : {
+          method: "USDT_ADDRESS" as const,
+          address: String(data.get("address") ?? ""),
+          network: String(data.get("network") ?? ""),
+        };
+  return Object.freeze({
+    ...input,
+    destination: destination ? Object.freeze(destination) : null,
+  });
 }
 
-export async function sha256Hex(value: string) {
-  const digest = await crypto.subtle.digest(
-    "SHA-256",
-    new TextEncoder().encode(value),
-  );
-  return bytesToHex(new Uint8Array(digest));
+const UUID = /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i;
+const KEY = /^[A-Za-z0-9][A-Za-z0-9._:-]{7,179}$/;
+const FINGERPRINT = /^[a-f0-9]{64}$/;
+const STATES: readonly string[] = [
+  "PREPARED",
+  "DESTINATION_REGISTERED",
+  "OUTCOME_UNCERTAIN",
+  "CONFIRMED",
+  "DEFINITIVELY_REJECTED",
+  "CANCELLED",
+];
+const FIELDS = [
+  "v",
+  "ownerId",
+  "key",
+  "method",
+  "amountKrw",
+  "policyId",
+  "policyVersion",
+  "destinationIdentity",
+  "destinationId",
+  "withdrawalId",
+  "state",
+  "createdAt",
+  "updatedAt",
+  "expiresAt",
+];
+
+export class WithdrawalLogicalSafetyError extends Error {
+  constructor(
+    public readonly code: "STORAGE_UNAVAILABLE" | "RECONCILIATION_REQUIRED",
+  ) {
+    super(
+      code === "STORAGE_UNAVAILABLE"
+        ? WITHDRAWAL_STORAGE_FAILURE_COPY
+        : WITHDRAWAL_RECONCILIATION_COPY,
+    );
+  }
 }
 
-/** 새 목적지 재료를 정규화한다. 원문은 반환하지 않고 지문 입력 조각만 만든다. */
-export function normalizeWithdrawalDestinationParts(
-  material: WithdrawalDestinationMaterial,
+function unsafe(): never {
+  throw new WithdrawalLogicalSafetyError("RECONCILIATION_REQUIRED");
+}
+
+export function validateWithdrawalLogicalRequest(
+  value: unknown,
+  ownerId: string,
+): PersistedWithdrawalLogicalRequest {
+  if (
+    !value ||
+    typeof value !== "object" ||
+    Array.isArray(value) ||
+    Object.getPrototypeOf(value) !== Object.prototype
+  )
+    return unsafe();
+  const record = value as Record<string, unknown>;
+  if (
+    Object.keys(record).length !== FIELDS.length ||
+    FIELDS.some((field) => !Object.hasOwn(record, field)) ||
+    Object.keys(record).some((field) => !FIELDS.includes(field))
+  )
+    return unsafe();
+  if (
+    record.v !== 2 ||
+    record.ownerId !== ownerId ||
+    !UUID.test(ownerId) ||
+    typeof record.key !== "string" ||
+    !KEY.test(record.key) ||
+    !["KRW_BANK", "USDT_ADDRESS"].includes(String(record.method)) ||
+    typeof record.amountKrw !== "string" ||
+    !/^[1-9][0-9]{0,14}$/.test(record.amountKrw) ||
+    typeof record.policyId !== "string" ||
+    !UUID.test(record.policyId) ||
+    !Number.isSafeInteger(record.policyVersion) ||
+    Number(record.policyVersion) < 1 ||
+    typeof record.destinationIdentity !== "string" ||
+    !FINGERPRINT.test(record.destinationIdentity) ||
+    (record.destinationId !== null &&
+      (typeof record.destinationId !== "string" ||
+        !UUID.test(record.destinationId))) ||
+    (record.withdrawalId !== null &&
+      (typeof record.withdrawalId !== "string" ||
+        !UUID.test(record.withdrawalId))) ||
+    !STATES.includes(String(record.state))
+  )
+    return unsafe();
+  const dates = [record.createdAt, record.updatedAt, record.expiresAt];
+  if (
+    dates.some(
+      (date) =>
+        typeof date !== "string" ||
+        !/^\d{4}-\d\d-\d\dT/.test(date) ||
+        !Number.isFinite(Date.parse(date)),
+    )
+  )
+    return unsafe();
+  if (
+    Date.parse(String(record.createdAt)) >
+      Date.parse(String(record.updatedAt)) ||
+    Date.parse(String(record.expiresAt)) <= Date.parse(String(record.createdAt))
+  )
+    return unsafe();
+  if (
+    ["DESTINATION_REGISTERED", "OUTCOME_UNCERTAIN", "CONFIRMED"].includes(
+      String(record.state),
+    ) &&
+    !record.destinationId
+  )
+    return unsafe();
+  if (
+    ["OUTCOME_UNCERTAIN", "CONFIRMED"].includes(String(record.state)) &&
+    !record.withdrawalId
+  )
+    return unsafe();
+  return Object.freeze({ ...record }) as PersistedWithdrawalLogicalRequest;
+}
+
+/** Expiry never deletes a key. The caller must reconcile with the server. */
+export function isWithdrawalLogicalRequestExpired(
+  record: PersistedWithdrawalLogicalRequest,
+  now = Date.now(),
 ) {
-  if (material.method === "KRW_BANK") {
-    return [
-      "KRW_BANK",
-      material.bankCode.trim().toUpperCase(),
-      material.accountHolder.normalize("NFKC").trim(),
-      material.accountNumber.replace(/\D/g, ""),
-    ];
-  }
-  return [
-    "USDT_ADDRESS",
-    material.network.trim().toUpperCase(),
-    material.address.normalize("NFKC").trim(),
-  ];
-}
-
-export async function fingerprintDestinationMaterial(parts: readonly string[]) {
-  return sha256Hex(`putduk.withdrawal.destination.v1:${parts.join("\u001f")}`);
-}
-
-export function registeredDestinationRef(destinationId: string) {
-  return `registered:${destinationId}`;
-}
-
-/** 방법·금액·정책·목적지 지문. 저장되는 값은 이 해시뿐이고 원문이 아니다. */
-export async function fingerprintWithdrawalLogicalRequest(
-  identity: LogicalIdentity,
-) {
-  const canonical = [
-    identity.method,
-    identity.amountKrw,
-    identity.policyId,
-    identity.destinationRef,
-  ].join("\u001f");
-  return sha256Hex(`putduk.withdrawal.logical-request.v1:${canonical}`);
-}
-
-export function memoryLogicalRequestStore(
-  backing = new Map<string, string>(),
-): LogicalRequestStore {
-  return {
-    read: (key) => backing.get(key) ?? null,
-    remove: (key) => {
-      backing.delete(key);
-    },
-    write: (key, value) => {
-      backing.set(key, value);
-    },
-  };
-}
-
-export function createStorageLogicalRequestStore(
-  storage: Pick<Storage, "getItem" | "removeItem" | "setItem"> | null,
-  fallback = memoryFallback,
-): LogicalRequestStore {
-  if (!storage) {
-    return memoryLogicalRequestStore(fallback);
-  }
-  return {
-    read(key) {
-      try {
-        return storage.getItem(key);
-      } catch {
-        return fallback.get(key) ?? null;
-      }
-    },
-    remove(key) {
-      try {
-        storage.removeItem(key);
-      } catch {
-        fallback.delete(key);
-      }
-    },
-    write(key, value) {
-      try {
-        storage.setItem(key, value);
-      } catch {
-        fallback.set(key, value);
-      }
-    },
-  };
-}
-
-function readSessionStorage() {
-  try {
-    if (typeof sessionStorage === "undefined") {
-      return null;
-    }
-    const probe = `${WITHDRAWAL_LOGICAL_REQUEST_STORAGE_KEY}.probe`;
-    sessionStorage.setItem(probe, "1");
-    sessionStorage.removeItem(probe);
-    return sessionStorage;
-  } catch {
-    return null;
-  }
-}
-
-/** 탭 세션에만 둔다. 새로고침 뒤 불확실 재시도까지 같은 키를 유지한다. */
-export function browserWithdrawalLogicalRequestStore() {
-  return createStorageLogicalRequestStore(readSessionStorage());
+  return Date.parse(record.expiresAt) <= now;
 }
 
 export function parsePersistedWithdrawalLogicalRequest(
   raw: string | null,
-): PersistedWithdrawalLogicalRequest | null {
-  if (!raw) {
-    return null;
-  }
+  ownerId: string,
+) {
+  if (raw === null) return null;
   try {
-    const parsed = JSON.parse(raw) as unknown;
-    if (!parsed || typeof parsed !== "object") {
-      return null;
-    }
-    const record = parsed as Record<string, unknown>;
-    if (record.v !== 1) {
-      return null;
-    }
-    if (
-      typeof record.fingerprint !== "string" ||
-      !FINGERPRINT_PATTERN.test(record.fingerprint)
-    ) {
-      return null;
-    }
-    if (
-      typeof record.key !== "string" ||
-      !OPAQUE_KEY_PATTERN.test(record.key)
-    ) {
-      return null;
-    }
-    return {
-      fingerprint: record.fingerprint,
-      key: record.key,
-      v: 1,
-    };
+    return validateWithdrawalLogicalRequest(
+      JSON.parse(raw) as unknown,
+      ownerId,
+    );
   } catch {
-    return null;
+    return unsafe();
   }
 }
 
-export function loadWithdrawalLogicalRequest(store: LogicalRequestStore) {
+export function withdrawalLogicalStorageKey(ownerId: string) {
+  if (!UUID.test(ownerId)) return unsafe();
+  return `${WITHDRAWAL_LOGICAL_REQUEST_STORAGE_KEY}:${ownerId}`;
+}
+
+/** There is deliberately NO memory fallback for money commands. */
+export function createStorageLogicalRequestStore(
+  storage: Pick<Storage, "getItem" | "removeItem" | "setItem"> | null,
+): LogicalRequestStore {
+  const fail = (): never => {
+    throw new WithdrawalLogicalSafetyError("STORAGE_UNAVAILABLE");
+  };
+  return {
+    read(key) {
+      try {
+        return storage ? storage.getItem(key) : fail();
+      } catch {
+        return fail();
+      }
+    },
+    remove(key) {
+      try {
+        if (!storage) return fail();
+        storage.removeItem(key);
+      } catch {
+        return fail();
+      }
+    },
+    write(key, value) {
+      try {
+        if (!storage) return fail();
+        storage.setItem(key, value);
+      } catch {
+        return fail();
+      }
+    },
+  };
+}
+
+export function browserWithdrawalLogicalRequestStore() {
+  try {
+    return createStorageLogicalRequestStore(window.localStorage);
+  } catch {
+    return createStorageLogicalRequestStore(null);
+  }
+}
+
+export function loadWithdrawalLogicalRequest(
+  store: LogicalRequestStore,
+  ownerId: string,
+) {
   return parsePersistedWithdrawalLogicalRequest(
-    store.read(WITHDRAWAL_LOGICAL_REQUEST_STORAGE_KEY),
+    store.read(withdrawalLogicalStorageKey(ownerId)),
+    ownerId,
   );
 }
 
-export function saveWithdrawalLogicalRequest(
+/** Write + exact read-back proof, required before EACH destination/money mutation. */
+export function persistWithdrawalLogicalRequest(
   store: LogicalRequestStore,
-  state: PersistedWithdrawalLogicalRequest | null,
+  record: PersistedWithdrawalLogicalRequest,
+  ownerId: string,
 ) {
-  if (!state) {
-    store.remove(WITHDRAWAL_LOGICAL_REQUEST_STORAGE_KEY);
-    return;
-  }
-  store.write(WITHDRAWAL_LOGICAL_REQUEST_STORAGE_KEY, JSON.stringify(state));
+  const validated = validateWithdrawalLogicalRequest(record, ownerId);
+  const key = withdrawalLogicalStorageKey(ownerId);
+  const serialized = JSON.stringify(validated);
+  store.write(key, serialized);
+  if (store.read(key) !== serialized)
+    throw new WithdrawalLogicalSafetyError("STORAGE_UNAVAILABLE");
+  return validated;
 }
 
-/**
- * 같은 지문이면 기존 키를 재사용한다.
- * 금액·방법·정책·목적지가 바뀌면 새 키를 만든다.
- */
-export function decideWithdrawalLogicalKey(
-  current: PersistedWithdrawalLogicalRequest | null,
-  fingerprint: string,
-  createKey: () => string,
-): PersistedWithdrawalLogicalRequest {
-  if (
-    current &&
-    current.fingerprint === fingerprint &&
-    OPAQUE_KEY_PATTERN.test(current.key)
-  ) {
-    return current;
-  }
-  const key = createKey();
-  if (!OPAQUE_KEY_PATTERN.test(key)) {
-    throw new Error("INVALID_WITHDRAWAL_LOGICAL_KEY");
-  }
-  return { fingerprint, key, v: 1 };
-}
-
-/** 성공·확정 거절·취소만 키를 지운다. 불확실 결과는 그대로 둔다. */
-export function settleWithdrawalLogicalRequest(
-  current: PersistedWithdrawalLogicalRequest | null,
-  outcome: WithdrawalLogicalOutcome,
-): PersistedWithdrawalLogicalRequest | null {
-  if (outcome === "uncertain") {
-    return current;
-  }
-  return null;
-}
-
-export function adoptWithdrawalLogicalKey(
-  store: LogicalRequestStore,
-  fingerprint: string,
-  createKey: () => string = () => crypto.randomUUID(),
-) {
-  const next = decideWithdrawalLogicalKey(
-    loadWithdrawalLogicalRequest(store),
-    fingerprint,
-    createKey,
-  );
-  saveWithdrawalLogicalRequest(store, next);
-  return next.key;
-}
-
+/** Clear only the acknowledged terminal key, never another tab's newer intent. */
 export function finishWithdrawalLogicalKey(
   store: LogicalRequestStore,
-  outcome: WithdrawalLogicalOutcome,
+  record: PersistedWithdrawalLogicalRequest,
+  ownerId: string,
 ) {
-  saveWithdrawalLogicalRequest(
-    store,
-    settleWithdrawalLogicalRequest(
-      loadWithdrawalLogicalRequest(store),
-      outcome,
-    ),
-  );
+  if (
+    !["CONFIRMED", "CANCELLED", "DEFINITIVELY_REJECTED"].includes(record.state)
+  )
+    return;
+  const current = loadWithdrawalLogicalRequest(store, ownerId);
+  if (current?.key === record.key)
+    store.remove(withdrawalLogicalStorageKey(ownerId));
 }
 
 function readErrorCode(payload: unknown) {
-  if (!payload || typeof payload !== "object") {
+  if (
+    !payload ||
+    typeof payload !== "object" ||
+    !Object.hasOwn(payload, "error")
+  )
     return null;
-  }
   const error = (payload as { error?: unknown }).error;
-  if (!error || typeof error !== "object") {
+  if (!error || typeof error !== "object" || !Object.hasOwn(error, "code"))
     return null;
-  }
-  const code = (error as { code?: unknown }).code;
-  return typeof code === "string" && code.length > 0 ? code : null;
+  return (error as { code?: unknown }).code;
 }
 
-function readWithdrawalId(payload: unknown) {
-  if (!payload || typeof payload !== "object") {
+export function readWithdrawalHoldId(payload: unknown) {
+  if (
+    !payload ||
+    typeof payload !== "object" ||
+    !Object.hasOwn(payload, "data")
+  )
     return null;
-  }
   const data = (payload as { data?: unknown }).data;
-  if (!data || typeof data !== "object") {
+  if (!data || typeof data !== "object" || !Object.hasOwn(data, "withdrawalId"))
     return null;
-  }
-  const withdrawalId = (data as { withdrawalId?: unknown }).withdrawalId;
-  return typeof withdrawalId === "string" && withdrawalId.length > 0
-    ? withdrawalId
-    : null;
+  const id = (data as { withdrawalId?: unknown }).withdrawalId;
+  return typeof id === "string" && UUID.test(id) ? id : null;
 }
 
-/**
- * 응답 본문을 읽지 못했거나 커밋 여부가 불명확하면 uncertain.
- * 5xx·WITHDRAWAL_REQUEST_FAILED 는 커밋 여부를 확정하지 않는다.
- */
+export type WithdrawalLogicalOutcome =
+  "confirmed_success" | "definitive_rejection" | "uncertain";
+
+/** A rejection may retire a key only AFTER serialized server reconciliation. */
 export function classifyWithdrawalHoldResponse(input: {
   bodyParsed: boolean;
   ok: boolean;
   payload: unknown;
   status: number;
-}): Exclude<WithdrawalLogicalOutcome, "cancelled"> {
-  if (!input.bodyParsed) {
-    return "uncertain";
-  }
-  if (input.ok) {
-    return readWithdrawalId(input.payload) ? "confirmed_success" : "uncertain";
-  }
-  const code = readErrorCode(input.payload);
-  if (
-    code &&
-    DEFINITIVE_REJECTIONS.some(
-      (item) => item.status === input.status && item.code === code,
-    )
-  ) {
-    return "definitive_rejection";
-  }
-  return "uncertain";
+}): WithdrawalLogicalOutcome {
+  if (!input.bodyParsed) return "uncertain";
+  if (input.ok)
+    return readWithdrawalHoldId(input.payload)
+      ? "confirmed_success"
+      : "uncertain";
+  const pairs = [
+    [400, "INVALID_IDEMPOTENCY_KEY"],
+    [400, "INVALID_WITHDRAWAL_REQUEST"],
+    [401, "UNAUTHENTICATED"],
+    [409, "INSUFFICIENT_AVAILABLE_BALANCE"],
+  ] as const;
+  return pairs.some(
+    ([status, code]) =>
+      status === input.status && code === readErrorCode(input.payload),
+  )
+    ? "definitive_rejection"
+    : "uncertain";
 }

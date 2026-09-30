@@ -107,7 +107,10 @@ test("응답이 유실돼도 같은 출금 요청은 홀드·영수증을 한 �
   await expect(
     page.getByRole("heading", { name: "출금하기", level: 1 }),
   ).toBeVisible();
-  await page.getByRole("button", { name: "최소 금액" }).click();
+  await expect(page.locator("#withdrawal-amount")).toHaveValue(
+    seen[0]!.amountKrw,
+  );
+  await expect(page.getByRole("button", { name: "최소 금액" })).toBeDisabled();
   await page.getByRole("button", { name: "출금 요청하기" }).click();
   await expect(page.locator("#withdrawal-request-feedback")).toContainText(
     "출금 요청을 접수했어요.",

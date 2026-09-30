@@ -183,7 +183,7 @@ test("홈·START 오류 복구와 키보드·축소 모션을 확인한다", asy
     {
       name: E2E_FORCE_REST_FAILURE_COOKIE,
       value: HOME_READ_FAULT_TABLES,
-      url: "http://127.0.0.1:3000",
+      url: `http://127.0.0.1:${process.env.E2E_WEB_PORT ?? "3000"}`,
     },
   ]);
 

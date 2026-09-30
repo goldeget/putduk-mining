@@ -18,7 +18,11 @@ import {
 } from "../../workers/runner.mjs";
 
 const REMOTE_PROJECT_REF = "osrmyjgmpdspdcwqjwuv";
-const DB_CONTAINER = "supabase_db_putduk-mining";
+const localProjectId = process.env.LOCAL_SUPABASE_PROJECT_ID ?? "putduk-mining";
+if (!/^putduk-mining(?:-[a-z0-9-]+)?$/.test(localProjectId)) {
+  throw new Error("LOCAL_DB_PROJECT_SCOPE_REJECTED");
+}
+const DB_CONTAINER = `supabase_db_${localProjectId}`;
 
 function requireLocalWorkerEnv() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim();

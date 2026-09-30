@@ -1,0 +1,29 @@
+{
+  "requests": [
+    {
+      "key": "ffbe525b-402f-4ae4-88f6-ef5d92843dd7",
+      "method": "KRW_BANK",
+      "destinationId": "47ace984-83ab-46b3-a762-d4bb7c79a61a",
+      "amountKrw": "1000"
+    },
+    {
+      "key": "ffbe525b-402f-4ae4-88f6-ef5d92843dd7",
+      "method": "KRW_BANK",
+      "destinationId": "47ace984-83ab-46b3-a762-d4bb7c79a61a",
+      "amountKrw": "1000"
+    }
+  ],
+  "tabCloseReopen": "pending key preserved after closing a recovered tab",
+  "staleTabAfterAcknowledgement": "old success; zero additional hold calls",
+  "effects": {
+    "ownerId": "7d96abc0-9079-4b02-a38d-781016b528f9",
+    "key": "ffbe525b-402f-4ae4-88f6-ef5d92843dd7",
+    "requestId": "9382bde5-084f-4466-9243-23efced7858d",
+    "destinationId": "47ace984-83ab-46b3-a762-d4bb7c79a61a",
+    "request": 1,
+    "hold": 1,
+    "outbox": 1,
+    "receipt": 1
+  },
+  "observedBeforeCleanup": true
+}

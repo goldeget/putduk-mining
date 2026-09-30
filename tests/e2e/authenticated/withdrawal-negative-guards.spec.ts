@@ -159,8 +159,28 @@ test.describe("welcome withdrawal negative guards", () => {
     expect(count).toBe(1);
 
     const held = await readLatestWithdrawal(member.userId);
+    const { data: generalPolicy } = await client
+      .from("withdrawal_policies")
+      .select("id,version")
+      .eq("destination_type", "KRW_BANK")
+      .eq("is_enabled", true)
+      .order("version", { ascending: false })
+      .limit(1)
+      .single();
+    const prepared = await page.request.post("/api/v1/withdrawals/intents", {
+      data: {
+        method: "KRW_BANK",
+        amountKrw: String(WELCOME_CAP_KRW),
+        policyId: generalPolicy!.id,
+        policyVersion: generalPolicy!.version,
+        destinationId: destination?.id,
+        destination: null,
+      },
+    });
+    expect(prepared.status()).toBe(201);
+    const logicalKey = (await prepared.json()).data.record.key;
     const spend = await page.request.post("/api/v1/withdrawals/hold", {
-      headers: { "Idempotency-Key": `ws05-doublespend-${member.userId}` },
+      headers: { "Idempotency-Key": logicalKey },
       data: {
         method: "KRW_BANK",
         destinationId: destination?.id,
@@ -168,6 +188,9 @@ test.describe("welcome withdrawal negative guards", () => {
       },
     });
     expect(spend.status()).toBe(409);
+    expect((await spend.json()).error.code).toBe(
+      "INSUFFICIENT_AVAILABLE_BALANCE",
+    );
     expect(held?.status).toBe("HELD");
   });
 

@@ -1,0 +1,15 @@
+{
+  "key": "b86ae007-ea68-4590-9d8c-c08f64e44e45",
+  "effects": {
+    "ownerId": "3493f154-6f10-4a86-917c-7de2afd44c60",
+    "key": "b86ae007-ea68-4590-9d8c-c08f64e44e45",
+    "requestId": null,
+    "destinationId": null,
+    "request": 0,
+    "hold": 0,
+    "outbox": 0,
+    "receipt": 0
+  },
+  "mutations": 0,
+  "observedBeforeCleanup": true
+}

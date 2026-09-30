@@ -138,13 +138,13 @@ export default async function WithdrawalPage() {
     admin
       .from("withdrawal_policies")
       .select(
-        "id, currency, destination_type, minimum_amount_atomic, fee_atomic, destination_config, allows_welcome_reward, effective_at",
+        "id, version, currency, destination_type, minimum_amount_atomic, fee_atomic, destination_config, allows_welcome_reward, effective_at",
       )
       .eq("is_enabled", true)
       .eq("currency", "KRW")
       .lte("effective_at", nowIso)
       .or(`expires_at.is.null,expires_at.gt.${nowIso}`)
-      .order("effective_at", { ascending: false }),
+      .order("version", { ascending: false }),
     identity.supabase
       .from("withdrawal_requests")
       .select(
@@ -194,6 +194,7 @@ export default async function WithdrawalPage() {
       id: row.id,
       method,
       minimumAmountAtomic: String(row.minimum_amount_atomic),
+      version: row.version,
     });
   }
 
@@ -377,6 +378,8 @@ export default async function WithdrawalPage() {
             />
           ) : (
             <WithdrawalForm
+              key={identity.userId}
+              ownerId={identity.userId}
               account={{
                 availableBalanceAtomic: availableAtomic,
                 heldBalanceAtomic: heldAtomic,

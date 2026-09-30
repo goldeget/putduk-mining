@@ -245,7 +245,7 @@ test("unauthenticated AI chat API rejects without admitting a turn", async ({
     },
     headers: {
       "Content-Type": "application/json",
-      Origin: "http://127.0.0.1:3000",
+      Origin: `http://127.0.0.1:${process.env.E2E_WEB_PORT ?? "3000"}`,
     },
   });
   expect(response.status()).toBe(401);

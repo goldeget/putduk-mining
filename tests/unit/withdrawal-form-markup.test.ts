@@ -21,6 +21,7 @@ const policy = {
   id: "policy-krw",
   method: "KRW_BANK" as const,
   minimumAmountAtomic: "1000",
+  version: 1,
 };
 
 function markup(
@@ -36,6 +37,7 @@ function markup(
       account,
       destinations,
       policies: [policy],
+      ownerId: "11111111-1111-4111-8111-111111111111",
     }),
   );
 }

@@ -23,6 +23,8 @@ const SUBMIT_CODE_COPY = {
   INVALID_WITHDRAWAL_REQUEST: "출금 요청 정보를 확인해 주세요.",
   INSUFFICIENT_AVAILABLE_BALANCE: "출금 가능 금액이 부족해요.",
   WITHDRAWAL_REQUEST_FAILED: MEMBER_WITHDRAWAL_SUBMIT_FALLBACK,
+  WITHDRAWAL_RECONCILIATION_REQUIRED:
+    "이전 출금 요청을 먼저 확인해 주세요. 확인하기 전에는 새 요청을 보내지 않아요.",
 } as const satisfies Record<string, string>;
 
 /** 출금 목적지 등록 — 허용된 애플리케이션 오류 코드만 제품 카피 사용 */
@@ -32,6 +34,8 @@ const DESTINATION_CODE_COPY = {
   /** 구성 미비도 회원에게는 내부 원인 대신 등록 실패 안내 */
   WITHDRAWAL_SECURITY_NOT_CONFIGURED: MEMBER_DESTINATION_REGISTER_FALLBACK,
   DESTINATION_REGISTER_FAILED: MEMBER_DESTINATION_REGISTER_FALLBACK,
+  WITHDRAWAL_RECONCILIATION_REQUIRED:
+    "이전 출금 요청을 먼저 확인해 주세요. 확인하기 전에는 새 요청을 보내지 않아요.",
 } as const satisfies Record<string, string>;
 
 /**

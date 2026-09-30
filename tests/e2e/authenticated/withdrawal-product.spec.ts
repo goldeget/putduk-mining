@@ -193,7 +193,13 @@ test("빈 이력·검증·오류 복구와 KRW 기준 복사를 확인한다", a
   );
   await expect(page.getByText("withdrawal_requests")).toHaveCount(0);
 
+  // Uncertain outcome must be reconciled before materially changing the request.
+  await page.getByRole("button", { name: "입력 다시하기" }).click();
+  await expect(
+    page.getByRole("button", { name: "다른 목적지로 변경" }),
+  ).toBeEnabled();
   await page.getByRole("button", { name: "다른 목적지로 변경" }).click();
+  await page.getByRole("button", { name: "최소 금액" }).click();
   await page.locator('select[name="bankCode"]').selectOption("KB");
   await page.locator('input[name="accountHolder"]').fill("홍길동");
   await page.locator('input[name="accountNumber"]').fill("123456789012");

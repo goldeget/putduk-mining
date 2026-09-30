@@ -1,0 +1,15 @@
+{
+  "ownerId": "2329f732-efba-4039-9f07-732b7e96ed2b",
+  "mutations": 0,
+  "effects": {
+    "ownerId": "2329f732-efba-4039-9f07-732b7e96ed2b",
+    "key": "p1-corrupt-no-server",
+    "requestId": null,
+    "destinationId": null,
+    "request": 0,
+    "hold": 0,
+    "outbox": 0,
+    "receipt": 0
+  },
+  "observedBeforeCleanup": true
+}

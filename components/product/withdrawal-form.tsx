@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 
 import { PutdukIcon } from "@/components/icons/putduk-icon";
@@ -11,9 +11,7 @@ import {
 } from "@/components/product/destination-type";
 import {
   isMemberFacingWithdrawalCopy,
-  memberDestinationRegisterMessage,
   MEMBER_WITHDRAWAL_NETWORK_FALLBACK,
-  memberWithdrawalSubmitMessage,
 } from "@/components/product/member-withdrawal-errors";
 import styles from "@/components/product/product-experience.module.css";
 import {
@@ -22,16 +20,18 @@ import {
 } from "@/domain/wallet/format-amount";
 import { trackAnalyticsEvent } from "@/lib/analytics/client";
 import {
-  adoptWithdrawalLogicalKey,
   browserWithdrawalLogicalRequestStore,
-  classifyWithdrawalHoldResponse,
-  fingerprintDestinationMaterial,
-  fingerprintWithdrawalLogicalRequest,
-  finishWithdrawalLogicalKey,
-  normalizeWithdrawalDestinationParts,
-  registeredDestinationRef,
-  type WithdrawalLogicalOutcome,
+  LEGACY_WITHDRAWAL_LOGICAL_REQUEST_STORAGE_KEY,
+  snapshotWithdrawalInput,
+  WithdrawalLogicalSafetyError,
+  WITHDRAWAL_RECONCILIATION_COPY,
+  type PersistedWithdrawalLogicalRequest,
 } from "@/lib/wallet/withdrawal-logical-request";
+import {
+  recoverWithdrawalLogicalRequest,
+  resolveWithdrawalLogicalRequest,
+  submitWithdrawalLogicalRequest,
+} from "@/lib/wallet/withdrawal-client";
 
 export type WithdrawalAccount = {
   availableBalanceAtomic: string;
@@ -45,6 +45,7 @@ export type WithdrawalPolicy = {
   id: string;
   method: WithdrawalDestinationMethod;
   minimumAmountAtomic: string;
+  version: number;
 };
 
 export type RegisteredWithdrawalDestination = {
@@ -82,10 +83,12 @@ export function WithdrawalForm({
   account,
   destinations = [],
   policies,
+  ownerId,
 }: {
   account: WithdrawalAccount | null;
   destinations?: readonly RegisteredWithdrawalDestination[];
   policies: readonly WithdrawalPolicy[];
+  ownerId: string;
 }) {
   const router = useRouter();
   const submittingRef = useRef(false);
@@ -102,6 +105,68 @@ export function WithdrawalForm({
   const [useNewDestination, setUseNewDestination] = useState(false);
   const [bankCode, setBankCode] = useState("");
   const [network, setNetwork] = useState("");
+  const [recovery, setRecovery] =
+    useState<PersistedWithdrawalLogicalRequest | null>(null);
+  const [recoveryReady, setRecoveryReady] = useState(false);
+
+  function legacyPresent() {
+    try {
+      return (
+        localStorage.getItem(LEGACY_WITHDRAWAL_LOGICAL_REQUEST_STORAGE_KEY) !==
+          null ||
+        sessionStorage.getItem(
+          LEGACY_WITHDRAWAL_LOGICAL_REQUEST_STORAGE_KEY,
+        ) !== null
+      );
+    } catch {
+      throw new WithdrawalLogicalSafetyError("STORAGE_UNAVAILABLE");
+    }
+  }
+
+  useEffect(() => {
+    let live = true;
+    async function recover() {
+      try {
+        const record = await recoverWithdrawalLogicalRequest(
+          ownerId,
+          browserWithdrawalLogicalRequestStore(),
+          fetch,
+          legacyPresent(),
+        );
+        if (!live) return;
+        if (
+          record &&
+          ["PREPARED", "DESTINATION_REGISTERED", "OUTCOME_UNCERTAIN"].includes(
+            record.state,
+          )
+        ) {
+          setRecovery(record);
+          setAmount(record.amountKrw);
+          setMethod(record.method);
+        } else if (record?.state === "CONFIRMED") {
+          setFeedback({
+            tone: "success",
+            message:
+              "이전 출금 요청을 접수했어요. 아래에서 상태를 확인해 주세요.",
+          });
+        }
+        setRecoveryReady(true);
+      } catch (error) {
+        if (live)
+          setFeedback({
+            tone: "error",
+            message:
+              error instanceof WithdrawalLogicalSafetyError
+                ? error.message
+                : WITHDRAWAL_RECONCILIATION_COPY,
+          });
+      }
+    }
+    void recover();
+    return () => {
+      live = false;
+    };
+  }, [ownerId]);
 
   const policy = useMemo(
     () => policies.find((candidate) => candidate.method === method),
@@ -126,7 +191,10 @@ export function WithdrawalForm({
     [destinations, method],
   );
 
-  const needsNewDestination = !eligibleDestination || useNewDestination;
+  const needsNewDestination = recovery
+    ? !recovery.destinationId
+    : !eligibleDestination || useNewDestination;
+  const lockIntent = Boolean(recovery);
 
   let amountAtomic: string | null = null;
   try {
@@ -140,6 +208,7 @@ export function WithdrawalForm({
       ? (BigInt(amountAtomic) + BigInt(policy.feeAtomic)).toString()
       : null;
   const meetsMinimum = Boolean(
+    recoveryReady &&
     amountAtomic &&
     policy &&
     BigInt(amountAtomic) >= BigInt(policy.minimumAmountAtomic),
@@ -150,56 +219,45 @@ export function WithdrawalForm({
     BigInt(totalAtomic) <= BigInt(account.availableBalanceAtomic),
   );
   const canSubmit = Boolean(
+    recoveryReady &&
     amountAtomic &&
     policy &&
     account &&
-    meetsMinimum &&
-    hasEnoughBalance &&
-    (needsNewDestination || eligibleDestination),
+    (recovery || (meetsMinimum && hasEnoughBalance)) &&
+    (recovery || needsNewDestination || eligibleDestination),
   );
 
-  function resetLogicalRequest() {
-    // 폼 재설정은 진행 중 논리 요청을 버린다. 불확실 실패만으로는 호출되지 않는다.
-    finishWithdrawalLogicalKey(
-      browserWithdrawalLogicalRequestStore(),
-      "cancelled",
-    );
-  }
-
-  async function destinationRefFor(form: HTMLFormElement) {
-    if (!needsNewDestination && eligibleDestination) {
-      return registeredDestinationRef(eligibleDestination.id);
-    }
-    const formData = new FormData(form);
-    const parts =
-      method === "KRW_BANK"
-        ? normalizeWithdrawalDestinationParts({
-            method: "KRW_BANK",
-            accountHolder: String(formData.get("accountHolder") ?? ""),
-            accountNumber: String(formData.get("accountNumber") ?? ""),
-            bankCode: String(formData.get("bankCode") ?? ""),
-          })
-        : normalizeWithdrawalDestinationParts({
-            method: "USDT_ADDRESS",
-            address: String(formData.get("address") ?? ""),
-            network: String(formData.get("network") ?? ""),
-          });
-    return `material:${await fingerprintDestinationMaterial(parts)}`;
-  }
-
-  async function readHoldBody(response: Response) {
+  async function resetLogicalRequest() {
+    if (!recovery || submittingRef.current) return;
+    submittingRef.current = true;
+    setPending(true);
     try {
-      const text = await response.text();
-      if (!text.trim()) {
-        return { bodyParsed: false, payload: null };
+      const resolved = await resolveWithdrawalLogicalRequest(
+        ownerId,
+        browserWithdrawalLogicalRequestStore(),
+        recovery,
+        "CANCEL",
+      );
+      if (resolved.state !== "CANCELLED") {
+        setRecovery(resolved);
+        setFeedback({ tone: "error", message: WITHDRAWAL_RECONCILIATION_COPY });
+        return;
       }
-      const payload = JSON.parse(text) as unknown;
-      return {
-        bodyParsed: payload !== null && typeof payload === "object",
-        payload,
-      };
-    } catch {
-      return { bodyParsed: false, payload: null };
+      setRecovery(null);
+      setAmount("");
+      setFeedback(null);
+      router.refresh();
+    } catch (error) {
+      setFeedback({
+        tone: "error",
+        message:
+          error instanceof WithdrawalLogicalSafetyError
+            ? error.message
+            : WITHDRAWAL_RECONCILIATION_COPY,
+      });
+    } finally {
+      submittingRef.current = false;
+      setPending(false);
     }
   }
 
@@ -228,47 +286,6 @@ export function WithdrawalForm({
     }
   }
 
-  async function resolveDestinationId(form: HTMLFormElement) {
-    if (!needsNewDestination && eligibleDestination) {
-      return eligibleDestination.id;
-    }
-
-    const formData = new FormData(form);
-    const body =
-      method === "KRW_BANK"
-        ? {
-            method: "KRW_BANK" as const,
-            accountHolder: String(formData.get("accountHolder") ?? ""),
-            accountNumber: String(formData.get("accountNumber") ?? ""),
-            bankCode: String(formData.get("bankCode") ?? ""),
-          }
-        : {
-            method: "USDT_ADDRESS" as const,
-            address: String(formData.get("address") ?? ""),
-            network: String(formData.get("network") ?? ""),
-          };
-
-    const registerResponse = await fetch(WITHDRAWAL_DESTINATION_REGISTER_URL, {
-      method: "POST",
-      credentials: "same-origin",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
-    const registerPayload = (await registerResponse
-      .json()
-      .catch(() => null)) as {
-      data?: { destinationId?: string };
-      error?: { code?: string; message?: string };
-    } | null;
-
-    if (!registerResponse.ok || !registerPayload?.data?.destinationId) {
-      // 서버 message는 무시하고 허용 코드→한국어만 사용한다.
-      throw new Error(memberDestinationRegisterMessage(registerPayload));
-    }
-
-    return registerPayload.data.destinationId;
-  }
-
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!policy || !account || !amountAtomic || !canSubmit) {
@@ -291,56 +308,31 @@ export function WithdrawalForm({
 
     const form = event.currentTarget;
     const requestStore = browserWithdrawalLogicalRequestStore();
+    // The entire snapshot precedes pending, disabled controls and the first await.
+    const snapshot = snapshotWithdrawalInput(form, {
+      method,
+      amountKrw: amountAtomic,
+      policyId: recovery?.policyId ?? policy.id,
+      policyVersion: recovery?.policyVersion ?? policy.version,
+      destinationId:
+        recovery?.destinationId ??
+        (!needsNewDestination ? (eligibleDestination?.id ?? null) : null),
+    });
     submittingRef.current = true;
     setPending(true);
     setFeedback(null);
-    let keyAdopted = false;
-
     try {
-      const destinationId = await resolveDestinationId(form);
-      const fingerprint = await fingerprintWithdrawalLogicalRequest({
-        amountKrw: amountAtomic,
-        destinationRef: await destinationRefFor(form),
-        method,
-        policyId: policy.id,
+      const resolved = await submitWithdrawalLogicalRequest({
+        ownerId,
+        store: requestStore,
+        snapshot,
+        legacyPresent: legacyPresent(),
+        knownKey: recovery?.key ?? null,
+        onRecord: setRecovery,
       });
-      // 전송 전에 키를 고정한다. 응답 유실·단절·파싱 실패는 이 키를 유지한다.
-      const idempotencyKey = adoptWithdrawalLogicalKey(
-        requestStore,
-        fingerprint,
-      );
-      keyAdopted = true;
-      const response = await fetch(WITHDRAWAL_HOLD_SUBMIT_URL, {
-        method: "POST",
-        credentials: "same-origin",
-        headers: {
-          "Content-Type": "application/json",
-          "Idempotency-Key": idempotencyKey,
-        },
-        body: JSON.stringify({
-          method,
-          destinationId,
-          amountKrw: amountAtomic,
-        }),
-      });
-      const { bodyParsed, payload } = await readHoldBody(response);
-      const outcome: WithdrawalLogicalOutcome = classifyWithdrawalHoldResponse({
-        bodyParsed,
-        ok: response.ok,
-        payload,
-        status: response.status,
-      });
-      finishWithdrawalLogicalKey(requestStore, outcome);
-      keyAdopted = false;
-
-      if (outcome !== "confirmed_success") {
-        // 고장 주입·내부 DB 문구가 message에 실려도 회원 UI에는 노출하지 않는다.
-        setFeedback({
-          message: memberWithdrawalSubmitMessage(payload),
-          tone: "error",
-        });
-        return;
-      }
+      if (resolved.state !== "CONFIRMED")
+        throw new WithdrawalLogicalSafetyError("RECONCILIATION_REQUIRED");
+      setRecovery(null);
 
       setFeedback({
         message:
@@ -358,17 +350,16 @@ export function WithdrawalForm({
       );
       router.refresh();
     } catch (error) {
-      if (keyAdopted) {
-        finishWithdrawalLogicalKey(requestStore, "uncertain");
-      }
       const candidate =
         error instanceof Error
           ? error.message
           : MEMBER_WITHDRAWAL_NETWORK_FALLBACK;
       setFeedback({
-        message: isMemberFacingWithdrawalCopy(candidate)
-          ? candidate
-          : MEMBER_WITHDRAWAL_NETWORK_FALLBACK,
+        message:
+          error instanceof WithdrawalLogicalSafetyError ||
+          isMemberFacingWithdrawalCopy(candidate)
+            ? candidate
+            : MEMBER_WITHDRAWAL_NETWORK_FALLBACK,
         tone: "error",
       });
     } finally {
@@ -382,12 +373,7 @@ export function WithdrawalForm({
   }
 
   return (
-    <form
-      className={styles.form}
-      onSubmit={submit}
-      onReset={resetLogicalRequest}
-      noValidate
-    >
+    <form className={styles.form} onSubmit={submit} noValidate>
       <header className={styles.stepHeader}>
         <span className={styles.stepNumber}>01</span>
         <div>
@@ -407,7 +393,7 @@ export function WithdrawalForm({
                 value={candidate.method}
                 checked={method === candidate.method}
                 onChange={() => changeMethod(candidate.method)}
-                disabled={pending}
+                disabled={pending || lockIntent}
               />
               <span>
                 {destinationMethodLabel(candidate.method)}
@@ -452,10 +438,12 @@ export function WithdrawalForm({
               setAmount(event.target.value.replace(/[^0-9]/g, ""))
             }
             aria-invalid={Boolean(
-              amount && (!amountAtomic || !meetsMinimum || !hasEnoughBalance),
+              !recovery &&
+              amount &&
+              (!amountAtomic || !meetsMinimum || !hasEnoughBalance),
             )}
             aria-describedby="withdrawal-amount-help"
-            disabled={pending}
+            disabled={pending || lockIntent}
             required
           />
           <strong className={styles.currencySuffix}>원</strong>
@@ -463,24 +451,32 @@ export function WithdrawalForm({
       </label>
 
       <div className={styles.quickAmounts} aria-label="빠른 금액 선택">
-        <button type="button" onClick={chooseMinimum} disabled={pending}>
+        <button
+          type="button"
+          onClick={chooseMinimum}
+          disabled={pending || lockIntent}
+        >
           최소 금액
         </button>
         <button
           type="button"
           onClick={() => setAmount("5000")}
-          disabled={pending}
+          disabled={pending || lockIntent}
         >
           5천원
         </button>
         <button
           type="button"
           onClick={() => setAmount("10000")}
-          disabled={pending}
+          disabled={pending || lockIntent}
         >
           1만원
         </button>
-        <button type="button" onClick={chooseAll} disabled={pending}>
+        <button
+          type="button"
+          onClick={chooseAll}
+          disabled={pending || lockIntent}
+        >
           전액
         </button>
       </div>
@@ -506,7 +502,7 @@ export function WithdrawalForm({
               type="button"
               className={styles.inlineReveal}
               onClick={() => setUseNewDestination(true)}
-              disabled={pending}
+              disabled={pending || lockIntent}
             >
               다른 목적지로 변경
             </button>
@@ -647,6 +643,23 @@ export function WithdrawalForm({
         {pending ? "출금 요청 접수 중" : "출금 요청하기"}
         <PutdukIcon name="arrow-right" size={18} />
       </button>
+
+      {recovery ? (
+        <div className={styles.formNotice}>
+          <p>
+            이전 요청을 확인하고 있어요. 다시 보내도 같은 요청으로 처리돼요.
+          </p>
+          {!recovery.withdrawalId ? (
+            <button
+              type="button"
+              onClick={resetLogicalRequest}
+              disabled={pending}
+            >
+              입력 다시하기
+            </button>
+          ) : null}
+        </div>
+      ) : null}
 
       {feedback ? (
         <p
