@@ -1,7 +1,9 @@
 # PUTDUK AI — Conversation Continuity Audit
 
-Status: **OPEN (honest gap)**  
-Lane: C — AI product  
+Status: **OPEN (honest gap)**
+
+Lane: C — AI product
+
 Mode constant: `SESSION_MEMORY_ONLY` (`domain/ai/continuity.ts`)
 
 ## Current truth

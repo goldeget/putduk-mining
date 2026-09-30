@@ -15,6 +15,39 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # PR 변경분만 검사한다. 작업 트리 전체 포맷이나 브랜치 이름은 쓰지 않는다.
+  diff-integrity:
+    name: Exact diff integrity
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Check exact PR diff whitespace and conflict markers
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          case "$BASE_SHA" in
+            *[!0-9a-fA-F]*|"") echo "invalid base sha" >&2; exit 1 ;;
+          esac
+          case "$HEAD_SHA" in
+            *[!0-9a-fA-F]*|"") echo "invalid head sha" >&2; exit 1 ;;
+          esac
+          if ! git cat-file -e "${BASE_SHA}^{commit}" 2>/dev/null; then
+            git fetch --no-tags origin "$BASE_SHA"
+          fi
+          if ! git cat-file -e "${HEAD_SHA}^{commit}" 2>/dev/null; then
+            git fetch --no-tags origin "$HEAD_SHA"
+          fi
+          git diff --check "${BASE_SHA}...${HEAD_SHA}"
+
   application:
     name: Application gates
     runs-on: ubuntu-24.04

@@ -2,8 +2,10 @@
 
 Status: **PARTIAL product evidence (not PRODUCT COMPLETE, not LAUNCH READY)**
 
-Lane: `parallel/withdrawal-product`  
-Scope: member withdrawal product presentation and browser evidence only.  
+Lane: `parallel/withdrawal-product`
+
+Scope: member withdrawal product presentation and browser evidence only.
+
 WS-06 money path (admin KRW/USDT browser money, hold/finalize/ledger commands) was **not rewritten**.
 
 ## Proven in this lane
@@ -29,12 +31,14 @@ Canonical benchmark file present:
 
 `docs/design/visual-lab/references/benchmark-v2026-09-27/benchmark--withdrawal--desktop-1440--dark--default.webp`
 
-This lane captures production-route screenshots for 390/834/1440 × light/dark.  
+This lane captures production-route screenshots for 390/834/1440 × light/dark.
+
 Manual side-by-side gap closure against the full Visual Lab matrix (tablet light, mobile light, non-default states) remains **OPEN**. Do not treat screenshot existence as Visual Lab PASS.
 
 ## Performance notes
 
-`test-results/withdrawal-product/route-timing.json` records next-dev/start navigation timing and script transfer size.  
+`test-results/withdrawal-product/route-timing.json` records next-dev/start navigation timing and script transfer size.
+
 This is a bounded observation, **not** a release performance acceptance gate.
 
 ## OPEN

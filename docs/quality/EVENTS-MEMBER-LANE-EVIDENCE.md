@@ -2,7 +2,8 @@
 
 Status: **FUNCTIONAL EVIDENCE / NOT PRODUCT COMPLETE / NOT LAUNCH READY**
 
-Lane: `parallel/events-product`  
+Lane: `parallel/events-product`
+
 Ownership: `app/(product)/events/**`, events-specific tests/components
 
 ## Publication lifecycle audit (no silent redesign)
