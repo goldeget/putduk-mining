@@ -65,4 +65,14 @@ describe("출금 폼 서버 마크업", () => {
     expect(html).toContain('value=""');
     expect(html).not.toContain("defaultValue");
   });
+
+  it("KRW 잔액 출금 문구를 유지하고 USDT 잔액 표현을 쓰지 않는다", () => {
+    const html = markup([]);
+
+    expect(html).toContain("사용 가능한 원화에서만 출금할 수 있어요.");
+    expect(html).toContain("USDT를 따로 보관하지 않습니다.");
+    expect(html).not.toContain("USDT 잔액");
+    expect(html).not.toContain("USDT 지갑");
+    expect(html).not.toContain("보유 USDT");
+  });
 });
