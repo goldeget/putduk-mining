@@ -14,6 +14,7 @@ html {
 body {
   margin: 0;
   min-width: 320px;
+  overflow-wrap: anywhere;
   background: var(--base);
   color: var(--ink);
 }

@@ -19,6 +19,10 @@ import {
   memberCountLabel,
 } from "./_lib/member-evidence";
 import styles from "./members.module.css";
+import {
+  presentMemberLifecycle,
+  presentMemberProfile,
+} from "./_lib/member-state-display";
 
 const memberIdSchema = z.uuid();
 
@@ -268,27 +272,33 @@ export default async function MembersPage({
     profile.error ||
     lifecycle.error,
   );
+  const lifecycleDisplay = presentMemberLifecycle(lifecycle);
+  const profileDisplay = presentMemberProfile(profile);
 
   return (
     <div
       className={styles.membersPage}
       data-ui-ready="/members"
       data-ui-state={
-        countFailed || evidenceFailed || kycAccessFailed ? "partial" : "loaded"
+        countFailed ||
+        evidenceFailed ||
+        kycAccessFailed ||
+        !lifecycleDisplay.available ||
+        !profileDisplay.available
+          ? "partial"
+          : "loaded"
       }
     >
       <section className="member-identity">
-        <div className="member-avatar">
-          {(profile.data?.display_name ?? "퍼").slice(0, 1)}
-        </div>
+        <div className="member-avatar">{profileDisplay.avatar}</div>
         <div>
           <p className="eyebrow">회원 한눈에 · 확인된 식별자</p>
-          <h1>{profile.data?.display_name ?? "이름 미설정"}</h1>
+          <h1>{profileDisplay.name}</h1>
           <code>{userId}</code>
         </div>
         <div className="member-state">
           <span>현재 여정</span>
-          <strong>{lifecycle.data?.stage ?? "SIGNED_UP"}</strong>
+          <strong>{lifecycleDisplay.stage}</strong>
           <small>
             가입{" "}
             {new Intl.DateTimeFormat("ko-KR", {
@@ -299,7 +309,10 @@ export default async function MembersPage({
         </div>
       </section>
 
-      {countFailed || evidenceFailed ? (
+      {countFailed ||
+      evidenceFailed ||
+      !lifecycleDisplay.available ||
+      !profileDisplay.available ? (
         <p className={styles.partialAlert} role="alert">
           일부 운영 증거를 불러오지 못했습니다. 숫자는 0으로 바꾸지 않습니다.{" "}
           <Link href={`/members?id=${userId}` as Route}>다시 불러오기</Link>
@@ -351,19 +364,11 @@ export default async function MembersPage({
             </div>
             <div>
               <dt>첫 입금</dt>
-              <dd>
-                {lifecycle.data?.first_funding_at
-                  ? formatKst(lifecycle.data.first_funding_at)
-                  : "없음"}
-              </dd>
+              <dd>{lifecycleDisplay.firstFunding}</dd>
             </div>
             <div>
               <dt>환영 출금</dt>
-              <dd>
-                {lifecycle.data?.welcome_withdrawal_completed_at
-                  ? formatKst(lifecycle.data.welcome_withdrawal_completed_at)
-                  : "미완료"}
-              </dd>
+              <dd>{lifecycleDisplay.welcomeWithdrawal}</dd>
             </div>
           </dl>
           <p className="locked-state">

@@ -53,6 +53,10 @@
   word-break: keep-all;
 }
 
+.hero > div {
+  min-width: 0;
+}
+
 .lead {
   max-width: 28rem;
   margin: 12px 0 0;
@@ -85,6 +89,8 @@
 }
 
 .orbit strong {
+  max-width: 100%;
+  overflow-wrap: anywhere;
   color: var(--gold-soft);
   font-size: 4rem;
   line-height: 1.08;
@@ -239,12 +245,13 @@
 
 .operationsGrid {
   display: grid;
-  grid-template-columns: 1.15fr 0.85fr;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
   gap: 16px;
   margin-top: 20px;
 }
 
 .panel {
+  min-width: 0;
   border: 1px solid var(--line);
   border-radius: 18px;
   background: var(--surface);
@@ -273,7 +280,7 @@
 
 .metrics {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1px;
   margin-top: 28px;
   overflow: hidden;

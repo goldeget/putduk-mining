@@ -23,6 +23,7 @@ body {
   color: var(--text-primary);
   font-family: var(--font-sans);
   font-synthesis: none;
+  overflow-wrap: anywhere;
   text-rendering: optimizeLegibility;
 }
 
@@ -95,6 +96,8 @@ select {
   align-items: center;
   gap: 0.7rem;
   min-height: 44px;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .brand-lockup svg {
@@ -783,7 +786,7 @@ select {
 .world-row {
   --world-accent: var(--text-tertiary);
   display: grid;
-  grid-template-columns: 2.8rem 3.2rem 1fr auto;
+  grid-template-columns: 2.8rem minmax(3.2rem, max-content) minmax(0, 1fr) auto;
   min-height: 92px;
   align-items: center;
   border-bottom: 1px solid var(--border-default);
@@ -830,8 +833,9 @@ select {
 
 .world-row__code {
   display: grid;
-  width: 32px;
-  height: 32px;
+  width: 2.285714em;
+  height: 2.285714em;
+  white-space: nowrap;
   place-items: center;
   border: 1px solid color-mix(in srgb, var(--world-accent) 45%, transparent);
   border-radius: 50%;
@@ -1314,10 +1318,9 @@ select {
 }
 
 .product-header__identity > span:first-child {
-  display: grid;
+  display: block;
   min-width: 0;
   max-width: min(170px, 100%);
-  gap: 0.14rem;
   overflow: hidden;
   font-size: 0.875rem;
   font-weight: 650;
@@ -1327,6 +1330,8 @@ select {
 }
 
 .product-header__identity small {
+  display: block;
+  margin-bottom: 0.14rem;
   color: var(--text-tertiary);
   font-family: var(--font-mono);
   font-size: 0.875rem;
@@ -1351,7 +1356,7 @@ select {
   min-height: calc(100svh - 66px);
   margin-inline: auto;
   padding-block: clamp(2.2rem, 6vw, 5.5rem)
-    calc(7rem + env(safe-area-inset-bottom));
+    calc(7em + env(safe-area-inset-bottom));
   line-break: strict;
   word-break: keep-all;
 }
@@ -3364,7 +3369,7 @@ select {
   }
 
   .world-row {
-    grid-template-columns: 2.25rem 2.8rem 1fr;
+    grid-template-columns: 2.25rem minmax(2.8rem, max-content) minmax(0, 1fr);
   }
 
   .world-row__state {
@@ -3496,7 +3501,8 @@ select {
   background: var(--background-canvas);
 }
 .support-dock--member {
-  padding-bottom: calc(6rem + env(safe-area-inset-bottom));
+  /* Keep the enlarged bottom-navigation labels clear of the support action. */
+  padding-bottom: calc(6em + env(safe-area-inset-bottom));
 }
 .support-launcher {
   min-width: 4.75rem;

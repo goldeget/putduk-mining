@@ -41,6 +41,41 @@ beforeEach(() => {
 });
 
 describe("admin partial read recovery", () => {
+  it("failed reads do not expose residual restriction or risk rows as current evidence", async () => {
+    const error = { message: "fault-injected unavailable read" };
+    reads.tables.safe_mode_controls = {
+      data: [{ component: "MINING", is_paused: true }],
+      error,
+    };
+    reads.tables.block_rules = {
+      data: [
+        {
+          id: "stale-block",
+          reason: "이전 제한 기록",
+          starts_at: "2026-09-30T00:00:00Z",
+        },
+      ],
+      error,
+    };
+    reads.tables.risk_flags = {
+      data: [
+        {
+          id: "stale-risk",
+          flag_code: "이전 위험 신호",
+          created_at: "2026-09-30T00:00:00Z",
+        },
+      ],
+      error,
+    };
+    const markup = renderToStaticMarkup(await RestrictionsPage());
+    expect(markup).toContain('data-ui-state="partial"');
+    expect(markup).toContain("확인 불가");
+    expect(markup).not.toContain("이전 제한 기록");
+    expect(markup).not.toContain("이전 위험 신호");
+    expect(markup).not.toContain("제한 없음");
+    expect(markup).not.toContain("위험 신호 없음");
+    expect(markup).not.toContain("안전 모드 변경 테스트 표식");
+  });
   it("safe mode read failure cannot say all normal or expose a change command", async () => {
     reads.tables.safe_mode_controls = {
       data: [],

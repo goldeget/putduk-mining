@@ -6,6 +6,7 @@ import { MiningCore } from "../../../components/foundation/mining-core";
 import { GuidedQuest } from "../../../components/product/guided-quest";
 import { WithdrawalForm } from "../../../components/product/withdrawal-form";
 import { RouteMotionFixture } from "./route-motion-fixtures";
+import { NotificationPreferencesForm } from "../../../components/product/notification-preferences-form";
 import "../../../app/globals.css";
 import "../../../app/productization.css";
 
@@ -63,7 +64,74 @@ function MotionFixture() {
   );
 }
 
+function NotificationPreferencesFixture() {
+  const [initial, setInitial] = useState({
+    events_enabled: false,
+    marketing_enabled: false,
+    mining_enabled: true,
+    service_enabled: true,
+    wallet_enabled: false,
+  });
+  const [readState, setReadState] = useState("loaded");
+  const [mounted, setMounted] = useState(true);
+  return (
+    <main className="fixture-panel" data-notification-fixture>
+      <h1>알림 설정 · 합성 읽기 상태</h1>
+      <p>실제 회원이나 원격 저장과 연결되지 않는 로컬 검사입니다.</p>
+      <div className="fixture-host-controls">
+        <label>
+          읽기 상태
+          <select
+            data-fixture-notification-read
+            value={readState}
+            onChange={(event) => setReadState(event.target.value)}
+          >
+            <option value="loaded">조회됨</option>
+            <option value="empty">설정 없음</option>
+            <option value="error">조회 실패</option>
+          </select>
+        </label>
+        <button
+          data-fixture-notification-same
+          type="button"
+          onClick={() => setInitial({ ...initial })}
+        >
+          동일한 서버 값 전달
+        </button>
+        <button
+          data-fixture-notification-fresh
+          type="button"
+          onClick={() =>
+            setInitial({ ...initial, events_enabled: !initial.events_enabled })
+          }
+        >
+          변경된 서버 값 전달
+        </button>
+        <button
+          data-fixture-notification-mount
+          type="button"
+          onClick={() => setMounted((value) => !value)}
+        >
+          폼 표시 전환
+        </button>
+      </div>
+      <section data-fixture-notification-content>
+        {mounted ? (
+          <NotificationPreferencesForm
+            initial={readState === "loaded" ? initial : null}
+            readState={readState}
+          />
+        ) : (
+          <p>폼이 해제되었습니다.</p>
+        )}
+      </section>
+    </main>
+  );
+}
+
 export function Fixture({ kind }) {
+  if (kind === "notification-preferences")
+    return <NotificationPreferencesFixture />;
   if (kind === "motion") return <MotionFixture />;
   if (kind === "home-motion" || kind === "start-motion")
     return <RouteMotionFixture kind={kind} />;

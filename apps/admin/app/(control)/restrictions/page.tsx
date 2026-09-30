@@ -40,7 +40,7 @@ export default async function RestrictionsPage() {
       .limit(20),
   ]);
 
-  const safeRows = safeMode.data ?? [];
+  const safeRows = safeMode.error ? [] : (safeMode.data ?? []);
   const byComponent = new Map(safeRows.map((r) => [r.component, r]));
   const loadFailed = Boolean(safeMode.error || blocks.error || flags.error);
   const pausedCount = SAFE_MODE_COMPONENTS.filter((component) =>
@@ -167,7 +167,7 @@ export default async function RestrictionsPage() {
       ) : null}
 
       <section className="queue-list" aria-label="제한 규칙">
-        {(blocks.data ?? []).map((row) => (
+        {(blocks.error ? [] : (blocks.data ?? [])).map((row) => (
           <QueueCard key={row.id}>
             <header className="queue-card__head">
               <div>
@@ -206,7 +206,7 @@ export default async function RestrictionsPage() {
       ) : null}
 
       <section className="queue-list" aria-label="위험 신호">
-        {(flags.data ?? []).map((row) => (
+        {(flags.error ? [] : (flags.data ?? [])).map((row) => (
           <QueueCard key={row.id} tone="caution">
             <header className="queue-card__head">
               <div>

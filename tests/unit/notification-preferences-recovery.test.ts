@@ -60,7 +60,7 @@ describe("preferences recovery UI", () => {
       expect(fetch).not.toHaveBeenCalled();
     },
   );
-  it("retains original settings and releases pending after network throw", async () => {
+  it("retains settings but blocks another save after an uncertain network result", async () => {
     vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new TypeError("offline")));
     await render({ initial });
     await submit();
@@ -68,7 +68,8 @@ describe("preferences recovery UI", () => {
     expect(
       container.querySelector<HTMLButtonElement>("button[type=submit]")!
         .disabled,
-    ).toBe(false);
+    ).toBe(true);
+    expect(container.textContent).toContain("설정 다시 확인");
     expect(
       container.querySelector<HTMLInputElement>("#pref-events_enabled")!
         .checked,
