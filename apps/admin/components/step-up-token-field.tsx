@@ -8,11 +8,15 @@ import { createAdminBrowserClient } from "@/lib/supabase/browser";
 /**
  * 고위험 명령용 일회성 step-up 토큰.
  * 최근 TOTP AMR만으로는 머니 RPC를 호출하지 않습니다.
+ *
+ * onTokenIssued 가 있으면 부모가 토큰 사본을 보관할 수 있다.
  */
 export function StepUpTokenField({
   commandFamily,
+  onTokenIssued,
 }: {
   commandFamily: AdminCommandFamily;
+  onTokenIssued?: (token: string) => void;
 }) {
   const [token, setToken] = useState("");
   const tokenInputRef = useRef<HTMLInputElement>(null);
@@ -84,6 +88,7 @@ export function StepUpTokenField({
       tokenInputRef.current.value = next;
     }
     setToken(next);
+    onTokenIssued?.(next);
   }
 
   return (

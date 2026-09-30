@@ -76,25 +76,6 @@ export function depositStatusLabel(status: string): string {
   }
 }
 
-export function kycStatusLabel(status: string): string {
-  switch (status) {
-    case "PENDING":
-      return "대기";
-    case "IN_REVIEW":
-      return "검토 중";
-    case "APPROVED":
-      return "승인";
-    case "ON_HOLD":
-      return "보류";
-    case "REJECTED":
-      return "반려";
-    case "REQUIRES_RESUBMISSION":
-      return "재제출 필요";
-    default:
-      return status;
-  }
-}
-
 /**
  * 외부 송금이 이미 기록된 상태면 true.
  * 계약 상태 EXTERNAL_SENT_RECORDED 또는 기존 PROCESSING+증거.

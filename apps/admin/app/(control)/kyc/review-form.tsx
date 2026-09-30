@@ -1,45 +1,94 @@
 "use client";
 
-import { useActionState } from "react";
+import { useRef, useState, useTransition } from "react";
 
 import type { CommandActionResult } from "@/app/(control)/_lib/command-gate";
-import {
-  ConfirmCheckbox,
-  ReasonField,
-  SubmitButton,
-} from "@/components/operator-fields";
+import { ConfirmCheckbox, ReasonField } from "@/components/operator-fields";
 import { QueueFlash } from "@/components/queue-shell";
 import { StepUpTokenField } from "@/components/step-up-token-field";
 import { ADMIN_COMMAND_FAMILIES } from "@/lib/auth/command-families";
 
-import { reviewKycCaseAction } from "./actions";
+import { reviewKycCaseFromFields } from "./actions";
 
+const DECISIONS = [
+  { value: "IN_REVIEW", label: "검토 중으로 유지" },
+  { value: "APPROVED", label: "승인" },
+  { value: "ON_HOLD", label: "보류" },
+  { value: "REQUIRES_RESUBMISSION", label: "재제출 요청" },
+  { value: "REJECTED", label: "반려" },
+] as const;
+
+/**
+ * ConfirmCheckbox 로 confirmation DOM 을 고정한다.
+ * step-up 토큰은 제출 이벤트(클라이언트)에서 ref 로 읽어 서버 액션 인자로 넘긴다.
+ * useActionState 래퍼가 FormData/ref 를 서버 쪽에서 비우는 경로를 피한다.
+ */
 export function KycReviewForm({ caseId }: { caseId: string }) {
-  const [result, action] = useActionState<CommandActionResult | null, FormData>(
-    reviewKycCaseAction,
-    null,
-  );
+  const stepUpTokenRef = useRef("");
+  const [decision, setDecision] = useState<string>("IN_REVIEW");
+  const [result, setResult] = useState<CommandActionResult | null>(null);
+  const [pending, startTransition] = useTransition();
+
+  function onSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const fromRef = stepUpTokenRef.current.trim();
+    const fromDom = String(formData.get("stepUpToken") ?? "").trim();
+    const stepUpToken = fromRef.length >= 16 ? fromRef : fromDom;
+    startTransition(async () => {
+      const next = await reviewKycCaseFromFields({
+        caseId,
+        decision: String(formData.get("decision") ?? decision),
+        reason: String(formData.get("reason") ?? ""),
+        confirmation: String(formData.get("confirmation") ?? ""),
+        stepUpToken,
+      });
+      setResult(next);
+    });
+  }
+
   return (
-    <form action={action} className="operator-form">
+    <form
+      aria-label="본인 확인 검토"
+      className="operator-form"
+      noValidate
+      onReset={(event) => event.preventDefault()}
+      onSubmit={onSubmit}
+    >
       <input name="caseId" type="hidden" value={caseId} />
       <label className="operator-field">
         <span>결과</span>
-        <select name="decision" required defaultValue="IN_REVIEW">
-          <option value="IN_REVIEW">검토 중으로 유지</option>
-          <option value="APPROVED">승인</option>
-          <option value="ON_HOLD">보류</option>
-          <option value="REQUIRES_RESUBMISSION">재제출 요청</option>
-          <option value="REJECTED">반려</option>
+        <select
+          name="decision"
+          required
+          value={decision}
+          onChange={(event) => setDecision(event.target.value)}
+        >
+          {DECISIONS.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
         </select>
       </label>
-      <ReasonField label="결정 사유" />
+      <ReasonField
+        label="결정 사유"
+        placeholder="왜 이 결정을 했는지 10자 이상 적어 주세요."
+      />
       <ConfirmCheckbox
-        label="문서 원문·비밀번호는 이 화면에 표시되지 않습니다."
+        label="문서 원문·비밀번호·식별 번호는 이 화면에 표시되지 않습니다."
         name="confirmation"
         value="REVIEW_KYC"
       />
-      <StepUpTokenField commandFamily={ADMIN_COMMAND_FAMILIES.KYC_REVIEW} />
-      <SubmitButton>검토 결과 저장</SubmitButton>
+      <StepUpTokenField
+        commandFamily={ADMIN_COMMAND_FAMILIES.KYC_REVIEW}
+        onTokenIssued={(token) => {
+          stepUpTokenRef.current = token;
+        }}
+      />
+      <button className="gold-button" disabled={pending} type="submit">
+        {pending ? "저장 중…" : "검토 결과 저장"}
+      </button>
       <QueueFlash result={result} />
     </form>
   );
