@@ -272,10 +272,10 @@ test.describe("admin exceptions product queue", () => {
   }) => {
     test.setTimeout(420_000);
     const hydration = trackHydration(page);
-    const moneyBefore = await moneySnapshot();
 
     const admin = await createConfirmedMember("exc-admin");
     await grantAdminRoleVerified(admin.userId);
+    const moneyBefore = await moneySnapshot();
     await clearProbeMismatches(admin.userId);
     const secret = await completeAdminLoginWithTotp(
       page,
@@ -427,9 +427,9 @@ test.describe("admin exceptions product queue", () => {
     page,
   }) => {
     test.setTimeout(240_000);
-    const moneyBefore = await moneySnapshot();
     const admin = await createConfirmedMember("exc-stale");
     await grantAdminRoleVerified(admin.userId);
+    const moneyBefore = await moneySnapshot();
     const secret = await completeAdminLoginWithTotp(
       page,
       admin.email,
