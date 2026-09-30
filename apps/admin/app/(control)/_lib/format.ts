@@ -55,6 +55,10 @@ export function withdrawalStatusLabel(status: string): string {
 
 export function depositStatusLabel(status: string): string {
   switch (status) {
+    case "SUBMITTED":
+      return "확인 대기";
+    case "CONFIRMED":
+      return "원화 반영 완료";
     case "REQUESTED":
       return "접수";
     case "AWAITING_TRANSFER":
