@@ -13,6 +13,11 @@ import { EmptyQueue, QueueCard, QueueShell } from "@/components/queue-shell";
 import { requireAdminPage } from "@/lib/auth/principal";
 import { createAdminServiceClient } from "@/lib/supabase/service";
 
+import {
+  EmptyQueueNextStep,
+  WithdrawalOfflineBanner,
+  WithdrawalQueueError,
+} from "../_components/queue-states";
 import { FinalizeLedgerForm, KrwBankSendForm, ReleaseHoldForm } from "./forms";
 
 type WithdrawalRow = {
@@ -65,19 +70,21 @@ export default async function KrwBankWithdrawalQueuePage() {
     queryError = retry.error;
   }
 
-  // 증빙 메타: destination_snapshot 또는 별도 컬럼이 오기 전 UI 힌트용
   return (
     <>
       <QueueShell
-        eyebrow="KRW BANK WITHDRAWAL"
+        eyebrow="계좌 출금"
         lead="계좌 출금만 다룹니다. 은행 참조·실제 원화·운영자·송금 시각을 남깁니다. 네트워크나 거래해시는 묻지 않습니다."
         title="계좌 출금 대기열"
       />
 
+      <WithdrawalOfflineBanner />
+
       {queryError ? (
-        <p className="queue-flash" role="alert">
-          계좌 출금 대기열을 불러오지 못했습니다.
-        </p>
+        <WithdrawalQueueError
+          description="계좌 출금 대기열을 불러오지 못했습니다. 잠시 후 다시 열어 주세요."
+          title="대기열을 불러오지 못함"
+        />
       ) : null}
 
       {!queryError && rows.length === 0 ? (
@@ -85,6 +92,13 @@ export default async function KrwBankWithdrawalQueuePage() {
           body="처리할 계좌 출금이 없습니다."
           title="대기 중인 계좌 출금 없음"
         />
+      ) : null}
+
+      {!queryError && rows.length === 0 ? (
+        <EmptyQueueNextStep>
+          새 요청이 접수되면 여기에 나타납니다. 오늘의 퍼뜩에서 다른 업무를
+          확인하세요.
+        </EmptyQueueNextStep>
       ) : null}
 
       <section className="queue-list" aria-label="계좌 출금 대기">

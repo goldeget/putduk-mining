@@ -1,0 +1,102 @@
+/* 출금 대기열 전용 상태 UI — 공유 globals는 수정하지 않음 */
+
+.loading {
+  display: grid;
+  gap: 14px;
+  margin-top: 28px;
+}
+
+.loadingCard {
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 22px 20px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.loadingLine {
+  display: block;
+  height: 12px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.06),
+    rgba(212, 175, 55, 0.18),
+    rgba(255, 255, 255, 0.06)
+  );
+  background-size: 200% 100%;
+  animation: withdrawal-shimmer 1.6s ease-in-out infinite;
+}
+
+.loadingLineShort {
+  width: 42%;
+  margin-bottom: 14px;
+}
+
+.loadingLineMid {
+  width: 68%;
+  margin-bottom: 10px;
+}
+
+.loadingLineWide {
+  width: 88%;
+}
+
+.errorPanel {
+  margin-top: 24px;
+  border: 1px solid rgba(239, 144, 127, 0.4);
+  border-radius: 18px;
+  padding: 20px 18px;
+  background: rgba(239, 144, 127, 0.08);
+}
+
+.errorPanel h2 {
+  margin: 0 0 8px;
+  font-size: 1.05rem;
+}
+
+.errorPanel p {
+  margin: 0 0 14px;
+  color: var(--muted);
+  max-width: 36rem;
+  line-height: 1.55;
+}
+
+.errorActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.offlineBanner {
+  margin-top: 18px;
+  border: 1px dashed rgba(212, 175, 55, 0.45);
+  border-radius: 14px;
+  padding: 12px 14px;
+  color: var(--gold-soft);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.emptyHint {
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.5;
+  max-width: 28rem;
+}
+
+@keyframes withdrawal-shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loadingLine {
+    animation: none;
+    background: rgba(255, 255, 255, 0.08);
+  }
+}
