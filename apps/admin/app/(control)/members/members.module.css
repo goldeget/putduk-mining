@@ -1,0 +1,95 @@
+.membersPage {
+  display: grid;
+  gap: 0;
+}
+
+.partialAlert {
+  margin-top: 18px;
+  border: 1px solid color-mix(in srgb, var(--gold) 35%, var(--line));
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--surface) 88%, #3a2a10);
+  padding: 14px 16px;
+  color: var(--ink);
+  font-size: 0.88rem;
+  line-height: 1.5;
+  word-break: keep-all;
+}
+
+.partialAlert a {
+  color: var(--gold);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.lookupActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.loadingShell {
+  display: grid;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.loadingBlock {
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--surface);
+  min-height: 88px;
+  padding: 20px;
+}
+
+.loadingBlockWide {
+  min-height: 160px;
+}
+
+.loadingLabel {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.errorPanel {
+  display: grid;
+  gap: 12px;
+  margin-top: 28px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--surface);
+  padding: 28px 22px;
+  max-width: 36rem;
+}
+
+.errorPanel h1 {
+  margin: 0;
+  font-size: 1.45rem;
+  word-break: keep-all;
+}
+
+.errorPanel p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.55;
+  word-break: keep-all;
+}
+
+.errorActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+@media (max-width: 720px) {
+  .partialAlert {
+    font-size: 0.84rem;
+  }
+
+  .errorPanel {
+    padding: 22px 16px;
+  }
+}
