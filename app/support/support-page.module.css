@@ -1,0 +1,17 @@
+/* Support 라우트 전용 — 전역 typography/CSS 카운트·공유 규칙과 분리한다. */
+
+.page {
+  line-break: strict;
+  overflow-wrap: normal;
+  word-break: keep-all;
+}
+
+.heading {
+  line-break: strict;
+  overflow-wrap: normal;
+  word-break: keep-all;
+}
+
+.token {
+  white-space: nowrap;
+}

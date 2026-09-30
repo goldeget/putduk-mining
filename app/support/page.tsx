@@ -5,6 +5,8 @@ import { BrandMark } from "@/components/brand/brand-mark";
 import { SupportStartButton } from "@/components/support/support-runtime";
 import { ThemeControl } from "@/components/system/theme-control";
 
+import styles from "./support-page.module.css";
+
 const topics = [
   {
     title: "계정과 가입",
@@ -42,7 +44,7 @@ export const metadata: Metadata = {
 
 export default function SupportPage() {
   return (
-    <main className="support-center">
+    <main className={`support-center ${styles.page}`}>
       <header className="site-header shell">
         <Link className="brand-lockup" href="/" aria-label="퍼뜩 채굴 홈">
           <BrandMark title="" />
@@ -61,7 +63,9 @@ export default function SupportPage() {
 
       <section className="shell support-center__hero">
         <p className="eyebrow">SUPPORT</p>
-        <h1>필요한 도움을 바로 확인해요.</h1>
+        <h1 className={styles.heading}>
+          필요한 도움을 바로 <span className={styles.token}>확인해요</span>.
+        </h1>
         <p className="ko-copy">
           상담 창에서 비밀번호나 인증 코드는 보내지 마세요.
         </p>
@@ -72,6 +76,7 @@ export default function SupportPage() {
         className="shell support-center__guide"
         id="support-guide"
         aria-labelledby="support-guide-title"
+        tabIndex={-1}
       >
         <h2 id="support-guide-title">자주 확인하는 안내</h2>
         <div className="support-center__topics">
