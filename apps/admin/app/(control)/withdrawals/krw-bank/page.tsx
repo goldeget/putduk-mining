@@ -71,7 +71,10 @@ export default async function KrwBankWithdrawalQueuePage() {
   }
 
   return (
-    <>
+    <div
+      data-ui-ready="/withdrawals/krw-bank"
+      data-ui-state={queryError ? "error" : rows.length ? "loaded" : "empty"}
+    >
       <QueueShell
         eyebrow="계좌 출금"
         lead="계좌 출금만 다룹니다. 은행 참조·실제 원화·운영자·송금 시각을 남깁니다. 네트워크나 거래해시는 묻지 않습니다."
@@ -102,7 +105,7 @@ export default async function KrwBankWithdrawalQueuePage() {
       ) : null}
 
       <section className="queue-list" aria-label="계좌 출금 대기">
-        {rows.map((row) => {
+        {(queryError ? [] : rows).map((row) => {
           const snap = row.destination_snapshot ?? {};
           const bankRef =
             typeof snap.bank_reference === "string"
@@ -184,6 +187,6 @@ export default async function KrwBankWithdrawalQueuePage() {
           );
         })}
       </section>
-    </>
+    </div>
   );
 }

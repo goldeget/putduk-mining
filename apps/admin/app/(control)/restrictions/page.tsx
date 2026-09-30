@@ -48,7 +48,10 @@ export default async function RestrictionsPage() {
   ).length;
 
   return (
-    <>
+    <div
+      data-ui-ready="/restrictions"
+      data-ui-state={loadFailed ? "partial" : "loaded"}
+    >
       <QueueShell
         eyebrow="제한 · 안전 모드"
         lead="기능을 잠시 멈추거나 위험 신호를 확인합니다. 사유와 감사 기록을 남깁니다."
@@ -85,7 +88,11 @@ export default async function RestrictionsPage() {
           <h2>안전 모드</h2>
         </div>
         <span aria-live="polite">
-          {pausedCount > 0 ? `정지 ${pausedCount}건` : "전부 정상"}
+          {safeMode.error
+            ? "확인 불가"
+            : pausedCount > 0
+              ? `정지 ${pausedCount}건`
+              : "전부 정상"}
         </span>
       </section>
 
@@ -100,7 +107,9 @@ export default async function RestrictionsPage() {
                   <p className="eyebrow">{component}</p>
                   <h2>{COMPONENT_LABEL[component]}</h2>
                 </div>
-                <strong>{safeModeStateLabel(paused)}</strong>
+                <strong>
+                  {safeMode.error ? "확인 불가" : safeModeStateLabel(paused)}
+                </strong>
               </header>
               {row ? (
                 <dl className="evidence-grid">
@@ -124,13 +133,23 @@ export default async function RestrictionsPage() {
                   </div>
                 </dl>
               ) : (
-                <p className="panel-note">아직 기록이 없습니다.</p>
+                <p className="panel-note">
+                  {safeMode.error
+                    ? "현재 상태를 불러오지 못했습니다."
+                    : "아직 기록이 없습니다."}
+                </p>
               )}
-              <SafeModeForm
-                canMutate={canMutate}
-                component={component as SafeModeComponent}
-                currentlyPaused={paused}
-              />
+              {safeMode.error ? (
+                <p className="panel-note" role="alert">
+                  현재 안전 모드를 확인한 뒤 변경할 수 있습니다.
+                </p>
+              ) : (
+                <SafeModeForm
+                  canMutate={canMutate}
+                  component={component as SafeModeComponent}
+                  currentlyPaused={paused}
+                />
+              )}
             </QueueCard>
           );
         })}
@@ -203,6 +222,6 @@ export default async function RestrictionsPage() {
           </QueueCard>
         ))}
       </section>
-    </>
+    </div>
   );
 }

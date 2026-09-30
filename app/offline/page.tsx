@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ThemeControl } from "@/components/system/theme-control";
 
 import { PutdukIcon } from "@/components/icons/putduk-icon";
 import { StatePanel } from "@/components/ui/states";
@@ -7,7 +8,14 @@ export const metadata = { title: "오프라인" };
 
 export default function OfflinePage() {
   return (
-    <main className="shell">
+    <main
+      className="shell terminal-page"
+      data-ui-ready="/offline"
+      data-ui-state="offline"
+    >
+      <div className="terminal-page__tools">
+        <ThemeControl />
+      </div>
       <StatePanel
         tone="offline"
         title="현재 네트워크에 연결되지 않았습니다."

@@ -1,15 +1,14 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
-
-type PreferenceKey =
-  | "events_enabled"
-  | "marketing_enabled"
-  | "mining_enabled"
-  | "service_enabled"
-  | "wallet_enabled";
-
-type Preferences = Record<PreferenceKey, boolean>;
+import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useRouter } from "next/navigation";
+import { RouteReloadButton } from "@/components/product/route-reload-button";
+import { StatePanel } from "@/components/ui/states";
+import {
+  isNotificationPreferences,
+  type NotificationPreferences,
+  type PreferenceKey,
+} from "@/lib/product/notification-preferences-read";
 
 const options: readonly {
   description: string;
@@ -45,15 +44,40 @@ const options: readonly {
 
 export function NotificationPreferencesForm({
   initial,
+  readState = initial ? "loaded" : "error",
 }: {
-  initial: Preferences;
+  initial: NotificationPreferences | null;
+  readState?: "loaded" | "empty" | "error";
 }) {
+  const router = useRouter();
   const [preferences, setPreferences] = useState(initial);
   const [message, setMessage] = useState("");
   const [pending, setPending] = useState(false);
+  const [online, setOnline] = useState(true);
+  const [sessionExpired, setSessionExpired] = useState(false);
+  const pendingRef = useRef(false);
+  useEffect(() => {
+    const update = () => setOnline(navigator.onLine);
+    update();
+    window.addEventListener("online", update);
+    window.addEventListener("offline", update);
+    return () => {
+      window.removeEventListener("online", update);
+      window.removeEventListener("offline", update);
+    };
+  }, []);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (
+      !preferences ||
+      readState !== "loaded" ||
+      sessionExpired ||
+      pendingRef.current ||
+      !navigator.onLine
+    )
+      return;
+    pendingRef.current = true;
     setPending(true);
     setMessage("");
 
@@ -63,16 +87,46 @@ export function NotificationPreferencesForm({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(preferences),
       });
-      setMessage(
-        response.ok
-          ? "알림 설정을 저장했습니다."
-          : "알림 설정을 저장하지 못했습니다.",
-      );
+      const payload = await response.json().catch(() => null);
+      if (response.status === 401) {
+        setSessionExpired(true);
+        setMessage(
+          "로그인 시간이 지났어요. 다시 로그인한 뒤 설정을 확인해 주세요.",
+        );
+      } else if (
+        response.ok &&
+        isNotificationPreferences(payload?.data?.preferences)
+      ) {
+        setPreferences(payload.data.preferences);
+        setMessage("알림 설정을 저장했습니다.");
+      } else {
+        setMessage("저장 결과를 확인하지 못했어요. 다시 불러와 확인해 주세요.");
+      }
     } catch {
       setMessage("연결을 확인한 뒤 다시 시도해 주세요.");
     } finally {
       setPending(false);
+      pendingRef.current = false;
     }
+  }
+
+  if (readState !== "loaded" || !preferences) {
+    return (
+      <StatePanel
+        tone={readState === "empty" ? "empty" : "error"}
+        title={
+          readState === "empty"
+            ? "아직 알림 설정이 없어요"
+            : "알림 설정을 확인하지 못했어요"
+        }
+        description={
+          readState === "empty"
+            ? "계정 설정이 준비되면 받는 알림을 선택할 수 있어요. 잠시 후 다시 확인해 주세요."
+            : "현재 설정을 알 수 없어 저장할 수 없어요. 연결을 확인한 뒤 다시 불러와 주세요."
+        }
+        action={<RouteReloadButton className="button button--secondary" />}
+      />
+    );
   }
 
   return (
@@ -91,10 +145,11 @@ export function NotificationPreferencesForm({
             <input
               id={`pref-${option.key}`}
               type="checkbox"
+              disabled={pending || !online || sessionExpired}
               checked={preferences[option.key]}
               onChange={(event) =>
                 setPreferences((current) => ({
-                  ...current,
+                  ...current!,
                   [option.key]: event.target.checked,
                 }))
               }
@@ -106,11 +161,25 @@ export function NotificationPreferencesForm({
       <footer>
         <button
           className="button button--primary"
-          disabled={pending}
+          disabled={pending || !online || sessionExpired}
           type="submit"
         >
           {pending ? "저장 중" : "설정 저장"}
         </button>
+        {!online ? (
+          <p role="status">
+            인터넷 연결을 확인해 주세요. 연결되면 설정을 저장할 수 있어요.
+          </p>
+        ) : null}
+        {sessionExpired ? (
+          <button
+            className="button button--secondary"
+            onClick={() => router.refresh()}
+            type="button"
+          >
+            로그인 상태 확인
+          </button>
+        ) : null}
         {message ? (
           <p role="status" aria-live="polite">
             {message}

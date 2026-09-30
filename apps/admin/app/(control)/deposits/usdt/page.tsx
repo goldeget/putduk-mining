@@ -54,7 +54,10 @@ export default async function UsdtDepositQueuePage() {
   const rows = (data ?? []) as UsdtManualDepositRow[];
 
   return (
-    <>
+    <div
+      data-ui-ready="/deposits/usdt"
+      data-ui-state={error ? "error" : rows.length ? "loaded" : "empty"}
+    >
       <QueueShell
         eyebrow="USDT 수동 입금"
         lead="회원이 보낸 USDT를 확인하고, 원화 입금만 반영합니다. 회원 USDT 잔액은 없습니다."
@@ -128,6 +131,6 @@ export default async function UsdtDepositQueuePage() {
           </QueueCard>
         ))}
       </section>
-    </>
+    </div>
   );
 }

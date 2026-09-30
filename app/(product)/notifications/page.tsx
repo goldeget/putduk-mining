@@ -32,7 +32,12 @@ export default async function NotificationCenterPage() {
   const unread = countUnreadMemberNotifications(notifications);
 
   return (
-    <>
+    <div
+      data-ui-ready="/notifications"
+      data-ui-state={
+        error ? "error" : notifications.length ? "loaded" : "empty"
+      }
+    >
       <PageHeading
         eyebrow="알림"
         title={unread ? `새 소식 ${unread}개` : "중요한 변화를 놓치지 않도록."}
@@ -90,6 +95,6 @@ export default async function NotificationCenterPage() {
           <PushControl />
         </Surface>
       </div>
-    </>
+    </div>
   );
 }

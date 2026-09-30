@@ -9,6 +9,7 @@ import { StatePanel } from "@/components/ui/states";
 import { Surface } from "@/components/ui/surface";
 import { formatTrialValue } from "@/domain/trial/format-trial-value";
 import { requirePageUser } from "@/lib/auth/session";
+import { resolveStartPageState } from "@/lib/product/start-page-state";
 import {
   formatTrialQuotaPercent,
   formatTrialRemaining,
@@ -23,7 +24,7 @@ export default async function StartPage() {
   const [
     { data: trial, error: trialError },
     { data: conversion, error: conversionError },
-    { data: lifecycle },
+    { data: lifecycle, error: lifecycleError },
   ] = await Promise.all([
     identity.supabase
       .from("trial_account_snapshots")
@@ -46,47 +47,46 @@ export default async function StartPage() {
       .maybeSingle(),
   ]);
 
-  const trialStatus = trialError ? "UNAVAILABLE" : (trial?.status ?? "READY");
+  const state = resolveStartPageState({
+    status: trial?.status,
+    hasSnapshot: Boolean(trial),
+    readFailed: Boolean(trialError),
+  });
+  const trialStatus = state.status;
   const trialPresentation = presentTrialStatus(trialStatus);
   const conversionPresentation = presentConversionStatus(conversion?.status);
   const quotaPercent = formatTrialQuotaPercent(trial?.quota_consumed_bps);
-  const isActive = trialStatus === "ACTIVE";
-  const isComplete = trialStatus === "COMPLETED" || trialStatus === "EXPIRED";
-  const headingTitle = trialError
-    ? "START 상태를 확인할 수 없어요."
-    : isComplete
-      ? "첫 채굴을 마쳤어요."
-      : isActive
-        ? "첫 채굴이 진행 중이에요."
-        : "첫 채굴, 분명한 시작.";
-  const headingLead = trialError
-    ? "연결을 확인한 뒤 다시 열어 주세요."
-    : isComplete
-      ? "체험 값은 실제 돈이 아니에요. 자격 확인 후 최대 5,000원까지 전환될 수 있어요."
-      : "KOREA 월드에서 첫 채굴을 경험해요. 체험 값은 실제 지갑과 분리됩니다.";
-
-  let commandTitle = "PUTDUK START를 준비하세요";
-  let commandLead = "준비가 되면 여기서 첫 채굴을 시작하세요.";
-  if (isActive) {
-    commandTitle = "채굴이 진행 중이에요";
-    commandLead =
-      "앱을 닫아도 채굴은 계속돼요. 다시 접속하면 결과를 확인할 수 있어요.";
-  } else if (isComplete) {
-    commandTitle = "PUTDUK START가 끝났어요";
-    commandLead =
-      "체험 값과 실제 KRW는 분리돼요. 전환된 환영 보상은 입금 없이 첫 출금할 수 있어요.";
-  }
+  const isActive = state.active;
+  const isComplete = state.complete;
+  const questReady =
+    !state.uncertain &&
+    !conversionError &&
+    !lifecycleError &&
+    typeof lifecycle?.stage === "string";
 
   return (
-    <div className={styles.layout}>
+    <div
+      className={styles.layout}
+      data-ui-ready="/start"
+      data-ui-state={
+        state.uncertain
+          ? state.uiState
+          : conversionError || lifecycleError
+            ? "partial"
+            : "loaded"
+      }
+    >
       <TrialSynchronizer active={isActive} />
-      <GuidedQuest
-        serverStage={`${lifecycle?.stage ?? "SIGNED_UP"}:${trialStatus}:${conversion?.status ?? "NONE"}`}
-      />
+      {questReady ? (
+        <GuidedQuest
+          ownerId={identity.userId}
+          serverStage={`${lifecycle?.stage ?? "SIGNED_UP"}:${trialStatus}:${conversion?.status ?? "NONE"}`}
+        />
+      ) : null}
       <PageHeading
         eyebrow="PUTDUK START"
-        title={headingTitle}
-        lead={headingLead}
+        title={state.headingTitle}
+        lead={state.headingLead}
       />
 
       <section className={styles.grid}>
@@ -96,20 +96,20 @@ export default async function StartPage() {
           data-quest-target="world"
         >
           <div className={styles.stageMeta} data-start-stage-meta>
-            <span className={styles.stageMetaLabel}>체험 · KOREA</span>
+            <span className={styles.stageMetaLabel}>체험 · 한국</span>
             <strong className={styles.stageStatus} data-start-status>
               {trialPresentation.label}
             </strong>
           </div>
           <div className={styles.stageVisual}>
-            <MiningCore />
+            <MiningCore running={isActive} />
           </div>
           <div className={styles.stageFooter} data-quest-target="progress">
             <div className={styles.values}>
               <span>
                 <small>무료 체험 사용량</small>
                 <strong>
-                  {trialError || quotaPercent === null
+                  {state.uncertain || quotaPercent === null
                     ? "—"
                     : `${quotaPercent.toFixed(0)}%`}
                 </strong>
@@ -117,7 +117,7 @@ export default async function StartPage() {
               <span>
                 <small>체험 결과</small>
                 <strong>
-                  {trialError
+                  {state.uncertain
                     ? "확인할 수 없음"
                     : formatTrialValue(String(trial?.reward_atomic ?? "0"))}
                 </strong>
@@ -126,7 +126,7 @@ export default async function StartPage() {
             <div
               className={styles.progress}
               aria-label={
-                trialError || quotaPercent === null
+                state.uncertain || quotaPercent === null
                   ? "체험 사용량을 불러오지 못함"
                   : `체험 사용량 ${quotaPercent.toFixed(0)}%`
               }
@@ -134,7 +134,7 @@ export default async function StartPage() {
               <span
                 style={{
                   width:
-                    trialError || quotaPercent === null
+                    state.uncertain || quotaPercent === null
                       ? "0%"
                       : `${quotaPercent}%`,
                 }}
@@ -151,9 +151,9 @@ export default async function StartPage() {
             data-quest-target="action"
           >
             <p className="eyebrow">다음 행동</p>
-            <h2>{commandTitle}</h2>
-            <p>{commandLead}</p>
-            {trialError ? (
+            <h2>{state.commandTitle}</h2>
+            <p>{state.commandLead}</p>
+            {state.uncertain ? (
               <StatePanel
                 tone="error"
                 title="상태를 불러오지 못했어요"
@@ -186,10 +186,10 @@ export default async function StartPage() {
               ) : (
                 <WelcomeRewardAction conversion={conversion} />
               )
-            ) : (
+            ) : state.ready ? (
               <StartTrialButton />
-            )}
-            {isComplete && conversion?.status ? (
+            ) : null}
+            {isComplete && !conversionError && conversion?.status ? (
               <p className={styles.actionMessage}>
                 {conversionPresentation.description}
               </p>

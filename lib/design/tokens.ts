@@ -13,17 +13,20 @@ export const designTokens = {
   text: {
     primary: "#f8f2e4",
     secondary: "#b8ad98",
-    tertiary: "#817765",
+    tertiary: "#b0a38c",
     inverse: "#17130d",
   },
   border: {
     subtle: "rgba(246, 224, 174, 0.09)",
-    default: "rgba(246, 224, 174, 0.17)",
+    default: "rgba(246, 224, 174, 0.32)",
     strong: "rgba(246, 200, 91, 0.36)",
+    control: "rgba(246, 224, 174, 0.48)",
   },
   brand: {
     primary: "#f6c85b",
     strong: "#d99a2b",
+    hover: "#ffdb83",
+    active: "#e6b340",
     quiet: "#3a2810",
     mineral: "#fff0a6",
   },
@@ -62,7 +65,7 @@ export const designTokens = {
   },
   shadow: {
     lift: "0 18px 60px rgba(0, 0, 0, 0.28)",
-    focus: "0 0 0 3px rgba(246, 200, 91, 0.34)",
+    focus: "0 0 0 2px var(--background-canvas), 0 0 0 5px var(--brand-primary)",
   },
   motion: {
     fast: "140ms",
@@ -94,12 +97,27 @@ export const lightThemeTokens = {
   text: {
     primary: "#17130d",
     secondary: "#605643",
-    tertiary: "#81745e",
+    tertiary: "#6f614b",
     inverse: "#fffdf8",
+  },
+  status: {
+    success: "#176444",
+    warning: "#76510b",
+    danger: "#ac332b",
+    info: "#1f5d88",
+  },
+  world: {
+    korea: "#9b650d",
+    usa: "#225f98",
+    gold: "#806018",
+    silver: "#52616b",
+    crypto: "#6650a5",
   },
   brand: {
     primary: "#9b650d",
     strong: "#7c4b06",
+    hover: "#7c4b06",
+    active: "#633b03",
     quiet: "#f0ddb0",
     mineral: "#b77a17",
   },

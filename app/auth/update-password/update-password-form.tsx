@@ -37,9 +37,13 @@ export function UpdatePasswordForm() {
   const mismatch = confirmation.length > 0 && password !== confirmation;
 
   return (
-    <form className="auth-form" action={action}>
-      <label>
-        <span>새 비밀번호</span>
+    <form
+      className="auth-form"
+      action={action}
+      data-ui-state={state.status === "error" || mismatch ? "error" : "loaded"}
+    >
+      <div className="auth-form__field">
+        <label htmlFor="new-password">새 비밀번호</label>
         <div className="auth-form__password">
           <input
             id="new-password"
@@ -56,16 +60,19 @@ export function UpdatePasswordForm() {
           <button
             type="button"
             aria-controls="new-password password-confirmation"
+            aria-label={
+              show
+                ? "새 비밀번호와 확인 값 숨기기"
+                : "새 비밀번호와 확인 값 보기"
+            }
             aria-pressed={show}
             onClick={() => setShow((value) => !value)}
           >
             {show ? "숨기기" : "보기"}
           </button>
         </div>
-        <small id="new-password-help">
-          10자 이상 입력해 주세요. 비밀번호 관리자와 붙여넣기를 지원합니다.
-        </small>
-      </label>
+        <small id="new-password-help">10자 이상 입력해 주세요.</small>
+      </div>
       <label>
         <span>새 비밀번호 확인</span>
         <input

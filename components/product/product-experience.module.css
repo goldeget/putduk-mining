@@ -4,7 +4,7 @@
   gap: 0.45rem;
   margin-bottom: 1.25rem;
   color: var(--text-tertiary);
-  font-size: 0.78rem;
+  font-size: 0.875rem;
   font-weight: 750;
   text-decoration: none;
   transition:
@@ -78,7 +78,7 @@
   border-radius: var(--radius-md);
   color: var(--brand-primary);
   background: color-mix(in srgb, var(--brand-quiet) 44%, transparent);
-  font: 800 0.7rem/1 var(--font-mono);
+  font: 800 0.875rem/1 var(--font-mono);
 }
 
 .stepHeader h2,
@@ -108,7 +108,7 @@
 .aiPromise > p {
   margin: 0.35rem 0 0;
   color: var(--text-secondary);
-  font-size: 0.82rem;
+  font-size: 0.875rem;
   line-height: 1.7;
   word-break: keep-all;
 }
@@ -121,9 +121,10 @@
 
 .fieldGroup > span,
 .field > span,
+.field > label,
 .assetLegend {
   color: var(--text-secondary);
-  font-size: 0.78rem;
+  font-size: 0.875rem;
   font-weight: 750;
 }
 
@@ -137,16 +138,17 @@
 
 .amountField input,
 .field input,
-.field select {
+.field select,
+.field textarea {
   width: 100%;
   min-height: 3.45rem;
   padding: 0.9rem 1rem;
-  border: 1px solid var(--border-default);
+  border: 1px solid var(--border-control);
   border-radius: var(--radius-md);
   outline: none;
   color: var(--text-primary);
   background: var(--surface-sunken);
-  font: 650 0.95rem/1.2 var(--font-sans);
+  font: 650 1rem/1.2 var(--font-sans);
   transition:
     border-color var(--motion-fast) var(--motion-easing),
     background var(--motion-fast) var(--motion-easing),
@@ -162,25 +164,25 @@
 
 .amountField input:hover,
 .field input:hover,
-.field select:hover {
-  border-color: var(--border-strong);
+.field select:hover,
+.field textarea:hover {
+  border-color: var(--brand-strong);
 }
 
 .amountField input:focus,
 .field input:focus,
-.field select:focus {
+.field select:focus,
+.field textarea:focus {
   border-color: var(--brand-strong);
   background: var(--surface-default);
   box-shadow: var(--shadow-focus);
 }
 
 .amountField input[aria-invalid="true"],
-.field input[aria-invalid="true"] {
-  border-color: color-mix(
-    in srgb,
-    var(--status-danger) 65%,
-    var(--border-default)
-  );
+.field input[aria-invalid="true"],
+.field select[aria-invalid="true"],
+.field textarea[aria-invalid="true"] {
+  border-color: var(--status-danger);
 }
 
 .currencySuffix {
@@ -188,7 +190,7 @@
   top: 50%;
   right: 1rem;
   color: var(--text-tertiary);
-  font: 800 0.75rem/1 var(--font-mono);
+  font: 800 0.875rem/1 var(--font-mono);
   transform: translateY(-50%);
 }
 
@@ -200,13 +202,13 @@
 }
 
 .quickAmounts button {
-  min-height: 2.25rem;
+  min-height: 44px;
   padding: 0.45rem 0.75rem;
-  border: 1px solid var(--border-default);
+  border: 1px solid var(--border-control);
   border-radius: var(--radius-full);
   color: var(--text-secondary);
   background: transparent;
-  font: 750 0.7rem/1 var(--font-sans);
+  font: 750 0.875rem/1 var(--font-sans);
   cursor: pointer;
   transition:
     color var(--motion-fast) var(--motion-easing),
@@ -254,7 +256,7 @@
   border: 1px solid transparent;
   border-radius: var(--radius-md);
   color: var(--text-tertiary);
-  font-size: 0.76rem;
+  font-size: 0.875rem;
   font-weight: 800;
 }
 
@@ -294,7 +296,7 @@
 .formNotice p,
 .formNoticeBody {
   margin: 0;
-  font-size: 0.77rem;
+  font-size: 0.875rem;
   line-height: 1.65;
   line-break: strict;
   word-break: keep-all;
@@ -320,14 +322,14 @@
 .summaryList dt,
 .policySummary dt {
   color: var(--text-tertiary);
-  font-size: 0.72rem;
+  font-size: 0.875rem;
 }
 
 .summaryList dd,
 .policySummary dd {
   margin: 0;
   color: var(--text-primary);
-  font: 760 0.76rem/1.3 var(--font-mono);
+  font: 760 0.875rem/1.3 var(--font-mono);
   text-align: right;
 }
 
@@ -342,7 +344,7 @@
   border-radius: var(--radius-md);
   color: var(--text-secondary);
   background: var(--surface-sunken);
-  font-size: 0.78rem;
+  font-size: 0.875rem;
   line-height: 1.55;
 }
 
@@ -384,7 +386,7 @@
 .summaryAmount small {
   margin-left: 0.35rem;
   color: var(--text-tertiary);
-  font: 750 0.75rem/1 var(--font-sans);
+  font: 750 0.875rem/1 var(--font-sans);
 }
 
 .flowList {
@@ -403,12 +405,12 @@
   min-height: 3.4rem;
   border-top: 1px solid var(--border-subtle);
   color: var(--text-secondary);
-  font-size: 0.78rem;
+  font-size: 0.875rem;
 }
 
 .flowList span {
   color: var(--brand-primary);
-  font: 750 0.62rem/1 var(--font-mono);
+  font: 750 0.875rem/1 var(--font-mono);
 }
 
 .historyPanel {
@@ -466,7 +468,7 @@
 
 .historyPrimary strong {
   color: var(--text-primary);
-  font-size: 0.86rem;
+  font-size: 0.875rem;
   font-variant-numeric: tabular-nums;
 }
 
@@ -474,7 +476,7 @@
 .historyItem time,
 .historyMeta {
   color: var(--text-tertiary);
-  font-size: 0.68rem;
+  font-size: 0.875rem;
 }
 
 .historyDetail {
@@ -501,7 +503,7 @@
   border-radius: var(--radius-full);
   color: var(--text-secondary);
   background: var(--surface-sunken);
-  font-size: 0.66rem;
+  font-size: 0.875rem;
   font-weight: 850;
   line-height: 1;
   white-space: nowrap;
@@ -588,13 +590,13 @@
 
 .welcomeFacts dt {
   color: var(--text-tertiary);
-  font-size: 0.65rem;
+  font-size: 0.875rem;
 }
 
 .welcomeFacts dd {
   margin: 0;
   color: var(--text-primary);
-  font-size: 0.78rem;
+  font-size: 0.875rem;
   font-weight: 780;
 }
 
@@ -606,7 +608,7 @@
 .welcomeAction p {
   margin: 0;
   color: var(--text-secondary);
-  font-size: 0.75rem;
+  font-size: 0.875rem;
   line-height: 1.55;
 }
 
@@ -709,7 +711,7 @@
   padding-top: 1.1rem;
   border-top: 1px solid rgba(255, 240, 190, 0.15);
   color: rgba(255, 248, 233, 0.68);
-  font-size: 0.73rem;
+  font-size: 0.875rem;
 }
 
 .worldHeroFacts strong,
@@ -804,7 +806,7 @@
 .promiseCard p {
   margin: 0.35rem 0 0;
   color: var(--text-tertiary);
-  font-size: 0.74rem;
+  font-size: 0.875rem;
   line-height: 1.55;
 }
 
@@ -813,7 +815,7 @@
   display: block;
   margin-bottom: 0.3rem;
   color: var(--brand-primary);
-  font: 750 0.61rem/1 var(--font-mono);
+  font: 750 0.875rem/1 var(--font-mono);
   letter-spacing: 0.08em;
 }
 
@@ -841,7 +843,7 @@
 
 .sessionCardHeader small {
   color: var(--brand-primary);
-  font: 750 0.61rem/1 var(--font-mono);
+  font: 750 0.875rem/1 var(--font-mono);
 }
 
 .sessionCardHeader h3 {
@@ -868,13 +870,13 @@
 
 .sessionFacts dt {
   color: var(--text-tertiary);
-  font-size: 0.64rem;
+  font-size: 0.875rem;
 }
 
 .sessionFacts dd {
   margin: 0;
   color: var(--text-primary);
-  font: 740 0.74rem/1.35 var(--font-mono);
+  font: 740 0.875rem/1.35 var(--font-mono);
 }
 
 .sectionHeader {
@@ -895,7 +897,7 @@
   max-width: 34rem;
   margin: 0;
   color: var(--text-tertiary);
-  font-size: 0.76rem;
+  font-size: 0.875rem;
   line-height: 1.6;
   text-align: right;
 }
@@ -914,7 +916,7 @@
 
 .eventCard time {
   color: var(--text-tertiary);
-  font-size: 0.68rem;
+  font-size: 0.875rem;
 }
 
 .noticeList {
@@ -938,19 +940,19 @@
 
 .noticeItem strong {
   color: var(--text-primary);
-  font-size: 0.85rem;
+  font-size: 0.875rem;
 }
 
 .noticeItem p {
   margin: 0.3rem 0 0;
   color: var(--text-tertiary);
-  font-size: 0.73rem;
+  font-size: 0.875rem;
   line-height: 1.55;
 }
 
 .noticeItem time {
   color: var(--text-tertiary);
-  font-size: 0.66rem;
+  font-size: 0.875rem;
   white-space: nowrap;
 }
 
@@ -1031,7 +1033,7 @@
 
 .menuCard small {
   color: var(--text-tertiary);
-  font-size: 0.72rem;
+  font-size: 0.875rem;
   line-height: 1.5;
   line-break: strict;
   word-break: keep-all;
@@ -1160,7 +1162,7 @@
   align-items: center;
   gap: 0.35rem;
   color: var(--brand-primary);
-  font-size: 0.78rem;
+  font-size: 0.875rem;
   font-weight: 800;
   text-decoration: none;
 }
@@ -1279,7 +1281,7 @@
 
 .balanceStrip small {
   color: var(--text-tertiary);
-  font-size: 0.72rem;
+  font-size: 0.875rem;
   font-weight: 700;
 }
 
@@ -1290,13 +1292,13 @@
 
 .monoHint {
   font-family: var(--font-mono);
-  font-size: 0.85em;
+  font-size: 0.875rem;
   word-break: break-all;
 }
 
 .field input.monoInput {
   font-family: var(--font-mono);
-  font-size: 0.82rem;
+  font-size: 1rem;
 }
 
 .depositAddressBlock {
@@ -1308,7 +1310,7 @@
 .depositAddressBlock > p {
   margin: 0;
   color: var(--text-secondary);
-  font-size: 0.78rem;
+  font-size: 0.875rem;
   font-weight: 750;
 }
 
@@ -1321,7 +1323,7 @@
   border-radius: var(--radius-md);
   color: var(--text-primary);
   background: var(--surface-sunken);
-  font: 650 0.82rem/1.45 var(--font-mono);
+  font: 650 0.875rem/1.45 var(--font-mono);
   overflow-wrap: anywhere;
   word-break: break-all;
 }
@@ -1331,18 +1333,22 @@
 }
 
 .inlineReveal {
-  display: block;
-  width: fit-content;
-  margin-top: 0.45rem;
-  border: 0;
-  background: transparent;
-  color: var(--brand-primary);
+  display: inline-flex;
+  min-width: 44px;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  margin-inline-start: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border-control);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  background: var(--surface-raised);
   font: inherit;
-  font-size: 0.78rem;
+  font-size: 0.875rem;
   font-weight: 700;
+  line-height: 1.4;
   cursor: pointer;
-  text-decoration: underline;
-  text-underline-offset: 0.18em;
 }
 
 .welcomeMethodField {
@@ -1353,7 +1359,7 @@
 
 .welcomeMethodField legend {
   margin-bottom: 0.55rem;
-  font-size: 0.78rem;
+  font-size: 0.875rem;
   font-weight: 750;
 }
 
@@ -1361,7 +1367,7 @@
   display: block;
   margin-top: 0.2rem;
   color: var(--text-tertiary);
-  font-size: 0.68rem;
+  font-size: 0.875rem;
   font-weight: 600;
 }
 
@@ -1371,11 +1377,19 @@
   .quickAmounts button,
   .amountField input,
   .field input,
-  .field select {
+  .field select,
+  .field textarea {
     transition: none;
   }
 
   .skeleton span {
     animation: none;
   }
+}
+.inlineReveal:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+.inlineReveal:hover:not(:disabled) {
+  background: var(--surface-interactive);
 }

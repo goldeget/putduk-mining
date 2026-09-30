@@ -1,48 +1,20 @@
 "use client";
 
-import { useEffect, useSyncExternalStore } from "react";
-
-type ThemePreference = "system" | "light" | "dark";
-
-const storageKey = "putduk-theme";
-const changeEvent = "putduk-theme-change";
-
-function readPreference(): ThemePreference {
-  const saved = window.localStorage.getItem(storageKey);
-  return saved === "light" || saved === "dark" || saved === "system"
-    ? saved
-    : "system";
-}
-
-function subscribe(onStoreChange: () => void) {
-  window.addEventListener("storage", onStoreChange);
-  window.addEventListener(changeEvent, onStoreChange);
-  return () => {
-    window.removeEventListener("storage", onStoreChange);
-    window.removeEventListener(changeEvent, onStoreChange);
-  };
-}
-
-function applyPreference(preference: ThemePreference) {
-  const root = document.documentElement;
-  if (preference === "system") {
-    delete root.dataset.theme;
-  } else {
-    root.dataset.theme = preference;
-  }
-  root.style.colorScheme = preference === "system" ? "light dark" : preference;
-}
+import { useSyncExternalStore } from "react";
+import {
+  normalizeTheme,
+  readThemePreference,
+  setThemePreference,
+  subscribeTheme,
+  type ThemePreference,
+} from "../../lib/design/theme";
 
 export function ThemeControl() {
   const preference = useSyncExternalStore(
-    subscribe,
-    readPreference,
+    subscribeTheme,
+    readThemePreference,
     (): ThemePreference => "system",
   );
-
-  useEffect(() => {
-    applyPreference(preference);
-  }, [preference]);
 
   return (
     <label className="theme-control">
@@ -50,12 +22,9 @@ export function ThemeControl() {
       <select
         aria-label="화면 테마"
         value={preference}
-        onChange={(event) => {
-          const next = event.target.value as ThemePreference;
-          window.localStorage.setItem(storageKey, next);
-          applyPreference(next);
-          window.dispatchEvent(new Event(changeEvent));
-        }}
+        onChange={(event) =>
+          setThemePreference(normalizeTheme(event.target.value))
+        }
       >
         <option value="system">시스템</option>
         <option value="light">라이트</option>

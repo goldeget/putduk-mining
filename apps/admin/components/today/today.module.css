@@ -5,7 +5,7 @@
 .eyebrow {
   margin: 0 0 10px;
   color: var(--gold);
-  font-size: 0.7rem;
+  font-size: 0.875rem;
   font-weight: 800;
   letter-spacing: 0.12em;
 }
@@ -66,7 +66,7 @@
   display: block;
   margin-top: 14px;
   color: var(--muted);
-  font-size: 0.72rem;
+  font-size: 0.875rem;
 }
 
 .orbit {
@@ -81,7 +81,7 @@
 .orbit span,
 .orbit small {
   color: var(--muted);
-  font-size: 0.72rem;
+  font-size: 0.875rem;
 }
 
 .orbit strong {
@@ -124,7 +124,7 @@
   max-width: 36rem;
   margin: 0;
   color: var(--muted);
-  font-size: 0.8rem;
+  font-size: 0.875rem;
   line-height: 1.5;
   word-break: keep-all;
 }
@@ -136,7 +136,7 @@
   background: transparent;
   color: var(--ink);
   padding: 10px 14px;
-  font-size: 0.78rem;
+  font-size: 0.875rem;
   cursor: pointer;
 }
 
@@ -164,7 +164,7 @@
 
 .sectionHead > span {
   color: var(--muted);
-  font-size: 0.72rem;
+  font-size: 0.875rem;
 }
 
 .attentionGrid {
@@ -175,7 +175,7 @@
 
 .card {
   min-height: 210px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--line);
   border-radius: 18px;
   background: var(--surface);
   padding: 20px;
@@ -199,8 +199,12 @@
   display: flex;
   justify-content: space-between;
   color: var(--gold);
-  font-size: 0.64rem;
+  font-size: 0.875rem;
   letter-spacing: 0.08em;
+}
+
+.card header small {
+  font-size: 0.875rem;
 }
 
 .card > strong {
@@ -220,7 +224,7 @@
   max-width: 16rem;
   margin: 0;
   color: var(--muted);
-  font-size: 0.74rem;
+  font-size: 0.875rem;
   line-height: 1.45;
   word-break: keep-all;
 }
@@ -241,7 +245,7 @@
 }
 
 .panel {
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--line);
   border-radius: 18px;
   background: var(--surface);
   padding: 24px;
@@ -263,7 +267,7 @@
   border-radius: 99px;
   color: var(--success);
   padding: 6px 9px;
-  font-size: 0.6rem;
+  font-size: 0.875rem;
   letter-spacing: 0.08em;
 }
 
@@ -287,7 +291,7 @@
 
 .metrics span {
   color: var(--muted);
-  font-size: 0.7rem;
+  font-size: 0.875rem;
 }
 
 .metrics strong {
@@ -299,7 +303,7 @@
 .note {
   max-width: 28rem;
   color: var(--muted);
-  font-size: 0.76rem;
+  font-size: 0.875rem;
   line-height: 1.5;
   word-break: keep-all;
 }
@@ -310,7 +314,7 @@
   color: var(--gold-soft);
   text-decoration: underline;
   text-underline-offset: 3px;
-  font-size: 0.84rem;
+  font-size: 0.875rem;
 }
 
 .textLink:focus-visible {
@@ -328,9 +332,9 @@
   display: grid;
   grid-template-columns: 85px 1fr auto;
   gap: 12px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-top: 1px solid var(--border-subtle);
   padding: 13px 0;
-  font-size: 0.72rem;
+  font-size: 0.875rem;
 }
 
 .auditList li span,
@@ -349,27 +353,6 @@
   display: grid;
   gap: 12px;
   justify-items: start;
-}
-
-@media (prefers-color-scheme: light) {
-  .card,
-  .panel {
-    border-color: rgba(70, 55, 30, 0.09);
-  }
-
-  .hero {
-    background:
-      radial-gradient(
-        circle at 85% 50%,
-        rgba(199, 141, 36, 0.13),
-        transparent 34%
-      ),
-      #fffdf8;
-  }
-
-  .auditList li {
-    border-top-color: rgba(70, 55, 30, 0.08);
-  }
 }
 
 @media (max-width: 1100px) {

@@ -77,20 +77,35 @@ export default async function UsdtWithdrawalQueuePage() {
   const rows = (data ?? []) as WithdrawalRow[];
   const ids = rows.map((r) => r.id);
   const cryptoMap = new Map<string, CryptoWithdrawal>();
-  if (ids.length) {
+  let cryptoReadFailed = false;
+  if (!error && ids.length) {
     const crypto = await db
       .from("crypto_withdrawals")
       .select(
         "withdrawal_request_id, network, destination_address, transaction_hash, submitted_at",
       )
       .in("withdrawal_request_id", ids);
-    for (const item of (crypto.data ?? []) as CryptoWithdrawal[]) {
+    cryptoReadFailed = Boolean(crypto.error);
+    for (const item of (crypto.error
+      ? []
+      : (crypto.data ?? [])) as CryptoWithdrawal[]) {
       cryptoMap.set(item.withdrawal_request_id, item);
     }
   }
 
   return (
-    <>
+    <div
+      data-ui-ready="/withdrawals/usdt"
+      data-ui-state={
+        error
+          ? "error"
+          : cryptoReadFailed
+            ? "partial"
+            : rows.length
+              ? "loaded"
+              : "empty"
+      }
+    >
       <QueueShell
         eyebrow="USDT 주소 출금"
         lead="KRW 잔액에서 빠져나가는 USDT 주소 출금입니다. 회원 USDT 잔액은 없습니다. 외부 송금 기록 뒤에는 다시 보내기를 제공하지 않습니다."
@@ -98,6 +113,12 @@ export default async function UsdtWithdrawalQueuePage() {
       />
 
       <WithdrawalOfflineBanner />
+      {cryptoReadFailed ? (
+        <WithdrawalQueueError
+          title="송금 기록을 확인하지 못했습니다"
+          description="이미 송금한 기록을 확인할 때까지 작업을 잠급니다. 연결을 확인한 뒤 다시 불러오세요."
+        />
+      ) : null}
 
       {error ? (
         <WithdrawalQueueError
@@ -120,7 +141,7 @@ export default async function UsdtWithdrawalQueuePage() {
       ) : null}
 
       <section className="queue-list" aria-label="USDT 출금 대기">
-        {rows.map((row) => {
+        {(error ? [] : rows).map((row) => {
           const crypto = cryptoMap.get(row.id);
           const snap = row.destination_snapshot ?? {};
           const networkHint =
@@ -179,7 +200,11 @@ export default async function UsdtWithdrawalQueuePage() {
                 ) : null}
               </dl>
 
-              {sent ? (
+              {cryptoReadFailed ? (
+                <p className="panel-note" role="alert">
+                  송금 기록 확인 후 작업할 수 있습니다.
+                </p>
+              ) : sent ? (
                 <UsdtFinalizeForm withdrawalId={row.id} />
               ) : (
                 <>
@@ -196,6 +221,6 @@ export default async function UsdtWithdrawalQueuePage() {
           );
         })}
       </section>
-    </>
+    </div>
   );
 }

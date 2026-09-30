@@ -102,23 +102,32 @@ export default async function WalletPage() {
   const trialState = trialError ? "error" : trial ? "ready" : "empty";
 
   return (
-    <WalletReadView
-      balanceState={balanceState}
-      krw={krw}
-      ledgerEntries={ledgerEntries}
-      ledgerState={classifyLedgerHistoryRead({
-        count: ledgerEntries.length,
-        error: Boolean(ledgerError),
-      })}
-      receiptState={classifyReceiptHistoryRead({
-        count: receipts.length,
-        error: Boolean(receiptError),
-      })}
-      receipts={receipts}
-      trialRewardAtomic={
-        trial?.reward_atomic == null ? null : String(trial.reward_atomic)
+    <div
+      data-ui-ready="/wallet"
+      data-ui-state={
+        accountsError || trialError || ledgerError || receiptError
+          ? "partial"
+          : "loaded"
       }
-      trialState={trialState}
-    />
+    >
+      <WalletReadView
+        balanceState={balanceState}
+        krw={krw}
+        ledgerEntries={ledgerEntries}
+        ledgerState={classifyLedgerHistoryRead({
+          count: ledgerEntries.length,
+          error: Boolean(ledgerError),
+        })}
+        receiptState={classifyReceiptHistoryRead({
+          count: receipts.length,
+          error: Boolean(receiptError),
+        })}
+        receipts={receipts}
+        trialRewardAtomic={
+          trial?.reward_atomic == null ? null : String(trial.reward_atomic)
+        }
+        trialState={trialState}
+      />
+    </div>
   );
 }

@@ -3,6 +3,7 @@ import type { Route } from "next";
 
 import { formatKst, shortId } from "@/app/(control)/_lib/format";
 import { EmptyQueue, QueueCard, QueueShell } from "@/components/queue-shell";
+import { RouteRetryButton } from "@/components/route-retry-button";
 import { requireAdminPage } from "@/lib/auth/principal";
 import { createAdminServiceClient } from "@/lib/supabase/service";
 
@@ -43,12 +44,14 @@ export default async function KycQueuePage() {
   const caseIds = rows.map((row) => row.id);
 
   const submissionByCase = new Map<string, { document_kind: string }[]>();
-  if (caseIds.length > 0) {
-    const { data: submissions } = await db
+  let submissionsUnavailable = false;
+  if (!error && caseIds.length > 0) {
+    const { data: submissions, error: submissionError } = await db
       .from("kyc_submissions")
       .select("case_id, document_kind")
       .in("case_id", caseIds);
-    for (const row of submissions ?? []) {
+    submissionsUnavailable = Boolean(submissionError);
+    for (const row of submissionError ? [] : (submissions ?? [])) {
       const list = submissionByCase.get(row.case_id) ?? [];
       list.push({ document_kind: row.document_kind });
       submissionByCase.set(row.case_id, list);
@@ -56,9 +59,20 @@ export default async function KycQueuePage() {
   }
 
   return (
-    <>
+    <div
+      data-ui-ready="/kyc"
+      data-ui-state={
+        error
+          ? "error"
+          : submissionsUnavailable
+            ? "partial"
+            : rows.length === 0
+              ? "empty"
+              : "loaded"
+      }
+    >
       <QueueShell
-        eyebrow="IDENTITY REVIEW"
+        eyebrow="본인 확인"
         lead="본인 확인 건을 검토하고 결과와 사유를 남깁니다. 문서 원문·번호·비밀번호는 보여 주지 않습니다."
         title="본인 확인 검토"
       />
@@ -71,7 +85,17 @@ export default async function KycQueuePage() {
       {error ? (
         <p className="queue-flash" role="alert">
           본인 확인 대기열을 불러오지 못했습니다. 잠시 후 다시 열어 주세요.
+          <RouteRetryButton />
         </p>
+      ) : null}
+      {submissionsUnavailable ? (
+        <div className="queue-flash" role="alert">
+          <p>
+            제출 서류 정보를 확인하지 못했습니다. 자료를 다시 확인한 뒤 검토할
+            수 있습니다.
+          </p>
+          <RouteRetryButton />
+        </div>
       ) : null}
 
       {!error && rows.length === 0 ? (
@@ -82,7 +106,7 @@ export default async function KycQueuePage() {
       ) : null}
 
       <section className="queue-list" aria-label="본인 확인 대기">
-        {rows.map((row) => {
+        {(error ? [] : rows).map((row) => {
           const submissionCount = countSubmissions(
             submissionByCase.get(row.id),
           );
@@ -123,9 +147,11 @@ export default async function KycQueuePage() {
                 <div>
                   <dt>제출 서류</dt>
                   <dd>
-                    {submissionCount === 0
-                      ? "없음"
-                      : `${submissionCount}건 (원문 비공개)`}
+                    {submissionsUnavailable
+                      ? "확인 불가"
+                      : submissionCount === 0
+                        ? "없음"
+                        : `${submissionCount}건 (원문 비공개)`}
                   </dd>
                 </div>
                 {row.decision_reason ? (
@@ -138,11 +164,14 @@ export default async function KycQueuePage() {
               <p className="panel-note">
                 원문·저장 경로·해시·식별 번호는 표시하지 않습니다.
               </p>
-              <KycReviewForm caseId={row.id} />
+              <KycReviewForm
+                caseId={row.id}
+                evidenceAvailable={!submissionsUnavailable}
+              />
             </QueueCard>
           );
         })}
       </section>
-    </>
+    </div>
   );
 }

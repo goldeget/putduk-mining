@@ -5,7 +5,7 @@
   padding: 0.55rem clamp(1rem, 4vw, 1.8rem);
   border-bottom: 1px solid var(--border-subtle);
   color: var(--text-secondary);
-  font-size: 0.78rem;
+  font-size: 0.875rem;
   line-height: 1.45;
 }
 

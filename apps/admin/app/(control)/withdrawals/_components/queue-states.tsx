@@ -9,6 +9,7 @@ export function WithdrawalQueueLoading({ label }: { label: string }) {
   return (
     <section
       aria-busy="true"
+      data-ui-state="loading"
       aria-label={label}
       className={styles.loading}
       role="status"
@@ -37,7 +38,7 @@ export function WithdrawalQueueError({
   onRetry?: () => void;
 }) {
   return (
-    <section className={styles.errorPanel} role="alert">
+    <section className={styles.errorPanel} role="alert" data-ui-state="error">
       <h2>{title}</h2>
       <p>{description}</p>
       <div className={styles.errorActions}>

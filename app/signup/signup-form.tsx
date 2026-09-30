@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useRef, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
 
 import {
@@ -9,6 +9,10 @@ import {
   type SignupActionState,
 } from "@/app/signup/actions";
 import { PutdukIcon } from "@/components/icons/putduk-icon";
+import {
+  waitForSignupRead,
+  withSignupReadDeadline,
+} from "@/lib/auth/signup-read-deadline";
 
 const INITIAL_STATE: SignupActionState = {
   fieldErrors: {},
@@ -47,6 +51,9 @@ export function SignupForm() {
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const availabilityRequest = useRef(0);
   const phoneRequest = useRef(0);
+  const alive = useRef(true);
+  const loginIdRead = useRef<AbortController | null>(null);
+  const phoneRead = useRef<AbortController | null>(null);
   const [consents, setConsents] = useState({
     marketing: false,
     privacy: false,
@@ -57,7 +64,19 @@ export function SignupForm() {
   const passwordMismatch =
     passwordConfirmation.length > 0 && password !== passwordConfirmation;
 
+  useEffect(() => {
+    alive.current = true;
+    return () => {
+      alive.current = false;
+      availabilityRequest.current += 1;
+      phoneRequest.current += 1;
+      loginIdRead.current?.abort();
+      phoneRead.current?.abort();
+    };
+  }, []);
+
   async function checkLoginId() {
+    loginIdRead.current?.abort();
     if (!/^[a-z][a-z0-9_]{3,19}$/.test(loginId)) {
       availabilityRequest.current += 1;
       setAvailability("invalid");
@@ -66,44 +85,70 @@ export function SignupForm() {
 
     const requestId = availabilityRequest.current + 1;
     availabilityRequest.current = requestId;
+    const controller = new AbortController();
+    loginIdRead.current = controller;
     setAvailability("checking");
     try {
-      const response = await fetch("/api/v1/auth/login-id-availability", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ loginId }),
-      });
-      const payload = (await response.json()) as {
-        data?: { available?: boolean };
-      };
-      if (availabilityRequest.current !== requestId) return;
+      const { response, payload } = await withSignupReadDeadline(
+        async (signal) => {
+          const response = await waitForSignupRead(
+            fetch("/api/v1/auth/login-id-availability", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ loginId }),
+              signal,
+            }),
+            signal,
+          );
+          const payload = (await waitForSignupRead(
+            response.json(),
+            signal,
+          )) as {
+            data?: { available?: boolean };
+          };
+          return { response, payload };
+        },
+        controller,
+      );
+      if (!alive.current || availabilityRequest.current !== requestId) return;
       if (!response.ok || typeof payload.data?.available !== "boolean") {
         setAvailability("error");
         return;
       }
       setAvailability(payload.data.available ? "available" : "unavailable");
     } catch {
-      if (availabilityRequest.current === requestId) {
+      if (alive.current && availabilityRequest.current === requestId) {
         setAvailability("error");
       }
+    } finally {
+      if (loginIdRead.current === controller) loginIdRead.current = null;
     }
   }
 
   async function checkPhone() {
+    phoneRead.current?.abort();
     const requestId = phoneRequest.current + 1;
     phoneRequest.current = requestId;
+    const controller = new AbortController();
+    phoneRead.current = controller;
     setPhoneAvailability("checking");
     try {
-      const result = await checkSignupPhoneAvailability(phone);
-      if (phoneRequest.current !== requestId) return;
+      // Server-action transport cannot be cancelled; late read-only replies are ignored.
+      const result = await withSignupReadDeadline(
+        () => checkSignupPhoneAvailability(phone),
+        controller,
+      );
+      if (!alive.current || phoneRequest.current !== requestId) return;
       if (result === "AVAILABLE") setPhoneAvailability("available");
       else if (result === "UNAVAILABLE") setPhoneAvailability("unavailable");
       else if (result === "INVALID") setPhoneAvailability("invalid");
       else setPhoneAvailability("error");
     } catch {
-      if (phoneRequest.current === requestId) {
+      if (alive.current && phoneRequest.current === requestId) {
         setPhoneAvailability("error");
       }
+    } finally {
+      if (phoneRead.current === controller) phoneRead.current = null;
     }
   }
 
@@ -112,7 +157,13 @@ export function SignupForm() {
   }
 
   return (
-    <form className="signup-form" action={action}>
+    <form
+      className="signup-form"
+      action={action}
+      data-ui-state={
+        state.status === "error" || passwordMismatch ? "error" : "loaded"
+      }
+    >
       <fieldset>
         <legend>기본 정보</legend>
         <div className="signup-form__grid">
@@ -146,18 +197,21 @@ export function SignupForm() {
               aria-invalid={Boolean(state.fieldErrors.dateOfBirth)}
               aria-describedby={
                 state.fieldErrors.dateOfBirth
-                  ? "date-of-birth-error"
-                  : undefined
+                  ? "date-of-birth-help date-of-birth-error"
+                  : "date-of-birth-help"
               }
             />
+            <small id="date-of-birth-help">
+              태어난 연도, 월, 일을 선택해 주세요.
+            </small>
             {state.fieldErrors.dateOfBirth ? (
               <small id="date-of-birth-error">
                 {state.fieldErrors.dateOfBirth}
               </small>
             ) : null}
           </label>
-          <label>
-            <span>휴대전화</span>
+          <div className="signup-form__field">
+            <label htmlFor="signup-phone">휴대전화</label>
             <div className="signup-form__inline">
               <input
                 id="signup-phone"
@@ -170,6 +224,7 @@ export function SignupForm() {
                 value={phone}
                 onChange={(event) => {
                   phoneRequest.current += 1;
+                  phoneRead.current?.abort();
                   setPhone(event.target.value);
                   setPhoneAvailability("idle");
                 }}
@@ -211,7 +266,7 @@ export function SignupForm() {
                         ? "지금은 번호를 확인하지 못했어요. 잠시 후 다시 시도해 주세요."
                         : "가입에 사용할 수 있는지 확인해 주세요.")}
             </small>
-          </label>
+          </div>
           <label>
             <span>복구 이메일</span>
             <input
@@ -239,8 +294,8 @@ export function SignupForm() {
 
       <fieldset>
         <legend>로그인 정보</legend>
-        <label>
-          <span>로그인 아이디</span>
+        <div className="signup-form__field">
+          <label htmlFor="signup-login-id">로그인 아이디</label>
           <div className="signup-form__inline">
             <input
               id="signup-login-id"
@@ -248,6 +303,7 @@ export function SignupForm() {
               value={loginId}
               onChange={(event) => {
                 availabilityRequest.current += 1;
+                loginIdRead.current?.abort();
                 setLoginId(event.target.value.toLowerCase());
                 setAvailability("idle");
               }}
@@ -291,11 +347,11 @@ export function SignupForm() {
                       ? "지금은 아이디를 확인하지 못했어요. 잠시 후 다시 시도해 주세요."
                       : "영문자로 시작하는 4~20자의 영문 소문자, 숫자, 밑줄")}
           </small>
-        </label>
+        </div>
 
         <div className="signup-form__grid">
-          <label>
-            <span>비밀번호</span>
+          <div className="signup-form__field">
+            <label htmlFor="signup-password">비밀번호</label>
             <div className="signup-form__password">
               <input
                 id="signup-password"
@@ -313,6 +369,7 @@ export function SignupForm() {
               <button
                 type="button"
                 aria-controls="signup-password"
+                aria-label={showPassword ? "비밀번호 숨기기" : "비밀번호 보기"}
                 aria-pressed={showPassword}
                 onClick={() => setShowPassword((value) => !value)}
               >
@@ -326,9 +383,9 @@ export function SignupForm() {
             ) : (
               <small id="signup-password-help">10자 이상 입력해 주세요.</small>
             )}
-          </label>
-          <label>
-            <span>비밀번호 확인</span>
+          </div>
+          <div className="signup-form__field">
+            <label htmlFor="signup-password-confirmation">비밀번호 확인</label>
             <div className="signup-form__password">
               <input
                 id="signup-password-confirmation"
@@ -346,28 +403,36 @@ export function SignupForm() {
                   passwordMismatch ||
                   Boolean(state.fieldErrors.passwordConfirmation)
                 }
-                aria-describedby={
-                  passwordMismatch || state.fieldErrors.passwordConfirmation
-                    ? "signup-password-confirmation-error"
-                    : undefined
-                }
+                aria-describedby="signup-password-confirmation-help"
               />
               <button
                 type="button"
                 aria-controls="signup-password-confirmation"
+                aria-label={
+                  showConfirmation
+                    ? "비밀번호 확인 값 숨기기"
+                    : "비밀번호 확인 값 보기"
+                }
                 aria-pressed={showConfirmation}
                 onClick={() => setShowConfirmation((value) => !value)}
               >
                 {showConfirmation ? "숨기기" : "보기"}
               </button>
             </div>
-            {passwordMismatch || state.fieldErrors.passwordConfirmation ? (
-              <small id="signup-password-confirmation-error">
-                {state.fieldErrors.passwordConfirmation ??
-                  "비밀번호가 서로 일치하지 않습니다."}
-              </small>
-            ) : null}
-          </label>
+            <small
+              id="signup-password-confirmation-help"
+              role={
+                passwordMismatch || state.fieldErrors.passwordConfirmation
+                  ? "alert"
+                  : undefined
+              }
+            >
+              {state.fieldErrors.passwordConfirmation ??
+                (passwordMismatch
+                  ? "비밀번호가 서로 일치하지 않습니다."
+                  : "같은 비밀번호를 한 번 더 입력해 주세요.")}
+            </small>
+          </div>
         </div>
       </fieldset>
 

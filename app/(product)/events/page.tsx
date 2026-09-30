@@ -84,7 +84,19 @@ export default async function EventsPage() {
   );
 
   return (
-    <div className={styles.eventPage}>
+    <div
+      className={styles.eventPage}
+      data-ui-ready="/events"
+      data-ui-state={
+        eventsError && noticesError
+          ? "error"
+          : eventsError || noticesError || participantsError
+            ? "partial"
+            : events.length === 0 && notices.length === 0
+              ? "empty"
+              : "loaded"
+      }
+    >
       <PageHeading
         eyebrow="EVENTS"
         title="참여할 수 있는 여정"

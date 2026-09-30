@@ -6,6 +6,11 @@ import { useEffect, useId, useSyncExternalStore } from "react";
 import { PutdukIcon } from "@/components/icons/putduk-icon";
 import { readPluginKey } from "@/lib/support/channel-session";
 import { createSupportController } from "@/lib/support/support-controller";
+import { readThemePreference, subscribeTheme } from "@/lib/design/theme";
+import {
+  useSupportDisplayState,
+  type SupportDisplayState,
+} from "./use-support-display-state";
 
 import styles from "./support-runtime.module.css";
 
@@ -26,35 +31,16 @@ const controller = createSupportController({
   },
 });
 
-function subscribeTheme(onStoreChange: () => void) {
-  window.addEventListener("putduk-theme-change", onStoreChange);
-  window.addEventListener("storage", onStoreChange);
-  return () => {
-    window.removeEventListener("putduk-theme-change", onStoreChange);
-    window.removeEventListener("storage", onStoreChange);
-  };
-}
-
-function readAppearance(): "light" | "dark" | "system" {
-  const saved = window.localStorage.getItem("putduk-theme");
-  return saved === "light" || saved === "dark" ? saved : "system";
-}
-
-function supportUiState(booted: boolean): "loading" | "ready" | "unavailable" {
-  if (!pluginKey) {
-    return "unavailable";
-  }
-  return booted ? "ready" : "loading";
-}
-
-function supportStatusCopy(state: "loading" | "ready" | "unavailable") {
+function supportStatusCopy(state: SupportDisplayState) {
   if (state === "ready") {
     return "상담 창을 열 준비가 되었어요.";
   }
   if (state === "loading") {
     return "상담 창을 준비하고 있어요.";
   }
-  return "지금은 아래 안내를 먼저 확인해 주세요.";
+  return pluginKey
+    ? "상담 창 준비가 지연되고 있어요. 아래 안내를 먼저 확인해 주세요."
+    : "지금은 아래 안내를 먼저 확인해 주세요.";
 }
 
 export function SupportRuntime() {
@@ -62,7 +48,7 @@ export function SupportRuntime() {
   const router = useRouter();
   const appearance = useSyncExternalStore(
     subscribeTheme,
-    readAppearance,
+    readThemePreference,
     () => "system" as const,
   );
   const booted = useSyncExternalStore(
@@ -70,7 +56,7 @@ export function SupportRuntime() {
     controller.isBooted,
     () => false,
   );
-  const uiState = supportUiState(booted);
+  const uiState = useSupportDisplayState(booted, Boolean(pluginKey));
 
   useEffect(() => {
     if (!pluginKey) {
@@ -88,42 +74,49 @@ export function SupportRuntime() {
     return null;
   }
 
-  const aboveNavigation = [
-    "/ai",
-    "/events",
-    "/home",
-    "/menu",
-    "/mining",
-    "/notifications",
-    "/start",
-    "/wallet",
-  ].some((path) => pathname === path || pathname.startsWith(`${path}/`));
+  const aboveNavigation =
+    [
+      "/events",
+      "/home",
+      "/menu",
+      "/mining",
+      "/notifications",
+      "/start",
+      "/wallet",
+    ].some((path) => pathname === path || pathname.startsWith(`${path}/`)) ||
+    pathname === "/ai";
 
   return (
-    <button
-      id="putduk-support-launcher"
-      className={[
-        "button",
-        "button--primary",
-        "support-launcher",
-        "putduk-support-launcher",
-        aboveNavigation ? "support-launcher--raised" : "",
-      ]
+    <div
+      className={["support-dock", aboveNavigation ? "support-dock--member" : ""]
         .filter(Boolean)
         .join(" ")}
-      type="button"
-      aria-label="상담 열기"
-      data-support-state={uiState}
-      onClick={() => {
-        if (booted) {
-          return;
-        }
-        router.push("/support");
-      }}
     >
-      <PutdukIcon name="spark" size={18} />
-      <span>상담</span>
-    </button>
+      <button
+        id="putduk-support-launcher"
+        className={[
+          "button",
+          "button--primary",
+          "support-launcher",
+          "putduk-support-launcher",
+          aboveNavigation ? "support-launcher--raised" : "",
+        ]
+          .filter(Boolean)
+          .join(" ")}
+        type="button"
+        aria-label={uiState === "unavailable" ? "상담 안내 열기" : "상담 열기"}
+        data-support-state={uiState}
+        onClick={() => {
+          if (booted) {
+            return;
+          }
+          router.push("/support");
+        }}
+      >
+        <PutdukIcon name="spark" size={18} />
+        <span>{uiState === "unavailable" ? "상담 안내" : "상담"}</span>
+      </button>
+    </div>
   );
 }
 
@@ -134,7 +127,7 @@ export function SupportStartButton() {
     controller.isBooted,
     () => false,
   );
-  const uiState = supportUiState(booted);
+  const uiState = useSupportDisplayState(booted, Boolean(pluginKey));
   const statusCopy = supportStatusCopy(uiState);
 
   return (
@@ -150,12 +143,19 @@ export function SupportStartButton() {
             return;
           }
           document.getElementById("support-guide")?.scrollIntoView({
-            behavior: "smooth",
+            behavior: window.matchMedia("(prefers-reduced-motion: reduce)")
+              .matches
+              ? "instant"
+              : "smooth",
             block: "start",
           });
         }}
       >
-        {uiState === "loading" ? "준비 중" : "상담 시작"}
+        {uiState === "loading"
+          ? "준비 중"
+          : uiState === "ready"
+            ? "상담 시작"
+            : "안내 보기"}
       </button>
       <p
         id={statusId}

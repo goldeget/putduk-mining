@@ -12,7 +12,11 @@ export default async function MenuPage() {
   await requirePageUser("/menu");
 
   return (
-    <div className={styles.menuPage}>
+    <div
+      className={styles.menuPage}
+      data-ui-ready="/menu"
+      data-ui-state="loaded"
+    >
       <PageHeading
         eyebrow="내 퍼뜩"
         title="내 퍼뜩"

@@ -1,10 +1,18 @@
 import Link from "next/link";
+import { ThemeControl } from "@/components/system/theme-control";
 
 import { StatePanel } from "@/components/ui/states";
 
 export default function AuthErrorPage() {
   return (
-    <main className="shell">
+    <main
+      className="shell terminal-page"
+      data-ui-ready="/auth/error"
+      data-ui-state="error"
+    >
+      <div className="terminal-page__tools">
+        <ThemeControl />
+      </div>
       <StatePanel
         tone="error"
         title="계정 확인을 완료하지 못했습니다"

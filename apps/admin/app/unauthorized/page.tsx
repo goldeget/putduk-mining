@@ -1,3 +1,4 @@
+import { ThemeControl } from "../../../../components/system/theme-control";
 import type { Route } from "next";
 import Link from "next/link";
 
@@ -19,7 +20,8 @@ export default async function UnauthorizedPage({
   return (
     <main className="auth-stage">
       <section className="auth-card">
-        <p className="eyebrow">COMMAND DENIED</p>
+        <ThemeControl />
+        <p className="eyebrow">권한 확인</p>
         <h1>권한이 없습니다</h1>
         <p>{message}</p>
         <div className="auth-actions">

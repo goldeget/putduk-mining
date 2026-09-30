@@ -45,8 +45,11 @@
 }
 
 .livingWorld {
+  grid-column: 1;
+  grid-row: 1;
   position: relative;
   min-height: 29rem;
+  background: #070706;
   overflow: hidden;
   padding: 0;
   isolation: isolate;
@@ -55,19 +58,23 @@
 .livingWorld::after {
   position: absolute;
   inset: auto 0 0;
-  z-index: -1;
+  z-index: 1;
+  pointer-events: none;
   height: 60%;
-  background: linear-gradient(
-    transparent,
-    color-mix(in srgb, var(--surface-sunken) 94%, transparent)
-  );
+  background: linear-gradient(transparent, rgba(7, 7, 6, 0.94));
   content: "";
 }
 
 .livingVisual {
   position: absolute;
   inset: 0;
-  z-index: -2;
+  z-index: auto;
+  pointer-events: none;
+}
+
+.livingVisual picture {
+  position: absolute;
+  inset: 0;
 }
 
 .livingVisual picture,
@@ -84,17 +91,21 @@
 
 .livingVisual :global(.mining-core) {
   position: absolute;
-  top: 3.5rem;
-  right: clamp(1rem, 8%, 5rem);
-  transform: scale(0.82);
-  transform-origin: center;
+  z-index: 2;
+  top: 1rem;
+  left: auto;
+  right: 2%;
+  width: min(68%, 20rem);
+  transform: none;
+  pointer-events: auto;
 }
 
 .livingStatus {
-  position: absolute;
-  right: clamp(1.2rem, 4vw, 2.8rem);
-  bottom: clamp(1.2rem, 4vw, 2.6rem);
-  left: clamp(1.2rem, 4vw, 2.8rem);
+  position: relative;
+  z-index: 3;
+  pointer-events: none;
+  padding: clamp(18rem, 30vw, 22rem) clamp(1.2rem, 4vw, 2.8rem)
+    clamp(1.2rem, 4vw, 2.6rem);
 }
 
 .liveStatus {
@@ -106,7 +117,7 @@
   border-radius: var(--radius-full);
   color: var(--status-success);
   background: color-mix(in srgb, var(--surface-sunken) 75%, transparent);
-  font-size: 0.74rem;
+  font-size: 0.875rem;
   font-weight: 800;
 }
 
@@ -142,6 +153,8 @@
 }
 
 .summary {
+  grid-column: 2;
+  grid-row: 1;
   display: grid;
   grid-template-rows: 1fr 1fr;
   gap: 1rem;
@@ -160,7 +173,7 @@
   align-items: center;
   gap: 0.55rem;
   color: var(--text-secondary);
-  font-size: 0.78rem;
+  font-size: 0.875rem;
   font-weight: 800;
 }
 
@@ -176,7 +189,7 @@
 .summaryHint {
   margin: 0;
   color: var(--text-tertiary);
-  font-size: 0.8rem;
+  font-size: 0.875rem;
   line-height: 1.5;
   word-break: keep-all;
 }
@@ -187,7 +200,7 @@
   gap: 0.35rem;
   margin-top: 1rem;
   color: var(--brand-primary);
-  font-size: 0.82rem;
+  font-size: 0.875rem;
   font-weight: 800;
   text-decoration: none;
 }
@@ -250,7 +263,7 @@
 
 .notificationsHeader a {
   color: var(--brand-primary);
-  font-size: 0.8rem;
+  font-size: 0.875rem;
   font-weight: 800;
   text-decoration: none;
 }
@@ -294,7 +307,7 @@
 .notificationMeta,
 .notificationTime {
   color: var(--text-tertiary);
-  font-size: 0.7rem;
+  font-size: 0.875rem;
 }
 
 .notificationTitle {
@@ -310,7 +323,7 @@
   margin: 0;
   overflow: hidden;
   color: var(--text-secondary);
-  font-size: 0.78rem;
+  font-size: 0.875rem;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -351,7 +364,7 @@
   max-width: 22rem;
   margin: 0 0 1.15rem;
   color: var(--text-secondary);
-  font-size: 0.84rem;
+  font-size: 0.875rem;
   line-height: 1.55;
   word-break: keep-all;
 }
@@ -361,6 +374,11 @@
 }
 
 @media (max-width: 1099px) {
+  .livingWorld,
+  .summary {
+    grid-column: 1;
+    grid-row: auto;
+  }
   .hero,
   .lower {
     grid-template-columns: 1fr;
@@ -391,9 +409,9 @@
   }
 
   .livingVisual :global(.mining-core) {
-    top: 2.2rem;
-    right: -1.5rem;
-    transform: scale(0.62);
+    top: 1rem;
+    right: 2%;
+    transform: none;
   }
 
   .summary {

@@ -1,4 +1,7 @@
 import type { Metadata, Viewport } from "next";
+import { ThemeRuntime } from "../../../components/system/theme-runtime";
+import { putdukFont } from "../../../lib/design/fonts";
+import { themeBootstrap } from "../../../lib/design/theme";
 
 import "./globals.css";
 
@@ -8,8 +11,10 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false, nocache: true },
 };
 export const viewport: Viewport = {
-  colorScheme: "dark light",
-  themeColor: "#08090b",
+  colorScheme: "light dark",
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
@@ -18,16 +23,28 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ko" suppressHydrationWarning>
+    <html lang="ko" className={putdukFont.variable} suppressHydrationWarning>
       <head>
+        <meta
+          name="theme-color"
+          content="#070706"
+          media="(prefers-color-scheme: dark)"
+        />
+        <meta
+          name="theme-color"
+          content="#f8f4ea"
+          media="(prefers-color-scheme: light)"
+        />
         <script
           dangerouslySetInnerHTML={{
-            __html:
-              'try{var t=localStorage.getItem("putduk-theme");if(t==="light"||t==="dark"){document.documentElement.dataset.theme=t;document.documentElement.style.colorScheme=t}}catch(e){}',
+            __html: themeBootstrap,
           }}
         />
       </head>
-      <body>{children}</body>
+      <body>
+        <ThemeRuntime />
+        {children}
+      </body>
     </html>
   );
 }

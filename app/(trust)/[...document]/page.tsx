@@ -10,6 +10,12 @@ import {
   TRUST_DOCUMENTS,
   TRUST_LAST_UPDATED,
 } from "@/lib/trust/public-content";
+import {
+  getPublicFactDisplayValue,
+  getPublicFactLabel,
+  getTrustNavigationLabel,
+  localizePublicWorldNames,
+} from "@/lib/trust/public-presentation";
 
 type PageProps = {
   params: Promise<{ document: string[] }>;
@@ -78,7 +84,11 @@ export default async function TrustDocumentPage({ params }: PageProps) {
   };
 
   return (
-    <article className="trust-document">
+    <article
+      className="trust-document"
+      data-ui-ready={path}
+      data-ui-state="loaded"
+    >
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -87,22 +97,22 @@ export default async function TrustDocumentPage({ params }: PageProps) {
       />
       <header className="trust-document__hero">
         <div>
-          <p className="eyebrow">{document.eyebrow}</p>
+          <p className="eyebrow">{getTrustNavigationLabel(document.path)}</p>
           <h1>{document.title}</h1>
-          <p>{document.summary}</p>
+          <p>{localizePublicWorldNames(document.summary)}</p>
         </div>
         <dl>
           <div>
-            <dt>CONTENT VERSION</dt>
+            <dt>안내 버전</dt>
             <dd>{TRUST_CONTENT_VERSION}</dd>
           </div>
           <div>
-            <dt>LAST UPDATED</dt>
+            <dt>최근 수정일</dt>
             <dd>{TRUST_LAST_UPDATED}</dd>
           </div>
           <div>
-            <dt>CANONICAL PATH</dt>
-            <dd>{document.path}</dd>
+            <dt>안내 주제</dt>
+            <dd>{getTrustNavigationLabel(document.path)}</dd>
           </div>
         </dl>
       </header>
@@ -110,14 +120,14 @@ export default async function TrustDocumentPage({ params }: PageProps) {
       {facts.length ? (
         <section className="trust-facts" aria-labelledby="facts-heading">
           <header>
-            <p className="eyebrow">VERIFIED PUBLIC DATA</p>
+            <p className="eyebrow">확인된 서비스 정보</p>
             <h2 id="facts-heading">공식 사실</h2>
           </header>
           <div>
             {facts.map((fact) => (
               <article key={fact.key}>
-                <span>{fact.key}</span>
-                <strong>{fact.value}</strong>
+                <span>{getPublicFactLabel(fact.key)}</span>
+                <strong>{getPublicFactDisplayValue(fact)}</strong>
                 <p>{fact.description}</p>
               </article>
             ))}
@@ -133,12 +143,12 @@ export default async function TrustDocumentPage({ params }: PageProps) {
               <div>
                 <h2>{section.heading}</h2>
                 {section.body.map((paragraph) => (
-                  <p key={paragraph}>{paragraph}</p>
+                  <p key={paragraph}>{localizePublicWorldNames(paragraph)}</p>
                 ))}
                 {section.items ? (
                   <ul>
                     {section.items.map((item) => (
-                      <li key={item}>{item}</li>
+                      <li key={item}>{localizePublicWorldNames(item)}</li>
                     ))}
                   </ul>
                 ) : null}
@@ -148,7 +158,7 @@ export default async function TrustDocumentPage({ params }: PageProps) {
         </div>
         <aside>
           <PutdukIcon name="shield" size={24} />
-          <p className="eyebrow">TRUST PRINCIPLE</p>
+          <p className="eyebrow">안내 원칙</p>
           <strong>확인되지 않은 값을 운영 사실처럼 표시하지 않습니다.</strong>
           <p className="ko-copy">
             현재 준비 상태와 실제 활성 상태를 구분하며, 변경은 버전과 적용일을

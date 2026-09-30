@@ -65,7 +65,7 @@
 
 .profileField small {
   color: var(--text-tertiary);
-  font-size: 0.72rem;
+  font-size: 0.875rem;
 }
 
 .profileField strong {

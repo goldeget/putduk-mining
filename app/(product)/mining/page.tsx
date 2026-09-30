@@ -14,11 +14,11 @@ import {
 } from "@/lib/product/mining-display";
 
 const worldColors: Record<string, string> = {
-  CRYPTO: "#a28ce8",
-  GOLD: "#d9b873",
-  KOREA: "#f6c85b",
-  SILVER: "#b9c4ca",
-  USA: "#78aee8",
+  CRYPTO: "var(--world-crypto)",
+  GOLD: "var(--world-gold)",
+  KOREA: "var(--world-korea)",
+  SILVER: "var(--world-silver)",
+  USA: "var(--world-usa)",
 };
 
 const worldDescriptions: Record<string, string> = {
@@ -53,7 +53,19 @@ export default async function MiningPage() {
     : null;
 
   return (
-    <div className={styles.worldPage}>
+    <div
+      className={styles.worldPage}
+      data-ui-ready="/mining"
+      data-ui-state={
+        sessionsError && worldsError
+          ? "error"
+          : sessionsError || worldsError
+            ? "partial"
+            : !sessions?.length
+              ? "empty"
+              : "loaded"
+      }
+    >
       <PageHeading
         eyebrow="채굴"
         title="채굴 월드"
@@ -102,7 +114,7 @@ export default async function MiningPage() {
             </div>
             <h2 id="world-hero-title">
               {currentSession
-                ? `${currentSession.world_name_ko}에서 채굴이 이어지고 있어요`
+                ? `${currentSession.world_name_ko} · ${currentStatus?.label ?? "상태 확인 중"}`
                 : "첫 월드에서 채굴을 시작해 보세요"}
             </h2>
             <p>

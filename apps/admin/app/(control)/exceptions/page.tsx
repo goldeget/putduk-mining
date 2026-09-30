@@ -40,7 +40,16 @@ export default async function ExceptionsPage() {
   const loadFailed = Boolean(mismatches.error || jobs.error);
 
   return (
-    <>
+    <div
+      data-ui-ready="/exceptions"
+      data-ui-state={
+        loadFailed
+          ? "partial"
+          : mismatchRows.length + jobRows.length === 0
+            ? "empty"
+            : "loaded"
+      }
+    >
       <QueueShell
         eyebrow="정산 · 대사"
         lead="정산 실패와 대사 차이를 확인합니다. 여기서 숫자를 자동으로 고치지 않습니다."
@@ -156,6 +165,6 @@ export default async function ExceptionsPage() {
           </QueueCard>
         ))}
       </section>
-    </>
+    </div>
   );
 }

@@ -7,6 +7,7 @@ import { PageHeading } from "@/components/product/page-heading";
 import { PushControl } from "@/components/product/push-control";
 import { Surface } from "@/components/ui/surface";
 import { requirePageUser } from "@/lib/auth/session";
+import { presentNotificationPreferencesRead } from "@/lib/product/notification-preferences-read";
 
 /**
  * 알림 설정 제품 의미(카피·패널·기본 선호)는 PR #24(notifications-product)가 소유한다.
@@ -14,16 +15,21 @@ import { requirePageUser } from "@/lib/auth/session";
  */
 export default async function NotificationSettingsPage() {
   const identity = await requirePageUser("/menu/notifications");
-  const { data: preferences } = await identity.supabase
+  const { data: preferences, error } = await identity.supabase
     .from("notification_preferences")
     .select(
       "mining_enabled, wallet_enabled, events_enabled, service_enabled, marketing_enabled",
     )
     .eq("user_id", identity.userId)
     .maybeSingle();
+  const read = presentNotificationPreferencesRead(preferences, error);
 
   return (
-    <div className={menuStyles.settingsPage}>
+    <div
+      className={menuStyles.settingsPage}
+      data-ui-ready="/menu/notifications"
+      data-ui-state={read.state}
+    >
       <Link className={menuStyles.backLink} href="/menu">
         <PutdukIcon name="arrow-right" size={16} aria-hidden="true" />
         <span>내 퍼뜩으로</span>
@@ -49,13 +55,9 @@ export default async function NotificationSettingsPage() {
           </p>
         </div>
         <NotificationPreferencesForm
-          initial={{
-            events_enabled: preferences?.events_enabled ?? true,
-            marketing_enabled: preferences?.marketing_enabled ?? false,
-            mining_enabled: preferences?.mining_enabled ?? true,
-            service_enabled: preferences?.service_enabled ?? true,
-            wallet_enabled: preferences?.wallet_enabled ?? true,
-          }}
+          key={JSON.stringify(read)}
+          initial={read.preferences}
+          readState={read.state}
         />
       </Surface>
     </div>

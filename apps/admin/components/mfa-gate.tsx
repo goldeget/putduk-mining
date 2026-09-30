@@ -1,12 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import type { Route } from "next";
 import { useRouter } from "next/navigation";
 
 import { createAdminBrowserClient } from "@/lib/supabase/browser";
+import { waitForAdminResult } from "@/lib/ui/abortable";
 
 type Enrolment = { id: string; qrCode: string; secret: string };
+const adminSessionIdPattern =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export function MfaGate({ returnTo }: { returnTo: string }) {
   const router = useRouter();
@@ -15,116 +19,196 @@ export function MfaGate({ returnTo }: { returnTo: string }) {
   const [code, setCode] = useState("");
   const [message, setMessage] = useState("인증 수단을 확인하고 있습니다.");
   const [busy, setBusy] = useState(true);
+  const [attempt, setAttempt] = useState(0);
+  const [prepareFailed, setPrepareFailed] = useState(false);
+  const alive = useRef(true);
+  const verifying = useRef(false);
+  const confirmation = useRef<AbortController | null>(null);
 
   useEffect(() => {
     let active = true;
+    alive.current = true;
+    const preparation = new AbortController();
+    const preparationTimeout = window.setTimeout(
+      () => preparation.abort(),
+      15_000,
+    );
     async function prepare() {
-      const supabase = createAdminBrowserClient();
-      const {
-        data: { session },
-        error: sessionError,
-      } = await supabase.auth.getSession();
-      if (!active) return;
-      if (sessionError || !session) {
-        setMessage("로그인 세션을 확인하지 못했습니다. 다시 로그인해 주세요.");
-        setBusy(false);
-        return;
-      }
-      const { data: factors, error } = await supabase.auth.mfa.listFactors();
-      if (!active) return;
-      if (error || !factors) {
-        setMessage(
-          "다중 인증 정보를 불러오지 못했습니다. 다시 로그인해 주세요.",
+      try {
+        const supabase = createAdminBrowserClient();
+        const {
+          data: { session },
+          error: sessionError,
+        } = await waitForAdminResult(
+          supabase.auth.getSession(),
+          preparation.signal,
         );
-        setBusy(false);
-        return;
-      }
-      const totpFactors = factors.totp ?? [];
-      const allFactors = factors.all ?? [];
-      const verified = totpFactors.find(
-        (factor) => factor.status === "verified",
-      );
-      if (verified) {
-        setFactorId(verified.id);
-        setMessage("인증 앱에 표시된 6자리 코드를 입력해 주세요.");
-        setBusy(false);
-        return;
-      }
-      const staleUnverified = allFactors.filter(
-        (factor) =>
-          factor.factor_type === "totp" && factor.status === "unverified",
-      );
-      const cleanup = await Promise.all(
-        staleUnverified.map((factor) =>
-          supabase.auth.mfa.unenroll({ factorId: factor.id }),
-        ),
-      );
-      if (cleanup.some(({ error: cleanupError }) => cleanupError)) {
-        setMessage(
-          "이전 인증 앱 등록을 정리하지 못했습니다. 다시 로그인해 주세요.",
+        if (!active) return;
+        if (sessionError || !session) {
+          setPrepareFailed(true);
+          setMessage(
+            "로그인 세션을 확인하지 못했습니다. 다시 로그인해 주세요.",
+          );
+          setBusy(false);
+          return;
+        }
+        const { data: factors, error } = await waitForAdminResult(
+          supabase.auth.mfa.listFactors(),
+          preparation.signal,
         );
-        setBusy(false);
-        return;
-      }
-      // 재시도마다 고유 friendlyName → GoTrue 이름 충돌로 enroll UI가 비는 것을 방지
-      const { data, error: enrollError } = await supabase.auth.mfa.enroll({
-        factorType: "totp",
-        friendlyName: `PUTDUK Admin ${Date.now().toString(36)}`,
-        issuer: "PUTDUK MINING",
-      });
-      if (!active) return;
-      if (enrollError || !data || data.type !== "totp") {
-        setMessage(
-          enrollError?.message?.trim()
-            ? `인증 앱 등록을 시작하지 못했습니다. (${enrollError.message})`
-            : "인증 앱 등록을 시작하지 못했습니다. 잠시 후 다시 시도해 주세요.",
+        if (!active) return;
+        if (error || !factors) {
+          setPrepareFailed(true);
+          setMessage(
+            "다중 인증 정보를 불러오지 못했습니다. 다시 로그인해 주세요.",
+          );
+          setBusy(false);
+          return;
+        }
+        const totpFactors = factors.totp ?? [];
+        const allFactors = factors.all ?? [];
+        const verified = totpFactors.find(
+          (factor) => factor.status === "verified",
         );
-      } else {
-        setFactorId(data.id);
-        setEnrolment({
-          id: data.id,
-          qrCode: data.totp.qr_code,
-          secret: data.totp.secret,
-        });
-        setMessage("인증 앱에 QR을 등록한 뒤 6자리 코드를 입력해 주세요.");
+        if (verified) {
+          setFactorId(verified.id);
+          setMessage("인증 앱에 표시된 6자리 코드를 입력해 주세요.");
+          setBusy(false);
+          return;
+        }
+        const staleUnverified = allFactors.filter(
+          (factor) =>
+            factor.factor_type === "totp" && factor.status === "unverified",
+        );
+        const cleanup = await waitForAdminResult(
+          Promise.all(
+            staleUnverified.map((factor) =>
+              supabase.auth.mfa.unenroll({ factorId: factor.id }),
+            ),
+          ),
+          preparation.signal,
+        );
+        if (!active) return;
+        if (cleanup.some(({ error: cleanupError }) => cleanupError)) {
+          setPrepareFailed(true);
+          setMessage(
+            "이전 인증 앱 등록을 정리하지 못했습니다. 다시 로그인해 주세요.",
+          );
+          setBusy(false);
+          return;
+        }
+        // 재시도마다 고유 friendlyName → GoTrue 이름 충돌로 enroll UI가 비는 것을 방지
+        const { data, error: enrollError } = await waitForAdminResult(
+          supabase.auth.mfa.enroll({
+            factorType: "totp",
+            friendlyName: `PUTDUK Admin ${Date.now().toString(36)}`,
+            issuer: "PUTDUK MINING",
+          }),
+          preparation.signal,
+        );
+        if (!active) return;
+        if (enrollError || !data || data.type !== "totp") {
+          setPrepareFailed(true);
+          setMessage(
+            "인증 앱 등록을 시작하지 못했습니다. 잠시 후 다시 시도해 주세요.",
+          );
+        } else {
+          setFactorId(data.id);
+          setEnrolment({
+            id: data.id,
+            qrCode: data.totp.qr_code,
+            secret: data.totp.secret,
+          });
+          setMessage("인증 앱에 QR을 등록한 뒤 6자리 코드를 입력해 주세요.");
+        }
+        setBusy(false);
+      } catch {
+        if (!active) return;
+        setFactorId(null);
+        setEnrolment(null);
+        setPrepareFailed(true);
+        setMessage(
+          "인증 정보를 확인하지 못했습니다. 연결을 확인한 뒤 다시 시도해 주세요.",
+        );
+      } finally {
+        window.clearTimeout(preparationTimeout);
+        if (active) setBusy(false);
       }
-      setBusy(false);
     }
     void prepare();
     return () => {
       active = false;
+      preparation.abort();
+      alive.current = false;
+      confirmation.current?.abort();
     };
-  }, []);
+  }, [attempt]);
 
   async function verify(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (busy || verifying.current) return;
     if (!factorId || !/^\d{6}$/.test(code)) {
       setMessage("6자리 인증 코드를 확인해 주세요.");
       return;
     }
     setBusy(true);
-    const { error } =
-      await createAdminBrowserClient().auth.mfa.challengeAndVerify({
-        factorId,
-        code,
-      });
-    if (error) {
-      setMessage("인증 코드가 올바르지 않거나 만료되었습니다.");
-      setBusy(false);
-      return;
+    verifying.current = true;
+    setMessage("인증을 확인하고 있습니다.");
+    const controller = new AbortController();
+    confirmation.current = controller;
+    const timeout = window.setTimeout(() => controller.abort(), 15_000);
+    try {
+      if (!navigator.onLine) throw new Error("OFFLINE");
+      const { error } = await waitForAdminResult(
+        createAdminBrowserClient().auth.mfa.challengeAndVerify({
+          factorId,
+          code,
+        }),
+        controller.signal,
+      );
+      if (!alive.current || controller.signal.aborted) return;
+      if (error) {
+        setMessage("인증 코드가 올바르지 않거나 만료되었습니다.");
+        setBusy(false);
+        return;
+      }
+      const recorded = await waitForAdminResult(
+        fetch("/api/v1/admin/session/mfa-confirmed", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: "{}",
+          signal: controller.signal,
+        }),
+        controller.signal,
+      );
+      const payload = await waitForAdminResult(
+        recorded.json().catch(() => null),
+        controller.signal,
+      );
+      if (!alive.current || controller.signal.aborted) return;
+      if (
+        !recorded.ok ||
+        payload?.data?.recorded !== true ||
+        typeof payload?.data?.adminSessionId !== "string" ||
+        !adminSessionIdPattern.test(payload.data.adminSessionId)
+      ) {
+        setMessage("보안 기록을 확인하지 못했습니다. 다시 로그인해 주세요.");
+        setBusy(false);
+        return;
+      }
+      router.replace(returnTo as Route);
+      router.refresh();
+    } catch {
+      if (alive.current)
+        setMessage(
+          "인증 결과를 확인하지 못했습니다. 연결을 확인하고 코드를 다시 입력해 주세요.",
+        );
+    } finally {
+      window.clearTimeout(timeout);
+      confirmation.current = null;
+      verifying.current = false;
+      if (alive.current) setBusy(false);
     }
-    const recorded = await fetch("/api/v1/admin/session/mfa-confirmed", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: "{}",
-    });
-    if (!recorded.ok) {
-      setMessage("보안 기록을 확인하지 못했습니다. 다시 로그인해 주세요.");
-      setBusy(false);
-      return;
-    }
-    router.replace(returnTo as Route);
-    router.refresh();
   }
 
   return (
@@ -148,10 +232,33 @@ export function MfaGate({ returnTo }: { returnTo: string }) {
       <p className="form-note" aria-live="polite">
         {message}
       </p>
+      {prepareFailed ? (
+        <div>
+          <button
+            className="ghost-button"
+            disabled={busy}
+            type="button"
+            onClick={() => {
+              setBusy(true);
+              setPrepareFailed(false);
+              setFactorId(null);
+              setEnrolment(null);
+              setMessage("인증 수단을 확인하고 있습니다.");
+              setAttempt((value) => value + 1);
+            }}
+          >
+            다시 확인
+          </button>
+          <Link className="text-link" href="/login">
+            다시 로그인
+          </Link>
+        </div>
+      ) : null}
       <form className="auth-form" onSubmit={verify}>
         <label>
           <span>6자리 인증 코드</span>
           <input
+            disabled={busy || !factorId}
             autoComplete="one-time-code"
             inputMode="numeric"
             maxLength={6}

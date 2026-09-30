@@ -33,7 +33,11 @@ export default async function MembersPage({
   const db = createAdminServiceClient();
   if (!parsedId.success) {
     return (
-      <div className={styles.membersPage}>
+      <div
+        className={styles.membersPage}
+        data-ui-ready="/members"
+        data-ui-state={id ? "error" : "empty"}
+      >
         <section className="page-intro">
           <p className="eyebrow">회원 한눈에</p>
           <h1>회원 한 사람의 맥락</h1>
@@ -170,10 +174,18 @@ export default async function MembersPage({
 
   if (authUser.error || !authUser.data.user) {
     return (
-      <div className={styles.membersPage}>
+      <div
+        className={styles.membersPage}
+        data-ui-ready="/members"
+        data-ui-state={authUser.error ? "error" : "empty"}
+      >
         <section className="page-intro">
           <p className="eyebrow">회원 한눈에</p>
-          <h1>회원을 찾지 못했습니다.</h1>
+          <h1>
+            {authUser.error
+              ? "회원 정보를 확인하지 못했습니다."
+              : "회원을 찾지 못했습니다."}
+          </h1>
           <p>
             식별자를 다시 확인해 주세요. 존재 여부 외의 정보는 표시하지
             않습니다.
@@ -258,7 +270,13 @@ export default async function MembersPage({
   );
 
   return (
-    <div className={styles.membersPage}>
+    <div
+      className={styles.membersPage}
+      data-ui-ready="/members"
+      data-ui-state={
+        countFailed || evidenceFailed || kycAccessFailed ? "partial" : "loaded"
+      }
+    >
       <section className="member-identity">
         <div className="member-avatar">
           {(profile.data?.display_name ?? "퍼").slice(0, 1)}

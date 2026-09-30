@@ -270,7 +270,18 @@ export default async function WithdrawalPage() {
   }
 
   return (
-    <>
+    <div
+      data-ui-ready="/wallet/withdraw"
+      data-ui-state={
+        accountsError ||
+        policiesError ||
+        requestsError ||
+        conversionError ||
+        destinationsError
+          ? "partial"
+          : "loaded"
+      }
+    >
       <Link className={styles.pageBack} href="/wallet">
         ← 내 자산으로
       </Link>
@@ -520,6 +531,6 @@ export default async function WithdrawalPage() {
           </div>
         )}
       </section>
-    </>
+    </div>
   );
 }

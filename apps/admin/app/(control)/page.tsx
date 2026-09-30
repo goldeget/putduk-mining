@@ -6,5 +6,18 @@ import { loadTodaySnapshot } from "./_lib/load-today-snapshot";
 export default async function TodayPage() {
   await requireAdminPage("/");
   const snapshot = await loadTodaySnapshot();
-  return <TodayView snapshot={snapshot} />;
+  return (
+    <div
+      data-ui-ready="/"
+      data-ui-state={
+        snapshot.hasUnavailable
+          ? "partial"
+          : snapshot.allQueuesEmpty
+            ? "empty"
+            : "loaded"
+      }
+    >
+      <TodayView snapshot={snapshot} />
+    </div>
+  );
 }

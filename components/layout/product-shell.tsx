@@ -29,7 +29,7 @@ export function ProductShell({
         <div className="product-sidebar__principle">
           <PutdukIcon name="shield" size={18} />
           <span>
-            <small>VERIFIED BALANCE</small>
+            <small>확인된 잔액</small>
             확인된 내역만 잔액에 반영됩니다
           </span>
         </div>
@@ -50,7 +50,7 @@ export function ProductShell({
             <ThemeControl />
             <div className="product-header__identity">
               <span>
-                <small>MEMBER</small>
+                <small>회원</small>
                 {displayName}
               </span>
               <span className="product-header__avatar" aria-hidden="true">

@@ -672,9 +672,10 @@ export function WithdrawalForm({
                 ))}
               </select>
             </label>
-            <label className={`${styles.field} ${styles.wideField}`}>
-              <span>받을 주소</span>
+            <div className={`${styles.field} ${styles.wideField}`}>
+              <label htmlFor="withdrawal-address">받을 주소</label>
               <input
+                id="withdrawal-address"
                 name="address"
                 minLength={20}
                 maxLength={128}
@@ -686,12 +687,14 @@ export function WithdrawalForm({
               <button
                 type="button"
                 className={styles.inlineReveal}
+                aria-controls="withdrawal-address"
+                aria-pressed={revealAddress}
                 onClick={() => setRevealAddress((value) => !value)}
                 disabled={pending}
               >
                 {revealAddress ? "주소 가리기" : "확인 시 전체 보기"}
               </button>
-            </label>
+            </div>
           </div>
         )
       ) : null}
