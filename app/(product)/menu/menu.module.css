@@ -1,0 +1,154 @@
+/* 메뉴 레인 전용 스타일. 공유 productization/globals는 수정하지 않는다. */
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.85rem;
+  color: var(--text-secondary);
+  font-size: 0.88rem;
+  text-decoration: none;
+}
+
+.backLink svg {
+  transform: rotate(180deg);
+}
+
+.backLink:hover,
+.backLink:focus-visible {
+  color: var(--brand-primary);
+}
+
+.backLink:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--brand-primary) 55%, transparent);
+  outline-offset: 3px;
+  border-radius: 0.35rem;
+}
+
+.accountPage {
+  display: grid;
+  gap: 1rem;
+}
+
+.profile {
+  display: grid;
+  grid-template-columns: minmax(15rem, 0.75fr) minmax(0, 1.25fr);
+  gap: 1rem;
+}
+
+.profileCard {
+  display: grid;
+  gap: 1rem;
+  padding: 1.35rem;
+}
+
+.profileCardPrimary {
+  align-content: space-between;
+  min-height: 12rem;
+  background:
+    radial-gradient(
+      circle at 12% 10%,
+      color-mix(in srgb, var(--brand-primary) 16%, transparent),
+      transparent 12rem
+    ),
+    var(--surface-raised);
+}
+
+.profileCardPrimary svg {
+  color: var(--brand-primary);
+}
+
+.profileField {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.profileField small {
+  color: var(--text-tertiary);
+  font-size: 0.72rem;
+}
+
+.profileField strong {
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+.profileCardPrimary .profileField strong {
+  font-size: clamp(1.3rem, 3vw, 2rem);
+}
+
+.sessions {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.35rem;
+}
+
+.sessionsCopy {
+  max-width: 28rem;
+}
+
+.sessionsCopy h2,
+.sessionsCopy p {
+  margin: 0;
+}
+
+.sessionsCopy h2 {
+  margin-block: 0.35rem;
+}
+
+.sessionsActions {
+  display: flex;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.sessionsActions form {
+  margin: 0;
+}
+
+.settingsPage {
+  display: grid;
+  gap: 1rem;
+}
+
+.settingsPanel {
+  display: grid;
+  gap: 1rem;
+  padding: 1.35rem;
+}
+
+.settingsHeading h2,
+.settingsHeading p {
+  margin: 0;
+}
+
+.settingsHeading h2 {
+  margin-block: 0.35rem 0.5rem;
+}
+
+.settingsHeading > p:last-child {
+  max-width: 28rem;
+  color: var(--text-secondary);
+}
+
+@media (max-width: 759px) {
+  .profile {
+    grid-template-columns: 1fr;
+  }
+
+  .sessions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .sessionsActions,
+  .sessionsActions form,
+  .sessionsActions button {
+    width: 100%;
+  }
+}

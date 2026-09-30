@@ -1,57 +1,20 @@
 import type { Route } from "next";
 import Link from "next/link";
 
-import {
-  PutdukIcon,
-  type PutdukIconName,
-} from "@/components/icons/putduk-icon";
+import { MENU_ITEMS } from "@/app/(product)/menu/menu-items";
+import { PutdukIcon } from "@/components/icons/putduk-icon";
 import styles from "@/components/product/product-experience.module.css";
 import { PageHeading } from "@/components/product/page-heading";
 import { Surface } from "@/components/ui/surface";
+import { requirePageUser } from "@/lib/auth/session";
 
-const menuItems: ReadonlyArray<{
-  description: string;
-  href: Route;
-  icon: PutdukIconName;
-  label: string;
-}> = [
-  {
-    href: "/menu/account" as Route,
-    icon: "user",
-    label: "계정 관리",
-    description: "계정, 로그인 기기, 로그아웃을 확인합니다.",
-  },
-  {
-    href: "/notifications",
-    icon: "bell",
-    label: "알림 센터",
-    description: "채굴·자산·이벤트 소식과 수신 설정입니다.",
-  },
-  {
-    href: "/ai",
-    icon: "ai",
-    label: "PUTDUK AI",
-    description: "내 상태와 이용 방법을 자연스럽게 물어봅니다.",
-  },
-  {
-    href: "/putduk-facts" as Route,
-    icon: "shield",
-    label: "신뢰 센터",
-    description: "공식 정보와 채굴의 기본 원칙을 확인합니다.",
-  },
-  {
-    href: "/support" as Route,
-    icon: "spark",
-    label: "상담",
-    description: "가입, 채굴, 입금과 출금 안내를 확인해요.",
-  },
-];
+export default async function MenuPage() {
+  await requirePageUser("/menu");
 
-export default function MenuPage() {
   return (
     <div className={styles.menuPage}>
       <PageHeading
-        eyebrow="MY PUTDUK"
+        eyebrow="내 퍼뜩"
         title="내 퍼뜩"
         lead="계정, 알림, 도움말을 한곳에서 확인하세요."
       />
@@ -67,8 +30,12 @@ export default function MenuPage() {
       </Surface>
 
       <nav className={styles.menuGrid} aria-label="내 퍼뜩 메뉴">
-        {menuItems.map((item) => (
-          <Link className={styles.menuCard} href={item.href} key={item.href}>
+        {MENU_ITEMS.map((item) => (
+          <Link
+            className={styles.menuCard}
+            href={item.href as Route}
+            key={item.href}
+          >
             <span className={styles.menuIcon}>
               <PutdukIcon name={item.icon} size={21} />
             </span>

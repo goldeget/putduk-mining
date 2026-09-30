@@ -1,9 +1,17 @@
+import Link from "next/link";
+
+import menuStyles from "@/app/(product)/menu/menu.module.css";
+import { PutdukIcon } from "@/components/icons/putduk-icon";
 import { NotificationPreferencesForm } from "@/components/product/notification-preferences-form";
 import { PageHeading } from "@/components/product/page-heading";
 import { PushControl } from "@/components/product/push-control";
 import { Surface } from "@/components/ui/surface";
 import { requirePageUser } from "@/lib/auth/session";
 
+/**
+ * 알림 설정 제품 의미(카피·패널·기본 선호)는 PR #24(notifications-product)가 소유한다.
+ * 이 레인은 메뉴 허브 전용 seam(뒤로가기·return path)만 유지한다.
+ */
 export default async function NotificationSettingsPage() {
   const identity = await requirePageUser("/menu/notifications");
   const { data: preferences } = await identity.supabase
@@ -15,7 +23,12 @@ export default async function NotificationSettingsPage() {
     .maybeSingle();
 
   return (
-    <>
+    <div className={menuStyles.settingsPage}>
+      <Link className={menuStyles.backLink} href="/menu">
+        <PutdukIcon name="arrow-right" size={16} aria-hidden="true" />
+        <span>내 퍼뜩으로</span>
+      </Link>
+
       <PageHeading
         eyebrow="알림 설정"
         title="필요한 순간에만, 명확한 알림."
@@ -45,6 +58,6 @@ export default async function NotificationSettingsPage() {
           }}
         />
       </Surface>
-    </>
+    </div>
   );
 }
