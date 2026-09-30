@@ -11,6 +11,7 @@ import {
   loginAsMember,
   startTrialFromUi,
 } from "./helpers/member-session";
+import { seedMemberNotification } from "./helpers/notification-fixtures";
 
 const HOME_READ_FAULT_TABLES =
   "trial_account_snapshots,mining_active_session_snapshots";
@@ -266,5 +267,95 @@ test("홈·START 반응형·테마 스크린샷을 남긴다", async ({ page }) 
     ].join("\n"),
     "utf8",
   );
+  expect(hydration).toEqual([]);
+});
+
+test("홈은 더 새로운 만료 알림을 limit 전에 빼고 본인 유효 알림만 보여 준다", async ({
+  page,
+}) => {
+  test.setTimeout(420_000);
+  const hydration = trackHydration(page);
+  const owner = await createConfirmedMember("home-notif-owner");
+  const other = await createConfirmedMember("home-notif-other");
+  const now = Date.now();
+  const at = (offsetMs: number) => new Date(now + offsetMs).toISOString();
+
+  const olderActive = seedMemberNotification({
+    body: "이전 시각이어도 아직 유효한 안내예요.",
+    category: "wallet",
+    createdAt: at(-6 * 60 * 60 * 1000),
+    route: "/wallet/deposit",
+    title: "홈에 남을 유효 알림",
+    userId: owner.userId,
+  });
+  const olderRead = seedMemberNotification({
+    body: "이미 확인한 안내예요.",
+    category: "mining",
+    createdAt: at(-8 * 60 * 60 * 1000),
+    readAt: at(-7 * 60 * 60 * 1000),
+    route: "/mining",
+    title: "읽은 유효 알림",
+    userId: owner.userId,
+  });
+
+  const expiredTitles = [
+    "만료된 최신 알림 1",
+    "만료된 최신 알림 2",
+    "만료된 최신 알림 3",
+  ];
+  expiredTitles.forEach((title, index) => {
+    seedMemberNotification({
+      body: "만료되어 홈 최근 알림에 있으면 안 돼요.",
+      category: "service",
+      createdAt: at(-(40 - index * 10) * 60 * 1000),
+      expiresAt: at(-2 * 60 * 1000),
+      title,
+      userId: owner.userId,
+    });
+  });
+
+  const expiredEvent = seedMemberNotification({
+    body: "만료된 이벤트 링크는 홈에 나오면 안 돼요.",
+    category: "events",
+    createdAt: at(-15 * 60 * 1000),
+    expiresAt: at(-60 * 1000),
+    route: "/login",
+    title: "만료된 이벤트 알림",
+    userId: owner.userId,
+  });
+  const foreign = seedMemberNotification({
+    body: "다른 회원의 알림은 홈에 나오면 안 돼요.",
+    category: "service",
+    createdAt: at(-30 * 1000),
+    title: "다른 회원의 홈 알림",
+    userId: other.userId,
+  });
+
+  await loginAsMember(page, owner, "/home");
+
+  await expect(
+    page.getByRole("heading", { name: "오늘도 채굴이 이어지고 있어요." }),
+  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "최근 알림" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "전체 보기" })).toHaveAttribute(
+    "href",
+    "/notifications",
+  );
+  await expect(page.getByText(olderActive.title)).toBeVisible();
+  await expect(page.getByText(olderRead.title)).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: new RegExp(olderActive.title) }),
+  ).toHaveAttribute("href", "/wallet/deposit");
+  await expect(
+    page.getByRole("link", { name: new RegExp(olderRead.title) }),
+  ).toHaveAttribute("href", "/mining");
+
+  for (const title of [...expiredTitles, expiredEvent.title, foreign.title]) {
+    await expect(page.getByText(title)).toHaveCount(0);
+  }
+  await expect(
+    page.getByText("새 알림이 없어요", { exact: false }),
+  ).toHaveCount(0);
+  await expect(page.getByRole("link", { name: /^로그인$/ })).toHaveCount(0);
   expect(hydration).toEqual([]);
 });

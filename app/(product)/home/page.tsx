@@ -6,6 +6,7 @@ import { PutdukIcon } from "@/components/icons/putduk-icon";
 import { RouteReloadButton } from "@/components/product/route-reload-button";
 import { StatePanel } from "@/components/ui/states";
 import { Surface } from "@/components/ui/surface";
+import { activeMemberNotificationExpiryOr } from "@/domain/notifications/member-inbox";
 import { formatTrialValue } from "@/domain/trial/format-trial-value";
 import { formatAtomicAmount } from "@/domain/wallet/format-amount";
 import { requirePageUser } from "@/lib/auth/session";
@@ -20,6 +21,8 @@ import styles from "./home.module.css";
 
 export default async function ProductHomePage() {
   const identity = await requirePageUser("/home");
+  // 알림 만료 경계는 이 서버 시각이다. 클라이언트 시계를 쓰지 않는다.
+  const notificationNow = new Date();
   const [
     { data: trial, error: trialError },
     { data: accounts, error: walletError },
@@ -47,6 +50,7 @@ export default async function ProductHomePage() {
       .from("notifications")
       .select("id, category, title_ko, body_ko, route, read_at, created_at")
       .eq("user_id", identity.userId)
+      .or(activeMemberNotificationExpiryOr(notificationNow))
       .order("created_at", { ascending: false })
       .limit(3),
   ]);

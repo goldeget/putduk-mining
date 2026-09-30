@@ -46,6 +46,15 @@ export function filterActiveMemberNotifications<
   );
 }
 
+/**
+ * 목록 limit 앞에 붙이는 PostgREST or 조건.
+ * 기준은 서버 시각 now 이다. expires_at 이 없거나 now 보다 이후인 행만 남긴다.
+ * 만료 행을 먼저 걸러야 최신 만료 행이 limit 슬롯을 차지하지 않는다.
+ */
+export function activeMemberNotificationExpiryOr(now: Date): string {
+  return `expires_at.is.null,expires_at.gt.${now.toISOString()}`;
+}
+
 export function notificationCategoryLabelKo(category: string): string {
   return CATEGORY_LABELS_KO[category] ?? "알림";
 }

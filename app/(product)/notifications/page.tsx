@@ -6,6 +6,7 @@ import { PushControl } from "@/components/product/push-control";
 import { StatePanel } from "@/components/ui/states";
 import { Surface } from "@/components/ui/surface";
 import {
+  activeMemberNotificationExpiryOr,
   countUnreadMemberNotifications,
   filterActiveMemberNotifications,
 } from "@/domain/notifications/member-inbox";
@@ -13,18 +14,21 @@ import { requirePageUser } from "@/lib/auth/session";
 
 export default async function NotificationCenterPage() {
   const identity = await requirePageUser("/notifications");
-  const nowIso = new Date().toISOString();
+  const notificationNow = new Date();
   const { data: rows, error } = await identity.supabase
     .from("notifications")
     .select(
       "id, category, title_ko, body_ko, route, read_at, created_at, expires_at",
     )
     .eq("user_id", identity.userId)
-    .or(`expires_at.is.null,expires_at.gt.${nowIso}`)
+    .or(activeMemberNotificationExpiryOr(notificationNow))
     .order("created_at", { ascending: false })
     .limit(50);
 
-  const notifications = filterActiveMemberNotifications(rows ?? [], new Date());
+  const notifications = filterActiveMemberNotifications(
+    rows ?? [],
+    notificationNow,
+  );
   const unread = countUnreadMemberNotifications(notifications);
 
   return (
