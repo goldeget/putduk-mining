@@ -13,6 +13,9 @@ export const MEMBER_DESTINATION_REGISTER_FALLBACK =
 export const MEMBER_WITHDRAWAL_NETWORK_FALLBACK =
   "인터넷 연결을 확인한 뒤 다시 시도해 주세요.";
 
+export const MEMBER_WELCOME_WITHDRAWAL_FALLBACK =
+  "첫 출금 요청을 접수하지 못했어요. 잠시 후 다시 시도해 주세요.";
+
 /** 출금 요청(hold) 제출 — 허용된 애플리케이션 오류 코드만 제품 카피 사용 */
 const SUBMIT_CODE_COPY = {
   UNAUTHENTICATED: "로그인이 필요합니다.",
@@ -31,9 +34,32 @@ const DESTINATION_CODE_COPY = {
   DESTINATION_REGISTER_FAILED: MEMBER_DESTINATION_REGISTER_FALLBACK,
 } as const satisfies Record<string, string>;
 
+/**
+ * 환영 보상 첫 출금.
+ * 일반 출금과 뜻이 같은 코드는 SUBMIT_CODE_COPY를 그대로 쓴다.
+ * 환영 전용 코드만 이 목록에 둔다. message 원문은 사용하지 않는다.
+ */
+const WELCOME_CODE_COPY = {
+  UNAUTHENTICATED: SUBMIT_CODE_COPY.UNAUTHENTICATED,
+  INVALID_IDEMPOTENCY_KEY: SUBMIT_CODE_COPY.INVALID_IDEMPOTENCY_KEY,
+  INSUFFICIENT_AVAILABLE_BALANCE:
+    SUBMIT_CODE_COPY.INSUFFICIENT_AVAILABLE_BALANCE,
+  INVALID_WELCOME_WITHDRAWAL_REQUEST: "환영 보상 출금 정보를 확인해 주세요.",
+  VERIFIED_WITHDRAWAL_DESTINATION_REQUIRED:
+    "검증과 보호 대기 시간이 끝난 본인 출금 계좌가 필요합니다.",
+  WELCOME_WITHDRAWAL_POLICY_UNAVAILABLE:
+    "현재 사용할 수 있는 환영 보상 출금 정책이 없습니다.",
+  WELCOME_REWARD_NOT_WITHDRAWABLE: "출금 가능한 환영 보상을 확인해 주세요.",
+  WELCOME_REWARD_WITHDRAWAL_EXISTS: "이미 접수된 환영 보상 출금이 있습니다.",
+  WELCOME_WITHDRAWAL_PAUSED:
+    "현재 안전 점검으로 출금 접수가 잠시 중단되었습니다.",
+  WELCOME_WITHDRAWAL_REQUEST_FAILED: MEMBER_WELCOME_WITHDRAWAL_FALLBACK,
+} as const satisfies Record<string, string>;
+
 export type MemberWithdrawalSubmitErrorCode = keyof typeof SUBMIT_CODE_COPY;
 export type MemberDestinationRegisterErrorCode =
   keyof typeof DESTINATION_CODE_COPY;
+export type MemberWelcomeWithdrawalErrorCode = keyof typeof WELCOME_CODE_COPY;
 
 function readErrorCode(payload: unknown): string | undefined {
   if (!payload || typeof payload !== "object") {
@@ -63,6 +89,21 @@ export function memberWithdrawalSubmitMessage(payload: unknown): string {
 }
 
 /**
+ * 환영 보상 첫 출금 응답 → 회원 노출용 한국어.
+ * payload.error.message는 무시한다. 코드가 없거나 목록 밖이면 기본 안내만 쓴다.
+ */
+export function memberWelcomeWithdrawalMessage(payload: unknown): string {
+  const code = readErrorCode(payload);
+  if (!code) {
+    return MEMBER_WELCOME_WITHDRAWAL_FALLBACK;
+  }
+  return (
+    WELCOME_CODE_COPY[code as MemberWelcomeWithdrawalErrorCode] ??
+    MEMBER_WELCOME_WITHDRAWAL_FALLBACK
+  );
+}
+
+/**
  * 출금 목적지 등록 응답 → 회원 노출용 한국어.
  * payload.error.message는 무시한다.
  */
@@ -82,8 +123,10 @@ export function isMemberFacingWithdrawalCopy(message: string): boolean {
   const allowlisted = new Set<string>([
     ...Object.values(SUBMIT_CODE_COPY),
     ...Object.values(DESTINATION_CODE_COPY),
+    ...Object.values(WELCOME_CODE_COPY),
     MEMBER_WITHDRAWAL_SUBMIT_FALLBACK,
     MEMBER_DESTINATION_REGISTER_FALLBACK,
+    MEMBER_WELCOME_WITHDRAWAL_FALLBACK,
     MEMBER_WITHDRAWAL_NETWORK_FALLBACK,
   ]);
   return allowlisted.has(message);

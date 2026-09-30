@@ -9,6 +9,11 @@ import {
   destinationMethodLabel,
   type WithdrawalDestinationMethod,
 } from "@/components/product/destination-type";
+import {
+  isMemberFacingWithdrawalCopy,
+  MEMBER_WITHDRAWAL_NETWORK_FALLBACK,
+  memberWelcomeWithdrawalMessage,
+} from "@/components/product/member-withdrawal-errors";
 import styles from "@/components/product/product-experience.module.css";
 
 type Feedback = { message: string; tone: "error" | "success" } | null;
@@ -65,15 +70,12 @@ export function WelcomeWithdrawalAction({
           policyId: selected.policyId,
         }),
       });
-      const payload = (await response.json().catch(() => null)) as {
-        error?: { message?: string };
-      } | null;
+      const payload = await response.json().catch(() => null);
 
       if (!response.ok) {
+        // 서버 message 원문은 회원 화면에 쓰지 않는다.
         setFeedback({
-          message:
-            payload?.error?.message ??
-            "첫 출금 요청을 접수하지 못했어요. 잠시 후 다시 시도해 주세요.",
+          message: memberWelcomeWithdrawalMessage(payload),
           tone: "error",
         });
         return;
@@ -85,9 +87,15 @@ export function WelcomeWithdrawalAction({
         tone: "success",
       });
       router.refresh();
-    } catch {
+    } catch (error) {
+      const candidate =
+        error instanceof Error
+          ? error.message
+          : MEMBER_WITHDRAWAL_NETWORK_FALLBACK;
       setFeedback({
-        message: "인터넷 연결을 확인한 뒤 다시 시도해 주세요.",
+        message: isMemberFacingWithdrawalCopy(candidate)
+          ? candidate
+          : MEMBER_WITHDRAWAL_NETWORK_FALLBACK,
         tone: "error",
       });
     } finally {
