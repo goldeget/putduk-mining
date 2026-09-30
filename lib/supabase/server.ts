@@ -7,7 +7,7 @@ import { getPublicEnv } from "@/lib/env/public";
 import {
   createSupabaseServerFetch,
   E2E_FORCE_REST_FAILURE_COOKIE,
-  parseE2eForceRestFailureTables,
+  resolveE2eForceRestFailureTables,
   supabaseServerFetch,
 } from "@/lib/supabase/server-fetch";
 
@@ -15,12 +15,10 @@ export async function createSupabaseServerClient() {
   const cookieStore = await cookies();
   const env = getPublicEnv();
   // 홈 등 SSR 스냅샷 조회만 테스트에서 실패시킬 때 사용. 프로덕션 APP_ENV에서는 무시한다.
-  const forceRestFailures =
-    process.env.APP_ENV === "test"
-      ? parseE2eForceRestFailureTables(
-          cookieStore.get(E2E_FORCE_REST_FAILURE_COOKIE)?.value,
-        )
-      : [];
+  const forceRestFailures = resolveE2eForceRestFailureTables(
+    process.env.APP_ENV,
+    cookieStore.get(E2E_FORCE_REST_FAILURE_COOKIE)?.value,
+  );
   const fetchImpl =
     forceRestFailures.length > 0
       ? createSupabaseServerFetch({ forceRestFailures })

@@ -14,6 +14,20 @@ type ServerFetchOptions = {
   forceRestFailures?: readonly string[];
 };
 
+/**
+ * 고장 쿠키는 APP_ENV=test 에서만 읽는다.
+ * production 을 포함한 그 외 환경에서는 쿠키가 있어도 효과가 없다.
+ */
+export function resolveE2eForceRestFailureTables(
+  appEnv: string | undefined,
+  cookieValue: string | undefined | null,
+): string[] {
+  if (appEnv !== "test") {
+    return [];
+  }
+  return parseE2eForceRestFailureTables(cookieValue);
+}
+
 /** 쿠키 값에서 안전한 스냅샷 테이블 이름만 허용한다. */
 export function parseE2eForceRestFailureTables(
   raw: string | undefined | null,

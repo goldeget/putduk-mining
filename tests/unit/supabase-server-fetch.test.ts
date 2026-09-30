@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   createSupabaseServerFetch,
   parseE2eForceRestFailureTables,
+  resolveE2eForceRestFailureTables,
 } from "@/lib/supabase/server-fetch";
 
 function createAbortAwarePendingFetch(): typeof fetch {
@@ -86,6 +87,21 @@ describe("createSupabaseServerFetch", () => {
     const auth = await serverFetch("http://127.0.0.1:54321/auth/v1/user");
     expect(auth.status).toBe(200);
     expect(upstream).toHaveBeenCalledOnce();
+  });
+});
+
+describe("resolveE2eForceRestFailureTables", () => {
+  it("ignores the fault cookie unless APP_ENV is test", () => {
+    const cookie = "trial_account_snapshots,mining_active_session_snapshots";
+    expect(resolveE2eForceRestFailureTables("production", cookie)).toEqual([]);
+    expect(resolveE2eForceRestFailureTables("staging", cookie)).toEqual([]);
+    expect(resolveE2eForceRestFailureTables("development", cookie)).toEqual([]);
+    expect(resolveE2eForceRestFailureTables(undefined, cookie)).toEqual([]);
+    expect(resolveE2eForceRestFailureTables("test", cookie)).toEqual([
+      "trial_account_snapshots",
+      "mining_active_session_snapshots",
+    ]);
+    expect(resolveE2eForceRestFailureTables("test", null)).toEqual([]);
   });
 });
 
