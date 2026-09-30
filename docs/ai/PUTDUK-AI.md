@@ -97,9 +97,11 @@ bounded PUTDUK completion or error event; raw provider events are not exposed.
 
 ### Conversation continuity gate
 
-Durable conversation/message/summary storage is **not implemented yet**. The
-current browser retains only its in-memory messages, so a refresh does not
-restore a conversation. This is an explicit functional gap, not simulated
+Durable conversation/message/summary storage is **not implemented yet**. See
+`docs/ai/CONVERSATION-CONTINUITY-AUDIT.md` and
+`domain/ai/continuity.ts` (`SESSION_MEMORY_ONLY`). The current browser retains
+only its in-memory messages, so a refresh does not restore a conversation. The
+UI discloses this honestly. This is an explicit functional gap, not simulated
 persistence. Before adding it, approve and implement together:
 
 - user-owned conversation, message and versioned safe-summary tables;

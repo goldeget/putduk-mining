@@ -1,0 +1,27 @@
+/* AI 채팅 전용 보강. 공유 globals / product-experience CSS는 수정하지 않는다. */
+
+.continuityNotice {
+  margin: 0;
+  padding: 0.55rem clamp(1rem, 4vw, 1.8rem);
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.recoveryButton {
+  margin-top: 0.45rem;
+  justify-self: start;
+}
+
+.thinkingStatic {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .continuityNotice {
+    transition: none;
+  }
+}

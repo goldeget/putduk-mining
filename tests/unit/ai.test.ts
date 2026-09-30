@@ -419,14 +419,22 @@ describe("OpenAI Responses stream parser", () => {
     });
   });
 
-  it("maps provider failures to a bounded internal code", () => {
+  it("ignores provider reasoning and non-text stream events", () => {
     expect(
       parseOpenAiSseData(
         JSON.stringify({
-          type: "response.failed",
-          response: { error: { message: "sensitive provider detail" } },
+          type: "response.reasoning.delta",
+          delta: "hidden chain of thought",
         }),
       ),
-    ).toEqual({ kind: "failed", code: "PROVIDER_STREAM_FAILED" });
+    ).toEqual({ kind: "ignored" });
+    expect(
+      parseOpenAiSseData(
+        JSON.stringify({
+          type: "response.output_item.added",
+          item: { type: "reasoning" },
+        }),
+      ),
+    ).toEqual({ kind: "ignored" });
   });
 });
