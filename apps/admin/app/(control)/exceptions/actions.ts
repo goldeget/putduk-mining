@@ -111,16 +111,13 @@ export async function acknowledgeReconciliationExceptionAction(
   }
 
   const db = createAdminServiceClient();
-  const { data, error } = await db.rpc(
-    "acknowledge_reconciliation_mismatch",
-    {
-      p_mismatch_id: parsed.data.mismatchId,
-      p_actor: access.principal.userId,
-      p_result: parsed.data.result,
-      p_reason: parsed.data.reason,
-      p_request_id: access.requestId,
-    },
-  );
+  const { data, error } = await db.rpc("acknowledge_reconciliation_mismatch", {
+    p_mismatch_id: parsed.data.mismatchId,
+    p_actor: access.principal.userId,
+    p_result: parsed.data.result,
+    p_reason: parsed.data.reason,
+    p_request_id: access.requestId,
+  });
 
   if (error) {
     const detail = [error.message, error.code, error.details]
@@ -128,7 +125,11 @@ export async function acknowledgeReconciliationExceptionAction(
       .join(" ");
     const failure = mapAcknowledgementFailure(detail);
     // 종료·경합 실패는 상태 변경이 없다. 시도 감사만 따로 남긴다.
-    if (failure.code === "STALE_OR_CLOSED" || failure.code === "ALREADY_INVESTIGATING") {
+    if (
+      !failure.ok &&
+      (failure.code === "STALE_OR_CLOSED" ||
+        failure.code === "ALREADY_INVESTIGATING")
+    ) {
       await db.from("audit_logs").insert({
         actor_user_id: access.principal.userId,
         actor_role: access.principal.role,

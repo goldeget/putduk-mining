@@ -38,7 +38,10 @@ function form(result = "ACCEPTED") {
 }
 
 function installClient(options: {
-  rpcResult: { data: unknown; error: { message: string; code?: string } | null };
+  rpcResult: {
+    data: unknown;
+    error: { message: string; code?: string } | null;
+  };
   auditError?: { message: string } | null;
 }) {
   const calls: string[] = [];
