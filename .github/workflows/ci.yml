@@ -221,7 +221,8 @@ jobs:
 
       - name: Run authenticated browser tests
         # 관리자 출금 E2E는 실제 TOTP 창을 기다린다. 이 한도를 줄이지 않는다.
-        timeout-minutes: 45
+        # P1 회귀 추가 후 170개 실행이 45분을 넘었다. job 한도 70분 안에서 여유를 둔다.
+        timeout-minutes: 60
         run: pnpm test:e2e:authenticated
 
       - name: Preserve authenticated browser evidence
