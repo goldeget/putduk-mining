@@ -176,19 +176,30 @@ export default async function MembersPage({
       .limit(5),
   ]);
 
-  if (authUser.error || !authUser.data.user) {
+  const authError = authUser.error as {
+    status?: number;
+    code?: string;
+    message?: string;
+  } | null;
+  const userMissing =
+    !authUser.data.user &&
+    (!authError ||
+      authError.status === 404 ||
+      authError.code === "user_not_found" ||
+      /user not found/i.test(authError.message ?? ""));
+  if (authError || !authUser.data.user) {
     return (
       <div
         className={styles.membersPage}
         data-ui-ready="/members"
-        data-ui-state={authUser.error ? "error" : "empty"}
+        data-ui-state={userMissing ? "empty" : "error"}
       >
         <section className="page-intro">
           <p className="eyebrow">회원 한눈에</p>
           <h1>
-            {authUser.error
-              ? "회원 정보를 확인하지 못했습니다."
-              : "회원을 찾지 못했습니다."}
+            {userMissing
+              ? "회원을 찾지 못했습니다."
+              : "회원 정보를 확인하지 못했습니다."}
           </h1>
           <p>
             식별자를 다시 확인해 주세요. 존재 여부 외의 정보는 표시하지

@@ -212,7 +212,7 @@ test("signed-in support route keeps Korean guidance and ready state", async ({
   const member = await createConfirmedMember("support-ready");
   await installSupportPort(page);
   await loginAsMember(page, member, "/home");
-  await expect(page.getByText("MEMBER").first()).toBeVisible();
+  await expect(page.getByText("회원", { exact: true }).first()).toBeVisible();
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/support");
   await waitForBoot(page, member.userId);

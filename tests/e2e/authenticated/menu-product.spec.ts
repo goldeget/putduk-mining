@@ -275,6 +275,6 @@ test("logout failure query shows recovery without ending the session", async ({
   await expect(
     page.getByRole("button", { name: "이 기기에서 로그아웃" }),
   ).toBeVisible();
-  await expect(page.getByText("MEMBER").first()).toBeVisible();
+  await expect(page.getByText("회원", { exact: true }).first()).toBeVisible();
   expect(hydration).toEqual([]);
 });

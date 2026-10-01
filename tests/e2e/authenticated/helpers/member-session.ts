@@ -28,7 +28,10 @@ export async function loginAsMember(
     );
   }
   // 서버 액션 쿠키가 브라우저에 정착할 때까지 인증 UI를 확인한다.
-  await page.getByText("MEMBER").first().waitFor({ timeout: 30_000 });
+  await page
+    .getByText("회원", { exact: true })
+    .first()
+    .waitFor({ timeout: 30_000 });
 }
 
 /** 첫 방문 안내 오버레이가 시작 CTA를 가리거나 클릭을 가로채지 않게 닫는다. */
@@ -123,7 +126,7 @@ export async function convertWelcomeFromUi(page: Page) {
   await page.goto("/start");
   await dismissGuidedQuestIfPresent(page);
   const memberVisible = await page
-    .getByText("MEMBER")
+    .getByText("회원", { exact: true })
     .first()
     .isVisible()
     .catch(() => false);
