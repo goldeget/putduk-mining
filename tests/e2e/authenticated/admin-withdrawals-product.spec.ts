@@ -99,9 +99,12 @@ async function expectNoHorizontalOverflow(page: Page) {
 
 async function shoot(page: Page, name: string) {
   mkdirSync(OUTPUT_DIR, { recursive: true });
+  // Pixel 7 배율로 전체 페이지를 찍으면 기기 픽셀이 캡처 한도를 넘는다.
+  // 전체 페이지는 CSS 픽셀로 남긴다. 넘침·테마·포커스 단언은 그대로다.
   await page.screenshot({
     path: path.join(OUTPUT_DIR, name),
     fullPage: true,
+    scale: "css",
   });
 }
 
