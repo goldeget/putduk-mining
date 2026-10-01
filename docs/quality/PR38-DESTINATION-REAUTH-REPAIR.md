@@ -77,6 +77,49 @@ the loaded UI (desktop/mobile Dark and mobile Light at 200% root text). They
 are not counted as completed withdrawal/reauthentication visual evidence.
 That existing capture-readiness gap remains explicit product evidence debt.
 
+### Functional pass and capture-redaction follow-up
+
+Run `36824346540` at `fdd8f7de1bafc2e87f6979b8949790718c7e0256`
+passed all nine jobs: web/admin/worker unit 390/40/17, 445 DB assertions,
+both production builds, foundation browser 42, typography 70/128 and the full
+authenticated suite 186 (45.6 minutes, no retry markers). Real TOTP and the
+retained caller/grant session assertions passed on desktop and mobile.
+Authenticated artifact `11145983829` has digest
+`sha256:391884c7ef26507f4aa3008bf13fc411ffeea7668ded7d53e92fe393f084e051`.
+
+Actual screenshot review found mobile full-page mask overlays displaced from
+their controls when captured after interaction-induced scrolling. Only synthetic
+fixture destinations were shown, not production financial data; nevertheless,
+those captures are not accepted as correctly redacted evidence. Desktop and
+tablet captures also retained scrolled sticky-chrome positions. The shared
+capture helper now fixes the scroll origin and temporarily hides sensitive
+controls only during capture, in addition to mask overlays. It does not clear
+values, change authentication or alter money flows. A separate isolated-HTML
+browser regression compares identical redacted pixels with different input
+values and verifies values, focus and visibility are restored. This is a capture
+privacy test, not a mocked application acceptance test.
+
+The first local probe found focus loss from visibility-based hiding; the second
+found unstable pixels from pending smooth scrolling. Neither is accepted as a
+pass. Capture-only opacity preserves focus, and two rendering frames settle the
+normalized scroll origin while the original scroll style is restored afterward.
+The four Dark/Light desktop/mobile cases then passed three repetitions each
+(12/12), including exact redacted PNG equality with different sensitive values.
+The final local `pnpm verify` after these capture changes passed again (84 assets,
+format/lint, both typechecks, 390 web/40 admin units, both production builds and
+bundle isolation). Four additional foundation browser cases now guard capture
+privacy; the authenticated suite remains 186 cases. Exact-head CI is pending.
+
+These capture-only changes require a fresh exact-head CI run and actual masked
+screen review before the final execution record. The earlier functional pass
+does not make the changed evidence head or the whole product complete.
+
+The reviewed real form still has material composition/density differences from
+the durable desktop Dark benchmark (navigation proportion, expanded welcome
+section and total form length). Light feedback readability also needs measured
+contrast acceptance. Correcting capture privacy is not a redesign or closure of
+those product gaps. No fresh LCP/INP/CLS/FPS/memory acceptance is claimed here.
+
 Local fresh Supabase startup was rejected by the execution environment policy.
 No workaround, historical container reuse, global inventory or remote DB call
 was attempted. The temporary fresh namespace/port configuration was restored.

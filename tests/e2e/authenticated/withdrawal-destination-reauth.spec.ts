@@ -18,6 +18,7 @@ import {
   reauthenticateDestination,
   type ReauthDestination,
 } from "./helpers/withdrawal-reauth";
+import { captureRedactedWithdrawalEvidence } from "./helpers/withdrawal-evidence";
 
 // Password/OTP/proof requests must not enter persisted browser traces/videos.
 // Explicit evidence screenshots mask every credential and destination control.
@@ -96,15 +97,7 @@ async function proofStates(ownerId: string) {
 }
 async function evidence(page: Page, name: string) {
   const screenshotPath = test.info().outputPath(`${name}.png`);
-  await page.screenshot({
-    path: screenshotPath,
-    fullPage: true,
-    mask: [
-      page.locator(
-        'input[name="destinationReauthPassword"],input[name="destinationReauthTotp"],input[name="accountHolder"],input[name="accountNumber"],input[name="address"]',
-      ),
-    ],
-  });
+  await captureRedactedWithdrawalEvidence(page, screenshotPath);
   await test.info().attach(name, {
     contentType: "image/png",
     path: screenshotPath,

@@ -15,6 +15,7 @@ import {
   loginAsMember,
 } from "./helpers/member-session";
 import { seedWithdrawalStatusMatrix } from "./helpers/withdrawal-fixtures";
+import { captureRedactedWithdrawalEvidence } from "./helpers/withdrawal-evidence";
 
 // The error/recovery case now enters a real reauthentication password. Do not
 // persist credential-bearing traces/videos or automatic failure screenshots.
@@ -222,15 +223,7 @@ test("빈 이력·검증·오류 복구와 KRW 기준 복사를 확인한다", a
   const evidencePath = test
     .info()
     .outputPath("registration-error-after-reauth.png");
-  await page.screenshot({
-    path: evidencePath,
-    fullPage: true,
-    mask: [
-      page.locator(
-        'input[name="destinationReauthPassword"],input[name="destinationReauthTotp"],input[name="accountHolder"],input[name="accountNumber"]',
-      ),
-    ],
-  });
+  await captureRedactedWithdrawalEvidence(page, evidencePath);
   await test.info().attach("withdrawal-registration-error-after-reauth", {
     contentType: "image/png",
     path: evidencePath,

@@ -69,6 +69,15 @@ never stored in React state, logical records, local storage, audit metadata or
 analytics. Opaque proof plaintext exists only in the no-store response and one
 registration header. New browser evidence disables credential-bearing traces
 and masks all credential/destination inputs in explicit screenshots.
+Captures normalize the scroll origin and also use screenshot-only CSS to hide
+those controls, preserving their layout and actual values. This second layer
+prevents pixel disclosure if a mobile full-page mask overlay is displaced;
+the capture style is removed afterward. A browser pixel-equality regression
+checks different synthetic values produce identical redacted images without
+changing input values, focus or visibility.
+
+The capture-only styling follows the installed Playwright screenshot API:
+[screenshot style and mask options](https://playwright.dev/docs/api/class-page#page-screenshot).
 
 Security events record admission/verification/denial/consumption using owner,
 method, grant ID and request ID. They contain neither credentials nor raw
