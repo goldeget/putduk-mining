@@ -30,7 +30,11 @@ export async function confirmOperatorStepUp(form: Locator, secret: string) {
     .locator("input")
     .fill(code);
   await form.getByRole("button", { name: "작업 확인" }).click();
-  await expect(form.getByText("작업 확인이 완료되었습니다")).toBeVisible({
+  await expect(
+    form.getByText(
+      "이번 작업을 한 번 실행할 수 있습니다. 다음 작업에는 다시 확인해 주세요.",
+    ),
+  ).toBeVisible({
     timeout: 30_000,
   });
 }
