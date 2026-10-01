@@ -45,6 +45,10 @@ Light/Dark, incorrect password, successful replacement, protected state,
 lost-response recovery, cross-session/owner/method/fingerprint denial,
 concurrent one-use consumption, rate limit and actual TOTP verification.
 Existing welcome and idempotency tests remain in the full suite.
+An additional single-statement delayed-consumption DB regression proves that
+waiting beyond expiry cannot use an otherwise valid proof. The clock hardening
+is a separate additive migration; previously tested migration bodies were not
+rewritten.
 Tablet/reduced-motion and keyboard-focus evidence is additionally captured in
 the desktop project's four Light/Dark KRW/USDT UI cases.
 

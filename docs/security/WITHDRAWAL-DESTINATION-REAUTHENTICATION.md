@@ -25,6 +25,8 @@ for the eligible first welcome withdrawal.
 4. A 256-bit opaque proof is bound to owner, originating Auth session, method
    and the existing canonical destination fingerprint. Only its SHA-256 hash
    is stored. The DB fixes its five-minute lifetime and verification timestamp.
+   Verification/consumption uses the actual DB clock, not the start time of a
+   statement that may have waited on a lock.
 5. Registration validates the proof against the current verified session before
    invoking the frozen service-only command. The private DB helper serializes
    on the existing owner withdrawal lock and atomically consumes a verified,

@@ -64,6 +64,24 @@ where token_hash=encode(extensions.digest('expired-usdt','sha256'),'hex');
 alter table public.withdrawal_destination_step_ups enable trigger withdrawal_destination_step_up_guard;
 select throws_ok($$select pg_temp.change_destination(owner_id,'USDT_ADDRESS','expired-usdt',repeat('d',64)) from reauth_ctx$$,'42501','WITHDRAWAL_REAUTH_REQUIRED','expired proof denied');
 
+-- The whole helper runs in ONE outer SQL statement. Its start time precedes
+-- expiry, but actual consumption is delayed until AFTER expiry. All fixture
+-- changes are rolled back when throws_ok catches the denied command.
+create function pg_temp.delayed_expired_change(p_owner uuid,p_session uuid) returns uuid
+language plpgsql as $$ declare v_id uuid; begin
+  insert into public.withdrawal_destination_step_ups(user_id,auth_session_id,token_hash,method,destination_fingerprint)
+  values(p_owner,p_session,encode(extensions.digest('delayed-expiry','sha256'),'hex'),'USDT_ADDRESS',repeat('d',64)) returning id into v_id;
+  update public.withdrawal_destination_step_ups set status='VERIFIED' where id=v_id;
+  alter table public.withdrawal_destination_step_ups disable trigger withdrawal_destination_step_up_guard;
+  update public.withdrawal_destination_step_ups set created_at=statement_timestamp()-interval '4 minutes',
+    verified_at=statement_timestamp()-interval '3 minutes',expires_at=clock_timestamp()+interval '40 milliseconds' where id=v_id;
+  alter table public.withdrawal_destination_step_ups enable trigger withdrawal_destination_step_up_guard;
+  perform pg_sleep(0.12);
+  return pg_temp.change_destination(p_owner,'USDT_ADDRESS','delayed-expiry',repeat('d',64));
+end $$;
+select throws_ok($$select pg_temp.delayed_expired_change(owner_id,session_id) from reauth_ctx$$,
+  '42501','WITHDRAWAL_REAUTH_REQUIRED','proof expiry is checked at actual consumption, not statement start');
+
 insert into public.withdrawal_destination_step_ups(user_id,auth_session_id,token_hash,method,destination_fingerprint)
 select owner_id,session_id,encode(extensions.digest('revoked-usdt','sha256'),'hex'),'USDT_ADDRESS',repeat('d',64) from reauth_ctx;
 update public.withdrawal_destination_step_ups set status='VERIFIED' where token_hash=encode(extensions.digest('revoked-usdt','sha256'),'hex');
