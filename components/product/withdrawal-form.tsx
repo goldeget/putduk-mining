@@ -152,6 +152,7 @@ export function WithdrawalForm({
               "이전 출금 요청을 접수했어요. 아래에서 상태를 확인해 주세요.",
           });
         } else if (record?.state === "CANCELLED" && record.destinationId) {
+          setMethod(record.method);
           setFeedback({
             tone: "success",
             message:

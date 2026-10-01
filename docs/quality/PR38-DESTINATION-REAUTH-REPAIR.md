@@ -27,8 +27,11 @@ boundary, privacy, deployment ordering and safe failure policy.
 | Product | Pending masked rendered screenshot review and scoped acceptance |
 | Whole-product launch gate | Not passed; this repair cannot close unrelated product/security/release gaps |
 
-Local web unit tests: 375 passed. Admin unit tests: 40 passed. Typechecks passed.
-Complete local application verification/build result and exact-head CI IDs
+Local web unit tests: 380 passed. Admin unit tests: 40 passed. Typechecks passed.
+Both production builds and the public/admin bundle boundary check passed.
+One additional concurrent focused run failed to start a test worker; the same
+73 assertions passed in a subsequent single-worker run without relaxing checks.
+Complete final local application verification and exact-head CI IDs
 will be recorded after execution; earlier PR CI is not acceptance of this delta.
 
 Local fresh Supabase startup was rejected by the execution environment policy.
@@ -42,6 +45,8 @@ Light/Dark, incorrect password, successful replacement, protected state,
 lost-response recovery, cross-session/owner/method/fingerprint denial,
 concurrent one-use consumption, rate limit and actual TOTP verification.
 Existing welcome and idempotency tests remain in the full suite.
+Tablet/reduced-motion and keyboard-focus evidence is additionally captured in
+the desktop project's four Light/Dark KRW/USDT UI cases.
 
 ## Boundaries and carried findings
 
