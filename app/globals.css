@@ -925,12 +925,14 @@ select {
   color: var(--status-danger);
 }
 
+.state-panel h1,
 .state-panel h2,
 .state-panel p {
   margin: 0;
   word-break: keep-all;
 }
 
+.state-panel h1,
 .state-panel h2 {
   max-width: 16ch;
   font-size: clamp(1.15rem, 2.8vw, 1.45rem);
@@ -3545,15 +3547,16 @@ select {
 }
 @media (forced-colors: active) {
   :focus-visible {
-    outline: 2px solid Highlight;
-    outline-offset: 3px;
-    box-shadow: none;
+    /* Forced colors suppresses shadow rings; this must win over page rules. */
+    outline: 2px solid Highlight !important;
+    outline-offset: 3px !important;
+    box-shadow: none !important;
   }
   button,
   input,
   select,
   textarea {
-    border: 1px solid ButtonText;
+    border: 1px solid ButtonText !important;
   }
 }
 

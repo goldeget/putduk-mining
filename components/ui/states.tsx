@@ -13,6 +13,7 @@ export function Skeleton({ label = "콘텐츠 불러오는 중" }: { label?: str
 type StatePanelProps = {
   action?: React.ReactNode;
   description: string;
+  headingLevel?: 1 | 2;
   title: string;
   tone?: "empty" | "error" | "offline";
 };
@@ -20,15 +21,17 @@ type StatePanelProps = {
 export function StatePanel({
   action,
   description,
+  headingLevel = 2,
   title,
   tone = "empty",
 }: StatePanelProps) {
+  const Heading = headingLevel === 1 ? "h1" : "h2";
   return (
     <section className={`state-panel state-panel--${tone}`} role="status">
       <span className="state-panel__icon">
         <PutdukIcon name={tone === "error" ? "shield" : "pulse"} />
       </span>
-      <h2>{title}</h2>
+      <Heading>{title}</Heading>
       <p>{description}</p>
       {action ? <div className="state-panel__action">{action}</div> : null}
     </section>

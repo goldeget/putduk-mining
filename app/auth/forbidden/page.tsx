@@ -14,6 +14,7 @@ export default function ForbiddenPage() {
         <ThemeControl />
       </div>
       <StatePanel
+        headingLevel={1}
         tone="error"
         title="운영 권한이 없습니다"
         description="이 계정에는 관리자 접근 권한이 없습니다. 권한은 운영 책임자가 승인합니다."

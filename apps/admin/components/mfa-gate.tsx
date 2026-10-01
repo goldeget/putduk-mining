@@ -71,6 +71,9 @@ export function MfaGate({ returnTo }: { returnTo: string }) {
           (factor) => factor.status === "verified",
         );
         if (verified) {
+          if (typeof verified.id !== "string" || !verified.id.trim()) {
+            throw new Error("MFA_FACTOR_UNAVAILABLE");
+          }
           setFactorId(verified.id);
           setMessage("인증 앱에 표시된 6자리 코드를 입력해 주세요.");
           setBusy(false);

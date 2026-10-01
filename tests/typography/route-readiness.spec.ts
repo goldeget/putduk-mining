@@ -35,7 +35,13 @@ test("a different route's marker does not satisfy readiness", async ({
 test("reports genuine empty, error and partial separately", async ({
   page,
 }) => {
-  for (const state of ["empty", "error", "partial", "unknown"] as const) {
+  for (const state of [
+    "empty",
+    "error",
+    "partial",
+    "unknown",
+    "offline",
+  ] as const) {
     await page.setContent(
       `<main><div data-ui-ready="/kyc" data-ui-state="${state}"><h1>본인 확인 검토</h1><p>${state}</p></div></main>`,
     );

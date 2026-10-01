@@ -1,13 +1,14 @@
 import { expect, type Page } from "@playwright/test";
 
 export type UiTerminalState =
-  "loaded" | "empty" | "error" | "partial" | "unknown";
+  "loaded" | "empty" | "error" | "partial" | "unknown" | "offline";
 export const UI_TERMINAL_STATES: readonly UiTerminalState[] = [
   "loaded",
   "empty",
   "error",
   "partial",
   "unknown",
+  "offline",
 ];
 
 /** The marker belongs to a completed route body, never the shared shell/loading fallback. */
@@ -22,7 +23,7 @@ export async function waitForRouteBody(
   await body.waitFor({ state: "visible", timeout });
   await expect
     .poll(async () => body.getAttribute("data-ui-state"), { timeout })
-    .toMatch(/^(loaded|empty|error|partial|unknown)$/);
+    .toMatch(/^(loaded|empty|error|partial|unknown|offline)$/);
   const state = (await body.getAttribute("data-ui-state")) as UiTerminalState;
   // A ready shell wrapped around a skeleton is not a completed page.
   await expect(

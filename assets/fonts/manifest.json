@@ -10,5 +10,8 @@
   "delivery": "next/font/local, same origin in both apps; no font CDN",
   "glyph_count": 14757,
   "verified_hangul": ["가", "힣", "퍼", "뜩"],
-  "verification": "Next bundled fontkit actual font metadata"
+  "verification": "Next bundled fontkit actual font metadata",
+  "license_original_sha256": "b04538c9abec39a3db75108cf0af0fd9c77032fe8aa2cf38345b4d250e98e38e",
+  "license_sha256": "85fce85e25260b03777bf10373d3bd9363b9da96d9e0ca86a280dd37ed7667a0",
+  "license_formatting": "One trailing ASCII space on OFL line 22 removed; complete copyright, Reserved Font Name and license text retained. Font bytes unchanged."
 }
