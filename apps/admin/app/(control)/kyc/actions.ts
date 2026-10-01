@@ -116,6 +116,29 @@ export async function reviewKycCaseAction(
     };
   }
 
+  const db = createAdminServiceClient();
+  // 역할·step-up 소비 이후에만 조회한다. 조회 실패는 심사 RPC를 호출하지 않는다.
+  // 실제 0건(error 없음)은 기존처럼 심사할 수 있다.
+  let submissionError: { message?: string } | null = null;
+  try {
+    const submissionRead = await db
+      .from("kyc_submissions")
+      .select("case_id")
+      .eq("case_id", parsed.data.caseId)
+      .limit(1);
+    submissionError = submissionRead.error;
+  } catch {
+    submissionError = { message: "KYC_SUBMISSIONS_UNAVAILABLE" };
+  }
+  if (submissionError) {
+    return {
+      ok: false,
+      code: "EVIDENCE_UNAVAILABLE",
+      message:
+        "제출 서류를 확인하지 못했습니다. 자료를 다시 확인한 뒤 검토해 주세요.",
+    };
+  }
+
   const rpcArgs = buildReviewKycRpcArgs({
     caseId: parsed.data.caseId,
     decision: parsed.data.decision,
@@ -124,10 +147,7 @@ export async function reviewKycCaseAction(
     requestId: access.requestId,
   });
 
-  const { error } = await createAdminServiceClient().rpc(
-    "review_kyc_case",
-    rpcArgs,
-  );
+  const { error } = await db.rpc("review_kyc_case", rpcArgs);
 
   if (error) {
     return mapKycReviewFailure(error.message);
