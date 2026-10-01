@@ -46,6 +46,40 @@ function recordOf(payload: unknown, ownerId: string, nullable = false) {
     : validateWithdrawalLogicalRequest(record, ownerId);
 }
 
+async function closeProtectedUncommittedIntent(
+  payload: unknown,
+  record: PersistedWithdrawalLogicalRequest | null,
+  ownerId: string,
+  store: LogicalRequestStore,
+  fetcher: Fetcher,
+) {
+  const protectedDestination =
+    payload && typeof payload === "object" && Object.hasOwn(payload, "data")
+      ? (payload as { data: { protectionActive?: unknown } }).data
+      : null;
+  if (
+    record?.destinationId &&
+    !record.withdrawalId &&
+    !["CONFIRMED", "CANCELLED", "DEFINITIVELY_REJECTED"].includes(
+      record.state,
+    ) &&
+    protectedDestination?.protectionActive === true
+  ) {
+    persistWithdrawalLogicalRequest(store, record, ownerId);
+    // The serialized server resolution rechecks actual money. A competing hold
+    // can return OUTCOME_UNCERTAIN; never replace that outcome with cancellation.
+    return resolveWithdrawalLogicalRequest(
+      ownerId,
+      store,
+      record,
+      "CANCEL",
+      null,
+      fetcher,
+    );
+  }
+  return record;
+}
+
 export function assertWithdrawalStorageReady(
   store: LogicalRequestStore,
   ownerId: string,
@@ -87,9 +121,17 @@ export async function recoverWithdrawalLogicalRequest(
     });
     if (!response.ok)
       throw new WithdrawalLogicalSafetyError("RECONCILIATION_REQUIRED");
-    const known = recordOf(await bodyOf(response), ownerId, true);
+    const payload = await bodyOf(response);
+    let known = recordOf(payload, ownerId, true);
     if (!known || known.key !== knownKey)
       throw new WithdrawalLogicalSafetyError("RECONCILIATION_REQUIRED");
+    known = (await closeProtectedUncommittedIntent(
+      payload,
+      known,
+      ownerId,
+      store,
+      fetcher,
+    ))!;
     if (
       ["CONFIRMED", "CANCELLED", "DEFINITIVELY_REJECTED"].includes(known.state)
     )
@@ -103,9 +145,25 @@ export async function recoverWithdrawalLogicalRequest(
   });
   if (!response.ok)
     throw new WithdrawalLogicalSafetyError("RECONCILIATION_REQUIRED");
-  const server = recordOf(await bodyOf(response), ownerId, true);
-  if (server && (!local || server.key === local.key))
-    return persistWithdrawalLogicalRequest(store, server, ownerId);
+  const payload = await bodyOf(response);
+  const server = recordOf(payload, ownerId, true);
+  if (server && (!local || server.key === local.key)) {
+    const resolved = (await closeProtectedUncommittedIntent(
+      payload,
+      server,
+      ownerId,
+      store,
+      fetcher,
+    ))!;
+    if (
+      ["CONFIRMED", "CANCELLED", "DEFINITIVELY_REJECTED"].includes(
+        resolved.state,
+      )
+    )
+      finishWithdrawalLogicalKey(store, resolved, ownerId);
+    else persistWithdrawalLogicalRequest(store, resolved, ownerId);
+    return resolved;
+  }
   if (local) {
     const resolved = await fetcher(WITHDRAWAL_INTENT_URL, {
       credentials: "same-origin",
@@ -175,6 +233,8 @@ export async function submitWithdrawalLogicalRequest(input: {
   legacyPresent?: boolean;
   knownKey?: string | null;
   onRecord?: (record: PersistedWithdrawalLogicalRequest | null) => void;
+  // Transient credential input only. Never part of the logical snapshot/store.
+  destinationReauth?: { password: string; totpCode?: string } | undefined;
 }) {
   const { ownerId, store, snapshot, onRecord } = input;
   const fetcher = input.fetcher ?? fetch;
@@ -215,12 +275,52 @@ export async function submitWithdrawalLogicalRequest(input: {
   if (!record.destinationId) {
     if (!snapshot.destination)
       throw new WithdrawalLogicalSafetyError("RECONCILIATION_REQUIRED");
+    let proof: string | null = null;
+    if (input.destinationReauth) {
+      const reauthResponse = await fetcher(
+        `${WITHDRAWAL_DESTINATION_REGISTER_URL}/reauth`,
+        {
+          method: "POST",
+          credentials: "same-origin",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            destination: snapshot.destination,
+            ...input.destinationReauth,
+          }),
+        },
+      );
+      const result = await bodyOf(reauthResponse);
+      if (!reauthResponse.ok)
+        throw new Error(memberDestinationRegisterMessage(result));
+      const candidate =
+        result && typeof result === "object" && Object.hasOwn(result, "data")
+          ? (result as { data: unknown }).data
+          : null;
+      if (
+        !candidate ||
+        typeof candidate !== "object" ||
+        !Object.hasOwn(candidate, "token") ||
+        !Object.hasOwn(candidate, "expiresAt")
+      )
+        throw new WithdrawalLogicalSafetyError("RECONCILIATION_REQUIRED");
+      const value = candidate as { token: unknown; expiresAt: unknown };
+      if (
+        typeof value.token !== "string" ||
+        !/^[A-Za-z0-9_-]{43}$/.test(value.token) ||
+        typeof value.expiresAt !== "string" ||
+        !Number.isFinite(Date.parse(value.expiresAt)) ||
+        Date.parse(value.expiresAt) <= Date.now()
+      )
+        throw new WithdrawalLogicalSafetyError("RECONCILIATION_REQUIRED");
+      proof = value.token;
+    }
     const response = await fetcher(WITHDRAWAL_DESTINATION_REGISTER_URL, {
       method: "POST",
       credentials: "same-origin",
       headers: {
         "Content-Type": "application/json",
         "Idempotency-Key": record.key,
+        ...(proof ? { "Withdrawal-Reauth": proof } : {}),
       },
       body: JSON.stringify(snapshot.destination),
     });
@@ -236,6 +336,23 @@ export async function submitWithdrawalLogicalRequest(input: {
       throw new WithdrawalLogicalSafetyError("RECONCILIATION_REQUIRED");
     record = persistWithdrawalLogicalRequest(store, bound, ownerId);
     onRecord?.(record);
+    const data = (payload as { data: { protectionActive?: unknown } }).data;
+    if (data.protectionActive === true) {
+      // Replacement is complete, but cannot hold money during the protection
+      // window. Close only the uncommitted intent after server reconciliation.
+      const cancelled = await resolveWithdrawalLogicalRequest(
+        ownerId,
+        store,
+        record,
+        "CANCEL",
+        null,
+        fetcher,
+      );
+      if (cancelled.state !== "CANCELLED" || cancelled.withdrawalId)
+        throw new WithdrawalLogicalSafetyError("RECONCILIATION_REQUIRED");
+      onRecord?.(null);
+      return cancelled;
+    }
   }
   // Repeat the durability proof immediately before the money command.
   persistWithdrawalLogicalRequest(store, record, ownerId);

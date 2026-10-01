@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 import { createConfirmedMember } from "../fixtures/local-auth";
+import { reauthenticateDestination } from "./helpers/withdrawal-reauth";
 import {
   countExternalSends,
   createLocalServiceRoleClient,
@@ -16,7 +17,6 @@ import {
 } from "./helpers/journey";
 import {
   loginAsMember,
-  registerDestinationViaProductionApi,
   requestWelcomeWithdrawalFromUi,
 } from "./helpers/member-session";
 import {
@@ -199,12 +199,25 @@ test.describe("welcome withdrawal negative guards", () => {
   }) => {
     const { member } = await prepareMemberThroughStart(page, "ws05-cool");
     await registerFirstKrwDestination(page);
-    await registerDestinationViaProductionApi(page, {
+    const replacement = {
       method: "KRW_BANK",
       accountHolder: "퍼뜩변경",
       accountNumber: "110987654321",
       bankCode: "SHINHAN",
-    });
+    } as const;
+    const proof = await reauthenticateDestination(
+      page,
+      replacement,
+      member.password,
+    );
+    const changed = await page.request.post(
+      "/api/v1/withdrawals/destinations",
+      {
+        data: replacement,
+        headers: { "Withdrawal-Reauth": proof },
+      },
+    );
+    expect(changed.status()).toBe(201);
 
     await page.goto("/wallet/withdraw");
     // 보호 안내가 요약·상세 두 곳에 있을 수 있다.

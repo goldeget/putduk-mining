@@ -94,6 +94,136 @@ const confirmed = () =>
 afterEach(() => vi.unstubAllGlobals());
 
 describe("withdrawal v2 durable logical lifecycle", () => {
+  it("lost replacement response closes the protected intent without credentials or money commands", async () => {
+    const { store } = storage();
+    persistWithdrawalLogicalRequest(store, record(), OWNER);
+    const cancelled = { ...bound(), state: "CANCELLED" as const };
+    const fetcher = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(
+        response({ record: bound(), protectionActive: true }),
+      )
+      .mockResolvedValueOnce(response({ record: cancelled }));
+    expect(
+      await recoverWithdrawalLogicalRequest(OWNER, store, fetcher),
+    ).toEqual(cancelled);
+    expect(loadWithdrawalLogicalRequest(store, OWNER)).toBeNull();
+    expect(
+      fetcher.mock.calls.map(([url, init]) => [url, init?.method ?? "GET"]),
+    ).toEqual([
+      ["/api/v1/withdrawals/intents", "GET"],
+      ["/api/v1/withdrawals/intents", "PATCH"],
+    ]);
+    expect(JSON.parse(String(fetcher.mock.calls[1]?.[1]?.body))).toEqual({
+      action: "CANCEL",
+      withdrawalId: null,
+    });
+  });
+  it("protected recovery preserves a competing committed money outcome", async () => {
+    const { store } = storage();
+    const fetcher = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(
+        response({ record: bound(), protectionActive: true }),
+      )
+      .mockResolvedValueOnce(response({ record: committed() }));
+    expect(
+      await recoverWithdrawalLogicalRequest(OWNER, store, fetcher),
+    ).toEqual(committed());
+    expect(loadWithdrawalLogicalRequest(store, OWNER)?.withdrawalId).toBe(WD);
+  });
+  it("protected metadata never cancels a record already linked to real money", async () => {
+    const { store } = storage();
+    const fetcher = vi
+      .fn<typeof fetch>()
+      .mockResolvedValue(
+        response({ record: committed(), protectionActive: true }),
+      );
+    expect(
+      await recoverWithdrawalLogicalRequest(OWNER, store, fetcher),
+    ).toEqual(committed());
+    expect(fetcher).toHaveBeenCalledTimes(1);
+  });
+  it("non-boolean protection metadata does not authorize cancellation", async () => {
+    const { store } = storage();
+    const fetcher = vi
+      .fn<typeof fetch>()
+      .mockResolvedValue(
+        response({ record: bound(), protectionActive: "true" }),
+      );
+    expect(
+      await recoverWithdrawalLogicalRequest(OWNER, store, fetcher),
+    ).toEqual(bound());
+    expect(fetcher).toHaveBeenCalledTimes(1);
+  });
+  it("replacement credentials and proof are transient and protection never creates a hold", async () => {
+    const { store, backing } = storage();
+    const token = "z".repeat(43);
+    const fetcher = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(response({ record: null }))
+      .mockResolvedValueOnce(response({ record: record() }, 201))
+      .mockResolvedValueOnce(
+        response({ token, expiresAt: "2099-10-01T00:00:00Z" }),
+      )
+      .mockResolvedValueOnce(
+        response({ record: bound(), protectionActive: true }, 201),
+      )
+      .mockResolvedValueOnce(
+        response({ record: { ...bound(), state: "CANCELLED" } }),
+      );
+    expect(
+      (
+        await submitWithdrawalLogicalRequest({
+          ownerId: OWNER,
+          store,
+          snapshot,
+          fetcher,
+          destinationReauth: {
+            password: "transient-password",
+            totpCode: "123456",
+          },
+        })
+      ).state,
+    ).toBe("CANCELLED");
+    expect(fetcher.mock.calls[2]?.[0]).toBe(
+      "/api/v1/withdrawals/destinations/reauth",
+    );
+    expect(fetcher.mock.calls[3]?.[1]?.headers).toMatchObject({
+      "Withdrawal-Reauth": token,
+    });
+    expect(
+      fetcher.mock.calls.some(([url]) => String(url).endsWith("/hold")),
+    ).toBe(false);
+    expect(JSON.stringify([...backing.values()])).not.toMatch(
+      /transient-password|123456|zzzzzzzz/,
+    );
+    expect(fetcher.mock.calls[3]?.[1]?.body).not.toContain("password");
+  });
+  it("failed real reauthentication cannot register or hold", async () => {
+    const { store } = storage();
+    const fetcher = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(response({ record: null }))
+      .mockResolvedValueOnce(response({ record: record() }, 201))
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify({ error: { code: "WITHDRAWAL_REAUTH_FAILED" } }),
+          { status: 403 },
+        ),
+      );
+    await expect(
+      submitWithdrawalLogicalRequest({
+        ownerId: OWNER,
+        store,
+        snapshot,
+        fetcher,
+        destinationReauth: { password: "wrong" },
+      }),
+    ).rejects.toThrow("비밀번호");
+    expect(fetcher).toHaveBeenCalledTimes(3);
+    expect(loadWithdrawalLogicalRequest(store, OWNER)?.key).toBe(KEY);
+  });
   it("new material and registered binding retain the canonical identity and opaque key", () => {
     const prepared = record();
     const registered = bound();

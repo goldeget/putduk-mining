@@ -53,7 +53,8 @@ export async function GET(request: Request) {
       status: 400,
     });
   }
-  const { data, error } = await createSupabaseAdminClient().rpc(
+  const service = createSupabaseAdminClient();
+  const { data, error } = await service.rpc(
     "resolve_withdrawal_logical_request",
     {
       p_user_id: identity.userId,
@@ -62,7 +63,29 @@ export async function GET(request: Request) {
     },
   );
   if (error) return withdrawalLogicalApiError(error);
-  return apiSuccess({ record: data });
+  let protectionActive = false;
+  if (data?.destinationId && !data.withdrawalId) {
+    const destination = await service
+      .from("withdrawal_destinations")
+      .select("protection_until")
+      .eq("id", data.destinationId)
+      .eq("user_id", identity.userId)
+      .maybeSingle();
+    if (
+      destination.error ||
+      !destination.data ||
+      !Number.isFinite(Date.parse(destination.data.protection_until))
+    )
+      return apiError({
+        code: "WITHDRAWAL_RECONCILIATION_REQUIRED",
+        message: "이전 요청을 확인하지 못했어요. 잠시 후 다시 확인해 주세요.",
+        status: 503,
+      });
+    protectionActive =
+      Date.parse(destination.data.protection_until) > Date.now();
+  }
+  // Presentation metadata only; the DB command still owns monetary eligibility.
+  return apiSuccess({ record: data, protectionActive });
 }
 
 export async function POST(request: Request) {

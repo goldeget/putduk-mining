@@ -31,6 +31,11 @@ const SUBMIT_CODE_COPY = {
 const DESTINATION_CODE_COPY = {
   UNAUTHENTICATED: "로그인이 필요합니다.",
   INVALID_DESTINATION: "출금 목적지 정보를 확인해 주세요.",
+  WITHDRAWAL_REAUTH_REQUIRED: "비밀번호를 다시 확인해 주세요.",
+  WITHDRAWAL_REAUTH_FAILED: "비밀번호와 인증 정보를 다시 확인해 주세요.",
+  WITHDRAWAL_REAUTH_MFA_REQUIRED: "인증 앱의 숫자 6자리를 입력해 주세요.",
+  WITHDRAWAL_REAUTH_RATE_LIMITED: "시도가 많아요. 15분 뒤 다시 확인해 주세요.",
+  WITHDRAWAL_REAUTH_UNAVAILABLE: "잠시 후 다시 확인해 주세요.",
   /** 구성 미비도 회원에게는 내부 원인 대신 등록 실패 안내 */
   WITHDRAWAL_SECURITY_NOT_CONFIGURED: MEMBER_DESTINATION_REGISTER_FALLBACK,
   DESTINATION_REGISTER_FAILED: MEMBER_DESTINATION_REGISTER_FALLBACK,
@@ -116,10 +121,10 @@ export function memberDestinationRegisterMessage(payload: unknown): string {
   if (!code) {
     return MEMBER_DESTINATION_REGISTER_FALLBACK;
   }
-  return (
-    DESTINATION_CODE_COPY[code as MemberDestinationRegisterErrorCode] ??
-    MEMBER_DESTINATION_REGISTER_FALLBACK
-  );
+  return Object.hasOwn(DESTINATION_CODE_COPY, code)
+    ? (DESTINATION_CODE_COPY[code as MemberDestinationRegisterErrorCode] ??
+        MEMBER_DESTINATION_REGISTER_FALLBACK)
+    : MEMBER_DESTINATION_REGISTER_FALLBACK;
 }
 
 /** 허용 목록에 있는 회원용 안내인지 판별 (catch에서 재사용) */
