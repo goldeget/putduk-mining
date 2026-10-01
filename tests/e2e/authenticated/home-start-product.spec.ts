@@ -113,7 +113,7 @@ test("홈과 START READY 상태를 도메인 스냅샷으로 보여 준다", asy
   await loginAsMember(page, member, "/home");
 
   await expect(
-    page.getByRole("heading", { name: "오늘도 채굴이 이어지고 있어요." }),
+    page.getByRole("heading", { name: "오늘의 채굴 상태를 확인해요." }),
   ).toBeVisible();
   await expect(
     page.getByRole("link", { name: /첫 채굴 시작/ }).first(),
@@ -207,7 +207,7 @@ test("홈·START 오류 복구와 키보드·축소 모션을 확인한다", asy
     .first()
     .click();
   await expect(
-    page.getByRole("heading", { name: "오늘도 채굴이 이어지고 있어요." }),
+    page.getByRole("heading", { name: "오늘의 채굴 상태를 확인해요." }),
   ).toBeVisible({ timeout: 30_000 });
 
   await applyTheme(page, "dark");
@@ -334,7 +334,7 @@ test("홈은 더 새로운 만료 알림을 limit 전에 빼고 본인 유효 �
   await loginAsMember(page, owner, "/home");
 
   await expect(
-    page.getByRole("heading", { name: "오늘도 채굴이 이어지고 있어요." }),
+    page.getByRole("heading", { name: "오늘의 채굴 상태를 확인해요." }),
   ).toBeVisible();
   await expect(page.getByRole("heading", { name: "최근 알림" })).toBeVisible();
   await expect(page.getByRole("link", { name: "전체 보기" })).toHaveAttribute(

@@ -159,7 +159,7 @@ test.describe("authenticated success visual evidence", () => {
       {
         route: "home",
         url: "/home",
-        ready: "오늘도 채굴이 이어지고 있어요.",
+        ready: "오늘의 채굴 상태를 확인해요.",
       },
       {
         route: "start",

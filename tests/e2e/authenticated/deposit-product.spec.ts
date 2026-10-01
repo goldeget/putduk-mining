@@ -539,13 +539,13 @@ test("covers deposit layout, theme, focus, and reduced motion", async ({
 
       await page.setViewportSize({ height: 844, width: 390 });
       await page.getByLabel("화면 테마").selectOption("system");
-      await expect(page.locator("html")).not.toHaveAttribute(
-        "data-theme",
-        "dark",
+      await expect(page.locator("html")).toHaveAttribute(
+        "data-theme-preference",
+        "system",
       );
-      await expect(page.locator("html")).not.toHaveAttribute(
+      await expect(page.locator("html")).toHaveAttribute(
         "data-theme",
-        "light",
+        /^(light|dark)$/,
       );
       await page.emulateMedia({
         colorScheme: "light",

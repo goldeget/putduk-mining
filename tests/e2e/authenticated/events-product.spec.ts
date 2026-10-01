@@ -212,10 +212,15 @@ test("shows empty events and notices without invented content", async ({
 
   await page.setViewportSize({ height: 844, width: 390 });
   await page.getByLabel("화면 테마").selectOption("system");
-  // 시스템 모드: data-theme를 light/dark(또는 system)로 강제하지 않음.
-  // OS prefers-color-scheme이 실제 색을 구동한다.
-  await expect(page.locator("html")).not.toHaveAttribute("data-theme", "dark");
-  await expect(page.locator("html")).not.toHaveAttribute("data-theme", "light");
+  // 선호는 system으로 남고, 해석된 data-theme가 OS 색을 따른다.
+  await expect(page.locator("html")).toHaveAttribute(
+    "data-theme-preference",
+    "system",
+  );
+  await expect(page.locator("html")).toHaveAttribute(
+    "data-theme",
+    /^(light|dark)$/,
+  );
   await page.emulateMedia({ colorScheme: "light", reducedMotion: "reduce" });
   await expect
     .poll(() =>
