@@ -444,11 +444,20 @@ select is(
 );
 
 -- Replacement destination is protected during cooldown
+-- Synthetic verified proof; the production API verifies the password/MFA.
+insert into auth.sessions(id,user_id,created_at,updated_at)
+select 'd5555555-5555-4555-8555-555555555555',user_a,statement_timestamp(),statement_timestamp() from ws04_ctx;
+insert into public.withdrawal_destination_step_ups(user_id,auth_session_id,token_hash,method,destination_fingerprint)
+select user_a,'d5555555-5555-4555-8555-555555555555',
+  encode(extensions.digest('step-up-token-ws04-a2','sha256'),'hex'),'KRW_BANK',
+  encode(extensions.digest('fp-ws04-bank-a-replaced','sha256'),'hex') from ws04_ctx;
+update public.withdrawal_destination_step_ups set status='VERIFIED'
+where user_id=(select user_a from ws04_ctx) and method='KRW_BANK';
 update ws04_ctx
 set destination_a = public.register_krw_bank_destination(
   user_a,
   decode('ffeeddccbbaa99887766554433221100', 'hex'),
-  'fp-ws04-bank-a-replaced',
+  encode(extensions.digest('fp-ws04-bank-a-replaced','sha256'),'hex'),
   '국민 **9999',
   'step-up-token-ws04-a2',
   'd4444444-4444-4444-8444-444444444445',
@@ -489,6 +498,12 @@ select
   statement_timestamp(), operator_id, false
 from ws04_ctx;
 
+insert into public.withdrawal_destination_step_ups(user_id,auth_session_id,token_hash,method,destination_fingerprint)
+select user_a,'d5555555-5555-4555-8555-555555555555',
+  encode(extensions.digest('step-up-token-ws04-usdt2','sha256'),'hex'),'USDT_ADDRESS',
+  encode(extensions.digest('fp-ws04-usdt-a2','sha256'),'hex') from ws04_ctx;
+update public.withdrawal_destination_step_ups set status='VERIFIED'
+where user_id=(select user_a from ws04_ctx) and method='USDT_ADDRESS';
 update ws04_ctx
 set destination_a = public.register_usdt_withdrawal_destination(
   user_a,
@@ -537,7 +552,7 @@ set destination_a = public.register_usdt_withdrawal_destination(
   'TRC20',
   'TNEWaBcDeFgHiJkLmNoPqRsTuVwXyZ9999',
   decode('99887766554433221100ffeeddccbbaa', 'hex'),
-  'fp-ws04-usdt-a2',
+  encode(extensions.digest('fp-ws04-usdt-a2','sha256'),'hex'),
   'TRC20 TNEW…9999',
   'step-up-token-ws04-usdt2',
   'd4444444-4444-4444-8444-444444444447',
