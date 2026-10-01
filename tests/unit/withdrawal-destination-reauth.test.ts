@@ -21,8 +21,17 @@ vi.mock("@/lib/supabase/server-fetch", () => ({
 }));
 
 const OWNER = "11111111-1111-4111-8111-111111111111";
+const SESSION = "22222222-2222-4222-8222-222222222222";
 function authClient() {
   const auth = {
+    getUser: vi.fn().mockResolvedValue({
+      data: { user: { id: OWNER } },
+      error: null,
+    }),
+    getClaims: vi.fn().mockResolvedValue({
+      data: { claims: { sub: OWNER, session_id: SESSION, aal: "aal2" } },
+      error: null,
+    }),
     signInWithPassword: vi.fn().mockResolvedValue({
       data: { user: { id: OWNER }, session: {} },
       error: null,
@@ -42,15 +51,23 @@ function authClient() {
 }
 const credentials = {
   userId: OWNER,
+  sessionId: SESSION,
   email: "synthetic@putduk.test",
   password: "synthetic-only-password",
 };
 let current: ReturnType<typeof authClient>;
+let caller: ReturnType<typeof authClient>;
 beforeEach(() => {
   current = authClient();
+  caller = authClient();
 });
 const check = (totpCode?: string) =>
-  verifyWithdrawalPassword({ ...credentials, auth: current.client, totpCode });
+  verifyWithdrawalPassword({
+    ...credentials,
+    auth: current.client,
+    callerAuth: caller.client,
+    totpCode,
+  });
 function withMfa(type = "totp") {
   current.auth.mfa.listFactors.mockResolvedValue({
     data: {
@@ -166,19 +183,25 @@ describe("destination change password/MFA proof", () => {
   it("checks TOTP against the factor returned by Auth", async () => {
     withMfa();
     expect(await check("123456")).toBe("VERIFIED");
-    expect(current.auth.mfa.challengeAndVerify).toHaveBeenCalledWith({
+    expect(caller.auth.mfa.challengeAndVerify).toHaveBeenCalledWith({
       factorId: "trusted-factor",
       code: "123456",
     });
+    expect(current.auth.mfa.challengeAndVerify).not.toHaveBeenCalled();
+    expect(caller.auth.signInWithPassword).not.toHaveBeenCalled();
+    expect(caller.auth.signOut).not.toHaveBeenCalled();
+    expect(current.auth.signOut.mock.invocationCallOrder[0]).toBeLessThan(
+      caller.auth.mfa.challengeAndVerify.mock.invocationCallOrder[0]!,
+    );
   });
   it("rejects invalid TOTP", async () => {
     withMfa();
-    current.auth.mfa.challengeAndVerify.mockResolvedValue({ error: {} });
+    caller.auth.mfa.challengeAndVerify.mockResolvedValue({ error: {} });
     expect(await check("123456")).toBe("DENIED");
   });
   it("requires actual AAL2 after challenge", async () => {
     withMfa();
-    current.auth.mfa.getAuthenticatorAssuranceLevel.mockResolvedValue({
+    caller.auth.mfa.getAuthenticatorAssuranceLevel.mockResolvedValue({
       data: { currentLevel: "aal1" },
       error: null,
     });
@@ -187,6 +210,70 @@ describe("destination change password/MFA proof", () => {
   it("cleanup failure cannot issue a proof", async () => {
     current.auth.signOut.mockResolvedValue({ error: {} });
     expect(await check()).toBe("DENIED");
+  });
+  it("cleanup failure cannot challenge or sign out the caller", async () => {
+    withMfa();
+    current.auth.signOut.mockResolvedValue({ error: {} });
+    expect(await check("123456")).toBe("DENIED");
+    expect(caller.auth.mfa.challengeAndVerify).not.toHaveBeenCalled();
+    expect(caller.auth.signOut).not.toHaveBeenCalled();
+  });
+  it.each(["owner", "claim-owner", "session", "unavailable"])(
+    "rejects a mismatched caller before MFA (%s)",
+    async (reason) => {
+      withMfa();
+      caller.auth.getUser.mockResolvedValue({
+        data: { user: { id: reason === "owner" ? "other" : OWNER } },
+        error: reason === "unavailable" ? {} : null,
+      });
+      caller.auth.getClaims.mockResolvedValue({
+        data: {
+          claims: {
+            sub: reason === "claim-owner" ? "other" : OWNER,
+            session_id: reason === "session" ? "other-session" : SESSION,
+            aal: "aal2",
+          },
+        },
+        error: null,
+      });
+      expect(await check("123456")).toBe("DENIED");
+      expect(caller.auth.mfa.challengeAndVerify).not.toHaveBeenCalled();
+    },
+  );
+  it.each(["owner", "session", "aal", "unavailable"])(
+    "requires the upgraded claims to retain owner/session/AAL2 (%s)",
+    async (reason) => {
+      withMfa();
+      caller.auth.getClaims
+        .mockResolvedValueOnce({
+          data: { claims: { sub: OWNER, session_id: SESSION, aal: "aal1" } },
+          error: null,
+        })
+        .mockResolvedValueOnce({
+          data: {
+            claims: {
+              sub: reason === "owner" ? "other" : OWNER,
+              session_id: reason === "session" ? "other-session" : SESSION,
+              aal: reason === "aal" ? "aal1" : "aal2",
+            },
+          },
+          error: reason === "unavailable" ? {} : null,
+        });
+      expect(await check("123456")).toBe("DENIED");
+      expect(caller.auth.signOut).not.toHaveBeenCalled();
+    },
+  );
+  it("the password-verification client cannot also be the caller MFA client", async () => {
+    withMfa();
+    expect(
+      await verifyWithdrawalPassword({
+        ...credentials,
+        auth: current.client,
+        callerAuth: current.client,
+        totpCode: "123456",
+      }),
+    ).toBe("DENIED");
+    expect(current.auth.mfa.challengeAndVerify).not.toHaveBeenCalled();
   });
   it("provider exceptions still close the transient session", async () => {
     current.auth.signInWithPassword.mockRejectedValue(new Error("network"));

@@ -19,9 +19,14 @@ for the eligible first welcome withdrawal.
 3. A detached non-persistent Auth client verifies the actual password. It must
    return the same owner and a real session. Factor lookup failure denies access.
    If a verified MFA factor exists, a trusted TOTP challenge and actual AAL2 are
-   required. Unsupported factors fail closed. This does not enroll MFA or alter
-   the original browser/SSR session. Only the transient session is signed out.
-   Cleanup failure cannot issue a proof.
+   required. Unsupported factors fail closed. The disposable password session
+   is signed out **before** challenging MFA on the original caller's SSR client.
+   MFA can invalidate other low-assurance sessions; verifying it on a disposable
+   session invalidates the caller-bound proof. The caller's existing session is
+   therefore upgraded, never replaced or signed out by this helper. Auth user
+   and signed claims must retain the same owner/session before and after MFA,
+   with actual AAL2 afterward. The SSR client's MFA event persists upgraded
+   cookies. Cleanup, identity or assurance failure cannot issue a proof.
 4. A 256-bit opaque proof is bound to owner, originating Auth session, method
    and the existing canonical destination fingerprint. Only its SHA-256 hash
    is stored. The DB fixes its five-minute lifetime and verification timestamp.
@@ -92,4 +97,5 @@ results live in `docs/quality/PR38-DESTINATION-REAUTH-REPAIR.md`.
 Vendor behavior checked against the installed client and official references:
 [password verification](https://supabase.com/docs/reference/javascript/auth-signinwithpassword),
 [TOTP challenge and AAL](https://supabase.com/docs/guides/auth/auth-mfa/totp),
+[factor verification/session behavior](https://supabase.com/docs/reference/javascript/auth-mfa-enroll),
 [local-only signout](https://supabase.com/docs/reference/javascript/auth-signout).

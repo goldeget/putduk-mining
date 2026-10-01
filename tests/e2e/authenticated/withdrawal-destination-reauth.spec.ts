@@ -95,16 +95,19 @@ async function proofStates(ownerId: string) {
   return result.data?.map((row) => row.status);
 }
 async function evidence(page: Page, name: string) {
+  const screenshotPath = test.info().outputPath(`${name}.png`);
+  await page.screenshot({
+    path: screenshotPath,
+    fullPage: true,
+    mask: [
+      page.locator(
+        'input[name="destinationReauthPassword"],input[name="destinationReauthTotp"],input[name="accountHolder"],input[name="accountNumber"],input[name="address"]',
+      ),
+    ],
+  });
   await test.info().attach(name, {
     contentType: "image/png",
-    body: await page.screenshot({
-      fullPage: true,
-      mask: [
-        page.locator(
-          'input[name="destinationReauthPassword"],input[name="destinationReauthTotp"],input[name="accountHolder"],input[name="accountNumber"],input[name="address"]',
-        ),
-      ],
-    }),
+    path: screenshotPath,
   });
   expect(
     await page.evaluate(
@@ -450,18 +453,41 @@ test("configured MFA requires a real TOTP challenge; password alone cannot autho
   expect((await passwordOnly.json()).error.code).toBe(
     "WITHDRAWAL_REAUTH_MFA_REQUIRED",
   );
+  const db = createLocalServiceRoleClient();
+  const before = await db
+    .from("withdrawal_destination_step_ups")
+    .select("auth_session_id")
+    .eq("user_id", member.userId)
+    .eq("status", "DENIED")
+    .single();
+  expect(before.error).toBeNull();
   const proof = await reauthenticateDestination(
     page,
     REPLACEMENT.KRW_BANK,
     member.password,
     await nextTotpCode(factor.data.totp.secret),
   );
+  const verifiedProof = await db
+    .from("withdrawal_destination_step_ups")
+    .select("auth_session_id")
+    .eq("user_id", member.userId)
+    .eq("status", "VERIFIED")
+    .single();
+  expect(verifiedProof.error).toBeNull();
+  expect(
+    Boolean(before.data?.auth_session_id) &&
+      before.data?.auth_session_id === verifiedProof.data?.auth_session_id,
+  ).toBe(true);
   const changed = await page.request.post(URL, {
     data: REPLACEMENT.KRW_BANK,
     headers: { "Withdrawal-Reauth": proof },
   });
   expect(changed.status()).toBe(201);
   expect(await proofStates(member.userId)).toEqual(["DENIED", "CONSUMED"]);
+  await page.goto("/wallet/withdraw");
+  await expect(
+    page.getByRole("heading", { name: "출금하기", exact: true }),
+  ).toBeVisible();
   await auth.auth.signOut({ scope: "local" });
   await noMoney(member.userId);
 });

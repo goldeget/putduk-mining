@@ -78,15 +78,18 @@ type ReauthResult =
         | "WITHDRAWAL_REAUTH_UNAVAILABLE";
     };
 
-/** Actual Auth verification; never replaces the caller's SSR/browser session. */
+/** Password uses a disposable session; MFA upgrades the original caller session. */
 export async function verifyWithdrawalPassword(input: {
   auth: SupabaseClient;
+  callerAuth: SupabaseClient;
   userId: string;
+  sessionId: string;
   email: string;
   password: string;
   totpCode?: string | undefined;
 }): Promise<"VERIFIED" | "DENIED" | "MFA_REQUIRED"> {
   let result: "VERIFIED" | "DENIED" | "MFA_REQUIRED" = "DENIED";
+  let factorId: string | null = null;
   try {
     result = await (async () => {
       const { data, error } = await input.auth.auth.signInWithPassword({
@@ -104,16 +107,7 @@ export async function verifyWithdrawalPassword(input: {
       if (verified.length > 0) {
         const totp = verified.find((factor) => factor.factor_type === "totp");
         if (!totp || !input.totpCode) return "MFA_REQUIRED";
-        const { error: mfaError } =
-          await input.auth.auth.mfa.challengeAndVerify({
-            factorId: totp.id,
-            code: input.totpCode,
-          });
-        if (mfaError) return "DENIED";
-        const { data: assurance, error: assuranceError } =
-          await input.auth.auth.mfa.getAuthenticatorAssuranceLevel();
-        if (assuranceError || assurance.currentLevel !== "aal2")
-          return "DENIED";
+        factorId = totp.id;
       }
       return "VERIFIED";
     })();
@@ -125,6 +119,52 @@ export async function verifyWithdrawalPassword(input: {
   try {
     const { error } = await input.auth.auth.signOut({ scope: "local" });
     if (error) return "DENIED";
+  } catch {
+    return "DENIED";
+  }
+  if (result !== "VERIFIED" || !factorId) return result;
+  // MFA verification may revoke other AAL1 sessions. Challenging the disposable
+  // password session invalidates the very caller session to which the proof is
+  // bound. Close that session first, then upgrade the original SSR session.
+  if (input.callerAuth === input.auth) return "DENIED";
+  try {
+    const [
+      { data: caller, error: callerError },
+      { data: before, error: beforeError },
+    ] = await Promise.all([
+      input.callerAuth.auth.getUser(),
+      input.callerAuth.auth.getClaims(),
+    ]);
+    if (
+      callerError ||
+      beforeError ||
+      caller.user?.id !== input.userId ||
+      before?.claims?.sub !== input.userId ||
+      before?.claims?.session_id !== input.sessionId
+    )
+      return "DENIED";
+    const { error: mfaError } =
+      await input.callerAuth.auth.mfa.challengeAndVerify({
+        factorId,
+        code: input.totpCode!,
+      });
+    if (mfaError) return "DENIED";
+    const [
+      { data: assurance, error: assuranceError },
+      { data: after, error: afterError },
+    ] = await Promise.all([
+      input.callerAuth.auth.mfa.getAuthenticatorAssuranceLevel(),
+      input.callerAuth.auth.getClaims(),
+    ]);
+    if (
+      assuranceError ||
+      afterError ||
+      assurance.currentLevel !== "aal2" ||
+      after?.claims?.aal !== "aal2" ||
+      after?.claims?.sub !== input.userId ||
+      after?.claims?.session_id !== input.sessionId
+    )
+      return "DENIED";
   } catch {
     return "DENIED";
   }
@@ -177,7 +217,9 @@ export async function issueWithdrawalDestinationProof(
   const verdict = identity.user.email
     ? await verifyWithdrawalPassword({
         auth,
+        callerAuth: identity.supabase,
         userId: identity.userId,
+        sessionId: identity.sessionId,
         email: identity.user.email,
         password: input.password,
         totpCode: input.totpCode,

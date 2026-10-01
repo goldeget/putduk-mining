@@ -16,6 +16,10 @@ import {
 } from "./helpers/member-session";
 import { seedWithdrawalStatusMatrix } from "./helpers/withdrawal-fixtures";
 
+// The error/recovery case now enters a real reauthentication password. Do not
+// persist credential-bearing traces/videos or automatic failure screenshots.
+test.use({ trace: "off", video: "off", screenshot: "off" });
+
 const VIEWPORTS = [
   { height: 844, name: "390", width: 390 },
   { height: 1112, name: "834", width: 834 },
@@ -129,7 +133,7 @@ test("비로그인 방문자는 출금 복귀 경로를 유지한다", async ({ 
 test("빈 이력·검증·오류 복구와 KRW 기준 복사를 확인한다", async ({ page }) => {
   test.setTimeout(240_000);
   const hydration = trackHydration(page);
-  await prepareMemberThroughStart(page, "wd-product-form");
+  const { member } = await prepareMemberThroughStart(page, "wd-product-form");
   await registerFirstKrwDestination(page);
   hydration.length = 0;
   await openWithdraw(page);
@@ -203,12 +207,34 @@ test("빈 이력·검증·오류 복구와 KRW 기준 복사를 확인한다", a
   await page.locator('select[name="bankCode"]').selectOption("KB");
   await page.locator('input[name="accountHolder"]').fill("홍길동");
   await page.locator('input[name="accountNumber"]').fill("123456789012");
-  await submit.click();
+  await page
+    .locator('input[name="destinationReauthPassword"]')
+    .fill(member.password);
+  await page.getByRole("button", { name: "변경 확인", exact: true }).click();
+  await expect(
+    page.locator('input[name="destinationReauthPassword"]'),
+  ).toHaveValue("");
   await expect(page.locator("#withdrawal-request-feedback")).toContainText(
     "출금 목적지를 등록하지 못했어요. 잠시 후 다시 시도해 주세요.",
   );
   await expect(page.getByText("withdrawal_requests")).toHaveCount(0);
   await expect(page.getByText("withdrawal_destinations")).toHaveCount(0);
+  const evidencePath = test
+    .info()
+    .outputPath("registration-error-after-reauth.png");
+  await page.screenshot({
+    path: evidencePath,
+    fullPage: true,
+    mask: [
+      page.locator(
+        'input[name="destinationReauthPassword"],input[name="destinationReauthTotp"],input[name="accountHolder"],input[name="accountNumber"]',
+      ),
+    ],
+  });
+  await test.info().attach("withdrawal-registration-error-after-reauth", {
+    contentType: "image/png",
+    path: evidencePath,
+  });
   await page.unroute(/\/api\/v1\/withdrawals\/hold$/);
   await page.unroute(/\/api\/v1\/withdrawals\/destinations$/);
   expect(hydration).toEqual([]);

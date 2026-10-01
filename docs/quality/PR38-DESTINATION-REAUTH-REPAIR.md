@@ -18,7 +18,12 @@ repair are preserved. No ledger, reward formula or funding prerequisite changes.
 See `docs/security/WITHDRAWAL-DESTINATION-REAUTHENTICATION.md` for the trust
 boundary, privacy, deployment ordering and safe failure policy.
 
-## Acceptance status
+## Acceptance snapshot before final execution
+
+This committed report records implementation and known execution evidence at
+commit time. The final exact-head validation record is attached to PR #38 after
+the full workflow and masked screenshot review finish; it supplements this
+snapshot without changing the source tree that was tested.
 
 | Gate | Current evidence |
 | --- | --- |
@@ -27,12 +32,50 @@ boundary, privacy, deployment ordering and safe failure policy.
 | Product | Pending masked rendered screenshot review and scoped acceptance |
 | Whole-product launch gate | Not passed; this repair cannot close unrelated product/security/release gaps |
 
-Local web unit tests: 380 passed. Admin unit tests: 40 passed. Typechecks passed.
+Local web unit tests after the MFA follow-up: 390 passed. Admin unit tests:
+40 passed. The focused reauthentication/logical recovery/markup suite passed
+86 assertions. Typechecks passed.
 Both production builds and the public/admin bundle boundary check passed.
 One additional concurrent focused run failed to start a test worker; the same
 73 assertions passed in a subsequent single-worker run without relaxing checks.
-Complete final local application verification and exact-head CI IDs
-will be recorded after execution; earlier PR CI is not acceptance of this delta.
+The final local `pnpm verify` passed: 84 canonical assets, format, lint,
+web/admin typechecks, 390 web/40 admin unit tests, both production builds and
+bundle isolation. Exact-head CI results will be recorded after execution;
+earlier PR CI is not acceptance of this delta.
+
+### Failed exact-head CI retained, not accepted
+
+Run `36817206537` at `ff271f9e786544026f72c77f9aacfe8abce4c31f` passed
+eight jobs, including 445 DB assertions, 380 web/40 admin/17 worker unit tests,
+both production builds, 42 foundation browser tests and 70/128 typography tests.
+Its generated merge tree matched that head exactly. The authenticated step
+timed out at its unchanged 60-minute limit and is **not** functional acceptance.
+Evidence artifact `11143592498` has digest
+`sha256:ec468557d729a5f7327a5028bbde7ad920e71757c1998e06c20e0acb7dc9eed8`.
+
+The retained errors show an existing withdrawal form test still clicking
+`출금 요청하기` after replacement now requires password plus `변경 확인`.
+The test is updated to perform the real password flow while retaining its
+unavailable-registration/recovery assertions. Credential traces are disabled.
+The actual MFA case returned 503 after verification on the disposable session,
+consistent with MFA invalidating the caller session and its FK-bound grant.
+This is the session-invalidation diagnosis from the runtime result, service
+failure paths and documented provider behavior; the new browser assertions
+must independently prove the original session/grant survives. MFA now upgrades the original SSR session
+after disposable-password-session cleanup; owner/session/AAL2 are revalidated.
+New unit and actual browser assertions preserve that session and reject any
+owner/session mismatch. No timeout, assertion, MFA requirement or money guard
+is relaxed. A fresh full exact-head CI run is required for these changes.
+
+The line/GitHub reporters do not persist successful in-memory image bodies.
+Explicit masked screenshots now use actual test output paths and file-based
+attachments, so CI preserves the reviewed renders. Screenshot existence alone
+still does not imply visual or whole-product acceptance.
+
+Some existing typography withdrawal screenshots captured loading instead of
+the loaded UI (desktop/mobile Dark and mobile Light at 200% root text). They
+are not counted as completed withdrawal/reauthentication visual evidence.
+That existing capture-readiness gap remains explicit product evidence debt.
 
 Local fresh Supabase startup was rejected by the execution environment policy.
 No workaround, historical container reuse, global inventory or remote DB call
