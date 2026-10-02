@@ -21,8 +21,7 @@ values (
 
 insert into auth.users (
   id, aud, role, email, encrypted_password, email_confirmed_at,
-  raw_app_meta_data, raw_user_meta_data, created_at, updated_at
-)
+  raw_app_meta_data, raw_user_meta_data, created_at, updated_at, confirmation_token, recovery_token, email_change, email_change_token_new)
 select
   user_id,
   'authenticated',
@@ -32,8 +31,7 @@ select
   statement_timestamp(),
   '{}'::jsonb,
   '{}'::jsonb,
-  statement_timestamp(),
-  statement_timestamp()
+  statement_timestamp(), statement_timestamp(), '', '', '', ''
 from ws05_admin_ctx;
 
 insert into public.user_roles (user_id, role, granted_by)

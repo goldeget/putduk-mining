@@ -107,8 +107,7 @@ insert into auth.users (
   raw_app_meta_data,
   raw_user_meta_data,
   created_at,
-  updated_at
-) values
+  updated_at, confirmation_token, recovery_token, email_change, email_change_token_new) values
   (
     '37d97653-71a7-4788-b9ab-ea04889c0971',
     'authenticated',
@@ -118,8 +117,7 @@ insert into auth.users (
     statement_timestamp(),
     '{}'::jsonb,
     '{}'::jsonb,
-    statement_timestamp(),
-    statement_timestamp()
+    statement_timestamp(), statement_timestamp(), '', '', '', ''
   ),
   (
     '169d886b-7545-4aa9-82a3-23bf14f2cd72',
@@ -130,8 +128,7 @@ insert into auth.users (
     statement_timestamp(),
     '{}'::jsonb,
     '{}'::jsonb,
-    statement_timestamp(),
-    statement_timestamp()
+    statement_timestamp(), statement_timestamp(), '', '', '', ''
   );
 
 insert into public.withdrawal_destinations (

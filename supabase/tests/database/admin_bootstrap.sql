@@ -26,8 +26,7 @@ insert into auth.users (
   raw_app_meta_data,
   raw_user_meta_data,
   created_at,
-  updated_at
-)
+  updated_at, confirmation_token, recovery_token, email_change, email_change_token_new)
 select
   user_id,
   'authenticated',
@@ -37,8 +36,7 @@ select
   statement_timestamp(),
   '{}'::jsonb,
   '{}'::jsonb,
-  statement_timestamp(),
-  statement_timestamp()
+  statement_timestamp(), statement_timestamp(), '', '', '', ''
 from admin_test_context;
 
 select throws_ok(

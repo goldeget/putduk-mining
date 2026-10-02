@@ -30,11 +30,10 @@ values (
 
 insert into auth.users (
   id, aud, role, email, encrypted_password, email_confirmed_at,
-  raw_app_meta_data, raw_user_meta_data, created_at, updated_at
-)
+  raw_app_meta_data, raw_user_meta_data, created_at, updated_at, confirmation_token, recovery_token, email_change, email_change_token_new)
 select
   id, 'authenticated', 'authenticated', email, '', statement_timestamp(),
-  '{}'::jsonb, '{}'::jsonb, statement_timestamp(), statement_timestamp()
+  '{}'::jsonb, '{}'::jsonb, statement_timestamp(), statement_timestamp(), '', '', '', ''
 from (
   select user_a as id, 'ws04-a@putduk.test' as email from ws04_ctx
   union all

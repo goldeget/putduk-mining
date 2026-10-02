@@ -40,6 +40,24 @@ function requireLocalWorkerEnv() {
   return { url, secret };
 }
 
+/** GoTrue는 이 컬럼의 NULL을 문자열로 읽지 못해 회원 조회가 실패한다. */
+async function expectLoadableAuthUser(client: SupabaseClient, userId: string) {
+  const tokens = sql(`
+    select (
+      confirmation_token is not null
+      and recovery_token is not null
+      and email_change is not null
+      and email_change_token_new is not null
+    )::text
+    from auth.users
+    where id = '${userId}'::uuid
+  `);
+  expect(tokens).toBe("true");
+  const { data, error } = await client.auth.admin.getUserById(userId);
+  expect(error).toBeNull();
+  expect(data.user?.id).toBe(userId);
+}
+
 function sql(statement: string): string {
   return execFileSync(
     "docker",
@@ -375,8 +393,7 @@ describe("worker process execution against local Supabase", () => {
     sql(`
 insert into auth.users (
   id, instance_id, aud, role, email, encrypted_password, email_confirmed_at,
-  raw_app_meta_data, raw_user_meta_data, created_at, updated_at
-) values (
+  raw_app_meta_data, raw_user_meta_data, created_at, updated_at, confirmation_token, recovery_token, email_change, email_change_token_new) values (
   '${actorId}'::uuid,
   '00000000-0000-0000-0000-000000000000',
   'authenticated',
@@ -386,10 +403,10 @@ insert into auth.users (
   statement_timestamp(),
   '{}'::jsonb,
   '{}'::jsonb,
-  statement_timestamp(),
-  statement_timestamp()
+  statement_timestamp(), statement_timestamp(), '', '', '', ''
 );
 `);
+    await expectLoadableAuthUser(db, actorId);
     const { error: roleError } = await db.from("user_roles").insert({
       user_id: actorId,
       role: "ADMIN",
@@ -538,8 +555,7 @@ insert into auth.users (
     sql(`
 insert into auth.users (
   id, instance_id, aud, role, email, encrypted_password, email_confirmed_at,
-  raw_app_meta_data, raw_user_meta_data, created_at, updated_at
-) values (
+  raw_app_meta_data, raw_user_meta_data, created_at, updated_at, confirmation_token, recovery_token, email_change, email_change_token_new) values (
   '${userId}'::uuid,
   '00000000-0000-0000-0000-000000000000',
   'authenticated',
@@ -549,10 +565,10 @@ insert into auth.users (
   statement_timestamp(),
   '{}'::jsonb,
   '{}'::jsonb,
-  statement_timestamp(),
-  statement_timestamp()
+  statement_timestamp(), statement_timestamp(), '', '', '', ''
 );
 `);
+    await expectLoadableAuthUser(db, userId);
 
     const { error: bootstrapError } = await db.rpc("bootstrap_user", {
       p_user_id: userId,

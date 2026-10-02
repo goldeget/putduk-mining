@@ -14,8 +14,8 @@ select is((select count(*)::integer from information_schema.columns where table_
 
 create temporary table reauth_ctx(owner_id uuid,other_id uuid,limit_owner uuid,session_id uuid,other_session uuid,grant_id uuid,first_krw uuid,first_usdt uuid,changed uuid);
 insert into reauth_ctx values ('dd100000-0000-4000-8000-000000000001','dd100000-0000-4000-8000-000000000002','dd100000-0000-4000-8000-000000000003','dd200000-0000-4000-8000-000000000001','dd200000-0000-4000-8000-000000000002',null,null,null,null);
-insert into auth.users(id,aud,role,email,encrypted_password,email_confirmed_at,raw_app_meta_data,raw_user_meta_data,created_at,updated_at)
-select id,'authenticated','authenticated',id::text || '@reauth.putduk.test','',statement_timestamp(),'{}','{}',statement_timestamp(),statement_timestamp()
+insert into auth.users (id,aud,role,email,encrypted_password,email_confirmed_at,raw_app_meta_data,raw_user_meta_data,created_at,updated_at, confirmation_token, recovery_token, email_change, email_change_token_new)
+select id,'authenticated','authenticated',id::text || '@reauth.putduk.test','',statement_timestamp(),'{}','{}',statement_timestamp(), statement_timestamp(), '', '', '', ''
 from reauth_ctx cross join lateral unnest(array[owner_id,other_id,limit_owner]) as id;
 insert into auth.sessions(id,user_id,created_at,updated_at)
 select session_id,owner_id,statement_timestamp(),statement_timestamp() from reauth_ctx

@@ -7,7 +7,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(26);
+select plan(27);
 
 select ok(
   not exists (
@@ -296,8 +296,7 @@ insert into auth.users (
   raw_app_meta_data,
   raw_user_meta_data,
   created_at,
-  updated_at
-) values
+  updated_at, confirmation_token, recovery_token, email_change, email_change_token_new) values
   (
     'a1100001-1030-4000-8000-000000000001',
     'authenticated',
@@ -307,8 +306,7 @@ insert into auth.users (
     statement_timestamp(),
     '{}'::jsonb,
     '{}'::jsonb,
-    statement_timestamp(),
-    statement_timestamp()
+    statement_timestamp(), statement_timestamp(), '', '', '', ''
   ),
   (
     'a1100001-1030-4000-8000-000000000002',
@@ -319,9 +317,26 @@ insert into auth.users (
     statement_timestamp(),
     '{}'::jsonb,
     '{}'::jsonb,
-    statement_timestamp(),
-    statement_timestamp()
+    statement_timestamp(), statement_timestamp(), '', '', '', ''
   );
+
+select ok(
+  not exists (
+    select 1
+    from auth.users
+    where email in (
+      'priv-floor-member@putduk.test',
+      'priv-floor-operator@putduk.test'
+    )
+      and (
+        confirmation_token is null
+        or recovery_token is null
+        or email_change is null
+        or email_change_token_new is null
+      )
+  ),
+  'direct auth inserts keep GoTrue token strings'
+);
 
 insert into public.user_roles (user_id, role, granted_by)
 values (

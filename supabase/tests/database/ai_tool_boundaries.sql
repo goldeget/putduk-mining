@@ -61,8 +61,7 @@ insert into auth.users (
   raw_app_meta_data,
   raw_user_meta_data,
   created_at,
-  updated_at
-) values
+  updated_at, confirmation_token, recovery_token, email_change, email_change_token_new) values
   (
     '76a97376-0fc1-4c70-9cf4-e0a39cfd4f00',
     'authenticated',
@@ -72,8 +71,7 @@ insert into auth.users (
     statement_timestamp(),
     '{}'::jsonb,
     '{}'::jsonb,
-    statement_timestamp(),
-    statement_timestamp()
+    statement_timestamp(), statement_timestamp(), '', '', '', ''
   ),
   (
     '5a9cc1cc-8a52-4f2f-8d08-2a4d63c7c518',
@@ -84,8 +82,7 @@ insert into auth.users (
     statement_timestamp(),
     '{}'::jsonb,
     '{}'::jsonb,
-    statement_timestamp(),
-    statement_timestamp()
+    statement_timestamp(), statement_timestamp(), '', '', '', ''
   );
 
 select throws_ok(

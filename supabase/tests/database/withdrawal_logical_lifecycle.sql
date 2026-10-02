@@ -18,8 +18,8 @@ select is((select count(*)::integer from information_schema.columns where table_
 
 create temporary table logical_ctx(owner_id uuid, other_id uuid, operator_id uuid, policy_id uuid, logical jsonb, destination_id uuid, withdrawal_id uuid, later_key text);
 insert into logical_ctx values ('cc100000-0000-4000-8000-000000000001','cc100000-0000-4000-8000-000000000002','cc100000-0000-4000-8000-000000000003',null,null,null,null,null);
-insert into auth.users(id,aud,role,email,encrypted_password,email_confirmed_at,raw_app_meta_data,raw_user_meta_data,created_at,updated_at)
-select id,'authenticated','authenticated',id::text || '@logical.putduk.test','',statement_timestamp(),'{}','{}',statement_timestamp(),statement_timestamp()
+insert into auth.users (id,aud,role,email,encrypted_password,email_confirmed_at,raw_app_meta_data,raw_user_meta_data,created_at,updated_at, confirmation_token, recovery_token, email_change, email_change_token_new)
+select id,'authenticated','authenticated',id::text || '@logical.putduk.test','',statement_timestamp(),'{}','{}',statement_timestamp(), statement_timestamp(), '', '', '', ''
 from logical_ctx cross join lateral unnest(array[owner_id,other_id,operator_id]) as id;
 insert into public.user_roles(user_id,role,granted_by) select operator_id,'ADMIN',operator_id from logical_ctx;
 select public.bootstrap_user((select owner_id from logical_ctx));
