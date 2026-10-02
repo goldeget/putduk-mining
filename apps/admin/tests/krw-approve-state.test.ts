@@ -80,8 +80,9 @@ describe("KRW approve UX state", () => {
     expect(reduceKrwApprove(started, { type: "cancel" }).phase).toBe(
       "indeterminate",
     );
+    const afterLost = reduceKrwApprove(started, { type: "transport_lost" });
     expect(
-      reduceKrwApprove(started, {
+      reduceKrwApprove(afterLost, {
         type: "submit",
         online: true,
         payload: "1|다름",

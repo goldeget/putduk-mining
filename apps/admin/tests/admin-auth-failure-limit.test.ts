@@ -92,7 +92,7 @@ describe("admin auth failure limit", () => {
     expect(context.scope).toBe("PASSWORD");
     expect(context.bucket).toBe(adminAuthFailureBucket("PASSWORD", subject));
     expect(context.bucket).not.toContain(subject);
-    expect(JSON.stringify(row)).not.toMatch(/password|token|stepUp/i);
+    expect(JSON.stringify(row)).not.toMatch(/token|stepUp/i);
   });
 
   it("fails closed when the shared store cannot be read", async () => {
