@@ -9,6 +9,7 @@ import { ADMIN_COMMAND_FAMILIES } from "@/lib/auth/command-families";
 import {
   createKrwApproveState,
   reduceKrwApprove,
+  type KrwApproveEvent,
 } from "@/lib/deposits/krw-approve-state";
 import {
   CLIENT_ONLINE_HEADER,
@@ -18,6 +19,10 @@ import {
 type Receipt = {
   status?: string | null;
   auditRecorded?: boolean | null;
+  approvedAmountAtomic?: string | null;
+  ledgerTransactionId?: string | null;
+  linkedLedgerTransactionId?: string | null;
+  logicalOperationKey?: string | null;
 };
 
 const amountPattern = /^[1-9][0-9]{0,23}$/;
@@ -52,6 +57,7 @@ export function KrwDepositApproveForm({
   const abortRef = useRef<AbortController | null>(null);
   const busyRef = useRef(false);
   const busy = state.phase === "submitting" || state.phase === "confirming";
+  const locked = state.phase === "confirmed" || state.attemptRejected;
   const submitLabel =
     state.requestStarted && state.phase !== "confirmed"
       ? "같은 요청으로 다시 확인"
@@ -79,9 +85,14 @@ export function KrwDepositApproveForm({
     }
     const payload = `${amount}|${reason}`;
     const online = navigator.onLine;
+    let cursor = state;
+    const apply = (nextEvent: KrwApproveEvent) => {
+      cursor = reduceKrwApprove(cursor, nextEvent);
+      dispatch(nextEvent);
+    };
     const next = reduceKrwApprove(state, { type: "submit", online, payload });
     if (next.phase !== "submitting") {
-      dispatch({ type: "submit", online, payload });
+      apply({ type: "submit", online, payload });
       return;
     }
     const token =
@@ -89,7 +100,7 @@ export function KrwDepositApproveForm({
         ?.value ?? "";
     if (!sent.current) sent.current = { amount, reason };
     busyRef.current = true;
-    dispatch({ type: "submit", online, payload });
+    apply({ type: "submit", online, payload });
     const controller = new AbortController();
     abortRef.current = controller;
     try {
@@ -110,10 +121,18 @@ export function KrwDepositApproveForm({
         signal: controller.signal,
       });
       const body = (await response.json().catch(() => null)) as {
-        error?: { message?: string };
+        error?: { code?: string; message?: string };
       } | null;
       if (controller.signal.aborted) {
-        dispatch({ type: "cancel" });
+        apply({ type: "cancel" });
+        return;
+      }
+      // 다른 금액으로 이미 처리된 요청은 이번 시도의 끝이다.
+      if (
+        response.status === 409 &&
+        body?.error?.code === "IDEMPOTENCY_PAYLOAD_MISMATCH"
+      ) {
+        apply({ type: "payload_mismatch" });
         return;
       }
       if (
@@ -121,13 +140,13 @@ export function KrwDepositApproveForm({
         response.status === 401 ||
         response.status === 403
       ) {
-        dispatch({
+        apply({
           type: "definite_error",
           message: body?.error?.message || "입금 반영을 진행하지 못했습니다.",
         });
         return;
       }
-      dispatch({ type: "receipt" });
+      apply({ type: "receipt" });
       let receipt: Receipt | null = null;
       let refreshFailed = true;
       try {
@@ -139,7 +158,10 @@ export function KrwDepositApproveForm({
               "Content-Type": "application/json",
               [CLIENT_ONLINE_HEADER]: "1",
             },
-            body: JSON.stringify({ depositRequestId }),
+            body: JSON.stringify({
+              depositRequestId,
+              logicalOperationKey: state.logicalKey,
+            }),
             signal: controller.signal,
           },
         );
@@ -152,21 +174,37 @@ export function KrwDepositApproveForm({
         refreshFailed = !statusResponse.ok || !receipt?.status;
       } catch {
         if (controller.signal.aborted) {
-          dispatch({ type: "cancel" });
+          apply({ type: "cancel" });
           return;
         }
       }
-      dispatch({
+      apply({
         type: "refreshed",
         httpStatus: response.status,
         status: receipt?.status ?? null,
         audit: receipt?.auditRecorded ?? null,
         failed: refreshFailed,
+        approvedAmountAtomic:
+          typeof receipt?.approvedAmountAtomic === "string"
+            ? receipt.approvedAmountAtomic
+            : null,
+        ledgerTransactionId:
+          typeof receipt?.ledgerTransactionId === "string"
+            ? receipt.ledgerTransactionId
+            : null,
+        linkedLedgerTransactionId:
+          typeof receipt?.linkedLedgerTransactionId === "string"
+            ? receipt.linkedLedgerTransactionId
+            : null,
+        logicalOperationKey:
+          typeof receipt?.logicalOperationKey === "string"
+            ? receipt.logicalOperationKey
+            : null,
       });
-      if (receipt?.status === "APPROVED") router.refresh();
+      if (cursor.phase === "confirmed") router.refresh();
     } catch {
-      if (controller.signal.aborted) dispatch({ type: "cancel" });
-      else dispatch({ type: "transport_lost" });
+      if (controller.signal.aborted) apply({ type: "cancel" });
+      else apply({ type: "transport_lost" });
     } finally {
       busyRef.current = false;
       if (abortRef.current === controller) abortRef.current = null;
@@ -200,11 +238,7 @@ export function KrwDepositApproveForm({
         submissionPending={busy}
       />
       <div className="auth-actions">
-        <button
-          className="gold-button"
-          disabled={busy || state.phase === "confirmed"}
-          type="submit"
-        >
+        <button className="gold-button" disabled={busy || locked} type="submit">
           {busy ? "확인 중…" : submitLabel}
         </button>
         {busy ? (
