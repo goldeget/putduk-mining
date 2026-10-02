@@ -1,8 +1,8 @@
 # PR #39 검증 브랜치 작업 보고문 (GPT 인수인계)
 
-> **작성일:** 2026-10-02 (KST)  
-> **저장소:** `goldeget/putduk-mining` (authorized only)  
-> **브랜치:** `review/pr38-cde4b203` · **HEAD:** `503ccb2` (본 보고문) · **마지막 full CI green:** `82dce95` (run 36978447777)  
+> **작성일:** 2026-10-02 (KST)
+> **저장소:** `goldeget/putduk-mining` (authorized only)
+> **브랜치:** `review/pr38-cde4b203` · **HEAD:** `503ccb2` (본 보고문) · **마지막 full CI green:** `82dce95` (run 36978447777)
 > **PR:** [#39 검증: PR #38 통합 후보 cde4b203](https://github.com/goldeget/putduk-mining/pull/39)
 
 ---
@@ -18,8 +18,10 @@
 | **deploy / remote Supabase / Cloudflare / DNS** | 이 작업 범위 **아님** |
 | **develop 직접 merge 이력** | 본 검증 브랜치 작업 중 **develop에 merge하지 않음** |
 
-**로컬 truth:** worktree  
-`C:\Users\PC\Desktop\putduk-mining\.worktrees\pr38-followup-20261001`  
+**로컬 truth:** worktree
+
+`C:\Users\PC\Desktop\putduk-mining\.worktrees\pr38-followup-20261001`
+
 (로컬 브랜치명 `local/pr38-followup-20261001` = remote `review/pr38-cde4b203`)
 
 **루트 워크스페이스:** `develop` 체크아웃 + `stash@{0}: agent: root drift off develop (E2E local)` — merge 전까지 검증 브랜치와 **동기화하지 않음**.
@@ -152,22 +154,22 @@ GitHub `develop` 브랜치 protection에 **아래 16개 status check 이름** �
 
 ### Required check 이름 (16개 — 전체)
 
-1. Exact diff integrity  
-2. Application gates  
-3. Worker runtime gates  
-4. WebServer lifecycle probe  
-5. Korean typography public gates  
-6. Browser foundation  
-7. Database security gates  
-8. Korean typography protected gates  
-9. Authenticated product gates (1/8)  
-10. Authenticated product gates (2/8)  
-11. Authenticated product gates (3/8)  
-12. Authenticated product gates (4/8)  
-13. Authenticated product gates (5/8)  
-14. Authenticated product gates (6/8)  
-15. Authenticated product gates (7/8)  
-16. Authenticated product gates (8/8)  
+1. Exact diff integrity
+2. Application gates
+3. Worker runtime gates
+4. WebServer lifecycle probe
+5. Korean typography public gates
+6. Browser foundation
+7. Database security gates
+8. Korean typography protected gates
+9. Authenticated product gates (1/8)
+10. Authenticated product gates (2/8)
+11. Authenticated product gates (3/8)
+12. Authenticated product gates (4/8)
+13. Authenticated product gates (5/8)
+14. Authenticated product gates (6/8)
+15. Authenticated product gates (7/8)
+16. Authenticated product gates (8/8)
 
 ---
 
