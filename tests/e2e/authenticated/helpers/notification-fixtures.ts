@@ -27,7 +27,10 @@ export function seedMemberNotification(input: {
   const id = randomUUID();
   const createdAt = input.createdAt ?? new Date().toISOString();
   const expiresAt = input.expiresAt === undefined ? null : input.expiresAt;
-  const readAt = input.readAt ?? null;
+  let readAt = input.readAt ?? null;
+  if (readAt && readAt < createdAt) {
+    readAt = createdAt;
+  }
   const route = input.route ?? null;
   const dedupe = `e2e-notif-${id}`;
 

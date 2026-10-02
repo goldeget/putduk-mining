@@ -179,7 +179,7 @@ jobs:
   authenticated:
     name: Authenticated product gates (${{ matrix.shard }}/8)
     runs-on: ubuntu-24.04
-    timeout-minutes: 60
+    timeout-minutes: 90
     needs: [webserver-lifecycle]
     strategy:
       fail-fast: false
@@ -239,8 +239,9 @@ jobs:
       - name: Run authenticated browser tests
         # 관리자 출금 E2E는 실제 TOTP 창을 기다린다. shard당 한도를 줄이지 않는다.
         # 186개(chromium + mobile-chrome)를 8-way --shard로 나누면 shard당 약 23건이다. wall time은 가장 느린 shard 기준.
-        timeout-minutes: 45
-        run: pnpm test:e2e:authenticated -- --shard=${{ matrix.shard }}/8
+        timeout-minutes: 75
+        # pnpm run … -- --shard 는 CI에서 playwright 인자 앞에 `--` 가 한 번 더 붙어 shard가 무시된다.
+        run: pnpm exec playwright test --config playwright.authenticated.config.ts --shard=${{ matrix.shard }}/8
 
       - name: Preserve authenticated browser evidence
         if: always()

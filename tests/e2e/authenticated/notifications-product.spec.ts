@@ -187,10 +187,12 @@ test("lists own notifications, marks read, hides expired and unsafe links", asyn
     title: "입금 안내",
     userId: owner.userId,
   });
+  const readCreatedAt = new Date().toISOString();
   const read = seedMemberNotification({
     body: "이미 읽은 본인 알림입니다.",
     category: "mining",
-    readAt: new Date().toISOString(),
+    createdAt: readCreatedAt,
+    readAt: readCreatedAt,
     route: "/mining",
     title: "채굴 안내",
     userId: owner.userId,

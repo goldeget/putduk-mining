@@ -44,7 +44,7 @@ Cursor 규칙: `.cursor/rules/putduk-e2e-agent-verification.mdc` (`alwaysApply: 
 
 - PR CI는 authenticated 186 tests를 **8-way `--shard=i/8`** matrix job으로 병렬 실행한다 (`Authenticated product gates (1/8)` … `(8/8)`). chromium·mobile-chrome 프로젝트를 모두 포함한다.
 - branch protection / required checks는 예전 단일 job 이름 `Authenticated product gates` 대신 **위 여덟 job을 모두** 등록해야 한다.
-- shard 합집합은 로컬 `pnpm test:e2e:auth:full` 과 동일하다. CI에서 `--shard` 는 `pnpm test:e2e:authenticated -- --shard=i/8` 로 넘긴다.
+- shard 합집합은 로컬 `pnpm test:e2e:auth:full` 과 동일하다. CI에서는 `pnpm exec playwright test --config playwright.authenticated.config.ts --shard=i/8` 로 넘긴다 (`pnpm run … -- --shard` 는 CI에서 shard가 무시될 수 있음).
 
 ## 허용 / 금지
 
