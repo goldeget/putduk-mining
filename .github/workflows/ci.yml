@@ -200,8 +200,14 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # NEXT_PUBLIC_* 는 next build 시 클라이언트 번들에 고정된다. shard 런타임 env만으로는
+      # Channel Talk E2E 포트(mock) 키를 바꿀 수 없어 support-channel-talk 스펙이 깨진다.
       - name: Build member and admin apps for E2E
         run: pnpm build
+        env:
+          APP_ENV: test
+          NEXT_PUBLIC_CHANNEL_TALK_PLUGIN_KEY: putduk-e2e-plugin-key
+          CHANNEL_TALK_MEMBER_HASH_SECRET: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 
       - name: Upload E2E production build
         uses: actions/upload-artifact@v7

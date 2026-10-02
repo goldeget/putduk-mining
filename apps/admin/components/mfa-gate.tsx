@@ -31,7 +31,7 @@ export function MfaGate({ returnTo }: { returnTo: string }) {
     const preparation = new AbortController();
     const preparationTimeout = window.setTimeout(
       () => preparation.abort(),
-      15_000,
+      45_000,
     );
     async function prepare() {
       try {
