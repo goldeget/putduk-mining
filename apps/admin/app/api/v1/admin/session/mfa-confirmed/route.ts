@@ -31,7 +31,9 @@ export async function POST(request: Request) {
       { status: 403 },
     );
   }
-  if (identity.aal !== "aal2") {
+  const { data: assurance } =
+    await identity.supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+  if (assurance?.currentLevel !== "aal2") {
     return NextResponse.json(
       { error: { code: "MFA_REQUIRED" } },
       { status: 403 },

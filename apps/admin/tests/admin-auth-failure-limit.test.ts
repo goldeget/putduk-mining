@@ -127,6 +127,9 @@ describe("admin auth failure limit", () => {
     expect(stepUp).not.toContain("challengeAndVerify");
     expect(totp).toContain("readAdminAuthFailureBudget");
     expect(totp).toContain("challengeAndVerify");
+    expect(totp).toContain("postVerifySessionId");
+    expect(totp).toContain("sessionTarget.sessionId");
+    expect(confirmed).toContain("getAuthenticatorAssuranceLevel");
     expect(confirmed).toContain("hasAdminAuthServerProof");
     expect(issue).toContain("hasAdminAuthServerProof");
     expect(approve).toContain("p_operator_id: access.principal.userId");

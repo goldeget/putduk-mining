@@ -18,7 +18,11 @@ const bodySchema = z.object({
   factorId: z.string().trim().min(1).max(128).optional(),
 });
 
-type TotpFactor = { id?: string; status?: string };
+type TotpFactor = {
+  id?: string;
+  status?: string;
+  factor_type?: string;
+};
 
 function json(code: string, message: string, status: number) {
   return NextResponse.json(
@@ -36,6 +40,44 @@ function selectTotpFactor(
     return match?.id ?? null;
   }
   return factors.find((factor) => factor.status === "verified")?.id ?? null;
+}
+
+function listedTotpFactors(listed: {
+  totp?: TotpFactor[];
+  all?: TotpFactor[];
+}): TotpFactor[] {
+  const merged = new Map<string, TotpFactor>();
+  for (const factor of listed.totp ?? []) {
+    if (factor.id) merged.set(factor.id, factor);
+  }
+  for (const factor of listed.all ?? []) {
+    if (factor.factor_type !== "totp" || !factor.id) continue;
+    merged.set(factor.id, factor);
+  }
+  return [...merged.values()];
+}
+
+async function postVerifySessionId(
+  supabase: SupabaseClient,
+  fallbackSessionId: string,
+): Promise<
+  { ok: true; sessionId: string } | { ok: false; code: "MFA_INCOMPLETE" }
+> {
+  const [{ data: assurance }, { data: claimsData }] = await Promise.all([
+    supabase.auth.mfa.getAuthenticatorAssuranceLevel(),
+    supabase.auth.getClaims(),
+  ]);
+  if (assurance?.currentLevel !== "aal2") {
+    return { ok: false, code: "MFA_INCOMPLETE" };
+  }
+  const sessionId =
+    typeof claimsData?.claims?.session_id === "string"
+      ? claimsData.claims.session_id
+      : fallbackSessionId;
+  if (!sessionId) {
+    return { ok: false, code: "MFA_INCOMPLETE" };
+  }
+  return { ok: true, sessionId };
 }
 
 async function verifyCode(input: {
@@ -58,7 +100,10 @@ async function verifyCode(input: {
   }
 
   const listed = await input.supabase.auth.mfa.listFactors();
-  const factorId = selectTotpFactor(listed.data?.totp ?? [], input.factorId);
+  const factorId = selectTotpFactor(
+    listed.data ? listedTotpFactors(listed.data) : [],
+    input.factorId,
+  );
   if (listed.error || !factorId) {
     return json(
       "TOTP_UNAVAILABLE",
@@ -84,10 +129,22 @@ async function verifyCode(input: {
     );
   }
 
+  const sessionTarget = await postVerifySessionId(
+    input.supabase,
+    input.sessionId,
+  );
+  if (!sessionTarget.ok) {
+    return json(
+      "MFA_SESSION_STALE",
+      "인증 결과를 확인하지 못했습니다. 다시 로그인해 주세요.",
+      503,
+    );
+  }
+
   const proved = await writeAdminAuthServerProof({
     kind: "TOTP",
     userId: input.userId,
-    sessionId: input.sessionId,
+    sessionId: sessionTarget.sessionId,
   });
   if (!proved) {
     return json(

@@ -178,13 +178,19 @@ async function completeAdminLoginWithTotpOnce(
   const secret = (await secretCode.textContent())?.trim();
   if (!secret) throw new Error("TOTP enrolment secret missing.");
 
-  const code = generateTotp(secret);
-  rememberTotpUse(secret, code);
+  const code = await nextTotpCode(secret);
   await page.locator('input[inputmode="numeric"]').fill(code);
   await page.getByRole("button", { name: "인증 완료" }).click();
-  await page.waitForURL((url) => !url.pathname.includes("/mfa"), {
-    timeout: 60_000,
-  });
+  try {
+    await page.waitForURL((url) => !url.pathname.includes("/mfa"), {
+      timeout: 60_000,
+    });
+  } catch (error) {
+    const note = (await page.locator(".form-note").textContent())?.trim();
+    throw new Error(
+      `ADMIN_MFA_NAVIGATION_FAILED: note=${note ?? "none"}; ${error instanceof Error ? error.message : String(error)}`,
+    );
+  }
   return secret;
 }
 
