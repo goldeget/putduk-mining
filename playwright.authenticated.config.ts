@@ -98,7 +98,7 @@ export default defineConfig({
   // 로컬 Docker·콜드 Next 기동을 고려. CI job timeout-minutes는 변경하지 않는다.
   timeout: 180_000,
   // CI github reporter slow annotation 기본 5분. TOTP·복구 스펙(withdrawal-p1-recovery 등)은 shard당 7분대가 정상.
-  reportSlowTests: isCI ? { max: 5, threshold: 480_000 } : undefined,
+  ...(isCI ? { reportSlowTests: { max: 5, threshold: 480_000 } } : {}),
   // CI: github reporter는 shard/job마다 Run Summary notice와 slow warning annotation을 남긴다. line만 사용한다.
   reporter: isCI ? "line" : "list",
   use: {
