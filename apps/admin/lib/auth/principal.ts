@@ -89,8 +89,7 @@ export async function getAdminIdentity(): Promise<AdminIdentity | null> {
 
 function isPutdukTestRuntime() {
   return (
-    process.env.APP_ENV === "test" ||
-    process.env.NEXT_PUBLIC_APP_ENV === "test"
+    process.env.APP_ENV === "test" || process.env.NEXT_PUBLIC_APP_ENV === "test"
   );
 }
 
