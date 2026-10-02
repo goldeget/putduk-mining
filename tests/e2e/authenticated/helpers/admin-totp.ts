@@ -129,8 +129,9 @@ async function completeAdminLoginWithTotpOnce(
   const verifyOnly = page.getByText(
     "인증 앱에 표시된 6자리 코드를 입력해 주세요.",
   );
-  const deadline = Date.now() + 120_000;
+  const deadline = Date.now() + 90_000;
   let sawEnrolment = false;
+  let retryClicks = 0;
   while (Date.now() < deadline) {
     if (await secretCode.isVisible()) {
       sawEnrolment = true;
@@ -149,6 +150,12 @@ async function completeAdminLoginWithTotpOnce(
       ) {
         throw new Error(
           `TOTP_ENROLMENT_UI_MISSING: permanent session error; note=${note ?? "none"}`,
+        );
+      }
+      retryClicks += 1;
+      if (retryClicks > 8) {
+        throw new Error(
+          `TOTP_ENROLMENT_UI_MISSING: prepare retry budget exhausted; note=${note ?? "none"}`,
         );
       }
       await retryButton.click();
