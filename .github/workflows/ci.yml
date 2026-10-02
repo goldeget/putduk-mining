@@ -206,6 +206,7 @@ jobs:
         run: pnpm build
         env:
           APP_ENV: test
+          NEXT_PUBLIC_APP_ENV: test
           NEXT_PUBLIC_CHANNEL_TALK_PLUGIN_KEY: putduk-e2e-plugin-key
           CHANNEL_TALK_MEMBER_HASH_SECRET: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 
@@ -258,7 +259,7 @@ jobs:
           version: 2.113.0
 
       - name: Start local Supabase
-        run: supabase start --yes
+        run: bash scripts/ci-supabase-start.sh
 
       - name: Rebuild migrations from zero
         run: pnpm db:reset
@@ -283,7 +284,12 @@ jobs:
             ms-playwright-${{ runner.os }}-
 
       - name: Install Chromium
-        run: pnpm exec playwright install --with-deps chromium
+        run: |
+          if [ -d "$HOME/.cache/ms-playwright" ] && [ -n "$(ls -A "$HOME/.cache/ms-playwright" 2>/dev/null)" ]; then
+            pnpm exec playwright install chromium
+          else
+            pnpm exec playwright install --with-deps chromium
+          fi
 
       - name: Run authenticated browser tests
         # 관리자 출금 E2E는 실제 TOTP 창을 기다린다. shard당 한도를 줄이지 않는다.
@@ -333,7 +339,7 @@ jobs:
           version: 2.113.0
 
       - name: Start local Supabase
-        run: supabase start --yes
+        run: bash scripts/ci-supabase-start.sh
 
       - name: Rebuild migrations from zero
         run: pnpm db:reset
@@ -431,7 +437,7 @@ jobs:
           version: 2.113.0
 
       - name: Start local Supabase
-        run: supabase start --yes
+        run: bash scripts/ci-supabase-start.sh
 
       - name: Rebuild migrations from zero
         run: pnpm db:reset
@@ -439,8 +445,26 @@ jobs:
       - name: Export local Supabase env
         run: node scripts/capture-local-supabase-env.mjs
 
+      - name: Resolve Playwright version
+        id: playwright-version
+        run: echo "version=$(pnpm exec playwright --version | awk '{print $2}')" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/ms-playwright
+          key: ms-playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ms-playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}-
+            ms-playwright-${{ runner.os }}-
+
       - name: Install Chromium
-        run: pnpm exec playwright install --with-deps chromium
+        run: |
+          if [ -d "$HOME/.cache/ms-playwright" ] && [ -n "$(ls -A "$HOME/.cache/ms-playwright" 2>/dev/null)" ]; then
+            pnpm exec playwright install chromium
+          else
+            pnpm exec playwright install --with-deps chromium
+          fi
 
       - name: Run protected Korean typography
         timeout-minutes: 20

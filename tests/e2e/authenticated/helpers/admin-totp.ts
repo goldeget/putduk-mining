@@ -102,19 +102,29 @@ async function completeAdminLoginWithTotpOnce(
 
   const secretCode = page.locator(".mfa-enrolment code");
   const retryButton = page.getByRole("button", { name: "다시 확인" });
-  try {
-    await expect(secretCode.or(retryButton)).toBeVisible({ timeout: 90_000 });
-  } catch (error) {
-    const note = (await page.locator(".form-note").textContent())?.trim();
-    const alert = (await page.locator("[role='alert']").textContent())?.trim();
-    throw new Error(
-      `TOTP_ENROLMENT_UI_MISSING: note=${note ?? "none"}; alert=${alert ?? "none"}; cause=${error instanceof Error ? error.message : String(error)}`,
-    );
+  const verifyOnly = page.getByText(
+    "인증 앱에 표시된 6자리 코드를 입력해 주세요.",
+  );
+  const deadline = Date.now() + 120_000;
+  let sawEnrolment = false;
+  while (Date.now() < deadline) {
+    if (await secretCode.isVisible()) {
+      sawEnrolment = true;
+      break;
+    }
+    if (await verifyOnly.isVisible()) {
+      throw new Error(
+        "TOTP_ENROLMENT_UI_MISSING: verified-factor-only; enrolment UI expected for first admin login",
+      );
+    }
+    if (await retryButton.isVisible()) {
+      await retryButton.click();
+    }
+    await page.waitForTimeout(2_000);
   }
-  if (await retryButton.isVisible()) {
-    await retryButton.click();
+  if (!sawEnrolment) {
     try {
-      await expect(secretCode).toBeVisible({ timeout: 90_000 });
+      await expect(secretCode).toBeVisible({ timeout: 5_000 });
     } catch (error) {
       const note = (await page.locator(".form-note").textContent())?.trim();
       const alert = (
