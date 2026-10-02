@@ -1,0 +1,33 @@
+/* 상담 런타임 상태 문구 — globals.css(공유)를 건드리지 않는다. */
+
+.status {
+  margin: 0.85rem 0 0;
+  max-width: 28rem;
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.status[data-support-state="loading"] {
+  color: var(--text-secondary);
+}
+
+.status[data-support-state="unavailable"] {
+  color: var(--text-secondary);
+}
+
+.status[data-support-state="ready"] {
+  color: var(--text-primary);
+}
+
+.startWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+}
+
+.startWrap :global(.putduk-support-launcher:focus-visible) {
+  outline: 2px solid var(--accent-primary, #c9a227);
+  outline-offset: 3px;
+}

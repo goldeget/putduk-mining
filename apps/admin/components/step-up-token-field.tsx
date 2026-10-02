@@ -1,19 +1,29 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useFormStatus } from "react-dom";
 
 import type { AdminCommandFamily } from "@/lib/auth/command-families";
 import { createAdminBrowserClient } from "@/lib/supabase/browser";
+import { waitForAdminResult } from "@/lib/ui/abortable";
 
 /**
  * 고위험 명령용 일회성 step-up 토큰.
  * 최근 TOTP AMR만으로는 머니 RPC를 호출하지 않습니다.
+ *
+ * onTokenIssued 가 있으면 부모가 토큰 사본을 보관할 수 있다.
  */
 export function StepUpTokenField({
   commandFamily,
+  onTokenIssued,
+  submissionPending = false,
 }: {
   commandFamily: AdminCommandFamily;
+  onTokenIssued?: (token: string) => void;
+  submissionPending?: boolean;
 }) {
+  const { pending: formPending } = useFormStatus();
+  const parentPending = formPending || submissionPending;
   const [token, setToken] = useState("");
   const tokenInputRef = useRef<HTMLInputElement>(null);
   const [code, setCode] = useState("");
@@ -21,69 +31,194 @@ export function StepUpTokenField({
     "인증 앱 코드로 작업 확인을 완료해 주세요.",
   );
   const [busy, setBusy] = useState(false);
+  const issuing = useRef(false);
+  const requestSequence = useRef(0);
+  const alive = useRef(true);
+  const controllerRef = useRef<AbortController | null>(null);
+  const expiryTimer = useRef<number | null>(null);
+  const tokenCallback = useRef(onTokenIssued);
+  tokenCallback.current = onTokenIssued;
+
+  useEffect(() => {
+    alive.current = true;
+    function invalidate() {
+      requestSequence.current += 1;
+      issuing.current = false;
+      setBusy(false);
+      controllerRef.current?.abort();
+      if (expiryTimer.current !== null)
+        window.clearTimeout(expiryTimer.current);
+      if (tokenInputRef.current) tokenInputRef.current.value = "";
+      setToken("");
+      tokenCallback.current?.("");
+      setMessage("작업 확인이 필요합니다. 인증 앱 코드를 다시 입력해 주세요.");
+    }
+    invalidate();
+    window.addEventListener("offline", invalidate);
+    window.addEventListener("pagehide", invalidate);
+    let unsubscribe: (() => void) | undefined;
+    try {
+      const listener = createAdminBrowserClient().auth.onAuthStateChange?.(
+        (event) => {
+          if (event === "SIGNED_OUT" || event === "USER_UPDATED") invalidate();
+        },
+      );
+      unsubscribe = () => listener?.data.subscription.unsubscribe();
+    } catch {
+      invalidate();
+    }
+    return () => {
+      alive.current = false;
+      requestSequence.current += 1;
+      unsubscribe?.();
+      controllerRef.current?.abort();
+      if (expiryTimer.current !== null)
+        window.clearTimeout(expiryTimer.current);
+      tokenCallback.current?.("");
+      window.removeEventListener("offline", invalidate);
+      window.removeEventListener("pagehide", invalidate);
+    };
+  }, [commandFamily]);
+
+  useEffect(() => {
+    if (!parentPending) return;
+    // A form action has already captured FormData before pending is published.
+    // A manual parent supplies pending only after it captures its token snapshot.
+    // Clear the UI copy for the next command; this does not cancel that snapshot.
+    function clearSubmittedConfirmation() {
+      requestSequence.current += 1;
+      issuing.current = false;
+      controllerRef.current?.abort();
+      if (expiryTimer.current !== null)
+        window.clearTimeout(expiryTimer.current);
+      if (tokenInputRef.current) tokenInputRef.current.value = "";
+      setToken("");
+      tokenCallback.current?.("");
+      setBusy(false);
+      setMessage("작업을 보냈습니다. 다음 작업에는 다시 확인해 주세요.");
+    }
+    clearSubmittedConfirmation();
+  }, [parentPending]);
 
   async function issueGrant() {
+    if (issuing.current || parentPending) return;
+    writeToken("");
     if (!/^\d{6}$/.test(code)) {
       setMessage("6자리 인증 코드를 확인해 주세요.");
       return;
     }
     setBusy(true);
+    issuing.current = true;
+    const sequence = ++requestSequence.current;
+    const current = () => alive.current && sequence === requestSequence.current;
     setMessage("인증을 확인하고 있습니다.");
-    const supabase = createAdminBrowserClient();
-    const { data: factors, error: factorError } =
-      await supabase.auth.mfa.listFactors();
-    if (factorError) {
-      setBusy(false);
-      setMessage("인증 수단을 불러오지 못했습니다.");
-      return;
-    }
-    const verified = factors.totp.find(
-      (factor) => factor.status === "verified",
-    );
-    if (!verified) {
-      setBusy(false);
-      setMessage("등록된 인증 앱이 없습니다. 먼저 MFA를 완료해 주세요.");
-      return;
-    }
-    const { error: verifyError } = await supabase.auth.mfa.challengeAndVerify({
-      factorId: verified.id,
-      code,
-    });
-    if (verifyError) {
-      setBusy(false);
-      setMessage("인증 코드가 올바르지 않거나 만료되었습니다.");
-      return;
-    }
-    const response = await fetch("/api/v1/admin/session/step-up", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ commandFamily }),
-    });
-    const payload = (await response.json().catch(() => null)) as {
-      data?: { token?: string };
-      error?: { code?: string };
-    } | null;
-    setBusy(false);
-    if (!response.ok || !payload?.data?.token) {
-      writeToken("");
-      setMessage(
-        payload?.error?.code === "STEP_UP_REQUIRED"
-          ? "인증 앱으로 다시 확인한 뒤 시도해 주세요."
-          : "작업 확인 토큰을 발급하지 못했습니다.",
+    const controller = new AbortController();
+    controllerRef.current = controller;
+    const timeout = window.setTimeout(() => controller.abort(), 15_000);
+    try {
+      if (!navigator.onLine) throw new Error("OFFLINE");
+      const supabase = createAdminBrowserClient();
+      const { data: factors, error: factorError } = await waitForAdminResult(
+        supabase.auth.mfa.listFactors(),
+        controller.signal,
       );
-      return;
+      if (!current() || controller.signal.aborted) return;
+      if (factorError || !factors || !Array.isArray(factors.totp)) {
+        setBusy(false);
+        setMessage("인증 수단을 불러오지 못했습니다.");
+        return;
+      }
+      const verified = factors.totp.find(
+        (factor) => factor.status === "verified",
+      );
+      if (!verified) {
+        setBusy(false);
+        setMessage("등록된 인증 앱이 없습니다. 먼저 MFA를 완료해 주세요.");
+        return;
+      }
+      const { error: verifyError } = await waitForAdminResult(
+        supabase.auth.mfa.challengeAndVerify({
+          factorId: verified.id,
+          code,
+        }),
+        controller.signal,
+      );
+      if (!current() || controller.signal.aborted) return;
+      if (verifyError) {
+        setBusy(false);
+        setMessage("인증 코드가 올바르지 않거나 만료되었습니다.");
+        return;
+      }
+      const response = await waitForAdminResult(
+        fetch("/api/v1/admin/session/step-up", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ commandFamily }),
+          signal: controller.signal,
+        }),
+        controller.signal,
+      );
+      const payload = (await waitForAdminResult(
+        response.json().catch(() => null),
+        controller.signal,
+      )) as {
+        data?: { token?: string; commandFamily?: string };
+        error?: { code?: string };
+      } | null;
+      if (!current() || controller.signal.aborted) return;
+      setBusy(false);
+      if (
+        !response.ok ||
+        typeof payload?.data?.token !== "string" ||
+        payload.data.token.length < 16 ||
+        payload.data.commandFamily !== commandFamily
+      ) {
+        writeToken("");
+        setMessage(
+          payload?.error?.code === "STEP_UP_REQUIRED"
+            ? "인증 앱으로 다시 확인한 뒤 시도해 주세요."
+            : "작업 확인 토큰을 발급하지 못했습니다.",
+        );
+        return;
+      }
+      // 성공 문구보다 먼저 DOM에 넣는다. useEffect면 제출이 빈 토큰을 보낸다.
+      writeToken(payload.data.token);
+      setCode("");
+      setMessage(
+        "이번 작업을 한 번 실행할 수 있습니다. 다음 작업에는 다시 확인해 주세요.",
+      );
+      // Conservatively discard client confirmation before the server's 10-minute TTL.
+      // This only clears UI state; the server remains authoritative for validity/consumption.
+      expiryTimer.current = window.setTimeout(() => {
+        writeToken("");
+        setMessage(
+          "작업 확인 시간이 지났습니다. 인증 앱 코드로 다시 확인해 주세요.",
+        );
+      }, 5 * 60_000);
+    } catch {
+      if (current()) {
+        writeToken("");
+        setMessage(
+          "작업 확인 결과를 받지 못했습니다. 연결을 확인한 뒤 다시 시도해 주세요.",
+        );
+      }
+    } finally {
+      window.clearTimeout(timeout);
+      if (current()) {
+        controllerRef.current = null;
+        issuing.current = false;
+        setBusy(false);
+      }
     }
-    // 성공 문구보다 먼저 DOM에 넣는다. useEffect면 제출이 빈 토큰을 보낸다.
-    writeToken(payload.data.token);
-    setCode("");
-    setMessage("작업 확인이 완료되었습니다. 이제 명령을 실행할 수 있습니다.");
   }
 
   function writeToken(next: string) {
+    if (expiryTimer.current !== null) window.clearTimeout(expiryTimer.current);
     if (tokenInputRef.current) {
       tokenInputRef.current.value = next;
     }
     setToken(next);
+    tokenCallback.current?.(next);
   }
 
   return (
@@ -100,14 +235,18 @@ export function StepUpTokenField({
           autoComplete="one-time-code"
           inputMode="numeric"
           maxLength={6}
-          onChange={(event) => setCode(event.target.value.replace(/\D/g, ""))}
+          disabled={busy || parentPending}
+          onChange={(event) => {
+            writeToken("");
+            setCode(event.target.value.replace(/\D/g, ""));
+          }}
           pattern="[0-9]{6}"
           value={code}
         />
       </label>
       <button
         className="ghost-button"
-        disabled={busy}
+        disabled={busy || parentPending}
         onClick={() => void issueGrant()}
         type="button"
       >

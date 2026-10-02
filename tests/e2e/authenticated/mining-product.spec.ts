@@ -198,8 +198,14 @@ test("shows the empty session, world directory, themes, and keyboard path", asyn
 
   await page.setViewportSize({ height: 844, width: 390 });
   await page.getByLabel("화면 테마").selectOption("system");
-  await expect(page.locator("html")).not.toHaveAttribute("data-theme", "dark");
-  await expect(page.locator("html")).not.toHaveAttribute("data-theme", "light");
+  await expect(page.locator("html")).toHaveAttribute(
+    "data-theme-preference",
+    "system",
+  );
+  await expect(page.locator("html")).toHaveAttribute(
+    "data-theme",
+    /^(light|dark)$/,
+  );
   await page.emulateMedia({ colorScheme: "light", reducedMotion: "reduce" });
   await expect
     .poll(() =>
@@ -298,7 +304,7 @@ test("renders an active session and a maintenance session from the server snapsh
 
   await loginAsMember(page, member, "/mining");
   await expect(
-    page.getByRole("heading", { name: "코리아에서 채굴이 이어지고 있어요" }),
+    page.getByRole("heading", { name: "코리아 · 채굴 중" }),
   ).toBeVisible();
   await expect(page.getByText("채굴 중").first()).toBeVisible();
   await expect(page.getByText("점검 중").first()).toBeVisible();

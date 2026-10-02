@@ -3,7 +3,7 @@ import { createHmac } from "node:crypto";
 import { expect, type Page } from "@playwright/test";
 import { createClient } from "@supabase/supabase-js";
 
-export const ADMIN_ORIGIN = "http://127.0.0.1:3100";
+export const ADMIN_ORIGIN = `http://127.0.0.1:${process.env.E2E_ADMIN_PORT ?? "3100"}`;
 const REMOTE_PROJECT_REF = "osrmyjgmpdspdcwqjwuv";
 
 export function requiredEnv(name: string) {

@@ -107,6 +107,14 @@ function destinationConfigKey(method: WithdrawalDestinationMethod) {
   return method === "KRW_BANK" ? "allowed_bank_codes" : "allowed_networks";
 }
 
+function reopenWithdrawal() {
+  return (
+    <Link className="button button--secondary" href="/wallet/withdraw">
+      다시 열기
+    </Link>
+  );
+}
+
 export default async function WithdrawalPage() {
   const identity = await requirePageUser();
   const now = new Date();
@@ -130,13 +138,13 @@ export default async function WithdrawalPage() {
     admin
       .from("withdrawal_policies")
       .select(
-        "id, currency, destination_type, minimum_amount_atomic, fee_atomic, destination_config, allows_welcome_reward, effective_at",
+        "id, version, currency, destination_type, minimum_amount_atomic, fee_atomic, destination_config, allows_welcome_reward, effective_at",
       )
       .eq("is_enabled", true)
       .eq("currency", "KRW")
       .lte("effective_at", nowIso)
       .or(`expires_at.is.null,expires_at.gt.${nowIso}`)
-      .order("effective_at", { ascending: false }),
+      .order("version", { ascending: false }),
     identity.supabase
       .from("withdrawal_requests")
       .select(
@@ -186,6 +194,7 @@ export default async function WithdrawalPage() {
       id: row.id,
       method,
       minimumAmountAtomic: String(row.minimum_amount_atomic),
+      version: row.version,
     });
   }
 
@@ -261,14 +270,25 @@ export default async function WithdrawalPage() {
   }
 
   return (
-    <>
+    <div
+      data-ui-ready="/wallet/withdraw"
+      data-ui-state={
+        accountsError ||
+        policiesError ||
+        requestsError ||
+        conversionError ||
+        destinationsError
+          ? "partial"
+          : "loaded"
+      }
+    >
       <Link className={styles.pageBack} href="/wallet">
         ← 내 자산으로
       </Link>
       <PageHeading
-        eyebrow="WITHDRAWAL"
+        eyebrow="출금"
         title="출금하기"
-        lead="정산된 실제 잔액만 출금할 수 있어요. 은행 계좌와 USDT 주소를 지원합니다."
+        lead="정산된 KRW 잔액만 출금할 수 있어요. 은행 계좌와 USDT 주소를 지원합니다."
       />
 
       <Surface as="section" className={styles.balanceStrip} tone="raised">
@@ -353,12 +373,14 @@ export default async function WithdrawalPage() {
             <StatePanel
               tone="error"
               title="출금 정보를 불러오지 못했어요"
-              description="인터넷 연결을 확인한 뒤 다시 시도해 주세요."
+              description="인터넷 연결을 확인한 뒤 다시 열어 주세요."
+              action={reopenWithdrawal()}
             />
           ) : !securityReady ? (
             <StatePanel
               title="일반 출금 접수를 잠시 이용할 수 없어요"
               description="준비가 끝나면 다시 이용할 수 있어요."
+              action={reopenWithdrawal()}
             />
           ) : policies.length === 0 || !accounts ? (
             <StatePanel
@@ -367,6 +389,8 @@ export default async function WithdrawalPage() {
             />
           ) : (
             <WithdrawalForm
+              key={identity.userId}
+              ownerId={identity.userId}
               account={{
                 availableBalanceAtomic: availableAtomic,
                 heldBalanceAtomic: heldAtomic,
@@ -403,7 +427,7 @@ export default async function WithdrawalPage() {
         </Surface>
 
         <Surface as="aside" className={styles.summaryPanel}>
-          <p className="eyebrow">SAFE WITHDRAWAL</p>
+          <p className="eyebrow">출금 안내</p>
           <h2>요청 후 처리 순서</h2>
           <p>접수된 금액은 보류되며, 완료 또는 취소 결과가 반영됩니다.</p>
           <ol className={styles.flowList}>
@@ -433,7 +457,7 @@ export default async function WithdrawalPage() {
       >
         <header className={styles.historyHeader}>
           <span>
-            <p className="eyebrow">WITHDRAWAL STATUS</p>
+            <p className="eyebrow">출금 상태</p>
             <h2 id="withdrawal-history">최근 출금 요청</h2>
             <p>요청별 금액과 처리 단계를 확인할 수 있어요.</p>
           </span>
@@ -445,7 +469,8 @@ export default async function WithdrawalPage() {
             <StatePanel
               tone="error"
               title="출금 요청 내역을 불러오지 못했어요"
-              description="잠시 후 다시 확인해 주세요."
+              description="인터넷 연결을 확인한 뒤 다시 열어 주세요."
+              action={reopenWithdrawal()}
             />
           </div>
         ) : requests?.length ? (
@@ -506,6 +531,6 @@ export default async function WithdrawalPage() {
           </div>
         )}
       </section>
-    </>
+    </div>
   );
 }

@@ -184,8 +184,7 @@ select throws_ok(
       raw_app_meta_data,
       raw_user_meta_data,
       created_at,
-      updated_at
-    ) values (
+      updated_at, confirmation_token, recovery_token, email_change, email_change_token_new) values (
       '011d1d5d-4a7a-4b7d-89ea-57298ec48b9b',
       'authenticated',
       'authenticated',
@@ -194,8 +193,7 @@ select throws_ok(
       statement_timestamp(),
       '{"provider":"email","providers":["email"]}'::jsonb,
       '{}'::jsonb,
-      statement_timestamp(),
-      statement_timestamp()
+      statement_timestamp(), statement_timestamp(), '', '', '', ''
     )
   $query$,
   '23514',
@@ -215,8 +213,7 @@ select throws_ok(
       raw_app_meta_data,
       raw_user_meta_data,
       created_at,
-      updated_at
-    ) values (
+      updated_at, confirmation_token, recovery_token, email_change, email_change_token_new) values (
       'b777210b-5df3-468e-bba8-35f4875b7c3c',
       'authenticated',
       'authenticated',
@@ -225,8 +222,7 @@ select throws_ok(
       statement_timestamp(),
       '{"provider":"google","providers":["google"]}'::jsonb,
       '{}'::jsonb,
-      statement_timestamp(),
-      statement_timestamp()
+      statement_timestamp(), statement_timestamp(), '', '', '', ''
     )
   $query$,
   '22023',
@@ -246,8 +242,7 @@ select throws_ok(
       raw_app_meta_data,
       raw_user_meta_data,
       created_at,
-      updated_at
-    ) values (
+      updated_at, confirmation_token, recovery_token, email_change, email_change_token_new) values (
       'cff604b7-9e1f-45ef-a45c-7a5dd39930cb',
       'authenticated',
       'authenticated',
@@ -269,8 +264,7 @@ select throws_ok(
         'marketing_granted', false,
         'marketing_version', 'MARKETING-KO-2026-09-27'
       ),
-      statement_timestamp(),
-      statement_timestamp()
+      statement_timestamp(), statement_timestamp(), '', '', '', ''
     )
   $query$,
   '23514',
@@ -288,8 +282,7 @@ insert into auth.users (
   raw_app_meta_data,
   raw_user_meta_data,
   created_at,
-  updated_at
-) values (
+  updated_at, confirmation_token, recovery_token, email_change, email_change_token_new) values (
   '3f7be82f-785a-4074-bc53-e8be020ceb4d',
   'authenticated',
   'authenticated',
@@ -311,8 +304,7 @@ insert into auth.users (
     'marketing_granted', false,
     'marketing_version', 'MARKETING-KO-2026-09-27'
   ),
-  statement_timestamp(),
-  statement_timestamp()
+  statement_timestamp(), statement_timestamp(), '', '', '', ''
 );
 
 select ok(

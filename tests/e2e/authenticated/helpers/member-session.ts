@@ -28,7 +28,10 @@ export async function loginAsMember(
     );
   }
   // 서버 액션 쿠키가 브라우저에 정착할 때까지 인증 UI를 확인한다.
-  await page.getByText("MEMBER").first().waitFor({ timeout: 30_000 });
+  await page
+    .getByText("회원", { exact: true })
+    .first()
+    .waitFor({ timeout: 30_000 });
 }
 
 /** 첫 방문 안내 오버레이가 시작 CTA를 가리거나 클릭을 가로채지 않게 닫는다. */
@@ -68,15 +71,23 @@ export async function startTrialFromUi(page: Page) {
     );
   }
   // UI 스냅샷이 지연돼도 API 성공이면 통과. ACTIVE 문구는 가능하면 확인한다.
+  // h1「첫 채굴이 진행 중이에요.」와 부분 일치하지 않도록 h2 exact name을 쓴다.
   await page.goto("/start");
   await dismissGuidedQuestIfPresent(page);
-  const activeCopy = page.getByText("채굴이 진행 중이에요");
+  const activeCopy = page.getByRole("heading", {
+    level: 2,
+    name: "채굴이 진행 중이에요",
+    exact: true,
+  });
   try {
     await activeCopy.waitFor({ timeout: 20_000 });
   } catch {
-    const status = (
-      await page.locator(".product-mining-stage__meta strong").textContent()
-    )?.trim();
+    const statusLocator = page
+      .locator(
+        "[data-start-stage-meta] strong, .product-mining-stage__meta strong",
+      )
+      .first();
+    const status = (await statusLocator.textContent())?.trim();
     if (status !== "진행 중") {
       throw new Error(
         `TRIAL_START_UI_NOT_ACTIVE: status=${status ?? "none"} (API was ok)`,
@@ -115,7 +126,7 @@ export async function convertWelcomeFromUi(page: Page) {
   await page.goto("/start");
   await dismissGuidedQuestIfPresent(page);
   const memberVisible = await page
-    .getByText("MEMBER")
+    .getByText("회원", { exact: true })
     .first()
     .isVisible()
     .catch(() => false);

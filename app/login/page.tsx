@@ -34,7 +34,7 @@ export default async function LoginPage({
           : null;
 
   return (
-    <main className="auth-page">
+    <main className="auth-page" data-ui-ready="/login" data-ui-state="loaded">
       <section className="auth-page__brand" aria-labelledby="auth-title">
         <div className="auth-page__top">
           <Link className="brand-lockup" href="/" aria-label="퍼뜩 채굴 홈">
@@ -47,7 +47,7 @@ export default async function LoginPage({
           <ThemeControl />
         </div>
         <div>
-          <p className="eyebrow">SECURE ENTRY</p>
+          <p className="eyebrow">안전한 로그인</p>
           <h1 className="ko-heading" id="auth-title">
             나의 채굴로 돌아가기
           </h1>
@@ -70,7 +70,7 @@ export default async function LoginPage({
       </section>
       <section className="auth-page__panel" aria-label="계정 로그인">
         <div className="auth-page__panel-header">
-          <p className="eyebrow">ACCOUNT</p>
+          <p className="eyebrow">계정 로그인</p>
           <h2 className="ko-heading">다시 만나 반가워요.</h2>
           <p className="ko-copy">아이디 또는 복구 이메일로 로그인해 주세요.</p>
         </div>
@@ -84,7 +84,7 @@ export default async function LoginPage({
         ) : null}
         <AuthForm nextPath={nextPath} />
         <p className="auth-page__legal ko-copy">
-          로그인에 문제가 있어도 계정 존재 여부는 알려 드리지 않습니다.
+          계정 정보를 잊으셨다면 아이디 찾기나 비밀번호 재설정을 이용해 주세요.
         </p>
       </section>
     </main>

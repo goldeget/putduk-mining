@@ -5,6 +5,7 @@ This repository is a greenfield project. The following scope lock is an absolute
 ## Authorized targets only
 
 - Local workspace: `C:\Users\PC\Desktop\putduk-mining`
+- User-authorized QA output storage only: `D:\PUTDUK-MINING-QA` on the `ESD-USB` volume (authorized 2026-10-01). This is not another source workspace.
 - GitHub repository: `goldeget/putduk-mining`
 - GitHub remote: `https://github.com/goldeget/putduk-mining.git`
 - Supabase project: `putduk-mining`
@@ -21,11 +22,19 @@ This repository is a greenfield project. The following scope lock is an absolute
 3. Do not copy, port, infer, or resurrect implementation or product decisions from any previous PUTDUK or unrelated project. The documents and code inside this repository are the only project source of truth.
 4. Before every GitHub or Supabase operation, verify the exact repository identity or Supabase project ref. If it is missing, ambiguous, or different from the authorized targets above, stop without opening the target and report the mismatch.
 5. Authentication to a different GitHub account, organization, Supabase account, or project never grants permission to inspect or use it. Do not switch targets to work around an authentication or tooling problem.
-6. Search commands and automated discovery must stay inside the authorized local workspace. Do not perform parent-directory, home-directory, cross-workspace, account-wide, organization-wide, or project-list searches for implementation context.
+6. Search commands and automated discovery must stay inside the authorized local workspace, except inspecting this repository's newly generated QA evidence under `D:\PUTDUK-MINING-QA`. Never scan the D: root or use existing external-drive contents as implementation context. Do not perform parent-directory, home-directory, cross-workspace, account-wide, organization-wide, or project-list searches for implementation context.
 7. Any request to change these authorized targets must come explicitly from the user. Until this file is deliberately updated for that request, the boundary remains locked.
 8. A possible scope violation is a hard stop, not a reason to guess. Report it as `BLOCKED_TARGET_SCOPE`.
 9. This is a true greenfield system. Treat every prior local or remote implementation as nonexistent and forbidden evidence, including shell history, editor history, caches, prior agent memory, prior task output, old Docker state, and similarly named projects.
 10. Repository documents are specifications only. Do not mistake scaffolding, prose, or historical artifacts for an implemented application.
+
+## External QA evidence storage
+
+1. Verify D: is the user-authorized `ESD-USB` volume before writing QA evidence. Do not inventory its existing files.
+2. Use a fresh, project- and run-specific directory under `D:\PUTDUK-MINING-QA` for approved-repository artifact downloads, extraction, screenshots, review reports and task-scoped temporary files.
+3. Do not open or reuse any pre-existing project, code, asset, database, backup or configuration on D:. QA evidence is not a replacement source of truth for the repository.
+4. The repository and Git work remain in the authorized C: workspace. Moving the repository, deleting prior C: outputs, or broad drive cleanup requires a separate explicit user request.
+5. This storage authorization does not authorize another GitHub repository, remote Supabase mutation, Cloudflare mutation, deployment or release.
 
 ## Docker isolation
 

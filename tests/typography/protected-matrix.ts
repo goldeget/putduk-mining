@@ -8,12 +8,15 @@ import {
   type TypographyTheme,
   type TypographyViewport,
 } from "./helpers";
+import type { UiTerminalState } from "./route-readiness";
 
 export type ProtectedTypographyRoute = {
   name: string;
   origin: string;
   pathname: string;
   url: string;
+  expectedStates?: readonly UiTerminalState[];
+  fixtureId?: string;
 };
 
 async function auditProtectedRoute(input: {
@@ -37,7 +40,11 @@ async function auditProtectedRoute(input: {
       origin: input.route.origin,
       page: input.page,
       pathname: input.route.pathname,
-      readySelector: "main",
+      requireRouteBody: true,
+      ...(input.route.expectedStates
+        ? { expectedStates: input.route.expectedStates }
+        : {}),
+      ...(input.route.fixtureId ? { fixtureId: input.route.fixtureId } : {}),
       routeName: input.route.name,
       testInfo: input.testInfo,
       theme: input.theme,

@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { SignupForm } from "@/app/signup/signup-form";
 import { BrandMark } from "@/components/brand/brand-mark";
+import { ThemeControl } from "@/components/system/theme-control";
 import { PutdukIcon } from "@/components/icons/putduk-icon";
 
 export const metadata: Metadata = {
@@ -12,19 +13,26 @@ export const metadata: Metadata = {
 
 export default function SignupPage() {
   return (
-    <main className="auth-page signup-page">
+    <main
+      className="auth-page signup-page"
+      data-ui-ready="/signup"
+      data-ui-state="loaded"
+    >
       <section className="auth-page__brand" aria-labelledby="signup-title">
-        <Link className="brand-lockup" href="/" aria-label="퍼뜩 채굴 홈">
-          <BrandMark title="" />
-          <span>
-            <strong>PUTDUK</strong>
-            <small>MINING</small>
-          </span>
-        </Link>
+        <div className="auth-page__top">
+          <Link className="brand-lockup" href="/" aria-label="퍼뜩 채굴 홈">
+            <BrandMark title="" />
+            <span>
+              <strong>PUTDUK</strong>
+              <small>MINING</small>
+            </span>
+          </Link>
+          <ThemeControl />
+        </div>
         <div>
-          <p className="eyebrow">YOUR FIRST MINING WORLD</p>
+          <p className="eyebrow">나의 첫 채굴 월드</p>
           <h1 className="ko-heading" id="signup-title">
-            KOREA에서 시작하는 첫 채굴.
+            한국 월드에서 시작하는 첫 채굴.
           </h1>
           <p>가입을 마치면 PUTDUK START가 이어서 안내합니다.</p>
         </div>
@@ -47,7 +55,7 @@ export default function SignupPage() {
         aria-label="회원가입"
       >
         <div className="auth-page__panel-header">
-          <p className="eyebrow">CREATE ACCOUNT</p>
+          <p className="eyebrow">회원가입</p>
           <h2>계정 만들기</h2>
           <p className="ko-copy">
             이름, 생년월일, 휴대전화와 로그인 정보를 입력해 주세요.

@@ -375,9 +375,16 @@ test("submits manual USDT through the server and hides other members", async ({
       const usdtHistory = page.getByRole("region", { name: "최근 USDT 입금" });
       const submittedRow = usdtHistory.getByText("7.654321 USDT 송금");
       const submitFeedback = page.locator("#usdt-deposit-feedback");
-      await expect(submittedRow.or(submitFeedback)).toBeVisible({
-        timeout: 60_000,
-      });
+      // 접수 문구와 이 금액의 송금 행이 동시에 보이면 or()는 strict mode로 실패한다.
+      // 문구는 피드백 영역, 행은 최근 USDT 입금 영역의 금액으로 따로 확인한다.
+      await expect
+        .poll(
+          async () =>
+            (await submittedRow.isVisible()) ||
+            (await submitFeedback.isVisible()),
+          { timeout: 60_000 },
+        )
+        .toBe(true);
       if (await submitFeedback.isVisible()) {
         const feedbackText = (await submitFeedback.innerText()).trim();
         if (!feedbackText.includes("입금 내역을 접수했어요")) {
@@ -539,13 +546,13 @@ test("covers deposit layout, theme, focus, and reduced motion", async ({
 
       await page.setViewportSize({ height: 844, width: 390 });
       await page.getByLabel("화면 테마").selectOption("system");
-      await expect(page.locator("html")).not.toHaveAttribute(
-        "data-theme",
-        "dark",
+      await expect(page.locator("html")).toHaveAttribute(
+        "data-theme-preference",
+        "system",
       );
-      await expect(page.locator("html")).not.toHaveAttribute(
+      await expect(page.locator("html")).toHaveAttribute(
         "data-theme",
-        "light",
+        /^(light|dark)$/,
       );
       await page.emulateMedia({
         colorScheme: "light",

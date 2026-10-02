@@ -29,7 +29,11 @@ export function AuthForm({ nextPath }: { nextPath: string }) {
   const hasError = state.status === "error";
 
   return (
-    <form className="auth-form" action={action}>
+    <form
+      className="auth-form"
+      action={action}
+      data-ui-state={hasError ? "error" : "loaded"}
+    >
       <input type="hidden" name="next" value={nextPath} />
       <label>
         <span>아이디 또는 복구 이메일</span>
@@ -47,9 +51,9 @@ export function AuthForm({ nextPath }: { nextPath: string }) {
           required
         />
       </label>
-      <div className="auth-form__password-field">
-        <label htmlFor="login-password">
-          <span>비밀번호</span>
+      <div className="auth-form__field">
+        <label htmlFor="login-password">비밀번호</label>
+        <div className="auth-form__password">
           <input
             id="login-password"
             name="password"
@@ -61,15 +65,16 @@ export function AuthForm({ nextPath }: { nextPath: string }) {
             aria-describedby={hasError ? "login-error" : undefined}
             required
           />
-        </label>
-        <button
-          type="button"
-          aria-controls="login-password"
-          aria-pressed={showPassword}
-          onClick={() => setShowPassword((value) => !value)}
-        >
-          {showPassword ? "숨기기" : "보기"}
-        </button>
+          <button
+            type="button"
+            aria-controls="login-password"
+            aria-label={showPassword ? "비밀번호 숨기기" : "비밀번호 보기"}
+            aria-pressed={showPassword}
+            onClick={() => setShowPassword((value) => !value)}
+          >
+            {showPassword ? "숨기기" : "보기"}
+          </button>
+        </div>
       </div>
       <nav className="auth-form__recovery ko-copy" aria-label="계정 찾기">
         <Link href="/find-id">아이디 찾기</Link>

@@ -1,0 +1,47 @@
+{
+  "registered": {
+    "key": "26c69ca5-4df5-4130-9c66-27fc7e81784b",
+    "destinationId": "410aad75-4c2d-4eaf-9e11-32e0fc3a7cb9"
+  },
+  "beforeHold": {
+    "ownerId": "9e102d71-cf25-4596-b862-da73c85c8c50",
+    "key": "26c69ca5-4df5-4130-9c66-27fc7e81784b",
+    "requestId": null,
+    "destinationId": null,
+    "request": 0,
+    "hold": 0,
+    "outbox": 0,
+    "receipt": 0
+  },
+  "before": {
+    "id": "410aad75-4c2d-4eaf-9e11-32e0fc3a7cb9",
+    "user_id": "9e102d71-cf25-4596-b862-da73c85c8c50",
+    "destination_type": "KRW_BANK",
+    "protection_until": "2026-09-30T08:07:42.488348+00:00",
+    "replaced_at": null,
+    "value_fingerprint": "df3b7249a777272370078be8f824e18258d74f1b846de370d2dd1e865ab5db1b",
+    "destinationCount": 1,
+    "historyCount": 1
+  },
+  "after": {
+    "id": "410aad75-4c2d-4eaf-9e11-32e0fc3a7cb9",
+    "user_id": "9e102d71-cf25-4596-b862-da73c85c8c50",
+    "destination_type": "KRW_BANK",
+    "protection_until": "2026-09-30T08:07:42.488348+00:00",
+    "replaced_at": null,
+    "value_fingerprint": "df3b7249a777272370078be8f824e18258d74f1b846de370d2dd1e865ab5db1b",
+    "destinationCount": 1,
+    "historyCount": 1
+  },
+  "effects": {
+    "ownerId": "9e102d71-cf25-4596-b862-da73c85c8c50",
+    "key": "26c69ca5-4df5-4130-9c66-27fc7e81784b",
+    "requestId": "cf33be1b-22d8-4494-9399-10d5ade44904",
+    "destinationId": "410aad75-4c2d-4eaf-9e11-32e0fc3a7cb9",
+    "request": 1,
+    "hold": 1,
+    "outbox": 1,
+    "receipt": 1
+  },
+  "observedBeforeCleanup": true
+}

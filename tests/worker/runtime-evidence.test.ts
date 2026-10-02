@@ -18,7 +18,11 @@ import {
 } from "../../workers/runner.mjs";
 
 const REMOTE_PROJECT_REF = "osrmyjgmpdspdcwqjwuv";
-const DB_CONTAINER = "supabase_db_putduk-mining";
+const localProjectId = process.env.LOCAL_SUPABASE_PROJECT_ID ?? "putduk-mining";
+if (!/^putduk-mining(?:-[a-z0-9-]+)?$/.test(localProjectId)) {
+  throw new Error("LOCAL_DB_PROJECT_SCOPE_REJECTED");
+}
+const DB_CONTAINER = `supabase_db_${localProjectId}`;
 
 function requireLocalWorkerEnv() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim();
@@ -34,6 +38,24 @@ function requireLocalWorkerEnv() {
     );
   }
   return { url, secret };
+}
+
+/** GoTrue는 이 컬럼의 NULL을 문자열로 읽지 못해 회원 조회가 실패한다. */
+async function expectLoadableAuthUser(client: SupabaseClient, userId: string) {
+  const tokens = sql(`
+    select (
+      confirmation_token is not null
+      and recovery_token is not null
+      and email_change is not null
+      and email_change_token_new is not null
+    )::text
+    from auth.users
+    where id = '${userId}'::uuid
+  `);
+  expect(tokens).toBe("true");
+  const { data, error } = await client.auth.admin.getUserById(userId);
+  expect(error).toBeNull();
+  expect(data.user?.id).toBe(userId);
 }
 
 function sql(statement: string): string {
@@ -83,7 +105,8 @@ async function insertOutboxEvent(
     request_id: randomUUID(),
     idempotency_key: `worker-runtime:${id}`,
     status: "PENDING",
-    available_at: new Date().toISOString(),
+    // 앱 시계가 DB보다 빠르면 available_at이 아직 도래하지 않아 claim이 0이 된다.
+    available_at: new Date(Date.now() - 5_000).toISOString(),
     attempt_count: 0,
     max_attempts: 12,
     occurred_at: new Date().toISOString(),
@@ -111,7 +134,7 @@ async function insertSystemJob(
     idempotency_key: `worker-job:${id}`,
     payload: { version: 1 },
     status: "PENDING",
-    available_at: new Date().toISOString(),
+    available_at: new Date(Date.now() - 5_000).toISOString(),
     attempts: 0,
     max_attempts: 12,
     priority: 50,
@@ -371,8 +394,7 @@ describe("worker process execution against local Supabase", () => {
     sql(`
 insert into auth.users (
   id, instance_id, aud, role, email, encrypted_password, email_confirmed_at,
-  raw_app_meta_data, raw_user_meta_data, created_at, updated_at
-) values (
+  raw_app_meta_data, raw_user_meta_data, created_at, updated_at, confirmation_token, recovery_token, email_change, email_change_token_new) values (
   '${actorId}'::uuid,
   '00000000-0000-0000-0000-000000000000',
   'authenticated',
@@ -382,10 +404,10 @@ insert into auth.users (
   statement_timestamp(),
   '{}'::jsonb,
   '{}'::jsonb,
-  statement_timestamp(),
-  statement_timestamp()
+  statement_timestamp(), statement_timestamp(), '', '', '', ''
 );
 `);
+    await expectLoadableAuthUser(db, actorId);
     const { error: roleError } = await db.from("user_roles").insert({
       user_id: actorId,
       role: "ADMIN",
@@ -534,8 +556,7 @@ insert into auth.users (
     sql(`
 insert into auth.users (
   id, instance_id, aud, role, email, encrypted_password, email_confirmed_at,
-  raw_app_meta_data, raw_user_meta_data, created_at, updated_at
-) values (
+  raw_app_meta_data, raw_user_meta_data, created_at, updated_at, confirmation_token, recovery_token, email_change, email_change_token_new) values (
   '${userId}'::uuid,
   '00000000-0000-0000-0000-000000000000',
   'authenticated',
@@ -545,10 +566,10 @@ insert into auth.users (
   statement_timestamp(),
   '{}'::jsonb,
   '{}'::jsonb,
-  statement_timestamp(),
-  statement_timestamp()
+  statement_timestamp(), statement_timestamp(), '', '', '', ''
 );
 `);
+    await expectLoadableAuthUser(db, userId);
 
     const { error: bootstrapError } = await db.rpc("bootstrap_user", {
       p_user_id: userId,

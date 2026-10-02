@@ -15,13 +15,7 @@ import { ADMIN_COMMAND_FAMILIES } from "@/lib/auth/command-families";
 
 import { confirmUsdtManualDepositAction } from "./actions";
 
-export function ConfirmUsdtDepositForm({
-  depositId,
-  suggestedKrw,
-}: {
-  depositId: string;
-  suggestedKrw?: string;
-}) {
+export function ConfirmUsdtDepositForm({ depositId }: { depositId: string }) {
   const [result, action] = useActionState<CommandActionResult | null, FormData>(
     confirmUsdtManualDepositAction,
     null,
@@ -31,7 +25,6 @@ export function ConfirmUsdtDepositForm({
     <form action={action} className="operator-form">
       <input name="depositId" type="hidden" value={depositId} />
       <TextField
-        defaultValue={suggestedKrw}
         inputMode="numeric"
         label="반영할 원화 금액"
         name="creditedKrw"

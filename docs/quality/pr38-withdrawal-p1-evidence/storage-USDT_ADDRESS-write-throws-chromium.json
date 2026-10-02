@@ -1,0 +1,14 @@
+{
+  "ownerId": "a11a8584-9383-462e-b3d6-7f651dad0e8c",
+  "fault": "write-throws",
+  "destinationCalls": 0,
+  "holdCalls": 0,
+  "prepareCalls": 0,
+  "destinations": 0,
+  "requests": 0,
+  "intents": 0,
+  "holds": 0,
+  "outbox": 0,
+  "receipts": 0,
+  "observedBeforeCleanup": true
+}

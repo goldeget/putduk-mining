@@ -1,4 +1,13 @@
-import { formatKst, shortId } from "@/app/(control)/_lib/format";
+import Link from "next/link";
+import type { Route } from "next";
+
+import {
+  formatKst,
+  formatMismatchEvidence,
+  mismatchStatusLabel,
+  mismatchTypeLabel,
+  shortId,
+} from "@/app/(control)/_lib/format";
 import { EmptyQueue, QueueCard, QueueShell } from "@/components/queue-shell";
 import { requireAdminPage } from "@/lib/auth/principal";
 import { createAdminServiceClient } from "@/lib/supabase/service";
@@ -13,7 +22,7 @@ export default async function ExceptionsPage() {
     db
       .from("reconciliation_mismatches")
       .select(
-        "id, mismatch_type, subject_type, subject_id, status, created_at, resolution_reason",
+        "id, mismatch_type, subject_type, subject_id, status, created_at, resolution_reason, expected_value, actual_value",
       )
       .in("status", ["OPEN", "INVESTIGATING"])
       .order("created_at", { ascending: true })
@@ -28,30 +37,51 @@ export default async function ExceptionsPage() {
 
   const mismatchRows = mismatches.data ?? [];
   const jobRows = jobs.data ?? [];
+  const loadFailed = Boolean(mismatches.error || jobs.error);
 
   return (
-    <>
+    <div
+      data-ui-ready="/exceptions"
+      data-ui-state={
+        loadFailed
+          ? "partial"
+          : mismatchRows.length + jobRows.length === 0
+            ? "empty"
+            : "loaded"
+      }
+    >
       <QueueShell
-        eyebrow="SETTLEMENT · RECONCILIATION"
+        eyebrow="정산 · 대사"
         lead="정산 실패와 대사 차이를 확인합니다. 여기서 숫자를 자동으로 고치지 않습니다."
         title="정산·대사 예외"
       />
 
-      {mismatches.error || jobs.error ? (
+      {loadFailed ? (
         <p className="queue-flash" role="alert">
-          예외 목록을 일부 불러오지 못했습니다.
+          예외 목록을 일부 불러오지 못했습니다.{" "}
+          <Link className="text-link" href={"/exceptions" as Route}>
+            다시 불러오기
+          </Link>
         </p>
       ) : null}
 
       <section className="section-heading">
         <div>
-          <p className="eyebrow">RECONCILIATION</p>
-          <h2>대사 차이</h2>
+          <p className="eyebrow">대사 차이</p>
+          <h2>열린 대사 차이</h2>
         </div>
+        <p className="panel-note" aria-live="polite">
+          {mismatches.error
+            ? "조회 확인 필요"
+            : `${mismatchRows.length.toLocaleString("ko-KR")}건 · 자동 수리 없음`}
+        </p>
       </section>
 
       {!mismatches.error && mismatchRows.length === 0 ? (
-        <EmptyQueue body="열린 대사 차이가 없습니다." title="대사 예외 없음" />
+        <EmptyQueue
+          body="열린 대사 차이가 없습니다. 차이가 나면 여기 증거로 남습니다."
+          title="대사 예외 없음"
+        />
       ) : null}
 
       <section className="queue-list" aria-label="대사 예외">
@@ -59,14 +89,39 @@ export default async function ExceptionsPage() {
           <QueueCard key={row.id} tone="caution">
             <header className="queue-card__head">
               <div>
-                <p className="eyebrow">{row.mismatch_type}</p>
+                <p className="eyebrow">
+                  {mismatchTypeLabel(row.mismatch_type)} · {shortId(row.id)}
+                </p>
                 <h2>
                   {row.subject_type} · {shortId(row.subject_id)}
                 </h2>
               </div>
-              <span>{row.status}</span>
+              <span>{mismatchStatusLabel(row.status)}</span>
             </header>
-            <p className="panel-note">발견 {formatKst(row.created_at)}</p>
+            <dl className="evidence-grid">
+              <div>
+                <dt>발견</dt>
+                <dd>{formatKst(row.created_at)}</dd>
+              </div>
+              <div>
+                <dt>유형 코드</dt>
+                <dd>{row.mismatch_type}</dd>
+              </div>
+              <div>
+                <dt>기대 값</dt>
+                <dd>{formatMismatchEvidence(row.expected_value)}</dd>
+              </div>
+              <div>
+                <dt>실제 값</dt>
+                <dd>{formatMismatchEvidence(row.actual_value)}</dd>
+              </div>
+            </dl>
+            {row.resolution_reason ? (
+              <p className="panel-note">이전 사유: {row.resolution_reason}</p>
+            ) : null}
+            <p className="panel-note">
+              이 화면은 확인만 합니다. 원장 수리는 별도 승인 명령이 필요합니다.
+            </p>
             <ExceptionAckForm mismatchId={row.id} />
           </QueueCard>
         ))}
@@ -74,9 +129,14 @@ export default async function ExceptionsPage() {
 
       <section className="section-heading">
         <div>
-          <p className="eyebrow">BACKGROUND JOBS</p>
+          <p className="eyebrow">자동 작업</p>
           <h2>실패·격리된 작업</h2>
         </div>
+        <p className="panel-note" aria-live="polite">
+          {jobs.error
+            ? "조회 확인 필요"
+            : `${jobRows.length.toLocaleString("ko-KR")}건 · 잔액 직접 수정 없음`}
+        </p>
       </section>
 
       {!jobs.error && jobRows.length === 0 ? (
@@ -105,6 +165,6 @@ export default async function ExceptionsPage() {
           </QueueCard>
         ))}
       </section>
-    </>
+    </div>
   );
 }

@@ -145,8 +145,7 @@ insert into auth.users (
   raw_app_meta_data,
   raw_user_meta_data,
   created_at,
-  updated_at
-)
+  updated_at, confirmation_token, recovery_token, email_change, email_change_token_new)
 select
   id,
   'authenticated',
@@ -156,8 +155,7 @@ select
   statement_timestamp(),
   '{}'::jsonb,
   '{}'::jsonb,
-  statement_timestamp(),
-  statement_timestamp()
+  statement_timestamp(), statement_timestamp(), '', '', '', ''
 from (
   select user_id as id, 'ws02-member@putduk.test' as email from ws02_context
   union all

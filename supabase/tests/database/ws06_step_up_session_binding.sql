@@ -22,8 +22,7 @@ values (
 
 insert into auth.users (
   id, aud, role, email, encrypted_password, email_confirmed_at,
-  raw_app_meta_data, raw_user_meta_data, created_at, updated_at
-)
+  raw_app_meta_data, raw_user_meta_data, created_at, updated_at, confirmation_token, recovery_token, email_change, email_change_token_new)
 values
   (
     '11111111-1111-4111-8111-111111111601',
@@ -34,8 +33,7 @@ values
     statement_timestamp(),
     '{}'::jsonb,
     '{}'::jsonb,
-    statement_timestamp(),
-    statement_timestamp()
+    statement_timestamp(), statement_timestamp(), '', '', '', ''
   ),
   (
     '22222222-2222-4222-8222-222222222601',
@@ -46,8 +44,7 @@ values
     statement_timestamp(),
     '{}'::jsonb,
     '{}'::jsonb,
-    statement_timestamp(),
-    statement_timestamp()
+    statement_timestamp(), statement_timestamp(), '', '', '', ''
   );
 
 insert into public.user_roles (user_id, role, granted_by)

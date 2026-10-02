@@ -4,6 +4,7 @@ import { apiError, apiSuccess } from "@/lib/api/http";
 import { readIdempotencyKey } from "@/lib/api/idempotency";
 import { getVerifiedIdentity } from "@/lib/auth/session";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { withdrawalLogicalApiError } from "@/lib/wallet/withdrawal-logical-errors.server";
 
 const requestSchema = z.object({
   method: z.enum(["KRW_BANK", "USDT_ADDRESS"]),
@@ -42,19 +43,20 @@ export async function POST(request: Request) {
   }
 
   const admin = createSupabaseAdminClient();
-  const rpcName =
-    body.data.method === "KRW_BANK"
-      ? "request_krw_withdrawal"
-      : "request_usdt_withdrawal";
-
-  const { data, error } = await admin.rpc(rpcName, {
+  // Atomically delegates to request_krw_withdrawal / request_usdt_withdrawal.
+  // An arbitrary fresh browser key cannot bypass the unresolved-intent guard.
+  const { data, error } = await admin.rpc("hold_withdrawal_logical_request", {
     p_user_id: identity.userId,
+    p_method: body.data.method,
     p_destination_id: body.data.destinationId,
     p_amount_krw: body.data.amountKrw,
     p_idempotency_key: idempotencyKey,
   });
 
   if (error) {
+    if (error.message.includes("WITHDRAWAL_LOGICAL_")) {
+      return withdrawalLogicalApiError(error);
+    }
     const insufficient = error.message.includes(
       "INSUFFICIENT_AVAILABLE_BALANCE",
     );

@@ -15,6 +15,39 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # PR 변경분만 검사한다. 작업 트리 전체 포맷이나 브랜치 이름은 쓰지 않는다.
+  diff-integrity:
+    name: Exact diff integrity
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Check exact PR diff whitespace and conflict markers
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          case "$BASE_SHA" in
+            *[!0-9a-fA-F]*|"") echo "invalid base sha" >&2; exit 1 ;;
+          esac
+          case "$HEAD_SHA" in
+            *[!0-9a-fA-F]*|"") echo "invalid head sha" >&2; exit 1 ;;
+          esac
+          if ! git cat-file -e "${BASE_SHA}^{commit}" 2>/dev/null; then
+            git fetch --no-tags origin "$BASE_SHA"
+          fi
+          if ! git cat-file -e "${HEAD_SHA}^{commit}" 2>/dev/null; then
+            git fetch --no-tags origin "$HEAD_SHA"
+          fi
+          git diff --check "${BASE_SHA}...${HEAD_SHA}"
+
   application:
     name: Application gates
     runs-on: ubuntu-24.04
@@ -144,10 +177,14 @@ jobs:
         run: node scripts/run-with-watchdog.mjs 120 -- node scripts/e2e-web-server-lifecycle-harness.mjs
 
   authenticated:
-    name: Authenticated product gates
+    name: Authenticated product gates (${{ matrix.shard }}/8)
     runs-on: ubuntu-24.04
-    timeout-minutes: 70
+    timeout-minutes: 90
     needs: [webserver-lifecycle]
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4, 5, 6, 7, 8]
     steps:
       - name: Check out source
         uses: actions/checkout@v7
@@ -183,19 +220,34 @@ jobs:
       - name: Create ephemeral withdrawal data key
         run: node scripts/write-ephemeral-withdrawal-key.mjs
 
+      - name: Resolve Playwright version
+        id: playwright-version
+        run: echo "version=$(pnpm exec playwright --version | awk '{print $2}')" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/ms-playwright
+          key: ms-playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ms-playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}-
+            ms-playwright-${{ runner.os }}-
+
       - name: Install Chromium
         run: pnpm exec playwright install --with-deps chromium
 
       - name: Run authenticated browser tests
-        # 관리자 출금 E2E는 실제 TOTP 창을 기다린다. 이 한도를 줄이지 않는다.
-        timeout-minutes: 45
-        run: pnpm test:e2e:authenticated
+        # 관리자 출금 E2E는 실제 TOTP 창을 기다린다. shard당 한도를 줄이지 않는다.
+        # 186개(chromium + mobile-chrome)를 8-way --shard로 나누면 shard당 약 23건이다. wall time은 가장 느린 shard 기준.
+        timeout-minutes: 75
+        # pnpm run … -- --shard 는 CI에서 playwright 인자 앞에 `--` 가 한 번 더 붙어 shard가 무시된다.
+        run: pnpm exec playwright test --config playwright.authenticated.config.ts --shard=${{ matrix.shard }}/8
 
       - name: Preserve authenticated browser evidence
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: authenticated-playwright
+          name: authenticated-playwright-shard-${{ matrix.shard }}
           path: |
             playwright-report
             test-results
@@ -280,7 +332,7 @@ jobs:
 
       - name: Assert public typography evidence
         if: always()
-        run: node scripts/assert-typography-report.mjs test-results/typography/report.json --passed 70 --screenshots 70 --redact
+        run: node scripts/assert-typography-report.mjs test-results/typography/report.json --passed 75 --screenshots 70 --redact
 
       - name: Preserve public typography evidence
         if: always()

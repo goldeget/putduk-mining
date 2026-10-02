@@ -1,13 +1,15 @@
 import type { ReactNode } from "react";
-import type { Route } from "next";
 import Link from "next/link";
 
 import { BrandMark } from "@/components/brand/brand-mark";
 import { PutdukIcon } from "@/components/icons/putduk-icon";
+import { PublicNavigation } from "@/components/layout/public-navigation";
+import { ThemeControl } from "@/components/system/theme-control";
 import {
   TRUST_CONTENT_VERSION,
   TRUST_DOCUMENTS,
 } from "@/lib/trust/public-content";
+import { getTrustNavigationLabel } from "@/lib/trust/public-presentation";
 
 const primaryLinks = [
   ["/about", "소개"],
@@ -25,20 +27,24 @@ export function TrustShell({ children }: { children: ReactNode }) {
             <BrandMark title="" />
             <span>
               <strong>PUTDUK</strong>
-              <small>TRUST CENTER</small>
+              <small>신뢰 안내</small>
             </span>
           </Link>
-          <nav aria-label="신뢰센터 주요 메뉴">
-            {primaryLinks.map(([href, label]) => (
-              <Link href={href} key={href}>
-                {label}
-              </Link>
-            ))}
-          </nav>
-          <Link className="button button--secondary" href="/login">
-            계정으로 이동
-            <PutdukIcon name="arrow-right" size={17} />
-          </Link>
+          <PublicNavigation
+            label="신뢰센터 주요 메뉴"
+            links={primaryLinks.map(([href, label]) => ({ href, label }))}
+          />
+          <div className="trust-header__tools">
+            <ThemeControl />
+            <Link
+              className="button button--secondary"
+              href="/login"
+              aria-label="로그인으로 이동"
+            >
+              <span>로그인</span>
+              <PutdukIcon name="arrow-right" size={17} />
+            </Link>
+          </div>
         </div>
       </header>
       <main>{children}</main>
@@ -55,13 +61,13 @@ export function TrustShell({ children }: { children: ReactNode }) {
             공개 사실 버전 <span>{TRUST_CONTENT_VERSION}</span>
           </p>
         </div>
-        <nav aria-label="전체 신뢰센터 문서">
-          {TRUST_DOCUMENTS.map((document) => (
-            <Link href={document.path as Route} key={document.path}>
-              {document.path}
-            </Link>
-          ))}
-        </nav>
+        <PublicNavigation
+          label="전체 신뢰센터 문서"
+          links={TRUST_DOCUMENTS.map((document) => ({
+            href: document.path,
+            label: getTrustNavigationLabel(document.path),
+          }))}
+        />
       </footer>
     </div>
   );

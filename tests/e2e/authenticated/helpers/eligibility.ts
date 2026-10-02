@@ -349,7 +349,8 @@ async function withTimeoutRetry<T>(
 export async function advanceTrialToCompleted(userId: string): Promise<void> {
   const client = createLocalServiceRoleClient();
   const started = new Date(Date.now() - 60 * 60 * 1000).toISOString();
-  const expired = new Date().toISOString();
+  // DB now()보다 앞에 두어야 만료 정산이 ACTIVE로 남지 않는다.
+  const expired = new Date(Date.now() - 5 * 60 * 1000).toISOString();
 
   await withTimeoutRetry("TRIAL_ACCOUNT_CLOCK", async () =>
     client

@@ -1,0 +1,280 @@
+.scene {
+  --ambient-play-state: paused;
+  isolation: isolate;
+}
+.scene[data-motion="playing"] {
+  --ambient-play-state: running;
+}
+.art {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.halo {
+  position: absolute;
+  inset: 12%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--brand-primary) 21%, transparent),
+    transparent 68%
+  );
+  animation: breathe 12s ease-in-out infinite;
+  animation-play-state: var(--ambient-play-state);
+}
+
+.orbit {
+  position: absolute;
+  border: 1px solid color-mix(in srgb, var(--brand-primary) 27%, transparent);
+  border-radius: 50%;
+  animation: revolve 24s linear infinite;
+  animation-play-state: var(--ambient-play-state);
+}
+
+.outer {
+  inset: 6%;
+}
+.inner {
+  inset: 19%;
+  border-style: dashed;
+  animation-duration: 18s;
+  animation-direction: reverse;
+}
+.orbit span {
+  position: absolute;
+  top: -4px;
+  left: calc(50% - 4px);
+  width: 8px;
+  height: 8px;
+  border: 2px solid var(--surface-sunken);
+  border-radius: 50%;
+  background: var(--brand-primary);
+}
+.inner span {
+  background: var(--brand-mineral);
+}
+
+.depthRing {
+  position: absolute;
+  inset: 43% 12% 10%;
+  border: 1px solid color-mix(in srgb, var(--brand-primary) 22%, transparent);
+  border-radius: 50%;
+  transform: rotate(-14deg) scaleY(0.4);
+  box-shadow: 0 6px 0 color-mix(in srgb, var(--brand-primary) 7%, transparent);
+}
+
+.core {
+  position: absolute;
+  inset: 22%;
+  filter: drop-shadow(
+    0 18px 22px color-mix(in srgb, var(--surface-sunken) 65%, transparent)
+  );
+  animation: float 12s ease-in-out infinite;
+  animation-play-state: var(--ambient-play-state);
+}
+.core svg {
+  display: block;
+  width: 100%;
+}
+.bevel {
+  fill: none;
+  stroke: var(--brand-mineral);
+  stroke-width: 0.75;
+  opacity: 0.3;
+}
+.face {
+  fill: var(--surface-sunken);
+  stroke: var(--border-strong);
+  stroke-width: 1.2;
+}
+.mineral {
+  fill: var(--brand-mineral);
+  opacity: 0.3;
+}
+.mark {
+  fill: none;
+  stroke: var(--brand-primary);
+  stroke-width: 2.5;
+}
+
+.glint {
+  position: absolute;
+  inset: 15% 26% 73%;
+  border-radius: 50%;
+  background: var(--brand-mineral);
+  opacity: 0.18;
+  transform: rotate(-29deg);
+  animation: light 16s ease-in-out infinite;
+  animation-play-state: var(--ambient-play-state);
+}
+.energy {
+  position: absolute;
+  inset: 25%;
+}
+.particle {
+  position: absolute;
+  top: 49%;
+  left: -28%;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--brand-primary);
+  opacity: 0.35;
+  animation: feed 12s ease-in-out infinite;
+  animation-play-state: var(--ambient-play-state);
+}
+.particle:nth-child(2) {
+  top: 19%;
+  left: -10%;
+  animation-delay: -2s;
+}
+.particle:nth-child(3) {
+  top: 78%;
+  left: -10%;
+  animation-delay: -4s;
+}
+.particle:nth-child(4) {
+  left: 124%;
+  animation-name: feed-back;
+  animation-delay: -6s;
+}
+.particle:nth-child(5) {
+  top: 19%;
+  left: 107%;
+  animation-name: feed-back;
+  animation-delay: -8s;
+}
+.particle:nth-child(6) {
+  top: 78%;
+  left: 107%;
+  animation-name: feed-back;
+  animation-delay: -10s;
+}
+
+.controls {
+  position: absolute;
+  z-index: 2;
+  bottom: -0.35rem;
+  left: 50%;
+  width: max-content;
+  max-width: 95%;
+  transform: translateX(-50%);
+}
+.pause {
+  min-height: 44px;
+  max-width: 100%;
+  padding: 0.65rem 0.9rem;
+  border: 1px solid var(--border-control);
+  border-radius: var(--radius-full);
+  color: var(--text-primary);
+  background: var(--surface-raised);
+  font: 700 0.875rem/1.3 var(--font-sans);
+  cursor: pointer;
+  transition:
+    background-color var(--motion-fast) var(--motion-easing),
+    border-color var(--motion-fast) var(--motion-easing);
+}
+.pause:hover:enabled {
+  background: var(--surface-interactive);
+}
+.pause:focus-visible {
+  outline: 2px solid var(--brand-primary);
+  outline-offset: 3px;
+}
+.pause:disabled {
+  color: var(--text-secondary);
+  cursor: default;
+}
+.description {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@keyframes revolve {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+@keyframes breathe {
+  0%,
+  100% {
+    opacity: 0.6;
+    transform: scale(0.96);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.04);
+  }
+}
+@keyframes light {
+  0%,
+  100% {
+    opacity: 0.12;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+@keyframes feed {
+  0%,
+  100% {
+    transform: translateX(0);
+    opacity: 0.2;
+  }
+  70% {
+    transform: translateX(36px);
+    opacity: 0.6;
+  }
+  85% {
+    transform: translateX(42px);
+    opacity: 0;
+  }
+}
+@keyframes feed-back {
+  0%,
+  100% {
+    transform: translateX(0);
+    opacity: 0.2;
+  }
+  70% {
+    transform: translateX(-36px);
+    opacity: 0.6;
+  }
+  85% {
+    transform: translateX(-42px);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scene *,
+  .scene *::before,
+  .scene *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+@media (forced-colors: active) {
+  .pause:focus-visible {
+    outline-color: Highlight;
+  }
+  .orbit,
+  .depthRing {
+    border-color: CanvasText;
+  }
+}

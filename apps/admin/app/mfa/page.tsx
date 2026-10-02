@@ -1,3 +1,4 @@
+import { ThemeControl } from "../../../../components/system/theme-control";
 import type { Metadata } from "next";
 
 import { MfaGate } from "@/components/mfa-gate";
@@ -18,7 +19,8 @@ export default async function MfaPage({
   return (
     <main className="auth-stage">
       <section className="auth-card auth-card--mfa">
-        <p className="eyebrow">MANDATORY AAL2</p>
+        <ThemeControl />
+        <p className="eyebrow">두 번째 보안 확인</p>
         <h1>운영자 본인 확인</h1>
         <p>운영 화면은 인증 앱을 통한 두 번째 확인 없이는 열리지 않습니다.</p>
         <MfaGate returnTo={safeReturn} />

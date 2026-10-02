@@ -28,7 +28,6 @@ export default defineConfig({
   reporter: isCI
     ? [
         ["line"],
-        ["github"],
         ["json", { outputFile: "test-results/typography/report.json" }],
       ]
     : "list",

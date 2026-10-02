@@ -1,0 +1,45 @@
+{
+  "first": {
+    "key": "aefa1768-4bcf-47b2-b468-21325fc48310",
+    "method": "USDT_ADDRESS",
+    "destinationId": "5262c85b-8cf1-49f4-af5c-5fcac33cb71e",
+    "amountKrw": "1000"
+  },
+  "retry": {
+    "key": "aefa1768-4bcf-47b2-b468-21325fc48310",
+    "method": "USDT_ADDRESS",
+    "destinationId": "5262c85b-8cf1-49f4-af5c-5fcac33cb71e",
+    "amountKrw": "1000"
+  },
+  "before": {
+    "id": "5262c85b-8cf1-49f4-af5c-5fcac33cb71e",
+    "user_id": "2dbe9546-efb9-4385-a4ed-674fb02333bc",
+    "destination_type": "USDT_ADDRESS",
+    "protection_until": "2026-09-30T08:09:03.229696+00:00",
+    "replaced_at": null,
+    "value_fingerprint": "5a7956cb7f311737496686b308ca7e9c1761effbc33ac9fff1528e8b21deace6",
+    "destinationCount": 1,
+    "historyCount": 1
+  },
+  "after": {
+    "id": "5262c85b-8cf1-49f4-af5c-5fcac33cb71e",
+    "user_id": "2dbe9546-efb9-4385-a4ed-674fb02333bc",
+    "destination_type": "USDT_ADDRESS",
+    "protection_until": "2026-09-30T08:09:03.229696+00:00",
+    "replaced_at": null,
+    "value_fingerprint": "5a7956cb7f311737496686b308ca7e9c1761effbc33ac9fff1528e8b21deace6",
+    "destinationCount": 1,
+    "historyCount": 1
+  },
+  "effects": {
+    "ownerId": "2dbe9546-efb9-4385-a4ed-674fb02333bc",
+    "key": "aefa1768-4bcf-47b2-b468-21325fc48310",
+    "requestId": "94ffd4b4-3b24-4abc-8a6d-7f21e95be46d",
+    "destinationId": "5262c85b-8cf1-49f4-af5c-5fcac33cb71e",
+    "request": 1,
+    "hold": 1,
+    "outbox": 1,
+    "receipt": 1
+  },
+  "observedBeforeCleanup": true
+}

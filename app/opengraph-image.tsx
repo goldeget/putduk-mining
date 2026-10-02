@@ -92,7 +92,7 @@ export default async function OpenGraphImage() {
               letterSpacing: 2,
             }}
           >
-            SERVER TIME · LEDGER FIRST · VERSIONED RULES
+            확인된 기록 · 명확한 채굴 안내
           </div>
         </div>
       </div>

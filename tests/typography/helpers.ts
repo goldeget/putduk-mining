@@ -1,4 +1,5 @@
 import { expect, type Page, type TestInfo } from "@playwright/test";
+import { waitForRouteBody, type UiTerminalState } from "./route-readiness";
 
 export type TypographyTheme = "dark" | "light";
 
@@ -204,6 +205,9 @@ export async function auditTypographyRoute(input: {
   page: Page;
   pathname?: string;
   readySelector?: string;
+  requireRouteBody?: boolean;
+  expectedStates?: readonly UiTerminalState[];
+  fixtureId?: string;
   routeName: string;
   testInfo: TestInfo;
   textScale?: number;
@@ -236,13 +240,28 @@ export async function auditTypographyRoute(input: {
       timeout: 60_000,
     });
   }
+  const state = input.requireRouteBody
+    ? await waitForRouteBody(
+        input.page,
+        input.pathname ?? new URL(input.page.url()).pathname,
+      )
+    : undefined;
   await input.page.evaluate(async (scale) => {
     await document.fonts.ready;
     if (scale !== 1) {
       document.documentElement.style.fontSize = `${scale * 100}%`;
     }
   }, textScale);
-  await input.page.waitForTimeout(100);
+  await input.page.evaluate(async () => {
+    await Promise.all(
+      Array.from(document.images).map((image) =>
+        image.decode().catch(() => undefined),
+      ),
+    );
+    await new Promise<void>((resolve) =>
+      requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+    );
+  });
 
   const name = evidenceName({
     routeName: input.routeName,
@@ -255,6 +274,54 @@ export async function auditTypographyRoute(input: {
     body: screenshot,
     contentType: "image/png",
   });
+  const presentation = await input.page.evaluate(() => {
+    let storedPreference: string | null;
+    try {
+      storedPreference = localStorage.getItem("putduk-theme");
+    } catch {
+      storedPreference = "storage-unavailable";
+    }
+    return {
+      storedPreference,
+      resolvedTheme: document.documentElement.dataset.theme ?? "system-css",
+      osTheme: matchMedia("(prefers-color-scheme: dark)").matches
+        ? "dark"
+        : "light",
+      reducedMotion: matchMedia("(prefers-reduced-motion: reduce)").matches,
+      fontFamily: getComputedStyle(document.body).fontFamily,
+      fontFaces: Array.from(document.fonts).map((font) => ({
+        family: font.family,
+        status: font.status,
+        weight: font.weight,
+      })),
+      failedImages: Array.from(document.images)
+        .filter((image) => !image.complete || image.naturalWidth === 0)
+        .map((image) => ({
+          alt: image.alt,
+          src: new URL(image.currentSrc || image.src, location.href).pathname,
+        })),
+    };
+  });
+  await input.testInfo.attach(`${name}-state`, {
+    body: JSON.stringify({
+      route: new URL(input.page.url()).pathname,
+      state: state ?? "public-content",
+      expectedStates: input.expectedStates ?? ["loaded", "empty"],
+      sourceSha: process.env.GITHUB_SHA ?? "local-uncommitted",
+      theme: input.theme,
+      viewport: input.viewport,
+      textScale,
+      fixtureId: input.fixtureId ?? "unspecified-existing-route-fixture",
+      browser: input.page.context().browser()?.version() ?? "unavailable",
+      presentation,
+    }),
+    contentType: "application/json",
+  });
+  if (state)
+    expect(
+      input.expectedStates ?? ["loaded", "empty"],
+      `${input.routeName}: ${state} is not stable loaded/empty evidence`,
+    ).toContain(state);
 
   const result = await readTypographyAudit(input.page);
   expect(
@@ -264,5 +331,21 @@ export async function auditTypographyRoute(input: {
   expect(
     result.koreanBreaks,
     `${input.routeName} ${input.viewport.label}px ${input.theme}: Korean token split across lines`,
+  ).toEqual([]);
+}
+
+/** 현재 페이지 타이포 청결도만 검사한다(전역 매트릭스 카운트에 포함되지 않음). */
+export async function assertTypographyClean(page: Page, label: string) {
+  await page.evaluate(async () => {
+    await document.fonts.ready;
+  });
+  const result = await readTypographyAudit(page);
+  expect(
+    result.overflow.scrollWidth,
+    `${label}: horizontal overflow\n${JSON.stringify(result.overflow.offenders, null, 2)}`,
+  ).toBeLessThanOrEqual(result.overflow.clientWidth + 1);
+  expect(
+    result.koreanBreaks,
+    `${label}: Korean token split across lines`,
   ).toEqual([]);
 }

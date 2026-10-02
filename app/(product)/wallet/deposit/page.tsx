@@ -201,7 +201,14 @@ export default async function DepositPage() {
   });
 
   return (
-    <>
+    <div
+      data-ui-ready="/wallet/deposit"
+      data-ui-state={
+        error || instructionResult.error || usdtHistoryResult.error
+          ? "partial"
+          : "loaded"
+      }
+    >
       <Link className={styles.pageBack} href="/wallet">
         ← 내 자산으로
       </Link>
@@ -389,6 +396,6 @@ export default async function DepositPage() {
           </div>
         )}
       </section>
-    </>
+    </div>
   );
 }

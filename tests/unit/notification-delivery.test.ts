@@ -55,6 +55,34 @@ describe("decideNotificationDelivery", () => {
     ).toThrow(/allowlist/i);
   });
 
+  it("rejects protocol-relative and backslash deep links", () => {
+    expect(() =>
+      decideNotificationDelivery({
+        ...base,
+        deepLink: "//attacker.invalid/wallet",
+      }),
+    ).toThrow(/allowlist/i);
+    expect(() =>
+      decideNotificationDelivery({
+        ...base,
+        deepLink: "/wallet\\escape",
+      }),
+    ).toThrow(/allowlist/i);
+  });
+
+  it("defers non-critical delivery during quiet hours", () => {
+    expect(
+      decideNotificationDelivery({
+        ...base,
+        now: new Date("2026-09-26T15:30:00.000Z"),
+        quietHours: { endHour: 8, startHour: 22 },
+      }),
+    ).toMatchObject({
+      channels: [],
+      reason: "QUIET_HOURS",
+    });
+  });
+
   it("fans out a published notice once and respects category preferences", () => {
     const plans = planPublishedNotificationFanout({
       allowedDeepLinkPrefixes: ["/events"],

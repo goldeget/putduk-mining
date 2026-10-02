@@ -1,0 +1,27 @@
+{
+  "requests": [
+    {
+      "key": "b3ea8287-65e1-4a14-a7e8-977e02f51987",
+      "method": "KRW_BANK",
+      "destinationId": "1e838789-8217-43aa-98fe-1f6606eb726b",
+      "amountKrw": "1000"
+    },
+    {
+      "key": "b3ea8287-65e1-4a14-a7e8-977e02f51987",
+      "method": "KRW_BANK",
+      "destinationId": "1e838789-8217-43aa-98fe-1f6606eb726b",
+      "amountKrw": "1000"
+    }
+  ],
+  "effects": {
+    "ownerId": "9dff6e9a-cfe2-46fe-a047-e403876352c1",
+    "key": "b3ea8287-65e1-4a14-a7e8-977e02f51987",
+    "requestId": "7489933f-e62a-450e-bd2c-9077f66343fa",
+    "destinationId": "1e838789-8217-43aa-98fe-1f6606eb726b",
+    "request": 1,
+    "hold": 1,
+    "outbox": 1,
+    "receipt": 1
+  },
+  "observedBeforeCleanup": true
+}

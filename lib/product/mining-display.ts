@@ -32,6 +32,11 @@ export function presentMiningStatus(status: string | null | undefined) {
   return miningStatusCopy[status] ?? unknownStatus;
 }
 
+/** Only these confirmed snapshot states permit a decorative running scene. */
+export function isConfirmedMiningRunning(status: string | null | undefined) {
+  return status === "NORMAL" || status === "REDUCED";
+}
+
 export function formatMiningClock(value: string | null | undefined) {
   if (!value) {
     return "확인 중";

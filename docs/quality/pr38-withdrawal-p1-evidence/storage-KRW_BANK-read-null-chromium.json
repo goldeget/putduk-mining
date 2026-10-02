@@ -1,0 +1,14 @@
+{
+  "ownerId": "2ef31272-bcb7-458b-8fa5-5e34bd380e4b",
+  "fault": "read-null",
+  "destinationCalls": 0,
+  "holdCalls": 0,
+  "prepareCalls": 0,
+  "destinations": 0,
+  "requests": 0,
+  "intents": 0,
+  "holds": 0,
+  "outbox": 0,
+  "receipts": 0,
+  "observedBeforeCleanup": true
+}

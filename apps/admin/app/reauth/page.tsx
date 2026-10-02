@@ -1,3 +1,4 @@
+import { ThemeControl } from "../../../../components/system/theme-control";
 import type { Route } from "next";
 import Link from "next/link";
 
@@ -25,7 +26,8 @@ export default async function ReauthPage({
   return (
     <main className="auth-stage">
       <section className="auth-card">
-        <p className="eyebrow">RE-AUTHENTICATION</p>
+        <ThemeControl />
+        <p className="eyebrow">다시 로그인</p>
         <h1>다시 확인해 주세요</h1>
         <p>{copy}</p>
         <div className="auth-actions">

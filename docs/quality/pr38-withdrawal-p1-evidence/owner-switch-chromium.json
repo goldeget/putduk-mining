@@ -1,0 +1,16 @@
+{
+  "ownerA": "93499e25-1abc-49a7-a556-19288162467f",
+  "ownerB": "952060c6-6482-4fdb-a428-06ee4aef399e",
+  "deniedStatus": 409,
+  "effects": {
+    "ownerId": "93499e25-1abc-49a7-a556-19288162467f",
+    "key": "5c00791c-10d8-46cd-822b-b6709a79df64",
+    "requestId": "869d18fc-cac0-4f9c-9305-ddcfde00ac5b",
+    "destinationId": "674df735-858b-4af1-bf0c-1d5288cfb7e5",
+    "request": 1,
+    "hold": 1,
+    "outbox": 1,
+    "receipt": 1
+  },
+  "observedBeforeCleanup": true
+}

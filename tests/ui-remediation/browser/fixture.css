@@ -1,0 +1,113 @@
+@font-face {
+  font-family: "PUTDUKFixturePretendard";
+  src: url("/fixture-font.woff2") format("woff2");
+  font-weight: 45 930;
+  font-style: normal;
+  font-display: swap;
+}
+:root {
+  --font-putduk: "PUTDUKFixturePretendard";
+}
+.fixture-toolbar,
+.fixture-panel,
+.fixture-motion {
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+}
+.fixture-toolbar {
+  position: relative;
+  padding: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  border-bottom: 1px solid var(--border-default);
+  background: var(--background-elevated);
+}
+.fixture-toolbar p {
+  flex: 1 1 25rem;
+  margin: 0;
+  font-size: 0.875rem;
+}
+.fixture-toolbar nav {
+  width: 100%;
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+.fixture-toolbar nav a {
+  color: var(--text-secondary);
+}
+.fixture-toolbar nav a[aria-current] {
+  color: var(--text-primary);
+  text-decoration: underline;
+}
+.fixture-toolbar .theme-control {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+.fixture-toolbar select,
+.fixture-host-controls select,
+.fixture-host-control select {
+  font: inherit;
+  background: var(--surface-raised);
+  color: var(--text-primary);
+  padding: 0.5rem;
+  border: 1px solid var(--border-default);
+  border-radius: 0.5rem;
+}
+.fixture-panel {
+  width: min(100% - 2rem, 45rem);
+  margin: 2rem auto;
+}
+.fixture-panel--wide {
+  width: min(100% - 2rem, 74rem);
+}
+.fixture-panel > h1,
+.fixture-motion > h1 {
+  font-size: clamp(1.25rem, 3vw, 2rem);
+}
+.fixture-host-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-block: 1.5rem;
+}
+.fixture-host-controls > label {
+  display: grid;
+  gap: 0.5rem;
+}
+.fixture-host-control {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-block: 1rem;
+}
+.fixture-motion {
+  width: min(100% - 2rem, 60rem);
+  margin: 2rem auto;
+}
+.fixture-world {
+  position: relative;
+  min-height: 30rem;
+  padding: 1rem;
+  background: var(--background-elevated);
+  border: 1px solid var(--border-default);
+  border-radius: 1rem;
+}
+.fixture-world .mining-core {
+  width: min(78vw, 370px);
+  margin-inline: auto;
+}
+.fixture-target {
+  margin-block: 1.5rem;
+  padding: 1rem;
+  background: var(--surface-default);
+  border: 1px solid var(--border-default);
+  border-radius: 1rem;
+}
+.fixture-scroll-spacer {
+  height: 140vh;
+  padding-top: 100vh;
+}

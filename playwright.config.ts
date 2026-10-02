@@ -4,12 +4,12 @@ const isCI = Boolean(process.env.CI);
 
 export default defineConfig({
   testDir: "./tests/e2e",
-  testIgnore: ["**/authenticated/**"],
+  testIgnore: ["**/authenticated/**", "**/support-typography.spec.ts"],
   fullyParallel: true,
   forbidOnly: isCI,
   globalTimeout: isCI ? 3 * 60_000 : 0,
   retries: isCI ? 2 : 0,
-  reporter: isCI ? [["line"], ["github"]] : "list",
+  reporter: isCI ? "line" : "list",
   use: {
     baseURL: "http://127.0.0.1:3000",
     trace: "on-first-retry",

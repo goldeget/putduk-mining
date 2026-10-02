@@ -10,7 +10,11 @@ import {
  * 비밀번호와 포트는 여기에 두지 않는다.
  * 실행 전에 status 의 DB URL 이 로컬인지 확인한다.
  */
-const LOCAL_DB_CONTAINER = "supabase_db_putduk-mining";
+const localProjectId = process.env.LOCAL_SUPABASE_PROJECT_ID ?? "putduk-mining";
+if (!/^putduk-mining(?:-[a-z0-9-]+)?$/.test(localProjectId)) {
+  throw new Error("LOCAL_DB_PROJECT_SCOPE_REJECTED");
+}
+const LOCAL_DB_CONTAINER = `supabase_db_${localProjectId}`;
 
 const DB_URL_ENV = "LOCAL_SUPABASE_DB_URL";
 

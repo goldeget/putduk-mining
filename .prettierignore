@@ -1,6 +1,7 @@
 .next
 .sites-work
 **/.next
+**/.vite
 **/dist
 **/*.md
 coverage

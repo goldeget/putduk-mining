@@ -4,6 +4,9 @@ import type { ReactNode } from "react";
 import { SupportRuntime } from "@/components/support/support-runtime";
 import { AnalyticsBeacon } from "@/components/system/analytics-beacon";
 import { PwaRegistrar } from "@/components/system/pwa-registrar";
+import { ThemeRuntime } from "@/components/system/theme-runtime";
+import { putdukFont } from "@/lib/design/fonts";
+import { themeBootstrap } from "@/lib/design/theme";
 
 import "./globals.css";
 import "./productization.css";
@@ -77,10 +80,6 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   colorScheme: "light dark",
-  themeColor: [
-    { color: "#070706", media: "(prefers-color-scheme: dark)" },
-    { color: "#f8f4ea", media: "(prefers-color-scheme: light)" },
-  ],
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
@@ -90,12 +89,26 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: ReactNode }>) {
   return (
-    <html lang="ko" data-scroll-behavior="smooth" suppressHydrationWarning>
+    <html
+      lang="ko"
+      className={putdukFont.variable}
+      data-scroll-behavior="smooth"
+      suppressHydrationWarning
+    >
       <head>
+        <meta
+          name="theme-color"
+          content="#070706"
+          media="(prefers-color-scheme: dark)"
+        />
+        <meta
+          name="theme-color"
+          content="#f8f4ea"
+          media="(prefers-color-scheme: light)"
+        />
         <script
           dangerouslySetInnerHTML={{
-            __html:
-              'try{var t=localStorage.getItem("putduk-theme");if(t==="light"||t==="dark"){document.documentElement.dataset.theme=t;document.documentElement.style.colorScheme=t}}catch(e){}',
+            __html: themeBootstrap,
           }}
         />
       </head>
@@ -111,8 +124,9 @@ export default function RootLayout({
         />
         <PwaRegistrar />
         <AnalyticsBeacon />
-        <SupportRuntime />
+        <ThemeRuntime />
         {children}
+        <SupportRuntime />
       </body>
     </html>
   );

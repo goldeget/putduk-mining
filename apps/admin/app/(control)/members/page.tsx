@@ -13,9 +13,18 @@ import {
 import { requireAdminPage } from "@/lib/auth/principal";
 import { createAdminServiceClient } from "@/lib/supabase/service";
 
+import {
+  anyMemberCountFailed,
+  countMemberMiningSessions,
+  memberCountLabel,
+} from "./_lib/member-evidence";
+import styles from "./members.module.css";
+import {
+  presentMemberLifecycle,
+  presentMemberProfile,
+} from "./_lib/member-state-display";
+
 const memberIdSchema = z.uuid();
-const countText = (value: number | null, failed: boolean) =>
-  failed || value === null ? "—" : value.toLocaleString("ko-KR");
 
 export default async function MembersPage({
   searchParams,
@@ -28,22 +37,29 @@ export default async function MembersPage({
   const db = createAdminServiceClient();
   if (!parsedId.success) {
     return (
-      <>
+      <div
+        className={styles.membersPage}
+        data-ui-ready="/members"
+        data-ui-state={id ? "error" : "empty"}
+      >
         <section className="page-intro">
-          <p className="eyebrow">MEMBER 360</p>
+          <p className="eyebrow">회원 한눈에</p>
           <h1>회원 한 사람의 맥락</h1>
           <p>
-            정확한 회원 UUID로만 조회합니다. 비밀번호·문서 원문·출금 목적지
+            정확한 회원 식별자로만 조회합니다. 비밀번호·문서 원문·출금 목적지
             원문은 보이지 않습니다.
           </p>
         </section>
-        <form className="member-search">
-          <label htmlFor="member-id">회원 UUID</label>
+        <form className="member-search" method="get" action="/members">
+          <label htmlFor="member-id">회원 식별자</label>
           <div>
             <input
               id="member-id"
               name="id"
+              defaultValue={id ?? ""}
               placeholder="00000000-0000-0000-0000-000000000000"
+              autoComplete="off"
+              spellCheck={false}
               required
             />
             <button className="gold-button" type="submit">
@@ -51,17 +67,19 @@ export default async function MembersPage({
             </button>
           </div>
           {id ? (
-            <p className="form-error">올바른 회원 UUID를 입력해 주세요.</p>
+            <p className="form-error" role="alert">
+              올바른 회원 식별자를 입력해 주세요.
+            </p>
           ) : null}
         </form>
         <section className="member-empty">
-          <span>360°</span>
+          <span aria-hidden="true">360°</span>
           <h2>조회할 회원을 선택하세요.</h2>
           <p>
             이름이나 전화번호로 검색하지 않습니다. 정확한 식별자만 받습니다.
           </p>
         </section>
-      </>
+      </div>
     );
   }
 
@@ -101,10 +119,7 @@ export default async function MembersPage({
       .from("trial_accounts")
       .select("id", { count: "exact", head: true })
       .eq("user_id", userId),
-    db
-      .from("mining_sessions")
-      .select("id", { count: "exact", head: true })
-      .eq("user_id", userId),
+    countMemberMiningSessions(db, userId),
     db
       .from("wallet_accounts")
       .select("id", { count: "exact", head: true })
@@ -161,21 +176,42 @@ export default async function MembersPage({
       .limit(5),
   ]);
 
-  if (authUser.error || !authUser.data.user) {
+  const authError = authUser.error as {
+    status?: number;
+    code?: string;
+    message?: string;
+  } | null;
+  const userMissing =
+    !authUser.data.user &&
+    (!authError ||
+      authError.status === 404 ||
+      authError.code === "user_not_found" ||
+      /user not found/i.test(authError.message ?? ""));
+  if (authError || !authUser.data.user) {
     return (
-      <>
+      <div
+        className={styles.membersPage}
+        data-ui-ready="/members"
+        data-ui-state={userMissing ? "empty" : "error"}
+      >
         <section className="page-intro">
-          <p className="eyebrow">MEMBER 360</p>
-          <h1>회원을 찾지 못했습니다.</h1>
+          <p className="eyebrow">회원 한눈에</p>
+          <h1>
+            {userMissing
+              ? "회원을 찾지 못했습니다."
+              : "회원 정보를 확인하지 못했습니다."}
+          </h1>
           <p>
             식별자를 다시 확인해 주세요. 존재 여부 외의 정보는 표시하지
             않습니다.
           </p>
         </section>
-        <Link className="text-link" href={"/members" as Route}>
-          다시 조회
-        </Link>
-      </>
+        <div className={styles.lookupActions}>
+          <Link className="text-link" href={"/members" as Route}>
+            다시 조회
+          </Link>
+        </div>
+      </div>
     );
   }
 
@@ -195,7 +231,7 @@ export default async function MembersPage({
       action: "MEMBER_360_KYC_SUMMARY_VIEW",
       target_type: "USER",
       target_id: userId,
-      reason: "Member 360에서 KYC 상태 요약 조회",
+      reason: "회원 한눈보기에서 본인 확인 상태 요약 조회",
       request_id: randomUUID(),
       metadata: {
         surface: "admin_member_360",
@@ -217,31 +253,63 @@ export default async function MembersPage({
   }
 
   const modules = [
-    ["PUTDUK START", trial],
+    ["체험 시작", trial],
     ["채굴 · 정산", mining],
     ["지갑 · 거래", wallet],
     ["입금", deposits],
     ["출금", withdrawals],
     ["이벤트", events],
     ["알림", notifications],
-    ["PUTDUK AI", ai],
+    ["운영 도우미", ai],
     ["보안 이벤트", security],
   ] as const;
 
+  // event_participants·notifications는 service_role SELECT가 아직 없다.
+  // 항상 배너를 띄우지 않고, 권한 있는 모듈 실패만 복구 안내한다.
+  const countFailed = anyMemberCountFailed([
+    trial,
+    mining,
+    wallet,
+    deposits,
+    withdrawals,
+    ai,
+    security,
+  ]);
+  const evidenceFailed = Boolean(
+    timeline.error ||
+    depositRows.error ||
+    withdrawalRows.error ||
+    riskFlags.error ||
+    profile.error ||
+    lifecycle.error,
+  );
+  const lifecycleDisplay = presentMemberLifecycle(lifecycle);
+  const profileDisplay = presentMemberProfile(profile);
+
   return (
-    <>
+    <div
+      className={styles.membersPage}
+      data-ui-ready="/members"
+      data-ui-state={
+        countFailed ||
+        evidenceFailed ||
+        kycAccessFailed ||
+        !lifecycleDisplay.available ||
+        !profileDisplay.available
+          ? "partial"
+          : "loaded"
+      }
+    >
       <section className="member-identity">
-        <div className="member-avatar">
-          {(profile.data?.display_name ?? "P").slice(0, 1)}
-        </div>
+        <div className="member-avatar">{profileDisplay.avatar}</div>
         <div>
-          <p className="eyebrow">MEMBER 360 · VERIFIED ID</p>
-          <h1>{profile.data?.display_name ?? "이름 미설정"}</h1>
+          <p className="eyebrow">회원 한눈에 · 확인된 식별자</p>
+          <h1>{profileDisplay.name}</h1>
           <code>{userId}</code>
         </div>
         <div className="member-state">
           <span>현재 여정</span>
-          <strong>{lifecycle.data?.stage ?? "SIGNED_UP"}</strong>
+          <strong>{lifecycleDisplay.stage}</strong>
           <small>
             가입{" "}
             {new Intl.DateTimeFormat("ko-KR", {
@@ -251,6 +319,16 @@ export default async function MembersPage({
           </small>
         </div>
       </section>
+
+      {countFailed ||
+      evidenceFailed ||
+      !lifecycleDisplay.available ||
+      !profileDisplay.available ? (
+        <p className={styles.partialAlert} role="alert">
+          일부 운영 증거를 불러오지 못했습니다. 숫자는 0으로 바꾸지 않습니다.{" "}
+          <Link href={`/members?id=${userId}` as Route}>다시 불러오기</Link>
+        </p>
+      ) : null}
 
       <nav className="member-anchors" aria-label="증거 구역">
         <a href="#evidence-account">계정</a>
@@ -264,7 +342,7 @@ export default async function MembersPage({
         {modules.map(([label, result]) => (
           <article key={label}>
             <span>{label}</span>
-            <strong>{countText(result.count, Boolean(result.error))}</strong>
+            <strong>{memberCountLabel(result)}</strong>
             <small>연결된 기록</small>
           </article>
         ))}
@@ -273,7 +351,7 @@ export default async function MembersPage({
       <section className="member-detail-grid">
         <article className="detail-panel" id="evidence-account">
           <header>
-            <p className="eyebrow">IDENTITY & ACCESS</p>
+            <p className="eyebrow">계정</p>
             <h2>계정 상태</h2>
           </header>
           <dl>
@@ -297,19 +375,11 @@ export default async function MembersPage({
             </div>
             <div>
               <dt>첫 입금</dt>
-              <dd>
-                {lifecycle.data?.first_funding_at
-                  ? formatKst(lifecycle.data.first_funding_at)
-                  : "없음"}
-              </dd>
+              <dd>{lifecycleDisplay.firstFunding}</dd>
             </div>
             <div>
               <dt>환영 출금</dt>
-              <dd>
-                {lifecycle.data?.welcome_withdrawal_completed_at
-                  ? formatKst(lifecycle.data.welcome_withdrawal_completed_at)
-                  : "미완료"}
-              </dd>
+              <dd>{lifecycleDisplay.welcomeWithdrawal}</dd>
             </div>
           </dl>
           <p className="locked-state">
@@ -319,7 +389,7 @@ export default async function MembersPage({
 
         <article className="detail-panel" id="evidence-kyc">
           <header>
-            <p className="eyebrow">SENSITIVE · AUDITED</p>
+            <p className="eyebrow">민 · 감사 기록</p>
             <h2>본인 확인 요약</h2>
           </header>
           {!canReadKyc ? (
@@ -359,7 +429,7 @@ export default async function MembersPage({
           id="evidence-money"
         >
           <header>
-            <p className="eyebrow">FUNDING EVIDENCE</p>
+            <p className="eyebrow">입출금 증거</p>
             <h2>입금 · 출금 증거</h2>
           </header>
           <div className="evidence-split">
@@ -431,7 +501,7 @@ export default async function MembersPage({
 
         <article className="detail-panel" id="evidence-risk">
           <header>
-            <p className="eyebrow">RISK</p>
+            <p className="eyebrow">위험</p>
             <h2>위험 신호</h2>
           </header>
           {riskFlags.error ? (
@@ -461,7 +531,7 @@ export default async function MembersPage({
           id="evidence-timeline"
         >
           <header>
-            <p className="eyebrow">ACTIVITY TIMELINE</p>
+            <p className="eyebrow">활동</p>
             <h2>최근 활동 맥락</h2>
           </header>
           {timeline.error ? (
@@ -486,6 +556,6 @@ export default async function MembersPage({
           )}
         </article>
       </section>
-    </>
+    </div>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 
 import { PutdukIcon } from "@/components/icons/putduk-icon";
@@ -9,12 +9,29 @@ import {
   destinationMethodLabel,
   type WithdrawalDestinationMethod,
 } from "@/components/product/destination-type";
+import {
+  isMemberFacingWithdrawalCopy,
+  MEMBER_WITHDRAWAL_NETWORK_FALLBACK,
+} from "@/components/product/member-withdrawal-errors";
 import styles from "@/components/product/product-experience.module.css";
 import {
   formatAtomicAmount,
   parseDisplayAmount,
 } from "@/domain/wallet/format-amount";
 import { trackAnalyticsEvent } from "@/lib/analytics/client";
+import {
+  browserWithdrawalLogicalRequestStore,
+  LEGACY_WITHDRAWAL_LOGICAL_REQUEST_STORAGE_KEY,
+  snapshotWithdrawalInput,
+  WithdrawalLogicalSafetyError,
+  WITHDRAWAL_RECONCILIATION_COPY,
+  type PersistedWithdrawalLogicalRequest,
+} from "@/lib/wallet/withdrawal-logical-request";
+import {
+  recoverWithdrawalLogicalRequest,
+  resolveWithdrawalLogicalRequest,
+  submitWithdrawalLogicalRequest,
+} from "@/lib/wallet/withdrawal-client";
 
 export type WithdrawalAccount = {
   availableBalanceAtomic: string;
@@ -28,6 +45,7 @@ export type WithdrawalPolicy = {
   id: string;
   method: WithdrawalDestinationMethod;
   minimumAmountAtomic: string;
+  version: number;
 };
 
 export type RegisteredWithdrawalDestination = {
@@ -65,12 +83,15 @@ export function WithdrawalForm({
   account,
   destinations = [],
   policies,
+  ownerId,
 }: {
   account: WithdrawalAccount | null;
   destinations?: readonly RegisteredWithdrawalDestination[];
   policies: readonly WithdrawalPolicy[];
+  ownerId: string;
 }) {
   const router = useRouter();
+  const submittingRef = useRef(false);
   const initialMethod =
     policies.find((policy) => policy.method === "KRW_BANK")?.method ??
     policies[0]?.method ??
@@ -84,6 +105,77 @@ export function WithdrawalForm({
   const [useNewDestination, setUseNewDestination] = useState(false);
   const [bankCode, setBankCode] = useState("");
   const [network, setNetwork] = useState("");
+  const [showReauthPassword, setShowReauthPassword] = useState(false);
+  const [reauthRequired, setReauthRequired] = useState(false);
+  const [recovery, setRecovery] =
+    useState<PersistedWithdrawalLogicalRequest | null>(null);
+  const [recoveryReady, setRecoveryReady] = useState(false);
+
+  function legacyPresent() {
+    try {
+      return (
+        localStorage.getItem(LEGACY_WITHDRAWAL_LOGICAL_REQUEST_STORAGE_KEY) !==
+          null ||
+        sessionStorage.getItem(
+          LEGACY_WITHDRAWAL_LOGICAL_REQUEST_STORAGE_KEY,
+        ) !== null
+      );
+    } catch {
+      throw new WithdrawalLogicalSafetyError("STORAGE_UNAVAILABLE");
+    }
+  }
+
+  useEffect(() => {
+    let live = true;
+    async function recover() {
+      try {
+        const record = await recoverWithdrawalLogicalRequest(
+          ownerId,
+          browserWithdrawalLogicalRequestStore(),
+          fetch,
+          legacyPresent(),
+        );
+        if (!live) return;
+        if (
+          record &&
+          ["PREPARED", "DESTINATION_REGISTERED", "OUTCOME_UNCERTAIN"].includes(
+            record.state,
+          )
+        ) {
+          setRecovery(record);
+          setAmount(record.amountKrw);
+          setMethod(record.method);
+        } else if (record?.state === "CONFIRMED") {
+          setFeedback({
+            tone: "success",
+            message:
+              "이전 출금 요청을 접수했어요. 아래에서 상태를 확인해 주세요.",
+          });
+        } else if (record?.state === "CANCELLED" && record.destinationId) {
+          setMethod(record.method);
+          setFeedback({
+            tone: "success",
+            message:
+              "이전 요청을 정리했어요. 등록된 계좌·주소와 보호 시간을 확인해 주세요.",
+          });
+        }
+        setRecoveryReady(true);
+      } catch (error) {
+        if (live)
+          setFeedback({
+            tone: "error",
+            message:
+              error instanceof WithdrawalLogicalSafetyError
+                ? error.message
+                : WITHDRAWAL_RECONCILIATION_COPY,
+          });
+      }
+    }
+    void recover();
+    return () => {
+      live = false;
+    };
+  }, [ownerId]);
 
   const policy = useMemo(
     () => policies.find((candidate) => candidate.method === method),
@@ -108,7 +200,13 @@ export function WithdrawalForm({
     [destinations, method],
   );
 
-  const needsNewDestination = !eligibleDestination || useNewDestination;
+  const needsNewDestination = recovery
+    ? !recovery.destinationId
+    : (!eligibleDestination && !protectedDestination) || useNewDestination;
+  const needsReauth =
+    needsNewDestination &&
+    (reauthRequired || destinations.some((item) => item.method === method));
+  const lockIntent = Boolean(recovery);
 
   let amountAtomic: string | null = null;
   try {
@@ -122,6 +220,7 @@ export function WithdrawalForm({
       ? (BigInt(amountAtomic) + BigInt(policy.feeAtomic)).toString()
       : null;
   const meetsMinimum = Boolean(
+    recoveryReady &&
     amountAtomic &&
     policy &&
     BigInt(amountAtomic) >= BigInt(policy.minimumAmountAtomic),
@@ -132,13 +231,47 @@ export function WithdrawalForm({
     BigInt(totalAtomic) <= BigInt(account.availableBalanceAtomic),
   );
   const canSubmit = Boolean(
+    recoveryReady &&
     amountAtomic &&
     policy &&
     account &&
-    meetsMinimum &&
-    hasEnoughBalance &&
-    (needsNewDestination || eligibleDestination),
+    (recovery || (meetsMinimum && hasEnoughBalance)) &&
+    (recovery || needsNewDestination || eligibleDestination),
   );
+
+  async function resetLogicalRequest() {
+    if (!recovery || submittingRef.current) return;
+    submittingRef.current = true;
+    setPending(true);
+    try {
+      const resolved = await resolveWithdrawalLogicalRequest(
+        ownerId,
+        browserWithdrawalLogicalRequestStore(),
+        recovery,
+        "CANCEL",
+      );
+      if (resolved.state !== "CANCELLED") {
+        setRecovery(resolved);
+        setFeedback({ tone: "error", message: WITHDRAWAL_RECONCILIATION_COPY });
+        return;
+      }
+      setRecovery(null);
+      setAmount("");
+      setFeedback(null);
+      router.refresh();
+    } catch (error) {
+      setFeedback({
+        tone: "error",
+        message:
+          error instanceof WithdrawalLogicalSafetyError
+            ? error.message
+            : WITHDRAWAL_RECONCILIATION_COPY,
+      });
+    } finally {
+      submittingRef.current = false;
+      setPending(false);
+    }
+  }
 
   function changeMethod(next: WithdrawalDestinationMethod) {
     setMethod(next);
@@ -148,6 +281,8 @@ export function WithdrawalForm({
     setUseNewDestination(false);
     setBankCode("");
     setNetwork("");
+    setReauthRequired(false);
+    setShowReauthPassword(false);
   }
 
   function chooseMinimum() {
@@ -163,49 +298,6 @@ export function WithdrawalForm({
     if (available > fee) {
       setAmount(atomicToInput((available - fee).toString()));
     }
-  }
-
-  async function resolveDestinationId(form: HTMLFormElement) {
-    if (!needsNewDestination && eligibleDestination) {
-      return eligibleDestination.id;
-    }
-
-    const formData = new FormData(form);
-    const body =
-      method === "KRW_BANK"
-        ? {
-            method: "KRW_BANK" as const,
-            accountHolder: String(formData.get("accountHolder") ?? ""),
-            accountNumber: String(formData.get("accountNumber") ?? ""),
-            bankCode: String(formData.get("bankCode") ?? ""),
-          }
-        : {
-            method: "USDT_ADDRESS" as const,
-            address: String(formData.get("address") ?? ""),
-            network: String(formData.get("network") ?? ""),
-          };
-
-    const registerResponse = await fetch(WITHDRAWAL_DESTINATION_REGISTER_URL, {
-      method: "POST",
-      credentials: "same-origin",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
-    const registerPayload = (await registerResponse
-      .json()
-      .catch(() => null)) as {
-      data?: { destinationId?: string };
-      error?: { message?: string };
-    } | null;
-
-    if (!registerResponse.ok || !registerPayload?.data?.destinationId) {
-      throw new Error(
-        registerPayload?.error?.message ??
-          "출금 목적지를 등록하지 못했어요. 잠시 후 다시 시도해 주세요.",
-      );
-    }
-
-    return registerPayload.data.destinationId;
   }
 
   async function submit(event: FormEvent<HTMLFormElement>) {
@@ -224,42 +316,59 @@ export function WithdrawalForm({
       return;
     }
 
+    if (submittingRef.current) {
+      return;
+    }
+
     const form = event.currentTarget;
+    const requestStore = browserWithdrawalLogicalRequestStore();
+    // The entire snapshot precedes pending, disabled controls and the first await.
+    const snapshot = snapshotWithdrawalInput(form, {
+      method,
+      amountKrw: amountAtomic,
+      policyId: recovery?.policyId ?? policy.id,
+      policyVersion: recovery?.policyVersion ?? policy.version,
+      destinationId:
+        recovery?.destinationId ??
+        (!needsNewDestination ? (eligibleDestination?.id ?? null) : null),
+    });
+    const passwordField = form.elements.namedItem(
+      "destinationReauthPassword",
+    ) as HTMLInputElement | null;
+    const totpField = form.elements.namedItem(
+      "destinationReauthTotp",
+    ) as HTMLInputElement | null;
+    const destinationReauth = needsReauth
+      ? {
+          password: passwordField?.value ?? "",
+          ...(totpField?.value ? { totpCode: totpField.value } : {}),
+        }
+      : undefined;
+    // Clear credentials immediately; do not keep them in React state or storage.
+    if (passwordField) passwordField.value = "";
+    if (totpField) totpField.value = "";
+    submittingRef.current = true;
     setPending(true);
     setFeedback(null);
-
     try {
-      const destinationId = await resolveDestinationId(form);
-      const response = await fetch(WITHDRAWAL_HOLD_SUBMIT_URL, {
-        method: "POST",
-        credentials: "same-origin",
-        headers: {
-          "Content-Type": "application/json",
-          "Idempotency-Key": crypto.randomUUID(),
-        },
-        body: JSON.stringify({
-          method,
-          destinationId,
-          amountKrw: amountAtomic,
-        }),
+      const resolved = await submitWithdrawalLogicalRequest({
+        ownerId,
+        store: requestStore,
+        snapshot,
+        legacyPresent: legacyPresent(),
+        knownKey: recovery?.key ?? null,
+        onRecord: setRecovery,
+        destinationReauth,
       });
-      const payload = (await response.json().catch(() => null)) as {
-        error?: { message?: string };
-      } | null;
-
-      if (!response.ok) {
-        setFeedback({
-          message:
-            payload?.error?.message ??
-            "출금 요청을 접수하지 못했어요. 잠시 후 다시 시도해 주세요.",
-          tone: "error",
-        });
-        return;
-      }
+      if (resolved.state !== "CONFIRMED" && resolved.state !== "CANCELLED")
+        throw new WithdrawalLogicalSafetyError("RECONCILIATION_REQUIRED");
+      setRecovery(null);
 
       setFeedback({
         message:
-          "출금 요청을 접수했어요. 사용 가능 금액에서 보류되며, 아래에서 상태를 확인할 수 있어요.",
+          resolved.state === "CANCELLED"
+            ? "계좌·주소를 변경했어요. 보호 시간이 끝난 뒤 출금할 수 있어요."
+            : "출금 요청을 접수했어요. 사용 가능 금액에서 보류되며, 아래에서 상태를 확인할 수 있어요.",
         tone: "success",
       });
       setAmount("");
@@ -268,19 +377,33 @@ export function WithdrawalForm({
       setUseNewDestination(false);
       setBankCode("");
       setNetwork("");
-      void trackAnalyticsEvent("withdrawal_start", { currency: "KRW" }).catch(
-        () => undefined,
-      );
+      setReauthRequired(false);
+      setShowReauthPassword(false);
+      if (resolved.state === "CONFIRMED")
+        void trackAnalyticsEvent("withdrawal_start", { currency: "KRW" }).catch(
+          () => undefined,
+        );
       router.refresh();
     } catch (error) {
+      const candidate =
+        error instanceof Error
+          ? error.message
+          : MEMBER_WITHDRAWAL_NETWORK_FALLBACK;
       setFeedback({
         message:
-          error instanceof Error
-            ? error.message
-            : "인터넷 연결을 확인한 뒤 다시 시도해 주세요.",
+          error instanceof WithdrawalLogicalSafetyError ||
+          isMemberFacingWithdrawalCopy(candidate)
+            ? candidate
+            : MEMBER_WITHDRAWAL_NETWORK_FALLBACK,
         tone: "error",
       });
+      if (
+        error instanceof Error &&
+        error.message === "비밀번호를 다시 확인해 주세요."
+      )
+        setReauthRequired(true);
     } finally {
+      submittingRef.current = false;
       setPending(false);
     }
   }
@@ -310,7 +433,7 @@ export function WithdrawalForm({
                 value={candidate.method}
                 checked={method === candidate.method}
                 onChange={() => changeMethod(candidate.method)}
-                disabled={pending}
+                disabled={pending || lockIntent}
               />
               <span>
                 {destinationMethodLabel(candidate.method)}
@@ -355,10 +478,12 @@ export function WithdrawalForm({
               setAmount(event.target.value.replace(/[^0-9]/g, ""))
             }
             aria-invalid={Boolean(
-              amount && (!amountAtomic || !meetsMinimum || !hasEnoughBalance),
+              !recovery &&
+              amount &&
+              (!amountAtomic || !meetsMinimum || !hasEnoughBalance),
             )}
             aria-describedby="withdrawal-amount-help"
-            disabled={pending}
+            disabled={pending || lockIntent}
             required
           />
           <strong className={styles.currencySuffix}>원</strong>
@@ -366,24 +491,32 @@ export function WithdrawalForm({
       </label>
 
       <div className={styles.quickAmounts} aria-label="빠른 금액 선택">
-        <button type="button" onClick={chooseMinimum} disabled={pending}>
+        <button
+          type="button"
+          onClick={chooseMinimum}
+          disabled={pending || lockIntent}
+        >
           최소 금액
         </button>
         <button
           type="button"
           onClick={() => setAmount("5000")}
-          disabled={pending}
+          disabled={pending || lockIntent}
         >
           5천원
         </button>
         <button
           type="button"
           onClick={() => setAmount("10000")}
-          disabled={pending}
+          disabled={pending || lockIntent}
         >
           1만원
         </button>
-        <button type="button" onClick={chooseAll} disabled={pending}>
+        <button
+          type="button"
+          onClick={chooseAll}
+          disabled={pending || lockIntent}
+        >
           전액
         </button>
       </div>
@@ -409,12 +542,58 @@ export function WithdrawalForm({
               type="button"
               className={styles.inlineReveal}
               onClick={() => setUseNewDestination(true)}
-              disabled={pending}
+              disabled={pending || lockIntent}
             >
               다른 목적지로 변경
             </button>
           </div>
         </div>
+      ) : null}
+
+      {needsReauth ? (
+        <section
+          aria-labelledby="destination-reauth-heading"
+          className={styles.destinationGrid}
+        >
+          <div className={styles.wideField}>
+            <h3 id="destination-reauth-heading">변경 전 비밀번호 확인</h3>
+            <p id="destination-reauth-help">
+              계좌·주소를 바꾸면 24시간 보호 시간이 적용돼요.
+            </p>
+          </div>
+          <label className={`${styles.field} ${styles.wideField}`}>
+            <span>현재 비밀번호</span>
+            <input
+              name="destinationReauthPassword"
+              type={showReauthPassword ? "text" : "password"}
+              autoComplete="current-password"
+              maxLength={1024}
+              required
+              disabled={pending}
+              aria-describedby="destination-reauth-help"
+            />
+            <button
+              type="button"
+              className={styles.inlineReveal}
+              disabled={pending}
+              onClick={() => setShowReauthPassword((value) => !value)}
+              aria-pressed={showReauthPassword}
+            >
+              {showReauthPassword ? "비밀번호 가리기" : "비밀번호 보기"}
+            </button>
+          </label>
+          <label className={`${styles.field} ${styles.wideField}`}>
+            <span>인증 앱 코드 (설정한 경우)</span>
+            <input
+              name="destinationReauthTotp"
+              inputMode="numeric"
+              autoComplete="one-time-code"
+              pattern="[0-9]{6}"
+              maxLength={6}
+              disabled={pending}
+            />
+          </label>
+        </section>
       ) : null}
 
       {protectedDestination && !eligibleDestination && !useNewDestination ? (
@@ -493,9 +672,10 @@ export function WithdrawalForm({
                 ))}
               </select>
             </label>
-            <label className={`${styles.field} ${styles.wideField}`}>
-              <span>받을 주소</span>
+            <div className={`${styles.field} ${styles.wideField}`}>
+              <label htmlFor="withdrawal-address">받을 주소</label>
               <input
+                id="withdrawal-address"
                 name="address"
                 minLength={20}
                 maxLength={128}
@@ -507,12 +687,14 @@ export function WithdrawalForm({
               <button
                 type="button"
                 className={styles.inlineReveal}
+                aria-controls="withdrawal-address"
+                aria-pressed={revealAddress}
                 onClick={() => setRevealAddress((value) => !value)}
                 disabled={pending}
               >
                 {revealAddress ? "주소 가리기" : "확인 시 전체 보기"}
               </button>
-            </label>
+            </div>
           </div>
         )
       ) : null}
@@ -547,12 +729,36 @@ export function WithdrawalForm({
         type="submit"
         disabled={pending || !canSubmit}
       >
-        {pending ? "출금 요청 접수 중" : "출금 요청하기"}
+        {needsReauth
+          ? pending
+            ? "변경 확인 중"
+            : "변경 확인"
+          : pending
+            ? "출금 요청 접수 중"
+            : "출금 요청하기"}
         <PutdukIcon name="arrow-right" size={18} />
       </button>
 
+      {recovery ? (
+        <div className={styles.formNotice}>
+          <p>
+            이전 요청을 확인하고 있어요. 다시 보내도 같은 요청으로 처리돼요.
+          </p>
+          {!recovery.withdrawalId ? (
+            <button
+              type="button"
+              onClick={resetLogicalRequest}
+              disabled={pending}
+            >
+              입력 다시하기
+            </button>
+          ) : null}
+        </div>
+      ) : null}
+
       {feedback ? (
         <p
+          id="withdrawal-request-feedback"
           className={`${styles.feedback} ${
             feedback.tone === "success"
               ? styles.feedbackSuccess

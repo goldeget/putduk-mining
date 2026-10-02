@@ -2,6 +2,14 @@ import { defineConfig, devices } from "@playwright/test";
 
 const isCI = Boolean(process.env.CI);
 const isListing = process.argv.includes("--list");
+const webPort = process.env.E2E_WEB_PORT ?? "3000";
+const adminPort = process.env.E2E_ADMIN_PORT ?? "3100";
+for (const port of [webPort, adminPort]) {
+  if (!/^[0-9]{4,5}$/.test(port) || Number(port) > 65535)
+    throw new Error("Invalid local E2E port.");
+}
+const webOrigin = `http://127.0.0.1:${webPort}`;
+const adminOrigin = `http://127.0.0.1:${adminPort}`;
 
 function required(name: string) {
   const value = process.env[name]?.trim();
@@ -66,11 +74,11 @@ const useNextStart =
   process.env.E2E_NEXT_START === "1" ||
   (process.env.E2E_NEXT_START !== "0" && adminWebServerNeeded && !isCI);
 const memberWebCommand = useNextStart
-  ? "node scripts/e2e-web-server.mjs pnpm exec next start --hostname 127.0.0.1 --port 3000"
-  : "node scripts/e2e-web-server.mjs pnpm exec next dev --hostname 127.0.0.1 --port 3000";
+  ? `node scripts/e2e-web-server.mjs pnpm exec next start --hostname 127.0.0.1 --port ${webPort}`
+  : `node scripts/e2e-web-server.mjs pnpm exec next dev --hostname 127.0.0.1 --port ${webPort}`;
 const adminWebCommand = useNextStart
-  ? "node scripts/e2e-web-server.mjs pnpm --dir apps/admin exec next start --hostname 127.0.0.1 --port 3100"
-  : "node scripts/e2e-web-server.mjs pnpm --dir apps/admin exec next dev --hostname 127.0.0.1 --port 3100";
+  ? `node scripts/e2e-web-server.mjs pnpm --dir apps/admin exec next start --hostname 127.0.0.1 --port ${adminPort}`
+  : `node scripts/e2e-web-server.mjs pnpm --dir apps/admin exec next dev --hostname 127.0.0.1 --port ${adminPort}`;
 
 if (
   supabaseUrl.includes("osrmyjgmpdspdcwqjwuv") ||
@@ -89,9 +97,12 @@ export default defineConfig({
   retries: isCI ? 1 : 0,
   // 로컬 Docker·콜드 Next 기동을 고려. CI job timeout-minutes는 변경하지 않는다.
   timeout: 180_000,
-  reporter: isCI ? [["line"], ["github"]] : "list",
+  // CI github reporter slow annotation 기본 5분. TOTP·복구 스펙(withdrawal-p1-recovery 등)은 shard당 7분대가 정상.
+  ...(isCI ? { reportSlowTests: { max: 5, threshold: 480_000 } } : {}),
+  // CI: github reporter는 shard/job마다 Run Summary notice와 slow warning annotation을 남긴다. line만 사용한다.
+  reporter: isCI ? "line" : "list",
   use: {
-    baseURL: "http://127.0.0.1:3000",
+    baseURL: webOrigin,
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
     video: "retain-on-failure",
@@ -123,15 +134,15 @@ export default defineConfig({
       // e2e-web-server는 손자를 Playwright 프로세스 그룹 안에 둔다.
       // Linux teardown은 gracefulShutdown → 실패 시 kill(-pid) 순이다.
       command: memberWebCommand,
-      url: "http://127.0.0.1:3000",
-      reuseExistingServer: !isCI,
+      url: webOrigin,
+      reuseExistingServer: !isCI && process.env.E2E_REUSE_SERVER !== "0",
       timeout: 180_000,
       gracefulShutdown: { signal: "SIGTERM" as const, timeout: 5_000 },
       stdout: (isCI ? "pipe" : "ignore") as "pipe" | "ignore",
       env: {
         ...process.env,
         ...sharedEnv,
-        NEXT_PUBLIC_APP_URL: "http://127.0.0.1:3000",
+        NEXT_PUBLIC_APP_URL: webOrigin,
         NEXT_PUBLIC_CHANNEL_TALK_PLUGIN_KEY: "putduk-e2e-plugin-key",
         CHANNEL_TALK_MEMBER_HASH_SECRET: "aa".repeat(32),
       },
@@ -140,16 +151,16 @@ export default defineConfig({
       ? [
           {
             command: adminWebCommand,
-            url: "http://127.0.0.1:3100/login",
-            reuseExistingServer: !isCI,
+            url: `${adminOrigin}/login`,
+            reuseExistingServer: !isCI && process.env.E2E_REUSE_SERVER !== "0",
             timeout: 180_000,
             gracefulShutdown: { signal: "SIGTERM" as const, timeout: 5_000 },
             stdout: (isCI ? "pipe" : "ignore") as "pipe" | "ignore",
             env: {
               ...process.env,
               ...sharedEnv,
-              ADMIN_APP_URL: "http://127.0.0.1:3100",
-              NEXT_PUBLIC_APP_URL: "http://127.0.0.1:3100",
+              ADMIN_APP_URL: adminOrigin,
+              NEXT_PUBLIC_APP_URL: adminOrigin,
               NEXT_PUBLIC_CHANNEL_TALK_PLUGIN_KEY: "",
               CHANNEL_TALK_MEMBER_HASH_SECRET: "",
             },

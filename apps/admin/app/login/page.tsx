@@ -3,6 +3,8 @@ import type { Route } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import { ThemeControl } from "../../../../components/system/theme-control";
+
 import { LoginForm } from "@/components/login-form";
 import { getAdminIdentity } from "@/lib/auth/principal";
 import { safeAdminReturnPath } from "@/lib/auth/return-path";
@@ -26,14 +28,15 @@ export default async function LoginPage({
     redirect(destination as Route);
   }
   return (
-    <main className="auth-stage">
+    <main className="auth-stage" data-ui-ready="/login" data-ui-state="loaded">
       <section className="auth-card">
         <div className="brand-lockup">
           <span className="brand-symbol">P</span>
           <strong>퍼뜩</strong>
-          <small>ADMIN CONTROL PLANE</small>
+          <small>운영자 보안 접속</small>
         </div>
-        <p className="eyebrow">DEDICATED OPERATOR ACCESS</p>
+        <ThemeControl />
+        <p className="eyebrow">운영자 전용</p>
         <h1>운영자 전용 보안 로그인</h1>
         <p>일반 회원 계정과 분리된 운영자 권한 및 다중 인증을 확인합니다.</p>
         {denied ? (

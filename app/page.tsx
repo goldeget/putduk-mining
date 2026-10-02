@@ -5,18 +5,18 @@ import { PutdukIcon } from "@/components/icons/putduk-icon";
 import { ThemeControl } from "@/components/system/theme-control";
 
 const worlds = [
-  { code: "KR", label: "KOREA", state: "첫 여정", tone: "korea" },
-  { code: "US", label: "USA", state: "확장 월드", tone: "usa" },
-  { code: "AU", label: "GOLD", state: "금빛 월드", tone: "gold" },
-  { code: "AG", label: "SILVER", state: "은빛 월드", tone: "silver" },
-  { code: "CX", label: "CRYPTO", state: "디지털 월드", tone: "crypto" },
+  { code: "KR", label: "한국", state: "첫 여정", tone: "korea" },
+  { code: "US", label: "미국", state: "확장 월드", tone: "usa" },
+  { code: "AU", label: "금", state: "금빛 월드", tone: "gold" },
+  { code: "AG", label: "은", state: "은빛 월드", tone: "silver" },
+  { code: "CX", label: "디지털 자산", state: "디지털 월드", tone: "crypto" },
 ] as const;
 
 const journey = [
   {
     icon: "mining" as const,
     step: "01",
-    title: "KOREA에서 첫 채굴",
+    title: "한국 월드에서 첫 채굴",
     description: "PUTDUK START로 핵심 채굴 흐름을 경험합니다.",
   },
   {
@@ -43,12 +43,12 @@ const structuredData = {
   operatingSystem: "Web, PWA",
   url: "https://mining.putduk.com",
   description:
-    "KOREA에서 시작해 채굴 상태와 결과를 확인하는 PUTDUK의 채굴 서비스입니다.",
+    "한국 월드에서 시작해 채굴 상태와 결과를 확인하는 PUTDUK의 채굴 서비스입니다.",
 };
 
 export default function HomePage() {
   return (
-    <main className="consumer-landing">
+    <main className="consumer-landing" data-ui-ready="/" data-ui-state="loaded">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
@@ -83,7 +83,7 @@ export default function HomePage() {
 
       <section className="hero shell landing-hero" id="top">
         <div className="hero__copy">
-          <p className="eyebrow">MINING, MADE CLEAR</p>
+          <p className="eyebrow">쉽게 시작하는 채굴</p>
           <h1>
             작은 시작이,
             <br />
@@ -92,7 +92,7 @@ export default function HomePage() {
             엽니다.
           </h1>
           <p className="hero__lead">
-            KOREA에서 채굴을 시작해요. 앱을 닫아도 채굴은 계속돼요.
+            한국 월드에서 채굴을 시작해요. 앱을 닫아도 채굴은 계속돼요.
           </p>
           <div className="hero__actions">
             <Link className="button button--primary" href="/signup">
@@ -113,7 +113,7 @@ export default function HomePage() {
           <dl className="hero__facts">
             <div>
               <dt>첫 월드</dt>
-              <dd>KOREA</dd>
+              <dd>한국</dd>
             </div>
             <div>
               <dt>채굴 결과</dt>
@@ -121,7 +121,7 @@ export default function HomePage() {
             </div>
             <div>
               <dt>기본 지갑</dt>
-              <dd>KRW</dd>
+              <dd>원화 · KRW</dd>
             </div>
           </dl>
         </div>
@@ -147,7 +147,7 @@ export default function HomePage() {
             />
           </picture>
           <div className="hero__signal">
-            <span>YOUR MINING WORLD</span>
+            <span>나만의 채굴 세계</span>
             <strong>지금, 퍼뜩.</strong>
             <p>앱을 닫아도 채굴은 계속돼요</p>
           </div>
@@ -171,7 +171,7 @@ export default function HomePage() {
             />
           </picture>
           <div className="hero__index" aria-hidden="true">
-            01 / KOREA
+            01 / 한국
           </div>
         </div>
       </section>
@@ -206,9 +206,7 @@ export default function HomePage() {
             내 첫 채굴 시작하기
             <PutdukIcon name="arrow-right" size={19} />
           </Link>
-          <p className="ko-copy">
-            가입 후 KOREA 월드의 안내에 따라 시작합니다.
-          </p>
+          <p className="ko-copy">가입 후 한국 월드의 안내에 따라 시작합니다.</p>
         </div>
       </section>
 
@@ -219,12 +217,12 @@ export default function HomePage() {
       >
         <div className="section-heading section-heading--row">
           <div>
-            <p className="eyebrow">FIVE MINING WORLDS</p>
+            <p className="eyebrow">다섯 개의 채굴 월드</p>
             <h2 id="worlds-title">한 번의 시작, 다섯 개의 채굴 세계.</h2>
           </div>
           <p>
-            KOREA에서 첫 여정을 시작하고 USA, GOLD, SILVER, CRYPTO로 나만의 채굴
-            경험을 넓혀갑니다.
+            한국 월드에서 시작해요. 미국, 금, 은, 디지털 자산 월드로 채굴 경험을
+            넓혀갈 수 있어요.
           </p>
         </div>
         <div className="world-list">
@@ -246,7 +244,7 @@ export default function HomePage() {
 
       <section className="landing-trust shell" aria-labelledby="trust-title">
         <div>
-          <p className="eyebrow">TRUST &amp; VERIFICATION</p>
+          <p className="eyebrow">신뢰와 검증</p>
           <h2 className="ko-heading" id="trust-title">
             보이는 숫자보다, 확인 가능한 과정.
           </h2>

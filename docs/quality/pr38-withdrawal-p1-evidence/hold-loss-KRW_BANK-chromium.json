@@ -1,0 +1,45 @@
+{
+  "first": {
+    "key": "b5ee0c65-d9b5-4026-90d3-58100ba48989",
+    "method": "KRW_BANK",
+    "destinationId": "af4e8fc3-8282-4860-9815-e0acebbe98d7",
+    "amountKrw": "1000"
+  },
+  "retry": {
+    "key": "b5ee0c65-d9b5-4026-90d3-58100ba48989",
+    "method": "KRW_BANK",
+    "destinationId": "af4e8fc3-8282-4860-9815-e0acebbe98d7",
+    "amountKrw": "1000"
+  },
+  "before": {
+    "id": "af4e8fc3-8282-4860-9815-e0acebbe98d7",
+    "user_id": "f0a9d95a-4f24-4d0e-a285-23e724cfb86b",
+    "destination_type": "KRW_BANK",
+    "protection_until": "2026-09-30T08:07:07.162572+00:00",
+    "replaced_at": null,
+    "value_fingerprint": "df3b7249a777272370078be8f824e18258d74f1b846de370d2dd1e865ab5db1b",
+    "destinationCount": 1,
+    "historyCount": 1
+  },
+  "after": {
+    "id": "af4e8fc3-8282-4860-9815-e0acebbe98d7",
+    "user_id": "f0a9d95a-4f24-4d0e-a285-23e724cfb86b",
+    "destination_type": "KRW_BANK",
+    "protection_until": "2026-09-30T08:07:07.162572+00:00",
+    "replaced_at": null,
+    "value_fingerprint": "df3b7249a777272370078be8f824e18258d74f1b846de370d2dd1e865ab5db1b",
+    "destinationCount": 1,
+    "historyCount": 1
+  },
+  "effects": {
+    "ownerId": "f0a9d95a-4f24-4d0e-a285-23e724cfb86b",
+    "key": "b5ee0c65-d9b5-4026-90d3-58100ba48989",
+    "requestId": "eb04b6ed-c19e-4b38-b257-c7ab42ca5f0c",
+    "destinationId": "af4e8fc3-8282-4860-9815-e0acebbe98d7",
+    "request": 1,
+    "hold": 1,
+    "outbox": 1,
+    "receipt": 1
+  },
+  "observedBeforeCleanup": true
+}

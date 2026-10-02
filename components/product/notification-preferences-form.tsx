@@ -1,15 +1,26 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
-
-type PreferenceKey =
-  | "events_enabled"
-  | "marketing_enabled"
-  | "mining_enabled"
-  | "service_enabled"
-  | "wallet_enabled";
-
-type Preferences = Record<PreferenceKey, boolean>;
+import {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type FormEvent,
+} from "react";
+import { useRouter } from "next/navigation";
+import { RouteReloadButton } from "@/components/product/route-reload-button";
+import { StatePanel } from "@/components/ui/states";
+import {
+  isNotificationPreferences,
+  preferenceKeys,
+  type NotificationPreferences,
+  type PreferenceKey,
+} from "@/lib/product/notification-preferences-read";
+import {
+  notificationPreferencesSaveWaitMs,
+  readNotificationPreferencesSaved,
+  waitForNotificationPreferencesSave,
+} from "@/lib/product/notification-preferences-save";
 
 const options: readonly {
   description: string;
@@ -45,51 +56,189 @@ const options: readonly {
 
 export function NotificationPreferencesForm({
   initial,
+  readState = initial ? "loaded" : "error",
 }: {
-  initial: Preferences;
+  initial: NotificationPreferences | null;
+  readState?: "loaded" | "empty" | "error";
 }) {
-  const [preferences, setPreferences] = useState(initial);
+  const router = useRouter();
+  const [preferences, setPreferences] = useState(() =>
+    isNotificationPreferences(initial) ? initial : null,
+  );
   const [message, setMessage] = useState("");
   const [pending, setPending] = useState(false);
+  const [online, setOnline] = useState(true);
+  const [sessionExpired, setSessionExpired] = useState(false);
+  const [unconfirmedSave, setUnconfirmedSave] = useState(false);
+  const pendingRef = useRef(false);
+  const alive = useRef(true);
+  const requestSequence = useRef(0);
+  const controllerRef = useRef<AbortController | null>(null);
+  const uncertainRef = useRef(false);
+  const serverReadKey = JSON.stringify([
+    readState,
+    ...preferenceKeys.map((key) => initial?.[key] ?? null),
+  ]);
+  const currentReadKey = useRef(serverReadKey);
+  const [lastServerReadKey, setLastServerReadKey] = useState(serverReadKey);
+  // A changed server snapshot is new evidence. An identical refresh is not.
+  if (lastServerReadKey !== serverReadKey) {
+    setLastServerReadKey(serverReadKey);
+    setPreferences(isNotificationPreferences(initial) ? initial : null);
+    setMessage("");
+    setPending(false);
+    setSessionExpired(false);
+    setUnconfirmedSave(false);
+  }
+
+  useEffect(() => {
+    alive.current = true;
+    return () => {
+      alive.current = false;
+      requestSequence.current += 1;
+      pendingRef.current = false;
+      controllerRef.current?.abort();
+    };
+  }, []);
+  useLayoutEffect(() => {
+    currentReadKey.current = serverReadKey;
+    uncertainRef.current = false;
+    pendingRef.current = false;
+    return () => {
+      requestSequence.current += 1;
+      pendingRef.current = false;
+      controllerRef.current?.abort();
+    };
+  }, [serverReadKey]);
+  useEffect(() => {
+    const update = () => setOnline(navigator.onLine);
+    update();
+    window.addEventListener("online", update);
+    window.addEventListener("offline", update);
+    return () => {
+      window.removeEventListener("online", update);
+      window.removeEventListener("offline", update);
+    };
+  }, []);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (
+      !preferences ||
+      readState !== "loaded" ||
+      sessionExpired ||
+      uncertainRef.current ||
+      pendingRef.current ||
+      !navigator.onLine
+    )
+      return;
+    pendingRef.current = true;
+    const sequence = ++requestSequence.current;
+    const readKey = serverReadKey;
+    const current = () =>
+      alive.current &&
+      sequence === requestSequence.current &&
+      readKey === currentReadKey.current;
+    const controller = new AbortController();
+    controllerRef.current = controller;
+    const timeout = window.setTimeout(
+      () => controller.abort(),
+      notificationPreferencesSaveWaitMs,
+    );
     setPending(true);
     setMessage("");
+    const markUnconfirmed = () => {
+      uncertainRef.current = true;
+      setUnconfirmedSave(true);
+      setMessage(
+        "저장 결과를 확인하지 못했어요. 연결을 확인한 뒤 설정을 다시 불러와 주세요.",
+      );
+    };
 
     try {
-      const response = await fetch("/api/v1/notifications/preferences", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(preferences),
-      });
-      setMessage(
-        response.ok
-          ? "알림 설정을 저장했습니다."
-          : "알림 설정을 저장하지 못했습니다.",
+      const response = await waitForNotificationPreferencesSave(
+        fetch("/api/v1/notifications/preferences", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(preferences),
+          signal: controller.signal,
+        }),
+        controller.signal,
       );
+      if (!current() || controller.signal.aborted) return;
+      if (response.status === 401) {
+        setSessionExpired(true);
+        setMessage(
+          "로그인 시간이 지났어요. 다시 로그인한 뒤 설정을 확인해 주세요.",
+        );
+        return;
+      }
+      const payload: unknown = await waitForNotificationPreferencesSave(
+        response.json().catch(() => null),
+        controller.signal,
+      );
+      if (!current() || controller.signal.aborted) return;
+      const saved = response.ok
+        ? readNotificationPreferencesSaved(payload)
+        : null;
+      if (!saved) {
+        markUnconfirmed();
+        return;
+      }
+      setPreferences(saved);
+      setMessage("알림 설정을 저장했습니다.");
     } catch {
-      setMessage("네트워크 연결을 확인해 주세요.");
+      if (current()) markUnconfirmed();
     } finally {
-      setPending(false);
+      window.clearTimeout(timeout);
+      if (current()) {
+        setPending(false);
+        pendingRef.current = false;
+        controllerRef.current = null;
+      }
     }
   }
 
+  if (readState !== "loaded" || !preferences) {
+    return (
+      <StatePanel
+        tone={readState === "empty" ? "empty" : "error"}
+        title={
+          readState === "empty"
+            ? "아직 알림 설정이 없어요"
+            : "알림 설정을 확인하지 못했어요"
+        }
+        description={
+          readState === "empty"
+            ? "계정 설정이 준비되면 받는 알림을 선택할 수 있어요. 잠시 후 다시 확인해 주세요."
+            : "현재 설정을 알 수 없어 저장할 수 없어요. 연결을 확인한 뒤 다시 불러와 주세요."
+        }
+        action={<RouteReloadButton className="button button--secondary" />}
+      />
+    );
+  }
+
   return (
-    <form className="preference-form" onSubmit={submit}>
+    <form
+      className="preference-form"
+      onSubmit={submit}
+      aria-label="알림 종류 설정"
+    >
       <div>
         {options.map((option) => (
-          <label key={option.key}>
+          <label key={option.key} htmlFor={`pref-${option.key}`}>
             <span>
               <strong>{option.label}</strong>
               <small>{option.description}</small>
             </span>
             <input
+              id={`pref-${option.key}`}
               type="checkbox"
+              disabled={pending || !online || sessionExpired || unconfirmedSave}
               checked={preferences[option.key]}
               onChange={(event) =>
                 setPreferences((current) => ({
-                  ...current,
+                  ...current!,
                   [option.key]: event.target.checked,
                 }))
               }
@@ -101,12 +250,42 @@ export function NotificationPreferencesForm({
       <footer>
         <button
           className="button button--primary"
-          disabled={pending}
+          disabled={pending || !online || sessionExpired || unconfirmedSave}
+          aria-busy={pending}
           type="submit"
         >
           {pending ? "저장 중" : "설정 저장"}
         </button>
-        {message ? <p role="status">{message}</p> : null}
+        {unconfirmedSave ? (
+          <button
+            className="button button--secondary"
+            type="button"
+            onClick={() => window.location.reload()}
+          >
+            설정 다시 확인
+          </button>
+        ) : null}
+        {!online ? (
+          <p role="status">
+            {unconfirmedSave
+              ? "인터넷 연결을 확인한 뒤 설정을 다시 불러와 주세요."
+              : "인터넷 연결을 확인해 주세요. 연결되면 설정을 저장할 수 있어요."}
+          </p>
+        ) : null}
+        {sessionExpired ? (
+          <button
+            className="button button--secondary"
+            onClick={() => router.refresh()}
+            type="button"
+          >
+            로그인 상태 확인
+          </button>
+        ) : null}
+        {message ? (
+          <p role="status" aria-live="polite">
+            {message}
+          </p>
+        ) : null}
       </footer>
     </form>
   );

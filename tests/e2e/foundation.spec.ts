@@ -101,7 +101,9 @@ test("renders distinct product login and signup states", async ({ page }) => {
     page.getByRole("heading", { name: "다시 만나 반가워요." }),
   ).toBeVisible();
   await expect(page.getByLabel("아이디 또는 복구 이메일")).toBeVisible();
-  await expect(page.getByLabel("비밀번호")).toBeVisible();
+  await expect(
+    page.getByRole("textbox", { exact: true, name: "비밀번호" }),
+  ).toBeVisible();
   await expect(page.locator(".auth-form__message")).toHaveCount(0);
   await expect(page.getByRole("button", { name: /로그인/ })).toBeVisible();
   await expect(
