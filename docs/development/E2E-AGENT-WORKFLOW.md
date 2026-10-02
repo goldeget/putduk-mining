@@ -1,7 +1,7 @@
 # E2E 에이전트·개발자 워크플로
 
-사람과 AI 에이전트가 동일하게 따르는 **authenticated Playwright** 검증 절차다.  
-Browser foundation(`pnpm test:e2e`, `playwright.config.ts`)과 분리되어 있다.  
+사람과 AI 에이전트가 동일하게 따르는 **authenticated Playwright** 검증 절차다.
+Browser foundation(`pnpm test:e2e`, `playwright.config.ts`)과 분리되어 있다.
 실행 계층(FAST / FOCUSED / FULL)은 `docs/quality/WS-05-EXECUTION-CONTRACT.md`와 같다.
 
 Cursor 규칙: `.cursor/rules/putduk-e2e-agent-verification.mdc` (`alwaysApply: true`)

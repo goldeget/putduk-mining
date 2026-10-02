@@ -321,8 +321,13 @@
 
 .summaryList dt,
 .policySummary dt {
+  flex: 0 0 auto;
   color: var(--text-tertiary);
   font-size: 0.875rem;
+  line-break: strict;
+  overflow-wrap: normal;
+  white-space: nowrap;
+  word-break: keep-all;
 }
 
 .summaryList dd,

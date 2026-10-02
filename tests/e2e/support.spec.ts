@@ -97,7 +97,11 @@ async function applyTheme(page: Page, theme: "dark" | "light" | "system") {
   }, theme);
   await page.reload({ waitUntil: "domcontentloaded" });
   if (theme === "system") {
-    await expect(page.locator("html")).not.toHaveAttribute("data-theme");
+    await expect(page.locator("html")).toHaveAttribute(
+      "data-theme-preference",
+      "system",
+    );
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
   } else {
     await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
   }
@@ -136,7 +140,7 @@ test("anonymous support center stays usable without Channel Talk", async ({
   const launcher = page.locator("#putduk-support-launcher");
   await expect(launcher).toBeVisible();
   await expect(launcher).toHaveAttribute("data-support-state", "unavailable");
-  await expect(page.getByRole("button", { name: "상담 시작" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "안내 보기" })).toBeVisible();
   await waitForHydratedControls(page);
 
   const launcherBox = await launcher.boundingBox();

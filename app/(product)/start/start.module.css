@@ -50,8 +50,13 @@
 
 .stageStatus {
   display: inline-flex;
+  flex: 0 0 auto;
   align-items: center;
   padding: 0.35rem 0.7rem;
+  line-break: strict;
+  overflow-wrap: normal;
+  white-space: nowrap;
+  word-break: keep-all;
   border: 1px solid color-mix(in srgb, var(--border-default) 80%, transparent);
   border-radius: var(--radius-full);
   color: var(--text-primary);

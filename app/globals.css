@@ -23,8 +23,10 @@ body {
   color: var(--text-primary);
   font-family: var(--font-sans);
   font-synthesis: none;
-  overflow-wrap: anywhere;
+  line-break: strict;
+  overflow-wrap: normal;
   text-rendering: optimizeLegibility;
+  word-break: keep-all;
 }
 
 body::before {
@@ -412,6 +414,9 @@ select {
   font-size: 0.875rem;
   font-weight: 700;
   letter-spacing: 0.14em;
+  line-break: strict;
+  overflow-wrap: normal;
+  word-break: keep-all;
 }
 
 .hero__signal strong {
@@ -847,6 +852,9 @@ select {
   font-size: clamp(1.25rem, 4vw, 2rem);
   font-weight: 560;
   letter-spacing: -0.035em;
+  line-break: strict;
+  overflow-wrap: normal;
+  word-break: keep-all;
 }
 
 .world-row__state {
@@ -1387,10 +1395,17 @@ select {
   gap: 0.3rem;
   border-radius: var(--radius-sm);
   color: var(--text-tertiary);
-  font-size: 0.875rem;
+  font-size: min(0.875rem, 4.1vw);
+  line-break: strict;
+  overflow-wrap: normal;
+  word-break: keep-all;
   transition:
     color var(--motion-fast) var(--motion-easing),
     background-color var(--motion-fast) var(--motion-easing);
+}
+
+.product-navigation a span {
+  white-space: nowrap;
 }
 
 .product-navigation a:hover {
