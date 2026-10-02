@@ -51,6 +51,20 @@ Schema changes additionally require a project-scoped isolated Supabase reset/tes
 
 Critical UI changes add browser E2E, accessibility, visual and performance evidence. A green sub-job is not release acceptance unless the workflow ran the exact target SHA and all required jobs/artifacts are present.
 
+### CI wall-clock contract (PR / push to `main` or `develop`)
+
+PUTDUK MINING keeps GitHub Actions on `ubuntu-24.04` within a **~20 minute workflow wall clock** until platform launch. The measured critical path is the **longest single job**, not the sum of parallel jobs.
+
+**Required hybrid pattern** (see `.github/workflows/ci.yml` and `.cursor/rules/putduk-ci-wall-clock.mdc`):
+
+1. Job **`e2e-app-build`** runs **`pnpm build` once** per workflow and uploads artifact **`e2e-next-production`** (`.next` and `apps/admin/.next` at repo-relative paths).
+2. **`authenticated`** matrix jobs (eight shards) **`need`** `e2e-app-build` and `webserver-lifecycle`, download the artifact, set **`E2E_NEXT_START=1`**, and run Playwright with **production `next start`** — not `next dev`. Each shard still runs isolated local Supabase reset for data isolation.
+3. **`typography-protected`** **`needs`** `e2e-app-build`, downloads the same artifact, and sets **`E2E_PREBUILT_APPS=1`** so protected typography servers skip duplicate builds.
+
+**Forbidden regressions:** authenticated CI using `next dev`; removing the eight-shard matrix without a documented replacement; adding a serial full authenticated suite job; per-shard full app builds without the shared artifact; weakening assertions or step timeouts only to shorten wall clock.
+
+**Baseline evidence:** PR #39 green runs with eight authenticated shards at **~16 minutes** wall clock (`docs/development/E2E-AGENT-WORKFLOW.md`, run `36975512027` / `9cfc2ef`). Agents must read the E2E CI section and the wall-clock rule before changing the workflow and must not merge changes that increase critical path without documented mitigation and measurement.
+
 ## 5. CD stages
 
 ```text

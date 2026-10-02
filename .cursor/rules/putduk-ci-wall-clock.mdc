@@ -1,0 +1,41 @@
+---
+description: CI wall-clock hybrid lock — PR workflow ≤20m critical path, E2E prebuilt artifact
+alwaysApply: true
+---
+
+# PUTDUK CI — wall-clock lock
+
+상세: `docs/development/E2E-AGENT-WORKFLOW.md` (CI 섹션) · `docs/development/GIT-CI-CD-POLICY.md` (wall-clock contract)
+
+## 목표
+
+- `ubuntu-24.04` PR/push(`main`/`develop`) CI **전체 workflow wall clock ≤ 20분**.
+- critical path = **가장 오래 걸리는 job 하나** (shard/job 시간의 합이 아님).
+- 검증 baseline: PR #39 green run `36975512027` / `9cfc2ef` — 8-shard authenticated, wall **~16m**.
+
+## 필수 hybrid 패턴 (`.github/workflows/ci.yml`)
+
+1. **`e2e-app-build`** — workflow당 1회 `pnpm build` (회원+운영자). artifact `e2e-next-production`: `.next`, `apps/admin/.next` (repo 상대 경로 유지).
+2. **`authenticated`** — `needs: [webserver-lifecycle, e2e-app-build]`, matrix **8-shard** 유지, shard마다 isolated `supabase start` + `db:reset`, artifact download 후 Playwright step에 **`E2E_NEXT_START=1`** (next start only).
+3. **`typography-protected`** — `needs: [e2e-app-build]`, 동일 artifact download, **`E2E_PREBUILT_APPS=1`** 로 `typography-protected-servers.mjs` 빌드 생략·next start only.
+4. shard/step **timeout-minutes** (authenticated step 75m, job 90m 등) — TOTP·복구 스펙 때문에 **약화 금지**. wall clock 개선은 **더 빠른 서버·공유 빌드**로만.
+
+## 금지 회귀 (에이전트·리뷰어 공통)
+
+- CI authenticated shard에서 **`next dev`** (`playwright.authenticated.config.ts` webServer, `E2E_NEXT_START` 미설정).
+- 8-shard matrix **제거·축소** without documented 대체 (단일 serial full-suite job 추가 포함).
+- shard/job마다 **전체 production build 중복** (공유 artifact 없이).
+- assertion 약화, `test.skip`/`test.only`, spec 삭제, **timeout만 줄여** green 만들기.
+- CI workflow 변경 전 **`E2E-AGENT-WORKFLOW.md` CI 섹션 + 본 rule** 미독.
+- critical path를 **20분 초과**시키는 merge without **문서화된 완화·측정 evidence**.
+
+## workflow 변경 전 체크리스트
+
+1. `docs/development/E2E-AGENT-WORKFLOW.md` CI 섹션 읽기.
+2. 본 rule과 `playwright.authenticated.config.ts` 주석 확인.
+3. 변경 후 예상 critical path job 이름·의존 그래프를 PR 설명에 명시.
+
+## 로컬 vs CI
+
+- 로컬 focused E2E: `E2E_NEXT_START=1` 권장 (관리자 앱 동시 dev 컴파일 회피).
+- CI는 **항상** prebuilt artifact + `E2E_NEXT_START=1` — 로컬과 동일 서버 모드 유지.

@@ -40,13 +40,39 @@ Cursor 규칙: `.cursor/rules/putduk-e2e-agent-verification.mdc` (`alwaysApply: 
 
 **주의:** `auth:file`, `auth:grep`, `auth:one`은 `--` 뒤 인자 없이 실행하면 chromium 프로젝트 **전체**가 수집된다.
 
-## GitHub CI (authenticated shard)
+## GitHub CI (wall-clock hybrid)
+
+**목표:** workflow wall clock **≤ 20분** (critical path = 가장 느린 job). Cursor rule: `.cursor/rules/putduk-ci-wall-clock.mdc`.
+
+### 공유 production build (`e2e-app-build`)
+
+1. workflow당 **1회** `pnpm build` (회원 + `apps/admin`).
+2. artifact `e2e-next-production`: `.next`, `apps/admin/.next` (repo 상대 경로).
+3. 소비 job: **authenticated** 8-shard matrix, **typography-protected** (병렬 가능).
+
+### authenticated shard
 
 - PR CI는 authenticated 186 tests를 **8-way `--shard=i/8`** matrix job으로 병렬 실행한다 (`Authenticated product gates (1/8)` … `(8/8)`). chromium·mobile-chrome 프로젝트를 모두 포함한다.
+- `needs: [webserver-lifecycle, e2e-app-build]` — shard마다 isolated `supabase start` + `db:reset`은 유지한다.
+- Playwright 전 **artifact download**; step env **`E2E_NEXT_START=1`** → `playwright.authenticated.config.ts`는 **next start only** (CI `next dev` 금지).
 - branch protection / required checks는 예전 단일 job 이름 `Authenticated product gates` 대신 **위 여덟 job을 모두** 등록해야 한다.
 - shard 합집합은 로컬 `pnpm test:e2e:auth:full` 과 동일하다. CI에서는 `pnpm exec playwright test --config playwright.authenticated.config.ts --shard=i/8` 로 넘긴다 (`pnpm run … -- --shard` 는 CI에서 shard가 무시될 수 있음).
 - Playwright browser cache는 `actions/cache@v5`, key `~/.cache/ms-playwright` (workflow `ci.yml`).
 - CI authenticated config는 **`reporter: "line"`만** 쓴다. `github` reporter와 `reportSlowTests` slow warning은 Run Summary·check annotation 노이즈를 만든다. slow 상한은 `reportSlowTests: { max: 5, threshold: 480_000 }` 이며 `exactOptionalPropertyTypes` 때문에 `undefined`를 넘기지 않고 CI일 때만 spread로 병합한다 (`9cfc2ef`).
+- shard step **timeout-minutes: 75** / job 90m — TOTP 스펙 때문에 줄이지 않는다. wall time은 prebuilt + next start로 확보한다.
+
+### typography-protected
+
+- `needs: [e2e-app-build]` — 동일 artifact download.
+- Playwright webServer step env **`E2E_PREBUILT_APPS=1`** → `scripts/typography-protected-servers.mjs`는 member/admin **build 생략**, next start만.
+
+### job 의존 (요약)
+
+```text
+e2e-app-build ─┬─► authenticated (×8, needs webserver-lifecycle)
+               └─► typography-protected
+(parallel) application, database, browser, worker, typography-public, …
+```
 
 ### PR #39 검증 run 증거 (review/pr38-cde4b203)
 

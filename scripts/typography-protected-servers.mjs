@@ -6,6 +6,8 @@
  * 먼저 빌드하고 `next start`로 띄운 뒤, 잘못된 자격 증명 조회가
  * 연속으로 빨라야만 준비 포트를 연다.
  * Playwright는 3199가 열리기 전에는 테스트를 시작하지 않는다.
+ *
+ * CI: `E2E_PREBUILT_APPS=1` 이면 member/admin build를 건너뛰고 `e2e-app-build` artifact의 `.next`만 next start한다.
  */
 import { spawn } from "node:child_process";
 import { createServer } from "node:http";
@@ -282,18 +284,23 @@ async function main() {
     NEXT_PUBLIC_APP_URL: ADMIN_ORIGIN,
   });
 
-  await runToCompletion(
-    "build member",
-    "pnpm exec next build",
-    memberEnv,
-    secrets,
-  );
-  await runToCompletion(
-    "build admin",
-    "pnpm --dir apps/admin exec next build",
-    adminEnv,
-    secrets,
-  );
+  const prebuiltApps = process.env.E2E_PREBUILT_APPS === "1";
+  if (prebuiltApps) {
+    log("skip member/admin build (E2E_PREBUILT_APPS=1)");
+  } else {
+    await runToCompletion(
+      "build member",
+      "pnpm exec next build",
+      memberEnv,
+      secrets,
+    );
+    await runToCompletion(
+      "build admin",
+      "pnpm --dir apps/admin exec next build",
+      adminEnv,
+      secrets,
+    );
+  }
 
   startDevServer(
     "member",
