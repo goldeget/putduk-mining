@@ -54,7 +54,9 @@ export function krwDepositProjectionCredit(input: {
   idempotencyKey: string;
 }): LedgerEntry {
   if (typeof input.amountAtomic !== "bigint" || input.amountAtomic <= 0n) {
-    throw new RangeError("KRW deposit projection amount must be a positive bigint.");
+    throw new RangeError(
+      "KRW deposit projection amount must be a positive bigint.",
+    );
   }
   if (!input.idempotencyKey.trim()) {
     throw new Error("KRW deposit projection requires an idempotency key.");

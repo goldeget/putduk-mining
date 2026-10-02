@@ -54,11 +54,7 @@ async function verifyCode(input: {
     );
   }
   if (budget === "RATE_LIMITED") {
-    return json(
-      "RATE_LIMITED",
-      "잠시 후 다시 시도해 주세요.",
-      429,
-    );
+    return json("RATE_LIMITED", "잠시 후 다시 시도해 주세요.", 429);
   }
 
   const listed = await input.supabase.auth.mfa.listFactors();
@@ -112,11 +108,7 @@ export const dynamic = "force-dynamic";
 export async function POST(request: Request) {
   const parsed = bodySchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) {
-    return json(
-      "INVALID_CODE",
-      "6자리 인증 코드를 확인해 주세요.",
-      400,
-    );
+    return json("INVALID_CODE", "6자리 인증 코드를 확인해 주세요.", 400);
   }
 
   if (parsed.data.purpose === "STEP_UP") {
@@ -125,7 +117,11 @@ export async function POST(request: Request) {
       return json(access.code, "이 작업을 실행할 수 없습니다.", access.status);
     }
     if (!access.principal.sessionId) {
-      return json("ADMIN_SESSION_REQUIRED", "운영 세션을 다시 확인해 주세요.", 403);
+      return json(
+        "ADMIN_SESSION_REQUIRED",
+        "운영 세션을 다시 확인해 주세요.",
+        403,
+      );
     }
     return verifyCode({
       supabase: access.principal.supabase,

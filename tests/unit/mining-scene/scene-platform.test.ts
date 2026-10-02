@@ -11,7 +11,10 @@ import {
   CATALOG_V1_PRODUCTS,
   presentationForCode,
 } from "@/lib/mining-scene/product-presentation";
-import { resolveCatalogProduct, resolveScene } from "@/lib/mining-scene/resolve-scene";
+import {
+  resolveCatalogProduct,
+  resolveScene,
+} from "@/lib/mining-scene/resolve-scene";
 import { SAFE_SCENE_COPY } from "@/lib/mining-scene/safe-scene-copy";
 import { SCENE_REGISTRY } from "@/lib/mining-scene/scene-registry";
 import { SK_HYNIX_V3_REFERENCE } from "@/lib/mining-scene/sk-hynix-v3-reference";
@@ -111,7 +114,9 @@ describe("catalog scene resolution", () => {
     });
     expect(disguised.scene?.familyKey).toBe("PRECIOUS_GOLD");
     expect(disguised.presentation?.profile.displayNameKo).toBe("엔비디아 테마");
-    expect(resolveCatalogProduct(identity("NVDA", "US_STOCK")).scene).toBeNull();
+    expect(
+      resolveCatalogProduct(identity("NVDA", "US_STOCK")).scene,
+    ).toBeNull();
   });
 
   test("keeps gold and bitcoin copy away from ownership and quoted returns", () => {
@@ -146,7 +151,9 @@ describe("scene selection without a renderer branch", () => {
     });
     const catalog = resolveCatalogProduct(identity("005930", "KR_STOCK"));
 
-    const assigned = resolveCatalogProduct(identity(ASSIGNED_PRODUCT_CODE, "KR_STOCK"));
+    const assigned = resolveCatalogProduct(
+      identity(ASSIGNED_PRODUCT_CODE, "KR_STOCK"),
+    );
 
     expect(fixture.scene).toBe(SCENE_REGISTRY.SEMICONDUCTOR_MEMORY.definition);
     expect(fixture.scene).toBe(assigned.scene);
@@ -180,7 +187,15 @@ describe("scene selection without a renderer branch", () => {
     expect(first.presentation?.profile.particleEmphasis).toBe("none");
     expect(second.presentation?.profile.particleEmphasis).toBe("steady");
 
-    for (const code of ["ETH", "BNB", "XRP", "BTC", "NVDA", "XAU", "XAG"] as const) {
+    for (const code of [
+      "ETH",
+      "BNB",
+      "XRP",
+      "BTC",
+      "NVDA",
+      "XAU",
+      "XAG",
+    ] as const) {
       const resolved = resolveCatalogProduct(
         CATALOG_V1_PRODUCTS.find((item) => item.code === code)!,
       );
@@ -301,10 +316,12 @@ describe("presentation boundary", () => {
     expect(encoded).not.toContain("https://");
     expect(encoded).not.toContain(SK_HYNIX_V3_REFERENCE.backgroundSha256);
     expect(encoded).not.toContain("balance");
-    expect(tryActivateProductionMaster(SK_HYNIX_V3_REFERENCE.backgroundSha256)).toBeNull();
     expect(
-      isApprovedMasterSha256(SK_HYNIX_V3_REFERENCE.backgroundSha256),
-    ).toBe(false);
+      tryActivateProductionMaster(SK_HYNIX_V3_REFERENCE.backgroundSha256),
+    ).toBeNull();
+    expect(isApprovedMasterSha256(SK_HYNIX_V3_REFERENCE.backgroundSha256)).toBe(
+      false,
+    );
   });
 });
 
@@ -313,9 +330,11 @@ describe("registry contract", () => {
     expect(findEconomicFieldPaths(SCENE_REGISTRY)).toEqual([]);
     expect(findEconomicFieldPaths(APPROVED_PRODUCT_PRESENTATIONS)).toEqual([]);
     expect(findEconomicFieldPaths(SK_HYNIX_V3_REFERENCE)).toEqual([]);
-    expect(findEconomicFieldPaths(projectStageInput(
-      resolveCatalogProduct(identity("XAU", "GOLD")),
-    ))).toEqual([]);
+    expect(
+      findEconomicFieldPaths(
+        projectStageInput(resolveCatalogProduct(identity("XAU", "GOLD"))),
+      ),
+    ).toEqual([]);
     expect(JSON.stringify(SCENE_REGISTRY)).not.toMatch(
       /balance|yield|pending|verified|수익률|잔액/i,
     );
@@ -379,7 +398,9 @@ describe("registry contract", () => {
     expect(referenceSource).not.toContain("ETF_BASKET");
     expect(registrySource).not.toContain("sk-hynix-v3-reference");
     expect(registrySource).not.toContain(SK_HYNIX_V3_REFERENCE.htmlSha256);
-    expect(registrySource).not.toContain(SK_HYNIX_V3_REFERENCE.backgroundSha256);
+    expect(registrySource).not.toContain(
+      SK_HYNIX_V3_REFERENCE.backgroundSha256,
+    );
 
     const manifest = readFileSync(
       join(root, "public/brand/assets.manifest.json"),
@@ -448,7 +469,9 @@ describe("registry contract", () => {
       expect(stageSource).not.toContain(code);
     }
 
-    expect(combined).not.toMatch(/Math\.random|doSettle|setInterval|requestAnimationFrame/);
+    expect(combined).not.toMatch(
+      /Math\.random|doSettle|setInterval|requestAnimationFrame/,
+    );
     expect(combined).not.toMatch(/getContext\(\s*["']webgl/);
     expect(combined).not.toMatch(/\bthree\b|openai|dall-e|generative/i);
     expect(styleSource).not.toMatch(/gradient|@keyframes|animation\s*:/i);

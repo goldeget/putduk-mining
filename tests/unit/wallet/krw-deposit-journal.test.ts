@@ -33,10 +33,12 @@ describe("KRW deposit journal contract", () => {
         side: "CREDIT",
       },
     ]);
-    expect(krwDepositProjectionCredit({
-      amountAtomic: 4_000n,
-      idempotencyKey: "deposit-ledger-0001",
-    })).toEqual({
+    expect(
+      krwDepositProjectionCredit({
+        amountAtomic: 4_000n,
+        idempotencyKey: "deposit-ledger-0001",
+      }),
+    ).toEqual({
       amountAtomic: 4_000n,
       direction: "CREDIT",
       entryType: "DEPOSIT",
@@ -71,11 +73,11 @@ describe("KRW deposit journal contract", () => {
   });
 
   it("does not treat liability net as the wallet total while a withdrawal is held", () => {
-    const liabilityNetAtomic = 80_000n;
+    const liabilityNetAtomic: bigint = 80_000n;
     const openHoldAtomic = 20_000n;
-    const walletTotalAtomic = 100_000n;
+    const walletTotalAtomic: bigint = 100_000n;
 
-    expect(liabilityNetAtomic === walletTotalAtomic).toBe(false);
+    expect(liabilityNetAtomic).not.toBe(walletTotalAtomic);
     expect(
       krwWalletMatchesLiabilityPlusOpenHold({
         liabilityNetAtomic,

@@ -98,9 +98,9 @@ from (
 ) as person;
 
 insert into public.user_roles (user_id, role, granted_by)
-select admin_id, 'ADMIN', admin_id from krw_ctx
+select admin_id, 'ADMIN'::public.app_role, admin_id from krw_ctx
 union all
-select admin_two_id, 'ADMIN', admin_two_id from krw_ctx;
+select admin_two_id, 'ADMIN'::public.app_role, admin_two_id from krw_ctx;
 
 select public.bootstrap_user((select baseline_id from krw_ctx));
 select public.bootstrap_user((select partial_id from krw_ctx));

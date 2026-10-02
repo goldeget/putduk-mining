@@ -13,7 +13,10 @@ export {
   readSceneFromDisplayProfile,
 } from "@/lib/mining-scene/display-profile-boundary";
 export { findEconomicFieldPaths } from "@/lib/mining-scene/economic-field-guard";
-export { resolveCatalogProduct, resolveScene } from "@/lib/mining-scene/resolve-scene";
+export {
+  resolveCatalogProduct,
+  resolveScene,
+} from "@/lib/mining-scene/resolve-scene";
 export { getSceneRow, SCENE_REGISTRY } from "@/lib/mining-scene/scene-registry";
 export type {
   SceneEconomicPolicy,
@@ -27,7 +30,10 @@ export {
   STAGE_INPUT_HAS_NO_ECONOMIC_IDENTITY,
   STAGE_SCENE_INPUT_KEYS,
 } from "@/lib/mining-scene/stage-input";
-export type { StageSceneInput, StageSceneInputKey } from "@/lib/mining-scene/stage-input";
+export type {
+  StageSceneInput,
+  StageSceneInputKey,
+} from "@/lib/mining-scene/stage-input";
 export {
   ACCENT_TOKENS,
   APPROVED_MASTER_VARIANTS,

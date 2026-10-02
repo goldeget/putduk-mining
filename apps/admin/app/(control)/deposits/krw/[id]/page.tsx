@@ -9,7 +9,10 @@ import {
   shortId,
 } from "@/app/(control)/_lib/format";
 import { QueueCard, QueueShell } from "@/components/queue-shell";
-import { loadKrwDeposit, loadKrwDepositReceipt } from "@/lib/deposits/krw-queue";
+import {
+  loadKrwDeposit,
+  loadKrwDepositReceipt,
+} from "@/lib/deposits/krw-queue";
 import { HIGH_IMPACT_ROLES } from "@/lib/auth/policy";
 import { requireAdminPage } from "@/lib/auth/principal";
 
@@ -46,7 +49,8 @@ export default async function KrwDepositDetailPage({
   }
   if (!loaded.row) notFound();
   const row = loaded.row;
-  const receipt = row.status === "APPROVED" ? await loadKrwDepositReceipt(id) : null;
+  const receipt =
+    row.status === "APPROVED" ? await loadKrwDepositReceipt(id) : null;
   const pending = PENDING.has(row.status);
 
   return (
@@ -70,7 +74,10 @@ export default async function KrwDepositDetailPage({
           <div>
             <dt>회원</dt>
             <dd>
-              <Link className="text-link" href={`/members?id=${row.user_id}` as Route}>
+              <Link
+                className="text-link"
+                href={`/members?id=${row.user_id}` as Route}
+              >
                 {shortId(row.user_id)}
               </Link>
             </dd>

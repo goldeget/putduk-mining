@@ -10,7 +10,8 @@ export const SK_HYNIX_V3_REFERENCE = {
   productionAssetApproval: "NOT_APPROVED",
   activatesProductionScene: false,
   htmlByteLength: 493313,
-  htmlSha256: "2f33d6b021f642e043e9068f353c3d279540d9c370b2478ef3173f2d9535ecd7",
+  htmlSha256:
+    "2f33d6b021f642e043e9068f353c3d279540d9c370b2478ef3173f2d9535ecd7",
   embeddedJpegCount: 1,
   embeddedJpegByteLength: 355879,
   embeddedJpegWidth: 1024,

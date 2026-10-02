@@ -19,7 +19,9 @@ export type SceneEconomicPolicy = "NONE" | "DECISION_REQUIRED";
 export type SceneRegistryRow<K extends SceneFamilyKey = SceneFamilyKey> = {
   readonly familyKey: K;
   readonly version: 1;
-  readonly economicPolicy: K extends "ETF_BASKET" ? "DECISION_REQUIRED" : "NONE";
+  readonly economicPolicy: K extends "ETF_BASKET"
+    ? "DECISION_REQUIRED"
+    : "NONE";
   readonly definition: SceneDefinition & { readonly familyKey: K };
 };
 

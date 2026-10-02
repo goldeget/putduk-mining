@@ -74,15 +74,19 @@ describe("KRW approve UX state", () => {
       online: true,
       payload: "5000|계좌 입금을 확인했습니다",
     });
-    expect(reduceKrwApprove(started, { type: "transport_lost" }).logicalKey).toBe(
-      key,
-    );
+    expect(
+      reduceKrwApprove(started, { type: "transport_lost" }).logicalKey,
+    ).toBe(key);
     expect(reduceKrwApprove(started, { type: "cancel" }).phase).toBe(
       "indeterminate",
     );
-    expect(reduceKrwApprove(started, { type: "submit", online: true, payload: "1|다름" }).message).toBe(
-      KRW_APPROVE_COPY.payloadLocked,
-    );
+    expect(
+      reduceKrwApprove(started, {
+        type: "submit",
+        online: true,
+        payload: "1|다름",
+      }).message,
+    ).toBe(KRW_APPROVE_COPY.payloadLocked);
   });
 
   it("ignores a second click while the first request is in flight", () => {

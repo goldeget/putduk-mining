@@ -104,7 +104,9 @@ export const APPROVED_PRODUCT_PRESENTATIONS = {
 export function presentationForCode(
   code: string,
 ): CatalogProductPresentation | null {
-  if (!Object.prototype.hasOwnProperty.call(APPROVED_PRODUCT_PRESENTATIONS, code)) {
+  if (
+    !Object.prototype.hasOwnProperty.call(APPROVED_PRODUCT_PRESENTATIONS, code)
+  ) {
     return null;
   }
   return APPROVED_PRODUCT_PRESENTATIONS[code as CatalogProductCode];

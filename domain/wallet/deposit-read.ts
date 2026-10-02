@@ -13,10 +13,7 @@ export function classifyDepositRead(input: {
 }
 
 export type ApprovedDepositJournalState =
-  | "matched"
-  | "mismatch"
-  | "missing"
-  | "not_approved";
+  "matched" | "mismatch" | "missing" | "not_approved";
 
 const ATOMIC_INTEGER = /^-?\d+$/;
 
@@ -77,7 +74,12 @@ export function classifyApprovedDepositJournal(input: {
   ) {
     return "missing";
   }
-  if (approved <= 0n || debit !== approved || credit !== approved || projection !== approved) {
+  if (
+    approved <= 0n ||
+    debit !== approved ||
+    credit !== approved ||
+    projection !== approved
+  ) {
     return "mismatch";
   }
   return "matched";

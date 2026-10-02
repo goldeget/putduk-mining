@@ -112,13 +112,17 @@ const offlineMoneyResult: CommandActionResult = {
 };
 
 /** 스텝업을 소비하기 전에 끊김과 재시도 키를 확인한다. */
-export function prepareMoneyAttempt(formData: FormData):
+export function prepareMoneyAttempt(
+  formData: FormData,
+):
   | { ok: true; idempotencyKey: string }
   | { ok: false; result: CommandActionResult } {
   if (declaredClientOffline(formData.get("clientOnline"))) {
     return { ok: false, result: offlineMoneyResult };
   }
-  const idempotencyKey = parseLogicalOperationKey(formData.get("idempotencyKey"));
+  const idempotencyKey = parseLogicalOperationKey(
+    formData.get("idempotencyKey"),
+  );
   if (!idempotencyKey) {
     return {
       ok: false,

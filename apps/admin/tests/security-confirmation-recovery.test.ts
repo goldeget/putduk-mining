@@ -119,7 +119,8 @@ function jsonResponse(body: unknown, status = 200) {
 function mockVerifiedThen(body: unknown, status = 200) {
   return vi.fn(async (input: RequestInfo | URL) => {
     const url = String(input);
-    if (url.includes("totp-verify")) return jsonResponse({ data: { verified: true } });
+    if (url.includes("totp-verify"))
+      return jsonResponse({ data: { verified: true } });
     return jsonResponse(body, status);
   });
 }

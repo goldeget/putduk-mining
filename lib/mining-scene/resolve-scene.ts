@@ -20,10 +20,20 @@ import {
 
 const ACCENT_TOKEN_SET: ReadonlySet<string> = new Set(ACCENT_TOKENS);
 const DECORATIVE_OBJECT_SET: ReadonlySet<string> = new Set(DECORATIVE_OBJECTS);
-const PARTICLE_EMPHASIS = new Set<ParticleEmphasis>(["none", "sparse", "steady"]);
-const AMBIENT_PRESETS = new Set<AmbientPreset>(["still", "warm", "cool", "neutral"]);
+const PARTICLE_EMPHASIS = new Set<ParticleEmphasis>([
+  "none",
+  "sparse",
+  "steady",
+]);
+const AMBIENT_PRESETS = new Set<AmbientPreset>([
+  "still",
+  "warm",
+  "cool",
+  "neutral",
+]);
 
-const UNSAFE_COPY = /https?:|\/\/|<|>|javascript:|VISUAL_MASTER_REQUIRED|DECISION_REQUIRED|수익률|잔액/i;
+const UNSAFE_COPY =
+  /https?:|\/\/|<|>|javascript:|VISUAL_MASTER_REQUIRED|DECISION_REQUIRED|수익률|잔액/i;
 
 function safeCopy(value: unknown, fallback: string) {
   if (typeof value !== "string") {
@@ -63,9 +73,7 @@ function isSafeProfile(profile: ProductSceneProfile): boolean {
     return false;
   }
   if (
-    profile.decorativeObjects.some(
-      (item) => !DECORATIVE_OBJECT_SET.has(item),
-    )
+    profile.decorativeObjects.some((item) => !DECORATIVE_OBJECT_SET.has(item))
   ) {
     return false;
   }
@@ -172,7 +180,9 @@ export function resolveScene(
     profile,
   };
   const productionAssetActive = activationOf(scene);
-  const visibleCopy = productionAssetActive ? profile.htmlCopyKo : SAFE_SCENE_COPY;
+  const visibleCopy = productionAssetActive
+    ? profile.htmlCopyKo
+    : SAFE_SCENE_COPY;
 
   return {
     identity,

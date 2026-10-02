@@ -56,12 +56,7 @@ export type StageSceneInput = {
 };
 
 type EconomicIdentityKey =
-  | "amount"
-  | "balance"
-  | "pending"
-  | "productCode"
-  | "verified"
-  | "yield";
+  "amount" | "balance" | "pending" | "productCode" | "verified" | "yield";
 
 type StageLeak = Extract<EconomicIdentityKey, keyof StageSceneInput>;
 

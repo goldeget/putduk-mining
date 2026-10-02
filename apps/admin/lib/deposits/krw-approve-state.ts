@@ -56,7 +56,10 @@ export function createKrwApproveState(logicalKey: string): KrwApproveState {
   };
 }
 
-function sameKey(state: KrwApproveState, patch: Partial<KrwApproveState>): KrwApproveState {
+function sameKey(
+  state: KrwApproveState,
+  patch: Partial<KrwApproveState>,
+): KrwApproveState {
   return { ...state, ...patch, logicalKey: state.logicalKey };
 }
 
@@ -75,7 +78,10 @@ export function reduceKrwApprove(
         return state;
       }
       if (!event.online) {
-        return sameKey(state, { phase: "editing", message: KRW_APPROVE_COPY.offline });
+        return sameKey(state, {
+          phase: "editing",
+          message: KRW_APPROVE_COPY.offline,
+        });
       }
       if (
         state.requestStarted &&
@@ -96,7 +102,8 @@ export function reduceKrwApprove(
       });
     }
     case "cancel": {
-      if (state.phase !== "submitting" && state.phase !== "confirming") return state;
+      if (state.phase !== "submitting" && state.phase !== "confirming")
+        return state;
       return sameKey(state, {
         phase: "indeterminate",
         message: KRW_APPROVE_COPY.indeterminate,

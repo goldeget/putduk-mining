@@ -22,7 +22,9 @@ export default async function KrwDepositQueuePage() {
   return (
     <div
       data-ui-ready="/deposits/krw"
-      data-ui-state={loaded.ok ? (loaded.rows.length ? "loaded" : "empty") : "error"}
+      data-ui-state={
+        loaded.ok ? (loaded.rows.length ? "loaded" : "empty") : "error"
+      }
     >
       <QueueShell
         eyebrow="원화 입금"

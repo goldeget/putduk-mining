@@ -17,8 +17,13 @@ export async function POST(request: Request) {
   const access = await requireAdminCommand(request, HIGH_IMPACT_ROLES);
   if (!access.ok) {
     return NextResponse.json(
-      { error: { code: access.code, message: "이 작업을 실행할 수 없습니다." } },
-      { status: access.status, headers: { "Cache-Control": "private, no-store" } },
+      {
+        error: { code: access.code, message: "이 작업을 실행할 수 없습니다." },
+      },
+      {
+        status: access.status,
+        headers: { "Cache-Control": "private, no-store" },
+      },
     );
   }
   const parsed = bodySchema.safeParse(await request.json().catch(() => null));

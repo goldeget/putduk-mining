@@ -91,7 +91,8 @@ export type ApprovedSceneMasterSha256 =
 /** 퍼블릭 상대 경로 허용 목록. 외부 URL 은 받지 않는다. */
 export const APPROVED_SCENE_ASSET_PATHS = [] as const;
 
-export type ApprovedSceneAssetPath = (typeof APPROVED_SCENE_ASSET_PATHS)[number];
+export type ApprovedSceneAssetPath =
+  (typeof APPROVED_SCENE_ASSET_PATHS)[number];
 
 export const APPROVED_MASTER_VARIANTS = [] as const;
 

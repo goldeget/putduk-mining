@@ -16,7 +16,7 @@ import {
   recordAdminAuthFailure,
   type FailureLimitStore,
 } from "@/lib/auth/failure-limit";
-import { adminAuthFailureBucket } from "../../../../lib/security/rate-limit-bucket";
+import { adminAuthFailureBucket } from "../../../lib/security/rate-limit-bucket";
 
 const adminRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -68,13 +68,13 @@ describe("admin auth failure limit", () => {
         };
         return chain;
       },
-    });
+    } as Parameters<typeof createSecurityEventFailureStore>[0]);
 
     const subject = "operator@example.com";
     for (let attempt = 0; attempt < ADMIN_AUTH_FAILURE_MAX; attempt += 1) {
-      expect(await readAdminAuthFailureBudget("PASSWORD", subject, events)).toBe(
-        "ALLOW",
-      );
+      expect(
+        await readAdminAuthFailureBudget("PASSWORD", subject, events),
+      ).toBe("ALLOW");
       expect(await recordAdminAuthFailure("PASSWORD", subject, events)).toBe(
         true,
       );
@@ -102,9 +102,9 @@ describe("admin auth failure limit", () => {
       insertProof: async () => false,
       hasProof: async () => null,
     };
-    expect(
-      await readAdminAuthFailureBudget("TOTP", "user-1", events),
-    ).toBe("UNAVAILABLE");
+    expect(await readAdminAuthFailureBudget("TOTP", "user-1", events)).toBe(
+      "UNAVAILABLE",
+    );
   });
 
   it("wires login and TOTP through the server failure path", () => {
