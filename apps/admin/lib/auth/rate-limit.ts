@@ -1,48 +1,15 @@
 import "server-only";
 
-import { randomUUID } from "node:crypto";
-
-import { recordAdminSecurityEvent } from "@/lib/security/events";
-
-const WINDOW_MS = 15 * 60 * 1000;
-const MAX_ATTEMPTS = 30;
-
-type Bucket = { count: number; windowStartedAt: number };
-
-const memoryBuckets = new Map<string, Bucket>();
-
 /**
- * 프로세스 로컬 보조 한도. 권위 있는 한도는 SQL `ADMIN_AUTH` rate limit이며
- * `register_admin_session` 호출 시 적용됩니다. user_metadata는 사용하지 않습니다.
+ * 프로세스 메모리 카운터는 쓰지 않는다.
+ * 비밀번호·TOTP 실패 제한은 public.security_events 다.
+ * register_admin_session 의 ADMIN_AUTH 한도는 성공한 세션 등록용이며
+ * 실패 제한이 아니다.
+ * 원격 인증 제공자의 호출 제한은 이 모듈에서 완료로 보지 않는다.
  */
-export function enforceAdminAuthRateLimit(bucketKey: string):
-  | {
-      ok: true;
-    }
-  | {
-      ok: false;
-      code: "RATE_LIMITED";
-    } {
-  const now = Date.now();
-  const current = memoryBuckets.get(bucketKey);
-  if (!current || now - current.windowStartedAt > WINDOW_MS) {
-    memoryBuckets.set(bucketKey, { count: 1, windowStartedAt: now });
-    return { ok: true };
-  }
-  if (current.count >= MAX_ATTEMPTS) {
-    return { ok: false, code: "RATE_LIMITED" };
-  }
-  current.count += 1;
-  return { ok: true };
-}
-
-export async function recordAdminAuthRateLimitEvent(
-  userId: string | null,
-  limited: boolean,
-): Promise<void> {
-  await recordAdminSecurityEvent({
-    eventType: limited ? "ADMIN_AUTH_RATE_LIMITED" : "ADMIN_AUTH_ATTEMPT",
-    userId,
-    userAgent: `rate-limit:${randomUUID()}`,
-  });
-}
+export {
+  hasAdminAuthServerProof,
+  readAdminAuthFailureBudget,
+  recordAdminAuthFailure,
+  writeAdminAuthServerProof,
+} from "@/lib/auth/failure-limit";

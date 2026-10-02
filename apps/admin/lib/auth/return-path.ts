@@ -2,6 +2,7 @@ const SAFE_ADMIN_PATHS = [
   "/",
   "/members",
   "/deposits/usdt",
+  "/deposits/krw",
   "/withdrawals/krw-bank",
   "/withdrawals/usdt",
   "/kyc",

@@ -1,8 +1,14 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 
 import type { CommandActionResult } from "@/app/(control)/_lib/command-gate";
+import {
+  bindMoneyFormSubmit,
+  MoneyOfflineNote,
+  MoneyOperationFields,
+  useLogicalOperationKey,
+} from "@/components/money-operation-form";
 import {
   ConfirmCheckbox,
   ReasonField,
@@ -16,14 +22,21 @@ import { ADMIN_COMMAND_FAMILIES } from "@/lib/auth/command-families";
 import { confirmUsdtManualDepositAction } from "./actions";
 
 export function ConfirmUsdtDepositForm({ depositId }: { depositId: string }) {
+  const operationKey = useLogicalOperationKey("usdt_dep");
+  const [offlineNote, setOfflineNote] = useState<string | null>(null);
   const [result, action] = useActionState<CommandActionResult | null, FormData>(
     confirmUsdtManualDepositAction,
     null,
   );
 
   return (
-    <form action={action} className="operator-form">
+    <form
+      action={action}
+      className="operator-form"
+      onSubmit={(event) => bindMoneyFormSubmit(event, setOfflineNote)}
+    >
       <input name="depositId" type="hidden" value={depositId} />
+      <MoneyOperationFields operationKey={operationKey} />
       <TextField
         inputMode="numeric"
         label="반영할 원화 금액"
@@ -40,6 +53,7 @@ export function ConfirmUsdtDepositForm({ depositId }: { depositId: string }) {
         commandFamily={ADMIN_COMMAND_FAMILIES.DEPOSIT_CONFIRM}
       />
       <SubmitButton pendingLabel="확인 중…">입금 확인 · 원화 반영</SubmitButton>
+      <MoneyOfflineNote message={offlineNote} />
       <QueueFlash result={result} />
     </form>
   );

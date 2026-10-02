@@ -4,7 +4,7 @@ import { z } from "zod";
 
 import {
   mapRpcFailure,
-  newIdempotencyKey,
+  prepareMoneyAttempt,
   requireHighImpactPrincipal,
   type CommandActionResult,
 } from "@/app/(control)/_lib/command-gate";
@@ -45,6 +45,8 @@ export async function recordUsdtExternalSendAction(
   _prev: CommandActionResult | null,
   formData: FormData,
 ): Promise<CommandActionResult> {
+  const prepared = prepareMoneyAttempt(formData);
+  if (!prepared.ok) return prepared.result;
   const access = await requireHighImpactPrincipal(
     ADMIN_COMMAND_FAMILIES.WITHDRAWAL_OPERATOR,
     formData,
@@ -104,11 +106,24 @@ export async function recordUsdtExternalSendAction(
     p_conversion_evidence: conversionEvidence,
     p_actor: access.principal.userId,
     p_sent_at: sentAt.toISOString(),
-    p_idempotency_key: newIdempotencyKey("usdt_send"),
+    p_idempotency_key: prepared.idempotencyKey,
   });
 
   if (error) {
     return mapRpcFailure(error.message, "USDT 송금 기록을 남기지 못했습니다.");
+  }
+  const recordedSend = await service
+    .from("withdrawal_external_sends")
+    .select("id")
+    .eq("withdrawal_id", parsed.data.withdrawalId)
+    .limit(1);
+  if (recordedSend.error || !recordedSend.data?.length) {
+    return {
+      ok: false,
+      code: "UNCONFIRMED",
+      message:
+        "송금 기록을 아직 확인하지 못했습니다. 같은 요청으로 다시 확인해 주세요.",
+    };
   }
   return {
     ok: true,
@@ -121,6 +136,8 @@ export async function finalizeUsdtWithdrawalLedgerAction(
   _prev: CommandActionResult | null,
   formData: FormData,
 ): Promise<CommandActionResult> {
+  const prepared = prepareMoneyAttempt(formData);
+  if (!prepared.ok) return prepared.result;
   const access = await requireHighImpactPrincipal(
     ADMIN_COMMAND_FAMILIES.WITHDRAWAL_OPERATOR,
     formData,
@@ -152,11 +169,24 @@ export async function finalizeUsdtWithdrawalLedgerAction(
   const { error } = await service.rpc("finalize_withdrawal_ledger", {
     p_withdrawal_id: parsed.data.withdrawalId,
     p_actor: access.principal.userId,
-    p_idempotency_key: newIdempotencyKey("usdt_fin"),
+    p_idempotency_key: prepared.idempotencyKey,
   });
 
   if (error) {
     return mapRpcFailure(error.message, "원장 확정을 완료하지 못했습니다.");
+  }
+  const finalized = await service
+    .from("withdrawal_requests")
+    .select("finalize_ledger_transaction_id")
+    .eq("id", parsed.data.withdrawalId)
+    .maybeSingle();
+  if (finalized.error || !finalized.data?.finalize_ledger_transaction_id) {
+    return {
+      ok: false,
+      code: "UNCONFIRMED",
+      message:
+        "원장 확정을 아직 확인하지 못했습니다. 같은 요청으로 다시 확인해 주세요.",
+    };
   }
   return { ok: true, message: "USDT 출금 원장을 확정했습니다." };
 }
@@ -165,6 +195,8 @@ export async function releaseUsdtWithdrawalHoldAction(
   _prev: CommandActionResult | null,
   formData: FormData,
 ): Promise<CommandActionResult> {
+  const prepared = prepareMoneyAttempt(formData);
+  if (!prepared.ok) return prepared.result;
   const access = await requireHighImpactPrincipal(
     ADMIN_COMMAND_FAMILIES.WITHDRAWAL_OPERATOR,
     formData,
@@ -192,13 +224,26 @@ export async function releaseUsdtWithdrawalHoldAction(
       p_withdrawal_id: parsed.data.withdrawalId,
       p_actor: access.principal.userId,
       p_reason: parsed.data.reason,
-      p_idempotency_key: newIdempotencyKey("usdt_rel"),
+      p_idempotency_key: prepared.idempotencyKey,
       p_disposition: disposition,
     },
   );
 
   if (error) {
     return mapRpcFailure(error.message, "보류 금액을 해제하지 못했습니다.");
+  }
+  const released = await createAdminServiceClient()
+    .from("withdrawal_requests")
+    .select("status")
+    .eq("id", parsed.data.withdrawalId)
+    .maybeSingle();
+  if (released.error || released.data?.status !== disposition) {
+    return {
+      ok: false,
+      code: "UNCONFIRMED",
+      message:
+        "해제 결과를 아직 확인하지 못했습니다. 같은 요청으로 다시 확인해 주세요.",
+    };
   }
   return {
     ok: true,

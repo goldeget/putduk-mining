@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 const items = [
   { href: "/", label: "오늘의 퍼뜩" },
   { href: "/deposits/usdt", label: "USDT 입금 확인" },
+  { href: "/deposits/krw", label: "원화 입금 확인" },
   { href: "/withdrawals/krw-bank", label: "계좌 출금" },
   { href: "/withdrawals/usdt", label: "USDT 출금" },
   { href: "/kyc", label: "본인 확인 검토" },

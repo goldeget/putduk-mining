@@ -162,16 +162,35 @@ export function MfaGate({ returnTo }: { returnTo: string }) {
     const timeout = window.setTimeout(() => controller.abort(), 15_000);
     try {
       if (!navigator.onLine) throw new Error("OFFLINE");
-      const { error } = await waitForAdminResult(
-        createAdminBrowserClient().auth.mfa.challengeAndVerify({
-          factorId,
-          code,
+      const verified = await waitForAdminResult(
+        fetch("/api/v1/admin/session/totp-verify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            code,
+            purpose: "SESSION",
+            factorId,
+          }),
+          signal: controller.signal,
         }),
         controller.signal,
       );
+      const verifiedPayload = (await waitForAdminResult(
+        verified.json().catch(() => null),
+        controller.signal,
+      )) as { data?: { verified?: boolean }; error?: { code?: string } } | null;
       if (!alive.current || controller.signal.aborted) return;
-      if (error) {
-        setMessage("인증 코드가 올바르지 않거나 만료되었습니다.");
+      if (verifiedPayload?.error?.code === "RATE_LIMITED") {
+        setMessage("잠시 후 다시 시도해 주세요.");
+        setBusy(false);
+        return;
+      }
+      if (!verified.ok || verifiedPayload?.data?.verified !== true) {
+        setMessage(
+          verified.status === 401
+            ? "인증 코드가 올바르지 않거나 만료되었습니다."
+            : "인증 결과를 확인하지 못했습니다. 다시 로그인해 주세요.",
+        );
         setBusy(false);
         return;
       }

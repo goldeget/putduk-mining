@@ -4,10 +4,12 @@ import { z } from "zod";
 import { HIGH_IMPACT_ROLES } from "@/lib/auth/policy";
 import { requireAdminCommand } from "@/lib/auth/principal";
 import { consumeAdminStepUpGrant } from "@/lib/auth/step-up";
+import { requestDeclaredOffline } from "@/lib/money/logical-operation";
 import { createAdminServiceClient } from "@/lib/supabase/service";
 
 const bodySchema = z.discriminatedUnion("action", [
-  z.object({
+  z
+    .object({
     action: z.literal("RECORD_KRW_SEND"),
     withdrawalId: z.string().uuid(),
     bankReference: z.string().trim().min(4).max(200),
@@ -15,8 +17,10 @@ const bodySchema = z.discriminatedUnion("action", [
     sentAt: z.string().datetime(),
     stepUpToken: z.string().min(16),
     idempotencyKey: z.string().min(8).max(200),
-  }),
-  z.object({
+  })
+    .strict(),
+  z
+    .object({
     action: z.literal("RECORD_USDT_SEND"),
     withdrawalId: z.string().uuid(),
     network: z.enum(["TRC20", "ERC20", "BEP20"]),
@@ -26,21 +30,26 @@ const bodySchema = z.discriminatedUnion("action", [
     sentAt: z.string().datetime(),
     stepUpToken: z.string().min(16),
     idempotencyKey: z.string().min(8).max(200),
-  }),
-  z.object({
+  })
+    .strict(),
+  z
+    .object({
     action: z.literal("FINALIZE_LEDGER"),
     withdrawalId: z.string().uuid(),
     stepUpToken: z.string().min(16),
     idempotencyKey: z.string().min(8).max(200),
-  }),
-  z.object({
+  })
+    .strict(),
+  z
+    .object({
     action: z.literal("RELEASE_HOLD"),
     withdrawalId: z.string().uuid(),
     reason: z.string().trim().min(4).max(500),
     disposition: z.enum(["REJECTED", "CANCELLED"]),
     stepUpToken: z.string().min(16),
     idempotencyKey: z.string().min(8).max(200),
-  }),
+  })
+    .strict(),
 ]);
 
 export const dynamic = "force-dynamic";
@@ -59,6 +68,12 @@ export async function POST(request: Request) {
     return Response.json(
       { ok: false, code: "INVALID_COMMAND" },
       { status: 400 },
+    );
+  }
+  if (requestDeclaredOffline(request)) {
+    return Response.json(
+      { ok: false, code: "OFFLINE_BLOCKED" },
+      { status: 409 },
     );
   }
 

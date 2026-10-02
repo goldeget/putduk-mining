@@ -4,7 +4,7 @@ import { z } from "zod";
 
 import {
   mapRpcFailure,
-  newIdempotencyKey,
+  prepareMoneyAttempt,
   requireHighImpactPrincipal,
   type CommandActionResult,
 } from "@/app/(control)/_lib/command-gate";
@@ -25,6 +25,8 @@ export async function confirmUsdtManualDepositAction(
   _prev: CommandActionResult | null,
   formData: FormData,
 ): Promise<CommandActionResult> {
+  const prepared = prepareMoneyAttempt(formData);
+  if (!prepared.ok) return prepared.result;
   const access = await requireHighImpactPrincipal(
     ADMIN_COMMAND_FAMILIES.DEPOSIT_CONFIRM,
     formData,
@@ -52,7 +54,7 @@ export async function confirmUsdtManualDepositAction(
     p_credited_krw: credited,
     p_actor: access.principal.userId,
     p_reason: parsed.data.reason,
-    p_idempotency_key: newIdempotencyKey("usdt_dep"),
+    p_idempotency_key: prepared.idempotencyKey,
   });
 
   if (error) {
@@ -60,6 +62,19 @@ export async function confirmUsdtManualDepositAction(
       error.message,
       "USDT 입금 확인을 완료하지 못했습니다.",
     );
+  }
+  const confirmed = await db
+    .from("usdt_manual_deposits")
+    .select("status")
+    .eq("id", parsed.data.depositId)
+    .maybeSingle();
+  if (confirmed.error || confirmed.data?.status !== "CONFIRMED") {
+    return {
+      ok: false,
+      code: "UNCONFIRMED",
+      message:
+        "입금 반영을 아직 확인하지 못했습니다. 같은 요청으로 다시 확인해 주세요.",
+    };
   }
 
   return {
