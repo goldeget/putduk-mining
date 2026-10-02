@@ -113,7 +113,17 @@ async function completeAdminLoginWithTotpOnce(
   }
   if (await retryButton.isVisible()) {
     await retryButton.click();
-    await expect(secretCode).toBeVisible({ timeout: 90_000 });
+    try {
+      await expect(secretCode).toBeVisible({ timeout: 90_000 });
+    } catch (error) {
+      const note = (await page.locator(".form-note").textContent())?.trim();
+      const alert = (
+        await page.locator("[role='alert']").textContent()
+      )?.trim();
+      throw new Error(
+        `TOTP_ENROLMENT_UI_MISSING: note=${note ?? "none"}; alert=${alert ?? "none"}; cause=${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
   }
   const secret = (await secretCode.textContent())?.trim();
   if (!secret) throw new Error("TOTP enrolment secret missing.");

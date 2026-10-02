@@ -26,12 +26,22 @@ setup("운영자 세션을 준비한다", async ({ page }) => {
   mkdirSync("test-results/typography-protected", { recursive: true });
   const operator = await createConfirmedMember("ws05-typography-admin");
   await grantAdminRole(operator.userId);
-  try {
-    await completeAdminLoginWithTotp(page, operator.email, operator.password);
-  } catch (error) {
-    if (!isRetryableAdminSetupError(error)) throw error;
-    await page.context().clearCookies();
-    await completeAdminLoginWithTotp(page, operator.email, operator.password);
+  let lastError: unknown;
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    try {
+      await completeAdminLoginWithTotp(page, operator.email, operator.password);
+      lastError = undefined;
+      break;
+    } catch (error) {
+      lastError = error;
+      if (!isRetryableAdminSetupError(error) || attempt === 2) {
+        throw error;
+      }
+      await page.context().clearCookies();
+    }
+  }
+  if (lastError) {
+    throw lastError;
   }
   await page.context().storageState({ path: statePath });
 });
