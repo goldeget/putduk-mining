@@ -1,3 +1,7 @@
+import { readFileSync } from "node:fs";
+import { spawnSync } from "node:child_process";
+import { fileURLToPath } from "node:url";
+
 import { describe, expect, it } from "vitest";
 
 import {
@@ -7,6 +11,7 @@ import {
   formatGithubEnv,
   loadJobLocalAllowlist,
   parseShellEnv,
+  redactSupabaseCliLine,
 } from "../../scripts/capture-local-supabase-env.mjs";
 
 const allow = loadJobLocalAllowlist();
@@ -243,5 +248,76 @@ SECRET_KEY=${SECRET}
         error: undefined,
       }),
     ).toThrow(/postgres and postgresql/);
+  });
+});
+
+describe("supabase start log redaction", () => {
+  const jwt = "eyJhbGciOiJub25lIn0.eyJyb2xlIjoidGVzdCJ9.c2ln";
+  const storageSecret = "ab".repeat(32);
+  const accessKey = "cd".repeat(16);
+  const digest = `sha256:${"ef".repeat(32)}`;
+
+  it("masks key-shaped strings and keeps the database password mask", () => {
+    const input = [
+      `│ Publishable │ ${PUBLISHABLE} │`,
+      `│ Secret │ ${SECRET} │`,
+      `│ Secret Key │ ${storageSecret} │`,
+      `│ Access Key │ ${accessKey} │`,
+      `anon key: ${jwt}`,
+      `service_role key: ${jwt}`,
+      "│ URL │ postgresql://postgres:unit-test-password@127.0.0.1:65432/postgres │",
+      "│ URL │ postgresql://postgres:***@127.0.0.1:65432/postgres │",
+      "API keys and JWT secrets are shared defaults. Do not use in production",
+      digest,
+      "Secret source: Actions",
+    ].join("\n");
+    const output = input
+      .split("\n")
+      .map((line) => redactSupabaseCliLine(line))
+      .join("\n");
+
+    expect(output).not.toContain(PUBLISHABLE);
+    expect(output).not.toContain(SECRET);
+    expect(output).not.toContain(jwt);
+    expect(output).not.toContain(storageSecret);
+    expect(output).not.toContain(accessKey);
+    expect(output).not.toContain("unit-test-password");
+    expect(output).toContain("<redacted>");
+    expect(output).toContain(
+      "postgresql://postgres:***@127.0.0.1:65432/postgres",
+    );
+    expect(output).toContain("shared defaults");
+    expect(output).toContain(digest);
+    expect(output).toContain("Secret source: Actions");
+  });
+
+  it("redacts the stream before a caller can print it", () => {
+    const result = spawnSync(
+      process.execPath,
+      ["scripts/redact-supabase-cli-stream.mjs"],
+      {
+        input: `│ Secret │ ${SECRET} │\n`,
+        encoding: "utf8",
+        cwd: fileURLToPath(new URL("../..", import.meta.url)),
+      },
+    );
+    expect(result.status).toBe(0);
+    expect(result.stdout).not.toContain(SECRET);
+    expect(result.stdout).toContain("<redacted>");
+    expect(result.stderr ?? "").not.toContain(SECRET);
+  });
+
+  it("pipes supabase start through redaction without shell tracing", () => {
+    const script = readFileSync(
+      fileURLToPath(
+        new URL("../../scripts/ci-supabase-start.sh", import.meta.url),
+      ),
+      "utf8",
+    );
+    expect(script).not.toMatch(/^set -x/m);
+    expect(script).not.toMatch(/supabase start[^\n]*\becho\b/);
+    expect(script).toContain(
+      "supabase start --yes 2>&1 | node scripts/redact-supabase-cli-stream.mjs",
+    );
   });
 });

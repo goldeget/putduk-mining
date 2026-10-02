@@ -77,6 +77,8 @@ export function selectLocalCredentials(values: Record<string, string>): {
   dbUrl: string;
 };
 
+export function redactSupabaseCliLine(line: string): string;
+
 export function redactStatusText(text: string): string;
 
 export function captureFromCliResult(result: {

@@ -482,6 +482,83 @@ function detectedKeys(values) {
   return names.length > 0 ? names.join(", ") : "(none)";
 }
 
+const SENSITIVE_CELL_LABELS = new Set([
+  "access key",
+  "anon",
+  "anon key",
+  "jwt",
+  "jwt secret",
+  "publishable",
+  "secret",
+  "secret key",
+  "service role",
+  "service role key",
+  "service_role",
+  "service_role key",
+]);
+
+const SB_KEY = /sb_(?:publishable|secret)_[A-Za-z0-9_-]+/g;
+const JWT_TOKEN = /eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+/g;
+const DB_PASSWORD = /(postgres(?:ql)?:\/\/[^:\s/@]+:)([^@\s/]+)(@)/gi;
+const SECRET_ASSIGNMENT =
+  /^(\s*(?:export\s+)?(?:PUBLISHABLE_KEY|SECRET_KEY|ANON_KEY|SERVICE_ROLE_KEY|JWT_SECRET|SUPABASE_SECRET_KEY|NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY|auth\.publishable_key|auth\.secret_key|auth\.anon_key|auth\.service_role_key)\s*=\s*).+$/i;
+const LABELED_SECRET =
+  /^(\s*(?:Publishable|Secret Key|Access Key|anon key|service_role key|service role key|JWT secret|Secret)\s*[:=]\s*)(\S+)/i;
+
+function maskDbPassword(line) {
+  return line.replace(DB_PASSWORD, (match, prefix, password, suffix) => {
+    if (password === "***") {
+      return match;
+    }
+    return `${prefix}***${suffix}`;
+  });
+}
+
+function redactSensitiveCells(line) {
+  if (!line.includes("│")) {
+    return line;
+  }
+  const parts = line.split("│");
+  if (parts.length < 3) {
+    return line;
+  }
+  const label = parts[1].trim().toLowerCase();
+  if (!SENSITIVE_CELL_LABELS.has(label)) {
+    return line;
+  }
+  const raw = parts[2];
+  if (!raw.trim()) {
+    return line;
+  }
+  const leading = raw.match(/^\s*/)?.[0] ?? "";
+  const trailing = raw.match(/\s*$/)?.[0] ?? "";
+  parts[2] = `${leading}<redacted>${trailing}`;
+  return parts.join("│");
+}
+
+function redactSupabaseCliSegment(segment) {
+  const assigned = segment.replace(SECRET_ASSIGNMENT, "$1<redacted>");
+  const withoutTokens = maskDbPassword(assigned)
+    .replace(SB_KEY, "<redacted>")
+    .replace(JWT_TOKEN, "<redacted>");
+  const cells = redactSensitiveCells(withoutTokens);
+  if (cells.includes("│")) {
+    return cells;
+  }
+  return cells.replace(LABELED_SECRET, "$1<redacted>");
+}
+
+/**
+ * supabase start 한 줄. 로그·요약·아티팩트에 쓰기 전에 호출한다.
+ * 키 값을 반환 문자열에 남기지 않는다.
+ */
+export function redactSupabaseCliLine(line) {
+  return String(line ?? "")
+    .split("\r")
+    .map((segment) => redactSupabaseCliSegment(segment))
+    .join("\r");
+}
+
 export function redactStatusText(text) {
   return String(text ?? "")
     .split(/\r?\n/)
@@ -489,9 +566,7 @@ export function redactStatusText(text) {
       if (/^(?:export\s+)?[A-Za-z_][A-Za-z0-9_.]*=/.test(line.trim())) {
         return line.replace(/=.*/, "=<redacted>");
       }
-      return line
-        .replace(/eyJ[A-Za-z0-9_-]{8,}/g, "<jwt>")
-        .replace(/sb_(?:secret|publishable)_[A-Za-z0-9_-]+/g, "<sbkey>");
+      return redactSupabaseCliLine(line);
     })
     .join("\n")
     .slice(0, 800);
