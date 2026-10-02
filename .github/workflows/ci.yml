@@ -208,6 +208,8 @@ jobs:
         with:
           name: e2e-next-production
           retention-days: 1
+          include-hidden-files: true
+          if-no-files-found: error
           path: |
             .next
             apps/admin/.next

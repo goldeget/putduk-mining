@@ -5,6 +5,7 @@
 export const DISPLAY_PROFILE_SCENE_REJECTION =
   "DISPLAY_PROFILE_NOT_A_SCENE_SOURCE" as const;
 
-export function readSceneFromDisplayProfile(_profile: unknown): null {
+export function readSceneFromDisplayProfile(profile: unknown): null {
+  void profile;
   return null;
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import type { CSSProperties } from "react";
 
 import { SAFE_SCENE_COPY } from "@/lib/mining-scene/safe-scene-copy";
@@ -69,12 +70,13 @@ export function MiningLiveStage({
       aria-label={scene.a11yLabelKo}
     >
       {showMaster && scene.master ? (
-        <img
+        <Image
           className={styles.master}
           alt={scene.master.altKo}
           src={scene.master.assetPath}
           width={scene.master.width}
           height={scene.master.height}
+          unoptimized
         />
       ) : null}
       <p className={styles.copy}>{copy}</p>
