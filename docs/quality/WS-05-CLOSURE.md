@@ -17,14 +17,14 @@
 
 CI workflow 필수 job 8 + authenticated shard 8:
 
-1. Exact diff integrity  
-2. Application gates  
-3. Worker runtime gates  
-4. WebServer lifecycle probe  
-5. Korean typography public gates  
-6. Browser foundation  
-7. Database security gates  
-8. Korean typography protected gates  
+1. Exact diff integrity
+2. Application gates
+3. Worker runtime gates
+4. WebServer lifecycle probe
+5. Korean typography public gates
+6. Browser foundation
+7. Database security gates
+8. Korean typography protected gates
 9. Authenticated product gates (1/8) … (8/8)
 
 ## MERGE NOT AUTHORIZED
