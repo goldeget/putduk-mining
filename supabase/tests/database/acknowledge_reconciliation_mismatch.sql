@@ -14,6 +14,60 @@ begin
 end;
 $$;
 
+-- dblink 는 루프백 trust 가 아니라 이 DB 컨테이너의 scram 호스트로 붙는다.
+-- 프로젝트 이름이 바뀌어도 공유 스택과 분리 스택을 같은 검사로 고른다.
+create temporary table recon_ack_db_host (host text);
+
+do $$
+declare
+  v_schema text;
+  v_candidate text;
+  v_conn text;
+begin
+  select namespace.nspname into v_schema
+  from pg_extension as extension
+  join pg_namespace as namespace on namespace.oid = extension.extnamespace
+  where extension.extname = 'dblink';
+
+  if v_schema is null then
+    raise exception 'DBLINK_EXTENSION_MISSING';
+  end if;
+
+  foreach v_candidate in array array[
+    'supabase_db_putduk-mining-clean',
+    'supabase_db_putduk-mining'
+  ]
+  loop
+    v_conn := format(
+      'host=%s dbname=postgres user=postgres password=postgres',
+      v_candidate
+    );
+    begin
+      execute format(
+        'select %I.dblink_connect(%L, %L)',
+        v_schema,
+        'recon_ack_probe',
+        v_conn
+      );
+      execute format(
+        'select %I.dblink_disconnect(%L)',
+        v_schema,
+        'recon_ack_probe'
+      );
+      insert into recon_ack_db_host (host) values (v_candidate);
+      exit;
+    exception
+      when others then
+        null;
+    end;
+  end loop;
+
+  if not exists (select 1 from recon_ack_db_host) then
+    raise exception 'LOCAL_DB_HOST_UNRESOLVED';
+  end if;
+end;
+$$;
+
 select lives_ok(
   $concurrent$
     do $body$
@@ -21,6 +75,7 @@ select lives_ok(
       v_schema text;
       v_connected boolean := false;
       v_status text;
+      v_conn text;
     begin
       select namespace.nspname into v_schema
       from pg_extension as extension
@@ -31,12 +86,15 @@ select lives_ok(
         raise exception 'DBLINK_EXTENSION_MISSING';
       end if;
 
-      -- 루프백은 trust 라 비밀번호가 쓰이지 않는다. 이 프로젝트 로컬 DB 이름으로 붙어야 scram 이 된다.
+      -- 루프백은 trust 라 비밀번호가 쓰이지 않는다. 위에서 고른 컨테이너 이름으로 scram 에 붙는다.
+      select 'host=' || host || ' dbname=postgres user=postgres password=postgres'
+        into v_conn
+      from recon_ack_db_host;
       execute format(
         'select %I.dblink_connect(%L, %L)',
         v_schema,
         'recon_ack_peer',
-        'host=supabase_db_putduk-mining dbname=postgres user=postgres password=postgres'
+        v_conn
       );
       v_connected := true;
 
@@ -210,17 +268,22 @@ select is(
 do $$
 declare
   v_schema text;
+  v_conn text;
 begin
   select namespace.nspname into v_schema
   from pg_extension as extension
   join pg_namespace as namespace on namespace.oid = extension.extnamespace
   where extension.extname = 'dblink';
 
+  select 'host=' || host || ' dbname=postgres user=postgres password=postgres'
+    into v_conn
+  from recon_ack_db_host;
+
   execute format(
     'select %I.dblink_connect(%L, %L)',
     v_schema,
     'recon_ack_cleanup',
-    'host=supabase_db_putduk-mining dbname=postgres user=postgres password=postgres'
+    v_conn
   );
   execute format(
     'select %I.dblink_exec(%L, %L)',
