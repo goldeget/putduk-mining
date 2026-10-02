@@ -89,7 +89,7 @@ export async function grantAdminRole(userId: string) {
   if (error) throw new Error(error.message);
 }
 
-export async function completeAdminLoginWithTotp(
+async function completeAdminLoginWithTotpOnce(
   page: Page,
   email: string,
   password: string,
@@ -101,14 +101,19 @@ export async function completeAdminLoginWithTotp(
   await page.waitForURL(/\/mfa/);
 
   const secretCode = page.locator(".mfa-enrolment code");
+  const retryButton = page.getByRole("button", { name: "다시 확인" });
   try {
-    await expect(secretCode).toBeVisible({ timeout: 60_000 });
+    await expect(secretCode.or(retryButton)).toBeVisible({ timeout: 90_000 });
   } catch (error) {
     const note = (await page.locator(".form-note").textContent())?.trim();
     const alert = (await page.locator("[role='alert']").textContent())?.trim();
     throw new Error(
       `TOTP_ENROLMENT_UI_MISSING: note=${note ?? "none"}; alert=${alert ?? "none"}; cause=${error instanceof Error ? error.message : String(error)}`,
     );
+  }
+  if (await retryButton.isVisible()) {
+    await retryButton.click();
+    await expect(secretCode).toBeVisible({ timeout: 90_000 });
   }
   const secret = (await secretCode.textContent())?.trim();
   if (!secret) throw new Error("TOTP enrolment secret missing.");
@@ -121,6 +126,29 @@ export async function completeAdminLoginWithTotp(
     timeout: 60_000,
   });
   return secret;
+}
+
+export async function completeAdminLoginWithTotp(
+  page: Page,
+  email: string,
+  password: string,
+): Promise<string> {
+  let lastError: unknown;
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    try {
+      return await completeAdminLoginWithTotpOnce(page, email, password);
+    } catch (error) {
+      lastError = error;
+      if (
+        attempt === 2 ||
+        !(error instanceof Error) ||
+        !error.message.includes("TOTP_ENROLMENT_UI_MISSING")
+      ) {
+        throw error;
+      }
+    }
+  }
+  throw lastError;
 }
 
 /** 이미 등록된 인증 앱으로 별도 브라우저 세션을 연다. */

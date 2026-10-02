@@ -9,6 +9,10 @@ import { createAdminBrowserClient } from "@/lib/supabase/browser";
 import { waitForAdminResult } from "@/lib/ui/abortable";
 
 type Enrolment = { id: string; qrCode: string; secret: string };
+
+/** GoTrue·로컬 Supabase가 CI 병렬 부하에서 15초를 넘길 수 있다. */
+export const ADMIN_MFA_PREPARE_TIMEOUT_MS = 45_000;
+
 const adminSessionIdPattern =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -31,7 +35,7 @@ export function MfaGate({ returnTo }: { returnTo: string }) {
     const preparation = new AbortController();
     const preparationTimeout = window.setTimeout(
       () => preparation.abort(),
-      45_000,
+      ADMIN_MFA_PREPARE_TIMEOUT_MS,
     );
     async function prepare() {
       try {

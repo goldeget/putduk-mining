@@ -2,7 +2,10 @@
 import { act, createElement } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { MfaGate } from "@/components/mfa-gate";
+import {
+  ADMIN_MFA_PREPARE_TIMEOUT_MS,
+  MfaGate,
+} from "@/components/mfa-gate";
 import { StepUpTokenField } from "@/components/step-up-token-field";
 import { KycReviewForm } from "@/app/(control)/kyc/review-form";
 
@@ -130,7 +133,9 @@ describe("security confirmation recovery", () => {
     vi.useFakeTimers();
     mocks.getSession.mockImplementationOnce(() => new Promise(() => undefined));
     await mountMfa();
-    await act(async () => vi.advanceTimersByTimeAsync(15_001));
+    await act(async () =>
+      vi.advanceTimersByTimeAsync(ADMIN_MFA_PREPARE_TIMEOUT_MS + 1),
+    );
     expect(container.textContent).toContain("다시 확인");
     expect(
       container.querySelector<HTMLButtonElement>('button[type="submit"]')!
