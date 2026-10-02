@@ -45,6 +45,19 @@ Cursor 규칙: `.cursor/rules/putduk-e2e-agent-verification.mdc` (`alwaysApply: 
 - PR CI는 authenticated 186 tests를 **8-way `--shard=i/8`** matrix job으로 병렬 실행한다 (`Authenticated product gates (1/8)` … `(8/8)`). chromium·mobile-chrome 프로젝트를 모두 포함한다.
 - branch protection / required checks는 예전 단일 job 이름 `Authenticated product gates` 대신 **위 여덟 job을 모두** 등록해야 한다.
 - shard 합집합은 로컬 `pnpm test:e2e:auth:full` 과 동일하다. CI에서는 `pnpm exec playwright test --config playwright.authenticated.config.ts --shard=i/8` 로 넘긴다 (`pnpm run … -- --shard` 는 CI에서 shard가 무시될 수 있음).
+- Playwright browser cache는 `actions/cache@v5`, key `~/.cache/ms-playwright` (workflow `ci.yml`).
+- CI authenticated config는 **`reporter: "line"`만** 쓴다. `github` reporter와 `reportSlowTests` slow warning은 Run Summary·check annotation 노이즈를 만든다. slow 상한은 `reportSlowTests: { max: 5, threshold: 480_000 }` 이며 `exactOptionalPropertyTypes` 때문에 `undefined`를 넘기지 않고 CI일 때만 spread로 병합한다 (`9cfc2ef`).
+
+### PR #39 검증 run 증거 (review/pr38-cde4b203)
+
+| run ID | head SHA | conclusion | 비고 |
+| --- | --- | --- | --- |
+| `36963225127` | `048e882` | success | 단일 authenticated job baseline (~67m wall) |
+| `36973023878` | `ad0d147` | success | 8-shard, 16 job 전부 success, wall ~16m |
+| `36975011504` | `2f349c9` | cancelled | merge queue 우선 취소 + Application gates TS (`reportSlowTests`); 후속 `9cfc2ef` |
+| `36975512027` | `9cfc2ef` | success | **최종 green**, check annotation **0건**, wall ~16m |
+
+로컬 검증·문서·CI truth는 worktree `local/pr38-followup-20261001` / remote `review/pr38-cde4b203` 기준이다. 루트 `develop` 체크아웃의 uncommitted Playwright diff는 merge 전까지 동기화하지 않는다.
 
 ## 허용 / 금지
 
