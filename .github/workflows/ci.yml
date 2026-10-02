@@ -177,14 +177,14 @@ jobs:
         run: node scripts/run-with-watchdog.mjs 120 -- node scripts/e2e-web-server-lifecycle-harness.mjs
 
   authenticated:
-    name: Authenticated product gates (${{ matrix.shard }}/4)
+    name: Authenticated product gates (${{ matrix.shard }}/8)
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     needs: [webserver-lifecycle]
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3, 4]
+        shard: [1, 2, 3, 4, 5, 6, 7, 8]
     steps:
       - name: Check out source
         uses: actions/checkout@v7
@@ -220,14 +220,27 @@ jobs:
       - name: Create ephemeral withdrawal data key
         run: node scripts/write-ephemeral-withdrawal-key.mjs
 
+      - name: Resolve Playwright version
+        id: playwright-version
+        run: echo "version=$(pnpm exec playwright --version | awk '{print $2}')" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ms-playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ms-playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}-
+            ms-playwright-${{ runner.os }}-
+
       - name: Install Chromium
         run: pnpm exec playwright install --with-deps chromium
 
       - name: Run authenticated browser tests
         # 관리자 출금 E2E는 실제 TOTP 창을 기다린다. shard당 한도를 줄이지 않는다.
-        # 186개를 4-way --shard로 나누면 shard당 약 47건이다. 병렬 wall time은 가장 느린 shard 기준.
+        # 186개(chromium + mobile-chrome)를 8-way --shard로 나누면 shard당 약 23건이다. wall time은 가장 느린 shard 기준.
         timeout-minutes: 45
-        run: pnpm test:e2e:authenticated -- --shard=${{ matrix.shard }}/4
+        run: pnpm test:e2e:authenticated -- --shard=${{ matrix.shard }}/8
 
       - name: Preserve authenticated browser evidence
         if: always()
