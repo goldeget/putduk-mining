@@ -2,7 +2,7 @@
 
 > **작성일:** 2026-10-02 (KST)  
 > **저장소:** `goldeget/putduk-mining` (authorized only)  
-> **브랜치:** `review/pr38-cde4b203` · **HEAD:** `82dce95f344409722c9e4803da665b7ff5fb4207`  
+> **브랜치:** `review/pr38-cde4b203` · **HEAD:** `503ccb2` (본 보고문) · **마지막 full CI green:** `82dce95` (run 36978447777)  
 > **PR:** [#39 검증: PR #38 통합 후보 cde4b203](https://github.com/goldeget/putduk-mining/pull/39)
 
 ---
@@ -178,8 +178,8 @@ GitHub `develop` 브랜치 protection에 **아래 16개 status check 이름** �
 | URL | https://github.com/goldeget/putduk-mining/pull/39 |
 | state | **OPEN** (Draft 아님 — Ready for review) |
 | mergeable | **MERGEABLE** |
-| head | `82dce95` @ `review/pr38-cde4b203` |
-| checks | run **36978447777** 기준 **16/16 SUCCESS** |
+| head | `503ccb2` @ `review/pr38-cde4b203` (docs-only 추가) |
+| checks | run **36978447777** @ `82dce95` 기준 **16/16 SUCCESS** (HEAD `503ccb2` CI는 push 후 재실행 대기) |
 
 ---
 
@@ -188,7 +188,7 @@ GitHub `develop` 브랜치 protection에 **아래 16개 status check 이름** �
 | 위치 | 상태 |
 | --- | --- |
 | Worktree | `C:\Users\PC\Desktop\putduk-mining\.worktrees\pr38-followup-20261001` |
-| Remote tracking | `origin/review/pr38-cde4b203` @ `82dce95` |
+| Remote tracking | `origin/review/pr38-cde4b203` @ `503ccb2` |
 | Root repo | `C:\Users\PC\Desktop\putduk-mining`, branch `develop` |
 | Stash | `stash@{0}: On develop: agent: root drift off develop (E2E local)` |
 | Root untracked (동기화 전) | `.cursor/rules/putduk-e2e-agent-verification.mdc`, 일부 `docs/` (worktree에 커밋된 버전이 truth) |
