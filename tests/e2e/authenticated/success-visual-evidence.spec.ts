@@ -144,6 +144,7 @@ async function captureSuccess(
 test.describe("authenticated success visual evidence", () => {
   test("captures user and admin success screens for the visual lab matrix", async ({
     page,
+    browser,
   }) => {
     test.setTimeout(600_000);
     const hydration: string[] = [];
@@ -195,22 +196,32 @@ test.describe("authenticated success visual evidence", () => {
 
     const operator = await createConfirmedMember("ws05-visual-admin");
     await grantAdminRole(operator.userId);
-    await completeAdminLoginWithTotp(page, operator.email, operator.password);
-    await expect(page.getByText("오늘의 퍼뜩").first()).toBeVisible({
-      timeout: 60_000,
-    });
+    const adminContext = await browser.newContext();
+    const adminPage = await adminContext.newPage();
+    try {
+      await completeAdminLoginWithTotp(
+        adminPage,
+        operator.email,
+        operator.password,
+      );
+      await expect(adminPage.getByText("오늘의 퍼뜩").first()).toBeVisible({
+        timeout: 60_000,
+      });
 
-    for (const viewport of VIEWPORTS) {
-      for (const theme of THEMES) {
-        await captureSuccess(page, {
-          audience: "admin",
-          route: "today",
-          url: `${ADMIN_ORIGIN}/`,
-          viewport,
-          theme,
-          ready: "오늘의 퍼뜩",
-        });
+      for (const viewport of VIEWPORTS) {
+        for (const theme of THEMES) {
+          await captureSuccess(adminPage, {
+            audience: "admin",
+            route: "today",
+            url: `${ADMIN_ORIGIN}/`,
+            viewport,
+            theme,
+            ready: "오늘의 퍼뜩",
+          });
+        }
       }
+    } finally {
+      await adminContext.close();
     }
 
     writeFileSync(

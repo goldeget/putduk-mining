@@ -87,6 +87,27 @@ export async function getAdminIdentity(): Promise<AdminIdentity | null> {
   };
 }
 
+/** 로그인 화면은 SSR에서 세션 조회가 끝날 때까지 폼을 숨긴다. E2E·CI 부하에서는 조회가 길어져 입력란이 늦게 뜬다. */
+export async function getAdminIdentityForLoginPage(): Promise<AdminIdentity | null> {
+  const budgetMs = process.env.APP_ENV === "test" ? 20_000 : null;
+  if (budgetMs == null) {
+    return getAdminIdentity();
+  }
+  let timeout: ReturnType<typeof setTimeout> | undefined;
+  try {
+    return await Promise.race([
+      getAdminIdentity(),
+      new Promise<null>((resolve) => {
+        timeout = setTimeout(() => resolve(null), budgetMs);
+      }),
+    ]);
+  } finally {
+    if (timeout) {
+      clearTimeout(timeout);
+    }
+  }
+}
+
 export async function requireAdminIdentity(
   returnPath = "/",
 ): Promise<AdminIdentity> {

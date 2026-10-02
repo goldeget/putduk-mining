@@ -3,6 +3,8 @@ import { createHmac } from "node:crypto";
 import { expect, type Page } from "@playwright/test";
 import { createClient } from "@supabase/supabase-js";
 
+import { waitForRouteBody } from "../../../typography/route-readiness";
+
 export const ADMIN_ORIGIN = `http://127.0.0.1:${process.env.E2E_ADMIN_PORT ?? "3100"}`;
 const REMOTE_PROJECT_REF = "osrmyjgmpdspdcwqjwuv";
 
@@ -89,12 +91,34 @@ export async function grantAdminRole(userId: string) {
   if (error) throw new Error(error.message);
 }
 
+async function openAdminLogin(page: Page) {
+  const deadline = Date.now() + 120_000;
+  let lastError = "unknown";
+  while (Date.now() < deadline) {
+    try {
+      await page.goto(`${ADMIN_ORIGIN}/login`, {
+        waitUntil: "domcontentloaded",
+        timeout: 30_000,
+      });
+      await waitForRouteBody(page, "/login", 30_000);
+      await expect(page.locator('input[name="email"]')).toBeVisible({
+        timeout: 10_000,
+      });
+      return;
+    } catch (error) {
+      lastError = error instanceof Error ? error.message : String(error);
+      await page.waitForTimeout(1_500);
+    }
+  }
+  throw new Error(`ADMIN_LOGIN_UI_MISSING: ${lastError}`);
+}
+
 async function completeAdminLoginWithTotpOnce(
   page: Page,
   email: string,
   password: string,
 ): Promise<string> {
-  await page.goto(`${ADMIN_ORIGIN}/login`);
+  await openAdminLogin(page);
   await page.locator('input[name="email"]').fill(email);
   await page.locator('input[name="password"]').fill(password);
   await page.getByRole("button", { name: "보안 로그인" }).click();
@@ -162,7 +186,8 @@ export async function completeAdminLoginWithTotp(
       if (
         attempt === 2 ||
         !(error instanceof Error) ||
-        !error.message.includes("TOTP_ENROLMENT_UI_MISSING")
+        (!error.message.includes("TOTP_ENROLMENT_UI_MISSING") &&
+          !error.message.includes("ADMIN_LOGIN_UI_MISSING"))
       ) {
         throw error;
       }
@@ -178,7 +203,7 @@ export async function completeAdminLoginWithExistingTotp(
   password: string,
   secret: string,
 ) {
-  await page.goto(`${ADMIN_ORIGIN}/login`);
+  await openAdminLogin(page);
   await page.locator('input[name="email"]').fill(email);
   await page.locator('input[name="password"]').fill(password);
   await page.getByRole("button", { name: "보안 로그인" }).click();

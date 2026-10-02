@@ -27,6 +27,7 @@ vi.mock("next/headers", () => ({
 
 import {
   getAdminIdentity,
+  getAdminIdentityForLoginPage,
   requireAdminCommand,
   requireAdminIdentity,
 } from "@/lib/auth/principal";
@@ -103,6 +104,25 @@ describe("admin server principal boundary", () => {
       role: null,
       userId: USER_ID,
     });
+  });
+
+  it("returns null on the login page when test identity lookup exceeds its budget", async () => {
+    vi.useFakeTimers();
+    vi.stubEnv("APP_ENV", "test");
+    const { client } = createAuthenticatedClient();
+    client.auth.getClaims.mockImplementation(
+      () =>
+        new Promise(() => {
+          /* never resolves */
+        }),
+    );
+    mocks.createAdminServerClient.mockResolvedValue(client);
+
+    const pending = getAdminIdentityForLoginPage();
+    await vi.advanceTimersByTimeAsync(20_000);
+    await expect(pending).resolves.toBeNull();
+    vi.useRealTimers();
+    vi.unstubAllEnvs();
   });
 
   it("rejects a normal authenticated user from loading the admin control plane", async () => {

@@ -17,6 +17,7 @@ function isRetryableAdminSetupError(error: unknown) {
   return (
     message.includes("계정 서비스를 연결하지 못했어요") ||
     message.includes("TOTP_ENROLMENT_UI_MISSING") ||
+    message.includes("ADMIN_LOGIN_UI_MISSING") ||
     message.includes("입력한 정보로 운영자 로그인을 완료할 수 없습니다")
   );
 }
