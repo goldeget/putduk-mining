@@ -179,7 +179,7 @@ jobs:
   authenticated:
     name: Authenticated product gates
     runs-on: ubuntu-24.04
-    timeout-minutes: 70
+    timeout-minutes: 90
     needs: [webserver-lifecycle]
     steps:
       - name: Check out source
@@ -221,8 +221,8 @@ jobs:
 
       - name: Run authenticated browser tests
         # 관리자 출금 E2E는 실제 TOTP 창을 기다린다. 이 한도를 줄이지 않는다.
-        # P1 회귀 추가 후 170개 실행이 45분을 넘었다. job 한도 70분 안에서 여유를 둔다.
-        timeout-minutes: 60
+        # 186개 실행이 60분 단계에서 181번째까지 진행 중 끊겼다. job 한도 90분 안에서 여유를 둔다.
+        timeout-minutes: 75
         run: pnpm test:e2e:authenticated
 
       - name: Preserve authenticated browser evidence
