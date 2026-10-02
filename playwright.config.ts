@@ -9,7 +9,7 @@ export default defineConfig({
   forbidOnly: isCI,
   globalTimeout: isCI ? 3 * 60_000 : 0,
   retries: isCI ? 2 : 0,
-  reporter: isCI ? [["line"], ["github"]] : "list",
+  reporter: isCI ? "line" : "list",
   use: {
     baseURL: "http://127.0.0.1:3000",
     trace: "on-first-retry",
