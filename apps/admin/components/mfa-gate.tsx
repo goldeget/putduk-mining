@@ -5,7 +5,8 @@ import Link from "next/link";
 import type { Route } from "next";
 import { useRouter } from "next/navigation";
 
-import { createAdminBrowserClient } from "@/lib/supabase/browser";
+import { prepareAdminMfaAction } from "@/app/mfa/actions";
+import type { AdminMfaPreparePayload } from "@/lib/auth/mfa-prepare-types";
 import { waitForAdminResult } from "@/lib/ui/abortable";
 
 type Enrolment = { id: string; qrCode: string; secret: string };
@@ -25,20 +26,73 @@ function prepareBackoffMs(attemptIndex: number) {
 const adminSessionIdPattern =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-export function MfaGate({ returnTo }: { returnTo: string }) {
+function stateFromPrepare(payload: AdminMfaPreparePayload): {
+  factorId: string | null;
+  enrolment: Enrolment | null;
+  message: string;
+  prepareFailed: boolean;
+  busy: boolean;
+} {
+  if (payload.status === "ready") {
+    return {
+      factorId: payload.factorId,
+      enrolment: payload.enrolment,
+      message: payload.message,
+      prepareFailed: false,
+      busy: false,
+    };
+  }
+  if (payload.status === "session_missing") {
+    return {
+      factorId: null,
+      enrolment: null,
+      message: payload.message,
+      prepareFailed: true,
+      busy: false,
+    };
+  }
+  return {
+    factorId: null,
+    enrolment: null,
+    message: payload.message,
+    prepareFailed: false,
+    busy: true,
+  };
+}
+
+export function MfaGate({
+  returnTo,
+  initialPrepare,
+}: {
+  returnTo: string;
+  initialPrepare?: AdminMfaPreparePayload | null;
+}) {
   const router = useRouter();
-  const [factorId, setFactorId] = useState<string | null>(null);
-  const [enrolment, setEnrolment] = useState<Enrolment | null>(null);
+  const initialReady = initialPrepare?.status === "ready";
+  const [factorId, setFactorId] = useState<string | null>(
+    initialReady ? initialPrepare.factorId : null,
+  );
+  const [enrolment, setEnrolment] = useState<Enrolment | null>(
+    initialReady ? initialPrepare.enrolment : null,
+  );
   const [code, setCode] = useState("");
-  const [message, setMessage] = useState("인증 수단을 확인하고 있습니다.");
-  const [busy, setBusy] = useState(true);
+  const [message, setMessage] = useState(
+    initialPrepare?.message ?? "인증 수단을 확인하고 있습니다.",
+  );
+  const [busy, setBusy] = useState(!initialReady);
   const [attempt, setAttempt] = useState(0);
-  const [prepareFailed, setPrepareFailed] = useState(false);
+  const [prepareFailed, setPrepareFailed] = useState(
+    initialPrepare?.status === "session_missing",
+  );
   const alive = useRef(true);
   const verifying = useRef(false);
   const confirmation = useRef<AbortController | null>(null);
 
   useEffect(() => {
+    if (initialReady && attempt === 0) {
+      return;
+    }
+
     let active = true;
     alive.current = true;
     let preparation: AbortController | null = null;
@@ -53,88 +107,19 @@ export function MfaGate({ returnTo }: { returnTo: string }) {
         ADMIN_MFA_PREPARE_TIMEOUT_MS,
       );
       try {
-        const supabase = createAdminBrowserClient();
-        const {
-          data: { session },
-          error: sessionError,
-        } = await waitForAdminResult(supabase.auth.getSession(), signal);
-        if (!active) return "retry";
-        if (sessionError || !session) {
-          setPrepareFailed(true);
-          setMessage(
-            "로그인 세션을 확인하지 못했습니다. 다시 로그인해 주세요.",
-          );
-          return "session_missing";
-        }
-        const { data: factors, error } = await waitForAdminResult(
-          supabase.auth.mfa.listFactors(),
+        const payload = await waitForAdminResult(
+          prepareAdminMfaAction(),
           signal,
         );
         if (!active) return "retry";
-        if (error || !factors) {
-          setMessage(
-            "다중 인증 정보를 불러오지 못했습니다. 잠시 후 다시 시도합니다.",
-          );
-          return "retry";
-        }
-        const totpFactors = factors.totp ?? [];
-        const allFactors = factors.all ?? [];
-        const verified = totpFactors.find(
-          (factor) => factor.status === "verified",
-        );
-        if (verified) {
-          if (typeof verified.id !== "string" || !verified.id.trim()) {
-            throw new Error("MFA_FACTOR_UNAVAILABLE");
-          }
-          setFactorId(verified.id);
-          setEnrolment(null);
-          setPrepareFailed(false);
-          setMessage("인증 앱에 표시된 6자리 코드를 입력해 주세요.");
-          return "ready";
-        }
-        const staleUnverified = allFactors.filter(
-          (factor) =>
-            factor.factor_type === "totp" && factor.status === "unverified",
-        );
-        const cleanup = await waitForAdminResult(
-          Promise.all(
-            staleUnverified.map((factor) =>
-              supabase.auth.mfa.unenroll({ factorId: factor.id }),
-            ),
-          ),
-          signal,
-        );
-        if (!active) return "retry";
-        if (cleanup.some(({ error: cleanupError }) => cleanupError)) {
-          setMessage(
-            "이전 인증 앱 등록을 정리하지 못했습니다. 잠시 후 다시 시도합니다.",
-          );
-          return "retry";
-        }
-        const { data, error: enrollError } = await waitForAdminResult(
-          supabase.auth.mfa.enroll({
-            factorType: "totp",
-            friendlyName: `PUTDUK Admin ${Date.now().toString(36)}`,
-            issuer: "PUTDUK MINING",
-          }),
-          signal,
-        );
-        if (!active) return "retry";
-        if (enrollError || !data || data.type !== "totp") {
-          setMessage(
-            "인증 앱 등록을 시작하지 못했습니다. 잠시 후 다시 시도합니다.",
-          );
-          return "retry";
-        }
-        setFactorId(data.id);
-        setEnrolment({
-          id: data.id,
-          qrCode: data.totp.qr_code,
-          secret: data.totp.secret,
-        });
-        setPrepareFailed(false);
-        setMessage("인증 앱에 QR을 등록한 뒤 6자리 코드를 입력해 주세요.");
-        return "ready";
+        const next = stateFromPrepare(payload);
+        setFactorId(next.factorId);
+        setEnrolment(next.enrolment);
+        setMessage(next.message);
+        setPrepareFailed(next.prepareFailed);
+        if (payload.status === "ready") return "ready";
+        if (payload.status === "session_missing") return "session_missing";
+        return "retry";
       } catch {
         if (!active) return "retry";
         setFactorId(null);
@@ -185,7 +170,7 @@ export function MfaGate({ returnTo }: { returnTo: string }) {
       alive.current = false;
       confirmation.current?.abort();
     };
-  }, [attempt]);
+  }, [attempt, initialReady]);
 
   async function verify(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();

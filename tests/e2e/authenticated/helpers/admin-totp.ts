@@ -142,6 +142,15 @@ async function completeAdminLoginWithTotpOnce(
       );
     }
     if (await retryButton.isVisible()) {
+      const note = (await page.locator(".form-note").textContent())?.trim();
+      if (
+        note?.includes("로그인 세션을 확인하지 못했습니다") ||
+        note?.includes("다시 로그인해 주세요")
+      ) {
+        throw new Error(
+          `TOTP_ENROLMENT_UI_MISSING: permanent session error; note=${note ?? "none"}`,
+        );
+      }
       await retryButton.click();
     }
     await page.waitForTimeout(2_000);

@@ -7,11 +7,7 @@ import { MfaGate } from "@/components/mfa-gate";
 
 const mocks = vi.hoisted(() => ({
   factorId: undefined as unknown,
-  getSession: vi.fn(),
-  listFactors: vi.fn(),
-  enroll: vi.fn(),
-  unenroll: vi.fn(),
-  challengeAndVerify: vi.fn(),
+  prepareAdminMfaAction: vi.fn(),
   replace: vi.fn(),
   refresh: vi.fn(),
 }));
@@ -28,32 +24,41 @@ vi.mock("next/link", () => ({
     children: ReactNode;
   }) => createElement("a", { href, ...props }, children),
 }));
-vi.mock("@/lib/supabase/browser", () => ({
-  createAdminBrowserClient: () => ({
-    auth: {
-      getSession: mocks.getSession,
-      mfa: {
-        listFactors: mocks.listFactors,
-        enroll: mocks.enroll,
-        unenroll: mocks.unenroll,
-        challengeAndVerify: mocks.challengeAndVerify,
-      },
-    },
-  }),
+vi.mock("@/app/mfa/actions", () => ({
+  prepareAdminMfaAction: mocks.prepareAdminMfaAction,
 }));
+
+function trustedFactorId(value: unknown) {
+  return (
+    typeof value === "string" &&
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+      value.trim(),
+    )
+  );
+}
 
 let host: HTMLDivElement;
 let root: Root;
 beforeEach(() => {
   vi.clearAllMocks();
   Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
-  mocks.getSession.mockResolvedValue({ data: { session: {} }, error: null });
-  mocks.listFactors.mockImplementation(() =>
-    Promise.resolve({
-      data: { totp: [{ status: "verified", id: mocks.factorId }], all: [] },
-      error: null,
-    }),
-  );
+  mocks.prepareAdminMfaAction.mockImplementation(async () => {
+    const factorId = mocks.factorId;
+    if (!trustedFactorId(factorId)) {
+      return {
+        status: "retry",
+        message:
+          "인증 정보를 확인하지 못했습니다. 연결을 확인한 뒤 다시 시도합니다.",
+      } as const;
+    }
+    return {
+      status: "ready",
+      mode: "verify",
+      factorId: factorId as string,
+      enrolment: null,
+      message: "인증 앱에 표시된 6자리 코드를 입력해 주세요.",
+    } as const;
+  });
   host = document.createElement("div");
   document.body.append(host);
   root = createRoot(host);
@@ -85,9 +90,6 @@ describe("malformed verified factor display recovery, without auth command chang
       expect(host.querySelector<HTMLInputElement>("input")!.disabled).toBe(
         true,
       );
-      expect(mocks.enroll).not.toHaveBeenCalled();
-      expect(mocks.unenroll).not.toHaveBeenCalled();
-      expect(mocks.challengeAndVerify).not.toHaveBeenCalled();
       expect(mocks.replace).not.toHaveBeenCalled();
       expect(mocks.refresh).not.toHaveBeenCalled();
     },
@@ -108,10 +110,7 @@ describe("malformed verified factor display recovery, without auth command chang
     ).toBe(false);
     expect(host.querySelector(".ghost-button")).toBeNull();
     expect(host.textContent).toContain("인증 앱에 표시된 6자리 코드를 입력");
-    expect(mocks.listFactors).toHaveBeenCalledTimes(2);
-    expect(mocks.enroll).not.toHaveBeenCalled();
-    expect(mocks.unenroll).not.toHaveBeenCalled();
-    expect(mocks.challengeAndVerify).not.toHaveBeenCalled();
+    expect(mocks.prepareAdminMfaAction).toHaveBeenCalledTimes(2);
     expect(mocks.replace).not.toHaveBeenCalled();
   });
 });

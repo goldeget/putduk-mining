@@ -7,11 +7,9 @@ import { StepUpTokenField } from "@/components/step-up-token-field";
 import { KycReviewForm } from "@/app/(control)/kyc/review-form";
 
 const mocks = vi.hoisted(() => ({
-  getSession: vi.fn(),
+  prepareAdminMfaAction: vi.fn(),
   listFactors: vi.fn(),
   challengeAndVerify: vi.fn(),
-  enroll: vi.fn(),
-  unenroll: vi.fn(),
   replace: vi.fn(),
   refresh: vi.fn(),
   reviewKyc: vi.fn(),
@@ -19,15 +17,14 @@ const mocks = vi.hoisted(() => ({
 vi.mock("@/app/(control)/kyc/actions", () => ({
   reviewKycCaseFromFields: mocks.reviewKyc,
 }));
+vi.mock("@/app/mfa/actions", () => ({
+  prepareAdminMfaAction: mocks.prepareAdminMfaAction,
+}));
 vi.mock("@/lib/supabase/browser", () => ({
   createAdminBrowserClient: () => ({
     auth: {
-      getSession: mocks.getSession,
       mfa: {
-        listFactors: mocks.listFactors,
         challengeAndVerify: mocks.challengeAndVerify,
-        enroll: mocks.enroll,
-        unenroll: mocks.unenroll,
       },
       onAuthStateChange: () => ({
         data: { subscription: { unsubscribe: vi.fn() } },
@@ -47,13 +44,12 @@ beforeEach(() => {
     configurable: true,
     value: true,
   });
-  mocks.getSession.mockResolvedValue({
-    data: { session: { user: { id: "qa-only" } } },
-    error: null,
-  });
-  mocks.listFactors.mockResolvedValue({
-    data: { totp: [{ id: "factor-qa", status: "verified" }], all: [] },
-    error: null,
+  mocks.prepareAdminMfaAction.mockResolvedValue({
+    status: "ready",
+    mode: "verify",
+    factorId: "factor-qa",
+    enrolment: null,
+    message: "인증 앱에 표시된 6자리 코드를 입력해 주세요.",
   });
   mocks.challengeAndVerify.mockResolvedValue({ error: null });
   container = document.createElement("div");
@@ -128,7 +124,9 @@ function mockVerifiedThen(body: unknown, status = 200) {
 describe("security confirmation recovery", () => {
   it("MFA preparation timeout recovers without a fake verified factor", async () => {
     vi.useFakeTimers();
-    mocks.getSession.mockImplementationOnce(() => new Promise(() => undefined));
+    mocks.prepareAdminMfaAction.mockImplementationOnce(
+      () => new Promise(() => undefined),
+    );
     await mountMfa();
     await act(async () =>
       vi.advanceTimersByTimeAsync(ADMIN_MFA_PREPARE_TIMEOUT_MS + 1),
@@ -141,7 +139,7 @@ describe("security confirmation recovery", () => {
     expect(mocks.replace).not.toHaveBeenCalled();
   });
   it("MFA preparation throw exposes a retry instead of permanent busy", async () => {
-    mocks.getSession.mockRejectedValueOnce(new TypeError("network"));
+    mocks.prepareAdminMfaAction.mockRejectedValueOnce(new TypeError("network"));
     await mountMfa();
     expect(container.textContent).toContain("다시 확인");
     expect(container.querySelector<HTMLButtonElement>("button")!.disabled).toBe(
