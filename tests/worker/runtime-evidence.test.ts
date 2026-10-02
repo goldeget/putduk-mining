@@ -105,7 +105,8 @@ async function insertOutboxEvent(
     request_id: randomUUID(),
     idempotency_key: `worker-runtime:${id}`,
     status: "PENDING",
-    available_at: new Date().toISOString(),
+    // 앱 시계가 DB보다 빠르면 available_at이 아직 도래하지 않아 claim이 0이 된다.
+    available_at: new Date(Date.now() - 5_000).toISOString(),
     attempt_count: 0,
     max_attempts: 12,
     occurred_at: new Date().toISOString(),
@@ -133,7 +134,7 @@ async function insertSystemJob(
     idempotency_key: `worker-job:${id}`,
     payload: { version: 1 },
     status: "PENDING",
-    available_at: new Date().toISOString(),
+    available_at: new Date(Date.now() - 5_000).toISOString(),
     attempts: 0,
     max_attempts: 12,
     priority: 50,
