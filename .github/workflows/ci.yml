@@ -177,10 +177,14 @@ jobs:
         run: node scripts/run-with-watchdog.mjs 120 -- node scripts/e2e-web-server-lifecycle-harness.mjs
 
   authenticated:
-    name: Authenticated product gates
+    name: Authenticated product gates (${{ matrix.shard }}/4)
     runs-on: ubuntu-24.04
-    timeout-minutes: 90
+    timeout-minutes: 60
     needs: [webserver-lifecycle]
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
     steps:
       - name: Check out source
         uses: actions/checkout@v7
@@ -220,16 +224,16 @@ jobs:
         run: pnpm exec playwright install --with-deps chromium
 
       - name: Run authenticated browser tests
-        # 관리자 출금 E2E는 실제 TOTP 창을 기다린다. 이 한도를 줄이지 않는다.
-        # 186개 실행이 60분 단계에서 181번째까지 진행 중 끊겼다. job 한도 90분 안에서 여유를 둔다.
-        timeout-minutes: 75
-        run: pnpm test:e2e:authenticated
+        # 관리자 출금 E2E는 실제 TOTP 창을 기다린다. shard당 한도를 줄이지 않는다.
+        # 186개를 4-way --shard로 나누면 shard당 약 47건이다. 병렬 wall time은 가장 느린 shard 기준.
+        timeout-minutes: 45
+        run: pnpm test:e2e:authenticated -- --shard=${{ matrix.shard }}/4
 
       - name: Preserve authenticated browser evidence
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: authenticated-playwright
+          name: authenticated-playwright-shard-${{ matrix.shard }}
           path: |
             playwright-report
             test-results
