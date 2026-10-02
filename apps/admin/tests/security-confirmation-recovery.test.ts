@@ -2,10 +2,7 @@
 import { act, createElement } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import {
-  ADMIN_MFA_PREPARE_TIMEOUT_MS,
-  MfaGate,
-} from "@/components/mfa-gate";
+import { ADMIN_MFA_PREPARE_TIMEOUT_MS, MfaGate } from "@/components/mfa-gate";
 import { StepUpTokenField } from "@/components/step-up-token-field";
 import { KycReviewForm } from "@/app/(control)/kyc/review-form";
 
