@@ -1,16 +1,19 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  assertLocalApiUrl,
+  assertLocalDbUrl,
   captureFromCliResult,
   formatGithubEnv,
+  loadJobLocalAllowlist,
   parseShellEnv,
 } from "../../scripts/capture-local-supabase-env.mjs";
 
-const LOCAL_URL = "http://127.0.0.1:54321";
+const allow = loadJobLocalAllowlist();
+const LOCAL_URL = `http://127.0.0.1:${allow.apiPort}`;
 const PUBLISHABLE = "sb_publishable_local_fixture";
 const SECRET = "sb_secret_local_fixture";
-const LOCAL_DB =
-  "postgresql://postgres:unit-test-password@127.0.0.1:65432/postgres";
+const LOCAL_DB = `postgresql://postgres:unit-test-password@127.0.0.1:${allow.dbPort}/postgres`;
 
 describe("supabase status env parser", () => {
   it("parses KEY=value, quoted values, and export prefixes", () => {
@@ -158,11 +161,42 @@ SECRET_KEY=${SECRET}
   it("accepts localhost as a local API host", () => {
     const captured = captureFromCliResult({
       status: 0,
-      stdout: `API_URL="http://localhost:54321/"\nPUBLISHABLE_KEY=${PUBLISHABLE}\nSECRET_KEY=${SECRET}\nDB_URL=${LOCAL_DB}\n`,
+      stdout: `API_URL="http://localhost:${allow.apiPort}/"\nPUBLISHABLE_KEY=${PUBLISHABLE}\nSECRET_KEY=${SECRET}\nDB_URL=${LOCAL_DB}\n`,
       stderr: "",
       error: undefined,
     });
-    expect(captured.apiUrl).toBe("http://localhost:54321");
+    expect(captured.apiUrl).toBe(`http://localhost:${allow.apiPort}`);
+  });
+
+  it("rejects a loopback prefix that parses as another host or port", () => {
+    expect(() =>
+      assertLocalApiUrl(`http://127.0.0.1.evil.com:${allow.apiPort}`),
+    ).toThrow(/127\.0\.0\.1 and localhost/);
+    expect(() =>
+      assertLocalApiUrl(`http://127.0.0.1:${allow.apiPort}@evil.com`),
+    ).toThrow(/127\.0\.0\.1 and localhost/);
+    expect(() =>
+      assertLocalApiUrl(`http://127.0.0.1.supabase.co:${allow.apiPort}`),
+    ).toThrow(/Refusing remote Supabase credentials/);
+    expect(() => assertLocalApiUrl("http://127.0.0.1:54321")).toThrow(
+      /job-local port allowlist/,
+    );
+    expect(() =>
+      assertLocalApiUrl(`http://user:pass@127.0.0.1:${allow.apiPort}`),
+    ).toThrow(/embedded credentials/);
+  });
+
+  it("rejects a loopback database URL for another port or project identity", () => {
+    expect(() =>
+      assertLocalDbUrl(
+        `postgresql://postgres.osrmyjgmpdspdcwqjwuv:pw@127.0.0.1:${allow.dbPort}/postgres`,
+      ),
+    ).toThrow(/Refusing remote Supabase database URL/);
+    expect(() =>
+      assertLocalDbUrl(
+        `postgresql://postgres:unit-test-password@127.0.0.1:5432/postgres`,
+      ),
+    ).toThrow(/job-local port allowlist/);
   });
 
   it("rejects a remote database URL without echoing the password", () => {
