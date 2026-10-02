@@ -79,6 +79,7 @@ export function protectedChildEnv(baseEnv, overrides) {
     ...omitLiveProviders(baseEnv),
     ...overrides,
     APP_ENV: "test",
+    NEXT_PUBLIC_APP_ENV: "test",
   });
 }
 

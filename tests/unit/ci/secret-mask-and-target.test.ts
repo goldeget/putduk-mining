@@ -157,6 +157,7 @@ describe("CI secret mask and target allowlist", () => {
       { NEXT_PUBLIC_APP_URL: "http://127.0.0.1:3000" },
     );
     expect(child.APP_ENV).toBe("test");
+    expect(child.NEXT_PUBLIC_APP_ENV).toBe("test");
     expect(child.SMTP_PASSWORD).toBeUndefined();
     expect(child.NEXT_PUBLIC_APP_URL).toBe("http://127.0.0.1:3000");
   });

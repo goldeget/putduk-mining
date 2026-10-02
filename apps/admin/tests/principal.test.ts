@@ -106,22 +106,23 @@ describe("admin server principal boundary", () => {
     });
   });
 
-  it("returns null on the login page when test identity lookup exceeds its budget", async () => {
-    vi.useFakeTimers();
+  it("skips SSR identity lookup on the login page in test runtime", async () => {
     vi.stubEnv("APP_ENV", "test");
     const { client } = createAuthenticatedClient();
-    client.auth.getClaims.mockImplementation(
-      () =>
-        new Promise(() => {
-          /* never resolves */
-        }),
-    );
     mocks.createAdminServerClient.mockResolvedValue(client);
 
-    const pending = getAdminIdentityForLoginPage();
-    await vi.advanceTimersByTimeAsync(20_000);
-    await expect(pending).resolves.toBeNull();
-    vi.useRealTimers();
+    await expect(getAdminIdentityForLoginPage()).resolves.toBeNull();
+    expect(mocks.createAdminServerClient).not.toHaveBeenCalled();
+    vi.unstubAllEnvs();
+  });
+
+  it("skips SSR identity lookup when only NEXT_PUBLIC_APP_ENV is test (prebuilt E2E)", async () => {
+    vi.stubEnv("NEXT_PUBLIC_APP_ENV", "test");
+    const { client } = createAuthenticatedClient();
+    mocks.createAdminServerClient.mockResolvedValue(client);
+
+    await expect(getAdminIdentityForLoginPage()).resolves.toBeNull();
+    expect(mocks.createAdminServerClient).not.toHaveBeenCalled();
     vi.unstubAllEnvs();
   });
 

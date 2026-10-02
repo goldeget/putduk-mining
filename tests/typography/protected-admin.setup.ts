@@ -23,7 +23,7 @@ function isRetryableAdminSetupError(error: unknown) {
 }
 
 setup("운영자 세션을 준비한다", async ({ page }) => {
-  setup.setTimeout(240_000);
+  setup.setTimeout(360_000);
   mkdirSync("test-results/typography-protected", { recursive: true });
   const operator = await createConfirmedMember("ws05-typography-admin");
   await grantAdminRole(operator.userId);

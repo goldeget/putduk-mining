@@ -87,25 +87,23 @@ export async function getAdminIdentity(): Promise<AdminIdentity | null> {
   };
 }
 
-/** 로그인 화면은 SSR에서 세션 조회가 끝날 때까지 폼을 숨긴다. E2E·CI 부하에서는 조회가 길어져 입력란이 늦게 뜬다. */
+function isPutdukTestRuntime() {
+  return (
+    process.env.APP_ENV === "test" ||
+    process.env.NEXT_PUBLIC_APP_ENV === "test"
+  );
+}
+
+/**
+ * 로그인 화면 SSR은 세션 조회가 끝나야 폼이 그려진다.
+ * E2E prebuilt(next start)에서는 런타임 APP_ENV가 비어도 NEXT_PUBLIC_APP_ENV=test 가
+ * build에 고정되므로, 테스트에서는 GoTrue 조회 없이 폼을 바로 연다.
+ */
 export async function getAdminIdentityForLoginPage(): Promise<AdminIdentity | null> {
-  const budgetMs = process.env.APP_ENV === "test" ? 20_000 : null;
-  if (budgetMs == null) {
-    return getAdminIdentity();
+  if (isPutdukTestRuntime()) {
+    return null;
   }
-  let timeout: ReturnType<typeof setTimeout> | undefined;
-  try {
-    return await Promise.race([
-      getAdminIdentity(),
-      new Promise<null>((resolve) => {
-        timeout = setTimeout(() => resolve(null), budgetMs);
-      }),
-    ]);
-  } finally {
-    if (timeout) {
-      clearTimeout(timeout);
-    }
-  }
+  return getAdminIdentity();
 }
 
 export async function requireAdminIdentity(
