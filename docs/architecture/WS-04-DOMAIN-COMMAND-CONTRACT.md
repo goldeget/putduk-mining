@@ -381,7 +381,13 @@ It is service-only, INVOKER, and verifies the current administrator role,
 server AAL2 result and bound session before returning policy/revision/timeline
 data. Its exact envelope is fixed in the same contract. Never expose
 `app_private` via PostgREST or fake an administrator session for an engine
-reader. An engine/worker publication reader has a separate future authority.
+reader. The separate unattended engine/worker query is
+`public.read_effective_economy_policy(p_effective_at_microseconds bigint)`.
+Its exact envelope and historical event-time boundary are frozen in
+`docs/architecture/ENGINE-POLICY-READER-CONTRACT.md`. It requires the actual
+`service_role`, uses INVOKER and a fresh READ COMMITTED snapshot under the
+publication lock, and verifies the original four publication receipts. Its
+policy provenance never establishes funding coverage or money authority.
 
 The initial approved numeric configuration is exact seed data, not a
 permanent economic ceiling. Administrators can change supported numbers,

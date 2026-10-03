@@ -40,9 +40,9 @@ function fixture(document = structuredClone(approved)) {
     publicationId: "00000000-0000-4000-8000-000000000002",
     policyVersion: document.policyVersion,
     revisionId: "00000000-0000-4000-8000-000000000003",
-    publishedAtMilliseconds: 0n,
-    effectiveFromMilliseconds: 0n,
-    effectiveUntilMilliseconds: null,
+    publishedAtMicroseconds: 0n,
+    effectiveFromMicroseconds: 0n,
+    effectiveUntilMicroseconds: null,
     configDigest: policyTextDigest(configText),
     manifestDigest: policyTextDigest(manifestText),
     approvalEvidence: document.approvalEvidence,
@@ -56,7 +56,7 @@ function fixture(document = structuredClone(approved)) {
     expected,
     publication: { ...expected, state: "PUBLISHED" } as PolicyPublication,
     sourceComplete: true,
-    serverNowMilliseconds: 0n,
+    serverNowMicroseconds: 0n,
   };
 }
 
@@ -133,20 +133,20 @@ describe("published V1 economy policy validation", () => {
 
   it("rejects forged effective instants even with an unchanged version and content", () => {
     const input = fixture();
-    input.publication = { ...input.publication, effectiveFromMilliseconds: 1n };
+    input.publication = { ...input.publication, effectiveFromMicroseconds: 1n };
     expect(() => validateEconomyPolicy(input)).toThrow(
       "ECONOMY_POLICY_RECEIPT_MISMATCH",
     );
     const scheduled = fixture();
     scheduled.expected = {
       ...scheduled.expected,
-      effectiveFromMilliseconds: 100n,
+      effectiveFromMicroseconds: 100n,
     };
     scheduled.publication = { ...scheduled.expected, state: "PUBLISHED" };
     expect(() => validateEconomyPolicy(scheduled)).toThrow(
       "ECONOMY_POLICY_OUTSIDE_EFFECTIVE_WINDOW",
     );
-    scheduled.serverNowMilliseconds = 100n;
+    scheduled.serverNowMicroseconds = 100n;
     const policy = validateEconomyPolicy(scheduled);
     expect(() => assertEffectiveEconomyPolicy(policy, 99n)).toThrow(
       "ECONOMY_POLICY_OUTSIDE_EFFECTIVE_WINDOW",
@@ -156,19 +156,41 @@ describe("published V1 economy policy validation", () => {
 
   it("uses a half-open expiry and requires publication before effect", () => {
     const input = fixture();
-    input.expected = { ...input.expected, effectiveUntilMilliseconds: 10n };
+    input.expected = { ...input.expected, effectiveUntilMicroseconds: 10n };
     input.publication = { ...input.expected, state: "PUBLISHED" };
-    input.serverNowMilliseconds = 9n;
+    input.serverNowMicroseconds = 9n;
     const policy = validateEconomyPolicy(input);
     expect(() => assertEffectiveEconomyPolicy(policy, 10n)).toThrow(
       "ECONOMY_POLICY_OUTSIDE_EFFECTIVE_WINDOW",
     );
     expect(() =>
-      validateEconomyPolicy({ ...input, serverNowMilliseconds: 10n }),
+      validateEconomyPolicy({ ...input, serverNowMicroseconds: 10n }),
     ).toThrow("ECONOMY_POLICY_OUTSIDE_EFFECTIVE_WINDOW");
-    input.expected = { ...input.expected, publishedAtMilliseconds: 1n };
+    input.expected = { ...input.expected, publishedAtMicroseconds: 1n };
     input.publication = { ...input.expected, state: "PUBLISHED" };
     expect(() => validateEconomyPolicy(input)).toThrow(
+      "ECONOMY_POLICY_OUTSIDE_EFFECTIVE_WINDOW",
+    );
+  });
+
+  it("preserves policy boundaries inside one millisecond without truncation", () => {
+    const input = fixture();
+    input.expected = {
+      ...input.expected,
+      publishedAtMicroseconds: 1_001n,
+      effectiveFromMicroseconds: 1_001n,
+      effectiveUntilMicroseconds: 1_999n,
+    };
+    input.publication = { ...input.expected, state: "PUBLISHED" };
+    expect(() =>
+      validateEconomyPolicy({ ...input, serverNowMicroseconds: 1_000n }),
+    ).toThrow("ECONOMY_POLICY_OUTSIDE_EFFECTIVE_WINDOW");
+    const policy = validateEconomyPolicy({
+      ...input,
+      serverNowMicroseconds: 1_001n,
+    });
+    assertEffectiveEconomyPolicy(policy, 1_998n);
+    expect(() => assertEffectiveEconomyPolicy(policy, 1_999n)).toThrow(
       "ECONOMY_POLICY_OUTSIDE_EFFECTIVE_WINDOW",
     );
   });

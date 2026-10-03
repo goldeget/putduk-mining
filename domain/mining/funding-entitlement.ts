@@ -4,7 +4,7 @@ import {
   assertEffectiveEconomyPolicy,
   BASIS_POINT_UNIT,
   fundingTierForPrincipal,
-  MILLISECONDS_PER_DAY,
+  MICROSECONDS_PER_DAY,
   type ValidatedEconomyPolicy,
 } from "@/domain/mining/economy-policy";
 
@@ -84,7 +84,7 @@ export type FundingPrincipalSnapshot = {
   readonly lots: readonly {
     readonly lotId: string;
     readonly remainingEligiblePrincipalKrw: bigint;
-    readonly effectiveFromMilliseconds: bigint;
+    readonly effectiveFromMicroseconds: bigint;
   }[];
 };
 
@@ -154,9 +154,9 @@ function conditions(input: FundingConditionInput, instant: bigint): Conditions {
       lots.has(lot.lotId) ||
       typeof lot.remainingEligiblePrincipalKrw !== "bigint" ||
       lot.remainingEligiblePrincipalKrw < 0n ||
-      typeof lot.effectiveFromMilliseconds !== "bigint" ||
-      lot.effectiveFromMilliseconds < 0n ||
-      lot.effectiveFromMilliseconds > instant
+      typeof lot.effectiveFromMicroseconds !== "bigint" ||
+      lot.effectiveFromMicroseconds < 0n ||
+      lot.effectiveFromMicroseconds > instant
     )
       fail("PRINCIPAL_LOT_UNCONFIRMED");
     lots.add(lot.lotId);
@@ -290,9 +290,9 @@ function freeze<T>(value: T): T {
 export type ExistingFundingCycleSnapshot = {
   readonly entitlementRevision: bigint;
   readonly cycleIndex: bigint;
-  readonly anchorMilliseconds: bigint;
-  readonly cycleDurationMilliseconds: bigint;
-  readonly cursorMilliseconds: bigint;
+  readonly anchorMicroseconds: bigint;
+  readonly cycleDurationMicroseconds: bigint;
+  readonly cursorMicroseconds: bigint;
   readonly baseCapacity: ExactMicroKrw;
   readonly conditionalRetentionCapacity: ExactMicroKrw;
   readonly baseUsed: ExactMicroKrw;
@@ -303,8 +303,8 @@ export type ExistingFundingCycleSnapshot = {
 export type FundingEntitlementPreview = ExistingFundingCycleSnapshot & {
   readonly mode: "PREVIEW_ONLY";
   readonly cycleIndex: bigint;
-  readonly cycleStartMilliseconds: bigint;
-  readonly cycleEndMilliseconds: bigint;
+  readonly cycleStartMicroseconds: bigint;
+  readonly cycleEndMicroseconds: bigint;
   readonly condition: Conditions;
 };
 const previews = new WeakSet<FundingEntitlementPreview>();
@@ -317,41 +317,41 @@ function register(state: FundingEntitlementPreview) {
 /** Creates a hypothesis or consumes trusted existing facts; never persists an anchor. */
 export function createFundingEntitlementPreview({
   condition,
-  serverNowMilliseconds,
+  serverNowMicroseconds,
   existingCycle,
   expectedEntitlementRevision,
 }: {
   condition: FundingConditionInput;
-  serverNowMilliseconds: bigint;
+  serverNowMicroseconds: bigint;
   existingCycle?: ExistingFundingCycleSnapshot;
   expectedEntitlementRevision: bigint;
 }): FundingEntitlementPreview {
   if (
-    typeof serverNowMilliseconds !== "bigint" ||
-    serverNowMilliseconds < 0n ||
+    typeof serverNowMicroseconds !== "bigint" ||
+    serverNowMicroseconds < 0n ||
     typeof expectedEntitlementRevision !== "bigint" ||
     expectedEntitlementRevision <= 0n
   )
     fail("INVALID_PREVIEW_IDENTITY");
   const current = conditions(
     condition,
-    existingCycle?.cursorMilliseconds ?? serverNowMilliseconds,
+    existingCycle?.cursorMicroseconds ?? serverNowMicroseconds,
   );
   const duration =
-    BigInt(condition.policy.document.cycleDays) * MILLISECONDS_PER_DAY;
+    BigInt(condition.policy.document.cycleDays) * MICROSECONDS_PER_DAY;
   if (!existingCycle && current.tierCode === null)
     fail("FUNDING_BELOW_MINIMUM_NOT_ACTIVATED");
-  const anchor = existingCycle?.anchorMilliseconds ?? serverNowMilliseconds;
-  const cursor = existingCycle?.cursorMilliseconds ?? serverNowMilliseconds;
+  const anchor = existingCycle?.anchorMicroseconds ?? serverNowMicroseconds;
+  const cursor = existingCycle?.cursorMicroseconds ?? serverNowMicroseconds;
   if (
     typeof anchor !== "bigint" ||
     typeof cursor !== "bigint" ||
     anchor < 0n ||
     cursor < anchor ||
-    cursor > serverNowMilliseconds ||
+    cursor > serverNowMicroseconds ||
     (existingCycle &&
       (existingCycle.entitlementRevision !== expectedEntitlementRevision ||
-        existingCycle.cycleDurationMilliseconds !== duration))
+        existingCycle.cycleDurationMicroseconds !== duration))
   )
     fail("CYCLE_SNAPSHOT_REVISION_OR_TIME_MISMATCH");
   const index = existingCycle?.cycleIndex ?? 0n;
@@ -370,12 +370,12 @@ export function createFundingEntitlementPreview({
   return register({
     mode: "PREVIEW_ONLY",
     entitlementRevision: expectedEntitlementRevision,
-    anchorMilliseconds: anchor,
-    cycleDurationMilliseconds: duration,
-    cursorMilliseconds: cursor,
+    anchorMicroseconds: anchor,
+    cycleDurationMicroseconds: duration,
+    cursorMicroseconds: cursor,
     cycleIndex: index,
-    cycleStartMilliseconds: start,
-    cycleEndMilliseconds: start + duration,
+    cycleStartMicroseconds: start,
+    cycleEndMicroseconds: start + duration,
     condition: current,
     baseCapacity: nonnegative(
       existingCycle?.baseCapacity ?? current.fullBaseCapacity,
@@ -423,15 +423,15 @@ export function fundingPreviewStatus(
 }
 
 export type FundingForwardChange = {
-  readonly effectiveFromMilliseconds: bigint;
+  readonly effectiveFromMicroseconds: bigint;
   readonly expectedEntitlementRevision: bigint;
   readonly entitlementRevision: bigint;
   readonly condition: FundingConditionInput;
 };
 
 type PreviewSegment = {
-  readonly startMilliseconds: bigint;
-  readonly endMilliseconds: bigint;
+  readonly startMicroseconds: bigint;
+  readonly endMicroseconds: bigint;
   readonly cycleIndex: bigint;
   readonly policyVersion: string;
   readonly principalRevision: bigint;
@@ -448,12 +448,12 @@ type PreviewSegment = {
  */
 export function previewFundingInterval({
   state,
-  serverNowMilliseconds,
+  serverNowMicroseconds,
   expectedEntitlementRevision,
   changes = [],
 }: {
   state: FundingEntitlementPreview;
-  serverNowMilliseconds: bigint;
+  serverNowMicroseconds: bigint;
   expectedEntitlementRevision: bigint;
   changes?: readonly FundingForwardChange[];
 }) {
@@ -463,18 +463,18 @@ export function previewFundingInterval({
   )
     fail("ENTITLEMENT_REVISION_MISMATCH");
   if (
-    typeof serverNowMilliseconds !== "bigint" ||
-    serverNowMilliseconds < state.cursorMilliseconds
+    typeof serverNowMicroseconds !== "bigint" ||
+    serverNowMicroseconds < state.cursorMicroseconds
   )
     fail("RETROACTIVE_PREVIEW_INTERVAL");
   changes.forEach((change, index) => {
     if (
-      typeof change.effectiveFromMilliseconds !== "bigint" ||
-      change.effectiveFromMilliseconds < state.cursorMilliseconds ||
-      change.effectiveFromMilliseconds > serverNowMilliseconds ||
+      typeof change.effectiveFromMicroseconds !== "bigint" ||
+      change.effectiveFromMicroseconds < state.cursorMicroseconds ||
+      change.effectiveFromMicroseconds > serverNowMicroseconds ||
       (index > 0 &&
-        change.effectiveFromMilliseconds <=
-          changes[index - 1]!.effectiveFromMilliseconds)
+        change.effectiveFromMicroseconds <=
+          changes[index - 1]!.effectiveFromMicroseconds)
     )
       fail("RETROACTIVE_OR_AMBIGUOUS_BOUNDARY");
   });
@@ -488,11 +488,11 @@ export function previewFundingInterval({
     conditionalRetentionUsed: ExactMicroKrw;
     retentionQualificationRequired: true;
   }[] = [];
-  while (current.cursorMilliseconds <= serverNowMilliseconds) {
+  while (current.cursorMicroseconds <= serverNowMicroseconds) {
     if (segments.length + closedCycles.length > 2048)
       fail("PREVIEW_INTERVAL_TOO_LARGE");
     const change = changes[changeIndex];
-    if (change?.effectiveFromMilliseconds === current.cursorMilliseconds) {
+    if (change?.effectiveFromMicroseconds === current.cursorMicroseconds) {
       if (
         change.expectedEntitlementRevision !== current.entitlementRevision ||
         change.entitlementRevision !== current.entitlementRevision + 1n
@@ -500,7 +500,7 @@ export function previewFundingInterval({
         fail("FORWARD_CHANGE_REVISION_MISMATCH");
       const next = conditions(
         change.condition,
-        change.effectiveFromMilliseconds,
+        change.effectiveFromMicroseconds,
       );
       const priorPublication = current.condition.input.policy.publication;
       const nextPublication = next.input.policy.publication;
@@ -510,8 +510,8 @@ export function previewFundingInterval({
           "policyId",
           "policyVersion",
           "revisionId",
-          "publishedAtMilliseconds",
-          "effectiveFromMilliseconds",
+          "publishedAtMicroseconds",
+          "effectiveFromMicroseconds",
           "configDigest",
           "manifestDigest",
           "approvalEvidence",
@@ -525,15 +525,15 @@ export function previewFundingInterval({
         fail("POLICY_PUBLICATION_ID_REUSED");
       if (
         priorPublication.publicationId !== nextPublication.publicationId &&
-        (priorPublication.effectiveUntilMilliseconds !==
-          change.effectiveFromMilliseconds ||
-          nextPublication.effectiveFromMilliseconds !==
-            change.effectiveFromMilliseconds)
+        (priorPublication.effectiveUntilMicroseconds !==
+          change.effectiveFromMicroseconds ||
+          nextPublication.effectiveFromMicroseconds !==
+            change.effectiveFromMicroseconds)
       )
         fail("POLICY_PUBLICATION_BOUNDARY_MISMATCH");
       if (
-        BigInt(next.input.policy.document.cycleDays) * MILLISECONDS_PER_DAY !==
-          current.cycleDurationMilliseconds ||
+        BigInt(next.input.policy.document.cycleDays) * MICROSECONDS_PER_DAY !==
+          current.cycleDurationMicroseconds ||
         next.input.policy.document.microKrwPerKrw !==
           current.condition.input.policy.document.microKrwPerKrw
       )
@@ -551,7 +551,7 @@ export function previewFundingInterval({
       for (const lot of next.input.funding.lots) {
         if (
           !oldLotIds.has(lot.lotId) &&
-          lot.effectiveFromMilliseconds !== change.effectiveFromMilliseconds
+          lot.effectiveFromMicroseconds !== change.effectiveFromMicroseconds
         )
           fail("NEW_PRINCIPAL_LOT_EFFECTIVE_BOUNDARY_MISMATCH");
       }
@@ -562,7 +562,7 @@ export function previewFundingInterval({
         const following = nextLots.get(lot.lotId);
         if (!following) continue;
         if (
-          following.effectiveFromMilliseconds !== lot.effectiveFromMilliseconds
+          following.effectiveFromMicroseconds !== lot.effectiveFromMicroseconds
         )
           fail("PRINCIPAL_LOT_AGE_CHANGED");
         if (
@@ -589,7 +589,7 @@ export function previewFundingInterval({
       )
         fail("STALE_PRINCIPAL_REVISION");
       const durationLeft =
-        current.cycleEndMilliseconds - current.cursorMilliseconds;
+        current.cycleEndMicroseconds - current.cursorMicroseconds;
       current = register({
         ...current,
         entitlementRevision: change.entitlementRevision,
@@ -603,7 +603,7 @@ export function previewFundingInterval({
                 current.condition.fullBaseCapacity,
               ),
               durationLeft,
-              current.cycleDurationMilliseconds,
+              current.cycleDurationMicroseconds,
             ),
           ),
         ),
@@ -616,14 +616,14 @@ export function previewFundingInterval({
                 current.condition.fullConditionalRetentionCapacity,
               ),
               durationLeft,
-              current.cycleDurationMilliseconds,
+              current.cycleDurationMicroseconds,
             ),
           ),
         ),
       });
       changeIndex += 1;
     }
-    if (current.cursorMilliseconds === current.cycleEndMilliseconds) {
+    if (current.cursorMicroseconds === current.cycleEndMicroseconds) {
       closedCycles.push({
         cycleIndex: current.cycleIndex,
         baseUsed: current.baseUsed,
@@ -633,9 +633,9 @@ export function previewFundingInterval({
       current = register({
         ...current,
         cycleIndex: current.cycleIndex + 1n,
-        cycleStartMilliseconds: current.cycleEndMilliseconds,
-        cycleEndMilliseconds:
-          current.cycleEndMilliseconds + current.cycleDurationMilliseconds,
+        cycleStartMicroseconds: current.cycleEndMicroseconds,
+        cycleEndMicroseconds:
+          current.cycleEndMicroseconds + current.cycleDurationMicroseconds,
         baseCapacity: current.condition.fullBaseCapacity,
         conditionalRetentionCapacity:
           current.condition.fullConditionalRetentionCapacity,
@@ -645,28 +645,28 @@ export function previewFundingInterval({
     }
     assertEffectiveEconomyPolicy(
       current.condition.input.policy,
-      current.cursorMilliseconds,
+      current.cursorMicroseconds,
     );
-    if (current.cursorMilliseconds === serverNowMilliseconds) break;
+    if (current.cursorMicroseconds === serverNowMicroseconds) break;
     const nextBoundary =
-      changes[changeIndex]?.effectiveFromMilliseconds ?? serverNowMilliseconds;
+      changes[changeIndex]?.effectiveFromMicroseconds ?? serverNowMicroseconds;
     const expires =
-      current.condition.input.policy.publication.effectiveUntilMilliseconds ??
-      serverNowMilliseconds;
+      current.condition.input.policy.publication.effectiveUntilMicroseconds ??
+      serverNowMicroseconds;
     const end = [
-      serverNowMilliseconds,
-      current.cycleEndMilliseconds,
+      serverNowMicroseconds,
+      current.cycleEndMicroseconds,
       nextBoundary,
       expires,
     ].reduce((minimum, value) => (value < minimum ? value : minimum));
-    const start = current.cursorMilliseconds;
+    const start = current.cursorMicroseconds;
     if (end <= start) fail("UNRESOLVED_EFFECTIVE_BOUNDARY");
     const status = fundingPreviewStatus(current);
     let base = ZERO;
     let retention = ZERO;
     if (status === "ACTIVE") {
       const elapsed = end - start;
-      const denominator = current.cycleDurationMilliseconds * BASIS_POINT_UNIT;
+      const denominator = current.cycleDurationMicroseconds * BASIS_POINT_UNIT;
       const baseCandidate = scale(
         current.condition.fullBaseCapacity,
         elapsed * current.condition.allocationBps,
@@ -723,8 +723,8 @@ export function previewFundingInterval({
     const wholeKrw = carry.numerator / (carry.denominator * microPerKrw);
     settlementReadyKrw += wholeKrw;
     segments.push({
-      startMilliseconds: start,
-      endMilliseconds: end,
+      startMicroseconds: start,
+      endMicroseconds: end,
       cycleIndex: current.cycleIndex,
       policyVersion: current.condition.input.policy.document.policyVersion,
       principalRevision: current.condition.input.funding.principalRevision,
@@ -735,7 +735,7 @@ export function previewFundingInterval({
     });
     current = register({
       ...current,
-      cursorMilliseconds: end,
+      cursorMicroseconds: end,
       baseUsed: add(current.baseUsed, base),
       conditionalRetentionUsed: add(
         current.conditionalRetentionUsed,

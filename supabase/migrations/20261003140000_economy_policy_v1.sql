@@ -605,8 +605,8 @@ begin
     if v_manifest is not null or v_version.id is null
       or v_expected_revision is distinct from v_previous.id
       or v_expected_digest is distinct from v_version.config_digest
-      or v_previous.state is distinct from case v_operation
-        when 'PREVIEW' then 'DRAFT' when 'APPROVE' then 'PREVIEWED' when 'PUBLISH' then 'APPROVED' end then
+      or v_previous.state is distinct from (case v_operation
+        when 'PREVIEW' then 'DRAFT' when 'APPROVE' then 'PREVIEWED' when 'PUBLISH' then 'APPROVED' end) then
       raise exception using errcode = '40001', message = 'ECONOMY_POLICY_REVISION_CHANGED';
     end if;
     if v_effective is null or not isfinite(v_effective) or v_effective <= clock_timestamp()

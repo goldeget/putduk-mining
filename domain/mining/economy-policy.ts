@@ -6,7 +6,7 @@ import { z } from "zod";
 
 /** Arithmetic units, not configurable economic rates or thresholds. */
 export const BASIS_POINT_UNIT = 10_000n;
-export const MILLISECONDS_PER_DAY = 86_400_000n;
+export const MICROSECONDS_PER_DAY = 86_400_000_000n;
 export const MICRO_KRW_PER_KRW = 1_000_000n;
 
 const integer = z.number().refine(Number.isSafeInteger).nonnegative();
@@ -112,9 +112,9 @@ export type PolicyPublicationIdentity = {
   readonly publicationId: string;
   readonly policyVersion: string;
   readonly revisionId: string;
-  readonly publishedAtMilliseconds: bigint;
-  readonly effectiveFromMilliseconds: bigint;
-  readonly effectiveUntilMilliseconds: bigint | null;
+  readonly publishedAtMicroseconds: bigint;
+  readonly effectiveFromMicroseconds: bigint;
+  readonly effectiveUntilMicroseconds: bigint | null;
   readonly configDigest: string;
   readonly manifestDigest: string;
   readonly approvalEvidence: string;
@@ -143,9 +143,9 @@ const IDENTITY_KEYS = [
   "publicationId",
   "policyVersion",
   "revisionId",
-  "publishedAtMilliseconds",
-  "effectiveFromMilliseconds",
-  "effectiveUntilMilliseconds",
+  "publishedAtMicroseconds",
+  "effectiveFromMicroseconds",
+  "effectiveUntilMicroseconds",
   "configDigest",
   "manifestDigest",
   "approvalEvidence",
@@ -252,7 +252,7 @@ export function validateEconomyPolicy({
   publication,
   expected,
   sourceComplete,
-  serverNowMilliseconds,
+  serverNowMicroseconds,
 }: {
   configuration: unknown;
   configText: string;
@@ -261,11 +261,11 @@ export function validateEconomyPolicy({
   publication: PolicyPublication;
   expected: PolicyPublicationIdentity;
   sourceComplete: boolean;
-  serverNowMilliseconds: bigint;
+  serverNowMicroseconds: bigint;
 }): ValidatedEconomyPolicy {
   if (sourceComplete !== true) fail("ECONOMY_POLICY_SOURCE_INCOMPLETE");
   if (publication.state !== "PUBLISHED") fail("ECONOMY_POLICY_NOT_PUBLISHED");
-  if (typeof serverNowMilliseconds !== "bigint" || serverNowMilliseconds < 0n)
+  if (typeof serverNowMicroseconds !== "bigint" || serverNowMicroseconds < 0n)
     fail("ECONOMY_POLICY_INVALID_SERVER_TIME");
   for (const key of IDENTITY_KEYS) {
     if (publication[key] !== expected[key])
@@ -283,18 +283,18 @@ export function validateEconomyPolicy({
           value,
         ),
     ) ||
-    typeof publication.publishedAtMilliseconds !== "bigint" ||
-    typeof publication.effectiveFromMilliseconds !== "bigint" ||
-    publication.publishedAtMilliseconds < 0n ||
-    publication.publishedAtMilliseconds >
-      publication.effectiveFromMilliseconds ||
-    publication.publishedAtMilliseconds > serverNowMilliseconds ||
-    publication.effectiveFromMilliseconds > serverNowMilliseconds ||
-    (publication.effectiveUntilMilliseconds !== null &&
-      (typeof publication.effectiveUntilMilliseconds !== "bigint" ||
-        publication.effectiveUntilMilliseconds <=
-          publication.effectiveFromMilliseconds ||
-        serverNowMilliseconds >= publication.effectiveUntilMilliseconds)) ||
+    typeof publication.publishedAtMicroseconds !== "bigint" ||
+    typeof publication.effectiveFromMicroseconds !== "bigint" ||
+    publication.publishedAtMicroseconds < 0n ||
+    publication.publishedAtMicroseconds >
+      publication.effectiveFromMicroseconds ||
+    publication.publishedAtMicroseconds > serverNowMicroseconds ||
+    publication.effectiveFromMicroseconds > serverNowMicroseconds ||
+    (publication.effectiveUntilMicroseconds !== null &&
+      (typeof publication.effectiveUntilMicroseconds !== "bigint" ||
+        publication.effectiveUntilMicroseconds <=
+          publication.effectiveFromMicroseconds ||
+        serverNowMicroseconds >= publication.effectiveUntilMicroseconds)) ||
     !/^[a-f0-9]{64}$/.test(publication.configDigest) ||
     !/^[a-f0-9]{64}$/.test(publication.manifestDigest) ||
     !/^[a-f0-9]{64}$/.test(publication.approvalEvidenceDigest)
@@ -345,9 +345,9 @@ export function assertEffectiveEconomyPolicy(
     fail("ECONOMY_POLICY_INVALID_SERVER_TIME");
   const receipt = policy.publication;
   if (
-    instant < receipt.effectiveFromMilliseconds ||
-    (receipt.effectiveUntilMilliseconds !== null &&
-      instant >= receipt.effectiveUntilMilliseconds)
+    instant < receipt.effectiveFromMicroseconds ||
+    (receipt.effectiveUntilMicroseconds !== null &&
+      instant >= receipt.effectiveUntilMicroseconds)
   )
     fail("ECONOMY_POLICY_OUTSIDE_EFFECTIVE_WINDOW");
 }

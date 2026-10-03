@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 import {
-  MILLISECONDS_PER_DAY,
+  MICROSECONDS_PER_DAY,
   policyTextDigest,
   validateEconomyPolicy,
   type EconomyPolicyDocument,
@@ -40,9 +40,9 @@ const expected: PolicyPublicationIdentity = {
   publicationId: "00000000-0000-4000-8000-000000000002",
   policyVersion: source.policyVersion,
   revisionId: "00000000-0000-4000-8000-000000000003",
-  publishedAtMilliseconds: 0n,
-  effectiveFromMilliseconds: 0n,
-  effectiveUntilMilliseconds: null,
+  publishedAtMicroseconds: 0n,
+  effectiveFromMicroseconds: 0n,
+  effectiveUntilMicroseconds: null,
   configDigest: policyTextDigest(configText),
   manifestDigest: policyTextDigest(manifestText),
   approvalEvidence: source.approvalEvidence,
@@ -56,11 +56,11 @@ const policy = validateEconomyPolicy({
   publication: { ...expected, state: "PUBLISHED" },
   expected,
   sourceComplete: true,
-  serverNowMilliseconds: 0n,
+  serverNowMicroseconds: 0n,
 });
 const microPerKrw = BigInt(source.microKrwPerKrw);
-const cycle = BigInt(source.cycleDays) * MILLISECONDS_PER_DAY;
-const day = MILLISECONDS_PER_DAY;
+const cycle = BigInt(source.cycleDays) * MICROSECONDS_PER_DAY;
+const day = MICROSECONDS_PER_DAY;
 
 function condition(principal = 100000n, revision = 1n): FundingConditionInput {
   return {
@@ -74,7 +74,7 @@ function condition(principal = 100000n, revision = 1n): FundingConditionInput {
         {
           lotId: "confirmed-lot-1",
           remainingEligiblePrincipalKrw: principal,
-          effectiveFromMilliseconds: 0n,
+          effectiveFromMicroseconds: 0n,
         },
       ],
     },
@@ -92,7 +92,7 @@ function condition(principal = 100000n, revision = 1n): FundingConditionInput {
 function deposit(
   previous: FundingConditionInput,
   principal: bigint,
-  effectiveFromMilliseconds: bigint,
+  effectiveFromMicroseconds: bigint,
 ): FundingConditionInput {
   const revision = previous.funding.principalRevision + 1n;
   const input = condition(principal, revision);
@@ -106,7 +106,7 @@ function deposit(
           lotId: `new-deposit-${revision}`,
           remainingEligiblePrincipalKrw:
             principal - previous.funding.eligiblePrincipalKrw,
-          effectiveFromMilliseconds,
+          effectiveFromMicroseconds,
         },
       ],
     },
@@ -115,7 +115,7 @@ function deposit(
 function start(input = condition()) {
   return createFundingEntitlementPreview({
     condition: input,
-    serverNowMilliseconds: 0n,
+    serverNowMicroseconds: 0n,
     expectedEntitlementRevision: 1n,
   });
 }
@@ -126,7 +126,7 @@ function run(
 ) {
   return previewFundingInterval({
     state,
-    serverNowMilliseconds: end,
+    serverNowMicroseconds: end,
     expectedEntitlementRevision: state.entitlementRevision,
     changes,
   });
@@ -137,7 +137,7 @@ function change(
   prior = 1n,
 ): FundingForwardChange {
   return {
-    effectiveFromMilliseconds: at,
+    effectiveFromMicroseconds: at,
     condition: input,
     expectedEntitlementRevision: prior,
     entitlementRevision: prior + 1n,
@@ -147,11 +147,11 @@ function exhausted(at = 5n * day, input = condition()) {
   const original = start(input);
   return createFundingEntitlementPreview({
     condition: input,
-    serverNowMilliseconds: at,
+    serverNowMicroseconds: at,
     expectedEntitlementRevision: 1n,
     existingCycle: {
       ...original,
-      cursorMilliseconds: at,
+      cursorMicroseconds: at,
       baseUsed: original.baseCapacity,
       conditionalRetentionUsed: original.conditionalRetentionCapacity,
     },
@@ -181,7 +181,7 @@ function publication(
     publication: { ...identity, state: "PUBLISHED" },
     expected: identity,
     sourceComplete: true,
-    serverNowMilliseconds: now,
+    serverNowMicroseconds: now,
   });
 }
 
@@ -218,7 +218,7 @@ describe("read-only V1 funding entitlement engine", () => {
   });
 
   it("settles whole KRW only while retaining micro and submicro carry", () => {
-    const result = run(start(condition(1000000n)), 220000n);
+    const result = run(start(condition(1000000n)), 220_000_000n);
     expect(result.settlementReadyKrw).toBe(12n);
     expect(result.rewardCarryMicroKrw).toBe(731481n);
     expect(result.rewardCarrySubMicroKrw.numerator).toBeGreaterThan(0n);
@@ -228,15 +228,24 @@ describe("read-only V1 funding entitlement engine", () => {
   });
 
   it("produces identical exact accrual and carry for whole and arbitrarily partitioned intervals", () => {
-    const whole = run(start(condition(1000003n)), 701234n);
+    const whole = run(start(condition(1000003n)), 701_234_000n);
     let current = start(condition(1000003n));
     let totalCredits = 0n;
-    for (const end of [1n, 7n, 999n, 1203n, 20001n, 400003n, 701234n]) {
+    for (const end of [
+      1n,
+      7n,
+      999_000n,
+      1_203_000n,
+      20_001_000n,
+      400_003_000n,
+      701_234_000n,
+    ]) {
       const result = run(current, end);
       totalCredits += result.settlementReadyKrw;
       current = result.state;
     }
     expect(totalCredits).toBe(whole.settlementReadyKrw);
+    expect(totalCredits).toBeGreaterThan(0n);
     expect(current.baseRewardCarry).toEqual(whole.state.baseRewardCarry);
     expect(current.baseUsed).toEqual(whole.state.baseUsed);
     expect(current.conditionalRetentionUsed).toEqual(
@@ -269,9 +278,9 @@ describe("read-only V1 funding entitlement engine", () => {
     expect(result.state.baseCapacity).toEqual(
       exactMicroKrw(105000n * microPerKrw),
     );
-    expect(result.state.anchorMilliseconds).toBe(initial.anchorMilliseconds);
-    expect(result.state.cycleEndMilliseconds).toBe(
-      initial.cycleEndMilliseconds,
+    expect(result.state.anchorMicroseconds).toBe(initial.anchorMicroseconds);
+    expect(result.state.cycleEndMicroseconds).toBe(
+      initial.cycleEndMicroseconds,
     );
     expect(result.state.baseUsed.numerator).toBeGreaterThan(
       initial.baseUsed.numerator,
@@ -299,7 +308,7 @@ describe("read-only V1 funding entitlement engine", () => {
     const original = start();
     const existing = createFundingEntitlementPreview({
       condition: original.condition.input,
-      serverNowMilliseconds: 0n,
+      serverNowMicroseconds: 0n,
       expectedEntitlementRevision: 1n,
       existingCycle: {
         ...original,
@@ -328,7 +337,7 @@ describe("read-only V1 funding entitlement engine", () => {
     const original = start(input);
     const recorded = createFundingEntitlementPreview({
       condition: input,
-      serverNowMilliseconds: 0n,
+      serverNowMicroseconds: 0n,
       expectedEntitlementRevision: 1n,
       existingCycle: {
         ...original,
@@ -370,7 +379,7 @@ describe("read-only V1 funding entitlement engine", () => {
       ),
     );
     expect(result.state.baseUsed).toEqual(initial.baseUsed);
-    expect(result.state.cycleEndMilliseconds).toBe(cycle);
+    expect(result.state.cycleEndMicroseconds).toBe(cycle);
     expect(result.settlementReadyKrw).toBe(0n);
   });
 
@@ -452,8 +461,8 @@ describe("read-only V1 funding entitlement engine", () => {
     const reset = run(before.state, cycle);
     expect(reset.closedCycles).toHaveLength(1);
     expect(reset.state.cycleIndex).toBe(1n);
-    expect(reset.state.anchorMilliseconds).toBe(0n);
-    expect(reset.state.cycleEndMilliseconds).toBe(cycle * 2n);
+    expect(reset.state.anchorMicroseconds).toBe(0n);
+    expect(reset.state.cycleEndMicroseconds).toBe(cycle * 2n);
     expect(reset.state.baseUsed).toEqual(exactMicroKrw(0n));
     expect(reset.state.baseRewardCarry).toEqual(earned.state.baseRewardCarry);
     expect(reset.settlementReadyKrw).toBe(0n);
@@ -485,14 +494,14 @@ describe("read-only V1 funding entitlement engine", () => {
       start(condition(1000000n)).baseCapacity,
     );
     expect(result.state.cycleIndex).toBe(1n);
-    expect(result.state.anchorMilliseconds).toBe(0n);
+    expect(result.state.anchorMicroseconds).toBe(0n);
   });
 
   it("pins consecutive published policies to the exact effective boundary and never rewrites earlier accrual", () => {
     const boundary = 15n * day;
     const previousPolicy = publication(
       source,
-      { effectiveUntilMilliseconds: boundary },
+      { effectiveUntilMicroseconds: boundary },
       0n,
     );
     const nextDocument = structuredClone(source);
@@ -504,8 +513,8 @@ describe("read-only V1 funding entitlement engine", () => {
         policyId: "00000000-0000-4000-8000-000000000004",
         publicationId: "00000000-0000-4000-8000-000000000005",
         revisionId: "00000000-0000-4000-8000-000000000006",
-        publishedAtMilliseconds: day,
-        effectiveFromMilliseconds: boundary,
+        publishedAtMicroseconds: day,
+        effectiveFromMicroseconds: boundary,
       },
       boundary,
     );
@@ -521,7 +530,7 @@ describe("read-only V1 funding entitlement engine", () => {
     expect(result.closedCycles[0]!.baseUsed).toEqual(
       exactMicroKrw(12500n * microPerKrw),
     );
-    expect(result.state.anchorMilliseconds).toBe(0n);
+    expect(result.state.anchorMicroseconds).toBe(0n);
     expect(result.state.baseCapacity).toEqual(
       exactMicroKrw(10000n * microPerKrw),
     );
@@ -558,7 +567,7 @@ describe("read-only V1 funding entitlement engine", () => {
       funding: {
         ...added.funding,
         lots: added.funding.lots.map((lot, index) =>
-          index === 0 ? { ...lot, effectiveFromMilliseconds: day } : lot,
+          index === 0 ? { ...lot, effectiveFromMicroseconds: day } : lot,
         ),
       },
     };
@@ -570,7 +579,7 @@ describe("read-only V1 funding entitlement engine", () => {
       funding: {
         ...added.funding,
         lots: added.funding.lots.map((lot, index) =>
-          index === 1 ? { ...lot, effectiveFromMilliseconds: 0n } : lot,
+          index === 1 ? { ...lot, effectiveFromMicroseconds: 0n } : lot,
         ),
       },
     };
@@ -633,7 +642,7 @@ describe("read-only V1 funding entitlement engine", () => {
       previewFundingInterval({
         state: start(),
         expectedEntitlementRevision: 2n,
-        serverNowMilliseconds: day,
+        serverNowMicroseconds: day,
       }),
     ).toThrow("ENTITLEMENT_REVISION_MISMATCH");
     expect(() => run({ ...start() }, day)).toThrow(
@@ -674,13 +683,13 @@ describe("read-only V1 funding entitlement engine", () => {
             lots: [
               {
                 ...condition().funding.lots[0]!,
-                effectiveFromMilliseconds: day,
+                effectiveFromMicroseconds: day,
               },
             ],
           },
         }),
       ]),
     ).toThrow("PRINCIPAL_LOT_AGE_CHANGED");
-    expect(initial.cursorMilliseconds).toBe(day);
+    expect(initial.cursorMicroseconds).toBe(day);
   });
 });
