@@ -16,7 +16,7 @@ test.describe("admin app-owned session and real TOTP", () => {
   test("enrolls TOTP, registers admin session, and rejects normal members", async ({
     page,
     browser,
-  }) => {
+  }, testInfo) => {
     const operator = await createConfirmedMember("ws05-admin-op");
     await grantAdminRole(operator.userId);
     const secret = await completeAdminLoginWithTotp(
@@ -29,7 +29,13 @@ test.describe("admin app-owned session and real TOTP", () => {
       timeout: 60_000,
     });
 
-    await page.getByRole("button", { name: "이 기기 로그아웃" }).click();
+    const logout = page.getByRole("button", { name: "이 기기 로그아웃" });
+    await expect(logout).toBeInViewport();
+    await page.screenshot({
+      path: testInfo.outputPath("admin-session-logout-reachable.png"),
+      fullPage: true,
+    });
+    await logout.click();
     await page.waitForURL(/\/login/, { timeout: 60_000 });
 
     const member = await createConfirmedMember("ws05-admin-member");

@@ -37,12 +37,31 @@ test("real admin session prepares a USDT draft without approval or a money write
     created_at: "2026-08-01T00:00:00Z",
   });
   expect(fixtureError).toBeNull();
+  await page.goto(`${ADMIN_ORIGIN}/assistant`);
+  await expect(page.locator('[data-ui-ready="/assistant"]')).toHaveAttribute(
+    "data-ui-state",
+    "loaded",
+  );
+  await expect(
+    page.getByText("운영 세션이 바뀌었습니다. 운영 화면을 다시 열어 주세요."),
+  ).toHaveCount(0);
   const url = `${ADMIN_ORIGIN}/api/v1/admin/assistant/prepare`;
-  // APIRequestContext must preserve the device bound to the actual admin session.
-  const headers = {
-    origin: ADMIN_ORIGIN,
-    "user-agent": await page.evaluate(() => navigator.userAgent),
-  };
+  // Chromium sends its secure loopback cookies; APIRequestContext on HTTP did
+  // not. Exercise the real browser transport without overriding its identity.
+  const browserPost = (input: Record<string, unknown>) =>
+    page.evaluate(async (data) => {
+      const response = await fetch("/api/v1/admin/assistant/prepare", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      return {
+        status: response.status,
+        cacheControl: response.headers.get("cache-control"),
+        payload: await response.json(),
+      };
+    }, input);
   const pending = { task: "usdt-deposit-pending" };
   const deniedOrigin = await page.request.post(url, { data: pending });
   expect(deniedOrigin.status()).toBe(403);
@@ -55,10 +74,10 @@ test("real admin session prepares a USDT draft without approval or a money write
     .order("created_at", { ascending: true })
     .limit(1);
   expect(before.error).toBeNull();
-  const snapshot = await page.request.post(url, { headers, data: pending });
-  expect(snapshot.status()).toBe(200);
-  expect(snapshot.headers()["cache-control"]).toBe("private, no-store");
-  const snapshotData = (await snapshot.json()).data;
+  const snapshot = await browserPost(pending);
+  expect(snapshot.status, snapshot.payload.error?.code).toBe(200);
+  expect(snapshot.cacheControl).toBe("private, no-store");
+  const snapshotData = snapshot.payload.data;
   expect(snapshotData.count).toBe(before.count);
   expect(Date.parse(snapshotData.oldestAt)).toBe(
     Date.parse(before.data![0]!.created_at),
@@ -70,9 +89,9 @@ test("real admin session prepares a USDT draft without approval or a money write
     creditedKrw: "50000",
     reason: "운영 도우미 초안만 검토하는 로컬 시험입니다.",
   };
-  const prepared = await page.request.post(url, { headers, data: body });
-  expect(prepared.status()).toBe(200);
-  const draft = (await prepared.json()).data;
+  const prepared = await browserPost(body);
+  expect(prepared.status, prepared.payload.error?.code).toBe(200);
+  const draft = prepared.payload.data;
   expect(draft.canExecute).toBe(false);
   expect(draft.command).toBe("confirm_usdt_manual_deposit");
   expect(draft.input).toEqual({
@@ -86,20 +105,11 @@ test("real admin session prepares a USDT draft without approval or a money write
   expect(JSON.stringify(draft)).not.toMatch(
     /stepUpToken|idempotencyKey|user_id|tx_hash|deposit_address|actor/,
   );
-  const injected = await page.request.post(url, {
-    headers,
-    data: { ...body, confirmation: "CONFIRM_USDT_DEPOSIT" },
+  const injected = await browserPost({
+    ...body,
+    confirmation: "CONFIRM_USDT_DEPOSIT",
   });
-  expect(injected.status()).toBe(400);
-
-  await page.goto(`${ADMIN_ORIGIN}/assistant`);
-  await expect(page.locator('[data-ui-ready="/assistant"]')).toHaveAttribute(
-    "data-ui-state",
-    "loaded",
-  );
-  await expect(
-    page.getByText("운영 세션이 바뀌었습니다. 운영 화면을 다시 열어 주세요."),
-  ).toHaveCount(0);
+  expect(injected.status).toBe(400);
   await page
     .getByRole("button", { name: "입금 대기 확인", exact: true })
     .click();
@@ -127,6 +137,7 @@ test("real admin session prepares a USDT draft without approval or a money write
   for (const width of [320, 390, 834, 1440]) {
     await page.setViewportSize({ width, height: 900 });
     for (const theme of ["system", "light", "dark"]) {
+      await expect(page.getByLabel("화면 테마")).toBeVisible();
       await page.getByLabel("화면 테마").selectOption(theme);
       await expect
         .poll(() =>
@@ -197,7 +208,7 @@ test("real admin session prepares a USDT draft without approval or a money write
     .eq("role", "ADMIN")
     .is("revoked_at", null);
   expect(revoked.error).toBeNull();
-  const deniedRole = await page.request.post(url, { headers, data: pending });
-  expect(deniedRole.status()).toBe(403);
-  expect((await deniedRole.json()).error.code).toBe("ROLE_REQUIRED");
+  const deniedRole = await browserPost(pending);
+  expect(deniedRole.status).toBe(403);
+  expect(deniedRole.payload.error.code).toBe("ROLE_REQUIRED");
 });

@@ -50,65 +50,84 @@ export async function setSafeModeAction(
   if (!access.ok) return access.result;
 
   const isPaused = parsed.data.pause === "true";
-  const db = createAdminServiceClient();
-  // A private DB trigger applies this versioned command in the audit INSERT's
-  // transaction. No separate state write can survive a failed audit or event.
-  const { error } = await db.from("audit_logs").insert({
-    actor_user_id: access.principal.userId,
-    actor_role: access.principal.role,
-    action: safeModeAuditAction(isPaused),
-    target_type: "SAFE_MODE",
-    target_id: parsed.data.component,
-    reason: parsed.data.reason,
-    request_id: access.requestId,
-    metadata: {
-      command_version: 1,
-      idempotency_key: attempt.idempotencyKey,
-      expected_request_id: parsed.data.expectedRequestId,
-      component: parsed.data.component,
-      is_paused: isPaused,
-      review_at: parsed.data.reviewAt,
-    },
-  });
+  try {
+    const db = createAdminServiceClient();
+    // A private DB trigger applies this versioned command in the audit INSERT's
+    // transaction. No separate state write can survive a failed audit or event.
+    const { error } = await db.from("audit_logs").insert({
+      actor_user_id: access.principal.userId,
+      actor_role: access.principal.role,
+      action: safeModeAuditAction(isPaused),
+      target_type: "SAFE_MODE",
+      target_id: parsed.data.component,
+      reason: parsed.data.reason,
+      request_id: access.requestId,
+      metadata: {
+        command_version: 1,
+        idempotency_key: attempt.idempotencyKey,
+        expected_request_id: parsed.data.expectedRequestId,
+        component: parsed.data.component,
+        is_paused: isPaused,
+        review_at: parsed.data.reviewAt,
+      },
+    });
 
-  if (error) {
-    if (error.message?.includes("SAFE_MODE_STATE_CHANGED"))
+    if (error) {
+      if (error.message?.includes("SAFE_MODE_STATE_CHANGED"))
+        return {
+          ok: false,
+          code: "STATE_CHANGED",
+          message:
+            "다른 운영 작업으로 상태가 바뀌었습니다. 다시 불러와 확인해 주세요.",
+        };
+      return mapRpcFailure(
+        error.message,
+        "안전 모드를 저장하지 못했습니다. 현재 상태를 다시 확인해 주세요.",
+      );
+    }
+    // A successful transport or a missing trigger is not a command receipt.
+    const receipt = await db
+      .from("audit_logs")
+      .select(
+        "id,actor_user_id,action,target_id,reason,request_id,after_state,metadata",
+      )
+      .eq("target_type", "SAFE_MODE")
+      .eq("metadata->>command_version", "1")
+      .eq("metadata->>idempotency_key", attempt.idempotencyKey)
+      .maybeSingle();
+    if (
+      receipt.error ||
+      !receipt.data ||
+      receipt.data.actor_user_id !== access.principal.userId ||
+      receipt.data.action !== safeModeAuditAction(isPaused) ||
+      receipt.data.target_id !== parsed.data.component ||
+      receipt.data.reason !== parsed.data.reason ||
+      typeof receipt.data.metadata?.request_hash !== "string" ||
+      !/^[a-f0-9]{64}$/.test(receipt.data.metadata.request_hash) ||
+      typeof receipt.data.after_state?.id !== "string" ||
+      receipt.data.after_state?.changed_by !== access.principal.userId ||
+      receipt.data.after_state?.request_id !== receipt.data.request_id ||
+      receipt.data.after_state?.component !== parsed.data.component ||
+      receipt.data.after_state?.is_paused !== isPaused
+    ) {
       return {
         ok: false,
-        code: "STATE_CHANGED",
+        code: "RECEIPT_UNVERIFIED",
         message:
-          "다른 운영 작업으로 상태가 바뀌었습니다. 다시 불러와 확인해 주세요.",
+          "처리 결과를 확인하지 못했습니다. 현재 상태를 다시 확인해 주세요.",
       };
-    return mapRpcFailure(
-      error.message,
-      "안전 모드를 저장하지 못했습니다. 현재 상태를 다시 확인해 주세요.",
-    );
-  }
-  // A successful transport or a missing trigger is not a command receipt.
-  const receipt = await db
-    .from("audit_logs")
-    .select(
-      "id,actor_user_id,action,target_id,reason,request_id,after_state,metadata",
-    )
-    .eq("target_type", "SAFE_MODE")
-    .eq("metadata->>command_version", "1")
-    .eq("metadata->>idempotency_key", attempt.idempotencyKey)
-    .maybeSingle();
-  if (
-    receipt.error ||
-    !receipt.data ||
-    receipt.data.actor_user_id !== access.principal.userId ||
-    receipt.data.action !== safeModeAuditAction(isPaused) ||
-    receipt.data.target_id !== parsed.data.component ||
-    receipt.data.reason !== parsed.data.reason ||
-    typeof receipt.data.metadata?.request_hash !== "string" ||
-    !/^[a-f0-9]{64}$/.test(receipt.data.metadata.request_hash) ||
-    typeof receipt.data.after_state?.id !== "string" ||
-    receipt.data.after_state?.changed_by !== access.principal.userId ||
-    receipt.data.after_state?.request_id !== receipt.data.request_id ||
-    receipt.data.after_state?.component !== parsed.data.component ||
-    receipt.data.after_state?.is_paused !== isPaused
-  ) {
+    }
+
+    revalidatePath("/restrictions");
+
+    return {
+      ok: true,
+      message:
+        receipt.data.request_id === access.requestId
+          ? safeModeSuccessMessage(parsed.data.component, isPaused)
+          : "이미 처리한 작업입니다. 현재 상태를 확인해 주세요.",
+    };
+  } catch {
     return {
       ok: false,
       code: "RECEIPT_UNVERIFIED",
@@ -116,11 +135,4 @@ export async function setSafeModeAction(
         "처리 결과를 확인하지 못했습니다. 현재 상태를 다시 확인해 주세요.",
     };
   }
-
-  revalidatePath("/restrictions");
-
-  return {
-    ok: true,
-    message: safeModeSuccessMessage(parsed.data.component, isPaused),
-  };
 }

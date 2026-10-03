@@ -124,6 +124,51 @@ select is((select count(*)::integer from public.outbox_events where
   event_type = 'SAFE_MODE_CHANGED.v1' and aggregate_id = (select control_id from safe_mode_ctx)),
   2, 'only two original commands produced two events');
 
+-- Real worker completion verifies the old command without replaying its state.
+update public.outbox_events set status = 'PROCESSING', lease_owner = 'safe-pgtap-worker',
+  lease_expires_at = clock_timestamp() + interval '1 minute'
+where payload->>'audit_id' = (select receipt_id::text from safe_mode_ctx);
+select throws_ok($$select public.complete_outbox_event(
+  (select id from public.outbox_events where payload->>'audit_id' = (select receipt_id::text from safe_mode_ctx)),
+  'another-worker')$$, '55000', 'OUTBOX_LEASE_NOT_OWNED', 'a different worker cannot acknowledge the event');
+set local role service_role;
+select lives_ok($$select public.complete_outbox_event(
+  (select id from public.outbox_events where payload->>'audit_id' = (select receipt_id::text from pg_temp.safe_mode_ctx)),
+  'safe-pgtap-worker')$$, 'an actual service worker acknowledges the original immutable command');
+reset role;
+select is((select count(*)::integer from public.event_consumer_deliveries as delivery
+  join public.outbox_events as event on event.id = delivery.event_id
+  where event.payload->>'audit_id' = (select receipt_id::text from safe_mode_ctx)
+    and delivery.consumer_name = 'operator_safe_mode_audit.v1' and delivery.status = 'SUCCEEDED'),
+  1, 'one internal consumer receipt accompanies the event completion');
+select ok(not (select is_paused from public.safe_mode_controls where component = 'AI'),
+  'consuming an old pause never reapplies it after the newer clear');
+-- Only the isolated fixture simulates lease recovery for a duplicate delivery.
+update public.outbox_events set status = 'PROCESSING', lease_owner = 'safe-pgtap-worker',
+  lease_expires_at = clock_timestamp() + interval '1 minute'
+where payload->>'audit_id' = (select receipt_id::text from safe_mode_ctx);
+select lives_ok($$select public.complete_outbox_event(
+  (select id from public.outbox_events where payload->>'audit_id' = (select receipt_id::text from safe_mode_ctx)),
+  'safe-pgtap-worker')$$, 'duplicate delivery verifies and retains the original consumer receipt');
+select is((select count(*)::integer from public.event_consumer_deliveries), 1,
+  'duplicate delivery creates no extra consumer effect');
+select ok(not has_table_privilege('service_role', 'public.event_consumer_deliveries', 'UPDATE')
+  and not has_table_privilege('service_role', 'public.event_consumer_deliveries', 'DELETE'),
+  'the worker cannot rewrite or delete delivery receipts');
+-- Corrupt only the second event's fixture payload, never shared history.
+update public.outbox_events set payload = payload || '{"request_hash":"invalid"}'::jsonb,
+  status = 'PROCESSING', lease_owner = 'safe-pgtap-worker',
+  lease_expires_at = clock_timestamp() + interval '1 minute'
+where idempotency_key = 'safe-mode:safe-mode-second-operation';
+select throws_ok($$select public.complete_outbox_event(
+  (select id from public.outbox_events where idempotency_key = 'safe-mode:safe-mode-second-operation'),
+  'safe-pgtap-worker')$$, '55000', 'SAFE_MODE_EVENT_RECEIPT_MISMATCH', 'a changed event never borrows a valid command receipt');
+select is((select status::text from public.outbox_events where
+  idempotency_key = 'safe-mode:safe-mode-second-operation'), 'PROCESSING',
+  'rejected completion leaves the owned event available for explicit failure handling');
+select is((select count(*)::integer from public.event_consumer_deliveries), 1,
+  'rejected completion leaves no consumer receipt');
+
 -- Deliberately corrupt only this transaction's fixture; never remove shared history.
 update app_private.idempotency_keys set response_payload = '{}'::jsonb where
   scope = 'safe_mode.control' and idempotency_key = 'safe-mode-first-operation';

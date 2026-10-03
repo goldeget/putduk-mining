@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useId, useState } from "react";
+import { useRouter } from "next/navigation";
 
 import type { CommandActionResult } from "@/app/(control)/_lib/command-gate";
 import {
@@ -33,6 +34,7 @@ export function SafeModeForm({
   expectedRequestId: string | null;
 }) {
   const formId = useId();
+  const router = useRouter();
   const [reviewRevision, setReviewRevision] = useState(0);
   const [offlineNote, setOfflineNote] = useState<string | null>(null);
   const operationKey = useLogicalOperationKey("safe_mode");
@@ -116,10 +118,22 @@ export function SafeModeForm({
       <MoneyOfflineNote message={offlineNote} />
       <QueueFlash result={result} />
       {result && !result.ok ? (
-        <p className="panel-note">
-          저장에 실패했습니다. 사유·확인·작업 확인을 다시 점검한 뒤 재시도해
-          주세요.
-        </p>
+        <div>
+          <p className="panel-note">
+            현재 상태와 입력을 확인해 주세요. 다시 시도할 때는 인증 앱으로 새로
+            확인해 주세요.
+          </p>
+          <button
+            className="ghost-button"
+            type="button"
+            onClick={() => {
+              setReviewRevision((value) => value + 1);
+              router.refresh();
+            }}
+          >
+            현재 상태 새로고침
+          </button>
+        </div>
       ) : null}
     </form>
   );

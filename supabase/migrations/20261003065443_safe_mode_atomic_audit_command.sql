@@ -30,7 +30,7 @@ begin
       'SETTLEMENT', 'DEPOSIT', 'WITHDRAWAL', 'REFERRAL_PAYOUT',
       'EVENT_PAYOUT', 'NOTIFICATION', 'AI')
     or new.target_id is null or new.actor_user_id is null
-    or char_length(btrim(new.reason)) not between 10 and 500
+    or new.reason is null or char_length(btrim(new.reason)) not between 10 and 500
     or new.metadata->>'component' is distinct from new.target_id
     or jsonb_typeof(new.metadata->'is_paused') is distinct from 'boolean'
     or not (new.metadata ? 'review_at')
@@ -42,6 +42,7 @@ begin
   end if;
   v_operation_key := new.metadata->>'idempotency_key';
   if v_operation_key is null
+    or jsonb_typeof(new.metadata->'idempotency_key') is distinct from 'string'
     or v_operation_key !~ '^[A-Za-z0-9][A-Za-z0-9._:-]{7,179}$'
     or jsonb_typeof(new.metadata->'review_at') not in ('string', 'null')
     or jsonb_typeof(new.metadata->'expected_request_id') not in ('string', 'null') then
@@ -80,7 +81,8 @@ begin
     if v_key.request_hash is distinct from v_hash then
       raise exception using errcode = '22023', message = 'IDEMPOTENCY_PAYLOAD_MISMATCH';
     end if;
-    if v_key.status <> 'COMPLETED' or v_key.completed_at is null then
+    if v_key.status <> 'COMPLETED' or v_key.completed_at is null
+      or v_key.response_status is distinct from 200 then
       raise exception using errcode = '40001', message = 'SAFE_MODE_COMMAND_IN_PROGRESS';
     end if;
     select receipt.* into v_receipt from public.audit_logs as receipt
@@ -134,6 +136,9 @@ begin
   where control.component = new.target_id for update;
   if v_control.request_id is distinct from v_expected_request then
     raise exception using errcode = '40001', message = 'SAFE_MODE_STATE_CHANGED';
+  end if;
+  if v_review_at is not null and v_review_at <= clock_timestamp() then
+    raise exception using errcode = '22023', message = 'INVALID_SAFE_MODE_REVIEW_TIME';
   end if;
   v_before := case when v_control.id is null then null else to_jsonb(v_control) end;
   insert into public.safe_mode_controls (

@@ -209,4 +209,29 @@ describe("safe-mode invalid input preserves one-time confirmation", () => {
     });
     expect(revalidatePath).not.toHaveBeenCalled();
   });
+  it("keeps a thrown transport failure recoverable without reporting success", async () => {
+    installWriter(RECEIPT);
+    vi.mocked(createAdminServiceClient).mockImplementation(() => {
+      throw new Error("unavailable private configuration");
+    });
+    expect(await setSafeModeAction(null, form())).toEqual({
+      ok: false,
+      code: "RECEIPT_UNVERIFIED",
+      message:
+        "처리 결과를 확인하지 못했습니다. 현재 상태를 다시 확인해 주세요.",
+    });
+    expect(revalidatePath).not.toHaveBeenCalled();
+  });
+  it("describes a verified old receipt without claiming its old pause is current", async () => {
+    const originalRequest = "0d460000-0000-4000-8000-0000000000b2";
+    installWriter({
+      ...RECEIPT,
+      request_id: originalRequest,
+      after_state: { ...RECEIPT.after_state, request_id: originalRequest },
+    });
+    expect(await setSafeModeAction(null, form())).toEqual({
+      ok: true,
+      message: "이미 처리한 작업입니다. 현재 상태를 확인해 주세요.",
+    });
+  });
 });

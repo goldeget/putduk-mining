@@ -975,6 +975,125 @@ insert into auth.users (
   }, 30_000);
 });
 
+describe("safe-mode actual command and registered worker delivery", () => {
+  it("acknowledges the actual command once and never reapplies an old pause on replay", async () => {
+    const db = serviceClient();
+    const actorId = randomUUID();
+    const firstRequest = randomUUID();
+    const secondRequest = randomUUID();
+    const firstKey = `safe-worker-${randomUUID()}`;
+    const secondKey = `safe-worker-${randomUUID()}`;
+    sql(`
+      insert into auth.users (id, aud, role, email, encrypted_password, email_confirmed_at,
+        raw_app_meta_data, raw_user_meta_data, created_at, updated_at,
+        confirmation_token, recovery_token, email_change, email_change_token_new)
+      values ('${actorId}', 'authenticated', 'authenticated', 'safe-worker-${actorId}@putduk.test', '',
+        statement_timestamp(), '{}'::jsonb, '{}'::jsonb, statement_timestamp(), statement_timestamp(), '', '', '', '');
+      insert into public.user_roles (user_id, role, granted_by) values ('${actorId}', 'ADMIN', '${actorId}');
+    `);
+    async function command(
+      paused: boolean,
+      requestId: string,
+      operationKey: string,
+    ) {
+      const prior = await db
+        .from("safe_mode_controls")
+        .select("request_id")
+        .eq("component", "AI")
+        .maybeSingle();
+      expect(prior.error).toBeNull();
+      const written = await db.from("audit_logs").insert({
+        actor_user_id: actorId,
+        actor_role: "ADMIN",
+        action: paused ? "SAFE_MODE_ENABLED" : "SAFE_MODE_DISABLED",
+        target_type: "SAFE_MODE",
+        target_id: "AI",
+        reason: "Actual worker safe mode integration",
+        request_id: requestId,
+        metadata: {
+          command_version: 1,
+          idempotency_key: operationKey,
+          component: "AI",
+          is_paused: paused,
+          review_at: null,
+          expected_request_id: prior.data?.request_id ?? null,
+        },
+      });
+      expect(written.error).toBeNull();
+      const created = await db
+        .from("outbox_events")
+        .select("id,payload")
+        .eq("request_id", requestId)
+        .single();
+      expect(created.error).toBeNull();
+      expect(created.data?.payload.audit_id).toMatch(/^[a-f0-9-]{36}$/);
+      return created.data!;
+    }
+    const first = await command(true, firstRequest, firstKey);
+    const firstCycle = await processOutboxBatch(db, {
+      workerId: `safe-worker-${randomUUID()}`,
+      batchSize: 100,
+    });
+    expect(firstCycle.completed).toBeGreaterThanOrEqual(1);
+    expect((await readOutbox(db, first.id)).status).toBe("PROCESSED");
+    const readDelivery = () =>
+      db
+        .from("event_consumer_deliveries")
+        .select("id,status,attempt_count,processed_at")
+        .eq("event_id", first.id)
+        .eq("consumer_name", "operator_safe_mode_audit.v1")
+        .single();
+    const delivered = await readDelivery();
+    expect(delivered.error).toBeNull();
+    expect(delivered.data).toMatchObject({
+      status: "SUCCEEDED",
+      attempt_count: 1,
+    });
+    expect(delivered.data?.processed_at).toBeTruthy();
+
+    const second = await command(false, secondRequest, secondKey);
+    // Only this newly-created CI fixture is forced to its recovery state.
+    sql(
+      `update public.outbox_events set status='DEAD_LETTER', lease_owner=null, lease_expires_at=null where id='${first.id}';`,
+    );
+    const replayed = await db.rpc("replay_outbox_event", {
+      p_event_id: first.id,
+      p_actor_id: actorId,
+      p_reason: "Replay verified historical audit event",
+      p_request_id: randomUUID(),
+    });
+    expect(replayed.error).toBeNull();
+    expect(replayed.data).toBe(first.id);
+    await processOutboxBatch(db, {
+      workerId: `safe-replay-${randomUUID()}`,
+      batchSize: 100,
+    });
+    expect((await readOutbox(db, first.id)).status).toBe("PROCESSED");
+    expect((await readOutbox(db, second.id)).status).toBe("PROCESSED");
+    const duplicate = await readDelivery();
+    expect(duplicate.error).toBeNull();
+    expect(duplicate.data).toEqual(delivered.data);
+    const current = await db
+      .from("safe_mode_controls")
+      .select("is_paused,request_id")
+      .eq("component", "AI")
+      .single();
+    expect(current.error).toBeNull();
+    expect(current.data).toEqual({
+      is_paused: false,
+      request_id: secondRequest,
+    });
+    const auditCount = await db
+      .from("audit_logs")
+      .select("id", { count: "exact", head: true })
+      .eq("target_type", "SAFE_MODE")
+      .eq("actor_user_id", actorId);
+    expect(auditCount.error).toBeNull();
+    expect(auditCount.count).toBe(2);
+    expect(activeLeaseRenewalCount()).toBe(0);
+  });
+});
+
 function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }

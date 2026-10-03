@@ -138,6 +138,10 @@ test.describe("admin restrictions · safe mode", () => {
     expect(stillBefore?.is_paused ?? false).toBe(false);
 
     await confirmOperatorStepUp(applyForm, secret);
+    const validGrant = await applyForm
+      .locator('input[name="stepUpToken"]')
+      .inputValue();
+    expect(validGrant.length).toBeGreaterThanOrEqual(16);
     // Bypass the client change event to exercise the server's input boundary:
     // an invalid date must not spend a valid one-time grant.
     const reviewTime = applyForm.getByLabel("검토 시각(한국 시간, 선택)");
@@ -157,6 +161,13 @@ test.describe("admin restrictions · safe mode", () => {
     await reviewTime.evaluate((field: HTMLInputElement) => {
       field.value = "";
     });
+    // Submission deliberately clears the UI token. Restore this same unused
+    // grant only in the test to prove the server did not consume invalid input.
+    await applyForm
+      .locator('input[name="stepUpToken"]')
+      .evaluate((field: HTMLInputElement, token) => {
+        field.value = token;
+      }, validGrant);
     await applyForm.getByRole("button", { name: "안전 모드 적용" }).click();
     await expect(applyForm.getByRole("status")).toContainText(
       "알림 기능을 잠시 멈췄습니다",

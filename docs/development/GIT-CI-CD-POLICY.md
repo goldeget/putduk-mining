@@ -33,6 +33,12 @@ The repository must have no missing reachable objects. A shallow clone may be re
 - Never erase user work to create a clean tree.
 - Generated assets are reviewed through their manifest and source/version record.
 - Commits are atomic enough to revert without mixing unrelated state.
+- Batch a complete feature flow into each PR: input, authorization, domain/DB,
+  worker, UI and recovery changes that belong together. Keep reversible commits
+  locally and run focused checks before publishing a stable candidate. Do not
+  trigger the full workflow for every small intermediate edit. Verify the final
+  PR candidate and its develop merge independently; a changed failing candidate
+  still needs a new complete run.
 
 ## 4. CI gates
 

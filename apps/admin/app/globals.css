@@ -227,16 +227,23 @@ input:focus-visible {
   height: 100svh;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
   border-right: 1px solid var(--line);
   background: var(--background-subtle);
   padding: 28px 20px;
 }
 .brand-lockup--rail {
+  flex-shrink: 0;
   margin: 0 7px 48px;
 }
 .control-rail nav {
   display: grid;
+  flex: 1;
+  min-height: 80px;
+  overflow-y: auto;
+  align-content: start;
   gap: 8px;
+  margin-bottom: 16px;
 }
 .control-rail nav a {
   display: flex;
@@ -260,6 +267,7 @@ input:focus-visible {
 }
 .operator-card {
   display: grid;
+  flex-shrink: 0;
   gap: 5px;
   margin-top: auto;
   border: 1px solid var(--line);
@@ -1008,6 +1016,7 @@ input:focus-visible {
   .control-rail {
     position: static;
     height: auto;
+    overflow-y: visible;
     display: grid;
     grid-template-columns: 1fr auto;
     border-right: 0;
@@ -1020,9 +1029,12 @@ input:focus-visible {
   .control-rail nav {
     grid-column: 1 / -1;
     display: flex;
+    flex: initial;
     min-width: 0;
+    min-height: 0;
     max-width: 100%;
     margin-top: 16px;
+    margin-bottom: 0;
     overflow-x: auto;
   }
   /* 좁은 화면에서도 세션 종료를 숨기지 않는다. */
@@ -1031,7 +1043,21 @@ input:focus-visible {
     margin-top: 12px;
   }
   .control-topbar {
+    display: flex;
+    height: auto;
+    padding: 12px 16px;
+  }
+  .control-topbar > div:first-child,
+  .control-topbar__tools > p {
     display: none;
+  }
+  .control-topbar__tools,
+  .control-topbar .theme-control {
+    width: 100%;
+  }
+  .control-topbar .theme-control {
+    flex-wrap: wrap;
+    justify-content: space-between;
   }
   .control-main {
     padding-top: 24px;
@@ -1135,6 +1161,7 @@ input:focus-visible {
 }
 .theme-control select {
   min-height: 44px;
+  font: inherit;
   font-size: 1rem;
   max-width: 100%;
   padding: 0.5rem;
