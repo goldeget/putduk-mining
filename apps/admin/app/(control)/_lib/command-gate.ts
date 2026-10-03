@@ -12,6 +12,10 @@ import {
 import { getAdminIdentity, type AdminPrincipal } from "@/lib/auth/principal";
 import { assertAndTouchAdminAppSession } from "@/lib/auth/session-registry";
 import { consumeAdminStepUpGrant } from "@/lib/auth/step-up";
+import {
+  declaredClientOffline,
+  parseLogicalOperationKey,
+} from "@/lib/money/logical-operation";
 
 export type CommandActionResult =
   { ok: true; message: string } | { ok: false; code: string; message: string };
@@ -98,6 +102,38 @@ export async function requireHighImpactPrincipal(
       adminSessionId: session.adminSessionId,
     },
   };
+}
+
+const offlineMoneyResult: CommandActionResult = {
+  ok: false,
+  code: "OFFLINE_BLOCKED",
+  message:
+    "연결이 끊긴 상태에서는 처리하지 않습니다. 다시 연결된 뒤 직접 눌러 주세요.",
+};
+
+/** 스텝업을 소비하기 전에 끊김과 재시도 키를 확인한다. */
+export function prepareMoneyAttempt(
+  formData: FormData,
+):
+  | { ok: true; idempotencyKey: string }
+  | { ok: false; result: CommandActionResult } {
+  if (declaredClientOffline(formData.get("clientOnline"))) {
+    return { ok: false, result: offlineMoneyResult };
+  }
+  const idempotencyKey = parseLogicalOperationKey(
+    formData.get("idempotencyKey"),
+  );
+  if (!idempotencyKey) {
+    return {
+      ok: false,
+      result: {
+        ok: false,
+        code: "INVALID_IDEMPOTENCY_KEY",
+        message: "요청 식별자를 확인해 주세요.",
+      },
+    };
+  }
+  return { ok: true, idempotencyKey };
 }
 
 export function newIdempotencyKey(prefix: string): string {

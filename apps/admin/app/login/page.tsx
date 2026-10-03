@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 import { ThemeControl } from "../../../../components/system/theme-control";
 
 import { LoginForm } from "@/components/login-form";
-import { getAdminIdentity } from "@/lib/auth/principal";
+import { getAdminIdentityForLoginPage } from "@/lib/auth/principal";
 import { safeAdminReturnPath } from "@/lib/auth/return-path";
 
 export const metadata: Metadata = { title: "운영자 로그인" };
@@ -19,7 +19,7 @@ export default async function LoginPage({
 }) {
   const { returnTo, denied } = await searchParams;
   const safeReturn = safeAdminReturnPath(returnTo);
-  const identity = await getAdminIdentity();
+  const identity = await getAdminIdentityForLoginPage();
   if (identity?.role) {
     const destination =
       identity.aal === "aal2"

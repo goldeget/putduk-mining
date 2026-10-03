@@ -77,6 +77,10 @@ describe("admin authorization policy", () => {
   it("allows only known admin return paths", () => {
     expect(safeAdminReturnPath("/members?id=one")).toBe("/members?id=one");
     expect(safeAdminReturnPath("/deposits/usdt")).toBe("/deposits/usdt");
+    expect(safeAdminReturnPath("/deposits/krw")).toBe("/deposits/krw");
+    expect(
+      safeAdminReturnPath("/deposits/krw/11111111-1111-4111-8111-111111111111"),
+    ).toBe("/deposits/krw/11111111-1111-4111-8111-111111111111");
     expect(safeAdminReturnPath("/withdrawals/krw-bank")).toBe(
       "/withdrawals/krw-bank",
     );

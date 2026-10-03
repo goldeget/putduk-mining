@@ -3,6 +3,8 @@ import { createHmac } from "node:crypto";
 import { expect, type Page } from "@playwright/test";
 import { createClient } from "@supabase/supabase-js";
 
+import { waitForRouteBody } from "../../../typography/route-readiness";
+
 export const ADMIN_ORIGIN = `http://127.0.0.1:${process.env.E2E_ADMIN_PORT ?? "3100"}`;
 const REMOTE_PROJECT_REF = "osrmyjgmpdspdcwqjwuv";
 
@@ -89,38 +91,131 @@ export async function grantAdminRole(userId: string) {
   if (error) throw new Error(error.message);
 }
 
-export async function completeAdminLoginWithTotp(
+async function openAdminLogin(page: Page) {
+  const deadline = Date.now() + 120_000;
+  let lastError = "unknown";
+  while (Date.now() < deadline) {
+    try {
+      await page.goto(`${ADMIN_ORIGIN}/login`, {
+        waitUntil: "domcontentloaded",
+        timeout: 30_000,
+      });
+      await waitForRouteBody(page, "/login", 30_000);
+      await expect(page.locator('input[name="email"]')).toBeVisible({
+        timeout: 10_000,
+      });
+      return;
+    } catch (error) {
+      lastError = error instanceof Error ? error.message : String(error);
+      await page.waitForTimeout(1_500);
+    }
+  }
+  throw new Error(`ADMIN_LOGIN_UI_MISSING: ${lastError}`);
+}
+
+async function completeAdminLoginWithTotpOnce(
   page: Page,
   email: string,
   password: string,
 ): Promise<string> {
-  await page.goto(`${ADMIN_ORIGIN}/login`);
+  await openAdminLogin(page);
   await page.locator('input[name="email"]').fill(email);
   await page.locator('input[name="password"]').fill(password);
   await page.getByRole("button", { name: "보안 로그인" }).click();
   await page.waitForURL(/\/mfa/);
 
   const secretCode = page.locator(".mfa-enrolment code");
-  try {
-    await expect(secretCode).toBeVisible({ timeout: 60_000 });
-  } catch (error) {
-    const note = (await page.locator(".form-note").textContent())?.trim();
-    const alert = (await page.locator("[role='alert']").textContent())?.trim();
-    throw new Error(
-      `TOTP_ENROLMENT_UI_MISSING: note=${note ?? "none"}; alert=${alert ?? "none"}; cause=${error instanceof Error ? error.message : String(error)}`,
-    );
+  const retryButton = page.getByRole("button", { name: "다시 확인" });
+  const verifyOnly = page.getByText(
+    "인증 앱에 표시된 6자리 코드를 입력해 주세요.",
+  );
+  const deadline = Date.now() + 90_000;
+  let sawEnrolment = false;
+  let retryClicks = 0;
+  while (Date.now() < deadline) {
+    if (await secretCode.isVisible()) {
+      sawEnrolment = true;
+      break;
+    }
+    if (await verifyOnly.isVisible()) {
+      throw new Error(
+        "TOTP_ENROLMENT_UI_MISSING: verified-factor-only; enrolment UI expected for first admin login",
+      );
+    }
+    if (await retryButton.isVisible()) {
+      const note = (await page.locator(".form-note").textContent())?.trim();
+      if (
+        note?.includes("로그인 세션을 확인하지 못했습니다") ||
+        note?.includes("다시 로그인해 주세요")
+      ) {
+        throw new Error(
+          `TOTP_ENROLMENT_UI_MISSING: permanent session error; note=${note ?? "none"}`,
+        );
+      }
+      retryClicks += 1;
+      if (retryClicks > 8) {
+        throw new Error(
+          `TOTP_ENROLMENT_UI_MISSING: prepare retry budget exhausted; note=${note ?? "none"}`,
+        );
+      }
+      await retryButton.click();
+    }
+    await page.waitForTimeout(2_000);
+  }
+  if (!sawEnrolment) {
+    try {
+      await expect(secretCode).toBeVisible({ timeout: 5_000 });
+    } catch (error) {
+      const note = (await page.locator(".form-note").textContent())?.trim();
+      const alert = (
+        await page.locator("[role='alert']").textContent()
+      )?.trim();
+      throw new Error(
+        `TOTP_ENROLMENT_UI_MISSING: note=${note ?? "none"}; alert=${alert ?? "none"}; cause=${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
   }
   const secret = (await secretCode.textContent())?.trim();
   if (!secret) throw new Error("TOTP enrolment secret missing.");
 
-  const code = generateTotp(secret);
-  rememberTotpUse(secret, code);
+  const code = await nextTotpCode(secret);
   await page.locator('input[inputmode="numeric"]').fill(code);
   await page.getByRole("button", { name: "인증 완료" }).click();
-  await page.waitForURL((url) => !url.pathname.includes("/mfa"), {
-    timeout: 60_000,
-  });
+  try {
+    await page.waitForURL((url) => !url.pathname.includes("/mfa"), {
+      timeout: 60_000,
+    });
+  } catch (error) {
+    const note = (await page.locator(".form-note").textContent())?.trim();
+    throw new Error(
+      `ADMIN_MFA_NAVIGATION_FAILED: note=${note ?? "none"}; ${error instanceof Error ? error.message : String(error)}`,
+    );
+  }
   return secret;
+}
+
+export async function completeAdminLoginWithTotp(
+  page: Page,
+  email: string,
+  password: string,
+): Promise<string> {
+  let lastError: unknown;
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    try {
+      return await completeAdminLoginWithTotpOnce(page, email, password);
+    } catch (error) {
+      lastError = error;
+      if (
+        attempt === 2 ||
+        !(error instanceof Error) ||
+        (!error.message.includes("TOTP_ENROLMENT_UI_MISSING") &&
+          !error.message.includes("ADMIN_LOGIN_UI_MISSING"))
+      ) {
+        throw error;
+      }
+    }
+  }
+  throw lastError;
 }
 
 /** 이미 등록된 인증 앱으로 별도 브라우저 세션을 연다. */
@@ -130,7 +225,7 @@ export async function completeAdminLoginWithExistingTotp(
   password: string,
   secret: string,
 ) {
-  await page.goto(`${ADMIN_ORIGIN}/login`);
+  await openAdminLogin(page);
   await page.locator('input[name="email"]').fill(email);
   await page.locator('input[name="password"]').fill(password);
   await page.getByRole("button", { name: "보안 로그인" }).click();

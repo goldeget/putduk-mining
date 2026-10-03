@@ -87,6 +87,24 @@ export async function getAdminIdentity(): Promise<AdminIdentity | null> {
   };
 }
 
+function isPutdukTestRuntime() {
+  return (
+    process.env.APP_ENV === "test" || process.env.NEXT_PUBLIC_APP_ENV === "test"
+  );
+}
+
+/**
+ * 로그인 화면 SSR은 세션 조회가 끝나야 폼이 그려진다.
+ * E2E prebuilt(next start)에서는 런타임 APP_ENV가 비어도 NEXT_PUBLIC_APP_ENV=test 가
+ * build에 고정되므로, 테스트에서는 GoTrue 조회 없이 폼을 바로 연다.
+ */
+export async function getAdminIdentityForLoginPage(): Promise<AdminIdentity | null> {
+  if (isPutdukTestRuntime()) {
+    return null;
+  }
+  return getAdminIdentity();
+}
+
 export async function requireAdminIdentity(
   returnPath = "/",
 ): Promise<AdminIdentity> {

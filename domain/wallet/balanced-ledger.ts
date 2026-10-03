@@ -76,3 +76,70 @@ export function validateBalancedLedgerTransaction(
 
   return totals;
 }
+
+export type KrwDepositJournalInput = {
+  approvalAmountAtomic: bigint;
+  cashAccountId: string;
+  correlationId: string;
+  currency: string;
+  idempotencyKey: string;
+  liabilityAccountId: string;
+  reference: string;
+};
+
+/**
+ * 원화 입금 승인액으로 균형 분개를 만든다.
+ * 차변은 운영 현금, 대변은 회원 부채다. 요청액과 승인액의 차이는 여기서 정책으로 만들지 않는다.
+ */
+export function buildKrwDepositJournal(
+  input: KrwDepositJournalInput,
+): BalancedLedgerTransaction {
+  if (input.currency !== "KRW") {
+    throw new Error("KRW deposit journal currency must be KRW.");
+  }
+  if (typeof input.approvalAmountAtomic !== "bigint") {
+    throw new TypeError("approvalAmountAtomic must be a bigint.");
+  }
+
+  const transaction: BalancedLedgerTransaction = {
+    correlationId: input.correlationId,
+    currency: "KRW",
+    idempotencyKey: input.idempotencyKey,
+    lines: [
+      {
+        accountId: input.cashAccountId,
+        amountAtomic: input.approvalAmountAtomic,
+        currency: "KRW",
+        side: "DEBIT",
+      },
+      {
+        accountId: input.liabilityAccountId,
+        amountAtomic: input.approvalAmountAtomic,
+        currency: "KRW",
+        side: "CREDIT",
+      },
+    ],
+    reference: input.reference,
+  };
+
+  validateBalancedLedgerTransaction(transaction);
+  return transaction;
+}
+
+/**
+ * 출금 hold 중에는 부채 순액이 지갑 총잔액보다 작다.
+ * 총잔액과 부채를 그대로 같게 보면 오탐이므로, 열린 hold를 더한 값과 비교한다.
+ */
+export function krwWalletMatchesLiabilityPlusOpenHold(input: {
+  liabilityNetAtomic: bigint;
+  openHoldAtomic: bigint;
+  walletTotalAtomic: bigint;
+}): boolean {
+  if (input.openHoldAtomic < 0n) {
+    throw new RangeError("Open hold must be zero or positive.");
+  }
+
+  return (
+    input.liabilityNetAtomic + input.openHoldAtomic === input.walletTotalAtomic
+  );
+}

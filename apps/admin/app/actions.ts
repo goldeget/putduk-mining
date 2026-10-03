@@ -5,6 +5,11 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
+import {
+  readAdminAuthFailureBudget,
+  recordAdminAuthFailure,
+  writeAdminAuthServerProof,
+} from "@/lib/auth/failure-limit";
 import { pickHighestRole } from "@/lib/auth/policy";
 import { safeAdminReturnPath } from "@/lib/auth/return-path";
 import {
@@ -23,6 +28,9 @@ const credentialsSchema = z.object({
   returnTo: z.string().optional(),
 });
 const genericLoginError = "입력한 정보로 운영자 로그인을 완료할 수 없습니다.";
+const retryLoginError = "잠시 후 다시 로그인해 주세요.";
+const unavailableLoginError =
+  "지금은 접속을 확인할 수 없습니다. 잠시 후 다시 시도해 주세요.";
 
 export async function loginAction(
   _state: LoginState,
@@ -33,15 +41,40 @@ export async function loginAction(
     password: formData.get("password"),
     returnTo: formData.get("returnTo") ?? undefined,
   });
-  if (!parsed.success) return { message: genericLoginError };
+  const rawEmail = String(formData.get("email") ?? "")
+    .trim()
+    .toLowerCase();
+  if (rawEmail) {
+    const budget = await readAdminAuthFailureBudget("PASSWORD", rawEmail);
+    if (budget === "RATE_LIMITED") return { message: retryLoginError };
+    if (budget === "UNAVAILABLE") return { message: unavailableLoginError };
+  }
+  if (!parsed.success) {
+    if (rawEmail) await recordAdminAuthFailure("PASSWORD", rawEmail);
+    return { message: genericLoginError };
+  }
 
   const supabase = await createAdminServerClient();
   const userAgent = (await headers()).get("user-agent");
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email: parsed.data.email,
-    password: parsed.data.password,
-  });
+  let data: Awaited<
+    ReturnType<typeof supabase.auth.signInWithPassword>
+  >["data"];
+  let error: Awaited<
+    ReturnType<typeof supabase.auth.signInWithPassword>
+  >["error"];
+  try {
+    const signedIn = await supabase.auth.signInWithPassword({
+      email: parsed.data.email,
+      password: parsed.data.password,
+    });
+    data = signedIn.data;
+    error = signedIn.error;
+  } catch {
+    await recordAdminAuthFailure("PASSWORD", parsed.data.email);
+    return { message: genericLoginError };
+  }
   if (error || !data.user) {
+    await recordAdminAuthFailure("PASSWORD", parsed.data.email);
     await recordAdminSecurityEvent({
       eventType: "ADMIN_LOGIN_REJECTED",
       userId: null,
@@ -56,9 +89,10 @@ export async function loginAction(
     .eq("user_id", data.user.id)
     .is("revoked_at", null);
   if (roleError || !pickHighestRole((roleRows ?? []).map(({ role }) => role))) {
+    await recordAdminAuthFailure("PASSWORD", parsed.data.email);
     await recordAdminSecurityEvent({
       eventType: "ADMIN_LOGIN_REJECTED",
-      userId: data.user.id,
+      userId: null,
       userAgent,
     });
     await supabase.auth.signOut({ scope: "local" });
@@ -78,10 +112,6 @@ export async function loginAction(
   const { data: assurance } =
     await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
   const returnTo = safeAdminReturnPath(parsed.data.returnTo);
-  if (assurance?.currentLevel !== "aal2") {
-    redirect(`/mfa?returnTo=${encodeURIComponent(returnTo)}` as Route);
-  }
-
   const { data: claimsData } = await supabase.auth.getClaims();
   const authSessionId =
     typeof claimsData?.claims?.session_id === "string"
@@ -91,6 +121,19 @@ export async function loginAction(
     await supabase.auth.signOut({ scope: "local" });
     return { message: genericLoginError };
   }
+  const passwordProved = await writeAdminAuthServerProof({
+    kind: "PASSWORD",
+    userId: data.user.id,
+    sessionId: authSessionId,
+  });
+  if (!passwordProved) {
+    await supabase.auth.signOut({ scope: "local" });
+    return { message: unavailableLoginError };
+  }
+  if (assurance?.currentLevel !== "aal2") {
+    redirect(`/mfa?returnTo=${encodeURIComponent(returnTo)}` as Route);
+  }
+
   const registered = await registerAdminAppSession({
     userId: data.user.id,
     authSessionId,

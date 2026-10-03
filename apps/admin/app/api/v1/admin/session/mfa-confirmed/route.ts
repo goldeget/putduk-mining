@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { hasAdminAuthServerProof } from "@/lib/auth/failure-limit";
 import { ADMIN_ROLES } from "@/lib/auth/policy";
 import { getAdminIdentity } from "@/lib/auth/principal";
 import { registerAdminAppSession } from "@/lib/auth/session-registry";
@@ -30,7 +31,9 @@ export async function POST(request: Request) {
       { status: 403 },
     );
   }
-  if (identity.aal !== "aal2") {
+  const { data: assurance } =
+    await identity.supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+  if (assurance?.currentLevel !== "aal2") {
     return NextResponse.json(
       { error: { code: "MFA_REQUIRED" } },
       { status: 403 },
@@ -39,6 +42,23 @@ export async function POST(request: Request) {
   if (!identity.sessionId) {
     return NextResponse.json(
       { error: { code: "ADMIN_SESSION_REQUIRED" } },
+      { status: 403 },
+    );
+  }
+  const totpProof = await hasAdminAuthServerProof({
+    kind: "TOTP",
+    userId: identity.userId,
+    sessionId: identity.sessionId,
+  });
+  if (totpProof === null) {
+    return NextResponse.json(
+      { error: { code: "AUTH_UNAVAILABLE" } },
+      { status: 503 },
+    );
+  }
+  if (!totpProof) {
+    return NextResponse.json(
+      { error: { code: "MFA_REQUIRED" } },
       { status: 403 },
     );
   }

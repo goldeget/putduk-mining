@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { isAdminCommandFamily } from "@/lib/auth/command-families";
+import { hasAdminAuthServerProof } from "@/lib/auth/failure-limit";
 import { hasRecentTotpStepUp, HIGH_IMPACT_ROLES } from "@/lib/auth/policy";
 import { requireAdminCommand } from "@/lib/auth/principal";
 import { issueAdminStepUpGrant } from "@/lib/auth/step-up";
@@ -21,7 +22,18 @@ export async function POST(request: Request) {
     );
   }
 
-  if (!hasRecentTotpStepUp(access.principal.amr)) {
+  const totpProof = await hasAdminAuthServerProof({
+    kind: "TOTP",
+    userId: access.principal.userId,
+    sessionId: access.principal.sessionId,
+  });
+  if (totpProof === null) {
+    return NextResponse.json(
+      { error: { code: "AUTH_UNAVAILABLE" } },
+      { status: 503 },
+    );
+  }
+  if (!totpProof || !hasRecentTotpStepUp(access.principal.amr)) {
     return NextResponse.json(
       { error: { code: "STEP_UP_REQUIRED" } },
       { status: 403 },

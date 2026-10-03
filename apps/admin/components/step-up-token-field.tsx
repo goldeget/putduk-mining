@@ -117,36 +117,32 @@ export function StepUpTokenField({
     const timeout = window.setTimeout(() => controller.abort(), 15_000);
     try {
       if (!navigator.onLine) throw new Error("OFFLINE");
-      const supabase = createAdminBrowserClient();
-      const { data: factors, error: factorError } = await waitForAdminResult(
-        supabase.auth.mfa.listFactors(),
-        controller.signal,
-      );
-      if (!current() || controller.signal.aborted) return;
-      if (factorError || !factors || !Array.isArray(factors.totp)) {
-        setBusy(false);
-        setMessage("인증 수단을 불러오지 못했습니다.");
-        return;
-      }
-      const verified = factors.totp.find(
-        (factor) => factor.status === "verified",
-      );
-      if (!verified) {
-        setBusy(false);
-        setMessage("등록된 인증 앱이 없습니다. 먼저 MFA를 완료해 주세요.");
-        return;
-      }
-      const { error: verifyError } = await waitForAdminResult(
-        supabase.auth.mfa.challengeAndVerify({
-          factorId: verified.id,
-          code,
+      const verified = await waitForAdminResult(
+        fetch("/api/v1/admin/session/totp-verify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ code, purpose: "STEP_UP" }),
+          signal: controller.signal,
         }),
         controller.signal,
       );
+      const verifiedPayload = (await waitForAdminResult(
+        verified.json().catch(() => null),
+        controller.signal,
+      )) as { data?: { verified?: boolean }; error?: { code?: string } } | null;
       if (!current() || controller.signal.aborted) return;
-      if (verifyError) {
+      if (verifiedPayload?.error?.code === "RATE_LIMITED") {
         setBusy(false);
-        setMessage("인증 코드가 올바르지 않거나 만료되었습니다.");
+        setMessage("잠시 후 다시 시도해 주세요.");
+        return;
+      }
+      if (!verified.ok || verifiedPayload?.data?.verified !== true) {
+        setBusy(false);
+        setMessage(
+          verified.status === 401
+            ? "인증 코드가 올바르지 않거나 만료되었습니다."
+            : "인증 결과를 확인하지 못했습니다. 다시 시도해 주세요.",
+        );
         return;
       }
       const response = await waitForAdminResult(

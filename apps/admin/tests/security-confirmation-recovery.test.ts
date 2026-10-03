@@ -2,16 +2,14 @@
 import { act, createElement } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { MfaGate } from "@/components/mfa-gate";
+import { ADMIN_MFA_PREPARE_TIMEOUT_MS, MfaGate } from "@/components/mfa-gate";
 import { StepUpTokenField } from "@/components/step-up-token-field";
 import { KycReviewForm } from "@/app/(control)/kyc/review-form";
 
 const mocks = vi.hoisted(() => ({
-  getSession: vi.fn(),
+  prepareAdminMfaAction: vi.fn(),
   listFactors: vi.fn(),
   challengeAndVerify: vi.fn(),
-  enroll: vi.fn(),
-  unenroll: vi.fn(),
   replace: vi.fn(),
   refresh: vi.fn(),
   reviewKyc: vi.fn(),
@@ -19,15 +17,14 @@ const mocks = vi.hoisted(() => ({
 vi.mock("@/app/(control)/kyc/actions", () => ({
   reviewKycCaseFromFields: mocks.reviewKyc,
 }));
+vi.mock("@/app/mfa/actions", () => ({
+  prepareAdminMfaAction: mocks.prepareAdminMfaAction,
+}));
 vi.mock("@/lib/supabase/browser", () => ({
   createAdminBrowserClient: () => ({
     auth: {
-      getSession: mocks.getSession,
       mfa: {
-        listFactors: mocks.listFactors,
         challengeAndVerify: mocks.challengeAndVerify,
-        enroll: mocks.enroll,
-        unenroll: mocks.unenroll,
       },
       onAuthStateChange: () => ({
         data: { subscription: { unsubscribe: vi.fn() } },
@@ -47,13 +44,12 @@ beforeEach(() => {
     configurable: true,
     value: true,
   });
-  mocks.getSession.mockResolvedValue({
-    data: { session: { user: { id: "qa-only" } } },
-    error: null,
-  });
-  mocks.listFactors.mockResolvedValue({
-    data: { totp: [{ id: "factor-qa", status: "verified" }], all: [] },
-    error: null,
+  mocks.prepareAdminMfaAction.mockResolvedValue({
+    status: "ready",
+    mode: "verify",
+    factorId: "factor-qa",
+    enrolment: null,
+    message: "인증 앱에 표시된 6자리 코드를 입력해 주세요.",
   });
   mocks.challengeAndVerify.mockResolvedValue({ error: null });
   container = document.createElement("div");
@@ -109,12 +105,32 @@ async function verifyMfa() {
   );
 }
 
+function jsonResponse(body: unknown, status = 200) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "Content-Type": "application/json" },
+  });
+}
+
+function mockVerifiedThen(body: unknown, status = 200) {
+  return vi.fn(async (input: RequestInfo | URL) => {
+    const url = String(input);
+    if (url.includes("totp-verify"))
+      return jsonResponse({ data: { verified: true } });
+    return jsonResponse(body, status);
+  });
+}
+
 describe("security confirmation recovery", () => {
   it("MFA preparation timeout recovers without a fake verified factor", async () => {
     vi.useFakeTimers();
-    mocks.getSession.mockImplementationOnce(() => new Promise(() => undefined));
+    mocks.prepareAdminMfaAction.mockImplementationOnce(
+      () => new Promise(() => undefined),
+    );
     await mountMfa();
-    await act(async () => vi.advanceTimersByTimeAsync(15_001));
+    await act(async () =>
+      vi.advanceTimersByTimeAsync(ADMIN_MFA_PREPARE_TIMEOUT_MS + 1),
+    );
     expect(container.textContent).toContain("다시 확인");
     expect(
       container.querySelector<HTMLButtonElement>('button[type="submit"]')!
@@ -123,7 +139,7 @@ describe("security confirmation recovery", () => {
     expect(mocks.replace).not.toHaveBeenCalled();
   });
   it("MFA preparation throw exposes a retry instead of permanent busy", async () => {
-    mocks.getSession.mockRejectedValueOnce(new TypeError("network"));
+    mocks.prepareAdminMfaAction.mockRejectedValueOnce(new TypeError("network"));
     await mountMfa();
     expect(container.textContent).toContain("다시 확인");
     expect(container.querySelector<HTMLButtonElement>("button")!.disabled).toBe(
@@ -156,21 +172,15 @@ describe("security confirmation recovery", () => {
     await mountMfa();
     await verifyMfa();
     expect(mocks.replace).not.toHaveBeenCalled();
-    expect(container.textContent).toContain("보안 기록");
+    expect(mocks.challengeAndVerify).not.toHaveBeenCalled();
+    expect(container.textContent).toContain("인증 결과");
   });
   it.each(["", "fixture-session", "00000000-0000-4000-8000"])(
     "MFA rejects a non-UUID recorded session %s",
     async (adminSessionId) => {
       vi.stubGlobal(
         "fetch",
-        vi
-          .fn()
-          .mockResolvedValue(
-            new Response(
-              JSON.stringify({ data: { recorded: true, adminSessionId } }),
-              { status: 200 },
-            ),
-          ),
+        mockVerifiedThen({ data: { recorded: true, adminSessionId } }),
       );
       await mountMfa();
       await verifyMfa();
@@ -181,20 +191,16 @@ describe("security confirmation recovery", () => {
   it("MFA accepts the recorded UUID response contract", async () => {
     vi.stubGlobal(
       "fetch",
-      vi.fn().mockResolvedValue(
-        new Response(
-          JSON.stringify({
-            data: {
-              recorded: true,
-              adminSessionId: "00000000-0000-4000-8000-000000000001",
-            },
-          }),
-          { status: 200 },
-        ),
-      ),
+      mockVerifiedThen({
+        data: {
+          recorded: true,
+          adminSessionId: "00000000-0000-4000-8000-000000000001",
+        },
+      }),
     );
     await mountMfa();
     await verifyMfa();
+    expect(mocks.challengeAndVerify).not.toHaveBeenCalled();
     expect(mocks.replace).toHaveBeenCalledWith("/kyc");
     expect(mocks.refresh).toHaveBeenCalledOnce();
   });
@@ -280,14 +286,9 @@ describe("security confirmation recovery", () => {
     const grant = "qa-token-with-more-than-16-characters";
     vi.stubGlobal(
       "fetch",
-      vi.fn().mockResolvedValue(
-        new Response(
-          JSON.stringify({
-            data: { token: grant, commandFamily: "KYC_REVIEW" },
-          }),
-          { status: 200 },
-        ),
-      ),
+      mockVerifiedThen({
+        data: { token: grant, commandFamily: "KYC_REVIEW" },
+      }),
     );
     const callback = vi.fn();
     let finish: (() => void) | undefined;
@@ -341,14 +342,9 @@ describe("security confirmation recovery", () => {
     const grant = "qa-token-with-more-than-16-characters";
     vi.stubGlobal(
       "fetch",
-      vi.fn().mockResolvedValue(
-        new Response(
-          JSON.stringify({
-            data: { token: grant, commandFamily: "KYC_REVIEW" },
-          }),
-          { status: 200 },
-        ),
-      ),
+      mockVerifiedThen({
+        data: { token: grant, commandFamily: "KYC_REVIEW" },
+      }),
     );
     let finish: ((value: unknown) => void) | undefined;
     mocks.reviewKyc.mockImplementationOnce(
@@ -384,26 +380,28 @@ describe("security confirmation recovery", () => {
     ).toBe("");
   });
   it("step-up clears an earlier grant before a thrown re-check", async () => {
-    const fetch = vi.fn().mockResolvedValue(
-      new Response(
-        JSON.stringify({
+    const fetch = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse({ data: { verified: true } }))
+      .mockResolvedValueOnce(
+        jsonResponse({
           data: {
             token: "qa-token-with-more-than-16-characters",
             commandFamily: "KYC_REVIEW",
           },
         }),
-        { status: 200 },
-      ),
-    );
+      )
+      .mockRejectedValueOnce(new TypeError("failed"));
     vi.stubGlobal("fetch", fetch);
     const callback = await mountStepUp();
     await issue();
+    expect(mocks.listFactors).not.toHaveBeenCalled();
+    expect(mocks.challengeAndVerify).not.toHaveBeenCalled();
     expect(
       container.querySelector<HTMLInputElement>('input[name="stepUpToken"]')!
         .value,
     ).toContain("qa-token");
     await fillCode();
-    mocks.listFactors.mockRejectedValueOnce(new TypeError("failed"));
     await issue();
     expect(
       container.querySelector<HTMLInputElement>('input[name="stepUpToken"]')!
@@ -419,20 +417,15 @@ describe("security confirmation recovery", () => {
     async (kind) => {
       vi.stubGlobal(
         "fetch",
-        vi.fn().mockResolvedValue(
-          new Response(
-            JSON.stringify(
-              kind === "malformed"
-                ? {}
-                : {
-                    data: {
-                      token: "qa-token-with-more-than-16-characters",
-                      commandFamily: "DEPOSIT_CONFIRM",
-                    },
-                  },
-            ),
-            { status: 200 },
-          ),
+        mockVerifiedThen(
+          kind === "malformed"
+            ? {}
+            : {
+                data: {
+                  token: "qa-token-with-more-than-16-characters",
+                  commandFamily: "DEPOSIT_CONFIRM",
+                },
+              },
         ),
       );
       await mountStepUp();
@@ -444,48 +437,33 @@ describe("security confirmation recovery", () => {
       expect(container.textContent).not.toContain("이제 명령을");
     },
   );
-  it("SDK timeout releases busy and ignores the eventually late result", async () => {
-    vi.useFakeTimers();
-    let resolveLate:
-      | ((value: { data: { totp: []; all: [] }; error: null }) => void)
-      | undefined;
-    mocks.listFactors.mockImplementationOnce(
-      () =>
-        new Promise((resolve) => {
-          resolveLate = resolve;
-        }),
-    );
+  it("step-up confirmation does not call browser Auth MFA", async () => {
+    const fetch = mockVerifiedThen({
+      data: {
+        token: "qa-token-with-more-than-16-characters",
+        commandFamily: "KYC_REVIEW",
+      },
+    });
+    vi.stubGlobal("fetch", fetch);
     await mountStepUp();
     await issue();
-    expect(container.querySelector<HTMLButtonElement>("button")!.disabled).toBe(
-      true,
-    );
-    await act(async () => vi.advanceTimersByTimeAsync(15_001));
-    expect(container.querySelector<HTMLButtonElement>("button")!.disabled).toBe(
-      false,
-    );
-    await act(async () =>
-      resolveLate?.({ data: { totp: [], all: [] }, error: null }),
-    );
+    expect(mocks.listFactors).not.toHaveBeenCalled();
+    expect(mocks.challengeAndVerify).not.toHaveBeenCalled();
+    expect(String(fetch.mock.calls[0]?.[0])).toContain("totp-verify");
     expect(
       container.querySelector<HTMLInputElement>('input[name="stepUpToken"]')!
         .value,
-    ).toBe("");
+    ).toContain("qa-token");
   });
   it("offline invalidation removes the hidden grant and parent copy", async () => {
     vi.stubGlobal(
       "fetch",
-      vi.fn().mockResolvedValue(
-        new Response(
-          JSON.stringify({
-            data: {
-              token: "qa-token-with-more-than-16-characters",
-              commandFamily: "KYC_REVIEW",
-            },
-          }),
-          { status: 200 },
-        ),
-      ),
+      mockVerifiedThen({
+        data: {
+          token: "qa-token-with-more-than-16-characters",
+          commandFamily: "KYC_REVIEW",
+        },
+      }),
     );
     const callback = await mountStepUp();
     await issue();
@@ -500,17 +478,12 @@ describe("security confirmation recovery", () => {
     vi.useFakeTimers();
     vi.stubGlobal(
       "fetch",
-      vi.fn().mockResolvedValue(
-        new Response(
-          JSON.stringify({
-            data: {
-              token: "qa-token-with-more-than-16-characters",
-              commandFamily: "KYC_REVIEW",
-            },
-          }),
-          { status: 200 },
-        ),
-      ),
+      mockVerifiedThen({
+        data: {
+          token: "qa-token-with-more-than-16-characters",
+          commandFamily: "KYC_REVIEW",
+        },
+      }),
     );
     const callback = await mountStepUp();
     await issue();

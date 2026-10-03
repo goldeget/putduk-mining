@@ -47,3 +47,25 @@ export function calculateLedgerBalance(
       : balance - entry.amountAtomic;
   }, 0n);
 }
+
+/** 원화 입금 승인이 지갑 투영에 남기는 대변. 금액은 승인액이며 소수점을 받지 않는다. */
+export function krwDepositProjectionCredit(input: {
+  amountAtomic: bigint;
+  idempotencyKey: string;
+}): LedgerEntry {
+  if (typeof input.amountAtomic !== "bigint" || input.amountAtomic <= 0n) {
+    throw new RangeError(
+      "KRW deposit projection amount must be a positive bigint.",
+    );
+  }
+  if (!input.idempotencyKey.trim()) {
+    throw new Error("KRW deposit projection requires an idempotency key.");
+  }
+
+  return {
+    amountAtomic: input.amountAtomic,
+    direction: "CREDIT",
+    entryType: "DEPOSIT",
+    idempotencyKey: input.idempotencyKey,
+  };
+}

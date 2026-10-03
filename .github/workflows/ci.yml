@@ -176,11 +176,56 @@ jobs:
       - name: Probe e2e-web-server process-group teardown
         run: node scripts/run-with-watchdog.mjs 120 -- node scripts/e2e-web-server-lifecycle-harness.mjs
 
+  # 회원·운영자 production build를 workflow당 1회만 수행한다.
+  # authenticated shard와 typography-protected가 동일 산출물을 재사용해 shard당 next dev/중복 build를 막는다.
+  e2e-app-build:
+    name: E2E production build artifact
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6.1.0
+        with:
+          version: 12.6.0
+
+      - name: Install Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # NEXT_PUBLIC_* 는 next build 시 클라이언트 번들에 고정된다. shard 런타임 env만으로는
+      # Channel Talk E2E 포트(mock) 키를 바꿀 수 없어 support-channel-talk 스펙이 깨진다.
+      - name: Build member and admin apps for E2E
+        run: pnpm build
+        env:
+          APP_ENV: test
+          NEXT_PUBLIC_APP_ENV: test
+          NEXT_PUBLIC_CHANNEL_TALK_PLUGIN_KEY: putduk-e2e-plugin-key
+          CHANNEL_TALK_MEMBER_HASH_SECRET: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+
+      - name: Upload E2E production build
+        uses: actions/upload-artifact@v7
+        with:
+          name: e2e-next-production
+          retention-days: 1
+          include-hidden-files: true
+          if-no-files-found: error
+          path: |
+            .next
+            apps/admin/.next
+
   authenticated:
     name: Authenticated product gates (${{ matrix.shard }}/8)
     runs-on: ubuntu-24.04
     timeout-minutes: 90
-    needs: [webserver-lifecycle]
+    needs: [webserver-lifecycle, e2e-app-build]
     strategy:
       fail-fast: false
       matrix:
@@ -203,13 +248,18 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Download E2E production build
+        uses: actions/download-artifact@v7
+        with:
+          name: e2e-next-production
+
       - name: Install Supabase CLI
         uses: supabase/setup-cli@v3
         with:
           version: 2.113.0
 
       - name: Start local Supabase
-        run: supabase start --yes
+        run: bash scripts/ci-supabase-start.sh
 
       - name: Rebuild migrations from zero
         run: pnpm db:reset
@@ -234,12 +284,20 @@ jobs:
             ms-playwright-${{ runner.os }}-
 
       - name: Install Chromium
-        run: pnpm exec playwright install --with-deps chromium
+        run: |
+          if [ -d "$HOME/.cache/ms-playwright" ] && [ -n "$(ls -A "$HOME/.cache/ms-playwright" 2>/dev/null)" ]; then
+            pnpm exec playwright install chromium
+          else
+            pnpm exec playwright install --with-deps chromium
+          fi
 
       - name: Run authenticated browser tests
         # 관리자 출금 E2E는 실제 TOTP 창을 기다린다. shard당 한도를 줄이지 않는다.
         # 186개(chromium + mobile-chrome)를 8-way --shard로 나누면 shard당 약 23건이다. wall time은 가장 느린 shard 기준.
+        # CI wall-clock: e2e-app-build 산출물 + E2E_NEXT_START=1 (next start). next dev 금지 — putduk-ci-wall-clock.mdc.
         timeout-minutes: 75
+        env:
+          E2E_NEXT_START: "1"
         # pnpm run … -- --shard 는 CI에서 playwright 인자 앞에 `--` 가 한 번 더 붙어 shard가 무시된다.
         run: pnpm exec playwright test --config playwright.authenticated.config.ts --shard=${{ matrix.shard }}/8
 
@@ -281,7 +339,7 @@ jobs:
           version: 2.113.0
 
       - name: Start local Supabase
-        run: supabase start --yes
+        run: bash scripts/ci-supabase-start.sh
 
       - name: Rebuild migrations from zero
         run: pnpm db:reset
@@ -349,6 +407,7 @@ jobs:
     name: Korean typography protected gates
     runs-on: ubuntu-24.04
     timeout-minutes: 40
+    needs: [e2e-app-build]
     steps:
       - name: Check out source
         uses: actions/checkout@v7
@@ -367,13 +426,18 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Download E2E production build
+        uses: actions/download-artifact@v7
+        with:
+          name: e2e-next-production
+
       - name: Install Supabase CLI
         uses: supabase/setup-cli@v3
         with:
           version: 2.113.0
 
       - name: Start local Supabase
-        run: supabase start --yes
+        run: bash scripts/ci-supabase-start.sh
 
       - name: Rebuild migrations from zero
         run: pnpm db:reset
@@ -381,11 +445,31 @@ jobs:
       - name: Export local Supabase env
         run: node scripts/capture-local-supabase-env.mjs
 
+      - name: Resolve Playwright version
+        id: playwright-version
+        run: echo "version=$(pnpm exec playwright --version | awk '{print $2}')" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/ms-playwright
+          key: ms-playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ms-playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}-
+            ms-playwright-${{ runner.os }}-
+
       - name: Install Chromium
-        run: pnpm exec playwright install --with-deps chromium
+        run: |
+          if [ -d "$HOME/.cache/ms-playwright" ] && [ -n "$(ls -A "$HOME/.cache/ms-playwright" 2>/dev/null)" ]; then
+            pnpm exec playwright install chromium
+          else
+            pnpm exec playwright install --with-deps chromium
+          fi
 
       - name: Run protected Korean typography
         timeout-minutes: 20
+        env:
+          E2E_PREBUILT_APPS: "1"
         run: pnpm exec playwright test --config playwright.typography.protected.config.ts
 
       - name: Assert protected typography evidence

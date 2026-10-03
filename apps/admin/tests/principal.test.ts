@@ -27,6 +27,7 @@ vi.mock("next/headers", () => ({
 
 import {
   getAdminIdentity,
+  getAdminIdentityForLoginPage,
   requireAdminCommand,
   requireAdminIdentity,
 } from "@/lib/auth/principal";
@@ -103,6 +104,26 @@ describe("admin server principal boundary", () => {
       role: null,
       userId: USER_ID,
     });
+  });
+
+  it("skips SSR identity lookup on the login page in test runtime", async () => {
+    vi.stubEnv("APP_ENV", "test");
+    const { client } = createAuthenticatedClient();
+    mocks.createAdminServerClient.mockResolvedValue(client);
+
+    await expect(getAdminIdentityForLoginPage()).resolves.toBeNull();
+    expect(mocks.createAdminServerClient).not.toHaveBeenCalled();
+    vi.unstubAllEnvs();
+  });
+
+  it("skips SSR identity lookup when only NEXT_PUBLIC_APP_ENV is test (prebuilt E2E)", async () => {
+    vi.stubEnv("NEXT_PUBLIC_APP_ENV", "test");
+    const { client } = createAuthenticatedClient();
+    mocks.createAdminServerClient.mockResolvedValue(client);
+
+    await expect(getAdminIdentityForLoginPage()).resolves.toBeNull();
+    expect(mocks.createAdminServerClient).not.toHaveBeenCalled();
+    vi.unstubAllEnvs();
   });
 
   it("rejects a normal authenticated user from loading the admin control plane", async () => {

@@ -68,7 +68,11 @@ const adminWebServerNeeded = needsAdminWebServer();
 /**
  * 로컬에서 회원 앱과 관리자 앱을 동시에 next dev로 컴파일하면
  * authenticator statement_timeout(8s)이 START 조회와 체험 시계 갱신을 취소한다.
- * CI는 러너 여유가 있어 next dev를 유지한다. 로컬 관리자 E2E는 빌드된 next start를 쓴다.
+ *
+ * CI wall-clock 계약: workflow job `e2e-app-build`가 `.next` / `apps/admin/.next` 를 1회 빌드·업로드하고,
+ * authenticated shard는 반드시 `E2E_NEXT_START=1` 로 next start만 쓴다. CI에서 next dev는 금지
+ * (문서·`.cursor/rules/putduk-ci-wall-clock.mdc` 예외 없이 회귀 불가).
+ * 로컬 관리자 E2E는 admin webServer가 필요할 때 기본 next start.
  */
 const useNextStart =
   process.env.E2E_NEXT_START === "1" ||

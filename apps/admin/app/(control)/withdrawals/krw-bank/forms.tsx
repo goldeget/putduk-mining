@@ -1,8 +1,14 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 
 import type { CommandActionResult } from "@/app/(control)/_lib/command-gate";
+import {
+  bindMoneyFormSubmit,
+  MoneyOfflineNote,
+  MoneyOperationFields,
+  useLogicalOperationKey,
+} from "@/components/money-operation-form";
 import {
   ConfirmCheckbox,
   ReasonField,
@@ -32,6 +38,8 @@ export function KrwBankSendForm({
   withdrawalId: string;
   amountKrw: string;
 }) {
+  const operationKey = useLogicalOperationKey("krw_send");
+  const [offlineNote, setOfflineNote] = useState<string | null>(null);
   const [result, action] = useActionState<CommandActionResult | null, FormData>(
     recordKrwExternalSendAction,
     null,
@@ -41,8 +49,10 @@ export function KrwBankSendForm({
       action={action}
       className="operator-form"
       onReset={(event) => event.preventDefault()}
+      onSubmit={(event) => bindMoneyFormSubmit(event, setOfflineNote)}
     >
       <input name="withdrawalId" type="hidden" value={withdrawalId} />
+      <MoneyOperationFields operationKey={operationKey} />
       <TextField
         label="은행 이체 참조(증빙)"
         name="bankReference"
@@ -69,12 +79,15 @@ export function KrwBankSendForm({
         commandFamily={ADMIN_COMMAND_FAMILIES.WITHDRAWAL_OPERATOR}
       />
       <SubmitButton>계좌 송금 기록</SubmitButton>
+      <MoneyOfflineNote message={offlineNote} />
       <QueueFlash result={result} />
     </form>
   );
 }
 
 export function FinalizeLedgerForm({ withdrawalId }: { withdrawalId: string }) {
+  const operationKey = useLogicalOperationKey("krw_fin");
+  const [offlineNote, setOfflineNote] = useState<string | null>(null);
   const [result, action] = useActionState<CommandActionResult | null, FormData>(
     finalizeWithdrawalLedgerAction,
     null,
@@ -84,8 +97,10 @@ export function FinalizeLedgerForm({ withdrawalId }: { withdrawalId: string }) {
       action={action}
       className="operator-form"
       onReset={(event) => event.preventDefault()}
+      onSubmit={(event) => bindMoneyFormSubmit(event, setOfflineNote)}
     >
       <input name="withdrawalId" type="hidden" value={withdrawalId} />
+      <MoneyOperationFields operationKey={operationKey} />
       <p className="panel-note">
         외부 송금은 이미 기록됐습니다. 다시 보내지 말고 원장만 확정하세요.
       </p>
@@ -98,12 +113,17 @@ export function FinalizeLedgerForm({ withdrawalId }: { withdrawalId: string }) {
         commandFamily={ADMIN_COMMAND_FAMILIES.WITHDRAWAL_OPERATOR}
       />
       <SubmitButton>원장 확정</SubmitButton>
+      <MoneyOfflineNote message={offlineNote} />
       <QueueFlash result={result} />
     </form>
   );
 }
 
 export function ReleaseHoldForm({ withdrawalId }: { withdrawalId: string }) {
+  const rejectKey = useLogicalOperationKey("krw_reject");
+  const cancelKey = useLogicalOperationKey("krw_cancel");
+  const [rejectOffline, setRejectOffline] = useState<string | null>(null);
+  const [cancelOffline, setCancelOffline] = useState<string | null>(null);
   const [result, action] = useActionState<CommandActionResult | null, FormData>(
     releaseWithdrawalHoldAction,
     null,
@@ -114,8 +134,10 @@ export function ReleaseHoldForm({ withdrawalId }: { withdrawalId: string }) {
         action={action}
         className="operator-form operator-form--danger"
         onReset={(event) => event.preventDefault()}
+        onSubmit={(event) => bindMoneyFormSubmit(event, setRejectOffline)}
       >
         <input name="withdrawalId" type="hidden" value={withdrawalId} />
+        <MoneyOperationFields operationKey={rejectKey} />
         <ReasonField label="거절 사유" />
         <ConfirmCheckbox
           label="운영 거절입니다. 외부 송금 전에만 가능합니다."
@@ -126,13 +148,16 @@ export function ReleaseHoldForm({ withdrawalId }: { withdrawalId: string }) {
           commandFamily={ADMIN_COMMAND_FAMILIES.WITHDRAWAL_OPERATOR}
         />
         <SubmitButton variant="danger">거절 · 보류 해제</SubmitButton>
+        <MoneyOfflineNote message={rejectOffline} />
       </form>
       <form
         action={action}
         className="operator-form operator-form--danger"
         onReset={(event) => event.preventDefault()}
+        onSubmit={(event) => bindMoneyFormSubmit(event, setCancelOffline)}
       >
         <input name="withdrawalId" type="hidden" value={withdrawalId} />
+        <MoneyOperationFields operationKey={cancelKey} />
         <ReasonField label="취소 사유" />
         <ConfirmCheckbox
           label="운영 취소입니다. 외부 송금 전에만 가능합니다."
@@ -143,6 +168,7 @@ export function ReleaseHoldForm({ withdrawalId }: { withdrawalId: string }) {
           commandFamily={ADMIN_COMMAND_FAMILIES.WITHDRAWAL_OPERATOR}
         />
         <SubmitButton variant="danger">취소 · 보류 해제</SubmitButton>
+        <MoneyOfflineNote message={cancelOffline} />
       </form>
       <QueueFlash result={result} />
     </div>

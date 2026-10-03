@@ -1,16 +1,24 @@
+import { readFileSync } from "node:fs";
+import { spawnSync } from "node:child_process";
+import { fileURLToPath } from "node:url";
+
 import { describe, expect, it } from "vitest";
 
 import {
+  assertLocalApiUrl,
+  assertLocalDbUrl,
   captureFromCliResult,
   formatGithubEnv,
+  loadJobLocalAllowlist,
   parseShellEnv,
+  redactSupabaseCliLine,
 } from "../../scripts/capture-local-supabase-env.mjs";
 
-const LOCAL_URL = "http://127.0.0.1:54321";
+const allow = loadJobLocalAllowlist();
+const LOCAL_URL = `http://127.0.0.1:${allow.apiPort}`;
 const PUBLISHABLE = "sb_publishable_local_fixture";
 const SECRET = "sb_secret_local_fixture";
-const LOCAL_DB =
-  "postgresql://postgres:unit-test-password@127.0.0.1:65432/postgres";
+const LOCAL_DB = `postgresql://postgres:unit-test-password@127.0.0.1:${allow.dbPort}/postgres`;
 
 describe("supabase status env parser", () => {
   it("parses KEY=value, quoted values, and export prefixes", () => {
@@ -158,11 +166,42 @@ SECRET_KEY=${SECRET}
   it("accepts localhost as a local API host", () => {
     const captured = captureFromCliResult({
       status: 0,
-      stdout: `API_URL="http://localhost:54321/"\nPUBLISHABLE_KEY=${PUBLISHABLE}\nSECRET_KEY=${SECRET}\nDB_URL=${LOCAL_DB}\n`,
+      stdout: `API_URL="http://localhost:${allow.apiPort}/"\nPUBLISHABLE_KEY=${PUBLISHABLE}\nSECRET_KEY=${SECRET}\nDB_URL=${LOCAL_DB}\n`,
       stderr: "",
       error: undefined,
     });
-    expect(captured.apiUrl).toBe("http://localhost:54321");
+    expect(captured.apiUrl).toBe(`http://localhost:${allow.apiPort}`);
+  });
+
+  it("rejects a loopback prefix that parses as another host or port", () => {
+    expect(() =>
+      assertLocalApiUrl(`http://127.0.0.1.evil.com:${allow.apiPort}`),
+    ).toThrow(/127\.0\.0\.1 and localhost/);
+    expect(() =>
+      assertLocalApiUrl(`http://127.0.0.1:${allow.apiPort}@evil.com`),
+    ).toThrow(/127\.0\.0\.1 and localhost/);
+    expect(() =>
+      assertLocalApiUrl(`http://127.0.0.1.supabase.co:${allow.apiPort}`),
+    ).toThrow(/Refusing remote Supabase credentials/);
+    expect(() => assertLocalApiUrl("http://127.0.0.1:54321")).toThrow(
+      /job-local port allowlist/,
+    );
+    expect(() =>
+      assertLocalApiUrl(`http://user:pass@127.0.0.1:${allow.apiPort}`),
+    ).toThrow(/embedded credentials/);
+  });
+
+  it("rejects a loopback database URL for another port or project identity", () => {
+    expect(() =>
+      assertLocalDbUrl(
+        `postgresql://postgres.osrmyjgmpdspdcwqjwuv:pw@127.0.0.1:${allow.dbPort}/postgres`,
+      ),
+    ).toThrow(/Refusing remote Supabase database URL/);
+    expect(() =>
+      assertLocalDbUrl(
+        `postgresql://postgres:unit-test-password@127.0.0.1:5432/postgres`,
+      ),
+    ).toThrow(/job-local port allowlist/);
   });
 
   it("rejects a remote database URL without echoing the password", () => {
@@ -209,5 +248,76 @@ SECRET_KEY=${SECRET}
         error: undefined,
       }),
     ).toThrow(/postgres and postgresql/);
+  });
+});
+
+describe("supabase start log redaction", () => {
+  const jwt = "eyJhbGciOiJub25lIn0.eyJyb2xlIjoidGVzdCJ9.c2ln";
+  const storageSecret = "ab".repeat(32);
+  const accessKey = "cd".repeat(16);
+  const digest = `sha256:${"ef".repeat(32)}`;
+
+  it("masks key-shaped strings and keeps the database password mask", () => {
+    const input = [
+      `│ Publishable │ ${PUBLISHABLE} │`,
+      `│ Secret │ ${SECRET} │`,
+      `│ Secret Key │ ${storageSecret} │`,
+      `│ Access Key │ ${accessKey} │`,
+      `anon key: ${jwt}`,
+      `service_role key: ${jwt}`,
+      "│ URL │ postgresql://postgres:unit-test-password@127.0.0.1:65432/postgres │",
+      "│ URL │ postgresql://postgres:***@127.0.0.1:65432/postgres │",
+      "API keys and JWT secrets are shared defaults. Do not use in production",
+      digest,
+      "Secret source: Actions",
+    ].join("\n");
+    const output = input
+      .split("\n")
+      .map((line) => redactSupabaseCliLine(line))
+      .join("\n");
+
+    expect(output).not.toContain(PUBLISHABLE);
+    expect(output).not.toContain(SECRET);
+    expect(output).not.toContain(jwt);
+    expect(output).not.toContain(storageSecret);
+    expect(output).not.toContain(accessKey);
+    expect(output).not.toContain("unit-test-password");
+    expect(output).toContain("<redacted>");
+    expect(output).toContain(
+      "postgresql://postgres:***@127.0.0.1:65432/postgres",
+    );
+    expect(output).toContain("shared defaults");
+    expect(output).toContain(digest);
+    expect(output).toContain("Secret source: Actions");
+  });
+
+  it("redacts the stream before a caller can print it", () => {
+    const result = spawnSync(
+      process.execPath,
+      ["scripts/redact-supabase-cli-stream.mjs"],
+      {
+        input: `│ Secret │ ${SECRET} │\n`,
+        encoding: "utf8",
+        cwd: fileURLToPath(new URL("../..", import.meta.url)),
+      },
+    );
+    expect(result.status).toBe(0);
+    expect(result.stdout).not.toContain(SECRET);
+    expect(result.stdout).toContain("<redacted>");
+    expect(result.stderr ?? "").not.toContain(SECRET);
+  });
+
+  it("pipes supabase start through redaction without shell tracing", () => {
+    const script = readFileSync(
+      fileURLToPath(
+        new URL("../../scripts/ci-supabase-start.sh", import.meta.url),
+      ),
+      "utf8",
+    );
+    expect(script).not.toMatch(/^set -x/m);
+    expect(script).not.toMatch(/supabase start[^\n]*\becho\b/);
+    expect(script).toContain(
+      "supabase start --yes 2>&1 | node scripts/redact-supabase-cli-stream.mjs",
+    );
   });
 });
