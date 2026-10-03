@@ -124,6 +124,14 @@ jobs:
       - name: Run pgTAP tests
         run: pnpm db:test
 
+      # 두 세션 검사는 커밋이 남는다. 공유 suite 를 오염시키지 않도록
+      # 러너의 일회용 DB 를 다시 만든 뒤 그 파일만 실행한다.
+      - name: Rebuild disposable database for concurrent approval
+        run: pnpm db:reset
+
+      - name: Run two-session deposit approval
+        run: supabase test db supabase/tests-concurrent/krw_deposit_concurrent_approval.sql
+
       - name: Lint application schemas
         run: pnpm db:lint
 
