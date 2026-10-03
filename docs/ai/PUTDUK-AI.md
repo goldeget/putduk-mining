@@ -12,6 +12,8 @@ target runtime. A configured code path is not a production launch approval.
 
 ## V1 scope
 
+This document describes the member-facing AI. The required V1 operator assistant is a separate admin surface with its own live operator authorization and draft-only boundary, documented in `docs/architecture/ADMIN-OPERATIONS-ASSISTANT.md`. Member RLS tools and public response caches never become an operator data channel. Operator facts are not sent to the member provider.
+
 PUTDUK AI has four bounded routes:
 
 1. deterministic denial or clarification;
