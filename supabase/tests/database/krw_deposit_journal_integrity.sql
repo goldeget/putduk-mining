@@ -419,7 +419,7 @@ select is(
   'two admins leave one deposit journal'
 );
 
-select skip(1, 'NOT_RUN: two-session concurrent approval needs another database connection');
+-- 같은 입금의 두 세션 동시 승인은 krw_deposit_concurrent_approval.sql 이 검사한다.
 
 -- 4. 다른 payload, 금액·통화·상태, 권한. step-up 토큰은 고정 시그니처에 없다.
 select throws_ok(
