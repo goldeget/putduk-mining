@@ -101,6 +101,23 @@ fixture의 원래 DEBIT/CREDIT 값을 실제 enum으로 명시하며 검사 조�
 과거 fixture에 원본 계정 계약의 liability를 명시하고 두 항목·합계·통화와
 즉시 균형 guard 검사를 추가한다. 기존 실패 assertion과 금융 guard는
 유지한다. 부분 통과·문서·정적 추적은 전체 DB PASS가 아니다.
+
+네 번째 후보 `728cf797f9fba16a1c66157ef083c644c373cea7`의 run
+`37114352291` attempt 1은 main DB suite **23 files / 674 assertions PASS**를
+확인했다. 그 뒤 실제 두 DB 세션 KRW 승인 7개 단언도 통과했지만, spec
+끝의 outbox DELETE cleanup이 새 source 원본 FK에 막혀 job은 실패했다.
+최종 전체 상태는 CANCELLED, 09:49:42Z–09:54:21Z, 4분 39초다. 증거는
+`D:\PUTDUK-MINING-QA\codex-2026-10-03T09-50-27-452Z-ebc9fbc8`에 보존한다.
+이를 Database job 전체 성공이나 PR 성공으로 기록하지 않는다.
+
+workflow는 main suite 뒤 DB를 reset한 다음 동시성 세 파일과 schema
+lint/advisors를 실행한다. 뒤에 공유 데이터 suite가 없으므로 금융 원본을
+행별로 삭제할 필요가 없다. KRW의 금융 cleanup 블록을 제거하고 영수증은
+일회용 러너가 폐기될 때까지 보존한다. source FK·append-only·원장·감사
+기록은 완화하지 않는다. 원래 KRW 7개 / USDT 11개 / safe-mode 6개 단언과
+실제 세션 종료를 유지한다. KRW와 USDT에 source 영수증 단일성과 원본
+journal/wallet/event/effective_at 대조를 각각 2개 추가하여 후보 수는
+**9 / 13 / 6**이다. 이는 아직 새 전체 실행의 통과 결과가 아니다.
 로컬 Supabase 실행은 자동 승인 검토에서 차단됐으므로 우회하지 않는다.
 검증은 이 저장소의 CI 일회용 DB에서 새로 만들고 실행한다. 변경은 한 기능
 묶음으로 제출하며 PR와 develop push의 18개 job·전체 20분 이내 완료를 각각

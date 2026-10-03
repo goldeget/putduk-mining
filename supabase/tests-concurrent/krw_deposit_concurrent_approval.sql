@@ -388,46 +388,53 @@ select is(
   'concurrent KRW approval does not create a USDT wallet'
 );
 
-do $$
-declare
-  v_schema text;
-  v_conn text;
-  v_deposit_id uuid;
-begin
-  select namespace.nspname into v_schema
-  from pg_extension as extension
-  join pg_namespace as namespace on namespace.oid = extension.extnamespace
-  where extension.extname = 'dblink';
+select is(
+  (
+    select count(*)::integer
+    from public.money_source_movements as movement
+    join public.deposit_requests as request
+      on request.ledger_transaction_id = movement.ledger_transaction_id
+    where request.id = (select deposit_id from krw_conc_deposit)
+  ),
+  1,
+  'concurrent KRW approval captures one source movement for the original journal'
+);
 
-  select 'host=' || host || ' dbname=postgres user=postgres password=postgres'
-    into v_conn
-  from krw_conc_host;
-  select deposit_id into v_deposit_id from krw_conc_deposit;
-
-  execute format(
-    'select %I.dblink_connect(%L, %L)',
-    v_schema,
-    'krw_conc_cleanup',
-    v_conn
-  );
-  -- 원장과 감사 기록은 지우지 않는다. 뒤 검사가 잡는 것은 대기 중인 아웃박스뿐이다.
-  execute format(
-    'select %I.dblink_exec(%L, %L)',
-    v_schema,
-    'krw_conc_cleanup',
-    format(
-      'delete from public.outbox_events where aggregate_id = %L::uuid and event_type = %L',
-      v_deposit_id,
-      'DEPOSIT_CONFIRMED.v1'
+select ok(
+  (
+    select count(*) = 1 and bool_and(
+      movement.schema_version = 1
+      and movement.user_id = request.user_id
+      and movement.source_bucket = 'PRINCIPAL'
+      and movement.movement_kind = 'CREDIT'
+      and movement.origin_code = 'KRW_DEPOSIT'
+      and movement.amount_atomic = request.approved_amount_atomic
+      and movement.wallet_ledger_id = request.wallet_ledger_id
+      and movement.effective_at = journal.posted_at
+      and event.event_type = 'DEPOSIT_CONFIRMED.v1'
+      and event.schema_version = 1
+      and event.aggregate_type = 'deposit_request'
+      and event.aggregate_id = request.id
+      and event.actor_user_id = request.reviewed_by
+      and event.payload->>'approved_amount_atomic' = movement.amount_atomic::text
+      and event.payload->>'ledger_transaction_id' = journal.id::text
+      and event.payload->>'wallet_ledger_id' = request.wallet_ledger_id::text
     )
-  );
-  execute format(
-    'select %I.dblink_disconnect(%L)',
-    v_schema,
-    'krw_conc_cleanup'
-  );
-end;
-$$;
+    from public.deposit_requests as request
+    join public.ledger_transactions as journal
+      on journal.id = request.ledger_transaction_id
+    join public.money_source_movements as movement
+      on movement.ledger_transaction_id = journal.id
+    join public.outbox_events as event
+      on event.id = movement.source_event_id
+    where request.id = (select deposit_id from krw_conc_deposit)
+  ),
+  'the single KRW PRINCIPAL CREDIT keeps the original wallet, event and effective instant'
+);
+
+-- CI는 main suite 뒤 이 전용 로컬 DB를 reset하고 세 동시성 검사만 실행한다.
+-- 별도 세션에서 커밋한 금융 영수증은 일회용 러너 DB 폐기까지 함께 보존한다.
+-- outbox/source/journal/audit row를 개별 삭제하지 않는다.
 
 select * from finish();
 
