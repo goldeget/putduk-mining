@@ -141,6 +141,11 @@ test.describe("admin Member 360 product states", () => {
             ),
             fullPage: true,
           });
+          await sources.screenshot({
+            path: testInfo.outputPath(
+              `money-source-panel-${state}-${width}-${theme}.png`,
+            ),
+          });
         }
       }
     }

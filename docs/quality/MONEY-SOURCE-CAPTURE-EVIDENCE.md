@@ -74,6 +74,8 @@ fixture에는 새 view 응답이 없어 partial이 됐다. 실제 empty-source s
 묶음으로 제출하며 PR와 develop push의 18개 job·전체 20분 이내 완료를 각각
 확인한다. 320/390/834/1440px × System/Light/Dark의 실제 confirmed/unresolved
 화면 pixels도 검토해야 한다.
+각 상태의 전체 화면과 자금 구분 panel을 각각 저장한다. 긴 모바일 전체
+페이지 축소 이미지 하나만으로 금액·문구의 읽기 품질을 판단하지 않는다.
 
 ## 남은 연결과 승인
 
