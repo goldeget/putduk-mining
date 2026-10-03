@@ -1,3 +1,5 @@
+import "server-only";
+
 export type EventRewardFact = boolean | bigint | string;
 
 export type EventRewardCondition = {
@@ -76,6 +78,9 @@ export function evaluateEventReward({
     rule.rewardKrw <= 0n ||
     rule.perUserCapKrw <= 0n ||
     rule.budgetRemainingKrw < 0n ||
+    !Number.isFinite(rule.activeFrom.getTime()) ||
+    !Number.isFinite(rule.activeUntil.getTime()) ||
+    !Number.isFinite(occurredAt.getTime()) ||
     rule.activeUntil <= rule.activeFrom
   ) {
     throw new RangeError("Event reward rule configuration is invalid.");

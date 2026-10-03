@@ -1,3 +1,5 @@
+import "server-only";
+
 export const REFERRAL_REFERRER_REWARD_KRW = 5_000n;
 export const REFERRAL_REFERRED_REWARD_KRW = 5_000n;
 export const REFERRAL_PAIR_MAX_REWARD_KRW = 10_000n;

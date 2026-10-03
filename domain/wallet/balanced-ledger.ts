@@ -1,3 +1,5 @@
+import "server-only";
+
 export const LEDGER_SIDES = ["DEBIT", "CREDIT"] as const;
 
 export type BalancedLedgerSide = (typeof LEDGER_SIDES)[number];

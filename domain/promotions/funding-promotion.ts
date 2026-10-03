@@ -1,3 +1,5 @@
+import "server-only";
+
 export const DEFAULT_FIRST_FUNDING_REWARD_CAP_KRW = 10_000n;
 
 export type FundingPromotionRule = {
@@ -34,9 +36,21 @@ export function calculateFundingPromotionReward(
   if (
     rule.campaignType === "FIRST_FUNDING" &&
     rule.rewardCapKrw > DEFAULT_FIRST_FUNDING_REWARD_CAP_KRW &&
-    !rule.operatorApprovedException
+    (!rule.operatorApprovedException || !rule.activeFrom || !rule.activeUntil)
   ) {
-    throw new Error("A first-funding cap above 10,000 KRW needs approval.");
+    throw new Error(
+      "A first-funding cap above 10,000 KRW needs approval and a schedule.",
+    );
+  }
+  if (
+    (rule.activeFrom && !Number.isFinite(rule.activeFrom.getTime())) ||
+    (rule.activeUntil && !Number.isFinite(rule.activeUntil.getTime())) ||
+    (occurredAt && !Number.isFinite(occurredAt.getTime())) ||
+    ((rule.activeFrom || rule.activeUntil) && !occurredAt)
+  ) {
+    throw new RangeError(
+      "Promotion evaluation requires valid schedule and event times.",
+    );
   }
   if (
     rule.activeFrom &&
@@ -149,6 +163,23 @@ export function resolveFundingPromotionClaims({
 }): readonly FundingPromotionClaim[] {
   if (!eventId.trim()) {
     throw new Error("Deposit event ID is required.");
+  }
+  if (!Number.isFinite(occurredAt.getTime())) {
+    throw new RangeError("Promotion event time is invalid.");
+  }
+  const campaignIds = new Set<string>();
+  for (const candidate of candidates) {
+    if (
+      !candidate.campaignId.trim() ||
+      candidate.campaignId !== candidate.campaignId.trim() ||
+      campaignIds.has(candidate.campaignId) ||
+      !Number.isSafeInteger(candidate.stackingPriority)
+    ) {
+      throw new Error(
+        "Promotion candidates require unique IDs and valid priorities.",
+      );
+    }
+    campaignIds.add(candidate.campaignId);
   }
 
   const consumedGroups = new Set<string>();

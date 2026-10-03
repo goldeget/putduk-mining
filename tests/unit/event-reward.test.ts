@@ -27,6 +27,16 @@ const input = {
 };
 
 describe("evaluateEventReward", () => {
+  it.each(["activeFrom", "activeUntil", "occurredAt"] as const)(
+    "rejects an unknown %s instead of bypassing the schedule",
+    (field) => {
+      const broken =
+        field === "occurredAt"
+          ? { ...input, occurredAt: new Date(NaN) }
+          : { ...input, rule: { ...rule, [field]: new Date(NaN) } };
+      expect(() => evaluateEventReward(broken)).toThrow(/configuration/);
+    },
+  );
   it("produces a deterministic versioned qualification snapshot", () => {
     expect(evaluateEventReward(input)).toEqual({
       idempotencyKey: "event-reward:autumn-1:three-missions:member-1:v1",

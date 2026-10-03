@@ -1,3 +1,5 @@
+import "server-only";
+
 export const WELCOME_REWARD_MAX_KRW = 5_000n;
 
 export type WelcomeRewardRiskSignal = {
@@ -64,6 +66,14 @@ export function decideWelcomeRewardConversion(
   }
 
   if (input.existingConversion) {
+    if (
+      input.existingConversion.amountKrw <= 0n ||
+      input.existingConversion.amountKrw > WELCOME_REWARD_MAX_KRW
+    ) {
+      throw new RangeError(
+        "The existing welcome reward is outside the approved cap.",
+      );
+    }
     if (input.existingConversion.idempotencyKey !== input.idempotencyKey) {
       throw new Error(
         "The trial reward was already converted by another request.",
