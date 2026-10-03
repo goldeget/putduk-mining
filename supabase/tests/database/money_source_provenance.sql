@@ -287,6 +287,14 @@ select is((select count(*)::integer from public.money_source_movements where use
 set local role service_role;
 update source_ctx set legacy_deposit_id = public.create_deposit_request(
   legacy_id, 'KRW', 2345, 'source-legacy-request-v1');
+-- Bootstrap creates a wallet only. Prepare the actual legacy liability account
+-- before the fixture's CREDIT SELECT; an APPROVED retry does not create it.
+insert into public.ledger_accounts (
+  code, currency, account_class, normal_side, owner_user_id, is_controlled_asset
+)
+select 'USER:' || upper(legacy_id::text) || ':KRW:LIABILITY',
+  'KRW'::public.currency_code, 'LIABILITY'::public.ledger_account_class,
+  'CREDIT'::public.ledger_side, legacy_id, false from source_ctx;
 reset role;
 insert into public.ledger_transactions(category, currency, idempotency_key,
   reference_type, reference_id, member_user_id, request_id, correlation_id,
@@ -303,6 +311,24 @@ union all
 select journal.id, account.id, 1, 'CREDIT'::public.ledger_side, 2345
 from source_ctx as ctx join public.ledger_transactions as journal on journal.reference_id = ctx.legacy_deposit_id
 join public.ledger_accounts as account on account.code = 'USER:' || upper(ctx.legacy_id::text) || ':KRW:LIABILITY';
+select ok((select count(*) = 2
+    and count(*) filter (where entry.sequence = 0 and entry.side = 'DEBIT'
+      and account.code = 'PUTDUK:OPERATING_CASH:KRW' and account.owner_user_id is null) = 1
+    and count(*) filter (where entry.sequence = 1 and entry.side = 'CREDIT'
+      and account.code = 'USER:' || upper(ctx.legacy_id::text) || ':KRW:LIABILITY'
+      and account.owner_user_id = ctx.legacy_id) = 1
+    and bool_and(entry.amount_atomic = 2345 and account.currency = journal.currency)
+  from public.ledger_transactions as journal
+  join public.ledger_entries as entry on entry.transaction_id = journal.id
+  join public.ledger_accounts as account on account.id = entry.account_id
+  cross join source_ctx as ctx where journal.idempotency_key = 'source-legacy-credit-v1:ledger'),
+  'the pre-capture journal contains both real cash and legacy member legs on the same journal');
+set local role service_role;
+select lives_ok($$set constraints ledger_entries_balanced_at_commit,
+  ledger_transactions_balanced_at_commit immediate$$,
+  'all earlier CREDIT3 journals and the complete pre-capture fixture satisfy the original balance guards');
+set constraints ledger_entries_balanced_at_commit, ledger_transactions_balanced_at_commit deferred;
+reset role;
 insert into public.wallet_ledger(wallet_account_id, user_id, direction, entry_type,
   amount_atomic, idempotency_key, reference_type, reference_id, reason, created_by, created_at)
 select wallet.id, ctx.legacy_id, 'CREDIT', 'DEPOSIT', 2345, 'source-legacy-credit-v1',

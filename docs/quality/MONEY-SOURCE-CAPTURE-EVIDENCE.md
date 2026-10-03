@@ -89,6 +89,18 @@ IF 조건의 CASE 4곳을 괄호로 감싸 분기 내부 THEN을 IF 종료 토�
 `D:\PUTDUK-MINING-QA\codex-2026-10-03T09-36-47-333Z-cf08474e`에 보존한다.
 fixture의 원래 DEBIT/CREDIT 값을 실제 enum으로 명시하며 검사 조건·원장
 구조·영수증 검증을 완화하지 않는다. 새 후보는 전체 CI로 다시 검증한다.
+
+세 번째 후보 `79ff83b6c8e6f1c71f38512361d989a2616d9b29`의 run
+`37113888331` attempt 1은 23개 파일·672개 assertion을 실행했으나 새
+64개 중 2개가 실패했다. 과거 journal fixture의 legacy 회원 liability
+계정이 없어 CREDIT 항목이 0행이었고, 뒤쪽 균형 검사에서 원래의 deferred
+원장 guard가 이를 거절했다. 최신 bootstrap은 wallet만 만들며 해당 계정을
+만들지 않는다는 실제 정의를 확인했다. 실행은 취소했고
+09:41:16Z–09:45:28Z, 4분 12초다. 증거는
+`D:\PUTDUK-MINING-QA\codex-2026-10-03T09-44-54-648Z-4387063f`에 보존한다.
+과거 fixture에 원본 계정 계약의 liability를 명시하고 두 항목·합계·통화와
+즉시 균형 guard 검사를 추가한다. 기존 실패 assertion과 금융 guard는
+유지한다. 부분 통과·문서·정적 추적은 전체 DB PASS가 아니다.
 로컬 Supabase 실행은 자동 승인 검토에서 차단됐으므로 우회하지 않는다.
 검증은 이 저장소의 CI 일회용 DB에서 새로 만들고 실행한다. 변경은 한 기능
 묶음으로 제출하며 PR와 develop push의 18개 job·전체 20분 이내 완료를 각각
