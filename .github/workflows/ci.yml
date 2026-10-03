@@ -170,6 +170,9 @@ jobs:
       - name: Run two-session deposit approval
         run: supabase test db supabase/tests-concurrent/krw_deposit_concurrent_approval.sql
 
+      - name: Run two-session USDT approval
+        run: supabase test db supabase/tests-concurrent/usdt_deposit_concurrent_approval.sql
+
       - name: Lint application schemas
         run: pnpm db:lint
 
