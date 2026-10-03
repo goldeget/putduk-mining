@@ -523,7 +523,7 @@ jobs:
 
       - name: Assert protected typography evidence
         if: always()
-        run: node scripts/assert-typography-report.mjs test-results/typography-protected/report.json --passed 128 --screenshots 126 --hydration 0 --redact
+        run: node scripts/assert-typography-report.mjs test-results/typography-protected/report.json --passed 135 --screenshots 133 --hydration 0 --redact
 
       - name: Preserve protected typography evidence
         if: always()
