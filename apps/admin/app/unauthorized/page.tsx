@@ -1,6 +1,7 @@
-import { ThemeControl } from "../../../../components/system/theme-control";
 import type { Route } from "next";
 import Link from "next/link";
+
+import { AdminAuthEntry } from "@/components/auth/admin-auth-entry";
 
 export const dynamic = "force-dynamic";
 
@@ -16,27 +17,22 @@ export default async function UnauthorizedPage({
       : code === "ROLE_FORBIDDEN"
         ? "현재 역할로는 이 작업을 할 수 없습니다."
         : "이 화면이나 명령을 실행할 권한이 없습니다.";
-
   return (
-    <main className="auth-stage">
-      <section className="auth-card">
-        <ThemeControl />
-        <p className="eyebrow">권한 확인</p>
-        <h1>권한이 없습니다</h1>
-        <p>{message}</p>
-        <div className="auth-actions">
-          <Link className="gold-button" href={"/" as Route}>
-            오늘의 퍼뜩
-          </Link>
-          <Link
-            className="ghost-button"
-            href={"/reauth?reason=step-up" as Route}
-          >
-            다시 확인
-          </Link>
-        </div>
-        <footer>거절된 명령은 보안 기록에 남습니다.</footer>
-      </section>
-    </main>
+    <AdminAuthEntry
+      phase="unauthorized"
+      eyebrow="권한 확인"
+      title="권한이 없습니다"
+      description={message}
+      footer={<p>거절된 작업은 보안 기록에 남습니다.</p>}
+    >
+      <div className="auth-actions">
+        <Link className="gold-button" href={"/" as Route}>
+          오늘의 퍼뜩
+        </Link>
+        <Link className="ghost-button" href={"/reauth?reason=step-up" as Route}>
+          다시 확인
+        </Link>
+      </div>
+    </AdminAuthEntry>
   );
 }

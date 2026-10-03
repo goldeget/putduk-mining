@@ -1,14 +1,18 @@
 "use client";
 
 import { useActionState, useEffect, useRef, useState } from "react";
-import { useFormStatus } from "react-dom";
 
 import {
   checkSignupPhoneAvailability,
   signupAction,
   type SignupActionState,
 } from "@/app/signup/actions";
-import { PutdukIcon } from "@/components/icons/putduk-icon";
+import {
+  AuthConnectionNotice,
+  AuthSubmitButton,
+  preventOfflineAuthSubmission,
+  useAuthOnline,
+} from "@/components/auth/auth-form-feedback";
 import {
   waitForSignupRead,
   withSignupReadDeadline,
@@ -23,22 +27,8 @@ const INITIAL_STATE: SignupActionState = {
 type AvailabilityState =
   "idle" | "checking" | "available" | "unavailable" | "invalid" | "error";
 
-function SignupSubmit() {
-  const { pending } = useFormStatus();
-
-  return (
-    <button
-      className="button button--primary ko-copy"
-      type="submit"
-      disabled={pending}
-    >
-      {pending ? "계정을 만들고 있어요" : "가입하고 시작하기"}
-      <PutdukIcon name="arrow-right" size={18} />
-    </button>
-  );
-}
-
 export function SignupForm() {
+  const online = useAuthOnline();
   const [state, action] = useActionState(signupAction, INITIAL_STATE);
   const [loginId, setLoginId] = useState("");
   const [phone, setPhone] = useState("");
@@ -76,6 +66,7 @@ export function SignupForm() {
   }, []);
 
   async function checkLoginId() {
+    if (!navigator.onLine) return;
     loginIdRead.current?.abort();
     if (!/^[a-z][a-z0-9_]{3,19}$/.test(loginId)) {
       availabilityRequest.current += 1;
@@ -126,6 +117,7 @@ export function SignupForm() {
   }
 
   async function checkPhone() {
+    if (!navigator.onLine) return;
     phoneRead.current?.abort();
     const requestId = phoneRequest.current + 1;
     phoneRequest.current = requestId;
@@ -160,10 +152,13 @@ export function SignupForm() {
     <form
       className="signup-form"
       action={action}
+      aria-label="회원가입"
+      onSubmit={preventOfflineAuthSubmission}
       data-ui-state={
         state.status === "error" || passwordMismatch ? "error" : "loaded"
       }
     >
+      <AuthConnectionNotice />
       <fieldset>
         <legend>기본 정보</legend>
         <div className="signup-form__grid">
@@ -238,7 +233,7 @@ export function SignupForm() {
               <button
                 type="button"
                 onClick={checkPhone}
-                disabled={phoneAvailability === "checking"}
+                disabled={!online || phoneAvailability === "checking"}
               >
                 {phoneAvailability === "checking"
                   ? "확인 중"
@@ -275,6 +270,8 @@ export function SignupForm() {
               type="email"
               inputMode="email"
               autoComplete="email"
+              autoCapitalize="none"
+              spellCheck={false}
               required
               aria-invalid={Boolean(state.fieldErrors.recoveryEmail)}
               aria-describedby="recovery-email-help"
@@ -324,7 +321,7 @@ export function SignupForm() {
             <button
               type="button"
               onClick={checkLoginId}
-              disabled={availability === "checking"}
+              disabled={!online || availability === "checking"}
             >
               {availability === "checking" ? "확인 중" : "사용 가능 확인"}
             </button>
@@ -548,7 +545,11 @@ export function SignupForm() {
         </p>
       ) : null}
 
-      <SignupSubmit />
+      <AuthSubmitButton
+        label="가입하고 시작하기"
+        pendingLabel="계정을 만들고 있어요"
+        disabled={passwordMismatch}
+      />
     </form>
   );
 }

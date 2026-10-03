@@ -1,6 +1,6 @@
-import { ThemeControl } from "../../../../components/system/theme-control";
 import type { Metadata } from "next";
 
+import { AdminAuthEntry } from "@/components/auth/admin-auth-entry";
 import { MfaGate } from "@/components/mfa-gate";
 import { prepareAdminMfaOnServer } from "@/lib/auth/mfa-prepare";
 import { requireAdminIdentity } from "@/lib/auth/principal";
@@ -19,14 +19,14 @@ export default async function MfaPage({
   await requireAdminIdentity(safeReturn);
   const initialPrepare = await prepareAdminMfaOnServer();
   return (
-    <main className="auth-stage">
-      <section className="auth-card auth-card--mfa">
-        <ThemeControl />
-        <p className="eyebrow">두 번째 보안 확인</p>
-        <h1>운영자 본인 확인</h1>
-        <p>운영 화면은 인증 앱을 통한 두 번째 확인 없이는 열리지 않습니다.</p>
-        <MfaGate initialPrepare={initialPrepare} returnTo={safeReturn} />
-      </section>
-    </main>
+    <AdminAuthEntry
+      phase="mfa"
+      eyebrow="두 번째 보안 확인"
+      title="운영자 본인 확인"
+      description="인증 앱의 코드를 입력해 주세요. 확인을 마치면 운영 화면으로 이어집니다."
+      footer={<p>등록 키와 인증 코드는 다른 사람에게 공유하지 마세요.</p>}
+    >
+      <MfaGate initialPrepare={initialPrepare} returnTo={safeReturn} />
+    </AdminAuthEntry>
   );
 }

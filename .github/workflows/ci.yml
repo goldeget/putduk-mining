@@ -111,6 +111,9 @@ jobs:
       - name: Verify canonical brand assets
         run: pnpm assets:verify
 
+      - name: Verify exact approved economy seed
+        run: node scripts/generate-economy-policy-seed.mjs --check
+
       - name: Verify formatting
         run: pnpm format:check
 
@@ -133,6 +136,17 @@ jobs:
     steps:
       - name: Check out source
         uses: actions/checkout@v7
+
+      - name: Canonicalize the approved checkout origin
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = "goldeget/putduk-mining"
+          checkout_origin="$(git remote get-url origin)"
+          case "$checkout_origin" in
+            https://github.com/goldeget/putduk-mining|https://github.com/goldeget/putduk-mining.git) ;;
+            *) echo "BLOCKED_TARGET_SCOPE: checkout origin mismatch" >&2; exit 1 ;;
+          esac
+          git remote set-url origin https://github.com/goldeget/putduk-mining.git
 
       - name: Install pnpm
         uses: pnpm/action-setup@v6.1.0
@@ -175,6 +189,9 @@ jobs:
 
       - name: Run two-session safe-mode command
         run: supabase test db supabase/tests-concurrent/safe_mode_concurrent_command.sql
+
+      - name: Verify published policy reader against concurrent publication
+        run: node scripts/assert-economy-policy-reader-concurrency.mjs
 
       - name: Lint application schemas
         run: pnpm db:lint
@@ -442,7 +459,7 @@ jobs:
 
       - name: Assert public typography evidence
         if: always()
-        run: node scripts/assert-typography-report.mjs test-results/typography/report.json --passed 75 --screenshots 70 --redact
+        run: node scripts/assert-typography-report.mjs test-results/typography/report.json --passed 115 --screenshots 110 --redact
 
       - name: Preserve public typography evidence
         if: always()

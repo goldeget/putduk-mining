@@ -12,6 +12,7 @@ import {
 } from "@/lib/supabase/browser";
 
 type DraftContext = {
+  readonly publicConfig: Readonly<AdminPublicBrowserConfig>;
   draft: UsdtOperatorDraft | null;
   epoch: number;
   clearedReason: "EXPIRED" | "SESSION" | "CONNECTION" | null;
@@ -124,6 +125,7 @@ export function OperatorDraftProvider({
   return (
     <Context
       value={{
+        publicConfig,
         draft,
         epoch,
         clearedReason,
@@ -141,4 +143,9 @@ export function useOperatorDraft(): DraftContext {
   const value = useContext(Context);
   if (!value) throw new Error("Operator draft session boundary is required");
   return value;
+}
+
+/** Control pages share the server-validated public tuple; auth screens may stand alone. */
+export function useAdminPublicBrowserConfig(): Readonly<AdminPublicBrowserConfig> | null {
+  return useContext(Context)?.publicConfig ?? null;
 }

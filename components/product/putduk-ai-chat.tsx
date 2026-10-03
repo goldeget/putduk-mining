@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useEffect, useId, useRef, type FormEvent } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 
 import { AI_QUESTION_MAX_CHARACTERS } from "@/domain/ai/chat";
@@ -11,123 +11,60 @@ import {
 import { trackAnalyticsEvent } from "@/lib/analytics/client";
 
 import styles from "./putduk-ai-chat.module.css";
+import { aiGroundingTime, aiSourceLabel } from "./putduk-ai-protocol";
 import {
   buildPutdukAiScreenContext,
   type PutdukAiExplicitScreenContext,
 } from "./putduk-ai-screen-context";
+import { usePutdukAiSession } from "./putduk-ai-session";
 
-type MessageState = "cancelled" | "complete" | "error" | "streaming";
-
-type Message = {
-  id: string;
-  role: "assistant" | "user";
-  state: MessageState;
-  text: string;
+export type PutdukAiChatProps = {
+  initialScreenContext?: PutdukAiExplicitScreenContext;
+  presentation?: "page" | "panel";
+  /** Existing page callers remain compatible; the shared owner supplies truth. */
+  knowledgeVersion?: string;
+  providerConfigured?: boolean;
 };
-
-type ApiErrorPayload = {
-  error?: { code?: string; message?: string };
-};
-
-function getDataFromSseBlock(block: string) {
-  const data = block
-    .split("\n")
-    .filter((line) => line.startsWith("data:"))
-    .map((line) => line.slice(5).trimStart())
-    .join("\n");
-
-  if (!data) {
-    return null;
-  }
-
-  try {
-    return JSON.parse(data) as Record<string, unknown>;
-  } catch {
-    return null;
-  }
-}
 
 export function PutdukAiChat({
   initialScreenContext,
-  knowledgeVersion,
-  providerConfigured,
-}: {
-  initialScreenContext?: PutdukAiExplicitScreenContext;
-  knowledgeVersion: string;
-  providerConfigured: boolean;
-}) {
+  presentation = "page",
+}: PutdukAiChatProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [pending, setPending] = useState(false);
-  const [question, setQuestion] = useState("");
-  const [reducedMotion, setReducedMotion] = useState(false);
-  const abortRef = useRef<AbortController | null>(null);
+  const session = usePutdukAiSession();
+  const composerId = useId();
   const questionInputRef = useRef<HTMLTextAreaElement | null>(null);
+  const transcriptRef = useRef<HTMLDivElement | null>(null);
+  const followLatest = useRef(true);
+  const lastMessage = session.messages.at(-1);
+  const status =
+    session.ownerStatus !== "ready"
+      ? "로그인 상태를 다시 확인하고 있어요."
+      : session.pending
+        ? "답변을 기다리고 있어요."
+        : lastMessage?.role !== "assistant"
+          ? ""
+          : lastMessage.state === "complete"
+            ? "답변이 도착했어요."
+            : (lastMessage.failure?.label ?? "");
 
   useEffect(() => {
     void trackAnalyticsEvent("ai_open", {
       continuity_mode: AI_CONVERSATION_CONTINUITY_MODE,
-      knowledge_version: knowledgeVersion,
-      provider_configured: providerConfigured,
+      knowledge_version: session.knowledgeVersion,
+      provider_configured: session.providerConfigured,
     }).catch(() => undefined);
-
-    return () => abortRef.current?.abort();
-  }, [knowledgeVersion, providerConfigured]);
+  }, [session.knowledgeVersion, session.providerConfigured]);
 
   useEffect(() => {
-    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const sync = () => setReducedMotion(media.matches);
-    sync();
-    media.addEventListener("change", sync);
-    return () => media.removeEventListener("change", sync);
-  }, []);
-
-  function updateMessage(id: string, update: (message: Message) => Message) {
-    setMessages((current) =>
-      current.map((message) => (message.id === id ? update(message) : message)),
-    );
-  }
-
-  function focusComposer() {
-    questionInputRef.current?.focus();
-  }
-
-  async function submit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const trimmedQuestion = question.trim();
-    if (pending || trimmedQuestion.length < 3) {
-      return;
+    if (followLatest.current && transcriptRef.current) {
+      transcriptRef.current.scrollTop = transcriptRef.current.scrollHeight;
     }
+  }, [session.messages]);
 
-    const clientMessageId = crypto.randomUUID();
-    const assistantMessageId = crypto.randomUUID();
-    const abortController = new AbortController();
-    abortRef.current = abortController;
-    setPending(true);
-    setQuestion("");
-    setMessages((current) => [
-      ...current,
-      {
-        id: clientMessageId,
-        role: "user",
-        state: "complete",
-        text: trimmedQuestion,
-      },
-      {
-        id: assistantMessageId,
-        role: "assistant",
-        state: "streaming",
-        text: "",
-      },
-    ]);
-
-    void trackAnalyticsEvent("ai_question", {
-      character_count: trimmedQuestion.length,
-      knowledge_version: knowledgeVersion,
-    }).catch(() => undefined);
-
-    let terminalEventReceived = false;
+  function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
     const screenContext = buildPutdukAiScreenContext({
       ...(initialScreenContext
         ? { explicitContext: initialScreenContext }
@@ -135,213 +72,153 @@ export function PutdukAiChat({
       pathname,
       searchParams,
     });
-
-    try {
-      const response = await fetch("/api/v1/ai/chat", {
-        method: "POST",
-        credentials: "same-origin",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          clientMessageId,
-          question: trimmedQuestion,
-          ...(screenContext ? { screenContext } : {}),
-        }),
-        signal: abortController.signal,
-      });
-
-      if (!response.ok || !response.body) {
-        const payload = (await response
-          .json()
-          .catch(() => null)) as ApiErrorPayload | null;
-        throw new Error(payload?.error?.message ?? "답변을 시작하지 못했어요.");
-      }
-
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-      let buffer = "";
-
-      while (true) {
-        const { done, value } = await reader.read();
-        buffer += decoder
-          .decode(value, { stream: !done })
-          .replaceAll("\r\n", "\n");
-        const blocks = buffer.split("\n\n");
-        buffer = done ? "" : (blocks.pop() ?? "");
-
-        for (const block of blocks) {
-          const data = getDataFromSseBlock(block);
-          if (!data || typeof data.type !== "string") {
-            continue;
-          }
-
-          if (data.type === "delta" && typeof data.text === "string") {
-            updateMessage(assistantMessageId, (message) => ({
-              ...message,
-              text: message.text + data.text,
-            }));
-          }
-
-          if (data.type === "done") {
-            terminalEventReceived = true;
-            updateMessage(assistantMessageId, (message) => ({
-              ...message,
-              state: "complete",
-            }));
-          }
-
-          if (data.type === "error") {
-            terminalEventReceived = true;
-            updateMessage(assistantMessageId, (message) => ({
-              ...message,
-              state: "error",
-              text:
-                typeof data.message === "string"
-                  ? data.message
-                  : "답변을 완료하지 못했어요.",
-            }));
-          }
-        }
-
-        if (done) {
-          break;
-        }
-      }
-
-      if (!terminalEventReceived) {
-        throw new Error("연결이 예기치 않게 종료됐어요. 다시 시도해 주세요.");
-      }
-    } catch (error) {
-      const cancelled = abortController.signal.aborted;
-      updateMessage(assistantMessageId, (message) => ({
-        ...message,
-        state: cancelled ? "cancelled" : "error",
-        text: cancelled
-          ? message.text || "답변 생성을 중단했어요."
-          : error instanceof Error
-            ? error.message
-            : "답변을 완료하지 못했어요.",
-      }));
-    } finally {
-      if (abortRef.current === abortController) {
-        abortRef.current = null;
-      }
-      setPending(false);
-    }
-  }
-
-  function cancel() {
-    abortRef.current?.abort();
+    void session.submit(screenContext ? { screenContext } : {});
   }
 
   return (
     <section
-      className="ai-chat"
-      aria-label="PUTDUK AI 질문"
+      className={`ai-chat ${styles.chat} ${presentation === "panel" ? styles.panel : styles.page}`}
+      aria-label="퍼뜩 AI 대화"
       data-ai-continuity={AI_CONVERSATION_CONTINUITY_MODE}
-      data-provider-configured={providerConfigured ? "true" : "false"}
+      data-ai-presentation={presentation}
+      data-provider-configured={session.providerConfigured ? "true" : "false"}
     >
-      <header className="ai-chat__status">
-        <span className="ai-chat__indicator is-ready" aria-hidden="true" />
-        <span>
-          <strong>
-            {providerConfigured ? "계정·일반 질문 도움말" : "계정·퍼뜩 도움말"}
-          </strong>
-          <small>확인된 정보만 사용하고, 찾지 못하면 추측하지 않아요</small>
-        </span>
-      </header>
+      {presentation === "page" ? (
+        <header className={styles.pageStatus}>
+          <strong>내 기록과 퍼뜩 이용 안내</strong>
+          <span>확인하지 못한 내용은 추측하지 않아요.</span>
+        </header>
+      ) : null}
 
-      <p className={styles.continuityNotice} data-testid="ai-continuity-notice">
-        {AI_CONVERSATION_CONTINUITY_COPY}
-      </p>
+      <div
+        className={styles.notices}
+        role="note"
+        aria-label="대화 안내"
+        tabIndex={0}
+      >
+        <p
+          className={styles.continuityNotice}
+          data-testid="ai-continuity-notice"
+        >
+          {AI_CONVERSATION_CONTINUITY_COPY}
+        </p>
+        {session.ownerStatus !== "ready" ? (
+          <p className={styles.providerNotice}>
+            {session.ownerStatus === "checking"
+              ? "로그인 상태를 확인하고 있어요."
+              : "로그인 상태를 다시 확인하고 있어요."}
+          </p>
+        ) : null}
+        {!session.providerConfigured ? (
+          <p className={styles.providerNotice}>
+            내 기록과 퍼뜩 안내를 확인해요. 일반 질문은 답변이 제한돼요.
+          </p>
+        ) : null}
+      </div>
 
-      <div className="ai-chat__messages" role="log" aria-live="polite">
-        {messages.length === 0 ? (
-          <div className="ai-chat__welcome">
-            <p className="eyebrow">ASK PUTDUK</p>
+      <div
+        ref={transcriptRef}
+        className={`ai-chat__messages ${styles.transcript}`}
+        role="log"
+        aria-live="off"
+        aria-label="대화 내용"
+        tabIndex={0}
+        onScroll={(event) => {
+          const node = event.currentTarget;
+          followLatest.current =
+            node.scrollHeight - node.scrollTop - node.clientHeight < 72;
+        }}
+      >
+        {session.messages.length === 0 ? (
+          <div className={`ai-chat__welcome ${styles.welcome}`}>
             <h2>궁금한 내용을 편하게 물어보세요.</h2>
-            <p>
-              오늘 채굴 상태, 입출금 진행 상황, 이벤트 참여 조건이나 퍼뜩 이용
-              방법을 질문할 수 있어요. 확인할 수 없는 수치는 만들어 답하지
-              않습니다.
-            </p>
+            <p>내 기록과 퍼뜩 이용 방법을 함께 확인해요.</p>
           </div>
         ) : (
-          messages.map((message) => (
+          session.messages.map((message) => (
             <article
-              className={`ai-message ai-message--${message.role}`}
+              className={`ai-message ai-message--${message.role} ${styles.message}`}
               key={message.id}
               data-message-state={message.state}
+              data-answer-source={message.source}
             >
-              <span>{message.role === "assistant" ? "PUTDUK AI" : "나"}</span>
-              {message.role === "assistant" &&
-              message.state === "streaming" &&
-              !message.text ? (
-                reducedMotion ? (
-                  <p className={styles.thinkingStatic}>확인 중</p>
-                ) : (
-                  <div
-                    className="ai-message__thinking"
-                    aria-label="확인 가능한 정보를 찾는 중"
-                  >
-                    <i />
-                    <i />
-                    <i />
-                  </div>
-                )
-              ) : (
-                <p>{message.text}</p>
-              )}
-              {message.role === "assistant" &&
-              ["cancelled", "error"].includes(message.state) ? (
-                <>
-                  <small>
-                    {message.state === "cancelled"
-                      ? "답변 중단됨"
-                      : "연결 실패"}
-                  </small>
-                  {message.state === "error" ? (
-                    <button
-                      className={`button button--secondary ${styles.recoveryButton}`}
-                      type="button"
-                      onClick={focusComposer}
-                    >
-                      다시 질문하기
-                    </button>
+              <span>{message.role === "assistant" ? "퍼뜩 AI" : "나"}</span>
+              {message.text ? <p>{message.text}</p> : null}
+              {message.state === "streaming" && !message.text ? (
+                <p className={styles.waiting}>
+                  {message.source === "tool"
+                    ? "내 기록을 확인하고 있어요."
+                    : "답변을 기다리고 있어요."}
+                </p>
+              ) : null}
+              {message.source ? (
+                <div className={styles.answerEvidence}>
+                  <span>{aiSourceLabel(message.source)}</span>
+                  {message.grounding ? (
+                    <time dateTime={message.grounding.asOf}>
+                      {aiGroundingTime(message.grounding)} KST 조회
+                    </time>
                   ) : null}
-                </>
+                </div>
+              ) : null}
+              {message.failure ? (
+                <div className={styles.failure}>
+                  <strong>{message.failure.label}</strong>
+                  <p>{message.failure.message}</p>
+                  <button
+                    className={`button button--secondary ${styles.recoveryButton}`}
+                    type="button"
+                    disabled={!session.canSubmit || session.pending}
+                    onClick={() => {
+                      if (session.restoreQuestion(message.id)) {
+                        questionInputRef.current?.focus();
+                      }
+                    }}
+                  >
+                    다시 질문하기
+                  </button>
+                </div>
               ) : null}
             </article>
           ))
         )}
       </div>
 
-      <form className="ai-composer" onSubmit={submit}>
-        <label htmlFor="putduk-ai-question">질문 입력</label>
+      <p
+        className={styles.liveStatus}
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        {status}
+      </p>
+
+      <form className={`ai-composer ${styles.composer}`} onSubmit={submit}>
+        <label htmlFor={composerId}>질문 입력</label>
         <textarea
-          id="putduk-ai-question"
+          id={composerId}
+          data-testid="putduk-ai-question"
           ref={questionInputRef}
-          value={question}
-          onChange={(event) => setQuestion(event.target.value)}
+          value={session.draft}
+          onChange={(event) => session.setDraft(event.target.value)}
           maxLength={AI_QUESTION_MAX_CHARACTERS}
-          placeholder="예: 체험 보상 5,000원은 언제 출금할 수 있어?"
-          disabled={pending}
+          placeholder="어떤 내용을 확인할까요?"
+          disabled={!session.canSubmit}
           required
+          rows={2}
         />
         <footer>
-          <p>
-            PUTDUK AI는 확인과 설명을 돕지만 송금·승인·보상 지급이나 잔액 변경을
-            대신하지 않습니다.
-          </p>
+          <p>확인과 설명을 도와요. 송금이나 잔액 변경은 할 수 없어요.</p>
           <span>
             <small>
-              {question.length.toLocaleString("ko-KR")} /{" "}
+              {session.draft.length.toLocaleString("ko-KR")} /{" "}
               {AI_QUESTION_MAX_CHARACTERS.toLocaleString("ko-KR")}
             </small>
-            {pending ? (
+            {session.pending ? (
               <button
                 className="button button--secondary"
                 type="button"
-                onClick={cancel}
+                onClick={session.cancel}
               >
                 답변 중단
               </button>
@@ -349,7 +226,7 @@ export function PutdukAiChat({
               <button
                 className="button button--primary"
                 type="submit"
-                disabled={question.trim().length < 3}
+                disabled={!session.canSubmit || session.draft.trim().length < 3}
               >
                 질문 보내기
               </button>

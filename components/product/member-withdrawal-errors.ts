@@ -4,6 +4,11 @@
  * 알 수 없는 코드·내부 DB/스키마 메시지는 닫힌(fail-closed) 기본 안내로 대체한다.
  */
 
+import {
+  WITHDRAWAL_SOURCE_UNAVAILABLE_CODE,
+  WITHDRAWAL_SOURCE_UNAVAILABLE_COPY,
+} from "@/lib/wallet/withdrawal-source-status";
+
 export const MEMBER_WITHDRAWAL_SUBMIT_FALLBACK =
   "출금 요청을 접수하지 못했어요. 잠시 후 다시 시도해 주세요.";
 
@@ -22,6 +27,7 @@ const SUBMIT_CODE_COPY = {
   INVALID_IDEMPOTENCY_KEY: "요청 식별자를 확인해 주세요.",
   INVALID_WITHDRAWAL_REQUEST: "출금 요청 정보를 확인해 주세요.",
   INSUFFICIENT_AVAILABLE_BALANCE: "출금 가능 금액이 부족해요.",
+  [WITHDRAWAL_SOURCE_UNAVAILABLE_CODE]: WITHDRAWAL_SOURCE_UNAVAILABLE_COPY,
   WITHDRAWAL_REQUEST_FAILED: MEMBER_WITHDRAWAL_SUBMIT_FALLBACK,
   WITHDRAWAL_RECONCILIATION_REQUIRED:
     "이전 출금 요청을 먼저 확인해 주세요. 확인하기 전에는 새 요청을 보내지 않아요.",

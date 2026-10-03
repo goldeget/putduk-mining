@@ -350,12 +350,12 @@ select ok(
 );
 
 select ok(
-  has_function_privilege(
+  not has_function_privilege(
     'service_role',
     'public.create_withdrawal_request(uuid,uuid,uuid,bigint,text,jsonb,text)',
     'EXECUTE'
   ),
-  'service role can execute create_withdrawal_request'
+  'service role cannot execute the retired seven-argument withdrawal writer'
 );
 select ok(
   not has_function_privilege(

@@ -375,7 +375,7 @@ test("shows LIVE SCHEDULED ENDED notices isolation and detail", async ({
         );
         await expect(navigation).toBeVisible();
         await expect(
-          navigation.getByRole("link", { name: "이벤트" }),
+          navigation.getByRole("link", { name: "더보기", exact: true }),
         ).toHaveAttribute("aria-current", "page");
       }
       await shoot(page, `seeded-${viewport.name}-${theme}.png`);

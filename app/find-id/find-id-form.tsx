@@ -1,30 +1,29 @@
 "use client";
 
 import { useActionState } from "react";
-import { useFormStatus } from "react-dom";
 
 import {
   requestLoginIdLink,
   type FindIdActionState,
 } from "@/app/find-id/actions";
-import { PutdukIcon } from "@/components/icons/putduk-icon";
+import {
+  AuthConnectionNotice,
+  AuthSubmitButton,
+  preventOfflineAuthSubmission,
+} from "@/components/auth/auth-form-feedback";
 
 const INITIAL_STATE: FindIdActionState = { message: "", status: "idle" };
-
-function SubmitButton() {
-  const { pending } = useFormStatus();
-  return (
-    <button className="button button--primary" type="submit" disabled={pending}>
-      {pending ? "확인하고 있어요" : "아이디 확인 링크 받기"}
-      <PutdukIcon name="arrow-right" size={18} />
-    </button>
-  );
-}
 
 export function FindIdForm() {
   const [state, action] = useActionState(requestLoginIdLink, INITIAL_STATE);
   return (
-    <form className="auth-form" action={action}>
+    <form
+      className="auth-form"
+      action={action}
+      aria-label="아이디 찾기"
+      onSubmit={preventOfflineAuthSubmission}
+    >
+      <AuthConnectionNotice />
       <label>
         <span>복구 이메일</span>
         <input
@@ -32,6 +31,8 @@ export function FindIdForm() {
           name="email"
           type="email"
           autoComplete="email"
+          autoCapitalize="none"
+          spellCheck={false}
           inputMode="email"
           aria-describedby={
             state.status === "confirmation" ? "find-id-confirmation" : undefined
@@ -49,7 +50,10 @@ export function FindIdForm() {
         </p>
       ) : null}
       <div className="auth-form__actions">
-        <SubmitButton />
+        <AuthSubmitButton
+          label="아이디 확인 링크 받기"
+          pendingLabel="확인하고 있어요"
+        />
       </div>
     </form>
   );

@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 import { buildPublicContentSecurityPolicy } from "./lib/support/csp";
+import { resolveNextDistDir } from "./scripts/resolve-next-dist-dir.mjs";
 
 const contentSecurityPolicy = buildPublicContentSecurityPolicy({
   appEnv: process.env.APP_ENV,
@@ -29,6 +30,7 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  distDir: resolveNextDistDir(),
   allowedDevOrigins: ["127.0.0.1"],
   productionBrowserSourceMaps: false,
   reactStrictMode: true,
@@ -58,6 +60,7 @@ const nextConfig: NextConfig = {
         "/home",
         "/start",
         "/mining",
+        "/products/:path*",
         "/wallet/:path*",
         "/events",
         "/notifications",

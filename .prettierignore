@@ -2,6 +2,7 @@
 .sites-work
 **/.worktrees
 **/.next
+**/.next-qa-*
 **/.vite
 **/dist
 **/*.md

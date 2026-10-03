@@ -546,7 +546,7 @@ insert into auth.users (
     expect(ledgerAfter).toBe(ledgerBefore);
   });
 
-  it("idempotent finalize retry does not add another external send", async () => {
+  it("closes fresh general withdrawal and finalizes a historical original without another send", async () => {
     const db = client();
     const suffix = randomUUID().slice(0, 8);
     const userId = randomUUID();
@@ -673,7 +673,7 @@ insert into auth.users (
       throw new Error(destError.message);
     }
 
-    const { data: withdrawalId, error: requestError } = await db.rpc(
+    const { data: freshWithdrawalId, error: requestError } = await db.rpc(
       "request_krw_withdrawal",
       {
         p_user_id: userId,
@@ -682,9 +682,48 @@ insert into auth.users (
         p_idempotency_key: `worker-wd-${suffix}`,
       },
     );
-    if (requestError) {
-      throw new Error(requestError.message);
-    }
+    expect(freshWithdrawalId).toBeNull();
+    expect(requestError?.code).toBe("55000");
+    expect(requestError?.message).toBe(
+      "WITHDRAWAL_VERIFIED_SOURCE_LIFECYCLE_UNAVAILABLE",
+    );
+    const { count: rejectedRequestCount, error: rejectedCountError } = await db
+      .from("withdrawal_requests")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", userId)
+      .eq("idempotency_key", `worker-wd-${suffix}`);
+    expect(rejectedCountError).toBeNull();
+    expect(rejectedRequestCount).toBe(0);
+
+    // A postgres-only, connection-local test fixture simulates an original
+    // source-less historical receipt. It is not a verified mining producer.
+    const historicalReceipt = sql(`
+      begin;
+      ${readFileSync("supabase/tests/fixtures/historical-held-withdrawal.sql", "utf8")}
+      select pg_temp.seed_historical_held_withdrawal(
+        '${userId}'::uuid, '${destinationId}'::uuid, 5000, 'worker-wd-${suffix}'
+      );
+      commit;
+    `);
+    const withdrawalId = historicalReceipt
+      .split(/\r?\n/)
+      .find((line) => /^[a-f0-9-]{36}$/.test(line));
+    if (!withdrawalId) throw new Error("HISTORICAL_WITHDRAWAL_FIXTURE_MISSING");
+    const recovered = await db.rpc("request_krw_withdrawal", {
+      p_user_id: userId,
+      p_destination_id: destinationId,
+      p_amount_krw: 5000,
+      p_idempotency_key: `worker-wd-${suffix}`,
+    });
+    expect(recovered.error).toBeNull();
+    expect(recovered.data).toBe(withdrawalId);
+    const provenance = await db
+      .from("money_source_summaries")
+      .select("coverage")
+      .eq("user_id", userId)
+      .single();
+    expect(provenance.error).toBeNull();
+    expect(provenance.data?.coverage).toBe("UNRESOLVED");
 
     const { data: sendId, error: sendError } = await db.rpc(
       "record_krw_external_send",

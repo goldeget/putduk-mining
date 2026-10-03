@@ -73,6 +73,8 @@ export type ScenePoint = {
 
 export type ScenePerformance = {
   readonly maxParticles: number;
+  readonly maxFps?: number;
+  readonly maxDpr?: number;
   readonly renderer: "none" | "canvas-2d";
   readonly webgl: false;
   readonly timerAdvancesValue: false;
@@ -83,18 +85,29 @@ export type ScenePerformance = {
  * 비어 있으면 APPROVED 팩을 만들 수 없다.
  * SK하이닉스 V3 참조 해시는 여기에 넣지 않는다.
  */
-export const APPROVED_SCENE_MASTER_SHA256 = [] as const;
+export const APPROVED_SCENE_MASTER_SHA256 = [
+  "5d398a3155635d46a6d0b1f639c25d349ddf21607a16a4e6f948655744b8a6dd",
+] as const;
 
 export type ApprovedSceneMasterSha256 =
   (typeof APPROVED_SCENE_MASTER_SHA256)[number];
 
 /** 퍼블릭 상대 경로 허용 목록. 외부 URL 은 받지 않는다. */
-export const APPROVED_SCENE_ASSET_PATHS = [] as const;
+export const APPROVED_SCENE_ASSET_PATHS = [
+  "/brand/scenes/semiconductor-memory/semiconductor-memory-640-v1.avif",
+  "/brand/scenes/semiconductor-memory/semiconductor-memory-640-v1.webp",
+  "/brand/scenes/semiconductor-memory/semiconductor-memory-960-v1.avif",
+  "/brand/scenes/semiconductor-memory/semiconductor-memory-960-v1.webp",
+  "/brand/scenes/semiconductor-memory/semiconductor-memory-1280-v1.avif",
+  "/brand/scenes/semiconductor-memory/semiconductor-memory-1280-v1.webp",
+  "/brand/scenes/semiconductor-memory/semiconductor-memory-1539-v1.avif",
+  "/brand/scenes/semiconductor-memory/semiconductor-memory-1539-v1.webp",
+] as const;
 
 export type ApprovedSceneAssetPath =
   (typeof APPROVED_SCENE_ASSET_PATHS)[number];
 
-export const APPROVED_MASTER_VARIANTS = [] as const;
+export const APPROVED_MASTER_VARIANTS = ["semiconductor-memory-v1"] as const;
 
 export type ApprovedMasterVariant = (typeof APPROVED_MASTER_VARIANTS)[number];
 
@@ -110,6 +123,8 @@ export type ApprovedResponsiveSource = {
   readonly media: string;
   readonly assetPath: ApprovedSceneAssetPath;
   readonly width: number;
+  readonly height: number;
+  readonly mimeType: "image/avif" | "image/webp";
 };
 
 type SceneDefinitionBase = {

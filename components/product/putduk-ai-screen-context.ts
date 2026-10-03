@@ -22,6 +22,17 @@ const QUERY_KEY_BY_CONTEXT_FIELD = {
 
 type QueryContextField = keyof typeof QUERY_KEY_BY_CONTEXT_FIELD;
 
+function canonicalScreenRoute(
+  pathname: string,
+): AiScreenContext["currentRoute"] {
+  const exact = validContextValue("currentRoute", pathname);
+  if (exact) return exact;
+
+  // The event slug is not sent to AI; an optional UUID hint still goes through RLS.
+  if (/^\/events\/[a-z0-9]+(?:-[a-z0-9]+)*$/.test(pathname)) return "/events";
+  return undefined;
+}
+
 function validContextValue<Key extends keyof AiScreenContext>(
   key: Key,
   value: unknown,
@@ -61,7 +72,7 @@ export function buildPutdukAiScreenContext({
   pathname,
   searchParams,
 }: BuildPutdukAiScreenContextInput): AiScreenContext | undefined {
-  const currentRoute = validContextValue("currentRoute", pathname);
+  const currentRoute = canonicalScreenRoute(pathname);
   if (!currentRoute) {
     return undefined;
   }

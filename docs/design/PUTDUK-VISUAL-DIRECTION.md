@@ -2,7 +2,10 @@
 
 Status: **CANONICAL / APPROVED ART DIRECTION**
 
-Asset version: `2026.09.27-v1`
+Runtime asset manifest snapshot: `2026.10.03-v3` (96 assets; prior 88 preserved).
+
+Product benchmark: `visual-lab-2026.09.27-v1`. This benchmark identifier is
+separate from the runtime asset version and remains unchanged.
 
 ## 1. Canonical references
 
@@ -14,6 +17,39 @@ The following files are immutable visual references for this greenfield product:
 | `docs/design/visual-references/putduk-rank-master-reference.png` | Mining-world immersion, planetary rank-emblem hierarchy and cinematic quality bar | `b91a1e9bc64456a6d7c73861c7cfa8512eb976867fb112cdecdd083648a80f96` |
 
 These references define visual quality and art direction. They do **not** define final copy, product claims, rank benefits, economic values, or implemented scope. They remain separate from optimized runtime assets and must never be served directly by the application.
+
+### Owner direction confirmed on 2026-10-03
+
+The supplied mining/app mockups set the fidelity target for realistic metal,
+black glass, gold and blue reflected light, background detail and spatial depth.
+Match those qualities in the actual responsive product. A label such as
+"2D/2.5D" must not justify replacing them with flat illustrations, generic
+gradients or a lower-quality scene. Rendering technology is an implementation
+choice; direct comparison of the rendered material, light, color and composition
+is the quality gate. Device frames and placeholder bars in a mockup do not
+become application controls or implemented features.
+
+The approved member layout is a dominant scene with concise factual information,
+followed by one normal-flow row for `상세 보기` and the complete-face `AI 도움`
+launcher, then the five-tab navigation. The detailed link applies to the mining
+view; dedicated AI routes provide their own conversation UI. The robot face and
+this arrangement are approved. At the handoff, the semiconductor scene master
+and economic values were pending; that historical state is superseded within
+the scope of the follow-up decisions below. Reference images alone do not
+extend approval.
+
+On 2026-10-03 the owner delegated the visual choice and the existing clean
+semiconductor master `5d398a3155635d46a6d0b1f639c25d349ddf21607a16a4e6f948655744b8a6dd`
+was selected for app use. Its approved pack supplies complete-composition AVIF
+and lossless WebP widths 640/960/1280/1539. Only `SEMICONDUCTOR_MEMORY` and the
+explicit default backdrop use that pack; the other 13 families remain pending.
+See [the review](generated-masters/semiconductor-memory-v3-clean-2026-10-03/REVIEW.md).
+
+The separate [V1 owner-approved policy](../product/ECONOMY-V1-USER-APPROVAL-2026-10-03.md)
+and its JSON version supersede earlier pending economic values within their
+approval scope. They are configuration evidence, not running engine, DB,
+settlement or product acceptance. Read real server results before showing money;
+scene/asset approval grants no economic authority. Remote freeze remains.
 
 ## 2. Non-negotiable Korean copy rule
 
@@ -71,6 +107,10 @@ The emotional sequence is **dark space → warm discovery light → a clear next
 - Expression is conveyed through minimal face-light geometry and body pose.
 - The mascot guides, celebrates and explains. It must never impersonate an operator, promise returns or obscure a critical warning.
 - Full mascot renders are selective; the simplified sprout-miner symbol is used for compact product identity.
+- The approved `AI 도움` launcher uses the complete 1254×1254 face composition,
+  including leaves, helmet, ears and chin, through its four versioned runtime
+  derivatives. Preserve it with `object-fit: contain`; do not regenerate, crop,
+  repaint or replace it with the previous cropped upper-body presentation.
 
 ### Planetary ranks
 
@@ -105,10 +145,18 @@ The emotional sequence is **dark space → warm discovery light → a clear next
 
 ## 8. Motion and dimension
 
-- Normal product UI is 2D/2.5D.
-- High-quality 3D is limited to mining scenes and high-value rank/world moments.
+- Product surfaces preserve the approved realistic material and light quality
+  while keeping financial copy and controls legible. No dimension label lowers
+  the visual fidelity target.
+- Mining scenes retain cinematic spatial depth through approved scene masters,
+  responsive derivatives and bounded motion. A raster master is a high-quality
+  visual layer, not permission to publish a flattened screenshot as the app.
 - Motion explains state, continuity or spatial hierarchy. It never delays a transaction.
-- Reduced motion, low-power and WebGL-unavailable modes receive complete static experiences.
+- Reduced motion, low-power and WebGL-unavailable modes receive complete static
+  experiences using the same approved visual quality, real text and controls.
+  Adapt effect count and resolution rather than substituting a flat scene.
+- Server-confirmed state and revisions drive mining cues. A scene, timer or
+  animation never calculates money, capacity, eligibility or a successful result.
 - Detailed budgets and fallbacks are defined in `PUTDUK-MOTION-EXPERIENCE.md`.
 
 ## 9. Prohibited outcomes

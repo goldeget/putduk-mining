@@ -8,7 +8,118 @@ const manifestPath = path.join(root, "public", "brand", "assets.manifest.json");
 const manifest = JSON.parse(await readFile(manifestPath, "utf8"));
 
 const failures = [];
-const requiredVersion = "2026.09.27-v1";
+const requiredVersion = "2026.10.03-v3";
+const aiHelpSource =
+  "docs/design/generated-masters/ai-help-face-2026-10-03/putduk-ai-help-face-master-v1.png";
+const aiHelpSourceHash =
+  "d7aa8e5c8ddf1215ca3be650699a6c18fe168c9eefbba86a7204718f9d39ffd2";
+const aiHelpVersion = "2026.10.03-ai-help-face-v1";
+const aiHelpReviewScope =
+  "Owner-approved batch 7 AI help launcher face; preserve the complete 1254x1254 composition with object-fit: contain; no scene, economic or other asset approval.";
+const provenanceKeys = [
+  "assetVersion",
+  "sourceMaster",
+  "sourceSha256",
+  "reviewScope",
+];
+const approvedAiHelpPaths = new Map(
+  [128, 256].flatMap((size) =>
+    ["avif", "webp"].map((format) => [
+      `/brand/mascot/putduk-ai-help-face-${size}-v1.${format}`,
+      size,
+    ]),
+  ),
+);
+const sceneSource =
+  "docs/design/generated-masters/semiconductor-memory-v3-clean-2026-10-03/semiconductor-memory-v3-clean-master-v1.png";
+const sceneSourceHash =
+  "5d398a3155635d46a6d0b1f639c25d349ddf21607a16a4e6f948655744b8a6dd";
+const sceneVersion = "2026.10.03-semiconductor-memory-v1";
+const sceneReviewScope =
+  "Owner-delegated 2026-10-03 visual selection: approved complete 1539x1022 clean semiconductor scene; responsive encoding only, no crop, recoloring or upscale; no product mapping, economic runtime or other family approval.";
+const approvedScenePaths = new Map(
+  [640, 960, 1280, 1539].flatMap((width) =>
+    ["avif", "webp"].map((format) => [
+      `/brand/scenes/semiconductor-memory/semiconductor-memory-${width}-v1.${format}`,
+      { width, height: Math.round((1022 * width) / 1539) },
+    ]),
+  ),
+);
+
+/** Reviewed metadata belongs only to the approved face and scene packs. */
+export function aiHelpMetadataFailures(asset) {
+  const size = approvedAiHelpPaths.get(asset.path);
+  if (!size)
+    return !approvedScenePaths.has(asset.path) &&
+      provenanceKeys.some((key) => key in asset)
+      ? [`unapproved provenance path: ${asset.path}`]
+      : [];
+  const errors = [];
+  const expected = {
+    assetVersion: aiHelpVersion,
+    sourceMaster: aiHelpSource,
+    sourceSha256: aiHelpSourceHash,
+    reviewScope: aiHelpReviewScope,
+  };
+  for (const [key, value] of Object.entries(expected))
+    if (asset[key] !== value)
+      errors.push(`AI help ${key} mismatch: ${asset.path}`);
+  if (asset.width !== size || asset.height !== size)
+    errors.push(`AI help square dimensions mismatch: ${asset.path}`);
+  if (asset.theme !== "system")
+    errors.push(`AI help theme mismatch: ${asset.path}`);
+  if (asset.mimeType !== `image/${asset.path.split(".").at(-1)}`)
+    errors.push(`AI help MIME mismatch: ${asset.path}`);
+  const allowedKeys = new Set([
+    "path",
+    "bytes",
+    "sha256",
+    "mimeType",
+    "alt",
+    "width",
+    "height",
+    "theme",
+    ...provenanceKeys,
+  ]);
+  if (Object.keys(asset).some((key) => !allowedKeys.has(key)))
+    errors.push(`unapproved AI help metadata: ${asset.path}`);
+  return errors;
+}
+
+export function approvedSceneMetadataFailures(asset) {
+  const dimensions = approvedScenePaths.get(asset.path);
+  if (!dimensions)
+    return asset.path?.startsWith("/brand/scenes/")
+      ? [`unapproved scene path: ${asset.path}`]
+      : [];
+  const errors = [];
+  const expected = {
+    assetVersion: sceneVersion,
+    sourceMaster: sceneSource,
+    sourceSha256: sceneSourceHash,
+    reviewScope: sceneReviewScope,
+    theme: "system",
+    mimeType: `image/${asset.path.split(".").at(-1)}`,
+    ...dimensions,
+  };
+  for (const [key, value] of Object.entries(expected))
+    if (asset[key] !== value)
+      errors.push(`scene ${key} mismatch: ${asset.path}`);
+  const allowedKeys = new Set([
+    "path",
+    "bytes",
+    "sha256",
+    "mimeType",
+    "alt",
+    "width",
+    "height",
+    "theme",
+    ...provenanceKeys,
+  ]);
+  if (Object.keys(asset).some((key) => !allowedKeys.has(key)))
+    errors.push(`unapproved scene metadata: ${asset.path}`);
+  return errors;
+}
 const allowedMimes = new Set([
   "image/avif",
   "image/png",
@@ -26,8 +137,15 @@ if (!Array.isArray(manifest.assets) || manifest.assets.length === 0) {
 }
 
 for (const asset of manifest.assets ?? []) {
+  failures.push(...aiHelpMetadataFailures(asset));
+  failures.push(...approvedSceneMetadataFailures(asset));
   const relative = asset.path?.replace(/^\//, "");
-  if (!relative || relative.includes("..")) {
+  if (
+    !relative ||
+    !/^\/(brand|ranks)\//.test(asset.path) ||
+    relative.includes("..") ||
+    relative.includes("\\")
+  ) {
     failures.push(`unsafe asset path: ${String(asset.path)}`);
     continue;
   }
@@ -77,6 +195,8 @@ for (const [relative, expected] of expectedReferenceHashes) {
 }
 
 const expectedMasterHashes = new Map([
+  [aiHelpSource, aiHelpSourceHash],
+  [sceneSource, sceneSourceHash],
   [
     "docs/design/generated-masters/putduk-miner-master-v1.png",
     "5efb45738d0cdd72bfb2cc3a24a31d6034eeb33277daa375bf05ab51b8eb1fea",
@@ -110,6 +230,21 @@ const expectedMasterHashes = new Map([
     "73cb455e6415283bb50604897ab7af8a234031c737e707d220db1b9d4f0ecc08",
   ],
 ]);
+
+for (const expectedPath of approvedAiHelpPaths.keys()) {
+  if (
+    manifest.assets.filter((asset) => asset.path === expectedPath).length !== 1
+  )
+    failures.push(
+      `AI help derivative must appear exactly once: ${expectedPath}`,
+    );
+}
+for (const expectedPath of approvedScenePaths.keys()) {
+  if (
+    manifest.assets.filter((asset) => asset.path === expectedPath).length !== 1
+  )
+    failures.push(`scene derivative must appear exactly once: ${expectedPath}`);
+}
 
 for (const [relative, expected] of expectedMasterHashes) {
   try {

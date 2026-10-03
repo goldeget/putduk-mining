@@ -8,6 +8,7 @@ const SAFE_ADMIN_PATHS = [
   "/kyc",
   "/exceptions",
   "/restrictions",
+  "/economy",
   "/session-expired",
   "/reauth",
   "/unauthorized",

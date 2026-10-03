@@ -1,12 +1,147 @@
-/* AI 채팅 전용 보강. 공유 globals / product-experience CSS는 수정하지 않는다. */
+/* Shared session presentations; keep the conversation and composer in focus. */
+
+.chat:global(.ai-chat) {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  overflow: auto;
+  background: var(--surface-default);
+}
+
+.chat::before {
+  display: none;
+}
+
+.chat.page {
+  height: min(48rem, 80svh);
+  min-height: 24rem;
+}
+
+.chat.panel {
+  height: 100%;
+  min-height: 0;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.pageStatus {
+  display: grid;
+  flex: 0 0 auto;
+  gap: 0.25rem;
+  padding: 1rem clamp(1rem, 4vw, 1.8rem);
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 0.9rem;
+}
+
+.pageStatus span {
+  color: var(--text-secondary);
+}
+
+.notices {
+  flex: 0 0 auto;
+  padding: 0.65rem clamp(1rem, 4vw, 1.8rem);
+  border-bottom: 1px solid var(--border-subtle);
+}
 
 .continuityNotice {
   margin: 0;
-  padding: 0.55rem clamp(1rem, 4vw, 1.8rem);
-  border-bottom: 1px solid var(--border-subtle);
   color: var(--text-secondary);
   font-size: 0.875rem;
   line-height: 1.45;
+}
+
+.providerNotice {
+  margin: 0.2rem 0 0;
+  max-width: 40ch;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  word-break: keep-all;
+}
+
+.chat .transcript {
+  min-height: 8rem;
+  max-height: none;
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  overflow-wrap: anywhere;
+}
+
+.panel .transcript {
+  min-height: 3rem;
+  padding: 1.25rem;
+}
+
+.panel .notices {
+  max-height: 6rem;
+  overflow-y: auto;
+}
+
+.transcript:focus-visible,
+.notices:focus-visible {
+  outline: 2px solid var(--brand-strong);
+  outline-offset: -3px;
+}
+
+.chat .welcome {
+  max-width: 28rem;
+  padding-block: clamp(1.5rem, 5vh, 3rem);
+}
+
+.chat .welcome h2 {
+  font-size: clamp(1.2rem, 3.5vw, 1.6rem);
+  line-height: 1.4;
+}
+
+.chat .message {
+  width: min(94%, 44rem);
+  min-width: 0;
+  border: 0;
+  font-size: 1rem;
+}
+
+.message:global(.ai-message--assistant) {
+  width: 100%;
+  padding-inline: 0;
+  background: transparent;
+}
+
+.chat .message > p {
+  font-size: 1rem;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+.chat .message > span {
+  font-family: inherit;
+  letter-spacing: normal;
+}
+
+.answerEvidence {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.75rem;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+.failure {
+  display: grid;
+  justify-items: start;
+  gap: 0.4rem;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.failure p {
+  margin: 0;
+  max-width: 42ch;
+  line-height: 1.6;
+  word-break: keep-all;
 }
 
 .recoveryButton {
@@ -14,10 +149,68 @@
   justify-self: start;
 }
 
-.thinkingStatic {
+.waiting {
   margin: 0;
   color: var(--text-secondary);
   font-size: 0.9rem;
+}
+
+.liveStatus {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.chat .composer {
+  flex: 0 0 auto;
+  min-width: 0;
+  padding: 0.9rem clamp(1rem, 4vw, 1.6rem);
+}
+
+.chat .composer textarea {
+  min-height: 4.8rem;
+  max-height: 9rem;
+}
+
+.panel .composer footer {
+  grid-template-columns: 1fr;
+}
+
+.panel .composer footer > span {
+  justify-content: space-between;
+}
+
+@media (max-height: 560px) {
+  .panel .notices {
+    max-height: 3rem;
+    padding-block: 0.4rem;
+  }
+
+  .panel .transcript {
+    padding-block: 0.75rem;
+  }
+
+  .panel .welcome {
+    padding-block: 0.75rem;
+  }
+
+  .panel .composer {
+    gap: 0.4rem;
+    padding-block: 0.6rem;
+  }
+
+  .panel .composer textarea {
+    min-height: 3.5rem;
+    max-height: 5rem;
+    padding-block: 0.6rem;
+  }
+
+  .panel .composer footer {
+    gap: 0.35rem;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

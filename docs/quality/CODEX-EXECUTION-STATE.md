@@ -2,6 +2,111 @@
 
 기록일: 2026-10-03 KST. 상태: **IN_PROGRESS / NOT RELEASE READY**.
 
+## PR #47 통합 후보와 첫 CI의 제한
+
+PR #47의 첫 head `5fe76eb066a58f52ac167a81a5506d28f272a83f`는 canonical
+배경·공유 AI·5탭·published-only catalog를 포함했다. run `37126927027`
+attempt 1은 인증 검사 실패와 18m30s budget 취소로 **FAILED ACCEPTANCE**다.
+이 run의 빌드·DB·135 typography pass를 전체 통과나 제품 완료로 사용하지
+않는다. 실제 pixels의 작은 한글 mono 라벨 결함도 별도로 발견했다.
+
+후속 후보는 실제 radio hit area를 label 내부에 고정하고, 현재 경로의
+visible 요소·pathname으로 검사와 AI 전용 레이아웃을 결정한다. catalog
+fixture의 owner read를 격리 CI에 한정하며 service 권한을 넓히지 않는다.
+숫자용 글꼴에도 bundled 한글 fallback을 공급하고 실제 mono 한글 라벨
+검사를 추가한다. native dialog·주 스크롤·상세 focus 복귀를 보존한다.
+
+승인 JSON의 SHA `158c81e91923ba31f57b457ae3a33bc4092455e4abe2a2c888d5b5d2bc33b9e0`
+를 그대로 DB seed와 CI 검증에 결합했다. 서버 전용 BigInt preview는 정책
+receipt/digest, 고정 cycle, lot effective time, forward proration, 하나의
+global capacity와 carry를 검사한다. **PREVIEW_ONLY**이며 wallet·정산을
+쓰지 않는다. 관리자 정책 저장·검토·승인·미래 발행은 append-only 버전,
+fresh 권한·AAL2·bound session·one-use step-up·동일 key receipt를 사용한다.
+운영자의 다음 버전에서 숫자를 바꿀 수 있으며 초기 운영값을 영구 상수로
+고정하지 않는다. 정책 outbox는 consumer 연결 전 보류 상태다.
+
+retired POST와 exact legacy seven-argument RPC의 service 실행 권한을 닫는다.
+기존 owner fixture·historical rows·현대 request command·START 첫 출금은
+보존한다. source-aware reserve/release/finalize·principal recovery·실채굴
+DB writer·worker settlement는 후속 구현 대상이다. 원금 회수 시 lot 배분
+선택은 별도 사용자 답변 전 활성화하지 않는다.
+
+후속 head의 전체 18-job CI, 실제 pixels 및 develop 병합 CI는 별도 gate다.
+원격 Supabase/Cloudflare/DNS/배포/실제 지급 잠금과 보호11개는 유지한다.
+
+## 2026-10-03 후속 승인과 asset 등록
+
+사용자가 시각 선택을 위임했고 기존 clean semiconductor master
+`5d398a3155635d46a6d0b1f639c25d349ddf21607a16a4e6f948655744b8a6dd`를
+앱용으로 채택했다. runtime `2026.10.03-semiconductor-memory-v1`의 전체
+구도 AVIF/WebP8종이 추가되어 manifest는 `2026.10.03-v3`/96종이다.
+기존88 entry digest와 파일 bytes를 보존했다. memory family만 approved,
+다른13개 family는 pending이다. 기본 배경은 explicit registry로 정하며
+world/code/name/회원 상태에서 상품을 추론하지 않는다.
+
+asset verifier96종, brand unit9개, builder syntax, decoded geometry/hash가
+통과했다. AVIF 최소41.067dB, WebP4종 resized pixel lossless이며640/1539
+decoded pixels를 직접 검토했다. 증거는
+`D:\PUTDUK-MINING-QA\scene-assets-20261003-2216-9df68e6d`다.
+실제 앱 crop/theme/native zoom/성능/접근성/모션/서버 snapshot acceptance는
+이 자산 검사와 분리한다. PRODUCT COMPLETE나 출시 완료가 아니다.
+
+경제 V1 운영값은 [후속 승인](../product/ECONOMY-V1-USER-APPROVAL-2026-10-03.md)과
+`../product/economy-v1-approved-2026-10-03.json`에서 OWNER_APPROVED다.
+아래 이전 "경제 숫자/scene 승인 대기" 기록은 해당 당시의 이력이다.
+승인 범위의 값 때문에 구현을 보류하지 않으며 approved server policy로
+연결한다. engine/DB/worker/정산의 실제 활성·완료 증거는 아직 별도이고
+원격 Supabase/Cloudflare/DNS/배포/실제 지급 잠금은 유지한다.
+
+## 현재 병합 상태
+
+PR #46 최종 head `1b2b0fb4907f22cf8e9582d1c1b924b85bb900c9`의 run
+`37114935163` attempt 1은 18개 job success, **18분 5초**다.
+develop 병합 `034c78ccc8002c7eb9f34ca70ac88712f1cc16de`의 push run
+`37116286293` attempt 1도 **POST_MERGE_VERIFIED**, **17분 20초**다.
+2026-10-03 `10:23:57Z`–`10:41:17Z`이며 PR 전용 Exact diff integrity만
+skip, 나머지 17개 job은 success다. 정상 merge이며 보호 규칙 우회는 없다.
+원금 CREDIT3 capture의 DB·동시성·source 화면 증거와 제한은
+`MONEY-SOURCE-CAPTURE-EVIDENCE.md`를 따른다. 제품·출시 완료는 아니다.
+
+다음 작업은 같은 source workspace의 `codex/product-ai-navigation`에서
+승인된 5개 탭, 공개 catalog read와 공유 AI session을 하나의 기능 묶음으로
+진행한다. batch 7의 전체 robot face와 normal-flow 한 줄 도움 행은 승인됐다.
+큰 장면 아래 상세 보기·AI 도움, 그 아래 5탭이며 모바일 전체 대화와 PC
+오른쪽 panel/넓게 보기를 따른다. 인계 당시 반도체 scene master와 경제 숫자
+승인은 별도 대기였고, 현재 상태는 위 후속 승인을 따른다. 사소한 편집마다 전체 CI를
+반복하지 않으며 안정된 후보의 전체 PR CI와 병합 CI는 각각 검증한다.
+
+## 2026-10-03 인계 대조와 재개 범위
+
+- 아래 기존 검사/CI/실패 기록은 각 후보의 이력으로 보존한다. PR46 성공을
+  이후 미커밋 UI의 acceptance로 전용하지 않는다.
+- 인계는 구현 중단 시점을 기록한 것이다. 현재 재개 권한은 최신 직접 사용자
+  지시에 따른다. 기존 보호11개와 소유권 경계, 원격 Supabase/Cloudflare/DNS/
+  배포/실송금 잠금은 계속 유지한다.
+- runtime manifest는 `2026.10.03-v2`/88종이다. HEAD의 기존84 entry는
+  그대로이고 전체 얼굴128/256 AVIF/WebP4종이 추가됐다. source master와
+  4종 실제 hash는 인계 대조에서 manifest와 일치했다. 이 대조는 새 asset
+  verifier 실행 또는 실제 앱 pixels/성능 PASS가 아니다.
+- 승인 얼굴 hash는
+  `d7aa8e5c8ddf1215ca3be650699a6c18fe168c9eefbba86a7204718f9d39ffd2`,
+  face version은 `2026.10.03-ai-help-face-v1`이다. 전체 구성의 재생성·crop·
+  repaint 없이 public derivative를 사용한다. Visual Lab 식별자는 별도의
+  `visual-lab-2026.09.27-v1`이다.
+- 반도체 master hash
+  `5d398a3155635d46a6d0b1f639c25d349ddf21607a16a4e6f948655744b8a6dd`는
+  REVIEW 승인 대기다. 제공된 사진은 참고이며 얼굴/배치 승인으로 scene·
+  경제 값·runtime activation을 승인하지 않는다.
+- 인계 source의 홈/채굴/상품은 Earth이며 Stage allowlist는 비어 있고
+  Scene14종은 inactive다. Funding engine/30일 cycle/earned authority와
+  V3 server-snapshot HUD는 미연결이다. 현재 값처럼 표시하지 않는다.
+- 먼저 기존 AI/nav/catalog/dock의 결함·auth·복구·main 스크롤을 마무리하고
+  실제 rendered mobile/PC/keyboard/modal/200%/theme/reduced-motion/성능
+  증거를 확보한다. 구현·static 모델·검사·실제 runtime 상태를 구분한다.
+- 원본의 사실적 금속·빛·공간 깊이·색상·배경 품질이 화면 기준이다.
+  2D/2.5D라는 표현으로 하향 치환하지 않으며 실제 비교 전 100% 일치·
+  무결점·렉없음을 달성으로 기록하지 않는다.
+
 ## 권한과 기준
 
 - 소스·Git: `C:\Users\PC\Desktop\putduk-mining`.
@@ -13,7 +118,7 @@
 - PR #41 push run `37092611992`는 위 병합 SHA에서 success로 확인됐다. PR 전용 Exact diff integrity는 skip이고 다른 16개 job은 success였다. 확인 시각: 2026-10-03 12:39:37 KST.
 - develop ruleset `24403592`: 시작 시 strict 필수 검사 16개. PR #43 검증 후 `CI completeness and 20-minute budget`을 추가해 현재 17개이며 integration ID `15368`, strict, 승인 수 0, bypass 없음, force push/삭제 차단이다. merge queue는 사용하지 않는다.
 
-## 첫 변경 범위
+## 첫 변경 범위 — PR42 이전 이력
 
 1. Windows QA 결과·로그·TEMP를 D:로 보낸다. source/origin/volume을 확인하고 기존 수정 파일 hash를 비교한다. 단위 검사 worker는 둘로 제한한다.
 2. 관리자 송금·안전 모드 검토 시각을 한국 시간 입력에서 UTC로 변환한다. 잘못된 날짜는 작업 확인 소비 전에 거절한다. 안전 모드 보완 후보는 입력 검증과 원자적 저장·감사·outbox·복구를 같은 기능 묶음으로 검증한다.
@@ -22,7 +127,7 @@
 
 기존 public RPC 이름·권한·원장·outbox 모델을 유지한다. DB 승인 명령 자체의 USDT payload 재시도 보강은 후속 변경이다.
 
-## 로컬 증거
+## 초기 로컬 증거 — 현재 UI 후보의 검사 아님
 
 아래 경로는 이 작업이 새로 생성한 QA 결과다. 단위 검사나 CI만으로 제품 완료를 주장하지 않는다.
 
@@ -56,7 +161,7 @@ C: 여유가 작업 중 크게 변동했다. 소스/Next 빌드/Docker 저장 �
 - 후속 CI에서는 네 Playwright 계층에 `--fail-on-flaky-tests`를 적용한다. retry는 진단에 남기지만 첫 실패 후 retry 성공을 green으로 받아들이지 않는다. KYC 결과는 다음 작업을 시작할 때 이전 성공을 지우며, 카드가 먼저 사라진 뒤 서버 응답이 도착해도 유지된다. 최종 focused 4 tests·타입 검사 PASS: `codex-2026-10-03T05-04-07-735Z-58303d45`, `codex-2026-10-03T05-04-15-553Z-d6b8e1d1`. 이번 소유 파일 format/lint는 `codex-2026-10-03T05-01-20-875Z-428cb044`에서 PASS였다. 새 테스트의 React 작성 규칙 오류는 수정 뒤 별도 검사했다.
 - 후속 로컬 증거: 전체 회원 65 files / 604 tests PASS (`codex-2026-10-03T04-41-53-399Z-cad95ced`), Git 목록 lint PASS (`codex-2026-10-03T04-41-53-437Z-3a579dd2`), 두 앱 typecheck PASS (`codex-2026-10-03T04-48-59-915Z-674f4869`), KYC 제거 전후 결과 전달 단위 3 tests PASS (`codex-2026-10-03T04-52-25-416Z-30a0669a`). 초기 타입 검사 실패는 선언 파일·테스트 타입을 보완한 뒤 재검증했다. 최종 후보의 CI를 대신하지 않는다.
 
-## 다음 순서
+## 후속 PR/CI 이력과 당시 실행 순서
 
 - PR #43 최종 head `0654ae1ab7feab0c0a9ad203d93b86965c21da96`: PR run `37100084715` success, 전체 **16분 34초**. 실제 KYC 성공 메시지·카드 제거·DB와 화면을 함께 확인했다. 병합 `6c60115dae694fbb20c6ad3b9ca21673cf4eceff`, push run `37101218564` success / **POST_MERGE_VERIFIED**, 전체 **17분 8초** (`05:52:18Z`–`06:09:26Z`). PR 전용 Exact diff integrity만 skip이다.
 - PR #44 최종 head `ff9f910238cccbaca3d0e3f330d86047515394db`: PR run `37102198468` success, 전체 **16분 53초** (`06:10:48Z`–`06:27:41Z`). 21 pgTAP files / 572 assertions, 두 세션 KRW 7·USDT 11 assertions, DB lint·advisors가 모두 성공했다. 기존 public USDT 명령에서 payload 충돌·외부 영수증 충돌·불완전 원장을 거절하며 금액·원장·지갑·audit·outbox가 일치하는 영수증만 재사용한다. 병합 `a42c996b414aa32569523604505fcb9cf2e1807b`, push run `37103303899`는 **success / POST_MERGE_VERIFIED**, 전체 **16분 21초** (`06:30:48Z`–`06:47:09Z`)다. 18개 job을 확인했고 PR 전용 Exact diff integrity만 skip이다. 증거: `D:\PUTDUK-MINING-QA\codex-2026-10-03T06-08-46-870Z-f60472d8`.

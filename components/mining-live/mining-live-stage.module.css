@@ -1,31 +1,130 @@
 .stage {
   position: relative;
+  isolation: isolate;
+  width: 100%;
   overflow: hidden;
-  min-height: 10rem;
-  padding: 1.5rem;
+  min-height: clamp(27rem, 62svh, 44rem);
   border-radius: 1.25rem;
   background: var(--surface-sunken);
   color: var(--text-primary);
   border-top: 2px solid var(--scene-accent, transparent);
 }
 
+.stage[data-scene-art="closed"],
+.stage[data-scene-art="pending"] {
+  min-height: 10rem;
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  min-height: inherit;
+  padding: clamp(1rem, 2.5vw, 2rem);
+  gap: 2rem;
+}
+
 .copy {
+  align-self: flex-start;
   max-width: 22rem;
   margin: 0;
+  padding: 0.65rem 0.9rem;
+  border: 1px solid rgb(242 217 168 / 20%);
+  border-radius: 0.75rem;
+  background: rgb(12 17 24 / 88%);
+  color: #f7f2e8;
   line-height: 1.7;
+  text-wrap: pretty;
+}
+
+.controls {
+  width: 100%;
+  min-width: 0;
+  min-height: inherit;
+}
+
+.withControls {
+  padding: 0;
+  gap: 0;
+}
+
+.picture {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  display: block;
+  overflow: hidden;
 }
 
 .master {
   display: block;
   width: 100%;
-  height: auto;
-  margin-bottom: 1rem;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 50%;
 }
 
 .canvas {
   position: absolute;
+  z-index: 1;
   inset: 0;
   width: 100%;
   height: 100%;
   pointer-events: none;
+}
+
+.canvas[data-motion-state="paused"],
+.canvas[data-motion-state="unavailable"] {
+  visibility: hidden;
+}
+
+.imageRecovery {
+  position: absolute;
+  z-index: 3;
+  inset: 35% 1rem auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  background: rgb(12 17 24 / 94%);
+  color: #f7f2e8;
+}
+
+.imageRecovery p {
+  margin: 0;
+}
+
+.imageRecovery button {
+  min-height: 2.75rem;
+  padding-inline: 1rem;
+  border: 1px solid #d5b37b;
+  border-radius: 0.5rem;
+  background: #171d24;
+  color: #f7f2e8;
+  cursor: pointer;
+}
+
+.imageRecovery button:focus-visible {
+  outline: 3px solid #f2d9a8;
+  outline-offset: 3px;
+}
+
+@media (max-width: 599px) {
+  .stage[data-scene-art="ready"] {
+    min-height: 34rem;
+  }
+
+  .master {
+    object-position: 50% 50%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .canvas {
+    display: none;
+  }
 }

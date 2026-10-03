@@ -3,3 +3,6 @@
 # All executable files and maintained documentation keep the normal checks.
 docs/architecture/USER-APPROVED-FINAL-ARCHITECTURE-2026-10-03.txt -text whitespace=cr-at-eol,-blank-at-eol
 docs/design/USER-PROVIDED-VISUAL-PROMPT-2026-10-03.txt -text whitespace=cr-at-eol,-blank-at-eol
+# The V1 policy's byte digest binds the approved seed on Windows and CI.
+docs/product/ECONOMY-V1-USER-APPROVAL-2026-10-03.md -text whitespace=cr-at-eol
+docs/product/economy-v1-approved-2026-10-03.json -text whitespace=cr-at-eol

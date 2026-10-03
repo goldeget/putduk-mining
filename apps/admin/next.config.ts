@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 import { buildAdminContentSecurityPolicy } from "./lib/content-security-policy";
+import { resolveNextDistDir } from "../../scripts/resolve-next-dist-dir.mjs";
 
 const contentSecurityPolicy = buildAdminContentSecurityPolicy({
   appEnv: process.env.APP_ENV,
@@ -30,6 +31,7 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  distDir: resolveNextDistDir(),
   allowedDevOrigins: ["127.0.0.1"],
   productionBrowserSourceMaps: false,
   poweredByHeader: false,

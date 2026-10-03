@@ -98,6 +98,27 @@ const serverEnvSchema = z
 export type ServerEnv = z.infer<typeof serverEnvSchema> &
   ReturnType<typeof getPublicEnv>;
 
+/** Configuration presence only; neither provider health nor authorization. */
+export function hasConfiguredAiProvider(): boolean {
+  const provider = serverEnvSchema.shape.AI_PROVIDER.safeParse(
+    process.env.AI_PROVIDER,
+  );
+  const key = serverEnvSchema.shape.AI_API_KEY.safeParse(
+    process.env.AI_API_KEY,
+  );
+  const model = serverEnvSchema.shape.AI_MODEL_LOW_COST.safeParse(
+    process.env.AI_MODEL_LOW_COST,
+  );
+  return Boolean(
+    provider.success &&
+    key.success &&
+    model.success &&
+    provider.data &&
+    key.data &&
+    model.data,
+  );
+}
+
 export function getServerEnv(): ServerEnv {
   const server = serverEnvSchema.parse({
     APP_ENV: process.env.APP_ENV,

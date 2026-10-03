@@ -179,7 +179,8 @@ test("member support identity does not leak across login", async ({ page }) => {
 
   const width = page.viewportSize()?.width ?? 1280;
   await page.goto("/home");
-  const launcher = page.locator("#putduk-support-launcher");
+  await expect(page.locator("#putduk-support-launcher")).toHaveCount(0);
+  const launcher = page.getByRole("button", { name: "AI 도움", exact: true });
   await expect(launcher).toBeVisible();
   if (width < 980) {
     const navigation = page.locator(".product-workspace > .product-navigation");
@@ -192,6 +193,14 @@ test("member support identity does not leak across login", async ({ page }) => {
       expect(boxesOverlap(launcherBox, navigationBox)).toBe(false);
     }
   }
+  await page
+    .getByRole("navigation", { name: "주요 메뉴" })
+    .getByRole("link", { name: "더보기", exact: true })
+    .click();
+  await page.locator('a[href="/support"]').click();
+  await expect(page).toHaveURL(/\/support$/);
+  await waitForBoot(page, memberB.userId);
+  await expect(page.locator("#putduk-support-launcher")).toBeVisible();
 });
 
 test("signed-in support route keeps Korean guidance and ready state", async ({

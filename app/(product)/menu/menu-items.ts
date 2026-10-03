@@ -12,6 +12,12 @@ export type MenuItem = {
 /** 내 퍼뜩 허브 네비게이션. 알림 센터와 알림 설정을 분리한다. */
 export const MENU_ITEMS: readonly MenuItem[] = [
   {
+    href: "/events",
+    icon: "event",
+    label: "이벤트",
+    description: "진행 중인 이벤트와 참여 조건을 확인해요.",
+  },
+  {
     href: "/menu/account" as Route,
     icon: "user",
     label: "계정 관리",
