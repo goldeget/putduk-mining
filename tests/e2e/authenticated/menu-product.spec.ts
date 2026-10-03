@@ -152,7 +152,9 @@ test("menu hub, account, and settings cover states and navigation", async ({
     "지갑",
     "더보기",
   ]);
-  await expect(menuNav.getByRole("link", { name: /이벤트/ })).toBeVisible();
+  const eventsLink = menuNav.getByRole("link", { name: /^이벤트\s/ });
+  await expect(eventsLink).toBeVisible();
+  await expect(eventsLink).toHaveAttribute("href", "/events");
   const headerNotificationLink = page
     .locator("header.product-header")
     .getByRole("link", { name: "알림 센터", exact: true });

@@ -146,6 +146,39 @@ describe("AI dock route and modal lifecycle", () => {
     expect(host.querySelector('a[href="#putduk-mining-details"]')).toBeNull();
   });
 
+  it("opens and scrolls the visible mining details instead of hidden streamed content", async () => {
+    const stale = document.createElement("details");
+    stale.id = "putduk-mining-details";
+    stale.hidden = true;
+    const current = document.createElement("details");
+    current.id = stale.id;
+    const summary = document.createElement("summary");
+    summary.tabIndex = 0;
+    current.append(summary);
+    const scroll = vi.fn();
+    current.scrollIntoView = scroll;
+    Object.defineProperty(stale, "getClientRects", {
+      value: () => [] as unknown as DOMRectList,
+    });
+    Object.defineProperty(current, "getClientRects", {
+      value: () => [current.getBoundingClientRect()] as unknown as DOMRectList,
+    });
+    main.append(stale, current);
+    await render("/mining");
+    await act(async () =>
+      host
+        .querySelector<HTMLAnchorElement>('a[href="#putduk-mining-details"]')!
+        .click(),
+    );
+    expect(stale.open).toBe(false);
+    expect(current.open).toBe(true);
+    expect(scroll).toHaveBeenCalledWith({
+      block: "start",
+      behavior: "instant",
+    });
+    expect(document.activeElement).toBe(current.querySelector("summary"));
+  });
+
   it("opens one panel, locks the real main scroller, then restores styles and focus", async () => {
     document.documentElement.style.setProperty("overflow", "clip");
     await render();

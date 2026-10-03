@@ -493,7 +493,11 @@ test("covers deposit layout, theme, focus, and reduced motion", async ({
     async () => {
       await loginAsMember(page, member, "/wallet/deposit");
       await openDeposit(page);
-      await expect(page.getByText(FIXTURE_LONG_TRC20_ADDRESS)).toBeVisible();
+      const destinationAddress = page.locator("code:visible").filter({
+        hasText: FIXTURE_LONG_TRC20_ADDRESS,
+      });
+      await expect(destinationAddress).toHaveCount(1);
+      await expect(destinationAddress).toHaveText(FIXTURE_LONG_TRC20_ADDRESS);
 
       const amount = page.locator("#deposit-amount");
       await amount.focus();
@@ -512,9 +516,10 @@ test("covers deposit layout, theme, focus, and reduced motion", async ({
           await expect(
             page.getByRole("heading", { name: "입금하기", level: 1 }),
           ).toBeVisible();
-          await expect(
-            page.getByText(FIXTURE_LONG_TRC20_ADDRESS),
-          ).toBeVisible();
+          await expect(destinationAddress).toHaveCount(1);
+          await expect(destinationAddress).toHaveText(
+            FIXTURE_LONG_TRC20_ADDRESS,
+          );
           await expectNoHorizontalOverflow(page);
           if (viewport.width < 980) {
             const navigation = page.locator(

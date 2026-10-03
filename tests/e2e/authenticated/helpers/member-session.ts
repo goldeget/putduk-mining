@@ -27,11 +27,15 @@ export async function loginAsMember(
       `MEMBER_LOGIN_FAILED: alert=${alert ?? "none"}; cause=${error instanceof Error ? error.message : String(error)}`,
     );
   }
-  // 서버 액션 쿠키가 브라우저에 정착할 때까지 인증 UI를 확인한다.
-  await page
-    .getByText("회원", { exact: true })
-    .first()
-    .waitFor({ timeout: 30_000 });
+  // Dedicated AI intentionally hides the account header. Check the current
+  // authenticated presentation rather than hidden text from a prior route.
+  if (nextPath === "/ai" || nextPath === "/menu/ai") {
+    await expect(page.locator("[data-ai-page]:visible")).toHaveCount(1);
+  } else {
+    await expect(
+      page.locator(".product-header__identity:visible small"),
+    ).toHaveText("회원", { timeout: 30_000 });
+  }
 }
 
 /** 첫 방문 안내 오버레이가 시작 CTA를 가리거나 클릭을 가로채지 않게 닫는다. */
@@ -126,8 +130,7 @@ export async function convertWelcomeFromUi(page: Page) {
   await page.goto("/start");
   await dismissGuidedQuestIfPresent(page);
   const memberVisible = await page
-    .getByText("회원", { exact: true })
-    .first()
+    .locator(".product-header__identity:visible small")
     .isVisible()
     .catch(() => false);
   const convertButton = page.getByRole("button", {

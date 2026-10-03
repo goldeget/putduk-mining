@@ -162,7 +162,7 @@ HUD를 기존 `MiningLiveStage`에 통합한다. 마지막으로 실제 route별
 | 3 | Tier·Entitlement·Cycle·Segment·Proration | 후속 V1 구조·수치 승인 version을 서버 계약에 연결한다. 실제 transactional engine은 미구현이므로 approved config와 running/settlement 증거를 구분한다 |
 | 4 | 서버 정산·Live Snapshot | 기존 helper와 command gap 확인. 단일 권위 engine·balanced posting·lease/retry·revision 연결 필요 |
 | 5 | 사용자 Capacity UX | 같은 권위 snapshot의 원금·등급·오늘 채굴·capacity·speed만 우선 HTML로 표시. next Tier는 승인 정책과 실제 데이터가 있는 상세 영역에만 표시 |
-| 6 | 관리자 경제 제어 | simple 입력·영향 preview·confirm/step-up·버전 예약/취소·복구 필요 |
+| 6 | 관리자 경제 제어 | PR47 후속 후보에 실제 DB 조회·immutable 정책 생성/검토/승인/미래 발행·step-up·receipt 복구 foundation을 추가. consumer/실제 정산 활성, 이미 예약된 정책의 별도 취소 계약과 전체 제품 증거는 후속 gate |
 | 7 | AI Gateway·관리자 도우미 | 기존 read/draft 재사용, provider-neutral routing·정책·cost/quota·eval·실패 상태 확장 |
 | 8 | 사용자 AI | 기존 read-only/money denial·shared session·승인 얼굴/normal-flow dock/context 재사용. 현재 미커밋 foundation을 실제 app/auth/modal/복구로 검증하며 DB 영속 대화·모델 기억 구현으로 확대하지 않음 |
 | 9 | V3 clean master·Scene runtime | immutable reference 보존, imagegen clean master 검토·derivative·단일 bounded renderer·실제 delta 연결 |

@@ -17,10 +17,11 @@ export async function waitForRouteBody(
   pathname: string,
   timeout = 60_000,
 ): Promise<UiTerminalState> {
-  const body = page
-    .locator(`[data-ui-ready=${JSON.stringify(pathname)}]`)
-    .first();
+  const body = page.locator(
+    `[data-ui-ready=${JSON.stringify(pathname)}]:visible`,
+  );
   await body.waitFor({ state: "visible", timeout });
+  await expect(body).toHaveCount(1);
   await expect
     .poll(async () => body.getAttribute("data-ui-state"), { timeout })
     .toMatch(/^(loaded|empty|error|partial|unknown|offline)$/);
@@ -29,6 +30,6 @@ export async function waitForRouteBody(
   await expect(
     body.locator('[data-ui-state="loading"], [aria-busy="true"]'),
   ).toHaveCount(0);
-  await expect(body.locator("h1").first()).toBeVisible();
+  await expect(body.getByRole("heading", { level: 1 })).toBeVisible();
   return state;
 }

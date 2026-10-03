@@ -65,7 +65,13 @@ export async function prepareMemberThroughStart(
   await advanceTrialToCompleted(member.userId);
   await approveKycEligibility(member.userId, operator.userId);
   await page.goto("/start");
-  await page.getByText("첫 채굴을 마쳤어요.").waitFor({ timeout: 60_000 });
+  await page
+    .getByRole("heading", {
+      name: "첫 채굴을 마쳤어요.",
+      exact: true,
+      level: 1,
+    })
+    .waitFor({ timeout: 60_000 });
   await convertWelcomeFromUi(page);
   await assertNoDepositRows(member.userId);
 

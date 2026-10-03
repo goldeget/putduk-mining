@@ -3,10 +3,8 @@ import path from "node:path";
 
 import { expect, test, type Page } from "@playwright/test";
 
-import {
-  createConfirmedMember,
-  createLocalServiceRoleClient,
-} from "../fixtures/local-auth";
+import { createConfirmedMember } from "../fixtures/local-auth";
+import { execLocalAdminSql } from "./helpers/local-db";
 import {
   dismissGuidedQuestIfPresent,
   loginAsMember,
@@ -63,11 +61,13 @@ test("the actual draft-only catalog stays unpublished with accessible responsive
     )
       hydration.push(message.text().slice(0, 400));
   });
-  const localCatalog = await createLocalServiceRoleClient()
-    .from("product_catalog_versions")
-    .select("id, status, published_at");
-  expect(localCatalog.error).toBeNull();
-  const catalogRows = localCatalog.data ?? [];
+  // The application's service role deliberately has no direct catalog-table
+  // privilege. Inspect only the isolated CI fixture as its owner.
+  const catalogRows = JSON.parse(
+    execLocalAdminSql(
+      "select coalesce(json_agg(json_build_object('status', status, 'published_at', published_at)), '[]'::json) from public.product_catalog_versions;",
+    ),
+  ) as { status: string; published_at: string | null }[];
   expect(catalogRows.some((catalog) => catalog.status === "DRAFT")).toBe(true);
   expect(
     catalogRows.filter(

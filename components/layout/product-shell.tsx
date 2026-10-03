@@ -67,7 +67,10 @@ export function ProductShell({
           </span>
         </div>
       </aside>
-      <div className={`product-workspace ${styles.workspace}`}>
+      <div
+        className={`product-workspace ${styles.workspace}`}
+        data-ai-page-active={pathname === "/ai" || pathname === "/menu/ai"}
+      >
         <header className="product-header">
           <Link className="product-header__brand" href="/home">
             <BrandMark title="퍼뜩 채굴" />

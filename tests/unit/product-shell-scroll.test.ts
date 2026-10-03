@@ -73,6 +73,20 @@ afterEach(async () => {
 });
 
 describe("product main scroll history", () => {
+  it("uses the current route when a hidden previous AI page remains in the DOM", async () => {
+    const previousAi = document.createElement("div");
+    previousAi.hidden = true;
+    previousAi.setAttribute("data-ai-page", "");
+    host.append(previousAi);
+    await render("/wallet");
+    const workspace = host.querySelector(".product-workspace")!;
+    expect(workspace.getAttribute("data-ai-page-active")).toBe("false");
+    host.querySelector("main")!.scrollTo = vi.fn();
+    await render("/ai");
+    expect(workspace.getAttribute("data-ai-page-active")).toBe("true");
+    await render("/wallet");
+    expect(workspace.getAttribute("data-ai-page-active")).toBe("false");
+  });
   it("scrolls the actual main rather than the window on a normal route change", async () => {
     await render();
     const main = host.querySelector("main")!;

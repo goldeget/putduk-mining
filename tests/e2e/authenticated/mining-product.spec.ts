@@ -105,7 +105,7 @@ async function applyTheme(page: Page, theme: "dark" | "light") {
 }
 
 async function openMiningDetails(page: Page) {
-  const details = page.locator("#putduk-mining-details");
+  const details = page.locator("#putduk-mining-details:visible");
   if (
     !(await details.evaluate(
       (node) => node instanceof HTMLDetailsElement && node.open,

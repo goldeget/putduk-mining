@@ -2,6 +2,38 @@
 
 기록일: 2026-10-03 KST. 상태: **IN_PROGRESS / NOT RELEASE READY**.
 
+## PR #47 통합 후보와 첫 CI의 제한
+
+PR #47의 첫 head `5fe76eb066a58f52ac167a81a5506d28f272a83f`는 canonical
+배경·공유 AI·5탭·published-only catalog를 포함했다. run `37126927027`
+attempt 1은 인증 검사 실패와 18m30s budget 취소로 **FAILED ACCEPTANCE**다.
+이 run의 빌드·DB·135 typography pass를 전체 통과나 제품 완료로 사용하지
+않는다. 실제 pixels의 작은 한글 mono 라벨 결함도 별도로 발견했다.
+
+후속 후보는 실제 radio hit area를 label 내부에 고정하고, 현재 경로의
+visible 요소·pathname으로 검사와 AI 전용 레이아웃을 결정한다. catalog
+fixture의 owner read를 격리 CI에 한정하며 service 권한을 넓히지 않는다.
+숫자용 글꼴에도 bundled 한글 fallback을 공급하고 실제 mono 한글 라벨
+검사를 추가한다. native dialog·주 스크롤·상세 focus 복귀를 보존한다.
+
+승인 JSON의 SHA `158c81e91923ba31f57b457ae3a33bc4092455e4abe2a2c888d5b5d2bc33b9e0`
+를 그대로 DB seed와 CI 검증에 결합했다. 서버 전용 BigInt preview는 정책
+receipt/digest, 고정 cycle, lot effective time, forward proration, 하나의
+global capacity와 carry를 검사한다. **PREVIEW_ONLY**이며 wallet·정산을
+쓰지 않는다. 관리자 정책 저장·검토·승인·미래 발행은 append-only 버전,
+fresh 권한·AAL2·bound session·one-use step-up·동일 key receipt를 사용한다.
+운영자의 다음 버전에서 숫자를 바꿀 수 있으며 초기 운영값을 영구 상수로
+고정하지 않는다. 정책 outbox는 consumer 연결 전 보류 상태다.
+
+retired POST와 exact legacy seven-argument RPC의 service 실행 권한을 닫는다.
+기존 owner fixture·historical rows·현대 request command·START 첫 출금은
+보존한다. source-aware reserve/release/finalize·principal recovery·실채굴
+DB writer·worker settlement는 후속 구현 대상이다. 원금 회수 시 lot 배분
+선택은 별도 사용자 답변 전 활성화하지 않는다.
+
+후속 head의 전체 18-job CI, 실제 pixels 및 develop 병합 CI는 별도 gate다.
+원격 Supabase/Cloudflare/DNS/배포/실제 지급 잠금과 보호11개는 유지한다.
+
 ## 2026-10-03 후속 승인과 asset 등록
 
 사용자가 시각 선택을 위임했고 기존 clean semiconductor master

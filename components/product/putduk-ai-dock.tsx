@@ -211,11 +211,19 @@ function RouteAiDock({ pathname }: { pathname: string }) {
             <a
               className={styles.detailsLink}
               href="#putduk-mining-details"
-              onClick={() => {
-                const details = document.getElementById(
-                  "putduk-mining-details",
-                );
-                if (details instanceof HTMLDetailsElement) details.open = true;
+              onClick={(event) => {
+                const details = Array.from(
+                  document.querySelectorAll<HTMLDetailsElement>(
+                    'details[id="putduk-mining-details"]',
+                  ),
+                ).find((node) => node.getClientRects().length > 0);
+                if (!details) return;
+                event.preventDefault();
+                details.open = true;
+                details.scrollIntoView({ block: "start", behavior: "instant" });
+                details
+                  .querySelector("summary")
+                  ?.focus({ preventScroll: true });
               }}
             >
               상세 보기

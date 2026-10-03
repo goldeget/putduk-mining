@@ -45,7 +45,11 @@ const idle: SupportSyncState = {
 
 function walk(directory: string): string[] {
   return readdirSync(directory).flatMap((entry) => {
-    if (entry === "node_modules" || entry === ".next") {
+    if (
+      entry === "node_modules" ||
+      entry === ".next" ||
+      entry.startsWith(".next-qa-")
+    ) {
       return [];
     }
     const path = join(directory, entry);
