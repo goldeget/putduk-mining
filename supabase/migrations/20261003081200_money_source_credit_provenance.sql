@@ -127,10 +127,10 @@ begin
     or (v_category = 'DEPOSIT' and v_wallet.created_by is distinct from v_event.actor_user_id)
     or right(v_journal.idempotency_key, 7) is distinct from ':ledger'
     or char_length(btrim(v_command_key)) not between 8 and 200
-    or v_wallet.idempotency_key is distinct from case
-      when v_origin = 'KRW_DEPOSIT' then v_command_key else v_command_key || ':wallet' end
-    or v_event.idempotency_key is distinct from v_command_key || case
-      when v_origin = 'KRW_DEPOSIT' then ':deposit-event' else ':event' end
+    or v_wallet.idempotency_key is distinct from (case
+      when v_origin = 'KRW_DEPOSIT' then v_command_key else v_command_key || ':wallet' end)
+    or v_event.idempotency_key is distinct from v_command_key || (case
+      when v_origin = 'KRW_DEPOSIT' then ':deposit-event' else ':event' end)
     or (v_origin = 'WELCOME_REWARD' and v_conversion_key is distinct from v_command_key)
     or v_event.payload->>'user_id' is distinct from v_owner::text
     or v_event.payload->>v_amount_key is distinct from v_amount::text
@@ -156,12 +156,12 @@ begin
       join public.ledger_accounts as a on a.id = e.account_id
       where e.transaction_id = v_journal_id and e.sequence = 0 and e.side = 'DEBIT'
         and e.amount_atomic = v_amount and a.currency = 'KRW'
-        and a.code = case when v_category = 'DEPOSIT' then 'PUTDUK:OPERATING_CASH:KRW'
-          else 'PUTDUK:WELCOME_REWARD_EXPENSE:KRW' end
+        and a.code = (case when v_category = 'DEPOSIT' then 'PUTDUK:OPERATING_CASH:KRW'
+          else 'PUTDUK:WELCOME_REWARD_EXPENSE:KRW' end)
         and a.normal_side = 'DEBIT' and a.is_controlled_asset = (v_category = 'DEPOSIT')
-        and a.owner_user_id is null and a.account_class = case
+        and a.owner_user_id is null and a.account_class = (case
           when v_category = 'DEPOSIT' then 'ASSET'::public.ledger_account_class
-          else 'EXPENSE'::public.ledger_account_class end)
+          else 'EXPENSE'::public.ledger_account_class end))
   then
     raise exception using errcode = '55000', message = 'MONEY_SOURCE_RECEIPT_UNVERIFIED';
   end if;

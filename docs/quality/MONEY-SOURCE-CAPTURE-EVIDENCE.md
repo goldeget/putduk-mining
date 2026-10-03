@@ -67,8 +67,18 @@ command/worker 연결이 없다. 승인된 funding engine으로 간주하지 않
 fixture에는 새 view 응답이 없어 partial이 됐다. 실제 empty-source snapshot을
 추가하고, 누락 시 partial이 되는 별도 검사도 유지했다. 실패를 삭제하지 않는다.
 
-새 SQL migration·pgTAP·원본 금전 검사·실제 관리자 브라우저는 아직 이 후보의
-정확한 commit SHA CI에서 실행되지 않았다. **DB/브라우저 PASS를 주장하지 않는다.**
+첫 PR #46 후보 `6c33dfff8e2253e48b38edd6011a297b4b855260`의 CI
+`37113067397` attempt 1은 새 migration의 PL/pgSQL IF 조건에 있는
+CASE 표현식에서 syntax error로 실패했다. 데이터베이스 검사가 실패했으므로
+남은 실행을 취소했다. 최종 상태는 CANCELLED이며 09:26:41Z–09:34:26Z,
+7분 45초다. 일부 성공 job을 전체 통과로 집계하지 않는다.
+원본 실패 로그와 run/jobs는
+`D:\PUTDUK-MINING-QA\codex-2026-10-03T09-26-33-954Z-bb2ed87b`에 보존한다.
+
+IF 조건의 CASE 4곳을 괄호로 감싸 분기 내부 THEN을 IF 종료 토큰과 구별했다.
+원본 키·계정·영수증 검증의 값이나 분기는 변경하지 않았다. 기존 정상 세 명령과
+위조·충돌·rollback 검사를 모두 유지한다. 수정 후보의 새 전체 CI 전에는
+**DB/브라우저 PASS를 주장하지 않는다.**
 로컬 Supabase 실행은 자동 승인 검토에서 차단됐으므로 우회하지 않는다.
 검증은 이 저장소의 CI 일회용 DB에서 새로 만들고 실행한다. 변경은 한 기능
 묶음으로 제출하며 PR와 develop push의 18개 job·전체 20분 이내 완료를 각각
