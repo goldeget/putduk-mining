@@ -717,6 +717,7 @@ describe("withdrawal v2 durable logical lifecycle", () => {
     [400, "INVALID_IDEMPOTENCY_KEY"],
     [401, "UNAUTHENTICATED"],
     [409, "INSUFFICIENT_AVAILABLE_BALANCE"],
+    [409, "WITHDRAWAL_SOURCE_UNAVAILABLE"],
   ])(
     "classifies exact definitive pair %s/%s, without erasing by itself",
     (status, code) => {

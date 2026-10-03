@@ -14,6 +14,10 @@ import {
   loginAsMember,
 } from "./helpers/member-session";
 import { execLocalAdminSql } from "./helpers/local-db";
+import {
+  readWithdrawalMoneySnapshot,
+  seedHistoricalHeldWithdrawal,
+} from "./helpers/historical-withdrawal-fixture";
 
 const METHODS = ["KRW_BANK", "USDT_ADDRESS"] as const;
 type Method = (typeof METHODS)[number];
@@ -218,7 +222,7 @@ test.beforeAll(() => {
   requireWithdrawalDataKey();
 });
 for (const method of METHODS) {
-  test(`${method}: new destination, committed hold response loss, reload and legitimate later withdrawal`, async ({
+  test(`${method}: new destination, historical hold response loss, reload and source-less later withdrawal rejection`, async ({
     page,
   }) => {
     const { member } = await prepareMemberThroughStart(
@@ -245,8 +249,23 @@ for (const method of METHODS) {
     });
     await page.route("**/api/v1/withdrawals/hold", async (route) => {
       seen.push(hold(route));
+      if (drop) {
+        const original = seen[0]!;
+        seedHistoricalHeldWithdrawal({
+          ownerId: member.userId,
+          destinationId: original.destinationId,
+          amountKrw: original.amountKrw,
+          key: original.key,
+        });
+      }
       const upstream = await route.fetch();
-      expect(upstream.status()).toBe(201);
+      if (seen.length <= 2) expect(upstream.status()).toBe(201);
+      else {
+        expect(upstream.status()).toBe(409);
+        expect((await upstream.json()).error.code).toBe(
+          "WITHDRAWAL_SOURCE_UNAVAILABLE",
+        );
+      }
       if (drop) {
         drop = false;
         await route.abort("connectionreset");
@@ -290,16 +309,27 @@ for (const method of METHODS) {
       effects: one,
       observedBeforeCleanup: true,
     });
-    // No permanent semantic key: a new explicit request after acknowledgement is legitimate.
+    // A new explicit key is legitimate, but cannot create an unverified general hold.
+    const moneyBefore = readWithdrawalMoneySnapshot(member.userId);
     await page.locator("#withdrawal-amount").fill("1000");
     await submit(page);
-    await success(page);
+    await expect(page.locator("#withdrawal-request-feedback")).toContainText(
+      "확인된 채굴 수익만 출금할 수 있어요.",
+    );
     expect(seen).toHaveLength(3);
     expect(seen[2]!.key).not.toBe(original.key);
     const later = await effects(member.userId, seen[2]!.key);
     expect([later.request, later.hold, later.outbox, later.receipt]).toEqual([
-      1, 1, 1, 1,
+      0, 0, 0, 0,
     ]);
+    expect(readWithdrawalMoneySnapshot(member.userId)).toEqual(moneyBefore);
+    const rejected = await page.request.get("/api/v1/withdrawals/intents", {
+      headers: { "Idempotency-Key": seen[2]!.key },
+    });
+    expect(rejected.status()).toBe(200);
+    expect((await rejected.json()).data.record.state).toBe(
+      "DEFINITIVELY_REJECTED",
+    );
   });
 
   test(`${method}: registration commits then response is lost before any hold`, async ({
@@ -338,6 +368,14 @@ for (const method of METHODS) {
       0, 0, 0, 0,
     ]);
     const before = await destination(member.userId, registered!.destinationId);
+    // Only the original historical hold is recoverable; no new earned credit is seeded.
+    const historicalId = seedHistoricalHeldWithdrawal({
+      ownerId: member.userId,
+      destinationId: registered!.destinationId,
+      amountKrw: "1000",
+      key: registered!.key,
+    });
+    const moneyBeforeRetry = readWithdrawalMoneySnapshot(member.userId);
     await reloadForRecovery(page);
     await expect(page.locator("#withdrawal-amount")).toHaveValue("1000");
     await submit(page);
@@ -358,6 +396,10 @@ for (const method of METHODS) {
     expect([one.request, one.hold, one.outbox, one.receipt]).toEqual([
       1, 1, 1, 1,
     ]);
+    expect(one.requestId).toBe(historicalId);
+    expect(readWithdrawalMoneySnapshot(member.userId)).toEqual(
+      moneyBeforeRetry,
+    );
     await evidence(page, `registration-loss-${method}`, {
       registered,
       beforeHold: zero,
@@ -592,6 +634,13 @@ test("another tab recovers the same unresolved key after committed response loss
   const seen: ReturnType<typeof hold>[] = [];
   await page.route("**/api/v1/withdrawals/hold", async (route) => {
     seen.push(hold(route));
+    const original = seen[0]!;
+    seedHistoricalHeldWithdrawal({
+      ownerId: member.userId,
+      destinationId: original.destinationId,
+      amountKrw: original.amountKrw,
+      key: original.key,
+    });
     const upstream = await route.fetch();
     expect(upstream.status()).toBe(201);
     await route.abort("connectionreset");
@@ -643,6 +692,12 @@ test("account A pending state is not adopted by account B on the same browser", 
   let captured: ReturnType<typeof hold> | null = null;
   await page.route("**/api/v1/withdrawals/hold", async (route) => {
     captured = hold(route);
+    seedHistoricalHeldWithdrawal({
+      ownerId: a.userId,
+      destinationId: captured.destinationId,
+      amountKrw: captured.amountKrw,
+      key: captured.key,
+    });
     const upstream = await route.fetch();
     expect(upstream.status()).toBe(201);
     await route.abort("connectionreset");
@@ -712,6 +767,15 @@ test("corrupt browser state plus expired committed server record recovers withou
   let drop = true;
   await page.route("**/api/v1/withdrawals/hold", async (route) => {
     seen.push(hold(route));
+    if (drop) {
+      const original = seen[0]!;
+      seedHistoricalHeldWithdrawal({
+        ownerId: member.userId,
+        destinationId: original.destinationId,
+        amountKrw: original.amountKrw,
+        key: original.key,
+      });
+    }
     const upstream = await route.fetch();
     expect(upstream.status()).toBe(201);
     if (drop) {
