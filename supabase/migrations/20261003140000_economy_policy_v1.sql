@@ -178,7 +178,6 @@ declare
   v_reference jsonb;
   v_tier jsonb;
   v_previous_max numeric;
-  v_index integer;
   v_min numeric;
   v_max numeric;
   v_key text;

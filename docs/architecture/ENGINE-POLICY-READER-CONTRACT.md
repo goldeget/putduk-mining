@@ -159,10 +159,48 @@ future canonical publication, no money writes and no outbox activation.
 Unit tests cover exact transport above JavaScript's safe-integer range, malformed
 envelopes and proof chains, DB failure recovery, all interval edges, private
 content hashes, historical evaluation and nonaligned exact microsecond cases.
-The stale-isolation guard is currently a source assertion; its real transaction
-replay and the two-session lock sequence below remain separate DB gates.
-pgTAP execution remains unverified until separately authorized CI/local DB
-evidence exists. Source checks and unit fixtures do not prove live DB behavior.
+The single-session pgTAP proof is recorded separately from the transaction
+contention gate. Source checks and unit fixtures do not prove live DB behavior.
+The pgTAP stale-isolation check is a source assertion; actual replay requires
+the independent two-session gate below.
+
+`scripts/assert-economy-policy-reader-concurrency.mjs` implements that gate for
+this repository's disposable `database` CI job only. It rejects local execution,
+another repository/origin, production settings, hosted endpoints or a different
+project. It verifies the checkout's configured container name and Supabase CLI
+project label without inventory, then validates RPC role/security metadata and
+the approved seed's actual UTF-8 manifest and approval-document hashes. Its two
+independent PostgreSQL backends must match the controller's database and cluster
+identity before fixture creation. The temporary administrator fixture uses
+fresh generated IDs and the existing session-bound step-up and canonical
+CREATE/PREVIEW/APPROVE/PUBLISH lifecycle. It copies the approved configuration
+and changes only `policyVersion`; it never inserts a publication directly or
+writes a money row. Committed disposable policy proofs remain until that CI
+database is destroyed, while existing fixtures and publication history remain.
+
+The gate observes each owned advisory waiter in `pg_locks`, its actual blocker
+and `pg_stat_activity` lock wait after clearing the observer's statistics
+snapshot. It covers an exclusive publisher followed by a shared reader, the
+reverse order, and publisher rollback. Commit cases assert the predecessor at
+one microsecond before the boundary and the successor at the exact half-open
+boundary. Rollback asserts unchanged policy, publication/receipt/idempotency,
+audit/outbox/step-up/security-event counts and administrator-session state.
+Every contention case repeats the exact event read after completion, checks
+the post-lock DB clock, and preserves money-record counts and held policy
+events. Actual REPEATABLE READ and SERIALIZABLE transactions establish their
+own snapshots and must return SQLSTATE `25000` with
+`ECONOMY_POLICY_FRESH_SNAPSHOT_REQUIRED`.
+
+Waiter and real DB-clock polling are bounded; elapsed sleep is never success
+evidence. The main process has an 85-second timeout, individual sessions have
+15-second statement and 10-second lock limits, and cleanup has a separate
+5-second limit. Success and failure both close only this run's named sessions.
+Raw SQL/process diagnostics are captured privately; the CI log contains a
+bounded outcome receipt with backend IDs and publication identities. Focused
+unit checks validate target rejection, complete receipts, diagnostic handling,
+timeouts and owned-session cleanup using mocked process calls. No local DB or
+Docker process is run by those unit tests. Real transaction execution of this
+new gate remains pending the next authorized isolated CI run.
 
 A future transaction-level settlement adapter must obtain authoritative
 funding/entitlement/source receipts under its own user and money locks, pin
