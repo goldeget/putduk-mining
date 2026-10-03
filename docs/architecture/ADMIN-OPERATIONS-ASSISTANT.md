@@ -65,6 +65,10 @@ canonical Visual Lab, 시각·자산·테마·모션 문서를 따른다. 여섯
 
 현재는 계약과 기존 실행 경계가 있다. 운영 도우미의 실제 화면·조회·초안·공통 등록·권한 회귀·제품 증거를 구현하기 전까지 V1 완료로 세지 않는다.
 
+조회·초안 기반은 `apps/admin/lib/assistant/operations.ts`와 `POST /api/v1/admin/assistant/prepare`다. 현재 ADMIN/SUPER_ADMIN의 USDT 입금 대기 조회와 `confirm_usdt_manual_deposit` 입력 초안만 등록한다. UI 최종 승인과 같은 `usdtDepositConfirmInput`의 금액·사유 검증을 재사용하며 초안에는 확인 값·운영자·요청 키·TOTP 토큰을 넣지 않는다. 준비 endpoint는 승인이나 금전 RPC를 호출하지 않는다. 전체 요청의 UTF-8 크기를 4,096 bytes로 제한하고, 임의 명령·SQL·추가 권한 필드를 거절한다. 실제 대기 신청만 초안으로 준비하며 조회 실패·변경된 상태는 초안 성공으로 표현하지 않는다. 응답은 private/no-store이며 외부 모델·캐시·지속 저장을 사용하지 않는다.
+
+이는 서버 기반이며 아직 운영 도우미 화면이나 자연어 모델 연결이 아니다. 5분 초안 만료 정보만 응답하고, 이를 적용하는 UI·만료·입력 변경 확인 해제·재접속·세션 소유권·실제 양식 연결은 별도 구현·검증이 필요하다. `admin-assistant-read-draft.spec.ts`는 실제 관리자 세션에서 조회·초안 준비 뒤 신청과 원장이 바뀌지 않고 Origin/현재 권한 거절이 동작하는지 확인한다. 단위 검사나 이 endpoint 존재를 PRODUCT COMPLETE로 세지 않는다.
+
 2026-10-03 소스 조사에서 `setSafeModeAction`의 상태 upsert와 감사 insert가 별도 요청임을 확인했다. 해당 기능은 원자적 명령·안전한 재시도와 입력 검증 후 작업 확인 소비가 보완되기 전까지 도우미의 실행 준비 완료 항목으로 등록하지 않는다. API와 `requireHighImpactPrincipal`은 `hasAdminCommandOrigin`으로 설정된 관리자 origin을 동일하게 비교한다. 누락·다른 origin은 identity·운영 세션·작업 확인 소비 전에 거절하며 Host/전달 Host를 신뢰해 우회하지 않는다. 현재 역할·AAL2·운영 세션·일회용 명령별 확인은 그대로 유지한다. 전체 후보 CI에서 실제 양식 동작도 확인해야 한다. 실제 채굴의 `calculateSettlement`는 현재 단위 검사에서만 호출되며 기존 `record_mining_settlement`와 승인된 규칙을 사용한 서버 실행 연결은 별도 검증 대상이다. 이 관찰을 공통 명령 구현 완료로 확대하지 않는다.
 
 필수 검사는 역할·세션·TOTP·origin 거절, 모델/입력 주입, 교차 회원·운영자 데이터 누출, 초안 변조와 오래된 상태, 예산·정책 변경, 중복 실행·동시 승인·응답 끊김, 공급자 비활성/장애, 실제 서버 영수증과 접근성·모바일/태블릿/데스크톱·테마·축소 모션·렌더 화면·Visual Lab 비교다. 화면이나 테스트 fixture 존재만으로 PRODUCT COMPLETE를 선언하지 않는다.
