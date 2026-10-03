@@ -6,7 +6,7 @@ Status: **CANONICAL OPERATING MODEL / IMPLEMENTATION INCOMPLETE**
 
 ## 1. Operator cockpit
 
-The single operator needs one prioritized inbox, not a collection of hidden dashboards.
+The operator needs one prioritized inbox and simple value, target, time, preview and confirmation controls. Admin work must remain usable without an AI provider. Do not add a separate advanced mode, JSON/SQL editor or internal key/version inputs. The integrated V1 operator assistant prepares the same typed forms and uses the same human-confirmed server command boundary. Its contract is `docs/architecture/ADMIN-OPERATIONS-ASSISTANT.md`.
 
 | Queue | SLA signal | Required evidence | Allowed action |
 | --- | --- | --- | --- |
@@ -64,7 +64,7 @@ Activation requires operator identity, reason, scope, expiry/review time and imm
 
 ## 5. AI boundaries
 
-Operations AI may summarize queues, cluster failures, retrieve runbooks and draft a response. Growth AI may summarize cohorts and propose experiments. Neither may:
+The V1 operator assistant may summarize authorized queues, explain outcomes and prepare editable drafts for the existing forms. A human confirms the current target and proposed result through the ordinary server command, live permissions and required step-up. The assistant never submits a mutation or consumes the final approval. Growth AI remains a P2 advisory capability. Neither may:
 
 - mutate balances or ledgers;
 - approve deposits/withdrawals;

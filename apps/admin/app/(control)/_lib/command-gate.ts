@@ -10,6 +10,7 @@ import {
   type AdminRole,
 } from "@/lib/auth/policy";
 import { getAdminIdentity, type AdminPrincipal } from "@/lib/auth/principal";
+import { hasAdminCommandOrigin } from "@/lib/auth/request-origin";
 import { assertAndTouchAdminAppSession } from "@/lib/auth/session-registry";
 import { consumeAdminStepUpGrant } from "@/lib/auth/step-up";
 import {
@@ -21,6 +22,7 @@ export type CommandActionResult =
   { ok: true; message: string } | { ok: false; code: string; message: string };
 
 const DENIAL_COPY: Record<string, string> = {
+  ORIGIN_DENIED: "운영 화면을 다시 열고 시도해 주세요.",
   UNAUTHENTICATED: "세션이 만료되었습니다. 다시 로그인해 주세요.",
   ROLE_REQUIRED: "이 작업을 실행할 권한이 없습니다.",
   MFA_REQUIRED: "추가 본인 확인이 필요합니다.",
@@ -55,6 +57,10 @@ export async function requireHighImpactPrincipal(
   | { ok: true; principal: AdminPrincipal; requestId: string }
   | { ok: false; result: CommandActionResult }
 > {
+  const requestHeaders = await headers();
+  if (!hasAdminCommandOrigin(requestHeaders)) {
+    return { ok: false, result: denial("ORIGIN_DENIED") };
+  }
   const identity = await getAdminIdentity();
   const decision = decideAdminAccess({
     authenticated: Boolean(identity),
@@ -66,7 +72,7 @@ export async function requireHighImpactPrincipal(
     return { ok: false, result: denial(decision) };
   }
 
-  const userAgent = (await headers()).get("user-agent");
+  const userAgent = requestHeaders.get("user-agent");
   const session = await assertAndTouchAdminAppSession({
     userId: identity.userId,
     authSessionId: identity.sessionId,

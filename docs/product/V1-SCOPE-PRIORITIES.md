@@ -36,6 +36,7 @@ V1 means limited scope at production quality. It does not mean placeholder secur
 - durable retry/lease/dead-letter/replay foundation with backpressure;
 - KRW deposit-request and operator approval path;
 - KRW withdrawal-request and operator review path;
+- manual USDT deposit credited as operator-approved KRW and manual USDT withdrawal against the real KRW wallet, under the frozen WS-04 commands;
 - secure withdrawal destinations, receipts and history;
 - automatic two-stage referral qualification/risk/recheck/payout foundation;
 - funding-promotion rules, budget guards and automatic payout foundation;
@@ -50,6 +51,7 @@ V1 means limited scope at production quality. It does not mean placeholder secur
 ### Operations and release
 
 - minimum one-person admin queues for deposit, withdrawal, settlement exception and user lookup;
+- shared server command/authorization boundary for ordinary admin forms and human-confirmed assistant drafts; no autonomous AI writer or approval;
 - request, trace, job and audit correlation IDs;
 - retry/dead-letter policy with idempotent replay;
 - production backup/PITR entitlement verification and a restore rehearsal;
@@ -74,6 +76,8 @@ V1 means limited scope at production quality. It does not mean placeholder secur
 - canonical Trust Center, FAQ, status and changelog;
 - operator-authored non-empty V1 notice/event templates, disabled until dates/content are approved;
 - admin controls for content, rules, feature flags and user support evidence;
+- beginner-friendly operator input, target/time selection, preview and confirmation, without a separate advanced/JSON/SQL mode;
+- integrated operator assistant for authorized queue facts, explanations and reviewable drafts through the same admin forms and commands; required V1 delivery, not a P2 seam;
 - visual-regression, accessibility and performance budgets;
 - Korean production writing pass and timezone-safe KST presentation.
 - Trust/Search/AI discovery pages and structured data from canonical facts;
@@ -83,10 +87,10 @@ V1 means limited scope at production quality. It does not mean placeholder secur
 
 ## P2 — deliberate next
 
-- USDT deposit/withdrawal operations beyond the V1 structural seam;
+- additional USDT operational automation beyond the approved manual V1 flows; no automatic FX or market coupling;
 - richer equipment catalog and advanced rank benefit system;
 - Living World events and emotion-based presentation that never changes economic truth;
-- operations AI summaries and growth AI recommendations, both read-only/advisory;
+- growth AI recommendations, read-only/advisory;
 - Japan launch, `ja-JP` localization and Japan-specific compliance/content review;
 - native iOS/Android shells after PWA retention and capability evidence;
 - attribution and campaign optimization beyond privacy-safe first-party parameters;
@@ -118,3 +122,5 @@ A P1 feature that misses its acceptance gate may be disabled only if:
 5. release evidence records the deferral owner and follow-up.
 
 No P0 safety, ledger, authorization, recovery or evidence requirement can be waived by calling the release an MVP.
+
+The owner-required integrated operator assistant is not covered by the optional P1 deferral rule. Its real authorized reads, drafts, shared command boundary and product evidence must be delivered before claiming the intended V1 complete. A navigation link or registry foundation is insufficient. Canonical contract: `docs/architecture/ADMIN-OPERATIONS-ASSISTANT.md`.

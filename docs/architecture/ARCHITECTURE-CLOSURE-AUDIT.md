@@ -2,6 +2,8 @@
 
 Audit date: **2026-09-27 KST**
 
+This is a historical implementation snapshot, not the current scope contract. The owner-required V1 operator assistant and manual USDT flows are now governed by `docs/product/V1-SCOPE-PRIORITIES.md`, `docs/architecture/ADMIN-OPERATIONS-ASSISTANT.md` and the frozen WS-04 commands. The P2 descriptions below record the audit date and do not defer these current V1 requirements. Re-evaluate implementation and product evidence at the current exact candidate.
+
 Scope: **authorized local repository only**
 
 Remote Supabase/Cloudflare validation: **not performed; mutation freeze preserved**

@@ -46,6 +46,10 @@ export const safeModeInputSchema = z.object({
   pause: z.enum(["true", "false"]),
   reason: z.string().trim().min(10).max(500),
   confirmation: z.literal("SAFE_MODE"),
+  expectedRequestId: z
+    .union([z.uuid(), z.literal("")])
+    .optional()
+    .transform((value) => value || null),
   /** 선택 검토 시각(한국 시간 datetime-local). 비우면 null. */
   reviewAt: z
     .string()
@@ -90,6 +94,7 @@ export function parseSafeModeFormInput(raw: {
   reason: FormDataEntryValue | null;
   confirmation: FormDataEntryValue | null;
   reviewAt?: FormDataEntryValue | null;
+  expectedRequestId?: FormDataEntryValue | null;
 }):
   | { ok: true; data: SafeModeParsedInput }
   | { ok: false; code: "INVALID_INPUT"; message: string } {
@@ -99,6 +104,7 @@ export function parseSafeModeFormInput(raw: {
     reason: raw.reason,
     confirmation: raw.confirmation,
     reviewAt: raw.reviewAt ?? "",
+    expectedRequestId: raw.expectedRequestId ?? "",
   });
   if (!parsed.success) {
     return {

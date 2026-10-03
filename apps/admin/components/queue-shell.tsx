@@ -60,11 +60,15 @@ export function EmptyQueue({ title, body }: { title: string; body: string }) {
 export function QueueCard({
   children,
   tone = "default",
+  id,
 }: {
   children: React.ReactNode;
   tone?: "default" | "caution" | "done";
+  id?: string;
 }) {
   return (
-    <article className={`queue-card queue-card--${tone}`}>{children}</article>
+    <article className={`queue-card queue-card--${tone}`} id={id}>
+      {children}
+    </article>
   );
 }

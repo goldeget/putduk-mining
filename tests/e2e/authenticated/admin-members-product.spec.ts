@@ -35,9 +35,11 @@ test.describe("admin Member 360 product states", () => {
 
     const member = await createConfirmedMember("admin-members-target");
     await page.goto(`${ADMIN_ORIGIN}/members?id=${member.userId}`);
-    await expect(page.getByText(member.userId)).toBeVisible({
+    const selectedIdentity = page.locator(".member-identity code");
+    await expect(selectedIdentity).toHaveText(member.userId, {
       timeout: 60_000,
     });
+    await expect(selectedIdentity).toBeVisible();
     await expect(page.getByText("채굴 · 정산")).toBeVisible();
     // 채굴 건수는 실패를 0으로 위장하지 않는다. SELECT 권한이 있으면 숫자다.
     const miningCard = page.locator(".member-module-grid article").filter({

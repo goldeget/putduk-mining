@@ -173,6 +173,9 @@ jobs:
       - name: Run two-session USDT approval
         run: supabase test db supabase/tests-concurrent/usdt_deposit_concurrent_approval.sql
 
+      - name: Run two-session safe-mode command
+        run: supabase test db supabase/tests-concurrent/safe_mode_concurrent_command.sql
+
       - name: Lint application schemas
         run: pnpm db:lint
 
@@ -523,7 +526,7 @@ jobs:
 
       - name: Assert protected typography evidence
         if: always()
-        run: node scripts/assert-typography-report.mjs test-results/typography-protected/report.json --passed 128 --screenshots 126 --hydration 0 --redact
+        run: node scripts/assert-typography-report.mjs test-results/typography-protected/report.json --passed 135 --screenshots 133 --hydration 0 --redact
 
       - name: Preserve protected typography evidence
         if: always()

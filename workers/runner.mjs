@@ -11,7 +11,7 @@
  * Stdout heartbeats are operational logs only — not lease evidence.
  * Still missing:
  *   - permanent reject for unsupported outbox (today exhausts to DEAD_LETTER)
- *   - outbox delivery / notification fanout commands
+ *   - member notification fanout commands
  */
 
 import { createClient } from "@supabase/supabase-js";
@@ -30,9 +30,25 @@ export const SUPPORTED_JOB_HANDLERS = Object.freeze({
 
 /**
  * Outbox event types with a registered command handler.
- * Empty until delivery/fanout RPCs exist — unsupported events must not complete.
+ * Internal safe-mode audit acknowledgement is committed by the existing
+ * complete_outbox_event command. Other event types remain unsupported.
  */
-export const SUPPORTED_OUTBOX_HANDLERS = Object.freeze({});
+export const SUPPORTED_OUTBOX_HANDLERS = Object.freeze({
+  "SAFE_MODE_CHANGED.v1": prepareSafeModeAuditDelivery,
+});
+
+function prepareSafeModeAuditDelivery(_client, event) {
+  // This is only envelope preflight. The DB completion command verifies the
+  // actual immutable command receipt and persists the deduplicated effect.
+  if (
+    event.event_type !== "SAFE_MODE_CHANGED.v1" ||
+    event.schema_version !== 1 ||
+    event.aggregate_type !== "safe_mode_control" ||
+    typeof event.payload?.audit_id !== "string" ||
+    typeof event.payload?.is_paused !== "boolean"
+  )
+    throw new Error("SAFE_MODE_EVENT_ENVELOPE_INVALID");
+}
 
 export function requireEnv(name, env = process.env) {
   const value = env[name]?.trim();

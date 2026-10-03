@@ -109,6 +109,7 @@ describe("admin restrictions · safe mode policy", () => {
         reason: "출금 이상을 확인해 잠시 멈춥니다.",
         confirmation: "SAFE_MODE",
         reviewAt: null,
+        expectedRequestId: null,
       },
     });
   });

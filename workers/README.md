@@ -15,6 +15,11 @@ that Cloudflare Queues or additional Cloudflare Workers should be created.
 - Unsupported outbox/job types call `fail_*` and are never silently completed
 - Reconciliation records mismatches and does **not** auto-repair
 - The browser is never the runner
+- `SAFE_MODE_CHANGED.v1` has an internal audit acknowledgement handler. Existing
+  `complete_outbox_event` verifies the immutable original command and commits one
+  `event_consumer_deliveries` receipt in its completion transaction. Replay keeps
+  that receipt and never reapplies past control state. This is a candidate pending
+  DB and full CI evidence; it does not deliver member notifications or Web Push.
 
 Stdout heartbeats are operational logs only. Durable lease ownership is
 `claim_*`, `extend_*_lease`, `complete_*`, and `fail_*`. Operator replay is
@@ -22,9 +27,11 @@ Stdout heartbeats are operational logs only. Durable lease ownership is
 
 Still missing:
 
-- a timer that extends a lease again while one handler runs longer than the lease
 - permanent unsupported reject (today exhausts attempts into `DEAD_LETTER`)
-- outbox delivery / notification fanout commands
+- member notification fanout commands and other domain consumers
+
+Periodic lease renewal exists in the runner and has its own runtime evidence
+tests. No new infrastructure is provisioned by these adapters.
 
 ```bash
 node --env-file-if-exists=.env.local workers/runner.mjs

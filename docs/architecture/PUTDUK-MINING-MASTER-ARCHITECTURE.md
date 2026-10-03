@@ -344,7 +344,7 @@ progression and referral campaigns. The normal first-funding promotion is
 capped at KRW 10,000; an explicitly approved special operator campaign may use
 a higher configured cap and budget. See `docs/product/FUNDING-PROMOTIONS.md`.
 
-USDT remains a secondary P2 operational seam unless specifically approved for V1. No exchange API or external-price dependency is assumed. Destination data is sensitive and receives encryption/redaction/retention controls, history, cooldown and step-up authentication.
+V1 includes manual USDT deposits credited as approved KRW and manual USDT withdrawals against the real KRW wallet. These are distinct flows under `WS-04-DOMAIN-COMMAND-CONTRACT.md`; no user USDT balance, exchange API, automatic FX or external-price dependency is permitted. Destination data receives encryption/redaction/retention controls, history, cooldown and step-up authentication.
 
 ## 17. Transactional outbox, jobs and reconciliation
 
@@ -414,9 +414,13 @@ prevent notification fatigue. Canonical flow:
 
 May explain, summarize, retrieve authorized context and recommend next actions. It uses genuine provider streaming and durable user-owned conversation state when enabled.
 
-### Operations AI and Growth AI (P2)
+### Operations assistant (V1 required)
 
-May summarize queues/failures or propose experiments from authorized facts. Their output is advisory.
+The operator assistant is part of the admin architecture and V1 delivery. It reads authorized facts, explains results and prepares reviewable drafts. The operator completes an explicit form confirmation through the same server command and authorization boundary used by the ordinary UI. It has no separate money writer or approval endpoint. Each new admin capability must define its typed input, authorized read/preview, draft mapping, human confirmation, domain command and receipt together. See `docs/architecture/ADMIN-OPERATIONS-ASSISTANT.md` for the implementation boundary and required evidence.
+
+### Growth AI (P2)
+
+May propose experiments from authorized aggregate facts. Its output is advisory.
 
 No AI may mutate a balance/ledger, approve funding/withdrawal, decide a reward, change a rule/flag/role, publish content or claim unavailable evidence. Tools enforce these denials on the server. Provider failures are visible and recoverable; fake timer progress and chain-of-thought exposure are forbidden.
 
@@ -431,6 +435,8 @@ Roles:
 - `VIEWER`.
 
 The admin hostname is a routing/blast-radius boundary, not authorization. The separately built `apps/admin` control plane uses its own authentication cookie and requires live user verification, an active server-owned `user_roles` record and AAL2 TOTP MFA. High-impact commands additionally require recent TOTP step-up, exact origin, capability, idempotency, explicit confirmation and reason. `user_metadata` never grants authority. The cockpit owns deposit, withdrawal, settlement/job exception, support, content, security and audit queues with SLA/age/severity.
+
+Everyday operator input stays simple: value, target, time, preview and confirmation. There is no separate advanced mode exposing JSON, SQL, rule IDs, version keys or infrastructure commands. The admin must remain fully operable without a provider; the assistant prepares the same forms and never changes deterministic economy truth. Internal versioning, budgets and audit stay server-owned.
 
 High-impact commands require:
 

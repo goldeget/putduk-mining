@@ -37,7 +37,19 @@ FUNDING_PROMO_REWARD_PAID.v1
 NOTICE_PUBLISHED.v1
 EVENT_STARTED.v1
 EVENT_REWARD_GRANTED.v1
+SAFE_MODE_CHANGED.v1
 ```
+
+`SAFE_MODE_CHANGED.v1` is an internal operator event. Its aggregate is the
+existing `safe_mode_control` UUID; payload includes audit UUID, component,
+pause state, review time and request hash. It does not authorize a money command
+or send member notifications. The control, immutable audit and event commit
+together; retries retain the same original receipt without reapplying old state.
+The registered internal `operator_safe_mode_audit.v1` consumer verifies the
+original command and commits one existing consumer delivery receipt through
+`complete_outbox_event`. It never reapplies past control state or creates member
+notifications. Registration exists in the candidate; actual DB/worker delivery
+evidence and product completion remain separate gates.
 
 ## Compatibility
 

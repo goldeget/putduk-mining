@@ -1,0 +1,137 @@
+PUTDUK MINING 연속 구현 실행 계약 — 2026-10-03
+
+이 문서를 Cursor 또는 Codex에 실행 프롬프트로 전달한다.
+출시 준비가 완료됐다는 선언이 아니라, 실제 저장소의 남은 작업을 닫는 절차다.
+
+1. 대상과 권한
+
+AGENTS.md를 먼저 읽고 그대로 적용한다.
+소스와 Git 작업은 C:\Users\PC\Desktop\putduk-mining에서만 수행한다.
+GitHub는 goldeget/putduk-mining과 정확한 origin
+https://github.com/goldeget/putduk-mining.git만 사용한다.
+매 GitHub 동작 전에 origin을 다시 비교한다.
+D:가 ESD-USB인지 확인한 뒤 새 D:\PUTDUK-MINING-QA 실행 폴더에만
+로그·임시 파일·해당 후보의 CI 다운로드·화면 검토 결과를 저장한다.
+D: 루트, 기존 외부 자료, 다른 저장소·프로젝트·과거 구현은 탐색하지 않는다.
+소스를 D:로 이동하거나 기존 C: 산출물을 삭제하지 않는다.
+
+사용자는 코드 구현·커밋·push·PR·정상 develop 병합·CI 확인을 승인했다.
+기존 사용자의 미커밋 파일을 stage·포맷·reset·stash·삭제하지 않는다.
+우리 변경 파일만 명시적으로 stage하고 시작 hash와 보존 여부를 비교한다.
+원격 Supabase 변경, Cloudflare, DNS, 배포, 실송금은 별도 잠금이다.
+계정 ID가 미확정인 Cloudflare를 조회하거나 다른 계정으로 대체하지 않는다.
+누락 Git 객체·원격 불일치·대상 불명확은 BLOCKED_TARGET_SCOPE 또는
+무결성 차단으로 기록하며 우회·force push·보호 규칙 bypass를 하지 않는다.
+
+2. 실제 상태를 먼저 확인한다
+
+docs/quality/CODEX-EXECUTION-STATE.md의 SHA·PR·run은 이력이다.
+현재 git status, HEAD, origin/develop, PR head·병합 SHA와
+정확한 SHA의 최종 workflow·attempt·job·artifact를 새로 확인한다.
+문서, route, component, 단위 검사, fixture를 실제 기능 완료로 추정하지 않는다.
+GPT_TRANSFER_REPORT.md가 허용된 저장소에 없으면 대조 불가로 기록한다.
+누락 보고서를 찾기 위해 D: 또는 다른 workspace를 탐색하지 않는다.
+
+단일 후보에 대해 관찰 사실, 미결 정책, 제안, 검증 결과를 분리한다.
+이미 구현된 기능은 재사용하며 같은 기능의 테이블·RPC·service·UI를 중복 생성하지 않는다.
+WS-04-DOMAIN-COMMAND-CONTRACT.md의 public 이름을 유지한다.
+새 기능에 실제 명령 계약이 없다면 기존 모델과 소유권을 먼저 검토하고,
+명시적 계약 확장과 구현을 한 범위로 리뷰한다. 임의 별칭을 만들지 않는다.
+
+3. 최종 아키텍처
+
+회원 UI / 관리자 UI / 운영 도우미 초안
+  → 현재 역할·세션·origin·입력·자격·필요한 작업 확인
+  → 기존 승인된 서버 도메인 명령
+  → 한 DB 트랜잭션의 균형 원장·읽기 모델·감사·버전 outbox
+  → 중복에 안전한 worker와 실제 결과 확인
+  → 사용자 결과·운영 예외 큐·복구
+
+돈은 정수와 균형 원장으로만 기록한다. 잔액은 projection이다.
+같은 논리 요청의 재시도는 같은 키를 유지하고 다른 payload는 거절한다.
+동시 실행·응답 끊김·부분 영수증·원장 불일치를 실제 DB 검사로 확인한다.
+불완전 데이터나 조회 오류를 성공·0건으로 표시하지 않는다.
+새 migration은 CLI로 만들며 이미 적용한 migration을 수정하지 않는다.
+DB 검사는 새 프로젝트 범위 또는 정확한 후보 CI의 일회용 DB를 사용한다.
+공유 DB의 감사·원장 삭제나 전역 Docker inventory/prune는 금지한다.
+
+운영자는 쉬운 값 입력 → 대상 → 시점 → 미리보기 → 확인으로 작업한다.
+고급 모드·JSON·SQL·환경 변수·내부 ID나 rule version 입력을 노출하지 않는다.
+운영 도우미는 V1 필수 기능이다. 공급자 없이도 실제 조회와 편집 초안이 동작한다.
+도우미와 일반 양식은 동일한 입력·권한·도메인 실행 경계를 사용한다.
+도우미는 조회·설명·초안만 수행하고 승인·잔액·TOTP·게시를 직접 실행하지 않는다.
+초안은 짧은 유효 기간과 소유 운영 세션을 가지며 편집·로그아웃·연결 끊김으로
+이전 확인을 무효화한다. 외부 AI에 개인정보·입금 증빙·비밀 규칙을 보내지 않는다.
+미구현 보너스·상품·행사·공지 기능에 가짜 실행 버튼이나 성공 결과를 만들지 않는다.
+
+경제 수치·원금 포함 기준·등급 혜택·캠페인 예산·특별 한도를 추측해서 활성화하지 않는다.
+실제 입금·운영 보너스·START 전환·추천·행사 보상은 승인된 분류로 구분한다.
+START의 실원화 전환은 별도 균형 거래이며 최대 5,000원, 첫 적격 출금에 입금 조건을 넣지 않는다.
+일반 추천 보상과 첫 입금 행사는 기존 승인 상한을 지키며 특별 행사는 버전·예산·기간을 요구한다.
+상품은 출처와 운영자 승인이 있는 버전 catalog를 사용한다.
+시장 가격 API나 React 상수로 런타임 보상을 정하지 않는다.
+정산은 서버 시간·승인 정책·재현 가능한 구간 snapshot·중복 방지에 연결한다.
+행사 종료는 그 버전의 적용 종료다. 다른 활성 정책을 과거 배율로 덮어쓰지 않는다.
+
+4. Scene과 애니메이션
+
+docs/design의 canonical master, visual-lab, theme, motion, asset 계약을 읽는다.
+Scene은 실제 상품·회원 채굴 상태·서버 정산을 표현한다.
+접속 종료 중 정산, 재접속, 동기화 지연, 일시 중지, 권한 없음, 오류와 복구를 구분한다.
+클라이언트 애니메이션·타이머·파티클은 돈이나 채굴 자격을 만들지 않는다.
+서버 결과를 받기 전에 가짜 채굴 수익·가짜 성공 숫자를 올리지 않는다.
+필요한 집중 동작만 사용하고 배경 모션은 정지·저전력·reduced motion을 제공한다.
+증가 수치와 효과는 실제 확인된 결과를 따라가며 효과 종료가 서버 실행을 재시작하지 않는다.
+한국어는 HTML/CSS 또는 검토된 SVG에 두고 raster pixels에 넣지 않는다.
+원본 master와 runtime derivative를 분리하고 assets manifest를 검증한다.
+승인되지 않은 master를 승인으로 기록하지 않는다. rank-01~06을 유지한다.
+
+5. 실행 순서
+
+먼저 현재 PR과 병합 후 CI를 닫고 동일 후보의 원시 증거를 저장한다.
+다음은 운영 도우미의 실제 조회·초안·기존 양식 연결과 origin 경계를 완성한다.
+그 뒤 안전 모드의 입력 확인 순서·상태 변경·감사·outbox·중복 처리의 원자성을 보완한다.
+원금 분류·승인 정책·상품 버전의 계약과 실제 구현 차이를 닫는다.
+기존 채굴 정산 명령을 승인 정책과 실제 서버 실행에 연결하고 회계 일치를 검증한다.
+비어 있는 outbox handler를 완료 처리로 위장하지 말고 도메인별 소비자·재시도·DLQ·복구를 구현한다.
+그 다음 실제 데이터의 Scene·모션과 회원/관리자 제품 경험을 마감한다.
+미결 정책에 의존하지 않는 독립 작업은 계속하되 필요한 값이나 외부 대상은 대기 상태로 남긴다.
+기능 흐름 하나를 충분히 완성한 묶음으로 PR을 만든다. 그 안의 커밋은 되돌릴 수 있게 나눈다.
+사소한 수정마다 push·전체 CI를 시작하지 않는다. 입력·권한·DB·워커·화면·복구의
+관련 변경을 로컬 집중 검사와 소스 검토로 먼저 닫고, 안정된 후보를 한 번 push한다.
+CI가 진행되는 동안 다음 묶음의 독립 작업을 진행하되 동일 파일의 동시 작업을 피한다.
+실제 결함 발견으로 후보가 바뀌면 전체 CI를 다시 요구한다. 실패를 숨기거나 일부 결과를 섞지 않는다.
+
+6. CI — 전체 20분이 절대 상한이다
+
+현재 workflow의 모든 품질 계층과 8개 인증 browser shard를 유지한다.
+공유 production build artifact를 사용하고 shard별 전체 재빌드·직렬 전체 검사를 추가하지 않는다.
+대기·설치·빌드·DB reset·검사·artifact upload·후속 job을 모두 포함한
+전체 workflow attempt의 생성부터 종료까지 20분 이내여야 한다.
+단일 job 시간이나 병렬 job 시간 합계로 전체 시간을 대신 계산하지 않는다.
+전체 rerun은 해당 attempt 시작부터 측정하고 이전 attempt의 job을 섞지 않는다.
+
+CI completeness and 20-minute budget은 모든 예상 job과 정확한 repository/
+workflow/run/attempt/head를 확인한다. push에서 PR 전용 Exact diff integrity만 skip 가능하다.
+18분 30초에 미완료면 취소 여유를 확보해 실패 처리한다. 20분 초과를 수용하지 않는다.
+실패·flaky retry 성공·누락 job·부분 rerun·timeout·cancel은 품질 통과가 아니다.
+assertion·테스트·TOTP 대기·권한·DB 검사를 줄여 시간 조건을 맞추지 않는다.
+새 부하로 시간 초과가 생기면 공유 준비·캐시 정확성·독립 검사 병렬화·shard 균형을 개선한다.
+PR 최종 후보의 전체 CI와 develop 병합 SHA의 push CI를 각각 새로 검증한다.
+
+7. 완료 기준과 인계
+
+FOUNDATION COMPLETE, FUNCTIONALLY COMPLETE, PRODUCT COMPLETE를 분리한다.
+출시 계산에는 PRODUCT COMPLETE만 포함한다.
+실제 backend, 한국어 UX, 320/390/834/1440px, System/Light/Dark,
+200% 확대, loading/empty/error/recovery/success/unauthorized, keyboard/focus,
+offline/reconnect, reduced motion, browser E2E, 실제 렌더 screenshot 검토,
+Visual Lab 비교, 회귀와 성능 증거를 해당 기능에 맞게 확보한다.
+일반 SaaS 템플릿·bare CRUD·placeholder·fake 연결을 최종 경험으로 인정하지 않는다.
+
+커밋·push·merge 전에 fsck, reachable missing object, 정확한 원격과 head를 확인한다.
+보호된 develop에 정상 PR merge만 수행한다. CI와 필수 검사를 우회하지 않는다.
+작업 상태에는 정확한 local/remote SHA, PR, merge SHA, CI attempt·전체 시간,
+QA 경로, 원시 실패, 보존한 사용자 파일, 미결 정책과 다음 독립 작업을 남긴다.
+전체 CI green을 production 배포·경제 승인·비주얼 승인·출시 완료로 확대하지 않는다.
+현재 권한으로 가능한 일을 끝까지 수행하고, 증거가 없는 완료·무결점 보증은 쓰지 않는다.

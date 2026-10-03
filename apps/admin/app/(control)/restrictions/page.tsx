@@ -24,7 +24,7 @@ export default async function RestrictionsPage() {
     db
       .from("safe_mode_controls")
       .select(
-        "id, component, is_paused, reason, starts_at, review_at, changed_by",
+        "id, component, is_paused, reason, starts_at, review_at, changed_by, request_id",
       )
       .order("component"),
     db
@@ -104,7 +104,7 @@ export default async function RestrictionsPage() {
             <QueueCard key={component} tone={paused ? "caution" : "default"}>
               <header className="queue-card__head">
                 <div>
-                  <p className="eyebrow">{component}</p>
+                  <p className="eyebrow">기능 일시 정지</p>
                   <h2>{COMPONENT_LABEL[component]}</h2>
                 </div>
                 <strong>
@@ -129,7 +129,11 @@ export default async function RestrictionsPage() {
                   </div>
                   <div>
                     <dt>변경자</dt>
-                    <dd>{row.changed_by ? shortId(row.changed_by) : "—"}</dd>
+                    <dd>
+                      {row.changed_by === principal.userId
+                        ? "현재 운영자"
+                        : "다른 운영자"}
+                    </dd>
                   </div>
                 </dl>
               ) : (
@@ -148,6 +152,7 @@ export default async function RestrictionsPage() {
                   canMutate={canMutate}
                   component={component as SafeModeComponent}
                   currentlyPaused={paused}
+                  expectedRequestId={row?.request_id ?? null}
                 />
               )}
             </QueueCard>

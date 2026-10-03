@@ -79,7 +79,7 @@ export default async function UsdtDepositQueuePage() {
 
       <section className="queue-list" aria-label="USDT 입금 확인 대기">
         {rows.map((row) => (
-          <QueueCard key={row.id}>
+          <QueueCard key={row.id} id={`usdt-deposit-${row.id}`}>
             <header className="queue-card__head">
               <div>
                 <p className="eyebrow">입금 · {shortId(row.id)}</p>

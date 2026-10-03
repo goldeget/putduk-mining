@@ -13,11 +13,13 @@ const schema = z.object({
 export type AdminEnv = z.infer<typeof schema>;
 
 export function getAdminEnv(): AdminEnv {
+  // Read public values at server runtime when a build is promoted across targets.
+  const runtimeEnv = process.env;
   return schema.parse({
     APP_ENV: process.env.APP_ENV,
-    NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
+    NEXT_PUBLIC_SUPABASE_URL: runtimeEnv.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:
-      process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
+      runtimeEnv.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
     SUPABASE_SECRET_KEY: process.env.SUPABASE_SECRET_KEY,
     ADMIN_APP_URL: process.env.ADMIN_APP_URL,
   });

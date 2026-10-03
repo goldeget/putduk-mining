@@ -1,7 +1,5 @@
 "use server";
 
-import { z } from "zod";
-
 import {
   mapRpcFailure,
   prepareMoneyAttempt,
@@ -9,18 +7,9 @@ import {
   type CommandActionResult,
 } from "@/app/(control)/_lib/command-gate";
 import { ADMIN_COMMAND_FAMILIES } from "@/lib/auth/command-families";
+import { usdtDepositConfirmInput } from "@/lib/deposits/usdt-confirm-input";
 import { verifyUsdtDepositReceipt } from "@/lib/deposits/usdt-confirm-receipt";
 import { createAdminServiceClient } from "@/lib/supabase/service";
-
-const confirmSchema = z.object({
-  depositId: z.uuid(),
-  creditedKrw: z
-    .string()
-    .trim()
-    .regex(/^[1-9][0-9]{0,14}$/),
-  reason: z.string().trim().min(10).max(500),
-  confirmation: z.literal("CONFIRM_USDT_DEPOSIT"),
-});
 
 export async function confirmUsdtManualDepositAction(
   _prev: CommandActionResult | null,
@@ -28,7 +17,7 @@ export async function confirmUsdtManualDepositAction(
 ): Promise<CommandActionResult> {
   const prepared = prepareMoneyAttempt(formData);
   if (!prepared.ok) return prepared.result;
-  const parsed = confirmSchema.safeParse({
+  const parsed = usdtDepositConfirmInput.safeParse({
     depositId: formData.get("depositId"),
     creditedKrw: formData.get("creditedKrw"),
     reason: formData.get("reason"),
