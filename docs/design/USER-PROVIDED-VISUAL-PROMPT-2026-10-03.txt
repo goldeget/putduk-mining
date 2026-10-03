@@ -1,0 +1,902 @@
+맞아. **퍼뜩은 백엔드가 아무리 좋아도 화면이 평범하면 안 돼.** 지금부터는 UI/UX를 단순 “프런트 마감”이 아니라 **백엔드·원장과 동급의 출시 핵심 아키텍처**로 봐야 해.
+
+그리고 네가 말한 **“GPT로 고퀄리티 Scene Master 이미지를 만든 뒤 Cursor가 실제 서비스 애니메이션으로 구현”**하는 방식이 퍼뜩에는 상당히 잘 맞아. SK하이닉스 V3에서 이미 그 가능성을 확인한 셈이고.
+
+# 퍼뜩의 UI/UX 최종 목표
+
+내가 기준을 잡으면 이거야.
+
+> **첫 화면에서 “이게 한국의 흔한 앱테크/금융 웹사이트인가?”가 아니라 “이건 하나의 고급 디지털 채굴 서비스다”라는 느낌이 나야 한다.**
+
+동시에:
+
+> **시각적으로 화려하지만 저사양 모바일에서도 버벅이지 않아야 한다.**
+
+즉 둘 다 가져간다.
+
+```text
+초고퀄리티
++
+초고급 애니메이션
++
+직관적인 UX
++
+빠른 로딩
++
+60fps 지향
++
+모바일 우선
+```
+
+---
+
+# 1. V3 방식이 퍼뜩의 핵심 제작 방식
+
+굳이 무거운 3D 모델을 브라우저에서 실시간 렌더링할 필요가 없어.
+
+가장 효율적인 구조가:
+
+```text
+GPT가 만든 초고퀄리티 Scene Master
+          ↓
+고품질 배경 이미지
+          ↓
+Canvas / CSS / DOM 효과
+          ↓
+서버 실제 채굴 데이터
+          ↓
+살아있는 Scene처럼 표현
+```
+
+이거야.
+
+## 쉽게 말하면
+
+**비싼 부분은 이미지에 미리 구워놓고, 움직여야 하는 부분만 브라우저에서 움직인다.**
+
+그래서:
+
+- 공장
+- HBM
+- wafer
+- GPU
+- 금광
+- BTC 구조물
+
+같이 디테일이 엄청 많이 필요한 것들은 GPT 생성 Master.
+
+브라우저에서는:
+
+- 빛
+- 입자
+- energy stream
+- spark
+- extraction beam
+- money delta
+- HUD
+- pulse
+
+정도만 움직인다.
+
+이게 **퀄리티 대비 성능이 가장 좋음.**
+
+---
+
+# 2. SK하이닉스 V3를 사실상 Visual Benchmark로
+
+앞으로 Scene 만들 때:
+
+> **“V3보다 싸 보이면 실패”**
+
+를 내부 기준으로 잡아도 돼.
+
+SK하이닉스:
+
+```text
+HBM
+Wafer
+Memory
+Fab
+Extraction Core
+Gold/Blue Light
+Deep Cinematic Space
+```
+
+삼성:
+
+```text
+Wafer Fab
+Silicon Die
+Robotic Semiconductor Line
+Foundry
+```
+
+NVIDIA:
+
+```text
+GPU Die
+AI Core
+Server Matrix
+Compute Streams
+```
+
+Gold:
+
+```text
+Ore
+Molten Gold
+Bullion
+Extraction Plant
+```
+
+BTC:
+
+```text
+Block
+Hash Stream
+Digital Mining Core
+Blockchain Structure
+```
+
+각 Family마다 **완전히 다른 고퀄 Master**를 만들어야 해.
+
+SK 배경 색만 바꿔서 NVIDIA 만드는 건 절대 안 됨.
+
+---
+
+# 3. GPT 이미지 생성 단계부터 Production 규칙 적용
+
+이미지를 만들 때부터:
+
+### 넣지 말 것
+
+```text
+돈 숫자
+오늘 채굴
+버튼
+PENDING
+VERIFIED
+실시간 가격
+사용자 이름
+동적 텍스트
+```
+
+이런 건 Master 이미지에 박으면 안 돼.
+
+### Master에는
+
+```text
+환경
+기계
+재질
+조명
+깊이
+공간
+오브젝트
+플랫폼
+```
+
+만.
+
+그래야 React에서 실제 데이터를 올릴 수 있어.
+
+---
+
+# 4. 최종 화면은 3 Layer
+
+이건 그대로 확정하면 돼.
+
+## Layer 1
+
+**GPT Scene Master**
+
+화면 퀄리티의 80~90%.
+
+## Layer 2
+
+**Motion Effects**
+
+Canvas/필요 최소 CSS.
+
+```text
+particle
+spark
+beam
+pulse
+energy
+ambient
+```
+
+## Layer 3
+
+**HTML UI**
+
+```text
+원금
+Tier
+Today Mined
+Capacity
+Speed
+Pending
+Verified
+buttons
+```
+
+이렇게.
+
+---
+
+# 5. 채굴 화면은 무조건 Scene 중심
+
+앞에서 선택한 **1번 유지.**
+
+```text
+┌────────────────────────────┐
+│                            │
+│      CINEMATIC SCENE       │
+│                            │
+│ L5 PRO                     │
+│ ₩5,000,000                 │
+│                            │
+│      TODAY +₩54,281        │
+│                            │
+│ ███████████░░░ 54%         │
+│ ₩918K / ₩1.7M              │
+│                            │
+│ 현재 속도 ₩56K/day          │
+│                            │
+│ [채굴 파워 올리기]          │
+│                            │
+└────────────────────────────┘
+```
+
+그리고 아래로 스크롤하면:
+
+```text
+채굴 상세
+정산
+기록
+Loyalty
+Tier 혜택
+상품정보
+```
+
+---
+
+# 6. Tier가 올라가면 단순 숫자만 바뀌면 안 됨
+
+이게 퍼뜩의 재미가 될 거야.
+
+예를 들어 L1:
+
+```text
+조용함
+장비 일부 활성
+particle LOW
+```
+
+L3:
+
+```text
+wafer line 활성
+energy path 증가
+```
+
+L5:
+
+```text
+fab line 활성
+multiple extraction
+```
+
+L9:
+
+```text
+전체 장면 고밀도
+multi-source
+강한 core
+```
+
+L12+:
+
+```text
+PRIVATE ELITE
+최대 cinematic profile
+```
+
+사용자가 추가입금하면:
+
+```text
+입금 승인
+↓
+Tier Up
+↓
+화면이 순간적으로 살아남
+↓
+추가 라인 활성화
+↓
+Capacity bar 확장
+↓
+Mining Speed 증가
+```
+
+이걸 **한 번의 Level-Up Sequence**로 보여준다.
+
+---
+
+# 7. Level Up 순간은 정말 잘 만들어야 함
+
+예:
+
+```text
+POWER INCREASE DETECTED
+
+L5 PRO
+      ↓
+L6 PREMIUM
+```
+
+화면 전체:
+
+```text
+빛 강해짐
+→ extraction core pulse
+→ energy streams 활성
+→ 새로운 source 켜짐
+→ Capacity bar 확장
+→ 새 Mining Speed 표시
+```
+
+그리고:
+
+```text
++₩XXX Capacity
+```
+
+가 실제 서버 계산 결과로 표시.
+
+---
+
+# 8. 돈 Animation은 절대로 Fake 금지
+
+V3 prototype의 랜덤 돈은 **시각 참고만**.
+
+Production에서는:
+
+```text
+서버 실제 delta
++₩428
+```
+
+가 들어오면 그때만:
+
+```text
+HBM source
+   ↓
+particle
+   ↓
+central extraction
+   ↓
++₩428
+```
+
+연출.
+
+서버 값이 안 변하면:
+
+```text
+빛/입자 ambient만
+```
+
+움직이고 돈은 안 늘어남.
+
+이게 퀄리티도 높이고 신뢰도도 높임.
+
+---
+
+# 9. 성능은 `Adaptive Visual Quality`
+
+이걸 반드시 넣자.
+
+기기 성능에 따라 자동으로 effect density를 조정.
+
+## HIGH
+
+```text
+DPR 2
+많은 particles
+full glow
+multiple energy paths
+```
+
+## MEDIUM
+
+```text
+DPR 제한
+particle 감소
+blur 감소
+```
+
+## LOW
+
+```text
+Master image 유지
+최소 particle
+최소 glow
+```
+
+중요한 건:
+
+**LOW에서도 배경 Master 자체가 고퀄이기 때문에 화면이 싸 보이지 않는다는 것.**
+
+---
+
+# 10. 모바일에서 특히 중요한 것
+
+모바일은 GPU가 데스크톱보다 약하니까:
+
+```text
+particle count 상한
+DPR cap
+blur 최소화
+shadow 최소화
+canvas 1개
+RAF owner 1개
+```
+
+로 가야 해.
+
+절대로 Component마다:
+
+```text
+requestAnimationFrame()
+```
+
+따로 돌리면 안 됨.
+
+**Stage animation scheduler 하나.**
+
+---
+
+# 11. 화면 밖이면 애니메이션 정지
+
+필수.
+
+```text
+tab hidden
+→ pause
+
+Scene viewport 밖
+→ pause
+
+화면 잠금
+→ pause
+```
+
+복귀:
+
+```text
+현재 Server Snapshot 읽음
+↓
+새 상태로 바로 동기화
+```
+
+밀린 20분치 animation을 몰아서 재생하면 안 돼.
+
+---
+
+# 12. reduced-motion
+
+사용자가 motion 감소 설정이면:
+
+```text
+continuous particle OFF
+parallax OFF
+breathing OFF
+```
+
+하지만:
+
+```text
+원금
+수익
+Capacity
+상태
+```
+
+정보는 그대로.
+
+---
+
+# 13. UI 스타일 전체는 `Premium + Dark Cinematic`
+
+채굴 Scene:
+
+```text
+Dark Cinematic
+```
+
+나머지 앱 shell:
+
+```text
+Premium Minimal
+```
+
+이 조합이 가장 좋아.
+
+모든 페이지까지 금빛 배경/불빛으로 도배하면 오히려 싸 보여.
+
+예:
+
+```text
+홈
+→ clean premium
+
+지갑
+→ clean premium
+
+상품
+→ high-quality cards
+
+채굴
+→ cinematic island
+
+Admin
+→ ultra clean operational UI
+```
+
+---
+
+# 14. 홈도 상당히 중요
+
+홈 진입 순간:
+
+```text
+안녕하세요
+
+오늘 채굴
+₩54,281
+
+현재 L5 PRO
+
+Capacity
+54%
+
+[채굴 화면으로]
+```
+
+아래:
+
+```text
+현재 상품
+이벤트
+내 자산
+공지
+```
+
+정도.
+
+**정보 30개를 한 화면에 넣지 않는다.**
+
+---
+
+# 15. 모바일 5개 탭도 유지
+
+```text
+홈
+채굴
+상품
+지갑
+더보기
+```
+
+이게 UX 중심축.
+
+AI는 모든 페이지 같은 위치.
+
+---
+
+# 16. PUTDUK AI 버튼 디자인도 고급스럽게
+
+평범한:
+
+```text
+💬
+```
+
+챗 버튼 말고.
+
+예:
+
+```text
+PUTDUK AI ✦
+```
+
+혹은 작은 animated core.
+
+누르면 bottom sheet:
+
+```text
+무엇을 도와드릴까요?
+
+[내 채굴 분석]
+[다음 Tier]
+[출금 영향]
+[이벤트]
+```
+
++ 자유질문.
+
+---
+
+# 17. UI 변화에는 항상 Transition
+
+갑자기 숫자 뚝 바뀌는 것보다:
+
+```text
+1,284,481
+   ↓
+1,285,009
+```
+
+짧은 roll.
+
+Capacity:
+
+```text
+54%
+→
+71%
+```
+
+smooth expansion.
+
+Tier:
+
+```text
+PRO
+→
+PREMIUM
+```
+
+cinematic transition.
+
+단 **200~500ms 정도의 bounded animation** 위주.
+
+느려서 기다려야 하는 animation은 금지.
+
+---
+
+# 18. 돈 관련 UI는 반대로 엄청 명확하게
+
+화려한 Scene과 금융 Command UI를 섞으면 안 됨.
+
+입금/출금/원금회수:
+
+```text
+white/clean panel
+명확한 금액
+명확한 버튼
+명확한 결과
+```
+
+잘못 클릭하지 않게.
+
+즉:
+
+> **즐기는 화면은 Cinematic. 돈을 움직이는 화면은 Precise.**
+
+이 원칙이 아주 중요해.
+
+---
+
+# 19. Admin은 화려할 필요 없음
+
+Admin까지 V3처럼 만들면 운영성이 떨어져.
+
+Admin 목표:
+
+```text
+빠름
+깨끗함
+정보 명확
+원클릭
+```
+
+다만 디자인은 고급스럽게.
+
+예:
+
+```text
+Linear
+Stripe Dashboard
+Vercel
+OpenAI dashboard
+```
+
+같은 방향의 **clean professional UX**가 맞아.
+
+---
+
+# 20. Visual Asset Pipeline을 실제 개발 프로세스로
+
+앞으로 새로운 Scene 만들 때 매번:
+
+```text
+1. GPT로 Scene Master 생성
+2. 사용자 검토
+3. APPROVED MASTER
+4. immutable hash/version
+5. responsive derivatives
+6. anchor mapping
+7. tier visual profiles
+8. Canvas effect
+9. DOM HUD
+10. visual regression
+```
+
+순서.
+
+이걸 아예 개발 표준으로 고정.
+
+---
+
+# 21. GPT 이미지 → Cursor 구현 Workflow
+
+이 구조가 앞으로 계속 반복돼.
+
+예:
+
+### 내가
+
+```text
+NVIDIA 최종 Scene Master
+```
+
+이미지 생성.
+
+### 너
+
+이미지 승인.
+
+### Cursor
+
+```text
+Asset manifest
+WebP/AVIF
+responsive srcset
+anchors
+Scene Pack
+Tier profile
+Canvas
+HUD
+tests
+```
+
+구현.
+
+즉 **GPT = Art Director / Master Generator**
+
+**Cursor = Implementation Engineer**
+
+역할 분리.
+
+---
+
+# 22. Visual QA는 반드시 사람 눈 + 자동화
+
+자동 screenshot diff만으로:
+
+```text
+PASS
+```
+
+했다고 끝내면 안 됨.
+
+왜냐하면 이미지가 틀려도 픽셀 diff threshold는 통과할 수 있어.
+
+그래서:
+
+### 자동
+
+```text
+390px
+834px
+1440px
+
+reduced motion
+dark/light shell
+```
+
+스크린샷.
+
+### AI/GPT review
+
+- 구도
+- crop
+- anchor
+- depth
+- material
+- readability
+- cheap-looking effects
+- overlap
+
+검토.
+
+그리고 너한테 실제 screenshot 보여주기.
+
+---
+
+# 23. 출시 UX Gate
+
+나는 출시 조건에 UI/UX를 아예 넣겠어.
+
+백엔드:
+
+```text
+Money PASS
+Security PASS
+DB PASS
+```
+
+만으로 출시 금지.
+
+추가:
+
+```text
+Visual Quality PASS
+Responsive PASS
+Animation PASS
+Performance PASS
+Accessibility PASS
+Korean Typography PASS
+No Hydration Error PASS
+```
+
+전부 통과해야 함.
+
+---
+
+# 24. 퍼뜩의 최종 차별점
+
+내가 보면 퍼뜩은 여기서 경쟁력이 생겨.
+
+보통 금융/앱테크:
+
+```text
+숫자
+차트
+목록
+```
+
+퍼뜩:
+
+```text
+내 원금
+↓
+실제 채굴세계
+↓
+장비/Scene 성장
+↓
+실시간 Mining Capacity
+↓
+실제 서버 보상
+↓
+Tier progression
+```
+
+즉 금융 UI에 가까운 게 아니라 **“Premium Interactive Mining Experience”**가 되는 거야.
+
+---
+
+## 최종적으로 이 한 문장을 Visual Product Principle로 박으면 돼
+
+> **PUTDUK MINING은 백엔드가 제품을 지탱하지만, 사용자가 제품의 가치를 느끼는 순간은 UI/UX와 Scene이다. 따라서 UI/UX·시각 품질·애니메이션·반응성은 금융 무결성·보안과 동급의 출시 관문으로 취급한다.**
+
+그리고 구현 전략은:
+
+> **고퀄리티 GPT-generated cinematic raster master + lightweight Canvas effects + authoritative HTML HUD**
+
+로 고정.
+
+이게 **V3에서 얻은 퀄리티를 유지하면서도 모바일 렉을 최소화할 수 있는 가장 좋은 방식**이라고 봐.

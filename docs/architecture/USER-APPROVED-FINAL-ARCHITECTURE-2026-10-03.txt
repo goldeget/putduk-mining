@@ -1,0 +1,2088 @@
+# PUTDUK MINING — ULTIMATE FINAL ARCHITECTURE
+
+## 0. 최종 제품 정의
+
+PUTDUK MINING은 다음 다섯 시스템이 하나로 결합된 플랫폼으로 완성한다.
+
+1. **Funding-Based Mining Economy**
+2. **GPT/Claude-style Mining Capacity System**
+3. **Operator-Controlled Admin Platform**
+4. **PUTDUK Native AI System**
+5. **Search / AI Discovery / SEO / GEO Platform**
+
+사용자는:
+
+`실제 원금 입금`
+→ `채굴 원금 증가`
+→ `Tier 자동 상승`
+→ `Mining Capacity 증가`
+→ `Mining Speed 증가`
+→ `Scene 강화`
+→ `실제 서버 채굴`
+→ `PENDING`
+→ `Settlement`
+→ `VERIFIED`
+
+를 경험한다.
+
+운영자는 프로그래밍 지식 없이:
+
+`선택 → 입력 → 미리보기 → 적용`
+
+만으로 플랫폼 전체를 제어한다.
+
+AI는 관리자와 사용자가 이 모든 기능을 자연어로 더 쉽게 이용하도록 돕지만, 돈·권한·보안 규칙을 우회하지 않는다.
+
+---
+
+# 1. 현재 레포를 기준으로 한 원칙
+
+현재 `develop` 기반의 기존 구현은 최대한 재사용한다.
+
+특히 새로 중복 구현하지 않는다.
+
+- Balanced Ledger
+- Deposit / Withdrawal commands
+- KRW approval integrity
+- USDT manual deposit confirmation
+- USDT concurrent retry integrity
+- Outbox claim/retry foundation
+- Catalog state machine
+- Admin AAL2/TOTP
+- Step-up
+- Member 360
+- Notification foundation
+- Event foundation
+- Safe Mode
+- Reconciliation
+- Existing AI read-only foundation
+- AI money mutation denial
+- MiningLiveStage
+- Scene Registry
+- Product presentation registry
+
+새 최종 아키텍처는 이 위에 얹는다.
+
+---
+
+# 2. 돈의 Source를 완전 분리
+
+논리적으로 최소:
+
+- `PRINCIPAL`
+- `MINING_REWARD`
+- `BONUS`
+- `OTHER_NON_PRINCIPAL`
+
+을 분리한다.
+
+## Principal 인정
+
+YES:
+
+- 실제 승인 KRW 입금
+- USDT-TRC20 입금 확인 후 관리자 KRW 환산 Principal 지급
+- 명시적 Principal correction
+
+NO:
+
+- 가입 보너스
+- 이벤트 보너스
+- 추천 보상
+- 프로모션
+- 채굴 보상
+- 관리자 일반 Bonus
+- 무료 지급
+
+따라서:
+
+`BONUS != PRINCIPAL`
+
+`MINING_REWARD != PRINCIPAL`
+
+이다.
+
+---
+
+# 3. 채굴 원금의 최종 정의
+
+채굴 계산에는 lifetime deposit을 사용하지 않는다.
+
+사용값:
+
+## `Eligible Funding Principal`
+
+개념:
+
+`실제 원금 Credit`
+`- 원금 Withdrawal`
+`- 원금 Debit/Reversal`
+
+예:
+
+1억원 입금
+
+Lifetime Principal Deposit  
+= 1억원
+
+Eligible Principal  
+= 1억원
+
+이후 원금 9천만원 회수:
+
+Lifetime Deposit  
+= 여전히 1억원
+
+Eligible Principal  
+= 1천만원
+
+Mining Tier는 즉시 1천만원 기준으로 재평가한다.
+
+채굴수익을 출금해도 Eligible Principal은 감소하지 않는다.
+
+---
+
+# 4. 초고액까지 Funding Tier 지원
+
+처음부터 10만원~50억원 이상을 처리한다.
+
+예시 Tier hierarchy:
+
+- L1 STARTER
+- L2 STARTER+
+- L3 ACTIVE
+- L4 ADVANCED
+- L5 PRO
+- L6 PREMIUM
+- L7 PREMIUM+
+- L8 ELITE
+- L9 ULTRA
+- L10 ULTRA+
+- L11 PRIVATE
+- L12 PRIVATE+
+- L13 PRIVATE ELITE
+- L14 PRIVATE ELITE+
+
+실제 금액구간과 수익률은 **Admin-configured Versioned Economy Rule**로 관리한다.
+
+코드 하드코딩 금지.
+
+---
+
+# 5. GPT/Claude 사용량형 Mining Capacity
+
+PUTDUK의 핵심 UX로 확정한다.
+
+사용자는 단순한 `%`만 보는 게 아니다.
+
+예:
+
+**채굴 원금**
+
+₩5,000,000
+
+**L5 PRO**
+
+**이번 Mining Cycle**
+
+₩918,420 / ₩1,700,000
+
+`███████████░░░░░ 54%`
+
+**현재 Mining Speed**
+
+₩XX,XXX / day
+
+**Next Reset**
+
+14일 08시간
+
+이것이 GPT/Claude의 usage meter와 같은 역할을 한다.
+
+---
+
+# 6. Mining Capacity와 Speed 분리
+
+## Capacity
+
+이번 Cycle에서 받을 수 있는 총 채굴 가능량.
+
+## Speed
+
+Capacity가 차는 속도.
+
+따라서 이벤트도 두 종류가 가능하다.
+
+### SPEED BOOST
+
+같은 Capacity를 빨리 채운다.
+
+### CAPACITY BOOST
+
+이번 Cycle에서 받을 수 있는 총 보상량을 늘린다.
+
+운영자는 Admin에서 선택한다.
+
+---
+
+# 7. 30-Day Rolling Mining Cycle
+
+사용자별 rolling 30-day cycle.
+
+첫 Principal activation:
+
+`cycle_started_at`
+
+생성.
+
+30일 후:
+
+새 Cycle.
+
+추가입금으로 Cycle을 Reset하지 않는다.
+
+원금 출금→재입금으로 Reset을 악용하지 못하게 한다.
+
+---
+
+# 8. Capacity 100%
+
+100% 도달:
+
+`CYCLE_COMPLETE`
+
+이후:
+
+- 신규 monetary accrual 0
+- 이미 채굴된 보상 유지
+- Ambient Scene 유지
+- Reset countdown 표시
+- 다른 상품 탐색
+- 다음 Tier preview
+- 추가입금 preview
+
+제공.
+
+가짜 money animation 금지.
+
+---
+
+# 9. 중간 추가입금 완전자동
+
+입금 승인 순간:
+
+`Principal Changed`
+→ `Principal Revision`
+→ `Tier Resolver`
+→ `Entitlement Engine`
+→ `Capacity Recalculation`
+→ `Speed Recalculation`
+→ `Snapshot Revision`
+→ `Scene Profile Update`
+→ `Level Up Notification`
+
+까지 자동.
+
+운영자가 Tier를 수동 변경하지 않는다.
+
+---
+
+# 10. Mining Segment
+
+중간 추가입금 시 과거 보상을 소급 계산하지 않는다.
+
+예:
+
+Day 1~15  
+₩1M / L3
+
+15일 14:32  
++₩4M
+
+Day 15 14:32 이후  
+₩5M / L5
+
+서버 내부:
+
+`Segment A`
+- principal 1M
+- tier L3
+- rule V
+
+`Segment B`
+- principal 5M
+- tier L5
+- rule V
+
+각 Segment를 별도로 계산한다.
+
+---
+
+# 11. Mid-Cycle Proration
+
+Cycle 종료 직전 추가입금으로 30일치 전체 보상을 받지 못한다.
+
+추가 entitlement:
+
+`새 Tier의 남은 기간 entitlement`
+`- 기존 Tier의 남은 기간 entitlement`
+
+만 추가한다.
+
+다음 Cycle부터 새 Tier 전체 30일 Capacity 적용.
+
+---
+
+# 12. 원금 회수
+
+Principal withdrawal:
+
+→ Eligible Principal 감소  
+→ Tier 재평가  
+→ Capacity 감소  
+→ Speed 감소  
+→ Scene intensity 감소
+
+이미 VERIFIED된 과거 채굴보상은 취소하지 않는다.
+
+새 Capacity보다 이미 채굴한 금액이 크면:
+
+`CAPACITY_EXHAUSTED`
+
+로 전환하고 Reset까지 추가 accrual 0.
+
+---
+
+# 13. Entitlement Engine
+
+플랫폼 경제의 단일 계산 엔진.
+
+다른 API/Worker/UI가 각자 계산하지 않는다.
+
+### INPUT
+
+- Eligible Principal
+- Principal revision
+- Tier version
+- Cycle
+- Remaining cycle duration
+- Product Rule
+- Loyalty
+- Campaign
+- User Override
+- Global Control
+- Current Server Time
+
+### OUTPUT
+
+- Tier
+- Tier Version
+- Mining Speed
+- Cycle Capacity
+- Used Capacity
+- Remaining Capacity
+- Slot count
+- Scene profile
+- Cycle state
+- entitlement revision
+
+---
+
+# 14. 사용자 화면의 최상위 5정보
+
+모바일에서도 한 화면에 이해 가능해야 한다.
+
+1. **채굴 원금**
+2. **현재 Tier**
+3. **오늘 채굴**
+4. **현재 Cycle Capacity**
+5. **다음 Tier까지 필요한 금액**
+
+예:
+
+채굴 원금  
+₩8,700,000
+
+L5 PRO
+
+TODAY MINED  
++₩XX,XXX
+
+MINING CAPACITY  
+54%
+
+NEXT LEVEL  
+₩1,300,000 추가 시 PREMIUM
+
+---
+
+# 15. Upgrade Preview
+
+`[채굴 파워 올리기]`
+
+선택:
+
+- ₩100,000
+- ₩500,000
+- ₩1,000,000
+- ₩5,000,000
+- 직접 입력
+
+서버 Preview API가:
+
+- 새 Principal
+- 새 Tier
+- Capacity 변화
+- Speed 변화
+- Mining Slot 변화
+- Scene Profile 변화
+
+를 계산한다.
+
+클라이언트 계산 금지.
+
+---
+
+# 16. Tier별 UI/UX 차별화
+
+별도 페이지를 복사하지 않는다.
+
+공통 `MiningLiveStage`.
+
+### STARTER
+
+- 단순 HUD
+- 낮은 scene activity
+- 1 mining slot
+
+### ACTIVE
+
+- 추가 energy route
+- stronger progress feedback
+
+### PRO
+
+- multi-source mining
+- richer HUD
+
+### PREMIUM
+
+- multi-path extraction
+- additional slots
+
+### ELITE
+
+- high-density scene
+
+### ULTRA
+
+- full production visual state
+
+### PRIVATE
+
+- premium visual treatment
+- operator-specific override 가능
+
+---
+
+# 17. V3 SK hynix — 시각 기준
+
+기존 V3 Reference Master를 버리지 않는다.
+
+V3의:
+
+- HBM
+- wafer
+- fab
+- extraction platform
+- realistic material
+- deep composition
+- gold/blue lighting
+- cinematic darkness
+- spatial depth
+
+을 PUTDUK Scene 품질 기준으로 삼는다.
+
+하지만 prototype의:
+
+- fake money
+- Math.random rewards
+- timer reward
+- local-only settlement
+- baked dynamic UI
+- multiple unbounded RAF
+
+는 production에 이식하지 않는다.
+
+---
+
+# 18. V3 Production은 3-Layer
+
+## Layer 1 — Scene Master Raster
+
+실제 cinematic background.
+
+## Layer 2 — Transparent Motion Canvas
+
+- particle
+- energy trail
+- spark
+- ripple
+- extraction flow
+- subtle lighting
+
+만.
+
+## Layer 3 — HTML/DOM
+
+- Today Mined
+- Principal
+- Tier
+- Capacity
+- Pending
+- Verified
+- Speed
+- Reset
+- controls
+- money labels
+
+돈/버튼/접근성 요소를 Canvas 전용으로 만들지 않는다.
+
+---
+
+# 19. V3 Original과 Production Clean Master
+
+현재 Reference는 그대로 immutable 보존.
+
+별도:
+
+`V3 CLEAN PRODUCTION MASTER`
+
+제작.
+
+Reference의 구도/재질/빛/공간감은 최대한 유지.
+
+Production raster 안에는:
+
+- 동적 금액
+- 버튼
+- HUD
+- 가짜 시세
+- 미승인 로고/production text
+
+를 baked하지 않는다.
+
+---
+
+# 20. Tier별 V3 효과
+
+같은 Master를 단순 recolor하지 않는다.
+
+Tier는:
+
+- active anchor count
+- particle density
+- energy path
+- lighting intensity
+- extraction pulse
+- ambient frequency
+- settlement effect budget
+
+를 변화시킨다.
+
+L1:
+
+LOW.
+
+L5:
+
+HIGH.
+
+L9:
+
+ULTRA.
+
+PRIVATE:
+
+MAXIMUM APPROVED PROFILE.
+
+---
+
+# 21. Money Animation
+
+오직 실제 서버 monetary delta로 작동.
+
+금지:
+
+- Math.random()
+- setInterval money
+- client reward calculation
+- rAF reward calculation
+
+서버:
+
+`Snapshot N`
+→ `Snapshot N+1`
+
+positive delta가 있을 때만:
+
+source
+→ energy particle
+→ extraction
+→ DOM `+₩XXX`
+→ HUD update.
+
+---
+
+# 22. Settlement Animation
+
+실제 settlement 발생:
+
+`PENDING`
+→ `VAULT`
+→ `VERIFIED`
+
+연출.
+
+같은 금액의 Pending 감소와 Verified 증가를 신규 수익으로 두 번 보여주지 않는다.
+
+---
+
+# 23. Level Up Animation
+
+추가입금 승인:
+
+`LEVEL UP`
+
+→ power surge  
+→ additional extraction path  
+→ Capacity meter expansion  
+→ Tier badge transition  
+→ Scene intensity upgrade
+
+실제 서버 Entitlement 변경 이후에만 재생.
+
+---
+
+# 24. Cycle Complete Animation
+
+100%:
+
+`CYCLE COMPLETE`
+`VAULT SECURED`
+
+Money flow STOP.
+
+Ambient만 유지.
+
+Reset:
+
+`NEW CYCLE`
+
+짧은 restart sequence.
+
+---
+
+# 25. Multi-Scene
+
+공통 Stage 유지.
+
+Scene Families:
+
+- SEMICONDUCTOR_MEMORY
+- SEMICONDUCTOR_FOUNDRY
+- AI_GPU_COMPUTE
+- PRECIOUS_GOLD
+- PRECIOUS_SILVER
+- BLOCKCHAIN_HASH
+- CRYPTO_NETWORK
+- ETF_BASKET
+- AUTO_MOBILITY
+- ENERGY_OIL
+- FINANCE_CAPITAL
+- BIO_HEALTH
+- CONSUMER_RETAIL
+- future approved families
+
+상품을 추가할 때 Stage 수정 금지.
+
+---
+
+# 26. Operator-Controlled Admin
+
+운영자는 전부 제어 가능.
+
+Admin:
+
+- 회원
+- Principal
+- Bonus
+- Mining Reward
+- Deposit
+- Withdrawal
+- USDT
+- Funding Tier
+- Mining Rules
+- Capacity
+- Speed
+- User Override
+- Global Multiplier
+- Product
+- Scene mapping
+- Event
+- Notice
+- Banner
+- Notification
+- Risk
+- Safe Mode
+- Workers
+- Reconciliation
+- Analytics
+- AI
+
+관리.
+
+---
+
+# 27. 초보자 Admin
+
+어드민은 전체가 SIMPLE.
+
+JSON/SQL/cron/rule expression 노출 금지.
+
+항상:
+
+`선택`
+→ `입력`
+→ `영향 미리보기`
+→ `적용`
+
+형태.
+
+---
+
+# 28. PUTDUK Native AI — 최종 핵심 구성
+
+퍼뜩 AI는 “나중에 붙이는 챗봇”이 아니다.
+
+처음부터 독립 Domain으로 구축한다.
+
+구조:
+
+`PUTDUK AI Gateway`
+→ `Provider Router`
+→ `Policy Engine`
+→ `Context Builder`
+→ `Tool Registry`
+→ `Command Registry`
+→ `Audit`
+→ `Evaluation`
+
+---
+
+# 29. 현재 기존 AI를 재사용
+
+현재 레포에 이미 있는:
+
+- grounded AI routing
+- AI read-only
+- money mutation denial
+- SESSION_MEMORY_ONLY
+- tool failure fail-closed
+- AI browser/eval foundation
+
+을 버리지 않는다.
+
+그 위에 Provider Abstraction을 확장한다.
+
+---
+
+# 30. AI Provider Layer
+
+처음부터 provider-neutral.
+
+예:
+
+`AIProvider`
+
+interface.
+
+뒤에 필요시:
+
+- OpenAI
+- Google Gemini
+- Anthropic
+- 기타 승인 provider
+
+를 연결할 수 있다.
+
+하나의 provider를 UI/business logic에 직접 박지 않는다.
+
+---
+
+# 31. API Key Architecture
+
+Provider API Key는 절대 브라우저에 내려보내지 않는다.
+
+Admin에서:
+
+`AI Provider 설정`
+
+은 가능.
+
+하지만 저장은:
+
+- server secret store
+- environment secret
+- approved secrets infrastructure
+
+에서만.
+
+DB plaintext 저장 금지.
+
+UI에는 저장 후:
+
+`sk-...XXXX`
+
+같은 최소 마스킹 상태만 보인다.
+
+---
+
+# 32. AI Provider가 없어도 앱이 망가지지 않음
+
+API Key 없음:
+
+`AI_PROVIDER_NOT_CONFIGURED`
+
+상태.
+
+기존:
+
+- FAQ
+- deterministic help
+- rules explanation
+- manual admin
+
+은 계속 작동.
+
+AI가 없는 것을 가짜 AI 답변으로 숨기지 않는다.
+
+---
+
+# 33. Admin AI Assistant
+
+모든 Admin 페이지에 동일한 PUTDUK 운영도우미 Context가 존재.
+
+예:
+
+회원 상세에서:
+
+“이 회원 최근 상태 요약해줘.”
+
+AI:
+
+- Principal
+- Tier
+- deposits
+- withdrawals
+- mining
+- risk
+- recent admin actions
+
+을 조회하여 설명.
+
+---
+
+# 34. Admin AI Actions
+
+AI는 Command를 직접 발명하지 않는다.
+
+Admin UI와 동일한 `Command Registry` 사용.
+
+예:
+
+“이 회원에게 보너스 3만원 줘.”
+
+AI:
+
+회원 확인  
+→ BONUS_CREDIT draft  
+→ 영향 Preview  
+→ 운영자 확인  
+→ Step-up  
+→ 기존 Command 실행.
+
+직접 DB UPDATE 금지.
+
+---
+
+# 35. Admin AI Risk Levels
+
+### READ
+
+자동.
+
+### DRAFT
+
+자동 초안.
+
+### MEDIUM ACTION
+
+운영자 Confirm.
+
+### HIGH-RISK MONEY
+
+Confirm + Step-up.
+
+예:
+
+- Principal credit
+- debit
+- withdrawal approval
+- reward correction
+- global economy change
+
+는 HIGH.
+
+---
+
+# 36. Admin AI 기능
+
+최종적으로:
+
+### 조회
+
+“오늘 입금 얼마?”
+
+“USDT 대기?”
+
+“원장 이상?”
+
+### 분석
+
+“오늘 출금 증가 이유?”
+
+“어떤 Tier가 가장 성장했어?”
+
+### 작성
+
+“주말 이벤트 만들어줘.”
+
+“점검 공지 만들어줘.”
+
+### 운영
+
+“BTC 상품 숨겨줘.”
+
+“user123 채굴 일시정지 초안.”
+
+### 이상감지
+
+“오늘 평소와 다른 지표 찾아줘.”
+
+---
+
+# 37. User PUTDUK AI
+
+사용자 화면에서도 PUTDUK AI 사용.
+
+글로벌 launcher + 페이지 context.
+
+예:
+
+### Mining
+
+“왜 오늘 채굴속도가 바뀌었어?”
+
+AI가 실제:
+
+- Principal
+- Tier
+- Product Rule
+- Capacity
+- Campaign
+- Cycle state
+
+를 읽어 설명.
+
+### Wallet
+
+“출금하면 채굴등급이 어떻게 바뀌어?”
+
+Preview API를 사용.
+
+### Product
+
+“Gold랑 BTC 차이가 뭐야?”
+
+승인된 Product data만 이용.
+
+### Events
+
+“지금 받을 수 있는 이벤트 있어?”
+
+실제 live events 조회.
+
+---
+
+# 38. User AI는 Money Authority가 아님
+
+AI가:
+
+- balance 수정
+- withdrawal 승인
+- reward 계산
+- Tier 강제변경
+- Principal 변경
+
+을 직접 하지 않는다.
+
+금액은 서버 결과를 설명할 뿐.
+
+이 원칙은 기존 AI money denial을 유지한다.
+
+---
+
+# 39. AI Context
+
+AI에게 전체 DB를 던지지 않는다.
+
+페이지별 least-privilege Context Tools.
+
+예:
+
+`getMyMiningSnapshot`
+
+`getMyFundingSummary`
+
+`getPublishedProducts`
+
+`getActiveEvents`
+
+`explainTierRule`
+
+등.
+
+Admin은 별도 privileged tools.
+
+---
+
+# 40. AI Observability
+
+기록:
+
+- request id
+- user/admin identity
+- provider
+- model
+- latency
+- token usage
+- tool usage
+- final result category
+- denial reason
+- estimated provider cost
+
+단 prompt 전체에 민감정보 저장을 최소화한다.
+
+---
+
+# 41. AI Usage Budget
+
+외부 유료 AI 연결 시 비용 폭주 방지.
+
+Admin:
+
+- daily AI budget
+- monthly AI budget
+- per-user limit
+- per-admin limit
+- provider limit
+
+설정.
+
+사용자 AI usage도 별도 quota로 관리 가능.
+
+Mining Capacity와는 별개 Domain이다.
+
+---
+
+# 42. 검색/AI 검색 노출도 제품 기능으로 취급
+
+SEO를 출시 직전 작업으로 두지 않는다.
+
+새 Domain:
+
+## `Trust / Discovery`
+
+에서 관리.
+
+목표:
+
+검색자가:
+
+- 퍼뜩
+- 퍼뜩 채굴
+- PUTDUK
+- PUTDUK MINING
+- 퍼뜩 채굴이란
+- 퍼뜩 채굴 사용법
+- 퍼뜩 채굴 상품
+
+등을 검색했을 때 검색엔진과 AI가 공식 사이트를 명확한 entity로 이해하도록 한다.
+
+검색/AI 노출 자체는 어떤 검색엔진도 보장하지 않는다.
+
+---
+
+# 43. ChatGPT Search
+
+OpenAI 공식 지침상 공개 사이트는 ChatGPT Search에 표시될 수 있으며, 요약·snippet·citation을 위해 **OAI-SearchBot을 차단하지 않는 것이 중요**하다. GPTBot은 학습 제어용이며 ChatGPT Search 노출 제어와 역할이 다르다.
+
+따라서 production public site의 robots 정책:
+
+`OAI-SearchBot`
+→ public content Allow.
+
+GPTBot:
+→ PUTDUK의 별도 training policy에 따라 allow/disallow를 결정.
+
+**Search visibility를 위해 GPTBot까지 허용할 필요는 없다.**
+
+---
+
+# 44. OpenAI crawler + Cloudflare
+
+Cloudflare/WAF가 OAI-SearchBot을 403으로 막지 않는지 배포 검증에 포함한다.
+
+OpenAI도 WAF/CDN/bot mitigation이 crawler를 잘못 막을 수 있다고 명시한다.
+
+단 crawler 허용을 이유로 Admin/API 보호를 약화하지 않는다.
+
+Public content만 허용.
+
+---
+
+# 45. ChatGPT 유입 분석
+
+OpenAI 공식 설명에 따르면 ChatGPT 검색 추천 URL에는 `utm_source=chatgpt.com`이 포함될 수 있으므로 analytics에서 ChatGPT referral을 별도 집계한다.
+
+Admin Analytics:
+
+- Google
+- Naver
+- Bing
+- ChatGPT
+- Direct
+- Social
+
+별 획득 사용자 분석.
+
+---
+
+# 46. Google / Gemini / AI Overview
+
+Google은 AI Overview와 AI Mode에 **별도 AI SEO 파일이나 특별 schema가 필요하지 않으며 기존 SEO 기반이 그대로 적용**된다고 공식적으로 명시한다. 페이지가 Google Search에 index 가능해야 하며 중요한 내용은 텍스트로 제공하고, 내부링크·페이지 경험·정확한 구조화 데이터를 유지해야 한다.
+
+따라서 `llms.txt` 같은 비표준 파일을 핵심 ranking mechanism으로 간주하지 않는다.
+
+원한다면 보조 파일로 제공할 수 있지만 **Google AI 노출의 필수 조건으로 사용하지 않는다.**
+
+---
+
+# 47. Googlebot
+
+Google Search public pages:
+
+- Googlebot crawl 가능
+- HTTP 200
+- indexable visible text
+- no accidental noindex
+
+여야 한다.
+
+Google은 이 세 가지를 기본 기술요건으로 명시한다.
+
+---
+
+# 48. Google-Extended
+
+Google-Extended는 Gemini Apps/Vertex AI의 training/grounding 관리용 별도 robots token이며 Google Search 포함 여부나 ranking signal에는 영향을 주지 않는다.
+
+따라서:
+
+`Google Search visibility`
+와
+`Gemini training/grounding policy`
+
+를 혼동하지 않는다.
+
+---
+
+# 49. Naver
+
+Naver public pages:
+
+`Yeti`
+crawl 허용.
+
+Naver는 robots.txt와 sitemap을 권장하고, Admin/private 페이지는 수집 금지하라고 명시한다.
+
+Naver Search Advisor:
+
+- 사이트 소유 확인
+- URL 검사
+- crawl/index 상태
+- sitemap
+- SEO errors
+
+모니터링.
+
+사이트 등록 자체가 검색 노출 보장을 뜻하지 않는다. 네이버도 웹검색은 자동 수집 기반이라고 설명한다.
+
+---
+
+# 50. Naver AI source description
+
+Naver robots meta에는 `nosourceinfo`가 있으며 이는 AI 자동 생성 출처설명을 제외하는 설정이다. PUTDUK이 Naver AI/검색에서 출처 설명을 원한다면 **public discovery 페이지에 `nosourceinfo`를 넣지 않는다.**
+
+---
+
+# 51. Bing / Copilot
+
+Bing Webmaster 공식 가이드는 Bing Search뿐 아니라 Copilot/grounding도 같은 crawl/index/ranking 기반을 사용한다고 명시한다. 또한:
+
+- IndexNow
+- XML sitemap
+- crawlable internal links
+- canonical URLs
+- 명확한 Entity
+- 단일주제 URL
+- 독립적으로 검증 가능한 사실
+
+을 권장한다.
+
+따라서 PUTDUK public Knowledge Pages를 명확한 주제 단위로 분리한다.
+
+---
+
+# 52. IndexNow
+
+새 공지/이벤트/상품/도움말이:
+
+CREATE  
+UPDATE  
+DELETE
+
+될 때 자동 IndexNow notification.
+
+IndexNow는 변경 URL을 즉시 검색엔진에 알리는 프로토콜이고 최대 10,000 URL bulk 제출을 지원한다.
+
+IndexNow 공식 FAQ에는 Bing뿐 아니라 Naver endpoint도 명시되어 있다.
+
+즉 Admin Publish workflow:
+
+`Publish`
+→ cache invalidation
+→ sitemap lastmod update
+→ IndexNow
+→ analytics event
+
+자동화.
+
+---
+
+# 53. SEO Public Information Architecture
+
+검색 가능한 공식 Public pages를 만든다.
+
+예:
+
+`/`
+
+`/about`
+
+`/how-it-works`
+
+`/mining`
+
+`/mining/capacity`
+
+`/mining/tiers`
+
+`/products`
+
+`/products/[code-or-slug]`
+
+`/events`
+
+`/events/[slug]`
+
+`/notices`
+
+`/notices/[slug]`
+
+`/help`
+
+`/help/deposit`
+
+`/help/usdt-trc20`
+
+`/help/withdrawal`
+
+`/help/mining-capacity`
+
+`/help/mining-tier`
+
+`/security`
+
+`/ai`
+
+`/status`
+
+`/terms`
+
+`/privacy`
+
+경로명은 실제 repo convention과 충돌하면 기존 convention을 우선한다.
+
+---
+
+# 54. Private URLs는 검색 금지
+
+절대로 index하면 안 되는 것:
+
+- `/admin`
+- account/member private pages
+- wallet details
+- KYC
+- personal mining history
+- private API
+- auth callbacks
+- internal preview
+- staging
+- QA artifacts
+
+robots만 믿지 않는다.
+
+인증 + `noindex` + 필요 경로 crawl restriction을 함께 사용.
+
+---
+
+# 55. Server-rendered Public Content
+
+중요한 브랜드/설명 콘텐츠를 JS interaction 후에만 노출하지 않는다.
+
+SSR/SSG HTML에:
+
+- PUTDUK 정의
+- Mining Capacity 정의
+- Funding Tier 설명
+- Principal/Bonus 구분
+- USDT flow
+- Product 설명
+- FAQ
+- event/notice text
+
+가 실제 텍스트로 존재하게 한다.
+
+Google도 중요한 내용을 textual form으로 제공할 것을 권장한다.
+
+---
+
+# 56. Entity Identity
+
+브랜드 표기를 통일한다.
+
+Primary:
+
+**퍼뜩 채굴**
+
+English:
+
+**PUTDUK MINING**
+
+Organization:
+
+**PUTDUK**
+
+모든:
+
+- title
+- description
+- OpenGraph
+- structured data
+- social profile
+- footer
+- about
+- support
+- GitHub 공개 설명이 필요할 경우
+
+에서 일관된 Entity identity 사용.
+
+---
+
+# 57. Organization Structured Data
+
+공식 Home/About에 `Organization` JSON-LD.
+
+적용 가능한 실제 정보만:
+
+- name
+- alternateName
+- url
+- logo
+- contact
+- sameAs
+
+등.
+
+Google은 Organization structured data가 조직 disambiguation과 logo/knowledge panel 이해에 도움을 줄 수 있다고 설명한다.
+
+가짜 사업정보를 schema에 넣지 않는다.
+
+---
+
+# 58. WebSite Structured Data
+
+Home에 `WebSite`.
+
+최소:
+
+- `name`
+- `url`
+
+Google은 site name 이해를 위해 Home에 WebSite structured data 사용을 안내한다.
+
+---
+
+# 59. Structured Data
+
+실제 visible content와 정확히 일치해야 한다.
+
+기본:
+
+- Organization
+- WebSite
+- BreadcrumbList
+- Article/NewsArticle where appropriate
+- 기타 실제 콘텐츠와 정확히 맞는 schema.org
+
+Mining 상품을 억지로 ecommerce Product로 마크업하지 않는다.
+
+Naver도 schema.org 구조화 데이터를 검색 반영에 활용하지만 노출을 보장하지 않는다고 명시한다.
+
+---
+
+# 60. Canonical
+
+모든 public page canonical 통일.
+
+중복:
+
+- query variants
+- tracking URLs
+- alternate paths
+
+은 canonical 또는 redirect로 합친다.
+
+Google은 redirect와 `rel=canonical`을 강한 canonical signal로, sitemap을 보조 signal로 설명한다.
+
+---
+
+# 61. Sitemap
+
+자동 생성.
+
+필요하면 Sitemap Index:
+
+- core
+- products
+- notices
+- events
+- help
+
+분리.
+
+Canonical public URL만 포함.
+
+Google과 Naver 모두 sitemap 활용을 권장한다.
+
+---
+
+# 62. robots.txt
+
+Production canonical host의 root에 관리.
+
+개념:
+
+public crawler allow
+
+private/admin/auth/internal disallow.
+
+Sitemap URL 포함.
+
+OAI-SearchBot public allow.
+
+Yeti public allow.
+
+Googlebot/Bingbot public allow.
+
+Cloudflare에서 같은 의도가 깨지지 않는지 production smoke test.
+
+---
+
+# 63. Content Strategy — AI가 PUTDUK을 이해하게 만드는 핵심
+
+가장 중요한 건 keyword stuffing이 아니다.
+
+각 공식 페이지에서 질문 하나를 명확하게 답한다.
+
+예:
+
+## 퍼뜩 채굴이란?
+
+첫 문단에서 정확하게 정의.
+
+## Mining Capacity란?
+
+정의  
+→ 계산 원칙  
+→ Reset  
+→ 예시
+
+## Funding Tier란?
+
+정의  
+→ Principal 관계  
+→ Upgrade 방법
+
+## Bonus와 Principal 차이
+
+정확히 설명.
+
+## USDT 입금은 어떻게 처리되나?
+
+TRC20  
+→ 관리자 확인  
+→ KRW principal conversion.
+
+## 추가입금하면 어떻게 되나?
+
+자동 Tier / Capacity / Speed recalculation.
+
+이렇게 **AI가 문맥을 추론하지 않아도 페이지 자체만으로 답할 수 있게** 만든다.
+
+Bing도 독립적으로 검증 가능한 명확한 사실, 명확한 entity, 단일주제 URL이 grounding/citation에 유리하다고 공식 가이드에서 설명한다.
+
+---
+
+# 64. AI/GEO Knowledge Layer
+
+DB와 마케팅 카피가 서로 다른 사실을 말하지 않도록:
+
+`Canonical Brand Facts Registry`
+
+를 만든다.
+
+예:
+
+- canonical platform name
+- short definition
+- official domain
+- supported deposit methods
+- supported chain
+- mining architecture description
+- contact
+- official social URLs
+- public product metadata
+
+Public pages/metadata/JSON-LD/AI answer fixtures가 이 Source를 사용.
+
+단 경제 수치는 Versioned Economy Rules에서 가져온다.
+
+---
+
+# 65. 자동 생성 SEO 페이지 남발 금지
+
+AI로:
+
+“퍼뜩 채굴 추천 2026”
+“퍼뜩 돈버는법 1”
+“퍼뜩 돈버는법 2”
+
+같은 얇은 페이지 수천 개 생성하지 않는다.
+
+Bing은 대량 저품질 AI 콘텐츠, keyword stuffing, prompt injection식 AI 조작이 검색/grounding visibility를 해칠 수 있다고 명시한다.
+
+Public content는 원본성·실제 정보·가치 중심.
+
+---
+
+# 66. External Authority
+
+공식 Entity 신호 강화:
+
+- official social account
+- press/review coverage
+- authoritative external links
+- consistent profile names
+- actual mentions
+
+Naver도 신뢰할 수 있는 외부 사이트에서의 언급/링크가 사이트 평판에 중요하다고 안내한다.
+
+가짜 backlink network 금지.
+
+---
+
+# 67. 검색 Analytics Control Center
+
+Admin에 `Discovery` 메뉴.
+
+표시:
+
+### Search
+
+- Google impressions/clicks
+- Naver exposure
+- Bing
+- indexed URL count
+- crawl errors
+
+### AI Referrals
+
+- ChatGPT referrals
+- Bing/Copilot referrals where measurable
+- other AI referrals
+
+### Queries
+
+- 퍼뜩
+- 퍼뜩 채굴
+- PUTDUK
+- product-specific
+
+### Entity Coverage
+
+공식 정의 페이지 존재 여부.
+
+---
+
+# 68. AI Search Monitoring Agent
+
+PUTDUK 운영도우미가 주기적으로:
+
+- Google indexing health
+- Bing indexing
+- Naver indexing
+- sitemap state
+- broken canonicals
+- robots accidental block
+- public metadata conflict
+- stale public product content
+
+을 검사하도록 설계.
+
+외부 AI가 실제로 PUTDUK을 항상 인용하는지 보장한다고 주장하지 않는다.
+
+가능한 공개 검색에서 주기적으로 실제 결과를 검증한다.
+
+---
+
+# 69. Admin CMS
+
+코딩 없이 다음을 발행:
+
+- Notice
+- Event
+- FAQ
+- Help article
+- Banner
+- Product description
+- Public guide
+
+작성 후:
+
+`Preview`
+→ `Publish`
+
+하면 자동으로:
+
+- metadata
+- canonical
+- sitemap update
+- IndexNow
+- cache invalidate
+- analytics event
+
+실행.
+
+---
+
+# 70. AI-assisted CMS
+
+운영자:
+
+“USDT 입금 안내 만들어줘.”
+
+AI:
+
+초안 작성.
+
+하지만 지원 network/address/process 등 사실은 Canonical Facts/현재 설정을 tool로 조회.
+
+임의로 지어내지 않는다.
+
+운영자 승인 후 Publish.
+
+---
+
+# 71. AI가 SEO를 자동 관리
+
+AI 운영도우미:
+
+“SEO 문제 확인해줘.”
+
+→ title duplication
+→ missing description
+→ broken canonical
+→ orphan pages
+→ noindex mistake
+→ sitemap mismatch
+→ structured data mismatch
+→ crawler block
+
+검사.
+
+돈과 달리 LOW-risk SEO correction은 preview 후 자동화 가능.
+
+---
+
+# 72. 기술 SEO CI Gate
+
+출시 CI에 추가:
+
+- robots validation
+- sitemap validation
+- canonical validation
+- public metadata uniqueness
+- structured data syntax
+- private pages noindex
+- admin/auth indexing denied
+- public pages HTTP 200
+- OAI-SearchBot expected access policy
+- Yeti policy
+- Googlebot policy
+- no secret/private URL in sitemap
+
+---
+
+# 73. Accessibility는 AI Agent compatibility에도 중요
+
+OpenAI 공식 문서는 ChatGPT Agent가 ARIA roles/labels/states를 활용해 페이지 구조를 이해한다고 설명한다.
+
+따라서 기존 접근성 작업은 단순 장애인 접근성뿐 아니라 향후 AI Agent가 PUTDUK을 안정적으로 조작하는 데도 중요하다.
+
+모든 Admin control:
+
+- semantic button
+- label
+- role
+- state
+- accessible name
+
+을 갖는다.
+
+---
+
+# 74. Final Admin Information Architecture
+
+### Dashboard
+
+### Members
+
+### Money
+- KRW deposits
+- USDT deposits
+- Withdrawals
+- Credits/debits
+- Holds
+- Reconciliation
+
+### Mining
+- Live sessions
+- Funding Tiers
+- Capacity
+- Speed
+- Rules
+- Settlements
+- User overrides
+
+### Products
+- Products
+- Rules
+- Scene mapping
+- Publish
+
+### Content
+- Notices
+- Events
+- Banners
+- FAQ
+- Public Help
+
+### Notifications
+
+### Support
+
+### Risk
+
+### AI
+- PUTDUK AI
+- Providers
+- Budget
+- Evals
+- Usage
+
+### Discovery
+- SEO
+- Indexing
+- Sitemap
+- AI referrals
+- Search health
+
+### Automation
+- Workers
+- Outbox
+- Scheduled jobs
+- Failure queue
+
+### Settings
+
+---
+
+# 75. Final User IA
+
+### Home
+
+### Mining
+
+### Products
+
+### Wallet
+
+### Events
+
+### Notifications
+
+### Support
+
+### PUTDUK AI
+
+PUTDUK AI는 모든 화면에서 Contextual Assistant로 열 수 있다.
+
+---
+
+# 76. CI / Release Gate
+
+출시 완료는 단순 CI green이 아니다.
+
+필수:
+
+- application green
+- DB fresh rebuild
+- migration upgrade path
+- pgTAP
+- KRW concurrency
+- USDT concurrency
+- ledger reconciliation
+- worker runtime
+- money idempotency
+- admin security
+- user E2E
+- AI money denial
+- AI provider failure
+- SEO technical gate
+- crawler policy
+- Scene visual evidence
+- responsive
+- reduced motion
+- performance
+- secret scan
+- target allowlist
+- staging
+- production smoke
+
+---
+
+# 77. 현재 이후 구현 순서
+
+## WAVE 1
+
+현재 PR #45 최종 검증/통합.
+
+## WAVE 2
+
+Principal provenance + Eligible Principal.
+
+## WAVE 3
+
+Tier + Entitlement Engine + Cycle + Segment + Proration.
+
+## WAVE 4
+
+Authoritative mining settlement + Live Snapshot.
+
+## WAVE 5
+
+User Mining Capacity UX.
+
+## WAVE 6
+
+Admin Economy Control Center.
+
+## WAVE 7
+
+PUTDUK AI Provider Gateway + Admin Assistant.
+
+## WAVE 8
+
+User PUTDUK AI.
+
+## WAVE 9
+
+V3 CLEAN Master + Scene Runtime.
+
+## WAVE 10
+
+Other Scene Families.
+
+## WAVE 11
+
+Public CMS + Trust/Discovery.
+
+## WAVE 12
+
+SEO/GEO + Search/AI crawler support + IndexNow.
+
+## WAVE 13
+
+Staging.
+
+## WAVE 14
+
+Production release.
+
+---
+
+# 78. 최종 전체 Architecture
+
+`KRW / USDT Funding`
+
+↓
+
+`Eligible Principal`
+
+↓
+
+`Principal Revision`
+
+↓
+
+`Funding Tier`
+
+↓
+
+`Entitlement Engine`
+
+↓
+
+`30-day Mining Cycle`
+
+↓
+
+`Segment / Proration`
+
+↓
+
+`Capacity + Speed`
+
+↓
+
+`Product Rule`
+
+↓
+
+`Authoritative Mining`
+
+↓
+
+`Settlement`
+
+↓
+
+`Balanced Ledger`
+
+↓
+
+`Live Snapshot`
+
+↓
+
+`MiningLiveStage`
+
+↓
+
+`V3 / Family Scene`
+
+동시에:
+
+`PUTDUK Admin`
+↔ `Command Registry`
+↔ `PUTDUK AI`
+
+그리고 Public 측:
+
+`Canonical Brand Facts`
+→ `Public CMS`
+→ `SSR Public Pages`
+→ `Structured Data`
+→ `Sitemap`
+→ `IndexNow`
+→ `Google / Gemini`
+→ `Naver`
+→ `Bing / Copilot`
+→ `ChatGPT Search`
+
+로 연결한다.
+
+---
+
+# 79. 최종 원칙
+
+## USER
+
+“내 원금이 내 채굴기를 돌린다.”
+
+## OPERATOR
+
+“나는 코드를 몰라도 플랫폼 전체를 통제한다.”
+
+## SYSTEM
+
+“사람은 정책을 정하고 시스템은 자동 계산·실행한다.”
+
+## AI
+
+“AI는 운영과 사용을 쉽게 하지만 권위 있는 돈 계산을 대신하지 않는다.”
+
+## SCENE
+
+“화면의 돈은 실제 서버 이벤트만 표현한다.”
+
+## DISCOVERY
+
+“공식 정보는 사람에게도 검색엔진에게도 AI에게도 같은 사실을 제공한다.”
+
+## DEVELOPMENT
+
+“기존 구현을 복제하지 않고 하나의 authoritative architecture로 수렴한다.”

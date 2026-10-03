@@ -1,0 +1,5 @@
+# Owner-provided specifications retain their original UTF-8/CRLF bytes.
+# CRLF and the original Markdown hard-break spaces are immutable source data.
+# All executable files and maintained documentation keep the normal checks.
+docs/architecture/USER-APPROVED-FINAL-ARCHITECTURE-2026-10-03.txt -text whitespace=cr-at-eol,-blank-at-eol
+docs/design/USER-PROVIDED-VISUAL-PROMPT-2026-10-03.txt -text whitespace=cr-at-eol,-blank-at-eol
