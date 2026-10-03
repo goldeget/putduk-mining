@@ -53,7 +53,13 @@ Critical UI changes add browser E2E, accessibility, visual and performance evide
 
 ### CI wall-clock contract (PR / push to `main` or `develop`)
 
-PUTDUK MINING keeps GitHub Actions on `ubuntu-24.04` within a **~20 minute workflow wall clock** until platform launch. The measured critical path is the **longest single job**, not the sum of parallel jobs.
+PUTDUK MINING requires the **entire CI attempt to finish within 20 minutes** on `ubuntu-24.04`. This is a hard acceptance ceiling, not an approximate target. For an initial run, measure `created_at` to final workflow completion, including runner queue time, the shared build, dependent jobs and evidence uploads. A full rerun uses that attempt's `run_started_at`; jobs from earlier attempts cannot fill missing evidence. Neither the longest individual job nor the sum of parallel jobs measures the whole workflow.
+
+`CI completeness and 20-minute budget` starts alongside the quality jobs. It verifies the exact repository, run, attempt and candidate, then requires all 17 quality jobs to complete successfully. Only `Exact diff integrity` may be skipped on a push. Missing, duplicate, unexpected, cancelled, failed or timed-out jobs cannot pass. The controller requests cancellation at **18m30s** if work remains, reserving 90 seconds for shutdown. If ordinary cancellation leaves quality jobs running, it uses force cancellation. A cancelled run is a failure candidate, never evidence of quality. API errors fail closed.
+
+The controller's `actions: write` permission is confined to that job, with no persisted checkout credential; all other jobs keep read-only permissions. It can address only this repository and this run's cancellation endpoints. Hosted-runner queues or API outages cannot be promised away: an over-20-minute result must be recorded as failed acceptance and must not be merged, even if GitHub later reports green. Verify the final run metadata separately before PR merge and after the develop push.
+
+All four Playwright CI lanes use `--fail-on-flaky-tests`. Existing retries remain available for diagnosis, but a test that fails and then passes on retry makes the job fail. Fix the cause rather than accepting a coincidental retry success.
 
 **Required hybrid pattern** (see `.github/workflows/ci.yml` and `.cursor/rules/putduk-ci-wall-clock.mdc`):
 
@@ -61,9 +67,9 @@ PUTDUK MINING keeps GitHub Actions on `ubuntu-24.04` within a **~20 minute workf
 2. **`authenticated`** matrix jobs (eight shards) **`need`** `e2e-app-build` and `webserver-lifecycle`, download the artifact, set **`E2E_NEXT_START=1`**, and run Playwright with **production `next start`** — not `next dev`. Each shard still runs isolated local Supabase reset for data isolation.
 3. **`typography-protected`** **`needs`** `e2e-app-build`, downloads the same artifact, and sets **`E2E_PREBUILT_APPS=1`** so protected typography servers skip duplicate builds.
 
-**Forbidden regressions:** authenticated CI using `next dev`; removing the eight-shard matrix without a documented replacement; adding a serial full authenticated suite job; per-shard full app builds without the shared artifact; weakening assertions or step timeouts only to shorten wall clock.
+**Forbidden regressions:** authenticated CI using `next dev`; removing the eight-shard matrix without a documented replacement; adding a serial full authenticated suite job; per-shard full app builds without the shared artifact; weakening assertions, removing specs, skipping tests or treating timeout/cancellation as a pass. Test-level timeouts, real TOTP waits and retries remain intact. Workflow/job deadlines bound a failed run; they do not make a partial suite acceptable.
 
-**Baseline evidence:** PR #39 green runs with eight authenticated shards at **~16 minutes** wall clock (`docs/development/E2E-AGENT-WORKFLOW.md`, run `36975512027` / `9cfc2ef`). Agents must read the E2E CI section and the wall-clock rule before changing the workflow and must not merge changes that increase critical path without documented mitigation and measurement.
+**Baseline evidence:** PR #39 green runs with eight authenticated shards at **~16 minutes** wall clock (`docs/development/E2E-AGENT-WORKFLOW.md`, run `36975512027` / `9cfc2ef`). Agents must read the E2E CI section and the wall-clock rule before changing the workflow. Every new candidate needs all checks and measured full-workflow time within 20 minutes; a plan to improve it later does not waive the ceiling.
 
 ## 5. CD stages
 

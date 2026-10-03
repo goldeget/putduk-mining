@@ -72,6 +72,9 @@ Every feature must satisfy all applicable items:
 - asset manifest verification passes where visual assets changed;
 - secrets and production identifiers are absent from client bundles/logs;
 - raw evidence includes exact commit SHA, build/run identifiers and environment.
+- PR and post-merge CI both finish within 20 minutes for the whole workflow;
+  queue/build dependencies/evidence uploads count, every applicable quality job
+  completes, and a timeout, cancellation or partial rerun is not a pass.
 
 ## Release-level gate
 
