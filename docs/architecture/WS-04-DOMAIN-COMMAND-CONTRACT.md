@@ -23,6 +23,16 @@ single transaction command under `docs/architecture/SAFE-MODE-COMMAND.md`.
 A private invoker trigger records control state, audit receipt, outbox and the
 logical key atomically. No public RPC alias or duplicate domain table is added.
 
+2026-10-03 money-source extension: the owner approved remaining Eligible
+Funding Principal, excluding every bonus and mining reward. The canonical
+contract is `docs/architecture/MONEY-SOURCE-PROVENANCE.md`. Existing KRW and
+manual-USDT approval names and payloads stay frozen. A new append-only
+`public.money_source_movements` projection links original balanced journal,
+wallet and versioned outbox receipts; it never edits balances or backfills
+ambiguous history. Capture/coverage evidence does not activate mining or
+complete source-aware withdrawals. Existing withdrawal command names are
+retained; no guessed generic withdrawal source or public RPC alias is allowed.
+
 If a welcome withdrawal policy row is absent, a later migration may seed only
 the already approved no-funding KRW 5,000 ceiling. Do not activate DRAFT
 catalog rows or invent economic values. Any value not already contracted is

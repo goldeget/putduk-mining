@@ -13,9 +13,17 @@ Domain calculations execute behind authenticated server commands and database
 invariants. API responses disclose only what the member needs to understand the
 result, including stable public error/receipt codes and request IDs.
 
+The mining settlement, fixed-point arithmetic, trial qualification/conversion,
+referral qualification, funding promotion and event reward modules use Next's
+`server-only` boundary. They cannot be imported into a client component graph.
+Display formatting remains separate. This boundary does not prove that a
+calculation is connected to an approved runtime command or activated policy.
+
 ## Source and asset protection
 
-- GitHub remains private.
+- GitHub must be private before production traffic. The owner-authorized
+  temporary public visibility and its return-to-private requirement are recorded
+  in `docs/development/GIT-CI-CD-POLICY.md`; public CI is not a launch.
 - Public production source maps are disabled.
 - Private source maps, when used, have controlled access and retention.
 - Secrets, service-role keys, VAPID private keys, database credentials,

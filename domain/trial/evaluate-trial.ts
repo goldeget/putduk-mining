@@ -1,3 +1,5 @@
+import "server-only";
+
 export const TRIAL_QUOTA_BPS = 10_000;
 export const MAX_TRIAL_DURATION_MS = 24 * 60 * 60 * 1_000;
 

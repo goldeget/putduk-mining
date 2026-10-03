@@ -1,3 +1,5 @@
+import "server-only";
+
 export const BASIS_POINTS_SCALE = 10_000n;
 export const MILLISECONDS_PER_SECOND = 1_000n;
 

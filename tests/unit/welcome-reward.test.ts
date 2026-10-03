@@ -8,6 +8,25 @@ import {
 } from "@/domain/trial/welcome-reward";
 
 describe("welcome reward conversion", () => {
+  it.each([-1n, 0n, 5_001n])(
+    "rejects an invalid cached reward of %s KRW",
+    (amountKrw) => {
+      expect(() =>
+        decideWelcomeRewardConversion({
+          existingConversion: {
+            amountKrw,
+            idempotencyKey: "trial:one:convert",
+          },
+          hasBlockingRisk: false,
+          idempotencyKey: "trial:one:convert",
+          isKycApproved: true,
+          isTrialComplete: true,
+          trialRewardKrw: 4_000n,
+        }),
+      ).toThrow(/approved cap/);
+    },
+  );
+
   it("caps a completed eligible trial at 5,000 KRW", () => {
     expect(
       decideWelcomeRewardConversion({

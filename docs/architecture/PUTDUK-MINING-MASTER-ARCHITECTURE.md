@@ -2,7 +2,14 @@
 
 Status: **CANONICAL TARGET ARCHITECTURE / IMPLEMENTATION PARTIAL**
 
-Architecture version: `2026.09.27-WS-03`
+Architecture version: `2026.10.03-eligible-principal-v1`
+
+The owner additionally approved the final funding/capacity/cycle, native AI,
+Scene and discovery direction on 2026-10-03. The exact supplied text is preserved
+in `USER-APPROVED-FINAL-ARCHITECTURE-2026-10-03.txt`; its reconciliation and
+implementation order are in `FINAL-ARCHITECTURE-EXECUTION-MAP.md`. Examples of
+amounts, tier names or tool names in that text are not economic activation,
+production rank approval or replacements for frozen WS-04 commands.
 
 Product state: **greenfield 0→1; not production ready**
 
@@ -102,7 +109,7 @@ Funding ─ deposit/withdrawal requests, destinations and promotion rules
 Referral ─ attribution, versioned qualification, risk hold and automatic payout
 LiveOps ─ event factory, deterministic rewards, notices, missions and targeting
 Notification ─ preferences, subscriptions, delivery and deep links
-AI ─ read-only/explanatory user AI and future advisory ops/growth AI
+AI ─ provider-neutral user help and operator read/draft context; no money authority
 Trust ─ canonical facts, FAQ, status and changelog
 Analytics ─ validated fact events, funnels and experiments
 Admin ─ queues and role-bounded commands; not a second business layer
@@ -249,16 +256,36 @@ Canonical contract: `docs/product/TRIAL-WELCOME-WITHDRAWAL.md`.
 Conceptual formula:
 
 ```text
-elapsed interval
-× base mining rate
-× equipment efficiency
-× world multiplier
-× event multiplier
-× status multiplier
+current Eligible Funding Principal
+× approved Funding Tier Rule
+× approved Product Rule
+× approved User Override
+× approved Global/Campaign Multiplier
+× Eligible Elapsed Time
 = segment result
 ```
 
+The owner approved remaining eligible principal on 2026-10-03. Lifetime
+deposits, bonuses and mining rewards are excluded from the tier basis. Principal
+recovery changes future power; reward withdrawal does not. Canonical source,
+withdrawal, temporal and compatibility rules are
+`docs/architecture/MONEY-SOURCE-PROVENANCE.md`. Exact tier/rate/product/cap
+values remain unapproved. The existing elapsed-rate helper is a legacy
+preflight foundation, not the approved funding engine or activation authority.
+
 Authoritative calculation uses fixed/decimal database-safe arithmetic and server timestamps. No per-second database write is required. `last_settled_at` or an equivalent cursor anchors settled time.
+
+Calculation preflight rejects invalid timestamps, duplicate version IDs or
+effective times, unsafe elapsed milliseconds, out-of-schema multipliers and
+amounts outside the existing signed-bigint range. A boundary at interval start
+uses the new rule; a boundary exactly at interval end belongs to the next
+interval. Whole atomic amounts retain BigInt precision above JavaScript's safe
+Number range. These checks do not select economic values or activate a policy.
+
+Current runtime gap: `calculateSettlement` has no application/worker caller;
+the legacy `record_mining_settlement` is not restored to service-role execution
+by this preflight work. Approved rule loading, serialized command execution,
+balanced journal/projection/outbox and real product evidence remain required.
 
 If any effective rule changes inside an interval, the engine splits the interval at each boundary and records the exact rule/config versions. The command locks or otherwise serializes the subject, validates expected state, writes settlement and ledger/audit effects in one transactional boundary, then advances the cursor.
 
@@ -273,6 +300,35 @@ Mining status:
 Each status has explicit start/end behavior, user copy, admin authority and settlement semantics.
 
 ## 14. Economy and configuration
+
+Funding entitlement has one server authority, separate from the six neutral
+visual rank assets and from external AI usage quotas. Capacity is the allowed
+monetary accrual for the member's cycle; speed is its accrual rate. Speed boosts
+and capacity boosts have distinct versioned semantics. Funding tiers are
+operator-configured data, including high principal amounts, not React constants.
+
+The approved member cycle lasts 30 days from first principal activation.
+Additional funding and principal withdrawal/redeposit do not reset its anchor.
+Principal/rule changes create effective-time segments. Mid-cycle entitlement
+changes apply only to the remaining duration; no end-of-cycle top-up earns a
+new full cycle. Previously earned/verified rewards are retained on downgrade.
+If revised capacity is already consumed, new accrual stops. The owner's later
+2026-10-03 decision permits automatic resumption in the same cycle when actual
+effective capacity rises above already used capacity, only from that change's
+effective time and only for the remaining difference. The original cycle anchor
+and end never move; exhausted time is not backfilled. Speed boosts alone do not
+increase capacity or resume exhausted accrual. Safe mode, authorization and
+other eligibility controls still apply. PENDING-to-VERIFIED settlement never creates a second reward or restores
+used capacity. Full capacity preserves ambient visuals, existing rewards and
+the server-owned reset countdown, while monetary flow stops. Contract:
+`MINING-ENTITLEMENT-CYCLE-CONTRACT.md`.
+
+Tier, speed, capacity, used/remaining capacity, slots, scene profile, cycle state
+and entitlement revision come from the same server engine/snapshot. Upgrade
+preview uses that engine without writing principal or money. Exact rate units,
+rounding, caps and policy numbers still require approved version data. The
+source capture candidate and legacy settlement helper do not implement this
+entire runtime engine. See `FINAL-ARCHITECTURE-EXECUTION-MAP.md` for open seams.
 
 Economic configuration is immutable/versioned after activation:
 
@@ -316,6 +372,12 @@ command, reason and immutable audit. All monetary commands require a stable
 idempotency key and ownership/authorization check. Canonical model:
 `docs/architecture/LEDGER-RECONCILIATION.md`.
 
+Money provenance separates PRINCIPAL, MINING_REWARD, BONUS and
+OTHER_NON_PRINCIPAL. Source projections preserve the original balanced journal;
+unknown legacy amounts remain unresolved. Current eligible principal and
+lifetime deposit statistics are separate. Generic withdrawals cannot silently
+choose a source. See `MONEY-SOURCE-PROVENANCE.md` for the approved contract.
+
 ## 16. Funding and withdrawal
 
 Primary V1 denomination is KRW.
@@ -343,6 +405,14 @@ funding promotion engine supports funding-only, activity-only, hybrid,
 progression and referral campaigns. The normal first-funding promotion is
 capped at KRW 10,000; an explicitly approved special operator campaign may use
 a higher configured cap and budget. See `docs/product/FUNDING-PROMOTIONS.md`.
+
+Promotion/event evaluation rejects unknown schedule or event timestamps rather
+than treating comparisons with invalid dates as eligible. A scheduled funding
+campaign requires the deposit event's time; a special first-funding exception
+requires its approved schedule. Duplicate campaign candidates are rejected
+before creating two proposed claims for one source event. This pure preflight
+does not reserve budgets or post rewards; real transactional consumers remain
+a separate implementation and evidence gate.
 
 V1 includes manual USDT deposits credited as approved KRW and manual USDT withdrawals against the real KRW wallet. These are distinct flows under `WS-04-DOMAIN-COMMAND-CONTRACT.md`; no user USDT balance, exchange API, automatic FX or external-price dependency is permitted. Destination data receives encryption/redaction/retention controls, history, cooldown and step-up authentication.
 

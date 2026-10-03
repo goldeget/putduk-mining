@@ -128,10 +128,11 @@ select is(
 -- 이전 함수의 정상 영수증: 요청 hash/키 저장소/actor_role 없이도 금전 증거는 존재한다.
 insert into public.ledger_transactions (
   category, currency, idempotency_key, reference_type, reference_id, member_user_id,
-  request_id, correlation_id, description, metadata, created_by
+  request_id, correlation_id, description, metadata, created_by, created_at
 )
 select 'DEPOSIT', 'KRW', 'usdt-receipt-legacy:ledger', 'usdt_manual_deposit', legacy_id,
-  member_id, gen_random_uuid(), gen_random_uuid(), 'legacy fixture journal', '{}'::jsonb, admin_id
+  member_id, gen_random_uuid(), gen_random_uuid(), 'legacy fixture journal', '{}'::jsonb, admin_id,
+  (select introduced_at - interval '1 second' from app_private.money_source_epochs where version = 1)
 from usdt_receipt_ctx;
 insert into public.ledger_entries (transaction_id, account_id, sequence, side, amount_atomic)
 select legacy.id, entry.account_id, entry.sequence, entry.side, 23456

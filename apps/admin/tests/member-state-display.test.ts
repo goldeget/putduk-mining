@@ -61,6 +61,24 @@ beforeEach(() => {
   reads.tables = {
     user_profiles: { data: { display_name: "테스트 회원" }, error: null },
     member_lifecycle_states: { data: lifecycle, error: null },
+    money_source_summaries: {
+      data: {
+        user_id: "00000000-0000-4000-8000-000000000001",
+        schema_version: 1,
+        coverage: "COMPLETE",
+        unclassified_wallet_entries: "0",
+        unconnected_withdrawals: "0",
+        unclassified_journals: "0",
+        invalid_source_receipts: "0",
+        eligible_principal_atomic: "0",
+        recorded_krw_principal_deposits_atomic: "0",
+        recorded_usdt_principal_credits_atomic: "0",
+        recorded_bonus_atomic: "0",
+        observed_at: "2026-10-03T08:30:00Z",
+        capture_started_at: "2026-10-03T08:12:00Z",
+      },
+      error: null,
+    },
   };
 });
 
@@ -175,5 +193,18 @@ describe("member lifecycle and profile read truth", () => {
     expect(markup).toContain('data-ui-state="loaded"');
     expect(markup).toMatch(/첫 입금<\/dt><dd>없음/);
     expect(markup).toMatch(/환영 출금<\/dt><dd>미완료/);
+  });
+  it("the actual member page keeps missing provenance partial even when profile reads succeed", async () => {
+    reads.tables.money_source_summaries = { data: null, error: null };
+    const markup = renderToStaticMarkup(
+      await MembersPage({
+        searchParams: Promise.resolve({
+          id: "00000000-0000-4000-8000-000000000001",
+        }),
+      }),
+    );
+    expect(markup).toContain('data-ui-state="partial"');
+    expect(markup).toContain("자금 구분을 확인하지 못했습니다.");
+    expect(markup).toMatch(/채굴 인정 원금<\/dt><dd>확인 필요/);
   });
 });

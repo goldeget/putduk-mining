@@ -23,6 +23,7 @@ import {
   presentMemberLifecycle,
   presentMemberProfile,
 } from "./_lib/member-state-display";
+import { presentMemberMoneySources } from "./_lib/money-source-display";
 
 const memberIdSchema = z.uuid();
 
@@ -101,6 +102,7 @@ export default async function MembersPage({
     depositRows,
     withdrawalRows,
     riskFlags,
+    moneySources,
   ] = await Promise.all([
     db.auth.admin.getUserById(userId),
     db
@@ -174,6 +176,13 @@ export default async function MembersPage({
       .eq("user_id", userId)
       .order("created_at", { ascending: false })
       .limit(5),
+    db
+      .from("money_source_summaries")
+      .select(
+        "user_id,schema_version,coverage,unclassified_wallet_entries,unconnected_withdrawals,unclassified_journals,invalid_source_receipts,eligible_principal_atomic,recorded_krw_principal_deposits_atomic,recorded_usdt_principal_credits_atomic,recorded_bonus_atomic,observed_at,capture_started_at",
+      )
+      .eq("user_id", userId)
+      .maybeSingle(),
   ]);
 
   const authError = authUser.error as {
@@ -285,6 +294,7 @@ export default async function MembersPage({
   );
   const lifecycleDisplay = presentMemberLifecycle(lifecycle);
   const profileDisplay = presentMemberProfile(profile);
+  const moneyDisplay = presentMemberMoneySources(moneySources, userId);
 
   return (
     <div
@@ -295,7 +305,9 @@ export default async function MembersPage({
         evidenceFailed ||
         kycAccessFailed ||
         !lifecycleDisplay.available ||
-        !profileDisplay.available
+        !profileDisplay.available ||
+        !moneyDisplay.available ||
+        !moneyDisplay.complete
           ? "partial"
           : "loaded"
       }
@@ -334,6 +346,7 @@ export default async function MembersPage({
         <a href="#evidence-account">계정</a>
         <a href="#evidence-kyc">본인 확인</a>
         <a href="#evidence-money">입출금</a>
+        <a href="#evidence-money-sources">원금 · 수익</a>
         <a href="#evidence-risk">위험</a>
         <a href="#evidence-timeline">활동</a>
       </nav>
@@ -349,6 +362,65 @@ export default async function MembersPage({
       </section>
 
       <section className="member-detail-grid">
+        <article
+          className="detail-panel detail-panel--wide"
+          id="evidence-money-sources"
+        >
+          <header>
+            <p className="eyebrow">원금 · 채굴 수익 · 보너스</p>
+            <h2>자금 구분</h2>
+          </header>
+          {!moneyDisplay.available ? (
+            <p className={styles.partialAlert} role="status">
+              자금 구분을 확인하지 못했습니다. 다시 불러와 주세요.
+            </p>
+          ) : !moneyDisplay.complete ? (
+            <p className={styles.partialAlert} role="status">
+              거래의 자금 출처를 확인해야 합니다. 채굴 인정 원금은 아직 확정하지
+              않았어요.
+            </p>
+          ) : null}
+          <dl className={styles.sourceStats}>
+            {moneyDisplay.rows.map(([label, value]) => (
+              <div key={label}>
+                <dt>{label}</dt>
+                <dd>{value}</dd>
+              </div>
+            ))}
+          </dl>
+          <p className="panel-note">
+            채굴 수익과 보너스는 원금에 포함하지 않아요.
+          </p>
+          <p className="panel-note">
+            채굴 등급과 파워는 수익률 설정을 마친 뒤 확인할 수 있어요.
+          </p>
+          {moneyDisplay.available && !moneyDisplay.complete ? (
+            <div className={styles.recordedSources}>
+              <h3>기록 시작 이후 확인된 입금</h3>
+              <dl>
+                <div>
+                  <dt>원화 원금 입금</dt>
+                  <dd>{moneyDisplay.recordedKrwDeposits}</dd>
+                </div>
+                <div>
+                  <dt>USDT 환산 원금</dt>
+                  <dd>{moneyDisplay.recordedUsdtCredits}</dd>
+                </div>
+              </dl>
+              <p className="panel-note">
+                이 금액은 전체 누적 입금과 다를 수 있어요.
+              </p>
+            </div>
+          ) : null}
+          {moneyDisplay.observedAt ? (
+            <p className="panel-note">
+              조회 시각 · {formatKst(moneyDisplay.observedAt)}
+            </p>
+          ) : null}
+          <Link className="text-link" href={`/members?id=${userId}` as Route}>
+            다시 불러오기
+          </Link>
+        </article>
         <article className="detail-panel" id="evidence-account">
           <header>
             <p className="eyebrow">계정</p>
