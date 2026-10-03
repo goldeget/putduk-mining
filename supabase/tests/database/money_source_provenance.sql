@@ -296,11 +296,11 @@ select 'DEPOSIT', 'KRW', 'source-legacy-credit-v1:ledger', 'deposit_request', le
   epoch.introduced_at - interval '1 second', epoch.introduced_at - interval '1 second'
 from source_ctx cross join app_private.money_source_epochs as epoch where epoch.version = 1;
 insert into public.ledger_entries(transaction_id, account_id, sequence, side, amount_atomic)
-select journal.id, account.id, 0, 'DEBIT', 2345
+select journal.id, account.id, 0, 'DEBIT'::public.ledger_side, 2345
 from public.ledger_transactions as journal join public.ledger_accounts as account
   on account.code = 'PUTDUK:OPERATING_CASH:KRW' where journal.idempotency_key = 'source-legacy-credit-v1:ledger'
 union all
-select journal.id, account.id, 1, 'CREDIT', 2345
+select journal.id, account.id, 1, 'CREDIT'::public.ledger_side, 2345
 from source_ctx as ctx join public.ledger_transactions as journal on journal.reference_id = ctx.legacy_deposit_id
 join public.ledger_accounts as account on account.code = 'USER:' || upper(ctx.legacy_id::text) || ':KRW:LIABILITY';
 insert into public.wallet_ledger(wallet_account_id, user_id, direction, entry_type,
@@ -495,7 +495,7 @@ with inserted as (
 insert into public.ledger_entries (transaction_id, account_id, sequence, side, amount_atomic)
 select inserted.id, account.id, leg.sequence, leg.side::public.ledger_side, 1000
 from inserted cross join source_ctx as ctx
-cross join (values (0::smallint, 'DEBIT', true), (1::smallint, 'CREDIT', false))
+cross join (values (0::smallint, 'DEBIT'::public.ledger_side, true), (1::smallint, 'CREDIT'::public.ledger_side, false))
   as leg(sequence, side, member_account)
 join public.ledger_accounts as account on account.code = case when leg.member_account
   then 'USER:' || upper(ctx.member_id::text) || ':KRW:LIABILITY'
@@ -522,7 +522,7 @@ with inserted as (
 insert into public.ledger_entries (transaction_id, account_id, sequence, side, amount_atomic)
 select inserted.id, account.id, leg.sequence, leg.side::public.ledger_side, 1000
 from inserted cross join source_ctx as ctx
-cross join (values (0::smallint, 'DEBIT', true), (1::smallint, 'CREDIT', false))
+cross join (values (0::smallint, 'DEBIT'::public.ledger_side, true), (1::smallint, 'CREDIT'::public.ledger_side, false))
   as leg(sequence, side, member_account)
 join public.ledger_accounts as account on account.code = case when leg.member_account
   then 'USER:' || upper(ctx.member_id::text) || ':KRW:LIABILITY'

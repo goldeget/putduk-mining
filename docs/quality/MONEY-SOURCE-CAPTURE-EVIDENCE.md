@@ -79,6 +79,16 @@ IF 조건의 CASE 4곳을 괄호로 감싸 분기 내부 THEN을 IF 종료 토�
 원본 키·계정·영수증 검증의 값이나 분기는 변경하지 않았다. 기존 정상 세 명령과
 위조·충돌·rollback 검사를 모두 유지한다. 수정 후보의 새 전체 CI 전에는
 **DB/브라우저 PASS를 주장하지 않는다.**
+
+두 번째 후보 `4a17d458a6e5f425a18fc69d0357c90aaf6ea428`의 run
+`37113617105` attempt 1은 migration 설치를 통과한 뒤 새 pgTAP fixture의
+`INSERT ... SELECT ... UNION ALL`에서 side 문자열이 text로 추론되어
+`ledger_side` enum INSERT에 실패했다. 앞선 38개 assertion의 실패는 0이지만
+전체 pgTAP 완료가 아니므로 PASS로 처리하지 않는다. 실행은 취소했으며
+09:36:24Z–09:39:40Z, 3분 16초다. 로그와 run/jobs는
+`D:\PUTDUK-MINING-QA\codex-2026-10-03T09-36-47-333Z-cf08474e`에 보존한다.
+fixture의 원래 DEBIT/CREDIT 값을 실제 enum으로 명시하며 검사 조건·원장
+구조·영수증 검증을 완화하지 않는다. 새 후보는 전체 CI로 다시 검증한다.
 로컬 Supabase 실행은 자동 승인 검토에서 차단됐으므로 우회하지 않는다.
 검증은 이 저장소의 CI 일회용 DB에서 새로 만들고 실행한다. 변경은 한 기능
 묶음으로 제출하며 PR와 develop push의 18개 job·전체 20분 이내 완료를 각각
