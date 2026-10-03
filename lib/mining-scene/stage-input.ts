@@ -1,6 +1,7 @@
 import type {
   AccentToken,
   AmbientPreset,
+  ApprovedResponsiveSource,
   ApprovedSceneMaster,
   ParticleEmphasis,
   ResolvedScene,
@@ -30,6 +31,7 @@ export const STAGE_SCENE_INPUT_KEYS = [
   "accentToken",
   "particleEmphasis",
   "master",
+  "responsiveSources",
   "productionAssetActive",
   "decoration",
 ] as const;
@@ -51,12 +53,31 @@ export type StageSceneInput = {
   readonly accentToken: AccentToken | null;
   readonly particleEmphasis: ParticleEmphasis | null;
   readonly master: ApprovedSceneMaster | null;
+  readonly responsiveSources: readonly ApprovedResponsiveSource[];
   readonly productionAssetActive: boolean;
   readonly decoration: "none" | "canvas-2d";
 };
 
 type EconomicIdentityKey =
-  "amount" | "balance" | "pending" | "productCode" | "verified" | "yield";
+  | "amount"
+  | "balance"
+  | "capacity"
+  | "earned"
+  | "eligiblePrincipal"
+  | "fundingTier"
+  | "pending"
+  | "productCode"
+  | "productId"
+  | "productName"
+  | "rate"
+  | "reward"
+  | "sessionId"
+  | "speed"
+  | "used"
+  | "verified"
+  | "worldCode"
+  | "worldName"
+  | "yield";
 
 type StageLeak = Extract<EconomicIdentityKey, keyof StageSceneInput>;
 
@@ -67,23 +88,56 @@ export const STAGE_INPUT_HAS_NO_ECONOMIC_IDENTITY: [StageLeak] extends [never]
 
 export function projectStageInput(resolved: ResolvedScene): StageSceneInput {
   const scene = resolved.scene;
+  const performance = scene?.performance;
+  const master = scene?.master;
   const decoration =
     scene?.performance.renderer === "canvas-2d" ? "canvas-2d" : "none";
   return {
     familyKey: scene?.familyKey ?? null,
     version: scene?.version ?? null,
     visualStatus: resolved.visualStatus,
-    anchor: scene?.anchor ?? null,
-    extractionTarget: scene?.extractionTarget ?? null,
+    anchor: scene ? { x: scene.anchor.x, y: scene.anchor.y } : null,
+    extractionTarget: scene
+      ? { x: scene.extractionTarget.x, y: scene.extractionTarget.y }
+      : null,
     particle: scene?.particle ?? null,
     ambient: scene?.ambient ?? null,
     reducedMotion: "static",
-    performance: scene?.performance ?? null,
+    performance: performance
+      ? {
+          maxParticles: performance.maxParticles,
+          renderer: performance.renderer,
+          webgl: performance.webgl,
+          timerAdvancesValue: performance.timerAdvancesValue,
+          ...(performance.maxFps !== undefined
+            ? { maxFps: performance.maxFps }
+            : {}),
+          ...(performance.maxDpr !== undefined
+            ? { maxDpr: performance.maxDpr }
+            : {}),
+        }
+      : null,
     userCopyKo: resolved.userCopyKo,
     a11yLabelKo: resolved.a11yLabelKo,
     accentToken: resolved.presentation?.profile.accentToken ?? null,
     particleEmphasis: resolved.presentation?.profile.particleEmphasis ?? null,
-    master: scene?.master ?? null,
+    master: master
+      ? {
+          sha256: master.sha256,
+          assetPath: master.assetPath,
+          width: master.width,
+          height: master.height,
+          altKo: master.altKo,
+        }
+      : null,
+    responsiveSources:
+      scene?.responsiveSources.map((source) => ({
+        media: source.media,
+        assetPath: source.assetPath,
+        width: source.width,
+        height: source.height,
+        mimeType: source.mimeType,
+      })) ?? [],
     productionAssetActive: resolved.productionAssetActive,
     decoration,
   };

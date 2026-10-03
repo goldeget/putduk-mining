@@ -1,6 +1,36 @@
 # 원금 출처 기록 검증
 
-상태: **IMPLEMENTATION CANDIDATE / NOT PRODUCT COMPLETE**
+상태: **PR46 MERGED / POST_MERGE_VERIFIED / NOT PRODUCT COMPLETE**
+
+## 최종 후보와 병합 검증
+
+최종 head `1b2b0fb4907f22cf8e9582d1c1b924b85bb900c9`의 PR run
+`37114935163` attempt 1은 18개 job 모두 success였다. 생성부터 완료까지
+`10:00:23Z`–`10:18:28Z`, **18분 5초**다. DB 23 files / 674 assertions,
+실제 두 세션 KRW 9 / USDT 13 / Safe Mode 6 assertions와 lint/advisors가
+통과했다. 이전 후보의 성공 job을 합친 결과가 아니다.
+
+정상 develop 병합은 `034c78ccc8002c7eb9f34ca70ac88712f1cc16de`다.
+부모는 `5a7ba0c462307a26788a6f4749e45a0ba4fa64a3`와 최종 PR head다.
+병합 후 push run `37116286293` attempt 1도 정확한 병합 SHA에서 success다.
+`10:23:57Z`–`10:41:17Z`, 전체 **17분 20초**에 완료했다. 18개 job 중 PR
+전용 Exact diff integrity만 skip이며 나머지 17개는 success다. 모든 시각은
+2026-10-03 UTC다. independent identity/job/budget 검증은 다음 경로에 있다.
+
+- PR: `D:\PUTDUK-MINING-QA\codex-2026-10-03T10-04-9c24fbfd`.
+- 병합 후: `D:\PUTDUK-MINING-QA\codex-pr46-postmerge-20261003T1024Z-54dfc302`.
+
+실제 mobile-chrome source PNG 48개를 수집하고 24개 자금 panel과 대표
+전체 화면 8개를 직접 검토했다. chromium은 별도 48개 전체/panel pixels를
+직접 검토했다. 두 실제 승인 원금 3,000원+7,000원과 미분류 history의
+현재 원금/누적값 확인 필요가 구별된다. 이 범위의 잘림은 관측하지 않았다.
+chromium 검토/hash는
+`D:\PUTDUK-MINING-QA\pr46-shard1-source-pixels-20261003T101838Z-0b0158a8`에 있다.
+
+긴 모바일 12지표, 기존 overview의 partial 경고·영문 활동 코드는 후속 UI
+개선 대상으로 남긴다. 실제 기기·200%·측정 대비·성능·production acceptance나
+Member 360 전체 제품 완료를 주장하지 않는다. 아래의 미실행·후보 표현은
+각 당시의 검증 기록이며, 최종 CI 상태는 이 절의 정확한 후보를 따른다.
 
 기준은 `docs/architecture/MONEY-SOURCE-PROVENANCE.md`의
 `2026.10.03-eligible-principal-v1` 승인 계약이다. 누적 입금을 현재 원금으로

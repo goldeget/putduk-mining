@@ -43,7 +43,11 @@ function supportStatusCopy(state: SupportDisplayState) {
     : "지금은 아래 안내를 먼저 확인해 주세요.";
 }
 
-export function SupportRuntime() {
+export function SupportRuntime({
+  memberLauncher = true,
+}: {
+  memberLauncher?: boolean;
+} = {}) {
   const pathname = usePathname();
   const router = useRouter();
   const appearance = useSyncExternalStore(
@@ -81,10 +85,13 @@ export function SupportRuntime() {
       "/menu",
       "/mining",
       "/notifications",
+      "/products",
       "/start",
       "/wallet",
     ].some((path) => pathname === path || pathname.startsWith(`${path}/`)) ||
     pathname === "/ai";
+
+  if (aboveNavigation && !memberLauncher) return null;
 
   return (
     <div

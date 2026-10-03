@@ -1,0 +1,119 @@
+.hud {
+  position: relative;
+  display: flex;
+  min-height: inherit;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: clamp(1rem, 3vw, 2rem);
+  color: #fff5e5;
+}
+
+.heading {
+  align-self: flex-start;
+  max-width: 32rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid rgb(234 191 115 / 22%);
+  border-radius: 1rem;
+  background: rgb(8 12 17 / 84%);
+  box-shadow: 0 10px 32px rgb(0 0 0 / 22%);
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.meta > span:last-child {
+  color: #ecd3a6;
+}
+
+.heading h2 {
+  max-width: 24ch;
+  margin: 0.65rem 0 0;
+  font-size: clamp(1.1rem, 2.5vw, 1.6rem);
+  font-weight: 720;
+  line-height: 1.4;
+  letter-spacing: -0.04em;
+  word-break: keep-all;
+}
+
+.description {
+  max-width: 32ch;
+  margin: 0.45rem 0 0;
+  color: #dbcdbb;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  word-break: keep-all;
+}
+
+.facts {
+  display: grid;
+  width: min(100%, 42rem);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.facts > span {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.85rem;
+  border: 1px solid rgb(229 195 142 / 30%);
+  border-radius: 0.8rem;
+  background: rgb(8 12 17 / 92%);
+  color: #e0d2bd;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+.facts strong {
+  color: #fff5e5;
+  font-size: clamp(0.875rem, 2vw, 1.1rem);
+  font-variant-numeric: tabular-nums;
+}
+
+.actions {
+  align-self: flex-start;
+}
+
+.details {
+  min-width: 0;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  background: var(--surface-default);
+}
+
+.summary {
+  min-height: 3rem;
+  padding: 0.9rem 1rem;
+  color: var(--text-primary);
+  font-weight: 720;
+  cursor: pointer;
+}
+
+.summary:focus-visible {
+  border-radius: var(--radius-lg);
+  outline: 2px solid var(--brand-strong);
+  outline-offset: -3px;
+}
+
+.detailContent {
+  display: grid;
+  min-width: 0;
+  gap: 1rem;
+  padding: 0 1rem 1rem;
+}
+
+@media (max-width: 360px) {
+  .facts {
+    gap: 0.3rem;
+  }
+
+  .facts > span {
+    padding: 0.65rem 0.45rem;
+  }
+}

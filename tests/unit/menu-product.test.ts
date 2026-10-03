@@ -18,6 +18,7 @@ describe("menu hub navigation", () => {
     expect(hrefs).toContain("/menu/notifications");
     expect(hrefs).toContain("/ai");
     expect(hrefs).toContain("/support");
+    expect(hrefs).toContain("/events");
   });
 
   it("keeps Korean labels free of developer jargon", () => {

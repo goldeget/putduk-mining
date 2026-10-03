@@ -10,6 +10,7 @@ export type PutdukIconName =
   | "menu"
   | "mining"
   | "pulse"
+  | "products"
   | "shield"
   | "spark"
   | "user"
@@ -73,6 +74,14 @@ const paths: Record<PutdukIconName, React.ReactNode> = {
   pulse: (
     <>
       <path d="M3.5 12h4l2-5.5 4 11 2-5.5h5" />
+    </>
+  ),
+  products: (
+    <>
+      <rect x="4.5" y="4.5" width="5.75" height="5.75" rx="1.25" />
+      <rect x="13.75" y="4.5" width="5.75" height="5.75" rx="1.25" />
+      <rect x="4.5" y="13.75" width="5.75" height="5.75" rx="1.25" />
+      <path d="M13.75 16.625h5.75M16.625 13.75v5.75" />
     </>
   ),
   shield: (

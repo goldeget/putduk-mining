@@ -70,6 +70,19 @@ async function expectNoHorizontalOverflow(page: Page) {
 
 async function shoot(page: Page, fileName: string) {
   await waitForHydratedControls(page);
+  await page.waitForFunction(() => {
+    const image = document.querySelector(
+      '[data-scene-art="ready"] picture img',
+    );
+    return (
+      image instanceof HTMLImageElement &&
+      image.complete &&
+      image.naturalWidth > 0
+    );
+  });
+  await page
+    .locator("#main-content")
+    .evaluate((node) => node.scrollTo({ top: 0, behavior: "instant" }));
   mkdirSync(OUTPUT_DIR, { recursive: true });
   await page.screenshot({
     animations: "disabled",
@@ -88,6 +101,19 @@ async function applyTheme(page: Page, theme: "dark" | "light") {
   }, theme);
   await page.reload({ waitUntil: "domcontentloaded" });
   await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
+  await openMiningDetails(page);
+}
+
+async function openMiningDetails(page: Page) {
+  const details = page.locator("#putduk-mining-details");
+  if (
+    !(await details.evaluate(
+      (node) => node instanceof HTMLDetailsElement && node.open,
+    ))
+  ) {
+    await page.getByText("채굴 상세", { exact: true }).click();
+  }
+  await expect(details).toHaveAttribute("open", "");
 }
 
 test("unsigned visitors keep the mining return path", async ({ page }) => {
@@ -114,6 +140,12 @@ test("shows the empty session, world directory, themes, and keyboard path", asyn
     page.getByRole("heading", { name: "첫 월드에서 채굴을 시작해 보세요" }),
   ).toBeVisible();
   await expect(page.getByText("채굴 중")).toHaveCount(0);
+  await expect(page.locator("#putduk-mining-details")).not.toHaveAttribute(
+    "open",
+    "",
+  );
+  await shoot(page, "initial-scene-details-closed.png");
+  await openMiningDetails(page);
 
   const mainText = await page.locator("main").innerText();
   expect(mainText).toContain("앱을 닫아도 채굴은 계속돼요.");
@@ -176,7 +208,11 @@ test("shows the empty session, world directory, themes, and keyboard path", asyn
         await expect(
           navigation.getByRole("link", { name: "채굴" }),
         ).toHaveAttribute("aria-current", "page");
-        const launcher = page.locator("#putduk-support-launcher");
+        await expect(page.locator("#putduk-support-launcher")).toHaveCount(0);
+        const launcher = page.getByRole("button", {
+          name: "AI 도움",
+          exact: true,
+        });
         await expect(launcher).toBeVisible();
         const launcherBox = await launcher.boundingBox();
         const navigationBox = await navigation.boundingBox();
@@ -249,7 +285,7 @@ test("shows the empty session, world directory, themes, and keyboard path", asyn
       PerformanceNavigationTiming | undefined;
     const images = performance
       .getEntriesByType("resource")
-      .filter((entry) => entry.name.includes("orbital-earth"))
+      .filter((entry) => entry.name.includes("semiconductor-memory"))
       .map((entry) => {
         const resource = entry as PerformanceResourceTiming;
         return {
@@ -303,6 +339,7 @@ test("renders an active session and a maintenance session from the server snapsh
   });
 
   await loginAsMember(page, member, "/mining");
+  await openMiningDetails(page);
   await expect(
     page.getByRole("heading", { name: "코리아 · 채굴 중" }),
   ).toBeVisible();
@@ -338,6 +375,7 @@ test("renders an active session and a maintenance session from the server snapsh
   await page.waitForURL(/\/home$/);
   await page.goBack();
   await expect(page).toHaveURL(/\/mining$/);
+  await openMiningDetails(page);
   await expect(page.getByText("점검 중").first()).toBeVisible();
 
   for (const viewport of VIEWPORTS) {
@@ -365,6 +403,7 @@ test("shows an empty world directory and restores the shared worlds", async ({
   try {
     await setMiningWorldsActive(false);
     await loginAsMember(page, member, "/mining");
+    await openMiningDetails(page);
     await expect(page.getByText("표시할 월드가 아직 없어요")).toBeVisible();
     await expect(
       page.getByRole("heading", { name: "코리아", level: 3 }),
@@ -379,6 +418,7 @@ test("shows an empty world directory and restores the shared worlds", async ({
   }
 
   await page.reload();
+  await openMiningDetails(page);
   await expect(
     page.getByRole("heading", { name: "코리아", level: 3 }),
   ).toBeVisible();

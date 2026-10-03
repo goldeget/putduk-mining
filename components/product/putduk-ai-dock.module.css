@@ -1,0 +1,240 @@
+.dock {
+  min-width: 0;
+  padding: 0.5rem max(1rem, env(safe-area-inset-right)) 0.5rem
+    max(1rem, env(safe-area-inset-left));
+  border-top: 1px solid var(--border-subtle);
+  background: var(--background-canvas);
+}
+
+.actions {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.detailsLink {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 0.6rem;
+  margin-right: auto;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  text-decoration: none;
+}
+
+.launcher {
+  display: inline-flex;
+  min-height: 52px;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.2rem 1rem 0.2rem 0.3rem;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-full);
+  color: var(--text-primary);
+  background: var(--surface-default);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.launcher:hover,
+.mascotClose:hover,
+.closeButton:hover {
+  border-color: var(--brand-primary);
+  background: var(--background-subtle);
+}
+
+.launcher:active {
+  background: var(--surface-raised);
+}
+
+.launcher:focus-visible,
+.detailsLink:focus-visible,
+.mascotClose:focus-visible,
+.closeButton:focus-visible,
+.expandLink:focus-visible {
+  outline: 2px solid var(--brand-strong);
+  outline-offset: 3px;
+}
+
+.mascot,
+.mascot img {
+  display: block;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.status {
+  margin: 0.4rem 0 0;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.dialog {
+  position: fixed;
+  inset: var(--ai-viewport-top, 0px) 0 auto;
+  width: 100%;
+  height: 100vh;
+  height: var(--ai-viewport-height, 100dvh);
+  min-width: 0;
+  min-height: 0;
+  max-width: none;
+  max-height: none;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  border: 0;
+  color: var(--text-primary);
+  background: var(--surface-default);
+  opacity: 1;
+  transform: translateY(0);
+  transition-property: transform, opacity;
+  transition-duration: 160ms;
+  transition-timing-function: ease-out;
+}
+
+.dialog[open] {
+  display: flex;
+  flex-direction: column;
+}
+
+.dialog::backdrop {
+  background: color-mix(in srgb, var(--background-canvas) 65%, transparent);
+}
+
+@starting-style {
+  .dialog[open] {
+    opacity: 0;
+    transform: translateY(0.65rem);
+  }
+}
+
+.header {
+  display: flex;
+  min-width: 0;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.6rem max(0.75rem, env(safe-area-inset-right)) 0.6rem
+    max(0.75rem, env(safe-area-inset-left));
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.identity,
+.headerActions {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.identity h2 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 650;
+  line-height: 1.4;
+}
+
+.mascotClose,
+.closeButton {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+  place-items: center;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  background: transparent;
+  cursor: pointer;
+}
+
+.closeButton svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+}
+
+.expandLink {
+  display: none;
+  min-height: 44px;
+  align-items: center;
+  padding-inline: 0.5rem;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  text-decoration: none;
+}
+
+.body {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.body > :global(.ai-chat) {
+  min-width: 0;
+  min-height: 0;
+  flex: 1 1 auto;
+}
+
+.dialog .body [role="note"] {
+  max-height: min(6rem, calc(var(--ai-viewport-height, 100dvh) * 0.16));
+  overflow-y: auto;
+}
+
+.dialog .body :global(.ai-composer) textarea {
+  min-height: clamp(
+    2.75rem,
+    calc(var(--ai-viewport-height, 100dvh) * 0.12),
+    4.8rem
+  );
+}
+
+@media (min-width: 980px) {
+  .dock {
+    padding-inline: clamp(1.5rem, 3vw, 3rem);
+  }
+
+  .dialog {
+    left: auto;
+    width: min(100%, 30rem);
+    border-left: 1px solid var(--border-default);
+    box-shadow: var(--shadow-lift);
+  }
+
+  .expandLink {
+    display: inline-flex;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dialog {
+    transition-duration: 0ms;
+  }
+}
+
+@media (forced-colors: active) {
+  .launcher,
+  .mascotClose,
+  .closeButton,
+  .dialog {
+    border: 1px solid ButtonText;
+  }
+}

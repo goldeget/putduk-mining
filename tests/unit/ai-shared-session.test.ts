@@ -1,0 +1,981 @@
+// @vitest-environment jsdom
+
+import { act, createElement, Fragment, useEffect } from "react";
+import { createRoot, type Root } from "react-dom/client";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+
+import { PutdukAiChat } from "@/components/product/putduk-ai-chat";
+import { AI_PRESENTATION_OWNER_HEADER } from "@/domain/ai/presentation-owner";
+import {
+  PutdukAiSessionProvider,
+  usePutdukAiSession,
+  type PutdukAiSession,
+} from "@/components/product/putduk-ai-session";
+
+const navigation = vi.hoisted(() => ({ pathname: "/wallet", search: "" }));
+type AuthObserver = (
+  event: string,
+  browserSession: { user: { id: string } } | null,
+) => void;
+const browserAuth = vi.hoisted(() => ({
+  autoInitial: true,
+  ownerId: "member-a" as string | null,
+  observers: new Set<AuthObserver>(),
+  refresh: vi.fn(),
+  unsubscribes: [] as ReturnType<typeof vi.fn>[],
+  createError: false,
+  onSubscribe: null as (() => void) | null,
+  configurations: [] as unknown[],
+}));
+vi.mock("next/navigation", () => ({
+  usePathname: () => navigation.pathname,
+  useSearchParams: () => new URLSearchParams(navigation.search),
+  useRouter: () => ({ refresh: browserAuth.refresh }),
+}));
+vi.mock("@/lib/supabase/browser", () => ({
+  createSupabaseBrowserClient: (configuration: unknown) => {
+    browserAuth.configurations.push(configuration);
+    if (browserAuth.createError) throw new Error("AUTH_OBSERVER_UNAVAILABLE");
+    return {
+      auth: {
+        onAuthStateChange(observer: AuthObserver) {
+          browserAuth.observers.add(observer);
+          const unsubscribe = vi.fn(() =>
+            browserAuth.observers.delete(observer),
+          );
+          browserAuth.unsubscribes.push(unsubscribe);
+          browserAuth.onSubscribe?.();
+          if (browserAuth.autoInitial)
+            queueMicrotask(() => {
+              if (browserAuth.observers.has(observer))
+                observer(
+                  "INITIAL_SESSION",
+                  browserAuth.ownerId
+                    ? { user: { id: browserAuth.ownerId } }
+                    : null,
+                );
+            });
+          return { data: { subscription: { unsubscribe } } };
+        },
+      },
+    };
+  },
+}));
+vi.mock("@/lib/analytics/client", () => ({
+  trackAnalyticsEvent: vi.fn().mockResolvedValue(undefined),
+}));
+
+const requestId = "a3cb8f7b-16b6-41c8-8f65-5782e6b14df7";
+let host: HTMLDivElement;
+let root: Root;
+let session: PutdukAiSession;
+let fetchMock: ReturnType<typeof vi.fn>;
+
+function Probe() {
+  const current = usePutdukAiSession();
+  useEffect(() => {
+    session = current;
+  }, [current]);
+  return createElement(
+    "output",
+    { "data-testid": "session-probe" },
+    current.draft,
+  );
+}
+
+function render(
+  ownerUserId = "member-a",
+  views = 1,
+  providerConfigured = true,
+  ownerVerificationId = `${ownerUserId}:server-render-1`,
+) {
+  return act(async () =>
+    root.render(
+      createElement(
+        PutdukAiSessionProvider,
+        {
+          ownerUserId,
+          ownerVerificationId,
+          knowledgeVersion: "v1",
+          providerConfigured,
+          browserAuthConfig: {
+            url: "http://127.0.0.1:58421",
+            publishableKey: "sb_publishable_member_browser_fixture",
+          },
+        },
+        createElement(
+          Fragment,
+          null,
+          createElement(Probe),
+          ...Array.from({ length: views }, (_, index) =>
+            createElement(PutdukAiChat, { key: index, presentation: "panel" }),
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
+function emitAuth(event: string, ownerId: string | null) {
+  browserAuth.ownerId = ownerId;
+  for (const observer of browserAuth.observers)
+    observer(event, ownerId ? { user: { id: ownerId } } : null);
+}
+
+function responseStream() {
+  let controller!: ReadableStreamDefaultController<Uint8Array>;
+  const cancelled = vi.fn();
+  const stream = new ReadableStream<Uint8Array>({
+    start(value) {
+      controller = value;
+    },
+    cancel: cancelled,
+  });
+  return {
+    cancelled,
+    response: new Response(stream, {
+      headers: { "Content-Type": "text/event-stream" },
+    }),
+    send(event: object) {
+      controller.enqueue(
+        new TextEncoder().encode(`data: ${JSON.stringify(event)}\n\n`),
+      );
+    },
+    close() {
+      controller.close();
+    },
+  };
+}
+
+function immediateAnswer(source: "static" | "tool" | "provider" = "static") {
+  const stream = responseStream();
+  stream.send({ type: "ready", requestId, source });
+  stream.send({ type: "delta", text: "확인한 안내예요." });
+  stream.send({
+    type: "done",
+    requestId,
+    knowledgeVersion: "server-v2",
+    ...(source === "tool"
+      ? {
+          grounding: {
+            source: "domain_tool",
+            tool: "wallet.summary",
+            asOf: "2026-10-03T02:00:00.000Z",
+          },
+        }
+      : {}),
+  });
+  stream.close();
+  return stream;
+}
+
+async function begin(
+  question: string,
+  screenContext?: Parameters<PutdukAiSession["submit"]>[0],
+) {
+  let turn!: Promise<void>;
+  await act(async () => {
+    session.setDraft(question);
+    turn = session.submit(screenContext);
+    await Promise.resolve();
+  });
+  return { turn };
+}
+
+beforeEach(() => {
+  Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
+  navigation.pathname = "/wallet";
+  navigation.search = "";
+  browserAuth.autoInitial = true;
+  browserAuth.ownerId = "member-a";
+  browserAuth.observers.clear();
+  browserAuth.unsubscribes = [];
+  browserAuth.createError = false;
+  browserAuth.onSubscribe = null;
+  browserAuth.configurations = [];
+  browserAuth.refresh = vi.fn();
+  fetchMock = vi.fn();
+  vi.stubGlobal("fetch", fetchMock);
+  host = document.createElement("div");
+  document.body.append(host);
+  root = createRoot(host);
+});
+
+afterEach(async () => {
+  await act(async () => root.unmount());
+  host.remove();
+  vi.unstubAllGlobals();
+  vi.restoreAllMocks();
+});
+
+describe("one PUTDUK AI request and session owner", () => {
+  it("uses the server runtime auth tuple without browser build environment values", async () => {
+    vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", undefined);
+    vi.stubEnv("NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY", undefined);
+    try {
+      await render();
+      expect(browserAuth.configurations).toEqual([
+        {
+          url: "http://127.0.0.1:58421",
+          publishableKey: "sb_publishable_member_browser_fixture",
+        },
+      ]);
+      expect(session.canSubmit).toBe(true);
+      await render();
+      expect(browserAuth.configurations).toHaveLength(1);
+      expect(browserAuth.observers.size).toBe(1);
+    } finally {
+      vi.unstubAllEnvs();
+    }
+  });
+
+  it("keeps submit closed until the browser's initial owner matches the server owner", async () => {
+    browserAuth.autoInitial = false;
+    await render();
+    expect(session.ownerStatus).toBe("checking");
+    expect(session.canSubmit).toBe(false);
+    expect(host.querySelector("textarea")?.disabled).toBe(true);
+    await act(async () => {
+      session.setDraft("확인 전에는 전송할 수 없는 질문");
+      await session.submit();
+    });
+    expect(session.draft).toBe("");
+    expect(fetchMock).not.toHaveBeenCalled();
+    await act(async () => emitAuth("INITIAL_SESSION", "member-a"));
+    expect(session.canSubmit).toBe(true);
+    expect(host.querySelector("textarea")?.disabled).toBe(false);
+    expect(browserAuth.refresh).not.toHaveBeenCalled();
+  });
+
+  it("preserves the same owner's draft and live request on token refresh", async () => {
+    const stream = responseStream();
+    fetchMock.mockResolvedValue(stream.response);
+    await render();
+    const { turn } = await begin("내 기록을 확인해 주세요");
+    const signal = (fetchMock.mock.calls[0]![1] as RequestInit).signal!;
+    await act(async () => {
+      session.setDraft("다음에 물어볼 질문");
+      emitAuth("TOKEN_REFRESHED", "member-a");
+    });
+    expect(session.canSubmit).toBe(true);
+    expect(session.pending).toBe(true);
+    expect(session.messages).toHaveLength(2);
+    expect(session.draft).toBe("다음에 물어볼 질문");
+    expect(signal.aborted).toBe(false);
+    expect(browserAuth.refresh).not.toHaveBeenCalled();
+    await act(async () => {
+      session.cancel();
+      await turn;
+    });
+  });
+
+  it("sends the server-verified presentation owner as a comparison header on every request", async () => {
+    const ownerUserId = "b755a143-0dcb-47f6-8aee-0192a1a594b2";
+    browserAuth.ownerId = ownerUserId;
+    fetchMock.mockImplementation(async () => immediateAnswer().response);
+    await render(ownerUserId);
+    await act(async () => {
+      session.setDraft("첫 번째 도움말 질문");
+      await session.submit();
+      session.setDraft("두 번째 도움말 질문");
+      await session.submit();
+    });
+    const nextOwnerUserId = "c6a65b65-f28a-4159-a9b0-1a5da3409639";
+    browserAuth.ownerId = nextOwnerUserId;
+    await render(nextOwnerUserId);
+    await act(async () => {
+      session.setDraft("새 회원의 첫 번째 질문");
+      await session.submit();
+    });
+    expect(fetchMock).toHaveBeenCalledTimes(3);
+    for (const [index, [url, options]] of fetchMock.mock.calls.entries()) {
+      expect(url).toBe("/api/v1/ai/chat");
+      const request = options as RequestInit;
+      expect(
+        new Headers(request.headers).get(AI_PRESENTATION_OWNER_HEADER),
+      ).toBe(index < 2 ? ownerUserId : nextOwnerUserId);
+      expect(request.credentials).toBe("same-origin");
+      expect(JSON.parse(request.body as string)).not.toHaveProperty(
+        "ownerUserId",
+      );
+    }
+  });
+
+  it("purges a stale presentation on HTTP 409 and waits for a fresh initial session after a new server nonce", async () => {
+    const ownerUserId = "b755a143-0dcb-47f6-8aee-0192a1a594b2";
+    browserAuth.ownerId = ownerUserId;
+    let resolveChanged!: (response: Response) => void;
+    fetchMock
+      .mockResolvedValueOnce(immediateAnswer("tool").response)
+      .mockImplementationOnce(
+        () => new Promise<Response>((resolve) => (resolveChanged = resolve)),
+      );
+    await render(ownerUserId);
+    await act(async () => {
+      session.setDraft("이전 회원의 기록 질문");
+      await session.submit();
+    });
+    const oldQuestionId = session.messages.at(-1)!.id;
+    const oldObserver = Array.from(browserAuth.observers)[0]!;
+    const { turn } = await begin("현재 상태를 다시 확인해 주세요");
+    const signal = (fetchMock.mock.calls[1]![1] as RequestInit).signal!;
+    browserAuth.autoInitial = false;
+    await act(async () => {
+      session.setDraft("이전 회원의 개인 초안");
+      resolveChanged(
+        Response.json(
+          {
+            error: {
+              code: "AI_SESSION_CHANGED",
+              message: "로그인 상태가 바뀌었어요. 다시 확인해 주세요.",
+            },
+          },
+          { status: 409 },
+        ),
+      );
+      await turn;
+    });
+    expect(signal.aborted).toBe(true);
+    expect(session.messages).toEqual([]);
+    expect(session.draft).toBe("");
+    expect(session.pending).toBe(false);
+    expect(session.canSubmit).toBe(false);
+    expect(session.ownerStatus).toBe("refreshing");
+    expect(host.textContent).not.toContain("이전 회원");
+    expect(host.textContent).not.toContain("내 기록 조회");
+    expect(browserAuth.refresh).toHaveBeenCalledOnce();
+    expect(browserAuth.unsubscribes[0]).toHaveBeenCalledOnce();
+    expect(browserAuth.observers.size).toBe(1);
+    await act(async () => {
+      expect(session.restoreQuestion(oldQuestionId)).toBe(false);
+      session.setDraft("재확인 전에는 보내면 안 되는 질문");
+      await session.submit();
+    });
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(session.draft).toBe("");
+
+    await render(ownerUserId, 1, true, `${ownerUserId}:server-render-2`);
+    await act(async () => {
+      oldObserver("INITIAL_SESSION", { user: { id: ownerUserId } });
+      emitAuth("SIGNED_IN", ownerUserId);
+      emitAuth("TOKEN_REFRESHED", ownerUserId);
+      session.setDraft("오래된 관찰 정보로 보내려는 질문");
+      await session.submit();
+    });
+    expect(session.canSubmit).toBe(false);
+    expect(session.messages).toEqual([]);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    await act(async () => {
+      emitAuth("INITIAL_SESSION", "c6a65b65-f28a-4159-a9b0-1a5da3409639");
+      emitAuth("TOKEN_REFRESHED", ownerUserId);
+    });
+    expect(session.canSubmit).toBe(false);
+    expect(session.messages).toEqual([]);
+    await act(async () => emitAuth("INITIAL_SESSION", ownerUserId));
+    expect(session.canSubmit).toBe(true);
+    expect(session.messages).toEqual([]);
+    expect(session.draft).toBe("");
+    expect(browserAuth.refresh).toHaveBeenCalledOnce();
+  });
+
+  it("keeps the cleared HTTP 409 session locked when fresh browser initial confirmation arrives before server re-verification", async () => {
+    fetchMock.mockResolvedValue(
+      Response.json({ error: { code: "AI_SESSION_CHANGED" } }, { status: 409 }),
+    );
+    await render();
+    await act(async () => {
+      session.setDraft("계정 전환 응답을 받는 질문");
+      await session.submit();
+    });
+    // The replacement observer has already emitted INITIAL_SESSION, but the
+    // server nonce still belongs to the rejected presentation.
+    expect(browserAuth.unsubscribes).toHaveLength(2);
+    expect(session.canSubmit).toBe(false);
+    expect(session.messages).toEqual([]);
+    await act(async () => {
+      emitAuth("TOKEN_REFRESHED", "member-a");
+      session.setDraft("서버 재확인 전 질문");
+      await session.submit();
+    });
+    expect(fetchMock).toHaveBeenCalledOnce();
+    await render("member-a", 1, true, "member-a:server-render-2");
+    expect(session.canSubmit).toBe(true);
+    expect(session.messages).toEqual([]);
+    expect(session.draft).toBe("");
+    expect(browserAuth.refresh).toHaveBeenCalledOnce();
+  });
+
+  it("closes a resubscription gap despite a new nonce and ignores callbacks from the disposed observer", async () => {
+    fetchMock.mockResolvedValue(immediateAnswer().response);
+    await render();
+    await act(async () => {
+      session.setDraft("이미 완료한 안내 질문");
+      await session.submit();
+      session.setDraft("보존할 미전송 초안");
+    });
+    const history = session.messages;
+    const oldObserver = Array.from(browserAuth.observers)[0]!;
+    browserAuth.autoInitial = false;
+    browserAuth.refresh = vi.fn();
+    const gapSubmit = vi.fn(() => {
+      void session.submit();
+      session.setDraft("구독 설정 순간의 초안");
+    });
+    browserAuth.onSubscribe = gapSubmit;
+    await render("member-a", 1, true, "member-a:server-render-2");
+    expect(gapSubmit).toHaveBeenCalledOnce();
+    expect(browserAuth.unsubscribes[0]).toHaveBeenCalledOnce();
+    expect(session.canSubmit).toBe(false);
+    expect(session.ownerStatus).toBe("checking");
+    await act(async () => {
+      oldObserver("INITIAL_SESSION", { user: { id: "member-a" } });
+      oldObserver("SIGNED_OUT", null);
+      emitAuth("TOKEN_REFRESHED", "member-a");
+      await session.submit();
+      session.setDraft("재구독 중에는 수정할 수 없는 초안");
+    });
+    expect(session.canSubmit).toBe(false);
+    expect(session.messages).toEqual(history);
+    expect(session.draft).toBe("보존할 미전송 초안");
+    expect(fetchMock).toHaveBeenCalledOnce();
+    expect(browserAuth.refresh).not.toHaveBeenCalled();
+    await act(async () => emitAuth("INITIAL_SESSION", "member-a"));
+    expect(session.canSubmit).toBe(true);
+    expect(session.messages).toEqual(history);
+    expect(session.draft).toBe("보존할 미전송 초안");
+  });
+
+  it("finishes an interrupted live answer when its auth observer is replaced and preserves the matching owner's draft", async () => {
+    const stream = responseStream();
+    fetchMock.mockResolvedValue(stream.response);
+    await render();
+    const { turn } = await begin("인증 재확인 중인 답변 질문");
+    const signal = (fetchMock.mock.calls[0]![1] as RequestInit).signal!;
+    await act(async () => {
+      stream.send({ type: "ready", requestId, source: "provider" });
+      stream.send({ type: "delta", text: "끝까지 받지 못한 내용" });
+      session.setDraft("다음에 보낼 미전송 초안");
+      await Promise.resolve();
+    });
+    browserAuth.autoInitial = false;
+    browserAuth.refresh = vi.fn();
+    await render("member-a", 1, true, "member-a:server-render-2");
+    await act(async () => turn);
+    expect(signal.aborted).toBe(true);
+    expect(stream.cancelled).toHaveBeenCalledOnce();
+    expect(session.pending).toBe(false);
+    expect(session.canSubmit).toBe(false);
+    expect(session.messages.at(-1)).toMatchObject({
+      state: "cancelled",
+      text: "끝까지 받지 못한 내용",
+      failure: { code: "AI_STREAM_INTERRUPTED", label: "답변 수신 중단" },
+    });
+    expect(session.messages.at(-1)?.grounding).toBeUndefined();
+    expect(session.draft).toBe("다음에 보낼 미전송 초안");
+    await act(async () => emitAuth("INITIAL_SESSION", "member-a"));
+    expect(session.canSubmit).toBe(true);
+    expect(session.pending).toBe(false);
+    expect(session.draft).toBe("다음에 보낼 미전송 초안");
+    expect(fetchMock).toHaveBeenCalledOnce();
+  });
+
+  it("keeps ready history and draft across unrelated same-owner server verification", async () => {
+    fetchMock.mockResolvedValue(immediateAnswer().response);
+    await render();
+    await act(async () => {
+      session.setDraft("퍼뜩 안내를 설명해 주세요");
+      await session.submit();
+      session.setDraft("다음 질문의 미전송 초안");
+    });
+    const history = session.messages;
+    await render("member-a", 1, true, "member-a:server-render-2");
+    expect(session.canSubmit).toBe(true);
+    expect(session.messages).toEqual(history);
+    expect(session.draft).toBe("다음 질문의 미전송 초안");
+    expect(browserAuth.unsubscribes).toHaveLength(1);
+    expect(browserAuth.unsubscribes[0]).not.toHaveBeenCalled();
+  });
+
+  it("purges and blocks on account mismatch, then requires a fresh server verification to reopen the cleared owner", async () => {
+    const stream = responseStream();
+    fetchMock.mockResolvedValueOnce(stream.response);
+    await render();
+    const { turn } = await begin("회원 A의 내 기록 질문");
+    const signal = (fetchMock.mock.calls[0]![1] as RequestInit).signal!;
+    await act(async () => {
+      session.setDraft("회원 A의 초안");
+      emitAuth("SIGNED_IN", "member-b");
+      session.setDraft("오래된 화면에서 들어온 새 초안");
+      await session.submit();
+      await turn;
+    });
+    expect(signal.aborted).toBe(true);
+    expect(session.canSubmit).toBe(false);
+    expect(session.ownerStatus).toBe("refreshing");
+    expect(session.messages).toEqual([]);
+    expect(session.draft).toBe("");
+    expect(session.pending).toBe(false);
+    expect(host.textContent).not.toContain("회원 A");
+    expect(host.querySelector("textarea")?.disabled).toBe(true);
+    expect(browserAuth.refresh).toHaveBeenCalledOnce();
+    expect(fetchMock).toHaveBeenCalledOnce();
+
+    await render("member-a", 1, true, "member-a:server-render-2");
+    expect(session.canSubmit).toBe(false);
+    await act(async () => emitAuth("TOKEN_REFRESHED", "member-b"));
+    expect(session.canSubmit).toBe(false);
+    await act(async () => emitAuth("SIGNED_IN", "member-a"));
+    expect(session.canSubmit).toBe(true);
+    expect(session.messages).toEqual([]);
+    expect(session.draft).toBe("");
+    expect(fetchMock).toHaveBeenCalledOnce();
+  });
+
+  it("does not unlock a signed-out owner on browser login alone, but resumes after fresh same-owner server verification", async () => {
+    fetchMock.mockResolvedValue(immediateAnswer().response);
+    await render();
+    await act(async () => {
+      session.setDraft("회원 A에게만 보이는 질문");
+      await session.submit();
+      session.setDraft("회원 A의 초안");
+      emitAuth("SIGNED_OUT", null);
+    });
+    expect(session.messages).toEqual([]);
+    expect(session.draft).toBe("");
+    expect(session.canSubmit).toBe(false);
+    expect(browserAuth.refresh).toHaveBeenCalledOnce();
+    await act(async () => emitAuth("SIGNED_IN", "member-a"));
+    expect(session.canSubmit).toBe(false);
+    await act(async () => {
+      session.setDraft("서버 확인 전 새 질문");
+      await session.submit();
+    });
+    expect(fetchMock).toHaveBeenCalledOnce();
+    await render("member-a", 1, true, "member-a:server-render-2");
+    expect(session.canSubmit).toBe(true);
+    expect(session.ownerStatus).toBe("ready");
+    expect(session.messages).toEqual([]);
+    expect(session.draft).toBe("");
+  });
+
+  it("rejects initial mismatch and ignores disposed subscriptions after the server changes owner or unmounts", async () => {
+    browserAuth.ownerId = "member-b";
+    await render();
+    expect(session.canSubmit).toBe(false);
+    expect(browserAuth.refresh).toHaveBeenCalledOnce();
+    const oldObserver = Array.from(browserAuth.observers)[0]!;
+    await render("member-b");
+    expect(session.canSubmit).toBe(true);
+    expect(browserAuth.unsubscribes[0]).toHaveBeenCalledOnce();
+    await act(async () => {
+      session.setDraft("새 회원의 질문 초안");
+      oldObserver("SIGNED_OUT", null);
+    });
+    expect(session.canSubmit).toBe(true);
+    expect(session.draft).toBe("새 회원의 질문 초안");
+    expect(browserAuth.refresh).toHaveBeenCalledOnce();
+    const currentObserver = Array.from(browserAuth.observers)[0]!;
+    await act(async () => root.render(null));
+    expect(browserAuth.unsubscribes[1]).toHaveBeenCalledOnce();
+    currentObserver("SIGNED_OUT", null);
+    expect(browserAuth.refresh).toHaveBeenCalledOnce();
+    expect(browserAuth.observers.size).toBe(0);
+  });
+
+  it("fails closed when the browser auth subscription cannot be created", async () => {
+    browserAuth.createError = true;
+    await render();
+    expect(session.canSubmit).toBe(false);
+    expect(session.ownerStatus).toBe("refreshing");
+    expect(browserAuth.refresh).toHaveBeenCalledOnce();
+    await act(async () => {
+      session.setDraft("인증 관찰이 불가한 질문");
+      await session.submit();
+    });
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("keeps a draft and in-flight answer across route/presentation unmount without re-sending", async () => {
+    const stream = responseStream();
+    fetchMock.mockResolvedValue(stream.response);
+    await render();
+    const { turn } = await begin("내 지갑 잔액을 확인해 줘");
+    expect(host.querySelector("textarea")?.disabled).toBe(false);
+    await act(async () => session.setDraft("다음에 묻고 싶은 내용"));
+    expect(host.querySelector("textarea")?.value).toBe("다음에 묻고 싶은 내용");
+    navigation.pathname = "/mining";
+    await render("member-a", 0);
+    expect(session.pending).toBe(true);
+    expect(session.draft).toBe("다음에 묻고 싶은 내용");
+    expect((fetchMock.mock.calls[0]![1] as RequestInit).signal?.aborted).toBe(
+      false,
+    );
+    await act(async () => {
+      stream.send({ type: "ready", requestId, source: "tool" });
+      stream.send({ type: "delta", text: "현재 확정 기록을 확인했어요." });
+      stream.send({
+        type: "done",
+        requestId,
+        knowledgeVersion: "server-v2",
+        grounding: {
+          source: "domain_tool",
+          tool: "wallet.summary",
+          asOf: "2026-10-03T02:00:00.000Z",
+        },
+      });
+      stream.close();
+      await turn;
+    });
+    await render();
+    expect(fetchMock).toHaveBeenCalledOnce();
+    expect(session.draft).toBe("다음에 묻고 싶은 내용");
+    expect(session.messages.at(-1)).toMatchObject({
+      source: "tool",
+      state: "complete",
+      knowledgeVersion: "server-v2",
+      grounding: { tool: "wallet.summary" },
+    });
+    expect(host.textContent).toContain("내 기록 조회");
+    expect(host.querySelector("time")?.dateTime).toBe(
+      "2026-10-03T02:00:00.000Z",
+    );
+  });
+
+  it("aborts and clears on owner change, and ignores a late response from the previous member", async () => {
+    let resolveOld!: (response: Response) => void;
+    fetchMock.mockImplementation(
+      () =>
+        new Promise<Response>((resolve) => {
+          resolveOld = resolve;
+        }),
+    );
+    await render();
+    const { turn } = await begin("회원 A의 지갑 질문");
+    const signal = (fetchMock.mock.calls[0]![1] as RequestInit).signal!;
+    await act(async () => session.setDraft("회원 A의 미전송 초안"));
+    browserAuth.ownerId = "member-b";
+    await render("member-b");
+    expect(signal.aborted).toBe(true);
+    expect(session.draft).toBe("");
+    expect(session.messages).toEqual([]);
+    expect(session.canSubmit).toBe(true);
+    const late = immediateAnswer();
+    await act(async () => {
+      resolveOld(late.response);
+      await turn;
+    });
+    expect(session.messages).toEqual([]);
+    expect(host.textContent).not.toContain("회원 A");
+    expect(late.cancelled).toHaveBeenCalledOnce();
+  });
+
+  it("aborts when the shared provider unmounts", async () => {
+    const stream = responseStream();
+    fetchMock.mockResolvedValue(stream.response);
+    await render();
+    const { turn } = await begin("채굴 상태를 알려줘");
+    const signal = (fetchMock.mock.calls[0]![1] as RequestInit).signal!;
+    await act(async () => {
+      root.render(null);
+      await Promise.resolve();
+    });
+    await turn;
+    expect(signal.aborted).toBe(true);
+    expect(stream.cancelled).toHaveBeenCalledOnce();
+  });
+
+  it("blocks duplicate submit, preserves partial text on stop, and restores the question without sending it", async () => {
+    const stream = responseStream();
+    fetchMock
+      .mockResolvedValueOnce(stream.response)
+      .mockResolvedValueOnce(immediateAnswer().response);
+    await render();
+    const { turn } = await begin("일반 도움말을 알려줘");
+    await act(async () => {
+      session.setDraft("겹친 질문");
+      await session.submit();
+      stream.send({ type: "ready", requestId, source: "provider" });
+      stream.send({ type: "delta", text: "아직 끝나지 않은 내용" });
+      await Promise.resolve();
+    });
+    expect(fetchMock).toHaveBeenCalledOnce();
+    await act(async () => {
+      session.cancel();
+      await turn;
+    });
+    expect(session.messages.at(-1)).toMatchObject({
+      state: "cancelled",
+      text: "아직 끝나지 않은 내용",
+      failure: { label: "답변 중단됨" },
+    });
+    const id = session.messages.at(-1)!.id;
+    await act(async () => expect(session.restoreQuestion(id)).toBe(true));
+    expect(session.draft).toBe("일반 도움말을 알려줘");
+    expect(fetchMock).toHaveBeenCalledOnce();
+    await act(async () => session.submit());
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    const first = JSON.parse(
+      (fetchMock.mock.calls[0]![1] as RequestInit).body as string,
+    ) as { clientMessageId: string };
+    const retry = JSON.parse(
+      (fetchMock.mock.calls[1]![1] as RequestInit).body as string,
+    ) as { clientMessageId: string };
+    expect(retry.clientMessageId).not.toBe(first.clientMessageId);
+  });
+
+  it("does not let a cancelled old fetch clear the next request's pending state", async () => {
+    let resolveOld!: (response: Response) => void;
+    const next = responseStream();
+    fetchMock
+      .mockImplementationOnce(
+        () =>
+          new Promise<Response>((resolve) => {
+            resolveOld = resolve;
+          }),
+      )
+      .mockResolvedValueOnce(next.response);
+    await render();
+    const old = await begin("첫 번째 질문이에요");
+    await act(async () => session.cancel());
+    const second = await begin("두 번째 질문이에요");
+    await act(async () => {
+      resolveOld(immediateAnswer().response);
+      await old.turn;
+    });
+    expect(session.pending).toBe(true);
+    expect(session.messages.at(-1)?.state).toBe("streaming");
+    await act(async () => {
+      next.send({ type: "ready", requestId, source: "static" });
+      next.send({ type: "delta", text: "두 번째 답변" });
+      next.send({ type: "done", requestId, knowledgeVersion: "v1" });
+      next.close();
+      await second.turn;
+    });
+    expect(session.pending).toBe(false);
+    expect(session.messages.at(-1)?.text).toBe("두 번째 답변");
+  });
+
+  it("keeps incomplete text but does not invent a done receipt when the connection ends", async () => {
+    const stream = responseStream();
+    stream.send({ type: "ready", requestId, source: "provider" });
+    stream.send({ type: "delta", text: "일부만 도착한 내용" });
+    stream.close();
+    fetchMock.mockResolvedValue(stream.response);
+    await render();
+    await act(async () => {
+      session.setDraft("일반 내용을 설명해 줘");
+      await session.submit();
+    });
+    expect(session.messages.at(-1)).toMatchObject({
+      state: "error",
+      text: "일부만 도착한 내용",
+      failure: { code: "AI_STREAM_INTERRUPTED", label: "답변 수신 중단" },
+    });
+    expect(session.messages.at(-1)?.grounding).toBeUndefined();
+    expect(session.pending).toBe(false);
+  });
+
+  it("marks actual fetch rejection as a connection failure and leaves retry under the member's control", async () => {
+    fetchMock.mockRejectedValue(new TypeError("Failed to fetch"));
+    await render();
+    await act(async () => {
+      session.setDraft("지갑 사용 방법을 알려줘");
+      await session.submit();
+    });
+    expect(session.messages.at(-1)).toMatchObject({
+      state: "error",
+      text: "",
+      failure: { code: "AI_CONNECTION_FAILED", label: "연결 실패" },
+    });
+    expect(session.messages.at(-1)?.source).toBeUndefined();
+    expect(session.messages.at(-1)?.grounding).toBeUndefined();
+    expect(session.pending).toBe(false);
+    await act(async () =>
+      expect(session.restoreQuestion(session.messages.at(-1)!.id)).toBe(true),
+    );
+    expect(session.draft).toBe("지갑 사용 방법을 알려줘");
+    expect(fetchMock).toHaveBeenCalledOnce();
+  });
+
+  it("preserves a verified done receipt if stop is pressed during reader cleanup", async () => {
+    const stream = responseStream();
+    let finishCleanup!: () => void;
+    stream.cancelled.mockImplementation(
+      () =>
+        new Promise<void>((resolve) => {
+          finishCleanup = resolve;
+        }),
+    );
+    fetchMock.mockResolvedValue(stream.response);
+    await render();
+    const { turn } = await begin("퍼뜩 이용 방법을 알려줘");
+    await act(async () => {
+      stream.send({ type: "ready", requestId, source: "static" });
+      stream.send({ type: "delta", text: "완료된 안내예요." });
+      stream.send({ type: "done", requestId, knowledgeVersion: "v1" });
+      await Promise.resolve();
+    });
+    expect(session.messages.at(-1)?.state).toBe("complete");
+    expect(session.pending).toBe(true);
+    await act(async () => session.cancel());
+    expect(session.pending).toBe(false);
+    expect(session.messages.at(-1)).toMatchObject({
+      state: "complete",
+      requestId,
+      text: "완료된 안내예요.",
+    });
+    expect(session.messages.at(-1)?.failure).toBeUndefined();
+    await act(async () => {
+      finishCleanup();
+      await turn;
+    });
+    expect(session.messages.at(-1)?.state).toBe("complete");
+  });
+
+  it("shows actual static fallback with no fake provider or account grounding", async () => {
+    fetchMock.mockResolvedValue(immediateAnswer("static").response);
+    await render("member-a", 1, false);
+    await act(async () => {
+      session.setDraft("퍼뜩 이용 안내를 알려줘");
+      await session.submit();
+    });
+    expect(host.textContent).toContain("일반 질문은 답변이 제한돼요");
+    expect(host.textContent).toContain("퍼뜩 안내");
+    expect(host.textContent).not.toContain("AI 도움말");
+    expect(host.querySelector("time")).toBeNull();
+    expect(session.messages.at(-1)?.source).toBe("static");
+    expect(host.querySelector(".ai-message__thinking")).toBeNull();
+  });
+
+  it("labels owned tool failure correctly and restores the failed question from the recovery button", async () => {
+    const stream = responseStream();
+    stream.send({ type: "ready", requestId, source: "tool" });
+    stream.send({
+      type: "error",
+      code: "AI_TOOL_UNAVAILABLE",
+      message: "확인되지 않은 금액은 안내하지 않아요.",
+    });
+    stream.close();
+    fetchMock.mockResolvedValue(stream.response);
+    await render();
+    await act(async () => {
+      session.setDraft("오늘 채굴 보상 얼마야?");
+      await session.submit();
+    });
+    expect(host.textContent).toContain("상태 확인 실패");
+    expect(host.textContent).not.toContain("연결 실패");
+    const recovery = Array.from(host.querySelectorAll("button")).find(
+      (button) => button.textContent === "다시 질문하기",
+    )!;
+    await act(async () => recovery.click());
+    expect(host.querySelector("textarea")?.value).toBe(
+      "오늘 채굴 보상 얼마야?",
+    );
+    expect(document.activeElement).toBe(host.querySelector("textarea"));
+    expect(fetchMock).toHaveBeenCalledOnce();
+  });
+
+  it("uses fresh path/query on submit, never the previous selected event or owner identity", async () => {
+    fetchMock.mockImplementation(() =>
+      Promise.resolve(immediateAnswer().response),
+    );
+    navigation.pathname = "/events/member-event";
+    navigation.search =
+      "selectedEvent=1fe5c6bf-1b1e-49b4-a8bd-c0ab925ac7ee&token=secret";
+    await render();
+    await act(async () => session.setDraft("여기서는 무엇을 할 수 있어?"));
+    await act(async () =>
+      host
+        .querySelector("form")!
+        .dispatchEvent(
+          new Event("submit", { bubbles: true, cancelable: true }),
+        ),
+    );
+    navigation.pathname = "/wallet/withdraw";
+    navigation.search =
+      "selectedTransaction=98334dc6-3cad-40de-865e-c5824b1c405b&bankAccount=secret";
+    await render();
+    await act(async () => session.setDraft("이 화면은 어떻게 쓰나요?"));
+    await act(async () =>
+      host
+        .querySelector("form")!
+        .dispatchEvent(
+          new Event("submit", { bubbles: true, cancelable: true }),
+        ),
+    );
+    const bodies = fetchMock.mock.calls.map(
+      (call) => JSON.parse((call[1] as RequestInit).body as string) as object,
+    );
+    expect(bodies[0]).toMatchObject({
+      screenContext: {
+        currentRoute: "/events",
+        selectedEvent: "1fe5c6bf-1b1e-49b4-a8bd-c0ab925ac7ee",
+      },
+    });
+    expect(bodies[1]).toMatchObject({
+      screenContext: {
+        currentRoute: "/wallet/withdraw",
+        selectedTransaction: "98334dc6-3cad-40de-865e-c5824b1c405b",
+      },
+    });
+    expect(JSON.stringify(bodies[1])).not.toMatch(
+      /selectedEvent|member-event|member-a|bankAccount|secret/,
+    );
+    expect(Object.keys(bodies[1]!)).toEqual([
+      "clientMessageId",
+      "question",
+      "screenContext",
+    ]);
+  });
+
+  it("uses unique labelled composers for shared presentations and announces status rather than each token", async () => {
+    await render("member-a", 2);
+    const composers = Array.from(host.querySelectorAll("textarea"));
+    expect(composers).toHaveLength(2);
+    expect(new Set(composers.map((composer) => composer.id)).size).toBe(2);
+    for (const composer of composers)
+      expect(
+        Array.from(host.querySelectorAll("label")).some(
+          (label) => label.htmlFor === composer.id,
+        ),
+      ).toBe(true);
+    expect(host.querySelector('[role="log"]')?.getAttribute("aria-live")).toBe(
+      "off",
+    );
+    expect(
+      host.querySelector('[role="status"]')?.getAttribute("aria-live"),
+    ).toBe("polite");
+    await act(async () => session.setDraft("공유되는 한 개 초안"));
+    expect(composers.map((composer) => composer.value)).toEqual([
+      "공유되는 한 개 초안",
+      "공유되는 한 개 초안",
+    ]);
+  });
+
+  it.each([
+    { code: "UNAUTHENTICATED", status: 401, label: "로그인 필요" },
+    { code: "AI_RATE_LIMITED", status: 429, label: "요청 제한" },
+    { code: "AI_PROVIDER_UNAVAILABLE", status: 503, label: "AI 응답 불가" },
+  ])(
+    "keeps $code distinct from a fabricated tool result",
+    async ({ code, status, label }) => {
+      fetchMock.mockResolvedValue(
+        new Response(
+          JSON.stringify({ error: { code, message: "다시 확인해 주세요." } }),
+          { status, headers: { "Content-Type": "application/json" } },
+        ),
+      );
+      await render();
+      await act(async () => {
+        session.setDraft("확인할 내용을 질문해요");
+        await session.submit();
+      });
+      expect(session.messages.at(-1)).toMatchObject({
+        state: "error",
+        failure: { code, label },
+      });
+      expect(session.messages.at(-1)?.source).toBeUndefined();
+      expect(session.messages.at(-1)?.grounding).toBeUndefined();
+    },
+  );
+});

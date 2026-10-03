@@ -42,6 +42,15 @@ Playwright의 reporter 환경 변수는 출력 reporter를 사용할 때만 적�
 
 D드라이브는 FAT32이므로 단일 파일 약 4GiB 제한이 있다. Docker DB 이미지나 대형 단일 archive 저장 경로로 사용하지 않는다. 드라이브 포맷이나 Docker 전역 저장 위치를 변경하지 않는다.
 
-Next.js의 빌드 디렉터리는 기존 `.next`를 유지한다. 설치된 Next.js 문서는 distDir이 project directory를 벗어나면 안 된다고 명시한다. 따라서 D드라이브를 사용했다는 이유로 빌드·DB 저장 공간 문제가 모두 해결됐다고 판단하지 않는다. 무거운 로컬 작업 전에 C드라이브의 실제 여유와 해당 작업의 예상 소모를 다시 확인한다.
+Next.js와 CI의 기본 빌드 디렉터리는 `.next`다. 기존 디렉터리가 외부 경로의
+junction/symlink라면 `NEXT_BUILD_OUTPUT_LINK_FORBIDDEN`으로 중단한다. 과거 캐시를
+읽거나 옮기거나 삭제하지 않는다. 로컬 새 빌드는 실행 범위 환경 변수
+`PUTDUK_NEXT_DIST_DIR=.next-qa-<run-id>`로 저장소 안의 새 디렉터리를 선택할 수 있다.
+회원·관리자 build/start와 bundle 검사가 동일 값을 사용하며 CI 기본 artifact
+경로는 바뀌지 않는다. 허용된 두 앱 디렉터리 밖, 경로 이탈, 기존 연결은 거절한다.
+검사 후 Next가 자동 생성한 설정은 실행 전 bytes로 복원하고 보호 변경을 stage하지 않는다.
+설치된 Next.js 문서는 distDir이 project directory를 벗어나면 안 된다고 명시한다.
+D드라이브를 사용했다는 이유로 빌드·DB 저장 공간 문제가 모두 해결됐다고 판단하지 않는다.
+무거운 로컬 작업 전에 C드라이브의 실제 여유와 예상 소모를 다시 확인한다.
 
 실행기는 기존 파일 삭제, 소스 이동, DB reset, Docker 변경, GitHub push/merge, 원격 Supabase/Cloudflare 변경을 수행하지 않는다. 해당 기능을 추가하는 경우에도 별도 권한·격리·검증 경계를 유지해야 한다.

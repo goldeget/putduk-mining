@@ -4,6 +4,7 @@ import {
   type AiClientStreamEvent,
   aiChatRequestSchema,
 } from "@/domain/ai/chat";
+import { matchesAiPresentationOwner } from "@/domain/ai/presentation-owner";
 import { readAiCache, writeAiCache } from "@/lib/ai/cache";
 import { extractSseData, parseOpenAiSseData } from "@/lib/ai/openai-stream";
 import { planAiTurn } from "@/lib/ai/orchestrator";
@@ -89,6 +90,14 @@ export async function POST(request: Request) {
     });
   }
   const userId = identity.userId;
+
+  if (!matchesAiPresentationOwner(request.headers, userId)) {
+    return apiError({
+      code: "AI_SESSION_CHANGED",
+      message: "로그인 상태가 바뀌었어요. 다시 확인해 주세요.",
+      status: 409,
+    });
+  }
 
   let env: ReturnType<typeof getServerEnv>;
   try {

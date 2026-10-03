@@ -11,6 +11,7 @@ export const config = {
     "/home/:path*",
     "/start/:path*",
     "/mining/:path*",
+    "/products/:path*",
     "/wallet/:path*",
     "/events/:path*",
     "/notifications/:path*",

@@ -77,12 +77,13 @@ async function expectNoHorizontalOverflow(page: Page) {
 
 async function shoot(page: Page, fileName: string) {
   await waitForHydratedControls(page);
-  mkdirSync(OUTPUT_DIR, { recursive: true });
+  const projectOutput = path.join(OUTPUT_DIR, test.info().project.name);
+  mkdirSync(projectOutput, { recursive: true });
   await page.screenshot({
     animations: "disabled",
     caret: "initial",
     fullPage: true,
-    path: path.join(OUTPUT_DIR, fileName),
+    path: path.join(projectOutput, fileName),
   });
 }
 
@@ -142,6 +143,16 @@ test("menu hub, account, and settings cover states and navigation", async ({
   await expectKoreanSafe(page);
 
   const menuNav = page.getByRole("navigation", { name: "내 퍼뜩 메뉴" });
+  const primaryNavigation = page.locator("nav.product-navigation:visible");
+  await expect(primaryNavigation).toHaveCount(1);
+  await expect(primaryNavigation.getByRole("link")).toHaveText([
+    "홈",
+    "채굴",
+    "상품",
+    "지갑",
+    "더보기",
+  ]);
+  await expect(menuNav.getByRole("link", { name: /이벤트/ })).toBeVisible();
   const headerNotificationLink = page
     .locator("header.product-header")
     .getByRole("link", { name: "알림 센터", exact: true });

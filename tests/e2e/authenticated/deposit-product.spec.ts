@@ -522,9 +522,15 @@ test("covers deposit layout, theme, focus, and reduced motion", async ({
             );
             await expect(navigation).toBeVisible();
             await expect(
-              navigation.getByRole("link", { name: "자산" }),
+              navigation.getByRole("link", { name: "지갑" }),
             ).toHaveAttribute("aria-current", "page");
-            const launcher = page.locator("#putduk-support-launcher");
+            await expect(page.locator("#putduk-support-launcher")).toHaveCount(
+              0,
+            );
+            const launcher = page.getByRole("button", {
+              name: "AI 도움",
+              exact: true,
+            });
             await expect(launcher).toBeVisible();
             const launcherBox = await launcher.boundingBox();
             const navigationBox = await navigation.boundingBox();

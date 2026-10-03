@@ -5,10 +5,12 @@
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
+import { resolveNextDistDir } from "./resolve-next-dist-dir.mjs";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
-const adminBuild = join(root, "apps", "admin", ".next");
-const publicClient = join(root, ".next", "static");
+const adminRoot = join(root, "apps", "admin");
+const adminBuild = join(adminRoot, resolveNextDistDir(adminRoot));
+const publicClient = join(root, resolveNextDistDir(root), "static");
 
 const adminForbidden = [
   "@channel.io",

@@ -7,6 +7,54 @@ const EVENT_ID = "1fe5c6bf-1b1e-49b4-a8bd-c0ab925ac7ee";
 const TRANSACTION_ID = "98334dc6-3cad-40de-865e-c5824b1c405b";
 
 describe("PUTDUK AI client screen context", () => {
+  it.each(["/products", "/menu/account"])(
+    "includes a known app route without widening arbitrary prefixes: %s",
+    (pathname) => {
+      expect(buildPutdukAiScreenContext({ pathname })).toEqual({
+        currentRoute: pathname,
+      });
+    },
+  );
+
+  it("normalizes an event detail to its safe route without exposing the slug", () => {
+    expect(
+      buildPutdukAiScreenContext({
+        pathname: "/events/member-campaign",
+        explicitContext: { selectedEvent: EVENT_ID },
+      }),
+    ).toEqual({ currentRoute: "/events", selectedEvent: EVENT_ID });
+  });
+
+  it.each([
+    "/products/private",
+    "/events/one/two",
+    "/events/%2Fsecret",
+    "/events/one?token=secret",
+  ])(
+    "does not turn an unknown path into approved screen context: %s",
+    (pathname) =>
+      expect(buildPutdukAiScreenContext({ pathname })).toBeUndefined(),
+  );
+
+  it("uses new route query hints without retaining a previous screen selection", () => {
+    const previous = buildPutdukAiScreenContext({
+      pathname: "/events/one",
+      searchParams: new URLSearchParams({ selectedEvent: EVENT_ID }),
+    });
+    expect(previous?.selectedEvent).toBe(EVENT_ID);
+    expect(
+      buildPutdukAiScreenContext({
+        pathname: "/wallet/withdraw",
+        searchParams: new URLSearchParams({
+          selectedTransaction: TRANSACTION_ID,
+        }),
+      }),
+    ).toEqual({
+      currentRoute: "/wallet/withdraw",
+      selectedTransaction: TRANSACTION_ID,
+    });
+  });
+
   it("keeps only the approved route and explicitly allowlisted query fields", () => {
     const searchParams = new URLSearchParams({
       currentProduct: PRODUCT_ID,
