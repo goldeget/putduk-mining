@@ -6,7 +6,10 @@ import {
   usableOperatorDraft,
   type UsdtOperatorDraft,
 } from "@/lib/assistant/draft";
-import { createAdminBrowserClient } from "@/lib/supabase/browser";
+import {
+  createAdminBrowserClient,
+  type AdminPublicBrowserConfig,
+} from "@/lib/supabase/browser";
 
 type DraftContext = {
   draft: UsdtOperatorDraft | null;
@@ -22,9 +25,11 @@ const Context = createContext<DraftContext | null>(null);
 export function OperatorDraftProvider({
   children,
   userId,
+  publicConfig,
 }: {
   children?: React.ReactNode;
   userId: string;
+  publicConfig: AdminPublicBrowserConfig;
 }) {
   const [draft, setDraft] = useState<UsdtOperatorDraft | null>(null);
   const [epoch, setEpoch] = useState(0);
@@ -54,19 +59,19 @@ export function OperatorDraftProvider({
     window.addEventListener("pagehide", invalidate);
     let unsubscribe: (() => void) | undefined;
     try {
-      const subscription = createAdminBrowserClient().auth.onAuthStateChange(
-        (event, session) => {
-          if (
-            event === "SIGNED_OUT" ||
-            event === "USER_UPDATED" ||
-            (event === "SIGNED_IN" && session?.user.id !== userId)
-          ) {
-            ownerActive.current = false;
-            invalidate();
-            setClearedReason("SESSION");
-          }
-        },
-      );
+      const subscription = createAdminBrowserClient(
+        publicConfig,
+      ).auth.onAuthStateChange((event, session) => {
+        if (
+          event === "SIGNED_OUT" ||
+          event === "USER_UPDATED" ||
+          (event === "SIGNED_IN" && session?.user.id !== userId)
+        ) {
+          ownerActive.current = false;
+          invalidate();
+          setClearedReason("SESSION");
+        }
+      });
       unsubscribe = () => subscription.data.subscription.unsubscribe();
     } catch {
       ownerActive.current = false;
@@ -85,7 +90,7 @@ export function OperatorDraftProvider({
       window.removeEventListener("offline", invalidate);
       window.removeEventListener("pagehide", invalidate);
     };
-  }, [userId]);
+  }, [userId, publicConfig]);
 
   useEffect(() => {
     if (!draft) return;

@@ -38,7 +38,11 @@ test("real admin session prepares a USDT draft without approval or a money write
   });
   expect(fixtureError).toBeNull();
   const url = `${ADMIN_ORIGIN}/api/v1/admin/assistant/prepare`;
-  const headers = { origin: ADMIN_ORIGIN };
+  // APIRequestContext must preserve the device bound to the actual admin session.
+  const headers = {
+    origin: ADMIN_ORIGIN,
+    "user-agent": await page.evaluate(() => navigator.userAgent),
+  };
   const pending = { task: "usdt-deposit-pending" };
   const deniedOrigin = await page.request.post(url, { data: pending });
   expect(deniedOrigin.status()).toBe(403);
@@ -93,6 +97,9 @@ test("real admin session prepares a USDT draft without approval or a money write
     "data-ui-state",
     "loaded",
   );
+  await expect(
+    page.getByText("운영 세션이 바뀌었습니다. 운영 화면을 다시 열어 주세요."),
+  ).toHaveCount(0);
   await page
     .getByRole("button", { name: "입금 대기 확인", exact: true })
     .click();
