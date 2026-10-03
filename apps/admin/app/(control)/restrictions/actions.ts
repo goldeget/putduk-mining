@@ -8,6 +8,7 @@ import {
   type CommandActionResult,
 } from "@/app/(control)/_lib/command-gate";
 import { ADMIN_COMMAND_FAMILIES } from "@/lib/auth/command-families";
+import { declaredClientOffline } from "@/lib/money/logical-operation";
 import { createAdminServiceClient } from "@/lib/supabase/service";
 
 import {
@@ -21,14 +22,14 @@ export async function setSafeModeAction(
   _prev: CommandActionResult | null,
   formData: FormData,
 ): Promise<CommandActionResult> {
-  // 역할·스텝업·세션을 먼저 검사한다. 안전 모드/플래그는 인가가 아니다.
-  const access = await requireHighImpactPrincipal(
-    ADMIN_COMMAND_FAMILIES.SAFE_MODE,
-    formData,
-    SAFE_MODE_MUTATION_ROLES,
-  );
-  if (!access.ok) return access.result;
-
+  // Pure input checks do not consume the operator's one-time confirmation.
+  if (declaredClientOffline(formData.get("clientOnline"))) {
+    return {
+      ok: false,
+      code: "OFFLINE_BLOCKED",
+      message: "연결이 끊겼습니다. 다시 연결된 뒤 직접 눌러 주세요.",
+    };
+  }
   const parsed = parseSafeModeFormInput({
     component: formData.get("component"),
     pause: formData.get("pause"),
@@ -43,6 +44,14 @@ export async function setSafeModeAction(
       message: parsed.message,
     };
   }
+
+  // A valid input never replaces current role, AAL2, session, origin or step-up.
+  const access = await requireHighImpactPrincipal(
+    ADMIN_COMMAND_FAMILIES.SAFE_MODE,
+    formData,
+    SAFE_MODE_MUTATION_ROLES,
+  );
+  if (!access.ok) return access.result;
 
   const isPaused = parsed.data.pause === "true";
   const db = createAdminServiceClient();

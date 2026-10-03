@@ -119,7 +119,7 @@ test.describe("admin restrictions · safe mode", () => {
     const card = adminPage.locator("article.queue-card", {
       has: adminPage.locator('input[name="component"][value="NOTIFICATION"]'),
     });
-    const applyForm = card.locator('form[aria-label="NOTIFICATION 안전 모드"]');
+    const applyForm = card.getByRole("form", { name: "알림 안전 모드" });
     await expect(
       applyForm.getByRole("button", { name: "안전 모드 적용" }),
     ).toBeVisible();
@@ -138,6 +138,25 @@ test.describe("admin restrictions · safe mode", () => {
     expect(stillBefore?.is_paused ?? false).toBe(false);
 
     await confirmOperatorStepUp(applyForm, secret);
+    // Bypass the client change event to exercise the server's input boundary:
+    // an invalid date must not spend a valid one-time grant.
+    const reviewTime = applyForm.getByLabel("검토 시각(한국 시간, 선택)");
+    await reviewTime.evaluate((field: HTMLInputElement) => {
+      field.value = "2000-01-01T00:00";
+    });
+    await applyForm.getByRole("button", { name: "안전 모드 적용" }).click();
+    await expect(applyForm.getByRole("status")).toContainText(
+      "검토 시각은 지금보다 이후여야 합니다",
+    );
+    expect((await readSafeMode("NOTIFICATION"))?.is_paused ?? false).toBe(
+      false,
+    );
+    expect(await readConsumedStepUpFamilies(admin.userId)).not.toContain(
+      "SAFE_MODE",
+    );
+    await reviewTime.evaluate((field: HTMLInputElement) => {
+      field.value = "";
+    });
     await applyForm.getByRole("button", { name: "안전 모드 적용" }).click();
     await expect(applyForm.getByRole("status")).toContainText(
       "알림 기능을 잠시 멈췄습니다",

@@ -1,8 +1,12 @@
 "use client";
 
-import { useActionState, useId } from "react";
+import { useActionState, useId, useState } from "react";
 
 import type { CommandActionResult } from "@/app/(control)/_lib/command-gate";
+import {
+  bindMoneyFormSubmit,
+  MoneyOfflineNote,
+} from "@/components/money-operation-form";
 import {
   ConfirmCheckbox,
   ReasonField,
@@ -13,7 +17,7 @@ import { StepUpTokenField } from "@/components/step-up-token-field";
 import { ADMIN_COMMAND_FAMILIES } from "@/lib/auth/command-families";
 
 import { setSafeModeAction } from "./actions";
-import type { SafeModeComponent } from "./safe-mode-policy";
+import { COMPONENT_LABEL, type SafeModeComponent } from "./safe-mode-policy";
 
 export function SafeModeForm({
   component,
@@ -25,6 +29,8 @@ export function SafeModeForm({
   canMutate: boolean;
 }) {
   const formId = useId();
+  const [reviewRevision, setReviewRevision] = useState(0);
+  const [offlineNote, setOfflineNote] = useState<string | null>(null);
   const [result, action] = useActionState<CommandActionResult | null, FormData>(
     setSafeModeAction,
     null,
@@ -43,12 +49,23 @@ export function SafeModeForm({
   return (
     <form
       action={action}
-      aria-label={`${component} 안전 모드`}
+      aria-label={`${COMPONENT_LABEL[component]} 안전 모드`}
       className="operator-form"
       onReset={(event) => event.preventDefault()}
+      onSubmit={(event) => bindMoneyFormSubmit(event, setOfflineNote)}
+      onChange={(event) => {
+        const field = event.target;
+        if (
+          (field instanceof HTMLInputElement ||
+            field instanceof HTMLTextAreaElement) &&
+          (field.name === "reason" || field.name === "reviewAt")
+        )
+          setReviewRevision((value) => value + 1);
+      }}
     >
       <input name="component" type="hidden" value={component} />
       <input name="pause" type="hidden" value={nextPause} />
+      <input name="clientOnline" type="hidden" defaultValue="1" />
       <ReasonField
         label="확인 사유"
         placeholder="왜 멈추거나 푸는지 짧게 적어 주세요."
@@ -65,6 +82,7 @@ export function SafeModeForm({
         </span>
       </label>
       <ConfirmCheckbox
+        key={`confirm-${nextPause}-${reviewRevision}`}
         label={
           currentlyPaused
             ? "제한을 해제합니다. 결과를 감사 기록에 남깁니다."
@@ -73,13 +91,17 @@ export function SafeModeForm({
         name="confirmation"
         value="SAFE_MODE"
       />
-      <StepUpTokenField commandFamily={ADMIN_COMMAND_FAMILIES.SAFE_MODE} />
+      <StepUpTokenField
+        key={`step-up-${nextPause}-${reviewRevision}`}
+        commandFamily={ADMIN_COMMAND_FAMILIES.SAFE_MODE}
+      />
       <SubmitButton
         pendingLabel="저장 중…"
         variant={currentlyPaused ? "gold" : "danger"}
       >
         {currentlyPaused ? "제한 해제" : "안전 모드 적용"}
       </SubmitButton>
+      <MoneyOfflineNote message={offlineNote} />
       <QueueFlash result={result} />
       {result && !result.ok ? (
         <p className="panel-note">
