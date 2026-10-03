@@ -65,6 +65,6 @@ canonical Visual Lab, 시각·자산·테마·모션 문서를 따른다. 여섯
 
 현재는 계약과 기존 실행 경계가 있다. 운영 도우미의 실제 화면·조회·초안·공통 등록·권한 회귀·제품 증거를 구현하기 전까지 V1 완료로 세지 않는다.
 
-2026-10-03 소스 조사에서 `setSafeModeAction`의 상태 upsert와 감사 insert가 별도 요청임을 확인했다. 해당 기능은 원자적 명령·안전한 재시도와 입력 검증 후 작업 확인 소비가 보완되기 전까지 도우미의 실행 준비 완료 항목으로 등록하지 않는다. `requireHighImpactPrincipal`의 전용 origin 검증도 API 경계와 함께 확인해야 한다. 실제 채굴의 `calculateSettlement`는 현재 단위 검사에서만 호출되며 기존 `record_mining_settlement`와 승인된 규칙을 사용한 서버 실행 연결은 별도 검증 대상이다. 이 관찰을 공통 명령 구현 완료로 확대하지 않는다.
+2026-10-03 소스 조사에서 `setSafeModeAction`의 상태 upsert와 감사 insert가 별도 요청임을 확인했다. 해당 기능은 원자적 명령·안전한 재시도와 입력 검증 후 작업 확인 소비가 보완되기 전까지 도우미의 실행 준비 완료 항목으로 등록하지 않는다. API와 `requireHighImpactPrincipal`은 `hasAdminCommandOrigin`으로 설정된 관리자 origin을 동일하게 비교한다. 누락·다른 origin은 identity·운영 세션·작업 확인 소비 전에 거절하며 Host/전달 Host를 신뢰해 우회하지 않는다. 현재 역할·AAL2·운영 세션·일회용 명령별 확인은 그대로 유지한다. 전체 후보 CI에서 실제 양식 동작도 확인해야 한다. 실제 채굴의 `calculateSettlement`는 현재 단위 검사에서만 호출되며 기존 `record_mining_settlement`와 승인된 규칙을 사용한 서버 실행 연결은 별도 검증 대상이다. 이 관찰을 공통 명령 구현 완료로 확대하지 않는다.
 
 필수 검사는 역할·세션·TOTP·origin 거절, 모델/입력 주입, 교차 회원·운영자 데이터 누출, 초안 변조와 오래된 상태, 예산·정책 변경, 중복 실행·동시 승인·응답 끊김, 공급자 비활성/장애, 실제 서버 영수증과 접근성·모바일/태블릿/데스크톱·테마·축소 모션·렌더 화면·Visual Lab 비교다. 화면이나 테스트 fixture 존재만으로 PRODUCT COMPLETE를 선언하지 않는다.

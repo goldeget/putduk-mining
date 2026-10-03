@@ -6,6 +6,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { adminLoginPath, safeAdminReturnPath } from "@/lib/auth/return-path";
+import { hasAdminCommandOrigin } from "@/lib/auth/request-origin";
 import {
   decideAdminAccess,
   pickHighestRole,
@@ -13,7 +14,6 @@ import {
   type AuthenticationMethod,
 } from "@/lib/auth/policy";
 import { assertAndTouchAdminAppSession } from "@/lib/auth/session-registry";
-import { getAdminEnv } from "@/lib/env";
 import { createAdminServerClient } from "@/lib/supabase/server";
 
 type TrustedClaims = {
@@ -174,8 +174,7 @@ export async function requireAdminCommand(
   | { ok: true; principal: AdminPrincipal }
   | { ok: false; status: 401 | 403; code: string }
 > {
-  const expectedOrigin = new URL(getAdminEnv().ADMIN_APP_URL).origin;
-  if (request.headers.get("origin") !== expectedOrigin) {
+  if (!hasAdminCommandOrigin(request.headers)) {
     return { ok: false, status: 403, code: "ORIGIN_DENIED" };
   }
   const identity = await getAdminIdentity();

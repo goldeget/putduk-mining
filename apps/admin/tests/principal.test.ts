@@ -156,6 +156,33 @@ describe("admin server principal boundary", () => {
     expect(mocks.assertAndTouchAdminAppSession).not.toHaveBeenCalled();
   });
 
+  it.each([
+    null,
+    "null",
+    "https://mining.putduk.com",
+    "http://admin.mining.putduk.com",
+    "https://admin.mining.putduk.com:444",
+    "https://admin.mining.putduk.com/path",
+    "https://admin.mining.putduk.com, https://mining.putduk.com",
+  ])("rejects origin %s before identity or session access", async (origin) => {
+    const requestHeaders = new Headers({
+      host: "admin.mining.putduk.com",
+      "x-forwarded-host": "admin.mining.putduk.com",
+    });
+    if (origin !== null) requestHeaders.set("origin", origin);
+    await expect(
+      requireAdminCommand(
+        new Request(`${ADMIN_ORIGIN}/api/v1/admin/deposits/approve`, {
+          method: "POST",
+          headers: requestHeaders,
+        }),
+        ["SUPER_ADMIN", "ADMIN"],
+      ),
+    ).resolves.toEqual({ ok: false, status: 403, code: "ORIGIN_DENIED" });
+    expect(mocks.createAdminServerClient).not.toHaveBeenCalled();
+    expect(mocks.assertAndTouchAdminAppSession).not.toHaveBeenCalled();
+  });
+
   it("rejects privileged operators without an app-owned admin session", async () => {
     const { client } = createAuthenticatedClient({ roles: ["ADMIN"] });
     mocks.createAdminServerClient.mockResolvedValue(client);
