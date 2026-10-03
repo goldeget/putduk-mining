@@ -410,56 +410,15 @@ begin
     'krw_conc_cleanup',
     v_conn
   );
+  -- 원장과 감사 기록은 지우지 않는다. 뒤 검사가 잡는 것은 대기 중인 아웃박스뿐이다.
   execute format(
     'select %I.dblink_exec(%L, %L)',
     v_schema,
     'krw_conc_cleanup',
     format(
-      $cleanup$
-        delete from public.outbox_events
-        where aggregate_id = %L::uuid;
-        delete from public.audit_logs
-        where target_id = %L::text;
-        delete from public.wallet_ledger
-        where reference_id = %L::uuid
-           or user_id = '0d210000-0000-4000-8000-000000000101';
-        delete from public.ledger_entries as entry
-        using public.ledger_transactions as transaction
-        where entry.transaction_id = transaction.id
-          and transaction.reference_id = %L::uuid;
-        delete from public.ledger_transactions
-        where reference_id = %L::uuid;
-        delete from public.ledger_accounts
-        where owner_user_id = '0d210000-0000-4000-8000-000000000101';
-        delete from public.deposit_requests
-        where id = %L::uuid
-           or user_id = '0d210000-0000-4000-8000-000000000101';
-        delete from public.wallet_accounts
-        where user_id = '0d210000-0000-4000-8000-000000000101';
-        delete from app_private.idempotency_keys
-        where actor_id in (
-          '0d210000-0000-4000-8000-0000000000a1',
-          '0d210000-0000-4000-8000-0000000000a2'
-        );
-        delete from public.user_roles
-        where user_id in (
-          '0d210000-0000-4000-8000-0000000000a1',
-          '0d210000-0000-4000-8000-0000000000a2',
-          '0d210000-0000-4000-8000-000000000101'
-        );
-        delete from auth.users
-        where id in (
-          '0d210000-0000-4000-8000-0000000000a1',
-          '0d210000-0000-4000-8000-0000000000a2',
-          '0d210000-0000-4000-8000-000000000101'
-        );
-      $cleanup$,
+      'delete from public.outbox_events where aggregate_id = %L::uuid and event_type = %L',
       v_deposit_id,
-      v_deposit_id,
-      v_deposit_id,
-      v_deposit_id,
-      v_deposit_id,
-      v_deposit_id
+      'DEPOSIT_CONFIRMED.v1'
     )
   );
   execute format(
