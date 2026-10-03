@@ -18,18 +18,13 @@ import {
 import { QueueFlash } from "@/components/queue-shell";
 import { StepUpTokenField } from "@/components/step-up-token-field";
 import { ADMIN_COMMAND_FAMILIES } from "@/lib/auth/command-families";
+import { formatKstDateTimeInput } from "@/lib/time/kst-input";
 
 import {
   finalizeUsdtWithdrawalLedgerAction,
   recordUsdtExternalSendAction,
   releaseUsdtWithdrawalHoldAction,
 } from "./actions";
-
-function nowLocalInputValue() {
-  const d = new Date();
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
-}
 
 export function UsdtSendForm({
   withdrawalId,
@@ -80,8 +75,8 @@ export function UsdtSendForm({
         />
       </label>
       <TextField
-        defaultValue={nowLocalInputValue()}
-        label="송금 시각"
+        defaultValue={formatKstDateTimeInput()}
+        label="송금 시각(한국 시간)"
         name="sentAt"
         type="datetime-local"
       />

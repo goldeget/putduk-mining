@@ -1,5 +1,6 @@
 .next
 .sites-work
+**/.worktrees
 **/.next
 **/.vite
 **/dist

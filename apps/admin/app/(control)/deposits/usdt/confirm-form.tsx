@@ -33,6 +33,7 @@ export function ConfirmUsdtDepositForm({ depositId }: { depositId: string }) {
     <form
       action={action}
       className="operator-form"
+      onReset={(event) => event.preventDefault()}
       onSubmit={(event) => bindMoneyFormSubmit(event, setOfflineNote)}
     >
       <input name="depositId" type="hidden" value={depositId} />

@@ -102,7 +102,7 @@ export function formatTrialRemaining(
   if (!Number.isFinite(seconds)) {
     return "확인 중";
   }
-  const whole = Math.max(0, Math.floor(seconds));
+  const whole = Math.max(0, seconds);
   if (whole === 0) {
     return "정산 대기";
   }
@@ -110,9 +110,9 @@ export function formatTrialRemaining(
     return "1분 미만";
   }
   if (whole < 3600) {
-    return `${Math.floor(whole / 60)}분 이내`;
+    return `${Math.ceil(whole / 60)}분 이내`;
   }
-  const hours = Math.floor(whole / 3600);
+  const hours = Math.ceil(whole / 3600);
   return `${hours}시간 이내`;
 }
 
