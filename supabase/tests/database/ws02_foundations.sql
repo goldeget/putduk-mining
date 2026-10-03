@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(45);
+select plan(47);
 
 select has_table('public', 'ledger_accounts', 'balanced ledger accounts exist');
 select has_table('public', 'ledger_transactions', 'balanced ledger headers exist');
@@ -317,6 +317,12 @@ select is(
   1,
   'welcome conversion emits one versioned transactional event'
 );
+select ok((select source_bucket = 'BONUS' and origin_code = 'WELCOME_REWARD' and amount_atomic = 5000
+  from public.money_source_movements where ledger_transaction_id = (select ledger_transaction_id from ws02_context)),
+  'real START conversion records BONUS provenance and never principal');
+select is((select eligible_principal_atomic from public.money_source_summaries
+  where user_id = (select user_id from ws02_context)), '0',
+  'a real welcome reward does not create eligible funding principal');
 select is(
   (
     select count(*)::integer

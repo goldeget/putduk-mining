@@ -2,10 +2,9 @@
 
 export function formatKrw(atomic: number | string | null | undefined): string {
   if (atomic === null || atomic === undefined || atomic === "") return "—";
-  const value =
-    typeof atomic === "string" ? Number.parseInt(atomic, 10) : atomic;
-  if (!Number.isFinite(value)) return "—";
-  return `${value.toLocaleString("ko-KR")}원`;
+  if (typeof atomic === "number" && !Number.isSafeInteger(atomic)) return "—";
+  if (typeof atomic === "string" && !/^-?[0-9]+$/.test(atomic)) return "—";
+  return `${BigInt(atomic).toLocaleString("ko-KR")}원`;
 }
 
 export function formatUsdt(amount: string | number | null | undefined): string {

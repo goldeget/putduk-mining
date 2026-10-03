@@ -108,7 +108,7 @@ profile에서도 유지한다. 가족별 원형 master는 서로 달라야 하�
 
 | Wave | 결과 | 현재 상태와 gate |
 | --- | --- | --- |
-| 1 | PR #45 운영 도우미·안전 모드·worker 통합 | 최종 head e9b3c32 전체 18 job/16분 55초와 실제 pixels 검토. develop 병합 5a7ba0c 완료, push CI 37111792067 별도 검증 중 |
+| 1 | PR #45 운영 도우미·안전 모드·worker 통합 | 최종 head e9b3c32 전체 18 job/16분 55초와 실제 pixels 검토. develop 병합 5a7ba0c, push CI 37111792067 success/전체 17분 16초 독립 검증 완료. scoped 기능 증거이며 PRODUCT COMPLETE는 아님 |
 | 2 | 원금 출처와 Eligible Principal | 새 실제 입금/START capture·readback·admin 후보 작성. source-aware 출금/보정은 후속 연결 필요 |
 | 3 | Tier·Entitlement·Cycle·Segment·Proration | 승인 구조 반영, 실제 transactional engine 미구현. 숫자 없는 draft/검증은 가능하며 활성화는 보류 |
 | 4 | 서버 정산·Live Snapshot | 기존 helper와 command gap 확인. 단일 권위 engine·balanced posting·lease/retry·revision 연결 필요 |

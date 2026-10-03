@@ -28,6 +28,45 @@
   margin-top: 18px;
 }
 
+.sourceStats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px 20px;
+}
+
+.sourceStats > div {
+  min-width: 0;
+  border-bottom: 1px solid var(--line);
+  padding: 12px 0;
+}
+
+.sourceStats dt {
+  color: var(--muted);
+  font-size: 0.875rem;
+  word-break: keep-all;
+}
+
+.sourceStats dd {
+  margin: 8px 0 0;
+  color: var(--ink);
+  font-size: 1.1rem;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.recordedSources {
+  border-top: 1px solid var(--line);
+  margin-top: 20px;
+  padding-top: 16px;
+  max-width: 38rem;
+}
+
+@media (max-width: 1000px) {
+  .sourceStats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 .loadingShell {
   display: grid;
   gap: 16px;
@@ -91,5 +130,11 @@
 
   .errorPanel {
     padding: 22px 16px;
+  }
+}
+
+@media (max-width: 400px) {
+  .sourceStats {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
