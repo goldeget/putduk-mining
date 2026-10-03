@@ -42,7 +42,11 @@ Cursor 규칙: `.cursor/rules/putduk-e2e-agent-verification.mdc` (`alwaysApply: 
 
 ## GitHub CI (wall-clock hybrid)
 
-**목표:** workflow wall clock **≤ 20분** (critical path = 가장 느린 job). Cursor rule: `.cursor/rules/putduk-ci-wall-clock.mdc`.
+**필수 기준:** 전체 CI 실행 **≤ 20분**. 최초 실행의 `created_at`부터 workflow 종료까지 대기·공유 빌드·후속 job·증거 저장을 모두 포함한다. 가장 느린 단일 job 시간으로 대신하지 않는다. Cursor rule: `.cursor/rules/putduk-ci-wall-clock.mdc`.
+
+`CI completeness and 20-minute budget`이 병렬로 시작해 현재 시도에서 필수 품질 job 17개를 확인한다. 18분 30초에도 남은 검사가 있으면 종료 여유를 확보하기 위해 취소하고 실패로 기록한다. 일반 취소가 응답하지 않으면 force cancel한다. 최종 workflow 종료 시간도 별도로 확인한다. 전체 재실행은 해당 시도의 시작부터 측정하고, 일부 실패 job만 재실행해 이전 시도의 성공을 합치는 방식은 완료 증거로 인정하지 않는다.
+
+네 Playwright CI 계층은 `--fail-on-flaky-tests`를 적용한다. retry는 원인 조사에 사용하지만 첫 실패 후 retry 성공은 CI 통과로 인정하지 않는다. 실제 TOTP·권한·DB 결과 검사는 유지한다.
 
 ### 공유 production build (`e2e-app-build`)
 
@@ -59,7 +63,7 @@ Cursor 규칙: `.cursor/rules/putduk-e2e-agent-verification.mdc` (`alwaysApply: 
 - shard 합집합은 로컬 `pnpm test:e2e:auth:full` 과 동일하다. CI에서는 `pnpm exec playwright test --config playwright.authenticated.config.ts --shard=i/8` 로 넘긴다 (`pnpm run … -- --shard` 는 CI에서 shard가 무시될 수 있음).
 - Playwright browser cache는 `actions/cache@v5`, key `~/.cache/ms-playwright` (workflow `ci.yml`).
 - CI authenticated config는 **`reporter: "line"`만** 쓴다. `github` reporter와 `reportSlowTests` slow warning은 Run Summary·check annotation 노이즈를 만든다. slow 상한은 `reportSlowTests: { max: 5, threshold: 480_000 }` 이며 `exactOptionalPropertyTypes` 때문에 `undefined`를 넘기지 않고 CI일 때만 spread로 병합한다 (`9cfc2ef`).
-- shard step **timeout-minutes: 75** / job 90m — TOTP 스펙 때문에 줄이지 않는다. wall time은 prebuilt + next start로 확보한다.
+- shard job 한도는 **19분**, 실행 step 한도는 **18분**이며 전체 감시기는 대기·빌드 시간을 포함한 더 이른 마감도 적용한다. 실제 TOTP 대기, 개별 테스트 시간, assertion, retry는 유지한다. 시간 초과·취소는 실패이며 일부 검사를 통과로 바꿀 수 없다. 속도는 prebuilt + next start + 8-way 병렬 실행으로 확보한다.
 
 ### typography-protected
 
@@ -72,6 +76,7 @@ Cursor 규칙: `.cursor/rules/putduk-e2e-agent-verification.mdc` (`alwaysApply: 
 e2e-app-build ─┬─► authenticated (×8, needs webserver-lifecycle)
                └─► typography-protected
 (parallel) application, database, browser, worker, typography-public, …
+(parallel) ci-budget ─► 전체 job 완료·시간 판정 / 미완료 시 취소
 ```
 
 ### PR #39 검증 run 증거 (review/pr38-cde4b203)

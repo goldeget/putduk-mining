@@ -9,6 +9,7 @@ import { createAdminServiceClient } from "@/lib/supabase/service";
 
 import { kycRiskLabel, kycStatusLabel } from "./labels";
 import { KycReviewForm } from "./review-form";
+import { KycReviewFeedback } from "./review-feedback";
 
 type KycQueueRow = {
   id: string;
@@ -98,80 +99,82 @@ export default async function KycQueuePage() {
         </div>
       ) : null}
 
-      {!error && rows.length === 0 ? (
-        <EmptyQueue
-          body="지금 검토할 본인 확인 건이 없습니다."
-          title="대기 건 없음"
-        />
-      ) : null}
+      <KycReviewFeedback>
+        {!error && rows.length === 0 ? (
+          <EmptyQueue
+            body="지금 검토할 본인 확인 건이 없습니다."
+            title="대기 건 없음"
+          />
+        ) : null}
 
-      <section className="queue-list" aria-label="본인 확인 대기">
-        {(error ? [] : rows).map((row) => {
-          const submissionCount = countSubmissions(
-            submissionByCase.get(row.id),
-          );
-          return (
-            <QueueCard
-              key={row.id}
-              tone={row.risk_level === "HIGH" ? "caution" : "default"}
-            >
-              <header className="queue-card__head">
-                <div>
-                  <p className="eyebrow">본인 확인 · {shortId(row.id)}</p>
-                  <h2>{kycStatusLabel(row.status)}</h2>
-                </div>
-                <span className="risk-chip">
-                  {kycRiskLabel(row.risk_level)}
-                </span>
-              </header>
-              <dl className="evidence-grid">
-                <div>
-                  <dt>접수</dt>
-                  <dd>
-                    <time dateTime={row.opened_at}>
-                      {formatKst(row.opened_at)}
-                    </time>
-                  </dd>
-                </div>
-                <div>
-                  <dt>회원</dt>
-                  <dd>
-                    <Link
-                      className="text-link"
-                      href={`/members?id=${row.user_id}` as Route}
-                    >
-                      {shortId(row.user_id)}
-                    </Link>
-                  </dd>
-                </div>
-                <div>
-                  <dt>제출 서류</dt>
-                  <dd>
-                    {submissionsUnavailable
-                      ? "확인 불가"
-                      : submissionCount === 0
-                        ? "없음"
-                        : `${submissionCount}건 (원문 비공개)`}
-                  </dd>
-                </div>
-                {row.decision_reason ? (
+        <section className="queue-list" aria-label="본인 확인 대기">
+          {(error ? [] : rows).map((row) => {
+            const submissionCount = countSubmissions(
+              submissionByCase.get(row.id),
+            );
+            return (
+              <QueueCard
+                key={row.id}
+                tone={row.risk_level === "HIGH" ? "caution" : "default"}
+              >
+                <header className="queue-card__head">
                   <div>
-                    <dt>최근 사유</dt>
-                    <dd>{row.decision_reason}</dd>
+                    <p className="eyebrow">본인 확인 · {shortId(row.id)}</p>
+                    <h2>{kycStatusLabel(row.status)}</h2>
                   </div>
-                ) : null}
-              </dl>
-              <p className="panel-note">
-                원문·저장 경로·해시·식별 번호는 표시하지 않습니다.
-              </p>
-              <KycReviewForm
-                caseId={row.id}
-                evidenceAvailable={!submissionsUnavailable}
-              />
-            </QueueCard>
-          );
-        })}
-      </section>
+                  <span className="risk-chip">
+                    {kycRiskLabel(row.risk_level)}
+                  </span>
+                </header>
+                <dl className="evidence-grid">
+                  <div>
+                    <dt>접수</dt>
+                    <dd>
+                      <time dateTime={row.opened_at}>
+                        {formatKst(row.opened_at)}
+                      </time>
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>회원</dt>
+                    <dd>
+                      <Link
+                        className="text-link"
+                        href={`/members?id=${row.user_id}` as Route}
+                      >
+                        {shortId(row.user_id)}
+                      </Link>
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>제출 서류</dt>
+                    <dd>
+                      {submissionsUnavailable
+                        ? "확인 불가"
+                        : submissionCount === 0
+                          ? "없음"
+                          : `${submissionCount}건 (원문 비공개)`}
+                    </dd>
+                  </div>
+                  {row.decision_reason ? (
+                    <div>
+                      <dt>최근 사유</dt>
+                      <dd>{row.decision_reason}</dd>
+                    </div>
+                  ) : null}
+                </dl>
+                <p className="panel-note">
+                  원문·저장 경로·해시·식별 번호는 표시하지 않습니다.
+                </p>
+                <KycReviewForm
+                  caseId={row.id}
+                  evidenceAvailable={!submissionsUnavailable}
+                />
+              </QueueCard>
+            );
+          })}
+        </section>
+      </KycReviewFeedback>
     </div>
   );
 }

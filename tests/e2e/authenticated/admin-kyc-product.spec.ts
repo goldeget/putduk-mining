@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 
 import { createConfirmedMember } from "../fixtures/local-auth";
 import { completeAdminLoginWithTotp } from "./helpers/admin-totp";
@@ -31,6 +31,7 @@ async function fillKycReview(
 async function submitKycWithStepUp(
   form: ReturnType<typeof kycReviewForm>,
   secret: string,
+  page: Page,
 ) {
   // 출금 E2E와 동일: 이미 채워진 폼에 step-up만 한 뒤 바로 제출한다.
   await confirmOperatorStepUp(form, secret);
@@ -39,10 +40,12 @@ async function submitKycWithStepUp(
     .toMatch(/^.{16,}$/);
   await expect(form.getByRole("checkbox")).toBeChecked();
   await form.getByRole("button", { name: "검토 결과 저장" }).click();
-  await expect(form.getByRole("status")).toContainText(
-    "본인 확인 검토 결과를 저장했습니다",
-    { timeout: 30_000 },
-  );
+  await expect(
+    page.getByRole("status", { name: "본인 확인 검토 결과" }),
+  ).toContainText("본인 확인 검토 결과를 저장했습니다", { timeout: 30_000 });
+  await expect(
+    page.getByRole("status", { name: "본인 확인 검토 결과" }),
+  ).toBeInViewport();
 }
 
 test.describe("admin KYC product queue", () => {
@@ -147,14 +150,20 @@ test.describe("admin KYC product queue", () => {
       )
       .toMatch(/^.{16,}$/);
     await approveForm.getByRole("button", { name: "검토 결과 저장" }).click();
-    await expect(approveForm.getByRole("status")).toContainText(
-      "본인 확인 검토 결과를 저장했습니다",
-      { timeout: 30_000 },
-    );
+    await expect(
+      page.getByRole("status", { name: "본인 확인 검토 결과" }),
+    ).toContainText("본인 확인 검토 결과를 저장했습니다", { timeout: 30_000 });
+    await expect(
+      page.getByRole("status", { name: "본인 확인 검토 결과" }),
+    ).toBeInViewport();
+    await expect(kycCard(page, approve.caseId)).toHaveCount(0);
     const approved = await readKycCase(approve.caseId);
     expect(approved.status).toBe("APPROVED");
     expect(approved.decision_reason).toContain("승인합니다");
     expect(approved.reviewed_by).toBe(operator.userId);
+    await page.screenshot({
+      path: test.info().outputPath("kyc-review-approved.png"),
+    });
 
     await openKycQueue(page);
     const rejectForm = kycReviewForm(kycCard(page, reject.caseId));
@@ -163,10 +172,14 @@ test.describe("admin KYC product queue", () => {
       "REJECTED",
       "제출 내용이 부족해 반려합니다. 재신청이 필요합니다.",
     );
-    await submitKycWithStepUp(rejectForm, secret);
+    await submitKycWithStepUp(rejectForm, secret, page);
+    await expect(kycCard(page, reject.caseId)).toHaveCount(0);
     const rejected = await readKycCase(reject.caseId);
     expect(rejected.status).toBe("REJECTED");
     expect(rejected.decision_reason).toContain("반려합니다");
+    await page.screenshot({
+      path: test.info().outputPath("kyc-review-rejected.png"),
+    });
   });
 
   test("rejects a step-up token bound to the wrong command family", async ({

@@ -9,6 +9,7 @@ import { StepUpTokenField } from "@/components/step-up-token-field";
 import { ADMIN_COMMAND_FAMILIES } from "@/lib/auth/command-families";
 
 import { reviewKycCaseFromFields } from "./actions";
+import { useKycReviewFeedback } from "./review-feedback";
 
 const DECISIONS = [
   { value: "IN_REVIEW", label: "검토 중으로 유지" },
@@ -34,6 +35,7 @@ export function KycReviewForm({
   const [decision, setDecision] = useState<string>("IN_REVIEW");
   const [result, setResult] = useState<CommandActionResult | null>(null);
   const [pending, startTransition] = useTransition();
+  const publishFeedback = useKycReviewFeedback();
 
   function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -42,6 +44,7 @@ export function KycReviewForm({
     const fromRef = stepUpTokenRef.current.trim();
     const fromDom = String(formData.get("stepUpToken") ?? "").trim();
     const stepUpToken = fromRef.length >= 16 ? fromRef : fromDom;
+    publishFeedback?.(null);
     startTransition(async () => {
       const next = await reviewKycCaseFromFields({
         caseId,
@@ -50,6 +53,7 @@ export function KycReviewForm({
         confirmation: String(formData.get("confirmation") ?? ""),
         stepUpToken,
       });
+      if (next.ok) publishFeedback?.(next);
       setResult(next);
     });
   }
@@ -118,7 +122,7 @@ export function KycReviewForm({
           {pending ? "저장 중…" : "검토 결과 저장"}
         </button>
       </fieldset>
-      <QueueFlash result={result} />
+      <QueueFlash result={result?.ok && publishFeedback ? null : result} />
     </form>
   );
 }

@@ -15,6 +15,44 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  ci-budget:
+    name: CI completeness and 20-minute budget
+    # Keep the controller alive during ordinary cancellation long enough to
+    # verify shutdown. Its loop and job timeout are both bounded.
+    if: always()
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      actions: write
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Canonicalize the approved checkout origin
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = "goldeget/putduk-mining"
+          checkout_origin="$(git remote get-url origin)"
+          case "$checkout_origin" in
+            https://github.com/goldeget/putduk-mining|https://github.com/goldeget/putduk-mining.git) ;;
+            *) echo "BLOCKED_TARGET_SCOPE: checkout origin mismatch" >&2; exit 1 ;;
+          esac
+          git remote set-url origin https://github.com/goldeget/putduk-mining.git
+
+      - name: Install Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+
+      - name: Enforce whole-workflow time and complete quality gates
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CI_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: node scripts/ci-wall-clock.mjs
+
   # PR 변경분만 검사한다. 작업 트리 전체 포맷이나 브랜치 이름은 쓰지 않는다.
   diff-integrity:
     name: Exact diff integrity
@@ -164,7 +202,7 @@ jobs:
         run: pnpm exec playwright install --with-deps chromium
 
       - name: Run browser tests
-        run: pnpm test:e2e
+        run: pnpm exec playwright test --config playwright.config.ts --fail-on-flaky-tests
 
   # Authenticated suite와 분리된 webServer teardown 증거.
   # full 29 suite를 대체하거나 skip하지 않는다.
@@ -232,7 +270,7 @@ jobs:
   authenticated:
     name: Authenticated product gates (${{ matrix.shard }}/8)
     runs-on: ubuntu-24.04
-    timeout-minutes: 90
+    timeout-minutes: 19
     needs: [webserver-lifecycle, e2e-app-build]
     strategy:
       fail-fast: false
@@ -300,14 +338,14 @@ jobs:
           fi
 
       - name: Run authenticated browser tests
-        # 관리자 출금 E2E는 실제 TOTP 창을 기다린다. shard당 한도를 줄이지 않는다.
+        # 실제 TOTP 창과 모든 assertion/retry는 유지한다. 중단은 실패이며 통과가 아니다.
         # 186개(chromium + mobile-chrome)를 8-way --shard로 나누면 shard당 약 23건이다. wall time은 가장 느린 shard 기준.
         # CI wall-clock: e2e-app-build 산출물 + E2E_NEXT_START=1 (next start). next dev 금지 — putduk-ci-wall-clock.mdc.
-        timeout-minutes: 75
+        timeout-minutes: 18
         env:
           E2E_NEXT_START: "1"
         # pnpm run … -- --shard 는 CI에서 playwright 인자 앞에 `--` 가 한 번 더 붙어 shard가 무시된다.
-        run: pnpm exec playwright test --config playwright.authenticated.config.ts --shard=${{ matrix.shard }}/8
+        run: pnpm exec playwright test --config playwright.authenticated.config.ts --shard=${{ matrix.shard }}/8 --fail-on-flaky-tests
 
       - name: Preserve authenticated browser evidence
         if: always()
@@ -322,7 +360,7 @@ jobs:
   worker:
     name: Worker runtime gates
     runs-on: ubuntu-24.04
-    timeout-minutes: 30
+    timeout-minutes: 19
     steps:
       - name: Check out source
         uses: actions/checkout@v7
@@ -370,7 +408,7 @@ jobs:
   typography-public:
     name: Korean typography public gates
     runs-on: ubuntu-24.04
-    timeout-minutes: 25
+    timeout-minutes: 19
     steps:
       - name: Check out source
         uses: actions/checkout@v7
@@ -394,7 +432,7 @@ jobs:
 
       - name: Run public Korean typography
         timeout-minutes: 15
-        run: pnpm exec playwright test --config playwright.typography.config.ts
+        run: pnpm exec playwright test --config playwright.typography.config.ts --fail-on-flaky-tests
 
       - name: Assert public typography evidence
         if: always()
@@ -414,7 +452,7 @@ jobs:
   typography-protected:
     name: Korean typography protected gates
     runs-on: ubuntu-24.04
-    timeout-minutes: 40
+    timeout-minutes: 19
     needs: [e2e-app-build]
     steps:
       - name: Check out source
@@ -475,10 +513,10 @@ jobs:
           fi
 
       - name: Run protected Korean typography
-        timeout-minutes: 20
+        timeout-minutes: 18
         env:
           E2E_PREBUILT_APPS: "1"
-        run: pnpm exec playwright test --config playwright.typography.protected.config.ts
+        run: pnpm exec playwright test --config playwright.typography.protected.config.ts --fail-on-flaky-tests
 
       - name: Assert protected typography evidence
         if: always()
