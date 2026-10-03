@@ -111,6 +111,9 @@ jobs:
       - name: Verify canonical brand assets
         run: pnpm assets:verify
 
+      - name: Verify exact approved economy seed
+        run: node scripts/generate-economy-policy-seed.mjs --check
+
       - name: Verify formatting
         run: pnpm format:check
 

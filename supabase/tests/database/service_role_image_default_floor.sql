@@ -464,8 +464,9 @@ select is(
   'service_role deposit approval writes the ledger credit'
 );
 
-select isnt(
-  public.create_withdrawal_request(
+select throws_ok(
+  $legacy$
+  select public.create_withdrawal_request(
     'a1100001-1030-4000-8000-000000000001',
     (
       select id
@@ -484,9 +485,11 @@ select isnt(
     'BANK_ACCOUNT',
     '{"display":"***-**-1234","encrypted":{"alg":"A256GCM","v":1}}'::jsonb,
     'priv-floor-withdrawal-0001'
-  ),
-  null,
-  'service_role can create a KRW withdrawal request against the ledger balance'
+  )
+  $legacy$,
+  '42501',
+  'permission denied for function create_withdrawal_request',
+  'service_role cannot execute the retired writer even with a funded wallet'
 );
 
 select lives_ok(

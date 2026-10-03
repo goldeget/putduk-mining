@@ -363,3 +363,35 @@ P0 delivery.
 - Deposit admin addresses never share the user withdrawal destination row
   model.
 - Public command names above are frozen; no aliases.
+
+## 7. Approved economy policy storage extension (2026-10-03)
+
+The owner's new V1 operating values are the exact approved JSON under
+`docs/product/economy-v1-approved-2026-10-03.json`. The single new canonical
+service-only command is `public.manage_economy_policy_version(text, text,
+text, uuid, text, timestamptz, uuid, uuid, text, text, text, text, text)`.
+Its operations are CREATE, PREVIEW, APPROVE and PUBLISH. The exact argument
+names, administrator proof boundary, immutable receipts, forward-only
+effective schedule and seed provenance are frozen in
+`docs/architecture/ECONOMY-POLICY-VERSION-CONTRACT.md`.
+
+The separate canonical administrator query is
+`public.read_economy_policy_version_state(uuid, uuid, text, text, text)`.
+It is service-only, INVOKER, and verifies the current administrator role,
+server AAL2 result and bound session before returning policy/revision/timeline
+data. Its exact envelope is fixed in the same contract. Never expose
+`app_private` via PostgREST or fake an administrator session for an engine
+reader. An engine/worker publication reader has a separate future authority.
+
+The initial approved numeric configuration is exact seed data, not a
+permanent economic ceiling. Administrators can change supported numbers,
+including rates, thresholds, campaign/multiplier limits, slots and future
+fee amounts through newly approved future policy versions. Integer
+accounting, source separation, carry, global allocation and immutable
+historical results remain fixed.
+
+This command stores policy versions only. It adds no alternate mining,
+deposit, withdrawal, wallet, source movement or settlement writer. The
+existing names and separation rules above remain authoritative. Approved
+policy publication does not establish principal coverage, activate the
+economic engine or approve a product/catalog selection.
