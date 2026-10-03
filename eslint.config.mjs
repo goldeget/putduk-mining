@@ -9,6 +9,7 @@ export default defineConfig([
     "**/.next/**",
     "**/.vite/**",
     ".sites-work/**",
+    "**/.worktrees/**",
     "**/dist/**",
     "coverage/**",
     "playwright-report/**",
