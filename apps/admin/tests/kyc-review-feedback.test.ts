@@ -17,6 +17,11 @@ vi.mock("@/components/step-up-token-field", () => ({
 
 let container: HTMLDivElement;
 let root: Root;
+const scrollIntoView = vi.fn();
+const originalScroll = Object.getOwnPropertyDescriptor(
+  HTMLElement.prototype,
+  "scrollIntoView",
+);
 const success = {
   ok: true,
   message: "본인 확인 검토 결과를 저장했습니다.",
@@ -24,6 +29,10 @@ const success = {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  Object.defineProperty(HTMLElement.prototype, "scrollIntoView", {
+    configurable: true,
+    value: scrollIntoView,
+  });
   Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
   container = document.createElement("div");
   document.body.append(container);
@@ -32,6 +41,15 @@ beforeEach(() => {
 afterEach(async () => {
   await act(async () => root.unmount());
   container.remove();
+  if (originalScroll) {
+    Object.defineProperty(
+      HTMLElement.prototype,
+      "scrollIntoView",
+      originalScroll,
+    );
+  } else {
+    Reflect.deleteProperty(HTMLElement.prototype, "scrollIntoView");
+  }
 });
 async function render(children: ReactNode) {
   await act(async () =>
@@ -71,6 +89,10 @@ describe("KYC queue review result", () => {
       )?.textContent,
     ).toBe(success.message);
     expect(mocks.review).toHaveBeenCalledOnce();
+    expect(scrollIntoView).toHaveBeenCalledExactlyOnceWith({
+      block: "nearest",
+      behavior: "instant",
+    });
   });
 
   it("keeps failed review feedback in the form and never publishes success", async () => {
@@ -88,6 +110,7 @@ describe("KYC queue review result", () => {
       container.querySelector('[aria-label="본인 확인 검토 결과"]'),
     ).toBeNull();
     expect(container.querySelector("form")).not.toBeNull();
+    expect(scrollIntoView).not.toHaveBeenCalled();
   });
 
   it("clears previous success when the next review fails", async () => {
@@ -114,5 +137,6 @@ describe("KYC queue review result", () => {
     await render(createElement("p", null, "대기 건 없음"));
     expect(container.querySelectorAll('[role="status"]')).toHaveLength(1);
     expect(container.textContent).toContain(success.message);
+    expect(scrollIntoView).toHaveBeenCalledOnce();
   });
 });

@@ -43,6 +43,9 @@ async function submitKycWithStepUp(
   await expect(
     page.getByRole("status", { name: "본인 확인 검토 결과" }),
   ).toContainText("본인 확인 검토 결과를 저장했습니다", { timeout: 30_000 });
+  await expect(
+    page.getByRole("status", { name: "본인 확인 검토 결과" }),
+  ).toBeInViewport();
 }
 
 test.describe("admin KYC product queue", () => {
@@ -150,6 +153,9 @@ test.describe("admin KYC product queue", () => {
     await expect(
       page.getByRole("status", { name: "본인 확인 검토 결과" }),
     ).toContainText("본인 확인 검토 결과를 저장했습니다", { timeout: 30_000 });
+    await expect(
+      page.getByRole("status", { name: "본인 확인 검토 결과" }),
+    ).toBeInViewport();
     await expect(kycCard(page, approve.caseId)).toHaveCount(0);
     const approved = await readKycCase(approve.caseId);
     expect(approved.status).toBe("APPROVED");
