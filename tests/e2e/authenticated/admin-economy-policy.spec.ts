@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 
 import { createConfirmedMember } from "../fixtures/local-auth";
 import {
@@ -13,6 +13,37 @@ import {
   issueCommandFamilyToken,
   setStepUpToken,
 } from "./helpers/admin-money-ui";
+
+async function postEconomyFromBrowser(
+  page: Page,
+  endpoint: "state" | "command",
+  data: Record<string, unknown>,
+  idempotencyKey: string | null = null,
+) {
+  // Production Secure cookies are honored by Chromium on loopback. Node's
+  // APIRequestContext drops them on HTTP; use the actual authenticated browser.
+  return page.evaluate(
+    async ({ origin, endpoint, data, idempotencyKey }) => {
+      if (location.origin !== origin) throw new Error("ADMIN_ORIGIN_MISMATCH");
+      const response = await fetch(`/api/v1/admin/economy/${endpoint}`, {
+        method: "POST",
+        credentials: "same-origin",
+        cache: "no-store",
+        headers: {
+          "Content-Type": "application/json",
+          ...(idempotencyKey ? { "Idempotency-Key": idempotencyKey } : {}),
+        },
+        body: JSON.stringify(data),
+      });
+      return {
+        ok: response.ok,
+        status: response.status,
+        payload: await response.json(),
+      };
+    },
+    { origin: ADMIN_ORIGIN, endpoint, data, idempotencyKey },
+  );
+}
 
 test("real admin policy lifecycle preserves exact values, source boundaries and same-key replay", async ({
   page,
@@ -92,12 +123,12 @@ test("real admin policy lifecycle preserves exact values, source boundaries and 
   ).toBeVisible({ timeout: 30_000 });
   await expect(page.getByText("12.34%", { exact: true })).toBeVisible();
 
-  const stateResponse = await page.request.post(
-    `${ADMIN_ORIGIN}/api/v1/admin/economy/state`,
-    { headers: { Origin: ADMIN_ORIGIN }, data: { policyVersion: version } },
-  );
-  expect(stateResponse.ok()).toBe(true);
-  const state = (await stateResponse.json()).data;
+  const stateResponse = await postEconomyFromBrowser(page, "state", {
+    policyVersion: version,
+  });
+  expect(stateResponse.ok).toBe(true);
+  expect(stateResponse.status).toBe(200);
+  const state = stateResponse.payload.data;
   expect(state.selectedVersion.settings.baseCycleRateBps).toBe(1234);
   expect(state.runtimeStatus).toBe("POLICY_CONSUMER_NOT_ENABLED");
   expect(JSON.stringify(state)).not.toContain("sourceComplete");
@@ -131,11 +162,12 @@ test("real admin policy lifecycle preserves exact values, source boundaries and 
   await expect(
     page.getByText("발행된 버전은 수정하지 않습니다.", { exact: false }),
   ).toBeVisible();
-  const final = await page.request.post(
-    `${ADMIN_ORIGIN}/api/v1/admin/economy/state`,
-    { headers: { Origin: ADMIN_ORIGIN }, data: { policyVersion: version } },
-  );
-  const finalState = (await final.json()).data;
+  const final = await postEconomyFromBrowser(page, "state", {
+    policyVersion: version,
+  });
+  expect(final.ok).toBe(true);
+  expect(final.status).toBe(200);
+  const finalState = final.payload.data;
   expect(finalState.selectedVersion.latestRevision.state).toBe("PUBLISHED");
   expect(
     finalState.selectedVersion.history.map(
@@ -147,15 +179,15 @@ test("real admin policy lifecycle preserves exact values, source boundaries and 
     (item) => JSON.parse(item.body).operation === "PREVIEW",
   );
   expect(preview).toBeDefined();
-  const replay = await page.request.post(
-    `${ADMIN_ORIGIN}/api/v1/admin/economy/command`,
-    {
-      headers: { Origin: ADMIN_ORIGIN, "Idempotency-Key": preview!.key },
-      data: JSON.parse(preview!.body),
-    },
+  const replay = await postEconomyFromBrowser(
+    page,
+    "command",
+    JSON.parse(preview!.body),
+    preview!.key,
   );
-  expect(replay.ok()).toBe(true);
-  const replayData = (await replay.json()).data;
+  expect(replay.ok).toBe(true);
+  expect(replay.status).toBe(200);
+  const replayData = replay.payload.data;
   expect(replayData.receipt.state).toBe("PREVIEWED");
   expect(replayData.console.selectedVersion.latestRevision.state).toBe(
     "PUBLISHED",

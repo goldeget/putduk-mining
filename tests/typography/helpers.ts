@@ -5,7 +5,7 @@ export type TypographyTheme = "dark" | "light";
 
 export type TypographyViewport = {
   height: number;
-  label: "390" | "834" | "1440";
+  label: "320" | "390" | "834" | "1440";
   width: number;
 };
 

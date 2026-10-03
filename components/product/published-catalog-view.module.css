@@ -402,6 +402,7 @@
   }
   .hero {
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     min-height: 0;
     gap: 1.25rem;
     padding: 0 0 2.5rem;
@@ -411,6 +412,8 @@
     z-index: auto;
     inset: auto;
     width: 100%;
+    min-width: 0;
+    max-width: 100%;
     aspect-ratio: 1.6;
     mask-image: linear-gradient(
       0deg,
