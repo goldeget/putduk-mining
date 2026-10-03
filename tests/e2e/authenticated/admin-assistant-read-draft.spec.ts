@@ -116,7 +116,9 @@ test("real admin session prepares a USDT draft without approval or a money write
   await expect(
     page.getByRole("status", { name: "USDT 입금 대기 조회 결과" }),
   ).toContainText("확인 대기");
-  await page.getByLabel("입금 신청", { exact: true }).selectOption(depositId);
+  await page
+    .getByRole("combobox", { name: "입금 신청", exact: true })
+    .selectOption(depositId);
   await page.getByLabel("반영할 원화 금액", { exact: true }).fill("50000");
   await page.getByLabel("확인 사유", { exact: true }).fill(body.reason);
   await page.getByRole("button", { name: "초안 준비", exact: true }).click();

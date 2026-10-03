@@ -76,4 +76,6 @@ C: 여유가 작업 중 크게 변동했다. 소스/Next 빌드/Docker 저장 �
 - 원금/정책/상품 → 서버 실채굴 정산 → outbox/worker 소비자 → 관리자/AI → 실제 데이터에 연결된 Scene·연출 → 제품 수준의 화면·접근성·성능 증거 순으로 닫는다.
 - 경제 수치, 추천 수령자 등 미결 정책, 비주얼 master 승인, staging/production 대상은 임의로 확정하거나 활성화하지 않는다. 이 조건에 의존하지 않는 구현·검증은 계속한다.
 
+- PR #45 head `f16a80ef3adf1248e2a6e224a2414dea78456785`, run `37107334766`은 **cancelled / NOT ACCEPTED**, 전체 **19분 8초** (`07:44:15Z`–`08:03:23Z`)다. 일회용 DB 22 files / 606 assertions, KRW 7·USDT 11·안전 모드 6 동시성 assertions와 실제 worker runtime 18 tests는 통과했다. Typography 135 tests / 133 screenshots도 통과했다. 브라우저 두 shard의 운영 도우미 검사는 실제 선택란과 신청이 있어도 `getByLabel`의 전체 label 텍스트 비교가 맞지 않아 각 180초 후 재시도했고, desktop 나머지 검사는 시간 게이트가 취소했다. 실제 접근성 snapshot의 `combobox "입금 신청"`으로 조회한다. 옵션의 `USDT USDT` 중복도 제거한다. 권한·TOTP·시간 제한·retry·assertion을 완화하지 않는다. 원본 logs·실패 화면: `D:\PUTDUK-MINING-QA\codex-2026-10-03T07-44-00-157Z-63be5628`.
+
 기준 계약: `WS-04-DOMAIN-COMMAND-CONTRACT.md`, `LEDGER-RECONCILIATION.md`, `DOMAIN-EVENTS-OUTBOX.md`, master architecture, visual/motion/Visual Lab, `GIT-CI-CD-POLICY.md`, `DEFINITION-OF-DONE.md`. 현재 저장소에 없는 보고서나 과거 다른 구현을 추측해서 보충하지 않는다.

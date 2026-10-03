@@ -29,7 +29,7 @@ export default async function AssistantPage() {
     if (!unavailable)
       options = (result.data ?? []).map((row, index) => ({
         depositId: row.id,
-        label: `신청 ${index + 1} · ${row.network_snapshot} · ${formatUsdt(row.sent_usdt_amount)} USDT · ${formatKst(row.created_at)}`,
+        label: `신청 ${index + 1} · ${row.network_snapshot} · ${formatUsdt(row.sent_usdt_amount)} · ${formatKst(row.created_at)}`,
       }));
   } catch {
     unavailable = true;
