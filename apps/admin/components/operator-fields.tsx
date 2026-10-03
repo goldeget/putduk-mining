@@ -31,13 +31,15 @@ export function ReasonField({
   label = "확인 사유",
   minLength = 10,
   placeholder = "왜 이 결정을 했는지 짧게 적어 주세요.",
+  defaultValue,
 }: {
   name?: string;
   label?: string;
   minLength?: number;
   placeholder?: string;
+  defaultValue?: string | undefined;
 }) {
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState(defaultValue ?? "");
   return (
     <label className="operator-field">
       <span>{label}</span>

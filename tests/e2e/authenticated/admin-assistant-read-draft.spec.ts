@@ -9,15 +9,20 @@ import {
   grantAdminRole,
 } from "./helpers/admin-totp";
 import { createLocalServiceRoleClient } from "./helpers/eligibility";
+import { confirmOperatorStepUp } from "./helpers/admin-money-ui";
 
 test("real admin session prepares a USDT draft without approval or a money write", async ({
   page,
-}) => {
+}, testInfo) => {
   test.setTimeout(180_000);
   const operator = await createConfirmedMember("assistant-read-operator");
   const member = await createConfirmedMember("assistant-read-target");
   await grantAdminRole(operator.userId);
-  await completeAdminLoginWithTotp(page, operator.email, operator.password);
+  const secret = await completeAdminLoginWithTotp(
+    page,
+    operator.email,
+    operator.password,
+  );
   const db = createLocalServiceRoleClient();
   const depositId = randomUUID();
   const { error: fixtureError } = await db.from("usdt_manual_deposits").insert({
@@ -29,6 +34,7 @@ test("real admin session prepares a USDT draft without approval or a money write
     deposit_address_snapshot: "TLOCALASSISTANTFIXTUREDEPOSIT000001",
     network_snapshot: "TRC20",
     idempotency_key: `assistant-read-${depositId}`,
+    created_at: "2026-08-01T00:00:00Z",
   });
   expect(fixtureError).toBeNull();
   const url = `${ADMIN_ORIGIN}/api/v1/admin/assistant/prepare`;
@@ -81,6 +87,79 @@ test("real admin session prepares a USDT draft without approval or a money write
     data: { ...body, confirmation: "CONFIRM_USDT_DEPOSIT" },
   });
   expect(injected.status()).toBe(400);
+
+  await page.goto(`${ADMIN_ORIGIN}/assistant`);
+  await expect(page.locator('[data-ui-ready="/assistant"]')).toHaveAttribute(
+    "data-ui-state",
+    "loaded",
+  );
+  await page
+    .getByRole("button", { name: "입금 대기 확인", exact: true })
+    .click();
+  await expect(
+    page.getByRole("status", { name: "USDT 입금 대기 조회 결과" }),
+  ).toContainText("확인 대기");
+  await page.getByLabel("입금 신청", { exact: true }).selectOption(depositId);
+  await page.getByLabel("반영할 원화 금액", { exact: true }).fill("50000");
+  await page.getByLabel("확인 사유", { exact: true }).fill(body.reason);
+  await page.getByRole("button", { name: "초안 준비", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: "원화 50,000원" }),
+  ).toBeVisible();
+  // Editing a draft invalidates the old preview before it can be applied.
+  await page.getByLabel("반영할 원화 금액", { exact: true }).fill("40000");
+  await expect(
+    page.getByRole("heading", { name: "원화 50,000원" }),
+  ).toHaveCount(0);
+  await page.getByLabel("반영할 원화 금액", { exact: true }).fill("50000");
+  await page.getByRole("button", { name: "초안 준비", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: "원화 50,000원" }),
+  ).toBeVisible();
+  await page.emulateMedia({ reducedMotion: "reduce", colorScheme: "light" });
+  for (const width of [320, 390, 834, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    for (const theme of ["system", "light", "dark"]) {
+      await page.getByLabel("화면 테마").selectOption(theme);
+      await expect
+        .poll(() =>
+          page.evaluate(
+            () => document.documentElement.scrollWidth <= window.innerWidth + 1,
+          ),
+        )
+        .toBe(true);
+      await page.screenshot({
+        path: testInfo.outputPath(`assistant-${width}-${theme}.png`),
+        fullPage: true,
+      });
+    }
+  }
+  await page
+    .getByRole("link", { name: "입금 내역에서 검토", exact: true })
+    .click();
+  const card = page.locator(`#usdt-deposit-${depositId}`);
+  await expect(card).toBeVisible();
+  await card
+    .getByRole("button", { name: "초안 불러오기", exact: true })
+    .click();
+  const form = card.locator("form");
+  await expect(form.getByLabel("반영할 원화 금액")).toHaveValue("50000");
+  await expect(form.getByLabel("확인 사유")).toHaveValue(body.reason);
+  await expect(form.getByRole("checkbox")).not.toBeChecked();
+  await expect(form.locator('input[name="stepUpToken"]')).toHaveValue("");
+  await form.getByRole("checkbox").check();
+  await confirmOperatorStepUp(form, secret);
+  await expect(form.locator('input[name="stepUpToken"]')).toHaveValue(
+    /^.{16,}$/,
+  );
+  await form.getByLabel("반영할 원화 금액").fill("40000");
+  await expect(form.getByRole("checkbox")).not.toBeChecked();
+  await expect(form.locator('input[name="stepUpToken"]')).toHaveValue("");
+  await form.getByRole("checkbox").check();
+  await form
+    .getByRole("button", { name: "입금 확인 · 원화 반영", exact: true })
+    .click();
+  await expect(form.getByRole("status")).toContainText("인증 앱으로 다시 확인");
   const deposit = await db
     .from("usdt_manual_deposits")
     .select("status,credited_krw,ledger_transaction_id,wallet_ledger_id")

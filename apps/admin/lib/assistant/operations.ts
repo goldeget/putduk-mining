@@ -1,6 +1,7 @@
 import "server-only";
 
 import { z } from "zod";
+import { OPERATOR_DRAFT_LIFETIME_MS } from "@/lib/assistant/draft";
 
 import { ADMIN_COMMAND_FAMILIES } from "@/lib/auth/command-families";
 import { HIGH_IMPACT_ROLES } from "@/lib/auth/policy";
@@ -31,4 +32,4 @@ export const adminAssistantInput = z.discriminatedUnion("task", [
   ADMIN_ASSISTANT_OPERATIONS["usdt-deposit-draft"].schema,
 ]);
 
-export const OPERATOR_DRAFT_LIFETIME_MS = 5 * 60 * 1_000;
+export { OPERATOR_DRAFT_LIFETIME_MS };

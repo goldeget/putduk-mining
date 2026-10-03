@@ -11,12 +11,12 @@
 - 원격 Supabase, Cloudflare, DNS, 배포, 실송금은 기존 잠금을 유지한다.
 - 시작 HEAD/develop: `0a5ea7e5a66f801d59d82147629cf6caa9f85ffe`.
 - PR #41 push run `37092611992`는 위 병합 SHA에서 success로 확인됐다. PR 전용 Exact diff integrity는 skip이고 다른 16개 job은 success였다. 확인 시각: 2026-10-03 12:39:37 KST.
-- develop ruleset `24403592`: strict 필수 검사 16개, 승인 수 0, bypass 없음, force push/삭제 차단. merge queue는 사용하지 않는다.
+- develop ruleset `24403592`: 시작 시 strict 필수 검사 16개. PR #43 검증 후 `CI completeness and 20-minute budget`을 추가해 현재 17개이며 integration ID `15368`, strict, 승인 수 0, bypass 없음, force push/삭제 차단이다. merge queue는 사용하지 않는다.
 
 ## 첫 변경 범위
 
 1. Windows QA 결과·로그·TEMP를 D:로 보낸다. source/origin/volume을 확인하고 기존 수정 파일 hash를 비교한다. 단위 검사 worker는 둘로 제한한다.
-2. 관리자 송금·안전 모드 검토 시각을 한국 시간 입력에서 UTC로 변환한다. 잘못된 날짜는 작업 확인을 소비하기 전에 거절한다.
+2. 관리자 송금·안전 모드 검토 시각을 한국 시간 입력에서 UTC로 변환한다. 송금의 잘못된 날짜는 작업 확인 소비 전에 거절한다. 안전 모드는 현재 권한 확인 안에서 작업 확인을 먼저 소비하므로 별도 보완 대상이다.
 3. USDT 입금 성공은 실제 입금·원장·지갑의 연결과 금액이 맞을 때만 표시한다. 다른 금액, 누락, 조회 실패, 응답 끊김은 성공으로 표시하지 않는다. 원화 RPC 인자는 정수 문자열로 전달한다.
 4. START 남은 시간의 “이내” 문구는 올림한다. 서버 보상이나 자격 계산은 바꾸지 않는다.
 
@@ -58,11 +58,16 @@ C: 여유가 작업 중 크게 변동했다. 소스/Next 빌드/Docker 저장 �
 
 ## 다음 순서
 
+- PR #43 최종 head `0654ae1ab7feab0c0a9ad203d93b86965c21da96`: PR run `37100084715` success, 전체 **16분 34초**. 실제 KYC 성공 메시지·카드 제거·DB와 화면을 함께 확인했다. 병합 `6c60115dae694fbb20c6ad3b9ca21673cf4eceff`, push run `37101218564` success / **POST_MERGE_VERIFIED**, 전체 **17분 8초** (`05:52:18Z`–`06:09:26Z`). PR 전용 Exact diff integrity만 skip이다.
+- PR #44 최종 head `ff9f910238cccbaca3d0e3f330d86047515394db`: PR run `37102198468` success, 전체 **16분 53초** (`06:10:48Z`–`06:27:41Z`). 21 pgTAP files / 572 assertions, 두 세션 KRW 7·USDT 11 assertions, DB lint·advisors가 모두 성공했다. 기존 public USDT 명령에서 payload 충돌·외부 영수증 충돌·불완전 원장을 거절하며 금액·원장·지갑·audit·outbox가 일치하는 영수증만 재사용한다. 병합 `a42c996b414aa32569523604505fcb9cf2e1807b`, push run `37103303899`는 **진행 중 / POST_MERGE_UNVERIFIED**이며 전체 종료와 20분 게이트를 추가 확인한다. 증거: `D:\PUTDUK-MINING-QA\codex-2026-10-03T06-08-46-870Z-f60472d8`.
+- Supabase CLI 로컬 도움말 명령 두 건은 자동 승인 검토에서 `blocked by policy`로 실행 전에 거절됐다. 로컬 SQL은 실행 성공으로 기록하지 않는다. 우회하지 않고 동일 후보의 GitHub 일회용 DB 검사 증거로 검증했다. 원격 DB 변경은 하지 않았다.
+- 운영 도우미 후보는 제공자 없이 실제 USDT 대기 조회와 5분 메모리 초안을 준비한다. 현재 역할·AAL2·운영 세션·정확한 설정 origin을 다시 확인하고, 기존 입금 화면의 명시적 초안 불러오기만 허용한다. 실제 지급은 기존 action과 TOTP를 사용하며 금액·사유 변경은 확인과 토큰을 지운다. 외부 AI 연결·자동 지급·미구현 기능 실행은 없다. 전체 관리자 단위 210 tests와 두 앱 타입 검사가 로컬에서 통과했으나 전체 후보 CI·브라우저·실제 화면 검토 전에는 FUNCTIONALLY/PRODUCT COMPLETE로 기록하지 않는다.
+
 - PR #43 최초 후보 `bb4c837619dc10d5fbaf8a6e123a9571c984452f`의 run `37098981745`는 18개 job success, 전체 **16분 4초**였다. 시간 게이트도 success다. 다만 내려받은 KYC 승인·반려 스크린샷에서 성공 메시지가 기존 스크롤 위치의 화면 밖에 있었다. 이 후보를 바로 병합하지 않고, 실제 UI가 성공 메시지를 즉시 보이는 위치로 이동하도록 보완한다. 테스트가 임의로 스크롤해 결함을 가리지 않으며 E2E는 `toBeInViewport`를 확인한다. 움직임은 instant여서 reduced motion에서도 추가 애니메이션이 없다. 후속 focused KYC 4 tests와 두 앱 typecheck는 `codex-2026-10-03T05-29-38-921Z-6a4a6844`, `codex-2026-10-03T05-29-54-965Z-77419911`에서 PASS였다. 새 head의 전체 CI를 다시 확인해야 한다.
 
-- PR #42 병합 SHA push CI 확인 → CI 20분·KYC 결과 보강 PR의 정확한 head 검증 → develop 정상 병합 → 병합 SHA push CI 확인. 시간 게이트를 develop 필수 검사에 추가하되 기존 strict 검사와 bypass 금지는 유지한다. push/merge 전 fsck·누락 객체·정확한 origin을 검증한다.
+- PR #44 병합 SHA push CI 확인 → 운영 도우미 후보의 정확한 head 전체 CI·화면 검토 → develop 정상 병합 → 병합 SHA push CI 확인. push/merge 전 fsck·누락 객체·정확한 origin을 검증한다.
 - USDT DB 승인: 같은 키의 다른 payload, 다른 입금과 충돌한 키, 동시 승인, 원장·지갑·audit·outbox 일치. 새 migration만 사용하고 공유 테스트 DB를 초기화하지 않는다. 일회용 CI DB에서 검증한다.
-- 운영자 공통 명령과 운영 도우미: 현존 명령을 재사용하고 별도 AI 지급 코드를 만들지 않는다. 간단한 입력·대상·시점·미리보기·확인 UI를 기본으로 한다. AI는 초안·설명·조회만 하고 운영자의 최종 실행은 같은 권한·작업 확인·명령 경계를 지난다. 기존 문서의 P2 운영 AI 표현과 이번 요구의 차이는 후속 계약 변경에서 함께 정리한다.
+- 운영자 공통 명령과 운영 도우미: 현존 명령을 재사용하고 별도 AI 지급 코드를 만들지 않는다. 간단한 입력·대상·시점·미리보기·확인 UI를 기본으로 한다. AI는 초안·설명·조회만 하고 운영자의 최종 실행은 같은 권한·작업 확인·명령 경계를 지난다. V1 필수 운영 도우미 계약과 관련 문서의 P2 표현을 함께 정리한 후보를 검증한다.
 - 원금/정책/상품 → 서버 실채굴 정산 → outbox/worker 소비자 → 관리자/AI → 실제 데이터에 연결된 Scene·연출 → 제품 수준의 화면·접근성·성능 증거 순으로 닫는다.
 - 경제 수치, 추천 수령자 등 미결 정책, 비주얼 master 승인, staging/production 대상은 임의로 확정하거나 활성화하지 않는다. 이 조건에 의존하지 않는 구현·검증은 계속한다.
 

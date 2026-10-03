@@ -4,6 +4,12 @@ const ADMIN_ORIGIN = "http://127.0.0.1:3100";
 
 registerProtectedTypographyMatrix([
   {
+    name: "admin-assistant",
+    origin: ADMIN_ORIGIN,
+    pathname: "/assistant",
+    url: `${ADMIN_ORIGIN}/assistant`,
+  },
+  {
     name: "admin-today",
     origin: ADMIN_ORIGIN,
     pathname: "/",
