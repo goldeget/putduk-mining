@@ -38,7 +38,7 @@ describe("admin USDT deposit queue — canonical model", () => {
   });
 
   it("confirms through confirm_usdt_manual_deposit with the manual deposit id", () => {
-    expect(actionsSource).toContain('rpc("confirm_usdt_manual_deposit"');
+    expect(actionsSource).toMatch(/rpc\(\s*"confirm_usdt_manual_deposit"/);
     expect(actionsSource).toContain("p_deposit_id");
     expect(actionsSource).toContain("p_credited_krw");
     expect(actionsSource).not.toContain("approve_deposit_request");
