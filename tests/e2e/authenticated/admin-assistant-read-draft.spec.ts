@@ -141,6 +141,23 @@ test("real admin session prepares a USDT draft without approval or a money write
     for (const theme of ["system", "light", "dark"]) {
       await expect(page.getByLabel("화면 테마")).toBeVisible();
       await page.getByLabel("화면 테마").selectOption(theme);
+      await expect(page.locator("html")).toHaveAttribute(
+        "data-theme",
+        theme === "dark" ? "dark" : "light",
+      );
+      await expect(page.locator("#assistant-title")).toHaveCSS(
+        "color",
+        theme === "dark" ? "rgb(248, 242, 228)" : "rgb(23, 19, 13)",
+      );
+      await expect(page.locator("#draft-review-title")).toHaveCSS(
+        "color",
+        theme === "dark" ? "rgb(248, 242, 228)" : "rgb(23, 19, 13)",
+      );
+      // Verify painted title pixels in their actual viewport as well as the
+      // full-page artifact, which includes regions outside the current scroll.
+      await page.locator("#assistant-title").screenshot({
+        path: testInfo.outputPath(`assistant-title-${width}-${theme}.png`),
+      });
       await expect
         .poll(() =>
           page.evaluate(
