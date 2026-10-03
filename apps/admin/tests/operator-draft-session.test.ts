@@ -8,16 +8,20 @@ const mocks = vi.hoisted(() => ({
     ((event: string, session: { user: { id: string } } | null) => void) | null,
   observe: vi.fn(),
   unsubscribe: vi.fn(),
+  createClient: vi.fn(),
 }));
 vi.mock("@/lib/supabase/browser", () => ({
-  createAdminBrowserClient: () => ({
-    auth: {
-      onAuthStateChange: (callback: typeof mocks.changed) => {
-        mocks.changed = callback;
-        return { data: { subscription: { unsubscribe: mocks.unsubscribe } } };
+  createAdminBrowserClient: (config: unknown) => {
+    mocks.createClient(config);
+    return {
+      auth: {
+        onAuthStateChange: (callback: typeof mocks.changed) => {
+          mocks.changed = callback;
+          return { data: { subscription: { unsubscribe: mocks.unsubscribe } } };
+        },
       },
-    },
-  }),
+    };
+  },
 }));
 
 import {
@@ -30,6 +34,10 @@ let root: Root;
 let container: HTMLDivElement;
 type Access = ReturnType<typeof useOperatorDraft>;
 const owner = "0d470000-0000-4000-8000-000000000001";
+const publicConfig = {
+  url: "http://127.0.0.1:54321",
+  publishableKey: "local-public-key-for-runtime-test",
+};
 
 function candidate() {
   return {
@@ -59,7 +67,7 @@ async function render(userId = owner, session = "first") {
     root.render(
       createElement(
         OperatorDraftProvider,
-        { userId, key: `${userId}:${session}` },
+        { userId, publicConfig, key: `${userId}:${session}` },
         createElement(Probe),
       ),
     ),
@@ -79,6 +87,7 @@ async function save(value: unknown = candidate()) {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  mocks.createClient.mockReset();
   vi.useFakeTimers();
   vi.setSystemTime(new Date("2026-10-03T06:00:00Z"));
   Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
@@ -93,6 +102,21 @@ afterEach(async () => {
 });
 
 describe("operator draft session and expiry", () => {
+  it("subscribes with the server runtime public configuration", async () => {
+    await render();
+    expect(mocks.createClient).toHaveBeenCalledWith(publicConfig);
+    expect(access().clearedReason).toBeNull();
+    expect(await save()).toBe(true);
+  });
+  it("rejects drafts when the auth subscription cannot be created", async () => {
+    mocks.createClient.mockImplementation(() => {
+      throw new Error("subscription unavailable");
+    });
+    await render();
+    await act(async () => vi.runAllTicks());
+    expect(access().clearedReason).toBe("SESSION");
+    expect(await save()).toBe(false);
+  });
   it("keeps only a valid draft in the current provider memory", async () => {
     await render();
     expect(await save()).toBe(true);
