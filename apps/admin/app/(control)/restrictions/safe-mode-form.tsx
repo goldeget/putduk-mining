@@ -5,7 +5,9 @@ import { useActionState, useId, useState } from "react";
 import type { CommandActionResult } from "@/app/(control)/_lib/command-gate";
 import {
   bindMoneyFormSubmit,
+  MoneyOperationFields,
   MoneyOfflineNote,
+  useLogicalOperationKey,
 } from "@/components/money-operation-form";
 import {
   ConfirmCheckbox,
@@ -23,14 +25,17 @@ export function SafeModeForm({
   component,
   currentlyPaused,
   canMutate,
+  expectedRequestId,
 }: {
   component: SafeModeComponent;
   currentlyPaused: boolean;
   canMutate: boolean;
+  expectedRequestId: string | null;
 }) {
   const formId = useId();
   const [reviewRevision, setReviewRevision] = useState(0);
   const [offlineNote, setOfflineNote] = useState<string | null>(null);
+  const operationKey = useLogicalOperationKey("safe_mode");
   const [result, action] = useActionState<CommandActionResult | null, FormData>(
     setSafeModeAction,
     null,
@@ -65,7 +70,14 @@ export function SafeModeForm({
     >
       <input name="component" type="hidden" value={component} />
       <input name="pause" type="hidden" value={nextPause} />
-      <input name="clientOnline" type="hidden" defaultValue="1" />
+      <input
+        name="expectedRequestId"
+        type="hidden"
+        value={expectedRequestId ?? ""}
+      />
+      <MoneyOperationFields
+        operationKey={`${operationKey}:${expectedRequestId ?? "initial"}:${nextPause}:${reviewRevision}`}
+      />
       <ReasonField
         label="확인 사유"
         placeholder="왜 멈추거나 푸는지 짧게 적어 주세요."
@@ -82,7 +94,7 @@ export function SafeModeForm({
         </span>
       </label>
       <ConfirmCheckbox
-        key={`confirm-${nextPause}-${reviewRevision}`}
+        key={`confirm-${expectedRequestId ?? "initial"}-${nextPause}-${reviewRevision}`}
         label={
           currentlyPaused
             ? "제한을 해제합니다. 결과를 감사 기록에 남깁니다."
@@ -92,7 +104,7 @@ export function SafeModeForm({
         value="SAFE_MODE"
       />
       <StepUpTokenField
-        key={`step-up-${nextPause}-${reviewRevision}`}
+        key={`step-up-${expectedRequestId ?? "initial"}-${nextPause}-${reviewRevision}`}
         commandFamily={ADMIN_COMMAND_FAMILIES.SAFE_MODE}
       />
       <SubmitButton

@@ -17,6 +17,12 @@ Safe mode and the existing `claim_outbox_events`, `claim_system_jobs`, and
 mismatches and does not auto-repair. The worker entrypoint will live under
 `workers/` later; this contract commit does not add the worker.
 
+2026-10-03 safe-mode integrity extension: `setSafeModeAction` remains the
+existing server entrypoint. Its versioned `SAFE_MODE` audit INSERT is the
+single transaction command under `docs/architecture/SAFE-MODE-COMMAND.md`.
+A private invoker trigger records control state, audit receipt, outbox and the
+logical key atomically. No public RPC alias or duplicate domain table is added.
+
 If a welcome withdrawal policy row is absent, a later migration may seed only
 the already approved no-funding KRW 5,000 ceiling. Do not activate DRAFT
 catalog rows or invent economic values. Any value not already contracted is

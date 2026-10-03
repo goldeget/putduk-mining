@@ -173,6 +173,9 @@ jobs:
       - name: Run two-session USDT approval
         run: supabase test db supabase/tests-concurrent/usdt_deposit_concurrent_approval.sql
 
+      - name: Run two-session safe-mode command
+        run: supabase test db supabase/tests-concurrent/safe_mode_concurrent_command.sql
+
       - name: Lint application schemas
         run: pnpm db:lint
 
