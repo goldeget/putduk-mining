@@ -26,7 +26,11 @@ describe("home-start-display", () => {
   it("남은 초를 표시용으로만 바꾸며 보상은 계산하지 않는다", () => {
     expect(formatTrialRemaining(null)).toBe("정산 대기");
     expect(formatTrialRemaining(30)).toBe("1분 미만");
+    expect(formatTrialRemaining(0.5)).toBe("1분 미만");
+    expect(formatTrialRemaining(90)).toBe("2분 이내");
     expect(formatTrialRemaining(120)).toBe("2분 이내");
+    expect(formatTrialRemaining(3599)).toBe("60분 이내");
+    expect(formatTrialRemaining(3601)).toBe("2시간 이내");
     expect(formatTrialRemaining(7200)).toBe("2시간 이내");
   });
 

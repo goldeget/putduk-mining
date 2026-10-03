@@ -54,7 +54,7 @@ export function SafeModeForm({
         placeholder="왜 멈추거나 푸는지 짧게 적어 주세요."
       />
       <label className="operator-field">
-        <span>검토 시각(선택)</span>
+        <span>검토 시각(한국 시간, 선택)</span>
         <input
           aria-describedby={`${formId}-review-hint`}
           name="reviewAt"

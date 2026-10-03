@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { parseKstDateTimeInput } from "@/lib/time/kst-input";
+
 import {
   HIGH_IMPACT_ROLES,
   type AdminRole,
@@ -44,7 +46,7 @@ export const safeModeInputSchema = z.object({
   pause: z.enum(["true", "false"]),
   reason: z.string().trim().min(10).max(500),
   confirmation: z.literal("SAFE_MODE"),
-  /** 선택 검토 시각(ISO). 비우면 null. */
+  /** 선택 검토 시각(한국 시간 datetime-local). 비우면 null. */
   reviewAt: z
     .string()
     .trim()
@@ -107,8 +109,8 @@ export function parseSafeModeFormInput(raw: {
   }
 
   if (parsed.data.reviewAt) {
-    const reviewMs = Date.parse(parsed.data.reviewAt);
-    if (!Number.isFinite(reviewMs) || reviewMs <= Date.now()) {
+    const reviewAt = parseKstDateTimeInput(parsed.data.reviewAt);
+    if (!reviewAt || Date.parse(reviewAt) <= Date.now()) {
       return {
         ok: false,
         code: "INVALID_INPUT",
@@ -119,7 +121,7 @@ export function parseSafeModeFormInput(raw: {
       ok: true,
       data: {
         ...parsed.data,
-        reviewAt: new Date(reviewMs).toISOString(),
+        reviewAt,
       },
     };
   }

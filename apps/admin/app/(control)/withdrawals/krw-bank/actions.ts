@@ -10,6 +10,7 @@ import {
 } from "@/app/(control)/_lib/command-gate";
 import { ADMIN_COMMAND_FAMILIES } from "@/lib/auth/command-families";
 import { createAdminServiceClient } from "@/lib/supabase/service";
+import { parseKstDateTimeInput } from "@/lib/time/kst-input";
 
 const recordSchema = z.object({
   withdrawalId: z.uuid(),
@@ -52,12 +53,6 @@ export async function recordKrwExternalSendAction(
 ): Promise<CommandActionResult> {
   const prepared = prepareMoneyAttempt(formData);
   if (!prepared.ok) return prepared.result;
-  const access = await requireHighImpactPrincipal(
-    ADMIN_COMMAND_FAMILIES.WITHDRAWAL_OPERATOR,
-    formData,
-  );
-  if (!access.ok) return access.result;
-
   const parsed = recordSchema.safeParse({
     withdrawalId: formData.get("withdrawalId"),
     bankReference: formData.get("bankReference"),
@@ -73,14 +68,20 @@ export async function recordKrwExternalSendAction(
     };
   }
 
-  const sentAt = new Date(parsed.data.sentAt);
-  if (Number.isNaN(sentAt.getTime())) {
+  const sentAt = parseKstDateTimeInput(parsed.data.sentAt);
+  if (!sentAt) {
     return {
       ok: false,
       code: "INVALID_SENT_AT",
       message: "송금 시각을 다시 확인해 주세요.",
     };
   }
+
+  const access = await requireHighImpactPrincipal(
+    ADMIN_COMMAND_FAMILIES.WITHDRAWAL_OPERATOR,
+    formData,
+  );
+  if (!access.ok) return access.result;
 
   const service = createAdminServiceClient();
   const { data: existingSends, error: existingError } = await service
@@ -99,9 +100,9 @@ export async function recordKrwExternalSendAction(
   const { error } = await service.rpc("record_krw_external_send", {
     p_withdrawal_id: parsed.data.withdrawalId,
     p_bank_reference: parsed.data.bankReference,
-    p_actual_krw_amount: Number.parseInt(parsed.data.actualKrw, 10),
+    p_actual_krw_amount: parsed.data.actualKrw,
     p_actor: access.principal.userId,
-    p_sent_at: sentAt.toISOString(),
+    p_sent_at: sentAt,
     p_idempotency_key: prepared.idempotencyKey,
   });
 

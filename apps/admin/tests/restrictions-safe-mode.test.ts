@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import {
   canMutateSafeMode,
@@ -124,6 +124,30 @@ describe("admin restrictions · safe mode policy", () => {
         reviewAt: past,
       }).ok,
     ).toBe(false);
+  });
+
+  it("compares and saves the review time in Korea time", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-10-03T03:00:00Z"));
+    try {
+      const input = {
+        component: "DEPOSIT",
+        pause: "true",
+        reason: "입금 확인이 밀려 잠시 멈춥니다.",
+        confirmation: "SAFE_MODE",
+      };
+      expect(
+        parseSafeModeFormInput({ ...input, reviewAt: "2026-10-03T11:59" }).ok,
+      ).toBe(false);
+      expect(
+        parseSafeModeFormInput({ ...input, reviewAt: "2026-10-03T12:01" }),
+      ).toMatchObject({
+        ok: true,
+        data: { reviewAt: "2026-10-03T03:01:00.000Z" },
+      });
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it("keeps the approved V1 component set without inventing new types", () => {
