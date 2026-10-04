@@ -12,6 +12,7 @@ import {
   seedMiningReadSession,
   setMiningWorldsActive,
 } from "./helpers/mining-fixtures";
+import { expectSettledRoute } from "./helpers/settled-route";
 
 const VIEWPORTS = [
   { height: 844, name: "390", width: 390 },
@@ -105,13 +106,18 @@ async function applyTheme(page: Page, theme: "dark" | "light") {
 }
 
 async function openMiningDetails(page: Page) {
-  const details = page.locator("#putduk-mining-details:visible");
+  // 보이는 details만 고르면 hidden S: 슬롯의 같은 요약이 남아 텍스트 클릭이 둘로 실패한다.
+  await expectSettledRoute(page, "/mining");
+  const details = page.locator("#putduk-mining-details");
+  await expect(details).toHaveCount(1);
+  const summary = page.getByText("채굴 상세", { exact: true });
+  await expect(summary).toHaveCount(1);
   if (
     !(await details.evaluate(
       (node) => node instanceof HTMLDetailsElement && node.open,
     ))
   ) {
-    await page.getByText("채굴 상세", { exact: true }).click();
+    await summary.click();
   }
   await expect(details).toHaveAttribute("open", "");
 }
@@ -140,10 +146,10 @@ test("shows the empty session, world directory, themes, and keyboard path", asyn
     page.getByRole("heading", { name: "첫 월드에서 채굴을 시작해 보세요" }),
   ).toBeVisible();
   await expect(page.getByText("채굴 중")).toHaveCount(0);
-  await expect(page.locator("#putduk-mining-details")).not.toHaveAttribute(
-    "open",
-    "",
-  );
+  await expectSettledRoute(page, "/mining");
+  const closedDetails = page.locator("#putduk-mining-details");
+  await expect(closedDetails).toHaveCount(1);
+  await expect(closedDetails).not.toHaveAttribute("open", "");
   await shoot(page, "initial-scene-details-closed.png");
   await openMiningDetails(page);
 

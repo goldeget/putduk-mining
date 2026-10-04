@@ -1,6 +1,7 @@
 import { expect, type Page } from "@playwright/test";
 
 import type { ConfirmedMember } from "../../fixtures/local-auth";
+import { expectSettledRoute } from "./settled-route";
 
 export async function loginAsMember(
   page: Page,
@@ -206,18 +207,21 @@ export async function requestWelcomeWithdrawalFromUi(
   method: "KRW_BANK" | "USDT_ADDRESS",
 ) {
   await page.goto("/wallet/withdraw");
-  const welcomeHeading = page.getByRole("heading", {
+  // 제목은 이미 하나여도 hidden S: 슬롯의 라디오는 남아 strict check가 바로 실패한다.
+  const route = await expectSettledRoute(page, "/wallet/withdraw");
+  const welcomeHeading = route.getByRole("heading", {
     level: 2,
     name: "입금 없이도 가능한 첫 출금",
   });
-  // 같은 주소로 다시 들어올 때 이전 제목이 잠깐 남아 strict mode가 바로 실패한다.
   await expect(welcomeHeading).toHaveCount(1);
   await expect(welcomeHeading).toBeVisible();
 
-  const radios = page.locator('input[name="welcomeMethod"]');
-  if ((await radios.count()) > 0) {
-    const value = method === "KRW_BANK" ? "KRW_BANK" : "USDT_ADDRESS";
-    await page.locator(`input[name="welcomeMethod"][value="${value}"]`).check();
+  const value = method === "KRW_BANK" ? "KRW_BANK" : "USDT_ADDRESS";
+  const radio = page.locator(`input[name="welcomeMethod"][value="${value}"]`);
+  await expect.poll(async () => radio.count()).toBeLessThanOrEqual(1);
+  if ((await radio.count()) === 1) {
+    await expect(radio).toHaveCount(1);
+    await radio.check();
   }
 
   const requestButton = page.getByRole("button", {
