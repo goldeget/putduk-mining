@@ -15,6 +15,11 @@ import {
   presentMiningStatus,
   isConfirmedMiningRunning,
 } from "@/lib/product/mining-display";
+import {
+  parseMiningServerDisplay,
+  presentMiningServerDisplay,
+  type MiningAmountView,
+} from "@/lib/product/mining-server-display";
 import miningStyles from "./page.module.css";
 
 const worldColors: Record<string, string> = {
@@ -24,6 +29,37 @@ const worldColors: Record<string, string> = {
   SILVER: "var(--world-silver)",
   USA: "var(--world-usa)",
 };
+
+function MiningAmountPanel({
+  error,
+  view,
+}: {
+  error: boolean;
+  view: MiningAmountView | null;
+}) {
+  if (error || !view) {
+    return (
+      <StatePanel
+        tone="error"
+        title="채굴 금액을 불러오지 못했어요"
+        description="잠시 후 다시 시도해 주세요."
+      />
+    );
+  }
+  if (view.state === "empty") {
+    return <p className={miningStyles.moneyEmpty}>채굴 금액은 아직 없어요.</p>;
+  }
+  return (
+    <dl className={miningStyles.moneyFacts} aria-label="채굴 금액">
+      {view.rows.map((row) => (
+        <div key={row.label}>
+          <dt>{row.label}</dt>
+          <dd>{row.value}</dd>
+        </div>
+      ))}
+    </dl>
+  );
+}
 
 const worldDescriptions: Record<string, string> = {
   CRYPTO: "디지털 자산 테마를 담은 채굴 월드",
@@ -38,6 +74,7 @@ export default async function MiningPage() {
   const [
     { data: sessions, error: sessionsError },
     { data: worlds, error: worldsError },
+    displayResponse,
   ] = await Promise.all([
     identity.supabase
       .from("mining_active_session_snapshots")
@@ -50,7 +87,20 @@ export default async function MiningPage() {
       .from("asset_worlds")
       .select("code, display_name_ko")
       .order("sort_order"),
+    identity.supabase.rpc("read_own_mining_server_display", {
+      p_user_id: identity.userId,
+    }),
   ]);
+  const parsedDisplay = displayResponse.error
+    ? null
+    : parseMiningServerDisplay(displayResponse.data);
+  const displayError = Boolean(displayResponse.error) || !parsedDisplay;
+  const displayView = parsedDisplay
+    ? presentMiningServerDisplay(parsedDisplay)
+    : null;
+  const miningAmounts = (
+    <MiningAmountPanel error={displayError} view={displayView} />
+  );
   const currentSession = sessions?.[0];
   const currentStatus = currentSession
     ? presentMiningStatus(currentSession.status)
@@ -61,9 +111,9 @@ export default async function MiningPage() {
       className={styles.worldPage}
       data-ui-ready="/mining"
       data-ui-state={
-        sessionsError && worldsError
+        sessionsError && worldsError && displayError
           ? "error"
-          : sessionsError || worldsError
+          : sessionsError || worldsError || displayError
             ? "partial"
             : !sessions?.length
               ? "empty"
@@ -77,11 +127,14 @@ export default async function MiningPage() {
       />
 
       {sessionsError ? (
-        <StatePanel
-          tone="error"
-          title="채굴 상태를 불러오지 못했어요"
-          description="인터넷 연결을 확인한 뒤 다시 시도해 주세요. 화면을 닫아도 채굴은 계속돼요."
-        />
+        <>
+          <StatePanel
+            tone="error"
+            title="채굴 상태를 불러오지 못했어요"
+            description="인터넷 연결을 확인한 뒤 다시 시도해 주세요. 화면을 닫아도 채굴은 계속돼요."
+          />
+          {miningAmounts}
+        </>
       ) : (
         <MiningLiveStage
           scene={resolveDefaultStageInput()}
@@ -140,6 +193,7 @@ export default async function MiningPage() {
                 </Link>
               </div>
             )}
+            {miningAmounts}
           </div>
         </MiningLiveStage>
       )}
