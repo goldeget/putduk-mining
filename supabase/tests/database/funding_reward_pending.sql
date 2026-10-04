@@ -26,7 +26,7 @@ select is((select combined_speed::text from producer_limits), '15000',
   'the published combined speed limit is 1.50x');
 
 select ok(
-  (select not prosecdef and provolatile = 'i'
+  (select not prosecdef and provolatile = 's'
       and proconfig @> array['search_path=pg_catalog']::text[]
     from pg_proc
     where oid = 'app_private.funding_reward_pending_segment_micro(bigint,bigint,bigint,bigint,bigint,bigint)'::regprocedure)
