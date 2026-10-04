@@ -51,6 +51,8 @@ select ok(
   = array[
     'admin_sessions',
     'admin_step_up_grants',
+    'ai_conversations',
+    'ai_messages',
     'analytics_events',
     'audit_logs',
     'deposit_requests',
@@ -163,6 +165,8 @@ select ok(
   = array[
     'admin_sessions',
     'admin_step_up_grants',
+    'ai_conversations',
+    'ai_messages',
     'ai_requests',
     'analytics_events',
     'asset_worlds',

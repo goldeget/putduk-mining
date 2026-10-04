@@ -12,7 +12,7 @@ Mode constant: `SESSION_MEMORY_ONLY` (`domain/ai/continuity.ts`)
 | --- | --- |
 | Browser in-memory messages | `components/product/putduk-ai-chat.tsx` keeps React state only |
 | Refresh / remount | Messages are cleared; UI copy states this openly |
-| Durable conversation tables | **Absent** — no `ai_conversations` / `ai_messages` / safe-summary schema |
+| Durable conversation tables | **Rows only** — `public.ai_conversations`, `public.ai_messages` in `supabase/migrations/20261005040000_ai_conversation_storage.sql`. Safe-summary schema is still absent. |
 | Restore / resume API | **Absent** — only `POST /api/v1/ai/chat` turn admission |
 | Cross-device continuity | **Absent** |
 | Simulated persistence (localStorage of raw turns) | **Forbidden** — would fake durability |
@@ -38,5 +38,7 @@ Approve and ship together (do not half-implement):
 - secret/credential redaction;
 - atomic turn start/completion/failure + per-user idempotency;
 - cross-user isolation, refresh restore, and cancellation recovery tests.
+
+Conversation and message rows are stored. Safe-summary, retention, redaction, restore API, and browser continuity stay open. RAG, eval, provider router, and learning candidates stay **BLOCKED** out of that storage commit.
 
 Until then: **OPEN**. Do not claim PRODUCT COMPLETE for PUTDUK AI conversation continuity.
