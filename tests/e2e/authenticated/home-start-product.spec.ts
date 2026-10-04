@@ -12,6 +12,7 @@ import {
   startTrialFromUi,
 } from "./helpers/member-session";
 import { seedMemberNotification } from "./helpers/notification-fixtures";
+import { expectSettledRoute } from "./helpers/settled-route";
 
 const HOME_READ_FAULT_TABLES =
   "trial_account_snapshots,mining_active_session_snapshots";
@@ -165,7 +166,11 @@ test("START ACTIVE 상태는 서버 동기화 안내와 진행 문구를 유지�
   await expect(page.getByText("진행 중").first()).toBeVisible();
 
   await page.goto("/home");
-  await expect(page.getByText("PUTDUK START 진행 중")).toBeVisible();
+  // hidden id="S:*"가 같은 진행 문구를 복제한다. 정착된 홈 안에서만 하나여야 한다.
+  const home = await expectSettledRoute(page, "/home");
+  const activeStatus = home.getByText("PUTDUK START 진행 중");
+  await expect(activeStatus).toHaveCount(1);
+  await expect(activeStatus).toBeVisible();
   await expect(
     page.getByRole("link", { name: /START 계속하기/ }),
   ).toBeVisible();
