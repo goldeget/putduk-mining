@@ -9,6 +9,7 @@ import {
   dismissGuidedQuestIfPresent,
   loginAsMember,
 } from "./helpers/member-session";
+import { expectSettledRoute } from "./helpers/settled-route";
 
 const OUTPUT = path.join("test-results", "products-catalog");
 
@@ -23,10 +24,8 @@ async function expectNoOverflow(page: Page) {
 }
 
 async function capture(page: Page, name: string) {
-  await expect(page.locator('[data-ui-ready="/products"]')).toHaveAttribute(
-    "data-ui-state",
-    "empty",
-  );
+  const view = await expectSettledRoute(page, "/products");
+  await expect(view).toHaveAttribute("data-ui-state", "empty");
   await expectNoOverflow(page);
   const projectOutput = path.join(OUTPUT, test.info().project.name);
   mkdirSync(projectOutput, { recursive: true });
@@ -86,7 +85,7 @@ test("the actual draft-only catalog stays unpublished with accessible responsive
   await expect(
     page.getByRole("heading", { name: /공개된 상품이\s*아직 없어요/ }),
   ).toBeVisible();
-  const view = page.locator('[data-ui-ready="/products"]');
+  const view = await expectSettledRoute(page, "/products");
   await expect(view).toHaveAttribute("data-ui-state", "empty");
   await expect(view).toHaveAttribute("data-observed-at", /^\d{4}-\d{2}-\d{2}T/);
   await expect(view.locator("details")).toHaveCount(0);

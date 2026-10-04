@@ -12,7 +12,8 @@ html {
 }
 
 body {
-  min-width: 320px;
+  /* CSS zoom은 고정 px를 키운다. 320px 바닥이 390px 화면에서 640px가 되지 않게 한다. */
+  min-width: min(320px, 100%);
   margin: 0;
   overflow-x: hidden;
   background:
