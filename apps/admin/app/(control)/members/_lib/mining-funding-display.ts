@@ -1,7 +1,9 @@
 import { z } from "zod";
 
-/** 화면 단위. 채굴 금액을 다시 계산하지 않는다. */
+/** 화면 단위. 채굴 금액과 속도를 다시 계산하지 않는다. */
 const MICRO_KRW_PER_KRW = 1_000_000n;
+const BASIS_POINT_UNIT = 10_000n;
+const unreadLabel = "확인할 수 없어요";
 
 const microText = z
   .string()
@@ -37,12 +39,21 @@ export type AdminMiningFundingRow = {
 export type AdminMiningFundingView = {
   state: "ready" | "empty" | "unavailable";
   rows: AdminMiningFundingRow[];
+  miningRows: AdminMiningFundingRow[];
 };
 
 const unknownRows: AdminMiningFundingRow[] = [
   { label: "인정 원금", value: "확인 필요", tone: "separate" },
   { label: "정산 전 대기 수익", value: "확인 필요", tone: "separate" },
   { label: "아직 확정 전", value: "확인 필요", tone: "unconfirmed" },
+];
+
+const unknownMiningRows: AdminMiningFundingRow[] = [
+  { label: "등급", value: unreadLabel, tone: "separate" },
+  { label: "채굴 용량", value: unreadLabel, tone: "separate" },
+  { label: "남은 용량", value: unreadLabel, tone: "separate" },
+  { label: "사용한 용량", value: unreadLabel, tone: "separate" },
+  { label: "속도", value: unreadLabel, tone: "separate" },
 ];
 
 function parseDisplay(value: unknown) {
@@ -81,26 +92,109 @@ export function formatAdminMicroKrw(micro: string | null) {
   return `${wholeText}.${fractionText}원`;
 }
 
+/** 없는 용량은 0원으로 바꾸지 않는다. */
+function formatAdminKnownMicro(micro: string | null) {
+  if (micro === null) {
+    return unreadLabel;
+  }
+  const formatted = formatAdminMicroKrw(micro);
+  return formatted === "아직 없어요" || formatted === "확인 필요"
+    ? unreadLabel
+    : formatted;
+}
+
+/** 서버가 준 배율만 보여 준다. 없는 속도는 0배가 아니다. */
+function formatAdminSpeed(bps: string | null) {
+  if (bps === null || !/^(0|[1-9][0-9]*)$/.test(bps)) {
+    return unreadLabel;
+  }
+  const value = BigInt(bps);
+  const whole = value / BASIS_POINT_UNIT;
+  const fraction = value % BASIS_POINT_UNIT;
+  if (fraction === 0n) {
+    return `${whole.toString()}배`;
+  }
+  const width = BASIS_POINT_UNIT.toString().length - 1;
+  const fractionText = fraction
+    .toString()
+    .padStart(width, "0")
+    .replace(/0+$/, "");
+  return `${whole.toString()}.${fractionText}배`;
+}
+
+function formatAdminTier(activated: boolean, code: string | null) {
+  if (!activated) {
+    return "적용 전";
+  }
+  return code ? code : unreadLabel;
+}
+
+function presentMiningPace(data: {
+  tier_code: string | null;
+  tier_activated: boolean;
+  effective_capacity_micro_krw: string | null;
+  remaining_capacity_micro_krw: string | null;
+  used_capacity_micro_krw: string | null;
+  speed_multiplier_bps: string | null;
+}): AdminMiningFundingRow[] {
+  return [
+    {
+      label: "등급",
+      tone: "separate",
+      value: formatAdminTier(data.tier_activated, data.tier_code),
+    },
+    {
+      label: "채굴 용량",
+      tone: "separate",
+      value: formatAdminKnownMicro(data.effective_capacity_micro_krw),
+    },
+    {
+      label: "남은 용량",
+      tone: "separate",
+      value: formatAdminKnownMicro(data.remaining_capacity_micro_krw),
+    },
+    {
+      label: "사용한 용량",
+      tone: "separate",
+      value: formatAdminKnownMicro(data.used_capacity_micro_krw),
+    },
+    {
+      label: "속도",
+      tone: "separate",
+      value: formatAdminSpeed(data.speed_multiplier_bps),
+    },
+  ];
+}
+
 /**
  * 서버가 나눠 준 인정 원금, 정산 전 대기 수익, 아직 확정 전만 보여 준다.
- * 세 금액은 더하지 않고, 없는 값은 0원으로 만들지 않는다.
+ * 등급·용량·속도는 그 금액과 더하지 않는다. 없는 값은 0원으로 만들지 않는다.
  */
 export function presentAdminMiningFunding(result: {
   data: unknown;
   error: unknown;
 }): AdminMiningFundingView {
   if (result.error) {
-    return { state: "unavailable", rows: unknownRows };
+    return {
+      state: "unavailable",
+      rows: unknownRows,
+      miningRows: unknownMiningRows,
+    };
   }
   const data = parseDisplay(result.data);
   if (!data) {
-    return { state: "unavailable", rows: unknownRows };
+    return {
+      state: "unavailable",
+      rows: unknownRows,
+      miningRows: unknownMiningRows,
+    };
   }
   if (!data.available) {
-    return { state: "empty", rows: [] };
+    return { state: "empty", rows: [], miningRows: [] };
   }
   return {
     state: "ready",
+    miningRows: presentMiningPace(data),
     rows: [
       {
         label: "인정 원금",

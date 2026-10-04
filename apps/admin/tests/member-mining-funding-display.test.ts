@@ -19,9 +19,20 @@ const ready = {
   retention_unconfirmed_micro_krw: "25000000000",
 };
 
+function viewOf(data: unknown, error: unknown = null) {
+  return presentAdminMiningFunding({ data, error });
+}
+
 function labels(data: unknown, error: unknown = null) {
-  const view = presentAdminMiningFunding({ data, error });
+  const view = viewOf(data, error);
   return Object.fromEntries(view.rows.map((row) => [row.label, row.value]));
+}
+
+function miningLabels(data: unknown, error: unknown = null) {
+  const view = viewOf(data, error);
+  return Object.fromEntries(
+    view.miningRows.map((row) => [row.label, row.value]),
+  );
 }
 
 describe("admin mining funding display", () => {
@@ -32,6 +43,14 @@ describe("admin mining funding display", () => {
     expect(byLabel["인정 원금"]).toBe("100,000원");
     expect(byLabel["정산 전 대기 수익"]).toBe("15,000원");
     expect(byLabel["아직 확정 전"]).toBe("25,000원");
+    expect(miningLabels(ready)).toEqual({
+      등급: "L1",
+      "채굴 용량": "15,000원",
+      "남은 용량": "15,000원",
+      "사용한 용량": "0원",
+      속도: "1배",
+    });
+    expect(view.miningRows.map((row) => row.tone)).not.toContain("unconfirmed");
     expect(view.rows.find((row) => row.label === "아직 확정 전")?.tone).toBe(
       "unconfirmed",
     );
@@ -39,9 +58,9 @@ describe("admin mining funding display", () => {
     expect(Object.values(byLabel)).not.toContain("125,000원");
     expect(Object.values(byLabel)).not.toContain("40,000원");
     expect(Object.values(byLabel)).not.toContain("140,000원");
-    expect(view.rows.map((row) => row.label).join(" ")).not.toMatch(
-      /micro|pending|retention|bonus|capacity|tier/i,
-    );
+    expect(
+      [...view.rows, ...view.miningRows].map((row) => row.label).join(" "),
+    ).not.toMatch(/micro|pending|retention|bonus|capacity|tier|bps/i);
     expect(view.rows.filter((row) => row.label.includes("원금"))).toEqual([
       { label: "인정 원금", value: "100,000원", tone: "separate" },
     ]);
@@ -72,6 +91,42 @@ describe("admin mining funding display", () => {
       "정산 전 대기 수익": "아직 없어요",
       "아직 확정 전": "아직 없어요",
     });
+    const missingPace = {
+      ...ready,
+      tier_code: null,
+      tier_activated: false,
+      effective_capacity_micro_krw: null,
+      remaining_capacity_micro_krw: null,
+      used_capacity_micro_krw: null,
+      speed_multiplier_bps: null,
+    };
+    expect(miningLabels(missingPace)).toEqual({
+      등급: "적용 전",
+      "채굴 용량": "확인할 수 없어요",
+      "남은 용량": "확인할 수 없어요",
+      "사용한 용량": "확인할 수 없어요",
+      속도: "확인할 수 없어요",
+    });
+    expect(Object.values(miningLabels(missingPace))).not.toContain("0원");
+    expect(Object.values(miningLabels(missingPace))).not.toContain("0배");
+  });
+
+  it("keeps an inactive rank from looking active and shows a fractional speed", () => {
+    expect(
+      miningLabels({
+        ...ready,
+        tier_activated: false,
+        tier_code: "L1",
+        speed_multiplier_bps: "15000",
+      }),
+    ).toMatchObject({ 등급: "적용 전", 속도: "1.5배" });
+    expect(
+      miningLabels({
+        ...ready,
+        tier_activated: true,
+        tier_code: null,
+      })["등급"],
+    ).toBe("확인할 수 없어요");
   });
 
   it("does not show an empty funding subject as zero", () => {
@@ -86,7 +141,7 @@ describe("admin mining funding display", () => {
         },
         error: null,
       }),
-    ).toEqual({ state: "empty", rows: [] });
+    ).toEqual({ state: "empty", rows: [], miningRows: [] });
   });
 
   it("a read error or a bonus field cannot become principal", () => {
@@ -100,7 +155,16 @@ describe("admin mining funding display", () => {
       "확인 필요",
       "확인 필요",
     ]);
+    expect(failed.miningRows.map((row) => row.value)).toEqual([
+      "확인할 수 없어요",
+      "확인할 수 없어요",
+      "확인할 수 없어요",
+      "확인할 수 없어요",
+      "확인할 수 없어요",
+    ]);
     expect(failed.rows.map((row) => row.value)).not.toContain("0원");
+    expect(failed.miningRows.map((row) => row.value)).not.toContain("0원");
+    expect(failed.miningRows.map((row) => row.value)).not.toContain("적용 전");
 
     const bonus = presentAdminMiningFunding({
       data: { ...ready, recorded_bonus_atomic: "3000" },

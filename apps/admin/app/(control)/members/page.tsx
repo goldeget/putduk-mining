@@ -419,11 +419,22 @@ export default async function MembersPage({
           <p className="panel-note">
             대기 수익과 아직 확정 전 금액은 원금에 포함하지 않아요.
           </p>
+          <h3>등급 · 용량 · 속도</h3>
+          {fundingDisplay.miningRows.length === 0 ? (
+            <p className="panel-note">등급과 용량, 속도는 아직 없어요.</p>
+          ) : (
+            <dl className={styles.sourceStats}>
+              {fundingDisplay.miningRows.map((row) => (
+                <div key={row.label}>
+                  <dt>{row.label}</dt>
+                  <dd>{row.value}</dd>
+                </div>
+              ))}
+            </dl>
+          )}
+          <p className="panel-note">용량과 속도는 원금이 아니에요.</p>
           <p className="panel-note">
             채굴 수익과 보너스는 원금에 포함하지 않아요.
-          </p>
-          <p className="panel-note">
-            채굴 등급과 파워는 수익률 설정을 마친 뒤 확인할 수 있어요.
           </p>
           {moneyDisplay.available && !moneyDisplay.complete ? (
             <div className={styles.recordedSources}>
