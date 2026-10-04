@@ -6,11 +6,29 @@ import {
 } from "@/app/(control)/members/_lib/member-state-display";
 import MembersPage from "@/app/(control)/members/page";
 
+const readyMiningDisplay = {
+  available: true,
+  eligible_principal_micro_krw: "100000000000",
+  tier_code: null,
+  tier_activated: false,
+  cycle_started_at: null,
+  cycle_end: null,
+  effective_capacity_micro_krw: null,
+  remaining_capacity_micro_krw: null,
+  used_capacity_micro_krw: null,
+  speed_multiplier_bps: null,
+  pending_micro_krw: "15000000000",
+  retention_unconfirmed_micro_krw: "25000000000",
+};
 const reads = vi.hoisted(() => ({
   tables: {} as Record<
     string,
     { data: unknown; error: unknown; count?: number }
   >,
+  miningDisplay: {
+    data: null as unknown,
+    error: null as unknown,
+  },
 }));
 vi.mock("@/lib/auth/principal", () => ({
   requireAdminPage: vi.fn().mockResolvedValue({ role: "SUPPORT" }),
@@ -50,6 +68,9 @@ vi.mock("@/lib/supabase/service", () => ({
       };
       return query;
     },
+    rpc() {
+      return Promise.resolve(reads.miningDisplay);
+    },
   }),
 }));
 const lifecycle = {
@@ -80,6 +101,7 @@ beforeEach(() => {
       error: null,
     },
   };
+  reads.miningDisplay = { data: readyMiningDisplay, error: null };
 });
 
 describe("member lifecycle and profile read truth", () => {
@@ -193,6 +215,16 @@ describe("member lifecycle and profile read truth", () => {
     expect(markup).toContain('data-ui-state="loaded"');
     expect(markup).toMatch(/첫 입금<\/dt><dd>없음/);
     expect(markup).toMatch(/환영 출금<\/dt><dd>미완료/);
+    expect(markup).toMatch(/인정 원금<\/dt><dd>100,000원/);
+    expect(markup).toMatch(/정산 전 대기 수익<\/dt><dd>15,000원/);
+    expect(markup).toMatch(/아직 확정 전<\/dt><dd>25,000원/);
+    expect(markup).toContain("확정된 수익이 아니에요");
+    expect(markup).not.toContain("140,000원");
+    expect(markup).not.toContain("115,000원");
+    expect(markup).not.toContain("40,000원");
+    expect(markup).toMatch(/확정 채굴 수익<\/dt><dd>확인 필요/);
+    expect(markup).toMatch(/채굴 인정 원금<\/dt><dd>0원/);
+    expect(markup).not.toMatch(/보너스<\/dt><dd>100,000원/);
   });
   it("the actual member page keeps missing provenance partial even when profile reads succeed", async () => {
     reads.tables.money_source_summaries = { data: null, error: null };
@@ -206,5 +238,44 @@ describe("member lifecycle and profile read truth", () => {
     expect(markup).toContain('data-ui-state="partial"');
     expect(markup).toContain("자금 구분을 확인하지 못했습니다.");
     expect(markup).toMatch(/채굴 인정 원금<\/dt><dd>확인 필요/);
+  });
+  it("a missing mining display is not shown as zero principal or pending earnings", async () => {
+    reads.miningDisplay = { data: null, error: { code: "42501" } };
+    const markup = renderToStaticMarkup(
+      await MembersPage({
+        searchParams: Promise.resolve({
+          id: "00000000-0000-4000-8000-000000000001",
+        }),
+      }),
+    );
+    expect(markup).toContain('data-ui-state="partial"');
+    expect(markup).toContain("원금과 대기 수익을 확인하지 못했습니다.");
+    expect(markup).toMatch(/정산 전 대기 수익<\/dt><dd>확인 필요/);
+    expect(markup).toMatch(/아직 확정 전<\/dt><dd>확인 필요/);
+    expect(markup).not.toMatch(/정산 전 대기 수익<\/dt><dd>0원/);
+    expect(markup).not.toMatch(/아직 확정 전<\/dt><dd>0원/);
+  });
+  it("an empty funding subject does not invent zero earnings", async () => {
+    reads.miningDisplay = {
+      data: {
+        ...readyMiningDisplay,
+        available: false,
+        eligible_principal_micro_krw: null,
+        pending_micro_krw: null,
+        retention_unconfirmed_micro_krw: null,
+      },
+      error: null,
+    };
+    const markup = renderToStaticMarkup(
+      await MembersPage({
+        searchParams: Promise.resolve({
+          id: "00000000-0000-4000-8000-000000000001",
+        }),
+      }),
+    );
+    expect(markup).toContain("원금과 대기 수익은 아직 없어요.");
+    expect(markup).not.toMatch(/정산 전 대기 수익<\/dt>/);
+    expect(markup).not.toMatch(/아직 확정 전<\/dt>/);
+    expect(markup).not.toMatch(/정산 전 대기 수익<\/dt><dd>0원/);
   });
 });

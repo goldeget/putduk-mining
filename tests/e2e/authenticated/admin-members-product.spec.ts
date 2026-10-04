@@ -66,9 +66,11 @@ test.describe("admin Member 360 product states", () => {
         })
         .locator("dd");
     await expect(sourceValue("채굴 인정 원금")).toHaveText("0원");
-    await expect(sourceValue("미확정 채굴 수익")).toHaveText("확인 필요");
     await expect(sourceValue("누적 채굴 수익")).toHaveText("확인 필요");
-    await expect(sourceValue("확정 채굴 수익")).toHaveText("0원");
+    await expect(sourceValue("확정 채굴 수익")).toHaveText("확인 필요");
+    await expect(sourceValue("정산 전 대기 수익")).toBeVisible();
+    await expect(sourceValue("아직 확정 전")).toBeVisible();
+    await expect(sources.getByText("확정된 수익이 아니에요")).toBeVisible();
     const db = createLocalServiceRoleClient();
     const created = await db.rpc("create_deposit_request", {
       p_user_id: member.userId,

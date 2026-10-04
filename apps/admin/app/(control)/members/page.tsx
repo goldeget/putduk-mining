@@ -23,6 +23,7 @@ import {
   presentMemberLifecycle,
   presentMemberProfile,
 } from "./_lib/member-state-display";
+import { presentAdminMiningFunding } from "./_lib/mining-funding-display";
 import { presentMemberMoneySources } from "./_lib/money-source-display";
 
 const memberIdSchema = z.uuid();
@@ -103,6 +104,7 @@ export default async function MembersPage({
     withdrawalRows,
     riskFlags,
     moneySources,
+    miningFunding,
   ] = await Promise.all([
     db.auth.admin.getUserById(userId),
     db
@@ -183,6 +185,7 @@ export default async function MembersPage({
       )
       .eq("user_id", userId)
       .maybeSingle(),
+    db.rpc("read_own_mining_server_display", { p_user_id: userId }),
   ]);
 
   const authError = authUser.error as {
@@ -295,6 +298,7 @@ export default async function MembersPage({
   const lifecycleDisplay = presentMemberLifecycle(lifecycle);
   const profileDisplay = presentMemberProfile(profile);
   const moneyDisplay = presentMemberMoneySources(moneySources, userId);
+  const fundingDisplay = presentAdminMiningFunding(miningFunding);
 
   return (
     <div
@@ -307,7 +311,8 @@ export default async function MembersPage({
         !lifecycleDisplay.available ||
         !profileDisplay.available ||
         !moneyDisplay.available ||
-        !moneyDisplay.complete
+        !moneyDisplay.complete ||
+        fundingDisplay.state === "unavailable"
           ? "partial"
           : "loaded"
       }
@@ -388,6 +393,32 @@ export default async function MembersPage({
               </div>
             ))}
           </dl>
+          <h3>원금과 대기 수익</h3>
+          {fundingDisplay.state === "empty" ? (
+            <p className="panel-note">원금과 대기 수익은 아직 없어요.</p>
+          ) : (
+            <>
+              {fundingDisplay.state === "unavailable" ? (
+                <p className={styles.partialAlert} role="status">
+                  원금과 대기 수익을 확인하지 못했습니다. 다시 불러와 주세요.
+                </p>
+              ) : null}
+              <dl className={styles.sourceStats}>
+                {fundingDisplay.rows.map((row) => (
+                  <div key={row.label}>
+                    <dt>{row.label}</dt>
+                    <dd>{row.value}</dd>
+                    {row.tone === "unconfirmed" ? (
+                      <p className="panel-note">확정된 수익이 아니에요.</p>
+                    ) : null}
+                  </div>
+                ))}
+              </dl>
+            </>
+          )}
+          <p className="panel-note">
+            대기 수익과 아직 확정 전 금액은 원금에 포함하지 않아요.
+          </p>
           <p className="panel-note">
             채굴 수익과 보너스는 원금에 포함하지 않아요.
           </p>
