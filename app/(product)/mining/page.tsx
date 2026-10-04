@@ -20,6 +20,7 @@ import {
   presentMiningServerDisplay,
   type MiningAmountView,
 } from "@/lib/product/mining-server-display";
+import { readOwnMiningServerDisplay } from "@/lib/product/read-mining-server-display";
 import miningStyles from "./page.module.css";
 
 const worldColors: Record<string, string> = {
@@ -87,9 +88,7 @@ export default async function MiningPage() {
       .from("asset_worlds")
       .select("code, display_name_ko")
       .order("sort_order"),
-    identity.supabase.rpc("read_own_mining_server_display", {
-      p_user_id: identity.userId,
-    }),
+    readOwnMiningServerDisplay(identity),
   ]);
   const parsedDisplay = displayResponse.error
     ? null

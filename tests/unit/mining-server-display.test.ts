@@ -87,6 +87,27 @@ describe("presentMiningServerDisplay", () => {
     expect(formatMiningSpeedBps("15000")).toBe("1.5배");
   });
 
+  test("reads the signed-in member through the server role only", () => {
+    const page = readFileSync(
+      new URL("../../app/(product)/mining/page.tsx", import.meta.url),
+      "utf8",
+    );
+    const reader = readFileSync(
+      new URL(
+        "../../lib/product/read-mining-server-display.ts",
+        import.meta.url,
+      ),
+      "utf8",
+    );
+    expect(page).toContain("readOwnMiningServerDisplay(identity)");
+    expect(page).not.toContain("identity.supabase.rpc");
+    expect(reader).toContain('import "server-only"');
+    expect(reader).toContain("createSupabaseAdminClient()");
+    expect(reader).toContain("p_user_id: sessionUserId");
+    expect(reader).toContain("const sessionUserId = identity.userId");
+    expect(reader).not.toContain("requestedUserId");
+  });
+
   test("rejects internal columns before they can reach the screen", () => {
     expect(
       parseMiningServerDisplay({

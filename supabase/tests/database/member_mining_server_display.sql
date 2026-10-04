@@ -5,20 +5,20 @@ create extension if not exists pgtap with schema extensions;
 select no_plan();
 
 select ok(
-  (select prosecdef and provolatile = 'v'
+  (select not prosecdef and provolatile = 'v'
       and pg_get_userbyid(proowner) = 'service_role'
       and proconfig @> array['search_path=pg_catalog']::text[]
     from pg_proc
     where oid = 'public.read_own_mining_server_display(uuid)'::regprocedure)
-  and has_function_privilege(
+  and not has_function_privilege(
     'authenticated', 'public.read_own_mining_server_display(uuid)', 'EXECUTE')
   and not has_function_privilege(
     'anon', 'public.read_own_mining_server_display(uuid)', 'EXECUTE')
   and not has_function_privilege(
     'public', 'public.read_own_mining_server_display(uuid)', 'EXECUTE')
-  and not has_function_privilege(
+  and has_function_privilege(
     'service_role', 'public.read_own_mining_server_display(uuid)', 'EXECUTE'),
-  'only a signed-in member can execute the display read');
+  'only the server service role can execute the display read');
 
 select ok(
   not has_function_privilege('authenticated', 'app_private.read_funding_principal_foundation(uuid)', 'EXECUTE')
@@ -77,8 +77,8 @@ select set_config('request.jwt.claims', '', true);
 set local role authenticated;
 select throws_ok(
   $$select public.read_own_mining_server_display('0c5e0000-0000-4000-8000-000000000101'::uuid)$$,
-  '42501', 'MINING_DISPLAY_SIGN_IN_REQUIRED',
-  'a member without a session cannot read mining display');
+  '42501', 'permission denied for function read_own_mining_server_display',
+  'a member session cannot execute the mining display read');
 reset role;
 
 create temporary table display_ctx (
@@ -119,7 +119,7 @@ grant select, update on display_ctx to service_role;
 grant select on display_ctx to authenticated;
 
 select set_config('request.jwt.claim.sub', (select empty_id::text from display_ctx), true);
-set local role authenticated;
+set local role service_role;
 select is(
   (public.read_own_mining_server_display((select empty_id from display_ctx))->>'available'),
   'false',
@@ -154,7 +154,7 @@ select is(
   'below-minimum private pending is zero');
 
 select set_config('request.jwt.claim.sub', (select other_id::text from display_ctx), true);
-set local role authenticated;
+set local role service_role;
 select is(
   (public.read_own_mining_server_display((select other_id from display_ctx))->>'pending_micro_krw'),
   (select other_pending from display_ctx),
@@ -202,7 +202,7 @@ select ok(
 reset role;
 
 select set_config('request.jwt.claim.sub', (select owner_id::text from display_ctx), true);
-set local role authenticated;
+set local role service_role;
 select ok(
   (select display->>'available' = 'true'
       and display->>'pending_micro_krw' = ctx.owner_private->>'pending_micro_krw'
@@ -243,11 +243,24 @@ select throws_ok(
 reset role;
 
 select set_config('request.jwt.claim.sub', (select other_id::text from display_ctx), true);
-set local role authenticated;
+set local role service_role;
 select throws_ok(
   $$select public.read_own_mining_server_display((select owner_id from display_ctx))$$,
   '42501', 'MINING_DISPLAY_SUBJECT_FORBIDDEN',
   'the other member cannot read the owner display');
+reset role;
+
+select set_config('request.jwt.claim.sub', '', true);
+select set_config('request.jwt.claims', '', true);
+set local role service_role;
+select throws_ok(
+  $$select public.read_own_mining_server_display(null::uuid)$$,
+  '42501', 'MINING_DISPLAY_SUBJECT_FORBIDDEN',
+  'the server role cannot read a missing subject');
+select is(
+  (public.read_own_mining_server_display((select owner_id from display_ctx))->>'pending_micro_krw'),
+  (select owner_private->>'pending_micro_krw' from display_ctx),
+  'the server role reads the member id supplied by the signed-in session');
 reset role;
 
 select * from finish();
