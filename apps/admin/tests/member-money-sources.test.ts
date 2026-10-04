@@ -29,10 +29,14 @@ describe("money source operator evidence", () => {
     expect(result.complete).toBe(true);
     expect(result.rows).toContainEqual(["채굴 인정 원금", "15,000원"]);
     expect(result.rows).toContainEqual(["현재 보너스", "3,000원"]);
+    expect(result.rows).toContainEqual(["누적 보너스", "3,000원"]);
     expect(result.rows).toContainEqual(["현재 채굴 등급", "설정 전"]);
-    expect(result.rows).toContainEqual(["미확정 채굴 수익", "확인 필요"]);
     expect(result.rows).toContainEqual(["누적 채굴 수익", "확인 필요"]);
-    expect(result.rows).toContainEqual(["확정 채굴 수익", "0원"]);
+    expect(result.rows).toContainEqual(["확정 채굴 수익", "확인 필요"]);
+    expect(result.rows).toContainEqual(["누적 원금 회수", "확인 필요"]);
+    expect(result.rows).toContainEqual(["총 출금", "확인 필요"]);
+    expect(result.rows.map((row) => row[1])).not.toContain("18,000원");
+    expect(result.rows.map((row) => row[0])).not.toContain("미확정 채굴 수익");
   });
   it("legacy unknown coverage hides eligible principal and lifetime claims", () => {
     const result = present({

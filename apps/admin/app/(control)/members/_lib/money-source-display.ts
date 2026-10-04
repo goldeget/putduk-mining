@@ -67,18 +67,16 @@ export function presentMemberMoneySources(
       "누적 USDT 환산 원금",
       known(complete ? data.recorded_usdt_principal_credits_atomic : null),
     ],
-    ["누적 원금 회수", complete ? "0원" : "확인 필요"],
+    ["누적 원금 회수", "확인 필요"],
     ["채굴 인정 원금", known(data?.eligible_principal_atomic)],
     ["현재 채굴 등급", "설정 전"],
     ["현재 채굴 파워", "설정 전"],
-    // Source coverage proves posted money only; it does not prove that no
-    // unposted earned/pending accrual exists in the mining domain.
+    // 원장 출처가 맞아도 누적·확정 채굴 수익 금액은 이 조회에 없다.
     ["누적 채굴 수익", "확인 필요"],
-    ["미확정 채굴 수익", "확인 필요"],
-    ["확정 채굴 수익", complete ? "0원" : "확인 필요"],
+    ["확정 채굴 수익", "확인 필요"],
     ["누적 보너스", known(complete ? data.recorded_bonus_atomic : null)],
     ["현재 보너스", known(complete ? data.recorded_bonus_atomic : null)],
-    ["총 출금", complete ? "0원" : "확인 필요"],
+    ["총 출금", "확인 필요"],
   ] as const;
   return {
     available: data !== null,
