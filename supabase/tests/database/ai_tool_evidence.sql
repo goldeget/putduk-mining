@@ -133,7 +133,6 @@ select ok(
       and c.relkind = 'r'
       and c.relname in (
         'ai_message_redactions',
-        'ai_conversation_summaries',
         'ai_topics',
         'ai_topic_clusters',
         'ai_knowledge_gaps',
@@ -150,7 +149,7 @@ select ok(
         'ai_escalations'
       )
   ),
-  'redaction, summary, RAG, eval, provider, and learning tables stay absent'
+  'redaction, RAG, eval, provider, and learning tables stay absent'
 );
 
 select ok(
