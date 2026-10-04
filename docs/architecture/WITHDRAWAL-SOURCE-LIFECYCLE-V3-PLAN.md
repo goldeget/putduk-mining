@@ -393,8 +393,11 @@ FINANCIAL_RECONCILIATION job과 SAFE_MODE_CHANGED.v1 outbox만 지원한다.
 wallet label의 MINING_REWARD 합계, pure preview, PUBLISHED policy, reader 존재는 실제
 earned/carry/settlement writer나 출금 가능 source의 증거가 아니다.
 
-**principal 부분 회수의 배분/FIFO는 사용자 답변 대기다.** FIFO·비례·사용자 lot 선택을
-임의 결정하지 않는다. lot 보유기간 qualification과 실제 entitlement writer를 포함한
+일반 원금 회수는 `NEWEST_FIRST`다. 정렬은 `effective_at` DESC, `recorded_at` DESC,
+lot id DESC이고 부분 배분한다. reversal, chargeback, correction은
+`ORIGINAL_LOT_TARGETED`다. 대상 lot이 부족하면
+`PRINCIPAL_RECOVERY_ORIGINAL_LOT_SHORT`다. FIFO, 비례 배분, 사용자 lot 선택은
+쓰지 않는다. lot 보유기간 qualification과 실제 entitlement writer를 포함한
 계약이 충족될 때까지 principal hold를 닫는다. 전액 회수 형식으로 미결 정책을 우회하지 않는다.
 
 ## 10. 구현·검증 게이트
