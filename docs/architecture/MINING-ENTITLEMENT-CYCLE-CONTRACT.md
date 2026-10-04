@@ -503,6 +503,34 @@ retention은 `UNCONFIRMED`다. 1 micro-KRW 미만은 이 저장의 carry가 아�
 다시 나누지 않는다. `POLICY_CONSUMER_NOT_ENABLED`를 풀지 않는다. 이 저장은
 `PRODUCT COMPLETE`가 아니다.
 
+## 11D. Pending 산출
+
+이 절은 원장 credit, wallet projection, `reward_carry`, settlement, worker,
+snapshot, verified 전환을 구현하지 않는다. 서비스 권한 조회는
+`app_private.read_funding_reward_pending(uuid)` 하나다. 보상 금액 인자는 없다.
+
+조회는 저장된 segment의 principal, 이미 계산된 base/retention proration,
+policy version, cycle 창을 읽는다. 적용 속도는 그 segment에 저장된 policy의
+기본 speed다. 호출자가 넘긴 배수나 보상 금액이 아니다. 저장되지 않은
+campaign boost, product multiplier, override 결합은 만들지 않는다.
+
+경과 시간은 각 segment의 `[effective_at, effective_until)` 안에서만 센다.
+이전 segment를 새 tier로 다시 쓰지 않고 cycle 시작과 끝을 바꾸지 않는다.
+base의 경과분은 speed만큼 빨리 채우되, 그 segment의 저장된 base와 cycle의
+남은 capacity를 넘지 않는다. 남은 capacity가 0이면 speed만으로 pending을
+다시 열지 않는다. retention은 pending에 더하지 않고 `UNCONFIRMED`로 남긴다.
+결과는 수락 영수증이 아닌 pending 수치다. used를 더하지 않는다.
+
+최소 원금 미만이거나 출처가 미해결이면 pending은 0이다. segment 행은
+지우지 않는다. 수락된 used를 저장하는 표는 아직 없으므로, 이 조회의 남은
+capacity는 저장된 base 합이다. 소진 뒤 speed로 재개하지 않는 규칙은 남은
+capacity가 0인 계산에 있다. `POLICY_CONSUMER_NOT_ENABLED`를 풀지 않는다.
+이 조회는 `PRODUCT COMPLETE`가 아니다.
+
+미명세로 남기고 구현하지 않는다: multiplier 결합 순서, retention vesting,
+1원 미만 carry, whole KRW credit, snapshot 필드, worker, 원금 감소 시점의
+segment 분할.
+
 ## 12. 호환성과 활성화 미결 Gate
 
 다음 항목은 open finding이다. 기본값·fixture·예시로 결정하지 않으며
