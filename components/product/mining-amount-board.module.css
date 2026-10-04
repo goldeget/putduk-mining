@@ -1,0 +1,154 @@
+.moneyStack {
+  display: grid;
+  gap: 0.55rem;
+  width: min(100%, 42rem);
+}
+
+.moneyLead,
+.moneyPair,
+.moneyCapacity dl {
+  display: grid;
+  gap: 0.45rem;
+  margin: 0;
+}
+
+.moneyLead {
+  width: min(100%, 32rem);
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.9fr);
+}
+
+.moneyPair {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.moneyFollow {
+  display: grid;
+  gap: 0.45rem;
+  width: 100%;
+}
+
+.moneyLead > div,
+.moneyPair > div,
+.moneyCapacity {
+  min-width: 0;
+  border: 1px solid rgb(229 195 142 / 24%);
+  border-radius: 0.8rem;
+  background: rgb(8 12 17 / 78%);
+}
+
+.moneyLead > div,
+.moneyPair > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.28rem;
+  padding: 0.7rem 0.8rem;
+}
+
+.moneyCapacity {
+  display: grid;
+  gap: 0.45rem;
+  padding: 0.75rem 0.8rem;
+}
+
+.moneyCapacity h3 {
+  margin: 0;
+  color: #e0d2bd;
+  font-size: 0.8125rem;
+  font-weight: 650;
+  line-height: 1.4;
+}
+
+.moneyCapacity dl {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.moneyCapacity dl > div {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.moneyLead dt,
+.moneyPair dt,
+.moneyCapacity dt {
+  color: #e0d2bd;
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.moneyLead dd,
+.moneyPair dd,
+.moneyCapacity dd {
+  margin: 0;
+  color: #fff5e5;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.3;
+  word-break: keep-all;
+}
+
+.moneyLead > div[data-amount-weight="lead"] dd {
+  font-size: clamp(1.05rem, 2.4vw, 1.4rem);
+  font-weight: 720;
+}
+
+.moneyLead > div[data-amount-weight="companion"] dd {
+  font-size: 1rem;
+  font-weight: 650;
+}
+
+.moneyPair > div[data-amount-weight="pending"] dd,
+.moneyPair > div[data-amount-weight="speed"] dd {
+  font-size: 1rem;
+  font-weight: 650;
+}
+
+.moneyCapacity dd {
+  font-size: 0.95rem;
+  font-weight: 650;
+}
+
+.moneyRetention {
+  max-width: 36rem;
+  margin: 0;
+  padding: 0.45rem 0.7rem;
+  border: 1px dashed rgb(229 195 142 / 35%);
+  border-radius: 0.7rem;
+  background: rgb(8 12 17 / 42%);
+  color: #cbbfae;
+  font-size: 0.75rem;
+  font-weight: 450;
+  line-height: 1.45;
+  word-break: keep-all;
+}
+
+.moneyEmpty {
+  max-width: 28ch;
+  margin: 0;
+  padding: 0.85rem 1rem;
+  border: 1px solid rgb(229 195 142 / 24%);
+  border-radius: 0.8rem;
+  background: rgb(8 12 17 / 78%);
+  color: #dbcdbb;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  word-break: keep-all;
+}
+
+@media (max-width: 360px) {
+  .moneyLead,
+  .moneyPair {
+    gap: 0.3rem;
+  }
+
+  .moneyLead > div,
+  .moneyPair > div,
+  .moneyCapacity {
+    padding: 0.6rem 0.5rem;
+  }
+
+  .moneyCapacity dl {
+    grid-template-columns: 1fr;
+  }
+}

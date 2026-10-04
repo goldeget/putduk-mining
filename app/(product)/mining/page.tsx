@@ -2,6 +2,10 @@ import type { CSSProperties } from "react";
 import Link from "next/link";
 
 import { PutdukIcon } from "@/components/icons/putduk-icon";
+import {
+  MiningAmountBoard,
+  miningDisplayedValue,
+} from "@/components/product/mining-amount-board";
 import styles from "@/components/product/product-experience.module.css";
 import { PageHeading } from "@/components/product/page-heading";
 import { ProductStatusPill } from "@/components/product/product-status-pill";
@@ -18,7 +22,6 @@ import {
 import {
   parseMiningServerDisplay,
   presentMiningServerDisplay,
-  type MiningAmountView,
 } from "@/lib/product/mining-server-display";
 import { readOwnMiningServerDisplay } from "@/lib/product/read-mining-server-display";
 import miningStyles from "./page.module.css";
@@ -30,37 +33,6 @@ const worldColors: Record<string, string> = {
   SILVER: "var(--world-silver)",
   USA: "var(--world-usa)",
 };
-
-function MiningAmountPanel({
-  error,
-  view,
-}: {
-  error: boolean;
-  view: MiningAmountView | null;
-}) {
-  if (error || !view) {
-    return (
-      <StatePanel
-        tone="error"
-        title="채굴 금액을 불러오지 못했어요"
-        description="잠시 후 다시 시도해 주세요."
-      />
-    );
-  }
-  if (view.state === "empty") {
-    return <p className={miningStyles.moneyEmpty}>채굴 금액은 아직 없어요.</p>;
-  }
-  return (
-    <dl className={miningStyles.moneyFacts} aria-label="채굴 금액">
-      {view.rows.map((row) => (
-        <div key={row.label}>
-          <dt>{row.label}</dt>
-          <dd>{row.value}</dd>
-        </div>
-      ))}
-    </dl>
-  );
-}
 
 const worldDescriptions: Record<string, string> = {
   CRYPTO: "디지털 자산 테마를 담은 채굴 월드",
@@ -97,9 +69,10 @@ export default async function MiningPage() {
   const displayView = parsedDisplay
     ? presentMiningServerDisplay(parsedDisplay)
     : null;
-  const miningAmounts = (
-    <MiningAmountPanel error={displayError} view={displayView} />
-  );
+  const amountBoard = {
+    error: displayError,
+    view: displayView,
+  };
   const currentSession = sessions?.[0];
   const currentStatus = currentSession
     ? presentMiningStatus(currentSession.status)
@@ -132,7 +105,7 @@ export default async function MiningPage() {
             title="채굴 상태를 불러오지 못했어요"
             description="인터넷 연결을 확인한 뒤 다시 시도해 주세요. 화면을 닫아도 채굴은 계속돼요."
           />
-          {miningAmounts}
+          <MiningAmountBoard {...amountBoard} placement="stack" />
         </>
       ) : (
         <MiningLiveStage
@@ -140,59 +113,64 @@ export default async function MiningPage() {
           running={isConfirmedMiningRunning(currentSession?.status)}
         >
           <div className={miningStyles.hud}>
-            <header className={miningStyles.heading}>
-              <div className={miningStyles.meta}>
-                {currentStatus ? (
-                  <ProductStatusPill
-                    label={currentStatus.label}
-                    tone={currentStatus.tone}
-                  />
-                ) : (
-                  <ProductStatusPill label="시작 전" tone="neutral" />
-                )}
-                {currentSession ? (
-                  <span className="eyebrow">{currentSession.world_code}</span>
-                ) : null}
-              </div>
-              <h2 id="world-hero-title">
-                {currentSession
-                  ? `${currentSession.world_name_ko} · ${currentStatus?.label ?? "상태 확인 중"}`
-                  : "첫 월드에서 채굴을 시작해 보세요"}
-              </h2>
-              <p className={miningStyles.description}>
-                {currentSession
-                  ? "정산된 금액은 지갑에서 확인할 수 있어요."
-                  : "PUTDUK START로 첫 채굴을 시작해 보세요."}
-              </p>
-            </header>
-            {currentSession ? (
-              <div className={miningStyles.facts}>
-                <span>
-                  정산 전 경과{" "}
-                  <strong>
-                    {formatMiningElapsed(currentSession.unsettled_seconds)}
-                  </strong>
-                </span>
-                <span>
-                  활성 장비{" "}
-                  <strong>{currentSession.active_equipment_count}개</strong>
-                </span>
-                <span>
-                  최근 정산{" "}
-                  <strong>
-                    {formatMiningClock(currentSession.last_settled_at)}
-                  </strong>
-                </span>
-              </div>
-            ) : (
-              <div className={miningStyles.actions}>
-                <Link className="button button--primary" href="/start">
-                  PUTDUK START 확인
-                  <PutdukIcon name="arrow-right" size={18} />
-                </Link>
-              </div>
-            )}
-            {miningAmounts}
+            <div className={miningStyles.hudTop}>
+              <header className={miningStyles.heading}>
+                <div className={miningStyles.meta}>
+                  {currentStatus ? (
+                    <ProductStatusPill
+                      label={currentStatus.label}
+                      tone={currentStatus.tone}
+                    />
+                  ) : (
+                    <ProductStatusPill label="시작 전" tone="neutral" />
+                  )}
+                  {currentSession ? (
+                    <span className="eyebrow">{currentSession.world_code}</span>
+                  ) : null}
+                </div>
+                <h2 id="world-hero-title">
+                  {currentSession
+                    ? `${currentSession.world_name_ko} · ${currentStatus?.label ?? "상태 확인 중"}`
+                    : "첫 월드에서 채굴을 시작해 보세요"}
+                </h2>
+                <p className={miningStyles.description}>
+                  {currentSession
+                    ? "정산된 금액은 지갑에서 확인할 수 있어요."
+                    : "PUTDUK START로 첫 채굴을 시작해 보세요."}
+                </p>
+              </header>
+              <MiningAmountBoard {...amountBoard} placement="lead" />
+            </div>
+            <div className={miningStyles.hudBottom}>
+              {currentSession ? (
+                <div className={miningStyles.facts}>
+                  <span>
+                    정산 전 경과{" "}
+                    <strong>
+                      {formatMiningElapsed(currentSession.unsettled_seconds)}
+                    </strong>
+                  </span>
+                  <span>
+                    활성 장비{" "}
+                    <strong>{currentSession.active_equipment_count}개</strong>
+                  </span>
+                  <span>
+                    최근 정산{" "}
+                    <strong>
+                      {formatMiningClock(currentSession.last_settled_at)}
+                    </strong>
+                  </span>
+                </div>
+              ) : (
+                <div className={miningStyles.actions}>
+                  <Link className="button button--primary" href="/start">
+                    PUTDUK START 확인
+                    <PutdukIcon name="arrow-right" size={18} />
+                  </Link>
+                </div>
+              )}
+              <MiningAmountBoard {...amountBoard} placement="follow" />
+            </div>
           </div>
         </MiningLiveStage>
       )}
@@ -200,6 +178,14 @@ export default async function MiningPage() {
       <details className={miningStyles.details} id="putduk-mining-details">
         <summary className={miningStyles.summary}>채굴 상세</summary>
         <div className={miningStyles.detailContent}>
+          {displayView?.state === "ready" ? (
+            <dl className={styles.sessionFacts} aria-label="채굴 기간">
+              <div>
+                <dt>기간</dt>
+                <dd>{miningDisplayedValue(displayView, "기간")}</dd>
+              </div>
+            </dl>
+          ) : null}
           {sessions?.length ? (
             <>
               <header className={styles.sectionHeader}>
