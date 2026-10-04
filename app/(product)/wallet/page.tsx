@@ -8,12 +8,16 @@ import {
   type WalletReceiptEvidence,
 } from "@/domain/wallet/wallet-read";
 import { requirePageUser } from "@/lib/auth/session";
+import { parseMiningServerDisplay } from "@/lib/product/mining-server-display";
+import { readOwnMiningServerDisplay } from "@/lib/product/read-mining-server-display";
+import { presentWalletServerDisplay } from "@/lib/product/wallet-server-display";
 
 export default async function WalletPage() {
   const identity = await requirePageUser();
   const [
     { data: krwAccount, error: accountsError },
     { data: trial, error: trialError },
+    displayResponse,
   ] = await Promise.all([
     identity.supabase
       .from("wallet_balance_snapshots")
@@ -28,7 +32,14 @@ export default async function WalletPage() {
       .select("status, reward_atomic")
       .eq("user_id", identity.userId)
       .maybeSingle(),
+    readOwnMiningServerDisplay(identity),
   ]);
+  const parsedDisplay = displayResponse.error
+    ? null
+    : parseMiningServerDisplay(displayResponse.data);
+  const funding = parsedDisplay
+    ? presentWalletServerDisplay(parsedDisplay)
+    : { state: "error" as const };
 
   const krw =
     krwAccount && !accountsError
@@ -105,13 +116,18 @@ export default async function WalletPage() {
     <div
       data-ui-ready="/wallet"
       data-ui-state={
-        accountsError || trialError || ledgerError || receiptError
+        accountsError ||
+        trialError ||
+        ledgerError ||
+        receiptError ||
+        parsedDisplay === null
           ? "partial"
           : "loaded"
       }
     >
       <WalletReadView
         balanceState={balanceState}
+        funding={funding}
         krw={krw}
         ledgerEntries={ledgerEntries}
         ledgerState={classifyLedgerHistoryRead({

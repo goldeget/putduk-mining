@@ -16,9 +16,13 @@ import {
   labelWalletReceiptStatus,
   labelWalletReceiptType,
 } from "@/domain/wallet/wallet-read";
+import type { WalletFundingView } from "@/lib/product/wallet-server-display";
+
+export type WalletFundingPanel = { state: "error" } | WalletFundingView;
 
 export type WalletReadViewProps = {
   balanceState: WalletReadState;
+  funding: WalletFundingPanel;
   krw: KrwWalletProjection | null;
   ledgerEntries: WalletLedgerEvidence[];
   ledgerState: WalletReadState;
@@ -30,6 +34,7 @@ export type WalletReadViewProps = {
 
 export function WalletReadView({
   balanceState,
+  funding,
   krw,
   ledgerEntries,
   ledgerState,
@@ -118,6 +123,50 @@ export function WalletReadView({
             </Link>
           )}
         </Surface>
+      </section>
+
+      <section
+        className="wallet-funding"
+        aria-labelledby="wallet-funding-title"
+      >
+        <header>
+          <h2 id="wallet-funding-title">원금과 대기 수익</h2>
+          <p className="wallet-funding__lead">
+            정산 전 금액은 출금 가능 잔액에 포함되지 않아요.
+          </p>
+        </header>
+        {funding.state === "error" ? (
+          <StatePanel
+            tone="error"
+            title="원금과 대기 수익을 불러오지 못했어요"
+            description="잠시 후 다시 시도해 주세요."
+            action={<WalletReadRecovery label="금액 다시 확인" />}
+          />
+        ) : funding.state === "empty" ? (
+          <p className="wallet-funding__empty">
+            원금과 대기 수익은 아직 없어요.
+          </p>
+        ) : (
+          <dl className="wallet-funding__facts">
+            {funding.rows.map((row) => (
+              <div
+                key={row.label}
+                className={
+                  row.tone === "unconfirmed"
+                    ? "wallet-funding__unconfirmed"
+                    : "wallet-funding__fact"
+                }
+                data-funding-tone={row.tone}
+              >
+                <dt>{row.label}</dt>
+                <dd>{row.value}</dd>
+                {row.tone === "unconfirmed" ? (
+                  <p>확정된 수익이 아니에요.</p>
+                ) : null}
+              </div>
+            ))}
+          </dl>
+        )}
       </section>
 
       <Surface as="section" className="ledger-principle">

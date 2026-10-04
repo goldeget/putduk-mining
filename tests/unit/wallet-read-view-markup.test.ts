@@ -21,11 +21,14 @@ vi.mock("next/link", () => ({
   }) => createElement("a", { href, ...props }, children),
 }));
 
+const quietFunding = { state: "empty" as const };
+
 describe("WalletReadView 마크업", () => {
   it("0원 상태와 빈 내역을 구분해서 보여 준다", () => {
     const html = renderToStaticMarkup(
       createElement(WalletReadView, {
         balanceState: "zero",
+        funding: quietFunding,
         krw: {
           availableAtomic: "0",
           balanceAtomic: "0",
@@ -46,6 +49,7 @@ describe("WalletReadView 마크업", () => {
     expect(html).toContain("지금 사용 가능한 원화는 0원이에요");
     expect(html).toContain("아직 거래 내역이 없어요");
     expect(html).toContain("아직 입출금 처리 내역이 없어요");
+    expect(html).toContain("원금과 대기 수익은 아직 없어요");
     expect(html).not.toMatch(/USDT\s*잔액|내 USDT|USDT 잔고/);
   });
 
@@ -53,6 +57,18 @@ describe("WalletReadView 마크업", () => {
     const html = renderToStaticMarkup(
       createElement(WalletReadView, {
         balanceState: "ready",
+        funding: {
+          state: "ready",
+          rows: [
+            { label: "인정 원금", tone: "separate", value: "100,000원" },
+            {
+              label: "정산 전 대기 수익",
+              tone: "separate",
+              value: "15,000원",
+            },
+            { label: "아직 확정 전", tone: "unconfirmed", value: "25,000원" },
+          ],
+        },
         krw: {
           availableAtomic: "5000",
           balanceAtomic: "7000",
@@ -93,12 +109,24 @@ describe("WalletReadView 마크업", () => {
     expect(html).toContain("RCPT-001");
     expect(html).toContain("처리 중");
     expect(html).toContain("환영 보상 첫 출금");
+    expect(html).toContain("인정 원금");
+    expect(html).toContain("100,000원");
+    expect(html).toContain("정산 전 대기 수익");
+    expect(html).toContain("15,000원");
+    expect(html).toContain('data-funding-tone="unconfirmed"');
+    expect(html).toContain("25,000원");
+    expect(html).toContain("확정된 수익이 아니에요");
+    expect(html).toContain("5,000 KRW");
+    expect(html).not.toContain("115,000");
+    expect(html).not.toContain("140,000");
+    expect(html).not.toContain("40,000원");
   });
 
   it("읽기 실패에 복구 버튼을 제공한다", () => {
     const html = renderToStaticMarkup(
       createElement(WalletReadView, {
         balanceState: "error",
+        funding: { state: "error" },
         krw: null,
         ledgerEntries: [],
         ledgerState: "error",
@@ -110,6 +138,7 @@ describe("WalletReadView 마크업", () => {
     );
 
     expect(html).toContain("지갑을 불러오지 못했어요");
+    expect(html).toContain("원금과 대기 수익을 불러오지 못했어요");
     expect(html).toContain("거래 내역을 불러오지 못했어요");
     expect(html).toContain("처리 내역을 불러오지 못했어요");
     expect(html).toContain("다시 시도");
@@ -122,6 +151,7 @@ describe("WalletReadView 마크업", () => {
     const html = renderToStaticMarkup(
       createElement(WalletReadView, {
         balanceState: "empty",
+        funding: quietFunding,
         krw: null,
         ledgerEntries: [],
         ledgerState: "empty",
