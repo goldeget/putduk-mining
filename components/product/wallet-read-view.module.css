@@ -1,0 +1,253 @@
+.page {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.heroCard,
+.trialCard,
+.metric {
+  border-radius: var(--radius-xl);
+}
+
+.heroCard {
+  display: grid;
+  gap: 0.35rem;
+  padding: clamp(1.2rem, 3vw, 1.85rem);
+  border-color: color-mix(
+    in srgb,
+    var(--brand-primary) 46%,
+    var(--border-default)
+  );
+}
+
+.heroKicker {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.heroKicker small,
+.heroLabel {
+  color: var(--text-tertiary);
+  font-size: 0.875rem;
+  font-weight: 650;
+}
+
+.heroValue {
+  margin: 0.35rem 0 0.15rem;
+  color: var(--text-primary);
+  font-size: clamp(2rem, 5vw, 3.15rem);
+  font-variant-numeric: tabular-nums;
+  font-weight: 650;
+  letter-spacing: -0.05em;
+  line-height: 1.05;
+}
+
+.breakdown {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem;
+  margin: 0.85rem 0 0;
+}
+
+.breakdown div {
+  display: grid;
+  gap: 0.2rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.breakdown dt {
+  color: var(--text-tertiary);
+  font-size: 0.8125rem;
+}
+
+.breakdown dd {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 650;
+}
+
+.note {
+  max-width: 28rem;
+  margin: 0.75rem 0 0;
+  color: var(--text-tertiary);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  line-break: strict;
+  word-break: keep-all;
+}
+
+.funding {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.funding h2 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 1.05rem;
+  font-weight: 650;
+  letter-spacing: -0.03em;
+  line-break: strict;
+  word-break: keep-all;
+}
+
+.fundingLead,
+.empty {
+  max-width: 28rem;
+  margin: 0.3rem 0 0;
+  color: var(--text-secondary);
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  line-break: strict;
+  word-break: keep-all;
+}
+
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.7rem;
+  margin: 0;
+}
+
+.metric {
+  display: flex;
+  min-width: 0;
+  min-height: 6.5rem;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.9rem 0.8rem;
+  border: 1px solid var(--border-default);
+  background: var(--surface-default);
+}
+
+.metric dt {
+  color: var(--text-tertiary);
+  font-size: 0.8125rem;
+  font-weight: 650;
+  line-height: 1.35;
+  line-break: strict;
+  word-break: keep-all;
+}
+
+.metric dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.15;
+  word-break: keep-all;
+}
+
+.metric[data-funding-tone="separate"] {
+  border-color: color-mix(
+    in srgb,
+    var(--brand-primary) 38%,
+    var(--border-default)
+  );
+  background: var(--surface-raised);
+}
+
+.metric[data-funding-tone="separate"] dd {
+  color: var(--text-primary);
+  font-size: clamp(1.05rem, 2.2vw, 1.45rem);
+  font-weight: 680;
+}
+
+.metric[data-funding-tone="unconfirmed"] {
+  border-style: dashed;
+  background: transparent;
+}
+
+.metric[data-funding-tone="unconfirmed"] dd {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  font-weight: 560;
+}
+
+.metric p {
+  margin: auto 0 0;
+  color: var(--text-tertiary);
+  font-size: 0.75rem;
+  line-height: 1.4;
+  word-break: keep-all;
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.7rem;
+}
+
+.actions :global(.button) {
+  width: 100%;
+}
+
+.trialCard {
+  display: grid;
+  gap: 0.3rem;
+  padding: 1.05rem 1.15rem;
+  border-style: dashed;
+}
+
+.trialCard span,
+.trialCard small {
+  color: var(--text-tertiary);
+  font-size: 0.8125rem;
+  font-weight: 650;
+}
+
+.trialCard strong {
+  color: var(--text-secondary);
+  font-size: clamp(1.15rem, 2.5vw, 1.55rem);
+  font-variant-numeric: tabular-nums;
+  font-weight: 620;
+  letter-spacing: -0.04em;
+}
+
+.trialLink {
+  justify-self: start;
+  margin-top: 0.35rem;
+  color: var(--brand-primary);
+  font-size: 0.875rem;
+  font-weight: 750;
+  text-decoration: none;
+}
+
+.trialLink:focus-visible {
+  outline: none;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-focus);
+}
+
+.history :global(.ledger-history) {
+  margin-top: 0.4rem;
+}
+
+@media (max-width: 520px) {
+  .metrics {
+    gap: 0.45rem;
+  }
+
+  .metric {
+    min-height: 7.25rem;
+    padding: 0.7rem 0.55rem;
+  }
+
+  .metric dt {
+    font-size: 0.75rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .heroCard,
+  .metric,
+  .trialCard {
+    box-shadow: none;
+  }
+}
