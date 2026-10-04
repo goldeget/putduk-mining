@@ -28,8 +28,11 @@ fresh 권한·AAL2·bound session·one-use step-up·동일 key receipt를 사용
 retired POST와 exact legacy seven-argument RPC의 service 실행 권한을 닫는다.
 기존 owner fixture·historical rows·현대 request command·START 첫 출금은
 보존한다. source-aware reserve/release/finalize·principal recovery·실채굴
-DB writer·worker settlement는 후속 구현 대상이다. 원금 회수 시 lot 배분
-선택은 별도 사용자 답변 전 활성화하지 않는다.
+DB writer·worker settlement는 후속 구현 대상이다. 일반 원금 회수는
+`NEWEST_FIRST`다. 정렬은 `effective_at` DESC, `recorded_at` DESC, lot id DESC이고
+부분 배분한다. reversal, chargeback, correction은 `ORIGINAL_LOT_TARGETED`다.
+대상 lot이 부족하면 `PRINCIPAL_RECOVERY_ORIGINAL_LOT_SHORT`다. FIFO, 비례 배분,
+사용자 lot 선택은 쓰지 않는다.
 
 후속 head의 전체 18-job CI, 실제 pixels 및 develop 병합 CI는 별도 gate다.
 원격 Supabase/Cloudflare/DNS/배포/실제 지급 잠금과 보호11개는 유지한다.

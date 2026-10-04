@@ -443,8 +443,13 @@ MINING_REWARD로 등급을 계산하지 않는다. policy의 최소 원금 미�
 분리한다. retention은 `UNCONFIRMED`이며 확정 잔액이 아니다. 이 조회는 원장
 credit을 만들지 않는다.
 
-상품 multiplier, slot 수, campaign cap은 이 조회의 출력이 아니다. 부분 원금
-회수의 lot 배분은 계속 미정이며 거절한다. 이 조회는 `PRODUCT COMPLETE`가 아니다.
+상품 multiplier, slot 수, campaign cap은 이 조회의 출력이 아니다. 일반 원금
+회수는 `NEWEST_FIRST`다. 정렬은 `effective_at` DESC, `recorded_at` DESC, lot id
+DESC이고 부분 배분한다. reversal, chargeback, correction은
+`ORIGINAL_LOT_TARGETED`다. 대상 lot이 부족하면
+`PRINCIPAL_RECOVERY_ORIGINAL_LOT_SHORT`다. FIFO, 비례 배분, 사용자 lot 선택은
+쓰지 않는다. 이 조회는 그 배분을 실행하지 않는다. 이 조회는 `PRODUCT COMPLETE`가
+아니다.
 
 ## 11B. 30일 창 저장
 
@@ -471,7 +476,11 @@ principal lot의 남은 합이 발행 policy의 최소 원금 이상일 때 생�
 
 이미 저장된 anchor는 다시 계산해 고치지 않는다. 원금이 최소 미만으로
 바뀌어도 기존 창의 시각을 당기거나 늘리지 않으며, 그 상태에서는 다음 창도
-열지 않는다. 부분 원금 회수의 lot 배분은 계속 미정이다. retention은
+열지 않는다. 일반 원금 회수는 `NEWEST_FIRST`다. 정렬은 `effective_at` DESC,
+`recorded_at` DESC, lot id DESC이고 부분 배분한다. reversal, chargeback,
+correction은 `ORIGINAL_LOT_TARGETED`다. 대상 lot이 부족하면
+`PRINCIPAL_RECOVERY_ORIGINAL_LOT_SHORT`다. FIFO, 비례 배분, 사용자 lot 선택은
+쓰지 않는다. retention은
 `UNCONFIRMED`로 남고 `POLICY_CONSUMER_NOT_ENABLED`를 풀지 않는다. 이 저장은
 `PRODUCT COMPLETE`가 아니다.
 
@@ -499,8 +508,11 @@ cycle horizon이며 이후 입금이 이 값을 바꾸지 않는다. 같은 cycl
 retention은 `UNCONFIRMED`다. 1 micro-KRW 미만은 이 저장의 carry가 아니며
 `reward_carry`를 만들지 않는다. 정산 carry는 이후 파도다.
 
-부분 원금 회수의 lot 배분은 계속 미정이다. 원금이 줄어드는 경로로 segment를
-다시 나누지 않는다. `POLICY_CONSUMER_NOT_ENABLED`를 풀지 않는다. 이 저장은
+일반 원금 회수는 `NEWEST_FIRST`다. 정렬은 `effective_at` DESC, `recorded_at`
+DESC, lot id DESC이고 부분 배분한다. reversal, chargeback, correction은
+`ORIGINAL_LOT_TARGETED`다. 대상 lot이 부족하면
+`PRINCIPAL_RECOVERY_ORIGINAL_LOT_SHORT`다. FIFO, 비례 배분, 사용자 lot 선택은
+쓰지 않는다. 원금이 줄어드는 경로로 segment를 다시 나누지 않는다. `POLICY_CONSUMER_NOT_ENABLED`를 풀지 않는다. 이 저장은
 `PRODUCT COMPLETE`가 아니다.
 
 ## 11D. Pending 산출

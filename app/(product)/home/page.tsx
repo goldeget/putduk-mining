@@ -84,33 +84,6 @@ export default async function ProductHomePage() {
       data-ui-ready="/home"
       data-ui-state={partialFailure ? "partial" : world.sourceState}
     >
-      <header className={styles.welcome}>
-        <div className={styles.welcomeCopy}>
-          <p className="eyebrow">오늘</p>
-          <h1 className={styles.welcomeTitle}>
-            {world.running
-              ? "오늘도 채굴이 이어지고 있어요."
-              : "오늘의 채굴 상태를 확인해요."}
-          </h1>
-          <p className={styles.welcomeLead}>
-            지금 상태와 다음에 할 일만 모았어요.
-          </p>
-        </div>
-        {world.needsRequery ? (
-          <RouteReloadButton
-            className={`button button--primary ${styles.primaryAction}`}
-          />
-        ) : (
-          <Link
-            className={`button button--primary ${styles.primaryAction}`}
-            href={world.primary.href}
-          >
-            {world.primary.label}
-            <PutdukIcon name="arrow-right" size={18} />
-          </Link>
-        )}
-      </header>
-
       {partialFailure ? (
         <StatePanel
           tone="error"
@@ -121,6 +94,64 @@ export default async function ProductHomePage() {
       ) : null}
 
       <section className={styles.hero} aria-label="오늘의 채굴 상태">
+        <Surface as="article" className={styles.livingWorld} tone="raised">
+          <div className={styles.livingVisual}>
+            <picture>
+              <source
+                type="image/avif"
+                srcSet="/brand/worlds/orbital-earth-960-v1.avif"
+              />
+              <img
+                src="/brand/worlds/orbital-earth-960-v1.webp"
+                alt="우주에서 바라본 퍼뜩 채굴 월드"
+                width="960"
+                height="540"
+                decoding="async"
+                fetchPriority="high"
+              />
+            </picture>
+            <MiningCore running={world.running} />
+          </div>
+          <div className={styles.livingOverlay}>
+            <header className={styles.welcome}>
+              <div className={styles.welcomeCopy}>
+                <p className="eyebrow">오늘</p>
+                <h1 className={styles.welcomeTitle}>
+                  {world.running
+                    ? "오늘도 채굴이 이어지고 있어요."
+                    : "오늘의 채굴 상태를 확인해요."}
+                </h1>
+                <p className={styles.welcomeLead}>
+                  지금 상태와 다음에 할 일만 모았어요.
+                </p>
+              </div>
+              {world.needsRequery ? (
+                <RouteReloadButton
+                  className={`button button--primary ${styles.primaryAction}`}
+                />
+              ) : (
+                <Link
+                  className={`button button--primary ${styles.primaryAction}`}
+                  href={world.primary.href}
+                >
+                  {world.primary.label}
+                  <PutdukIcon name="arrow-right" size={18} />
+                </Link>
+              )}
+            </header>
+            <div className={styles.livingStatus}>
+              <span
+                className={`${styles.liveStatus}${world.needsRequery ? ` ${styles.liveStatusUnavailable}` : ""}`}
+              >
+                <i className={styles.liveStatusDot} aria-hidden="true" />
+                {world.liveLabel}
+              </span>
+              <h2 className={styles.livingStatusTitle}>{world.worldTitle}</h2>
+              <p className={styles.livingStatusLead}>{world.worldLead}</p>
+            </div>
+          </div>
+        </Surface>
+
         <div className={styles.summary}>
           <Surface as="article" className={styles.summaryCard}>
             <span className={styles.summaryLabel}>
@@ -184,36 +215,6 @@ export default async function ProductHomePage() {
             </Link>
           </Surface>
         </div>
-
-        <Surface as="article" className={styles.livingWorld} tone="raised">
-          <div className={styles.livingVisual}>
-            <picture>
-              <source
-                type="image/avif"
-                srcSet="/brand/worlds/orbital-earth-960-v1.avif"
-              />
-              <img
-                src="/brand/worlds/orbital-earth-960-v1.webp"
-                alt="우주에서 바라본 퍼뜩 채굴 월드"
-                width="960"
-                height="540"
-                decoding="async"
-                fetchPriority="high"
-              />
-            </picture>
-            <MiningCore running={world.running} />
-          </div>
-          <div className={styles.livingStatus}>
-            <span
-              className={`${styles.liveStatus}${world.needsRequery ? ` ${styles.liveStatusUnavailable}` : ""}`}
-            >
-              <i className={styles.liveStatusDot} aria-hidden="true" />
-              {world.liveLabel}
-            </span>
-            <h2 className={styles.livingStatusTitle}>{world.worldTitle}</h2>
-            <p className={styles.livingStatusLead}>{world.worldLead}</p>
-          </div>
-        </Surface>
       </section>
 
       <section className={styles.lower}>

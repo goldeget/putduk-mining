@@ -109,13 +109,25 @@ describe("WalletReadView 마크업", () => {
     expect(html).toContain("RCPT-001");
     expect(html).toContain("처리 중");
     expect(html).toContain("환영 보상 첫 출금");
-    expect(html).toContain("인정 원금");
-    expect(html).toContain("100,000원");
-    expect(html).toContain("정산 전 대기 수익");
-    expect(html).toContain("15,000원");
-    expect(html).toContain('data-funding-tone="unconfirmed"');
-    expect(html).toContain("25,000원");
-    expect(html).toContain("확정된 수익이 아니에요");
+    const metricsStart = html.indexOf('data-wallet-metrics="separate"');
+    expect(metricsStart).toBeGreaterThan(-1);
+    const metrics = html.slice(
+      metricsStart,
+      html.indexOf("</dl>", metricsStart),
+    );
+    expect(metrics.match(/<dt>/g)).toHaveLength(3);
+    expect(metrics).toContain("인정 원금");
+    expect(metrics).toContain("100,000원");
+    expect(metrics).toContain("정산 전 대기 수익");
+    expect(metrics).toContain("15,000원");
+    expect(metrics).toContain('data-funding-tone="unconfirmed"');
+    expect(metrics).toContain("25,000원");
+    expect(metrics).toContain("확정된 수익이 아니에요");
+    expect(metrics).not.toContain("115,000");
+    expect(metrics).not.toContain("140,000");
+    expect(html.indexOf("사용 가능 잔액")).toBeLessThan(
+      html.indexOf('data-wallet-metrics="separate"'),
+    );
     expect(html).toContain("5,000 KRW");
     expect(html).not.toContain("115,000");
     expect(html).not.toContain("140,000");

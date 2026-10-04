@@ -219,6 +219,14 @@ describe("member lifecycle and profile read truth", () => {
     expect(markup).toMatch(/정산 전 대기 수익<\/dt><dd>15,000원/);
     expect(markup).toMatch(/아직 확정 전<\/dt><dd>25,000원/);
     expect(markup).toContain("확정된 수익이 아니에요");
+    expect(markup).toMatch(/등급<\/dt><dd>적용 전/);
+    expect(markup).toMatch(/채굴 용량<\/dt><dd>확인할 수 없어요/);
+    expect(markup).toMatch(/남은 용량<\/dt><dd>확인할 수 없어요/);
+    expect(markup).toMatch(/사용한 용량<\/dt><dd>확인할 수 없어요/);
+    expect(markup).toMatch(/속도<\/dt><dd>확인할 수 없어요/);
+    expect(markup).not.toMatch(/채굴 용량<\/dt><dd>0원/);
+    expect(markup).not.toMatch(/속도<\/dt><dd>0배/);
+    expect(markup).not.toContain("설정 전");
     expect(markup).not.toContain("140,000원");
     expect(markup).not.toContain("115,000원");
     expect(markup).not.toContain("40,000원");
@@ -252,8 +260,14 @@ describe("member lifecycle and profile read truth", () => {
     expect(markup).toContain("원금과 대기 수익을 확인하지 못했습니다.");
     expect(markup).toMatch(/정산 전 대기 수익<\/dt><dd>확인 필요/);
     expect(markup).toMatch(/아직 확정 전<\/dt><dd>확인 필요/);
+    expect(markup).toMatch(/등급<\/dt><dd>확인할 수 없어요/);
+    expect(markup).toMatch(/채굴 용량<\/dt><dd>확인할 수 없어요/);
+    expect(markup).toMatch(/속도<\/dt><dd>확인할 수 없어요/);
+    expect(markup).not.toMatch(/등급<\/dt><dd>적용 전/);
     expect(markup).not.toMatch(/정산 전 대기 수익<\/dt><dd>0원/);
     expect(markup).not.toMatch(/아직 확정 전<\/dt><dd>0원/);
+    expect(markup).not.toMatch(/채굴 용량<\/dt><dd>0원/);
+    expect(markup).not.toMatch(/속도<\/dt><dd>0배/);
   });
   it("an empty funding subject does not invent zero earnings", async () => {
     reads.miningDisplay = {
@@ -274,8 +288,48 @@ describe("member lifecycle and profile read truth", () => {
       }),
     );
     expect(markup).toContain("원금과 대기 수익은 아직 없어요.");
+    expect(markup).toContain("등급과 용량, 속도는 아직 없어요.");
     expect(markup).not.toMatch(/정산 전 대기 수익<\/dt>/);
     expect(markup).not.toMatch(/아직 확정 전<\/dt>/);
+    expect(markup).not.toMatch(/등급<\/dt>/);
+    expect(markup).not.toMatch(/채굴 용량<\/dt>/);
+    expect(markup).not.toMatch(/속도<\/dt>/);
     expect(markup).not.toMatch(/정산 전 대기 수익<\/dt><dd>0원/);
+  });
+  it("shows server rank, capacity, and speed apart from principal and pending earnings", async () => {
+    reads.miningDisplay = {
+      data: {
+        ...readyMiningDisplay,
+        tier_code: "L1",
+        tier_activated: true,
+        effective_capacity_micro_krw: "15000000000",
+        remaining_capacity_micro_krw: "15000000000",
+        used_capacity_micro_krw: "0",
+        speed_multiplier_bps: "10000",
+      },
+      error: null,
+    };
+    const markup = renderToStaticMarkup(
+      await MembersPage({
+        searchParams: Promise.resolve({
+          id: "00000000-0000-4000-8000-000000000001",
+        }),
+      }),
+    );
+    expect(markup).toMatch(/등급<\/dt><dd>L1/);
+    expect(markup).toMatch(/채굴 용량<\/dt><dd>15,000원/);
+    expect(markup).toMatch(/남은 용량<\/dt><dd>15,000원/);
+    expect(markup).toMatch(/사용한 용량<\/dt><dd>0원/);
+    expect(markup).toMatch(/속도<\/dt><dd>1배/);
+    expect(markup).toMatch(/인정 원금<\/dt><dd>100,000원/);
+    expect(markup).toMatch(/정산 전 대기 수익<\/dt><dd>15,000원/);
+    expect(markup).toMatch(/아직 확정 전<\/dt><dd>25,000원/);
+    expect(markup).toContain("용량과 속도는 원금이 아니에요.");
+    expect(markup).not.toContain("115,000원");
+    expect(markup).not.toContain("130,000원");
+    expect(markup).not.toContain("40,000원");
+    expect(markup).not.toContain("설정 전");
+    expect(markup).not.toContain("채굴 등급과 파워");
+    expect(markup).not.toMatch(/tier_code|speed_multiplier|micro_krw|bps/i);
   });
 });

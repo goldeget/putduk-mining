@@ -13,9 +13,12 @@ owner-only 최근 출금 요청 reader와 존재하는 원본 receipt로 확인�
 RPC 별칭을 만들지 않는다. 과거 아래 caller 관측은 이 변경 이전 기록이다.
 후속 owner V1 승인은 기본 VERIFIED `MINING_REWARD` 전용 출금·명시적
 `PRINCIPAL` 회수·platform fee 0을 승인했다
-(`../product/ECONOMY-V1-USER-APPROVAL-2026-10-03.md`). 부분 원금 회수의 lot 배분과
-유지 자격 범위는 별도 인간 결정이며, 기존 아래 mixed/fee matrix는 미래 확장
-검토 범위다. 승인된 V1의 fallback·혼합 출금을 허용하지 않는다.
+(`../product/ECONOMY-V1-USER-APPROVAL-2026-10-03.md`). 일반 원금 회수는
+`NEWEST_FIRST`다. 정렬은 `effective_at` DESC, `recorded_at` DESC, lot id DESC이고
+부분 배분한다. reversal, chargeback, correction은 `ORIGINAL_LOT_TARGETED`다.
+대상 lot이 부족하면 `PRINCIPAL_RECOVERY_ORIGINAL_LOT_SHORT`다. FIFO, 비례 배분,
+사용자 lot 선택은 쓰지 않는다. 유지 자격 범위는 별도 인간 결정이며, 기존 아래
+mixed/fee matrix는 미래 확장 검토 범위다. 승인된 V1의 fallback·혼합 출금을 허용하지 않는다.
 신규 단위 검증과 pgTAP 계약을 추가했지만 로컬 DB 실행·원격 적용 여부는 별도
 증거이며, 이 폐쇄만으로 source allocation·hold·release·finalize 연결이 완료되지는 않는다.
 

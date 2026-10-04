@@ -40,15 +40,15 @@
 
 .hero {
   display: grid;
-  grid-template-columns: minmax(0, 1.55fr) minmax(17rem, 0.75fr);
-  gap: 1rem;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.85rem;
 }
 
 .livingWorld {
   grid-column: 1;
   grid-row: 1;
   position: relative;
-  min-height: 29rem;
+  min-height: 24rem;
   background: #070706;
   overflow: hidden;
   padding: 0;
@@ -100,12 +100,52 @@
   pointer-events: auto;
 }
 
+.livingOverlay {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  min-height: 24rem;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1.25rem;
+  padding: clamp(1.15rem, 3vw, 2.1rem);
+  pointer-events: none;
+}
+
+.livingOverlay .welcome,
+.livingOverlay .primaryAction,
+.livingOverlay a {
+  pointer-events: auto;
+}
+
+.livingOverlay .welcomeCopy {
+  max-width: min(100%, 28rem);
+  padding-right: min(34%, 7.5rem);
+}
+
+.livingOverlay .welcomeTitle {
+  color: #fff8ea;
+}
+
+.livingOverlay .welcomeLead {
+  color: rgba(255, 248, 234, 0.76);
+}
+
 .livingStatus {
   position: relative;
   z-index: 3;
   pointer-events: none;
   padding: clamp(18rem, 30vw, 22rem) clamp(1.2rem, 4vw, 2.8rem)
     clamp(1.2rem, 4vw, 2.6rem);
+}
+
+.livingOverlay .livingStatus {
+  padding: 0;
+}
+
+.livingOverlay .livingStatusTitle {
+  margin-top: 0.55rem;
+  font-size: clamp(1.35rem, 2.4vw, 1.85rem);
 }
 
 .liveStatus {
@@ -153,11 +193,11 @@
 }
 
 .summary {
-  grid-column: 2;
-  grid-row: 1;
+  grid-column: 1;
+  grid-row: 2;
   display: grid;
-  grid-template-rows: 1fr 1fr;
-  gap: 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
 }
 
 .summaryCard {
@@ -187,6 +227,7 @@
 }
 
 .summaryHint {
+  max-width: 22rem;
   margin: 0;
   color: var(--text-tertiary);
   font-size: 0.875rem;
@@ -374,38 +415,20 @@
 }
 
 @media (max-width: 1099px) {
-  .livingWorld,
-  .summary {
-    grid-column: 1;
-    grid-row: auto;
-  }
-  .hero,
   .lower {
     grid-template-columns: 1fr;
-  }
-
-  .summary {
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: none;
   }
 }
 
 @media (max-width: 759px) {
   .welcome {
-    align-items: stretch;
+    align-items: flex-start;
     flex-direction: column;
   }
 
-  .primaryAction {
-    width: 100%;
-  }
-
-  .hero {
-    display: contents;
-  }
-
-  .livingWorld {
-    min-height: 25rem;
+  .livingWorld,
+  .livingOverlay {
+    min-height: 22rem;
   }
 
   .livingVisual :global(.mining-core) {

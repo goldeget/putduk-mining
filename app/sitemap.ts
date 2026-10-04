@@ -1,20 +1,14 @@
 import type { MetadataRoute } from "next";
 
-import { TRUST_DOCUMENTS } from "@/lib/trust/public-content";
+import {
+  PUBLIC_DISCOVERY_PATHS,
+  toPublicUrl,
+} from "@/lib/trust/public-discovery";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://mining.putduk.com";
-
-  return [
-    {
-      url: baseUrl,
-      changeFrequency: "weekly",
-      priority: 1,
-    },
-    ...TRUST_DOCUMENTS.map((document) => ({
-      url: `${baseUrl}${document.path}`,
-      changeFrequency: "monthly" as const,
-      priority: document.path === "/putduk-facts" ? 0.9 : 0.7,
-    })),
-  ];
+  return PUBLIC_DISCOVERY_PATHS.map((path) => ({
+    url: toPublicUrl(path),
+    changeFrequency: path === "/" ? "weekly" : "monthly",
+    priority: path === "/" ? 1 : path === "/putduk-facts" ? 0.9 : 0.7,
+  }));
 }

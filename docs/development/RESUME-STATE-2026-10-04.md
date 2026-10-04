@@ -75,8 +75,11 @@ QA 저장소는 확인한 `ESD-USB`의 다음 실행 전용 폴더다. 최신 �
 3. 기존 WS-04 command와 money/source 계약 안에서 Principal lot/cycle/entitlement/
    verified earned producer/settlement/worker를 연결한다. 별도 money writer나 alias를
    만들지 않는다. 일반 MINING_REWARD 출금은 그 증거를 소비한 뒤에만 개방한다.
-4. 부분 원금 회수의 lot 배분 방식은 아직 사용자 결정이 없다. 임의 FIFO나 비례 배분을
-   채택하지 않는다. 다른 승인 경제 숫자는 다시 미정으로 돌리거나 임의 변경하지 않는다.
+4. 일반 원금 회수는 `NEWEST_FIRST`다. 정렬은 `effective_at` DESC, `recorded_at` DESC,
+   lot id DESC이고 부분 배분한다. reversal, chargeback, correction은
+   `ORIGINAL_LOT_TARGETED`다. 대상 lot이 부족하면
+   `PRINCIPAL_RECOVERY_ORIGINAL_LOT_SHORT`다. FIFO, 비례 배분, 사용자 lot 선택은
+   쓰지 않는다. 다른 승인 경제 숫자는 다시 미정으로 돌리거나 임의 변경하지 않는다.
 5. V3 HUD·scene은 실제 서버 결과와 승인 상품만 표현한다. 현재 반도체 family 외에
    없는 장면·가짜 장비·상품·수익을 추가하지 않는다. 원격 적용은 별도 명시 단계다.
 
