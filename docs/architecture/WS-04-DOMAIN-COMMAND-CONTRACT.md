@@ -436,6 +436,22 @@ does not split a segment. Capacity exhaustion, speed, mining production and
 settlement stay outside these functions. This storage is not
 `PRODUCT COMPLETE`.
 
+The separate pending read is
+`app_private.read_funding_reward_pending(uuid)`. It is service-only,
+INVOKER, and not a public command or an alias of a money command. It has no
+reward-amount argument. It reads stored segment principal, the stored base
+and retention proration, the segment policy version, and the stored cycle
+window. Applied speed is that policy's stored default speed. Elapsed time is
+scaled inside each segment window with integer basis points, then capped by
+the stored base and the remaining capacity. Speed does not increase that
+capacity. A zero remaining capacity stays closed. Retention stays
+`UNCONFIRMED` and is not added to pending. The result is a pending figure,
+not an accepted receipt, used increment, ledger credit, wallet projection,
+or `reward_carry`. It does not release `POLICY_CONSUMER_NOT_ENABLED`.
+Campaign boost, product multiplier, and override combination stay out
+because those stored inputs do not exist. Settlement and worker recovery
+stay outside this function. This read is not `PRODUCT COMPLETE`.
+
 The initial approved numeric configuration is exact seed data, not a
 permanent economic ceiling. Administrators can change supported numbers,
 including rates, thresholds, campaign/multiplier limits, slots and future
