@@ -206,7 +206,13 @@ export async function requestWelcomeWithdrawalFromUi(
   method: "KRW_BANK" | "USDT_ADDRESS",
 ) {
   await page.goto("/wallet/withdraw");
-  await page.getByText("입금 없이도 가능한 첫 출금").waitFor();
+  const welcomeHeading = page.getByRole("heading", {
+    level: 2,
+    name: "입금 없이도 가능한 첫 출금",
+  });
+  // 같은 주소로 다시 들어올 때 이전 제목이 잠깐 남아 strict mode가 바로 실패한다.
+  await expect(welcomeHeading).toHaveCount(1);
+  await expect(welcomeHeading).toBeVisible();
 
   const radios = page.locator('input[name="welcomeMethod"]');
   if ((await radios.count()) > 0) {
