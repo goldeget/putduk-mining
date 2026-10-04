@@ -343,5 +343,41 @@ select ok(
   'unresolved principal is not reported as zero');
 reset role;
 
+insert into public.usdt_manual_deposits (
+  id, user_id, network, tx_hash, sent_usdt_amount, deposit_address_snapshot, network_snapshot, idempotency_key
+)
+select '0d470000-0000-4000-8000-00000000d0ff', empty_id, 'TRC20', repeat('8', 64), 10.000001,
+  'local-w1-principal-address', 'TRC20', 'w1-principal-usdt-overflow' from principal_ctx;
+set local role service_role;
+select lives_ok($$
+  select public.confirm_usdt_manual_deposit(
+    '0d470000-0000-4000-8000-00000000d0ff', 9007199254740993::bigint, admin_id,
+    'fixture amount above micro ceiling', 'w1-principal-usdt-overflow') from principal_ctx
+$$, 'a KRW amount above the micro ceiling still confirms');
+select lives_ok($$set constraints usdt_manual_deposits_money_source_complete immediate$$,
+  'an unrepresentable principal amount still completes the original receipt');
+set constraints usdt_manual_deposits_money_source_complete deferred;
+reset role;
+select is(
+  (select credited_krw::text from public.usdt_manual_deposits
+    where id = '0d470000-0000-4000-8000-00000000d0ff'),
+  '9007199254740993',
+  'the confirmed KRW amount stays exact above the micro ceiling');
+select is((select count(*)::integer from public.funding_principal_lots
+  where user_id = (select empty_id from principal_ctx)), 0,
+  'an amount that cannot fit in micro-KRW does not create a lot');
+set local role service_role;
+select is(
+  app_private.read_funding_principal_foundation((select empty_id from principal_ctx))->>'funding_status',
+  'FUNDING_PRINCIPAL_UNRESOLVED',
+  'an unrepresentable principal credit stays unresolved');
+select ok(
+  app_private.read_funding_principal_foundation((select empty_id from principal_ctx))->>'eligible_principal_micro_krw' is null,
+  'an unrepresentable principal credit is not summed as a smaller lot');
+reset role;
+select is((select count(*)::integer from public.funding_principal_lots
+  where user_id = (select member_id from principal_ctx)), 3,
+  'the overflow credit does not change existing lots');
+
 select * from finish();
 rollback;

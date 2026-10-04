@@ -190,6 +190,10 @@ begin
   if new.origin_code not in ('KRW_DEPOSIT', 'USDT_KRW_DEPOSIT', 'PRINCIPAL_CORRECTION') then
     raise exception using errcode = '55000', message = 'FUNDING_PRINCIPAL_ORIGIN_REJECTED';
   end if;
+  -- micro bigint에 담기지 않으면 lot을 만들지 않는다. 기존 입금 확정은 롤백하지 않는다.
+  if new.amount_atomic > 9223372036854 then
+    return new;
+  end if;
   v_micro := app_private.funding_principal_micro_krw(new.amount_atomic);
   insert into public.funding_principal_lots (
     user_id, money_source_movement_id, ledger_transaction_id, source_event_id,
@@ -286,6 +290,7 @@ begin
       and movement.source_bucket = 'PRINCIPAL'
       and movement.movement_kind = 'CREDIT'
       and movement.recorded_at >= v_epoch
+      and movement.amount_atomic <= 9223372036854
       and not exists (
         select 1 from public.funding_principal_lots as lot
         where lot.money_source_movement_id = movement.id
@@ -295,6 +300,22 @@ begin
       )
   ) then
     raise exception using errcode = '55000', message = 'FUNDING_PRINCIPAL_LOT_MISMATCH';
+  end if;
+
+  if exists (
+    select 1
+    from public.money_source_movements as movement
+    where movement.user_id = p_user_id
+      and movement.source_bucket = 'PRINCIPAL'
+      and movement.movement_kind = 'CREDIT'
+      and movement.amount_atomic > 9223372036854
+  ) then
+    return jsonb_build_object(
+      'eligible_principal_micro_krw', null,
+      'minimum_principal_micro_krw', v_minimum_micro::text,
+      'funding_status', 'FUNDING_PRINCIPAL_UNRESOLVED',
+      'lot_count', v_lot_count
+    );
   end if;
 
   if exists (
