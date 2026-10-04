@@ -1,3 +1,5 @@
+import { WITHDRAWAL_SOURCE_UNAVAILABLE_CODE } from "./withdrawal-source-status";
+
 /** Safe owner-scoped recovery record. Destination material is NEVER persisted. */
 export const WITHDRAWAL_LOGICAL_REQUEST_STORAGE_KEY =
   "putduk.withdrawal.logical-request.v2";
@@ -363,6 +365,7 @@ export function classifyWithdrawalHoldResponse(input: {
     [400, "INVALID_WITHDRAWAL_REQUEST"],
     [401, "UNAUTHENTICATED"],
     [409, "INSUFFICIENT_AVAILABLE_BALANCE"],
+    [409, WITHDRAWAL_SOURCE_UNAVAILABLE_CODE],
   ] as const;
   return pairs.some(
     ([status, code]) =>

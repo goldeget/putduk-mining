@@ -9,11 +9,13 @@ export const AI_SAFE_ROUTES = [
   "/home",
   "/login",
   "/menu",
+  "/menu/account",
   "/menu/ai",
   "/menu/notifications",
   "/mining",
   "/notifications",
   "/offline",
+  "/products",
   "/signup",
   "/start",
   "/wallet",
@@ -45,28 +47,48 @@ export const aiChatRequestSchema = z
 
 export type AiChatRequest = z.infer<typeof aiChatRequestSchema>;
 
-export type AiClientStreamEvent =
-  | {
-      requestId: string;
-      source: "cache" | "provider" | "static" | "tool";
-      type: "ready";
-    }
-  | {
-      text: string;
-      type: "delta";
-    }
-  | {
-      knowledgeVersion: string;
-      grounding?: {
-        asOf: string;
-        source: "domain_tool";
-        tool: string;
-      };
-      requestId: string;
-      type: "done";
-    }
-  | {
-      code: string;
-      message: string;
-      type: "error";
-    };
+export const aiAnswerSourceSchema = z.enum([
+  "cache",
+  "provider",
+  "static",
+  "tool",
+]);
+
+export const aiAnswerGroundingSchema = z
+  .object({
+    asOf: z.iso.datetime({ offset: true }),
+    source: z.literal("domain_tool"),
+    tool: z.string().min(1).max(100),
+  })
+  .strict();
+
+/** Only the existing server's public stream envelope is a client receipt. */
+export const aiClientStreamEventSchema = z.discriminatedUnion("type", [
+  z
+    .object({
+      requestId: z.uuid(),
+      source: aiAnswerSourceSchema,
+      type: z.literal("ready"),
+    })
+    .strict(),
+  z.object({ text: z.string().max(32_000), type: z.literal("delta") }).strict(),
+  z
+    .object({
+      knowledgeVersion: z.string().min(1).max(200),
+      grounding: aiAnswerGroundingSchema.optional(),
+      requestId: z.uuid(),
+      type: z.literal("done"),
+    })
+    .strict(),
+  z
+    .object({
+      code: z.string().min(1).max(100),
+      message: z.string().min(1).max(4_000),
+      type: z.literal("error"),
+    })
+    .strict(),
+]);
+
+export type AiAnswerSource = z.infer<typeof aiAnswerSourceSchema>;
+export type AiAnswerGrounding = z.infer<typeof aiAnswerGroundingSchema>;
+export type AiClientStreamEvent = z.infer<typeof aiClientStreamEventSchema>;

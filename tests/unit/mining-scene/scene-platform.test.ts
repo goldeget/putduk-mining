@@ -31,6 +31,7 @@ import {
   tryActivateProductionMaster,
   type MiningProductIdentity,
   type ProductSceneProfile,
+  type ResolvedScene,
 } from "@/lib/mining-scene/types";
 
 const root = fileURLToPath(new URL("../../../", import.meta.url));
@@ -83,15 +84,19 @@ describe("catalog scene resolution", () => {
         code: product.code,
         category: product.category,
       });
-      expect(resolved.productionAssetActive).toBe(false);
-      expect(resolved.userCopyKo).toBe(SAFE_SCENE_COPY);
       expect(resolved.userCopyKo).not.toContain("VISUAL_MASTER_REQUIRED");
       if (product.code === ASSIGNED_PRODUCT_CODE) {
+        expect(resolved.productionAssetActive).toBe(true);
+        expect(resolved.userCopyKo).toBe(
+          resolved.presentation?.profile.htmlCopyKo,
+        );
         expect(resolved.presentation?.sceneFamilyKey).toBe(ASSIGNED_FAMILY);
         expect(resolved.scene?.familyKey).toBe(ASSIGNED_FAMILY);
-        expect(resolved.visualStatus).toBe("VISUAL_MASTER_REQUIRED");
-        expect(resolved.scene?.packStatus).toBe("VISUAL_MASTER_REQUIRED");
+        expect(resolved.visualStatus).toBe("MASTER_READY");
+        expect(resolved.scene?.packStatus).toBe("APPROVED");
       } else {
+        expect(resolved.productionAssetActive).toBe(false);
+        expect(resolved.userCopyKo).toBe(SAFE_SCENE_COPY);
         expect(resolved.presentation?.sceneFamilyKey).toBeNull();
         expect(resolved.scene).toBeNull();
         expect(resolved.visualStatus).toBe("FAMILY_UNASSIGNED");
@@ -326,6 +331,33 @@ describe("presentation boundary", () => {
 });
 
 describe("registry contract", () => {
+  test("strips nested nonvisual fields before serializing a renderer input", () => {
+    const resolved = resolveCatalogProduct(
+      identity(ASSIGNED_PRODUCT_CODE, "KR_STOCK"),
+    );
+    const scene = resolved.scene!;
+    const projected = projectStageInput({
+      ...resolved,
+      scene: {
+        ...scene,
+        anchor: { ...scene.anchor, productCode: ASSIGNED_PRODUCT_CODE },
+        performance: { ...scene.performance, balance: "5000" },
+        master: { ...scene.master, reward: "9999" },
+        responsiveSources: scene.responsiveSources.map((source) => ({
+          ...source,
+          sessionId: "private-session",
+        })),
+      },
+    } as unknown as ResolvedScene);
+
+    expect(findEconomicFieldPaths(projected)).toEqual([]);
+    expect(JSON.stringify(projected)).not.toMatch(
+      /productCode|sessionId|private-session|balance|reward/,
+    );
+    expect(projected.master).toEqual(scene.master);
+    expect(projected.performance).toEqual(scene.performance);
+  });
+
   test("has no money, yield, or balance fields", () => {
     expect(findEconomicFieldPaths(SCENE_REGISTRY)).toEqual([]);
     expect(findEconomicFieldPaths(APPROVED_PRODUCT_PRESENTATIONS)).toEqual([]);
@@ -341,7 +373,9 @@ describe("registry contract", () => {
   });
 
   test("does not activate an unapproved family or the SK hynix reference as a production asset", () => {
-    expect(APPROVED_SCENE_MASTER_SHA256).toEqual([]);
+    expect(APPROVED_SCENE_MASTER_SHA256).toEqual([
+      "5d398a3155635d46a6d0b1f639c25d349ddf21607a16a4e6f948655744b8a6dd",
+    ]);
     expect(SK_HYNIX_V3_REFERENCE.activatesProductionScene).toBe(false);
     expect(SK_HYNIX_V3_REFERENCE.productionAssetApproval).toBe("NOT_APPROVED");
     expect(SCENE_REGISTRY.ETF_BASKET.economicPolicy).toBe("DECISION_REQUIRED");
@@ -349,13 +383,22 @@ describe("registry contract", () => {
 
     for (const familyKey of SCENE_FAMILY_KEYS) {
       const row = SCENE_REGISTRY[familyKey];
-      expect(row.definition.packStatus).toBe("VISUAL_MASTER_REQUIRED");
-      expect(row.definition.master).toBeNull();
-      expect(row.definition.productionAssetActive).toBe(false);
-      expect(row.definition.responsiveSources).toEqual([]);
       expect(row.definition.performance.webgl).toBe(false);
       expect(row.definition.performance.timerAdvancesValue).toBe(false);
-      expect(row.definition.performance.renderer).toBe("none");
+      if (familyKey === ASSIGNED_FAMILY) {
+        expect(row.definition.packStatus).toBe("APPROVED");
+        expect(row.definition.master?.sha256).toBe(
+          APPROVED_SCENE_MASTER_SHA256[0],
+        );
+        expect(row.definition.productionAssetActive).toBe(true);
+        expect(row.definition.responsiveSources.length).toBeGreaterThan(0);
+      } else {
+        expect(row.definition.packStatus).toBe("VISUAL_MASTER_REQUIRED");
+        expect(row.definition.master).toBeNull();
+        expect(row.definition.productionAssetActive).toBe(false);
+        expect(row.definition.responsiveSources).toEqual([]);
+        expect(row.definition.performance.renderer).toBe("none");
+      }
     }
 
     const assigned = Object.values(APPROVED_PRODUCT_PRESENTATIONS).filter(
@@ -427,9 +470,18 @@ describe("registry contract", () => {
       expect(projected).not.toHaveProperty("productCode");
       expect(projected).not.toHaveProperty("balance");
       expect(projected.familyKey).toBe(familyKey);
-      expect(projected.master).toBeNull();
-      expect(projected.productionAssetActive).toBe(false);
-      expect(projected.decoration).toBe("none");
+      if (familyKey === ASSIGNED_FAMILY) {
+        expect(projected.master?.sha256).toBe(APPROVED_SCENE_MASTER_SHA256[0]);
+        expect(projected.productionAssetActive).toBe(true);
+        expect(projected.responsiveSources).toEqual(
+          SCENE_REGISTRY[familyKey].definition.responsiveSources,
+        );
+      } else {
+        expect(projected.master).toBeNull();
+        expect(projected.responsiveSources).toEqual([]);
+        expect(projected.productionAssetActive).toBe(false);
+        expect(projected.decoration).toBe("none");
+      }
       expect(projected.reducedMotion).toBe("static");
     }
 
@@ -469,9 +521,7 @@ describe("registry contract", () => {
       expect(stageSource).not.toContain(code);
     }
 
-    expect(combined).not.toMatch(
-      /Math\.random|doSettle|setInterval|requestAnimationFrame/,
-    );
+    expect(combined).not.toMatch(/Math\.random|doSettle|setInterval/);
     expect(combined).not.toMatch(/getContext\(\s*["']webgl/);
     expect(combined).not.toMatch(/\bthree\b|openai|dall-e|generative/i);
     expect(styleSource).not.toMatch(/gradient|@keyframes|animation\s*:/i);

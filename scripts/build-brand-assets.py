@@ -22,7 +22,7 @@ PUBLIC = ROOT / "public"
 BRAND = PUBLIC / "brand"
 RANKS = PUBLIC / "ranks"
 GENERATED_MASTERS = ROOT / "docs" / "design" / "generated-masters"
-VERSION = "2026.09.27-v1"
+VERSION = "2026.10.03-v3"
 
 MASCOT_MASTER = GENERATED_MASTERS / "putduk-miner-master-v1.png"
 WORLD_MASTER = GENERATED_MASTERS / "putduk-orbital-earth-master-v1.png"
@@ -299,6 +299,10 @@ def build_rank_variants() -> None:
 
 def asset_alt(path: Path) -> str:
     value = path.as_posix()
+    if path.name.startswith("semiconductor-memory-") and "/scenes/" in value:
+        return "금빛과 푸른빛이 반사되는 반도체 시설과 중앙 추출 장치"
+    if path.name.startswith("putduk-ai-help-face-"):
+        return "금빛 헬멧과 새싹을 쓴 퍼뜩 AI 도움 얼굴"
     if "/ranks/" in value:
         rank = next(part for part in path.parts if part.startswith("rank-"))
         return f"퍼뜩 {rank} 행성 랭크 엠블럼"
@@ -311,7 +315,14 @@ def asset_alt(path: Path) -> str:
     return "퍼뜩 브랜드 자산"
 
 
-def build_manifest() -> None:
+def build_manifest(*, write: bool = True) -> dict[str, object]:
+    manifest_path = BRAND / "assets.manifest.json"
+    previous = (
+        json.loads(manifest_path.read_text(encoding="utf-8"))
+        if manifest_path.exists()
+        else {"assets": []}
+    )
+    previous_by_path = {asset["path"]: asset for asset in previous["assets"]}
     roots = [BRAND, RANKS]
     files = sorted(
         path
@@ -351,18 +362,27 @@ def build_manifest() -> None:
             record["purpose"] = "maskable"
         else:
             record["theme"] = "system"
+        # Review metadata belongs to the exact committed bytes. A different
+        # encoding must not inherit approval merely because its path matches.
+        prior = previous_by_path.get(relative)
+        if prior and prior.get("sha256") == record["sha256"]:
+            for key in ("assetVersion", "sourceMaster", "sourceSha256", "reviewScope"):
+                if key in prior:
+                    record[key] = prior[key]
         assets.append(record)
 
     manifest = {
         "schemaVersion": 1,
         "assetVersion": VERSION,
-        "generatedAt": "2026-09-27T00:00:00Z",
+        "generatedAt": "2026-10-03T00:00:00Z",
         "sourcePolicy": "Canonical references live under docs/design/visual-references; lossless generated masters live under docs/design/generated-masters; public files are optimized derivatives and generated pixels contain no production copy.",
         "assets": assets,
     }
-    (BRAND / "assets.manifest.json").write_text(
-        json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
-    )
+    if write:
+        manifest_path.write_text(
+            json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+        )
+    return manifest
 
 
 def main() -> None:

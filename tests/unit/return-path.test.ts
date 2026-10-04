@@ -22,6 +22,8 @@ describe("protected return paths", () => {
     "/ai?question=wallet",
     "/events",
     "/events/live-sample",
+    "/products",
+    "/products/catalog-item?category=KOREA",
   ])("preserves a product return path: %s", (path) =>
     expect(safeProtectedReturnPath(path)).toBe(path),
   );
@@ -41,6 +43,8 @@ describe("protected return paths", () => {
     "/backoffice",
     "/wallet\\redirect",
     "/wallet#javascript:alert(1)",
+    "/products-other",
+    "/products/../public",
   ])("rejects an unsafe or public destination: %s", (path) => {
     expect(isSafeProtectedReturnPath(path)).toBe(false);
     expect(safeProtectedReturnPath(path)).toBe("/home");

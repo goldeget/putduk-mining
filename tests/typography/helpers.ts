@@ -5,7 +5,7 @@ export type TypographyTheme = "dark" | "light";
 
 export type TypographyViewport = {
   height: number;
-  label: "390" | "834" | "1440";
+  label: "320" | "390" | "834" | "1440";
   width: number;
 };
 
@@ -275,6 +275,27 @@ export async function auditTypographyRoute(input: {
     contentType: "image/png",
   });
   const presentation = await input.page.evaluate(() => {
+    const projectFont = getComputedStyle(document.documentElement)
+      .getPropertyValue("--font-putduk")
+      .split(",")[0]
+      ?.trim()
+      .replaceAll('"', "")
+      .replaceAll("'", "");
+    const monoKoreanWithoutProjectFont = Array.from(
+      document.body.querySelectorAll<HTMLElement>("*"),
+    ).flatMap((element) => {
+      const text = Array.from(element.childNodes)
+        .filter((node) => node.nodeType === Node.TEXT_NODE)
+        .map((node) => node.textContent ?? "")
+        .join("");
+      if (!/[가-힣]/.test(text) || element.getClientRects().length === 0)
+        return [];
+      const font = getComputedStyle(element).fontFamily;
+      if (!font.includes("monospace")) return [];
+      return projectFont && font.includes(projectFont)
+        ? []
+        : [{ text: text.trim().slice(0, 80), font }];
+    });
     let storedPreference: string | null;
     try {
       storedPreference = localStorage.getItem("putduk-theme");
@@ -289,6 +310,7 @@ export async function auditTypographyRoute(input: {
         : "light",
       reducedMotion: matchMedia("(prefers-reduced-motion: reduce)").matches,
       fontFamily: getComputedStyle(document.body).fontFamily,
+      monoKoreanWithoutProjectFont,
       fontFaces: Array.from(document.fonts).map((font) => ({
         family: font.family,
         status: font.status,
@@ -322,6 +344,11 @@ export async function auditTypographyRoute(input: {
       input.expectedStates ?? ["loaded", "empty"],
       `${input.routeName}: ${state} is not stable loaded/empty evidence`,
     ).toContain(state);
+
+  expect(
+    presentation.monoKoreanWithoutProjectFont,
+    `${input.routeName}: Korean mono labels require the bundled Korean font, rather than unverified runner fonts`,
+  ).toEqual([]);
 
   const result = await readTypographyAudit(input.page);
   expect(

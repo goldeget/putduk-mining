@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
 
+import { useAdminPublicBrowserConfig } from "@/components/assistant/operator-draft-provider";
 import type { AdminCommandFamily } from "@/lib/auth/command-families";
 import { createAdminBrowserClient } from "@/lib/supabase/browser";
 import { waitForAdminResult } from "@/lib/ui/abortable";
@@ -22,6 +23,7 @@ export function StepUpTokenField({
   onTokenIssued?: (token: string) => void;
   submissionPending?: boolean;
 }) {
+  const publicConfig = useAdminPublicBrowserConfig();
   const { pending: formPending } = useFormStatus();
   const parentPending = formPending || submissionPending;
   const [token, setToken] = useState("");
@@ -58,11 +60,11 @@ export function StepUpTokenField({
     window.addEventListener("pagehide", invalidate);
     let unsubscribe: (() => void) | undefined;
     try {
-      const listener = createAdminBrowserClient().auth.onAuthStateChange?.(
-        (event) => {
-          if (event === "SIGNED_OUT" || event === "USER_UPDATED") invalidate();
-        },
-      );
+      const listener = createAdminBrowserClient(
+        publicConfig ?? undefined,
+      ).auth.onAuthStateChange?.((event) => {
+        if (event === "SIGNED_OUT" || event === "USER_UPDATED") invalidate();
+      });
       unsubscribe = () => listener?.data.subscription.unsubscribe();
     } catch {
       invalidate();
@@ -78,7 +80,7 @@ export function StepUpTokenField({
       window.removeEventListener("offline", invalidate);
       window.removeEventListener("pagehide", invalidate);
     };
-  }, [commandFamily]);
+  }, [commandFamily, publicConfig]);
 
   useEffect(() => {
     if (!parentPending) return;

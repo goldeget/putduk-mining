@@ -5,8 +5,12 @@ import { readIdempotencyKey } from "@/lib/api/idempotency";
 import { getVerifiedIdentity } from "@/lib/auth/session";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { withdrawalLogicalApiError } from "@/lib/wallet/withdrawal-logical-errors.server";
+import {
+  WITHDRAWAL_SOURCE_UNAVAILABLE_CODE,
+  WITHDRAWAL_SOURCE_UNAVAILABLE_COPY,
+} from "@/lib/wallet/withdrawal-source-status";
 
-const requestSchema = z.object({
+const requestSchema = z.strictObject({
   method: z.enum(["KRW_BANK", "USDT_ADDRESS"]),
   destinationId: z.string().uuid(),
   amountKrw: z.string().regex(/^[1-9][0-9]{0,14}$/),
@@ -54,6 +58,15 @@ export async function POST(request: Request) {
   });
 
   if (error) {
+    if (
+      error.message.includes("WITHDRAWAL_VERIFIED_SOURCE_LIFECYCLE_UNAVAILABLE")
+    ) {
+      return apiError({
+        code: WITHDRAWAL_SOURCE_UNAVAILABLE_CODE,
+        message: WITHDRAWAL_SOURCE_UNAVAILABLE_COPY,
+        status: 409,
+      });
+    }
     if (error.message.includes("WITHDRAWAL_LOGICAL_")) {
       return withdrawalLogicalApiError(error);
     }

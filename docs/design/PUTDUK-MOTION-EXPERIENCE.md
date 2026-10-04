@@ -32,9 +32,14 @@ authoritative server state
 - Duplicate requests must resolve to the same idempotent result.
 - A failed or cancelled animation cannot roll back or duplicate an accepted settlement.
 
-## 4. 2D/2.5D and 3D boundary
+## 4. Visual quality and rendering boundary
 
-Normal application UI remains 2D/2.5D. Selective 3D may be used for:
+Application surfaces and mining worlds retain the reference quality of realistic
+metal, glass, light, color, background detail and spatial depth. "2D/2.5D" is
+not permission to lower that quality or replace it with flat illustrations or
+generic gradients. Approved raster masters and bounded motion are valid layers;
+rendering technology does not establish visual acceptance. Selective 3D may be
+used for:
 
 - the active mining world;
 - equipment inspection where spatial understanding adds value;
@@ -45,7 +50,9 @@ It may not be required to fund, withdraw, review a ledger, recover an account or
 ## 5. Runtime budgets
 
 - Load 3D only after the critical UI and after capability/intent checks.
-- Provide a complete raster/2.5D fallback from the canonical asset system.
+- Provide a complete static experience from approved responsive masters while
+  retaining material, lighting and composition quality. Adapt effects rather
+  than substituting a lower-quality scene.
 - Use compressed textures, geometry reuse, instancing and LOD.
 - Pause rendering when hidden or out of view.
 - Prefer a stable 30 FPS fallback over an unstable 60 FPS attempt on constrained devices.

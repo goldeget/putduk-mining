@@ -1,33 +1,21 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import { useFormStatus } from "react-dom";
 
 import {
   updatePasswordAction,
   type UpdatePasswordActionState,
 } from "@/app/auth/update-password/actions";
-import { PutdukIcon } from "@/components/icons/putduk-icon";
+import {
+  AuthConnectionNotice,
+  AuthSubmitButton,
+  preventOfflineAuthSubmission,
+} from "@/components/auth/auth-form-feedback";
 
 const INITIAL_STATE: UpdatePasswordActionState = {
   message: "",
   status: "idle",
 };
-
-function SubmitButton({ mismatch }: { mismatch: boolean }) {
-  const { pending } = useFormStatus();
-
-  return (
-    <button
-      className="button button--primary"
-      type="submit"
-      disabled={pending || mismatch}
-    >
-      {pending ? "변경하고 있어요" : "새 비밀번호 저장"}
-      <PutdukIcon name="arrow-right" size={18} />
-    </button>
-  );
-}
 
 export function UpdatePasswordForm() {
   const [state, action] = useActionState(updatePasswordAction, INITIAL_STATE);
@@ -40,8 +28,11 @@ export function UpdatePasswordForm() {
     <form
       className="auth-form"
       action={action}
+      aria-label="새 비밀번호 설정"
+      onSubmit={preventOfflineAuthSubmission}
       data-ui-state={state.status === "error" || mismatch ? "error" : "loaded"}
     >
+      <AuthConnectionNotice />
       <div className="auth-form__field">
         <label htmlFor="new-password">새 비밀번호</label>
         <div className="auth-form__password">
@@ -107,7 +98,11 @@ export function UpdatePasswordForm() {
         </p>
       ) : null}
       <div className="auth-form__actions">
-        <SubmitButton mismatch={mismatch} />
+        <AuthSubmitButton
+          label="새 비밀번호 저장"
+          pendingLabel="변경하고 있어요"
+          disabled={mismatch}
+        />
       </div>
     </form>
   );

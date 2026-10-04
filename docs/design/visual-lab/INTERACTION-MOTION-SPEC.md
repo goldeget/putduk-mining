@@ -40,7 +40,8 @@ At `prefers-reduced-motion: reduce` or the user setting:
 
 ## Performance tiers
 
-- baseline: static 2D/2.5D art with CSS transforms;
+- baseline: high-quality approved static masters with complete controls and
+  bounded CSS transitions; retain realistic material, light and composition;
 - enhanced: bounded particles and layered depth after capability/network checks;
 - premium mining tier: selectively loaded 3D with LOD, compressed textures, instancing and explicit teardown.
 

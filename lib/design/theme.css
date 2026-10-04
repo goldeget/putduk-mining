@@ -73,7 +73,9 @@
   --font-sans:
     var(--font-putduk, "Pretendard Variable"), "Apple SD Gothic Neo",
     "Noto Sans KR", system-ui, sans-serif;
-  --font-mono: "SFMono-Regular", "Cascadia Code", "Roboto Mono", monospace;
+  --font-mono:
+    "SFMono-Regular", "Cascadia Code", "Roboto Mono",
+    var(--font-putduk, "Pretendard Variable"), monospace;
 }
 
 html[data-theme="light"] {

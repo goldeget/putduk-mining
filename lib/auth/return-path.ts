@@ -6,8 +6,13 @@ export const PROTECTED_PAGE_PATHS = [
   "/ai",
 ] as const;
 
-/** `/events`와 `/events/[slug]` 딥링크 반환을 함께 보존한다. */
-export const PROTECTED_PAGE_PREFIXES = ["/wallet", "/menu", "/events"] as const;
+/** 인증이 필요한 하위 화면도 같은 출처의 로그인 반환 경로로 보존한다. */
+export const PROTECTED_PAGE_PREFIXES = [
+  "/wallet",
+  "/menu",
+  "/events",
+  "/products",
+] as const;
 
 export function isSafeProtectedReturnPath(value: string): boolean {
   if (

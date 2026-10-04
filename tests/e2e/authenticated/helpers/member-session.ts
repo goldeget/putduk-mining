@@ -1,6 +1,7 @@
 import { expect, type Page } from "@playwright/test";
 
 import type { ConfirmedMember } from "../../fixtures/local-auth";
+import { expectSettledRoute } from "./settled-route";
 
 export async function loginAsMember(
   page: Page,
@@ -27,11 +28,15 @@ export async function loginAsMember(
       `MEMBER_LOGIN_FAILED: alert=${alert ?? "none"}; cause=${error instanceof Error ? error.message : String(error)}`,
     );
   }
-  // 서버 액션 쿠키가 브라우저에 정착할 때까지 인증 UI를 확인한다.
-  await page
-    .getByText("회원", { exact: true })
-    .first()
-    .waitFor({ timeout: 30_000 });
+  // Dedicated AI intentionally hides the account header. Check the current
+  // authenticated presentation rather than hidden text from a prior route.
+  if (nextPath === "/ai" || nextPath === "/menu/ai") {
+    await expect(page.locator("[data-ai-page]:visible")).toHaveCount(1);
+  } else {
+    await expect(
+      page.locator(".product-header__identity:visible small"),
+    ).toHaveText("회원", { timeout: 30_000 });
+  }
 }
 
 /** 첫 방문 안내 오버레이가 시작 CTA를 가리거나 클릭을 가로채지 않게 닫는다. */
@@ -126,8 +131,7 @@ export async function convertWelcomeFromUi(page: Page) {
   await page.goto("/start");
   await dismissGuidedQuestIfPresent(page);
   const memberVisible = await page
-    .getByText("회원", { exact: true })
-    .first()
+    .locator(".product-header__identity:visible small")
     .isVisible()
     .catch(() => false);
   const convertButton = page.getByRole("button", {
@@ -203,12 +207,21 @@ export async function requestWelcomeWithdrawalFromUi(
   method: "KRW_BANK" | "USDT_ADDRESS",
 ) {
   await page.goto("/wallet/withdraw");
-  await page.getByText("입금 없이도 가능한 첫 출금").waitFor();
+  // 제목은 이미 하나여도 hidden S: 슬롯의 라디오는 남아 strict check가 바로 실패한다.
+  const route = await expectSettledRoute(page, "/wallet/withdraw");
+  const welcomeHeading = route.getByRole("heading", {
+    level: 2,
+    name: "입금 없이도 가능한 첫 출금",
+  });
+  await expect(welcomeHeading).toHaveCount(1);
+  await expect(welcomeHeading).toBeVisible();
 
-  const radios = page.locator('input[name="welcomeMethod"]');
-  if ((await radios.count()) > 0) {
-    const value = method === "KRW_BANK" ? "KRW_BANK" : "USDT_ADDRESS";
-    await page.locator(`input[name="welcomeMethod"][value="${value}"]`).check();
+  const value = method === "KRW_BANK" ? "KRW_BANK" : "USDT_ADDRESS";
+  const radio = page.locator(`input[name="welcomeMethod"][value="${value}"]`);
+  await expect.poll(async () => radio.count()).toBeLessThanOrEqual(1);
+  if ((await radio.count()) === 1) {
+    await expect(radio).toHaveCount(1);
+    await radio.check();
   }
 
   const requestButton = page.getByRole("button", {

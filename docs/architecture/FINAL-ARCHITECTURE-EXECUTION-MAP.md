@@ -8,6 +8,21 @@ SHA-256: `a8b082f4691d3cd6e94f1d707770c241df61c3c436076a5c46c511a49b8e0457`.
 원문은 실행 방향이며 모든 기능의 구현·제품 완성 증거가 아니다.
 기존 master·WS-04·원장·outbox·보안·시각 계약에 이 결정을 반영한다.
 
+후속 승인 overlay(2026-10-03): 사용자 승인 경제 운영값은
+[승인 원문](../product/ECONOMY-V1-USER-APPROVAL-2026-10-03.md)과
+`../product/economy-v1-approved-2026-10-03.json`의
+`PUTDUK-MINING-V1-2026-10-03`이다. 아래 초기 미정/예시 해석은 이 승인
+범위에서 해당 version으로 대체한다. 승인된 구조·수치 때문에 구현을
+보류하지 않으며 server 정책으로 연결한다. 승인 config와 engine/DB 활성·
+정산·실제 runtime의 완성 증거는 구분한다. 원격 잠금은 그대로다.
+
+사용자는 시각 선택도 위임했다. clean master `5d398a3155635d46a6d0b1f639c25d349ddf21607a16a4e6f948655744b8a6dd`
+를 실제 앱 배경으로 채택했고, 전체 구도 AVIF/WebP8종을 등록했다.
+현재 manifest는 `2026.10.03-v3`/96종이며 기존88종은 보존했다.
+`SEMICONDUCTOR_MEMORY`와 명시 `DEFAULT_STAGE_BACKDROP`만 이 승인 pack을
+사용한다. 다른13개 family와 prototype reference는 계속 pending이다.
+제품 mapping·서버 snapshot·돈의 권위나 actual pixels/성능 완료를 승인한 것은 아니다.
+
 후속 UI 프롬프트는 `../design/USER-PROVIDED-VISUAL-PROMPT-2026-10-03.txt`에
 원래 UTF-8/CRLF와 Markdown 줄바꿈 공백을 보존했다. SHA-256은
 `361667675167a5fc9fffbd5cca268ad9fe96ce8b7a430c735bede85d06e5b4cd`다.
@@ -20,8 +35,9 @@ SHA-256: `a8b082f4691d3cd6e94f1d707770c241df61c3c436076a5c46c511a49b8e0457`.
 
 - 현재 develop의 실제 원장·입출금·관리자 보안·outbox·catalog·AI·Scene을
   재사용한다. 이름이 다른 두 번째 money service나 Stage를 만들지 않는다.
-- Funding Tier와 중립 시각 rank-01~06은 별개다. 원문의 L1~L14 명칭·금액·
-  속도·혜택은 예시이며 production 설정값으로 seed하지 않는다.
+- Funding Tier와 중립 시각 rank-01~06은 별개다. 초기 원문의 예시를 직접
+  seed하지 않는다. 후속 사용자 승인 원문/JSON의 정확한 L1~L14 정책을
+  versioned 서버 설정으로 소비하며 React나 worker 상수로 복제하지 않는다.
 - 잔여 인정 원금과 사용자별 30일 cycle, capacity/speed 분리, 남은 기간
   proration은 승인된 구조다. 수익률·단위·반올림·한도·상품·loyalty/campaign의
   실제 숫자는 versioned 승인 데이터가 있어야 활성화된다.
@@ -88,9 +104,14 @@ reduced motion과 canonical 비교를 별도로 검증한다.
 정보 3~5개다. 원금·현재 등급·오늘 채굴·용량·속도만 우선 표시하고 자세한
 정산·기록·등급표·상품 규칙·설정은 펼쳐 본다. 모바일 하단은
 `홈 · 채굴 · 상품 · 지갑 · 더보기`의 5개 탭이다. 이벤트·공지·알림·지원·
-설정은 더보기와 적절한 바로가기로 열며 AI는 탭이 아닌 모든 화면의 같은
-위치의 플로팅 버튼으로 연다. 실제 route·권한·safe area·키보드·dialog와
-접근성 검토 후 연결한다. 합성 목업이나 탭 명세를 구현 완료로 세지 않는다.
+설정은 더보기와 적절한 바로가기로 연다. 후속 batch 7 승인 배치가 이전
+floating 표현을 대체한다. 큰 장면 아래 normal-flow 한 줄에 상세 보기와
+전체 얼굴의 `AI 도움`을 두고 그 아래 5탭을 둔다. 상세 링크는 채굴 화면에
+적용한다. 별도 상시 말풍선·중복 지갑 CTA·잘린 상반신을 다시 넣지 않는다.
+`퍼뜩 AI`는 도우미 이름이며 모바일 전체 대화, PC 오른쪽 panel과 넓게 보기를
+사용한다. 전용 AI route에서는 공통 session으로 대화를 열고 launcher를 중복
+표시하지 않는다. 실제 route·권한·safe area·키보드·dialog·main 스크롤과
+접근성을 검증한다. 합성 목업이나 탭 명세를 구현 완료로 세지 않는다.
 
 Scene은 화면 밖·hidden·reduced motion에서 멈춘다. effect 수·해상도·frame
 budget을 capability별로 제한하고 정적 fallback에서도 모든 조작이 가능해야
@@ -104,18 +125,46 @@ profile에서도 유지한다. 가족별 원형 master는 서로 달라야 하�
 수의 승인으로 해석하지 않는다. master의 runtime 게시 전에는 사용자 검토·
 승인과 hash/version, derivatives·anchors·profiles 및 직접 pixels QA가 필요하다.
 
+원본 목업의 사실적 금속·검은 유리·조명·색상·공간 깊이·배경 품질을 실제
+화면의 기준으로 삼는다. 2D/2.5D라는 말로 단순한 flat/vector 장면이나 일반
+gradient로 하향 치환하지 않는다. renderer의 종류와 사용자에게 보이는
+품질을 구분하며 저성능 profile에서도 approved master의 재질과 구도를
+유지한다. 기능·경제 값은 실제 구현된 서버 계약에만 연결한다. 사진의
+placeholder나 승인되지 않은 통계를 만들지 않는다.
+
+### 시각 승인과 연결 — 2026-10-03 인계 시점 이력
+
+이 표는 후속 scene/경제 승인과 pack 등록 이전의 인계 snapshot이다.
+현재 승인 상태는 상단 overlay와 master REVIEW를 우선한다. 각 완료 증거는
+이 표의 이전 후보/실행 결과를 새 runtime으로 전용하지 않고 다시 확인한다.
+
+| 대상 | 승인/구현 상태 | 남은 gate |
+| --- | --- | --- |
+| 전체 AI 얼굴·도움 행 | batch 7 승인. master hash `d7aa8e5c8ddf1215ca3be650699a6c18fe168c9eefbba86a7204718f9d39ffd2`, face asset `2026.10.03-ai-help-face-v1`의 4종 derivative와 shell/dock caller 존재 | 실제 회원 앱 pixels, modal/focus/auth lifecycle, 모바일 keyboard/200%/theme/성능 검증 |
+| runtime manifest | `2026.10.03-v2`, 기존84+얼굴4=88종. Visual Lab benchmark는 별도 `visual-lab-2026.09.27-v1` | 같은 후보의 integrity/실제 렌더 검증; asset 검사는 제품 완료를 대신하지 않음 |
+| 반도체 clean master | `REVIEW.md`의 PRODUCTION APPROVAL PENDING, hash `5d398a3155635d46a6d0b1f639c25d349ddf21607a16a4e6f948655744b8a6dd`. 새 첨부 사진은 참고만 | 사용자 scene 승인과 derivatives/anchors/profiles/mapping, 직접 crop·theme·성능 검토 |
+| V3 runtime/HUD | scene hash/path/variant allowlist는 비어 있고 family14종 inactive. 인계 시 Stage 화면 caller 없음; 홈/채굴/상품은 Earth | 서버 권위 snapshot/revision/receipt, 단일 renderer/visibility lifecycle. 현재 연결 완료로 기록하지 않음 |
+| 핵심 경제5값 | 표시 방향은 승인됐으나 Funding entitlement/30일 cycle/earned authority는 미연결 | wallet/누적입금/trial을 대체값으로 쓰지 않고 같은 서버 revision/as-of의 실제 값만 표시 |
+
+적용은 기존 shell/nav/catalog/shared AI를 먼저 안정화하고, 승인된 얼굴과
+기존 자산을 보존하는 순서로 진행한다. 그 다음 단일 권위 snapshot 계약과
+엔진을 연결하고, 별도 승인된 scene derivative/mapping·bounded motion·HTML
+HUD를 기존 `MiningLiveStage`에 통합한다. 마지막으로 실제 route별 데이터
+상태·화면·접근성·motion·성능을 동일 후보에서 검증한다. 이 순서는 새 경제
+숫자·slot 정책·scene 게시를 임의로 확정하지 않는다.
+
 ## 실제 작업 묶음
 
 | Wave | 결과 | 현재 상태와 gate |
 | --- | --- | --- |
 | 1 | PR #45 운영 도우미·안전 모드·worker 통합 | 최종 head e9b3c32 전체 18 job/16분 55초와 실제 pixels 검토. develop 병합 5a7ba0c, push CI 37111792067 success/전체 17분 16초 독립 검증 완료. scoped 기능 증거이며 PRODUCT COMPLETE는 아님 |
-| 2 | 원금 출처와 Eligible Principal | 새 실제 입금/START capture·readback·admin 후보 작성. source-aware 출금/보정은 후속 연결 필요 |
-| 3 | Tier·Entitlement·Cycle·Segment·Proration | 승인 구조 반영, 실제 transactional engine 미구현. 숫자 없는 draft/검증은 가능하며 활성화는 보류 |
+| 2 | 원금 출처와 Eligible Principal | CREDIT3 capture·readback·admin PR46 병합 및 정확한 후보/병합 CI 검증. source-aware 출금/보정·전체 engine은 후속 연결 필요 |
+| 3 | Tier·Entitlement·Cycle·Segment·Proration | 후속 V1 구조·수치 승인 version을 서버 계약에 연결한다. 실제 transactional engine은 미구현이므로 approved config와 running/settlement 증거를 구분한다 |
 | 4 | 서버 정산·Live Snapshot | 기존 helper와 command gap 확인. 단일 권위 engine·balanced posting·lease/retry·revision 연결 필요 |
-| 5 | 사용자 Capacity UX | 목업 먼저, 승인 snapshot의 원금·등급·오늘 채굴·capacity·다음 등급을 HTML로 표시 |
-| 6 | 관리자 경제 제어 | simple 입력·영향 preview·confirm/step-up·버전 예약/취소·복구 필요 |
+| 5 | 사용자 Capacity UX | 같은 권위 snapshot의 원금·등급·오늘 채굴·capacity·speed만 우선 HTML로 표시. next Tier는 승인 정책과 실제 데이터가 있는 상세 영역에만 표시 |
+| 6 | 관리자 경제 제어 | PR47 후속 후보에 실제 DB 조회·immutable 정책 생성/검토/승인/미래 발행·step-up·receipt 복구 foundation을 추가. consumer/실제 정산 활성, 이미 예약된 정책의 별도 취소 계약과 전체 제품 증거는 후속 gate |
 | 7 | AI Gateway·관리자 도우미 | 기존 read/draft 재사용, provider-neutral routing·정책·cost/quota·eval·실패 상태 확장 |
-| 8 | 사용자 AI | 기존 read-only/money denial·launcher/context 재사용. 최소 권한·실제 정책 설명·quota 분리 |
+| 8 | 사용자 AI | 기존 read-only/money denial·shared session·승인 얼굴/normal-flow dock/context 재사용. 현재 미커밋 foundation을 실제 app/auth/modal/복구로 검증하며 DB 영속 대화·모델 기억 구현으로 확대하지 않음 |
 | 9 | V3 clean master·Scene runtime | immutable reference 보존, imagegen clean master 검토·derivative·단일 bounded renderer·실제 delta 연결 |
 | 10 | 다른 Scene family | 공통 Stage 유지, 승인 catalog/mapping·가족별 자산/anchor/profile·fallback 증거 |
 | 11 | CMS·Trust/Discovery | 실제 Canonical Facts·SSR content·운영자 preview/publish·audit/outbox 재사용/확장 |

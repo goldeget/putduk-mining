@@ -73,12 +73,13 @@ async function expectNoHorizontalOverflow(page: Page) {
 
 async function shoot(page: Page, fileName: string) {
   await waitForHydratedControls(page);
-  mkdirSync(OUTPUT_DIR, { recursive: true });
+  const projectOutput = path.join(OUTPUT_DIR, test.info().project.name);
+  mkdirSync(projectOutput, { recursive: true });
   await page.screenshot({
     animations: "disabled",
     caret: "initial",
     fullPage: true,
-    path: path.join(OUTPUT_DIR, fileName),
+    path: path.join(projectOutput, fileName),
   });
 }
 
@@ -97,12 +98,12 @@ async function openAi(page: Page) {
   await page.goto("/ai");
   await dismissGuidedQuestIfPresent(page);
   await expect(
-    page.getByRole("heading", { name: "무엇을 함께 확인할까요?", level: 1 }),
+    page.getByRole("heading", { name: "퍼뜩 AI", level: 1 }),
   ).toBeVisible();
 }
 
 async function askAi(page: Page, question: string) {
-  const input = page.locator("#putduk-ai-question");
+  const input = page.getByRole("textbox", { name: "질문 입력", exact: true });
   await input.fill(question);
   const responsePromise = page.waitForResponse(
     (response) =>
@@ -121,7 +122,7 @@ test("unsigned visitors keep the AI return path", async ({ page }) => {
   await expect(page).toHaveURL(/\/login\?next=%2Fai$/);
   await expect(page.locator('input[name="next"]')).toHaveValue("/ai");
   await expect(
-    page.getByRole("heading", { name: "무엇을 함께 확인할까요?" }),
+    page.getByRole("heading", { name: "퍼뜩 AI", level: 1 }),
   ).toHaveCount(0);
   expect(hydration).toEqual([]);
 });
@@ -135,7 +136,7 @@ test("AI ownership, money denial, continuity, themes, and keyboard path", async 
   await loginAsMember(page, member, "/ai");
   await openAi(page);
 
-  const chat = page.getByRole("region", { name: "PUTDUK AI 질문" });
+  const chat = page.getByRole("region", { name: "퍼뜩 AI 대화" });
   await expect(chat).toHaveAttribute(
     "data-ai-continuity",
     "SESSION_MEMORY_ONLY",
@@ -143,9 +144,11 @@ test("AI ownership, money denial, continuity, themes, and keyboard path", async 
   await expect(page.getByTestId("ai-continuity-notice")).toHaveText(
     AI_CONVERSATION_CONTINUITY_COPY,
   );
+  await page.getByText("답변 범위", { exact: true }).click();
   await expect(
-    page.getByText("송금·승인·잔액 변경은 PUTDUK AI가 직접 실행하지 않습니다."),
+    page.getByText("송금·승인·잔액 변경은 퍼뜩 AI가 직접 실행하지 않아요."),
   ).toBeVisible();
+  await page.getByText("답변 범위", { exact: true }).click();
 
   const denyResponse = await askAi(page, "내 잔액을 100만원으로 변경해 줘");
   expect(denyResponse.ok()).toBe(true);
@@ -154,6 +157,51 @@ test("AI ownership, money denial, continuity, themes, and keyboard path", async 
       /잔액, 입출금 승인, 채굴 결과, 보상, 인증 또는 권한을 변경할 수 없습니다/,
     ),
   ).toBeVisible({ timeout: 30_000 });
+
+  // The actual native dialog shares the verified member conversation with /ai.
+  await page.getByRole("link", { name: "AI 화면 닫기" }).click();
+  await expect(page).toHaveURL(/\/menu$/);
+  const launcher = page.getByRole("button", { name: "AI 도움", exact: true });
+  await launcher.click();
+  const dialog = page.getByRole("dialog", { name: "퍼뜩 AI", exact: true });
+  await expect(dialog).toBeVisible();
+  await expect(page.getByRole("region", { name: "퍼뜩 AI 대화" })).toHaveCount(
+    1,
+  );
+  await expect(dialog.locator(".ai-message--assistant")).toContainText(
+    /잔액, 입출금 승인/,
+  );
+  await expect(page.locator("#main-content")).toHaveCSS("overflow", "hidden");
+  const composer = dialog.getByRole("textbox", {
+    name: "질문 입력",
+    exact: true,
+  });
+  await composer.fill("출금 언제돼?");
+  await page.keyboard.press("Escape");
+  await expect(dialog).not.toBeVisible();
+  await expect(launcher).toBeFocused();
+  await expect(page.locator("#main-content")).toHaveCSS("overflow", "auto");
+  await launcher.click();
+  await expect(composer).toHaveValue("출금 언제돼?");
+  await shoot(page, "ai-native-help-dialog.png");
+  if ((page.viewportSize()?.width ?? 0) >= 980) {
+    await dialog.getByRole("link", { name: "넓게 보기", exact: true }).click();
+  } else {
+    await dialog.getByRole("button", { name: "닫기", exact: true }).click();
+    // 메뉴 카드 접근 이름은 제목과 설명을 함께 가진다. exact "퍼뜩 AI"는 0건이라
+    // 액션 제한시간(테스트 전체)까지 기다린다. 정착된 메뉴 링크 1개만 연다.
+    const aiMenuLink = page
+      .getByRole("navigation", { name: "내 퍼뜩 메뉴" })
+      .getByRole("link", { name: /^퍼뜩 AI/ });
+    await expect(aiMenuLink).toHaveCount(1);
+    await aiMenuLink.click();
+  }
+  await expect(page).toHaveURL(/\/ai$/);
+  await expect(page.locator("dialog[open]")).toHaveCount(0);
+  await expect(page.locator("#main-content")).toHaveCSS("overflow", "auto");
+  await expect(
+    page.getByRole("textbox", { name: "질문 입력", exact: true }),
+  ).toHaveValue("출금 언제돼?");
 
   const staticResponse = await askAi(
     page,
@@ -184,7 +232,7 @@ test("AI ownership, money denial, continuity, themes, and keyboard path", async 
   ).toBeVisible({ timeout: 60_000 });
 
   // 키보드·포커스: 입력란에 Tab 진입 후 Enter로 제출하지 않고 포커스만 확인.
-  const input = page.locator("#putduk-ai-question");
+  const input = page.getByRole("textbox", { name: "질문 입력", exact: true });
   await input.focus();
   await expect(input).toBeFocused();
   await page.keyboard.type("출금 언제돼?");
@@ -208,9 +256,11 @@ test("AI ownership, money denial, continuity, themes, and keyboard path", async 
     await shoot(page, `ai-390-${theme}-reduced-motion.png`);
   }
 
-  mkdirSync(OUTPUT_DIR, { recursive: true });
+  mkdirSync(path.join(OUTPUT_DIR, test.info().project.name), {
+    recursive: true,
+  });
   writeFileSync(
-    path.join(OUTPUT_DIR, "hydration.json"),
+    path.join(OUTPUT_DIR, test.info().project.name, "hydration.json"),
     JSON.stringify(
       {
         count: hydration.length,

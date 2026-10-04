@@ -24,6 +24,7 @@ import {
   recordKrwExternalSend,
   releaseWithdrawalHold,
 } from "./helpers/operator-commands";
+import { readWithdrawalMoneySnapshot } from "./helpers/historical-withdrawal-fixture";
 
 test.describe("welcome withdrawal negative guards", () => {
   test.beforeAll(() => {
@@ -97,7 +98,7 @@ test.describe("welcome withdrawal negative guards", () => {
     expect(afterReplay).toBe(1);
   });
 
-  test("concurrent welcome requests and held double-spend are denied", async ({
+  test("concurrent welcome requests keep one hold and source-less general spending is denied", async ({
     page,
   }) => {
     const { member } = await prepareMemberThroughStart(page, "ws05-race");
@@ -159,6 +160,7 @@ test.describe("welcome withdrawal negative guards", () => {
     expect(count).toBe(1);
 
     const held = await readLatestWithdrawal(member.userId);
+    const moneyBefore = readWithdrawalMoneySnapshot(member.userId);
     const { data: generalPolicy } = await client
       .from("withdrawal_policies")
       .select("id,version")
@@ -189,9 +191,18 @@ test.describe("welcome withdrawal negative guards", () => {
     });
     expect(spend.status()).toBe(409);
     expect((await spend.json()).error.code).toBe(
-      "INSUFFICIENT_AVAILABLE_BALANCE",
+      "WITHDRAWAL_SOURCE_UNAVAILABLE",
     );
     expect(held?.status).toBe("HELD");
+    expect(await readLatestWithdrawal(member.userId)).toEqual(held);
+    expect(readWithdrawalMoneySnapshot(member.userId)).toEqual(moneyBefore);
+    const { count: generalRequests, error: generalError } = await client
+      .from("withdrawal_requests")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", member.userId)
+      .eq("idempotency_key", logicalKey);
+    expect(generalError).toBeNull();
+    expect(generalRequests).toBe(0);
   });
 
   test("replacement cooldown blocks withdraw until protection ends", async ({

@@ -14,6 +14,7 @@ const items = [
   { href: "/kyc", label: "본인 확인 검토" },
   { href: "/exceptions", label: "정산·대사 예외" },
   { href: "/restrictions", label: "제한·안전 모드" },
+  { href: "/economy", label: "채굴 정책" },
   { href: "/members", label: "회원 종합 정보" },
 ] as const;
 

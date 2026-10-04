@@ -21,7 +21,10 @@ The canonical images are preserved under `docs/design/visual-references/`. They 
 4. Consume semantic tokens rather than page-local colors.
 5. Gold communicates primary action/progress; it is not applied indiscriminately.
 6. Use opaque, legible operational surfaces; glass is rare and purposeful.
-7. Normal UI is 2D/2.5D. 3D is selective, capability-gated and never required for a critical action.
+7. Preserve realistic material, light, background detail, color and spatial depth
+   from the approved references. A 2D/2.5D label does not lower the quality target.
+   Capability-based effect limits retain the approved master and every critical
+   action; 3D is never required to operate financial or recovery controls.
 8. System is the default theme preference; Light and Dark are complete modes.
 9. Every screen includes applicable loading, empty, success, warning, error, disabled, offline and reconnect states.
 10. Mobile, tablet and desktop share the same critical capability and hierarchy.

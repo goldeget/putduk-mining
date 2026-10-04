@@ -2,6 +2,23 @@
 
 상태: **SPEC_ONLY / SOURCE-AWARE WITHDRAWAL RUNTIME NOT CONNECTED**
 
+2026-10-03 후속 안전 보완: `20261003150000_legacy_withdrawal_entrypoint_closure.sql`
+후보는 `public.create_withdrawal_request(uuid,uuid,uuid,bigint,text,jsonb,text)`의
+PUBLIC·anon·authenticated·service_role 실행 권한만 철회한다. 기존 postgres
+소유 historical fixture 함수 본문·신청 row·정상 WS-04 request 4인자·START는
+변경하지 않는다. `/api/v1/withdrawals` POST는 인증 전 401, 인증 후
+`409 LEGACY_WITHDRAWAL_FLOW_RETIRED`와 출금 화면 안내만 반환하며 wallet·보안
+설정·암호화·RPC를 호출하지 않는다. 기존 결과는 `/wallet/withdraw`의
+owner-only 최근 출금 요청 reader와 존재하는 원본 receipt로 확인한다. 새 복구 writer나
+RPC 별칭을 만들지 않는다. 과거 아래 caller 관측은 이 변경 이전 기록이다.
+후속 owner V1 승인은 기본 VERIFIED `MINING_REWARD` 전용 출금·명시적
+`PRINCIPAL` 회수·platform fee 0을 승인했다
+(`../product/ECONOMY-V1-USER-APPROVAL-2026-10-03.md`). 부분 원금 회수의 lot 배분과
+유지 자격 범위는 별도 인간 결정이며, 기존 아래 mixed/fee matrix는 미래 확장
+검토 범위다. 승인된 V1의 fallback·혼합 출금을 허용하지 않는다.
+신규 단위 검증과 pgTAP 계약을 추가했지만 로컬 DB 실행·원격 적용 여부는 별도
+증거이며, 이 폐쇄만으로 source allocation·hold·release·finalize 연결이 완료되지는 않는다.
+
 작성 기준일: `2026-10-03`. 이 문서는 승인된 원금·자금 출처 구조와 현재
 저장소 구현 사이의 차이를 기록한다. 아래의 **승인 불변식**은 기존 계약을
 구체화한 것이다. **PROPOSED**로 표시한 입력·저장·잠금 선택은 아직 WS-04의
@@ -405,7 +422,7 @@ START 첫 출금은 conversion-bound 기존 경로를 보존한다.
 | `apps/admin/app/(control)/withdrawals/krw-bank/forms.tsx:29`, `:83`, `:117`; `usdt/forms.tsx:29`, `:98`, `:133` | 실제 송금 기록·원장 확정·거절/취소 폼은 source를 선택하지 않는다. 이미 확정된 배분과 source coverage·원금 영향·복구 상태를 read-only로 보여주고 원래 receipt를 확인한다. 관리자가 완료 단계에서 배분을 고치지 않는다. |
 | 같은 두 method의 `actions.ts`; `apps/admin/app/api/v1/admin/withdrawals/command/route.ts:137`, `:154` | 기존 송금/해제/완료 RPC, step-up·confirm·reason·logical key·offline gate를 유지한다. source digest/현재 state 재검증과 정확한 결과 확인을 연결한다. 전송 성공을 source 완료로 간주하지 않는다. |
 | `apps/admin/app/(control)/members/_lib/money-source-display.ts`의 `snapshotSchema`와 `presentMemberMoneySources` | CREDIT-period 표시와 누적 입금 통계, 실제 원금 회수·현재 인정 원금·source별 잔여/예약액을 구분하는 계약으로 확장한다. source COMPLETE를 미posting earned/pending 부재로 해석하지 않는다. display helper가 출처 선택·Tier·금전 writer를 맡지 않는다. |
-| `app/api/v1/withdrawals/route.ts:175` | 아직 legacy `create_withdrawal_request` 호출 코드가 존재한다. 현재 form은 hold 경로를 쓰지만, route 존재 자체는 source-aware 연결이 아니다. 실제 revoke/접근·caller를 재검증하고 source 없는 우회 writer로 사용되지 않도록 전환 계획을 확정한다. |
+| `app/api/v1/withdrawals/route.ts` | 변경 전 `:175`의 legacy `create_withdrawal_request` 호출은 삭제했다. 현재 후보는 인증 전 401, 인증 후 retired 409와 기존 출금 화면 안내만 반환한다. exact 7인자 service 실행 권한은 `20261003150000_legacy_withdrawal_entrypoint_closure.sql`에서 철회한다. 원격 적용 증거나 source-aware 연결 완료로 해석하지 않는다. |
 
 다음은 저장소의 request/prepare/hold/resolve/private-writer 이름 검색과 실제
 fixture 읽기로 확인한 전환 범위다. 4인자 요청 호출의 인자는 유지하되, 그 전에

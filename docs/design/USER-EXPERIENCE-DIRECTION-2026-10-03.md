@@ -15,6 +15,15 @@ pixels, 접근성·성능 증거는 아직 별도 검증이 필요하다.
 승인값·측정 사실이 아니다. 경제 숫자와 renderer budget은 각각 승인·
 실측 gate를 통과해야 한다.
 
+후속 승인 overlay(2026-10-03): 시각 선택 위임으로 기존 clean semiconductor
+master를 채택했고 전체 구도 AVIF/WebP8종과 memory/default backdrop을 등록했다.
+현재 manifest는 `2026.10.03-v3`/96종, 나머지13개 family는 pending이다.
+초기 inventory와 미승인 기록은 이력으로 남기며 현재 REVIEW를 우선한다.
+별도 [경제 V1 승인](../product/ECONOMY-V1-USER-APPROVAL-2026-10-03.md)과
+`../product/economy-v1-approved-2026-10-03.json`이 승인 범위의 숫자 미정을
+해소했다. 승인 config와 실제 engine/DB/정산/runtime은 구분하며 이 값 때문에
+구현을 보류하지 않는다. 원격 잠금과 실제 pixels/접근성/성능 gate는 유지한다.
+
 ## 1. 사용자 승인과 시각 기준
 
 2026-10-03 사용자 직접 승인 사항은 다음과 같다.
@@ -31,8 +40,12 @@ pixels, 접근성·성능 증거는 아직 별도 검증이 필요하다.
   접근성·한국어 typography·hydration/runtime 검증이 남으면 출시할 수 없다.
 - 모바일 하단 탭은 **홈·채굴·상품·지갑·더보기**로 확정했다. PC도 같은
   정보 구조의 안정적인 왼쪽 navigation을 사용하고 Scene이 주인공이다.
-- AI는 탭에서 제외한다. 모든 사용자 화면에서 같은 위치의 floating
-  **퍼뜩 AI** 버튼으로 접근한다. 돈·CTA·keyboard·focus·modal을 가리지 않는다.
+- AI는 탭에서 제외한다. 후속 batch 7 승인은 큰 장면 아래 normal-flow
+  한 줄의 **상세 보기·AI 도움**, 그 아래 5탭 배치다. 이전 floating 제안을
+  이 배치로 대체한다. `퍼뜩 AI`는 도우미 이름이며 버튼명은 `AI 도움`이다.
+  전체 얼굴의 잎·헬멧·귀·턱을 보존하고 모바일 전체 대화, PC 오른쪽 panel과
+  넓게 보기를 사용한다. 전용 AI 화면은 launcher를 중복 표시하지 않는다.
+  돈·CTA·keyboard·focus·modal을 가리지 않는다.
 - 새로운 큰 화면 결정은 이미지 목업과 추천안을 먼저 보여 주고 사용자
   의견을 받은 뒤 구현한다. 위 구조 승인이 최종 위치·crop·색·크기까지
   자동 승인한 것은 아니다.
@@ -49,6 +62,11 @@ production copy, 경제 규칙 또는 prototype 실행을 제품 진실로 사�
 canonical brand/rank master와 새 V3 clean master 후보를 직접 시각 검토했다.
 V3 후보에는 중앙 HBM, 왼쪽 wafer, 오른쪽 assembly, 전경 extraction ring,
 깊은 fab, 금속 재질과 gold/blue 반사가 있다. 이 공간감은 유지해야 한다.
+사용자의 최신 품질 기준은 원본 목업의 사실적 금속·검은 유리·조명·색상·
+배경·공간 깊이다. 2D/2.5D라는 표현으로 flat/vector 또는 일반 gradient로
+하향 치환하지 않는다. 저성능/reduced motion에서도 승인 master 품질을
+보존하고 효과를 제한한다. 사진의 placeholder를 미구현 기능으로 복제하지
+않으며 새 첨부 사진은 반도체 scene·경제 수치의 승인이 아니다.
 HUD를 중앙 HBM과 ring 위에 겹쳐 장면의 핵심을 가리는 구성은 피한다.
 canonical 이미지의 글자·등급·혜택은 복사하지 않는다. 정확한 브랜드 표기는
 `퍼뜩`이고 production 문구는 HTML/CSS 또는 검토된 SVG로 렌더한다.
@@ -76,9 +94,9 @@ phone은 가입 가능/이미 사용된 번호의 의미이고 소유 인증으�
 사용자 USDT 잔액이라고 부르지 않는다. 실제 상태별 copy는 backend
 조건과 일치하는지 후속 화면 목업·접근성 검토를 거친다.
 
-## 2. 실제 사용자 앱 Inventory
+## 2. 초기 사용자 앱 Inventory와 후속 대조
 
-아래는 2026-10-03 현재 workspace의 직접 읽기 근거다. `rg --files`로
+아래 UX-E01~19는 2026-10-03 초기 source 조사 이력이다. `rg --files`로
 `app`, `components`, `lib`의 관련 파일을 찾고 아래 파일을 읽었다.
 실행 browser나 원격 환경을 조사한 결과는 아니다. 경로 존재는 기능 또는
 `PRODUCT COMPLETE`의 증거가 아니다.
@@ -116,6 +134,15 @@ authoritative entitlement HUD는 아직 구현 과제다. 새 `/settings` 또는
 `/products`가 이미 존재한다고 기록하지 않는다. Visual Lab 표의
 `/settings/notifications` 표기보다 실제 `/menu/notifications` 경로를 우선하며,
 경로 통합·redirect·deep link는 후속 검토 대상이다.
+
+위 결론은 초기 inventory 시점의 이력으로 보존한다. 후속
+[CODEX_HANDOFF](../../CODEX_HANDOFF.md)의 미커밋 source 대조에서는 5탭,
+`/products`의 authenticated published read, shared AI session과
+`ProductShell`의 `PutdukAiDock` caller가 확인됐다. 새 dock은 승인된
+normal-flow 도움 행이며 실제 pixels/auth/modal/복구/성능 acceptance는 별도다.
+runtime manifest는 `2026.10.03-v2`/88종이고 승인 전체 얼굴4종을 사용한다.
+V3 Stage 화면 caller·approved scene allowlist·권위 entitlement HUD는 여전히
+미연결이다. 초기 표의 gap을 현재 완료 상태로도, 중복 구현 지시로도 쓰지 않는다.
 
 ## 3. 확정 정보 구조와 기능 역할
 
@@ -251,16 +278,16 @@ event 묶음은 bounded cue로 합칠 수 있지만 정확한 결과·영수증�
 
 ## 8. 공통 AI 버튼과 충돌 규칙
 
-사용자가 승인한 floating AI 접근은 같은 shell 위치와 일관된 이름
-`퍼뜩 AI`를 사용한다. 현재 `/ai`와 `/menu/ai` 페이지/POST API를 재사용할
+사용자가 후속 승인한 normal-flow AI 도움 행은 같은 shell 위치와 일관된 이름
+`AI 도움`을 사용하고 도우미 이름은 `퍼뜩 AI`다. 현재 `/ai`와 `/menu/ai` 페이지/POST API를 재사용할
 연결 seam이며 새 AI provider writer나 money endpoint를 만들지 않는다.
 현재 별도 페이지 두 개는 같은 component 재사용이다. 향후 panel/전용
 page fallback의 deep link를 정리하고 기존 접근을 깨뜨리지 않아야 한다.
 
-모바일 기본 anchor는 **하단 navigation와 bottom safe-area 위의 일정한
-오른쪽 영역**을 추천한다. PC도 content의 같은 상대 위치에 둔다. “같은
-위치”는 비가림 검증을 포함하며 모든 화면에 같은 고정 pixel offset을
-억지로 적용한다는 뜻이 아니다.
+초기 오른쪽 floating anchor 추천은 후속 승인된 **장면 아래 한 줄 도움
+행과 그 아래 navigation**으로 대체한다. 모바일과 PC 모두 이 normal-flow
+구조를 사용한다. “같은 위치”는 비가림 검증을 포함하며 모든 화면에 같은
+고정 pixel offset을 억지로 적용한다는 뜻이 아니다.
 
 1. 실제 nav 높이, safe-area, viewport, sticky CTA, 돈 요약의 reserved
    영역으로 배치한다. 큰 글자·가로모드·installed PWA를 포함해 겹침을 확인한다.
@@ -410,7 +437,7 @@ threshold 통과만으로 구도·crop·anchor·깊이·재질·readability·겹
 | 핵심 다섯 값 | 같은 서버 revision/as-of의 원금·Tier·오늘 채굴·capacity·speed; wallet/누적입금/trial/verified 통계와 의미 분리 |
 | 상세와 설정 | pending/verified/원장 영수증, Tier/next Tier/loyalty/상품/규칙, account/theme/notifications/support를 직접 찾고 keyboard로 열고 닫을 수 있음 |
 | 돈과 cue | reward/settlement/Tier/capacity 원본 구분; duplicate/reconnect/late event 한 번만 표현; no fake/backdated reward; 소진·재개·운영 중지 결과 일치 |
-| floating AI | 모든 해당 화면에서 일관된 접근; nav/safe-area/CTA/money/keyboard/focus/modal/상담 widget 비겹침; 최소 context·money denial·현재 continuity 유지 |
+| normal-flow AI 도움 행 | 모든 해당 화면에서 승인된 한 줄 도움 행으로 일관된 접근; 전용 AI 화면 중복 없음; nav/safe-area/CTA/money/keyboard/focus/modal/상담 widget 비겹침; 최소 context·money denial·현재 continuity 유지 |
 | 상태 | loading/empty/partial/error/recovery/success/disabled/unauthorized/offline/stale/reconnect, capacity 소진/증가/정상 reset과 관리 중지 |
 | responsive/theme/a11y | 320/390/834/1440, System/Light/Dark, 200% 확대, 긴 한국어·큰 금액, contrast/focus/keyboard/screen reader/target size/forced colors |
 | motion/성능 | normal/reduced motion recordings, hidden/in-view teardown, adaptive fallback, FPS/long-task/memory/bundle/LCP/CLS/INP 측정과 승인 budget |

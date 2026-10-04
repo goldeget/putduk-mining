@@ -126,7 +126,7 @@ export default function RootLayout({
         <AnalyticsBeacon />
         <ThemeRuntime />
         {children}
-        <SupportRuntime />
+        <SupportRuntime memberLauncher={false} />
       </body>
     </html>
   );

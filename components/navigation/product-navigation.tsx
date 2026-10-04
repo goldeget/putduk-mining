@@ -11,11 +11,11 @@ import {
 const items = [
   { href: "/home", icon: "home", label: "홈" },
   { href: "/mining", icon: "mining", label: "채굴" },
-  { href: "/wallet", icon: "wallet", label: "자산" },
-  { href: "/events", icon: "event", label: "이벤트" },
-  { href: "/menu", icon: "menu", label: "메뉴" },
+  { href: "/products", icon: "products", label: "상품" },
+  { href: "/wallet", icon: "wallet", label: "지갑" },
+  { href: "/menu", icon: "menu", label: "더보기" },
 ] as const satisfies ReadonlyArray<{
-  href: "/events" | "/home" | "/menu" | "/mining" | "/wallet";
+  href: "/products" | "/home" | "/menu" | "/mining" | "/wallet";
   icon: PutdukIconName;
   label: string;
 }>;
@@ -27,7 +27,13 @@ export function ProductNavigation() {
     <nav className="product-navigation" aria-label="주요 메뉴">
       {items.map((item) => {
         const active =
-          pathname === item.href || pathname.startsWith(`${item.href}/`);
+          pathname === item.href ||
+          pathname.startsWith(`${item.href}/`) ||
+          (item.href === "/menu" &&
+            (pathname === "/ai" ||
+              pathname === "/notifications" ||
+              pathname === "/events" ||
+              pathname.startsWith("/events/")));
         return (
           <Link
             className={active ? "is-active" : undefined}

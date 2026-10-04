@@ -2,13 +2,13 @@
 
 import { createBrowserClient } from "@supabase/ssr";
 
-import { getPublicEnv } from "@/lib/env/public";
+import {
+  parseSupabaseBrowserAuthConfig,
+  type SupabaseBrowserAuthConfig,
+} from "@/lib/env/public";
 
-export function createSupabaseBrowserClient() {
-  const env = getPublicEnv();
+export function createSupabaseBrowserClient(config: SupabaseBrowserAuthConfig) {
+  const { url, publishableKey } = parseSupabaseBrowserAuthConfig(config);
 
-  return createBrowserClient(
-    env.NEXT_PUBLIC_SUPABASE_URL,
-    env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
-  );
+  return createBrowserClient(url, publishableKey);
 }

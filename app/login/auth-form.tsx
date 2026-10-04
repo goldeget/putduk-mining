@@ -2,23 +2,15 @@
 
 import Link from "next/link";
 import { useActionState, useState } from "react";
-import { useFormStatus } from "react-dom";
 
 import { authenticateAction, type AuthActionState } from "@/app/login/actions";
-import { PutdukIcon } from "@/components/icons/putduk-icon";
+import {
+  AuthConnectionNotice,
+  AuthSubmitButton,
+  preventOfflineAuthSubmission,
+} from "@/components/auth/auth-form-feedback";
 
 const INITIAL_AUTH_STATE: AuthActionState = { message: "", status: "idle" };
-
-function LoginButton() {
-  const { pending } = useFormStatus();
-
-  return (
-    <button className="button button--primary" type="submit" disabled={pending}>
-      {pending ? "로그인하고 있어요" : "로그인"}
-      <PutdukIcon name="arrow-right" size={18} />
-    </button>
-  );
-}
 
 export function AuthForm({ nextPath }: { nextPath: string }) {
   const [state, action] = useActionState(
@@ -32,9 +24,12 @@ export function AuthForm({ nextPath }: { nextPath: string }) {
     <form
       className="auth-form"
       action={action}
+      aria-label="계정 로그인"
+      onSubmit={preventOfflineAuthSubmission}
       data-ui-state={hasError ? "error" : "loaded"}
     >
       <input type="hidden" name="next" value={nextPath} />
+      <AuthConnectionNotice />
       <label>
         <span>아이디 또는 복구 이메일</span>
         <input
@@ -90,7 +85,7 @@ export function AuthForm({ nextPath }: { nextPath: string }) {
         </p>
       ) : null}
       <div className="auth-form__actions">
-        <LoginButton />
+        <AuthSubmitButton label="로그인" pendingLabel="로그인하고 있어요" />
         <Link className="button button--secondary" href="/signup">
           새 계정 만들기
         </Link>

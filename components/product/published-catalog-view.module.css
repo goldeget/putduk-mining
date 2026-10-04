@@ -1,0 +1,537 @@
+.page {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: clip;
+  color: var(--text-primary);
+}
+
+.pageHeading {
+  display: flex;
+  min-width: 0;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 1.75rem;
+  border-bottom: 1px solid var(--border-default);
+}
+
+.pageHeading h1 {
+  margin: 0;
+  font-size: clamp(1.8rem, 3vw, 2.3rem);
+  font-weight: 650;
+  letter-spacing: -0.06em;
+}
+
+.pageHeading > p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.hero {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  align-items: center;
+  padding-block: 3.5rem;
+  border-bottom: 1px solid var(--border-default);
+}
+
+.emptyHero {
+  min-height: 36rem;
+}
+.loadedHero {
+  min-height: 20rem;
+}
+
+.scene {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  display: block;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  contain: inline-size;
+  pointer-events: none;
+  mask-image:
+    linear-gradient(90deg, transparent 10%, black 55%),
+    linear-gradient(0deg, transparent, black 30%, black 85%, transparent);
+  mask-composite: intersect;
+}
+
+.scene img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  min-width: 0;
+  object-fit: cover;
+  object-position: 68% center;
+  opacity: 0.78;
+}
+
+.heroCopy {
+  width: min(44%, 27rem);
+  min-width: 0;
+  position: relative;
+}
+
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin: 0 0 1.5rem;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+}
+
+.eyebrow::before {
+  width: 1.5rem;
+  height: 1px;
+  flex: 0 0 auto;
+  background: var(--brand-primary);
+  content: "";
+}
+
+.heroCopy h2 {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  font-weight: 650;
+  line-height: 1.3;
+  letter-spacing: -0.065em;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+.heroCopy h2 span {
+  display: block;
+}
+.loadedHero h2 {
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+}
+
+.heroCopy > p:not(.eyebrow) {
+  max-width: 24ch;
+  margin: 1.75rem 0 0;
+  color: var(--text-secondary);
+  line-height: 1.9;
+}
+
+.primaryAction {
+  min-width: 10.25rem;
+  min-height: 3.25rem;
+  justify-content: space-between;
+  margin-top: 2.2rem;
+}
+
+.products {
+  margin-top: 2rem;
+  border-top: 1px solid var(--border-default);
+}
+
+.scopeNotice {
+  max-width: 42rem;
+  margin: 1rem 0;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.7;
+}
+
+.productRow {
+  border-top: 1px solid var(--border-default);
+}
+.productRow:last-child {
+  border-bottom: 1px solid var(--border-default);
+}
+
+.productRow > summary {
+  display: grid;
+  min-height: 6.5rem;
+  grid-template-columns: 7rem minmax(0, 1fr) auto auto 1.25rem;
+  align-items: center;
+  gap: 1.25rem;
+  padding-block: 1.5rem;
+  cursor: pointer;
+  list-style: none;
+}
+
+.productRow > summary::-webkit-details-marker {
+  display: none;
+}
+.productRow > summary::marker {
+  content: "";
+}
+
+.productName {
+  min-width: 0;
+  font-size: clamp(1.3rem, 2vw, 1.65rem);
+  font-weight: 620;
+  letter-spacing: -0.04em;
+  overflow-wrap: anywhere;
+}
+
+.category,
+.availability,
+.disclosureLabel {
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+.category,
+.disclosureLabel {
+  color: var(--text-secondary);
+}
+.availability {
+  color: var(--brand-primary);
+}
+.productRow[data-availability="unavailable"] .availability {
+  color: var(--text-secondary);
+}
+
+.disclosureMark {
+  position: relative;
+  width: 1rem;
+  height: 1rem;
+  color: var(--text-secondary);
+}
+.disclosureMark::before,
+.disclosureMark::after {
+  position: absolute;
+  inset: calc(50% - 0.75px) 0;
+  height: 1.5px;
+  background: currentColor;
+  content: "";
+}
+.disclosureMark::after {
+  transform: rotate(90deg);
+}
+.productRow[open] .disclosureMark::after {
+  display: none;
+}
+.closeLabel,
+.productRow[open] .openLabel {
+  display: none;
+}
+.productRow[open] .closeLabel {
+  display: inline;
+}
+
+.productRow > summary:hover .productName {
+  color: var(--brand-primary);
+}
+.productRow > summary:focus-visible,
+.evidence > summary:focus-visible {
+  outline: 2px solid var(--brand-strong);
+  outline-offset: 5px;
+}
+
+.productDetail {
+  max-width: 48rem;
+  margin-left: 8.25rem;
+  padding: 0 0 2rem;
+  color: var(--text-secondary);
+}
+.productDetail > p {
+  margin: 0;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.availabilityDates,
+.evidenceDates {
+  display: grid;
+  gap: 1rem;
+  margin: 1.5rem 0 0;
+}
+.availabilityDates > div,
+.evidenceDates > div {
+  display: grid;
+  grid-template-columns: 7rem minmax(0, 1fr);
+  gap: 1rem;
+}
+.availabilityDates dt,
+.evidenceDates dt {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+.availabilityDates dd,
+.evidenceDates dd {
+  min-width: 0;
+  margin: 0;
+  font-size: 0.875rem;
+  overflow-wrap: anywhere;
+}
+
+.evidence {
+  margin-top: 1.5rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--border-default);
+}
+.evidence > summary {
+  width: fit-content;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+.sources {
+  display: grid;
+  gap: 1rem;
+  padding: 0;
+  margin: 1.5rem 0 0;
+  list-style: none;
+}
+.sources li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem 1rem;
+  font-size: 0.875rem;
+  line-height: 1.7;
+}
+.sources a {
+  color: var(--brand-strong);
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+  overflow-wrap: anywhere;
+}
+.sources li > span {
+  color: var(--text-secondary);
+}
+
+.observation {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  margin-top: 1.75rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+.observation::before {
+  position: absolute;
+  top: -1px;
+  left: 0;
+  width: 3rem;
+  height: 1px;
+  background: var(--brand-primary);
+  content: "";
+}
+
+.recovery {
+  display: grid;
+  justify-items: start;
+  gap: 1.5rem;
+  padding-block: clamp(3rem, 8vw, 6rem);
+}
+.recovery h2 {
+  max-width: 18ch;
+  margin: 0;
+  font-size: clamp(1.8rem, 4vw, 2.75rem);
+  line-height: 1.35;
+  letter-spacing: -0.05em;
+  overflow-wrap: anywhere;
+}
+.recovery > p {
+  margin: 0;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+.loadingLabel {
+  margin: 1.5rem 0;
+  color: var(--text-secondary);
+}
+.loadingScene {
+  min-height: 16rem;
+  border-radius: var(--radius-lg);
+  background: var(--background-subtle);
+}
+.loadingLines {
+  display: grid;
+  gap: 1rem;
+  max-width: 20rem;
+  margin-top: 2rem;
+}
+.loadingLines span {
+  width: 100%;
+  height: 1.25rem;
+  background: var(--background-subtle);
+}
+.loadingLines span:last-child {
+  width: 62%;
+}
+
+:global(html[data-theme="light"]) .scene {
+  inset: 3.5rem 0 3.5rem 43%;
+  border-radius: var(--radius-xl);
+  mask-image: none;
+  box-shadow: var(--shadow-lift);
+}
+:global(html[data-theme="light"]) .scene img {
+  opacity: 1;
+}
+:global(html[data-theme="light"]) .heroCopy {
+  width: 38%;
+}
+:global(html[data-theme="light"]) .loadedHero .scene {
+  inset-block: 1.5rem;
+}
+
+@media (prefers-color-scheme: light) {
+  :global(html:not([data-theme])) .scene {
+    inset: 3.5rem 0 3.5rem 43%;
+    border-radius: var(--radius-xl);
+    mask-image: none;
+    box-shadow: var(--shadow-lift);
+  }
+  :global(html:not([data-theme])) .scene img {
+    opacity: 1;
+  }
+  :global(html:not([data-theme])) .heroCopy {
+    width: 38%;
+  }
+  :global(html:not([data-theme])) .loadedHero .scene {
+    inset-block: 1.5rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .pageHeading {
+    padding-bottom: 1.5rem;
+  }
+  .pageHeading > p {
+    display: none;
+  }
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    min-height: 0;
+    gap: 1.25rem;
+    padding: 0 0 2.5rem;
+  }
+  .scene {
+    position: relative;
+    z-index: auto;
+    inset: auto;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    aspect-ratio: 1.6;
+    mask-image: linear-gradient(
+      0deg,
+      transparent,
+      black 25%,
+      black 90%,
+      transparent
+    );
+  }
+  .scene img {
+    object-position: 67% center;
+  }
+  .heroCopy {
+    width: 100%;
+  }
+  .heroCopy h2 {
+    font-size: clamp(1.8rem, 7.5vw, 2.2rem);
+  }
+  .heroCopy > p:not(.eyebrow) {
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
+  }
+  .eyebrow {
+    margin-bottom: 1.25rem;
+  }
+  .primaryAction {
+    margin-top: 1.75rem;
+  }
+  .loadedHero {
+    padding-bottom: 2rem;
+  }
+  .productRow > summary {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.5rem 1rem;
+    padding-block: 1.5rem;
+  }
+  .category {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .productName {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  .availability {
+    grid-column: 1;
+    grid-row: 3;
+  }
+  .disclosureLabel {
+    grid-column: 1;
+    grid-row: 4;
+  }
+  .disclosureMark {
+    grid-column: 2;
+    grid-row: 2;
+  }
+  .productDetail {
+    margin-left: 0;
+  }
+  .availabilityDates > div,
+  .evidenceDates > div {
+    grid-template-columns: 1fr;
+    gap: 0.25rem;
+  }
+  :global(html[data-theme="light"]) .scene {
+    inset: auto;
+    margin-top: 1.25rem;
+    border-radius: var(--radius-lg);
+  }
+  :global(html[data-theme="light"]) .heroCopy {
+    width: 100%;
+  }
+}
+
+@media (max-width: 767px) and (prefers-color-scheme: light) {
+  :global(html:not([data-theme])) .scene {
+    inset: auto;
+    margin-top: 1.25rem;
+    border-radius: var(--radius-lg);
+  }
+  :global(html:not([data-theme])) .heroCopy {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .primaryAction {
+    transition: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .scene {
+    display: none;
+  }
+  .availability,
+  .sources a {
+    color: CanvasText;
+  }
+  .disclosureMark::before,
+  .disclosureMark::after {
+    background: CanvasText;
+  }
+  .loadingScene,
+  .loadingLines span {
+    border: 1px solid CanvasText;
+  }
+}

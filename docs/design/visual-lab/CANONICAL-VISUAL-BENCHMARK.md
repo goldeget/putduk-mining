@@ -32,12 +32,21 @@ Never infer balances, rank benefits, member counts, eligibility, KYC decisions, 
 - cinematic black, mineral white and warm metallic gold;
 - deep-space and Earth atmosphere used as spatial context, not decorative card noise;
 - fintech hierarchy for money, status, receipts and risk;
-- a calm 2D/2.5D application shell with selective premium mining-world depth;
+- a calm, legible application shell with realistic material and light, plus
+  premium mining-world spatial depth; no dimension label permits a lower-quality
+  flat/vector or generic-gradient substitute;
 - large, decisive typography with compact factual metadata;
 - thin mineral borders, restrained radiance and deliberate negative space;
 - the sprout-miner mascot as a guide and state narrator, never as a childish sticker;
 - one primary action per decision surface;
 - motion that explains state, flow or consequence and fully respects reduced motion.
+
+The benchmark identity and reviewed captures above remain unchanged. The owner's
+2026-10-03 follow-up fixes the complete-face `AI 도움` launcher in one normal-flow
+help row below the dominant scene and above the five tabs. See
+`../PUTDUK-VISUAL-DIRECTION.md` and `../USER-EXPERIENCE-DIRECTION-2026-10-03.md` for
+that later placement and fidelity direction. This does not approve the pending
+semiconductor master, economic values or implemented availability.
 
 ## Required implementation relationship
 
