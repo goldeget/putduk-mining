@@ -58,7 +58,8 @@ update guard_ctx set bank_policy=(select id from public.withdrawal_policies wher
   usdt_policy=(select id from public.withdrawal_policies where version=1041002);
 insert into public.withdrawal_destinations(user_id,destination_type,encrypted_value,
   value_fingerprint,display_hint,verification_status,verified_at,protection_until)
-select person,method,decode(repeat('cd',32),'hex'),person::text||method,'원본 시험 목적지',
+select person,method,decode(repeat('cd',32),'hex'),
+  encode(extensions.digest(person::text||method,'sha256'),'hex'),'원본 시험 목적지',
   'VERIFIED',statement_timestamp()-interval '2 days',statement_timestamp()-interval '1 day'
 from guard_ctx cross join lateral (values
   (principal_id,'KRW_BANK'),(principal_id,'USDT_ADDRESS'),

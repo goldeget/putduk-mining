@@ -80,6 +80,9 @@ async function auditOne(input: {
     ...(AUTH_ROUTES.some((route) => route.name === input.route.name)
       ? { requireRouteBody: true, pathname: input.route.url }
       : {}),
+    ...(["/auth/error", "/auth/forbidden"].includes(input.route.url)
+      ? { expectedStates: ["error"] as const }
+      : {}),
     ...(input.textScale === undefined ? {} : { textScale: input.textScale }),
   });
 }

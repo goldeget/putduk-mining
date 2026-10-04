@@ -699,7 +699,7 @@ insert into auth.users (
     // source-less historical receipt. It is not a verified mining producer.
     const historicalReceipt = sql(`
       begin;
-      ${readFileSync("supabase/tests/fixtures/historical-held-withdrawal.sql", "utf8")}
+      ${readFileSync("supabase/test-fixtures/historical-held-withdrawal.sql", "utf8")}
       select pg_temp.seed_historical_held_withdrawal(
         '${userId}'::uuid, '${destinationId}'::uuid, 5000, 'worker-wd-${suffix}'
       );

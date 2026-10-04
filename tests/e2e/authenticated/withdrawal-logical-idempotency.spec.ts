@@ -2,6 +2,10 @@ import { expect, test, type Page, type Route } from "@playwright/test";
 
 import { createLocalServiceRoleClient } from "./helpers/eligibility";
 import {
+  readWithdrawalMoneySnapshot,
+  seedHistoricalHeldWithdrawal,
+} from "./helpers/historical-withdrawal-fixture";
+import {
   prepareMemberThroughStart,
   registerFirstKrwDestination,
   requireWithdrawalDataKey,
@@ -11,7 +15,8 @@ import { dismissGuidedQuestIfPresent } from "./helpers/member-session";
 /**
  * 응답 유실 주입은 이 스펙의 Playwright route 안에서만 한다.
  * 서버에 공개 디버그 경로를 두지 않는다. 프로덕션 번들에는 이 가로채기가 없다.
- * route.fetch 로 홀드 API가 커밋한 뒤, 브라우저에는 연결 끊김만 전달한다.
+ * 원본 키의 test-only historical hold를 만든 뒤 실제 API의 복구 응답을 유실시킨다.
+ * 새 일반 hold나 verified mining source를 만들거나 API guard를 우회하지 않는다.
  */
 
 function trackHydration(page: Page) {
@@ -56,7 +61,7 @@ test.beforeAll(() => {
   requireWithdrawalDataKey();
 });
 
-test("응답이 유실돼도 같은 출금 요청은 홀드·영수증을 한 번만 만든다", async ({
+test("과거 출금의 응답이 유실돼도 같은 요청은 홀드·영수증을 한 번만 유지한다", async ({
   page,
 }) => {
   test.setTimeout(180_000);
@@ -64,6 +69,12 @@ test("응답이 유실돼도 같은 출금 요청은 홀드·영수증을 한 �
   const { member } = await prepareMemberThroughStart(page, "wd-logical-key");
   await registerFirstKrwDestination(page);
   hydration.length = 0;
+  const client = createLocalServiceRoleClient();
+  const moneyBeforeHold = readWithdrawalMoneySnapshot(member.userId);
+  let moneyAfterHistoricalHold: ReturnType<
+    typeof readWithdrawalMoneySnapshot
+  > | null = null;
+  let historicalId = "";
 
   const seen: CapturedHold[] = [];
   let committedStatus = 0;
@@ -80,8 +91,45 @@ test("응답이 유실돼도 같은 출금 요청은 홀드·영수증을 한 �
       return;
     }
     dropResponse = false;
+    const original = seen[0]!;
+    const { data: prepared, error: preparedError } = await client
+      .from("withdrawal_logical_requests")
+      .select(
+        "user_id,idempotency_key,method,amount_krw,destination_id,withdrawal_id,state",
+      )
+      .eq("user_id", member.userId)
+      .eq("idempotency_key", original.key)
+      .single();
+    expect(preparedError).toBeNull();
+    expect(prepared).toMatchObject({
+      user_id: member.userId,
+      idempotency_key: original.key,
+      method: original.method,
+      destination_id: original.destinationId,
+      withdrawal_id: null,
+      state: "DESTINATION_REGISTERED",
+    });
+    expect(String(prepared?.amount_krw)).toBe(original.amountKrw);
+    expect(readWithdrawalMoneySnapshot(member.userId)).toEqual(moneyBeforeHold);
+    historicalId = seedHistoricalHeldWithdrawal({
+      ownerId: member.userId,
+      destinationId: original.destinationId,
+      amountKrw: original.amountKrw,
+      key: original.key,
+    });
+    moneyAfterHistoricalHold = readWithdrawalMoneySnapshot(member.userId);
+    expect(moneyAfterHistoricalHold.walletEntries).toBe(
+      moneyBeforeHold.walletEntries,
+    );
+    expect(moneyAfterHistoricalHold.walletTotal).toBe(
+      moneyBeforeHold.walletTotal,
+    );
+    expect(moneyAfterHistoricalHold.sourceMovements).toBe(
+      moneyBeforeHold.sourceMovements,
+    );
     const upstream = await route.fetch();
     committedStatus = upstream.status();
+    expect((await upstream.json()).data.withdrawalId).toBe(historicalId);
     // 서버 응답은 버리고, 브라우저에는 전송 후 단절만 보이게 한다.
     await route.abort("connectionreset");
   });
@@ -124,9 +172,12 @@ test("응답이 유실돼도 같은 출금 요청은 홀드·영수증을 한 �
   expect(seen[1]?.destinationId).toBe(seen[0]?.destinationId);
   expect(seen[1]?.method).toBe(seen[0]?.method);
   expect(hydration).toEqual([]);
+  expect(moneyAfterHistoricalHold).not.toBeNull();
+  expect(readWithdrawalMoneySnapshot(member.userId)).toEqual(
+    moneyAfterHistoricalHold,
+  );
 
   const idempotencyKey = seen[0]?.key ?? "";
-  const client = createLocalServiceRoleClient();
   const { data: requests, error: requestError } = await client
     .from("withdrawal_requests")
     .select(
@@ -141,6 +192,22 @@ test("응답이 유실돼도 같은 출금 요청은 홀드·영수증을 한 �
   expect(requests?.[0]?.hold_ledger_transaction_id).toBeTruthy();
 
   const requestId = requests?.[0]?.id ?? "";
+  expect(requestId).toBe(historicalId);
+  const { data: source, error: sourceError } = await client
+    .from("money_source_summaries")
+    .select("coverage,eligible_principal_atomic")
+    .eq("user_id", member.userId)
+    .single();
+  expect(sourceError).toBeNull();
+  expect(source?.coverage).toBe("UNRESOLVED");
+  expect(source?.eligible_principal_atomic).toBeNull();
+  const { count: miningSources, error: miningSourceError } = await client
+    .from("money_source_movements")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", member.userId)
+    .eq("source_bucket", "MINING_REWARD");
+  expect(miningSourceError).toBeNull();
+  expect(miningSources).toBe(0);
   const { count: holdCount, error: holdError } = await client
     .from("ledger_transactions")
     .select("id", { count: "exact", head: true })

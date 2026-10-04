@@ -5,7 +5,7 @@ import { execLocalAdminSql } from "./local-db";
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const POSTGRES_BIGINT_MAX = 9223372036854775807n;
 const fixtureUrl = new URL(
-  "../../../../supabase/tests/fixtures/historical-held-withdrawal.sql",
+  "../../../../supabase/test-fixtures/historical-held-withdrawal.sql",
   import.meta.url,
 );
 const configUrl = new URL("../../../../supabase/config.toml", import.meta.url);

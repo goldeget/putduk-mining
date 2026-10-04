@@ -147,6 +147,8 @@ select is((select count(*)::integer from public.withdrawal_requests where user_i
 -- Simulate an already committed historical original; no source is fabricated.
 update logical_ctx set withdrawal_id=pg_temp.seed_historical_held_withdrawal(owner_id,destination_id,1000,logical->>'key');
 update logical_ctx set withdrawal_id=public.hold_withdrawal_logical_request(owner_id,logical->>'key','KRW_BANK',destination_id,1000);
+-- Hold retry returns its committed ID; RECOVER durably binds the historical outcome.
+update logical_ctx set logical=public.resolve_withdrawal_logical_request(owner_id,'RECOVER',logical->>'key');
 select is((select state from public.withdrawal_logical_requests where idempotency_key=(select logical->>'key' from logical_ctx)),'OUTCOME_UNCERTAIN','historical hold recovery records durable outcome uncertainty');
 select is((select public.hold_withdrawal_logical_request(owner_id,logical->>'key','KRW_BANK',destination_id,1000) from logical_ctx),(select withdrawal_id from logical_ctx),'hold response loss replays exact withdrawal id');
 select is((select count(*)::integer from public.withdrawal_requests where user_id=(select owner_id from logical_ctx) and idempotency_key=(select logical->>'key' from logical_ctx)),1,'one request for original key');

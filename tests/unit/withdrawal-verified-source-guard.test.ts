@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 
 import { describe, expect, it } from "vitest";
 
@@ -16,7 +16,7 @@ const original = source(
   "supabase/migrations/20260927120300_ws04_destination_and_request_commands.sql",
 );
 const historical = source(
-  "supabase/tests/fixtures/historical-held-withdrawal.sql",
+  "supabase/test-fixtures/historical-held-withdrawal.sql",
 ).trimEnd();
 const guard = `  -- Existing requests recover above. Fresh general withdrawals remain closed
   -- until an authoritative earned producer and source lifecycle are connected.
@@ -213,6 +213,43 @@ describe("withdrawal source safety closure source integrity", () => {
     expect(historical).not.toMatch(/create function (?:public|app_private)\./i);
   });
 
+  it("keeps the shared helper outside standalone database test discovery", () => {
+    expect(
+      existsSync(
+        new URL(
+          "../../supabase/tests/fixtures/historical-held-withdrawal.sql",
+          import.meta.url,
+        ),
+      ),
+    ).toBe(false);
+    expect(historical).not.toMatch(/select (?:plan|no_plan|finish)\(/);
+  });
+
+  it("reconciles a historical outcome through the real recovery command before asserting its durable state", () => {
+    const sql = source(
+      "supabase/tests/database/withdrawal_logical_lifecycle.sql",
+    );
+    const canonical = source(
+      "supabase/migrations/20260930052429_withdrawal_logical_lifecycle.sql",
+    );
+    expect(canonical).toContain(
+      "if v_request is not null then\n    return v_request;",
+    );
+    const recovery = sql.indexOf(
+      "update logical_ctx set logical=public.resolve_withdrawal_logical_request(owner_id,'RECOVER',logical->>'key');",
+    );
+    expect(recovery).toBeGreaterThan(
+      sql.indexOf(
+        "update logical_ctx set withdrawal_id=pg_temp.seed_historical_held_withdrawal(",
+      ),
+    );
+    expect(recovery).toBeLessThan(
+      sql.indexOf(
+        "'OUTCOME_UNCERTAIN','historical hold recovery records durable outcome uncertainty'",
+      ),
+    );
+  });
+
   it.each(suites)(
     "keeps $name historical helper identical and rollback-only",
     ({ name, historicalCalls }) => {
@@ -258,7 +295,7 @@ describe("withdrawal source safety closure source integrity", () => {
     expect(test).toContain('requestError?.code).toBe("55000")');
     expect(test).toContain("rejectedRequestCount).toBe(0)");
     expect(test).toContain(
-      'readFileSync("supabase/tests/fixtures/historical-held-withdrawal.sql", "utf8")',
+      'readFileSync("supabase/test-fixtures/historical-held-withdrawal.sql", "utf8")',
     );
     expect(test).toContain("recovered.data).toBe(withdrawalId)");
     expect(test).toContain('provenance.data?.coverage).toBe("UNRESOLVED")');

@@ -193,7 +193,7 @@ hold를 만들고 원본 복구, 송금 후 release 금지, finalize/release의 
 검사한다. provenance는 UNRESOLVED로 남기며 source lifecycle을 완성한 척하지 않는다.
 
 historical 자료의 canonical 원문은
-`supabase/tests/fixtures/historical-held-withdrawal.sql`이다. migration에 설치하지
+`supabase/test-fixtures/historical-held-withdrawal.sql`이다. migration에 설치하지
 않고 `pg_temp`에만 존재한다. PostgreSQL owner만 실행하며 일반·인증·service 역할의
 execute를 회수한다. 원본 request, 기존 balanced `post_withdrawal_hold`, outbox와
 receipt를 같은 테스트 transaction에 만든다. wallet CREDIT, verified source, 과거
@@ -212,6 +212,26 @@ Node source 검사 10개, DB를 쓰지 않는 worker lease 검사 4개, 대상 �
 ESLint·Prettier·기존 변경 diff 검사는 통과했다. DB/worker 실제 실행, 두 세션 경합,
 브라우저, CI는 이 작성 단계에서 실행하지 않았다. 작은 guard의 소스 작성은 전체
 V3 활성화, 일반 수익 출금 완료 또는 제품 완료의 증거가 아니다.
+
+### 3.4 CI4에서 발견한 검사 자료 경계 수정
+
+2026-10-04 CI4의 DB 검사에서 세 가지 자료 결함이 확인됐다. shared helper를
+`supabase/tests/` 아래에 두어 독립 pgTAP suite로 수집한 오류는 위 canonical
+경로로 이동해 해결한다. 원문 SHA-256은
+`4de90b385f94f9583b272738ffecb9a301127a543283acabe07e7c40d3b9db1f`로 동일하다.
+네 rollback-only SQL suite의 inline 원문과 owner-only 의미는 바뀌지 않는다.
+
+guard suite의 기존 목적지 fingerprint는 UUID와 method를 붙인 값이었다.
+실제 `prepare_withdrawal_logical_request(uuid,text,bigint,uuid,integer,text,uuid)`는
+목적지의 64자리 lowercase hex identity를 읽으므로 시험 identity를 SHA-256
+hex로 만든다. 7인자의 위치와 실제 목적지 binding은 유지한다.
+
+historical request의 hold retry는 이미 commit된 원본 UUID를 바로 반환한다.
+logical state를 갱신하는 동작은 기존 `resolve_withdrawal_logical_request`의
+`RECOVER`다. logical suite는 이 실제 명령으로 원본을 재결합한 뒤 기존
+`OUTCOME_UNCERTAIN`과 원장·outbox·receipt 한 번 효과를 그대로 검사한다.
+상태 기대를 낮추거나 production writer·권한을 변경하지 않는다. 이 수정의
+DB 실행·재실행 CI 성공은 아직 별도 검증 대상이다.
 
 ## 4. 기존 fixture와 승인 정책의 불일치
 
