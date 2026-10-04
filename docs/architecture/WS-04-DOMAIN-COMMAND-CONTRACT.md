@@ -417,6 +417,25 @@ allocates a partial principal recovery. Segment proration, capacity
 exhaustion, mining production, and settlement stay outside these functions.
 This storage is not `PRODUCT COMPLETE`.
 
+The separate segment foundation is
+`app_private.ensure_funding_cycle_segments(uuid)` and
+`app_private.read_funding_segment_foundation(uuid)`. Both are service-only,
+INVOKER, and not public commands or aliases of a money command. Ensure
+reuses the W3 window and the W2 integer portion. The first segment freezes
+the cycle-start principal, tier, economy rule version, `effective_at` and
+`effective_until`. A later deposit does not rewrite that row or the stored
+window. It appends one segment for the remaining interval through the same
+`cycle_end`. The appended qualification is the new condition's remaining
+entitlement minus the previous condition's remaining entitlement, using an
+integer microsecond proportion. It is not the new condition's full cycle
+amount. Base and retention stay separate, and retention stays `UNCONFIRMED`.
+Sub-micro-KRW remainder is not stored as `reward_carry`. Neither function
+posts a ledger credit, releases `POLICY_CONSUMER_NOT_ENABLED`, confirms
+retention, or allocates a partial principal recovery. A principal decrease
+does not split a segment. Capacity exhaustion, speed, mining production and
+settlement stay outside these functions. This storage is not
+`PRODUCT COMPLETE`.
+
 The initial approved numeric configuration is exact seed data, not a
 permanent economic ceiling. Administrators can change supported numbers,
 including rates, thresholds, campaign/multiplier limits, slots and future
