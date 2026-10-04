@@ -389,6 +389,18 @@ Its exact envelope and historical event-time boundary are frozen in
 publication lock, and verifies the original four publication receipts. Its
 policy provenance never establishes funding coverage or money authority.
 
+The read-only entitlement qualification foundation is
+`app_private.read_funding_entitlement_foundation(uuid)`. It is service-only,
+INVOKER, and not a public command or an alias of an existing money command.
+It sums remaining W1 principal lots, reads
+`public.read_effective_economy_policy(bigint)`, and returns the published
+tier with separate base and unconfirmed retention amounts. Retention is not
+a verified balance. The function posts no ledger credit, does not release
+`POLICY_CONSUMER_NOT_ENABLED`, and does not allocate a partial principal
+recovery across lots. Product multipliers, slot counts, campaign caps, cycle
+runtime, segment proration, capacity exhaustion, mining production and
+settlement are outside this function.
+
 The initial approved numeric configuration is exact seed data, not a
 permanent economic ceiling. Administrators can change supported numbers,
 including rates, thresholds, campaign/multiplier limits, slots and future

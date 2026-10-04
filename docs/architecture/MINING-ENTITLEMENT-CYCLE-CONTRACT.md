@@ -427,6 +427,23 @@ LCP/CLS/INP 측정 없이 premium 품질이나 성능 완료를 선언하지 않
 quantitative renderer budget은 측정·승인해야 하며 이 문서에서 숫자를
 만들지 않는다.
 
+## 11A. 자격 기초 조회
+
+이 절은 30일 cycle, segment, proration, 소진 재개, settlement, worker를
+구현하지 않는다. 서비스 권한 조회
+`app_private.read_funding_entitlement_foundation(uuid)`만 자격 계산을 읽는다.
+
+인정 원금은 W1 principal lot의 남은 금액 합이다. 누적 입금, BONUS,
+MINING_REWARD로 등급을 계산하지 않는다. policy의 최소 원금 미만은
+`FUNDING_BELOW_MINIMUM`이며 등급을 켜지 않는다. 이상이면 발행된 policy row의
+등급 구간, base rate, 그 구간의 retention rate를 읽는다. 코드에 등급 숫자를
+두 번째 원본으로 두지 않는다. base entitlement와 retention entitlement는
+분리한다. retention은 `UNCONFIRMED`이며 확정 잔액이 아니다. 이 조회는 원장
+credit을 만들지 않는다.
+
+상품 multiplier, slot 수, campaign cap은 이 조회의 출력이 아니다. 부분 원금
+회수의 lot 배분은 계속 미정이며 거절한다. 이 조회는 `PRODUCT COMPLETE`가 아니다.
+
 ## 12. 호환성과 활성화 미결 Gate
 
 다음 항목은 open finding이다. 기본값·fixture·예시로 결정하지 않으며
