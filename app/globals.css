@@ -1883,6 +1883,88 @@ select {
   margin-top: 1rem;
 }
 
+.wallet-funding {
+  display: grid;
+  gap: 0.85rem;
+  margin-top: 0.8rem;
+}
+
+.wallet-funding h2 {
+  margin: 0;
+  font-size: clamp(1.15rem, 3vw, 1.45rem);
+  font-weight: 650;
+  letter-spacing: -0.03em;
+  line-break: strict;
+  word-break: keep-all;
+}
+
+.wallet-funding__lead,
+.wallet-funding__empty {
+  max-width: 28rem;
+  margin: 0.35rem 0 0;
+  color: var(--text-secondary);
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  line-break: strict;
+  word-break: keep-all;
+}
+
+.wallet-funding__facts {
+  display: grid;
+  gap: 0.7rem;
+  margin: 0;
+}
+
+.wallet-funding__fact,
+.wallet-funding__unconfirmed {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 0.95rem 1rem;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  background: var(--surface-sunken);
+}
+
+.wallet-funding__fact dt,
+.wallet-funding__unconfirmed dt {
+  color: var(--text-tertiary);
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+.wallet-funding__fact dd,
+.wallet-funding__unconfirmed dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+  word-break: keep-all;
+}
+
+.wallet-funding__fact dd {
+  color: var(--text-primary);
+  font-size: 1.15rem;
+}
+
+.wallet-funding__unconfirmed {
+  border-style: dashed;
+  background: transparent;
+}
+
+.wallet-funding__unconfirmed dd {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.wallet-funding__unconfirmed p {
+  margin: 0;
+  color: var(--text-tertiary);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  word-break: keep-all;
+}
+
 .ledger-principle h2,
 .ledger-history > p {
   line-break: strict;
@@ -3086,6 +3168,14 @@ select {
 
   .balance-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .wallet-funding__facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .wallet-funding__unconfirmed {
+    grid-column: 1 / -1;
   }
 
   .funding-layout {
