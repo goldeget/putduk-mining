@@ -101,6 +101,8 @@ bounded PUTDUK completion or error event; raw provider events are not exposed.
 
 Durable conversation and message rows exist in
 `supabase/migrations/20261005040000_ai_conversation_storage.sql`.
+Answer tool calls, sources, and feedback rows exist in
+`supabase/migrations/20261005054518_ai_tool_evidence_storage.sql`.
 Summary storage is **not implemented yet**. See
 `docs/ai/CONVERSATION-CONTINUITY-AUDIT.md` and
 `domain/ai/continuity.ts` (`SESSION_MEMORY_ONLY`). The current browser retains
