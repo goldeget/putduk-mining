@@ -475,6 +475,34 @@ principal lot의 남은 합이 발행 policy의 최소 원금 이상일 때 생�
 `UNCONFIRMED`로 남고 `POLICY_CONSUMER_NOT_ENABLED`를 풀지 않는다. 이 저장은
 `PRODUCT COMPLETE`가 아니다.
 
+## 11C. 시간 segment와 남은 기간 차이
+
+이 절은 used/remaining, speed, 소진 재개, producer, settlement, worker,
+원장 credit을 구현하지 않는다. 서비스 권한 함수는 다음 둘이다.
+
+- `app_private.ensure_funding_cycle_segments(uuid)`는 segment 행만 추가한다.
+- `app_private.read_funding_segment_foundation(uuid)`는 저장된 행만 읽는다.
+
+창은 11B를 그대로 쓴다. 추가 입금은 `cycle_started_at`과 `cycle_end`를
+바꾸지 않는다. 사용자당 cycle은 하나이고 상품마다 segment 금액을 복제하지
+않는다. 인정 원금은 W1 lot이고, 30일 전체 자격의 정수 계산은 W2 portion이다.
+
+첫 segment는 cycle 시작의 principal, tier, economy rule version,
+`effective_at`, `effective_until`을 고정한다. `effective_until`은 그 계산의
+cycle horizon이며 이후 입금이 이 값을 바꾸지 않는다. 같은 cycle에서 원금
+또는 tier가 바뀌면 이전 행을 닫지 않고, 남은 구간 `[변경 시각, cycle_end)`에
+새 행을 연다.
+
+새 행의 자격 수치는 새 조건의 남은 기간 entitlement에서 기존 조건의 같은
+남은 기간 entitlement를 뺀 값이다. 새 조건의 30일 전체를 넣지 않는다.
+남은 기간 비율은 microsecond 정수 비례다. base와 retention은 분리하고
+retention은 `UNCONFIRMED`다. 1 micro-KRW 미만은 이 저장의 carry가 아니며
+`reward_carry`를 만들지 않는다. 정산 carry는 이후 파도다.
+
+부분 원금 회수의 lot 배분은 계속 미정이다. 원금이 줄어드는 경로로 segment를
+다시 나누지 않는다. `POLICY_CONSUMER_NOT_ENABLED`를 풀지 않는다. 이 저장은
+`PRODUCT COMPLETE`가 아니다.
+
 ## 12. 호환성과 활성화 미결 Gate
 
 다음 항목은 open finding이다. 기본값·fixture·예시로 결정하지 않으며
