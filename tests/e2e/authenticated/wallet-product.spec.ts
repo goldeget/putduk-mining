@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 import { prepareMemberThroughStart } from "./helpers/journey";
+import { expectSettledRoute } from "./helpers/settled-route";
 
 test.describe("지갑 제품 읽기 화면", () => {
   test("지갑 화면은 읽기 모델과 hydration 안정성을 유지한다", async ({
@@ -27,7 +28,11 @@ test.describe("지갑 제품 읽기 화면", () => {
     ).toBeVisible({
       timeout: 60_000,
     });
-    await expect(page.getByLabel("실제 KRW 지갑")).toBeVisible();
+    // hidden id="S:*"가 같은 지갑 라벨을 복제한다. 정착된 지갑 안에서만 하나이고 보여야 한다.
+    const wallet = await expectSettledRoute(page, "/wallet");
+    const krwWallet = wallet.getByLabel("실제 KRW 지갑");
+    await expect(krwWallet).toHaveCount(1);
+    await expect(krwWallet).toBeVisible();
 
     const ledgerHistory = page.getByRole("region", {
       name: "최근 거래 내역",
