@@ -401,6 +401,22 @@ recovery across lots. Product multipliers, slot counts, campaign caps, cycle
 runtime, segment proration, capacity exhaustion, mining production and
 settlement are outside this function.
 
+The separate cycle-window foundation is
+`app_private.ensure_funding_cycle_windows(uuid)` and
+`app_private.read_funding_cycle_foundation(uuid)`. Both are service-only,
+INVOKER, and not public commands or aliases of a money command. Storage
+appends one user-level half-open window at a time. The anchor is the
+`effective_at` of the first W1 principal lot whose running remainder meets
+the published minimum. `cycle_end` is that start plus the published
+`cycleDays` measured as exact 24-hour days. Later lots and tier changes
+inside the window do not move the stored start, end, or earlier lot
+`effective_at`. The next window opens only at the prior `cycle_end`, and
+older rows stay. The read does not insert. Neither function posts a ledger
+credit, releases `POLICY_CONSUMER_NOT_ENABLED`, confirms retention, or
+allocates a partial principal recovery. Segment proration, capacity
+exhaustion, mining production, and settlement stay outside these functions.
+This storage is not `PRODUCT COMPLETE`.
+
 The initial approved numeric configuration is exact seed data, not a
 permanent economic ceiling. Administrators can change supported numbers,
 including rates, thresholds, campaign/multiplier limits, slots and future
