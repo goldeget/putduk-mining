@@ -104,14 +104,16 @@ Principal activation이 아니다. 실제 출처가 확인된 원금과 승인�
 조건이 있어야 한다. 정확한 최초 활성화 조건과 과거 회원의 anchor 처리에는
 아래 미결 gate가 적용된다.
 
-`cycle_started_at`은 첫 anchor를 의미하는 계약상 개념이다. 현재 schema에
-같은 이름의 column이 존재한다고 주장하거나 다른 schema 별칭을 추가하지
-않는다. anchor 정정은 별도 승인·감사 계약 없이는 허용하지 않는다.
+`cycle_started_at`은 첫 자격 anchor다. 창 저장은
+`app_private.funding_cycle_windows`의 `cycle_started_at`과 `cycle_end`만
+사용하며 public 별칭을 만들지 않는다. 상세는 11B다. anchor 정정은 별도
+승인·감사 계약 없이는 허용하지 않는다.
 
 주기는 anchor에서 30일 간격으로 이어지는 반개방 구간 `[start, end)`이다.
 server UTC-aware instant로 저장하고 V1 화면은 `Asia/Seoul`로 표시한다.
 일반 입금일, 달력월, 로그인일 또는 worker 실행일로 시작점을 옮기지 않는다.
-정확한 30일 시간 연산·timestamp precision은 버전 계약으로 명시한 뒤 실행한다.
+창 길이의 시각 연산은 11B가 정한다. 오늘 채굴의 날짜 경계와 eligible
+elapsed는 계속 미결이다.
 
 - 추가입금은 현재 주기의 남은 기간만 바꾼다. 새 30일을 지급하지 않는다.
 - 원금 hold·회수·전액 회수·release·재입금도 anchor를 보존한다.
@@ -444,6 +446,35 @@ credit을 만들지 않는다.
 상품 multiplier, slot 수, campaign cap은 이 조회의 출력이 아니다. 부분 원금
 회수의 lot 배분은 계속 미정이며 거절한다. 이 조회는 `PRODUCT COMPLETE`가 아니다.
 
+## 11B. 30일 창 저장
+
+이 절은 segment, proration, 소진 재개, settlement, worker, 원장 credit을
+구현하지 않는다. 서비스 권한 함수는 다음 둘이다.
+
+- `app_private.ensure_funding_cycle_windows(uuid)`는 창 행만 추가한다.
+- `app_private.read_funding_cycle_foundation(uuid)`는 저장된 창만 읽는다.
+
+사용자당 rolling cycle은 하나다. 상품마다 창을 복제하지 않는다. 자격은 W1
+principal lot의 남은 합이 발행 policy의 최소 원금 이상일 때 생긴다. anchor는
+그 합이 최소를 넘는 첫 lot의 `effective_at`이다. `FUNDING_BELOW_MINIMUM`만
+있고 창이 없으면 행을 만들지 않는다.
+
+창 길이는 발행 policy의 `cycleDays`를 정확한 24시간 단위로 더한 값이다.
+세션 시간대의 달력 일이 아니다. 저장된 첫 창의 길이가 이후 창의 간격이 된다.
+반개방 구간 `[start, end)`다. end 시각은 다음 창의 시작이다.
+
+같은 창 안의 추가 lot이나 등급 변경은 cycle id와 시작·끝을 바꾸지 않는다.
+기존 lot의 `effective_at`도 바꾸지 않는다. end 전에는 다음 행을 만들지
+않는다. end 이후의 평가만 다음 행을 연다. 이전 행은 지우지 않는다. 평가가
+여러 경계를 지나면 anchor 기준으로 빠진 창을 채우고, 평가 시각을 새
+시작점으로 쓰지 않는다.
+
+이미 저장된 anchor는 다시 계산해 고치지 않는다. 원금이 최소 미만으로
+바뀌어도 기존 창의 시각을 당기거나 늘리지 않으며, 그 상태에서는 다음 창도
+열지 않는다. 부분 원금 회수의 lot 배분은 계속 미정이다. retention은
+`UNCONFIRMED`로 남고 `POLICY_CONSUMER_NOT_ENABLED`를 풀지 않는다. 이 저장은
+`PRODUCT COMPLETE`가 아니다.
+
 ## 12. 호환성과 활성화 미결 Gate
 
 다음 항목은 open finding이다. 기본값·fixture·예시로 결정하지 않으며
@@ -452,7 +483,7 @@ credit을 만들지 않는다.
 | Finding | 필요한 결정 또는 증거 | 현재 제한 |
 | --- | --- | --- |
 | `ENT-ACTIVATION` | 첫 activation의 적격 조건·기준 영수증, 미설정 정책 중 받은 원금의 시작 처리, unresolved 과거 회원 anchor | 입금일·가입일로 anchor 추정 금지 |
-| `ENT-TIME` | 30일 경계의 정확한 duration 연산·정밀도, clock 권위, 오늘 채굴의 날짜 경계와 eligible elapsed 정의 | client 시각·요청 시각 사용 금지 |
+| `ENT-TIME` | 오늘 채굴의 날짜 경계와 eligible elapsed 정의. 창 길이만 11B에서 policy `cycleDays` × 24시간, 서버 timestamptz로 정했다 | client 시각·요청 시각 사용 금지 |
 | `ENT-NUMERIC` | Tier band 경계, base rate와 기간 단위, capacity 정의, product·loyalty·campaign·override/global 우선순위와 수치 | 채굴 활성화·production seed 금지 |
 | `ENT-ARITHMETIC` | 정확한 정밀도·분모·rounding·잔여값·cap 순서, downgrade 차감/음수 capacity 처리, 기존 bigint와 journal 범위 정합성 | helper 산술을 승인 정책으로 채택 금지 |
 | `ENT-STATE` | 전액 회수·비활성·pause 상태별 accrual/settlement의 상세 전이, 미사용 capacity 이월 여부 | 승인된 동일 주기 capacity 재개 구조 유지; 권한·운영 중지 우회와 자동 이월 금지 |
