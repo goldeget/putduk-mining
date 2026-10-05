@@ -40,6 +40,7 @@ export type AdminMiningFundingView = {
   state: "ready" | "empty" | "unavailable";
   rows: AdminMiningFundingRow[];
   miningRows: AdminMiningFundingRow[];
+  cycleRows: AdminMiningFundingRow[];
 };
 
 const unknownRows: AdminMiningFundingRow[] = [
@@ -54,6 +55,11 @@ const unknownMiningRows: AdminMiningFundingRow[] = [
   { label: "남은 용량", value: unreadLabel, tone: "separate" },
   { label: "사용한 용량", value: unreadLabel, tone: "separate" },
   { label: "속도", value: unreadLabel, tone: "separate" },
+];
+
+const unknownCycleRows: AdminMiningFundingRow[] = [
+  { label: "주기 시작", value: unreadLabel, tone: "separate" },
+  { label: "주기 끝", value: unreadLabel, tone: "separate" },
 ];
 
 function parseDisplay(value: unknown) {
@@ -122,6 +128,32 @@ function formatAdminSpeed(bps: string | null) {
   return `${whole.toString()}.${fractionText}배`;
 }
 
+/** 서버가 준 주기 시각만 보여 준다. 없는 시각은 0원이나 오늘이 아니다. */
+function formatAdminCycle(value: string | null) {
+  if (value === null || value.trim() === "") return unreadLabel;
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return unreadLabel;
+  return new Intl.DateTimeFormat("ko-KR", {
+    dateStyle: "medium",
+    timeStyle: "short",
+    timeZone: "Asia/Seoul",
+  }).format(date);
+}
+
+function presentCycle(
+  started: string | null,
+  end: string | null,
+): AdminMiningFundingRow[] {
+  return [
+    {
+      label: "주기 시작",
+      tone: "separate",
+      value: formatAdminCycle(started),
+    },
+    { label: "주기 끝", tone: "separate", value: formatAdminCycle(end) },
+  ];
+}
+
 function formatAdminTier(activated: boolean, code: string | null) {
   if (!activated) {
     return "적용 전";
@@ -168,7 +200,7 @@ function presentMiningPace(data: {
 
 /**
  * 서버가 나눠 준 인정 원금, 정산 전 대기 수익, 아직 확정 전만 보여 준다.
- * 등급·용량·속도는 그 금액과 더하지 않는다. 없는 값은 0원으로 만들지 않는다.
+ * 등급·용량·속도·주기는 그 금액과 더하지 않는다. 없는 값은 0원으로 만들지 않는다.
  */
 export function presentAdminMiningFunding(result: {
   data: unknown;
@@ -179,6 +211,7 @@ export function presentAdminMiningFunding(result: {
       state: "unavailable",
       rows: unknownRows,
       miningRows: unknownMiningRows,
+      cycleRows: unknownCycleRows,
     };
   }
   const data = parseDisplay(result.data);
@@ -187,14 +220,16 @@ export function presentAdminMiningFunding(result: {
       state: "unavailable",
       rows: unknownRows,
       miningRows: unknownMiningRows,
+      cycleRows: unknownCycleRows,
     };
   }
   if (!data.available) {
-    return { state: "empty", rows: [], miningRows: [] };
+    return { state: "empty", rows: [], miningRows: [], cycleRows: [] };
   }
   return {
     state: "ready",
     miningRows: presentMiningPace(data),
+    cycleRows: presentCycle(data.cycle_started_at, data.cycle_end),
     rows: [
       {
         label: "인정 원금",

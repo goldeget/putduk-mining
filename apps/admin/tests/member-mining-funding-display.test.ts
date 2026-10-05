@@ -35,6 +35,21 @@ function miningLabels(data: unknown, error: unknown = null) {
   );
 }
 
+function cycleLabels(data: unknown, error: unknown = null) {
+  const view = viewOf(data, error);
+  return Object.fromEntries(
+    view.cycleRows.map((row) => [row.label, row.value]),
+  );
+}
+
+function kst(iso: string) {
+  return new Intl.DateTimeFormat("ko-KR", {
+    dateStyle: "medium",
+    timeStyle: "short",
+    timeZone: "Asia/Seoul",
+  }).format(new Date(iso));
+}
+
 describe("admin mining funding display", () => {
   it("shows principal, pending earnings, and unconfirmed amounts apart", () => {
     const view = presentAdminMiningFunding({ data: ready, error: null });
@@ -58,8 +73,15 @@ describe("admin mining funding display", () => {
     expect(Object.values(byLabel)).not.toContain("125,000원");
     expect(Object.values(byLabel)).not.toContain("40,000원");
     expect(Object.values(byLabel)).not.toContain("140,000원");
+    expect(cycleLabels(ready)).toEqual({
+      "주기 시작": kst(ready.cycle_started_at),
+      "주기 끝": kst(ready.cycle_end),
+    });
+    expect(Object.values(cycleLabels(ready)).join(" ")).not.toMatch(/원|0원/);
     expect(
-      [...view.rows, ...view.miningRows].map((row) => row.label).join(" "),
+      [...view.rows, ...view.miningRows, ...view.cycleRows]
+        .map((row) => row.label)
+        .join(" "),
     ).not.toMatch(/micro|pending|retention|bonus|capacity|tier|bps/i);
     expect(view.rows.filter((row) => row.label.includes("원금"))).toEqual([
       { label: "인정 원금", value: "100,000원", tone: "separate" },
@@ -109,6 +131,16 @@ describe("admin mining funding display", () => {
     });
     expect(Object.values(miningLabels(missingPace))).not.toContain("0원");
     expect(Object.values(miningLabels(missingPace))).not.toContain("0배");
+    expect(
+      cycleLabels({
+        ...ready,
+        cycle_started_at: null,
+        cycle_end: "not-a-date",
+      }),
+    ).toEqual({
+      "주기 시작": "확인할 수 없어요",
+      "주기 끝": "확인할 수 없어요",
+    });
   });
 
   it("keeps an inactive rank from looking active and shows a fractional speed", () => {
@@ -141,7 +173,7 @@ describe("admin mining funding display", () => {
         },
         error: null,
       }),
-    ).toEqual({ state: "empty", rows: [], miningRows: [] });
+    ).toEqual({ state: "empty", rows: [], miningRows: [], cycleRows: [] });
   });
 
   it("a read error or a bonus field cannot become principal", () => {
@@ -165,6 +197,11 @@ describe("admin mining funding display", () => {
     expect(failed.rows.map((row) => row.value)).not.toContain("0원");
     expect(failed.miningRows.map((row) => row.value)).not.toContain("0원");
     expect(failed.miningRows.map((row) => row.value)).not.toContain("적용 전");
+    expect(failed.cycleRows.map((row) => row.value)).toEqual([
+      "확인할 수 없어요",
+      "확인할 수 없어요",
+    ]);
+    expect(failed.cycleRows.map((row) => row.value)).not.toContain("0원");
 
     const bonus = presentAdminMiningFunding({
       data: { ...ready, recorded_bonus_atomic: "3000" },
@@ -173,6 +210,9 @@ describe("admin mining funding display", () => {
     expect(bonus.state).toBe("unavailable");
     expect(bonus.rows.map((row) => row.value)).not.toContain("3,000원");
     expect(bonus.rows.map((row) => row.label).join(" ")).not.toMatch(/보너스/);
+    expect(bonus.cycleRows.map((row) => row.value).join(" ")).not.toContain(
+      "3,000",
+    );
   });
 
   it("reads the member through the admin service role only", () => {
@@ -187,5 +227,7 @@ describe("admin mining funding display", () => {
     expect(page).not.toContain("app_private");
     expect(page).not.toMatch(/security definer/i);
     expect(page).not.toContain("grant execute");
+    expect(page).toContain("채굴 주기");
+    expect(page).toContain("fundingDisplay.cycleRows");
   });
 });

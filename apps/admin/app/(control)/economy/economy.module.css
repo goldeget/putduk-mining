@@ -77,6 +77,11 @@
   line-height: 1.5;
   overflow-wrap: anywhere;
 }
+.panel h3 {
+  margin: 1.5rem 0 0.25rem;
+  font-size: 1.05rem;
+  line-height: 1.5;
+}
 .badge {
   display: inline-flex;
   align-items: center;

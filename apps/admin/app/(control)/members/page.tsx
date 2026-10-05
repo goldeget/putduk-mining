@@ -433,6 +433,20 @@ export default async function MembersPage({
             </dl>
           )}
           <p className="panel-note">용량과 속도는 원금이 아니에요.</p>
+          <h3>채굴 주기</h3>
+          {fundingDisplay.cycleRows.length === 0 ? (
+            <p className="panel-note">채굴 주기는 아직 없어요.</p>
+          ) : (
+            <dl className={styles.sourceStats}>
+              {fundingDisplay.cycleRows.map((row) => (
+                <div key={row.label}>
+                  <dt>{row.label}</dt>
+                  <dd>{row.value}</dd>
+                </div>
+              ))}
+            </dl>
+          )}
+          <p className="panel-note">주기는 원금이 아니에요.</p>
           <p className="panel-note">
             채굴 수익과 보너스는 원금에 포함하지 않아요.
           </p>
