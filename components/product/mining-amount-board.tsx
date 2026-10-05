@@ -24,6 +24,23 @@ function retentionCopy(value: string) {
   return `확인 전 ${value}. 확정된 수익이 아니에요.`;
 }
 
+const krwAmountPattern = /^([0-9][0-9,]*(?:\.[0-9]+)?)원$/;
+
+/** 숫자와 `원`만 나누고, 한글 문장은 한 덩어리로 둔다. */
+function AmountText({ value }: { value: string }) {
+  const amount = krwAmountPattern.exec(value);
+  const figure = amount?.[1];
+  if (!figure) {
+    return value;
+  }
+  return (
+    <span className={styles.amountValue}>
+      <span className={styles.amountFigure}>{figure}</span>
+      <span className={styles.amountUnit}>원</span>
+    </span>
+  );
+}
+
 function Fact({
   label,
   value,
@@ -36,25 +53,29 @@ function Fact({
   return (
     <div data-amount-weight={weight}>
       <dt>{label}</dt>
-      <dd>{value}</dd>
+      <dd>
+        <AmountText value={value} />
+      </dd>
     </div>
   );
 }
 
 function Lead({ view }: { view: ReadyView }) {
   return (
-    <dl className={styles.moneyLead} aria-label="채굴 원금과 등급">
-      <Fact
-        label="채굴 원금"
-        value={miningDisplayedValue(view, "인정 원금")}
-        weight="lead"
-      />
-      <Fact
-        label="현재 등급"
-        value={miningDisplayedValue(view, "등급")}
-        weight="companion"
-      />
-    </dl>
+    <div className={styles.moneySlot}>
+      <dl className={styles.moneyLead} aria-label="채굴 원금과 등급">
+        <Fact
+          label="채굴 원금"
+          value={miningDisplayedValue(view, "인정 원금")}
+          weight="lead"
+        />
+        <Fact
+          label="현재 등급"
+          value={miningDisplayedValue(view, "등급")}
+          weight="companion"
+        />
+      </dl>
+    </div>
   );
 }
 
