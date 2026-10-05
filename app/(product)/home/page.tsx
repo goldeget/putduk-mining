@@ -6,7 +6,14 @@ import { PutdukIcon } from "@/components/icons/putduk-icon";
 import { RouteReloadButton } from "@/components/product/route-reload-button";
 import { StatePanel } from "@/components/ui/states";
 import { Surface } from "@/components/ui/surface";
+import {
+  filterMemberVisibleEvents,
+  MEMBER_VISIBLE_EVENT_STATUSES,
+  selectFeaturedEvent,
+  type MemberEventRow,
+} from "@/domain/events/member-read-model";
 import { activeMemberNotificationExpiryOr } from "@/domain/notifications/member-inbox";
+import type { ProductCategory } from "@/domain/products/published-catalog";
 import { formatTrialValue } from "@/domain/trial/format-trial-value";
 import { formatAtomicAmount } from "@/domain/wallet/format-amount";
 import { requirePageUser } from "@/lib/auth/session";
@@ -16,8 +23,30 @@ import {
   presentTrialStatus,
 } from "@/lib/product/home-start-display";
 import { resolveHomeWorldState } from "@/lib/product/home-world-state";
+import { readMemberScreenFacts } from "@/lib/product/member-screen-facts";
+import {
+  formatJoinedOn,
+  formatScreenKrw,
+} from "@/lib/product/member-screen-present";
+import { getPublishedCatalog } from "@/lib/product/published-catalog";
 
 import styles from "./home.module.css";
+
+const categoryLabels: Record<ProductCategory, string> = {
+  KR_STOCK: "한국 주식 테마",
+  US_STOCK: "미국 주식 테마",
+  GOLD: "금",
+  SILVER: "은",
+  CRYPTO: "디지털 자산 테마",
+};
+
+const availabilityLabels = {
+  available: "제공 중",
+  scheduled: "제공 예정",
+  paused: "제공 중단",
+  retired: "제공 종료",
+  unavailable: "상태 확인",
+} as const;
 
 export default async function ProductHomePage() {
   const identity = await requirePageUser("/home");
@@ -28,6 +57,9 @@ export default async function ProductHomePage() {
     { data: accounts, error: walletError },
     { data: sessions, error: miningError },
     { data: notifications, error: notificationError },
+    facts,
+    catalog,
+    { data: eventsData, error: eventsError },
   ] = await Promise.all([
     identity.supabase
       .from("trial_account_snapshots")
@@ -53,6 +85,18 @@ export default async function ProductHomePage() {
       .or(activeMemberNotificationExpiryOr(notificationNow))
       .order("created_at", { ascending: false })
       .limit(3),
+    readMemberScreenFacts(identity),
+    getPublishedCatalog(),
+    identity.supabase
+      .from("events")
+      .select(
+        "id, slug, title_ko, summary_ko, status, starts_at, ends_at, published_at",
+      )
+      .in("status", [...MEMBER_VISIBLE_EVENT_STATUSES])
+      .not("published_at", "is", null)
+      .lte("published_at", notificationNow.toISOString())
+      .order("starts_at", { ascending: false })
+      .limit(8),
   ]);
 
   const krw = walletError
@@ -77,6 +121,28 @@ export default async function ProductHomePage() {
   const partialFailure = Boolean(
     trialError || walletError || miningError || notificationError,
   );
+  const featuredEvent = eventsError
+    ? undefined
+    : selectFeaturedEvent(
+        filterMemberVisibleEvents(
+          (eventsData ?? []) as MemberEventRow[],
+          notificationNow.toISOString(),
+        ),
+      );
+  const catalogProducts =
+    catalog.state === "loaded"
+      ? catalog.products.filter((product) => product.isFeatured)
+      : [];
+  const shownProducts = (
+    catalogProducts.length > 0
+      ? catalogProducts
+      : catalog.state === "loaded"
+        ? catalog.products
+        : []
+  )
+    .slice()
+    .sort((left, right) => left.displayOrder - right.displayOrder)
+    .slice(0, 3);
 
   return (
     <div
@@ -207,6 +273,38 @@ export default async function ProductHomePage() {
         </div>
       </section>
 
+      <Surface as="section" className={styles.profile} aria-label="내 프로필">
+        <div className={styles.profileIdentity}>
+          <span className={styles.profileMark} aria-hidden="true">
+            <PutdukIcon name="user" size={22} />
+          </span>
+          <div>
+            <strong>{facts.displayName}</strong>
+            <p>{facts.rankName ?? "등급은 아직 없어요"}</p>
+            <p>가입일 {formatJoinedOn(facts.joinedAt)}</p>
+          </div>
+        </div>
+        <dl className={styles.profileStats}>
+          <div>
+            <dt>사용 가능</dt>
+            <dd>
+              {formatScreenKrw(
+                facts.availableKrwAtomic,
+                facts.walletUnavailable,
+              )}
+            </dd>
+          </div>
+          <div>
+            <dt>오늘 채굴</dt>
+            <dd>아직 없어요</dd>
+          </div>
+          <div>
+            <dt>누적 채굴</dt>
+            <dd>아직 표시할 수 없어요</dd>
+          </div>
+        </dl>
+      </Surface>
+
       <nav className={styles.quickActions} aria-label="바로 가기">
         <Link href="/mining">
           <PutdukIcon name="mining" size={20} />
@@ -225,6 +323,54 @@ export default async function ProductHomePage() {
           <span>채굴 내역</span>
         </Link>
       </nav>
+
+      <section className={styles.products} aria-label="추천 상품">
+        <header className={styles.sectionHeader}>
+          <h2>추천 상품</h2>
+          <Link href="/products">전체 보기</Link>
+        </header>
+        {catalog.state === "error" ? (
+          <p className={styles.sectionEmpty}>
+            상품을 불러오지 못했어요. 잠시 후 다시 확인해 주세요.
+          </p>
+        ) : shownProducts.length ? (
+          <ul className={styles.productList}>
+            {shownProducts.map((product) => (
+              <li key={product.id}>
+                <Link className={styles.productCard} href="/products">
+                  <small>{categoryLabels[product.category]}</small>
+                  <strong>{product.nameKo}</strong>
+                  <span>{availabilityLabels[product.availability.state]}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className={styles.sectionEmpty}>공개된 상품이 아직 없어요.</p>
+        )}
+      </section>
+
+      <section className={styles.eventBand} aria-label="이벤트">
+        {eventsError ? (
+          <p className={styles.sectionEmpty}>
+            이벤트를 불러오지 못했어요. 잠시 후 다시 확인해 주세요.
+          </p>
+        ) : featuredEvent ? (
+          <Link
+            className={styles.eventCard}
+            href={`/events/${featuredEvent.slug}` as Route}
+          >
+            <p className="eyebrow">이벤트</p>
+            <h2>{featuredEvent.title_ko}</h2>
+            <p>{featuredEvent.summary_ko}</p>
+            <span>
+              자세히 보기 <PutdukIcon name="arrow-right" size={16} />
+            </span>
+          </Link>
+        ) : (
+          <p className={styles.sectionEmpty}>진행 중인 이벤트가 아직 없어요.</p>
+        )}
+      </section>
 
       <section className={styles.featureBand}>
         <Surface as="article" className={styles.featureCard}>

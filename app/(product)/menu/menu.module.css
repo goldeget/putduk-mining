@@ -138,6 +138,10 @@
 }
 
 @media (max-width: 759px) {
+  .memberStats {
+    grid-template-columns: 1fr;
+  }
+
   .profile {
     grid-template-columns: 1fr;
   }
@@ -157,6 +161,105 @@
 .page {
   display: grid;
   gap: 0.85rem;
+}
+
+.member,
+.membership {
+  display: grid;
+  gap: 0.85rem;
+  padding: 1.15rem 1.2rem;
+  border: 1px solid
+    color-mix(in srgb, var(--brand-primary) 34%, var(--border-default));
+  border-radius: var(--radius-xl);
+  background: var(--surface-raised);
+}
+
+.memberIdentity {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  min-width: 0;
+}
+
+.memberIdentity strong,
+.membership strong {
+  display: block;
+  color: var(--text-primary);
+  font-size: 1.2rem;
+  line-break: strict;
+  word-break: keep-all;
+}
+
+.memberIdentity p,
+.membership p,
+.language {
+  max-width: 24rem;
+  margin: 0.2rem 0 0;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.45;
+  line-break: strict;
+  word-break: keep-all;
+}
+
+.memberMark {
+  display: inline-grid;
+  width: 2.8rem;
+  height: 2.8rem;
+  flex: none;
+  place-items: center;
+  border: 1px solid
+    color-mix(in srgb, var(--brand-primary) 45%, var(--border-default));
+  border-radius: var(--radius-full);
+  color: var(--brand-primary);
+  background: color-mix(in srgb, var(--brand-quiet) 40%, var(--surface-sunken));
+}
+
+.memberStats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.65rem;
+  margin: 0;
+}
+
+.memberStats div {
+  display: grid;
+  gap: 0.25rem;
+  min-width: 0;
+  padding-top: 0.7rem;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.memberStats dt,
+.language span {
+  color: var(--text-tertiary);
+  font-size: 0.8125rem;
+}
+
+.memberStats dd,
+.language strong {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  line-break: strict;
+  word-break: keep-all;
+}
+
+.preferences {
+  display: grid;
+  gap: 0.85rem;
+  padding: 1rem 1rem 0.35rem;
+}
+
+.language {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0;
+  padding-bottom: 0.35rem;
 }
 
 .split {
