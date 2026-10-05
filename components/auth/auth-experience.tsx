@@ -105,7 +105,10 @@ export function AuthExperience({
               <p className={styles.description}>{description}</p>
             </div>
           </section>
-          <section className={styles.panel} aria-labelledby={`${titleId}-panel`}>
+          <section
+            className={styles.panel}
+            aria-labelledby={`${titleId}-panel`}
+          >
             <div className={styles.panelHeader}>
               <span className={styles.seal} aria-hidden="true">
                 <PutdukIcon name="shield" size={24} />
