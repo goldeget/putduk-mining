@@ -82,44 +82,47 @@ export function AuthExperience({
       data-ui-ready={route}
       data-ui-state={state}
     >
-      <header className={styles.header}>
-        <Link className={styles.brand} href="/" aria-label="퍼뜩 채굴 홈">
-          <BrandMark title="" />
-          <span>
-            <strong>퍼뜩</strong>
-            <small>채굴</small>
-          </span>
-        </Link>
-        <ThemeControl />
-      </header>
-      <div className={styles.composition}>
-        <section className={styles.story} aria-labelledby={titleId}>
-          <div className={styles.scene} aria-hidden="true">
-            <AuthArtwork />
-          </div>
-          <div className={styles.storyCopy}>
-            <p className={styles.eyebrow}>{eyebrow}</p>
-            <h1 id={titleId}>{title}</h1>
-            <p className={styles.description}>{description}</p>
-          </div>
-        </section>
-        <section className={styles.panel} aria-labelledby={`${titleId}-panel`}>
-          <div className={styles.panelHeader}>
-            <span className={styles.seal} aria-hidden="true">
-              <PutdukIcon name="shield" size={24} />
+      <div className={styles.stage}>
+        <header className={styles.header}>
+          <Link className={styles.brand} href="/" aria-label="퍼뜩 채굴 홈">
+            <BrandMark title="" />
+            <span>
+              <strong>퍼뜩</strong>
+              <small>채굴</small>
             </span>
-            <h2 id={`${titleId}-panel`}>{panelTitle}</h2>
-            <p>{panelDescription}</p>
-          </div>
-          {children}
-          {footer ? <div className={styles.footer}>{footer}</div> : null}
-        </section>
+          </Link>
+          <ThemeControl />
+        </header>
+        <div className={styles.composition} data-auth-layout="stage">
+          <section className={styles.story} aria-labelledby={titleId}>
+            <div className={styles.scene} aria-hidden="true">
+              <AuthArtwork />
+              <div className={styles.scrim} data-auth-scrim="" />
+            </div>
+            <div className={styles.storyCopy}>
+              <p className={styles.eyebrow}>{eyebrow}</p>
+              <h1 id={titleId}>{title}</h1>
+              <p className={styles.description}>{description}</p>
+            </div>
+          </section>
+          <section className={styles.panel} aria-labelledby={`${titleId}-panel`}>
+            <div className={styles.panelHeader}>
+              <span className={styles.seal} aria-hidden="true">
+                <PutdukIcon name="shield" size={24} />
+              </span>
+              <h2 id={`${titleId}-panel`}>{panelTitle}</h2>
+              <p>{panelDescription}</p>
+            </div>
+            {children}
+            {footer ? <div className={styles.footer}>{footer}</div> : null}
+          </section>
+        </div>
+        <footer className={styles.pageFooter}>
+          <Link href="/">퍼뜩 채굴 홈</Link>
+          <span aria-hidden="true">·</span>
+          <Link href="/recover">계정 복구</Link>
+        </footer>
       </div>
-      <footer className={styles.pageFooter}>
-        <Link href="/">퍼뜩 채굴 홈</Link>
-        <span aria-hidden="true">·</span>
-        <Link href="/recover">계정 복구</Link>
-      </footer>
     </main>
   );
 }
