@@ -2,17 +2,34 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { BrandMark } from "@/components/brand/brand-mark";
+import {
+  PutdukIcon,
+  type PutdukIconName,
+} from "@/components/icons/putduk-icon";
 import { SupportStartButton } from "@/components/support/support-runtime";
 import { ThemeControl } from "@/components/system/theme-control";
 
 import styles from "./support-page.module.css";
 
-const topics = [
+const helpLinks = [
+  ["/about", "소개"],
+  ["/how-it-works", "이용 방법"],
+  ["/faq", "자주 묻는 질문"],
+  ["/support", "고객지원"],
+] as const;
+
+const topics: readonly {
+  body: readonly string[];
+  icon: PutdukIconName;
+  title: string;
+}[] = [
   {
+    icon: "user",
     title: "계정과 가입",
     body: ["로그인에 쓰는 아이디를 먼저 확인해 주세요."],
   },
   {
+    icon: "spark",
     title: "PUTDUK START",
     body: [
       "앱을 닫아도 채굴은 계속돼요.",
@@ -20,10 +37,12 @@ const topics = [
     ],
   },
   {
+    icon: "mining",
     title: "채굴",
     body: ["채굴 화면의 상태를 먼저 확인해 주세요."],
   },
   {
+    icon: "wallet",
     title: "입금과 출금",
     body: [
       "입금은 직접 보내는 수동 입금이에요.",
@@ -31,10 +50,11 @@ const topics = [
     ],
   },
   {
+    icon: "bell",
     title: "문의할 때",
     body: ["화면 이름과 대략적인 시각을 알려 주세요."],
   },
-] as const;
+];
 
 export const metadata: Metadata = {
   title: "상담",
@@ -53,6 +73,17 @@ export default function SupportPage() {
             <small>MINING</small>
           </span>
         </Link>
+        <nav className={styles.nav} aria-label="도움말">
+          {helpLinks.map(([href, label]) => (
+            <Link
+              key={href}
+              href={href}
+              aria-current={href === "/support" ? "page" : undefined}
+            >
+              {label}
+            </Link>
+          ))}
+        </nav>
         <div className="site-header__tools">
           <ThemeControl />
           <Link className="support-center__login" href="/login">
@@ -62,7 +93,7 @@ export default function SupportPage() {
       </header>
 
       <section className="shell support-center__hero">
-        <p className="eyebrow">SUPPORT</p>
+        <p className="eyebrow">고객지원</p>
         <h1 className={styles.heading}>
           필요한 도움을 바로 <span className={styles.token}>확인해요</span>.
         </h1>
@@ -82,26 +113,36 @@ export default function SupportPage() {
         <div className="support-center__topics">
           {topics.map((topic) => (
             <article key={topic.title}>
-              <h3>{topic.title}</h3>
-              {topic.body.map((paragraph) => (
-                <p className="ko-copy" key={paragraph}>
-                  {paragraph}
-                </p>
-              ))}
+              <span className={styles.icon} aria-hidden="true">
+                <PutdukIcon name={topic.icon} size={20} />
+              </span>
+              <div className={styles.copy}>
+                <h3>{topic.title}</h3>
+                {topic.body.map((paragraph) => (
+                  <p className="ko-copy" key={paragraph}>
+                    {paragraph}
+                  </p>
+                ))}
+              </div>
             </article>
           ))}
         </div>
       </section>
 
       <section
-        className="shell support-center__notice"
+        className={`shell support-center__notice ${styles.notice}`}
         aria-labelledby="support-security-title"
       >
-        <h2 id="support-security-title">보안 안내</h2>
-        <p className="ko-copy">
-          상담원은 비밀번호, 인증 코드, 개인키, 시드 문구를 요구하지 않아요.
-        </p>
-        <p className="ko-copy">잔액과 출금은 상담 창에서 바뀌지 않아요.</p>
+        <span className={styles.icon} aria-hidden="true">
+          <PutdukIcon name="shield" size={20} />
+        </span>
+        <div className={styles.copy}>
+          <h2 id="support-security-title">보안 안내</h2>
+          <p className="ko-copy">
+            상담원은 비밀번호, 인증 코드, 개인키, 시드 문구를 요구하지 않아요.
+          </p>
+          <p className="ko-copy">잔액과 출금은 상담 창에서 바뀌지 않아요.</p>
+        </div>
       </section>
     </main>
   );

@@ -62,6 +62,29 @@ describe("approved auth composition", () => {
     ).toBe("true");
     expect(host.querySelectorAll("h1")).toHaveLength(1);
     expect(host.querySelector("h1")?.textContent).toBe("나의 채굴로 돌아가기");
+    const stage = host.querySelector('[data-auth-layout="stage"]');
+    const story = host.querySelector('section[aria-labelledby="auth-title"]');
+    const panel = host.querySelector(
+      'section[aria-labelledby="auth-title-panel"]',
+    );
+    expect(stage).not.toBeNull();
+    expect(story?.querySelector("[data-auth-scrim]")).not.toBeNull();
+    expect(story?.querySelector("h1")).not.toBeNull();
+    expect(panel?.querySelector("h2")?.textContent).toBe("다시 만나 반가워요.");
+    expect(
+      story &&
+        panel &&
+        story.compareDocumentPosition(panel) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    const submit = host.querySelector('button[type="submit"]');
+    const recovery = host.querySelector(".auth-form__recovery");
+    expect(
+      submit &&
+        recovery &&
+        submit.compareDocumentPosition(recovery) &
+          Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(host.textContent).not.toMatch(/₩|HBM|반도체|KOSPI|NYSE/);
     expect(host.querySelector('main[data-ui-ready="/login"]')).not.toBeNull();
     expect(
       host.querySelector('section[aria-labelledby="auth-title-panel"]'),

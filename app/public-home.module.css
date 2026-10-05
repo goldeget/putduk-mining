@@ -1,0 +1,196 @@
+/* 공개 첫 화면 전용. 문구, 그림, 시작 카드가 한 줄이고 그 아래 세 단계가 따른다. */
+
+.home :global(.landing-header) {
+  gap: 0.75rem 1rem;
+}
+
+.home :global(.landing-hero) {
+  align-items: stretch;
+  gap: clamp(1rem, 2vw, 1.5rem);
+  min-height: 0;
+  padding-block: clamp(1.25rem, 3vw, 2rem) clamp(1rem, 2vw, 1.5rem);
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.home :global(.hero h1) {
+  max-width: 8em;
+  margin: 0.55rem 0 0.75rem;
+  font-size: clamp(2.15rem, 3.6vw, 3.45rem);
+  line-height: 1.14;
+}
+
+.home :global(.hero__lead) {
+  max-width: 22rem;
+  line-height: 1.7;
+}
+
+.home :global(.hero__actions) {
+  margin-top: 1.25rem;
+}
+
+.home :global(.hero__visual) {
+  min-height: 22rem;
+}
+
+.home :global(.hero__signal strong) {
+  font-size: clamp(1.45rem, 2vw, 2.15rem);
+}
+
+.action {
+  display: grid;
+  align-content: start;
+  gap: 0.85rem;
+  padding: 1.05rem 1rem 1.1rem;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--surface-raised) 92%, transparent);
+}
+
+.action :global(.landing-welcome-proof) {
+  max-width: none;
+  margin-top: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.action :global(.hero__facts) {
+  grid-template-columns: 1fr;
+  max-width: none;
+  margin: 0;
+  border-top: 0;
+  gap: 0.65rem;
+}
+
+.action :global(.hero__facts div) {
+  gap: 0.2rem;
+  padding: 0.7rem 0 0;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.returnLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 44px;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.returnLink:hover {
+  color: var(--text-primary);
+}
+
+.returnLink:focus-visible,
+.helpLinks a:focus-visible,
+.home :global(.landing-header__nav a:focus-visible) {
+  border-radius: var(--radius-sm);
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.helpLinks {
+  display: none;
+}
+
+.helpLinks a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.home :global(.section-heading) {
+  max-width: 36rem;
+  margin-bottom: 1rem;
+}
+
+.home :global(.section-heading h2) {
+  font-size: clamp(1.45rem, 2.4vw, 2rem);
+  line-height: 1.25;
+}
+
+.home :global(.section-heading) > :global(.ko-copy) {
+  max-width: 36rem;
+  margin: 0.75rem 0 0;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  word-break: keep-all;
+}
+
+.home :global(.landing-journey) {
+  padding-block: 0.25rem clamp(2rem, 4vw, 3rem);
+}
+
+.home :global(.landing-journey__grid) {
+  margin-top: 0.35rem;
+}
+
+.home :global(.landing-journey__grid article) {
+  min-height: 0;
+  padding: 1.15rem 1.2rem 1.3rem;
+}
+
+.home :global(.landing-journey__grid svg) {
+  margin-top: 0.85rem;
+}
+
+.home :global(.landing-worlds) {
+  padding-bottom: clamp(2.5rem, 5vw, 4rem);
+}
+
+.home :global(.landing-trust h2) {
+  max-width: 14em;
+  font-size: clamp(1.45rem, 2.4vw, 2.05rem);
+  line-height: 1.25;
+}
+
+@media (min-width: 980px) {
+  .home :global(.landing-hero) {
+    grid-template-columns: minmax(0, 1fr) minmax(16rem, 0.92fr);
+  }
+
+  .action {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (min-width: 1100px) {
+  .home :global(.landing-hero) {
+    grid-template-columns: minmax(15rem, 0.86fr) minmax(17rem, 1.12fr) minmax(
+        15rem,
+        0.74fr
+      );
+  }
+
+  .home :global(.hero__visual) {
+    min-height: 100%;
+  }
+
+  .action {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 979px) {
+  .helpLinks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.2rem 1rem;
+    width: min(100% - 2rem, 1180px);
+    margin: 0.2rem auto 0;
+  }
+}
+
+@media (max-width: 759px) {
+  .home :global(.hero__actions) .button {
+    width: auto;
+    max-width: 100%;
+  }
+}
