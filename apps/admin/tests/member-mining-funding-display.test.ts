@@ -223,6 +223,8 @@ describe("admin mining funding display", () => {
     expect(page).toContain(
       'db.rpc("read_own_mining_server_display", { p_user_id: userId })',
     );
+    expect(page).toContain('from("funding_principal_lots")');
+    expect(page).toContain("resolveMiningServerDisplayRead");
     expect(page).toContain("createAdminServiceClient()");
     expect(page).not.toContain("app_private");
     expect(page).not.toMatch(/security definer/i);

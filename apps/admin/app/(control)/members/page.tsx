@@ -23,7 +23,10 @@ import {
   presentMemberLifecycle,
   presentMemberProfile,
 } from "./_lib/member-state-display";
-import { presentAdminMiningFunding } from "./_lib/mining-funding-display";
+import {
+  presentAdminMiningFunding,
+  resolveMiningServerDisplayRead,
+} from "./_lib/mining-funding-display";
 import { presentMemberMoneySources } from "./_lib/money-source-display";
 
 const memberIdSchema = z.uuid();
@@ -298,7 +301,17 @@ export default async function MembersPage({
   const lifecycleDisplay = presentMemberLifecycle(lifecycle);
   const profileDisplay = presentMemberProfile(profile);
   const moneyDisplay = presentMemberMoneySources(moneySources, userId);
-  const fundingDisplay = presentAdminMiningFunding(miningFunding);
+  const principalLots =
+    miningFunding.error || miningFunding.data == null
+      ? await db
+          .from("funding_principal_lots")
+          .select("id")
+          .eq("user_id", userId)
+          .limit(1)
+      : null;
+  const fundingDisplay = presentAdminMiningFunding(
+    resolveMiningServerDisplayRead(miningFunding, principalLots),
+  );
 
   return (
     <div

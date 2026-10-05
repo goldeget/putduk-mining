@@ -131,6 +131,72 @@ export function parseMiningServerDisplay(value: unknown) {
   return parsed.success ? parsed.data : null;
 }
 
+/** 원금 행이 없을 때의 빈 표시. 금액을 0원으로 만들지 않는다. */
+export const emptyMiningServerDisplay: MiningServerDisplay = {
+  available: false,
+  eligible_principal_micro_krw: null,
+  tier_code: null,
+  tier_activated: false,
+  cycle_started_at: null,
+  cycle_end: null,
+  effective_capacity_micro_krw: null,
+  remaining_capacity_micro_krw: null,
+  used_capacity_micro_krw: null,
+  speed_multiplier_bps: null,
+  pending_micro_krw: null,
+  retention_unconfirmed_micro_krw: null,
+};
+
+type MiningDisplayRead = {
+  data: unknown;
+  error: unknown;
+};
+
+function readErrorMessage(error: unknown) {
+  if (!error || typeof error !== "object" || !("message" in error)) {
+    return "";
+  }
+  return typeof error.message === "string" ? error.message : "";
+}
+
+/** 원금 주체가 없다는 서버 거절만 빈 상태로 본다. */
+export function isAbsentPrincipalFailure(error: unknown) {
+  return readErrorMessage(error).includes(
+    "FUNDING_PRINCIPAL_SUBJECT_NOT_FOUND",
+  );
+}
+
+function principalLotRows(data: unknown) {
+  if (data == null) {
+    return [];
+  }
+  return Array.isArray(data) ? data : null;
+}
+
+/**
+ * 표시 조회가 성공하면 그 값을 그대로 쓴다.
+ * 조회가 실패해도 원금 행이 없으면 빈 표시다. 행이 있는데 실패하면 오류를 유지한다.
+ */
+export function resolveMiningServerDisplayRead(
+  display: MiningDisplayRead,
+  principalLots: MiningDisplayRead | null,
+): MiningDisplayRead {
+  if (!display.error && display.data != null) {
+    return display;
+  }
+  if (!display.error || isAbsentPrincipalFailure(display.error)) {
+    return { data: emptyMiningServerDisplay, error: null };
+  }
+  if (!principalLots || principalLots.error) {
+    return display;
+  }
+  const rows = principalLotRows(principalLots.data);
+  if (rows && rows.length === 0) {
+    return { data: emptyMiningServerDisplay, error: null };
+  }
+  return display;
+}
+
 /**
  * 서버가 돌려준 표시값만 한국어 행으로 바꾼다.
  * 정산 전과 확인 전은 더하지 않는다.

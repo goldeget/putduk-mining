@@ -248,6 +248,10 @@ describe("member lifecycle and profile read truth", () => {
     expect(markup).toMatch(/채굴 인정 원금<\/dt><dd>확인 필요/);
   });
   it("a missing mining display is not shown as zero principal or pending earnings", async () => {
+    reads.tables.funding_principal_lots = {
+      data: [{ id: "lot-1" }],
+      error: null,
+    };
     reads.miningDisplay = { data: null, error: { code: "42501" } };
     const markup = renderToStaticMarkup(
       await MembersPage({
@@ -268,6 +272,34 @@ describe("member lifecycle and profile read truth", () => {
     expect(markup).not.toMatch(/아직 확정 전<\/dt><dd>0원/);
     expect(markup).not.toMatch(/채굴 용량<\/dt><dd>0원/);
     expect(markup).not.toMatch(/속도<\/dt><dd>0배/);
+  });
+  it("a failed display with no principal row is empty, not an error or zero", async () => {
+    reads.miningDisplay = {
+      data: null,
+      error: {
+        code: "PGRST202",
+        message:
+          "Could not find the function public.read_own_mining_server_display",
+      },
+    };
+    const markup = renderToStaticMarkup(
+      await MembersPage({
+        searchParams: Promise.resolve({
+          id: "00000000-0000-4000-8000-000000000001",
+        }),
+      }),
+    );
+    expect(markup).toMatch(/채굴 인정 원금<\/dt><dd>0원/);
+    expect(markup).toContain("원금과 대기 수익은 아직 없어요.");
+    expect(markup).toContain("등급과 용량, 속도는 아직 없어요.");
+    const funding = markup.slice(
+      markup.indexOf("<h3>원금과 대기 수익</h3>"),
+      markup.indexOf("<h3>등급"),
+    );
+    expect(funding).toContain("원금과 대기 수익은 아직 없어요.");
+    expect(funding).not.toContain("원금과 대기 수익을 확인하지 못했습니다.");
+    expect(funding).not.toContain("0원");
+    expect(funding).not.toContain("확인 필요");
   });
   it("an empty funding subject does not invent zero earnings", async () => {
     reads.miningDisplay = {

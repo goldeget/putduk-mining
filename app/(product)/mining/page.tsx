@@ -65,7 +65,10 @@ export default async function MiningPage() {
   const parsedDisplay = displayResponse.error
     ? null
     : parseMiningServerDisplay(displayResponse.data);
-  const displayError = Boolean(displayResponse.error) || !parsedDisplay;
+  // 본문이 없는 성공은 빈 상태다. 본문이 있는데 읽지 못할 때만 오류다.
+  const displayUnreadable =
+    displayResponse.data != null && !displayResponse.error && !parsedDisplay;
+  const displayError = Boolean(displayResponse.error) || displayUnreadable;
   const displayView = parsedDisplay
     ? presentMiningServerDisplay(parsedDisplay)
     : null;

@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+export { resolveMiningServerDisplayRead } from "../../../../../../lib/product/mining-server-display";
+
 /** 화면 단위. 채굴 금액과 속도를 다시 계산하지 않는다. */
 const MICRO_KRW_PER_KRW = 1_000_000n;
 const BASIS_POINT_UNIT = 10_000n;
