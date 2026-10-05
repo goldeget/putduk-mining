@@ -71,10 +71,6 @@ export function AuthForm({ nextPath }: { nextPath: string }) {
           </button>
         </div>
       </div>
-      <nav className="auth-form__recovery ko-copy" aria-label="계정 찾기">
-        <Link href="/find-id">아이디 찾기</Link>
-        <Link href="/recover">비밀번호 재설정</Link>
-      </nav>
       {state.status !== "idle" ? (
         <p
           id="login-error"
@@ -90,6 +86,10 @@ export function AuthForm({ nextPath }: { nextPath: string }) {
           새 계정 만들기
         </Link>
       </div>
+      <nav className="auth-form__recovery ko-copy" aria-label="계정 찾기">
+        <Link href="/find-id">아이디 찾기</Link>
+        <Link href="/recover">비밀번호 재설정</Link>
+      </nav>
     </form>
   );
 }
