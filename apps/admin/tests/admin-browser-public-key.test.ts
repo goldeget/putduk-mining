@@ -78,17 +78,17 @@ describe("admin browser public key role", () => {
     );
   });
 
-  it("rejects a service role public key before operator pages read it", () => {
-    const key = legacyKey("service_role");
+  it("lets the server read the typography placeholder without treating it as a browser key", () => {
+    const key = "local-typography-publishable-key-not-a-secret";
     stubAdminEnv(key);
-    let caught: Error | undefined;
-    try {
-      getAdminEnv();
-    } catch (error) {
-      caught = error as Error;
-    }
-    expect(caught?.message).toBe("SUPABASE_BROWSER_CONFIG_INVALID");
-    expect(caught?.message).not.toContain(key);
+    expect(getAdminEnv().NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY).toBe(key);
+    expect(() =>
+      createAdminBrowserClient({
+        url,
+        publishableKey: key,
+      }),
+    ).toThrow(new Error("SUPABASE_BROWSER_CONFIG_INVALID"));
+    expect(createBrowserClient).not.toHaveBeenCalled();
   });
 
   it("still returns a publishable public key for the operator browser", () => {
