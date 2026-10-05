@@ -38,6 +38,7 @@ type BatchOptions = {
   batchSize?: number;
   leaseSeconds?: number;
   retryDelaySeconds?: number;
+  randomUnit?: number;
   leaseRenewIntervalMs?: number;
   outboxHandlers?: Record<string, OutboxHandler>;
   jobHandlers?: Record<string, JobHandler>;
@@ -56,6 +57,15 @@ export type LeaseRenewal = {
 };
 
 export function backoffSeconds(attempt: number): number;
+
+export function jitteredRetryDelaySeconds(
+  attempt: number,
+  randomUnit?: number,
+): number;
+
+export function classifyJobFailure(
+  errorCode: string,
+): "PERMANENT" | "RETRYABLE";
 
 export function wantsOnce(
   argv?: readonly string[],

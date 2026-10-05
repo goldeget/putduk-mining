@@ -280,7 +280,7 @@ describe("worker process execution against local Supabase", () => {
     expect(summary.completed).toBe(0);
 
     const failed = await readOutbox(db, event.id);
-    expect(failed.status).toBe("FAILED");
+    expect(failed.status).toBe("DEAD_LETTER");
     expect(failed.last_error_code).toBe("UNSUPPORTED_EVENT_TYPE");
     expect(failed.attempt_count).toBeGreaterThanOrEqual(1);
     expect(new Date(failed.available_at).getTime()).toBeGreaterThanOrEqual(
@@ -823,7 +823,7 @@ insert into auth.users (
     expect(summary.completed).toBe(0);
 
     const failed = await readJob(db, job.id);
-    expect(["FAILED", "DEAD_LETTER"]).toContain(failed.status);
+    expect(failed.status).toBe("DEAD_LETTER");
     expect(failed.last_error_code).toBe("UNSUPPORTED_JOB_TYPE");
   });
 

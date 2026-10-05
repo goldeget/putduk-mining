@@ -9,8 +9,10 @@
  * A handler that outlives the original lease renews it on an interval.
  * The interval is cleared on success, failure, and worker shutdown.
  * Stdout heartbeats are operational logs only — not lease evidence.
+ * 지원하지 않는 아웃박스와 PERMANENT 작업은 그 시도에서 DEAD_LETTER가 된다.
+ * 재시도 지연은 상한 있는 지수 백오프에 지터를 더한 값이다.
+ * 같은 재조정 작업의 재시도는 작업 id를 요청 id로 다시 쓴다.
  * Still missing:
- *   - permanent reject for unsupported outbox (today exhausts to DEAD_LETTER)
  *   - member notification fanout commands
  */
 
@@ -71,6 +73,38 @@ export function createServiceClient(env = process.env) {
 export function backoffSeconds(attempt) {
   const base = Math.min(3600, 2 ** Math.max(0, attempt - 1));
   return Math.max(5, base);
+}
+
+/**
+ * 기준 지연보다 짧아지지 않는 지터를 더한다.
+ * randomUnit은 [0, 1)이며, 결과는 5초 이상 3600초 이하다.
+ */
+export function jitteredRetryDelaySeconds(attempt, randomUnit = Math.random()) {
+  const base = backoffSeconds(attempt);
+  if (!Number.isFinite(randomUnit) || randomUnit < 0 || randomUnit >= 1) {
+    throw new Error("INVALID_RETRY_JITTER");
+  }
+  const room = Math.max(0, 3600 - base);
+  const spread = Math.min(base, room);
+  return base + Math.floor(randomUnit * spread);
+}
+
+/** 다시 시도해도 같은 오류가 나는 작업만 영구 실패로 분류한다. */
+export function classifyJobFailure(errorCode) {
+  if (
+    errorCode === "UNSUPPORTED_JOB_TYPE" ||
+    errorCode === "RECONCILIATION_JOB_ID_REQUIRED"
+  ) {
+    return "PERMANENT";
+  }
+  return "RETRYABLE";
+}
+
+function resolveRetryDelaySeconds(attempt, override, randomUnit) {
+  if (typeof override === "number") {
+    return override;
+  }
+  return jitteredRetryDelaySeconds(attempt, randomUnit);
 }
 
 export function wantsOnce(argv = process.argv.slice(2), env = process.env) {
@@ -224,9 +258,14 @@ export async function emitStdoutHeartbeat(workerId, startedAt) {
   );
 }
 
-async function handleFinancialReconciliation(client) {
+async function handleFinancialReconciliation(client, job) {
+  const requestId = typeof job?.id === "string" ? job.id.trim() : "";
+  if (!requestId) {
+    throw new Error("RECONCILIATION_JOB_ID_REQUIRED");
+  }
+  // 재시도도 같은 작업 id를 요청 id로 보낸다. 대조 명령이 기존 성공 실행을 반환한다.
   const { error } = await client.rpc("run_financial_reconciliation", {
-    p_request_id: crypto.randomUUID(),
+    p_request_id: requestId,
   });
   if (error) {
     throw new Error(error.message);
@@ -243,7 +282,8 @@ function errorCode(cause, fallback) {
 
 /**
  * Claim and process one outbox batch.
- * Unsupported event types fail (retry → DLQ); they are never silently completed.
+ * 지원하지 않는 유형과 호환되지 않는 안전한 모드 봉투는 즉시 DEAD_LETTER다.
+ * 그 외 실패는 지터가 있는 백오프로 재시도하고, 조용히 완료하지 않는다.
  */
 export async function processOutboxBatch(
   client,
@@ -252,6 +292,7 @@ export async function processOutboxBatch(
     batchSize = 25,
     leaseSeconds = 60,
     retryDelaySeconds,
+    randomUnit,
     outboxHandlers = SUPPORTED_OUTBOX_HANDLERS,
     leaseRenewIntervalMs,
   } = {},
@@ -296,10 +337,11 @@ export async function processOutboxBatch(
         p_event_id: event.id,
         p_worker_id: workerId,
         p_error_code: "UNSUPPORTED_EVENT_TYPE",
-        p_retry_delay_seconds:
-          typeof retryDelaySeconds === "number"
-            ? retryDelaySeconds
-            : backoffSeconds(event.attempt_count),
+        p_retry_delay_seconds: resolveRetryDelaySeconds(
+          event.attempt_count,
+          retryDelaySeconds,
+          randomUnit,
+        ),
       });
       if (failError) {
         console.error("fail_outbox_event failed", failError.message);
@@ -343,10 +385,11 @@ export async function processOutboxBatch(
         p_event_id: event.id,
         p_worker_id: workerId,
         p_error_code: errorCode(cause, "OUTBOX_HANDLER_FAILED"),
-        p_retry_delay_seconds:
-          typeof retryDelaySeconds === "number"
-            ? retryDelaySeconds
-            : backoffSeconds(event.attempt_count),
+        p_retry_delay_seconds: resolveRetryDelaySeconds(
+          event.attempt_count,
+          retryDelaySeconds,
+          randomUnit,
+        ),
       });
       if (failError) {
         console.error("fail_outbox_event failed", failError.message);
@@ -370,6 +413,7 @@ export async function processJobBatch(
     leaseSeconds = 120,
     jobHandlers = SUPPORTED_JOB_HANDLERS,
     leaseRenewIntervalMs,
+    randomUnit,
   } = {},
 ) {
   const summary = {
@@ -409,8 +453,12 @@ export async function processJobBatch(
         p_job_id: job.id,
         p_worker_id: workerId,
         p_error_code: "UNSUPPORTED_JOB_TYPE",
-        p_error_class: "PERMANENT",
-        p_retry_delay_seconds: backoffSeconds(job.attempts),
+        p_error_class: classifyJobFailure("UNSUPPORTED_JOB_TYPE"),
+        p_retry_delay_seconds: resolveRetryDelaySeconds(
+          job.attempts,
+          undefined,
+          randomUnit,
+        ),
       });
       if (failError) {
         console.error("fail_system_job failed", failError.message);
@@ -447,12 +495,17 @@ export async function processJobBatch(
       }
       summary.completed += 1;
     } catch (cause) {
+      const failureCode = errorCode(cause, "JOB_HANDLER_FAILED");
       const { error: failError } = await client.rpc("fail_system_job", {
         p_job_id: job.id,
         p_worker_id: workerId,
-        p_error_code: errorCode(cause, "JOB_HANDLER_FAILED"),
-        p_error_class: "RETRYABLE",
-        p_retry_delay_seconds: backoffSeconds(job.attempts),
+        p_error_code: failureCode,
+        p_error_class: classifyJobFailure(failureCode),
+        p_retry_delay_seconds: resolveRetryDelaySeconds(
+          job.attempts,
+          undefined,
+          randomUnit,
+        ),
       });
       if (failError) {
         console.error("fail_system_job failed", failError.message);
