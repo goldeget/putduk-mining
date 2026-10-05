@@ -191,7 +191,7 @@ test("AI ownership, money denial, continuity, themes, and keyboard path", async 
     // 메뉴 카드 접근 이름은 제목과 설명을 함께 가진다. exact "퍼뜩 AI"는 0건이라
     // 액션 제한시간(테스트 전체)까지 기다린다. 정착된 메뉴 링크 1개만 연다.
     const aiMenuLink = page
-      .getByRole("navigation", { name: "내 퍼뜩 메뉴" })
+      .getByRole("navigation", { name: "더보기 메뉴" })
       .getByRole("link", { name: /^퍼뜩 AI/ });
     await expect(aiMenuLink).toHaveCount(1);
     await aiMenuLink.click();
