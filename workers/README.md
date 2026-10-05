@@ -25,9 +25,18 @@ Stdout heartbeats are operational logs only. Durable lease ownership is
 `claim_*`, `extend_*_lease`, `complete_*`, and `fail_*`. Operator replay is
 `replay_outbox_event` and `replay_system_job` (audited, no direct table update).
 
+Unsupported outbox types and an incompatible `SAFE_MODE_CHANGED.v1` envelope
+are permanent. `fail_outbox_event` stores `DEAD_LETTER` on that attempt.
+`fail_system_job` does the same when `p_error_class` is `PERMANENT`.
+Other failures keep capped exponential backoff. The delay adds jitter, stays
+at least the base delay, and never exceeds 3600 seconds.
+
+`FINANCIAL_RECONCILIATION` sends the job id as `p_request_id`. The same
+request returns the existing succeeded run and does not record a second run.
+The checker still does not repair money.
+
 Still missing:
 
-- permanent unsupported reject (today exhausts attempts into `DEAD_LETTER`)
 - member notification fanout commands and other domain consumers
 
 Periodic lease renewal exists in the runner and has its own runtime evidence
