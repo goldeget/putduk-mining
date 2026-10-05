@@ -82,9 +82,11 @@
 .moneyPair dd,
 .moneyCapacity dd {
   margin: 0;
+  min-width: 0;
   color: var(--text-primary);
   font-variant-numeric: tabular-nums;
   line-height: 1.3;
+  overflow-wrap: anywhere;
   word-break: keep-all;
 }
 

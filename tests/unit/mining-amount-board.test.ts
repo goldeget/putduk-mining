@@ -165,4 +165,31 @@ describe("채굴 금액 카드 구도", () => {
     expect(css).not.toMatch(/\.moneyFacts/);
     expect(board).not.toMatch(/Math\.random|setInterval|18,489|₩ 428/);
   });
+
+  it("좁은 칸보다 긴 금액만 줄바꿈하고 구도는 유지한다", () => {
+    const css = readFileSync(
+      "components/product/mining-amount-board.module.css",
+      "utf8",
+    );
+    const valueRule = css.match(
+      /\.moneyLead dd,\s*\.moneyPair dd,\s*\.moneyCapacity dd\s*\{[^}]*\}/s,
+    )?.[0];
+
+    expect(valueRule).toMatch(/min-width:\s*0/);
+    expect(valueRule).toMatch(/overflow-wrap:\s*anywhere/);
+    expect(valueRule).toMatch(/word-break:\s*keep-all/);
+    expect(css).toMatch(
+      /\.moneyLead\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1\.4fr\)\s*minmax\(0,\s*0\.9fr\)/s,
+    );
+    expect(css).toMatch(
+      /\.moneyPair\s*\{[^}]*grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\)/s,
+    );
+    const narrow = css.slice(css.indexOf("@media (max-width: 360px)"));
+    expect(narrow).toMatch(
+      /\.moneyCapacity dl\s*\{[^}]*grid-template-columns:\s*1fr/s,
+    );
+    expect(narrow).not.toMatch(
+      /\.money(?:Lead|Pair)\s*\{[^}]*grid-template-columns:\s*1fr/,
+    );
+  });
 });
