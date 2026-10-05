@@ -10,9 +10,13 @@ import {
   INDEXNOW_KEY_PATH,
   buildIndexNowSubmission,
 } from "@/lib/trust/indexnow";
+import { TRUST_LAST_UPDATED } from "@/lib/trust/public-content";
 import {
+  PUBLIC_DISCOVERY_LAST_MODIFIED,
   PUBLIC_DISCOVERY_PATHS,
+  buildBreadcrumbStructuredData,
   isRobotsDisallowed,
+  publicLanguageAlternates,
 } from "@/lib/trust/public-discovery";
 
 const PRIVATE_PATHS = [
@@ -114,5 +118,36 @@ describe("public discovery paths", () => {
       "utf8",
     );
     expect(body.trim()).toBe(INDEXNOW_KEY);
+  });
+});
+
+describe("public discovery freshness", () => {
+  it("publishes the shared freshness date and only the current language", () => {
+    expect(PUBLIC_DISCOVERY_LAST_MODIFIED).toBe(TRUST_LAST_UPDATED);
+    const entries = sitemap();
+    expect(
+      entries.every((entry) => entry.lastModified === TRUST_LAST_UPDATED),
+    ).toBe(true);
+    expect(publicLanguageAlternates("/faq")).toEqual({ "ko-KR": "/faq" });
+    expect(publicLanguageAlternates("/faq")).not.toHaveProperty("ja-JP");
+  });
+
+  it("builds a document breadcrumb from the public origin", () => {
+    expect(
+      buildBreadcrumbStructuredData({
+        name: "자주 묻는 질문",
+        path: "/faq",
+      }),
+    ).toMatchObject({
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { position: 1, item: "https://mining.putduk.com/" },
+        {
+          position: 2,
+          name: "자주 묻는 질문",
+          item: "https://mining.putduk.com/faq",
+        },
+      ],
+    });
   });
 });

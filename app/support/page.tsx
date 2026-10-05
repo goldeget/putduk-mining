@@ -2,6 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { BrandMark } from "@/components/brand/brand-mark";
+import { START_WELCOME_STATEMENTS } from "@/lib/trust/public-content";
+import {
+  buildBreadcrumbStructuredData,
+  publicLanguageAlternates,
+} from "@/lib/trust/public-discovery";
 import {
   PutdukIcon,
   type PutdukIconName,
@@ -34,6 +39,7 @@ const topics: readonly {
     body: [
       "앱을 닫아도 채굴은 계속돼요.",
       "다시 접속하면 결과를 확인할 수 있어요.",
+      ...START_WELCOME_STATEMENTS,
     ],
   },
   {
@@ -59,12 +65,26 @@ const topics: readonly {
 export const metadata: Metadata = {
   title: "상담",
   description: "가입, 채굴, 입금과 출금 문의를 확인하는 상담 안내입니다.",
-  alternates: { canonical: "/support" },
+  alternates: {
+    canonical: "/support",
+    languages: publicLanguageAlternates("/support"),
+  },
 };
+
+const supportBreadcrumb = buildBreadcrumbStructuredData({
+  name: "상담",
+  path: "/support",
+});
 
 export default function SupportPage() {
   return (
     <main className={`support-center ${styles.page}`}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(supportBreadcrumb).replace(/</g, "\\u003c"),
+        }}
+      />
       <header className="site-header shell">
         <Link className="brand-lockup" href="/" aria-label="퍼뜩 채굴 홈">
           <BrandMark title="" />

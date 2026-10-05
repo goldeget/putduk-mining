@@ -1,4 +1,7 @@
-import { TRUST_DOCUMENTS } from "@/lib/trust/public-content";
+import {
+  TRUST_DOCUMENTS,
+  TRUST_LAST_UPDATED,
+} from "@/lib/trust/public-content";
 
 export const PUBLIC_SITE_ORIGIN = "https://mining.putduk.com";
 
@@ -30,6 +33,41 @@ export const PRIVATE_ROBOTS_DISALLOW = [
   "/ai$",
   "/menu",
 ] as const;
+
+/** 사이트맵·문서에 쓰는 공개 갱신일. */
+export const PUBLIC_DISCOVERY_LAST_MODIFIED = TRUST_LAST_UPDATED;
+
+/**
+ * 현재 공개 언어만 연결한다.
+ * ja-JP 본문이 없으므로 그 주소는 만들지 않는다.
+ */
+export function publicLanguageAlternates(path: string) {
+  return { "ko-KR": path } as const;
+}
+
+export function buildBreadcrumbStructuredData(input: {
+  name: string;
+  path: string;
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "퍼뜩 채굴",
+        item: `${PUBLIC_SITE_ORIGIN}/`,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: input.name,
+        item: toPublicUrl(input.path),
+      },
+    ],
+  };
+}
 
 export function toPublicUrl(path: string): string {
   if (path === "/") {

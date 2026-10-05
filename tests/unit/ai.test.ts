@@ -133,6 +133,21 @@ describe("PUTDUK AI request boundary", () => {
     expect(route.kind === "static" ? route.answer : "").toContain(
       "실제 지갑과 완전 분리",
     );
+    expect(route.kind === "static" ? route.answer : "").toContain("5,000원");
+    expect(route.kind === "static" ? route.answer : "").toContain(
+      "입금하지 않아도",
+    );
+  });
+
+  it("answers the welcome cap without requiring funding", () => {
+    const route = routeAiQuestion("입금 없이 환영 보상을 받을 수 있나요?");
+
+    expect(route).toMatchObject({
+      classification: "STATIC_FACT",
+      kind: "static",
+      routeKey: "start_welcome_cap",
+    });
+    expect(route.kind === "static" ? route.answer : "").toContain("5,000원");
   });
 
   it("blocks asset mutation requests before any model route", () => {

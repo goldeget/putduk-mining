@@ -1,6 +1,14 @@
 export const TRUST_CONTENT_VERSION = "2026.09";
 export const TRUST_LAST_UPDATED = "2026-09-26";
 
+/** 자격 확인 후 1회 전환. 체험 장부와 실제 지갑은 그대로 분리된다. */
+export const START_WELCOME_STATEMENTS = [
+  "자격을 확인하면 출금할 수 있는 원화로 바꿀 수 있어요.",
+  "한 번만 가능해요.",
+  "최대 5,000원까지예요.",
+  "출금 전에 입금하지 않아도 돼요.",
+] as const;
+
 export type PublicFact = {
   description: string;
   key: string;
@@ -45,6 +53,11 @@ export const PUBLIC_FACTS: readonly PublicFact[] = [
     key: "TRIAL_LEDGER",
     value: "실제 지갑과 완전 분리",
     description: "체험 결과는 체험 전용 계정에만 기록됩니다.",
+  },
+  {
+    key: "START_WELCOME_CAP",
+    value: "최대 5,000원, 1회",
+    description: START_WELCOME_STATEMENTS.join(" "),
   },
   {
     key: "SUPPORTED_FUNDING_METHODS",
@@ -215,7 +228,12 @@ export const TRUST_DOCUMENTS: readonly TrustDocument[] = [
     title: "최대 24시간, 실제 자산과 분리된 첫 경험.",
     summary:
       "처음 가입한 사용자가 KOREA 월드에서 핵심 채굴 흐름을 이해하도록 설계한 사용량 기반 체험입니다.",
-    factKeys: ["TRIAL_DURATION", "TRIAL_LEDGER", "SUPPORTED_WORLDS"],
+    factKeys: [
+      "TRIAL_DURATION",
+      "TRIAL_LEDGER",
+      "START_WELCOME_CAP",
+      "SUPPORTED_WORLDS",
+    ],
     sections: [
       {
         heading: "종료 조건",
@@ -227,6 +245,7 @@ export const TRUST_DOCUMENTS: readonly TrustDocument[] = [
         heading: "분리 원칙",
         body: [
           "체험 계정과 세션은 실제 지갑과 별도입니다. 체험 결과가 실제 잔액으로 자동 전환되거나 섞이지 않습니다.",
+          ...START_WELCOME_STATEMENTS,
         ],
       },
     ],
@@ -313,7 +332,12 @@ export const TRUST_DOCUMENTS: readonly TrustDocument[] = [
     eyebrow: "FAQ",
     title: "자주 묻는 질문에 같은 기준으로 답합니다.",
     summary: "공식 사실과 제품 경계를 짧고 직접적으로 설명합니다.",
-    factKeys: ["TRIAL_DURATION", "SUPPORTED_FUNDING_METHODS", "AI_BOUNDARY"],
+    factKeys: [
+      "TRIAL_DURATION",
+      "START_WELCOME_CAP",
+      "SUPPORTED_FUNDING_METHODS",
+      "AI_BOUNDARY",
+    ],
     sections: [
       {
         heading: "실제 컴퓨터로 코인을 채굴하나요?",
@@ -324,7 +348,8 @@ export const TRUST_DOCUMENTS: readonly TrustDocument[] = [
       {
         heading: "체험 결과가 실제 잔액이 되나요?",
         body: [
-          "아닙니다. PUTDUK START의 계정은 실제 지갑과 완전히 분리됩니다.",
+          "체험 기록은 실제 지갑과 따로 보관돼요.",
+          ...START_WELCOME_STATEMENTS,
         ],
       },
       {
