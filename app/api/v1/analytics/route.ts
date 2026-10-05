@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
 
   const origin = request.headers.get("origin");
   const allowedOrigins = new Set(
-    allowedAnalyticsOrigins(env.NEXT_PUBLIC_APP_URL, process.env.ADMIN_APP_URL),
+    allowedAnalyticsOrigins(env.NEXT_PUBLIC_APP_URL),
   );
   if (!origin || !allowedOrigins.has(origin)) {
     return errorResponse(

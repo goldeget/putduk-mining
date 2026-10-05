@@ -86,7 +86,7 @@ export function sanitizeAnalyticsProperties(
 
 export function allowedAnalyticsOrigins(
   appUrl: string,
-  adminUrl: string | undefined,
+  adminUrl?: string,
 ): string[] {
   let appOrigin: string;
   try {

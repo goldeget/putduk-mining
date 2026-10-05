@@ -1018,6 +1018,8 @@ input:focus-visible {
 @media (max-width: 760px) {
   .control-shell {
     display: block;
+    /* 본문을 위로 올려도 세션 종료가 화면 아래에 남는다. */
+    padding-bottom: calc(13rem + env(safe-area-inset-bottom));
   }
   .control-rail {
     position: static;
@@ -1030,10 +1032,13 @@ input:focus-visible {
     padding: 16px;
   }
   .brand-lockup--rail {
+    grid-column: 1 / -1;
+    grid-row: 1;
     margin: 0;
   }
   .control-rail nav {
     grid-column: 1 / -1;
+    grid-row: 3;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
     min-width: 0;
@@ -1043,10 +1048,17 @@ input:focus-visible {
     margin-bottom: 0;
     overflow: visible;
   }
-  /* 좁은 화면에서도 세션 종료를 숨기지 않는다. */
+  /* 메뉴 11개는 줄바꿈한 채 두고, 세션 종료는 화면 아래에 고정한다. */
   .operator-card {
-    grid-column: 1 / -1;
-    margin-top: 12px;
+    position: fixed;
+    z-index: 20;
+    right: max(16px, env(safe-area-inset-right));
+    bottom: max(12px, env(safe-area-inset-bottom));
+    left: max(16px, env(safe-area-inset-left));
+    margin-top: 0;
+  }
+  .operator-card form button {
+    min-height: 44px;
   }
   .control-topbar {
     display: flex;
