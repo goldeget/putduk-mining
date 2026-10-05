@@ -60,8 +60,29 @@ describe("observability lane", () => {
           path: "/start?next=/wallet",
         },
         "d94bf8bd",
+        "screen_view",
       ),
     ).toEqual({ app_release: "d94bf8bd", path: "/start" });
+    expect(
+      sanitizeAnalyticsProperties(
+        {
+          amount_atomic: 5000,
+          currency: 5000,
+          email: "private@example.com",
+          path: "/wallet/TJRyWwFs9wTFGZg3JbrVriFbNfCug5tDeC",
+          phone: "+821012345678",
+        },
+        undefined,
+        "signup_complete",
+      ),
+    ).toEqual({});
+    expect(
+      sanitizeAnalyticsProperties(
+        { path: "/start%3Ftoken=secret" },
+        undefined,
+        "landing_view",
+      ),
+    ).toEqual({});
   });
 
   it("replays only a structural path", () => {

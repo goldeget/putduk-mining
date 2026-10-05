@@ -28,6 +28,7 @@ export async function recordProductionAnalyticsEvent(input: {
     const properties = sanitizeAnalyticsProperties(
       input.properties ?? {},
       readAppRelease(process.env.NEXT_PUBLIC_APP_RELEASE),
+      input.eventName,
     );
     const parsed = analyticsEventSchema.safeParse({
       eventId: randomUUID(),

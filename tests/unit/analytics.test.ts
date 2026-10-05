@@ -57,6 +57,82 @@ describe("analytics event contract", () => {
         properties: { currency: "KRW", path: "/about", returning: false },
       }).success,
     ).toBe(true);
+    expect(
+      analyticsEventSchema.safeParse({
+        ...validEvent,
+        eventName: "deposit_start",
+        properties: { currency: "KRW" },
+      }).success,
+    ).toBe(true);
+    expect(
+      analyticsEventSchema.safeParse({
+        ...validEvent,
+        eventName: "web_vital",
+        properties: {
+          navigation_type: "navigate",
+          vital_name: "LCP",
+          vital_rating: "good",
+          vital_unit: "ms",
+          vital_value: 1800,
+        },
+      }).success,
+    ).toBe(true);
+    expect(
+      analyticsEventSchema.safeParse({
+        ...validEvent,
+        eventName: "ai_question",
+        properties: { character_count: 12, knowledge_version: "2026.09" },
+      }).success,
+    ).toBe(true);
+    expect(
+      analyticsEventSchema.safeParse({
+        ...validEvent,
+        properties: { path: "/start%3Ftoken=secret" },
+      }).success,
+    ).toBe(false);
+    expect(
+      analyticsEventSchema.safeParse({
+        ...validEvent,
+        properties: {
+          path: "/auth/eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIn0.signatureok",
+        },
+      }).success,
+    ).toBe(false);
+    expect(
+      analyticsEventSchema.safeParse({
+        ...validEvent,
+        properties: {
+          path: "/wallet/TJRyWwFs9wTFGZg3JbrVriFbNfCug5tDeC",
+        },
+      }).success,
+    ).toBe(false);
+    expect(
+      analyticsEventSchema.safeParse({
+        ...validEvent,
+        properties: { path: "/id/010-1234-5678" },
+      }).success,
+    ).toBe(false);
+    expect(
+      analyticsEventSchema.safeParse({
+        ...validEvent,
+        eventName: "deposit_complete",
+        properties: { currency: 5000 },
+      }).success,
+    ).toBe(false);
+    expect(
+      analyticsEventSchema.safeParse({
+        ...validEvent,
+        eventName: "first_real_settlement",
+        properties: { vital_value: 5000 },
+      }).success,
+    ).toBe(false);
+    expect(
+      analyticsEventSchema.safeParse({
+        ...validEvent,
+        eventName: "client_error",
+        properties: { error_name: "TypeError" },
+      }).success,
+    ).toBe(true);
   });
 
   it("rejects more than twenty property keys", () => {

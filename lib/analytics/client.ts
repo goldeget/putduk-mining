@@ -47,6 +47,7 @@ export async function trackAnalyticsEvent(
     const safeProperties = sanitizeAnalyticsProperties(
       properties,
       readAppRelease(process.env.NEXT_PUBLIC_APP_RELEASE),
+      eventName,
     );
     if (eventName === "screen_view" || eventName === "landing_view") {
       const path =

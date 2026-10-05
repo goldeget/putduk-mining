@@ -1,13 +1,14 @@
 import {
   ANALYTICS_PROPERTY_NAMES,
+  analyticsPropertyFitsEvent,
+  analyticsPropertyValueAllowed,
   isSensitiveAnalyticsString,
+  type AnalyticsEventName,
   type AnalyticsPropertyName,
 } from "@/domain/analytics/events";
 
 const propertyNames = new Set<string>(ANALYTICS_PROPERTY_NAMES);
 
-const releasePattern = /^[A-Za-z0-9._-]{7,64}$/;
-const pathPattern = /^\/[A-Za-z0-9._~/-]{0,180}$/;
 const digestPattern = /^[A-Za-z0-9_-]{1,64}$/;
 const errorNamePattern = /^[A-Za-z][A-Za-z0-9_]{0,63}$/;
 
@@ -42,44 +43,41 @@ export function serverAnalyticsEnabled(appEnv: string | undefined): boolean {
 
 export function readAppRelease(value: string | undefined): string | undefined {
   const trimmed = value?.trim();
-  if (!trimmed || !releasePattern.test(trimmed)) return undefined;
-  if (isSensitiveAnalyticsString(trimmed, "app_release")) return undefined;
+  if (!trimmed || !analyticsPropertyValueAllowed("app_release", trimmed)) {
+    return undefined;
+  }
   return trimmed;
 }
 
 export function sanitizeAnalyticsPath(value: string): string | undefined {
   const path = value.split("?")[0]?.split("#")[0] ?? "";
-  if (!pathPattern.test(path)) return undefined;
-  if (isSensitiveAnalyticsString(path, "path")) return undefined;
+  if (!analyticsPropertyValueAllowed("path", path)) return undefined;
   return path;
 }
 
 export function sanitizeAnalyticsProperties(
   properties: Record<string, boolean | null | number | string>,
-  appRelease?: string,
+  appRelease: string | undefined,
+  eventName: AnalyticsEventName,
 ): Partial<Record<AnalyticsPropertyName, boolean | null | number | string>> {
   const next: Partial<
     Record<AnalyticsPropertyName, boolean | null | number | string>
   > = {};
   for (const [key, value] of Object.entries(properties)) {
     if (!propertyNames.has(key)) continue;
+    if (!analyticsPropertyFitsEvent(eventName, key)) continue;
     const name = key as AnalyticsPropertyName;
-    if (name === "path" && typeof value === "string") {
-      const path = sanitizeAnalyticsPath(value);
-      if (path) next.path = path;
-      continue;
-    }
-    if (typeof value === "string") {
-      if (isSensitiveAnalyticsString(value, name)) continue;
-      next[name] = value;
-      continue;
-    }
-    if (typeof value === "number") {
-      if (!Number.isFinite(value)) continue;
-      next[name] = value;
-      continue;
-    }
-    next[name] = value;
+    const candidate =
+      name === "path" && typeof value === "string"
+        ? sanitizeAnalyticsPath(value)
+        : value;
+    if (candidate === undefined) continue;
+    if (!analyticsPropertyValueAllowed(name, candidate)) continue;
+    next[name] = candidate;
+  }
+  if (typeof next.currency === "string") {
+    delete next.character_count;
+    delete next.vital_value;
   }
   const release = readAppRelease(appRelease);
   if (release && next.app_release === undefined) next.app_release = release;
