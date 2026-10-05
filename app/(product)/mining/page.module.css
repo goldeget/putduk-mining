@@ -131,6 +131,19 @@
   }
 }
 
+@media (min-width: 1100px) {
+  .sceneCaption {
+    align-items: center;
+    justify-content: flex-start;
+    padding: clamp(1.5rem, 3vw, 2.75rem);
+  }
+
+  .captionCard {
+    width: min(100%, 32rem);
+    background: color-mix(in srgb, var(--surface-raised) 94%, transparent);
+  }
+}
+
 @media (max-width: 699px) {
   .facts {
     grid-template-columns: 1fr;

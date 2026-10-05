@@ -113,6 +113,12 @@
   outline-offset: 3px;
 }
 
+@media (min-width: 1100px) {
+  .master {
+    object-position: 64% 42%;
+  }
+}
+
 @media (max-width: 599px) {
   .stage[data-scene-art="ready"] {
     min-height: 34rem;

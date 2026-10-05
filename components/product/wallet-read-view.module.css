@@ -267,6 +267,23 @@
   margin-top: 0.4rem;
 }
 
+@media (max-width: 759px) {
+  .heroCard {
+    padding: 1.15rem 1.05rem 1.2rem;
+    background:
+      linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--brand-primary) 12%, transparent),
+        transparent 5.5rem
+      ),
+      var(--surface-raised);
+  }
+
+  .heroValue {
+    font-size: clamp(1.85rem, 8vw, 2.4rem);
+  }
+}
+
 /* 글자가 칸보다 커지면 한글 단어가 들어갈 너비로 쌓는다. 320px 기본 글자에서는 세 칸을 유지한다. */
 @container (max-width: 12rem) {
   .metrics {

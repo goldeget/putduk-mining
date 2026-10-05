@@ -166,11 +166,11 @@ export function WalletReadView({
       </section>
 
       <div className={styles.actions}>
-        <Link className="button button--primary" href="/wallet/withdraw">
-          출금하기
-        </Link>
-        <Link className="button button--secondary" href="/wallet/deposit">
+        <Link className="button button--primary" href="/wallet/deposit">
           입금하기
+        </Link>
+        <Link className="button button--secondary" href="/wallet/withdraw">
+          출금하기
         </Link>
       </div>
 
@@ -227,9 +227,9 @@ export function WalletReadView({
               action={<WalletReadRecovery />}
             />
           ) : ledgerState === "ready" ? (
-            <div>
+            <div className={styles.ledgerList}>
               {ledgerEntries.map((entry) => (
-                <article key={entry.id}>
+                <article className={styles.ledgerRow} key={entry.id}>
                   <span
                     className={`ledger-direction ledger-direction--${entry.direction.toLowerCase()}`}
                   >

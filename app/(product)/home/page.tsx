@@ -207,6 +207,25 @@ export default async function ProductHomePage() {
         </div>
       </section>
 
+      <nav className={styles.quickActions} aria-label="바로 가기">
+        <Link href="/mining">
+          <PutdukIcon name="mining" size={20} />
+          <span>채굴 보기</span>
+        </Link>
+        <Link href="/wallet/deposit">
+          <PutdukIcon name="wallet" size={20} />
+          <span>입금하기</span>
+        </Link>
+        <Link href="/wallet/withdraw">
+          <PutdukIcon name="arrow-right" size={20} />
+          <span>출금하기</span>
+        </Link>
+        <Link href="/mining#putduk-mining-details">
+          <PutdukIcon name="pulse" size={20} />
+          <span>채굴 내역</span>
+        </Link>
+      </nav>
+
       <section className={styles.featureBand}>
         <Surface as="article" className={styles.featureCard}>
           <span

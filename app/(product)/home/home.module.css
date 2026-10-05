@@ -208,6 +208,41 @@
   box-shadow: var(--shadow-focus);
 }
 
+.quickActions {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.quickActions a {
+  display: grid;
+  justify-items: center;
+  gap: 0.45rem;
+  min-height: 5.4rem;
+  padding: 0.85rem 0.4rem;
+  border: 1px solid
+    color-mix(in srgb, var(--brand-primary) 28%, var(--border-default));
+  border-radius: var(--radius-xl);
+  background: var(--surface-raised);
+  color: var(--text-primary);
+  font-size: 0.8125rem;
+  font-weight: 750;
+  line-height: 1.35;
+  text-align: center;
+  text-decoration: none;
+  line-break: strict;
+  word-break: keep-all;
+}
+
+.quickActions a svg {
+  color: var(--brand-primary);
+}
+
+.quickActions a:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
 .progress {
   display: block;
   overflow: hidden;
@@ -465,7 +500,7 @@
 
   .livingWorld,
   .livingOverlay {
-    min-height: 20rem;
+    min-height: 16.5rem;
   }
 
   .livingWorld::after {
@@ -489,7 +524,18 @@
   }
 
   .summary {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.55rem;
+  }
+
+  .summaryCard {
+    min-height: 8.6rem;
+    padding: 0.85rem 0.9rem;
+  }
+
+  .summaryValue {
+    margin-block: 0.45rem 0.2rem;
+    font-size: clamp(1.15rem, 4.6vw, 1.55rem);
   }
 
   .aiStrip {
