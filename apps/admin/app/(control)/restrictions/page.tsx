@@ -14,6 +14,10 @@ import {
   safeModeStateLabel,
   type SafeModeComponent,
 } from "./safe-mode-policy";
+import {
+  ADDITIONAL_REVIEW_RECORD_LABEL,
+  memberRiskSeverityLabel,
+} from "../_lib/member-record-labels";
 
 export default async function RestrictionsPage() {
   const principal = await requireAdminPage("/restrictions");
@@ -215,8 +219,8 @@ export default async function RestrictionsPage() {
           <QueueCard key={row.id} tone="caution">
             <header className="queue-card__head">
               <div>
-                <p className="eyebrow">{row.flag_code}</p>
-                <h2>{row.severity}</h2>
+                <p className="eyebrow">{ADDITIONAL_REVIEW_RECORD_LABEL}</p>
+                <h2>{memberRiskSeverityLabel(row.severity)}</h2>
               </div>
               <span>{formatKst(row.created_at)}</span>
             </header>

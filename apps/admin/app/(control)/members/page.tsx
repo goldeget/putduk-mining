@@ -28,6 +28,12 @@ import {
   resolveMiningServerDisplayRead,
 } from "./_lib/mining-funding-display";
 import { presentMemberMoneySources } from "./_lib/money-source-display";
+import {
+  ADDITIONAL_REVIEW_RECORD_LABEL,
+  memberRiskSeverityLabel,
+  memberTimelineEventLabel,
+  memberTimelineSummaryLabel,
+} from "../_lib/member-record-labels";
 
 const memberIdSchema = z.uuid();
 
@@ -652,7 +658,8 @@ export default async function MembersPage({
               {riskFlags.data.map((row) => (
                 <li key={row.id}>
                   <strong>
-                    {row.flag_code} · {row.severity}
+                    {ADDITIONAL_REVIEW_RECORD_LABEL} ·{" "}
+                    {memberRiskSeverityLabel(row.severity)}
                   </strong>
                   <span>{row.resolved_at ? "해소" : "열림"}</span>
                   <time>{formatKst(row.created_at)}</time>
@@ -683,8 +690,10 @@ export default async function MembersPage({
                 <li key={entry.id}>
                   <span />
                   <div>
-                    <strong>{entry.event_type}</strong>
-                    <p>{entry.summary_code}</p>
+                    <strong>
+                      {memberTimelineEventLabel(entry.event_type)}
+                    </strong>
+                    <p>{memberTimelineSummaryLabel(entry.summary_code)}</p>
                   </div>
                   <time dateTime={entry.occurred_at}>
                     {formatKst(entry.occurred_at)}
