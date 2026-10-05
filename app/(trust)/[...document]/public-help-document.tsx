@@ -20,7 +20,7 @@ type PublicHelpDocumentProps = {
   document: TrustDocument;
   facts: readonly PublicFact[];
   path: string;
-  structuredData: object;
+  structuredData: readonly { "@type": string }[];
 };
 
 export function PublicHelpDocument({
@@ -35,12 +35,15 @@ export function PublicHelpDocument({
       data-ui-ready={path}
       data-ui-state="loaded"
     >
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(structuredData).replace(/</g, "\\u003c"),
-        }}
-      />
+      {structuredData.map((block) => (
+        <script
+          key={block["@type"]}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(block).replace(/</g, "\\u003c"),
+          }}
+        />
+      ))}
       <header className={styles.intro}>
         <p className="eyebrow">{getTrustNavigationLabel(document.path)}</p>
         <h1>{document.title}</h1>

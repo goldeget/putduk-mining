@@ -124,7 +124,8 @@ export default async function UsdtDepositQueuePage() {
             */}
             <p className="panel-note">
               반영할 원화는 운영자가 직접 입력합니다. 자동 환율은 쓰지 않습니다.
-              반려는 아직 승인된 명령이 없어 이 화면에서 처리하지 않습니다.
+              이 화면에서는 입금 확인만 할 수 있습니다. 반려는 처리할 수
+              없습니다.
             </p>
 
             <ConfirmUsdtDepositForm depositId={row.id} />

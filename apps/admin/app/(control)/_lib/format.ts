@@ -52,6 +52,18 @@ export function withdrawalStatusLabel(status: string): string {
   }
 }
 
+/** 이미 화면에 쓰던 목적지 이름만 재사용한다. 없는 코드는 영문으로 두지 않는다. */
+export function withdrawalDestinationLabel(destinationType: string): string {
+  switch (destinationType) {
+    case "KRW_BANK":
+      return "계좌";
+    case "USDT_ADDRESS":
+      return "USDT";
+    default:
+      return "확인할 수 없어요";
+  }
+}
+
 export function depositStatusLabel(status: string): string {
   switch (status) {
     case "SUBMITTED":

@@ -60,6 +60,7 @@ const suites = [
   { name: "withdrawal_logical_lifecycle", historicalCalls: 2 },
   { name: "legacy_withdrawal_entrypoint_closure", historicalCalls: 2 },
   { name: "krw_deposit_journal_integrity", historicalCalls: 3 },
+  { name: "withdrawal_idempotency_key_reuse", historicalCalls: 4 },
 ];
 
 function requestFunction(text: string) {

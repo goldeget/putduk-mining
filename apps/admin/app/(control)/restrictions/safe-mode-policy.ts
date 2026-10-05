@@ -139,6 +139,28 @@ export function safeModeStateLabel(isPaused: boolean): "정지 중" | "정상" {
   return isPaused ? "정지 중" : "정상";
 }
 
+/**
+ * 제한 범위·출처의 승인된 한국어 표가 없다.
+ * 같은 화면의 안전 모드에 있는 가입·퍼뜩 시작만 재사용하고,
+ * 나머지 영문 코드와 0은 보여 주지 않는다.
+ */
+const unreadRestrictionLabel = "확인할 수 없어요";
+
+export function blockScopeLabel(scope: string): string {
+  if (scope === "SIGNUP" || scope === "TRIAL") {
+    return COMPONENT_LABEL[scope];
+  }
+  return unreadRestrictionLabel;
+}
+
+export function blockSourceLabel(source: string): string {
+  const text = source.trim();
+  if (text === "" || text === "0" || /^[A-Za-z0-9_]+$/.test(text)) {
+    return unreadRestrictionLabel;
+  }
+  return text;
+}
+
 export function safeModeAuditAction(
   isPaused: boolean,
 ): "SAFE_MODE_ENABLED" | "SAFE_MODE_DISABLED" {

@@ -67,7 +67,9 @@
   flex: 1 1 auto;
   overflow-y: auto;
   overscroll-behavior: contain;
-  overflow-wrap: anywhere;
+  line-break: strict;
+  overflow-wrap: normal;
+  word-break: keep-all;
 }
 
 .panel .transcript {
@@ -112,7 +114,9 @@
 .chat .message > p {
   font-size: 1rem;
   line-height: 1.7;
-  overflow-wrap: anywhere;
+  line-break: strict;
+  overflow-wrap: normal;
+  word-break: keep-all;
 }
 
 .chat .message > span {

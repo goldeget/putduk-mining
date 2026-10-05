@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 
 import { SupportRuntime } from "@/components/support/support-runtime";
 import { AnalyticsBeacon } from "@/components/system/analytics-beacon";
+import { WebVitalsBeacon } from "@/components/system/web-vitals-beacon";
 import { PwaRegistrar } from "@/components/system/pwa-registrar";
 import { ThemeRuntime } from "@/components/system/theme-runtime";
 import { putdukFont } from "@/lib/design/fonts";
@@ -124,6 +125,7 @@ export default function RootLayout({
         />
         <PwaRegistrar />
         <AnalyticsBeacon />
+        <WebVitalsBeacon />
         <ThemeRuntime />
         {children}
         <SupportRuntime memberLauncher={false} />

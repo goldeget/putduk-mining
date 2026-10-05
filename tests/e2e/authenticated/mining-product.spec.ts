@@ -22,6 +22,12 @@ const VIEWPORTS = [
 
 const OUTPUT_DIR = path.join("test-results", "mining-product");
 
+function miningNotStarted(page: Page) {
+  return page
+    .getByRole("region", { name: "현재 채굴 현황" })
+    .getByText("시작 전", { exact: true });
+}
+
 function trackHydration(page: Page) {
   const hydration: string[] = [];
   page.on("console", (message) => {
@@ -141,7 +147,7 @@ test("shows the empty session, world directory, themes, and keyboard path", asyn
   await expect(
     page.getByRole("heading", { name: "채굴 월드", level: 1 }),
   ).toBeVisible();
-  await expect(page.getByText("시작 전")).toBeVisible();
+  await expect(miningNotStarted(page)).toBeVisible();
   await expect(
     page.getByRole("heading", { name: "첫 월드에서 채굴을 시작해 보세요" }),
   ).toBeVisible();
@@ -195,7 +201,7 @@ test("shows the empty session, world directory, themes, and keyboard path", asyn
   await expect(page).toHaveURL(/\/start$/);
 
   await page.goto("/mining");
-  await expect(page.getByText("시작 전")).toBeVisible();
+  await expect(miningNotStarted(page)).toBeVisible();
 
   for (const viewport of VIEWPORTS) {
     for (const theme of ["dark", "light"] as const) {
@@ -204,7 +210,7 @@ test("shows the empty session, world directory, themes, and keyboard path", asyn
         width: viewport.width,
       });
       await applyTheme(page, theme);
-      await expect(page.getByText("시작 전")).toBeVisible();
+      await expect(miningNotStarted(page)).toBeVisible();
       await expectNoHorizontalOverflow(page);
       if (viewport.width < 980) {
         const navigation = page.locator(
@@ -414,7 +420,7 @@ test("shows an empty world directory and restores the shared worlds", async ({
     await expect(
       page.getByRole("heading", { name: "코리아", level: 3 }),
     ).toHaveCount(0);
-    await expect(page.getByText("시작 전")).toBeVisible();
+    await expect(miningNotStarted(page)).toBeVisible();
     await page.setViewportSize({ height: 844, width: 390 });
     await applyTheme(page, "dark");
     await expectNoHorizontalOverflow(page);

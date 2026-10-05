@@ -8,6 +8,7 @@ import {
   formatKst,
   formatKrw,
   shortId,
+  withdrawalDestinationLabel,
   withdrawalStatusLabel,
 } from "@/app/(control)/_lib/format";
 import { requireAdminPage } from "@/lib/auth/principal";
@@ -28,6 +29,13 @@ import {
   resolveMiningServerDisplayRead,
 } from "./_lib/mining-funding-display";
 import { presentMemberMoneySources } from "./_lib/money-source-display";
+import {
+  ADDITIONAL_REVIEW_RECORD_LABEL,
+  memberRiskSeverityLabel,
+  memberTimelineEventLabel,
+  memberTimelineSummaryLabel,
+} from "../_lib/member-record-labels";
+import { kycRiskLabel, kycStatusLabel } from "../kyc/labels";
 
 const memberIdSchema = z.uuid();
 
@@ -545,11 +553,11 @@ export default async function MembersPage({
             <dl>
               <div>
                 <dt>상태</dt>
-                <dd>{kyc.status}</dd>
+                <dd>{kycStatusLabel(kyc.status)}</dd>
               </div>
               <div>
                 <dt>위험 수준</dt>
-                <dd>{kyc.risk_level}</dd>
+                <dd>{kycRiskLabel(kyc.risk_level)}</dd>
               </div>
               <div>
                 <dt>접수</dt>
@@ -605,12 +613,8 @@ export default async function MembersPage({
                   {withdrawalRows.data.map((row) => (
                     <li key={row.id}>
                       <strong>
-                        {row.destination_type === "KRW_BANK"
-                          ? "계좌"
-                          : row.destination_type === "USDT_ADDRESS"
-                            ? "USDT"
-                            : row.destination_type}{" "}
-                        · {withdrawalStatusLabel(row.status)}
+                        {withdrawalDestinationLabel(row.destination_type)} ·{" "}
+                        {withdrawalStatusLabel(row.status)}
                       </strong>
                       <span>{formatKrw(row.amount_atomic)}</span>
                       <time>{formatKst(row.requested_at)}</time>
@@ -652,7 +656,8 @@ export default async function MembersPage({
               {riskFlags.data.map((row) => (
                 <li key={row.id}>
                   <strong>
-                    {row.flag_code} · {row.severity}
+                    {ADDITIONAL_REVIEW_RECORD_LABEL} ·{" "}
+                    {memberRiskSeverityLabel(row.severity)}
                   </strong>
                   <span>{row.resolved_at ? "해소" : "열림"}</span>
                   <time>{formatKst(row.created_at)}</time>
@@ -683,8 +688,10 @@ export default async function MembersPage({
                 <li key={entry.id}>
                   <span />
                   <div>
-                    <strong>{entry.event_type}</strong>
-                    <p>{entry.summary_code}</p>
+                    <strong>
+                      {memberTimelineEventLabel(entry.event_type)}
+                    </strong>
+                    <p>{memberTimelineSummaryLabel(entry.summary_code)}</p>
                   </div>
                   <time dateTime={entry.occurred_at}>
                     {formatKst(entry.occurred_at)}

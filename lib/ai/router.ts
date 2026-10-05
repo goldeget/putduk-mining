@@ -110,9 +110,15 @@ const TOOL_RULES: readonly ToolRule[] = [
 
 const STATIC_RULES: readonly StaticRule[] = [
   {
+    routeKey: "start_welcome_cap",
+    pattern:
+      /(환영\s*보상|(?:체험|start|스타트).{0,24}5[,.]?000|5[,.]?000\s*원.{0,24}(?:체험|환영|스타트)|입금하지\s*않아도|입금\s*없이|사전\s*입금)/i,
+    factKeys: ["START_WELCOME_CAP", "TRIAL_LEDGER"],
+  },
+  {
     routeKey: "trial_separation",
     pattern: /(체험|start).*(실제|지갑|잔액|전환|합쳐|섞)/i,
-    factKeys: ["TRIAL_LEDGER"],
+    factKeys: ["TRIAL_LEDGER", "START_WELCOME_CAP"],
   },
   {
     routeKey: "trial_duration",

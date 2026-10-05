@@ -13,10 +13,13 @@ html {
 }
 body {
   margin: 0;
-  min-width: 320px;
-  overflow-wrap: anywhere;
+  /* CSS zoom은 고정 px를 키운다. 320px 바닥이 뷰포트를 넘지 않게 한다. */
+  min-width: min(320px, 100%);
   background: var(--base);
   color: var(--ink);
+  line-break: strict;
+  overflow-wrap: normal;
+  word-break: keep-all;
 }
 button,
 input {
@@ -220,11 +223,14 @@ input:focus-visible {
   min-height: 100svh;
   display: grid;
   grid-template-columns: 250px minmax(0, 1fr);
+  /* viewport-fit: cover. 로그인 후 셸은 노치와 홈 표시만큼 더 들여 쓰고, 16px 가장자리는 레일과 본문 패딩이 유지한다. */
+  padding: env(safe-area-inset-top) env(safe-area-inset-right)
+    env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
 .control-rail {
   position: sticky;
-  top: 0;
-  height: 100svh;
+  top: env(safe-area-inset-top);
+  height: calc(100svh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
   display: flex;
   flex-direction: column;
   overflow-y: auto;
@@ -1012,6 +1018,8 @@ input:focus-visible {
 @media (max-width: 760px) {
   .control-shell {
     display: block;
+    /* 본문을 위로 올려도 세션 종료가 화면 아래에 남는다. */
+    padding-bottom: calc(13rem + env(safe-area-inset-bottom));
   }
   .control-rail {
     position: static;
@@ -1024,23 +1032,33 @@ input:focus-visible {
     padding: 16px;
   }
   .brand-lockup--rail {
+    grid-column: 1 / -1;
+    grid-row: 1;
     margin: 0;
   }
   .control-rail nav {
     grid-column: 1 / -1;
-    display: flex;
-    flex: initial;
+    grid-row: 3;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
     min-width: 0;
     min-height: 0;
     max-width: 100%;
     margin-top: 16px;
     margin-bottom: 0;
-    overflow-x: auto;
+    overflow: visible;
   }
-  /* 좁은 화면에서도 세션 종료를 숨기지 않는다. */
+  /* 메뉴 11개는 줄바꿈한 채 두고, 세션 종료는 화면 아래에 고정한다. */
   .operator-card {
-    grid-column: 1 / -1;
-    margin-top: 12px;
+    position: fixed;
+    z-index: 20;
+    right: max(16px, env(safe-area-inset-right));
+    bottom: max(12px, env(safe-area-inset-bottom));
+    left: max(16px, env(safe-area-inset-left));
+    margin-top: 0;
+  }
+  .operator-card form button {
+    min-height: 44px;
   }
   .control-topbar {
     display: flex;
@@ -1082,8 +1100,14 @@ input:focus-visible {
   .evidence-grid {
     grid-template-columns: 1fr;
   }
+  /* 가로로 밀지 않고 줄바꿈해 목적지를 화면 안에 둔다. */
   .control-rail nav a {
-    white-space: nowrap;
+    min-width: 0;
+    max-width: 100%;
+    white-space: normal;
+    line-break: strict;
+    overflow-wrap: normal;
+    word-break: keep-all;
   }
   .pulse-metrics {
     grid-template-columns: 1fr;

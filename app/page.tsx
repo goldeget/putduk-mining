@@ -1,6 +1,8 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 
 import { BrandMark } from "@/components/brand/brand-mark";
+import { publicLanguageAlternates } from "@/lib/trust/public-discovery";
 import { PutdukIcon } from "@/components/icons/putduk-icon";
 import { ThemeControl } from "@/components/system/theme-control";
 
@@ -13,6 +15,13 @@ const worlds = [
   { code: "AG", label: "은", state: "은빛 월드", tone: "silver" },
   { code: "CX", label: "디지털 자산", state: "디지털 월드", tone: "crypto" },
 ] as const;
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: "/",
+    languages: publicLanguageAlternates("/"),
+  },
+};
 
 const journey = [
   {
