@@ -48,7 +48,8 @@ describe("admin USDT deposit queue — canonical model", () => {
   });
 
   it("does not invent REJECTED monetary transition UI", () => {
-    expect(pageSource).toMatch(/반려는 아직 승인된 명령/);
+    expect(pageSource).toMatch(/이 화면에서는 입금 확인만 할 수 있습니다/);
+    expect(pageSource).toMatch(/반려는 처리할 수\s+없습니다/);
     expect(pageSource).not.toContain("reject_usdt_manual_deposit");
     expect(actionsSource).not.toContain("reject_usdt");
     expect(formSource).not.toContain("REJECT");
