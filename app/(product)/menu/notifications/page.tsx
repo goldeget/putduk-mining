@@ -32,7 +32,7 @@ export default async function NotificationSettingsPage() {
     >
       <Link className={menuStyles.backLink} href="/menu">
         <PutdukIcon name="arrow-right" size={16} aria-hidden="true" />
-        <span>내 퍼뜩으로</span>
+        <span>더보기로</span>
       </Link>
 
       <PageHeading

@@ -24,6 +24,7 @@ import {
   requireWithdrawalDataKey,
 } from "./helpers/journey";
 import { requestWelcomeWithdrawalFromUi } from "./helpers/member-session";
+import { expectSettledRoute } from "./helpers/settled-route";
 
 test.describe("admin browser KRW withdrawal", () => {
   test.beforeAll(() => {
@@ -145,7 +146,13 @@ test.describe("admin browser KRW withdrawal", () => {
     await adminContext.close();
 
     await page.goto("/wallet/withdraw");
-    await expect(page.getByText("출금 처리가 완료됐어요.")).toBeVisible();
+    // hidden id="S:*"가 같은 완료 문구를 복제한다. 정착된 출금 화면에서 보이는 문구는 하나여야 한다.
+    const withdraw = await expectSettledRoute(page, "/wallet/withdraw");
+    const completed = withdraw
+      .getByText("출금 처리가 완료됐어요.")
+      .filter({ visible: true });
+    await expect(completed).toHaveCount(1);
+    await expect(completed).toBeVisible();
     await expect(page.getByText(/가상 채굴/)).toHaveCount(0);
   });
 });

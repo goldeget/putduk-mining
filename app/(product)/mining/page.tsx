@@ -65,7 +65,10 @@ export default async function MiningPage() {
   const parsedDisplay = displayResponse.error
     ? null
     : parseMiningServerDisplay(displayResponse.data);
-  const displayError = Boolean(displayResponse.error) || !parsedDisplay;
+  // 본문이 없는 성공은 빈 상태다. 본문이 있는데 읽지 못할 때만 오류다.
+  const displayUnreadable =
+    displayResponse.data != null && !displayResponse.error && !parsedDisplay;
+  const displayError = Boolean(displayResponse.error) || displayUnreadable;
   const displayView = parsedDisplay
     ? presentMiningServerDisplay(parsedDisplay)
     : null;
@@ -108,13 +111,13 @@ export default async function MiningPage() {
           <MiningAmountBoard {...amountBoard} placement="stack" />
         </>
       ) : (
-        <MiningLiveStage
-          scene={resolveDefaultStageInput()}
-          running={isConfirmedMiningRunning(currentSession?.status)}
-        >
-          <div className={miningStyles.hud}>
-            <div className={miningStyles.hudTop}>
-              <header className={miningStyles.heading}>
+        <>
+          <MiningLiveStage
+            scene={resolveDefaultStageInput()}
+            running={isConfirmedMiningRunning(currentSession?.status)}
+          >
+            <div className={miningStyles.sceneCaption}>
+              <header className={miningStyles.captionCard}>
                 <div className={miningStyles.meta}>
                   {currentStatus ? (
                     <ProductStatusPill
@@ -124,9 +127,6 @@ export default async function MiningPage() {
                   ) : (
                     <ProductStatusPill label="시작 전" tone="neutral" />
                   )}
-                  {currentSession ? (
-                    <span className="eyebrow">{currentSession.world_code}</span>
-                  ) : null}
                 </div>
                 <h2 id="world-hero-title">
                   {currentSession
@@ -139,40 +139,42 @@ export default async function MiningPage() {
                     : "PUTDUK START로 첫 채굴을 시작해 보세요."}
                 </p>
               </header>
-              <MiningAmountBoard {...amountBoard} placement="lead" />
             </div>
-            <div className={miningStyles.hudBottom}>
-              {currentSession ? (
-                <div className={miningStyles.facts}>
-                  <span>
-                    정산 전 경과{" "}
-                    <strong>
-                      {formatMiningElapsed(currentSession.unsettled_seconds)}
-                    </strong>
-                  </span>
-                  <span>
-                    활성 장비{" "}
-                    <strong>{currentSession.active_equipment_count}개</strong>
-                  </span>
-                  <span>
-                    최근 정산{" "}
-                    <strong>
-                      {formatMiningClock(currentSession.last_settled_at)}
-                    </strong>
-                  </span>
-                </div>
-              ) : (
-                <div className={miningStyles.actions}>
-                  <Link className="button button--primary" href="/start">
-                    PUTDUK START 확인
-                    <PutdukIcon name="arrow-right" size={18} />
-                  </Link>
-                </div>
-              )}
+          </MiningLiveStage>
+          <section className={miningStyles.below} aria-label="채굴 현황">
+            <div className={miningStyles.metrics}>
+              <MiningAmountBoard {...amountBoard} placement="lead" />
               <MiningAmountBoard {...amountBoard} placement="follow" />
             </div>
-          </div>
-        </MiningLiveStage>
+            {currentSession ? (
+              <div className={miningStyles.facts}>
+                <span>
+                  정산 전 경과{" "}
+                  <strong>
+                    {formatMiningElapsed(currentSession.unsettled_seconds)}
+                  </strong>
+                </span>
+                <span>
+                  활성 장비{" "}
+                  <strong>{currentSession.active_equipment_count}개</strong>
+                </span>
+                <span>
+                  최근 정산{" "}
+                  <strong>
+                    {formatMiningClock(currentSession.last_settled_at)}
+                  </strong>
+                </span>
+              </div>
+            ) : (
+              <div className={miningStyles.actions}>
+                <Link className="button button--primary" href="/start">
+                  PUTDUK START 확인
+                  <PutdukIcon name="arrow-right" size={18} />
+                </Link>
+              </div>
+            )}
+          </section>
+        </>
       )}
 
       <details className={miningStyles.details} id="putduk-mining-details">

@@ -21,6 +21,17 @@
   gap: 0.35rem 1rem;
 }
 
+.board {
+  width: min(100% - 2rem, 920px);
+  margin-inline: auto;
+}
+
+.board > :global(.shell) {
+  width: auto;
+  max-width: none;
+  margin-inline: 0;
+}
+
 .nav {
   display: flex;
   flex-wrap: wrap;
@@ -51,9 +62,9 @@
 .page :global(.support-center__hero),
 .page :global(.support-center__guide),
 .page :global(.support-center__notice) {
-  width: min(100% - 2rem, 860px);
+  width: auto;
   max-width: none;
-  margin-inline: auto;
+  margin-inline: 0;
 }
 
 .page :global(.support-center__hero) h1 {
@@ -113,4 +124,87 @@
   grid-template-columns: auto minmax(0, 1fr);
   gap: 0.75rem 0.9rem;
   align-items: start;
+}
+
+@media (min-width: 980px) {
+  .board {
+    display: grid;
+    grid-template-columns: minmax(16rem, 0.86fr) minmax(0, 1.14fr);
+    gap: 1.25rem 1.75rem;
+    align-items: start;
+    width: min(100% - 4rem, 1120px);
+  }
+
+  .board :global(.support-center__guide) {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+}
+
+@media (max-width: 759px) {
+  .page :global(.site-header) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "brand tools"
+      "nav nav";
+    align-items: center;
+    gap: 0.25rem 0.5rem;
+  }
+
+  .page :global(.site-header) > :global(.brand-lockup) {
+    grid-area: brand;
+    min-width: 0;
+  }
+
+  .page :global(.site-header .brand-lockup small) {
+    display: none;
+  }
+
+  .page :global(.support-center__login) {
+    flex-shrink: 0;
+  }
+
+  .page :global(.site-header__tools) {
+    grid-area: tools;
+    min-width: 0;
+    justify-self: end;
+    gap: 0.35rem;
+  }
+
+  .page :global(.theme-control select) {
+    max-width: 5.4rem;
+    padding-right: 1.15rem;
+    font-size: 0.875rem;
+  }
+
+  .nav {
+    grid-area: nav;
+    flex-wrap: nowrap;
+    gap: 0.4rem;
+    max-width: 100%;
+    min-width: 0;
+    margin-inline: 0;
+    padding-bottom: 0.2rem;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity;
+  }
+
+  .nav a {
+    flex: 0 0 auto;
+    padding-inline: 0.8rem;
+    scroll-snap-align: start;
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-full);
+    white-space: nowrap;
+  }
+
+  .page :global(.support-center__hero) h1 {
+    font-size: 1.65rem;
+  }
+
+  .heading {
+    max-width: 11em;
+  }
 }

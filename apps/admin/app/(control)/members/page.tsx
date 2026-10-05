@@ -23,7 +23,10 @@ import {
   presentMemberLifecycle,
   presentMemberProfile,
 } from "./_lib/member-state-display";
-import { presentAdminMiningFunding } from "./_lib/mining-funding-display";
+import {
+  presentAdminMiningFunding,
+  resolveMiningServerDisplayRead,
+} from "./_lib/mining-funding-display";
 import { presentMemberMoneySources } from "./_lib/money-source-display";
 
 const memberIdSchema = z.uuid();
@@ -298,7 +301,17 @@ export default async function MembersPage({
   const lifecycleDisplay = presentMemberLifecycle(lifecycle);
   const profileDisplay = presentMemberProfile(profile);
   const moneyDisplay = presentMemberMoneySources(moneySources, userId);
-  const fundingDisplay = presentAdminMiningFunding(miningFunding);
+  const principalLots =
+    miningFunding.error || miningFunding.data == null
+      ? await db
+          .from("funding_principal_lots")
+          .select("id")
+          .eq("user_id", userId)
+          .limit(1)
+      : null;
+  const fundingDisplay = presentAdminMiningFunding(
+    resolveMiningServerDisplayRead(miningFunding, principalLots),
+  );
 
   return (
     <div
@@ -433,6 +446,20 @@ export default async function MembersPage({
             </dl>
           )}
           <p className="panel-note">용량과 속도는 원금이 아니에요.</p>
+          <h3>채굴 주기</h3>
+          {fundingDisplay.cycleRows.length === 0 ? (
+            <p className="panel-note">채굴 주기는 아직 없어요.</p>
+          ) : (
+            <dl className={styles.sourceStats}>
+              {fundingDisplay.cycleRows.map((row) => (
+                <div key={row.label}>
+                  <dt>{row.label}</dt>
+                  <dd>{row.value}</dd>
+                </div>
+              ))}
+            </dl>
+          )}
+          <p className="panel-note">주기는 원금이 아니에요.</p>
           <p className="panel-note">
             채굴 수익과 보너스는 원금에 포함하지 않아요.
           </p>

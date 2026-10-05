@@ -112,7 +112,7 @@ test("unsigned visitors keep menu return paths", async ({ page }) => {
   await expect(page).toHaveURL(/\/login\?next=%2Fmenu$/);
   await expect(page.locator('input[name="next"]')).toHaveValue("/menu");
   await expect(
-    page.getByRole("heading", { name: "내 퍼뜩", level: 1 }),
+    page.getByRole("heading", { name: "더보기", level: 1 }),
   ).toHaveCount(0);
 
   await page.goto("/menu/account");
@@ -138,11 +138,11 @@ test("menu hub, account, and settings cover states and navigation", async ({
   await dismissGuidedQuestIfPresent(page);
 
   await expect(
-    page.getByRole("heading", { name: "내 퍼뜩", level: 1 }),
+    page.getByRole("heading", { name: "더보기", level: 1 }),
   ).toBeVisible();
   await expectKoreanSafe(page);
 
-  const menuNav = page.getByRole("navigation", { name: "내 퍼뜩 메뉴" });
+  const menuNav = page.getByRole("navigation", { name: "더보기 메뉴" });
   const primaryNavigation = page.locator("nav.product-navigation:visible");
   await expect(primaryNavigation).toHaveCount(1);
   await expect(primaryNavigation.getByRole("link")).toHaveText([
@@ -159,16 +159,16 @@ test("menu hub, account, and settings cover states and navigation", async ({
     .locator("header.product-header")
     .getByRole("link", { name: "알림 센터", exact: true });
   const menuNotificationLink = menuNav.locator('a[href="/notifications"]');
-  await expect(menuNav.getByRole("link", { name: /계정 관리/ })).toBeVisible();
+  await expect(menuNav.getByRole("link", { name: /내 정보/ })).toBeVisible();
   await expect(headerNotificationLink).toBeVisible();
-  await expect(menuNotificationLink).toHaveAccessibleName(/알림 센터/);
+  await expect(menuNotificationLink).toHaveAccessibleName(/^알림\s/);
   await expect(menuNav.getByRole("link", { name: /알림 설정/ })).toBeVisible();
   await expect(menuNav.getByRole("link", { name: /퍼뜩 AI/ })).toBeVisible();
 
-  await menuNav.getByRole("link", { name: /계정 관리/ }).click();
+  await menuNav.getByRole("link", { name: /내 정보/ }).click();
   await expect(page).toHaveURL(/\/menu\/account$/);
   await expect(
-    page.getByRole("heading", { name: "내 계정", level: 1 }),
+    page.getByRole("heading", { name: "내 정보", level: 1 }),
   ).toBeVisible();
   await expect(page.getByRole("region", { name: "계정 정보" })).toBeVisible();
   await expect(page.getByText("로그인 아이디")).toBeVisible();
@@ -186,7 +186,7 @@ test("menu hub, account, and settings cover states and navigation", async ({
     globalLogout.getByRole("button", { name: "모든 기기에서 로그아웃" }),
   ).toBeVisible();
 
-  await page.getByRole("link", { name: "내 퍼뜩으로" }).click();
+  await page.getByRole("link", { name: "더보기로" }).click();
   await expect(page).toHaveURL(/\/menu$/);
 
   await menuNav.getByRole("link", { name: /알림 설정/ }).click();
@@ -215,7 +215,7 @@ test("menu account keyboard focus, themes, and viewports", async ({ page }) => {
   await dismissGuidedQuestIfPresent(page);
 
   await expect(
-    page.getByRole("heading", { name: "내 계정", level: 1 }),
+    page.getByRole("heading", { name: "내 정보", level: 1 }),
   ).toBeVisible();
 
   const localButton = page.getByRole("button", {
@@ -233,7 +233,7 @@ test("menu account keyboard focus, themes, and viewports", async ({ page }) => {
   for (const theme of ["light", "dark"] as const) {
     await applyTheme(page, theme);
     await expect(
-      page.getByRole("heading", { name: "내 계정", level: 1 }),
+      page.getByRole("heading", { name: "내 정보", level: 1 }),
     ).toBeVisible();
     await shoot(page, `account-${theme}-1440.png`);
   }
@@ -246,14 +246,14 @@ test("menu account keyboard focus, themes, and viewports", async ({ page }) => {
     await page.goto("/menu");
     await dismissGuidedQuestIfPresent(page);
     await expect(
-      page.getByRole("heading", { name: "내 퍼뜩", level: 1 }),
+      page.getByRole("heading", { name: "더보기", level: 1 }),
     ).toBeVisible();
     await expectNoHorizontalOverflow(page);
     await shoot(page, `menu-hub-${viewport.name}.png`);
 
     await page.goto("/menu/account");
     await expect(
-      page.getByRole("heading", { name: "내 계정", level: 1 }),
+      page.getByRole("heading", { name: "내 정보", level: 1 }),
     ).toBeVisible();
     await expectNoHorizontalOverflow(page);
     await shoot(page, `menu-account-${viewport.name}.png`);

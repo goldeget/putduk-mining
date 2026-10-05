@@ -32,12 +32,12 @@ export default async function AccountPage({
     <div className={menuStyles.accountPage}>
       <Link className={menuStyles.backLink} href="/menu">
         <PutdukIcon name="arrow-right" size={16} aria-hidden="true" />
-        <span>내 퍼뜩으로</span>
+        <span>더보기로</span>
       </Link>
 
       <PageHeading
-        eyebrow="계정"
-        title="내 계정"
+        eyebrow="더보기"
+        title="내 정보"
         lead="로그인 정보와 기기 로그아웃을 관리해요."
       />
 

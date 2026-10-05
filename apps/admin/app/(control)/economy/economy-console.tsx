@@ -20,6 +20,7 @@ import {
   type EconomyOperation,
   type EconomySettings,
 } from "../../../lib/economy/types";
+import { PolicyReadPanel } from "./policy-read-panel";
 import styles from "./economy.module.css";
 
 const campaignLabels: Record<keyof EconomySettings["campaign"], string> = {
@@ -502,6 +503,7 @@ export function EconomyConsole({
           </ul>
         </section>
       </div>
+      <PolicyReadPanel view={view} />
       <section className={styles.panel} aria-label="새 정책 버전 작성">
         <div className={styles.panelHead}>
           <div>

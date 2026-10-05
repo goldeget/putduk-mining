@@ -1,6 +1,10 @@
 import "server-only";
 
 import type { VerifiedIdentity } from "@/lib/auth/session";
+import {
+  isAbsentPrincipalFailure,
+  resolveMiningServerDisplayRead,
+} from "@/lib/product/mining-server-display";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 /**
@@ -16,7 +20,21 @@ export async function readOwnMiningServerDisplay(identity: VerifiedIdentity) {
     };
   }
 
-  return createSupabaseAdminClient().rpc("read_own_mining_server_display", {
+  const client = createSupabaseAdminClient();
+  const display = await client.rpc("read_own_mining_server_display", {
     p_user_id: sessionUserId,
   });
+  if (!display.error && display.data != null) {
+    return display;
+  }
+  if (!display.error || isAbsentPrincipalFailure(display.error)) {
+    return resolveMiningServerDisplayRead(display, null);
+  }
+
+  const principalLots = await client
+    .from("funding_principal_lots")
+    .select("id")
+    .eq("user_id", sessionUserId)
+    .limit(1);
+  return resolveMiningServerDisplayRead(display, principalLots);
 }

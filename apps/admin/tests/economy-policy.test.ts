@@ -24,6 +24,7 @@ import {
   createEconomyStateHandler,
   type EconomyDependencies,
 } from "../lib/economy/handler";
+import { presentEconomyPolicyRead } from "../lib/economy/policy-read-view";
 import { economyConsoleView, parseEconomyState } from "../lib/economy/state";
 import type { EconomyState } from "../lib/economy/types";
 import { EconomyConsole } from "../app/(control)/economy/economy-console";
@@ -323,8 +324,71 @@ describe("admin economic policy authority and exact input", () => {
     expect(markup).toContain('aria-expanded="false"');
     expect(markup).toContain('role="status"');
     expect(markup).toContain("새 버전 작성");
+    expect(markup).toContain("저장된 정책 값");
+    expect(markup).toContain("아직 연결되지 않음");
+    expect(markup).toContain("유지 혜택은 원금이 아니에요.");
+    expect(markup).toContain("상한 없음");
+    const saved = markup.slice(
+      markup.indexOf("저장된 정책 값"),
+      markup.indexOf("새 정책 버전 작성"),
+    );
+    expect(saved).not.toContain("<input");
+    expect(saved).not.toContain("<textarea");
+    expect(saved).not.toContain("manifestText");
+    expect(saved).not.toContain("configText");
+    expect(saved).not.toContain("POLICY_CONSUMER_NOT_ENABLED");
     expect(markup).not.toContain("manifestText");
     expect(markup).not.toContain("PRODUCT COMPLETE");
+  });
+  it("shows saved policy values without turning a missing cap or benefit into principal", () => {
+    const view = economyConsoleView(parseEconomyState(rawState()));
+    const read = presentEconomyPolicyRead(view);
+    const openTier = read.tiers[0];
+    const uncapped = read.tiers.at(-1);
+    expect(openTier?.items).toEqual(
+      expect.arrayContaining([
+        { label: "원금 하한", value: "100,000원" },
+        { label: "유지 혜택", value: "15.00%" },
+      ]),
+    );
+    expect(uncapped?.items).toContainEqual({
+      label: "원금 상한",
+      value: "상한 없음",
+    });
+    expect(uncapped?.items.map((item) => item.value)).not.toContain("0원");
+    expect(read.tierNote).toBe("유지 혜택은 원금이 아니에요.");
+    expect(
+      read.tiers
+        .flatMap((tier) => tier.items)
+        .find((item) => item.label === "유지 혜택")?.value,
+    ).not.toMatch(/원$/);
+    const fees = read.groups.find((group) => group.title === "작업 수수료");
+    expect(fees?.items.map((item) => item.value)).toEqual([
+      "0원",
+      "0원",
+      "0원",
+      "0원",
+      "0원",
+    ]);
+    expect(read.status).toEqual(
+      expect.arrayContaining([
+        { label: "정산 연결", value: "아직 연결되지 않음" },
+      ]),
+    );
+    const missingPublication = presentEconomyPolicyRead({
+      ...view,
+      latestPublishedStart: null,
+      runtimeStatus: "OTHER" as never,
+      serverNow: "not-a-time",
+    });
+    expect(missingPublication.status).toEqual([
+      { label: "정산 연결", value: "확인할 수 없어요" },
+      { label: "최근 발행 적용 시간", value: "아직 없어요" },
+      { label: "조회 시각", value: "확인할 수 없어요" },
+    ]);
+    expect(JSON.stringify(read)).not.toMatch(
+      /configText|manifestText|select /i,
+    );
   });
   it("rejects fresh authorization and AAL denial before any policy mutation", async () => {
     const denied = dependencies([]);

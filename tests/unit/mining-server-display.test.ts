@@ -3,10 +3,12 @@ import { readFileSync } from "node:fs";
 import { describe, expect, test } from "vitest";
 
 import {
+  emptyMiningServerDisplay,
   formatMiningMicroKrw,
   formatMiningSpeedBps,
   parseMiningServerDisplay,
   presentMiningServerDisplay,
+  resolveMiningServerDisplayRead,
   type MiningServerDisplay,
 } from "@/lib/product/mining-server-display";
 
@@ -100,12 +102,84 @@ describe("presentMiningServerDisplay", () => {
       "utf8",
     );
     expect(page).toContain("readOwnMiningServerDisplay(identity)");
+    expect(page).toContain("displayResponse.data != null");
+    expect(page).not.toContain(
+      "const displayError = Boolean(displayResponse.error) || !parsedDisplay",
+    );
     expect(page).not.toContain("identity.supabase.rpc");
     expect(reader).toContain('import "server-only"');
     expect(reader).toContain("createSupabaseAdminClient()");
     expect(reader).toContain("p_user_id: sessionUserId");
     expect(reader).toContain("const sessionUserId = identity.userId");
+    expect(reader).toContain('from("funding_principal_lots")');
+    expect(reader).toContain('.select("id")');
+    expect(reader).toContain("resolveMiningServerDisplayRead");
     expect(reader).not.toContain("requestedUserId");
+    expect(reader).not.toContain('eligible_principal_micro_krw: "0"');
+  });
+
+  test("a missing principal row is an empty display, not an error or zero", () => {
+    expect(emptyMiningServerDisplay.eligible_principal_micro_krw).toBeNull();
+    expect(emptyMiningServerDisplay.pending_micro_krw).toBeNull();
+    expect(
+      resolveMiningServerDisplayRead({ data: null, error: null }, null),
+    ).toEqual({ data: emptyMiningServerDisplay, error: null });
+    expect(
+      resolveMiningServerDisplayRead(
+        {
+          data: null,
+          error: { message: "FUNDING_PRINCIPAL_SUBJECT_NOT_FOUND" },
+        },
+        null,
+      ),
+    ).toEqual({ data: emptyMiningServerDisplay, error: null });
+    expect(
+      resolveMiningServerDisplayRead(
+        {
+          data: null,
+          error: {
+            code: "PGRST202",
+            message:
+              "Could not find the function public.read_own_mining_server_display(p_user_id) in the schema cache",
+          },
+        },
+        { data: [], error: null },
+      ),
+    ).toEqual({ data: emptyMiningServerDisplay, error: null });
+    expect(presentMiningServerDisplay(emptyMiningServerDisplay)).toEqual({
+      state: "empty",
+    });
+  });
+
+  test("keeps a real read failure when a principal row exists", () => {
+    const failure = {
+      data: null,
+      error: { code: "42501", message: "permission denied" },
+    };
+    expect(
+      resolveMiningServerDisplayRead(failure, {
+        data: [{ id: "lot-1" }],
+        error: null,
+      }),
+    ).toBe(failure);
+    expect(
+      resolveMiningServerDisplayRead(failure, {
+        data: null,
+        error: { message: "lots unavailable" },
+      }),
+    ).toBe(failure);
+    const zero = resolveMiningServerDisplayRead(
+      {
+        data: { ...readyDisplay, eligible_principal_micro_krw: "0" },
+        error: null,
+      },
+      { data: [], error: null },
+    );
+    expect(zero.error).toBeNull();
+    expect(zero.data).toMatchObject({
+      available: true,
+      eligible_principal_micro_krw: "0",
+    });
   });
 
   test("rejects internal columns before they can reach the screen", () => {

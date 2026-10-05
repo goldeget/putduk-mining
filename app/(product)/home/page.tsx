@@ -139,16 +139,6 @@ export default async function ProductHomePage() {
                 </Link>
               )}
             </header>
-            <div className={styles.livingStatus}>
-              <span
-                className={`${styles.liveStatus}${world.needsRequery ? ` ${styles.liveStatusUnavailable}` : ""}`}
-              >
-                <i className={styles.liveStatusDot} aria-hidden="true" />
-                {world.liveLabel}
-              </span>
-              <h2 className={styles.livingStatusTitle}>{world.worldTitle}</h2>
-              <p className={styles.livingStatusLead}>{world.worldLead}</p>
-            </div>
           </div>
         </Surface>
 
@@ -217,7 +207,18 @@ export default async function ProductHomePage() {
         </div>
       </section>
 
-      <section className={styles.lower}>
+      <section className={styles.featureBand}>
+        <Surface as="article" className={styles.featureCard}>
+          <span
+            className={`${styles.liveStatus}${world.needsRequery ? ` ${styles.liveStatusUnavailable}` : ""}`}
+          >
+            <i className={styles.liveStatusDot} aria-hidden="true" />
+            {world.liveLabel}
+          </span>
+          <h2 className={styles.featureTitle}>{world.worldTitle}</h2>
+          <p className={styles.featureLead}>{world.worldLead}</p>
+        </Surface>
+
         <div className={styles.notifications}>
           <header className={styles.notificationsHeader}>
             <div>
@@ -279,18 +280,21 @@ export default async function ProductHomePage() {
             </div>
           )}
         </div>
-        <Surface as="aside" className={styles.aiCard} tone="raised">
+      </section>
+
+      <Surface as="aside" className={styles.aiStrip} tone="raised">
+        <span className={styles.aiMark}>
           <PutdukIcon name="ai" size={26} />
+        </span>
+        <span className={styles.aiCopy}>
           <p className="eyebrow">퍼뜩 AI</p>
           <h2>채굴과 지갑, 궁금한 점을 물어보세요.</h2>
-          <p className={styles.aiCardLead}>
-            확인할 수 없는 금액은 추측하지 않습니다.
-          </p>
-          <Link className="button button--secondary" href="/ai">
-            퍼뜩 AI 열기
-          </Link>
-        </Surface>
-      </section>
+          <p>확인할 수 없는 금액은 추측하지 않습니다.</p>
+        </span>
+        <Link className="button button--secondary" href="/ai">
+          퍼뜩 AI 열기
+        </Link>
+      </Surface>
 
       {world.notStarted ? (
         <StatePanel
