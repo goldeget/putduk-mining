@@ -17,6 +17,8 @@ import {
   localizePublicWorldNames,
 } from "@/lib/trust/public-presentation";
 
+import { PublicHelpDocument } from "./public-help-document";
+
 type PageProps = {
   params: Promise<{ document: string[] }>;
 };
@@ -82,6 +84,17 @@ export default async function TrustDocumentPage({ params }: PageProps) {
     },
     mainEntityOfPage: `https://mining.putduk.com${document.path}`,
   };
+
+  if (path === "/about" || path === "/faq" || path === "/how-it-works") {
+    return (
+      <PublicHelpDocument
+        document={document}
+        facts={facts}
+        path={path}
+        structuredData={structuredData}
+      />
+    );
+  }
 
   return (
     <article

@@ -4,6 +4,8 @@ import { BrandMark } from "@/components/brand/brand-mark";
 import { PutdukIcon } from "@/components/icons/putduk-icon";
 import { ThemeControl } from "@/components/system/theme-control";
 
+import styles from "./public-home.module.css";
+
 const worlds = [
   { code: "KR", label: "한국", state: "첫 여정", tone: "korea" },
   { code: "US", label: "미국", state: "확장 월드", tone: "usa" },
@@ -48,7 +50,11 @@ const structuredData = {
 
 export default function HomePage() {
   return (
-    <main className="consumer-landing" data-ui-ready="/" data-ui-state="loaded">
+    <main
+      className={`consumer-landing ${styles.home}`}
+      data-ui-ready="/"
+      data-ui-state="loaded"
+    >
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
@@ -63,9 +69,10 @@ export default function HomePage() {
           </span>
         </Link>
         <nav className="landing-header__nav" aria-label="공개 메뉴">
-          <a href="#start">PUTDUK START</a>
-          <a href="#worlds">월드</a>
-          <Link href="/verification">검증 원칙</Link>
+          <Link href="/about">소개</Link>
+          <Link href="/how-it-works">이용 방법</Link>
+          <Link href="/faq">자주 묻는 질문</Link>
+          <Link href="/support">고객지원</Link>
         </nav>
         <div className="site-header__tools">
           <ThemeControl />
@@ -80,6 +87,13 @@ export default function HomePage() {
           </Link>
         </div>
       </header>
+
+      <nav className={styles.helpLinks} aria-label="도움말">
+        <Link href="/about">소개</Link>
+        <Link href="/how-it-works">이용 방법</Link>
+        <Link href="/faq">자주 묻는 질문</Link>
+        <Link href="/support">고객지원</Link>
+      </nav>
 
       <section className="hero shell landing-hero" id="top">
         <div className="hero__copy">
@@ -99,31 +113,7 @@ export default function HomePage() {
               PUTDUK START 시작하기
               <PutdukIcon name="arrow-right" size={19} />
             </Link>
-            <Link className="button button--secondary" href="/login">
-              내 채굴로 돌아가기
-            </Link>
           </div>
-          <div className="landing-welcome-proof" role="note">
-            <PutdukIcon name="shield" size={21} />
-            <p className="ko-copy">
-              <strong>최대 5,000원 환영 보상</strong>
-              자격 확인 후 전환되며, 첫 출금에 사전 입금은 필요하지 않습니다.
-            </p>
-          </div>
-          <dl className="hero__facts">
-            <div>
-              <dt>첫 월드</dt>
-              <dd>한국</dd>
-            </div>
-            <div>
-              <dt>채굴 결과</dt>
-              <dd className="ko-copy">확인 가능</dd>
-            </div>
-            <div>
-              <dt>기본 지갑</dt>
-              <dd>원화 · KRW</dd>
-            </div>
-          </dl>
         </div>
 
         <div className="hero__visual landing-hero__visual">
@@ -174,6 +164,34 @@ export default function HomePage() {
             01 / 한국
           </div>
         </div>
+
+        <aside className={styles.action} aria-label="시작 안내">
+          <div className="landing-welcome-proof" role="note">
+            <PutdukIcon name="shield" size={21} />
+            <p className="ko-copy">
+              <strong>최대 5,000원 환영 보상</strong>
+              자격 확인 후 전환되며, 첫 출금에 사전 입금은 필요하지 않습니다.
+            </p>
+          </div>
+          <dl className="hero__facts">
+            <div>
+              <dt>첫 월드</dt>
+              <dd>한국</dd>
+            </div>
+            <div>
+              <dt>채굴 결과</dt>
+              <dd className="ko-copy">확인 가능</dd>
+            </div>
+            <div>
+              <dt>기본 지갑</dt>
+              <dd>원화 · KRW</dd>
+            </div>
+          </dl>
+          <Link className={styles.returnLink} href="/login">
+            내 채굴로 돌아가기
+            <PutdukIcon name="arrow-right" size={17} />
+          </Link>
+        </aside>
       </section>
 
       <section
@@ -181,12 +199,10 @@ export default function HomePage() {
         id="start"
         aria-labelledby="journey-title"
       >
-        <div className="section-heading section-heading--row">
-          <div>
-            <p className="eyebrow">PUTDUK START</p>
-            <h2 id="journey-title">첫 결과까지, 가치의 경계는 정확히.</h2>
-          </div>
-          <p>
+        <div className="section-heading">
+          <p className="eyebrow">PUTDUK START</p>
+          <h2 id="journey-title">첫 결과까지, 가치의 경계는 정확히.</h2>
+          <p className="ko-copy">
             체험 값은 실제 지갑과 분리됩니다. 전환된 환영 보상만 실제 KRW가
             됩니다.
           </p>
@@ -215,12 +231,10 @@ export default function HomePage() {
         id="worlds"
         aria-labelledby="worlds-title"
       >
-        <div className="section-heading section-heading--row">
-          <div>
-            <p className="eyebrow">다섯 개의 채굴 월드</p>
-            <h2 id="worlds-title">한 번의 시작, 다섯 개의 채굴 세계.</h2>
-          </div>
-          <p>
+        <div className="section-heading">
+          <p className="eyebrow">다섯 개의 채굴 월드</p>
+          <h2 id="worlds-title">한 번의 시작, 다섯 개의 채굴 세계.</h2>
+          <p className="ko-copy">
             한국 월드에서 시작해요. 미국, 금, 은, 디지털 자산 월드로 채굴 경험을
             넓혀갈 수 있어요.
           </p>

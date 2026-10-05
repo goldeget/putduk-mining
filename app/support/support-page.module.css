@@ -15,3 +15,102 @@
 .token {
   white-space: nowrap;
 }
+
+.page :global(.site-header) {
+  flex-wrap: wrap;
+  gap: 0.35rem 1rem;
+}
+
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1rem;
+  margin-inline: auto;
+}
+
+.nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.nav a[aria-current="page"] {
+  color: var(--text-primary);
+}
+
+.nav a:focus-visible {
+  border-radius: var(--radius-sm);
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.page :global(.support-center__hero),
+.page :global(.support-center__guide),
+.page :global(.support-center__notice) {
+  width: min(100% - 2rem, 860px);
+  max-width: none;
+  margin-inline: auto;
+}
+
+.page :global(.support-center__hero) h1 {
+  max-width: 12em;
+  font-size: clamp(1.85rem, 4vw, 2.6rem);
+}
+
+.page :global(.support-center__topics) {
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+}
+
+.page :global(.support-center__topics) article {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.75rem 0.9rem;
+  align-items: start;
+  border: 0;
+  border-radius: 0;
+  border-top: 1px solid var(--border-subtle);
+  background: var(--surface-default);
+}
+
+.page :global(.support-center__topics) article:first-child {
+  border-top: 0;
+}
+
+.page :global(.support-center__topics) h3,
+.page :global(.support-center__notice) h2 {
+  margin: 0.1rem 0 0.35rem;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.icon {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--radius-md);
+  color: var(--brand-primary);
+  background: color-mix(in srgb, var(--brand-primary) 12%, transparent);
+}
+
+.copy p {
+  margin: 0;
+}
+
+.copy p + p {
+  margin-top: 0.25rem;
+}
+
+.notice {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.75rem 0.9rem;
+  align-items: start;
+}
