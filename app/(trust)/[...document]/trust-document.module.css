@@ -1,0 +1,122 @@
+/* 검증, 출금 같은 안내. 좁은 화면은 큰 제목 아래 칸을 쌓지 않고 묶음으로 읽는다. */
+
+.document {
+  min-width: 0;
+}
+
+@media (max-width: 759px) {
+  .document :global(.trust-document) {
+    padding-top: 1.25rem;
+    padding-bottom: 2rem;
+  }
+
+  .document :global(.trust-document__hero) {
+    gap: 0.9rem;
+    padding-bottom: 1.15rem;
+  }
+
+  .document :global(.trust-document__hero h1) {
+    max-width: 12em;
+    margin: 0.4rem 0 0.6rem;
+    font-size: 1.65rem;
+    letter-spacing: -0.04em;
+    line-height: 1.28;
+  }
+
+  .document :global(.trust-document__hero > div > p:last-child) {
+    font-size: 0.95rem;
+    line-height: 1.65;
+  }
+
+  .document :global(.trust-document__hero dl) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    border: 0;
+    background: transparent;
+  }
+
+  .document :global(.trust-document__hero dl div) {
+    flex: 1 1 8.5rem;
+    min-width: 0;
+    padding: 0.65rem 0.75rem;
+    border-radius: var(--radius-md);
+  }
+
+  .document :global(.trust-document__hero dd) {
+    overflow-wrap: break-word;
+    word-break: keep-all;
+  }
+
+  .document :global(.trust-facts) {
+    padding-block: 1.15rem;
+  }
+
+  .document :global(.trust-facts > header) {
+    margin-bottom: 0.75rem;
+  }
+
+  .document :global(.trust-facts h2) {
+    font-size: 1.15rem;
+  }
+
+  .document :global(.trust-facts > div) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+    overflow: hidden;
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg);
+    background: var(--surface-default);
+  }
+
+  .document :global(.trust-facts article) {
+    min-height: 0;
+    min-width: 0;
+    padding: 0.85rem 0.95rem;
+    border-top: 1px solid var(--border-subtle);
+    border-radius: 0;
+  }
+
+  .document :global(.trust-facts article:first-child) {
+    border-top: 0;
+  }
+
+  .document :global(.trust-facts article > strong) {
+    min-width: 0;
+    margin-top: 0.25rem;
+    overflow-wrap: break-word;
+    word-break: keep-all;
+  }
+
+  .document :global(.trust-document__body) {
+    gap: 1rem;
+    padding-block: 1.15rem 0.25rem;
+  }
+
+  .document :global(.trust-document__body > div > section) {
+    gap: 0.6rem;
+    padding-bottom: 1rem;
+  }
+
+  .document :global(.trust-document__body > div > section + section) {
+    padding-top: 1rem;
+  }
+
+  .document :global(.trust-document__body h2) {
+    margin-bottom: 0.45rem;
+    font-size: 1.05rem;
+  }
+
+  .document :global(.trust-document__body section p) {
+    line-height: 1.65;
+  }
+
+  .document :global(.trust-document__body aside) {
+    gap: 0.4rem;
+  }
+
+  .document :global(.trust-document__body aside > svg) {
+    margin-bottom: 0;
+  }
+}

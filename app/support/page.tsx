@@ -92,58 +92,60 @@ export default function SupportPage() {
         </div>
       </header>
 
-      <section className="shell support-center__hero">
-        <p className="eyebrow">고객지원</p>
-        <h1 className={styles.heading}>
-          필요한 도움을 바로 <span className={styles.token}>확인해요</span>.
-        </h1>
-        <p className="ko-copy">
-          상담 창에서 비밀번호나 인증 코드는 보내지 마세요.
-        </p>
-        <SupportStartButton />
-      </section>
-
-      <section
-        className="shell support-center__guide"
-        id="support-guide"
-        aria-labelledby="support-guide-title"
-        tabIndex={-1}
-      >
-        <h2 id="support-guide-title">자주 확인하는 안내</h2>
-        <div className="support-center__topics">
-          {topics.map((topic) => (
-            <article key={topic.title}>
-              <span className={styles.icon} aria-hidden="true">
-                <PutdukIcon name={topic.icon} size={20} />
-              </span>
-              <div className={styles.copy}>
-                <h3>{topic.title}</h3>
-                {topic.body.map((paragraph) => (
-                  <p className="ko-copy" key={paragraph}>
-                    {paragraph}
-                  </p>
-                ))}
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section
-        className={`shell support-center__notice ${styles.notice}`}
-        aria-labelledby="support-security-title"
-      >
-        <span className={styles.icon} aria-hidden="true">
-          <PutdukIcon name="shield" size={20} />
-        </span>
-        <div className={styles.copy}>
-          <h2 id="support-security-title">보안 안내</h2>
+      <div className={styles.board}>
+        <section className="shell support-center__hero">
+          <p className="eyebrow">고객지원</p>
+          <h1 className={styles.heading}>
+            필요한 도움을 바로 <span className={styles.token}>확인해요</span>.
+          </h1>
           <p className="ko-copy">
-            상담원은 비밀번호, 인증 코드, 개인키, 시드 문구를 요구하지 않아요.
+            상담 창에서 비밀번호나 인증 코드는 보내지 마세요.
           </p>
-          <p className="ko-copy">잔액과 출금은 상담 창에서 바뀌지 않아요.</p>
-        </div>
-      </section>
+          <SupportStartButton />
+        </section>
+
+        <section
+          className="shell support-center__guide"
+          id="support-guide"
+          aria-labelledby="support-guide-title"
+          tabIndex={-1}
+        >
+          <h2 id="support-guide-title">자주 확인하는 안내</h2>
+          <div className="support-center__topics">
+            {topics.map((topic) => (
+              <article key={topic.title}>
+                <span className={styles.icon} aria-hidden="true">
+                  <PutdukIcon name={topic.icon} size={20} />
+                </span>
+                <div className={styles.copy}>
+                  <h3>{topic.title}</h3>
+                  {topic.body.map((paragraph) => (
+                    <p className="ko-copy" key={paragraph}>
+                      {paragraph}
+                    </p>
+                  ))}
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section
+          className={`shell support-center__notice ${styles.notice}`}
+          aria-labelledby="support-security-title"
+        >
+          <span className={styles.icon} aria-hidden="true">
+            <PutdukIcon name="shield" size={20} />
+          </span>
+          <div className={styles.copy}>
+            <h2 id="support-security-title">보안 안내</h2>
+            <p className="ko-copy">
+              상담원은 비밀번호, 인증 코드, 개인키, 시드 문구를 요구하지 않아요.
+            </p>
+            <p className="ko-copy">잔액과 출금은 상담 창에서 바뀌지 않아요.</p>
+          </div>
+        </section>
+      </div>
     </main>
   );
 }

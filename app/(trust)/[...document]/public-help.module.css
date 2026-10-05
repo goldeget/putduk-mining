@@ -170,3 +170,70 @@
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
+
+@media (max-width: 759px) {
+  .page {
+    padding-top: 1.15rem;
+    padding-bottom: 2rem;
+  }
+
+  .intro h1 {
+    max-width: 11em;
+    font-size: 1.65rem;
+    line-height: 1.28;
+  }
+
+  .summary {
+    font-size: 0.95rem;
+    line-height: 1.65;
+  }
+
+  .factList,
+  .rows {
+    gap: 0;
+    overflow: hidden;
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg);
+    background: var(--surface-default);
+  }
+
+  .factList li,
+  .rows > li {
+    min-width: 0;
+    border: 0;
+    border-top: 1px solid var(--border-subtle);
+    border-radius: 0;
+    background: transparent;
+  }
+
+  .factList li:first-child,
+  .rows > li:first-child {
+    border-top: 0;
+  }
+
+  .factList li {
+    padding: 0.8rem 0.95rem;
+  }
+
+  .factList strong,
+  .rows h2,
+  .rows p,
+  .items li {
+    min-width: 0;
+    overflow-wrap: break-word;
+    word-break: keep-all;
+  }
+
+  .rows {
+    margin-top: 1rem;
+  }
+
+  .rows > li {
+    padding: 0.85rem 0.95rem 0.95rem;
+  }
+
+  .note {
+    margin-top: 0.85rem;
+    padding: 0.85rem 0.95rem;
+  }
+}

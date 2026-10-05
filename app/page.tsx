@@ -108,12 +108,6 @@ export default function HomePage() {
           <p className="hero__lead">
             한국 월드에서 채굴을 시작해요. 앱을 닫아도 채굴은 계속돼요.
           </p>
-          <div className="hero__actions">
-            <Link className="button button--primary" href="/signup">
-              PUTDUK START 시작하기
-              <PutdukIcon name="arrow-right" size={19} />
-            </Link>
-          </div>
         </div>
 
         <div className="hero__visual landing-hero__visual">
@@ -166,6 +160,13 @@ export default function HomePage() {
         </div>
 
         <aside className={styles.action} aria-label="시작 안내">
+          <Link
+            className={`button button--primary ${styles.start}`}
+            href="/signup"
+          >
+            PUTDUK START 시작하기
+            <PutdukIcon name="arrow-right" size={19} />
+          </Link>
           <div className="landing-welcome-proof" role="note">
             <PutdukIcon name="shield" size={21} />
             <p className="ko-copy">
@@ -207,7 +208,11 @@ export default function HomePage() {
             됩니다.
           </p>
         </div>
-        <div className="landing-journey__grid">
+        <div
+          className="landing-journey__grid"
+          tabIndex={0}
+          aria-label="첫 채굴 단계"
+        >
           {journey.map((item) => (
             <article key={item.step}>
               <span>{item.step}</span>
@@ -239,7 +244,7 @@ export default function HomePage() {
             넓혀갈 수 있어요.
           </p>
         </div>
-        <div className="world-list">
+        <div className="world-list" tabIndex={0} aria-label="채굴 월드 목록">
           {worlds.map((world, index) => (
             <article
               className={`world-row world-row--${world.tone}`}
