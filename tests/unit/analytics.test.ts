@@ -31,6 +31,34 @@ describe("analytics event contract", () => {
     ).toBe(false);
   });
 
+  it("rejects property names and values outside the privacy allowlist", () => {
+    expect(
+      analyticsEventSchema.safeParse({
+        ...validEvent,
+        properties: { email: "private@example.com" },
+      }).success,
+    ).toBe(false);
+    expect(
+      analyticsEventSchema.safeParse({
+        ...validEvent,
+        properties: { path: "/start?token=secret" },
+      }).success,
+    ).toBe(false);
+    expect(
+      analyticsEventSchema.safeParse({
+        ...validEvent,
+        properties: { amount_atomic: 5000 },
+      }).success,
+    ).toBe(false);
+    expect(
+      analyticsEventSchema.safeParse({
+        ...validEvent,
+        eventName: "landing_view",
+        properties: { currency: "KRW", path: "/about", returning: false },
+      }).success,
+    ).toBe(true);
+  });
+
   it("rejects more than twenty property keys", () => {
     const properties = Object.fromEntries(
       Array.from({ length: 21 }, (_, index) => [`property_${index}`, index]),

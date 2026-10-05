@@ -1,8 +1,10 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { after } from "next/server";
 import { z } from "zod";
 
+import { recordProductionAnalyticsEvent } from "@/lib/analytics/record-event.server";
 import { getPublicEnv } from "@/lib/env/public";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -274,6 +276,18 @@ export async function signupAction(
         "입력한 이메일로 확인 안내를 보냈습니다. 안내가 보이지 않으면 스팸함도 확인해 주세요.",
       status: "confirmation",
     };
+  }
+
+  const signupUserId = data.user.id;
+  try {
+    after(() =>
+      recordProductionAnalyticsEvent({
+        eventName: "signup_complete",
+        userId: signupUserId,
+      }),
+    );
+  } catch {
+    // 분석 예약을 못 해도 가입 완료는 유지한다.
   }
 
   if (data.session) {

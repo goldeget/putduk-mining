@@ -91,3 +91,14 @@ Server-confirmed money/lifecycle events originate from committed domain/outbox
 facts, never browser self-report. Attribution follows campaign/creative/landing
 through signup, trial, welcome withdrawal, first funding, first real mining and
 7/30-day activity without storing sensitive query parameters.
+
+## Observability signals
+
+- `landing_view` is the first funnel event and is sent for `/` only.
+- `web_vital` carries `vital_name`, `vital_value`, `vital_rating`, `vital_unit`, and optional `navigation_type`.
+- `client_error` carries `error_name` and an optional `error_digest`. Error messages are not stored.
+- `app_release` is an optional release token. It is omitted when unset or unsafe.
+- Property names are the allowlist in `domain/analytics/events.ts`. Email, phone, address, token, balance, and query strings are rejected.
+- Browser ingestion runs only in production and skips automated browsers and loopback hosts.
+- Session evidence is a random session id plus a structural path. DOM, input, network bodies, and money values are not replayed.
+- The production funnel definition is `domain/analytics/funnel.ts`. A hosted product-analytics project is not configured from this repository.

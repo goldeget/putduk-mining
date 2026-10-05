@@ -19,8 +19,13 @@ export function AnalyticsBeacon() {
 
     lastTrackedPath.current = pathname;
     void trackAnalyticsEvent("screen_view", { path: pathname }).catch(() => {
-      // Analytics must never block or alter the user flow.
+      // 분석 실패가 화면 전환을 바꾸면 안 된다.
     });
+    if (pathname === "/") {
+      void trackAnalyticsEvent("landing_view", { path: pathname }).catch(() => {
+        // 첫 이벤트도 같은 방식으로 버린다.
+      });
+    }
   }, [pathname]);
 
   return null;
