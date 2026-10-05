@@ -267,6 +267,22 @@
   margin-top: 0.4rem;
 }
 
+.ledgerList {
+  display: grid;
+  min-width: 0;
+  border-top: 1px solid var(--border-default);
+}
+
+.ledgerRow {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.85rem;
+  min-width: 0;
+  min-height: 4.5rem;
+  border-bottom: 1px solid var(--border-default);
+}
+
 @media (max-width: 759px) {
   .heroCard {
     padding: 1.15rem 1.05rem 1.2rem;
