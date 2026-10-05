@@ -8,6 +8,7 @@ import {
   formatKst,
   formatKrw,
   shortId,
+  withdrawalDestinationLabel,
   withdrawalStatusLabel,
 } from "@/app/(control)/_lib/format";
 import { requireAdminPage } from "@/lib/auth/principal";
@@ -34,6 +35,7 @@ import {
   memberTimelineEventLabel,
   memberTimelineSummaryLabel,
 } from "../_lib/member-record-labels";
+import { kycRiskLabel, kycStatusLabel } from "../kyc/labels";
 
 const memberIdSchema = z.uuid();
 
@@ -551,11 +553,11 @@ export default async function MembersPage({
             <dl>
               <div>
                 <dt>상태</dt>
-                <dd>{kyc.status}</dd>
+                <dd>{kycStatusLabel(kyc.status)}</dd>
               </div>
               <div>
                 <dt>위험 수준</dt>
-                <dd>{kyc.risk_level}</dd>
+                <dd>{kycRiskLabel(kyc.risk_level)}</dd>
               </div>
               <div>
                 <dt>접수</dt>
@@ -611,12 +613,8 @@ export default async function MembersPage({
                   {withdrawalRows.data.map((row) => (
                     <li key={row.id}>
                       <strong>
-                        {row.destination_type === "KRW_BANK"
-                          ? "계좌"
-                          : row.destination_type === "USDT_ADDRESS"
-                            ? "USDT"
-                            : row.destination_type}{" "}
-                        · {withdrawalStatusLabel(row.status)}
+                        {withdrawalDestinationLabel(row.destination_type)} ·{" "}
+                        {withdrawalStatusLabel(row.status)}
                       </strong>
                       <span>{formatKrw(row.amount_atomic)}</span>
                       <time>{formatKst(row.requested_at)}</time>

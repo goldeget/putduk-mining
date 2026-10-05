@@ -8,6 +8,8 @@ import { createAdminServiceClient } from "@/lib/supabase/service";
 
 import { SafeModeForm } from "./safe-mode-form";
 import {
+  blockScopeLabel,
+  blockSourceLabel,
   canMutateSafeMode,
   COMPONENT_LABEL,
   SAFE_MODE_COMPONENTS,
@@ -180,7 +182,7 @@ export default async function RestrictionsPage() {
           <QueueCard key={row.id}>
             <header className="queue-card__head">
               <div>
-                <p className="eyebrow">{row.scope}</p>
+                <p className="eyebrow">{blockScopeLabel(row.scope)}</p>
                 <h2>{row.reason}</h2>
               </div>
               <span>{formatKst(row.starts_at)}</span>
@@ -188,7 +190,7 @@ export default async function RestrictionsPage() {
             <dl className="evidence-grid">
               <div>
                 <dt>출처</dt>
-                <dd>{row.source}</dd>
+                <dd>{blockSourceLabel(row.source)}</dd>
               </div>
               <div>
                 <dt>회원</dt>

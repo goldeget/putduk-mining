@@ -5,6 +5,7 @@ import {
   presentMemberProfile,
 } from "@/app/(control)/members/_lib/member-state-display";
 import MembersPage from "@/app/(control)/members/page";
+import { requireAdminPage } from "@/lib/auth/principal";
 
 const readyMiningDisplay = {
   available: true,
@@ -63,6 +64,7 @@ vi.mock("@/lib/supabase/service", () => ({
         order: () => query,
         limit: () => query,
         maybeSingle: () => query,
+        insert: () => Promise.resolve({ error: null }),
         then: (resolve: (result: typeof value) => unknown) =>
           Promise.resolve(value).then(resolve),
       };
@@ -363,5 +365,54 @@ describe("member lifecycle and profile read truth", () => {
     expect(markup).not.toContain("설정 전");
     expect(markup).not.toContain("채굴 등급과 파워");
     expect(markup).not.toMatch(/tier_code|speed_multiplier|micro_krw|bps/i);
+  });
+  it("shows Korean identity status and hides an unknown withdrawal destination code", async () => {
+    vi.mocked(requireAdminPage).mockResolvedValueOnce({
+      role: "ADMIN",
+      userId: "00000000-0000-4000-8000-0000000000aa",
+    } as Awaited<ReturnType<typeof requireAdminPage>>);
+    reads.tables.kyc_cases = {
+      data: {
+        status: "PENDING",
+        risk_level: "HIGH",
+        opened_at: "2026-10-01T00:00:00Z",
+        decided_at: null,
+      },
+      error: null,
+    };
+    reads.tables.withdrawal_requests = {
+      data: [
+        {
+          id: "w-bank",
+          status: "REQUESTED",
+          amount_atomic: "1000",
+          destination_type: "KRW_BANK",
+          requested_at: "2026-10-01T00:00:00Z",
+        },
+        {
+          id: "w-unknown",
+          status: "REQUESTED",
+          amount_atomic: "2000",
+          destination_type: "NOT_A_DESTINATION",
+          requested_at: "2026-10-02T00:00:00Z",
+        },
+      ],
+      error: null,
+      count: 2,
+    };
+    const markup = renderToStaticMarkup(
+      await MembersPage({
+        searchParams: Promise.resolve({
+          id: "00000000-0000-4000-8000-000000000001",
+        }),
+      }),
+    );
+    expect(markup).toMatch(/상태<\/dt><dd>대기/);
+    expect(markup).toMatch(/위험 수준<\/dt><dd>높음/);
+    expect(markup).not.toContain("PENDING");
+    expect(markup).not.toContain("HIGH");
+    expect(markup).toContain("계좌 · 접수");
+    expect(markup).toContain("확인할 수 없어요 · 접수");
+    expect(markup).not.toContain("NOT_A_DESTINATION");
   });
 });

@@ -2,6 +2,10 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import RestrictionsPage from "@/app/(control)/restrictions/page";
+import {
+  blockScopeLabel,
+  blockSourceLabel,
+} from "@/app/(control)/restrictions/safe-mode-policy";
 import UsdtQueuePage from "@/app/(control)/withdrawals/usdt/page";
 
 const reads = vi.hoisted(() => ({
@@ -86,6 +90,58 @@ describe("admin partial read recovery", () => {
     expect(markup).toContain("확인 불가");
     expect(markup).not.toContain("전부 정상");
     expect(markup).not.toContain("안전 모드 변경 테스트 표식");
+  });
+  it("restriction scope and source do not show English codes", async () => {
+    reads.tables.safe_mode_controls = { data: [], error: null };
+    reads.tables.block_rules = {
+      data: [
+        {
+          id: "block-account",
+          scope: "ACCOUNT",
+          source: "MANUAL",
+          reason: "반복 가입",
+          user_id: null,
+          starts_at: "2026-10-01T00:00:00Z",
+          ends_at: null,
+        },
+        {
+          id: "block-signup",
+          scope: "SIGNUP",
+          source: "현장 확인",
+          reason: "가입 제한",
+          user_id: null,
+          starts_at: "2026-10-02T00:00:00Z",
+          ends_at: null,
+        },
+        {
+          id: "block-zero",
+          scope: "DEVICE",
+          source: "0",
+          reason: "출처 없음",
+          user_id: null,
+          starts_at: "2026-10-03T00:00:00Z",
+          ends_at: null,
+        },
+      ],
+      error: null,
+    };
+    reads.tables.risk_flags = { data: [], error: null };
+    const markup = renderToStaticMarkup(await RestrictionsPage());
+    expect(blockScopeLabel("ACCOUNT")).toBe("확인할 수 없어요");
+    expect(blockScopeLabel("IP_CIDR")).toBe("확인할 수 없어요");
+    expect(blockScopeLabel("SIGNUP")).toBe("가입");
+    expect(blockScopeLabel("TRIAL")).toBe("퍼뜩 시작");
+    expect(blockSourceLabel("MANUAL")).toBe("확인할 수 없어요");
+    expect(blockSourceLabel("0")).toBe("확인할 수 없어요");
+    expect(blockSourceLabel("현장 확인")).toBe("현장 확인");
+    expect(markup).not.toContain("ACCOUNT");
+    expect(markup).not.toContain("MANUAL");
+    expect(markup).not.toContain("DEVICE");
+    expect(markup).not.toContain("<dd>0</dd>");
+    expect(markup).toContain("반복 가입");
+    expect(markup).toContain("현장 확인");
+    expect(markup).toContain("가입 제한");
+    expect(markup).toContain("출처 없음");
   });
   it("missing crypto read is not evidence that an external transfer did not happen", async () => {
     reads.tables.withdrawal_requests = {
