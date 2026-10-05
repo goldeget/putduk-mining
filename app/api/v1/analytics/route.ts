@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { NextResponse, type NextRequest } from "next/server";
 
 import { analyticsEventSchema } from "@/domain/analytics/events";
+import { allowedAnalyticsOrigins } from "@/domain/analytics/observability";
 import { getVerifiedIdentity } from "@/lib/auth/session";
 import { getServerEnv } from "@/lib/env/server";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
@@ -30,7 +31,9 @@ export async function POST(request: NextRequest) {
   }
 
   const origin = request.headers.get("origin");
-  const allowedOrigins = new Set([new URL(env.NEXT_PUBLIC_APP_URL).origin]);
+  const allowedOrigins = new Set(
+    allowedAnalyticsOrigins(env.NEXT_PUBLIC_APP_URL, process.env.ADMIN_APP_URL),
+  );
   if (!origin || !allowedOrigins.has(origin)) {
     return errorResponse(
       "ORIGIN_REJECTED",
