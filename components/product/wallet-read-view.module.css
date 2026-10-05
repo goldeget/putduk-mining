@@ -46,8 +46,9 @@
   font-weight: 650;
   letter-spacing: -0.05em;
   line-height: 1.05;
-  overflow-wrap: anywhere;
+  line-break: strict;
   word-break: keep-all;
+  container-type: inline-size;
 }
 
 .breakdown {
@@ -76,8 +77,9 @@
   font-size: 0.95rem;
   font-variant-numeric: tabular-nums;
   font-weight: 650;
-  overflow-wrap: anywhere;
+  line-break: strict;
   word-break: keep-all;
+  container-type: inline-size;
 }
 
 .note {
@@ -93,6 +95,7 @@
 .funding {
   display: grid;
   gap: 0.7rem;
+  container-type: inline-size;
 }
 
 .funding h2 {
@@ -151,8 +154,9 @@
   min-width: 0;
   font-variant-numeric: tabular-nums;
   line-height: 1.15;
-  overflow-wrap: anywhere;
+  line-break: strict;
   word-break: keep-all;
+  container-type: inline-size;
 }
 
 .metric[data-funding-tone="separate"] {
@@ -220,8 +224,28 @@
   font-variant-numeric: tabular-nums;
   font-weight: 620;
   letter-spacing: -0.04em;
-  overflow-wrap: anywhere;
+  line-break: strict;
   word-break: keep-all;
+  container-type: inline-size;
+}
+
+.amountValue {
+  display: flex;
+  max-width: 100%;
+  min-width: 0;
+  flex-wrap: wrap;
+  align-items: baseline;
+}
+
+.amountFigure {
+  max-width: 100%;
+  font-size: min(1em, 20cqi);
+  white-space: nowrap;
+}
+
+.amountUnit {
+  flex: none;
+  white-space: nowrap;
 }
 
 .trialLink {
@@ -241,6 +265,13 @@
 
 .history :global(.ledger-history) {
   margin-top: 0.4rem;
+}
+
+/* 글자가 칸보다 커지면 한글 단어가 들어갈 너비로 쌓는다. 320px 기본 글자에서는 세 칸을 유지한다. */
+@container (max-width: 12rem) {
+  .metrics {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 @media (max-width: 520px) {

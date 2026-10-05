@@ -46,7 +46,7 @@ describe("WalletReadView 마크업", () => {
     );
 
     expect(html).toContain("출금 가능 잔액");
-    expect(html).toContain("0 KRW");
+    expect(html.match(/>0<\/span><span[^>]*> KRW<\/span>/g)).toHaveLength(3);
     expect(html).toContain("지금 사용 가능한 원화는 0원이에요");
     expect(html).toContain("아직 거래 내역이 없어요");
     expect(html).toContain("아직 입출금 처리 내역이 없어요");
@@ -106,7 +106,9 @@ describe("WalletReadView 마크업", () => {
 
     expect(html).toContain("환영 보상");
     expect(html).toContain("+5,000 KRW");
-    expect(html).toContain("2,000 KRW");
+    expect(html).toMatch(/>2,000<\/span><span[^>]*> KRW<\/span>/);
+    expect(html).toMatch(/>5,000<\/span><span[^>]*> KRW<\/span>/);
+    expect(html).toMatch(/>7,000<\/span><span[^>]*> KRW<\/span>/);
     expect(html).toContain("RCPT-001");
     expect(html).toContain("처리 중");
     expect(html).toContain("환영 보상 첫 출금");
@@ -118,11 +120,11 @@ describe("WalletReadView 마크업", () => {
     );
     expect(metrics.match(/<dt>/g)).toHaveLength(3);
     expect(metrics).toContain("인정 원금");
-    expect(metrics).toContain("100,000원");
+    expect(metrics).toMatch(/>100,000<\/span><span[^>]*>원<\/span>/);
     expect(metrics).toContain("정산 전 대기 수익");
-    expect(metrics).toContain("15,000원");
+    expect(metrics).toMatch(/>15,000<\/span><span[^>]*>원<\/span>/);
     expect(metrics).toContain('data-funding-tone="unconfirmed"');
-    expect(metrics).toContain("25,000원");
+    expect(metrics).toMatch(/>25,000<\/span><span[^>]*>원<\/span>/);
     expect(metrics).toContain("확정된 수익이 아니에요");
     expect(metrics).not.toContain("115,000");
     expect(metrics).not.toContain("140,000");
@@ -156,6 +158,8 @@ describe("WalletReadView 마크업", () => {
     expect(html).toContain("처리 내역을 불러오지 못했어요");
     expect(html).toContain("다시 시도");
     expect(html).toContain("체험 값 다시 확인");
+    expect(html).toContain("확인할 수 없음");
+    expect(html).not.toContain("amountFigure");
     expect(html).not.toContain("balance-card--primary");
     expect(html).not.toContain("사용 가능 잔액</small>");
   });
@@ -181,7 +185,7 @@ describe("WalletReadView 마크업", () => {
     expect(html).not.toMatch(/update|mutate|insert/i);
   });
 
-  it("칸보다 긴 금액만 줄바꿈하고 세 칸 구도와 금액 분리를 유지한다", () => {
+  it("짧은 금액과 한글 단어는 한 줄로 두고 긴 숫자만 칸 안에 맞춘다", () => {
     const css = readFileSync(
       "components/product/wallet-read-view.module.css",
       "utf8",
@@ -207,11 +211,24 @@ describe("WalletReadView 마크업", () => {
     ]) {
       const block = rule(selector);
       expect(block, selector).toMatch(/min-width:\s*0/);
-      expect(block, selector).toMatch(/overflow-wrap:\s*anywhere/);
+      expect(block, selector).toMatch(/line-break:\s*strict/);
       expect(block, selector).toMatch(/word-break:\s*keep-all/);
+      expect(block, selector).toMatch(/container-type:\s*inline-size/);
+      expect(block, selector).not.toMatch(/overflow-wrap:\s*anywhere/);
       expect(block, selector).not.toMatch(/word-break:\s*break-all/);
       expect(block, selector).not.toMatch(/white-space:\s*nowrap/);
     }
+
+    expect(css).not.toMatch(/overflow-wrap:\s*anywhere/);
+    expect(css).toMatch(/\.amountFigure\s*\{[^}]*white-space:\s*nowrap/s);
+    expect(css).toMatch(
+      /\.amountFigure\s*\{[^}]*font-size:\s*min\(1em,\s*20cqi\)/s,
+    );
+    expect(css).toMatch(/\.amountUnit\s*\{[^}]*white-space:\s*nowrap/s);
+    expect(rule(".funding")).toMatch(/container-type:\s*inline-size/);
+    expect(css).toMatch(
+      /@container\s+\(max-width:\s*12rem\)\s*\{[^}]*\.metrics\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1fr\)/s,
+    );
 
     expect(rule(".metrics")).toMatch(
       /grid-template-columns:\s*repeat\(3,\s*minmax\(0,\s*1fr\)\)/,
@@ -235,6 +252,9 @@ describe("WalletReadView 마크업", () => {
     expect(view).toContain('formatAtomicAmount(krw.availableAtomic, "KRW")');
     expect(view).toContain('formatAtomicAmount(krw.heldAtomic, "KRW")');
     expect(view).toContain('formatAtomicAmount(krw.balanceAtomic, "KRW")');
+    expect(view).toContain("<WalletAmountText value={row.value} />");
+    expect(view).toContain("확인할 수 없음");
+    expect(view).not.toMatch(/toLocaleString|BigInt/);
     expect(view).not.toMatch(
       /availableAtomic\s*\+|heldAtomic\s*\+|balanceAtomic\s*\+/,
     );

@@ -20,6 +20,25 @@ import type { WalletFundingView } from "@/lib/product/wallet-server-display";
 
 import styles from "./wallet-read-view.module.css";
 
+const displayedAmountPattern =
+  /^(-?[0-9][0-9,]*(?:\.[0-9]+)?)(원| KRW| 체험 단위)$/;
+
+/** 숫자와 단위만 나누고, 한글 문장은 한 덩어리로 둔다. 금액은 다시 계산하지 않는다. */
+function WalletAmountText({ value }: { value: string }) {
+  const amount = displayedAmountPattern.exec(value);
+  const figure = amount?.[1];
+  const unit = amount?.[2];
+  if (!figure || unit === undefined) {
+    return value;
+  }
+  return (
+    <span className={styles.amountValue}>
+      <span className={styles.amountFigure}>{figure}</span>
+      <span className={styles.amountUnit}>{unit}</span>
+    </span>
+  );
+}
+
 export type WalletFundingPanel = { state: "error" } | WalletFundingView;
 
 export type WalletReadViewProps = {
@@ -74,16 +93,26 @@ export function WalletReadView({
             </div>
             <small className={styles.heroLabel}>사용 가능 잔액</small>
             <strong className={styles.heroValue}>
-              {formatAtomicAmount(krw.availableAtomic, "KRW")}
+              <WalletAmountText
+                value={formatAtomicAmount(krw.availableAtomic, "KRW")}
+              />
             </strong>
             <dl className={styles.breakdown}>
               <div>
                 <dt>출금 보류</dt>
-                <dd>{formatAtomicAmount(krw.heldAtomic, "KRW")}</dd>
+                <dd>
+                  <WalletAmountText
+                    value={formatAtomicAmount(krw.heldAtomic, "KRW")}
+                  />
+                </dd>
               </div>
               <div>
                 <dt>전체</dt>
-                <dd>{formatAtomicAmount(krw.balanceAtomic, "KRW")}</dd>
+                <dd>
+                  <WalletAmountText
+                    value={formatAtomicAmount(krw.balanceAtomic, "KRW")}
+                  />
+                </dd>
               </div>
             </dl>
             {balanceState === "zero" ? (
@@ -124,7 +153,9 @@ export function WalletReadView({
                 data-funding-tone={row.tone}
               >
                 <dt>{row.label}</dt>
-                <dd>{row.value}</dd>
+                <dd>
+                  <WalletAmountText value={row.value} />
+                </dd>
                 {row.tone === "unconfirmed" ? (
                   <p>확정된 수익이 아니에요.</p>
                 ) : null}
@@ -150,9 +181,13 @@ export function WalletReadView({
         </div>
         <small className={styles.heroLabel}>PUTDUK START</small>
         <strong>
-          {trialState === "error"
-            ? "확인할 수 없음"
-            : formatTrialValue(String(trialRewardAtomic ?? "0"))}
+          <WalletAmountText
+            value={
+              trialState === "error"
+                ? "확인할 수 없음"
+                : formatTrialValue(String(trialRewardAtomic ?? "0"))
+            }
+          />
         </strong>
         <p className={styles.note}>
           체험 값은 원화가 아니에요. 전환된 금액만 실제 지갑에 반영됩니다.
