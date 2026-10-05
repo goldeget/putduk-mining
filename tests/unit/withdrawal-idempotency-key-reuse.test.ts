@@ -55,13 +55,20 @@ function latestFileDefining(name: string) {
 const reusedGuard =
   /if v_existing_reference is distinct from (v_[a-z0-9_]+\.id)\s+or (v_[a-z0-9_]+) is null\s+then\s+raise exception using errcode = '22023', message = 'IDEMPOTENCY_KEY_REUSED';\s+end if;/g;
 
+function requiredGroup(match: RegExpMatchArray, index: number) {
+  const value = match[index];
+  if (value === undefined) {
+    throw new Error(`IDEMPOTENCY_GUARD_CAPTURE_MISSING:${index}`);
+  }
+  return value;
+}
+
 function guards(body: string) {
-  return [...body.matchAll(reusedGuard)].map((match) =>
-    match[0]
-      .replace(/\s+/g, " ")
-      .replace(match[1], "ROW")
-      .replace(match[2], "ID"),
-  );
+  return [...body.matchAll(reusedGuard)].map((match) => {
+    const row = requiredGroup(match, 1);
+    const id = requiredGroup(match, 2);
+    return match[0].replace(/\s+/g, " ").replace(row, "ROW").replace(id, "ID");
+  });
 }
 
 const canonicalGuard = guards(
