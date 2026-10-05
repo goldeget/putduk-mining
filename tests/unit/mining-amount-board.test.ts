@@ -55,13 +55,13 @@ describe("채굴 금액 카드 구도", () => {
     expect(pending).toBeLessThan(speed);
     expect(speed).toBeLessThan(capacity);
     expect(capacity).toBeLessThan(quiet);
-    expect(html).toContain("100,000원");
+    expect(html).toMatch(/>100,000<\/span><span[^>]*>원<\/span>/);
     expect(html).toContain(">L1<");
     expect(html).toContain("1배");
     expect(html).toContain("이번 한도");
     expect(html).toContain("사용한 한도");
     expect(html).toContain("남은 한도");
-    expect(html).toContain("0원");
+    expect(html).toMatch(/>0<\/span><span[^>]*>원<\/span>/);
     expect(html).not.toContain("30,000원");
     expect(html).not.toContain("18,489");
     expect(html).not.toContain("428");
@@ -134,7 +134,7 @@ describe("채굴 금액 카드 구도", () => {
     expect(html).toContain(">정산 전</dt><dd>아직 없어요</dd>");
     expect(html).toContain(">채굴 속도</dt><dd>아직 없어요</dd>");
     expect(html).toContain("확인 전 금액은 아직 없어요.");
-    expect(html).toContain("15,000원");
+    expect(html).toMatch(/>15,000<\/span><span[^>]*>원<\/span>/);
     expect(html).not.toContain(">정산 전</dt><dd>0원</dd>");
   });
 
@@ -176,8 +176,17 @@ describe("채굴 금액 카드 구도", () => {
     )?.[0];
 
     expect(valueRule).toMatch(/min-width:\s*0/);
-    expect(valueRule).toMatch(/overflow-wrap:\s*anywhere/);
+    expect(valueRule).toMatch(/line-break:\s*strict/);
     expect(valueRule).toMatch(/word-break:\s*keep-all/);
+    expect(valueRule).not.toMatch(/overflow-wrap:\s*anywhere/);
+    expect(valueRule).not.toMatch(/word-break:\s*break-all/);
+    expect(css).toMatch(/\.amountFigure\s*\{[^}]*white-space:\s*nowrap/s);
+    expect(css).toMatch(
+      /\.amountFigure\s*\{[^}]*font-size:\s*min\(1em,\s*20cqi\)/s,
+    );
+    expect(css).toMatch(
+      /@container\s+\(max-width:\s*12rem\)\s*\{[^}]*\.moneyLead,\s*\.moneyPair\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1fr\)/s,
+    );
     expect(css).toMatch(
       /\.moneyLead\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1\.4fr\)\s*minmax\(0,\s*0\.9fr\)/s,
     );
