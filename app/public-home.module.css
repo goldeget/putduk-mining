@@ -363,7 +363,37 @@
   }
 
   .home :global(.hero__signal) {
-    display: none;
+    position: absolute;
+    z-index: 4;
+    top: auto;
+    right: auto;
+    bottom: 3.35rem;
+    left: 0.75rem;
+    display: grid;
+    max-width: min(52%, 12.5rem);
+    min-width: 0;
+    gap: 0.2rem;
+    color: #f8f2e4;
+    text-shadow: 0 1px 12px rgb(0 0 0 / 62%);
+    text-wrap: wrap;
+  }
+
+  .home :global(.hero__signal span),
+  .home :global(.hero__signal strong),
+  .home :global(.hero__signal p) {
+    min-width: 0;
+    max-width: 100%;
+    line-break: strict;
+    overflow-wrap: normal;
+    word-break: keep-all;
+  }
+
+  .home :global(.hero__signal strong) {
+    line-height: 1.25;
+  }
+
+  .home :global(.hero__signal p) {
+    line-height: 1.45;
   }
 
   .home :global(.hero__mascot) {
