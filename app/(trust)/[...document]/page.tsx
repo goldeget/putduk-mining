@@ -11,6 +11,10 @@ import {
   TRUST_LAST_UPDATED,
 } from "@/lib/trust/public-content";
 import {
+  buildBreadcrumbStructuredData,
+  publicLanguageAlternates,
+} from "@/lib/trust/public-discovery";
+import {
   getPublicFactDisplayValue,
   getPublicFactLabel,
   getTrustNavigationLabel,
@@ -49,7 +53,10 @@ export async function generateMetadata({
   return {
     title: document.title,
     description: document.summary,
-    alternates: { canonical: document.path },
+    alternates: {
+      canonical: document.path,
+      languages: publicLanguageAlternates(document.path),
+    },
     openGraph: {
       type: "article",
       title: document.title,
@@ -70,21 +77,27 @@ export default async function TrustDocumentPage({ params }: PageProps) {
   }
 
   const facts = getPublicFacts(document.factKeys);
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@type": "Article",
-    headline: document.title,
-    description: document.summary,
-    inLanguage: "ko-KR",
-    datePublished: TRUST_LAST_UPDATED,
-    dateModified: TRUST_LAST_UPDATED,
-    isPartOf: {
-      "@type": "WebSite",
-      name: "PUTDUK MINING",
-      url: "https://mining.putduk.com",
+  const structuredData = [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      headline: document.title,
+      description: document.summary,
+      inLanguage: "ko-KR",
+      datePublished: TRUST_LAST_UPDATED,
+      dateModified: TRUST_LAST_UPDATED,
+      isPartOf: {
+        "@type": "WebSite",
+        name: "PUTDUK MINING",
+        url: "https://mining.putduk.com",
+      },
+      mainEntityOfPage: `https://mining.putduk.com${document.path}`,
     },
-    mainEntityOfPage: `https://mining.putduk.com${document.path}`,
-  };
+    buildBreadcrumbStructuredData({
+      name: getTrustNavigationLabel(document.path),
+      path: document.path,
+    }),
+  ];
 
   if (path === "/about" || path === "/faq" || path === "/how-it-works") {
     return (
@@ -104,12 +117,15 @@ export default async function TrustDocumentPage({ params }: PageProps) {
         data-ui-ready={path}
         data-ui-state="loaded"
       >
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(structuredData).replace(/</g, "\\u003c"),
-          }}
-        />
+        {structuredData.map((block) => (
+          <script
+            key={block["@type"]}
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify(block).replace(/</g, "\\u003c"),
+            }}
+          />
+        ))}
         <header className="trust-document__hero">
           <div>
             <p className="eyebrow">{getTrustNavigationLabel(document.path)}</p>

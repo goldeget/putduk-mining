@@ -8,6 +8,7 @@ const FACT_LABELS: Readonly<Record<string, string>> = {
   SUPPORTED_WORLDS: "채굴 월드",
   TRIAL_DURATION: "체험 기간",
   TRIAL_LEDGER: "체험 값과 실제 지갑",
+  START_WELCOME_CAP: "환영 보상",
   SUPPORTED_FUNDING_METHODS: "입금 방식",
   SETTLEMENT_AUTHORITY: "채굴·정산 기준",
   AI_BOUNDARY: "AI의 역할",
