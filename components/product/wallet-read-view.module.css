@@ -39,12 +39,15 @@
 
 .heroValue {
   margin: 0.35rem 0 0.15rem;
+  min-width: 0;
   color: var(--text-primary);
   font-size: clamp(2rem, 5vw, 3.15rem);
   font-variant-numeric: tabular-nums;
   font-weight: 650;
   letter-spacing: -0.05em;
   line-height: 1.05;
+  overflow-wrap: anywhere;
+  word-break: keep-all;
 }
 
 .breakdown {
@@ -68,10 +71,13 @@
 
 .breakdown dd {
   margin: 0;
+  min-width: 0;
   color: var(--text-secondary);
   font-size: 0.95rem;
   font-variant-numeric: tabular-nums;
   font-weight: 650;
+  overflow-wrap: anywhere;
+  word-break: keep-all;
 }
 
 .note {
@@ -118,12 +124,13 @@
 }
 
 .metric {
+  --metric-pad-inline: 0.8rem;
   display: flex;
   min-width: 0;
   min-height: 6.5rem;
   flex-direction: column;
   gap: 0.35rem;
-  padding: 0.9rem 0.8rem;
+  padding: 0.9rem var(--metric-pad-inline);
   border: 1px solid var(--border-default);
   background: var(--surface-default);
 }
@@ -138,9 +145,13 @@
 }
 
 .metric dd {
-  margin: 0;
+  /* 글자 시작은 라벨과 맞추고, 줄 길이는 칸 오른쪽 경계까지 둔다. */
+  width: calc(100% + var(--metric-pad-inline));
+  margin: 0 calc(-1 * var(--metric-pad-inline)) 0 0;
+  min-width: 0;
   font-variant-numeric: tabular-nums;
   line-height: 1.15;
+  overflow-wrap: anywhere;
   word-break: keep-all;
 }
 
@@ -203,11 +214,14 @@
 }
 
 .trialCard strong {
+  min-width: 0;
   color: var(--text-secondary);
   font-size: clamp(1.15rem, 2.5vw, 1.55rem);
   font-variant-numeric: tabular-nums;
   font-weight: 620;
   letter-spacing: -0.04em;
+  overflow-wrap: anywhere;
+  word-break: keep-all;
 }
 
 .trialLink {
@@ -235,8 +249,9 @@
   }
 
   .metric {
+    --metric-pad-inline: 0.55rem;
     min-height: 7.25rem;
-    padding: 0.7rem 0.55rem;
+    padding: 0.7rem var(--metric-pad-inline);
   }
 
   .metric dt {

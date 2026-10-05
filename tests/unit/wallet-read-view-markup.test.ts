@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 
@@ -178,5 +179,64 @@ describe("WalletReadView 마크업", () => {
     expect(html).toContain('href="/wallet/deposit"');
     expect(html).toContain("아직 표시할 지갑이 없어요");
     expect(html).not.toMatch(/update|mutate|insert/i);
+  });
+
+  it("칸보다 긴 금액만 줄바꿈하고 세 칸 구도와 금액 분리를 유지한다", () => {
+    const css = readFileSync(
+      "components/product/wallet-read-view.module.css",
+      "utf8",
+    );
+    const view = readFileSync(
+      "components/product/wallet-read-view.tsx",
+      "utf8",
+    );
+
+    function rule(selector: string) {
+      const escaped = selector.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      return (
+        css.match(new RegExp(`(?:^|\\n)${escaped}\\s*\\{[^}]*\\}`, "m"))?.[0] ??
+        ""
+      );
+    }
+
+    for (const selector of [
+      ".heroValue",
+      ".breakdown dd",
+      ".metric dd",
+      ".trialCard strong",
+    ]) {
+      const block = rule(selector);
+      expect(block, selector).toMatch(/min-width:\s*0/);
+      expect(block, selector).toMatch(/overflow-wrap:\s*anywhere/);
+      expect(block, selector).toMatch(/word-break:\s*keep-all/);
+      expect(block, selector).not.toMatch(/word-break:\s*break-all/);
+      expect(block, selector).not.toMatch(/white-space:\s*nowrap/);
+    }
+
+    expect(rule(".metrics")).toMatch(
+      /grid-template-columns:\s*repeat\(3,\s*minmax\(0,\s*1fr\)\)/,
+    );
+    expect(rule(".breakdown")).toMatch(
+      /grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\)/,
+    );
+    expect(rule(".metric dd")).toMatch(
+      /width:\s*calc\(100%\s*\+\s*var\(--metric-pad-inline\)\)/,
+    );
+    expect(rule(".metric dd")).toMatch(
+      /margin:\s*0\s+calc\(-1\s*\*\s*var\(--metric-pad-inline\)\)\s+0\s+0/,
+    );
+
+    const narrow = css.slice(css.indexOf("@media (max-width: 520px)"));
+    expect(narrow).toMatch(/--metric-pad-inline:\s*0\.55rem/);
+    expect(narrow).not.toMatch(
+      /\.metrics\s*\{[^}]*grid-template-columns:\s*1fr/,
+    );
+
+    expect(view).toContain('formatAtomicAmount(krw.availableAtomic, "KRW")');
+    expect(view).toContain('formatAtomicAmount(krw.heldAtomic, "KRW")');
+    expect(view).toContain('formatAtomicAmount(krw.balanceAtomic, "KRW")');
+    expect(view).not.toMatch(
+      /availableAtomic\s*\+|heldAtomic\s*\+|balanceAtomic\s*\+/,
+    );
   });
 });
