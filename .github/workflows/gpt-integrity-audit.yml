@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@v7
         with:
           repository: goldeget/putduk-mining
-          ref: 22b3c05a87c7cc3fec3b52e5751de505853de37f
+          ref: 402f186ab458dcea551c202e0689b66ad9a558c3
           fetch-depth: 0
           persist-credentials: false
 
@@ -32,7 +32,7 @@ jobs:
             *) echo BLOCKED_TARGET_SCOPE >&2; exit 1 ;;
           esac
           git remote set-url origin https://github.com/goldeget/putduk-mining.git
-          test "$(git rev-parse HEAD)" = "22b3c05a87c7cc3fec3b52e5751de505853de37f"
+          test "$(git rev-parse HEAD)" = "402f186ab458dcea551c202e0689b66ad9a558c3"
           test "$(git rev-parse --is-shallow-repository)" = "false"
           test -z "$(git replace -l)"
           test ! -s "$(git rev-parse --git-path info/grafts)"
@@ -57,7 +57,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: git-integrity-22b3c05
+          name: git-integrity-402f186
           path: ${{ runner.temp }}/putduk-git-integrity
           retention-days: 7
           if-no-files-found: error
