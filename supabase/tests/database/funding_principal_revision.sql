@@ -252,8 +252,8 @@ select throws_ok($$select public.request_krw_withdrawal(
   '0d470000-0000-4000-8000-000000000099',
   1,
   'w1-principal-recovery-closed')$$,
-  '55000', 'WITHDRAWAL_VERIFIED_SOURCE_LIFECYCLE_UNAVAILABLE',
-  'general withdrawal stays closed and does not spend principal');
+  '55000', 'VERIFIED_WITHDRAWAL_DESTINATION_REQUIRED',
+  'a missing destination does not spend verified principal');
 reset role;
 select ok((select count(*) = 3 and bool_and(lot.effective_at is not null)
     and bool_and(lot.amount_micro_krw = lot.amount_atomic * 1000000)

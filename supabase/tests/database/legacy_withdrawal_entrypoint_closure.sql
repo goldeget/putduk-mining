@@ -246,28 +246,14 @@ select throws_ok(
   'funded service caller cannot create a source-free legacy request'
 );
 
-select throws_ok($general_source$select public.request_krw_withdrawal(
-  owner_id, bank_destination_id, 10000, 'legacy-closure-modern-bank-0001') from legacy_closure_ctx$general_source$,
-  '55000', 'WITHDRAWAL_VERIFIED_SOURCE_LIFECYCLE_UNAVAILABLE',
-  'fresh general request cannot consume unverified total KRW');
-
-reset role;
--- Historical receipt fixture only; never a verified mining/source producer.
-update legacy_closure_ctx set bank_id = pg_temp.seed_historical_held_withdrawal(
-  owner_id, bank_destination_id, 10000, 'legacy-closure-modern-bank-0001'
-);
-set local role service_role;
-select throws_ok($general_source$select public.request_usdt_withdrawal(
-  owner_id, usdt_destination_id, 10000, 'legacy-closure-modern-usdt-0001') from legacy_closure_ctx$general_source$,
-  '55000', 'WITHDRAWAL_VERIFIED_SOURCE_LIFECYCLE_UNAVAILABLE',
-  'fresh general request cannot consume unverified total KRW');
-
-reset role;
--- Historical receipt fixture only; never a verified mining/source producer.
-update legacy_closure_ctx set usdt_id = pg_temp.seed_historical_held_withdrawal(
-  owner_id, usdt_destination_id, 10000, 'legacy-closure-modern-usdt-0001'
-);
-set local role service_role;
+update legacy_closure_ctx set bank_id = public.request_krw_withdrawal(
+  owner_id, bank_destination_id, 10000, 'legacy-closure-modern-bank-0001');
+select is(public.request_krw_withdrawal((select owner_id from legacy_closure_ctx),
+  (select bank_destination_id from legacy_closure_ctx), 10000, 'legacy-closure-modern-bank-0001'),
+  (select bank_id from legacy_closure_ctx),
+  'same general KRW request does not open a second hold');
+update legacy_closure_ctx set usdt_id = public.request_usdt_withdrawal(
+  owner_id, usdt_destination_id, 10000, 'legacy-closure-modern-usdt-0001');
 select ok(
   (select status = 'HELD' and currency = 'KRW' and destination_type = 'KRW_BANK'
     and amount_atomic = 10000 and fee_atomic = 0 and hold_ledger_transaction_id is not null
@@ -320,10 +306,15 @@ select is(
   25000::bigint, 'modern availability retains both HELD reservations and historical REQUESTED amount'
 );
 select throws_ok(
+  $$select public.request_krw_withdrawal(other_id, bank_destination_id, 1000,
+    'legacy-closure-no-source-0001') from legacy_closure_ctx$$,
+  '55000', 'WITHDRAWAL_VERIFIED_SOURCE_LIFECYCLE_UNAVAILABLE',
+  'a member without verified source credit cannot hold');
+select throws_ok(
   $$select public.request_krw_withdrawal(owner_id, bank_destination_id, 26000,
     'legacy-closure-modern-insufficient-0001') from legacy_closure_ctx$$,
-  '55000', 'WITHDRAWAL_VERIFIED_SOURCE_LIFECYCLE_UNAVAILABLE',
-  'unconnected general command cannot consume the remaining principal'
+  '22003', 'INSUFFICIENT_AVAILABLE_BALANCE',
+  'wallet availability still rejects a hold the verified principal cannot fund'
 );
 select is(
   (select count(*)::integer from public.outbox_events

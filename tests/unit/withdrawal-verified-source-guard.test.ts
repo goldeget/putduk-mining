@@ -58,8 +58,8 @@ const guard = `  -- Existing requests recover above. Fresh general withdrawals r
 const suites = [
   { name: "ws04_security_money_workers", historicalCalls: 4 },
   { name: "withdrawal_logical_lifecycle", historicalCalls: 2 },
-  { name: "legacy_withdrawal_entrypoint_closure", historicalCalls: 2 },
-  { name: "krw_deposit_journal_integrity", historicalCalls: 3 },
+  { name: "legacy_withdrawal_entrypoint_closure", historicalCalls: 0 },
+  { name: "krw_deposit_journal_integrity", historicalCalls: 0 },
   { name: "withdrawal_idempotency_key_reuse", historicalCalls: 4 },
 ];
 
@@ -262,7 +262,7 @@ describe("withdrawal source safety closure source integrity", () => {
       expect(sql.trim()).toMatch(/^begin;[\s\S]*rollback;$/);
       const body = after(sql, end);
       expect(
-        body.match(/pg_temp\.seed_historical_held_withdrawal\(/g),
+        body.match(/pg_temp\.seed_historical_held_withdrawal\(/g) ?? [],
       ).toHaveLength(historicalCalls);
       expect(body).toContain(
         "WITHDRAWAL_VERIFIED_SOURCE_LIFECYCLE_UNAVAILABLE",

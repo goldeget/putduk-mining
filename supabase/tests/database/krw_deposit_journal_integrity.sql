@@ -895,22 +895,24 @@ from public.withdrawal_destinations as destination
 where destination.user_id = krw_ctx.happy_id
   and destination.destination_type = 'KRW_BANK';
 
-select throws_ok($general_source$select public.request_krw_withdrawal(
-  happy_id,
-  krw_destination_id,
-  20000,
-  'krw-journal-hold-0001') from krw_ctx$general_source$,
+select throws_ok(
+  $$select public.request_krw_withdrawal(
+    '0d100000-0000-4000-8000-00000000ffff',
+    '0d100000-0000-4000-8000-00000000fffe',
+    1000,
+    'krw-journal-no-source')$$,
   '55000', 'WITHDRAWAL_VERIFIED_SOURCE_LIFECYCLE_UNAVAILABLE',
-  'fresh general request cannot consume unverified total KRW');
-
--- Historical receipt fixture only; never a verified mining/source producer.
+  'a member without verified source credit cannot hold');
+grant select, update on krw_ctx to service_role;
+set local role service_role;
 update krw_ctx
-set hold_id = pg_temp.seed_historical_held_withdrawal(
+set hold_id = public.request_krw_withdrawal(
   happy_id,
   krw_destination_id,
   20000,
   'krw-journal-hold-0001'
 );
+reset role;
 
 select ok(
   (
@@ -1078,17 +1080,9 @@ select ok(
 );
 
 -- 8. hold 해제, 재시도, 응답 유실 후 대사.
-select throws_ok($general_source$select public.request_krw_withdrawal(
-  happy_id,
-  krw_destination_id,
-  10000,
-  'krw-journal-release-hold') from krw_ctx$general_source$,
-  '55000', 'WITHDRAWAL_VERIFIED_SOURCE_LIFECYCLE_UNAVAILABLE',
-  'fresh general request cannot consume unverified total KRW');
-
--- Historical receipt fixture only; never a verified mining/source producer.
+set local role service_role;
 update krw_ctx
-set release_hold_id = pg_temp.seed_historical_held_withdrawal(
+set release_hold_id = public.request_krw_withdrawal(
   happy_id,
   krw_destination_id,
   10000,
@@ -1115,6 +1109,7 @@ select is(
   (select release_id from krw_ctx),
   'release replay after a lost response returns the original reversal'
 );
+reset role;
 select is(
   (
     select count(*)::integer
@@ -1192,22 +1187,15 @@ from public.withdrawal_destinations as destination
 where destination.user_id = krw_ctx.usdt_send_id
   and destination.destination_type = 'USDT_ADDRESS';
 
-select throws_ok($general_source$select public.request_usdt_withdrawal(
-  usdt_send_id,
-  usdt_destination_id,
-  1500,
-  'krw-journal-usdt-hold-0001') from krw_ctx$general_source$,
-  '55000', 'WITHDRAWAL_VERIFIED_SOURCE_LIFECYCLE_UNAVAILABLE',
-  'fresh general request cannot consume unverified total KRW');
-
--- Historical receipt fixture only; never a verified mining/source producer.
+set local role service_role;
 update krw_ctx
-set usdt_withdrawal_id = pg_temp.seed_historical_held_withdrawal(
+set usdt_withdrawal_id = public.request_usdt_withdrawal(
   usdt_send_id,
   usdt_destination_id,
   1500,
   'krw-journal-usdt-hold-0001'
 );
+reset role;
 
 update krw_ctx
 set usdt_external_send_id = public.record_usdt_external_send(
