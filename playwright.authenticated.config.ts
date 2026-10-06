@@ -95,6 +95,7 @@ if (
 
 export default defineConfig({
   testDir: "./tests/e2e/authenticated",
+  globalSetup: "./tests/e2e/fixtures/authenticated-setup.ts",
   fullyParallel: false,
   workers: 1,
   forbidOnly: isCI,

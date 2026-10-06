@@ -63,6 +63,10 @@ jobs:
             apps/admin/tests/admin-browser-public-key.test.ts \
             scripts/ci-authenticated-shards.mjs \
             scripts/ci-authenticated-shards.test.mjs \
+            playwright.authenticated.config.ts \
+            tests/e2e/fixtures/authenticated-setup.ts \
+            tests/e2e/authenticated/operator-fixture-isolation.spec.ts \
+            tests/unit/authenticated-setup.test.ts \
             .github/workflows/ci.yml \
             .github/workflows/gpt-patch-preflight.yml
           git diff --check
@@ -74,7 +78,11 @@ jobs:
             lib/ai/member-conversation.ts \
             tests/unit/ai-persistence-recovery-regression.test.ts \
             tests/unit/ai-korean-short-code-redaction.test.ts \
-            lib/env/public.ts
+            lib/env/public.ts \
+            playwright.authenticated.config.ts \
+            tests/e2e/fixtures/authenticated-setup.ts \
+            tests/e2e/authenticated/operator-fixture-isolation.spec.ts \
+            tests/unit/authenticated-setup.test.ts
           pnpm --dir apps/admin exec eslint --max-warnings=0 \
             lib/supabase/browser.ts tests/admin-browser-public-key.test.ts
 
@@ -127,6 +135,10 @@ jobs:
             scripts/ci-authenticated-shards.mjs \
             scripts/ci-authenticated-shards.test.mjs \
             scripts/ci-supabase-start.sh \
+            playwright.authenticated.config.ts \
+            tests/e2e/fixtures/authenticated-setup.ts \
+            tests/e2e/authenticated/operator-fixture-isolation.spec.ts \
+            tests/unit/authenticated-setup.test.ts \
             .github/workflows/ci.yml \
             .github/workflows/gpt-patch-preflight.yml \
             > gpt-preflight-evidence/normalized-sha256.txt
