@@ -1,0 +1,63 @@
+name: Exact candidate Git integrity
+
+on:
+  push:
+    branches:
+      - codex/integrity-audit-20261006
+
+permissions:
+  contents: read
+
+jobs:
+  integrity:
+    if: github.repository == 'goldeget/putduk-mining'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Check out the exact integration candidate with complete history
+        uses: actions/checkout@v7
+        with:
+          repository: goldeget/putduk-mining
+          ref: 22b3c05a87c7cc3fec3b52e5751de505853de37f
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Verify target, complete graph and clean candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = "goldeget/putduk-mining"
+          case "$(git remote get-url origin)" in
+            https://github.com/goldeget/putduk-mining|https://github.com/goldeget/putduk-mining.git) ;;
+            *) echo BLOCKED_TARGET_SCOPE >&2; exit 1 ;;
+          esac
+          git remote set-url origin https://github.com/goldeget/putduk-mining.git
+          test "$(git rev-parse HEAD)" = "22b3c05a87c7cc3fec3b52e5751de505853de37f"
+          test "$(git rev-parse --is-shallow-repository)" = "false"
+          test -z "$(git replace -l)"
+          test ! -s "$(git rev-parse --git-path info/grafts)"
+          out="$RUNNER_TEMP/putduk-git-integrity"
+          mkdir -p "$out"
+          git status --porcelain=v1 > "$out/status.txt"
+          test ! -s "$out/status.txt"
+          git remote -v > "$out/remotes.txt"
+          git rev-parse HEAD > "$out/target-sha.txt"
+          printf '%s\n' "$GITHUB_SHA" > "$out/audit-workflow-sha.txt"
+          git fsck --full > "$out/fsck.txt" 2>&1
+          git rev-list --objects --all --missing=print > "$out/objects.txt"
+          if grep -q '^?' "$out/objects.txt"; then
+            echo 'Missing reachable Git object' >&2
+            exit 1
+          fi
+          git diff --check 0a7e95ba8bf55539fe32fd6f4654ee49a0be226d...HEAD
+          printf '%s\n' 'PASS: exact clean candidate, complete history, no graft/replacement, git fsck --full, no missing reachable objects, diff check.' > "$out/result.txt"
+          sha256sum "$out"/*.txt > "$out/SHA256SUMS"
+
+      - name: Preserve exact-candidate integrity evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: git-integrity-22b3c05
+          path: ${{ runner.temp }}/putduk-git-integrity
+          retention-days: 7
+          if-no-files-found: error
