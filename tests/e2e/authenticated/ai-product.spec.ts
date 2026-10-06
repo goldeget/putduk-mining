@@ -3,7 +3,10 @@ import path from "node:path";
 
 import { expect, test, type Page } from "@playwright/test";
 
-import { AI_CONVERSATION_CONTINUITY_COPY } from "@/domain/ai/continuity";
+import {
+  AI_CONVERSATION_CONTINUITY_COPY,
+  AI_CONVERSATION_CONTINUITY_MODE,
+} from "@/domain/ai/continuity";
 
 import { createConfirmedMember } from "../fixtures/local-auth";
 import {
@@ -139,7 +142,7 @@ test("AI ownership, money denial, continuity, themes, and keyboard path", async 
   const chat = page.getByRole("region", { name: "퍼뜩 AI 대화" });
   await expect(chat).toHaveAttribute(
     "data-ai-continuity",
-    "SESSION_MEMORY_ONLY",
+    AI_CONVERSATION_CONTINUITY_MODE,
   );
   await expect(page.getByTestId("ai-continuity-notice")).toHaveText(
     AI_CONVERSATION_CONTINUITY_COPY,
@@ -214,13 +217,15 @@ test("AI ownership, money denial, continuity, themes, and keyboard path", async 
     timeout: 30_000,
   });
 
-  // 세션 연속성: 새로고침 후 대화가 복원되지 않아야 한다(가장한 persistence 금지).
+  // 계정 대화: 새로고침 뒤에도 이 계정의 답변이 다시 보여야 한다.
   await page.reload({ waitUntil: "domcontentloaded" });
   await openAi(page);
   await expect(
-    page.getByText("궁금한 내용을 편하게 물어보세요."),
-  ).toBeVisible();
-  await expect(page.locator(".ai-message")).toHaveCount(0);
+    page.getByText(/실제 지갑과 완전 분리|분리/).first(),
+  ).toBeVisible({
+    timeout: 30_000,
+  });
+  await expect(page.locator(".ai-message").first()).toBeVisible();
 
   const walletResponse = await askAi(page, "내 지갑 잔액 얼마야?");
   expect(walletResponse.ok()).toBe(true);

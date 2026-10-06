@@ -509,6 +509,17 @@ export async function executeAiTool(
   tool: AiToolName,
   options: ToolOptions = {},
 ): Promise<AiToolResult> {
+  if (
+    Object.prototype.hasOwnProperty.call(options, "userId") ||
+    Object.prototype.hasOwnProperty.call(options, "subjectUserId")
+  ) {
+    return {
+      answer: getAiToolFailureCopy(tool),
+      code: "AI_TOOL_UNAVAILABLE",
+      ok: false,
+      tool,
+    };
+  }
   const now = options.now ?? new Date();
   try {
     switch (tool) {

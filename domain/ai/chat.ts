@@ -40,6 +40,7 @@ export type AiScreenContext = z.infer<typeof aiScreenContextSchema>;
 export const aiChatRequestSchema = z
   .object({
     clientMessageId: z.uuid(),
+    conversationId: z.uuid().optional(),
     question: z.string().trim().min(3).max(AI_QUESTION_MAX_CHARACTERS),
     screenContext: aiScreenContextSchema.optional(),
   })
@@ -74,16 +75,21 @@ export const aiClientStreamEventSchema = z.discriminatedUnion("type", [
   z.object({ text: z.string().max(32_000), type: z.literal("delta") }).strict(),
   z
     .object({
+      assistantMessageId: z.uuid().optional(),
+      conversationId: z.uuid().optional(),
       knowledgeVersion: z.string().min(1).max(200),
       grounding: aiAnswerGroundingSchema.optional(),
       requestId: z.uuid(),
+      saved: z.boolean().optional(),
       type: z.literal("done"),
     })
     .strict(),
   z
     .object({
       code: z.string().min(1).max(100),
+      conversationId: z.uuid().optional(),
       message: z.string().min(1).max(4_000),
+      saved: z.boolean().optional(),
       type: z.literal("error"),
     })
     .strict(),
