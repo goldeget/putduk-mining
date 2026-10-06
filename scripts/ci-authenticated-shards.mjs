@@ -174,9 +174,7 @@ export function testListFor(shard, rootDir, cwd = process.cwd()) {
           .relative(rootDir, path.resolve(cwd, file))
           .split(path.sep)
           .join("/");
-        if (
-          !/^(?:[a-zA-Z0-9_-]+\/)*[a-zA-Z0-9_-]+\.spec\.ts$/.test(relative)
-        ) {
+        if (!/^(?:[a-zA-Z0-9_-]+\/)*[a-zA-Z0-9_-]+\.spec\.ts$/.test(relative)) {
           throw new Error("Test-list entry is outside the collected rootDir");
         }
         return `[${project}] > ${relative}`;
