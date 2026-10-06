@@ -126,6 +126,12 @@ jobs:
       - name: Unit tests
         run: pnpm test
 
+      - name: Verify authenticated scheduling invariants
+        run: node --test scripts/ci-authenticated-shards.test.mjs
+
+      - name: Verify every authenticated test is assigned exactly once
+        run: node scripts/ci-authenticated-shards.mjs --verify-only
+
       - name: Production build
         run: pnpm build
 
@@ -328,6 +334,8 @@ jobs:
           version: 2.113.0
 
       - name: Start local Supabase
+        env:
+          CI_SUPABASE_START_STAGGER_SECONDS: ${{ matrix.shard }}
         run: bash scripts/ci-supabase-start.sh
 
       - name: Rebuild migrations from zero
@@ -362,13 +370,12 @@ jobs:
 
       - name: Run authenticated browser tests
         # 실제 TOTP 창과 모든 assertion/retry는 유지한다. 중단은 실패이며 통과가 아니다.
-        # 186개(chromium + mobile-chrome)를 8-way --shard로 나누면 shard당 약 23건이다. wall time은 가장 느린 shard 기준.
+        # 파일/브라우저 조합은 통째로 배분한다. 전체 목록과 선택 목록의 exact coverage를 검사한다.
         # CI wall-clock: e2e-app-build 산출물 + E2E_NEXT_START=1 (next start). next dev 금지 — putduk-ci-wall-clock.mdc.
         timeout-minutes: 18
         env:
           E2E_NEXT_START: "1"
-        # pnpm run … -- --shard 는 CI에서 playwright 인자 앞에 `--` 가 한 번 더 붙어 shard가 무시된다.
-        run: pnpm exec playwright test --config playwright.authenticated.config.ts --shard=${{ matrix.shard }}/8 --fail-on-flaky-tests
+        run: node scripts/ci-authenticated-shards.mjs ${{ matrix.shard }}/8
 
       - name: Preserve authenticated browser evidence
         if: always()
@@ -378,6 +385,7 @@ jobs:
           path: |
             playwright-report
             test-results
+            ci-shard-evidence
           if-no-files-found: ignore
 
   worker:

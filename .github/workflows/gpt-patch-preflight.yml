@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - gpt/recovery-visual-20261006
+      - gpt/ci-balance-20261006
   workflow_dispatch:
 
 permissions:
@@ -15,7 +16,7 @@ concurrency:
 
 jobs:
   ai-patch:
-    name: AI patch checks (not release CI)
+    name: Security and CI patch checks (not release CI)
     if: github.repository == 'goldeget/putduk-mining'
     runs-on: ubuntu-24.04
     timeout-minutes: 20
@@ -60,6 +61,9 @@ jobs:
             lib/env/public.ts \
             apps/admin/lib/supabase/browser.ts \
             apps/admin/tests/admin-browser-public-key.test.ts \
+            scripts/ci-authenticated-shards.mjs \
+            scripts/ci-authenticated-shards.test.mjs \
+            .github/workflows/ci.yml \
             .github/workflows/gpt-patch-preflight.yml
           git diff --check
 
@@ -93,6 +97,21 @@ jobs:
           pnpm --dir apps/admin exec vitest run \
             tests/admin-browser-public-key.test.ts
 
+      - name: CI scheduling regression checks
+        if: ${{ !cancelled() }}
+        run: |
+          node --test scripts/ci-authenticated-shards.test.mjs
+          bash -n scripts/ci-supabase-start.sh
+          pnpm exec eslint --max-warnings=0 scripts/ci-authenticated-shards.mjs scripts/ci-authenticated-shards.test.mjs
+
+      - name: Verify locked Playwright exact coverage across eight shards
+        if: ${{ !cancelled() }}
+        run: node scripts/ci-authenticated-shards.mjs --verify-only
+
+      - name: All existing unit regressions
+        if: ${{ !cancelled() }}
+        run: pnpm test
+
       - name: Preserve exact-source and normalized-tree evidence
         if: always()
         run: |
@@ -105,6 +124,10 @@ jobs:
             lib/env/public.ts \
             apps/admin/lib/supabase/browser.ts \
             apps/admin/tests/admin-browser-public-key.test.ts \
+            scripts/ci-authenticated-shards.mjs \
+            scripts/ci-authenticated-shards.test.mjs \
+            scripts/ci-supabase-start.sh \
+            .github/workflows/ci.yml \
             .github/workflows/gpt-patch-preflight.yml \
             > gpt-preflight-evidence/normalized-sha256.txt
           printf '%s\n' 'Tests above use the normalized working tree. A nonempty format.patch means the original source SHA is NOT format-green. This workflow does NOT replace required CI, database tests, browser QA or release approval.' \
@@ -115,7 +138,9 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: gpt-preflight-${{ github.sha }}
-          path: gpt-preflight-evidence
+          path: |
+            gpt-preflight-evidence
+            ci-shard-evidence
           if-no-files-found: error
           retention-days: 7
 
