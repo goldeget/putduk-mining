@@ -1,0 +1,105 @@
+name: GPT patch preflight
+
+on:
+  push:
+    branches:
+      - gpt/recovery-visual-20261006
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gpt-patch-preflight-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ai-patch:
+    name: AI patch checks (not release CI)
+    if: github.repository == 'goldeget/putduk-mining'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Check out exact candidate
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+
+      - name: Verify target
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = "goldeget/putduk-mining"
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          case "$(git remote get-url origin)" in
+            https://github.com/goldeget/putduk-mining|https://github.com/goldeget/putduk-mining.git) ;;
+            *) echo 'BLOCKED_TARGET_SCOPE' >&2; exit 1 ;;
+          esac
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6.1.0
+        with:
+          version: 12.6.0
+
+      - name: Install Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+
+      - name: Install locked dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Normalize only candidate files for review
+        run: |
+          pnpm exec prettier --write \
+            domain/ai/member-transcript.ts \
+            lib/ai/member-conversation.ts \
+            tests/unit/ai-persistence-recovery-regression.test.ts \
+            .github/workflows/gpt-patch-preflight.yml
+          git diff --check
+
+      - name: Lint changed TypeScript
+        run: |
+          pnpm exec eslint --max-warnings=0 \
+            domain/ai/member-transcript.ts \
+            lib/ai/member-conversation.ts \
+            tests/unit/ai-persistence-recovery-regression.test.ts
+
+      - name: Typecheck web and admin
+        if: ${{ !cancelled() }}
+        run: pnpm typecheck
+
+      - name: AI regression and existing conversation tests
+        if: ${{ !cancelled() }}
+        run: |
+          pnpm exec vitest run \
+            tests/unit/ai-persistence-recovery-regression.test.ts \
+            tests/unit/ai-member-conversation.test.ts \
+            tests/unit/ai-money-continuity.test.ts
+
+      - name: Preserve exact-source and normalized-tree evidence
+        if: always()
+        run: |
+          mkdir -p gpt-preflight-evidence
+          printf '%s\n' "$GITHUB_SHA" > gpt-preflight-evidence/source-sha.txt
+          git diff --binary > gpt-preflight-evidence/format.patch
+          sha256sum domain/ai/member-transcript.ts lib/ai/member-conversation.ts \
+            tests/unit/ai-persistence-recovery-regression.test.ts \
+            .github/workflows/gpt-patch-preflight.yml \
+            > gpt-preflight-evidence/normalized-sha256.txt
+          printf '%s\n' 'Tests above use the normalized working tree. A nonempty format.patch means the original source SHA is NOT format-green. This workflow does NOT replace required CI, database tests, browser QA or release approval.' \
+            > gpt-preflight-evidence/README.txt
+
+      - name: Upload preflight evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: gpt-preflight-${{ github.sha }}
+          path: gpt-preflight-evidence
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Require original source formatting to be clean
+        if: ${{ !cancelled() }}
+        run: git diff --exit-code
