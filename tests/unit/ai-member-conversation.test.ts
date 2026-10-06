@@ -128,7 +128,9 @@ describe("회원 AI 본문 가림", () => {
   });
 
   it("따옴표, 조사, 한국어 토큰 라벨 뒤의 원문도 저장 문자열에서 뺀다", () => {
-    const quotedPassword = redactMemberTranscript('비밀번호는 "hunter2" 입니다');
+    const quotedPassword = redactMemberTranscript(
+      '비밀번호는 "hunter2" 입니다',
+    );
     const englishPassword = redactMemberTranscript("password is hunter2 now");
     const koreanToken = redactMemberTranscript(
       "내 토큰은 eyJhbGciOiJIUzI1NiJ9.payload.signature",
