@@ -109,11 +109,10 @@ export default async function MenuPage() {
         </div>
       </header>
 
-      <div className={styles.board}>
+      {/* 알림 설정과 퍼뜩 AI도 이 메뉴 안에 둔다. 다른 내비로 나누면 허브에서 찾지 못한다. */}
+      <nav className={styles.board} aria-label="더보기 메뉴">
         <section className={styles.panel}>
-          <nav aria-label="더보기 메뉴">
-            <MenuList items={links} />
-          </nav>
+          <MenuList items={links} />
         </section>
         <section className={styles.panel}>
           <div className={styles.preferences}>
@@ -123,11 +122,9 @@ export default async function MenuPage() {
               <strong>{formatLocaleLabel(facts.locale)}</strong>
             </p>
           </div>
-          <nav aria-label="더보기 설정">
-            <MenuList items={settings} />
-          </nav>
+          <MenuList items={settings} />
         </section>
-      </div>
+      </nav>
 
       <aside className={styles.membership}>
         <strong>{facts.rankName ?? "등급"}</strong>

@@ -19,6 +19,11 @@ describe("menu hub navigation", () => {
     expect(hrefs).toContain("/ai");
     expect(hrefs).toContain("/support");
     expect(hrefs).toContain("/events");
+    expect(
+      MENU_ITEMS.filter((item) => item.lane === "settings").map(
+        (item) => item.label,
+      ),
+    ).toEqual(expect.arrayContaining(["알림 설정", "퍼뜩 AI"]));
   });
 
   it("keeps Korean labels free of developer jargon", () => {

@@ -327,7 +327,7 @@ export default async function ProductHomePage() {
       <section className={styles.products} aria-label="추천 상품">
         <header className={styles.sectionHeader}>
           <h2>추천 상품</h2>
-          <Link href="/products">전체 보기</Link>
+          <Link href="/products">상품 보기</Link>
         </header>
         {catalog.state === "error" ? (
           <p className={styles.sectionEmpty}>

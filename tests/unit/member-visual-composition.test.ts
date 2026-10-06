@@ -45,6 +45,9 @@ describe("회원 화면 구도", () => {
     expect(homePage).not.toMatch(/인정 원금|채굴 용량|대기 수익/);
     expect(homePage).toContain("className={styles.featureBand}");
     expect(homePage).toContain("className={styles.aiStrip}");
+    expect(homePage).toContain('<Link href="/notifications">전체 보기</Link>');
+    expect(homePage).toContain('<Link href="/products">상품 보기</Link>');
+    expect(homePage.match(/>전체 보기</g)).toHaveLength(1);
     expect(homeCss).toMatch(
       /\.hero\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1fr\)/s,
     );
@@ -65,7 +68,12 @@ describe("회원 화면 구도", () => {
     expect(menuPage).toContain("아직 표시할 수 없어요");
     expect(menuPage).not.toMatch(/L5 PRO|54,281|보유 자산/);
     expect(menuPage).toContain("<h1>더보기</h1>");
-    expect(menuPage).toContain('aria-label="더보기 메뉴"');
+    expect(menuPage.match(/aria-label="더보기 메뉴"/g)).toHaveLength(1);
+    const hubStart = menuPage.indexOf('aria-label="더보기 메뉴"');
+    const hub = menuPage.slice(hubStart, menuPage.indexOf("</nav>", hubStart));
+    expect(hub).toContain("<MenuList items={links} />");
+    expect(hub).toContain("<MenuList items={settings} />");
+    expect(menuPage).not.toContain('aria-label="더보기 설정"');
     expect(menuCss).toMatch(
       /\.board\s*\{[^}]*grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\)/s,
     );
@@ -90,6 +98,12 @@ describe("회원 화면 구도", () => {
     expect(walletView).toContain('value="principal"');
     expect(walletView).toContain('value="profit"');
     expect(walletView).toContain('value="history"');
+    expect(walletView).toContain('id="ledger-history-title"');
+    expect(walletView).toContain(">최근 거래 내역</h2>");
+    expect(walletCss).toMatch(
+      /\.ledgerTabs \.tabPanel\[data-panel="history"\]\s*\{[^}]*display:\s*grid/s,
+    );
+    expect(walletCss).not.toMatch(/value="history"\]:checked/);
     expect(walletView).toContain("아직 거래 내역이 없어요");
     expect(walletView).not.toMatch(
       /eligible_principal_micro_krw\s*\+|pending_micro_krw\s*\+/,

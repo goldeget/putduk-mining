@@ -315,9 +315,13 @@
 
 .ledgerTabs:has(input[value="principal"]:checked)
   .tabPanel[data-panel="principal"],
-.ledgerTabs:has(input[value="profit"]:checked) .tabPanel[data-panel="profit"],
-.ledgerTabs:has(input[value="history"]:checked)
-  .tabPanel[data-panel="history"] {
+.ledgerTabs:has(input[value="profit"]:checked) .tabPanel[data-panel="profit"] {
+  display: grid;
+  gap: 0.85rem;
+}
+
+/* 거래 내역은 탭을 바꿔도 숨기지 않는다. 최근 거래 내역과 전환 문구가 화면에 남아야 한다. */
+.ledgerTabs .tabPanel[data-panel="history"] {
   display: grid;
   gap: 0.85rem;
 }
