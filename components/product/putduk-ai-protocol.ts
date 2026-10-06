@@ -15,6 +15,9 @@ export type PutdukAiMessage = {
   source?: AiAnswerSource;
   grounding?: AiAnswerGrounding;
   knowledgeVersion?: string;
+  saved?: boolean;
+  conversationId?: string;
+  assistantMessageId?: string;
   failure?: PutdukAiFailure;
 };
 
@@ -64,6 +67,10 @@ export function aiFailure(code: string, message?: string): PutdukAiFailure {
           "이미 접수된 질문",
           "이미 접수된 질문이에요. 다시 질문하려면 내용을 확인해 주세요.",
         ];
+      case "AI_CONVERSATION_NOT_FOUND":
+        return ["대화 확인", "대화를 찾지 못했어요. 새 대화로 질문해 주세요."];
+      case "AI_FEEDBACK_EXISTS":
+        return ["이미 남긴 의견", "이미 남긴 의견이에요."];
       case "AI_REQUEST_UNAVAILABLE":
         return [
           "질문 접수 실패",
@@ -195,6 +202,8 @@ export function applyAiStreamEvent(
       ...message,
       state: "error",
       failure: aiFailure(event.code, event.message),
+      ...(event.saved !== undefined ? { saved: event.saved } : {}),
+      ...(event.conversationId ? { conversationId: event.conversationId } : {}),
     };
   if (!message.source) throw new PutdukAiProtocolError();
   if (event.type === "delta") {
@@ -213,6 +222,11 @@ export function applyAiStreamEvent(
     state: "complete",
     knowledgeVersion: event.knowledgeVersion,
     ...(event.grounding ? { grounding: event.grounding } : {}),
+    ...(event.saved !== undefined ? { saved: event.saved } : {}),
+    ...(event.conversationId ? { conversationId: event.conversationId } : {}),
+    ...(event.assistantMessageId
+      ? { assistantMessageId: event.assistantMessageId }
+      : {}),
   };
 }
 
