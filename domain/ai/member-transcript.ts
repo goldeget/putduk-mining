@@ -4,8 +4,7 @@ const TITLE_MAX = 80;
 
 // A value's length is not a safety boundary: short OTPs and quoted passphrases
 // are secrets too. Match whole labels, not words such as "tokenization".
-const LABEL =
-  String.raw`(?<![\p{L}\p{N}_])(?:비밀번호|패스워드|인증\s*번호|토큰|개인\s*키|비밀\s*키|복구\s*(?:문구|코드)|시드(?:\s*문구)?|(?:password|passwd|pwd|otp|pin|api\s*key|access[_\s-]*token|refresh[_\s-]*token|secret|token|private\s*key|seed(?:\s*phrase)?|recovery\s*code)\b)`;
+const LABEL = String.raw`(?<![\p{L}\p{N}_])(?:비밀번호|패스워드|인증\s*번호|토큰|개인\s*키|비밀\s*키|복구\s*(?:문구|코드)|시드(?:\s*문구)?|(?:password|passwd|pwd|otp|pin|api\s*key|access[_\s-]*token|refresh[_\s-]*token|secret|token|private\s*key|seed(?:\s*phrase)?|recovery\s*code)\b)`;
 const QUOTED_VALUE = new RegExp(
   LABEL +
     String.raw`(?:["'”’]\s*(?=[:：=]))?\s*(?:(?:은|는|이|가|\bis\b|\bwas\b)\s*)?[:：=]?\s*(["'“‘` +

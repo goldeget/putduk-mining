@@ -355,9 +355,14 @@ async function insertEvidenceOnce(
     .maybeSingle();
   // Conflict is only idempotent success for this owner's identical evidence.
   // A different source, version or tool receipt is never overwritten.
-  if (readError || !existing
-    || Object.entries(row).some(([key, value]) =>
-      (existing as unknown as Record<string, unknown>)[key] !== value)) {
+  if (
+    readError ||
+    !existing ||
+    Object.entries(row).some(
+      ([key, value]) =>
+        (existing as unknown as Record<string, unknown>)[key] !== value,
+    )
+  ) {
     throw new MemberConversationWriteError("CONFLICT");
   }
 }
@@ -374,7 +379,9 @@ export function createSupabaseMemberConversationPort(
         ];
         const { data: rows, error: readError } = await supabase
           .from("ai_messages")
-          .select("id, user_id, conversation_id, author_role, body_text, position, client_message_id")
+          .select(
+            "id, user_id, conversation_id, author_role, body_text, position, client_message_id",
+          )
           .eq("user_id", userId)
           .eq("conversation_id", conversationId)
           .gte("position", afterPosition)
@@ -390,16 +397,19 @@ export function createSupabaseMemberConversationPort(
             }
             break;
           }
-          const role = index < expected.questionParts.length
-            ? "MEMBER" : "ASSISTANT";
-          if (row.user_id !== userId || row.conversation_id !== conversationId
-            || typeof row.id !== "string"
-            || row.position !== afterPosition + index
-            || row.author_role !== role
-            || row.body_text !== expectedBodies[index]
-            || (index === 0
+          const role =
+            index < expected.questionParts.length ? "MEMBER" : "ASSISTANT";
+          if (
+            row.user_id !== userId ||
+            row.conversation_id !== conversationId ||
+            typeof row.id !== "string" ||
+            row.position !== afterPosition + index ||
+            row.author_role !== role ||
+            row.body_text !== expectedBodies[index] ||
+            (index === 0
               ? row.client_message_id !== expected.clientMessageId
-              : row.client_message_id !== null)) {
+              : row.client_message_id !== null)
+          ) {
             throw new MemberConversationWriteError("CONFLICT");
           }
         }
@@ -409,7 +419,11 @@ export function createSupabaseMemberConversationPort(
         if (rows.length < expectedBodies.length) {
           throw new MemberConversationWriteError("FAILED");
         }
-        return rows[expected.questionParts.length].id as string;
+        const assistant = rows[expected.questionParts.length];
+        if (!assistant || typeof assistant.id !== "string") {
+          throw new MemberConversationWriteError("FAILED");
+        }
+        return assistant.id;
       }
       const { data, error } = await supabase
         .from("ai_messages")
