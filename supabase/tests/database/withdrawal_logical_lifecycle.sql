@@ -140,13 +140,16 @@ select is((select public.prepare_withdrawal_logical_request(owner_id,'KRW_BANK',
 select throws_ok($$select public.hold_withdrawal_logical_request(other_id,logical->>'key','KRW_BANK',destination_id,1000) from logical_ctx$$,'42501','WITHDRAWAL_LOGICAL_MISMATCH','cross-owner hold denied');
 select throws_ok($$select public.hold_withdrawal_logical_request(owner_id,gen_random_uuid()::text,'KRW_BANK',destination_id,1000) from logical_ctx$$,'42501','WITHDRAWAL_LOGICAL_MISMATCH','unprepared new key cannot invoke member hold');
 select throws_ok($$select public.hold_withdrawal_logical_request(owner_id,logical->>'key','KRW_BANK',destination_id,2000) from logical_ctx$$,'42501','WITHDRAWAL_LOGICAL_MISMATCH','amount is immutable after prepare');
-select throws_ok($$select public.hold_withdrawal_logical_request(owner_id,logical->>'key','KRW_BANK',destination_id,1000) from logical_ctx$$,
-  '55000','WITHDRAWAL_VERIFIED_SOURCE_LIFECYCLE_UNAVAILABLE','principal-only logical request cannot create a new general hold');
-select is((select state from public.withdrawal_logical_requests where idempotency_key=(select logical->>'key' from logical_ctx)),'DESTINATION_REGISTERED','rejected source gate leaves intent at its original state');
-select is((select count(*)::integer from public.withdrawal_requests where user_id=(select owner_id from logical_ctx)),0,'rejected new logical hold creates no request');
--- Simulate an already committed historical original; no source is fabricated.
-update logical_ctx set withdrawal_id=pg_temp.seed_historical_held_withdrawal(owner_id,destination_id,1000,logical->>'key');
+grant select, update on logical_ctx to service_role;
+set local role service_role;
 update logical_ctx set withdrawal_id=public.hold_withdrawal_logical_request(owner_id,logical->>'key','KRW_BANK',destination_id,1000);
+reset role;
+select is((select state from public.withdrawal_logical_requests where idempotency_key=(select logical->>'key' from logical_ctx)),'OUTCOME_UNCERTAIN','verified principal hold records the original outcome');
+select is((select status from public.withdrawal_requests where id=(select withdrawal_id from logical_ctx)),'HELD','verified principal logical request reaches hold');
+select is((select count(*)::integer from public.withdrawal_requests where user_id=(select owner_id from logical_ctx) and idempotency_key=(select logical->>'key' from logical_ctx)),1,'verified hold creates one request');
+-- Source-less historical receipt stays separate from the verified hold.
+select pg_temp.seed_historical_held_withdrawal(owner_id,destination_id,1000,'logical-historical-unconnected') from logical_ctx;
+select is(public.hold_withdrawal_logical_request((select owner_id from logical_ctx),(select logical->>'key' from logical_ctx),'KRW_BANK',(select destination_id from logical_ctx),1000),(select withdrawal_id from logical_ctx),'hold retry returns the original verified id');
 -- Hold retry returns its committed ID; RECOVER durably binds the historical outcome.
 update logical_ctx set logical=public.resolve_withdrawal_logical_request(owner_id,'RECOVER',logical->>'key');
 select is((select state from public.withdrawal_logical_requests where idempotency_key=(select logical->>'key' from logical_ctx)),'OUTCOME_UNCERTAIN','historical hold recovery records durable outcome uncertainty');
@@ -167,12 +170,16 @@ select is((select public.hold_withdrawal_logical_request(owner_id,logical->>'key
 select is((select public.resolve_withdrawal_logical_request(owner_id,'CONFIRM',logical->>'key',withdrawal_id)->>'state' from logical_ctx),'CONFIRMED','explicit exact acknowledgement concludes logical request');
 update logical_ctx set later_key=public.prepare_withdrawal_logical_request(owner_id,'KRW_BANK',1000,policy_id,189001,null,destination_id)->>'key';
 select isnt((select later_key from logical_ctx),(select logical->>'key' from logical_ctx),'later legitimate identical intent gets a different random key');
-select throws_ok($$select public.hold_withdrawal_logical_request(owner_id,later_key,'KRW_BANK',destination_id,1000) from logical_ctx$$,
-  '55000','WITHDRAWAL_VERIFIED_SOURCE_LIFECYCLE_UNAVAILABLE','a new later intent remains closed without verified source lifecycle');
+set local role service_role;
+select lives_ok($$select public.hold_withdrawal_logical_request(owner_id,later_key,'KRW_BANK',destination_id,1000) from logical_ctx$$,
+  'a later verified principal intent also reaches hold');
+reset role;
+select throws_ok($$select public.request_krw_withdrawal(other_id,destination_id,1000,'logical-no-verified-source') from logical_ctx$$,
+  '55000','WITHDRAWAL_VERIFIED_SOURCE_LIFECYCLE_UNAVAILABLE','a member without verified source credit cannot hold');
 -- A second distinct original historical receipt proves recovery is not permanently deduplicated.
-select pg_temp.seed_historical_held_withdrawal(owner_id,destination_id,1000,later_key) from logical_ctx;
-select lives_ok($$select public.hold_withdrawal_logical_request(owner_id,later_key,'KRW_BANK',destination_id,1000) from logical_ctx$$,'a distinct already committed historical hold remains recoverable');
-select is((select count(*)::integer from public.withdrawal_requests where user_id=(select owner_id from logical_ctx)),2,'two distinct historical original intents are not permanently deduplicated');
+select pg_temp.seed_historical_held_withdrawal(owner_id,destination_id,1000,'logical-historical-second') from logical_ctx;
+select lives_ok($$select public.hold_withdrawal_logical_request(owner_id,later_key,'KRW_BANK',destination_id,1000) from logical_ctx$$,'a distinct already committed hold remains recoverable');
+select is((select count(*)::integer from public.withdrawal_requests where user_id=(select owner_id from logical_ctx) and idempotency_key in ((select logical->>'key' from logical_ctx),(select later_key from logical_ctx))),2,'two verified intents are not permanently deduplicated');
 select is((select public.hold_withdrawal_logical_request(owner_id,logical->>'key','KRW_BANK',destination_id,1000) from logical_ctx),(select withdrawal_id from logical_ctx),'late old tab replays old result even after newer intent');
 
 update logical_ctx set logical = public.prepare_withdrawal_logical_request(other_id,'KRW_BANK',1000,policy_id,189001,repeat('b',64),null);

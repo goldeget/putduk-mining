@@ -83,25 +83,35 @@ create temporary table guard_before as select
   (select count(*) from public.transaction_receipts) receipts,
   (select count(*) from public.money_source_movements) sources;
 set local role service_role;
-select throws_ok($$select public.request_krw_withdrawal(principal_id,principal_bank,1000,'guard-general-bank') from guard_ctx$$,
-  '55000','WITHDRAWAL_VERIFIED_SOURCE_LIFECYCLE_UNAVAILABLE','funded principal cannot be silently spent as mining reward');
-select throws_ok($$select public.request_usdt_withdrawal(principal_id,principal_usdt,1000,'guard-general-usdt') from guard_ctx$$,
-  '55000','WITHDRAWAL_VERIFIED_SOURCE_LIFECYCLE_UNAVAILABLE','manual USDT general withdrawal also requires verified source lifecycle');
-select throws_ok($$select app_private.request_withdrawal_with_hold(principal_id,principal_bank,1000,'KRW_BANK','guard-private-general',null) from guard_ctx$$,
-  '55000','WITHDRAWAL_VERIFIED_SOURCE_LIFECYCLE_UNAVAILABLE','final private writer prevents general-wrapper bypass');
+update guard_ctx set bank_withdrawal=public.request_krw_withdrawal(principal_id,principal_bank,1000,'guard-general-bank');
+select is(public.request_krw_withdrawal((select principal_id from guard_ctx),(select principal_bank from guard_ctx),1000,'guard-general-bank'),
+  (select bank_withdrawal from guard_ctx),'same general KRW request does not open a second hold');
+select is((select status from public.withdrawal_requests where id=(select bank_withdrawal from guard_ctx)),
+  'HELD','verified principal credit reaches hold');
+select is((select count(*)::integer from public.ledger_transactions
+  where idempotency_key='guard-general-bank:hold'),1,'retry does not post a second hold journal');
+select ok((select count(*)=1 and bool_and(policy_code='NEWEST_FIRST')
+    and bool_and(allocation_micro_krw=app_private.funding_principal_micro_krw(1000))
+  from public.funding_principal_recovery_allocations
+  where hold_ledger_transaction_id=(select hold_ledger_transaction_id from public.withdrawal_requests
+    where id=(select bank_withdrawal from guard_ctx))),
+  'general hold reserves the verified principal lot once');
+update guard_ctx set usdt_withdrawal=public.request_usdt_withdrawal(principal_id,principal_usdt,1000,'guard-general-usdt');
+select is((select status from public.withdrawal_requests where id=(select usdt_withdrawal from guard_ctx)),
+  'HELD','verified principal also covers a manual USDT KRW hold');
+select lives_ok($$select app_private.request_withdrawal_with_hold(principal_id,principal_bank,1000,'KRW_BANK','guard-private-general',null) from guard_ctx$$,
+  'private writer reaches hold when verified principal covers the amount');
+select is(app_private.request_withdrawal_with_hold((select principal_id from guard_ctx),(select principal_bank from guard_ctx),1000,'KRW_BANK','guard-private-general',null),
+  (select id from public.withdrawal_requests where idempotency_key='guard-private-general'),
+  'private writer retry does not open a second hold');
 update guard_ctx set logical=public.prepare_withdrawal_logical_request(principal_id,'KRW_BANK',1000,bank_policy,1041001,null,principal_bank);
-select throws_ok($$select public.hold_withdrawal_logical_request(principal_id,logical->>'key','KRW_BANK',principal_bank,1000) from guard_ctx$$,
-  '55000','WITHDRAWAL_VERIFIED_SOURCE_LIFECYCLE_UNAVAILABLE','prepared logical intent cannot bypass source closure');
+select lives_ok($$select public.hold_withdrawal_logical_request(principal_id,logical->>'key','KRW_BANK',principal_bank,1000) from guard_ctx$$,
+  'prepared logical intent holds against verified principal');
 reset role;
 select is((select state from public.withdrawal_logical_requests where user_id=(select principal_id from guard_ctx)),
-  'DESTINATION_REGISTERED','rejected hold leaves the original prepared intent intact');
-select ok((select requests=(select count(*) from public.withdrawal_requests)
-  and journals=(select count(*) from public.ledger_transactions)
-  and wallets=(select count(*) from public.wallet_ledger)
-  and events=(select count(*) from public.outbox_events)
-  and receipts=(select count(*) from public.transaction_receipts)
-  and sources=(select count(*) from public.money_source_movements) from guard_before),
-  'all rejected general paths have no request/journal/wallet/event/receipt/source effects');
+  'OUTCOME_UNCERTAIN','held logical intent records the original outcome');
+select ok((select wallets=(select count(*) from public.wallet_ledger) from guard_before),
+  'source hold does not debit the wallet projection');
 
 -- An explicitly unclassified historical label is not a verified reward source.
 insert into public.wallet_ledger(wallet_account_id,user_id,direction,entry_type,amount_atomic,idempotency_key,reference_type,reference_id)
@@ -161,7 +171,8 @@ select throws_ok($$select app_private.request_withdrawal_with_hold(principal_id,
   '55000','WELCOME_REWARD_NOT_WITHDRAWABLE','an unproved conversion identifier cannot bypass general source closure');
 select throws_ok($$select app_private.request_withdrawal_with_hold(bank_owner,principal_bank,5000,'KRW_BANK','guard-private-other-destination',bank_conversion) from guard_ctx$$,
   '55000','VERIFIED_WITHDRAWAL_DESTINATION_REQUIRED','a proved own START still cannot use another owner destination');
-select is((select count(*)::integer from public.withdrawal_requests),0,
+select is((select count(*)::integer from public.withdrawal_requests
+  where user_id in ((select bank_owner from guard_ctx),(select usdt_owner from guard_ctx))),0,
   'unqualified private START attempts have no hold request effect');
 select throws_ok($$select public.request_krw_withdrawal(bank_owner,bank_destination,1000,'guard-bonus-general') from guard_ctx$$,
   '55000','WITHDRAWAL_VERIFIED_SOURCE_LIFECYCLE_UNAVAILABLE','real START BONUS cannot be spent through general mining withdrawal');
@@ -184,8 +195,10 @@ select is((select count(*)::integer from public.deposit_requests where user_id i
 select ok((select count(*)=2 and bool_and(source_bucket='BONUS' and origin_code='WELCOME_REWARD' and amount_atomic=5000)
   from public.money_source_movements where user_id in ((select bank_owner from guard_ctx),(select usdt_owner from guard_ctx))),
   'actual conversion source receipts remain BONUS rather than principal or mining');
-select is((select count(*)::integer from public.money_source_movements where movement_kind<>'CREDIT'),0,
-  'safety closure does not pretend to implement reserve/release/finalize source movements');
+select is((select count(*)::integer from public.money_source_movements
+  where movement_kind<>'CREDIT'
+    and user_id in ((select bank_owner from guard_ctx),(select usdt_owner from guard_ctx))),0,
+  'START bonus credits are not principal reserves');
 
 set local role service_role;
 update guard_ctx set send_id=public.record_krw_external_send(bank_withdrawal,'guard-actual-bank-receipt',5000,
