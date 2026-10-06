@@ -680,7 +680,7 @@ export async function POST(request: Request) {
               terminalStateRecorded = true;
               if (responseText && aiPlan.cacheable) {
                 await writeAiCache(admin, {
-                  answer: responseText,
+                  answer: redactMemberTranscript(responseText),
                   cacheKey: promptHash,
                   knowledgeVersion: TRUST_CONTENT_VERSION,
                   model: providerModel,

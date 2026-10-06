@@ -127,6 +127,20 @@ describe("회원 AI 본문 가림", () => {
     expect(text).toContain("[가림]");
   });
 
+  it("따옴표, 조사, 한국어 토큰 라벨 뒤의 원문도 저장 문자열에서 뺀다", () => {
+    const quotedPassword = redactMemberTranscript('비밀번호는 "hunter2" 입니다');
+    const englishPassword = redactMemberTranscript("password is hunter2 now");
+    const koreanToken = redactMemberTranscript(
+      "내 토큰은 eyJhbGciOiJIUzI1NiJ9.payload.signature",
+    );
+    const quotedSeed = redactMemberTranscript(`시드 문구 "${SEED}"`);
+    expect(quotedPassword).not.toContain("hunter2");
+    expect(englishPassword).not.toContain("hunter2");
+    expect(koreanToken).not.toContain("eyJhbGciOiJIUzI1NiJ9");
+    expect(koreanToken).not.toContain("payload");
+    expect(quotedSeed).not.toContain("abandon");
+  });
+
   it("일반 질문과 비밀번호라는 단어만 있는 문장은 그대로 둔다", () => {
     expect(redactMemberTranscript("오늘 채굴은 어떻게 보나요?")).toBe(
       "오늘 채굴은 어떻게 보나요?",

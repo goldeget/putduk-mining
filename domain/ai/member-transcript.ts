@@ -5,9 +5,9 @@ const TITLE_MAX = 80;
 const SECRET_PATTERNS: readonly RegExp[] = [
   /\bBearer\s+[A-Za-z0-9\-._~+/]+=*/gi,
   /\bsk-[A-Za-z0-9_\-]{8,}\b/g,
-  /\beyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\b/g,
-  /(?:비밀번호|패스워드|password|passwd|pwd|otp|인증\s*번호|api\s*key|access\s*token|refresh\s*token|secret|token|개인\s*키|비밀\s*키|private\s*key)\s*(?:은|는|이|가|:|：|=)?\s*[A-Za-z0-9_+/=.\-]{6,}/gi,
-  /(?:시드(?:\s*문구)?|seed(?:\s*phrase)?|복구\s*문구)\s*(?:은|는|:|：|=)?\s*(?:[a-z]{3,12}\s+){11,23}[a-z]{3,12}/gi,
+  /\beyJ[A-Za-z0-9_-]{4,}(?:\.[A-Za-z0-9_+\/=-]{4,}){2}/g,
+  /(?:비밀번호|패스워드|password|passwd|pwd|otp|인증\s*번호|api\s*key|access[_\s-]*token|refresh[_\s-]*token|secret|token|토큰|개인\s*키|비밀\s*키|private\s*key)\s*(?:은|는|이|가|\bis\b|\bwas\b|:|：|=)?\s*["'“”‘’`「」『』]?\s*[^\s"'“”‘’`「」『』]{6,}/gi,
+  /(?:시드(?:\s*문구)?|seed(?:\s*phrase)?|복구\s*문구)\s*(?:은|는|이|가|\bis\b|:|：|=)?\s*["'“”‘’`「」『』]?\s*(?:[a-z]{3,12}\s+){11,23}[a-z]{3,12}/gi,
   /\b[A-Z0-9]{4}(?:-[A-Z0-9]{4}){2,7}\b/g,
 ];
 
