@@ -56,6 +56,10 @@ jobs:
             domain/ai/member-transcript.ts \
             lib/ai/member-conversation.ts \
             tests/unit/ai-persistence-recovery-regression.test.ts \
+            tests/unit/ai-korean-short-code-redaction.test.ts \
+            lib/env/public.ts \
+            apps/admin/lib/supabase/browser.ts \
+            apps/admin/tests/admin-browser-public-key.test.ts \
             .github/workflows/gpt-patch-preflight.yml
           git diff --check
 
@@ -64,7 +68,11 @@ jobs:
           pnpm exec eslint --max-warnings=0 \
             domain/ai/member-transcript.ts \
             lib/ai/member-conversation.ts \
-            tests/unit/ai-persistence-recovery-regression.test.ts
+            tests/unit/ai-persistence-recovery-regression.test.ts \
+            tests/unit/ai-korean-short-code-redaction.test.ts \
+            lib/env/public.ts
+          pnpm --dir apps/admin exec eslint --max-warnings=0 \
+            lib/supabase/browser.ts tests/admin-browser-public-key.test.ts
 
       - name: Typecheck web and admin
         if: ${{ !cancelled() }}
@@ -75,8 +83,15 @@ jobs:
         run: |
           pnpm exec vitest run \
             tests/unit/ai-persistence-recovery-regression.test.ts \
+            tests/unit/ai-korean-short-code-redaction.test.ts \
             tests/unit/ai-member-conversation.test.ts \
             tests/unit/ai-money-continuity.test.ts
+
+      - name: Admin public-key boundary regressions
+        if: ${{ !cancelled() }}
+        run: |
+          pnpm --dir apps/admin exec vitest run \
+            tests/admin-browser-public-key.test.ts
 
       - name: Preserve exact-source and normalized-tree evidence
         if: always()
@@ -86,6 +101,10 @@ jobs:
           git diff --binary > gpt-preflight-evidence/format.patch
           sha256sum domain/ai/member-transcript.ts lib/ai/member-conversation.ts \
             tests/unit/ai-persistence-recovery-regression.test.ts \
+            tests/unit/ai-korean-short-code-redaction.test.ts \
+            lib/env/public.ts \
+            apps/admin/lib/supabase/browser.ts \
+            apps/admin/tests/admin-browser-public-key.test.ts \
             .github/workflows/gpt-patch-preflight.yml \
             > gpt-preflight-evidence/normalized-sha256.txt
           printf '%s\n' 'Tests above use the normalized working tree. A nonempty format.patch means the original source SHA is NOT format-green. This workflow does NOT replace required CI, database tests, browser QA or release approval.' \

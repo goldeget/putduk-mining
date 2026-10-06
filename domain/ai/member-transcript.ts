@@ -27,7 +27,7 @@ const ASSIGNED_VALUE = new RegExp(
   "giu",
 );
 const SHORT_CODE = new RegExp(
-  String.raw`(?<![\p{L}\p{N}_])(?:otp\b|pin\b|인증\s*번호)\s+\d{1,8}(?!\d)`,
+  String.raw`(?<![\p{L}\p{N}_])(?:otp\b|pin\b|인증\s*번호)\s*(?:(?:은|는|이|가)\s*)?\d+(?!\d)`,
   "giu",
 );
 
