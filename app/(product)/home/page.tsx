@@ -1,8 +1,10 @@
 import Link from "next/link";
 import type { Route } from "next";
 
+import { GlobalPavilion } from "@/components/brand/global-pavilion";
 import { MiningCore } from "@/components/foundation/mining-core";
 import { PutdukIcon } from "@/components/icons/putduk-icon";
+import { FundedRuntimeSummary } from "@/components/product/funded-runtime-summary";
 import { RouteReloadButton } from "@/components/product/route-reload-button";
 import { StatePanel } from "@/components/ui/states";
 import { Surface } from "@/components/ui/surface";
@@ -22,7 +24,12 @@ import {
   formatTrialQuotaPercent,
   presentTrialStatus,
 } from "@/lib/product/home-start-display";
-import { resolveHomeWorldState } from "@/lib/product/home-world-state";
+import {
+  presentHomeMiningFacts,
+  resolveHomeWorldState,
+} from "@/lib/product/home-world-state";
+import { parseMiningServerDisplay } from "@/lib/product/mining-server-display";
+import { readOwnMiningServerDisplay } from "@/lib/product/read-mining-server-display";
 import { readMemberScreenFacts } from "@/lib/product/member-screen-facts";
 import {
   formatJoinedOn,
@@ -60,6 +67,7 @@ export default async function ProductHomePage() {
     facts,
     catalog,
     { data: eventsData, error: eventsError },
+    fundedResponse,
   ] = await Promise.all([
     identity.supabase
       .from("trial_account_snapshots")
@@ -97,8 +105,18 @@ export default async function ProductHomePage() {
       .lte("published_at", notificationNow.toISOString())
       .order("starts_at", { ascending: false })
       .limit(8),
+    readOwnMiningServerDisplay(identity),
   ]);
 
+  const fundedDisplay = fundedResponse.error
+    ? null
+    : parseMiningServerDisplay(fundedResponse.data);
+  const fundedUnavailable = Boolean(fundedResponse.error) || !fundedDisplay;
+  const fundedRuntime =
+    !fundedUnavailable && fundedDisplay?.available
+      ? fundedDisplay.funded_runtime
+      : null;
+  const miningFacts = presentHomeMiningFacts(fundedRuntime);
   const krw = walletError
     ? undefined
     : accounts?.find((account) => account.currency === "KRW");
@@ -107,6 +125,8 @@ export default async function ProductHomePage() {
     mining: sessions?.[0],
     trialUnavailable: Boolean(trialError),
     miningUnavailable: Boolean(miningError),
+    fundedDisplay,
+    fundedUnavailable,
   });
   const trialPercent = world.trialStatusKnown
     ? formatTrialQuotaPercent(trial?.quota_consumed_bps)
@@ -119,7 +139,11 @@ export default async function ProductHomePage() {
         : undefined,
   );
   const partialFailure = Boolean(
-    trialError || walletError || miningError || notificationError,
+    trialError ||
+    walletError ||
+    miningError ||
+    notificationError ||
+    fundedUnavailable,
   );
   const featuredEvent = eventsError
     ? undefined
@@ -161,22 +185,8 @@ export default async function ProductHomePage() {
 
       <section className={styles.hero} aria-label="오늘의 채굴 상태">
         <Surface as="article" className={styles.livingWorld} tone="raised">
-          <div className={styles.livingVisual}>
-            <picture>
-              <source
-                type="image/avif"
-                srcSet="/brand/worlds/orbital-earth-960-v1.avif"
-              />
-              <img
-                src="/brand/worlds/orbital-earth-960-v1.webp"
-                alt="우주에서 바라본 퍼뜩 채굴 월드"
-                width="960"
-                height="540"
-                decoding="async"
-                fetchPriority="high"
-              />
-            </picture>
-            <MiningCore running={world.running} />
+          <div className={styles.livingVisual} aria-hidden="true">
+            <GlobalPavilion sizes="(min-width: 1100px) 80vw, 100vw" priority />
           </div>
           <div className={styles.livingOverlay}>
             <header className={styles.welcome}>
@@ -191,6 +201,8 @@ export default async function ProductHomePage() {
                   지금 상태와 다음에 할 일만 모았어요.
                 </p>
               </div>
+            </header>
+            <div className={styles.heroActions}>
               {world.needsRequery ? (
                 <RouteReloadButton
                   className={`button button--primary ${styles.primaryAction}`}
@@ -204,7 +216,8 @@ export default async function ProductHomePage() {
                   <PutdukIcon name="arrow-right" size={18} />
                 </Link>
               )}
-            </header>
+              <MiningCore running={world.running} />
+            </div>
           </div>
         </Surface>
 
@@ -273,6 +286,25 @@ export default async function ProductHomePage() {
         </div>
       </section>
 
+      <nav className={styles.quickActions} aria-label="바로 가기">
+        <Link href="/mining">
+          <PutdukIcon name="mining" size={20} />
+          <span>채굴 보기</span>
+        </Link>
+        <Link href="/wallet/deposit">
+          <PutdukIcon name="wallet" size={20} />
+          <span>입금하기</span>
+        </Link>
+        <Link href="/wallet/withdraw">
+          <PutdukIcon name="arrow-right" size={20} />
+          <span>출금하기</span>
+        </Link>
+        <Link href="/mining#putduk-mining-details">
+          <PutdukIcon name="pulse" size={20} />
+          <span>채굴 내역</span>
+        </Link>
+      </nav>
+
       <Surface as="section" className={styles.profile} aria-label="내 프로필">
         <div className={styles.profileIdentity}>
           <span className={styles.profileMark} aria-hidden="true">
@@ -296,33 +328,18 @@ export default async function ProductHomePage() {
           </div>
           <div>
             <dt>오늘 채굴</dt>
-            <dd>아직 없어요</dd>
+            <dd>{miningFacts.today}</dd>
           </div>
           <div>
-            <dt>누적 채굴</dt>
-            <dd>아직 표시할 수 없어요</dd>
+            <dt>현재 채굴 확정 누계</dt>
+            <dd>{miningFacts.committedTotal}</dd>
           </div>
         </dl>
       </Surface>
 
-      <nav className={styles.quickActions} aria-label="바로 가기">
-        <Link href="/mining">
-          <PutdukIcon name="mining" size={20} />
-          <span>채굴 보기</span>
-        </Link>
-        <Link href="/wallet/deposit">
-          <PutdukIcon name="wallet" size={20} />
-          <span>입금하기</span>
-        </Link>
-        <Link href="/wallet/withdraw">
-          <PutdukIcon name="arrow-right" size={20} />
-          <span>출금하기</span>
-        </Link>
-        <Link href="/mining#putduk-mining-details">
-          <PutdukIcon name="pulse" size={20} />
-          <span>채굴 내역</span>
-        </Link>
-      </nav>
+      {fundedRuntime ? (
+        <FundedRuntimeSummary runtime={fundedRuntime} placement="home" />
+      ) : null}
 
       <section className={styles.products} aria-label="추천 상품">
         <header className={styles.sectionHeader}>

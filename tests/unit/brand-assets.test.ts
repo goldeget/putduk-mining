@@ -41,7 +41,7 @@ describe("PUTDUK brand asset contract", () => {
     const manifest = await loadManifest();
 
     expect(manifest.schemaVersion).toBe(1);
-    expect(manifest.assetVersion).toBe("2026.10.03-v3");
+    expect(manifest.assetVersion).toBe("2026.10.06-v5");
     expect(manifest.sourcePolicy).toContain(
       "generated pixels contain no production copy",
     );
@@ -179,10 +179,10 @@ describe("PUTDUK brand asset contract", () => {
     expect(master.readUInt32BE(20)).toBe(1022);
     expect(master[25]).toBe(2); // PNG truecolour without alpha.
     const scenes = manifest.assets.filter((asset) =>
-      asset.path.startsWith("/brand/scenes/"),
+      asset.path.startsWith("/brand/scenes/semiconductor-memory/"),
     );
     expect(scenes).toHaveLength(8);
-    expect(manifest.assets).toHaveLength(96);
+    expect(manifest.assets).toHaveLength(112);
     for (const width of [640, 960, 1280, 1539]) {
       for (const format of ["avif", "webp"]) {
         const relative = `/brand/scenes/semiconductor-memory/semiconductor-memory-${width}-v1.${format}`;
@@ -208,6 +208,57 @@ describe("PUTDUK brand asset contract", () => {
         );
       }
     }
+  });
+
+  it("adds a source-locked global pavilion pack without changing any of the 96 prior records or bytes", async () => {
+    const manifest = await loadManifest();
+    const prefix = "/brand/scenes/global-pavilion/";
+    const prior = manifest.assets.filter(
+      (asset) =>
+        !asset.path.startsWith(prefix) &&
+        !/^\/brand\/scenes\/semiconductor-memory-light\/semiconductor-memory-light-(640|960|1280|1536)-v1\.(avif|webp)$/.test(
+          asset.path,
+        ),
+    );
+    expect(prior).toHaveLength(96);
+    expect(
+      createHash("sha256").update(JSON.stringify(prior)).digest("hex"),
+    ).toBe("71a28aa4af200d846603803b12d01b476e5028497b8a2f28c0a4a795d363893f");
+    const pack = manifest.assets.filter((asset) =>
+      asset.path.startsWith(prefix),
+    );
+    expect(pack).toHaveLength(8);
+    const sourceHash =
+      "82c8d567d0da86ce72052d6415e198793198f9886e65a21d0eadd859b66e1a32";
+    for (const asset of [...prior, ...pack]) {
+      const bytes = await readFile(
+        path.join(process.cwd(), "public", asset.path),
+      );
+      expect(createHash("sha256").update(bytes).digest("hex")).toBe(
+        asset.sha256,
+      );
+      expect(bytes.length).toBe(asset.bytes);
+    }
+    const source = await readFile(
+      path.join(process.cwd(), pack[0]!.sourceMaster!),
+    );
+    expect(createHash("sha256").update(source).digest("hex")).toBe(sourceHash);
+    const output = execFileSync(
+      process.execPath,
+      [
+        "--input-type=module",
+        "-e",
+        `
+      import {approvedSceneMetadataFailures} from './scripts/verify-brand-assets.mjs';
+      const pack=${JSON.stringify(pack)};
+      const variants=[...pack,{...pack[0],sourceSha256:'0'.repeat(64)},{...pack[0],width:1},{...pack[0],reviewScope:'Economic approval'},{...pack[0],path:'/brand/scenes/global-pavilion/unreviewed.png'}];
+      console.log(JSON.stringify(variants.map(approvedSceneMetadataFailures)));`,
+      ],
+      { cwd: process.cwd(), encoding: "utf8" },
+    );
+    const errors = JSON.parse(output.trim().split("\n").at(-1)!);
+    expect(errors.slice(0, 8)).toEqual(Array.from({ length: 8 }, () => []));
+    expect(errors.slice(8).every((row: string[]) => row.length > 0)).toBe(true);
   });
 
   it("rejects foreign hashes, recolored scope, unapproved families, dimensions and runtime PNGs through the scene verifier", async () => {
@@ -242,6 +293,114 @@ console.log(JSON.stringify(variants.map(approvedSceneMetadataFailures)));`,
     const results = JSON.parse(output.trim().split("\n").at(-1)!) as string[][];
     expect(results[0]).toEqual([]);
     expect(results.slice(1).every((errors) => errors.length > 0)).toBe(true);
+  });
+
+  it("adds the exact light companion paths while retaining all 104 prior entries and bytes", async () => {
+    const manifest = await loadManifest();
+    const approvedPaths = new Set(
+      [640, 960, 1280, 1536].flatMap((width) =>
+        ["avif", "webp"].map(
+          (format) =>
+            `/brand/scenes/semiconductor-memory-light/semiconductor-memory-light-${width}-v1.${format}`,
+        ),
+      ),
+    );
+    const prior = manifest.assets.filter(
+      (asset) => !approvedPaths.has(asset.path),
+    );
+    expect(prior).toHaveLength(104);
+    expect(
+      createHash("sha256").update(JSON.stringify(prior)).digest("hex"),
+    ).toBe("bd4887df3347bc9a120d7dae412ee2a157613ec10f2d56311c7d7db3909f5262");
+    const pack = manifest.assets.filter((asset) =>
+      approvedPaths.has(asset.path),
+    );
+    expect(new Set(pack.map((asset) => asset.path))).toEqual(approvedPaths);
+    expect(pack).toHaveLength(8);
+    const sourceMaster =
+      "docs/design/generated-masters/semiconductor-memory-light-2026-10-06/semiconductor-memory-light-master-v1.png";
+    const sourceHash =
+      "113fdbc5c41772145f98f3357f27754fa1bd20602a5261c133becc0fa1126d52";
+    const master = await readFile(path.join(process.cwd(), sourceMaster));
+    expect(createHash("sha256").update(master).digest("hex")).toBe(sourceHash);
+    expect(master.readUInt32BE(16)).toBe(1536);
+    expect(master.readUInt32BE(20)).toBe(1024);
+    expect(master[25]).toBe(2);
+    for (const asset of [...prior, ...pack]) {
+      const bytes = await readFile(
+        path.join(process.cwd(), "public", asset.path),
+      );
+      expect(createHash("sha256").update(bytes).digest("hex")).toBe(
+        asset.sha256,
+      );
+      expect(bytes.length).toBe(asset.bytes);
+    }
+    for (const asset of pack) {
+      const width = Number(/-(\d+)-v1\./.exec(asset.path)?.[1]);
+      expect(asset).toMatchObject({
+        assetVersion: "2026.10.06-semiconductor-memory-light-v1",
+        width,
+        height: Math.round((1024 * width) / 1536),
+        theme: "light",
+        mimeType: `image/${asset.path.split(".").at(-1)}`,
+        sourceMaster,
+        sourceSha256: sourceHash,
+      });
+      expect(asset.reviewScope).toContain(
+        "no economic or product mapping approval",
+      );
+    }
+  });
+
+  it("rejects wrong light sources, dimensions, theme, paths and actual runtime byte corruption", async () => {
+    const manifest = await loadManifest();
+    const asset = manifest.assets.find(
+      (entry) =>
+        entry.path ===
+        "/brand/scenes/semiconductor-memory-light/semiconductor-memory-light-640-v1.avif",
+    )!;
+    const output = execFileSync(
+      process.execPath,
+      [
+        "--input-type=module",
+        "-e",
+        `
+      import {readFile} from 'node:fs/promises';
+      import {approvedSceneMetadataFailures,aiHelpMetadataFailures,runtimeAssetIntegrityFailures} from './scripts/verify-brand-assets.mjs';
+      const asset=${JSON.stringify(asset)};
+      const metadata=[asset,{...asset,sourceSha256:'0'.repeat(64)},
+        {...asset,sourceMaster:'docs/design/generated-masters/semiconductor-memory-v3-clean-2026-10-03/semiconductor-memory-v3-clean-master-v1.png'},
+        {...asset,width:641},{...asset,height:640},{...asset,theme:'system'},
+        {...asset,path:'/brand/scenes/semiconductor-memory-light/semiconductor-memory-light-640-v1.png'},
+        {...asset,path:'/brand/scenes/semiconductor-memory-light/semiconductor-memory-light-1539-v1.avif'},
+        {...asset,reviewScope:'Economic and product approval'},
+        {...asset,productionEconomicRules:'forbidden'}];
+      const contents=await readFile('./public'+asset.path);
+      const corrupted=Buffer.from(contents);corrupted[corrupted.length-1]^=1;
+      console.log(JSON.stringify({metadata:metadata.map(approvedSceneMetadataFailures),
+        faceGate:aiHelpMetadataFailures(asset),
+        integrity:[runtimeAssetIntegrityFailures(asset,contents),
+          runtimeAssetIntegrityFailures({...asset,sha256:'0'.repeat(64)},contents),
+          runtimeAssetIntegrityFailures({...asset,bytes:asset.bytes+1},contents),
+          runtimeAssetIntegrityFailures(asset,corrupted)]}));
+    `,
+      ],
+      { cwd: process.cwd(), encoding: "utf8" },
+    );
+    const result = JSON.parse(output.trim().split("\n").at(-1)!) as {
+      metadata: string[][];
+      faceGate: string[];
+      integrity: string[][];
+    };
+    expect(result.metadata[0]).toEqual([]);
+    expect(result.metadata.slice(1).every((errors) => errors.length > 0)).toBe(
+      true,
+    );
+    expect(result.faceGate).toEqual([]);
+    expect(result.integrity[0]).toEqual([]);
+    expect(result.integrity.slice(1).every((errors) => errors.length > 0)).toBe(
+      true,
+    );
   });
 
   it("rejects widened or foreign face provenance through the actual verification contract", async () => {
@@ -281,7 +440,7 @@ console.log(JSON.stringify(variants.map(aiHelpMetadataFailures)));`,
       path.join(process.cwd(), "scripts/build-brand-assets.py"),
       "utf8",
     );
-    expect(source).toContain('VERSION = "2026.10.03-v3"');
+    expect(source).toContain('VERSION = "2026.10.06-v5"');
     expect(source).toContain('root.rglob("*")');
     expect(source).toContain('prior.get("sha256") == record["sha256"]');
     for (const key of [

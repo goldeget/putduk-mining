@@ -1,11 +1,16 @@
 "use client";
 
 import Link from "next/link";
+import type { Route } from "next";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 
 import { PutdukAiChat } from "./putduk-ai-chat";
 import { PutdukAiMascot } from "./putduk-ai-mascot";
+import {
+  buildPutdukAiScreenContext,
+  buildPutdukAiWideViewHref,
+} from "./putduk-ai-screen-context";
 import styles from "./putduk-ai-dock.module.css";
 
 const coreRoutes = [
@@ -113,6 +118,7 @@ function RouteAiDock({ pathname }: { pathname: string }) {
   const restoreFocusRef = useRef(true);
   const [open, setOpen] = useState(false);
   const [status, setStatus] = useState("");
+  const [wideViewHref, setWideViewHref] = useState("/ai");
 
   const closePanel = useCallback((restoreFocus = true, updateState = true) => {
     restoreFocusRef.current = restoreFocus;
@@ -200,6 +206,14 @@ function RouteAiDock({ pathname }: { pathname: string }) {
       unlock();
     };
     setStatus("");
+    setWideViewHref(
+      buildPutdukAiWideViewHref(
+        buildPutdukAiScreenContext({
+          pathname,
+          searchParams: new URLSearchParams(window.location.search),
+        }),
+      ),
+    );
     setOpen(true);
   }
 
@@ -282,7 +296,7 @@ function RouteAiDock({ pathname }: { pathname: string }) {
           <div className={styles.headerActions}>
             <Link
               className={styles.expandLink}
-              href="/ai"
+              href={wideViewHref as Route}
               onNavigate={() => closePanel(false)}
             >
               넓게 보기

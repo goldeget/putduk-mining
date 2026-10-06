@@ -29,7 +29,11 @@ describe("회원 화면 구도", () => {
     expect(walletCss).toMatch(
       /\.metrics\s*\{[^}]*grid-template-columns:\s*repeat\(3,\s*minmax\(0,\s*1fr\)\)/s,
     );
-    expect(walletCss).not.toMatch(/grid-column:\s*1\s*\/\s*-1/);
+    // The history introduction may span its two columns. Only the unconfirmed
+    // money card must never become a combined, full-width total.
+    expect(walletCss).not.toMatch(
+      /\.metric\[data-funding-tone="unconfirmed"\]\s*\{[^}]*grid-column:\s*1\s*\/\s*-1/s,
+    );
     expect(walletCss).toMatch(/data-funding-tone="unconfirmed"/);
     expect(walletCss).toMatch(/border-style:\s*dashed/);
   });

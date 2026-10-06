@@ -200,13 +200,17 @@ export default async function WithdrawalPage() {
 
   const policies = [...latestPolicies.values()];
   const securityReady = Boolean(process.env.WITHDRAWAL_DATA_KEY);
-  const availableAtomic = String(accounts?.available_balance_atomic ?? "0");
-  const heldAtomic = accounts
-    ? (
-        BigInt(String(accounts.balance_atomic)) -
-        BigInt(String(accounts.available_balance_atomic))
-      ).toString()
-    : "0";
+  const availableAtomic =
+    !accountsError && accounts
+      ? String(accounts.available_balance_atomic)
+      : null;
+  const heldAtomic =
+    !accountsError && accounts
+      ? (
+          BigInt(String(accounts.balance_atomic)) -
+          BigInt(String(accounts.available_balance_atomic))
+        ).toString()
+      : null;
 
   const welcomeOptions: WelcomeDestinationOption[] = [];
   for (const method of ["KRW_BANK", "USDT_ADDRESS"] as const) {
@@ -294,11 +298,19 @@ export default async function WithdrawalPage() {
       <Surface as="section" className={styles.balanceStrip} tone="raised">
         <div>
           <small>사용 가능</small>
-          <strong>{formatAtomicAmount(availableAtomic, "KRW")}</strong>
+          <strong>
+            {availableAtomic === null
+              ? "확인할 수 없음"
+              : formatAtomicAmount(availableAtomic, "KRW")}
+          </strong>
         </div>
         <div>
           <small>출금 보류</small>
-          <strong>{formatAtomicAmount(heldAtomic, "KRW")}</strong>
+          <strong>
+            {heldAtomic === null
+              ? "확인할 수 없음"
+              : formatAtomicAmount(heldAtomic, "KRW")}
+          </strong>
         </div>
       </Surface>
 
@@ -382,7 +394,10 @@ export default async function WithdrawalPage() {
               description="준비가 끝나면 다시 이용할 수 있어요."
               action={reopenWithdrawal()}
             />
-          ) : policies.length === 0 || !accounts ? (
+          ) : policies.length === 0 ||
+            !accounts ||
+            availableAtomic === null ||
+            heldAtomic === null ? (
             <StatePanel
               title="지금 이용할 수 있는 출금 수단이 없어요"
               description="출금 조건이 준비되면 이곳에 표시됩니다."

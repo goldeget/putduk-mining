@@ -342,6 +342,11 @@ test.describe("admin exceptions product queue", () => {
     await form.getByRole("checkbox").check();
     await confirmOperatorStepUp(form, secret);
     await form.getByLabel("확인 결과").selectOption("INVESTIGATING");
+    // 결과를 바꾸면 이전 확인과 작업 토큰이 해제되어야 한다.
+    await expect(form.getByRole("checkbox")).not.toBeChecked();
+    await expect(form.locator('input[name="stepUpToken"]')).toHaveValue("");
+    await form.getByRole("checkbox").check();
+    await confirmOperatorStepUp(form, secret);
     await form.getByRole("button", { name: "예외 확인 저장" }).click();
     await expect(form.getByRole("status")).toContainText("조사 중", {
       timeout: 60_000,

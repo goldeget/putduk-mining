@@ -1,6 +1,11 @@
 .page {
   display: grid;
-  gap: 0.85rem;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.page > :global(.product-page-heading) {
+  margin-bottom: 0.4rem;
 }
 
 .heroCard,
@@ -12,12 +17,24 @@
 .heroCard {
   display: grid;
   gap: 0.35rem;
-  padding: clamp(1.2rem, 3vw, 1.85rem);
+  min-width: 0;
+  padding: clamp(1.1rem, 2.5vw, 1.65rem);
   border-color: color-mix(
     in srgb,
     var(--brand-primary) 46%,
     var(--border-default)
   );
+  background:
+    linear-gradient(
+      115deg,
+      color-mix(in srgb, var(--brand-primary) 8%, transparent),
+      transparent 48%
+    ),
+    var(--surface-raised);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--brand-primary) 16%, transparent),
+    var(--shadow-lift);
+  container: wallet-hero / inline-size;
 }
 
 .heroKicker {
@@ -35,6 +52,88 @@
   color: var(--text-tertiary);
   font-size: 0.875rem;
   font-weight: 650;
+}
+
+.heroKicker small {
+  padding: 0.25rem 0.55rem;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-full);
+  color: var(--brand-primary);
+  background: color-mix(in srgb, var(--brand-quiet) 35%, transparent);
+}
+
+.heroOverview {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.heroBalance {
+  display: grid;
+  min-width: 0;
+  gap: 0.35rem;
+}
+
+.heroArtwork {
+  width: clamp(7rem, 15vw, 10.5rem);
+  height: auto;
+  color: var(--brand-primary);
+  pointer-events: none;
+  filter: drop-shadow(
+    0 8px 12px color-mix(in srgb, var(--brand-primary) 12%, transparent)
+  );
+}
+
+.metalHighlight {
+  stop-color: color-mix(in srgb, var(--brand-mineral) 65%, var(--brand-quiet));
+}
+
+.metalGold {
+  stop-color: var(--brand-primary);
+}
+
+.metalShadow {
+  stop-color: var(--brand-strong);
+}
+
+.glassHighlight {
+  stop-color: var(--surface-interactive);
+}
+
+.glassShadow {
+  stop-color: var(--surface-sunken);
+}
+
+.vaultLines {
+  opacity: 0.2;
+}
+
+.chipLines {
+  opacity: 0.55;
+}
+
+.artworkShadow {
+  fill: var(--brand-primary);
+  opacity: 0.08;
+}
+
+.walletGlass {
+  stroke: color-mix(in srgb, var(--brand-primary) 65%, transparent);
+}
+
+.walletStitch {
+  opacity: 0.5;
+}
+
+.walletClasp {
+  fill: var(--surface-sunken);
+  stroke: var(--brand-mineral);
+  stroke-width: 1.5;
+}
+
+.walletEdgeLight {
+  color: var(--brand-mineral);
 }
 
 .heroValue {
@@ -55,7 +154,7 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.65rem;
-  margin: 0.85rem 0 0;
+  margin: 0.5rem 0 0;
 }
 
 .breakdown div {
@@ -139,12 +238,30 @@
 }
 
 .metric dt {
+  display: grid;
+  gap: 0.45rem;
   color: var(--text-tertiary);
   font-size: 0.8125rem;
   font-weight: 650;
   line-height: 1.35;
   line-break: strict;
   word-break: keep-all;
+}
+
+.metricIcon {
+  display: inline-flex;
+  width: 1.4rem;
+  height: 1.4rem;
+  color: var(--brand-primary);
+}
+
+.metricIcon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.metric[data-funding-tone="unconfirmed"] .metricIcon {
+  color: var(--text-tertiary);
 }
 
 .metric dd {
@@ -195,12 +312,23 @@
 
 .actions {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 8rem), 1fr));
   gap: 0.7rem;
 }
 
 .actions :global(.button) {
   width: 100%;
+  min-width: 0;
+  min-height: 3rem;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  text-align: center;
+}
+
+.actions svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex: none;
 }
 
 .trialCard {
@@ -235,11 +363,12 @@
   min-width: 0;
   flex-wrap: wrap;
   align-items: baseline;
+  /* 숫자와 단위는 함께 맞춘다. 단위만 큰 글자로 남기지 않는다. */
+  font-size: min(1em, 20cqi, calc(170cqi / var(--wallet-amount-length, 1)));
 }
 
 .amountFigure {
   max-width: 100%;
-  font-size: min(1em, 20cqi);
   white-space: nowrap;
 }
 
@@ -270,14 +399,18 @@
 
 .tabList {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 5rem), 1fr));
   gap: 0.35rem;
-  border-bottom: 1px solid var(--border-subtle);
+  padding: 0.3rem;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  background: var(--surface-default);
 }
 
 .tab {
   position: relative;
   display: grid;
+  min-width: 0;
   min-height: 2.75rem;
   place-items: center;
   color: var(--text-secondary);
@@ -299,7 +432,25 @@
 
 .tab:has(input:checked) {
   color: var(--brand-primary);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--brand-quiet) 40%, var(--surface-raised));
   box-shadow: inset 0 -2px 0 var(--brand-primary);
+}
+
+.tabContent {
+  display: flex;
+  max-width: 100%;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  text-align: center;
+}
+
+.tabContent svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  flex: none;
 }
 
 .tab:has(input:focus-visible) {
@@ -327,7 +478,48 @@
 }
 
 .history :global(.ledger-history) {
-  margin-top: 0.4rem;
+  margin-top: 0;
+}
+
+.historyIntro {
+  padding: 1.1rem 1.25rem;
+  border-radius: var(--radius-lg);
+}
+
+.history,
+.receipts {
+  min-width: 0;
+  padding: clamp(1rem, 2vw, 1.5rem);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-xl);
+  background: var(--surface-default);
+}
+
+.receipts {
+  display: grid;
+  gap: 1.25rem;
+  align-content: start;
+}
+
+.receipts h2 {
+  margin: 0.5rem 0 0;
+  font-size: clamp(1.1rem, 2vw, 1.4rem);
+  font-weight: 650;
+  letter-spacing: -0.03em;
+}
+
+.receipts header > p:last-child {
+  max-width: 28rem;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.55;
+  word-break: keep-all;
+}
+
+.receipts :global(.state-panel) {
+  margin: 0;
+  max-width: 100%;
+  box-shadow: none;
 }
 
 .ledgerList {
@@ -361,11 +553,40 @@
   .heroValue {
     font-size: clamp(1.85rem, 8vw, 2.4rem);
   }
+
+  .heroArtwork {
+    width: clamp(4.5rem, 19vw, 7rem);
+  }
+
+  .heroOverview:has([data-wallet-long-amount="true"]) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .heroOverview:has([data-wallet-long-amount="true"]) .heroArtwork {
+    display: none;
+  }
+}
+
+/* 글자 확대 때는 장식을 비워 잔액 숫자와 단위를 읽을 너비를 확보한다. */
+@container wallet-hero (max-width: 12rem) {
+  .heroOverview {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .heroArtwork {
+    display: none;
+  }
 }
 
 /* 글자가 칸보다 커지면 한글 단어가 들어갈 너비로 쌓는다. 320px 기본 글자에서는 세 칸을 유지한다. */
 @container (max-width: 12rem) {
   .metrics {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@container (max-width: 30rem) {
+  .metrics:has([data-wallet-long-amount="true"]) {
     grid-template-columns: minmax(0, 1fr);
   }
 }
@@ -384,6 +605,26 @@
   .metric dt {
     font-size: 0.75rem;
   }
+
+  .tabContent {
+    gap: 0.3rem;
+  }
+
+  .tabContent svg {
+    width: 0.95rem;
+    height: 0.95rem;
+  }
+}
+
+@media (min-width: 1100px) {
+  .ledgerTabs .tabPanel[data-panel="history"] {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    align-items: start;
+  }
+
+  .historyIntro {
+    grid-column: 1 / -1;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -391,5 +632,11 @@
   .metric,
   .trialCard {
     box-shadow: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .heroArtwork {
+    display: none;
   }
 }

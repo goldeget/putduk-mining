@@ -17,28 +17,180 @@ import {
   wantsOnce,
 } from "../../workers/runner.mjs";
 
-const REMOTE_PROJECT_REF = "osrmyjgmpdspdcwqjwuv";
-const localProjectId = process.env.LOCAL_SUPABASE_PROJECT_ID ?? "putduk-mining";
-if (!/^putduk-mining(?:-[a-z0-9-]+)?$/.test(localProjectId)) {
-  throw new Error("LOCAL_DB_PROJECT_SCOPE_REJECTED");
-}
-const DB_CONTAINER = `supabase_db_${localProjectId}`;
+import { requireLocalWorkerTestEnv } from "../../workers/local-test-target.mjs";
 
 function requireLocalWorkerEnv() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim();
-  const secret = process.env.SUPABASE_SECRET_KEY?.trim();
-  if (!url || !secret) {
-    throw new Error(
-      "Local Supabase env missing. Run pnpm db:start, pnpm db:reset, then node scripts/capture-local-supabase-env.mjs before pnpm test:worker.",
-    );
-  }
-  if (url.includes(REMOTE_PROJECT_REF) || !url.startsWith("http://")) {
-    throw new Error(
-      "Worker runtime evidence must use the isolated local Supabase API only.",
-    );
-  }
-  return { url, secret };
+  return requireLocalWorkerTestEnv();
 }
+
+const fixtureRunId = randomUUID();
+const fixtureClients: SupabaseClient[] = [];
+const fixtureOutbox: Array<{
+  id: string;
+  aggregateId: string;
+  eventType: string;
+  idempotencyKey: string;
+  payloadJson: string;
+}> = [];
+const fixtureJobs: Array<{
+  id: string;
+  jobType: string;
+  idempotencyKey: string;
+  payloadJson: string;
+}> = [];
+const fixtureMismatches: Array<{
+  id: string;
+  runId: string;
+  jobId: string;
+  subjectId: string;
+}> = [];
+
+function sqlLiteral(value: string) {
+  return `E'${value.replaceAll("\\", "\\\\").replaceAll("'", "''")}'`;
+}
+
+function uuidLiteral(value: string) {
+  if (
+    !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+      value,
+    )
+  ) {
+    throw new Error("WORKER_FIXTURE_UUID_REQUIRED");
+  }
+  return `${sqlLiteral(value)}::uuid`;
+}
+
+function fixturePayload(value: unknown, defaults: Record<string, unknown>) {
+  if (
+    value !== undefined &&
+    (value === null || typeof value !== "object" || Array.isArray(value))
+  ) {
+    throw new Error("WORKER_FIXTURE_PAYLOAD_OBJECT_REQUIRED");
+  }
+  return {
+    ...defaults,
+    ...(value as Record<string, unknown> | undefined),
+    worker_runtime_fixture: fixtureRunId,
+  };
+}
+
+function uuidArray(values: string[]) {
+  return `array[${values.map(uuidLiteral).join(",")}]::uuid[]`;
+}
+
+/** Owner-only local cleanup of synthetic queue probes, never monetary evidence. */
+function cleanupWorkerFixtures() {
+  if (
+    !fixtureOutbox.length &&
+    !fixtureJobs.length &&
+    !fixtureMismatches.length
+  ) {
+    return;
+  }
+  requireLocalWorkerEnv();
+  const statements = ["begin;"];
+  for (const mismatch of fixtureMismatches) {
+    const job = fixtureJobs.find(
+      (candidate) => candidate.id === mismatch.jobId,
+    );
+    if (!job || job.jobType !== "FINANCIAL_RECONCILIATION") {
+      throw new Error("WORKER_FIXTURE_RECONCILIATION_OWNER_REQUIRED");
+    }
+    statements.push(`
+      delete from public.reconciliation_mismatches as mismatch
+      using public.reconciliation_runs as run, public.system_jobs as job
+      where mismatch.id = ${uuidLiteral(mismatch.id)}
+        and mismatch.run_id = ${uuidLiteral(mismatch.runId)}
+        and mismatch.subject_id = ${sqlLiteral(mismatch.subjectId)}
+        and mismatch.subject_type = 'worker_probe'
+        and mismatch.mismatch_type = 'WORKER_RUNTIME_PROBE_MISMATCH'
+        and mismatch.expected_value = '{"ok":true}'::jsonb
+        and mismatch.actual_value = '{"ok":false}'::jsonb
+        and mismatch.status = 'OPEN'
+        and mismatch.resolved_at is null and mismatch.resolved_by is null
+        and mismatch.resolution_reason is null
+        and run.id = mismatch.run_id and run.scope = 'FINANCIAL_CORE'
+        and run.request_id = ${uuidLiteral(mismatch.jobId)}
+        and job.id = run.request_id and job.job_type = 'FINANCIAL_RECONCILIATION'
+        and job.idempotency_key = ${sqlLiteral(job.idempotencyKey)}
+        and job.payload = ${sqlLiteral(job.payloadJson)}::jsonb
+        and job.payload->>'worker_runtime_fixture' = ${sqlLiteral(fixtureRunId)};
+    `);
+  }
+  for (const event of fixtureOutbox) {
+    if (
+      event.eventType.length > 128 ||
+      !/^[A-Z][A-Z0-9_]*[.]v[1-9][0-9]*$/.test(event.eventType)
+    ) {
+      throw new Error("WORKER_FIXTURE_EVENT_TYPE_REQUIRED");
+    }
+    statements.push(`
+      delete from public.outbox_events
+      where id = ${uuidLiteral(event.id)}
+        and event_type = ${sqlLiteral(event.eventType)}
+        and aggregate_type = 'WORKER_TEST'
+        and aggregate_id = ${uuidLiteral(event.aggregateId)}
+        and idempotency_key = ${sqlLiteral(event.idempotencyKey)}
+        and payload = ${sqlLiteral(event.payloadJson)}::jsonb
+        and payload->>'worker_runtime_fixture' = ${sqlLiteral(fixtureRunId)};
+    `);
+  }
+  // Financial jobs and their attempt/run receipts remain authoritative evidence.
+  const syntheticJobs = fixtureJobs.filter(
+    (job) => job.jobType !== "FINANCIAL_RECONCILIATION",
+  );
+  for (const job of syntheticJobs) {
+    if (job.jobType.length > 128 || !/^[A-Z][A-Z0-9_]*$/.test(job.jobType)) {
+      throw new Error("WORKER_FIXTURE_JOB_TYPE_REQUIRED");
+    }
+    statements.push(`
+      delete from public.system_jobs
+      where id = ${uuidLiteral(job.id)}
+        and job_type = ${sqlLiteral(job.jobType)}
+        and job_type <> 'FINANCIAL_RECONCILIATION'
+        and idempotency_key = ${sqlLiteral(job.idempotencyKey)}
+        and payload = ${sqlLiteral(job.payloadJson)}::jsonb
+        and payload->>'worker_runtime_fixture' = ${sqlLiteral(fixtureRunId)}
+        and not exists (select 1 from app_private.funding_engine_jobs as original
+          where original.job_id = public.system_jobs.id)
+        and not exists (select 1 from app_private.funding_earned_receipts as receipt
+          where receipt.job_id = public.system_jobs.id);
+    `);
+  }
+  statements.push(`commit;
+    select jsonb_build_object(
+      'outbox_probes_remaining', (select count(*) from public.outbox_events
+        where id = any(${uuidArray(fixtureOutbox.map((event) => event.id))})),
+      'synthetic_jobs_remaining', (select count(*) from public.system_jobs
+        where id = any(${uuidArray(syntheticJobs.map((job) => job.id))})),
+      'active_probe_mismatches', (select count(*) from public.reconciliation_mismatches
+        where id = any(${uuidArray(fixtureMismatches.map((mismatch) => mismatch.id))})
+          and status in ('OPEN', 'INVESTIGATING'))
+    );`);
+  const result = sql(statements.join("\n"))
+    .split(/\r?\n/)
+    .find((line) => line.startsWith("{"));
+  expect(
+    result,
+    "worker fixture teardown must return its actual DB counts",
+  ).toBeTruthy();
+  expect(JSON.parse(result!)).toEqual({
+    outbox_probes_remaining: 0,
+    synthetic_jobs_remaining: 0,
+    active_probe_mismatches: 0,
+  });
+}
+
+afterAll(async () => {
+  stopAllLeaseRenewals();
+  try {
+    cleanupWorkerFixtures();
+  } finally {
+    await Promise.all(
+      fixtureClients.map((client) => client.removeAllChannels()),
+    );
+  }
+});
 
 /** GoTrue는 이 컬럼의 NULL을 문자열로 읽지 못해 회원 조회가 실패한다. */
 async function expectLoadableAuthUser(client: SupabaseClient, userId: string) {
@@ -59,12 +211,13 @@ async function expectLoadableAuthUser(client: SupabaseClient, userId: string) {
 }
 
 function sql(statement: string): string {
+  const { container } = requireLocalWorkerEnv();
   return execFileSync(
     "docker",
     [
       "exec",
       "-i",
-      DB_CONTAINER,
+      container,
       "psql",
       "-U",
       "postgres",
@@ -83,9 +236,11 @@ function sql(statement: string): string {
 
 function serviceClient(): SupabaseClient {
   const { url, secret } = requireLocalWorkerEnv();
-  return createClient(url, secret, {
+  const client = createClient(url, secret, {
     auth: { autoRefreshToken: false, persistSession: false },
   });
+  fixtureClients.push(client);
+  return client;
 }
 
 async function insertOutboxEvent(
@@ -95,15 +250,10 @@ async function insertOutboxEvent(
   const id = randomUUID();
   const aggregateId = randomUUID();
   const row = {
-    id,
     event_type: "WORKER_RUNTIME_PROBE.v1",
     schema_version: 1,
-    aggregate_type: "WORKER_TEST",
-    aggregate_id: aggregateId,
-    payload: { probe: true },
     correlation_id: randomUUID(),
     request_id: randomUUID(),
-    idempotency_key: `worker-runtime:${id}`,
     status: "PENDING",
     // 앱 시계가 DB보다 빠르면 available_at이 아직 도래하지 않아 claim이 0이 된다.
     available_at: new Date(Date.now() - 5_000).toISOString(),
@@ -111,7 +261,19 @@ async function insertOutboxEvent(
     max_attempts: 12,
     occurred_at: new Date().toISOString(),
     ...overrides,
+    id,
+    aggregate_type: "WORKER_TEST",
+    aggregate_id: aggregateId,
+    idempotency_key: `worker-runtime:${fixtureRunId}:${id}`,
+    payload: fixturePayload(overrides.payload, { probe: true }),
   };
+  fixtureOutbox.push({
+    id: row.id,
+    aggregateId: row.aggregate_id,
+    eventType: row.event_type,
+    idempotencyKey: row.idempotency_key,
+    payloadJson: JSON.stringify(row.payload),
+  });
   const { data, error } = await client
     .from("outbox_events")
     .insert(row)
@@ -129,17 +291,23 @@ async function insertSystemJob(
 ) {
   const id = randomUUID();
   const row = {
-    id,
     job_type: "FINANCIAL_RECONCILIATION",
-    idempotency_key: `worker-job:${id}`,
-    payload: { version: 1 },
     status: "PENDING",
     available_at: new Date(Date.now() - 5_000).toISOString(),
     attempts: 0,
     max_attempts: 12,
     priority: 50,
     ...overrides,
+    id,
+    idempotency_key: `worker-job:${fixtureRunId}:${id}`,
+    payload: fixturePayload(overrides.payload, { version: 1 }),
   };
+  fixtureJobs.push({
+    id: row.id,
+    jobType: row.job_type,
+    idempotencyKey: row.idempotency_key,
+    payloadJson: JSON.stringify(row.payload),
+  });
   const { data, error } = await client
     .from("system_jobs")
     .insert(row)
@@ -204,8 +372,6 @@ describe("worker runtime evidence seam", () => {
 });
 
 describe("worker process execution against local Supabase", () => {
-  const clients: SupabaseClient[] = [];
-
   beforeAll(() => {
     requireLocalWorkerEnv();
     const canUpdate = sql(
@@ -218,16 +384,8 @@ describe("worker process execution against local Supabase", () => {
     expect(canReplay).toBe("true");
   });
 
-  afterAll(() => {
-    for (const client of clients) {
-      void client.removeAllChannels();
-    }
-  });
-
   function client() {
-    const created = serviceClient();
-    clients.push(created);
-    return created;
+    return serviceClient();
   }
 
   it("claims an outbox lease, completes a supported handler, and denies the wrong worker", async () => {
@@ -497,8 +655,8 @@ insert into auth.users (
     const { data: runs, error: runsError } = await db
       .from("reconciliation_runs")
       .select("id, status, mismatch_count, checked_count")
-      .order("created_at", { ascending: false })
-      .limit(1);
+      .eq("request_id", job.id)
+      .eq("scope", "FINANCIAL_CORE");
     if (runsError) {
       throw new Error(runsError.message);
     }
@@ -506,9 +664,17 @@ insert into auth.users (
     const runId = runs?.[0]?.id as string;
 
     const subjectId = randomUUID();
+    const mismatchId = randomUUID();
+    fixtureMismatches.push({
+      id: mismatchId,
+      runId,
+      jobId: job.id,
+      subjectId,
+    });
     const { error: mismatchInsertError } = await db
       .from("reconciliation_mismatches")
       .insert({
+        id: mismatchId,
         run_id: runId,
         mismatch_type: "WORKER_RUNTIME_PROBE_MISMATCH",
         subject_type: "worker_probe",
@@ -1133,6 +1299,78 @@ describe("safe-mode actual command and registered worker delivery", () => {
   });
 });
 
+describe("worker waiting-item ownership against local Supabase", () => {
+  it.each(["outbox", "job"] as const)(
+    "does not lease the next %s while the first handler exceeds its original lease",
+    async (lane) => {
+      const db = serviceClient();
+      const type = `WAITING_OWNERSHIP_${randomUUID().replaceAll("-", "").toUpperCase()}`;
+      const first =
+        lane === "outbox"
+          ? await insertOutboxEvent(db, {
+              event_type: `${type}.v1`,
+              available_at: "2000-01-01T00:00:00Z",
+            })
+          : await insertSystemJob(db, {
+              job_type: type,
+              priority: 0,
+              available_at: "2000-01-01T00:00:00Z",
+            });
+      const second =
+        lane === "outbox"
+          ? await insertOutboxEvent(db, {
+              event_type: `${type}.v1`,
+              available_at: "2000-01-01T00:00:01Z",
+            })
+          : await insertSystemJob(db, {
+              job_type: type,
+              priority: 0,
+              available_at: "2000-01-01T00:00:01Z",
+            });
+      const handler = async (_client: SupabaseClient, row: { id: string }) => {
+        if (row.id !== first.id) return;
+        await delay(11_000);
+        const waiting =
+          lane === "outbox"
+            ? await readOutbox(db, second.id)
+            : await readJob(db, second.id);
+        expect(waiting.status).toBe("PENDING");
+        expect(waiting.lease_owner).toBeNull();
+        expect(waiting.lease_expires_at).toBeNull();
+        expect(
+          lane === "outbox" ? waiting.attempt_count : waiting.attempts,
+        ).toBe(0);
+      };
+      const options = {
+        workerId: `waiting-${randomUUID()}`,
+        batchSize: 2,
+        leaseSeconds: 10,
+        leaseRenewIntervalMs: 1_000,
+        outboxHandlers: { [`${type}.v1`]: handler },
+        jobHandlers: { [type]: handler },
+      };
+      const summary =
+        lane === "outbox"
+          ? await processOutboxBatch(db, options)
+          : await processJobBatch(db, options);
+      expect(summary).toEqual({
+        claimed: 2,
+        completed: 2,
+        failed: 0,
+        unsupported: 0,
+      });
+      const done =
+        lane === "outbox"
+          ? await readOutbox(db, second.id)
+          : await readJob(db, second.id);
+      expect(done.status).toBe(lane === "outbox" ? "PROCESSED" : "SUCCEEDED");
+      expect(lane === "outbox" ? done.attempt_count : done.attempts).toBe(1);
+      expect(activeLeaseRenewalCount()).toBe(0);
+    },
+    30_000,
+  );
+});
+
 function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -1188,6 +1426,7 @@ describe("periodic lease renewal without a database", () => {
       client as unknown as SupabaseClient,
       {
         workerId: "ws06-extend-fail",
+        batchSize: 1,
         leaseSeconds: 10,
         leaseRenewIntervalMs: 50,
         outboxHandlers: {
@@ -1245,6 +1484,7 @@ describe("periodic lease renewal without a database", () => {
 
     const summary = await processJobBatch(client as unknown as SupabaseClient, {
       workerId: "ws06-job-extend-fail",
+      batchSize: 1,
       leaseSeconds: 10,
       leaseRenewIntervalMs: 50,
       jobHandlers: {

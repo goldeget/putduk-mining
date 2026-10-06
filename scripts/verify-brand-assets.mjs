@@ -8,7 +8,7 @@ const manifestPath = path.join(root, "public", "brand", "assets.manifest.json");
 const manifest = JSON.parse(await readFile(manifestPath, "utf8"));
 
 const failures = [];
-const requiredVersion = "2026.10.03-v3";
+const requiredVersion = "2026.10.06-v5";
 const aiHelpSource =
   "docs/design/generated-masters/ai-help-face-2026-10-03/putduk-ai-help-face-master-v1.png";
 const aiHelpSourceHash =
@@ -46,11 +46,124 @@ const approvedScenePaths = new Map(
   ),
 );
 
+const globalSource =
+  "docs/design/generated-masters/global-pavilion-2026-10-06/global-pavilion-master-v1.png";
+const globalSourceHash =
+  "82c8d567d0da86ce72052d6415e198793198f9886e65a21d0eadd859b66e1a32";
+const globalVersion = "2026.10.06-global-pavilion-v1";
+const globalReviewScope =
+  "User-delegated Phase 2 production-quality artwork from fully inspected Drive reference families: coherent city, networked Earth and material pavilion; complete 1536x1024 composition, no production copy, responsive encoding only; no economic approval or product-specific runtime mapping.";
+const delegatedGlobalPaths = new Map(
+  [640, 960, 1280, 1536].flatMap((width) =>
+    ["avif", "webp"].map((format) => [
+      `/brand/scenes/global-pavilion/global-pavilion-${width}-v1.${format}`,
+      { width, height: Math.round((1024 * width) / 1536) },
+    ]),
+  ),
+);
+
+const lightSource =
+  "docs/design/generated-masters/semiconductor-memory-light-2026-10-06/semiconductor-memory-light-master-v1.png";
+const lightSourceHash =
+  "113fdbc5c41772145f98f3357f27754fa1bd20602a5261c133becc0fa1126d52";
+const lightVersion = "2026.10.06-semiconductor-memory-light-v1";
+const lightReviewScope =
+  "User-delegated Phase 2 native light companion from the unchanged clean memory master and fully inspected a02-m00032 light desktop reference; complete 1536x1024 composition, responsive encoding only, no crop, recoloring or upscale; presentation-only neutral mining backdrop, no economic or product mapping approval.";
+const delegatedLightPaths = new Map(
+  [640, 960, 1280, 1536].flatMap((width) =>
+    ["avif", "webp"].map((format) => [
+      `/brand/scenes/semiconductor-memory-light/semiconductor-memory-light-${width}-v1.${format}`,
+      { width, height: Math.round((1024 * width) / 1536) },
+    ]),
+  ),
+);
+
+export function delegatedLightMetadataFailures(asset) {
+  const dimensions = delegatedLightPaths.get(asset.path);
+  if (!dimensions)
+    return asset.path?.startsWith("/brand/scenes/semiconductor-memory-light/")
+      ? [`unapproved light scene path: ${asset.path}`]
+      : [];
+  const expected = {
+    assetVersion: lightVersion,
+    sourceMaster: lightSource,
+    sourceSha256: lightSourceHash,
+    reviewScope: lightReviewScope,
+    theme: "light",
+    mimeType: `image/${asset.path.split(".").at(-1)}`,
+    ...dimensions,
+  };
+  const errors = Object.entries(expected)
+    .filter(([key, value]) => asset[key] !== value)
+    .map(([key]) => `light scene ${key} mismatch: ${asset.path}`);
+  const allowed = new Set([
+    "path",
+    "bytes",
+    "sha256",
+    "mimeType",
+    "alt",
+    "width",
+    "height",
+    "theme",
+    ...provenanceKeys,
+  ]);
+  if (Object.keys(asset).some((key) => !allowed.has(key)))
+    errors.push(`unapproved light scene metadata: ${asset.path}`);
+  return errors;
+}
+
+/** Used by the real disk verifier and corruption regressions. */
+export function runtimeAssetIntegrityFailures(
+  asset,
+  contents,
+  fileSize = contents.length,
+) {
+  const errors = [];
+  if (createHash("sha256").update(contents).digest("hex") !== asset.sha256)
+    errors.push(`hash mismatch: ${asset.path}`);
+  if (fileSize !== asset.bytes || contents.length !== asset.bytes)
+    errors.push(`byte mismatch: ${asset.path}`);
+  return errors;
+}
+
+export function delegatedGlobalMetadataFailures(asset) {
+  const dimensions = delegatedGlobalPaths.get(asset.path);
+  if (!dimensions) return [];
+  const expected = {
+    assetVersion: globalVersion,
+    sourceMaster: globalSource,
+    sourceSha256: globalSourceHash,
+    reviewScope: globalReviewScope,
+    theme: "system",
+    mimeType: `image/${asset.path.split(".").at(-1)}`,
+    ...dimensions,
+  };
+  const errors = Object.entries(expected)
+    .filter(([key, value]) => asset[key] !== value)
+    .map(([key]) => `global pavilion ${key} mismatch: ${asset.path}`);
+  const allowed = new Set([
+    "path",
+    "bytes",
+    "sha256",
+    "mimeType",
+    "alt",
+    "width",
+    "height",
+    "theme",
+    ...provenanceKeys,
+  ]);
+  if (Object.keys(asset).some((key) => !allowed.has(key)))
+    errors.push(`unapproved global pavilion metadata: ${asset.path}`);
+  return errors;
+}
+
 /** Reviewed metadata belongs only to the approved face and scene packs. */
 export function aiHelpMetadataFailures(asset) {
   const size = approvedAiHelpPaths.get(asset.path);
   if (!size)
     return !approvedScenePaths.has(asset.path) &&
+      !delegatedGlobalPaths.has(asset.path) &&
+      !delegatedLightPaths.has(asset.path) &&
       provenanceKeys.some((key) => key in asset)
       ? [`unapproved provenance path: ${asset.path}`]
       : [];
@@ -87,6 +200,10 @@ export function aiHelpMetadataFailures(asset) {
 }
 
 export function approvedSceneMetadataFailures(asset) {
+  if (asset.path?.startsWith("/brand/scenes/semiconductor-memory-light/"))
+    return delegatedLightMetadataFailures(asset);
+  if (delegatedGlobalPaths.has(asset.path))
+    return delegatedGlobalMetadataFailures(asset);
   const dimensions = approvedScenePaths.get(asset.path);
   if (!dimensions)
     return asset.path?.startsWith("/brand/scenes/")
@@ -156,10 +273,7 @@ for (const asset of manifest.assets ?? []) {
       readFile(absolute),
       stat(absolute),
     ]);
-    const digest = createHash("sha256").update(contents).digest("hex");
-    if (digest !== asset.sha256) failures.push(`hash mismatch: ${asset.path}`);
-    if (info.size !== asset.bytes)
-      failures.push(`byte mismatch: ${asset.path}`);
+    failures.push(...runtimeAssetIntegrityFailures(asset, contents, info.size));
   } catch {
     failures.push(`missing asset: ${asset.path}`);
   }
@@ -197,6 +311,8 @@ for (const [relative, expected] of expectedReferenceHashes) {
 const expectedMasterHashes = new Map([
   [aiHelpSource, aiHelpSourceHash],
   [sceneSource, sceneSourceHash],
+  [globalSource, globalSourceHash],
+  [lightSource, lightSourceHash],
   [
     "docs/design/generated-masters/putduk-miner-master-v1.png",
     "5efb45738d0cdd72bfb2cc3a24a31d6034eeb33277daa375bf05ab51b8eb1fea",
@@ -239,7 +355,11 @@ for (const expectedPath of approvedAiHelpPaths.keys()) {
       `AI help derivative must appear exactly once: ${expectedPath}`,
     );
 }
-for (const expectedPath of approvedScenePaths.keys()) {
+for (const expectedPath of [
+  ...approvedScenePaths.keys(),
+  ...delegatedGlobalPaths.keys(),
+  ...delegatedLightPaths.keys(),
+]) {
   if (
     manifest.assets.filter((asset) => asset.path === expectedPath).length !== 1
   )

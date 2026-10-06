@@ -3,12 +3,17 @@
 ## Current truth
 
 The authenticated application path, deterministic safety and intent router,
-owned read-only account tools, public-knowledge cache boundary, database audit,
+owned read-only account tools, database audit,
 real streaming transport and cancellation handling are implemented. Static
 public facts and account-state answers backed by the current user's RLS session
 work without an external model. No provider is active until `AI_PROVIDER`,
 `AI_API_KEY` and an operator-approved `AI_MODEL_LOW_COST` are configured in the
 target runtime. A configured code path is not a production launch approval.
+
+Owner-account conversation bodies, source/tool receipts and feedback are stored
+and can be reopened. These stored answers are historical, not fresh account
+lookups. Shared caching is disabled for all free-form member provider turns:
+a topic match or best-effort redaction cannot establish public-only content.
 
 ## V1 scope
 
@@ -61,7 +66,7 @@ authenticated browser
 → intent and context router
   ├─ denial / clarification / canonical static rule
   ├─ authenticated RLS-owned read-only domain tool
-  ├─ versioned public-knowledge cache
+  ├─ canonical public knowledge (free-form shared cache disabled)
   ├─ allowlisted UI help
   └─ general-safe provider fallback without account context
 → approved low-cost or high-capability model only where required
@@ -77,8 +82,10 @@ bounded PUTDUK completion or error event; raw provider events are not exposed.
 
 ## Data handling
 
-- Raw user questions are not stored in the PUTDUK database in the current
-  implementation.
+- Member questions and completed answers are stored in owner-scoped
+  `ai_conversations` / `ai_messages` after best-effort secret redaction. Tool
+  failure explanations are also stored. Redaction is not a guarantee that every
+  sensitive value is recognized. Never describe this as hash-only storage.
 - `ai_requests` stores a SHA-256 prompt hash, question character count, model
   key, knowledge version, status and bounded error metadata.
 - `ai_usage` stores non-negative token counts only after a verified completion.
@@ -87,10 +94,11 @@ bounded PUTDUK completion or error event; raw provider events are not exposed.
   controls must still be reviewed before production activation.
 - Account-tool results are rendered deterministically and are never written to
   the shared response cache or sent to the provider.
-- The current cache is an exact prompt/model/knowledge-version cache for public
-  PUTDUK knowledge, not a semantic-similarity cache. Semantic caching remains
-  gated on an approved embedding model, public-only corpus, similarity threshold
-  evaluation and cache-poisoning tests; it must never include account context.
+- Exact prompt/model/knowledge-version cache infrastructure exists, but member
+  free-form turns do not read or write it. Enabling a shared cache requires an
+  approved public-only corpus and deterministic input selector plus privacy and
+  poisoning tests. Semantic caching additionally requires approved embedding
+  and similarity evaluation. Topic regexes cannot establish public-only input.
 - General-safe prompts contain no account or screen context. UI-help prompts
   contain only schema-validated route/world/product fields and selected-item
   presence flags. Transaction/event UUIDs stay server-side for RLS tool reads
@@ -103,19 +111,24 @@ Durable conversation and message rows exist in
 `supabase/migrations/20261005040000_ai_conversation_storage.sql`.
 Answer tool calls, sources, and feedback rows exist in
 `supabase/migrations/20261005054518_ai_tool_evidence_storage.sql`.
-Summary storage is **not implemented yet**. See
-`docs/ai/CONVERSATION-CONTINUITY-AUDIT.md` and
-`domain/ai/continuity.ts` (`SESSION_MEMORY_ONLY`). The current browser retains
-only its in-memory messages, so a refresh does not restore a conversation. The
-UI discloses this honestly. This is an explicit functional gap, not simulated
-persistence. Before adding it, approve and implement together:
+Summary schema exists in `20261005064600_ai_conversation_summary_storage.sql`,
+but no summary generation or provider history/summary transmission is enabled.
+`domain/ai/continuity.ts` uses `OWNER_ACCOUNT`. The browser lists the most recent
+40 conversations and restores the latest 120 message rows, joining stored body
+chunks and disclosing omitted earlier rows. Full-history pagination is absent.
 
-- user-owned conversation, message and versioned safe-summary tables;
-- RLS plus `FORCE ROW LEVEL SECURITY` and server-only mutation commands;
-- retention, export and deletion policy;
-- secret/credential redaction and content protection;
-- atomic turn start/completion/failure and per-user idempotency;
-- cross-user, refresh restoration and cancellation recovery tests.
+Restoration reads existing source and tool-outcome receipts under owner RLS.
+Failed tools stay retryable; missing/inconsistent receipts are unverified.
+Stored `created_at` is labeled as the save time. Original tool lookup `asOf` is
+not stored and is never reconstructed from save time. Historical answers tell
+the member to ask again for current state. Owner invalidation cancels or ignores
+pending history, stream and list results before they can replace cleared state.
+
+Remaining gates: retention/export/deletion policy, provider transmission scope,
+atomic multichunk/turn persistence and actual HTTP retry recovery, complete
+browser ownership/restoration/cancellation evidence, and safe summary generation.
+See `docs/ai/CONVERSATION-CONTINUITY-AUDIT.md`; schema and unit tests do not
+establish product completion.
 
 Official implementation references:
 
@@ -136,7 +149,8 @@ Official implementation references:
 - `AiTools` — typed PUTDUK-owned, read-only tool registry. Tools are not exposed
   as provider-callable functions and accept no user ID.
 - `AiToolExecutor` — current-session RLS reads and deterministic Korean answers.
-- `AiCache` — public-knowledge-only, version and expiry-bound response cache.
+- `AiCache` — version and expiry-bound cache infrastructure; member free-form
+  caching remains disabled pending a proven public-only input boundary.
 - `AiUsage` — server-only admission, terminal state and usage commands.
 - `AiReport` — read-only usage projections.
 
@@ -154,8 +168,8 @@ AI_CACHE_TTL_SECONDS=3600
 ```
 
 The repository intentionally does not hardcode a model. Static facts and owned
-domain tools are checked first. Only public PUTDUK knowledge is eligible for the
-shared cache. General-safe and UI-help answers are never placed in that cache.
+domain tools are checked first. All free-form member answers, including PUTDUK
+topic questions, stay out of the shared cache.
 Simple provider questions select the approved low-cost model; only explicit
 comparative/analytical questions may select the optional high-capability model.
 Availability, quality, latency, pricing, data controls and account access must
@@ -182,7 +196,7 @@ be approved together. The database enforces the per-user minute and rolling
 ## Production activation gate
 
 Before enabling the provider in production, verify the exact model and account,
-data-retention controls, monthly budget and alerts, abuse response, Korean answer
+data-retention and input-transmission controls, monthly budget and alerts, abuse response, Korean answer
 quality, prompt-injection tests, streaming cancellation, usage reconciliation,
 and authenticated ownership isolation. Durable conversation continuity requires
 its separate gate above. Remote Supabase application, provider activation and

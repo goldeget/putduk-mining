@@ -39,6 +39,12 @@ export async function confirmOperatorStepUp(form: Locator, secret: string) {
   });
 }
 
+/** Changed evidence must discard both the human confirmation and old grant. */
+export async function expectEditedReviewInvalidated(form: Locator) {
+  await expect(form.getByRole("checkbox")).not.toBeChecked();
+  await expect(form.locator('input[name="stepUpToken"]')).toHaveValue("");
+}
+
 export async function setStepUpToken(form: Locator, token: string) {
   await form.locator('input[name="stepUpToken"]').evaluate((element, value) => {
     (element as HTMLInputElement).value = value;

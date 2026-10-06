@@ -28,6 +28,51 @@
   margin-top: 18px;
 }
 
+.lookupPanel {
+  margin: 20px 0 0;
+}
+.lookupPanel summary {
+  min-height: 44px;
+  display: list-item;
+  padding: 12px 0;
+  color: var(--gold);
+  cursor: pointer;
+}
+.lookupPanel summary:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 3px;
+}
+.searchResults {
+  display: grid;
+  gap: 12px;
+  margin: 20px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.searchResults a {
+  display: grid;
+  gap: 12px;
+  min-height: 44px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+}
+.searchResults dl {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  margin: 0;
+}
+.searchResults dt {
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+.searchResults dd {
+  margin: 6px 0 0;
+  overflow-wrap: anywhere;
+}
+
 .sourceStats {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

@@ -13,7 +13,9 @@ export default async function AssistantPage() {
     return (
       <div data-ui-ready="/assistant" data-ui-state="unauthorized">
         <h1>운영 도우미</h1>
-        <p role="status">이 역할로는 입금 처리 초안을 준비할 수 없습니다.</p>
+        <p role="status">
+          이 역할로는 운영 기록 설명이나 입금 처리 초안을 준비할 수 없습니다.
+        </p>
       </div>
     );
   let options: AssistantTargetOption[] = [];

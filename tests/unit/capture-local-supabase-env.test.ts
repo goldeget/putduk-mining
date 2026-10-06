@@ -257,6 +257,65 @@ describe("supabase start log redaction", () => {
   const accessKey = "cd".repeat(16);
   const digest = `sha256:${"ef".repeat(32)}`;
 
+  const cliCredentialFields = [
+    "ANON_KEY",
+    "PUBLISHABLE_KEY",
+    "SERVICE_ROLE_KEY",
+    "SECRET_KEY",
+    "JWT_SECRET",
+    "S3_PROTOCOL_ACCESS_KEY_ID",
+    "S3_PROTOCOL_ACCESS_KEY_SECRET",
+    "auth.anon_key",
+    "auth.publishable_key",
+    "auth.service_role_key",
+    "auth.secret_key",
+    "auth.jwt_secret",
+    "storage.s3_access_key_id",
+    "storage.s3_secret_access_key",
+  ];
+
+  it.each(cliCredentialFields)(
+    "redacts CLI credential %s in JSON and env formats without relying on its value shape",
+    (field) => {
+      const credential =
+        'synthetic opaque value with spaces, punctuation and \\"quote';
+      const json = JSON.stringify({ API_URL: LOCAL_URL, [field]: credential });
+      const safeJson = redactSupabaseCliLine(json);
+      expect(safeJson).not.toContain("synthetic opaque");
+      expect(JSON.parse(safeJson)).toEqual({
+        API_URL: LOCAL_URL,
+        [field]: "<redacted>",
+      });
+      const env = `API_URL=${LOCAL_URL}\nexport ${field}=${JSON.stringify(credential)}`;
+      expect(redactSupabaseCliLine(env)).toBe(
+        `API_URL=${LOCAL_URL}\nexport ${field}=<redacted>`,
+      );
+    },
+  );
+
+  it("redacts multiple JSON fields across pretty lines while preserving nonsecret service URLs", () => {
+    const input = JSON.stringify(
+      {
+        API_URL: LOCAL_URL,
+        STUDIO_URL: "http://127.0.0.1:58423",
+        S3_PROTOCOL_URL: `${LOCAL_URL}/storage/v1/s3`,
+        JWT_SECRET: "synthetic signing material",
+        S3_PROTOCOL_ACCESS_KEY_ID: "synthetic access identifier",
+        S3_PROTOCOL_ACCESS_KEY_SECRET: "synthetic storage material",
+      },
+      null,
+      2,
+    );
+    expect(JSON.parse(redactSupabaseCliLine(input))).toEqual({
+      API_URL: LOCAL_URL,
+      STUDIO_URL: "http://127.0.0.1:58423",
+      S3_PROTOCOL_URL: `${LOCAL_URL}/storage/v1/s3`,
+      JWT_SECRET: "<redacted>",
+      S3_PROTOCOL_ACCESS_KEY_ID: "<redacted>",
+      S3_PROTOCOL_ACCESS_KEY_SECRET: "<redacted>",
+    });
+  });
+
   it("masks key-shaped strings and keeps the database password mask", () => {
     const input = [
       `│ Publishable │ ${PUBLISHABLE} │`,
@@ -305,6 +364,36 @@ describe("supabase start log redaction", () => {
     expect(result.stdout).not.toContain(SECRET);
     expect(result.stdout).toContain("<redacted>");
     expect(result.stderr ?? "").not.toContain(SECRET);
+  });
+
+  it("redacts opaque JSON and env credentials in the actual streaming consumer", () => {
+    const result = spawnSync(
+      process.execPath,
+      ["scripts/redact-supabase-cli-stream.mjs"],
+      {
+        input: [
+          JSON.stringify({
+            API_URL: LOCAL_URL,
+            JWT_SECRET: "synthetic signing material",
+            S3_PROTOCOL_ACCESS_KEY_ID: "synthetic access identifier",
+            S3_PROTOCOL_ACCESS_KEY_SECRET: "synthetic storage material",
+          }),
+          "S3_PROTOCOL_ACCESS_KEY_SECRET='synthetic env storage material'",
+        ].join("\n"),
+        encoding: "utf8",
+        cwd: fileURLToPath(new URL("../..", import.meta.url)),
+      },
+    );
+    expect(result.status).toBe(0);
+    expect(result.stdout).not.toContain("synthetic");
+    expect(result.stderr ?? "").not.toContain("synthetic");
+    expect(JSON.parse(result.stdout.split("\n")[0]!)).toEqual({
+      API_URL: LOCAL_URL,
+      JWT_SECRET: "<redacted>",
+      S3_PROTOCOL_ACCESS_KEY_ID: "<redacted>",
+      S3_PROTOCOL_ACCESS_KEY_SECRET: "<redacted>",
+    });
+    expect(result.stdout).toContain("S3_PROTOCOL_ACCESS_KEY_SECRET=<redacted>");
   });
 
   it("pipes supabase start through redaction without shell tracing", () => {

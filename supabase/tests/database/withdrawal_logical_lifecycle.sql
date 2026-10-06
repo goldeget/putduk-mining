@@ -87,6 +87,90 @@ revoke all on function pg_temp.seed_historical_held_withdrawal(uuid, uuid, bigin
   from public, anon, authenticated, service_role;
 -- END TEST-ONLY HISTORICAL HOLD FIXTURE
 
+-- BEGIN TEST-ONLY VERIFIED MINING REWARD FIXTURE
+-- Owner-only sealed mining CREDIT fixture for local rollback/concurrency tests.
+-- This is not a producer command or legacy settlement activation.
+-- The actual tested withdrawal commands must create their own reservations.
+create function pg_temp.plant_verified_mining_reward(
+  p_user_id uuid,
+  p_movement_id uuid,
+  p_amount bigint,
+  p_effective_at timestamptz,
+  p_recorded_at timestamptz,
+  p_key text
+) returns void
+language plpgsql security invoker set search_path = pg_catalog
+as $$
+declare
+  v_credit uuid := gen_random_uuid();
+  v_journal uuid := gen_random_uuid();
+  v_wallet uuid := gen_random_uuid();
+  v_event uuid := gen_random_uuid();
+  v_request uuid := gen_random_uuid();
+  v_correlation uuid := gen_random_uuid();
+  v_wallet_account uuid;
+begin
+  if current_user <> 'postgres' then
+    raise exception using errcode = '42501', message = 'VERIFIED_MINING_FIXTURE_OWNER_ONLY';
+  end if;
+  select account.id into v_wallet_account
+  from public.wallet_accounts as account
+  where account.user_id = p_user_id and account.currency = 'KRW' and account.closed_at is null;
+  insert into public.ledger_transactions(
+    id, category, currency, idempotency_key, reference_type, reference_id,
+    member_user_id, request_id, correlation_id, description, posted_at
+  ) values (
+    v_journal, 'MINING_REWARD', 'KRW', p_key || ':ledger', 'mining_reward_credit', v_credit,
+    p_user_id, v_request, v_correlation, 'verified mining reward credit', p_effective_at
+  );
+  insert into public.ledger_entries(transaction_id, account_id, sequence, side, amount_atomic)
+  values
+    (v_journal, (select id from public.ledger_accounts where code = 'PUTDUK:MINING_REWARD_EXPENSE:KRW'),
+      0, 'DEBIT', p_amount),
+    (v_journal, (select id from public.ledger_accounts
+      where code = 'USER:' || upper(p_user_id::text) || ':KRW:LIABILITY'),
+      1, 'CREDIT', p_amount);
+  insert into public.wallet_ledger(
+    id, wallet_account_id, user_id, direction, entry_type, amount_atomic,
+    idempotency_key, reference_type, reference_id
+  ) values (
+    v_wallet, v_wallet_account, p_user_id, 'CREDIT', 'MINING_REWARD', p_amount,
+    p_key || ':wallet', 'mining_reward_credit', v_credit
+  );
+  insert into public.outbox_events(
+    id, event_type, schema_version, aggregate_type, aggregate_id, actor_user_id,
+    payload, correlation_id, request_id, idempotency_key
+  ) values (
+    v_event, 'MINING_REWARD_CREDITED.v1', 1, 'mining_reward_credit', v_credit, p_user_id,
+    jsonb_build_object(
+      'user_id', p_user_id,
+      'amount_atomic', p_amount,
+      'currency', 'KRW',
+      'ledger_transaction_id', v_journal,
+      'wallet_ledger_id', v_wallet
+    ),
+    v_correlation, v_request, p_key || ':event'
+  );
+  insert into public.mining_reward_credits(
+    id, user_id, amount_atomic, ledger_transaction_id, wallet_ledger_id,
+    source_event_id, effective_at
+  ) values (
+    v_credit, p_user_id, p_amount, v_journal, v_wallet, v_event, p_effective_at
+  );
+  insert into public.money_source_movements(
+    id, user_id, source_bucket, movement_kind, origin_code, amount_atomic,
+    ledger_transaction_id, wallet_ledger_id, source_event_id, effective_at, recorded_at
+  ) values (
+    p_movement_id, p_user_id, 'MINING_REWARD', 'CREDIT', 'MINING_REWARD', p_amount,
+    v_journal, v_wallet, v_event, p_effective_at, p_recorded_at
+  );
+end;
+$$;
+
+revoke all on function pg_temp.plant_verified_mining_reward(uuid,uuid,bigint,timestamptz,timestamptz,text)
+  from public, anon, authenticated, service_role;
+-- END TEST-ONLY VERIFIED MINING REWARD FIXTURE
+
 create extension if not exists pgtap with schema extensions;
 select no_plan();
 
@@ -112,10 +196,17 @@ from logical_ctx cross join lateral unnest(array[owner_id,other_id,operator_id])
 insert into public.user_roles(user_id,role,granted_by) select operator_id,'ADMIN',operator_id from logical_ctx;
 select public.bootstrap_user((select owner_id from logical_ctx));
 select public.bootstrap_user((select other_id from logical_ctx));
-select public.approve_deposit_request(
-  public.create_deposit_request((select owner_id from logical_ctx),'KRW',100000,'logical-fixture-deposit'),
-  (select operator_id from logical_ctx),100000,'logical-fixture-deposit-ledger','local pgTAP verified funding',gen_random_uuid()
-);
+insert into public.ledger_accounts(
+  code, currency, account_class, normal_side, owner_user_id, is_controlled_asset
+)
+select 'USER:' || upper(owner_id::text) || ':KRW:LIABILITY',
+  'KRW', 'LIABILITY', 'CREDIT', owner_id, false
+from logical_ctx
+on conflict (code) do nothing;
+select pg_temp.plant_verified_mining_reward(
+  owner_id, 'cc100000-0000-4000-8000-000000000004', 100000,
+  statement_timestamp(), statement_timestamp(), 'logical-fixture-mining-credit'
+) from logical_ctx;
 insert into public.withdrawal_policies(currency,destination_type,version,is_enabled,minimum_amount_atomic,fee_atomic,destination_config,effective_at,approved_by)
 select 'KRW','KRW_BANK',189001,true,1,0,'{"allowed_bank_codes":["KB"]}',statement_timestamp()-interval '1 minute',operator_id from logical_ctx returning id;
 update logical_ctx set policy_id = (select id from public.withdrawal_policies where destination_type='KRW_BANK' and version=189001);
@@ -144,8 +235,16 @@ grant select, update on logical_ctx to service_role;
 set local role service_role;
 update logical_ctx set withdrawal_id=public.hold_withdrawal_logical_request(owner_id,logical->>'key','KRW_BANK',destination_id,1000);
 reset role;
-select is((select state from public.withdrawal_logical_requests where idempotency_key=(select logical->>'key' from logical_ctx)),'OUTCOME_UNCERTAIN','verified principal hold records the original outcome');
-select is((select status from public.withdrawal_requests where id=(select withdrawal_id from logical_ctx)),'HELD','verified principal logical request reaches hold');
+select is((select state from public.withdrawal_logical_requests where idempotency_key=(select logical->>'key' from logical_ctx)),'OUTCOME_UNCERTAIN','verified mining reward hold records the original outcome');
+select is((select status from public.withdrawal_requests where id=(select withdrawal_id from logical_ctx)),'HELD','verified mining reward logical request reaches hold');
+select is((select sum(reservation.amount_atomic)::bigint
+  from public.mining_reward_withdrawal_reservations as reservation
+  join public.money_source_movements as movement on movement.id=reservation.credit_movement_id
+  where reservation.hold_ledger_transaction_id=(select hold_ledger_transaction_id
+    from public.withdrawal_requests where id=(select withdrawal_id from logical_ctx))
+    and movement.source_bucket='MINING_REWARD'
+    and app_private.money_source_credit_verified(movement)),1000::bigint,
+  'logical hold reserves its full amount from the canonical mining reward credit');
 select is((select count(*)::integer from public.withdrawal_requests where user_id=(select owner_id from logical_ctx) and idempotency_key=(select logical->>'key' from logical_ctx)),1,'verified hold creates one request');
 -- Source-less historical receipt stays separate from the verified hold.
 select pg_temp.seed_historical_held_withdrawal(owner_id,destination_id,1000,'logical-historical-unconnected') from logical_ctx;
@@ -172,7 +271,7 @@ update logical_ctx set later_key=public.prepare_withdrawal_logical_request(owner
 select isnt((select later_key from logical_ctx),(select logical->>'key' from logical_ctx),'later legitimate identical intent gets a different random key');
 set local role service_role;
 select lives_ok($$select public.hold_withdrawal_logical_request(owner_id,later_key,'KRW_BANK',destination_id,1000) from logical_ctx$$,
-  'a later verified principal intent also reaches hold');
+  'a later verified mining reward intent also reaches hold');
 reset role;
 select throws_ok($$select public.request_krw_withdrawal(other_id,destination_id,1000,'logical-no-verified-source') from logical_ctx$$,
   '55000','WITHDRAWAL_VERIFIED_SOURCE_LIFECYCLE_UNAVAILABLE','a member without verified source credit cannot hold');

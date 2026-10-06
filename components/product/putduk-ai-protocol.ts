@@ -4,11 +4,12 @@ import {
   type AiAnswerSource,
   type AiClientStreamEvent,
 } from "@/domain/ai/chat";
+import type { MemberAiHelpTopic } from "@/domain/ai/member-help";
 
 export type PutdukAiMessage = {
   id: string;
   role: "assistant" | "user";
-  state: "cancelled" | "complete" | "error" | "streaming";
+  state: "cancelled" | "complete" | "error" | "streaming" | "unverified";
   text: string;
   question?: string;
   requestId?: string;
@@ -19,6 +20,9 @@ export type PutdukAiMessage = {
   conversationId?: string;
   assistantMessageId?: string;
   failure?: PutdukAiFailure;
+  historical?: boolean;
+  recordedAt?: string;
+  helpTopic?: MemberAiHelpTopic;
 };
 
 export type PutdukAiFailure = {
@@ -71,6 +75,11 @@ export function aiFailure(code: string, message?: string): PutdukAiFailure {
         return ["대화 확인", "대화를 찾지 못했어요. 새 대화로 질문해 주세요."];
       case "AI_FEEDBACK_EXISTS":
         return ["이미 남긴 의견", "이미 남긴 의견이에요."];
+      case "AI_HISTORY_UNVERIFIED":
+        return [
+          "저장된 답변 확인",
+          "답변 근거를 확인하지 못했어요. 현재 상태는 다시 질문해 주세요.",
+        ];
       case "AI_REQUEST_UNAVAILABLE":
         return [
           "질문 접수 실패",
@@ -214,13 +223,15 @@ export function applyAiStreamEvent(
   if (
     !message.text.trim() ||
     event.requestId !== message.requestId ||
-    (message.source === "tool") !== Boolean(event.grounding)
+    (message.source === "tool") !== Boolean(event.grounding) ||
+    (event.helpTopic !== undefined && message.source !== "static")
   )
     throw new PutdukAiProtocolError();
   return {
     ...message,
     state: "complete",
     knowledgeVersion: event.knowledgeVersion,
+    ...(event.helpTopic ? { helpTopic: event.helpTopic } : {}),
     ...(event.grounding ? { grounding: event.grounding } : {}),
     ...(event.saved !== undefined ? { saved: event.saved } : {}),
     ...(event.conversationId ? { conversationId: event.conversationId } : {}),

@@ -199,7 +199,7 @@ test("AI ownership, money denial, continuity, themes, and keyboard path", async 
     await expect(aiMenuLink).toHaveCount(1);
     await aiMenuLink.click();
   }
-  await expect(page).toHaveURL(/\/ai$/);
+  await expect(page).toHaveURL(/\/ai(?:\?|$)/);
   await expect(page.locator("dialog[open]")).toHaveCount(0);
   await expect(page.locator("#main-content")).toHaveCSS("overflow", "auto");
   await expect(

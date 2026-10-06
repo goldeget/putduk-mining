@@ -15,10 +15,11 @@ const items = [
   { href: "/exceptions", label: "정산·대사 예외" },
   { href: "/restrictions", label: "제한·안전 모드" },
   { href: "/economy", label: "채굴 정책" },
+  { href: "/catalog", label: "상품 검토" },
   { href: "/members", label: "회원 종합 정보" },
 ] as const;
 
-export function AdminNavigation() {
+export function AdminNavigation({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
   return (
     <nav aria-label="운영자 주 메뉴">
@@ -31,6 +32,7 @@ export function AdminNavigation() {
             href={item.href as Route}
             key={item.href}
             aria-current={current ? "page" : undefined}
+            onNavigate={() => onNavigate?.()}
           >
             <span>{String(index + 1).padStart(2, "0")}</span>
             {item.label}

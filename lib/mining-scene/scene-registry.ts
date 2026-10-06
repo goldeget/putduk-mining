@@ -107,6 +107,83 @@ export const SEMICONDUCTOR_MEMORY_APPROVED_SCENE = {
     width: 1539,
     height: 1022,
     altKo: "금빛과 푸른빛이 반사되는 반도체 시설과 중앙 추출 장치",
+    lightVariant: {
+      master: {
+        sha256:
+          "113fdbc5c41772145f98f3357f27754fa1bd20602a5261c133becc0fa1126d52",
+        assetPath:
+          "/brand/scenes/semiconductor-memory-light/semiconductor-memory-light-1536-v1.webp",
+        width: 1536,
+        height: 1024,
+        altKo: "밝은 전시장에 놓인 금빛 반도체와 정밀한 원형 장치",
+      },
+      responsiveSources: [
+        {
+          media: "",
+          assetPath:
+            "/brand/scenes/semiconductor-memory-light/semiconductor-memory-light-640-v1.avif",
+          width: 640,
+          height: 427,
+          mimeType: "image/avif",
+        },
+        {
+          media: "",
+          assetPath:
+            "/brand/scenes/semiconductor-memory-light/semiconductor-memory-light-640-v1.webp",
+          width: 640,
+          height: 427,
+          mimeType: "image/webp",
+        },
+        {
+          media: "",
+          assetPath:
+            "/brand/scenes/semiconductor-memory-light/semiconductor-memory-light-960-v1.avif",
+          width: 960,
+          height: 640,
+          mimeType: "image/avif",
+        },
+        {
+          media: "",
+          assetPath:
+            "/brand/scenes/semiconductor-memory-light/semiconductor-memory-light-960-v1.webp",
+          width: 960,
+          height: 640,
+          mimeType: "image/webp",
+        },
+        {
+          media: "",
+          assetPath:
+            "/brand/scenes/semiconductor-memory-light/semiconductor-memory-light-1280-v1.avif",
+          width: 1280,
+          height: 853,
+          mimeType: "image/avif",
+        },
+        {
+          media: "",
+          assetPath:
+            "/brand/scenes/semiconductor-memory-light/semiconductor-memory-light-1280-v1.webp",
+          width: 1280,
+          height: 853,
+          mimeType: "image/webp",
+        },
+        {
+          media: "",
+          assetPath:
+            "/brand/scenes/semiconductor-memory-light/semiconductor-memory-light-1536-v1.avif",
+          width: 1536,
+          height: 1024,
+          mimeType: "image/avif",
+        },
+        {
+          media: "",
+          assetPath:
+            "/brand/scenes/semiconductor-memory-light/semiconductor-memory-light-1536-v1.webp",
+          width: 1536,
+          height: 1024,
+          mimeType: "image/webp",
+        },
+      ],
+    },
   },
   responsiveSources: [
     {

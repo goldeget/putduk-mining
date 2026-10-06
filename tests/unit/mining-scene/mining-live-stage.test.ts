@@ -9,6 +9,7 @@ import { resolveDefaultStageInput } from "@/lib/mining-scene/default-stage";
 import { SAFE_SCENE_COPY } from "@/lib/mining-scene/safe-scene-copy";
 import type { StageSceneInput } from "@/lib/mining-scene/stage-input";
 import { APPROVED_SCENE_ASSET_PATHS } from "@/lib/mining-scene/types";
+import { themeChangeEvent } from "@/lib/design/theme";
 
 vi.mock("next/image", () => ({
   default: (props: Record<string, unknown>) =>
@@ -85,9 +86,55 @@ afterEach(async () => {
   await act(async () => root.unmount());
   host.remove();
   vi.unstubAllGlobals();
+  delete document.documentElement.dataset.theme;
 });
 
 describe("approved shared mining stage", () => {
+  it("changes the reviewed artwork on theme events while keeping live HTML controls", async () => {
+    const control = createElement(
+      "button",
+      { type: "button" },
+      "채굴 상태 확인",
+    );
+    await render({ children: control });
+    const button = host.querySelector("button")!;
+    await act(async () => {
+      document.documentElement.dataset.theme = "light";
+      window.dispatchEvent(new Event(themeChangeEvent));
+    });
+    expect(host.querySelector("img")!.getAttribute("src")).toBe(
+      approved.master!.lightVariant!.master.assetPath,
+    );
+    expect(host.querySelector("section")!.dataset.sceneTheme).toBe("light");
+    expect(host.querySelector("button")).toBe(button);
+    await imageEvent("load");
+    expect(host.querySelector("canvas")!.dataset.imageWidth).toBe("1536");
+    await act(async () => {
+      document.documentElement.dataset.theme = "dark";
+      window.dispatchEvent(new Event(themeChangeEvent));
+    });
+    expect(host.querySelector("img")!.getAttribute("src")).toBe(
+      approved.master!.assetPath,
+    );
+    expect(host.querySelector("button")).toBe(button);
+    expect(host.querySelector("canvas")).toBeNull();
+  });
+
+  it("never renders a light companion under an unapproved primary master", async () => {
+    document.documentElement.dataset.theme = "light";
+    await render({
+      scene: {
+        ...approved,
+        master: {
+          ...approved.master!,
+          sha256: "unapproved" as NonNullable<
+            StageSceneInput["master"]
+          >["sha256"],
+        },
+      },
+    });
+    expect(host.querySelector("img")).toBeNull();
+  });
   it("renders an approved neutral scene with responsive sources and decorative alt", async () => {
     await render();
     const section = host.querySelector("section")!;

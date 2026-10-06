@@ -22,7 +22,7 @@ PUBLIC = ROOT / "public"
 BRAND = PUBLIC / "brand"
 RANKS = PUBLIC / "ranks"
 GENERATED_MASTERS = ROOT / "docs" / "design" / "generated-masters"
-VERSION = "2026.10.03-v3"
+VERSION = "2026.10.06-v5"
 
 MASCOT_MASTER = GENERATED_MASTERS / "putduk-miner-master-v1.png"
 WORLD_MASTER = GENERATED_MASTERS / "putduk-orbital-earth-master-v1.png"
@@ -299,6 +299,10 @@ def build_rank_variants() -> None:
 
 def asset_alt(path: Path) -> str:
     value = path.as_posix()
+    if path.name.startswith("semiconductor-memory-light-") and "/scenes/semiconductor-memory-light/" in value:
+        return "밝은 전시 공간에서 금빛 회로와 푸른 메모리 칩이 빛나는 반도체 시설"
+    if path.name.startswith("global-pavilion-") and "/scenes/global-pavilion/" in value:
+        return "금빛 도시와 푸른 지구, 금속과 반도체가 놓인 원형 전시 공간"
     if path.name.startswith("semiconductor-memory-") and "/scenes/" in value:
         return "금빛과 푸른빛이 반사되는 반도체 시설과 중앙 추출 장치"
     if path.name.startswith("putduk-ai-help-face-"):
@@ -371,10 +375,12 @@ def build_manifest(*, write: bool = True) -> dict[str, object]:
                     record[key] = prior[key]
         assets.append(record)
 
+    assets.sort(key=lambda asset: asset["path"])
+
     manifest = {
         "schemaVersion": 1,
         "assetVersion": VERSION,
-        "generatedAt": "2026-10-03T00:00:00Z",
+        "generatedAt": "2026-10-06T00:00:00Z",
         "sourcePolicy": "Canonical references live under docs/design/visual-references; lossless generated masters live under docs/design/generated-masters; public files are optimized derivatives and generated pixels contain no production copy.",
         "assets": assets,
     }

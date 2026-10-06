@@ -19,6 +19,53 @@ const start = (): PutdukAiMessage => ({
 });
 
 describe("the actual PUTDUK AI public stream protocol", () => {
+  it("accepts registered navigation only on a completed static answer", () => {
+    const complete = (source: "static" | "provider") => {
+      const ready = applyAiStreamEvent(start(), {
+        type: "ready",
+        requestId,
+        source,
+      });
+      return applyAiStreamEvent(ready, {
+        type: "delta",
+        text: "알림 설정에서 선택해 주세요.",
+      });
+    };
+    expect(
+      applyAiStreamEvent(complete("static"), {
+        type: "done",
+        requestId,
+        knowledgeVersion: "v1",
+        helpTopic: "notification_settings",
+      }),
+    ).toMatchObject({ state: "complete", helpTopic: "notification_settings" });
+    expect(() =>
+      applyAiStreamEvent(complete("provider"), {
+        type: "done",
+        requestId,
+        knowledgeVersion: "v1",
+        helpTopic: "notification_settings",
+      }),
+    ).toThrow(PutdukAiProtocolError);
+    for (const extra of [
+      { helpTopic: "admin" },
+      { actions: [{ href: "javascript:alert(1)" }] },
+    ]) {
+      expect(() =>
+        createAiEventDecoder().push(
+          new TextEncoder().encode(
+            encode({
+              type: "done",
+              requestId,
+              knowledgeVersion: "v1",
+              ...extra,
+            }),
+          ),
+        ),
+      ).toThrow(PutdukAiProtocolError);
+    }
+  });
+
   it("decodes split Korean UTF-8, split CRLF, comments, and a final block without a delimiter", () => {
     const decoder = createAiEventDecoder();
     const bytes = new TextEncoder().encode(

@@ -12,5 +12,9 @@ export default defineConfig({
     environment: "node",
     include: ["tests/worker/**/*.test.ts"],
     fileParallelism: false,
+    reporters: ["default", "json"],
+    outputFile: {
+      json: "test-results/worker/vitest.json",
+    },
   },
 });

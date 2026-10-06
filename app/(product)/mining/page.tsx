@@ -1,6 +1,8 @@
 import type { CSSProperties } from "react";
 import Link from "next/link";
 
+import { FundedRuntimeSummary } from "@/components/product/funded-runtime-summary";
+import { RouteReloadButton } from "@/components/product/route-reload-button";
 import { PutdukIcon } from "@/components/icons/putduk-icon";
 import {
   MiningAmountBoard,
@@ -22,6 +24,7 @@ import {
 import {
   parseMiningServerDisplay,
   presentMiningServerDisplay,
+  resolveFundedRuntimeStatus,
 } from "@/lib/product/mining-server-display";
 import { readOwnMiningServerDisplay } from "@/lib/product/read-mining-server-display";
 import miningStyles from "./page.module.css";
@@ -80,6 +83,17 @@ export default async function MiningPage() {
   const currentStatus = currentSession
     ? presentMiningStatus(currentSession.status)
     : null;
+  const fundedRuntime = parsedDisplay?.funded_runtime;
+  const fundedStatus = resolveFundedRuntimeStatus(fundedRuntime);
+  const fundedLabel =
+    fundedStatus === "ACTIVE"
+      ? "채굴 중"
+      : fundedStatus === "STOPPED"
+        ? fundedRuntime?.schema_version === 2 &&
+          fundedRuntime.stop_reason === "CAPACITY_USED"
+          ? "이번 한도 완료"
+          : "배분 대기"
+        : "상태 확인 중";
 
   return (
     <div
@@ -90,7 +104,7 @@ export default async function MiningPage() {
           ? "error"
           : sessionsError || worldsError || displayError
             ? "partial"
-            : !sessions?.length
+            : !sessions?.length && !fundedRuntime
               ? "empty"
               : "loaded"
       }
@@ -114,12 +128,25 @@ export default async function MiningPage() {
         <>
           <MiningLiveStage
             scene={resolveDefaultStageInput()}
-            running={isConfirmedMiningRunning(currentSession?.status)}
+            running={
+              displayError
+                ? false
+                : fundedRuntime
+                  ? fundedStatus === "ACTIVE"
+                  : isConfirmedMiningRunning(currentSession?.status)
+            }
           >
             <div className={miningStyles.sceneCaption}>
               <header className={miningStyles.captionCard}>
                 <div className={miningStyles.meta}>
-                  {currentStatus ? (
+                  {displayError ? (
+                    <ProductStatusPill label="상태 확인 중" tone="neutral" />
+                  ) : fundedRuntime ? (
+                    <ProductStatusPill
+                      label={fundedLabel}
+                      tone={fundedStatus === "ACTIVE" ? "success" : "neutral"}
+                    />
+                  ) : currentStatus ? (
                     <ProductStatusPill
                       label={currentStatus.label}
                       tone={currentStatus.tone}
@@ -129,14 +156,26 @@ export default async function MiningPage() {
                   )}
                 </div>
                 <h2 id="world-hero-title">
-                  {currentSession
-                    ? `${currentSession.world_name_ko} · ${currentStatus?.label ?? "상태 확인 중"}`
-                    : "첫 월드에서 채굴을 시작해 보세요"}
+                  {displayError
+                    ? "채굴 상태를 다시 확인해 주세요"
+                    : fundedRuntime
+                      ? `실제 채굴 · ${fundedLabel}`
+                      : currentSession
+                        ? `${currentSession.world_name_ko} · ${currentStatus?.label ?? "상태 확인 중"}`
+                        : "첫 월드에서 채굴을 시작해 보세요"}
                 </h2>
                 <p className={miningStyles.description}>
-                  {currentSession
-                    ? "정산된 금액은 지갑에서 확인할 수 있어요."
-                    : "PUTDUK START로 첫 채굴을 시작해 보세요."}
+                  {displayError
+                    ? "기록을 불러오지 못했어요. 잠시 후 다시 확인해 주세요."
+                    : fundedRuntime
+                      ? fundedStatus === "ACTIVE"
+                        ? "확인된 원금 배분으로 채굴하고 있어요. 확정된 금액은 지갑에서 확인해 주세요."
+                        : fundedStatus === "STOPPED"
+                          ? "원금과 확정된 기록은 그대로예요. 배분과 채굴 한도를 확인해 주세요."
+                          : "채굴 기록은 확인됐어요. 현재 상태는 다시 확인해 주세요."
+                      : currentSession
+                        ? "정산된 금액은 지갑에서 확인할 수 있어요."
+                        : "PUTDUK START로 첫 채굴을 시작해 보세요."}
                 </p>
               </header>
             </div>
@@ -146,7 +185,21 @@ export default async function MiningPage() {
               <MiningAmountBoard {...amountBoard} placement="lead" />
               <MiningAmountBoard {...amountBoard} placement="follow" />
             </div>
-            {currentSession ? (
+            {displayError ? (
+              <div className={miningStyles.actions}>
+                <RouteReloadButton label="채굴 상태 다시 확인" />
+              </div>
+            ) : fundedRuntime ? (
+              <div className={miningStyles.actions}>
+                <Link
+                  className="button button--primary"
+                  href="/products/allocation"
+                >
+                  채굴 배분 확인
+                  <PutdukIcon name="arrow-right" size={18} />
+                </Link>
+              </div>
+            ) : currentSession ? (
               <div className={miningStyles.facts}>
                 <span>
                   정산 전 경과{" "}
@@ -176,6 +229,10 @@ export default async function MiningPage() {
           </section>
         </>
       )}
+
+      {parsedDisplay?.funded_runtime ? (
+        <FundedRuntimeSummary runtime={parsedDisplay.funded_runtime} />
+      ) : null}
 
       <details className={miningStyles.details} id="putduk-mining-details">
         <summary className={miningStyles.summary}>채굴 상세</summary>

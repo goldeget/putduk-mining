@@ -172,6 +172,73 @@
   gap: 12px;
   flex-shrink: 0;
 }
+.contextPanel {
+  margin-bottom: 24px;
+}
+.contextPanel > button {
+  margin-top: 16px;
+  min-height: 44px;
+}
+.memberLookup,
+.contextReport {
+  margin-top: 24px;
+  border-top: 1px solid var(--line);
+  padding-top: 20px;
+}
+.contextReport h3,
+.contextReport h4 {
+  color: var(--ink);
+  word-break: keep-all;
+}
+.contextReport > section {
+  margin: 24px 0;
+  max-width: 44rem;
+}
+.contextReport ul {
+  padding-left: 20px;
+}
+.contextReport li + li {
+  margin-top: 16px;
+}
+.contextReport li p {
+  margin: 0 0 8px;
+  line-height: 1.65;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+.contextEvidenceGroup + .contextEvidenceGroup {
+  margin-top: 20px;
+}
+.contextEvidenceGroup ul {
+  margin: 0;
+}
+.contextEvidenceGroup li + li {
+  margin-top: 8px;
+}
+.contextEvidenceGroup li p {
+  margin: 0;
+}
+.contextSourceLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  max-width: 100%;
+  margin-top: 6px;
+  overflow-wrap: anywhere;
+}
+.contextChoices {
+  display: grid;
+  gap: 12px;
+  list-style: none;
+  padding: 0 !important;
+}
+.contextChoices button {
+  width: 100%;
+  min-height: 44px;
+  text-align: left;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
 @media (max-width: 900px) {
   .workspace {
     grid-template-columns: minmax(0, 1fr);

@@ -1,0 +1,3008 @@
+{
+  "schema_version": 1,
+  "sources": [
+    {
+      "archive_id": "archive-1",
+      "filename": "approved-drive-source-1.zip",
+      "bytes": 37847212,
+      "sha256": "7bf01e26a9011a10b896a91859775295d52cfc78064599d8e76c89dc5fb6549e",
+      "original_filename": "10월4일 퍼뜩목업사진(2).zip"
+    },
+    {
+      "archive_id": "archive-2",
+      "filename": "approved-drive-source-2.zip",
+      "bytes": 58582575,
+      "sha256": "08d0b6e93b8060661490d7a238fe90176290598d58cd738430d367075c3fbc37",
+      "original_filename": "퍼뜩채굴 모바일 목업사진(3).zip"
+    }
+  ],
+  "all_members": [
+    {
+      "reference_id": "a01-m00001",
+      "archive_id": "archive-1",
+      "member_index": 1,
+      "path": "ChatGPT 이미지 2026년 10월 4일 오전 11_07_19-1.png",
+      "declared_bytes": 1873218,
+      "compressed_bytes": 1860310,
+      "crc32": "c47f9a1e",
+      "bytes": 1873218,
+      "sha256": "d957b2fe19481e83caeca4fcf88453a760cfc7778ed4aa2474e63f96f6a5268c",
+      "kind": "image"
+    },
+    {
+      "reference_id": "a01-m00002",
+      "archive_id": "archive-1",
+      "member_index": 2,
+      "path": "ChatGPT 이미지 2026년 10월 4일 오전 11_07_27-2.png",
+      "declared_bytes": 1863593,
+      "compressed_bytes": 1851546,
+      "crc32": "57836178",
+      "bytes": 1863593,
+      "sha256": "b8b8c11082045b6d0de3b453366ffe035f61e11d70822e81aace1b37461ad4cd",
+      "kind": "image"
+    },
+    {
+      "reference_id": "a01-m00003",
+      "archive_id": "archive-1",
+      "member_index": 3,
+      "path": "ChatGPT 이미지 2026년 10월 4일 오전 11_07_32-3.png",
+      "declared_bytes": 1863867,
+      "compressed_bytes": 1850929,
+      "crc32": "45ab6f82",
+      "bytes": 1863867,
+      "sha256": "c909395295c1f58eb4f8d77fe33bdbc8d342af8767935f0223acc6d749eeba7d",
+      "kind": "image"
+    },
+    {
+      "reference_id": "a01-m00004",
+      "archive_id": "archive-1",
+      "member_index": 4,
+      "path": "ChatGPT 이미지 2026년 10월 4일 오전 11_07_35-4.png",
+      "declared_bytes": 1925893,
+      "compressed_bytes": 1913917,
+      "crc32": "31e491c6",
+      "bytes": 1925893,
+      "sha256": "1ff263d2b8415f18186f9eda182e47579c61336e381d6321e1792dc265c11140",
+      "kind": "image"
+    },
+    {
+      "reference_id": "a01-m00005",
+      "archive_id": "archive-1",
+      "member_index": 5,
+      "path": "ChatGPT 이미지 2026년 10월 4일 오전 11_07_55-5.png",
+      "declared_bytes": 1757510,
+      "compressed_bytes": 1745395,
+      "crc32": "2af751a6",
+      "bytes": 1757510,
+      "sha256": "0d7afa3ddce7d866e6f1644159e135d15f11fbf29e78306c2d33d11e3e677f43",
+      "kind": "image"
+    },
+    {
+      "reference_id": "a01-m00006",
+      "archive_id": "archive-1",
+      "member_index": 6,
+      "path": "ChatGPT 이미지 2026년 10월 4일 오전 11_08_08-6.png",
+      "declared_bytes": 2116885,
+      "compressed_bytes": 2105019,
+      "crc32": "a23172b9",
+      "bytes": 2116885,
+      "sha256": "6ae69fabee6d56696bb16645fa60af9a6a5f21a921f908c1f59f75eac32edf1a",
+      "kind": "image"
+    },
+    {
+      "reference_id": "a01-m00007",
+      "archive_id": "archive-1",
+      "member_index": 7,
+      "path": "ChatGPT 이미지 2026년 10월 4일 오전 11_08_11-7.png",
+      "declared_bytes": 1884734,
+      "compressed_bytes": 1872730,
+      "crc32": "a5a5de05",
+      "bytes": 1884734,
+      "sha256": "6327d2618425b496211e1199c9dfd788ce94dc10ea9b834375dda71a8f5ae3d8",
+      "kind": "image"
+    },
+    {
+      "reference_id": "a01-m00008",
+      "archive_id": "archive-1",
+      "member_index": 8,
+      "path": "ChatGPT 이미지 2026년 10월 4일 오전 11_08_14-8.png",
+      "declared_bytes": 1808437,
+      "compressed_bytes": 1796415,
+      "crc32": "b135b8dd",
+      "bytes": 1808437,
+      "sha256": "a31edc0cc7d37b6d86cbf5303b109e0cf04d18d603ad9ba0eaec9691714f33b4",
+      "kind": "image"
+    },
+    {
+      "reference_id": "a01-m00009",
+      "archive_id": "archive-1",
+      "member_index": 9,
+      "path": "ChatGPT 이미지 2026년 10월 4일 오전 11_08_16-9.png",
+      "declared_bytes": 2129852,
+      "compressed_bytes": 2117958,
+      "crc32": "e249a36e",
+      "bytes": 2129852,
+      "sha256": "dcff2c4a5b55ae46671b47844a0a8e1dd7d8626883484a96294d6fcc3a6bccd6",
+      "kind": "image"
+    },
+    {
+      "reference_id": "a01-m00010",
+      "archive_id": "archive-1",
+      "member_index": 10,
+      "path": "ChatGPT 이미지 2026년 10월 4일 오전 11_08_21-10.png",
+      "declared_bytes": 1725519,
+      "compressed_bytes": 1712554,
+      "crc32": "f0b85452",
+      "bytes": 1725519,
+      "sha256": "16a312f3fc8cb556cdc003d687f6693290c880ffbd51312966e8a7dafbe4d6dc",
+      "kind": "image"
+    },
+    {
+      "reference_id": "a01-m00011",
+      "archive_id": "archive-1",
+      "member_index": 11,
+      "path": "ChatGPT 이미지 2026년 10월 4일 오후 01_54_11-1.png",
+      "declared_bytes": 1926304,
+      "compressed_bytes": 1913388,
+      "crc32": "6ead8dfe",
+      "bytes": 1926304,
+      "sha256": "541d157544a5ca883d4d464d533bfedf87ef2be3a507159032deb65a71a1ca53",
+      "kind": "image"
+    },
+    {
+      "reference_id": "a01-m00012",
+      "archive_id": "archive-1",
+      "member_index": 12,
+      "path": "ChatGPT 이미지 2026년 10월 4일 오후 01_54_14-2.png",
+      "declared_bytes": 1853198,
+      "compressed_bytes": 1841167,
+      "crc32": "6a1483a4",
+      "bytes": 1853198,
+      "sha256": "d655f7123945a4aa2799cfb160ba40cb4330a97a149b001e4408bd759f2fb62e",
+      "kind": "image"
+    },
+    {
+      "reference_id": "a01-m00013",
+      "archive_id": "archive-1",
+      "member_index": 13,
+      "path": "ChatGPT 이미지 2026년 10월 4일 오후 01_54_15-3.png",
+      "declared_bytes": 1811217,
+      "compressed_bytes": 1798280,
+      "crc32": "fc7171e4",
+      "bytes": 1811217,
+      "sha256": "dd3cdca14a532f44349865c87a78ddd10ec8e12c791716885332d38dd35e4c2b",
+      "kind": "image"
+    },
+    {
+      "reference_id": "a01-m00014",
+      "archive_id": "archive-1",
+      "member_index": 14,
+      "path": "ChatGPT 이미지 2026년 10월 4일 오후 01_54_19-4.png",
+      "declared_bytes": 1825179,
+      "compressed_bytes": 1812255,
+      "crc32": "15abccdd",
+      "bytes": 1825179,
+      "sha256": "b9a2e5cd390dac5c027972ce03344a8e5416934fcfecedd3d7c41290d2cad3f6",
+      "kind": "image"
+    },
+    {
+      "reference_id": "a01-m00015",
+      "archive_id": "archive-1",
+      "member_index": 15,
+      "path": "ChatGPT 이미지 2026년 10월 4일 오후 01_54_21-5.png",
+      "declared_bytes": 2071582,
+      "compressed_bytes": 2059667,
+      "crc32": "647935fb",
+      "bytes": 2071582,
+      "sha256": "3294b60b121806f5f2fdcce9f86c0a1aff5fceb68297c7d8c8c75f9810552b4e",
+      "kind": "image"
+    },
+    {
+      "reference_id": "a01-m00016",
+      "archive_id": "archive-1",
+      "member_index": 16,
+      "path": "ChatGPT 이미지 2026년 10월 4일 오후 01_54_27-6.png",
+      "declared_bytes": 1688960,
+      "compressed_bytes": 1675965,
+      "crc32": "ad76fd7a",
+      "bytes": 1688960,
+      "sha256": "4ea0eeb9248d6d1f16b20ddad8fa5ea5e8bd513042cbdea4e2f7abff7418ff49",
+      "kind": "image"
+    },
+    {
+      "reference_id": "a01-m00017",
+      "archive_id": "archive-1",
+      "member_index": 17,
+      "path": "ChatGPT 이미지 2026년 10월 4일 오후 01_54_32-7.png",
+      "declared_bytes": 1650461,
+      "compressed_bytes": 1638360,
+      "crc32": "c11913b0",
+      "bytes": 1650461,
+      "sha256": "a9c1c1fb000805da81973a77662e6c26df17ed85005ced0d8a1a224f726ac48c",
+      "kind": "image"
+    },
+    {
+      "reference_id": "a01-m00018",
+      "archive_id": "archive-1",
+      "member_index": 18,
+      "path": "ChatGPT 이미지 2026년 10월 4일 오후 01_54_43-8.png",
+      "declared_bytes": 2039075,
+      "compressed_bytes": 2027112,
+      "crc32": "fc4f53b1",
+      "bytes": 2039075,
+      "sha256": "3715150bd192f004a2202639142748ebfef3ee4d99b612968609f6fb98785979",
+      "kind": "image"
+    },
+    {
+      "reference_id": "a01-m00019",
+      "archive_id": "archive-1",
+      "member_index": 19,
+      "path": "ChatGPT 이미지 2026년 10월 4일 오후 01_54_45-9.png",
+      "declared_bytes": 2171943,
+      "compressed_bytes": 2160088,
+      "crc32": "ef361b9e",
+      "bytes": 2171943,
+      "sha256": "44437ef5b63058b06b9d3288c5ff13740f94d6fb9ae778a893c13d0c38c10a52",
+      "kind": "image"
+    },
+    {
+      "reference_id": "a01-m00020",
+      "archive_id": "archive-1",
+      "member_index": 20,
+      "path": "ChatGPT 이미지 2026년 10월 4일 오후 01_54_46-10.png",
+      "declared_bytes": 2102355,
+      "compressed_bytes": 2089571,
+      "crc32": "d4852ebd",
+      "bytes": 2102355,
+      "sha256": "d4a091f0c6aaa7b8b5c81ac3b691fe3bcff3cd53efd56cc28940761d4c0b997e",
+      "kind": "image"
+    },
+    {
+      "reference_id": "a02-m00001",
+      "archive_id": "archive-2",
+      "member_index": 1,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 07_57_41-1.png",
+      "declared_bytes": 1881431,
+      "compressed_bytes": 1869441,
+      "crc32": "9db21549",
+      "bytes": 1881431,
+      "sha256": "ef8efdab2ce03d9ff8f978ba6dd80543c77d230f3464d770ffad450c475e6822",
+      "kind": "image"
+    },
+    {
+      "reference_id": "a02-m00002",
+      "archive_id": "archive-2",
+      "member_index": 2,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 07_58_15-2.png",
+      "declared_bytes": 1780144,
+      "compressed_bytes": 1768018,
+      "crc32": "5402506f",
+      "bytes": 1780144,
+      "sha256": "c8b2a2f70a3c268db0118c11d41bf8d4340b26e5a9ce601f131d07d22845465b",
+      "kind": "image"
+    },
+    {
+      "reference_id": "a02-m00003",
+      "archive_id": "archive-2",
+      "member_index": 3,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 07_58_46-3.png",
+      "declared_bytes": 1682526,
+      "compressed_bytes": 1669514,
+      "crc32": "c1a4f4ef",
+      "bytes": 1682526,
+      "sha256": "5442c4c5303a2011892b7b9e0cdecdf6e6add8d17653586b80f5ac122203dd9e",
+      "kind": "image"
+    },
+    {
+      "reference_id": "a02-m00004",
+      "archive_id": "archive-2",
+      "member_index": 4,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 07_58_52-4.png",
+      "declared_bytes": 1905498,
+      "compressed_bytes": 1893531,
+      "crc32": "49a3c664",
+      "bytes": 1905498,
+      "sha256": "245cbfadba13af5f205cf8f877b8b64136ec8d9171b046fef0894390dec3bf4e",
+      "kind": "image"
+    },
+    {
+      "reference_id": "a02-m00005",
+      "archive_id": "archive-2",
+      "member_index": 5,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 07_58_56-5.png",
+      "declared_bytes": 1868388,
+      "compressed_bytes": 1856404,
+      "crc32": "be862487",
+      "bytes": 1868388,
+      "sha256": "394d9cb3b3b5adef918c6784f1d193554cf5639dc589b632e8bf8403d7d80642",
+      "kind": "image"
+    },
+    {
+      "reference_id": "a02-m00006",
+      "archive_id": "archive-2",
+      "member_index": 6,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 07_59_01-6.png",
+      "declared_bytes": 1998622,
+      "compressed_bytes": 1986695,
+      "crc32": "4f7348c5",
+      "bytes": 1998622,
+      "sha256": "9ea9aa475ae0881478f57f5cad2957fcaef4252cee3e51a5f7cdd4997130155a",
+      "kind": "image"
+    },
+    {
+      "reference_id": "a02-m00007",
+      "archive_id": "archive-2",
+      "member_index": 7,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 07_59_04-7.png",
+      "declared_bytes": 1622912,
+      "compressed_bytes": 1610815,
+      "crc32": "699e7619",
+      "bytes": 1622912,
+      "sha256": "981bff8cd1970da7183c71c8f57b82f1bdda833e67de81fe00755e5201c1dcc8",
+      "kind": "image"
+    },
+    {
+      "reference_id": "a02-m00008",
+      "archive_id": "archive-2",
+      "member_index": 8,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 08_16_04-1.png",
+      "declared_bytes": 1881431,
+      "compressed_bytes": 1869441,
+      "crc32": "9db21549",
+      "bytes": 1881431,
+      "sha256": "ef8efdab2ce03d9ff8f978ba6dd80543c77d230f3464d770ffad450c475e6822",
+      "kind": "image"
+    },
+    {
+      "reference_id": "a02-m00009",
+      "archive_id": "archive-2",
+      "member_index": 9,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 08_16_12-2.png",
+      "declared_bytes": 1780144,
+      "compressed_bytes": 1768018,
+      "crc32": "5402506f",
+      "bytes": 1780144,
+      "sha256": "c8b2a2f70a3c268db0118c11d41bf8d4340b26e5a9ce601f131d07d22845465b",
+      "kind": "image"
+    },
+    {
+      "reference_id": "a02-m00010",
+      "archive_id": "archive-2",
+      "member_index": 10,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 08_16_24-3.png",
+      "declared_bytes": 1682526,
+      "compressed_bytes": 1669514,
+      "crc32": "c1a4f4ef",
+      "bytes": 1682526,
+      "sha256": "5442c4c5303a2011892b7b9e0cdecdf6e6add8d17653586b80f5ac122203dd9e",
+      "kind": "image"
+    },
+    {
+      "reference_id": "a02-m00011",
+      "archive_id": "archive-2",
+      "member_index": 11,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 08_16_30-4.png",
+      "declared_bytes": 1905498,
+      "compressed_bytes": 1893531,
+      "crc32": "49a3c664",
+      "bytes": 1905498,
+      "sha256": "245cbfadba13af5f205cf8f877b8b64136ec8d9171b046fef0894390dec3bf4e",
+      "kind": "image"
+    },
+    {
+      "reference_id": "a02-m00012",
+      "archive_id": "archive-2",
+      "member_index": 12,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 08_16_36-5.png",
+      "declared_bytes": 1868388,
+      "compressed_bytes": 1856404,
+      "crc32": "be862487",
+      "bytes": 1868388,
+      "sha256": "394d9cb3b3b5adef918c6784f1d193554cf5639dc589b632e8bf8403d7d80642",
+      "kind": "image"
+    },
+    {
+      "reference_id": "a02-m00013",
+      "archive_id": "archive-2",
+      "member_index": 13,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 08_16_41-6.png",
+      "declared_bytes": 1998622,
+      "compressed_bytes": 1986695,
+      "crc32": "4f7348c5",
+      "bytes": 1998622,
+      "sha256": "9ea9aa475ae0881478f57f5cad2957fcaef4252cee3e51a5f7cdd4997130155a",
+      "kind": "image"
+    },
+    {
+      "reference_id": "a02-m00014",
+      "archive_id": "archive-2",
+      "member_index": 14,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 08_16_53-7.png",
+      "declared_bytes": 1622912,
+      "compressed_bytes": 1610815,
+      "crc32": "699e7619",
+      "bytes": 1622912,
+      "sha256": "981bff8cd1970da7183c71c8f57b82f1bdda833e67de81fe00755e5201c1dcc8",
+      "kind": "image"
+    },
+    {
+      "reference_id": "a02-m00015",
+      "archive_id": "archive-2",
+      "member_index": 15,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 08_17_33-1.png",
+      "declared_bytes": 2121115,
+      "compressed_bytes": 2109241,
+      "crc32": "dac5af67",
+      "bytes": 2121115,
+      "sha256": "34369898d32e5607131e5312e76483d1b03bd34192dde7cccfd3813f1240b080",
+      "kind": "image"
+    },
+    {
+      "reference_id": "a02-m00016",
+      "archive_id": "archive-2",
+      "member_index": 16,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 08_17_43-2.png",
+      "declared_bytes": 2044325,
+      "compressed_bytes": 2031532,
+      "crc32": "f1e4a0cd",
+      "bytes": 2044325,
+      "sha256": "ea64f85a6162a77d4eb3b3eee79cbaca2918730a938487841d18a27b89fab25e",
+      "kind": "image"
+    },
+    {
+      "reference_id": "a02-m00017",
+      "archive_id": "archive-2",
+      "member_index": 17,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 08_17_49-3.png",
+      "declared_bytes": 1986897,
+      "compressed_bytes": 1974948,
+      "crc32": "f632faae",
+      "bytes": 1986897,
+      "sha256": "d9453bb598d52665b5ead62d8ccd6d3b21009b870d5c131215443372fb52f43a",
+      "kind": "image"
+    },
+    {
+      "reference_id": "a02-m00018",
+      "archive_id": "archive-2",
+      "member_index": 18,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 08_17_57-4.png",
+      "declared_bytes": 2018051,
+      "compressed_bytes": 2006116,
+      "crc32": "72799663",
+      "bytes": 2018051,
+      "sha256": "471c8144a1910cc2569792042d76ebe91dd539e6d673e732c18f8e5f61a5c004",
+      "kind": "image"
+    },
+    {
+      "reference_id": "a02-m00019",
+      "archive_id": "archive-2",
+      "member_index": 19,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 08_18_04-5.png",
+      "declared_bytes": 2156835,
+      "compressed_bytes": 2144049,
+      "crc32": "3c6d9b16",
+      "bytes": 2156835,
+      "sha256": "4fb3b3f8cca57438006f30092961b4cad93647d9fa3480f63b8956b5a6d74f9f",
+      "kind": "image"
+    },
+    {
+      "reference_id": "a02-m00020",
+      "archive_id": "archive-2",
+      "member_index": 20,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 08_18_11-6.png",
+      "declared_bytes": 1786689,
+      "compressed_bytes": 1773780,
+      "crc32": "1b665755",
+      "bytes": 1786689,
+      "sha256": "7889c3f7c328003a8bfae2a2465dfdf10f740b1e1de58ecebaa862c0ff92a252",
+      "kind": "image"
+    },
+    {
+      "reference_id": "a02-m00021",
+      "archive_id": "archive-2",
+      "member_index": 21,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 08_18_18-7.png",
+      "declared_bytes": 1806397,
+      "compressed_bytes": 1793414,
+      "crc32": "d0339c21",
+      "bytes": 1806397,
+      "sha256": "af563b4f4d6a3ce71981de5e7329ef5bfda2c32be7fc92e9b02d14092e22faeb",
+      "kind": "image"
+    },
+    {
+      "reference_id": "a02-m00022",
+      "archive_id": "archive-2",
+      "member_index": 22,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 08_18_23-8.png",
+      "declared_bytes": 1790405,
+      "compressed_bytes": 1777498,
+      "crc32": "546c17a9",
+      "bytes": 1790405,
+      "sha256": "624dde07693d5be72dcfed41aa5d95188051252c40e99febdc43d4e371c0c1bb",
+      "kind": "image"
+    },
+    {
+      "reference_id": "a02-m00023",
+      "archive_id": "archive-2",
+      "member_index": 23,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 08_19_05-1.png",
+      "declared_bytes": 1898726,
+      "compressed_bytes": 1886667,
+      "crc32": "cd227a7c",
+      "bytes": 1898726,
+      "sha256": "ec654ec12013f421e0cdcbfbef8ae10920a71a7997f3c66507410e3d4ca9b6e0",
+      "kind": "image"
+    },
+    {
+      "reference_id": "a02-m00024",
+      "archive_id": "archive-2",
+      "member_index": 24,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 08_19_09-2.png",
+      "declared_bytes": 1851455,
+      "compressed_bytes": 1839396,
+      "crc32": "fd11434d",
+      "bytes": 1851455,
+      "sha256": "0a7bf7c67a92b0b51e6d1888fccd11476456d1f3508f309b909d5674fdc17980",
+      "kind": "image"
+    },
+    {
+      "reference_id": "a02-m00025",
+      "archive_id": "archive-2",
+      "member_index": 25,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 08_19_15-3.png",
+      "declared_bytes": 1723057,
+      "compressed_bytes": 1710987,
+      "crc32": "1f6d5785",
+      "bytes": 1723057,
+      "sha256": "1b40d9802c2180a4b511749be35f0f6deffc0004fa8ce931322b9c1358a7be1a",
+      "kind": "image"
+    },
+    {
+      "reference_id": "a02-m00026",
+      "archive_id": "archive-2",
+      "member_index": 26,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 08_19_20-4.png",
+      "declared_bytes": 1608163,
+      "compressed_bytes": 1596045,
+      "crc32": "2846c9d7",
+      "bytes": 1608163,
+      "sha256": "cb8777bedb9f3c43e2b0265fea16449477b4627afd6f97ce781bdc78556bdb40",
+      "kind": "image"
+    },
+    {
+      "reference_id": "a02-m00027",
+      "archive_id": "archive-2",
+      "member_index": 27,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 08_19_28-5.png",
+      "declared_bytes": 1749725,
+      "compressed_bytes": 1737668,
+      "crc32": "7bd665e5",
+      "bytes": 1749725,
+      "sha256": "eb6a744e448839d5f991ee1191921f4657102f6ff1e2714ccd6378647e7ff5e9",
+      "kind": "image"
+    },
+    {
+      "reference_id": "a02-m00028",
+      "archive_id": "archive-2",
+      "member_index": 28,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 08_19_33-6.png",
+      "declared_bytes": 1439430,
+      "compressed_bytes": 1426298,
+      "crc32": "d0538823",
+      "bytes": 1439430,
+      "sha256": "1d5e12e3a654b6289a4d5de170e7c2215b58d0e0457a44fe88bf2a10f81d3482",
+      "kind": "image"
+    },
+    {
+      "reference_id": "a02-m00029",
+      "archive_id": "archive-2",
+      "member_index": 29,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 08_19_39-7.png",
+      "declared_bytes": 1907704,
+      "compressed_bytes": 1894755,
+      "crc32": "465a19ac",
+      "bytes": 1907704,
+      "sha256": "77f69dfdcb245aec6db1eb4acb42b555837085ddd7f9be24a5cad8e42b4ad770",
+      "kind": "image"
+    },
+    {
+      "reference_id": "a02-m00030",
+      "archive_id": "archive-2",
+      "member_index": 30,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 08_19_43-8.png",
+      "declared_bytes": 2024723,
+      "compressed_bytes": 2011855,
+      "crc32": "2932b957",
+      "bytes": 2024723,
+      "sha256": "fa42c3d06d8461c17b2d1bc48179f727e97ddbac6150ed29b6a5390187d0f808",
+      "kind": "image"
+    },
+    {
+      "reference_id": "a02-m00031",
+      "archive_id": "archive-2",
+      "member_index": 31,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 08_19_47-9.png",
+      "declared_bytes": 1798443,
+      "compressed_bytes": 1786409,
+      "crc32": "24f1b16d",
+      "bytes": 1798443,
+      "sha256": "54c902f1632fe1701a8ded0332764dd1dda9d6ad7d5d6c863cf33477c62fb078",
+      "kind": "image"
+    },
+    {
+      "reference_id": "a02-m00032",
+      "archive_id": "archive-2",
+      "member_index": 32,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 08_19_54-10.png",
+      "declared_bytes": 1777787,
+      "compressed_bytes": 1765761,
+      "crc32": "1577de85",
+      "bytes": 1777787,
+      "sha256": "90686b1732e4ea2022afbeca298b7a93fe0bacc6cc37c0e88c74e6931016f0c2",
+      "kind": "image"
+    }
+  ],
+  "images": [
+    {
+      "reference_id": "a01-m00001",
+      "archive_id": "archive-1",
+      "member_index": 1,
+      "path": "ChatGPT 이미지 2026년 10월 4일 오전 11_07_19-1.png",
+      "declared_bytes": 1873218,
+      "compressed_bytes": 1860310,
+      "crc32": "c47f9a1e",
+      "bytes": 1873218,
+      "sha256": "d957b2fe19481e83caeca4fcf88453a760cfc7778ed4aa2474e63f96f6a5268c",
+      "kind": "image",
+      "format": "PNG",
+      "frames": [
+        {
+          "index": 0,
+          "width": 941,
+          "height": 1672,
+          "pixel_sha256": "9e61ee96861858ae75199a0e7cf1fa1207dad4338f584b10dd0e1c072468d523"
+        }
+      ],
+      "width": 941,
+      "height": 1672,
+      "pixel_sha256": "13ea77bff553a6595f580c5440b1dbb8504b9fa1c4568470a9830466f973694a",
+      "phash": "025575cb7f4a152a",
+      "review_png": "images/a01-m00001.png",
+      "classification": {
+        "viewport": "mobile",
+        "theme": "dark",
+        "screen_type": "login",
+        "basis": "Every full original individually inspected; phone/browser framing and functional labels, not raw pixel width."
+      },
+      "route_mapping": ["/login"],
+      "visual_review": "original_individually_inspected",
+      "actual_browser_evidence": [],
+      "deviation_disposition": "actual_render_comparison_pending",
+      "reference_quality_notes": [
+        "Reference typography stays HTML in production; example money/market prices do not authorize economic values.",
+        "Device/browser chrome is presentation, not an app control."
+      ]
+    },
+    {
+      "reference_id": "a01-m00002",
+      "archive_id": "archive-1",
+      "member_index": 2,
+      "path": "ChatGPT 이미지 2026년 10월 4일 오전 11_07_27-2.png",
+      "declared_bytes": 1863593,
+      "compressed_bytes": 1851546,
+      "crc32": "57836178",
+      "bytes": 1863593,
+      "sha256": "b8b8c11082045b6d0de3b453366ffe035f61e11d70822e81aace1b37461ad4cd",
+      "kind": "image",
+      "format": "PNG",
+      "frames": [
+        {
+          "index": 0,
+          "width": 941,
+          "height": 1672,
+          "pixel_sha256": "5ea2d5102d98c2012c38f6709358de1a0a0c1a2baf205b322321c82c921e740d"
+        }
+      ],
+      "width": 941,
+      "height": 1672,
+      "pixel_sha256": "0bdd69d81615faaca4a2e4a7a1821d24a0cf38d59c8e44d37653397cfaf4d017",
+      "phash": "34d720bb3b00c6ee",
+      "review_png": "images/a01-m00002.png",
+      "classification": {
+        "viewport": "mobile",
+        "theme": "dark",
+        "screen_type": "signup",
+        "basis": "Every full original individually inspected; phone/browser framing and functional labels, not raw pixel width."
+      },
+      "route_mapping": ["/signup"],
+      "visual_review": "original_individually_inspected",
+      "actual_browser_evidence": [],
+      "deviation_disposition": "actual_render_comparison_pending",
+      "reference_quality_notes": [
+        "Reference typography stays HTML in production; example money/market prices do not authorize economic values.",
+        "Device/browser chrome is presentation, not an app control."
+      ]
+    },
+    {
+      "reference_id": "a01-m00003",
+      "archive_id": "archive-1",
+      "member_index": 3,
+      "path": "ChatGPT 이미지 2026년 10월 4일 오전 11_07_32-3.png",
+      "declared_bytes": 1863867,
+      "compressed_bytes": 1850929,
+      "crc32": "45ab6f82",
+      "bytes": 1863867,
+      "sha256": "c909395295c1f58eb4f8d77fe33bdbc8d342af8767935f0223acc6d749eeba7d",
+      "kind": "image",
+      "format": "PNG",
+      "frames": [
+        {
+          "index": 0,
+          "width": 941,
+          "height": 1672,
+          "pixel_sha256": "d058c428f1e8f365b410046938a4b3dc19c1605f5db924dc9bca1b08540345fb"
+        }
+      ],
+      "width": 941,
+      "height": 1672,
+      "pixel_sha256": "5908f5eb6ac725ae944f99ffe0a5c3a84bfed65e5a0e0cc6f9f2a1823dd3181e",
+      "phash": "3a6d433a078ebc85",
+      "review_png": "images/a01-m00003.png",
+      "classification": {
+        "viewport": "mobile",
+        "theme": "dark",
+        "screen_type": "home",
+        "basis": "Every full original individually inspected; phone/browser framing and functional labels, not raw pixel width."
+      },
+      "route_mapping": ["/home"],
+      "visual_review": "original_individually_inspected",
+      "actual_browser_evidence": [],
+      "deviation_disposition": "actual_render_comparison_pending",
+      "reference_quality_notes": [
+        "Reference typography stays HTML in production; example money/market prices do not authorize economic values.",
+        "Device/browser chrome is presentation, not an app control."
+      ]
+    },
+    {
+      "reference_id": "a01-m00004",
+      "archive_id": "archive-1",
+      "member_index": 4,
+      "path": "ChatGPT 이미지 2026년 10월 4일 오전 11_07_35-4.png",
+      "declared_bytes": 1925893,
+      "compressed_bytes": 1913917,
+      "crc32": "31e491c6",
+      "bytes": 1925893,
+      "sha256": "1ff263d2b8415f18186f9eda182e47579c61336e381d6321e1792dc265c11140",
+      "kind": "image",
+      "format": "PNG",
+      "frames": [
+        {
+          "index": 0,
+          "width": 941,
+          "height": 1672,
+          "pixel_sha256": "d05ba96560d31046f7f8e9c8cb7fce163b94bd2c9e7e02424a4185a680496653"
+        }
+      ],
+      "width": 941,
+      "height": 1672,
+      "pixel_sha256": "120a3db81d39b7afd5064daf3dcfe71e2788e27ea43e98ce0a70a5259eb40923",
+      "phash": "3e1c14fb333349c8",
+      "review_png": "images/a01-m00004.png",
+      "classification": {
+        "viewport": "mobile",
+        "theme": "dark",
+        "screen_type": "mining",
+        "basis": "Every full original individually inspected; phone/browser framing and functional labels, not raw pixel width."
+      },
+      "route_mapping": ["/mining"],
+      "visual_review": "original_individually_inspected",
+      "actual_browser_evidence": [],
+      "deviation_disposition": "actual_render_comparison_pending",
+      "reference_quality_notes": [
+        "Reference typography stays HTML in production; example money/market prices do not authorize economic values.",
+        "Device/browser chrome is presentation, not an app control."
+      ]
+    },
+    {
+      "reference_id": "a01-m00005",
+      "archive_id": "archive-1",
+      "member_index": 5,
+      "path": "ChatGPT 이미지 2026년 10월 4일 오전 11_07_55-5.png",
+      "declared_bytes": 1757510,
+      "compressed_bytes": 1745395,
+      "crc32": "2af751a6",
+      "bytes": 1757510,
+      "sha256": "0d7afa3ddce7d866e6f1644159e135d15f11fbf29e78306c2d33d11e3e677f43",
+      "kind": "image",
+      "format": "PNG",
+      "frames": [
+        {
+          "index": 0,
+          "width": 941,
+          "height": 1672,
+          "pixel_sha256": "66782118f1686c23279493208da6ace59879aed98300ad2443d43d39bc53f1fa"
+        }
+      ],
+      "width": 941,
+      "height": 1672,
+      "pixel_sha256": "845e8373fd5b6f032f2662202a5a192e83260ebd19fbfde844d0e7b7e1fb0192",
+      "phash": "66b2227d636c88ae",
+      "review_png": "images/a01-m00005.png",
+      "classification": {
+        "viewport": "mobile",
+        "theme": "dark",
+        "screen_type": "wallet",
+        "basis": "Every full original individually inspected; phone/browser framing and functional labels, not raw pixel width."
+      },
+      "route_mapping": ["/wallet"],
+      "visual_review": "original_individually_inspected",
+      "actual_browser_evidence": [],
+      "deviation_disposition": "actual_render_comparison_pending",
+      "reference_quality_notes": [
+        "Reference typography stays HTML in production; example money/market prices do not authorize economic values.",
+        "Device/browser chrome is presentation, not an app control."
+      ]
+    },
+    {
+      "reference_id": "a01-m00006",
+      "archive_id": "archive-1",
+      "member_index": 6,
+      "path": "ChatGPT 이미지 2026년 10월 4일 오전 11_08_08-6.png",
+      "declared_bytes": 2116885,
+      "compressed_bytes": 2105019,
+      "crc32": "a23172b9",
+      "bytes": 2116885,
+      "sha256": "6ae69fabee6d56696bb16645fa60af9a6a5f21a921f908c1f59f75eac32edf1a",
+      "kind": "image",
+      "format": "PNG",
+      "frames": [
+        {
+          "index": 0,
+          "width": 1672,
+          "height": 941,
+          "pixel_sha256": "820293ac2cdc4b6064c73cd1b3fd0104bf072876d5ad11b321e0ff7d58381199"
+        }
+      ],
+      "width": 1672,
+      "height": 941,
+      "pixel_sha256": "19cff42bf4bb964acaf30248794c2f698510d0054382c49453d2deb7331d47cc",
+      "phash": "0352a7385ee71d19",
+      "review_png": "images/a01-m00006.png",
+      "classification": {
+        "viewport": "desktop",
+        "theme": "dark",
+        "screen_type": "login",
+        "basis": "Every full original individually inspected; phone/browser framing and functional labels, not raw pixel width."
+      },
+      "route_mapping": ["/login"],
+      "visual_review": "original_individually_inspected",
+      "actual_browser_evidence": [],
+      "deviation_disposition": "actual_render_comparison_pending",
+      "reference_quality_notes": [
+        "Reference typography stays HTML in production; example money/market prices do not authorize economic values.",
+        "Device/browser chrome is presentation, not an app control."
+      ]
+    },
+    {
+      "reference_id": "a01-m00007",
+      "archive_id": "archive-1",
+      "member_index": 7,
+      "path": "ChatGPT 이미지 2026년 10월 4일 오전 11_08_11-7.png",
+      "declared_bytes": 1884734,
+      "compressed_bytes": 1872730,
+      "crc32": "a5a5de05",
+      "bytes": 1884734,
+      "sha256": "6327d2618425b496211e1199c9dfd788ce94dc10ea9b834375dda71a8f5ae3d8",
+      "kind": "image",
+      "format": "PNG",
+      "frames": [
+        {
+          "index": 0,
+          "width": 1672,
+          "height": 941,
+          "pixel_sha256": "5af7b24337adb5d9307a878f68274216b3d75aa57e368c498b0c6630890d0ac1"
+        }
+      ],
+      "width": 1672,
+      "height": 941,
+      "pixel_sha256": "3f346055037ee0bfd8eaad093ad5c5c5188984fcc3ba360cdabfc7c60c3f9772",
+      "phash": "6a0a39e61de4e6c8",
+      "review_png": "images/a01-m00007.png",
+      "classification": {
+        "viewport": "desktop",
+        "theme": "dark",
+        "screen_type": "home",
+        "basis": "Every full original individually inspected; phone/browser framing and functional labels, not raw pixel width."
+      },
+      "route_mapping": ["/home"],
+      "visual_review": "original_individually_inspected",
+      "actual_browser_evidence": [],
+      "deviation_disposition": "actual_render_comparison_pending",
+      "reference_quality_notes": [
+        "Reference typography stays HTML in production; example money/market prices do not authorize economic values.",
+        "Device/browser chrome is presentation, not an app control."
+      ]
+    },
+    {
+      "reference_id": "a01-m00008",
+      "archive_id": "archive-1",
+      "member_index": 8,
+      "path": "ChatGPT 이미지 2026년 10월 4일 오전 11_08_14-8.png",
+      "declared_bytes": 1808437,
+      "compressed_bytes": 1796415,
+      "crc32": "b135b8dd",
+      "bytes": 1808437,
+      "sha256": "a31edc0cc7d37b6d86cbf5303b109e0cf04d18d603ad9ba0eaec9691714f33b4",
+      "kind": "image",
+      "format": "PNG",
+      "frames": [
+        {
+          "index": 0,
+          "width": 1672,
+          "height": 941,
+          "pixel_sha256": "e111f025183f060bacaa84e5a55ce4269a8461ce667021811001746e77a19d3a"
+        }
+      ],
+      "width": 1672,
+      "height": 941,
+      "pixel_sha256": "8dcfab9a6aab2917ffdc63ce71e72a38c89a90ce9084eec588a1cbf45954f1aa",
+      "phash": "7321d4f667631a88",
+      "review_png": "images/a01-m00008.png",
+      "classification": {
+        "viewport": "desktop",
+        "theme": "dark",
+        "screen_type": "mining",
+        "basis": "Every full original individually inspected; phone/browser framing and functional labels, not raw pixel width."
+      },
+      "route_mapping": ["/mining"],
+      "visual_review": "original_individually_inspected",
+      "actual_browser_evidence": [],
+      "deviation_disposition": "actual_render_comparison_pending",
+      "reference_quality_notes": [
+        "Reference typography stays HTML in production; example money/market prices do not authorize economic values.",
+        "Device/browser chrome is presentation, not an app control."
+      ]
+    },
+    {
+      "reference_id": "a01-m00009",
+      "archive_id": "archive-1",
+      "member_index": 9,
+      "path": "ChatGPT 이미지 2026년 10월 4일 오전 11_08_16-9.png",
+      "declared_bytes": 2129852,
+      "compressed_bytes": 2117958,
+      "crc32": "e249a36e",
+      "bytes": 2129852,
+      "sha256": "dcff2c4a5b55ae46671b47844a0a8e1dd7d8626883484a96294d6fcc3a6bccd6",
+      "kind": "image",
+      "format": "PNG",
+      "frames": [
+        {
+          "index": 0,
+          "width": 1672,
+          "height": 941,
+          "pixel_sha256": "5928e6b77bfcd22313a54e4fc2ff26aaa4337b9eb67e57d157c52a659c465de3"
+        }
+      ],
+      "width": 1672,
+      "height": 941,
+      "pixel_sha256": "f0c2e148256a1c75940844c6a01a2185f49230b22eeee7f7acaa8f16ce67d23a",
+      "phash": "1f70c8ae6dad6c40",
+      "review_png": "images/a01-m00009.png",
+      "classification": {
+        "viewport": "desktop",
+        "theme": "dark",
+        "screen_type": "products",
+        "basis": "Every full original individually inspected; phone/browser framing and functional labels, not raw pixel width."
+      },
+      "route_mapping": ["/products"],
+      "visual_review": "original_individually_inspected",
+      "actual_browser_evidence": [],
+      "deviation_disposition": "actual_render_comparison_pending",
+      "reference_quality_notes": [
+        "Reference typography stays HTML in production; example money/market prices do not authorize economic values.",
+        "Device/browser chrome is presentation, not an app control."
+      ]
+    },
+    {
+      "reference_id": "a01-m00010",
+      "archive_id": "archive-1",
+      "member_index": 10,
+      "path": "ChatGPT 이미지 2026년 10월 4일 오전 11_08_21-10.png",
+      "declared_bytes": 1725519,
+      "compressed_bytes": 1712554,
+      "crc32": "f0b85452",
+      "bytes": 1725519,
+      "sha256": "16a312f3fc8cb556cdc003d687f6693290c880ffbd51312966e8a7dafbe4d6dc",
+      "kind": "image",
+      "format": "PNG",
+      "frames": [
+        {
+          "index": 0,
+          "width": 1672,
+          "height": 941,
+          "pixel_sha256": "f5bb0533509d3040429f67761bda8a3c78bed1c5ad4bf8b7794aa21d36747ad8"
+        }
+      ],
+      "width": 1672,
+      "height": 941,
+      "pixel_sha256": "c782555e6a6331f8f584df460debdf1c1612a3afad41bfbc401cd8c1c8a53bf9",
+      "phash": "431e1e6343be64e1",
+      "review_png": "images/a01-m00010.png",
+      "classification": {
+        "viewport": "desktop",
+        "theme": "dark",
+        "screen_type": "wallet",
+        "basis": "Every full original individually inspected; phone/browser framing and functional labels, not raw pixel width."
+      },
+      "route_mapping": ["/wallet"],
+      "visual_review": "original_individually_inspected",
+      "actual_browser_evidence": [],
+      "deviation_disposition": "actual_render_comparison_pending",
+      "reference_quality_notes": [
+        "Reference typography stays HTML in production; example money/market prices do not authorize economic values.",
+        "Device/browser chrome is presentation, not an app control."
+      ]
+    },
+    {
+      "reference_id": "a01-m00011",
+      "archive_id": "archive-1",
+      "member_index": 11,
+      "path": "ChatGPT 이미지 2026년 10월 4일 오후 01_54_11-1.png",
+      "declared_bytes": 1926304,
+      "compressed_bytes": 1913388,
+      "crc32": "6ead8dfe",
+      "bytes": 1926304,
+      "sha256": "541d157544a5ca883d4d464d533bfedf87ef2be3a507159032deb65a71a1ca53",
+      "kind": "image",
+      "format": "PNG",
+      "frames": [
+        {
+          "index": 0,
+          "width": 863,
+          "height": 1822,
+          "pixel_sha256": "c6b8db008b2c13caaf9d4db9a355ae2d22f56e83537d8b42205209212baf4a14"
+        }
+      ],
+      "width": 863,
+      "height": 1822,
+      "pixel_sha256": "b7c315e96f972c836e477f1fa83a29a9cdb9d2f476f04eeeab80a503c4a7afd8",
+      "phash": "3693b327372c44a6",
+      "review_png": "images/a01-m00011.png",
+      "classification": {
+        "viewport": "mobile",
+        "theme": "dark",
+        "screen_type": "home",
+        "basis": "Every full original individually inspected; phone/browser framing and functional labels, not raw pixel width."
+      },
+      "route_mapping": ["/home"],
+      "visual_review": "original_individually_inspected",
+      "actual_browser_evidence": [],
+      "deviation_disposition": "actual_render_comparison_pending",
+      "reference_quality_notes": [
+        "Reference typography stays HTML in production; example money/market prices do not authorize economic values.",
+        "Device/browser chrome is presentation, not an app control."
+      ]
+    },
+    {
+      "reference_id": "a01-m00012",
+      "archive_id": "archive-1",
+      "member_index": 12,
+      "path": "ChatGPT 이미지 2026년 10월 4일 오후 01_54_14-2.png",
+      "declared_bytes": 1853198,
+      "compressed_bytes": 1841167,
+      "crc32": "6a1483a4",
+      "bytes": 1853198,
+      "sha256": "d655f7123945a4aa2799cfb160ba40cb4330a97a149b001e4408bd759f2fb62e",
+      "kind": "image",
+      "format": "PNG",
+      "frames": [
+        {
+          "index": 0,
+          "width": 863,
+          "height": 1822,
+          "pixel_sha256": "d6ba40904c4a2bfafb1170b199d5943bb69cc8104d51a6b84d4ed87e75761bb9"
+        }
+      ],
+      "width": 863,
+      "height": 1822,
+      "pixel_sha256": "0a084f1ecc3d77ecf4d2194315f8198f34632162c228341857920fa3c9322792",
+      "phash": "7b50b333256464ec",
+      "review_png": "images/a01-m00012.png",
+      "classification": {
+        "viewport": "mobile",
+        "theme": "dark",
+        "screen_type": "login",
+        "basis": "Every full original individually inspected; phone/browser framing and functional labels, not raw pixel width."
+      },
+      "route_mapping": ["/login"],
+      "visual_review": "original_individually_inspected",
+      "actual_browser_evidence": [],
+      "deviation_disposition": "actual_render_comparison_pending",
+      "reference_quality_notes": [
+        "Reference typography stays HTML in production; example money/market prices do not authorize economic values.",
+        "Device/browser chrome is presentation, not an app control."
+      ]
+    },
+    {
+      "reference_id": "a01-m00013",
+      "archive_id": "archive-1",
+      "member_index": 13,
+      "path": "ChatGPT 이미지 2026년 10월 4일 오후 01_54_15-3.png",
+      "declared_bytes": 1811217,
+      "compressed_bytes": 1798280,
+      "crc32": "fc7171e4",
+      "bytes": 1811217,
+      "sha256": "dd3cdca14a532f44349865c87a78ddd10ec8e12c791716885332d38dd35e4c2b",
+      "kind": "image",
+      "format": "PNG",
+      "frames": [
+        {
+          "index": 0,
+          "width": 863,
+          "height": 1822,
+          "pixel_sha256": "820864071501781a4e3aa026932ec3b27426ede7af198d12edb8f651c35eb4ad"
+        }
+      ],
+      "width": 863,
+      "height": 1822,
+      "pixel_sha256": "99afbcb087f7f7e7dcbbabecb4098b9f931544663aed589908061e53f4edab8e",
+      "phash": "309b05a76e24e4ee",
+      "review_png": "images/a01-m00013.png",
+      "classification": {
+        "viewport": "mobile",
+        "theme": "dark",
+        "screen_type": "signup",
+        "basis": "Every full original individually inspected; phone/browser framing and functional labels, not raw pixel width."
+      },
+      "route_mapping": ["/signup"],
+      "visual_review": "original_individually_inspected",
+      "actual_browser_evidence": [],
+      "deviation_disposition": "actual_render_comparison_pending",
+      "reference_quality_notes": [
+        "Reference typography stays HTML in production; example money/market prices do not authorize economic values.",
+        "Device/browser chrome is presentation, not an app control."
+      ]
+    },
+    {
+      "reference_id": "a01-m00014",
+      "archive_id": "archive-1",
+      "member_index": 14,
+      "path": "ChatGPT 이미지 2026년 10월 4일 오후 01_54_19-4.png",
+      "declared_bytes": 1825179,
+      "compressed_bytes": 1812255,
+      "crc32": "15abccdd",
+      "bytes": 1825179,
+      "sha256": "b9a2e5cd390dac5c027972ce03344a8e5416934fcfecedd3d7c41290d2cad3f6",
+      "kind": "image",
+      "format": "PNG",
+      "frames": [
+        {
+          "index": 0,
+          "width": 863,
+          "height": 1822,
+          "pixel_sha256": "e3c8379eb08958f2174e61c2f1685b71de3874e3e1f05f323bd62d4fc8f8a41f"
+        }
+      ],
+      "width": 863,
+      "height": 1822,
+      "pixel_sha256": "da227e90b6638752ea4453241471ade4245c170a9610419e56c639464b491290",
+      "phash": "133e35ce436854ab",
+      "review_png": "images/a01-m00014.png",
+      "classification": {
+        "viewport": "mobile",
+        "theme": "dark",
+        "screen_type": "mining",
+        "basis": "Every full original individually inspected; phone/browser framing and functional labels, not raw pixel width."
+      },
+      "route_mapping": ["/mining"],
+      "visual_review": "original_individually_inspected",
+      "actual_browser_evidence": [],
+      "deviation_disposition": "actual_render_comparison_pending",
+      "reference_quality_notes": [
+        "Reference typography stays HTML in production; example money/market prices do not authorize economic values.",
+        "Device/browser chrome is presentation, not an app control."
+      ]
+    },
+    {
+      "reference_id": "a01-m00015",
+      "archive_id": "archive-1",
+      "member_index": 15,
+      "path": "ChatGPT 이미지 2026년 10월 4일 오후 01_54_21-5.png",
+      "declared_bytes": 2071582,
+      "compressed_bytes": 2059667,
+      "crc32": "647935fb",
+      "bytes": 2071582,
+      "sha256": "3294b60b121806f5f2fdcce9f86c0a1aff5fceb68297c7d8c8c75f9810552b4e",
+      "kind": "image",
+      "format": "PNG",
+      "frames": [
+        {
+          "index": 0,
+          "width": 863,
+          "height": 1822,
+          "pixel_sha256": "82e382250cb9fdba126e3e31eb9b69a0647fc385b29191f17062761a1db2dcdb"
+        }
+      ],
+      "width": 863,
+      "height": 1822,
+      "pixel_sha256": "fb9f10edc0f485d6747fd56a1521a4f215d7b2ad6fedada9b0eaa3d325c9aea9",
+      "phash": "3713732e70ec26b0",
+      "review_png": "images/a01-m00015.png",
+      "classification": {
+        "viewport": "mobile",
+        "theme": "dark",
+        "screen_type": "products",
+        "basis": "Every full original individually inspected; phone/browser framing and functional labels, not raw pixel width."
+      },
+      "route_mapping": ["/products"],
+      "visual_review": "original_individually_inspected",
+      "actual_browser_evidence": [],
+      "deviation_disposition": "actual_render_comparison_pending",
+      "reference_quality_notes": [
+        "Reference typography stays HTML in production; example money/market prices do not authorize economic values.",
+        "Device/browser chrome is presentation, not an app control."
+      ]
+    },
+    {
+      "reference_id": "a01-m00016",
+      "archive_id": "archive-1",
+      "member_index": 16,
+      "path": "ChatGPT 이미지 2026년 10월 4일 오후 01_54_27-6.png",
+      "declared_bytes": 1688960,
+      "compressed_bytes": 1675965,
+      "crc32": "ad76fd7a",
+      "bytes": 1688960,
+      "sha256": "4ea0eeb9248d6d1f16b20ddad8fa5ea5e8bd513042cbdea4e2f7abff7418ff49",
+      "kind": "image",
+      "format": "PNG",
+      "frames": [
+        {
+          "index": 0,
+          "width": 863,
+          "height": 1822,
+          "pixel_sha256": "fef5c52b5bc0ebb079a6de1b040d1298f1e21fb1f913a463d092ebe9d84d78bc"
+        }
+      ],
+      "width": 863,
+      "height": 1822,
+      "pixel_sha256": "43cb83054ce5c4155b7bb9c767b30aa4d5b689931fe4eaf792d51d55ee7eea81",
+      "phash": "3b3b1326676484ae",
+      "review_png": "images/a01-m00016.png",
+      "classification": {
+        "viewport": "mobile",
+        "theme": "dark",
+        "screen_type": "wallet",
+        "basis": "Every full original individually inspected; phone/browser framing and functional labels, not raw pixel width."
+      },
+      "route_mapping": ["/wallet"],
+      "visual_review": "original_individually_inspected",
+      "actual_browser_evidence": [],
+      "deviation_disposition": "actual_render_comparison_pending",
+      "reference_quality_notes": [
+        "Reference typography stays HTML in production; example money/market prices do not authorize economic values.",
+        "Device/browser chrome is presentation, not an app control."
+      ]
+    },
+    {
+      "reference_id": "a01-m00017",
+      "archive_id": "archive-1",
+      "member_index": 17,
+      "path": "ChatGPT 이미지 2026년 10월 4일 오후 01_54_32-7.png",
+      "declared_bytes": 1650461,
+      "compressed_bytes": 1638360,
+      "crc32": "c11913b0",
+      "bytes": 1650461,
+      "sha256": "a9c1c1fb000805da81973a77662e6c26df17ed85005ced0d8a1a224f726ac48c",
+      "kind": "image",
+      "format": "PNG",
+      "frames": [
+        {
+          "index": 0,
+          "width": 863,
+          "height": 1822,
+          "pixel_sha256": "97ab0855f613550f84c502dee50b6ec1a96e1f38d15bfa67d8ece00c9da06977"
+        }
+      ],
+      "width": 863,
+      "height": 1822,
+      "pixel_sha256": "dd724aa839146a9a52aac4aebfdb281b1e0a23f001e285fb99ba90a50a9b2ffa",
+      "phash": "723333232764c4ee",
+      "review_png": "images/a01-m00017.png",
+      "classification": {
+        "viewport": "mobile",
+        "theme": "dark",
+        "screen_type": "menu",
+        "basis": "Every full original individually inspected; phone/browser framing and functional labels, not raw pixel width."
+      },
+      "route_mapping": ["/menu"],
+      "visual_review": "original_individually_inspected",
+      "actual_browser_evidence": [],
+      "deviation_disposition": "actual_render_comparison_pending",
+      "reference_quality_notes": [
+        "Reference typography stays HTML in production; example money/market prices do not authorize economic values.",
+        "Device/browser chrome is presentation, not an app control."
+      ]
+    },
+    {
+      "reference_id": "a01-m00018",
+      "archive_id": "archive-1",
+      "member_index": 18,
+      "path": "ChatGPT 이미지 2026년 10월 4일 오후 01_54_43-8.png",
+      "declared_bytes": 2039075,
+      "compressed_bytes": 2027112,
+      "crc32": "fc4f53b1",
+      "bytes": 2039075,
+      "sha256": "3715150bd192f004a2202639142748ebfef3ee4d99b612968609f6fb98785979",
+      "kind": "image",
+      "format": "PNG",
+      "frames": [
+        {
+          "index": 0,
+          "width": 1586,
+          "height": 992,
+          "pixel_sha256": "85976a8396321ce1c06b160145b9d8e801ede0d7b23420b9ebe23d2ab91ba93a"
+        }
+      ],
+      "width": 1586,
+      "height": 992,
+      "pixel_sha256": "2df602cd39b15f8bae16fac1ae7061fa1b6a6b451fe4ce26c100877d26ee35cd",
+      "phash": "266653e66a097c99",
+      "review_png": "images/a01-m00018.png",
+      "classification": {
+        "viewport": "desktop",
+        "theme": "dark",
+        "screen_type": "home",
+        "basis": "Every full original individually inspected; phone/browser framing and functional labels, not raw pixel width."
+      },
+      "route_mapping": ["/home"],
+      "visual_review": "original_individually_inspected",
+      "actual_browser_evidence": [],
+      "deviation_disposition": "actual_render_comparison_pending",
+      "reference_quality_notes": [
+        "Reference typography stays HTML in production; example money/market prices do not authorize economic values.",
+        "Device/browser chrome is presentation, not an app control."
+      ]
+    },
+    {
+      "reference_id": "a01-m00019",
+      "archive_id": "archive-1",
+      "member_index": 19,
+      "path": "ChatGPT 이미지 2026년 10월 4일 오후 01_54_45-9.png",
+      "declared_bytes": 2171943,
+      "compressed_bytes": 2160088,
+      "crc32": "ef361b9e",
+      "bytes": 2171943,
+      "sha256": "44437ef5b63058b06b9d3288c5ff13740f94d6fb9ae778a893c13d0c38c10a52",
+      "kind": "image",
+      "format": "PNG",
+      "frames": [
+        {
+          "index": 0,
+          "width": 1586,
+          "height": 992,
+          "pixel_sha256": "ce43b112c45fd82295945fa4c9549507cc7143004293a8c9dd51eeb598cd86eb"
+        }
+      ],
+      "width": 1586,
+      "height": 992,
+      "pixel_sha256": "0ffd4a7afd5da9e1d17ce6e28d61a36e8d1612fa75dec5b1a911a3a0c4b6b12f",
+      "phash": "435b296972271cdc",
+      "review_png": "images/a01-m00019.png",
+      "classification": {
+        "viewport": "desktop",
+        "theme": "dark",
+        "screen_type": "mining",
+        "basis": "Every full original individually inspected; phone/browser framing and functional labels, not raw pixel width."
+      },
+      "route_mapping": ["/mining"],
+      "visual_review": "original_individually_inspected",
+      "actual_browser_evidence": [],
+      "deviation_disposition": "actual_render_comparison_pending",
+      "reference_quality_notes": [
+        "Reference typography stays HTML in production; example money/market prices do not authorize economic values.",
+        "Device/browser chrome is presentation, not an app control."
+      ]
+    },
+    {
+      "reference_id": "a01-m00020",
+      "archive_id": "archive-1",
+      "member_index": 20,
+      "path": "ChatGPT 이미지 2026년 10월 4일 오후 01_54_46-10.png",
+      "declared_bytes": 2102355,
+      "compressed_bytes": 2089571,
+      "crc32": "d4852ebd",
+      "bytes": 2102355,
+      "sha256": "d4a091f0c6aaa7b8b5c81ac3b691fe3bcff3cd53efd56cc28940761d4c0b997e",
+      "kind": "image",
+      "format": "PNG",
+      "frames": [
+        {
+          "index": 0,
+          "width": 1586,
+          "height": 992,
+          "pixel_sha256": "2bf7bc49298d1d5fa5757ac8bc89fc064f0c130eb9d15cc38e840a69436ee359"
+        }
+      ],
+      "width": 1586,
+      "height": 992,
+      "pixel_sha256": "c915f4810626b7d57b3b44cbe08a10db45892bb0cd6d40202bb29bc8d2276b90",
+      "phash": "288f6de764e48ce0",
+      "review_png": "images/a01-m00020.png",
+      "classification": {
+        "viewport": "desktop",
+        "theme": "dark",
+        "screen_type": "products",
+        "basis": "Every full original individually inspected; phone/browser framing and functional labels, not raw pixel width."
+      },
+      "route_mapping": ["/products"],
+      "visual_review": "original_individually_inspected",
+      "actual_browser_evidence": [],
+      "deviation_disposition": "actual_render_comparison_pending",
+      "reference_quality_notes": [
+        "Reference typography stays HTML in production; example money/market prices do not authorize economic values.",
+        "Device/browser chrome is presentation, not an app control."
+      ]
+    },
+    {
+      "reference_id": "a02-m00001",
+      "archive_id": "archive-2",
+      "member_index": 1,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 07_57_41-1.png",
+      "declared_bytes": 1881431,
+      "compressed_bytes": 1869441,
+      "crc32": "9db21549",
+      "bytes": 1881431,
+      "sha256": "ef8efdab2ce03d9ff8f978ba6dd80543c77d230f3464d770ffad450c475e6822",
+      "kind": "image",
+      "format": "PNG",
+      "frames": [
+        {
+          "index": 0,
+          "width": 941,
+          "height": 1672,
+          "pixel_sha256": "908d5acec2708a718020da6f71b434b5cb91235cea37c8db76d1b97fe310116a"
+        }
+      ],
+      "width": 941,
+      "height": 1672,
+      "pixel_sha256": "13677cd2d024c15148d3ae57d3def7f6765b2e53eb27e8f922a6331bb9591758",
+      "phash": "2a75b2b3332a44ec",
+      "review_png": "images/a02-m00001.png",
+      "classification": {
+        "viewport": "mobile",
+        "theme": "dark",
+        "screen_type": "login",
+        "basis": "Full unique original individually inspected; duplicated originals verified by full-file SHA256. Phone/browser frame and active navigation determine classification."
+      },
+      "route_mapping": ["/login"],
+      "visual_review": "original_individually_inspected",
+      "actual_browser_evidence": [],
+      "deviation_disposition": "actual_render_comparison_pending",
+      "reference_quality_notes": [
+        "All production copy must be HTML; source monetary examples, returns, dates, L5 labels and product purchase pricing are visual examples, not approved economics.",
+        "Preserve black/white glass, gold-blue industrial material and coherent scene hierarchy; retain approved canonical brand and AI face.",
+        "Device/browser chrome and illustrative chat/chart content are not production controls or authoritative data."
+      ]
+    },
+    {
+      "reference_id": "a02-m00002",
+      "archive_id": "archive-2",
+      "member_index": 2,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 07_58_15-2.png",
+      "declared_bytes": 1780144,
+      "compressed_bytes": 1768018,
+      "crc32": "5402506f",
+      "bytes": 1780144,
+      "sha256": "c8b2a2f70a3c268db0118c11d41bf8d4340b26e5a9ce601f131d07d22845465b",
+      "kind": "image",
+      "format": "PNG",
+      "frames": [
+        {
+          "index": 0,
+          "width": 941,
+          "height": 1672,
+          "pixel_sha256": "fcfdc87563709899d8f699e3a15b8ebeebef3892c5f3d08987355009b1226b42"
+        }
+      ],
+      "width": 941,
+      "height": 1672,
+      "pixel_sha256": "bbfe2195ae0567e3bcd00f289a3c507833d94b09fa5ef04e88a301277b291317",
+      "phash": "20d722b33f28e4ae",
+      "review_png": "images/a02-m00002.png",
+      "classification": {
+        "viewport": "mobile",
+        "theme": "dark",
+        "screen_type": "signup",
+        "basis": "Full unique original individually inspected; duplicated originals verified by full-file SHA256. Phone/browser frame and active navigation determine classification."
+      },
+      "route_mapping": ["/signup"],
+      "visual_review": "original_individually_inspected",
+      "actual_browser_evidence": [],
+      "deviation_disposition": "actual_render_comparison_pending",
+      "reference_quality_notes": [
+        "All production copy must be HTML; source monetary examples, returns, dates, L5 labels and product purchase pricing are visual examples, not approved economics.",
+        "Preserve black/white glass, gold-blue industrial material and coherent scene hierarchy; retain approved canonical brand and AI face.",
+        "Device/browser chrome and illustrative chat/chart content are not production controls or authoritative data."
+      ]
+    },
+    {
+      "reference_id": "a02-m00003",
+      "archive_id": "archive-2",
+      "member_index": 3,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 07_58_46-3.png",
+      "declared_bytes": 1682526,
+      "compressed_bytes": 1669514,
+      "crc32": "c1a4f4ef",
+      "bytes": 1682526,
+      "sha256": "5442c4c5303a2011892b7b9e0cdecdf6e6add8d17653586b80f5ac122203dd9e",
+      "kind": "image",
+      "format": "PNG",
+      "frames": [
+        {
+          "index": 0,
+          "width": 941,
+          "height": 1672,
+          "pixel_sha256": "69d1fdeae13249d8f3fa5dc2b4e201c9bbb9c59545d6781866dcf2c59b446712"
+        }
+      ],
+      "width": 941,
+      "height": 1672,
+      "pixel_sha256": "8a3e624c8e26121cae0fe52299285671bd2f6dab30bc3ef6836b29a6f6b69638",
+      "phash": "2a7f72c37b0a04aa",
+      "review_png": "images/a02-m00003.png",
+      "classification": {
+        "viewport": "mobile",
+        "theme": "dark",
+        "screen_type": "wallet",
+        "basis": "Full unique original individually inspected; duplicated originals verified by full-file SHA256. Phone/browser frame and active navigation determine classification."
+      },
+      "route_mapping": ["/wallet"],
+      "visual_review": "original_individually_inspected",
+      "actual_browser_evidence": [],
+      "deviation_disposition": "actual_render_comparison_pending",
+      "reference_quality_notes": [
+        "All production copy must be HTML; source monetary examples, returns, dates, L5 labels and product purchase pricing are visual examples, not approved economics.",
+        "Preserve black/white glass, gold-blue industrial material and coherent scene hierarchy; retain approved canonical brand and AI face.",
+        "Device/browser chrome and illustrative chat/chart content are not production controls or authoritative data."
+      ]
+    },
+    {
+      "reference_id": "a02-m00004",
+      "archive_id": "archive-2",
+      "member_index": 4,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 07_58_52-4.png",
+      "declared_bytes": 1905498,
+      "compressed_bytes": 1893531,
+      "crc32": "49a3c664",
+      "bytes": 1905498,
+      "sha256": "245cbfadba13af5f205cf8f877b8b64136ec8d9171b046fef0894390dec3bf4e",
+      "kind": "image",
+      "format": "PNG",
+      "frames": [
+        {
+          "index": 0,
+          "width": 941,
+          "height": 1672,
+          "pixel_sha256": "7dc1ef8c790e95699a8b96d5bfe07032ea7df0b8b8ea5311b27099b31a7fd269"
+        }
+      ],
+      "width": 941,
+      "height": 1672,
+      "pixel_sha256": "7408fc32f314ebb78c4dadde5b246057407e9b062bc601bb57fd9103d7687e0c",
+      "phash": "2a5f70e7672a44a8",
+      "review_png": "images/a02-m00004.png",
+      "classification": {
+        "viewport": "mobile",
+        "theme": "dark",
+        "screen_type": "mining",
+        "basis": "Full unique original individually inspected; duplicated originals verified by full-file SHA256. Phone/browser frame and active navigation determine classification."
+      },
+      "route_mapping": ["/mining"],
+      "visual_review": "original_individually_inspected",
+      "actual_browser_evidence": [],
+      "deviation_disposition": "actual_render_comparison_pending",
+      "reference_quality_notes": [
+        "All production copy must be HTML; source monetary examples, returns, dates, L5 labels and product purchase pricing are visual examples, not approved economics.",
+        "Preserve black/white glass, gold-blue industrial material and coherent scene hierarchy; retain approved canonical brand and AI face.",
+        "Device/browser chrome and illustrative chat/chart content are not production controls or authoritative data."
+      ]
+    },
+    {
+      "reference_id": "a02-m00005",
+      "archive_id": "archive-2",
+      "member_index": 5,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 07_58_56-5.png",
+      "declared_bytes": 1868388,
+      "compressed_bytes": 1856404,
+      "crc32": "be862487",
+      "bytes": 1868388,
+      "sha256": "394d9cb3b3b5adef918c6784f1d193554cf5639dc589b632e8bf8403d7d80642",
+      "kind": "image",
+      "format": "PNG",
+      "frames": [
+        {
+          "index": 0,
+          "width": 941,
+          "height": 1672,
+          "pixel_sha256": "9f7961ee96e61e28a01684368341f0dfd089cc870667c86fd07cb19fa4452d85"
+        }
+      ],
+      "width": 941,
+      "height": 1672,
+      "pixel_sha256": "c3503bba5c8852190e93b9c3412eee9227c027481e55f68b4594c689586eb479",
+      "phash": "2257222b76aa85ee",
+      "review_png": "images/a02-m00005.png",
+      "classification": {
+        "viewport": "mobile",
+        "theme": "dark",
+        "screen_type": "home",
+        "basis": "Full unique original individually inspected; duplicated originals verified by full-file SHA256. Phone/browser frame and active navigation determine classification."
+      },
+      "route_mapping": ["/home"],
+      "visual_review": "original_individually_inspected",
+      "actual_browser_evidence": [],
+      "deviation_disposition": "actual_render_comparison_pending",
+      "reference_quality_notes": [
+        "All production copy must be HTML; source monetary examples, returns, dates, L5 labels and product purchase pricing are visual examples, not approved economics.",
+        "Preserve black/white glass, gold-blue industrial material and coherent scene hierarchy; retain approved canonical brand and AI face.",
+        "Device/browser chrome and illustrative chat/chart content are not production controls or authoritative data."
+      ]
+    },
+    {
+      "reference_id": "a02-m00006",
+      "archive_id": "archive-2",
+      "member_index": 6,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 07_59_01-6.png",
+      "declared_bytes": 1998622,
+      "compressed_bytes": 1986695,
+      "crc32": "4f7348c5",
+      "bytes": 1998622,
+      "sha256": "9ea9aa475ae0881478f57f5cad2957fcaef4252cee3e51a5f7cdd4997130155a",
+      "kind": "image",
+      "format": "PNG",
+      "frames": [
+        {
+          "index": 0,
+          "width": 941,
+          "height": 1672,
+          "pixel_sha256": "ef3becc24604c99956fbef3099b098f77a6fabaf8be8486f8886e9856ceadfbd"
+        }
+      ],
+      "width": 941,
+      "height": 1672,
+      "pixel_sha256": "c88bf239d776de2fab90e38369262380657a43ab714f5e97ed82c3f8bbc4f6fe",
+      "phash": "2255ba5b73aa642a",
+      "review_png": "images/a02-m00006.png",
+      "classification": {
+        "viewport": "mobile",
+        "theme": "dark",
+        "screen_type": "products",
+        "basis": "Full unique original individually inspected; duplicated originals verified by full-file SHA256. Phone/browser frame and active navigation determine classification."
+      },
+      "route_mapping": ["/products"],
+      "visual_review": "original_individually_inspected",
+      "actual_browser_evidence": [],
+      "deviation_disposition": "actual_render_comparison_pending",
+      "reference_quality_notes": [
+        "All production copy must be HTML; source monetary examples, returns, dates, L5 labels and product purchase pricing are visual examples, not approved economics.",
+        "Preserve black/white glass, gold-blue industrial material and coherent scene hierarchy; retain approved canonical brand and AI face.",
+        "Device/browser chrome and illustrative chat/chart content are not production controls or authoritative data."
+      ]
+    },
+    {
+      "reference_id": "a02-m00007",
+      "archive_id": "archive-2",
+      "member_index": 7,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 07_59_04-7.png",
+      "declared_bytes": 1622912,
+      "compressed_bytes": 1610815,
+      "crc32": "699e7619",
+      "bytes": 1622912,
+      "sha256": "981bff8cd1970da7183c71c8f57b82f1bdda833e67de81fe00755e5201c1dcc8",
+      "kind": "image",
+      "format": "PNG",
+      "frames": [
+        {
+          "index": 0,
+          "width": 941,
+          "height": 1672,
+          "pixel_sha256": "e3f3e3fcabcb4262ea24b07c716166e979feac3eae173fdbc69336ee0f8b9b6b"
+        }
+      ],
+      "width": 941,
+      "height": 1672,
+      "pixel_sha256": "13025f1ad0eb86a0e32ce57004e189c92f63e9a92cc0fd572de2978ce26d2478",
+      "phash": "2a572a7476a8e4aa",
+      "review_png": "images/a02-m00007.png",
+      "classification": {
+        "viewport": "mobile",
+        "theme": "dark",
+        "screen_type": "menu",
+        "basis": "Full unique original individually inspected; duplicated originals verified by full-file SHA256. Phone/browser frame and active navigation determine classification."
+      },
+      "route_mapping": ["/menu"],
+      "visual_review": "original_individually_inspected",
+      "actual_browser_evidence": [],
+      "deviation_disposition": "actual_render_comparison_pending",
+      "reference_quality_notes": [
+        "All production copy must be HTML; source monetary examples, returns, dates, L5 labels and product purchase pricing are visual examples, not approved economics.",
+        "Preserve black/white glass, gold-blue industrial material and coherent scene hierarchy; retain approved canonical brand and AI face.",
+        "Device/browser chrome and illustrative chat/chart content are not production controls or authoritative data."
+      ]
+    },
+    {
+      "reference_id": "a02-m00008",
+      "archive_id": "archive-2",
+      "member_index": 8,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 08_16_04-1.png",
+      "declared_bytes": 1881431,
+      "compressed_bytes": 1869441,
+      "crc32": "9db21549",
+      "bytes": 1881431,
+      "sha256": "ef8efdab2ce03d9ff8f978ba6dd80543c77d230f3464d770ffad450c475e6822",
+      "kind": "image",
+      "format": "PNG",
+      "frames": [
+        {
+          "index": 0,
+          "width": 941,
+          "height": 1672,
+          "pixel_sha256": "908d5acec2708a718020da6f71b434b5cb91235cea37c8db76d1b97fe310116a"
+        }
+      ],
+      "width": 941,
+      "height": 1672,
+      "pixel_sha256": "13677cd2d024c15148d3ae57d3def7f6765b2e53eb27e8f922a6331bb9591758",
+      "phash": "2a75b2b3332a44ec",
+      "review_png": "images/a02-m00008.png",
+      "classification": {
+        "viewport": "mobile",
+        "theme": "dark",
+        "screen_type": "login",
+        "basis": "Full unique original individually inspected; duplicated originals verified by full-file SHA256. Phone/browser frame and active navigation determine classification."
+      },
+      "route_mapping": ["/login"],
+      "visual_review": "byte_identical_duplicate_of_individually_inspected_original",
+      "actual_browser_evidence": [],
+      "deviation_disposition": "actual_render_comparison_pending",
+      "reference_quality_notes": [
+        "All production copy must be HTML; source monetary examples, returns, dates, L5 labels and product purchase pricing are visual examples, not approved economics.",
+        "Preserve black/white glass, gold-blue industrial material and coherent scene hierarchy; retain approved canonical brand and AI face.",
+        "Device/browser chrome and illustrative chat/chart content are not production controls or authoritative data."
+      ],
+      "duplicate_of": "a02-m00001"
+    },
+    {
+      "reference_id": "a02-m00009",
+      "archive_id": "archive-2",
+      "member_index": 9,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 08_16_12-2.png",
+      "declared_bytes": 1780144,
+      "compressed_bytes": 1768018,
+      "crc32": "5402506f",
+      "bytes": 1780144,
+      "sha256": "c8b2a2f70a3c268db0118c11d41bf8d4340b26e5a9ce601f131d07d22845465b",
+      "kind": "image",
+      "format": "PNG",
+      "frames": [
+        {
+          "index": 0,
+          "width": 941,
+          "height": 1672,
+          "pixel_sha256": "fcfdc87563709899d8f699e3a15b8ebeebef3892c5f3d08987355009b1226b42"
+        }
+      ],
+      "width": 941,
+      "height": 1672,
+      "pixel_sha256": "bbfe2195ae0567e3bcd00f289a3c507833d94b09fa5ef04e88a301277b291317",
+      "phash": "20d722b33f28e4ae",
+      "review_png": "images/a02-m00009.png",
+      "classification": {
+        "viewport": "mobile",
+        "theme": "dark",
+        "screen_type": "signup",
+        "basis": "Full unique original individually inspected; duplicated originals verified by full-file SHA256. Phone/browser frame and active navigation determine classification."
+      },
+      "route_mapping": ["/signup"],
+      "visual_review": "byte_identical_duplicate_of_individually_inspected_original",
+      "actual_browser_evidence": [],
+      "deviation_disposition": "actual_render_comparison_pending",
+      "reference_quality_notes": [
+        "All production copy must be HTML; source monetary examples, returns, dates, L5 labels and product purchase pricing are visual examples, not approved economics.",
+        "Preserve black/white glass, gold-blue industrial material and coherent scene hierarchy; retain approved canonical brand and AI face.",
+        "Device/browser chrome and illustrative chat/chart content are not production controls or authoritative data."
+      ],
+      "duplicate_of": "a02-m00002"
+    },
+    {
+      "reference_id": "a02-m00010",
+      "archive_id": "archive-2",
+      "member_index": 10,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 08_16_24-3.png",
+      "declared_bytes": 1682526,
+      "compressed_bytes": 1669514,
+      "crc32": "c1a4f4ef",
+      "bytes": 1682526,
+      "sha256": "5442c4c5303a2011892b7b9e0cdecdf6e6add8d17653586b80f5ac122203dd9e",
+      "kind": "image",
+      "format": "PNG",
+      "frames": [
+        {
+          "index": 0,
+          "width": 941,
+          "height": 1672,
+          "pixel_sha256": "69d1fdeae13249d8f3fa5dc2b4e201c9bbb9c59545d6781866dcf2c59b446712"
+        }
+      ],
+      "width": 941,
+      "height": 1672,
+      "pixel_sha256": "8a3e624c8e26121cae0fe52299285671bd2f6dab30bc3ef6836b29a6f6b69638",
+      "phash": "2a7f72c37b0a04aa",
+      "review_png": "images/a02-m00010.png",
+      "classification": {
+        "viewport": "mobile",
+        "theme": "dark",
+        "screen_type": "wallet",
+        "basis": "Full unique original individually inspected; duplicated originals verified by full-file SHA256. Phone/browser frame and active navigation determine classification."
+      },
+      "route_mapping": ["/wallet"],
+      "visual_review": "byte_identical_duplicate_of_individually_inspected_original",
+      "actual_browser_evidence": [],
+      "deviation_disposition": "actual_render_comparison_pending",
+      "reference_quality_notes": [
+        "All production copy must be HTML; source monetary examples, returns, dates, L5 labels and product purchase pricing are visual examples, not approved economics.",
+        "Preserve black/white glass, gold-blue industrial material and coherent scene hierarchy; retain approved canonical brand and AI face.",
+        "Device/browser chrome and illustrative chat/chart content are not production controls or authoritative data."
+      ],
+      "duplicate_of": "a02-m00003"
+    },
+    {
+      "reference_id": "a02-m00011",
+      "archive_id": "archive-2",
+      "member_index": 11,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 08_16_30-4.png",
+      "declared_bytes": 1905498,
+      "compressed_bytes": 1893531,
+      "crc32": "49a3c664",
+      "bytes": 1905498,
+      "sha256": "245cbfadba13af5f205cf8f877b8b64136ec8d9171b046fef0894390dec3bf4e",
+      "kind": "image",
+      "format": "PNG",
+      "frames": [
+        {
+          "index": 0,
+          "width": 941,
+          "height": 1672,
+          "pixel_sha256": "7dc1ef8c790e95699a8b96d5bfe07032ea7df0b8b8ea5311b27099b31a7fd269"
+        }
+      ],
+      "width": 941,
+      "height": 1672,
+      "pixel_sha256": "7408fc32f314ebb78c4dadde5b246057407e9b062bc601bb57fd9103d7687e0c",
+      "phash": "2a5f70e7672a44a8",
+      "review_png": "images/a02-m00011.png",
+      "classification": {
+        "viewport": "mobile",
+        "theme": "dark",
+        "screen_type": "mining",
+        "basis": "Full unique original individually inspected; duplicated originals verified by full-file SHA256. Phone/browser frame and active navigation determine classification."
+      },
+      "route_mapping": ["/mining"],
+      "visual_review": "byte_identical_duplicate_of_individually_inspected_original",
+      "actual_browser_evidence": [],
+      "deviation_disposition": "actual_render_comparison_pending",
+      "reference_quality_notes": [
+        "All production copy must be HTML; source monetary examples, returns, dates, L5 labels and product purchase pricing are visual examples, not approved economics.",
+        "Preserve black/white glass, gold-blue industrial material and coherent scene hierarchy; retain approved canonical brand and AI face.",
+        "Device/browser chrome and illustrative chat/chart content are not production controls or authoritative data."
+      ],
+      "duplicate_of": "a02-m00004"
+    },
+    {
+      "reference_id": "a02-m00012",
+      "archive_id": "archive-2",
+      "member_index": 12,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 08_16_36-5.png",
+      "declared_bytes": 1868388,
+      "compressed_bytes": 1856404,
+      "crc32": "be862487",
+      "bytes": 1868388,
+      "sha256": "394d9cb3b3b5adef918c6784f1d193554cf5639dc589b632e8bf8403d7d80642",
+      "kind": "image",
+      "format": "PNG",
+      "frames": [
+        {
+          "index": 0,
+          "width": 941,
+          "height": 1672,
+          "pixel_sha256": "9f7961ee96e61e28a01684368341f0dfd089cc870667c86fd07cb19fa4452d85"
+        }
+      ],
+      "width": 941,
+      "height": 1672,
+      "pixel_sha256": "c3503bba5c8852190e93b9c3412eee9227c027481e55f68b4594c689586eb479",
+      "phash": "2257222b76aa85ee",
+      "review_png": "images/a02-m00012.png",
+      "classification": {
+        "viewport": "mobile",
+        "theme": "dark",
+        "screen_type": "home",
+        "basis": "Full unique original individually inspected; duplicated originals verified by full-file SHA256. Phone/browser frame and active navigation determine classification."
+      },
+      "route_mapping": ["/home"],
+      "visual_review": "byte_identical_duplicate_of_individually_inspected_original",
+      "actual_browser_evidence": [],
+      "deviation_disposition": "actual_render_comparison_pending",
+      "reference_quality_notes": [
+        "All production copy must be HTML; source monetary examples, returns, dates, L5 labels and product purchase pricing are visual examples, not approved economics.",
+        "Preserve black/white glass, gold-blue industrial material and coherent scene hierarchy; retain approved canonical brand and AI face.",
+        "Device/browser chrome and illustrative chat/chart content are not production controls or authoritative data."
+      ],
+      "duplicate_of": "a02-m00005"
+    },
+    {
+      "reference_id": "a02-m00013",
+      "archive_id": "archive-2",
+      "member_index": 13,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 08_16_41-6.png",
+      "declared_bytes": 1998622,
+      "compressed_bytes": 1986695,
+      "crc32": "4f7348c5",
+      "bytes": 1998622,
+      "sha256": "9ea9aa475ae0881478f57f5cad2957fcaef4252cee3e51a5f7cdd4997130155a",
+      "kind": "image",
+      "format": "PNG",
+      "frames": [
+        {
+          "index": 0,
+          "width": 941,
+          "height": 1672,
+          "pixel_sha256": "ef3becc24604c99956fbef3099b098f77a6fabaf8be8486f8886e9856ceadfbd"
+        }
+      ],
+      "width": 941,
+      "height": 1672,
+      "pixel_sha256": "c88bf239d776de2fab90e38369262380657a43ab714f5e97ed82c3f8bbc4f6fe",
+      "phash": "2255ba5b73aa642a",
+      "review_png": "images/a02-m00013.png",
+      "classification": {
+        "viewport": "mobile",
+        "theme": "dark",
+        "screen_type": "products",
+        "basis": "Full unique original individually inspected; duplicated originals verified by full-file SHA256. Phone/browser frame and active navigation determine classification."
+      },
+      "route_mapping": ["/products"],
+      "visual_review": "byte_identical_duplicate_of_individually_inspected_original",
+      "actual_browser_evidence": [],
+      "deviation_disposition": "actual_render_comparison_pending",
+      "reference_quality_notes": [
+        "All production copy must be HTML; source monetary examples, returns, dates, L5 labels and product purchase pricing are visual examples, not approved economics.",
+        "Preserve black/white glass, gold-blue industrial material and coherent scene hierarchy; retain approved canonical brand and AI face.",
+        "Device/browser chrome and illustrative chat/chart content are not production controls or authoritative data."
+      ],
+      "duplicate_of": "a02-m00006"
+    },
+    {
+      "reference_id": "a02-m00014",
+      "archive_id": "archive-2",
+      "member_index": 14,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 08_16_53-7.png",
+      "declared_bytes": 1622912,
+      "compressed_bytes": 1610815,
+      "crc32": "699e7619",
+      "bytes": 1622912,
+      "sha256": "981bff8cd1970da7183c71c8f57b82f1bdda833e67de81fe00755e5201c1dcc8",
+      "kind": "image",
+      "format": "PNG",
+      "frames": [
+        {
+          "index": 0,
+          "width": 941,
+          "height": 1672,
+          "pixel_sha256": "e3f3e3fcabcb4262ea24b07c716166e979feac3eae173fdbc69336ee0f8b9b6b"
+        }
+      ],
+      "width": 941,
+      "height": 1672,
+      "pixel_sha256": "13025f1ad0eb86a0e32ce57004e189c92f63e9a92cc0fd572de2978ce26d2478",
+      "phash": "2a572a7476a8e4aa",
+      "review_png": "images/a02-m00014.png",
+      "classification": {
+        "viewport": "mobile",
+        "theme": "dark",
+        "screen_type": "menu",
+        "basis": "Full unique original individually inspected; duplicated originals verified by full-file SHA256. Phone/browser frame and active navigation determine classification."
+      },
+      "route_mapping": ["/menu"],
+      "visual_review": "byte_identical_duplicate_of_individually_inspected_original",
+      "actual_browser_evidence": [],
+      "deviation_disposition": "actual_render_comparison_pending",
+      "reference_quality_notes": [
+        "All production copy must be HTML; source monetary examples, returns, dates, L5 labels and product purchase pricing are visual examples, not approved economics.",
+        "Preserve black/white glass, gold-blue industrial material and coherent scene hierarchy; retain approved canonical brand and AI face.",
+        "Device/browser chrome and illustrative chat/chart content are not production controls or authoritative data."
+      ],
+      "duplicate_of": "a02-m00007"
+    },
+    {
+      "reference_id": "a02-m00015",
+      "archive_id": "archive-2",
+      "member_index": 15,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 08_17_33-1.png",
+      "declared_bytes": 2121115,
+      "compressed_bytes": 2109241,
+      "crc32": "dac5af67",
+      "bytes": 2121115,
+      "sha256": "34369898d32e5607131e5312e76483d1b03bd34192dde7cccfd3813f1240b080",
+      "kind": "image",
+      "format": "PNG",
+      "frames": [
+        {
+          "index": 0,
+          "width": 1586,
+          "height": 992,
+          "pixel_sha256": "b75b0ff88e05723f7bd7b07d49727ac58d6cc97d001f167b4a0b3f3c239da746"
+        }
+      ],
+      "width": 1586,
+      "height": 992,
+      "pixel_sha256": "c7ac105412586d6a356c0708ed02c1bfea6c49a12f8ac97be31f56fcd9c958d9",
+      "phash": "7e50cd6e508e1d31",
+      "review_png": "images/a02-m00015.png",
+      "classification": {
+        "viewport": "desktop",
+        "theme": "dark",
+        "screen_type": "login",
+        "basis": "Full unique original individually inspected; duplicated originals verified by full-file SHA256. Phone/browser frame and active navigation determine classification."
+      },
+      "route_mapping": ["/login"],
+      "visual_review": "original_individually_inspected",
+      "actual_browser_evidence": [],
+      "deviation_disposition": "actual_render_comparison_pending",
+      "reference_quality_notes": [
+        "All production copy must be HTML; source monetary examples, returns, dates, L5 labels and product purchase pricing are visual examples, not approved economics.",
+        "Preserve black/white glass, gold-blue industrial material and coherent scene hierarchy; retain approved canonical brand and AI face.",
+        "Device/browser chrome and illustrative chat/chart content are not production controls or authoritative data."
+      ]
+    },
+    {
+      "reference_id": "a02-m00016",
+      "archive_id": "archive-2",
+      "member_index": 16,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 08_17_43-2.png",
+      "declared_bytes": 2044325,
+      "compressed_bytes": 2031532,
+      "crc32": "f1e4a0cd",
+      "bytes": 2044325,
+      "sha256": "ea64f85a6162a77d4eb3b3eee79cbaca2918730a938487841d18a27b89fab25e",
+      "kind": "image",
+      "format": "PNG",
+      "frames": [
+        {
+          "index": 0,
+          "width": 1586,
+          "height": 992,
+          "pixel_sha256": "f45ca5e4410c08a250e6ae0ee938bf2f944240db9f32a03796c87a6dce282801"
+        }
+      ],
+      "width": 1586,
+      "height": 992,
+      "pixel_sha256": "b4de2e9651a558bcaca9702c8bde5769483d68466faa330ab7453b729cc199a7",
+      "phash": "6b69466913863b39",
+      "review_png": "images/a02-m00016.png",
+      "classification": {
+        "viewport": "desktop",
+        "theme": "dark",
+        "screen_type": "signup",
+        "basis": "Full unique original individually inspected; duplicated originals verified by full-file SHA256. Phone/browser frame and active navigation determine classification."
+      },
+      "route_mapping": ["/signup"],
+      "visual_review": "original_individually_inspected",
+      "actual_browser_evidence": [],
+      "deviation_disposition": "actual_render_comparison_pending",
+      "reference_quality_notes": [
+        "All production copy must be HTML; source monetary examples, returns, dates, L5 labels and product purchase pricing are visual examples, not approved economics.",
+        "Preserve black/white glass, gold-blue industrial material and coherent scene hierarchy; retain approved canonical brand and AI face.",
+        "Device/browser chrome and illustrative chat/chart content are not production controls or authoritative data."
+      ]
+    },
+    {
+      "reference_id": "a02-m00017",
+      "archive_id": "archive-2",
+      "member_index": 17,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 08_17_49-3.png",
+      "declared_bytes": 1986897,
+      "compressed_bytes": 1974948,
+      "crc32": "f632faae",
+      "bytes": 1986897,
+      "sha256": "d9453bb598d52665b5ead62d8ccd6d3b21009b870d5c131215443372fb52f43a",
+      "kind": "image",
+      "format": "PNG",
+      "frames": [
+        {
+          "index": 0,
+          "width": 1586,
+          "height": 992,
+          "pixel_sha256": "01b0ba3f3b3e160d6a26466ce4e7ab101a537595621335c46fa9abdcf063571b"
+        }
+      ],
+      "width": 1586,
+      "height": 992,
+      "pixel_sha256": "66c7181166295afb07891beb231cd298f2c8464c71c83fa48e76a57b2e54de98",
+      "phash": "7e186156634c9b3c",
+      "review_png": "images/a02-m00017.png",
+      "classification": {
+        "viewport": "desktop",
+        "theme": "dark",
+        "screen_type": "home",
+        "basis": "Full unique original individually inspected; duplicated originals verified by full-file SHA256. Phone/browser frame and active navigation determine classification."
+      },
+      "route_mapping": ["/home"],
+      "visual_review": "original_individually_inspected",
+      "actual_browser_evidence": [],
+      "deviation_disposition": "actual_render_comparison_pending",
+      "reference_quality_notes": [
+        "All production copy must be HTML; source monetary examples, returns, dates, L5 labels and product purchase pricing are visual examples, not approved economics.",
+        "Preserve black/white glass, gold-blue industrial material and coherent scene hierarchy; retain approved canonical brand and AI face.",
+        "Device/browser chrome and illustrative chat/chart content are not production controls or authoritative data."
+      ]
+    },
+    {
+      "reference_id": "a02-m00018",
+      "archive_id": "archive-2",
+      "member_index": 18,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 08_17_57-4.png",
+      "declared_bytes": 2018051,
+      "compressed_bytes": 2006116,
+      "crc32": "72799663",
+      "bytes": 2018051,
+      "sha256": "471c8144a1910cc2569792042d76ebe91dd539e6d673e732c18f8e5f61a5c004",
+      "kind": "image",
+      "format": "PNG",
+      "frames": [
+        {
+          "index": 0,
+          "width": 1586,
+          "height": 992,
+          "pixel_sha256": "a0238daa72521c8c9cc996e3f4c1f1a0e740559ba1c2589d410cb0866733e264"
+        }
+      ],
+      "width": 1586,
+      "height": 992,
+      "pixel_sha256": "324d3c942225735eab7da97bce6fbda5dfc13be3cce8cafa76042512b74e4bb4",
+      "phash": "66463d41c6af1999",
+      "review_png": "images/a02-m00018.png",
+      "classification": {
+        "viewport": "desktop",
+        "theme": "dark",
+        "screen_type": "mining",
+        "basis": "Full unique original individually inspected; duplicated originals verified by full-file SHA256. Phone/browser frame and active navigation determine classification."
+      },
+      "route_mapping": ["/mining"],
+      "visual_review": "original_individually_inspected",
+      "actual_browser_evidence": [],
+      "deviation_disposition": "actual_render_comparison_pending",
+      "reference_quality_notes": [
+        "All production copy must be HTML; source monetary examples, returns, dates, L5 labels and product purchase pricing are visual examples, not approved economics.",
+        "Preserve black/white glass, gold-blue industrial material and coherent scene hierarchy; retain approved canonical brand and AI face.",
+        "Device/browser chrome and illustrative chat/chart content are not production controls or authoritative data."
+      ]
+    },
+    {
+      "reference_id": "a02-m00019",
+      "archive_id": "archive-2",
+      "member_index": 19,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 08_18_04-5.png",
+      "declared_bytes": 2156835,
+      "compressed_bytes": 2144049,
+      "crc32": "3c6d9b16",
+      "bytes": 2156835,
+      "sha256": "4fb3b3f8cca57438006f30092961b4cad93647d9fa3480f63b8956b5a6d74f9f",
+      "kind": "image",
+      "format": "PNG",
+      "frames": [
+        {
+          "index": 0,
+          "width": 1586,
+          "height": 992,
+          "pixel_sha256": "5b6ea1177dd274054ac96eeb5e1116bf68f71bd8ae07b0d3bc5b3a30534c1589"
+        }
+      ],
+      "width": 1586,
+      "height": 992,
+      "pixel_sha256": "eebde7708c92f76bfdeb8750aeeb88c51703e22e3d0edc0702f2001014d7b007",
+      "phash": "1594f36366ea6c0c",
+      "review_png": "images/a02-m00019.png",
+      "classification": {
+        "viewport": "desktop",
+        "theme": "dark",
+        "screen_type": "products",
+        "basis": "Full unique original individually inspected; duplicated originals verified by full-file SHA256. Phone/browser frame and active navigation determine classification."
+      },
+      "route_mapping": ["/products"],
+      "visual_review": "original_individually_inspected",
+      "actual_browser_evidence": [],
+      "deviation_disposition": "actual_render_comparison_pending",
+      "reference_quality_notes": [
+        "All production copy must be HTML; source monetary examples, returns, dates, L5 labels and product purchase pricing are visual examples, not approved economics.",
+        "Preserve black/white glass, gold-blue industrial material and coherent scene hierarchy; retain approved canonical brand and AI face.",
+        "Device/browser chrome and illustrative chat/chart content are not production controls or authoritative data."
+      ]
+    },
+    {
+      "reference_id": "a02-m00020",
+      "archive_id": "archive-2",
+      "member_index": 20,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 08_18_11-6.png",
+      "declared_bytes": 1786689,
+      "compressed_bytes": 1773780,
+      "crc32": "1b665755",
+      "bytes": 1786689,
+      "sha256": "7889c3f7c328003a8bfae2a2465dfdf10f740b1e1de58ecebaa862c0ff92a252",
+      "kind": "image",
+      "format": "PNG",
+      "frames": [
+        {
+          "index": 0,
+          "width": 1586,
+          "height": 992,
+          "pixel_sha256": "845a20c41c7f37341e197853a0f9b33c32dc25a116bec5191e2c19fe39322902"
+        }
+      ],
+      "width": 1586,
+      "height": 992,
+      "pixel_sha256": "c462fe4eacdd293f9bc4f2a97d7fc1114962f565640ea57ab6412e2a6582d124",
+      "phash": "613f4f61a51f12c2",
+      "review_png": "images/a02-m00020.png",
+      "classification": {
+        "viewport": "desktop",
+        "theme": "dark",
+        "screen_type": "wallet",
+        "basis": "Full unique original individually inspected; duplicated originals verified by full-file SHA256. Phone/browser frame and active navigation determine classification."
+      },
+      "route_mapping": ["/wallet"],
+      "visual_review": "original_individually_inspected",
+      "actual_browser_evidence": [],
+      "deviation_disposition": "actual_render_comparison_pending",
+      "reference_quality_notes": [
+        "All production copy must be HTML; source monetary examples, returns, dates, L5 labels and product purchase pricing are visual examples, not approved economics.",
+        "Preserve black/white glass, gold-blue industrial material and coherent scene hierarchy; retain approved canonical brand and AI face.",
+        "Device/browser chrome and illustrative chat/chart content are not production controls or authoritative data."
+      ]
+    },
+    {
+      "reference_id": "a02-m00021",
+      "archive_id": "archive-2",
+      "member_index": 21,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 08_18_18-7.png",
+      "declared_bytes": 1806397,
+      "compressed_bytes": 1793414,
+      "crc32": "d0339c21",
+      "bytes": 1806397,
+      "sha256": "af563b4f4d6a3ce71981de5e7329ef5bfda2c32be7fc92e9b02d14092e22faeb",
+      "kind": "image",
+      "format": "PNG",
+      "frames": [
+        {
+          "index": 0,
+          "width": 1586,
+          "height": 992,
+          "pixel_sha256": "370161b11780962dd49d593bd7f8dd1c8a290c25f7500c565dcecc11b7a3585b"
+        }
+      ],
+      "width": 1586,
+      "height": 992,
+      "pixel_sha256": "52c7f04cc89a8b2d1ad80bf380f16040370e8819570d3ca696d925d4df430e88",
+      "phash": "4b4b5b2a373494a6",
+      "review_png": "images/a02-m00021.png",
+      "classification": {
+        "viewport": "desktop",
+        "theme": "dark",
+        "screen_type": "menu",
+        "basis": "Full unique original individually inspected; duplicated originals verified by full-file SHA256. Phone/browser frame and active navigation determine classification."
+      },
+      "route_mapping": ["/menu"],
+      "visual_review": "original_individually_inspected",
+      "actual_browser_evidence": [],
+      "deviation_disposition": "actual_render_comparison_pending",
+      "reference_quality_notes": [
+        "All production copy must be HTML; source monetary examples, returns, dates, L5 labels and product purchase pricing are visual examples, not approved economics.",
+        "Preserve black/white glass, gold-blue industrial material and coherent scene hierarchy; retain approved canonical brand and AI face.",
+        "Device/browser chrome and illustrative chat/chart content are not production controls or authoritative data."
+      ]
+    },
+    {
+      "reference_id": "a02-m00022",
+      "archive_id": "archive-2",
+      "member_index": 22,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 08_18_23-8.png",
+      "declared_bytes": 1790405,
+      "compressed_bytes": 1777498,
+      "crc32": "546c17a9",
+      "bytes": 1790405,
+      "sha256": "624dde07693d5be72dcfed41aa5d95188051252c40e99febdc43d4e371c0c1bb",
+      "kind": "image",
+      "format": "PNG",
+      "frames": [
+        {
+          "index": 0,
+          "width": 1586,
+          "height": 992,
+          "pixel_sha256": "4f7cf2b671e6ffd783378cda2ae1a910cf4fbd180bc14adf81484a2e3691a18c"
+        }
+      ],
+      "width": 1586,
+      "height": 992,
+      "pixel_sha256": "8130c07abb0e59d8cbb798dd10f11ee335ae393dfa199aad39d1443713610327",
+      "phash": "1a983e8633368ddc",
+      "review_png": "images/a02-m00022.png",
+      "classification": {
+        "viewport": "desktop",
+        "theme": "dark",
+        "screen_type": "ai",
+        "basis": "Full unique original individually inspected; duplicated originals verified by full-file SHA256. Phone/browser frame and active navigation determine classification."
+      },
+      "route_mapping": ["/ai"],
+      "visual_review": "original_individually_inspected",
+      "actual_browser_evidence": [],
+      "deviation_disposition": "actual_render_comparison_pending",
+      "reference_quality_notes": [
+        "All production copy must be HTML; source monetary examples, returns, dates, L5 labels and product purchase pricing are visual examples, not approved economics.",
+        "Preserve black/white glass, gold-blue industrial material and coherent scene hierarchy; retain approved canonical brand and AI face.",
+        "Device/browser chrome and illustrative chat/chart content are not production controls or authoritative data."
+      ]
+    },
+    {
+      "reference_id": "a02-m00023",
+      "archive_id": "archive-2",
+      "member_index": 23,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 08_19_05-1.png",
+      "declared_bytes": 1898726,
+      "compressed_bytes": 1886667,
+      "crc32": "cd227a7c",
+      "bytes": 1898726,
+      "sha256": "ec654ec12013f421e0cdcbfbef8ae10920a71a7997f3c66507410e3d4ca9b6e0",
+      "kind": "image",
+      "format": "PNG",
+      "frames": [
+        {
+          "index": 0,
+          "width": 941,
+          "height": 1672,
+          "pixel_sha256": "81cb9103d6425020df3b4dee4cde462f6f007223b3d9f0d3a4ef512a1a745cab"
+        }
+      ],
+      "width": 941,
+      "height": 1672,
+      "pixel_sha256": "41f913a276dfb494c605754e4c28b68b688a8a908f85ab39924254b27bf83676",
+      "phash": "6a75c8d7772a0c0a",
+      "review_png": "images/a02-m00023.png",
+      "classification": {
+        "viewport": "mobile",
+        "theme": "dark",
+        "screen_type": "login",
+        "basis": "Full unique original individually inspected; duplicated originals verified by full-file SHA256. Phone/browser frame and active navigation determine classification."
+      },
+      "route_mapping": ["/login"],
+      "visual_review": "original_individually_inspected",
+      "actual_browser_evidence": [],
+      "deviation_disposition": "actual_render_comparison_pending",
+      "reference_quality_notes": [
+        "All production copy must be HTML; source monetary examples, returns, dates, L5 labels and product purchase pricing are visual examples, not approved economics.",
+        "Preserve black/white glass, gold-blue industrial material and coherent scene hierarchy; retain approved canonical brand and AI face.",
+        "Device/browser chrome and illustrative chat/chart content are not production controls or authoritative data."
+      ]
+    },
+    {
+      "reference_id": "a02-m00024",
+      "archive_id": "archive-2",
+      "member_index": 24,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 08_19_09-2.png",
+      "declared_bytes": 1851455,
+      "compressed_bytes": 1839396,
+      "crc32": "fd11434d",
+      "bytes": 1851455,
+      "sha256": "0a7bf7c67a92b0b51e6d1888fccd11476456d1f3508f309b909d5674fdc17980",
+      "kind": "image",
+      "format": "PNG",
+      "frames": [
+        {
+          "index": 0,
+          "width": 941,
+          "height": 1672,
+          "pixel_sha256": "ec01ac95cdc7ca379d16e29261404593c7c8890fa60fe2d5a1c6a1e4d506ea9b"
+        }
+      ],
+      "width": 941,
+      "height": 1672,
+      "pixel_sha256": "bfecde3688a78367c54be8b488466f9f3f36b4aba1708ae2d810773677bd0fde",
+      "phash": "20d73213332eccee",
+      "review_png": "images/a02-m00024.png",
+      "classification": {
+        "viewport": "mobile",
+        "theme": "dark",
+        "screen_type": "home",
+        "basis": "Full unique original individually inspected; duplicated originals verified by full-file SHA256. Phone/browser frame and active navigation determine classification."
+      },
+      "route_mapping": ["/home"],
+      "visual_review": "original_individually_inspected",
+      "actual_browser_evidence": [],
+      "deviation_disposition": "actual_render_comparison_pending",
+      "reference_quality_notes": [
+        "All production copy must be HTML; source monetary examples, returns, dates, L5 labels and product purchase pricing are visual examples, not approved economics.",
+        "Preserve black/white glass, gold-blue industrial material and coherent scene hierarchy; retain approved canonical brand and AI face.",
+        "Device/browser chrome and illustrative chat/chart content are not production controls or authoritative data."
+      ]
+    },
+    {
+      "reference_id": "a02-m00025",
+      "archive_id": "archive-2",
+      "member_index": 25,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 08_19_15-3.png",
+      "declared_bytes": 1723057,
+      "compressed_bytes": 1710987,
+      "crc32": "1f6d5785",
+      "bytes": 1723057,
+      "sha256": "1b40d9802c2180a4b511749be35f0f6deffc0004fa8ce931322b9c1358a7be1a",
+      "kind": "image",
+      "format": "PNG",
+      "frames": [
+        {
+          "index": 0,
+          "width": 941,
+          "height": 1672,
+          "pixel_sha256": "ec07bdb0900acc2a9490dfc3025ea376d75cddf27e6feb0d195e1baaedc1e7fc"
+        }
+      ],
+      "width": 941,
+      "height": 1672,
+      "pixel_sha256": "595627e4dd907b4ad20f9702aa69c81ec8666b0772a09303c0e025aff2fdb1b0",
+      "phash": "327532656f0cc4ea",
+      "review_png": "images/a02-m00025.png",
+      "classification": {
+        "viewport": "mobile",
+        "theme": "dark",
+        "screen_type": "wallet",
+        "basis": "Full unique original individually inspected; duplicated originals verified by full-file SHA256. Phone/browser frame and active navigation determine classification."
+      },
+      "route_mapping": ["/wallet"],
+      "visual_review": "original_individually_inspected",
+      "actual_browser_evidence": [],
+      "deviation_disposition": "actual_render_comparison_pending",
+      "reference_quality_notes": [
+        "All production copy must be HTML; source monetary examples, returns, dates, L5 labels and product purchase pricing are visual examples, not approved economics.",
+        "Preserve black/white glass, gold-blue industrial material and coherent scene hierarchy; retain approved canonical brand and AI face.",
+        "Device/browser chrome and illustrative chat/chart content are not production controls or authoritative data."
+      ]
+    },
+    {
+      "reference_id": "a02-m00026",
+      "archive_id": "archive-2",
+      "member_index": 26,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 08_19_20-4.png",
+      "declared_bytes": 1608163,
+      "compressed_bytes": 1596045,
+      "crc32": "2846c9d7",
+      "bytes": 1608163,
+      "sha256": "cb8777bedb9f3c43e2b0265fea16449477b4627afd6f97ce781bdc78556bdb40",
+      "kind": "image",
+      "format": "PNG",
+      "frames": [
+        {
+          "index": 0,
+          "width": 941,
+          "height": 1672,
+          "pixel_sha256": "54748ec9e3fb720ae27825ccbc81c733589ee724ab5dedfbba46bae31a71891f"
+        }
+      ],
+      "width": 941,
+      "height": 1672,
+      "pixel_sha256": "38f1a47b27ef27299a523d20a030fd224b06b0a5e3345fd64ac8f0f40b330b2a",
+      "phash": "22572a647ea8e4ea",
+      "review_png": "images/a02-m00026.png",
+      "classification": {
+        "viewport": "mobile",
+        "theme": "dark",
+        "screen_type": "menu",
+        "basis": "Full unique original individually inspected; duplicated originals verified by full-file SHA256. Phone/browser frame and active navigation determine classification."
+      },
+      "route_mapping": ["/menu"],
+      "visual_review": "original_individually_inspected",
+      "actual_browser_evidence": [],
+      "deviation_disposition": "actual_render_comparison_pending",
+      "reference_quality_notes": [
+        "All production copy must be HTML; source monetary examples, returns, dates, L5 labels and product purchase pricing are visual examples, not approved economics.",
+        "Preserve black/white glass, gold-blue industrial material and coherent scene hierarchy; retain approved canonical brand and AI face.",
+        "Device/browser chrome and illustrative chat/chart content are not production controls or authoritative data."
+      ]
+    },
+    {
+      "reference_id": "a02-m00027",
+      "archive_id": "archive-2",
+      "member_index": 27,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 08_19_28-5.png",
+      "declared_bytes": 1749725,
+      "compressed_bytes": 1737668,
+      "crc32": "7bd665e5",
+      "bytes": 1749725,
+      "sha256": "eb6a744e448839d5f991ee1191921f4657102f6ff1e2714ccd6378647e7ff5e9",
+      "kind": "image",
+      "format": "PNG",
+      "frames": [
+        {
+          "index": 0,
+          "width": 941,
+          "height": 1672,
+          "pixel_sha256": "c9d4d22cd05c082e7c4c7569573e72fabef16fe110accfb6805dd19254e625f1"
+        }
+      ],
+      "width": 941,
+      "height": 1672,
+      "pixel_sha256": "4df7d0bf81c301feb43ef759a8842f959a7f39fd6fa1ca6c97303a8b05e15561",
+      "phash": "6373223636ff6220",
+      "review_png": "images/a02-m00027.png",
+      "classification": {
+        "viewport": "mobile",
+        "theme": "light",
+        "screen_type": "home",
+        "basis": "Full unique original individually inspected; duplicated originals verified by full-file SHA256. Phone/browser frame and active navigation determine classification."
+      },
+      "route_mapping": ["/home"],
+      "visual_review": "original_individually_inspected",
+      "actual_browser_evidence": [],
+      "deviation_disposition": "actual_render_comparison_pending",
+      "reference_quality_notes": [
+        "All production copy must be HTML; source monetary examples, returns, dates, L5 labels and product purchase pricing are visual examples, not approved economics.",
+        "Preserve black/white glass, gold-blue industrial material and coherent scene hierarchy; retain approved canonical brand and AI face.",
+        "Device/browser chrome and illustrative chat/chart content are not production controls or authoritative data."
+      ]
+    },
+    {
+      "reference_id": "a02-m00028",
+      "archive_id": "archive-2",
+      "member_index": 28,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 08_19_33-6.png",
+      "declared_bytes": 1439430,
+      "compressed_bytes": 1426298,
+      "crc32": "d0538823",
+      "bytes": 1439430,
+      "sha256": "1d5e12e3a654b6289a4d5de170e7c2215b58d0e0457a44fe88bf2a10f81d3482",
+      "kind": "image",
+      "format": "PNG",
+      "frames": [
+        {
+          "index": 0,
+          "width": 941,
+          "height": 1672,
+          "pixel_sha256": "1346537731dc50e356653666e76d76ec1e38e70a7cd1c928b7cf73041d60355b"
+        }
+      ],
+      "width": 941,
+      "height": 1672,
+      "pixel_sha256": "2b256d06bbccb74c4c2c3f98d2bf8ef3803f8c3b08b9648fee3f25985259d038",
+      "phash": "133b26b626a37361",
+      "review_png": "images/a02-m00028.png",
+      "classification": {
+        "viewport": "mobile",
+        "theme": "light",
+        "screen_type": "wallet",
+        "basis": "Full unique original individually inspected; duplicated originals verified by full-file SHA256. Phone/browser frame and active navigation determine classification."
+      },
+      "route_mapping": ["/wallet"],
+      "visual_review": "original_individually_inspected",
+      "actual_browser_evidence": [],
+      "deviation_disposition": "actual_render_comparison_pending",
+      "reference_quality_notes": [
+        "All production copy must be HTML; source monetary examples, returns, dates, L5 labels and product purchase pricing are visual examples, not approved economics.",
+        "Preserve black/white glass, gold-blue industrial material and coherent scene hierarchy; retain approved canonical brand and AI face.",
+        "Device/browser chrome and illustrative chat/chart content are not production controls or authoritative data."
+      ]
+    },
+    {
+      "reference_id": "a02-m00029",
+      "archive_id": "archive-2",
+      "member_index": 29,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 08_19_39-7.png",
+      "declared_bytes": 1907704,
+      "compressed_bytes": 1894755,
+      "crc32": "465a19ac",
+      "bytes": 1907704,
+      "sha256": "77f69dfdcb245aec6db1eb4acb42b555837085ddd7f9be24a5cad8e42b4ad770",
+      "kind": "image",
+      "format": "PNG",
+      "frames": [
+        {
+          "index": 0,
+          "width": 1586,
+          "height": 992,
+          "pixel_sha256": "5713aa21fcb6cebdd72c225b64eef3b870442763733cfaec672e72d71fa579ea"
+        }
+      ],
+      "width": 1586,
+      "height": 992,
+      "pixel_sha256": "415b110acd50844aecdb1a2e76b238963262c01b23df391d0fabbc21315c8a03",
+      "phash": "1689a76678e60f19",
+      "review_png": "images/a02-m00029.png",
+      "classification": {
+        "viewport": "desktop",
+        "theme": "dark",
+        "screen_type": "login",
+        "basis": "Full unique original individually inspected; duplicated originals verified by full-file SHA256. Phone/browser frame and active navigation determine classification."
+      },
+      "route_mapping": ["/login"],
+      "visual_review": "original_individually_inspected",
+      "actual_browser_evidence": [],
+      "deviation_disposition": "actual_render_comparison_pending",
+      "reference_quality_notes": [
+        "All production copy must be HTML; source monetary examples, returns, dates, L5 labels and product purchase pricing are visual examples, not approved economics.",
+        "Preserve black/white glass, gold-blue industrial material and coherent scene hierarchy; retain approved canonical brand and AI face.",
+        "Device/browser chrome and illustrative chat/chart content are not production controls or authoritative data."
+      ]
+    },
+    {
+      "reference_id": "a02-m00030",
+      "archive_id": "archive-2",
+      "member_index": 30,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 08_19_43-8.png",
+      "declared_bytes": 2024723,
+      "compressed_bytes": 2011855,
+      "crc32": "2932b957",
+      "bytes": 2024723,
+      "sha256": "fa42c3d06d8461c17b2d1bc48179f727e97ddbac6150ed29b6a5390187d0f808",
+      "kind": "image",
+      "format": "PNG",
+      "frames": [
+        {
+          "index": 0,
+          "width": 1586,
+          "height": 992,
+          "pixel_sha256": "0373fd7ae4394f20a708040e66a55ab836f8f5beef70d2a6dbe26a9ccba97899"
+        }
+      ],
+      "width": 1586,
+      "height": 992,
+      "pixel_sha256": "3543b8fb009e467a1d5c138266c64a26ce81ce1d716d51d66c595891ce0e1720",
+      "phash": "66666960966f3991",
+      "review_png": "images/a02-m00030.png",
+      "classification": {
+        "viewport": "desktop",
+        "theme": "dark",
+        "screen_type": "mining",
+        "basis": "Full unique original individually inspected; duplicated originals verified by full-file SHA256. Phone/browser frame and active navigation determine classification."
+      },
+      "route_mapping": ["/mining"],
+      "visual_review": "original_individually_inspected",
+      "actual_browser_evidence": [],
+      "deviation_disposition": "actual_render_comparison_pending",
+      "reference_quality_notes": [
+        "All production copy must be HTML; source monetary examples, returns, dates, L5 labels and product purchase pricing are visual examples, not approved economics.",
+        "Preserve black/white glass, gold-blue industrial material and coherent scene hierarchy; retain approved canonical brand and AI face.",
+        "Device/browser chrome and illustrative chat/chart content are not production controls or authoritative data."
+      ]
+    },
+    {
+      "reference_id": "a02-m00031",
+      "archive_id": "archive-2",
+      "member_index": 31,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 08_19_47-9.png",
+      "declared_bytes": 1798443,
+      "compressed_bytes": 1786409,
+      "crc32": "24f1b16d",
+      "bytes": 1798443,
+      "sha256": "54c902f1632fe1701a8ded0332764dd1dda9d6ad7d5d6c863cf33477c62fb078",
+      "kind": "image",
+      "format": "PNG",
+      "frames": [
+        {
+          "index": 0,
+          "width": 1586,
+          "height": 992,
+          "pixel_sha256": "405b52dfc30b6fa2706c3021e0ec4cbd65990dc13ed815b5f26066c4de9d56a7"
+        }
+      ],
+      "width": 1586,
+      "height": 992,
+      "pixel_sha256": "baa184498b67d30f351ebe4c0a8ba83d3f9475623c879e167720f76a1ec1179a",
+      "phash": "6c792663980de1b6",
+      "review_png": "images/a02-m00031.png",
+      "classification": {
+        "viewport": "desktop",
+        "theme": "light",
+        "screen_type": "login",
+        "basis": "Full unique original individually inspected; duplicated originals verified by full-file SHA256. Phone/browser frame and active navigation determine classification."
+      },
+      "route_mapping": ["/login"],
+      "visual_review": "original_individually_inspected",
+      "actual_browser_evidence": [],
+      "deviation_disposition": "actual_render_comparison_pending",
+      "reference_quality_notes": [
+        "All production copy must be HTML; source monetary examples, returns, dates, L5 labels and product purchase pricing are visual examples, not approved economics.",
+        "Preserve black/white glass, gold-blue industrial material and coherent scene hierarchy; retain approved canonical brand and AI face.",
+        "Device/browser chrome and illustrative chat/chart content are not production controls or authoritative data."
+      ]
+    },
+    {
+      "reference_id": "a02-m00032",
+      "archive_id": "archive-2",
+      "member_index": 32,
+      "path": "ChatGPT 이미지 2026년 10월 3일 오후 08_19_54-10.png",
+      "declared_bytes": 1777787,
+      "compressed_bytes": 1765761,
+      "crc32": "1577de85",
+      "bytes": 1777787,
+      "sha256": "90686b1732e4ea2022afbeca298b7a93fe0bacc6cc37c0e88c74e6931016f0c2",
+      "kind": "image",
+      "format": "PNG",
+      "frames": [
+        {
+          "index": 0,
+          "width": 1586,
+          "height": 992,
+          "pixel_sha256": "fae08dba35d123fee2bcc635e32f1fee2896ee7555c45565813590bd6aaebd09"
+        }
+      ],
+      "width": 1586,
+      "height": 992,
+      "pixel_sha256": "c52b1582dc1ca87e919714ff979a79ba37ffb1e0b81d98b27352a66e3eb050b0",
+      "phash": "2767619a0d09f636",
+      "review_png": "images/a02-m00032.png",
+      "classification": {
+        "viewport": "desktop",
+        "theme": "light",
+        "screen_type": "mining",
+        "basis": "Full unique original individually inspected; duplicated originals verified by full-file SHA256. Phone/browser frame and active navigation determine classification."
+      },
+      "route_mapping": ["/mining"],
+      "visual_review": "original_individually_inspected",
+      "actual_browser_evidence": [],
+      "deviation_disposition": "actual_render_comparison_pending",
+      "reference_quality_notes": [
+        "All production copy must be HTML; source monetary examples, returns, dates, L5 labels and product purchase pricing are visual examples, not approved economics.",
+        "Preserve black/white glass, gold-blue industrial material and coherent scene hierarchy; retain approved canonical brand and AI face.",
+        "Device/browser chrome and illustrative chat/chart content are not production controls or authoritative data."
+      ]
+    }
+  ],
+  "byte_identical_groups": [
+    ["a02-m00001", "a02-m00008"],
+    ["a02-m00002", "a02-m00009"],
+    ["a02-m00003", "a02-m00010"],
+    ["a02-m00004", "a02-m00011"],
+    ["a02-m00005", "a02-m00012"],
+    ["a02-m00006", "a02-m00013"],
+    ["a02-m00007", "a02-m00014"]
+  ],
+  "pixel_identical_groups": [
+    ["a02-m00001", "a02-m00008"],
+    ["a02-m00002", "a02-m00009"],
+    ["a02-m00003", "a02-m00010"],
+    ["a02-m00004", "a02-m00011"],
+    ["a02-m00005", "a02-m00012"],
+    ["a02-m00006", "a02-m00013"],
+    ["a02-m00007", "a02-m00014"]
+  ],
+  "near_duplicate_candidates": [
+    {
+      "references": ["a01-m00002", "a02-m00002"],
+      "phash_distance": 10,
+      "status": "reviewed_distinct_composition_variant",
+      "explanation": "Same function family but distinct text, framing or scene composition; retain each reference record for actual browser comparison."
+    },
+    {
+      "references": ["a01-m00002", "a02-m00009"],
+      "phash_distance": 10,
+      "status": "reviewed_distinct_composition_variant",
+      "explanation": "Same function family but distinct text, framing or scene composition; retain each reference record for actual browser comparison."
+    },
+    {
+      "references": ["a01-m00016", "a01-m00017"],
+      "phash_distance": 10,
+      "status": "reviewed_distinct_functions",
+      "explanation": "Full originals have different active routes and functional controls; phone frame/background caused hash similarity."
+    },
+    {
+      "references": ["a02-m00002", "a02-m00024"],
+      "phash_distance": 10,
+      "status": "reviewed_distinct_functions",
+      "explanation": "Full originals have different active routes and functional controls; phone frame/background caused hash similarity."
+    },
+    {
+      "references": ["a02-m00003", "a02-m00004"],
+      "phash_distance": 10,
+      "status": "reviewed_distinct_functions",
+      "explanation": "Full originals have different active routes and functional controls; phone frame/background caused hash similarity."
+    },
+    {
+      "references": ["a02-m00003", "a02-m00011"],
+      "phash_distance": 10,
+      "status": "reviewed_distinct_functions",
+      "explanation": "Full originals have different active routes and functional controls; phone frame/background caused hash similarity."
+    },
+    {
+      "references": ["a02-m00004", "a02-m00010"],
+      "phash_distance": 10,
+      "status": "reviewed_distinct_functions",
+      "explanation": "Full originals have different active routes and functional controls; phone frame/background caused hash similarity."
+    },
+    {
+      "references": ["a02-m00007", "a02-m00026"],
+      "phash_distance": 4,
+      "status": "reviewed_near_duplicate_variant",
+      "explanation": "Same mobile Dark menu/profile/settings composition; revised profile amount, labels and switch panels. Both mapped to /menu, no image omitted."
+    },
+    {
+      "references": ["a02-m00009", "a02-m00024"],
+      "phash_distance": 10,
+      "status": "reviewed_distinct_functions",
+      "explanation": "Full originals have different active routes and functional controls; phone frame/background caused hash similarity."
+    },
+    {
+      "references": ["a02-m00010", "a02-m00011"],
+      "phash_distance": 10,
+      "status": "reviewed_distinct_functions",
+      "explanation": "Full originals have different active routes and functional controls; phone frame/background caused hash similarity."
+    },
+    {
+      "references": ["a02-m00014", "a02-m00026"],
+      "phash_distance": 4,
+      "status": "reviewed_near_duplicate_variant",
+      "explanation": "Same mobile Dark menu/profile/settings composition; revised profile amount, labels and switch panels. Both mapped to /menu, no image omitted."
+    }
+  ],
+  "coverage": {
+    "archives_inspected": 2,
+    "members_accounted": 52,
+    "image_entries": 52,
+    "unique_byte_images": 45,
+    "unique_pixel_images": 45,
+    "classified": 52,
+    "route_mapped": 52,
+    "browser_compared": 0,
+    "visual_qa_complete": false,
+    "individual_unique_originals_reviewed": 45,
+    "duplicates_accounted": 7,
+    "viewport_counts": {
+      "mobile": 32,
+      "desktop": 20
+    },
+    "theme_counts": {
+      "dark": 48,
+      "light": 4
+    },
+    "tablet_references_supplied": 0
+  },
+  "variant_families": [
+    {
+      "viewport": "desktop",
+      "theme": "dark",
+      "screen_type": "ai",
+      "references": ["a02-m00022"]
+    },
+    {
+      "viewport": "desktop",
+      "theme": "dark",
+      "screen_type": "home",
+      "references": ["a01-m00007", "a01-m00018", "a02-m00017"]
+    },
+    {
+      "viewport": "desktop",
+      "theme": "dark",
+      "screen_type": "login",
+      "references": ["a01-m00006", "a02-m00015", "a02-m00029"]
+    },
+    {
+      "viewport": "desktop",
+      "theme": "dark",
+      "screen_type": "menu",
+      "references": ["a02-m00021"]
+    },
+    {
+      "viewport": "desktop",
+      "theme": "dark",
+      "screen_type": "mining",
+      "references": ["a01-m00008", "a01-m00019", "a02-m00018", "a02-m00030"]
+    },
+    {
+      "viewport": "desktop",
+      "theme": "dark",
+      "screen_type": "products",
+      "references": ["a01-m00009", "a01-m00020", "a02-m00019"]
+    },
+    {
+      "viewport": "desktop",
+      "theme": "dark",
+      "screen_type": "signup",
+      "references": ["a02-m00016"]
+    },
+    {
+      "viewport": "desktop",
+      "theme": "dark",
+      "screen_type": "wallet",
+      "references": ["a01-m00010", "a02-m00020"]
+    },
+    {
+      "viewport": "desktop",
+      "theme": "light",
+      "screen_type": "login",
+      "references": ["a02-m00031"]
+    },
+    {
+      "viewport": "desktop",
+      "theme": "light",
+      "screen_type": "mining",
+      "references": ["a02-m00032"]
+    },
+    {
+      "viewport": "mobile",
+      "theme": "dark",
+      "screen_type": "home",
+      "references": [
+        "a01-m00003",
+        "a01-m00011",
+        "a02-m00005",
+        "a02-m00012",
+        "a02-m00024"
+      ]
+    },
+    {
+      "viewport": "mobile",
+      "theme": "dark",
+      "screen_type": "login",
+      "references": [
+        "a01-m00001",
+        "a01-m00012",
+        "a02-m00001",
+        "a02-m00008",
+        "a02-m00023"
+      ]
+    },
+    {
+      "viewport": "mobile",
+      "theme": "dark",
+      "screen_type": "menu",
+      "references": ["a01-m00017", "a02-m00007", "a02-m00014", "a02-m00026"]
+    },
+    {
+      "viewport": "mobile",
+      "theme": "dark",
+      "screen_type": "mining",
+      "references": ["a01-m00004", "a01-m00014", "a02-m00004", "a02-m00011"]
+    },
+    {
+      "viewport": "mobile",
+      "theme": "dark",
+      "screen_type": "products",
+      "references": ["a01-m00015", "a02-m00006", "a02-m00013"]
+    },
+    {
+      "viewport": "mobile",
+      "theme": "dark",
+      "screen_type": "signup",
+      "references": ["a01-m00002", "a01-m00013", "a02-m00002", "a02-m00009"]
+    },
+    {
+      "viewport": "mobile",
+      "theme": "dark",
+      "screen_type": "wallet",
+      "references": [
+        "a01-m00005",
+        "a01-m00016",
+        "a02-m00003",
+        "a02-m00010",
+        "a02-m00025"
+      ]
+    },
+    {
+      "viewport": "mobile",
+      "theme": "light",
+      "screen_type": "home",
+      "references": ["a02-m00027"]
+    },
+    {
+      "viewport": "mobile",
+      "theme": "light",
+      "screen_type": "wallet",
+      "references": ["a02-m00028"]
+    }
+  ]
+}

@@ -1,4 +1,10 @@
 import type { HomePrimaryAction } from "@/lib/product/home-start-display";
+import { formatAtomicAmount } from "@/domain/wallet/format-amount";
+import {
+  resolveFundedRuntimeStatus,
+  type FundedRuntimeDisplay,
+  type MiningServerDisplay,
+} from "@/lib/product/mining-server-display";
 import {
   isConfirmedMiningRunning,
   presentMiningStatus,
@@ -28,6 +34,8 @@ export function resolveHomeWorldState(input: {
   mining: Snapshot | null | undefined;
   trialUnavailable: boolean;
   miningUnavailable: boolean;
+  fundedDisplay: MiningServerDisplay | null | undefined;
+  fundedUnavailable: boolean;
 }) {
   // A failed read can retain data. It is not a confirmed source for the scene.
   const trial = input.trialUnavailable ? null : input.trial;
@@ -38,6 +46,62 @@ export function resolveHomeWorldState(input: {
   const miningStatusKnown =
     !input.miningUnavailable &&
     (!mining || knownMiningStatuses.has(mining.status ?? ""));
+  const funded = input.fundedUnavailable ? null : input.fundedDisplay;
+  const fundedStatus = funded?.available
+    ? resolveFundedRuntimeStatus(funded.funded_runtime)
+    : "UNKNOWN";
+  const fundedUnknown =
+    !funded ||
+    (funded.available && fundedStatus === "UNKNOWN") ||
+    (!funded.available && funded.funded_runtime !== undefined);
+
+  // A paid read takes priority. Only verified absence permits legacy/START fallback.
+  if (fundedUnknown || funded?.available) {
+    const unavailable = input.fundedUnavailable;
+    const partial = input.trialUnavailable || input.miningUnavailable;
+    const sourceState = unavailable
+      ? partial
+        ? ("error" as const)
+        : ("partial" as const)
+      : fundedUnknown
+        ? ("unknown" as const)
+        : partial || !trialStatusKnown || !miningStatusKnown
+          ? ("partial" as const)
+          : ("loaded" as const);
+    const primary: HomePrimaryAction = fundedUnknown
+      ? { href: "/home", label: "상태 다시 확인" }
+      : fundedStatus === "ACTIVE"
+        ? { href: "/mining", label: "실제 채굴 보기" }
+        : { href: "/products/allocation", label: "채굴 배분 확인" };
+    const capacityUsed =
+      funded?.funded_runtime?.schema_version === 2 &&
+      funded.funded_runtime.stop_reason === "CAPACITY_USED";
+    return {
+      sourceState,
+      needsRequery: fundedUnknown,
+      running: !fundedUnknown && fundedStatus === "ACTIVE",
+      liveLabel: fundedUnknown
+        ? unavailable
+          ? "상태를 불러오지 못했어요"
+          : "상태 확인이 필요해요"
+        : fundedStatus === "ACTIVE"
+          ? "채굴 중"
+          : capacityUsed
+            ? "이번 한도 완료"
+            : "배분 대기",
+      worldTitle: fundedUnknown ? "다시 확인해 주세요" : "실제 채굴",
+      worldLead: fundedUnknown
+        ? "실제 채굴 상태를 다시 확인하면 다음 안내를 보여 드려요."
+        : fundedStatus === "ACTIVE"
+          ? "서버에서 확인된 배분으로 채굴을 이어가고 있어요."
+          : capacityUsed
+            ? "이번 채굴 한도를 사용했어요. 상품과 배분을 확인해 주세요."
+            : "채굴할 상품과 배분을 확인해 주세요.",
+      primary,
+      trialStatusKnown,
+      notStarted: false,
+    };
+  }
   const readFailed = input.trialUnavailable || input.miningUnavailable;
   const unknown = !readFailed && (!trialStatusKnown || !miningStatusKnown);
   const needsRequery = readFailed || unknown;
@@ -92,5 +156,17 @@ export function resolveHomeWorldState(input: {
     primary,
     trialStatusKnown,
     notStarted: !needsRequery && !trial && !mining,
+  };
+}
+
+/** This accepted sum is per activation. The DTO does not provide a daily aggregate. */
+export function presentHomeMiningFacts(
+  runtime: FundedRuntimeDisplay | null | undefined,
+) {
+  return {
+    today: "확인할 수 없어요",
+    committedTotal: runtime
+      ? formatAtomicAmount(runtime.committed_reward_total_atomic, "KRW")
+      : "확인할 수 없어요",
   };
 }

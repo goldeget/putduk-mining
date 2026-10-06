@@ -128,6 +128,28 @@ export function projectStageInput(resolved: ResolvedScene): StageSceneInput {
           width: master.width,
           height: master.height,
           altKo: master.altKo,
+          ...(master.lightVariant
+            ? {
+                lightVariant: {
+                  master: {
+                    sha256: master.lightVariant.master.sha256,
+                    assetPath: master.lightVariant.master.assetPath,
+                    width: master.lightVariant.master.width,
+                    height: master.lightVariant.master.height,
+                    altKo: master.lightVariant.master.altKo,
+                  },
+                  responsiveSources: master.lightVariant.responsiveSources.map(
+                    (source) => ({
+                      media: source.media,
+                      assetPath: source.assetPath,
+                      width: source.width,
+                      height: source.height,
+                      mimeType: source.mimeType,
+                    }),
+                  ),
+                },
+              }
+            : {}),
         }
       : null,
     responsiveSources:

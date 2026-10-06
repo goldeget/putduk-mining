@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { CSSProperties } from "react";
 
 import { PageHeading } from "@/components/product/page-heading";
 import { WalletReadRecovery } from "@/components/product/wallet-read-recovery";
@@ -31,11 +32,166 @@ function WalletAmountText({ value }: { value: string }) {
   if (!figure || unit === undefined) {
     return value;
   }
+  const displayUnit = unit === " KRW" ? "원" : unit;
   return (
-    <span className={styles.amountValue}>
+    <span
+      className={styles.amountValue}
+      data-wallet-long-amount={figure.length > 14 ? "true" : undefined}
+      style={
+        {
+          "--wallet-amount-length": figure.length + displayUnit.length,
+        } as CSSProperties
+      }
+    >
       <span className={styles.amountFigure}>{figure}</span>
-      <span className={styles.amountUnit}>{unit}</span>
+      <span className={styles.amountUnit}>{displayUnit}</span>
     </span>
+  );
+}
+
+/** 금속 지갑과 칩은 장식이다. 잔액·보안 상태·수익을 나타내지 않는다. */
+function WalletArtwork() {
+  return (
+    <svg
+      aria-hidden="true"
+      className={styles.heroArtwork}
+      data-wallet-decoration="metal-wallet"
+      focusable="false"
+      viewBox="0 0 240 190"
+    >
+      <defs>
+        <linearGradient
+          id="wallet-read-metal-front"
+          x1="0"
+          y1="0"
+          x2="1"
+          y2="1"
+        >
+          <stop className={styles.metalHighlight} />
+          <stop className={styles.metalGold} offset="0.36" />
+          <stop className={styles.metalShadow} offset="0.72" />
+          <stop className={styles.metalGold} offset="1" />
+        </linearGradient>
+        <linearGradient id="wallet-read-metal-edge" x1="0" y1="0" x2="0" y2="1">
+          <stop className={styles.metalGold} />
+          <stop className={styles.metalShadow} offset="1" />
+        </linearGradient>
+        <linearGradient id="wallet-read-glass" x1="0" y1="0" x2="1" y2="1">
+          <stop className={styles.glassHighlight} />
+          <stop className={styles.glassShadow} offset="1" />
+        </linearGradient>
+      </defs>
+      <g className={styles.vaultLines} fill="none" stroke="currentColor">
+        <circle cx="142" cy="91" r="75" />
+        <circle cx="142" cy="91" r="65" strokeDasharray="3 10" />
+        <path d="M142 9v12m70 70h12m-82 70v12M60 91H48" />
+      </g>
+      <ellipse
+        className={styles.artworkShadow}
+        cx="126"
+        cy="169"
+        rx="80"
+        ry="9"
+      />
+      <g
+        className={styles.chipLines}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+      >
+        <path d="m138 39 41-11 27 17-41 11Zm0 0v43l27 17V56m41-11v43l-41 11" />
+        <path d="m148 39 22-6 15 10-22 6Zm-2 6v30m7-28v28m23-20 20-5m-20 13 20-5m-20 13 20-5" />
+      </g>
+      <path
+        d="m51 66 103-24 20 13v97l-20 13-103 10Z"
+        fill="url(#wallet-read-metal-edge)"
+      />
+      <path
+        d="m49 64 99-23q14-3 14 11v96q0 9-10 11l-99 23q-12 3-12-10V78q0-11 8-14Z"
+        fill="url(#wallet-read-metal-front)"
+      />
+      <path
+        className={styles.walletGlass}
+        d="m55 73 92-21q5-1 5 5v85q0 5-5 6l-92 21q-5 1-5-5V79q0-5 5-6Z"
+        fill="url(#wallet-read-glass)"
+      />
+      <path
+        className={styles.walletStitch}
+        d="m58 80 82-19m-82 99 82-19M59 85v66"
+        fill="none"
+        stroke="currentColor"
+        strokeDasharray="2 5"
+      />
+      <path
+        d="m134 103 39-9q8-2 8 7v22q0 6-7 8l-40 9q-8 2-8-7v-21q0-7 8-9Z"
+        fill="url(#wallet-read-metal-front)"
+      />
+      <circle className={styles.walletClasp} cx="161" cy="116" r="7" />
+      <path
+        className={styles.walletEdgeLight}
+        d="m49 65 99-23q10-2 12 5M51 173l103-24m-20-46 39-9"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+      />
+    </svg>
+  );
+}
+
+function WalletIcon({
+  kind,
+}: {
+  kind:
+    | "principal"
+    | "pending"
+    | "unconfirmed"
+    | "deposit"
+    | "withdraw"
+    | "history";
+}) {
+  return (
+    <svg
+      aria-hidden="true"
+      data-wallet-decoration="glyph"
+      focusable="false"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      {kind === "principal" ? (
+        <>
+          <ellipse cx="12" cy="6" rx="7" ry="3" />
+          <path d="M5 6v5c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 11v5c0 1.7 3.1 3 7 3s7-1.3 7-3v-5" />
+        </>
+      ) : null}
+      {kind === "pending" ? (
+        <>
+          <path d="M6 3h12M6 21h12M7 3v4l5 5-5 5v4m10-18v4l-5 5 5 5v4" />
+          <path d="M9 6h6m-6 12h6" />
+        </>
+      ) : null}
+      {kind === "unconfirmed" ? (
+        <>
+          <circle cx="12" cy="12" r="8" strokeDasharray="3 3" />
+          <path d="M9 12h6" />
+        </>
+      ) : null}
+      {kind === "deposit" || kind === "withdraw" ? (
+        <>
+          <path d="M4 15v5h16v-5M12 4v11" />
+          <path d={kind === "deposit" ? "m7 10 5 5 5-5" : "m7 9 5-5 5 5"} />
+        </>
+      ) : null}
+      {kind === "history" ? (
+        <>
+          <rect x="5" y="3" width="14" height="18" rx="2" />
+          <path d="M9 8h6M9 12h6M9 16h3" />
+        </>
+      ) : null}
+    </svg>
   );
 }
 
@@ -91,12 +247,17 @@ export function WalletReadView({
               <span>실제 지갑</span>
               <small>출금 가능</small>
             </div>
-            <small className={styles.heroLabel}>사용 가능 잔액</small>
-            <strong className={styles.heroValue}>
-              <WalletAmountText
-                value={formatAtomicAmount(krw.availableAtomic, "KRW")}
-              />
-            </strong>
+            <div className={styles.heroOverview}>
+              <div className={styles.heroBalance}>
+                <small className={styles.heroLabel}>사용 가능 잔액</small>
+                <strong className={styles.heroValue}>
+                  <WalletAmountText
+                    value={formatAtomicAmount(krw.availableAtomic, "KRW")}
+                  />
+                </strong>
+              </div>
+              <WalletArtwork />
+            </div>
             <dl className={styles.breakdown}>
               <div>
                 <dt>출금 보류</dt>
@@ -163,13 +324,26 @@ export function WalletReadView({
                     value: "아직 없어요",
                   },
                 ]
-            ).map((row) => (
+            ).map((row, index) => (
               <div
                 key={row.label}
                 className={styles.metric}
                 data-funding-tone={row.tone}
               >
-                <dt>{row.label}</dt>
+                <dt>
+                  <span className={styles.metricIcon}>
+                    <WalletIcon
+                      kind={
+                        row.tone === "unconfirmed"
+                          ? "unconfirmed"
+                          : index === 0
+                            ? "principal"
+                            : "pending"
+                      }
+                    />
+                  </span>
+                  {row.label}
+                </dt>
                 <dd>
                   <WalletAmountText value={row.value} />
                 </dd>
@@ -184,9 +358,11 @@ export function WalletReadView({
 
       <div className={styles.actions}>
         <Link className="button button--primary" href="/wallet/deposit">
+          <WalletIcon kind="deposit" />
           입금하기
         </Link>
         <Link className="button button--secondary" href="/wallet/withdraw">
+          <WalletIcon kind="withdraw" />
           출금하기
         </Link>
       </div>
@@ -204,15 +380,24 @@ export function WalletReadView({
               type="radio"
               value="principal"
             />
-            원금
+            <span className={styles.tabContent}>
+              <WalletIcon kind="principal" />
+              원금
+            </span>
           </label>
           <label className={styles.tab}>
             <input name="wallet-view" type="radio" value="profit" />
-            수익
+            <span className={styles.tabContent}>
+              <WalletIcon kind="pending" />
+              수익
+            </span>
           </label>
           <label className={styles.tab}>
             <input name="wallet-view" type="radio" value="history" />
-            거래내역
+            <span className={styles.tabContent}>
+              <WalletIcon kind="history" />
+              거래내역
+            </span>
           </label>
         </div>
 
@@ -257,7 +442,10 @@ export function WalletReadView({
         </div>
 
         <div className={styles.tabPanel} data-panel="history">
-          <Surface as="section" className="ledger-principle">
+          <Surface
+            as="section"
+            className={`ledger-principle ${styles.historyIntro}`}
+          >
             <p className="eyebrow">금액 기록</p>
             <h2>금액 변화는 이유와 상태를 함께 남겨요.</h2>
             <p>
@@ -314,7 +502,7 @@ export function WalletReadView({
           </div>
 
           <section
-            className="wallet-receipts"
+            className={`wallet-receipts ${styles.receipts}`}
             aria-labelledby="wallet-receipts-title"
           >
             <header>

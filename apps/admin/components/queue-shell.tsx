@@ -33,9 +33,18 @@ export function QueueShell({
 
 export function QueueFlash({
   result,
+  stale = false,
 }: {
   result?: { ok: boolean; message: string } | null;
+  stale?: boolean;
 }) {
+  if (stale) {
+    return (
+      <p className="panel-note" role="status">
+        입력이 바뀌었습니다. 내용을 다시 확인해 주세요.
+      </p>
+    );
+  }
   if (!result) return null;
   return (
     <p

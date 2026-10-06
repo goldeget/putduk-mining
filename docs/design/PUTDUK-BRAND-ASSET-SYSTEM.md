@@ -6,10 +6,11 @@ Status: **CANONICAL / IMPLEMENTED FOUNDATION**
 
 Manifest: `public/brand/assets.manifest.json`
 
-Runtime manifest snapshot: `2026.10.03-v3` — 96 assets: the preserved 84-entry
-`2026.09.27-v1` set plus four approved AI help face derivatives and eight approved
-semiconductor scene derivatives. The complete prior 88-entry set is preserved. Visual Lab
-remains `visual-lab-2026.09.27-v1`; it is a separate benchmark version.
+Runtime manifest snapshot: `2026.10.06-v5` — 112 assets: the preserved 84-entry
+`2026.09.27-v1` set plus four approved AI help face derivatives, eight clean
+semiconductor scene derivatives, eight global pavilion derivatives and eight
+light semiconductor derivatives. The complete prior 104-entry set is preserved.
+Visual Lab remains `visual-lab-2026.09.27-v1`; it is a separate benchmark version.
 
 ## 1. Source and runtime boundary
 
@@ -197,3 +198,42 @@ fidelity evidence are in the master review; rendered product acceptance is pendi
 ## 9. Rank naming boundary
 
 The supplied rank mockup contains more named visual examples than the requested production directory contract. V1 therefore ships exactly six neutral asset families (`rank-01`…`rank-06`). The architecture does not infer or copy generated rank names, benefits, thresholds or rewards. Product-owned rank configuration will bind real Korean names to these IDs through reviewed, versioned data.
+
+## Phase 2 global pavilion pack
+
+The user delegated production-quality execution of the fully inspected Drive
+references. The new global pavilion preserves their city, networked Earth and
+metal/semiconductor material intent in a clean native-generated decorative scene.
+Its full lossless master and scope are recorded in
+`generated-masters/global-pavilion-2026-10-06/REVIEW.md`. Eight AVIF/WebP derivatives
+are added by `scripts/build-global-pavilion-assets.py`; all prior 96 manifest
+records and runtime bytes remain unchanged. The verifier hash-locks the source,
+allowed derivative paths, dimensions and scope and rejects foreign metadata.
+
+Authentication and catalog use this decorative global scene. The approved memory
+mining scene, canonical logo, mascot face and neutral ranks retain their existing
+bindings. No scene selects a product or approves rewards. Every interactive
+control, Korean label and financial value remains live HTML/server data.
+The full source index is `mockup-source-index-2026-10-06.json`; actual browser
+comparison is tracked separately and is not implied by source inspection.
+
+## Phase 2 light semiconductor companion
+
+Manifest `2026.10.06-v5` adds eight light-only AVIF/WebP derivatives at widths
+640, 960, 1280 and 1536. Their reviewed lossless source is
+`generated-masters/semiconductor-memory-light-2026-10-06/semiconductor-memory-light-master-v1.png`,
+SHA-256 `113fdbc5c41772145f98f3357f27754fa1bd20602a5261c133becc0fa1126d52`.
+The unchanged clean memory master and inspected `a02-m00032` light reference
+guided this native companion; its review scope remains presentation only.
+
+`scripts/build-semiconductor-light-assets.py` requires Pillow 12.3.0, validates
+the complete RGB 1536×1024 source and preserves its composition without cropping,
+recoloring or upscaling. WebP is lossless against the resized pixels; each AVIF
+must decode at its exact dimensions with at least 40 dB PSNR. All 104 previous
+manifest records and runtime files remain unchanged. Their canonical entry
+digest is `bd4887df3347bc9a120d7dae412ee2a157613ec10f2d56311c7d7db3909f5262`.
+
+The verifier admits only the eight exact versioned light paths and checks their
+source, dimensions, theme and scope. Existing dark artwork remains unchanged.
+Asset integrity does not approve products, rewards, or runtime scene mapping;
+rendering and browser acceptance are separate evidence gates.

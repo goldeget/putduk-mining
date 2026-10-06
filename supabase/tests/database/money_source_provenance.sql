@@ -227,8 +227,23 @@ select throws_ok($test$
     set constraints deposit_requests_money_source_complete immediate;
   end;
   $body$;
+$test$, '55000', 'FUNDING_CREDIT_COMMAND_COMPLETION_MISSING',
+  'actual service rejects the missing financial/source original before credit completion');
+reset role;
+-- Trusted postgres fixture preserves the independent original deferred source
+-- invariant. The historical owner-only command path skips the private engine
+-- hook; it is not an application authority or a restored service privilege.
+select throws_ok($test$
+  do $body$
+  begin
+    perform public.approve_deposit_request(collision_deposit_id, admin_id, 888,
+      'source-collision-credit-v1', 'actual fixture bank transfer confirmed', gen_random_uuid()) from source_ctx;
+    set constraints deposit_requests_money_source_complete immediate;
+  end;
+  $body$;
 $test$, '55000', 'MONEY_SOURCE_CAPTURE_INCOMPLETE',
   'an ignored outbox-key collision rolls back the whole KRW approval at the deferred boundary');
+set local role service_role;
 reset role;
 select ok((select status = 'AWAITING_TRANSFER' and approved_amount_atomic is null
   and reviewed_by is null and ledger_transaction_id is null and wallet_ledger_id is null
@@ -242,7 +257,8 @@ select ok(not exists(select 1 from public.ledger_transactions
   and not exists(select 1 from app_private.idempotency_keys
     where scope = 'deposit.approve' and idempotency_key = 'source-collision-credit-v1')
   and not exists(select 1 from public.money_source_movements where source_event_id = (select collision_event_id from source_ctx))
-  and not exists(select 1 from public.outbox_events where aggregate_id = (select collision_deposit_id from source_ctx)),
+  and not exists(select 1 from public.outbox_events where aggregate_id = (select collision_deposit_id from source_ctx))
+  and not exists(select 1 from app_private.funding_credit_boundary_preparations where command_original_id=(select collision_deposit_id from source_ctx)),
   'deferred collision leaves no journal, wallet, audit, command key, source or approval event');
 select ok((select to_jsonb(event.*) = ctx.collision_event_before
   from source_ctx as ctx join public.outbox_events as event on event.id = ctx.collision_event_id)
@@ -410,23 +426,63 @@ select ok((select coverage = 'UNRESOLVED' and eligible_principal_atomic is null
   'a changed event key cannot substitute for the original approval business key');
 update public.outbox_events set idempotency_key = 'source-krw-credit-v1:deposit-event'
 where aggregate_id = (select deposit_id from source_ctx) and event_type = 'DEPOSIT_CONFIRMED.v1';
+
+-- Service-role commands cannot corrupt an account's posted journal identity.
+set local role service_role;
+select throws_ok($$update public.ledger_accounts set code = 'PUTDUK:SOURCE_FIXTURE_OTHER_CASH:KRW'
+  where code = 'PUTDUK:OPERATING_CASH:KRW'$$,
+  '55000', 'LEDGER_ACCOUNT_IDENTITY_IS_IMMUTABLE', 'the original command cash account cannot be renamed');
+select ok((select coverage = 'COMPLETE' and eligible_principal_atomic = '10000' and invalid_source_receipts = '0'
+  from public.money_source_summaries where user_id = (select member_id from source_ctx)),
+  'rejected account substitution leaves the original money receipts verified');
+select throws_ok($$update public.ledger_accounts set is_controlled_asset = false
+  where code = 'PUTDUK:OPERATING_CASH:KRW'$$,
+  '55000', 'LEDGER_ACCOUNT_IDENTITY_IS_IMMUTABLE', 'original controlled-asset semantics cannot be rewritten');
+select ok((select coverage = 'COMPLETE' and eligible_principal_atomic = '10000' and invalid_source_receipts = '0'
+  from public.money_source_summaries where user_id = (select member_id from source_ctx)),
+  'rejected asset rewrite leaves the original money receipts verified');
+select throws_ok($$update public.ledger_accounts set normal_side = 'CREDIT'
+  where code = 'PUTDUK:OPERATING_CASH:KRW'$$,
+  '55000', 'LEDGER_ACCOUNT_IDENTITY_IS_IMMUTABLE', 'the original asset normal side cannot be rewritten');
+select ok((select coverage = 'COMPLETE' and eligible_principal_atomic = '10000' and invalid_source_receipts = '0'
+  from public.money_source_summaries where user_id = (select member_id from source_ctx)),
+  'rejected normal-side rewrite leaves the original money receipts verified');
+reset role;
+
+-- Keep defensive readback coverage for historical corrupt originals. Only the
+-- table owner can prepare these rollback-only fixtures; restore the named
+-- trigger immediately after each fixture edit, before every service-role read.
+alter table public.ledger_accounts disable trigger ledger_accounts_identity_immutable;
 update public.ledger_accounts set code = 'PUTDUK:SOURCE_FIXTURE_OTHER_CASH:KRW'
 where code = 'PUTDUK:OPERATING_CASH:KRW';
+alter table public.ledger_accounts enable trigger ledger_accounts_identity_immutable;
+set local role service_role;
 select ok((select coverage = 'UNRESOLVED' and eligible_principal_atomic is null and invalid_source_receipts = '2'
   from public.money_source_summaries where user_id = (select member_id from source_ctx)),
   'the same asset class cannot substitute for the original command cash account');
+reset role;
+alter table public.ledger_accounts disable trigger ledger_accounts_identity_immutable;
 update public.ledger_accounts set code = 'PUTDUK:OPERATING_CASH:KRW'
 where code = 'PUTDUK:SOURCE_FIXTURE_OTHER_CASH:KRW';
 update public.ledger_accounts set is_controlled_asset = false where code = 'PUTDUK:OPERATING_CASH:KRW';
+alter table public.ledger_accounts enable trigger ledger_accounts_identity_immutable;
+set local role service_role;
 select ok((select coverage = 'UNRESOLVED' and eligible_principal_atomic is null
   from public.money_source_summaries where user_id = (select member_id from source_ctx)),
   'original controlled-asset semantics remain part of the money receipt');
+reset role;
+alter table public.ledger_accounts disable trigger ledger_accounts_identity_immutable;
 update public.ledger_accounts set is_controlled_asset = true where code = 'PUTDUK:OPERATING_CASH:KRW';
 update public.ledger_accounts set normal_side = 'CREDIT' where code = 'PUTDUK:OPERATING_CASH:KRW';
+alter table public.ledger_accounts enable trigger ledger_accounts_identity_immutable;
+set local role service_role;
 select ok((select coverage = 'UNRESOLVED' and eligible_principal_atomic is null
   from public.money_source_summaries where user_id = (select member_id from source_ctx)),
   'a changed normal side invalidates the original asset receipt');
+reset role;
+alter table public.ledger_accounts disable trigger ledger_accounts_identity_immutable;
 update public.ledger_accounts set normal_side = 'DEBIT' where code = 'PUTDUK:OPERATING_CASH:KRW';
+alter table public.ledger_accounts enable trigger ledger_accounts_identity_immutable;
 set local role service_role;
 select ok((select coverage = 'COMPLETE' and eligible_principal_atomic = '10000'
   from public.money_source_summaries where user_id = (select member_id from source_ctx)),
@@ -485,8 +541,23 @@ select throws_ok($test$
     set constraints deposit_requests_money_source_complete immediate;
   end;
   $body$;
+$test$, '55000', 'FUNDING_CREDIT_COMMAND_COMPLETION_MISSING',
+  'actual service rejects a suppressed approval audit before credit completion');
+reset role;
+-- Trusted postgres fixture preserves the independent original deferred source
+-- invariant. The historical owner-only command path skips the private engine
+-- hook; it is not an application authority or a restored service privilege.
+select throws_ok($test$
+  do $body$
+  begin
+    perform public.approve_deposit_request(audit_deposit_id, admin_id, 555,
+      'source-audit-credit-v1', 'source fixture suppressed approval audit', gen_random_uuid()) from source_ctx;
+    set constraints deposit_requests_money_source_complete immediate;
+  end;
+  $body$;
 $test$, '55000', 'MONEY_SOURCE_RECEIPT_UNVERIFIED',
   'terminal completeness rejects a captured credit without its original approval audit');
+set local role service_role;
 reset role;
 select ok((select status = 'AWAITING_TRANSFER' and ledger_transaction_id is null and wallet_ledger_id is null
     from public.deposit_requests where id = (select audit_deposit_id from source_ctx))
@@ -495,7 +566,8 @@ select ok((select status = 'AWAITING_TRANSFER' and ledger_transaction_id is null
   and not exists(select 1 from public.outbox_events where aggregate_id = (select audit_deposit_id from source_ctx))
   and not exists(select 1 from public.audit_logs where target_id = (select audit_deposit_id::text from source_ctx))
   and not exists(select 1 from app_private.idempotency_keys
-    where scope = 'deposit.approve' and idempotency_key = 'source-audit-credit-v1'),
+    where scope = 'deposit.approve' and idempotency_key = 'source-audit-credit-v1')
+  and not exists(select 1 from app_private.funding_credit_boundary_preparations where command_original_id=(select audit_deposit_id from source_ctx)),
   'missing audit rolls back the domain, journal, wallet, source event and completed key');
 select is((select count(*)::integer from public.money_source_movements
   where user_id = (select member_id from source_ctx)), 3, 'audit failure does not leave an orphan captured source');

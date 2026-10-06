@@ -5,6 +5,10 @@ import {
   aiChatRequestSchema,
 } from "@/domain/ai/chat";
 import { redactMemberTranscript } from "@/domain/ai/member-transcript";
+import {
+  getMemberAiHelp,
+  memberAiHelpFromSourceKey,
+} from "@/domain/ai/member-help";
 import { matchesAiPresentationOwner } from "@/domain/ai/presentation-owner";
 import { readAiCache, writeAiCache } from "@/lib/ai/cache";
 import {
@@ -25,6 +29,7 @@ import {
   failAiRequest,
 } from "@/lib/ai/usage";
 import { apiError } from "@/lib/api/http";
+import { readBoundedJsonBody } from "@/lib/api/request-body";
 import { getVerifiedIdentity } from "@/lib/auth/session";
 import { getServerEnv } from "@/lib/env/server";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
@@ -125,36 +130,19 @@ export async function POST(request: Request) {
     });
   }
 
-  const declaredLength = Number(request.headers.get("content-length") ?? 0);
-  if (Number.isFinite(declaredLength) && declaredLength > MAX_BODY_BYTES) {
+  const body = await readBoundedJsonBody(request, MAX_BODY_BYTES);
+  if (!body.ok) {
     return apiError({
-      code: "PAYLOAD_TOO_LARGE",
-      message: "질문이 너무 깁니다.",
-      status: 413,
+      code: body.code,
+      message:
+        body.code === "PAYLOAD_TOO_LARGE"
+          ? "질문이 너무 깁니다."
+          : "요청 형식이 올바르지 않습니다.",
+      status: body.code === "PAYLOAD_TOO_LARGE" ? 413 : 400,
     });
   }
 
-  const rawBody = await request.text();
-  if (new TextEncoder().encode(rawBody).byteLength > MAX_BODY_BYTES) {
-    return apiError({
-      code: "PAYLOAD_TOO_LARGE",
-      message: "질문이 너무 깁니다.",
-      status: 413,
-    });
-  }
-
-  let body: unknown;
-  try {
-    body = JSON.parse(rawBody);
-  } catch {
-    return apiError({
-      code: "INVALID_JSON",
-      message: "요청 형식이 올바르지 않습니다.",
-      status: 400,
-    });
-  }
-
-  const parsed = aiChatRequestSchema.safeParse(body);
+  const parsed = aiChatRequestSchema.safeParse(body.value);
   if (!parsed.success) {
     return apiError({
       code: "INVALID_AI_QUESTION",
@@ -393,15 +381,20 @@ export async function POST(request: Request) {
       });
     }
 
+    const sourceKey = grounding
+      ? `tool:${grounding.tool}`
+      : responseSource === "cache"
+        ? "guide:cache"
+        : providerRequestId.startsWith("static:")
+          ? `guide:${providerRequestId.slice("static:".length)}`
+          : "guide:putduk";
+    const helpTopic =
+      responseSource === "static"
+        ? memberAiHelpFromSourceKey(sourceKey)
+        : undefined;
     const saved = await saveMemberTurn({
       answer,
-      sourceKey: grounding
-        ? `tool:${grounding.tool}`
-        : responseSource === "cache"
-          ? "guide:cache"
-          : providerRequestId.startsWith("static:")
-            ? `guide:${providerRequestId.slice("static:".length)}`
-            : "guide:putduk",
+      sourceKey,
       ...(grounding
         ? {
             toolCall: {
@@ -417,6 +410,7 @@ export async function POST(request: Request) {
       knowledgeVersion: TRUST_CONTENT_VERSION,
       requestId: aiRequestId,
       type: "done",
+      ...(helpTopic ? { helpTopic } : {}),
       ...(grounding ? { grounding } : {}),
       ...savedFields(saved),
     };
@@ -499,10 +493,10 @@ export async function POST(request: Request) {
 
   if (!providerConfigured || !env.AI_API_KEY || !env.AI_MODEL_LOW_COST) {
     return returnAuditedImmediateAnswer(
-      "이 질문은 현재 공개 사실만으로 결정적으로 답하기 어렵습니다. 운영 승인된 AI 제공자가 구성되기 전에는 추측하지 않으며, 공식 안내 페이지에서 확인 가능한 범위만 답변합니다.",
+      `이 질문에 답할 수 있는 근거를 확인하지 못했어요. 확인할 수 없는 내용은 추측하지 않아요.\n\n${getMemberAiHelp("ai").answer}`,
       "static",
       STATIC_MODEL_KEY,
-      "static:provider-unconfigured",
+      "static:member_help_ai",
     );
   }
 

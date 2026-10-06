@@ -2,8 +2,15 @@
 
 import { useEffect, useId, useRef, useState, type FormEvent } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
+import Link from "next/link";
+import { PutdukIcon } from "@/components/icons/putduk-icon";
 
 import { AI_QUESTION_MAX_CHARACTERS } from "@/domain/ai/chat";
+import {
+  getMemberAiHelp,
+  getMemberAiPageTopic,
+  getMemberAiSuggestions,
+} from "@/domain/ai/member-help";
 import {
   AI_CONVERSATION_CONTINUITY_COPY,
   AI_CONVERSATION_CONTINUITY_MODE,
@@ -33,6 +40,7 @@ function conversationTime(value: string) {
   if (Number.isNaN(date.getTime())) return "";
   return new Intl.DateTimeFormat("ko-KR", {
     timeZone: "Asia/Seoul",
+    year: "numeric",
     month: "numeric",
     day: "numeric",
     hour: "2-digit",
@@ -53,6 +61,15 @@ export function PutdukAiChat({
   const questionInputRef = useRef<HTMLTextAreaElement | null>(null);
   const transcriptRef = useRef<HTMLDivElement | null>(null);
   const followLatest = useRef(true);
+  const screenContext = buildPutdukAiScreenContext({
+    ...(initialScreenContext ? { explicitContext: initialScreenContext } : {}),
+    pathname,
+    searchParams,
+  });
+  const pageHelp = getMemberAiHelp(
+    getMemberAiPageTopic(screenContext?.currentRoute),
+  );
+  const suggestions = getMemberAiSuggestions(screenContext?.currentRoute);
   const [feedbackChoice, setFeedbackChoice] = useState<
     Record<string, "choosing" | "exists" | "failed" | "saved">
   >({});
@@ -65,7 +82,9 @@ export function PutdukAiChat({
         : lastMessage?.role !== "assistant"
           ? ""
           : lastMessage.state === "complete"
-            ? "답변이 도착했어요."
+            ? lastMessage.historical
+              ? "저장된 대화를 보고 있어요."
+              : "답변이 도착했어요."
             : (lastMessage.failure?.label ?? "");
 
   useEffect(() => {
@@ -84,14 +103,31 @@ export function PutdukAiChat({
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const screenContext = buildPutdukAiScreenContext({
-      ...(initialScreenContext
-        ? { explicitContext: initialScreenContext }
-        : {}),
-      pathname,
-      searchParams,
-    });
     void session.submit(screenContext ? { screenContext } : {});
+  }
+
+  function suggestionCards() {
+    return (
+      <div className={styles.suggestions} role="group" aria-label="추천 질문">
+        {suggestions.map((suggestion) => (
+          <button
+            key={suggestion.question}
+            type="button"
+            disabled={!session.canSubmit || session.pending}
+            onClick={() => {
+              session.setDraft(suggestion.question);
+              questionInputRef.current?.focus();
+            }}
+          >
+            <span>
+              <strong>{suggestion.label}</strong>
+              <small>{suggestion.question}</small>
+            </span>
+            <PutdukIcon name="arrow-right" size={16} aria-hidden="true" />
+          </button>
+        ))}
+      </div>
+    );
   }
 
   return (
@@ -121,7 +157,19 @@ export function PutdukAiChat({
               <p>이전 대화를 불러오고 있어요.</p>
             ) : null}
             {session.historyStatus === "unavailable" ? (
-              <p>이전 대화를 불러오지 못했어요.</p>
+              <div>
+                <p>이전 대화를 불러오지 못했어요.</p>
+                <button
+                  type="button"
+                  className="button button--secondary"
+                  disabled={
+                    !session.canSubmit || !session.online || session.pending
+                  }
+                  onClick={() => void session.reloadHistory()}
+                >
+                  다시 불러오기
+                </button>
+              </div>
             ) : null}
             {session.historyStatus === "ready" &&
             session.history.length === 0 ? (
@@ -149,6 +197,12 @@ export function PutdukAiChat({
           </div>
         </details>
         <div className={styles.thread}>
+          {session.historyHasEarlierMessages ? (
+            <p className={styles.unsaved}>
+              최근 대화 일부를 표시해요. 더 오래된 내용은 여기에 표시되지
+              않아요.
+            </p>
+          ) : null}
           {presentation === "page" ? (
             <header className={styles.pageStatus}>
               <strong>내 기록과 퍼뜩 이용 안내</strong>
@@ -162,6 +216,7 @@ export function PutdukAiChat({
             aria-label="대화 안내"
             tabIndex={0}
           >
+            <span className={styles.screenLabel}>{pageHelp.title}</span>
             <p
               className={styles.continuityNotice}
               data-testid="ai-continuity-notice"
@@ -178,6 +233,12 @@ export function PutdukAiChat({
             {!session.providerConfigured ? (
               <p className={styles.providerNotice}>
                 내 기록과 퍼뜩 안내를 확인해요. 일반 질문은 답변이 제한돼요.
+              </p>
+            ) : null}
+            {!session.online ? (
+              <p className={styles.providerNotice} role="status">
+                인터넷 연결이 끊겼어요. 작성한 질문은 그대로 남아 있어요.
+                연결되면 직접 다시 보내 주세요.
               </p>
             ) : null}
           </div>
@@ -197,8 +258,27 @@ export function PutdukAiChat({
           >
             {session.messages.length === 0 ? (
               <div className={`ai-chat__welcome ${styles.welcome}`}>
-                <h2>궁금한 내용을 편하게 물어보세요.</h2>
-                <p>내 기록과 퍼뜩 이용 방법을 함께 확인해요.</p>
+                <div className={styles.welcomeHeader}>
+                  <picture className={styles.welcomeMascot}>
+                    <source
+                      type="image/avif"
+                      srcSet="/brand/mascot/putduk-ai-help-face-128-v1.avif 128w, /brand/mascot/putduk-ai-help-face-256-v1.avif 256w"
+                      sizes="128px"
+                    />
+                    <img
+                      src="/brand/mascot/putduk-ai-help-face-256-v1.webp"
+                      width="256"
+                      height="256"
+                      alt=""
+                      decoding="async"
+                    />
+                  </picture>
+                  <div>
+                    <h2>궁금한 내용을 편하게 물어보세요.</h2>
+                    <p>내 기록과 퍼뜩 이용 방법을 함께 확인해요.</p>
+                  </div>
+                </div>
+                {suggestionCards()}
               </div>
             ) : (
               session.messages.map((message) => (
@@ -227,6 +307,24 @@ export function PutdukAiChat({
                       ) : null}
                     </div>
                   ) : null}
+                  {message.historical && message.role === "assistant" ? (
+                    <div className={styles.answerEvidence}>
+                      <span>저장된 답변 · 현재 상태는 다시 질문해 주세요.</span>
+                      {message.recordedAt ? (
+                        <time dateTime={message.recordedAt}>
+                          저장 {conversationTime(message.recordedAt)} KST
+                        </time>
+                      ) : (
+                        <span>저장 시각 확인할 수 없음</span>
+                      )}
+                      {!message.source ? (
+                        <span>답변 근거 확인할 수 없음</span>
+                      ) : null}
+                      {message.source === "tool" ? (
+                        <span>당시 조회 시각은 저장되지 않았어요.</span>
+                      ) : null}
+                    </div>
+                  ) : null}
                   {message.failure ? (
                     <div className={styles.failure}>
                       <strong>{message.failure.label}</strong>
@@ -250,6 +348,28 @@ export function PutdukAiChat({
                       이번 답변은 계정에 남지 않았어요.
                     </p>
                   ) : null}
+                  {message.state === "complete" &&
+                  message.source === "static" &&
+                  message.helpTopic ? (
+                    <nav className={styles.nextActions} aria-label="관련 화면">
+                      {getMemberAiHelp(message.helpTopic).actions.map(
+                        (action) => (
+                          <Link
+                            key={action.href}
+                            href={action.href}
+                            prefetch={false}
+                          >
+                            {action.label}
+                            <PutdukIcon
+                              name="arrow-right"
+                              size={15}
+                              aria-hidden="true"
+                            />
+                          </Link>
+                        ),
+                      )}
+                    </nav>
+                  ) : null}
                   {message.role === "assistant" &&
                   message.state === "complete" &&
                   message.assistantMessageId &&
@@ -263,7 +383,11 @@ export function PutdukAiChat({
                         <>
                           <button
                             type="button"
-                            disabled={session.pending}
+                            disabled={
+                              !session.canSubmit ||
+                              !session.online ||
+                              session.pending
+                            }
                             onClick={() => {
                               const messageId = message.assistantMessageId;
                               if (!messageId) return;
@@ -281,7 +405,11 @@ export function PutdukAiChat({
                           </button>
                           <button
                             type="button"
-                            disabled={session.pending}
+                            disabled={
+                              !session.canSubmit ||
+                              !session.online ||
+                              session.pending
+                            }
                             onClick={() => {
                               const messageId = message.assistantMessageId;
                               if (!messageId) return;
@@ -301,7 +429,11 @@ export function PutdukAiChat({
                                   <button
                                     key={reasonCode}
                                     type="button"
-                                    disabled={session.pending}
+                                    disabled={
+                                      !session.canSubmit ||
+                                      !session.online ||
+                                      session.pending
+                                    }
                                     onClick={() => {
                                       const messageId =
                                         message.assistantMessageId;
@@ -338,6 +470,13 @@ export function PutdukAiChat({
               ))
             )}
           </div>
+
+          {session.messages.length > 0 ? (
+            <details className={styles.followUpSuggestions}>
+              <summary>이 화면 추천 질문</summary>
+              {suggestionCards()}
+            </details>
+          ) : null}
 
           <p
             className={styles.liveStatus}
@@ -382,7 +521,9 @@ export function PutdukAiChat({
                     className="button button--primary"
                     type="submit"
                     disabled={
-                      !session.canSubmit || session.draft.trim().length < 3
+                      !session.canSubmit ||
+                      !session.online ||
+                      session.draft.trim().length < 3
                     }
                   >
                     질문 보내기

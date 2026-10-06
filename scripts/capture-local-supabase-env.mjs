@@ -500,8 +500,32 @@ const SENSITIVE_CELL_LABELS = new Set([
 const SB_KEY = /sb_(?:publishable|secret)_[A-Za-z0-9_-]+/g;
 const JWT_TOKEN = /eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+/g;
 const DB_PASSWORD = /(postgres(?:ql)?:\/\/[^:\s/@]+:)([^@\s/]+)(@)/gi;
-const SECRET_ASSIGNMENT =
-  /^(\s*(?:export\s+)?(?:PUBLISHABLE_KEY|SECRET_KEY|ANON_KEY|SERVICE_ROLE_KEY|JWT_SECRET|SUPABASE_SECRET_KEY|NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY|auth\.publishable_key|auth\.secret_key|auth\.anon_key|auth\.service_role_key)\s*=\s*).+$/i;
+// CLI 2.113.0 default names and dotted override tags, including opaque JWT
+// signing material and S3 credentials that do not resemble a key or token.
+const CLI_CREDENTIAL_FIELDS = [
+  ...CLI_STATUS_ENV_FIELDS.publishableKey,
+  ...CLI_STATUS_ENV_FIELDS.secretKey,
+  "JWT_SECRET",
+  "auth.jwt_secret",
+  "S3_PROTOCOL_ACCESS_KEY_ID",
+  "S3_PROTOCOL_ACCESS_KEY_SECRET",
+  "storage.s3_access_key_id",
+  "storage.s3_secret_access_key",
+  "SUPABASE_SECRET_KEY",
+  "SUPABASE_SERVICE_ROLE_KEY",
+  "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+];
+const CREDENTIAL_FIELD_PATTERN = CLI_CREDENTIAL_FIELDS.map((field) =>
+  field.replaceAll(".", "\\."),
+).join("|");
+const SECRET_ASSIGNMENT = new RegExp(
+  "^(\\s*(?:export\\s+)?(?:" + CREDENTIAL_FIELD_PATTERN + ")\\s*=\\s*).+$",
+  "gim",
+);
+const JSON_SECRET_FIELD = new RegExp(
+  '("(?:' + CREDENTIAL_FIELD_PATTERN + ')"\\s*:\\s*)"(?:[^"\\\\]|\\\\.)*"',
+  "gi",
+);
 const LABELED_SECRET =
   /^(\s*(?:Publishable|Secret Key|Access Key|anon key|service_role key|service role key|JWT secret|Secret)\s*[:=]\s*)(\S+)/i;
 
@@ -537,7 +561,9 @@ function redactSensitiveCells(line) {
 }
 
 function redactSupabaseCliSegment(segment) {
-  const assigned = segment.replace(SECRET_ASSIGNMENT, "$1<redacted>");
+  const assigned = segment
+    .replace(SECRET_ASSIGNMENT, "$1<redacted>")
+    .replace(JSON_SECRET_FIELD, '$1"<redacted>"');
   const withoutTokens = maskDbPassword(assigned)
     .replace(SB_KEY, "<redacted>")
     .replace(JWT_TOKEN, "<redacted>");

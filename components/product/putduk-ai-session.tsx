@@ -7,6 +7,7 @@ import {
   useEffect,
   useRef,
   useState,
+  useSyncExternalStore,
   type ReactNode,
 } from "react";
 import { useRouter } from "next/navigation";
@@ -38,6 +39,7 @@ import {
   PutdukAiProtocolError,
   type PutdukAiMessage,
 } from "./putduk-ai-protocol";
+import { restoreOwnAiMessages } from "./putduk-ai-history";
 
 export type PutdukAiFeedbackResult = "exists" | "failed" | "saved";
 
@@ -47,10 +49,12 @@ export type PutdukAiSession = {
   draft: string;
   history: readonly OwnAiConversationSummary[];
   historyStatus: "hidden" | "loading" | "ready" | "unavailable";
+  historyHasEarlierMessages: boolean;
   knowledgeVersion: string;
   messages: readonly PutdukAiMessage[];
   pending: boolean;
   ownerStatus: "checking" | "ready" | "refreshing";
+  online: boolean;
   providerConfigured: boolean;
   setDraft: (question: string) => void;
   submit: (options?: { screenContext?: AiScreenContext }) => Promise<void>;
@@ -58,6 +62,7 @@ export type PutdukAiSession = {
   restoreQuestion: (messageId: string) => boolean;
   startNewConversation: () => void;
   openConversation: (conversationId: string) => Promise<void>;
+  reloadHistory: () => Promise<void>;
   sendFeedback: (
     messageId: string,
     rating: "DOWN" | "UP",
@@ -83,6 +88,18 @@ type ActiveRequest = {
 
 const SessionContext = createContext<PutdukAiSession | null>(null);
 
+function subscribeConnection(observe: () => void) {
+  window.addEventListener("online", observe);
+  window.addEventListener("offline", observe);
+  return () => {
+    window.removeEventListener("online", observe);
+    window.removeEventListener("offline", observe);
+  };
+}
+
+const browserConnectionSnapshot = () => navigator.onLine;
+const serverConnectionSnapshot = () => true;
+
 /** Account changes replace the entire owner before another presentation renders. */
 export function PutdukAiSessionProvider(props: ProviderProps) {
   return <OwnedAiSession key={props.ownerUserId} {...props} />;
@@ -107,6 +124,8 @@ function OwnedAiSession({
   );
   const [historyStatus, setHistoryStatus] =
     useState<PutdukAiSession["historyStatus"]>("hidden");
+  const [historyHasEarlierMessages, setHistoryHasEarlierMessages] =
+    useState(false);
   const [activeConversationId, setActiveConversationId] = useState<
     string | null
   >(null);
@@ -114,6 +133,11 @@ function OwnedAiSession({
   const [authObservationVersion, setAuthObservationVersion] = useState(0);
   const [ownerStatus, setOwnerStatus] =
     useState<PutdukAiSession["ownerStatus"]>("checking");
+  const online = useSyncExternalStore(
+    subscribeConnection,
+    browserConnectionSnapshot,
+    serverConnectionSnapshot,
+  );
   const draftRef = useRef("");
   const activeRef = useRef<ActiveRequest | null>(null);
   const liveRef = useRef(false);
@@ -125,6 +149,9 @@ function OwnedAiSession({
   const browserClientRef = useRef<SupabaseClient | null>(null);
   const activeConversationIdRef = useRef<string | null>(null);
   const historyTokenRef = useRef(0);
+  const historyListTokenRef = useRef(0);
+  const historyRetryConversationRef = useRef<string | null>(null);
+  const ownerEpochRef = useRef(0);
   const localTurnStartedRef = useRef(false);
 
   const writeMessage = useCallback((message: PutdukAiMessage) => {
@@ -170,6 +197,9 @@ function OwnedAiSession({
     const refreshNeeded = lockedVerificationRef.current === null;
     lockedVerificationRef.current ??= verificationRef.current;
     ownerAllowedRef.current = false;
+    ownerEpochRef.current += 1;
+    historyTokenRef.current += 1;
+    historyListTokenRef.current += 1;
     const active = activeRef.current;
     activeRef.current = null;
     active?.controller.abort();
@@ -177,9 +207,12 @@ function OwnedAiSession({
     draftRef.current = "";
     setDraftState("");
     setMessages([]);
+    setHistoryHasEarlierMessages(false);
+    historyRetryConversationRef.current = null;
     activeConversationIdRef.current = null;
     setActiveConversationId(null);
     setHistory([]);
+    setHistoryStatus("hidden");
     setPending(false);
     setOwnerStatus("refreshing");
     if (refreshNeeded)
@@ -232,6 +265,9 @@ function OwnedAiSession({
       disposed = true;
       liveRef.current = false;
       ownerAllowedRef.current = false;
+      ownerEpochRef.current += 1;
+      historyTokenRef.current += 1;
+      historyListTokenRef.current += 1;
       browserClientRef.current = null;
       unsubscribe?.();
       abortActiveRequest("AI_STREAM_INTERRUPTED");
@@ -270,13 +306,28 @@ function OwnedAiSession({
 
   const loadHistoryList = useCallback(async () => {
     const browser = browserClientRef.current;
-    if (!liveRef.current || !browser || typeof browser.from !== "function") {
+    if (
+      !liveRef.current ||
+      !ownerAllowedRef.current ||
+      !browser ||
+      typeof browser.from !== "function"
+    ) {
       return null;
     }
+    const epoch = ownerEpochRef.current;
+    const token = ++historyListTokenRef.current;
+    const current = () =>
+      liveRef.current &&
+      ownerAllowedRef.current &&
+      epoch === ownerEpochRef.current &&
+      token === historyListTokenRef.current &&
+      browser === browserClientRef.current;
     setHistoryStatus((current) => (current === "hidden" ? "loading" : current));
-    const listed = await listOwnAiConversations(browser, ownerUserId);
-    if (!liveRef.current) return null;
-    if (!listed.ok) {
+    const listed = await listOwnAiConversations(browser, ownerUserId).catch(
+      () => null,
+    );
+    if (!current()) return null;
+    if (!listed?.ok) {
       setHistoryStatus("unavailable");
       return null;
     }
@@ -286,20 +337,13 @@ function OwnedAiSession({
   }, [ownerUserId]);
 
   const applyOwnMessages = useCallback(
-    (conversationId: string, rows: readonly OwnAiMessage[]) => {
-      setMessages(
-        rows.map((row) => ({
-          id: row.id,
-          role: row.authorRole === "ASSISTANT" ? "assistant" : "user",
-          state: "complete" as const,
-          text: row.bodyText,
-          saved: true,
-          conversationId,
-          ...(row.authorRole === "ASSISTANT"
-            ? { assistantMessageId: row.id }
-            : {}),
-        })),
-      );
+    (
+      conversationId: string,
+      rows: readonly OwnAiMessage[],
+      hasEarlierMessages: boolean,
+    ) => {
+      setMessages(restoreOwnAiMessages(conversationId, rows));
+      setHistoryHasEarlierMessages(hasEarlierMessages);
     },
     [],
   );
@@ -309,40 +353,55 @@ function OwnedAiSession({
       if (!ownerAllowedRef.current || activeRef.current) return;
       historyTokenRef.current += 1;
       const token = historyTokenRef.current;
+      const epoch = ownerEpochRef.current;
       const browser = browserClientRef.current;
       if (!browser || typeof browser.from !== "function") return;
       const read = await readOwnAiMessages(
         browser,
         ownerUserId,
         conversationId,
-      );
-      if (!liveRef.current || token !== historyTokenRef.current) return;
-      if (!read.ok) {
+      ).catch(() => null);
+      if (
+        !liveRef.current ||
+        !ownerAllowedRef.current ||
+        epoch !== ownerEpochRef.current ||
+        token !== historyTokenRef.current
+      )
+        return;
+      if (!read?.ok) {
+        historyRetryConversationRef.current = conversationId;
         setHistoryStatus("unavailable");
         return;
       }
+      historyRetryConversationRef.current = null;
+      setHistoryStatus("ready");
       rememberConversation(conversationId);
-      applyOwnMessages(conversationId, read.messages);
+      applyOwnMessages(conversationId, read.messages, read.hasEarlierMessages);
     },
     [applyOwnMessages, ownerUserId, rememberConversation],
   );
 
   const startNewConversation = useCallback(() => {
-    if (activeRef.current) return;
+    if (!ownerAllowedRef.current || activeRef.current) return;
     historyTokenRef.current += 1;
+    historyRetryConversationRef.current = null;
     activeConversationIdRef.current = null;
     setActiveConversationId(null);
     setMessages([]);
+    setHistoryHasEarlierMessages(false);
   }, []);
 
   useEffect(() => {
     if (ownerStatus !== "ready") return;
     let cancelled = false;
     const token = historyTokenRef.current;
+    const epoch = ownerEpochRef.current;
     void (async () => {
       const conversations = await loadHistoryList();
       if (
         cancelled ||
+        !ownerAllowedRef.current ||
+        epoch !== ownerEpochRef.current ||
         token !== historyTokenRef.current ||
         localTurnStartedRef.current ||
         activeConversationIdRef.current ||
@@ -356,17 +415,28 @@ function OwnedAiSession({
         browser,
         ownerUserId,
         conversations[0].id,
-      );
+      ).catch(() => null);
       if (
         cancelled ||
+        !ownerAllowedRef.current ||
+        epoch !== ownerEpochRef.current ||
         token !== historyTokenRef.current ||
-        localTurnStartedRef.current ||
-        !read.ok
+        localTurnStartedRef.current
       ) {
         return;
       }
+      if (!read?.ok) {
+        historyRetryConversationRef.current = conversations[0].id;
+        setHistoryStatus("unavailable");
+        return;
+      }
+      historyRetryConversationRef.current = null;
       rememberConversation(conversations[0].id);
-      applyOwnMessages(conversations[0].id, read.messages);
+      applyOwnMessages(
+        conversations[0].id,
+        read.messages,
+        read.hasEarlierMessages,
+      );
     })();
     return () => {
       cancelled = true;
@@ -383,19 +453,46 @@ function OwnedAiSession({
     abortActiveRequest("CLIENT_CANCELLED");
   }, [abortActiveRequest]);
 
+  const reloadHistory = useCallback(async () => {
+    const epoch = ownerEpochRef.current;
+    const selection = historyTokenRef.current;
+    const listed = await loadHistoryList();
+    if (
+      !liveRef.current ||
+      !ownerAllowedRef.current ||
+      epoch !== ownerEpochRef.current ||
+      selection !== historyTokenRef.current
+    )
+      return;
+    const retryConversation = historyRetryConversationRef.current;
+    if (listed && retryConversation && !activeRef.current) {
+      await openConversation(retryConversation);
+    } else if (
+      listed?.[0] &&
+      !activeRef.current &&
+      !activeConversationIdRef.current &&
+      !localTurnStartedRef.current
+    ) {
+      await openConversation(listed[0].id);
+    }
+  }, [loadHistoryList, openConversation]);
+
   const submit = useCallback(
     async (options: { screenContext?: AiScreenContext } = {}) => {
       const question = draftRef.current.trim();
       if (
         !liveRef.current ||
         !ownerAllowedRef.current ||
+        !navigator.onLine ||
         activeRef.current ||
         question.length < 3 ||
         question.length > AI_QUESTION_MAX_CHARACTERS
       )
         return;
       historyTokenRef.current += 1;
+      historyRetryConversationRef.current = null;
       localTurnStartedRef.current = true;
+      const epoch = ownerEpochRef.current;
       const clientMessageId = crypto.randomUUID();
       const request: ActiveRequest = {
         controller: new AbortController(),
@@ -427,6 +524,7 @@ function OwnedAiSession({
       const isCurrent = () =>
         liveRef.current &&
         ownerAllowedRef.current &&
+        epoch === ownerEpochRef.current &&
         activeRef.current === request &&
         !request.controller.signal.aborted;
       const context = aiScreenContextSchema.safeParse(options.screenContext);
@@ -513,7 +611,12 @@ function OwnedAiSession({
           activeRef.current = null;
           setPending(false);
         }
-        if (liveRef.current && request.message.conversationId) {
+        if (
+          liveRef.current &&
+          ownerAllowedRef.current &&
+          epoch === ownerEpochRef.current &&
+          request.message.conversationId
+        ) {
           rememberConversation(request.message.conversationId);
           void loadHistoryList();
         }
@@ -534,7 +637,10 @@ function OwnedAiSession({
     (messageId: string) => {
       if (!ownerAllowedRef.current || activeRef.current) return false;
       const message = messages.find((row) => row.id === messageId);
-      if (!message?.question || !["error", "cancelled"].includes(message.state))
+      if (
+        !message?.question ||
+        !["error", "cancelled", "unverified"].includes(message.state)
+      )
         return false;
       setDraft(message.question);
       return true;
@@ -552,6 +658,7 @@ function OwnedAiSession({
       if (!liveRef.current || !ownerAllowedRef.current || !conversationId) {
         return "failed" as const;
       }
+      const epoch = ownerEpochRef.current;
       try {
         const response = await fetch("/api/v1/ai/feedback", {
           method: "POST",
@@ -567,14 +674,38 @@ function OwnedAiSession({
             ...(reasonCode ? { reasonCode } : {}),
           }),
         });
-        if (response.status === 409) return "exists" as const;
+        if (
+          !liveRef.current ||
+          !ownerAllowedRef.current ||
+          epoch !== ownerEpochRef.current
+        )
+          return "failed" as const;
+        if (response.status === 409) {
+          const payload = await response.json().catch(() => null);
+          if (
+            !liveRef.current ||
+            !ownerAllowedRef.current ||
+            epoch !== ownerEpochRef.current
+          )
+            return "failed" as const;
+          if (payload?.error?.code === "AI_SESSION_CHANGED") {
+            browserOwnerRef.current = undefined;
+            initialOwnerObservedRef.current = false;
+            invalidateOwner();
+            setAuthObservationVersion((current) => current + 1);
+            return "failed" as const;
+          }
+          return payload?.error?.code === "AI_FEEDBACK_EXISTS"
+            ? ("exists" as const)
+            : ("failed" as const);
+        }
         if (!response.ok) return "failed" as const;
         return "saved" as const;
       } catch {
         return "failed" as const;
       }
     },
-    [ownerUserId],
+    [invalidateOwner, ownerUserId],
   );
 
   return (
@@ -585,10 +716,12 @@ function OwnedAiSession({
         draft,
         history,
         historyStatus,
+        historyHasEarlierMessages,
         knowledgeVersion,
         messages,
         pending,
         ownerStatus,
+        online,
         providerConfigured,
         setDraft,
         submit,
@@ -596,6 +729,7 @@ function OwnedAiSession({
         restoreQuestion,
         startNewConversation,
         openConversation,
+        reloadHistory,
         sendFeedback,
       }}
     >

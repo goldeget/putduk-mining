@@ -28,7 +28,39 @@ const POLL_MS = 3_000;
 /** Job types with a registered command handler. */
 export const SUPPORTED_JOB_HANDLERS = Object.freeze({
   FINANCIAL_RECONCILIATION: handleFinancialReconciliation,
+  FUNDING_MINING_TICK_V1: prepareFundingMiningTick,
 });
+
+const FUNDING_JOB_UUID =
+  /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i;
+
+function prepareFundingMiningTick(_client, job) {
+  const payload = job?.payload;
+  const fields = ["user_id", "activation_id", "expected_state_id"];
+  if (
+    job?.job_type !== "FUNDING_MINING_TICK_V1" ||
+    typeof job.id !== "string" ||
+    !FUNDING_JOB_UUID.test(job.id) ||
+    job.payload_version !== 1 ||
+    !Number.isSafeInteger(job.attempts) ||
+    job.attempts < 1 ||
+    !payload ||
+    typeof payload !== "object" ||
+    Array.isArray(payload) ||
+    Object.keys(payload).length !== fields.length ||
+    fields.some(
+      (field) =>
+        !Object.hasOwn(payload, field) ||
+        typeof payload[field] !== "string" ||
+        !FUNDING_JOB_UUID.test(payload[field]),
+    ) ||
+    job.idempotency_key !== `funding:state:${payload.expected_state_id}`
+  )
+    throw new Error("FUNDING_JOB_ENVELOPE_INVALID");
+  // No calculation or monetary RPC here. The existing complete_system_job
+  // command verifies originals and commits the producer with the current fence.
+  // Registration does not release jobs held at infinity or create new jobs.
+}
 
 /**
  * Outbox event types with a registered command handler.
@@ -93,7 +125,8 @@ export function jitteredRetryDelaySeconds(attempt, randomUnit = Math.random()) {
 export function classifyJobFailure(errorCode) {
   if (
     errorCode === "UNSUPPORTED_JOB_TYPE" ||
-    errorCode === "RECONCILIATION_JOB_ID_REQUIRED"
+    errorCode === "RECONCILIATION_JOB_ID_REQUIRED" ||
+    errorCode === "FUNDING_JOB_ENVELOPE_INVALID"
   ) {
     return "PERMANENT";
   }
@@ -304,17 +337,27 @@ export async function processOutboxBatch(
     unsupported: 0,
   };
 
-  const { data, error } = await client.rpc("claim_outbox_events", {
-    p_worker_id: workerId,
-    p_batch_size: batchSize,
-    p_lease_seconds: leaseSeconds,
-  });
-  if (error) {
-    console.error("claim_outbox_events failed", error.message);
-    return { ...summary, claimError: error.message };
+  if (!Number.isInteger(batchSize) || batchSize < 1 || batchSize > 200) {
+    throw new Error("INVALID_WORKER_BATCH_SIZE");
   }
 
-  for (const event of data ?? []) {
+  // Claim only the item that can start now. batchSize bounds the cycle's work;
+  // waiting rows keep their original availability and never consume a lease.
+  while (summary.claimed < batchSize) {
+    const { data, error } = await client.rpc("claim_outbox_events", {
+      p_worker_id: workerId,
+      p_batch_size: 1,
+      p_lease_seconds: leaseSeconds,
+    });
+    if (error) {
+      console.error("claim_outbox_events failed", error.message);
+      summary.claimError = error.message;
+      break;
+    }
+    const event = data?.[0];
+    if (!event) {
+      break;
+    }
     summary.claimed += 1;
     const { error: extendError } = await client.rpc(
       "extend_outbox_event_lease",
@@ -327,7 +370,7 @@ export async function processOutboxBatch(
     if (extendError) {
       summary.failed += 1;
       console.error("extend_outbox_event_lease failed", extendError.message);
-      continue;
+      break;
     }
     const handler = outboxHandlers[event.event_type];
 
@@ -343,10 +386,9 @@ export async function processOutboxBatch(
           randomUnit,
         ),
       });
+      summary.failed += 1;
       if (failError) {
         console.error("fail_outbox_event failed", failError.message);
-      } else {
-        summary.failed += 1;
       }
       continue;
     }
@@ -391,11 +433,11 @@ export async function processOutboxBatch(
           randomUnit,
         ),
       });
+      summary.failed += 1;
       if (failError) {
         console.error("fail_outbox_event failed", failError.message);
-      } else {
-        summary.failed += 1;
       }
+      break;
     }
   }
 
@@ -423,17 +465,27 @@ export async function processJobBatch(
     unsupported: 0,
   };
 
-  const { data, error } = await client.rpc("claim_system_jobs", {
-    p_worker_id: workerId,
-    p_batch_size: batchSize,
-    p_lease_seconds: leaseSeconds,
-  });
-  if (error) {
-    console.error("claim_system_jobs failed", error.message);
-    return { ...summary, claimError: error.message };
+  if (!Number.isInteger(batchSize) || batchSize < 1 || batchSize > 100) {
+    throw new Error("INVALID_WORKER_BATCH_SIZE");
   }
 
-  for (const job of data ?? []) {
+  // Claim only the item that can start now. batchSize bounds the cycle's work;
+  // waiting rows keep their original availability and never consume a lease.
+  while (summary.claimed < batchSize) {
+    const { data, error } = await client.rpc("claim_system_jobs", {
+      p_worker_id: workerId,
+      p_batch_size: 1,
+      p_lease_seconds: leaseSeconds,
+    });
+    if (error) {
+      console.error("claim_system_jobs failed", error.message);
+      summary.claimError = error.message;
+      break;
+    }
+    const job = data?.[0];
+    if (!job) {
+      break;
+    }
     summary.claimed += 1;
     const { error: extendError } = await client.rpc("extend_system_job_lease", {
       p_job_id: job.id,
@@ -443,7 +495,7 @@ export async function processJobBatch(
     if (extendError) {
       summary.failed += 1;
       console.error("extend_system_job_lease failed", extendError.message);
-      continue;
+      break;
     }
     const handler = jobHandlers[job.job_type];
 
@@ -460,10 +512,9 @@ export async function processJobBatch(
           randomUnit,
         ),
       });
+      summary.failed += 1;
       if (failError) {
         console.error("fail_system_job failed", failError.message);
-      } else {
-        summary.failed += 1;
       }
       continue;
     }
@@ -507,11 +558,11 @@ export async function processJobBatch(
           randomUnit,
         ),
       });
+      summary.failed += 1;
       if (failError) {
         console.error("fail_system_job failed", failError.message);
-      } else {
-        summary.failed += 1;
       }
+      break;
     }
   }
 
@@ -529,6 +580,13 @@ export async function runWorkerCycle(client, options = {}) {
     outbox,
     jobs,
   };
+}
+
+export function workerCycleFailed(summary) {
+  return [summary.outbox, summary.jobs].some(
+    (batch) =>
+      Boolean(batch.claimError) || batch.failed > 0 || batch.unsupported > 0,
+  );
 }
 
 export async function runDurableLoop({
@@ -582,6 +640,9 @@ export async function runDurableLoop({
           at: new Date().toISOString(),
         }),
       );
+      if (workerCycleFailed(summary)) {
+        throw new Error("WORKER_ONCE_FAILED");
+      }
       return summary;
     }
 

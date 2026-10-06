@@ -1,4 +1,8 @@
 import type { AiScreenContext } from "@/domain/ai/chat";
+import {
+  findMemberAiHelpTopic,
+  getMemberAiHelp,
+} from "@/domain/ai/member-help";
 
 import { guardAiQuestion, type AiDeniedClassification } from "./guard";
 import { formatFactAnswer } from "./knowledge";
@@ -218,6 +222,19 @@ export function routeAiQuestion(
     };
   }
 
+  const helpTopic = findMemberAiHelpTopic(
+    normalized,
+    screenContext?.currentRoute,
+  );
+  if (helpTopic) {
+    return {
+      answer: getMemberAiHelp(helpTopic).answer,
+      classification: "STATIC_FACT",
+      kind: "static",
+      routeKey: `member_help_${helpTopic}`,
+    };
+  }
+
   if (screenContext?.currentRoute && UI_HELP_PATTERN.test(normalized)) {
     return {
       classification: "UI_HELP",
@@ -249,6 +266,9 @@ export function routeAiQuestion(
   };
 }
 
-export function isAiResponseCacheable(route: AiRoute) {
-  return route.kind === "low_cost" || route.kind === "high_capability";
+export function isAiResponseCacheable() {
+  // A topic or a best-effort redactor cannot prove that free-form input/output
+  // is public. Keep member turns out of the shared cache until an approved
+  // public-only corpus and deterministic input selector exist.
+  return false;
 }

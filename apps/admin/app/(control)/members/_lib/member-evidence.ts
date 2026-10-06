@@ -19,6 +19,7 @@ export async function countMemberMiningSessions(
 
 export {
   anyMemberCountFailed,
+  combineMemberCounts,
   memberCountLabel,
   type MemberCountResult,
 } from "./member-evidence-labels";

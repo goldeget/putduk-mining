@@ -380,6 +380,16 @@ select ok(
   ),
   'bonus credit is not a principal lot');
 
+create temporary table entitlement_withdrawal_snapshot as
+select
+  (select jsonb_agg(to_jsonb(entry) order by entry.id) from public.wallet_ledger as entry
+    where entry.user_id = ctx.band_id) as wallet_entries,
+  (select count(*) from public.ledger_transactions where member_user_id = ctx.band_id) as journals,
+  (select count(*) from public.outbox_events where actor_user_id = ctx.band_id) as events,
+  (select count(*) from public.withdrawal_requests where user_id = ctx.band_id) as requests,
+  (select count(*) from public.mining_reward_withdrawal_reservations where user_id = ctx.band_id) as reservations
+from entitlement_ctx as ctx;
+
 set local role service_role;
 select throws_ok($$
   insert into public.funding_principal_lots(
@@ -418,9 +428,18 @@ select throws_ok($$select public.request_krw_withdrawal(
   '0e2e0000-0000-4000-8000-000000000099',
   1,
   'w2-entitlement-withdrawal-closed')$$,
-  '55000', 'VERIFIED_WITHDRAWAL_DESTINATION_REQUIRED',
-  'a missing destination does not spend verified principal');
+  '55000', 'WITHDRAWAL_VERIFIED_SOURCE_LIFECYCLE_UNAVAILABLE',
+  'principal and welcome bonus do not substitute for mining rewards before destination lookup');
 reset role;
+select ok(
+  (select jsonb_agg(to_jsonb(entry) order by entry.id) from public.wallet_ledger as entry
+    where entry.user_id = ctx.band_id) is not distinct from snapshot.wallet_entries
+  and (select count(*) from public.ledger_transactions where member_user_id = ctx.band_id) = snapshot.journals
+  and (select count(*) from public.outbox_events where actor_user_id = ctx.band_id) = snapshot.events
+  and (select count(*) from public.withdrawal_requests where user_id = ctx.band_id) = snapshot.requests
+  and (select count(*) from public.mining_reward_withdrawal_reservations where user_id = ctx.band_id) = snapshot.reservations,
+  'rejected general withdrawal leaves wallet entries, journals, events, requests and reservations unchanged')
+from entitlement_ctx as ctx cross join entitlement_withdrawal_snapshot as snapshot;
 select ok((select count(*) = 2
     and bool_and(lot.amount_micro_krw = lot.amount_atomic * 1000000)
   from public.funding_principal_lots as lot

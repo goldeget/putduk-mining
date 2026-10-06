@@ -145,7 +145,7 @@ where account.user_id = ws04_ctx.user_a
 -- Phone availability shape
 select ok(
   (
-    select count(*) = 5
+    select count(*) = 19
       and bool_and(procedure.proconfig @> array['search_path=pg_catalog']::text[])
     from pg_proc as procedure
     join pg_namespace as namespace on namespace.oid = procedure.pronamespace
@@ -156,7 +156,21 @@ select ok(
         'public.is_login_id_available(text)'::regprocedure,
         'public.resolve_login_email(text)'::regprocedure,
         'app_private.capture_public_signup_identity()'::regprocedure,
-        'public.signup_phone_availability(text)'::regprocedure
+        'public.signup_phone_availability(text)'::regprocedure,
+        'public.confirm_funding_allocation(text,uuid,text,bigint,jsonb,text)'::regprocedure,
+        'app_private.execute_product_catalog_command(text,uuid,uuid,text,timestamptz,uuid,uuid,text,text,text,text,text)'::regprocedure,
+        'app_private.execute_product_catalog_review_read(uuid,uuid,uuid,text,text)'::regprocedure,
+        'app_private.validate_product_catalog_publication_trigger()'::regprocedure,
+        'app_private.verify_funding_integrity_at_commit()'::regprocedure,
+        'app_private.verify_balanced_ledger_at_commit()'::regprocedure,
+        'app_private.verify_funding_portion_transition()'::regprocedure,
+        'app_private.read_funding_runtime_server_display(uuid)'::regprocedure,
+        'app_private.read_neutral_funding_job_inputs(uuid,uuid,timestamp with time zone)'::regprocedure,
+        'app_private.read_verified_credit_funding_inputs(uuid,uuid,timestamp with time zone)'::regprocedure,
+        'app_private.begin_funding_credit_boundary(uuid,text)'::regprocedure,
+        'app_private.finish_funding_credit_boundary(uuid)'::regprocedure,
+        'app_private.carry_forward_funding_capacity(uuid,uuid,uuid)'::regprocedure,
+        'app_private.verify_credit_boundary_commit()'::regprocedure
       )
   )
     and not exists (
@@ -170,10 +184,24 @@ select ok(
           'public.is_login_id_available(text)'::regprocedure,
           'public.resolve_login_email(text)'::regprocedure,
           'app_private.capture_public_signup_identity()'::regprocedure,
-          'public.signup_phone_availability(text)'::regprocedure
+          'public.signup_phone_availability(text)'::regprocedure,
+        'public.confirm_funding_allocation(text,uuid,text,bigint,jsonb,text)'::regprocedure,
+        'app_private.execute_product_catalog_command(text,uuid,uuid,text,timestamptz,uuid,uuid,text,text,text,text,text)'::regprocedure,
+        'app_private.execute_product_catalog_review_read(uuid,uuid,uuid,text,text)'::regprocedure,
+        'app_private.validate_product_catalog_publication_trigger()'::regprocedure,
+        'app_private.verify_funding_integrity_at_commit()'::regprocedure,
+        'app_private.verify_balanced_ledger_at_commit()'::regprocedure,
+        'app_private.verify_funding_portion_transition()'::regprocedure,
+        'app_private.read_funding_runtime_server_display(uuid)'::regprocedure,
+        'app_private.read_neutral_funding_job_inputs(uuid,uuid,timestamp with time zone)'::regprocedure,
+        'app_private.read_verified_credit_funding_inputs(uuid,uuid,timestamp with time zone)'::regprocedure,
+        'app_private.begin_funding_credit_boundary(uuid,text)'::regprocedure,
+        'app_private.finish_funding_credit_boundary(uuid)'::regprocedure,
+        'app_private.carry_forward_funding_capacity(uuid,uuid,uuid)'::regprocedure,
+        'app_private.verify_credit_boundary_commit()'::regprocedure
         )
     ),
-  'application schemas allow exactly five reviewed SECURITY DEFINER functions'
+  'application schemas allow exactly nineteen reviewed SECURITY DEFINER functions'
 );
 
 select is(

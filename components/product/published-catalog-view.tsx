@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Route } from "next";
 
+import { GlobalPavilion } from "@/components/brand/global-pavilion";
 import { PutdukIcon } from "@/components/icons/putduk-icon";
 import type {
   ProductCategory,
@@ -47,25 +48,162 @@ function formatDate(value: string, dateOnly = false) {
 
 function CatalogEarth() {
   return (
-    <picture className={styles.scene}>
-      <source
-        type="image/avif"
-        srcSet="/brand/worlds/orbital-earth-960-v1.avif 960w, /brand/worlds/orbital-earth-1600-v1.avif 1600w, /brand/worlds/orbital-earth-2400-v1.avif 2400w"
-        sizes="(max-width: 767px) 100vw, (max-width: 1099px) 80vw, 65vw"
-      />
-      <source
-        type="image/webp"
-        srcSet="/brand/worlds/orbital-earth-960-v1.webp 960w, /brand/worlds/orbital-earth-1600-v1.webp 1600w, /brand/worlds/orbital-earth-2400-v1.webp 2400w"
-        sizes="(max-width: 767px) 100vw, (max-width: 1099px) 80vw, 65vw"
-      />
-      <img
-        src="/brand/worlds/orbital-earth-960-v1.webp"
-        alt=""
-        width="1600"
-        height="900"
-        decoding="async"
-      />
-    </picture>
+    <GlobalPavilion
+      className={styles.scene}
+      sizes="(max-width: 767px) 100vw, (max-width: 1099px) 80vw, 65vw"
+    />
+  );
+}
+
+/** 분류를 설명하는 장식이다. 상품 장면·수익·실물 자산을 지정하지 않는다. */
+function CategoryArtwork({
+  category,
+  productId,
+}: {
+  category: ProductCategory;
+  productId: string;
+}) {
+  const metalId = `catalog-metal-${productId}`;
+  const glassId = `catalog-glass-${productId}`;
+  return (
+    <span
+      className={styles.productArt}
+      data-category={category}
+      aria-hidden="true"
+    >
+      <svg
+        data-catalog-artwork={category}
+        aria-hidden="true"
+        focusable="false"
+        viewBox="0 0 320 180"
+      >
+        <defs>
+          <linearGradient id={metalId} x1="0" y1="0" x2="1" y2="1">
+            <stop className={styles.artGlint} />
+            <stop className={styles.artAccent} offset="0.35" />
+            <stop className={styles.artShadow} offset="0.72" />
+            <stop className={styles.artAccent} offset="1" />
+          </linearGradient>
+          <linearGradient id={glassId} x1="0" y1="0" x2="1" y2="1">
+            <stop className={styles.artGlassHighlight} />
+            <stop className={styles.artGlassShadow} offset="1" />
+          </linearGradient>
+        </defs>
+        <g className={styles.artCircuit} fill="none" stroke="currentColor">
+          <path d="M16 47h44l27 16M16 75h30l33 20M304 42h-36l-29 21M304 83h-29l-24 18M20 138h39l24-15M300 140h-31l-20-13" />
+          <path d="M38 24v17m241-17v13M35 153h35m204 0h-32" />
+          <circle cx="60" cy="47" r="2" />
+          <circle cx="268" cy="42" r="2" />
+        </g>
+        <ellipse
+          className={styles.artGround}
+          cx="160"
+          cy="147"
+          rx="103"
+          ry="17"
+        />
+        {category === "KR_STOCK" ? (
+          <g>
+            <path
+              d="m83 80 97-35 67 46v17l-97 37-67-47Z"
+              fill={`url(#${metalId})`}
+            />
+            <path
+              d="m83 80 97-35 67 46-97 37Z"
+              fill={`url(#${glassId})`}
+              className={styles.artOutline}
+            />
+            <path d="m101 81 76-27 51 35-77 28Z" fill={`url(#${metalId})`} />
+            <path d="m111 81 64-23 43 30-65 24Z" fill={`url(#${glassId})`} />
+            <g
+              className={styles.artDetail}
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path d="m122 80 49-17 30 20-48 17Zm13-3 14 9 28-10m-28 10v8" />
+              <path d="m87 85-13 5m21 1-13 5m21 1-13 5m21 1-13 5m21 1-13 5m21 1-13 5m21 1-13 5m21 1-13 5M162 128l7 7m4-11 7 7m4-11 7 7m4-11 7 7m4-11 7 7m4-11 7 7m4-11 7 7m4-11 7 7" />
+            </g>
+          </g>
+        ) : null}
+        {category === "US_STOCK" ? (
+          <g>
+            <path
+              d="m86 73 30-12 25 16v65l-30 13-25-16Zm60-29 37-14 30 20v88l-37 15-30-20Zm68 43 25-10 20 13v47l-25 11-20-14Z"
+              fill={`url(#${metalId})`}
+            />
+            <path
+              d="m87 76 23 15v60l-23-14Zm60-28 29 19v81l-29-19Zm68 42 18 12v42l-18-12Z"
+              fill={`url(#${glassId})`}
+            />
+            <g className={styles.artDetail} fill="none" stroke="currentColor">
+              <path d="m94 87 10 7m-10 6 10 7m-10 6 10 7m50-57 15 10m-15 6 15 10m-15 6 15 10m-15 6 15 10m-15 6 15 10m54-19 8 5m-8 7 8 5m-8 7 8 5" />
+              <path d="m113 89 20-8m-20 22 20-8m-20 22 20-8M181 65l24-10m-24 28 24-10m-24 28 24-10m-24 28 24-10m-24 28 24-10" />
+            </g>
+          </g>
+        ) : null}
+        {category === "GOLD" || category === "SILVER" ? (
+          <g>
+            <path
+              d="m76 118 57-24 70 24v21l-56 25-71-25Zm101-14 46-19 37 27v22l-46 21-37-29Z"
+              fill={`url(#${metalId})`}
+            />
+            <path
+              d="m76 118 57-24 70 24-56 25Zm101-14 46-19 37 27-46 21Z"
+              className={styles.artBevel}
+            />
+            <path
+              d="m106 111 23-65 64-21 31 68-65 38Z"
+              fill={`url(#${metalId})`}
+              className={styles.artOutline}
+            />
+            <path
+              d="m117 108 20-57 53-17 24 55-56 32Z"
+              className={styles.artBevel}
+            />
+            <path
+              d="m131 79 17-25 32-10 12 25-35 20Z"
+              fill={`url(#${metalId})`}
+            />
+            <g className={styles.artDetail} fill="none" stroke="currentColor">
+              <path d="m133 105 53-19m-58 9 53-19m-21 55v12l64-36V93M79 137l67 22m70-8 40-19" />
+            </g>
+          </g>
+        ) : null}
+        {category === "CRYPTO" ? (
+          <g>
+            <g
+              className={styles.artDetail}
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path d="m91 67 39 18m61-18 37-17m-25 54 40 25m-95-9-48 18" />
+              <path d="m73 43 23 12v26L73 94 50 81V55Zm178-15 20 11v23l-20 11-20-11V39Zm10 84 20 11v23l-20 11-20-11v-23ZM81 115l20 11v23l-20 11-20-11v-23Z" />
+            </g>
+            <path
+              d="m166 37 48 27v54l-48 28-48-28V64Z"
+              fill={`url(#${metalId})`}
+              className={styles.artOutline}
+            />
+            <path
+              d="m166 49 37 21v42l-37 22-37-22V70Z"
+              fill={`url(#${glassId})`}
+            />
+            <path
+              d="m166 63 24 14v27l-24 14-24-14V77Z"
+              fill={`url(#${metalId})`}
+            />
+            <path
+              d="m166 63 24 14-24 14-24-14Zm0 28v27"
+              className={styles.artDetail}
+              fill="none"
+              stroke="currentColor"
+            />
+          </g>
+        ) : null}
+      </svg>
+    </span>
   );
 }
 
@@ -76,18 +214,21 @@ function CatalogProduct({ product }: { product: PublishedCatalogProduct }) {
       data-availability={product.availability.state}
     >
       <summary>
-        <span className={styles.category}>
-          {categoryLabels[product.category]}
+        <CategoryArtwork category={product.category} productId={product.id} />
+        <span className={styles.productCopy}>
+          <span className={styles.category}>
+            {categoryLabels[product.category]}
+          </span>
+          <strong className={styles.productName}>{product.nameKo}</strong>
+          <span className={styles.availability}>
+            {availabilityLabels[product.availability.state]}
+          </span>
+          <span className={styles.disclosureLabel}>
+            <span className={styles.openLabel}>자세히 보기</span>
+            <span className={styles.closeLabel}>접기</span>
+            <span className={styles.disclosureMark} aria-hidden="true" />
+          </span>
         </span>
-        <strong className={styles.productName}>{product.nameKo}</strong>
-        <span className={styles.availability}>
-          {availabilityLabels[product.availability.state]}
-        </span>
-        <span className={styles.disclosureLabel}>
-          <span className={styles.openLabel}>자세히 보기</span>
-          <span className={styles.closeLabel}>접기</span>
-        </span>
-        <span className={styles.disclosureMark} aria-hidden="true" />
       </summary>
       <div className={styles.productDetail}>
         <p>{product.descriptionKo}</p>
@@ -250,7 +391,15 @@ export function PublishedCatalogView({ read }: { read: PublishedCatalogRead }) {
                   여기서 확인할 수 있어요.
                 </p>
               )}
-              {!hasProducts ? (
+              {hasProducts ? (
+                <Link
+                  className={`button button--primary ${styles.primaryAction}`}
+                  href="/products/allocation"
+                >
+                  상품 선택
+                  <PutdukIcon name="arrow-right" size={20} />
+                </Link>
+              ) : (
                 <Link
                   className={`button button--primary ${styles.primaryAction}`}
                   href="/mining"
@@ -258,7 +407,7 @@ export function PublishedCatalogView({ read }: { read: PublishedCatalogRead }) {
                   채굴 보기
                   <PutdukIcon name="arrow-right" size={20} />
                 </Link>
-              ) : null}
+              )}
             </div>
           </section>
           {hasProducts ? (

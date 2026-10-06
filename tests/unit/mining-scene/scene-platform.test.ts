@@ -375,6 +375,7 @@ describe("registry contract", () => {
   test("does not activate an unapproved family or the SK hynix reference as a production asset", () => {
     expect(APPROVED_SCENE_MASTER_SHA256).toEqual([
       "5d398a3155635d46a6d0b1f639c25d349ddf21607a16a4e6f948655744b8a6dd",
+      "113fdbc5c41772145f98f3357f27754fa1bd20602a5261c133becc0fa1126d52",
     ]);
     expect(SK_HYNIX_V3_REFERENCE.activatesProductionScene).toBe(false);
     expect(SK_HYNIX_V3_REFERENCE.productionAssetApproval).toBe("NOT_APPROVED");

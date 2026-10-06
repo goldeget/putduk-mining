@@ -46,7 +46,7 @@ describe("WalletReadView 마크업", () => {
     );
 
     expect(html).toContain("출금 가능 잔액");
-    expect(html.match(/>0<\/span><span[^>]*> KRW<\/span>/g)).toHaveLength(3);
+    expect(html.match(/>0<\/span><span[^>]*>원<\/span>/g)).toHaveLength(3);
     expect(html).toContain("지금 사용 가능한 원화는 0원이에요");
     expect(html).toContain("아직 거래 내역이 없어요");
     expect(html).toContain("아직 입출금 처리 내역이 없어요");
@@ -106,9 +106,9 @@ describe("WalletReadView 마크업", () => {
 
     expect(html).toContain("환영 보상");
     expect(html).toContain("+5,000 KRW");
-    expect(html).toMatch(/>2,000<\/span><span[^>]*> KRW<\/span>/);
-    expect(html).toMatch(/>5,000<\/span><span[^>]*> KRW<\/span>/);
-    expect(html).toMatch(/>7,000<\/span><span[^>]*> KRW<\/span>/);
+    expect(html).toMatch(/>2,000<\/span><span[^>]*>원<\/span>/);
+    expect(html).toMatch(/>5,000<\/span><span[^>]*>원<\/span>/);
+    expect(html).toMatch(/>7,000<\/span><span[^>]*>원<\/span>/);
     expect(html).toContain("RCPT-001");
     expect(html).toContain("처리 중");
     expect(html).toContain("환영 보상 첫 출금");
@@ -162,6 +162,7 @@ describe("WalletReadView 마크업", () => {
     expect(html).not.toContain("amountFigure");
     expect(html).not.toContain("balance-card--primary");
     expect(html).not.toContain("사용 가능 잔액</small>");
+    expect(html).not.toContain('data-wallet-decoration="metal-wallet"');
   });
 
   it("최근 거래 내역과 PUTDUK START 전환을 숨기지 않는다", () => {
@@ -261,9 +262,6 @@ describe("WalletReadView 마크업", () => {
 
     expect(css).not.toMatch(/overflow-wrap:\s*anywhere/);
     expect(css).toMatch(/\.amountFigure\s*\{[^}]*white-space:\s*nowrap/s);
-    expect(css).toMatch(
-      /\.amountFigure\s*\{[^}]*font-size:\s*min\(1em,\s*20cqi\)/s,
-    );
     expect(css).toMatch(/\.amountUnit\s*\{[^}]*white-space:\s*nowrap/s);
     expect(rule(".funding")).toMatch(/container-type:\s*inline-size/);
     expect(css).toMatch(
@@ -297,6 +295,93 @@ describe("WalletReadView 마크업", () => {
     expect(view).not.toMatch(/toLocaleString|BigInt/);
     expect(view).not.toMatch(
       /availableAtomic\s*\+|heldAtomic\s*\+|balanceAtomic\s*\+/,
+    );
+  });
+
+  it("장식은 접근성 트리에서 제외하고 입출금 동작 이름과 분리한다", () => {
+    const html = renderToStaticMarkup(
+      createElement(WalletReadView, {
+        balanceState: "zero",
+        funding: quietFunding,
+        krw: {
+          availableAtomic: "0",
+          balanceAtomic: "0",
+          heldAtomic: "0",
+          walletAccountId: "acct-decoration",
+        },
+        ledgerEntries: [],
+        ledgerState: "empty",
+        receiptState: "empty",
+        receipts: [],
+        trialRewardAtomic: "0",
+        trialState: "empty",
+      }),
+    );
+
+    const artwork =
+      html.match(
+        /<svg[^>]*data-wallet-decoration="metal-wallet"[\s\S]*?<\/svg>/,
+      )?.[0] ?? "";
+    expect(artwork).toContain('aria-hidden="true"');
+    expect(artwork).toContain('focusable="false"');
+    expect(artwork).not.toMatch(/<text|<title|<animate|<script/);
+    const decorations =
+      html.match(/<svg\b[^>]*data-wallet-decoration="[^"]*"[^>]*>/g) ?? [];
+    expect(decorations.length).toBeGreaterThan(1);
+    for (const svg of decorations) {
+      expect(svg).toContain('aria-hidden="true"');
+      expect(svg).toContain('focusable="false"');
+    }
+    expect(html).toMatch(
+      /href="\/wallet\/deposit"[\s\S]*?<\/svg>입금하기<\/a>/,
+    );
+    expect(html).toMatch(
+      /href="\/wallet\/withdraw"[\s\S]*?<\/svg>출금하기<\/a>/,
+    );
+    expect(artwork).not.toMatch(/role="(?:progressbar|status)"/);
+    expect(html).not.toMatch(/수익률|보장 수익/);
+  });
+
+  it("큰 잔액도 숫자를 바꾸지 않고 원화·체험·확인 불가를 유지한다", () => {
+    const html = renderToStaticMarkup(
+      createElement(WalletReadView, {
+        balanceState: "ready",
+        funding: {
+          state: "ready",
+          rows: [
+            { label: "인정 원금", tone: "separate", value: "확인할 수 없음" },
+            { label: "정산 전 대기 수익", tone: "separate", value: "0원" },
+            { label: "아직 확정 전", tone: "unconfirmed", value: "25,000원" },
+          ],
+        },
+        krw: {
+          availableAtomic: "9223372036854775807",
+          balanceAtomic: "9223372036854775817",
+          heldAtomic: "10",
+          walletAccountId: "acct-exact-large",
+        },
+        ledgerEntries: [],
+        ledgerState: "empty",
+        receiptState: "empty",
+        receipts: [],
+        trialRewardAtomic: "1200",
+        trialState: "ready",
+      }),
+    );
+
+    expect(html).toMatch(
+      />9,223,372,036,854,775,807<\/span><span[^>]*>원<\/span>/,
+    );
+    expect(html).toMatch(
+      />9,223,372,036,854,775,817<\/span><span[^>]*>원<\/span>/,
+    );
+    expect(html).toMatch(/>10<\/span><span[^>]*>원<\/span>/);
+    expect(html).toMatch(/>1,200<\/span><span[^>]*> 체험 단위<\/span>/);
+    expect(html).toContain("확인할 수 없음");
+    expect(html).toContain("확정된 수익이 아니에요");
+    expect(html).toContain('data-wallet-long-amount="true"');
+    expect(html).not.toMatch(
+      /9,223,372,036,854,775,808|9,223,372,036,854,775,800/,
     );
   });
 });

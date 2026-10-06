@@ -24,14 +24,18 @@ type OutboxHandler = (
   },
 ) => unknown;
 
-type JobHandler = (
-  client: SupabaseClient,
-  job: {
-    id: string;
-    job_type: string;
-    attempts: number;
-  },
-) => unknown;
+export type WorkerJobEnvelope = {
+  id: string;
+  job_type: string;
+  attempts: number;
+  payload_version?: number;
+  idempotency_key?: string;
+  payload?: unknown;
+};
+
+type JobHandler = (client: SupabaseClient, job: WorkerJobEnvelope) => unknown;
+
+export const SUPPORTED_JOB_HANDLERS: Readonly<Record<string, JobHandler>>;
 
 type BatchOptions = {
   workerId?: string;
@@ -103,3 +107,13 @@ export function startPeriodicLeaseRenewal(options: {
 export function stopAllLeaseRenewals(): void;
 
 export function activeLeaseRenewalCount(): number;
+
+export function workerCycleFailed(summary: WorkerCycleSummary): boolean;
+
+export function runDurableLoop(options?: {
+  client?: SupabaseClient;
+  workerId?: string;
+  pollMs?: number;
+  heartbeatMs?: number;
+  once?: boolean;
+}): Promise<WorkerCycleSummary>;

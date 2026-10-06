@@ -61,6 +61,7 @@ function visibleModal() {
 beforeEach(() => {
   vi.stubGlobal("IS_REACT_ACT_ENVIRONMENT", true);
   navigation.pathname = "/home";
+  window.history.replaceState({}, "", "/");
   originalShowModal = Object.getOwnPropertyDescriptor(
     HTMLDialogElement.prototype,
     "showModal",
@@ -128,6 +129,23 @@ afterEach(async () => {
 });
 
 describe("AI dock route and modal lifecycle", () => {
+  it("carries only validated originating context to wide view", async () => {
+    const transaction = "11111111-1111-4111-8111-111111111111";
+    window.history.replaceState(
+      {},
+      "",
+      `/wallet/withdraw?selectedTransaction=${transaction}&email=private@example.com&token=secret`,
+    );
+    await render("/wallet/withdraw");
+    await open();
+    const link = host.querySelector<HTMLAnchorElement>('a[href^="/ai?"]');
+    expect(link).not.toBeNull();
+    const url = new URL(link!.href);
+    expect(url.searchParams.get("aiOrigin")).toBe("/wallet/withdraw");
+    expect(url.searchParams.get("selectedTransaction")).toBe(transaction);
+    expect(url.search).not.toMatch(/email|private|token|secret/);
+  });
+
   it.each(["/ai", "/menu/ai", "/support", "/login"])(
     "does not duplicate the dedicated AI or support presentation on %s",
     async (pathname) => {

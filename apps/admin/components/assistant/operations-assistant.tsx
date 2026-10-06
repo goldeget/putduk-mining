@@ -12,6 +12,7 @@ import {
 } from "@/lib/assistant/draft";
 
 import styles from "./assistant.module.css";
+import { OperationsContext } from "./operations-context";
 
 export type AssistantTargetOption = { depositId: string; label: string };
 
@@ -133,7 +134,7 @@ export function OperationsAssistant({
           <p className={styles.eyebrow}>퍼뜩 운영</p>
           <h1 id="assistant-title">운영 도우미</h1>
           <p className={styles.lead}>
-            입금 현황을 확인하고 처리 초안을 준비해요.
+            운영 기록을 설명하고 다음 확인 순서를 안내해요.
           </p>
         </div>
         <svg
@@ -157,6 +158,7 @@ export function OperationsAssistant({
           />
         </svg>
       </section>
+      <OperationsContext />
       <div className={styles.workspace}>
         <section
           className={styles.panel}

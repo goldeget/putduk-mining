@@ -8,6 +8,7 @@ import ProductsError from "@/app/(product)/products/error";
 import { PublishedCatalogView } from "@/components/product/published-catalog-view";
 import {
   presentPublishedCatalogRead,
+  productCategories,
   type PublishedCatalogRead,
   type PublishedProductAvailability,
 } from "@/domain/products/published-catalog";
@@ -127,12 +128,13 @@ describe("the actual published-catalog screen", () => {
     expect(html).toContain('data-ui-state="empty"');
     expect(html).toContain(`data-observed-at="${observedAt}"`);
     expect(html).toContain(`dateTime="${observedAt}"`);
-    expect(html).toContain("orbital-earth-960-v1.avif 960w");
-    expect(html).toContain("orbital-earth-1600-v1.webp 1600w");
+    expect(html).toContain("global-pavilion-960-v1.avif 960w");
+    expect(html).toContain("global-pavilion-1280-v1.webp 1280w");
     expect(html).toContain('alt=""');
     expect(html).not.toMatch(
       /<canvas|<form|<details|coming soon|준비 중|KRW|USDT|선택 완료|채굴 시작/,
     );
+    expect(html).not.toContain("data-catalog-artwork");
   });
 
   it.each(["query_failed", "invalid_catalog", "invalid_products"] as const)(
@@ -151,8 +153,9 @@ describe("the actual published-catalog screen", () => {
       expect(html).toContain("다시 확인");
       expect(html).toContain('<button class="button button--primary"');
       expect(html).not.toMatch(
-        /아직 없어요|orbital-earth|query_failed|invalid_catalog|invalid_products|KRW|USDT/,
+        /아직 없어요|global-pavilion|query_failed|invalid_catalog|invalid_products|KRW|USDT/,
       );
+      expect(html).not.toContain("data-catalog-artwork");
     },
   );
 
@@ -190,6 +193,67 @@ describe("the actual published-catalog screen", () => {
       /PRIVATE-|approved_by|rule_payload|display_profile|<form|<button|\/api\/|선택 완료|채굴 시작|보장 수익|KRW|USDT/,
     );
     expect(html).not.toContain(approvalId);
+  });
+
+  it.each(productCategories)(
+    "uses %s only for hidden category illustration and keeps the real product disclosure",
+    (category) => {
+      const read = publishedRead();
+      const product = read.products[0]!;
+      product.category = category;
+      const html = markup(read);
+      const artwork =
+        html.match(
+          /<svg\b[^>]*data-catalog-artwork="[^"]*"[\s\S]*?<\/svg>/,
+        )?.[0] ?? "";
+
+      expect(artwork).toContain(`data-catalog-artwork="${category}"`);
+      expect(artwork).toContain('aria-hidden="true"');
+      expect(artwork).toContain('focusable="false"');
+      expect(artwork).not.toMatch(
+        /<text|<title|<image|<animate|<script|role="(?:img|progressbar|status)"/,
+      );
+      expect(html).toContain(product.nameKo);
+      expect(html).toContain(product.descriptionKo);
+      expect(html).toContain('data-availability="available"');
+      expect(html).toContain("제공 중");
+      expect(html).toContain("자세히 보기");
+      expect(html).toContain("접기");
+      expect(html.match(/<details(?:\s|>)/g)).toHaveLength(2);
+      expect(html).toContain('href="https://catalog-test.invalid/source"');
+      expect(html).not.toMatch(
+        /<form|<button|PRIVATE-|수익률|수익 보장|가격|삼성|NVIDIA|Bitcoin|Ethereum|상품 선택 완료/,
+      );
+    },
+  );
+
+  it("keeps repeated categories independently shaded without shortening long Korean names", () => {
+    const read = publishedRead();
+    const first = read.products[0]!;
+    const longName =
+      "여러 분야의 공개 정보를 운영자가 살펴보고 승인한 매우 긴 한국어 상품 이름";
+    read.products.push({
+      ...first,
+      id: "00000000-0000-4000-8000-000000000010",
+      nameKo: longName,
+      descriptionKo: "두 번째 상품의 실제 공개 설명이에요.",
+    });
+    const html = markup(read);
+    const artIds = [
+      ...html.matchAll(/id="(catalog-(?:metal|glass)-[^"]+)"/g),
+    ].map((match) => match[1]);
+    const artReferences = [
+      ...html.matchAll(/url\(#(catalog-(?:metal|glass)-[^)]+)\)/g),
+    ].map((match) => match[1]);
+
+    expect(html.match(/data-catalog-artwork="GOLD"/g)).toHaveLength(2);
+    expect(artIds).toHaveLength(4);
+    expect(new Set(artIds).size).toBe(4);
+    for (const reference of artReferences) expect(artIds).toContain(reference);
+    expect(html).toContain(longName);
+    expect(html).toContain("두 번째 상품의 실제 공개 설명이에요.");
+    expect(html.match(/<details(?:\s|>)/g)).toHaveLength(3);
+    expect(html).not.toContain("<details open");
   });
 
   it.each([
@@ -237,7 +301,7 @@ describe("the actual published-catalog screen", () => {
     expect(html).toContain("로그인이 필요해요");
     expect(html).toContain('href="/login?next=%2Fproducts"');
     expect(html).not.toMatch(
-      /data-ui-ready|orbital-earth|승인일|공개 정보|확인한 시각|아직 없어요/,
+      /data-ui-ready|global-pavilion|승인일|공개 정보|확인한 시각|아직 없어요/,
     );
   });
 

@@ -10,7 +10,7 @@ import { FindIdForm } from "@/app/find-id/find-id-form";
 import { RecoveryForm } from "@/app/recover/recovery-form";
 import { UpdatePasswordForm } from "@/app/auth/update-password/update-password-form";
 import { AuthExperience } from "@/components/auth/auth-experience";
-import { resolveDefaultStageInput } from "@/lib/mining-scene/default-stage";
+import { GLOBAL_PAVILION_ASSET } from "@/components/brand/global-pavilion";
 
 vi.mock("@/app/login/actions", () => ({ authenticateAction: vi.fn() }));
 vi.mock("@/app/signup/actions", () => ({
@@ -51,11 +51,11 @@ describe("approved auth composition", () => {
         createElement(AuthForm, { nextPath: "/wallet" }),
       ),
     );
-    const approved = resolveDefaultStageInput();
+    const approved = GLOBAL_PAVILION_ASSET;
     const image = host.querySelector("picture img");
-    expect(image?.getAttribute("src")).toBe(approved.master?.assetPath);
-    expect(image?.getAttribute("width")).toBe(String(approved.master?.width));
-    expect(image?.getAttribute("height")).toBe(String(approved.master?.height));
+    expect(image?.getAttribute("src")).toBe(approved.path);
+    expect(image?.getAttribute("width")).toBe(String(approved.width));
+    expect(image?.getAttribute("height")).toBe(String(approved.height));
     expect(image?.getAttribute("alt")).toBe("");
     expect(
       image?.closest("div[aria-hidden]")?.getAttribute("aria-hidden"),
@@ -89,7 +89,13 @@ describe("approved auth composition", () => {
     expect(
       host.querySelector('section[aria-labelledby="auth-title-panel"]'),
     ).not.toBeNull();
-    for (const source of approved.responsiveSources) {
+    for (const source of ["avif", "webp"].flatMap((format) =>
+      [640, 960, 1280, 1536].map((width) => ({
+        mimeType: `image/${format}`,
+        assetPath: `/brand/scenes/global-pavilion/global-pavilion-${width}-v1.${format}`,
+        width,
+      })),
+    )) {
       expect(
         [...host.querySelectorAll("source")].some(
           (node) =>

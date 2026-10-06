@@ -27,7 +27,7 @@ MASTER_PATH = (
 )
 MASTER_HASH = "5d398a3155635d46a6d0b1f639c25d349ddf21607a16a4e6f948655744b8a6dd"
 LEGACY_HASH = "e29fa4778a445da4fd99bedd551943573c0ba247b7b83b42ea5960b5c2f3893c"
-SNAPSHOT_VERSION = "2026.10.03-v3"
+SNAPSHOT_VERSION = "2026.10.06-v5"
 ASSET_VERSION = "2026.10.03-semiconductor-memory-v1"
 PATH_PREFIX = "/brand/scenes/semiconductor-memory/semiconductor-memory-"
 REVIEW_SCOPE = (
@@ -37,6 +37,11 @@ REVIEW_SCOPE = (
 )
 ALT = "금빛과 푸른빛이 반사되는 반도체 시설과 중앙 추출 장치"
 WIDTHS = (640, 960, 1280, 1539)
+
+LIGHT_PATHS = {
+    f"/brand/scenes/semiconductor-memory-light/semiconductor-memory-light-{width}-v1.{extension}"
+    for width in (640, 960, 1280, 1536) for extension in ("avif", "webp")
+}
 
 
 def sha256(contents: bytes) -> str:
@@ -57,7 +62,7 @@ def assert_existing_assets(manifest: dict[str, object]) -> None:
             raise SystemExit(f"Existing asset integrity failed: {relative}")
     legacy = [
         asset for asset in manifest["assets"]
-        if not asset["path"].startswith(PATH_PREFIX)
+        if not asset["path"].startswith((PATH_PREFIX, "/brand/scenes/global-pavilion/")) and asset["path"] not in LIGHT_PATHS
     ]
     digest = sha256(json.dumps(legacy, ensure_ascii=False, separators=(",", ":")).encode())
     if len(legacy) != 88 or digest != LEGACY_HASH:
@@ -145,7 +150,7 @@ def main() -> None:
     updated = {
         **manifest,
         "assetVersion": SNAPSHOT_VERSION,
-        "generatedAt": "2026-10-03T00:00:00Z",
+        "generatedAt": "2026-10-06T00:00:00Z",
         "assets": sorted([*legacy, *replacements.values()], key=lambda asset: asset["path"]),
     }
     if args.write:

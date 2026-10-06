@@ -87,6 +87,7 @@ export type ScenePerformance = {
  */
 export const APPROVED_SCENE_MASTER_SHA256 = [
   "5d398a3155635d46a6d0b1f639c25d349ddf21607a16a4e6f948655744b8a6dd",
+  "113fdbc5c41772145f98f3357f27754fa1bd20602a5261c133becc0fa1126d52",
 ] as const;
 
 export type ApprovedSceneMasterSha256 =
@@ -102,6 +103,14 @@ export const APPROVED_SCENE_ASSET_PATHS = [
   "/brand/scenes/semiconductor-memory/semiconductor-memory-1280-v1.webp",
   "/brand/scenes/semiconductor-memory/semiconductor-memory-1539-v1.avif",
   "/brand/scenes/semiconductor-memory/semiconductor-memory-1539-v1.webp",
+  "/brand/scenes/semiconductor-memory-light/semiconductor-memory-light-640-v1.avif",
+  "/brand/scenes/semiconductor-memory-light/semiconductor-memory-light-640-v1.webp",
+  "/brand/scenes/semiconductor-memory-light/semiconductor-memory-light-960-v1.avif",
+  "/brand/scenes/semiconductor-memory-light/semiconductor-memory-light-960-v1.webp",
+  "/brand/scenes/semiconductor-memory-light/semiconductor-memory-light-1280-v1.avif",
+  "/brand/scenes/semiconductor-memory-light/semiconductor-memory-light-1280-v1.webp",
+  "/brand/scenes/semiconductor-memory-light/semiconductor-memory-light-1536-v1.avif",
+  "/brand/scenes/semiconductor-memory-light/semiconductor-memory-light-1536-v1.webp",
 ] as const;
 
 export type ApprovedSceneAssetPath =
@@ -111,12 +120,20 @@ export const APPROVED_MASTER_VARIANTS = ["semiconductor-memory-v1"] as const;
 
 export type ApprovedMasterVariant = (typeof APPROVED_MASTER_VARIANTS)[number];
 
-export type ApprovedSceneMaster = {
+export type ApprovedSceneMasterImage = {
   readonly sha256: ApprovedSceneMasterSha256;
   readonly assetPath: ApprovedSceneAssetPath;
   readonly width: number;
   readonly height: number;
   readonly altKo: string;
+};
+
+export type ApprovedSceneMaster = ApprovedSceneMasterImage & {
+  /** Presentation-only companion; neither a product binding nor runtime state. */
+  readonly lightVariant?: {
+    readonly master: ApprovedSceneMasterImage;
+    readonly responsiveSources: readonly ApprovedResponsiveSource[];
+  };
 };
 
 export type ApprovedResponsiveSource = {
@@ -202,6 +219,30 @@ export function isApprovedMasterSha256(
   value: string,
 ): value is ApprovedSceneMasterSha256 {
   return (APPROVED_SCENE_MASTER_SHA256 as readonly string[]).includes(value);
+}
+
+/** Bind each reviewed hash to its own exact responsive paths and dimensions. */
+export function isApprovedSceneMasterImage(
+  master: ApprovedSceneMasterImage,
+): boolean {
+  if (
+    !isApprovedMasterSha256(master.sha256) ||
+    !(APPROVED_SCENE_ASSET_PATHS as readonly string[]).includes(
+      master.assetPath,
+    )
+  )
+    return false;
+  const light = master.sha256 === APPROVED_SCENE_MASTER_SHA256[1];
+  const prefix = light
+    ? "/brand/scenes/semiconductor-memory-light/semiconductor-memory-light-"
+    : "/brand/scenes/semiconductor-memory/semiconductor-memory-";
+  if (!master.assetPath.startsWith(prefix)) return false;
+  const width = Number(master.assetPath.slice(prefix.length).split("-v1.")[0]);
+  return (
+    Number.isSafeInteger(width) &&
+    master.width === width &&
+    master.height === Math.round(width * (light ? 1024 / 1536 : 1022 / 1539))
+  );
 }
 
 /** 허용 목록 밖의 해시는 프로덕션 마스터가 되지 않는다. */

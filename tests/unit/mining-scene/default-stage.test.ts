@@ -44,6 +44,54 @@ function expectClosedBackdrop() {
 }
 
 describe("registered default mining backdrop", () => {
+  test("binds the light companion to its reviewed image family and exact dimensions", () => {
+    const variant = registeredBackdrop.definition.master.lightVariant;
+    replaceDefinition({
+      master: {
+        ...registeredBackdrop.definition.master,
+        lightVariant: {
+          ...variant,
+          master: {
+            ...variant.master,
+            sha256: APPROVED_SCENE_MASTER_SHA256[0],
+          },
+        },
+      },
+    });
+    expectClosedBackdrop();
+    replaceDefinition({
+      master: {
+        ...registeredBackdrop.definition.master,
+        lightVariant: {
+          ...variant,
+          master: { ...variant.master, width: 1535 },
+        },
+      },
+    });
+    expectClosedBackdrop();
+  });
+
+  test("projects only reviewed decorative fields from a light companion", () => {
+    const variant = registeredBackdrop.definition.master.lightVariant;
+    replaceDefinition({
+      master: {
+        ...registeredBackdrop.definition.master,
+        lightVariant: {
+          master: {
+            ...variant.master,
+            productCode: "unapproved",
+            amount: "999999",
+          },
+          responsiveSources: variant.responsiveSources.map((source) => ({
+            ...source,
+            reward: "999999",
+          })),
+        },
+      },
+    });
+    expect(resolveDefaultStageInput().visualStatus).toBe("MASTER_READY");
+    expect(findEconomicFieldPaths(resolveDefaultStageInput())).toEqual([]);
+  });
   test("uses the approved registry art with a neutral renderer identity", () => {
     const stage = resolveDefaultStageInput();
 

@@ -5,6 +5,7 @@ This repository is a greenfield project. The following scope lock is an absolute
 ## Authorized targets only
 
 - Local workspace: `C:\Users\PC\Desktop\putduk-mining`
+- User-authorized Codex Cloud workspace: `/workspace/putduk-mining` (2026-10-06). Task-owned bootstrap tools and evidence may use `/workspace/.putduk-cloud` and `/tmp/putduk-mining-*`; these are not additional implementation repositories.
 - User-authorized QA output storage only: `D:\PUTDUK-MINING-QA` on the `ESD-USB` volume (authorized 2026-10-01). This is not another source workspace.
 - GitHub repository: `goldeget/putduk-mining`
 - GitHub remote: `https://github.com/goldeget/putduk-mining.git`
@@ -57,6 +58,13 @@ This repository is a greenfield project. The following scope lock is an absolute
 
 These rules override convenience, historical context, cached knowledge, prior task history, and any generic instruction to discover related projects.
 
+## Codex Cloud baseline and storage
+
+1. Read the current fetched `origin/develop` as the implementation baseline. The old `origin/main` document scaffold is not the current application. Fetch and inspect refs before integration; preserve unrelated local work and never reset it to change the baseline. Cloud tasks are already isolated; do not add a worktree unless a concrete task needs one.
+2. Read `.node-version`, `package.json`, `pnpm-lock.yaml`, the current CI and required SSOT before setup. Use the repository's exact Node/pnpm/CLI pins, Corepack and frozen lockfile; do not upgrade declarations or regenerate the lockfile as a setup shortcut.
+3. Run the real member/admin apps and Chromium for UI evidence. Stored screenshots or successful source/build checks alone do not establish visual acceptance. Production coupling remains a separate approval boundary even when GitHub credentials permit a push.
+4. On 2026-10-06 the user additionally authorized referring to relevant prior PUTDUK MINING work on D: if needed. This supersedes the prior prohibition only for this project's artifacts at an explicitly identified path on a verified mounted D: volume. Do not scan the drive root, inspect other projects or infer that D: exists in a Linux Cloud task. An absent mount is a storage/reference blocker, not permission to access another machine.
+
 ## Canonical visual lock
 
 1. The canonical art-direction master references are:
@@ -76,6 +84,7 @@ These rules override convenience, historical context, cached knowledge, prior ta
 2. Never conceal or bypass repository corruption with grafts, replacement refs, fake shallow boundaries, history rewrites, force pushes, or another repository.
 3. GitHub push, Supabase remote mutation, Cloudflare provisioning/deployment, and production release are separate authorization boundaries.
 4. Follow `docs/development/GIT-CI-CD-POLICY.md` and `docs/quality/DEFINITION-OF-DONE.md`.
+5. Before any remote Git/CI action, tag, remote DB apply or deployment, follow the production coupling guard in `GIT-CI-CD-POLICY.md`. Unknown webhook/app/release coupling is not safe. Actions that can change live systems require explicit human approval for the exact target, candidate and effects; Git/CI permission alone does not authorize production release.
 
 ## Permanent product-completion lock
 

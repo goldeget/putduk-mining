@@ -87,6 +87,90 @@ revoke all on function pg_temp.seed_historical_held_withdrawal(uuid, uuid, bigin
   from public, anon, authenticated, service_role;
 -- END TEST-ONLY HISTORICAL HOLD FIXTURE
 
+-- BEGIN TEST-ONLY VERIFIED MINING REWARD FIXTURE
+-- Owner-only sealed mining CREDIT fixture for local rollback/concurrency tests.
+-- This is not a producer command or legacy settlement activation.
+-- The actual tested withdrawal commands must create their own reservations.
+create function pg_temp.plant_verified_mining_reward(
+  p_user_id uuid,
+  p_movement_id uuid,
+  p_amount bigint,
+  p_effective_at timestamptz,
+  p_recorded_at timestamptz,
+  p_key text
+) returns void
+language plpgsql security invoker set search_path = pg_catalog
+as $$
+declare
+  v_credit uuid := gen_random_uuid();
+  v_journal uuid := gen_random_uuid();
+  v_wallet uuid := gen_random_uuid();
+  v_event uuid := gen_random_uuid();
+  v_request uuid := gen_random_uuid();
+  v_correlation uuid := gen_random_uuid();
+  v_wallet_account uuid;
+begin
+  if current_user <> 'postgres' then
+    raise exception using errcode = '42501', message = 'VERIFIED_MINING_FIXTURE_OWNER_ONLY';
+  end if;
+  select account.id into v_wallet_account
+  from public.wallet_accounts as account
+  where account.user_id = p_user_id and account.currency = 'KRW' and account.closed_at is null;
+  insert into public.ledger_transactions(
+    id, category, currency, idempotency_key, reference_type, reference_id,
+    member_user_id, request_id, correlation_id, description, posted_at
+  ) values (
+    v_journal, 'MINING_REWARD', 'KRW', p_key || ':ledger', 'mining_reward_credit', v_credit,
+    p_user_id, v_request, v_correlation, 'verified mining reward credit', p_effective_at
+  );
+  insert into public.ledger_entries(transaction_id, account_id, sequence, side, amount_atomic)
+  values
+    (v_journal, (select id from public.ledger_accounts where code = 'PUTDUK:MINING_REWARD_EXPENSE:KRW'),
+      0, 'DEBIT', p_amount),
+    (v_journal, (select id from public.ledger_accounts
+      where code = 'USER:' || upper(p_user_id::text) || ':KRW:LIABILITY'),
+      1, 'CREDIT', p_amount);
+  insert into public.wallet_ledger(
+    id, wallet_account_id, user_id, direction, entry_type, amount_atomic,
+    idempotency_key, reference_type, reference_id
+  ) values (
+    v_wallet, v_wallet_account, p_user_id, 'CREDIT', 'MINING_REWARD', p_amount,
+    p_key || ':wallet', 'mining_reward_credit', v_credit
+  );
+  insert into public.outbox_events(
+    id, event_type, schema_version, aggregate_type, aggregate_id, actor_user_id,
+    payload, correlation_id, request_id, idempotency_key
+  ) values (
+    v_event, 'MINING_REWARD_CREDITED.v1', 1, 'mining_reward_credit', v_credit, p_user_id,
+    jsonb_build_object(
+      'user_id', p_user_id,
+      'amount_atomic', p_amount,
+      'currency', 'KRW',
+      'ledger_transaction_id', v_journal,
+      'wallet_ledger_id', v_wallet
+    ),
+    v_correlation, v_request, p_key || ':event'
+  );
+  insert into public.mining_reward_credits(
+    id, user_id, amount_atomic, ledger_transaction_id, wallet_ledger_id,
+    source_event_id, effective_at
+  ) values (
+    v_credit, p_user_id, p_amount, v_journal, v_wallet, v_event, p_effective_at
+  );
+  insert into public.money_source_movements(
+    id, user_id, source_bucket, movement_kind, origin_code, amount_atomic,
+    ledger_transaction_id, wallet_ledger_id, source_event_id, effective_at, recorded_at
+  ) values (
+    p_movement_id, p_user_id, 'MINING_REWARD', 'CREDIT', 'MINING_REWARD', p_amount,
+    v_journal, v_wallet, v_event, p_effective_at, p_recorded_at
+  );
+end;
+$$;
+
+revoke all on function pg_temp.plant_verified_mining_reward(uuid,uuid,bigint,timestamptz,timestamptz,text)
+  from public, anon, authenticated, service_role;
+-- END TEST-ONLY VERIFIED MINING REWARD FIXTURE
+
 
 create extension if not exists pgtap with schema extensions;
 
@@ -149,7 +233,6 @@ create temporary table legacy_closure_ctx (
   other_id uuid not null,
   operator_id uuid not null,
   wallet_id uuid,
-  deposit_id uuid,
   legacy_policy_id uuid,
   legacy_id uuid,
   bank_destination_id uuid,
@@ -182,12 +265,16 @@ select public.bootstrap_user((select other_id from legacy_closure_ctx));
 update legacy_closure_ctx set wallet_id = account.id
 from public.wallet_accounts as account
 where account.user_id = legacy_closure_ctx.owner_id and account.currency = 'KRW';
-update legacy_closure_ctx set deposit_id = public.create_deposit_request(
-  owner_id, 'KRW', 50000, 'legacy-closure-deposit-0001'
-);
-select public.approve_deposit_request(
-  deposit_id, operator_id, 50000, 'legacy-closure-credit-0001',
-  'repository-local closure fixture deposit', '1e150001-0000-4000-8000-000000000004'
+insert into public.ledger_accounts(
+  code, currency, account_class, normal_side, owner_user_id, is_controlled_asset
+)
+select 'USER:' || upper(owner_id::text) || ':KRW:LIABILITY',
+  'KRW', 'LIABILITY', 'CREDIT', owner_id, false
+from legacy_closure_ctx
+on conflict (code) do nothing;
+select pg_temp.plant_verified_mining_reward(
+  owner_id, '1e150001-0000-4000-8000-000000000004', 50000,
+  statement_timestamp(), statement_timestamp(), 'legacy-closure-mining-credit-0001'
 ) from legacy_closure_ctx;
 
 insert into public.withdrawal_policies (
@@ -257,14 +344,26 @@ update legacy_closure_ctx set usdt_id = public.request_usdt_withdrawal(
 select ok(
   (select status = 'HELD' and currency = 'KRW' and destination_type = 'KRW_BANK'
     and amount_atomic = 10000 and fee_atomic = 0 and hold_ledger_transaction_id is not null
-   from public.withdrawal_requests where id = (select bank_id from legacy_closure_ctx)),
-  'explicit historical KRW receipt has its original balanced hold'
+    and (select sum(reservation.amount_atomic)
+      from public.mining_reward_withdrawal_reservations as reservation
+      join public.money_source_movements as movement on movement.id = reservation.credit_movement_id
+      where reservation.hold_ledger_transaction_id = request.hold_ledger_transaction_id
+        and movement.source_bucket = 'MINING_REWARD'
+        and app_private.money_source_credit_verified(movement)) = 10000
+   from public.withdrawal_requests as request where id = (select bank_id from legacy_closure_ctx)),
+  'modern KRW receipt reserves verified mining reward and has its original balanced hold'
 );
 select ok(
   (select status = 'HELD' and currency = 'KRW' and destination_type = 'USDT_ADDRESS'
     and amount_atomic = 10000 and fee_atomic = 0 and hold_ledger_transaction_id is not null
-   from public.withdrawal_requests where id = (select usdt_id from legacy_closure_ctx)),
-  'explicit historical manual-USDT receipt holds KRW, never a USDT wallet'
+    and (select sum(reservation.amount_atomic)
+      from public.mining_reward_withdrawal_reservations as reservation
+      join public.money_source_movements as movement on movement.id = reservation.credit_movement_id
+      where reservation.hold_ledger_transaction_id = request.hold_ledger_transaction_id
+        and movement.source_bucket = 'MINING_REWARD'
+        and app_private.money_source_credit_verified(movement)) = 10000
+   from public.withdrawal_requests as request where id = (select usdt_id from legacy_closure_ctx)),
+  'modern manual-USDT receipt reserves verified mining reward and holds KRW, never a USDT wallet'
 );
 select is(
   public.request_krw_withdrawal((select owner_id from legacy_closure_ctx),
@@ -314,7 +413,7 @@ select throws_ok(
   $$select public.request_krw_withdrawal(owner_id, bank_destination_id, 26000,
     'legacy-closure-modern-insufficient-0001') from legacy_closure_ctx$$,
   '22003', 'INSUFFICIENT_AVAILABLE_BALANCE',
-  'wallet availability still rejects a hold the verified principal cannot fund'
+  'wallet availability rejects a mining-backed hold beyond the balance left by existing requests'
 );
 select is(
   (select count(*)::integer from public.outbox_events
@@ -331,7 +430,7 @@ select is(
 select is(
   (select coverage from public.money_source_summaries
    where user_id = (select owner_id from legacy_closure_ctx)),
-  'UNRESOLVED', 'entrypoint closure does not fabricate source completeness for any hold'
+  'UNRESOLVED', 'entrypoint closure does not fabricate source completeness for the historical request'
 );
 select is(
   (select count(*)::integer from public.withdrawal_requests

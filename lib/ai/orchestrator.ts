@@ -31,7 +31,7 @@ export function planAiTurn({
         : createPublicAiContext();
 
   return {
-    cacheable: isAiResponseCacheable(route),
+    cacheable: isAiResponseCacheable(),
     context,
     route,
   };

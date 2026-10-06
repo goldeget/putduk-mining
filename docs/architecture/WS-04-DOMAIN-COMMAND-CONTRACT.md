@@ -38,6 +38,54 @@ the already approved no-funding KRW 5,000 ceiling. Do not activate DRAFT
 catalog rows or invent economic values. Any value not already contracted is
 `HUMAN_DECISION_REQUIRED`.
 
+### Phase 2 catalog and allocation command extension (2026-10-07)
+
+The user-authorized Phase 2 implementation adds these canonical entrypoints;
+they are not aliases for a ledger writer or the legacy settlement function:
+
+- `public.read_product_catalog_review_state`: operator-bound review of the
+  draft snapshot, exact content digest, revision and approval/publication history.
+- `public.manage_product_catalog`: explicit `PREVIEW`, `APPROVE`, `PUBLISH`
+  operations against one catalog ID, expected revision and exact preview digest.
+  Trusted arguments bind the verified actor, live admin application session,
+  authentication session and AAL2. Approval and publication additionally consume
+  their one-use step-up proof atomically with the logical operation receipt,
+  audit and outbox event. The API origin guard is mandatory; database authority
+  validation is independent. A completed same-key replay returns its original
+  receipt; a changed payload is rejected.
+- `public.confirm_funding_allocation`: authenticated member confirmation of a
+  published catalog, expected allocation revision and selected product/rule
+  IDs with exact integer allocation basis points. Its explicit operation is
+  `READ` or `CONFIRM`: READ requires every mutation argument to be null and
+  returns only the owner's safe revision, catalog and selection projection;
+  missing confirmation fields never become an implicit successful read. The
+  confirmation request supplies product IDs and allocation basis points; the
+  database derives the exact approved rule IDs without exposing rule payloads.
+  The owner comes exclusively
+  from the verified authenticated database identity. The command accepts no
+  owner override, reward, purchase price, fee, client effective time or settlement
+  amount. It seals an append-only allocation original with member audit and
+  outbox provenance under the member lock, then applies its server-time boundary
+  through the private engine adapter in the same transaction. If that adapter
+  cannot prove the transition, the entire confirmation fails without an effect.
+  This one narrow member writer is `SECURITY DEFINER`, with a fixed `pg_catalog`
+  search path and fully qualified internal references. EXECUTE belongs only to
+  `authenticated`; PUBLIC, anon and service-role execution are revoked. It
+  validates `auth.uid()` and `auth.role()` without granting members direct
+  private-table, audit, event or policy-reader privileges. The definer context
+  does not replace signed member authority or the private adapter's proof checks.
+
+These interfaces implement the existing operator-approved catalog workflow and
+global allocation contract. They do not approve the seeded draft identities,
+sources or visuals and do not authorize production publication or remote writes.
+Published snapshots and their children remain immutable. A seed digest is not
+an operator preview or approval receipt. Existing unapproved immutable rule
+originals cannot be rewritten into approval evidence. The bounded neutral rule
+adapter requires an explicit operator attestation of the unchanged 1.00x rule;
+unrecognized effects are rejected rather than interpreted as an empty rule.
+The actual migration and tested receipt schemas define the implemented argument
+types; command existence alone is not functional or product-completion evidence.
+
 ---
 
 ## 1. Separated flows
@@ -464,3 +512,28 @@ deposit, withdrawal, wallet, source movement or settlement writer. The
 existing names and separation rules above remain authoritative. Approved
 policy publication does not establish principal coverage, activate the
 economic engine or approve a product/catalog selection.
+
+## 8. Current source coverage correctness (2026-10-06)
+
+The current ordinary `request_krw_withdrawal` / `request_usdt_withdrawal` paths
+reserve verified `MINING_REWARD` only; insufficient mining does not fall back to
+principal. Qualified START retains its existing no-funding, KRW 5,000 ceiling and
+zero-fee conversion/withdrawal path. Principal recovery is a separate explicit
+confirmation contract and is not enabled by the ordinary mining command.
+
+`app_private.non_principal_withdrawal_coverage_verified(public.withdrawal_requests)`
+and `app_private.withdrawal_coverage_entries_verified(uuid,uuid,bigint,text)` are
+service-only INVOKER readers with a fixed path. They bind source coverage to exact
+immutable mining reservations or qualified START conversion originals, the existing
+balanced hold/request/event/receipt, and actual terminal journal/audit/event/send
+and finalized wallet debit. They add no monetary writer, public RPC alias, source
+backfill, HOLD debit or synthetic refund. Existing mining terminal source receipts
+remain required; qualified START does not acquire fabricated movement rows.
+
+Migration `20261006121500` retains summary schema 2 and the separate available,
+held, recovered and cumulative principal values. Unknown originals still return
+UNRESOLVED with principal NULL. The actual canonical lifecycle regression passed
+36 SQL assertions; the full current local pgTAP baseline passed 47 files / 1,522
+assertions and DB lint passed. These facts do not activate funded mining. The
+trusted funded producer/cursor/used/carry/earned posting and worker completion
+integration remain unimplemented; `record_mining_settlement` stays revoked.

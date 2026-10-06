@@ -3,12 +3,15 @@
 import Image from "next/image";
 import { useState, type CSSProperties, type ReactNode } from "react";
 
+import { useResolvedTheme } from "@/lib/design/use-resolved-theme";
+
 import { SAFE_SCENE_COPY } from "@/lib/mining-scene/safe-scene-copy";
 import type { StageSceneInput } from "@/lib/mining-scene/stage-input";
 import {
   ACCENT_TOKENS,
   APPROVED_SCENE_ASSET_PATHS,
   isApprovedMasterSha256,
+  isApprovedSceneMasterImage,
   type AccentToken,
   type ApprovedResponsiveSource,
   type ApprovedSceneMaster,
@@ -35,6 +38,7 @@ function approvedMaster(scene: StageSceneInput): ApprovedSceneMaster | null {
   return master &&
     scene.productionAssetActive &&
     isApprovedMasterSha256(master.sha256) &&
+    isApprovedSceneMasterImage(master) &&
     (APPROVED_SCENE_ASSET_PATHS as readonly string[]).includes(
       master.assetPath,
     ) &&
@@ -199,6 +203,22 @@ export function MiningLiveStage({
   reducedMotion = false,
   children,
 }: MiningLiveStageProps) {
+  const theme = useResolvedTheme();
+  const variant = scene.master?.lightVariant;
+  const lightScene = variant
+    ? {
+        ...scene,
+        master: variant.master,
+        responsiveSources: variant.responsiveSources,
+      }
+    : null;
+  if (
+    theme === "light" &&
+    lightScene &&
+    approvedMaster(scene) &&
+    approvedMaster(lightScene)
+  )
+    scene = lightScene;
   const master = approvedMaster(scene);
   const paintDecoration =
     running &&
@@ -217,6 +237,7 @@ export function MiningLiveStage({
       data-scene-family={scene.familyKey ?? ""}
       data-scene-version={scene.version ?? ""}
       data-scene-art={artState(scene, master)}
+      data-scene-theme={theme}
       data-mining-running={running ? "true" : "false"}
       data-motion={paintDecoration ? "ambient" : "static"}
       aria-label={scene.a11yLabelKo}

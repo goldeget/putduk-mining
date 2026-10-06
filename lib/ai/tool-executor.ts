@@ -2,6 +2,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { z } from "zod";
 
 import type { AiScreenContext } from "@/domain/ai/chat";
+import { activeMemberNotificationExpiryOr } from "@/domain/notifications/member-inbox";
 import { formatTrialValue } from "@/domain/trial/format-trial-value";
 import {
   formatAtomicAmount,
@@ -433,12 +434,14 @@ async function recentNotification(supabase: SupabaseClient, now: Date) {
     supabase
       .from("notifications")
       .select("title_ko, created_at")
+      .or(activeMemberNotificationExpiryOr(now))
       .order("created_at", { ascending: false })
       .limit(1)
       .maybeSingle(),
     supabase
       .from("notifications")
       .select("id", { count: "exact", head: true })
+      .or(activeMemberNotificationExpiryOr(now))
       .is("read_at", null),
   ]);
   if (error || countError) throw new Error("NOTIFICATION_QUERY_FAILED");

@@ -7,6 +7,7 @@ import {
 } from "./helpers/admin-totp";
 import {
   confirmOperatorStepUp,
+  expectEditedReviewInvalidated,
   formWithSubmit,
   openAdminQueue,
   readExternalSends,
@@ -87,6 +88,8 @@ test.describe("admin browser KRW withdrawal", () => {
     await sendForm
       .getByLabel("은행 이체 참조(증빙)")
       .fill(`WS06RETRY${withdrawalId.slice(0, 8)}`);
+    await expectEditedReviewInvalidated(sendForm);
+    await sendForm.getByRole("checkbox", { name: /계좌로 실제 송금/ }).check();
     await confirmOperatorStepUp(sendForm, secret);
     await sendForm.getByRole("button", { name: "계좌 송금 기록" }).click();
     await expect(sendForm.getByRole("status")).toContainText(
