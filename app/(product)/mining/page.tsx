@@ -83,7 +83,7 @@ export default async function MiningPage() {
 
   return (
     <div
-      className={styles.worldPage}
+      className={`${styles.worldPage} ${miningStyles.page}`}
       data-ui-ready="/mining"
       data-ui-state={
         sessionsError && worldsError && displayError

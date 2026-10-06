@@ -15,6 +15,14 @@ const walletCss = readFileSync(
   "components/product/wallet-read-view.module.css",
   "utf8",
 );
+const walletView = readFileSync(
+  "components/product/wallet-read-view.tsx",
+  "utf8",
+);
+const stageCss = readFileSync(
+  "components/mining-live/mining-live-stage.module.css",
+  "utf8",
+);
 
 describe("회원 화면 구도", () => {
   it("지갑의 세 값은 같은 줄의 카드로 두고 미확정을 합계 칸으로 늘리지 않는다", () => {
@@ -26,13 +34,20 @@ describe("회원 화면 구도", () => {
     expect(walletCss).toMatch(/border-style:\s*dashed/);
   });
 
-  it("홈은 장면 아래 기존 카드만 두고 원금·등급·용량을 추가하지 않는다", () => {
-    expect(homePage).not.toMatch(
-      /인정 원금|현재 등급|채굴 용량|대기 수익|오늘 채굴/,
-    );
+  it("홈은 회원 표시값과 공개 상품만 두고 목업 금액을 넣지 않는다", () => {
+    expect(homePage).toContain("readMemberScreenFacts");
+    expect(homePage).toContain("getPublishedCatalog");
     expect(homePage).toContain("사용 가능 KRW");
+    expect(homePage).toContain("오늘 채굴");
+    expect(homePage).toContain("아직 없어요");
+    expect(homePage).toContain("공개된 상품이 아직 없어요");
+    expect(homePage).not.toMatch(/54[,.]?281|5,000,000|12\.8%|\+11\.4%|L5 PRO/);
+    expect(homePage).not.toMatch(/인정 원금|채굴 용량|대기 수익/);
     expect(homePage).toContain("className={styles.featureBand}");
     expect(homePage).toContain("className={styles.aiStrip}");
+    expect(homePage).toContain('<Link href="/notifications">전체 보기</Link>');
+    expect(homePage).toContain('<Link href="/products">상품 보기</Link>');
+    expect(homePage.match(/>전체 보기</g)).toHaveLength(1);
     expect(homeCss).toMatch(
       /\.hero\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1fr\)/s,
     );
@@ -41,18 +56,30 @@ describe("회원 화면 구도", () => {
       /\.summary\s*\{[^}]*grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\)/s,
     );
     expect(homeCss).toMatch(/grid-row:\s*2/);
+    expect(homeCss).toMatch(/\.profileStats\s*\{/);
     expect(homeCss).toMatch(/\.featureBand\s*\{/);
     expect(homeCss).not.toMatch(/overflow-wrap:\s*anywhere/);
   });
 
-  it("더보기는 장면과 한 줄 목록이며 세 칸 카드 격자로 나누지 않는다", () => {
-    expect(menuPage).not.toMatch(/보유 자산|누적 채굴|L5|원금/);
+  it("더보기는 가입 정보와 두 열 목록을 같이 둔다", () => {
+    expect(menuPage).toContain("readMemberScreenFacts");
+    expect(menuPage).toContain("가입일");
+    expect(menuPage).toContain("누적 채굴");
+    expect(menuPage).toContain("아직 표시할 수 없어요");
+    expect(menuPage).not.toMatch(/L5 PRO|54,281|보유 자산/);
     expect(menuPage).toContain("<h1>더보기</h1>");
-    expect(menuPage).toContain('aria-label="더보기 메뉴"');
+    expect(menuPage.match(/aria-label="더보기 메뉴"/g)).toHaveLength(1);
+    const hubStart = menuPage.indexOf('aria-label="더보기 메뉴"');
+    const hub = menuPage.slice(hubStart, menuPage.indexOf("</nav>", hubStart));
+    expect(hub).toContain("<MenuList items={links} />");
+    expect(hub).toContain("<MenuList items={settings} />");
+    expect(menuPage).not.toContain('aria-label="더보기 설정"');
     expect(menuCss).toMatch(
-      /grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\)/,
+      /\.board\s*\{[^}]*grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\)/s,
     );
-    expect(menuCss).not.toMatch(/repeat\(3,/);
+    expect(menuCss).toMatch(
+      /\.memberStats\s*\{[^}]*grid-template-columns:\s*repeat\(3,\s*minmax\(0,\s*1fr\)\)/s,
+    );
     expect(menuCss).not.toMatch(/overflow-wrap:\s*anywhere/);
   });
 
@@ -67,6 +94,20 @@ describe("회원 화면 구도", () => {
     expect(miningPage.slice(stageEnd)).toContain('placement="lead"');
     expect(miningPage.slice(stageEnd)).toContain('placement="follow"');
     expect(miningPage).not.toMatch(/원금\s*\+|정산 전\s*\+|확인 전\s*\+/);
+    expect(stageCss).toMatch(/calc\(100dvh - 25rem\)/);
+    expect(walletView).toContain('value="principal"');
+    expect(walletView).toContain('value="profit"');
+    expect(walletView).toContain('value="history"');
+    expect(walletView).toContain('id="ledger-history-title"');
+    expect(walletView).toContain(">최근 거래 내역</h2>");
+    expect(walletCss).toMatch(
+      /\.ledgerTabs \.tabPanel\[data-panel="history"\]\s*\{[^}]*display:\s*grid/s,
+    );
+    expect(walletCss).not.toMatch(/value="history"\]:checked/);
+    expect(walletView).toContain("아직 거래 내역이 없어요");
+    expect(walletView).not.toMatch(
+      /eligible_principal_micro_krw\s*\+|pending_micro_krw\s*\+/,
+    );
   });
 
   it("상품은 카드 격자이며 가격과 anywhere 줄바꿈을 넣지 않는다", () => {
