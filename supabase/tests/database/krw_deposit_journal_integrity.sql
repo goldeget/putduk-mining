@@ -1088,7 +1088,6 @@ set release_hold_id = public.request_krw_withdrawal(
   10000,
   'krw-journal-release-hold'
 );
-reset role;
 
 update krw_ctx
 set release_id = public.release_withdrawal_hold(
@@ -1110,6 +1109,7 @@ select is(
   (select release_id from krw_ctx),
   'release replay after a lost response returns the original reversal'
 );
+reset role;
 select is(
   (
     select count(*)::integer
