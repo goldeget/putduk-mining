@@ -4,11 +4,18 @@ import {
   type AiClientStreamEvent,
   aiChatRequestSchema,
 } from "@/domain/ai/chat";
+import { redactMemberTranscript } from "@/domain/ai/member-transcript";
 import { matchesAiPresentationOwner } from "@/domain/ai/presentation-owner";
 import { readAiCache, writeAiCache } from "@/lib/ai/cache";
+import {
+  appendOwnMemberTurn,
+  createSupabaseMemberConversationPort,
+  MemberConversationWriteError,
+} from "@/lib/ai/member-conversation";
 import { extractSseData, parseOpenAiSseData } from "@/lib/ai/openai-stream";
 import { planAiTurn } from "@/lib/ai/orchestrator";
 import { buildAiInstructions, hashAiPrompt } from "@/lib/ai/prompt";
+import { buildMemberProviderRequestBody } from "@/lib/ai/provider-turn";
 import { createAiProviderOutputGuard } from "@/lib/ai/response-guard";
 import { executeAiTool } from "@/lib/ai/tool-executor";
 import { assertAiToolBoundary } from "@/lib/ai/tools";
@@ -155,6 +162,7 @@ export async function POST(request: Request) {
       status: 400,
     });
   }
+  const chatRequest = parsed.data;
 
   assertAiToolBoundary();
   const aiPlan = planAiTurn({
@@ -181,15 +189,41 @@ export async function POST(request: Request) {
           ? env.AI_MODEL_HIGH_CAPABILITY
           : (env.AI_MODEL_LOW_COST ?? "provider-unconfigured");
   const instructions = buildAiInstructions(aiContext);
+  const providerQuestion = redactMemberTranscript(parsed.data.question);
   const promptHash = hashAiPrompt({
     instructions,
     model: selectedModel,
-    question: parsed.data.question,
+    question: providerQuestion,
     ...(aiRoute.kind === "tool" && parsed.data.screenContext
       ? { requestContext: parsed.data.screenContext }
       : {}),
   });
   const admin = createSupabaseAdminClient();
+  const memberPort = createSupabaseMemberConversationPort(admin);
+  if (parsed.data.conversationId) {
+    try {
+      const owned = await memberPort.findOwnConversation(
+        userId,
+        parsed.data.conversationId,
+      );
+      if (!owned) {
+        return apiError({
+          code: "AI_CONVERSATION_NOT_FOUND",
+          message: "대화를 찾지 못했어요.",
+          status: 404,
+        });
+      }
+    } catch (error) {
+      if (error instanceof MemberConversationWriteError) {
+        return apiError({
+          code: "AI_CONVERSATION_UNAVAILABLE",
+          message: "대화를 확인하지 못했어요.",
+          status: 503,
+        });
+      }
+      throw error;
+    }
+  }
   const cachedResponse =
     aiPlan.cacheable && providerConfigured
       ? await readAiCache(
@@ -290,6 +324,43 @@ export async function POST(request: Request) {
     });
   }
 
+  async function saveMemberTurn(turn: {
+    answer: string;
+    sourceKey: string;
+    toolCall?: {
+      latencyMs: number | null;
+      outcome: "FAILED" | "SUCCEEDED";
+      toolName: string;
+    };
+  }) {
+    return appendOwnMemberTurn(memberPort, {
+      answer: turn.answer,
+      clientMessageId: chatRequest.clientMessageId,
+      knowledgeVersion: TRUST_CONTENT_VERSION,
+      question: chatRequest.question,
+      sourceKey: turn.sourceKey,
+      userId,
+      ...(chatRequest.conversationId
+        ? { conversationId: chatRequest.conversationId }
+        : {}),
+      ...(turn.toolCall ? { toolCall: turn.toolCall } : {}),
+    });
+  }
+
+  function savedFields(
+    saved: Awaited<ReturnType<typeof saveMemberTurn>>,
+  ): Pick<
+    Extract<AiClientStreamEvent, { type: "done" }>,
+    "assistantMessageId" | "conversationId" | "saved"
+  > {
+    if (!saved.ok) return { saved: false };
+    return {
+      assistantMessageId: saved.assistantMessageId,
+      conversationId: saved.conversationId,
+      saved: true,
+    };
+  }
+
   async function returnAuditedImmediateAnswer(
     answer: string,
     responseSource: "cache" | "static" | "tool",
@@ -300,6 +371,7 @@ export async function POST(request: Request) {
       source: "domain_tool";
       tool: string;
     },
+    toolLatencyMs?: number,
   ) {
     const { error } = await completeAiRequest(admin, {
       cachedInputTokens: 0,
@@ -321,11 +393,32 @@ export async function POST(request: Request) {
       });
     }
 
+    const saved = await saveMemberTurn({
+      answer,
+      sourceKey: grounding
+        ? `tool:${grounding.tool}`
+        : responseSource === "cache"
+          ? "guide:cache"
+          : providerRequestId.startsWith("static:")
+            ? `guide:${providerRequestId.slice("static:".length)}`
+            : "guide:putduk",
+      ...(grounding
+        ? {
+            toolCall: {
+              latencyMs: toolLatencyMs ?? null,
+              outcome: "SUCCEEDED" as const,
+              toolName: grounding.tool,
+            },
+          }
+        : {}),
+    });
+
     const doneEvent: AiClientStreamEvent = {
       knowledgeVersion: TRUST_CONTENT_VERSION,
       requestId: aiRequestId,
       type: "done",
       ...(grounding ? { grounding } : {}),
+      ...savedFields(saved),
     };
 
     return streamResponse([
@@ -345,20 +438,38 @@ export async function POST(request: Request) {
   }
 
   if (aiRoute.kind === "tool") {
+    const toolStarted = Date.now();
     const toolResult = await executeAiTool(identity.supabase, aiRoute.tool, {
       ...(parsed.data.screenContext
         ? { screenContext: parsed.data.screenContext }
         : {}),
     });
+    const latencyMs = Math.max(0, Date.now() - toolStarted);
 
     if (!toolResult.ok) {
       await recordFailure("FAILED", toolResult.code);
+      const saved = await saveMemberTurn({
+        answer: toolResult.answer,
+        sourceKey: `tool:${toolResult.tool}`,
+        toolCall: {
+          latencyMs,
+          outcome: "FAILED",
+          toolName: toolResult.tool,
+        },
+      });
+      const fields = savedFields(saved);
       return streamResponse([
         { requestId: aiRequestId, source: "tool", type: "ready" },
         {
           code: toolResult.code,
           message: toolResult.answer,
           type: "error",
+          ...(fields.saved
+            ? { saved: true as const }
+            : { saved: false as const }),
+          ...(fields.conversationId
+            ? { conversationId: fields.conversationId }
+            : {}),
         },
       ]);
     }
@@ -373,6 +484,7 @@ export async function POST(request: Request) {
         source: "domain_tool",
         tool: toolResult.tool,
       },
+      latencyMs,
     );
   }
 
@@ -411,24 +523,14 @@ export async function POST(request: Request) {
         Authorization: `Bearer ${env.AI_API_KEY}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        input: [
-          {
-            content: [
-              {
-                text: parsed.data.question,
-                type: "input_text",
-              },
-            ],
-            role: "user",
-          },
-        ],
-        instructions,
-        max_output_tokens: env.AI_MAX_OUTPUT_TOKENS,
-        model: selectedModel,
-        store: false,
-        stream: true,
-      }),
+      body: JSON.stringify(
+        buildMemberProviderRequestBody({
+          instructions,
+          maxOutputTokens: env.AI_MAX_OUTPUT_TOKENS,
+          model: selectedModel,
+          question: providerQuestion,
+        }),
+      ),
       cache: "no-store",
       signal: providerAbort.signal,
     });
@@ -586,10 +688,15 @@ export async function POST(request: Request) {
                   ttlSeconds: env.AI_CACHE_TTL_SECONDS,
                 });
               }
+              const saved = await saveMemberTurn({
+                answer: responseText,
+                sourceKey: "guide:provider",
+              });
               emit({
                 knowledgeVersion: TRUST_CONTENT_VERSION,
                 requestId: aiRequestId,
                 type: "done",
+                ...savedFields(saved),
               });
               break;
             }

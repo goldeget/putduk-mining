@@ -129,9 +129,11 @@ describe("PUTDUK AI provider failure and fabrication guards", () => {
 
 describe("PUTDUK AI conversation continuity audit", () => {
   it("locks session-only mode until durable schema is approved", () => {
-    expect(AI_DURABLE_CONVERSATION_IMPLEMENTED).toBe(false);
-    expect(AI_CONVERSATION_CONTINUITY_MODE).toBe("SESSION_MEMORY_ONLY");
-    expect(AI_CONVERSATION_CONTINUITY_COPY).toContain("새로고침하면 사라져요");
+    expect(AI_DURABLE_CONVERSATION_IMPLEMENTED).toBe(true);
+    expect(AI_CONVERSATION_CONTINUITY_MODE).toBe("OWNER_ACCOUNT");
+    expect(AI_CONVERSATION_CONTINUITY_COPY).toContain(
+      "이 계정에서 다시 열 수 있어요",
+    );
     expect(() => assertAiConversationContinuityHonest()).not.toThrow();
   });
 });
