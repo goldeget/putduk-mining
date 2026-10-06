@@ -3,10 +3,10 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 function source(path: string) {
-  return readFileSync(new URL(`../../${path}`, import.meta.url), "utf8").replace(
-    /\r\n/g,
-    "\n",
-  );
+  return readFileSync(
+    new URL(`../../${path}`, import.meta.url),
+    "utf8",
+  ).replace(/\r\n/g, "\n");
 }
 
 const migration = source(
@@ -33,12 +33,8 @@ describe("verified mining reward withdrawal reservation", () => {
     expect(migration).toContain(
       "order by movement.effective_at desc, movement.recorded_at desc, movement.id desc",
     );
-    expect(migration).toContain(
-      "if v_mining > 0 and v_mining < v_need then",
-    );
-    expect(migration).toContain(
-      "message = 'WITHDRAWAL_SOURCE_INSUFFICIENT'",
-    );
+    expect(migration).toContain("if v_mining > 0 and v_mining < v_need then");
+    expect(migration).toContain("message = 'WITHDRAWAL_SOURCE_INSUFFICIENT'");
     expect(migration).toContain("if v_mining >= v_need then");
     expect(migration).toContain("if p_fee_atomic <> 0 then");
     expect(migration).toContain("if v_mining_path then");

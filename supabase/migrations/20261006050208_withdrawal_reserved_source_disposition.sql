@@ -601,12 +601,14 @@ end;
 $$;
 
 -- 기존 확정·취소 함수가 요청 행을 갱신한 뒤에만 출처 행을 붙인다.
--- 함수 소유자는 service_role 이라 기존 record_principal_recovery_release 의 역할 검사를 통과한다.
+-- 그 함수는 security invoker이고 호출자는 service_role이다.
+-- 이 트리거도 invoker로 두어 current_user를 service_role로 유지한다.
+-- record_principal_recovery_release의 역할 검사를 그대로 통과한다.
 -- 세션 역할은 바꾸지 않는다. 원장 분개와 지갑 행은 추가하지 않는다.
 create function app_private.record_reserved_withdrawal_source_disposition()
 returns trigger
 language plpgsql
-security definer
+security invoker
 set search_path = pg_catalog
 as $$
 declare
@@ -874,13 +876,6 @@ begin
   return new;
 end;
 $$;
-
--- service_role 이 함수를 소유해야 기존 release 기록 함수의 역할 검사를 통과한다.
--- 스키마에 새 객체를 만들 권한은 소유권 이전 뒤에 바로 거둔다.
-grant create on schema app_private to service_role;
-alter function app_private.record_reserved_withdrawal_source_disposition()
-  owner to service_role;
-revoke create on schema app_private from service_role;
 
 create trigger withdrawal_requests_reserved_source_disposition
 after update of finalize_ledger_transaction_id, release_ledger_transaction_id

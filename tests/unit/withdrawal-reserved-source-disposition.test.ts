@@ -3,10 +3,10 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 function source(path: string) {
-  return readFileSync(new URL(`../../${path}`, import.meta.url), "utf8").replace(
-    /\r\n/g,
-    "\n",
-  );
+  return readFileSync(
+    new URL(`../../${path}`, import.meta.url),
+    "utf8",
+  ).replace(/\r\n/g, "\n");
 }
 
 const migration = source(
@@ -49,9 +49,7 @@ describe("reserved withdrawal source disposition", () => {
     expect(migration).toContain("MINING_REWARD_WITHDRAWAL_FINALIZE");
     expect(migration).toContain("MINING_REWARD_WITHDRAWAL_RELEASE");
     expect(migration).toContain("PRINCIPAL_RECOVERY_FINALIZE");
-    expect(migration).toContain(
-      "insert into public.money_source_movements",
-    );
+    expect(migration).toContain("insert into public.money_source_movements");
     expect(migration).toContain(
       "execute function app_private.record_reserved_withdrawal_source_disposition()",
     );
