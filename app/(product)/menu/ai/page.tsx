@@ -23,7 +23,7 @@ export default function PutdukAiPage() {
           </div>
         </details>
       </header>
-      <PutdukAiChat presentation="panel" />
+      <PutdukAiChat presentation="page" surface="page" />
     </section>
   );
 }

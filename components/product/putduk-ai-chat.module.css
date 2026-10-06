@@ -187,6 +187,136 @@
   justify-content: space-between;
 }
 
+.workspace {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  flex: 1 1 auto;
+  flex-direction: column;
+}
+
+@media (min-width: 960px) {
+  .surfacePage .workspace {
+    flex-direction: row;
+  }
+
+  .surfacePage .history {
+    width: min(16rem, 34%);
+    overflow: auto;
+    border-right: 1px solid var(--border-subtle);
+    border-bottom: 0;
+  }
+
+  .surfacePage .history:not([open]) > .historyBody {
+    display: grid;
+  }
+}
+
+.thread {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  flex: 1 1 auto;
+  flex-direction: column;
+}
+
+.history {
+  flex: 0 0 auto;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.history summary {
+  min-height: 2.75rem;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+}
+
+.history summary:focus-visible {
+  outline: 2px solid var(--brand-strong);
+  outline-offset: -2px;
+}
+
+.historyBody {
+  display: grid;
+  gap: 0.6rem;
+  padding: 0 1rem 0.9rem;
+}
+
+.historyBody p,
+.historyBody li {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+.historyBody ul {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.historyBody li button {
+  display: grid;
+  width: 100%;
+  gap: 0.15rem;
+  padding: 0.45rem 0.2rem;
+  border: 0;
+  color: var(--text-primary);
+  background: transparent;
+  font: inherit;
+  text-align: start;
+}
+
+.historyBody li button[aria-current="true"] {
+  color: var(--brand-strong);
+}
+
+.historyBody li button:focus-visible {
+  outline: 2px solid var(--brand-strong);
+  outline-offset: 2px;
+}
+
+.feedback {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.45rem;
+}
+
+.feedback button {
+  min-height: 2.25rem;
+  padding: 0.2rem 0.7rem;
+  border: 1px solid var(--border-control);
+  border-radius: var(--radius-full);
+  color: var(--text-secondary);
+  background: transparent;
+  font: inherit;
+  font-size: 0.82rem;
+}
+
+.feedback button:focus-visible {
+  outline: 2px solid var(--brand-strong);
+  outline-offset: 2px;
+}
+
+.feedback [role="group"] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  width: 100%;
+}
+
+.feedback p,
+.unsaved {
+  margin: 0.35rem 0 0;
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
 @media (max-height: 560px) {
   .panel .notices {
     max-height: 3rem;

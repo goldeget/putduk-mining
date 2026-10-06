@@ -11,14 +11,23 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 
+import type { SupabaseClient } from "@supabase/supabase-js";
+
 import {
   AI_QUESTION_MAX_CHARACTERS,
   aiScreenContextSchema,
   type AiScreenContext,
 } from "@/domain/ai/chat";
 import { AI_PRESENTATION_OWNER_HEADER } from "@/domain/ai/presentation-owner";
+import { AI_FEEDBACK_REASON_LABELS } from "@/domain/ai/member-feedback";
 import { trackAnalyticsEvent } from "@/lib/analytics/client";
 import type { SupabaseBrowserAuthConfig } from "@/lib/env/public";
+import {
+  listOwnAiConversations,
+  readOwnAiMessages,
+  type OwnAiConversationSummary,
+  type OwnAiMessage,
+} from "@/lib/ai/member-conversation-read";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 
 import {
@@ -30,9 +39,14 @@ import {
   type PutdukAiMessage,
 } from "./putduk-ai-protocol";
 
+export type PutdukAiFeedbackResult = "exists" | "failed" | "saved";
+
 export type PutdukAiSession = {
+  activeConversationId: string | null;
   canSubmit: boolean;
   draft: string;
+  history: readonly OwnAiConversationSummary[];
+  historyStatus: "hidden" | "loading" | "ready" | "unavailable";
   knowledgeVersion: string;
   messages: readonly PutdukAiMessage[];
   pending: boolean;
@@ -42,6 +56,13 @@ export type PutdukAiSession = {
   submit: (options?: { screenContext?: AiScreenContext }) => Promise<void>;
   cancel: () => void;
   restoreQuestion: (messageId: string) => boolean;
+  startNewConversation: () => void;
+  openConversation: (conversationId: string) => Promise<void>;
+  sendFeedback: (
+    messageId: string,
+    rating: "DOWN" | "UP",
+    reasonCode?: keyof typeof AI_FEEDBACK_REASON_LABELS,
+  ) => Promise<PutdukAiFeedbackResult>;
 };
 
 type ProviderProps = {
@@ -81,6 +102,14 @@ function OwnedAiSession({
   const { refresh } = useRouter();
   const [draft, setDraftState] = useState("");
   const [messages, setMessages] = useState<PutdukAiMessage[]>([]);
+  const [history, setHistory] = useState<readonly OwnAiConversationSummary[]>(
+    [],
+  );
+  const [historyStatus, setHistoryStatus] =
+    useState<PutdukAiSession["historyStatus"]>("hidden");
+  const [activeConversationId, setActiveConversationId] = useState<
+    string | null
+  >(null);
   const [pending, setPending] = useState(false);
   const [authObservationVersion, setAuthObservationVersion] = useState(0);
   const [ownerStatus, setOwnerStatus] =
@@ -93,6 +122,10 @@ function OwnedAiSession({
   const initialOwnerObservedRef = useRef(false);
   const verificationRef = useRef(ownerVerificationId);
   const lockedVerificationRef = useRef<string | null>(null);
+  const browserClientRef = useRef<SupabaseClient | null>(null);
+  const activeConversationIdRef = useRef<string | null>(null);
+  const historyTokenRef = useRef(0);
+  const localTurnStartedRef = useRef(false);
 
   const writeMessage = useCallback((message: PutdukAiMessage) => {
     setMessages((current) =>
@@ -144,6 +177,9 @@ function OwnedAiSession({
     draftRef.current = "";
     setDraftState("");
     setMessages([]);
+    activeConversationIdRef.current = null;
+    setActiveConversationId(null);
+    setHistory([]);
     setPending(false);
     setOwnerStatus("refreshing");
     if (refreshNeeded)
@@ -168,19 +204,23 @@ function OwnedAiSession({
     });
     let unsubscribe: (() => void) | undefined;
     try {
-      const { data } = createSupabaseBrowserClient({
+      const browser = createSupabaseBrowserClient({
         url: supabaseUrl,
         publishableKey: supabasePublishableKey,
-      }).auth.onAuthStateChange((event, browserSession) => {
-        if (disposed || !liveRef.current) return;
-        browserOwnerRef.current =
-          event === "SIGNED_OUT" ? null : (browserSession?.user?.id ?? null);
-        if (event === "INITIAL_SESSION")
-          initialOwnerObservedRef.current =
-            browserOwnerRef.current === ownerUserId;
-        if (browserOwnerRef.current !== ownerUserId) invalidateOwner();
-        else confirmMatchingOwner();
       });
+      browserClientRef.current = browser;
+      const { data } = browser.auth.onAuthStateChange(
+        (event, browserSession) => {
+          if (disposed || !liveRef.current) return;
+          browserOwnerRef.current =
+            event === "SIGNED_OUT" ? null : (browserSession?.user?.id ?? null);
+          if (event === "INITIAL_SESSION")
+            initialOwnerObservedRef.current =
+              browserOwnerRef.current === ownerUserId;
+          if (browserOwnerRef.current !== ownerUserId) invalidateOwner();
+          else confirmMatchingOwner();
+        },
+      );
       unsubscribe = () => data.subscription.unsubscribe();
     } catch {
       // No browser auth observer means no question may be sent.
@@ -192,6 +232,7 @@ function OwnedAiSession({
       disposed = true;
       liveRef.current = false;
       ownerAllowedRef.current = false;
+      browserClientRef.current = null;
       unsubscribe?.();
       abortActiveRequest("AI_STREAM_INTERRUPTED");
     };
@@ -222,6 +263,122 @@ function OwnedAiSession({
     setDraftState(draftRef.current);
   }, []);
 
+  const rememberConversation = useCallback((conversationId: string) => {
+    activeConversationIdRef.current = conversationId;
+    setActiveConversationId(conversationId);
+  }, []);
+
+  const loadHistoryList = useCallback(async () => {
+    const browser = browserClientRef.current;
+    if (!liveRef.current || !browser || typeof browser.from !== "function") {
+      return null;
+    }
+    setHistoryStatus((current) => (current === "hidden" ? "loading" : current));
+    const listed = await listOwnAiConversations(browser, ownerUserId);
+    if (!liveRef.current) return null;
+    if (!listed.ok) {
+      setHistoryStatus("unavailable");
+      return null;
+    }
+    setHistory(listed.conversations);
+    setHistoryStatus("ready");
+    return listed.conversations;
+  }, [ownerUserId]);
+
+  const applyOwnMessages = useCallback(
+    (conversationId: string, rows: readonly OwnAiMessage[]) => {
+      setMessages(
+        rows.map((row) => ({
+          id: row.id,
+          role: row.authorRole === "ASSISTANT" ? "assistant" : "user",
+          state: "complete" as const,
+          text: row.bodyText,
+          saved: true,
+          conversationId,
+          ...(row.authorRole === "ASSISTANT"
+            ? { assistantMessageId: row.id }
+            : {}),
+        })),
+      );
+    },
+    [],
+  );
+
+  const openConversation = useCallback(
+    async (conversationId: string) => {
+      if (!ownerAllowedRef.current || activeRef.current) return;
+      historyTokenRef.current += 1;
+      const token = historyTokenRef.current;
+      const browser = browserClientRef.current;
+      if (!browser || typeof browser.from !== "function") return;
+      const read = await readOwnAiMessages(
+        browser,
+        ownerUserId,
+        conversationId,
+      );
+      if (!liveRef.current || token !== historyTokenRef.current) return;
+      if (!read.ok) {
+        setHistoryStatus("unavailable");
+        return;
+      }
+      rememberConversation(conversationId);
+      applyOwnMessages(conversationId, read.messages);
+    },
+    [applyOwnMessages, ownerUserId, rememberConversation],
+  );
+
+  const startNewConversation = useCallback(() => {
+    if (activeRef.current) return;
+    historyTokenRef.current += 1;
+    activeConversationIdRef.current = null;
+    setActiveConversationId(null);
+    setMessages([]);
+  }, []);
+
+  useEffect(() => {
+    if (ownerStatus !== "ready") return;
+    let cancelled = false;
+    const token = historyTokenRef.current;
+    void (async () => {
+      const conversations = await loadHistoryList();
+      if (
+        cancelled ||
+        token !== historyTokenRef.current ||
+        localTurnStartedRef.current ||
+        activeConversationIdRef.current ||
+        !conversations?.[0]
+      ) {
+        return;
+      }
+      const browser = browserClientRef.current;
+      if (!browser) return;
+      const read = await readOwnAiMessages(
+        browser,
+        ownerUserId,
+        conversations[0].id,
+      );
+      if (
+        cancelled ||
+        token !== historyTokenRef.current ||
+        localTurnStartedRef.current ||
+        !read.ok
+      ) {
+        return;
+      }
+      rememberConversation(conversations[0].id);
+      applyOwnMessages(conversations[0].id, read.messages);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    applyOwnMessages,
+    loadHistoryList,
+    ownerUserId,
+    ownerStatus,
+    rememberConversation,
+  ]);
+
   const cancel = useCallback(() => {
     abortActiveRequest("CLIENT_CANCELLED");
   }, [abortActiveRequest]);
@@ -237,6 +394,8 @@ function OwnedAiSession({
         question.length > AI_QUESTION_MAX_CHARACTERS
       )
         return;
+      historyTokenRef.current += 1;
+      localTurnStartedRef.current = true;
       const clientMessageId = crypto.randomUUID();
       const request: ActiveRequest = {
         controller: new AbortController(),
@@ -284,6 +443,9 @@ function OwnedAiSession({
           body: JSON.stringify({
             clientMessageId,
             question,
+            ...(activeConversationIdRef.current
+              ? { conversationId: activeConversationIdRef.current }
+              : {}),
             ...(context.success ? { screenContext: context.data } : {}),
           }),
           signal: request.controller.signal,
@@ -351,9 +513,21 @@ function OwnedAiSession({
           activeRef.current = null;
           setPending(false);
         }
+        if (liveRef.current && request.message.conversationId) {
+          rememberConversation(request.message.conversationId);
+          void loadHistoryList();
+        }
       }
     },
-    [invalidateOwner, knowledgeVersion, ownerUserId, setDraft, writeMessage],
+    [
+      invalidateOwner,
+      knowledgeVersion,
+      loadHistoryList,
+      ownerUserId,
+      rememberConversation,
+      setDraft,
+      writeMessage,
+    ],
   );
 
   const restoreQuestion = useCallback(
@@ -368,11 +542,49 @@ function OwnedAiSession({
     [messages, setDraft],
   );
 
+  const sendFeedback = useCallback(
+    async (
+      messageId: string,
+      rating: "DOWN" | "UP",
+      reasonCode?: keyof typeof AI_FEEDBACK_REASON_LABELS,
+    ) => {
+      const conversationId = activeConversationIdRef.current;
+      if (!liveRef.current || !ownerAllowedRef.current || !conversationId) {
+        return "failed" as const;
+      }
+      try {
+        const response = await fetch("/api/v1/ai/feedback", {
+          method: "POST",
+          credentials: "same-origin",
+          headers: {
+            "Content-Type": "application/json",
+            [AI_PRESENTATION_OWNER_HEADER]: ownerUserId,
+          },
+          body: JSON.stringify({
+            conversationId,
+            messageId,
+            rating,
+            ...(reasonCode ? { reasonCode } : {}),
+          }),
+        });
+        if (response.status === 409) return "exists" as const;
+        if (!response.ok) return "failed" as const;
+        return "saved" as const;
+      } catch {
+        return "failed" as const;
+      }
+    },
+    [ownerUserId],
+  );
+
   return (
     <SessionContext.Provider
       value={{
+        activeConversationId,
         canSubmit: ownerStatus === "ready",
         draft,
+        history,
+        historyStatus,
         knowledgeVersion,
         messages,
         pending,
@@ -382,6 +594,9 @@ function OwnedAiSession({
         submit,
         cancel,
         restoreQuestion,
+        startNewConversation,
+        openConversation,
+        sendFeedback,
       }}
     >
       {children}

@@ -1,28 +1,25 @@
 /**
- * PUTDUK AI 대화 연속성 정책.
- * 내구성 대화 저장소가 승인·구현되기 전까지 브라우저 세션 메모리만 허용한다.
+ * PUTDUK AI 대화 연속성.
+ * 회원 본인 대화는 기존 ai_conversations / ai_messages에 남긴다.
+ * 보존 기간과 제공자 전송 범위는 정하지 않는다.
  */
 
-export const AI_CONVERSATION_CONTINUITY_MODE = "SESSION_MEMORY_ONLY" as const;
+export const AI_CONVERSATION_CONTINUITY_MODE = "OWNER_ACCOUNT" as const;
 
 export type AiConversationContinuityMode =
   typeof AI_CONVERSATION_CONTINUITY_MODE;
 
-/** 사용자에게 보이는 짧은 연속성 안내. 새로고침 시 대화가 사라짐을 숨기지 않는다. */
+/** 사용자에게 보이는 짧은 연속성 안내. 보존 기간은 말하지 않는다. */
 export const AI_CONVERSATION_CONTINUITY_COPY =
-  "이 화면의 대화는 새로고침하면 사라져요.";
+  "내 대화는 이 계정에서 다시 열 수 있어요.";
 
-/**
- * 내구성 대화 스키마·복원 API는 아직 없다.
- * 스키마를 흉내 내거나 localStorage에 원문을 쌓아 연속성을 가장하지 않는다.
- */
-export const AI_DURABLE_CONVERSATION_IMPLEMENTED = false;
+export const AI_DURABLE_CONVERSATION_IMPLEMENTED = true;
 
 export function assertAiConversationContinuityHonest() {
-  if (AI_DURABLE_CONVERSATION_IMPLEMENTED) {
+  if (!AI_DURABLE_CONVERSATION_IMPLEMENTED) {
     throw new Error("AI_DURABLE_CONVERSATION_FLAG_WITHOUT_SCHEMA");
   }
-  if (AI_CONVERSATION_CONTINUITY_MODE !== "SESSION_MEMORY_ONLY") {
+  if (AI_CONVERSATION_CONTINUITY_MODE !== "OWNER_ACCOUNT") {
     throw new Error("AI_CONVERSATION_CONTINUITY_MODE_UNSUPPORTED");
   }
 }

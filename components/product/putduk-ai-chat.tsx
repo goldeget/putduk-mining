@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useRef, type FormEvent } from "react";
+import { useEffect, useId, useRef, useState, type FormEvent } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 
 import { AI_QUESTION_MAX_CHARACTERS } from "@/domain/ai/chat";
@@ -8,6 +8,7 @@ import {
   AI_CONVERSATION_CONTINUITY_COPY,
   AI_CONVERSATION_CONTINUITY_MODE,
 } from "@/domain/ai/continuity";
+import { AI_FEEDBACK_REASON_LABELS } from "@/domain/ai/member-feedback";
 import { trackAnalyticsEvent } from "@/lib/analytics/client";
 
 import styles from "./putduk-ai-chat.module.css";
@@ -21,14 +22,29 @@ import { usePutdukAiSession } from "./putduk-ai-session";
 export type PutdukAiChatProps = {
   initialScreenContext?: PutdukAiExplicitScreenContext;
   presentation?: "page" | "panel";
+  surface?: "dock" | "page";
   /** Existing page callers remain compatible; the shared owner supplies truth. */
   knowledgeVersion?: string;
   providerConfigured?: boolean;
 };
 
+function conversationTime(value: string) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  return new Intl.DateTimeFormat("ko-KR", {
+    timeZone: "Asia/Seoul",
+    month: "numeric",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).format(date);
+}
+
 export function PutdukAiChat({
   initialScreenContext,
   presentation = "page",
+  surface = "dock",
 }: PutdukAiChatProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -37,6 +53,9 @@ export function PutdukAiChat({
   const questionInputRef = useRef<HTMLTextAreaElement | null>(null);
   const transcriptRef = useRef<HTMLDivElement | null>(null);
   const followLatest = useRef(true);
+  const [feedbackChoice, setFeedbackChoice] = useState<
+    Record<string, "choosing" | "exists" | "failed" | "saved">
+  >({});
   const lastMessage = session.messages.at(-1);
   const status =
     session.ownerStatus !== "ready"
@@ -77,163 +96,303 @@ export function PutdukAiChat({
 
   return (
     <section
-      className={`ai-chat ${styles.chat} ${presentation === "panel" ? styles.panel : styles.page}`}
+      className={`ai-chat ${styles.chat} ${presentation === "panel" ? styles.panel : styles.page} ${
+        surface === "page" ? styles.surfacePage : ""
+      }`}
       aria-label="퍼뜩 AI 대화"
       data-ai-continuity={AI_CONVERSATION_CONTINUITY_MODE}
       data-ai-presentation={presentation}
+      data-ai-surface={surface}
       data-provider-configured={session.providerConfigured ? "true" : "false"}
     >
-      {presentation === "page" ? (
-        <header className={styles.pageStatus}>
-          <strong>내 기록과 퍼뜩 이용 안내</strong>
-          <span>확인하지 못한 내용은 추측하지 않아요.</span>
-        </header>
-      ) : null}
-
-      <div
-        className={styles.notices}
-        role="note"
-        aria-label="대화 안내"
-        tabIndex={0}
-      >
-        <p
-          className={styles.continuityNotice}
-          data-testid="ai-continuity-notice"
-        >
-          {AI_CONVERSATION_CONTINUITY_COPY}
-        </p>
-        {session.ownerStatus !== "ready" ? (
-          <p className={styles.providerNotice}>
-            {session.ownerStatus === "checking"
-              ? "로그인 상태를 확인하고 있어요."
-              : "로그인 상태를 다시 확인하고 있어요."}
-          </p>
-        ) : null}
-        {!session.providerConfigured ? (
-          <p className={styles.providerNotice}>
-            내 기록과 퍼뜩 안내를 확인해요. 일반 질문은 답변이 제한돼요.
-          </p>
-        ) : null}
-      </div>
-
-      <div
-        ref={transcriptRef}
-        className={`ai-chat__messages ${styles.transcript}`}
-        role="log"
-        aria-live="off"
-        aria-label="대화 내용"
-        tabIndex={0}
-        onScroll={(event) => {
-          const node = event.currentTarget;
-          followLatest.current =
-            node.scrollHeight - node.scrollTop - node.clientHeight < 72;
-        }}
-      >
-        {session.messages.length === 0 ? (
-          <div className={`ai-chat__welcome ${styles.welcome}`}>
-            <h2>궁금한 내용을 편하게 물어보세요.</h2>
-            <p>내 기록과 퍼뜩 이용 방법을 함께 확인해요.</p>
-          </div>
-        ) : (
-          session.messages.map((message) => (
-            <article
-              className={`ai-message ai-message--${message.role} ${styles.message}`}
-              key={message.id}
-              data-message-state={message.state}
-              data-answer-source={message.source}
+      <div className={styles.workspace}>
+        <details className={styles.history}>
+          <summary>이전 대화</summary>
+          <div className={styles.historyBody}>
+            <button
+              className="button button--secondary"
+              type="button"
+              disabled={session.pending}
+              onClick={session.startNewConversation}
             >
-              <span>{message.role === "assistant" ? "퍼뜩 AI" : "나"}</span>
-              {message.text ? <p>{message.text}</p> : null}
-              {message.state === "streaming" && !message.text ? (
-                <p className={styles.waiting}>
-                  {message.source === "tool"
-                    ? "내 기록을 확인하고 있어요."
-                    : "답변을 기다리고 있어요."}
-                </p>
-              ) : null}
-              {message.source ? (
-                <div className={styles.answerEvidence}>
-                  <span>{aiSourceLabel(message.source)}</span>
-                  {message.grounding ? (
-                    <time dateTime={message.grounding.asOf}>
-                      {aiGroundingTime(message.grounding)} KST 조회
-                    </time>
-                  ) : null}
-                </div>
-              ) : null}
-              {message.failure ? (
-                <div className={styles.failure}>
-                  <strong>{message.failure.label}</strong>
-                  <p>{message.failure.message}</p>
+              새 대화
+            </button>
+            {session.historyStatus === "loading" ? (
+              <p>이전 대화를 불러오고 있어요.</p>
+            ) : null}
+            {session.historyStatus === "unavailable" ? (
+              <p>이전 대화를 불러오지 못했어요.</p>
+            ) : null}
+            {session.historyStatus === "ready" &&
+            session.history.length === 0 ? (
+              <p>아직 이전 대화가 없어요.</p>
+            ) : null}
+            <ul>
+              {session.history.map((item) => (
+                <li key={item.id}>
                   <button
-                    className={`button button--secondary ${styles.recoveryButton}`}
                     type="button"
-                    disabled={!session.canSubmit || session.pending}
-                    onClick={() => {
-                      if (session.restoreQuestion(message.id)) {
-                        questionInputRef.current?.focus();
-                      }
-                    }}
+                    aria-current={
+                      session.activeConversationId === item.id
+                        ? "true"
+                        : undefined
+                    }
+                    disabled={session.pending}
+                    onClick={() => void session.openConversation(item.id)}
                   >
-                    다시 질문하기
+                    <strong>{item.title}</strong>
+                    <small>{conversationTime(item.updatedAt)}</small>
                   </button>
-                </div>
-              ) : null}
-            </article>
-          ))
-        )}
-      </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </details>
+        <div className={styles.thread}>
+          {presentation === "page" ? (
+            <header className={styles.pageStatus}>
+              <strong>내 기록과 퍼뜩 이용 안내</strong>
+              <span>확인하지 못한 내용은 추측하지 않아요.</span>
+            </header>
+          ) : null}
 
-      <p
-        className={styles.liveStatus}
-        role="status"
-        aria-live="polite"
-        aria-atomic="true"
-      >
-        {status}
-      </p>
+          <div
+            className={styles.notices}
+            role="note"
+            aria-label="대화 안내"
+            tabIndex={0}
+          >
+            <p
+              className={styles.continuityNotice}
+              data-testid="ai-continuity-notice"
+            >
+              {AI_CONVERSATION_CONTINUITY_COPY}
+            </p>
+            {session.ownerStatus !== "ready" ? (
+              <p className={styles.providerNotice}>
+                {session.ownerStatus === "checking"
+                  ? "로그인 상태를 확인하고 있어요."
+                  : "로그인 상태를 다시 확인하고 있어요."}
+              </p>
+            ) : null}
+            {!session.providerConfigured ? (
+              <p className={styles.providerNotice}>
+                내 기록과 퍼뜩 안내를 확인해요. 일반 질문은 답변이 제한돼요.
+              </p>
+            ) : null}
+          </div>
 
-      <form className={`ai-composer ${styles.composer}`} onSubmit={submit}>
-        <label htmlFor={composerId}>질문 입력</label>
-        <textarea
-          id={composerId}
-          data-testid="putduk-ai-question"
-          ref={questionInputRef}
-          value={session.draft}
-          onChange={(event) => session.setDraft(event.target.value)}
-          maxLength={AI_QUESTION_MAX_CHARACTERS}
-          placeholder="어떤 내용을 확인할까요?"
-          disabled={!session.canSubmit}
-          required
-          rows={2}
-        />
-        <footer>
-          <p>확인과 설명을 도와요. 송금이나 잔액 변경은 할 수 없어요.</p>
-          <span>
-            <small>
-              {session.draft.length.toLocaleString("ko-KR")} /{" "}
-              {AI_QUESTION_MAX_CHARACTERS.toLocaleString("ko-KR")}
-            </small>
-            {session.pending ? (
-              <button
-                className="button button--secondary"
-                type="button"
-                onClick={session.cancel}
-              >
-                답변 중단
-              </button>
+          <div
+            ref={transcriptRef}
+            className={`ai-chat__messages ${styles.transcript}`}
+            role="log"
+            aria-live="off"
+            aria-label="대화 내용"
+            tabIndex={0}
+            onScroll={(event) => {
+              const node = event.currentTarget;
+              followLatest.current =
+                node.scrollHeight - node.scrollTop - node.clientHeight < 72;
+            }}
+          >
+            {session.messages.length === 0 ? (
+              <div className={`ai-chat__welcome ${styles.welcome}`}>
+                <h2>궁금한 내용을 편하게 물어보세요.</h2>
+                <p>내 기록과 퍼뜩 이용 방법을 함께 확인해요.</p>
+              </div>
             ) : (
-              <button
-                className="button button--primary"
-                type="submit"
-                disabled={!session.canSubmit || session.draft.trim().length < 3}
-              >
-                질문 보내기
-              </button>
+              session.messages.map((message) => (
+                <article
+                  className={`ai-message ai-message--${message.role} ${styles.message}`}
+                  key={message.id}
+                  data-message-state={message.state}
+                  data-answer-source={message.source}
+                >
+                  <span>{message.role === "assistant" ? "퍼뜩 AI" : "나"}</span>
+                  {message.text ? <p>{message.text}</p> : null}
+                  {message.state === "streaming" && !message.text ? (
+                    <p className={styles.waiting}>
+                      {message.source === "tool"
+                        ? "내 기록을 확인하고 있어요."
+                        : "답변을 기다리고 있어요."}
+                    </p>
+                  ) : null}
+                  {message.source ? (
+                    <div className={styles.answerEvidence}>
+                      <span>{aiSourceLabel(message.source)}</span>
+                      {message.grounding ? (
+                        <time dateTime={message.grounding.asOf}>
+                          {aiGroundingTime(message.grounding)} KST 조회
+                        </time>
+                      ) : null}
+                    </div>
+                  ) : null}
+                  {message.failure ? (
+                    <div className={styles.failure}>
+                      <strong>{message.failure.label}</strong>
+                      <p>{message.failure.message}</p>
+                      <button
+                        className={`button button--secondary ${styles.recoveryButton}`}
+                        type="button"
+                        disabled={!session.canSubmit || session.pending}
+                        onClick={() => {
+                          if (session.restoreQuestion(message.id)) {
+                            questionInputRef.current?.focus();
+                          }
+                        }}
+                      >
+                        다시 질문하기
+                      </button>
+                    </div>
+                  ) : null}
+                  {message.saved === false ? (
+                    <p className={styles.unsaved}>
+                      이번 답변은 계정에 남지 않았어요.
+                    </p>
+                  ) : null}
+                  {message.role === "assistant" &&
+                  message.state === "complete" &&
+                  message.assistantMessageId &&
+                  message.saved !== false ? (
+                    <div className={styles.feedback}>
+                      {feedbackChoice[message.assistantMessageId] === "saved" ||
+                      feedbackChoice[message.assistantMessageId] ===
+                        "exists" ? (
+                        <p role="status">의견을 남겼어요.</p>
+                      ) : (
+                        <>
+                          <button
+                            type="button"
+                            disabled={session.pending}
+                            onClick={() => {
+                              const messageId = message.assistantMessageId;
+                              if (!messageId) return;
+                              void session
+                                .sendFeedback(messageId, "UP")
+                                .then((result) =>
+                                  setFeedbackChoice((current) => ({
+                                    ...current,
+                                    [messageId]: result,
+                                  })),
+                                );
+                            }}
+                          >
+                            도움 됨
+                          </button>
+                          <button
+                            type="button"
+                            disabled={session.pending}
+                            onClick={() => {
+                              const messageId = message.assistantMessageId;
+                              if (!messageId) return;
+                              setFeedbackChoice((current) => ({
+                                ...current,
+                                [messageId]: "choosing",
+                              }));
+                            }}
+                          >
+                            아쉬움
+                          </button>
+                          {feedbackChoice[message.assistantMessageId] ===
+                          "choosing" ? (
+                            <div role="group" aria-label="아쉬운 이유">
+                              {Object.entries(AI_FEEDBACK_REASON_LABELS).map(
+                                ([reasonCode, label]) => (
+                                  <button
+                                    key={reasonCode}
+                                    type="button"
+                                    disabled={session.pending}
+                                    onClick={() => {
+                                      const messageId =
+                                        message.assistantMessageId;
+                                      if (!messageId) return;
+                                      void session
+                                        .sendFeedback(
+                                          messageId,
+                                          "DOWN",
+                                          reasonCode as keyof typeof AI_FEEDBACK_REASON_LABELS,
+                                        )
+                                        .then((result) =>
+                                          setFeedbackChoice((current) => ({
+                                            ...current,
+                                            [messageId]: result,
+                                          })),
+                                        );
+                                    }}
+                                  >
+                                    {label}
+                                  </button>
+                                ),
+                              )}
+                            </div>
+                          ) : null}
+                          {feedbackChoice[message.assistantMessageId] ===
+                          "failed" ? (
+                            <p role="status">의견을 남기지 못했어요.</p>
+                          ) : null}
+                        </>
+                      )}
+                    </div>
+                  ) : null}
+                </article>
+              ))
             )}
-          </span>
-        </footer>
-      </form>
+          </div>
+
+          <p
+            className={styles.liveStatus}
+            role="status"
+            aria-live="polite"
+            aria-atomic="true"
+          >
+            {status}
+          </p>
+
+          <form className={`ai-composer ${styles.composer}`} onSubmit={submit}>
+            <label htmlFor={composerId}>질문 입력</label>
+            <textarea
+              id={composerId}
+              data-testid="putduk-ai-question"
+              ref={questionInputRef}
+              value={session.draft}
+              onChange={(event) => session.setDraft(event.target.value)}
+              maxLength={AI_QUESTION_MAX_CHARACTERS}
+              placeholder="어떤 내용을 확인할까요?"
+              disabled={!session.canSubmit}
+              required
+              rows={2}
+            />
+            <footer>
+              <p>확인과 설명을 도와요. 송금이나 잔액 변경은 할 수 없어요.</p>
+              <span>
+                <small>
+                  {session.draft.length.toLocaleString("ko-KR")} /{" "}
+                  {AI_QUESTION_MAX_CHARACTERS.toLocaleString("ko-KR")}
+                </small>
+                {session.pending ? (
+                  <button
+                    className="button button--secondary"
+                    type="button"
+                    onClick={session.cancel}
+                  >
+                    답변 중단
+                  </button>
+                ) : (
+                  <button
+                    className="button button--primary"
+                    type="submit"
+                    disabled={
+                      !session.canSubmit || session.draft.trim().length < 3
+                    }
+                  >
+                    질문 보내기
+                  </button>
+                )}
+              </span>
+            </footer>
+          </form>
+        </div>
+      </div>
     </section>
   );
 }
