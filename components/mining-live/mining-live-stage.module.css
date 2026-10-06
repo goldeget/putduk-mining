@@ -113,6 +113,17 @@
   outline-offset: 3px;
 }
 
+@media (min-width: 1100px) {
+  .master {
+    object-position: 64% 68%;
+  }
+
+  /* 창 스크롤은 없고 본문만 스크롤된다. 900px 높이에서 카드 하단이 잘리지 않게 높이를 줄인다. */
+  .stage {
+    min-height: clamp(18rem, calc(100dvh - 25rem), 32rem);
+  }
+}
+
 @media (max-width: 599px) {
   .stage[data-scene-art="ready"] {
     min-height: 34rem;

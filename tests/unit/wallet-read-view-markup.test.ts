@@ -164,6 +164,46 @@ describe("WalletReadView 마크업", () => {
     expect(html).not.toContain("사용 가능 잔액</small>");
   });
 
+  it("최근 거래 내역과 PUTDUK START 전환을 숨기지 않는다", () => {
+    const html = renderToStaticMarkup(
+      createElement(WalletReadView, {
+        balanceState: "ready",
+        funding: quietFunding,
+        krw: {
+          availableAtomic: "5000",
+          balanceAtomic: "5000",
+          heldAtomic: "0",
+          walletAccountId: "acct-start",
+        },
+        ledgerEntries: [
+          {
+            amountAtomic: "5000",
+            createdAt: "2026-09-29T00:00:00.000Z",
+            direction: "CREDIT",
+            entryType: "TRIAL_REWARD_CONVERSION",
+            id: "ledger-start",
+          },
+        ],
+        ledgerState: "ready",
+        receiptState: "empty",
+        receipts: [],
+        trialRewardAtomic: "0",
+        trialState: "empty",
+      }),
+    );
+    const historyStart = html.indexOf('aria-labelledby="ledger-history-title"');
+    const history = html.slice(
+      historyStart,
+      html.indexOf("</section>", historyStart),
+    );
+
+    expect(historyStart).toBeGreaterThan(-1);
+    expect(history).toContain('id="ledger-history-title"');
+    expect(history).toContain("최근 거래 내역");
+    expect(history).toContain("PUTDUK START 전환");
+    expect(history).not.toContain("hidden");
+  });
+
   it("입금·출금은 링크로만 연결하고 잔액을 쓰지 않는다", () => {
     const html = renderToStaticMarkup(
       createElement(WalletReadView, {

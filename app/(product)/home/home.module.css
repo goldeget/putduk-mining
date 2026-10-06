@@ -208,6 +208,41 @@
   box-shadow: var(--shadow-focus);
 }
 
+.quickActions {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.quickActions a {
+  display: grid;
+  justify-items: center;
+  gap: 0.45rem;
+  min-height: 5.4rem;
+  padding: 0.85rem 0.4rem;
+  border: 1px solid
+    color-mix(in srgb, var(--brand-primary) 28%, var(--border-default));
+  border-radius: var(--radius-xl);
+  background: var(--surface-raised);
+  color: var(--text-primary);
+  font-size: 0.8125rem;
+  font-weight: 750;
+  line-height: 1.35;
+  text-align: center;
+  text-decoration: none;
+  line-break: strict;
+  word-break: keep-all;
+}
+
+.quickActions a svg {
+  color: var(--brand-primary);
+}
+
+.quickActions a:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
 .progress {
   display: block;
   overflow: hidden;
@@ -451,6 +486,188 @@
   word-break: keep-all;
 }
 
+.profile {
+  display: grid;
+  gap: 1rem;
+  padding: 1.15rem 1.2rem;
+  border-color: color-mix(
+    in srgb,
+    var(--brand-primary) 34%,
+    var(--border-default)
+  );
+  border-radius: var(--radius-xl);
+}
+
+.profileIdentity {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  min-width: 0;
+}
+
+.profileIdentity strong {
+  display: block;
+  color: var(--text-primary);
+  font-size: 1.15rem;
+  line-break: strict;
+  word-break: keep-all;
+}
+
+.profileIdentity p {
+  max-width: 22rem;
+  margin: 0.15rem 0 0;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.45;
+  line-break: strict;
+  word-break: keep-all;
+}
+
+.profileMark {
+  display: inline-grid;
+  width: 2.8rem;
+  height: 2.8rem;
+  flex: none;
+  place-items: center;
+  border: 1px solid
+    color-mix(in srgb, var(--brand-primary) 45%, var(--border-default));
+  border-radius: var(--radius-full);
+  color: var(--brand-primary);
+  background: color-mix(in srgb, var(--brand-quiet) 40%, var(--surface-sunken));
+}
+
+.profileStats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.65rem;
+  margin: 0;
+}
+
+.profileStats div {
+  display: grid;
+  gap: 0.25rem;
+  min-width: 0;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.profileStats dt {
+  color: var(--text-tertiary);
+  font-size: 0.8125rem;
+}
+
+.profileStats dd {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  line-break: strict;
+  word-break: keep-all;
+}
+
+.products,
+.eventBand {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.sectionHeader h2,
+.eventCard h2 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 1.15rem;
+  line-break: strict;
+  word-break: keep-all;
+}
+
+.sectionHeader a,
+.eventCard span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--brand-primary);
+  font-size: 0.875rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.sectionHeader a:focus-visible,
+.eventCard:focus-visible,
+.productCard:focus-visible {
+  outline: none;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-focus);
+}
+
+.productList {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.65rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.productCard,
+.eventCard {
+  display: grid;
+  gap: 0.35rem;
+  min-height: 7.5rem;
+  padding: 1rem;
+  border: 1px solid
+    color-mix(in srgb, var(--brand-primary) 28%, var(--border-default));
+  border-radius: var(--radius-xl);
+  background: var(--surface-raised);
+  color: inherit;
+  text-decoration: none;
+}
+
+.productCard small,
+.sectionEmpty {
+  color: var(--text-tertiary);
+  font-size: 0.8125rem;
+}
+
+.productCard strong {
+  color: var(--text-primary);
+  font-size: 1rem;
+  line-break: strict;
+  word-break: keep-all;
+}
+
+.productCard span {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.eventCard p:last-of-type {
+  max-width: 28rem;
+  margin: 0;
+  overflow: hidden;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.45;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-break: strict;
+  word-break: keep-all;
+}
+
+.sectionEmpty {
+  margin: 0;
+  line-height: 1.5;
+  line-break: strict;
+  word-break: keep-all;
+}
+
 @media (max-width: 1099px) {
   .featureBand {
     grid-template-columns: 1fr;
@@ -458,6 +675,11 @@
 }
 
 @media (max-width: 759px) {
+  .profileStats,
+  .productList {
+    grid-template-columns: 1fr;
+  }
+
   .welcome {
     align-items: flex-start;
     flex-direction: column;
@@ -465,7 +687,7 @@
 
   .livingWorld,
   .livingOverlay {
-    min-height: 20rem;
+    min-height: 16.5rem;
   }
 
   .livingWorld::after {
@@ -489,7 +711,18 @@
   }
 
   .summary {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.55rem;
+  }
+
+  .summaryCard {
+    min-height: 8.6rem;
+    padding: 0.85rem 0.9rem;
+  }
+
+  .summaryValue {
+    margin-block: 0.45rem 0.2rem;
+    font-size: clamp(1.15rem, 4.6vw, 1.55rem);
   }
 
   .aiStrip {
