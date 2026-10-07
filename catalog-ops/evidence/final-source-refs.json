@@ -1,0 +1,8 @@
+{
+  "base_sha": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+  "main_and_develop_observed": {
+    "refs/heads/develop": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+    "refs/heads/main": "fbea85eebf1084bfc02bf1c452392b20f2f497ce"
+  },
+  "branch_rebased": false
+}

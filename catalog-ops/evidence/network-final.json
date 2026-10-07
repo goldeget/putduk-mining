@@ -1,0 +1,25 @@
+{
+  "status": "PARTIAL_RUNTIME_PASS",
+  "observed_at": "2026-10-07T13:48:53.880449+00:00",
+  "requests": 97,
+  "http_200": 76,
+  "reviewed_identity_sources": 29,
+  "original_research_network_now_usable": true,
+  "new_official_hosts": [
+    "data.sec.gov",
+    "www.proshares.com",
+    "tether.to",
+    "www.circle.com"
+  ],
+  "new_hosts_runtime": "BLOCKED_AFTER_DRAFT_SAVE",
+  "configuration_status": "SAVED",
+  "draft_id": "17fa9c03-0577-4c85-a75d-14c5e0448900~cecfgdraft_6ac648348e54819bb06176d8b70c63a3",
+  "requires_publish": true,
+  "updated_fields": ["network.allowed_domains", "start_skill"],
+  "install_script_unchanged": true,
+  "no_new_secrets": true,
+  "restricted_access_preserved": true,
+  "preserved_existing_custom_hosts": 54,
+  "package_manager_presets_preserved": true,
+  "krx_public_query": "HTTP_400_OR_403_NOT_CONFIRMED_UNBLOCKED_BY_PUBLICATION"
+}

@@ -1,0 +1,26 @@
+{
+  "status": "BLOCKED_COMMAND_NOT_FOUND",
+  "checked_at": "2026-10-07T13:48:53.880729+00:00",
+  "source_base_sha": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+  "catalog_command": "NOT_FOUND",
+  "content_command": "NOT_FOUND",
+  "prior_discovery_artifact": "evidence/command-discovery.json",
+  "additional_readonly_search": [
+    "package.json",
+    "apps/admin/lib",
+    "apps/admin/app/api",
+    "lib",
+    "supabase/migrations"
+  ],
+  "frozen_admin_ref": "f9b454a7c1b86dde1099b6e5a264092118258ead",
+  "frozen_admin_catalog_cms_routes": "NONE_FOUND_IN_EXACT_TREE",
+  "new_generated_ids": [],
+  "local_registration": "NOT_RUN",
+  "readback": "BLOCKED",
+  "render": "BLOCKED",
+  "rollback": "BLOCKED",
+  "sql_executed": false,
+  "rpc_mutation": false,
+  "production_touched": false,
+  "shared_staging_written": false
+}

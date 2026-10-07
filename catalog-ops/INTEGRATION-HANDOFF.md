@@ -1,70 +1,87 @@
-# Primary에 전달할 상품·경제·콘텐츠 운영 패키지
+# Primary 통합 검토 인계 — Research/Tier Finalization
 
 CURRENT BRANCH: `parallel/catalog-product-ops`
 
-EXACT HEAD: `node catalog-ops/verify-handoff.mjs --require-pushed --require-clean`이 최종 전체 SHA와 실제 원격 branch tip을 확인한다. 이 문서의 조사 anchor는 `6abe71b`(앞선 4개 checkpoint 완료)이며 자신의 최종 commit SHA를 문서에 자기 참조로 넣지 않는다. 클라우드 checkout의 fetch refspec이 제한되어 있어 remote-tracking ref 존재를 가정하지 않고 exact feature ref를 `git ls-remote`로 읽는다. 최종 채팅 보고에도 실제 push된 전체 SHA를 남긴다.
-
 BASE SHA: `0a7e95ba8bf55539fe32fd6f4654ee49a0be226d`
 
-요청 실행 설정은 GPT-6.1 Sol / High / Cloud다. 현재 도구에는 실행 모델·추론 강도를 조회하거나 변경하는 기능이 없어 실제 적용 여부는 미확인이다. 모델 설정을 바꾸었다고 주장하지 않는다.
+CONTINUATION START: `8f68be2005e16f1ac257626b3418cd3b8a96f1e3`
 
-COMMITS: research/audit → catalog/copy → economy simulation → content audit → validator/registration/handoff의 5개 checkpoint. 앞선 커밋은 `0a9bf7f`, `112d2fc`, `20f1179`, `6abe71b`. 마지막 checkpoint는 이 문서와 검증 스크립트를 포함한다. PR·merge·full CI는 실행하지 않았다.
+EXACT HEAD: `node catalog-ops/verify-handoff.mjs --require-pushed --require-clean`이 현재 전체 SHA와 실제 원격 tip을 출력한다. 최종 자기 참조 SHA를 파일 안에 발명하지 않는다. 사용자 최종 보고에도 전체 SHA를 남긴다.
 
-CHANGED PATHS: `catalog-ops/**` only. 전체 목록은 `evidence/changed-paths.txt`, 최종 diff와 freeze는 verify-handoff 출력으로 재확인한다.
+기존 5개 checkpoint를 보존하고 이번에는 research → Tier/economy/content → final evidence/handoff의 3개 logical checkpoint를 추가했다. 마지막 문서 commit 직전 head는 `b3937937a8f2f998a66ce499e4cc5299ca438b4f`. develop/main merge, rebase, PR, 전체 CI 없음. 실행 모델 요청 GPT-6.1 Sol / High / Cloud의 실제 모델 설정은 도구로 조회/변경할 수 없어 미확인이다.
 
-## 결과와 증거 상태
+## 현재 확인 결과
 
-| 항목                                   | 결과                                                                             |
-| -------------------------------------- | -------------------------------------------------------------------------------- |
-| PUBLIC RESEARCH SOURCES                | 52개 요청, 0개 응답 본문, 0개 현재 시장 사실 검증                                |
-| RESEARCH COMPLETED                     | NO — proxy 403. 공식 호스트 초안 saved, runtime 미적용, requires_publish=true    |
-| CURRENT REPO PRODUCTS                  | 11개 REPOSITORY_DRAFT; seed 기본 공개 0; LIVE_DB_UNKNOWN                         |
-| PROPOSED CANDIDATES                    | 55: US 15 / KR 14 / ETF 17 / CRYPTO 7 / PRECIOUS 2                               |
-| CONDITIONAL LAUNCH                     | P0 14 + P1 10 = 24; 실제 effective_wave는 모두 HOLD                              |
-| NEW PRODUCTS NOT IN REPO               | 조건부 출시 15개; 모든 후보 universe에서는 44개                                  |
-| EXISTING PRODUCTS KEPT                 | 삼성전자/SK하이닉스/AAPL/MSFT/NVDA/XAU/XAG/BTC/ETH 9개                           |
-| EXISTING PROPOSED HOLD                 | BNB/XRP P2; 삭제 실행 없음                                                       |
-| PERSONALTIES / ECONOMY                 | 24개 개별 성격·배율·rationale; approved=null                                     |
-| RECOMMENDED ECONOMY                    | A / 조정 balanced 1.00–1.18 / INHERIT_TIER_CAPACITY                              |
-| ECONOMY SIMULATION                     | PASS_OFFLINE_SIMULATION; NORMALIZED_INDEX_ONLY                                   |
-| 1.50 CAP                               | 정확한 유리수 곱 후 최종 한 번; 기존 runtime 구현 증거 아님                      |
-| CONCENTRATION                          | HIGH: 속도만 보는 모형에서 유일 최고 선택 100%; 실제 사용자 분포 UNKNOWN         |
-| EVENT REVIEW                           | KEEP 21 / REWRITE 5 / MERGE 3 / DROP 1 / ADD 10                                  |
-| NOTICE REVIEW                          | KEEP 22 / REWRITE 4 / MERGE 0 / DROP 0 / ADD 8                                   |
-| FAQ / SUPPORT / NOTIFICATION DELTA     | 16 / 8 / 8; 기존 68 / 28 / 32 보존                                               |
-| CATALOG / CONTENT REGISTRATION COMMAND | NOT FOUND / NOT FOUND                                                            |
-| LOCAL REGISTRATION                     | NOT RUN — 승인된 command 없음                                                    |
-| READBACK / RENDER / ROLLBACK           | BLOCKED / BLOCKED / BLOCKED; 실제 ID·화면 증거를 발명하지 않음                   |
-| VALIDATOR                              | PASS_DRAFT_VALIDATION; production-ready 판정이 아님                              |
-| TESTS                                  | 최종 TAP 참조. 거절·positive·정수 carry/cap/allocation/큰 정수 테스트, skip 없음 |
-| PRODUCTION                             | NOT TOUCHED                                                                      |
+| 항목               | 결과                                                                                                                                                        |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 실제 공식 조사     | 97 requests / 76 HTTP 200 / 29 identity sources reviewed; HTTP success와 facts 분리                                                                         |
+| 후보 신원          | VERIFIED 13 / PARTIAL 31 / UNKNOWN 11; all55 assessment complete, full identity completion NO                                                               |
+| canonical 증거     | evidence/product-source-evidence.json + original .txt.gz SHA256 + actual short quote/access time                                                            |
+| 최신 발견          | SEC Space Exploration Technologies Corp / SPCX / Nasdaq 존재; share class PARTIAL. VTI sponsor 현재 명칭 변경 반영. 국내 AI 471990 특정, 상세 거래소 미확인 |
+| 후보 universe      | US15 / KR14 / ETF17 / CRYPTO7 / PRECIOUS2                                                                                                                   |
+| 실제 repository    | DRAFT11, seed member-visible0; LIVE_DB_UNKNOWN                                                                                                              |
+| 조건부 출시        | P0 6 / P1 19 =25, effective all HOLD; public dates/approvals null                                                                                           |
+| 재편성             | LG전자 P2→P1, SpaceX HOLD→P1, Meta P1→P2. 미확인 P0 8개는 P1 조건부로 이동                                                                                  |
+| Tier SSOT          | docs/product/economy-v1-approved-2026-10-03.json, 14 unchanged document tiers; live receipt/effective_from UNKNOWN                                          |
+| 경제 추천          | Policy A + Tier gate + inherited global capacity + product speed, 1.00–1.10                                                                                 |
+| 자격               | 25 profiles, minimum L-tier + DERIVED_FROM_TIER, new gate PROPOSED_NOT_APPROVED                                                                             |
+| capacity           | 하나의 global cycle, slot/product별 증가 없음; conditional retention 분리                                                                                   |
+| 시뮬레이션         | NORMALIZED_INDEX_ONLY, 3bands×14tiers=42rows, BigInt/rational, no market price/money authority                                                              |
+| 최고속 pool        | L14에서 5개 distinct personality가 같은1.10; uniform tie 1/5는 가정, 실제 분포UNKNOWN                                                                       |
+| final cap          | product×user×event×temporary 정확한 곱 후 최종1.50 한 번. scope 실제 backend 구현 아님                                                                      |
+| downgrade          | 추천B, ineligible selection forward PAUSE. principalHOLD PAUSE_NOT_RESET. history/age/cycle/used/carry/verifiedledger 보존                                  |
+| Scene              | 신규16개 SPEC_REQUIRED; 25개 desktop/mobile/product browser QA 필요. frozen Scene 수정/이미지 생성0                                                         |
+| 기존 content 감사  | Event21KEEP/5REWRITE/3MERGE/1DROP/ADD10, Notice22KEEP/4REWRITE/ADD8 유지                                                                                    |
+| 새 Tier delta      | Event1/Notice4/FAQ6/Support3/Notification4, 모두DRAFT/정책·실제 상태 확인 전 게시발송금지                                                                   |
+| combined additions | Event11/Notice12/FAQ22/Support11/Notification12; 기존 rewrite 유지                                                                                          |
+| 법무               | LEGAL_BRAND_REVIEW_REQUIRED, 실제 자산소유·제휴·투자/수익 보장 주장 금지                                                                                    |
+| 승인 command       | catalog/content NOT_FOUND; exact base source와 frozenAdmin tree read-only 재확인                                                                            |
+| 실제 등록          | LOCAL NOT_RUN / generatedID[] / readback-render-rollback BLOCKED; SQL/fixture/migration 대체없음                                                            |
+| validator/tests    | PASS, 214tests=baseline108+new106, fail0/skip0; rootCI/DB/browserE2E 실행아님                                                                               |
+| 변경 경계          | catalog-ops/** ONLY; 세 frozen branch local+origin+live exact remote 모두 보존                                                                              |
+| runtime 환경       | Node24.21.0 / pnpm12.6.0 확인, Prettier3.9.9 scoped PASS, manifest/lock 버전 변경없음                                                                       |
 
-전체 P0/P1 및 P2/HOLD/REJECT 목록은 `PRODUCT-CATALOG-PROPOSAL.md`에 있다. P0/P1 전체 경제 표는 `PRODUCT-ECONOMY-MATRIX.md`, 각 값의 상대적 이유는 `product-economy-proposal.json`에 있다. 고속은 시장 성장률이 아니라 가상 장면/카탈로그 편성의 편집 제안이다. member copy에 proposed 숫자를 노출하지 않았다.
+## 추천 근거와 남은 결정
 
-## 법무·정책·제품 포지셔닝
+1.00–1.10은 승인 문서 범위 안이며 최고속의 추가 modifier 여유 15/11을 남긴다. 동일한 modifier 비교에서 cap에 닿는 상품은 0개이고, 1.18에서는 11개다. 1.12/1.18은 승인 범위도 바꿔야 한다. 1.10이어도 새 Tier gate와 효과 범위·적용 시각이 미정이므로 새로운 policy version 승인이 필요하다. 승인 배율은 전부 null이다.
 
-모든 상품은 LEGAL_BRAND_REVIEW_REQUIRED, 회원 원고는 LEGAL_COPY_REQUIRED다. 상표 이름·로고·기업 제휴·실제 금융상품 분류를 승인한 상태가 아니다. virtual-theme 설명은 저장소 명세와 원고 제안이며 규제 판단을 대체하지 않는다. 시장가격이 내부 보상을 결정하지 않으며 실제 주식/ETF/금속/코인을 소유하지 않는다는 문구도 법무 검토가 필요하다.
+L1의 4개부터 모든 14단계가 새 선택을 추가한다. 상위 NVIDIA 단독 속도 우위는 없지만, 속도만 보는 모형의 최고속 그룹 집중과 낮은 상품의 불리함은 남는다. 유명 테마를 높은 원금 단계에 배치하고 입문 단계에서 crypto/미국 단일 기업을 제공하지 않는 안은 박탈감·입금 유도 위험을 갖는다. Owner가 접근성·제작 예산·설명 품질을 검토해야 한다. 숨은 capacity·bonus·무작위 금액으로 균형을 강제하지 않는다. 25개는 아직 공개 가능한 수가 아니다. P0는 신원 VERIFIED만 허용하고 P1 PARTIAL은 공개 금지 gate를 유지했다.
 
-기존 OWNER_APPROVED product 범위는 0.90–1.10이다. 24개 중 9개가 1.10을 넘으므로 POLICY_VERSION_CHANGE_REQUIRED다. 범위 안 15개도 자동 실행 가능이 아니다. 현재 non-default modifiers는 EFFECT_SCOPE_UNRESOLVED다. 사람 승인이 필요한 것은 새 정책 범위·상품별 값·scope·효력 구간·기존 사용자 영향이며, 별도 사용자 승인 전 실제 경제 policy는 바꾸지 않는다.
+남은 인정 원금은 누적 입금액이 아니다. 보상·Bonus·체험 금액을 포함하지 않고 원금 HOLD를 제외한다. 과거 확정 원장·source journal·이력·채굴 나이·주기·사용량·carry를 고치지 않는다. 추천 하향안 B는 새 조건 시각 이후 자격 없는 선택을 멈추고, 자동 대체 없이 slot·allocation·정책 receipt를 다시 확인한다. 금융 엔진 변경은 Primary 소유이며 이 모형에 돈을 결정할 권한은 없다.
 
-1.18은 1.20보다 headroom을 남기지만 최고속 선택 편중을 제거하지 못한다. 최종 승인 전에 1.00–1.12 또는 C fallback을 검토한다. 추천은 A 하나이며 B는 capacity 변경 위험 비교 전용이다. 실제 회원 행동·지원 통계 없이 “균형이 검증됐다”고 판단하지 않는다.
+## Primary가 수행할 정확한 작업
 
-## Scene 연결
+1. `RESEARCH-SOURCES.md`와 evidence/product-source-evidence.json의 31 PARTIAL / 11 UNKNOWN 세부를 확인한다. 주식 종류를 COMMON으로 추측하지 않는다. SEC filings·issuer·개별 fund·한국 공식 상장 자료의 원본·날짜·인용을 추가하고 확인된 항목만 승격한다. 법무·상표·명칭·실제 시설 오인 검토는 별도 필수다.
+2. `PRODUCT-ECONOMY-MATRIX.md`의 14필드와 Tier JSON을 Owner에게 정확히 preview한다. 추천 1.00–1.10, 25개 minimum Tier, 접근성 문제, downgrade B, 별도 retention, 효과 범위, START 경계를 승인받는다. 이 branch가 승인 SSOT를 변경했다고 오인하지 않는다.
+3. 기존 versioned catalog/economy/server receipt 및 source provenance에 연결할 minimum L-tier 계약과 정책 version/digest/적용 시각을 확정한다. 상품별 원화 문턱이나 capacity를 만들지 않는다. 25개 proposal metadata를 기존 runtime payload에 그대로 삽입하지 않는다.
+4. 기존 권위에서 product×user×event×temporary의 범위·우선순위·portion·조건 변경을 결정하고, final cap once·fractional carry·global allocation·slot·safe mode·HOLD·capacity 하향·과거 확정 기록 보존을 검증한다. 대체 engine이나 client 돈 판정은 금지한다.
+5. ETF category·공개 projection·catalog command 및 content body/CTA/FAQ/macros/delivery 계약이 없으면 기존 권위의 계약에 추가한다. 상세 요구는 CONTRACT-MAPPING.md에 있다. Draft → preview → confirmation → server authorization → audit → readback을 revision/idempotency/role/AAL2/session/origin으로 검증한다.
+6. Frozen Scene에서 선택된 9개 spec과 신규 16개 요구를 읽고, desktop/mobile masters·회원/Admin 실제 렌더·돈 표시·상태·오류·해금·HOLD·모바일 browser QA를 별도 lane에서 수행한다. 이 패키지는 SceneRegistry/assets를 변경하지 않았다.
+7. 승인된 명령이 생기면 owned isolated LOCAL에서 실제 ID → readback → 권한/공개/노출 → render → cancel/archive → readback/숨김과 retry/replay/revoked session/역할 거절을 검증한다. Shared staging은 Primary 소유로 별도 승인하며 Production 등록은 별도 사용자 승인 전 금지한다.
+8. Integration·전체 CI·출시는 Primary가 수행한다. 이 branch는 PR로 자동 CI를 시작하지 않았다. 기존 세 frozen lane을 변경하거나 회원 UI/shared financial 파일을 동시에 편집하지 않는다.
 
-기존 동결 Scene 패키지에는 11개 명세/22개 프롬프트가 있다. 새 출시 제안 15개는 SCENE_SPEC_REQUIRED + DESKTOP_MASTER_REQUIRED + MOBILE_MASTER_REQUIRED다. 기존 9개 포함 24개 모두 제품용 desktop/mobile와 실화면 QA가 필요하다. 000660의 승인 family master는 최종 상품 QA가 아니다. `/mining`의 기본 입력을 상품 snapshot에 연결하는 작업은 Primary/새로 배정된 Scene lane 소유다. 이 브랜치는 SceneRegistry/runtime/asset를 수정하지 않는다.
+## 자동 저장한 Cloud 설정과 실제 네트워크 제한
 
-## Primary가 진행할 순서
+기존 restricted allowlist 54개, package-manager presets, cdn.playwright.dev/public.ecr.aws를 보존하고 실제 403을 관찰한 공식 호스트 4개(data.sec.gov, www.proshares.com, tether.to, www.circle.com)만 추가했다. 최신 start_skill도 저장했고 install_script·비밀값은 변경하지 않았다. Draft status는 saved / requires_publish=true다. Save는 runtime 변경이나 Publish가 아니다. 사용자가 환경 UI에서 최신 초안을 Save & Publish해야 한다. 이 lane에는 Publish 도구가 없다.
 
-1. 환경 설정 초안의 정확한 조사 호스트를 적용한 뒤 공식 자료 읽기를 재개한다. 이름·code·exchange·asset class/share class를 현재 사실로 검증하고 source body hash·excerpt·시각을 기록한다. SpaceX/SPCX는 최신 사실을 확인하기 전 상장/비상장으로 단정하지 않는다. SNDK 발행회사와 Alphabet A주도 교차 확인한다.
-2. ETF category/world/metadata와 approved catalog/content command를 확정한다. 이 lane의 proposal ID를 DB UUID로 쓰거나 US_STOCK 분류에 ETF를 숨기지 않는다. DTO에서 storage 지원 필드와 metadata를 나누고 unsupported 필드를 검토 결과로 반환한다.
-3. 법무/브랜드와 경제 policy 검토를 사용자에게 올린다. 승인된 기존 범위와 신규 제안을 별개 version으로 취급한다. product×user×event×temporary와 final cap portion/시간/retention 경계를 계약으로 결정한다.
-4. owned isolated LOCAL에서 실제 draft ID → 권한 있는 readback → 원고/snapshot digest 일치 → 실제 member/admin browser 렌더 → cancel/archive → 숨김 readback/audit를 수집한다. replay/역할/세션 취소/revision race/중복 발송/기존 기록 보존 검사를 포함한다. shared staging은 Primary 소유로 미룬다.
-5. 관련 UI·backend·Scene 작업은 Primary가 별도 lane에서 처리한다. 이 브랜치에는 production registration, direct SQL, migration, fixture importer, API executor를 추가하지 않는다. 최종 통합과 full CI는 Primary 소유다.
+기존 공식 사이트 요청은 실제로 응답했다. 새 호스트 4개의 재요청은 현재 runtime에서 403이라 미확인 정보를 완료 처리하지 않았다. KRX query 400/403과 일부 JavaScript·외부 frame 문제는 Publish만으로 해결된다고 주장하지 않는다. 실제 응답·원본 해시·접근 시각을 확인한 후 조사를 재개한다. Secret 발명·전체 인터넷 허용·프록시 우회는 없었다.
 
-## 유저가 승인해야 할 범위
+## 검증과 실행
 
-네트워크/현재 lane 시작 지침 초안은 onboarding 기능으로 이미 saved 상태다. 도구는 requires_publish=true를 반환했다. 환경 설정에서 검토 후 Publish해야 runtime에 적용된다. 이는 상품 생산 게시 승인과 별개다. 스킬의 save 계약상 saved는 실행·runtime update·publication 증거가 아니다.
+```sh
+source /workspace/.putduk-cloud-tools/activate.sh
+node catalog-ops/economy-simulate.mjs
+node catalog-ops/validate.mjs
+node --test catalog-ops/validate.test.mjs catalog-ops/research.test.mjs catalog-ops/finalize.test.mjs
+node node_modules/prettier/bin/prettier.cjs --check --ignore-path /dev/null catalog-ops/*.mjs catalog-ops/*.json catalog-ops/*.md
+git diff --check
+node catalog-ops/verify-handoff.mjs --require-pushed --require-clean
+```
 
-카탈로그 이름 사용/상품 포지셔닝/법무, 출시 편성, 새 policy version/값/효력시각, 실제 production 등록·발송은 별도 사람 승인이 필요하다. 비밀값은 추가하지 않았고 수동 JSON 입력도 요구하지 않는다. 필요한 결정 전에는 모든 운영 command 실행을 차단한다.
+일반 pnpm exec의 자동 의존 갱신은 상속된 pnpm 11과 충돌했지만, scoped formatter는 이미 설치된 manifest-pinned 3.9.9로 직접 검증했다. Node·pnpm·package·lock·workflow 수정은 없었다. DB나 API secret이 필요 없는 오프라인 workflow만 준비됐다. 명령·카운트·TAP 원본은 evidence/finalize-test-summary.json과 finalize-tests.tap에 있다. 과거 108개 입력은 정확한 Git SHA에 고정했고 현재 모형에는 새 106개 tests를 실행했다. Synthetic unit fixtures를 공개 조사·실제 DB 등록·확정 금액의 근거로 사용하지 않았다.
 
-운영 준비와 안전한 초안 리뷰는 가능하지만 **공식 조사 미완료·command 부재로 출시 준비는 NO**다.
+READY FOR PRIMARY REVIEW: YES
+READY FOR POLICY APPROVAL: NO — unresolved official detail, live/effect/Tier implementation contracts and legal/accessibility approval remain.
+READY FOR PRODUCTION: NO
+
+NOT DONE: Production publication/economy activation, shared staging write, SQL, migration, Member UI/backend/Mining Runtime/SceneRegistry changes, develop/main merge, PR, full CI, live DB ID/readback/browser registration evidence.

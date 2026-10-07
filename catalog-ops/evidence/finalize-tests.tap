@@ -1,222 +1,1294 @@
-✔ current 25-product proposal validates with 14 real Tier references (141.165625ms)
-✔ L1 immediately below threshold remains in previous Tier (0.27779ms)
-✔ L1 exact threshold unlocks correct Tier (0.108223ms)
-✔ L1 immediately above threshold stays in this Tier (0.107843ms)
-✔ L2 immediately below threshold remains in previous Tier (0.077828ms)
-✔ L2 exact threshold unlocks correct Tier (0.098298ms)
-✔ L2 immediately above threshold stays in this Tier (0.063897ms)
-✔ L3 immediately below threshold remains in previous Tier (0.081834ms)
-✔ L3 exact threshold unlocks correct Tier (0.185581ms)
-✔ L3 immediately above threshold stays in this Tier (0.142456ms)
-✔ L4 immediately below threshold remains in previous Tier (0.188365ms)
-✔ L4 exact threshold unlocks correct Tier (0.071759ms)
-✔ L4 immediately above threshold stays in this Tier (0.04629ms)
-✔ L5 immediately below threshold remains in previous Tier (0.038489ms)
-✔ L5 exact threshold unlocks correct Tier (0.036264ms)
-✔ L5 immediately above threshold stays in this Tier (0.042023ms)
-✔ L6 immediately below threshold remains in previous Tier (0.033972ms)
-✔ L6 exact threshold unlocks correct Tier (0.034011ms)
-✔ L6 immediately above threshold stays in this Tier (0.070767ms)
-✔ L7 immediately below threshold remains in previous Tier (0.070858ms)
-✔ L7 exact threshold unlocks correct Tier (0.040632ms)
-✔ L7 immediately above threshold stays in this Tier (0.038448ms)
-✔ L8 immediately below threshold remains in previous Tier (0.066941ms)
-✔ L8 exact threshold unlocks correct Tier (0.043356ms)
-✔ L8 immediately above threshold stays in this Tier (0.060772ms)
-✔ L9 immediately below threshold remains in previous Tier (0.094853ms)
-✔ L9 exact threshold unlocks correct Tier (0.07252ms)
-✔ L9 immediately above threshold stays in this Tier (0.078369ms)
-✔ L10 immediately below threshold remains in previous Tier (0.041673ms)
-✔ L10 exact threshold unlocks correct Tier (0.036425ms)
-✔ L10 immediately above threshold stays in this Tier (0.033872ms)
-✔ L11 immediately below threshold remains in previous Tier (0.150949ms)
-✔ L11 exact threshold unlocks correct Tier (0.04012ms)
-✔ L11 immediately above threshold stays in this Tier (0.076887ms)
-✔ L12 immediately below threshold remains in previous Tier (0.041142ms)
-✔ L12 exact threshold unlocks correct Tier (0.034011ms)
-✔ L12 immediately above threshold stays in this Tier (0.074463ms)
-✔ L13 immediately below threshold remains in previous Tier (0.043746ms)
-✔ L13 exact threshold unlocks correct Tier (0.038338ms)
-✔ L13 immediately above threshold stays in this Tier (0.032288ms)
-✔ L14 immediately below threshold remains in previous Tier (0.030366ms)
-✔ L14 exact threshold unlocks correct Tier (0.028182ms)
-✔ L14 immediately above threshold stays in this Tier (0.029895ms)
-✔ arbitrarily large integer principal remains exact at final unbounded Tier (0.443421ms)
-✔ invalid and unknown tiers are rejected rather than treated as eligible (0.218641ms)
-✔ non-contiguous SSOT intervals cannot resolve funding eligibility (0.229127ms)
-✔ product unlock happens at its inherited threshold, not at a rounded amount (0.684105ms)
-✔ available sets are monotone and all 14 levels add a product (0.280384ms)
-✔ L1 has four choices and cannot select the highest-stage SpaceX proposal (0.100342ms)
-✔ highest Tier has five equal-fastest choices with distinct scene personalities (0.169076ms)
-✔ tier downgrade pauses ineligible selection and preserves all old state (0.180663ms)
-✔ principal hold pauses even an eligible gold selection without reset (0.093712ms)
-✔ hold release reevaluates forward and is not an automatic authorization (0.079691ms)
-✔ safe mode wins over hold, pause and capacity-driven eligibility (0.156066ms)
-✔ Tier slots restrict allocations without multiplying cycle capacity (0.253083ms)
-✔ empty, duplicate and unknown selections never become authorization (0.192992ms)
-✔ 1.10 recommended band retains moderate modifier headroom; 1.18 pressures final cap (0.200914ms)
-✔ requested modifier stack is exact and clamped once at final 1.50 (0.104108ms)
-✔ normalized days-to-cap uses exact rational arithmetic, with no KRW payout forecast (0.117638ms)
-✔ speed-only ties do not fabricate actual member distribution (0.06582ms)
-✔ each comparison band uses accessible sets per Tier instead of all 25 everywhere (0.087603ms)
-✔ bands above existing 1.10 document require an explicit policy band change (0.058068ms)
-✔ high proposed speeds never populate any approved field (0.119711ms)
-✔ missing eligibility row (199.146433ms)
-✔ duplicate eligibility row (176.958619ms)
-✔ unknown Tier in product profile (172.032738ms)
-✔ missing minimum Funding Tier (137.889439ms)
-✔ raw KRW threshold in eligibility (124.063107ms)
-✔ raw KRW threshold in catalog (142.942648ms)
-✔ raw KRW threshold in economy (148.114161ms)
-✔ derived principal replaced by copied threshold (134.20834ms)
-✔ published document Tier threshold edited in proposal (120.878627ms)
-✔ unproven live publication timestamp (136.166813ms)
-✔ populated approved minimum Tier (134.371847ms)
-✔ higher speed moved to entry Tier without reviewed rationale (120.235634ms)
-✔ missing individual Tier rationale (123.329293ms)
-✔ missing per-product downgrade behavior (120.073848ms)
-✔ downgrade reset substituted for PAUSE (131.465526ms)
-✔ principal HOLD behavior removed (137.266988ms)
-✔ automatic substitute product on downgrade (116.100988ms)
-✔ source carry history lost on downgrade (124.072788ms)
-✔ product available despite effective HOLD (119.600623ms)
-✔ eligibility available despite effective HOLD (119.608666ms)
-✔ invalid unlock set (118.344168ms)
-✔ technical Tier code in member copy (119.569385ms)
-✔ extra funding solicitation in unlock copy (120.076964ms)
-✔ Tier gate policy version omitted (132.804937ms)
-✔ final cap headroom analysis omitted (117.673277ms)
-✔ fake actual concentration (123.305307ms)
-✔ unresolved identity promoted into P0 (132.111769ms)
-✔ canonical ticker differs from actual SEC directory (121.616377ms)
-✔ fabricated official quote does not occur in original bytes (121.519556ms)
-✔ legacy UNKNOWN added to current research (121.114833ms)
-✔ unapproved speed incorrectly activated (120.389977ms)
-✔ non-inherited product capacity (136.790718ms)
-✔ market linked economy value (118.195688ms)
-✔ legal review omitted (122.146734ms)
-✔ final cap raised to 1.60 (119.828513ms)
-✔ above-document speed loses required band change acknowledgement (122.473589ms)
-✔ fresh simulation reproduces the stored full Tier analysis (3.193751ms)
-✔ all 55 current candidates use evidence-qualified identity states (867.270916ms)
-✔ SEC actually identifies SPCX; missing share class stays partial (887.270155ms)
-✔ lossless downloaded response hashes are validated, not URL-only evidence (872.978945ms)
-✔ a successful Invesco QQQ response cannot verify ProShares TQQQ (732.702576ms)
-✔ a real primary sponsor response resolves the AI investigation slot only partially (733.046829ms)
-✔ current sponsor identity supersedes the historical VTI name hint (791.472276ms)
-✔ a complete gated draft passes while research and registration remain blocked (10.840409ms)
-✔ planned P0 can be researched later but UNKNOWN never becomes effective launch (7.690323ms)
-✔ verified source bookkeeping requires a real response and fresh factual evidence (7.865579ms)
-✔ duplicate proposal identity (7.41031ms)
-✔ duplicate product slug (5.12988ms)
-✔ duplicate market and ticker (4.596424ms)
-✔ uncontracted asset class (4.965802ms)
-✔ empty product identity hint (4.193794ms)
-✔ invalid planned launch wave (4.978561ms)
-✔ market linked product (5.098743ms)
-✔ fake operator approval (5.293668ms)
-✔ unreviewed brand clearance (5.082549ms)
-✔ invented partnership claim (4.371974ms)
-✔ unproven live catalog (5.191683ms)
-✔ fabricated new database UUID (5.381972ms)
-✔ candidate without a source (3.714619ms)
-✔ verified identity without factual evidence (5.502144ms)
-✔ UNKNOWN P0 effective candidate (6.202603ms)
-✔ UNKNOWN P1 effective candidate (6.554476ms)
-✔ SpaceX hint promoted to canonical ticker without checking (5.999856ms)
-✔ unmeasured scoring sold as measurement (8.026282ms)
-✔ ETF category contract omitted (7.144718ms)
-✔ official source URL with credentials (7.173522ms)
-✔ blocked source falsely verified (7.413355ms)
-✔ stale fetched source cannot verify current listing (6.652203ms)
-✔ future accessed date cannot verify source (6.280271ms)
-✔ research completed without a verified response (5.390014ms)
-✔ response hash invented without an obtained file (4.054945ms)
-✔ launch missing a product entry (2.940217ms)
-✔ duplicate display order (4.443091ms)
-✔ unproven launch approval (5.023429ms)
-✔ new product without Scene spec gate (4.31666ms)
-✔ missing mobile master gate (3.891246ms)
-✔ fabricated ready Scene asset (4.623174ms)
-✔ invalid calendar date (3.746898ms)
-✔ reversed availability dates (3.557231ms)
-✔ numeric floating speed instead of decimal string (2.542767ms)
-✔ three-decimal speed violates 0.01 step (3.192559ms)
-✔ proposed speed exceeds allowed 1.20 (2.57842ms)
-✔ proposal band silently changed (3.438581ms)
-✔ suggested yield invented (3.837165ms)
-✔ proposed speed below 1.00 (3.381725ms)
-✔ bps and decimal disagree (2.47855ms)
-✔ grade contradicts speed band (2.504569ms)
-✔ mining personality omitted (3.529379ms)
-✔ approved value invented (4.93147ms)
-✔ human policy gate disabled (5.58658ms)
-✔ market price controls proposed economy (3.904427ms)
-✔ product capacity override added (3.756532ms)
-✔ per-slot global capacity replicated (5.081917ms)
-✔ fractional won main display (3.941653ms)
-✔ new speed above existing policy passed silently (3.78123ms)
-✔ final cap increased (5.114456ms)
-✔ intermediate cap applied (4.022225ms)
-✔ micro unit altered (5.053635ms)
-✔ missing one launch economy value (3.29895ms)
-✔ money guarantee in member copy (4.787252ms)
-✔ numeric payout invented in member copy (6.024173ms)
-✔ market linked payout copy (4.886422ms)
-✔ technical enum exposed to member (4.851048ms)
-✔ positioning disclaimer removed (4.872911ms)
-✔ linked FAQ not present (4.258352ms)
-✔ delta collides with frozen internal slug (3.640357ms)
-✔ delta collides with frozen storage slug (3.776153ms)
-✔ empty content title (4.545476ms)
-✔ empty content full body (4.257941ms)
-✔ missing CTA (4.150579ms)
-✔ fabricated product detail route (4.59479ms)
-✔ invalid audience (4.061023ms)
-✔ invalid mining segment (3.640347ms)
-✔ required copy missing (3.540366ms)
-✔ template variable not declared (3.587117ms)
-✔ unapproved content financial value (3.685114ms)
-✔ content published without receipt (3.904797ms)
-✔ event ends before it starts (4.868805ms)
-✔ in-app notification links outside protected allowlist (3.672125ms)
-✔ uppercase notification category is not mapped (3.601818ms)
-✔ push opt-in bypass (3.765085ms)
-✔ invented member notification target (3.799838ms)
-✔ support macro sends automatically (3.596581ms)
-✔ missing a frozen event review (3.685466ms)
-✔ drop deletes historical records (4.639278ms)
-✔ unobserved external benchmark claimed complete (3.58946ms)
-✔ registration ready without readback evidence (3.700127ms)
-✔ production ready without approval (3.720448ms)
-✔ catalog command invented (4.454849ms)
-✔ direct SQL used to bypass command absence (3.84694ms)
-✔ shared staging not owned by this lane (3.579565ms)
-✔ fabricated readback PASS (4.603924ms)
-✔ fake screenshot used as real registration proof (3.86038ms)
-✔ fake rollback receipt (3.702621ms)
-✔ simulated outputs edited after computation (3.438741ms)
-✔ invented live selection distribution (3.437811ms)
-✔ leap and invalid-calendar dates are distinguished (0.088173ms)
-✔ decimal bps use exact 0.01 increments (0.256829ms)
-✔ combined cap matches requested product user event example (0.064708ms)
-✔ exact cap boundary and one bps below stay distinguishable (0.05326ms)
-✔ final-only clamp preserves a later reduction modifier (0.107272ms)
-✔ maximum proposed speed keeps exact calculable modifier headroom (0.294255ms)
-✔ sub-micro carry survives until the third tick (0.174745ms)
-✔ chunked accrual equals one interval without losing residue (0.122555ms)
-✔ capacity cannot be exceeded by large elapsed time (0.087673ms)
-✔ whole won display stays below the next verified 1-won boundary (0.075544ms)
-✔ two slots share global capacity and cannot allocate more than 100% (0.177689ms)
-✔ Policy A and B differ in capacity rather than silently changing reward rate (0.17191ms)
-✔ rational arithmetic is exact beyond Number safe integer range (0.124618ms)
-✔ invalid negative or zero inputs fail instead of producing money (0.183828ms)
-✔ restored default draft remains valid after all isolated mutations (2.533894ms)
-ℹ tests 214
-ℹ suites 0
-ℹ pass 214
-ℹ fail 0
-ℹ cancelled 0
-ℹ skipped 0
-ℹ todo 0
-ℹ duration_ms 5715.278982
+TAP version 13
+# Subtest: current 25-product proposal validates with 14 real Tier references
+ok 1 - current 25-product proposal validates with 14 real Tier references
+  ---
+  duration_ms: 129.96131
+  type: 'test'
+  ...
+# Subtest: L1 immediately below threshold remains in previous Tier
+ok 2 - L1 immediately below threshold remains in previous Tier
+  ---
+  duration_ms: 0.397231
+  type: 'test'
+  ...
+# Subtest: L1 exact threshold unlocks correct Tier
+ok 3 - L1 exact threshold unlocks correct Tier
+  ---
+  duration_ms: 0.150828
+  type: 'test'
+  ...
+# Subtest: L1 immediately above threshold stays in this Tier
+ok 4 - L1 immediately above threshold stays in this Tier
+  ---
+  duration_ms: 0.11239
+  type: 'test'
+  ...
+# Subtest: L2 immediately below threshold remains in previous Tier
+ok 5 - L2 immediately below threshold remains in previous Tier
+  ---
+  duration_ms: 0.095084
+  type: 'test'
+  ...
+# Subtest: L2 exact threshold unlocks correct Tier
+ok 6 - L2 exact threshold unlocks correct Tier
+  ---
+  duration_ms: 0.133723
+  type: 'test'
+  ...
+# Subtest: L2 immediately above threshold stays in this Tier
+ok 7 - L2 immediately above threshold stays in this Tier
+  ---
+  duration_ms: 0.07903
+  type: 'test'
+  ...
+# Subtest: L3 immediately below threshold remains in previous Tier
+ok 8 - L3 immediately below threshold remains in previous Tier
+  ---
+  duration_ms: 0.228656
+  type: 'test'
+  ...
+# Subtest: L3 exact threshold unlocks correct Tier
+ok 9 - L3 exact threshold unlocks correct Tier
+  ---
+  duration_ms: 0.115204
+  type: 'test'
+  ...
+# Subtest: L3 immediately above threshold stays in this Tier
+ok 10 - L3 immediately above threshold stays in this Tier
+  ---
+  duration_ms: 0.133763
+  type: 'test'
+  ...
+# Subtest: L4 immediately below threshold remains in previous Tier
+ok 11 - L4 immediately below threshold remains in previous Tier
+  ---
+  duration_ms: 0.151399
+  type: 'test'
+  ...
+# Subtest: L4 exact threshold unlocks correct Tier
+ok 12 - L4 exact threshold unlocks correct Tier
+  ---
+  duration_ms: 0.063215
+  type: 'test'
+  ...
+# Subtest: L4 immediately above threshold stays in this Tier
+ok 13 - L4 immediately above threshold stays in this Tier
+  ---
+  duration_ms: 0.043415
+  type: 'test'
+  ...
+# Subtest: L5 immediately below threshold remains in previous Tier
+ok 14 - L5 immediately below threshold remains in previous Tier
+  ---
+  duration_ms: 0.040541
+  type: 'test'
+  ...
+# Subtest: L5 exact threshold unlocks correct Tier
+ok 15 - L5 exact threshold unlocks correct Tier
+  ---
+  duration_ms: 0.037286
+  type: 'test'
+  ...
+# Subtest: L5 immediately above threshold stays in this Tier
+ok 16 - L5 immediately above threshold stays in this Tier
+  ---
+  duration_ms: 0.05915
+  type: 'test'
+  ...
+# Subtest: L6 immediately below threshold remains in previous Tier
+ok 17 - L6 immediately below threshold remains in previous Tier
+  ---
+  duration_ms: 0.03987
+  type: 'test'
+  ...
+# Subtest: L6 exact threshold unlocks correct Tier
+ok 18 - L6 exact threshold unlocks correct Tier
+  ---
+  duration_ms: 0.035584
+  type: 'test'
+  ...
+# Subtest: L6 immediately above threshold stays in this Tier
+ok 19 - L6 immediately above threshold stays in this Tier
+  ---
+  duration_ms: 0.070937
+  type: 'test'
+  ...
+# Subtest: L7 immediately below threshold remains in previous Tier
+ok 20 - L7 immediately below threshold remains in previous Tier
+  ---
+  duration_ms: 0.043686
+  type: 'test'
+  ...
+# Subtest: L7 exact threshold unlocks correct Tier
+ok 21 - L7 exact threshold unlocks correct Tier
+  ---
+  duration_ms: 0.051808
+  type: 'test'
+  ...
+# Subtest: L7 immediately above threshold stays in this Tier
+ok 22 - L7 immediately above threshold stays in this Tier
+  ---
+  duration_ms: 0.043446
+  type: 'test'
+  ...
+# Subtest: L8 immediately below threshold remains in previous Tier
+ok 23 - L8 immediately below threshold remains in previous Tier
+  ---
+  duration_ms: 0.061122
+  type: 'test'
+  ...
+# Subtest: L8 exact threshold unlocks correct Tier
+ok 24 - L8 exact threshold unlocks correct Tier
+  ---
+  duration_ms: 0.041913
+  type: 'test'
+  ...
+# Subtest: L8 immediately above threshold stays in this Tier
+ok 25 - L8 immediately above threshold stays in this Tier
+  ---
+  duration_ms: 0.040141
+  type: 'test'
+  ...
+# Subtest: L9 immediately below threshold remains in previous Tier
+ok 26 - L9 immediately below threshold remains in previous Tier
+  ---
+  duration_ms: 0.060432
+  type: 'test'
+  ...
+# Subtest: L9 exact threshold unlocks correct Tier
+ok 27 - L9 exact threshold unlocks correct Tier
+  ---
+  duration_ms: 0.039319
+  type: 'test'
+  ...
+# Subtest: L9 immediately above threshold stays in this Tier
+ok 28 - L9 immediately above threshold stays in this Tier
+  ---
+  duration_ms: 0.043015
+  type: 'test'
+  ...
+# Subtest: L10 immediately below threshold remains in previous Tier
+ok 29 - L10 immediately below threshold remains in previous Tier
+  ---
+  duration_ms: 0.037667
+  type: 'test'
+  ...
+# Subtest: L10 exact threshold unlocks correct Tier
+ok 30 - L10 exact threshold unlocks correct Tier
+  ---
+  duration_ms: 0.037096
+  type: 'test'
+  ...
+# Subtest: L10 immediately above threshold stays in this Tier
+ok 31 - L10 immediately above threshold stays in this Tier
+  ---
+  duration_ms: 0.298361
+  type: 'test'
+  ...
+# Subtest: L11 immediately below threshold remains in previous Tier
+ok 32 - L11 immediately below threshold remains in previous Tier
+  ---
+  duration_ms: 0.062765
+  type: 'test'
+  ...
+# Subtest: L11 exact threshold unlocks correct Tier
+ok 33 - L11 exact threshold unlocks correct Tier
+  ---
+  duration_ms: 0.036956
+  type: 'test'
+  ...
+# Subtest: L11 immediately above threshold stays in this Tier
+ok 34 - L11 immediately above threshold stays in this Tier
+  ---
+  duration_ms: 0.294746
+  type: 'test'
+  ...
+# Subtest: L12 immediately below threshold remains in previous Tier
+ok 35 - L12 immediately below threshold remains in previous Tier
+  ---
+  duration_ms: 0.054703
+  type: 'test'
+  ...
+# Subtest: L12 exact threshold unlocks correct Tier
+ok 36 - L12 exact threshold unlocks correct Tier
+  ---
+  duration_ms: 0.046109
+  type: 'test'
+  ...
+# Subtest: L12 immediately above threshold stays in this Tier
+ok 37 - L12 immediately above threshold stays in this Tier
+  ---
+  duration_ms: 0.036996
+  type: 'test'
+  ...
+# Subtest: L13 immediately below threshold remains in previous Tier
+ok 38 - L13 immediately below threshold remains in previous Tier
+  ---
+  duration_ms: 0.036966
+  type: 'test'
+  ...
+# Subtest: L13 exact threshold unlocks correct Tier
+ok 39 - L13 exact threshold unlocks correct Tier
+  ---
+  duration_ms: 0.076586
+  type: 'test'
+  ...
+# Subtest: L13 immediately above threshold stays in this Tier
+ok 40 - L13 immediately above threshold stays in this Tier
+  ---
+  duration_ms: 0.037717
+  type: 'test'
+  ...
+# Subtest: L14 immediately below threshold remains in previous Tier
+ok 41 - L14 immediately below threshold remains in previous Tier
+  ---
+  duration_ms: 0.031087
+  type: 'test'
+  ...
+# Subtest: L14 exact threshold unlocks correct Tier
+ok 42 - L14 exact threshold unlocks correct Tier
+  ---
+  duration_ms: 0.081563
+  type: 'test'
+  ...
+# Subtest: L14 immediately above threshold stays in this Tier
+ok 43 - L14 immediately above threshold stays in this Tier
+  ---
+  duration_ms: 0.033631
+  type: 'test'
+  ...
+# Subtest: arbitrarily large integer principal remains exact at final unbounded Tier
+ok 44 - arbitrarily large integer principal remains exact at final unbounded Tier
+  ---
+  duration_ms: 0.354977
+  type: 'test'
+  ...
+# Subtest: invalid and unknown tiers are rejected rather than treated as eligible
+ok 45 - invalid and unknown tiers are rejected rather than treated as eligible
+  ---
+  duration_ms: 0.222667
+  type: 'test'
+  ...
+# Subtest: non-contiguous SSOT intervals cannot resolve funding eligibility
+ok 46 - non-contiguous SSOT intervals cannot resolve funding eligibility
+  ---
+  duration_ms: 0.275968
+  type: 'test'
+  ...
+# Subtest: product unlock happens at its inherited threshold, not at a rounded amount
+ok 47 - product unlock happens at its inherited threshold, not at a rounded amount
+  ---
+  duration_ms: 0.241676
+  type: 'test'
+  ...
+# Subtest: available sets are monotone and all 14 levels add a product
+ok 48 - available sets are monotone and all 14 levels add a product
+  ---
+  duration_ms: 0.219372
+  type: 'test'
+  ...
+# Subtest: L1 has four choices and cannot select the highest-stage SpaceX proposal
+ok 49 - L1 has four choices and cannot select the highest-stage SpaceX proposal
+  ---
+  duration_ms: 0.095254
+  type: 'test'
+  ...
+# Subtest: highest Tier has five equal-fastest choices with distinct scene personalities
+ok 50 - highest Tier has five equal-fastest choices with distinct scene personalities
+  ---
+  duration_ms: 0.227464
+  type: 'test'
+  ...
+# Subtest: tier downgrade pauses ineligible selection and preserves all old state
+ok 51 - tier downgrade pauses ineligible selection and preserves all old state
+  ---
+  duration_ms: 0.19167
+  type: 'test'
+  ...
+# Subtest: principal hold pauses even an eligible gold selection without reset
+ok 52 - principal hold pauses even an eligible gold selection without reset
+  ---
+  duration_ms: 0.094993
+  type: 'test'
+  ...
+# Subtest: hold release reevaluates forward and is not an automatic authorization
+ok 53 - hold release reevaluates forward and is not an automatic authorization
+  ---
+  duration_ms: 0.07938
+  type: 'test'
+  ...
+# Subtest: safe mode wins over hold, pause and capacity-driven eligibility
+ok 54 - safe mode wins over hold, pause and capacity-driven eligibility
+  ---
+  duration_ms: 0.115094
+  type: 'test'
+  ...
+# Subtest: Tier slots restrict allocations without multiplying cycle capacity
+ok 55 - Tier slots restrict allocations without multiplying cycle capacity
+  ---
+  duration_ms: 0.155635
+  type: 'test'
+  ...
+# Subtest: empty, duplicate and unknown selections never become authorization
+ok 56 - empty, duplicate and unknown selections never become authorization
+  ---
+  duration_ms: 0.236167
+  type: 'test'
+  ...
+# Subtest: 1.10 recommended band retains moderate modifier headroom; 1.18 pressures final cap
+ok 57 - 1.10 recommended band retains moderate modifier headroom; 1.18 pressures final cap
+  ---
+  duration_ms: 0.104688
+  type: 'test'
+  ...
+# Subtest: requested modifier stack is exact and clamped once at final 1.50
+ok 58 - requested modifier stack is exact and clamped once at final 1.50
+  ---
+  duration_ms: 0.088654
+  type: 'test'
+  ...
+# Subtest: normalized days-to-cap uses exact rational arithmetic, with no KRW payout forecast
+ok 59 - normalized days-to-cap uses exact rational arithmetic, with no KRW payout forecast
+  ---
+  duration_ms: 0.070266
+  type: 'test'
+  ...
+# Subtest: speed-only ties do not fabricate actual member distribution
+ok 60 - speed-only ties do not fabricate actual member distribution
+  ---
+  duration_ms: 0.063666
+  type: 'test'
+  ...
+# Subtest: each comparison band uses accessible sets per Tier instead of all 25 everywhere
+ok 61 - each comparison band uses accessible sets per Tier instead of all 25 everywhere
+  ---
+  duration_ms: 0.085469
+  type: 'test'
+  ...
+# Subtest: bands above existing 1.10 document require an explicit policy band change
+ok 62 - bands above existing 1.10 document require an explicit policy band change
+  ---
+  duration_ms: 0.058638
+  type: 'test'
+  ...
+# Subtest: high proposed speeds never populate any approved field
+ok 63 - high proposed speeds never populate any approved field
+  ---
+  duration_ms: 0.118068
+  type: 'test'
+  ...
+# Subtest: missing eligibility row
+ok 64 - missing eligibility row
+  ---
+  duration_ms: 137.248218
+  type: 'test'
+  ...
+# Subtest: duplicate eligibility row
+ok 65 - duplicate eligibility row
+  ---
+  duration_ms: 121.077582
+  type: 'test'
+  ...
+# Subtest: unknown Tier in product profile
+ok 66 - unknown Tier in product profile
+  ---
+  duration_ms: 125.105505
+  type: 'test'
+  ...
+# Subtest: missing minimum Funding Tier
+ok 67 - missing minimum Funding Tier
+  ---
+  duration_ms: 121.178705
+  type: 'test'
+  ...
+# Subtest: raw KRW threshold in eligibility
+ok 68 - raw KRW threshold in eligibility
+  ---
+  duration_ms: 119.133872
+  type: 'test'
+  ...
+# Subtest: raw KRW threshold in catalog
+ok 69 - raw KRW threshold in catalog
+  ---
+  duration_ms: 117.93656
+  type: 'test'
+  ...
+# Subtest: raw KRW threshold in economy
+ok 70 - raw KRW threshold in economy
+  ---
+  duration_ms: 119.428937
+  type: 'test'
+  ...
+# Subtest: derived principal replaced by copied threshold
+ok 71 - derived principal replaced by copied threshold
+  ---
+  duration_ms: 132.883641
+  type: 'test'
+  ...
+# Subtest: published document Tier threshold edited in proposal
+ok 72 - published document Tier threshold edited in proposal
+  ---
+  duration_ms: 116.308387
+  type: 'test'
+  ...
+# Subtest: unproven live publication timestamp
+ok 73 - unproven live publication timestamp
+  ---
+  duration_ms: 129.342454
+  type: 'test'
+  ...
+# Subtest: populated approved minimum Tier
+ok 74 - populated approved minimum Tier
+  ---
+  duration_ms: 151.265857
+  type: 'test'
+  ...
+# Subtest: higher speed moved to entry Tier without reviewed rationale
+ok 75 - higher speed moved to entry Tier without reviewed rationale
+  ---
+  duration_ms: 135.068556
+  type: 'test'
+  ...
+# Subtest: missing individual Tier rationale
+ok 76 - missing individual Tier rationale
+  ---
+  duration_ms: 122.870358
+  type: 'test'
+  ...
+# Subtest: missing per-product downgrade behavior
+ok 77 - missing per-product downgrade behavior
+  ---
+  duration_ms: 122.763592
+  type: 'test'
+  ...
+# Subtest: downgrade reset substituted for PAUSE
+ok 78 - downgrade reset substituted for PAUSE
+  ---
+  duration_ms: 120.18765
+  type: 'test'
+  ...
+# Subtest: principal HOLD behavior removed
+ok 79 - principal HOLD behavior removed
+  ---
+  duration_ms: 132.104702
+  type: 'test'
+  ...
+# Subtest: automatic substitute product on downgrade
+ok 80 - automatic substitute product on downgrade
+  ---
+  duration_ms: 116.976308
+  type: 'test'
+  ...
+# Subtest: source carry history lost on downgrade
+ok 81 - source carry history lost on downgrade
+  ---
+  duration_ms: 118.149963
+  type: 'test'
+  ...
+# Subtest: product available despite effective HOLD
+ok 82 - product available despite effective HOLD
+  ---
+  duration_ms: 117.140226
+  type: 'test'
+  ...
+# Subtest: eligibility available despite effective HOLD
+ok 83 - eligibility available despite effective HOLD
+  ---
+  duration_ms: 125.463106
+  type: 'test'
+  ...
+# Subtest: invalid unlock set
+ok 84 - invalid unlock set
+  ---
+  duration_ms: 126.316806
+  type: 'test'
+  ...
+# Subtest: technical Tier code in member copy
+ok 85 - technical Tier code in member copy
+  ---
+  duration_ms: 125.663218
+  type: 'test'
+  ...
+# Subtest: extra funding solicitation in unlock copy
+ok 86 - extra funding solicitation in unlock copy
+  ---
+  duration_ms: 125.778572
+  type: 'test'
+  ...
+# Subtest: Tier gate policy version omitted
+ok 87 - Tier gate policy version omitted
+  ---
+  duration_ms: 141.850264
+  type: 'test'
+  ...
+# Subtest: final cap headroom analysis omitted
+ok 88 - final cap headroom analysis omitted
+  ---
+  duration_ms: 125.576186
+  type: 'test'
+  ...
+# Subtest: fake actual concentration
+ok 89 - fake actual concentration
+  ---
+  duration_ms: 124.706631
+  type: 'test'
+  ...
+# Subtest: unresolved identity promoted into P0
+ok 90 - unresolved identity promoted into P0
+  ---
+  duration_ms: 123.64851
+  type: 'test'
+  ...
+# Subtest: canonical ticker differs from actual SEC directory
+ok 91 - canonical ticker differs from actual SEC directory
+  ---
+  duration_ms: 150.304302
+  type: 'test'
+  ...
+# Subtest: fabricated official quote does not occur in original bytes
+ok 92 - fabricated official quote does not occur in original bytes
+  ---
+  duration_ms: 116.716856
+  type: 'test'
+  ...
+# Subtest: legacy UNKNOWN added to current research
+ok 93 - legacy UNKNOWN added to current research
+  ---
+  duration_ms: 119.346012
+  type: 'test'
+  ...
+# Subtest: unapproved speed incorrectly activated
+ok 94 - unapproved speed incorrectly activated
+  ---
+  duration_ms: 116.657465
+  type: 'test'
+  ...
+# Subtest: non-inherited product capacity
+ok 95 - non-inherited product capacity
+  ---
+  duration_ms: 130.765466
+  type: 'test'
+  ...
+# Subtest: market linked economy value
+ok 96 - market linked economy value
+  ---
+  duration_ms: 115.796894
+  type: 'test'
+  ...
+# Subtest: legal review omitted
+ok 97 - legal review omitted
+  ---
+  duration_ms: 117.861377
+  type: 'test'
+  ...
+# Subtest: final cap raised to 1.60
+ok 98 - final cap raised to 1.60
+  ---
+  duration_ms: 118.222162
+  type: 'test'
+  ...
+# Subtest: above-document speed loses required band change acknowledgement
+ok 99 - above-document speed loses required band change acknowledgement
+  ---
+  duration_ms: 137.280341
+  type: 'test'
+  ...
+# Subtest: fresh simulation reproduces the stored full Tier analysis
+ok 100 - fresh simulation reproduces the stored full Tier analysis
+  ---
+  duration_ms: 3.694248
+  type: 'test'
+  ...
+# Subtest: all 55 current candidates use evidence-qualified identity states
+ok 101 - all 55 current candidates use evidence-qualified identity states
+  ---
+  duration_ms: 1022.166981
+  type: 'test'
+  ...
+# Subtest: SEC actually identifies SPCX; missing share class stays partial
+ok 102 - SEC actually identifies SPCX; missing share class stays partial
+  ---
+  duration_ms: 718.914879
+  type: 'test'
+  ...
+# Subtest: lossless downloaded response hashes are validated, not URL-only evidence
+ok 103 - lossless downloaded response hashes are validated, not URL-only evidence
+  ---
+  duration_ms: 886.302782
+  type: 'test'
+  ...
+# Subtest: a successful Invesco QQQ response cannot verify ProShares TQQQ
+ok 104 - a successful Invesco QQQ response cannot verify ProShares TQQQ
+  ---
+  duration_ms: 693.513685
+  type: 'test'
+  ...
+# Subtest: a real primary sponsor response resolves the AI investigation slot only partially
+ok 105 - a real primary sponsor response resolves the AI investigation slot only partially
+  ---
+  duration_ms: 702.776196
+  type: 'test'
+  ...
+# Subtest: current sponsor identity supersedes the historical VTI name hint
+ok 106 - current sponsor identity supersedes the historical VTI name hint
+  ---
+  duration_ms: 748.171984
+  type: 'test'
+  ...
+# Subtest: a complete gated draft passes while research and registration remain blocked
+ok 107 - a complete gated draft passes while research and registration remain blocked
+  ---
+  duration_ms: 13.228371
+  type: 'test'
+  ...
+# Subtest: planned P0 can be researched later but UNKNOWN never becomes effective launch
+ok 108 - planned P0 can be researched later but UNKNOWN never becomes effective launch
+  ---
+  duration_ms: 6.793306
+  type: 'test'
+  ...
+# Subtest: verified source bookkeeping requires a real response and fresh factual evidence
+ok 109 - verified source bookkeeping requires a real response and fresh factual evidence
+  ---
+  duration_ms: 5.820835
+  type: 'test'
+  ...
+# Subtest: duplicate proposal identity
+ok 110 - duplicate proposal identity
+  ---
+  duration_ms: 6.8419
+  type: 'test'
+  ...
+# Subtest: duplicate product slug
+ok 111 - duplicate product slug
+  ---
+  duration_ms: 7.069544
+  type: 'test'
+  ...
+# Subtest: duplicate market and ticker
+ok 112 - duplicate market and ticker
+  ---
+  duration_ms: 4.386265
+  type: 'test'
+  ...
+# Subtest: uncontracted asset class
+ok 113 - uncontracted asset class
+  ---
+  duration_ms: 4.751618
+  type: 'test'
+  ...
+# Subtest: empty product identity hint
+ok 114 - empty product identity hint
+  ---
+  duration_ms: 4.109767
+  type: 'test'
+  ...
+# Subtest: invalid planned launch wave
+ok 115 - invalid planned launch wave
+  ---
+  duration_ms: 4.494428
+  type: 'test'
+  ...
+# Subtest: market linked product
+ok 116 - market linked product
+  ---
+  duration_ms: 4.688252
+  type: 'test'
+  ...
+# Subtest: fake operator approval
+ok 117 - fake operator approval
+  ---
+  duration_ms: 4.924229
+  type: 'test'
+  ...
+# Subtest: unreviewed brand clearance
+ok 118 - unreviewed brand clearance
+  ---
+  duration_ms: 4.905901
+  type: 'test'
+  ...
+# Subtest: invented partnership claim
+ok 119 - invented partnership claim
+  ---
+  duration_ms: 3.933891
+  type: 'test'
+  ...
+# Subtest: unproven live catalog
+ok 120 - unproven live catalog
+  ---
+  duration_ms: 4.322068
+  type: 'test'
+  ...
+# Subtest: fabricated new database UUID
+ok 121 - fabricated new database UUID
+  ---
+  duration_ms: 5.384445
+  type: 'test'
+  ...
+# Subtest: candidate without a source
+ok 122 - candidate without a source
+  ---
+  duration_ms: 3.884786
+  type: 'test'
+  ...
+# Subtest: verified identity without factual evidence
+ok 123 - verified identity without factual evidence
+  ---
+  duration_ms: 3.963946
+  type: 'test'
+  ...
+# Subtest: UNKNOWN P0 effective candidate
+ok 124 - UNKNOWN P0 effective candidate
+  ---
+  duration_ms: 4.684055
+  type: 'test'
+  ...
+# Subtest: UNKNOWN P1 effective candidate
+ok 125 - UNKNOWN P1 effective candidate
+  ---
+  duration_ms: 3.893159
+  type: 'test'
+  ...
+# Subtest: SpaceX hint promoted to canonical ticker without checking
+ok 126 - SpaceX hint promoted to canonical ticker without checking
+  ---
+  duration_ms: 3.936585
+  type: 'test'
+  ...
+# Subtest: unmeasured scoring sold as measurement
+ok 127 - unmeasured scoring sold as measurement
+  ---
+  duration_ms: 4.472485
+  type: 'test'
+  ...
+# Subtest: ETF category contract omitted
+ok 128 - ETF category contract omitted
+  ---
+  duration_ms: 4.149758
+  type: 'test'
+  ...
+# Subtest: official source URL with credentials
+ok 129 - official source URL with credentials
+  ---
+  duration_ms: 3.911447
+  type: 'test'
+  ...
+# Subtest: blocked source falsely verified
+ok 130 - blocked source falsely verified
+  ---
+  duration_ms: 4.348557
+  type: 'test'
+  ...
+# Subtest: stale fetched source cannot verify current listing
+ok 131 - stale fetched source cannot verify current listing
+  ---
+  duration_ms: 4.175036
+  type: 'test'
+  ...
+# Subtest: future accessed date cannot verify source
+ok 132 - future accessed date cannot verify source
+  ---
+  duration_ms: 4.046341
+  type: 'test'
+  ...
+# Subtest: research completed without a verified response
+ok 133 - research completed without a verified response
+  ---
+  duration_ms: 4.674722
+  type: 'test'
+  ...
+# Subtest: response hash invented without an obtained file
+ok 134 - response hash invented without an obtained file
+  ---
+  duration_ms: 4.349088
+  type: 'test'
+  ...
+# Subtest: launch missing a product entry
+ok 135 - launch missing a product entry
+  ---
+  duration_ms: 2.951445
+  type: 'test'
+  ...
+# Subtest: duplicate display order
+ok 136 - duplicate display order
+  ---
+  duration_ms: 4.091769
+  type: 'test'
+  ...
+# Subtest: unproven launch approval
+ok 137 - unproven launch approval
+  ---
+  duration_ms: 4.924849
+  type: 'test'
+  ...
+# Subtest: new product without Scene spec gate
+ok 138 - new product without Scene spec gate
+  ---
+  duration_ms: 4.49456
+  type: 'test'
+  ...
+# Subtest: missing mobile master gate
+ok 139 - missing mobile master gate
+  ---
+  duration_ms: 4.762323
+  type: 'test'
+  ...
+# Subtest: fabricated ready Scene asset
+ok 140 - fabricated ready Scene asset
+  ---
+  duration_ms: 5.463124
+  type: 'test'
+  ...
+# Subtest: invalid calendar date
+ok 141 - invalid calendar date
+  ---
+  duration_ms: 3.99969
+  type: 'test'
+  ...
+# Subtest: reversed availability dates
+ok 142 - reversed availability dates
+  ---
+  duration_ms: 4.186182
+  type: 'test'
+  ...
+# Subtest: numeric floating speed instead of decimal string
+ok 143 - numeric floating speed instead of decimal string
+  ---
+  duration_ms: 3.925499
+  type: 'test'
+  ...
+# Subtest: three-decimal speed violates 0.01 step
+ok 144 - three-decimal speed violates 0.01 step
+  ---
+  duration_ms: 5.076338
+  type: 'test'
+  ...
+# Subtest: proposed speed exceeds allowed 1.20
+ok 145 - proposed speed exceeds allowed 1.20
+  ---
+  duration_ms: 4.903247
+  type: 'test'
+  ...
+# Subtest: proposal band silently changed
+ok 146 - proposal band silently changed
+  ---
+  duration_ms: 6.770621
+  type: 'test'
+  ...
+# Subtest: suggested yield invented
+ok 147 - suggested yield invented
+  ---
+  duration_ms: 6.896753
+  type: 'test'
+  ...
+# Subtest: proposed speed below 1.00
+ok 148 - proposed speed below 1.00
+  ---
+  duration_ms: 5.179466
+  type: 'test'
+  ...
+# Subtest: bps and decimal disagree
+ok 149 - bps and decimal disagree
+  ---
+  duration_ms: 4.938
+  type: 'test'
+  ...
+# Subtest: grade contradicts speed band
+ok 150 - grade contradicts speed band
+  ---
+  duration_ms: 4.583573
+  type: 'test'
+  ...
+# Subtest: mining personality omitted
+ok 151 - mining personality omitted
+  ---
+  duration_ms: 6.860919
+  type: 'test'
+  ...
+# Subtest: approved value invented
+ok 152 - approved value invented
+  ---
+  duration_ms: 7.105168
+  type: 'test'
+  ...
+# Subtest: human policy gate disabled
+ok 153 - human policy gate disabled
+  ---
+  duration_ms: 7.757765
+  type: 'test'
+  ...
+# Subtest: market price controls proposed economy
+ok 154 - market price controls proposed economy
+  ---
+  duration_ms: 6.647846
+  type: 'test'
+  ...
+# Subtest: product capacity override added
+ok 155 - product capacity override added
+  ---
+  duration_ms: 6.741048
+  type: 'test'
+  ...
+# Subtest: per-slot global capacity replicated
+ok 156 - per-slot global capacity replicated
+  ---
+  duration_ms: 7.762553
+  type: 'test'
+  ...
+# Subtest: fractional won main display
+ok 157 - fractional won main display
+  ---
+  duration_ms: 6.812965
+  type: 'test'
+  ...
+# Subtest: new speed above existing policy passed silently
+ok 158 - new speed above existing policy passed silently
+  ---
+  duration_ms: 6.510819
+  type: 'test'
+  ...
+# Subtest: final cap increased
+ok 159 - final cap increased
+  ---
+  duration_ms: 8.628573
+  type: 'test'
+  ...
+# Subtest: intermediate cap applied
+ok 160 - intermediate cap applied
+  ---
+  duration_ms: 7.210287
+  type: 'test'
+  ...
+# Subtest: micro unit altered
+ok 161 - micro unit altered
+  ---
+  duration_ms: 7.110396
+  type: 'test'
+  ...
+# Subtest: missing one launch economy value
+ok 162 - missing one launch economy value
+  ---
+  duration_ms: 4.646859
+  type: 'test'
+  ...
+# Subtest: money guarantee in member copy
+ok 163 - money guarantee in member copy
+  ---
+  duration_ms: 7.252481
+  type: 'test'
+  ...
+# Subtest: numeric payout invented in member copy
+ok 164 - numeric payout invented in member copy
+  ---
+  duration_ms: 7.824265
+  type: 'test'
+  ...
+# Subtest: market linked payout copy
+ok 165 - market linked payout copy
+  ---
+  duration_ms: 5.608473
+  type: 'test'
+  ...
+# Subtest: technical enum exposed to member
+ok 166 - technical enum exposed to member
+  ---
+  duration_ms: 6.731082
+  type: 'test'
+  ...
+# Subtest: positioning disclaimer removed
+ok 167 - positioning disclaimer removed
+  ---
+  duration_ms: 7.373994
+  type: 'test'
+  ...
+# Subtest: linked FAQ not present
+ok 168 - linked FAQ not present
+  ---
+  duration_ms: 4.758589
+  type: 'test'
+  ...
+# Subtest: delta collides with frozen internal slug
+ok 169 - delta collides with frozen internal slug
+  ---
+  duration_ms: 5.715716
+  type: 'test'
+  ...
+# Subtest: delta collides with frozen storage slug
+ok 170 - delta collides with frozen storage slug
+  ---
+  duration_ms: 6.865876
+  type: 'test'
+  ...
+# Subtest: empty content title
+ok 171 - empty content title
+  ---
+  duration_ms: 7.580827
+  type: 'test'
+  ...
+# Subtest: empty content full body
+ok 172 - empty content full body
+  ---
+  duration_ms: 6.626444
+  type: 'test'
+  ...
+# Subtest: missing CTA
+ok 173 - missing CTA
+  ---
+  duration_ms: 5.276422
+  type: 'test'
+  ...
+# Subtest: fabricated product detail route
+ok 174 - fabricated product detail route
+  ---
+  duration_ms: 5.540402
+  type: 'test'
+  ...
+# Subtest: invalid audience
+ok 175 - invalid audience
+  ---
+  duration_ms: 4.715864
+  type: 'test'
+  ...
+# Subtest: invalid mining segment
+ok 176 - invalid mining segment
+  ---
+  duration_ms: 3.902042
+  type: 'test'
+  ...
+# Subtest: required copy missing
+ok 177 - required copy missing
+  ---
+  duration_ms: 5.003238
+  type: 'test'
+  ...
+# Subtest: template variable not declared
+ok 178 - template variable not declared
+  ---
+  duration_ms: 5.032303
+  type: 'test'
+  ...
+# Subtest: unapproved content financial value
+ok 179 - unapproved content financial value
+  ---
+  duration_ms: 5.082177
+  type: 'test'
+  ...
+# Subtest: content published without receipt
+ok 180 - content published without receipt
+  ---
+  duration_ms: 4.606549
+  type: 'test'
+  ...
+# Subtest: event ends before it starts
+ok 181 - event ends before it starts
+  ---
+  duration_ms: 5.062859
+  type: 'test'
+  ...
+# Subtest: in-app notification links outside protected allowlist
+ok 182 - in-app notification links outside protected allowlist
+  ---
+  duration_ms: 5.614052
+  type: 'test'
+  ...
+# Subtest: uppercase notification category is not mapped
+ok 183 - uppercase notification category is not mapped
+  ---
+  duration_ms: 5.080344
+  type: 'test'
+  ...
+# Subtest: push opt-in bypass
+ok 184 - push opt-in bypass
+  ---
+  duration_ms: 4.324982
+  type: 'test'
+  ...
+# Subtest: invented member notification target
+ok 185 - invented member notification target
+  ---
+  duration_ms: 4.042045
+  type: 'test'
+  ...
+# Subtest: support macro sends automatically
+ok 186 - support macro sends automatically
+  ---
+  duration_ms: 3.791055
+  type: 'test'
+  ...
+# Subtest: missing a frozen event review
+ok 187 - missing a frozen event review
+  ---
+  duration_ms: 3.911607
+  type: 'test'
+  ...
+# Subtest: drop deletes historical records
+ok 188 - drop deletes historical records
+  ---
+  duration_ms: 5.01811
+  type: 'test'
+  ...
+# Subtest: unobserved external benchmark claimed complete
+ok 189 - unobserved external benchmark claimed complete
+  ---
+  duration_ms: 3.613496
+  type: 'test'
+  ...
+# Subtest: registration ready without readback evidence
+ok 190 - registration ready without readback evidence
+  ---
+  duration_ms: 3.939028
+  type: 'test'
+  ...
+# Subtest: production ready without approval
+ok 191 - production ready without approval
+  ---
+  duration_ms: 3.664624
+  type: 'test'
+  ...
+# Subtest: catalog command invented
+ok 192 - catalog command invented
+  ---
+  duration_ms: 3.598293
+  type: 'test'
+  ...
+# Subtest: direct SQL used to bypass command absence
+ok 193 - direct SQL used to bypass command absence
+  ---
+  duration_ms: 3.718045
+  type: 'test'
+  ...
+# Subtest: shared staging not owned by this lane
+ok 194 - shared staging not owned by this lane
+  ---
+  duration_ms: 3.895593
+  type: 'test'
+  ...
+# Subtest: fabricated readback PASS
+ok 195 - fabricated readback PASS
+  ---
+  duration_ms: 4.473738
+  type: 'test'
+  ...
+# Subtest: fake screenshot used as real registration proof
+ok 196 - fake screenshot used as real registration proof
+  ---
+  duration_ms: 3.608458
+  type: 'test'
+  ...
+# Subtest: fake rollback receipt
+ok 197 - fake rollback receipt
+  ---
+  duration_ms: 3.766017
+  type: 'test'
+  ...
+# Subtest: simulated outputs edited after computation
+ok 198 - simulated outputs edited after computation
+  ---
+  duration_ms: 3.948373
+  type: 'test'
+  ...
+# Subtest: invented live selection distribution
+ok 199 - invented live selection distribution
+  ---
+  duration_ms: 3.552303
+  type: 'test'
+  ...
+# Subtest: leap and invalid-calendar dates are distinguished
+ok 200 - leap and invalid-calendar dates are distinguished
+  ---
+  duration_ms: 0.089626
+  type: 'test'
+  ...
+# Subtest: decimal bps use exact 0.01 increments
+ok 201 - decimal bps use exact 0.01 increments
+  ---
+  duration_ms: 0.252602
+  type: 'test'
+  ...
+# Subtest: combined cap matches requested product user event example
+ok 202 - combined cap matches requested product user event example
+  ---
+  duration_ms: 0.069214
+  type: 'test'
+  ...
+# Subtest: exact cap boundary and one bps below stay distinguishable
+ok 203 - exact cap boundary and one bps below stay distinguishable
+  ---
+  duration_ms: 0.057917
+  type: 'test'
+  ...
+# Subtest: final-only clamp preserves a later reduction modifier
+ok 204 - final-only clamp preserves a later reduction modifier
+  ---
+  duration_ms: 0.074513
+  type: 'test'
+  ...
+# Subtest: maximum proposed speed keeps exact calculable modifier headroom
+ok 205 - maximum proposed speed keeps exact calculable modifier headroom
+  ---
+  duration_ms: 0.180322
+  type: 'test'
+  ...
+# Subtest: sub-micro carry survives until the third tick
+ok 206 - sub-micro carry survives until the third tick
+  ---
+  duration_ms: 0.19795
+  type: 'test'
+  ...
+# Subtest: chunked accrual equals one interval without losing residue
+ok 207 - chunked accrual equals one interval without losing residue
+  ---
+  duration_ms: 0.154514
+  type: 'test'
+  ...
+# Subtest: capacity cannot be exceeded by large elapsed time
+ok 208 - capacity cannot be exceeded by large elapsed time
+  ---
+  duration_ms: 0.077357
+  type: 'test'
+  ...
+# Subtest: whole won display stays below the next verified 1-won boundary
+ok 209 - whole won display stays below the next verified 1-won boundary
+  ---
+  duration_ms: 0.073541
+  type: 'test'
+  ...
+# Subtest: two slots share global capacity and cannot allocate more than 100%
+ok 210 - two slots share global capacity and cannot allocate more than 100%
+  ---
+  duration_ms: 0.099921
+  type: 'test'
+  ...
+# Subtest: Policy A and B differ in capacity rather than silently changing reward rate
+ok 211 - Policy A and B differ in capacity rather than silently changing reward rate
+  ---
+  duration_ms: 0.147083
+  type: 'test'
+  ...
+# Subtest: rational arithmetic is exact beyond Number safe integer range
+ok 212 - rational arithmetic is exact beyond Number safe integer range
+  ---
+  duration_ms: 0.183467
+  type: 'test'
+  ...
+# Subtest: invalid negative or zero inputs fail instead of producing money
+ok 213 - invalid negative or zero inputs fail instead of producing money
+  ---
+  duration_ms: 0.158951
+  type: 'test'
+  ...
+# Subtest: restored default draft remains valid after all isolated mutations
+ok 214 - restored default draft remains valid after all isolated mutations
+  ---
+  duration_ms: 2.5324
+  type: 'test'
+  ...
+1..214
+# tests 214
+# suites 0
+# pass 214
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 5650.857565

@@ -1,7 +1,7 @@
 {
   "status": "PASS",
-  "completed_at": "2026-10-07T13:44:49.449018+00:00",
-  "command": "node --test catalog-ops/validate.test.mjs catalog-ops/research.test.mjs catalog-ops/finalize.test.mjs",
+  "completed_at": "2026-10-07T13:56:14.730231+00:00",
+  "command": "node --test --test-reporter=tap catalog-ops/validate.test.mjs catalog-ops/research.test.mjs catalog-ops/finalize.test.mjs",
   "baseline_tests_preserved": 108,
   "additional_tests": 106,
   "tests": 214,
@@ -9,6 +9,7 @@
   "fail": 0,
   "skipped": 0,
   "cancelled": 0,
-  "tap_sha256": "e6af306f7b7afbb40ab737f0522fa6d14846b90f654331e0f8644beae67c638c",
+  "todo": 0,
+  "tap_sha256": "413a9c4ccdf2c12dda8cee8b1e5924931d5159c1e63a0c62c73f4ea86c4cf801",
   "full_ci_run": false
 }
