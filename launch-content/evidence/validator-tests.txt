@@ -1,14 +1,14 @@
-✔ complete Korean package passes only as an unpublished draft (8.370504ms)
-✔ registration readiness cannot mistake draft validity for publication approval (4.084966ms)
-✔ duplicate internal and per-table slugs are rejected (10.170797ms)
-✔ blank title/body and unknown DB fields are rejected (12.626299ms)
-✔ invalid calendar dates, absent offsets and backwards windows are rejected (8.134329ms)
-✔ CTA, audience and notification protected-route allowlists fail closed (17.904027ms)
-✔ unapproved rewards, numeric returns and fake approval are rejected (15.126946ms)
-✔ mandatory safety copy and declared placeholders cannot disappear (8.587011ms)
-✔ notification channels and push/in-app text must remain consistent (5.870107ms)
-✔ publication state and missing FAQ categories fail closed (8.956047ms)
-✔ runbook stays complete, operator-scoped and identical to its full document (18.322632ms)
+✔ complete Korean package passes only as an unpublished draft (7.767236ms)
+✔ registration readiness cannot mistake draft validity for publication approval (2.986371ms)
+✔ duplicate internal and per-table slugs are rejected (10.193281ms)
+✔ blank title/body and unknown DB fields are rejected (14.767055ms)
+✔ invalid calendar dates, absent offsets and backwards windows are rejected (7.351329ms)
+✔ CTA, audience and notification protected-route allowlists fail closed (20.730182ms)
+✔ unapproved rewards, numeric returns and fake approval are rejected (18.184996ms)
+✔ mandatory safety copy and declared placeholders cannot disappear (11.376079ms)
+✔ notification channels and push/in-app text must remain consistent (9.116489ms)
+✔ publication state and missing FAQ categories fail closed (14.682878ms)
+✔ runbook stays complete, operator-scoped and identical to its full document (28.52579ms)
 ℹ tests 11
 ℹ suites 0
 ℹ pass 11
@@ -16,4 +16,4 @@
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 207.96255
+ℹ duration_ms 215.586843

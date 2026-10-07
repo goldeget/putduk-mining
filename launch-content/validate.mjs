@@ -199,26 +199,32 @@ export function validatePackage(bundle, { publication = false } = {}) {
           block("POLICY_VALUE_REQUIRED", slug);
         }
       }
-      const visibleCopy = `${title ?? ""}\n${body ?? ""}\n${row.summary_ko ?? ""}\n${m.notification_copy ?? ""}`;
+      const visibleCopy = `${title ?? ""}\n${body ?? ""}\n${row.summary_ko ?? ""}\n${m.card_title_ko ?? ""}\n${m.notification_copy ?? ""}`;
       function inspectEconomicFields(value) {
+        if (Array.isArray(value)) {
+          value.forEach(inspectEconomicFields);
+          return;
+        }
         if (!object(value)) return;
         for (const [key, entry] of Object.entries(value)) {
+          const economicKey = key.replace(/([a-z0-9])([A-Z])/g, "$1_$2");
           if (
-            /^(?:speed|capacity|amount_atomic|bonus_amount|reward_amount|yield|reward_rate|multiplier)$/i.test(
-              key,
+            /^(?:speed|capacity|amount_atomic|bonus_amount|reward_amount|yield|reward_rate|multiplier)(?:_value|_atomic|_multiplier|_rate)?$/i.test(
+              economicKey,
             ) &&
             entry !== null
           )
             issue("UNAPPROVED_METADATA_ECONOMICS", slug, key);
-          if (object(entry)) inspectEconomicFields(entry);
+          if (object(entry) || Array.isArray(entry))
+            inspectEconomicFields(entry);
         }
       }
       inspectEconomicFields(m);
-      const economicCopy = visibleCopy.replace(
+      const economicCopy = `${visibleCopy}\n${m.scene_brief ?? ""}`.replace(
         /0원(?:으로 (?:판단|생각)하지 마세요|인가요\?)/g,
         "금액 미확인 안내",
       );
-      if (/\d[\d,.]*\s*(?:%|퍼센트|원|KRW|USDT|배\b)/i.test(economicCopy))
+      if (/\d[\d,.]*\s*(?:%|퍼센트|원|KRW|USDT|배)/i.test(economicCopy))
         issue("UNAPPROVED_NUMERIC_ECONOMICS", slug);
       if (
         /POLICY_VALUE_REQUIRED|authoritative|\bDB\b|snapshot|raw enum/i.test(

@@ -148,4 +148,13 @@ test("runbook stays complete, operator-scoped and identical to its full document
   rejects("UNAPPROVED_METADATA_ECONOMICS", (b) => {
     event(b).metadata.speed = 7;
   });
+  rejects("UNAPPROVED_METADATA_ECONOMICS", (b) => {
+    event(b).metadata.proposed = [{ speedMultiplier: 3 }];
+  });
+  rejects("UNAPPROVED_NUMERIC_ECONOMICS", (b) => {
+    event(b).metadata.card_title_ko = "가입 첫날 50% 추가 보상";
+  });
+  rejects("UNAPPROVED_NUMERIC_ECONOMICS", (b) => {
+    event(b).metadata.scene_brief = "3배속 혜택 배너";
+  });
 });

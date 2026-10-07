@@ -7,7 +7,31 @@ import { fileURLToPath } from "node:url";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const files = execFileSync(
   "rg",
-  ["--files", "app", "components", "-g", "*.ts", "-g", "*.tsx"],
+  [
+    "--files",
+    "app",
+    "components",
+    "lib/product",
+    "lib/trust",
+    "domain/events",
+    "domain/notifications",
+    "domain/products",
+    "domain/wallet/format-amount.ts",
+    "-g",
+    "*.ts",
+    "-g",
+    "*.tsx",
+    "-g",
+    "*.js",
+    "-g",
+    "*.jsx",
+    "-g",
+    "*.mdx",
+    "-g",
+    "*.html",
+    "-g",
+    "*.css",
+  ],
   { cwd: root, encoding: "utf8" },
 )
   .trim()
@@ -23,6 +47,7 @@ const terms = [
   "authoritative",
   "snapshot",
   "raw enum",
+  "서버 확인",
 ];
 const patterns = terms.map((term) => [
   term,
@@ -39,6 +64,24 @@ function explain(file, line, internal) {
     return [
       "식별자·주석·상태 코드 후보. 문자열 존재만으로 회원 화면 노출을 확정하지 않습니다.",
       "내부 이름은 유지하세요. 실제 렌더/응답 경로에서 한국어 허용 목록으로 표시되는지 확인합니다.",
+    ];
+  if (file.includes("lib/trust/public-content"))
+    return [
+      "공개 AI 도움말의 미확인 처리 원칙. 현재 문구에 설계/내부 상태 표현이 포함됨.",
+      "아직 확인하지 못한 내용은 추측하지 않아요. 필요한 경우 운영자가 확인합니다.",
+    ];
+  if (
+    file.includes("member-screen-present") &&
+    line.includes("확인할 수 없어요")
+  )
+    return [
+      "가입 날짜 문자열을 날짜로 해석하지 못함. 잔액 오류나 미가입 상태가 아님.",
+      "가입 날짜 확인이 필요해요.",
+    ];
+  if (file.includes("start-page-state") || file.includes("home-start-display"))
+    return [
+      "체험 상태 조회 실패 또는 지원하지 않는 상태. 실패/미확인/미시작을 구분해야 함.",
+      "체험 상태를 다시 확인해 주세요. / 실제 확인 절차가 끝나면 전환 결과를 확인할 수 있어요.",
     ];
   if (file.includes("notification-preferences"))
     return [
@@ -60,7 +103,10 @@ function explain(file, line, internal) {
       "체험 진행률을 안전하게 산출할 정보가 없음. 보조기기 안내도 필요.",
       "체험 진행률을 불러오지 못했어요.",
     ];
-  if (file.includes("mining-amount-board"))
+  if (
+    file.includes("mining-amount-board") ||
+    file.includes("mining-server-display")
+  )
     return [
       "금액 표시가 미확인. 확인 전 금액과 확정 보상을 구분해야 함.",
       "금액을 불러오지 못했어요. 다시 확인해 주세요. / 확인 전 금액이며 확정된 보상은 아닙니다.",
@@ -130,6 +176,14 @@ for (const file of files) {
     }
   });
 }
+const readableHits = findings.filter(
+  (finding) => finding.classification === "MEMBER_COPY_OR_API_MESSAGE_REVIEW",
+);
+const readableLocations = [
+  ...new Map(
+    readableHits.map((finding) => [`${finding.file}:${finding.line}`, finding]),
+  ).values(),
+];
 const report = {
   baseline_sha: execFileSync("git", ["rev-parse", "origin/develop"], {
     cwd: root,
@@ -139,12 +193,22 @@ const report = {
     cwd: root,
     encoding: "utf8",
   }).trim(),
-  scan_scope: ["app/**/*.ts(x)", "components/**/*.ts(x)"],
+  scan_scope: [
+    "app/**",
+    "components/**",
+    "lib/product/**",
+    "lib/trust/**",
+    "domain/events/**",
+    "domain/notifications/**",
+    "domain/products/**",
+    "domain/wallet/format-amount.ts",
+  ],
   terms,
   technical_code_search:
     "quoted uppercase enum/error token candidates including single-word states; not a claim of raw UI leakage",
   source_hashes: hashes,
   matched_findings: findings.length,
+  unique_korean_locations: readableLocations.length,
   rendered_visibility: "NOT_VERIFIED",
   findings,
 };
@@ -154,9 +218,7 @@ fs.writeFileSync(
   `${JSON.stringify(report, null, 2)}\n`,
 );
 const escape = (value) => value.replaceAll("|", "\\|").replaceAll("\n", " ");
-const readable = findings.filter(
-  (finding) => finding.classification === "MEMBER_COPY_OR_API_MESSAGE_REVIEW",
-);
+const readable = readableLocations;
 const md = [
   "# 회원 문구 감사 보고서",
   "",

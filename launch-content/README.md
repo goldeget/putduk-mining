@@ -14,7 +14,7 @@
 | 장애 안내 | 8 | incident-templates.json | docs/incident-templates.md |
 | 1인 출시 운영 절차 | 1 | runbook.json | LAUNCH-DAY-RUNBOOK.md |
 
-각 JSON은 record 배열입니다. `slug`는 패키지 전체에서 고유한 내부 키입니다. `storage`는 기존 테이블의 확인된 열에 대응하는 **미완성 초안 매핑**입니다. `metadata`는 현재 DB 계약에 없는 CTA·대상·카드/전체 이벤트 본문·시각·KPI·배너·위험·승인·전달 조건입니다. metadata를 임의 JSON 열이나 `event_rules.rule_payload`에 넣지 않습니다. FAQ/지원/장애 템플릿은 승인된 저장 계약이 없어 `storage`가 비어 있습니다.
+7개 콘텐츠 JSON은 record 배열입니다. manifest·등록 계획·증거는 별도 보조 구조입니다. `slug`는 패키지 전체에서 고유한 내부 키입니다. `storage`는 기존 테이블의 확인된 열에 대응하는 **미완성 초안 매핑**입니다. `metadata`는 현재 DB 계약에 없는 CTA·대상·카드/전체 이벤트 본문·시각·KPI·배너·위험·승인·전달 조건입니다. metadata를 임의 JSON 열이나 `event_rules.rule_payload`에 넣지 않습니다. FAQ/지원/장애·운영 절차는 승인된 저장 계약이 없어 `storage`가 비어 있습니다.
 
 이벤트 28개는 보상 없는 이용 안내 캠페인입니다. START 전환·용량/속도 설명 2개는 `POLICY_VALUE_REQUIRED`이며 정책 버전과 실제 runtime 확인 전 게시 금지입니다. 참여 클릭·미션 진행률·상품·보상·추적 코드를 만들지 않았습니다. 경제 수치는 전부 미지정입니다. 임의 bonus·수익률·속도·용량·KPI 목표값을 넣지 않습니다.
 
