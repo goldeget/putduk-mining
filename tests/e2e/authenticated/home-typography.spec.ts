@@ -58,6 +58,26 @@ test("unfunded home retains Korean layout across viewport and text scales", asyn
         });
         await assertViewportFits(page, info, label);
         await assertTypographyClean(page, label, info);
+        const summaryRows = await page
+          .getByRole("region", { name: "내 채굴 정보", exact: true })
+          .evaluate((section) => {
+            const grid = section.querySelector(":scope > div")!;
+            const rows = new Map<number, number>();
+            for (const card of grid.children) {
+              const rect = card.getBoundingClientRect();
+              if (rect.width <= 0 || rect.height <= 0) continue;
+              const top = Math.round(rect.top);
+              rows.set(top, (rows.get(top) ?? 0) + 1);
+            }
+            return [...rows.values()];
+          });
+        expect(summaryRows.reduce((sum, count) => sum + count, 0)).toBe(
+          theme === "dark" ? 4 : 3,
+        );
+        expect(
+          new Set(summaryRows).size,
+          `${label}: balanced summary rows`,
+        ).toBe(1);
         await page
           .getByRole("main")
           .evaluate((el) => el.scrollTo({ top: 0, behavior: "instant" }));
