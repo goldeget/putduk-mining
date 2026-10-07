@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "status": "PROPOSED_NOT_APPROVED",
+  "schedule": null,
+  "timezone": "Asia/Seoul",
+  "waves": [
+    {
+      "name": "P0_LAUNCH_CORE",
+      "products": [
+        "catalog-v1-samsung-electronics",
+        "catalog-v1-sk-hynix",
+        "catalog-v1-hyundai-motor",
+        "catalog-v1-lg-energy-solution",
+        "catalog-v1-nvidia",
+        "catalog-v1-tesla",
+        "catalog-v1-apple",
+        "catalog-v1-microsoft",
+        "catalog-v1-spy",
+        "catalog-v1-qqq",
+        "catalog-v1-bitcoin",
+        "catalog-v1-ethereum",
+        "catalog-v1-gold",
+        "catalog-v1-silver"
+      ],
+      "entry_gates": [
+        "CURRENT_OFFICIAL_IDENTITY",
+        "LEGAL_BRAND_APPROVAL",
+        "POLICY_APPROVAL",
+        "APPROVED_COMMAND",
+        "LOCAL_REGISTRATION_READBACK_RENDER_ROLLBACK",
+        "PRODUCT_SCENE_QA"
+      ],
+      "delay_if_failed": true,
+      "economic_activation": false
+    },
+    {
+      "name": "P1_LAUNCH_EXPANSION",
+      "products": [
+        "catalog-v1-naver",
+        "catalog-v1-kb-financial",
+        "catalog-v1-rocket-lab",
+        "catalog-v1-sandisk",
+        "catalog-v1-amazon",
+        "catalog-v1-alphabet-a",
+        "catalog-v1-meta",
+        "catalog-v1-soxx",
+        "catalog-v1-schd",
+        "catalog-v1-solana"
+      ],
+      "entry_gates": [
+        "CURRENT_OFFICIAL_IDENTITY",
+        "LEGAL_BRAND_APPROVAL",
+        "POLICY_APPROVAL",
+        "APPROVED_COMMAND",
+        "LOCAL_REGISTRATION_READBACK_RENDER_ROLLBACK",
+        "PRODUCT_SCENE_QA"
+      ],
+      "delay_if_failed": true,
+      "economic_activation": false
+    },
+    {
+      "name": "P2_LATER",
+      "products": [
+        "catalog-v1-lg-electronics",
+        "catalog-v1-kakao",
+        "catalog-v1-samsung-biologics",
+        "catalog-v1-hanwha-aerospace",
+        "catalog-v1-hd-hyundai-heavy",
+        "catalog-v1-hd-hyundai-electric",
+        "catalog-v1-sk-innovation",
+        "catalog-v1-amorepacific",
+        "catalog-v1-amd",
+        "catalog-v1-broadcom",
+        "catalog-v1-palantir",
+        "catalog-v1-jpmorgan",
+        "catalog-v1-netflix",
+        "catalog-v1-vti",
+        "catalog-v1-aiq",
+        "catalog-v1-bnd",
+        "catalog-v1-iau",
+        "catalog-v1-kodex-200",
+        "catalog-v1-tiger-us-sp500",
+        "catalog-v1-kodex-semiconductor",
+        "catalog-v1-tiger-us-nasdaq100",
+        "catalog-v1-kodex-treasury-3y",
+        "catalog-v1-bnb",
+        "catalog-v1-xrp"
+      ],
+      "entry_gates": [
+        "CURRENT_OFFICIAL_IDENTITY",
+        "LEGAL_BRAND_APPROVAL",
+        "POLICY_APPROVAL",
+        "APPROVED_COMMAND",
+        "LOCAL_REGISTRATION_READBACK_RENDER_ROLLBACK",
+        "PRODUCT_SCENE_QA"
+      ],
+      "delay_if_failed": true,
+      "economic_activation": false
+    },
+    {
+      "name": "HOLD",
+      "products": [
+        "catalog-v1-spacex",
+        "catalog-v1-kr-ai-etf-research",
+        "catalog-v1-kr-dividend-etf-research",
+        "catalog-v1-kodex-gold-futures",
+        "catalog-v1-tqqq-review"
+      ],
+      "entry_gates": [
+        "CURRENT_OFFICIAL_IDENTITY",
+        "LEGAL_BRAND_APPROVAL",
+        "POLICY_APPROVAL",
+        "APPROVED_COMMAND",
+        "LOCAL_REGISTRATION_READBACK_RENDER_ROLLBACK",
+        "PRODUCT_SCENE_QA"
+      ],
+      "delay_if_failed": true,
+      "economic_activation": false
+    },
+    {
+      "name": "REJECT",
+      "products": ["catalog-v1-usdt-rail", "catalog-v1-usdc-rail"],
+      "entry_gates": [
+        "CURRENT_OFFICIAL_IDENTITY",
+        "LEGAL_BRAND_APPROVAL",
+        "POLICY_APPROVAL",
+        "APPROVED_COMMAND",
+        "LOCAL_REGISTRATION_READBACK_RENDER_ROLLBACK",
+        "PRODUCT_SCENE_QA"
+      ],
+      "delay_if_failed": true,
+      "economic_activation": false
+    }
+  ]
+}

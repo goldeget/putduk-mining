@@ -1,0 +1,789 @@
+[
+  {
+    "proposal_id": "catalog-v1-samsung-electronics",
+    "requested_sources": [
+      "https://www.samsung.com/global/ir/",
+      "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx"
+    ],
+    "verified_name": null,
+    "verified_code": null,
+    "verified_market": null,
+    "verified_exchange": null,
+    "verified_asset_class": null,
+    "checked_at": null,
+    "scope": "INVESTIGATION_HINTS_ONLY",
+    "verification_status": "UNKNOWN"
+  },
+  {
+    "proposal_id": "catalog-v1-sk-hynix",
+    "requested_sources": [
+      "https://www.skhynix.com/",
+      "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx"
+    ],
+    "verified_name": null,
+    "verified_code": null,
+    "verified_market": null,
+    "verified_exchange": null,
+    "verified_asset_class": null,
+    "checked_at": null,
+    "scope": "INVESTIGATION_HINTS_ONLY",
+    "verification_status": "UNKNOWN"
+  },
+  {
+    "proposal_id": "catalog-v1-lg-electronics",
+    "requested_sources": [
+      "https://www.lg.com/global/investor-relations",
+      "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx"
+    ],
+    "verified_name": null,
+    "verified_code": null,
+    "verified_market": null,
+    "verified_exchange": null,
+    "verified_asset_class": null,
+    "checked_at": null,
+    "scope": "INVESTIGATION_HINTS_ONLY",
+    "verification_status": "UNKNOWN"
+  },
+  {
+    "proposal_id": "catalog-v1-hyundai-motor",
+    "requested_sources": [
+      "https://www.hyundai.com/worldwide/en/company/ir",
+      "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx"
+    ],
+    "verified_name": null,
+    "verified_code": null,
+    "verified_market": null,
+    "verified_exchange": null,
+    "verified_asset_class": null,
+    "checked_at": null,
+    "scope": "INVESTIGATION_HINTS_ONLY",
+    "verification_status": "UNKNOWN"
+  },
+  {
+    "proposal_id": "catalog-v1-lg-energy-solution",
+    "requested_sources": [
+      "https://www.lgensol.com/en/index",
+      "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx"
+    ],
+    "verified_name": null,
+    "verified_code": null,
+    "verified_market": null,
+    "verified_exchange": null,
+    "verified_asset_class": null,
+    "checked_at": null,
+    "scope": "INVESTIGATION_HINTS_ONLY",
+    "verification_status": "UNKNOWN"
+  },
+  {
+    "proposal_id": "catalog-v1-naver",
+    "requested_sources": [
+      "https://www.navercorp.com/",
+      "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx"
+    ],
+    "verified_name": null,
+    "verified_code": null,
+    "verified_market": null,
+    "verified_exchange": null,
+    "verified_asset_class": null,
+    "checked_at": null,
+    "scope": "INVESTIGATION_HINTS_ONLY",
+    "verification_status": "UNKNOWN"
+  },
+  {
+    "proposal_id": "catalog-v1-kakao",
+    "requested_sources": [
+      "https://www.kakaocorp.com/",
+      "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx"
+    ],
+    "verified_name": null,
+    "verified_code": null,
+    "verified_market": null,
+    "verified_exchange": null,
+    "verified_asset_class": null,
+    "checked_at": null,
+    "scope": "INVESTIGATION_HINTS_ONLY",
+    "verification_status": "UNKNOWN"
+  },
+  {
+    "proposal_id": "catalog-v1-samsung-biologics",
+    "requested_sources": [
+      "https://samsungbiologics.com/",
+      "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx"
+    ],
+    "verified_name": null,
+    "verified_code": null,
+    "verified_market": null,
+    "verified_exchange": null,
+    "verified_asset_class": null,
+    "checked_at": null,
+    "scope": "INVESTIGATION_HINTS_ONLY",
+    "verification_status": "UNKNOWN"
+  },
+  {
+    "proposal_id": "catalog-v1-kb-financial",
+    "requested_sources": [
+      "https://www.kbfg.com/",
+      "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx"
+    ],
+    "verified_name": null,
+    "verified_code": null,
+    "verified_market": null,
+    "verified_exchange": null,
+    "verified_asset_class": null,
+    "checked_at": null,
+    "scope": "INVESTIGATION_HINTS_ONLY",
+    "verification_status": "UNKNOWN"
+  },
+  {
+    "proposal_id": "catalog-v1-hanwha-aerospace",
+    "requested_sources": [
+      "https://www.hanwhaaerospace.com/",
+      "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx"
+    ],
+    "verified_name": null,
+    "verified_code": null,
+    "verified_market": null,
+    "verified_exchange": null,
+    "verified_asset_class": null,
+    "checked_at": null,
+    "scope": "INVESTIGATION_HINTS_ONLY",
+    "verification_status": "UNKNOWN"
+  },
+  {
+    "proposal_id": "catalog-v1-hd-hyundai-heavy",
+    "requested_sources": [
+      "https://www.hhi.co.kr/",
+      "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx"
+    ],
+    "verified_name": null,
+    "verified_code": null,
+    "verified_market": null,
+    "verified_exchange": null,
+    "verified_asset_class": null,
+    "checked_at": null,
+    "scope": "INVESTIGATION_HINTS_ONLY",
+    "verification_status": "UNKNOWN"
+  },
+  {
+    "proposal_id": "catalog-v1-hd-hyundai-electric",
+    "requested_sources": [
+      "https://www.hd-hyundaielectric.com/",
+      "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx"
+    ],
+    "verified_name": null,
+    "verified_code": null,
+    "verified_market": null,
+    "verified_exchange": null,
+    "verified_asset_class": null,
+    "checked_at": null,
+    "scope": "INVESTIGATION_HINTS_ONLY",
+    "verification_status": "UNKNOWN"
+  },
+  {
+    "proposal_id": "catalog-v1-sk-innovation",
+    "requested_sources": [
+      "https://www.skinnovation.com/",
+      "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx"
+    ],
+    "verified_name": null,
+    "verified_code": null,
+    "verified_market": null,
+    "verified_exchange": null,
+    "verified_asset_class": null,
+    "checked_at": null,
+    "scope": "INVESTIGATION_HINTS_ONLY",
+    "verification_status": "UNKNOWN"
+  },
+  {
+    "proposal_id": "catalog-v1-amorepacific",
+    "requested_sources": [
+      "https://www.apgroup.com/",
+      "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx"
+    ],
+    "verified_name": null,
+    "verified_code": null,
+    "verified_market": null,
+    "verified_exchange": null,
+    "verified_asset_class": null,
+    "checked_at": null,
+    "scope": "INVESTIGATION_HINTS_ONLY",
+    "verification_status": "UNKNOWN"
+  },
+  {
+    "proposal_id": "catalog-v1-nvidia",
+    "requested_sources": [
+      "https://investor.nvidia.com/",
+      "https://www.sec.gov/files/company_tickers_exchange.json"
+    ],
+    "verified_name": null,
+    "verified_code": null,
+    "verified_market": null,
+    "verified_exchange": null,
+    "verified_asset_class": null,
+    "checked_at": null,
+    "scope": "INVESTIGATION_HINTS_ONLY",
+    "verification_status": "UNKNOWN"
+  },
+  {
+    "proposal_id": "catalog-v1-tesla",
+    "requested_sources": [
+      "https://ir.tesla.com/",
+      "https://www.sec.gov/files/company_tickers_exchange.json"
+    ],
+    "verified_name": null,
+    "verified_code": null,
+    "verified_market": null,
+    "verified_exchange": null,
+    "verified_asset_class": null,
+    "checked_at": null,
+    "scope": "INVESTIGATION_HINTS_ONLY",
+    "verification_status": "UNKNOWN"
+  },
+  {
+    "proposal_id": "catalog-v1-rocket-lab",
+    "requested_sources": [
+      "https://investors.rocketlabcorp.com/",
+      "https://www.sec.gov/files/company_tickers_exchange.json"
+    ],
+    "verified_name": null,
+    "verified_code": null,
+    "verified_market": null,
+    "verified_exchange": null,
+    "verified_asset_class": null,
+    "checked_at": null,
+    "scope": "INVESTIGATION_HINTS_ONLY",
+    "verification_status": "UNKNOWN"
+  },
+  {
+    "proposal_id": "catalog-v1-sandisk",
+    "requested_sources": [
+      "https://investor.sandisk.com/",
+      "https://www.sec.gov/files/company_tickers_exchange.json"
+    ],
+    "verified_name": null,
+    "verified_code": null,
+    "verified_market": null,
+    "verified_exchange": null,
+    "verified_asset_class": null,
+    "checked_at": null,
+    "scope": "INVESTIGATION_HINTS_ONLY",
+    "verification_status": "UNKNOWN"
+  },
+  {
+    "proposal_id": "catalog-v1-spacex",
+    "requested_sources": [
+      "https://www.spacex.com/",
+      "https://www.sec.gov/files/company_tickers_exchange.json"
+    ],
+    "verified_name": null,
+    "verified_code": null,
+    "verified_market": null,
+    "verified_exchange": null,
+    "verified_asset_class": null,
+    "checked_at": null,
+    "scope": "INVESTIGATION_HINTS_ONLY",
+    "verification_status": "UNKNOWN"
+  },
+  {
+    "proposal_id": "catalog-v1-apple",
+    "requested_sources": [
+      "https://investor.apple.com/",
+      "https://www.sec.gov/files/company_tickers_exchange.json"
+    ],
+    "verified_name": null,
+    "verified_code": null,
+    "verified_market": null,
+    "verified_exchange": null,
+    "verified_asset_class": null,
+    "checked_at": null,
+    "scope": "INVESTIGATION_HINTS_ONLY",
+    "verification_status": "UNKNOWN"
+  },
+  {
+    "proposal_id": "catalog-v1-microsoft",
+    "requested_sources": [
+      "https://www.microsoft.com/en-us/Investor/",
+      "https://www.sec.gov/files/company_tickers_exchange.json"
+    ],
+    "verified_name": null,
+    "verified_code": null,
+    "verified_market": null,
+    "verified_exchange": null,
+    "verified_asset_class": null,
+    "checked_at": null,
+    "scope": "INVESTIGATION_HINTS_ONLY",
+    "verification_status": "UNKNOWN"
+  },
+  {
+    "proposal_id": "catalog-v1-amazon",
+    "requested_sources": [
+      "https://ir.aboutamazon.com/",
+      "https://www.sec.gov/files/company_tickers_exchange.json"
+    ],
+    "verified_name": null,
+    "verified_code": null,
+    "verified_market": null,
+    "verified_exchange": null,
+    "verified_asset_class": null,
+    "checked_at": null,
+    "scope": "INVESTIGATION_HINTS_ONLY",
+    "verification_status": "UNKNOWN"
+  },
+  {
+    "proposal_id": "catalog-v1-alphabet-a",
+    "requested_sources": [
+      "https://abc.xyz/investor/",
+      "https://www.sec.gov/files/company_tickers_exchange.json"
+    ],
+    "verified_name": null,
+    "verified_code": null,
+    "verified_market": null,
+    "verified_exchange": null,
+    "verified_asset_class": null,
+    "checked_at": null,
+    "scope": "INVESTIGATION_HINTS_ONLY",
+    "verification_status": "UNKNOWN"
+  },
+  {
+    "proposal_id": "catalog-v1-meta",
+    "requested_sources": [
+      "https://investor.atmeta.com/",
+      "https://www.sec.gov/files/company_tickers_exchange.json"
+    ],
+    "verified_name": null,
+    "verified_code": null,
+    "verified_market": null,
+    "verified_exchange": null,
+    "verified_asset_class": null,
+    "checked_at": null,
+    "scope": "INVESTIGATION_HINTS_ONLY",
+    "verification_status": "UNKNOWN"
+  },
+  {
+    "proposal_id": "catalog-v1-amd",
+    "requested_sources": [
+      "https://ir.amd.com/",
+      "https://www.sec.gov/files/company_tickers_exchange.json"
+    ],
+    "verified_name": null,
+    "verified_code": null,
+    "verified_market": null,
+    "verified_exchange": null,
+    "verified_asset_class": null,
+    "checked_at": null,
+    "scope": "INVESTIGATION_HINTS_ONLY",
+    "verification_status": "UNKNOWN"
+  },
+  {
+    "proposal_id": "catalog-v1-broadcom",
+    "requested_sources": [
+      "https://investors.broadcom.com/",
+      "https://www.sec.gov/files/company_tickers_exchange.json"
+    ],
+    "verified_name": null,
+    "verified_code": null,
+    "verified_market": null,
+    "verified_exchange": null,
+    "verified_asset_class": null,
+    "checked_at": null,
+    "scope": "INVESTIGATION_HINTS_ONLY",
+    "verification_status": "UNKNOWN"
+  },
+  {
+    "proposal_id": "catalog-v1-palantir",
+    "requested_sources": [
+      "https://investors.palantir.com/",
+      "https://www.sec.gov/files/company_tickers_exchange.json"
+    ],
+    "verified_name": null,
+    "verified_code": null,
+    "verified_market": null,
+    "verified_exchange": null,
+    "verified_asset_class": null,
+    "checked_at": null,
+    "scope": "INVESTIGATION_HINTS_ONLY",
+    "verification_status": "UNKNOWN"
+  },
+  {
+    "proposal_id": "catalog-v1-jpmorgan",
+    "requested_sources": [
+      "https://www.jpmorganchase.com/ir",
+      "https://www.sec.gov/files/company_tickers_exchange.json"
+    ],
+    "verified_name": null,
+    "verified_code": null,
+    "verified_market": null,
+    "verified_exchange": null,
+    "verified_asset_class": null,
+    "checked_at": null,
+    "scope": "INVESTIGATION_HINTS_ONLY",
+    "verification_status": "UNKNOWN"
+  },
+  {
+    "proposal_id": "catalog-v1-netflix",
+    "requested_sources": [
+      "https://ir.netflix.net/",
+      "https://www.sec.gov/files/company_tickers_exchange.json"
+    ],
+    "verified_name": null,
+    "verified_code": null,
+    "verified_market": null,
+    "verified_exchange": null,
+    "verified_asset_class": null,
+    "checked_at": null,
+    "scope": "INVESTIGATION_HINTS_ONLY",
+    "verification_status": "UNKNOWN"
+  },
+  {
+    "proposal_id": "catalog-v1-spy",
+    "requested_sources": [
+      "https://www.ssga.com/us/en/individual/etfs/funds/spdr-sp-500-etf-trust-spy"
+    ],
+    "verified_name": null,
+    "verified_code": null,
+    "verified_market": null,
+    "verified_exchange": null,
+    "verified_asset_class": null,
+    "checked_at": null,
+    "scope": "INVESTIGATION_HINTS_ONLY",
+    "verification_status": "UNKNOWN"
+  },
+  {
+    "proposal_id": "catalog-v1-qqq",
+    "requested_sources": ["https://www.invesco.com/qqq-etf/en/home.html"],
+    "verified_name": null,
+    "verified_code": null,
+    "verified_market": null,
+    "verified_exchange": null,
+    "verified_asset_class": null,
+    "checked_at": null,
+    "scope": "INVESTIGATION_HINTS_ONLY",
+    "verification_status": "UNKNOWN"
+  },
+  {
+    "proposal_id": "catalog-v1-soxx",
+    "requested_sources": [
+      "https://www.ishares.com/us/products/239705/ishares-phlx-semiconductor-etf"
+    ],
+    "verified_name": null,
+    "verified_code": null,
+    "verified_market": null,
+    "verified_exchange": null,
+    "verified_asset_class": null,
+    "checked_at": null,
+    "scope": "INVESTIGATION_HINTS_ONLY",
+    "verification_status": "UNKNOWN"
+  },
+  {
+    "proposal_id": "catalog-v1-schd",
+    "requested_sources": [
+      "https://www.schwabassetmanagement.com/products/schd"
+    ],
+    "verified_name": null,
+    "verified_code": null,
+    "verified_market": null,
+    "verified_exchange": null,
+    "verified_asset_class": null,
+    "checked_at": null,
+    "scope": "INVESTIGATION_HINTS_ONLY",
+    "verification_status": "UNKNOWN"
+  },
+  {
+    "proposal_id": "catalog-v1-vti",
+    "requested_sources": [
+      "https://investor.vanguard.com/investment-products/etfs/profile/vti"
+    ],
+    "verified_name": null,
+    "verified_code": null,
+    "verified_market": null,
+    "verified_exchange": null,
+    "verified_asset_class": null,
+    "checked_at": null,
+    "scope": "INVESTIGATION_HINTS_ONLY",
+    "verification_status": "UNKNOWN"
+  },
+  {
+    "proposal_id": "catalog-v1-aiq",
+    "requested_sources": ["https://www.globalxetfs.com/funds/aiq/"],
+    "verified_name": null,
+    "verified_code": null,
+    "verified_market": null,
+    "verified_exchange": null,
+    "verified_asset_class": null,
+    "checked_at": null,
+    "scope": "INVESTIGATION_HINTS_ONLY",
+    "verification_status": "UNKNOWN"
+  },
+  {
+    "proposal_id": "catalog-v1-bnd",
+    "requested_sources": [
+      "https://investor.vanguard.com/investment-products/etfs/profile/vti"
+    ],
+    "verified_name": null,
+    "verified_code": null,
+    "verified_market": null,
+    "verified_exchange": null,
+    "verified_asset_class": null,
+    "checked_at": null,
+    "scope": "INVESTIGATION_HINTS_ONLY",
+    "verification_status": "UNKNOWN"
+  },
+  {
+    "proposal_id": "catalog-v1-iau",
+    "requested_sources": [
+      "https://www.ishares.com/us/products/239705/ishares-phlx-semiconductor-etf"
+    ],
+    "verified_name": null,
+    "verified_code": null,
+    "verified_market": null,
+    "verified_exchange": null,
+    "verified_asset_class": null,
+    "checked_at": null,
+    "scope": "INVESTIGATION_HINTS_ONLY",
+    "verification_status": "UNKNOWN"
+  },
+  {
+    "proposal_id": "catalog-v1-kodex-200",
+    "requested_sources": [
+      "https://www.samsungfund.com/etf/main.do",
+      "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx"
+    ],
+    "verified_name": null,
+    "verified_code": null,
+    "verified_market": null,
+    "verified_exchange": null,
+    "verified_asset_class": null,
+    "checked_at": null,
+    "scope": "INVESTIGATION_HINTS_ONLY",
+    "verification_status": "UNKNOWN"
+  },
+  {
+    "proposal_id": "catalog-v1-tiger-us-sp500",
+    "requested_sources": [
+      "https://www.tigeretf.com/ko/main/index.do",
+      "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx"
+    ],
+    "verified_name": null,
+    "verified_code": null,
+    "verified_market": null,
+    "verified_exchange": null,
+    "verified_asset_class": null,
+    "checked_at": null,
+    "scope": "INVESTIGATION_HINTS_ONLY",
+    "verification_status": "UNKNOWN"
+  },
+  {
+    "proposal_id": "catalog-v1-kodex-semiconductor",
+    "requested_sources": [
+      "https://www.samsungfund.com/etf/main.do",
+      "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx"
+    ],
+    "verified_name": null,
+    "verified_code": null,
+    "verified_market": null,
+    "verified_exchange": null,
+    "verified_asset_class": null,
+    "checked_at": null,
+    "scope": "INVESTIGATION_HINTS_ONLY",
+    "verification_status": "UNKNOWN"
+  },
+  {
+    "proposal_id": "catalog-v1-kr-ai-etf-research",
+    "requested_sources": [
+      "https://www.tigeretf.com/ko/main/index.do",
+      "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx"
+    ],
+    "verified_name": null,
+    "verified_code": null,
+    "verified_market": null,
+    "verified_exchange": null,
+    "verified_asset_class": null,
+    "checked_at": null,
+    "scope": "INVESTIGATION_HINTS_ONLY",
+    "verification_status": "UNKNOWN"
+  },
+  {
+    "proposal_id": "catalog-v1-kr-dividend-etf-research",
+    "requested_sources": [
+      "https://www.samsungfund.com/etf/main.do",
+      "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx"
+    ],
+    "verified_name": null,
+    "verified_code": null,
+    "verified_market": null,
+    "verified_exchange": null,
+    "verified_asset_class": null,
+    "checked_at": null,
+    "scope": "INVESTIGATION_HINTS_ONLY",
+    "verification_status": "UNKNOWN"
+  },
+  {
+    "proposal_id": "catalog-v1-tiger-us-nasdaq100",
+    "requested_sources": [
+      "https://www.tigeretf.com/ko/main/index.do",
+      "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx"
+    ],
+    "verified_name": null,
+    "verified_code": null,
+    "verified_market": null,
+    "verified_exchange": null,
+    "verified_asset_class": null,
+    "checked_at": null,
+    "scope": "INVESTIGATION_HINTS_ONLY",
+    "verification_status": "UNKNOWN"
+  },
+  {
+    "proposal_id": "catalog-v1-kodex-gold-futures",
+    "requested_sources": [
+      "https://www.samsungfund.com/etf/main.do",
+      "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx"
+    ],
+    "verified_name": null,
+    "verified_code": null,
+    "verified_market": null,
+    "verified_exchange": null,
+    "verified_asset_class": null,
+    "checked_at": null,
+    "scope": "INVESTIGATION_HINTS_ONLY",
+    "verification_status": "UNKNOWN"
+  },
+  {
+    "proposal_id": "catalog-v1-kodex-treasury-3y",
+    "requested_sources": [
+      "https://www.samsungfund.com/etf/main.do",
+      "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx"
+    ],
+    "verified_name": null,
+    "verified_code": null,
+    "verified_market": null,
+    "verified_exchange": null,
+    "verified_asset_class": null,
+    "checked_at": null,
+    "scope": "INVESTIGATION_HINTS_ONLY",
+    "verification_status": "UNKNOWN"
+  },
+  {
+    "proposal_id": "catalog-v1-tqqq-review",
+    "requested_sources": ["https://www.invesco.com/qqq-etf/en/home.html"],
+    "verified_name": null,
+    "verified_code": null,
+    "verified_market": null,
+    "verified_exchange": null,
+    "verified_asset_class": null,
+    "checked_at": null,
+    "scope": "INVESTIGATION_HINTS_ONLY",
+    "verification_status": "UNKNOWN"
+  },
+  {
+    "proposal_id": "catalog-v1-bitcoin",
+    "requested_sources": ["https://bitcoin.org/en/"],
+    "verified_name": null,
+    "verified_code": null,
+    "verified_market": null,
+    "verified_exchange": null,
+    "verified_asset_class": null,
+    "checked_at": null,
+    "scope": "INVESTIGATION_HINTS_ONLY",
+    "verification_status": "UNKNOWN"
+  },
+  {
+    "proposal_id": "catalog-v1-ethereum",
+    "requested_sources": ["https://ethereum.org/en/"],
+    "verified_name": null,
+    "verified_code": null,
+    "verified_market": null,
+    "verified_exchange": null,
+    "verified_asset_class": null,
+    "checked_at": null,
+    "scope": "INVESTIGATION_HINTS_ONLY",
+    "verification_status": "UNKNOWN"
+  },
+  {
+    "proposal_id": "catalog-v1-solana",
+    "requested_sources": ["https://solana.com/"],
+    "verified_name": null,
+    "verified_code": null,
+    "verified_market": null,
+    "verified_exchange": null,
+    "verified_asset_class": null,
+    "checked_at": null,
+    "scope": "INVESTIGATION_HINTS_ONLY",
+    "verification_status": "UNKNOWN"
+  },
+  {
+    "proposal_id": "catalog-v1-bnb",
+    "requested_sources": ["https://www.bnbchain.org/en"],
+    "verified_name": null,
+    "verified_code": null,
+    "verified_market": null,
+    "verified_exchange": null,
+    "verified_asset_class": null,
+    "checked_at": null,
+    "scope": "INVESTIGATION_HINTS_ONLY",
+    "verification_status": "UNKNOWN"
+  },
+  {
+    "proposal_id": "catalog-v1-xrp",
+    "requested_sources": ["https://xrpl.org/"],
+    "verified_name": null,
+    "verified_code": null,
+    "verified_market": null,
+    "verified_exchange": null,
+    "verified_asset_class": null,
+    "checked_at": null,
+    "scope": "INVESTIGATION_HINTS_ONLY",
+    "verification_status": "UNKNOWN"
+  },
+  {
+    "proposal_id": "catalog-v1-usdt-rail",
+    "requested_sources": [
+      "https://www.sec.gov/files/company_tickers_exchange.json"
+    ],
+    "verified_name": null,
+    "verified_code": null,
+    "verified_market": null,
+    "verified_exchange": null,
+    "verified_asset_class": null,
+    "checked_at": null,
+    "scope": "INVESTIGATION_HINTS_ONLY",
+    "verification_status": "UNKNOWN"
+  },
+  {
+    "proposal_id": "catalog-v1-usdc-rail",
+    "requested_sources": [
+      "https://www.sec.gov/files/company_tickers_exchange.json"
+    ],
+    "verified_name": null,
+    "verified_code": null,
+    "verified_market": null,
+    "verified_exchange": null,
+    "verified_asset_class": null,
+    "checked_at": null,
+    "scope": "INVESTIGATION_HINTS_ONLY",
+    "verification_status": "UNKNOWN"
+  },
+  {
+    "proposal_id": "catalog-v1-gold",
+    "requested_sources": ["https://www.lbma.org.uk/"],
+    "verified_name": null,
+    "verified_code": null,
+    "verified_market": null,
+    "verified_exchange": null,
+    "verified_asset_class": null,
+    "checked_at": null,
+    "scope": "INVESTIGATION_HINTS_ONLY",
+    "verification_status": "UNKNOWN"
+  },
+  {
+    "proposal_id": "catalog-v1-silver",
+    "requested_sources": ["https://www.lbma.org.uk/"],
+    "verified_name": null,
+    "verified_code": null,
+    "verified_market": null,
+    "verified_exchange": null,
+    "verified_asset_class": null,
+    "checked_at": null,
+    "scope": "INVESTIGATION_HINTS_ONLY",
+    "verification_status": "UNKNOWN"
+  }
+]
