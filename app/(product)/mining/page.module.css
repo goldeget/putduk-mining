@@ -141,6 +141,13 @@
   line-height: 1.6;
 }
 
+:global(:root[data-theme="light"]) .heroCopy > p {
+  width: fit-content;
+  border-radius: 0.15rem;
+  background: var(--surface-default);
+  box-shadow: 0 0 0 0.35rem var(--surface-default);
+}
+
 .sceneCaption {
   position: relative;
   padding: 0.15rem 0.25rem 0.45rem;

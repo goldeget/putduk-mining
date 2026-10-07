@@ -80,6 +80,43 @@ async function paintedTextLineCounts(root: Locator, selector: string) {
   );
 }
 
+async function expectOpaqueTextContrast(copy: Locator) {
+  const contrast = await copy.evaluate((element) => {
+    const style = getComputedStyle(element);
+    function rgba(value: string) {
+      const values = value.match(/[\d.]+/g)?.map(Number) ?? [];
+      const [r, g, b, alpha = 1] = values;
+      if (r === undefined || g === undefined || b === undefined) {
+        throw new Error("PAINTED_RGB_COLOR_REQUIRED");
+      }
+      const linear = [r, g, b].map((channel) => {
+        const scaled = channel / 255;
+        return scaled <= 0.04045
+          ? scaled / 12.92
+          : ((scaled + 0.055) / 1.055) ** 2.4;
+      });
+      const [red = 0, green = 0, blue = 0] = linear;
+      return {
+        alpha,
+        luminance: red * 0.2126 + green * 0.7152 + blue * 0.0722,
+      };
+    }
+    const foreground = rgba(style.color);
+    const background = rgba(style.backgroundColor);
+    const bright = Math.max(foreground.luminance, background.luminance);
+    const dark = Math.min(foreground.luminance, background.luminance);
+    return {
+      opaque:
+        foreground.alpha === 1 &&
+        background.alpha === 1 &&
+        style.opacity === "1",
+      ratio: (bright + 0.05) / (dark + 0.05),
+    };
+  });
+  expect(contrast.opaque).toBe(true);
+  expect(contrast.ratio).toBeGreaterThanOrEqual(4.5);
+}
+
 async function sourceReferences() {
   const index = JSON.parse(
     await readFile(
@@ -400,6 +437,21 @@ async function captureRoutes(
             await page.evaluate(() => window.scrollTo(0, 0));
           }
           if (route === "/mining") {
+            const hero = ready.getByRole("region", {
+              name: "현재 채굴 현황",
+              exact: true,
+            });
+            await expectPaintedCopyFits(hero, "header > p", "header");
+            const captionLines = await paintedTextLineCounts(
+              hero,
+              "header > p",
+            );
+            expect(captionLines).toHaveLength(1);
+            expect(captionLines[0]).toBeGreaterThan(0);
+            expect(captionLines[0]).toBeLessThanOrEqual(3);
+            if (theme === "light") {
+              await expectOpaqueTextContrast(hero.locator("header > p"));
+            }
             const dock = page.locator("[data-ai-dock]:visible");
             await expect(dock).toHaveCount(1);
             await expectPaintedCopyFits(dock, "a, button", "[data-ai-dock]");
