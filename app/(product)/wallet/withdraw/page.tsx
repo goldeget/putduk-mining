@@ -474,10 +474,12 @@ export default async function WithdrawalPage() {
         <PrincipalWithdrawalForm
           key={`principal:${identity.userId}`}
           ownerId={identity.userId}
+          refreshRevision={nowIso}
         />
         <PrincipalCryptoWithdrawalForm
           key={`principal-crypto:${identity.userId}`}
           ownerId={identity.userId}
+          refreshRevision={nowIso}
         />
       </div>
 

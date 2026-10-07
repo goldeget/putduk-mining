@@ -12,6 +12,7 @@ import {
   sameWithdrawalLogicalOriginal,
   validateWithdrawalLogicalRecord,
 } from "../../../lib/wallet/withdrawal-logical-record";
+import { formatAtomicAmount } from "../../../domain/wallet/format-amount";
 import { type WithdrawalLogicalRecord } from "../../../lib/wallet/withdrawal-logical-record";
 import { createConfirmedMember } from "../fixtures/local-auth";
 import {
@@ -64,6 +65,26 @@ function principalSection(page: Page, method: PrincipalMethod) {
       `section[aria-labelledby="${method === "KRW_BANK" ? "principal-withdrawal-heading" : "principal-crypto-withdrawal-heading"}"]`,
     )
     .filter({ visible: true });
+}
+
+async function expectRenderedPrincipalFacts(
+  page: Page,
+  source: {
+    eligible_principal_atomic: string;
+    held_principal_atomic: string;
+  },
+) {
+  for (const method of ["KRW_BANK", "USDT_ADDRESS"] as const) {
+    const section = principalSection(page, method);
+    for (const [label, atomic] of [
+      ["현재 인정 원금", source.eligible_principal_atomic],
+      ["보류 중 원금", source.held_principal_atomic],
+    ] as const) {
+      await expect(
+        section.getByText(label, { exact: true }).locator("..").locator("dd"),
+      ).toHaveText(formatAtomicAmount(atomic, "KRW"));
+    }
+  }
 }
 
 async function fillPrincipal(section: Locator, member: MemberFixture) {
@@ -707,6 +728,7 @@ test.describe("signed member principal source-v3 product", () => {
       expect(held.proof.status).toBe("HELD");
       expect(held.proof.sends).toBe(0);
       expect(held.current.cycle).toEqual(member.initial.cycle);
+      await expectRenderedPrincipalFacts(page, held.current.source);
       await captureRedactedWithdrawalEvidence(
         page,
         info.outputPath(`principal-${method.toLowerCase()}-held.png`),
@@ -767,12 +789,6 @@ test.describe("signed member principal source-v3 product", () => {
         (allocationReplay.payload.data as { receipt: unknown }).receipt,
       ).toEqual(allocation.receipt);
       expect(financialSnapshot(member.member.userId)).toEqual(changed);
-      await captureRedactedWithdrawalEvidence(
-        page,
-        info.outputPath(
-          `principal-${method.toLowerCase()}-completed-current-input3.png`,
-        ),
-      );
       const currentFacts = await readPrincipalFacts(
         page,
         member.member.userId,
@@ -796,7 +812,15 @@ test.describe("signed member principal source-v3 product", () => {
           name: "원금 회수임을 확인하고 요청합니다.",
         }),
       ).not.toBeChecked();
+      await expectRenderedPrincipalFacts(page, changed.source);
       expect(financialSnapshot(member.member.userId)).toEqual(changed);
+      // Capture the actual refreshed completed view, not the prior HOLD UI.
+      await captureRedactedWithdrawalEvidence(
+        page,
+        info.outputPath(
+          `principal-${method.toLowerCase()}-completed-current-input3.png`,
+        ),
+      );
     });
   }
 

@@ -58,10 +58,18 @@ const terminal = (record: WithdrawalLogicalRecord) =>
   ["CONFIRMED", "CANCELLED", "DEFINITIVELY_REJECTED"].includes(record.state);
 
 /** An explicit principal action; mount/reconnect is read-only and never submits a hold. */
-export function PrincipalWithdrawalForm({ ownerId }: { ownerId: string }) {
+export function PrincipalWithdrawalForm({
+  ownerId,
+  refreshRevision = "",
+}: {
+  ownerId: string;
+  refreshRevision?: string;
+}) {
   const router = useRouter();
   const busy = useRef(false);
   const pointer = useRef<string | null>(null);
+  const factsGeneration = useRef(0);
+  const [refreshedRevision, setRefreshedRevision] = useState(refreshRevision);
   const [read, setRead] = useState<PrincipalWithdrawalRead | null>(null);
   const [record, setRecord] = useState<WithdrawalLogicalRecord | null>(null);
   const [ready, setReady] = useState(false);
@@ -108,6 +116,7 @@ export function PrincipalWithdrawalForm({ ownerId }: { ownerId: string }) {
   }, []);
   useEffect(() => {
     let live = true;
+    const generation = ++factsGeneration.current;
     void (async () => {
       try {
         const recovered = await recoverWithdrawalLogicalRecord(
@@ -120,19 +129,47 @@ export function PrincipalWithdrawalForm({ ownerId }: { ownerId: string }) {
         acceptRecovery(recovered);
         setReady(true);
         const facts = await refreshFacts();
-        if (!live) return;
+        if (!live || generation !== factsGeneration.current) return;
         setRead(facts);
         if (!recovered && facts.available)
           setDestinationId(facts.destinations[0]?.id ?? "");
         setReady(true);
       } catch (error) {
-        if (live) setFeedback(message(error));
+        if (live && generation === factsGeneration.current)
+          setFeedback(message(error));
       }
     })();
     return () => {
       live = false;
     };
   }, [ownerId, acceptRecovery, refreshFacts]);
+
+  // RSC refresh preserves Client state. Revalidate only the safe read, retaining
+  // entered fields, consent and immutable logical-request originals.
+  useEffect(() => {
+    if (refreshedRevision === refreshRevision) return;
+    let live = true;
+    const generation = ++factsGeneration.current;
+    void refreshFacts()
+      .then((facts) => {
+        if (live && generation === factsGeneration.current) setRead(facts);
+      })
+      .catch(() => {
+        if (!live || generation !== factsGeneration.current) return;
+        setRead(null);
+        setFeedback(
+          "최신 원금 조건을 불러오지 못했어요. 이전 요청 확인으로 접수 결과를 조회해 주세요.",
+        );
+      })
+      .finally(() => {
+        if (live && generation === factsGeneration.current)
+          setRefreshedRevision(refreshRevision);
+      });
+    return () => {
+      live = false;
+    };
+  }, [refreshFacts, refreshRevision, refreshedRevision]);
+  const refreshingFacts = refreshedRevision !== refreshRevision;
 
   let atomic: string | null = null;
   try {
@@ -157,6 +194,7 @@ export function PrincipalWithdrawalForm({ ownerId }: { ownerId: string }) {
   );
   const canSubmit =
     ready &&
+    !refreshingFacts &&
     consent &&
     !ordinaryPending &&
     !otherPrincipalPending &&
@@ -181,6 +219,7 @@ export function PrincipalWithdrawalForm({ ownerId }: { ownerId: string }) {
         pointer.current = null;
         setFeedback("확인을 마쳤어요. 현재 조건을 확인한 뒤 요청해 주세요.");
       }
+      router.refresh();
     } catch (error) {
       setFeedback(message(error));
     } finally {
@@ -287,6 +326,11 @@ export function PrincipalWithdrawalForm({ ownerId }: { ownerId: string }) {
           </p>
         </div>
       </header>
+      {refreshingFacts ? (
+        <p className={styles.freshness} role="status">
+          최신 원금 정보를 확인하고 있어요…
+        </p>
+      ) : null}
       {facts ? (
         <>
           <dl
