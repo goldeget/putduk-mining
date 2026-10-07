@@ -1,0 +1,1139 @@
+{
+  "status": "PASS_DRAFT_ONLY",
+  "counts": {
+    "events": 30,
+    "notices": 26,
+    "notifications": 32,
+    "faq": 68,
+    "support-macros": 28,
+    "incident-templates": 8
+  },
+  "errors": [],
+  "publication_blockers": [
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "event-welcome-tour"
+    },
+    {
+      "code": "SCHEDULE_REQUIRED",
+      "slug": "event-welcome-tour"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "event-start-guide"
+    },
+    {
+      "code": "SCHEDULE_REQUIRED",
+      "slug": "event-start-guide"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "event-account-safety"
+    },
+    {
+      "code": "SCHEDULE_REQUIRED",
+      "slug": "event-account-safety"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "event-phishing-check"
+    },
+    {
+      "code": "SCHEDULE_REQUIRED",
+      "slug": "event-phishing-check"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "event-wallet-tour"
+    },
+    {
+      "code": "SCHEDULE_REQUIRED",
+      "slug": "event-wallet-tour"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "event-pending-verified"
+    },
+    {
+      "code": "SCHEDULE_REQUIRED",
+      "slug": "event-pending-verified"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "event-cycle-guide"
+    },
+    {
+      "code": "SCHEDULE_REQUIRED",
+      "slug": "event-cycle-guide"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "event-offline-guide"
+    },
+    {
+      "code": "SCHEDULE_REQUIRED",
+      "slug": "event-offline-guide"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "event-product-read"
+    },
+    {
+      "code": "SCHEDULE_REQUIRED",
+      "slug": "event-product-read"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "event-krw-ready"
+    },
+    {
+      "code": "SCHEDULE_REQUIRED",
+      "slug": "event-krw-ready"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "event-usdt-ready"
+    },
+    {
+      "code": "SCHEDULE_REQUIRED",
+      "slug": "event-usdt-ready"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "event-withdraw-ready"
+    },
+    {
+      "code": "SCHEDULE_REQUIRED",
+      "slug": "event-withdraw-ready"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "event-hold-guide"
+    },
+    {
+      "code": "SCHEDULE_REQUIRED",
+      "slug": "event-hold-guide"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "event-notification-tour"
+    },
+    {
+      "code": "SCHEDULE_REQUIRED",
+      "slug": "event-notification-tour"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "event-notification-choice"
+    },
+    {
+      "code": "SCHEDULE_REQUIRED",
+      "slug": "event-notification-choice"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "event-support-practice"
+    },
+    {
+      "code": "SCHEDULE_REQUIRED",
+      "slug": "event-support-practice"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "event-read-notices"
+    },
+    {
+      "code": "SCHEDULE_REQUIRED",
+      "slug": "event-read-notices"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "event-status-check"
+    },
+    {
+      "code": "SCHEDULE_REQUIRED",
+      "slug": "event-status-check"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "event-update-check"
+    },
+    {
+      "code": "SCHEDULE_REQUIRED",
+      "slug": "event-update-check"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "event-browser-readiness"
+    },
+    {
+      "code": "SCHEDULE_REQUIRED",
+      "slug": "event-browser-readiness"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "event-theme-choice"
+    },
+    {
+      "code": "SCHEDULE_REQUIRED",
+      "slug": "event-theme-choice"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "event-accessible-guide"
+    },
+    {
+      "code": "SCHEDULE_REQUIRED",
+      "slug": "event-accessible-guide"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "event-transaction-history"
+    },
+    {
+      "code": "SCHEDULE_REQUIRED",
+      "slug": "event-transaction-history"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "event-privacy-check"
+    },
+    {
+      "code": "SCHEDULE_REQUIRED",
+      "slug": "event-privacy-check"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "event-weekend-guide"
+    },
+    {
+      "code": "SCHEDULE_REQUIRED",
+      "slug": "event-weekend-guide"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "event-maintenance-ready"
+    },
+    {
+      "code": "SCHEDULE_REQUIRED",
+      "slug": "event-maintenance-ready"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "event-security-reminder"
+    },
+    {
+      "code": "SCHEDULE_REQUIRED",
+      "slug": "event-security-reminder"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "event-launch-feedback"
+    },
+    {
+      "code": "SCHEDULE_REQUIRED",
+      "slug": "event-launch-feedback"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "event-welcome-policy-review"
+    },
+    {
+      "code": "POLICY_VALUE_REQUIRED",
+      "slug": "event-welcome-policy-review"
+    },
+    {
+      "code": "SCHEDULE_REQUIRED",
+      "slug": "event-welcome-policy-review"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "event-capacity-policy-review"
+    },
+    {
+      "code": "POLICY_VALUE_REQUIRED",
+      "slug": "event-capacity-policy-review"
+    },
+    {
+      "code": "SCHEDULE_REQUIRED",
+      "slug": "event-capacity-policy-review"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notice-official-open"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notice-introduction"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notice-account-login"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notice-security-phishing"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notice-wallet-terms"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notice-principal-reward-bonus"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notice-krw-deposit"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notice-usdt-deposit"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notice-withdrawal"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notice-withdrawal-hold"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notice-mining-cycle"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notice-pending-verified"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notice-products-mining"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notice-notifications"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notice-support"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notice-scheduled-maintenance"
+    },
+    {
+      "code": "VERIFIED_TEMPLATE_VALUES_REQUIRED",
+      "slug": "notice-scheduled-maintenance"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notice-urgent-maintenance"
+    },
+    {
+      "code": "VERIFIED_TEMPLATE_VALUES_REQUIRED",
+      "slug": "notice-urgent-maintenance"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notice-incident"
+    },
+    {
+      "code": "VERIFIED_TEMPLATE_VALUES_REQUIRED",
+      "slug": "notice-incident"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notice-recovery"
+    },
+    {
+      "code": "VERIFIED_TEMPLATE_VALUES_REQUIRED",
+      "slug": "notice-recovery"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notice-update"
+    },
+    {
+      "code": "VERIFIED_TEMPLATE_VALUES_REQUIRED",
+      "slug": "notice-update"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notice-policy-change"
+    },
+    {
+      "code": "VERIFIED_TEMPLATE_VALUES_REQUIRED",
+      "slug": "notice-policy-change"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notice-privacy-change"
+    },
+    {
+      "code": "VERIFIED_TEMPLATE_VALUES_REQUIRED",
+      "slug": "notice-privacy-change"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notice-browser-devices"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notice-known-limitations"
+    },
+    {
+      "code": "VERIFIED_TEMPLATE_VALUES_REQUIRED",
+      "slug": "notice-known-limitations"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notice-start-conversion"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notice-event-participation"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notification-deposit-received"
+    },
+    {
+      "code": "PRIMARY_DOMAIN_EVENT_MAPPING_REQUIRED",
+      "slug": "notification-deposit-received"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notification-deposit-review"
+    },
+    {
+      "code": "PRIMARY_DOMAIN_EVENT_MAPPING_REQUIRED",
+      "slug": "notification-deposit-review"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notification-deposit-info"
+    },
+    {
+      "code": "PRIMARY_DOMAIN_EVENT_MAPPING_REQUIRED",
+      "slug": "notification-deposit-info"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notification-deposit-posted"
+    },
+    {
+      "code": "PRIMARY_DOMAIN_EVENT_MAPPING_REQUIRED",
+      "slug": "notification-deposit-posted"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notification-deposit-declined"
+    },
+    {
+      "code": "PRIMARY_DOMAIN_EVENT_MAPPING_REQUIRED",
+      "slug": "notification-deposit-declined"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notification-usdt-submitted"
+    },
+    {
+      "code": "PRIMARY_DOMAIN_EVENT_MAPPING_REQUIRED",
+      "slug": "notification-usdt-submitted"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notification-usdt-instruction"
+    },
+    {
+      "code": "PRIMARY_DOMAIN_EVENT_MAPPING_REQUIRED",
+      "slug": "notification-usdt-instruction"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notification-withdraw-received"
+    },
+    {
+      "code": "PRIMARY_DOMAIN_EVENT_MAPPING_REQUIRED",
+      "slug": "notification-withdraw-received"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notification-withdraw-review"
+    },
+    {
+      "code": "PRIMARY_DOMAIN_EVENT_MAPPING_REQUIRED",
+      "slug": "notification-withdraw-review"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notification-withdraw-hold"
+    },
+    {
+      "code": "PRIMARY_DOMAIN_EVENT_MAPPING_REQUIRED",
+      "slug": "notification-withdraw-hold"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notification-withdraw-sending"
+    },
+    {
+      "code": "PRIMARY_DOMAIN_EVENT_MAPPING_REQUIRED",
+      "slug": "notification-withdraw-sending"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notification-withdraw-complete"
+    },
+    {
+      "code": "PRIMARY_DOMAIN_EVENT_MAPPING_REQUIRED",
+      "slug": "notification-withdraw-complete"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notification-withdraw-result"
+    },
+    {
+      "code": "PRIMARY_DOMAIN_EVENT_MAPPING_REQUIRED",
+      "slug": "notification-withdraw-result"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notification-mining-start"
+    },
+    {
+      "code": "PRIMARY_DOMAIN_EVENT_MAPPING_REQUIRED",
+      "slug": "notification-mining-start"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notification-mining-pending"
+    },
+    {
+      "code": "PRIMARY_DOMAIN_EVENT_MAPPING_REQUIRED",
+      "slug": "notification-mining-pending"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notification-mining-verified"
+    },
+    {
+      "code": "PRIMARY_DOMAIN_EVENT_MAPPING_REQUIRED",
+      "slug": "notification-mining-verified"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notification-mining-capacity"
+    },
+    {
+      "code": "PRIMARY_DOMAIN_EVENT_MAPPING_REQUIRED",
+      "slug": "notification-mining-capacity"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notification-mining-cycle"
+    },
+    {
+      "code": "PRIMARY_DOMAIN_EVENT_MAPPING_REQUIRED",
+      "slug": "notification-mining-cycle"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notification-mining-pause"
+    },
+    {
+      "code": "PRIMARY_DOMAIN_EVENT_MAPPING_REQUIRED",
+      "slug": "notification-mining-pause"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notification-event-start"
+    },
+    {
+      "code": "PRIMARY_DOMAIN_EVENT_MAPPING_REQUIRED",
+      "slug": "notification-event-start"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notification-event-ending"
+    },
+    {
+      "code": "PRIMARY_DOMAIN_EVENT_MAPPING_REQUIRED",
+      "slug": "notification-event-ending"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notification-event-ended"
+    },
+    {
+      "code": "PRIMARY_DOMAIN_EVENT_MAPPING_REQUIRED",
+      "slug": "notification-event-ended"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notification-event-cancelled"
+    },
+    {
+      "code": "PRIMARY_DOMAIN_EVENT_MAPPING_REQUIRED",
+      "slug": "notification-event-cancelled"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notification-notice-published"
+    },
+    {
+      "code": "PRIMARY_DOMAIN_EVENT_MAPPING_REQUIRED",
+      "slug": "notification-notice-published"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notification-security-change"
+    },
+    {
+      "code": "PRIMARY_DOMAIN_EVENT_MAPPING_REQUIRED",
+      "slug": "notification-security-change"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notification-security-phishing"
+    },
+    {
+      "code": "PRIMARY_DOMAIN_EVENT_MAPPING_REQUIRED",
+      "slug": "notification-security-phishing"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notification-maintenance-start"
+    },
+    {
+      "code": "PRIMARY_DOMAIN_EVENT_MAPPING_REQUIRED",
+      "slug": "notification-maintenance-start"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notification-maintenance-end"
+    },
+    {
+      "code": "PRIMARY_DOMAIN_EVENT_MAPPING_REQUIRED",
+      "slug": "notification-maintenance-end"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notification-incident-open"
+    },
+    {
+      "code": "PRIMARY_DOMAIN_EVENT_MAPPING_REQUIRED",
+      "slug": "notification-incident-open"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notification-incident-update"
+    },
+    {
+      "code": "PRIMARY_DOMAIN_EVENT_MAPPING_REQUIRED",
+      "slug": "notification-incident-update"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notification-incident-recovered"
+    },
+    {
+      "code": "PRIMARY_DOMAIN_EVENT_MAPPING_REQUIRED",
+      "slug": "notification-incident-recovered"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "notification-support-reply"
+    },
+    {
+      "code": "PRIMARY_DOMAIN_EVENT_MAPPING_REQUIRED",
+      "slug": "notification-support-reply"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-account-01"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-account-02"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-account-03"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-account-04"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-login-05"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-login-06"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-login-07"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-login-08"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-mining-09"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-mining-10"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-mining-11"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-mining-12"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-mining-13"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-mining-14"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-product-15"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-product-16"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-product-17"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-product-18"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-wallet-19"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-wallet-20"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-wallet-21"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-wallet-22"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-deposit-23"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-deposit-24"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-deposit-25"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-deposit-26"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-deposit-27"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-deposit-28"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-withdrawal-29"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-withdrawal-30"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-withdrawal-31"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-withdrawal-32"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-principal-33"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-principal-34"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-principal-35"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-principal-36"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-mining-reward-37"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-mining-reward-38"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-mining-reward-39"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-mining-reward-40"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-bonus-41"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-bonus-42"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-bonus-43"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-bonus-44"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-hold-45"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-hold-46"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-hold-47"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-hold-48"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-event-49"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-event-50"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-event-51"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-event-52"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-notification-53"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-notification-54"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-notification-55"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-notification-56"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-security-57"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-security-58"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-security-59"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-security-60"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-troubleshooting-61"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-troubleshooting-62"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-troubleshooting-63"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-troubleshooting-64"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-support-65"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-support-66"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-support-67"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "faq-support-68"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "macro-account-access"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "macro-login-failure"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "macro-password-recovery"
+    },
+    {
+      "code": "VERIFIED_TEMPLATE_VALUES_REQUIRED",
+      "slug": "macro-password-recovery"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "macro-krw-pending"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "macro-krw-mismatch"
+    },
+    {
+      "code": "VERIFIED_TEMPLATE_VALUES_REQUIRED",
+      "slug": "macro-krw-mismatch"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "macro-deposit-duplicate"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "macro-usdt-pending"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "macro-usdt-network"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "macro-withdraw-pending"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "macro-withdraw-hold"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "macro-withdraw-destination"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "macro-withdraw-receipt"
+    },
+    {
+      "code": "VERIFIED_TEMPLATE_VALUES_REQUIRED",
+      "slug": "macro-withdraw-receipt"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "macro-wallet-unavailable"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "macro-wallet-types"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "macro-mining-stale"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "macro-cycle-question"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "macro-pending-reward"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "macro-product-question"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "macro-bonus-question"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "macro-event-cancel"
+    },
+    {
+      "code": "VERIFIED_TEMPLATE_VALUES_REQUIRED",
+      "slug": "macro-event-cancel"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "macro-push-missing"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "macro-notification-settings"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "macro-phishing-report"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "macro-privacy-request"
+    },
+    {
+      "code": "VERIFIED_TEMPLATE_VALUES_REQUIRED",
+      "slug": "macro-privacy-request"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "macro-browser-issue"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "macro-incident-wait"
+    },
+    {
+      "code": "VERIFIED_TEMPLATE_VALUES_REQUIRED",
+      "slug": "macro-incident-wait"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "macro-recovery-followup"
+    },
+    {
+      "code": "VERIFIED_TEMPLATE_VALUES_REQUIRED",
+      "slug": "macro-recovery-followup"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "macro-support-closing"
+    },
+    {
+      "code": "VERIFIED_TEMPLATE_VALUES_REQUIRED",
+      "slug": "macro-support-closing"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "incident-first-notice"
+    },
+    {
+      "code": "VERIFIED_TEMPLATE_VALUES_REQUIRED",
+      "slug": "incident-first-notice"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "incident-ongoing-delay"
+    },
+    {
+      "code": "VERIFIED_TEMPLATE_VALUES_REQUIRED",
+      "slug": "incident-ongoing-delay"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "incident-payment-review"
+    },
+    {
+      "code": "VERIFIED_TEMPLATE_VALUES_REQUIRED",
+      "slug": "incident-payment-review"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "incident-mining-review"
+    },
+    {
+      "code": "VERIFIED_TEMPLATE_VALUES_REQUIRED",
+      "slug": "incident-mining-review"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "incident-partial-recovery"
+    },
+    {
+      "code": "VERIFIED_TEMPLATE_VALUES_REQUIRED",
+      "slug": "incident-partial-recovery"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "incident-verified-recovery"
+    },
+    {
+      "code": "VERIFIED_TEMPLATE_VALUES_REQUIRED",
+      "slug": "incident-verified-recovery"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "incident-post-incident"
+    },
+    {
+      "code": "VERIFIED_TEMPLATE_VALUES_REQUIRED",
+      "slug": "incident-post-incident"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "incident-correction"
+    },
+    {
+      "code": "VERIFIED_TEMPLATE_VALUES_REQUIRED",
+      "slug": "incident-correction"
+    },
+    {
+      "code": "APPROVED_CONTENT_COMMAND_REQUIRED",
+      "slug": "package"
+    }
+  ],
+  "production_allowed": false
+}

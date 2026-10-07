@@ -1,0 +1,18 @@
+✔ complete Korean package passes only as an unpublished draft (3.139041ms)
+✔ registration readiness cannot mistake draft validity for publication approval (1.689787ms)
+✔ duplicate internal and per-table slugs are rejected (5.511606ms)
+✔ blank title/body and unknown DB fields are rejected (7.600374ms)
+✔ invalid calendar dates, absent offsets and backwards windows are rejected (6.735771ms)
+✔ CTA, audience and notification protected-route allowlists fail closed (10.183988ms)
+✔ unapproved rewards, numeric returns and fake approval are rejected (11.546751ms)
+✔ mandatory safety copy and declared placeholders cannot disappear (6.659516ms)
+✔ notification channels and push/in-app text must remain consistent (9.278863ms)
+✔ publication state and missing FAQ categories fail closed (12.053295ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 135.231423
