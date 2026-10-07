@@ -194,14 +194,14 @@
 }
 @media (min-width: 980px) {
   .shell:global(.product-shell) {
-    grid-template-columns: 188px minmax(0, 1fr);
+    grid-template-columns: 11.75rem minmax(0, 1fr);
     grid-template-rows: 68px minmax(0, 1fr);
   }
   .productsShell .main {
     padding: clamp(24px, 2vw, 32px);
   }
   .aiShell:global(.product-shell) {
-    grid-template-columns: 216px minmax(0, 1fr);
+    grid-template-columns: 13.5rem minmax(0, 1fr);
   }
   .header:global(.product-header) {
     grid-column: 1 / -1;

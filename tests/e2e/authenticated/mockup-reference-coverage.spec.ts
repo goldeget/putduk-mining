@@ -1004,11 +1004,13 @@ async function captureRoutes(
           if (width >= 980 && ["/products", "/menu", "/ai"].includes(route)) {
             const sidebar = page.locator("aside.product-sidebar:visible");
             await expect(sidebar).toHaveCount(1);
+            await expectPaintedCopyFits(sidebar, "nav a > span", "a");
             const finalLink = sidebar
               .getByRole("navigation")
               .getByRole("link")
               .last();
             const story = sidebar.locator(":scope > div").last();
+            await expectPaintedCopyFits(story, "p, strong, small", "div");
             const linkBox = await finalLink.boundingBox();
             const storyBox = await story.boundingBox();
             expect(linkBox).not.toBeNull();
