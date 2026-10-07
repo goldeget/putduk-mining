@@ -1,6 +1,5 @@
 import { createRoot } from "react-dom/client";
-import { AdminNavigation } from "../../components/admin-navigation";
-import { ScreenGuide } from "../../components/assistant/screen-guide";
+import { AdminShell } from "../../components/admin-shell";
 import { TodayView } from "../../components/today/today-view";
 import { OperationsView } from "../../components/operations/operations-view";
 import { MemberDirectory } from "../../components/members/member-directory";
@@ -82,42 +81,43 @@ window.fetch = async () => {
   throw new Error("No API calls in isolated Admin UI QA");
 };
 createRoot(document.getElementById("fixture-root")).render(
-  <div className="control-shell">
-    <aside className="control-rail">
-      <p className="brand-lockup">퍼뜩 · 화면 검증</p>
-      <AdminNavigation role={params.get("role") ?? "ADMIN"} />
-    </aside>
-    <div className="control-workspace">
-      <header className="control-topbar">
-        <span>합성 데이터 · 인증 E2E 아님</span>
-        <ScreenGuide role={params.get("role") ?? "ADMIN"} />
-      </header>
-      <main className="control-main">
-        {section === "today" ? (
-          <TodayView snapshot={today} />
-        ) : section === "members" ? (
-          <MemberDirectory
-            members={
-              unavailable || empty
-                ? []
-                : [
-                    {
-                      userId: "00000000-0000-4000-8000-000000000001",
-                      name: "합성 테스트 회원",
-                      joinedAt: observedAt,
-                    },
-                  ]
-            }
-            unavailable={unavailable}
-            query=""
-            invalidReference={false}
-          />
-        ) : snapshot ? (
-          <OperationsView snapshot={snapshot} />
-        ) : (
-          <p>등록되지 않은 검증 화면</p>
-        )}
-      </main>
-    </div>
-  </div>,
+  <>
+    <p
+      style={{
+        margin: 0,
+        padding: "12px 16px",
+        fontSize: 14,
+        borderBottom: "1px solid var(--line)",
+      }}
+    >
+      격리된 실제 Admin 셸 · 합성 운영자/자료 · 인증·DB E2E 아님 · 서버 명령
+      차단
+    </p>
+    <AdminShell principal={{ role: params.get("role") ?? "ADMIN" }}>
+      {section === "today" ? (
+        <TodayView snapshot={today} />
+      ) : section === "members" ? (
+        <MemberDirectory
+          members={
+            unavailable || empty
+              ? []
+              : [
+                  {
+                    userId: "00000000-0000-4000-8000-000000000001",
+                    name: "합성 테스트 회원",
+                    joinedAt: observedAt,
+                  },
+                ]
+          }
+          unavailable={unavailable}
+          query=""
+          invalidReference={false}
+        />
+      ) : snapshot ? (
+        <OperationsView snapshot={snapshot} />
+      ) : (
+        <p>등록되지 않은 검증 화면</p>
+      )}
+    </AdminShell>
+  </>,
 );

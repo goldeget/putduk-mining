@@ -45,6 +45,7 @@
 - Admin typecheck, 범위 내 ESLint, production build PASS
 - 실제 시스템 Chromium `151.0.7922.173`: 98개 컴포넌트 브라우저 QA PASS
 - 화면 폭 320 / 390 / 834 / 1440, Light / Dark, reduced motion, 11개 실제 컴포넌트 화면, 메뉴·화면 안내 키보드 닫기·조회 실패/빈 상태 구분·미리보기·실제 clipboard·편집 무효화·offline 삭제 검증
+- 실제 `AdminShell` 전체를 사용해 테마 선택·세션 카드·고정 로그아웃 영역까지 확인합니다. fixture의 운영자는 합성이며 auth action 두 개만 명시적으로 차단했습니다. 실제 인증 성공으로 해석하지 않습니다.
 - 결과: `test-results/admin-release-component-qa/results.json`; 스크린샷 32개와 소스 SHA-256 포함
 - 승인된 Visual Lab의 Admin Today 데스크톱 Dark 목업과 실제 Today/공지 스크린샷을 열어 검토했습니다. 우선 작업 배치를 수정했습니다. 픽셀 완전 일치 판정이나 인증된 서비스 화면 검증으로 확대하지 않습니다.
 

@@ -28,6 +28,8 @@ const server = await createServer({
       name: "admin-only-component-boundary",
       enforce: "pre",
       resolveId(specifier, importer) {
+        if (specifier === "@/app/actions")
+          return "\0fixture:admin-auth-actions";
         if (["server-only", "next/headers"].includes(specifier))
           throw new Error(
             `Server code forbidden in isolated UI QA: ${specifier}`,
@@ -43,6 +45,8 @@ const server = await createServer({
         return null;
       },
       load(id) {
+        if (id === "\0fixture:admin-auth-actions")
+          return 'export function logoutAction(){throw new Error("Auth commands blocked in isolated component QA");} export function logoutAllAction(){throw new Error("Auth commands blocked in isolated component QA");}';
         if (id === "\0fixture:next/link")
           return `import {createElement} from "react"; export default function Link({href,children,onClick,...props}){return createElement("a",{...props,href:String(href),onClick(event){event.preventDefault();onClick?.(event);}},children);}`;
         if (id === "\0fixture:next/navigation")

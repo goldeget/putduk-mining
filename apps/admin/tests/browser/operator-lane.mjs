@@ -14,6 +14,8 @@ const output = path.join(project, "test-results/admin-release-component-qa");
 await fs.mkdir(output, { recursive: true });
 const sources = [
   "apps/admin/components/admin-navigation.tsx",
+  "apps/admin/components/admin-shell.tsx",
+  "components/system/theme-control.tsx",
   "apps/admin/components/assistant/screen-guide.tsx",
   "apps/admin/components/assistant/operator-draft-provider.tsx",
   "apps/admin/lib/operations/registry.ts",
@@ -30,7 +32,10 @@ const sources = [
   "apps/admin/components/members/member-directory.tsx",
   "apps/admin/tests/browser/fixture.jsx",
   "apps/admin/tests/browser/server.mjs",
+  "apps/admin/tests/browser/operator-lane.mjs",
+  "apps/admin/tests/browser/index.html",
   "lib/design/theme.css",
+  "lib/design/theme.ts",
 ];
 async function provenance() {
   return Object.fromEntries(
@@ -155,6 +160,12 @@ try {
           name: "운영 도우미 화면 안내",
         });
         assert.equal(await guide.isVisible(), true);
+        assert(
+          (await guide.evaluate(
+            (node) => node.scrollWidth - node.clientWidth,
+          )) <= 1,
+          "screen guide must fit without sideways scrolling",
+        );
         assert.match(await guide.innerText(), /실제 기록을 확인/);
         await page.keyboard.press("Escape");
         assert.equal(await guide.isVisible(), false);
