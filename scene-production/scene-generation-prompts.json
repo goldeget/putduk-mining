@@ -1,0 +1,2253 @@
+{
+  "schema_version": 1,
+  "base_sha": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+  "scope": "CREATIVE_DRAFT_PREPRODUCTION",
+  "generation_has_run": false,
+  "production_catalog_verified": false,
+  "prompts": [
+    {
+      "prompt_id": "samsung-electronics-desktop-master-v1",
+      "product_id": "30000000-0000-4000-8000-000000000001",
+      "product_name": "삼성전자 테마",
+      "product_code": "005930",
+      "target": "DESKTOP_MASTER",
+      "aspect_ratio": "16:9",
+      "positive_prompt": "Ultra-premium cinematic high-end CGI, production-quality 3D concept art, ultra-detailed physically plausible photorealistic materials, rich spatial depth, realistic reflections, sophisticated industrial architecture, volumetric lighting, fixed-camera-friendly composition. Match the material and depth quality of the repository clean semiconductor reference, never duplicate its machinery for other products. The scene is an unbranded virtual theme, not a real facility, investment product, partnership or network operation. Render a calm dormant base plate; later transparent local machinery effects are supplied by the runtime.\nProduct identity context: Samsung Electronics Theme (005930), no trademark in the image.\nCreate this specific world: A vast white-ceramic foundry with nested lithography chambers and a distant device-integration gallery, viewed across an asymmetric diagonal service aisle.\nHero: An upright patterned silicon wafer in a precision lithography cradle, offset right of center, not an HBM tower. Supporting objects: sealed wafer cassettes; layered cleanroom process chambers; unmarked device chassis behind glass. Machinery: lithography scanner carriage; sealed wafer transfer arm; precision cassette elevator.\nMaterials: iridescent etched silicon; white sintered ceramic; brushed stainless steel; smoked observation glass. Lighting: Broad pearl-white ceiling panels with thin cobalt scanner lines and soft warm rim reflections; bright cleanroom depth without blown highlights. Palette: pearl white, cobalt blue, iridescent violet, pale champagne.\nVisual flow geometry, dormant and unanimated in this master: Fine scan lines travel from the overhead exposure chamber across wafer traces into the lower-right silicon collection cradle. Extraction object: A faceted silicon tile seated in the lower-right ceramic inspection cradle; no coins, currency or floating reward cubes.\nDepth: Foreground: Low service rails at left lead past a textured ceramic inspection surface at right. Midground: Wafer and scanner dominate the right-middle; separate process bays remain visible to the left. Background: Repeated cleanroom portals retreat diagonally toward a quiet vanishing point above center. Distinct planes and physical scale, not flat layers or motion parallax.\nLandscape 16:9 desktop master. Composition: Three-quarter elevated aisle perspective; wafer center at 0.62,0.40 and collection cradle at 0.61,0.67; leave upper-left operational space quiet.\nRespect these normalized UI safe rectangles (x1,y1,x2,y2; directions from the viewer): left 0,0.12,0.25,0.7 Low-detail operational overlay region; hero remains outside it; right 0.82,0.12,1,0.7 Low-detail secondary information region; no essential machinery; top 0,0,1,0.18 Low-contrast product/status heading region; bottom 0,0.8,1,1 Low-detail session amount/receipt region, real HTML only. Maintain quiet low-contrast spaces without painting any UI. Keep the full hero and extraction object outside reserved areas. No baked text, figures, financial claims or motion.",
+      "negative_requirements": [
+        "No text, letters, numbers, typography, logos, trademarks, watermarks or endorsement marks",
+        "No UI, HUD, buttons, charts, member data, account balances, earnings, yield, APR, guaranteed rewards, monetary amounts, USDT or KRW amounts, arbitrary speed multipliers",
+        "No coins, payment stamps, money cubes or token dispensers",
+        "No cheap 2D, flat vector, cartoon, primitive geometry, low-resolution texture or generic mining room",
+        "No single generic central core reused across products, no name/logo/color swap",
+        "No global camera zoom, viewport shake, forward/backward camera travel, strong parallax or sway",
+        "No busy light trails, sparks or particle clouds baked into the static master; no malformed symbols"
+      ],
+      "composition_notes": "Three-quarter elevated aisle perspective; wafer center at 0.62,0.40 and collection cradle at 0.61,0.67; leave upper-left operational space quiet",
+      "ui_safe_zone_notes": [
+        {
+          "side": "left",
+          "rect": [
+            0,
+            0.12,
+            0.25,
+            0.7
+          ],
+          "purpose": "Low-detail operational overlay region; hero remains outside it"
+        },
+        {
+          "side": "right",
+          "rect": [
+            0.82,
+            0.12,
+            1,
+            0.7
+          ],
+          "purpose": "Low-detail secondary information region; no essential machinery"
+        },
+        {
+          "side": "top",
+          "rect": [
+            0,
+            0,
+            1,
+            0.18
+          ],
+          "purpose": "Low-contrast product/status heading region"
+        },
+        {
+          "side": "bottom",
+          "rect": [
+            0,
+            0.8,
+            1,
+            1
+          ],
+          "purpose": "Low-detail session amount/receipt region, real HTML only"
+        }
+      ],
+      "focal_point": {
+        "hero": {
+          "x": 0.62,
+          "y": 0.4
+        },
+        "extraction": {
+          "x": 0.61,
+          "y": 0.67
+        },
+        "scope": "PROPOSED_NORMALIZED_TARGETS_REMEASURE_AFTER_GENERATION"
+      },
+      "lighting_notes": "Broad pearl-white ceiling panels with thin cobalt scanner lines and soft warm rim reflections; bright cleanroom depth without blown highlights",
+      "material_notes": [
+        "iridescent etched silicon",
+        "white sintered ceramic",
+        "brushed stainless steel",
+        "smoked observation glass"
+      ],
+      "runtime_motion_notes": {
+        "camera": "FIXED_CAMERA",
+        "motion": "LOCAL_MOTION_ONLY",
+        "machinery": [
+          "lithography scanner carriage",
+          "sealed wafer transfer arm",
+          "precision cassette elevator"
+        ],
+        "energy_flow": "Fine scan lines travel from the overhead exposure chamber across wafer traces into the lower-right silicon collection cradle",
+        "reduced_motion": "STATIC_SAME_QUALITY_MASTER",
+        "raster": "DORMANT_BASE_PLATE_NO_BAKED_DYNAMIC_FX"
+      },
+      "regeneration_reasons": [
+        "Product cannot be recognized in a blinded two-second comparison",
+        "Name/color/logo swap or generic core replaces unique industrial narrative",
+        "Hero/machinery/extraction clipped or covered by UI in actual target viewport",
+        "Cheap material, flat depth, inaccurate physical reflections or malformed important objects",
+        "Baked text/UI/money or sponsorship implication",
+        "Runtime anchor cannot be placed consistently on the generated physical object"
+      ],
+      "approval_status": "DRAFT_CREATIVE_BRIEF_NOT_VISUAL_OR_CATALOG_APPROVAL",
+      "production_gate": "CATALOG_TRUTH_UNRESOLVED_AND_LEGAL_BRAND_REVIEW_REQUIRED",
+      "profile_signature": "A vast white-ceramic foundry with nested lithography chambers and a distant device-integration gallery, viewed across an asymmetric diagonal service aisle|An upright patterned silicon wafer in a precision lithography cradle, offset right of center, not an HBM tower|lithography scanner carriage|sealed wafer transfer arm|precision cassette elevator|iridescent etched silicon|white sintered ceramic|brushed stainless steel|smoked observation glass|Broad pearl-white ceiling panels with thin cobalt scanner lines and soft warm rim reflections; bright cleanroom depth without blown highlights|Fine scan lines travel from the overhead exposure chamber across wafer traces into the lower-right silicon collection cradle|A faceted silicon tile seated in the lower-right ceramic inspection cradle; no coins, currency or floating reward cubes"
+    },
+    {
+      "prompt_id": "samsung-electronics-mobile-master-v1",
+      "product_id": "30000000-0000-4000-8000-000000000001",
+      "product_name": "삼성전자 테마",
+      "product_code": "005930",
+      "target": "MOBILE_MASTER",
+      "aspect_ratio": "9:16",
+      "positive_prompt": "Ultra-premium cinematic high-end CGI, production-quality 3D concept art, ultra-detailed physically plausible photorealistic materials, rich spatial depth, realistic reflections, sophisticated industrial architecture, volumetric lighting, fixed-camera-friendly composition. Match the material and depth quality of the repository clean semiconductor reference, never duplicate its machinery for other products. The scene is an unbranded virtual theme, not a real facility, investment product, partnership or network operation. Render a calm dormant base plate; later transparent local machinery effects are supplied by the runtime.\nProduct identity context: Samsung Electronics Theme (005930), no trademark in the image.\nCreate this specific world: A vast white-ceramic foundry with nested lithography chambers and a distant device-integration gallery, viewed across an asymmetric diagonal service aisle.\nHero: An upright patterned silicon wafer in a precision lithography cradle, offset right of center, not an HBM tower. Supporting objects: sealed wafer cassettes; layered cleanroom process chambers; unmarked device chassis behind glass. Machinery: lithography scanner carriage; sealed wafer transfer arm; precision cassette elevator.\nMaterials: iridescent etched silicon; white sintered ceramic; brushed stainless steel; smoked observation glass. Lighting: Broad pearl-white ceiling panels with thin cobalt scanner lines and soft warm rim reflections; bright cleanroom depth without blown highlights. Palette: pearl white, cobalt blue, iridescent violet, pale champagne.\nVisual flow geometry, dormant and unanimated in this master: Fine scan lines travel from the overhead exposure chamber across wafer traces into the lower-right silicon collection cradle. Extraction object: A faceted silicon tile seated in the lower-right ceramic inspection cradle; no coins, currency or floating reward cubes.\nDepth: Foreground: Low service rails at left lead past a textured ceramic inspection surface at right. Midground: Wafer and scanner dominate the right-middle; separate process bays remain visible to the left. Background: Repeated cleanroom portals retreat diagonally toward a quiet vanishing point above center. Distinct planes and physical scale, not flat layers or motion parallax.\nPortrait 9:16 art-directed master, not a crop of the landscape. Composition: Stack the wafer above its collection cradle in a narrow vertical cleanroom bay; keep the scanner arm entering from the middle-right instead of cropping an entire side process bay.\nRespect these normalized UI safe rectangles (x1,y1,x2,y2; directions from the viewer): left 0,0,0.1,1 Keep edge structures low contrast; no indispensable machinery here; right 0.9,0,1,1 Keep edge low contrast; portrait machinery remains inside these edges; top 0,0,1,0.24 Quiet status/product heading region; no critical hero detail behind real HTML; bottom 0,0.76,1,1 Quiet session amount/status region; controls/help/navigation remain normal HTML flow outside art. Maintain quiet low-contrast spaces without painting any UI. Keep the full hero and extraction object outside reserved areas. No baked text, figures, financial claims or motion.",
+      "negative_requirements": [
+        "No text, letters, numbers, typography, logos, trademarks, watermarks or endorsement marks",
+        "No UI, HUD, buttons, charts, member data, account balances, earnings, yield, APR, guaranteed rewards, monetary amounts, USDT or KRW amounts, arbitrary speed multipliers",
+        "No coins, payment stamps, money cubes or token dispensers",
+        "No cheap 2D, flat vector, cartoon, primitive geometry, low-resolution texture or generic mining room",
+        "No single generic central core reused across products, no name/logo/color swap",
+        "No global camera zoom, viewport shake, forward/backward camera travel, strong parallax or sway",
+        "No busy light trails, sparks or particle clouds baked into the static master; no malformed symbols"
+      ],
+      "composition_notes": "Stack the wafer above its collection cradle in a narrow vertical cleanroom bay; keep the scanner arm entering from the middle-right instead of cropping an entire side process bay",
+      "ui_safe_zone_notes": [
+        {
+          "side": "left",
+          "rect": [
+            0,
+            0,
+            0.1,
+            1
+          ],
+          "purpose": "Keep edge structures low contrast; no indispensable machinery here"
+        },
+        {
+          "side": "right",
+          "rect": [
+            0.9,
+            0,
+            1,
+            1
+          ],
+          "purpose": "Keep edge low contrast; portrait machinery remains inside these edges"
+        },
+        {
+          "side": "top",
+          "rect": [
+            0,
+            0,
+            1,
+            0.24
+          ],
+          "purpose": "Quiet status/product heading region; no critical hero detail behind real HTML"
+        },
+        {
+          "side": "bottom",
+          "rect": [
+            0,
+            0.76,
+            1,
+            1
+          ],
+          "purpose": "Quiet session amount/status region; controls/help/navigation remain normal HTML flow outside art"
+        }
+      ],
+      "focal_point": {
+        "hero": {
+          "x": 0.52,
+          "y": 0.37
+        },
+        "extraction": {
+          "x": 0.52,
+          "y": 0.65
+        },
+        "scope": "PROPOSED_NORMALIZED_TARGETS_REMEASURE_AFTER_GENERATION"
+      },
+      "lighting_notes": "Broad pearl-white ceiling panels with thin cobalt scanner lines and soft warm rim reflections; bright cleanroom depth without blown highlights",
+      "material_notes": [
+        "iridescent etched silicon",
+        "white sintered ceramic",
+        "brushed stainless steel",
+        "smoked observation glass"
+      ],
+      "runtime_motion_notes": {
+        "camera": "FIXED_CAMERA",
+        "motion": "LOCAL_MOTION_ONLY",
+        "machinery": [
+          "lithography scanner carriage",
+          "sealed wafer transfer arm",
+          "precision cassette elevator"
+        ],
+        "energy_flow": "Fine scan lines travel from the overhead exposure chamber across wafer traces into the lower-right silicon collection cradle",
+        "reduced_motion": "STATIC_SAME_QUALITY_MASTER",
+        "raster": "DORMANT_BASE_PLATE_NO_BAKED_DYNAMIC_FX"
+      },
+      "regeneration_reasons": [
+        "Product cannot be recognized in a blinded two-second comparison",
+        "Name/color/logo swap or generic core replaces unique industrial narrative",
+        "Hero/machinery/extraction clipped or covered by UI in actual target viewport",
+        "Cheap material, flat depth, inaccurate physical reflections or malformed important objects",
+        "Baked text/UI/money or sponsorship implication",
+        "Runtime anchor cannot be placed consistently on the generated physical object"
+      ],
+      "approval_status": "DRAFT_CREATIVE_BRIEF_NOT_VISUAL_OR_CATALOG_APPROVAL",
+      "production_gate": "CATALOG_TRUTH_UNRESOLVED_AND_LEGAL_BRAND_REVIEW_REQUIRED",
+      "profile_signature": "A vast white-ceramic foundry with nested lithography chambers and a distant device-integration gallery, viewed across an asymmetric diagonal service aisle|An upright patterned silicon wafer in a precision lithography cradle, offset right of center, not an HBM tower|lithography scanner carriage|sealed wafer transfer arm|precision cassette elevator|iridescent etched silicon|white sintered ceramic|brushed stainless steel|smoked observation glass|Broad pearl-white ceiling panels with thin cobalt scanner lines and soft warm rim reflections; bright cleanroom depth without blown highlights|Fine scan lines travel from the overhead exposure chamber across wafer traces into the lower-right silicon collection cradle|A faceted silicon tile seated in the lower-right ceramic inspection cradle; no coins, currency or floating reward cubes"
+    },
+    {
+      "prompt_id": "sk-hynix-desktop-master-v1",
+      "product_id": "30000000-0000-4000-8000-000000000002",
+      "product_name": "SK하이닉스 테마",
+      "product_code": "000660",
+      "target": "DESKTOP_MASTER",
+      "aspect_ratio": "16:9",
+      "positive_prompt": "Ultra-premium cinematic high-end CGI, production-quality 3D concept art, ultra-detailed physically plausible photorealistic materials, rich spatial depth, realistic reflections, sophisticated industrial architecture, volumetric lighting, fixed-camera-friendly composition. Match the material and depth quality of the repository clean semiconductor reference, never duplicate its machinery for other products. The scene is an unbranded virtual theme, not a real facility, investment product, partnership or network operation. Render a calm dormant base plate; later transparent local machinery effects are supplied by the runtime.\nProduct identity context: SK hynix Theme (000660), no trademark in the image.\nCreate this specific world: A deep reflective semiconductor memory fab with a suspended HBM stack, a wafer-scanning station on the left and memory-processing towers on the right.\nHero: A physically detailed tiered HBM package with visible interposer edges suspended above a dormant circular memory collection platform. Supporting objects: left silicon wafer disk; right memory processing towers; robotic fab arms behind the stack. Machinery: HBM alignment arm; wafer scanner; memory tower service mechanism.\nMaterials: dark titanium package plates; etched silicon wafer; black polished glass; fine copper interconnect edges. Lighting: Cyan fab columns and controlled amber edge reflections on the HBM layers; white task lights reveal microscopic material detail. Palette: cyan, warm gold, mineral white, black titanium.\nVisual flow geometry, dormant and unanimated in this master: Local pin lights step down the HBM layer edges toward the platform; reserve every dynamic trail for a later transparent runtime layer. Extraction object: The lower memory collection ring under the suspended package, visibly idle in the raster master.\nDepth: Foreground: A wide low extraction platform with engraved physical seams, without glyphs or numerical markings. Midground: HBM stack holds the center while wafer and processing tower preserve different left/right silhouettes. Background: Blue-lit fab columns and robots diminish through several physically separated depth planes. Distinct planes and physical scale, not flat layers or motion parallax.\nLandscape 16:9 desktop master. Composition: Recompose the approved 1539x1022 family direction as a true 16:9 master without stretching or cropping wafer/tower; HBM 0.50,0.37, ring 0.50,0.68.\nRespect these normalized UI safe rectangles (x1,y1,x2,y2; directions from the viewer): left 0,0.12,0.25,0.7 Low-detail operational overlay region; hero remains outside it; right 0.82,0.12,1,0.7 Low-detail secondary information region; no essential machinery; top 0,0,1,0.18 Low-contrast product/status heading region; bottom 0,0.8,1,1 Low-detail session amount/receipt region, real HTML only. Maintain quiet low-contrast spaces without painting any UI. Keep the full hero and extraction object outside reserved areas. No baked text, figures, financial claims or motion.",
+      "negative_requirements": [
+        "No text, letters, numbers, typography, logos, trademarks, watermarks or endorsement marks",
+        "No UI, HUD, buttons, charts, member data, account balances, earnings, yield, APR, guaranteed rewards, monetary amounts, USDT or KRW amounts, arbitrary speed multipliers",
+        "No coins, payment stamps, money cubes or token dispensers",
+        "No cheap 2D, flat vector, cartoon, primitive geometry, low-resolution texture or generic mining room",
+        "No single generic central core reused across products, no name/logo/color swap",
+        "No global camera zoom, viewport shake, forward/backward camera travel, strong parallax or sway",
+        "No busy light trails, sparks or particle clouds baked into the static master; no malformed symbols"
+      ],
+      "composition_notes": "Recompose the approved 1539x1022 family direction as a true 16:9 master without stretching or cropping wafer/tower; HBM 0.50,0.37, ring 0.50,0.68",
+      "ui_safe_zone_notes": [
+        {
+          "side": "left",
+          "rect": [
+            0,
+            0.12,
+            0.25,
+            0.7
+          ],
+          "purpose": "Low-detail operational overlay region; hero remains outside it"
+        },
+        {
+          "side": "right",
+          "rect": [
+            0.82,
+            0.12,
+            1,
+            0.7
+          ],
+          "purpose": "Low-detail secondary information region; no essential machinery"
+        },
+        {
+          "side": "top",
+          "rect": [
+            0,
+            0,
+            1,
+            0.18
+          ],
+          "purpose": "Low-contrast product/status heading region"
+        },
+        {
+          "side": "bottom",
+          "rect": [
+            0,
+            0.8,
+            1,
+            1
+          ],
+          "purpose": "Low-detail session amount/receipt region, real HTML only"
+        }
+      ],
+      "focal_point": {
+        "hero": {
+          "x": 0.5,
+          "y": 0.37
+        },
+        "extraction": {
+          "x": 0.5,
+          "y": 0.68
+        },
+        "scope": "PROPOSED_NORMALIZED_TARGETS_REMEASURE_AFTER_GENERATION"
+      },
+      "lighting_notes": "Cyan fab columns and controlled amber edge reflections on the HBM layers; white task lights reveal microscopic material detail",
+      "material_notes": [
+        "dark titanium package plates",
+        "etched silicon wafer",
+        "black polished glass",
+        "fine copper interconnect edges"
+      ],
+      "runtime_motion_notes": {
+        "camera": "FIXED_CAMERA",
+        "motion": "LOCAL_MOTION_ONLY",
+        "machinery": [
+          "HBM alignment arm",
+          "wafer scanner",
+          "memory tower service mechanism"
+        ],
+        "energy_flow": "Local pin lights step down the HBM layer edges toward the platform; reserve every dynamic trail for a later transparent runtime layer",
+        "reduced_motion": "STATIC_SAME_QUALITY_MASTER",
+        "raster": "DORMANT_BASE_PLATE_NO_BAKED_DYNAMIC_FX"
+      },
+      "regeneration_reasons": [
+        "Product cannot be recognized in a blinded two-second comparison",
+        "Name/color/logo swap or generic core replaces unique industrial narrative",
+        "Hero/machinery/extraction clipped or covered by UI in actual target viewport",
+        "Cheap material, flat depth, inaccurate physical reflections or malformed important objects",
+        "Baked text/UI/money or sponsorship implication",
+        "Runtime anchor cannot be placed consistently on the generated physical object"
+      ],
+      "approval_status": "DRAFT_CREATIVE_BRIEF_NOT_VISUAL_OR_CATALOG_APPROVAL",
+      "production_gate": "CATALOG_TRUTH_UNRESOLVED_AND_LEGAL_BRAND_REVIEW_REQUIRED",
+      "profile_signature": "A deep reflective semiconductor memory fab with a suspended HBM stack, a wafer-scanning station on the left and memory-processing towers on the right|A physically detailed tiered HBM package with visible interposer edges suspended above a dormant circular memory collection platform|HBM alignment arm|wafer scanner|memory tower service mechanism|dark titanium package plates|etched silicon wafer|black polished glass|fine copper interconnect edges|Cyan fab columns and controlled amber edge reflections on the HBM layers; white task lights reveal microscopic material detail|Local pin lights step down the HBM layer edges toward the platform; reserve every dynamic trail for a later transparent runtime layer|The lower memory collection ring under the suspended package, visibly idle in the raster master"
+    },
+    {
+      "prompt_id": "sk-hynix-mobile-master-v1",
+      "product_id": "30000000-0000-4000-8000-000000000002",
+      "product_name": "SK하이닉스 테마",
+      "product_code": "000660",
+      "target": "MOBILE_MASTER",
+      "aspect_ratio": "9:16",
+      "positive_prompt": "Ultra-premium cinematic high-end CGI, production-quality 3D concept art, ultra-detailed physically plausible photorealistic materials, rich spatial depth, realistic reflections, sophisticated industrial architecture, volumetric lighting, fixed-camera-friendly composition. Match the material and depth quality of the repository clean semiconductor reference, never duplicate its machinery for other products. The scene is an unbranded virtual theme, not a real facility, investment product, partnership or network operation. Render a calm dormant base plate; later transparent local machinery effects are supplied by the runtime.\nProduct identity context: SK hynix Theme (000660), no trademark in the image.\nCreate this specific world: A deep reflective semiconductor memory fab with a suspended HBM stack, a wafer-scanning station on the left and memory-processing towers on the right.\nHero: A physically detailed tiered HBM package with visible interposer edges suspended above a dormant circular memory collection platform. Supporting objects: left silicon wafer disk; right memory processing towers; robotic fab arms behind the stack. Machinery: HBM alignment arm; wafer scanner; memory tower service mechanism.\nMaterials: dark titanium package plates; etched silicon wafer; black polished glass; fine copper interconnect edges. Lighting: Cyan fab columns and controlled amber edge reflections on the HBM layers; white task lights reveal microscopic material detail. Palette: cyan, warm gold, mineral white, black titanium.\nVisual flow geometry, dormant and unanimated in this master: Local pin lights step down the HBM layer edges toward the platform; reserve every dynamic trail for a later transparent runtime layer. Extraction object: The lower memory collection ring under the suspended package, visibly idle in the raster master.\nDepth: Foreground: A wide low extraction platform with engraved physical seams, without glyphs or numerical markings. Midground: HBM stack holds the center while wafer and processing tower preserve different left/right silhouettes. Background: Blue-lit fab columns and robots diminish through several physically separated depth planes. Distinct planes and physical scale, not flat layers or motion parallax.\nPortrait 9:16 art-directed master, not a crop of the landscape. Composition: Keep the complete HBM tier silhouette above a smaller lower ring; bring wafer and tower inward as shallow side stations, rather than cutting them off with center-cover.\nRespect these normalized UI safe rectangles (x1,y1,x2,y2; directions from the viewer): left 0,0,0.1,1 Keep edge structures low contrast; no indispensable machinery here; right 0.9,0,1,1 Keep edge low contrast; portrait machinery remains inside these edges; top 0,0,1,0.24 Quiet status/product heading region; no critical hero detail behind real HTML; bottom 0,0.76,1,1 Quiet session amount/status region; controls/help/navigation remain normal HTML flow outside art. Maintain quiet low-contrast spaces without painting any UI. Keep the full hero and extraction object outside reserved areas. No baked text, figures, financial claims or motion.",
+      "negative_requirements": [
+        "No text, letters, numbers, typography, logos, trademarks, watermarks or endorsement marks",
+        "No UI, HUD, buttons, charts, member data, account balances, earnings, yield, APR, guaranteed rewards, monetary amounts, USDT or KRW amounts, arbitrary speed multipliers",
+        "No coins, payment stamps, money cubes or token dispensers",
+        "No cheap 2D, flat vector, cartoon, primitive geometry, low-resolution texture or generic mining room",
+        "No single generic central core reused across products, no name/logo/color swap",
+        "No global camera zoom, viewport shake, forward/backward camera travel, strong parallax or sway",
+        "No busy light trails, sparks or particle clouds baked into the static master; no malformed symbols"
+      ],
+      "composition_notes": "Keep the complete HBM tier silhouette above a smaller lower ring; bring wafer and tower inward as shallow side stations, rather than cutting them off with center-cover",
+      "ui_safe_zone_notes": [
+        {
+          "side": "left",
+          "rect": [
+            0,
+            0,
+            0.1,
+            1
+          ],
+          "purpose": "Keep edge structures low contrast; no indispensable machinery here"
+        },
+        {
+          "side": "right",
+          "rect": [
+            0.9,
+            0,
+            1,
+            1
+          ],
+          "purpose": "Keep edge low contrast; portrait machinery remains inside these edges"
+        },
+        {
+          "side": "top",
+          "rect": [
+            0,
+            0,
+            1,
+            0.24
+          ],
+          "purpose": "Quiet status/product heading region; no critical hero detail behind real HTML"
+        },
+        {
+          "side": "bottom",
+          "rect": [
+            0,
+            0.76,
+            1,
+            1
+          ],
+          "purpose": "Quiet session amount/status region; controls/help/navigation remain normal HTML flow outside art"
+        }
+      ],
+      "focal_point": {
+        "hero": {
+          "x": 0.5,
+          "y": 0.36
+        },
+        "extraction": {
+          "x": 0.5,
+          "y": 0.65
+        },
+        "scope": "PROPOSED_NORMALIZED_TARGETS_REMEASURE_AFTER_GENERATION"
+      },
+      "lighting_notes": "Cyan fab columns and controlled amber edge reflections on the HBM layers; white task lights reveal microscopic material detail",
+      "material_notes": [
+        "dark titanium package plates",
+        "etched silicon wafer",
+        "black polished glass",
+        "fine copper interconnect edges"
+      ],
+      "runtime_motion_notes": {
+        "camera": "FIXED_CAMERA",
+        "motion": "LOCAL_MOTION_ONLY",
+        "machinery": [
+          "HBM alignment arm",
+          "wafer scanner",
+          "memory tower service mechanism"
+        ],
+        "energy_flow": "Local pin lights step down the HBM layer edges toward the platform; reserve every dynamic trail for a later transparent runtime layer",
+        "reduced_motion": "STATIC_SAME_QUALITY_MASTER",
+        "raster": "DORMANT_BASE_PLATE_NO_BAKED_DYNAMIC_FX"
+      },
+      "regeneration_reasons": [
+        "Product cannot be recognized in a blinded two-second comparison",
+        "Name/color/logo swap or generic core replaces unique industrial narrative",
+        "Hero/machinery/extraction clipped or covered by UI in actual target viewport",
+        "Cheap material, flat depth, inaccurate physical reflections or malformed important objects",
+        "Baked text/UI/money or sponsorship implication",
+        "Runtime anchor cannot be placed consistently on the generated physical object"
+      ],
+      "approval_status": "DRAFT_CREATIVE_BRIEF_NOT_VISUAL_OR_CATALOG_APPROVAL",
+      "production_gate": "CATALOG_TRUTH_UNRESOLVED_AND_LEGAL_BRAND_REVIEW_REQUIRED",
+      "profile_signature": "A deep reflective semiconductor memory fab with a suspended HBM stack, a wafer-scanning station on the left and memory-processing towers on the right|A physically detailed tiered HBM package with visible interposer edges suspended above a dormant circular memory collection platform|HBM alignment arm|wafer scanner|memory tower service mechanism|dark titanium package plates|etched silicon wafer|black polished glass|fine copper interconnect edges|Cyan fab columns and controlled amber edge reflections on the HBM layers; white task lights reveal microscopic material detail|Local pin lights step down the HBM layer edges toward the platform; reserve every dynamic trail for a later transparent runtime layer|The lower memory collection ring under the suspended package, visibly idle in the raster master"
+    },
+    {
+      "prompt_id": "apple-desktop-master-v1",
+      "product_id": "30000000-0000-4000-8000-000000000003",
+      "product_name": "애플 테마",
+      "product_code": "AAPL",
+      "target": "DESKTOP_MASTER",
+      "aspect_ratio": "16:9",
+      "positive_prompt": "Ultra-premium cinematic high-end CGI, production-quality 3D concept art, ultra-detailed physically plausible photorealistic materials, rich spatial depth, realistic reflections, sophisticated industrial architecture, volumetric lighting, fixed-camera-friendly composition. Match the material and depth quality of the repository clean semiconductor reference, never duplicate its machinery for other products. The scene is an unbranded virtual theme, not a real facility, investment product, partnership or network operation. Render a calm dormant base plate; later transparent local machinery effects are supplied by the runtime.\nProduct identity context: Apple Theme (AAPL), no trademark in the image.\nCreate this specific world: An architectural precision-device atelier with curved frosted partitions and an immaculate microassembly island, quiet rather than cavernous.\nHero: A sculpted unbranded silicon package held in a levitating precision fixture above a circular sapphire inspection lens. Supporting objects: unmarked machined device shells; tiny precision grippers; sapphire optical inspection discs. Machinery: microassembly grippers; optical inspection lens; precision device-shell turntable.\nMaterials: satin aluminum; bead-blasted titanium; frosted glass; silicon with subtle interference color. Lighting: Large soft ivory area lights, cool silver edge lighting and a restrained rose-copper bounce under the lens; luxury product-photography discipline. Palette: soft ivory, silver, graphite, rose copper.\nVisual flow geometry, dormant and unanimated in this master: Fine optical paths converge through the sapphire lens from individually arranged microassembly tools. Extraction object: A precision-finished silicon module in the sapphire inspection lens, never a currency-shaped reward.\nDepth: Foreground: One satin metal bench edge with tactile finish, leaving the lower information area calm. Midground: Offset precision silicon fixture and individually legible tool tips with generous negative space. Background: Frosted curved partitions reveal two distant assembly rooms without generic server racks. Distinct planes and physical scale, not flat layers or motion parallax.\nLandscape 16:9 desktop master. Composition: Low oblique macro-industrial lens with fixture at 0.56,0.43 and inspection lens 0.56,0.66; quiet ivory volume in upper-left.\nRespect these normalized UI safe rectangles (x1,y1,x2,y2; directions from the viewer): left 0,0.12,0.25,0.7 Low-detail operational overlay region; hero remains outside it; right 0.82,0.12,1,0.7 Low-detail secondary information region; no essential machinery; top 0,0,1,0.18 Low-contrast product/status heading region; bottom 0,0.8,1,1 Low-detail session amount/receipt region, real HTML only. Maintain quiet low-contrast spaces without painting any UI. Keep the full hero and extraction object outside reserved areas. No baked text, figures, financial claims or motion.",
+      "negative_requirements": [
+        "No text, letters, numbers, typography, logos, trademarks, watermarks or endorsement marks",
+        "No UI, HUD, buttons, charts, member data, account balances, earnings, yield, APR, guaranteed rewards, monetary amounts, USDT or KRW amounts, arbitrary speed multipliers",
+        "No coins, payment stamps, money cubes or token dispensers",
+        "No cheap 2D, flat vector, cartoon, primitive geometry, low-resolution texture or generic mining room",
+        "No single generic central core reused across products, no name/logo/color swap",
+        "No global camera zoom, viewport shake, forward/backward camera travel, strong parallax or sway",
+        "No busy light trails, sparks or particle clouds baked into the static master; no malformed symbols"
+      ],
+      "composition_notes": "Low oblique macro-industrial lens with fixture at 0.56,0.43 and inspection lens 0.56,0.66; quiet ivory volume in upper-left",
+      "ui_safe_zone_notes": [
+        {
+          "side": "left",
+          "rect": [
+            0,
+            0.12,
+            0.25,
+            0.7
+          ],
+          "purpose": "Low-detail operational overlay region; hero remains outside it"
+        },
+        {
+          "side": "right",
+          "rect": [
+            0.82,
+            0.12,
+            1,
+            0.7
+          ],
+          "purpose": "Low-detail secondary information region; no essential machinery"
+        },
+        {
+          "side": "top",
+          "rect": [
+            0,
+            0,
+            1,
+            0.18
+          ],
+          "purpose": "Low-contrast product/status heading region"
+        },
+        {
+          "side": "bottom",
+          "rect": [
+            0,
+            0.8,
+            1,
+            1
+          ],
+          "purpose": "Low-detail session amount/receipt region, real HTML only"
+        }
+      ],
+      "focal_point": {
+        "hero": {
+          "x": 0.56,
+          "y": 0.43
+        },
+        "extraction": {
+          "x": 0.56,
+          "y": 0.66
+        },
+        "scope": "PROPOSED_NORMALIZED_TARGETS_REMEASURE_AFTER_GENERATION"
+      },
+      "lighting_notes": "Large soft ivory area lights, cool silver edge lighting and a restrained rose-copper bounce under the lens; luxury product-photography discipline",
+      "material_notes": [
+        "satin aluminum",
+        "bead-blasted titanium",
+        "frosted glass",
+        "silicon with subtle interference color"
+      ],
+      "runtime_motion_notes": {
+        "camera": "FIXED_CAMERA",
+        "motion": "LOCAL_MOTION_ONLY",
+        "machinery": [
+          "microassembly grippers",
+          "optical inspection lens",
+          "precision device-shell turntable"
+        ],
+        "energy_flow": "Fine optical paths converge through the sapphire lens from individually arranged microassembly tools",
+        "reduced_motion": "STATIC_SAME_QUALITY_MASTER",
+        "raster": "DORMANT_BASE_PLATE_NO_BAKED_DYNAMIC_FX"
+      },
+      "regeneration_reasons": [
+        "Product cannot be recognized in a blinded two-second comparison",
+        "Name/color/logo swap or generic core replaces unique industrial narrative",
+        "Hero/machinery/extraction clipped or covered by UI in actual target viewport",
+        "Cheap material, flat depth, inaccurate physical reflections or malformed important objects",
+        "Baked text/UI/money or sponsorship implication",
+        "Runtime anchor cannot be placed consistently on the generated physical object"
+      ],
+      "approval_status": "DRAFT_CREATIVE_BRIEF_NOT_VISUAL_OR_CATALOG_APPROVAL",
+      "production_gate": "CATALOG_TRUTH_UNRESOLVED_AND_LEGAL_BRAND_REVIEW_REQUIRED",
+      "profile_signature": "An architectural precision-device atelier with curved frosted partitions and an immaculate microassembly island, quiet rather than cavernous|A sculpted unbranded silicon package held in a levitating precision fixture above a circular sapphire inspection lens|microassembly grippers|optical inspection lens|precision device-shell turntable|satin aluminum|bead-blasted titanium|frosted glass|silicon with subtle interference color|Large soft ivory area lights, cool silver edge lighting and a restrained rose-copper bounce under the lens; luxury product-photography discipline|Fine optical paths converge through the sapphire lens from individually arranged microassembly tools|A precision-finished silicon module in the sapphire inspection lens, never a currency-shaped reward"
+    },
+    {
+      "prompt_id": "apple-mobile-master-v1",
+      "product_id": "30000000-0000-4000-8000-000000000003",
+      "product_name": "애플 테마",
+      "product_code": "AAPL",
+      "target": "MOBILE_MASTER",
+      "aspect_ratio": "9:16",
+      "positive_prompt": "Ultra-premium cinematic high-end CGI, production-quality 3D concept art, ultra-detailed physically plausible photorealistic materials, rich spatial depth, realistic reflections, sophisticated industrial architecture, volumetric lighting, fixed-camera-friendly composition. Match the material and depth quality of the repository clean semiconductor reference, never duplicate its machinery for other products. The scene is an unbranded virtual theme, not a real facility, investment product, partnership or network operation. Render a calm dormant base plate; later transparent local machinery effects are supplied by the runtime.\nProduct identity context: Apple Theme (AAPL), no trademark in the image.\nCreate this specific world: An architectural precision-device atelier with curved frosted partitions and an immaculate microassembly island, quiet rather than cavernous.\nHero: A sculpted unbranded silicon package held in a levitating precision fixture above a circular sapphire inspection lens. Supporting objects: unmarked machined device shells; tiny precision grippers; sapphire optical inspection discs. Machinery: microassembly grippers; optical inspection lens; precision device-shell turntable.\nMaterials: satin aluminum; bead-blasted titanium; frosted glass; silicon with subtle interference color. Lighting: Large soft ivory area lights, cool silver edge lighting and a restrained rose-copper bounce under the lens; luxury product-photography discipline. Palette: soft ivory, silver, graphite, rose copper.\nVisual flow geometry, dormant and unanimated in this master: Fine optical paths converge through the sapphire lens from individually arranged microassembly tools. Extraction object: A precision-finished silicon module in the sapphire inspection lens, never a currency-shaped reward.\nDepth: Foreground: One satin metal bench edge with tactile finish, leaving the lower information area calm. Midground: Offset precision silicon fixture and individually legible tool tips with generous negative space. Background: Frosted curved partitions reveal two distant assembly rooms without generic server racks. Distinct planes and physical scale, not flat layers or motion parallax.\nPortrait 9:16 art-directed master, not a crop of the landscape. Composition: Compose a vertical optical inspection tower with silicon fixture above lens and two visible grippers from opposite sides; distant partitions rise behind it.\nRespect these normalized UI safe rectangles (x1,y1,x2,y2; directions from the viewer): left 0,0,0.1,1 Keep edge structures low contrast; no indispensable machinery here; right 0.9,0,1,1 Keep edge low contrast; portrait machinery remains inside these edges; top 0,0,1,0.24 Quiet status/product heading region; no critical hero detail behind real HTML; bottom 0,0.76,1,1 Quiet session amount/status region; controls/help/navigation remain normal HTML flow outside art. Maintain quiet low-contrast spaces without painting any UI. Keep the full hero and extraction object outside reserved areas. No baked text, figures, financial claims or motion.",
+      "negative_requirements": [
+        "No text, letters, numbers, typography, logos, trademarks, watermarks or endorsement marks",
+        "No UI, HUD, buttons, charts, member data, account balances, earnings, yield, APR, guaranteed rewards, monetary amounts, USDT or KRW amounts, arbitrary speed multipliers",
+        "No coins, payment stamps, money cubes or token dispensers",
+        "No cheap 2D, flat vector, cartoon, primitive geometry, low-resolution texture or generic mining room",
+        "No single generic central core reused across products, no name/logo/color swap",
+        "No global camera zoom, viewport shake, forward/backward camera travel, strong parallax or sway",
+        "No busy light trails, sparks or particle clouds baked into the static master; no malformed symbols"
+      ],
+      "composition_notes": "Compose a vertical optical inspection tower with silicon fixture above lens and two visible grippers from opposite sides; distant partitions rise behind it",
+      "ui_safe_zone_notes": [
+        {
+          "side": "left",
+          "rect": [
+            0,
+            0,
+            0.1,
+            1
+          ],
+          "purpose": "Keep edge structures low contrast; no indispensable machinery here"
+        },
+        {
+          "side": "right",
+          "rect": [
+            0.9,
+            0,
+            1,
+            1
+          ],
+          "purpose": "Keep edge low contrast; portrait machinery remains inside these edges"
+        },
+        {
+          "side": "top",
+          "rect": [
+            0,
+            0,
+            1,
+            0.24
+          ],
+          "purpose": "Quiet status/product heading region; no critical hero detail behind real HTML"
+        },
+        {
+          "side": "bottom",
+          "rect": [
+            0,
+            0.76,
+            1,
+            1
+          ],
+          "purpose": "Quiet session amount/status region; controls/help/navigation remain normal HTML flow outside art"
+        }
+      ],
+      "focal_point": {
+        "hero": {
+          "x": 0.5,
+          "y": 0.4
+        },
+        "extraction": {
+          "x": 0.5,
+          "y": 0.63
+        },
+        "scope": "PROPOSED_NORMALIZED_TARGETS_REMEASURE_AFTER_GENERATION"
+      },
+      "lighting_notes": "Large soft ivory area lights, cool silver edge lighting and a restrained rose-copper bounce under the lens; luxury product-photography discipline",
+      "material_notes": [
+        "satin aluminum",
+        "bead-blasted titanium",
+        "frosted glass",
+        "silicon with subtle interference color"
+      ],
+      "runtime_motion_notes": {
+        "camera": "FIXED_CAMERA",
+        "motion": "LOCAL_MOTION_ONLY",
+        "machinery": [
+          "microassembly grippers",
+          "optical inspection lens",
+          "precision device-shell turntable"
+        ],
+        "energy_flow": "Fine optical paths converge through the sapphire lens from individually arranged microassembly tools",
+        "reduced_motion": "STATIC_SAME_QUALITY_MASTER",
+        "raster": "DORMANT_BASE_PLATE_NO_BAKED_DYNAMIC_FX"
+      },
+      "regeneration_reasons": [
+        "Product cannot be recognized in a blinded two-second comparison",
+        "Name/color/logo swap or generic core replaces unique industrial narrative",
+        "Hero/machinery/extraction clipped or covered by UI in actual target viewport",
+        "Cheap material, flat depth, inaccurate physical reflections or malformed important objects",
+        "Baked text/UI/money or sponsorship implication",
+        "Runtime anchor cannot be placed consistently on the generated physical object"
+      ],
+      "approval_status": "DRAFT_CREATIVE_BRIEF_NOT_VISUAL_OR_CATALOG_APPROVAL",
+      "production_gate": "CATALOG_TRUTH_UNRESOLVED_AND_LEGAL_BRAND_REVIEW_REQUIRED",
+      "profile_signature": "An architectural precision-device atelier with curved frosted partitions and an immaculate microassembly island, quiet rather than cavernous|A sculpted unbranded silicon package held in a levitating precision fixture above a circular sapphire inspection lens|microassembly grippers|optical inspection lens|precision device-shell turntable|satin aluminum|bead-blasted titanium|frosted glass|silicon with subtle interference color|Large soft ivory area lights, cool silver edge lighting and a restrained rose-copper bounce under the lens; luxury product-photography discipline|Fine optical paths converge through the sapphire lens from individually arranged microassembly tools|A precision-finished silicon module in the sapphire inspection lens, never a currency-shaped reward"
+    },
+    {
+      "prompt_id": "microsoft-desktop-master-v1",
+      "product_id": "30000000-0000-4000-8000-000000000004",
+      "product_name": "마이크로소프트 테마",
+      "product_code": "MSFT",
+      "target": "DESKTOP_MASTER",
+      "aspect_ratio": "16:9",
+      "positive_prompt": "Ultra-premium cinematic high-end CGI, production-quality 3D concept art, ultra-detailed physically plausible photorealistic materials, rich spatial depth, realistic reflections, sophisticated industrial architecture, volumetric lighting, fixed-camera-friendly composition. Match the material and depth quality of the repository clean semiconductor reference, never duplicate its machinery for other products. The scene is an unbranded virtual theme, not a real facility, investment product, partnership or network operation. Render a calm dormant base plate; later transparent local machinery effects are supplied by the runtime.\nProduct identity context: Microsoft Theme (MSFT), no trademark in the image.\nCreate this specific world: A monumental enterprise-cloud atrium with terraced distributed compute halls joined by visible optical bridges and an open central light well.\nHero: A layered translucent cloud-fabric routing hub suspended between several physically distinct server halls. Supporting objects: optical bridge conduits; distributed compute terraces; coolant service ribs. Machinery: optical switching arrays; rack cooling manifolds; local node-routing relays.\nMaterials: translucent optical glass; powder-coated navy steel; matte ceramic racks; braided fiber bundles. Lighting: Daylight from the atrium clerestory with azure optical paths and warm white service lights; balanced architectural scale. Palette: azure, navy, frosted white, muted teal.\nVisual flow geometry, dormant and unanimated in this master: Several sparse node paths join the routing hub and descend to a small lower optical receiver; keep endpoints distinct. Extraction object: A transparent optical receiver below the routing hub; no token mint or balance display.\nDepth: Foreground: A quiet mezzanine rail at left establishes human scale without characters. Midground: Glass routing hub sits right-center, with multiple terraces and separate optical bridges. Background: Compute halls recede to different heights below a pale atrium ceiling. Distinct planes and physical scale, not flat layers or motion parallax.\nLandscape 16:9 desktop master. Composition: Architectural wide interior with hub at 0.60,0.43 and receiver 0.58,0.67; left mezzanine stays low-contrast for factual UI.\nRespect these normalized UI safe rectangles (x1,y1,x2,y2; directions from the viewer): left 0,0.12,0.25,0.7 Low-detail operational overlay region; hero remains outside it; right 0.82,0.12,1,0.7 Low-detail secondary information region; no essential machinery; top 0,0,1,0.18 Low-contrast product/status heading region; bottom 0,0.8,1,1 Low-detail session amount/receipt region, real HTML only. Maintain quiet low-contrast spaces without painting any UI. Keep the full hero and extraction object outside reserved areas. No baked text, figures, financial claims or motion.",
+      "negative_requirements": [
+        "No text, letters, numbers, typography, logos, trademarks, watermarks or endorsement marks",
+        "No UI, HUD, buttons, charts, member data, account balances, earnings, yield, APR, guaranteed rewards, monetary amounts, USDT or KRW amounts, arbitrary speed multipliers",
+        "No coins, payment stamps, money cubes or token dispensers",
+        "No cheap 2D, flat vector, cartoon, primitive geometry, low-resolution texture or generic mining room",
+        "No single generic central core reused across products, no name/logo/color swap",
+        "No global camera zoom, viewport shake, forward/backward camera travel, strong parallax or sway",
+        "No busy light trails, sparks or particle clouds baked into the static master; no malformed symbols"
+      ],
+      "composition_notes": "Architectural wide interior with hub at 0.60,0.43 and receiver 0.58,0.67; left mezzanine stays low-contrast for factual UI",
+      "ui_safe_zone_notes": [
+        {
+          "side": "left",
+          "rect": [
+            0,
+            0.12,
+            0.25,
+            0.7
+          ],
+          "purpose": "Low-detail operational overlay region; hero remains outside it"
+        },
+        {
+          "side": "right",
+          "rect": [
+            0.82,
+            0.12,
+            1,
+            0.7
+          ],
+          "purpose": "Low-detail secondary information region; no essential machinery"
+        },
+        {
+          "side": "top",
+          "rect": [
+            0,
+            0,
+            1,
+            0.18
+          ],
+          "purpose": "Low-contrast product/status heading region"
+        },
+        {
+          "side": "bottom",
+          "rect": [
+            0,
+            0.8,
+            1,
+            1
+          ],
+          "purpose": "Low-detail session amount/receipt region, real HTML only"
+        }
+      ],
+      "focal_point": {
+        "hero": {
+          "x": 0.6,
+          "y": 0.43
+        },
+        "extraction": {
+          "x": 0.58,
+          "y": 0.67
+        },
+        "scope": "PROPOSED_NORMALIZED_TARGETS_REMEASURE_AFTER_GENERATION"
+      },
+      "lighting_notes": "Daylight from the atrium clerestory with azure optical paths and warm white service lights; balanced architectural scale",
+      "material_notes": [
+        "translucent optical glass",
+        "powder-coated navy steel",
+        "matte ceramic racks",
+        "braided fiber bundles"
+      ],
+      "runtime_motion_notes": {
+        "camera": "FIXED_CAMERA",
+        "motion": "LOCAL_MOTION_ONLY",
+        "machinery": [
+          "optical switching arrays",
+          "rack cooling manifolds",
+          "local node-routing relays"
+        ],
+        "energy_flow": "Several sparse node paths join the routing hub and descend to a small lower optical receiver; keep endpoints distinct",
+        "reduced_motion": "STATIC_SAME_QUALITY_MASTER",
+        "raster": "DORMANT_BASE_PLATE_NO_BAKED_DYNAMIC_FX"
+      },
+      "regeneration_reasons": [
+        "Product cannot be recognized in a blinded two-second comparison",
+        "Name/color/logo swap or generic core replaces unique industrial narrative",
+        "Hero/machinery/extraction clipped or covered by UI in actual target viewport",
+        "Cheap material, flat depth, inaccurate physical reflections or malformed important objects",
+        "Baked text/UI/money or sponsorship implication",
+        "Runtime anchor cannot be placed consistently on the generated physical object"
+      ],
+      "approval_status": "DRAFT_CREATIVE_BRIEF_NOT_VISUAL_OR_CATALOG_APPROVAL",
+      "production_gate": "CATALOG_TRUTH_UNRESOLVED_AND_LEGAL_BRAND_REVIEW_REQUIRED",
+      "profile_signature": "A monumental enterprise-cloud atrium with terraced distributed compute halls joined by visible optical bridges and an open central light well|A layered translucent cloud-fabric routing hub suspended between several physically distinct server halls|optical switching arrays|rack cooling manifolds|local node-routing relays|translucent optical glass|powder-coated navy steel|matte ceramic racks|braided fiber bundles|Daylight from the atrium clerestory with azure optical paths and warm white service lights; balanced architectural scale|Several sparse node paths join the routing hub and descend to a small lower optical receiver; keep endpoints distinct|A transparent optical receiver below the routing hub; no token mint or balance display"
+    },
+    {
+      "prompt_id": "microsoft-mobile-master-v1",
+      "product_id": "30000000-0000-4000-8000-000000000004",
+      "product_name": "마이크로소프트 테마",
+      "product_code": "MSFT",
+      "target": "MOBILE_MASTER",
+      "aspect_ratio": "9:16",
+      "positive_prompt": "Ultra-premium cinematic high-end CGI, production-quality 3D concept art, ultra-detailed physically plausible photorealistic materials, rich spatial depth, realistic reflections, sophisticated industrial architecture, volumetric lighting, fixed-camera-friendly composition. Match the material and depth quality of the repository clean semiconductor reference, never duplicate its machinery for other products. The scene is an unbranded virtual theme, not a real facility, investment product, partnership or network operation. Render a calm dormant base plate; later transparent local machinery effects are supplied by the runtime.\nProduct identity context: Microsoft Theme (MSFT), no trademark in the image.\nCreate this specific world: A monumental enterprise-cloud atrium with terraced distributed compute halls joined by visible optical bridges and an open central light well.\nHero: A layered translucent cloud-fabric routing hub suspended between several physically distinct server halls. Supporting objects: optical bridge conduits; distributed compute terraces; coolant service ribs. Machinery: optical switching arrays; rack cooling manifolds; local node-routing relays.\nMaterials: translucent optical glass; powder-coated navy steel; matte ceramic racks; braided fiber bundles. Lighting: Daylight from the atrium clerestory with azure optical paths and warm white service lights; balanced architectural scale. Palette: azure, navy, frosted white, muted teal.\nVisual flow geometry, dormant and unanimated in this master: Several sparse node paths join the routing hub and descend to a small lower optical receiver; keep endpoints distinct. Extraction object: A transparent optical receiver below the routing hub; no token mint or balance display.\nDepth: Foreground: A quiet mezzanine rail at left establishes human scale without characters. Midground: Glass routing hub sits right-center, with multiple terraces and separate optical bridges. Background: Compute halls recede to different heights below a pale atrium ceiling. Distinct planes and physical scale, not flat layers or motion parallax.\nPortrait 9:16 art-directed master, not a crop of the landscape. Composition: Arrange three compute terraces vertically around a tall routing hub; preserve the optical joins inside the middle portrait width.\nRespect these normalized UI safe rectangles (x1,y1,x2,y2; directions from the viewer): left 0,0,0.1,1 Keep edge structures low contrast; no indispensable machinery here; right 0.9,0,1,1 Keep edge low contrast; portrait machinery remains inside these edges; top 0,0,1,0.24 Quiet status/product heading region; no critical hero detail behind real HTML; bottom 0,0.76,1,1 Quiet session amount/status region; controls/help/navigation remain normal HTML flow outside art. Maintain quiet low-contrast spaces without painting any UI. Keep the full hero and extraction object outside reserved areas. No baked text, figures, financial claims or motion.",
+      "negative_requirements": [
+        "No text, letters, numbers, typography, logos, trademarks, watermarks or endorsement marks",
+        "No UI, HUD, buttons, charts, member data, account balances, earnings, yield, APR, guaranteed rewards, monetary amounts, USDT or KRW amounts, arbitrary speed multipliers",
+        "No coins, payment stamps, money cubes or token dispensers",
+        "No cheap 2D, flat vector, cartoon, primitive geometry, low-resolution texture or generic mining room",
+        "No single generic central core reused across products, no name/logo/color swap",
+        "No global camera zoom, viewport shake, forward/backward camera travel, strong parallax or sway",
+        "No busy light trails, sparks or particle clouds baked into the static master; no malformed symbols"
+      ],
+      "composition_notes": "Arrange three compute terraces vertically around a tall routing hub; preserve the optical joins inside the middle portrait width",
+      "ui_safe_zone_notes": [
+        {
+          "side": "left",
+          "rect": [
+            0,
+            0,
+            0.1,
+            1
+          ],
+          "purpose": "Keep edge structures low contrast; no indispensable machinery here"
+        },
+        {
+          "side": "right",
+          "rect": [
+            0.9,
+            0,
+            1,
+            1
+          ],
+          "purpose": "Keep edge low contrast; portrait machinery remains inside these edges"
+        },
+        {
+          "side": "top",
+          "rect": [
+            0,
+            0,
+            1,
+            0.24
+          ],
+          "purpose": "Quiet status/product heading region; no critical hero detail behind real HTML"
+        },
+        {
+          "side": "bottom",
+          "rect": [
+            0,
+            0.76,
+            1,
+            1
+          ],
+          "purpose": "Quiet session amount/status region; controls/help/navigation remain normal HTML flow outside art"
+        }
+      ],
+      "focal_point": {
+        "hero": {
+          "x": 0.5,
+          "y": 0.39
+        },
+        "extraction": {
+          "x": 0.5,
+          "y": 0.64
+        },
+        "scope": "PROPOSED_NORMALIZED_TARGETS_REMEASURE_AFTER_GENERATION"
+      },
+      "lighting_notes": "Daylight from the atrium clerestory with azure optical paths and warm white service lights; balanced architectural scale",
+      "material_notes": [
+        "translucent optical glass",
+        "powder-coated navy steel",
+        "matte ceramic racks",
+        "braided fiber bundles"
+      ],
+      "runtime_motion_notes": {
+        "camera": "FIXED_CAMERA",
+        "motion": "LOCAL_MOTION_ONLY",
+        "machinery": [
+          "optical switching arrays",
+          "rack cooling manifolds",
+          "local node-routing relays"
+        ],
+        "energy_flow": "Several sparse node paths join the routing hub and descend to a small lower optical receiver; keep endpoints distinct",
+        "reduced_motion": "STATIC_SAME_QUALITY_MASTER",
+        "raster": "DORMANT_BASE_PLATE_NO_BAKED_DYNAMIC_FX"
+      },
+      "regeneration_reasons": [
+        "Product cannot be recognized in a blinded two-second comparison",
+        "Name/color/logo swap or generic core replaces unique industrial narrative",
+        "Hero/machinery/extraction clipped or covered by UI in actual target viewport",
+        "Cheap material, flat depth, inaccurate physical reflections or malformed important objects",
+        "Baked text/UI/money or sponsorship implication",
+        "Runtime anchor cannot be placed consistently on the generated physical object"
+      ],
+      "approval_status": "DRAFT_CREATIVE_BRIEF_NOT_VISUAL_OR_CATALOG_APPROVAL",
+      "production_gate": "CATALOG_TRUTH_UNRESOLVED_AND_LEGAL_BRAND_REVIEW_REQUIRED",
+      "profile_signature": "A monumental enterprise-cloud atrium with terraced distributed compute halls joined by visible optical bridges and an open central light well|A layered translucent cloud-fabric routing hub suspended between several physically distinct server halls|optical switching arrays|rack cooling manifolds|local node-routing relays|translucent optical glass|powder-coated navy steel|matte ceramic racks|braided fiber bundles|Daylight from the atrium clerestory with azure optical paths and warm white service lights; balanced architectural scale|Several sparse node paths join the routing hub and descend to a small lower optical receiver; keep endpoints distinct|A transparent optical receiver below the routing hub; no token mint or balance display"
+    },
+    {
+      "prompt_id": "nvidia-desktop-master-v1",
+      "product_id": "30000000-0000-4000-8000-000000000005",
+      "product_name": "엔비디아 테마",
+      "product_code": "NVDA",
+      "target": "DESKTOP_MASTER",
+      "aspect_ratio": "16:9",
+      "positive_prompt": "Ultra-premium cinematic high-end CGI, production-quality 3D concept art, ultra-detailed physically plausible photorealistic materials, rich spatial depth, realistic reflections, sophisticated industrial architecture, volumetric lighting, fixed-camera-friendly composition. Match the material and depth quality of the repository clean semiconductor reference, never duplicate its machinery for other products. The scene is an unbranded virtual theme, not a real facility, investment product, partnership or network operation. Render a calm dormant base plate; later transparent local machinery effects are supplied by the runtime.\nProduct identity context: NVIDIA Theme (NVDA), no trademark in the image.\nCreate this specific world: A dense liquid-cooled AI supercompute hall with a diagonal rack canyon and a visible GPU carrier at its near terminus.\nHero: An exposed multi-die GPU module in a heavy copper cold-plate cradle with surrounding coolant plumbing. Supporting objects: liquid-cooled GPU racks; optical interconnect looms; transparent coolant distribution headers. Machinery: GPU carrier service arm; liquid cooling manifold; optical interconnect switch.\nMaterials: brushed copper cold plates; black anodized rack metal; optical glass fibers; clear coolant tubing. Lighting: Emerald rack accents with cyan coolant reflections and a warm copper key on the GPU carrier; volumetric beams reveal the long rack canyon. Palette: emerald, cyan, copper, carbon black.\nVisual flow geometry, dormant and unanimated in this master: Aligned interconnect lanes trace from the rack canyon into the GPU carrier and terminate at a low compute output aperture. Extraction object: A narrow optical output aperture beneath the GPU carrier, distinct from HBM ring and cloud hub.\nDepth: Foreground: Copper cold plate and restrained coolant connections create tactile high-performance detail. Midground: GPU carrier contrasts with dense but legible rack silhouettes on one diagonal. Background: Rack canyon repeats toward a cool distant vanishing point with controlled atmospheric falloff. Distinct planes and physical scale, not flat layers or motion parallax.\nLandscape 16:9 desktop master. Composition: Diagonal rack canyon, near GPU at 0.58,0.46 and aperture 0.56,0.66; quiet dark upper-left plane for overlay.\nRespect these normalized UI safe rectangles (x1,y1,x2,y2; directions from the viewer): left 0,0.12,0.25,0.7 Low-detail operational overlay region; hero remains outside it; right 0.82,0.12,1,0.7 Low-detail secondary information region; no essential machinery; top 0,0,1,0.18 Low-contrast product/status heading region; bottom 0,0.8,1,1 Low-detail session amount/receipt region, real HTML only. Maintain quiet low-contrast spaces without painting any UI. Keep the full hero and extraction object outside reserved areas. No baked text, figures, financial claims or motion.",
+      "negative_requirements": [
+        "No text, letters, numbers, typography, logos, trademarks, watermarks or endorsement marks",
+        "No UI, HUD, buttons, charts, member data, account balances, earnings, yield, APR, guaranteed rewards, monetary amounts, USDT or KRW amounts, arbitrary speed multipliers",
+        "No coins, payment stamps, money cubes or token dispensers",
+        "No cheap 2D, flat vector, cartoon, primitive geometry, low-resolution texture or generic mining room",
+        "No single generic central core reused across products, no name/logo/color swap",
+        "No global camera zoom, viewport shake, forward/backward camera travel, strong parallax or sway",
+        "No busy light trails, sparks or particle clouds baked into the static master; no malformed symbols"
+      ],
+      "composition_notes": "Diagonal rack canyon, near GPU at 0.58,0.46 and aperture 0.56,0.66; quiet dark upper-left plane for overlay",
+      "ui_safe_zone_notes": [
+        {
+          "side": "left",
+          "rect": [
+            0,
+            0.12,
+            0.25,
+            0.7
+          ],
+          "purpose": "Low-detail operational overlay region; hero remains outside it"
+        },
+        {
+          "side": "right",
+          "rect": [
+            0.82,
+            0.12,
+            1,
+            0.7
+          ],
+          "purpose": "Low-detail secondary information region; no essential machinery"
+        },
+        {
+          "side": "top",
+          "rect": [
+            0,
+            0,
+            1,
+            0.18
+          ],
+          "purpose": "Low-contrast product/status heading region"
+        },
+        {
+          "side": "bottom",
+          "rect": [
+            0,
+            0.8,
+            1,
+            1
+          ],
+          "purpose": "Low-detail session amount/receipt region, real HTML only"
+        }
+      ],
+      "focal_point": {
+        "hero": {
+          "x": 0.58,
+          "y": 0.46
+        },
+        "extraction": {
+          "x": 0.56,
+          "y": 0.66
+        },
+        "scope": "PROPOSED_NORMALIZED_TARGETS_REMEASURE_AFTER_GENERATION"
+      },
+      "lighting_notes": "Emerald rack accents with cyan coolant reflections and a warm copper key on the GPU carrier; volumetric beams reveal the long rack canyon",
+      "material_notes": [
+        "brushed copper cold plates",
+        "black anodized rack metal",
+        "optical glass fibers",
+        "clear coolant tubing"
+      ],
+      "runtime_motion_notes": {
+        "camera": "FIXED_CAMERA",
+        "motion": "LOCAL_MOTION_ONLY",
+        "machinery": [
+          "GPU carrier service arm",
+          "liquid cooling manifold",
+          "optical interconnect switch"
+        ],
+        "energy_flow": "Aligned interconnect lanes trace from the rack canyon into the GPU carrier and terminate at a low compute output aperture",
+        "reduced_motion": "STATIC_SAME_QUALITY_MASTER",
+        "raster": "DORMANT_BASE_PLATE_NO_BAKED_DYNAMIC_FX"
+      },
+      "regeneration_reasons": [
+        "Product cannot be recognized in a blinded two-second comparison",
+        "Name/color/logo swap or generic core replaces unique industrial narrative",
+        "Hero/machinery/extraction clipped or covered by UI in actual target viewport",
+        "Cheap material, flat depth, inaccurate physical reflections or malformed important objects",
+        "Baked text/UI/money or sponsorship implication",
+        "Runtime anchor cannot be placed consistently on the generated physical object"
+      ],
+      "approval_status": "DRAFT_CREATIVE_BRIEF_NOT_VISUAL_OR_CATALOG_APPROVAL",
+      "production_gate": "CATALOG_TRUTH_UNRESOLVED_AND_LEGAL_BRAND_REVIEW_REQUIRED",
+      "profile_signature": "A dense liquid-cooled AI supercompute hall with a diagonal rack canyon and a visible GPU carrier at its near terminus|An exposed multi-die GPU module in a heavy copper cold-plate cradle with surrounding coolant plumbing|GPU carrier service arm|liquid cooling manifold|optical interconnect switch|brushed copper cold plates|black anodized rack metal|optical glass fibers|clear coolant tubing|Emerald rack accents with cyan coolant reflections and a warm copper key on the GPU carrier; volumetric beams reveal the long rack canyon|Aligned interconnect lanes trace from the rack canyon into the GPU carrier and terminate at a low compute output aperture|A narrow optical output aperture beneath the GPU carrier, distinct from HBM ring and cloud hub"
+    },
+    {
+      "prompt_id": "nvidia-mobile-master-v1",
+      "product_id": "30000000-0000-4000-8000-000000000005",
+      "product_name": "엔비디아 테마",
+      "product_code": "NVDA",
+      "target": "MOBILE_MASTER",
+      "aspect_ratio": "9:16",
+      "positive_prompt": "Ultra-premium cinematic high-end CGI, production-quality 3D concept art, ultra-detailed physically plausible photorealistic materials, rich spatial depth, realistic reflections, sophisticated industrial architecture, volumetric lighting, fixed-camera-friendly composition. Match the material and depth quality of the repository clean semiconductor reference, never duplicate its machinery for other products. The scene is an unbranded virtual theme, not a real facility, investment product, partnership or network operation. Render a calm dormant base plate; later transparent local machinery effects are supplied by the runtime.\nProduct identity context: NVIDIA Theme (NVDA), no trademark in the image.\nCreate this specific world: A dense liquid-cooled AI supercompute hall with a diagonal rack canyon and a visible GPU carrier at its near terminus.\nHero: An exposed multi-die GPU module in a heavy copper cold-plate cradle with surrounding coolant plumbing. Supporting objects: liquid-cooled GPU racks; optical interconnect looms; transparent coolant distribution headers. Machinery: GPU carrier service arm; liquid cooling manifold; optical interconnect switch.\nMaterials: brushed copper cold plates; black anodized rack metal; optical glass fibers; clear coolant tubing. Lighting: Emerald rack accents with cyan coolant reflections and a warm copper key on the GPU carrier; volumetric beams reveal the long rack canyon. Palette: emerald, cyan, copper, carbon black.\nVisual flow geometry, dormant and unanimated in this master: Aligned interconnect lanes trace from the rack canyon into the GPU carrier and terminate at a low compute output aperture. Extraction object: A narrow optical output aperture beneath the GPU carrier, distinct from HBM ring and cloud hub.\nDepth: Foreground: Copper cold plate and restrained coolant connections create tactile high-performance detail. Midground: GPU carrier contrasts with dense but legible rack silhouettes on one diagonal. Background: Rack canyon repeats toward a cool distant vanishing point with controlled atmospheric falloff. Distinct planes and physical scale, not flat layers or motion parallax.\nPortrait 9:16 art-directed master, not a crop of the landscape. Composition: Use a vertical GPU carrier with coolant headers framing both sides and stacked rack depth behind; preserve the entire aperture below.\nRespect these normalized UI safe rectangles (x1,y1,x2,y2; directions from the viewer): left 0,0,0.1,1 Keep edge structures low contrast; no indispensable machinery here; right 0.9,0,1,1 Keep edge low contrast; portrait machinery remains inside these edges; top 0,0,1,0.24 Quiet status/product heading region; no critical hero detail behind real HTML; bottom 0,0.76,1,1 Quiet session amount/status region; controls/help/navigation remain normal HTML flow outside art. Maintain quiet low-contrast spaces without painting any UI. Keep the full hero and extraction object outside reserved areas. No baked text, figures, financial claims or motion.",
+      "negative_requirements": [
+        "No text, letters, numbers, typography, logos, trademarks, watermarks or endorsement marks",
+        "No UI, HUD, buttons, charts, member data, account balances, earnings, yield, APR, guaranteed rewards, monetary amounts, USDT or KRW amounts, arbitrary speed multipliers",
+        "No coins, payment stamps, money cubes or token dispensers",
+        "No cheap 2D, flat vector, cartoon, primitive geometry, low-resolution texture or generic mining room",
+        "No single generic central core reused across products, no name/logo/color swap",
+        "No global camera zoom, viewport shake, forward/backward camera travel, strong parallax or sway",
+        "No busy light trails, sparks or particle clouds baked into the static master; no malformed symbols"
+      ],
+      "composition_notes": "Use a vertical GPU carrier with coolant headers framing both sides and stacked rack depth behind; preserve the entire aperture below",
+      "ui_safe_zone_notes": [
+        {
+          "side": "left",
+          "rect": [
+            0,
+            0,
+            0.1,
+            1
+          ],
+          "purpose": "Keep edge structures low contrast; no indispensable machinery here"
+        },
+        {
+          "side": "right",
+          "rect": [
+            0.9,
+            0,
+            1,
+            1
+          ],
+          "purpose": "Keep edge low contrast; portrait machinery remains inside these edges"
+        },
+        {
+          "side": "top",
+          "rect": [
+            0,
+            0,
+            1,
+            0.24
+          ],
+          "purpose": "Quiet status/product heading region; no critical hero detail behind real HTML"
+        },
+        {
+          "side": "bottom",
+          "rect": [
+            0,
+            0.76,
+            1,
+            1
+          ],
+          "purpose": "Quiet session amount/status region; controls/help/navigation remain normal HTML flow outside art"
+        }
+      ],
+      "focal_point": {
+        "hero": {
+          "x": 0.5,
+          "y": 0.42
+        },
+        "extraction": {
+          "x": 0.5,
+          "y": 0.65
+        },
+        "scope": "PROPOSED_NORMALIZED_TARGETS_REMEASURE_AFTER_GENERATION"
+      },
+      "lighting_notes": "Emerald rack accents with cyan coolant reflections and a warm copper key on the GPU carrier; volumetric beams reveal the long rack canyon",
+      "material_notes": [
+        "brushed copper cold plates",
+        "black anodized rack metal",
+        "optical glass fibers",
+        "clear coolant tubing"
+      ],
+      "runtime_motion_notes": {
+        "camera": "FIXED_CAMERA",
+        "motion": "LOCAL_MOTION_ONLY",
+        "machinery": [
+          "GPU carrier service arm",
+          "liquid cooling manifold",
+          "optical interconnect switch"
+        ],
+        "energy_flow": "Aligned interconnect lanes trace from the rack canyon into the GPU carrier and terminate at a low compute output aperture",
+        "reduced_motion": "STATIC_SAME_QUALITY_MASTER",
+        "raster": "DORMANT_BASE_PLATE_NO_BAKED_DYNAMIC_FX"
+      },
+      "regeneration_reasons": [
+        "Product cannot be recognized in a blinded two-second comparison",
+        "Name/color/logo swap or generic core replaces unique industrial narrative",
+        "Hero/machinery/extraction clipped or covered by UI in actual target viewport",
+        "Cheap material, flat depth, inaccurate physical reflections or malformed important objects",
+        "Baked text/UI/money or sponsorship implication",
+        "Runtime anchor cannot be placed consistently on the generated physical object"
+      ],
+      "approval_status": "DRAFT_CREATIVE_BRIEF_NOT_VISUAL_OR_CATALOG_APPROVAL",
+      "production_gate": "CATALOG_TRUTH_UNRESOLVED_AND_LEGAL_BRAND_REVIEW_REQUIRED",
+      "profile_signature": "A dense liquid-cooled AI supercompute hall with a diagonal rack canyon and a visible GPU carrier at its near terminus|An exposed multi-die GPU module in a heavy copper cold-plate cradle with surrounding coolant plumbing|GPU carrier service arm|liquid cooling manifold|optical interconnect switch|brushed copper cold plates|black anodized rack metal|optical glass fibers|clear coolant tubing|Emerald rack accents with cyan coolant reflections and a warm copper key on the GPU carrier; volumetric beams reveal the long rack canyon|Aligned interconnect lanes trace from the rack canyon into the GPU carrier and terminate at a low compute output aperture|A narrow optical output aperture beneath the GPU carrier, distinct from HBM ring and cloud hub"
+    },
+    {
+      "prompt_id": "gold-desktop-master-v1",
+      "product_id": "30000000-0000-4000-8000-000000000006",
+      "product_name": "골드 테마",
+      "product_code": "XAU",
+      "target": "DESKTOP_MASTER",
+      "aspect_ratio": "16:9",
+      "positive_prompt": "Ultra-premium cinematic high-end CGI, production-quality 3D concept art, ultra-detailed physically plausible photorealistic materials, rich spatial depth, realistic reflections, sophisticated industrial architecture, volumetric lighting, fixed-camera-friendly composition. Match the material and depth quality of the repository clean semiconductor reference, never duplicate its machinery for other products. The scene is an unbranded virtual theme, not a real facility, investment product, partnership or network operation. Render a calm dormant base plate; later transparent local machinery effects are supplied by the runtime.\nProduct identity context: Gold Theme (XAU), no trademark in the image.\nCreate this specific world: A vaulted industrial gold refinery with a refractory furnace, a gravity-fed casting channel and substantial stone service architecture.\nHero: A covered refractory crucible above a long precision ingot mold, with a restrained molten-gold surface visible through the furnace aperture. Supporting objects: ore sorting tray; refractory furnace bricks; cooled unmarked ingot molds. Machinery: sealed crucible tilt mechanism; ore sorting conveyor; ingot mold cooling assembly.\nMaterials: rough mineral ore; heat-darkened refractory ceramic; molten metallic gold; heavy cast iron. Lighting: Warm furnace bounce against deep umber masonry with cool skylight shafts; metallic gold reads through physically plausible reflections rather than global gold tint. Palette: molten gold, deep umber, charcoal, cool skylight blue.\nVisual flow geometry, dormant and unanimated in this master: A short contained casting channel links the crucible to the mold; actual animated pouring is an optional local server-gated layer. Extraction object: The precision ingot mold at the near end of the casting channel; unmarked industrial metal without coins or payment symbolism.\nDepth: Foreground: Heavy refractory mold and ore textures establish tactile weight. Midground: Crucible aperture and casting channel remain visually separate, on a rightward diagonal. Background: Arched refinery roof and furnace stacks recede through warm haze. Distinct planes and physical scale, not flat layers or motion parallax.\nLandscape 16:9 desktop master. Composition: Wide refinery aisle with crucible at 0.60,0.43 and mold at 0.55,0.68; lower-left service wall leaves calm overlay room.\nRespect these normalized UI safe rectangles (x1,y1,x2,y2; directions from the viewer): left 0,0.12,0.25,0.7 Low-detail operational overlay region; hero remains outside it; right 0.82,0.12,1,0.7 Low-detail secondary information region; no essential machinery; top 0,0,1,0.18 Low-contrast product/status heading region; bottom 0,0.8,1,1 Low-detail session amount/receipt region, real HTML only. Maintain quiet low-contrast spaces without painting any UI. Keep the full hero and extraction object outside reserved areas. No baked text, figures, financial claims or motion.",
+      "negative_requirements": [
+        "No text, letters, numbers, typography, logos, trademarks, watermarks or endorsement marks",
+        "No UI, HUD, buttons, charts, member data, account balances, earnings, yield, APR, guaranteed rewards, monetary amounts, USDT or KRW amounts, arbitrary speed multipliers",
+        "No coins, payment stamps, money cubes or token dispensers",
+        "No cheap 2D, flat vector, cartoon, primitive geometry, low-resolution texture or generic mining room",
+        "No single generic central core reused across products, no name/logo/color swap",
+        "No global camera zoom, viewport shake, forward/backward camera travel, strong parallax or sway",
+        "No busy light trails, sparks or particle clouds baked into the static master; no malformed symbols"
+      ],
+      "composition_notes": "Wide refinery aisle with crucible at 0.60,0.43 and mold at 0.55,0.68; lower-left service wall leaves calm overlay room",
+      "ui_safe_zone_notes": [
+        {
+          "side": "left",
+          "rect": [
+            0,
+            0.12,
+            0.25,
+            0.7
+          ],
+          "purpose": "Low-detail operational overlay region; hero remains outside it"
+        },
+        {
+          "side": "right",
+          "rect": [
+            0.82,
+            0.12,
+            1,
+            0.7
+          ],
+          "purpose": "Low-detail secondary information region; no essential machinery"
+        },
+        {
+          "side": "top",
+          "rect": [
+            0,
+            0,
+            1,
+            0.18
+          ],
+          "purpose": "Low-contrast product/status heading region"
+        },
+        {
+          "side": "bottom",
+          "rect": [
+            0,
+            0.8,
+            1,
+            1
+          ],
+          "purpose": "Low-detail session amount/receipt region, real HTML only"
+        }
+      ],
+      "focal_point": {
+        "hero": {
+          "x": 0.6,
+          "y": 0.43
+        },
+        "extraction": {
+          "x": 0.55,
+          "y": 0.68
+        },
+        "scope": "PROPOSED_NORMALIZED_TARGETS_REMEASURE_AFTER_GENERATION"
+      },
+      "lighting_notes": "Warm furnace bounce against deep umber masonry with cool skylight shafts; metallic gold reads through physically plausible reflections rather than global gold tint",
+      "material_notes": [
+        "rough mineral ore",
+        "heat-darkened refractory ceramic",
+        "molten metallic gold",
+        "heavy cast iron"
+      ],
+      "runtime_motion_notes": {
+        "camera": "FIXED_CAMERA",
+        "motion": "LOCAL_MOTION_ONLY",
+        "machinery": [
+          "sealed crucible tilt mechanism",
+          "ore sorting conveyor",
+          "ingot mold cooling assembly"
+        ],
+        "energy_flow": "A short contained casting channel links the crucible to the mold; actual animated pouring is an optional local server-gated layer",
+        "reduced_motion": "STATIC_SAME_QUALITY_MASTER",
+        "raster": "DORMANT_BASE_PLATE_NO_BAKED_DYNAMIC_FX"
+      },
+      "regeneration_reasons": [
+        "Product cannot be recognized in a blinded two-second comparison",
+        "Name/color/logo swap or generic core replaces unique industrial narrative",
+        "Hero/machinery/extraction clipped or covered by UI in actual target viewport",
+        "Cheap material, flat depth, inaccurate physical reflections or malformed important objects",
+        "Baked text/UI/money or sponsorship implication",
+        "Runtime anchor cannot be placed consistently on the generated physical object"
+      ],
+      "approval_status": "DRAFT_CREATIVE_BRIEF_NOT_VISUAL_OR_CATALOG_APPROVAL",
+      "production_gate": "CATALOG_TRUTH_UNRESOLVED_AND_LEGAL_BRAND_REVIEW_REQUIRED",
+      "profile_signature": "A vaulted industrial gold refinery with a refractory furnace, a gravity-fed casting channel and substantial stone service architecture|A covered refractory crucible above a long precision ingot mold, with a restrained molten-gold surface visible through the furnace aperture|sealed crucible tilt mechanism|ore sorting conveyor|ingot mold cooling assembly|rough mineral ore|heat-darkened refractory ceramic|molten metallic gold|heavy cast iron|Warm furnace bounce against deep umber masonry with cool skylight shafts; metallic gold reads through physically plausible reflections rather than global gold tint|A short contained casting channel links the crucible to the mold; actual animated pouring is an optional local server-gated layer|The precision ingot mold at the near end of the casting channel; unmarked industrial metal without coins or payment symbolism"
+    },
+    {
+      "prompt_id": "gold-mobile-master-v1",
+      "product_id": "30000000-0000-4000-8000-000000000006",
+      "product_name": "골드 테마",
+      "product_code": "XAU",
+      "target": "MOBILE_MASTER",
+      "aspect_ratio": "9:16",
+      "positive_prompt": "Ultra-premium cinematic high-end CGI, production-quality 3D concept art, ultra-detailed physically plausible photorealistic materials, rich spatial depth, realistic reflections, sophisticated industrial architecture, volumetric lighting, fixed-camera-friendly composition. Match the material and depth quality of the repository clean semiconductor reference, never duplicate its machinery for other products. The scene is an unbranded virtual theme, not a real facility, investment product, partnership or network operation. Render a calm dormant base plate; later transparent local machinery effects are supplied by the runtime.\nProduct identity context: Gold Theme (XAU), no trademark in the image.\nCreate this specific world: A vaulted industrial gold refinery with a refractory furnace, a gravity-fed casting channel and substantial stone service architecture.\nHero: A covered refractory crucible above a long precision ingot mold, with a restrained molten-gold surface visible through the furnace aperture. Supporting objects: ore sorting tray; refractory furnace bricks; cooled unmarked ingot molds. Machinery: sealed crucible tilt mechanism; ore sorting conveyor; ingot mold cooling assembly.\nMaterials: rough mineral ore; heat-darkened refractory ceramic; molten metallic gold; heavy cast iron. Lighting: Warm furnace bounce against deep umber masonry with cool skylight shafts; metallic gold reads through physically plausible reflections rather than global gold tint. Palette: molten gold, deep umber, charcoal, cool skylight blue.\nVisual flow geometry, dormant and unanimated in this master: A short contained casting channel links the crucible to the mold; actual animated pouring is an optional local server-gated layer. Extraction object: The precision ingot mold at the near end of the casting channel; unmarked industrial metal without coins or payment symbolism.\nDepth: Foreground: Heavy refractory mold and ore textures establish tactile weight. Midground: Crucible aperture and casting channel remain visually separate, on a rightward diagonal. Background: Arched refinery roof and furnace stacks recede through warm haze. Distinct planes and physical scale, not flat layers or motion parallax.\nPortrait 9:16 art-directed master, not a crop of the landscape. Composition: Place crucible above the mold in a tall furnace bay; a short visible channel connects them with ore tray tucked mid-left.\nRespect these normalized UI safe rectangles (x1,y1,x2,y2; directions from the viewer): left 0,0,0.1,1 Keep edge structures low contrast; no indispensable machinery here; right 0.9,0,1,1 Keep edge low contrast; portrait machinery remains inside these edges; top 0,0,1,0.24 Quiet status/product heading region; no critical hero detail behind real HTML; bottom 0,0.76,1,1 Quiet session amount/status region; controls/help/navigation remain normal HTML flow outside art. Maintain quiet low-contrast spaces without painting any UI. Keep the full hero and extraction object outside reserved areas. No baked text, figures, financial claims or motion.",
+      "negative_requirements": [
+        "No text, letters, numbers, typography, logos, trademarks, watermarks or endorsement marks",
+        "No UI, HUD, buttons, charts, member data, account balances, earnings, yield, APR, guaranteed rewards, monetary amounts, USDT or KRW amounts, arbitrary speed multipliers",
+        "No coins, payment stamps, money cubes or token dispensers",
+        "No cheap 2D, flat vector, cartoon, primitive geometry, low-resolution texture or generic mining room",
+        "No single generic central core reused across products, no name/logo/color swap",
+        "No global camera zoom, viewport shake, forward/backward camera travel, strong parallax or sway",
+        "No busy light trails, sparks or particle clouds baked into the static master; no malformed symbols"
+      ],
+      "composition_notes": "Place crucible above the mold in a tall furnace bay; a short visible channel connects them with ore tray tucked mid-left",
+      "ui_safe_zone_notes": [
+        {
+          "side": "left",
+          "rect": [
+            0,
+            0,
+            0.1,
+            1
+          ],
+          "purpose": "Keep edge structures low contrast; no indispensable machinery here"
+        },
+        {
+          "side": "right",
+          "rect": [
+            0.9,
+            0,
+            1,
+            1
+          ],
+          "purpose": "Keep edge low contrast; portrait machinery remains inside these edges"
+        },
+        {
+          "side": "top",
+          "rect": [
+            0,
+            0,
+            1,
+            0.24
+          ],
+          "purpose": "Quiet status/product heading region; no critical hero detail behind real HTML"
+        },
+        {
+          "side": "bottom",
+          "rect": [
+            0,
+            0.76,
+            1,
+            1
+          ],
+          "purpose": "Quiet session amount/status region; controls/help/navigation remain normal HTML flow outside art"
+        }
+      ],
+      "focal_point": {
+        "hero": {
+          "x": 0.53,
+          "y": 0.39
+        },
+        "extraction": {
+          "x": 0.5,
+          "y": 0.65
+        },
+        "scope": "PROPOSED_NORMALIZED_TARGETS_REMEASURE_AFTER_GENERATION"
+      },
+      "lighting_notes": "Warm furnace bounce against deep umber masonry with cool skylight shafts; metallic gold reads through physically plausible reflections rather than global gold tint",
+      "material_notes": [
+        "rough mineral ore",
+        "heat-darkened refractory ceramic",
+        "molten metallic gold",
+        "heavy cast iron"
+      ],
+      "runtime_motion_notes": {
+        "camera": "FIXED_CAMERA",
+        "motion": "LOCAL_MOTION_ONLY",
+        "machinery": [
+          "sealed crucible tilt mechanism",
+          "ore sorting conveyor",
+          "ingot mold cooling assembly"
+        ],
+        "energy_flow": "A short contained casting channel links the crucible to the mold; actual animated pouring is an optional local server-gated layer",
+        "reduced_motion": "STATIC_SAME_QUALITY_MASTER",
+        "raster": "DORMANT_BASE_PLATE_NO_BAKED_DYNAMIC_FX"
+      },
+      "regeneration_reasons": [
+        "Product cannot be recognized in a blinded two-second comparison",
+        "Name/color/logo swap or generic core replaces unique industrial narrative",
+        "Hero/machinery/extraction clipped or covered by UI in actual target viewport",
+        "Cheap material, flat depth, inaccurate physical reflections or malformed important objects",
+        "Baked text/UI/money or sponsorship implication",
+        "Runtime anchor cannot be placed consistently on the generated physical object"
+      ],
+      "approval_status": "DRAFT_CREATIVE_BRIEF_NOT_VISUAL_OR_CATALOG_APPROVAL",
+      "production_gate": "CATALOG_TRUTH_UNRESOLVED_AND_LEGAL_BRAND_REVIEW_REQUIRED",
+      "profile_signature": "A vaulted industrial gold refinery with a refractory furnace, a gravity-fed casting channel and substantial stone service architecture|A covered refractory crucible above a long precision ingot mold, with a restrained molten-gold surface visible through the furnace aperture|sealed crucible tilt mechanism|ore sorting conveyor|ingot mold cooling assembly|rough mineral ore|heat-darkened refractory ceramic|molten metallic gold|heavy cast iron|Warm furnace bounce against deep umber masonry with cool skylight shafts; metallic gold reads through physically plausible reflections rather than global gold tint|A short contained casting channel links the crucible to the mold; actual animated pouring is an optional local server-gated layer|The precision ingot mold at the near end of the casting channel; unmarked industrial metal without coins or payment symbolism"
+    },
+    {
+      "prompt_id": "silver-desktop-master-v1",
+      "product_id": "30000000-0000-4000-8000-000000000007",
+      "product_name": "실버 테마",
+      "product_code": "XAG",
+      "target": "DESKTOP_MASTER",
+      "aspect_ratio": "16:9",
+      "positive_prompt": "Ultra-premium cinematic high-end CGI, production-quality 3D concept art, ultra-detailed physically plausible photorealistic materials, rich spatial depth, realistic reflections, sophisticated industrial architecture, volumetric lighting, fixed-camera-friendly composition. Match the material and depth quality of the repository clean semiconductor reference, never duplicate its machinery for other products. The scene is an unbranded virtual theme, not a real facility, investment product, partnership or network operation. Render a calm dormant base plate; later transparent local machinery effects are supplied by the runtime.\nProduct identity context: Silver Theme (XAG), no trademark in the image.\nCreate this specific world: A cool silver electrorefining laboratory with a long segmented electrolytic bath and a crystal inspection station under sawtooth roof daylight.\nHero: A dendritic silver crystal lifted over a rectangular purification bath by a precision gantry. Supporting objects: electrorefining plate arrays; quartz inspection vessel; unmarked brushed silver bar cradle. Machinery: crystal lifting gantry; electrorefining plate exchanger; precision polishing head.\nMaterials: dendritic silver; polished stainless steel; quartz glass; pale ceramic bath lining. Lighting: Cold daylight broken across silver facets, violet inspection light and narrow white highlights on brushed metal; no gold furnace glow. Palette: silver white, ice blue, soft violet, steel gray.\nVisual flow geometry, dormant and unanimated in this master: Fine local charge traces pass through bath plates into the crystal inspection station, ending at a cooled bar cradle. Extraction object: A brushed silver bar cradle below the inspection station, unmarked and industrial rather than monetary.\nDepth: Foreground: Bath rim and textured plate edges catch narrow silver highlights. Midground: Gantry-held dendritic crystal contrasts with rectangular purification cells. Background: Sawtooth windows and repeating laboratory bays provide cool receding depth. Distinct planes and physical scale, not flat layers or motion parallax.\nLandscape 16:9 desktop master. Composition: Side-oblique view along the bath; crystal at 0.58,0.42 and bar cradle 0.55,0.67; reserve quiet top-left daylight wall.\nRespect these normalized UI safe rectangles (x1,y1,x2,y2; directions from the viewer): left 0,0.12,0.25,0.7 Low-detail operational overlay region; hero remains outside it; right 0.82,0.12,1,0.7 Low-detail secondary information region; no essential machinery; top 0,0,1,0.18 Low-contrast product/status heading region; bottom 0,0.8,1,1 Low-detail session amount/receipt region, real HTML only. Maintain quiet low-contrast spaces without painting any UI. Keep the full hero and extraction object outside reserved areas. No baked text, figures, financial claims or motion.",
+      "negative_requirements": [
+        "No text, letters, numbers, typography, logos, trademarks, watermarks or endorsement marks",
+        "No UI, HUD, buttons, charts, member data, account balances, earnings, yield, APR, guaranteed rewards, monetary amounts, USDT or KRW amounts, arbitrary speed multipliers",
+        "No coins, payment stamps, money cubes or token dispensers",
+        "No cheap 2D, flat vector, cartoon, primitive geometry, low-resolution texture or generic mining room",
+        "No single generic central core reused across products, no name/logo/color swap",
+        "No global camera zoom, viewport shake, forward/backward camera travel, strong parallax or sway",
+        "No busy light trails, sparks or particle clouds baked into the static master; no malformed symbols"
+      ],
+      "composition_notes": "Side-oblique view along the bath; crystal at 0.58,0.42 and bar cradle 0.55,0.67; reserve quiet top-left daylight wall",
+      "ui_safe_zone_notes": [
+        {
+          "side": "left",
+          "rect": [
+            0,
+            0.12,
+            0.25,
+            0.7
+          ],
+          "purpose": "Low-detail operational overlay region; hero remains outside it"
+        },
+        {
+          "side": "right",
+          "rect": [
+            0.82,
+            0.12,
+            1,
+            0.7
+          ],
+          "purpose": "Low-detail secondary information region; no essential machinery"
+        },
+        {
+          "side": "top",
+          "rect": [
+            0,
+            0,
+            1,
+            0.18
+          ],
+          "purpose": "Low-contrast product/status heading region"
+        },
+        {
+          "side": "bottom",
+          "rect": [
+            0,
+            0.8,
+            1,
+            1
+          ],
+          "purpose": "Low-detail session amount/receipt region, real HTML only"
+        }
+      ],
+      "focal_point": {
+        "hero": {
+          "x": 0.58,
+          "y": 0.42
+        },
+        "extraction": {
+          "x": 0.55,
+          "y": 0.67
+        },
+        "scope": "PROPOSED_NORMALIZED_TARGETS_REMEASURE_AFTER_GENERATION"
+      },
+      "lighting_notes": "Cold daylight broken across silver facets, violet inspection light and narrow white highlights on brushed metal; no gold furnace glow",
+      "material_notes": [
+        "dendritic silver",
+        "polished stainless steel",
+        "quartz glass",
+        "pale ceramic bath lining"
+      ],
+      "runtime_motion_notes": {
+        "camera": "FIXED_CAMERA",
+        "motion": "LOCAL_MOTION_ONLY",
+        "machinery": [
+          "crystal lifting gantry",
+          "electrorefining plate exchanger",
+          "precision polishing head"
+        ],
+        "energy_flow": "Fine local charge traces pass through bath plates into the crystal inspection station, ending at a cooled bar cradle",
+        "reduced_motion": "STATIC_SAME_QUALITY_MASTER",
+        "raster": "DORMANT_BASE_PLATE_NO_BAKED_DYNAMIC_FX"
+      },
+      "regeneration_reasons": [
+        "Product cannot be recognized in a blinded two-second comparison",
+        "Name/color/logo swap or generic core replaces unique industrial narrative",
+        "Hero/machinery/extraction clipped or covered by UI in actual target viewport",
+        "Cheap material, flat depth, inaccurate physical reflections or malformed important objects",
+        "Baked text/UI/money or sponsorship implication",
+        "Runtime anchor cannot be placed consistently on the generated physical object"
+      ],
+      "approval_status": "DRAFT_CREATIVE_BRIEF_NOT_VISUAL_OR_CATALOG_APPROVAL",
+      "production_gate": "CATALOG_TRUTH_UNRESOLVED_AND_LEGAL_BRAND_REVIEW_REQUIRED",
+      "profile_signature": "A cool silver electrorefining laboratory with a long segmented electrolytic bath and a crystal inspection station under sawtooth roof daylight|A dendritic silver crystal lifted over a rectangular purification bath by a precision gantry|crystal lifting gantry|electrorefining plate exchanger|precision polishing head|dendritic silver|polished stainless steel|quartz glass|pale ceramic bath lining|Cold daylight broken across silver facets, violet inspection light and narrow white highlights on brushed metal; no gold furnace glow|Fine local charge traces pass through bath plates into the crystal inspection station, ending at a cooled bar cradle|A brushed silver bar cradle below the inspection station, unmarked and industrial rather than monetary"
+    },
+    {
+      "prompt_id": "silver-mobile-master-v1",
+      "product_id": "30000000-0000-4000-8000-000000000007",
+      "product_name": "실버 테마",
+      "product_code": "XAG",
+      "target": "MOBILE_MASTER",
+      "aspect_ratio": "9:16",
+      "positive_prompt": "Ultra-premium cinematic high-end CGI, production-quality 3D concept art, ultra-detailed physically plausible photorealistic materials, rich spatial depth, realistic reflections, sophisticated industrial architecture, volumetric lighting, fixed-camera-friendly composition. Match the material and depth quality of the repository clean semiconductor reference, never duplicate its machinery for other products. The scene is an unbranded virtual theme, not a real facility, investment product, partnership or network operation. Render a calm dormant base plate; later transparent local machinery effects are supplied by the runtime.\nProduct identity context: Silver Theme (XAG), no trademark in the image.\nCreate this specific world: A cool silver electrorefining laboratory with a long segmented electrolytic bath and a crystal inspection station under sawtooth roof daylight.\nHero: A dendritic silver crystal lifted over a rectangular purification bath by a precision gantry. Supporting objects: electrorefining plate arrays; quartz inspection vessel; unmarked brushed silver bar cradle. Machinery: crystal lifting gantry; electrorefining plate exchanger; precision polishing head.\nMaterials: dendritic silver; polished stainless steel; quartz glass; pale ceramic bath lining. Lighting: Cold daylight broken across silver facets, violet inspection light and narrow white highlights on brushed metal; no gold furnace glow. Palette: silver white, ice blue, soft violet, steel gray.\nVisual flow geometry, dormant and unanimated in this master: Fine local charge traces pass through bath plates into the crystal inspection station, ending at a cooled bar cradle. Extraction object: A brushed silver bar cradle below the inspection station, unmarked and industrial rather than monetary.\nDepth: Foreground: Bath rim and textured plate edges catch narrow silver highlights. Midground: Gantry-held dendritic crystal contrasts with rectangular purification cells. Background: Sawtooth windows and repeating laboratory bays provide cool receding depth. Distinct planes and physical scale, not flat layers or motion parallax.\nPortrait 9:16 art-directed master, not a crop of the landscape. Composition: Use a vertically suspended crystal above stacked short purification cells and lower bar cradle; gantry remains readable across the middle width.\nRespect these normalized UI safe rectangles (x1,y1,x2,y2; directions from the viewer): left 0,0,0.1,1 Keep edge structures low contrast; no indispensable machinery here; right 0.9,0,1,1 Keep edge low contrast; portrait machinery remains inside these edges; top 0,0,1,0.24 Quiet status/product heading region; no critical hero detail behind real HTML; bottom 0,0.76,1,1 Quiet session amount/status region; controls/help/navigation remain normal HTML flow outside art. Maintain quiet low-contrast spaces without painting any UI. Keep the full hero and extraction object outside reserved areas. No baked text, figures, financial claims or motion.",
+      "negative_requirements": [
+        "No text, letters, numbers, typography, logos, trademarks, watermarks or endorsement marks",
+        "No UI, HUD, buttons, charts, member data, account balances, earnings, yield, APR, guaranteed rewards, monetary amounts, USDT or KRW amounts, arbitrary speed multipliers",
+        "No coins, payment stamps, money cubes or token dispensers",
+        "No cheap 2D, flat vector, cartoon, primitive geometry, low-resolution texture or generic mining room",
+        "No single generic central core reused across products, no name/logo/color swap",
+        "No global camera zoom, viewport shake, forward/backward camera travel, strong parallax or sway",
+        "No busy light trails, sparks or particle clouds baked into the static master; no malformed symbols"
+      ],
+      "composition_notes": "Use a vertically suspended crystal above stacked short purification cells and lower bar cradle; gantry remains readable across the middle width",
+      "ui_safe_zone_notes": [
+        {
+          "side": "left",
+          "rect": [
+            0,
+            0,
+            0.1,
+            1
+          ],
+          "purpose": "Keep edge structures low contrast; no indispensable machinery here"
+        },
+        {
+          "side": "right",
+          "rect": [
+            0.9,
+            0,
+            1,
+            1
+          ],
+          "purpose": "Keep edge low contrast; portrait machinery remains inside these edges"
+        },
+        {
+          "side": "top",
+          "rect": [
+            0,
+            0,
+            1,
+            0.24
+          ],
+          "purpose": "Quiet status/product heading region; no critical hero detail behind real HTML"
+        },
+        {
+          "side": "bottom",
+          "rect": [
+            0,
+            0.76,
+            1,
+            1
+          ],
+          "purpose": "Quiet session amount/status region; controls/help/navigation remain normal HTML flow outside art"
+        }
+      ],
+      "focal_point": {
+        "hero": {
+          "x": 0.5,
+          "y": 0.39
+        },
+        "extraction": {
+          "x": 0.5,
+          "y": 0.65
+        },
+        "scope": "PROPOSED_NORMALIZED_TARGETS_REMEASURE_AFTER_GENERATION"
+      },
+      "lighting_notes": "Cold daylight broken across silver facets, violet inspection light and narrow white highlights on brushed metal; no gold furnace glow",
+      "material_notes": [
+        "dendritic silver",
+        "polished stainless steel",
+        "quartz glass",
+        "pale ceramic bath lining"
+      ],
+      "runtime_motion_notes": {
+        "camera": "FIXED_CAMERA",
+        "motion": "LOCAL_MOTION_ONLY",
+        "machinery": [
+          "crystal lifting gantry",
+          "electrorefining plate exchanger",
+          "precision polishing head"
+        ],
+        "energy_flow": "Fine local charge traces pass through bath plates into the crystal inspection station, ending at a cooled bar cradle",
+        "reduced_motion": "STATIC_SAME_QUALITY_MASTER",
+        "raster": "DORMANT_BASE_PLATE_NO_BAKED_DYNAMIC_FX"
+      },
+      "regeneration_reasons": [
+        "Product cannot be recognized in a blinded two-second comparison",
+        "Name/color/logo swap or generic core replaces unique industrial narrative",
+        "Hero/machinery/extraction clipped or covered by UI in actual target viewport",
+        "Cheap material, flat depth, inaccurate physical reflections or malformed important objects",
+        "Baked text/UI/money or sponsorship implication",
+        "Runtime anchor cannot be placed consistently on the generated physical object"
+      ],
+      "approval_status": "DRAFT_CREATIVE_BRIEF_NOT_VISUAL_OR_CATALOG_APPROVAL",
+      "production_gate": "CATALOG_TRUTH_UNRESOLVED_AND_LEGAL_BRAND_REVIEW_REQUIRED",
+      "profile_signature": "A cool silver electrorefining laboratory with a long segmented electrolytic bath and a crystal inspection station under sawtooth roof daylight|A dendritic silver crystal lifted over a rectangular purification bath by a precision gantry|crystal lifting gantry|electrorefining plate exchanger|precision polishing head|dendritic silver|polished stainless steel|quartz glass|pale ceramic bath lining|Cold daylight broken across silver facets, violet inspection light and narrow white highlights on brushed metal; no gold furnace glow|Fine local charge traces pass through bath plates into the crystal inspection station, ending at a cooled bar cradle|A brushed silver bar cradle below the inspection station, unmarked and industrial rather than monetary"
+    },
+    {
+      "prompt_id": "bitcoin-desktop-master-v1",
+      "product_id": "30000000-0000-4000-8000-000000000008",
+      "product_name": "비트코인 테마",
+      "product_code": "BTC",
+      "target": "DESKTOP_MASTER",
+      "aspect_ratio": "16:9",
+      "positive_prompt": "Ultra-premium cinematic high-end CGI, production-quality 3D concept art, ultra-detailed physically plausible photorealistic materials, rich spatial depth, realistic reflections, sophisticated industrial architecture, volumetric lighting, fixed-camera-friendly composition. Match the material and depth quality of the repository clean semiconductor reference, never duplicate its machinery for other products. The scene is an unbranded virtual theme, not a real facility, investment product, partnership or network operation. Render a calm dormant base plate; later transparent local machinery effects are supplied by the runtime.\nProduct identity context: Bitcoin Theme (BTC), no trademark in the image.\nCreate this specific world: A basalt block-forging hall with substantial parallel hash-channel grooves and a mechanical seal press under a cavernous ribbed roof.\nHero: A dark interlocking block assembly seated under a heavy seal press; architectural block, not a coin or logo. Supporting objects: parallel hash channel rails; physical block carrier trays; distant sealed node cabinets. Machinery: mechanical block seal press; block carrier carriage; hash channel switching gates.\nMaterials: basalt; oxidized bronze; black forged steel; amber optical inserts. Lighting: Low amber channel light with broad cool roof shafts and a precise bronze rim on the seal press; strong heavy shadows. Palette: basalt black, oxidized bronze, amber, slate blue.\nVisual flow geometry, dormant and unanimated in this master: Parallel hash lanes converge at the block press and end at the visible sealed-block receiving tray. Extraction object: The physical block receiving tray beneath the press; no token logo, payment stamp or financial implication.\nDepth: Foreground: Large worn rail surfaces lead toward a heavy near block tray. Midground: Seal press and interlocking block distinguish the silhouette from generic crypto crystals. Background: Parallel cabinets and roof ribs retreat through a deep basalt nave. Distinct planes and physical scale, not flat layers or motion parallax.\nLandscape 16:9 desktop master. Composition: Low fixed aisle perspective; block press at 0.56,0.44 and receiving tray 0.56,0.68; sparse upper-left stone wall.\nRespect these normalized UI safe rectangles (x1,y1,x2,y2; directions from the viewer): left 0,0.12,0.25,0.7 Low-detail operational overlay region; hero remains outside it; right 0.82,0.12,1,0.7 Low-detail secondary information region; no essential machinery; top 0,0,1,0.18 Low-contrast product/status heading region; bottom 0,0.8,1,1 Low-detail session amount/receipt region, real HTML only. Maintain quiet low-contrast spaces without painting any UI. Keep the full hero and extraction object outside reserved areas. No baked text, figures, financial claims or motion.",
+      "negative_requirements": [
+        "No text, letters, numbers, typography, logos, trademarks, watermarks or endorsement marks",
+        "No UI, HUD, buttons, charts, member data, account balances, earnings, yield, APR, guaranteed rewards, monetary amounts, USDT or KRW amounts, arbitrary speed multipliers",
+        "No coins, payment stamps, money cubes or token dispensers",
+        "No cheap 2D, flat vector, cartoon, primitive geometry, low-resolution texture or generic mining room",
+        "No single generic central core reused across products, no name/logo/color swap",
+        "No global camera zoom, viewport shake, forward/backward camera travel, strong parallax or sway",
+        "No busy light trails, sparks or particle clouds baked into the static master; no malformed symbols"
+      ],
+      "composition_notes": "Low fixed aisle perspective; block press at 0.56,0.44 and receiving tray 0.56,0.68; sparse upper-left stone wall",
+      "ui_safe_zone_notes": [
+        {
+          "side": "left",
+          "rect": [
+            0,
+            0.12,
+            0.25,
+            0.7
+          ],
+          "purpose": "Low-detail operational overlay region; hero remains outside it"
+        },
+        {
+          "side": "right",
+          "rect": [
+            0.82,
+            0.12,
+            1,
+            0.7
+          ],
+          "purpose": "Low-detail secondary information region; no essential machinery"
+        },
+        {
+          "side": "top",
+          "rect": [
+            0,
+            0,
+            1,
+            0.18
+          ],
+          "purpose": "Low-contrast product/status heading region"
+        },
+        {
+          "side": "bottom",
+          "rect": [
+            0,
+            0.8,
+            1,
+            1
+          ],
+          "purpose": "Low-detail session amount/receipt region, real HTML only"
+        }
+      ],
+      "focal_point": {
+        "hero": {
+          "x": 0.56,
+          "y": 0.44
+        },
+        "extraction": {
+          "x": 0.56,
+          "y": 0.68
+        },
+        "scope": "PROPOSED_NORMALIZED_TARGETS_REMEASURE_AFTER_GENERATION"
+      },
+      "lighting_notes": "Low amber channel light with broad cool roof shafts and a precise bronze rim on the seal press; strong heavy shadows",
+      "material_notes": [
+        "basalt",
+        "oxidized bronze",
+        "black forged steel",
+        "amber optical inserts"
+      ],
+      "runtime_motion_notes": {
+        "camera": "FIXED_CAMERA",
+        "motion": "LOCAL_MOTION_ONLY",
+        "machinery": [
+          "mechanical block seal press",
+          "block carrier carriage",
+          "hash channel switching gates"
+        ],
+        "energy_flow": "Parallel hash lanes converge at the block press and end at the visible sealed-block receiving tray",
+        "reduced_motion": "STATIC_SAME_QUALITY_MASTER",
+        "raster": "DORMANT_BASE_PLATE_NO_BAKED_DYNAMIC_FX"
+      },
+      "regeneration_reasons": [
+        "Product cannot be recognized in a blinded two-second comparison",
+        "Name/color/logo swap or generic core replaces unique industrial narrative",
+        "Hero/machinery/extraction clipped or covered by UI in actual target viewport",
+        "Cheap material, flat depth, inaccurate physical reflections or malformed important objects",
+        "Baked text/UI/money or sponsorship implication",
+        "Runtime anchor cannot be placed consistently on the generated physical object"
+      ],
+      "approval_status": "DRAFT_CREATIVE_BRIEF_NOT_VISUAL_OR_CATALOG_APPROVAL",
+      "production_gate": "CATALOG_TRUTH_UNRESOLVED_AND_LEGAL_BRAND_REVIEW_REQUIRED",
+      "profile_signature": "A basalt block-forging hall with substantial parallel hash-channel grooves and a mechanical seal press under a cavernous ribbed roof|A dark interlocking block assembly seated under a heavy seal press; architectural block, not a coin or logo|mechanical block seal press|block carrier carriage|hash channel switching gates|basalt|oxidized bronze|black forged steel|amber optical inserts|Low amber channel light with broad cool roof shafts and a precise bronze rim on the seal press; strong heavy shadows|Parallel hash lanes converge at the block press and end at the visible sealed-block receiving tray|The physical block receiving tray beneath the press; no token logo, payment stamp or financial implication"
+    },
+    {
+      "prompt_id": "bitcoin-mobile-master-v1",
+      "product_id": "30000000-0000-4000-8000-000000000008",
+      "product_name": "비트코인 테마",
+      "product_code": "BTC",
+      "target": "MOBILE_MASTER",
+      "aspect_ratio": "9:16",
+      "positive_prompt": "Ultra-premium cinematic high-end CGI, production-quality 3D concept art, ultra-detailed physically plausible photorealistic materials, rich spatial depth, realistic reflections, sophisticated industrial architecture, volumetric lighting, fixed-camera-friendly composition. Match the material and depth quality of the repository clean semiconductor reference, never duplicate its machinery for other products. The scene is an unbranded virtual theme, not a real facility, investment product, partnership or network operation. Render a calm dormant base plate; later transparent local machinery effects are supplied by the runtime.\nProduct identity context: Bitcoin Theme (BTC), no trademark in the image.\nCreate this specific world: A basalt block-forging hall with substantial parallel hash-channel grooves and a mechanical seal press under a cavernous ribbed roof.\nHero: A dark interlocking block assembly seated under a heavy seal press; architectural block, not a coin or logo. Supporting objects: parallel hash channel rails; physical block carrier trays; distant sealed node cabinets. Machinery: mechanical block seal press; block carrier carriage; hash channel switching gates.\nMaterials: basalt; oxidized bronze; black forged steel; amber optical inserts. Lighting: Low amber channel light with broad cool roof shafts and a precise bronze rim on the seal press; strong heavy shadows. Palette: basalt black, oxidized bronze, amber, slate blue.\nVisual flow geometry, dormant and unanimated in this master: Parallel hash lanes converge at the block press and end at the visible sealed-block receiving tray. Extraction object: The physical block receiving tray beneath the press; no token logo, payment stamp or financial implication.\nDepth: Foreground: Large worn rail surfaces lead toward a heavy near block tray. Midground: Seal press and interlocking block distinguish the silhouette from generic crypto crystals. Background: Parallel cabinets and roof ribs retreat through a deep basalt nave. Distinct planes and physical scale, not flat layers or motion parallax.\nPortrait 9:16 art-directed master, not a crop of the landscape. Composition: Frame the entire tall press above its tray; hash rails enter diagonally within the middle portrait area and roof ribs provide vertical depth.\nRespect these normalized UI safe rectangles (x1,y1,x2,y2; directions from the viewer): left 0,0,0.1,1 Keep edge structures low contrast; no indispensable machinery here; right 0.9,0,1,1 Keep edge low contrast; portrait machinery remains inside these edges; top 0,0,1,0.24 Quiet status/product heading region; no critical hero detail behind real HTML; bottom 0,0.76,1,1 Quiet session amount/status region; controls/help/navigation remain normal HTML flow outside art. Maintain quiet low-contrast spaces without painting any UI. Keep the full hero and extraction object outside reserved areas. No baked text, figures, financial claims or motion.",
+      "negative_requirements": [
+        "No text, letters, numbers, typography, logos, trademarks, watermarks or endorsement marks",
+        "No UI, HUD, buttons, charts, member data, account balances, earnings, yield, APR, guaranteed rewards, monetary amounts, USDT or KRW amounts, arbitrary speed multipliers",
+        "No coins, payment stamps, money cubes or token dispensers",
+        "No cheap 2D, flat vector, cartoon, primitive geometry, low-resolution texture or generic mining room",
+        "No single generic central core reused across products, no name/logo/color swap",
+        "No global camera zoom, viewport shake, forward/backward camera travel, strong parallax or sway",
+        "No busy light trails, sparks or particle clouds baked into the static master; no malformed symbols"
+      ],
+      "composition_notes": "Frame the entire tall press above its tray; hash rails enter diagonally within the middle portrait area and roof ribs provide vertical depth",
+      "ui_safe_zone_notes": [
+        {
+          "side": "left",
+          "rect": [
+            0,
+            0,
+            0.1,
+            1
+          ],
+          "purpose": "Keep edge structures low contrast; no indispensable machinery here"
+        },
+        {
+          "side": "right",
+          "rect": [
+            0.9,
+            0,
+            1,
+            1
+          ],
+          "purpose": "Keep edge low contrast; portrait machinery remains inside these edges"
+        },
+        {
+          "side": "top",
+          "rect": [
+            0,
+            0,
+            1,
+            0.24
+          ],
+          "purpose": "Quiet status/product heading region; no critical hero detail behind real HTML"
+        },
+        {
+          "side": "bottom",
+          "rect": [
+            0,
+            0.76,
+            1,
+            1
+          ],
+          "purpose": "Quiet session amount/status region; controls/help/navigation remain normal HTML flow outside art"
+        }
+      ],
+      "focal_point": {
+        "hero": {
+          "x": 0.5,
+          "y": 0.4
+        },
+        "extraction": {
+          "x": 0.5,
+          "y": 0.65
+        },
+        "scope": "PROPOSED_NORMALIZED_TARGETS_REMEASURE_AFTER_GENERATION"
+      },
+      "lighting_notes": "Low amber channel light with broad cool roof shafts and a precise bronze rim on the seal press; strong heavy shadows",
+      "material_notes": [
+        "basalt",
+        "oxidized bronze",
+        "black forged steel",
+        "amber optical inserts"
+      ],
+      "runtime_motion_notes": {
+        "camera": "FIXED_CAMERA",
+        "motion": "LOCAL_MOTION_ONLY",
+        "machinery": [
+          "mechanical block seal press",
+          "block carrier carriage",
+          "hash channel switching gates"
+        ],
+        "energy_flow": "Parallel hash lanes converge at the block press and end at the visible sealed-block receiving tray",
+        "reduced_motion": "STATIC_SAME_QUALITY_MASTER",
+        "raster": "DORMANT_BASE_PLATE_NO_BAKED_DYNAMIC_FX"
+      },
+      "regeneration_reasons": [
+        "Product cannot be recognized in a blinded two-second comparison",
+        "Name/color/logo swap or generic core replaces unique industrial narrative",
+        "Hero/machinery/extraction clipped or covered by UI in actual target viewport",
+        "Cheap material, flat depth, inaccurate physical reflections or malformed important objects",
+        "Baked text/UI/money or sponsorship implication",
+        "Runtime anchor cannot be placed consistently on the generated physical object"
+      ],
+      "approval_status": "DRAFT_CREATIVE_BRIEF_NOT_VISUAL_OR_CATALOG_APPROVAL",
+      "production_gate": "CATALOG_TRUTH_UNRESOLVED_AND_LEGAL_BRAND_REVIEW_REQUIRED",
+      "profile_signature": "A basalt block-forging hall with substantial parallel hash-channel grooves and a mechanical seal press under a cavernous ribbed roof|A dark interlocking block assembly seated under a heavy seal press; architectural block, not a coin or logo|mechanical block seal press|block carrier carriage|hash channel switching gates|basalt|oxidized bronze|black forged steel|amber optical inserts|Low amber channel light with broad cool roof shafts and a precise bronze rim on the seal press; strong heavy shadows|Parallel hash lanes converge at the block press and end at the visible sealed-block receiving tray|The physical block receiving tray beneath the press; no token logo, payment stamp or financial implication"
+    },
+    {
+      "prompt_id": "ethereum-desktop-master-v1",
+      "product_id": "30000000-0000-4000-8000-000000000009",
+      "product_name": "이더리움 테마",
+      "product_code": "ETH",
+      "target": "DESKTOP_MASTER",
+      "aspect_ratio": "16:9",
+      "positive_prompt": "Ultra-premium cinematic high-end CGI, production-quality 3D concept art, ultra-detailed physically plausible photorealistic materials, rich spatial depth, realistic reflections, sophisticated industrial architecture, volumetric lighting, fixed-camera-friendly composition. Match the material and depth quality of the repository clean semiconductor reference, never duplicate its machinery for other products. The scene is an unbranded virtual theme, not a real facility, investment product, partnership or network operation. Render a calm dormant base plate; later transparent local machinery effects are supplied by the runtime.\nProduct identity context: Ethereum Theme (ETH), no trademark in the image.\nCreate this specific world: A tall vaulted validator conservatory with separate polygonal node pedestals connected by suspended optical lattice bridges.\nHero: A faceted transparent consensus prism surrounded by distinct validator pedestals, not a branded diamond logo. Supporting objects: validator pedestals; optical lattice bridges; small translucent routing relays. Machinery: validator relay shutters; optical lattice junctions; consensus prism support actuator.\nMaterials: optical quartz; anodized violet metal; matte white ceramic; smoked structural glass. Lighting: Soft violet node interiors, ice-blue lattice reflections and diffuse high clerestory light; balanced luminous transparency. Palette: violet, ice blue, smoked gray, ceramic white.\nVisual flow geometry, dormant and unanimated in this master: Sparse short paths from separate pedestals meet around the prism and terminate in a clear lower consensus receiver. Extraction object: A clear consensus receiver directly below the prism; abstract presentation without network finality or financial guarantee.\nDepth: Foreground: A glass walkway edge exposes the nearest node pedestal below. Midground: Prism and several independently legible node pedestals form a spatial graph. Background: Tall lattice arches and distant validators fall into cool atmospheric depth. Distinct planes and physical scale, not flat layers or motion parallax.\nLandscape 16:9 desktop master. Composition: Open asymmetric validator arc with prism at 0.59,0.42 and receiver 0.58,0.66; nodes distributed at different depths, upper-left quiet.\nRespect these normalized UI safe rectangles (x1,y1,x2,y2; directions from the viewer): left 0,0.12,0.25,0.7 Low-detail operational overlay region; hero remains outside it; right 0.82,0.12,1,0.7 Low-detail secondary information region; no essential machinery; top 0,0,1,0.18 Low-contrast product/status heading region; bottom 0,0.8,1,1 Low-detail session amount/receipt region, real HTML only. Maintain quiet low-contrast spaces without painting any UI. Keep the full hero and extraction object outside reserved areas. No baked text, figures, financial claims or motion.",
+      "negative_requirements": [
+        "No text, letters, numbers, typography, logos, trademarks, watermarks or endorsement marks",
+        "No UI, HUD, buttons, charts, member data, account balances, earnings, yield, APR, guaranteed rewards, monetary amounts, USDT or KRW amounts, arbitrary speed multipliers",
+        "No coins, payment stamps, money cubes or token dispensers",
+        "No cheap 2D, flat vector, cartoon, primitive geometry, low-resolution texture or generic mining room",
+        "No single generic central core reused across products, no name/logo/color swap",
+        "No global camera zoom, viewport shake, forward/backward camera travel, strong parallax or sway",
+        "No busy light trails, sparks or particle clouds baked into the static master; no malformed symbols"
+      ],
+      "composition_notes": "Open asymmetric validator arc with prism at 0.59,0.42 and receiver 0.58,0.66; nodes distributed at different depths, upper-left quiet",
+      "ui_safe_zone_notes": [
+        {
+          "side": "left",
+          "rect": [
+            0,
+            0.12,
+            0.25,
+            0.7
+          ],
+          "purpose": "Low-detail operational overlay region; hero remains outside it"
+        },
+        {
+          "side": "right",
+          "rect": [
+            0.82,
+            0.12,
+            1,
+            0.7
+          ],
+          "purpose": "Low-detail secondary information region; no essential machinery"
+        },
+        {
+          "side": "top",
+          "rect": [
+            0,
+            0,
+            1,
+            0.18
+          ],
+          "purpose": "Low-contrast product/status heading region"
+        },
+        {
+          "side": "bottom",
+          "rect": [
+            0,
+            0.8,
+            1,
+            1
+          ],
+          "purpose": "Low-detail session amount/receipt region, real HTML only"
+        }
+      ],
+      "focal_point": {
+        "hero": {
+          "x": 0.59,
+          "y": 0.42
+        },
+        "extraction": {
+          "x": 0.58,
+          "y": 0.66
+        },
+        "scope": "PROPOSED_NORMALIZED_TARGETS_REMEASURE_AFTER_GENERATION"
+      },
+      "lighting_notes": "Soft violet node interiors, ice-blue lattice reflections and diffuse high clerestory light; balanced luminous transparency",
+      "material_notes": [
+        "optical quartz",
+        "anodized violet metal",
+        "matte white ceramic",
+        "smoked structural glass"
+      ],
+      "runtime_motion_notes": {
+        "camera": "FIXED_CAMERA",
+        "motion": "LOCAL_MOTION_ONLY",
+        "machinery": [
+          "validator relay shutters",
+          "optical lattice junctions",
+          "consensus prism support actuator"
+        ],
+        "energy_flow": "Sparse short paths from separate pedestals meet around the prism and terminate in a clear lower consensus receiver",
+        "reduced_motion": "STATIC_SAME_QUALITY_MASTER",
+        "raster": "DORMANT_BASE_PLATE_NO_BAKED_DYNAMIC_FX"
+      },
+      "regeneration_reasons": [
+        "Product cannot be recognized in a blinded two-second comparison",
+        "Name/color/logo swap or generic core replaces unique industrial narrative",
+        "Hero/machinery/extraction clipped or covered by UI in actual target viewport",
+        "Cheap material, flat depth, inaccurate physical reflections or malformed important objects",
+        "Baked text/UI/money or sponsorship implication",
+        "Runtime anchor cannot be placed consistently on the generated physical object"
+      ],
+      "approval_status": "DRAFT_CREATIVE_BRIEF_NOT_VISUAL_OR_CATALOG_APPROVAL",
+      "production_gate": "CATALOG_TRUTH_UNRESOLVED_AND_LEGAL_BRAND_REVIEW_REQUIRED",
+      "profile_signature": "A tall vaulted validator conservatory with separate polygonal node pedestals connected by suspended optical lattice bridges|A faceted transparent consensus prism surrounded by distinct validator pedestals, not a branded diamond logo|validator relay shutters|optical lattice junctions|consensus prism support actuator|optical quartz|anodized violet metal|matte white ceramic|smoked structural glass|Soft violet node interiors, ice-blue lattice reflections and diffuse high clerestory light; balanced luminous transparency|Sparse short paths from separate pedestals meet around the prism and terminate in a clear lower consensus receiver|A clear consensus receiver directly below the prism; abstract presentation without network finality or financial guarantee"
+    },
+    {
+      "prompt_id": "ethereum-mobile-master-v1",
+      "product_id": "30000000-0000-4000-8000-000000000009",
+      "product_name": "이더리움 테마",
+      "product_code": "ETH",
+      "target": "MOBILE_MASTER",
+      "aspect_ratio": "9:16",
+      "positive_prompt": "Ultra-premium cinematic high-end CGI, production-quality 3D concept art, ultra-detailed physically plausible photorealistic materials, rich spatial depth, realistic reflections, sophisticated industrial architecture, volumetric lighting, fixed-camera-friendly composition. Match the material and depth quality of the repository clean semiconductor reference, never duplicate its machinery for other products. The scene is an unbranded virtual theme, not a real facility, investment product, partnership or network operation. Render a calm dormant base plate; later transparent local machinery effects are supplied by the runtime.\nProduct identity context: Ethereum Theme (ETH), no trademark in the image.\nCreate this specific world: A tall vaulted validator conservatory with separate polygonal node pedestals connected by suspended optical lattice bridges.\nHero: A faceted transparent consensus prism surrounded by distinct validator pedestals, not a branded diamond logo. Supporting objects: validator pedestals; optical lattice bridges; small translucent routing relays. Machinery: validator relay shutters; optical lattice junctions; consensus prism support actuator.\nMaterials: optical quartz; anodized violet metal; matte white ceramic; smoked structural glass. Lighting: Soft violet node interiors, ice-blue lattice reflections and diffuse high clerestory light; balanced luminous transparency. Palette: violet, ice blue, smoked gray, ceramic white.\nVisual flow geometry, dormant and unanimated in this master: Sparse short paths from separate pedestals meet around the prism and terminate in a clear lower consensus receiver. Extraction object: A clear consensus receiver directly below the prism; abstract presentation without network finality or financial guarantee.\nDepth: Foreground: A glass walkway edge exposes the nearest node pedestal below. Midground: Prism and several independently legible node pedestals form a spatial graph. Background: Tall lattice arches and distant validators fall into cool atmospheric depth. Distinct planes and physical scale, not flat layers or motion parallax.\nPortrait 9:16 art-directed master, not a crop of the landscape. Composition: Build a vertical validator spiral around the prism with three complete nodes visible in the middle; keep receiver below and arches above.\nRespect these normalized UI safe rectangles (x1,y1,x2,y2; directions from the viewer): left 0,0,0.1,1 Keep edge structures low contrast; no indispensable machinery here; right 0.9,0,1,1 Keep edge low contrast; portrait machinery remains inside these edges; top 0,0,1,0.24 Quiet status/product heading region; no critical hero detail behind real HTML; bottom 0,0.76,1,1 Quiet session amount/status region; controls/help/navigation remain normal HTML flow outside art. Maintain quiet low-contrast spaces without painting any UI. Keep the full hero and extraction object outside reserved areas. No baked text, figures, financial claims or motion.",
+      "negative_requirements": [
+        "No text, letters, numbers, typography, logos, trademarks, watermarks or endorsement marks",
+        "No UI, HUD, buttons, charts, member data, account balances, earnings, yield, APR, guaranteed rewards, monetary amounts, USDT or KRW amounts, arbitrary speed multipliers",
+        "No coins, payment stamps, money cubes or token dispensers",
+        "No cheap 2D, flat vector, cartoon, primitive geometry, low-resolution texture or generic mining room",
+        "No single generic central core reused across products, no name/logo/color swap",
+        "No global camera zoom, viewport shake, forward/backward camera travel, strong parallax or sway",
+        "No busy light trails, sparks or particle clouds baked into the static master; no malformed symbols"
+      ],
+      "composition_notes": "Build a vertical validator spiral around the prism with three complete nodes visible in the middle; keep receiver below and arches above",
+      "ui_safe_zone_notes": [
+        {
+          "side": "left",
+          "rect": [
+            0,
+            0,
+            0.1,
+            1
+          ],
+          "purpose": "Keep edge structures low contrast; no indispensable machinery here"
+        },
+        {
+          "side": "right",
+          "rect": [
+            0.9,
+            0,
+            1,
+            1
+          ],
+          "purpose": "Keep edge low contrast; portrait machinery remains inside these edges"
+        },
+        {
+          "side": "top",
+          "rect": [
+            0,
+            0,
+            1,
+            0.24
+          ],
+          "purpose": "Quiet status/product heading region; no critical hero detail behind real HTML"
+        },
+        {
+          "side": "bottom",
+          "rect": [
+            0,
+            0.76,
+            1,
+            1
+          ],
+          "purpose": "Quiet session amount/status region; controls/help/navigation remain normal HTML flow outside art"
+        }
+      ],
+      "focal_point": {
+        "hero": {
+          "x": 0.5,
+          "y": 0.39
+        },
+        "extraction": {
+          "x": 0.5,
+          "y": 0.64
+        },
+        "scope": "PROPOSED_NORMALIZED_TARGETS_REMEASURE_AFTER_GENERATION"
+      },
+      "lighting_notes": "Soft violet node interiors, ice-blue lattice reflections and diffuse high clerestory light; balanced luminous transparency",
+      "material_notes": [
+        "optical quartz",
+        "anodized violet metal",
+        "matte white ceramic",
+        "smoked structural glass"
+      ],
+      "runtime_motion_notes": {
+        "camera": "FIXED_CAMERA",
+        "motion": "LOCAL_MOTION_ONLY",
+        "machinery": [
+          "validator relay shutters",
+          "optical lattice junctions",
+          "consensus prism support actuator"
+        ],
+        "energy_flow": "Sparse short paths from separate pedestals meet around the prism and terminate in a clear lower consensus receiver",
+        "reduced_motion": "STATIC_SAME_QUALITY_MASTER",
+        "raster": "DORMANT_BASE_PLATE_NO_BAKED_DYNAMIC_FX"
+      },
+      "regeneration_reasons": [
+        "Product cannot be recognized in a blinded two-second comparison",
+        "Name/color/logo swap or generic core replaces unique industrial narrative",
+        "Hero/machinery/extraction clipped or covered by UI in actual target viewport",
+        "Cheap material, flat depth, inaccurate physical reflections or malformed important objects",
+        "Baked text/UI/money or sponsorship implication",
+        "Runtime anchor cannot be placed consistently on the generated physical object"
+      ],
+      "approval_status": "DRAFT_CREATIVE_BRIEF_NOT_VISUAL_OR_CATALOG_APPROVAL",
+      "production_gate": "CATALOG_TRUTH_UNRESOLVED_AND_LEGAL_BRAND_REVIEW_REQUIRED",
+      "profile_signature": "A tall vaulted validator conservatory with separate polygonal node pedestals connected by suspended optical lattice bridges|A faceted transparent consensus prism surrounded by distinct validator pedestals, not a branded diamond logo|validator relay shutters|optical lattice junctions|consensus prism support actuator|optical quartz|anodized violet metal|matte white ceramic|smoked structural glass|Soft violet node interiors, ice-blue lattice reflections and diffuse high clerestory light; balanced luminous transparency|Sparse short paths from separate pedestals meet around the prism and terminate in a clear lower consensus receiver|A clear consensus receiver directly below the prism; abstract presentation without network finality or financial guarantee"
+    },
+    {
+      "prompt_id": "bnb-desktop-master-v1",
+      "product_id": "30000000-0000-4000-8000-000000000010",
+      "product_name": "BNB 테마",
+      "product_code": "BNB",
+      "target": "DESKTOP_MASTER",
+      "aspect_ratio": "16:9",
+      "positive_prompt": "Ultra-premium cinematic high-end CGI, production-quality 3D concept art, ultra-detailed physically plausible photorealistic materials, rich spatial depth, realistic reflections, sophisticated industrial architecture, volumetric lighting, fixed-camera-friendly composition. Match the material and depth quality of the repository clean semiconductor reference, never duplicate its machinery for other products. The scene is an unbranded virtual theme, not a real facility, investment product, partnership or network operation. Render a calm dormant base plate; later transparent local machinery effects are supplied by the runtime.\nProduct identity context: BNB Theme (BNB), no trademark in the image.\nCreate this specific world: A stepped ceramic network-routing transit hall with intersecting hexagonal conduit galleries and a central switchyard beneath a geometric skylight.\nHero: An unbranded hexagonal routing switchboard built from mechanically interlocking ceramic modules, deliberately unlike Ethereum's transparent prism. Supporting objects: tiered routing channels; hexagonal service galleries; individual packet transfer gates. Machinery: multi-lane routing switches; packet gate actuators; modular service elevators.\nMaterials: saffron ceramic; matte graphite steel; clear conduit glass; brushed nickel junctions. Lighting: Honey-yellow conduit edges against graphite with clean white skylight illumination and cool nickel reflections; restrained color, no exchange branding. Palette: saffron, graphite, nickel silver, warm white.\nVisual flow geometry, dormant and unanimated in this master: Several orthogonal and diagonal lanes converge through distinct gate modules and terminate at a lower routing collector. Extraction object: A ceramic routing collector at the lower switchyard edge; not a token dispenser or currency tray.\nDepth: Foreground: Two conduit bridges frame the near collector without covering the lower safe area. Midground: Stepped switchboard geometry exposes multiple discrete path junctions. Background: Hexagonal galleries and skylight beams reveal successive network tiers. Distinct planes and physical scale, not flat layers or motion parallax.\nLandscape 16:9 desktop master. Composition: Fixed elevated switchyard perspective; hub 0.60,0.45, collector 0.58,0.68; geometry flows from upper-right to lower-middle, left wall stays calm.\nRespect these normalized UI safe rectangles (x1,y1,x2,y2; directions from the viewer): left 0,0.12,0.25,0.7 Low-detail operational overlay region; hero remains outside it; right 0.82,0.12,1,0.7 Low-detail secondary information region; no essential machinery; top 0,0,1,0.18 Low-contrast product/status heading region; bottom 0,0.8,1,1 Low-detail session amount/receipt region, real HTML only. Maintain quiet low-contrast spaces without painting any UI. Keep the full hero and extraction object outside reserved areas. No baked text, figures, financial claims or motion.",
+      "negative_requirements": [
+        "No text, letters, numbers, typography, logos, trademarks, watermarks or endorsement marks",
+        "No UI, HUD, buttons, charts, member data, account balances, earnings, yield, APR, guaranteed rewards, monetary amounts, USDT or KRW amounts, arbitrary speed multipliers",
+        "No coins, payment stamps, money cubes or token dispensers",
+        "No cheap 2D, flat vector, cartoon, primitive geometry, low-resolution texture or generic mining room",
+        "No single generic central core reused across products, no name/logo/color swap",
+        "No global camera zoom, viewport shake, forward/backward camera travel, strong parallax or sway",
+        "No busy light trails, sparks or particle clouds baked into the static master; no malformed symbols"
+      ],
+      "composition_notes": "Fixed elevated switchyard perspective; hub 0.60,0.45, collector 0.58,0.68; geometry flows from upper-right to lower-middle, left wall stays calm",
+      "ui_safe_zone_notes": [
+        {
+          "side": "left",
+          "rect": [
+            0,
+            0.12,
+            0.25,
+            0.7
+          ],
+          "purpose": "Low-detail operational overlay region; hero remains outside it"
+        },
+        {
+          "side": "right",
+          "rect": [
+            0.82,
+            0.12,
+            1,
+            0.7
+          ],
+          "purpose": "Low-detail secondary information region; no essential machinery"
+        },
+        {
+          "side": "top",
+          "rect": [
+            0,
+            0,
+            1,
+            0.18
+          ],
+          "purpose": "Low-contrast product/status heading region"
+        },
+        {
+          "side": "bottom",
+          "rect": [
+            0,
+            0.8,
+            1,
+            1
+          ],
+          "purpose": "Low-detail session amount/receipt region, real HTML only"
+        }
+      ],
+      "focal_point": {
+        "hero": {
+          "x": 0.6,
+          "y": 0.45
+        },
+        "extraction": {
+          "x": 0.58,
+          "y": 0.68
+        },
+        "scope": "PROPOSED_NORMALIZED_TARGETS_REMEASURE_AFTER_GENERATION"
+      },
+      "lighting_notes": "Honey-yellow conduit edges against graphite with clean white skylight illumination and cool nickel reflections; restrained color, no exchange branding",
+      "material_notes": [
+        "saffron ceramic",
+        "matte graphite steel",
+        "clear conduit glass",
+        "brushed nickel junctions"
+      ],
+      "runtime_motion_notes": {
+        "camera": "FIXED_CAMERA",
+        "motion": "LOCAL_MOTION_ONLY",
+        "machinery": [
+          "multi-lane routing switches",
+          "packet gate actuators",
+          "modular service elevators"
+        ],
+        "energy_flow": "Several orthogonal and diagonal lanes converge through distinct gate modules and terminate at a lower routing collector",
+        "reduced_motion": "STATIC_SAME_QUALITY_MASTER",
+        "raster": "DORMANT_BASE_PLATE_NO_BAKED_DYNAMIC_FX"
+      },
+      "regeneration_reasons": [
+        "Product cannot be recognized in a blinded two-second comparison",
+        "Name/color/logo swap or generic core replaces unique industrial narrative",
+        "Hero/machinery/extraction clipped or covered by UI in actual target viewport",
+        "Cheap material, flat depth, inaccurate physical reflections or malformed important objects",
+        "Baked text/UI/money or sponsorship implication",
+        "Runtime anchor cannot be placed consistently on the generated physical object"
+      ],
+      "approval_status": "DRAFT_CREATIVE_BRIEF_NOT_VISUAL_OR_CATALOG_APPROVAL",
+      "production_gate": "CATALOG_TRUTH_UNRESOLVED_AND_LEGAL_BRAND_REVIEW_REQUIRED",
+      "profile_signature": "A stepped ceramic network-routing transit hall with intersecting hexagonal conduit galleries and a central switchyard beneath a geometric skylight|An unbranded hexagonal routing switchboard built from mechanically interlocking ceramic modules, deliberately unlike Ethereum's transparent prism|multi-lane routing switches|packet gate actuators|modular service elevators|saffron ceramic|matte graphite steel|clear conduit glass|brushed nickel junctions|Honey-yellow conduit edges against graphite with clean white skylight illumination and cool nickel reflections; restrained color, no exchange branding|Several orthogonal and diagonal lanes converge through distinct gate modules and terminate at a lower routing collector|A ceramic routing collector at the lower switchyard edge; not a token dispenser or currency tray"
+    },
+    {
+      "prompt_id": "bnb-mobile-master-v1",
+      "product_id": "30000000-0000-4000-8000-000000000010",
+      "product_name": "BNB 테마",
+      "product_code": "BNB",
+      "target": "MOBILE_MASTER",
+      "aspect_ratio": "9:16",
+      "positive_prompt": "Ultra-premium cinematic high-end CGI, production-quality 3D concept art, ultra-detailed physically plausible photorealistic materials, rich spatial depth, realistic reflections, sophisticated industrial architecture, volumetric lighting, fixed-camera-friendly composition. Match the material and depth quality of the repository clean semiconductor reference, never duplicate its machinery for other products. The scene is an unbranded virtual theme, not a real facility, investment product, partnership or network operation. Render a calm dormant base plate; later transparent local machinery effects are supplied by the runtime.\nProduct identity context: BNB Theme (BNB), no trademark in the image.\nCreate this specific world: A stepped ceramic network-routing transit hall with intersecting hexagonal conduit galleries and a central switchyard beneath a geometric skylight.\nHero: An unbranded hexagonal routing switchboard built from mechanically interlocking ceramic modules, deliberately unlike Ethereum's transparent prism. Supporting objects: tiered routing channels; hexagonal service galleries; individual packet transfer gates. Machinery: multi-lane routing switches; packet gate actuators; modular service elevators.\nMaterials: saffron ceramic; matte graphite steel; clear conduit glass; brushed nickel junctions. Lighting: Honey-yellow conduit edges against graphite with clean white skylight illumination and cool nickel reflections; restrained color, no exchange branding. Palette: saffron, graphite, nickel silver, warm white.\nVisual flow geometry, dormant and unanimated in this master: Several orthogonal and diagonal lanes converge through distinct gate modules and terminate at a lower routing collector. Extraction object: A ceramic routing collector at the lower switchyard edge; not a token dispenser or currency tray.\nDepth: Foreground: Two conduit bridges frame the near collector without covering the lower safe area. Midground: Stepped switchboard geometry exposes multiple discrete path junctions. Background: Hexagonal galleries and skylight beams reveal successive network tiers. Distinct planes and physical scale, not flat layers or motion parallax.\nPortrait 9:16 art-directed master, not a crop of the landscape. Composition: Restage the switchyard as three vertical routing tiers; compact hexagonal hub and lower collector stay fully inside the central portrait corridor.\nRespect these normalized UI safe rectangles (x1,y1,x2,y2; directions from the viewer): left 0,0,0.1,1 Keep edge structures low contrast; no indispensable machinery here; right 0.9,0,1,1 Keep edge low contrast; portrait machinery remains inside these edges; top 0,0,1,0.24 Quiet status/product heading region; no critical hero detail behind real HTML; bottom 0,0.76,1,1 Quiet session amount/status region; controls/help/navigation remain normal HTML flow outside art. Maintain quiet low-contrast spaces without painting any UI. Keep the full hero and extraction object outside reserved areas. No baked text, figures, financial claims or motion.",
+      "negative_requirements": [
+        "No text, letters, numbers, typography, logos, trademarks, watermarks or endorsement marks",
+        "No UI, HUD, buttons, charts, member data, account balances, earnings, yield, APR, guaranteed rewards, monetary amounts, USDT or KRW amounts, arbitrary speed multipliers",
+        "No coins, payment stamps, money cubes or token dispensers",
+        "No cheap 2D, flat vector, cartoon, primitive geometry, low-resolution texture or generic mining room",
+        "No single generic central core reused across products, no name/logo/color swap",
+        "No global camera zoom, viewport shake, forward/backward camera travel, strong parallax or sway",
+        "No busy light trails, sparks or particle clouds baked into the static master; no malformed symbols"
+      ],
+      "composition_notes": "Restage the switchyard as three vertical routing tiers; compact hexagonal hub and lower collector stay fully inside the central portrait corridor",
+      "ui_safe_zone_notes": [
+        {
+          "side": "left",
+          "rect": [
+            0,
+            0,
+            0.1,
+            1
+          ],
+          "purpose": "Keep edge structures low contrast; no indispensable machinery here"
+        },
+        {
+          "side": "right",
+          "rect": [
+            0.9,
+            0,
+            1,
+            1
+          ],
+          "purpose": "Keep edge low contrast; portrait machinery remains inside these edges"
+        },
+        {
+          "side": "top",
+          "rect": [
+            0,
+            0,
+            1,
+            0.24
+          ],
+          "purpose": "Quiet status/product heading region; no critical hero detail behind real HTML"
+        },
+        {
+          "side": "bottom",
+          "rect": [
+            0,
+            0.76,
+            1,
+            1
+          ],
+          "purpose": "Quiet session amount/status region; controls/help/navigation remain normal HTML flow outside art"
+        }
+      ],
+      "focal_point": {
+        "hero": {
+          "x": 0.5,
+          "y": 0.41
+        },
+        "extraction": {
+          "x": 0.5,
+          "y": 0.65
+        },
+        "scope": "PROPOSED_NORMALIZED_TARGETS_REMEASURE_AFTER_GENERATION"
+      },
+      "lighting_notes": "Honey-yellow conduit edges against graphite with clean white skylight illumination and cool nickel reflections; restrained color, no exchange branding",
+      "material_notes": [
+        "saffron ceramic",
+        "matte graphite steel",
+        "clear conduit glass",
+        "brushed nickel junctions"
+      ],
+      "runtime_motion_notes": {
+        "camera": "FIXED_CAMERA",
+        "motion": "LOCAL_MOTION_ONLY",
+        "machinery": [
+          "multi-lane routing switches",
+          "packet gate actuators",
+          "modular service elevators"
+        ],
+        "energy_flow": "Several orthogonal and diagonal lanes converge through distinct gate modules and terminate at a lower routing collector",
+        "reduced_motion": "STATIC_SAME_QUALITY_MASTER",
+        "raster": "DORMANT_BASE_PLATE_NO_BAKED_DYNAMIC_FX"
+      },
+      "regeneration_reasons": [
+        "Product cannot be recognized in a blinded two-second comparison",
+        "Name/color/logo swap or generic core replaces unique industrial narrative",
+        "Hero/machinery/extraction clipped or covered by UI in actual target viewport",
+        "Cheap material, flat depth, inaccurate physical reflections or malformed important objects",
+        "Baked text/UI/money or sponsorship implication",
+        "Runtime anchor cannot be placed consistently on the generated physical object"
+      ],
+      "approval_status": "DRAFT_CREATIVE_BRIEF_NOT_VISUAL_OR_CATALOG_APPROVAL",
+      "production_gate": "CATALOG_TRUTH_UNRESOLVED_AND_LEGAL_BRAND_REVIEW_REQUIRED",
+      "profile_signature": "A stepped ceramic network-routing transit hall with intersecting hexagonal conduit galleries and a central switchyard beneath a geometric skylight|An unbranded hexagonal routing switchboard built from mechanically interlocking ceramic modules, deliberately unlike Ethereum's transparent prism|multi-lane routing switches|packet gate actuators|modular service elevators|saffron ceramic|matte graphite steel|clear conduit glass|brushed nickel junctions|Honey-yellow conduit edges against graphite with clean white skylight illumination and cool nickel reflections; restrained color, no exchange branding|Several orthogonal and diagonal lanes converge through distinct gate modules and terminate at a lower routing collector|A ceramic routing collector at the lower switchyard edge; not a token dispenser or currency tray"
+    },
+    {
+      "prompt_id": "xrp-desktop-master-v1",
+      "product_id": "30000000-0000-4000-8000-000000000011",
+      "product_name": "XRP 테마",
+      "product_code": "XRP",
+      "target": "DESKTOP_MASTER",
+      "aspect_ratio": "16:9",
+      "positive_prompt": "Ultra-premium cinematic high-end CGI, production-quality 3D concept art, ultra-detailed physically plausible photorealistic materials, rich spatial depth, realistic reflections, sophisticated industrial architecture, volumetric lighting, fixed-camera-friendly composition. Match the material and depth quality of the repository clean semiconductor reference, never duplicate its machinery for other products. The scene is an unbranded virtual theme, not a real facility, investment product, partnership or network operation. Render a calm dormant base plate; later transparent local machinery effects are supplied by the runtime.\nProduct identity context: XRP Theme (XRP), no trademark in the image.\nCreate this specific world: A long cool-metal relay terminal with two distinct infrastructure halls joined by a suspended optical transfer bridge across an open central void.\nHero: A precision relay bridge with a visible optical handshake coupler at its center, not a crystal, coin or exchange mark. Supporting objects: separate relay terminal chambers; optical verification shutters; suspended bridge cable ribs. Machinery: relay verification shutters; handshake coupler actuator; bridge channel selector.\nMaterials: brushed palladium-toned metal; clear optical glass; dark blue structural steel; white ceramic relay housings. Lighting: Silver-white bridge illumination, deep-blue void reflections and a quiet cyan line at the coupler; no gold token atmosphere. Palette: palladium silver, deep blue, white, restrained cyan.\nVisual flow geometry, dormant and unanimated in this master: A single clearly traceable relay path crosses between halls through the coupler and descends into the lower verification dock. Extraction object: The small verification dock below the bridge coupler; no banking symbols, payment claims or external-network success assertion.\nDepth: Foreground: Near terminal platform edge and suspended bridge ribs establish a deep void. Midground: Long bridge and coupler remain the distinctive horizontal hero silhouette. Background: Far terminal chamber glows through narrow steel portals across the void. Distinct planes and physical scale, not flat layers or motion parallax.\nLandscape 16:9 desktop master. Composition: Oblique long-bridge view; coupler 0.61,0.43 and dock 0.59,0.66; leave upper-left structural wall low detail.\nRespect these normalized UI safe rectangles (x1,y1,x2,y2; directions from the viewer): left 0,0.12,0.25,0.7 Low-detail operational overlay region; hero remains outside it; right 0.82,0.12,1,0.7 Low-detail secondary information region; no essential machinery; top 0,0,1,0.18 Low-contrast product/status heading region; bottom 0,0.8,1,1 Low-detail session amount/receipt region, real HTML only. Maintain quiet low-contrast spaces without painting any UI. Keep the full hero and extraction object outside reserved areas. No baked text, figures, financial claims or motion.",
+      "negative_requirements": [
+        "No text, letters, numbers, typography, logos, trademarks, watermarks or endorsement marks",
+        "No UI, HUD, buttons, charts, member data, account balances, earnings, yield, APR, guaranteed rewards, monetary amounts, USDT or KRW amounts, arbitrary speed multipliers",
+        "No coins, payment stamps, money cubes or token dispensers",
+        "No cheap 2D, flat vector, cartoon, primitive geometry, low-resolution texture or generic mining room",
+        "No single generic central core reused across products, no name/logo/color swap",
+        "No global camera zoom, viewport shake, forward/backward camera travel, strong parallax or sway",
+        "No busy light trails, sparks or particle clouds baked into the static master; no malformed symbols"
+      ],
+      "composition_notes": "Oblique long-bridge view; coupler 0.61,0.43 and dock 0.59,0.66; leave upper-left structural wall low detail",
+      "ui_safe_zone_notes": [
+        {
+          "side": "left",
+          "rect": [
+            0,
+            0.12,
+            0.25,
+            0.7
+          ],
+          "purpose": "Low-detail operational overlay region; hero remains outside it"
+        },
+        {
+          "side": "right",
+          "rect": [
+            0.82,
+            0.12,
+            1,
+            0.7
+          ],
+          "purpose": "Low-detail secondary information region; no essential machinery"
+        },
+        {
+          "side": "top",
+          "rect": [
+            0,
+            0,
+            1,
+            0.18
+          ],
+          "purpose": "Low-contrast product/status heading region"
+        },
+        {
+          "side": "bottom",
+          "rect": [
+            0,
+            0.8,
+            1,
+            1
+          ],
+          "purpose": "Low-detail session amount/receipt region, real HTML only"
+        }
+      ],
+      "focal_point": {
+        "hero": {
+          "x": 0.61,
+          "y": 0.43
+        },
+        "extraction": {
+          "x": 0.59,
+          "y": 0.66
+        },
+        "scope": "PROPOSED_NORMALIZED_TARGETS_REMEASURE_AFTER_GENERATION"
+      },
+      "lighting_notes": "Silver-white bridge illumination, deep-blue void reflections and a quiet cyan line at the coupler; no gold token atmosphere",
+      "material_notes": [
+        "brushed palladium-toned metal",
+        "clear optical glass",
+        "dark blue structural steel",
+        "white ceramic relay housings"
+      ],
+      "runtime_motion_notes": {
+        "camera": "FIXED_CAMERA",
+        "motion": "LOCAL_MOTION_ONLY",
+        "machinery": [
+          "relay verification shutters",
+          "handshake coupler actuator",
+          "bridge channel selector"
+        ],
+        "energy_flow": "A single clearly traceable relay path crosses between halls through the coupler and descends into the lower verification dock",
+        "reduced_motion": "STATIC_SAME_QUALITY_MASTER",
+        "raster": "DORMANT_BASE_PLATE_NO_BAKED_DYNAMIC_FX"
+      },
+      "regeneration_reasons": [
+        "Product cannot be recognized in a blinded two-second comparison",
+        "Name/color/logo swap or generic core replaces unique industrial narrative",
+        "Hero/machinery/extraction clipped or covered by UI in actual target viewport",
+        "Cheap material, flat depth, inaccurate physical reflections or malformed important objects",
+        "Baked text/UI/money or sponsorship implication",
+        "Runtime anchor cannot be placed consistently on the generated physical object"
+      ],
+      "approval_status": "DRAFT_CREATIVE_BRIEF_NOT_VISUAL_OR_CATALOG_APPROVAL",
+      "production_gate": "CATALOG_TRUTH_UNRESOLVED_AND_LEGAL_BRAND_REVIEW_REQUIRED",
+      "profile_signature": "A long cool-metal relay terminal with two distinct infrastructure halls joined by a suspended optical transfer bridge across an open central void|A precision relay bridge with a visible optical handshake coupler at its center, not a crystal, coin or exchange mark|relay verification shutters|handshake coupler actuator|bridge channel selector|brushed palladium-toned metal|clear optical glass|dark blue structural steel|white ceramic relay housings|Silver-white bridge illumination, deep-blue void reflections and a quiet cyan line at the coupler; no gold token atmosphere|A single clearly traceable relay path crosses between halls through the coupler and descends into the lower verification dock|The small verification dock below the bridge coupler; no banking symbols, payment claims or external-network success assertion"
+    },
+    {
+      "prompt_id": "xrp-mobile-master-v1",
+      "product_id": "30000000-0000-4000-8000-000000000011",
+      "product_name": "XRP 테마",
+      "product_code": "XRP",
+      "target": "MOBILE_MASTER",
+      "aspect_ratio": "9:16",
+      "positive_prompt": "Ultra-premium cinematic high-end CGI, production-quality 3D concept art, ultra-detailed physically plausible photorealistic materials, rich spatial depth, realistic reflections, sophisticated industrial architecture, volumetric lighting, fixed-camera-friendly composition. Match the material and depth quality of the repository clean semiconductor reference, never duplicate its machinery for other products. The scene is an unbranded virtual theme, not a real facility, investment product, partnership or network operation. Render a calm dormant base plate; later transparent local machinery effects are supplied by the runtime.\nProduct identity context: XRP Theme (XRP), no trademark in the image.\nCreate this specific world: A long cool-metal relay terminal with two distinct infrastructure halls joined by a suspended optical transfer bridge across an open central void.\nHero: A precision relay bridge with a visible optical handshake coupler at its center, not a crystal, coin or exchange mark. Supporting objects: separate relay terminal chambers; optical verification shutters; suspended bridge cable ribs. Machinery: relay verification shutters; handshake coupler actuator; bridge channel selector.\nMaterials: brushed palladium-toned metal; clear optical glass; dark blue structural steel; white ceramic relay housings. Lighting: Silver-white bridge illumination, deep-blue void reflections and a quiet cyan line at the coupler; no gold token atmosphere. Palette: palladium silver, deep blue, white, restrained cyan.\nVisual flow geometry, dormant and unanimated in this master: A single clearly traceable relay path crosses between halls through the coupler and descends into the lower verification dock. Extraction object: The small verification dock below the bridge coupler; no banking symbols, payment claims or external-network success assertion.\nDepth: Foreground: Near terminal platform edge and suspended bridge ribs establish a deep void. Midground: Long bridge and coupler remain the distinctive horizontal hero silhouette. Background: Far terminal chamber glows through narrow steel portals across the void. Distinct planes and physical scale, not flat layers or motion parallax.\nPortrait 9:16 art-directed master, not a crop of the landscape. Composition: Turn the bridge into a diagonal rising relay span connecting two vertically separated halls; keep coupler and verification dock centered without cropping bridge endpoints.\nRespect these normalized UI safe rectangles (x1,y1,x2,y2; directions from the viewer): left 0,0,0.1,1 Keep edge structures low contrast; no indispensable machinery here; right 0.9,0,1,1 Keep edge low contrast; portrait machinery remains inside these edges; top 0,0,1,0.24 Quiet status/product heading region; no critical hero detail behind real HTML; bottom 0,0.76,1,1 Quiet session amount/status region; controls/help/navigation remain normal HTML flow outside art. Maintain quiet low-contrast spaces without painting any UI. Keep the full hero and extraction object outside reserved areas. No baked text, figures, financial claims or motion.",
+      "negative_requirements": [
+        "No text, letters, numbers, typography, logos, trademarks, watermarks or endorsement marks",
+        "No UI, HUD, buttons, charts, member data, account balances, earnings, yield, APR, guaranteed rewards, monetary amounts, USDT or KRW amounts, arbitrary speed multipliers",
+        "No coins, payment stamps, money cubes or token dispensers",
+        "No cheap 2D, flat vector, cartoon, primitive geometry, low-resolution texture or generic mining room",
+        "No single generic central core reused across products, no name/logo/color swap",
+        "No global camera zoom, viewport shake, forward/backward camera travel, strong parallax or sway",
+        "No busy light trails, sparks or particle clouds baked into the static master; no malformed symbols"
+      ],
+      "composition_notes": "Turn the bridge into a diagonal rising relay span connecting two vertically separated halls; keep coupler and verification dock centered without cropping bridge endpoints",
+      "ui_safe_zone_notes": [
+        {
+          "side": "left",
+          "rect": [
+            0,
+            0,
+            0.1,
+            1
+          ],
+          "purpose": "Keep edge structures low contrast; no indispensable machinery here"
+        },
+        {
+          "side": "right",
+          "rect": [
+            0.9,
+            0,
+            1,
+            1
+          ],
+          "purpose": "Keep edge low contrast; portrait machinery remains inside these edges"
+        },
+        {
+          "side": "top",
+          "rect": [
+            0,
+            0,
+            1,
+            0.24
+          ],
+          "purpose": "Quiet status/product heading region; no critical hero detail behind real HTML"
+        },
+        {
+          "side": "bottom",
+          "rect": [
+            0,
+            0.76,
+            1,
+            1
+          ],
+          "purpose": "Quiet session amount/status region; controls/help/navigation remain normal HTML flow outside art"
+        }
+      ],
+      "focal_point": {
+        "hero": {
+          "x": 0.5,
+          "y": 0.4
+        },
+        "extraction": {
+          "x": 0.5,
+          "y": 0.64
+        },
+        "scope": "PROPOSED_NORMALIZED_TARGETS_REMEASURE_AFTER_GENERATION"
+      },
+      "lighting_notes": "Silver-white bridge illumination, deep-blue void reflections and a quiet cyan line at the coupler; no gold token atmosphere",
+      "material_notes": [
+        "brushed palladium-toned metal",
+        "clear optical glass",
+        "dark blue structural steel",
+        "white ceramic relay housings"
+      ],
+      "runtime_motion_notes": {
+        "camera": "FIXED_CAMERA",
+        "motion": "LOCAL_MOTION_ONLY",
+        "machinery": [
+          "relay verification shutters",
+          "handshake coupler actuator",
+          "bridge channel selector"
+        ],
+        "energy_flow": "A single clearly traceable relay path crosses between halls through the coupler and descends into the lower verification dock",
+        "reduced_motion": "STATIC_SAME_QUALITY_MASTER",
+        "raster": "DORMANT_BASE_PLATE_NO_BAKED_DYNAMIC_FX"
+      },
+      "regeneration_reasons": [
+        "Product cannot be recognized in a blinded two-second comparison",
+        "Name/color/logo swap or generic core replaces unique industrial narrative",
+        "Hero/machinery/extraction clipped or covered by UI in actual target viewport",
+        "Cheap material, flat depth, inaccurate physical reflections or malformed important objects",
+        "Baked text/UI/money or sponsorship implication",
+        "Runtime anchor cannot be placed consistently on the generated physical object"
+      ],
+      "approval_status": "DRAFT_CREATIVE_BRIEF_NOT_VISUAL_OR_CATALOG_APPROVAL",
+      "production_gate": "CATALOG_TRUTH_UNRESOLVED_AND_LEGAL_BRAND_REVIEW_REQUIRED",
+      "profile_signature": "A long cool-metal relay terminal with two distinct infrastructure halls joined by a suspended optical transfer bridge across an open central void|A precision relay bridge with a visible optical handshake coupler at its center, not a crystal, coin or exchange mark|relay verification shutters|handshake coupler actuator|bridge channel selector|brushed palladium-toned metal|clear optical glass|dark blue structural steel|white ceramic relay housings|Silver-white bridge illumination, deep-blue void reflections and a quiet cyan line at the coupler; no gold token atmosphere|A single clearly traceable relay path crosses between halls through the coupler and descends into the lower verification dock|The small verification dock below the bridge coupler; no banking symbols, payment claims or external-network success assertion"
+    }
+  ]
+}

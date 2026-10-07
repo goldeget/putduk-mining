@@ -1,0 +1,2801 @@
+{
+  "schema_version": 1,
+  "base_sha": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+  "scope": "11_REPOSITORY_DRAFT_CANDIDATES_NOT_APPROVED_LAUNCH_CATALOG",
+  "hierarchy": [
+    "COMMON_MINING_RUNTIME",
+    "ASSET_CLASS",
+    "SECTOR_SCENE_FAMILY",
+    "INDIVIDUAL_PRODUCT_VISUAL_PROFILE",
+    "PRODUCT_SPECIFIC_SCENE_MASTER",
+    "AUTHORITATIVE_SERVER_STATE",
+    "PRODUCT_SPECIFIC_MOTION_CUES"
+  ],
+  "financial_boundary": {
+    "authority": "SERVER_LEDGER_SETTLEMENT",
+    "scene": "PRESENTATION_ONLY",
+    "ai": "CREATIVE_ASSETS_EXPLAIN_PROPOSE_NEVER_MUTATE_MONEY",
+    "display": "INTEGER_WHOLE_KRW_MAIN_PRESENTATION",
+    "micro_krw_per_krw": "1000000",
+    "carry": "Existing domain baseRewardCarry/rewardCarryMicroKrw are contracts, not proof of live snapshot/UI binding",
+    "session_label": "이번 세션 채굴액",
+    "session_hint": "실시간 계산 중 · 정산 전",
+    "whole_krw_pulse": "Only positive confirmed server session delta crossing integer KRW; no timer/interpolation-created value; no replay on reconnect",
+    "verified_cue": "Only new authoritative verified receipt; stronger bounded pulse, deduplicated; no arbitrary reward amounts"
+  },
+  "products": [
+    {
+      "product_id": "30000000-0000-4000-8000-000000000001",
+      "product_code": "005930",
+      "slug": "samsung-electronics",
+      "display_name_ko": "삼성전자 테마",
+      "display_name_en": "Samsung Electronics Theme",
+      "asset_class": "KR_STOCK",
+      "market": "KR",
+      "ticker": "005930",
+      "sector": "UNKNOWN",
+      "catalog_source": {
+        "file": "supabase/migrations/20260926192208_ws02_commands_and_catalog_seed.sql",
+        "symbol_or_record": "proposal code 005930",
+        "line": 1159,
+        "verified": true,
+        "verification_scope": "REPOSITORY_RECORD_NOT_OPERATOR_APPROVAL"
+      },
+      "current_scene_status": "PRODUCT_MASTER_REQUIRED",
+      "current_scene_master": null,
+      "member_visible": false,
+      "live_member_visible": "UNKNOWN",
+      "catalog_status": "DRAFT",
+      "scene_family": "SEMICONDUCTOR_FOUNDRY",
+      "scene_family_scope": "PROPOSED_NOT_RUNTIME_BINDING",
+      "current_scene_family": null,
+      "status_tags": [
+        "PRODUCT_MASTER_REQUIRED",
+        "CATALOG_TRUTH_UNRESOLVED",
+        "NOT_MEMBER_VISIBLE",
+        "RUNTIME_MAPPING_REQUIRED",
+        "BRAND_LEGAL_REVIEW_REQUIRED",
+        "MOBILE_VARIANT_REQUIRED"
+      ],
+      "metadata": {
+        "proposed_visual_sector": "Foundry / device integration",
+        "sector_scope": "CREATIVE_PROPOSAL_NOT_CANONICAL_CATALOG_FIELD",
+        "publishable": false
+      },
+      "product_visual_profile": {
+        "visual_story": "실리콘 웨이퍼가 정밀 가공을 거쳐 다양한 전자 장치의 기반이 되는 삼성전자 테마의 제조 세계.",
+        "environment": "A vast white-ceramic foundry with nested lithography chambers and a distant device-integration gallery, viewed across an asymmetric diagonal service aisle",
+        "hero_object": "An upright patterned silicon wafer in a precision lithography cradle, offset right of center, not an HBM tower",
+        "secondary_objects": [
+          "sealed wafer cassettes",
+          "layered cleanroom process chambers",
+          "unmarked device chassis behind glass"
+        ],
+        "materials": [
+          "iridescent etched silicon",
+          "white sintered ceramic",
+          "brushed stainless steel",
+          "smoked observation glass"
+        ],
+        "lighting": "Broad pearl-white ceiling panels with thin cobalt scanner lines and soft warm rim reflections; bright cleanroom depth without blown highlights",
+        "palette": [
+          "pearl white",
+          "cobalt blue",
+          "iridescent violet",
+          "pale champagne"
+        ],
+        "machinery": [
+          "lithography scanner carriage",
+          "sealed wafer transfer arm",
+          "precision cassette elevator"
+        ],
+        "energy_flow": "Fine scan lines travel from the overhead exposure chamber across wafer traces into the lower-right silicon collection cradle",
+        "extraction_target": "A faceted silicon tile seated in the lower-right ceramic inspection cradle; no coins, currency or floating reward cubes",
+        "foreground_plan": "Low service rails at left lead past a textured ceramic inspection surface at right",
+        "midground_plan": "Wafer and scanner dominate the right-middle; separate process bays remain visible to the left",
+        "background_plan": "Repeated cleanroom portals retreat diagonally toward a quiet vanishing point above center",
+        "depth_plan": "Foreground: Low service rails at left lead past a textured ceramic inspection surface at right. Midground: Wafer and scanner dominate the right-middle; separate process bays remain visible to the left. Background: Repeated cleanroom portals retreat diagonally toward a quiet vanishing point above center. Distinct planes and physical scale, not flat layers or motion parallax."
+      },
+      "runtime_visual_states": {
+        "IDLE": "Dormant An upright patterned silicon wafer in a precision lithography cradle, offset right of center, not an HBM tower; steady environmental reflection only. No extraction or earning cue.",
+        "STARTING": "Only after an authoritative accepted start/transition: one short local lithography scanner carriage readiness cue, then await confirmed running state. If no such contract exists, use static UNKNOWN; button press is not engine acceptance.",
+        "RUNNING": "Only server-confirmed NORMAL: bounded local lithography scanner carriage motion and Fine scan lines travel from the overhead exposure chamber across wafer traces into the lower-right silicon collection cradle. Fixed camera, no money generated by animation.",
+        "REDUCED": "Only confirmed REDUCED: sparse sealed wafer transfer arm activity with less frequent local flow; do not invent an economic speed ratio. Current boolean gate does not yet distinguish its motion cadence.",
+        "PAUSED": "Static A faceted silicon tile seated in the lower-right ceramic inspection cradle; no coins, currency or floating reward cubes; use only an actual authoritative pause condition. No new member pause command and no clock-derived reward.",
+        "STOPPED": "Park lithography scanner carriage, remove active flow, keep the same master and real stopped status in HTML.",
+        "MAINTENANCE": "Keep A vast white-ceramic foundry with nested lithography chambers and a distant device-integration gallery, viewed across an asymmetric diagonal service aisle static; quiet service light at sealed wafer transfer arm only if authorized state exists. Explain maintenance in HTML, not raster pixels.",
+        "PARTIAL_STOP": "Only explicitly identified affected precision cassette elevator may stop independently; without subcomponent state freeze all effects and explain partial stop. Never assume unaffected earnings.",
+        "SETTLEMENT": "One subtle local light sweep toward A faceted silicon tile seated in the lower-right ceramic inspection cradle; no coins, currency or floating reward cubes only on actual settlement progress/receipt. No verified-success cue before server confirmation.",
+        "VERIFIED": "One bounded acknowledgement at A faceted silicon tile seated in the lower-right ceramic inspection cradle; no coins, currency or floating reward cubes for a new verified receipt; deduplicate by actual receipt/revision identity. Financial verified status is not catalog approval or network finality.",
+        "UNKNOWN": "Static approved master, no machinery/extraction/earning animation. HTML 상태 확인 중 and recovery. Missing, stale, offline or unsupported truth must never look running."
+      },
+      "composition": {
+        "desktop_master_ratio": "16:9",
+        "mobile_master_ratio": "9:16",
+        "mobile_strategy": "MOBILE_MASTER_REQUIRED",
+        "desktop_ui_safe_zones": [
+          {
+            "side": "left",
+            "rect": [
+              0,
+              0.12,
+              0.25,
+              0.7
+            ],
+            "purpose": "Low-detail operational overlay region; hero remains outside it"
+          },
+          {
+            "side": "right",
+            "rect": [
+              0.82,
+              0.12,
+              1,
+              0.7
+            ],
+            "purpose": "Low-detail secondary information region; no essential machinery"
+          },
+          {
+            "side": "top",
+            "rect": [
+              0,
+              0,
+              1,
+              0.18
+            ],
+            "purpose": "Low-contrast product/status heading region"
+          },
+          {
+            "side": "bottom",
+            "rect": [
+              0,
+              0.8,
+              1,
+              1
+            ],
+            "purpose": "Low-detail session amount/receipt region, real HTML only"
+          }
+        ],
+        "mobile_ui_safe_zones": [
+          {
+            "side": "left",
+            "rect": [
+              0,
+              0,
+              0.1,
+              1
+            ],
+            "purpose": "Keep edge structures low contrast; no indispensable machinery here"
+          },
+          {
+            "side": "right",
+            "rect": [
+              0.9,
+              0,
+              1,
+              1
+            ],
+            "purpose": "Keep edge low contrast; portrait machinery remains inside these edges"
+          },
+          {
+            "side": "top",
+            "rect": [
+              0,
+              0,
+              1,
+              0.24
+            ],
+            "purpose": "Quiet status/product heading region; no critical hero detail behind real HTML"
+          },
+          {
+            "side": "bottom",
+            "rect": [
+              0,
+              0.76,
+              1,
+              1
+            ],
+            "purpose": "Quiet session amount/status region; controls/help/navigation remain normal HTML flow outside art"
+          }
+        ],
+        "focal_point": {
+          "desktop": {
+            "x": 0.62,
+            "y": 0.4
+          },
+          "mobile": {
+            "x": 0.52,
+            "y": 0.37
+          }
+        },
+        "extraction_target": {
+          "desktop": {
+            "x": 0.61,
+            "y": 0.67
+          },
+          "mobile": {
+            "x": 0.52,
+            "y": 0.65
+          }
+        },
+        "desktop_notes": "Three-quarter elevated aisle perspective; wafer center at 0.62,0.40 and collection cradle at 0.61,0.67; leave upper-left operational space quiet",
+        "mobile_notes": "Stack the wafer above its collection cradle in a narrow vertical cleanroom bay; keep the scanner arm entering from the middle-right instead of cropping an entire side process bay",
+        "crop_constraints": "A centered landscape cover would cut the right-side wafer and scanner; a dedicated portrait composition is required",
+        "acceptance": "SPEC_ONLY_NO_NEW_IMAGE_OR_CROP_PASS"
+      },
+      "runtime_binding": {
+        "identity": "Authoritative selected product_id + catalog_version; code validated against actual product row, never inferred from company name/category/world",
+        "anchor": {
+          "desktop": {
+            "x": 0.62,
+            "y": 0.4
+          },
+          "mobile": {
+            "x": 0.52,
+            "y": 0.37
+          }
+        },
+        "extraction_target": {
+          "desktop": {
+            "x": 0.61,
+            "y": 0.67
+          },
+          "mobile": {
+            "x": 0.52,
+            "y": 0.65
+          }
+        },
+        "coordinate_scope": "PROPOSED_NOT_MEASURED_MASTER_PIXELS",
+        "camera": "FIXED_CAMERA",
+        "motion": "LOCAL_MOTION_ONLY",
+        "timerAdvancesValue": false,
+        "reduced_motion": "Static same approved master, all state/copy/controls preserved",
+        "offscreen": "Pause only decoration; never pause mining engine",
+        "low_power": "Preserve master; remove/simplify local FX under existing runtime budgets"
+      },
+      "generation": {
+        "status": "PREPRODUCTION_CATALOG_GATE_REQUIRED",
+        "prompt_id": "samsung-electronics-desktop-master-v1",
+        "prompt_ids": [
+          "samsung-electronics-desktop-master-v1",
+          "samsung-electronics-mobile-master-v1"
+        ],
+        "desktop_master_required": true,
+        "mobile_master_required": true,
+        "regen_required": false,
+        "reason": "No approved product master; new distinct desktop and portrait masters"
+      },
+      "review": {
+        "visual_status": "SPEC_ONLY",
+        "runtime_mapping_status": "RUNTIME_MAPPING_REQUIRED",
+        "legal_brand_review": "LEGAL_BRAND_REVIEW_REQUIRED",
+        "notes": [
+          "No unapproved logo, wordmark, partnership, sponsorship or endorsement",
+          "No visual acceptance or publication authority inferred from draft manifest",
+          "Existing family/default master remains preserved",
+          "UNKNOWN != PASS; new image and browser acceptance pending"
+        ]
+      }
+    },
+    {
+      "product_id": "30000000-0000-4000-8000-000000000002",
+      "product_code": "000660",
+      "slug": "sk-hynix",
+      "display_name_ko": "SK하이닉스 테마",
+      "display_name_en": "SK hynix Theme",
+      "asset_class": "KR_STOCK",
+      "market": "KR",
+      "ticker": "000660",
+      "sector": "UNKNOWN",
+      "catalog_source": {
+        "file": "supabase/migrations/20260926192208_ws02_commands_and_catalog_seed.sql",
+        "symbol_or_record": "proposal code 000660",
+        "line": 1160,
+        "verified": true,
+        "verification_scope": "REPOSITORY_RECORD_NOT_OPERATOR_APPROVAL"
+      },
+      "current_scene_status": "FAMILY_MASTER_ONLY",
+      "current_scene_master": "docs/design/generated-masters/semiconductor-memory-v3-clean-2026-10-03/semiconductor-memory-v3-clean-master-v1.png",
+      "member_visible": false,
+      "live_member_visible": "UNKNOWN",
+      "catalog_status": "DRAFT",
+      "scene_family": "SEMICONDUCTOR_MEMORY",
+      "scene_family_scope": "EXISTING_FAMILY_BINDING",
+      "current_scene_family": "SEMICONDUCTOR_MEMORY",
+      "status_tags": [
+        "FAMILY_MASTER_ONLY",
+        "CATALOG_TRUTH_UNRESOLVED",
+        "NOT_MEMBER_VISIBLE",
+        "RUNTIME_MAPPING_REQUIRED",
+        "BRAND_LEGAL_REVIEW_REQUIRED",
+        "MOBILE_VARIANT_REQUIRED",
+        "DESKTOP_VARIANT_REQUIRED"
+      ],
+      "metadata": {
+        "proposed_visual_sector": "HBM / memory",
+        "sector_scope": "CREATIVE_PROPOSAL_NOT_CANONICAL_CATALOG_FIELD",
+        "publishable": false
+      },
+      "product_visual_profile": {
+        "visual_story": "HBM 적층 메모리의 정교한 층과 웨이퍼 공정이 하나의 메모리 추출 장치로 모이는 SK하이닉스 테마의 팹.",
+        "environment": "A deep reflective semiconductor memory fab with a suspended HBM stack, a wafer-scanning station on the left and memory-processing towers on the right",
+        "hero_object": "A physically detailed tiered HBM package with visible interposer edges suspended above a dormant circular memory collection platform",
+        "secondary_objects": [
+          "left silicon wafer disk",
+          "right memory processing towers",
+          "robotic fab arms behind the stack"
+        ],
+        "materials": [
+          "dark titanium package plates",
+          "etched silicon wafer",
+          "black polished glass",
+          "fine copper interconnect edges"
+        ],
+        "lighting": "Cyan fab columns and controlled amber edge reflections on the HBM layers; white task lights reveal microscopic material detail",
+        "palette": [
+          "cyan",
+          "warm gold",
+          "mineral white",
+          "black titanium"
+        ],
+        "machinery": [
+          "HBM alignment arm",
+          "wafer scanner",
+          "memory tower service mechanism"
+        ],
+        "energy_flow": "Local pin lights step down the HBM layer edges toward the platform; reserve every dynamic trail for a later transparent runtime layer",
+        "extraction_target": "The lower memory collection ring under the suspended package, visibly idle in the raster master",
+        "foreground_plan": "A wide low extraction platform with engraved physical seams, without glyphs or numerical markings",
+        "midground_plan": "HBM stack holds the center while wafer and processing tower preserve different left/right silhouettes",
+        "background_plan": "Blue-lit fab columns and robots diminish through several physically separated depth planes",
+        "depth_plan": "Foreground: A wide low extraction platform with engraved physical seams, without glyphs or numerical markings. Midground: HBM stack holds the center while wafer and processing tower preserve different left/right silhouettes. Background: Blue-lit fab columns and robots diminish through several physically separated depth planes. Distinct planes and physical scale, not flat layers or motion parallax."
+      },
+      "runtime_visual_states": {
+        "IDLE": "Dormant A physically detailed tiered HBM package with visible interposer edges suspended above a dormant circular memory collection platform; steady environmental reflection only. No extraction or earning cue.",
+        "STARTING": "Only after an authoritative accepted start/transition: one short local HBM alignment arm readiness cue, then await confirmed running state. If no such contract exists, use static UNKNOWN; button press is not engine acceptance.",
+        "RUNNING": "Only server-confirmed NORMAL: bounded local HBM alignment arm motion and Local pin lights step down the HBM layer edges toward the platform; reserve every dynamic trail for a later transparent runtime layer. Fixed camera, no money generated by animation.",
+        "REDUCED": "Only confirmed REDUCED: sparse wafer scanner activity with less frequent local flow; do not invent an economic speed ratio. Current boolean gate does not yet distinguish its motion cadence.",
+        "PAUSED": "Static The lower memory collection ring under the suspended package, visibly idle in the raster master; use only an actual authoritative pause condition. No new member pause command and no clock-derived reward.",
+        "STOPPED": "Park HBM alignment arm, remove active flow, keep the same master and real stopped status in HTML.",
+        "MAINTENANCE": "Keep A deep reflective semiconductor memory fab with a suspended HBM stack, a wafer-scanning station on the left and memory-processing towers on the right static; quiet service light at wafer scanner only if authorized state exists. Explain maintenance in HTML, not raster pixels.",
+        "PARTIAL_STOP": "Only explicitly identified affected memory tower service mechanism may stop independently; without subcomponent state freeze all effects and explain partial stop. Never assume unaffected earnings.",
+        "SETTLEMENT": "One subtle local light sweep toward The lower memory collection ring under the suspended package, visibly idle in the raster master only on actual settlement progress/receipt. No verified-success cue before server confirmation.",
+        "VERIFIED": "One bounded acknowledgement at The lower memory collection ring under the suspended package, visibly idle in the raster master for a new verified receipt; deduplicate by actual receipt/revision identity. Financial verified status is not catalog approval or network finality.",
+        "UNKNOWN": "Static approved master, no machinery/extraction/earning animation. HTML 상태 확인 중 and recovery. Missing, stale, offline or unsupported truth must never look running."
+      },
+      "composition": {
+        "desktop_master_ratio": "16:9",
+        "mobile_master_ratio": "9:16",
+        "mobile_strategy": "MOBILE_MASTER_REQUIRED",
+        "desktop_ui_safe_zones": [
+          {
+            "side": "left",
+            "rect": [
+              0,
+              0.12,
+              0.25,
+              0.7
+            ],
+            "purpose": "Low-detail operational overlay region; hero remains outside it"
+          },
+          {
+            "side": "right",
+            "rect": [
+              0.82,
+              0.12,
+              1,
+              0.7
+            ],
+            "purpose": "Low-detail secondary information region; no essential machinery"
+          },
+          {
+            "side": "top",
+            "rect": [
+              0,
+              0,
+              1,
+              0.18
+            ],
+            "purpose": "Low-contrast product/status heading region"
+          },
+          {
+            "side": "bottom",
+            "rect": [
+              0,
+              0.8,
+              1,
+              1
+            ],
+            "purpose": "Low-detail session amount/receipt region, real HTML only"
+          }
+        ],
+        "mobile_ui_safe_zones": [
+          {
+            "side": "left",
+            "rect": [
+              0,
+              0,
+              0.1,
+              1
+            ],
+            "purpose": "Keep edge structures low contrast; no indispensable machinery here"
+          },
+          {
+            "side": "right",
+            "rect": [
+              0.9,
+              0,
+              1,
+              1
+            ],
+            "purpose": "Keep edge low contrast; portrait machinery remains inside these edges"
+          },
+          {
+            "side": "top",
+            "rect": [
+              0,
+              0,
+              1,
+              0.24
+            ],
+            "purpose": "Quiet status/product heading region; no critical hero detail behind real HTML"
+          },
+          {
+            "side": "bottom",
+            "rect": [
+              0,
+              0.76,
+              1,
+              1
+            ],
+            "purpose": "Quiet session amount/status region; controls/help/navigation remain normal HTML flow outside art"
+          }
+        ],
+        "focal_point": {
+          "desktop": {
+            "x": 0.5,
+            "y": 0.37
+          },
+          "mobile": {
+            "x": 0.5,
+            "y": 0.36
+          }
+        },
+        "extraction_target": {
+          "desktop": {
+            "x": 0.5,
+            "y": 0.68
+          },
+          "mobile": {
+            "x": 0.5,
+            "y": 0.65
+          }
+        },
+        "desktop_notes": "Recompose the approved 1539x1022 family direction as a true 16:9 master without stretching or cropping wafer/tower; HBM 0.50,0.37, ring 0.50,0.68",
+        "mobile_notes": "Keep the complete HBM tier silhouette above a smaller lower ring; bring wafer and tower inward as shallow side stations, rather than cutting them off with center-cover",
+        "crop_constraints": "Existing ratio is about 1.506:1, not 16:9. Existing mobile cover is not accepted product QA; new portrait preserves wafer and tower identity",
+        "acceptance": "SPEC_ONLY_NO_NEW_IMAGE_OR_CROP_PASS"
+      },
+      "runtime_binding": {
+        "identity": "Authoritative selected product_id + catalog_version; code validated against actual product row, never inferred from company name/category/world",
+        "anchor": {
+          "desktop": {
+            "x": 0.5,
+            "y": 0.37
+          },
+          "mobile": {
+            "x": 0.5,
+            "y": 0.36
+          }
+        },
+        "extraction_target": {
+          "desktop": {
+            "x": 0.5,
+            "y": 0.68
+          },
+          "mobile": {
+            "x": 0.5,
+            "y": 0.65
+          }
+        },
+        "coordinate_scope": "PROPOSED_NOT_MEASURED_MASTER_PIXELS",
+        "camera": "FIXED_CAMERA",
+        "motion": "LOCAL_MOTION_ONLY",
+        "timerAdvancesValue": false,
+        "reduced_motion": "Static same approved master, all state/copy/controls preserved",
+        "offscreen": "Pause only decoration; never pause mining engine",
+        "low_power": "Preserve master; remove/simplify local FX under existing runtime budgets"
+      },
+      "generation": {
+        "status": "PREPRODUCTION_CATALOG_GATE_REQUIRED",
+        "prompt_id": "sk-hynix-desktop-master-v1",
+        "prompt_ids": [
+          "sk-hynix-desktop-master-v1",
+          "sk-hynix-mobile-master-v1"
+        ],
+        "desktop_master_required": true,
+        "mobile_master_required": true,
+        "regen_required": false,
+        "reason": "New 16:9 desktop variant and portrait composition; preserve approved existing family master unchanged"
+      },
+      "review": {
+        "visual_status": "SPEC_ONLY",
+        "runtime_mapping_status": "RUNTIME_MAPPING_REQUIRED",
+        "legal_brand_review": "LEGAL_BRAND_REVIEW_REQUIRED",
+        "notes": [
+          "No unapproved logo, wordmark, partnership, sponsorship or endorsement",
+          "No visual acceptance or publication authority inferred from draft manifest",
+          "Existing family/default master remains preserved",
+          "UNKNOWN != PASS; new image and browser acceptance pending"
+        ]
+      }
+    },
+    {
+      "product_id": "30000000-0000-4000-8000-000000000003",
+      "product_code": "AAPL",
+      "slug": "apple",
+      "display_name_ko": "애플 테마",
+      "display_name_en": "Apple Theme",
+      "asset_class": "US_STOCK",
+      "market": "US",
+      "ticker": "AAPL",
+      "sector": "UNKNOWN",
+      "catalog_source": {
+        "file": "supabase/migrations/20260926192208_ws02_commands_and_catalog_seed.sql",
+        "symbol_or_record": "proposal code AAPL",
+        "line": 1161,
+        "verified": true,
+        "verification_scope": "REPOSITORY_RECORD_NOT_OPERATOR_APPROVAL"
+      },
+      "current_scene_status": "PRODUCT_MASTER_REQUIRED",
+      "current_scene_master": null,
+      "member_visible": false,
+      "live_member_visible": "UNKNOWN",
+      "catalog_status": "DRAFT",
+      "scene_family": "SEMICONDUCTOR_COMPUTE",
+      "scene_family_scope": "PROPOSED_NOT_RUNTIME_BINDING",
+      "current_scene_family": null,
+      "status_tags": [
+        "PRODUCT_MASTER_REQUIRED",
+        "CATALOG_TRUTH_UNRESOLVED",
+        "NOT_MEMBER_VISIBLE",
+        "RUNTIME_MAPPING_REQUIRED",
+        "BRAND_LEGAL_REVIEW_REQUIRED",
+        "MOBILE_VARIANT_REQUIRED"
+      ],
+      "metadata": {
+        "proposed_visual_sector": "Precision silicon / device ecosystem",
+        "sector_scope": "CREATIVE_PROPOSAL_NOT_CANONICAL_CATALOG_FIELD",
+        "publishable": false
+      },
+      "product_visual_profile": {
+        "visual_story": "정밀 실리콘과 장치 조립의 절제된 질감을 보여 주는 애플 테마. 대형 서버나 HBM 공장과 다른 작은 부품의 정교함이 핵심이다.",
+        "environment": "An architectural precision-device atelier with curved frosted partitions and an immaculate microassembly island, quiet rather than cavernous",
+        "hero_object": "A sculpted unbranded silicon package held in a levitating precision fixture above a circular sapphire inspection lens",
+        "secondary_objects": [
+          "unmarked machined device shells",
+          "tiny precision grippers",
+          "sapphire optical inspection discs"
+        ],
+        "materials": [
+          "satin aluminum",
+          "bead-blasted titanium",
+          "frosted glass",
+          "silicon with subtle interference color"
+        ],
+        "lighting": "Large soft ivory area lights, cool silver edge lighting and a restrained rose-copper bounce under the lens; luxury product-photography discipline",
+        "palette": [
+          "soft ivory",
+          "silver",
+          "graphite",
+          "rose copper"
+        ],
+        "machinery": [
+          "microassembly grippers",
+          "optical inspection lens",
+          "precision device-shell turntable"
+        ],
+        "energy_flow": "Fine optical paths converge through the sapphire lens from individually arranged microassembly tools",
+        "extraction_target": "A precision-finished silicon module in the sapphire inspection lens, never a currency-shaped reward",
+        "foreground_plan": "One satin metal bench edge with tactile finish, leaving the lower information area calm",
+        "midground_plan": "Offset precision silicon fixture and individually legible tool tips with generous negative space",
+        "background_plan": "Frosted curved partitions reveal two distant assembly rooms without generic server racks",
+        "depth_plan": "Foreground: One satin metal bench edge with tactile finish, leaving the lower information area calm. Midground: Offset precision silicon fixture and individually legible tool tips with generous negative space. Background: Frosted curved partitions reveal two distant assembly rooms without generic server racks. Distinct planes and physical scale, not flat layers or motion parallax."
+      },
+      "runtime_visual_states": {
+        "IDLE": "Dormant A sculpted unbranded silicon package held in a levitating precision fixture above a circular sapphire inspection lens; steady environmental reflection only. No extraction or earning cue.",
+        "STARTING": "Only after an authoritative accepted start/transition: one short local microassembly grippers readiness cue, then await confirmed running state. If no such contract exists, use static UNKNOWN; button press is not engine acceptance.",
+        "RUNNING": "Only server-confirmed NORMAL: bounded local microassembly grippers motion and Fine optical paths converge through the sapphire lens from individually arranged microassembly tools. Fixed camera, no money generated by animation.",
+        "REDUCED": "Only confirmed REDUCED: sparse optical inspection lens activity with less frequent local flow; do not invent an economic speed ratio. Current boolean gate does not yet distinguish its motion cadence.",
+        "PAUSED": "Static A precision-finished silicon module in the sapphire inspection lens, never a currency-shaped reward; use only an actual authoritative pause condition. No new member pause command and no clock-derived reward.",
+        "STOPPED": "Park microassembly grippers, remove active flow, keep the same master and real stopped status in HTML.",
+        "MAINTENANCE": "Keep An architectural precision-device atelier with curved frosted partitions and an immaculate microassembly island, quiet rather than cavernous static; quiet service light at optical inspection lens only if authorized state exists. Explain maintenance in HTML, not raster pixels.",
+        "PARTIAL_STOP": "Only explicitly identified affected precision device-shell turntable may stop independently; without subcomponent state freeze all effects and explain partial stop. Never assume unaffected earnings.",
+        "SETTLEMENT": "One subtle local light sweep toward A precision-finished silicon module in the sapphire inspection lens, never a currency-shaped reward only on actual settlement progress/receipt. No verified-success cue before server confirmation.",
+        "VERIFIED": "One bounded acknowledgement at A precision-finished silicon module in the sapphire inspection lens, never a currency-shaped reward for a new verified receipt; deduplicate by actual receipt/revision identity. Financial verified status is not catalog approval or network finality.",
+        "UNKNOWN": "Static approved master, no machinery/extraction/earning animation. HTML 상태 확인 중 and recovery. Missing, stale, offline or unsupported truth must never look running."
+      },
+      "composition": {
+        "desktop_master_ratio": "16:9",
+        "mobile_master_ratio": "9:16",
+        "mobile_strategy": "MOBILE_MASTER_REQUIRED",
+        "desktop_ui_safe_zones": [
+          {
+            "side": "left",
+            "rect": [
+              0,
+              0.12,
+              0.25,
+              0.7
+            ],
+            "purpose": "Low-detail operational overlay region; hero remains outside it"
+          },
+          {
+            "side": "right",
+            "rect": [
+              0.82,
+              0.12,
+              1,
+              0.7
+            ],
+            "purpose": "Low-detail secondary information region; no essential machinery"
+          },
+          {
+            "side": "top",
+            "rect": [
+              0,
+              0,
+              1,
+              0.18
+            ],
+            "purpose": "Low-contrast product/status heading region"
+          },
+          {
+            "side": "bottom",
+            "rect": [
+              0,
+              0.8,
+              1,
+              1
+            ],
+            "purpose": "Low-detail session amount/receipt region, real HTML only"
+          }
+        ],
+        "mobile_ui_safe_zones": [
+          {
+            "side": "left",
+            "rect": [
+              0,
+              0,
+              0.1,
+              1
+            ],
+            "purpose": "Keep edge structures low contrast; no indispensable machinery here"
+          },
+          {
+            "side": "right",
+            "rect": [
+              0.9,
+              0,
+              1,
+              1
+            ],
+            "purpose": "Keep edge low contrast; portrait machinery remains inside these edges"
+          },
+          {
+            "side": "top",
+            "rect": [
+              0,
+              0,
+              1,
+              0.24
+            ],
+            "purpose": "Quiet status/product heading region; no critical hero detail behind real HTML"
+          },
+          {
+            "side": "bottom",
+            "rect": [
+              0,
+              0.76,
+              1,
+              1
+            ],
+            "purpose": "Quiet session amount/status region; controls/help/navigation remain normal HTML flow outside art"
+          }
+        ],
+        "focal_point": {
+          "desktop": {
+            "x": 0.56,
+            "y": 0.43
+          },
+          "mobile": {
+            "x": 0.5,
+            "y": 0.4
+          }
+        },
+        "extraction_target": {
+          "desktop": {
+            "x": 0.56,
+            "y": 0.66
+          },
+          "mobile": {
+            "x": 0.5,
+            "y": 0.63
+          }
+        },
+        "desktop_notes": "Low oblique macro-industrial lens with fixture at 0.56,0.43 and inspection lens 0.56,0.66; quiet ivory volume in upper-left",
+        "mobile_notes": "Compose a vertical optical inspection tower with silicon fixture above lens and two visible grippers from opposite sides; distant partitions rise behind it",
+        "crop_constraints": "Side grippers and curved partition identity would vanish in landscape center crop",
+        "acceptance": "SPEC_ONLY_NO_NEW_IMAGE_OR_CROP_PASS"
+      },
+      "runtime_binding": {
+        "identity": "Authoritative selected product_id + catalog_version; code validated against actual product row, never inferred from company name/category/world",
+        "anchor": {
+          "desktop": {
+            "x": 0.56,
+            "y": 0.43
+          },
+          "mobile": {
+            "x": 0.5,
+            "y": 0.4
+          }
+        },
+        "extraction_target": {
+          "desktop": {
+            "x": 0.56,
+            "y": 0.66
+          },
+          "mobile": {
+            "x": 0.5,
+            "y": 0.63
+          }
+        },
+        "coordinate_scope": "PROPOSED_NOT_MEASURED_MASTER_PIXELS",
+        "camera": "FIXED_CAMERA",
+        "motion": "LOCAL_MOTION_ONLY",
+        "timerAdvancesValue": false,
+        "reduced_motion": "Static same approved master, all state/copy/controls preserved",
+        "offscreen": "Pause only decoration; never pause mining engine",
+        "low_power": "Preserve master; remove/simplify local FX under existing runtime budgets"
+      },
+      "generation": {
+        "status": "PREPRODUCTION_CATALOG_GATE_REQUIRED",
+        "prompt_id": "apple-desktop-master-v1",
+        "prompt_ids": [
+          "apple-desktop-master-v1",
+          "apple-mobile-master-v1"
+        ],
+        "desktop_master_required": true,
+        "mobile_master_required": true,
+        "regen_required": false,
+        "reason": "No approved product master; new distinct desktop and portrait masters"
+      },
+      "review": {
+        "visual_status": "SPEC_ONLY",
+        "runtime_mapping_status": "RUNTIME_MAPPING_REQUIRED",
+        "legal_brand_review": "LEGAL_BRAND_REVIEW_REQUIRED",
+        "notes": [
+          "No unapproved logo, wordmark, partnership, sponsorship or endorsement",
+          "No visual acceptance or publication authority inferred from draft manifest",
+          "Existing family/default master remains preserved",
+          "UNKNOWN != PASS; new image and browser acceptance pending"
+        ]
+      }
+    },
+    {
+      "product_id": "30000000-0000-4000-8000-000000000004",
+      "product_code": "MSFT",
+      "slug": "microsoft",
+      "display_name_ko": "마이크로소프트 테마",
+      "display_name_en": "Microsoft Theme",
+      "asset_class": "US_STOCK",
+      "market": "US",
+      "ticker": "MSFT",
+      "sector": "UNKNOWN",
+      "catalog_source": {
+        "file": "supabase/migrations/20260926192208_ws02_commands_and_catalog_seed.sql",
+        "symbol_or_record": "proposal code MSFT",
+        "line": 1162,
+        "verified": true,
+        "verification_scope": "REPOSITORY_RECORD_NOT_OPERATOR_APPROVAL"
+      },
+      "current_scene_status": "PRODUCT_MASTER_REQUIRED",
+      "current_scene_master": null,
+      "member_visible": false,
+      "live_member_visible": "UNKNOWN",
+      "catalog_status": "DRAFT",
+      "scene_family": "SEMICONDUCTOR_COMPUTE",
+      "scene_family_scope": "PROPOSED_NOT_RUNTIME_BINDING",
+      "current_scene_family": null,
+      "status_tags": [
+        "PRODUCT_MASTER_REQUIRED",
+        "CATALOG_TRUTH_UNRESOLVED",
+        "NOT_MEMBER_VISIBLE",
+        "RUNTIME_MAPPING_REQUIRED",
+        "BRAND_LEGAL_REVIEW_REQUIRED",
+        "MOBILE_VARIANT_REQUIRED"
+      ],
+      "metadata": {
+        "proposed_visual_sector": "Distributed cloud fabric",
+        "sector_scope": "CREATIVE_PROPOSAL_NOT_CANONICAL_CATALOG_FIELD",
+        "publishable": false
+      },
+      "product_visual_profile": {
+        "visual_story": "분산 컴퓨팅 노드가 안정적인 광섬유 망으로 연결되는 마이크로소프트 테마. 단일 GPU 공장 대신 여러 구역이 협력하는 공간이다.",
+        "environment": "A monumental enterprise-cloud atrium with terraced distributed compute halls joined by visible optical bridges and an open central light well",
+        "hero_object": "A layered translucent cloud-fabric routing hub suspended between several physically distinct server halls",
+        "secondary_objects": [
+          "optical bridge conduits",
+          "distributed compute terraces",
+          "coolant service ribs"
+        ],
+        "materials": [
+          "translucent optical glass",
+          "powder-coated navy steel",
+          "matte ceramic racks",
+          "braided fiber bundles"
+        ],
+        "lighting": "Daylight from the atrium clerestory with azure optical paths and warm white service lights; balanced architectural scale",
+        "palette": [
+          "azure",
+          "navy",
+          "frosted white",
+          "muted teal"
+        ],
+        "machinery": [
+          "optical switching arrays",
+          "rack cooling manifolds",
+          "local node-routing relays"
+        ],
+        "energy_flow": "Several sparse node paths join the routing hub and descend to a small lower optical receiver; keep endpoints distinct",
+        "extraction_target": "A transparent optical receiver below the routing hub; no token mint or balance display",
+        "foreground_plan": "A quiet mezzanine rail at left establishes human scale without characters",
+        "midground_plan": "Glass routing hub sits right-center, with multiple terraces and separate optical bridges",
+        "background_plan": "Compute halls recede to different heights below a pale atrium ceiling",
+        "depth_plan": "Foreground: A quiet mezzanine rail at left establishes human scale without characters. Midground: Glass routing hub sits right-center, with multiple terraces and separate optical bridges. Background: Compute halls recede to different heights below a pale atrium ceiling. Distinct planes and physical scale, not flat layers or motion parallax."
+      },
+      "runtime_visual_states": {
+        "IDLE": "Dormant A layered translucent cloud-fabric routing hub suspended between several physically distinct server halls; steady environmental reflection only. No extraction or earning cue.",
+        "STARTING": "Only after an authoritative accepted start/transition: one short local optical switching arrays readiness cue, then await confirmed running state. If no such contract exists, use static UNKNOWN; button press is not engine acceptance.",
+        "RUNNING": "Only server-confirmed NORMAL: bounded local optical switching arrays motion and Several sparse node paths join the routing hub and descend to a small lower optical receiver; keep endpoints distinct. Fixed camera, no money generated by animation.",
+        "REDUCED": "Only confirmed REDUCED: sparse rack cooling manifolds activity with less frequent local flow; do not invent an economic speed ratio. Current boolean gate does not yet distinguish its motion cadence.",
+        "PAUSED": "Static A transparent optical receiver below the routing hub; no token mint or balance display; use only an actual authoritative pause condition. No new member pause command and no clock-derived reward.",
+        "STOPPED": "Park optical switching arrays, remove active flow, keep the same master and real stopped status in HTML.",
+        "MAINTENANCE": "Keep A monumental enterprise-cloud atrium with terraced distributed compute halls joined by visible optical bridges and an open central light well static; quiet service light at rack cooling manifolds only if authorized state exists. Explain maintenance in HTML, not raster pixels.",
+        "PARTIAL_STOP": "Only explicitly identified affected local node-routing relays may stop independently; without subcomponent state freeze all effects and explain partial stop. Never assume unaffected earnings.",
+        "SETTLEMENT": "One subtle local light sweep toward A transparent optical receiver below the routing hub; no token mint or balance display only on actual settlement progress/receipt. No verified-success cue before server confirmation.",
+        "VERIFIED": "One bounded acknowledgement at A transparent optical receiver below the routing hub; no token mint or balance display for a new verified receipt; deduplicate by actual receipt/revision identity. Financial verified status is not catalog approval or network finality.",
+        "UNKNOWN": "Static approved master, no machinery/extraction/earning animation. HTML 상태 확인 중 and recovery. Missing, stale, offline or unsupported truth must never look running."
+      },
+      "composition": {
+        "desktop_master_ratio": "16:9",
+        "mobile_master_ratio": "9:16",
+        "mobile_strategy": "MOBILE_MASTER_REQUIRED",
+        "desktop_ui_safe_zones": [
+          {
+            "side": "left",
+            "rect": [
+              0,
+              0.12,
+              0.25,
+              0.7
+            ],
+            "purpose": "Low-detail operational overlay region; hero remains outside it"
+          },
+          {
+            "side": "right",
+            "rect": [
+              0.82,
+              0.12,
+              1,
+              0.7
+            ],
+            "purpose": "Low-detail secondary information region; no essential machinery"
+          },
+          {
+            "side": "top",
+            "rect": [
+              0,
+              0,
+              1,
+              0.18
+            ],
+            "purpose": "Low-contrast product/status heading region"
+          },
+          {
+            "side": "bottom",
+            "rect": [
+              0,
+              0.8,
+              1,
+              1
+            ],
+            "purpose": "Low-detail session amount/receipt region, real HTML only"
+          }
+        ],
+        "mobile_ui_safe_zones": [
+          {
+            "side": "left",
+            "rect": [
+              0,
+              0,
+              0.1,
+              1
+            ],
+            "purpose": "Keep edge structures low contrast; no indispensable machinery here"
+          },
+          {
+            "side": "right",
+            "rect": [
+              0.9,
+              0,
+              1,
+              1
+            ],
+            "purpose": "Keep edge low contrast; portrait machinery remains inside these edges"
+          },
+          {
+            "side": "top",
+            "rect": [
+              0,
+              0,
+              1,
+              0.24
+            ],
+            "purpose": "Quiet status/product heading region; no critical hero detail behind real HTML"
+          },
+          {
+            "side": "bottom",
+            "rect": [
+              0,
+              0.76,
+              1,
+              1
+            ],
+            "purpose": "Quiet session amount/status region; controls/help/navigation remain normal HTML flow outside art"
+          }
+        ],
+        "focal_point": {
+          "desktop": {
+            "x": 0.6,
+            "y": 0.43
+          },
+          "mobile": {
+            "x": 0.5,
+            "y": 0.39
+          }
+        },
+        "extraction_target": {
+          "desktop": {
+            "x": 0.58,
+            "y": 0.67
+          },
+          "mobile": {
+            "x": 0.5,
+            "y": 0.64
+          }
+        },
+        "desktop_notes": "Architectural wide interior with hub at 0.60,0.43 and receiver 0.58,0.67; left mezzanine stays low-contrast for factual UI",
+        "mobile_notes": "Arrange three compute terraces vertically around a tall routing hub; preserve the optical joins inside the middle portrait width",
+        "crop_constraints": "Landscape distributed halls communicate identity through breadth; portrait must restage them as vertical terraces",
+        "acceptance": "SPEC_ONLY_NO_NEW_IMAGE_OR_CROP_PASS"
+      },
+      "runtime_binding": {
+        "identity": "Authoritative selected product_id + catalog_version; code validated against actual product row, never inferred from company name/category/world",
+        "anchor": {
+          "desktop": {
+            "x": 0.6,
+            "y": 0.43
+          },
+          "mobile": {
+            "x": 0.5,
+            "y": 0.39
+          }
+        },
+        "extraction_target": {
+          "desktop": {
+            "x": 0.58,
+            "y": 0.67
+          },
+          "mobile": {
+            "x": 0.5,
+            "y": 0.64
+          }
+        },
+        "coordinate_scope": "PROPOSED_NOT_MEASURED_MASTER_PIXELS",
+        "camera": "FIXED_CAMERA",
+        "motion": "LOCAL_MOTION_ONLY",
+        "timerAdvancesValue": false,
+        "reduced_motion": "Static same approved master, all state/copy/controls preserved",
+        "offscreen": "Pause only decoration; never pause mining engine",
+        "low_power": "Preserve master; remove/simplify local FX under existing runtime budgets"
+      },
+      "generation": {
+        "status": "PREPRODUCTION_CATALOG_GATE_REQUIRED",
+        "prompt_id": "microsoft-desktop-master-v1",
+        "prompt_ids": [
+          "microsoft-desktop-master-v1",
+          "microsoft-mobile-master-v1"
+        ],
+        "desktop_master_required": true,
+        "mobile_master_required": true,
+        "regen_required": false,
+        "reason": "No approved product master; new distinct desktop and portrait masters"
+      },
+      "review": {
+        "visual_status": "SPEC_ONLY",
+        "runtime_mapping_status": "RUNTIME_MAPPING_REQUIRED",
+        "legal_brand_review": "LEGAL_BRAND_REVIEW_REQUIRED",
+        "notes": [
+          "No unapproved logo, wordmark, partnership, sponsorship or endorsement",
+          "No visual acceptance or publication authority inferred from draft manifest",
+          "Existing family/default master remains preserved",
+          "UNKNOWN != PASS; new image and browser acceptance pending"
+        ]
+      }
+    },
+    {
+      "product_id": "30000000-0000-4000-8000-000000000005",
+      "product_code": "NVDA",
+      "slug": "nvidia",
+      "display_name_ko": "엔비디아 테마",
+      "display_name_en": "NVIDIA Theme",
+      "asset_class": "US_STOCK",
+      "market": "US",
+      "ticker": "NVDA",
+      "sector": "UNKNOWN",
+      "catalog_source": {
+        "file": "supabase/migrations/20260926192208_ws02_commands_and_catalog_seed.sql",
+        "symbol_or_record": "proposal code NVDA",
+        "line": 1163,
+        "verified": true,
+        "verification_scope": "REPOSITORY_RECORD_NOT_OPERATOR_APPROVAL"
+      },
+      "current_scene_status": "PRODUCT_MASTER_REQUIRED",
+      "current_scene_master": null,
+      "member_visible": false,
+      "live_member_visible": "UNKNOWN",
+      "catalog_status": "DRAFT",
+      "scene_family": "AI_GPU_COMPUTE",
+      "scene_family_scope": "PROPOSED_NOT_RUNTIME_BINDING",
+      "current_scene_family": null,
+      "status_tags": [
+        "PRODUCT_MASTER_REQUIRED",
+        "CATALOG_TRUTH_UNRESOLVED",
+        "NOT_MEMBER_VISIBLE",
+        "RUNTIME_MAPPING_REQUIRED",
+        "BRAND_LEGAL_REVIEW_REQUIRED",
+        "MOBILE_VARIANT_REQUIRED"
+      ],
+      "metadata": {
+        "proposed_visual_sector": "GPU / AI supercompute",
+        "sector_scope": "CREATIVE_PROPOSAL_NOT_CANONICAL_CATALOG_FIELD",
+        "publishable": false
+      },
+      "product_visual_profile": {
+        "visual_story": "액체 냉각 GPU와 정렬된 연산 모듈이 광학 인터커넥트로 연결되는 엔비디아 테마의 고성능 연산 시설.",
+        "environment": "A dense liquid-cooled AI supercompute hall with a diagonal rack canyon and a visible GPU carrier at its near terminus",
+        "hero_object": "An exposed multi-die GPU module in a heavy copper cold-plate cradle with surrounding coolant plumbing",
+        "secondary_objects": [
+          "liquid-cooled GPU racks",
+          "optical interconnect looms",
+          "transparent coolant distribution headers"
+        ],
+        "materials": [
+          "brushed copper cold plates",
+          "black anodized rack metal",
+          "optical glass fibers",
+          "clear coolant tubing"
+        ],
+        "lighting": "Emerald rack accents with cyan coolant reflections and a warm copper key on the GPU carrier; volumetric beams reveal the long rack canyon",
+        "palette": [
+          "emerald",
+          "cyan",
+          "copper",
+          "carbon black"
+        ],
+        "machinery": [
+          "GPU carrier service arm",
+          "liquid cooling manifold",
+          "optical interconnect switch"
+        ],
+        "energy_flow": "Aligned interconnect lanes trace from the rack canyon into the GPU carrier and terminate at a low compute output aperture",
+        "extraction_target": "A narrow optical output aperture beneath the GPU carrier, distinct from HBM ring and cloud hub",
+        "foreground_plan": "Copper cold plate and restrained coolant connections create tactile high-performance detail",
+        "midground_plan": "GPU carrier contrasts with dense but legible rack silhouettes on one diagonal",
+        "background_plan": "Rack canyon repeats toward a cool distant vanishing point with controlled atmospheric falloff",
+        "depth_plan": "Foreground: Copper cold plate and restrained coolant connections create tactile high-performance detail. Midground: GPU carrier contrasts with dense but legible rack silhouettes on one diagonal. Background: Rack canyon repeats toward a cool distant vanishing point with controlled atmospheric falloff. Distinct planes and physical scale, not flat layers or motion parallax."
+      },
+      "runtime_visual_states": {
+        "IDLE": "Dormant An exposed multi-die GPU module in a heavy copper cold-plate cradle with surrounding coolant plumbing; steady environmental reflection only. No extraction or earning cue.",
+        "STARTING": "Only after an authoritative accepted start/transition: one short local GPU carrier service arm readiness cue, then await confirmed running state. If no such contract exists, use static UNKNOWN; button press is not engine acceptance.",
+        "RUNNING": "Only server-confirmed NORMAL: bounded local GPU carrier service arm motion and Aligned interconnect lanes trace from the rack canyon into the GPU carrier and terminate at a low compute output aperture. Fixed camera, no money generated by animation.",
+        "REDUCED": "Only confirmed REDUCED: sparse liquid cooling manifold activity with less frequent local flow; do not invent an economic speed ratio. Current boolean gate does not yet distinguish its motion cadence.",
+        "PAUSED": "Static A narrow optical output aperture beneath the GPU carrier, distinct from HBM ring and cloud hub; use only an actual authoritative pause condition. No new member pause command and no clock-derived reward.",
+        "STOPPED": "Park GPU carrier service arm, remove active flow, keep the same master and real stopped status in HTML.",
+        "MAINTENANCE": "Keep A dense liquid-cooled AI supercompute hall with a diagonal rack canyon and a visible GPU carrier at its near terminus static; quiet service light at liquid cooling manifold only if authorized state exists. Explain maintenance in HTML, not raster pixels.",
+        "PARTIAL_STOP": "Only explicitly identified affected optical interconnect switch may stop independently; without subcomponent state freeze all effects and explain partial stop. Never assume unaffected earnings.",
+        "SETTLEMENT": "One subtle local light sweep toward A narrow optical output aperture beneath the GPU carrier, distinct from HBM ring and cloud hub only on actual settlement progress/receipt. No verified-success cue before server confirmation.",
+        "VERIFIED": "One bounded acknowledgement at A narrow optical output aperture beneath the GPU carrier, distinct from HBM ring and cloud hub for a new verified receipt; deduplicate by actual receipt/revision identity. Financial verified status is not catalog approval or network finality.",
+        "UNKNOWN": "Static approved master, no machinery/extraction/earning animation. HTML 상태 확인 중 and recovery. Missing, stale, offline or unsupported truth must never look running."
+      },
+      "composition": {
+        "desktop_master_ratio": "16:9",
+        "mobile_master_ratio": "9:16",
+        "mobile_strategy": "MOBILE_MASTER_REQUIRED",
+        "desktop_ui_safe_zones": [
+          {
+            "side": "left",
+            "rect": [
+              0,
+              0.12,
+              0.25,
+              0.7
+            ],
+            "purpose": "Low-detail operational overlay region; hero remains outside it"
+          },
+          {
+            "side": "right",
+            "rect": [
+              0.82,
+              0.12,
+              1,
+              0.7
+            ],
+            "purpose": "Low-detail secondary information region; no essential machinery"
+          },
+          {
+            "side": "top",
+            "rect": [
+              0,
+              0,
+              1,
+              0.18
+            ],
+            "purpose": "Low-contrast product/status heading region"
+          },
+          {
+            "side": "bottom",
+            "rect": [
+              0,
+              0.8,
+              1,
+              1
+            ],
+            "purpose": "Low-detail session amount/receipt region, real HTML only"
+          }
+        ],
+        "mobile_ui_safe_zones": [
+          {
+            "side": "left",
+            "rect": [
+              0,
+              0,
+              0.1,
+              1
+            ],
+            "purpose": "Keep edge structures low contrast; no indispensable machinery here"
+          },
+          {
+            "side": "right",
+            "rect": [
+              0.9,
+              0,
+              1,
+              1
+            ],
+            "purpose": "Keep edge low contrast; portrait machinery remains inside these edges"
+          },
+          {
+            "side": "top",
+            "rect": [
+              0,
+              0,
+              1,
+              0.24
+            ],
+            "purpose": "Quiet status/product heading region; no critical hero detail behind real HTML"
+          },
+          {
+            "side": "bottom",
+            "rect": [
+              0,
+              0.76,
+              1,
+              1
+            ],
+            "purpose": "Quiet session amount/status region; controls/help/navigation remain normal HTML flow outside art"
+          }
+        ],
+        "focal_point": {
+          "desktop": {
+            "x": 0.58,
+            "y": 0.46
+          },
+          "mobile": {
+            "x": 0.5,
+            "y": 0.42
+          }
+        },
+        "extraction_target": {
+          "desktop": {
+            "x": 0.56,
+            "y": 0.66
+          },
+          "mobile": {
+            "x": 0.5,
+            "y": 0.65
+          }
+        },
+        "desktop_notes": "Diagonal rack canyon, near GPU at 0.58,0.46 and aperture 0.56,0.66; quiet dark upper-left plane for overlay",
+        "mobile_notes": "Use a vertical GPU carrier with coolant headers framing both sides and stacked rack depth behind; preserve the entire aperture below",
+        "crop_constraints": "Diagonal rack context and coolant silhouette need portrait-specific positioning",
+        "acceptance": "SPEC_ONLY_NO_NEW_IMAGE_OR_CROP_PASS"
+      },
+      "runtime_binding": {
+        "identity": "Authoritative selected product_id + catalog_version; code validated against actual product row, never inferred from company name/category/world",
+        "anchor": {
+          "desktop": {
+            "x": 0.58,
+            "y": 0.46
+          },
+          "mobile": {
+            "x": 0.5,
+            "y": 0.42
+          }
+        },
+        "extraction_target": {
+          "desktop": {
+            "x": 0.56,
+            "y": 0.66
+          },
+          "mobile": {
+            "x": 0.5,
+            "y": 0.65
+          }
+        },
+        "coordinate_scope": "PROPOSED_NOT_MEASURED_MASTER_PIXELS",
+        "camera": "FIXED_CAMERA",
+        "motion": "LOCAL_MOTION_ONLY",
+        "timerAdvancesValue": false,
+        "reduced_motion": "Static same approved master, all state/copy/controls preserved",
+        "offscreen": "Pause only decoration; never pause mining engine",
+        "low_power": "Preserve master; remove/simplify local FX under existing runtime budgets"
+      },
+      "generation": {
+        "status": "PREPRODUCTION_CATALOG_GATE_REQUIRED",
+        "prompt_id": "nvidia-desktop-master-v1",
+        "prompt_ids": [
+          "nvidia-desktop-master-v1",
+          "nvidia-mobile-master-v1"
+        ],
+        "desktop_master_required": true,
+        "mobile_master_required": true,
+        "regen_required": false,
+        "reason": "No approved product master; new distinct desktop and portrait masters"
+      },
+      "review": {
+        "visual_status": "SPEC_ONLY",
+        "runtime_mapping_status": "RUNTIME_MAPPING_REQUIRED",
+        "legal_brand_review": "LEGAL_BRAND_REVIEW_REQUIRED",
+        "notes": [
+          "No unapproved logo, wordmark, partnership, sponsorship or endorsement",
+          "No visual acceptance or publication authority inferred from draft manifest",
+          "Existing family/default master remains preserved",
+          "UNKNOWN != PASS; new image and browser acceptance pending"
+        ]
+      }
+    },
+    {
+      "product_id": "30000000-0000-4000-8000-000000000006",
+      "product_code": "XAU",
+      "slug": "gold",
+      "display_name_ko": "골드 테마",
+      "display_name_en": "Gold Theme",
+      "asset_class": "GOLD",
+      "market": "UNKNOWN",
+      "ticker": "XAU",
+      "sector": "UNKNOWN",
+      "catalog_source": {
+        "file": "supabase/migrations/20260926192208_ws02_commands_and_catalog_seed.sql",
+        "symbol_or_record": "proposal code XAU",
+        "line": 1164,
+        "verified": true,
+        "verification_scope": "REPOSITORY_RECORD_NOT_OPERATOR_APPROVAL"
+      },
+      "current_scene_status": "PRODUCT_MASTER_REQUIRED",
+      "current_scene_master": null,
+      "member_visible": false,
+      "live_member_visible": "UNKNOWN",
+      "catalog_status": "DRAFT",
+      "scene_family": "PRECIOUS_GOLD",
+      "scene_family_scope": "PROPOSED_NOT_RUNTIME_BINDING",
+      "current_scene_family": null,
+      "status_tags": [
+        "PRODUCT_MASTER_REQUIRED",
+        "CATALOG_TRUTH_UNRESOLVED",
+        "NOT_MEMBER_VISIBLE",
+        "RUNTIME_MAPPING_REQUIRED",
+        "BRAND_LEGAL_REVIEW_REQUIRED",
+        "MOBILE_VARIANT_REQUIRED"
+      ],
+      "metadata": {
+        "proposed_visual_sector": "Gold refinement metaphor",
+        "sector_scope": "CREATIVE_PROPOSAL_NOT_CANONICAL_CATALOG_FIELD",
+        "publishable": false
+      },
+      "product_visual_profile": {
+        "visual_story": "거친 광석부터 정제된 금속까지 질감이 달라지는 골드 테마의 정련소. 화면 속 금은 화폐나 실물 소유권 표시가 아니다.",
+        "environment": "A vaulted industrial gold refinery with a refractory furnace, a gravity-fed casting channel and substantial stone service architecture",
+        "hero_object": "A covered refractory crucible above a long precision ingot mold, with a restrained molten-gold surface visible through the furnace aperture",
+        "secondary_objects": [
+          "ore sorting tray",
+          "refractory furnace bricks",
+          "cooled unmarked ingot molds"
+        ],
+        "materials": [
+          "rough mineral ore",
+          "heat-darkened refractory ceramic",
+          "molten metallic gold",
+          "heavy cast iron"
+        ],
+        "lighting": "Warm furnace bounce against deep umber masonry with cool skylight shafts; metallic gold reads through physically plausible reflections rather than global gold tint",
+        "palette": [
+          "molten gold",
+          "deep umber",
+          "charcoal",
+          "cool skylight blue"
+        ],
+        "machinery": [
+          "sealed crucible tilt mechanism",
+          "ore sorting conveyor",
+          "ingot mold cooling assembly"
+        ],
+        "energy_flow": "A short contained casting channel links the crucible to the mold; actual animated pouring is an optional local server-gated layer",
+        "extraction_target": "The precision ingot mold at the near end of the casting channel; unmarked industrial metal without coins or payment symbolism",
+        "foreground_plan": "Heavy refractory mold and ore textures establish tactile weight",
+        "midground_plan": "Crucible aperture and casting channel remain visually separate, on a rightward diagonal",
+        "background_plan": "Arched refinery roof and furnace stacks recede through warm haze",
+        "depth_plan": "Foreground: Heavy refractory mold and ore textures establish tactile weight. Midground: Crucible aperture and casting channel remain visually separate, on a rightward diagonal. Background: Arched refinery roof and furnace stacks recede through warm haze. Distinct planes and physical scale, not flat layers or motion parallax."
+      },
+      "runtime_visual_states": {
+        "IDLE": "Dormant A covered refractory crucible above a long precision ingot mold, with a restrained molten-gold surface visible through the furnace aperture; steady environmental reflection only. No extraction or earning cue.",
+        "STARTING": "Only after an authoritative accepted start/transition: one short local sealed crucible tilt mechanism readiness cue, then await confirmed running state. If no such contract exists, use static UNKNOWN; button press is not engine acceptance.",
+        "RUNNING": "Only server-confirmed NORMAL: bounded local sealed crucible tilt mechanism motion and A short contained casting channel links the crucible to the mold; actual animated pouring is an optional local server-gated layer. Fixed camera, no money generated by animation.",
+        "REDUCED": "Only confirmed REDUCED: sparse ore sorting conveyor activity with less frequent local flow; do not invent an economic speed ratio. Current boolean gate does not yet distinguish its motion cadence.",
+        "PAUSED": "Static The precision ingot mold at the near end of the casting channel; unmarked industrial metal without coins or payment symbolism; use only an actual authoritative pause condition. No new member pause command and no clock-derived reward.",
+        "STOPPED": "Park sealed crucible tilt mechanism, remove active flow, keep the same master and real stopped status in HTML.",
+        "MAINTENANCE": "Keep A vaulted industrial gold refinery with a refractory furnace, a gravity-fed casting channel and substantial stone service architecture static; quiet service light at ore sorting conveyor only if authorized state exists. Explain maintenance in HTML, not raster pixels.",
+        "PARTIAL_STOP": "Only explicitly identified affected ingot mold cooling assembly may stop independently; without subcomponent state freeze all effects and explain partial stop. Never assume unaffected earnings.",
+        "SETTLEMENT": "One subtle local light sweep toward The precision ingot mold at the near end of the casting channel; unmarked industrial metal without coins or payment symbolism only on actual settlement progress/receipt. No verified-success cue before server confirmation.",
+        "VERIFIED": "One bounded acknowledgement at The precision ingot mold at the near end of the casting channel; unmarked industrial metal without coins or payment symbolism for a new verified receipt; deduplicate by actual receipt/revision identity. Financial verified status is not catalog approval or network finality.",
+        "UNKNOWN": "Static approved master, no machinery/extraction/earning animation. HTML 상태 확인 중 and recovery. Missing, stale, offline or unsupported truth must never look running."
+      },
+      "composition": {
+        "desktop_master_ratio": "16:9",
+        "mobile_master_ratio": "9:16",
+        "mobile_strategy": "MOBILE_MASTER_REQUIRED",
+        "desktop_ui_safe_zones": [
+          {
+            "side": "left",
+            "rect": [
+              0,
+              0.12,
+              0.25,
+              0.7
+            ],
+            "purpose": "Low-detail operational overlay region; hero remains outside it"
+          },
+          {
+            "side": "right",
+            "rect": [
+              0.82,
+              0.12,
+              1,
+              0.7
+            ],
+            "purpose": "Low-detail secondary information region; no essential machinery"
+          },
+          {
+            "side": "top",
+            "rect": [
+              0,
+              0,
+              1,
+              0.18
+            ],
+            "purpose": "Low-contrast product/status heading region"
+          },
+          {
+            "side": "bottom",
+            "rect": [
+              0,
+              0.8,
+              1,
+              1
+            ],
+            "purpose": "Low-detail session amount/receipt region, real HTML only"
+          }
+        ],
+        "mobile_ui_safe_zones": [
+          {
+            "side": "left",
+            "rect": [
+              0,
+              0,
+              0.1,
+              1
+            ],
+            "purpose": "Keep edge structures low contrast; no indispensable machinery here"
+          },
+          {
+            "side": "right",
+            "rect": [
+              0.9,
+              0,
+              1,
+              1
+            ],
+            "purpose": "Keep edge low contrast; portrait machinery remains inside these edges"
+          },
+          {
+            "side": "top",
+            "rect": [
+              0,
+              0,
+              1,
+              0.24
+            ],
+            "purpose": "Quiet status/product heading region; no critical hero detail behind real HTML"
+          },
+          {
+            "side": "bottom",
+            "rect": [
+              0,
+              0.76,
+              1,
+              1
+            ],
+            "purpose": "Quiet session amount/status region; controls/help/navigation remain normal HTML flow outside art"
+          }
+        ],
+        "focal_point": {
+          "desktop": {
+            "x": 0.6,
+            "y": 0.43
+          },
+          "mobile": {
+            "x": 0.53,
+            "y": 0.39
+          }
+        },
+        "extraction_target": {
+          "desktop": {
+            "x": 0.55,
+            "y": 0.68
+          },
+          "mobile": {
+            "x": 0.5,
+            "y": 0.65
+          }
+        },
+        "desktop_notes": "Wide refinery aisle with crucible at 0.60,0.43 and mold at 0.55,0.68; lower-left service wall leaves calm overlay room",
+        "mobile_notes": "Place crucible above the mold in a tall furnace bay; a short visible channel connects them with ore tray tucked mid-left",
+        "crop_constraints": "Wide casting channel and ore stage cannot be lost to a center crop",
+        "acceptance": "SPEC_ONLY_NO_NEW_IMAGE_OR_CROP_PASS"
+      },
+      "runtime_binding": {
+        "identity": "Authoritative selected product_id + catalog_version; code validated against actual product row, never inferred from company name/category/world",
+        "anchor": {
+          "desktop": {
+            "x": 0.6,
+            "y": 0.43
+          },
+          "mobile": {
+            "x": 0.53,
+            "y": 0.39
+          }
+        },
+        "extraction_target": {
+          "desktop": {
+            "x": 0.55,
+            "y": 0.68
+          },
+          "mobile": {
+            "x": 0.5,
+            "y": 0.65
+          }
+        },
+        "coordinate_scope": "PROPOSED_NOT_MEASURED_MASTER_PIXELS",
+        "camera": "FIXED_CAMERA",
+        "motion": "LOCAL_MOTION_ONLY",
+        "timerAdvancesValue": false,
+        "reduced_motion": "Static same approved master, all state/copy/controls preserved",
+        "offscreen": "Pause only decoration; never pause mining engine",
+        "low_power": "Preserve master; remove/simplify local FX under existing runtime budgets"
+      },
+      "generation": {
+        "status": "PREPRODUCTION_CATALOG_GATE_REQUIRED",
+        "prompt_id": "gold-desktop-master-v1",
+        "prompt_ids": [
+          "gold-desktop-master-v1",
+          "gold-mobile-master-v1"
+        ],
+        "desktop_master_required": true,
+        "mobile_master_required": true,
+        "regen_required": false,
+        "reason": "No approved product master; new distinct desktop and portrait masters"
+      },
+      "review": {
+        "visual_status": "SPEC_ONLY",
+        "runtime_mapping_status": "RUNTIME_MAPPING_REQUIRED",
+        "legal_brand_review": "LEGAL_BRAND_REVIEW_REQUIRED",
+        "notes": [
+          "No unapproved logo, wordmark, partnership, sponsorship or endorsement",
+          "No visual acceptance or publication authority inferred from draft manifest",
+          "Existing family/default master remains preserved",
+          "UNKNOWN != PASS; new image and browser acceptance pending"
+        ]
+      }
+    },
+    {
+      "product_id": "30000000-0000-4000-8000-000000000007",
+      "product_code": "XAG",
+      "slug": "silver",
+      "display_name_ko": "실버 테마",
+      "display_name_en": "Silver Theme",
+      "asset_class": "SILVER",
+      "market": "UNKNOWN",
+      "ticker": "XAG",
+      "sector": "UNKNOWN",
+      "catalog_source": {
+        "file": "supabase/migrations/20260926192208_ws02_commands_and_catalog_seed.sql",
+        "symbol_or_record": "proposal code XAG",
+        "line": 1165,
+        "verified": true,
+        "verification_scope": "REPOSITORY_RECORD_NOT_OPERATOR_APPROVAL"
+      },
+      "current_scene_status": "PRODUCT_MASTER_REQUIRED",
+      "current_scene_master": null,
+      "member_visible": false,
+      "live_member_visible": "UNKNOWN",
+      "catalog_status": "DRAFT",
+      "scene_family": "PRECIOUS_SILVER",
+      "scene_family_scope": "PROPOSED_NOT_RUNTIME_BINDING",
+      "current_scene_family": null,
+      "status_tags": [
+        "PRODUCT_MASTER_REQUIRED",
+        "CATALOG_TRUTH_UNRESOLVED",
+        "NOT_MEMBER_VISIBLE",
+        "RUNTIME_MAPPING_REQUIRED",
+        "BRAND_LEGAL_REVIEW_REQUIRED",
+        "MOBILE_VARIANT_REQUIRED"
+      ],
+      "metadata": {
+        "proposed_visual_sector": "Silver purification metaphor",
+        "sector_scope": "CREATIVE_PROPOSAL_NOT_CANONICAL_CATALOG_FIELD",
+        "publishable": false
+      },
+      "product_visual_profile": {
+        "visual_story": "차가운 은 결정이 전해 정제와 정밀 가공을 거쳐 정제 금속으로 이어지는 실버 테마. 골드 장면의 색만 바꾸지 않는다.",
+        "environment": "A cool silver electrorefining laboratory with a long segmented electrolytic bath and a crystal inspection station under sawtooth roof daylight",
+        "hero_object": "A dendritic silver crystal lifted over a rectangular purification bath by a precision gantry",
+        "secondary_objects": [
+          "electrorefining plate arrays",
+          "quartz inspection vessel",
+          "unmarked brushed silver bar cradle"
+        ],
+        "materials": [
+          "dendritic silver",
+          "polished stainless steel",
+          "quartz glass",
+          "pale ceramic bath lining"
+        ],
+        "lighting": "Cold daylight broken across silver facets, violet inspection light and narrow white highlights on brushed metal; no gold furnace glow",
+        "palette": [
+          "silver white",
+          "ice blue",
+          "soft violet",
+          "steel gray"
+        ],
+        "machinery": [
+          "crystal lifting gantry",
+          "electrorefining plate exchanger",
+          "precision polishing head"
+        ],
+        "energy_flow": "Fine local charge traces pass through bath plates into the crystal inspection station, ending at a cooled bar cradle",
+        "extraction_target": "A brushed silver bar cradle below the inspection station, unmarked and industrial rather than monetary",
+        "foreground_plan": "Bath rim and textured plate edges catch narrow silver highlights",
+        "midground_plan": "Gantry-held dendritic crystal contrasts with rectangular purification cells",
+        "background_plan": "Sawtooth windows and repeating laboratory bays provide cool receding depth",
+        "depth_plan": "Foreground: Bath rim and textured plate edges catch narrow silver highlights. Midground: Gantry-held dendritic crystal contrasts with rectangular purification cells. Background: Sawtooth windows and repeating laboratory bays provide cool receding depth. Distinct planes and physical scale, not flat layers or motion parallax."
+      },
+      "runtime_visual_states": {
+        "IDLE": "Dormant A dendritic silver crystal lifted over a rectangular purification bath by a precision gantry; steady environmental reflection only. No extraction or earning cue.",
+        "STARTING": "Only after an authoritative accepted start/transition: one short local crystal lifting gantry readiness cue, then await confirmed running state. If no such contract exists, use static UNKNOWN; button press is not engine acceptance.",
+        "RUNNING": "Only server-confirmed NORMAL: bounded local crystal lifting gantry motion and Fine local charge traces pass through bath plates into the crystal inspection station, ending at a cooled bar cradle. Fixed camera, no money generated by animation.",
+        "REDUCED": "Only confirmed REDUCED: sparse electrorefining plate exchanger activity with less frequent local flow; do not invent an economic speed ratio. Current boolean gate does not yet distinguish its motion cadence.",
+        "PAUSED": "Static A brushed silver bar cradle below the inspection station, unmarked and industrial rather than monetary; use only an actual authoritative pause condition. No new member pause command and no clock-derived reward.",
+        "STOPPED": "Park crystal lifting gantry, remove active flow, keep the same master and real stopped status in HTML.",
+        "MAINTENANCE": "Keep A cool silver electrorefining laboratory with a long segmented electrolytic bath and a crystal inspection station under sawtooth roof daylight static; quiet service light at electrorefining plate exchanger only if authorized state exists. Explain maintenance in HTML, not raster pixels.",
+        "PARTIAL_STOP": "Only explicitly identified affected precision polishing head may stop independently; without subcomponent state freeze all effects and explain partial stop. Never assume unaffected earnings.",
+        "SETTLEMENT": "One subtle local light sweep toward A brushed silver bar cradle below the inspection station, unmarked and industrial rather than monetary only on actual settlement progress/receipt. No verified-success cue before server confirmation.",
+        "VERIFIED": "One bounded acknowledgement at A brushed silver bar cradle below the inspection station, unmarked and industrial rather than monetary for a new verified receipt; deduplicate by actual receipt/revision identity. Financial verified status is not catalog approval or network finality.",
+        "UNKNOWN": "Static approved master, no machinery/extraction/earning animation. HTML 상태 확인 중 and recovery. Missing, stale, offline or unsupported truth must never look running."
+      },
+      "composition": {
+        "desktop_master_ratio": "16:9",
+        "mobile_master_ratio": "9:16",
+        "mobile_strategy": "MOBILE_MASTER_REQUIRED",
+        "desktop_ui_safe_zones": [
+          {
+            "side": "left",
+            "rect": [
+              0,
+              0.12,
+              0.25,
+              0.7
+            ],
+            "purpose": "Low-detail operational overlay region; hero remains outside it"
+          },
+          {
+            "side": "right",
+            "rect": [
+              0.82,
+              0.12,
+              1,
+              0.7
+            ],
+            "purpose": "Low-detail secondary information region; no essential machinery"
+          },
+          {
+            "side": "top",
+            "rect": [
+              0,
+              0,
+              1,
+              0.18
+            ],
+            "purpose": "Low-contrast product/status heading region"
+          },
+          {
+            "side": "bottom",
+            "rect": [
+              0,
+              0.8,
+              1,
+              1
+            ],
+            "purpose": "Low-detail session amount/receipt region, real HTML only"
+          }
+        ],
+        "mobile_ui_safe_zones": [
+          {
+            "side": "left",
+            "rect": [
+              0,
+              0,
+              0.1,
+              1
+            ],
+            "purpose": "Keep edge structures low contrast; no indispensable machinery here"
+          },
+          {
+            "side": "right",
+            "rect": [
+              0.9,
+              0,
+              1,
+              1
+            ],
+            "purpose": "Keep edge low contrast; portrait machinery remains inside these edges"
+          },
+          {
+            "side": "top",
+            "rect": [
+              0,
+              0,
+              1,
+              0.24
+            ],
+            "purpose": "Quiet status/product heading region; no critical hero detail behind real HTML"
+          },
+          {
+            "side": "bottom",
+            "rect": [
+              0,
+              0.76,
+              1,
+              1
+            ],
+            "purpose": "Quiet session amount/status region; controls/help/navigation remain normal HTML flow outside art"
+          }
+        ],
+        "focal_point": {
+          "desktop": {
+            "x": 0.58,
+            "y": 0.42
+          },
+          "mobile": {
+            "x": 0.5,
+            "y": 0.39
+          }
+        },
+        "extraction_target": {
+          "desktop": {
+            "x": 0.55,
+            "y": 0.67
+          },
+          "mobile": {
+            "x": 0.5,
+            "y": 0.65
+          }
+        },
+        "desktop_notes": "Side-oblique view along the bath; crystal at 0.58,0.42 and bar cradle 0.55,0.67; reserve quiet top-left daylight wall",
+        "mobile_notes": "Use a vertically suspended crystal above stacked short purification cells and lower bar cradle; gantry remains readable across the middle width",
+        "crop_constraints": "Horizontal bath and plate geometry need restaging, not hue-swapping the gold refinery",
+        "acceptance": "SPEC_ONLY_NO_NEW_IMAGE_OR_CROP_PASS"
+      },
+      "runtime_binding": {
+        "identity": "Authoritative selected product_id + catalog_version; code validated against actual product row, never inferred from company name/category/world",
+        "anchor": {
+          "desktop": {
+            "x": 0.58,
+            "y": 0.42
+          },
+          "mobile": {
+            "x": 0.5,
+            "y": 0.39
+          }
+        },
+        "extraction_target": {
+          "desktop": {
+            "x": 0.55,
+            "y": 0.67
+          },
+          "mobile": {
+            "x": 0.5,
+            "y": 0.65
+          }
+        },
+        "coordinate_scope": "PROPOSED_NOT_MEASURED_MASTER_PIXELS",
+        "camera": "FIXED_CAMERA",
+        "motion": "LOCAL_MOTION_ONLY",
+        "timerAdvancesValue": false,
+        "reduced_motion": "Static same approved master, all state/copy/controls preserved",
+        "offscreen": "Pause only decoration; never pause mining engine",
+        "low_power": "Preserve master; remove/simplify local FX under existing runtime budgets"
+      },
+      "generation": {
+        "status": "PREPRODUCTION_CATALOG_GATE_REQUIRED",
+        "prompt_id": "silver-desktop-master-v1",
+        "prompt_ids": [
+          "silver-desktop-master-v1",
+          "silver-mobile-master-v1"
+        ],
+        "desktop_master_required": true,
+        "mobile_master_required": true,
+        "regen_required": false,
+        "reason": "No approved product master; new distinct desktop and portrait masters"
+      },
+      "review": {
+        "visual_status": "SPEC_ONLY",
+        "runtime_mapping_status": "RUNTIME_MAPPING_REQUIRED",
+        "legal_brand_review": "LEGAL_BRAND_REVIEW_REQUIRED",
+        "notes": [
+          "No unapproved logo, wordmark, partnership, sponsorship or endorsement",
+          "No visual acceptance or publication authority inferred from draft manifest",
+          "Existing family/default master remains preserved",
+          "UNKNOWN != PASS; new image and browser acceptance pending"
+        ]
+      }
+    },
+    {
+      "product_id": "30000000-0000-4000-8000-000000000008",
+      "product_code": "BTC",
+      "slug": "bitcoin",
+      "display_name_ko": "비트코인 테마",
+      "display_name_en": "Bitcoin Theme",
+      "asset_class": "CRYPTO",
+      "market": "UNKNOWN",
+      "ticker": "BTC",
+      "sector": "UNKNOWN",
+      "catalog_source": {
+        "file": "supabase/migrations/20260926192208_ws02_commands_and_catalog_seed.sql",
+        "symbol_or_record": "proposal code BTC",
+        "line": 1166,
+        "verified": true,
+        "verification_scope": "REPOSITORY_RECORD_NOT_OPERATOR_APPROVAL"
+      },
+      "current_scene_status": "PRODUCT_MASTER_REQUIRED",
+      "current_scene_master": null,
+      "member_visible": false,
+      "live_member_visible": "UNKNOWN",
+      "catalog_status": "DRAFT",
+      "scene_family": "BLOCKCHAIN_HASH",
+      "scene_family_scope": "PROPOSED_NOT_RUNTIME_BINDING",
+      "current_scene_family": null,
+      "status_tags": [
+        "PRODUCT_MASTER_REQUIRED",
+        "CATALOG_TRUTH_UNRESOLVED",
+        "NOT_MEMBER_VISIBLE",
+        "RUNTIME_MAPPING_REQUIRED",
+        "BRAND_LEGAL_REVIEW_REQUIRED",
+        "MOBILE_VARIANT_REQUIRED"
+      ],
+      "metadata": {
+        "proposed_visual_sector": "Hash / block forge metaphor",
+        "sector_scope": "CREATIVE_PROPOSAL_NOT_CANONICAL_CATALOG_FIELD",
+        "publishable": false
+      },
+      "product_visual_profile": {
+        "visual_story": "해시 경로가 무거운 블록 봉인 장치로 모이는 비트코인 테마. 실제 외부 네트워크 채굴이나 토큰 지급을 주장하지 않는 가상 세계.",
+        "environment": "A basalt block-forging hall with substantial parallel hash-channel grooves and a mechanical seal press under a cavernous ribbed roof",
+        "hero_object": "A dark interlocking block assembly seated under a heavy seal press; architectural block, not a coin or logo",
+        "secondary_objects": [
+          "parallel hash channel rails",
+          "physical block carrier trays",
+          "distant sealed node cabinets"
+        ],
+        "materials": [
+          "basalt",
+          "oxidized bronze",
+          "black forged steel",
+          "amber optical inserts"
+        ],
+        "lighting": "Low amber channel light with broad cool roof shafts and a precise bronze rim on the seal press; strong heavy shadows",
+        "palette": [
+          "basalt black",
+          "oxidized bronze",
+          "amber",
+          "slate blue"
+        ],
+        "machinery": [
+          "mechanical block seal press",
+          "block carrier carriage",
+          "hash channel switching gates"
+        ],
+        "energy_flow": "Parallel hash lanes converge at the block press and end at the visible sealed-block receiving tray",
+        "extraction_target": "The physical block receiving tray beneath the press; no token logo, payment stamp or financial implication",
+        "foreground_plan": "Large worn rail surfaces lead toward a heavy near block tray",
+        "midground_plan": "Seal press and interlocking block distinguish the silhouette from generic crypto crystals",
+        "background_plan": "Parallel cabinets and roof ribs retreat through a deep basalt nave",
+        "depth_plan": "Foreground: Large worn rail surfaces lead toward a heavy near block tray. Midground: Seal press and interlocking block distinguish the silhouette from generic crypto crystals. Background: Parallel cabinets and roof ribs retreat through a deep basalt nave. Distinct planes and physical scale, not flat layers or motion parallax."
+      },
+      "runtime_visual_states": {
+        "IDLE": "Dormant A dark interlocking block assembly seated under a heavy seal press; architectural block, not a coin or logo; steady environmental reflection only. No extraction or earning cue.",
+        "STARTING": "Only after an authoritative accepted start/transition: one short local mechanical block seal press readiness cue, then await confirmed running state. If no such contract exists, use static UNKNOWN; button press is not engine acceptance.",
+        "RUNNING": "Only server-confirmed NORMAL: bounded local mechanical block seal press motion and Parallel hash lanes converge at the block press and end at the visible sealed-block receiving tray. Fixed camera, no money generated by animation.",
+        "REDUCED": "Only confirmed REDUCED: sparse block carrier carriage activity with less frequent local flow; do not invent an economic speed ratio. Current boolean gate does not yet distinguish its motion cadence.",
+        "PAUSED": "Static The physical block receiving tray beneath the press; no token logo, payment stamp or financial implication; use only an actual authoritative pause condition. No new member pause command and no clock-derived reward.",
+        "STOPPED": "Park mechanical block seal press, remove active flow, keep the same master and real stopped status in HTML.",
+        "MAINTENANCE": "Keep A basalt block-forging hall with substantial parallel hash-channel grooves and a mechanical seal press under a cavernous ribbed roof static; quiet service light at block carrier carriage only if authorized state exists. Explain maintenance in HTML, not raster pixels.",
+        "PARTIAL_STOP": "Only explicitly identified affected hash channel switching gates may stop independently; without subcomponent state freeze all effects and explain partial stop. Never assume unaffected earnings.",
+        "SETTLEMENT": "One subtle local light sweep toward The physical block receiving tray beneath the press; no token logo, payment stamp or financial implication only on actual settlement progress/receipt. No verified-success cue before server confirmation.",
+        "VERIFIED": "One bounded acknowledgement at The physical block receiving tray beneath the press; no token logo, payment stamp or financial implication for a new verified receipt; deduplicate by actual receipt/revision identity. Financial verified status is not catalog approval or network finality.",
+        "UNKNOWN": "Static approved master, no machinery/extraction/earning animation. HTML 상태 확인 중 and recovery. Missing, stale, offline or unsupported truth must never look running."
+      },
+      "composition": {
+        "desktop_master_ratio": "16:9",
+        "mobile_master_ratio": "9:16",
+        "mobile_strategy": "MOBILE_MASTER_REQUIRED",
+        "desktop_ui_safe_zones": [
+          {
+            "side": "left",
+            "rect": [
+              0,
+              0.12,
+              0.25,
+              0.7
+            ],
+            "purpose": "Low-detail operational overlay region; hero remains outside it"
+          },
+          {
+            "side": "right",
+            "rect": [
+              0.82,
+              0.12,
+              1,
+              0.7
+            ],
+            "purpose": "Low-detail secondary information region; no essential machinery"
+          },
+          {
+            "side": "top",
+            "rect": [
+              0,
+              0,
+              1,
+              0.18
+            ],
+            "purpose": "Low-contrast product/status heading region"
+          },
+          {
+            "side": "bottom",
+            "rect": [
+              0,
+              0.8,
+              1,
+              1
+            ],
+            "purpose": "Low-detail session amount/receipt region, real HTML only"
+          }
+        ],
+        "mobile_ui_safe_zones": [
+          {
+            "side": "left",
+            "rect": [
+              0,
+              0,
+              0.1,
+              1
+            ],
+            "purpose": "Keep edge structures low contrast; no indispensable machinery here"
+          },
+          {
+            "side": "right",
+            "rect": [
+              0.9,
+              0,
+              1,
+              1
+            ],
+            "purpose": "Keep edge low contrast; portrait machinery remains inside these edges"
+          },
+          {
+            "side": "top",
+            "rect": [
+              0,
+              0,
+              1,
+              0.24
+            ],
+            "purpose": "Quiet status/product heading region; no critical hero detail behind real HTML"
+          },
+          {
+            "side": "bottom",
+            "rect": [
+              0,
+              0.76,
+              1,
+              1
+            ],
+            "purpose": "Quiet session amount/status region; controls/help/navigation remain normal HTML flow outside art"
+          }
+        ],
+        "focal_point": {
+          "desktop": {
+            "x": 0.56,
+            "y": 0.44
+          },
+          "mobile": {
+            "x": 0.5,
+            "y": 0.4
+          }
+        },
+        "extraction_target": {
+          "desktop": {
+            "x": 0.56,
+            "y": 0.68
+          },
+          "mobile": {
+            "x": 0.5,
+            "y": 0.65
+          }
+        },
+        "desktop_notes": "Low fixed aisle perspective; block press at 0.56,0.44 and receiving tray 0.56,0.68; sparse upper-left stone wall",
+        "mobile_notes": "Frame the entire tall press above its tray; hash rails enter diagonally within the middle portrait area and roof ribs provide vertical depth",
+        "crop_constraints": "Parallel hash lanes at the landscape edges establish identity and need a new portrait entry direction",
+        "acceptance": "SPEC_ONLY_NO_NEW_IMAGE_OR_CROP_PASS"
+      },
+      "runtime_binding": {
+        "identity": "Authoritative selected product_id + catalog_version; code validated against actual product row, never inferred from company name/category/world",
+        "anchor": {
+          "desktop": {
+            "x": 0.56,
+            "y": 0.44
+          },
+          "mobile": {
+            "x": 0.5,
+            "y": 0.4
+          }
+        },
+        "extraction_target": {
+          "desktop": {
+            "x": 0.56,
+            "y": 0.68
+          },
+          "mobile": {
+            "x": 0.5,
+            "y": 0.65
+          }
+        },
+        "coordinate_scope": "PROPOSED_NOT_MEASURED_MASTER_PIXELS",
+        "camera": "FIXED_CAMERA",
+        "motion": "LOCAL_MOTION_ONLY",
+        "timerAdvancesValue": false,
+        "reduced_motion": "Static same approved master, all state/copy/controls preserved",
+        "offscreen": "Pause only decoration; never pause mining engine",
+        "low_power": "Preserve master; remove/simplify local FX under existing runtime budgets"
+      },
+      "generation": {
+        "status": "PREPRODUCTION_CATALOG_GATE_REQUIRED",
+        "prompt_id": "bitcoin-desktop-master-v1",
+        "prompt_ids": [
+          "bitcoin-desktop-master-v1",
+          "bitcoin-mobile-master-v1"
+        ],
+        "desktop_master_required": true,
+        "mobile_master_required": true,
+        "regen_required": false,
+        "reason": "No approved product master; new distinct desktop and portrait masters"
+      },
+      "review": {
+        "visual_status": "SPEC_ONLY",
+        "runtime_mapping_status": "RUNTIME_MAPPING_REQUIRED",
+        "legal_brand_review": "LEGAL_BRAND_REVIEW_REQUIRED",
+        "notes": [
+          "No unapproved logo, wordmark, partnership, sponsorship or endorsement",
+          "No visual acceptance or publication authority inferred from draft manifest",
+          "Existing family/default master remains preserved",
+          "UNKNOWN != PASS; new image and browser acceptance pending"
+        ]
+      }
+    },
+    {
+      "product_id": "30000000-0000-4000-8000-000000000009",
+      "product_code": "ETH",
+      "slug": "ethereum",
+      "display_name_ko": "이더리움 테마",
+      "display_name_en": "Ethereum Theme",
+      "asset_class": "CRYPTO",
+      "market": "UNKNOWN",
+      "ticker": "ETH",
+      "sector": "UNKNOWN",
+      "catalog_source": {
+        "file": "supabase/migrations/20260926192208_ws02_commands_and_catalog_seed.sql",
+        "symbol_or_record": "proposal code ETH",
+        "line": 1167,
+        "verified": true,
+        "verification_scope": "REPOSITORY_RECORD_NOT_OPERATOR_APPROVAL"
+      },
+      "current_scene_status": "PRODUCT_MASTER_REQUIRED",
+      "current_scene_master": null,
+      "member_visible": false,
+      "live_member_visible": "UNKNOWN",
+      "catalog_status": "DRAFT",
+      "scene_family": "CRYPTO_NETWORK",
+      "scene_family_scope": "PROPOSED_NOT_RUNTIME_BINDING",
+      "current_scene_family": null,
+      "status_tags": [
+        "PRODUCT_MASTER_REQUIRED",
+        "CATALOG_TRUTH_UNRESOLVED",
+        "NOT_MEMBER_VISIBLE",
+        "RUNTIME_MAPPING_REQUIRED",
+        "BRAND_LEGAL_REVIEW_REQUIRED",
+        "MOBILE_VARIANT_REQUIRED"
+      ],
+      "metadata": {
+        "proposed_visual_sector": "Validator / network metaphor",
+        "sector_scope": "CREATIVE_PROPOSAL_NOT_CANONICAL_CATALOG_FIELD",
+        "publishable": false
+      },
+      "product_visual_profile": {
+        "visual_story": "여러 검증 노드가 투명한 연결 구조로 협력하는 이더리움 테마. 비트코인의 봉인 공장과 다른 분산 네트워크 공간.",
+        "environment": "A tall vaulted validator conservatory with separate polygonal node pedestals connected by suspended optical lattice bridges",
+        "hero_object": "A faceted transparent consensus prism surrounded by distinct validator pedestals, not a branded diamond logo",
+        "secondary_objects": [
+          "validator pedestals",
+          "optical lattice bridges",
+          "small translucent routing relays"
+        ],
+        "materials": [
+          "optical quartz",
+          "anodized violet metal",
+          "matte white ceramic",
+          "smoked structural glass"
+        ],
+        "lighting": "Soft violet node interiors, ice-blue lattice reflections and diffuse high clerestory light; balanced luminous transparency",
+        "palette": [
+          "violet",
+          "ice blue",
+          "smoked gray",
+          "ceramic white"
+        ],
+        "machinery": [
+          "validator relay shutters",
+          "optical lattice junctions",
+          "consensus prism support actuator"
+        ],
+        "energy_flow": "Sparse short paths from separate pedestals meet around the prism and terminate in a clear lower consensus receiver",
+        "extraction_target": "A clear consensus receiver directly below the prism; abstract presentation without network finality or financial guarantee",
+        "foreground_plan": "A glass walkway edge exposes the nearest node pedestal below",
+        "midground_plan": "Prism and several independently legible node pedestals form a spatial graph",
+        "background_plan": "Tall lattice arches and distant validators fall into cool atmospheric depth",
+        "depth_plan": "Foreground: A glass walkway edge exposes the nearest node pedestal below. Midground: Prism and several independently legible node pedestals form a spatial graph. Background: Tall lattice arches and distant validators fall into cool atmospheric depth. Distinct planes and physical scale, not flat layers or motion parallax."
+      },
+      "runtime_visual_states": {
+        "IDLE": "Dormant A faceted transparent consensus prism surrounded by distinct validator pedestals, not a branded diamond logo; steady environmental reflection only. No extraction or earning cue.",
+        "STARTING": "Only after an authoritative accepted start/transition: one short local validator relay shutters readiness cue, then await confirmed running state. If no such contract exists, use static UNKNOWN; button press is not engine acceptance.",
+        "RUNNING": "Only server-confirmed NORMAL: bounded local validator relay shutters motion and Sparse short paths from separate pedestals meet around the prism and terminate in a clear lower consensus receiver. Fixed camera, no money generated by animation.",
+        "REDUCED": "Only confirmed REDUCED: sparse optical lattice junctions activity with less frequent local flow; do not invent an economic speed ratio. Current boolean gate does not yet distinguish its motion cadence.",
+        "PAUSED": "Static A clear consensus receiver directly below the prism; abstract presentation without network finality or financial guarantee; use only an actual authoritative pause condition. No new member pause command and no clock-derived reward.",
+        "STOPPED": "Park validator relay shutters, remove active flow, keep the same master and real stopped status in HTML.",
+        "MAINTENANCE": "Keep A tall vaulted validator conservatory with separate polygonal node pedestals connected by suspended optical lattice bridges static; quiet service light at optical lattice junctions only if authorized state exists. Explain maintenance in HTML, not raster pixels.",
+        "PARTIAL_STOP": "Only explicitly identified affected consensus prism support actuator may stop independently; without subcomponent state freeze all effects and explain partial stop. Never assume unaffected earnings.",
+        "SETTLEMENT": "One subtle local light sweep toward A clear consensus receiver directly below the prism; abstract presentation without network finality or financial guarantee only on actual settlement progress/receipt. No verified-success cue before server confirmation.",
+        "VERIFIED": "One bounded acknowledgement at A clear consensus receiver directly below the prism; abstract presentation without network finality or financial guarantee for a new verified receipt; deduplicate by actual receipt/revision identity. Financial verified status is not catalog approval or network finality.",
+        "UNKNOWN": "Static approved master, no machinery/extraction/earning animation. HTML 상태 확인 중 and recovery. Missing, stale, offline or unsupported truth must never look running."
+      },
+      "composition": {
+        "desktop_master_ratio": "16:9",
+        "mobile_master_ratio": "9:16",
+        "mobile_strategy": "MOBILE_MASTER_REQUIRED",
+        "desktop_ui_safe_zones": [
+          {
+            "side": "left",
+            "rect": [
+              0,
+              0.12,
+              0.25,
+              0.7
+            ],
+            "purpose": "Low-detail operational overlay region; hero remains outside it"
+          },
+          {
+            "side": "right",
+            "rect": [
+              0.82,
+              0.12,
+              1,
+              0.7
+            ],
+            "purpose": "Low-detail secondary information region; no essential machinery"
+          },
+          {
+            "side": "top",
+            "rect": [
+              0,
+              0,
+              1,
+              0.18
+            ],
+            "purpose": "Low-contrast product/status heading region"
+          },
+          {
+            "side": "bottom",
+            "rect": [
+              0,
+              0.8,
+              1,
+              1
+            ],
+            "purpose": "Low-detail session amount/receipt region, real HTML only"
+          }
+        ],
+        "mobile_ui_safe_zones": [
+          {
+            "side": "left",
+            "rect": [
+              0,
+              0,
+              0.1,
+              1
+            ],
+            "purpose": "Keep edge structures low contrast; no indispensable machinery here"
+          },
+          {
+            "side": "right",
+            "rect": [
+              0.9,
+              0,
+              1,
+              1
+            ],
+            "purpose": "Keep edge low contrast; portrait machinery remains inside these edges"
+          },
+          {
+            "side": "top",
+            "rect": [
+              0,
+              0,
+              1,
+              0.24
+            ],
+            "purpose": "Quiet status/product heading region; no critical hero detail behind real HTML"
+          },
+          {
+            "side": "bottom",
+            "rect": [
+              0,
+              0.76,
+              1,
+              1
+            ],
+            "purpose": "Quiet session amount/status region; controls/help/navigation remain normal HTML flow outside art"
+          }
+        ],
+        "focal_point": {
+          "desktop": {
+            "x": 0.59,
+            "y": 0.42
+          },
+          "mobile": {
+            "x": 0.5,
+            "y": 0.39
+          }
+        },
+        "extraction_target": {
+          "desktop": {
+            "x": 0.58,
+            "y": 0.66
+          },
+          "mobile": {
+            "x": 0.5,
+            "y": 0.64
+          }
+        },
+        "desktop_notes": "Open asymmetric validator arc with prism at 0.59,0.42 and receiver 0.58,0.66; nodes distributed at different depths, upper-left quiet",
+        "mobile_notes": "Build a vertical validator spiral around the prism with three complete nodes visible in the middle; keep receiver below and arches above",
+        "crop_constraints": "A wide node graph needs a portrait spiral; cutting to the prism alone removes distributed identity",
+        "acceptance": "SPEC_ONLY_NO_NEW_IMAGE_OR_CROP_PASS"
+      },
+      "runtime_binding": {
+        "identity": "Authoritative selected product_id + catalog_version; code validated against actual product row, never inferred from company name/category/world",
+        "anchor": {
+          "desktop": {
+            "x": 0.59,
+            "y": 0.42
+          },
+          "mobile": {
+            "x": 0.5,
+            "y": 0.39
+          }
+        },
+        "extraction_target": {
+          "desktop": {
+            "x": 0.58,
+            "y": 0.66
+          },
+          "mobile": {
+            "x": 0.5,
+            "y": 0.64
+          }
+        },
+        "coordinate_scope": "PROPOSED_NOT_MEASURED_MASTER_PIXELS",
+        "camera": "FIXED_CAMERA",
+        "motion": "LOCAL_MOTION_ONLY",
+        "timerAdvancesValue": false,
+        "reduced_motion": "Static same approved master, all state/copy/controls preserved",
+        "offscreen": "Pause only decoration; never pause mining engine",
+        "low_power": "Preserve master; remove/simplify local FX under existing runtime budgets"
+      },
+      "generation": {
+        "status": "PREPRODUCTION_CATALOG_GATE_REQUIRED",
+        "prompt_id": "ethereum-desktop-master-v1",
+        "prompt_ids": [
+          "ethereum-desktop-master-v1",
+          "ethereum-mobile-master-v1"
+        ],
+        "desktop_master_required": true,
+        "mobile_master_required": true,
+        "regen_required": false,
+        "reason": "No approved product master; new distinct desktop and portrait masters"
+      },
+      "review": {
+        "visual_status": "SPEC_ONLY",
+        "runtime_mapping_status": "RUNTIME_MAPPING_REQUIRED",
+        "legal_brand_review": "LEGAL_BRAND_REVIEW_REQUIRED",
+        "notes": [
+          "No unapproved logo, wordmark, partnership, sponsorship or endorsement",
+          "No visual acceptance or publication authority inferred from draft manifest",
+          "Existing family/default master remains preserved",
+          "UNKNOWN != PASS; new image and browser acceptance pending"
+        ]
+      }
+    },
+    {
+      "product_id": "30000000-0000-4000-8000-000000000010",
+      "product_code": "BNB",
+      "slug": "bnb",
+      "display_name_ko": "BNB 테마",
+      "display_name_en": "BNB Theme",
+      "asset_class": "CRYPTO",
+      "market": "UNKNOWN",
+      "ticker": "BNB",
+      "sector": "UNKNOWN",
+      "catalog_source": {
+        "file": "supabase/migrations/20260926192208_ws02_commands_and_catalog_seed.sql",
+        "symbol_or_record": "proposal code BNB",
+        "line": 1168,
+        "verified": true,
+        "verification_scope": "REPOSITORY_RECORD_NOT_OPERATOR_APPROVAL"
+      },
+      "current_scene_status": "PRODUCT_MASTER_REQUIRED",
+      "current_scene_master": null,
+      "member_visible": false,
+      "live_member_visible": "UNKNOWN",
+      "catalog_status": "DRAFT",
+      "scene_family": "CRYPTO_NETWORK",
+      "scene_family_scope": "PROPOSED_NOT_RUNTIME_BINDING",
+      "current_scene_family": null,
+      "status_tags": [
+        "PRODUCT_MASTER_REQUIRED",
+        "CATALOG_TRUTH_UNRESOLVED",
+        "NOT_MEMBER_VISIBLE",
+        "RUNTIME_MAPPING_REQUIRED",
+        "BRAND_LEGAL_REVIEW_REQUIRED",
+        "MOBILE_VARIANT_REQUIRED"
+      ],
+      "metadata": {
+        "proposed_visual_sector": "Multi-lane network routing metaphor",
+        "sector_scope": "CREATIVE_PROPOSAL_NOT_CANONICAL_CATALOG_FIELD",
+        "publishable": false
+      },
+      "product_visual_profile": {
+        "visual_story": "여러 경로가 규칙적으로 교차하는 BNB 테마의 네트워크 허브. 거래소 제휴·실제 전송·코인 지급을 암시하지 않는다.",
+        "environment": "A stepped ceramic network-routing transit hall with intersecting hexagonal conduit galleries and a central switchyard beneath a geometric skylight",
+        "hero_object": "An unbranded hexagonal routing switchboard built from mechanically interlocking ceramic modules, deliberately unlike Ethereum's transparent prism",
+        "secondary_objects": [
+          "tiered routing channels",
+          "hexagonal service galleries",
+          "individual packet transfer gates"
+        ],
+        "materials": [
+          "saffron ceramic",
+          "matte graphite steel",
+          "clear conduit glass",
+          "brushed nickel junctions"
+        ],
+        "lighting": "Honey-yellow conduit edges against graphite with clean white skylight illumination and cool nickel reflections; restrained color, no exchange branding",
+        "palette": [
+          "saffron",
+          "graphite",
+          "nickel silver",
+          "warm white"
+        ],
+        "machinery": [
+          "multi-lane routing switches",
+          "packet gate actuators",
+          "modular service elevators"
+        ],
+        "energy_flow": "Several orthogonal and diagonal lanes converge through distinct gate modules and terminate at a lower routing collector",
+        "extraction_target": "A ceramic routing collector at the lower switchyard edge; not a token dispenser or currency tray",
+        "foreground_plan": "Two conduit bridges frame the near collector without covering the lower safe area",
+        "midground_plan": "Stepped switchboard geometry exposes multiple discrete path junctions",
+        "background_plan": "Hexagonal galleries and skylight beams reveal successive network tiers",
+        "depth_plan": "Foreground: Two conduit bridges frame the near collector without covering the lower safe area. Midground: Stepped switchboard geometry exposes multiple discrete path junctions. Background: Hexagonal galleries and skylight beams reveal successive network tiers. Distinct planes and physical scale, not flat layers or motion parallax."
+      },
+      "runtime_visual_states": {
+        "IDLE": "Dormant An unbranded hexagonal routing switchboard built from mechanically interlocking ceramic modules, deliberately unlike Ethereum's transparent prism; steady environmental reflection only. No extraction or earning cue.",
+        "STARTING": "Only after an authoritative accepted start/transition: one short local multi-lane routing switches readiness cue, then await confirmed running state. If no such contract exists, use static UNKNOWN; button press is not engine acceptance.",
+        "RUNNING": "Only server-confirmed NORMAL: bounded local multi-lane routing switches motion and Several orthogonal and diagonal lanes converge through distinct gate modules and terminate at a lower routing collector. Fixed camera, no money generated by animation.",
+        "REDUCED": "Only confirmed REDUCED: sparse packet gate actuators activity with less frequent local flow; do not invent an economic speed ratio. Current boolean gate does not yet distinguish its motion cadence.",
+        "PAUSED": "Static A ceramic routing collector at the lower switchyard edge; not a token dispenser or currency tray; use only an actual authoritative pause condition. No new member pause command and no clock-derived reward.",
+        "STOPPED": "Park multi-lane routing switches, remove active flow, keep the same master and real stopped status in HTML.",
+        "MAINTENANCE": "Keep A stepped ceramic network-routing transit hall with intersecting hexagonal conduit galleries and a central switchyard beneath a geometric skylight static; quiet service light at packet gate actuators only if authorized state exists. Explain maintenance in HTML, not raster pixels.",
+        "PARTIAL_STOP": "Only explicitly identified affected modular service elevators may stop independently; without subcomponent state freeze all effects and explain partial stop. Never assume unaffected earnings.",
+        "SETTLEMENT": "One subtle local light sweep toward A ceramic routing collector at the lower switchyard edge; not a token dispenser or currency tray only on actual settlement progress/receipt. No verified-success cue before server confirmation.",
+        "VERIFIED": "One bounded acknowledgement at A ceramic routing collector at the lower switchyard edge; not a token dispenser or currency tray for a new verified receipt; deduplicate by actual receipt/revision identity. Financial verified status is not catalog approval or network finality.",
+        "UNKNOWN": "Static approved master, no machinery/extraction/earning animation. HTML 상태 확인 중 and recovery. Missing, stale, offline or unsupported truth must never look running."
+      },
+      "composition": {
+        "desktop_master_ratio": "16:9",
+        "mobile_master_ratio": "9:16",
+        "mobile_strategy": "MOBILE_MASTER_REQUIRED",
+        "desktop_ui_safe_zones": [
+          {
+            "side": "left",
+            "rect": [
+              0,
+              0.12,
+              0.25,
+              0.7
+            ],
+            "purpose": "Low-detail operational overlay region; hero remains outside it"
+          },
+          {
+            "side": "right",
+            "rect": [
+              0.82,
+              0.12,
+              1,
+              0.7
+            ],
+            "purpose": "Low-detail secondary information region; no essential machinery"
+          },
+          {
+            "side": "top",
+            "rect": [
+              0,
+              0,
+              1,
+              0.18
+            ],
+            "purpose": "Low-contrast product/status heading region"
+          },
+          {
+            "side": "bottom",
+            "rect": [
+              0,
+              0.8,
+              1,
+              1
+            ],
+            "purpose": "Low-detail session amount/receipt region, real HTML only"
+          }
+        ],
+        "mobile_ui_safe_zones": [
+          {
+            "side": "left",
+            "rect": [
+              0,
+              0,
+              0.1,
+              1
+            ],
+            "purpose": "Keep edge structures low contrast; no indispensable machinery here"
+          },
+          {
+            "side": "right",
+            "rect": [
+              0.9,
+              0,
+              1,
+              1
+            ],
+            "purpose": "Keep edge low contrast; portrait machinery remains inside these edges"
+          },
+          {
+            "side": "top",
+            "rect": [
+              0,
+              0,
+              1,
+              0.24
+            ],
+            "purpose": "Quiet status/product heading region; no critical hero detail behind real HTML"
+          },
+          {
+            "side": "bottom",
+            "rect": [
+              0,
+              0.76,
+              1,
+              1
+            ],
+            "purpose": "Quiet session amount/status region; controls/help/navigation remain normal HTML flow outside art"
+          }
+        ],
+        "focal_point": {
+          "desktop": {
+            "x": 0.6,
+            "y": 0.45
+          },
+          "mobile": {
+            "x": 0.5,
+            "y": 0.41
+          }
+        },
+        "extraction_target": {
+          "desktop": {
+            "x": 0.58,
+            "y": 0.68
+          },
+          "mobile": {
+            "x": 0.5,
+            "y": 0.65
+          }
+        },
+        "desktop_notes": "Fixed elevated switchyard perspective; hub 0.60,0.45, collector 0.58,0.68; geometry flows from upper-right to lower-middle, left wall stays calm",
+        "mobile_notes": "Restage the switchyard as three vertical routing tiers; compact hexagonal hub and lower collector stay fully inside the central portrait corridor",
+        "crop_constraints": "Lateral conduit bridges cannot be center-cropped without losing the routing story",
+        "acceptance": "SPEC_ONLY_NO_NEW_IMAGE_OR_CROP_PASS"
+      },
+      "runtime_binding": {
+        "identity": "Authoritative selected product_id + catalog_version; code validated against actual product row, never inferred from company name/category/world",
+        "anchor": {
+          "desktop": {
+            "x": 0.6,
+            "y": 0.45
+          },
+          "mobile": {
+            "x": 0.5,
+            "y": 0.41
+          }
+        },
+        "extraction_target": {
+          "desktop": {
+            "x": 0.58,
+            "y": 0.68
+          },
+          "mobile": {
+            "x": 0.5,
+            "y": 0.65
+          }
+        },
+        "coordinate_scope": "PROPOSED_NOT_MEASURED_MASTER_PIXELS",
+        "camera": "FIXED_CAMERA",
+        "motion": "LOCAL_MOTION_ONLY",
+        "timerAdvancesValue": false,
+        "reduced_motion": "Static same approved master, all state/copy/controls preserved",
+        "offscreen": "Pause only decoration; never pause mining engine",
+        "low_power": "Preserve master; remove/simplify local FX under existing runtime budgets"
+      },
+      "generation": {
+        "status": "PREPRODUCTION_CATALOG_GATE_REQUIRED",
+        "prompt_id": "bnb-desktop-master-v1",
+        "prompt_ids": [
+          "bnb-desktop-master-v1",
+          "bnb-mobile-master-v1"
+        ],
+        "desktop_master_required": true,
+        "mobile_master_required": true,
+        "regen_required": false,
+        "reason": "No approved product master; new distinct desktop and portrait masters"
+      },
+      "review": {
+        "visual_status": "SPEC_ONLY",
+        "runtime_mapping_status": "RUNTIME_MAPPING_REQUIRED",
+        "legal_brand_review": "LEGAL_BRAND_REVIEW_REQUIRED",
+        "notes": [
+          "No unapproved logo, wordmark, partnership, sponsorship or endorsement",
+          "No visual acceptance or publication authority inferred from draft manifest",
+          "Existing family/default master remains preserved",
+          "UNKNOWN != PASS; new image and browser acceptance pending"
+        ]
+      }
+    },
+    {
+      "product_id": "30000000-0000-4000-8000-000000000011",
+      "product_code": "XRP",
+      "slug": "xrp",
+      "display_name_ko": "XRP 테마",
+      "display_name_en": "XRP Theme",
+      "asset_class": "CRYPTO",
+      "market": "UNKNOWN",
+      "ticker": "XRP",
+      "sector": "UNKNOWN",
+      "catalog_source": {
+        "file": "supabase/migrations/20260926192208_ws02_commands_and_catalog_seed.sql",
+        "symbol_or_record": "proposal code XRP",
+        "line": 1169,
+        "verified": true,
+        "verification_scope": "REPOSITORY_RECORD_NOT_OPERATOR_APPROVAL"
+      },
+      "current_scene_status": "PRODUCT_MASTER_REQUIRED",
+      "current_scene_master": null,
+      "member_visible": false,
+      "live_member_visible": "UNKNOWN",
+      "catalog_status": "DRAFT",
+      "scene_family": "CRYPTO_NETWORK",
+      "scene_family_scope": "PROPOSED_NOT_RUNTIME_BINDING",
+      "current_scene_family": null,
+      "status_tags": [
+        "PRODUCT_MASTER_REQUIRED",
+        "CATALOG_TRUTH_UNRESOLVED",
+        "NOT_MEMBER_VISIBLE",
+        "RUNTIME_MAPPING_REQUIRED",
+        "BRAND_LEGAL_REVIEW_REQUIRED",
+        "MOBILE_VARIANT_REQUIRED"
+      ],
+      "metadata": {
+        "proposed_visual_sector": "Relay / interoperability metaphor",
+        "sector_scope": "CREATIVE_PROPOSAL_NOT_CANONICAL_CATALOG_FIELD",
+        "publishable": false
+      },
+      "product_visual_profile": {
+        "visual_story": "두 구역을 연결하는 정밀 릴레이 다리와 경로 확인 장치가 보이는 XRP 테마. 실제 결제·은행 제휴를 의미하지 않는다.",
+        "environment": "A long cool-metal relay terminal with two distinct infrastructure halls joined by a suspended optical transfer bridge across an open central void",
+        "hero_object": "A precision relay bridge with a visible optical handshake coupler at its center, not a crystal, coin or exchange mark",
+        "secondary_objects": [
+          "separate relay terminal chambers",
+          "optical verification shutters",
+          "suspended bridge cable ribs"
+        ],
+        "materials": [
+          "brushed palladium-toned metal",
+          "clear optical glass",
+          "dark blue structural steel",
+          "white ceramic relay housings"
+        ],
+        "lighting": "Silver-white bridge illumination, deep-blue void reflections and a quiet cyan line at the coupler; no gold token atmosphere",
+        "palette": [
+          "palladium silver",
+          "deep blue",
+          "white",
+          "restrained cyan"
+        ],
+        "machinery": [
+          "relay verification shutters",
+          "handshake coupler actuator",
+          "bridge channel selector"
+        ],
+        "energy_flow": "A single clearly traceable relay path crosses between halls through the coupler and descends into the lower verification dock",
+        "extraction_target": "The small verification dock below the bridge coupler; no banking symbols, payment claims or external-network success assertion",
+        "foreground_plan": "Near terminal platform edge and suspended bridge ribs establish a deep void",
+        "midground_plan": "Long bridge and coupler remain the distinctive horizontal hero silhouette",
+        "background_plan": "Far terminal chamber glows through narrow steel portals across the void",
+        "depth_plan": "Foreground: Near terminal platform edge and suspended bridge ribs establish a deep void. Midground: Long bridge and coupler remain the distinctive horizontal hero silhouette. Background: Far terminal chamber glows through narrow steel portals across the void. Distinct planes and physical scale, not flat layers or motion parallax."
+      },
+      "runtime_visual_states": {
+        "IDLE": "Dormant A precision relay bridge with a visible optical handshake coupler at its center, not a crystal, coin or exchange mark; steady environmental reflection only. No extraction or earning cue.",
+        "STARTING": "Only after an authoritative accepted start/transition: one short local relay verification shutters readiness cue, then await confirmed running state. If no such contract exists, use static UNKNOWN; button press is not engine acceptance.",
+        "RUNNING": "Only server-confirmed NORMAL: bounded local relay verification shutters motion and A single clearly traceable relay path crosses between halls through the coupler and descends into the lower verification dock. Fixed camera, no money generated by animation.",
+        "REDUCED": "Only confirmed REDUCED: sparse handshake coupler actuator activity with less frequent local flow; do not invent an economic speed ratio. Current boolean gate does not yet distinguish its motion cadence.",
+        "PAUSED": "Static The small verification dock below the bridge coupler; no banking symbols, payment claims or external-network success assertion; use only an actual authoritative pause condition. No new member pause command and no clock-derived reward.",
+        "STOPPED": "Park relay verification shutters, remove active flow, keep the same master and real stopped status in HTML.",
+        "MAINTENANCE": "Keep A long cool-metal relay terminal with two distinct infrastructure halls joined by a suspended optical transfer bridge across an open central void static; quiet service light at handshake coupler actuator only if authorized state exists. Explain maintenance in HTML, not raster pixels.",
+        "PARTIAL_STOP": "Only explicitly identified affected bridge channel selector may stop independently; without subcomponent state freeze all effects and explain partial stop. Never assume unaffected earnings.",
+        "SETTLEMENT": "One subtle local light sweep toward The small verification dock below the bridge coupler; no banking symbols, payment claims or external-network success assertion only on actual settlement progress/receipt. No verified-success cue before server confirmation.",
+        "VERIFIED": "One bounded acknowledgement at The small verification dock below the bridge coupler; no banking symbols, payment claims or external-network success assertion for a new verified receipt; deduplicate by actual receipt/revision identity. Financial verified status is not catalog approval or network finality.",
+        "UNKNOWN": "Static approved master, no machinery/extraction/earning animation. HTML 상태 확인 중 and recovery. Missing, stale, offline or unsupported truth must never look running."
+      },
+      "composition": {
+        "desktop_master_ratio": "16:9",
+        "mobile_master_ratio": "9:16",
+        "mobile_strategy": "MOBILE_MASTER_REQUIRED",
+        "desktop_ui_safe_zones": [
+          {
+            "side": "left",
+            "rect": [
+              0,
+              0.12,
+              0.25,
+              0.7
+            ],
+            "purpose": "Low-detail operational overlay region; hero remains outside it"
+          },
+          {
+            "side": "right",
+            "rect": [
+              0.82,
+              0.12,
+              1,
+              0.7
+            ],
+            "purpose": "Low-detail secondary information region; no essential machinery"
+          },
+          {
+            "side": "top",
+            "rect": [
+              0,
+              0,
+              1,
+              0.18
+            ],
+            "purpose": "Low-contrast product/status heading region"
+          },
+          {
+            "side": "bottom",
+            "rect": [
+              0,
+              0.8,
+              1,
+              1
+            ],
+            "purpose": "Low-detail session amount/receipt region, real HTML only"
+          }
+        ],
+        "mobile_ui_safe_zones": [
+          {
+            "side": "left",
+            "rect": [
+              0,
+              0,
+              0.1,
+              1
+            ],
+            "purpose": "Keep edge structures low contrast; no indispensable machinery here"
+          },
+          {
+            "side": "right",
+            "rect": [
+              0.9,
+              0,
+              1,
+              1
+            ],
+            "purpose": "Keep edge low contrast; portrait machinery remains inside these edges"
+          },
+          {
+            "side": "top",
+            "rect": [
+              0,
+              0,
+              1,
+              0.24
+            ],
+            "purpose": "Quiet status/product heading region; no critical hero detail behind real HTML"
+          },
+          {
+            "side": "bottom",
+            "rect": [
+              0,
+              0.76,
+              1,
+              1
+            ],
+            "purpose": "Quiet session amount/status region; controls/help/navigation remain normal HTML flow outside art"
+          }
+        ],
+        "focal_point": {
+          "desktop": {
+            "x": 0.61,
+            "y": 0.43
+          },
+          "mobile": {
+            "x": 0.5,
+            "y": 0.4
+          }
+        },
+        "extraction_target": {
+          "desktop": {
+            "x": 0.59,
+            "y": 0.66
+          },
+          "mobile": {
+            "x": 0.5,
+            "y": 0.64
+          }
+        },
+        "desktop_notes": "Oblique long-bridge view; coupler 0.61,0.43 and dock 0.59,0.66; leave upper-left structural wall low detail",
+        "mobile_notes": "Turn the bridge into a diagonal rising relay span connecting two vertically separated halls; keep coupler and verification dock centered without cropping bridge endpoints",
+        "crop_constraints": "Horizontal two-terminal bridge needs a separately staged diagonal portrait master",
+        "acceptance": "SPEC_ONLY_NO_NEW_IMAGE_OR_CROP_PASS"
+      },
+      "runtime_binding": {
+        "identity": "Authoritative selected product_id + catalog_version; code validated against actual product row, never inferred from company name/category/world",
+        "anchor": {
+          "desktop": {
+            "x": 0.61,
+            "y": 0.43
+          },
+          "mobile": {
+            "x": 0.5,
+            "y": 0.4
+          }
+        },
+        "extraction_target": {
+          "desktop": {
+            "x": 0.59,
+            "y": 0.66
+          },
+          "mobile": {
+            "x": 0.5,
+            "y": 0.64
+          }
+        },
+        "coordinate_scope": "PROPOSED_NOT_MEASURED_MASTER_PIXELS",
+        "camera": "FIXED_CAMERA",
+        "motion": "LOCAL_MOTION_ONLY",
+        "timerAdvancesValue": false,
+        "reduced_motion": "Static same approved master, all state/copy/controls preserved",
+        "offscreen": "Pause only decoration; never pause mining engine",
+        "low_power": "Preserve master; remove/simplify local FX under existing runtime budgets"
+      },
+      "generation": {
+        "status": "PREPRODUCTION_CATALOG_GATE_REQUIRED",
+        "prompt_id": "xrp-desktop-master-v1",
+        "prompt_ids": [
+          "xrp-desktop-master-v1",
+          "xrp-mobile-master-v1"
+        ],
+        "desktop_master_required": true,
+        "mobile_master_required": true,
+        "regen_required": false,
+        "reason": "No approved product master; new distinct desktop and portrait masters"
+      },
+      "review": {
+        "visual_status": "SPEC_ONLY",
+        "runtime_mapping_status": "RUNTIME_MAPPING_REQUIRED",
+        "legal_brand_review": "LEGAL_BRAND_REVIEW_REQUIRED",
+        "notes": [
+          "No unapproved logo, wordmark, partnership, sponsorship or endorsement",
+          "No visual acceptance or publication authority inferred from draft manifest",
+          "Existing family/default master remains preserved",
+          "UNKNOWN != PASS; new image and browser acceptance pending"
+        ]
+      }
+    }
+  ]
+}
