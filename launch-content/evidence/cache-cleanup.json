@@ -1,0 +1,14 @@
+[
+  {
+    "path": "/workspace/.putduk-cloud-tools/npm-cache",
+    "removed_file_bytes": 63659044,
+    "kind": "task_created_package_metadata_cache",
+    "source_removed": false
+  },
+  {
+    "path": "/workspace/.putduk-cloud-tools/cache",
+    "removed_file_bytes": 224312871,
+    "kind": "task_created_package_metadata_cache",
+    "source_removed": false
+  }
+]

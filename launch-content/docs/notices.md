@@ -13,7 +13,7 @@
 입출금 신청과 처리 완료는 다릅니다. 금액을 다루는 요청은 최종 내용을 확인한 뒤 진행하세요. 문제가 생기면 같은 요청을 반복하지 말고 고객지원에 알려 주세요.
 
 CTA: 안내 보기 → /home
-대상: MEMBERS. 승인: PENDING. 경제: NONE / NOT_APPLICABLE.
+대상: 회원. 게시·발송: 운영자 승인 필요. 경제: 추가 경제 효과 없음.
 
 ## 퍼뜩은 어떤 서비스인가요?
 
@@ -26,7 +26,7 @@ CTA: 안내 보기 → /home
 실제 적용 조건은 상품·채굴·지갑 화면에서 확인해 주세요.
 
 CTA: 안내 보기 → /about
-대상: MEMBERS. 승인: PENDING. 경제: NONE / NOT_APPLICABLE.
+대상: 회원. 게시·발송: 운영자 승인 필요. 경제: 추가 경제 효과 없음.
 
 ## 회원가입과 로그인 안내
 
@@ -39,7 +39,7 @@ CTA: 안내 보기 → /about
 다른 사람의 계정이나 개인정보로 가입하지 마세요. 비밀번호와 인증 코드는 누구에게도 보내지 않습니다.
 
 CTA: 안내 보기 → /login
-대상: MEMBERS. 승인: PENDING. 경제: NONE / NOT_APPLICABLE.
+대상: 회원. 게시·발송: 운영자 승인 필요. 경제: 추가 경제 효과 없음.
 
 ## 계정 보안과 가짜 안내 주의
 
@@ -52,7 +52,7 @@ CTA: 안내 보기 → /login
 의심스러운 안내는 공식 고객지원에 알려 주세요. 화면을 보낼 때 개인정보를 가려 주세요.
 
 CTA: 안내 보기 → /support
-대상: MEMBERS. 승인: PENDING. 경제: NONE / NOT_APPLICABLE.
+대상: 회원. 게시·발송: 운영자 승인 필요. 경제: 추가 경제 효과 없음.
 
 ## 지갑에서 사용하는 용어 안내
 
@@ -65,7 +65,7 @@ CTA: 안내 보기 → /support
 지갑 합계와 지금 출금할 수 있는 금액은 다를 수 있습니다. 출금 화면의 실제 가능 금액과 조건을 확인하세요.
 
 CTA: 안내 보기 → /wallet
-대상: MEMBERS. 승인: PENDING. 경제: NONE / NOT_APPLICABLE.
+대상: 회원. 게시·발송: 운영자 승인 필요. 경제: 추가 경제 효과 없음.
 
 ## 원금·채굴보상·Bonus는 어떻게 다른가요?
 
@@ -78,7 +78,7 @@ CTA: 안내 보기 → /wallet
 금액이 예상과 다르면 거래 내역을 확인하고 고객지원으로 문의해 주세요.
 
 CTA: 안내 보기 → /wallet
-대상: MEMBERS. 승인: PENDING. 경제: NONE / NOT_APPLICABLE.
+대상: 회원. 게시·발송: 운영자 승인 필요. 경제: 추가 경제 효과 없음.
 
 ## 원화 입금 이용 안내
 
@@ -91,7 +91,7 @@ CTA: 안내 보기 → /wallet
 정보가 다르거나 반영이 늦으면 신청 시각과 확인 가능한 거래 정보를 공식 고객지원으로 알려 주세요. 비밀번호나 인증 코드는 보내지 않습니다.
 
 CTA: 안내 보기 → /wallet/deposit
-대상: MEMBERS. 승인: PENDING. 경제: NONE / NOT_APPLICABLE.
+대상: 회원. 게시·발송: 운영자 승인 필요. 경제: 추가 경제 효과 없음.
 
 ## USDT 입금 이용 안내
 
@@ -104,7 +104,7 @@ USDT 입금은 화면에 안내된 주소와 네트워크로 직접 전송하는
 원화로 반영되는 금액은 실제 처리 결과와 적용 조건을 확인하세요. 임의 환율이나 예상 반영 금액을 확정 금액으로 보지 마세요.
 
 CTA: 안내 보기 → /wallet/deposit
-대상: MEMBERS. 승인: PENDING. 경제: NONE / NOT_APPLICABLE.
+대상: 회원. 게시·발송: 운영자 승인 필요. 경제: 추가 경제 효과 없음.
 
 ## 출금 이용 안내
 
@@ -117,7 +117,7 @@ USDT 출금은 원화 잔액에 대한 출금 방식입니다. 별도의 회원 
 처리 상태는 내역에서 확인하세요. 처리 중 같은 요청을 반복하거나 출금 해제를 위해 외부 송금을 하지 마세요.
 
 CTA: 안내 보기 → /wallet/withdraw
-대상: MEMBERS. 승인: PENDING. 경제: NONE / NOT_APPLICABLE.
+대상: 회원. 게시·발송: 운영자 승인 필요. 경제: 추가 경제 효과 없음.
 
 ## 출금 검토와 보류 안내
 
@@ -130,7 +130,7 @@ CTA: 안내 보기 → /wallet/withdraw
 같은 출금을 다시 신청하지 말고 기존 신청으로 문의해 주세요. 외부 송금으로 보류를 해제할 수 있다는 안내는 따르지 마세요.
 
 CTA: 안내 보기 → /wallet/withdraw
-대상: MEMBERS. 승인: PENDING. 경제: NONE / NOT_APPLICABLE.
+대상: 회원. 게시·발송: 운영자 승인 필요. 경제: 추가 경제 효과 없음.
 
 ## 채굴 주기 안내
 
@@ -143,7 +143,7 @@ CTA: 안내 보기 → /wallet/withdraw
 주기 정보가 보이지 않거나 기록과 다르면 고객지원에 확인을 요청해 주세요.
 
 CTA: 안내 보기 → /mining
-대상: MEMBERS. 승인: PENDING. 경제: NONE / NOT_APPLICABLE.
+대상: 회원. 게시·발송: 운영자 승인 필요. 경제: 추가 경제 효과 없음.
 
 ## 확인 전 금액과 확정 금액 안내
 
@@ -156,7 +156,7 @@ CTA: 안내 보기 → /mining
 반영이 지연되면 공지와 내역을 확인하세요. 확인되지 않은 금액을 더하거나 중복 보상으로 기대하지 마세요.
 
 CTA: 안내 보기 → /mining
-대상: MEMBERS. 승인: PENDING. 경제: NONE / NOT_APPLICABLE.
+대상: 회원. 게시·발송: 운영자 승인 필요. 경제: 추가 경제 효과 없음.
 
 ## 상품과 채굴 조건 안내
 
@@ -169,7 +169,7 @@ CTA: 안내 보기 → /mining
 적용 조건을 확인할 수 없는 상품이나 기능은 이용 전에 고객지원으로 문의해 주세요.
 
 CTA: 안내 보기 → /products
-대상: MEMBERS. 승인: PENDING. 경제: NONE / NOT_APPLICABLE.
+대상: 회원. 게시·발송: 운영자 승인 필요. 경제: 추가 경제 효과 없음.
 
 ## 알림 이용과 수신 설정 안내
 
@@ -182,7 +182,7 @@ CTA: 안내 보기 → /products
 알림이 오지 않으면 앱 안의 알림과 기기의 알림 설정을 확인합니다.
 
 CTA: 안내 보기 → /menu/notifications
-대상: MEMBERS. 승인: PENDING. 경제: NONE / NOT_APPLICABLE.
+대상: 회원. 게시·발송: 운영자 승인 필요. 경제: 추가 경제 효과 없음.
 
 ## 고객지원 이용 안내
 
@@ -195,7 +195,7 @@ CTA: 안내 보기 → /menu/notifications
 상담 연결이 되지 않으면 화면의 도움말을 확인하고 잠시 후 다시 시도해 주세요. 확인되지 않은 상담 시간이나 처리 완료 시각을 약속하지 않습니다.
 
 CTA: 안내 보기 → /support
-대상: MEMBERS. 승인: PENDING. 경제: NONE / NOT_APPLICABLE.
+대상: 회원. 게시·발송: 운영자 승인 필요. 경제: 추가 경제 효과 없음.
 
 ## 정기점검 안내
 
@@ -211,7 +211,7 @@ CTA: 안내 보기 → /support
 시간이나 범위가 바뀌면 공지로 다시 안내하겠습니다.
 
 CTA: 안내 보기 → /status
-대상: MEMBERS. 승인: PENDING. 경제: NONE / NOT_APPLICABLE.
+대상: 회원. 게시·발송: 운영자 승인 필요. 경제: 추가 경제 효과 없음.
 
 확인 후 채울 변수: affected_features, ends_at_kst, starts_at_kst
 
@@ -230,7 +230,7 @@ CTA: 안내 보기 → /status
 영향받는 기능의 요청을 반복하지 마세요. 종료 시각이 확인되면 다시 안내하겠습니다. 금액과 처리 상태는 점검 뒤 실제 내역으로 확인해 주세요.
 
 CTA: 안내 보기 → /status
-대상: MEMBERS. 승인: PENDING. 경제: NONE / NOT_APPLICABLE.
+대상: 회원. 게시·발송: 운영자 승인 필요. 경제: 추가 경제 효과 없음.
 
 확인 후 채울 변수: affected_features, confirmed_facts, next_update_kst, starts_at_kst
 
@@ -248,7 +248,7 @@ CTA: 안내 보기 → /status
 입출금 결과가 보이지 않으면 같은 요청을 반복하지 마세요. 원인과 거래 영향은 확인 중이며, 확인된 내용만 다시 안내하겠습니다.
 
 CTA: 안내 보기 → /status
-대상: MEMBERS. 승인: PENDING. 경제: NONE / NOT_APPLICABLE.
+대상: 회원. 게시·발송: 운영자 승인 필요. 경제: 추가 경제 효과 없음.
 
 확인 후 채울 변수: affected_features, confirmed_facts, next_update_kst, observed_at_kst
 
@@ -265,7 +265,7 @@ CTA: 안내 보기 → /status
 처리 완료 여부는 내 거래 내역에서 확인해 주세요. 전체 거래가 완료되었다는 뜻은 아닙니다. 문제가 계속되면 고객지원으로 알려 주세요.
 
 CTA: 안내 보기 → /status
-대상: MEMBERS. 승인: PENDING. 경제: NONE / NOT_APPLICABLE.
+대상: 회원. 게시·발송: 운영자 승인 필요. 경제: 추가 경제 효과 없음.
 
 확인 후 채울 변수: affected_features, remaining_issues, verified_at_kst, verified_checks
 
@@ -282,7 +282,7 @@ CTA: 안내 보기 → /status
 화면이 이전 상태로 보이면 작성 중인 내용을 확인한 뒤 앱을 다시 열어 주세요. 금액과 거래 기록은 해당 내역에서 확인합니다. 문제가 생기면 고객지원으로 알려 주세요.
 
 CTA: 안내 보기 → /changelog
-대상: MEMBERS. 승인: PENDING. 경제: NONE / NOT_APPLICABLE.
+대상: 회원. 게시·발송: 운영자 승인 필요. 경제: 추가 경제 효과 없음.
 
 확인 후 채울 변수: changes, effective_at_kst, member_actions
 
@@ -302,7 +302,7 @@ CTA: 안내 보기 → /changelog
 적용 전에 내용을 읽어 주세요. 자세한 조건이 이해되지 않으면 고객지원으로 문의할 수 있습니다.
 
 CTA: 안내 보기 → /events
-대상: MEMBERS. 승인: PENDING. 경제: NONE / NOT_APPLICABLE.
+대상: 회원. 게시·발송: 운영자 승인 필요. 경제: 추가 경제 효과 없음.
 
 확인 후 채울 변수: after_policy, before_policy, effective_at_kst, existing_member_impact, member_actions, policy_scope
 
@@ -322,7 +322,7 @@ CTA: 안내 보기 → /events
 관련 문의는 공식 고객지원으로 접수해 주세요. 문의에는 필요한 최소 정보만 포함합니다.
 
 CTA: 안내 보기 → /support
-대상: MEMBERS. 승인: PENDING. 경제: NONE / NOT_APPLICABLE.
+대상: 회원. 게시·발송: 운영자 승인 필요. 경제: 추가 경제 효과 없음.
 
 확인 후 채울 변수: approved_privacy_route, effective_at_kst, privacy_changes, privacy_scope, rights_process
 
@@ -337,7 +337,7 @@ CTA: 안내 보기 → /support
 문제가 계속되면 기기와 브라우저 이름, 발생한 화면을 고객지원으로 알려 주세요.
 
 CTA: 안내 보기 → /support
-대상: MEMBERS. 승인: PENDING. 경제: NONE / NOT_APPLICABLE.
+대상: 회원. 게시·발송: 운영자 승인 필요. 경제: 추가 경제 효과 없음.
 
 ## 현재 이용 제한사항 안내
 
@@ -354,7 +354,7 @@ CTA: 안내 보기 → /support
 확인되지 않은 기능은 정상 이용 가능으로 안내하지 않습니다. 거래 요청을 반복하거나 보안 설정을 약화시키는 방법은 사용하지 마세요.
 
 CTA: 안내 보기 → /status
-대상: MEMBERS. 승인: PENDING. 경제: NONE / NOT_APPLICABLE.
+대상: 회원. 게시·발송: 운영자 승인 필요. 경제: 추가 경제 효과 없음.
 
 확인 후 채울 변수: affected_scope, confirmed_limitations, next_update_kst, safe_workaround, verified_at_kst
 
@@ -369,7 +369,7 @@ START는 실제 지갑과 구분된 체험입니다. 체험 결과가 자동으�
 전환이나 출금 해제를 위한 개인 계좌 송금 요청에는 응하지 마세요.
 
 CTA: 안내 보기 → /start
-대상: MEMBERS. 승인: PENDING. 경제: NONE / NOT_APPLICABLE.
+대상: 회원. 게시·발송: 운영자 승인 필요. 경제: 추가 경제 효과 없음.
 
 ## 이벤트 참여 전 확인사항
 
@@ -382,5 +382,4 @@ CTA: 안내 보기 → /start
 취소나 조건 변경이 생기면 공지로 안내합니다. 확인되지 않은 보상이나 지급 시각은 약속하지 않습니다.
 
 CTA: 안내 보기 → /events
-대상: MEMBERS. 승인: PENDING. 경제: NONE / NOT_APPLICABLE.
-
+대상: 회원. 게시·발송: 운영자 승인 필요. 경제: 추가 경제 효과 없음.

@@ -16,7 +16,8 @@
     "faq",
     "support-macros",
     "notifications",
-    "incident-templates"
+    "incident-templates",
+    "runbook"
   ],
   "minimum_counts": {
     "events": 24,
@@ -24,7 +25,8 @@
     "faq": 64,
     "support-macros": 24,
     "notifications": 30,
-    "incident-templates": 8
+    "incident-templates": 8,
+    "runbook": 1
   },
   "audiences": ["MEMBERS", "PUBLIC", "OPERATORS"],
   "event_segments": [
@@ -70,7 +72,8 @@
     "/about",
     "/faq",
     "/status",
-    "/changelog"
+    "/changelog",
+    "/"
   ],
   "notification_routes": [
     "/home",

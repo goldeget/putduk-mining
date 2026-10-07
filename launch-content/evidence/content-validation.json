@@ -6,7 +6,8 @@
     "notifications": 32,
     "faq": 68,
     "support-macros": 28,
-    "incident-templates": 8
+    "incident-templates": 8,
+    "runbook": 1
   },
   "errors": [],
   "publication_blockers": [
@@ -1129,6 +1130,10 @@
     {
       "code": "VERIFIED_TEMPLATE_VALUES_REQUIRED",
       "slug": "incident-correction"
+    },
+    {
+      "code": "OPERATOR_APPROVAL_REQUIRED",
+      "slug": "runbook-launch-day"
     },
     {
       "code": "APPROVED_CONTENT_COMMAND_REQUIRED",

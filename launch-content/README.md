@@ -12,6 +12,7 @@
 | 고객지원 답변 | 28 | support-macros.json | docs/support-macros.md |
 | Push/In-app 알림 | 32 | notifications.json | docs/notifications.md |
 | 장애 안내 | 8 | incident-templates.json | docs/incident-templates.md |
+| 1인 출시 운영 절차 | 1 | runbook.json | LAUNCH-DAY-RUNBOOK.md |
 
 각 JSON은 record 배열입니다. `slug`는 패키지 전체에서 고유한 내부 키입니다. `storage`는 기존 테이블의 확인된 열에 대응하는 **미완성 초안 매핑**입니다. `metadata`는 현재 DB 계약에 없는 CTA·대상·카드/전체 이벤트 본문·시각·KPI·배너·위험·승인·전달 조건입니다. metadata를 임의 JSON 열이나 `event_rules.rule_payload`에 넣지 않습니다. FAQ/지원/장애 템플릿은 승인된 저장 계약이 없어 `storage`가 비어 있습니다.
 

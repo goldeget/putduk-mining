@@ -1,0 +1,16 @@
+{
+  "status": "saved",
+  "draft_id": "17fa9c03-0577-4c85-a75d-14c5e0448900~cecfgdraft_6ac62508451c819b966e464c7294e823",
+  "requires_publish": true,
+  "changed_fields": ["start_skill"],
+  "role": "SECONDARY RELEASE OPERATIONS / CONTENT LANE",
+  "frozen_admin_sha": "f9b454a7c1b86dde1099b6e5a264092118258ead",
+  "preserved": [
+    "install_script",
+    "repositories",
+    "network_policy",
+    "existing_runtime_requirements"
+  ],
+  "secrets_added": 0,
+  "application_status": "DRAFT_ONLY; Publish required"
+}

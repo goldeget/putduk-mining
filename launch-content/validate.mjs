@@ -27,6 +27,7 @@ const fields = {
   faq: [],
   "support-macros": [],
   "incident-templates": [],
+  runbook: [],
 };
 const placeholderPattern = /\{\{([a-z0-9_]+)\}\}/g;
 const nonempty = (value) =>
@@ -44,7 +45,11 @@ export function loadPackage(root = ownRoot) {
       JSON.parse(fs.readFileSync(path.join(root, `${kind}.json`), "utf8")),
     ]),
   );
-  return { manifest, collections };
+  const runbookSource = fs.readFileSync(
+    path.join(root, "LAUNCH-DAY-RUNBOOK.md"),
+    "utf8",
+  );
+  return { manifest, collections, runbookSource };
 }
 
 // Date.parse alone accepts impossible dates such as February 30; verify the
@@ -195,6 +200,20 @@ export function validatePackage(bundle, { publication = false } = {}) {
         }
       }
       const visibleCopy = `${title ?? ""}\n${body ?? ""}\n${row.summary_ko ?? ""}\n${m.notification_copy ?? ""}`;
+      function inspectEconomicFields(value) {
+        if (!object(value)) return;
+        for (const [key, entry] of Object.entries(value)) {
+          if (
+            /^(?:speed|capacity|amount_atomic|bonus_amount|reward_amount|yield|reward_rate|multiplier)$/i.test(
+              key,
+            ) &&
+            entry !== null
+          )
+            issue("UNAPPROVED_METADATA_ECONOMICS", slug, key);
+          if (object(entry)) inspectEconomicFields(entry);
+        }
+      }
+      inspectEconomicFields(m);
       const economicCopy = visibleCopy.replace(
         /0원(?:으로 (?:판단|생각)하지 마세요|인가요\?)/g,
         "금액 미확인 안내",
@@ -279,6 +298,23 @@ export function validatePackage(bundle, { publication = false } = {}) {
           block("SCHEDULE_REQUIRED", slug);
         else if (Date.parse(row.ends_at) <= Date.parse(row.starts_at))
           issue("INVALID_DATE_ORDER", slug);
+      }
+      if (kind === "runbook") {
+        if (m.audience !== "OPERATORS" || m.route_origin !== "ADMIN_APP_URL")
+          issue("RUNBOOK_OPERATOR_SCOPE_REQUIRED", slug);
+        if (
+          !Array.isArray(item.sections) ||
+          item.sections.length < 9 ||
+          item.sections.some(
+            (section) =>
+              !nonempty(section.title_ko) ||
+              !nonempty(section.body_markdown) ||
+              section.operator_confirmation_required !== true,
+          )
+        )
+          issue("RUNBOOK_STEPS_REQUIRED", slug);
+        if (body !== bundle.runbookSource)
+          issue("RUNBOOK_DOCUMENT_MISMATCH", slug);
       }
       if (kind === "notifications") {
         if (

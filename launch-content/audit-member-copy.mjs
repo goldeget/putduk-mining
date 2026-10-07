@@ -30,7 +30,7 @@ const patterns = terms.map((term) => [
 ]);
 patterns.push([
   "technical error code / raw enum candidate",
-  /["'`]([A-Z][A-Z0-9]*(?:_[A-Z0-9]+)+)["'`]/,
+  /["'`]([A-Z][A-Z0-9_]{1,})["'`]/,
 ]);
 const findings = [];
 const hashes = {};
@@ -131,14 +131,18 @@ for (const file of files) {
   });
 }
 const report = {
-  baseline_sha: execFileSync("git", ["rev-parse", "HEAD"], {
+  baseline_sha: execFileSync("git", ["rev-parse", "origin/develop"], {
+    cwd: root,
+    encoding: "utf8",
+  }).trim(),
+  checkout_sha: execFileSync("git", ["rev-parse", "HEAD"], {
     cwd: root,
     encoding: "utf8",
   }).trim(),
   scan_scope: ["app/**/*.ts(x)", "components/**/*.ts(x)"],
   terms,
   technical_code_search:
-    "quoted uppercase underscore token candidates; not a claim of raw UI leakage",
+    "quoted uppercase enum/error token candidates including single-word states; not a claim of raw UI leakage",
   source_hashes: hashes,
   matched_findings: findings.length,
   rendered_visibility: "NOT_VERIFIED",

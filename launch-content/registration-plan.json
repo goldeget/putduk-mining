@@ -1,0 +1,74 @@
+{
+  "schema_version": "putduk-launch-registration-plan-v1",
+  "baseline_sha": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+  "status": "BLOCKED",
+  "reason": "APPROVED_CONTENT_COMMAND_NOT_FOUND",
+  "production_allowed": false,
+  "target": {
+    "local_project_id": "putduk-mining",
+    "staging_target": null,
+    "production_target": null
+  },
+  "command": {
+    "name": null,
+    "authority": "Primary must map approved existing domain boundaries; no alternate RPC, direct SQL or service-role importer"
+  },
+  "created_ids": [],
+  "actual_registration_executed": false,
+  "dry_run_status": "UNRUN",
+  "readback_status": "UNRUN",
+  "member_render_status": "UNRUN",
+  "rollback_status": "UNRUN",
+  "stages": [
+    {
+      "slug": "review",
+      "required": [
+        "exact source SHA",
+        "operator-reviewed Korean copy",
+        "actual audience and schedule",
+        "approved economic policy where needed",
+        "verified template variables"
+      ]
+    },
+    {
+      "slug": "preview",
+      "required": [
+        "approved command",
+        "exact impact preview",
+        "current role/session/origin",
+        "idempotency",
+        "explicit human confirmation"
+      ]
+    },
+    {
+      "slug": "local-draft",
+      "required": [
+        "isolated local DB",
+        "actual draft receipt",
+        "created ID/revision",
+        "audit"
+      ]
+    },
+    {
+      "slug": "readback-render",
+      "required": [
+        "authorized readback",
+        "full body and CTA rendering",
+        "audience isolation",
+        "unpublished content hidden",
+        "retry and revocation checks"
+      ]
+    },
+    {
+      "slug": "rollback",
+      "required": [
+        "approved cancel/archive command",
+        "actual visibility and scheduling stopped",
+        "audit receipt",
+        "financial/participant/delivery history retained"
+      ]
+    }
+  ],
+  "unsupported_metadata_must_be_reported": true,
+  "test_fixture_sql_is_a_publisher": false
+}

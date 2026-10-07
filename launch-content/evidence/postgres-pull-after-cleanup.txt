@@ -1,0 +1,71 @@
+17.6.1.158: Pulling from supabase/postgres
+e6f31ffc071e: Already exists
+498a244f555d: Pulling fs layer
+32bfe7c0a4b9: Pulling fs layer
+9860e44d4d32: Pulling fs layer
+d7c1cc03085c: Pulling fs layer
+ee02ba04abbd: Pulling fs layer
+3deef7e0de88: Pulling fs layer
+1e40da44e651: Pulling fs layer
+2bf03da13843: Pulling fs layer
+ccb85ff59ca5: Pulling fs layer
+d633f688a3e1: Pulling fs layer
+abbb747de905: Pulling fs layer
+e7f95a1d37af: Pulling fs layer
+a937b4dfea5a: Pulling fs layer
+acf41e7ea660: Pulling fs layer
+4599ada4ddc4: Pulling fs layer
+601f053bc1c6: Pulling fs layer
+451bf6d723e8: Pulling fs layer
+cfecf399afb7: Pulling fs layer
+0bd13f8e9af4: Pulling fs layer
+75ff486b78a4: Pulling fs layer
+9c430d2079cb: Pulling fs layer
+748920062a2f: Pulling fs layer
+60382f14d112: Pulling fs layer
+36b2dd684648: Pulling fs layer
+f2aa8cac0b87: Pulling fs layer
+e7aa91c1252d: Pulling fs layer
+415aa48180ae: Pulling fs layer
+83e91386ffc4: Pulling fs layer
+ee02ba04abbd: Waiting
+3deef7e0de88: Waiting
+1e40da44e651: Waiting
+2bf03da13843: Waiting
+ccb85ff59ca5: Waiting
+d633f688a3e1: Waiting
+abbb747de905: Waiting
+e7f95a1d37af: Waiting
+a937b4dfea5a: Waiting
+acf41e7ea660: Waiting
+4599ada4ddc4: Waiting
+601f053bc1c6: Waiting
+d7c1cc03085c: Waiting
+f2aa8cac0b87: Waiting
+e7aa91c1252d: Waiting
+415aa48180ae: Waiting
+83e91386ffc4: Waiting
+cfecf399afb7: Waiting
+0bd13f8e9af4: Waiting
+75ff486b78a4: Waiting
+9c430d2079cb: Waiting
+60382f14d112: Waiting
+36b2dd684648: Waiting
+748920062a2f: Waiting
+9860e44d4d32: Retrying in 5 seconds
+32bfe7c0a4b9: Retrying in 5 seconds
+498a244f555d: Retrying in 5 seconds
+9860e44d4d32: Retrying in 4 seconds
+32bfe7c0a4b9: Retrying in 4 seconds
+498a244f555d: Retrying in 4 seconds
+9860e44d4d32: Retrying in 3 seconds
+32bfe7c0a4b9: Retrying in 3 seconds
+498a244f555d: Retrying in 3 seconds
+9860e44d4d32: Retrying in 2 seconds
+32bfe7c0a4b9: Retrying in 2 seconds
+498a244f555d: Retrying in 2 seconds
+9860e44d4d32: Retrying in 1 second
+32bfe7c0a4b9: Retrying in 1 second
+498a244f555d: Retrying in 1 second
+451bf6d723e8: Waiting
+error pulling image configuration: download failed after attempts=6: Forbidden

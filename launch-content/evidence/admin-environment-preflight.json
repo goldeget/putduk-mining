@@ -1,0 +1,88 @@
+{
+  "observed_at_utc": "2026-10-07T11:00:34.717Z",
+  "observed_at_kst": "2026-10-07 20:00:34",
+  "checks": {
+    "frozen_admin_ref": {
+      "status": "PASS",
+      "sha": "f9b454a7c1b86dde1099b6e5a264092118258ead"
+    },
+    "checked_out_sha": "822eb61758a0a7535f6a124bc825d3e03704ae8a",
+    "node": {
+      "status": "PASS",
+      "version": "v24.21.0"
+    },
+    "pnpm": {
+      "version": "12.6.0",
+      "status": "PASS"
+    },
+    "supabase_cli": {
+      "version": "2.113.0",
+      "status": "PASS"
+    },
+    "docker": {
+      "driver": "vfs"
+    },
+    "bundled_chromium": {
+      "status": "BLOCKED",
+      "reason": "PINNED_BROWSER_UNAVAILABLE; official download returned cdn.playwright.dev 403"
+    },
+    "system_chromium": {
+      "status": "PASS",
+      "version": "151.0.7922.173",
+      "authenticated_e2e": "NOT_EXECUTED"
+    },
+    "local_supabase": {
+      "status": "BLOCKED",
+      "reason": "LOCAL_STACK_NOT_READY; startup/image pull failed; no credentials invented or recorded"
+    }
+  },
+  "admin_e2e": {
+    "status": "BLOCKED",
+    "target_sha": "f9b454a7c1b86dde1099b6e5a264092118258ead",
+    "specs": [
+      {
+        "name": "admin-today",
+        "status": "BLOCKED",
+        "executed": false
+      },
+      {
+        "name": "admin-members-product",
+        "status": "BLOCKED",
+        "executed": false
+      },
+      {
+        "name": "admin-exceptions-product",
+        "status": "BLOCKED",
+        "executed": false
+      },
+      {
+        "name": "admin-assistant-read-draft",
+        "status": "BLOCKED",
+        "executed": false
+      },
+      {
+        "name": "admin-session-totp",
+        "status": "BLOCKED",
+        "executed": false
+      },
+      {
+        "name": "deposit-product",
+        "status": "BLOCKED",
+        "executed": false
+      },
+      {
+        "name": "admin-krw-browser-money",
+        "status": "BLOCKED",
+        "executed": false
+      },
+      {
+        "name": "admin-usdt-browser-money",
+        "status": "BLOCKED",
+        "executed": false
+      }
+    ],
+    "reason": "Actual local DB/auth and pinned browser prerequisites are unresolved. This probe does not execute tests."
+  },
+  "production_mutation": false,
+  "source_modified": false
+}

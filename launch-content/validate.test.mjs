@@ -135,3 +135,17 @@ test("publication state and missing FAQ categories fail closed", () => {
     );
   });
 });
+test("runbook stays complete, operator-scoped and identical to its full document", () => {
+  rejects("RUNBOOK_DOCUMENT_MISMATCH", (b) => {
+    b.collections.runbook[0].body_ko += "다른 안내";
+  });
+  rejects("RUNBOOK_STEPS_REQUIRED", (b) => {
+    b.collections.runbook[0].sections[0].operator_confirmation_required = false;
+  });
+  rejects("RUNBOOK_OPERATOR_SCOPE_REQUIRED", (b) => {
+    b.collections.runbook[0].metadata.audience = "MEMBERS";
+  });
+  rejects("UNAPPROVED_METADATA_ECONOMICS", (b) => {
+    event(b).metadata.speed = 7;
+  });
+});

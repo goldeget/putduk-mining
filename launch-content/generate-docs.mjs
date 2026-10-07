@@ -10,6 +10,18 @@ if (validation.status !== "PASS_DRAFT_ONLY")
   throw new Error(JSON.stringify(validation.errors));
 const directory = path.join(root, "docs");
 fs.mkdirSync(directory, { recursive: true });
+const audienceLabels = {
+  MEMBERS: "회원",
+  PUBLIC: "방문자와 회원",
+  OPERATORS: "운영자",
+};
+const segmentLabels = {
+  ALL_MEMBERS: "모든 회원",
+  NEW_MEMBERS: "처음 이용하는 회원",
+  MINING_MEMBERS: "채굴 상태를 확인하는 회원",
+  DEPOSIT_MEMBERS: "입금을 준비하거나 확인하는 회원",
+  WITHDRAWAL_MEMBERS: "출금을 준비하거나 확인하는 회원",
+};
 const names = {
   events: "출시 이벤트",
   notices: "출시 공지",
@@ -17,6 +29,7 @@ const names = {
   "support-macros": "고객지원 답변",
   notifications: "Push·앱 안 알림",
   "incident-templates": "장애 안내",
+  runbook: "출시일 1인 운영 절차",
 };
 for (const [kind, items] of Object.entries(bundle.collections)) {
   const lines = [
@@ -41,7 +54,7 @@ for (const [kind, items] of Object.entries(bundle.collections)) {
       body,
       "",
       `CTA: ${m.cta.label} → ${m.cta.route}`,
-      `대상: ${m.audience}${m.segment ? ` / ${m.segment}` : ""}. 승인: ${m.approval.status}. 경제: ${m.economy.impact} / ${m.economy.policy_status}.`,
+      `대상: ${audienceLabels[m.audience]}${m.segment ? ` / ${segmentLabels[m.segment]}` : ""}. 게시·발송: 운영자 승인 필요. 경제: ${m.economy.impact === "NONE" ? "추가 경제 효과 없음" : "정책 값·버전 승인 필요 (POLICY_VALUE_REQUIRED)"}.`,
       "",
     );
     if (kind === "events")
@@ -72,6 +85,11 @@ for (const [kind, items] of Object.entries(bundle.collections)) {
         "",
       );
   }
-  fs.writeFileSync(path.join(directory, `${kind}.md`), `${lines.join("\n")}\n`);
+  fs.writeFileSync(
+    path.join(directory, `${kind}.md`),
+    `${lines.join("\n").trimEnd()}\n`,
+  );
 }
-console.log("Generated six complete operator content documents.");
+console.log(
+  `Generated ${Object.keys(bundle.collections).length} complete operator content documents.`,
+);
