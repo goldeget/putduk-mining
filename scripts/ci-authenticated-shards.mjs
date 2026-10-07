@@ -34,9 +34,9 @@ const TIMING_HINTS = {
   "catalog-allocation.spec.ts": 155,
   "ai-context-help.spec.ts": 30,
   "mockup-reference-coverage.spec.ts": 85,
-  // All four current cases passed in 416.992s on the 2026-10-07 Cloud
-  // Chromium run at 7b34cd3; rounded file elapsed time, mobile estimate only.
-  "principal-withdrawal-product.spec.ts": 420,
+  // All four freshness-fix cases passed in 441.622s on the 2026-10-07
+  // Cloud Chromium run, source-bound to 3d2b039; mobile estimate only.
+  "principal-withdrawal-product.spec.ts": 450,
   // Conservative hint from the existing authenticated config's recovery note.
   "withdrawal-p1-recovery.spec.ts": 480,
 };
