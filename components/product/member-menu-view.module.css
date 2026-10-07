@@ -297,6 +297,7 @@
   align-content: start;
 }
 .panel {
+  container: menu-options / inline-size;
   padding: 0 0.95rem;
 }
 .list {
@@ -613,8 +614,32 @@
   .row strong {
     font-size: 0.92rem;
   }
+  @container menu-options (max-width: 22rem) {
+    .row {
+      grid-template-columns: 34px minmax(0, 1fr) 18px;
+      grid-template-areas:
+        "icon label arrow"
+        "icon description arrow";
+      row-gap: 0.25rem;
+      padding-block: 0.65rem;
+    }
+    .row > .icon {
+      grid-area: icon;
+    }
+    .row strong {
+      grid-area: label;
+    }
+    .row small {
+      grid-area: description;
+      max-width: 32ch;
+    }
+    .row > .chevron {
+      grid-area: arrow;
+    }
+  }
   .story {
     display: flex;
+    flex-wrap: wrap;
     min-height: 105px;
     align-items: center;
     justify-content: space-between;
@@ -631,6 +656,7 @@
       url("/brand/scenes/semiconductor-wafer-light-desktop/semiconductor-wafer-light-desktop-960-v1.webp");
   }
   .story p {
+    flex: 1 1 12rem;
     margin: 0;
     font-size: 1rem;
     line-height: 1.45;

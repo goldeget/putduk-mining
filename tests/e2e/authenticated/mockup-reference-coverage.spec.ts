@@ -900,6 +900,22 @@ async function captureRoutes(
               name: "더보기 메뉴",
               exact: true,
             });
+            if (width >= 980) {
+              const descriptions = await paintedTextLineCounts(
+                navigation,
+                "a > small",
+              );
+              expect(descriptions.length).toBeGreaterThan(0);
+              for (const lines of descriptions) {
+                expect(lines).toBeGreaterThan(0);
+                expect(lines).toBeLessThanOrEqual(3);
+              }
+              const story = ready.getByText(/더 큰 가능성을 향해/);
+              const storyLines = await paintedTextLineCounts(story, ":scope");
+              expect(storyLines).toHaveLength(1);
+              expect(storyLines[0]).toBeGreaterThan(0);
+              expect(storyLines[0]).toBeLessThanOrEqual(3);
+            }
             for (const href of [
               "/menu/account",
               "/notifications",

@@ -1025,6 +1025,20 @@
     flex-direction: column;
   }
 }
+@container ai-page (max-width: 56rem) {
+  .chat.surfacePage {
+    display: flex;
+    align-items: stretch;
+  }
+  .surfacePage .workspace {
+    display: flex;
+    flex-direction: column;
+  }
+  .surfacePage .contextRail {
+    width: auto;
+    align-self: stretch;
+  }
+}
 @media (max-width: 359px) {
   .pagePrompts button {
     padding: 0.75rem;
