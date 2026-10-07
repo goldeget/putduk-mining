@@ -42,9 +42,14 @@ function dialog() {
   return host.querySelector<HTMLDialogElement>("[data-ai-dialog]")!;
 }
 
-async function render(pathname = navigation.pathname) {
+async function render(
+  pathname = navigation.pathname,
+  presentation: "dock" | "inline" = "dock",
+) {
   navigation.pathname = pathname;
-  await act(async () => root.render(createElement(PutdukAiDock)));
+  await act(async () =>
+    root.render(createElement(PutdukAiDock, { presentation })),
+  );
 }
 
 async function open() {
@@ -197,59 +202,70 @@ describe("AI dock route and modal lifecycle", () => {
     expect(document.activeElement).toBe(current.querySelector("summary"));
   });
 
-  it("opens one panel, locks the real main scroller, then restores styles and focus", async () => {
-    document.documentElement.style.setProperty("overflow", "clip");
-    await render();
-    const opener = launcher();
-    await open();
-    await open();
-    expect(dialog().open).toBe(true);
-    expect(opener.getAttribute("aria-expanded")).toBe("true");
-    expect(host.querySelectorAll("textarea")).toHaveLength(1);
-    expect(main.style.overflow).toBe("hidden");
-    expect(document.body.style.overflow).toBe("hidden");
-    expect(dialog().style.getPropertyValue("--ai-viewport-height")).toBe(
-      "640px",
-    );
-    expect(dialog().style.getPropertyValue("--ai-viewport-top")).toBe("16px");
-    await act(async () =>
-      host.querySelector<HTMLButtonElement>('[aria-label="닫기"]')!.click(),
-    );
-    expect(dialog().open).toBe(false);
-    expect(host.querySelector("textarea")).toBeNull();
-    expect(opener.getAttribute("aria-expanded")).toBe("false");
-    expect(document.activeElement).toBe(opener);
-    expect(main.style.overflow).toBe("auto");
-    expect(main.style.getPropertyPriority("overflow")).toBe("important");
-    expect(main.style.getPropertyValue("overscroll-behavior")).toBe("contain");
-    expect(document.body.style.overflow).toBe("");
-    expect(document.documentElement.style.overflow).toBe("clip");
-    document.documentElement.style.removeProperty("overflow");
-  });
+  it.each(["dock", "inline"] as const)(
+    "%s opens one panel, locks the real main scroller, then restores styles and focus",
+    async (presentation) => {
+      document.documentElement.style.setProperty("overflow", "clip");
+      await render("/home", presentation);
+      const opener = launcher();
+      await open();
+      await open();
+      expect(dialog().open).toBe(true);
+      expect(opener.getAttribute("aria-expanded")).toBe("true");
+      expect(host.querySelectorAll("textarea")).toHaveLength(1);
+      expect(main.style.overflow).toBe("hidden");
+      expect(document.body.style.overflow).toBe("hidden");
+      expect(dialog().style.getPropertyValue("--ai-viewport-height")).toBe(
+        "640px",
+      );
+      expect(dialog().style.getPropertyValue("--ai-viewport-top")).toBe("16px");
+      await act(async () =>
+        host.querySelector<HTMLButtonElement>('[aria-label="닫기"]')!.click(),
+      );
+      expect(dialog().open).toBe(false);
+      expect(host.querySelector("textarea")).toBeNull();
+      expect(opener.getAttribute("aria-expanded")).toBe("false");
+      expect(document.activeElement).toBe(opener);
+      expect(main.style.overflow).toBe("auto");
+      expect(main.style.getPropertyPriority("overflow")).toBe("important");
+      expect(main.style.getPropertyValue("overscroll-behavior")).toBe(
+        "contain",
+      );
+      expect(document.body.style.overflow).toBe("");
+      expect(document.documentElement.style.overflow).toBe("clip");
+      document.documentElement.style.removeProperty("overflow");
+    },
+  );
 
-  it("handles Escape without allowing the browser close event to steal focus", async () => {
-    await render();
-    await open();
-    const cancel = new Event("cancel", { cancelable: true });
-    await act(async () => dialog().dispatchEvent(cancel));
-    expect(cancel.defaultPrevented).toBe(true);
-    expect(dialog().open).toBe(false);
-    expect(document.activeElement).toBe(launcher());
-    expect(main.style.overflow).toBe("auto");
-  });
+  it.each(["dock", "inline"] as const)(
+    "%s handles Escape without allowing the browser close event to steal focus",
+    async (presentation) => {
+      await render("/home", presentation);
+      await open();
+      const cancel = new Event("cancel", { cancelable: true });
+      await act(async () => dialog().dispatchEvent(cancel));
+      expect(cancel.defaultPrevented).toBe(true);
+      expect(dialog().open).toBe(false);
+      expect(document.activeElement).toBe(launcher());
+      expect(main.style.overflow).toBe("auto");
+    },
+  );
 
-  it("blocks AI opening while a visible money confirmation owns the modal", async () => {
-    await render();
-    const money = visibleModal();
-    await open();
-    expect(dialog().open).toBe(false);
-    expect(money.open).toBe(true);
-    expect(host.querySelector('[role="status"]')?.textContent).toContain(
-      "다른 확인 창을 닫은 뒤",
-    );
-    expect(main.style.overflow).toBe("auto");
-    expect(host.querySelector("textarea")).toBeNull();
-  });
+  it.each(["dock", "inline"] as const)(
+    "%s blocks AI opening while a visible money confirmation owns the modal",
+    async (presentation) => {
+      await render("/home", presentation);
+      const money = visibleModal();
+      await open();
+      expect(dialog().open).toBe(false);
+      expect(money.open).toBe(true);
+      expect(host.querySelector('[role="status"]')?.textContent).toContain(
+        "다른 확인 창을 닫은 뒤",
+      );
+      expect(main.style.overflow).toBe("auto");
+      expect(host.querySelector("textarea")).toBeNull();
+    },
+  );
 
   it("ignores a hidden modal but notices when it becomes visible", async () => {
     await render();

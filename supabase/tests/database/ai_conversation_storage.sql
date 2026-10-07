@@ -107,11 +107,15 @@ select ok(
         'app_private.begin_funding_credit_boundary(uuid,text)'::regprocedure,
         'app_private.finish_funding_credit_boundary(uuid)'::regprocedure,
         'app_private.carry_forward_funding_capacity(uuid,uuid,uuid)'::regprocedure,
-        'app_private.verify_credit_boundary_commit()'::regprocedure
+        'app_private.verify_credit_boundary_commit()'::regprocedure,
+        'app_private.capture_funding_global_control_original()'::regprocedure,
+        'app_private.verify_funding_global_control_commit()'::regprocedure,
+        'app_private.capture_funding_withdrawal_clock_admission(uuid,text,uuid)'::regprocedure,
+        'app_private.verify_funding_withdrawal_clock_commit()'::regprocedure
       )
   )
     and (
-      select count(*) = 19
+      select count(*) = 23
         and coalesce(
           bool_and(
             procedure.proconfig @> array['search_path=pg_catalog']::text[]

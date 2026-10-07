@@ -114,6 +114,68 @@ test.describe("admin Member 360 product states", () => {
     await expect(menu).toBeHidden();
     await expect(navigation).toBeVisible();
 
+    // A cropped rail screenshot cannot prove that the lower destinations are
+    // covered. Verify keyboard scrolling and hit testing in the actual shell.
+    await page.setViewportSize({ width: 1440, height: 900 });
+    for (const theme of ["dark", "light"]) {
+      await page.getByLabel("화면 테마").selectOption(theme);
+      await page.evaluate(() => {
+        document.documentElement.style.fontSize = "200%";
+      });
+      try {
+        const destinations = await navigation.getByRole("link").all();
+        await destinations[0]!.focus();
+        for (const destination of destinations) {
+          await expect(destination).toBeFocused();
+          await expect(destination).toBeInViewport();
+          const linkBox = await destination.boundingBox();
+          const navBox = await navigation.boundingBox();
+          const cardBox = await page.locator(".operator-card").boundingBox();
+          expect(linkBox!.y).toBeGreaterThanOrEqual(navBox!.y - 1);
+          expect(linkBox!.y + linkBox!.height).toBeLessThanOrEqual(
+            navBox!.y + navBox!.height + 1,
+          );
+          expect(linkBox!.y + linkBox!.height).toBeLessThanOrEqual(cardBox!.y);
+          expect(
+            await destination.evaluate((link) => {
+              const bounds = link.getBoundingClientRect();
+              return [...link.querySelectorAll("span")].every((copy) => {
+                const range = document.createRange();
+                range.selectNodeContents(copy);
+                return [...range.getClientRects()].every(
+                  (fragment) =>
+                    fragment.left >= bounds.left - 1 &&
+                    fragment.right <= bounds.right + 1 &&
+                    fragment.top >= bounds.top - 1 &&
+                    fragment.bottom <= bounds.bottom + 1,
+                );
+              });
+            }),
+          ).toBe(true);
+          expect(
+            await destination.evaluate((link) => {
+              const box = link.getBoundingClientRect();
+              return link.contains(
+                document.elementFromPoint(
+                  box.x + box.width / 2,
+                  box.y + box.height / 2,
+                ),
+              );
+            }),
+          ).toBe(true);
+          await destination.press("Tab");
+        }
+        await expect(logout).toBeFocused();
+        await page.screenshot({
+          path: testInfo.outputPath(`admin-menu-1440-${theme}-text-200.png`),
+        });
+      } finally {
+        await page.evaluate(() => {
+          document.documentElement.style.fontSize = "";
+        });
+      }
+    }
+
     await page.setViewportSize({ width: 390, height: 900 });
     await page.evaluate(() => {
       document.documentElement.style.zoom = "2";

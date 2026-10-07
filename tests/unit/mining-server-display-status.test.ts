@@ -111,8 +111,8 @@ describe("server-proven funded runtime status", () => {
     ["missing status", { ...active, status: undefined }],
     ["missing speed proof", { ...active, speed: undefined }],
     [
-      "unproven control status",
-      { ...active, status: "STOPPED", stop_reason: "SAFE_MODE" },
+      "unsupported account control status",
+      { ...active, status: "STOPPED", stop_reason: "ACCOUNT_PAUSE" },
     ],
     ["running with a stop reason", { ...active, stop_reason: "CAPACITY_USED" }],
     ["stopped without a reason", { ...active, status: "STOPPED" }],
@@ -186,6 +186,107 @@ describe("server-proven funded runtime status", () => {
     (_label, value) => {
       expect(() => fundedRuntimeDisplaySchema.safeParse(value)).not.toThrow();
       expect(read(value)).toBeNull();
+    },
+  );
+});
+
+describe("strict server-owned GLOBAL permission stop", () => {
+  const paused = { ...active, status: "STOPPED", stop_reason: "SAFE_MODE" };
+
+  it("accepts a versioned permission stop without changing configured speed, money or carry", () => {
+    const parsed = read(paused)?.funded_runtime;
+    expect(parsed).toEqual(paused);
+    expect(resolveFundedRuntimeStatus(parsed)).toBe("STOPPED");
+    expect(parsed?.reward_carry).toEqual(historical.reward_carry);
+    expect(parsed?.conditional_maintenance).toEqual(
+      historical.conditional_maintenance,
+    );
+    expect(parsed?.committed_reward_total_atomic).toBe("12");
+    expect(parsed?.allocation_bps).toBe("5000");
+  });
+
+  it("accepts a GLOBAL stop with zero allocation and independent conditional maintenance", () => {
+    const supplied = {
+      ...paused,
+      allocation_bps: "0",
+      speed: {
+        ...active.speed,
+        effective_global_multiplier: { numerator: "0", denominator: "1" },
+      },
+    };
+    expect(read(supplied)?.funded_runtime).toEqual(supplied);
+    expect(resolveFundedRuntimeStatus(read(supplied)?.funded_runtime)).toBe(
+      "STOPPED",
+    );
+  });
+
+  it("preserves the capped configured global ratio during a permission stop", () => {
+    const supplied = {
+      ...paused,
+      speed: {
+        ...active.speed,
+        effective_global_multiplier: { numerator: "3", denominator: "2" },
+      },
+    };
+    expect(read(supplied)?.funded_runtime).toEqual(supplied);
+  });
+
+  it.each([
+    ["ACTIVE contradicts GLOBAL stop", { ...paused, status: "ACTIVE" }],
+    [
+      "schema1 has no permission proof",
+      { ...historical, status: "STOPPED", stop_reason: "SAFE_MODE" },
+    ],
+    ["missing configured speed proof", { ...paused, speed: undefined }],
+    [
+      "zero allocation with positive configured ratio",
+      { ...paused, allocation_bps: "0" },
+    ],
+    [
+      "positive allocation with zero configured ratio",
+      {
+        ...paused,
+        speed: {
+          ...active.speed,
+          effective_global_multiplier: { numerator: "0", denominator: "1" },
+        },
+      },
+    ],
+    ["unknown account control", { ...paused, stop_reason: "ACCOUNT_PAUSE" }],
+    [
+      "unapproved product multiplier",
+      {
+        ...paused,
+        speed: { ...active.speed, product_multiplier_bps: "12000" },
+      },
+    ],
+    [
+      "unapproved global speed",
+      {
+        ...paused,
+        speed: {
+          ...active.speed,
+          effective_global_multiplier: {
+            numerator: "15001",
+            denominator: "10000",
+          },
+        },
+      },
+    ],
+    [
+      "unconfirmed value relabelled wallet",
+      {
+        ...paused,
+        conditional_maintenance: {
+          ...historical.conditional_maintenance,
+          qualification: "CONFIRMED",
+        },
+      },
+    ],
+  ])(
+    "rejects %s without fabricating a safe stopped/running DTO",
+    (_label, supplied) => {
+      expect(read(supplied)).toBeNull();
     },
   );
 });

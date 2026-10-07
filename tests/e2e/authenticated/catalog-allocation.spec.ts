@@ -16,6 +16,9 @@ import {
 } from "./helpers/admin-totp";
 import { confirmOperatorStepUp } from "./helpers/admin-money-ui";
 import { execLocalAdminSql } from "./helpers/local-db";
+import { expectSettledRoute } from "./helpers/settled-route";
+import { awaitPaintedImages } from "./helpers/painted-images";
+import { assertViewportFits } from "./helpers/viewport-geometry";
 import {
   dismissGuidedQuestIfPresent,
   loginAsMember,
@@ -58,65 +61,179 @@ async function captureMatrix(page: Page, info: TestInfo, label: string) {
     await page.setViewportSize({ width, height: width === 834 ? 1112 : 900 });
     for (const theme of ["dark", "light"] as const) {
       await page.emulateMedia({ colorScheme: theme, reducedMotion: "reduce" });
-      await page.evaluate((value) => {
-        localStorage.setItem("putduk-theme", value);
-        document.documentElement.dataset.theme = value;
-        document.documentElement.style.colorScheme = value;
-        window.dispatchEvent(new Event("putduk-theme-change"));
-      }, theme);
-      expect(
-        await page.evaluate(
-          () =>
-            document.documentElement.scrollWidth -
-            document.documentElement.clientWidth,
-        ),
-      ).toBeLessThanOrEqual(1);
-      await page.evaluate(() => document.fonts.ready);
-      const main = page.getByRole("main");
-      await expect(main).toHaveCount(1);
-      const { range, step } = await main.evaluate((element) => ({
-        range: element.scrollHeight - element.clientHeight,
-        step: Math.max(1, Math.floor(element.clientHeight * 0.7)),
-      }));
-      const positions = [0];
-      for (let top = step; top < range; top += step) positions.push(top);
-      if (range > 16) positions.push(range);
-      for (const [index, top] of positions.entries()) {
-        await main.evaluate(
-          (element, top) => element.scrollTo({ top, behavior: "instant" }),
-          top,
+      await page
+        .getByRole("combobox", { name: "화면 테마" })
+        .first()
+        .selectOption(theme);
+      await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
+      await expect(page.locator("html")).toHaveAttribute(
+        "data-theme-preference",
+        theme,
+      );
+      const textScales =
+        label === "funded-home-server-status" && width < 600
+          ? [100, 200]
+          : [100];
+      for (const textScale of textScales) {
+        await page.evaluate((scale) => {
+          document.documentElement.style.fontSize = `${16 * (scale / 100)}px`;
+        }, textScale);
+        await expect(
+          page.getByRole("combobox", { name: "화면 테마" }).first(),
+        ).toHaveValue(theme);
+        for (const scene of await page.locator("[data-scene-theme]").all()) {
+          await expect(scene).toHaveAttribute("data-scene-theme", theme);
+        }
+        await assertViewportFits(
+          page,
+          info,
+          `${label}-${width}-${theme}-text-${textScale}`,
         );
+        await page.evaluate(() => document.fonts.ready);
+        const main = page.getByRole("main");
+        await expect(main).toHaveCount(1);
+        // The previous viewport may have ended at the bottom of main. Reset
+        // before checking the new responsive/theme source and its decoded paint.
+        await main.evaluate((element) =>
+          element.scrollTo({ top: 0, behavior: "instant" }),
+        );
+        await page.evaluate(() => window.scrollTo(0, 0));
         await expect
-          .poll(() => main.evaluate((element) => element.scrollTop))
-          .toBe(top);
-        const position =
-          top === 0 ? "top" : top === range ? "bottom" : `middle-${index}`;
-        const name = `${label}-${width}-${theme}-${position}`;
-        const screenshot = `${name}.png`;
-        const output = info.outputPath(screenshot);
-        // A body-only attachment is discarded by the list reporter. Keep the
-        // actual file so every accepted paid render can be reviewed afterwards.
-        await page.screenshot({
-          path: output,
-          fullPage: true,
-          animations: "disabled",
-        });
-        await info.attach(name, { path: output, contentType: "image/png" });
-        records.push({
-          label,
-          route: new URL(page.url()).pathname,
-          width,
-          theme,
-          screenshot,
-          sha256: createHash("sha256")
-            .update(await readFile(output))
-            .digest("hex"),
-          scroll_position: position,
-          scroll_top: top,
-          scroll_range: range,
-          capture_step: step,
-          manual_reference_comparison: "pending",
-        });
+          .poll(() =>
+            page.evaluate(() =>
+              [...document.images]
+                .filter((image) => image.getBoundingClientRect().width > 0)
+                .every((image) => image.complete && image.naturalWidth > 0),
+            ),
+          )
+          .toBe(true);
+        if (label === "funded-home-server-status") {
+          const hero = page
+            .getByRole("region", { name: "오늘의 채굴 상태", exact: true })
+            .locator("picture[data-scene-theme] img");
+          await expect(hero).toHaveCount(1);
+          const family =
+            theme === "light"
+              ? width >= 980
+                ? "semiconductor-wafer-light-desktop"
+                : "semiconductor-wafer-light"
+              : width >= 980
+                ? "semiconductor-tower-desktop"
+                : "semiconductor-tower";
+          await expect
+            .poll(() =>
+              hero.evaluate(
+                (image: HTMLImageElement) =>
+                  new URL(image.currentSrc, location.href).pathname,
+              ),
+            )
+            .toContain(`/brand/scenes/${family}/`);
+          await awaitPaintedImages(page);
+          await expect
+            .poll(() =>
+              hero.evaluate(
+                (image: HTMLImageElement) =>
+                  new URL(image.currentSrc, location.href).pathname,
+              ),
+            )
+            .toContain(`/brand/scenes/${family}/`);
+          const capacity = page.locator('a[data-fact="capacity"] strong');
+          await expect(capacity).toHaveCount(1);
+          await expect(capacity).not.toHaveText("확인할 수 없음");
+          // Exact server precision must fit instead of being clipped by the card.
+          expect(
+            await capacity.evaluate(
+              (element) => element.scrollWidth <= element.clientWidth + 1,
+            ),
+          ).toBe(true);
+          if (theme === "dark" && width < 600) {
+            // Full server precision and currency remain together. A scrollWidth
+            // check alone previously passed even while fractional digits wrapped.
+            const geometry = await capacity.evaluate((element) => {
+              const range = document.createRange();
+              range.selectNodeContents(element);
+              const fragments = [...range.getClientRects()].filter(
+                (rect) => rect.width > 0,
+              );
+              const oneLine =
+                fragments.length > 0 &&
+                fragments.every(
+                  (rect) => Math.abs(rect.top - fragments[0]!.top) <= 1,
+                );
+              return {
+                oneLine,
+                valueWidth: element.getBoundingClientRect().width,
+                cardWidth: element.closest("a")!.getBoundingClientRect().width,
+                fontSize: getComputedStyle(element).fontSize,
+                fragments: fragments.map(({ top, width }) => ({ top, width })),
+              };
+            });
+            if (!geometry.oneLine) {
+              await capacity.scrollIntoViewIfNeeded();
+              await awaitPaintedImages(page);
+              const failure = info.outputPath(
+                `capacity-failed-${width}-${theme}-text-${textScale}.png`,
+              );
+              await page.screenshot({ path: failure, animations: "disabled" });
+              await info.attach("capacity-painted-failure", {
+                path: failure,
+                contentType: "image/png",
+              });
+            }
+            expect(
+              geometry.oneLine,
+              JSON.stringify({ width, theme, textScale, geometry }),
+            ).toBe(true);
+          }
+        }
+        const { range, step } = await main.evaluate((element) => ({
+          range: element.scrollHeight - element.clientHeight,
+          step: Math.max(1, Math.floor(element.clientHeight * 0.7)),
+        }));
+        const positions = [0];
+        for (let top = step; top < range; top += step) positions.push(top);
+        if (range > 16) positions.push(range);
+        for (const [index, top] of positions.entries()) {
+          await main.evaluate(
+            (element, top) => element.scrollTo({ top, behavior: "instant" }),
+            top,
+          );
+          await expect
+            .poll(() => main.evaluate((element) => element.scrollTop))
+            .toBe(top);
+          const paintedImages = await awaitPaintedImages(page);
+          const position =
+            top === 0 ? "top" : top === range ? "bottom" : `middle-${index}`;
+          const scaleSuffix = textScale === 200 ? "-text-200" : "";
+          const name = `${label}-${width}-${theme}${scaleSuffix}-${position}`;
+          const screenshot = `${name}.png`;
+          const output = info.outputPath(screenshot);
+          // A body-only attachment is discarded by the list reporter. Keep the
+          // actual file so every accepted paid render can be reviewed afterwards.
+          await page.screenshot({
+            path: output,
+            fullPage: true,
+            animations: "disabled",
+          });
+          await info.attach(name, { path: output, contentType: "image/png" });
+          records.push({
+            label,
+            route: new URL(page.url()).pathname,
+            width,
+            theme,
+            text_scale: textScale,
+            screenshot,
+            sha256: createHash("sha256")
+              .update(await readFile(output))
+              .digest("hex"),
+            scroll_position: position,
+            scroll_top: top,
+            scroll_range: range,
+            capture_step: step,
+            decoded_image_sources: paintedImages,
+            manual_reference_comparison: "pending",
+          });
+        }
       }
     }
   }
@@ -435,6 +552,13 @@ test("actual operator catalog approval and owner allocation retain receipts with
       "confirmed",
     );
     await expect(funded.getByText("50%", { exact: true })).toBeVisible();
+    const effectiveSpeed = memberPage.locator('[data-amount-weight="speed"]');
+    await expect(
+      effectiveSpeed.getByText("0.5배", { exact: true }),
+    ).toBeVisible();
+    await expect(effectiveSpeed.getByText("1배", { exact: true })).toHaveCount(
+      0,
+    );
     await expect(
       funded.getByRole("heading", { name: "원금 유지 혜택", exact: true }),
     ).toBeVisible();
@@ -442,9 +566,7 @@ test("actual operator catalog approval and owner allocation retain receipts with
     expect(ownerFinancialEvidence(owner.userId)).toEqual(after);
 
     await memberPage.goto("/home", { waitUntil: "networkidle" });
-    const homeStatus = memberPage.getByRole("region", {
-      name: "오늘의 채굴 상태",
-    });
+    const homeStatus = await expectSettledRoute(memberPage, "/home");
     await expect(
       homeStatus.getByRole("link", { name: "실제 채굴 보기", exact: true }),
     ).toHaveAttribute("href", "/mining");
@@ -452,8 +574,31 @@ test("actual operator catalog approval and owner allocation retain receipts with
       memberPage.getByRole("region", { name: "확인된 실제 채굴 기록" }),
     ).toHaveAttribute("data-funded-runtime-state", "confirmed");
     await expect(
-      memberPage.getByText("현재 채굴 확정 누계", { exact: true }),
+      memberPage
+        .getByRole("region", { name: "지갑과 체험 정보", exact: true })
+        .getByText("현재 채굴 확정 누계", { exact: true }),
     ).toBeVisible();
+    await memberPage
+      .getByRole("combobox", { name: "화면 테마" })
+      .first()
+      .selectOption("dark");
+    await expect(memberPage.locator("html")).toHaveAttribute(
+      "data-theme",
+      "dark",
+    );
+    const capacityProgress = memberPage.getByRole("progressbar", {
+      name: "채굴 한도 사용률",
+    });
+    await expect(capacityProgress).toBeVisible();
+    await expect(capacityProgress).toHaveAttribute("max", "10000");
+    await expect(capacityProgress).toHaveAttribute("aria-valuetext", /사용$/);
+    const homeProducts = memberPage.locator('ul[data-product-count="1"]');
+    await expect(homeProducts.locator("li")).toHaveCount(1);
+    const listBounds = await homeProducts.boundingBox();
+    const cardBounds = await homeProducts.locator("li").boundingBox();
+    expect(Math.abs(listBounds!.width - cardBounds!.width)).toBeLessThanOrEqual(
+      1,
+    );
     await captureMatrix(memberPage, info, "funded-home-server-status");
     expect(ownerFinancialEvidence(owner.userId)).toEqual(after);
 
@@ -474,7 +619,7 @@ test("actual operator catalog approval and owner allocation retain receipts with
 
     await memberPage.goto("/wallet", { waitUntil: "networkidle" });
     await expect(
-      memberPage.getByRole("heading", { name: "출금 가능 잔액", exact: true }),
+      memberPage.getByRole("heading", { name: "지갑", exact: true }),
     ).toBeVisible();
     await captureMatrix(memberPage, info, "funded-wallet-real-principal");
     expect(ownerFinancialEvidence(owner.userId)).toEqual(after);

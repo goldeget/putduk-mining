@@ -4,7 +4,10 @@ import { act, createElement, Fragment, useEffect } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { PutdukAiChat } from "@/components/product/putduk-ai-chat";
+import {
+  PutdukAiChat,
+  type PutdukAiPageFacts,
+} from "@/components/product/putduk-ai-chat";
 import { AI_PRESENTATION_OWNER_HEADER } from "@/domain/ai/presentation-owner";
 import {
   PutdukAiSessionProvider,
@@ -98,6 +101,8 @@ function render(
   views = 1,
   providerConfigured = true,
   ownerVerificationId = `${ownerUserId}:server-render-1`,
+  surface: "dock" | "page" = "dock",
+  pageFacts?: PutdukAiPageFacts,
 ) {
   return act(async () =>
     root.render(
@@ -118,7 +123,12 @@ function render(
           null,
           createElement(Probe),
           ...Array.from({ length: views }, (_, index) =>
-            createElement(PutdukAiChat, { key: index, presentation: "panel" }),
+            createElement(PutdukAiChat, {
+              key: index,
+              presentation: surface === "page" ? "page" : "panel",
+              surface,
+              ...(pageFacts ? { pageFacts } : {}),
+            }),
           ),
         ),
       ),
@@ -234,6 +244,163 @@ afterEach(async () => {
 });
 
 describe("one PUTDUK AI request and session owner", () => {
+  it("shows originating page guide links without guessing member figures or sending a request", async () => {
+    navigation.pathname = "/ai";
+    navigation.search = "aiOrigin=%2Fwallet";
+    await render("member-a", 1, false, "member-a:server-render-1", "page");
+    const guide = host.querySelector('[aria-label="현재 화면 도움"]');
+    expect(guide?.textContent).toContain("자산 화면 도움");
+    expect(
+      Array.from(guide?.querySelectorAll("a") ?? []).map((link) =>
+        link.getAttribute("href"),
+      ),
+    ).toEqual(["/wallet", "/wallet/deposit", "/wallet/withdraw"]);
+    expect(host.textContent).not.toMatch(/L5 PRO|5,000,000|54,281|54%/);
+    expect(fetchMock).not.toHaveBeenCalled();
+
+    await act(async () => session.setDraft("작성 중인 질문이에요"));
+    navigation.search = "aiOrigin=%2Fmenu%2Fnotifications";
+    await render("member-a", 1, false, "member-a:server-render-1", "page");
+    const updated = host.querySelector('[aria-label="현재 화면 도움"]');
+    expect(updated?.textContent).toContain("알림 설정 도움");
+    expect(
+      Array.from(updated?.querySelectorAll("a") ?? []).map((link) =>
+        link.getAttribute("href"),
+      ),
+    ).toEqual(["/menu/notifications", "/notifications"]);
+    expect(session.draft).toBe("작성 중인 질문이에요");
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("adapts the genuine page scene to Light without claiming a separate Light source", async () => {
+    document.documentElement.dataset.theme = "light";
+    try {
+      await render("member-a", 1, false, "member-a:server-render-1", "page");
+      const scene = host.querySelector(
+        'img[src="/brand/scenes/ai-partner-hero/ai-partner-hero-1280-v1.webp"]',
+      );
+      expect(scene?.getAttribute("alt")).toBe("");
+      expect(scene?.getAttribute("aria-hidden")).toBe("true");
+      expect(scene?.getAttribute("width")).toBe("1983");
+      expect(scene?.getAttribute("height")).toBe("793");
+      expect(host.querySelector("textarea")?.disabled).toBe(false);
+      expect(fetchMock).not.toHaveBeenCalled();
+    } finally {
+      delete document.documentElement.dataset.theme;
+    }
+  });
+
+  it("keeps the approved face in the dock instead of substituting the page robot", async () => {
+    await render();
+    expect(
+      host
+        .querySelector(
+          'img[src="/brand/mascot/putduk-ai-help-face-256-v1.webp"]',
+        )
+        ?.getAttribute("alt"),
+    ).toBe("");
+    expect(host.querySelector("[data-ai-partner-hero]")).toBeNull();
+    expect(host.querySelector('[aria-label="빠른 질문"]')).toBeNull();
+  });
+
+  it("binds server facts to the verified ready owner and hides them through an auth change", async () => {
+    const facts = {
+      ownerUserId: "member-a",
+      displayName: "검증된 A",
+      rankName: "확인된 등급",
+      availableKrwLabel: "12,345원",
+    };
+    browserAuth.autoInitial = false;
+    await render(
+      "member-a",
+      1,
+      false,
+      "member-a:server-render-1",
+      "page",
+      facts,
+    );
+    expect(session.ownerStatus).toBe("checking");
+    expect(host.textContent).not.toMatch(/검증된 A|확인된 등급|12,345원/);
+    await act(async () => emitAuth("INITIAL_SESSION", "member-a"));
+    expect(session.ownerStatus).toBe("ready");
+    expect(session.ownerUserId).toBe("member-a");
+    expect(host.textContent).toContain("검증된 A님");
+    expect(host.textContent).toContain("12,345원");
+    await act(async () => emitAuth("SIGNED_IN", "member-b"));
+    expect(session.ownerStatus).toBe("refreshing");
+    expect(host.textContent).not.toMatch(/검증된 A|확인된 등급|12,345원/);
+    browserAuth.autoInitial = true;
+    await render(
+      "member-b",
+      1,
+      false,
+      "member-b:server-render-1",
+      "page",
+      facts,
+    );
+    expect(session.ownerStatus).toBe("ready");
+    expect(session.ownerUserId).toBe("member-b");
+    expect(host.textContent).not.toMatch(/검증된 A|확인된 등급|12,345원/);
+    expect(
+      host.querySelector('[data-ai-account-facts] [role="status"]'),
+    ).not.toBeNull();
+  });
+
+  it("fills all five real quick questions only as drafts with composer focus", async () => {
+    navigation.pathname = "/ai";
+    await render("member-a", 1, false, "member-a:server-render-1", "page");
+    const group = host.querySelector('[aria-label="빠른 질문"]')!;
+    const buttons = Array.from(group.querySelectorAll("button"));
+    expect(buttons).toHaveLength(5);
+    const questions = [
+      "내 채굴 상태 알려줘",
+      "내 PUTDUK START 체험 상태 알려줘",
+      "첫 출금은 어떻게 준비하나요?",
+      "이벤트 참여 방법 알려줘",
+      "고객지원은 어디에 있나요?",
+    ];
+    for (let index = 0; index < buttons.length; index++) {
+      await act(async () => buttons[index]!.click());
+      expect(session.draft).toBe(questions[index]);
+      expect(document.activeElement).toBe(host.querySelector("textarea"));
+      expect(session.messages).toEqual([]);
+      expect(fetchMock).not.toHaveBeenCalled();
+    }
+    await act(async () => emitAuth("SIGNED_OUT", null));
+    expect(
+      Array.from(group.querySelectorAll("button")).every(
+        (button) => button.disabled,
+      ),
+    ).toBe(true);
+  });
+
+  it("recovers a failed decorative scene without losing or submitting the real draft", async () => {
+    await render("member-a", 1, false, "member-a:server-render-1", "page");
+    await act(async () => session.setDraft("작성한 질문을 유지해 주세요"));
+    const scene = () => host.querySelector("[data-ai-partner-hero] img")!;
+    await act(async () => scene().dispatchEvent(new Event("error")));
+    expect(
+      host
+        .querySelector("[data-ai-partner-hero]")
+        ?.getAttribute("data-ai-art-state"),
+    ).toBe("webp");
+    await act(async () => scene().dispatchEvent(new Event("error")));
+    expect(
+      host
+        .querySelector("[data-ai-partner-hero]")
+        ?.getAttribute("data-ai-art-state"),
+    ).toBe("unavailable");
+    const retry = Array.from(host.querySelectorAll("button")).find(
+      (button) => button.textContent === "배경 다시 불러오기",
+    )!;
+    await act(async () => retry.click());
+    expect(scene().getAttribute("src")).toContain("?ai-art-retry=1");
+    expect(host.querySelector("textarea")?.value).toBe(
+      "작성한 질문을 유지해 주세요",
+    );
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
   it("puts a contextual suggestion in the draft and focuses it without sending", async () => {
     navigation.pathname = "/wallet";
     await render();

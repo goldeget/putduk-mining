@@ -6,10 +6,13 @@ Status: **CANONICAL / IMPLEMENTED FOUNDATION**
 
 Manifest: `public/brand/assets.manifest.json`
 
-Runtime manifest snapshot: `2026.10.06-v5` — 112 assets: the preserved 84-entry
+Runtime manifest snapshot: `2026.10.06-v10` — 152 assets: the preserved 84-entry
 `2026.09.27-v1` set plus four approved AI help face derivatives, eight clean
 semiconductor scene derivatives, eight global pavilion derivatives and eight
-light semiconductor derivatives. The complete prior 104-entry set is preserved.
+light semiconductor derivatives, eight HOME semiconductor tower derivatives and
+eight Light HOME wafer derivatives and eight neutral GOLD category derivatives.
+Eight Dark desktop and eight Light desktop derivatives extend this set.
+The complete prior 136-entry set and reviewed Dark desktop pack are preserved.
 Visual Lab remains `visual-lab-2026.09.27-v1`; it is a separate benchmark version.
 
 ## 1. Source and runtime boundary
@@ -237,3 +240,107 @@ The verifier admits only the eight exact versioned light paths and checks their
 source, dimensions, theme and scope. Existing dark artwork remains unchanged.
 Asset integrity does not approve products, rewards, or runtime scene mapping;
 rendering and browser acceptance are separate evidence gates.
+
+## Exact MOBILE HOME semiconductor tower
+
+Manifest `2026.10.06-v6` adds eight dark AVIF/WebP derivatives at widths 640,
+960, 1280 and 1536 for the delegated reconstruction of MOBILE HOME `a02-m00005`.
+The reviewed RGB 1536×1024 source is
+`generated-masters/semiconductor-tower-2026-10-06/semiconductor-tower-master-v1.png`,
+SHA-256 `b7efda2f71a34d07460a7d50e3650bfafc9028e4b4f3e7e10a96000a9b07c9ee`.
+It preserves the navy factory, left robotic arm and right six-layer HBM tower.
+
+`scripts/build-semiconductor-tower-assets.py` uses Pillow 12.3.0, validates the
+source hash and dimensions, and encodes the full composition without cropping,
+recoloring or upscaling. WebP is lossless against the resized pixels; AVIF must
+decode at the exact dimensions with at least 40 dB PSNR. All 112 prior records
+and files remain unchanged; their canonical entry digest is
+`8d52743dc225ab9b19ce812520fde3ce99d55025f618e8055e09c1010c446852`.
+
+`SemiconductorTowerScene` selects the exact tower pack in Dark mode and the
+dedicated HOME wafer pack below in Light mode. The prior memory companion
+remains intact for its earlier scope. The component exposes
+responsive AVIF/WebP sources and presentation only. Rendered framing uses cover
+with a default 65% 45% tower position and remains subject to the Home browser
+gate. This asset review authorizes HOME hero presentation only; it does not
+approve another screen, the wider family, product mappings or economic rules.
+
+
+## Exact Light MOBILE HOME semiconductor wafer
+
+Manifest `2026.10.06-v7` adds eight light AVIF/WebP derivatives at widths 640,
+960, 1280 and 1536 for the delegated reconstruction of Light HOME `a02-m00027`.
+The reviewed RGB 1536×1024 source is
+`generated-masters/semiconductor-wafer-light-2026-10-06/semiconductor-wafer-light-master-v1.png`,
+SHA-256 `89651e191ac5031730531856cc3a4fe7f5b5d557e4c27bd3ec225fcde3f24848`.
+It preserves the white and blue glass factory, broad low wafer at center-right,
+vertical gold beam and helix, with clean space for HTML text at the left.
+
+`scripts/build-semiconductor-wafer-light-assets.py` uses Pillow 12.3.0 and
+validates the complete source, then encodes without cropping, recoloring or
+upscaling. WebP is lossless against the resized pixels; AVIF must decode at the
+exact dimensions with at least 40 dB PSNR. All 120 prior records and files remain
+unchanged; their canonical entry digest is
+`cd3bf1bea345ba0584caeaba7dc04f8a449333631037bd2b4ce25561daf644d0`.
+The verifier admits only the eight exact versioned paths and their fixed source,
+dimensions, Light theme and HOME-only provenance.
+
+The HOME component uses these sources only in Light mode; its existing Dark
+tower sources stay unchanged. Actual theme switching and responsive composition
+remain Home browser gates. This reconstruction does not approve another screen,
+the wider family, product mapping or economic rules.
+
+
+## Neutral GOLD category artwork
+
+Manifest `2026.10.06-v8` adds only eight dark AVIF/WebP derivatives at widths
+320, 640, 960 and 1536 from the reviewed navy factory and gold-bar composition.
+The complete RGB 1536×1024 source is
+`generated-masters/gold-category-2026-10-06/gold-category-master-v1.png`,
+SHA-256 `b22dced3d82446e8a946f49f29bbd5d62fc57e2b465464d7c260755d0600cf7e`.
+`SOURCE.json` retains the native output identity and frozen 128-asset baseline.
+
+`scripts/build-gold-category-assets.py` runs from the repository with a dry-run
+default; `--write` adds only this exact category pack. It requires Pillow 12.3.0,
+validates the source hash and RGB dimensions, and preserves the complete frame
+without crop, recoloring or upscale. WebP is lossless against resized pixels;
+AVIF must decode at the exact dimensions with at least 40 dB PSNR. The entire
+128-entry prior set remains unchanged, with canonical entry digest
+`00b8caf188b9481d87204dea866dabd41ef2b0fbf86fb71d87b679898dff6d52`.
+
+The verifier admits only the eight exact versioned GOLD paths, fixed source,
+dimensions, format, Dark theme and neutral scope. GOLD pixels are category
+presentation only. They cannot stand in for SILVER or attest actual holdings,
+operating catalog publication, economic values or yield. Root owns category UI
+integration and actual responsive browser acceptance.
+
+
+## Desktop HOME responsive artwork
+
+Manifest `2026.10.06-v10` adds two distinct eight-file desktop families, each at
+widths 960, 1280, 1536 and 1920 with full-frame AVIF and lossless WebP delivery.
+Both unchanged RGB masters are exactly 1983×793. No source or derivative is
+cropped, recolored, retouched or upscaled. Existing 136 records and files remain
+unchanged, with canonical digest
+`79f0a6cdd82e6ea098c087c5f489faf6d937f078c6fd8bcac844cc8ed461665c`.
+
+The Dark `semiconductor-tower-desktop` master is reviewed against desktop HOME
+`a02-m00017`, preserving the complete six-layer tower, robots and left greeting
+space. Its SHA-256 is
+`77fa85077eef2f0534d16a4900e4ada9ccc1fdcbb28c959775ca0ebcaf4b82f4`.
+The Light `semiconductor-wafer-light-desktop` master extends mobile
+`a02-m00027` intent responsively with the low thin wafer, white and ice-blue
+factory and gold beam. Its SHA-256 is
+`fb2ef6a74cba862a69229d334e84ad27e1e7dd4709702967f76d6c4242c08548`.
+No Light desktop reference was supplied; this is responsive inference, not
+supplied desktop reference acceptance. Each master directory retains REVIEW and
+SOURCE provenance, and the frozen Dark144 pack remains unchanged.
+
+Both repo-native generators default to dry runs; `--write` adds only their
+exact eight reviewed files and manifest entries. Pillow 12.3.0, exact source
+hash/dimensions, lossless resized WebP pixels and minimum 40 dB AVIF fidelity are
+required. The Light addition preserves all 144 preceding records and bytes,
+with digest `276dd5899d05f9cbb8dedb50edabbe9b600d214eaa18bec3ab1a6082c11da7fb`.
+The verifier checks only exact approved paths and fixed source, aspect ratio,
+format, theme and scope. Root owns media selection, DOM, responsive positioning
+and real browser acceptance. These assets add no product or economic approval.

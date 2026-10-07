@@ -74,7 +74,9 @@ const fundedRuntimeV2 = z
     schema_version: z.literal(2),
     ...fundedRuntimeFields,
     status: z.enum(["ACTIVE", "STOPPED"]),
-    stop_reason: z.enum(["NO_ACTIVE_ALLOCATION", "CAPACITY_USED"]).nullable(),
+    stop_reason: z
+      .enum(["NO_ACTIVE_ALLOCATION", "CAPACITY_USED", "SAFE_MODE"])
+      .nullable(),
     speed: z
       .object({
         product_multiplier_bps: boundedBps(9_000n, 11_000n),
@@ -106,6 +108,11 @@ const fundedRuntimeV2 = z
       BigInt(value.speed.effective_global_multiplier.numerator) > 0n;
     if (value.status === "ACTIVE") {
       return value.stop_reason === null && activeAllocation && positiveSpeed;
+    }
+    // GLOBAL is an independent server-proven permission stop. Its configured
+    // speed/allocation remain factual inputs; clients never derive a pause.
+    if (value.stop_reason === "SAFE_MODE") {
+      return activeAllocation === positiveSpeed;
     }
     if (value.stop_reason === "NO_ACTIVE_ALLOCATION") {
       return !activeAllocation && !positiveSpeed;
@@ -227,6 +234,24 @@ export function formatMiningSpeedBps(bps: string | null) {
     .padStart(width, "0")
     .replace(/0+$/, "");
   return `${whole.toString()}.${fractionText}배`;
+}
+
+/** Format the supplied server ratio; never combine allocation or speed effects. */
+function formatFundedSpeed(runtime: FundedRuntimeDisplay) {
+  if (runtime.schema_version !== 2) return unreadableLabel;
+  const ratio = runtime.speed.effective_global_multiplier;
+  const numerator = BigInt(ratio.numerator);
+  const denominator = BigInt(ratio.denominator);
+  const whole = numerator / denominator;
+  let remainder = numerator % denominator;
+  let fraction = "";
+  for (let digit = 0; digit < 6 && remainder > 0n; digit++) {
+    remainder *= 10n;
+    fraction += (remainder / denominator).toString();
+    remainder %= denominator;
+  }
+  const value = `${whole}${fraction ? `.${fraction}` : ""}배`;
+  return remainder > 0n ? `약 ${value}` : value;
 }
 
 export function formatMiningPeriod(start: string | null, end: string | null) {
@@ -367,7 +392,9 @@ export function presentMiningServerDisplay(
       },
       {
         label: "속도",
-        value: formatMiningSpeedBps(input.speed_multiplier_bps),
+        value: input.funded_runtime
+          ? formatFundedSpeed(input.funded_runtime)
+          : formatMiningSpeedBps(input.speed_multiplier_bps),
       },
       {
         label: "정산 전",

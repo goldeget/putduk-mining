@@ -1,6 +1,7 @@
 import type { HomePrimaryAction } from "@/lib/product/home-start-display";
 import { formatAtomicAmount } from "@/domain/wallet/format-amount";
 import {
+  formatMiningMicroKrw,
   resolveFundedRuntimeStatus,
   type FundedRuntimeDisplay,
   type MiningServerDisplay,
@@ -68,11 +69,17 @@ export function resolveHomeWorldState(input: {
         : partial || !trialStatusKnown || !miningStatusKnown
           ? ("partial" as const)
           : ("loaded" as const);
+    const safeMode =
+      fundedStatus === "STOPPED" &&
+      funded?.funded_runtime?.schema_version === 2 &&
+      funded.funded_runtime.stop_reason === "SAFE_MODE";
     const primary: HomePrimaryAction = fundedUnknown
       ? { href: "/home", label: "상태 다시 확인" }
       : fundedStatus === "ACTIVE"
         ? { href: "/mining", label: "실제 채굴 보기" }
-        : { href: "/products/allocation", label: "채굴 배분 확인" };
+        : safeMode
+          ? { href: "/mining", label: "채굴 상태 확인" }
+          : { href: "/products/allocation", label: "채굴 배분 확인" };
     const capacityUsed =
       funded?.funded_runtime?.schema_version === 2 &&
       funded.funded_runtime.stop_reason === "CAPACITY_USED";
@@ -86,17 +93,21 @@ export function resolveHomeWorldState(input: {
           : "상태 확인이 필요해요"
         : fundedStatus === "ACTIVE"
           ? "채굴 중"
-          : capacityUsed
-            ? "이번 한도 완료"
-            : "배분 대기",
+          : safeMode
+            ? "안전 모드로 잠시 멈춤"
+            : capacityUsed
+              ? "이번 한도 완료"
+              : "배분 대기",
       worldTitle: fundedUnknown ? "다시 확인해 주세요" : "실제 채굴",
       worldLead: fundedUnknown
         ? "실제 채굴 상태를 다시 확인하면 다음 안내를 보여 드려요."
         : fundedStatus === "ACTIVE"
           ? "서버에서 확인된 배분으로 채굴을 이어가고 있어요."
-          : capacityUsed
-            ? "이번 채굴 한도를 사용했어요. 상품과 배분을 확인해 주세요."
-            : "채굴할 상품과 배분을 확인해 주세요.",
+          : safeMode
+            ? "안전 모드로 잠시 멈췄어요. 지금까지 확인된 채굴 기록은 유지돼요."
+            : capacityUsed
+              ? "이번 채굴 한도를 사용했어요. 상품과 배분을 확인해 주세요."
+              : "채굴할 상품과 배분을 확인해 주세요.",
       primary,
       trialStatusKnown,
       notStarted: false,
@@ -168,5 +179,23 @@ export function presentHomeMiningFacts(
     committedTotal: runtime
       ? formatAtomicAmount(runtime.committed_reward_total_atomic, "KRW")
       : "확인할 수 없어요",
+  };
+}
+
+/** These two amounts are already computed by the server; neither is a wallet total. */
+export function presentHomeFundingFacts(
+  display: MiningServerDisplay | null | undefined,
+  unavailable = false,
+) {
+  const confirmed = !unavailable && display?.available ? display : null;
+  return {
+    principal:
+      confirmed?.eligible_principal_micro_krw == null
+        ? "확인할 수 없어요"
+        : formatMiningMicroKrw(confirmed.eligible_principal_micro_krw),
+    remainingCapacity:
+      confirmed?.remaining_capacity_micro_krw == null
+        ? "확인할 수 없어요"
+        : formatMiningMicroKrw(confirmed.remaining_capacity_micro_krw),
   };
 }

@@ -1,0 +1,435 @@
+.desktopHeader {
+  display: none;
+}
+
+.mobileTools {
+  position: relative;
+  z-index: 4;
+  display: flex;
+  min-width: 0;
+  min-height: 64px;
+  align-items: center;
+  justify-content: flex-end;
+  margin-bottom: -64px;
+  padding: 0.5rem 1.25rem;
+  pointer-events: none;
+}
+
+.tools {
+  display: flex;
+  min-width: 0;
+  max-width: 100%;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.3rem;
+  pointer-events: auto;
+}
+
+.tools > a {
+  display: inline-flex;
+  min-width: 44px;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-subtle);
+  border-radius: 50%;
+  color: var(--text-primary);
+  background: var(--surface-sunken);
+  text-decoration: none;
+}
+
+.tools :global(.theme-control) {
+  min-width: 0;
+}
+
+.tools :global(.theme-control > span) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+.tools :global(.theme-control select) {
+  min-height: 44px;
+  max-width: 6rem;
+  padding-inline: 0.45rem 0.25rem;
+  border-color: var(--border-default);
+  color: var(--text-primary);
+  background: var(--surface-sunken);
+  font-size: 0.75rem;
+}
+
+.identityName,
+.identity > svg {
+  display: none;
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  color: var(--brand-primary);
+}
+
+.tools > a:hover {
+  border-color: var(--brand-primary);
+  color: var(--brand-primary);
+}
+
+.tools > a:active {
+  background: var(--brand-quiet);
+}
+
+.tools > a:focus-visible,
+.brand:focus-visible,
+.topNavigation a:focus-visible,
+.accountCard:focus-visible,
+.sideNavigation a:focus-visible,
+.aiCard a:focus-visible {
+  outline: 2px solid var(--brand-strong);
+  outline-offset: 3px;
+}
+
+@media (min-width: 980px) {
+  .mobileTools {
+    display: none;
+  }
+
+  .desktopHeader {
+    position: relative;
+    z-index: 4;
+    display: flex;
+    min-width: 0;
+    min-height: 72px;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem 1rem;
+    padding: 0.5rem clamp(1rem, 1.7vw, 1.75rem);
+    border-bottom: 1px solid var(--border-subtle);
+    background: var(--background-canvas);
+  }
+
+  .brand {
+    display: flex;
+    min-width: 0;
+    max-width: 100%;
+    flex: 0 1 auto;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+    color: var(--brand-primary);
+    text-decoration: none;
+  }
+
+  .brand > svg {
+    width: 32px;
+    height: 45px;
+    flex: none;
+    filter: drop-shadow(0 0 6px rgb(239 194 97 / 25%));
+  }
+
+  .wordmark {
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: 0.015em;
+    overflow-wrap: anywhere;
+  }
+
+  .tagline {
+    padding-left: 0.8rem;
+    border-left: 1px solid var(--border-default);
+    color: var(--text-tertiary);
+    font-size: 0.55rem;
+    font-weight: 600;
+    line-height: 1.6;
+    letter-spacing: 0.15em;
+  }
+
+  .topNavigation {
+    display: flex;
+    min-width: 0;
+    flex: 1 1 auto;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.1rem clamp(0.3rem, 1.5vw, 1.5rem);
+  }
+
+  .topNavigation a {
+    display: flex;
+    min-height: 44px;
+    align-items: center;
+    padding: 0.4rem 0.5rem;
+    border-bottom: 2px solid transparent;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    line-height: 1.5;
+    text-decoration: none;
+  }
+
+  .topNavigation a[aria-current="page"] {
+    border-bottom-color: var(--brand-primary);
+    color: var(--brand-primary);
+  }
+
+  .topNavigation a:hover {
+    color: var(--text-primary);
+  }
+
+  .tools {
+    flex: 0 1 auto;
+    gap: 0.4rem;
+  }
+
+  .tools > a {
+    border-color: transparent;
+    background: transparent;
+  }
+
+  .tools > .identity {
+    min-width: 0;
+    max-width: 13rem;
+    gap: 0.5rem;
+    padding: 0.2rem 0.35rem;
+    border-radius: 0.5rem;
+  }
+
+  .avatar {
+    width: 36px;
+    height: 36px;
+    flex: none;
+    border: 1px solid var(--border-default);
+    border-radius: 50%;
+    color: var(--text-tertiary);
+  }
+
+  .identityName {
+    display: block;
+    min-width: 0;
+    overflow: hidden;
+    font-size: 0.8rem;
+    line-height: 1.5;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .identity > svg {
+    display: block;
+    width: 16px;
+    height: 16px;
+    flex: none;
+  }
+
+  .accountCard {
+    display: grid;
+    flex-shrink: 0;
+    min-width: 0;
+    min-height: 82px;
+    grid-template-columns: 44px minmax(0, 1fr);
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.8rem 0.75rem;
+    border: 1px solid var(--border-default);
+    border-radius: 0.75rem;
+    color: var(--text-primary);
+    background: var(--surface-sunken);
+    text-decoration: none;
+  }
+
+  .accountIcon {
+    display: grid;
+    width: 44px;
+    height: 44px;
+    place-items: center;
+    border: 1px solid var(--border-subtle);
+    border-radius: 50%;
+    color: var(--brand-primary);
+    background: var(--brand-quiet);
+  }
+
+  .accountCard > span:last-child {
+    display: grid;
+    min-width: 0;
+    gap: 0.25rem;
+  }
+
+  .accountCard strong {
+    min-width: 0;
+    font-size: 0.9rem;
+    font-weight: 650;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+  }
+
+  .accountCard small {
+    color: var(--text-tertiary);
+    font-size: 0.75rem;
+    line-height: 1.5;
+  }
+
+  .accountCard:hover {
+    border-color: var(--brand-primary);
+  }
+
+  .sideNavigation {
+    min-width: 0;
+    margin-top: 1rem;
+  }
+
+  .sideNavigation ul {
+    display: grid;
+    min-width: 0;
+    gap: 0.4rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .sideNavigation li {
+    min-width: 0;
+  }
+
+  .sideNavigation > ul > li > a {
+    display: grid;
+    min-width: 0;
+    min-height: 48px;
+    grid-template-columns: 25px minmax(0, 1fr);
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.55rem 0.8rem;
+    border: 1px solid transparent;
+    border-radius: 0.6rem;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+    text-decoration: none;
+  }
+
+  .sideNavigation > ul > li > a[aria-current="page"] {
+    border-color: var(--brand-primary);
+    color: var(--brand-primary);
+    background: linear-gradient(
+      115deg,
+      var(--brand-quiet),
+      var(--surface-default)
+    );
+    box-shadow: inset 0 0 12px rgb(224 175 70 / 10%);
+  }
+
+  .sideNavigation > ul > li > a:hover {
+    color: var(--text-primary);
+    border-color: var(--border-default);
+  }
+
+  .sideNavigation .walletSubnavigation {
+    gap: 0;
+    margin: 0.3rem 0 0.5rem 1.55rem;
+    padding-left: 0.8rem;
+    border-left: 1px solid var(--border-default);
+  }
+
+  .walletSubnavigation a {
+    display: flex;
+    min-width: 0;
+    min-height: 44px;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.35rem 0.45rem;
+    color: var(--text-secondary);
+    font-size: 0.78rem;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+    text-decoration: none;
+  }
+
+  .walletSubnavigation a::before {
+    width: 4px;
+    height: 4px;
+    flex: none;
+    border-radius: 50%;
+    background: currentColor;
+    content: "";
+  }
+
+  .walletSubnavigation a:hover {
+    color: var(--brand-primary);
+  }
+
+  .aiCard {
+    display: grid;
+    min-width: 0;
+    grid-template-columns: 48px minmax(0, 1fr);
+    align-items: center;
+    gap: 0.5rem 0.6rem;
+    margin-top: auto;
+    padding: 1rem 0.8rem;
+    border: 1px solid var(--border-default);
+    border-radius: 0.8rem;
+    background: var(--surface-sunken);
+  }
+
+  .aiCard > svg {
+    width: 48px;
+    height: 48px;
+    grid-row: span 2;
+    color: var(--brand-primary);
+  }
+
+  .aiCard strong {
+    color: var(--brand-primary);
+    font-size: 0.85rem;
+    font-weight: 650;
+    line-height: 1.5;
+  }
+
+  .aiCard p {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 0.7rem;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+  }
+
+  .aiCard a {
+    display: flex;
+    min-width: 0;
+    min-height: 44px;
+    grid-column: 1 / -1;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    margin-top: 0.3rem;
+    padding: 0.4rem 0.6rem;
+    border: 1px solid var(--brand-primary);
+    border-radius: 1.5rem;
+    color: var(--brand-primary);
+    font-size: 0.75rem;
+    line-height: 1.5;
+    text-decoration: none;
+  }
+
+  .aiCard a:hover {
+    background: var(--brand-quiet);
+  }
+}
+
+@media (min-width: 980px) and (max-width: 1199px) {
+  .tagline {
+    display: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .tools > a,
+  .accountCard,
+  .sideNavigation > ul > li > a[aria-current="page"],
+  .aiCard,
+  .aiCard a {
+    border: 1px solid ButtonText;
+    box-shadow: none;
+  }
+}

@@ -9,13 +9,15 @@ import {
   shortId,
 } from "@/app/(control)/_lib/format";
 import { EmptyQueue, QueueCard, QueueShell } from "@/components/queue-shell";
+import { HIGH_IMPACT_ROLES } from "@/lib/auth/policy";
 import { requireAdminPage } from "@/lib/auth/principal";
 import { createAdminServiceClient } from "@/lib/supabase/service";
 
 import { ExceptionAckForm } from "./ack-form";
+import { FailedJobs } from "./failed-jobs";
 
 export default async function ExceptionsPage() {
-  await requireAdminPage("/exceptions");
+  const principal = await requireAdminPage("/exceptions");
   const db = createAdminServiceClient();
 
   const [mismatches, jobs] = await Promise.all([
@@ -32,6 +34,7 @@ export default async function ExceptionsPage() {
       .select("id, job_type, status, attempts, updated_at, dead_lettered_at")
       .or("status.eq.FAILED,dead_lettered_at.not.is.null")
       .order("updated_at", { ascending: true })
+      .order("id", { ascending: true })
       .limit(20),
   ]);
 
@@ -84,7 +87,11 @@ export default async function ExceptionsPage() {
         />
       ) : null}
 
-      <section className="queue-list" aria-label="대사 예외">
+      <section
+        className="queue-list"
+        aria-label="대사 예외"
+        id="reconciliation-exceptions"
+      >
         {mismatchRows.map((row) => (
           <QueueCard key={row.id} tone="caution">
             <header className="queue-card__head">
@@ -127,44 +134,12 @@ export default async function ExceptionsPage() {
         ))}
       </section>
 
-      <section className="section-heading">
-        <div>
-          <p className="eyebrow">자동 작업</p>
-          <h2>실패·격리된 작업</h2>
-        </div>
-        <p className="panel-note" aria-live="polite">
-          {jobs.error
-            ? "조회 확인 필요"
-            : `${jobRows.length.toLocaleString("ko-KR")}건 · 잔액 직접 수정 없음`}
-        </p>
-      </section>
-
-      {!jobs.error && jobRows.length === 0 ? (
-        <EmptyQueue
-          body="실패하거나 격리된 자동 작업이 없습니다."
-          title="작업 예외 없음"
-        />
-      ) : null}
-
-      <section className="queue-list" aria-label="실패 작업">
-        {jobRows.map((row) => (
-          <QueueCard key={row.id}>
-            <header className="queue-card__head">
-              <div>
-                <p className="eyebrow">{row.job_type}</p>
-                <h2>
-                  {row.dead_lettered_at ? "격리됨" : "실패"} · 사람 확인 필요
-                </h2>
-              </div>
-              <time dateTime={row.updated_at}>{formatKst(row.updated_at)}</time>
-            </header>
-            <p className="panel-note">
-              시도 {row.attempts}회 · {shortId(row.id)}. 이 화면에서 잔액을 직접
-              고치지 않습니다.
-            </p>
-          </QueueCard>
-        ))}
-      </section>
+      <FailedJobs
+        jobs={jobRows}
+        unavailable={Boolean(jobs.error)}
+        canUseAssistant={HIGH_IMPACT_ROLES.includes(principal.role)}
+        observedAt={new Date().toISOString()}
+      />
     </div>
   );
 }

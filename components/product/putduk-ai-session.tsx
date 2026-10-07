@@ -44,6 +44,8 @@ import { restoreOwnAiMessages } from "./putduk-ai-history";
 export type PutdukAiFeedbackResult = "exists" | "failed" | "saved";
 
 export type PutdukAiSession = {
+  /** Verified server owner; read-only presentation binding, never owner selection. */
+  readonly ownerUserId: string;
   activeConversationId: string | null;
   canSubmit: boolean;
   draft: string;
@@ -711,6 +713,7 @@ function OwnedAiSession({
   return (
     <SessionContext.Provider
       value={{
+        ownerUserId,
         activeConversationId,
         canSubmit: ownerStatus === "ready",
         draft,

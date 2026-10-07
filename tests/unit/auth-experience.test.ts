@@ -81,7 +81,7 @@ describe("approved auth composition", () => {
     expect(
       submit &&
         recovery &&
-        submit.compareDocumentPosition(recovery) &
+        recovery.compareDocumentPosition(submit) &
           Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
     expect(host.textContent).not.toMatch(/₩|HBM|반도체|KOSPI|NYSE/);

@@ -264,6 +264,7 @@ input:focus-visible {
 }
 .control-rail nav {
   display: grid;
+  grid-auto-rows: max-content;
   flex: 1;
   min-height: 80px;
   overflow-y: auto;
@@ -272,7 +273,8 @@ input:focus-visible {
   margin-bottom: 16px;
 }
 .control-rail nav a {
-  display: flex;
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
   align-items: center;
   gap: 13px;
   border: 1px solid transparent;
@@ -286,10 +288,14 @@ input:focus-visible {
   background: rgba(226, 183, 92, 0.055);
   color: var(--ink);
 }
-.control-rail nav span {
+.control-rail nav .control-nav__index {
   color: var(--gold);
   font-size: 0.875rem;
   letter-spacing: 0.12em;
+}
+.control-nav__label {
+  min-width: 0;
+  line-height: 1.5;
 }
 .operator-card {
   display: grid;

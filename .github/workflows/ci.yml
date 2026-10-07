@@ -201,6 +201,18 @@ jobs:
       - name: Run two-session withdrawal member lock order
         run: supabase test db supabase/tests-concurrent/withdrawal_member_lock_order.sql
 
+      - name: Prepare canonical funded fixture for GLOBAL admission
+        run: supabase test db supabase/test-fixtures/funding_global_admission_canonical.sql
+
+      - name: Verify member allocation clock after GLOBAL admission
+        run: supabase test db supabase/tests-concurrent/global_allocation_admission_concurrent.sql
+
+      - name: Prepare principal HOLD clock admission fixture
+        run: supabase test db supabase/test-fixtures/hold_clock_admission_concurrency.sql
+
+      - name: Verify HOLD and CANCEL clock admission after real contention
+        run: supabase test db supabase/tests-concurrent/hold_cancel_admission_concurrent.sql
+
       - name: Verify published policy reader against concurrent publication
         run: node scripts/assert-economy-policy-reader-concurrency.mjs
 

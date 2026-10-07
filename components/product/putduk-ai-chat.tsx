@@ -1,6 +1,13 @@
 "use client";
 
-import { useEffect, useId, useRef, useState, type FormEvent } from "react";
+import {
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type FormEvent,
+  type ReactNode,
+} from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { PutdukIcon } from "@/components/icons/putduk-icon";
@@ -17,8 +24,14 @@ import {
 } from "@/domain/ai/continuity";
 import { AI_FEEDBACK_REASON_LABELS } from "@/domain/ai/member-feedback";
 import { trackAnalyticsEvent } from "@/lib/analytics/client";
+import { useResolvedTheme } from "@/lib/design/use-resolved-theme";
 
 import styles from "./putduk-ai-chat.module.css";
+import {
+  AiPartnerHero,
+  AiPartnerMark,
+} from "@/components/product/ai-partner-hero";
+import { AI_PAGE_PROMPTS } from "@/components/product/ai-page-prompts";
 import { aiGroundingTime, aiSourceLabel } from "./putduk-ai-protocol";
 import {
   buildPutdukAiScreenContext,
@@ -26,7 +39,16 @@ import {
 } from "./putduk-ai-screen-context";
 import { usePutdukAiSession } from "./putduk-ai-session";
 
+export type PutdukAiPageFacts = {
+  ownerUserId: string;
+  displayName: string;
+  rankName: string | null;
+  availableKrwLabel: string;
+};
+
 export type PutdukAiChatProps = {
+  pageFacts?: PutdukAiPageFacts;
+  pageTools?: ReactNode;
   initialScreenContext?: PutdukAiExplicitScreenContext;
   presentation?: "page" | "panel";
   surface?: "dock" | "page";
@@ -51,12 +73,19 @@ function conversationTime(value: string) {
 
 export function PutdukAiChat({
   initialScreenContext,
+  pageFacts,
+  pageTools,
   presentation = "page",
   surface = "dock",
 }: PutdukAiChatProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const session = usePutdukAiSession();
+  const theme = useResolvedTheme();
+  const welcomeScenePrefix =
+    theme === "light"
+      ? "/brand/scenes/semiconductor-memory-light/semiconductor-memory-light-"
+      : "/brand/scenes/semiconductor-memory/semiconductor-memory-";
   const composerId = useId();
   const questionInputRef = useRef<HTMLTextAreaElement | null>(null);
   const transcriptRef = useRef<HTMLDivElement | null>(null);
@@ -130,6 +159,24 @@ export function PutdukAiChat({
     );
   }
 
+  function partnerWelcome() {
+    if (surface !== "page") return null;
+    return (
+      <div className={styles.partnerWelcome}>
+        <AiPartnerMark />
+        <div className={styles.welcomeBubble}>
+          <strong>안녕하세요. 퍼뜩 AI예요.</strong>
+          <p>
+            내 기록과 이용 안내를 함께 확인해요.
+            <br />
+            궁금한 내용을 아래에 적어 주세요.
+          </p>
+          {suggestionCards()}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <section
       className={`ai-chat ${styles.chat} ${presentation === "panel" ? styles.panel : styles.page} ${
@@ -141,61 +188,153 @@ export function PutdukAiChat({
       data-ai-surface={surface}
       data-provider-configured={session.providerConfigured ? "true" : "false"}
     >
+      {surface === "page" ? (
+        <>
+          <AiPartnerHero tools={pageTools} />
+          <div
+            className={styles.pagePrompts}
+            role="group"
+            aria-label="빠른 질문"
+          >
+            {AI_PAGE_PROMPTS.map((suggestion) => (
+              <button
+                key={suggestion.question}
+                type="button"
+                disabled={!session.canSubmit || session.pending}
+                onClick={() => {
+                  session.setDraft(suggestion.question);
+                  questionInputRef.current?.focus();
+                }}
+              >
+                <PutdukIcon
+                  name={suggestion.icon}
+                  size={27}
+                  aria-hidden="true"
+                />
+                <strong>{suggestion.label}</strong>
+                <small>{suggestion.question}</small>
+              </button>
+            ))}
+          </div>
+        </>
+      ) : null}
       <div className={styles.workspace}>
-        <details className={styles.history}>
-          <summary>이전 대화</summary>
-          <div className={styles.historyBody}>
-            <button
-              className="button button--secondary"
-              type="button"
-              disabled={session.pending}
-              onClick={session.startNewConversation}
+        <aside
+          className={styles.contextRail}
+          aria-label="화면 도움과 이전 대화"
+        >
+          {surface === "page" && pageFacts ? (
+            <section
+              className={styles.accountFacts}
+              aria-label="내 정보 요약"
+              data-ai-account-facts
             >
-              새 대화
-            </button>
-            {session.historyStatus === "loading" ? (
-              <p>이전 대화를 불러오고 있어요.</p>
-            ) : null}
-            {session.historyStatus === "unavailable" ? (
-              <div>
-                <p>이전 대화를 불러오지 못했어요.</p>
-                <button
-                  type="button"
-                  className="button button--secondary"
-                  disabled={
-                    !session.canSubmit || !session.online || session.pending
-                  }
-                  onClick={() => void session.reloadHistory()}
-                >
-                  다시 불러오기
-                </button>
-              </div>
-            ) : null}
-            {session.historyStatus === "ready" &&
-            session.history.length === 0 ? (
-              <p>아직 이전 대화가 없어요.</p>
-            ) : null}
-            <ul>
-              {session.history.map((item) => (
-                <li key={item.id}>
+              {session.ownerStatus === "ready" &&
+              session.ownerUserId === pageFacts.ownerUserId ? (
+                <>
+                  <span className={styles.contextEyebrow}>내 기록</span>
+                  <h2>{pageFacts.displayName}님</h2>
+                  <dl>
+                    <div>
+                      <dt>현재 등급</dt>
+                      <dd>{pageFacts.rankName ?? "확인할 수 없음"}</dd>
+                    </div>
+                    <div>
+                      <dt>지갑 사용 가능 금액</dt>
+                      <dd>{pageFacts.availableKrwLabel}</dd>
+                    </div>
+                  </dl>
+                  <Link href="/wallet" prefetch={false}>
+                    내 지갑 보기
+                    <PutdukIcon
+                      name="arrow-right"
+                      size={16}
+                      aria-hidden="true"
+                    />
+                  </Link>
+                </>
+              ) : (
+                <p role="status">로그인 상태를 다시 확인하고 있어요.</p>
+              )}
+            </section>
+          ) : null}
+          {surface === "page" ? (
+            <section
+              className={styles.contextGuide}
+              aria-label="현재 화면 도움"
+            >
+              <span className={styles.contextEyebrow}>함께 확인할 화면</span>
+              <h2>{pageHelp.title}</h2>
+              <p>{pageHelp.answer.split("\n\n")[0]}</p>
+              <nav className={styles.contextActions} aria-label="이 화면 안내">
+                {pageHelp.actions.map((action) => (
+                  <Link key={action.href} href={action.href} prefetch={false}>
+                    {action.label}
+                    <PutdukIcon
+                      name="arrow-right"
+                      size={15}
+                      aria-hidden="true"
+                    />
+                  </Link>
+                ))}
+              </nav>
+            </section>
+          ) : null}
+          <details className={styles.history}>
+            <summary>이전 대화</summary>
+            <div className={styles.historyBody}>
+              <button
+                className="button button--secondary"
+                type="button"
+                disabled={session.pending}
+                onClick={session.startNewConversation}
+              >
+                새 대화
+              </button>
+              {session.historyStatus === "loading" ? (
+                <p>이전 대화를 불러오고 있어요.</p>
+              ) : null}
+              {session.historyStatus === "unavailable" ? (
+                <div>
+                  <p>이전 대화를 불러오지 못했어요.</p>
                   <button
                     type="button"
-                    aria-current={
-                      session.activeConversationId === item.id
-                        ? "true"
-                        : undefined
+                    className="button button--secondary"
+                    disabled={
+                      !session.canSubmit || !session.online || session.pending
                     }
-                    disabled={session.pending}
-                    onClick={() => void session.openConversation(item.id)}
+                    onClick={() => void session.reloadHistory()}
                   >
-                    <strong>{item.title}</strong>
-                    <small>{conversationTime(item.updatedAt)}</small>
+                    다시 불러오기
                   </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </details>
+                </div>
+              ) : null}
+              {session.historyStatus === "ready" &&
+              session.history.length === 0 ? (
+                <p>아직 이전 대화가 없어요.</p>
+              ) : null}
+              <ul>
+                {session.history.map((item) => (
+                  <li key={item.id}>
+                    <button
+                      type="button"
+                      aria-current={
+                        session.activeConversationId === item.id
+                          ? "true"
+                          : undefined
+                      }
+                      disabled={session.pending}
+                      onClick={() => void session.openConversation(item.id)}
+                    >
+                      <strong>{item.title}</strong>
+                      <small>{conversationTime(item.updatedAt)}</small>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </details>
+        </aside>
         <div className={styles.thread}>
           {session.historyHasEarlierMessages ? (
             <p className={styles.unsaved}>
@@ -205,6 +344,12 @@ export function PutdukAiChat({
           ) : null}
           {presentation === "page" ? (
             <header className={styles.pageStatus}>
+              {surface === "page" ? (
+                <div className={styles.chatIdentity}>
+                  <AiPartnerMark />
+                  <strong>PUTDUK AI</strong>
+                </div>
+              ) : null}
               <strong>내 기록과 퍼뜩 이용 안내</strong>
               <span>확인하지 못한 내용은 추측하지 않아요.</span>
             </header>
@@ -257,29 +402,54 @@ export function PutdukAiChat({
             }}
           >
             {session.messages.length === 0 ? (
-              <div className={`ai-chat__welcome ${styles.welcome}`}>
-                <div className={styles.welcomeHeader}>
-                  <picture className={styles.welcomeMascot}>
-                    <source
-                      type="image/avif"
-                      srcSet="/brand/mascot/putduk-ai-help-face-128-v1.avif 128w, /brand/mascot/putduk-ai-help-face-256-v1.avif 256w"
-                      sizes="128px"
-                    />
-                    <img
-                      src="/brand/mascot/putduk-ai-help-face-256-v1.webp"
-                      width="256"
-                      height="256"
-                      alt=""
-                      decoding="async"
-                    />
-                  </picture>
-                  <div>
-                    <h2>궁금한 내용을 편하게 물어보세요.</h2>
-                    <p>내 기록과 퍼뜩 이용 방법을 함께 확인해요.</p>
+              <>
+                {partnerWelcome() ?? (
+                  <div className={`ai-chat__welcome ${styles.welcome}`}>
+                    <div className={styles.welcomeHeader}>
+                      {surface === "page" ? (
+                        <picture className={styles.welcomeScene}>
+                          <source
+                            type="image/avif"
+                            srcSet={`${welcomeScenePrefix}640-v1.avif 640w, ${welcomeScenePrefix}960-v1.avif 960w, ${welcomeScenePrefix}1280-v1.avif 1280w`}
+                            sizes="(min-width: 960px) 640px, 100vw"
+                          />
+                          <img
+                            src={`${welcomeScenePrefix}960-v1.webp`}
+                            width="960"
+                            height="640"
+                            alt=""
+                            decoding="async"
+                          />
+                        </picture>
+                      ) : null}
+                      <picture className={styles.welcomeMascot}>
+                        <source
+                          type="image/avif"
+                          srcSet="/brand/mascot/putduk-ai-help-face-128-v1.avif 128w, /brand/mascot/putduk-ai-help-face-256-v1.avif 256w"
+                          sizes="128px"
+                        />
+                        <img
+                          src="/brand/mascot/putduk-ai-help-face-256-v1.webp"
+                          width="256"
+                          height="256"
+                          alt=""
+                          decoding="async"
+                        />
+                      </picture>
+                      <div className={styles.welcomeCopy}>
+                        {surface === "page" ? (
+                          <span className={styles.welcomeEyebrow}>
+                            PUTDUK AI
+                          </span>
+                        ) : null}
+                        <h2>궁금한 내용을 편하게 물어보세요.</h2>
+                        <p>내 기록과 퍼뜩 이용 방법을 함께 확인해요.</p>
+                      </div>
+                    </div>
+                    {suggestionCards()}
                   </div>
-                </div>
-                {suggestionCards()}
-              </div>
+                )}
+              </>
             ) : (
               session.messages.map((message) => (
                 <article

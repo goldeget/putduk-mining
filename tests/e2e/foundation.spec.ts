@@ -98,7 +98,7 @@ test("renders distinct product login and signup states", async ({ page }) => {
   await page.goto("/login");
 
   await expect(
-    page.getByRole("heading", { name: "다시 만나 반가워요." }),
+    page.getByRole("heading", { name: "로그인", exact: true }),
   ).toBeVisible();
   await expect(page.getByLabel("아이디 또는 복구 이메일")).toBeVisible();
   await expect(
@@ -107,10 +107,10 @@ test("renders distinct product login and signup states", async ({ page }) => {
   await expect(page.locator(".auth-form__message")).toHaveCount(0);
   await expect(page.getByRole("button", { name: /로그인/ })).toBeVisible();
   await expect(
-    page.getByRole("link", { name: "새 계정 만들기" }),
+    page.getByRole("link", { name: "회원가입", exact: true }),
   ).toBeVisible();
 
-  await page.getByRole("link", { name: "새 계정 만들기" }).click();
+  await page.getByRole("link", { name: "회원가입", exact: true }).click();
   await expect(page).toHaveURL(/\/signup$/);
   await expect(
     page.getByRole("heading", { name: "계정 만들기" }),

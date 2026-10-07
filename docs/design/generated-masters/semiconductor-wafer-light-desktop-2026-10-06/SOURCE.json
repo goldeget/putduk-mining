@@ -1,0 +1,20 @@
+{
+  "scope": "Light desktop HOME responsive inference from reviewed mobile a02-m00027; no supplied Light desktop reference acceptance",
+  "sourceNativePath": "/workspace/generated_images/exec-6f4dc33a-d085-4119-860c-9d9306a59a7c.png",
+  "sourceMaster": "docs/design/generated-masters/semiconductor-wafer-light-desktop-2026-10-06/semiconductor-wafer-light-desktop-master-v1.png",
+  "sourceSha256": "fb2ef6a74cba862a69229d334e84ad27e1e7dd4709702967f76d6c4242c08548",
+  "sourceDimensions": {
+    "width": 1983,
+    "height": 793,
+    "mode": "RGB"
+  },
+  "active136ManifestSha256": "803b993ae1a521ea142a9efae534d50ebb315ad1f58432b094ae7b4d03fb0fc6",
+  "baselineAssetCount": 144,
+  "baselineManifestSha256": "50e8648a66e862ad190518717d8d9648d59731981cb9f0e54eec82ceeb345920",
+  "baselineRecordDigest": "276dd5899d05f9cbb8dedb50edabbe9b600d214eaa18bec3ab1a6082c11da7fb",
+  "darkPackIntegritySha256": "b82a6baa07a135bee30d36996e5fd4568db0344bf88ef24915a42b21c7b2f58d",
+  "prospectiveManifestVersion": "2026.10.06-v10",
+  "prospectiveAssetCount": 152,
+  "widths": [960, 1280, 1536, 1920],
+  "formats": ["avif", "webp"]
+}

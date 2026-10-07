@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "assetVersion": "2026.10.07-mining-responsive-v1",
+  "sourcePolicy": "Native generated pixels contain no production copy; public files are optimized full-frame derivatives. Portrait scene is decorative only, never a running-state or economic fact.",
+  "assets": [
+    {
+      "sourceMaster": "docs/design/generated-masters/mining-semiconductor-mobile-light-2026-10-07/mining-semiconductor-mobile-light-master-v1.png",
+      "sourceSha256": "3dcf4cfc2c023fd86fd64d7a8c3f7c762316767600bd9743f1dc05feccd1b62e",
+      "assetVersion": "2026.10.07-mining-responsive-v1",
+      "reviewScope": "Native GPT mobile Light adaptation from existing full-viewed desktop Light and mobile Dark generated masters. No supplied mobile Light Mining reference exists; this is a responsive material/composition inference. Complete portrait frame, mechanical downscale and full-frame encoding only. Decorative gold module/wafer/robot clean-room; no raster text, interactive UI, money, running-state or economic approval. Actual-browser visual acceptance pending.",
+      "theme": "light",
+      "alt": "밝은 반도체 공장의 금색 설비와 은빛 웨이퍼",
+      "path": "/brand/scenes/mining-semiconductor-mobile-light/mining-semiconductor-mobile-light-480-v1.avif",
+      "width": 480,
+      "height": 640,
+      "mimeType": "image/avif",
+      "bytes": 181963,
+      "sha256": "d1166678274072885fb59a2679717442a00a9c0ee976ad141f9d76986a5167c1"
+    },
+    {
+      "sourceMaster": "docs/design/generated-masters/mining-semiconductor-mobile-light-2026-10-07/mining-semiconductor-mobile-light-master-v1.png",
+      "sourceSha256": "3dcf4cfc2c023fd86fd64d7a8c3f7c762316767600bd9743f1dc05feccd1b62e",
+      "assetVersion": "2026.10.07-mining-responsive-v1",
+      "reviewScope": "Native GPT mobile Light adaptation from existing full-viewed desktop Light and mobile Dark generated masters. No supplied mobile Light Mining reference exists; this is a responsive material/composition inference. Complete portrait frame, mechanical downscale and full-frame encoding only. Decorative gold module/wafer/robot clean-room; no raster text, interactive UI, money, running-state or economic approval. Actual-browser visual acceptance pending.",
+      "theme": "light",
+      "alt": "밝은 반도체 공장의 금색 설비와 은빛 웨이퍼",
+      "path": "/brand/scenes/mining-semiconductor-mobile-light/mining-semiconductor-mobile-light-480-v1.webp",
+      "width": 480,
+      "height": 640,
+      "mimeType": "image/webp",
+      "bytes": 456098,
+      "sha256": "48aca20c55fe71ea975fe733fc3a50f5fddb0432c3b519dec070f034f17d8fa9"
+    },
+    {
+      "sourceMaster": "docs/design/generated-masters/mining-semiconductor-mobile-light-2026-10-07/mining-semiconductor-mobile-light-master-v1.png",
+      "sourceSha256": "3dcf4cfc2c023fd86fd64d7a8c3f7c762316767600bd9743f1dc05feccd1b62e",
+      "assetVersion": "2026.10.07-mining-responsive-v1",
+      "reviewScope": "Native GPT mobile Light adaptation from existing full-viewed desktop Light and mobile Dark generated masters. No supplied mobile Light Mining reference exists; this is a responsive material/composition inference. Complete portrait frame, mechanical downscale and full-frame encoding only. Decorative gold module/wafer/robot clean-room; no raster text, interactive UI, money, running-state or economic approval. Actual-browser visual acceptance pending.",
+      "theme": "light",
+      "alt": "밝은 반도체 공장의 금색 설비와 은빛 웨이퍼",
+      "path": "/brand/scenes/mining-semiconductor-mobile-light/mining-semiconductor-mobile-light-640-v1.avif",
+      "width": 640,
+      "height": 853,
+      "mimeType": "image/avif",
+      "bytes": 282314,
+      "sha256": "3e847aeb3177a4157ee4e8c10c4837a3d146977cdfa9f85da9bc4a2be79cc3d3"
+    },
+    {
+      "sourceMaster": "docs/design/generated-masters/mining-semiconductor-mobile-light-2026-10-07/mining-semiconductor-mobile-light-master-v1.png",
+      "sourceSha256": "3dcf4cfc2c023fd86fd64d7a8c3f7c762316767600bd9743f1dc05feccd1b62e",
+      "assetVersion": "2026.10.07-mining-responsive-v1",
+      "reviewScope": "Native GPT mobile Light adaptation from existing full-viewed desktop Light and mobile Dark generated masters. No supplied mobile Light Mining reference exists; this is a responsive material/composition inference. Complete portrait frame, mechanical downscale and full-frame encoding only. Decorative gold module/wafer/robot clean-room; no raster text, interactive UI, money, running-state or economic approval. Actual-browser visual acceptance pending.",
+      "theme": "light",
+      "alt": "밝은 반도체 공장의 금색 설비와 은빛 웨이퍼",
+      "path": "/brand/scenes/mining-semiconductor-mobile-light/mining-semiconductor-mobile-light-640-v1.webp",
+      "width": 640,
+      "height": 853,
+      "mimeType": "image/webp",
+      "bytes": 762596,
+      "sha256": "f86afa9def08b739598ca2b1f129b5ec0383cbb1c9efb3a7e68890cbf1c78016"
+    },
+    {
+      "sourceMaster": "docs/design/generated-masters/mining-semiconductor-mobile-light-2026-10-07/mining-semiconductor-mobile-light-master-v1.png",
+      "sourceSha256": "3dcf4cfc2c023fd86fd64d7a8c3f7c762316767600bd9743f1dc05feccd1b62e",
+      "assetVersion": "2026.10.07-mining-responsive-v1",
+      "reviewScope": "Native GPT mobile Light adaptation from existing full-viewed desktop Light and mobile Dark generated masters. No supplied mobile Light Mining reference exists; this is a responsive material/composition inference. Complete portrait frame, mechanical downscale and full-frame encoding only. Decorative gold module/wafer/robot clean-room; no raster text, interactive UI, money, running-state or economic approval. Actual-browser visual acceptance pending.",
+      "theme": "light",
+      "alt": "밝은 반도체 공장의 금색 설비와 은빛 웨이퍼",
+      "path": "/brand/scenes/mining-semiconductor-mobile-light/mining-semiconductor-mobile-light-1086-v1.avif",
+      "width": 1086,
+      "height": 1448,
+      "mimeType": "image/avif",
+      "bytes": 592950,
+      "sha256": "6106bf144c1e1a330b780a984b2e4ef6d20bdf866c4f83814412918b44f07785"
+    },
+    {
+      "sourceMaster": "docs/design/generated-masters/mining-semiconductor-mobile-light-2026-10-07/mining-semiconductor-mobile-light-master-v1.png",
+      "sourceSha256": "3dcf4cfc2c023fd86fd64d7a8c3f7c762316767600bd9743f1dc05feccd1b62e",
+      "assetVersion": "2026.10.07-mining-responsive-v1",
+      "reviewScope": "Native GPT mobile Light adaptation from existing full-viewed desktop Light and mobile Dark generated masters. No supplied mobile Light Mining reference exists; this is a responsive material/composition inference. Complete portrait frame, mechanical downscale and full-frame encoding only. Decorative gold module/wafer/robot clean-room; no raster text, interactive UI, money, running-state or economic approval. Actual-browser visual acceptance pending.",
+      "theme": "light",
+      "alt": "밝은 반도체 공장의 금색 설비와 은빛 웨이퍼",
+      "path": "/brand/scenes/mining-semiconductor-mobile-light/mining-semiconductor-mobile-light-1086-v1.webp",
+      "width": 1086,
+      "height": 1448,
+      "mimeType": "image/webp",
+      "bytes": 1909612,
+      "sha256": "dd60abcea5bc9902e56b7a3fcca1b2eb6a8968e5ec70d0bdd0f67da387e0756a"
+    }
+  ]
+}

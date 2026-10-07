@@ -12,8 +12,15 @@ import { parseMiningServerDisplay } from "@/lib/product/mining-server-display";
 import { readOwnMiningServerDisplay } from "@/lib/product/read-mining-server-display";
 import { presentWalletServerDisplay } from "@/lib/product/wallet-server-display";
 
-export default async function WalletPage() {
+export default async function WalletPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ view?: string | string[] }>;
+}) {
   const identity = await requirePageUser();
+  const view = (await searchParams).view;
+  const initialView =
+    view === "history" || view === "profit" ? view : "principal";
   const [
     { data: krwAccount, error: accountsError },
     { data: trial, error: trialError },
@@ -126,6 +133,7 @@ export default async function WalletPage() {
       }
     >
       <WalletReadView
+        initialView={initialView}
         balanceState={balanceState}
         funding={funding}
         krw={krw}

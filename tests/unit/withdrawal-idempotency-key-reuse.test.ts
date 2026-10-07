@@ -108,7 +108,8 @@ describe("withdrawal idempotency key reuse", () => {
   });
 
   it("does not reopen general withdrawal creation or an accrual producer", () => {
-    const file = latestFileDefining("release_withdrawal_hold");
+    const file =
+      "supabase/migrations/20261005143000_withdrawal_idempotency_key_reuse.sql";
     const text = source(file);
     expect(file).not.toBe(appliedJournal);
     expect(text.match(/create or replace function /g)).toHaveLength(2);
@@ -123,5 +124,33 @@ describe("withdrawal idempotency key reuse", () => {
     expect(latestFunction("finalize_withdrawal_ledger")).not.toContain(
       "money_source_movements",
     );
+  });
+
+  it("limits the admitted principal clock extension to its three existing functions", () => {
+    const file = latestFileDefining("release_withdrawal_hold");
+    expect(file).toBe(
+      "supabase/migrations/20261006130100_principal_hold_cancel_clock_connections.sql",
+    );
+    const text = source(file);
+    expect(
+      [
+        ...text.matchAll(/create or replace function ([a-z_]+\.[a-z_]+)\(/g),
+      ].map((match) => match[1]),
+    ).toEqual([
+      "app_private.finish_principal_recovery_hold",
+      "app_private.record_principal_recovery_release",
+      "public.release_withdrawal_hold",
+    ]);
+    expect(text).not.toContain("request_withdrawal_with_hold");
+    expect(text).not.toContain(
+      "WITHDRAWAL_VERIFIED_SOURCE_LIFECYCLE_UNAVAILABLE",
+    );
+    expect(text).not.toMatch(/\bgrant\s+execute\s+on\s+function\s+public\./i);
+    expect(latestFunction("release_withdrawal_hold")).toContain(
+      "app_private.capture_funding_withdrawal_clock_admission",
+    );
+    expect(guards(latestFunction("release_withdrawal_hold"))).toEqual([
+      canonicalGuard,
+    ]);
   });
 });

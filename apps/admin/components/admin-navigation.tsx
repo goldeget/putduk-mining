@@ -34,8 +34,10 @@ export function AdminNavigation({ onNavigate }: { onNavigate?: () => void }) {
             aria-current={current ? "page" : undefined}
             onNavigate={() => onNavigate?.()}
           >
-            <span>{String(index + 1).padStart(2, "0")}</span>
-            {item.label}
+            <span className="control-nav__index">
+              {String(index + 1).padStart(2, "0")}
+            </span>
+            <span className="control-nav__label">{item.label}</span>
           </Link>
         );
       })}

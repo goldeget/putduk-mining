@@ -22,7 +22,7 @@ PUBLIC = ROOT / "public"
 BRAND = PUBLIC / "brand"
 RANKS = PUBLIC / "ranks"
 GENERATED_MASTERS = ROOT / "docs" / "design" / "generated-masters"
-VERSION = "2026.10.06-v5"
+VERSION = "2026.10.06-v17"
 
 MASCOT_MASTER = GENERATED_MASTERS / "putduk-miner-master-v1.png"
 WORLD_MASTER = GENERATED_MASTERS / "putduk-orbital-earth-master-v1.png"
@@ -297,8 +297,69 @@ def build_rank_variants() -> None:
             save_modern(canvas, directory / f"planet-{size}-v1", alpha=True)
 
 
+LOGIN_ALT_BY_PATH = {
+    f"/brand/scenes/{family}/{family}-{width}-v1.{extension}": alt
+    for family, widths, alt in [('login-wafer-dark', [480, 640, 941], '짙은 푸른 유리 공장 안에서 원형 웨이퍼와 금빛 수직 광선이 빛나는 세로 로그인 장면'), ('login-semiconductor-dark', [960, 1280, 1536, 1920], '짙은 푸른 반도체 공장 안에서 메모리 타워와 로봇 팔이 빛나고 오른쪽이 비워진 로그인 장면'), ('login-semiconductor-light', [960, 1280, 1536, 1920], '밝은 유리 반도체 공장 안에서 메모리 타워와 로봇 팔이 빛나고 오른쪽이 비워진 로그인 장면')]
+    for width in widths for extension in ("avif", "webp")
+}
+
+
+GIFT_ALT_BY_PATH = {
+    f"/brand/scenes/home-event-gift/home-event-gift-{width}-v1.{extension}": '짙은 푸른 공간의 오른쪽에 금빛 리본을 두른 세 선물 상자가 빛나는 홈 이벤트 장면'
+    for width in (480, 960, 1280, 1920) for extension in ("avif", "webp")
+}
+
+
+MINING_ALT_BY_PATH = {
+    f"/brand/scenes/{family}/{family}-{width}-v1.{extension}": alt
+    for family, widths, alt in [('mining-semiconductor-mobile-dark', [480, 640, 941], '짙은 푸른 반도체 공장 안에서 메모리 타워와 원형 웨이퍼, 두 로봇 팔이 빛나는 세로 채굴 장면'), ('mining-semiconductor-desktop-dark', [960, 1280, 1536, 1920], '짙은 푸른 반도체 공장 안에서 메모리 타워와 원형 웨이퍼, 두 로봇 팔이 빛나고 오른쪽이 비워진 넓은 채굴 장면'), ('mining-semiconductor-desktop-light', [960, 1280, 1536, 1920], '밝은 유리 반도체 공장 안에서 메모리 타워와 원형 웨이퍼, 두 로봇 팔이 빛나고 오른쪽이 비워진 넓은 채굴 장면')]
+    for width in widths for extension in ("avif", "webp")
+}
+
+
+WALLET_ALT_BY_PATH = {
+    f"/brand/scenes/{family}/{family}-{width}-v1.{extension}": alt
+    for family, widths, alt in [('wallet-vault-mobile-dark', [480, 640, 941], '짙은 푸른 반도체 공장 오른쪽에 금빛 테두리의 금고 문이 빛나는 세로 지갑 장면'), ('wallet-vault-desktop-dark', [960, 1280, 1536, 1920], '짙은 푸른 반도체 공장 오른쪽에 둥근 금고 문이 빛나고 왼쪽이 비워진 넓은 지갑 장면'), ('wallet-chip-mobile-light', [480, 640, 940], '밝은 유리 반도체 공장 오른쪽에 금빛 반도체 칩과 회로가 빛나는 세로 지갑 장면'), ('wallet-chip-desktop-light', [960, 1280, 1536, 1920], '밝은 유리 반도체 공장 오른쪽에 금빛 반도체 칩과 회로가 빛나고 왼쪽이 비워진 넓은 지갑 장면')]
+    for width in widths for extension in ("avif", "webp")
+}
+
+
+SIGNUP_ALT_BY_PATH = {'/brand/scenes/signup-semiconductor-mobile-dark/signup-semiconductor-mobile-dark-640-v1.webp': '짙은 푸른 반도체 공장에서 금빛 메모리 타워와 원형 웨이퍼, 두 로봇 팔이 빛나는 세로 가입 장면', '/brand/scenes/signup-semiconductor-mobile-dark/signup-semiconductor-mobile-dark-640-v1.avif': '짙은 푸른 반도체 공장에서 금빛 메모리 타워와 원형 웨이퍼, 두 로봇 팔이 빛나는 세로 가입 장면', '/brand/scenes/signup-semiconductor-mobile-dark/signup-semiconductor-mobile-dark-941-v1.webp': '짙은 푸른 반도체 공장에서 금빛 메모리 타워와 원형 웨이퍼, 두 로봇 팔이 빛나는 세로 가입 장면', '/brand/scenes/signup-semiconductor-mobile-dark/signup-semiconductor-mobile-dark-480-v1.avif': '짙은 푸른 반도체 공장에서 금빛 메모리 타워와 원형 웨이퍼, 두 로봇 팔이 빛나는 세로 가입 장면', '/brand/scenes/signup-semiconductor-mobile-dark/signup-semiconductor-mobile-dark-480-v1.webp': '짙은 푸른 반도체 공장에서 금빛 메모리 타워와 원형 웨이퍼, 두 로봇 팔이 빛나는 세로 가입 장면', '/brand/scenes/signup-semiconductor-mobile-dark/signup-semiconductor-mobile-dark-941-v1.avif': '짙은 푸른 반도체 공장에서 금빛 메모리 타워와 원형 웨이퍼, 두 로봇 팔이 빛나는 세로 가입 장면'}
+
+
+PRODUCTS_ALT_BY_PATH = {'/brand/scenes/products-semiconductor-hero/products-semiconductor-hero-960-v1.webp': '짙은 푸른 회로판 오른쪽에 금빛 핀으로 둘러싸인 검은 반도체 칩이 놓이고 왼쪽이 비워진 넓은 상품 장면', '/brand/scenes/products-semiconductor-hero/products-semiconductor-hero-640-v1.webp': '짙은 푸른 회로판 오른쪽에 금빛 핀으로 둘러싸인 검은 반도체 칩이 놓이고 왼쪽이 비워진 넓은 상품 장면', '/brand/scenes/products-semiconductor-hero/products-semiconductor-hero-960-v1.avif': '짙은 푸른 회로판 오른쪽에 금빛 핀으로 둘러싸인 검은 반도체 칩이 놓이고 왼쪽이 비워진 넓은 상품 장면', '/brand/scenes/products-semiconductor-hero/products-semiconductor-hero-1536-v1.avif': '짙은 푸른 회로판 오른쪽에 금빛 핀으로 둘러싸인 검은 반도체 칩이 놓이고 왼쪽이 비워진 넓은 상품 장면', '/brand/scenes/products-semiconductor-hero/products-semiconductor-hero-1280-v1.avif': '짙은 푸른 회로판 오른쪽에 금빛 핀으로 둘러싸인 검은 반도체 칩이 놓이고 왼쪽이 비워진 넓은 상품 장면', '/brand/scenes/products-semiconductor-hero/products-semiconductor-hero-1280-v1.webp': '짙은 푸른 회로판 오른쪽에 금빛 핀으로 둘러싸인 검은 반도체 칩이 놓이고 왼쪽이 비워진 넓은 상품 장면', '/brand/scenes/products-semiconductor-hero/products-semiconductor-hero-640-v1.avif': '짙은 푸른 회로판 오른쪽에 금빛 핀으로 둘러싸인 검은 반도체 칩이 놓이고 왼쪽이 비워진 넓은 상품 장면', '/brand/scenes/products-semiconductor-hero/products-semiconductor-hero-1536-v1.webp': '짙은 푸른 회로판 오른쪽에 금빛 핀으로 둘러싸인 검은 반도체 칩이 놓이고 왼쪽이 비워진 넓은 상품 장면', '/brand/scenes/products-semiconductor-hero/products-semiconductor-hero-480-v1.avif': '짙은 푸른 회로판 오른쪽에 금빛 핀으로 둘러싸인 검은 반도체 칩이 놓이고 왼쪽이 비워진 넓은 상품 장면', '/brand/scenes/products-semiconductor-hero/products-semiconductor-hero-480-v1.webp': '짙은 푸른 회로판 오른쪽에 금빛 핀으로 둘러싸인 검은 반도체 칩이 놓이고 왼쪽이 비워진 넓은 상품 장면', '/brand/scenes/products-semiconductor-hero/products-semiconductor-hero-1920-v1.avif': '짙은 푸른 회로판 오른쪽에 금빛 핀으로 둘러싸인 검은 반도체 칩이 놓이고 왼쪽이 비워진 넓은 상품 장면', '/brand/scenes/products-semiconductor-hero/products-semiconductor-hero-1920-v1.webp': '짙은 푸른 회로판 오른쪽에 금빛 핀으로 둘러싸인 검은 반도체 칩이 놓이고 왼쪽이 비워진 넓은 상품 장면'}
+
+
+AI_ALT_BY_PATH = {'/brand/scenes/ai-partner-hero/ai-partner-hero-1920-v1.webp': '금빛으로 빛나는 짙은 반도체 공장 앞 오른쪽에 검은 로봇이 손을 펼치고 왼쪽이 비워진 넓은 AI 장면', '/brand/scenes/ai-partner-hero/ai-partner-hero-1280-v1.avif': '금빛으로 빛나는 짙은 반도체 공장 앞 오른쪽에 검은 로봇이 손을 펼치고 왼쪽이 비워진 넓은 AI 장면', '/brand/scenes/ai-partner-hero/ai-partner-hero-1536-v1.webp': '금빛으로 빛나는 짙은 반도체 공장 앞 오른쪽에 검은 로봇이 손을 펼치고 왼쪽이 비워진 넓은 AI 장면', '/brand/scenes/ai-partner-hero/ai-partner-hero-1536-v1.avif': '금빛으로 빛나는 짙은 반도체 공장 앞 오른쪽에 검은 로봇이 손을 펼치고 왼쪽이 비워진 넓은 AI 장면', '/brand/scenes/ai-partner-hero/ai-partner-hero-960-v1.webp': '금빛으로 빛나는 짙은 반도체 공장 앞 오른쪽에 검은 로봇이 손을 펼치고 왼쪽이 비워진 넓은 AI 장면', '/brand/scenes/ai-partner-hero/ai-partner-hero-1280-v1.webp': '금빛으로 빛나는 짙은 반도체 공장 앞 오른쪽에 검은 로봇이 손을 펼치고 왼쪽이 비워진 넓은 AI 장면', '/brand/scenes/ai-partner-hero/ai-partner-hero-960-v1.avif': '금빛으로 빛나는 짙은 반도체 공장 앞 오른쪽에 검은 로봇이 손을 펼치고 왼쪽이 비워진 넓은 AI 장면', '/brand/scenes/ai-partner-hero/ai-partner-hero-640-v1.avif': '금빛으로 빛나는 짙은 반도체 공장 앞 오른쪽에 검은 로봇이 손을 펼치고 왼쪽이 비워진 넓은 AI 장면', '/brand/scenes/ai-partner-hero/ai-partner-hero-1920-v1.avif': '금빛으로 빛나는 짙은 반도체 공장 앞 오른쪽에 검은 로봇이 손을 펼치고 왼쪽이 비워진 넓은 AI 장면', '/brand/scenes/ai-partner-hero/ai-partner-hero-640-v1.webp': '금빛으로 빛나는 짙은 반도체 공장 앞 오른쪽에 검은 로봇이 손을 펼치고 왼쪽이 비워진 넓은 AI 장면', '/brand/scenes/ai-partner-hero/ai-partner-hero-480-v1.webp': '금빛으로 빛나는 짙은 반도체 공장 앞 오른쪽에 검은 로봇이 손을 펼치고 왼쪽이 비워진 넓은 AI 장면', '/brand/scenes/ai-partner-hero/ai-partner-hero-480-v1.avif': '금빛으로 빛나는 짙은 반도체 공장 앞 오른쪽에 검은 로봇이 손을 펼치고 왼쪽이 비워진 넓은 AI 장면'}
+
+
 def asset_alt(path: Path) -> str:
+    relative = "/" + path.relative_to(PUBLIC).as_posix()
+    if relative in SIGNUP_ALT_BY_PATH:
+        return SIGNUP_ALT_BY_PATH[relative]
+    if relative in PRODUCTS_ALT_BY_PATH:
+        return PRODUCTS_ALT_BY_PATH[relative]
+    if relative in AI_ALT_BY_PATH:
+        return AI_ALT_BY_PATH[relative]
+    if relative in WALLET_ALT_BY_PATH:
+        return WALLET_ALT_BY_PATH[relative]
+    if relative in MINING_ALT_BY_PATH:
+        return MINING_ALT_BY_PATH[relative]
+    if relative in GIFT_ALT_BY_PATH:
+        return GIFT_ALT_BY_PATH[relative]
+    if relative in LOGIN_ALT_BY_PATH:
+        return LOGIN_ALT_BY_PATH[relative]
     value = path.as_posix()
+    if path.name.startswith("semiconductor-tower-desktop-") and "/scenes/semiconductor-tower-desktop/" in value:
+        return "짙은 푸른 반도체 공장 안에서 여섯 층 메모리 타워와 양쪽 로봇 팔이 빛나는 넓은 장면"
+    if path.name.startswith("semiconductor-wafer-light-desktop-") and "/scenes/semiconductor-wafer-light-desktop/" in value:
+        return "밝은 유리 반도체 공장 안에서 낮고 얇은 원형 웨이퍼와 금빛 수직 광선이 빛나는 넓은 장면"
+    if path.name.startswith("gold-category-") and "/scenes/gold-category/" in value:
+        return "짙은 푸른 공장 안에서 금빛 금속 막대가 빛나는 중립 골드 카테고리 장면"
+    if path.name.startswith("semiconductor-wafer-light-") and "/scenes/semiconductor-wafer-light/" in value:
+        return "밝은 유리 반도체 공장 안에서 넓고 낮은 원형 웨이퍼와 금빛 수직 광선이 빛나는 장면"
+    if path.name.startswith("semiconductor-tower-") and "/scenes/semiconductor-tower/" in value:
+        return "짙은 푸른 반도체 공장 안에서 로봇 팔과 금빛 여섯 층 메모리 타워가 빛나는 장면"
     if path.name.startswith("semiconductor-memory-light-") and "/scenes/semiconductor-memory-light/" in value:
         return "밝은 전시 공간에서 금빛 회로와 푸른 메모리 칩이 빛나는 반도체 시설"
     if path.name.startswith("global-pavilion-") and "/scenes/global-pavilion/" in value:
@@ -358,7 +419,18 @@ def build_manifest(*, write: bool = True) -> dict[str, object]:
             with Image.open(path) as image:
                 record["width"] = image.width
                 record["height"] = image.height
-        if "-light" in path.stem:
+        if relative in AI_ALT_BY_PATH or relative in PRODUCTS_ALT_BY_PATH or relative in GIFT_ALT_BY_PATH or relative in {
+            f"/brand/scenes/semiconductor-tower/semiconductor-tower-{width}-v1.{format}"
+            for width in (640, 960, 1280, 1536) for format in ("avif", "webp")
+        } | {
+            f"/brand/scenes/gold-category/gold-category-{width}-v1.{format}"
+            for width in (320, 640, 960, 1536) for format in ("avif", "webp")
+        } | {
+            f"/brand/scenes/semiconductor-tower-desktop/semiconductor-tower-desktop-{width}-v1.{format}"
+            for width in (960, 1280, 1536, 1920) for format in ("avif", "webp")
+        }:
+            record["theme"] = "dark"
+        elif "-light" in path.stem:
             record["theme"] = "light"
         elif "-dark" in path.stem:
             record["theme"] = "dark"
@@ -392,6 +464,9 @@ def build_manifest(*, write: bool = True) -> dict[str, object]:
 
 
 def main() -> None:
+    if sys.argv[1:] == ["--manifest-dry-run"]:
+        print(json.dumps(build_manifest(write=False), ensure_ascii=False, indent=2))
+        return
     ensure_sources()
     if len(sys.argv) == 3 and sys.argv[1] == "--only":
         if sys.argv[2] != "notification":

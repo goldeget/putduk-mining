@@ -89,8 +89,12 @@ function lockDocumentScroll() {
   };
 }
 
-/** ProductShell supplies the normal-flow row outside its scrolling main. */
-export function PutdukAiDock() {
+/** The home shortcut shares the same authorized conversation and dialog. */
+export function PutdukAiDock({
+  presentation = "dock",
+}: {
+  presentation?: "dock" | "inline";
+}) {
   const pathname = usePathname();
   const dedicatedAi =
     pathname === "/ai" ||
@@ -104,10 +108,22 @@ export function PutdukAiDock() {
 
   // A route owns only the panel lifecycle. The shared conversation provider
   // stays mounted above this keyed presentation when the route changes.
-  return <RouteAiDock key={pathname} pathname={pathname} />;
+  return (
+    <RouteAiDock
+      key={pathname}
+      pathname={pathname}
+      presentation={presentation}
+    />
+  );
 }
 
-function RouteAiDock({ pathname }: { pathname: string }) {
+function RouteAiDock({
+  pathname,
+  presentation,
+}: {
+  pathname: string;
+  presentation: "dock" | "inline";
+}) {
   const dialogId = useId();
   const titleId = useId();
   const statusId = useId();
@@ -219,7 +235,11 @@ function RouteAiDock({ pathname }: { pathname: string }) {
 
   return (
     <>
-      <footer className={styles.dock} data-ai-dock aria-label="화면 도움">
+      <footer
+        className={`${styles.dock} ${presentation === "inline" ? styles.inline : ""}`}
+        data-ai-dock
+        aria-label="화면 도움"
+      >
         <div className={styles.actions}>
           {pathname === "/mining" ? (
             <a
@@ -255,7 +275,14 @@ function RouteAiDock({ pathname }: { pathname: string }) {
             onClick={(event) => openPanel(event.currentTarget)}
           >
             <PutdukAiMascot />
-            <span>AI 도움</span>
+            {presentation === "inline" ? (
+              <span className={styles.inlineCopy}>
+                <strong>PUTDUK AI</strong>
+                <small>질문하기</small>
+              </span>
+            ) : (
+              <span>AI 도움</span>
+            )}
           </button>
         </div>
         {status ? (

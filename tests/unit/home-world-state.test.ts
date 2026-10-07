@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  presentHomeFundingFacts,
   presentHomeMiningFacts,
   resolveHomeWorldState,
 } from "@/lib/product/home-world-state";
@@ -208,6 +209,42 @@ describe("Home world source truth", () => {
 });
 
 describe("Home paid runtime priority", () => {
+  it("shows a strict SAFE_MODE stop without changing accepted credits, carry or cursor facts", () => {
+    const runtime = {
+      ...activeReceipt,
+      status: "STOPPED" as const,
+      stop_reason: "SAFE_MODE" as const,
+    };
+    const display = parseMiningServerDisplay(paidDisplay(runtime));
+    expect(display).not.toBeNull();
+    const before = structuredClone(display);
+    const state = resolveHomeWorldState({
+      ...emptyReads,
+      fundedDisplay: display,
+      trial: { status: "ACTIVE" },
+      mining: { status: "NORMAL" },
+    });
+    expect(state.running).toBe(false);
+    expect(state.needsRequery).toBe(false);
+    expect(state.liveLabel).toBe("안전 모드로 잠시 멈춤");
+    expect(state.worldLead).toContain("확인된 채굴 기록은 유지돼요");
+    expect(state.primary).toEqual({
+      href: "/mining",
+      label: "채굴 상태 확인",
+    });
+    expect(state.notStarted).toBe(false);
+    expect(display).toEqual(before);
+    expect(display?.funded_runtime).toMatchObject({
+      committed_reward_total_atomic: "7",
+      reward_carry: { numerator: "1", denominator: "2", unit: "KRW" },
+      accepted_cursor_at: "2026-10-05T10:00:00.000000Z",
+      allocation_bps: "5000",
+      speed: {
+        effective_global_multiplier: { numerator: "1", denominator: "2" },
+      },
+    });
+  });
+
   it("uses confirmed 50% ACTIVE funded proof without a legacy session or START row", () => {
     const state = resolveHomeWorldState({
       ...emptyReads,
@@ -375,4 +412,62 @@ describe("Home proven receipt totals", () => {
       });
     },
   );
+});
+
+describe("Home server funding facts", () => {
+  const confirmed = {
+    ...paidDisplay(activeReceipt),
+    eligible_principal_micro_krw: "9007199254740993000000",
+    remaining_capacity_micro_krw: "1500000",
+  };
+
+  it("formats server principal and remaining limit without deriving a capacity percentage", () => {
+    expect(presentHomeFundingFacts(confirmed)).toEqual({
+      principal: "9,007,199,254,740,993원",
+      remainingCapacity: "1.5원",
+    });
+    expect(confirmed.funded_runtime?.committed_reward_total_atomic).toBe("7");
+  });
+
+  it.each([null, undefined, emptyMiningServerDisplay])(
+    "missing funding proof never supplies mock capital or a zero limit: %s",
+    (display) => {
+      expect(presentHomeFundingFacts(display)).toEqual({
+        principal: "확인할 수 없어요",
+        remainingCapacity: "확인할 수 없어요",
+      });
+    },
+  );
+
+  it("discards retained amounts on a failed read", () => {
+    expect(presentHomeFundingFacts(confirmed, true)).toEqual({
+      principal: "확인할 수 없어요",
+      remainingCapacity: "확인할 수 없어요",
+    });
+  });
+
+  it("keeps an individually missing field unknown while retaining the other server fact", () => {
+    expect(
+      presentHomeFundingFacts({
+        ...confirmed,
+        remaining_capacity_micro_krw: null,
+      }),
+    ).toEqual({
+      principal: "9,007,199,254,740,993원",
+      remainingCapacity: "확인할 수 없어요",
+    });
+  });
+
+  it("preserves a server-confirmed zero without inventing a percentage or daily total", () => {
+    expect(
+      presentHomeFundingFacts({
+        ...confirmed,
+        eligible_principal_micro_krw: "0",
+        remaining_capacity_micro_krw: "0",
+      }),
+    ).toEqual({ principal: "0원", remainingCapacity: "0원" });
+    expect(presentHomeMiningFacts(activeReceipt).today).toBe(
+      "확인할 수 없어요",
+    );
+  });
 });

@@ -145,7 +145,7 @@ where account.user_id = ws04_ctx.user_a
 -- Phone availability shape
 select ok(
   (
-    select count(*) = 19
+    select count(*) = 23
       and bool_and(procedure.proconfig @> array['search_path=pg_catalog']::text[])
     from pg_proc as procedure
     join pg_namespace as namespace on namespace.oid = procedure.pronamespace
@@ -170,7 +170,11 @@ select ok(
         'app_private.begin_funding_credit_boundary(uuid,text)'::regprocedure,
         'app_private.finish_funding_credit_boundary(uuid)'::regprocedure,
         'app_private.carry_forward_funding_capacity(uuid,uuid,uuid)'::regprocedure,
-        'app_private.verify_credit_boundary_commit()'::regprocedure
+        'app_private.verify_credit_boundary_commit()'::regprocedure,
+        'app_private.capture_funding_global_control_original()'::regprocedure,
+        'app_private.verify_funding_global_control_commit()'::regprocedure,
+        'app_private.capture_funding_withdrawal_clock_admission(uuid,text,uuid)'::regprocedure,
+        'app_private.verify_funding_withdrawal_clock_commit()'::regprocedure
       )
   )
     and not exists (
@@ -198,10 +202,14 @@ select ok(
         'app_private.begin_funding_credit_boundary(uuid,text)'::regprocedure,
         'app_private.finish_funding_credit_boundary(uuid)'::regprocedure,
         'app_private.carry_forward_funding_capacity(uuid,uuid,uuid)'::regprocedure,
-        'app_private.verify_credit_boundary_commit()'::regprocedure
+        'app_private.verify_credit_boundary_commit()'::regprocedure,
+        'app_private.capture_funding_global_control_original()'::regprocedure,
+        'app_private.verify_funding_global_control_commit()'::regprocedure,
+        'app_private.capture_funding_withdrawal_clock_admission(uuid,text,uuid)'::regprocedure,
+        'app_private.verify_funding_withdrawal_clock_commit()'::regprocedure
         )
     ),
-  'application schemas allow exactly nineteen reviewed SECURITY DEFINER functions'
+  'application schemas allow exactly twenty-three reviewed SECURITY DEFINER functions'
 );
 
 select is(

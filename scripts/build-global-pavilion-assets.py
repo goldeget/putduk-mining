@@ -24,7 +24,7 @@ MANIFEST = PUBLIC / "brand" / "assets.manifest.json"
 MASTER_PATH = "docs/design/generated-masters/global-pavilion-2026-10-06/global-pavilion-master-v1.png"
 MASTER_HASH = "82c8d567d0da86ce72052d6415e198793198f9886e65a21d0eadd859b66e1a32"
 LEGACY_HASH = "71a28aa4af200d846603803b12d01b476e5028497b8a2f28c0a4a795d363893f"
-SNAPSHOT_VERSION = "2026.10.06-v5"
+SNAPSHOT_VERSION = "2026.10.06-v17"
 ASSET_VERSION = "2026.10.06-global-pavilion-v1"
 PATH_PREFIX = "/brand/scenes/global-pavilion/global-pavilion-"
 REVIEW_SCOPE = (
@@ -40,6 +40,72 @@ LIGHT_PATHS = {
     f"/brand/scenes/semiconductor-memory-light/semiconductor-memory-light-{width}-v1.{extension}"
     for width in (640, 960, 1280, 1536) for extension in ("avif", "webp")
 }
+
+TOWER_PATHS = {
+    f"/brand/scenes/semiconductor-tower/semiconductor-tower-{width}-v1.{extension}"
+    for width in (640, 960, 1280, 1536) for extension in ("avif", "webp")
+}
+
+
+WAFER_LIGHT_PATHS = {
+    f"/brand/scenes/semiconductor-wafer-light/semiconductor-wafer-light-{width}-v1.{extension}"
+    for width in (640, 960, 1280, 1536) for extension in ("avif", "webp")
+}
+
+
+GOLD_PATHS = {
+    f"/brand/scenes/gold-category/gold-category-{width}-v1.{extension}"
+    for width in (320, 640, 960, 1536) for extension in ("avif", "webp")
+}
+
+
+DESKTOP_TOWER_PATHS = {
+    f"/brand/scenes/semiconductor-tower-desktop/semiconductor-tower-desktop-{width}-v1.{extension}"
+    for width in (960, 1280, 1536, 1920) for extension in ("avif", "webp")
+}
+
+DESKTOP_WAFER_LIGHT_PATHS = {
+    f"/brand/scenes/semiconductor-wafer-light-desktop/semiconductor-wafer-light-desktop-{width}-v1.{extension}"
+    for width in (960, 1280, 1536, 1920) for extension in ("avif", "webp")
+}
+
+
+LOGIN_PATHS = {
+    f"/brand/scenes/{family}/{family}-{width}-v1.{extension}"
+    for family, widths in (
+        ("login-wafer-dark", (480, 640, 941)),
+        ("login-semiconductor-dark", (960, 1280, 1536, 1920)),
+        ("login-semiconductor-light", (960, 1280, 1536, 1920)),
+    ) for width in widths for extension in ("avif", "webp")
+}
+
+
+GIFT_PATHS = {
+    f"/brand/scenes/home-event-gift/home-event-gift-{width}-v1.{extension}"
+    for width in (480, 960, 1280, 1920) for extension in ("avif", "webp")
+}
+
+
+MINING_PATHS = {
+    f"/brand/scenes/{family}/{family}-{width}-v1.{extension}"
+    for family, widths in (
+        ("mining-semiconductor-mobile-dark", (480, 640, 941)),
+        ("mining-semiconductor-desktop-dark", (960, 1280, 1536, 1920)),
+        ("mining-semiconductor-desktop-light", (960, 1280, 1536, 1920)),
+    ) for width in widths for extension in ("avif", "webp")
+}
+
+
+WALLET_PATHS = {'/brand/scenes/wallet-chip-mobile-light/wallet-chip-mobile-light-480-v1.webp', '/brand/scenes/wallet-chip-desktop-light/wallet-chip-desktop-light-1280-v1.webp', '/brand/scenes/wallet-vault-mobile-dark/wallet-vault-mobile-dark-941-v1.avif', '/brand/scenes/wallet-chip-mobile-light/wallet-chip-mobile-light-640-v1.webp', '/brand/scenes/wallet-vault-desktop-dark/wallet-vault-desktop-dark-1920-v1.avif', '/brand/scenes/wallet-chip-mobile-light/wallet-chip-mobile-light-640-v1.avif', '/brand/scenes/wallet-chip-mobile-light/wallet-chip-mobile-light-940-v1.webp', '/brand/scenes/wallet-chip-desktop-light/wallet-chip-desktop-light-1920-v1.webp', '/brand/scenes/wallet-vault-desktop-dark/wallet-vault-desktop-dark-1920-v1.webp', '/brand/scenes/wallet-vault-mobile-dark/wallet-vault-mobile-dark-941-v1.webp', '/brand/scenes/wallet-chip-desktop-light/wallet-chip-desktop-light-1536-v1.avif', '/brand/scenes/wallet-chip-desktop-light/wallet-chip-desktop-light-960-v1.webp', '/brand/scenes/wallet-vault-desktop-dark/wallet-vault-desktop-dark-1280-v1.webp', '/brand/scenes/wallet-chip-desktop-light/wallet-chip-desktop-light-960-v1.avif', '/brand/scenes/wallet-vault-mobile-dark/wallet-vault-mobile-dark-480-v1.avif', '/brand/scenes/wallet-vault-mobile-dark/wallet-vault-mobile-dark-480-v1.webp', '/brand/scenes/wallet-vault-mobile-dark/wallet-vault-mobile-dark-640-v1.webp', '/brand/scenes/wallet-vault-desktop-dark/wallet-vault-desktop-dark-1536-v1.webp', '/brand/scenes/wallet-vault-mobile-dark/wallet-vault-mobile-dark-640-v1.avif', '/brand/scenes/wallet-vault-desktop-dark/wallet-vault-desktop-dark-1536-v1.avif', '/brand/scenes/wallet-chip-desktop-light/wallet-chip-desktop-light-1280-v1.avif', '/brand/scenes/wallet-chip-desktop-light/wallet-chip-desktop-light-1536-v1.webp', '/brand/scenes/wallet-chip-desktop-light/wallet-chip-desktop-light-1920-v1.avif', '/brand/scenes/wallet-vault-desktop-dark/wallet-vault-desktop-dark-960-v1.webp', '/brand/scenes/wallet-chip-mobile-light/wallet-chip-mobile-light-480-v1.avif', '/brand/scenes/wallet-vault-desktop-dark/wallet-vault-desktop-dark-960-v1.avif', '/brand/scenes/wallet-vault-desktop-dark/wallet-vault-desktop-dark-1280-v1.avif', '/brand/scenes/wallet-chip-mobile-light/wallet-chip-mobile-light-940-v1.avif'}
+
+
+SIGNUP_PATHS = {'/brand/scenes/signup-semiconductor-mobile-dark/signup-semiconductor-mobile-dark-640-v1.webp', '/brand/scenes/signup-semiconductor-mobile-dark/signup-semiconductor-mobile-dark-640-v1.avif', '/brand/scenes/signup-semiconductor-mobile-dark/signup-semiconductor-mobile-dark-941-v1.webp', '/brand/scenes/signup-semiconductor-mobile-dark/signup-semiconductor-mobile-dark-480-v1.avif', '/brand/scenes/signup-semiconductor-mobile-dark/signup-semiconductor-mobile-dark-480-v1.webp', '/brand/scenes/signup-semiconductor-mobile-dark/signup-semiconductor-mobile-dark-941-v1.avif'}
+
+
+PRODUCTS_PATHS = {'/brand/scenes/products-semiconductor-hero/products-semiconductor-hero-960-v1.webp', '/brand/scenes/products-semiconductor-hero/products-semiconductor-hero-640-v1.webp', '/brand/scenes/products-semiconductor-hero/products-semiconductor-hero-960-v1.avif', '/brand/scenes/products-semiconductor-hero/products-semiconductor-hero-1536-v1.avif', '/brand/scenes/products-semiconductor-hero/products-semiconductor-hero-1280-v1.avif', '/brand/scenes/products-semiconductor-hero/products-semiconductor-hero-1280-v1.webp', '/brand/scenes/products-semiconductor-hero/products-semiconductor-hero-640-v1.avif', '/brand/scenes/products-semiconductor-hero/products-semiconductor-hero-1536-v1.webp', '/brand/scenes/products-semiconductor-hero/products-semiconductor-hero-480-v1.avif', '/brand/scenes/products-semiconductor-hero/products-semiconductor-hero-480-v1.webp', '/brand/scenes/products-semiconductor-hero/products-semiconductor-hero-1920-v1.avif', '/brand/scenes/products-semiconductor-hero/products-semiconductor-hero-1920-v1.webp'}
+
+
+AI_PATHS = {'/brand/scenes/ai-partner-hero/ai-partner-hero-1920-v1.webp', '/brand/scenes/ai-partner-hero/ai-partner-hero-1280-v1.avif', '/brand/scenes/ai-partner-hero/ai-partner-hero-1536-v1.webp', '/brand/scenes/ai-partner-hero/ai-partner-hero-1536-v1.avif', '/brand/scenes/ai-partner-hero/ai-partner-hero-960-v1.webp', '/brand/scenes/ai-partner-hero/ai-partner-hero-1280-v1.webp', '/brand/scenes/ai-partner-hero/ai-partner-hero-960-v1.avif', '/brand/scenes/ai-partner-hero/ai-partner-hero-640-v1.avif', '/brand/scenes/ai-partner-hero/ai-partner-hero-1920-v1.avif', '/brand/scenes/ai-partner-hero/ai-partner-hero-640-v1.webp', '/brand/scenes/ai-partner-hero/ai-partner-hero-480-v1.webp', '/brand/scenes/ai-partner-hero/ai-partner-hero-480-v1.avif'}
 
 
 def sha256(contents: bytes) -> str:
@@ -60,7 +126,7 @@ def assert_existing_assets(manifest: dict[str, object]) -> None:
             raise SystemExit(f"Existing asset integrity failed: {relative}")
     legacy = [
         asset for asset in manifest["assets"]
-        if not asset["path"].startswith(PATH_PREFIX) and asset["path"] not in LIGHT_PATHS
+        if ((((not asset["path"].startswith(PATH_PREFIX) and asset["path"] not in LIGHT_PATHS and asset["path"] not in TOWER_PATHS and asset["path"] not in WAFER_LIGHT_PATHS and asset["path"] not in GOLD_PATHS and asset["path"] not in DESKTOP_TOWER_PATHS and asset["path"] not in DESKTOP_WAFER_LIGHT_PATHS and asset["path"] not in LOGIN_PATHS and asset["path"] not in GIFT_PATHS and asset["path"] not in MINING_PATHS) and asset["path"] not in WALLET_PATHS) and asset["path"] not in SIGNUP_PATHS) and asset["path"] not in PRODUCTS_PATHS) and asset["path"] not in AI_PATHS
     ]
     digest = sha256(json.dumps(legacy, ensure_ascii=False, separators=(",", ":")).encode())
     if len(legacy) != 96 or digest != LEGACY_HASH:
