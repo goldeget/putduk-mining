@@ -17,12 +17,12 @@
       "asset_class": "KR_STOCK",
       "market": "KR",
       "ticker_hint": "005930",
-      "canonical_ticker": null,
-      "canonical_name": null,
-      "canonical_exchange": null,
+      "canonical_ticker": "005930",
+      "canonical_name": "Samsung Electronics",
+      "canonical_exchange": "KRX",
       "sector_hint": "반도체·기기",
       "share_class_hint": null,
-      "identity_status": "UNKNOWN",
+      "identity_status": "PUBLIC_MARKET_VERIFIED",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
       "proposed_wave": "P0_LAUNCH_CORE",
@@ -31,9 +31,20 @@
       "repo_status": "REPOSITORY_DRAFT",
       "repository_draft_id": "30000000-0000-4000-8000-000000000001",
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": ["samsung", "krx"],
-      "source_status": "ACCESS_BLOCKED",
-      "verified_facts": [],
+      "source_ids": [
+        "samsung",
+        "krx",
+        "samsung-listing"
+      ],
+      "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
+      "verified_facts": [
+        {
+          "source_id": "samsung-listing",
+          "quote": " Common Preferred Common Preferred KRX 005930 ISIN: KR7005930003 005935 ISIN: KR7005931001 - - LSE - - SMSN ISIN: US7960508882 SMSEL ISIN: U",
+          "locator": "NORMALIZED_VISIBLE_TEXT",
+          "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+        }
+      ],
       "scores": {
         "korean_recognition": 4,
         "global_recognition": 3,
@@ -59,10 +70,15 @@
       "scene_status": "SPEC_IN_FROZEN_LANE_PRODUCT_QA_REQUIRED",
       "registration_ready": false,
       "blocking_requirements": [
-        "PUBLIC_IDENTITY_VERIFICATION_REQUIRED",
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED"
-      ]
+      ],
+      "canonical_name_ko": "삼성전자",
+      "canonical_name_en": "Samsung Electronics",
+      "canonical_share_class": "COMMON",
+      "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+      "identity_confidence": "HIGH_SCOPE_LIMITED",
+      "unresolved_identity_fields": []
     },
     {
       "proposal_id": "catalog-v1-sk-hynix",
@@ -72,11 +88,11 @@
       "market": "KR",
       "ticker_hint": "000660",
       "canonical_ticker": null,
-      "canonical_name": null,
+      "canonical_name": "SK hynix",
       "canonical_exchange": null,
       "sector_hint": "메모리",
       "share_class_hint": null,
-      "identity_status": "UNKNOWN",
+      "identity_status": "PUBLIC_MARKET_PARTIAL",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
       "proposed_wave": "P0_LAUNCH_CORE",
@@ -85,9 +101,19 @@
       "repo_status": "REPOSITORY_DRAFT",
       "repository_draft_id": "30000000-0000-4000-8000-000000000002",
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": ["hynix", "krx"],
-      "source_status": "ACCESS_BLOCKED",
-      "verified_facts": [],
+      "source_ids": [
+        "hynix",
+        "krx"
+      ],
+      "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
+      "verified_facts": [
+        {
+          "source_id": "hynix",
+          "quote": "SK hynix 닫기 Don't show this message today 닫기 SK hynix 새창 Newsroom 새창 YouTube 새창 Instagram 새창 Linked in ",
+          "locator": "NORMALIZED_VISIBLE_TEXT",
+          "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+        }
+      ],
       "scores": {
         "korean_recognition": 4,
         "global_recognition": 3,
@@ -113,9 +139,20 @@
       "scene_status": "SPEC_IN_FROZEN_LANE_PRODUCT_QA_REQUIRED",
       "registration_ready": false,
       "blocking_requirements": [
-        "PUBLIC_IDENTITY_VERIFICATION_REQUIRED",
         "LEGAL_BRAND_REVIEW_REQUIRED",
-        "APPROVED_CATALOG_COMMAND_REQUIRED"
+        "APPROVED_CATALOG_COMMAND_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED"
+      ],
+      "canonical_name_ko": "SK하이닉스",
+      "canonical_name_en": "SK hynix",
+      "canonical_share_class": null,
+      "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+      "identity_confidence": "PARTIAL_DETAILS_REQUIRED",
+      "unresolved_identity_fields": [
+        "TICKER_REQUIRED",
+        "EXCHANGE_REQUIRED",
+        "SHARE_CLASS_REQUIRED"
       ]
     },
     {
@@ -125,12 +162,12 @@
       "asset_class": "KR_STOCK",
       "market": "KR",
       "ticker_hint": "066570",
-      "canonical_ticker": null,
-      "canonical_name": null,
+      "canonical_ticker": "066570",
+      "canonical_name": "LG Electronics",
       "canonical_exchange": null,
       "sector_hint": "가전",
       "share_class_hint": null,
-      "identity_status": "UNKNOWN",
+      "identity_status": "PUBLIC_MARKET_PARTIAL",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
       "proposed_wave": "P2_LATER",
@@ -139,9 +176,20 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": ["lg", "krx"],
-      "source_status": "ACCESS_BLOCKED",
-      "verified_facts": [],
+      "source_ids": [
+        "lg",
+        "krx",
+        "lg-stock"
+      ],
+      "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
+      "verified_facts": [
+        {
+          "source_id": "lg-stock",
+          "quote": "erir.koscom.co.kr/cyberir/stock.do?custId=066570&lang=eng\" class=\"cmp-embed\">\n     \n     \n    \n    <style>\r\n            /* c-tabs-inner-tab */\r",
+          "locator": "RAW_ISSUER_DOCUMENT",
+          "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+        }
+      ],
       "scores": {
         "korean_recognition": 4,
         "global_recognition": 3,
@@ -167,9 +215,19 @@
       "scene_status": "SCENE_SPEC_REQUIRED",
       "registration_ready": false,
       "blocking_requirements": [
-        "PUBLIC_IDENTITY_VERIFICATION_REQUIRED",
         "LEGAL_BRAND_REVIEW_REQUIRED",
-        "APPROVED_CATALOG_COMMAND_REQUIRED"
+        "APPROVED_CATALOG_COMMAND_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED"
+      ],
+      "canonical_name_ko": "LG전자",
+      "canonical_name_en": "LG Electronics",
+      "canonical_share_class": "COMMON_CLASS_LINK_PENDING",
+      "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+      "identity_confidence": "PARTIAL_DETAILS_REQUIRED",
+      "unresolved_identity_fields": [
+        "EXCHANGE_REQUIRED",
+        "SHARE_CLASS_REQUIRED"
       ]
     },
     {
@@ -180,11 +238,11 @@
       "market": "KR",
       "ticker_hint": "005380",
       "canonical_ticker": null,
-      "canonical_name": null,
+      "canonical_name": "Hyundai Motor",
       "canonical_exchange": null,
       "sector_hint": "모빌리티",
       "share_class_hint": null,
-      "identity_status": "UNKNOWN",
+      "identity_status": "PUBLIC_MARKET_PARTIAL",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
       "proposed_wave": "P0_LAUNCH_CORE",
@@ -193,9 +251,20 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": ["hyundai", "krx"],
-      "source_status": "ACCESS_BLOCKED",
-      "verified_facts": [],
+      "source_ids": [
+        "hyundai",
+        "krx",
+        "hyundai-stock"
+      ],
+      "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
+      "verified_facts": [
+        {
+          "source_id": "hyundai-stock",
+          "quote": "ance (Units: share) Stock Issuance Common Share Preferred series Total Dividend Number of Shares Issued 204,757,766 60,632,342 265,390,108 Tre",
+          "locator": "NORMALIZED_VISIBLE_TEXT",
+          "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+        }
+      ],
       "scores": {
         "korean_recognition": 4,
         "global_recognition": 3,
@@ -221,9 +290,20 @@
       "scene_status": "SCENE_SPEC_REQUIRED",
       "registration_ready": false,
       "blocking_requirements": [
-        "PUBLIC_IDENTITY_VERIFICATION_REQUIRED",
         "LEGAL_BRAND_REVIEW_REQUIRED",
-        "APPROVED_CATALOG_COMMAND_REQUIRED"
+        "APPROVED_CATALOG_COMMAND_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED"
+      ],
+      "canonical_name_ko": "현대자동차",
+      "canonical_name_en": "Hyundai Motor",
+      "canonical_share_class": "COMMON_CLASS_LINK_PENDING",
+      "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+      "identity_confidence": "PARTIAL_DETAILS_REQUIRED",
+      "unresolved_identity_fields": [
+        "TICKER_REQUIRED",
+        "EXCHANGE_REQUIRED",
+        "SHARE_CLASS_REQUIRED"
       ]
     },
     {
@@ -234,11 +314,11 @@
       "market": "KR",
       "ticker_hint": "373220",
       "canonical_ticker": null,
-      "canonical_name": null,
+      "canonical_name": "LG Energy Solution",
       "canonical_exchange": null,
       "sector_hint": "배터리",
       "share_class_hint": null,
-      "identity_status": "UNKNOWN",
+      "identity_status": "PUBLIC_MARKET_PARTIAL",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
       "proposed_wave": "P0_LAUNCH_CORE",
@@ -247,9 +327,19 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": ["lgensol", "krx"],
-      "source_status": "ACCESS_BLOCKED",
-      "verified_facts": [],
+      "source_ids": [
+        "lgensol",
+        "krx"
+      ],
+      "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
+      "verified_facts": [
+        {
+          "source_id": "lgensol",
+          "quote": "LG Energy Solution｜Global Battery Leader, Building the Future Energy Ecosystem Skip to content Product Applicatio",
+          "locator": "NORMALIZED_VISIBLE_TEXT",
+          "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+        }
+      ],
       "scores": {
         "korean_recognition": 4,
         "global_recognition": 3,
@@ -275,9 +365,20 @@
       "scene_status": "SCENE_SPEC_REQUIRED",
       "registration_ready": false,
       "blocking_requirements": [
-        "PUBLIC_IDENTITY_VERIFICATION_REQUIRED",
         "LEGAL_BRAND_REVIEW_REQUIRED",
-        "APPROVED_CATALOG_COMMAND_REQUIRED"
+        "APPROVED_CATALOG_COMMAND_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED"
+      ],
+      "canonical_name_ko": "LG에너지솔루션",
+      "canonical_name_en": "LG Energy Solution",
+      "canonical_share_class": null,
+      "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+      "identity_confidence": "PARTIAL_DETAILS_REQUIRED",
+      "unresolved_identity_fields": [
+        "TICKER_REQUIRED",
+        "EXCHANGE_REQUIRED",
+        "SHARE_CLASS_REQUIRED"
       ]
     },
     {
@@ -287,12 +388,12 @@
       "asset_class": "KR_STOCK",
       "market": "KR",
       "ticker_hint": "035420",
-      "canonical_ticker": null,
-      "canonical_name": null,
-      "canonical_exchange": null,
+      "canonical_ticker": "035420",
+      "canonical_name": "NAVER Corp.",
+      "canonical_exchange": "KRX/KOSPI",
       "sector_hint": "인터넷",
       "share_class_hint": null,
-      "identity_status": "UNKNOWN",
+      "identity_status": "PUBLIC_MARKET_PARTIAL",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
       "proposed_wave": "P1_LAUNCH_EXPANSION",
@@ -301,9 +402,20 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": ["naver", "krx"],
-      "source_status": "ACCESS_BLOCKED",
-      "verified_facts": [],
+      "source_ids": [
+        "naver",
+        "krx",
+        "naver-stock"
+      ],
+      "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
+      "verified_facts": [
+        {
+          "source_id": "naver-stock",
+          "quote": "무정보 공시정보 주가정보 재무제표 결산공고 IR 공고 재무정보 네이버 035420 네이버 035420 기간별 거래 현황 네이버 035420 188,100 전일대비 -3,000 등락률 -1.57% 시가 191,300 고가 191,400 저가 188,00",
+          "locator": "NORMALIZED_VISIBLE_TEXT",
+          "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+        }
+      ],
       "scores": {
         "korean_recognition": 4,
         "global_recognition": 3,
@@ -329,9 +441,18 @@
       "scene_status": "SCENE_SPEC_REQUIRED",
       "registration_ready": false,
       "blocking_requirements": [
-        "PUBLIC_IDENTITY_VERIFICATION_REQUIRED",
         "LEGAL_BRAND_REVIEW_REQUIRED",
-        "APPROVED_CATALOG_COMMAND_REQUIRED"
+        "APPROVED_CATALOG_COMMAND_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED"
+      ],
+      "canonical_name_ko": "NAVER",
+      "canonical_name_en": "NAVER Corp.",
+      "canonical_share_class": null,
+      "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+      "identity_confidence": "PARTIAL_DETAILS_REQUIRED",
+      "unresolved_identity_fields": [
+        "SHARE_CLASS_REQUIRED"
       ]
     },
     {
@@ -341,12 +462,12 @@
       "asset_class": "KR_STOCK",
       "market": "KR",
       "ticker_hint": "035720",
-      "canonical_ticker": null,
-      "canonical_name": null,
-      "canonical_exchange": null,
+      "canonical_ticker": "035720",
+      "canonical_name": "카카오",
+      "canonical_exchange": "KRX/KOSPI",
       "sector_hint": "인터넷",
       "share_class_hint": null,
-      "identity_status": "UNKNOWN",
+      "identity_status": "PUBLIC_MARKET_PARTIAL",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
       "proposed_wave": "P2_LATER",
@@ -355,9 +476,20 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": ["kakao", "krx"],
-      "source_status": "ACCESS_BLOCKED",
-      "verified_facts": [],
+      "source_ids": [
+        "kakao",
+        "krx",
+        "kakao-stock"
+      ],
+      "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
+      "verified_facts": [
+        {
+          "source_id": "kakao-stock",
+          "quote": "             <i class=\"screen_out\">kospi code : </i>\n                                    <span class=\"txt_sub\">카카오 035720</span>\n           ",
+          "locator": "RAW_ISSUER_DOCUMENT",
+          "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+        }
+      ],
       "scores": {
         "korean_recognition": 4,
         "global_recognition": 3,
@@ -383,9 +515,18 @@
       "scene_status": "SCENE_SPEC_REQUIRED",
       "registration_ready": false,
       "blocking_requirements": [
-        "PUBLIC_IDENTITY_VERIFICATION_REQUIRED",
         "LEGAL_BRAND_REVIEW_REQUIRED",
-        "APPROVED_CATALOG_COMMAND_REQUIRED"
+        "APPROVED_CATALOG_COMMAND_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED"
+      ],
+      "canonical_name_ko": "카카오",
+      "canonical_name_en": "카카오",
+      "canonical_share_class": null,
+      "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+      "identity_confidence": "PARTIAL_DETAILS_REQUIRED",
+      "unresolved_identity_fields": [
+        "SHARE_CLASS_REQUIRED"
       ]
     },
     {
@@ -395,12 +536,12 @@
       "asset_class": "KR_STOCK",
       "market": "KR",
       "ticker_hint": "207940",
-      "canonical_ticker": null,
-      "canonical_name": null,
-      "canonical_exchange": null,
+      "canonical_ticker": "207940",
+      "canonical_name": "Samsung Biologics",
+      "canonical_exchange": "KS (issuer designation)",
       "sector_hint": "바이오",
       "share_class_hint": null,
-      "identity_status": "UNKNOWN",
+      "identity_status": "PUBLIC_MARKET_PARTIAL",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
       "proposed_wave": "P2_LATER",
@@ -409,9 +550,20 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": ["samsungbio", "krx"],
-      "source_status": "ACCESS_BLOCKED",
-      "verified_facts": [],
+      "source_ids": [
+        "samsungbio",
+        "krx",
+        "samsungbio-stock"
+      ],
+      "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
+      "verified_facts": [
+        {
+          "source_id": "samsungbio-stock",
+          "quote": "te of Entity November 10 th , 2016 Ticker Common KS 207940 Listing Information - Description Description Shares Outstanding Total 71,174,000 Common 71,17",
+          "locator": "NORMALIZED_VISIBLE_TEXT",
+          "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+        }
+      ],
       "scores": {
         "korean_recognition": 4,
         "global_recognition": 3,
@@ -437,10 +589,17 @@
       "scene_status": "SCENE_SPEC_REQUIRED",
       "registration_ready": false,
       "blocking_requirements": [
-        "PUBLIC_IDENTITY_VERIFICATION_REQUIRED",
         "LEGAL_BRAND_REVIEW_REQUIRED",
-        "APPROVED_CATALOG_COMMAND_REQUIRED"
-      ]
+        "APPROVED_CATALOG_COMMAND_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED"
+      ],
+      "canonical_name_ko": "삼성바이오로직스",
+      "canonical_name_en": "Samsung Biologics",
+      "canonical_share_class": "COMMON",
+      "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+      "identity_confidence": "PARTIAL_DETAILS_REQUIRED",
+      "unresolved_identity_fields": []
     },
     {
       "proposal_id": "catalog-v1-kb-financial",
@@ -450,11 +609,11 @@
       "market": "KR",
       "ticker_hint": "105560",
       "canonical_ticker": null,
-      "canonical_name": null,
+      "canonical_name": "KB Financial Group",
       "canonical_exchange": null,
       "sector_hint": "금융",
       "share_class_hint": null,
-      "identity_status": "UNKNOWN",
+      "identity_status": "PUBLIC_MARKET_PARTIAL",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
       "proposed_wave": "P1_LAUNCH_EXPANSION",
@@ -463,9 +622,20 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": ["kb", "krx"],
-      "source_status": "ACCESS_BLOCKED",
-      "verified_facts": [],
+      "source_ids": [
+        "kb",
+        "krx",
+        "kb-eng"
+      ],
+      "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
+      "verified_facts": [
+        {
+          "source_id": "kb-eng",
+          "quote": "KB Financial Group Goto Gnb Goto main Goto main KB Financial Group About Us Overview KB Financial Group MissionㆍV",
+          "locator": "NORMALIZED_VISIBLE_TEXT",
+          "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+        }
+      ],
       "scores": {
         "korean_recognition": 4,
         "global_recognition": 3,
@@ -491,9 +661,20 @@
       "scene_status": "SCENE_SPEC_REQUIRED",
       "registration_ready": false,
       "blocking_requirements": [
-        "PUBLIC_IDENTITY_VERIFICATION_REQUIRED",
         "LEGAL_BRAND_REVIEW_REQUIRED",
-        "APPROVED_CATALOG_COMMAND_REQUIRED"
+        "APPROVED_CATALOG_COMMAND_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED"
+      ],
+      "canonical_name_ko": "KB금융",
+      "canonical_name_en": "KB Financial Group",
+      "canonical_share_class": null,
+      "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+      "identity_confidence": "PARTIAL_DETAILS_REQUIRED",
+      "unresolved_identity_fields": [
+        "TICKER_REQUIRED",
+        "EXCHANGE_REQUIRED",
+        "SHARE_CLASS_REQUIRED"
       ]
     },
     {
@@ -504,11 +685,11 @@
       "market": "KR",
       "ticker_hint": "012450",
       "canonical_ticker": null,
-      "canonical_name": null,
+      "canonical_name": "한화에어로스페이스",
       "canonical_exchange": null,
       "sector_hint": "방산·우주",
       "share_class_hint": null,
-      "identity_status": "UNKNOWN",
+      "identity_status": "PUBLIC_MARKET_PARTIAL",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
       "proposed_wave": "P2_LATER",
@@ -517,9 +698,20 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": ["hanwha", "krx"],
-      "source_status": "ACCESS_BLOCKED",
-      "verified_facts": [],
+      "source_ids": [
+        "hanwha",
+        "krx",
+        "hanwha-stock"
+      ],
+      "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
+      "verified_facts": [
+        {
+          "source_id": "hanwha-stock",
+          "quote": " 주식정보 주식 발행 내역 주식의 종류 발행주식수 자본금 비고 보통주 51,563,401 270,317 - 우선주 - - - 합계 51,563,401 270,317 - 1주의 액면금액: 5,000원 단위: 1주 백만원 주주구성 한화 35.",
+          "locator": "NORMALIZED_VISIBLE_TEXT",
+          "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+        }
+      ],
       "scores": {
         "korean_recognition": 4,
         "global_recognition": 3,
@@ -545,9 +737,20 @@
       "scene_status": "SCENE_SPEC_REQUIRED",
       "registration_ready": false,
       "blocking_requirements": [
-        "PUBLIC_IDENTITY_VERIFICATION_REQUIRED",
         "LEGAL_BRAND_REVIEW_REQUIRED",
-        "APPROVED_CATALOG_COMMAND_REQUIRED"
+        "APPROVED_CATALOG_COMMAND_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED"
+      ],
+      "canonical_name_ko": "한화에어로스페이스",
+      "canonical_name_en": "한화에어로스페이스",
+      "canonical_share_class": "COMMON_CLASS_LINK_PENDING",
+      "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+      "identity_confidence": "PARTIAL_DETAILS_REQUIRED",
+      "unresolved_identity_fields": [
+        "TICKER_REQUIRED",
+        "EXCHANGE_REQUIRED",
+        "SHARE_CLASS_REQUIRED"
       ]
     },
     {
@@ -562,7 +765,7 @@
       "canonical_exchange": null,
       "sector_hint": "조선",
       "share_class_hint": null,
-      "identity_status": "UNKNOWN",
+      "identity_status": "PUBLIC_MARKET_UNKNOWN",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
       "proposed_wave": "P2_LATER",
@@ -571,8 +774,11 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": ["hhi", "krx"],
-      "source_status": "ACCESS_BLOCKED",
+      "source_ids": [
+        "hhi",
+        "krx"
+      ],
+      "source_status": "NO_PRODUCT_SPECIFIC_FACTS_VERIFIED",
       "verified_facts": [],
       "scores": {
         "korean_recognition": 4,
@@ -599,9 +805,18 @@
       "scene_status": "SCENE_SPEC_REQUIRED",
       "registration_ready": false,
       "blocking_requirements": [
-        "PUBLIC_IDENTITY_VERIFICATION_REQUIRED",
         "LEGAL_BRAND_REVIEW_REQUIRED",
-        "APPROVED_CATALOG_COMMAND_REQUIRED"
+        "APPROVED_CATALOG_COMMAND_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED"
+      ],
+      "canonical_name_ko": null,
+      "canonical_name_en": null,
+      "canonical_share_class": null,
+      "current_existence": "UNKNOWN",
+      "identity_confidence": "UNKNOWN",
+      "unresolved_identity_fields": [
+        "SPECIFIC_CURRENT_OFFICIAL_IDENTITY_REQUIRED"
       ]
     },
     {
@@ -616,7 +831,7 @@
       "canonical_exchange": null,
       "sector_hint": "산업·전력",
       "share_class_hint": null,
-      "identity_status": "UNKNOWN",
+      "identity_status": "PUBLIC_MARKET_UNKNOWN",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
       "proposed_wave": "P2_LATER",
@@ -625,8 +840,11 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": ["hdelectric", "krx"],
-      "source_status": "ACCESS_BLOCKED",
+      "source_ids": [
+        "hdelectric",
+        "krx"
+      ],
+      "source_status": "NO_PRODUCT_SPECIFIC_FACTS_VERIFIED",
       "verified_facts": [],
       "scores": {
         "korean_recognition": 4,
@@ -653,9 +871,18 @@
       "scene_status": "SCENE_SPEC_REQUIRED",
       "registration_ready": false,
       "blocking_requirements": [
-        "PUBLIC_IDENTITY_VERIFICATION_REQUIRED",
         "LEGAL_BRAND_REVIEW_REQUIRED",
-        "APPROVED_CATALOG_COMMAND_REQUIRED"
+        "APPROVED_CATALOG_COMMAND_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED"
+      ],
+      "canonical_name_ko": null,
+      "canonical_name_en": null,
+      "canonical_share_class": null,
+      "current_existence": "UNKNOWN",
+      "identity_confidence": "UNKNOWN",
+      "unresolved_identity_fields": [
+        "SPECIFIC_CURRENT_OFFICIAL_IDENTITY_REQUIRED"
       ]
     },
     {
@@ -665,12 +892,12 @@
       "asset_class": "KR_STOCK",
       "market": "KR",
       "ticker_hint": "096770",
-      "canonical_ticker": null,
-      "canonical_name": null,
+      "canonical_ticker": "096770",
+      "canonical_name": "SK Innovation Co., Ltd.",
       "canonical_exchange": null,
       "sector_hint": "에너지",
       "share_class_hint": null,
-      "identity_status": "UNKNOWN",
+      "identity_status": "PUBLIC_MARKET_PARTIAL",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
       "proposed_wave": "P2_LATER",
@@ -679,9 +906,20 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": ["skinnovation", "krx"],
-      "source_status": "ACCESS_BLOCKED",
-      "verified_facts": [],
+      "source_ids": [
+        "skinnovation",
+        "krx",
+        "skinnov-stock"
+      ],
+      "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
+      "verified_facts": [
+        {
+          "source_id": "skinnov-stock",
+          "quote": "fn.io/skinnovation/ir_current.html?code=096770&koreng=2\" class=\"iframe_stock animate delay-1\" frameborder=\"0\" scrolling=\"no\"></iframe>\n      ",
+          "locator": "RAW_ISSUER_DOCUMENT",
+          "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+        }
+      ],
       "scores": {
         "korean_recognition": 4,
         "global_recognition": 3,
@@ -707,9 +945,19 @@
       "scene_status": "SCENE_SPEC_REQUIRED",
       "registration_ready": false,
       "blocking_requirements": [
-        "PUBLIC_IDENTITY_VERIFICATION_REQUIRED",
         "LEGAL_BRAND_REVIEW_REQUIRED",
-        "APPROVED_CATALOG_COMMAND_REQUIRED"
+        "APPROVED_CATALOG_COMMAND_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED"
+      ],
+      "canonical_name_ko": "SK이노베이션",
+      "canonical_name_en": "SK Innovation Co., Ltd.",
+      "canonical_share_class": "COMMON_CLASS_LINK_PENDING",
+      "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+      "identity_confidence": "PARTIAL_DETAILS_REQUIRED",
+      "unresolved_identity_fields": [
+        "EXCHANGE_REQUIRED",
+        "SHARE_CLASS_REQUIRED"
       ]
     },
     {
@@ -724,7 +972,7 @@
       "canonical_exchange": null,
       "sector_hint": "소비재",
       "share_class_hint": null,
-      "identity_status": "UNKNOWN",
+      "identity_status": "PUBLIC_MARKET_UNKNOWN",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
       "proposed_wave": "P2_LATER",
@@ -733,8 +981,11 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": ["amore", "krx"],
-      "source_status": "ACCESS_BLOCKED",
+      "source_ids": [
+        "amore",
+        "krx"
+      ],
+      "source_status": "NO_PRODUCT_SPECIFIC_FACTS_VERIFIED",
       "verified_facts": [],
       "scores": {
         "korean_recognition": 4,
@@ -761,9 +1012,18 @@
       "scene_status": "SCENE_SPEC_REQUIRED",
       "registration_ready": false,
       "blocking_requirements": [
-        "PUBLIC_IDENTITY_VERIFICATION_REQUIRED",
         "LEGAL_BRAND_REVIEW_REQUIRED",
-        "APPROVED_CATALOG_COMMAND_REQUIRED"
+        "APPROVED_CATALOG_COMMAND_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED"
+      ],
+      "canonical_name_ko": null,
+      "canonical_name_en": null,
+      "canonical_share_class": null,
+      "current_existence": "UNKNOWN",
+      "identity_confidence": "UNKNOWN",
+      "unresolved_identity_fields": [
+        "SPECIFIC_CURRENT_OFFICIAL_IDENTITY_REQUIRED"
       ]
     },
     {
@@ -773,12 +1033,12 @@
       "asset_class": "US_STOCK",
       "market": "US",
       "ticker_hint": "NVDA",
-      "canonical_ticker": null,
-      "canonical_name": null,
-      "canonical_exchange": null,
+      "canonical_ticker": "NVDA",
+      "canonical_name": "NVIDIA CORP",
+      "canonical_exchange": "Nasdaq",
       "sector_hint": "AI 연산",
       "share_class_hint": null,
-      "identity_status": "UNKNOWN",
+      "identity_status": "PUBLIC_MARKET_PARTIAL",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
       "proposed_wave": "P0_LAUNCH_CORE",
@@ -787,9 +1047,20 @@
       "repo_status": "REPOSITORY_DRAFT",
       "repository_draft_id": "30000000-0000-4000-8000-000000000005",
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": ["nvidia", "sec"],
-      "source_status": "ACCESS_BLOCKED",
-      "verified_facts": [],
+      "source_ids": [
+        "nvidia",
+        "sec"
+      ],
+      "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
+      "verified_facts": [
+        {
+          "source_id": "sec",
+          "quote": "[1045810, \"NVIDIA CORP\", \"NVDA\", \"Nasdaq\"]",
+          "locator": "data[ticker=NVDA]",
+          "scope": "NAME_TICKER_EXCHANGE_IN_CURRENT_SEC_DIRECTORY",
+          "cik": 1045810
+        }
+      ],
       "scores": {
         "korean_recognition": 3,
         "global_recognition": 4,
@@ -815,9 +1086,19 @@
       "scene_status": "SPEC_IN_FROZEN_LANE_PRODUCT_QA_REQUIRED",
       "registration_ready": false,
       "blocking_requirements": [
-        "PUBLIC_IDENTITY_VERIFICATION_REQUIRED",
         "LEGAL_BRAND_REVIEW_REQUIRED",
-        "APPROVED_CATALOG_COMMAND_REQUIRED"
+        "APPROVED_CATALOG_COMMAND_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED"
+      ],
+      "canonical_name_ko": null,
+      "canonical_name_en": "NVIDIA CORP",
+      "canonical_share_class": null,
+      "current_existence": "PRESENT_IN_CURRENT_SEC_DIRECTORY",
+      "identity_confidence": "HIGH_DIRECTORY_IDENTITY_PARTIAL_SHARE_CLASS",
+      "unresolved_identity_fields": [
+        "CURRENT_SHARE_CLASS_PRIMARY_FILING_REQUIRED",
+        "LISTING_DIRECTORY_IS_NOT_TRADE_OR_LICENSE_PROOF"
       ]
     },
     {
@@ -827,12 +1108,12 @@
       "asset_class": "US_STOCK",
       "market": "US",
       "ticker_hint": "TSLA",
-      "canonical_ticker": null,
-      "canonical_name": null,
-      "canonical_exchange": null,
+      "canonical_ticker": "TSLA",
+      "canonical_name": "Tesla, Inc.",
+      "canonical_exchange": "Nasdaq",
       "sector_hint": "모빌리티",
       "share_class_hint": null,
-      "identity_status": "UNKNOWN",
+      "identity_status": "PUBLIC_MARKET_PARTIAL",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
       "proposed_wave": "P0_LAUNCH_CORE",
@@ -841,9 +1122,20 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": ["tesla", "sec"],
-      "source_status": "ACCESS_BLOCKED",
-      "verified_facts": [],
+      "source_ids": [
+        "tesla",
+        "sec"
+      ],
+      "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
+      "verified_facts": [
+        {
+          "source_id": "sec",
+          "quote": "[1318605, \"Tesla, Inc.\", \"TSLA\", \"Nasdaq\"]",
+          "locator": "data[ticker=TSLA]",
+          "scope": "NAME_TICKER_EXCHANGE_IN_CURRENT_SEC_DIRECTORY",
+          "cik": 1318605
+        }
+      ],
       "scores": {
         "korean_recognition": 3,
         "global_recognition": 4,
@@ -869,9 +1161,19 @@
       "scene_status": "SCENE_SPEC_REQUIRED",
       "registration_ready": false,
       "blocking_requirements": [
-        "PUBLIC_IDENTITY_VERIFICATION_REQUIRED",
         "LEGAL_BRAND_REVIEW_REQUIRED",
-        "APPROVED_CATALOG_COMMAND_REQUIRED"
+        "APPROVED_CATALOG_COMMAND_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED"
+      ],
+      "canonical_name_ko": null,
+      "canonical_name_en": "Tesla, Inc.",
+      "canonical_share_class": null,
+      "current_existence": "PRESENT_IN_CURRENT_SEC_DIRECTORY",
+      "identity_confidence": "HIGH_DIRECTORY_IDENTITY_PARTIAL_SHARE_CLASS",
+      "unresolved_identity_fields": [
+        "CURRENT_SHARE_CLASS_PRIMARY_FILING_REQUIRED",
+        "LISTING_DIRECTORY_IS_NOT_TRADE_OR_LICENSE_PROOF"
       ]
     },
     {
@@ -881,12 +1183,12 @@
       "asset_class": "US_STOCK",
       "market": "US",
       "ticker_hint": "RKLB",
-      "canonical_ticker": null,
-      "canonical_name": null,
-      "canonical_exchange": null,
+      "canonical_ticker": "RKLB",
+      "canonical_name": "Rocket Lab Corp",
+      "canonical_exchange": "Nasdaq",
       "sector_hint": "우주",
       "share_class_hint": null,
-      "identity_status": "UNKNOWN",
+      "identity_status": "PUBLIC_MARKET_PARTIAL",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
       "proposed_wave": "P1_LAUNCH_EXPANSION",
@@ -895,9 +1197,20 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": ["rocketlab", "sec"],
-      "source_status": "ACCESS_BLOCKED",
-      "verified_facts": [],
+      "source_ids": [
+        "rocketlab",
+        "sec"
+      ],
+      "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
+      "verified_facts": [
+        {
+          "source_id": "sec",
+          "quote": "[1819994, \"Rocket Lab Corp\", \"RKLB\", \"Nasdaq\"]",
+          "locator": "data[ticker=RKLB]",
+          "scope": "NAME_TICKER_EXCHANGE_IN_CURRENT_SEC_DIRECTORY",
+          "cik": 1819994
+        }
+      ],
       "scores": {
         "korean_recognition": 3,
         "global_recognition": 4,
@@ -923,9 +1236,19 @@
       "scene_status": "SCENE_SPEC_REQUIRED",
       "registration_ready": false,
       "blocking_requirements": [
-        "PUBLIC_IDENTITY_VERIFICATION_REQUIRED",
         "LEGAL_BRAND_REVIEW_REQUIRED",
-        "APPROVED_CATALOG_COMMAND_REQUIRED"
+        "APPROVED_CATALOG_COMMAND_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED"
+      ],
+      "canonical_name_ko": null,
+      "canonical_name_en": "Rocket Lab Corp",
+      "canonical_share_class": null,
+      "current_existence": "PRESENT_IN_CURRENT_SEC_DIRECTORY",
+      "identity_confidence": "HIGH_DIRECTORY_IDENTITY_PARTIAL_SHARE_CLASS",
+      "unresolved_identity_fields": [
+        "CURRENT_SHARE_CLASS_PRIMARY_FILING_REQUIRED",
+        "LISTING_DIRECTORY_IS_NOT_TRADE_OR_LICENSE_PROOF"
       ]
     },
     {
@@ -935,12 +1258,12 @@
       "asset_class": "US_STOCK",
       "market": "US",
       "ticker_hint": "SNDK",
-      "canonical_ticker": null,
-      "canonical_name": null,
-      "canonical_exchange": null,
+      "canonical_ticker": "SNDK",
+      "canonical_name": "Sandisk Corp",
+      "canonical_exchange": "Nasdaq",
       "sector_hint": "저장장치",
       "share_class_hint": null,
-      "identity_status": "UNKNOWN",
+      "identity_status": "PUBLIC_MARKET_PARTIAL",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
       "proposed_wave": "P1_LAUNCH_EXPANSION",
@@ -949,9 +1272,20 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": ["sandisk", "sec"],
-      "source_status": "ACCESS_BLOCKED",
-      "verified_facts": [],
+      "source_ids": [
+        "sandisk",
+        "sec"
+      ],
+      "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
+      "verified_facts": [
+        {
+          "source_id": "sec",
+          "quote": "[2023554, \"Sandisk Corp\", \"SNDK\", \"Nasdaq\"]",
+          "locator": "data[ticker=SNDK]",
+          "scope": "NAME_TICKER_EXCHANGE_IN_CURRENT_SEC_DIRECTORY",
+          "cik": 2023554
+        }
+      ],
       "scores": {
         "korean_recognition": 3,
         "global_recognition": 4,
@@ -977,9 +1311,19 @@
       "scene_status": "SCENE_SPEC_REQUIRED",
       "registration_ready": false,
       "blocking_requirements": [
-        "PUBLIC_IDENTITY_VERIFICATION_REQUIRED",
         "LEGAL_BRAND_REVIEW_REQUIRED",
-        "APPROVED_CATALOG_COMMAND_REQUIRED"
+        "APPROVED_CATALOG_COMMAND_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED"
+      ],
+      "canonical_name_ko": null,
+      "canonical_name_en": "Sandisk Corp",
+      "canonical_share_class": null,
+      "current_existence": "PRESENT_IN_CURRENT_SEC_DIRECTORY",
+      "identity_confidence": "HIGH_DIRECTORY_IDENTITY_PARTIAL_SHARE_CLASS",
+      "unresolved_identity_fields": [
+        "CURRENT_SHARE_CLASS_PRIMARY_FILING_REQUIRED",
+        "LISTING_DIRECTORY_IS_NOT_TRADE_OR_LICENSE_PROOF"
       ]
     },
     {
@@ -989,12 +1333,12 @@
       "asset_class": "US_STOCK",
       "market": "US",
       "ticker_hint": "SPCX",
-      "canonical_ticker": null,
-      "canonical_name": null,
-      "canonical_exchange": null,
+      "canonical_ticker": "SPCX",
+      "canonical_name": "SPACE EXPLORATION TECHNOLOGIES CORP",
+      "canonical_exchange": "Nasdaq",
       "sector_hint": "우주",
       "share_class_hint": null,
-      "identity_status": "UNKNOWN",
+      "identity_status": "PUBLIC_MARKET_PARTIAL",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
       "proposed_wave": "HOLD",
@@ -1003,9 +1347,20 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": ["spacex", "sec"],
-      "source_status": "ACCESS_BLOCKED",
-      "verified_facts": [],
+      "source_ids": [
+        "spacex",
+        "sec"
+      ],
+      "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
+      "verified_facts": [
+        {
+          "source_id": "sec",
+          "quote": "[1181412, \"SPACE EXPLORATION TECHNOLOGIES CORP\", \"SPCX\", \"Nasdaq\"]",
+          "locator": "data[ticker=SPCX]",
+          "scope": "NAME_TICKER_EXCHANGE_IN_CURRENT_SEC_DIRECTORY",
+          "cik": 1181412
+        }
+      ],
       "scores": {
         "korean_recognition": 3,
         "global_recognition": 4,
@@ -1031,10 +1386,19 @@
       "scene_status": "SCENE_SPEC_REQUIRED",
       "registration_ready": false,
       "blocking_requirements": [
-        "PUBLIC_IDENTITY_VERIFICATION_REQUIRED",
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED",
-        "CURRENT_SPACEX_SPCX_LISTING_REQUIRED"
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED"
+      ],
+      "canonical_name_ko": null,
+      "canonical_name_en": "SPACE EXPLORATION TECHNOLOGIES CORP",
+      "canonical_share_class": null,
+      "current_existence": "PRESENT_IN_CURRENT_SEC_DIRECTORY",
+      "identity_confidence": "HIGH_DIRECTORY_IDENTITY_PARTIAL_SHARE_CLASS",
+      "unresolved_identity_fields": [
+        "CURRENT_SHARE_CLASS_PRIMARY_FILING_REQUIRED",
+        "LISTING_DIRECTORY_IS_NOT_TRADE_OR_LICENSE_PROOF"
       ]
     },
     {
@@ -1044,12 +1408,12 @@
       "asset_class": "US_STOCK",
       "market": "US",
       "ticker_hint": "AAPL",
-      "canonical_ticker": null,
-      "canonical_name": null,
-      "canonical_exchange": null,
+      "canonical_ticker": "AAPL",
+      "canonical_name": "Apple Inc.",
+      "canonical_exchange": "Nasdaq",
       "sector_hint": "정밀 기기",
       "share_class_hint": null,
-      "identity_status": "UNKNOWN",
+      "identity_status": "PUBLIC_MARKET_PARTIAL",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
       "proposed_wave": "P0_LAUNCH_CORE",
@@ -1058,9 +1422,20 @@
       "repo_status": "REPOSITORY_DRAFT",
       "repository_draft_id": "30000000-0000-4000-8000-000000000003",
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": ["apple", "sec"],
-      "source_status": "ACCESS_BLOCKED",
-      "verified_facts": [],
+      "source_ids": [
+        "apple",
+        "sec"
+      ],
+      "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
+      "verified_facts": [
+        {
+          "source_id": "sec",
+          "quote": "[320193, \"Apple Inc.\", \"AAPL\", \"Nasdaq\"]",
+          "locator": "data[ticker=AAPL]",
+          "scope": "NAME_TICKER_EXCHANGE_IN_CURRENT_SEC_DIRECTORY",
+          "cik": 320193
+        }
+      ],
       "scores": {
         "korean_recognition": 3,
         "global_recognition": 4,
@@ -1086,9 +1461,19 @@
       "scene_status": "SPEC_IN_FROZEN_LANE_PRODUCT_QA_REQUIRED",
       "registration_ready": false,
       "blocking_requirements": [
-        "PUBLIC_IDENTITY_VERIFICATION_REQUIRED",
         "LEGAL_BRAND_REVIEW_REQUIRED",
-        "APPROVED_CATALOG_COMMAND_REQUIRED"
+        "APPROVED_CATALOG_COMMAND_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED"
+      ],
+      "canonical_name_ko": null,
+      "canonical_name_en": "Apple Inc.",
+      "canonical_share_class": null,
+      "current_existence": "PRESENT_IN_CURRENT_SEC_DIRECTORY",
+      "identity_confidence": "HIGH_DIRECTORY_IDENTITY_PARTIAL_SHARE_CLASS",
+      "unresolved_identity_fields": [
+        "CURRENT_SHARE_CLASS_PRIMARY_FILING_REQUIRED",
+        "LISTING_DIRECTORY_IS_NOT_TRADE_OR_LICENSE_PROOF"
       ]
     },
     {
@@ -1098,12 +1483,12 @@
       "asset_class": "US_STOCK",
       "market": "US",
       "ticker_hint": "MSFT",
-      "canonical_ticker": null,
-      "canonical_name": null,
-      "canonical_exchange": null,
+      "canonical_ticker": "MSFT",
+      "canonical_name": "MICROSOFT CORP",
+      "canonical_exchange": "Nasdaq",
       "sector_hint": "클라우드",
       "share_class_hint": null,
-      "identity_status": "UNKNOWN",
+      "identity_status": "PUBLIC_MARKET_PARTIAL",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
       "proposed_wave": "P0_LAUNCH_CORE",
@@ -1112,9 +1497,20 @@
       "repo_status": "REPOSITORY_DRAFT",
       "repository_draft_id": "30000000-0000-4000-8000-000000000004",
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": ["microsoft", "sec"],
-      "source_status": "ACCESS_BLOCKED",
-      "verified_facts": [],
+      "source_ids": [
+        "microsoft",
+        "sec"
+      ],
+      "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
+      "verified_facts": [
+        {
+          "source_id": "sec",
+          "quote": "[789019, \"MICROSOFT CORP\", \"MSFT\", \"Nasdaq\"]",
+          "locator": "data[ticker=MSFT]",
+          "scope": "NAME_TICKER_EXCHANGE_IN_CURRENT_SEC_DIRECTORY",
+          "cik": 789019
+        }
+      ],
       "scores": {
         "korean_recognition": 3,
         "global_recognition": 4,
@@ -1140,9 +1536,19 @@
       "scene_status": "SPEC_IN_FROZEN_LANE_PRODUCT_QA_REQUIRED",
       "registration_ready": false,
       "blocking_requirements": [
-        "PUBLIC_IDENTITY_VERIFICATION_REQUIRED",
         "LEGAL_BRAND_REVIEW_REQUIRED",
-        "APPROVED_CATALOG_COMMAND_REQUIRED"
+        "APPROVED_CATALOG_COMMAND_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED"
+      ],
+      "canonical_name_ko": null,
+      "canonical_name_en": "MICROSOFT CORP",
+      "canonical_share_class": null,
+      "current_existence": "PRESENT_IN_CURRENT_SEC_DIRECTORY",
+      "identity_confidence": "HIGH_DIRECTORY_IDENTITY_PARTIAL_SHARE_CLASS",
+      "unresolved_identity_fields": [
+        "CURRENT_SHARE_CLASS_PRIMARY_FILING_REQUIRED",
+        "LISTING_DIRECTORY_IS_NOT_TRADE_OR_LICENSE_PROOF"
       ]
     },
     {
@@ -1152,12 +1558,12 @@
       "asset_class": "US_STOCK",
       "market": "US",
       "ticker_hint": "AMZN",
-      "canonical_ticker": null,
-      "canonical_name": null,
-      "canonical_exchange": null,
+      "canonical_ticker": "AMZN",
+      "canonical_name": "AMAZON COM INC",
+      "canonical_exchange": "Nasdaq",
       "sector_hint": "물류·클라우드",
       "share_class_hint": null,
-      "identity_status": "UNKNOWN",
+      "identity_status": "PUBLIC_MARKET_PARTIAL",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
       "proposed_wave": "P1_LAUNCH_EXPANSION",
@@ -1166,9 +1572,20 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": ["amazon", "sec"],
-      "source_status": "ACCESS_BLOCKED",
-      "verified_facts": [],
+      "source_ids": [
+        "amazon",
+        "sec"
+      ],
+      "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
+      "verified_facts": [
+        {
+          "source_id": "sec",
+          "quote": "[1018724, \"AMAZON COM INC\", \"AMZN\", \"Nasdaq\"]",
+          "locator": "data[ticker=AMZN]",
+          "scope": "NAME_TICKER_EXCHANGE_IN_CURRENT_SEC_DIRECTORY",
+          "cik": 1018724
+        }
+      ],
       "scores": {
         "korean_recognition": 3,
         "global_recognition": 4,
@@ -1194,9 +1611,19 @@
       "scene_status": "SCENE_SPEC_REQUIRED",
       "registration_ready": false,
       "blocking_requirements": [
-        "PUBLIC_IDENTITY_VERIFICATION_REQUIRED",
         "LEGAL_BRAND_REVIEW_REQUIRED",
-        "APPROVED_CATALOG_COMMAND_REQUIRED"
+        "APPROVED_CATALOG_COMMAND_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED"
+      ],
+      "canonical_name_ko": null,
+      "canonical_name_en": "AMAZON COM INC",
+      "canonical_share_class": null,
+      "current_existence": "PRESENT_IN_CURRENT_SEC_DIRECTORY",
+      "identity_confidence": "HIGH_DIRECTORY_IDENTITY_PARTIAL_SHARE_CLASS",
+      "unresolved_identity_fields": [
+        "CURRENT_SHARE_CLASS_PRIMARY_FILING_REQUIRED",
+        "LISTING_DIRECTORY_IS_NOT_TRADE_OR_LICENSE_PROOF"
       ]
     },
     {
@@ -1206,12 +1633,12 @@
       "asset_class": "US_STOCK",
       "market": "US",
       "ticker_hint": "GOOGL",
-      "canonical_ticker": null,
-      "canonical_name": null,
-      "canonical_exchange": null,
+      "canonical_ticker": "GOOGL",
+      "canonical_name": "Alphabet Inc.",
+      "canonical_exchange": "Nasdaq",
       "sector_hint": "정보·인터넷",
       "share_class_hint": "CLASS_A_TO_VERIFY",
-      "identity_status": "UNKNOWN",
+      "identity_status": "PUBLIC_MARKET_PARTIAL",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
       "proposed_wave": "P1_LAUNCH_EXPANSION",
@@ -1220,9 +1647,20 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": ["alphabet", "sec"],
-      "source_status": "ACCESS_BLOCKED",
-      "verified_facts": [],
+      "source_ids": [
+        "alphabet",
+        "sec"
+      ],
+      "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
+      "verified_facts": [
+        {
+          "source_id": "sec",
+          "quote": "[1652044, \"Alphabet Inc.\", \"GOOGL\", \"Nasdaq\"]",
+          "locator": "data[ticker=GOOGL]",
+          "scope": "NAME_TICKER_EXCHANGE_IN_CURRENT_SEC_DIRECTORY",
+          "cik": 1652044
+        }
+      ],
       "scores": {
         "korean_recognition": 3,
         "global_recognition": 4,
@@ -1248,9 +1686,19 @@
       "scene_status": "SCENE_SPEC_REQUIRED",
       "registration_ready": false,
       "blocking_requirements": [
-        "PUBLIC_IDENTITY_VERIFICATION_REQUIRED",
         "LEGAL_BRAND_REVIEW_REQUIRED",
-        "APPROVED_CATALOG_COMMAND_REQUIRED"
+        "APPROVED_CATALOG_COMMAND_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED"
+      ],
+      "canonical_name_ko": null,
+      "canonical_name_en": "Alphabet Inc.",
+      "canonical_share_class": null,
+      "current_existence": "PRESENT_IN_CURRENT_SEC_DIRECTORY",
+      "identity_confidence": "HIGH_DIRECTORY_IDENTITY_PARTIAL_SHARE_CLASS",
+      "unresolved_identity_fields": [
+        "CURRENT_SHARE_CLASS_PRIMARY_FILING_REQUIRED",
+        "LISTING_DIRECTORY_IS_NOT_TRADE_OR_LICENSE_PROOF"
       ]
     },
     {
@@ -1260,12 +1708,12 @@
       "asset_class": "US_STOCK",
       "market": "US",
       "ticker_hint": "META",
-      "canonical_ticker": null,
-      "canonical_name": null,
-      "canonical_exchange": null,
+      "canonical_ticker": "META",
+      "canonical_name": "Meta Platforms, Inc.",
+      "canonical_exchange": "Nasdaq",
       "sector_hint": "소셜 플랫폼",
       "share_class_hint": null,
-      "identity_status": "UNKNOWN",
+      "identity_status": "PUBLIC_MARKET_PARTIAL",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
       "proposed_wave": "P1_LAUNCH_EXPANSION",
@@ -1274,9 +1722,20 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": ["meta", "sec"],
-      "source_status": "ACCESS_BLOCKED",
-      "verified_facts": [],
+      "source_ids": [
+        "meta",
+        "sec"
+      ],
+      "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
+      "verified_facts": [
+        {
+          "source_id": "sec",
+          "quote": "[1326801, \"Meta Platforms, Inc.\", \"META\", \"Nasdaq\"]",
+          "locator": "data[ticker=META]",
+          "scope": "NAME_TICKER_EXCHANGE_IN_CURRENT_SEC_DIRECTORY",
+          "cik": 1326801
+        }
+      ],
       "scores": {
         "korean_recognition": 3,
         "global_recognition": 4,
@@ -1302,9 +1761,19 @@
       "scene_status": "SCENE_SPEC_REQUIRED",
       "registration_ready": false,
       "blocking_requirements": [
-        "PUBLIC_IDENTITY_VERIFICATION_REQUIRED",
         "LEGAL_BRAND_REVIEW_REQUIRED",
-        "APPROVED_CATALOG_COMMAND_REQUIRED"
+        "APPROVED_CATALOG_COMMAND_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED"
+      ],
+      "canonical_name_ko": null,
+      "canonical_name_en": "Meta Platforms, Inc.",
+      "canonical_share_class": null,
+      "current_existence": "PRESENT_IN_CURRENT_SEC_DIRECTORY",
+      "identity_confidence": "HIGH_DIRECTORY_IDENTITY_PARTIAL_SHARE_CLASS",
+      "unresolved_identity_fields": [
+        "CURRENT_SHARE_CLASS_PRIMARY_FILING_REQUIRED",
+        "LISTING_DIRECTORY_IS_NOT_TRADE_OR_LICENSE_PROOF"
       ]
     },
     {
@@ -1314,12 +1783,12 @@
       "asset_class": "US_STOCK",
       "market": "US",
       "ticker_hint": "AMD",
-      "canonical_ticker": null,
-      "canonical_name": null,
-      "canonical_exchange": null,
+      "canonical_ticker": "AMD",
+      "canonical_name": "ADVANCED MICRO DEVICES INC",
+      "canonical_exchange": "Nasdaq",
       "sector_hint": "연산 반도체",
       "share_class_hint": null,
-      "identity_status": "UNKNOWN",
+      "identity_status": "PUBLIC_MARKET_PARTIAL",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
       "proposed_wave": "P2_LATER",
@@ -1328,9 +1797,20 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": ["amd", "sec"],
-      "source_status": "ACCESS_BLOCKED",
-      "verified_facts": [],
+      "source_ids": [
+        "amd",
+        "sec"
+      ],
+      "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
+      "verified_facts": [
+        {
+          "source_id": "sec",
+          "quote": "[2488, \"ADVANCED MICRO DEVICES INC\", \"AMD\", \"Nasdaq\"]",
+          "locator": "data[ticker=AMD]",
+          "scope": "NAME_TICKER_EXCHANGE_IN_CURRENT_SEC_DIRECTORY",
+          "cik": 2488
+        }
+      ],
       "scores": {
         "korean_recognition": 3,
         "global_recognition": 4,
@@ -1356,9 +1836,19 @@
       "scene_status": "SCENE_SPEC_REQUIRED",
       "registration_ready": false,
       "blocking_requirements": [
-        "PUBLIC_IDENTITY_VERIFICATION_REQUIRED",
         "LEGAL_BRAND_REVIEW_REQUIRED",
-        "APPROVED_CATALOG_COMMAND_REQUIRED"
+        "APPROVED_CATALOG_COMMAND_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED"
+      ],
+      "canonical_name_ko": null,
+      "canonical_name_en": "ADVANCED MICRO DEVICES INC",
+      "canonical_share_class": null,
+      "current_existence": "PRESENT_IN_CURRENT_SEC_DIRECTORY",
+      "identity_confidence": "HIGH_DIRECTORY_IDENTITY_PARTIAL_SHARE_CLASS",
+      "unresolved_identity_fields": [
+        "CURRENT_SHARE_CLASS_PRIMARY_FILING_REQUIRED",
+        "LISTING_DIRECTORY_IS_NOT_TRADE_OR_LICENSE_PROOF"
       ]
     },
     {
@@ -1368,12 +1858,12 @@
       "asset_class": "US_STOCK",
       "market": "US",
       "ticker_hint": "AVGO",
-      "canonical_ticker": null,
-      "canonical_name": null,
-      "canonical_exchange": null,
+      "canonical_ticker": "AVGO",
+      "canonical_name": "Broadcom Inc.",
+      "canonical_exchange": "Nasdaq",
       "sector_hint": "통신 반도체",
       "share_class_hint": null,
-      "identity_status": "UNKNOWN",
+      "identity_status": "PUBLIC_MARKET_PARTIAL",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
       "proposed_wave": "P2_LATER",
@@ -1382,9 +1872,20 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": ["broadcom", "sec"],
-      "source_status": "ACCESS_BLOCKED",
-      "verified_facts": [],
+      "source_ids": [
+        "broadcom",
+        "sec"
+      ],
+      "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
+      "verified_facts": [
+        {
+          "source_id": "sec",
+          "quote": "[1730168, \"Broadcom Inc.\", \"AVGO\", \"Nasdaq\"]",
+          "locator": "data[ticker=AVGO]",
+          "scope": "NAME_TICKER_EXCHANGE_IN_CURRENT_SEC_DIRECTORY",
+          "cik": 1730168
+        }
+      ],
       "scores": {
         "korean_recognition": 3,
         "global_recognition": 4,
@@ -1410,9 +1911,19 @@
       "scene_status": "SCENE_SPEC_REQUIRED",
       "registration_ready": false,
       "blocking_requirements": [
-        "PUBLIC_IDENTITY_VERIFICATION_REQUIRED",
         "LEGAL_BRAND_REVIEW_REQUIRED",
-        "APPROVED_CATALOG_COMMAND_REQUIRED"
+        "APPROVED_CATALOG_COMMAND_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED"
+      ],
+      "canonical_name_ko": null,
+      "canonical_name_en": "Broadcom Inc.",
+      "canonical_share_class": null,
+      "current_existence": "PRESENT_IN_CURRENT_SEC_DIRECTORY",
+      "identity_confidence": "HIGH_DIRECTORY_IDENTITY_PARTIAL_SHARE_CLASS",
+      "unresolved_identity_fields": [
+        "CURRENT_SHARE_CLASS_PRIMARY_FILING_REQUIRED",
+        "LISTING_DIRECTORY_IS_NOT_TRADE_OR_LICENSE_PROOF"
       ]
     },
     {
@@ -1422,12 +1933,12 @@
       "asset_class": "US_STOCK",
       "market": "US",
       "ticker_hint": "PLTR",
-      "canonical_ticker": null,
-      "canonical_name": null,
-      "canonical_exchange": null,
+      "canonical_ticker": "PLTR",
+      "canonical_name": "Palantir Technologies Inc.",
+      "canonical_exchange": "Nasdaq",
       "sector_hint": "데이터",
       "share_class_hint": null,
-      "identity_status": "UNKNOWN",
+      "identity_status": "PUBLIC_MARKET_PARTIAL",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
       "proposed_wave": "P2_LATER",
@@ -1436,9 +1947,20 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": ["palantir", "sec"],
-      "source_status": "ACCESS_BLOCKED",
-      "verified_facts": [],
+      "source_ids": [
+        "palantir",
+        "sec"
+      ],
+      "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
+      "verified_facts": [
+        {
+          "source_id": "sec",
+          "quote": "[1321655, \"Palantir Technologies Inc.\", \"PLTR\", \"Nasdaq\"]",
+          "locator": "data[ticker=PLTR]",
+          "scope": "NAME_TICKER_EXCHANGE_IN_CURRENT_SEC_DIRECTORY",
+          "cik": 1321655
+        }
+      ],
       "scores": {
         "korean_recognition": 3,
         "global_recognition": 4,
@@ -1464,9 +1986,19 @@
       "scene_status": "SCENE_SPEC_REQUIRED",
       "registration_ready": false,
       "blocking_requirements": [
-        "PUBLIC_IDENTITY_VERIFICATION_REQUIRED",
         "LEGAL_BRAND_REVIEW_REQUIRED",
-        "APPROVED_CATALOG_COMMAND_REQUIRED"
+        "APPROVED_CATALOG_COMMAND_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED"
+      ],
+      "canonical_name_ko": null,
+      "canonical_name_en": "Palantir Technologies Inc.",
+      "canonical_share_class": null,
+      "current_existence": "PRESENT_IN_CURRENT_SEC_DIRECTORY",
+      "identity_confidence": "HIGH_DIRECTORY_IDENTITY_PARTIAL_SHARE_CLASS",
+      "unresolved_identity_fields": [
+        "CURRENT_SHARE_CLASS_PRIMARY_FILING_REQUIRED",
+        "LISTING_DIRECTORY_IS_NOT_TRADE_OR_LICENSE_PROOF"
       ]
     },
     {
@@ -1476,12 +2008,12 @@
       "asset_class": "US_STOCK",
       "market": "US",
       "ticker_hint": "JPM",
-      "canonical_ticker": null,
-      "canonical_name": null,
-      "canonical_exchange": null,
+      "canonical_ticker": "JPM",
+      "canonical_name": "JPMORGAN CHASE & CO",
+      "canonical_exchange": "NYSE",
       "sector_hint": "금융",
       "share_class_hint": null,
-      "identity_status": "UNKNOWN",
+      "identity_status": "PUBLIC_MARKET_PARTIAL",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
       "proposed_wave": "P2_LATER",
@@ -1490,9 +2022,20 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": ["jpm", "sec"],
-      "source_status": "ACCESS_BLOCKED",
-      "verified_facts": [],
+      "source_ids": [
+        "jpm",
+        "sec"
+      ],
+      "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
+      "verified_facts": [
+        {
+          "source_id": "sec",
+          "quote": "[19617, \"JPMORGAN CHASE & CO\", \"JPM\", \"NYSE\"]",
+          "locator": "data[ticker=JPM]",
+          "scope": "NAME_TICKER_EXCHANGE_IN_CURRENT_SEC_DIRECTORY",
+          "cik": 19617
+        }
+      ],
       "scores": {
         "korean_recognition": 3,
         "global_recognition": 4,
@@ -1518,9 +2061,19 @@
       "scene_status": "SCENE_SPEC_REQUIRED",
       "registration_ready": false,
       "blocking_requirements": [
-        "PUBLIC_IDENTITY_VERIFICATION_REQUIRED",
         "LEGAL_BRAND_REVIEW_REQUIRED",
-        "APPROVED_CATALOG_COMMAND_REQUIRED"
+        "APPROVED_CATALOG_COMMAND_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED"
+      ],
+      "canonical_name_ko": null,
+      "canonical_name_en": "JPMORGAN CHASE & CO",
+      "canonical_share_class": null,
+      "current_existence": "PRESENT_IN_CURRENT_SEC_DIRECTORY",
+      "identity_confidence": "HIGH_DIRECTORY_IDENTITY_PARTIAL_SHARE_CLASS",
+      "unresolved_identity_fields": [
+        "CURRENT_SHARE_CLASS_PRIMARY_FILING_REQUIRED",
+        "LISTING_DIRECTORY_IS_NOT_TRADE_OR_LICENSE_PROOF"
       ]
     },
     {
@@ -1530,12 +2083,12 @@
       "asset_class": "US_STOCK",
       "market": "US",
       "ticker_hint": "NFLX",
-      "canonical_ticker": null,
-      "canonical_name": null,
-      "canonical_exchange": null,
+      "canonical_ticker": "NFLX",
+      "canonical_name": "NETFLIX INC",
+      "canonical_exchange": "Nasdaq",
       "sector_hint": "콘텐츠",
       "share_class_hint": null,
-      "identity_status": "UNKNOWN",
+      "identity_status": "PUBLIC_MARKET_PARTIAL",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
       "proposed_wave": "P2_LATER",
@@ -1544,9 +2097,20 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": ["netflix", "sec"],
-      "source_status": "ACCESS_BLOCKED",
-      "verified_facts": [],
+      "source_ids": [
+        "netflix",
+        "sec"
+      ],
+      "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
+      "verified_facts": [
+        {
+          "source_id": "sec",
+          "quote": "[1065280, \"NETFLIX INC\", \"NFLX\", \"Nasdaq\"]",
+          "locator": "data[ticker=NFLX]",
+          "scope": "NAME_TICKER_EXCHANGE_IN_CURRENT_SEC_DIRECTORY",
+          "cik": 1065280
+        }
+      ],
       "scores": {
         "korean_recognition": 3,
         "global_recognition": 4,
@@ -1572,9 +2136,19 @@
       "scene_status": "SCENE_SPEC_REQUIRED",
       "registration_ready": false,
       "blocking_requirements": [
-        "PUBLIC_IDENTITY_VERIFICATION_REQUIRED",
         "LEGAL_BRAND_REVIEW_REQUIRED",
-        "APPROVED_CATALOG_COMMAND_REQUIRED"
+        "APPROVED_CATALOG_COMMAND_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED"
+      ],
+      "canonical_name_ko": null,
+      "canonical_name_en": "NETFLIX INC",
+      "canonical_share_class": null,
+      "current_existence": "PRESENT_IN_CURRENT_SEC_DIRECTORY",
+      "identity_confidence": "HIGH_DIRECTORY_IDENTITY_PARTIAL_SHARE_CLASS",
+      "unresolved_identity_fields": [
+        "CURRENT_SHARE_CLASS_PRIMARY_FILING_REQUIRED",
+        "LISTING_DIRECTORY_IS_NOT_TRADE_OR_LICENSE_PROOF"
       ]
     },
     {
@@ -1584,12 +2158,12 @@
       "asset_class": "ETF",
       "market": "US",
       "ticker_hint": "SPY",
-      "canonical_ticker": null,
-      "canonical_name": null,
-      "canonical_exchange": null,
+      "canonical_ticker": "SPY",
+      "canonical_name": "State Street SPDR S&P 500 ETF Trust",
+      "canonical_exchange": "NYSE Arca",
       "sector_hint": "미국 대표 지수",
       "share_class_hint": null,
-      "identity_status": "UNKNOWN",
+      "identity_status": "PUBLIC_MARKET_VERIFIED",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
       "proposed_wave": "P0_LAUNCH_CORE",
@@ -1598,9 +2172,18 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": ["ssga"],
-      "source_status": "ACCESS_BLOCKED",
-      "verified_facts": [],
+      "source_ids": [
+        "ssga"
+      ],
+      "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
+      "verified_facts": [
+        {
+          "source_id": "ssga",
+          "quote": "Trading Currency Ticker CUSIP ISIN NYSE ARCA Jan 22 1993 USD SPY 78462F103 US78462F1030 Fund Characteristics as of Oct 06 2026 Est. 3-5 Year EPS Growth ﻿Estima",
+          "locator": "NORMALIZED_VISIBLE_TEXT",
+          "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+        }
+      ],
       "scores": {
         "korean_recognition": 3,
         "global_recognition": 4,
@@ -1626,11 +2209,16 @@
       "scene_status": "SCENE_SPEC_REQUIRED",
       "registration_ready": false,
       "blocking_requirements": [
-        "PUBLIC_IDENTITY_VERIFICATION_REQUIRED",
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED",
         "ETF_CATEGORY_CONTRACT_REQUIRED"
-      ]
+      ],
+      "canonical_name_ko": "SPY",
+      "canonical_name_en": "State Street SPDR S&P 500 ETF Trust",
+      "canonical_share_class": "ETF_TRUST_SHARES",
+      "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+      "identity_confidence": "HIGH_SCOPE_LIMITED",
+      "unresolved_identity_fields": []
     },
     {
       "proposal_id": "catalog-v1-qqq",
@@ -1639,12 +2227,12 @@
       "asset_class": "ETF",
       "market": "US",
       "ticker_hint": "QQQ",
-      "canonical_ticker": null,
-      "canonical_name": null,
+      "canonical_ticker": "QQQ",
+      "canonical_name": "Invesco QQQ ETF",
       "canonical_exchange": null,
       "sector_hint": "미국 기술 지수",
       "share_class_hint": null,
-      "identity_status": "UNKNOWN",
+      "identity_status": "PUBLIC_MARKET_PARTIAL",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
       "proposed_wave": "P0_LAUNCH_CORE",
@@ -1653,9 +2241,18 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": ["invesco"],
-      "source_status": "ACCESS_BLOCKED",
-      "verified_facts": [],
+      "source_ids": [
+        "invesco"
+      ],
+      "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
+      "verified_facts": [
+        {
+          "source_id": "invesco",
+          "quote": "Invesco QQQ ETF | Invesco US Skip to main content Invest now Expand navigation Close navigation About QQQ Perf",
+          "locator": "NORMALIZED_VISIBLE_TEXT",
+          "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+        }
+      ],
       "scores": {
         "korean_recognition": 3,
         "global_recognition": 4,
@@ -1681,10 +2278,19 @@
       "scene_status": "SCENE_SPEC_REQUIRED",
       "registration_ready": false,
       "blocking_requirements": [
-        "PUBLIC_IDENTITY_VERIFICATION_REQUIRED",
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED",
-        "ETF_CATEGORY_CONTRACT_REQUIRED"
+        "ETF_CATEGORY_CONTRACT_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED"
+      ],
+      "canonical_name_ko": "QQQ",
+      "canonical_name_en": "Invesco QQQ ETF",
+      "canonical_share_class": "ETF_SHARES",
+      "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+      "identity_confidence": "PARTIAL_DETAILS_REQUIRED",
+      "unresolved_identity_fields": [
+        "EXCHANGE_REQUIRED"
       ]
     },
     {
@@ -1694,12 +2300,12 @@
       "asset_class": "ETF",
       "market": "US",
       "ticker_hint": "SOXX",
-      "canonical_ticker": null,
-      "canonical_name": null,
-      "canonical_exchange": null,
+      "canonical_ticker": "SOXX",
+      "canonical_name": "iShares Semiconductor ETF",
+      "canonical_exchange": "Nasdaq",
       "sector_hint": "반도체 묶음",
       "share_class_hint": null,
-      "identity_status": "UNKNOWN",
+      "identity_status": "PUBLIC_MARKET_VERIFIED",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
       "proposed_wave": "P1_LAUNCH_EXPANSION",
@@ -1708,9 +2314,18 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": ["ishares"],
-      "source_status": "ACCESS_BLOCKED",
-      "verified_facts": [],
+      "source_ids": [
+        "ishares"
+      ],
+      "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
+      "verified_facts": [
+        {
+          "source_id": "ishares",
+          "quote": "ssue a forward stock split for the iShares Semiconductor ETF (NASDAQ: SOXX). The record date for the forward stock split will be November 3, 2026, and the stock split wil",
+          "locator": "NORMALIZED_VISIBLE_TEXT",
+          "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+        }
+      ],
       "scores": {
         "korean_recognition": 3,
         "global_recognition": 4,
@@ -1736,11 +2351,16 @@
       "scene_status": "SCENE_SPEC_REQUIRED",
       "registration_ready": false,
       "blocking_requirements": [
-        "PUBLIC_IDENTITY_VERIFICATION_REQUIRED",
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED",
         "ETF_CATEGORY_CONTRACT_REQUIRED"
-      ]
+      ],
+      "canonical_name_ko": "SOXX",
+      "canonical_name_en": "iShares Semiconductor ETF",
+      "canonical_share_class": "ETF_SHARES",
+      "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+      "identity_confidence": "HIGH_SCOPE_LIMITED",
+      "unresolved_identity_fields": []
     },
     {
       "proposal_id": "catalog-v1-schd",
@@ -1749,12 +2369,12 @@
       "asset_class": "ETF",
       "market": "US",
       "ticker_hint": "SCHD",
-      "canonical_ticker": null,
-      "canonical_name": null,
-      "canonical_exchange": null,
+      "canonical_ticker": "SCHD",
+      "canonical_name": "Schwab U.S. Dividend Equity ETF",
+      "canonical_exchange": "NYSE Arca, Inc.",
       "sector_hint": "배당 분류",
       "share_class_hint": null,
-      "identity_status": "UNKNOWN",
+      "identity_status": "PUBLIC_MARKET_VERIFIED",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
       "proposed_wave": "P1_LAUNCH_EXPANSION",
@@ -1763,9 +2383,18 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": ["schwab"],
-      "source_status": "ACCESS_BLOCKED",
-      "verified_facts": [],
+      "source_ids": [
+        "schwab"
+      ],
+      "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
+      "verified_facts": [
+        {
+          "source_id": "schwab",
+          "quote": "ment Style Passive CUSIP 808524797 Exchange NYSE Arca, Inc. Yields SEC Yield (30 Day) As of 10/05/2026 10/05/2026 3.37% Distribution Yield (TTM) As of 08/",
+          "locator": "NORMALIZED_VISIBLE_TEXT",
+          "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+        }
+      ],
       "scores": {
         "korean_recognition": 3,
         "global_recognition": 4,
@@ -1791,25 +2420,30 @@
       "scene_status": "SCENE_SPEC_REQUIRED",
       "registration_ready": false,
       "blocking_requirements": [
-        "PUBLIC_IDENTITY_VERIFICATION_REQUIRED",
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED",
         "ETF_CATEGORY_CONTRACT_REQUIRED"
-      ]
+      ],
+      "canonical_name_ko": "SCHD",
+      "canonical_name_en": "Schwab U.S. Dividend Equity ETF",
+      "canonical_share_class": "ETF_SHARES",
+      "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+      "identity_confidence": "HIGH_SCOPE_LIMITED",
+      "unresolved_identity_fields": []
     },
     {
       "proposal_id": "catalog-v1-vti",
       "slug": "vti",
-      "name_hint_ko": "VTI",
+      "name_hint_ko": "Vanguard Morningstar Total Stock Market ETF",
       "asset_class": "ETF",
       "market": "US",
       "ticker_hint": "VTI",
-      "canonical_ticker": null,
-      "canonical_name": null,
-      "canonical_exchange": null,
+      "canonical_ticker": "VTI",
+      "canonical_name": "Vanguard Morningstar Total Stock Market ETF",
+      "canonical_exchange": "NYSE Arca",
       "sector_hint": "미국 전체 시장",
       "share_class_hint": null,
-      "identity_status": "UNKNOWN",
+      "identity_status": "PUBLIC_MARKET_VERIFIED",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
       "proposed_wave": "P2_LATER",
@@ -1818,9 +2452,18 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": ["vanguard"],
-      "source_status": "ACCESS_BLOCKED",
-      "verified_facts": [],
+      "source_ids": [
+        "vanguard"
+      ],
+      "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
+      "verified_facts": [
+        {
+          "source_id": "vanguard",
+          "quote": " the issuing fund. The fund\\u2019s ETF Shares are listed for trading on NYSE Arca and individual investors may only buy and sell them on the secondary market at market prices. ",
+          "locator": "RAW_ISSUER_DOCUMENT",
+          "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+        }
+      ],
       "scores": {
         "korean_recognition": 3,
         "global_recognition": 4,
@@ -1846,11 +2489,17 @@
       "scene_status": "SCENE_SPEC_REQUIRED",
       "registration_ready": false,
       "blocking_requirements": [
-        "PUBLIC_IDENTITY_VERIFICATION_REQUIRED",
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED",
         "ETF_CATEGORY_CONTRACT_REQUIRED"
-      ]
+      ],
+      "canonical_name_ko": "Vanguard Morningstar Total Stock Market ETF",
+      "canonical_name_en": "Vanguard Morningstar Total Stock Market ETF",
+      "canonical_share_class": "ETF_SHARES",
+      "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+      "identity_confidence": "HIGH_SCOPE_LIMITED",
+      "name_change_observation": "Current sponsor title differs from historical investigation hint; no performance implication.",
+      "unresolved_identity_fields": []
     },
     {
       "proposal_id": "catalog-v1-aiq",
@@ -1859,12 +2508,12 @@
       "asset_class": "ETF",
       "market": "US",
       "ticker_hint": "AIQ",
-      "canonical_ticker": null,
-      "canonical_name": null,
-      "canonical_exchange": null,
+      "canonical_ticker": "AIQ",
+      "canonical_name": "Global X Artificial Intelligence & Technology ETF",
+      "canonical_exchange": "Nasdaq",
       "sector_hint": "AI 묶음",
       "share_class_hint": null,
-      "identity_status": "UNKNOWN",
+      "identity_status": "PUBLIC_MARKET_VERIFIED",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
       "proposed_wave": "P2_LATER",
@@ -1873,9 +2522,18 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": ["globalx"],
-      "source_status": "ACCESS_BLOCKED",
-      "verified_facts": [],
+      "source_ids": [
+        "globalx"
+      ],
+      "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
+      "verified_facts": [
+        {
+          "source_id": "globalx",
+          "quote": " CUSIP 37954Y632 ISIN US37954Y6326 Primary Exchange Nasdaq Shares Outstanding 158,370,002 Number of Holdings 88 30-Day Median Bid-Ask Spread ? 0.02% Dist",
+          "locator": "NORMALIZED_VISIBLE_TEXT",
+          "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+        }
+      ],
       "scores": {
         "korean_recognition": 3,
         "global_recognition": 4,
@@ -1901,11 +2559,16 @@
       "scene_status": "SCENE_SPEC_REQUIRED",
       "registration_ready": false,
       "blocking_requirements": [
-        "PUBLIC_IDENTITY_VERIFICATION_REQUIRED",
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED",
         "ETF_CATEGORY_CONTRACT_REQUIRED"
-      ]
+      ],
+      "canonical_name_ko": "AIQ",
+      "canonical_name_en": "Global X Artificial Intelligence & Technology ETF",
+      "canonical_share_class": "ETF_SHARES",
+      "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+      "identity_confidence": "HIGH_SCOPE_LIMITED",
+      "unresolved_identity_fields": []
     },
     {
       "proposal_id": "catalog-v1-bnd",
@@ -1914,12 +2577,12 @@
       "asset_class": "ETF",
       "market": "US",
       "ticker_hint": "BND",
-      "canonical_ticker": null,
-      "canonical_name": null,
-      "canonical_exchange": null,
+      "canonical_ticker": "BND",
+      "canonical_name": "Vanguard Total Bond Market ETF",
+      "canonical_exchange": "Nasdaq",
       "sector_hint": "채권",
       "share_class_hint": null,
-      "identity_status": "UNKNOWN",
+      "identity_status": "PUBLIC_MARKET_VERIFIED",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
       "proposed_wave": "P2_LATER",
@@ -1928,9 +2591,19 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": ["vanguard"],
-      "source_status": "ACCESS_BLOCKED",
-      "verified_facts": [],
+      "source_ids": [
+        "vanguard",
+        "bnd"
+      ],
+      "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
+      "verified_facts": [
+        {
+          "source_id": "bnd",
+          "quote": " the issuing fund. The fund\\u2019s ETF Shares are listed for trading on Nasdaq and individual investors may only buy and sell them on the secondary market at market prices. ",
+          "locator": "RAW_ISSUER_DOCUMENT",
+          "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+        }
+      ],
       "scores": {
         "korean_recognition": 3,
         "global_recognition": 4,
@@ -1956,11 +2629,16 @@
       "scene_status": "SCENE_SPEC_REQUIRED",
       "registration_ready": false,
       "blocking_requirements": [
-        "PUBLIC_IDENTITY_VERIFICATION_REQUIRED",
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED",
         "ETF_CATEGORY_CONTRACT_REQUIRED"
-      ]
+      ],
+      "canonical_name_ko": "BND",
+      "canonical_name_en": "Vanguard Total Bond Market ETF",
+      "canonical_share_class": "ETF_SHARES",
+      "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+      "identity_confidence": "HIGH_SCOPE_LIMITED",
+      "unresolved_identity_fields": []
     },
     {
       "proposal_id": "catalog-v1-iau",
@@ -1969,12 +2647,12 @@
       "asset_class": "ETF",
       "market": "US",
       "ticker_hint": "IAU",
-      "canonical_ticker": null,
-      "canonical_name": null,
-      "canonical_exchange": null,
+      "canonical_ticker": "IAU",
+      "canonical_name": "iShares Gold Trust",
+      "canonical_exchange": "NYSE Arca",
       "sector_hint": "금 연계 ETF",
       "share_class_hint": null,
-      "identity_status": "UNKNOWN",
+      "identity_status": "PUBLIC_MARKET_VERIFIED",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
       "proposed_wave": "P2_LATER",
@@ -1983,9 +2661,19 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": ["ishares"],
-      "source_status": "ACCESS_BLOCKED",
-      "verified_facts": [],
+      "source_ids": [
+        "ishares",
+        "iau"
+      ],
+      "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
+      "verified_facts": [
+        {
+          "source_id": "iau",
+          "quote": "1, 2005\"},{\"@type\":\"PropertyValue\",\"name\":\"Exchange\",\"value\":\"NYSE Arca\"},{\"@type\":\"PropertyValue\",\"name\":\"Asset Class\",\"value\":\"Commodity\"},{\"@type\":\"PropertyValue\",\"",
+          "locator": "RAW_ISSUER_DOCUMENT",
+          "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+        }
+      ],
       "scores": {
         "korean_recognition": 3,
         "global_recognition": 4,
@@ -2011,11 +2699,16 @@
       "scene_status": "SCENE_SPEC_REQUIRED",
       "registration_ready": false,
       "blocking_requirements": [
-        "PUBLIC_IDENTITY_VERIFICATION_REQUIRED",
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED",
         "ETF_CATEGORY_CONTRACT_REQUIRED"
-      ]
+      ],
+      "canonical_name_ko": "IAU",
+      "canonical_name_en": "iShares Gold Trust",
+      "canonical_share_class": "GOLD_TRUST_SHARES",
+      "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+      "identity_confidence": "HIGH_SCOPE_LIMITED",
+      "unresolved_identity_fields": []
     },
     {
       "proposal_id": "catalog-v1-kodex-200",
@@ -2029,7 +2722,7 @@
       "canonical_exchange": null,
       "sector_hint": "한국 대표 지수",
       "share_class_hint": null,
-      "identity_status": "UNKNOWN",
+      "identity_status": "PUBLIC_MARKET_UNKNOWN",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
       "proposed_wave": "P2_LATER",
@@ -2038,8 +2731,11 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": ["kodex", "krx"],
-      "source_status": "ACCESS_BLOCKED",
+      "source_ids": [
+        "kodex",
+        "krx"
+      ],
+      "source_status": "NO_PRODUCT_SPECIFIC_FACTS_VERIFIED",
       "verified_facts": [],
       "scores": {
         "korean_recognition": 4,
@@ -2066,10 +2762,19 @@
       "scene_status": "SCENE_SPEC_REQUIRED",
       "registration_ready": false,
       "blocking_requirements": [
-        "PUBLIC_IDENTITY_VERIFICATION_REQUIRED",
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED",
-        "ETF_CATEGORY_CONTRACT_REQUIRED"
+        "ETF_CATEGORY_CONTRACT_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED"
+      ],
+      "canonical_name_ko": null,
+      "canonical_name_en": null,
+      "canonical_share_class": null,
+      "current_existence": "UNKNOWN",
+      "identity_confidence": "UNKNOWN",
+      "unresolved_identity_fields": [
+        "SPECIFIC_CURRENT_OFFICIAL_IDENTITY_REQUIRED"
       ]
     },
     {
@@ -2084,7 +2789,7 @@
       "canonical_exchange": null,
       "sector_hint": "미국 지수 국내 ETF",
       "share_class_hint": null,
-      "identity_status": "UNKNOWN",
+      "identity_status": "PUBLIC_MARKET_UNKNOWN",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
       "proposed_wave": "P2_LATER",
@@ -2093,8 +2798,11 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": ["tiger", "krx"],
-      "source_status": "ACCESS_BLOCKED",
+      "source_ids": [
+        "tiger",
+        "krx"
+      ],
+      "source_status": "NO_PRODUCT_SPECIFIC_FACTS_VERIFIED",
       "verified_facts": [],
       "scores": {
         "korean_recognition": 4,
@@ -2121,10 +2829,19 @@
       "scene_status": "SCENE_SPEC_REQUIRED",
       "registration_ready": false,
       "blocking_requirements": [
-        "PUBLIC_IDENTITY_VERIFICATION_REQUIRED",
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED",
-        "ETF_CATEGORY_CONTRACT_REQUIRED"
+        "ETF_CATEGORY_CONTRACT_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED"
+      ],
+      "canonical_name_ko": null,
+      "canonical_name_en": null,
+      "canonical_share_class": null,
+      "current_existence": "UNKNOWN",
+      "identity_confidence": "UNKNOWN",
+      "unresolved_identity_fields": [
+        "SPECIFIC_CURRENT_OFFICIAL_IDENTITY_REQUIRED"
       ]
     },
     {
@@ -2139,7 +2856,7 @@
       "canonical_exchange": null,
       "sector_hint": "한국 반도체 묶음",
       "share_class_hint": null,
-      "identity_status": "UNKNOWN",
+      "identity_status": "PUBLIC_MARKET_UNKNOWN",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
       "proposed_wave": "P2_LATER",
@@ -2148,8 +2865,11 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": ["kodex", "krx"],
-      "source_status": "ACCESS_BLOCKED",
+      "source_ids": [
+        "kodex",
+        "krx"
+      ],
+      "source_status": "NO_PRODUCT_SPECIFIC_FACTS_VERIFIED",
       "verified_facts": [],
       "scores": {
         "korean_recognition": 4,
@@ -2176,25 +2896,34 @@
       "scene_status": "SCENE_SPEC_REQUIRED",
       "registration_ready": false,
       "blocking_requirements": [
-        "PUBLIC_IDENTITY_VERIFICATION_REQUIRED",
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED",
-        "ETF_CATEGORY_CONTRACT_REQUIRED"
+        "ETF_CATEGORY_CONTRACT_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED"
+      ],
+      "canonical_name_ko": null,
+      "canonical_name_en": null,
+      "canonical_share_class": null,
+      "current_existence": "UNKNOWN",
+      "identity_confidence": "UNKNOWN",
+      "unresolved_identity_fields": [
+        "SPECIFIC_CURRENT_OFFICIAL_IDENTITY_REQUIRED"
       ]
     },
     {
       "proposal_id": "catalog-v1-kr-ai-etf-research",
       "slug": "kr-ai-etf-research",
-      "name_hint_ko": "국내 AI ETF 개별상품 조사",
+      "name_hint_ko": "KODEX AI반도체핵심장비 ETF",
       "asset_class": "ETF",
       "market": "KR",
-      "ticker_hint": null,
-      "canonical_ticker": null,
-      "canonical_name": null,
+      "ticker_hint": "471990",
+      "canonical_ticker": "471990",
+      "canonical_name": "KODEX AI반도체핵심장비 ETF",
       "canonical_exchange": null,
       "sector_hint": "AI 묶음",
       "share_class_hint": null,
-      "identity_status": "UNKNOWN",
+      "identity_status": "PUBLIC_MARKET_PARTIAL",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
       "proposed_wave": "HOLD",
@@ -2203,9 +2932,20 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": ["tiger", "krx"],
-      "source_status": "ACCESS_BLOCKED",
-      "verified_facts": [],
+      "source_ids": [
+        "tiger",
+        "krx",
+        "kodex"
+      ],
+      "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
+      "verified_facts": [
+        {
+          "source_id": "kodex",
+          "quote": " 먼저 담아야 할 연금·ISA 핵심 상품 지금 Hot한 ETF KODEX AI반도체핵심장비 ETF (종목코드 : 471990) AI반도체 공정의 핵심, 장비 업체의 장기적인 수혜 기대! 상품안내 KODEX 미국머니마켓액티브 ETF (종목코드 : 0048J0) 정말 쉬운 달러 투자! MMF형 월배",
+          "locator": "NORMALIZED_VISIBLE_TEXT",
+          "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+        }
+      ],
       "scores": {
         "korean_recognition": 4,
         "global_recognition": 3,
@@ -2231,10 +2971,20 @@
       "scene_status": "SCENE_SPEC_REQUIRED",
       "registration_ready": false,
       "blocking_requirements": [
-        "PUBLIC_IDENTITY_VERIFICATION_REQUIRED",
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED",
-        "ETF_CATEGORY_CONTRACT_REQUIRED"
+        "ETF_CATEGORY_CONTRACT_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED"
+      ],
+      "canonical_name_ko": "KODEX AI반도체핵심장비 ETF",
+      "canonical_name_en": "KODEX AI반도체핵심장비 ETF",
+      "canonical_share_class": "ETF_SHARES",
+      "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+      "identity_confidence": "PARTIAL_DETAILS_REQUIRED",
+      "resolved_generic_slot": true,
+      "unresolved_identity_fields": [
+        "EXCHANGE_REQUIRED"
       ]
     },
     {
@@ -2249,7 +2999,7 @@
       "canonical_exchange": null,
       "sector_hint": "배당 분류",
       "share_class_hint": null,
-      "identity_status": "UNKNOWN",
+      "identity_status": "PUBLIC_MARKET_UNKNOWN",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
       "proposed_wave": "HOLD",
@@ -2258,8 +3008,11 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": ["kodex", "krx"],
-      "source_status": "ACCESS_BLOCKED",
+      "source_ids": [
+        "kodex",
+        "krx"
+      ],
+      "source_status": "NO_PRODUCT_SPECIFIC_FACTS_VERIFIED",
       "verified_facts": [],
       "scores": {
         "korean_recognition": 4,
@@ -2286,10 +3039,19 @@
       "scene_status": "SCENE_SPEC_REQUIRED",
       "registration_ready": false,
       "blocking_requirements": [
-        "PUBLIC_IDENTITY_VERIFICATION_REQUIRED",
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED",
-        "ETF_CATEGORY_CONTRACT_REQUIRED"
+        "ETF_CATEGORY_CONTRACT_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED"
+      ],
+      "canonical_name_ko": null,
+      "canonical_name_en": null,
+      "canonical_share_class": null,
+      "current_existence": "UNKNOWN",
+      "identity_confidence": "UNKNOWN",
+      "unresolved_identity_fields": [
+        "SPECIFIC_CURRENT_OFFICIAL_IDENTITY_REQUIRED"
       ]
     },
     {
@@ -2304,7 +3066,7 @@
       "canonical_exchange": null,
       "sector_hint": "미국 기술 지수 국내 ETF",
       "share_class_hint": null,
-      "identity_status": "UNKNOWN",
+      "identity_status": "PUBLIC_MARKET_UNKNOWN",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
       "proposed_wave": "P2_LATER",
@@ -2313,8 +3075,11 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": ["tiger", "krx"],
-      "source_status": "ACCESS_BLOCKED",
+      "source_ids": [
+        "tiger",
+        "krx"
+      ],
+      "source_status": "NO_PRODUCT_SPECIFIC_FACTS_VERIFIED",
       "verified_facts": [],
       "scores": {
         "korean_recognition": 4,
@@ -2341,10 +3106,19 @@
       "scene_status": "SCENE_SPEC_REQUIRED",
       "registration_ready": false,
       "blocking_requirements": [
-        "PUBLIC_IDENTITY_VERIFICATION_REQUIRED",
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED",
-        "ETF_CATEGORY_CONTRACT_REQUIRED"
+        "ETF_CATEGORY_CONTRACT_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED"
+      ],
+      "canonical_name_ko": null,
+      "canonical_name_en": null,
+      "canonical_share_class": null,
+      "current_existence": "UNKNOWN",
+      "identity_confidence": "UNKNOWN",
+      "unresolved_identity_fields": [
+        "SPECIFIC_CURRENT_OFFICIAL_IDENTITY_REQUIRED"
       ]
     },
     {
@@ -2359,7 +3133,7 @@
       "canonical_exchange": null,
       "sector_hint": "금 선물·환헤지",
       "share_class_hint": null,
-      "identity_status": "UNKNOWN",
+      "identity_status": "PUBLIC_MARKET_UNKNOWN",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
       "proposed_wave": "HOLD",
@@ -2368,8 +3142,11 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": ["kodex", "krx"],
-      "source_status": "ACCESS_BLOCKED",
+      "source_ids": [
+        "kodex",
+        "krx"
+      ],
+      "source_status": "NO_PRODUCT_SPECIFIC_FACTS_VERIFIED",
       "verified_facts": [],
       "scores": {
         "korean_recognition": 4,
@@ -2396,11 +3173,20 @@
       "scene_status": "SCENE_SPEC_REQUIRED",
       "registration_ready": false,
       "blocking_requirements": [
-        "PUBLIC_IDENTITY_VERIFICATION_REQUIRED",
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED",
         "ETF_CATEGORY_CONTRACT_REQUIRED",
-        "COMPLEX_PRODUCT_REVIEW_REQUIRED"
+        "COMPLEX_PRODUCT_REVIEW_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED"
+      ],
+      "canonical_name_ko": null,
+      "canonical_name_en": null,
+      "canonical_share_class": null,
+      "current_existence": "UNKNOWN",
+      "identity_confidence": "UNKNOWN",
+      "unresolved_identity_fields": [
+        "SPECIFIC_CURRENT_OFFICIAL_IDENTITY_REQUIRED"
       ]
     },
     {
@@ -2415,7 +3201,7 @@
       "canonical_exchange": null,
       "sector_hint": "국내 채권",
       "share_class_hint": null,
-      "identity_status": "UNKNOWN",
+      "identity_status": "PUBLIC_MARKET_UNKNOWN",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
       "proposed_wave": "P2_LATER",
@@ -2424,8 +3210,11 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": ["kodex", "krx"],
-      "source_status": "ACCESS_BLOCKED",
+      "source_ids": [
+        "kodex",
+        "krx"
+      ],
+      "source_status": "NO_PRODUCT_SPECIFIC_FACTS_VERIFIED",
       "verified_facts": [],
       "scores": {
         "korean_recognition": 4,
@@ -2452,10 +3241,19 @@
       "scene_status": "SCENE_SPEC_REQUIRED",
       "registration_ready": false,
       "blocking_requirements": [
-        "PUBLIC_IDENTITY_VERIFICATION_REQUIRED",
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED",
-        "ETF_CATEGORY_CONTRACT_REQUIRED"
+        "ETF_CATEGORY_CONTRACT_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED"
+      ],
+      "canonical_name_ko": null,
+      "canonical_name_en": null,
+      "canonical_share_class": null,
+      "current_existence": "UNKNOWN",
+      "identity_confidence": "UNKNOWN",
+      "unresolved_identity_fields": [
+        "SPECIFIC_CURRENT_OFFICIAL_IDENTITY_REQUIRED"
       ]
     },
     {
@@ -2470,7 +3268,7 @@
       "canonical_exchange": null,
       "sector_hint": "레버리지",
       "share_class_hint": null,
-      "identity_status": "UNKNOWN",
+      "identity_status": "PUBLIC_MARKET_UNKNOWN",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
       "proposed_wave": "HOLD",
@@ -2479,8 +3277,10 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": ["invesco"],
-      "source_status": "ACCESS_BLOCKED",
+      "source_ids": [
+        "invesco"
+      ],
+      "source_status": "NO_PRODUCT_SPECIFIC_FACTS_VERIFIED",
       "verified_facts": [],
       "scores": {
         "korean_recognition": 3,
@@ -2507,11 +3307,20 @@
       "scene_status": "SCENE_SPEC_REQUIRED",
       "registration_ready": false,
       "blocking_requirements": [
-        "PUBLIC_IDENTITY_VERIFICATION_REQUIRED",
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED",
         "ETF_CATEGORY_CONTRACT_REQUIRED",
-        "COMPLEX_PRODUCT_REVIEW_REQUIRED"
+        "COMPLEX_PRODUCT_REVIEW_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED"
+      ],
+      "canonical_name_ko": null,
+      "canonical_name_en": null,
+      "canonical_share_class": null,
+      "current_existence": "UNKNOWN",
+      "identity_confidence": "UNKNOWN",
+      "unresolved_identity_fields": [
+        "SPECIFIC_CURRENT_OFFICIAL_IDENTITY_REQUIRED"
       ]
     },
     {
@@ -2521,12 +3330,12 @@
       "asset_class": "CRYPTO",
       "market": "PROTOCOL",
       "ticker_hint": "BTC",
-      "canonical_ticker": null,
-      "canonical_name": null,
-      "canonical_exchange": null,
+      "canonical_ticker": "BTC",
+      "canonical_name": "Bitcoin",
+      "canonical_exchange": "NOT_APPLICABLE_PROTOCOL",
       "sector_hint": "크립토",
       "share_class_hint": null,
-      "identity_status": "UNKNOWN",
+      "identity_status": "PUBLIC_MARKET_VERIFIED",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
       "proposed_wave": "P0_LAUNCH_CORE",
@@ -2535,9 +3344,18 @@
       "repo_status": "REPOSITORY_DRAFT",
       "repository_draft_id": "30000000-0000-4000-8000-000000000008",
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": ["bitcoin"],
-      "source_status": "ACCESS_BLOCKED",
-      "verified_facts": [],
+      "source_ids": [
+        "bitcoin"
+      ],
+      "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
+      "verified_facts": [
+        {
+          "source_id": "bitcoin",
+          "quote": "Prefill an amount (optional) $10 … BTC $25 … BTC $50 … BTC BTC amount USD amount Add an optional wallet note Optional note for your w",
+          "locator": "NORMALIZED_VISIBLE_TEXT",
+          "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+        }
+      ],
       "scores": {
         "korean_recognition": 3,
         "global_recognition": 3,
@@ -2563,10 +3381,15 @@
       "scene_status": "SPEC_IN_FROZEN_LANE_PRODUCT_QA_REQUIRED",
       "registration_ready": false,
       "blocking_requirements": [
-        "PUBLIC_IDENTITY_VERIFICATION_REQUIRED",
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED"
-      ]
+      ],
+      "canonical_name_ko": "비트코인",
+      "canonical_name_en": "Bitcoin",
+      "canonical_share_class": "NATIVE_ASSET",
+      "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+      "identity_confidence": "HIGH_SCOPE_LIMITED",
+      "unresolved_identity_fields": []
     },
     {
       "proposal_id": "catalog-v1-ethereum",
@@ -2575,12 +3398,12 @@
       "asset_class": "CRYPTO",
       "market": "PROTOCOL",
       "ticker_hint": "ETH",
-      "canonical_ticker": null,
-      "canonical_name": null,
-      "canonical_exchange": null,
+      "canonical_ticker": "ETH",
+      "canonical_name": "Ether",
+      "canonical_exchange": "NOT_APPLICABLE_PROTOCOL",
       "sector_hint": "크립토",
       "share_class_hint": null,
-      "identity_status": "UNKNOWN",
+      "identity_status": "PUBLIC_MARKET_VERIFIED",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
       "proposed_wave": "P0_LAUNCH_CORE",
@@ -2589,9 +3412,19 @@
       "repo_status": "REPOSITORY_DRAFT",
       "repository_draft_id": "30000000-0000-4000-8000-000000000009",
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": ["ethereum"],
-      "source_status": "ACCESS_BLOCKED",
-      "verified_facts": [],
+      "source_ids": [
+        "ethereum",
+        "eth-native"
+      ],
+      "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
+      "verified_facts": [
+        {
+          "source_id": "eth-native",
+          "quote": " ether (ETH)? What is ether (ETH)? Ether (ETH) is the native cryptocurrency that powers the Ethereum network. It's used to pay transaction fees (known as 'gas') for using",
+          "locator": "NORMALIZED_VISIBLE_TEXT",
+          "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+        }
+      ],
       "scores": {
         "korean_recognition": 3,
         "global_recognition": 3,
@@ -2617,10 +3450,15 @@
       "scene_status": "SPEC_IN_FROZEN_LANE_PRODUCT_QA_REQUIRED",
       "registration_ready": false,
       "blocking_requirements": [
-        "PUBLIC_IDENTITY_VERIFICATION_REQUIRED",
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED"
-      ]
+      ],
+      "canonical_name_ko": "이더리움",
+      "canonical_name_en": "Ether",
+      "canonical_share_class": "NATIVE_ASSET",
+      "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+      "identity_confidence": "HIGH_SCOPE_LIMITED",
+      "unresolved_identity_fields": []
     },
     {
       "proposal_id": "catalog-v1-solana",
@@ -2629,12 +3467,12 @@
       "asset_class": "CRYPTO",
       "market": "PROTOCOL",
       "ticker_hint": "SOL",
-      "canonical_ticker": null,
-      "canonical_name": null,
-      "canonical_exchange": null,
+      "canonical_ticker": "SOL",
+      "canonical_name": "Solana / SOL",
+      "canonical_exchange": "NOT_APPLICABLE_PROTOCOL",
       "sector_hint": "크립토",
       "share_class_hint": null,
-      "identity_status": "UNKNOWN",
+      "identity_status": "PUBLIC_MARKET_VERIFIED",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
       "proposed_wave": "P1_LAUNCH_EXPANSION",
@@ -2643,9 +3481,19 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": ["solana"],
-      "source_status": "ACCESS_BLOCKED",
-      "verified_facts": [],
+      "source_ids": [
+        "solana",
+        "sol-token"
+      ],
+      "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
+      "verified_facts": [
+        {
+          "source_id": "sol-token",
+          "quote": "very Solana transaction requires a fee paid in SOL. The fee has two components: a base fee and an optional prioritization fee . The base fee comp",
+          "locator": "NORMALIZED_VISIBLE_TEXT",
+          "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+        }
+      ],
       "scores": {
         "korean_recognition": 3,
         "global_recognition": 3,
@@ -2671,10 +3519,15 @@
       "scene_status": "SCENE_SPEC_REQUIRED",
       "registration_ready": false,
       "blocking_requirements": [
-        "PUBLIC_IDENTITY_VERIFICATION_REQUIRED",
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED"
-      ]
+      ],
+      "canonical_name_ko": "솔라나",
+      "canonical_name_en": "Solana / SOL",
+      "canonical_share_class": "NATIVE_ASSET",
+      "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+      "identity_confidence": "HIGH_SCOPE_LIMITED",
+      "unresolved_identity_fields": []
     },
     {
       "proposal_id": "catalog-v1-bnb",
@@ -2683,12 +3536,12 @@
       "asset_class": "CRYPTO",
       "market": "PROTOCOL",
       "ticker_hint": "BNB",
-      "canonical_ticker": null,
-      "canonical_name": null,
-      "canonical_exchange": null,
+      "canonical_ticker": "BNB",
+      "canonical_name": "BNB / BNB Chain",
+      "canonical_exchange": "NOT_APPLICABLE_PROTOCOL",
       "sector_hint": "크립토",
       "share_class_hint": null,
-      "identity_status": "UNKNOWN",
+      "identity_status": "PUBLIC_MARKET_PARTIAL",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
       "proposed_wave": "P2_LATER",
@@ -2697,9 +3550,18 @@
       "repo_status": "REPOSITORY_DRAFT",
       "repository_draft_id": "30000000-0000-4000-8000-000000000010",
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": ["bnb"],
-      "source_status": "ACCESS_BLOCKED",
-      "verified_facts": [],
+      "source_ids": [
+        "bnb"
+      ],
+      "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
+      "verified_facts": [
+        {
+          "source_id": "bnb",
+          "quote": "BNB Chain: Build for the Next Billion Web3 Users Chains MAIN CHAINS BNB Smart Chain Fast. Affordable. EV",
+          "locator": "NORMALIZED_VISIBLE_TEXT",
+          "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+        }
+      ],
       "scores": {
         "korean_recognition": 3,
         "global_recognition": 3,
@@ -2725,9 +3587,18 @@
       "scene_status": "SPEC_IN_FROZEN_LANE_PRODUCT_QA_REQUIRED",
       "registration_ready": false,
       "blocking_requirements": [
-        "PUBLIC_IDENTITY_VERIFICATION_REQUIRED",
         "LEGAL_BRAND_REVIEW_REQUIRED",
-        "APPROVED_CATALOG_COMMAND_REQUIRED"
+        "APPROVED_CATALOG_COMMAND_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED"
+      ],
+      "canonical_name_ko": "BNB",
+      "canonical_name_en": "BNB / BNB Chain",
+      "canonical_share_class": "NATIVE_ASSET_DETAIL_PENDING",
+      "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+      "identity_confidence": "PARTIAL_DETAILS_REQUIRED",
+      "unresolved_identity_fields": [
+        "SHARE_CLASS_REQUIRED"
       ]
     },
     {
@@ -2737,12 +3608,12 @@
       "asset_class": "CRYPTO",
       "market": "PROTOCOL",
       "ticker_hint": "XRP",
-      "canonical_ticker": null,
-      "canonical_name": null,
-      "canonical_exchange": null,
+      "canonical_ticker": "XRP",
+      "canonical_name": "XRP / XRP Ledger",
+      "canonical_exchange": "NOT_APPLICABLE_PROTOCOL",
       "sector_hint": "크립토",
       "share_class_hint": null,
-      "identity_status": "UNKNOWN",
+      "identity_status": "PUBLIC_MARKET_PARTIAL",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
       "proposed_wave": "P2_LATER",
@@ -2751,9 +3622,18 @@
       "repo_status": "REPOSITORY_DRAFT",
       "repository_draft_id": "30000000-0000-4000-8000-000000000011",
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": ["xrp"],
-      "source_status": "ACCESS_BLOCKED",
-      "verified_facts": [],
+      "source_ids": [
+        "xrp"
+      ],
+      "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
+      "verified_facts": [
+        {
+          "source_id": "xrp",
+          "quote": " JavaScript Python PHP Go Payments Direct XRP Payments Cross-currency Payments Escrow Checks Tokenization Stablecoin NFT Credit Lending (Open for Vot",
+          "locator": "NORMALIZED_VISIBLE_TEXT",
+          "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+        }
+      ],
       "scores": {
         "korean_recognition": 3,
         "global_recognition": 3,
@@ -2779,9 +3659,18 @@
       "scene_status": "SPEC_IN_FROZEN_LANE_PRODUCT_QA_REQUIRED",
       "registration_ready": false,
       "blocking_requirements": [
-        "PUBLIC_IDENTITY_VERIFICATION_REQUIRED",
         "LEGAL_BRAND_REVIEW_REQUIRED",
-        "APPROVED_CATALOG_COMMAND_REQUIRED"
+        "APPROVED_CATALOG_COMMAND_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED"
+      ],
+      "canonical_name_ko": "XRP",
+      "canonical_name_en": "XRP / XRP Ledger",
+      "canonical_share_class": "NATIVE_ASSET_DETAIL_PENDING",
+      "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+      "identity_confidence": "PARTIAL_DETAILS_REQUIRED",
+      "unresolved_identity_fields": [
+        "SHARE_CLASS_REQUIRED"
       ]
     },
     {
@@ -2796,7 +3685,7 @@
       "canonical_exchange": null,
       "sector_hint": "입출금 수단",
       "share_class_hint": null,
-      "identity_status": "UNKNOWN",
+      "identity_status": "PUBLIC_MARKET_UNKNOWN",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
       "proposed_wave": "REJECT",
@@ -2805,8 +3694,10 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": ["sec"],
-      "source_status": "ACCESS_BLOCKED",
+      "source_ids": [
+        "sec"
+      ],
+      "source_status": "NO_PRODUCT_SPECIFIC_FACTS_VERIFIED",
       "verified_facts": [],
       "scores": {
         "korean_recognition": 3,
@@ -2833,9 +3724,18 @@
       "scene_status": "SCENE_SPEC_REQUIRED",
       "registration_ready": false,
       "blocking_requirements": [
-        "PUBLIC_IDENTITY_VERIFICATION_REQUIRED",
         "LEGAL_BRAND_REVIEW_REQUIRED",
-        "APPROVED_CATALOG_COMMAND_REQUIRED"
+        "APPROVED_CATALOG_COMMAND_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED"
+      ],
+      "canonical_name_ko": null,
+      "canonical_name_en": null,
+      "canonical_share_class": null,
+      "current_existence": "UNKNOWN",
+      "identity_confidence": "UNKNOWN",
+      "unresolved_identity_fields": [
+        "SPECIFIC_CURRENT_OFFICIAL_IDENTITY_REQUIRED"
       ]
     },
     {
@@ -2845,12 +3745,12 @@
       "asset_class": "CRYPTO",
       "market": "PROTOCOL",
       "ticker_hint": "USDC",
-      "canonical_ticker": null,
-      "canonical_name": null,
-      "canonical_exchange": null,
+      "canonical_ticker": "USDC",
+      "canonical_name": "USD Coin (USDC)",
+      "canonical_exchange": "NOT_APPLICABLE_PROTOCOL",
       "sector_hint": "입출금 수단",
       "share_class_hint": null,
-      "identity_status": "UNKNOWN",
+      "identity_status": "PUBLIC_MARKET_PARTIAL",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
       "proposed_wave": "REJECT",
@@ -2859,9 +3759,19 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": ["sec"],
-      "source_status": "ACCESS_BLOCKED",
-      "verified_facts": [],
+      "source_ids": [
+        "sec",
+        "usdc-coinbase"
+      ],
+      "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
+      "verified_facts": [
+        {
+          "source_id": "usdc-coinbase",
+          "quote": "C) | Coinbase Help USD Coin (USDC) USD Coin (USDC) is a stablecoin pegged to the US dollar and redeemable on a 1:1 basis for US dollars, backed by dollar-denomin",
+          "locator": "NORMALIZED_VISIBLE_TEXT",
+          "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+        }
+      ],
       "scores": {
         "korean_recognition": 3,
         "global_recognition": 3,
@@ -2887,9 +3797,19 @@
       "scene_status": "SCENE_SPEC_REQUIRED",
       "registration_ready": false,
       "blocking_requirements": [
-        "PUBLIC_IDENTITY_VERIFICATION_REQUIRED",
         "LEGAL_BRAND_REVIEW_REQUIRED",
-        "APPROVED_CATALOG_COMMAND_REQUIRED"
+        "APPROVED_CATALOG_COMMAND_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED"
+      ],
+      "canonical_name_ko": "USDC 결제 수단 조사",
+      "canonical_name_en": "USD Coin (USDC)",
+      "canonical_share_class": "STABLECOIN_ISSUER_CHECK_PENDING",
+      "current_existence": "CURRENT_SECONDARY_PAGE_IDENTIFIES_ASSET",
+      "identity_confidence": "PARTIAL_DETAILS_REQUIRED",
+      "unresolved_identity_fields": [
+        "SHARE_CLASS_REQUIRED",
+        "ISSUER_PRIMARY_SOURCE_REQUIRED"
       ]
     },
     {
@@ -2899,12 +3819,12 @@
       "asset_class": "PRECIOUS",
       "market": "METAL",
       "ticker_hint": "XAU",
-      "canonical_ticker": null,
-      "canonical_name": null,
-      "canonical_exchange": null,
+      "canonical_ticker": "XAU",
+      "canonical_name": "Gold",
+      "canonical_exchange": "NOT_APPLICABLE_BULLION",
       "sector_hint": "귀금속",
       "share_class_hint": null,
-      "identity_status": "UNKNOWN",
+      "identity_status": "PUBLIC_MARKET_VERIFIED",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
       "proposed_wave": "P0_LAUNCH_CORE",
@@ -2913,9 +3833,18 @@
       "repo_status": "REPOSITORY_DRAFT",
       "repository_draft_id": "30000000-0000-4000-8000-000000000006",
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": ["lbma"],
-      "source_status": "ACCESS_BLOCKED",
-      "verified_facts": [],
+      "source_ids": [
+        "lbma"
+      ],
+      "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
+      "verified_facts": [
+        {
+          "source_id": "lbma",
+          "quote": " market. LBMA owns and manages the Good Delivery Lists for both gold and silver. Overview About Good Delivery Good Delivery Rules and Governance Good Delivery FAQs Lists Good",
+          "locator": "NORMALIZED_VISIBLE_TEXT",
+          "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+        }
+      ],
       "scores": {
         "korean_recognition": 3,
         "global_recognition": 3,
@@ -2941,10 +3870,16 @@
       "scene_status": "SPEC_IN_FROZEN_LANE_PRODUCT_QA_REQUIRED",
       "registration_ready": false,
       "blocking_requirements": [
-        "PUBLIC_IDENTITY_VERIFICATION_REQUIRED",
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED"
-      ]
+      ],
+      "canonical_name_ko": "금",
+      "canonical_name_en": "Gold",
+      "canonical_share_class": "BULLION_THEME_NO_SECURITY_SHARE_CLASS",
+      "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+      "identity_confidence": "HIGH_SCOPE_LIMITED",
+      "identifier_scope": "XAU_XAG_EXISTING_INTERNAL_CATALOG_CODES_NOT_LBMA_EXCHANGE_TICKERS",
+      "unresolved_identity_fields": []
     },
     {
       "proposal_id": "catalog-v1-silver",
@@ -2953,12 +3888,12 @@
       "asset_class": "PRECIOUS",
       "market": "METAL",
       "ticker_hint": "XAG",
-      "canonical_ticker": null,
-      "canonical_name": null,
-      "canonical_exchange": null,
+      "canonical_ticker": "XAG",
+      "canonical_name": "Silver",
+      "canonical_exchange": "NOT_APPLICABLE_BULLION",
       "sector_hint": "귀금속",
       "share_class_hint": null,
-      "identity_status": "UNKNOWN",
+      "identity_status": "PUBLIC_MARKET_VERIFIED",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
       "proposed_wave": "P0_LAUNCH_CORE",
@@ -2967,9 +3902,18 @@
       "repo_status": "REPOSITORY_DRAFT",
       "repository_draft_id": "30000000-0000-4000-8000-000000000007",
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": ["lbma"],
-      "source_status": "ACCESS_BLOCKED",
-      "verified_facts": [],
+      "source_ids": [
+        "lbma"
+      ],
+      "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
+      "verified_facts": [
+        {
+          "source_id": "lbma",
+          "quote": " market. LBMA owns and manages the Good Delivery Lists for both gold and silver. Overview About Good Delivery Good Delivery Rules and Governance Good Delivery FAQs Lists Good",
+          "locator": "NORMALIZED_VISIBLE_TEXT",
+          "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+        }
+      ],
       "scores": {
         "korean_recognition": 3,
         "global_recognition": 3,
@@ -2995,10 +3939,17 @@
       "scene_status": "SPEC_IN_FROZEN_LANE_PRODUCT_QA_REQUIRED",
       "registration_ready": false,
       "blocking_requirements": [
-        "PUBLIC_IDENTITY_VERIFICATION_REQUIRED",
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED"
-      ]
+      ],
+      "canonical_name_ko": "은",
+      "canonical_name_en": "Silver",
+      "canonical_share_class": "BULLION_THEME_NO_SECURITY_SHARE_CLASS",
+      "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+      "identity_confidence": "HIGH_SCOPE_LIMITED",
+      "identifier_scope": "XAU_XAG_EXISTING_INTERNAL_CATALOG_CODES_NOT_LBMA_EXCHANGE_TICKERS",
+      "unresolved_identity_fields": []
     }
-  ]
+  ],
+  "research_revision": 2
 }

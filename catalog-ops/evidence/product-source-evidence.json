@@ -1,789 +1,2491 @@
 [
   {
     "proposal_id": "catalog-v1-samsung-electronics",
-    "requested_sources": [
-      "https://www.samsung.com/global/ir/",
-      "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx"
+    "slug": "samsung-electronics",
+    "verification_status": "PUBLIC_MARKET_VERIFIED",
+    "verified_name": "Samsung Electronics",
+    "verified_name_ko": "삼성전자",
+    "verified_name_en": "Samsung Electronics",
+    "verified_code": "005930",
+    "verified_exchange": "KRX",
+    "verified_asset_class": "KR_STOCK",
+    "share_class": "COMMON",
+    "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+    "confidence": "HIGH_SCOPE_LIMITED",
+    "facts": [
+      {
+        "source_id": "samsung-listing",
+        "quote": " Common Preferred Common Preferred KRX 005930 ISIN: KR7005930003 005935 ISIN: KR7005931001 - - LSE - - SMSN ISIN: US7960508882 SMSEL ISIN: U",
+        "locator": "NORMALIZED_VISIBLE_TEXT",
+        "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+      }
     ],
-    "verified_name": null,
-    "verified_code": null,
-    "verified_market": null,
-    "verified_exchange": null,
-    "verified_asset_class": null,
-    "checked_at": null,
-    "scope": "INVESTIGATION_HINTS_ONLY",
-    "verification_status": "UNKNOWN"
+    "missing": [],
+    "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
+    "sources": [
+      {
+        "id": "samsung",
+        "url": "https://www.samsung.com/global/ir/",
+        "final_url": "https://www.samsung.com/global/ir/",
+        "accessed_at": "2026-10-07T13:18:12.306980+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "81536e9f671f30931f821d8f951ca54db727d8df37fbd157c0de36e620db34a2",
+        "observation": "RESPONSE_OBTAINED_REVIEW_REQUIRED"
+      },
+      {
+        "id": "krx",
+        "url": "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx",
+        "final_url": "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx",
+        "accessed_at": "2026-10-07T13:18:15.369143+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "bad2beed56052c7f993ce45226da084fc09b0c820b4038241ff34d2ee13154a3",
+        "observation": "RESPONSE_OBTAINED_REVIEW_REQUIRED"
+      },
+      {
+        "id": "samsung-listing",
+        "url": "https://www.samsung.com/global/ir/stock-information/listing-Info/",
+        "final_url": "https://www.samsung.com/global/ir/stock-information/listing-Info/",
+        "accessed_at": "2026-10-07T13:24:08.116904+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "b3a4452e1e16aa76b5bae9fa254d20556a71a8b990e90e998609c18e40f04cb1",
+        "observation": "RESPONSE_REVIEWED"
+      }
+    ],
+    "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
   },
   {
     "proposal_id": "catalog-v1-sk-hynix",
-    "requested_sources": [
-      "https://www.skhynix.com/",
-      "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx"
-    ],
-    "verified_name": null,
+    "slug": "sk-hynix",
+    "verification_status": "PUBLIC_MARKET_PARTIAL",
+    "verified_name": "SK hynix",
+    "verified_name_ko": "SK하이닉스",
+    "verified_name_en": "SK hynix",
     "verified_code": null,
-    "verified_market": null,
     "verified_exchange": null,
-    "verified_asset_class": null,
-    "checked_at": null,
-    "scope": "INVESTIGATION_HINTS_ONLY",
-    "verification_status": "UNKNOWN"
+    "verified_asset_class": "KR_STOCK",
+    "share_class": null,
+    "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+    "confidence": "PARTIAL_DETAILS_REQUIRED",
+    "facts": [
+      {
+        "source_id": "hynix",
+        "quote": "SK hynix 닫기 Don't show this message today 닫기 SK hynix 새창 Newsroom 새창 YouTube 새창 Instagram 새창 Linked in ",
+        "locator": "NORMALIZED_VISIBLE_TEXT",
+        "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+      }
+    ],
+    "missing": [
+      "TICKER_REQUIRED",
+      "EXCHANGE_REQUIRED",
+      "SHARE_CLASS_REQUIRED"
+    ],
+    "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
+    "sources": [
+      {
+        "id": "hynix",
+        "url": "https://www.skhynix.com/",
+        "final_url": "https://www.skhynix.com/",
+        "accessed_at": "2026-10-07T13:18:12.583325+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "8dfdcd804ef39d90aedcda6d5e62f003b5512d2a6d0f5a5e70940a9d120631d2",
+        "observation": "RESPONSE_REVIEWED"
+      },
+      {
+        "id": "krx",
+        "url": "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx",
+        "final_url": "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx",
+        "accessed_at": "2026-10-07T13:18:15.369143+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "bad2beed56052c7f993ce45226da084fc09b0c820b4038241ff34d2ee13154a3",
+        "observation": "RESPONSE_OBTAINED_REVIEW_REQUIRED"
+      }
+    ],
+    "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
   },
   {
     "proposal_id": "catalog-v1-lg-electronics",
-    "requested_sources": [
-      "https://www.lg.com/global/investor-relations",
-      "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx"
-    ],
-    "verified_name": null,
-    "verified_code": null,
-    "verified_market": null,
+    "slug": "lg-electronics",
+    "verification_status": "PUBLIC_MARKET_PARTIAL",
+    "verified_name": "LG Electronics",
+    "verified_name_ko": "LG전자",
+    "verified_name_en": "LG Electronics",
+    "verified_code": "066570",
     "verified_exchange": null,
-    "verified_asset_class": null,
-    "checked_at": null,
-    "scope": "INVESTIGATION_HINTS_ONLY",
-    "verification_status": "UNKNOWN"
+    "verified_asset_class": "KR_STOCK",
+    "share_class": "COMMON_CLASS_LINK_PENDING",
+    "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+    "confidence": "PARTIAL_DETAILS_REQUIRED",
+    "facts": [
+      {
+        "source_id": "lg-stock",
+        "quote": "erir.koscom.co.kr/cyberir/stock.do?custId=066570&lang=eng\" class=\"cmp-embed\">\n     \n     \n    \n    <style>\r\n            /* c-tabs-inner-tab */\r",
+        "locator": "RAW_ISSUER_DOCUMENT",
+        "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+      }
+    ],
+    "missing": [
+      "EXCHANGE_REQUIRED",
+      "SHARE_CLASS_REQUIRED"
+    ],
+    "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
+    "sources": [
+      {
+        "id": "lg",
+        "url": "https://www.lg.com/global/investor-relations",
+        "final_url": "https://www.lg.com/global/investor-relations/",
+        "accessed_at": "2026-10-07T13:18:13.595110+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "5f4727fc3eb07a70bf7d5d3f614ac4f3fd15a9f6b11cab40de7746d3406cb9fd",
+        "observation": "RESPONSE_OBTAINED_REVIEW_REQUIRED"
+      },
+      {
+        "id": "krx",
+        "url": "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx",
+        "final_url": "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx",
+        "accessed_at": "2026-10-07T13:18:15.369143+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "bad2beed56052c7f993ce45226da084fc09b0c820b4038241ff34d2ee13154a3",
+        "observation": "RESPONSE_OBTAINED_REVIEW_REQUIRED"
+      },
+      {
+        "id": "lg-stock",
+        "url": "https://www.lg.com/global/investor-relations/stock-information/stock-quotes/",
+        "final_url": "https://www.lg.com/global/investor-relations/stock-information/",
+        "accessed_at": "2026-10-07T13:24:11.288922+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "5d7ee23ae2a0a1ac5b0c651dade02dea94699a47443a13184218519880045d6c",
+        "observation": "RESPONSE_REVIEWED"
+      }
+    ],
+    "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
   },
   {
     "proposal_id": "catalog-v1-hyundai-motor",
-    "requested_sources": [
-      "https://www.hyundai.com/worldwide/en/company/ir",
-      "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx"
-    ],
-    "verified_name": null,
+    "slug": "hyundai-motor",
+    "verification_status": "PUBLIC_MARKET_PARTIAL",
+    "verified_name": "Hyundai Motor",
+    "verified_name_ko": "현대자동차",
+    "verified_name_en": "Hyundai Motor",
     "verified_code": null,
-    "verified_market": null,
     "verified_exchange": null,
-    "verified_asset_class": null,
-    "checked_at": null,
-    "scope": "INVESTIGATION_HINTS_ONLY",
-    "verification_status": "UNKNOWN"
+    "verified_asset_class": "KR_STOCK",
+    "share_class": "COMMON_CLASS_LINK_PENDING",
+    "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+    "confidence": "PARTIAL_DETAILS_REQUIRED",
+    "facts": [
+      {
+        "source_id": "hyundai-stock",
+        "quote": "ance (Units: share) Stock Issuance Common Share Preferred series Total Dividend Number of Shares Issued 204,757,766 60,632,342 265,390,108 Tre",
+        "locator": "NORMALIZED_VISIBLE_TEXT",
+        "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+      }
+    ],
+    "missing": [
+      "TICKER_REQUIRED",
+      "EXCHANGE_REQUIRED",
+      "SHARE_CLASS_REQUIRED"
+    ],
+    "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
+    "sources": [
+      {
+        "id": "hyundai",
+        "url": "https://www.hyundai.com/worldwide/en/company/ir",
+        "final_url": "https://www.hyundai.com/worldwide/en/company/ir",
+        "accessed_at": "2026-10-07T13:18:11.793868+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "dedfe3520272e94c63efdd95d2332ff08b8670bfa71a6f56ca9c21f7d90d83b4",
+        "observation": "RESPONSE_OBTAINED_REVIEW_REQUIRED"
+      },
+      {
+        "id": "krx",
+        "url": "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx",
+        "final_url": "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx",
+        "accessed_at": "2026-10-07T13:18:15.369143+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "bad2beed56052c7f993ce45226da084fc09b0c820b4038241ff34d2ee13154a3",
+        "observation": "RESPONSE_OBTAINED_REVIEW_REQUIRED"
+      },
+      {
+        "id": "hyundai-stock",
+        "url": "https://www.hyundai.com/worldwide/en/company/ir/stock-information",
+        "final_url": "https://www.hyundai.com/worldwide/en/company/ir/stock-information/stock-information",
+        "accessed_at": "2026-10-07T13:24:08.605848+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "ae01df728a524dda350986b865d70329b745004ea62828a8aad18b1742088acc",
+        "observation": "RESPONSE_REVIEWED"
+      }
+    ],
+    "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
   },
   {
     "proposal_id": "catalog-v1-lg-energy-solution",
-    "requested_sources": [
-      "https://www.lgensol.com/en/index",
-      "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx"
-    ],
-    "verified_name": null,
+    "slug": "lg-energy-solution",
+    "verification_status": "PUBLIC_MARKET_PARTIAL",
+    "verified_name": "LG Energy Solution",
+    "verified_name_ko": "LG에너지솔루션",
+    "verified_name_en": "LG Energy Solution",
     "verified_code": null,
-    "verified_market": null,
     "verified_exchange": null,
-    "verified_asset_class": null,
-    "checked_at": null,
-    "scope": "INVESTIGATION_HINTS_ONLY",
-    "verification_status": "UNKNOWN"
+    "verified_asset_class": "KR_STOCK",
+    "share_class": null,
+    "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+    "confidence": "PARTIAL_DETAILS_REQUIRED",
+    "facts": [
+      {
+        "source_id": "lgensol",
+        "quote": "LG Energy Solution｜Global Battery Leader, Building the Future Energy Ecosystem Skip to content Product Applicatio",
+        "locator": "NORMALIZED_VISIBLE_TEXT",
+        "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+      }
+    ],
+    "missing": [
+      "TICKER_REQUIRED",
+      "EXCHANGE_REQUIRED",
+      "SHARE_CLASS_REQUIRED"
+    ],
+    "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
+    "sources": [
+      {
+        "id": "lgensol",
+        "url": "https://www.lgensol.com/en/index",
+        "final_url": "https://www.lgensol.com/en/index",
+        "accessed_at": "2026-10-07T13:18:13.124766+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "5e352946f0695928ba832e18d7883d6b686faa6e8b628905f62fce9805f89aee",
+        "observation": "RESPONSE_REVIEWED"
+      },
+      {
+        "id": "krx",
+        "url": "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx",
+        "final_url": "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx",
+        "accessed_at": "2026-10-07T13:18:15.369143+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "bad2beed56052c7f993ce45226da084fc09b0c820b4038241ff34d2ee13154a3",
+        "observation": "RESPONSE_OBTAINED_REVIEW_REQUIRED"
+      }
+    ],
+    "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
   },
   {
     "proposal_id": "catalog-v1-naver",
-    "requested_sources": [
-      "https://www.navercorp.com/",
-      "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx"
+    "slug": "naver",
+    "verification_status": "PUBLIC_MARKET_PARTIAL",
+    "verified_name": "NAVER Corp.",
+    "verified_name_ko": "NAVER",
+    "verified_name_en": "NAVER Corp.",
+    "verified_code": "035420",
+    "verified_exchange": "KRX/KOSPI",
+    "verified_asset_class": "KR_STOCK",
+    "share_class": null,
+    "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+    "confidence": "PARTIAL_DETAILS_REQUIRED",
+    "facts": [
+      {
+        "source_id": "naver-stock",
+        "quote": "무정보 공시정보 주가정보 재무제표 결산공고 IR 공고 재무정보 네이버 035420 네이버 035420 기간별 거래 현황 네이버 035420 188,100 전일대비 -3,000 등락률 -1.57% 시가 191,300 고가 191,400 저가 188,00",
+        "locator": "NORMALIZED_VISIBLE_TEXT",
+        "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+      }
     ],
-    "verified_name": null,
-    "verified_code": null,
-    "verified_market": null,
-    "verified_exchange": null,
-    "verified_asset_class": null,
-    "checked_at": null,
-    "scope": "INVESTIGATION_HINTS_ONLY",
-    "verification_status": "UNKNOWN"
+    "missing": [
+      "SHARE_CLASS_REQUIRED"
+    ],
+    "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
+    "sources": [
+      {
+        "id": "naver",
+        "url": "https://www.navercorp.com/",
+        "final_url": "https://www.navercorp.com/main",
+        "accessed_at": "2026-10-07T13:18:13.964068+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "fc597d7cb06c9b4d63a37dbf540480a3ed2314d2db862be9222f8e203e7db6c0",
+        "observation": "RESPONSE_OBTAINED_REVIEW_REQUIRED"
+      },
+      {
+        "id": "krx",
+        "url": "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx",
+        "final_url": "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx",
+        "accessed_at": "2026-10-07T13:18:15.369143+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "bad2beed56052c7f993ce45226da084fc09b0c820b4038241ff34d2ee13154a3",
+        "observation": "RESPONSE_OBTAINED_REVIEW_REQUIRED"
+      },
+      {
+        "id": "naver-stock",
+        "url": "https://www.navercorp.com/investment/stock",
+        "final_url": "https://www.navercorp.com/investment/stock",
+        "accessed_at": "2026-10-07T13:24:08.724794+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "5eebbf1e07cb13401f5b364d8e17e89bb215388c6af65e2fd0878e20af787c67",
+        "observation": "RESPONSE_REVIEWED"
+      }
+    ],
+    "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
   },
   {
     "proposal_id": "catalog-v1-kakao",
-    "requested_sources": [
-      "https://www.kakaocorp.com/",
-      "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx"
+    "slug": "kakao",
+    "verification_status": "PUBLIC_MARKET_PARTIAL",
+    "verified_name": "카카오",
+    "verified_name_ko": "카카오",
+    "verified_name_en": "카카오",
+    "verified_code": "035720",
+    "verified_exchange": "KRX/KOSPI",
+    "verified_asset_class": "KR_STOCK",
+    "share_class": null,
+    "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+    "confidence": "PARTIAL_DETAILS_REQUIRED",
+    "facts": [
+      {
+        "source_id": "kakao-stock",
+        "quote": "             <i class=\"screen_out\">kospi code : </i>\n                                    <span class=\"txt_sub\">카카오 035720</span>\n           ",
+        "locator": "RAW_ISSUER_DOCUMENT",
+        "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+      }
     ],
-    "verified_name": null,
-    "verified_code": null,
-    "verified_market": null,
-    "verified_exchange": null,
-    "verified_asset_class": null,
-    "checked_at": null,
-    "scope": "INVESTIGATION_HINTS_ONLY",
-    "verification_status": "UNKNOWN"
+    "missing": [
+      "SHARE_CLASS_REQUIRED"
+    ],
+    "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
+    "sources": [
+      {
+        "id": "kakao",
+        "url": "https://www.kakaocorp.com/",
+        "final_url": "https://www.kakaocorp.com/page/",
+        "accessed_at": "2026-10-07T13:18:13.953935+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "0dbc9908d834b7f7ea860a5f53e2eefef973c71111723bba3b602bfff30b5ca6",
+        "observation": "RESPONSE_OBTAINED_REVIEW_REQUIRED"
+      },
+      {
+        "id": "krx",
+        "url": "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx",
+        "final_url": "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx",
+        "accessed_at": "2026-10-07T13:18:15.369143+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "bad2beed56052c7f993ce45226da084fc09b0c820b4038241ff34d2ee13154a3",
+        "observation": "RESPONSE_OBTAINED_REVIEW_REQUIRED"
+      },
+      {
+        "id": "kakao-stock",
+        "url": "https://www.kakaocorp.com/ir/main",
+        "final_url": "https://www.kakaocorp.com/ir/main",
+        "accessed_at": "2026-10-07T13:24:08.658163+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "cd624235b4535ac79680b29df76612710ea2d51fba081edfb76424fcab70de19",
+        "observation": "RESPONSE_REVIEWED"
+      }
+    ],
+    "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
   },
   {
     "proposal_id": "catalog-v1-samsung-biologics",
-    "requested_sources": [
-      "https://samsungbiologics.com/",
-      "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx"
+    "slug": "samsung-biologics",
+    "verification_status": "PUBLIC_MARKET_PARTIAL",
+    "verified_name": "Samsung Biologics",
+    "verified_name_ko": "삼성바이오로직스",
+    "verified_name_en": "Samsung Biologics",
+    "verified_code": "207940",
+    "verified_exchange": "KS (issuer designation)",
+    "verified_asset_class": "KR_STOCK",
+    "share_class": "COMMON",
+    "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+    "confidence": "PARTIAL_DETAILS_REQUIRED",
+    "facts": [
+      {
+        "source_id": "samsungbio-stock",
+        "quote": "te of Entity November 10 th , 2016 Ticker Common KS 207940 Listing Information - Description Description Shares Outstanding Total 71,174,000 Common 71,17",
+        "locator": "NORMALIZED_VISIBLE_TEXT",
+        "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+      }
     ],
-    "verified_name": null,
-    "verified_code": null,
-    "verified_market": null,
-    "verified_exchange": null,
-    "verified_asset_class": null,
-    "checked_at": null,
-    "scope": "INVESTIGATION_HINTS_ONLY",
-    "verification_status": "UNKNOWN"
+    "missing": [],
+    "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
+    "sources": [
+      {
+        "id": "samsungbio",
+        "url": "https://samsungbiologics.com/",
+        "final_url": "https://samsungbiologics.com/",
+        "accessed_at": "2026-10-07T13:18:13.270525+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "dd1747df54c223aa6818beded21f96d9de130dfd9f2a924e1818eccbb2eaf5d0",
+        "observation": "RESPONSE_OBTAINED_REVIEW_REQUIRED"
+      },
+      {
+        "id": "krx",
+        "url": "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx",
+        "final_url": "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx",
+        "accessed_at": "2026-10-07T13:18:15.369143+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "bad2beed56052c7f993ce45226da084fc09b0c820b4038241ff34d2ee13154a3",
+        "observation": "RESPONSE_OBTAINED_REVIEW_REQUIRED"
+      },
+      {
+        "id": "samsungbio-stock",
+        "url": "https://samsungbiologics.com/ir/stock-info/listing-information",
+        "final_url": "https://samsungbiologics.com/ir/stock-info/listing-information",
+        "accessed_at": "2026-10-07T13:24:07.959259+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "1de2b92a940c977346f46f47487195fac6194c5da8e020f9a76d8350ebfb2050",
+        "observation": "RESPONSE_REVIEWED"
+      }
+    ],
+    "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
   },
   {
     "proposal_id": "catalog-v1-kb-financial",
-    "requested_sources": [
-      "https://www.kbfg.com/",
-      "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx"
-    ],
-    "verified_name": null,
+    "slug": "kb-financial",
+    "verification_status": "PUBLIC_MARKET_PARTIAL",
+    "verified_name": "KB Financial Group",
+    "verified_name_ko": "KB금융",
+    "verified_name_en": "KB Financial Group",
     "verified_code": null,
-    "verified_market": null,
     "verified_exchange": null,
-    "verified_asset_class": null,
-    "checked_at": null,
-    "scope": "INVESTIGATION_HINTS_ONLY",
-    "verification_status": "UNKNOWN"
+    "verified_asset_class": "KR_STOCK",
+    "share_class": null,
+    "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+    "confidence": "PARTIAL_DETAILS_REQUIRED",
+    "facts": [
+      {
+        "source_id": "kb-eng",
+        "quote": "KB Financial Group Goto Gnb Goto main Goto main KB Financial Group About Us Overview KB Financial Group MissionㆍV",
+        "locator": "NORMALIZED_VISIBLE_TEXT",
+        "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+      }
+    ],
+    "missing": [
+      "TICKER_REQUIRED",
+      "EXCHANGE_REQUIRED",
+      "SHARE_CLASS_REQUIRED"
+    ],
+    "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
+    "sources": [
+      {
+        "id": "kb",
+        "url": "https://www.kbfg.com/",
+        "final_url": "https://www.kbfg.com/",
+        "accessed_at": "2026-10-07T13:18:13.603078+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "87ffcf8773ba7e270a75b2f03f25c6589f43a1244c4d0a4181fac838e6e8302a",
+        "observation": "RESPONSE_OBTAINED_REVIEW_REQUIRED"
+      },
+      {
+        "id": "krx",
+        "url": "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx",
+        "final_url": "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx",
+        "accessed_at": "2026-10-07T13:18:15.369143+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "bad2beed56052c7f993ce45226da084fc09b0c820b4038241ff34d2ee13154a3",
+        "observation": "RESPONSE_OBTAINED_REVIEW_REQUIRED"
+      },
+      {
+        "id": "kb-eng",
+        "url": "https://www.kbfg.com/eng/index.jsp",
+        "final_url": "https://www.kbfg.com/eng/index.jsp",
+        "accessed_at": "2026-10-07T13:25:51.814341+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "a840a747b6058a265464cc58e7cbc8c3ff072c57da07dfc563467a61c84dcecd",
+        "observation": "RESPONSE_REVIEWED"
+      }
+    ],
+    "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
   },
   {
     "proposal_id": "catalog-v1-hanwha-aerospace",
-    "requested_sources": [
-      "https://www.hanwhaaerospace.com/",
-      "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx"
-    ],
-    "verified_name": null,
+    "slug": "hanwha-aerospace",
+    "verification_status": "PUBLIC_MARKET_PARTIAL",
+    "verified_name": "한화에어로스페이스",
+    "verified_name_ko": "한화에어로스페이스",
+    "verified_name_en": "한화에어로스페이스",
     "verified_code": null,
-    "verified_market": null,
     "verified_exchange": null,
-    "verified_asset_class": null,
-    "checked_at": null,
-    "scope": "INVESTIGATION_HINTS_ONLY",
-    "verification_status": "UNKNOWN"
+    "verified_asset_class": "KR_STOCK",
+    "share_class": "COMMON_CLASS_LINK_PENDING",
+    "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+    "confidence": "PARTIAL_DETAILS_REQUIRED",
+    "facts": [
+      {
+        "source_id": "hanwha-stock",
+        "quote": " 주식정보 주식 발행 내역 주식의 종류 발행주식수 자본금 비고 보통주 51,563,401 270,317 - 우선주 - - - 합계 51,563,401 270,317 - 1주의 액면금액: 5,000원 단위: 1주 백만원 주주구성 한화 35.",
+        "locator": "NORMALIZED_VISIBLE_TEXT",
+        "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+      }
+    ],
+    "missing": [
+      "TICKER_REQUIRED",
+      "EXCHANGE_REQUIRED",
+      "SHARE_CLASS_REQUIRED"
+    ],
+    "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
+    "sources": [
+      {
+        "id": "hanwha",
+        "url": "https://www.hanwhaaerospace.com/",
+        "final_url": "https://www.hanwhaaerospace.com/kor/index.do",
+        "accessed_at": "2026-10-07T13:18:15.600772+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "78109b14e4c1bc51f9e4ba9ee8468f2ebccc60fedf8b52aa03e826ff1a8ffb57",
+        "observation": "RESPONSE_OBTAINED_REVIEW_REQUIRED"
+      },
+      {
+        "id": "krx",
+        "url": "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx",
+        "final_url": "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx",
+        "accessed_at": "2026-10-07T13:18:15.369143+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "bad2beed56052c7f993ce45226da084fc09b0c820b4038241ff34d2ee13154a3",
+        "observation": "RESPONSE_OBTAINED_REVIEW_REQUIRED"
+      },
+      {
+        "id": "hanwha-stock",
+        "url": "https://www.hanwhaaerospace.com/kor/ir/stock-info.do",
+        "final_url": "https://www.hanwhaaerospace.com/kor/ir/stock-info.do",
+        "accessed_at": "2026-10-07T13:24:10.085334+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "b1913e1a07714601f770a4c0485aa9370faadec7f250bc8cf554343dd54aaa27",
+        "observation": "RESPONSE_REVIEWED"
+      }
+    ],
+    "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
   },
   {
     "proposal_id": "catalog-v1-hd-hyundai-heavy",
-    "requested_sources": [
-      "https://www.hhi.co.kr/",
-      "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx"
-    ],
+    "slug": "hd-hyundai-heavy",
+    "verification_status": "PUBLIC_MARKET_UNKNOWN",
     "verified_name": null,
+    "verified_name_ko": null,
+    "verified_name_en": null,
     "verified_code": null,
-    "verified_market": null,
     "verified_exchange": null,
     "verified_asset_class": null,
-    "checked_at": null,
-    "scope": "INVESTIGATION_HINTS_ONLY",
-    "verification_status": "UNKNOWN"
+    "share_class": null,
+    "current_existence": "UNKNOWN",
+    "confidence": "UNKNOWN",
+    "facts": [],
+    "missing": [
+      "SPECIFIC_CURRENT_OFFICIAL_IDENTITY_REQUIRED"
+    ],
+    "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
+    "sources": [
+      {
+        "id": "hhi",
+        "url": "https://www.hhi.co.kr/",
+        "final_url": null,
+        "accessed_at": null,
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": null,
+        "observation": "ACCESS_BLOCKED"
+      },
+      {
+        "id": "krx",
+        "url": "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx",
+        "final_url": "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx",
+        "accessed_at": "2026-10-07T13:18:15.369143+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "bad2beed56052c7f993ce45226da084fc09b0c820b4038241ff34d2ee13154a3",
+        "observation": "RESPONSE_OBTAINED_REVIEW_REQUIRED"
+      }
+    ],
+    "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
   },
   {
     "proposal_id": "catalog-v1-hd-hyundai-electric",
-    "requested_sources": [
-      "https://www.hd-hyundaielectric.com/",
-      "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx"
-    ],
+    "slug": "hd-hyundai-electric",
+    "verification_status": "PUBLIC_MARKET_UNKNOWN",
     "verified_name": null,
+    "verified_name_ko": null,
+    "verified_name_en": null,
     "verified_code": null,
-    "verified_market": null,
     "verified_exchange": null,
     "verified_asset_class": null,
-    "checked_at": null,
-    "scope": "INVESTIGATION_HINTS_ONLY",
-    "verification_status": "UNKNOWN"
+    "share_class": null,
+    "current_existence": "UNKNOWN",
+    "confidence": "UNKNOWN",
+    "facts": [],
+    "missing": [
+      "SPECIFIC_CURRENT_OFFICIAL_IDENTITY_REQUIRED"
+    ],
+    "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
+    "sources": [
+      {
+        "id": "hdelectric",
+        "url": "https://www.hd-hyundaielectric.com/",
+        "final_url": "https://www.hd-hyundaielectric.com/",
+        "accessed_at": "2026-10-07T13:18:14.171333+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "1d89c3aa469cf9f783804bbaa8c1e01bf6fbe1d29561e022f51a3505c7053c12",
+        "observation": "RESPONSE_OBTAINED_REVIEW_REQUIRED"
+      },
+      {
+        "id": "krx",
+        "url": "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx",
+        "final_url": "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx",
+        "accessed_at": "2026-10-07T13:18:15.369143+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "bad2beed56052c7f993ce45226da084fc09b0c820b4038241ff34d2ee13154a3",
+        "observation": "RESPONSE_OBTAINED_REVIEW_REQUIRED"
+      }
+    ],
+    "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
   },
   {
     "proposal_id": "catalog-v1-sk-innovation",
-    "requested_sources": [
-      "https://www.skinnovation.com/",
-      "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx"
-    ],
-    "verified_name": null,
-    "verified_code": null,
-    "verified_market": null,
+    "slug": "sk-innovation",
+    "verification_status": "PUBLIC_MARKET_PARTIAL",
+    "verified_name": "SK Innovation Co., Ltd.",
+    "verified_name_ko": "SK이노베이션",
+    "verified_name_en": "SK Innovation Co., Ltd.",
+    "verified_code": "096770",
     "verified_exchange": null,
-    "verified_asset_class": null,
-    "checked_at": null,
-    "scope": "INVESTIGATION_HINTS_ONLY",
-    "verification_status": "UNKNOWN"
+    "verified_asset_class": "KR_STOCK",
+    "share_class": "COMMON_CLASS_LINK_PENDING",
+    "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+    "confidence": "PARTIAL_DETAILS_REQUIRED",
+    "facts": [
+      {
+        "source_id": "skinnov-stock",
+        "quote": "fn.io/skinnovation/ir_current.html?code=096770&koreng=2\" class=\"iframe_stock animate delay-1\" frameborder=\"0\" scrolling=\"no\"></iframe>\n      ",
+        "locator": "RAW_ISSUER_DOCUMENT",
+        "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+      }
+    ],
+    "missing": [
+      "EXCHANGE_REQUIRED",
+      "SHARE_CLASS_REQUIRED"
+    ],
+    "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
+    "sources": [
+      {
+        "id": "skinnovation",
+        "url": "https://www.skinnovation.com/",
+        "final_url": "https://www.skinnovation.com/",
+        "accessed_at": "2026-10-07T13:18:14.683005+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "68caa93d43598b47e89988841a65cbe396e64cb9041875de24b9c124e1de8b96",
+        "observation": "RESPONSE_OBTAINED_REVIEW_REQUIRED"
+      },
+      {
+        "id": "krx",
+        "url": "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx",
+        "final_url": "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx",
+        "accessed_at": "2026-10-07T13:18:15.369143+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "bad2beed56052c7f993ce45226da084fc09b0c820b4038241ff34d2ee13154a3",
+        "observation": "RESPONSE_OBTAINED_REVIEW_REQUIRED"
+      },
+      {
+        "id": "skinnov-stock",
+        "url": "https://www.skinnovation.com/ir/stock_01",
+        "final_url": "https://www.skinnovation.com/ir/stock_01",
+        "accessed_at": "2026-10-07T13:24:09.746478+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "962c94bfd6c459936c6066bb2fca8ccf790b700cc133a15aa0f2fd64fe609545",
+        "observation": "RESPONSE_REVIEWED"
+      }
+    ],
+    "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
   },
   {
     "proposal_id": "catalog-v1-amorepacific",
-    "requested_sources": [
-      "https://www.apgroup.com/",
-      "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx"
-    ],
+    "slug": "amorepacific",
+    "verification_status": "PUBLIC_MARKET_UNKNOWN",
     "verified_name": null,
+    "verified_name_ko": null,
+    "verified_name_en": null,
     "verified_code": null,
-    "verified_market": null,
     "verified_exchange": null,
     "verified_asset_class": null,
-    "checked_at": null,
-    "scope": "INVESTIGATION_HINTS_ONLY",
-    "verification_status": "UNKNOWN"
+    "share_class": null,
+    "current_existence": "UNKNOWN",
+    "confidence": "UNKNOWN",
+    "facts": [],
+    "missing": [
+      "SPECIFIC_CURRENT_OFFICIAL_IDENTITY_REQUIRED"
+    ],
+    "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
+    "sources": [
+      {
+        "id": "amore",
+        "url": "https://www.apgroup.com/",
+        "final_url": null,
+        "accessed_at": null,
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": null,
+        "observation": "ACCESS_BLOCKED"
+      },
+      {
+        "id": "krx",
+        "url": "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx",
+        "final_url": "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx",
+        "accessed_at": "2026-10-07T13:18:15.369143+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "bad2beed56052c7f993ce45226da084fc09b0c820b4038241ff34d2ee13154a3",
+        "observation": "RESPONSE_OBTAINED_REVIEW_REQUIRED"
+      }
+    ],
+    "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
   },
   {
     "proposal_id": "catalog-v1-nvidia",
-    "requested_sources": [
-      "https://investor.nvidia.com/",
-      "https://www.sec.gov/files/company_tickers_exchange.json"
+    "slug": "nvidia",
+    "verification_status": "PUBLIC_MARKET_PARTIAL",
+    "verified_name": "NVIDIA CORP",
+    "verified_name_ko": null,
+    "verified_name_en": "NVIDIA CORP",
+    "verified_code": "NVDA",
+    "verified_exchange": "Nasdaq",
+    "verified_asset_class": "US_STOCK",
+    "share_class": null,
+    "current_existence": "PRESENT_IN_CURRENT_SEC_DIRECTORY",
+    "confidence": "HIGH_DIRECTORY_IDENTITY_PARTIAL_SHARE_CLASS",
+    "facts": [
+      {
+        "source_id": "sec",
+        "quote": "[1045810, \"NVIDIA CORP\", \"NVDA\", \"Nasdaq\"]",
+        "locator": "data[ticker=NVDA]",
+        "scope": "NAME_TICKER_EXCHANGE_IN_CURRENT_SEC_DIRECTORY",
+        "cik": 1045810
+      }
     ],
-    "verified_name": null,
-    "verified_code": null,
-    "verified_market": null,
-    "verified_exchange": null,
-    "verified_asset_class": null,
-    "checked_at": null,
-    "scope": "INVESTIGATION_HINTS_ONLY",
-    "verification_status": "UNKNOWN"
+    "missing": [
+      "CURRENT_SHARE_CLASS_PRIMARY_FILING_REQUIRED",
+      "LISTING_DIRECTORY_IS_NOT_TRADE_OR_LICENSE_PROOF"
+    ],
+    "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
+    "sources": [
+      {
+        "id": "nvidia",
+        "url": "https://investor.nvidia.com/",
+        "final_url": "https://investor.nvidia.com/home/default.aspx",
+        "accessed_at": "2026-10-07T13:18:14.826841+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "cc2553e72396421fb0769c427f04529fe2cc2a8b3e8bc3c9ede5f9400302f7c9",
+        "observation": "RESPONSE_OBTAINED_REVIEW_REQUIRED"
+      },
+      {
+        "id": "sec",
+        "url": "https://www.sec.gov/files/company_tickers_exchange.json",
+        "final_url": "https://www.sec.gov/files/company_tickers_exchange.json",
+        "accessed_at": "2026-10-07T13:18:11.327077+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "e0033204d27cbf7149023b2e94432b2c90735fe9c4743ae4f156fd82843bcb3c",
+        "observation": "RESPONSE_REVIEWED"
+      }
+    ],
+    "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
   },
   {
     "proposal_id": "catalog-v1-tesla",
-    "requested_sources": [
-      "https://ir.tesla.com/",
-      "https://www.sec.gov/files/company_tickers_exchange.json"
+    "slug": "tesla",
+    "verification_status": "PUBLIC_MARKET_PARTIAL",
+    "verified_name": "Tesla, Inc.",
+    "verified_name_ko": null,
+    "verified_name_en": "Tesla, Inc.",
+    "verified_code": "TSLA",
+    "verified_exchange": "Nasdaq",
+    "verified_asset_class": "US_STOCK",
+    "share_class": null,
+    "current_existence": "PRESENT_IN_CURRENT_SEC_DIRECTORY",
+    "confidence": "HIGH_DIRECTORY_IDENTITY_PARTIAL_SHARE_CLASS",
+    "facts": [
+      {
+        "source_id": "sec",
+        "quote": "[1318605, \"Tesla, Inc.\", \"TSLA\", \"Nasdaq\"]",
+        "locator": "data[ticker=TSLA]",
+        "scope": "NAME_TICKER_EXCHANGE_IN_CURRENT_SEC_DIRECTORY",
+        "cik": 1318605
+      }
     ],
-    "verified_name": null,
-    "verified_code": null,
-    "verified_market": null,
-    "verified_exchange": null,
-    "verified_asset_class": null,
-    "checked_at": null,
-    "scope": "INVESTIGATION_HINTS_ONLY",
-    "verification_status": "UNKNOWN"
+    "missing": [
+      "CURRENT_SHARE_CLASS_PRIMARY_FILING_REQUIRED",
+      "LISTING_DIRECTORY_IS_NOT_TRADE_OR_LICENSE_PROOF"
+    ],
+    "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
+    "sources": [
+      {
+        "id": "tesla",
+        "url": "https://ir.tesla.com/",
+        "final_url": "https://ir.tesla.com/",
+        "accessed_at": "2026-10-07T13:18:14.396990+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "c26dc77554b83f3299f923175e858967bcd9690467dd67aba3f5e1fe408a7a9f",
+        "observation": "RESPONSE_OBTAINED_REVIEW_REQUIRED"
+      },
+      {
+        "id": "sec",
+        "url": "https://www.sec.gov/files/company_tickers_exchange.json",
+        "final_url": "https://www.sec.gov/files/company_tickers_exchange.json",
+        "accessed_at": "2026-10-07T13:18:11.327077+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "e0033204d27cbf7149023b2e94432b2c90735fe9c4743ae4f156fd82843bcb3c",
+        "observation": "RESPONSE_REVIEWED"
+      }
+    ],
+    "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
   },
   {
     "proposal_id": "catalog-v1-rocket-lab",
-    "requested_sources": [
-      "https://investors.rocketlabcorp.com/",
-      "https://www.sec.gov/files/company_tickers_exchange.json"
+    "slug": "rocket-lab",
+    "verification_status": "PUBLIC_MARKET_PARTIAL",
+    "verified_name": "Rocket Lab Corp",
+    "verified_name_ko": null,
+    "verified_name_en": "Rocket Lab Corp",
+    "verified_code": "RKLB",
+    "verified_exchange": "Nasdaq",
+    "verified_asset_class": "US_STOCK",
+    "share_class": null,
+    "current_existence": "PRESENT_IN_CURRENT_SEC_DIRECTORY",
+    "confidence": "HIGH_DIRECTORY_IDENTITY_PARTIAL_SHARE_CLASS",
+    "facts": [
+      {
+        "source_id": "sec",
+        "quote": "[1819994, \"Rocket Lab Corp\", \"RKLB\", \"Nasdaq\"]",
+        "locator": "data[ticker=RKLB]",
+        "scope": "NAME_TICKER_EXCHANGE_IN_CURRENT_SEC_DIRECTORY",
+        "cik": 1819994
+      }
     ],
-    "verified_name": null,
-    "verified_code": null,
-    "verified_market": null,
-    "verified_exchange": null,
-    "verified_asset_class": null,
-    "checked_at": null,
-    "scope": "INVESTIGATION_HINTS_ONLY",
-    "verification_status": "UNKNOWN"
+    "missing": [
+      "CURRENT_SHARE_CLASS_PRIMARY_FILING_REQUIRED",
+      "LISTING_DIRECTORY_IS_NOT_TRADE_OR_LICENSE_PROOF"
+    ],
+    "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
+    "sources": [
+      {
+        "id": "rocketlab",
+        "url": "https://investors.rocketlabcorp.com/",
+        "final_url": "https://investors.rocketlabcorp.com/",
+        "accessed_at": "2026-10-07T13:18:14.865515+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "28f46ec442489f3c2382363f989087940531a333786483be639db38800cf1fa3",
+        "observation": "RESPONSE_OBTAINED_REVIEW_REQUIRED"
+      },
+      {
+        "id": "sec",
+        "url": "https://www.sec.gov/files/company_tickers_exchange.json",
+        "final_url": "https://www.sec.gov/files/company_tickers_exchange.json",
+        "accessed_at": "2026-10-07T13:18:11.327077+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "e0033204d27cbf7149023b2e94432b2c90735fe9c4743ae4f156fd82843bcb3c",
+        "observation": "RESPONSE_REVIEWED"
+      }
+    ],
+    "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
   },
   {
     "proposal_id": "catalog-v1-sandisk",
-    "requested_sources": [
-      "https://investor.sandisk.com/",
-      "https://www.sec.gov/files/company_tickers_exchange.json"
+    "slug": "sandisk",
+    "verification_status": "PUBLIC_MARKET_PARTIAL",
+    "verified_name": "Sandisk Corp",
+    "verified_name_ko": null,
+    "verified_name_en": "Sandisk Corp",
+    "verified_code": "SNDK",
+    "verified_exchange": "Nasdaq",
+    "verified_asset_class": "US_STOCK",
+    "share_class": null,
+    "current_existence": "PRESENT_IN_CURRENT_SEC_DIRECTORY",
+    "confidence": "HIGH_DIRECTORY_IDENTITY_PARTIAL_SHARE_CLASS",
+    "facts": [
+      {
+        "source_id": "sec",
+        "quote": "[2023554, \"Sandisk Corp\", \"SNDK\", \"Nasdaq\"]",
+        "locator": "data[ticker=SNDK]",
+        "scope": "NAME_TICKER_EXCHANGE_IN_CURRENT_SEC_DIRECTORY",
+        "cik": 2023554
+      }
     ],
-    "verified_name": null,
-    "verified_code": null,
-    "verified_market": null,
-    "verified_exchange": null,
-    "verified_asset_class": null,
-    "checked_at": null,
-    "scope": "INVESTIGATION_HINTS_ONLY",
-    "verification_status": "UNKNOWN"
+    "missing": [
+      "CURRENT_SHARE_CLASS_PRIMARY_FILING_REQUIRED",
+      "LISTING_DIRECTORY_IS_NOT_TRADE_OR_LICENSE_PROOF"
+    ],
+    "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
+    "sources": [
+      {
+        "id": "sandisk",
+        "url": "https://investor.sandisk.com/",
+        "final_url": "https://investor.sandisk.com/",
+        "accessed_at": "2026-10-07T13:18:15.034398+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "fe0d92315048ca7907b06928eb0096c327eeebdb0fb45fa6cd1bd7fda8b9fe36",
+        "observation": "RESPONSE_OBTAINED_REVIEW_REQUIRED"
+      },
+      {
+        "id": "sec",
+        "url": "https://www.sec.gov/files/company_tickers_exchange.json",
+        "final_url": "https://www.sec.gov/files/company_tickers_exchange.json",
+        "accessed_at": "2026-10-07T13:18:11.327077+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "e0033204d27cbf7149023b2e94432b2c90735fe9c4743ae4f156fd82843bcb3c",
+        "observation": "RESPONSE_REVIEWED"
+      }
+    ],
+    "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
   },
   {
     "proposal_id": "catalog-v1-spacex",
-    "requested_sources": [
-      "https://www.spacex.com/",
-      "https://www.sec.gov/files/company_tickers_exchange.json"
+    "slug": "spacex",
+    "verification_status": "PUBLIC_MARKET_PARTIAL",
+    "verified_name": "SPACE EXPLORATION TECHNOLOGIES CORP",
+    "verified_name_ko": null,
+    "verified_name_en": "SPACE EXPLORATION TECHNOLOGIES CORP",
+    "verified_code": "SPCX",
+    "verified_exchange": "Nasdaq",
+    "verified_asset_class": "US_STOCK",
+    "share_class": null,
+    "current_existence": "PRESENT_IN_CURRENT_SEC_DIRECTORY",
+    "confidence": "HIGH_DIRECTORY_IDENTITY_PARTIAL_SHARE_CLASS",
+    "facts": [
+      {
+        "source_id": "sec",
+        "quote": "[1181412, \"SPACE EXPLORATION TECHNOLOGIES CORP\", \"SPCX\", \"Nasdaq\"]",
+        "locator": "data[ticker=SPCX]",
+        "scope": "NAME_TICKER_EXCHANGE_IN_CURRENT_SEC_DIRECTORY",
+        "cik": 1181412
+      }
     ],
-    "verified_name": null,
-    "verified_code": null,
-    "verified_market": null,
-    "verified_exchange": null,
-    "verified_asset_class": null,
-    "checked_at": null,
-    "scope": "INVESTIGATION_HINTS_ONLY",
-    "verification_status": "UNKNOWN"
+    "missing": [
+      "CURRENT_SHARE_CLASS_PRIMARY_FILING_REQUIRED",
+      "LISTING_DIRECTORY_IS_NOT_TRADE_OR_LICENSE_PROOF"
+    ],
+    "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
+    "sources": [
+      {
+        "id": "spacex",
+        "url": "https://www.spacex.com/",
+        "final_url": "https://www.spacex.com/",
+        "accessed_at": "2026-10-07T13:18:14.854326+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "aea16314a519faddf1499b03fa18e757da42478118b09e95a74cc8ce7981d2a0",
+        "observation": "RESPONSE_OBTAINED_REVIEW_REQUIRED"
+      },
+      {
+        "id": "sec",
+        "url": "https://www.sec.gov/files/company_tickers_exchange.json",
+        "final_url": "https://www.sec.gov/files/company_tickers_exchange.json",
+        "accessed_at": "2026-10-07T13:18:11.327077+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "e0033204d27cbf7149023b2e94432b2c90735fe9c4743ae4f156fd82843bcb3c",
+        "observation": "RESPONSE_REVIEWED"
+      }
+    ],
+    "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
   },
   {
     "proposal_id": "catalog-v1-apple",
-    "requested_sources": [
-      "https://investor.apple.com/",
-      "https://www.sec.gov/files/company_tickers_exchange.json"
+    "slug": "apple",
+    "verification_status": "PUBLIC_MARKET_PARTIAL",
+    "verified_name": "Apple Inc.",
+    "verified_name_ko": null,
+    "verified_name_en": "Apple Inc.",
+    "verified_code": "AAPL",
+    "verified_exchange": "Nasdaq",
+    "verified_asset_class": "US_STOCK",
+    "share_class": null,
+    "current_existence": "PRESENT_IN_CURRENT_SEC_DIRECTORY",
+    "confidence": "HIGH_DIRECTORY_IDENTITY_PARTIAL_SHARE_CLASS",
+    "facts": [
+      {
+        "source_id": "sec",
+        "quote": "[320193, \"Apple Inc.\", \"AAPL\", \"Nasdaq\"]",
+        "locator": "data[ticker=AAPL]",
+        "scope": "NAME_TICKER_EXCHANGE_IN_CURRENT_SEC_DIRECTORY",
+        "cik": 320193
+      }
     ],
-    "verified_name": null,
-    "verified_code": null,
-    "verified_market": null,
-    "verified_exchange": null,
-    "verified_asset_class": null,
-    "checked_at": null,
-    "scope": "INVESTIGATION_HINTS_ONLY",
-    "verification_status": "UNKNOWN"
+    "missing": [
+      "CURRENT_SHARE_CLASS_PRIMARY_FILING_REQUIRED",
+      "LISTING_DIRECTORY_IS_NOT_TRADE_OR_LICENSE_PROOF"
+    ],
+    "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
+    "sources": [
+      {
+        "id": "apple",
+        "url": "https://investor.apple.com/",
+        "final_url": "https://investor.apple.com/investor-relations/default.aspx",
+        "accessed_at": "2026-10-07T13:18:15.223593+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "c23a9094f415176d8caadeb371bfbc732cde815f309577c28c8ef3e504e2937e",
+        "observation": "RESPONSE_OBTAINED_REVIEW_REQUIRED"
+      },
+      {
+        "id": "sec",
+        "url": "https://www.sec.gov/files/company_tickers_exchange.json",
+        "final_url": "https://www.sec.gov/files/company_tickers_exchange.json",
+        "accessed_at": "2026-10-07T13:18:11.327077+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "e0033204d27cbf7149023b2e94432b2c90735fe9c4743ae4f156fd82843bcb3c",
+        "observation": "RESPONSE_REVIEWED"
+      }
+    ],
+    "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
   },
   {
     "proposal_id": "catalog-v1-microsoft",
-    "requested_sources": [
-      "https://www.microsoft.com/en-us/Investor/",
-      "https://www.sec.gov/files/company_tickers_exchange.json"
+    "slug": "microsoft",
+    "verification_status": "PUBLIC_MARKET_PARTIAL",
+    "verified_name": "MICROSOFT CORP",
+    "verified_name_ko": null,
+    "verified_name_en": "MICROSOFT CORP",
+    "verified_code": "MSFT",
+    "verified_exchange": "Nasdaq",
+    "verified_asset_class": "US_STOCK",
+    "share_class": null,
+    "current_existence": "PRESENT_IN_CURRENT_SEC_DIRECTORY",
+    "confidence": "HIGH_DIRECTORY_IDENTITY_PARTIAL_SHARE_CLASS",
+    "facts": [
+      {
+        "source_id": "sec",
+        "quote": "[789019, \"MICROSOFT CORP\", \"MSFT\", \"Nasdaq\"]",
+        "locator": "data[ticker=MSFT]",
+        "scope": "NAME_TICKER_EXCHANGE_IN_CURRENT_SEC_DIRECTORY",
+        "cik": 789019
+      }
     ],
-    "verified_name": null,
-    "verified_code": null,
-    "verified_market": null,
-    "verified_exchange": null,
-    "verified_asset_class": null,
-    "checked_at": null,
-    "scope": "INVESTIGATION_HINTS_ONLY",
-    "verification_status": "UNKNOWN"
+    "missing": [
+      "CURRENT_SHARE_CLASS_PRIMARY_FILING_REQUIRED",
+      "LISTING_DIRECTORY_IS_NOT_TRADE_OR_LICENSE_PROOF"
+    ],
+    "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
+    "sources": [
+      {
+        "id": "microsoft",
+        "url": "https://www.microsoft.com/en-us/Investor/",
+        "final_url": "https://www.microsoft.com/en-us/investor/default",
+        "accessed_at": "2026-10-07T13:18:15.485921+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "7ff6517180651f1e0a1ba584dba78bd7e7f7d916439a1ac15d810fd955215647",
+        "observation": "RESPONSE_OBTAINED_REVIEW_REQUIRED"
+      },
+      {
+        "id": "sec",
+        "url": "https://www.sec.gov/files/company_tickers_exchange.json",
+        "final_url": "https://www.sec.gov/files/company_tickers_exchange.json",
+        "accessed_at": "2026-10-07T13:18:11.327077+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "e0033204d27cbf7149023b2e94432b2c90735fe9c4743ae4f156fd82843bcb3c",
+        "observation": "RESPONSE_REVIEWED"
+      }
+    ],
+    "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
   },
   {
     "proposal_id": "catalog-v1-amazon",
-    "requested_sources": [
-      "https://ir.aboutamazon.com/",
-      "https://www.sec.gov/files/company_tickers_exchange.json"
+    "slug": "amazon",
+    "verification_status": "PUBLIC_MARKET_PARTIAL",
+    "verified_name": "AMAZON COM INC",
+    "verified_name_ko": null,
+    "verified_name_en": "AMAZON COM INC",
+    "verified_code": "AMZN",
+    "verified_exchange": "Nasdaq",
+    "verified_asset_class": "US_STOCK",
+    "share_class": null,
+    "current_existence": "PRESENT_IN_CURRENT_SEC_DIRECTORY",
+    "confidence": "HIGH_DIRECTORY_IDENTITY_PARTIAL_SHARE_CLASS",
+    "facts": [
+      {
+        "source_id": "sec",
+        "quote": "[1018724, \"AMAZON COM INC\", \"AMZN\", \"Nasdaq\"]",
+        "locator": "data[ticker=AMZN]",
+        "scope": "NAME_TICKER_EXCHANGE_IN_CURRENT_SEC_DIRECTORY",
+        "cik": 1018724
+      }
     ],
-    "verified_name": null,
-    "verified_code": null,
-    "verified_market": null,
-    "verified_exchange": null,
-    "verified_asset_class": null,
-    "checked_at": null,
-    "scope": "INVESTIGATION_HINTS_ONLY",
-    "verification_status": "UNKNOWN"
+    "missing": [
+      "CURRENT_SHARE_CLASS_PRIMARY_FILING_REQUIRED",
+      "LISTING_DIRECTORY_IS_NOT_TRADE_OR_LICENSE_PROOF"
+    ],
+    "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
+    "sources": [
+      {
+        "id": "amazon",
+        "url": "https://ir.aboutamazon.com/",
+        "final_url": "https://ir.aboutamazon.com/overview/default.aspx",
+        "accessed_at": "2026-10-07T13:18:15.513844+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "f6354d23a9b0bcd6580d9ec29033c6365fb3d80f198db7370a3dee2255ce5dae",
+        "observation": "RESPONSE_OBTAINED_REVIEW_REQUIRED"
+      },
+      {
+        "id": "sec",
+        "url": "https://www.sec.gov/files/company_tickers_exchange.json",
+        "final_url": "https://www.sec.gov/files/company_tickers_exchange.json",
+        "accessed_at": "2026-10-07T13:18:11.327077+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "e0033204d27cbf7149023b2e94432b2c90735fe9c4743ae4f156fd82843bcb3c",
+        "observation": "RESPONSE_REVIEWED"
+      }
+    ],
+    "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
   },
   {
     "proposal_id": "catalog-v1-alphabet-a",
-    "requested_sources": [
-      "https://abc.xyz/investor/",
-      "https://www.sec.gov/files/company_tickers_exchange.json"
+    "slug": "alphabet-a",
+    "verification_status": "PUBLIC_MARKET_PARTIAL",
+    "verified_name": "Alphabet Inc.",
+    "verified_name_ko": null,
+    "verified_name_en": "Alphabet Inc.",
+    "verified_code": "GOOGL",
+    "verified_exchange": "Nasdaq",
+    "verified_asset_class": "US_STOCK",
+    "share_class": null,
+    "current_existence": "PRESENT_IN_CURRENT_SEC_DIRECTORY",
+    "confidence": "HIGH_DIRECTORY_IDENTITY_PARTIAL_SHARE_CLASS",
+    "facts": [
+      {
+        "source_id": "sec",
+        "quote": "[1652044, \"Alphabet Inc.\", \"GOOGL\", \"Nasdaq\"]",
+        "locator": "data[ticker=GOOGL]",
+        "scope": "NAME_TICKER_EXCHANGE_IN_CURRENT_SEC_DIRECTORY",
+        "cik": 1652044
+      }
     ],
-    "verified_name": null,
-    "verified_code": null,
-    "verified_market": null,
-    "verified_exchange": null,
-    "verified_asset_class": null,
-    "checked_at": null,
-    "scope": "INVESTIGATION_HINTS_ONLY",
-    "verification_status": "UNKNOWN"
+    "missing": [
+      "CURRENT_SHARE_CLASS_PRIMARY_FILING_REQUIRED",
+      "LISTING_DIRECTORY_IS_NOT_TRADE_OR_LICENSE_PROOF"
+    ],
+    "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
+    "sources": [
+      {
+        "id": "alphabet",
+        "url": "https://abc.xyz/investor/",
+        "final_url": "https://abc.xyz/investor/",
+        "accessed_at": "2026-10-07T13:18:15.191793+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "4521ddfaec0e0acd0bb4e1a3bec25eb197ff0eab5fe029f1b72b90b238bc0268",
+        "observation": "RESPONSE_OBTAINED_REVIEW_REQUIRED"
+      },
+      {
+        "id": "sec",
+        "url": "https://www.sec.gov/files/company_tickers_exchange.json",
+        "final_url": "https://www.sec.gov/files/company_tickers_exchange.json",
+        "accessed_at": "2026-10-07T13:18:11.327077+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "e0033204d27cbf7149023b2e94432b2c90735fe9c4743ae4f156fd82843bcb3c",
+        "observation": "RESPONSE_REVIEWED"
+      }
+    ],
+    "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
   },
   {
     "proposal_id": "catalog-v1-meta",
-    "requested_sources": [
-      "https://investor.atmeta.com/",
-      "https://www.sec.gov/files/company_tickers_exchange.json"
+    "slug": "meta",
+    "verification_status": "PUBLIC_MARKET_PARTIAL",
+    "verified_name": "Meta Platforms, Inc.",
+    "verified_name_ko": null,
+    "verified_name_en": "Meta Platforms, Inc.",
+    "verified_code": "META",
+    "verified_exchange": "Nasdaq",
+    "verified_asset_class": "US_STOCK",
+    "share_class": null,
+    "current_existence": "PRESENT_IN_CURRENT_SEC_DIRECTORY",
+    "confidence": "HIGH_DIRECTORY_IDENTITY_PARTIAL_SHARE_CLASS",
+    "facts": [
+      {
+        "source_id": "sec",
+        "quote": "[1326801, \"Meta Platforms, Inc.\", \"META\", \"Nasdaq\"]",
+        "locator": "data[ticker=META]",
+        "scope": "NAME_TICKER_EXCHANGE_IN_CURRENT_SEC_DIRECTORY",
+        "cik": 1326801
+      }
     ],
-    "verified_name": null,
-    "verified_code": null,
-    "verified_market": null,
-    "verified_exchange": null,
-    "verified_asset_class": null,
-    "checked_at": null,
-    "scope": "INVESTIGATION_HINTS_ONLY",
-    "verification_status": "UNKNOWN"
+    "missing": [
+      "CURRENT_SHARE_CLASS_PRIMARY_FILING_REQUIRED",
+      "LISTING_DIRECTORY_IS_NOT_TRADE_OR_LICENSE_PROOF"
+    ],
+    "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
+    "sources": [
+      {
+        "id": "meta",
+        "url": "https://investor.atmeta.com/",
+        "final_url": "https://investor.atmeta.com/home/default.aspx",
+        "accessed_at": "2026-10-07T13:18:15.816928+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "06e1c26f7c188670ee44da4ecdf2f4595176f4e2c640ce4a14baafe55bbea515",
+        "observation": "RESPONSE_OBTAINED_REVIEW_REQUIRED"
+      },
+      {
+        "id": "sec",
+        "url": "https://www.sec.gov/files/company_tickers_exchange.json",
+        "final_url": "https://www.sec.gov/files/company_tickers_exchange.json",
+        "accessed_at": "2026-10-07T13:18:11.327077+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "e0033204d27cbf7149023b2e94432b2c90735fe9c4743ae4f156fd82843bcb3c",
+        "observation": "RESPONSE_REVIEWED"
+      }
+    ],
+    "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
   },
   {
     "proposal_id": "catalog-v1-amd",
-    "requested_sources": [
-      "https://ir.amd.com/",
-      "https://www.sec.gov/files/company_tickers_exchange.json"
+    "slug": "amd",
+    "verification_status": "PUBLIC_MARKET_PARTIAL",
+    "verified_name": "ADVANCED MICRO DEVICES INC",
+    "verified_name_ko": null,
+    "verified_name_en": "ADVANCED MICRO DEVICES INC",
+    "verified_code": "AMD",
+    "verified_exchange": "Nasdaq",
+    "verified_asset_class": "US_STOCK",
+    "share_class": null,
+    "current_existence": "PRESENT_IN_CURRENT_SEC_DIRECTORY",
+    "confidence": "HIGH_DIRECTORY_IDENTITY_PARTIAL_SHARE_CLASS",
+    "facts": [
+      {
+        "source_id": "sec",
+        "quote": "[2488, \"ADVANCED MICRO DEVICES INC\", \"AMD\", \"Nasdaq\"]",
+        "locator": "data[ticker=AMD]",
+        "scope": "NAME_TICKER_EXCHANGE_IN_CURRENT_SEC_DIRECTORY",
+        "cik": 2488
+      }
     ],
-    "verified_name": null,
-    "verified_code": null,
-    "verified_market": null,
-    "verified_exchange": null,
-    "verified_asset_class": null,
-    "checked_at": null,
-    "scope": "INVESTIGATION_HINTS_ONLY",
-    "verification_status": "UNKNOWN"
+    "missing": [
+      "CURRENT_SHARE_CLASS_PRIMARY_FILING_REQUIRED",
+      "LISTING_DIRECTORY_IS_NOT_TRADE_OR_LICENSE_PROOF"
+    ],
+    "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
+    "sources": [
+      {
+        "id": "amd",
+        "url": "https://ir.amd.com/",
+        "final_url": "https://ir.amd.com/",
+        "accessed_at": "2026-10-07T13:18:15.495241+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "667dfff9f17cd2aa0605dae1d754c36c09eed7b6634998390d27471f9ecb127d",
+        "observation": "RESPONSE_OBTAINED_REVIEW_REQUIRED"
+      },
+      {
+        "id": "sec",
+        "url": "https://www.sec.gov/files/company_tickers_exchange.json",
+        "final_url": "https://www.sec.gov/files/company_tickers_exchange.json",
+        "accessed_at": "2026-10-07T13:18:11.327077+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "e0033204d27cbf7149023b2e94432b2c90735fe9c4743ae4f156fd82843bcb3c",
+        "observation": "RESPONSE_REVIEWED"
+      }
+    ],
+    "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
   },
   {
     "proposal_id": "catalog-v1-broadcom",
-    "requested_sources": [
-      "https://investors.broadcom.com/",
-      "https://www.sec.gov/files/company_tickers_exchange.json"
+    "slug": "broadcom",
+    "verification_status": "PUBLIC_MARKET_PARTIAL",
+    "verified_name": "Broadcom Inc.",
+    "verified_name_ko": null,
+    "verified_name_en": "Broadcom Inc.",
+    "verified_code": "AVGO",
+    "verified_exchange": "Nasdaq",
+    "verified_asset_class": "US_STOCK",
+    "share_class": null,
+    "current_existence": "PRESENT_IN_CURRENT_SEC_DIRECTORY",
+    "confidence": "HIGH_DIRECTORY_IDENTITY_PARTIAL_SHARE_CLASS",
+    "facts": [
+      {
+        "source_id": "sec",
+        "quote": "[1730168, \"Broadcom Inc.\", \"AVGO\", \"Nasdaq\"]",
+        "locator": "data[ticker=AVGO]",
+        "scope": "NAME_TICKER_EXCHANGE_IN_CURRENT_SEC_DIRECTORY",
+        "cik": 1730168
+      }
     ],
-    "verified_name": null,
-    "verified_code": null,
-    "verified_market": null,
-    "verified_exchange": null,
-    "verified_asset_class": null,
-    "checked_at": null,
-    "scope": "INVESTIGATION_HINTS_ONLY",
-    "verification_status": "UNKNOWN"
+    "missing": [
+      "CURRENT_SHARE_CLASS_PRIMARY_FILING_REQUIRED",
+      "LISTING_DIRECTORY_IS_NOT_TRADE_OR_LICENSE_PROOF"
+    ],
+    "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
+    "sources": [
+      {
+        "id": "broadcom",
+        "url": "https://investors.broadcom.com/",
+        "final_url": "https://investors.broadcom.com/",
+        "accessed_at": "2026-10-07T13:18:15.749193+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "f62a4d79744d23ede59da89a61e7989e2610ea2cb37871dcb14bc6df4ea5c13a",
+        "observation": "RESPONSE_OBTAINED_REVIEW_REQUIRED"
+      },
+      {
+        "id": "sec",
+        "url": "https://www.sec.gov/files/company_tickers_exchange.json",
+        "final_url": "https://www.sec.gov/files/company_tickers_exchange.json",
+        "accessed_at": "2026-10-07T13:18:11.327077+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "e0033204d27cbf7149023b2e94432b2c90735fe9c4743ae4f156fd82843bcb3c",
+        "observation": "RESPONSE_REVIEWED"
+      }
+    ],
+    "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
   },
   {
     "proposal_id": "catalog-v1-palantir",
-    "requested_sources": [
-      "https://investors.palantir.com/",
-      "https://www.sec.gov/files/company_tickers_exchange.json"
+    "slug": "palantir",
+    "verification_status": "PUBLIC_MARKET_PARTIAL",
+    "verified_name": "Palantir Technologies Inc.",
+    "verified_name_ko": null,
+    "verified_name_en": "Palantir Technologies Inc.",
+    "verified_code": "PLTR",
+    "verified_exchange": "Nasdaq",
+    "verified_asset_class": "US_STOCK",
+    "share_class": null,
+    "current_existence": "PRESENT_IN_CURRENT_SEC_DIRECTORY",
+    "confidence": "HIGH_DIRECTORY_IDENTITY_PARTIAL_SHARE_CLASS",
+    "facts": [
+      {
+        "source_id": "sec",
+        "quote": "[1321655, \"Palantir Technologies Inc.\", \"PLTR\", \"Nasdaq\"]",
+        "locator": "data[ticker=PLTR]",
+        "scope": "NAME_TICKER_EXCHANGE_IN_CURRENT_SEC_DIRECTORY",
+        "cik": 1321655
+      }
     ],
-    "verified_name": null,
-    "verified_code": null,
-    "verified_market": null,
-    "verified_exchange": null,
-    "verified_asset_class": null,
-    "checked_at": null,
-    "scope": "INVESTIGATION_HINTS_ONLY",
-    "verification_status": "UNKNOWN"
+    "missing": [
+      "CURRENT_SHARE_CLASS_PRIMARY_FILING_REQUIRED",
+      "LISTING_DIRECTORY_IS_NOT_TRADE_OR_LICENSE_PROOF"
+    ],
+    "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
+    "sources": [
+      {
+        "id": "palantir",
+        "url": "https://investors.palantir.com/",
+        "final_url": "https://investors.palantir.com/",
+        "accessed_at": "2026-10-07T13:18:15.855667+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "27874b155bd75cb453028d0f21440af0acc2f5c0dd5679b2d1cec69445c47e58",
+        "observation": "RESPONSE_OBTAINED_REVIEW_REQUIRED"
+      },
+      {
+        "id": "sec",
+        "url": "https://www.sec.gov/files/company_tickers_exchange.json",
+        "final_url": "https://www.sec.gov/files/company_tickers_exchange.json",
+        "accessed_at": "2026-10-07T13:18:11.327077+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "e0033204d27cbf7149023b2e94432b2c90735fe9c4743ae4f156fd82843bcb3c",
+        "observation": "RESPONSE_REVIEWED"
+      }
+    ],
+    "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
   },
   {
     "proposal_id": "catalog-v1-jpmorgan",
-    "requested_sources": [
-      "https://www.jpmorganchase.com/ir",
-      "https://www.sec.gov/files/company_tickers_exchange.json"
+    "slug": "jpmorgan",
+    "verification_status": "PUBLIC_MARKET_PARTIAL",
+    "verified_name": "JPMORGAN CHASE & CO",
+    "verified_name_ko": null,
+    "verified_name_en": "JPMORGAN CHASE & CO",
+    "verified_code": "JPM",
+    "verified_exchange": "NYSE",
+    "verified_asset_class": "US_STOCK",
+    "share_class": null,
+    "current_existence": "PRESENT_IN_CURRENT_SEC_DIRECTORY",
+    "confidence": "HIGH_DIRECTORY_IDENTITY_PARTIAL_SHARE_CLASS",
+    "facts": [
+      {
+        "source_id": "sec",
+        "quote": "[19617, \"JPMORGAN CHASE & CO\", \"JPM\", \"NYSE\"]",
+        "locator": "data[ticker=JPM]",
+        "scope": "NAME_TICKER_EXCHANGE_IN_CURRENT_SEC_DIRECTORY",
+        "cik": 19617
+      }
     ],
-    "verified_name": null,
-    "verified_code": null,
-    "verified_market": null,
-    "verified_exchange": null,
-    "verified_asset_class": null,
-    "checked_at": null,
-    "scope": "INVESTIGATION_HINTS_ONLY",
-    "verification_status": "UNKNOWN"
+    "missing": [
+      "CURRENT_SHARE_CLASS_PRIMARY_FILING_REQUIRED",
+      "LISTING_DIRECTORY_IS_NOT_TRADE_OR_LICENSE_PROOF"
+    ],
+    "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
+    "sources": [
+      {
+        "id": "jpm",
+        "url": "https://www.jpmorganchase.com/ir",
+        "final_url": "https://www.jpmorganchase.com/ir",
+        "accessed_at": "2026-10-07T13:18:15.944743+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "e789d6cdf073cc44fa3a073f8da7356f20ff2d3c17996b8313d3d088e5d01afc",
+        "observation": "RESPONSE_OBTAINED_REVIEW_REQUIRED"
+      },
+      {
+        "id": "sec",
+        "url": "https://www.sec.gov/files/company_tickers_exchange.json",
+        "final_url": "https://www.sec.gov/files/company_tickers_exchange.json",
+        "accessed_at": "2026-10-07T13:18:11.327077+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "e0033204d27cbf7149023b2e94432b2c90735fe9c4743ae4f156fd82843bcb3c",
+        "observation": "RESPONSE_REVIEWED"
+      }
+    ],
+    "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
   },
   {
     "proposal_id": "catalog-v1-netflix",
-    "requested_sources": [
-      "https://ir.netflix.net/",
-      "https://www.sec.gov/files/company_tickers_exchange.json"
+    "slug": "netflix",
+    "verification_status": "PUBLIC_MARKET_PARTIAL",
+    "verified_name": "NETFLIX INC",
+    "verified_name_ko": null,
+    "verified_name_en": "NETFLIX INC",
+    "verified_code": "NFLX",
+    "verified_exchange": "Nasdaq",
+    "verified_asset_class": "US_STOCK",
+    "share_class": null,
+    "current_existence": "PRESENT_IN_CURRENT_SEC_DIRECTORY",
+    "confidence": "HIGH_DIRECTORY_IDENTITY_PARTIAL_SHARE_CLASS",
+    "facts": [
+      {
+        "source_id": "sec",
+        "quote": "[1065280, \"NETFLIX INC\", \"NFLX\", \"Nasdaq\"]",
+        "locator": "data[ticker=NFLX]",
+        "scope": "NAME_TICKER_EXCHANGE_IN_CURRENT_SEC_DIRECTORY",
+        "cik": 1065280
+      }
     ],
-    "verified_name": null,
-    "verified_code": null,
-    "verified_market": null,
-    "verified_exchange": null,
-    "verified_asset_class": null,
-    "checked_at": null,
-    "scope": "INVESTIGATION_HINTS_ONLY",
-    "verification_status": "UNKNOWN"
+    "missing": [
+      "CURRENT_SHARE_CLASS_PRIMARY_FILING_REQUIRED",
+      "LISTING_DIRECTORY_IS_NOT_TRADE_OR_LICENSE_PROOF"
+    ],
+    "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
+    "sources": [
+      {
+        "id": "netflix",
+        "url": "https://ir.netflix.net/",
+        "final_url": "https://ir.netflix.net/ir-overview/profile/default.aspx",
+        "accessed_at": "2026-10-07T13:18:16.403346+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "f42e1d562a9e4ec6562204684d53fb41fdb586054bb1e0667a89526c6efc429b",
+        "observation": "RESPONSE_OBTAINED_REVIEW_REQUIRED"
+      },
+      {
+        "id": "sec",
+        "url": "https://www.sec.gov/files/company_tickers_exchange.json",
+        "final_url": "https://www.sec.gov/files/company_tickers_exchange.json",
+        "accessed_at": "2026-10-07T13:18:11.327077+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "e0033204d27cbf7149023b2e94432b2c90735fe9c4743ae4f156fd82843bcb3c",
+        "observation": "RESPONSE_REVIEWED"
+      }
+    ],
+    "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
   },
   {
     "proposal_id": "catalog-v1-spy",
-    "requested_sources": [
-      "https://www.ssga.com/us/en/individual/etfs/funds/spdr-sp-500-etf-trust-spy"
+    "slug": "spy",
+    "verification_status": "PUBLIC_MARKET_VERIFIED",
+    "verified_name": "State Street SPDR S&P 500 ETF Trust",
+    "verified_name_ko": "SPY",
+    "verified_name_en": "State Street SPDR S&P 500 ETF Trust",
+    "verified_code": "SPY",
+    "verified_exchange": "NYSE Arca",
+    "verified_asset_class": "ETF",
+    "share_class": "ETF_TRUST_SHARES",
+    "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+    "confidence": "HIGH_SCOPE_LIMITED",
+    "facts": [
+      {
+        "source_id": "ssga",
+        "quote": "Trading Currency Ticker CUSIP ISIN NYSE ARCA Jan 22 1993 USD SPY 78462F103 US78462F1030 Fund Characteristics as of Oct 06 2026 Est. 3-5 Year EPS Growth ﻿Estima",
+        "locator": "NORMALIZED_VISIBLE_TEXT",
+        "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+      }
     ],
-    "verified_name": null,
-    "verified_code": null,
-    "verified_market": null,
-    "verified_exchange": null,
-    "verified_asset_class": null,
-    "checked_at": null,
-    "scope": "INVESTIGATION_HINTS_ONLY",
-    "verification_status": "UNKNOWN"
+    "missing": [],
+    "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
+    "sources": [
+      {
+        "id": "ssga",
+        "url": "https://www.ssga.com/us/en/individual/etfs/funds/spdr-sp-500-etf-trust-spy",
+        "final_url": "https://www.ssga.com/us/en/individual/etfs/state-street-spdr-sp-500-etf-trust-spy",
+        "accessed_at": "2026-10-07T13:18:16.912199+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "e0446f2af85730e760b534bc9b579129fb98b26644225815d94a95bcff5d8f2a",
+        "observation": "RESPONSE_REVIEWED"
+      }
+    ],
+    "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
   },
   {
     "proposal_id": "catalog-v1-qqq",
-    "requested_sources": ["https://www.invesco.com/qqq-etf/en/home.html"],
-    "verified_name": null,
-    "verified_code": null,
-    "verified_market": null,
+    "slug": "qqq",
+    "verification_status": "PUBLIC_MARKET_PARTIAL",
+    "verified_name": "Invesco QQQ ETF",
+    "verified_name_ko": "QQQ",
+    "verified_name_en": "Invesco QQQ ETF",
+    "verified_code": "QQQ",
     "verified_exchange": null,
-    "verified_asset_class": null,
-    "checked_at": null,
-    "scope": "INVESTIGATION_HINTS_ONLY",
-    "verification_status": "UNKNOWN"
+    "verified_asset_class": "ETF",
+    "share_class": "ETF_SHARES",
+    "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+    "confidence": "PARTIAL_DETAILS_REQUIRED",
+    "facts": [
+      {
+        "source_id": "invesco",
+        "quote": "Invesco QQQ ETF | Invesco US Skip to main content Invest now Expand navigation Close navigation About QQQ Perf",
+        "locator": "NORMALIZED_VISIBLE_TEXT",
+        "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+      }
+    ],
+    "missing": [
+      "EXCHANGE_REQUIRED"
+    ],
+    "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
+    "sources": [
+      {
+        "id": "invesco",
+        "url": "https://www.invesco.com/qqq-etf/en/home.html",
+        "final_url": "https://www.invesco.com/qqq-etf/en/home.html",
+        "accessed_at": "2026-10-07T13:18:15.878423+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "3eedce20ee0a64d2c08c4459a445d227a9e02a57b9f608b417a7361acddb7a63",
+        "observation": "RESPONSE_REVIEWED"
+      }
+    ],
+    "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
   },
   {
     "proposal_id": "catalog-v1-soxx",
-    "requested_sources": [
-      "https://www.ishares.com/us/products/239705/ishares-phlx-semiconductor-etf"
+    "slug": "soxx",
+    "verification_status": "PUBLIC_MARKET_VERIFIED",
+    "verified_name": "iShares Semiconductor ETF",
+    "verified_name_ko": "SOXX",
+    "verified_name_en": "iShares Semiconductor ETF",
+    "verified_code": "SOXX",
+    "verified_exchange": "Nasdaq",
+    "verified_asset_class": "ETF",
+    "share_class": "ETF_SHARES",
+    "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+    "confidence": "HIGH_SCOPE_LIMITED",
+    "facts": [
+      {
+        "source_id": "ishares",
+        "quote": "ssue a forward stock split for the iShares Semiconductor ETF (NASDAQ: SOXX). The record date for the forward stock split will be November 3, 2026, and the stock split wil",
+        "locator": "NORMALIZED_VISIBLE_TEXT",
+        "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+      }
     ],
-    "verified_name": null,
-    "verified_code": null,
-    "verified_market": null,
-    "verified_exchange": null,
-    "verified_asset_class": null,
-    "checked_at": null,
-    "scope": "INVESTIGATION_HINTS_ONLY",
-    "verification_status": "UNKNOWN"
+    "missing": [],
+    "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
+    "sources": [
+      {
+        "id": "ishares",
+        "url": "https://www.ishares.com/us/products/239705/ishares-phlx-semiconductor-etf",
+        "final_url": "https://www.ishares.com/us/products/239705/ishares-phlx-semiconductor-etf",
+        "accessed_at": "2026-10-07T13:18:16.378932+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "aabab3b871717d38857248cf4072cbc64ba309f777b9116c52baad990ce296d0",
+        "observation": "RESPONSE_REVIEWED"
+      }
+    ],
+    "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
   },
   {
     "proposal_id": "catalog-v1-schd",
-    "requested_sources": [
-      "https://www.schwabassetmanagement.com/products/schd"
+    "slug": "schd",
+    "verification_status": "PUBLIC_MARKET_VERIFIED",
+    "verified_name": "Schwab U.S. Dividend Equity ETF",
+    "verified_name_ko": "SCHD",
+    "verified_name_en": "Schwab U.S. Dividend Equity ETF",
+    "verified_code": "SCHD",
+    "verified_exchange": "NYSE Arca, Inc.",
+    "verified_asset_class": "ETF",
+    "share_class": "ETF_SHARES",
+    "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+    "confidence": "HIGH_SCOPE_LIMITED",
+    "facts": [
+      {
+        "source_id": "schwab",
+        "quote": "ment Style Passive CUSIP 808524797 Exchange NYSE Arca, Inc. Yields SEC Yield (30 Day) As of 10/05/2026 10/05/2026 3.37% Distribution Yield (TTM) As of 08/",
+        "locator": "NORMALIZED_VISIBLE_TEXT",
+        "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+      }
     ],
-    "verified_name": null,
-    "verified_code": null,
-    "verified_market": null,
-    "verified_exchange": null,
-    "verified_asset_class": null,
-    "checked_at": null,
-    "scope": "INVESTIGATION_HINTS_ONLY",
-    "verification_status": "UNKNOWN"
+    "missing": [],
+    "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
+    "sources": [
+      {
+        "id": "schwab",
+        "url": "https://www.schwabassetmanagement.com/products/schd",
+        "final_url": "https://www.schwabassetmanagement.com/products/schd",
+        "accessed_at": "2026-10-07T13:18:16.155040+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "df24b48459ee586248497a588d6e4cf05482d3d3df254d0a8cb89f8d13c13743",
+        "observation": "RESPONSE_REVIEWED"
+      }
+    ],
+    "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
   },
   {
     "proposal_id": "catalog-v1-vti",
-    "requested_sources": [
-      "https://investor.vanguard.com/investment-products/etfs/profile/vti"
+    "slug": "vti",
+    "verification_status": "PUBLIC_MARKET_VERIFIED",
+    "verified_name": "Vanguard Morningstar Total Stock Market ETF",
+    "verified_name_ko": "Vanguard Morningstar Total Stock Market ETF",
+    "verified_name_en": "Vanguard Morningstar Total Stock Market ETF",
+    "verified_code": "VTI",
+    "verified_exchange": "NYSE Arca",
+    "verified_asset_class": "ETF",
+    "share_class": "ETF_SHARES",
+    "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+    "confidence": "HIGH_SCOPE_LIMITED",
+    "facts": [
+      {
+        "source_id": "vanguard",
+        "quote": " the issuing fund. The fund\\u2019s ETF Shares are listed for trading on NYSE Arca and individual investors may only buy and sell them on the secondary market at market prices. ",
+        "locator": "RAW_ISSUER_DOCUMENT",
+        "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+      }
     ],
-    "verified_name": null,
-    "verified_code": null,
-    "verified_market": null,
-    "verified_exchange": null,
-    "verified_asset_class": null,
-    "checked_at": null,
-    "scope": "INVESTIGATION_HINTS_ONLY",
-    "verification_status": "UNKNOWN"
+    "missing": [],
+    "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
+    "sources": [
+      {
+        "id": "vanguard",
+        "url": "https://investor.vanguard.com/investment-products/etfs/profile/vti",
+        "final_url": "https://investor.vanguard.com/investment-products/etfs/profile/vti",
+        "accessed_at": "2026-10-07T13:18:17.452991+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "46fffdc59e6ed0fd14bf1f8c7df832863026a168b7615a626bfc3d2d3c38802f",
+        "observation": "RESPONSE_REVIEWED"
+      }
+    ],
+    "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
   },
   {
     "proposal_id": "catalog-v1-aiq",
-    "requested_sources": ["https://www.globalxetfs.com/funds/aiq/"],
-    "verified_name": null,
-    "verified_code": null,
-    "verified_market": null,
-    "verified_exchange": null,
-    "verified_asset_class": null,
-    "checked_at": null,
-    "scope": "INVESTIGATION_HINTS_ONLY",
-    "verification_status": "UNKNOWN"
+    "slug": "aiq",
+    "verification_status": "PUBLIC_MARKET_VERIFIED",
+    "verified_name": "Global X Artificial Intelligence & Technology ETF",
+    "verified_name_ko": "AIQ",
+    "verified_name_en": "Global X Artificial Intelligence & Technology ETF",
+    "verified_code": "AIQ",
+    "verified_exchange": "Nasdaq",
+    "verified_asset_class": "ETF",
+    "share_class": "ETF_SHARES",
+    "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+    "confidence": "HIGH_SCOPE_LIMITED",
+    "facts": [
+      {
+        "source_id": "globalx",
+        "quote": " CUSIP 37954Y632 ISIN US37954Y6326 Primary Exchange Nasdaq Shares Outstanding 158,370,002 Number of Holdings 88 30-Day Median Bid-Ask Spread ? 0.02% Dist",
+        "locator": "NORMALIZED_VISIBLE_TEXT",
+        "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+      }
+    ],
+    "missing": [],
+    "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
+    "sources": [
+      {
+        "id": "globalx",
+        "url": "https://www.globalxetfs.com/funds/aiq/",
+        "final_url": "https://www.globalxetfs.com/funds/aiq",
+        "accessed_at": "2026-10-07T13:18:17.017120+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "8a9de81f49e04cf67de1630eeabd5ab30880889c61f678380294ce1d47ed1980",
+        "observation": "RESPONSE_REVIEWED"
+      }
+    ],
+    "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
   },
   {
     "proposal_id": "catalog-v1-bnd",
-    "requested_sources": [
-      "https://investor.vanguard.com/investment-products/etfs/profile/vti"
+    "slug": "bnd",
+    "verification_status": "PUBLIC_MARKET_VERIFIED",
+    "verified_name": "Vanguard Total Bond Market ETF",
+    "verified_name_ko": "BND",
+    "verified_name_en": "Vanguard Total Bond Market ETF",
+    "verified_code": "BND",
+    "verified_exchange": "Nasdaq",
+    "verified_asset_class": "ETF",
+    "share_class": "ETF_SHARES",
+    "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+    "confidence": "HIGH_SCOPE_LIMITED",
+    "facts": [
+      {
+        "source_id": "bnd",
+        "quote": " the issuing fund. The fund\\u2019s ETF Shares are listed for trading on Nasdaq and individual investors may only buy and sell them on the secondary market at market prices. ",
+        "locator": "RAW_ISSUER_DOCUMENT",
+        "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+      }
     ],
-    "verified_name": null,
-    "verified_code": null,
-    "verified_market": null,
-    "verified_exchange": null,
-    "verified_asset_class": null,
-    "checked_at": null,
-    "scope": "INVESTIGATION_HINTS_ONLY",
-    "verification_status": "UNKNOWN"
+    "missing": [],
+    "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
+    "sources": [
+      {
+        "id": "vanguard",
+        "url": "https://investor.vanguard.com/investment-products/etfs/profile/vti",
+        "final_url": "https://investor.vanguard.com/investment-products/etfs/profile/vti",
+        "accessed_at": "2026-10-07T13:18:17.452991+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "46fffdc59e6ed0fd14bf1f8c7df832863026a168b7615a626bfc3d2d3c38802f",
+        "observation": "RESPONSE_REVIEWED"
+      },
+      {
+        "id": "bnd",
+        "url": "https://investor.vanguard.com/investment-products/etfs/profile/bnd",
+        "final_url": "https://investor.vanguard.com/investment-products/etfs/profile/bnd",
+        "accessed_at": "2026-10-07T13:20:27.840882+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "cd1a96852d0ae4e4b9fd1ab30d05b235436ae277e7d9c1b0d9dae8c31017a529",
+        "observation": "RESPONSE_REVIEWED"
+      }
+    ],
+    "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
   },
   {
     "proposal_id": "catalog-v1-iau",
-    "requested_sources": [
-      "https://www.ishares.com/us/products/239705/ishares-phlx-semiconductor-etf"
+    "slug": "iau",
+    "verification_status": "PUBLIC_MARKET_VERIFIED",
+    "verified_name": "iShares Gold Trust",
+    "verified_name_ko": "IAU",
+    "verified_name_en": "iShares Gold Trust",
+    "verified_code": "IAU",
+    "verified_exchange": "NYSE Arca",
+    "verified_asset_class": "ETF",
+    "share_class": "GOLD_TRUST_SHARES",
+    "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+    "confidence": "HIGH_SCOPE_LIMITED",
+    "facts": [
+      {
+        "source_id": "iau",
+        "quote": "1, 2005\"},{\"@type\":\"PropertyValue\",\"name\":\"Exchange\",\"value\":\"NYSE Arca\"},{\"@type\":\"PropertyValue\",\"name\":\"Asset Class\",\"value\":\"Commodity\"},{\"@type\":\"PropertyValue\",\"",
+        "locator": "RAW_ISSUER_DOCUMENT",
+        "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+      }
     ],
-    "verified_name": null,
-    "verified_code": null,
-    "verified_market": null,
-    "verified_exchange": null,
-    "verified_asset_class": null,
-    "checked_at": null,
-    "scope": "INVESTIGATION_HINTS_ONLY",
-    "verification_status": "UNKNOWN"
+    "missing": [],
+    "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
+    "sources": [
+      {
+        "id": "ishares",
+        "url": "https://www.ishares.com/us/products/239705/ishares-phlx-semiconductor-etf",
+        "final_url": "https://www.ishares.com/us/products/239705/ishares-phlx-semiconductor-etf",
+        "accessed_at": "2026-10-07T13:18:16.378932+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "aabab3b871717d38857248cf4072cbc64ba309f777b9116c52baad990ce296d0",
+        "observation": "RESPONSE_REVIEWED"
+      },
+      {
+        "id": "iau",
+        "url": "https://www.ishares.com/us/products/239561/ishares-gold-trust-fund",
+        "final_url": "https://www.ishares.com/us/products/239561/ishares-gold-trust-fund",
+        "accessed_at": "2026-10-07T13:20:27.625585+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "2bb297de0ad9833cb5141ac43e11b57f48a6e4df23d78d2122c6231763e1f24b",
+        "observation": "RESPONSE_REVIEWED"
+      }
+    ],
+    "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
   },
   {
     "proposal_id": "catalog-v1-kodex-200",
-    "requested_sources": [
-      "https://www.samsungfund.com/etf/main.do",
-      "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx"
-    ],
+    "slug": "kodex-200",
+    "verification_status": "PUBLIC_MARKET_UNKNOWN",
     "verified_name": null,
+    "verified_name_ko": null,
+    "verified_name_en": null,
     "verified_code": null,
-    "verified_market": null,
     "verified_exchange": null,
     "verified_asset_class": null,
-    "checked_at": null,
-    "scope": "INVESTIGATION_HINTS_ONLY",
-    "verification_status": "UNKNOWN"
+    "share_class": null,
+    "current_existence": "UNKNOWN",
+    "confidence": "UNKNOWN",
+    "facts": [],
+    "missing": [
+      "SPECIFIC_CURRENT_OFFICIAL_IDENTITY_REQUIRED"
+    ],
+    "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
+    "sources": [
+      {
+        "id": "kodex",
+        "url": "https://www.samsungfund.com/etf/main.do",
+        "final_url": "https://www.samsungfund.com/etf/main.do",
+        "accessed_at": "2026-10-07T13:18:17.426501+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "bd402b31974a1a740df77bd2ceb448e3b57d1b4285556f6030a076039d70bf01",
+        "observation": "RESPONSE_REVIEWED"
+      },
+      {
+        "id": "krx",
+        "url": "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx",
+        "final_url": "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx",
+        "accessed_at": "2026-10-07T13:18:15.369143+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "bad2beed56052c7f993ce45226da084fc09b0c820b4038241ff34d2ee13154a3",
+        "observation": "RESPONSE_OBTAINED_REVIEW_REQUIRED"
+      }
+    ],
+    "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
   },
   {
     "proposal_id": "catalog-v1-tiger-us-sp500",
-    "requested_sources": [
-      "https://www.tigeretf.com/ko/main/index.do",
-      "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx"
-    ],
+    "slug": "tiger-us-sp500",
+    "verification_status": "PUBLIC_MARKET_UNKNOWN",
     "verified_name": null,
+    "verified_name_ko": null,
+    "verified_name_en": null,
     "verified_code": null,
-    "verified_market": null,
     "verified_exchange": null,
     "verified_asset_class": null,
-    "checked_at": null,
-    "scope": "INVESTIGATION_HINTS_ONLY",
-    "verification_status": "UNKNOWN"
+    "share_class": null,
+    "current_existence": "UNKNOWN",
+    "confidence": "UNKNOWN",
+    "facts": [],
+    "missing": [
+      "SPECIFIC_CURRENT_OFFICIAL_IDENTITY_REQUIRED"
+    ],
+    "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
+    "sources": [
+      {
+        "id": "tiger",
+        "url": "https://www.tigeretf.com/ko/main/index.do",
+        "final_url": null,
+        "accessed_at": null,
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": null,
+        "observation": "ACCESS_BLOCKED"
+      },
+      {
+        "id": "krx",
+        "url": "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx",
+        "final_url": "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx",
+        "accessed_at": "2026-10-07T13:18:15.369143+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "bad2beed56052c7f993ce45226da084fc09b0c820b4038241ff34d2ee13154a3",
+        "observation": "RESPONSE_OBTAINED_REVIEW_REQUIRED"
+      }
+    ],
+    "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
   },
   {
     "proposal_id": "catalog-v1-kodex-semiconductor",
-    "requested_sources": [
-      "https://www.samsungfund.com/etf/main.do",
-      "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx"
-    ],
+    "slug": "kodex-semiconductor",
+    "verification_status": "PUBLIC_MARKET_UNKNOWN",
     "verified_name": null,
+    "verified_name_ko": null,
+    "verified_name_en": null,
     "verified_code": null,
-    "verified_market": null,
     "verified_exchange": null,
     "verified_asset_class": null,
-    "checked_at": null,
-    "scope": "INVESTIGATION_HINTS_ONLY",
-    "verification_status": "UNKNOWN"
+    "share_class": null,
+    "current_existence": "UNKNOWN",
+    "confidence": "UNKNOWN",
+    "facts": [],
+    "missing": [
+      "SPECIFIC_CURRENT_OFFICIAL_IDENTITY_REQUIRED"
+    ],
+    "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
+    "sources": [
+      {
+        "id": "kodex",
+        "url": "https://www.samsungfund.com/etf/main.do",
+        "final_url": "https://www.samsungfund.com/etf/main.do",
+        "accessed_at": "2026-10-07T13:18:17.426501+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "bd402b31974a1a740df77bd2ceb448e3b57d1b4285556f6030a076039d70bf01",
+        "observation": "RESPONSE_REVIEWED"
+      },
+      {
+        "id": "krx",
+        "url": "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx",
+        "final_url": "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx",
+        "accessed_at": "2026-10-07T13:18:15.369143+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "bad2beed56052c7f993ce45226da084fc09b0c820b4038241ff34d2ee13154a3",
+        "observation": "RESPONSE_OBTAINED_REVIEW_REQUIRED"
+      }
+    ],
+    "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
   },
   {
     "proposal_id": "catalog-v1-kr-ai-etf-research",
-    "requested_sources": [
-      "https://www.tigeretf.com/ko/main/index.do",
-      "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx"
-    ],
-    "verified_name": null,
-    "verified_code": null,
-    "verified_market": null,
+    "slug": "kr-ai-etf-research",
+    "verification_status": "PUBLIC_MARKET_PARTIAL",
+    "verified_name": "KODEX AI반도체핵심장비 ETF",
+    "verified_name_ko": "KODEX AI반도체핵심장비 ETF",
+    "verified_name_en": "KODEX AI반도체핵심장비 ETF",
+    "verified_code": "471990",
     "verified_exchange": null,
-    "verified_asset_class": null,
-    "checked_at": null,
-    "scope": "INVESTIGATION_HINTS_ONLY",
-    "verification_status": "UNKNOWN"
+    "verified_asset_class": "ETF",
+    "share_class": "ETF_SHARES",
+    "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+    "confidence": "PARTIAL_DETAILS_REQUIRED",
+    "facts": [
+      {
+        "source_id": "kodex",
+        "quote": " 먼저 담아야 할 연금·ISA 핵심 상품 지금 Hot한 ETF KODEX AI반도체핵심장비 ETF (종목코드 : 471990) AI반도체 공정의 핵심, 장비 업체의 장기적인 수혜 기대! 상품안내 KODEX 미국머니마켓액티브 ETF (종목코드 : 0048J0) 정말 쉬운 달러 투자! MMF형 월배",
+        "locator": "NORMALIZED_VISIBLE_TEXT",
+        "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+      }
+    ],
+    "missing": [
+      "EXCHANGE_REQUIRED"
+    ],
+    "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
+    "sources": [
+      {
+        "id": "tiger",
+        "url": "https://www.tigeretf.com/ko/main/index.do",
+        "final_url": null,
+        "accessed_at": null,
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": null,
+        "observation": "ACCESS_BLOCKED"
+      },
+      {
+        "id": "krx",
+        "url": "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx",
+        "final_url": "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx",
+        "accessed_at": "2026-10-07T13:18:15.369143+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "bad2beed56052c7f993ce45226da084fc09b0c820b4038241ff34d2ee13154a3",
+        "observation": "RESPONSE_OBTAINED_REVIEW_REQUIRED"
+      },
+      {
+        "id": "kodex",
+        "url": "https://www.samsungfund.com/etf/main.do",
+        "final_url": "https://www.samsungfund.com/etf/main.do",
+        "accessed_at": "2026-10-07T13:18:17.426501+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "bd402b31974a1a740df77bd2ceb448e3b57d1b4285556f6030a076039d70bf01",
+        "observation": "RESPONSE_REVIEWED"
+      }
+    ],
+    "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
   },
   {
     "proposal_id": "catalog-v1-kr-dividend-etf-research",
-    "requested_sources": [
-      "https://www.samsungfund.com/etf/main.do",
-      "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx"
-    ],
+    "slug": "kr-dividend-etf-research",
+    "verification_status": "PUBLIC_MARKET_UNKNOWN",
     "verified_name": null,
+    "verified_name_ko": null,
+    "verified_name_en": null,
     "verified_code": null,
-    "verified_market": null,
     "verified_exchange": null,
     "verified_asset_class": null,
-    "checked_at": null,
-    "scope": "INVESTIGATION_HINTS_ONLY",
-    "verification_status": "UNKNOWN"
+    "share_class": null,
+    "current_existence": "UNKNOWN",
+    "confidence": "UNKNOWN",
+    "facts": [],
+    "missing": [
+      "SPECIFIC_CURRENT_OFFICIAL_IDENTITY_REQUIRED"
+    ],
+    "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
+    "sources": [
+      {
+        "id": "kodex",
+        "url": "https://www.samsungfund.com/etf/main.do",
+        "final_url": "https://www.samsungfund.com/etf/main.do",
+        "accessed_at": "2026-10-07T13:18:17.426501+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "bd402b31974a1a740df77bd2ceb448e3b57d1b4285556f6030a076039d70bf01",
+        "observation": "RESPONSE_REVIEWED"
+      },
+      {
+        "id": "krx",
+        "url": "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx",
+        "final_url": "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx",
+        "accessed_at": "2026-10-07T13:18:15.369143+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "bad2beed56052c7f993ce45226da084fc09b0c820b4038241ff34d2ee13154a3",
+        "observation": "RESPONSE_OBTAINED_REVIEW_REQUIRED"
+      }
+    ],
+    "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
   },
   {
     "proposal_id": "catalog-v1-tiger-us-nasdaq100",
-    "requested_sources": [
-      "https://www.tigeretf.com/ko/main/index.do",
-      "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx"
-    ],
+    "slug": "tiger-us-nasdaq100",
+    "verification_status": "PUBLIC_MARKET_UNKNOWN",
     "verified_name": null,
+    "verified_name_ko": null,
+    "verified_name_en": null,
     "verified_code": null,
-    "verified_market": null,
     "verified_exchange": null,
     "verified_asset_class": null,
-    "checked_at": null,
-    "scope": "INVESTIGATION_HINTS_ONLY",
-    "verification_status": "UNKNOWN"
+    "share_class": null,
+    "current_existence": "UNKNOWN",
+    "confidence": "UNKNOWN",
+    "facts": [],
+    "missing": [
+      "SPECIFIC_CURRENT_OFFICIAL_IDENTITY_REQUIRED"
+    ],
+    "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
+    "sources": [
+      {
+        "id": "tiger",
+        "url": "https://www.tigeretf.com/ko/main/index.do",
+        "final_url": null,
+        "accessed_at": null,
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": null,
+        "observation": "ACCESS_BLOCKED"
+      },
+      {
+        "id": "krx",
+        "url": "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx",
+        "final_url": "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx",
+        "accessed_at": "2026-10-07T13:18:15.369143+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "bad2beed56052c7f993ce45226da084fc09b0c820b4038241ff34d2ee13154a3",
+        "observation": "RESPONSE_OBTAINED_REVIEW_REQUIRED"
+      }
+    ],
+    "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
   },
   {
     "proposal_id": "catalog-v1-kodex-gold-futures",
-    "requested_sources": [
-      "https://www.samsungfund.com/etf/main.do",
-      "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx"
-    ],
+    "slug": "kodex-gold-futures",
+    "verification_status": "PUBLIC_MARKET_UNKNOWN",
     "verified_name": null,
+    "verified_name_ko": null,
+    "verified_name_en": null,
     "verified_code": null,
-    "verified_market": null,
     "verified_exchange": null,
     "verified_asset_class": null,
-    "checked_at": null,
-    "scope": "INVESTIGATION_HINTS_ONLY",
-    "verification_status": "UNKNOWN"
+    "share_class": null,
+    "current_existence": "UNKNOWN",
+    "confidence": "UNKNOWN",
+    "facts": [],
+    "missing": [
+      "SPECIFIC_CURRENT_OFFICIAL_IDENTITY_REQUIRED"
+    ],
+    "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
+    "sources": [
+      {
+        "id": "kodex",
+        "url": "https://www.samsungfund.com/etf/main.do",
+        "final_url": "https://www.samsungfund.com/etf/main.do",
+        "accessed_at": "2026-10-07T13:18:17.426501+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "bd402b31974a1a740df77bd2ceb448e3b57d1b4285556f6030a076039d70bf01",
+        "observation": "RESPONSE_REVIEWED"
+      },
+      {
+        "id": "krx",
+        "url": "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx",
+        "final_url": "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx",
+        "accessed_at": "2026-10-07T13:18:15.369143+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "bad2beed56052c7f993ce45226da084fc09b0c820b4038241ff34d2ee13154a3",
+        "observation": "RESPONSE_OBTAINED_REVIEW_REQUIRED"
+      }
+    ],
+    "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
   },
   {
     "proposal_id": "catalog-v1-kodex-treasury-3y",
-    "requested_sources": [
-      "https://www.samsungfund.com/etf/main.do",
-      "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx"
-    ],
+    "slug": "kodex-treasury-3y",
+    "verification_status": "PUBLIC_MARKET_UNKNOWN",
     "verified_name": null,
+    "verified_name_ko": null,
+    "verified_name_en": null,
     "verified_code": null,
-    "verified_market": null,
     "verified_exchange": null,
     "verified_asset_class": null,
-    "checked_at": null,
-    "scope": "INVESTIGATION_HINTS_ONLY",
-    "verification_status": "UNKNOWN"
+    "share_class": null,
+    "current_existence": "UNKNOWN",
+    "confidence": "UNKNOWN",
+    "facts": [],
+    "missing": [
+      "SPECIFIC_CURRENT_OFFICIAL_IDENTITY_REQUIRED"
+    ],
+    "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
+    "sources": [
+      {
+        "id": "kodex",
+        "url": "https://www.samsungfund.com/etf/main.do",
+        "final_url": "https://www.samsungfund.com/etf/main.do",
+        "accessed_at": "2026-10-07T13:18:17.426501+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "bd402b31974a1a740df77bd2ceb448e3b57d1b4285556f6030a076039d70bf01",
+        "observation": "RESPONSE_REVIEWED"
+      },
+      {
+        "id": "krx",
+        "url": "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx",
+        "final_url": "https://data.krx.co.kr/contents/MDC/MAIN/main.jspx",
+        "accessed_at": "2026-10-07T13:18:15.369143+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "bad2beed56052c7f993ce45226da084fc09b0c820b4038241ff34d2ee13154a3",
+        "observation": "RESPONSE_OBTAINED_REVIEW_REQUIRED"
+      }
+    ],
+    "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
   },
   {
     "proposal_id": "catalog-v1-tqqq-review",
-    "requested_sources": ["https://www.invesco.com/qqq-etf/en/home.html"],
+    "slug": "tqqq-review",
+    "verification_status": "PUBLIC_MARKET_UNKNOWN",
     "verified_name": null,
+    "verified_name_ko": null,
+    "verified_name_en": null,
     "verified_code": null,
-    "verified_market": null,
     "verified_exchange": null,
     "verified_asset_class": null,
-    "checked_at": null,
-    "scope": "INVESTIGATION_HINTS_ONLY",
-    "verification_status": "UNKNOWN"
+    "share_class": null,
+    "current_existence": "UNKNOWN",
+    "confidence": "UNKNOWN",
+    "facts": [],
+    "missing": [
+      "SPECIFIC_CURRENT_OFFICIAL_IDENTITY_REQUIRED"
+    ],
+    "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
+    "sources": [
+      {
+        "id": "invesco",
+        "url": "https://www.invesco.com/qqq-etf/en/home.html",
+        "final_url": "https://www.invesco.com/qqq-etf/en/home.html",
+        "accessed_at": "2026-10-07T13:18:15.878423+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "3eedce20ee0a64d2c08c4459a445d227a9e02a57b9f608b417a7361acddb7a63",
+        "observation": "RESPONSE_REVIEWED"
+      }
+    ],
+    "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
   },
   {
     "proposal_id": "catalog-v1-bitcoin",
-    "requested_sources": ["https://bitcoin.org/en/"],
-    "verified_name": null,
-    "verified_code": null,
-    "verified_market": null,
-    "verified_exchange": null,
-    "verified_asset_class": null,
-    "checked_at": null,
-    "scope": "INVESTIGATION_HINTS_ONLY",
-    "verification_status": "UNKNOWN"
+    "slug": "bitcoin",
+    "verification_status": "PUBLIC_MARKET_VERIFIED",
+    "verified_name": "Bitcoin",
+    "verified_name_ko": "비트코인",
+    "verified_name_en": "Bitcoin",
+    "verified_code": "BTC",
+    "verified_exchange": "NOT_APPLICABLE_PROTOCOL",
+    "verified_asset_class": "CRYPTO",
+    "share_class": "NATIVE_ASSET",
+    "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+    "confidence": "HIGH_SCOPE_LIMITED",
+    "facts": [
+      {
+        "source_id": "bitcoin",
+        "quote": "Prefill an amount (optional) $10 … BTC $25 … BTC $50 … BTC BTC amount USD amount Add an optional wallet note Optional note for your w",
+        "locator": "NORMALIZED_VISIBLE_TEXT",
+        "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+      }
+    ],
+    "missing": [],
+    "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
+    "sources": [
+      {
+        "id": "bitcoin",
+        "url": "https://bitcoin.org/en/",
+        "final_url": "https://bitcoin.org/en/",
+        "accessed_at": "2026-10-07T13:18:17.050110+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "fc099af77575917cd5a183a806a4e6c30ad2b3e0656e49e0bd941735356f9dfb",
+        "observation": "RESPONSE_REVIEWED"
+      }
+    ],
+    "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
   },
   {
     "proposal_id": "catalog-v1-ethereum",
-    "requested_sources": ["https://ethereum.org/en/"],
-    "verified_name": null,
-    "verified_code": null,
-    "verified_market": null,
-    "verified_exchange": null,
-    "verified_asset_class": null,
-    "checked_at": null,
-    "scope": "INVESTIGATION_HINTS_ONLY",
-    "verification_status": "UNKNOWN"
+    "slug": "ethereum",
+    "verification_status": "PUBLIC_MARKET_VERIFIED",
+    "verified_name": "Ether",
+    "verified_name_ko": "이더리움",
+    "verified_name_en": "Ether",
+    "verified_code": "ETH",
+    "verified_exchange": "NOT_APPLICABLE_PROTOCOL",
+    "verified_asset_class": "CRYPTO",
+    "share_class": "NATIVE_ASSET",
+    "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+    "confidence": "HIGH_SCOPE_LIMITED",
+    "facts": [
+      {
+        "source_id": "eth-native",
+        "quote": " ether (ETH)? What is ether (ETH)? Ether (ETH) is the native cryptocurrency that powers the Ethereum network. It's used to pay transaction fees (known as 'gas') for using",
+        "locator": "NORMALIZED_VISIBLE_TEXT",
+        "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+      }
+    ],
+    "missing": [],
+    "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
+    "sources": [
+      {
+        "id": "ethereum",
+        "url": "https://ethereum.org/en/",
+        "final_url": "https://ethereum.org/",
+        "accessed_at": "2026-10-07T13:18:17.373363+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "7a70026bc8b086755476c626b4813afbd8d38ff369e7c77bf80f2f62f2bf5c58",
+        "observation": "RESPONSE_OBTAINED_REVIEW_REQUIRED"
+      },
+      {
+        "id": "eth-native",
+        "url": "https://ethereum.org/en/eth/",
+        "final_url": "https://ethereum.org/what-is-ether/",
+        "accessed_at": "2026-10-07T13:24:11.153045+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "2f87cddfab9c7119528f5bf768a76b9d353c11129dc6b454086cbc8daaf7d5fe",
+        "observation": "RESPONSE_REVIEWED"
+      }
+    ],
+    "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
   },
   {
     "proposal_id": "catalog-v1-solana",
-    "requested_sources": ["https://solana.com/"],
-    "verified_name": null,
-    "verified_code": null,
-    "verified_market": null,
-    "verified_exchange": null,
-    "verified_asset_class": null,
-    "checked_at": null,
-    "scope": "INVESTIGATION_HINTS_ONLY",
-    "verification_status": "UNKNOWN"
+    "slug": "solana",
+    "verification_status": "PUBLIC_MARKET_VERIFIED",
+    "verified_name": "Solana / SOL",
+    "verified_name_ko": "솔라나",
+    "verified_name_en": "Solana / SOL",
+    "verified_code": "SOL",
+    "verified_exchange": "NOT_APPLICABLE_PROTOCOL",
+    "verified_asset_class": "CRYPTO",
+    "share_class": "NATIVE_ASSET",
+    "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+    "confidence": "HIGH_SCOPE_LIMITED",
+    "facts": [
+      {
+        "source_id": "sol-token",
+        "quote": "very Solana transaction requires a fee paid in SOL. The fee has two components: a base fee and an optional prioritization fee . The base fee comp",
+        "locator": "NORMALIZED_VISIBLE_TEXT",
+        "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+      }
+    ],
+    "missing": [],
+    "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
+    "sources": [
+      {
+        "id": "solana",
+        "url": "https://solana.com/",
+        "final_url": "https://solana.com/",
+        "accessed_at": "2026-10-07T13:18:17.278637+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "77d9d1a0f9d13b36db5f7492d3c98916e9c844f3c0571c4c5172b36759466321",
+        "observation": "RESPONSE_OBTAINED_REVIEW_REQUIRED"
+      },
+      {
+        "id": "sol-token",
+        "url": "https://solana.com/docs/core/fees",
+        "final_url": "https://solana.com/docs/core/fees",
+        "accessed_at": "2026-10-07T13:24:10.141245+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "d485fe9517c66e2ea2f3c70e59b6000364c2c640f962beeb965116879c0c57e4",
+        "observation": "RESPONSE_REVIEWED"
+      }
+    ],
+    "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
   },
   {
     "proposal_id": "catalog-v1-bnb",
-    "requested_sources": ["https://www.bnbchain.org/en"],
-    "verified_name": null,
-    "verified_code": null,
-    "verified_market": null,
-    "verified_exchange": null,
-    "verified_asset_class": null,
-    "checked_at": null,
-    "scope": "INVESTIGATION_HINTS_ONLY",
-    "verification_status": "UNKNOWN"
+    "slug": "bnb",
+    "verification_status": "PUBLIC_MARKET_PARTIAL",
+    "verified_name": "BNB / BNB Chain",
+    "verified_name_ko": "BNB",
+    "verified_name_en": "BNB / BNB Chain",
+    "verified_code": "BNB",
+    "verified_exchange": "NOT_APPLICABLE_PROTOCOL",
+    "verified_asset_class": "CRYPTO",
+    "share_class": "NATIVE_ASSET_DETAIL_PENDING",
+    "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+    "confidence": "PARTIAL_DETAILS_REQUIRED",
+    "facts": [
+      {
+        "source_id": "bnb",
+        "quote": "BNB Chain: Build for the Next Billion Web3 Users Chains MAIN CHAINS BNB Smart Chain Fast. Affordable. EV",
+        "locator": "NORMALIZED_VISIBLE_TEXT",
+        "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+      }
+    ],
+    "missing": [
+      "SHARE_CLASS_REQUIRED"
+    ],
+    "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
+    "sources": [
+      {
+        "id": "bnb",
+        "url": "https://www.bnbchain.org/en",
+        "final_url": "https://www.bnbchain.org/en",
+        "accessed_at": "2026-10-07T13:18:17.833347+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "15fac5ce5c41cfc6d08fbc286cb5af3037525236bdd40cc5357106fa77e1f4dc",
+        "observation": "RESPONSE_REVIEWED"
+      }
+    ],
+    "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
   },
   {
     "proposal_id": "catalog-v1-xrp",
-    "requested_sources": ["https://xrpl.org/"],
-    "verified_name": null,
-    "verified_code": null,
-    "verified_market": null,
-    "verified_exchange": null,
-    "verified_asset_class": null,
-    "checked_at": null,
-    "scope": "INVESTIGATION_HINTS_ONLY",
-    "verification_status": "UNKNOWN"
+    "slug": "xrp",
+    "verification_status": "PUBLIC_MARKET_PARTIAL",
+    "verified_name": "XRP / XRP Ledger",
+    "verified_name_ko": "XRP",
+    "verified_name_en": "XRP / XRP Ledger",
+    "verified_code": "XRP",
+    "verified_exchange": "NOT_APPLICABLE_PROTOCOL",
+    "verified_asset_class": "CRYPTO",
+    "share_class": "NATIVE_ASSET_DETAIL_PENDING",
+    "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+    "confidence": "PARTIAL_DETAILS_REQUIRED",
+    "facts": [
+      {
+        "source_id": "xrp",
+        "quote": " JavaScript Python PHP Go Payments Direct XRP Payments Cross-currency Payments Escrow Checks Tokenization Stablecoin NFT Credit Lending (Open for Vot",
+        "locator": "NORMALIZED_VISIBLE_TEXT",
+        "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+      }
+    ],
+    "missing": [
+      "SHARE_CLASS_REQUIRED"
+    ],
+    "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
+    "sources": [
+      {
+        "id": "xrp",
+        "url": "https://xrpl.org/",
+        "final_url": "https://xrpl.org/",
+        "accessed_at": "2026-10-07T13:18:17.532421+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "6a9aa6274457c3803aadcd33890e26dc386506b97a1da5f5a3d938ebafec87a7",
+        "observation": "RESPONSE_REVIEWED"
+      }
+    ],
+    "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
   },
   {
     "proposal_id": "catalog-v1-usdt-rail",
-    "requested_sources": [
-      "https://www.sec.gov/files/company_tickers_exchange.json"
-    ],
+    "slug": "usdt-rail",
+    "verification_status": "PUBLIC_MARKET_UNKNOWN",
     "verified_name": null,
+    "verified_name_ko": null,
+    "verified_name_en": null,
     "verified_code": null,
-    "verified_market": null,
     "verified_exchange": null,
     "verified_asset_class": null,
-    "checked_at": null,
-    "scope": "INVESTIGATION_HINTS_ONLY",
-    "verification_status": "UNKNOWN"
+    "share_class": null,
+    "current_existence": "UNKNOWN",
+    "confidence": "UNKNOWN",
+    "facts": [],
+    "missing": [
+      "SPECIFIC_CURRENT_OFFICIAL_IDENTITY_REQUIRED"
+    ],
+    "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
+    "sources": [
+      {
+        "id": "sec",
+        "url": "https://www.sec.gov/files/company_tickers_exchange.json",
+        "final_url": "https://www.sec.gov/files/company_tickers_exchange.json",
+        "accessed_at": "2026-10-07T13:18:11.327077+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "e0033204d27cbf7149023b2e94432b2c90735fe9c4743ae4f156fd82843bcb3c",
+        "observation": "RESPONSE_REVIEWED"
+      }
+    ],
+    "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
   },
   {
     "proposal_id": "catalog-v1-usdc-rail",
-    "requested_sources": [
-      "https://www.sec.gov/files/company_tickers_exchange.json"
+    "slug": "usdc-rail",
+    "verification_status": "PUBLIC_MARKET_PARTIAL",
+    "verified_name": "USD Coin (USDC)",
+    "verified_name_ko": "USDC 결제 수단 조사",
+    "verified_name_en": "USD Coin (USDC)",
+    "verified_code": "USDC",
+    "verified_exchange": "NOT_APPLICABLE_PROTOCOL",
+    "verified_asset_class": "CRYPTO",
+    "share_class": "STABLECOIN_ISSUER_CHECK_PENDING",
+    "current_existence": "CURRENT_SECONDARY_PAGE_IDENTIFIES_ASSET",
+    "confidence": "PARTIAL_DETAILS_REQUIRED",
+    "facts": [
+      {
+        "source_id": "usdc-coinbase",
+        "quote": "C) | Coinbase Help USD Coin (USDC) USD Coin (USDC) is a stablecoin pegged to the US dollar and redeemable on a 1:1 basis for US dollars, backed by dollar-denomin",
+        "locator": "NORMALIZED_VISIBLE_TEXT",
+        "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+      }
     ],
-    "verified_name": null,
-    "verified_code": null,
-    "verified_market": null,
-    "verified_exchange": null,
-    "verified_asset_class": null,
-    "checked_at": null,
-    "scope": "INVESTIGATION_HINTS_ONLY",
-    "verification_status": "UNKNOWN"
+    "missing": [
+      "SHARE_CLASS_REQUIRED",
+      "ISSUER_PRIMARY_SOURCE_REQUIRED"
+    ],
+    "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
+    "sources": [
+      {
+        "id": "sec",
+        "url": "https://www.sec.gov/files/company_tickers_exchange.json",
+        "final_url": "https://www.sec.gov/files/company_tickers_exchange.json",
+        "accessed_at": "2026-10-07T13:18:11.327077+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "e0033204d27cbf7149023b2e94432b2c90735fe9c4743ae4f156fd82843bcb3c",
+        "observation": "RESPONSE_REVIEWED"
+      },
+      {
+        "id": "usdc-coinbase",
+        "url": "https://help.coinbase.com/en/coinbase/getting-started/crypto-education/usdc",
+        "final_url": "https://help.coinbase.com/en/coinbase/getting-started/crypto-education/usdc",
+        "accessed_at": "2026-10-07T13:20:27.433937+00:00",
+        "source_class": "SECONDARY_ASSET_REFERENCE",
+        "response_sha256": "12b8278b97b5d2ac0634050eca82754e48efe47a555fd1a31f941c78d8a84fcb",
+        "observation": "RESPONSE_REVIEWED"
+      }
+    ],
+    "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
   },
   {
     "proposal_id": "catalog-v1-gold",
-    "requested_sources": ["https://www.lbma.org.uk/"],
-    "verified_name": null,
-    "verified_code": null,
-    "verified_market": null,
-    "verified_exchange": null,
-    "verified_asset_class": null,
-    "checked_at": null,
-    "scope": "INVESTIGATION_HINTS_ONLY",
-    "verification_status": "UNKNOWN"
+    "slug": "gold",
+    "verification_status": "PUBLIC_MARKET_VERIFIED",
+    "verified_name": "Gold",
+    "verified_name_ko": "금",
+    "verified_name_en": "Gold",
+    "verified_code": "XAU",
+    "verified_exchange": "NOT_APPLICABLE_BULLION",
+    "verified_asset_class": "PRECIOUS",
+    "share_class": "BULLION_THEME_NO_SECURITY_SHARE_CLASS",
+    "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+    "confidence": "HIGH_SCOPE_LIMITED",
+    "facts": [
+      {
+        "source_id": "lbma",
+        "quote": " market. LBMA owns and manages the Good Delivery Lists for both gold and silver. Overview About Good Delivery Good Delivery Rules and Governance Good Delivery FAQs Lists Good",
+        "locator": "NORMALIZED_VISIBLE_TEXT",
+        "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+      }
+    ],
+    "missing": [],
+    "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
+    "sources": [
+      {
+        "id": "lbma",
+        "url": "https://www.lbma.org.uk/",
+        "final_url": "https://www.lbma.org.uk/",
+        "accessed_at": "2026-10-07T13:18:17.848139+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "b666dd97c83b55eb8511ceb42a90856586482f4b31e2d1becdfa3c490d3d36a7",
+        "observation": "RESPONSE_REVIEWED"
+      }
+    ],
+    "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
   },
   {
     "proposal_id": "catalog-v1-silver",
-    "requested_sources": ["https://www.lbma.org.uk/"],
-    "verified_name": null,
-    "verified_code": null,
-    "verified_market": null,
-    "verified_exchange": null,
-    "verified_asset_class": null,
-    "checked_at": null,
-    "scope": "INVESTIGATION_HINTS_ONLY",
-    "verification_status": "UNKNOWN"
+    "slug": "silver",
+    "verification_status": "PUBLIC_MARKET_VERIFIED",
+    "verified_name": "Silver",
+    "verified_name_ko": "은",
+    "verified_name_en": "Silver",
+    "verified_code": "XAG",
+    "verified_exchange": "NOT_APPLICABLE_BULLION",
+    "verified_asset_class": "PRECIOUS",
+    "share_class": "BULLION_THEME_NO_SECURITY_SHARE_CLASS",
+    "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+    "confidence": "HIGH_SCOPE_LIMITED",
+    "facts": [
+      {
+        "source_id": "lbma",
+        "quote": " market. LBMA owns and manages the Good Delivery Lists for both gold and silver. Overview About Good Delivery Good Delivery Rules and Governance Good Delivery FAQs Lists Good",
+        "locator": "NORMALIZED_VISIBLE_TEXT",
+        "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+      }
+    ],
+    "missing": [],
+    "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
+    "sources": [
+      {
+        "id": "lbma",
+        "url": "https://www.lbma.org.uk/",
+        "final_url": "https://www.lbma.org.uk/",
+        "accessed_at": "2026-10-07T13:18:17.848139+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "b666dd97c83b55eb8511ceb42a90856586482f4b31e2d1becdfa3c490d3d36a7",
+        "observation": "RESPONSE_REVIEWED"
+      }
+    ],
+    "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
   }
 ]

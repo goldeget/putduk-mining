@@ -1,0 +1,34 @@
+[
+  {
+    "url": "https://www.sec.gov/files/company_tickers_exchange.json",
+    "attempted_at": "2026-10-07T13:17:59.308820+00:00",
+    "status": 200,
+    "final_url": "https://www.sec.gov/files/company_tickers_exchange.json",
+    "response_bytes_read": 100000,
+    "sample": "{\"fields\":[\"cik\",\"name\",\"ticker\",\"exchange\"],\"data\":[[1045810,\"NVIDIA CORP\",\"NVDA\",\"Nasdaq\"],[320193,\"Apple Inc.\",\"AAPL\",\"Nasdaq\"],[1652044,\"Alphabet Inc.\",\"GOO"
+  },
+  {
+    "url": "https://www.samsung.com/global/ir/",
+    "attempted_at": "2026-10-07T13:17:59.309738+00:00",
+    "status": 200,
+    "final_url": "https://www.samsung.com/global/ir/",
+    "response_bytes_read": 100000,
+    "sample": "<!DOCTYPE html>\r\n\r\n<html lang=\"en-GB\">\r\n    \r\n    <head>\r\n\t<!-- PWA - manifest\r\n\t<link rel=\"manifest\" href=\"/etc.clientlibs/samsung/clientlibs/consumer/global/c"
+  },
+  {
+    "url": "https://www.spacex.com/",
+    "attempted_at": "2026-10-07T13:17:59.310296+00:00",
+    "status": 200,
+    "final_url": "https://www.spacex.com/",
+    "response_bytes_read": 3495,
+    "sample": "<!DOCTYPE html><html lang=\"en\"><head>\n    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n    <meta http-equiv=\"Content-Language\" content=\"e"
+  },
+  {
+    "url": "https://www.schwabassetmanagement.com/products/schd",
+    "attempted_at": "2026-10-07T13:17:59.310717+00:00",
+    "status": 200,
+    "final_url": "https://www.schwabassetmanagement.com/products/schd",
+    "response_bytes_read": 100000,
+    "sample": "<!DOCTYPE html>\n<html lang=\"en\" dir=\"ltr\" prefix=\"content: http://purl.org/rss/1.0/modules/content/  dc: http://purl.org/dc/terms/  foaf: http://xmlns.com/foaf/"
+  }
+]
