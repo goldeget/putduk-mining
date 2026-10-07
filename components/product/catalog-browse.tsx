@@ -74,7 +74,7 @@ export function CatalogBrowse({
               type="search"
               value={query}
               maxLength={120}
-              placeholder="상품 이름을 검색하세요"
+              placeholder="상품 검색"
               aria-controls={`${controlId}-products`}
               onChange={(event) => setQuery(event.target.value)}
             />

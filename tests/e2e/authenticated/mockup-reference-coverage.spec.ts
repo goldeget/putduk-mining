@@ -232,7 +232,7 @@ async function captureRoutes(
         ].includes(route) &&
         (["/mining", "/wallet"].includes(route) ||
           [390, 1440].includes(width) ||
-          (route === "/signup" && width === 320))
+          (["/signup", "/products"].includes(route) && width === 320))
           ? [1, 2]
           : [1]) {
           await page.evaluate((scale) => {
@@ -808,6 +808,28 @@ async function captureRoutes(
             );
           }
           if (route === "/products") {
+            const search = ready.getByRole("searchbox", { name: "상품 검색" });
+            const searchReadability = await search.evaluate(
+              (element: HTMLInputElement) => {
+                const style = getComputedStyle(element);
+                const context = document
+                  .createElement("canvas")
+                  .getContext("2d");
+                if (!context) throw new Error("Text measurement unavailable");
+                context.font = style.font;
+                return {
+                  placeholderWidth: context.measureText(element.placeholder)
+                    .width,
+                  availableWidth:
+                    element.clientWidth -
+                    parseFloat(style.paddingLeft) -
+                    parseFloat(style.paddingRight),
+                };
+              },
+            );
+            expect(searchReadability.placeholderWidth).toBeLessThanOrEqual(
+              searchReadability.availableWidth + 1,
+            );
             await expect(
               ready.getByRole("heading", {
                 level: 1,
