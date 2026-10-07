@@ -305,8 +305,10 @@ test.describe("admin exceptions product queue", () => {
     await expect(card).toBeVisible({ timeout: 60_000 });
     await expect(card.getByText("기대 값")).toBeVisible();
     await expect(card.getByText("실제 값")).toBeVisible();
-    await expect(card.getByText(/5000/)).toBeVisible();
-    await expect(card.getByText(/false/)).toBeVisible();
+    await expect(card.getByText(/5,000/)).toBeVisible();
+    await expect(card.getByText(/조건 미충족/)).toBeVisible();
+    await expect(card).not.toContainText("amount_atomic");
+    await expect(card).not.toContainText(seeded.mismatch.subject_id);
     await expect(card.getByText("열림")).toBeVisible();
     await expect(
       card.getByText("자동으로 원장이나 잔액을 고치지 않습니다."),

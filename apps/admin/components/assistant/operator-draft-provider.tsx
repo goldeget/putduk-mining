@@ -145,6 +145,17 @@ export function useOperatorDraft(): DraftContext {
   return value;
 }
 
+/** Writing-only drafts share the same session invalidation, without financial draft access. */
+export function useOperatorDraftSignals(): Pick<
+  DraftContext,
+  "epoch" | "clearedReason"
+> | null {
+  const value = useContext(Context);
+  return value
+    ? { epoch: value.epoch, clearedReason: value.clearedReason }
+    : null;
+}
+
 /** Control pages share the server-validated public tuple; auth screens may stand alone. */
 export function useAdminPublicBrowserConfig(): Readonly<AdminPublicBrowserConfig> | null {
   return useContext(Context)?.publicConfig ?? null;

@@ -10,6 +10,8 @@ import {
 import { EmptyQueue, QueueCard, QueueShell } from "@/components/queue-shell";
 import { requireAdminPage } from "@/lib/auth/principal";
 import { createAdminServiceClient } from "@/lib/supabase/service";
+import { similarPendingRequests } from "@/lib/operations/similar-requests";
+import { SimilarRequestNotice } from "@/components/operations/similar-request-notice";
 
 import { ConfirmUsdtDepositForm } from "./confirm-form";
 
@@ -52,6 +54,16 @@ export default async function UsdtDepositQueuePage() {
     .limit(40);
 
   const rows = (data ?? []) as UsdtManualDepositRow[];
+  const similar = similarPendingRequests(
+    error
+      ? []
+      : rows.map((row) => ({
+          id: row.id,
+          userId: row.user_id,
+          method: row.network_snapshot,
+          amount: row.sent_usdt_amount,
+        })),
+  );
 
   return (
     <div
@@ -112,11 +124,12 @@ export default async function UsdtDepositQueuePage() {
                     className="text-link"
                     href={`/members?id=${row.user_id}` as Route}
                   >
-                    {shortId(row.user_id)}
+                    회원 기록 확인
                   </Link>
                 </dd>
               </div>
             </dl>
+            <SimilarRequestNotice count={similar.get(row.id)} />
 
             {/*
               REJECTED 전환은 WS-04에 공개 명령이 없다.

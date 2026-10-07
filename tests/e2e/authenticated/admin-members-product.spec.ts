@@ -20,29 +20,29 @@ test.describe("admin Member 360 product states", () => {
 
     await page.goto(`${ADMIN_ORIGIN}/members`);
     await expect(
-      page.getByRole("heading", { name: "회원 한 사람의 맥락" }),
+      page.getByRole("heading", { name: "조회할 회원을 선택하세요." }),
     ).toBeVisible({
       timeout: 60_000,
     });
     await expect(page.getByText("조회할 회원을 선택하세요.")).toBeVisible();
-    await expect(page.getByLabel("회원 식별자")).toBeVisible();
+    await expect(page.getByLabel("회원 이름")).toBeVisible();
 
-    await page.getByLabel("회원 식별자").fill("not-a-uuid");
-    await page.getByRole("button", { name: "안전 조회" }).click();
+    await page.goto(`${ADMIN_ORIGIN}/members?id=not-a-uuid`);
     await expect(
       page.getByRole("alert").filter({
-        hasText: "올바른 회원 식별자를 입력해 주세요.",
+        hasText: "회원 참조가 올바르지 않아요.",
       }),
     ).toBeVisible({ timeout: 30_000 });
-    await expect(page.getByLabel("회원 식별자")).toHaveValue("not-a-uuid");
+    await expect(page.getByLabel("회원 이름")).toBeVisible();
 
     const member = await createConfirmedMember("admin-members-target");
     await page.goto(`${ADMIN_ORIGIN}/members?id=${member.userId}`);
-    const selectedIdentity = page.locator(".member-identity code");
-    await expect(selectedIdentity).toHaveText(member.userId, {
+    const selectedIdentity = page.locator(".member-identity");
+    await expect(selectedIdentity.getByRole("heading")).toBeVisible({
       timeout: 60_000,
     });
     await expect(selectedIdentity).toBeVisible();
+    await expect(selectedIdentity).not.toContainText(member.userId);
     await expect(page.getByText("채굴 · 정산")).toBeVisible();
     // 채굴 건수는 실패를 0으로 위장하지 않는다. SELECT 권한이 있으면 숫자다.
     const miningCard = page.locator(".member-module-grid article").filter({

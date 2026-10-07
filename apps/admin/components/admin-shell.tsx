@@ -3,6 +3,7 @@ import Link from "next/link";
 import { logoutAction, logoutAllAction } from "@/app/actions";
 import type { AdminPrincipal } from "@/lib/auth/principal";
 import { AdminNavigation } from "./admin-navigation";
+import { ScreenGuide } from "./assistant/screen-guide";
 import { ThemeControl } from "../../../components/system/theme-control";
 
 const operatorRoleLabel: Record<AdminPrincipal["role"], string> = {
@@ -22,13 +23,16 @@ export function AdminShell({
 }) {
   return (
     <div className="control-shell">
+      <a className="admin-skip-link" href="#admin-main-content">
+        본문 바로가기
+      </a>
       <aside className="control-rail">
         <Link className="brand-lockup brand-lockup--rail" href="/">
           <span className="brand-symbol">P</span>
           <strong>퍼뜩</strong>
           <small>운영</small>
         </Link>
-        <AdminNavigation />
+        <AdminNavigation role={principal.role} />
         <div className="operator-card">
           <span>보안 세션</span>
           <strong>{operatorRoleLabel[principal.role]}</strong>
@@ -48,11 +52,14 @@ export function AdminShell({
             운영자 본인 확인 완료
           </div>
           <div className="control-topbar__tools">
+            <ScreenGuide role={principal.role} />
             <ThemeControl />
-            <p>admin.mining.putduk.com</p>
+            <p>퍼뜩 운영</p>
           </div>
         </header>
-        <main className="control-main">{children}</main>
+        <main className="control-main" id="admin-main-content">
+          {children}
+        </main>
       </div>
     </div>
   );

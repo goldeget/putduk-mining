@@ -35,7 +35,8 @@ a {
 }
 button:focus-visible,
 a:focus-visible,
-input:focus-visible {
+input:focus-visible,
+textarea:focus-visible {
   outline: 3px solid var(--gold-soft);
   outline-offset: 3px;
 }
@@ -226,6 +227,27 @@ input:focus-visible {
   /* viewport-fit: cover. 로그인 후 셸은 노치와 홈 표시만큼 더 들여 쓰고, 16px 가장자리는 레일과 본문 패딩이 유지한다. */
   padding: env(safe-area-inset-top) env(safe-area-inset-right)
     env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+.admin-menu-links {
+  display: grid;
+  gap: 6px;
+}
+.admin-skip-link {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 100;
+  transform: translateY(-200%);
+  border-radius: 12px;
+  background: var(--gold-soft);
+  color: var(--base);
+  padding: 14px 20px;
+}
+.admin-skip-link:focus {
+  transform: translateY(0);
+}
+.admin-menu-toggle {
+  display: none;
 }
 .control-rail {
   position: sticky;
@@ -1016,6 +1038,25 @@ input:focus-visible {
   }
 }
 @media (max-width: 760px) {
+  .admin-menu-toggle {
+    grid-column: 1 / -1;
+    display: block;
+    width: 100%;
+    min-height: 48px;
+    border: 1px solid var(--line-strong);
+    border-radius: 12px;
+    background: var(--surface);
+    color: var(--ink);
+    font-weight: 750;
+  }
+  .admin-menu-links[data-expanded="false"] {
+    display: none;
+  }
+  .admin-menu-links[data-expanded="true"] {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+    grid-column: 1 / -1;
+  }
   .control-shell {
     display: block;
     /* 본문을 위로 올려도 세션 종료가 화면 아래에 남는다. */

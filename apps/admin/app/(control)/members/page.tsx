@@ -13,6 +13,8 @@ import {
 } from "@/app/(control)/_lib/format";
 import { requireAdminPage } from "@/lib/auth/principal";
 import { createAdminServiceClient } from "@/lib/supabase/service";
+import { MemberDirectory } from "@/components/members/member-directory";
+import { MemberContextBrief } from "@/components/members/member-context-brief";
 
 import {
   anyMemberCountFailed,
@@ -42,60 +44,65 @@ const memberIdSchema = z.uuid();
 export default async function MembersPage({
   searchParams,
 }: {
-  searchParams: Promise<{ id?: string }>;
+  searchParams: Promise<{ id?: string; q?: string }>;
 }) {
   const principal = await requireAdminPage("/members");
-  const { id } = await searchParams;
+  const { id, q } = await searchParams;
   const parsedId = memberIdSchema.safeParse(id);
-  const db = createAdminServiceClient();
   if (!parsedId.success) {
-    return (
-      <div
-        className={styles.membersPage}
-        data-ui-ready="/members"
-        data-ui-state={id ? "error" : "empty"}
-      >
+    if (!["SUPER_ADMIN", "ADMIN", "SUPPORT_ADMIN"].includes(principal.role)) {
+      return (
         <section className="page-intro">
-          <p className="eyebrow">회원 한눈에</p>
-          <h1>회원 한 사람의 맥락</h1>
-          <p>
-            정확한 회원 식별자로만 조회합니다. 비밀번호·문서 원문·출금 목적지
-            원문은 보이지 않습니다.
-          </p>
+          <h1>회원 목록 조회 권한이 필요해요</h1>
+          <p>회원 지원 업무를 맡은 운영자에게 조회를 요청해 주세요.</p>
         </section>
-        <form className="member-search" method="get" action="/members">
-          <label htmlFor="member-id">회원 식별자</label>
-          <div>
-            <input
-              id="member-id"
-              name="id"
-              defaultValue={id ?? ""}
-              placeholder="00000000-0000-0000-0000-000000000000"
-              autoComplete="off"
-              spellCheck={false}
-              required
-            />
-            <button className="gold-button" type="submit">
-              안전 조회
-            </button>
-          </div>
-          {id ? (
-            <p className="form-error" role="alert">
-              올바른 회원 식별자를 입력해 주세요.
-            </p>
-          ) : null}
-        </form>
-        <section className="member-empty">
-          <span aria-hidden="true">360°</span>
-          <h2>조회할 회원을 선택하세요.</h2>
-          <p>
-            이름이나 전화번호로 검색하지 않습니다. 정확한 식별자만 받습니다.
-          </p>
-        </section>
-      </div>
+      );
+    }
+    const db = createAdminServiceClient();
+    const query = z
+      .string()
+      .trim()
+      .max(40)
+      .safeParse(q ?? "");
+    const memberSchema = z.object({
+      user_id: z.uuid(),
+      display_name: z.string().nullable(),
+      created_at: z.iso.datetime({ offset: true }),
+    });
+    let members: { userId: string; name: string; joinedAt: string }[] = [];
+    let unavailable = !query.success;
+    if (query.success) {
+      try {
+        let request = db
+          .from("user_profiles")
+          .select("user_id,display_name,created_at")
+          .order("created_at", { ascending: false })
+          .limit(20);
+        if (query.data) request = request.eq("display_name", query.data);
+        const result = await request.abortSignal(AbortSignal.timeout(8000));
+        const parsed = z.array(memberSchema).safeParse(result.data);
+        unavailable = Boolean(result.error) || !parsed.success;
+        if (!unavailable && parsed.success)
+          members = parsed.data.map((row) => ({
+            userId: row.user_id,
+            name: row.display_name?.trim() || "이름 미등록 회원",
+            joinedAt: row.created_at,
+          }));
+      } catch {
+        unavailable = true;
+      }
+    }
+    return (
+      <MemberDirectory
+        members={members}
+        unavailable={unavailable}
+        query={query.success ? query.data : ""}
+        invalidReference={Boolean(id)}
+      />
     );
   }
 
+  const db = createAdminServiceClient();
   const userId = parsedId.data;
   const [
     authUser,
@@ -343,7 +350,9 @@ export default async function MembersPage({
         <div>
           <p className="eyebrow">회원 한눈에 · 확인된 식별자</p>
           <h1>{profileDisplay.name}</h1>
-          <code>{userId}</code>
+          <Link className="text-link" href="/members">
+            다른 회원 선택
+          </Link>
         </div>
         <div className="member-state">
           <span>현재 여정</span>
@@ -367,6 +376,24 @@ export default async function MembersPage({
           <Link href={`/members?id=${userId}` as Route}>다시 불러오기</Link>
         </p>
       ) : null}
+
+      <MemberContextBrief
+        userId={userId}
+        name={profileDisplay.name}
+        stage={lifecycleDisplay.stage}
+        partial={
+          countFailed ||
+          evidenceFailed ||
+          kycAccessFailed ||
+          !profileDisplay.available ||
+          !lifecycleDisplay.available
+        }
+        riskCount={
+          riskFlags.error || !Array.isArray(riskFlags.data)
+            ? null
+            : riskFlags.data.length
+        }
+      />
 
       <nav className="member-anchors" aria-label="증거 구역">
         <a href="#evidence-account">계정</a>

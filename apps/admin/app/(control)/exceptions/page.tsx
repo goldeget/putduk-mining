@@ -3,14 +3,17 @@ import type { Route } from "next";
 
 import {
   formatKst,
-  formatMismatchEvidence,
   mismatchStatusLabel,
   mismatchTypeLabel,
-  shortId,
 } from "@/app/(control)/_lib/format";
 import { EmptyQueue, QueueCard, QueueShell } from "@/components/queue-shell";
 import { requireAdminPage } from "@/lib/auth/principal";
 import { createAdminServiceClient } from "@/lib/supabase/service";
+import {
+  describeExceptionEvidence,
+  exceptionSubjectLabel,
+} from "@/lib/operations/exception-evidence";
+import { operationType } from "@/lib/operations/registry";
 
 import { ExceptionAckForm } from "./ack-form";
 
@@ -90,11 +93,9 @@ export default async function ExceptionsPage() {
             <header className="queue-card__head">
               <div>
                 <p className="eyebrow">
-                  {mismatchTypeLabel(row.mismatch_type)} · {shortId(row.id)}
+                  {mismatchTypeLabel(row.mismatch_type)}
                 </p>
-                <h2>
-                  {row.subject_type} · {shortId(row.subject_id)}
-                </h2>
+                <h2>{exceptionSubjectLabel(row.subject_type)}</h2>
               </div>
               <span>{mismatchStatusLabel(row.status)}</span>
             </header>
@@ -104,16 +105,16 @@ export default async function ExceptionsPage() {
                 <dd>{formatKst(row.created_at)}</dd>
               </div>
               <div>
-                <dt>유형 코드</dt>
-                <dd>{row.mismatch_type}</dd>
+                <dt>확인할 내용</dt>
+                <dd>{mismatchTypeLabel(row.mismatch_type)}</dd>
               </div>
               <div>
                 <dt>기대 값</dt>
-                <dd>{formatMismatchEvidence(row.expected_value)}</dd>
+                <dd>{describeExceptionEvidence(row.expected_value)}</dd>
               </div>
               <div>
                 <dt>실제 값</dt>
-                <dd>{formatMismatchEvidence(row.actual_value)}</dd>
+                <dd>{describeExceptionEvidence(row.actual_value)}</dd>
               </div>
             </dl>
             {row.resolution_reason ? (
@@ -151,7 +152,7 @@ export default async function ExceptionsPage() {
           <QueueCard key={row.id}>
             <header className="queue-card__head">
               <div>
-                <p className="eyebrow">{row.job_type}</p>
+                <p className="eyebrow">{operationType(row.job_type)}</p>
                 <h2>
                   {row.dead_lettered_at ? "격리됨" : "실패"} · 사람 확인 필요
                 </h2>
@@ -159,8 +160,7 @@ export default async function ExceptionsPage() {
               <time dateTime={row.updated_at}>{formatKst(row.updated_at)}</time>
             </header>
             <p className="panel-note">
-              시도 {row.attempts}회 · {shortId(row.id)}. 이 화면에서 잔액을 직접
-              고치지 않습니다.
+              시도 {row.attempts}회. 이 화면에서 잔액을 직접 고치지 않습니다.
             </p>
           </QueueCard>
         ))}

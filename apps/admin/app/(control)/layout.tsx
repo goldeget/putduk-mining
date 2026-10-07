@@ -15,7 +15,7 @@ export default async function ControlLayout({
   return (
     <AdminShell principal={principal}>
       <OperatorDraftProvider
-        key={`${principal.userId}:${principal.adminSessionId}`}
+        key={`${principal.userId}:${principal.adminSessionId}:${principal.role}`}
         userId={principal.userId}
         publicConfig={{
           url: env.NEXT_PUBLIC_SUPABASE_URL,

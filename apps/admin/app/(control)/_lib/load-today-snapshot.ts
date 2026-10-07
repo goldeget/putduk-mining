@@ -30,6 +30,7 @@ export async function loadTodaySnapshot(
 ): Promise<TodaySnapshot> {
   const db = createAdminServiceClient();
   const [
+    krwDeposits,
     kyc,
     usdtDeposits,
     krwWithdrawals,
@@ -41,6 +42,11 @@ export async function loadTodaySnapshot(
     trials,
     audits,
   ] = await Promise.all([
+    db
+      .from("deposit_requests")
+      .select("id", { count: "exact", head: true })
+      .eq("currency", "KRW")
+      .in("status", ["REQUESTED", "AWAITING_TRANSFER", "REVIEWING"]),
     db
       .from("kyc_cases")
       .select("id", { count: "exact", head: true })
@@ -100,6 +106,7 @@ export async function loadTodaySnapshot(
       }));
 
   return buildTodaySnapshot({
+    krwDeposits: asCountSource(krwDeposits),
     usdtDeposits: asCountSource(usdtDeposits),
     krwWithdrawals: asCountSource(krwWithdrawals),
     usdtWithdrawals: asCountSource(usdtWithdrawals),

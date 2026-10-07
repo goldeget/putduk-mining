@@ -11,6 +11,8 @@ import { EmptyQueue, QueueCard, QueueShell } from "@/components/queue-shell";
 import { loadKrwDepositQueue } from "@/lib/deposits/krw-queue";
 import { HIGH_IMPACT_ROLES } from "@/lib/auth/policy";
 import { requireAdminPage } from "@/lib/auth/principal";
+import { similarPendingRequests } from "@/lib/operations/similar-requests";
+import { SimilarRequestNotice } from "@/components/operations/similar-request-notice";
 
 export default async function KrwDepositQueuePage() {
   const principal = await requireAdminPage("/deposits/krw");
@@ -18,6 +20,16 @@ export default async function KrwDepositQueuePage() {
     redirect("/unauthorized?code=ROLE_FORBIDDEN" as Route);
   }
   const loaded = await loadKrwDepositQueue();
+  const similar = similarPendingRequests(
+    loaded.ok
+      ? loaded.rows.map((row) => ({
+          id: row.id,
+          userId: row.user_id,
+          method: "KRW",
+          amount: row.amount_atomic,
+        }))
+      : [],
+  );
 
   return (
     <div
@@ -72,11 +84,12 @@ export default async function KrwDepositQueuePage() {
                         className="text-link"
                         href={`/members?id=${row.user_id}` as Route}
                       >
-                        {shortId(row.user_id)}
+                        회원 기록 확인
                       </Link>
                     </dd>
                   </div>
                 </dl>
+                <SimilarRequestNotice count={similar.get(row.id)} />
                 <Link
                   className="ghost-button"
                   href={`/deposits/krw/${row.id}` as Route}

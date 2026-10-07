@@ -11,11 +11,22 @@ import {
 } from "@/app/(control)/_lib/today-snapshot";
 
 import { TodayRefreshButton } from "./today-refresh-button";
+import { OperationalBrief } from "@/components/assistant/operational-brief";
+import { OperatorChecklist } from "@/components/operations/operator-checklist";
+import { buildDailyBrief } from "@/lib/operations/daily-brief";
 import styles from "./today.module.css";
 
 export function TodayView({ snapshot }: { snapshot: TodaySnapshot }) {
   const totalLabel = formatCountDisplay(snapshot.attentionTotal);
   const observed = formatObservedAtKst(snapshot.observedAtIso);
+  const brief = buildDailyBrief(snapshot);
+  const attention = [
+    ...brief.unknown,
+    ...brief.pending,
+    ...snapshot.attention.filter(
+      (item) => item.status.kind === "ready" && item.status.count === 0,
+    ),
+  ];
 
   return (
     <div className={styles.root} data-testid="admin-today">
@@ -80,6 +91,22 @@ export function TodayView({ snapshot }: { snapshot: TodaySnapshot }) {
         </section>
       ) : null}
 
+      {brief.next ? (
+        <aside className={styles.nextAction} aria-label="먼저 확인할 일">
+          <div>
+            <strong>
+              {brief.unknown.length
+                ? "먼저 조회 상태를 확인해 주세요"
+                : "오늘 추천 순서"}
+            </strong>
+            <p>{brief.recommendation}</p>
+          </div>
+          <Link className="ghost-button" href={brief.next.href as Route}>
+            확인 화면 열기
+          </Link>
+        </aside>
+      ) : null}
+
       <section className={styles.sectionHead}>
         <div>
           <p className={styles.eyebrow}>우선 확인</p>
@@ -93,7 +120,7 @@ export function TodayView({ snapshot }: { snapshot: TodaySnapshot }) {
         aria-label="운영 확인 항목"
         data-testid="today-attention-grid"
       >
-        {snapshot.attention.map((item, index) => {
+        {attention.map((item, index) => {
           const unavailable = item.status.kind === "unavailable";
           const empty = item.status.kind === "ready" && item.status.count === 0;
           return (
@@ -199,6 +226,12 @@ export function TodayView({ snapshot }: { snapshot: TodaySnapshot }) {
           )}
         </article>
       </section>
+      <div className={styles.brief}>
+        <OperationalBrief snapshot={snapshot} />
+      </div>
+      <div className={styles.brief}>
+        <OperatorChecklist />
+      </div>
     </div>
   );
 }

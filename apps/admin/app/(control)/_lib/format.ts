@@ -103,7 +103,7 @@ export function mismatchStatusLabel(status: string): string {
   }
 }
 
-/** 대사 차이 유형 → 짧은 한국어 안내 (원본 코드는 별도 표시) */
+/** 대사 차이 유형 → 짧은 한국어 안내 */
 export function mismatchTypeLabel(mismatchType: string): string {
   switch (mismatchType) {
     case "UNBALANCED_JOURNAL":
@@ -112,6 +112,12 @@ export function mismatchTypeLabel(mismatchType: string): string {
       return "환영 보상 투영 불일치";
     case "WORKER_RUNTIME_PROBE_MISMATCH":
       return "작업 검증용 차이";
+    case "APPROVED_DEPOSIT_JOURNAL_MISMATCH":
+      return "입금 승인 기록과 반영 차이";
+    case "KRW_WALLET_LIABILITY_HOLD_PARITY":
+      return "원화 지갑과 출금 보류 기록 차이";
+    case "EXTERNAL_SEND_LINK_MISMATCH":
+      return "출금 송금 기록 연결 차이";
     default:
       return "대사 차이";
   }

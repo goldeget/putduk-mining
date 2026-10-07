@@ -49,6 +49,7 @@ describe("today snapshot counts", () => {
 
   it("builds empty-queue and unavailable snapshot states", () => {
     const empty = buildTodaySnapshot({
+      krwDeposits: ok(0),
       usdtDeposits: ok(0),
       krwWithdrawals: ok(0),
       usdtWithdrawals: ok(0),
@@ -69,6 +70,7 @@ describe("today snapshot counts", () => {
     expect(sumAttention(empty.attention)).toEqual({ kind: "ready", count: 0 });
 
     const partial = buildTodaySnapshot({
+      krwDeposits: ok(0),
       usdtDeposits: ok(1),
       krwWithdrawals: fail(),
       usdtWithdrawals: ok(0),
@@ -105,10 +107,15 @@ describe("today snapshot counts", () => {
     expect(todayLoaderSource).toMatch(
       /\.from\(\s*"usdt_manual_deposits"\s*\)[\s\S]*?\.eq\(\s*"status"\s*,\s*"SUBMITTED"\s*\)/,
     );
-    expect(todayLoaderSource).not.toContain('.from("deposit_requests")');
-    expect(todayLoaderSource).not.toContain(".from('deposit_requests')");
+    expect(todayLoaderSource).toMatch(
+      /\.from\(\s*"deposit_requests"\s*\)[\s\S]*?\.eq\(\s*"currency",\s*"KRW"\s*\)/,
+    );
     expect(todayLoaderSource).not.toContain('.from("crypto_deposits")');
-    expect(todayLoaderSource).not.toContain("AWAITING_TRANSFER");
+    const usdtQuery = todayLoaderSource.match(
+      /\.from\(\s*"usdt_manual_deposits"\s*\)[\s\S]*?\.eq\(\s*"status",\s*"SUBMITTED"\s*\)/,
+    )?.[0];
+    expect(usdtQuery).toBeDefined();
+    expect(usdtQuery).not.toContain("AWAITING_TRANSFER");
     expect(todayLoaderSource).toContain(
       "usdtDeposits: asCountSource(usdtDeposits)",
     );

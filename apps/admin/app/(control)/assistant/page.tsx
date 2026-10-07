@@ -6,6 +6,8 @@ import {
 import { HIGH_IMPACT_ROLES } from "@/lib/auth/policy";
 import { requireAdminPage } from "@/lib/auth/principal";
 import { createAdminServiceClient } from "@/lib/supabase/service";
+import { OperationalBrief } from "@/components/assistant/operational-brief";
+import { loadTodaySnapshot } from "../_lib/load-today-snapshot";
 
 export default async function AssistantPage() {
   const principal = await requireAdminPage("/assistant");
@@ -34,6 +36,7 @@ export default async function AssistantPage() {
   } catch {
     unavailable = true;
   }
+  const snapshot = await loadTodaySnapshot();
   return (
     <div
       data-ui-ready="/assistant"
@@ -42,6 +45,7 @@ export default async function AssistantPage() {
       }
     >
       <OperationsAssistant options={options} unavailable={unavailable} />
+      <OperationalBrief snapshot={snapshot} />
     </div>
   );
 }
