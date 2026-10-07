@@ -1,4 +1,5 @@
 scene-production/CLOUD-START-SKILL.md
+scene-production/INTEGRATION-HANDOFF.md
 scene-production/MISSING-SCENE-REPORT.md
 scene-production/PRODUCT-CATALOG-INVENTORY.md
 scene-production/PRODUCTION-STATUS.md
