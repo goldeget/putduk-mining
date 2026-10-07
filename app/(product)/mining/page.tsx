@@ -495,7 +495,7 @@ export default async function MiningPage() {
               <dd>{facts.period}</dd>
             </div>
             <div>
-              <dt>현재 채굴 확정 누계</dt>
+              <dt>확정 채굴 합계</dt>
               <dd>{facts.committed}</dd>
             </div>
             <div>

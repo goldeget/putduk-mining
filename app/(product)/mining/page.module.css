@@ -689,7 +689,7 @@
 .detailFacts > div {
   display: grid;
   min-width: 0;
-  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.4fr);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 7rem), 1fr));
   gap: 0.5rem;
   font-size: 0.72rem;
   line-height: 1.5;

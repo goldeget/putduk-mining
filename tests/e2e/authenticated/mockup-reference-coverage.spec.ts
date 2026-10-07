@@ -62,6 +62,24 @@ type Reference = {
   classification: { viewport: string; theme: string; screen_type: string };
 };
 
+async function paintedTextLineCounts(root: Locator, selector: string) {
+  return root.locator(selector).evaluateAll((elements) =>
+    elements.map((element) => {
+      const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+      const tops = new Set<number>();
+      for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+        if (!node.textContent?.trim()) continue;
+        const range = document.createRange();
+        range.selectNodeContents(node);
+        for (const rect of range.getClientRects()) {
+          if (rect.width > 0 && rect.height > 0) tops.add(Math.round(rect.top));
+        }
+      }
+      return tops.size;
+    }),
+  );
+}
+
 async function sourceReferences() {
   const index = JSON.parse(
     await readFile(
@@ -529,6 +547,17 @@ async function captureRoutes(
             expect(guideLines[0]).toBeLessThanOrEqual(2);
             expect(guideLines[1]).toBeGreaterThan(0);
             expect(guideLines[1]).toBeLessThanOrEqual(3);
+            const detailFacts = ready.locator('dl[aria-label="채굴 기간"]');
+            await expectPaintedCopyFits(detailFacts, "dt, dd", "div");
+            const detailLines = await paintedTextLineCounts(
+              detailFacts,
+              "dt, dd",
+            );
+            expect(detailLines).toHaveLength(8);
+            for (const lines of detailLines) {
+              expect(lines).toBeGreaterThan(0);
+              expect(lines).toBeLessThanOrEqual(2);
+            }
             expect(narrowFactLines).toHaveLength(3);
             for (const lines of narrowFactLines) {
               expect(lines).toBeGreaterThan(0);
