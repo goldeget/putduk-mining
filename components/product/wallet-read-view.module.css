@@ -154,12 +154,18 @@
 
 .heroKicker {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
   color: var(--text-secondary);
   font-size: 0.875rem;
   font-weight: 700;
+}
+
+.heroKicker > span,
+.heroKicker > small {
+  white-space: nowrap;
 }
 
 .heroKicker small,
@@ -722,6 +728,16 @@
 
 /* 글자 확대 때는 장식을 비워 잔액 숫자와 단위를 읽을 너비를 확보한다. */
 @container wallet-hero (max-width: 12rem) {
+  .heroKicker {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: start;
+  }
+
+  .heroKicker small {
+    padding-inline: 0.35rem;
+  }
+
   .heroOverview {
     grid-template-columns: minmax(0, 1fr);
   }

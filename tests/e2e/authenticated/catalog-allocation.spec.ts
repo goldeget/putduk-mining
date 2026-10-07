@@ -107,6 +107,48 @@ async function captureMatrix(page: Page, info: TestInfo, label: string) {
           );
         }
         if (label === "funded-wallet-real-principal") {
+          // Audit the whole rendered name, including the separate JSX suffix.
+          // Per-text-node Korean checks previously missed a lone wrapped 님.
+          const labels = await page
+            .locator("[data-wallet-balance-labels] > *")
+            .all();
+          expect(labels).toHaveLength(2);
+          if (width >= 980) {
+            const name = page.locator("[data-wallet-account-name]");
+            await expect(name).toHaveText("퍼뜩테스트님");
+            labels.push(name);
+          }
+          for (const label of labels) {
+            const geometry = await label.evaluate((element) => {
+              const range = document.createRange();
+              range.selectNodeContents(element);
+              const fragments = [...range.getClientRects()].filter(
+                (rect) => rect.width > 0,
+              );
+              const bounds = element.getBoundingClientRect();
+              return {
+                text: element.textContent,
+                oneLine:
+                  fragments.length > 0 &&
+                  fragments.every(
+                    (rect) => Math.abs(rect.top - fragments[0]!.top) <= 1,
+                  ),
+                fits: fragments.every(
+                  (rect) =>
+                    rect.left >= bounds.left - 1 &&
+                    rect.right <= bounds.right + 1,
+                ),
+              };
+            });
+            const context = JSON.stringify({
+              width,
+              theme,
+              textScale,
+              geometry,
+            });
+            expect(geometry.oneLine, context).toBe(true);
+            expect(geometry.fits, context).toBe(true);
+          }
           const amounts = page.locator('[data-wallet-metrics="separate"] dd');
           await expect(amounts).toHaveCount(3);
           for (const amount of await amounts.all()) {

@@ -106,7 +106,9 @@ export function WalletSidebar({ displayName }: { displayName: string }) {
           <PutdukIcon name="user" size={25} />
         </span>
         <span>
-          <strong>{displayName}님</strong>
+          <strong data-wallet-account-name title={displayName}>
+            {displayName}님
+          </strong>
           <small>내 계정</small>
         </span>
       </Link>

@@ -224,6 +224,7 @@
   }
 
   .accountCard {
+    container: wallet-account / inline-size;
     display: grid;
     flex-shrink: 0;
     min-width: 0;
@@ -258,10 +259,12 @@
 
   .accountCard strong {
     min-width: 0;
+    overflow: hidden;
     font-size: 0.9rem;
     font-weight: 650;
     line-height: 1.5;
-    overflow-wrap: anywhere;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .accountCard small {
@@ -272,6 +275,12 @@
 
   .accountCard:hover {
     border-color: var(--brand-primary);
+  }
+
+  @container wallet-account (max-width: 8.75rem) {
+    .accountCard > span:last-child {
+      grid-column: 1 / -1;
+    }
   }
 
   .sideNavigation {

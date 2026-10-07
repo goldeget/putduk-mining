@@ -180,7 +180,7 @@ export function WalletReadView({
                 />
               ) : (
                 <Surface as="article" className={styles.heroCard} tone="raised">
-                  <div className={styles.heroKicker}>
+                  <div className={styles.heroKicker} data-wallet-balance-labels>
                     <span>실제 지갑</span>
                     <small>출금 가능 잔액</small>
                   </div>
