@@ -606,6 +606,10 @@
   background: var(--wallet-panel);
 }
 
+.history {
+  container: wallet-history / inline-size;
+}
+
 .history :global(.ledger-history) > header {
   margin-bottom: 1rem;
 }
@@ -675,7 +679,22 @@
   font-weight: 740;
   line-break: strict;
   word-break: keep-all;
-  overflow-wrap: break-word;
+  white-space: nowrap;
+  overflow-wrap: normal;
+}
+
+/* 좁은 읽기 폭에서는 날짜와 금액에 각각 전체 행을 제공한다. */
+@container wallet-history (max-width: 20rem) {
+  .history .ledgerRow {
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 0.45rem 0.8rem;
+  }
+
+  .history .ledgerRow > strong {
+    grid-column: 1 / -1;
+    justify-self: end;
+    max-width: 100%;
+  }
 }
 
 .ledgerRow[data-wallet-entry-direction="CREDIT"] > strong {

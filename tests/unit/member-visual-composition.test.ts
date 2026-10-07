@@ -49,7 +49,7 @@ describe("회원 화면 구도", () => {
   it("홈은 회원 표시값과 공개 상품만 두고 목업 금액을 넣지 않는다", () => {
     expect(homePage).toContain("readMemberScreenFacts");
     expect(homePage).toContain("getPublishedCatalog");
-    expect(homePage).toContain("사용 가능 KRW");
+    expect(homePage).toContain("사용 가능 원화");
     expect(homePage).toContain("오늘 채굴");
     expect(homePage).toContain("아직 없어요");
     expect(homePage).toContain("공개된 상품이 아직 없어요");

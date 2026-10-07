@@ -102,7 +102,7 @@ export function resolveHomeWorldState(input: {
       worldLead: fundedUnknown
         ? "실제 채굴 상태를 다시 확인하면 다음 안내를 보여 드려요."
         : fundedStatus === "ACTIVE"
-          ? "서버에서 확인된 배분으로 채굴을 이어가고 있어요."
+          ? "선택한 상품과 비율로 채굴 중이에요."
           : safeMode
             ? "안전 모드로 잠시 멈췄어요. 지금까지 확인된 채굴 기록은 유지돼요."
             : capacityUsed

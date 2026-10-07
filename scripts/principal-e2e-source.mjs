@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 const ROOT = fileURLToPath(new URL("../", import.meta.url));
 const MANIFEST = "tests/e2e/fixtures/principal-integrated-source.json";
 const MANIFEST_SHA =
-  "e0d8481d70dc17657204196558732f21237b53a115adcdad27eddd6436c3f2ff";
+  "7c20596498cea26d9943a8fbaf3b56815cbaf65c934f468a6214815f7bfc4baf";
 const RUNTIME = [
   "components/product/principal-money.tsx",
   "components/product/principal-recovery.module.css",

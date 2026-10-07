@@ -10,6 +10,7 @@ PUTDUK combines fintech clarity, premium digital/game immersion, consumer-app us
 - `PUTDUK-BRAND-ASSET-SYSTEM.md` — production assets, manifest, responsive formats, accessibility and versioning.
 - `PUTDUK-THEME-SYSTEM.md` — semantic Light/Dark/System tokens and testing.
 - `PUTDUK-MOTION-EXPERIENCE.md` — truthful motion, selective 3D, fallback and performance evidence.
+- [PUTDUK-KOREAN-COPY-LAYOUT-CONTRACT.md](PUTDUK-KOREAN-COPY-LAYOUT-CONTRACT.md) — Korean copy, semantic wrapping, financial amount cohesion and browser typography evidence. Extend the existing tokens and typography checks; this contract does not introduce a second type system.
 
 The canonical images are preserved under `docs/design/visual-references/`. They define quality and art direction only. They are not production copy or runtime assets.
 

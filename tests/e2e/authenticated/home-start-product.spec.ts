@@ -207,7 +207,7 @@ test("홈과 START READY 상태를 도메인 스냅샷으로 보여 준다", asy
       .getByRole("group", { name: "PUTDUK START 체험", exact: true })
       .getByRole("link", { name: /첫 채굴 시작/ }),
   ).toBeVisible();
-  await expect(page.getByText("사용 가능 KRW")).toBeVisible();
+  await expect(page.getByText("사용 가능 원화")).toBeVisible();
   await expect(page.getByText("체험 값은 포함되지 않습니다.")).toBeVisible();
   await expect(
     page.getByText("새 알림이 없어요", { exact: false }),

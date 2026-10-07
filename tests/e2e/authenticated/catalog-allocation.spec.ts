@@ -19,6 +19,7 @@ import { execLocalAdminSql } from "./helpers/local-db";
 import { expectSettledRoute } from "./helpers/settled-route";
 import { awaitPaintedImages } from "./helpers/painted-images";
 import { assertViewportFits } from "./helpers/viewport-geometry";
+import { assertTypographyClean } from "../../typography/helpers";
 import {
   dismissGuidedQuestIfPresent,
   loginAsMember,
@@ -57,10 +58,12 @@ async function browserJson(
 
 async function captureMatrix(page: Page, info: TestInfo, label: string) {
   const records = [];
-  const widths =
-    label === "funded-wallet-real-principal"
-      ? [320, 360, 390, 430, 834, 1024, 1440]
-      : [320, 390, 834, 1440];
+  const expandedTypographyMatrix =
+    label === "funded-wallet-real-principal" ||
+    label === "funded-home-server-status";
+  const widths = expandedTypographyMatrix
+    ? [320, 360, 390, 430, 834, 1024, 1440]
+    : [320, 390, 834, 1440];
   for (const width of widths) {
     await page.setViewportSize({ width, height: width === 834 ? 1112 : 900 });
     for (const theme of ["dark", "light"] as const) {
@@ -74,12 +77,9 @@ async function captureMatrix(page: Page, info: TestInfo, label: string) {
         "data-theme-preference",
         theme,
       );
-      const textScales =
-        label === "funded-wallet-real-principal"
-          ? [100, 125, 150, 200]
-          : label === "funded-home-server-status" && width < 600
-            ? [100, 200]
-            : [100];
+      const textScales = expandedTypographyMatrix
+        ? [100, 125, 150, 200]
+        : [100];
       for (const textScale of textScales) {
         await page.evaluate((scale) => {
           document.documentElement.style.fontSize = `${16 * (scale / 100)}px`;
@@ -96,6 +96,16 @@ async function captureMatrix(page: Page, info: TestInfo, label: string) {
           `${label}-${width}-${theme}-text-${textScale}`,
         );
         await page.evaluate(() => document.fonts.ready);
+        if (
+          label === "funded-wallet-real-principal" ||
+          label === "funded-home-server-status"
+        ) {
+          await assertTypographyClean(
+            page,
+            `${label}-${width}-${theme}-text-${textScale}`,
+            info,
+          );
+        }
         if (label === "funded-wallet-real-principal") {
           const amounts = page.locator('[data-wallet-metrics="separate"] dd');
           await expect(amounts).toHaveCount(3);
@@ -164,6 +174,35 @@ async function captureMatrix(page: Page, info: TestInfo, label: string) {
               16 * (textScale / 100),
             );
           }
+          const historyAmount = page.locator(
+            "[data-wallet-entry-direction] > strong",
+          );
+          await expect(historyAmount).toHaveCount(1);
+          await expect(historyAmount).toHaveText("+100,000 KRW");
+          const historyGeometry = await historyAmount.evaluate((element) => {
+            const range = document.createRange();
+            range.selectNodeContents(element);
+            const fragments = [...range.getClientRects()].filter(
+              (rect) => rect.width > 0,
+            );
+            const bounds = element.getBoundingClientRect();
+            return {
+              oneLine:
+                fragments.length > 0 &&
+                fragments.every(
+                  (rect) => Math.abs(rect.top - fragments[0]!.top) <= 1,
+                ),
+              fits: fragments.every(
+                (rect) =>
+                  rect.left >= bounds.left - 1 &&
+                  rect.right <= bounds.right + 1,
+              ),
+            };
+          });
+          expect(
+            historyGeometry,
+            `${width}px ${theme} ${textScale}% exact ledger amount and currency`,
+          ).toEqual({ oneLine: true, fits: true });
         }
         const main = page.getByRole("main");
         await expect(main).toHaveCount(1);
@@ -183,6 +222,47 @@ async function captureMatrix(page: Page, info: TestInfo, label: string) {
           )
           .toBe(true);
         if (label === "funded-home-server-status") {
+          const accountAmounts = page.locator("[data-home-amount]");
+          await expect(accountAmounts).toHaveCount(2);
+          const confirmedPrincipal = page.locator(
+            '[data-fact="principal"] strong',
+          );
+          await expect(confirmedPrincipal).toHaveText("100,000원");
+          for (const amount of [
+            ...(await accountAmounts.all()),
+            confirmedPrincipal,
+          ]) {
+            await expect(amount).toHaveText(/^-?[0-9][0-9,]*(?:\.[0-9]+)?원$/);
+            const geometry = await amount.evaluate((element) => {
+              const range = document.createRange();
+              range.selectNodeContents(element);
+              const fragments = [...range.getClientRects()].filter(
+                (rect) => rect.width > 0,
+              );
+              const bounds = element.getBoundingClientRect();
+              return {
+                text: element.textContent,
+                oneLine:
+                  fragments.length > 0 &&
+                  fragments.every(
+                    (rect) => Math.abs(rect.top - fragments[0]!.top) <= 1,
+                  ),
+                fits: fragments.every(
+                  (rect) =>
+                    rect.left >= bounds.left - 1 &&
+                    rect.right <= bounds.right + 1,
+                ),
+              };
+            });
+            const context = JSON.stringify({
+              width,
+              theme,
+              textScale,
+              geometry,
+            });
+            expect(geometry.oneLine, context).toBe(true);
+            expect(geometry.fits, context).toBe(true);
+          }
           const hero = page
             .getByRole("region", { name: "오늘의 채굴 상태", exact: true })
             .locator("picture[data-scene-theme] img");
@@ -221,7 +301,7 @@ async function captureMatrix(page: Page, info: TestInfo, label: string) {
               (element) => element.scrollWidth <= element.clientWidth + 1,
             ),
           ).toBe(true);
-          if (theme === "dark" && width < 600) {
+          if (theme === "dark") {
             // Full server precision and currency remain together. A scrollWidth
             // check alone previously passed even while fractional digits wrapped.
             const geometry = await capacity.evaluate((element) => {

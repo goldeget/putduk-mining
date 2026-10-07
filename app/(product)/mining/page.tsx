@@ -291,7 +291,7 @@ export default async function MiningPage() {
             <p>
               {presentation.source === "funded" && !presentation.running
                 ? "현재 채굴은 멈췄어요."
-                : "서버에서 확인된 배수예요."}
+                : "채굴 속도에 적용하는 배수예요."}
             </p>
           </div>
           <div className={styles.actions}>

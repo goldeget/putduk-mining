@@ -335,10 +335,7 @@ export function PrincipalCryptoWithdrawalForm({
       ) : null}
       {facts ? (
         <>
-          <dl
-            className={styles.facts}
-            aria-label="서버에서 확인한 현재 원금 정보"
-          >
+          <dl className={styles.facts} aria-label="현재 원금 정보">
             <div>
               <dt>현재 인정 원금</dt>
               <dd>

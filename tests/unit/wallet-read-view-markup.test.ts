@@ -269,7 +269,10 @@ describe("WalletReadView 마크업", () => {
     expect(css).toMatch(/\.amountUnit\s*\{[^}]*white-space:\s*nowrap/s);
     expect(rule(".funding")).toMatch(/container-type:\s*inline-size/);
     expect(css).toMatch(
-      /@container\s+\(max-width:\s*12rem\)\s*\{[^}]*\.metrics\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1fr\)/s,
+      /@container\s+\(max-width:\s*20rem\)\s*\{[^}]*\.metrics\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1fr\)/s,
+    );
+    expect(css.indexOf("@container (max-width: 20rem)")).toBeGreaterThan(
+      css.indexOf("@media (max-width: 520px)"),
     );
 
     expect(rule(".metrics")).toMatch(

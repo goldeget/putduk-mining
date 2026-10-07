@@ -131,6 +131,13 @@ export default async function ProductHomePage() {
   const krw = walletError
     ? undefined
     : accounts?.find((account) => account.currency === "KRW");
+  const walletAmount = walletError
+    ? "확인할 수 없어요"
+    : formatAtomicAmount(
+        String(krw?.available_balance_atomic ?? "0"),
+        "KRW",
+      ).replace(/ KRW$/, "원");
+  const committedAmount = miningFacts.committedTotal.replace(/ KRW$/, "원");
   const world = resolveHomeWorldState({
     trial,
     mining: sessions?.[0],
@@ -277,7 +284,11 @@ export default async function ProductHomePage() {
                 size={14}
               />
             </Link>
-            <Link className={styles.summaryCard} href="/mining">
+            <Link
+              className={styles.summaryCard}
+              href="/mining"
+              data-fact="principal"
+            >
               <span className={styles.summaryIcon} aria-hidden="true">
                 <PutdukHomeIcon name="coins" size={28} />
               </span>
@@ -585,7 +596,7 @@ export default async function ProductHomePage() {
           <StatePanel
             tone="error"
             title="일부 정보를 불러오지 못했어요"
-            description="보이는 값은 서버에서 확인된 내용만 보여 드려요. 잠시 후 다시 확인해 주세요."
+            description="확인된 정보만 표시했어요. 잠시 후 다시 시도해 주세요."
             action={<RouteReloadButton className="button button--secondary" />}
           />
         ) : null}
@@ -597,14 +608,15 @@ export default async function ProductHomePage() {
         >
           <dl className={styles.profileStats}>
             <div>
-              <dt>사용 가능 KRW</dt>
+              <dt>사용 가능 원화</dt>
               <dd>
-                {walletError
-                  ? "확인할 수 없어요"
-                  : formatAtomicAmount(
-                      String(krw?.available_balance_atomic ?? "0"),
-                      "KRW",
-                    )}
+                <span
+                  className={styles.profileAmount}
+                  data-home-amount="wallet"
+                  data-home-long-amount={walletAmount.length > 14 || undefined}
+                >
+                  {walletAmount}
+                </span>
                 <p>체험 값은 포함되지 않습니다.</p>
                 <Link href="/wallet">
                   지갑 보기 <PutdukIcon name="arrow-right" size={14} />
@@ -614,7 +626,15 @@ export default async function ProductHomePage() {
             <div>
               <dt>현재 채굴 확정 누계</dt>
               <dd>
-                {miningFacts.committedTotal}
+                <span
+                  className={styles.profileAmount}
+                  data-home-amount="committed"
+                  data-home-long-amount={
+                    committedAmount.length > 14 || undefined
+                  }
+                >
+                  {committedAmount}
+                </span>
                 <p>현재 채굴에서 확정된 기록이에요.</p>
               </dd>
             </div>
