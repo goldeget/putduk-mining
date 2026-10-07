@@ -588,5 +588,67 @@
       "abuse_risk": "금 실물 보관·안전자산·원금 보장 오인",
       "registration_kind": "INFORMATIONAL_CAMPAIGN_PROPOSAL"
     }
+  },
+  {
+    "slug": "catalog-tier-events-reading",
+    "storage": {
+      "slug": "catalog-tier-events-reading",
+      "title_ko": "지금 고를 수 있는 테마 살펴보기",
+      "summary_ko": "상품 화면에서 지금 선택할 수 있는 테마의 설명을 읽어 보세요. 장면의 주제와 이용 조건은 따로 살펴볼 수 있어요.",
+      "status": "DRAFT",
+      "starts_at": null,
+      "ends_at": null,
+      "published_at": null
+    },
+    "metadata": {
+      "audience": "MEMBERS",
+      "cta": {
+        "label": "상품 안내 확인",
+        "route": "/products"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "publication_gate": "REVIEW_REQUIRED",
+      "registration_ready": false,
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "variables": [],
+      "required_phrases": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+      "card_title_ko": "지금 고를 수 있는 테마 살펴보기",
+      "body_markdown": "상품 화면에서 지금 선택할 수 있는 테마의 설명을 읽어 보세요. 장면의 주제와 이용 조건은 따로 살펴볼 수 있어요.\n\n새 테마는 정식 공개와 내 이용 조건 확인이 끝난 뒤 선택할 수 있습니다. 이름이나 장면만으로 받을 금액을 판단하지 않습니다. 안내 참여를 위해 입금하거나 테마를 바꿀 필요는 없습니다. 추가 보상은 없습니다.",
+      "segment": "ALL_MEMBERS",
+      "start_condition": "원고·법무·실제 대상·일정·렌더 확인 후 사람이 승인",
+      "end_condition": "승인된 종료 또는 cancel receipt 확인",
+      "schedule": {
+        "starts_at": null,
+        "ends_at": null,
+        "timezone": "Asia/Seoul",
+        "status": "SCHEDULE_REQUIRED"
+      },
+      "participation": "안내 읽기만 참여. 입금·상품 변경 불필요",
+      "exclusion": "미승인·미공개·사용 불가 기능을 실제 참여 대상으로 안내하지 않음",
+      "scene_brief": "무표식 산업 장치와 읽기용 여백; 로고 없음",
+      "notification_copy": "지금 고를 수 있는 테마 살펴보기 안내를 읽어 주세요. 추가 보상은 없습니다.",
+      "kpi": {
+        "definition": "실제 승인된 공지 노출/도움말 클릭 및 관련 오해 문의의 확인 가능한 집계",
+        "target": null,
+        "measurement": "집계 계약 없음: UNKNOWN"
+      },
+      "operator_note": "보상 없는 교육 안내. reward rule/0원 reward를 만들지 않음. 본문·CTA 저장 계약 확인 필요.",
+      "rollback": "기존 command cancel/archive와 노출·예약 중지 readback. 기존 기록 삭제 금지.",
+      "abuse_risk": "기업 이름으로 실제 자산 소유·제휴를 기대하는 오해",
+      "registration_kind": "INFORMATIONAL_CAMPAIGN_PROPOSAL",
+      "tier_policy_status": "PROPOSED_NOT_APPROVED",
+      "requires_authoritative_eligibility_event": true,
+      "policy_approval_before_publication": true
+    }
   }
 ]

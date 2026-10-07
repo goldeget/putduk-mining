@@ -1,17 +1,19 @@
 # 경제 모델 비교와 단일 추천
 
-**추천: Policy A / 조정 BALANCED 1.00–1.18 / INHERIT_TIER_CAPACITY.** 상품의 시각 리듬과 운영자 설정 속도만 달리하고 Tier의 global cycle capacity는 유지한다. 이 추천은 승인 전이며 현재 코드 적용 가능 판정이 아니다. 최고 1.20을 강제하지 않고 1.18로 제한해 복합 modifier 여유를 조금 남긴다. 등급은 편집 설계이며 투자 등급이 아니다.
+추천: **Policy A + Tier gate + inherited global capacity + product speed / 1.00–1.10**. 모든 값은 승인 전이며 runtime 적용/운영 수익 근거가 아니다.
 
-| 모델 | 속도                  | 용량                                    | 장점                                                        | 위험                                                         | 판단                                                  |
-| ---- | --------------------- | --------------------------------------- | ----------------------------------------------------------- | ------------------------------------------------------------ | ----------------------------------------------------- |
-| A    | 상품별 1.00–1.18 제안 | Tier global capacity 상속               | 기존 entitlement 경계를 보존하며 장면별 운영 성격 제공      | 최고속 선택 편중, 승인·scope 구현 필요                       | 추천하되 정책/편중 검토 필수                          |
-| B    | A와 같은 속도         | 비교용 C 1.00/B 1.05/A 1.10/S 1.15 용량 | 운영자에게 경제 영향의 크기 설명                            | payable ceiling 증가, capacity 이벤트와 충돌, 기존 자격 변경 | 비교 전용, 출시 비추천                                |
-| C    | 전부 1.00             | Tier global capacity 상속               | 속도 우열을 제거, 시각 취향 중심, 기존 기본값과 가깝게 유지 | 상품별 속도 요청을 만족하지 못함                             | 정책 미승인·편중 해소 실패 시 별도 승인할 보수적 대안 |
+| Model | 속도                                     | Capacity                    | 결론                                                         |
+| ----- | ---------------------------------------- | --------------------------- | ------------------------------------------------------------ |
+| A     | 상품별 1.00–1.10, Tier별 accessible pool | 승인 Tier global cycle 상속 | 단일 추천; gate/effect scope 새 policy 승인 필요             |
+| B     | 상품별 차이                              | 상품마다 별도 capacity      | payable ceiling을 바꾸므로 추천하지 않음; 구현/등록하지 않음 |
+| C     | 모두 1.00, 성격만 다름                   | 승인 Tier global cycle 상속 | 속도 우위 제거 비교용; 최종 추천 아님                        |
 
-1.00–1.12, 1.00–1.20, 1.00–1.25를 같은 24개 상대 순위에 0.01 단위로 재매핑해 비교한다. aggressive 1.25는 스트레스 시나리오이지 추천 상품값이나 승인값이 아니다. 최종 추천의 실제 개별 24개 값은 그대로 1.00–1.18이다.
+| 제안 Band | 최단 base-cap 도달: 정규화 | 최종 1.50 headroom | 중간 modifier cap 적용 상품 수 | 승인 문서 band 변경 |
+| --------- | -------------------------- | ------------------ | ------------------------------ | ------------------- |
+| 1.00–1.10 | 300/11일                   | 15/11              | 0                              | False               |
+| 1.00–1.12 | 375/14일                   | 75/56              | 0                              | True                |
+| 1.00–1.18 | 1500/59일                  | 75/59              | 11                             | True                |
 
-기존 승인 문서 범위는 0.90–1.10이며 9개 제안이 이를 넘는다. 새 policy version과 사용자 승인이 필요하다. 범위 안에 있는 나머지 값도 바로 활성화할 수 없다. `funding-entitlement.ts`는 비기본 product/user/campaign effect의 portion/stack scope가 미정이면 EFFECT_SCOPE_UNRESOLVED를 반환한다. 이 lane은 backend나 policy JSON을 수정하지 않는다.
+1.10은 승인 문서 product 0.90–1.10 안에 있지만 아직 non-default effect scope/자격 contract가 없어 활성화할 수 없다. 1.12와 1.18은 기존 band도 바꾸므로 별도의 POLICY_VERSION_CHANGE_REQUIRED. Grade/기업 유명세/시세는 경제 근거가 아니다. 두 개 50% slot에서 1.10과 1.10을 선택해도 rate=1.10, 한도=global100, 200이 아니다. 세부 비교는 TIER-PROGRESSION-ANALYSIS.md와 JSON을 읽는다.
 
-제품×사용자×이벤트×임시 modifier를 유리수로 곱한 뒤 최종 한 번만 1.50으로 제한하는 새 scope를 제안한다. 기존 campaign.maximumCombinedSpeedMultiplierBps=15000은 모든 modifier의 현재 구현된 곱셈 계약을 입증하지 않는다. 사용자 0.8 같은 감소 modifier가 섞이면 중간 cap은 결과를 바꾼다. Primary는 실제 승인 scope/순서/효력 구간/재정산/금융 변경 step-up을 별도 계약으로 확정해야 한다.
-
-원금, Tier, 슬롯, allocation, retention, cycle 이월, 금액 원장 규칙은 유지한다. 슬롯 수만큼 capacity를 복제하지 않는다. MISSION_BURST 등 성격은 고정 카메라 내 국소 시각 리듬이며 순간 보상·랜덤 당첨·시세 반영을 뜻하지 않는다.
+제품×사용자×이벤트×임시 효과는 정확한 유리수 곱 후 최종 한 번 1.50 제한 제안. 기존 campaign 15000 cap이 전체 scope 구현을 입증하지 않는다. 1.20×1.15×1.10=1.518→1.50이며, 1.18×1.20×1.25×0.80은 중간 cap 없이 1.416으로 유지해야 한다. Primary가 portion/priority/effective interval/source changes와 안전한 정산 연결을 검증해야 한다. 이 lane은 backend·ledger를 수정하지 않는다.

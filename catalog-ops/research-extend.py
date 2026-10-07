@@ -9,6 +9,8 @@ import json
 import pathlib
 import sys
 
+sys.dont_write_bytecode = True
+
 root = pathlib.Path(__file__).resolve().parent
 spec = importlib.util.spec_from_file_location("research_fetch", root / "research-fetch.py")
 module = importlib.util.module_from_spec(spec)

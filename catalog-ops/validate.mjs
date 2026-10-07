@@ -5,6 +5,7 @@ import { gunzipSync } from "node:zlib";
 import { fileURLToPath } from "node:url";
 import { resolve } from "node:path";
 import { decimalBps, simulate } from "./economy-simulate.mjs";
+import { validateFinalization } from "./validate-finalize.mjs";
 
 const root = fileURLToPath(new URL(".", import.meta.url));
 const classes = new Set(["KR_STOCK", "US_STOCK", "ETF", "CRYPTO", "PRECIOUS"]);
@@ -52,23 +53,72 @@ export function validDate(value) {
 export function loadPackage({ ref } = {}) {
   if (ref && ref !== "8f68be2005e16f1ac257626b3418cd3b8a96f1e3")
     throw new Error("INVALID_BASELINE_REF");
-  const read = (name) => JSON.parse(ref
-    ? execFileSync("git", ["show", `${ref}:catalog-ops/${name}`], { cwd: root, encoding: "utf8" })
-    : readFileSync(resolve(root, name), "utf8"));
+  const read = (name) =>
+    JSON.parse(
+      ref
+        ? execFileSync("git", ["show", `${ref}:catalog-ops/${name}`], {
+            cwd: root,
+            encoding: "utf8",
+          })
+        : readFileSync(resolve(root, name), "utf8"),
+    );
   const sourceResponseHashes = {};
+  const sourceResponseTexts = {};
   const responseDir = resolve(root, "evidence/source-responses");
   if (!ref && existsSync(responseDir)) {
     for (const name of readdirSync(responseDir).filter((p) =>
       /^[a-z0-9-]+\.txt(?:\.gz)?$/.test(p),
     )) {
       const bytes = readFileSync(resolve(responseDir, name));
-      sourceResponseHashes[name.replace(/\.txt(?:\.gz)?$/, "")] = createHash("sha256")
-        .update(name.endsWith(".gz") ? gunzipSync(bytes) : bytes)
+      const original = name.endsWith(".gz") ? gunzipSync(bytes) : bytes;
+      sourceResponseTexts[name.replace(/\.txt(?:\.gz)?$/, "")] =
+        original.toString("utf8");
+      sourceResponseHashes[name.replace(/\.txt(?:\.gz)?$/, "")] = createHash(
+        "sha256",
+      )
+        .update(original)
         .digest("hex");
     }
   }
   return {
     sourceResponseHashes,
+    sourceResponseTexts,
+    sourceResponseVisible: ref
+      ? {}
+      : JSON.parse(
+          execFileSync("python", [resolve(root, "source-text.py")], {
+            encoding: "utf8",
+            maxBuffer: 4000000,
+          }),
+        ),
+    ...(ref
+      ? {}
+      : {
+          eligibility: existsSync(
+            resolve(root, "product-tier-eligibility.json"),
+          )
+            ? read("product-tier-eligibility.json")
+            : undefined,
+          policySource: JSON.parse(
+            readFileSync(
+              resolve(
+                root,
+                "../docs/product/economy-v1-approved-2026-10-03.json",
+              ),
+              "utf8",
+            ),
+          ),
+          policySourceHash: createHash("sha256")
+            .update(
+              readFileSync(
+                resolve(
+                  root,
+                  "../docs/product/economy-v1-approved-2026-10-03.json",
+                ),
+              ),
+            )
+            .digest("hex"),
+        }),
     candidates: read("product-candidates.json"),
     launch: read("launch-catalog-proposal.json"),
     economy: read("product-economy-proposal.json"),
@@ -230,8 +280,13 @@ export function validatePackage(data, { now = Date.now() } = {}) {
           sourceMap.has(s),
         ), "MISSING_SOURCE_REFERENCE", path);
       require((data.candidates.research_revision === 2
-        ? ["PUBLIC_MARKET_VERIFIED", "PUBLIC_MARKET_PARTIAL", "PUBLIC_MARKET_UNKNOWN"]
-        : ["UNKNOWN", "PUBLIC_MARKET_VERIFIED"]).includes(p.identity_status), "INVALID_IDENTITY_STATE", path);
+        ? [
+            "PUBLIC_MARKET_VERIFIED",
+            "PUBLIC_MARKET_PARTIAL",
+            "PUBLIC_MARKET_UNKNOWN",
+          ]
+        : ["UNKNOWN", "PUBLIC_MARKET_VERIFIED"]
+      ).includes(p.identity_status), "INVALID_IDENTITY_STATE", path);
       if (p.identity_status === "PUBLIC_MARKET_VERIFIED") {
         require(p.source_ids.some((s) => sourceMap.get(s)?.verified === true) &&
           p.verified_facts.length > 0 &&
@@ -353,7 +408,8 @@ export function validatePackage(data, { now = Date.now() } = {}) {
     require(economy.allowed_proposal_band.minimum_bps === 10000 &&
       economy.allowed_proposal_band.maximum_bps === 12000 &&
       economy.recommended_band.minimum === "1.00" &&
-      economy.recommended_band.maximum === (economy.schema_version === 2 ? "1.10" : "1.18") &&
+      economy.recommended_band.maximum ===
+        (economy.schema_version === 2 ? "1.10" : "1.18") &&
       economy.recommended_band.step ===
         "0.01", "INVALID_ECONOMY_PROPOSAL_BAND", "economy");
     require(economy.status === "PROPOSED_NOT_APPROVED" &&
@@ -396,9 +452,16 @@ export function validatePackage(data, { now = Date.now() } = {}) {
       require(speed !== undefined &&
         speed ===
           BigInt(p.proposed_product_speed_bps), "SPEED_BPS_MISMATCH", path);
-      const band = (economy.schema_version === 2
-        ? { C: [10000n, 10200n], B: [10300n, 10500n], A: [10600n, 10800n], S: [10900n, 11000n] }
-        : gradeBands)[p.grade];
+      const band = (
+        economy.schema_version === 2
+          ? {
+              C: [10000n, 10200n],
+              B: [10300n, 10500n],
+              A: [10600n, 10800n],
+              S: [10900n, 11000n],
+            }
+          : gradeBands
+      )[p.grade];
       require(band &&
         speed >= band[0] &&
         speed <= band[1], "GRADE_SPEED_MISMATCH", path);
@@ -641,13 +704,17 @@ export function validatePackage(data, { now = Date.now() } = {}) {
     require(data.actions.status === "PROPOSED_NOT_EXECUTED" &&
       data.actions.never_delete_historical_records ===
         true, "UNSAFE_CONTENT_REVIEW_ACTION", "actions");
+    if (data.candidates.research_revision === 2 || economy.schema_version === 2)
+      errors.push(...validateFinalization(data));
     if (
-      !errors.some((e) => /SPEED|GRADE|COVERAGE|PACKAGE_SHAPE/.test(e.code))
+      !errors.some((e) => /SPEED|GRADE|COVERAGE|PACKAGE_SHAPE/.test(e.code)) &&
+      !(economy.schema_version === 2 && errors.length > 0)
     ) {
       const expected = simulate(
         clone(economy),
         clone(data.candidates),
         clone(data.currentEvidence.current_policy),
+        data.eligibility,
       );
       require(JSON.stringify(expected) ===
         JSON.stringify(
@@ -655,7 +722,9 @@ export function validatePackage(data, { now = Date.now() } = {}) {
         ), "SIMULATION_READBACK_MISMATCH", "simulation");
       require(data.simulation.market_price_inputs.length === 0 &&
         data.simulation.live_policy_confirmed === false &&
-        data.simulation.concentration.observed_member_distribution ===
+        (economy.schema_version === 2
+          ? data.simulation.concentration.after.observed_member_distribution
+          : data.simulation.concentration.observed_member_distribution) ===
           "UNKNOWN", "FABRICATED_SIMULATION_DATA", "simulation");
     }
   } catch (error) {

@@ -246,5 +246,107 @@
     },
     "status": "DRAFT",
     "review_before_send": true
+  },
+  {
+    "slug": "catalog-tier-support-unlock",
+    "title_ko": "테마 선택 조건 문의",
+    "body_ko": "문의하신 테마의 공개 여부와 계정의 선택 조건은 따로 확인합니다. 지금 선택 가능한 테마와 현재 안내를 확인한 뒤 알려 드리겠습니다. 안내만으로 선택이나 추가 보상이 완료되지는 않습니다. 어느 화면에서 어떤 안내가 보이는지 알려 주세요.",
+    "operator_note_ko": "승인된 읽기 화면에서 현재 정책 receipt·catalog 공개·eligibility 상태를 확인. 미확인 조건이나 입금 금액을 제안하지 않음.",
+    "metadata": {
+      "audience": "MEMBERS",
+      "cta": {
+        "label": "상품 안내 확인",
+        "route": "/products"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "publication_gate": "REVIEW_REQUIRED",
+      "registration_ready": false,
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "variables": [],
+      "required_phrases": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+      "tier_policy_status": "PROPOSED_NOT_APPROVED",
+      "requires_authoritative_eligibility_event": true,
+      "policy_approval_before_publication": true
+    },
+    "status": "DRAFT",
+    "review_before_send": true
+  },
+  {
+    "slug": "catalog-tier-support-pause",
+    "title_ko": "이용 조건 변경으로 채굴이 멈춘 경우",
+    "body_ko": "이용 조건이 바뀌면서 채굴이 잠시 멈출 수 있습니다. 이미 확정된 지갑 기록과 이전 이용 이력은 지워지지 않습니다. 지금 선택 중인 테마와 원금 회수 검토 상태를 확인하겠습니다. 확인 뒤 이용 가능한 선택지와 다음 절차를 안내해 드리겠습니다.",
+    "operator_note_ko": "PAUSE/HOLD와 최종 승인 상태를 읽기만 함. 원장 수정·임의 재개·소급 보상 약속 금지. 금융 승인과 대체 선택은 정식 권한 흐름 필요.",
+    "metadata": {
+      "audience": "MEMBERS",
+      "cta": {
+        "label": "상품 안내 확인",
+        "route": "/products"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "publication_gate": "REVIEW_REQUIRED",
+      "registration_ready": false,
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "variables": [],
+      "required_phrases": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+      "tier_policy_status": "PROPOSED_NOT_APPROVED",
+      "requires_authoritative_eligibility_event": true,
+      "policy_approval_before_publication": true
+    },
+    "status": "DRAFT",
+    "review_before_send": true
+  },
+  {
+    "slug": "catalog-tier-support-resume",
+    "title_ko": "보류 해제 뒤 재개 안내",
+    "body_ko": "보류 해제 뒤에도 이용 조건과 현재 진행 상태를 다시 확인해야 할 수 있습니다. 이전 기록을 지우거나 멈춘 시간의 보상을 자동 추가하는 방식은 아닙니다. 현재 표시된 안내를 확인한 뒤 필요한 선택 절차를 설명해 드리겠습니다.",
+    "operator_note_ko": "정확한 server effective boundary·receipt 확인 전 재개 시각/금액을 말하지 않음. 승인된 대체 선택을 회원이 확인하도록 안내.",
+    "metadata": {
+      "audience": "MEMBERS",
+      "cta": {
+        "label": "상품 안내 확인",
+        "route": "/products"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "publication_gate": "REVIEW_REQUIRED",
+      "registration_ready": false,
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "variables": [],
+      "required_phrases": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+      "tier_policy_status": "PROPOSED_NOT_APPROVED",
+      "requires_authoritative_eligibility_event": true,
+      "policy_approval_before_publication": true
+    },
+    "status": "DRAFT",
+    "review_before_send": true
   }
 ]

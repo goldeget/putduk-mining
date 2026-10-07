@@ -91,6 +91,7 @@ if __name__ == "__main__":
         "bnd": ("bnd", "Vanguard Total Bond Market ETF", "BND", "Nasdaq", "ETF_SHARES", "ETF Shares are listed for trading on Nasdaq", True),
         "iau": ("iau", "iShares Gold Trust", "IAU", "NYSE Arca", "GOLD_TRUST_SHARES", '"name":"Exchange","value":"NYSE Arca"', True),
         "kr-ai-etf-research": ("kodex", "KODEX AI반도체핵심장비 ETF", "471990", None, "ETF_SHARES", "KODEX AI반도체핵심장비 ETF (종목코드 : 471990)", False),
+        "kodex-200": ("kodex-main200", "KODEX 200", "069500", None, "ETF_SHARES", '"identifier": "069500"', True),
         "bitcoin": ("bitcoin", "Bitcoin", "BTC", "NOT_APPLICABLE_PROTOCOL", "NATIVE_ASSET", "BTC", False),
         "ethereum": ("eth-native", "Ether", "ETH", "NOT_APPLICABLE_PROTOCOL", "NATIVE_ASSET", "Ether (ETH) is the native cryptocurrency", False),
         "solana": ("sol-token", "Solana / SOL", "SOL", "NOT_APPLICABLE_PROTOCOL", "NATIVE_ASSET", "fee paid in SOL", False),
@@ -130,6 +131,7 @@ if __name__ == "__main__":
             if slug not in verified:
                 missing = [field + "_REQUIRED" for field, value in (("TICKER", ticker), ("EXCHANGE", exchange), ("SHARE_CLASS", share)) if value is None or "PENDING" in value]
                 if slug == "usdc-rail": missing.append("ISSUER_PRIMARY_SOURCE_REQUIRED")
+                if not missing: missing.append("KS_VENUE_MEANING_PRIMARY_CONFIRMATION_REQUIRED")
             if slug in ("gold", "silver"):
                 p["identifier_scope"] = "XAU_XAG_EXISTING_INTERNAL_CATALOG_CODES_NOT_LBMA_EXCHANGE_TICKERS"
             if slug == "kr-ai-etf-research":

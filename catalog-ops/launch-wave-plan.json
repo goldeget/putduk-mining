@@ -8,15 +8,7 @@
       "name": "P0_LAUNCH_CORE",
       "products": [
         "catalog-v1-samsung-electronics",
-        "catalog-v1-sk-hynix",
-        "catalog-v1-hyundai-motor",
-        "catalog-v1-lg-energy-solution",
-        "catalog-v1-nvidia",
-        "catalog-v1-tesla",
-        "catalog-v1-apple",
-        "catalog-v1-microsoft",
         "catalog-v1-spy",
-        "catalog-v1-qqq",
         "catalog-v1-bitcoin",
         "catalog-v1-ethereum",
         "catalog-v1-gold",
@@ -36,13 +28,22 @@
     {
       "name": "P1_LAUNCH_EXPANSION",
       "products": [
+        "catalog-v1-sk-hynix",
+        "catalog-v1-lg-electronics",
+        "catalog-v1-hyundai-motor",
+        "catalog-v1-lg-energy-solution",
         "catalog-v1-naver",
         "catalog-v1-kb-financial",
+        "catalog-v1-nvidia",
+        "catalog-v1-tesla",
         "catalog-v1-rocket-lab",
         "catalog-v1-sandisk",
+        "catalog-v1-spacex",
+        "catalog-v1-apple",
+        "catalog-v1-microsoft",
         "catalog-v1-amazon",
         "catalog-v1-alphabet-a",
-        "catalog-v1-meta",
+        "catalog-v1-qqq",
         "catalog-v1-soxx",
         "catalog-v1-schd",
         "catalog-v1-solana"
@@ -61,7 +62,6 @@
     {
       "name": "P2_LATER",
       "products": [
-        "catalog-v1-lg-electronics",
         "catalog-v1-kakao",
         "catalog-v1-samsung-biologics",
         "catalog-v1-hanwha-aerospace",
@@ -69,6 +69,7 @@
         "catalog-v1-hd-hyundai-electric",
         "catalog-v1-sk-innovation",
         "catalog-v1-amorepacific",
+        "catalog-v1-meta",
         "catalog-v1-amd",
         "catalog-v1-broadcom",
         "catalog-v1-palantir",
@@ -100,7 +101,6 @@
     {
       "name": "HOLD",
       "products": [
-        "catalog-v1-spacex",
         "catalog-v1-kr-ai-etf-research",
         "catalog-v1-kr-dividend-etf-research",
         "catalog-v1-kodex-gold-futures",

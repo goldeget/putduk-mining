@@ -681,5 +681,6 @@
     "faq_additions": 16,
     "support_additions": 8,
     "notifications_additions": 8
-  }
+  },
+  "benchmark_observation_scope": "HISTORICAL_8F68BE2_BLOCKED_ATTEMPTS_NOT_CURRENT_CONNECTIVITY_STATUS"
 }

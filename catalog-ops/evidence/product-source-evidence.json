@@ -74,11 +74,7 @@
         "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
       }
     ],
-    "missing": [
-      "TICKER_REQUIRED",
-      "EXCHANGE_REQUIRED",
-      "SHARE_CLASS_REQUIRED"
-    ],
+    "missing": ["TICKER_REQUIRED", "EXCHANGE_REQUIRED", "SHARE_CLASS_REQUIRED"],
     "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
     "sources": [
       {
@@ -123,10 +119,7 @@
         "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
       }
     ],
-    "missing": [
-      "EXCHANGE_REQUIRED",
-      "SHARE_CLASS_REQUIRED"
-    ],
+    "missing": ["EXCHANGE_REQUIRED", "SHARE_CLASS_REQUIRED"],
     "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
     "sources": [
       {
@@ -180,11 +173,7 @@
         "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
       }
     ],
-    "missing": [
-      "TICKER_REQUIRED",
-      "EXCHANGE_REQUIRED",
-      "SHARE_CLASS_REQUIRED"
-    ],
+    "missing": ["TICKER_REQUIRED", "EXCHANGE_REQUIRED", "SHARE_CLASS_REQUIRED"],
     "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
     "sources": [
       {
@@ -238,11 +227,7 @@
         "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
       }
     ],
-    "missing": [
-      "TICKER_REQUIRED",
-      "EXCHANGE_REQUIRED",
-      "SHARE_CLASS_REQUIRED"
-    ],
+    "missing": ["TICKER_REQUIRED", "EXCHANGE_REQUIRED", "SHARE_CLASS_REQUIRED"],
     "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
     "sources": [
       {
@@ -287,9 +272,7 @@
         "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
       }
     ],
-    "missing": [
-      "SHARE_CLASS_REQUIRED"
-    ],
+    "missing": ["SHARE_CLASS_REQUIRED"],
     "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
     "sources": [
       {
@@ -343,9 +326,7 @@
         "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
       }
     ],
-    "missing": [
-      "SHARE_CLASS_REQUIRED"
-    ],
+    "missing": ["SHARE_CLASS_REQUIRED"],
     "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
     "sources": [
       {
@@ -399,7 +380,7 @@
         "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
       }
     ],
-    "missing": [],
+    "missing": ["KS_VENUE_MEANING_PRIMARY_CONFIRMATION_REQUIRED"],
     "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
     "sources": [
       {
@@ -453,11 +434,7 @@
         "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
       }
     ],
-    "missing": [
-      "TICKER_REQUIRED",
-      "EXCHANGE_REQUIRED",
-      "SHARE_CLASS_REQUIRED"
-    ],
+    "missing": ["TICKER_REQUIRED", "EXCHANGE_REQUIRED", "SHARE_CLASS_REQUIRED"],
     "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
     "sources": [
       {
@@ -511,11 +488,7 @@
         "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
       }
     ],
-    "missing": [
-      "TICKER_REQUIRED",
-      "EXCHANGE_REQUIRED",
-      "SHARE_CLASS_REQUIRED"
-    ],
+    "missing": ["TICKER_REQUIRED", "EXCHANGE_REQUIRED", "SHARE_CLASS_REQUIRED"],
     "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
     "sources": [
       {
@@ -562,9 +535,7 @@
     "current_existence": "UNKNOWN",
     "confidence": "UNKNOWN",
     "facts": [],
-    "missing": [
-      "SPECIFIC_CURRENT_OFFICIAL_IDENTITY_REQUIRED"
-    ],
+    "missing": ["SPECIFIC_CURRENT_OFFICIAL_IDENTITY_REQUIRED"],
     "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
     "sources": [
       {
@@ -602,9 +573,7 @@
     "current_existence": "UNKNOWN",
     "confidence": "UNKNOWN",
     "facts": [],
-    "missing": [
-      "SPECIFIC_CURRENT_OFFICIAL_IDENTITY_REQUIRED"
-    ],
+    "missing": ["SPECIFIC_CURRENT_OFFICIAL_IDENTITY_REQUIRED"],
     "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
     "sources": [
       {
@@ -649,10 +618,7 @@
         "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
       }
     ],
-    "missing": [
-      "EXCHANGE_REQUIRED",
-      "SHARE_CLASS_REQUIRED"
-    ],
+    "missing": ["EXCHANGE_REQUIRED", "SHARE_CLASS_REQUIRED"],
     "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
     "sources": [
       {
@@ -699,9 +665,7 @@
     "current_existence": "UNKNOWN",
     "confidence": "UNKNOWN",
     "facts": [],
-    "missing": [
-      "SPECIFIC_CURRENT_OFFICIAL_IDENTITY_REQUIRED"
-    ],
+    "missing": ["SPECIFIC_CURRENT_OFFICIAL_IDENTITY_REQUIRED"],
     "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
     "sources": [
       {
@@ -1517,9 +1481,7 @@
         "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
       }
     ],
-    "missing": [
-      "EXCHANGE_REQUIRED"
-    ],
+    "missing": ["EXCHANGE_REQUIRED"],
     "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
     "sources": [
       {
@@ -1771,20 +1733,25 @@
   {
     "proposal_id": "catalog-v1-kodex-200",
     "slug": "kodex-200",
-    "verification_status": "PUBLIC_MARKET_UNKNOWN",
-    "verified_name": null,
-    "verified_name_ko": null,
-    "verified_name_en": null,
-    "verified_code": null,
+    "verification_status": "PUBLIC_MARKET_PARTIAL",
+    "verified_name": "KODEX 200",
+    "verified_name_ko": "KODEX 200",
+    "verified_name_en": "KODEX 200",
+    "verified_code": "069500",
     "verified_exchange": null,
-    "verified_asset_class": null,
-    "share_class": null,
-    "current_existence": "UNKNOWN",
-    "confidence": "UNKNOWN",
-    "facts": [],
-    "missing": [
-      "SPECIFIC_CURRENT_OFFICIAL_IDENTITY_REQUIRED"
+    "verified_asset_class": "ETF",
+    "share_class": "ETF_SHARES",
+    "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+    "confidence": "PARTIAL_DETAILS_REQUIRED",
+    "facts": [
+      {
+        "source_id": "kodex-main200",
+        "quote": " \"alternateName\": \"KODEX 200\"\r\n\t,  \"identifier\": \"069500\"\r\n\t,  \"url\": \"https://www.samsungfund.com/etf/product/view.do?id=2ETF01\"\r\n\t,  \"description\": \"대",
+        "locator": "RAW_ISSUER_DOCUMENT",
+        "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+      }
     ],
+    "missing": ["EXCHANGE_REQUIRED"],
     "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
     "sources": [
       {
@@ -1804,6 +1771,15 @@
         "source_class": "PRIMARY_TARGET",
         "response_sha256": "bad2beed56052c7f993ce45226da084fc09b0c820b4038241ff34d2ee13154a3",
         "observation": "RESPONSE_OBTAINED_REVIEW_REQUIRED"
+      },
+      {
+        "id": "kodex-main200",
+        "url": "https://www.samsungfund.com/etf/product/view.do?id=2ETF01",
+        "final_url": "https://www.samsungfund.com/etf/product/view.do?id=2ETF01",
+        "accessed_at": "2026-10-07T13:29:34.019649+00:00",
+        "source_class": "PRIMARY_TARGET",
+        "response_sha256": "d810d3508955a420d508c478b5b74cc9bebaaba3b4410dd5bf617a1757e5b2b3",
+        "observation": "RESPONSE_REVIEWED"
       }
     ],
     "scope": "PUBLIC_IDENTITY_NOT_PUTDUK_APPROVAL_OR_LIVE_CATALOG"
@@ -1822,9 +1798,7 @@
     "current_existence": "UNKNOWN",
     "confidence": "UNKNOWN",
     "facts": [],
-    "missing": [
-      "SPECIFIC_CURRENT_OFFICIAL_IDENTITY_REQUIRED"
-    ],
+    "missing": ["SPECIFIC_CURRENT_OFFICIAL_IDENTITY_REQUIRED"],
     "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
     "sources": [
       {
@@ -1862,9 +1836,7 @@
     "current_existence": "UNKNOWN",
     "confidence": "UNKNOWN",
     "facts": [],
-    "missing": [
-      "SPECIFIC_CURRENT_OFFICIAL_IDENTITY_REQUIRED"
-    ],
+    "missing": ["SPECIFIC_CURRENT_OFFICIAL_IDENTITY_REQUIRED"],
     "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
     "sources": [
       {
@@ -1909,9 +1881,7 @@
         "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
       }
     ],
-    "missing": [
-      "EXCHANGE_REQUIRED"
-    ],
+    "missing": ["EXCHANGE_REQUIRED"],
     "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
     "sources": [
       {
@@ -1958,9 +1928,7 @@
     "current_existence": "UNKNOWN",
     "confidence": "UNKNOWN",
     "facts": [],
-    "missing": [
-      "SPECIFIC_CURRENT_OFFICIAL_IDENTITY_REQUIRED"
-    ],
+    "missing": ["SPECIFIC_CURRENT_OFFICIAL_IDENTITY_REQUIRED"],
     "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
     "sources": [
       {
@@ -1998,9 +1966,7 @@
     "current_existence": "UNKNOWN",
     "confidence": "UNKNOWN",
     "facts": [],
-    "missing": [
-      "SPECIFIC_CURRENT_OFFICIAL_IDENTITY_REQUIRED"
-    ],
+    "missing": ["SPECIFIC_CURRENT_OFFICIAL_IDENTITY_REQUIRED"],
     "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
     "sources": [
       {
@@ -2038,9 +2004,7 @@
     "current_existence": "UNKNOWN",
     "confidence": "UNKNOWN",
     "facts": [],
-    "missing": [
-      "SPECIFIC_CURRENT_OFFICIAL_IDENTITY_REQUIRED"
-    ],
+    "missing": ["SPECIFIC_CURRENT_OFFICIAL_IDENTITY_REQUIRED"],
     "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
     "sources": [
       {
@@ -2078,9 +2042,7 @@
     "current_existence": "UNKNOWN",
     "confidence": "UNKNOWN",
     "facts": [],
-    "missing": [
-      "SPECIFIC_CURRENT_OFFICIAL_IDENTITY_REQUIRED"
-    ],
+    "missing": ["SPECIFIC_CURRENT_OFFICIAL_IDENTITY_REQUIRED"],
     "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
     "sources": [
       {
@@ -2118,9 +2080,7 @@
     "current_existence": "UNKNOWN",
     "confidence": "UNKNOWN",
     "facts": [],
-    "missing": [
-      "SPECIFIC_CURRENT_OFFICIAL_IDENTITY_REQUIRED"
-    ],
+    "missing": ["SPECIFIC_CURRENT_OFFICIAL_IDENTITY_REQUIRED"],
     "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
     "sources": [
       {
@@ -2282,9 +2242,7 @@
         "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
       }
     ],
-    "missing": [
-      "SHARE_CLASS_REQUIRED"
-    ],
+    "missing": ["SHARE_CLASS_REQUIRED"],
     "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
     "sources": [
       {
@@ -2320,9 +2278,7 @@
         "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
       }
     ],
-    "missing": [
-      "SHARE_CLASS_REQUIRED"
-    ],
+    "missing": ["SHARE_CLASS_REQUIRED"],
     "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
     "sources": [
       {
@@ -2351,9 +2307,7 @@
     "current_existence": "UNKNOWN",
     "confidence": "UNKNOWN",
     "facts": [],
-    "missing": [
-      "SPECIFIC_CURRENT_OFFICIAL_IDENTITY_REQUIRED"
-    ],
+    "missing": ["SPECIFIC_CURRENT_OFFICIAL_IDENTITY_REQUIRED"],
     "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
     "sources": [
       {
@@ -2389,10 +2343,7 @@
         "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
       }
     ],
-    "missing": [
-      "SHARE_CLASS_REQUIRED",
-      "ISSUER_PRIMARY_SOURCE_REQUIRED"
-    ],
+    "missing": ["SHARE_CLASS_REQUIRED", "ISSUER_PRIMARY_SOURCE_REQUIRED"],
     "editorial_ko_label_status": "TRANSLATION_NOT_REGISTERED_LEGAL_NAME",
     "sources": [
       {

@@ -51,7 +51,21 @@ const freezes = {
 for (const [ref, sha] of Object.entries(freezes)) {
   assert.equal(git("rev-parse", ref), sha);
   assert.equal(git("rev-parse", `origin/${ref}`), sha);
+  assert.equal(
+    git("ls-remote", "--exit-code", "origin", `refs/heads/${ref}`).split(
+      /\s+/,
+    )[0],
+    sha,
+  );
 }
+const continuationStart = "8f68be2005e16f1ac257626b3418cd3b8a96f1e3";
+git("merge-base", "--is-ancestor", continuationStart, "HEAD");
+const research = JSON.parse(
+  readFileSync(
+    new URL("evidence/research-sources.json", import.meta.url),
+    "utf8",
+  ),
+);
 git("diff", "--check");
 git("fsck", "--full");
 const missing = git("rev-list", "--objects", "--all", "--missing=print")
@@ -75,7 +89,18 @@ console.log(
       reachable_missing_objects: 0,
       clean_worktree: git("status", "--porcelain").length === 0,
       production: "NOT_TOUCHED",
-      research: "BLOCKED_PROXY_403",
+      research: {
+        assessment_completed: research.assessment_completed,
+        all_identities_verified: research.completed,
+        counts: research.status_counts,
+      },
+      continuation_start_sha: continuationStart,
+      new_commits: git(
+        "log",
+        "--reverse",
+        "--format=%H %s",
+        `${continuationStart}..HEAD`,
+      ).split("\n"),
       registration: "BLOCKED_COMMAND_NOT_FOUND",
     },
     null,

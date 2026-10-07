@@ -1,13 +1,11 @@
-# 실제 실행한 오프라인 경제 시뮬레이션
+# 오프라인 Tier-aware 시뮬레이션
 
-`economy-simulate.mjs`는 BigInt basis points와 약분된 유리수만 사용한다. 1원=1,000,000 micro KRW이며 multiplier의 소수 문자열은 100bps 단위로 읽는다. 모든 계산 증거는 JSON에 있다. 화면용 소수 문자열은 정수 나눗셈으로 잘라 표시하며 정산 권위로 사용하지 않는다.
+`node catalog-ops/economy-simulate.mjs`는 JSON의 25개 proposal/승인 SSOT/Tier profiles를 읽어 3 bands × 14 tiers를 계산한다. BigInt 정수 bps와 numerator/denominator, fractional carry/최종 cap 로직을 사용한다. capacity normalized100, 실제 KRW 예측 없음. 매 Tier의 eligible IDs/선택 수/top/평균/spread/시간차이/headroom/다음 해금/slot/cap 인센티브를 저장한다.
 
-현재 승인 문서의 30일을 시간 축으로 사용하고 base capacity를 100 지수로 정규화했다. LIVE 정책·base rate 활성화·비기본 scope·실제 회원 principal을 조회하지 않았으므로 실제 수익 예측이 아니다. 문서의 최소 원금과 1500bps capacity 계산 예는 문서 산술만 확인하며 payout forecast가 아니다. Retention은 별도 조건이므로 합산하지 않았다.
+| 제안 Band | 최단 base-cap 도달: 정규화 | 최종 1.50 headroom | 중간 modifier cap 적용 상품 수 | 승인 문서 band 변경 |
+| --------- | -------------------------- | ------------------ | ------------------------------ | ------------------- |
+| 1.00–1.10 | 300/11일                   | 15/11              | 0                              | False               |
+| 1.00–1.12 | 375/14일                   | 75/56              | 0                              | True                |
+| 1.00–1.18 | 1500/59일                  | 75/59              | 11                             | True                |
 
-Policy A에서 1.00은 지수 한도까지 30일, 1.18은 25.423728일이다. 주기 최대 지수는 둘 다 100이며 빠른 상품이 더 일찍 도달한다. full allocation 속도차는 18%다. 두 슬롯에 50%씩 1.18/1.00을 배정하면 속도 지수 1.09이고 총 capacity는 여전히 100이다. 최고 상품을 슬롯마다 넣어서 global 한도를 늘리는 모델은 거부한다.
-
-1.20×1.15×1.10은 1.518이므로 최종 1.50이다. 추천 최고 1.18의 남은 factor는 1.271186이고 1.15×1.10=1.265는 아직 cap 미만이다. 임시 1.05까지 곱하면 cap에 닿는다. 숫자는 서버 활성 혜택이 아니라 조합 검토 예다. 스트레스 조합에서는 모든 상품이 cap에 닿아 상품 속도 차이가 사라질 수 있다.
-
-속도만 보는 가상 선택자는 유일 최고인 NVDA 조사안에 100% 배정한다. 이것은 실제 사용자 분포가 아니며 `observed_member_distribution=UNKNOWN`이다. 따라서 편중 위험은 HIGH다. 같은 capacity가 이 유인을 없애지 않는다. 추천을 자동으로 균형 PASS 처리하지 않는다. 사람은 속도 폭 축소 또는 C 대안을 검토하고, 실제 선택·지원 문의·장면 선호를 확인해야 한다. 숨은 페널티·랜덤 보너스·추가 용량을 만들어 편중을 억지로 해결하지 않는다.
-
-정수 경계 검증에는 1/3 micro씩 세 tick의 0/0/1 누적, 큰 정수, global capacity 도달, 1원 main display floor, 최종 cap 순서와 allocation 초과를 포함한다. 검증 스크립트는 부정한 정책이나 미승인값을 생산 준비로 통과시키지 않는다.
+기존 108개 baseline regression은 8f68be2의 exact 입력으로 보존했으며 새 연구/Tier 검증은 현재 입력으로 별도 실행한다. 소스 해시·실제 인용·SEC row·P0 상태·상속 자격·하향 PAUSE·duplicate/invalid tier·원화 문턱 금지·cap headroom을 검증한다. PASS_OFFLINE_SIMULATION은 정책 승인, live publication, wallet verified 금액, 실제 browser 렌더, 제품 완료를 뜻하지 않는다.

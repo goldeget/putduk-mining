@@ -1,30 +1,31 @@
-# 상품별 경제 제안
+# 최종 조건부 25개 경제·Tier Matrix
 
-모든 값은 PROPOSED_NOT_APPROVED다. 승인값은 null이다. Grade는 가상 상품 편성 표기이며 투자 등급·기업 평가가 아니다. 각 값의 비교 근거, whole KRW cue, Pending/Settlement/Verified 경계는 JSON에 있다.
+단일 추천은 Policy A + Funding Tier gate + inherited global capacity + product speed, 1.00–1.10. 전부 PROPOSED_NOT_APPROVED이고 approved speed는 null이다. Tier gate는 승인/구현되지 않았으며 원화 문턱을 상품에 복사하지 않는다. market_linked=false, 상품/slot별 capacity 증가 없음. HINT는 확인된 canonical ticker가 아니다. Grade는 가상 편성이며 증권/기업 등급이 아니다.
 
-| 상품(조사 힌트) | 편성 제안           | Grade | 장면 성격     | 제안 속도 | Capacity              | 기존 정책                                     |
-| --------------- | ------------------- | ----- | ------------- | --------- | --------------------- | --------------------------------------------- |
-| 삼성전자        | P0_LAUNCH_CORE      | A     | 정밀 스캔형   | 1.12      | INHERIT_TIER_CAPACITY | POLICY_VERSION_CHANGE_REQUIRED                |
-| SK하이닉스      | P0_LAUNCH_CORE      | S     | 층별 신호형   | 1.15      | INHERIT_TIER_CAPACITY | POLICY_VERSION_CHANGE_REQUIRED                |
-| 현대자동차      | P0_LAUNCH_CORE      | B     | 차례 진행형   | 1.09      | INHERIT_TIER_CAPACITY | WITHIN_DOCUMENT_BAND_RUNTIME_SCOPE_UNRESOLVED |
-| LG에너지솔루션  | P0_LAUNCH_CORE      | B     | 셀 순서형     | 1.08      | INHERIT_TIER_CAPACITY | WITHIN_DOCUMENT_BAND_RUNTIME_SCOPE_UNRESOLVED |
-| NAVER           | P1_LAUNCH_EXPANSION | B     | 정보 탐색형   | 1.07      | INHERIT_TIER_CAPACITY | WITHIN_DOCUMENT_BAND_RUNTIME_SCOPE_UNRESOLVED |
-| KB금융          | P1_LAUNCH_EXPANSION | C     | 기록 정리형   | 1.02      | INHERIT_TIER_CAPACITY | WITHIN_DOCUMENT_BAND_RUNTIME_SCOPE_UNRESOLVED |
-| 엔비디아        | P0_LAUNCH_CORE      | S     | 연산 흐름형   | 1.18      | INHERIT_TIER_CAPACITY | POLICY_VERSION_CHANGE_REQUIRED                |
-| 테슬라          | P0_LAUNCH_CORE      | A     | 조립 리듬형   | 1.13      | INHERIT_TIER_CAPACITY | POLICY_VERSION_CHANGE_REQUIRED                |
-| 로켓랩          | P1_LAUNCH_EXPANSION | S     | 임무 단계형   | 1.16      | INHERIT_TIER_CAPACITY | POLICY_VERSION_CHANGE_REQUIRED                |
-| 샌디스크        | P1_LAUNCH_EXPANSION | B     | 저장 정리형   | 1.09      | INHERIT_TIER_CAPACITY | WITHIN_DOCUMENT_BAND_RUNTIME_SCOPE_UNRESOLVED |
-| 애플            | P0_LAUNCH_CORE      | B     | 정밀 관찰형   | 1.08      | INHERIT_TIER_CAPACITY | WITHIN_DOCUMENT_BAND_RUNTIME_SCOPE_UNRESOLVED |
-| 마이크로소프트  | P0_LAUNCH_CORE      | A     | 연결 흐름형   | 1.10      | INHERIT_TIER_CAPACITY | WITHIN_DOCUMENT_BAND_RUNTIME_SCOPE_UNRESOLVED |
-| 아마존          | P1_LAUNCH_EXPANSION | B     | 경로 정리형   | 1.07      | INHERIT_TIER_CAPACITY | WITHIN_DOCUMENT_BAND_RUNTIME_SCOPE_UNRESOLVED |
-| 알파벳          | P1_LAUNCH_EXPANSION | A     | 지식 연결형   | 1.11      | INHERIT_TIER_CAPACITY | POLICY_VERSION_CHANGE_REQUIRED                |
-| 메타            | P1_LAUNCH_EXPANSION | B     | 노드 교류형   | 1.06      | INHERIT_TIER_CAPACITY | WITHIN_DOCUMENT_BAND_RUNTIME_SCOPE_UNRESOLVED |
-| SPY             | P0_LAUNCH_CORE      | C     | 묶음 균형형   | 1.03      | INHERIT_TIER_CAPACITY | WITHIN_DOCUMENT_BAND_RUNTIME_SCOPE_UNRESOLVED |
-| QQQ             | P0_LAUNCH_CORE      | B     | 묶음 연결형   | 1.06      | INHERIT_TIER_CAPACITY | WITHIN_DOCUMENT_BAND_RUNTIME_SCOPE_UNRESOLVED |
-| SOXX            | P1_LAUNCH_EXPANSION | A     | 묶음 검사형   | 1.10      | INHERIT_TIER_CAPACITY | WITHIN_DOCUMENT_BAND_RUNTIME_SCOPE_UNRESOLVED |
-| SCHD            | P1_LAUNCH_EXPANSION | C     | 묶음 기록형   | 1.01      | INHERIT_TIER_CAPACITY | WITHIN_DOCUMENT_BAND_RUNTIME_SCOPE_UNRESOLVED |
-| 비트코인        | P0_LAUNCH_CORE      | A     | 블록 순서형   | 1.14      | INHERIT_TIER_CAPACITY | POLICY_VERSION_CHANGE_REQUIRED                |
-| 이더리움        | P0_LAUNCH_CORE      | A     | 구조 연결형   | 1.12      | INHERIT_TIER_CAPACITY | POLICY_VERSION_CHANGE_REQUIRED                |
-| 솔라나          | P1_LAUNCH_EXPANSION | A     | 나란한 흐름형 | 1.13      | INHERIT_TIER_CAPACITY | POLICY_VERSION_CHANGE_REQUIRED                |
-| 금              | P0_LAUNCH_CORE      | C     | 정제 관찰형   | 1.00      | INHERIT_TIER_CAPACITY | WITHIN_DOCUMENT_BAND_RUNTIME_SCOPE_UNRESOLVED |
-| 은              | P0_LAUNCH_CORE      | C     | 표면 검사형   | 1.04      | INHERIT_TIER_CAPACITY | WITHIN_DOCUMENT_BAND_RUNTIME_SCOPE_UNRESOLVED |
+| Product        | Ticker        | Asset    | Wave                | Grade | Personality      | Speed | Min Tier | Capacity              | Market linked | Scene family                    | Legal                       | Research               | Policy                |
+| -------------- | ------------- | -------- | ------------------- | ----- | ---------------- | ----- | -------- | --------------------- | ------------- | ------------------------------- | --------------------------- | ---------------------- | --------------------- |
+| 금             | XAU           | PRECIOUS | P0_LAUNCH_CORE      | C     | 정제 관찰형      | 1.00  | L1       | INHERIT_TIER_CAPACITY | false         | 광물 정제 작업실                | LEGAL_BRAND_REVIEW_REQUIRED | PUBLIC_MARKET_VERIFIED | PROPOSED_NOT_APPROVED |
+| 은             | XAG           | PRECIOUS | P0_LAUNCH_CORE      | C     | 표면 검사형      | 1.01  | L1       | INHERIT_TIER_CAPACITY | false         | 은색 소재 검사실                | LEGAL_BRAND_REVIEW_REQUIRED | PUBLIC_MARKET_VERIFIED | PROPOSED_NOT_APPROVED |
+| SPY            | SPY           | ETF      | P0_LAUNCH_CORE      | C     | 묶음 균형형      | 1.01  | L1       | INHERIT_TIER_CAPACITY | false         | 여러 구역의 균형 작업실         | LEGAL_BRAND_REVIEW_REQUIRED | PUBLIC_MARKET_VERIFIED | PROPOSED_NOT_APPROVED |
+| KB금융         | 105560 (HINT) | KR_STOCK | P1_LAUNCH_EXPANSION | C     | 기록 정리형      | 1.01  | L1       | INHERIT_TIER_CAPACITY | false         | 차분한 기록 보관실              | LEGAL_BRAND_REVIEW_REQUIRED | PUBLIC_MARKET_PARTIAL  | PROPOSED_NOT_APPROVED |
+| LG전자         | 066570        | KR_STOCK | P1_LAUNCH_EXPANSION | B     | 생활 기기 연결형 | 1.03  | L2       | INHERIT_TIER_CAPACITY | false         | 서로 다른 생활 기기 모듈 검사실 | LEGAL_BRAND_REVIEW_REQUIRED | PUBLIC_MARKET_PARTIAL  | PROPOSED_NOT_APPROVED |
+| SCHD           | SCHD          | ETF      | P1_LAUNCH_EXPANSION | B     | 묶음 기록형      | 1.03  | L2       | INHERIT_TIER_CAPACITY | false         | 차분한 다중 기록 작업실         | LEGAL_BRAND_REVIEW_REQUIRED | PUBLIC_MARKET_VERIFIED | PROPOSED_NOT_APPROVED |
+| 애플           | AAPL          | US_STOCK | P1_LAUNCH_EXPANSION | B     | 정밀 관찰형      | 1.04  | L3       | INHERIT_TIER_CAPACITY | false         | 작은 기기 부품 검사실           | LEGAL_BRAND_REVIEW_REQUIRED | PUBLIC_MARKET_PARTIAL  | PROPOSED_NOT_APPROVED |
+| NAVER          | 035420        | KR_STOCK | P1_LAUNCH_EXPANSION | B     | 정보 탐색형      | 1.04  | L3       | INHERIT_TIER_CAPACITY | false         | 계층형 정보 연결 공간           | LEGAL_BRAND_REVIEW_REQUIRED | PUBLIC_MARKET_PARTIAL  | PROPOSED_NOT_APPROVED |
+| 현대자동차     | 005380 (HINT) | KR_STOCK | P1_LAUNCH_EXPANSION | B     | 차례 진행형      | 1.05  | L4       | INHERIT_TIER_CAPACITY | false         | 구동 장치 검수 작업실           | LEGAL_BRAND_REVIEW_REQUIRED | PUBLIC_MARKET_PARTIAL  | PROPOSED_NOT_APPROVED |
+| 마이크로소프트 | MSFT          | US_STOCK | P1_LAUNCH_EXPANSION | B     | 연결 흐름형      | 1.05  | L4       | INHERIT_TIER_CAPACITY | false         | 여러 층의 클라우드 작업실       | LEGAL_BRAND_REVIEW_REQUIRED | PUBLIC_MARKET_PARTIAL  | PROPOSED_NOT_APPROVED |
+| LG에너지솔루션 | 373220 (HINT) | KR_STOCK | P1_LAUNCH_EXPANSION | A     | 셀 순서형        | 1.06  | L5       | INHERIT_TIER_CAPACITY | false         | 밀폐 배터리 셀 검사실           | LEGAL_BRAND_REVIEW_REQUIRED | PUBLIC_MARKET_PARTIAL  | PROPOSED_NOT_APPROVED |
+| 아마존         | AMZN          | US_STOCK | P1_LAUNCH_EXPANSION | A     | 경로 정리형      | 1.06  | L5       | INHERIT_TIER_CAPACITY | false         | 다층 물류 경로 작업실           | LEGAL_BRAND_REVIEW_REQUIRED | PUBLIC_MARKET_PARTIAL  | PROPOSED_NOT_APPROVED |
+| 삼성전자       | 005930        | KR_STOCK | P0_LAUNCH_CORE      | A     | 정밀 스캔형      | 1.07  | L6       | INHERIT_TIER_CAPACITY | false         | 넓은 웨이퍼 공정실              | LEGAL_BRAND_REVIEW_REQUIRED | PUBLIC_MARKET_VERIFIED | PROPOSED_NOT_APPROVED |
+| SOXX           | SOXX          | ETF      | P1_LAUNCH_EXPANSION | A     | 묶음 검사형      | 1.07  | L6       | INHERIT_TIER_CAPACITY | false         | 여러 반도체 공정의 분리 공간    | LEGAL_BRAND_REVIEW_REQUIRED | PUBLIC_MARKET_VERIFIED | PROPOSED_NOT_APPROVED |
+| 이더리움       | ETH           | CRYPTO   | P0_LAUNCH_CORE      | A     | 구조 연결형      | 1.08  | L7       | INHERIT_TIER_CAPACITY | false         | 다층 프로토콜 연결실            | LEGAL_BRAND_REVIEW_REQUIRED | PUBLIC_MARKET_VERIFIED | PROPOSED_NOT_APPROVED |
+| 알파벳         | GOOGL         | US_STOCK | P1_LAUNCH_EXPANSION | A     | 지식 연결형      | 1.08  | L7       | INHERIT_TIER_CAPACITY | false         | 빛의 색이 분리된 검색 연결실    | LEGAL_BRAND_REVIEW_REQUIRED | PUBLIC_MARKET_PARTIAL  | PROPOSED_NOT_APPROVED |
+| QQQ            | QQQ           | ETF      | P1_LAUNCH_EXPANSION | S     | 묶음 연결형      | 1.09  | L8       | INHERIT_TIER_CAPACITY | false         | 층별 기술 장치 연결실           | LEGAL_BRAND_REVIEW_REQUIRED | PUBLIC_MARKET_PARTIAL  | PROPOSED_NOT_APPROVED |
+| 솔라나         | SOL           | CRYPTO   | P1_LAUNCH_EXPANSION | S     | 나란한 흐름형    | 1.09  | L8       | INHERIT_TIER_CAPACITY | false         | 여러 개의 평행 검사 통로        | LEGAL_BRAND_REVIEW_REQUIRED | PUBLIC_MARKET_VERIFIED | PROPOSED_NOT_APPROVED |
+| 비트코인       | BTC           | CRYPTO   | P0_LAUNCH_CORE      | S     | 블록 순서형      | 1.09  | L9       | INHERIT_TIER_CAPACITY | false         | 단단한 블록 처리 작업실         | LEGAL_BRAND_REVIEW_REQUIRED | PUBLIC_MARKET_VERIFIED | PROPOSED_NOT_APPROVED |
+| 샌디스크       | SNDK          | US_STOCK | P1_LAUNCH_EXPANSION | S     | 저장 정리형      | 1.09  | L10      | INHERIT_TIER_CAPACITY | false         | 플래시 저장 모듈 검사실         | LEGAL_BRAND_REVIEW_REQUIRED | PUBLIC_MARKET_PARTIAL  | PROPOSED_NOT_APPROVED |
+| SK하이닉스     | 000660 (HINT) | KR_STOCK | P1_LAUNCH_EXPANSION | S     | 층별 신호형      | 1.10  | L11      | INHERIT_TIER_CAPACITY | false         | 적층 메모리 공정실              | LEGAL_BRAND_REVIEW_REQUIRED | PUBLIC_MARKET_PARTIAL  | PROPOSED_NOT_APPROVED |
+| 테슬라         | TSLA          | US_STOCK | P1_LAUNCH_EXPANSION | S     | 조립 리듬형      | 1.10  | L11      | INHERIT_TIER_CAPACITY | false         | 정밀 구동계 조립실              | LEGAL_BRAND_REVIEW_REQUIRED | PUBLIC_MARKET_PARTIAL  | PROPOSED_NOT_APPROVED |
+| 로켓랩         | RKLB          | US_STOCK | P1_LAUNCH_EXPANSION | S     | 임무 단계형      | 1.10  | L12      | INHERIT_TIER_CAPACITY | false         | 발사체 점검 격납고              | LEGAL_BRAND_REVIEW_REQUIRED | PUBLIC_MARKET_PARTIAL  | PROPOSED_NOT_APPROVED |
+| 엔비디아       | NVDA          | US_STOCK | P1_LAUNCH_EXPANSION | S     | 연산 흐름형      | 1.10  | L13      | INHERIT_TIER_CAPACITY | false         | 액체 냉각 연산 시설             | LEGAL_BRAND_REVIEW_REQUIRED | PUBLIC_MARKET_PARTIAL  | PROPOSED_NOT_APPROVED |
+| SpaceX         | SPCX          | US_STOCK | P1_LAUNCH_EXPANSION | S     | 궤도 연결형      | 1.10  | L14      | INHERIT_TIER_CAPACITY | false         | 궤도 통신 장치 점검 공간        | LEGAL_BRAND_REVIEW_REQUIRED | PUBLIC_MARKET_PARTIAL  | PROPOSED_NOT_APPROVED |

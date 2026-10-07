@@ -1,6 +1,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { resolve } from "node:path";
+import { simulateTiered } from "./tier-analysis.mjs";
 
 const root = fileURLToPath(new URL(".", import.meta.url));
 export const UNIT = 10000n;
@@ -144,7 +145,9 @@ export function allocationRate(products) {
   );
 }
 
-export function simulate(proposal, candidates, policy) {
+export function simulate(proposal, candidates, policy, eligibility) {
+  if (proposal.schema_version === 2)
+    return simulateTiered(proposal, candidates, policy, eligibility);
   const cycle = BigInt(policy.cycleDays);
   const values = proposal.products.map((p) =>
     decimalBps(p.proposed_product_speed_multiplier),
@@ -343,6 +346,7 @@ if (
     read("product-economy-proposal.json"),
     read("product-candidates.json"),
     read("evidence/current-catalog-evidence.json").current_policy,
+    read("product-tier-eligibility.json"),
   );
   const text = JSON.stringify(result, null, 2) + "\n";
   writeFileSync(resolve(root, "economy-simulation-results.json"), text);
@@ -359,7 +363,10 @@ if (
         capped: x.moderate_stack_capped_count,
       })),
       actual_runtime: "UNVERIFIED_NOT_ACTIVATED",
-      concentration: "HIGH",
+      concentration:
+        result.schema_version === 2
+          ? "UNIQUE_FASTEST_REMOVED_ACTUAL_BEHAVIOR_UNKNOWN"
+          : "HIGH",
     }),
   );
 }

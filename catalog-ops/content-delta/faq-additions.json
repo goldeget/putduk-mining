@@ -478,5 +478,203 @@
       "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d"
     },
     "status": "DRAFT"
+  },
+  {
+    "slug": "catalog-tier-faq-choices",
+    "title_ko": "왜 지금 고를 수 있는 테마가 서로 다른가요?",
+    "body_ko": "계정에서 확인된 이용 조건에 따라 선택 가능한 테마가 달라질 수 있습니다. 지금 선택할 수 있는 테마의 설명부터 살펴보세요. 목록에 보인다고 선택이 완료된 것은 아니며, 조건이 아직 확인되지 않았다면 신청을 반복하지 말고 고객지원에 문의해 주세요.",
+    "category": "Product",
+    "metadata": {
+      "audience": "MEMBERS",
+      "cta": {
+        "label": "상품 안내 확인",
+        "route": "/products"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "publication_gate": "REVIEW_REQUIRED",
+      "registration_ready": false,
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "variables": [],
+      "required_phrases": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+      "tier_policy_status": "PROPOSED_NOT_APPROVED",
+      "requires_authoritative_eligibility_event": true,
+      "policy_approval_before_publication": true
+    },
+    "status": "DRAFT"
+  },
+  {
+    "slug": "catalog-tier-faq-unlock",
+    "title_ko": "새 테마는 언제 선택할 수 있나요?",
+    "body_ko": "테마가 정식 공개되고 내 이용 조건이 확인된 뒤 선택할 수 있습니다. 공개 알림과 내 계정의 선택 가능 상태는 다를 수 있어요. 조건을 확인 중이라면 기다리거나 고객지원에 문의해 주세요. 안내를 읽는 것만으로 추가 보상이 생기지는 않습니다.",
+    "category": "Product",
+    "metadata": {
+      "audience": "MEMBERS",
+      "cta": {
+        "label": "상품 안내 확인",
+        "route": "/products"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "publication_gate": "REVIEW_REQUIRED",
+      "registration_ready": false,
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "variables": [],
+      "required_phrases": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+      "tier_policy_status": "PROPOSED_NOT_APPROVED",
+      "requires_authoritative_eligibility_event": true,
+      "policy_approval_before_publication": true
+    },
+    "status": "DRAFT"
+  },
+  {
+    "slug": "catalog-tier-faq-principal",
+    "title_ko": "테마 이용 조건에 보상과 보너스도 포함되나요?",
+    "body_ko": "상품 이용 단계의 기준은 확인된 남은 원금입니다. 채굴보상과 보너스, 체험 기록은 원금과 따로 구분합니다. 입금 신청 중인 금액이 바로 원금에 반영되는 것은 아닙니다. 원금 회수 요청으로 사용이 보류된 금액도 이용 조건에 영향을 줄 수 있으니 지갑과 상품 안내를 함께 확인해 주세요.",
+    "category": "Product",
+    "metadata": {
+      "audience": "MEMBERS",
+      "cta": {
+        "label": "상품 안내 확인",
+        "route": "/products"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "publication_gate": "REVIEW_REQUIRED",
+      "registration_ready": false,
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "variables": [],
+      "required_phrases": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+      "tier_policy_status": "PROPOSED_NOT_APPROVED",
+      "requires_authoritative_eligibility_event": true,
+      "policy_approval_before_publication": true
+    },
+    "status": "DRAFT"
+  },
+  {
+    "slug": "catalog-tier-faq-downgrade",
+    "title_ko": "원금을 회수하면 선택 중인 테마는 어떻게 되나요?",
+    "body_ko": "원금 회수나 이용 조건 변경으로 지금 선택한 테마를 계속 이용하기 어려워질 수 있습니다. 원금 회수 검토 중에는 채굴이 일시 멈출 수 있어요. 이미 확정된 지갑 기록과 이전 이용 이력은 지워지지 않습니다. 조건이 바뀌면 선택 가능한 테마와 현재 상태를 확인하고, 변경 내용을 읽은 뒤 직접 선택해 주세요.",
+    "category": "Product",
+    "metadata": {
+      "audience": "MEMBERS",
+      "cta": {
+        "label": "상품 안내 확인",
+        "route": "/products"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "publication_gate": "REVIEW_REQUIRED",
+      "registration_ready": false,
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "variables": [],
+      "required_phrases": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+      "tier_policy_status": "PROPOSED_NOT_APPROVED",
+      "requires_authoritative_eligibility_event": true,
+      "policy_approval_before_publication": true
+    },
+    "status": "DRAFT"
+  },
+  {
+    "slug": "catalog-tier-faq-hold",
+    "title_ko": "원금 회수 보류가 풀리면 처음부터 시작하나요?",
+    "body_ko": "보류 해제는 이전 기록을 지우고 처음부터 시작한다는 뜻이 아닙니다. 실제 확인된 상태와 이용 조건에 따라 이후 진행을 다시 판단합니다. 멈춰 있던 시간의 보상이 자동으로 추가되지는 않아요. 재개 안내가 없거나 계속 멈춰 있다면 고객지원에 문의해 주세요.",
+    "category": "Product",
+    "metadata": {
+      "audience": "MEMBERS",
+      "cta": {
+        "label": "상품 안내 확인",
+        "route": "/products"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "publication_gate": "REVIEW_REQUIRED",
+      "registration_ready": false,
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "variables": [],
+      "required_phrases": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+      "tier_policy_status": "PROPOSED_NOT_APPROVED",
+      "requires_authoritative_eligibility_event": true,
+      "policy_approval_before_publication": true
+    },
+    "status": "DRAFT"
+  },
+  {
+    "slug": "catalog-tier-faq-top",
+    "title_ko": "같은 이용 단계에서도 테마마다 다른 점이 있나요?",
+    "body_ko": "여러 테마가 비슷한 진행 조건을 가질 수 있지만 장면의 주제와 안내 방식은 서로 다릅니다. 속도와 주기 한도는 따로 읽어 주세요. 유명한 기업 이름이나 화면의 움직임으로 받을 금액을 판단하지 않습니다. 실제 적용 조건은 공개된 상품 설명에서 확인해 주세요.",
+    "category": "Product",
+    "metadata": {
+      "audience": "MEMBERS",
+      "cta": {
+        "label": "상품 안내 확인",
+        "route": "/products"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "publication_gate": "REVIEW_REQUIRED",
+      "registration_ready": false,
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "variables": [],
+      "required_phrases": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+      "tier_policy_status": "PROPOSED_NOT_APPROVED",
+      "requires_authoritative_eligibility_event": true,
+      "policy_approval_before_publication": true
+    },
+    "status": "DRAFT"
   }
 ]

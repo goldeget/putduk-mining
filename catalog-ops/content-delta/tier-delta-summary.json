@@ -1,0 +1,32 @@
+{
+  "status": "DRAFT_NOT_REGISTERED",
+  "preserves_frozen_event_audit": {
+    "KEEP": 21,
+    "REWRITE": 5,
+    "MERGE": 3,
+    "DROP": 1,
+    "ADD": 10
+  },
+  "preserves_frozen_notice_audit": {
+    "KEEP": 22,
+    "REWRITE": 4,
+    "ADD": 8
+  },
+  "additional_tier_delta": {
+    "events": 1,
+    "notices": 4,
+    "faq": 6,
+    "notifications": 4,
+    "support": 3
+  },
+  "combined_addition_counts": {
+    "events-additions": 11,
+    "notices-additions": 12,
+    "faq-additions": 22,
+    "notifications-additions": 12,
+    "support-additions": 11
+  },
+  "financial_rules_created": false,
+  "notification_delivery": false,
+  "production": false
+}

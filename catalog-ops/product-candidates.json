@@ -31,11 +31,7 @@
       "repo_status": "REPOSITORY_DRAFT",
       "repository_draft_id": "30000000-0000-4000-8000-000000000001",
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": [
-        "samsung",
-        "krx",
-        "samsung-listing"
-      ],
+      "source_ids": ["samsung", "krx", "samsung-listing"],
       "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
       "verified_facts": [
         {
@@ -95,16 +91,13 @@
       "identity_status": "PUBLIC_MARKET_PARTIAL",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
-      "proposed_wave": "P0_LAUNCH_CORE",
+      "proposed_wave": "P1_LAUNCH_EXPANSION",
       "effective_wave": "HOLD",
-      "classification_reason_ko": "조건부 24개 편성의 산업·장면 분산 후보",
+      "classification_reason_ko": "현재 공식 신원 세부 확인이 PARTIAL이므로 P0 확정 후보에서 P1 조건부 조사로 이동. 전체 25개 품질 제안에는 유지하지만 확인 전 공개 금지.",
       "repo_status": "REPOSITORY_DRAFT",
       "repository_draft_id": "30000000-0000-4000-8000-000000000002",
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": [
-        "hynix",
-        "krx"
-      ],
+      "source_ids": ["hynix", "krx"],
       "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
       "verified_facts": [
         {
@@ -142,6 +135,7 @@
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED"
       ],
       "canonical_name_ko": "SK하이닉스",
@@ -153,7 +147,8 @@
         "TICKER_REQUIRED",
         "EXCHANGE_REQUIRED",
         "SHARE_CLASS_REQUIRED"
-      ]
+      ],
+      "previous_proposed_wave": "P0_LAUNCH_CORE"
     },
     {
       "proposal_id": "catalog-v1-lg-electronics",
@@ -170,17 +165,13 @@
       "identity_status": "PUBLIC_MARKET_PARTIAL",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
-      "proposed_wave": "P2_LATER",
+      "proposed_wave": "P1_LAUNCH_EXPANSION",
       "effective_wave": "HOLD",
-      "classification_reason_ko": "초기 24개와의 중복 또는 추가 제작 부담으로 후속 검토",
+      "classification_reason_ko": "현재 공식 근거를 읽은 후 조건부 출시 제안에 승격. 생활 기기/우주 통신 장면 대비를 추가하며 미확인 상장 세부·법무·정책·Scene gate는 계속 HOLD.",
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": [
-        "lg",
-        "krx",
-        "lg-stock"
-      ],
+      "source_ids": ["lg", "krx", "lg-stock"],
       "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
       "verified_facts": [
         {
@@ -218,6 +209,7 @@
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED"
       ],
       "canonical_name_ko": "LG전자",
@@ -228,7 +220,8 @@
       "unresolved_identity_fields": [
         "EXCHANGE_REQUIRED",
         "SHARE_CLASS_REQUIRED"
-      ]
+      ],
+      "previous_proposed_wave": "P2_LATER"
     },
     {
       "proposal_id": "catalog-v1-hyundai-motor",
@@ -245,17 +238,13 @@
       "identity_status": "PUBLIC_MARKET_PARTIAL",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
-      "proposed_wave": "P0_LAUNCH_CORE",
+      "proposed_wave": "P1_LAUNCH_EXPANSION",
       "effective_wave": "HOLD",
-      "classification_reason_ko": "조건부 24개 편성의 산업·장면 분산 후보",
+      "classification_reason_ko": "현재 공식 신원 세부 확인이 PARTIAL이므로 P0 확정 후보에서 P1 조건부 조사로 이동. 전체 25개 품질 제안에는 유지하지만 확인 전 공개 금지.",
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": [
-        "hyundai",
-        "krx",
-        "hyundai-stock"
-      ],
+      "source_ids": ["hyundai", "krx", "hyundai-stock"],
       "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
       "verified_facts": [
         {
@@ -293,6 +282,7 @@
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED"
       ],
       "canonical_name_ko": "현대자동차",
@@ -304,7 +294,8 @@
         "TICKER_REQUIRED",
         "EXCHANGE_REQUIRED",
         "SHARE_CLASS_REQUIRED"
-      ]
+      ],
+      "previous_proposed_wave": "P0_LAUNCH_CORE"
     },
     {
       "proposal_id": "catalog-v1-lg-energy-solution",
@@ -321,16 +312,13 @@
       "identity_status": "PUBLIC_MARKET_PARTIAL",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
-      "proposed_wave": "P0_LAUNCH_CORE",
+      "proposed_wave": "P1_LAUNCH_EXPANSION",
       "effective_wave": "HOLD",
-      "classification_reason_ko": "조건부 24개 편성의 산업·장면 분산 후보",
+      "classification_reason_ko": "현재 공식 신원 세부 확인이 PARTIAL이므로 P0 확정 후보에서 P1 조건부 조사로 이동. 전체 25개 품질 제안에는 유지하지만 확인 전 공개 금지.",
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": [
-        "lgensol",
-        "krx"
-      ],
+      "source_ids": ["lgensol", "krx"],
       "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
       "verified_facts": [
         {
@@ -368,6 +356,7 @@
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED"
       ],
       "canonical_name_ko": "LG에너지솔루션",
@@ -379,7 +368,8 @@
         "TICKER_REQUIRED",
         "EXCHANGE_REQUIRED",
         "SHARE_CLASS_REQUIRED"
-      ]
+      ],
+      "previous_proposed_wave": "P0_LAUNCH_CORE"
     },
     {
       "proposal_id": "catalog-v1-naver",
@@ -402,11 +392,7 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": [
-        "naver",
-        "krx",
-        "naver-stock"
-      ],
+      "source_ids": ["naver", "krx", "naver-stock"],
       "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
       "verified_facts": [
         {
@@ -444,6 +430,7 @@
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED"
       ],
       "canonical_name_ko": "NAVER",
@@ -451,9 +438,7 @@
       "canonical_share_class": null,
       "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
       "identity_confidence": "PARTIAL_DETAILS_REQUIRED",
-      "unresolved_identity_fields": [
-        "SHARE_CLASS_REQUIRED"
-      ]
+      "unresolved_identity_fields": ["SHARE_CLASS_REQUIRED"]
     },
     {
       "proposal_id": "catalog-v1-kakao",
@@ -476,11 +461,7 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": [
-        "kakao",
-        "krx",
-        "kakao-stock"
-      ],
+      "source_ids": ["kakao", "krx", "kakao-stock"],
       "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
       "verified_facts": [
         {
@@ -518,6 +499,7 @@
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED"
       ],
       "canonical_name_ko": "카카오",
@@ -525,9 +507,7 @@
       "canonical_share_class": null,
       "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
       "identity_confidence": "PARTIAL_DETAILS_REQUIRED",
-      "unresolved_identity_fields": [
-        "SHARE_CLASS_REQUIRED"
-      ]
+      "unresolved_identity_fields": ["SHARE_CLASS_REQUIRED"]
     },
     {
       "proposal_id": "catalog-v1-samsung-biologics",
@@ -550,11 +530,7 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": [
-        "samsungbio",
-        "krx",
-        "samsungbio-stock"
-      ],
+      "source_ids": ["samsungbio", "krx", "samsungbio-stock"],
       "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
       "verified_facts": [
         {
@@ -592,6 +568,7 @@
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED"
       ],
       "canonical_name_ko": "삼성바이오로직스",
@@ -599,7 +576,9 @@
       "canonical_share_class": "COMMON",
       "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
       "identity_confidence": "PARTIAL_DETAILS_REQUIRED",
-      "unresolved_identity_fields": []
+      "unresolved_identity_fields": [
+        "KS_VENUE_MEANING_PRIMARY_CONFIRMATION_REQUIRED"
+      ]
     },
     {
       "proposal_id": "catalog-v1-kb-financial",
@@ -622,11 +601,7 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": [
-        "kb",
-        "krx",
-        "kb-eng"
-      ],
+      "source_ids": ["kb", "krx", "kb-eng"],
       "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
       "verified_facts": [
         {
@@ -664,6 +639,7 @@
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED"
       ],
       "canonical_name_ko": "KB금융",
@@ -698,11 +674,7 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": [
-        "hanwha",
-        "krx",
-        "hanwha-stock"
-      ],
+      "source_ids": ["hanwha", "krx", "hanwha-stock"],
       "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
       "verified_facts": [
         {
@@ -740,6 +712,7 @@
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED"
       ],
       "canonical_name_ko": "한화에어로스페이스",
@@ -774,10 +747,7 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": [
-        "hhi",
-        "krx"
-      ],
+      "source_ids": ["hhi", "krx"],
       "source_status": "NO_PRODUCT_SPECIFIC_FACTS_VERIFIED",
       "verified_facts": [],
       "scores": {
@@ -807,6 +777,7 @@
       "blocking_requirements": [
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED"
       ],
@@ -840,10 +811,7 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": [
-        "hdelectric",
-        "krx"
-      ],
+      "source_ids": ["hdelectric", "krx"],
       "source_status": "NO_PRODUCT_SPECIFIC_FACTS_VERIFIED",
       "verified_facts": [],
       "scores": {
@@ -873,6 +841,7 @@
       "blocking_requirements": [
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED"
       ],
@@ -906,11 +875,7 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": [
-        "skinnovation",
-        "krx",
-        "skinnov-stock"
-      ],
+      "source_ids": ["skinnovation", "krx", "skinnov-stock"],
       "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
       "verified_facts": [
         {
@@ -948,6 +913,7 @@
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED"
       ],
       "canonical_name_ko": "SK이노베이션",
@@ -981,10 +947,7 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": [
-        "amore",
-        "krx"
-      ],
+      "source_ids": ["amore", "krx"],
       "source_status": "NO_PRODUCT_SPECIFIC_FACTS_VERIFIED",
       "verified_facts": [],
       "scores": {
@@ -1015,6 +978,7 @@
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED"
       ],
       "canonical_name_ko": null,
@@ -1041,16 +1005,13 @@
       "identity_status": "PUBLIC_MARKET_PARTIAL",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
-      "proposed_wave": "P0_LAUNCH_CORE",
+      "proposed_wave": "P1_LAUNCH_EXPANSION",
       "effective_wave": "HOLD",
-      "classification_reason_ko": "조건부 24개 편성의 산업·장면 분산 후보",
+      "classification_reason_ko": "현재 공식 신원 세부 확인이 PARTIAL이므로 P0 확정 후보에서 P1 조건부 조사로 이동. 전체 25개 품질 제안에는 유지하지만 확인 전 공개 금지.",
       "repo_status": "REPOSITORY_DRAFT",
       "repository_draft_id": "30000000-0000-4000-8000-000000000005",
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": [
-        "nvidia",
-        "sec"
-      ],
+      "source_ids": ["nvidia", "sec"],
       "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
       "verified_facts": [
         {
@@ -1089,6 +1050,7 @@
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED"
       ],
       "canonical_name_ko": null,
@@ -1099,7 +1061,8 @@
       "unresolved_identity_fields": [
         "CURRENT_SHARE_CLASS_PRIMARY_FILING_REQUIRED",
         "LISTING_DIRECTORY_IS_NOT_TRADE_OR_LICENSE_PROOF"
-      ]
+      ],
+      "previous_proposed_wave": "P0_LAUNCH_CORE"
     },
     {
       "proposal_id": "catalog-v1-tesla",
@@ -1116,16 +1079,13 @@
       "identity_status": "PUBLIC_MARKET_PARTIAL",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
-      "proposed_wave": "P0_LAUNCH_CORE",
+      "proposed_wave": "P1_LAUNCH_EXPANSION",
       "effective_wave": "HOLD",
-      "classification_reason_ko": "조건부 24개 편성의 산업·장면 분산 후보",
+      "classification_reason_ko": "현재 공식 신원 세부 확인이 PARTIAL이므로 P0 확정 후보에서 P1 조건부 조사로 이동. 전체 25개 품질 제안에는 유지하지만 확인 전 공개 금지.",
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": [
-        "tesla",
-        "sec"
-      ],
+      "source_ids": ["tesla", "sec"],
       "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
       "verified_facts": [
         {
@@ -1164,6 +1124,7 @@
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED"
       ],
       "canonical_name_ko": null,
@@ -1174,7 +1135,8 @@
       "unresolved_identity_fields": [
         "CURRENT_SHARE_CLASS_PRIMARY_FILING_REQUIRED",
         "LISTING_DIRECTORY_IS_NOT_TRADE_OR_LICENSE_PROOF"
-      ]
+      ],
+      "previous_proposed_wave": "P0_LAUNCH_CORE"
     },
     {
       "proposal_id": "catalog-v1-rocket-lab",
@@ -1197,10 +1159,7 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": [
-        "rocketlab",
-        "sec"
-      ],
+      "source_ids": ["rocketlab", "sec"],
       "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
       "verified_facts": [
         {
@@ -1239,6 +1198,7 @@
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED"
       ],
       "canonical_name_ko": null,
@@ -1272,10 +1232,7 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": [
-        "sandisk",
-        "sec"
-      ],
+      "source_ids": ["sandisk", "sec"],
       "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
       "verified_facts": [
         {
@@ -1314,6 +1271,7 @@
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED"
       ],
       "canonical_name_ko": null,
@@ -1341,16 +1299,13 @@
       "identity_status": "PUBLIC_MARKET_PARTIAL",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
-      "proposed_wave": "HOLD",
+      "proposed_wave": "P1_LAUNCH_EXPANSION",
       "effective_wave": "HOLD",
-      "classification_reason_ko": "자산 종류·상장 및 복잡성 재검토 후 편성",
+      "classification_reason_ko": "현재 공식 근거를 읽은 후 조건부 출시 제안에 승격. 생활 기기/우주 통신 장면 대비를 추가하며 미확인 상장 세부·법무·정책·Scene gate는 계속 HOLD.",
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": [
-        "spacex",
-        "sec"
-      ],
+      "source_ids": ["spacex", "sec"],
       "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
       "verified_facts": [
         {
@@ -1389,6 +1344,7 @@
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED"
       ],
       "canonical_name_ko": null,
@@ -1399,7 +1355,8 @@
       "unresolved_identity_fields": [
         "CURRENT_SHARE_CLASS_PRIMARY_FILING_REQUIRED",
         "LISTING_DIRECTORY_IS_NOT_TRADE_OR_LICENSE_PROOF"
-      ]
+      ],
+      "previous_proposed_wave": "HOLD"
     },
     {
       "proposal_id": "catalog-v1-apple",
@@ -1416,16 +1373,13 @@
       "identity_status": "PUBLIC_MARKET_PARTIAL",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
-      "proposed_wave": "P0_LAUNCH_CORE",
+      "proposed_wave": "P1_LAUNCH_EXPANSION",
       "effective_wave": "HOLD",
-      "classification_reason_ko": "조건부 24개 편성의 산업·장면 분산 후보",
+      "classification_reason_ko": "현재 공식 신원 세부 확인이 PARTIAL이므로 P0 확정 후보에서 P1 조건부 조사로 이동. 전체 25개 품질 제안에는 유지하지만 확인 전 공개 금지.",
       "repo_status": "REPOSITORY_DRAFT",
       "repository_draft_id": "30000000-0000-4000-8000-000000000003",
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": [
-        "apple",
-        "sec"
-      ],
+      "source_ids": ["apple", "sec"],
       "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
       "verified_facts": [
         {
@@ -1464,6 +1418,7 @@
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED"
       ],
       "canonical_name_ko": null,
@@ -1474,7 +1429,8 @@
       "unresolved_identity_fields": [
         "CURRENT_SHARE_CLASS_PRIMARY_FILING_REQUIRED",
         "LISTING_DIRECTORY_IS_NOT_TRADE_OR_LICENSE_PROOF"
-      ]
+      ],
+      "previous_proposed_wave": "P0_LAUNCH_CORE"
     },
     {
       "proposal_id": "catalog-v1-microsoft",
@@ -1491,16 +1447,13 @@
       "identity_status": "PUBLIC_MARKET_PARTIAL",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
-      "proposed_wave": "P0_LAUNCH_CORE",
+      "proposed_wave": "P1_LAUNCH_EXPANSION",
       "effective_wave": "HOLD",
-      "classification_reason_ko": "조건부 24개 편성의 산업·장면 분산 후보",
+      "classification_reason_ko": "현재 공식 신원 세부 확인이 PARTIAL이므로 P0 확정 후보에서 P1 조건부 조사로 이동. 전체 25개 품질 제안에는 유지하지만 확인 전 공개 금지.",
       "repo_status": "REPOSITORY_DRAFT",
       "repository_draft_id": "30000000-0000-4000-8000-000000000004",
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": [
-        "microsoft",
-        "sec"
-      ],
+      "source_ids": ["microsoft", "sec"],
       "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
       "verified_facts": [
         {
@@ -1539,6 +1492,7 @@
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED"
       ],
       "canonical_name_ko": null,
@@ -1549,7 +1503,8 @@
       "unresolved_identity_fields": [
         "CURRENT_SHARE_CLASS_PRIMARY_FILING_REQUIRED",
         "LISTING_DIRECTORY_IS_NOT_TRADE_OR_LICENSE_PROOF"
-      ]
+      ],
+      "previous_proposed_wave": "P0_LAUNCH_CORE"
     },
     {
       "proposal_id": "catalog-v1-amazon",
@@ -1572,10 +1527,7 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": [
-        "amazon",
-        "sec"
-      ],
+      "source_ids": ["amazon", "sec"],
       "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
       "verified_facts": [
         {
@@ -1614,6 +1566,7 @@
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED"
       ],
       "canonical_name_ko": null,
@@ -1647,10 +1600,7 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": [
-        "alphabet",
-        "sec"
-      ],
+      "source_ids": ["alphabet", "sec"],
       "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
       "verified_facts": [
         {
@@ -1689,6 +1639,7 @@
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED"
       ],
       "canonical_name_ko": null,
@@ -1716,16 +1667,13 @@
       "identity_status": "PUBLIC_MARKET_PARTIAL",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
-      "proposed_wave": "P1_LAUNCH_EXPANSION",
+      "proposed_wave": "P2_LATER",
       "effective_wave": "HOLD",
-      "classification_reason_ko": "조건부 24개 편성의 산업·장면 분산 후보",
+      "classification_reason_ko": "SEC 신원은 확인했으나 정보/연결 테마와의 중복 및 25개 출시 제작 부담을 고려해 후속 편성 제안. 실제 기업의 투자 등급 판단이 아니다.",
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": [
-        "meta",
-        "sec"
-      ],
+      "source_ids": ["meta", "sec"],
       "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
       "verified_facts": [
         {
@@ -1764,6 +1712,7 @@
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED"
       ],
       "canonical_name_ko": null,
@@ -1774,7 +1723,8 @@
       "unresolved_identity_fields": [
         "CURRENT_SHARE_CLASS_PRIMARY_FILING_REQUIRED",
         "LISTING_DIRECTORY_IS_NOT_TRADE_OR_LICENSE_PROOF"
-      ]
+      ],
+      "previous_proposed_wave": "P1_LAUNCH_EXPANSION"
     },
     {
       "proposal_id": "catalog-v1-amd",
@@ -1797,10 +1747,7 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": [
-        "amd",
-        "sec"
-      ],
+      "source_ids": ["amd", "sec"],
       "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
       "verified_facts": [
         {
@@ -1839,6 +1786,7 @@
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED"
       ],
       "canonical_name_ko": null,
@@ -1872,10 +1820,7 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": [
-        "broadcom",
-        "sec"
-      ],
+      "source_ids": ["broadcom", "sec"],
       "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
       "verified_facts": [
         {
@@ -1914,6 +1859,7 @@
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED"
       ],
       "canonical_name_ko": null,
@@ -1947,10 +1893,7 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": [
-        "palantir",
-        "sec"
-      ],
+      "source_ids": ["palantir", "sec"],
       "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
       "verified_facts": [
         {
@@ -1989,6 +1932,7 @@
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED"
       ],
       "canonical_name_ko": null,
@@ -2022,10 +1966,7 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": [
-        "jpm",
-        "sec"
-      ],
+      "source_ids": ["jpm", "sec"],
       "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
       "verified_facts": [
         {
@@ -2064,6 +2005,7 @@
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED"
       ],
       "canonical_name_ko": null,
@@ -2097,10 +2039,7 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": [
-        "netflix",
-        "sec"
-      ],
+      "source_ids": ["netflix", "sec"],
       "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
       "verified_facts": [
         {
@@ -2139,6 +2078,7 @@
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED"
       ],
       "canonical_name_ko": null,
@@ -2172,9 +2112,7 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": [
-        "ssga"
-      ],
+      "source_ids": ["ssga"],
       "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
       "verified_facts": [
         {
@@ -2235,15 +2173,13 @@
       "identity_status": "PUBLIC_MARKET_PARTIAL",
       "status": "PUTDUK_PROPOSED",
       "operator_approval": null,
-      "proposed_wave": "P0_LAUNCH_CORE",
+      "proposed_wave": "P1_LAUNCH_EXPANSION",
       "effective_wave": "HOLD",
-      "classification_reason_ko": "조건부 24개 편성의 산업·장면 분산 후보",
+      "classification_reason_ko": "현재 공식 신원 세부 확인이 PARTIAL이므로 P0 확정 후보에서 P1 조건부 조사로 이동. 전체 25개 품질 제안에는 유지하지만 확인 전 공개 금지.",
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": [
-        "invesco"
-      ],
+      "source_ids": ["invesco"],
       "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
       "verified_facts": [
         {
@@ -2282,6 +2218,7 @@
         "APPROVED_CATALOG_COMMAND_REQUIRED",
         "ETF_CATEGORY_CONTRACT_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED"
       ],
       "canonical_name_ko": "QQQ",
@@ -2289,9 +2226,8 @@
       "canonical_share_class": "ETF_SHARES",
       "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
       "identity_confidence": "PARTIAL_DETAILS_REQUIRED",
-      "unresolved_identity_fields": [
-        "EXCHANGE_REQUIRED"
-      ]
+      "unresolved_identity_fields": ["EXCHANGE_REQUIRED"],
+      "previous_proposed_wave": "P0_LAUNCH_CORE"
     },
     {
       "proposal_id": "catalog-v1-soxx",
@@ -2314,9 +2250,7 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": [
-        "ishares"
-      ],
+      "source_ids": ["ishares"],
       "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
       "verified_facts": [
         {
@@ -2383,9 +2317,7 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": [
-        "schwab"
-      ],
+      "source_ids": ["schwab"],
       "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
       "verified_facts": [
         {
@@ -2452,9 +2384,7 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": [
-        "vanguard"
-      ],
+      "source_ids": ["vanguard"],
       "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
       "verified_facts": [
         {
@@ -2522,9 +2452,7 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": [
-        "globalx"
-      ],
+      "source_ids": ["globalx"],
       "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
       "verified_facts": [
         {
@@ -2591,10 +2519,7 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": [
-        "vanguard",
-        "bnd"
-      ],
+      "source_ids": ["vanguard", "bnd"],
       "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
       "verified_facts": [
         {
@@ -2661,10 +2586,7 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": [
-        "ishares",
-        "iau"
-      ],
+      "source_ids": ["ishares", "iau"],
       "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
       "verified_facts": [
         {
@@ -2717,10 +2639,80 @@
       "asset_class": "ETF",
       "market": "KR",
       "ticker_hint": "069500",
+      "canonical_ticker": "069500",
+      "canonical_name": "KODEX 200",
+      "canonical_exchange": null,
+      "sector_hint": "한국 대표 지수",
+      "share_class_hint": null,
+      "identity_status": "PUBLIC_MARKET_PARTIAL",
+      "status": "PUTDUK_PROPOSED",
+      "operator_approval": null,
+      "proposed_wave": "P2_LATER",
+      "effective_wave": "HOLD",
+      "classification_reason_ko": "초기 24개와의 중복 또는 추가 제작 부담으로 후속 검토",
+      "repo_status": "NOT_IN_REPOSITORY",
+      "repository_draft_id": null,
+      "live_status": "LIVE_DB_UNKNOWN",
+      "source_ids": ["kodex", "krx", "kodex-main200"],
+      "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
+      "verified_facts": [
+        {
+          "source_id": "kodex-main200",
+          "quote": " \"alternateName\": \"KODEX 200\"\r\n\t,  \"identifier\": \"069500\"\r\n\t,  \"url\": \"https://www.samsungfund.com/etf/product/view.do?id=2ETF01\"\r\n\t,  \"description\": \"대",
+          "locator": "RAW_ISSUER_DOCUMENT",
+          "scope": "IDENTITY_ONLY_NO_PRICE_OR_RETURN_INPUTS"
+        }
+      ],
+      "scores": {
+        "korean_recognition": 4,
+        "global_recognition": 3,
+        "asset_representation": 3,
+        "sector_diversity": 3,
+        "catalog_diversity": 3,
+        "low_overlap": 4,
+        "story_value": 3,
+        "visual_differentiation": 2,
+        "production_potential": 3,
+        "beginner_clarity": 3,
+        "operations_simplicity": 2,
+        "support_simplicity": 3,
+        "legal_clarity": 1,
+        "data_confidence": 1,
+        "launch_usefulness": 2,
+        "content_expansion": 3
+      },
+      "score_status": "EDITORIAL_HYPOTHESIS_NOT_MEASURED",
+      "market_linked": false,
+      "legal_brand_review": "LEGAL_BRAND_REVIEW_REQUIRED",
+      "partnership_claim_allowed": false,
+      "scene_status": "SCENE_SPEC_REQUIRED",
+      "registration_ready": false,
+      "blocking_requirements": [
+        "LEGAL_BRAND_REVIEW_REQUIRED",
+        "APPROVED_CATALOG_COMMAND_REQUIRED",
+        "ETF_CATEGORY_CONTRACT_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED"
+      ],
+      "canonical_name_ko": "KODEX 200",
+      "canonical_name_en": "KODEX 200",
+      "canonical_share_class": "ETF_SHARES",
+      "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
+      "identity_confidence": "PARTIAL_DETAILS_REQUIRED",
+      "unresolved_identity_fields": ["EXCHANGE_REQUIRED"]
+    },
+    {
+      "proposal_id": "catalog-v1-tiger-us-sp500",
+      "slug": "tiger-us-sp500",
+      "name_hint_ko": "TIGER 미국S&P500",
+      "asset_class": "ETF",
+      "market": "KR",
+      "ticker_hint": "360750",
       "canonical_ticker": null,
       "canonical_name": null,
       "canonical_exchange": null,
-      "sector_hint": "한국 대표 지수",
+      "sector_hint": "미국 지수 국내 ETF",
       "share_class_hint": null,
       "identity_status": "PUBLIC_MARKET_UNKNOWN",
       "status": "PUTDUK_PROPOSED",
@@ -2731,10 +2723,7 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": [
-        "kodex",
-        "krx"
-      ],
+      "source_ids": ["tiger", "krx"],
       "source_status": "NO_PRODUCT_SPECIFIC_FACTS_VERIFIED",
       "verified_facts": [],
       "scores": {
@@ -2766,72 +2755,6 @@
         "APPROVED_CATALOG_COMMAND_REQUIRED",
         "ETF_CATEGORY_CONTRACT_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED",
-        "PUBLIC_IDENTITY_DETAILS_REQUIRED"
-      ],
-      "canonical_name_ko": null,
-      "canonical_name_en": null,
-      "canonical_share_class": null,
-      "current_existence": "UNKNOWN",
-      "identity_confidence": "UNKNOWN",
-      "unresolved_identity_fields": [
-        "SPECIFIC_CURRENT_OFFICIAL_IDENTITY_REQUIRED"
-      ]
-    },
-    {
-      "proposal_id": "catalog-v1-tiger-us-sp500",
-      "slug": "tiger-us-sp500",
-      "name_hint_ko": "TIGER 미국S&P500",
-      "asset_class": "ETF",
-      "market": "KR",
-      "ticker_hint": "360750",
-      "canonical_ticker": null,
-      "canonical_name": null,
-      "canonical_exchange": null,
-      "sector_hint": "미국 지수 국내 ETF",
-      "share_class_hint": null,
-      "identity_status": "PUBLIC_MARKET_UNKNOWN",
-      "status": "PUTDUK_PROPOSED",
-      "operator_approval": null,
-      "proposed_wave": "P2_LATER",
-      "effective_wave": "HOLD",
-      "classification_reason_ko": "초기 24개와의 중복 또는 추가 제작 부담으로 후속 검토",
-      "repo_status": "NOT_IN_REPOSITORY",
-      "repository_draft_id": null,
-      "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": [
-        "tiger",
-        "krx"
-      ],
-      "source_status": "NO_PRODUCT_SPECIFIC_FACTS_VERIFIED",
-      "verified_facts": [],
-      "scores": {
-        "korean_recognition": 4,
-        "global_recognition": 3,
-        "asset_representation": 3,
-        "sector_diversity": 3,
-        "catalog_diversity": 3,
-        "low_overlap": 4,
-        "story_value": 3,
-        "visual_differentiation": 2,
-        "production_potential": 3,
-        "beginner_clarity": 3,
-        "operations_simplicity": 2,
-        "support_simplicity": 3,
-        "legal_clarity": 1,
-        "data_confidence": 1,
-        "launch_usefulness": 2,
-        "content_expansion": 3
-      },
-      "score_status": "EDITORIAL_HYPOTHESIS_NOT_MEASURED",
-      "market_linked": false,
-      "legal_brand_review": "LEGAL_BRAND_REVIEW_REQUIRED",
-      "partnership_claim_allowed": false,
-      "scene_status": "SCENE_SPEC_REQUIRED",
-      "registration_ready": false,
-      "blocking_requirements": [
-        "LEGAL_BRAND_REVIEW_REQUIRED",
-        "APPROVED_CATALOG_COMMAND_REQUIRED",
-        "ETF_CATEGORY_CONTRACT_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED"
       ],
@@ -2865,10 +2788,7 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": [
-        "kodex",
-        "krx"
-      ],
+      "source_ids": ["kodex", "krx"],
       "source_status": "NO_PRODUCT_SPECIFIC_FACTS_VERIFIED",
       "verified_facts": [],
       "scores": {
@@ -2899,6 +2819,7 @@
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED",
         "ETF_CATEGORY_CONTRACT_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED"
       ],
@@ -2932,11 +2853,7 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": [
-        "tiger",
-        "krx",
-        "kodex"
-      ],
+      "source_ids": ["tiger", "krx", "kodex"],
       "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
       "verified_facts": [
         {
@@ -2975,6 +2892,7 @@
         "APPROVED_CATALOG_COMMAND_REQUIRED",
         "ETF_CATEGORY_CONTRACT_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED"
       ],
       "canonical_name_ko": "KODEX AI반도체핵심장비 ETF",
@@ -2983,9 +2901,7 @@
       "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
       "identity_confidence": "PARTIAL_DETAILS_REQUIRED",
       "resolved_generic_slot": true,
-      "unresolved_identity_fields": [
-        "EXCHANGE_REQUIRED"
-      ]
+      "unresolved_identity_fields": ["EXCHANGE_REQUIRED"]
     },
     {
       "proposal_id": "catalog-v1-kr-dividend-etf-research",
@@ -3008,10 +2924,7 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": [
-        "kodex",
-        "krx"
-      ],
+      "source_ids": ["kodex", "krx"],
       "source_status": "NO_PRODUCT_SPECIFIC_FACTS_VERIFIED",
       "verified_facts": [],
       "scores": {
@@ -3042,6 +2955,7 @@
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED",
         "ETF_CATEGORY_CONTRACT_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED"
       ],
@@ -3075,10 +2989,7 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": [
-        "tiger",
-        "krx"
-      ],
+      "source_ids": ["tiger", "krx"],
       "source_status": "NO_PRODUCT_SPECIFIC_FACTS_VERIFIED",
       "verified_facts": [],
       "scores": {
@@ -3109,6 +3020,7 @@
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED",
         "ETF_CATEGORY_CONTRACT_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED"
       ],
@@ -3142,10 +3054,7 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": [
-        "kodex",
-        "krx"
-      ],
+      "source_ids": ["kodex", "krx"],
       "source_status": "NO_PRODUCT_SPECIFIC_FACTS_VERIFIED",
       "verified_facts": [],
       "scores": {
@@ -3177,6 +3086,7 @@
         "APPROVED_CATALOG_COMMAND_REQUIRED",
         "ETF_CATEGORY_CONTRACT_REQUIRED",
         "COMPLEX_PRODUCT_REVIEW_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED"
       ],
@@ -3210,10 +3120,7 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": [
-        "kodex",
-        "krx"
-      ],
+      "source_ids": ["kodex", "krx"],
       "source_status": "NO_PRODUCT_SPECIFIC_FACTS_VERIFIED",
       "verified_facts": [],
       "scores": {
@@ -3244,6 +3151,7 @@
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED",
         "ETF_CATEGORY_CONTRACT_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED"
       ],
@@ -3277,9 +3185,7 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": [
-        "invesco"
-      ],
+      "source_ids": ["invesco"],
       "source_status": "NO_PRODUCT_SPECIFIC_FACTS_VERIFIED",
       "verified_facts": [],
       "scores": {
@@ -3311,6 +3217,7 @@
         "APPROVED_CATALOG_COMMAND_REQUIRED",
         "ETF_CATEGORY_CONTRACT_REQUIRED",
         "COMPLEX_PRODUCT_REVIEW_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED"
       ],
@@ -3344,9 +3251,7 @@
       "repo_status": "REPOSITORY_DRAFT",
       "repository_draft_id": "30000000-0000-4000-8000-000000000008",
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": [
-        "bitcoin"
-      ],
+      "source_ids": ["bitcoin"],
       "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
       "verified_facts": [
         {
@@ -3412,10 +3317,7 @@
       "repo_status": "REPOSITORY_DRAFT",
       "repository_draft_id": "30000000-0000-4000-8000-000000000009",
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": [
-        "ethereum",
-        "eth-native"
-      ],
+      "source_ids": ["ethereum", "eth-native"],
       "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
       "verified_facts": [
         {
@@ -3481,10 +3383,7 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": [
-        "solana",
-        "sol-token"
-      ],
+      "source_ids": ["solana", "sol-token"],
       "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
       "verified_facts": [
         {
@@ -3550,9 +3449,7 @@
       "repo_status": "REPOSITORY_DRAFT",
       "repository_draft_id": "30000000-0000-4000-8000-000000000010",
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": [
-        "bnb"
-      ],
+      "source_ids": ["bnb"],
       "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
       "verified_facts": [
         {
@@ -3590,6 +3487,7 @@
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED"
       ],
       "canonical_name_ko": "BNB",
@@ -3597,9 +3495,7 @@
       "canonical_share_class": "NATIVE_ASSET_DETAIL_PENDING",
       "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
       "identity_confidence": "PARTIAL_DETAILS_REQUIRED",
-      "unresolved_identity_fields": [
-        "SHARE_CLASS_REQUIRED"
-      ]
+      "unresolved_identity_fields": ["SHARE_CLASS_REQUIRED"]
     },
     {
       "proposal_id": "catalog-v1-xrp",
@@ -3622,9 +3518,7 @@
       "repo_status": "REPOSITORY_DRAFT",
       "repository_draft_id": "30000000-0000-4000-8000-000000000011",
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": [
-        "xrp"
-      ],
+      "source_ids": ["xrp"],
       "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
       "verified_facts": [
         {
@@ -3662,6 +3556,7 @@
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED"
       ],
       "canonical_name_ko": "XRP",
@@ -3669,9 +3564,7 @@
       "canonical_share_class": "NATIVE_ASSET_DETAIL_PENDING",
       "current_existence": "CURRENT_PRIMARY_PAGE_IDENTIFIES_ASSET",
       "identity_confidence": "PARTIAL_DETAILS_REQUIRED",
-      "unresolved_identity_fields": [
-        "SHARE_CLASS_REQUIRED"
-      ]
+      "unresolved_identity_fields": ["SHARE_CLASS_REQUIRED"]
     },
     {
       "proposal_id": "catalog-v1-usdt-rail",
@@ -3694,9 +3587,7 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": [
-        "sec"
-      ],
+      "source_ids": ["sec"],
       "source_status": "NO_PRODUCT_SPECIFIC_FACTS_VERIFIED",
       "verified_facts": [],
       "scores": {
@@ -3726,6 +3617,7 @@
       "blocking_requirements": [
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED"
       ],
@@ -3759,10 +3651,7 @@
       "repo_status": "NOT_IN_REPOSITORY",
       "repository_draft_id": null,
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": [
-        "sec",
-        "usdc-coinbase"
-      ],
+      "source_ids": ["sec", "usdc-coinbase"],
       "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
       "verified_facts": [
         {
@@ -3800,6 +3689,7 @@
         "LEGAL_BRAND_REVIEW_REQUIRED",
         "APPROVED_CATALOG_COMMAND_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED",
+        "PUBLIC_IDENTITY_DETAILS_REQUIRED",
         "PUBLIC_IDENTITY_DETAILS_REQUIRED"
       ],
       "canonical_name_ko": "USDC 결제 수단 조사",
@@ -3833,9 +3723,7 @@
       "repo_status": "REPOSITORY_DRAFT",
       "repository_draft_id": "30000000-0000-4000-8000-000000000006",
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": [
-        "lbma"
-      ],
+      "source_ids": ["lbma"],
       "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
       "verified_facts": [
         {
@@ -3902,9 +3790,7 @@
       "repo_status": "REPOSITORY_DRAFT",
       "repository_draft_id": "30000000-0000-4000-8000-000000000007",
       "live_status": "LIVE_DB_UNKNOWN",
-      "source_ids": [
-        "lbma"
-      ],
+      "source_ids": ["lbma"],
       "source_status": "RESPONSE_REVIEWED_SCOPE_LIMITED",
       "verified_facts": [
         {
