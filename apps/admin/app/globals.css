@@ -301,7 +301,18 @@ textarea:focus-visible {
   border: 1px solid var(--line);
   border-radius: 16px;
   padding: 16px;
-  background: rgba(226, 183, 92, 0.035);
+  background: var(--surface);
+}
+.operator-logout summary {
+  min-height: 44px;
+  padding: 12px 0;
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+.operator-logout summary:focus-visible {
+  outline: 3px solid var(--gold-soft);
+  outline-offset: 3px;
 }
 .operator-card > span,
 .operator-card small {
@@ -1059,8 +1070,7 @@ textarea:focus-visible {
   }
   .control-shell {
     display: block;
-    /* 본문을 위로 올려도 세션 종료가 화면 아래에 남는다. */
-    padding-bottom: calc(13rem + env(safe-area-inset-bottom));
+    padding-bottom: env(safe-area-inset-bottom);
   }
   .control-rail {
     position: static;
@@ -1089,14 +1099,22 @@ textarea:focus-visible {
     margin-bottom: 0;
     overflow: visible;
   }
-  /* 메뉴 11개는 줄바꿈한 채 두고, 세션 종료는 화면 아래에 고정한다. */
+  /* 세션 도구는 본문을 덮지 않으며, 종료 명령은 명시적으로 펼쳐요. */
   .operator-card {
-    position: fixed;
-    z-index: 20;
-    right: max(16px, env(safe-area-inset-right));
-    bottom: max(12px, env(safe-area-inset-bottom));
-    left: max(16px, env(safe-area-inset-left));
-    margin-top: 0;
+    position: static;
+    grid-column: 1 / -1;
+    grid-row: 2;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    margin-top: 12px;
+    padding: 10px 16px;
+  }
+  .operator-card > span,
+  .operator-card > small {
+    display: none;
+  }
+  .operator-logout[open] {
+    grid-column: 1 / -1;
   }
   .operator-card form button {
     min-height: 44px;

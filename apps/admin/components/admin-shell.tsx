@@ -37,12 +37,15 @@ export function AdminShell({
           <span>보안 세션</span>
           <strong>{operatorRoleLabel[principal.role]}</strong>
           <small>추가 본인 확인 완료</small>
-          <form action={logoutAction}>
-            <button type="submit">이 기기 로그아웃</button>
-          </form>
-          <form action={logoutAllAction}>
-            <button type="submit">모든 세션 종료</button>
-          </form>
+          <details className="operator-logout">
+            <summary>세션 종료 메뉴</summary>
+            <form action={logoutAction}>
+              <button type="submit">이 기기 로그아웃</button>
+            </form>
+            <form action={logoutAllAction}>
+              <button type="submit">모든 세션 종료</button>
+            </form>
+          </details>
         </div>
       </aside>
       <div className="control-workspace">

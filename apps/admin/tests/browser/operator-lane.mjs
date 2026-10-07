@@ -134,7 +134,37 @@ try {
         );
         const nav = page.getByRole("navigation", { name: "운영자 주 메뉴" });
         const toggle = nav.getByRole("button", { name: "운영 메뉴 열기" });
+        const session = page.locator(".operator-card");
+        const logoutMenu = session.locator("summary");
+        assert.equal(
+          await session
+            .getByRole("button", { name: "이 기기 로그아웃" })
+            .isVisible(),
+          false,
+        );
+        await logoutMenu.click();
+        assert.equal(
+          await session
+            .getByRole("button", { name: "이 기기 로그아웃" })
+            .isVisible(),
+          true,
+        );
+        assert.equal(
+          await session
+            .getByRole("button", { name: "모든 세션 종료" })
+            .isVisible(),
+          true,
+        );
+        await logoutMenu.click();
         if (width <= 760) {
+          const sessionBox = await session.boundingBox();
+          const mainBox = await page.locator("main").boundingBox();
+          assert(
+            sessionBox &&
+              mainBox &&
+              sessionBox.y + sessionBox.height <= mainBox.y,
+            "mobile session tools must remain above the content rather than cover it",
+          );
           assert.equal(await toggle.isVisible(), true);
           assert.equal(
             await nav.getByRole("link", { name: "공지 운영" }).isVisible(),

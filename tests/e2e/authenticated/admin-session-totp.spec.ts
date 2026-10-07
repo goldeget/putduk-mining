@@ -29,7 +29,9 @@ test.describe("admin app-owned session and real TOTP", () => {
       timeout: 60_000,
     });
 
+    await page.getByText("세션 종료 메뉴", { exact: true }).click();
     const logout = page.getByRole("button", { name: "이 기기 로그아웃" });
+    await logout.scrollIntoViewIfNeeded();
     await expect(logout).toBeInViewport();
     await page.screenshot({
       path: testInfo.outputPath("admin-session-logout-reachable.png"),

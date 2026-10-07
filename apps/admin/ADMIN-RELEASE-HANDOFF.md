@@ -9,7 +9,7 @@
 - 구현 기준: `origin/develop` = `0a7e95ba8bf55539fe32fd6f4654ee49a0be226d`
 - `origin/main` = `fbea85eebf1084bfc02bf1c452392b20f2f497ce`; develop이 420 commits 앞섬
 - 첫 구현 체크포인트: `4d1c341ac3f858e235e2d26804cb048648dec9c3`
-- 변경 범위: `apps/admin/**`, Admin 전용 authenticated E2E 3개와 기존 Admin browser fixture
+- 변경 범위: `apps/admin/**`, Admin 전용 authenticated E2E 4개와 기존 Admin browser fixture
 - member `app/**`, 금융 엔진, ledger/withdrawal 실행, migrations, RLS, 공용 API 계약, lockfile은 변경하지 않음
 
 ## 구현된 동작
@@ -36,6 +36,8 @@
 
 전역 `이 화면 안내`는 현재 화면의 확인 순서와 주의점을 설명합니다. 운영 요약은 실제 조회 값을 결정적으로 정리합니다. **자연어 모델 AI가 연결된 제품으로 표현하지 않았습니다.** 기존 USDT 운영 초안 흐름은 유지합니다.
 
+실제 공통 셸 스크린샷에서 모바일 고정 세션 카드가 본문을 덮는 문제를 찾아 수정했습니다. 세션 도구는 상단의 일반 문서 흐름에 놓고 종료 명령은 명시적으로 펼칩니다. 기존 두 로그아웃 server action은 유지하며, 실제 인증 E2E의 도달성 검사도 새 메뉴를 사용합니다.
+
 글 초안은 미리보기 → 운영자 검토 → 복사까지입니다. 게시·전송 버튼과 성공 상태를 만들지 않았습니다. 편집하면 검토가 해제되며, 5분 만료·연결 끊김·pagehide·기존 운영 세션 무효화 때 지웁니다. 세션 무효화 후 편집을 막고 재인증을 안내합니다. 늦은 clipboard 응답으로 오래된 완료 안내를 복구하지 않습니다. 역할 변경 시 기존 provider의 메모리도 새로 만듭니다.
 
 ## 검증 증거
@@ -45,7 +47,7 @@
 - Admin typecheck, 범위 내 ESLint, production build PASS
 - 실제 시스템 Chromium `151.0.7922.173`: 98개 컴포넌트 브라우저 QA PASS
 - 화면 폭 320 / 390 / 834 / 1440, Light / Dark, reduced motion, 11개 실제 컴포넌트 화면, 메뉴·화면 안내 키보드 닫기·조회 실패/빈 상태 구분·미리보기·실제 clipboard·편집 무효화·offline 삭제 검증
-- 실제 `AdminShell` 전체를 사용해 테마 선택·세션 카드·고정 로그아웃 영역까지 확인합니다. fixture의 운영자는 합성이며 auth action 두 개만 명시적으로 차단했습니다. 실제 인증 성공으로 해석하지 않습니다.
+- 실제 `AdminShell` 전체를 사용해 테마 선택·세션 카드·펼치는 로그아웃 메뉴와 모바일 본문 비겹침까지 확인합니다. fixture의 운영자는 합성이며 auth action 두 개만 명시적으로 차단했습니다. 실제 인증 성공으로 해석하지 않습니다.
 - 결과: `test-results/admin-release-component-qa/results.json`; 스크린샷 32개와 소스 SHA-256 포함
 - 승인된 Visual Lab의 Admin Today 데스크톱 Dark 목업과 실제 Today/공지 스크린샷을 열어 검토했습니다. 우선 작업 배치를 수정했습니다. 픽셀 완전 일치 판정이나 인증된 서비스 화면 검증으로 확대하지 않습니다.
 
@@ -64,7 +66,7 @@ node apps/admin/tests/browser/server.mjs
 PUTDUK_UI_TEST_EXECUTABLE=/usr/bin/chromium node apps/admin/tests/browser/operator-lane.mjs
 ```
 
-Primary의 로컬 DB가 준비되면 기존 authenticated runner에서 최소 `admin-today`, `admin-members-product`, `admin-exceptions-product`, `admin-assistant-read-draft`, 영향받은 입금 E2E를 실행해야 합니다. 신규 조회 화면의 실제 역할·권한 취소·미허용 역할·읽기 실패도 검증해야 합니다. 동일 프로젝트의 격리된 로컬 DB만 사용하세요.
+Primary의 로컬 DB가 준비되면 기존 authenticated runner에서 최소 `admin-today`, `admin-members-product`, `admin-exceptions-product`, `admin-assistant-read-draft`, `admin-session-totp`, 영향받은 입금 E2E를 실행해야 합니다. 신규 조회 화면의 실제 역할·권한 취소·미허용 역할·읽기 실패도 검증해야 합니다. 동일 프로젝트의 격리된 로컬 DB만 사용하세요.
 
 ## 공유 backend 요구 — Primary 소유
 
