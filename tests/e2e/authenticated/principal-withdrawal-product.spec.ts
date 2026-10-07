@@ -46,6 +46,10 @@ import {
   type PrincipalOperator,
 } from "./helpers/principal-product-fixture";
 import { expectSettledRoute } from "./helpers/settled-route";
+import {
+  capturePrincipalPresentation,
+  writePrincipalPresentationReport,
+} from "./helpers/principal-presentation-evidence";
 import { captureRedactedWithdrawalEvidence } from "./helpers/withdrawal-evidence";
 
 type MemberFixture = Awaited<ReturnType<typeof preparePrincipalMember>>;
@@ -605,6 +609,20 @@ test.describe("signed member principal source-v3 product", () => {
     );
     expect(mutations.length).toBe(postsBeforeReload);
     expect(financialSnapshot(member.member.userId)).toEqual(afterHold.current);
+    // Recovery finishes its read before evidence is collected; no finance is retried.
+    await expect(
+      section.getByRole("button", { name: "이전 요청 확인", exact: true }),
+    ).toBeEnabled();
+    await expect(
+      page.getByText("원금 정보를 확인하고 있어요…", { exact: true }),
+    ).toHaveCount(0);
+    await page.waitForLoadState("networkidle");
+    await page.evaluate(async () => {
+      await document.fonts.ready;
+      await new Promise<void>((resolve) =>
+        requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+      );
+    });
     await captureRedactedWithdrawalEvidence(
       page,
       info.outputPath("principal-original-recovered.png"),
@@ -781,4 +799,215 @@ test.describe("signed member principal source-v3 product", () => {
       expect(financialSnapshot(member.member.userId)).toEqual(changed);
     });
   }
+
+  test("reconstructed principal cards retain money truth at seven widths, both themes and enlarged Korean text", async ({
+    page,
+  }, info) => {
+    test.setTimeout(240_000);
+    const member = await preparePrincipalMember(page, operator, "KRW_BANK");
+    const before = financialSnapshot(member.member.userId);
+    const errors: string[] = [];
+    const mutations: string[] = [];
+    const origin = new URL(page.url()).origin;
+    page.on("pageerror", (error) => errors.push(`page:${error.name}`));
+    page.on("console", (message) => {
+      if (message.type() === "error") errors.push("console:error");
+    });
+    page.on("response", (response) => {
+      if (response.status() >= 400)
+        errors.push(
+          `http:${response.status()}:${new URL(response.url()).pathname}`,
+        );
+    });
+    page.on("request", (request) => {
+      const path = new URL(request.url()).pathname;
+      if (
+        request.method() !== "GET" &&
+        ["/api/v1/withdrawals/intents", "/api/v1/withdrawals/hold"].includes(
+          path,
+        )
+      )
+        mutations.push(path);
+    });
+    page.on("requestfailed", (request) => {
+      const url = new URL(request.url());
+      if (
+        request.failure()?.errorText === "net::ERR_ABORTED" &&
+        request.method() === "GET" &&
+        request.resourceType() === "fetch" &&
+        !request.isNavigationRequest() &&
+        request.headers()["next-router-prefetch"] === "1" &&
+        url.origin === origin &&
+        !url.pathname.startsWith("/api/")
+      )
+        return;
+      errors.push(`network:${url.pathname}`);
+    });
+    const records = [];
+    for (const width of [320, 360, 375, 390, 834, 1440, 1920]) {
+      await page.setViewportSize({ width, height: width === 834 ? 1112 : 900 });
+      for (const theme of ["dark", "light"] as const) {
+        await page.emulateMedia({
+          colorScheme: theme,
+          reducedMotion: "reduce",
+        });
+        await page.evaluate(
+          (theme) => localStorage.setItem("putduk-theme", theme),
+          theme,
+        );
+        expect(
+          (
+            await page.goto("/wallet/withdraw", { waitUntil: "networkidle" })
+          )?.status(),
+        ).toBe(200);
+        await expectSettledRoute(page, "/wallet/withdraw");
+        await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
+        await expect(
+          principalSection(page, "KRW_BANK").getByRole("combobox"),
+        ).toHaveValue(member.destinationId);
+        for (const textScale of [1, 2]) {
+          await page.evaluate(async (scale) => {
+            document.documentElement.style.fontSize = scale === 2 ? "200%" : "";
+            await document.fonts.ready;
+          }, textScale);
+          const main = page.getByRole("main");
+          expect(
+            await main.evaluate((root) => root.clientHeight),
+          ).toBeGreaterThanOrEqual(page.viewportSize()!.height / 2);
+          await expect
+            .poll(() =>
+              main.evaluate(
+                (root) =>
+                  root.scrollWidth <= root.clientWidth + 1 &&
+                  document.documentElement.scrollWidth <= innerWidth + 1,
+              ),
+            )
+            .toBe(true);
+          for (const method of ["KRW_BANK", "USDT_ADDRESS"] as const) {
+            const section = principalSection(page, method);
+            const moneyGroups = await section
+              .locator("[data-principal-money-group]")
+              .evaluateAll((groups) =>
+                groups.map((group) => {
+                  const range = document.createRange();
+                  range.selectNodeContents(group);
+                  const lines = [...range.getClientRects()].filter(
+                    (box) => box.width > 0 && box.height > 0,
+                  );
+                  const box = group.closest("dd")!.getBoundingClientRect();
+                  return (
+                    lines.length === 1 &&
+                    lines.every(
+                      (line) =>
+                        line.left >= box.left - 1 &&
+                        line.right <= box.right + 1,
+                    )
+                  );
+                }),
+              );
+            expect(moneyGroups.length).toBeGreaterThanOrEqual(6);
+            expect(moneyGroups.every(Boolean)).toBe(true);
+            const fields = section.locator('input[type="text"],select');
+            expect(await fields.count()).toBe(2);
+            const controls = await fields.evaluateAll((nodes) =>
+              nodes.map((node) => {
+                const css = getComputedStyle(node),
+                  box = node.getBoundingClientRect(),
+                  parent = node.closest("section")!.getBoundingClientRect();
+                return {
+                  styled:
+                    css.borderTopStyle !== "none" &&
+                    parseFloat(css.borderTopWidth) >= 1 &&
+                    css.backgroundColor !== "rgba(0, 0, 0, 0)",
+                  touchTarget: box.height >= 44,
+                  contained:
+                    box.left >= parent.left && box.right <= parent.right + 1,
+                };
+              }),
+            );
+            expect(
+              controls.every((c) => c.styled && c.touchTarget && c.contained),
+            ).toBe(true);
+            const badgeContrasts = await section.evaluate((root) => {
+              const luminance = (value: string) => {
+                const channels = value.match(/[0-9.]+/g)?.map(Number);
+                if (
+                  !channels ||
+                  channels.length < 3 ||
+                  (channels.length > 3 && channels[3] !== 1)
+                )
+                  return null;
+                const linear = channels.slice(0, 3).map((c) => {
+                  const v = c / 255;
+                  return v <= 0.04045
+                    ? v / 12.92
+                    : ((v + 0.055) / 1.055) ** 2.4;
+                });
+                return (
+                  linear[0]! * 0.2126 +
+                  linear[1]! * 0.7152 +
+                  linear[2]! * 0.0722
+                );
+              };
+              return [...root.querySelectorAll("form h3")].map((heading) => {
+                const badge = heading.previousElementSibling;
+                if (!badge) return null;
+                const css = getComputedStyle(badge),
+                  fg = luminance(css.color),
+                  bg = luminance(css.backgroundColor);
+                return fg === null || bg === null
+                  ? null
+                  : (Math.max(fg, bg) + 0.05) / (Math.min(fg, bg) + 0.05);
+              });
+            });
+            expect(badgeContrasts).toHaveLength(2);
+            expect(
+              badgeContrasts.every(
+                (contrast) => contrast !== null && contrast >= 4.5,
+              ),
+            ).toBe(true);
+            const consent = section.getByRole("checkbox", {
+              name: "원금 회수임을 확인하고 요청합니다.",
+              exact: true,
+            });
+            await expect(consent).not.toBeChecked();
+            await expect(
+              section.getByRole("button", {
+                name: "원금 회수 확인 후 요청",
+                exact: true,
+              }),
+            ).toBeDisabled();
+            await section
+              .getByLabel("회수할 원금 (원)", { exact: true })
+              .focus();
+            await expect(
+              section.getByLabel("회수할 원금 (원)", { exact: true }),
+            ).toBeFocused();
+            await page.keyboard.press("Tab");
+            await expect(section.getByRole("combobox")).toBeFocused();
+            const evidence = await capturePrincipalPresentation(
+              page,
+              section,
+              info,
+              `principal-${method.toLowerCase()}-${width}-${theme}-text-${textScale}`,
+            );
+            records.push({ width, theme, textScale, method, ...evidence });
+          }
+        }
+      }
+    }
+    expect(records).toHaveLength(56);
+    expect(mutations).toEqual([]);
+    expect(errors).toEqual([]);
+    expect(financialSnapshot(member.member.userId)).toEqual(before);
+    await writePrincipalPresentationReport(info, {
+      scope:
+        "funded principal before-consent cards only; screenshot review pending",
+      records,
+      mutations,
+      errors,
+      moneyUnchanged: true,
+      globalVisualAccepted: false,
+    });
+  });
 });

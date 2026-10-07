@@ -127,7 +127,7 @@ jobs:
         run: pnpm test
 
       - name: Verify authenticated scheduling invariants
-        run: node --test scripts/ci-authenticated-shards.test.mjs scripts/assert-worker-report.test.mjs
+        run: node --test scripts/ci-authenticated-shards.test.mjs scripts/assert-worker-report.test.mjs scripts/e2e-admin-server.test.mjs
 
       - name: Verify every authenticated test is assigned exactly once
         env:

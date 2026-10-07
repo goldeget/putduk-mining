@@ -37,7 +37,7 @@ function copyCandidate() {
 describe("portable principal candidate guard", () => {
   it("verifies all runtime and migration bytes after moving to another checkout", () => {
     expect(assertPrincipalCandidateSources(copyCandidate())).toMatchObject({
-      runtimeSources: 12,
+      runtimeSources: 14,
       migrationSources: 32,
     });
   });
@@ -51,6 +51,14 @@ describe("portable principal candidate guard", () => {
       );
     });
   }
+  it("rejects altered principal presentation CSS with unchanged monetary sources", () => {
+    const root = copyCandidate();
+    const css = "components/product/principal-recovery.module.css";
+    writeFileSync(join(root, css), "changed presentation original");
+    expect(() => assertPrincipalCandidateSources(root)).toThrow(
+      "PRINCIPAL_E2E_SOURCE_CHANGED",
+    );
+  });
   it("rejects a caller-rewritten manifest rather than accepting its new hashes", () => {
     const root = copyCandidate();
     writeFileSync(

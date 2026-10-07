@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { PrincipalCryptoWithdrawalForm } from "@/components/product/principal-crypto-withdrawal-form";
 import { PrincipalWithdrawalForm } from "@/components/product/principal-withdrawal-form";
+import principalStyles from "@/components/product/principal-recovery.module.css";
 
 import { PutdukIcon } from "@/components/icons/putduk-icon";
 import {
@@ -382,20 +383,6 @@ export default async function WithdrawalPage() {
         )}
       </Surface>
 
-      <Surface as="section" tone="raised">
-        <PrincipalWithdrawalForm
-          key={`principal:${identity.userId}`}
-          ownerId={identity.userId}
-        />
-      </Surface>
-
-      <Surface as="section" tone="raised">
-        <PrincipalCryptoWithdrawalForm
-          key={`principal-crypto:${identity.userId}`}
-          ownerId={identity.userId}
-        />
-      </Surface>
-
       <div className={styles.fundingWorkspace}>
         <Surface as="section" className={styles.fundingPanel} tone="raised">
           {accountsError || policiesError ? (
@@ -481,6 +468,17 @@ export default async function WithdrawalPage() {
             </li>
           </ol>
         </Surface>
+      </div>
+
+      <div className={principalStyles.workspace}>
+        <PrincipalWithdrawalForm
+          key={`principal:${identity.userId}`}
+          ownerId={identity.userId}
+        />
+        <PrincipalCryptoWithdrawalForm
+          key={`principal-crypto:${identity.userId}`}
+          ownerId={identity.userId}
+        />
       </div>
 
       <section

@@ -8,7 +8,9 @@ import {
   type FormEvent,
 } from "react";
 import { useRouter } from "next/navigation";
-import styles from "@/components/product/product-experience.module.css";
+import { PutdukIcon } from "@/components/icons/putduk-icon";
+import styles from "@/components/product/principal-recovery.module.css";
+import { PrincipalMoney } from "@/components/product/principal-money";
 import {
   isMemberFacingWithdrawalCopy,
   MEMBER_WITHDRAWAL_NETWORK_FALLBACK,
@@ -271,80 +273,95 @@ export function PrincipalWithdrawalForm({ ownerId }: { ownerId: string }) {
   return (
     <section
       aria-labelledby="principal-withdrawal-heading"
-      className={styles.fundingPanel}
+      className={styles.panel}
     >
-      <header className={styles.stepHeader}>
+      <header className={styles.header}>
+        <span className={styles.methodIcon} aria-hidden="true">
+          <PutdukIcon name="wallet" size={24} />
+        </span>
         <div>
+          <p className={styles.eyebrow}>은행 계좌</p>
           <h2 id="principal-withdrawal-heading">원금 회수</h2>
-          <p>
-            채굴 수익 출금과 별도로, 입금한 원금에서 회수할 금액을 직접 확인해
-            주세요.
+          <p className={styles.description}>
+            입금한 원금에서 회수할 금액을 확인해 주세요.
           </p>
         </div>
       </header>
       {facts ? (
         <>
           <dl
-            className={styles.policySummary}
+            className={styles.facts}
             aria-label="서버에서 확인한 현재 원금 정보"
           >
             <div>
               <dt>현재 인정 원금</dt>
-              <dd>{formatAtomicAmount(facts.eligiblePrincipalKrw, "KRW")}</dd>
+              <dd>
+                <PrincipalMoney atomic={facts.eligiblePrincipalKrw} />
+              </dd>
             </div>
             <div>
               <dt>보류 중 원금</dt>
-              <dd>{formatAtomicAmount(facts.heldPrincipalKrw, "KRW")}</dd>
+              <dd>
+                <PrincipalMoney atomic={facts.heldPrincipalKrw} />
+              </dd>
             </div>
             <div>
               <dt>지갑 사용 가능</dt>
-              <dd>{formatAtomicAmount(facts.walletAvailableKrw, "KRW")}</dd>
+              <dd>
+                <PrincipalMoney atomic={facts.walletAvailableKrw} />
+              </dd>
             </div>
           </dl>
-          <p>
+          <p className={styles.freshness}>
             조회 시각:{" "}
             {new Date(facts.evaluatedAt).toLocaleString("ko-KR", {
               timeZone: "Asia/Seoul",
             })}
-            . 조회값은 접수 보장이 아니며, 요청할 때 자격을 다시 확인해요.
+            . 요청할 때 회수 조건을 다시 확인해요.
           </p>
         </>
       ) : (
-        <p role="status">
-          현재 원금 회수 조건을 확인하지 못했어요. 이전 요청 확인은 계속 이용할
-          수 있어요.
+        <p className={styles.notice} role="status">
+          {read === null && !feedback
+            ? "원금 정보를 확인하고 있어요…"
+            : "현재 원금 회수 조건을 확인하지 못했어요. 이전 요청 확인은 계속 이용할 수 있어요."}
         </p>
       )}
       {otherPrincipalPending ? (
-        <p role="status">
+        <p className={styles.notice} role="status">
           이전 원금 회수 요청의 수단이 은행 계좌와 달라요. 이전 요청 확인을
           이용해 주세요.
         </p>
       ) : null}
       {ordinaryPending ? (
-        <p role="status">
+        <p className={styles.notice} role="status">
           채굴 수익 출금의 이전 요청을 먼저 위에서 확인해 주세요.
         </p>
       ) : null}
       <form onSubmit={submit} noValidate className={styles.form}>
+        <div className={styles.step}>
+          <span aria-hidden="true">01</span>
+          <h3>금액과 받을 곳</h3>
+        </div>
+        <div className={styles.field}>
+          <label htmlFor="principal-withdrawal-amount">회수할 원금 (원)</label>
+          <span className={styles.amountControl}>
+            <input
+              id="principal-withdrawal-amount"
+              type="text"
+              inputMode="numeric"
+              autoComplete="off"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value.replace(/[^0-9]/g, ""))}
+              required
+              disabled={pending || Boolean(record)}
+              placeholder="0"
+            />
+            <span aria-hidden="true">원</span>
+          </span>
+        </div>
         <label
-          className={styles.fieldGroup}
-          htmlFor="principal-withdrawal-amount"
-        >
-          <span>회수할 원금 (원)</span>
-          <input
-            id="principal-withdrawal-amount"
-            type="text"
-            inputMode="numeric"
-            autoComplete="off"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value.replace(/[^0-9]/g, ""))}
-            required
-            disabled={pending || Boolean(record)}
-          />
-        </label>
-        <label
-          className={styles.fieldGroup}
+          className={styles.field}
           htmlFor="principal-withdrawal-destination"
         >
           <span>본인 명의 은행 계좌</span>
@@ -372,58 +389,76 @@ export function PrincipalWithdrawalForm({ ownerId }: { ownerId: string }) {
           </select>
         </label>
         {!principalPending && facts ? (
-          <p>
-            최소 {formatAtomicAmount(facts.policy.minimumAmountKrw, "KRW")} ·
-            수수료 {formatAtomicAmount(facts.policy.feeKrw, "KRW")}. 새 계좌는
-            위의 계좌 등록 절차에서 본인 확인과 보호 시간을 마친 뒤 사용할 수
-            있어요.
-          </p>
+          <>
+            <dl className={styles.policy}>
+              <div>
+                <dt>최소 회수 금액</dt>
+                <dd>
+                  {formatAtomicAmount(facts.policy.minimumAmountKrw, "KRW")}
+                </dd>
+              </div>
+              <div>
+                <dt>수수료</dt>
+                <dd>{formatAtomicAmount(facts.policy.feeKrw, "KRW")}</dd>
+              </div>
+            </dl>
+            <p className={styles.hint}>
+              새 계좌는 위의 출금 영역에서 등록해 주세요. 본인 확인과 보호
+              시간이 끝나야 사용할 수 있어요.
+            </p>
+          </>
         ) : null}
-        <label className={styles.fieldGroup}>
+        <div className={styles.step}>
+          <span aria-hidden="true">02</span>
+          <h3>원금 회수 확인</h3>
+        </div>
+        <label className={styles.consent}>
+          <input
+            type="checkbox"
+            aria-label="원금 회수임을 확인하고 요청합니다."
+            checked={consent}
+            disabled={pending || ordinaryPending || otherPrincipalPending}
+            onChange={(e) => setConsent(e.target.checked)}
+          />
           <span>
-            <input
-              type="checkbox"
-              checked={consent}
-              disabled={pending || ordinaryPending || otherPrincipalPending}
-              onChange={(e) => setConsent(e.target.checked)}
-            />{" "}
-            원금 회수임을 확인하고 요청합니다.
+            <strong>원금 회수로 요청합니다</strong>
+            <small>
+              보류한 금액의 유지기간만 멈춰요. 이전 기간은 보존해요. 취소하면
+              다시 누적돼요. 보류 기간은 혜택 계산에 더하지 않아요.
+            </small>
           </span>
-          <small>
-            회수 보류된 원금 부분의 유지기간만 멈춰요. 기존 적격 기간은
-            보존되고, 취소로 보류가 해제되면 이후부터 다시 누적돼요. 보류 중
-            기간은 소급해 더하지 않아요.
-          </small>
         </label>
-        <button
-          type="submit"
-          className="button button--primary"
-          disabled={pending || !canSubmit}
-        >
-          {pending
-            ? "확인 중…"
-            : principalPending
-              ? "같은 원금 회수 요청 다시 확인"
-              : "원금 회수 확인 후 요청"}
-        </button>
-        {anyPrincipalPending ? (
+        <div className={styles.actions}>
+          <button
+            type="submit"
+            className="button button--primary"
+            disabled={pending || !canSubmit}
+          >
+            {pending
+              ? "확인 중…"
+              : principalPending
+                ? "같은 원금 회수 요청 다시 확인"
+                : "원금 회수 확인 후 요청"}
+          </button>
+          {anyPrincipalPending ? (
+            <button
+              type="button"
+              className="button button--secondary"
+              disabled={pending}
+              onClick={() => void cancelUnsubmitted()}
+            >
+              접수 전 요청 정리
+            </button>
+          ) : null}
           <button
             type="button"
             className="button button--secondary"
             disabled={pending}
-            onClick={() => void cancelUnsubmitted()}
+            onClick={() => void checkPrevious()}
           >
-            접수 전 요청 정리
+            이전 요청 확인
           </button>
-        ) : null}
-        <button
-          type="button"
-          className="button button--secondary"
-          disabled={pending}
-          onClick={() => void checkPrevious()}
-        >
-          이전 요청 확인
-        </button>
+        </div>
       </form>
       {feedback ? (
         <p className={styles.feedback} role="status">

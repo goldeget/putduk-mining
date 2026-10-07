@@ -12,16 +12,16 @@ const html = () =>
     }),
   );
 describe("explicit principal confirmation panel", () => {
-  it("starts unavailable with unchecked consent and disabled finance submission", () => {
+  it("starts loading with unchecked consent and disabled finance submission", () => {
     const value = html();
-    expect(value).toContain("현재 원금 회수 조건을 확인하지 못했어요");
+    expect(value).toContain("원금 정보를 확인하고 있어요…");
     expect(value).not.toContain('checked=""');
     expect(value).toMatch(/<button[^>]*type="submit"[^>]*disabled/);
   });
   it("states pause/preserved age/prospective resumption without promising held-cycle payout", () => {
     const value = html();
-    expect(value).toContain("기존 적격 기간은 보존");
-    expect(value).toContain("보류 중 기간은 소급해 더하지 않아요");
+    expect(value).toContain("이전 기간은 보존해요");
+    expect(value).toContain("보류 기간은 혜택 계산에 더하지 않아요");
     expect(value).not.toContain("유지 혜택 지급");
   });
   it("does not collect new bank material/password/service authority in principal form", () => {

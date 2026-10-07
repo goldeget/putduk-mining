@@ -5,7 +5,7 @@
   "sources": [
     {
       "path": "app/(product)/wallet/withdraw/page.tsx",
-      "sha256": "e08a2ce439ec2f8fe631fab6d203b13ebfa41f506959621f423b3cf781b363cf",
+      "sha256": "17f294ab2b4190a119cb4fb6db1763e380f775fae2df2b88ab5750c3ce3322f1",
       "kind": "runtime"
     },
     {
@@ -15,12 +15,12 @@
     },
     {
       "path": "components/product/principal-crypto-withdrawal-form.tsx",
-      "sha256": "4b1f1ae47cdbc84a5cad6351d148b8fe14057151bddf3bb164b82ffa10678d25",
+      "sha256": "914a216c4bc99894fde09b17c763470e2bdbd73fa8713f2977a53586c816632c",
       "kind": "runtime"
     },
     {
       "path": "components/product/principal-withdrawal-form.tsx",
-      "sha256": "19dd8220dacc78453c59d0b678dd46f2b779967f62b7ebd82a9a636708a318d4",
+      "sha256": "478a429d618ae5da98a9b90b68eb3a70d5f0668b4dc7147d180bb937ba9be5c6",
       "kind": "runtime"
     },
     {
@@ -222,6 +222,16 @@
       "path": "supabase/migrations/20261006139350_closed_native_finalize_request_links.sql",
       "sha256": "7d6187ffaa405863d680e91c3f6406e42bea64e7b15a4489ec5cc3310d9b6e04",
       "kind": "migration"
+    },
+    {
+      "kind": "runtime",
+      "path": "components/product/principal-recovery.module.css",
+      "sha256": "e43a89fece04535234e6111b37f3213ad962a7c8a5334dae63fb59fe09b3e6ee"
+    },
+    {
+      "path": "components/product/principal-money.tsx",
+      "kind": "runtime",
+      "sha256": "7f467a3693b3d2db2f29c3879fe0f25d366ed6ee1f40466bf39586f57c013121"
     }
   ]
 }

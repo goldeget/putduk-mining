@@ -16,7 +16,7 @@ describe("explicit manual-USDT principal panel", () => {
     const s = html();
     expect(s).not.toContain('checked=""');
     expect(s).toMatch(/<button[^>]*type="submit"[^>]*disabled/);
-    expect(s).toContain("현재 원금 회수 조건을 확인하지 못했어요");
+    expect(s).toContain("원금 정보를 확인하고 있어요…");
   });
   it("states KRW amount and actual manual-send receipt without a fabricated quote", () => {
     const s = html();
@@ -43,8 +43,8 @@ describe("explicit manual-USDT principal panel", () => {
   });
   it("preserves pause/age/no-retro semantics without promising held-cycle payment", () => {
     const s = html();
-    expect(s).toContain("기존 적격 기간은 보존");
-    expect(s).toContain("보류 중 기간은 소급해 더하지 않아요");
+    expect(s).toContain("이전 기간은 보존해요");
+    expect(s).toContain("보류 기간은 혜택 계산에 더하지 않아요");
     expect(s).not.toContain("유지 혜택 지급");
   });
   it("offers explicit readonly recovery separate from finance submission", () =>

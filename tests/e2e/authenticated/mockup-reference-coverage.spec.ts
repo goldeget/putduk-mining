@@ -226,7 +226,7 @@ async function captureRoutes(
           "/menu",
           "/ai",
         ].includes(route) &&
-        (route === "/mining" ||
+        (["/mining", "/wallet"].includes(route) ||
           [390, 1440].includes(width) ||
           (route === "/signup" && width === 320))
           ? [1, 2]

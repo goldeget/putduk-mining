@@ -7,8 +7,10 @@ import { fileURLToPath } from "node:url";
 const ROOT = fileURLToPath(new URL("../", import.meta.url));
 const MANIFEST = "tests/e2e/fixtures/principal-integrated-source.json";
 const MANIFEST_SHA =
-  "1e00ee48559a0580052b5cd7cb5e9171214ca22682f12292b396e9efc077c589";
+  "c305e9cb681119993ee804ec40dde3d6f6e140a8ff00cae50fb8f38daed60eb4";
 const RUNTIME = [
+  "components/product/principal-money.tsx",
+  "components/product/principal-recovery.module.css",
   "app/(product)/wallet/withdraw/page.tsx",
   "app/api/v1/withdrawals/intents/route.ts",
   "components/product/principal-withdrawal-form.tsx",
@@ -50,7 +52,7 @@ export function assertPrincipalCandidateSources(root = ROOT) {
     map.repository !== "goldeget/putduk-mining" ||
     map.migration_count !== 152 ||
     !Array.isArray(map.sources) ||
-    map.sources.length !== 44
+    map.sources.length !== 46
   ) {
     throw new Error("PRINCIPAL_E2E_RUNTIME_MAP_INVALID");
   }
@@ -62,7 +64,7 @@ export function assertPrincipalCandidateSources(root = ROOT) {
   if (
     JSON.stringify(runtime) !== JSON.stringify(RUNTIME) ||
     migrations.length !== 32 ||
-    new Set(map.sources.map((row) => row.path)).size !== 44
+    new Set(map.sources.map((row) => row.path)).size !== 46
   )
     throw new Error("PRINCIPAL_E2E_RUNTIME_MAP_INVALID");
   for (const row of map.sources) {
@@ -82,7 +84,7 @@ export function assertPrincipalCandidateSources(root = ROOT) {
       throw new Error("PRINCIPAL_E2E_SOURCE_CHANGED");
   }
   return {
-    runtimeSources: 12,
+    runtimeSources: 14,
     migrationSources: 32,
     manifestSha256: MANIFEST_SHA,
   };
