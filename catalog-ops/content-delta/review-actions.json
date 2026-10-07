@@ -1,0 +1,51 @@
+{
+  "status": "PROPOSED_NOT_EXECUTED",
+  "actions": [
+    {
+      "slug": "event-account-safety",
+      "title_ko": "출시 첫날 계정 안전 확인",
+      "decision": "MERGE",
+      "reason_ko": "비밀번호/낯선 로그인 안내를 피싱 캠페인에 통합. 보안 내용을 삭제하지 않음.",
+      "merge_into": "event-phishing-check",
+      "existing_body_sha256": "dc65fd9bd183bae9020852f0098c32d37d7d36f2055207d5a1e8a0a465f60cf6",
+      "economic_effect": "NONE",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "event-product-read",
+      "title_ko": "상품 설명 먼저 읽기",
+      "decision": "MERGE",
+      "reason_ko": "새 자산 소유/제휴/시장가격 교육 안내에 통합하여 같은 목적 노출 중복 방지.",
+      "merge_into": "catalog-event-theme-reading",
+      "existing_body_sha256": "f47668fd129b1557429251e1648c1532196854511b9936f7dbf887f40de77eda",
+      "economic_effect": "NONE",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "event-support-practice",
+      "title_ko": "도움이 필요할 때 문의하기",
+      "decision": "DROP",
+      "reason_ko": "연습 참여용 상담 문의는 실제 운영 큐에 부담. 도움말/지원 공지로 안내하고 이벤트 노출 제외 제안.",
+      "merge_into": null,
+      "existing_body_sha256": "5c9858e3d72401554558f744ad7a6e13694bbf19e0cf754396830b5154c1dc9a",
+      "economic_effect": "NONE",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "event-security-reminder",
+      "title_ko": "안전한 상담 약속",
+      "decision": "MERGE",
+      "reason_ko": "기존 피싱 캠페인과 내용 중복. 계정 안전 내용과 함께 통합 제안.",
+      "merge_into": "event-phishing-check",
+      "existing_body_sha256": "08273ec1db6a1c01b9d08a906acd5117f47c20add36affcaa20be59f89efd091",
+      "economic_effect": "NONE",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    }
+  ],
+  "never_delete_historical_records": true,
+  "registration_ready": false
+}

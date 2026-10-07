@@ -1,0 +1,685 @@
+{
+  "schema_version": 1,
+  "frozen_ref": "ba9ed931f756488ce4f67f945cffad9552842c09",
+  "public_benchmark_completed": false,
+  "benchmarks": [
+    {
+      "category": "FINTECH",
+      "source_id": "toss",
+      "url": "https://toss.im/",
+      "accessed_at": null,
+      "observed_pattern": null,
+      "verification_status": "ACCESS_BLOCKED",
+      "putduk_review_basis": "REPOSITORY_AND_EDITORIAL_REVIEW_NOT_OBSERVED_EXTERNAL_PATTERN"
+    },
+    {
+      "category": "BROKERAGE",
+      "source_id": "schwab-help",
+      "url": "https://www.schwab.com/resource-center/insights",
+      "accessed_at": null,
+      "observed_pattern": null,
+      "verification_status": "ACCESS_BLOCKED",
+      "putduk_review_basis": "REPOSITORY_AND_EDITORIAL_REVIEW_NOT_OBSERVED_EXTERNAL_PATTERN"
+    },
+    {
+      "category": "PAYMENTS",
+      "source_id": "stripe",
+      "url": "https://docs.stripe.com/",
+      "accessed_at": null,
+      "observed_pattern": null,
+      "verification_status": "ACCESS_BLOCKED",
+      "putduk_review_basis": "REPOSITORY_AND_EDITORIAL_REVIEW_NOT_OBSERVED_EXTERNAL_PATTERN"
+    },
+    {
+      "category": "CRYPTO",
+      "source_id": "coinbase",
+      "url": "https://help.coinbase.com/",
+      "accessed_at": null,
+      "observed_pattern": null,
+      "verification_status": "ACCESS_BLOCKED",
+      "putduk_review_basis": "REPOSITORY_AND_EDITORIAL_REVIEW_NOT_OBSERVED_EXTERNAL_PATTERN"
+    },
+    {
+      "category": "CONSUMER",
+      "source_id": "apple-help",
+      "url": "https://support.apple.com/",
+      "accessed_at": null,
+      "observed_pattern": null,
+      "verification_status": "ACCESS_BLOCKED",
+      "putduk_review_basis": "REPOSITORY_AND_EDITORIAL_REVIEW_NOT_OBSERVED_EXTERNAL_PATTERN"
+    },
+    {
+      "category": "SUBSCRIPTION",
+      "source_id": "netflix-help",
+      "url": "https://help.netflix.com/",
+      "accessed_at": null,
+      "observed_pattern": null,
+      "verification_status": "ACCESS_BLOCKED",
+      "putduk_review_basis": "REPOSITORY_AND_EDITORIAL_REVIEW_NOT_OBSERVED_EXTERNAL_PATTERN"
+    },
+    {
+      "category": "REWARDS",
+      "source_id": "starbucks",
+      "url": "https://www.starbucks.com/rewards",
+      "accessed_at": null,
+      "observed_pattern": null,
+      "verification_status": "ACCESS_BLOCKED",
+      "putduk_review_basis": "REPOSITORY_AND_EDITORIAL_REVIEW_NOT_OBSERVED_EXTERNAL_PATTERN"
+    }
+  ],
+  "event_review": [
+    {
+      "slug": "event-welcome-tour",
+      "title_ko": "퍼뜩 첫 화면 둘러보기",
+      "decision": "KEEP",
+      "reason_ko": "입금 없는 첫 화면 안내와 별도 보상 없음이 명확.",
+      "merge_into": null,
+      "existing_body_sha256": "f661cbafaff6ab566449bdaa43c57942e327d85afd3d0280c7bd94cd7e47ac51",
+      "economic_effect": "NONE",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "event-start-guide",
+      "title_ko": "퍼뜩 START 체험 안내",
+      "decision": "KEEP",
+      "reason_ko": "체험·실제 지갑 분리와 입금 불필요 경계 유지.",
+      "merge_into": null,
+      "existing_body_sha256": "059bedd110f45b9665f5ef607177a0db712f41ceeb5bf676172e865f4dc63b5d",
+      "economic_effect": "NONE",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "event-account-safety",
+      "title_ko": "출시 첫날 계정 안전 확인",
+      "decision": "MERGE",
+      "reason_ko": "비밀번호/낯선 로그인 안내를 피싱 캠페인에 통합. 보안 내용을 삭제하지 않음.",
+      "merge_into": "event-phishing-check",
+      "existing_body_sha256": "dc65fd9bd183bae9020852f0098c32d37d7d36f2055207d5a1e8a0a465f60cf6",
+      "economic_effect": "NONE",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "event-phishing-check",
+      "title_ko": "가짜 안내 구별하기",
+      "decision": "KEEP",
+      "reason_ko": "공식 입금 화면 확인과 외부 송금 거절이 핵심; 합쳐진 보안 내용도 포함 필요.",
+      "merge_into": null,
+      "existing_body_sha256": "02d2a29f4a2a9b9c0ad508fafd3e02febfd8853b468efca7a798c3489407c848",
+      "economic_effect": "NONE",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "event-wallet-tour",
+      "title_ko": "지갑의 세 가지 기록 이해하기",
+      "decision": "KEEP",
+      "reason_ko": "원금·보상·Bonus를 실제 출금 조건과 구분.",
+      "merge_into": null,
+      "existing_body_sha256": "863dcbea775a0b3879d0c7bc2854cc3d492c9e74d423fe5cb861ed2591fdd725",
+      "economic_effect": "NONE",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "event-pending-verified",
+      "title_ko": "확인 전과 확정 금액 구별하기",
+      "decision": "REWRITE",
+      "reason_ko": "정산 과정과 실제 지갑 반영을 구분. 상품 장면과 함께 읽어도 확정 잔액 오인 방지.",
+      "merge_into": null,
+      "existing_body_sha256": "d9a5f1eae0557e979563ae37994567f54e4dfdfc4de41f1319971e1823052fa6",
+      "economic_effect": "NONE",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "event-cycle-guide",
+      "title_ko": "내 채굴 주기 확인하기",
+      "decision": "REWRITE",
+      "reason_ko": "주기 의미 유지, global capacity를 슬롯별 중복 계산하지 않는 설명 추가.",
+      "merge_into": null,
+      "existing_body_sha256": "7736294d5bedf7d9474f1f403558621f74085e4bc6ce75584cc287957f5f3efe",
+      "economic_effect": "NONE",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "event-offline-guide",
+      "title_ko": "앱을 닫았을 때의 채굴 안내",
+      "decision": "REWRITE",
+      "reason_ko": "화면/실제 처리 구분은 유지하고 재접속 후 확인 경로를 명확화. 무조건 지급 문구 금지.",
+      "merge_into": null,
+      "existing_body_sha256": "54a35e5f4cbb69febb935e5045f587ea7af2c886f886efaaec79569be9073c28",
+      "economic_effect": "NONE",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "event-product-read",
+      "title_ko": "상품 설명 먼저 읽기",
+      "decision": "MERGE",
+      "reason_ko": "새 자산 소유/제휴/시장가격 교육 안내에 통합하여 같은 목적 노출 중복 방지.",
+      "merge_into": "catalog-event-theme-reading",
+      "existing_body_sha256": "f47668fd129b1557429251e1648c1532196854511b9936f7dbf887f40de77eda",
+      "economic_effect": "NONE",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "event-krw-ready",
+      "title_ko": "원화 입금 전 준비 확인",
+      "decision": "KEEP",
+      "reason_ko": "입금 신청/송금/반영 차이를 설명하며 재신청 방지.",
+      "merge_into": null,
+      "existing_body_sha256": "9b7fe14750f37c58bab5daa82eafa9541f00edeeb9e8e0b02e464aa3c5309c1b",
+      "economic_effect": "NONE",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "event-usdt-ready",
+      "title_ko": "USDT 전송 전 확인",
+      "decision": "KEEP",
+      "reason_ko": "주소·네트워크 오송금 위험과 수동 검토를 설명.",
+      "merge_into": null,
+      "existing_body_sha256": "8de378f5f1ea4bd182a6fe302e3a23312a5df1752d9fe55757c3891fda9602f2",
+      "economic_effect": "NONE",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "event-withdraw-ready",
+      "title_ko": "첫 출금 전 확인",
+      "decision": "KEEP",
+      "reason_ko": "본인 확인·받는 곳·신청/완료 구분 유지.",
+      "merge_into": null,
+      "existing_body_sha256": "292fea559631cf2efac62e1b9092c9f639520e74f633fabdf7ba83e9195e1e7e",
+      "economic_effect": "NONE",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "event-hold-guide",
+      "title_ko": "출금 검토 중 안내",
+      "decision": "KEEP",
+      "reason_ko": "보류와 실패·완료 차이, 자료 최소 제출 설명.",
+      "merge_into": null,
+      "existing_body_sha256": "d4f4443fb69aa81635cf0f9c2325b4099266c992186037dbe0068a7cff7513e8",
+      "economic_effect": "NONE",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "event-notification-tour",
+      "title_ko": "내 알림함 살펴보기",
+      "decision": "KEEP",
+      "reason_ko": "알림과 거래 완료 차이 유지.",
+      "merge_into": null,
+      "existing_body_sha256": "4c1a01ecf5ba8e6df84fbacc84939af6e81e4a21d2e318a29847a4bccf8d6cb6",
+      "economic_effect": "NONE",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "event-notification-choice",
+      "title_ko": "알림 설정 선택하기",
+      "decision": "KEEP",
+      "reason_ko": "선호 선택과 내역 확인을 분리; 출시 전 실제 설정 QA gate 필요.",
+      "merge_into": null,
+      "existing_body_sha256": "df209e7e05ac38b13b6fcf8d0639607a3699a50b5a266d6d563a311952e352bd",
+      "economic_effect": "NONE",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "event-support-practice",
+      "title_ko": "도움이 필요할 때 문의하기",
+      "decision": "DROP",
+      "reason_ko": "연습 참여용 상담 문의는 실제 운영 큐에 부담. 도움말/지원 공지로 안내하고 이벤트 노출 제외 제안.",
+      "merge_into": null,
+      "existing_body_sha256": "5c9858e3d72401554558f744ad7a6e13694bbf19e0cf754396830b5154c1dc9a",
+      "economic_effect": "NONE",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "event-read-notices",
+      "title_ko": "출시 공지 읽기",
+      "decision": "KEEP",
+      "reason_ko": "공지 읽음을 이벤트 참여/보상으로 오인하지 않음.",
+      "merge_into": null,
+      "existing_body_sha256": "97d2cf460f14e950a0ff18a51c090cc7227f564e5da20bb9cc13701075504bfe",
+      "economic_effect": "NONE",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "event-status-check",
+      "title_ko": "서비스 상태 확인하기",
+      "decision": "KEEP",
+      "reason_ko": "장애 중 재요청 금지 및 복구 뒤 개별 거래 확인.",
+      "merge_into": null,
+      "existing_body_sha256": "da23ae36304800311b122d49b516c695328b385bcbb21a50bb39170ac884fd41",
+      "economic_effect": "NONE",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "event-update-check",
+      "title_ko": "업데이트 내용 살펴보기",
+      "decision": "KEEP",
+      "reason_ko": "재접속 전 작성 내용 보호, 보안정보 요청 거절.",
+      "merge_into": null,
+      "existing_body_sha256": "990c71e6709985d53019a5c39a66aea08d05774ebca6b8b5679a398cc6aaaaf1",
+      "economic_effect": "NONE",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "event-browser-readiness",
+      "title_ko": "내 기기에서 이용 준비",
+      "decision": "KEEP",
+      "reason_ko": "관찰 피드백이며 모든 기기 지원 약속 없음.",
+      "merge_into": null,
+      "existing_body_sha256": "25bb50ee4c8428421eff6a8bf17c10217d43430e001413ec71765624664a11ce",
+      "economic_effect": "NONE",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "event-theme-choice",
+      "title_ko": "편한 화면 테마 찾기",
+      "decision": "KEEP",
+      "reason_ko": "색상 선택과 경제 조건 독립; 실제 theme 기능 QA 필요.",
+      "merge_into": null,
+      "existing_body_sha256": "31a2f693d256f1d4a4bb392860b5988c0e4845454665ebb037cdc083cf1bc022",
+      "economic_effect": "NONE",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "event-accessible-guide",
+      "title_ko": "천천히 읽는 이용 안내",
+      "decision": "KEEP",
+      "reason_ko": "천천히 읽는 안내와 금전 보상 없음으로 고령 이용자 부담 완화.",
+      "merge_into": null,
+      "existing_body_sha256": "50b0b6b28c82f1838fcacbe1dea418bab0d5e9e85525f748793eb75d5e0b7ec0",
+      "economic_effect": "NONE",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "event-transaction-history",
+      "title_ko": "내 거래 기록 읽기",
+      "decision": "KEEP",
+      "reason_ko": "신청/반영 시각과 실제 거래 기록 확인.",
+      "merge_into": null,
+      "existing_body_sha256": "508150b22993d8f80bf41d535d571e56a31190a2f57738c2ca6bafb6f495d50f",
+      "economic_effect": "NONE",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "event-privacy-check",
+      "title_ko": "개인정보 안내 확인",
+      "decision": "KEEP",
+      "reason_ko": "문의 개인정보 최소화와 권리 안내.",
+      "merge_into": null,
+      "existing_body_sha256": "8d150fca3c6fb8bd36fc1abd2a82996c4369cc4aae870236f68577bfe163c533",
+      "economic_effect": "NONE",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "event-weekend-guide",
+      "title_ko": "주말에도 확인할 안내",
+      "decision": "KEEP",
+      "reason_ko": "미확인 처리 시간을 약속하지 않음.",
+      "merge_into": null,
+      "existing_body_sha256": "87aaf0a96d36bf565b0dfe12735fc60d27055aa95e0e18e55a5f64eb4b7c5ef0",
+      "economic_effect": "NONE",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "event-maintenance-ready",
+      "title_ko": "점검 전 이용 준비",
+      "decision": "KEEP",
+      "reason_ko": "점검 전 요청 결과 확인과 반복 금지.",
+      "merge_into": null,
+      "existing_body_sha256": "d9193017d95ab383a5894ad96d5edbb2222e0524f9a6427ebf4bd17cdb805343",
+      "economic_effect": "NONE",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "event-security-reminder",
+      "title_ko": "안전한 상담 약속",
+      "decision": "MERGE",
+      "reason_ko": "기존 피싱 캠페인과 내용 중복. 계정 안전 내용과 함께 통합 제안.",
+      "merge_into": "event-phishing-check",
+      "existing_body_sha256": "08273ec1db6a1c01b9d08a906acd5117f47c20add36affcaa20be59f89efd091",
+      "economic_effect": "NONE",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "event-launch-feedback",
+      "title_ko": "출시 이용 경험 알려 주세요",
+      "decision": "KEEP",
+      "reason_ko": "실제 불편만 지원으로 수집, 금전 유인 없음.",
+      "merge_into": null,
+      "existing_body_sha256": "bf5104243be1bb3802be098146e4d3397ca2231313d9242b3832f8018b84c20d",
+      "economic_effect": "NONE",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "event-welcome-policy-review",
+      "title_ko": "START 전환 조건 안내 캠페인",
+      "decision": "KEEP",
+      "reason_ko": "입금 강제 금지와 전환 적격성 분리; 기존 경제 승인 gate 유지.",
+      "merge_into": null,
+      "existing_body_sha256": "3f425b55d524dcd553fe52c757b60f39867c91dc3a236be2a28ecd351a1ddad8",
+      "economic_effect": "POLICY_DEPENDENT",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "event-capacity-policy-review",
+      "title_ko": "채굴 용량·속도 안내 캠페인",
+      "decision": "REWRITE",
+      "reason_ko": "상품별 속도 제안 이후 혼동 방지. 기존 POLICY_VALUE_REQUIRED gate는 그대로 보존.",
+      "merge_into": null,
+      "existing_body_sha256": "c190aadae7f0689f9e1d633cabf6f08a297941355cf70e4eda631e4b80984971",
+      "economic_effect": "POLICY_DEPENDENT",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    }
+  ],
+  "notice_review": [
+    {
+      "slug": "notice-official-open",
+      "title_ko": "퍼뜩 정식 오픈 안내",
+      "decision": "KEEP",
+      "reason_ko": "실제 기능 확인 gate가 있으며 오픈 시각·혜택을 임의 확정하지 않음.",
+      "merge_into": null,
+      "existing_body_sha256": "26b823518b760b3ca0707c8f5fb15a65b18c3928de2889d4ff782bf72003c3e0",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "notice-introduction",
+      "title_ko": "퍼뜩은 어떤 서비스인가요?",
+      "decision": "REWRITE",
+      "reason_ko": "상품 확장에 맞춰 가상 테마와 실제 자산·제휴·시장 연동 경계를 보강. 법무 검토 필요.",
+      "merge_into": null,
+      "existing_body_sha256": "3ed95eba4ec0186a4c940990229dcdbb62228e64b468df73e3f6c7874f236a76",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "notice-account-login",
+      "title_ko": "회원가입과 로그인 안내",
+      "decision": "KEEP",
+      "reason_ko": "번호 사용 가능 여부를 문자/소유 인증으로 오인하지 않음.",
+      "merge_into": null,
+      "existing_body_sha256": "d1ba4a950827dce9dfe7d8eccbce0ebd16b44de168e7e80c382baf497adf4ca8",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "notice-security-phishing",
+      "title_ko": "계정 보안과 가짜 안내 주의",
+      "decision": "KEEP",
+      "reason_ko": "공식 입금 안내와 보안정보 미제공 경계.",
+      "merge_into": null,
+      "existing_body_sha256": "3d1f4b617338a6ecede8dd1b38e5f3b2c89f31598ee72e58848e180ee76fe5b9",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "notice-wallet-terms",
+      "title_ko": "지갑에서 사용하는 용어 안내",
+      "decision": "KEEP",
+      "reason_ko": "원금·보상·Bonus·보류와 출금가능 금액 구분.",
+      "merge_into": null,
+      "existing_body_sha256": "99f430335df46121e75663a0a585b86b2fb4cda0f57c575fa4a8637d2336ad90",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "notice-principal-reward-bonus",
+      "title_ko": "원금·채굴보상·Bonus는 어떻게 다른가요?",
+      "decision": "KEEP",
+      "reason_ko": "세금액 원천·자격 증가 오인 방지; wallet 공지와 목적이 달라 유지.",
+      "merge_into": null,
+      "existing_body_sha256": "3a5333735195b47fba4f2f29eef860e4aabc18abe88deb72a97477c1479ce5c9",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "notice-krw-deposit",
+      "title_ko": "원화 입금 이용 안내",
+      "decision": "KEEP",
+      "reason_ko": "신청/송금/반영 차이 및 재요청 방지.",
+      "merge_into": null,
+      "existing_body_sha256": "09e548ff032f57e2d7caaabfc801f944eb56cb6424d90fdea2c31584c4596866",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "notice-usdt-deposit",
+      "title_ko": "USDT 입금 이용 안내",
+      "decision": "KEEP",
+      "reason_ko": "네트워크/주소 확인과 실제 검토·원화 반영 분리.",
+      "merge_into": null,
+      "existing_body_sha256": "4807250c2372261bd03dddb0bc577372cfc3196471c800257d012b7c75701aee",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "notice-withdrawal",
+      "title_ko": "출금 이용 안내",
+      "decision": "KEEP",
+      "reason_ko": "원화 잔액 기반 USDT 출금, 신청/실행 분리.",
+      "merge_into": null,
+      "existing_body_sha256": "8d5cfa8f26a069b7475fa27dc23c23fb52eb5407155d7265d0b5877dd89c456c",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "notice-withdrawal-hold",
+      "title_ko": "출금 검토와 보류 안내",
+      "decision": "KEEP",
+      "reason_ko": "보류와 거절·송금 완료 분리, 미확인 처리시각 약속 없음.",
+      "merge_into": null,
+      "existing_body_sha256": "d768d66c0f61bfda0ac2616b76e6d8167e5a8f2ce361f61cef03de78613c9d14",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "notice-mining-cycle",
+      "title_ko": "채굴 주기 안내",
+      "decision": "REWRITE",
+      "reason_ko": "global capacity/slot 중복 오인 방지와 잔여 한도·소액 carry 의미를 구분.",
+      "merge_into": null,
+      "existing_body_sha256": "363b7c22dd9c295acb6caef34a5f2e8d3c7d67f745073222ad8b4b7aff213f41",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "notice-pending-verified",
+      "title_ko": "확인 전 금액과 확정 금액 안내",
+      "decision": "REWRITE",
+      "reason_ko": "Pending→정산→지갑 확정 구분을 단순 한국어로 명확화.",
+      "merge_into": null,
+      "existing_body_sha256": "9f605e9b6f27d9f2b8ce8e3bca81e6098557331be4c09300df12df053c8f20ea",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "notice-products-mining",
+      "title_ko": "상품과 채굴 조건 안내",
+      "decision": "REWRITE",
+      "reason_ko": "새 ETF/산업 테마에도 적용되는 설명/선택 구분과 속도/용량 독립성 추가.",
+      "merge_into": null,
+      "existing_body_sha256": "14ed598fa80da50c1eeae1cf983d0ba5ee54b7e11446a9745a328f1de71ac700",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "notice-notifications",
+      "title_ko": "알림 이용과 수신 설정 안내",
+      "decision": "KEEP",
+      "reason_ko": "푸시 동의와 거래 완료를 분리; 실제 fanout 구현 gate 유지.",
+      "merge_into": null,
+      "existing_body_sha256": "759d2149f3a3cf058c5c9c0c71c5e0933e4ea08defddcbe57bcd088c6f2342d4",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "notice-support",
+      "title_ko": "고객지원 이용 안내",
+      "decision": "KEEP",
+      "reason_ko": "실제 문의 정보 최소화와 미확인 운영시간 약속 없음.",
+      "merge_into": null,
+      "existing_body_sha256": "598d810b4824c7cbaf7b5a82a41fe4bac4bce4d242fefcbb3a28f8349d9f2309",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "notice-scheduled-maintenance",
+      "title_ko": "정기점검 안내",
+      "decision": "KEEP",
+      "reason_ko": "시간/영향 변수와 재요청 금지; 실제 값 확인 전 DRAFT.",
+      "merge_into": null,
+      "existing_body_sha256": "1ee0db5935b7cd236d2ed41701acc862b895908b1f022882a8ede8e08bae743f",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "notice-urgent-maintenance",
+      "title_ko": "긴급점검 안내",
+      "decision": "KEEP",
+      "reason_ko": "확인 사실·다음 안내·종료 미정 분리.",
+      "merge_into": null,
+      "existing_body_sha256": "4898642762242201d99cc96eb7cd8ebed1214a74afadefae90cb9fcd1e49ba53",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "notice-incident",
+      "title_ko": "서비스 이용 지연 안내",
+      "decision": "KEEP",
+      "reason_ko": "관찰 현상과 원인/거래 영향 미확인 경계.",
+      "merge_into": null,
+      "existing_body_sha256": "2150d95c69983e31c5ce75fcff664a5e5dd4c2fb24a291f0f95256a61c4d9309",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "notice-recovery",
+      "title_ko": "서비스 복구 안내",
+      "decision": "KEEP",
+      "reason_ko": "기능 복구와 모든 거래 완료가 다름.",
+      "merge_into": null,
+      "existing_body_sha256": "c8d34796342be9f7f59fa2a993b30b1a9fa27da151fcb042991ba2ce2adc0e9c",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "notice-update",
+      "title_ko": "서비스 업데이트 안내",
+      "decision": "KEEP",
+      "reason_ko": "회원 행동·작성 내용 보호·실제 적용 시간 변수.",
+      "merge_into": null,
+      "existing_body_sha256": "2bfe3267b5d384d9d01cf4c3e77239a854548d8a7d0295faef0421606fbffe3a",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "notice-policy-change",
+      "title_ko": "이용 정책 변경 안내",
+      "decision": "KEEP",
+      "reason_ko": "전후 차이·기존 회원 영향·동의 내용 변수; 승인 필요.",
+      "merge_into": null,
+      "existing_body_sha256": "4cc7f93acc63518347c9cc181cbcbdd76d75fb3fadd0ca0a05e3dd7e9602f343",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "notice-privacy-change",
+      "title_ko": "개인정보 처리 안내 변경",
+      "decision": "KEEP",
+      "reason_ko": "권리 행사/정확한 승인 route 필요; 법무 gate 유지.",
+      "merge_into": null,
+      "existing_body_sha256": "a592a3872f931c6ab5f06bf69dac1904c8a87b511cc2e9686431e84da1bd545c",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "notice-browser-devices",
+      "title_ko": "브라우저와 기기 이용 안내",
+      "decision": "KEEP",
+      "reason_ko": "지원 범위를 실제 출시 QA로 한정, 모든 기기 보장 없음.",
+      "merge_into": null,
+      "existing_body_sha256": "0d6b7b74876f728ec34a26ad579920dc38c08cb5b40b6b059c5e264f07b3b9a6",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "notice-known-limitations",
+      "title_ko": "현재 이용 제한사항 안내",
+      "decision": "KEEP",
+      "reason_ko": "현재 영향·대안·다음 안내를 확인된 사실로만 작성.",
+      "merge_into": null,
+      "existing_body_sha256": "f9a3d82059e338039df0e9b9742e0ffb6770018d987979c73dbbb6e12582ec14",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "notice-start-conversion",
+      "title_ko": "START 체험과 실제 전환 안내",
+      "decision": "KEEP",
+      "reason_ko": "체험/실제 전환 분리·입금 불필요 경계.",
+      "merge_into": null,
+      "existing_body_sha256": "af859274bdddf6200b57bea6607e5ab81b34574a45bd708b5617f26fa98cf7f8",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    },
+    {
+      "slug": "notice-event-participation",
+      "title_ko": "이벤트 참여 전 확인사항",
+      "decision": "KEEP",
+      "reason_ko": "대상/기간/승인 보상/취소를 설명; 상품 공지와 목적 다름.",
+      "merge_into": null,
+      "existing_body_sha256": "cbcd53e4c072c0a5f45f97fc9558a154eb475499bec4325e42cb871179f68e00",
+      "operation_status": "PROPOSED_NOT_EXECUTED",
+      "retains_historical_records": true
+    }
+  ],
+  "event_counts": {
+    "KEEP": 22,
+    "MERGE": 3,
+    "REWRITE": 4,
+    "DROP": 1,
+    "ADD_MISSING": 10
+  },
+  "notice_counts": {
+    "KEEP": 22,
+    "REWRITE": 4,
+    "ADD_MISSING": 8
+  },
+  "delta_counts": {
+    "events_additions": 10,
+    "events_rewrites": 4,
+    "notices_additions": 8,
+    "notices_rewrites": 4,
+    "faq_additions": 16,
+    "support_additions": 8,
+    "notifications_additions": 8
+  }
+}

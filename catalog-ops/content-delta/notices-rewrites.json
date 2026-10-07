@@ -1,0 +1,160 @@
+[
+  {
+    "slug": "notice-introduction",
+    "storage": {
+      "slug": "launch-introduction",
+      "title_ko": "퍼뜩은 어떤 서비스인가요?",
+      "summary_ko": "퍼뜩은 승인된 이용 조건에 따라 채굴 상태와 기록을 확인하는 서비스입니다. 화면의 움직임이 보상 지급을 결정하지 않습니다.",
+      "body_markdown": "퍼뜩은 가상 채굴 주제와 이용 기록을 확인하는 서비스입니다. 처음이라면 START 체험과 도움말부터 읽어 주세요. 체험 기록과 실제 지갑은 구분됩니다.\n\n테마 이름과 장면은 실제 주식·ETF·금속·코인의 매수나 소유를 뜻하지 않습니다. 기업·운용사와의 제휴를 뜻하지 않습니다. 시장가격이 채굴보상을 결정하지 않습니다.\n\n장면의 움직임이 금액을 확정하지 않습니다. 실제 이용 조건과 정산·지갑 기록을 확인해 주세요.",
+      "status": "DRAFT",
+      "is_pinned": false,
+      "published_at": null,
+      "expires_at": null
+    },
+    "metadata": {
+      "audience": "MEMBERS",
+      "category": "service",
+      "cta": {
+        "label": "안내 보기",
+        "route": "/about"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "required_phrases": [],
+      "variables": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+      "publication_gate": "REVIEW_REQUIRED",
+      "template": false,
+      "change_reason": "상품 확장에 맞춰 가상 테마와 실제 자산·제휴·시장 연동 경계를 보강. 법무 검토 필요.",
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "registration_ready": false
+    }
+  },
+  {
+    "slug": "notice-mining-cycle",
+    "storage": {
+      "slug": "launch-mining-cycle",
+      "title_ko": "채굴 주기 안내",
+      "summary_ko": "채굴 주기는 내 계정에 적용된 시작과 종료 기준을 사용합니다. 가입일이나 입금 신청일만 보고 직접 계산하지 마세요.",
+      "body_markdown": "채굴 주기는 내 계정에 적용된 시작과 종료를 사용합니다. 가입일이나 입금 신청일로 직접 계산하지 마세요.\n\n추가 입금이나 재접속이 새 주기를 자동으로 시작하지 않습니다. 상품 수와 슬롯 수만큼 전체 주기 한도를 더하지 않습니다. 주기 한도와 속도는 별도 조건입니다.\n\n주기 종료 후 남은 한도가 자동 지급된다고 생각하지 마세요. 소액 누적 기록과 남은 한도도 다릅니다. 내 적용 상태와 실제 정산 기록을 확인하고, 안내가 없으면 고객지원으로 문의해 주세요.",
+      "status": "DRAFT",
+      "is_pinned": false,
+      "published_at": null,
+      "expires_at": null
+    },
+    "metadata": {
+      "audience": "MEMBERS",
+      "category": "service",
+      "cta": {
+        "label": "안내 보기",
+        "route": "/mining"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "required_phrases": [],
+      "variables": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+      "publication_gate": "REVIEW_REQUIRED",
+      "template": false,
+      "release_dependencies": ["실제 기능·적용 정책 확인", "출시 책임자 승인"],
+      "change_reason": "global capacity/slot 중복 오인 방지와 잔여 한도·소액 carry 의미를 구분.",
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "registration_ready": false
+    }
+  },
+  {
+    "slug": "notice-pending-verified",
+    "storage": {
+      "slug": "launch-pending-verified",
+      "title_ko": "확인 전 금액과 확정 금액 안내",
+      "summary_ko": "확인 전 금액은 아직 검토와 정산이 끝나지 않은 표시입니다. 바로 출금할 수 있는 확정 금액이 아닙니다.",
+      "body_markdown": "확인 전 기록은 아직 정산을 마치지 않은 상태입니다. 바로 출금할 수 있는 확정 잔액이 아닙니다.\n\n정산 뒤 실제 처리 기록을 통해 지갑에 반영된 확정 금액을 확인합니다. 화면 불빛, 재접속, 알림 수신만으로 금액이 확정되지 않습니다.\n\n지연되면 공지와 내역을 확인하세요. 확인 전 기록을 지갑 잔액과 더하거나 중복 보상을 기대하지 마세요.",
+      "status": "DRAFT",
+      "is_pinned": false,
+      "published_at": null,
+      "expires_at": null
+    },
+    "metadata": {
+      "audience": "MEMBERS",
+      "category": "service",
+      "cta": {
+        "label": "안내 보기",
+        "route": "/mining"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "required_phrases": [],
+      "variables": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+      "publication_gate": "REVIEW_REQUIRED",
+      "template": false,
+      "change_reason": "Pending→정산→지갑 확정 구분을 단순 한국어로 명확화.",
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "registration_ready": false
+    }
+  },
+  {
+    "slug": "notice-products-mining",
+    "storage": {
+      "slug": "launch-products-mining",
+      "title_ko": "상품과 채굴 조건 안내",
+      "summary_ko": "상품 화면에는 현재 공개된 상품과 설명이 표시됩니다. 선택 전 적용 조건을 읽고 궁금한 점을 확인하세요.",
+      "body_markdown": "상품 화면에서 현재 공개된 설명과 이용 조건을 확인하세요. 상품 설명이 보여도 대상이나 적용 시각에 따라 지금 선택할 수 없는 경우가 있습니다.\n\n테마 이름과 그림은 실제 주식·ETF·금속·코인을 매수하거나 보유한다는 뜻이 아닙니다. 기업 제휴나 시장가격·배당의 반영을 뜻하지 않습니다.\n\n속도와 주기 한도는 다릅니다. 장면 효과가 강해져도 한도나 확정 금액이 자동으로 늘지 않습니다. 안내를 이해하지 못했다면 선택 전에 도움말이나 고객지원을 확인하세요.",
+      "status": "DRAFT",
+      "is_pinned": false,
+      "published_at": null,
+      "expires_at": null
+    },
+    "metadata": {
+      "audience": "MEMBERS",
+      "category": "service",
+      "cta": {
+        "label": "안내 보기",
+        "route": "/products"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "required_phrases": [],
+      "variables": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+      "publication_gate": "REVIEW_REQUIRED",
+      "template": false,
+      "release_dependencies": ["실제 기능·적용 정책 확인", "출시 책임자 승인"],
+      "change_reason": "새 ETF/산업 테마에도 적용되는 설명/선택 구분과 속도/용량 독립성 추가.",
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "registration_ready": false
+    }
+  }
+]

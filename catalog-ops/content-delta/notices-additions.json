@@ -1,0 +1,329 @@
+[
+  {
+    "slug": "catalog-notice-product-release",
+    "storage": {
+      "slug": "catalog-notice-product-release",
+      "title_ko": "새 테마 공개 전 확인 안내",
+      "summary_ko": "새 테마를 순서대로 안내합니다.",
+      "body_markdown": "새로 안내하는 테마: {{approved_product_names}}\n공개 시각: {{effective_at_kst}}\n이용 가능한 대상: {{approved_audience}}\n\n상품 화면에서 설명과 적용 조건을 읽어 주세요. 이름과 그림은 실제 자산 매수나 소유, 기업 제휴를 뜻하지 않습니다. 공개 안내를 보았다는 이유로 상품 선택이나 추가 보상이 완료되지 않습니다.\n\n선택 가능 여부는 내 계정에 표시된 최신 안내에서 확인합니다. 안내가 보이지 않으면 같은 요청을 반복하지 말고 고객지원으로 알려 주세요.",
+      "status": "DRAFT",
+      "is_pinned": false,
+      "published_at": null,
+      "expires_at": null
+    },
+    "metadata": {
+      "audience": "MEMBERS",
+      "cta": {
+        "label": "안내 확인",
+        "route": "/products"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "publication_gate": "REVIEW_REQUIRED",
+      "registration_ready": false,
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "variables": [
+        "approved_product_names",
+        "effective_at_kst",
+        "approved_audience"
+      ],
+      "required_phrases": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+      "template": true,
+      "schedule_status": "EFFECTIVE_TIME_REQUIRED",
+      "operator_note": "실제 승인값·적용 시각·대상만 채움. 미지원 metadata를 rule_payload에 숨기지 않음."
+    }
+  },
+  {
+    "slug": "catalog-notice-theme-positioning",
+    "storage": {
+      "slug": "catalog-notice-theme-positioning",
+      "title_ko": "테마 이름과 실제 자산은 다릅니다",
+      "summary_ko": "상품 이름의 의미를 먼저 확인해 주세요.",
+      "body_markdown": "퍼뜩의 테마 이름과 장면은 가상 채굴 주제를 설명합니다. 실제 주식·ETF·금속·코인을 매수하거나 소유하는 뜻이 아닙니다. 해당 기업·운용사와의 제휴나 보증을 뜻하지 않습니다.\n\n시장가격·배당·분배금이 채굴보상을 결정하지 않습니다. 이용 조건과 금액은 공개된 안내 및 실제 정산·지갑 기록으로 확인합니다.\n\n이름이나 그림 때문에 실제 자산이 생긴 것으로 생각했다면 선택 전에 고객지원에 문의해 주세요.",
+      "status": "DRAFT",
+      "is_pinned": false,
+      "published_at": null,
+      "expires_at": null
+    },
+    "metadata": {
+      "audience": "MEMBERS",
+      "cta": {
+        "label": "안내 확인",
+        "route": "/products"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "publication_gate": "REVIEW_REQUIRED",
+      "registration_ready": false,
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "variables": [],
+      "required_phrases": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+      "template": false,
+      "schedule_status": "REVIEW_REQUIRED",
+      "operator_note": "실제 승인값·적용 시각·대상만 채움. 미지원 metadata를 rule_payload에 숨기지 않음."
+    }
+  },
+  {
+    "slug": "catalog-notice-availability",
+    "storage": {
+      "slug": "catalog-notice-availability",
+      "title_ko": "상품 선택 가능 상태 안내",
+      "summary_ko": "공개와 선택 가능 여부는 다를 수 있습니다.",
+      "body_markdown": "상품 설명이 보이더라도 지금 선택할 수 없는 경우가 있습니다. 이용 대상, 적용 시각, 일시 중지 여부를 상품 안내에서 확인하세요.\n\n선택 버튼이 보이지 않거나 이용이 중지되었다면 반복해서 요청하지 마세요. 이름만 보고 내 계정에서 사용할 수 있다고 판단하지 않습니다.\n\n내 기록에 영향이 있는 변경은 별도 안내합니다. 선택 가능 여부가 분명하지 않으면 고객지원으로 확인을 요청할 수 있어요.",
+      "status": "DRAFT",
+      "is_pinned": false,
+      "published_at": null,
+      "expires_at": null
+    },
+    "metadata": {
+      "audience": "MEMBERS",
+      "cta": {
+        "label": "안내 확인",
+        "route": "/products"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "publication_gate": "REVIEW_REQUIRED",
+      "registration_ready": false,
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "variables": [],
+      "required_phrases": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+      "template": false,
+      "schedule_status": "REVIEW_REQUIRED",
+      "operator_note": "실제 승인값·적용 시각·대상만 채움. 미지원 metadata를 rule_payload에 숨기지 않음."
+    }
+  },
+  {
+    "slug": "catalog-notice-retired",
+    "storage": {
+      "slug": "catalog-notice-retired",
+      "title_ko": "테마의 새 선택 중지 안내",
+      "summary_ko": "기존 기록의 영향과 새 선택을 구분해 안내합니다.",
+      "body_markdown": "새 선택이 중지되는 테마: {{approved_product_names}}\n적용 시각: {{effective_at_kst}}\n기존 이용과 정산 기록에 미치는 영향: {{verified_existing_impact}}\n이용 가능한 다음 단계: {{approved_next_steps}}\n\n새 선택 중지는 기존 금액·거래 기록 삭제를 뜻하지 않습니다. 기존 기록과 실제 적용 상태를 채굴·지갑에서 확인해 주세요. 이 변경으로 추가 보상이나 환급이 자동 발생한다고 생각하지 마세요.\n\n기록이 예상과 다르면 같은 요청을 반복하지 말고 해당 내역으로 고객지원에 문의합니다.",
+      "status": "DRAFT",
+      "is_pinned": false,
+      "published_at": null,
+      "expires_at": null
+    },
+    "metadata": {
+      "audience": "MEMBERS",
+      "cta": {
+        "label": "안내 확인",
+        "route": "/products"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "publication_gate": "REVIEW_REQUIRED",
+      "registration_ready": false,
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "variables": [
+        "approved_product_names",
+        "effective_at_kst",
+        "verified_existing_impact",
+        "approved_next_steps"
+      ],
+      "required_phrases": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+      "template": true,
+      "schedule_status": "EFFECTIVE_TIME_REQUIRED",
+      "operator_note": "실제 승인값·적용 시각·대상만 채움. 미지원 metadata를 rule_payload에 숨기지 않음."
+    }
+  },
+  {
+    "slug": "catalog-notice-scene-money",
+    "storage": {
+      "slug": "catalog-notice-scene-money",
+      "title_ko": "장면 움직임과 확정 금액 안내",
+      "summary_ko": "장면의 표현이 금액을 결정하지 않습니다.",
+      "body_markdown": "빛, 기계 움직임, 작업 신호는 가상 장면의 표현입니다. 불빛이 강해지거나 화면이 빨라졌다고 보상이 추가되거나 금액이 확정되지 않습니다.\n\n채굴 화면의 확인 전 기록과 지갑의 확정 기록은 다릅니다. 정산을 마친 실제 기록을 기준으로 출금 가능 여부를 확인하세요.\n\n앱을 다시 열거나 장면을 바꾸어도 같은 금액을 중복 지급하지 않습니다. 금액이 다르게 보이면 시각과 해당 내역을 고객지원에 알려 주세요.",
+      "status": "DRAFT",
+      "is_pinned": false,
+      "published_at": null,
+      "expires_at": null
+    },
+    "metadata": {
+      "audience": "MEMBERS",
+      "cta": {
+        "label": "안내 확인",
+        "route": "/mining"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "publication_gate": "REVIEW_REQUIRED",
+      "registration_ready": false,
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "variables": [],
+      "required_phrases": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+      "template": false,
+      "schedule_status": "REVIEW_REQUIRED",
+      "operator_note": "실제 승인값·적용 시각·대상만 채움. 미지원 metadata를 rule_payload에 숨기지 않음."
+    }
+  },
+  {
+    "slug": "catalog-notice-speed-policy-review",
+    "storage": {
+      "slug": "catalog-notice-speed-policy-review",
+      "title_ko": "채굴 속도 조건 변경 사전 안내",
+      "summary_ko": "변경 내용과 기존 이용 영향을 확인해 주세요.",
+      "body_markdown": "변경 대상: {{approved_product_names}}\n변경 전 속도 조건: {{approved_before_speed}}\n변경 후 속도 조건: {{approved_after_speed}}\n적용 시각: {{effective_at_kst}}\n주기 한도와 기존 이용에 미치는 영향: {{verified_existing_impact}}\n\n속도는 진행 속도를 뜻하며 주기 안에서 적용되는 한도와 다릅니다. 더 빠르게 보인다고 총액이 자동으로 늘지 않습니다. 안내에 적힌 적용 시각 전에는 새 조건을 사용하지 않습니다.\n\n금액과 상태는 실제 적용된 안내 및 정산 기록을 확인해 주세요. 이해되지 않는 내용은 고객지원으로 문의할 수 있습니다.",
+      "status": "DRAFT",
+      "is_pinned": false,
+      "published_at": null,
+      "expires_at": null
+    },
+    "metadata": {
+      "audience": "MEMBERS",
+      "cta": {
+        "label": "안내 확인",
+        "route": "/mining"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "POLICY_EXPLANATION",
+        "policy_status": "POLICY_VALUE_REQUIRED",
+        "values": {}
+      },
+      "publication_gate": "REVIEW_REQUIRED",
+      "registration_ready": false,
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "variables": [
+        "approved_product_names",
+        "approved_before_speed",
+        "approved_after_speed",
+        "effective_at_kst",
+        "verified_existing_impact"
+      ],
+      "required_phrases": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+      "template": true,
+      "schedule_status": "EFFECTIVE_TIME_REQUIRED",
+      "operator_note": "실제 승인값·적용 시각·대상만 채움. 미지원 metadata를 rule_payload에 숨기지 않음."
+    }
+  },
+  {
+    "slug": "catalog-notice-effective-version",
+    "storage": {
+      "slug": "catalog-notice-effective-version",
+      "title_ko": "상품 안내가 달라졌을 때 확인하는 방법",
+      "summary_ko": "내 이용에 적용된 안내를 확인하세요.",
+      "body_markdown": "새 상품 안내가 공개되어도 모든 기록에 새 조건이 소급 적용되는 것은 아닙니다. 적용 시각과 기존 이용에 미치는 영향은 변경 공지에서 확인하세요.\n\n이전 기록을 새 상품 설명과 단순 비교해 금액을 더하거나 빼지 마세요. 채굴과 지갑에 표시된 실제 적용 상태를 확인합니다.\n\n설명과 내 기록이 다르면 해당 화면과 발생 시각을 고객지원에 알려 주세요. 비밀번호·인증 코드는 보내지 않습니다.",
+      "status": "DRAFT",
+      "is_pinned": false,
+      "published_at": null,
+      "expires_at": null
+    },
+    "metadata": {
+      "audience": "MEMBERS",
+      "cta": {
+        "label": "안내 확인",
+        "route": "/events"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "publication_gate": "REVIEW_REQUIRED",
+      "registration_ready": false,
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "variables": [],
+      "required_phrases": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+      "template": false,
+      "schedule_status": "REVIEW_REQUIRED",
+      "operator_note": "실제 승인값·적용 시각·대상만 채움. 미지원 metadata를 rule_payload에 숨기지 않음."
+    }
+  },
+  {
+    "slug": "catalog-notice-etf-basket",
+    "storage": {
+      "slug": "catalog-notice-etf-basket",
+      "title_ko": "ETF 테마의 묶음 표현 안내",
+      "summary_ko": "묶음 장면은 실제 투자 포트폴리오가 아닙니다.",
+      "body_markdown": "ETF는 여러 대상을 묶는 금융 상품의 한 종류입니다. 퍼뜩의 ETF 테마 제안은 묶음 개념을 가상 장면으로 설명합니다. 실제 ETF나 구성 종목을 매수하거나 보유하는 뜻이 아닙니다.\n\n지수의 성과나 배당·분배금이 채굴보상으로 반영되지 않습니다. 여러 장치가 보여도 받을 금액이나 슬롯별 한도가 자동으로 늘지 않습니다.\n\n공개 여부와 선택 가능 조건은 상품 화면의 실제 안내로 확인해 주세요.",
+      "status": "DRAFT",
+      "is_pinned": false,
+      "published_at": null,
+      "expires_at": null
+    },
+    "metadata": {
+      "audience": "MEMBERS",
+      "cta": {
+        "label": "안내 확인",
+        "route": "/products"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "publication_gate": "REVIEW_REQUIRED",
+      "registration_ready": false,
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "variables": [],
+      "required_phrases": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+      "template": false,
+      "schedule_status": "REVIEW_REQUIRED",
+      "operator_note": "실제 승인값·적용 시각·대상만 채움. 미지원 metadata를 rule_payload에 숨기지 않음."
+    }
+  }
+]
