@@ -4,6 +4,15 @@
 
 계약 버전: `2026.10.03-entitlement-cycle-v1`.
 
+2026-10-07 [Owner 상품 접근권·Tier 교정](../product/OWNER-PRODUCT-TIER-POLICY-2026-10-07.md)을
+현재 Product/Mining 계약에 우선 적용한다. Funding Tier는 상품 접근권을
+제한하지 않으며 승인된 slot 수와 원금 기반 경제를 정한다. 현재 공통 base
+bps에 대한 적격 원금 비례 accrual이 mining scale을 이미 표현하므로 별도
+Tier speed multiplier를 추가하지 않는다. GLOBAL_CYCLE capacity와 기존
+age/cycle/used/carry/Verified 이력을 보존한다. 상품 배수 제안은 개별 승인
+rule이 아니다. Tier 하락 시 초과 slot의 결정적 유지/pause 전이는 아직
+`TIER_DOWNGRADE_SLOT_POLICY_REQUIRED`이며 상품 Tier 잠금으로 대체하지 않는다.
+
 이 문서는 2026-10-03 사용자가 승인한 잔여 원금, 사용자별 30일 주기,
 용량과 속도의 분리, 변경 시점 이후 구간 계산 구조를 구체화한다. 경제
 운영값, 공개 RPC 확장, migration, 채굴 활성화, 원격 변경 또는 배포의

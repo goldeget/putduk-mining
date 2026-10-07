@@ -186,6 +186,59 @@ function publication(
 }
 
 describe("read-only V1 funding entitlement engine", () => {
+  it.each(source.tiers)(
+    "keeps principal-proportional BASE speed without an extra Tier multiplier at $code",
+    (tier) => {
+      const principal = BigInt(tier.minimumPrincipalKrw);
+      const initial = start(condition(principal));
+      const baselinePrincipal = BigInt(source.minimumPrincipalKrw);
+      const baseline = run(start(condition(baselinePrincipal)), day)
+        .segments[0]!.baseAccrued;
+      const actual = run(initial, day).segments[0]!.baseAccrued;
+
+      expect(initial.condition.tierCode).toBe(tier.code);
+      expect(initial.condition.slots).toBe(tier.slots);
+      expect(initial.condition.allocatedBaseSpeedMultiplier).toEqual(
+        exactMicroKrw(1n),
+      );
+      expect(actual.numerator * baseline.denominator * baselinePrincipal).toBe(
+        baseline.numerator * actual.denominator * principal,
+      );
+    },
+  );
+
+  it("does not gate a source-confirmed published Product identity by Funding Tier", () => {
+    // Preview-only trusted-source fixtures; no real catalog publication or
+    // proposed product modifier is implied by these descriptive identities.
+    const input = condition(BigInt(source.minimumPrincipalKrw));
+    const baseline = run(start(input), day);
+    for (const identity of [
+      "nvidia",
+      "tesla",
+      "spacex",
+      "sk-hynix",
+      "btc",
+      "etf",
+      "gold",
+    ]) {
+      const state = start({
+        ...input,
+        allocations: [
+          {
+            ...input.allocations[0]!,
+            productId: `published-fixture-${identity}`,
+          },
+        ],
+      });
+      expect(state.condition.tierCode).toBe("L1");
+      expect(state.condition.slots).toBe(1);
+      expect(state.baseCapacity).toEqual(baseline.state.baseCapacity);
+      expect(run(state, day).segments[0]!.baseAccrued).toEqual(
+        baseline.segments[0]!.baseAccrued,
+      );
+    }
+  });
+
   it("reads base, conditional retention and minimum activation from approved policy data", () => {
     const state = start();
     expect(state.mode).toBe("PREVIEW_ONLY");
