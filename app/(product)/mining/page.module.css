@@ -565,6 +565,16 @@
   text-decoration: none;
 }
 
+.trialRecovery {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.trialRecovery :global(.button) {
+  min-width: 0;
+  max-width: 100%;
+}
+
 .records {
   display: grid;
   container: mining-records / inline-size;
@@ -705,12 +715,11 @@
 }
 
 .guideBanner {
-  display: flex;
+  display: grid;
   min-width: 0;
   min-height: 76px;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.9rem;
+  container: mining-guide / inline-size;
+  gap: 0.5rem;
   padding: 0.8rem 1rem;
   border: 1px solid var(--border-default);
   border-radius: 0.8rem;
@@ -723,11 +732,24 @@
   text-decoration: none;
 }
 
-.guideBanner > span {
+.guideHeading {
   display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   min-width: 0;
-  flex: 1;
-  gap: 0.3rem;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+@container mining-guide (max-width: 14rem) {
+  .guideHeading {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.5rem;
+  }
+
+  .guideHeading strong {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
 }
 
 .guideBanner strong {

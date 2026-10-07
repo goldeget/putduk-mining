@@ -374,10 +374,16 @@ export default async function MiningPage() {
               <PutdukIcon name="arrow-right" size={16} />
             </Link>
           ) : (
-            <RouteReloadButton
-              label={trialView.actionLabel}
-              className="button button--secondary"
-            />
+            <div
+              className={styles.trialRecovery}
+              role="group"
+              aria-label={trialView.actionLabel}
+            >
+              <RouteReloadButton
+                label="다시 확인"
+                className="button button--secondary"
+              />
+            </div>
           )}
         </section>
       ) : null}
@@ -509,12 +515,12 @@ export default async function MiningPage() {
       {runtime ? <FundedRuntimeSummary runtime={runtime} /> : null}
 
       <Link className={styles.guideBanner} href="/how-it-works">
-        <PutdukIcon name="shield" size={25} />
-        <span>
-          <strong>채굴과 지갑, 한눈에 이해하기</strong>
-          <small>확정 금액과 확인 전 금액의 차이를 알아보세요.</small>
+        <span className={styles.guideHeading}>
+          <PutdukIcon name="shield" size={25} />
+          <strong>채굴과 지갑 안내</strong>
+          <PutdukIcon name="arrow-right" size={20} />
         </span>
-        <PutdukIcon name="arrow-right" size={20} />
+        <small>확정 금액과 확인 전 금액의 차이를 알아보세요.</small>
       </Link>
 
       <details className={styles.details} id="putduk-mining-details">

@@ -461,6 +461,74 @@ async function captureRoutes(
                   return tops.size;
                 }),
               );
+            const trialRecovery = ready.getByRole("group", {
+              name: "START 상태 다시 확인",
+              exact: true,
+            });
+            const trialRetry = trialRecovery.getByRole("button", {
+              name: "다시 확인",
+              exact: true,
+            });
+            await expectPaintedCopyFits(trialRecovery, "button", "button");
+            const retryLines = await trialRetry.evaluate((button) => {
+              const walker = document.createTreeWalker(
+                button,
+                NodeFilter.SHOW_TEXT,
+              );
+              const tops = new Set<number>();
+              for (
+                let node = walker.nextNode();
+                node;
+                node = walker.nextNode()
+              ) {
+                if (!node.textContent?.trim()) continue;
+                const range = document.createRange();
+                range.selectNodeContents(node);
+                for (const rect of range.getClientRects()) {
+                  if (rect.width > 0 && rect.height > 0)
+                    tops.add(Math.round(rect.top));
+                }
+              }
+              return tops.size;
+            });
+            expect(retryLines).toBeGreaterThan(0);
+            expect(retryLines).toBeLessThanOrEqual(2);
+            expect(
+              (await trialRetry.boundingBox())?.height,
+            ).toBeGreaterThanOrEqual(44);
+            const guide = ready.getByRole("link", {
+              name: /채굴과 지갑 안내/,
+            });
+            await expect(guide).toHaveAttribute("href", "/how-it-works");
+            await expectPaintedCopyFits(guide, "strong, small", "a");
+            const guideLines = await guide.evaluate((element) =>
+              [...element.querySelectorAll("strong, small")].map((copy) => {
+                const walker = document.createTreeWalker(
+                  copy,
+                  NodeFilter.SHOW_TEXT,
+                );
+                const tops = new Set<number>();
+                for (
+                  let node = walker.nextNode();
+                  node;
+                  node = walker.nextNode()
+                ) {
+                  if (!node.textContent?.trim()) continue;
+                  const range = document.createRange();
+                  range.selectNodeContents(node);
+                  for (const rect of range.getClientRects()) {
+                    if (rect.width > 0 && rect.height > 0)
+                      tops.add(Math.round(rect.top));
+                  }
+                }
+                return tops.size;
+              }),
+            );
+            expect(guideLines).toHaveLength(2);
+            expect(guideLines[0]).toBeGreaterThan(0);
+            expect(guideLines[0]).toBeLessThanOrEqual(2);
+            expect(guideLines[1]).toBeGreaterThan(0);
+            expect(guideLines[1]).toBeLessThanOrEqual(3);
             expect(narrowFactLines).toHaveLength(3);
             for (const lines of narrowFactLines) {
               expect(lines).toBeGreaterThan(0);
