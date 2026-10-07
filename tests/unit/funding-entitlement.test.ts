@@ -978,6 +978,121 @@ describe("read-only V1 funding entitlement engine", () => {
     );
   });
 
+  it("composes mixed product weights exactly before a single global speed cap regardless of declaration order", () => {
+    const input = condition(1000000n);
+    const allocations = [
+      {
+        ...input.allocations[0]!,
+        productId: "approved-speed-fixture-a",
+        allocationBps: 6000,
+        productMultiplierBps: 11000,
+      },
+      {
+        ...input.allocations[0]!,
+        productId: "approved-speed-fixture-b",
+        allocationBps: 4000,
+        productMultiplierBps: 9000,
+      },
+    ];
+    const effects = {
+      userOverrideMultiplierBps: 8000,
+      speedMultipliersBps: [12500, 12500],
+    };
+    const result = run(start({ ...input, allocations, effects }), day);
+    // (0.6 × 1.1 + 0.4 × 0.9) × 0.8 × 1.25 × 1.25 = 1.275.
+    // Capping the campaign ingredients before multiplying the user override
+    // would produce 1.224 instead, changing the approved exact composition.
+    expect(result.state.condition.allocatedBaseSpeedMultiplier).toEqual(
+      exactMicroKrw(51n, 40n),
+    );
+    expect(result.segments[0]!.baseAccrued).toEqual(
+      exactMicroKrw(6375n * microPerKrw),
+    );
+    expect(result.state.baseCapacity).toEqual(start(input).baseCapacity);
+    expect(result.segments[0]!.conditionalRetentionAccrued).toEqual(
+      run(start(input), day).segments[0]!.conditionalRetentionAccrued,
+    );
+    const reordered = run(
+      start({ ...input, allocations: [...allocations].reverse(), effects }),
+      day,
+    );
+    expect(reordered.state.baseUsed).toEqual(result.state.baseUsed);
+    expect(reordered.state.baseRewardCarry).toEqual(
+      result.state.baseRewardCarry,
+    );
+    expect(reordered.state.conditionalRetentionUsed).toEqual(
+      result.state.conditionalRetentionUsed,
+    );
+  });
+
+  it("reduces only future aggregate economics on a partial HOLD while preserving the original lot and cycle", () => {
+    // The trusted aggregate is supplied by the native portion reader. This
+    // preview does not infer which portion was held or qualify its clock.
+    const input = condition(1000000n);
+    const original = start(input);
+    const before = run(original, 20n * day);
+    const held: FundingConditionInput = {
+      ...input,
+      expectedPrincipalRevision: 2n,
+      funding: {
+        ...input.funding,
+        principalRevision: 2n,
+        eligiblePrincipalKrw: 700000n,
+        lots: [
+          {
+            ...input.funding.lots[0]!,
+            remainingEligiblePrincipalKrw: 700000n,
+          },
+        ],
+      },
+    };
+    const atHold = run(before.state, 20n * day, [change(20n * day, held)]);
+    expect(atHold.state.condition.tierCode).toBe("L2");
+    expect(atHold.state.baseUsed).toEqual(before.state.baseUsed);
+    expect(atHold.state.conditionalRetentionUsed).toEqual(
+      before.state.conditionalRetentionUsed,
+    );
+    expect(atHold.state.baseRewardCarry).toEqual(before.state.baseRewardCarry);
+    expect(atHold.state.baseCapacity).toEqual(
+      exactMicroKrw(135000n * microPerKrw),
+    );
+    const after = run(atHold.state, 23n * day);
+    expect(after.segments[0]!.baseAccrued).toEqual(
+      exactMicroKrw(10500n * microPerKrw),
+    );
+    expect(after.segments[0]!.conditionalRetentionAccrued).toEqual(
+      exactMicroKrw(11200n * microPerKrw),
+    );
+    expect(after.settlementReadyKrw).toBe(10500n);
+    expect(after.conditionalRetentionSettlementReadyKrw).toBe(0n);
+    expect(after.retentionQualificationRequired).toBe(true);
+    expect(after.state.anchorMicroseconds).toBe(original.anchorMicroseconds);
+    expect(after.state.cycleEndMicroseconds).toBe(
+      original.cycleEndMicroseconds,
+    );
+    expect(
+      after.state.condition.input.funding.lots[0]!.effectiveFromMicroseconds,
+    ).toBe(0n);
+    const first = run(atHold.state, 21n * day);
+    const split = run(first.state, 23n * day);
+    expect(first.settlementReadyKrw + split.settlementReadyKrw).toBe(
+      after.settlementReadyKrw,
+    );
+    expect(split.state.baseUsed).toEqual(after.state.baseUsed);
+    expect(split.state.baseRewardCarry).toEqual(after.state.baseRewardCarry);
+    expect(split.state.conditionalRetentionUsed).toEqual(
+      after.state.conditionalRetentionUsed,
+    );
+    // A RELEASE needs native source/portion originals; a generic lot increase
+    // cannot impersonate a cancellation or supply retroactive compensation.
+    expect(() =>
+      run(after.state, 24n * day, [
+        change(23n * day, condition(1000000n, 3n), 2n),
+      ]),
+    ).toThrow("PRINCIPAL_LOT_INCREASE_REQUIRES_CORRECTION_CONTRACT");
+    expect(after.state.cursorMicroseconds).toBe(23n * day);
+  });
+
   it("keeps principal maintenance conditional with zero BASE allocation and starts selection prospectively", () => {
     const input = condition();
     const unassigned = { ...input, allocations: [] };

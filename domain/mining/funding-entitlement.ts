@@ -463,6 +463,145 @@ export type FundingForwardChange = {
   readonly condition: FundingConditionInput;
 };
 
+/** A server-derived sealed declaration, not a browser allocation proposal. */
+export type FundingSlotAllocationOriginal = {
+  readonly originalId: string;
+  readonly revision: bigint;
+  readonly catalogVersionId: string;
+  readonly effectiveFromMicroseconds: bigint;
+  readonly sourceComplete: boolean;
+  /** Array position is the immutable ordinal stored in the allocation original. */
+  readonly products: readonly {
+    readonly productId: string;
+    readonly ruleVersionId: string;
+    readonly allocationBps: number;
+  }[];
+};
+
+/**
+ * Read-only deterministic downgrade preview using the existing global engine.
+ * The caller must verify the native original's seal/catalog/rule receipts before
+ * supplying it. This helper neither manufactures that proof nor persists a
+ * pause, entitlement, source original, reward or ledger credit. The full intent
+ * remains separate from the prospective active condition. Later slot recovery
+ * requires a reviewed policy or explicit reselection; it never resumes here.
+ */
+export function previewFundingSlotDowngrade({
+  state,
+  change,
+  allocationOriginal,
+  expectedAllocationOriginalId,
+  expectedAllocationRevision,
+}: {
+  state: FundingEntitlementPreview;
+  change: FundingForwardChange;
+  allocationOriginal: FundingSlotAllocationOriginal;
+  expectedAllocationOriginalId: string;
+  expectedAllocationRevision: bigint;
+}) {
+  if (!previews.has(state)) fail("UNVALIDATED_PREVIEW_STATE");
+  if (
+    allocationOriginal.sourceComplete !== true ||
+    !allocationOriginal.originalId.trim() ||
+    !allocationOriginal.catalogVersionId.trim() ||
+    typeof allocationOriginal.revision !== "bigint" ||
+    allocationOriginal.revision <= 0n ||
+    allocationOriginal.originalId !== expectedAllocationOriginalId ||
+    allocationOriginal.revision !== expectedAllocationRevision
+  )
+    fail("SLOT_ALLOCATION_ORIGINAL_UNCONFIRMED");
+  if (
+    typeof allocationOriginal.effectiveFromMicroseconds !== "bigint" ||
+    allocationOriginal.effectiveFromMicroseconds < 0n ||
+    allocationOriginal.effectiveFromMicroseconds > state.cursorMicroseconds ||
+    typeof change.effectiveFromMicroseconds !== "bigint" ||
+    change.effectiveFromMicroseconds < state.cursorMicroseconds
+  )
+    fail("SLOT_ALLOCATION_EFFECTIVE_BOUNDARY_INVALID");
+  const declared = state.condition.input.allocations;
+  const incoming = change.condition.allocations;
+  if (
+    declared.length !==
+      Math.min(state.condition.slots, allocationOriginal.products.length) ||
+    incoming.length !== allocationOriginal.products.length ||
+    allocationOriginal.products.some((product, index) => {
+      const previous = declared[index];
+      const next = incoming[index]!;
+      return (
+        !product.ruleVersionId.trim() ||
+        next.productId !== product.productId ||
+        next.allocationBps !== product.allocationBps ||
+        (previous !== undefined &&
+          (product.productId !== previous.productId ||
+            product.allocationBps !== previous.allocationBps ||
+            next.productMultiplierBps !== previous.productMultiplierBps ||
+            next.published !== previous.published ||
+            next.sourceComplete !== previous.sourceComplete))
+      );
+    })
+  )
+    fail("SLOT_ALLOCATION_DECLARATION_MISMATCH");
+  assertEffectiveEconomyPolicy(
+    change.condition.policy,
+    change.effectiveFromMicroseconds,
+  );
+  const nextTier = fundingTierForPrincipal(
+    change.condition.policy,
+    change.condition.funding.eligiblePrincipalKrw,
+  );
+  const nextSlots = nextTier?.slots ?? 0;
+  if (
+    nextSlots >= state.condition.slots ||
+    allocationOriginal.products.length <= nextSlots
+  )
+    fail("SLOT_DOWNGRADE_WITH_EXCESS_REQUIRED");
+  const decisions = allocationOriginal.products.map((product, index) => ({
+    ...product,
+    ordinal: index + 1,
+    state: index < nextSlots ? ("RETAINED" as const) : ("PAUSED" as const),
+    pauseReason: index < nextSlots ? null : ("SLOT_LIMIT_REDUCED" as const),
+  }));
+  const prospectiveChange: FundingForwardChange = {
+    ...change,
+    condition: {
+      ...change.condition,
+      allocations: incoming.slice(0, nextSlots),
+    },
+  };
+  const interval = previewFundingInterval({
+    state,
+    serverNowMicroseconds: change.effectiveFromMicroseconds,
+    expectedEntitlementRevision: state.entitlementRevision,
+    changes: [prospectiveChange],
+  });
+  return freeze({
+    mode: "PREVIEW_ONLY" as const,
+    selectionPolicy: "ALLOCATION_ORIGINAL_ORDINAL_PREFIX" as const,
+    allocationOriginal: {
+      ...allocationOriginal,
+      products: allocationOriginal.products.map((product) => ({ ...product })),
+    },
+    previousSlots: state.condition.slots,
+    nextSlots,
+    decisions,
+    activeAllocationBps: decisions.reduce(
+      (sum, decision) =>
+        sum + (decision.state === "RETAINED" ? decision.allocationBps : 0),
+      0,
+    ),
+    pausedAllocationBps: decisions.reduce(
+      (sum, decision) =>
+        sum + (decision.state === "PAUSED" ? decision.allocationBps : 0),
+      0,
+    ),
+    prospectiveChange: {
+      ...prospectiveChange,
+      condition: interval.state.condition.input,
+    },
+    interval,
+  });
+}
+
 type PreviewSegment = {
   readonly startMicroseconds: bigint;
   readonly endMicroseconds: bigint;
