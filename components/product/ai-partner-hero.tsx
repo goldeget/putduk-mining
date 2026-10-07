@@ -1,24 +1,16 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useId, useState, type ReactNode } from "react";
+import { MenuBrandSymbol } from "@/components/product/menu-brand-symbol";
 import styles from "./ai-partner-hero.module.css";
 
 export function AiPartnerMark({ className }: { className?: string }) {
+  const paintId = useId();
   return (
-    <svg
-      className={className}
-      viewBox="0 0 40 56"
-      fill="none"
-      aria-hidden="true"
-      focusable="false"
-    >
-      <path d="M3 10 21 1l16 8-18 9L3 10Z" fill="#ffe6a0" />
-      <path d="M3 10v36l16 9V18L3 10Z" fill="#b98b3c" />
-      <path d="m19 18 18-9v37l-18 9V18Z" fill="#f0c66c" />
-      <path d="m10 14 7 4v32l-7-4V14Z" fill="#fbe7a9" />
-      <path d="m24 20 7-4v26l-7 4V20Z" fill="#31240f" />
-      <path d="m3 10 18-9 16 8v37l-18 9-16-9V10Z" stroke="#f8d88c" />
-    </svg>
+    <MenuBrandSymbol
+      {...(className === undefined ? {} : { className })}
+      idPrefix={`ai-brand-${paintId.replace(/:/g, "")}`}
+    />
   );
 }
 

@@ -78,7 +78,7 @@ export function RouteBrandHeader({
       data-route-brand-header={view}
     >
       <Link className={styles.brand} href="/home" aria-label="퍼뜩 채굴 홈">
-        <MenuBrandSymbol />
+        <MenuBrandSymbol idPrefix={`${view}-header-brand`} />
         <strong>
           PUTDUK <span>MINING</span>
         </strong>

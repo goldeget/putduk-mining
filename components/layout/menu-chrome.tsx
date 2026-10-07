@@ -19,7 +19,7 @@ export function MenuHeader({ displayName }: { displayName: string }) {
       data-menu-header="true"
     >
       <Link className={styles.brand} href="/home" aria-label="퍼뜩 채굴 홈">
-        <MenuBrandSymbol />
+        <MenuBrandSymbol idPrefix="menu-header-brand" />
         <strong>
           PUTDUK
           <br />

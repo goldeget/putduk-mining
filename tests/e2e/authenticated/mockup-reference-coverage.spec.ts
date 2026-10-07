@@ -195,6 +195,13 @@ async function captureRoutes(
         : widths;
     for (const width of routeWidths) {
       for (const theme of themes) {
+        await page.evaluate((value) => {
+          localStorage.setItem("putduk-theme", value);
+        }, theme);
+        // Configure the next capture on a blank document. Resizing the previous
+        // route starts responsive image requests that the immediate navigation
+        // would cancel; retain strict failures for the actual rendered route.
+        await page.goto("about:blank");
         await page.setViewportSize({
           width,
           height: width === 834 ? 1112 : 900,
@@ -203,9 +210,6 @@ async function captureRoutes(
           colorScheme: theme,
           reducedMotion: "reduce",
         });
-        await page.evaluate((value) => {
-          localStorage.setItem("putduk-theme", value);
-        }, theme);
         const response = await page.goto(route, { waitUntil: "networkidle" });
         expect(response?.status()).toBe(200);
         await expect(page).toHaveURL((url) => url.pathname === route);
@@ -1106,9 +1110,8 @@ async function captureRoutes(
             }
           }
         }
-        await page.evaluate(() => {
-          document.documentElement.style.fontSize = "";
-        });
+        // The next document starts at its normal text size. Resetting this
+        // departing document can start another responsive image request.
       }
     }
   }
