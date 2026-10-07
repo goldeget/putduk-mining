@@ -1202,7 +1202,7 @@
     {
       "proposal_id": "catalog-v1-alphabet-a",
       "slug": "alphabet-a",
-      "name_hint_ko": "알파벳 A주 조사안",
+      "name_hint_ko": "알파벳",
       "asset_class": "US_STOCK",
       "market": "US",
       "ticker_hint": "GOOGL",

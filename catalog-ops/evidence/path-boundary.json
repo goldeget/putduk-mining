@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "checked_against_base": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+  "paths": 58,
+  "allowed": "catalog-ops/**",
+  "outside_scope": [],
+  "frozen_refs": "ALL_EXACT",
+  "worktree_status": "PRE_FINAL_CHECKPOINT_EXPECTED_CATALOG_CHANGES",
+  "final_head_resolver": "node catalog-ops/verify-handoff.mjs --require-pushed --require-clean"
+}

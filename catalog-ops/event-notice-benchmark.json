@@ -104,8 +104,8 @@
     {
       "slug": "event-phishing-check",
       "title_ko": "가짜 안내 구별하기",
-      "decision": "KEEP",
-      "reason_ko": "공식 입금 화면 확인과 외부 송금 거절이 핵심; 합쳐진 보안 내용도 포함 필요.",
+      "decision": "REWRITE",
+      "reason_ko": "계정 안전/안전한 상담 2개를 통합한 전체 원고. 외부 송금 거절과 낯선 계정 변경·상담정보 최소화를 함께 유지.",
       "merge_into": null,
       "existing_body_sha256": "02d2a29f4a2a9b9c0ad508fafd3e02febfd8853b468efca7a798c3489407c848",
       "economic_effect": "NONE",
@@ -662,9 +662,9 @@
     }
   ],
   "event_counts": {
-    "KEEP": 22,
+    "KEEP": 21,
     "MERGE": 3,
-    "REWRITE": 4,
+    "REWRITE": 5,
     "DROP": 1,
     "ADD_MISSING": 10
   },
@@ -675,7 +675,7 @@
   },
   "delta_counts": {
     "events_additions": 10,
-    "events_rewrites": 4,
+    "events_rewrites": 5,
     "notices_additions": 8,
     "notices_rewrites": 4,
     "faq_additions": 16,

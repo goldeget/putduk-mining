@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "operation": "LOCAL_CANCEL_ARCHIVE_READBACK",
+  "status": "BLOCKED",
+  "execution": "UNRUN",
+  "reason": "APPROVED_CATALOG_COMMAND_REQUIRED / APPROVED_CONTENT_COMMAND_REQUIRED",
+  "target": null,
+  "created_id": null,
+  "request_id": null,
+  "readback_result": null,
+  "screenshots": [],
+  "rollback_receipt": null,
+  "proof_source": "evidence/command-discovery.json",
+  "production_touched": false,
+  "shared_staging_written": false,
+  "direct_sql_executed": false,
+  "note": "No fabricated IDs, readback, previews or screenshot substitutes. Schema and static draft are not registration evidence."
+}

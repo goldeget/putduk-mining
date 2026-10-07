@@ -12,6 +12,7 @@ node catalog-ops/economy-simulate.mjs
 node catalog-ops/validate.mjs
 node --test catalog-ops/validate.test.mjs
 git diff --check
+node catalog-ops/verify-handoff.mjs --require-pushed --require-clean
 ```
 
 `research-fetch.py`는 공식 자료에 읽기 요청만 보낸다. `audit-repository.py`는 지정 저장소와 동결 브랜치만 읽는다. 어떤 스크립트도 SQL·RPC·등록·발송·게시를 실행하지 않는다. 돈의 권위는 서버의 승인된 정산·원장이며 시뮬레이션은 정상화 지수 비교다.

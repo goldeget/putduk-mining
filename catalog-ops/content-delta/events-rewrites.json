@@ -1,5 +1,65 @@
 [
   {
+    "slug": "event-phishing-check",
+    "storage": {
+      "slug": "launch-phishing-check",
+      "title_ko": "가짜 안내 구별하기",
+      "summary_ko": "입금 안내는 로그인한 퍼뜩 화면에서 직접 확인하세요. 문자나 메신저의 계좌·지갑 주소를 그대로 따라 송금하지 마세요. 출금 해제나 보상 수령을 이유로 개인 계좌 송금을 요구하면 응하지 말고 고객지원에 알려 주세요.",
+      "status": "DRAFT",
+      "starts_at": null,
+      "ends_at": null,
+      "published_at": null
+    },
+    "metadata": {
+      "audience": "MEMBERS",
+      "category": "event",
+      "cta": {
+        "label": "안전 안내 확인",
+        "route": "/support"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "required_phrases": [],
+      "variables": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+      "publication_gate": "REVIEW_REQUIRED",
+      "card_title_ko": "송금 전 주소부터 확인해요",
+      "body_markdown": "내 계정의 로그인 정보와 변경 안내를 확인하세요. 비밀번호는 다른 서비스와 함께 쓰지 않습니다. 낯선 로그인이나 변경을 발견하면 공식 고객지원으로 알려 주세요.\n\n입금 안내는 로그인한 퍼뜩 화면에서 직접 확인합니다. 문자나 메신저에 적힌 계좌·지갑 주소를 그대로 따라 송금하지 마세요. 출금 해제나 보상 수령을 이유로 별도 송금을 요구하면 중단합니다.\n\n상담에서도 비밀번호·인증 코드·개인 키를 보내지 않습니다. 화면을 공유할 때 개인정보를 가려 주세요. 이 확인 자체의 추가 보상은 없습니다.",
+      "segment": "ALL_MEMBERS",
+      "schedule": {
+        "starts_at": null,
+        "ends_at": null,
+        "timezone": "Asia/Seoul",
+        "status": "SCHEDULE_REQUIRED"
+      },
+      "start_condition": "운영자 문구·대상·기간 승인, 해당 화면 실제 이용 검증 및 출시 책임자 오픈 승인 후 시작",
+      "end_condition": "승인된 종료 시각 도달 또는 관련 기능 중지·취소 공지 시 종료",
+      "participation": "안내를 읽고 연결 화면에서 본인 정보를 확인합니다. 참여 실적이나 보상 청구를 생성하지 않습니다.",
+      "exclusion": "로그인이 필요한 화면은 본인 계정으로 이용합니다. 제한 중인 기능을 우회하거나 다른 사람의 계정을 사용하지 않습니다.",
+      "scene_brief": "가짜 메시지를 흐리게 처리하고 공식 화면으로 돌아오는 장면을 보여 주세요.",
+      "notification_copy": "송금 전 주소부터 확인해요. 이벤트 안내에서 이용 방법을 확인해 주세요.",
+      "kpi": {
+        "definition": "피싱 안내 열람률과 의심 안내 신고 건수",
+        "target": null,
+        "measurement": "승인된 비식별 집계 계약이 있을 때만 측정. 신규 추적·보상 참여 카운터는 만들지 않음"
+      },
+      "operator_note": "교육형 안내입니다. 알림 수신 선택·조용한 시간·중복 발송 방지를 확인하세요. 자동 미션 판정 또는 보상 지급 기능으로 등록하지 마세요.",
+      "rollback": "승인된 취소 명령으로 노출과 예약 발송을 중지하고 안내를 남깁니다. 참여·거래·감사 기록은 삭제하지 않습니다. 취소 명령이 없으면 등록하지 않습니다.",
+      "abuse_risk": "반복 열람·다중 계정·공유 IP만으로 보상이나 제재를 만들지 않습니다. 개인정보를 캠페인 보고에 넣지 않습니다.",
+      "registration_kind": "INFORMATIONAL_CAMPAIGN_PROPOSAL",
+      "change_reason": "계정 안전/안전한 상담 2개를 통합한 전체 원고. 외부 송금 거절과 낯선 계정 변경·상담정보 최소화를 함께 유지.",
+      "registration_ready": false
+    }
+  },
+  {
     "slug": "event-pending-verified",
     "storage": {
       "slug": "launch-pending-verified",

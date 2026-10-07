@@ -1,0 +1,658 @@
+TAP version 13
+# Subtest: a complete gated draft passes while research and registration remain blocked
+ok 1 - a complete gated draft passes while research and registration remain blocked
+  ---
+  duration_ms: 13.37621
+  type: 'test'
+  ...
+# Subtest: planned P0 can be researched later but UNKNOWN never becomes effective launch
+ok 2 - planned P0 can be researched later but UNKNOWN never becomes effective launch
+  ---
+  duration_ms: 7.104242
+  type: 'test'
+  ...
+# Subtest: verified source bookkeeping requires a real response and fresh factual evidence
+ok 3 - verified source bookkeeping requires a real response and fresh factual evidence
+  ---
+  duration_ms: 5.812383
+  type: 'test'
+  ...
+# Subtest: duplicate proposal identity
+ok 4 - duplicate proposal identity
+  ---
+  duration_ms: 7.228498
+  type: 'test'
+  ...
+# Subtest: duplicate product slug
+ok 5 - duplicate product slug
+  ---
+  duration_ms: 5.221528
+  type: 'test'
+  ...
+# Subtest: duplicate market and ticker
+ok 6 - duplicate market and ticker
+  ---
+  duration_ms: 4.73792
+  type: 'test'
+  ...
+# Subtest: uncontracted asset class
+ok 7 - uncontracted asset class
+  ---
+  duration_ms: 5.936334
+  type: 'test'
+  ...
+# Subtest: empty product identity hint
+ok 8 - empty product identity hint
+  ---
+  duration_ms: 5.165223
+  type: 'test'
+  ...
+# Subtest: invalid planned launch wave
+ok 9 - invalid planned launch wave
+  ---
+  duration_ms: 5.14308
+  type: 'test'
+  ...
+# Subtest: market linked product
+ok 10 - market linked product
+  ---
+  duration_ms: 4.855297
+  type: 'test'
+  ...
+# Subtest: fake operator approval
+ok 11 - fake operator approval
+  ---
+  duration_ms: 5.079164
+  type: 'test'
+  ...
+# Subtest: unreviewed brand clearance
+ok 12 - unreviewed brand clearance
+  ---
+  duration_ms: 5.370161
+  type: 'test'
+  ...
+# Subtest: invented partnership claim
+ok 13 - invented partnership claim
+  ---
+  duration_ms: 4.347082
+  type: 'test'
+  ...
+# Subtest: unproven live catalog
+ok 14 - unproven live catalog
+  ---
+  duration_ms: 4.590308
+  type: 'test'
+  ...
+# Subtest: fabricated new database UUID
+ok 15 - fabricated new database UUID
+  ---
+  duration_ms: 5.429531
+  type: 'test'
+  ...
+# Subtest: candidate without a source
+ok 16 - candidate without a source
+  ---
+  duration_ms: 4.010776
+  type: 'test'
+  ...
+# Subtest: verified identity without factual evidence
+ok 17 - verified identity without factual evidence
+  ---
+  duration_ms: 4.756708
+  type: 'test'
+  ...
+# Subtest: UNKNOWN P0 effective candidate
+ok 18 - UNKNOWN P0 effective candidate
+  ---
+  duration_ms: 5.665186
+  type: 'test'
+  ...
+# Subtest: UNKNOWN P1 effective candidate
+ok 19 - UNKNOWN P1 effective candidate
+  ---
+  duration_ms: 4.735647
+  type: 'test'
+  ...
+# Subtest: SpaceX hint promoted to canonical ticker without checking
+ok 20 - SpaceX hint promoted to canonical ticker without checking
+  ---
+  duration_ms: 5.945147
+  type: 'test'
+  ...
+# Subtest: unmeasured scoring sold as measurement
+ok 21 - unmeasured scoring sold as measurement
+  ---
+  duration_ms: 5.014497
+  type: 'test'
+  ...
+# Subtest: ETF category contract omitted
+ok 22 - ETF category contract omitted
+  ---
+  duration_ms: 5.094897
+  type: 'test'
+  ...
+# Subtest: official source URL with credentials
+ok 23 - official source URL with credentials
+  ---
+  duration_ms: 6.57154
+  type: 'test'
+  ...
+# Subtest: blocked source falsely verified
+ok 24 - blocked source falsely verified
+  ---
+  duration_ms: 5.088507
+  type: 'test'
+  ...
+# Subtest: stale fetched source cannot verify current listing
+ok 25 - stale fetched source cannot verify current listing
+  ---
+  duration_ms: 4.696848
+  type: 'test'
+  ...
+# Subtest: future accessed date cannot verify source
+ok 26 - future accessed date cannot verify source
+  ---
+  duration_ms: 5.157091
+  type: 'test'
+  ...
+# Subtest: research completed without a verified response
+ok 27 - research completed without a verified response
+  ---
+  duration_ms: 4.630789
+  type: 'test'
+  ...
+# Subtest: response hash invented without an obtained file
+ok 28 - response hash invented without an obtained file
+  ---
+  duration_ms: 4.414433
+  type: 'test'
+  ...
+# Subtest: launch missing a product entry
+ok 29 - launch missing a product entry
+  ---
+  duration_ms: 2.862828
+  type: 'test'
+  ...
+# Subtest: duplicate display order
+ok 30 - duplicate display order
+  ---
+  duration_ms: 3.89371
+  type: 'test'
+  ...
+# Subtest: unproven launch approval
+ok 31 - unproven launch approval
+  ---
+  duration_ms: 5.240426
+  type: 'test'
+  ...
+# Subtest: new product without Scene spec gate
+ok 32 - new product without Scene spec gate
+  ---
+  duration_ms: 4.038658
+  type: 'test'
+  ...
+# Subtest: missing mobile master gate
+ok 33 - missing mobile master gate
+  ---
+  duration_ms: 3.890134
+  type: 'test'
+  ...
+# Subtest: fabricated ready Scene asset
+ok 34 - fabricated ready Scene asset
+  ---
+  duration_ms: 7.085613
+  type: 'test'
+  ...
+# Subtest: invalid calendar date
+ok 35 - invalid calendar date
+  ---
+  duration_ms: 4.207691
+  type: 'test'
+  ...
+# Subtest: reversed availability dates
+ok 36 - reversed availability dates
+  ---
+  duration_ms: 4.031907
+  type: 'test'
+  ...
+# Subtest: numeric floating speed instead of decimal string
+ok 37 - numeric floating speed instead of decimal string
+  ---
+  duration_ms: 5.364643
+  type: 'test'
+  ...
+# Subtest: three-decimal speed violates 0.01 step
+ok 38 - three-decimal speed violates 0.01 step
+  ---
+  duration_ms: 3.698556
+  type: 'test'
+  ...
+# Subtest: proposed speed exceeds allowed 1.20
+ok 39 - proposed speed exceeds allowed 1.20
+  ---
+  duration_ms: 2.805732
+  type: 'test'
+  ...
+# Subtest: proposal band silently changed
+ok 40 - proposal band silently changed
+  ---
+  duration_ms: 4.617779
+  type: 'test'
+  ...
+# Subtest: suggested yield invented
+ok 41 - suggested yield invented
+  ---
+  duration_ms: 4.253286
+  type: 'test'
+  ...
+# Subtest: proposed speed below 1.00
+ok 42 - proposed speed below 1.00
+  ---
+  duration_ms: 3.559867
+  type: 'test'
+  ...
+# Subtest: bps and decimal disagree
+ok 43 - bps and decimal disagree
+  ---
+  duration_ms: 2.729909
+  type: 'test'
+  ...
+# Subtest: grade contradicts speed band
+ok 44 - grade contradicts speed band
+  ---
+  duration_ms: 2.732152
+  type: 'test'
+  ...
+# Subtest: mining personality omitted
+ok 45 - mining personality omitted
+  ---
+  duration_ms: 3.657303
+  type: 'test'
+  ...
+# Subtest: approved value invented
+ok 46 - approved value invented
+  ---
+  duration_ms: 4.403677
+  type: 'test'
+  ...
+# Subtest: human policy gate disabled
+ok 47 - human policy gate disabled
+  ---
+  duration_ms: 5.666958
+  type: 'test'
+  ...
+# Subtest: market price controls proposed economy
+ok 48 - market price controls proposed economy
+  ---
+  duration_ms: 4.041042
+  type: 'test'
+  ...
+# Subtest: product capacity override added
+ok 49 - product capacity override added
+  ---
+  duration_ms: 4.067812
+  type: 'test'
+  ...
+# Subtest: per-slot global capacity replicated
+ok 50 - per-slot global capacity replicated
+  ---
+  duration_ms: 5.900159
+  type: 'test'
+  ...
+# Subtest: fractional won main display
+ok 51 - fractional won main display
+  ---
+  duration_ms: 4.188514
+  type: 'test'
+  ...
+# Subtest: new speed above existing policy passed silently
+ok 52 - new speed above existing policy passed silently
+  ---
+  duration_ms: 3.975923
+  type: 'test'
+  ...
+# Subtest: final cap increased
+ok 53 - final cap increased
+  ---
+  duration_ms: 5.173856
+  type: 'test'
+  ...
+# Subtest: intermediate cap applied
+ok 54 - intermediate cap applied
+  ---
+  duration_ms: 4.584128
+  type: 'test'
+  ...
+# Subtest: micro unit altered
+ok 55 - micro unit altered
+  ---
+  duration_ms: 4.025878
+  type: 'test'
+  ...
+# Subtest: missing one launch economy value
+ok 56 - missing one launch economy value
+  ---
+  duration_ms: 2.882127
+  type: 'test'
+  ...
+# Subtest: money guarantee in member copy
+ok 57 - money guarantee in member copy
+  ---
+  duration_ms: 4.135604
+  type: 'test'
+  ...
+# Subtest: numeric payout invented in member copy
+ok 58 - numeric payout invented in member copy
+  ---
+  duration_ms: 4.739823
+  type: 'test'
+  ...
+# Subtest: market linked payout copy
+ok 59 - market linked payout copy
+  ---
+  duration_ms: 5.315259
+  type: 'test'
+  ...
+# Subtest: technical enum exposed to member
+ok 60 - technical enum exposed to member
+  ---
+  duration_ms: 4.901196
+  type: 'test'
+  ...
+# Subtest: positioning disclaimer removed
+ok 61 - positioning disclaimer removed
+  ---
+  duration_ms: 5.298544
+  type: 'test'
+  ...
+# Subtest: linked FAQ not present
+ok 62 - linked FAQ not present
+  ---
+  duration_ms: 4.840384
+  type: 'test'
+  ...
+# Subtest: delta collides with frozen internal slug
+ok 63 - delta collides with frozen internal slug
+  ---
+  duration_ms: 4.615796
+  type: 'test'
+  ...
+# Subtest: delta collides with frozen storage slug
+ok 64 - delta collides with frozen storage slug
+  ---
+  duration_ms: 4.511079
+  type: 'test'
+  ...
+# Subtest: empty content title
+ok 65 - empty content title
+  ---
+  duration_ms: 4.786714
+  type: 'test'
+  ...
+# Subtest: empty content full body
+ok 66 - empty content full body
+  ---
+  duration_ms: 4.496347
+  type: 'test'
+  ...
+# Subtest: missing CTA
+ok 67 - missing CTA
+  ---
+  duration_ms: 4.284939
+  type: 'test'
+  ...
+# Subtest: fabricated product detail route
+ok 68 - fabricated product detail route
+  ---
+  duration_ms: 4.888878
+  type: 'test'
+  ...
+# Subtest: invalid audience
+ok 69 - invalid audience
+  ---
+  duration_ms: 4.03417
+  type: 'test'
+  ...
+# Subtest: invalid mining segment
+ok 70 - invalid mining segment
+  ---
+  duration_ms: 3.820019
+  type: 'test'
+  ...
+# Subtest: required copy missing
+ok 71 - required copy missing
+  ---
+  duration_ms: 3.731526
+  type: 'test'
+  ...
+# Subtest: template variable not declared
+ok 72 - template variable not declared
+  ---
+  duration_ms: 3.886739
+  type: 'test'
+  ...
+# Subtest: unapproved content financial value
+ok 73 - unapproved content financial value
+  ---
+  duration_ms: 4.588436
+  type: 'test'
+  ...
+# Subtest: content published without receipt
+ok 74 - content published without receipt
+  ---
+  duration_ms: 3.649922
+  type: 'test'
+  ...
+# Subtest: event ends before it starts
+ok 75 - event ends before it starts
+  ---
+  duration_ms: 4.09976
+  type: 'test'
+  ...
+# Subtest: in-app notification links outside protected allowlist
+ok 76 - in-app notification links outside protected allowlist
+  ---
+  duration_ms: 3.817635
+  type: 'test'
+  ...
+# Subtest: uppercase notification category is not mapped
+ok 77 - uppercase notification category is not mapped
+  ---
+  duration_ms: 3.635001
+  type: 'test'
+  ...
+# Subtest: push opt-in bypass
+ok 78 - push opt-in bypass
+  ---
+  duration_ms: 3.667389
+  type: 'test'
+  ...
+# Subtest: invented member notification target
+ok 79 - invented member notification target
+  ---
+  duration_ms: 3.797585
+  type: 'test'
+  ...
+# Subtest: support macro sends automatically
+ok 80 - support macro sends automatically
+  ---
+  duration_ms: 3.622392
+  type: 'test'
+  ...
+# Subtest: missing a frozen event review
+ok 81 - missing a frozen event review
+  ---
+  duration_ms: 3.584114
+  type: 'test'
+  ...
+# Subtest: drop deletes historical records
+ok 82 - drop deletes historical records
+  ---
+  duration_ms: 4.913454
+  type: 'test'
+  ...
+# Subtest: unobserved external benchmark claimed complete
+ok 83 - unobserved external benchmark claimed complete
+  ---
+  duration_ms: 3.795672
+  type: 'test'
+  ...
+# Subtest: registration ready without readback evidence
+ok 84 - registration ready without readback evidence
+  ---
+  duration_ms: 4.157006
+  type: 'test'
+  ...
+# Subtest: production ready without approval
+ok 85 - production ready without approval
+  ---
+  duration_ms: 4.353853
+  type: 'test'
+  ...
+# Subtest: catalog command invented
+ok 86 - catalog command invented
+  ---
+  duration_ms: 4.222745
+  type: 'test'
+  ...
+# Subtest: direct SQL used to bypass command absence
+ok 87 - direct SQL used to bypass command absence
+  ---
+  duration_ms: 4.655396
+  type: 'test'
+  ...
+# Subtest: shared staging not owned by this lane
+ok 88 - shared staging not owned by this lane
+  ---
+  duration_ms: 3.747118
+  type: 'test'
+  ...
+# Subtest: fabricated readback PASS
+ok 89 - fabricated readback PASS
+  ---
+  duration_ms: 4.354113
+  type: 'test'
+  ...
+# Subtest: fake screenshot used as real registration proof
+ok 90 - fake screenshot used as real registration proof
+  ---
+  duration_ms: 4.016735
+  type: 'test'
+  ...
+# Subtest: fake rollback receipt
+ok 91 - fake rollback receipt
+  ---
+  duration_ms: 3.863665
+  type: 'test'
+  ...
+# Subtest: simulated outputs edited after computation
+ok 92 - simulated outputs edited after computation
+  ---
+  duration_ms: 3.668841
+  type: 'test'
+  ...
+# Subtest: invented live selection distribution
+ok 93 - invented live selection distribution
+  ---
+  duration_ms: 4.825973
+  type: 'test'
+  ...
+# Subtest: leap and invalid-calendar dates are distinguished
+ok 94 - leap and invalid-calendar dates are distinguished
+  ---
+  duration_ms: 0.287552
+  type: 'test'
+  ...
+# Subtest: decimal bps use exact 0.01 increments
+ok 95 - decimal bps use exact 0.01 increments
+  ---
+  duration_ms: 0.619873
+  type: 'test'
+  ...
+# Subtest: combined cap matches requested product user event example
+ok 96 - combined cap matches requested product user event example
+  ---
+  duration_ms: 0.089575
+  type: 'test'
+  ...
+# Subtest: exact cap boundary and one bps below stay distinguishable
+ok 97 - exact cap boundary and one bps below stay distinguishable
+  ---
+  duration_ms: 0.171899
+  type: 'test'
+  ...
+# Subtest: final-only clamp preserves a later reduction modifier
+ok 98 - final-only clamp preserves a later reduction modifier
+  ---
+  duration_ms: 0.109715
+  type: 'test'
+  ...
+# Subtest: maximum proposed speed keeps exact calculable modifier headroom
+ok 99 - maximum proposed speed keeps exact calculable modifier headroom
+  ---
+  duration_ms: 0.190357
+  type: 'test'
+  ...
+# Subtest: sub-micro carry survives until the third tick
+ok 100 - sub-micro carry survives until the third tick
+  ---
+  duration_ms: 0.170867
+  type: 'test'
+  ...
+# Subtest: chunked accrual equals one interval without losing residue
+ok 101 - chunked accrual equals one interval without losing residue
+  ---
+  duration_ms: 0.138458
+  type: 'test'
+  ...
+# Subtest: capacity cannot be exceeded by large elapsed time
+ok 102 - capacity cannot be exceeded by large elapsed time
+  ---
+  duration_ms: 0.124597
+  type: 'test'
+  ...
+# Subtest: whole won display stays below the next verified 1-won boundary
+ok 103 - whole won display stays below the next verified 1-won boundary
+  ---
+  duration_ms: 0.095884
+  type: 'test'
+  ...
+# Subtest: two slots share global capacity and cannot allocate more than 100%
+ok 104 - two slots share global capacity and cannot allocate more than 100%
+  ---
+  duration_ms: 0.119259
+  type: 'test'
+  ...
+# Subtest: Policy A and B differ in capacity rather than silently changing reward rate
+ok 105 - Policy A and B differ in capacity rather than silently changing reward rate
+  ---
+  duration_ms: 0.222995
+  type: 'test'
+  ...
+# Subtest: rational arithmetic is exact beyond Number safe integer range
+ok 106 - rational arithmetic is exact beyond Number safe integer range
+  ---
+  duration_ms: 0.12646
+  type: 'test'
+  ...
+# Subtest: invalid negative or zero inputs fail instead of producing money
+ok 107 - invalid negative or zero inputs fail instead of producing money
+  ---
+  duration_ms: 0.140862
+  type: 'test'
+  ...
+# Subtest: restored default draft remains valid after all isolated mutations
+ok 108 - restored default draft remains valid after all isolated mutations
+  ---
+  duration_ms: 3.078042
+  type: 'test'
+  ...
+1..108
+# tests 108
+# suites 0
+# pass 108
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 551.238206

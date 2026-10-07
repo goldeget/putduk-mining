@@ -38,7 +38,10 @@
       "fanout_status": "APPROVED_DELIVERY_COMMAND_REQUIRED",
       "push_opt_in_required": true,
       "publication_is_delivery": false,
-      "critical_override": false
+      "critical_override": false,
+      "delivery_policy": "인앱 기록 먼저. 실제 푸시 동의·수신 선택·조용한 시간·cooldown·cap·재시도 dedup을 승인된 command가 검증. 발송 receipt 없으면 UNKNOWN.",
+      "trigger_evidence": "실제 승인된 상품/공지/지원 답변 상태와 버전별 domain event readback 필요",
+      "sensitive_data": "회원 이름·잔액·계좌·주소·risk 사유·거래 식별자를 push에 포함하지 않음"
     }
   },
   {
@@ -80,7 +83,10 @@
       "fanout_status": "APPROVED_DELIVERY_COMMAND_REQUIRED",
       "push_opt_in_required": true,
       "publication_is_delivery": false,
-      "critical_override": false
+      "critical_override": false,
+      "delivery_policy": "인앱 기록 먼저. 실제 푸시 동의·수신 선택·조용한 시간·cooldown·cap·재시도 dedup을 승인된 command가 검증. 발송 receipt 없으면 UNKNOWN.",
+      "trigger_evidence": "실제 승인된 상품/공지/지원 답변 상태와 버전별 domain event readback 필요",
+      "sensitive_data": "회원 이름·잔액·계좌·주소·risk 사유·거래 식별자를 push에 포함하지 않음"
     }
   },
   {
@@ -122,7 +128,10 @@
       "fanout_status": "APPROVED_DELIVERY_COMMAND_REQUIRED",
       "push_opt_in_required": true,
       "publication_is_delivery": false,
-      "critical_override": false
+      "critical_override": false,
+      "delivery_policy": "인앱 기록 먼저. 실제 푸시 동의·수신 선택·조용한 시간·cooldown·cap·재시도 dedup을 승인된 command가 검증. 발송 receipt 없으면 UNKNOWN.",
+      "trigger_evidence": "실제 승인된 상품/공지/지원 답변 상태와 버전별 domain event readback 필요",
+      "sensitive_data": "회원 이름·잔액·계좌·주소·risk 사유·거래 식별자를 push에 포함하지 않음"
     }
   },
   {
@@ -164,7 +173,10 @@
       "fanout_status": "APPROVED_DELIVERY_COMMAND_REQUIRED",
       "push_opt_in_required": true,
       "publication_is_delivery": false,
-      "critical_override": false
+      "critical_override": false,
+      "delivery_policy": "인앱 기록 먼저. 실제 푸시 동의·수신 선택·조용한 시간·cooldown·cap·재시도 dedup을 승인된 command가 검증. 발송 receipt 없으면 UNKNOWN.",
+      "trigger_evidence": "실제 승인된 상품/공지/지원 답변 상태와 버전별 domain event readback 필요",
+      "sensitive_data": "회원 이름·잔액·계좌·주소·risk 사유·거래 식별자를 push에 포함하지 않음"
     }
   },
   {
@@ -206,7 +218,10 @@
       "fanout_status": "APPROVED_DELIVERY_COMMAND_REQUIRED",
       "push_opt_in_required": true,
       "publication_is_delivery": false,
-      "critical_override": false
+      "critical_override": false,
+      "delivery_policy": "인앱 기록 먼저. 실제 푸시 동의·수신 선택·조용한 시간·cooldown·cap·재시도 dedup을 승인된 command가 검증. 발송 receipt 없으면 UNKNOWN.",
+      "trigger_evidence": "실제 승인된 상품/공지/지원 답변 상태와 버전별 domain event readback 필요",
+      "sensitive_data": "회원 이름·잔액·계좌·주소·risk 사유·거래 식별자를 push에 포함하지 않음"
     }
   },
   {
@@ -248,7 +263,10 @@
       "fanout_status": "APPROVED_DELIVERY_COMMAND_REQUIRED",
       "push_opt_in_required": true,
       "publication_is_delivery": false,
-      "critical_override": false
+      "critical_override": false,
+      "delivery_policy": "인앱 기록 먼저. 실제 푸시 동의·수신 선택·조용한 시간·cooldown·cap·재시도 dedup을 승인된 command가 검증. 발송 receipt 없으면 UNKNOWN.",
+      "trigger_evidence": "실제 승인된 상품/공지/지원 답변 상태와 버전별 domain event readback 필요",
+      "sensitive_data": "회원 이름·잔액·계좌·주소·risk 사유·거래 식별자를 push에 포함하지 않음"
     }
   },
   {
@@ -290,7 +308,10 @@
       "fanout_status": "APPROVED_DELIVERY_COMMAND_REQUIRED",
       "push_opt_in_required": true,
       "publication_is_delivery": false,
-      "critical_override": false
+      "critical_override": false,
+      "delivery_policy": "인앱 기록 먼저. 실제 푸시 동의·수신 선택·조용한 시간·cooldown·cap·재시도 dedup을 승인된 command가 검증. 발송 receipt 없으면 UNKNOWN.",
+      "trigger_evidence": "실제 승인된 상품/공지/지원 답변 상태와 버전별 domain event readback 필요",
+      "sensitive_data": "회원 이름·잔액·계좌·주소·risk 사유·거래 식별자를 push에 포함하지 않음"
     }
   },
   {
@@ -332,7 +353,10 @@
       "fanout_status": "APPROVED_DELIVERY_COMMAND_REQUIRED",
       "push_opt_in_required": true,
       "publication_is_delivery": false,
-      "critical_override": false
+      "critical_override": false,
+      "delivery_policy": "인앱 기록 먼저. 실제 푸시 동의·수신 선택·조용한 시간·cooldown·cap·재시도 dedup을 승인된 command가 검증. 발송 receipt 없으면 UNKNOWN.",
+      "trigger_evidence": "실제 승인된 상품/공지/지원 답변 상태와 버전별 domain event readback 필요",
+      "sensitive_data": "회원 이름·잔액·계좌·주소·risk 사유·거래 식별자를 push에 포함하지 않음"
     }
   }
 ]

@@ -38,7 +38,7 @@ ROWS = [
     ("apple", "애플", "US_STOCK", "US", "AAPL", "정밀 기기", "apple", "P0_LAUNCH_CORE"),
     ("microsoft", "마이크로소프트", "US_STOCK", "US", "MSFT", "클라우드", "microsoft", "P0_LAUNCH_CORE"),
     ("amazon", "아마존", "US_STOCK", "US", "AMZN", "물류·클라우드", "amazon", "P1_LAUNCH_EXPANSION"),
-    ("alphabet-a", "알파벳 A주 조사안", "US_STOCK", "US", "GOOGL", "정보·인터넷", "alphabet", "P1_LAUNCH_EXPANSION"),
+    ("alphabet-a", "알파벳", "US_STOCK", "US", "GOOGL", "정보·인터넷", "alphabet", "P1_LAUNCH_EXPANSION"),
     ("meta", "메타", "US_STOCK", "US", "META", "소셜 플랫폼", "meta", "P1_LAUNCH_EXPANSION"),
     ("amd", "AMD", "US_STOCK", "US", "AMD", "연산 반도체", "amd", "P2_LATER"),
     ("broadcom", "브로드컴", "US_STOCK", "US", "AVGO", "통신 반도체", "broadcom", "P2_LATER"),
@@ -195,7 +195,7 @@ def build():
         launch.append(l)
         # No ticker hint, numeric speed proposal or technical enum leaks into member copy.
         short = world + "을 둘러보는 가상 채굴 테마예요."
-        body = (name + "에서 떠올린 산업 이미지를 가상 채굴 장면으로 표현한 제안입니다. " + world + "에서 " + motion + "을 살펴보세요.\n\n"
+        body = (name + "에서 떠올린 산업 이미지를 가상 채굴 장면으로 표현한 테마입니다. " + world + "에서 " + motion + "을 살펴보세요.\n\n"
                 "테마 이름은 실제 주식·ETF·금속·코인의 매수나 소유를 뜻하지 않습니다. 시세나 배당이 채굴보상을 결정하지 않습니다. 해당 기업·운용사와의 제휴를 뜻하지 않습니다.\n\n"
                 "채굴 속도와 주기 한도는 서로 다른 조건입니다. 장면의 움직임이 금액을 확정하지 않습니다. 확인 전 기록은 정산 뒤 지갑에 반영된 확정 기록과 구분해 주세요. 선택 가능 여부와 적용 조건은 실제 공개된 상품 안내에서 확인하세요.")
         copy.append({"proposal_id": p["proposal_id"], "slug": "copy-" + slug,

@@ -8,7 +8,7 @@
 
 ## P1_LAUNCH_EXPANSION
 
-NAVER, KB금융, 로켓랩, 샌디스크, 아마존, 알파벳 A주 조사안, 메타, SOXX, SCHD, 솔라나
+NAVER, KB금융, 로켓랩, 샌디스크, 아마존, 알파벳, 메타, SOXX, SCHD, 솔라나
 
 ## P2_LATER
 
@@ -28,4 +28,4 @@ USDT 결제 수단 조사, USDC 결제 수단 조사
 
 SpaceX는 현재 SPCX 상장 여부를 확인하지 못했다. 상장/비상장 어느 쪽도 단정하지 않는다. SNDK도 현재 발행회사·분리 후 상장·거래소를 확인해야 한다. Alphabet은 A주 GOOGL 가설로만 편성하며 공식 share class 교차 확인이 필요하다. 국내 AI·배당 ETF는 특정 상품 이름과 코드가 미정인 조사 슬롯이므로 출시 후보에 넣지 않았다. 레버리지·선물·헤지 상품은 추가 복잡성 검토가 필요하다. USDT/USDC는 채굴상품 편성 거절이며 입출금 지원 여부를 새로 주장하지 않는다.
 
-신규 15개 출시 제안은 기존 catalog/scene 패키지에 없다: 현대자동차, LG에너지솔루션, NAVER, KB금융, 테슬라, 로켓랩, 샌디스크, 아마존, 알파벳 A주 조사안, 메타, SPY, QQQ, SOXX, SCHD, 솔라나. 모든 신규 후보에 SCENE_SPEC_REQUIRED, DESKTOP_MASTER_REQUIRED, MOBILE_MASTER_REQUIRED를 연결했다. 24개 모두 실제 상품 browser QA가 필요하다.
+신규 15개 출시 제안은 기존 catalog/scene 패키지에 없다: 현대자동차, LG에너지솔루션, NAVER, KB금융, 테슬라, 로켓랩, 샌디스크, 아마존, 알파벳, 메타, SPY, QQQ, SOXX, SCHD, 솔라나. 모든 신규 후보에 SCENE_SPEC_REQUIRED, DESKTOP_MASTER_REQUIRED, MOBILE_MASTER_REQUIRED를 연결했다. 24개 모두 실제 상품 browser QA가 필요하다.

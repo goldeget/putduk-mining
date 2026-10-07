@@ -483,7 +483,7 @@
     {
       "proposal_id": "catalog-v1-alphabet-a",
       "slug": "alphabet-a",
-      "product_name_hint_ko": "알파벳 A주 조사안",
+      "product_name_hint_ko": "알파벳",
       "proposed_wave": "P1_LAUNCH_EXPANSION",
       "grade": "A",
       "mining_personality": "KNOWLEDGE_LINK",

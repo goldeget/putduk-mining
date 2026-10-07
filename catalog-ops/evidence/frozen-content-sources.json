@@ -36,6 +36,38 @@
         "event-launch-feedback",
         "event-welcome-policy-review",
         "event-capacity-policy-review"
+      ],
+      "storage_slugs": [
+        "launch-welcome-tour",
+        "launch-start-guide",
+        "launch-account-safety",
+        "launch-phishing-check",
+        "launch-wallet-tour",
+        "launch-pending-verified",
+        "launch-cycle-guide",
+        "launch-offline-guide",
+        "launch-product-read",
+        "launch-krw-ready",
+        "launch-usdt-ready",
+        "launch-withdraw-ready",
+        "launch-hold-guide",
+        "launch-notification-tour",
+        "launch-notification-choice",
+        "launch-support-practice",
+        "launch-read-notices",
+        "launch-status-check",
+        "launch-update-check",
+        "launch-browser-readiness",
+        "launch-theme-choice",
+        "launch-accessible-guide",
+        "launch-transaction-history",
+        "launch-privacy-check",
+        "launch-weekend-guide",
+        "launch-maintenance-ready",
+        "launch-security-reminder",
+        "launch-launch-feedback",
+        "launch-welcome-policy-review",
+        "launch-capacity-policy-review"
       ]
     },
     "notices": {
@@ -69,6 +101,34 @@
         "notice-known-limitations",
         "notice-start-conversion",
         "notice-event-participation"
+      ],
+      "storage_slugs": [
+        "launch-official-open",
+        "launch-introduction",
+        "launch-account-login",
+        "launch-security-phishing",
+        "launch-wallet-terms",
+        "launch-principal-reward-bonus",
+        "launch-krw-deposit",
+        "launch-usdt-deposit",
+        "launch-withdrawal",
+        "launch-withdrawal-hold",
+        "launch-mining-cycle",
+        "launch-pending-verified",
+        "launch-products-mining",
+        "launch-notifications",
+        "launch-support",
+        "launch-scheduled-maintenance",
+        "launch-urgent-maintenance",
+        "launch-incident",
+        "launch-recovery",
+        "launch-update",
+        "launch-policy-change",
+        "launch-privacy-change",
+        "launch-browser-devices",
+        "launch-known-limitations",
+        "launch-start-conversion",
+        "launch-event-participation"
       ]
     },
     "faq": {
@@ -144,7 +204,8 @@
         "faq-support-66",
         "faq-support-67",
         "faq-support-68"
-      ]
+      ],
+      "storage_slugs": []
     },
     "notifications": {
       "path": "launch-content/notifications.json",
@@ -183,7 +244,8 @@
         "notification-incident-update",
         "notification-incident-recovered",
         "notification-support-reply"
-      ]
+      ],
+      "storage_slugs": []
     },
     "support-macros": {
       "path": "launch-content/support-macros.json",
@@ -218,7 +280,8 @@
         "macro-incident-wait",
         "macro-recovery-followup",
         "macro-support-closing"
-      ]
+      ],
+      "storage_slugs": []
     },
     "incident-templates": {
       "path": "launch-content/incident-templates.json",
@@ -233,7 +296,8 @@
         "incident-verified-recovery",
         "incident-post-incident",
         "incident-correction"
-      ]
+      ],
+      "storage_slugs": []
     }
   }
 }

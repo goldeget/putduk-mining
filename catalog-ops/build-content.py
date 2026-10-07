@@ -33,7 +33,7 @@ EVENT_ADDITIONS = [
     ("space-reading", "우주 테마의 임무 장면 이해하기", "/products", "상품 안내 읽기",
      "우주 테마는 발사체 점검과 임무 준비를 떠올린 가상 장면입니다. 실제 발사 일정이나 성공 결과에 따라 보상이 바뀌는 서비스가 아닙니다.\n\n짧고 강한 불빛은 장면의 리듬일 뿐 당첨·추가 지급을 뜻하지 않습니다. 기업 이름과 상품 이용 가능 여부는 현재 공개된 안내로 확인해 주세요. 이 안내에는 추가 보상이 없습니다.", "실제 발사 결과·상장 소문·당첨 보상 오인", "화염·발사 없이 고정된 점검 격납고"),
     ("etf-reading", "ETF 테마는 어떤 이름인가요?", "/products", "묶음 테마 안내",
-     "ETF는 여러 대상을 묶는 금융 상품의 한 종류입니다. 퍼뜩의 ETF 테마 제안은 그 묶음 개념을 가상 장면으로 표현합니다. 실제 ETF를 매수하거나 구성 종목을 보유하는 뜻이 아닙니다.\n\n실제 배당·분배금·지수 수익률이 퍼뜩 채굴보상으로 들어오지 않습니다. 공개 여부와 이용 조건은 별도 안내로 확인해 주세요. 이 안내의 추가 보상은 없습니다.", "실제 ETF 투자·배당·분산투자 안전성 오인", "서로 다른 작업 구역을 연결한 장면; 종목 로고 없음"),
+     "ETF는 여러 대상을 묶는 금융 상품의 한 종류입니다. 퍼뜩의 ETF 테마는 그 묶음 개념을 가상 장면으로 표현합니다. 실제 ETF를 매수하거나 구성 종목을 보유하는 뜻이 아닙니다.\n\n실제 배당·분배금·지수 수익률이 퍼뜩 채굴보상으로 들어오지 않습니다. 공개 여부와 이용 조건은 별도 안내로 확인해 주세요. 이 안내의 추가 보상은 없습니다.", "실제 ETF 투자·배당·분산투자 안전성 오인", "서로 다른 작업 구역을 연결한 장면; 종목 로고 없음"),
     ("single-and-basket", "한 기업 테마와 묶음 테마 구별하기", "/products", "설명 비교하기",
      "한 기업에서 떠올린 테마와 여러 대상을 묶는 상품에서 떠올린 테마는 설명 방식이 다릅니다. 하나는 특정 산업 장면을, 다른 하나는 여러 작업 구역을 함께 보여 줄 수 있어요.\n\n묶음 장면을 선택한다고 실제 자산이 분산되거나 한도가 늘어나는 것은 아닙니다. 테마 수나 슬롯 수만 보고 받을 금액을 더하지 마세요. 실제 적용 조건을 읽어 주세요. 추가 보상은 없습니다.", "슬롯·ETF 구성 수만큼 global 용량 중복 계산", "단일 모듈과 다중 작업 구역의 대비"),
     ("crypto-labels", "코인 이름과 지갑 금액 구별하기", "/products", "테마 이름 읽기",
@@ -58,7 +58,7 @@ NOTICE_ADDITIONS = [
     ("effective-version", "상품 안내가 달라졌을 때 확인하는 방법", "내 이용에 적용된 안내를 확인하세요.",
      "새 상품 안내가 공개되어도 모든 기록에 새 조건이 소급 적용되는 것은 아닙니다. 적용 시각과 기존 이용에 미치는 영향은 변경 공지에서 확인하세요.\n\n이전 기록을 새 상품 설명과 단순 비교해 금액을 더하거나 빼지 마세요. 채굴과 지갑에 표시된 실제 적용 상태를 확인합니다.\n\n설명과 내 기록이 다르면 해당 화면과 발생 시각을 고객지원에 알려 주세요. 비밀번호·인증 코드는 보내지 않습니다.", [], "/events"),
     ("etf-basket", "ETF 테마의 묶음 표현 안내", "묶음 장면은 실제 투자 포트폴리오가 아닙니다.",
-     "ETF는 여러 대상을 묶는 금융 상품의 한 종류입니다. 퍼뜩의 ETF 테마 제안은 묶음 개념을 가상 장면으로 설명합니다. 실제 ETF나 구성 종목을 매수하거나 보유하는 뜻이 아닙니다.\n\n지수의 성과나 배당·분배금이 채굴보상으로 반영되지 않습니다. 여러 장치가 보여도 받을 금액이나 슬롯별 한도가 자동으로 늘지 않습니다.\n\n공개 여부와 선택 가능 조건은 상품 화면의 실제 안내로 확인해 주세요.", [], "/products"),
+     "ETF는 여러 대상을 묶는 금융 상품의 한 종류입니다. 퍼뜩의 ETF 테마는 묶음 개념을 가상 장면으로 설명합니다. 실제 ETF나 구성 종목을 매수하거나 보유하는 뜻이 아닙니다.\n\n지수의 성과나 배당·분배금이 채굴보상으로 반영되지 않습니다. 여러 장치가 보여도 받을 금액이나 슬롯별 한도가 자동으로 늘지 않습니다.\n\n공개 여부와 선택 가능 조건은 상품 화면의 실제 안내로 확인해 주세요.", [], "/products"),
 ]
 
 FAQ = [
@@ -130,6 +130,7 @@ def build():
         additions.append({"slug": slug, "storage": {"slug": slug, "title_ko": title, "summary_ko": body.split("\n")[0][:220],
                           "status": "DRAFT", "starts_at": None, "ends_at": None, "published_at": None}, "metadata": meta})
     event_rewrites = {
+        "event-phishing-check": "내 계정의 로그인 정보와 변경 안내를 확인하세요. 비밀번호는 다른 서비스와 함께 쓰지 않습니다. 낯선 로그인이나 변경을 발견하면 공식 고객지원으로 알려 주세요.\n\n입금 안내는 로그인한 퍼뜩 화면에서 직접 확인합니다. 문자나 메신저에 적힌 계좌·지갑 주소를 그대로 따라 송금하지 마세요. 출금 해제나 보상 수령을 이유로 별도 송금을 요구하면 중단합니다.\n\n상담에서도 비밀번호·인증 코드·개인 키를 보내지 않습니다. 화면을 공유할 때 개인정보를 가려 주세요. 이 확인 자체의 추가 보상은 없습니다.",
         "event-offline-guide": "앱을 닫았다고 화면 움직임이 보상을 만들거나 멈추는 것은 아닙니다. 실제 처리는 내 계정에 적용된 조건과 서비스 상태에 따릅니다.\n\n다시 접속한 뒤 채굴의 최신 기록과 지갑의 확정 기록을 구분해 확인하세요. 오래 갱신되지 않으면 공지와 고객지원 안내를 확인합니다. 안내를 읽는 것만으로 추가 보상은 없습니다.",
         "event-cycle-guide": "채굴 화면에서 내 주기의 시작·종료와 적용 조건을 확인하세요. 가입일이나 입금 신청일만으로 주기를 계산하지 않습니다.\n\n상품 수와 슬롯 수만큼 전체 한도를 반복해서 더하지 마세요. 추가 입금이 새 주기를 자동으로 시작하는 것도 아닙니다. 적용 정보가 보이지 않으면 같은 요청을 반복하지 말고 고객지원으로 문의하세요.",
         "event-pending-verified": "채굴 화면의 확인 전 기록은 아직 정산이 끝나지 않은 상태입니다. 실제 정산 뒤 지갑에 반영된 확정 기록을 따로 확인해 주세요.\n\n장면의 불빛·다시 접속·알림 수신이 금액을 확정하지 않습니다. 확인 전 금액을 지갑 잔액과 더하거나 바로 출금 가능한 금액으로 생각하지 마세요.",
@@ -138,6 +139,7 @@ def build():
     event_merges = {"event-product-read": "catalog-event-theme-reading", "event-account-safety": "event-phishing-check",
                     "event-security-reminder": "event-phishing-check"}
     event_reasons = {
+        "event-phishing-check": "계정 안전/안전한 상담 2개를 통합한 전체 원고. 외부 송금 거절과 낯선 계정 변경·상담정보 최소화를 함께 유지.",
         "event-offline-guide": "화면/실제 처리 구분은 유지하고 재접속 후 확인 경로를 명확화. 무조건 지급 문구 금지.",
         "event-cycle-guide": "주기 의미 유지, global capacity를 슬롯별 중복 계산하지 않는 설명 추가.",
         "event-pending-verified": "정산 과정과 실제 지갑 반영을 구분. 상품 장면과 함께 읽어도 확정 잔액 오인 방지.",
@@ -240,7 +242,10 @@ def build():
         "metadata": {**base_metadata(r, "안내 보기"), "channels": ["IN_APP", "WEB_PUSH"],
             "user_id": None, "source_event_id": None, "deduplication_key": None, "scheduled_at": None,
             "fanout_status": "APPROVED_DELIVERY_COMMAND_REQUIRED", "push_opt_in_required": True,
-            "publication_is_delivery": False, "critical_override": False}} for s, t, b, r, c in NOTIFICATIONS])
+            "publication_is_delivery": False, "critical_override": False,
+            "delivery_policy": "인앱 기록 먼저. 실제 푸시 동의·수신 선택·조용한 시간·cooldown·cap·재시도 dedup을 승인된 command가 검증. 발송 receipt 없으면 UNKNOWN.",
+            "trigger_evidence": "실제 승인된 상품/공지/지원 답변 상태와 버전별 domain event readback 필요",
+            "sensitive_data": "회원 이름·잔액·계좌·주소·risk 사유·거래 식별자를 push에 포함하지 않음"}} for s, t, b, r, c in NOTIFICATIONS])
     research = json.loads((ROOT / "evidence/research-sources.json").read_text())["sources"]
     benchmarks = [{"category": x["purpose"].removeprefix("BENCHMARK_"), "source_id": x["id"], "url": x["requested_url"],
                    "accessed_at": None, "observed_pattern": None, "verification_status": "ACCESS_BLOCKED",
@@ -261,7 +266,7 @@ def build():
         body += "## " + title + "\n\n" + json.dumps(counts, ensure_ascii=False) + "\n\n| 기존 slug | 판정 | 이유 | 통합 대상 |\n|---|---|---|---|\n"
         for x in entries: body += "| " + x["slug"] + " | " + x["decision"] + " | " + x["reason_ko"] + " | " + (x["merge_into"] or "—") + " |\n"
         body += "\n"
-    body += "새 콘텐츠는 content-delta에만 작성했다. 보상 없는 교육 이벤트 10개, 공지 8개, FAQ 16개, support 8개, notification 8개다. 기존 4개 이벤트와 4개 공지의 전체 수정 본문만 별도 파일로 보관했다. 보안 MERGE는 실제 publisher 준비 후 통합 원고·링크·예약 중지·역사 보존을 preview하고 승인해야 한다. DROP은 운영 노출 제외 제안이며 삭제 실행이 아니다.\n\n"
+    body += "새 콘텐츠는 content-delta에만 작성했다. 보상 없는 교육 이벤트 10개, 공지 8개, FAQ 16개, support 8개, notification 8개다. 기존 5개 이벤트와 4개 공지의 전체 수정 본문만 별도 파일로 보관했다. 보안 MERGE의 실제 통합 본문도 event-phishing-check rewrite에 포함했다. publisher 준비 후 원고·링크·예약 중지·역사 보존을 preview하고 승인해야 한다. DROP은 운영 노출 제외 제안이며 삭제 실행이 아니다.\n\n"
     body += "광범위한 기본 가입/입출금/보안/점검/장애 템플릿은 동결 패키지에 충분히 있어 복제하지 않았다. 기존 FAQ 68개와 매크로 28개는 보존한다. 신규 FAQ는 테마/실제 자산·속도/한도·장면/정산·ETF·retire 오해를 다룬다. 새 값·돈·대상·날짜를 채운 실제 등록/발송은 하지 않았다.\n\n"
     body += "이벤트 storage에는 full body/CTA/audience 필드가 없고 일정 NOT NULL이다. 지금 null 일정은 안전한 초안이며 insert-ready 행이 아니다. 공지 상세 본문이 목록에 전부 렌더되는 계약도 미확인이다. 알림 user/source/dedup은 실제 domain command가 정해야 하며 초안 slug를 DB user_id처럼 쓰지 않는다.\n"
     (ROOT / "EVENT-NOTICE-GAP-REVIEW.md").write_text(body)

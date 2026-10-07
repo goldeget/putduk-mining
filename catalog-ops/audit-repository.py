@@ -79,7 +79,8 @@ if __name__ == "__main__":
         body = git("show", freezes["parallel/launch-ops-content"] + ":" + path)
         data = json.loads(body)
         content_evidence[kind] = {"path": path, "count": len(data), "sha256": hashlib.sha256(body.encode()).hexdigest(),
-                                  "slugs": [x["slug"] for x in data]}
+                                  "slugs": [x["slug"] for x in data],
+                                  "storage_slugs": [x["storage"]["slug"] for x in data if x.get("storage", {}).get("slug")]}
     write("evidence/frozen-content-sources.json", {"ref": freezes["parallel/launch-ops-content"], "packages": content_evidence})
     write("evidence/frozen-scene-sources.json", {"ref": freezes["parallel/product-scene-production"],
         "product_codes": [x["product_code"] for x in inventory["products"]],

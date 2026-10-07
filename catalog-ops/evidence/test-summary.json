@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "status": "PASS",
+  "node": "v24.21.0",
+  "pnpm": "12.6.0",
+  "tests": 108,
+  "passed": 108,
+  "failed": 0,
+  "skipped": 0,
+  "rejection_cases": 90,
+  "json_files_parsed": 31,
+  "python_syntax": "PASS",
+  "simulation": "PASS_OFFLINE_SIMULATION",
+  "validator": "PASS_DRAFT_VALIDATION",
+  "production_ready": false,
+  "public_research": "BLOCKED_PROXY_403",
+  "registration": "BLOCKED_COMMAND_NOT_FOUND"
+}

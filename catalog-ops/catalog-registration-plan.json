@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "kind": "catalog",
+  "status": "BLOCKED",
+  "blocker": "APPROVED_CATALOG_COMMAND_REQUIRED",
+  "base_sha": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+  "command_status": "NOT_FOUND",
+  "approved_commands": {
+    "draft": null,
+    "preview": null,
+    "approve": null,
+    "publish": null,
+    "archive": null,
+    "cancel": null
+  },
+  "isolation": "OWNED_ISOLATED_LOCAL_REQUIRED",
+  "local_target": null,
+  "shared_staging": "DEFERRED_PRIMARY_OWNED_ENVIRONMENT",
+  "production": "FORBIDDEN_IN_THIS_LANE",
+  "registration_ready": false,
+  "production_ready": false,
+  "generated_ids": [],
+  "readback": "BLOCKED",
+  "render": "BLOCKED",
+  "rollback": "BLOCKED",
+  "local_registration": "NOT_RUN",
+  "direct_sql_allowed": false,
+  "fixtures_allowed": false,
+  "migration_allowed": false,
+  "required_evidence": [
+    "EXACT_COMMAND_NAME_AND_PERMISSION",
+    "APPROVED_OPERATOR_AAL2_SESSION",
+    "SAME_ORIGIN_VALIDATION",
+    "REVISION_RECHECK",
+    "REQUEST_AND_IDEMPOTENCY_KEYS",
+    "REASON",
+    "EXACT_IMPACT_PREVIEW",
+    "HUMAN_CONFIRMATION",
+    "AUDIT_RECEIPT",
+    "DRAFT_CREATED_ID",
+    "READBACK_MATCH",
+    "REAL_MEMBER_AND_ADMIN_RENDER",
+    "CANCEL_OR_ARCHIVE_READBACK",
+    "RETRY_NO_DUPLICATES",
+    "DENIED_ROLE_AND_REVOKED_SESSION",
+    "HISTORIC_RECEIPTS_PRESERVED"
+  ],
+  "preview_impact": [
+    "target members/segments",
+    "content diff and immutable digest",
+    "schedule Asia/Seoul display + UTC storage",
+    "visibility and availability",
+    "notification channels/cooldown/quiet hours/opt-in",
+    "economic policy and budget impact",
+    "old sessions/receipts/ledger retained",
+    "unsupported metadata rejected visibly"
+  ],
+  "retry": "Same logical action reuses idempotency; new revision needs re-preview and re-confirmation",
+  "rollback_plan": "Use actual authorized cancel/archive command; stop future exposure/schedule/fanout; retain audit/claims/delivery/ledger. Verify readback and member hide.",
+  "steps": [
+    {
+      "step": "draft",
+      "execution": "UNRUN",
+      "command": null,
+      "receipt": null
+    },
+    {
+      "step": "preview",
+      "execution": "UNRUN",
+      "command": null,
+      "receipt": null
+    },
+    {
+      "step": "approve",
+      "execution": "UNRUN",
+      "command": null,
+      "receipt": null
+    },
+    {
+      "step": "publish",
+      "execution": "UNRUN",
+      "command": null,
+      "receipt": null
+    },
+    {
+      "step": "archive",
+      "execution": "UNRUN",
+      "command": null,
+      "receipt": null
+    },
+    {
+      "step": "cancel",
+      "execution": "UNRUN",
+      "command": null,
+      "receipt": null
+    }
+  ],
+  "not_runtime_payload": true
+}

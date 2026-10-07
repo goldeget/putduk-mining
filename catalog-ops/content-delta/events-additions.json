@@ -358,7 +358,7 @@
     "storage": {
       "slug": "catalog-event-etf-reading",
       "title_ko": "ETF 테마는 어떤 이름인가요?",
-      "summary_ko": "ETF는 여러 대상을 묶는 금융 상품의 한 종류입니다. 퍼뜩의 ETF 테마 제안은 그 묶음 개념을 가상 장면으로 표현합니다. 실제 ETF를 매수하거나 구성 종목을 보유하는 뜻이 아닙니다.",
+      "summary_ko": "ETF는 여러 대상을 묶는 금융 상품의 한 종류입니다. 퍼뜩의 ETF 테마는 그 묶음 개념을 가상 장면으로 표현합니다. 실제 ETF를 매수하거나 구성 종목을 보유하는 뜻이 아닙니다.",
       "status": "DRAFT",
       "starts_at": null,
       "ends_at": null,
@@ -387,7 +387,7 @@
       "required_phrases": [],
       "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
       "card_title_ko": "ETF 테마는 어떤 이름인가요?",
-      "body_markdown": "ETF는 여러 대상을 묶는 금융 상품의 한 종류입니다. 퍼뜩의 ETF 테마 제안은 그 묶음 개념을 가상 장면으로 표현합니다. 실제 ETF를 매수하거나 구성 종목을 보유하는 뜻이 아닙니다.\n\n실제 배당·분배금·지수 수익률이 퍼뜩 채굴보상으로 들어오지 않습니다. 공개 여부와 이용 조건은 별도 안내로 확인해 주세요. 이 안내의 추가 보상은 없습니다.",
+      "body_markdown": "ETF는 여러 대상을 묶는 금융 상품의 한 종류입니다. 퍼뜩의 ETF 테마는 그 묶음 개념을 가상 장면으로 표현합니다. 실제 ETF를 매수하거나 구성 종목을 보유하는 뜻이 아닙니다.\n\n실제 배당·분배금·지수 수익률이 퍼뜩 채굴보상으로 들어오지 않습니다. 공개 여부와 이용 조건은 별도 안내로 확인해 주세요. 이 안내의 추가 보상은 없습니다.",
       "segment": "ALL_MEMBERS",
       "start_condition": "원고·법무·실제 대상·일정·렌더 확인 후 사람이 승인",
       "end_condition": "승인된 종료 또는 cancel receipt 확인",
