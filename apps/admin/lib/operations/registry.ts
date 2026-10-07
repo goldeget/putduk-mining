@@ -51,7 +51,7 @@ export const operationSections = {
   },
   audit: {
     title: "보안·운영 기록",
-    lead: "누가 어떤 운영 작업을 했는지 기록을 확인해요.",
+    lead: "어떤 운영 권한으로 어떤 작업을 했는지 기록을 확인해요.",
     roles: operators,
     draft: null,
     boundary:
@@ -105,6 +105,7 @@ export function operationStatus(value: unknown): string {
     PROCESSING: "처리 중",
     RUNNING: "진행 중",
     COMPLETED: "완료",
+    SUCCEEDED: "완료 기록",
     NORMAL: "채굴 중",
     REDUCED: "속도 제한",
     MAINTENANCE: "점검 중",

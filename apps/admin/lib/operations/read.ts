@@ -77,7 +77,7 @@ const sources: Record<OperationSection, readonly Source[]> = {
       key: "audit",
       title: "최근 운영 기록",
       table: "audit_logs",
-      columns: "id,action,target_type,created_at",
+      columns: "id,action,target_type,actor_role,created_at",
       order: "created_at",
     },
   ],
@@ -126,6 +126,19 @@ function text(value: unknown, fallback: string) {
   return typeof value === "string" && value.trim()
     ? value.trim().slice(0, 500)
     : fallback;
+}
+
+function actorRole(value: unknown) {
+  const labels: Record<string, string> = {
+    SUPER_ADMIN: "최고 운영자",
+    ADMIN: "운영자",
+    CONTENT_ADMIN: "콘텐츠 운영자",
+    SUPPORT_ADMIN: "고객 지원 운영자",
+    VIEWER: "조회 담당자",
+  };
+  return typeof value === "string" && Object.hasOwn(labels, value)
+    ? `처리한 운영 권한 · ${labels[value]}`
+    : "처리한 운영 권한 확인 필요";
 }
 
 /** Narrow presentation projection: no payload, token, address, risk weights or SQL. */
@@ -199,6 +212,7 @@ export function projectOperationRecord(
         ...common,
         title: auditActionLabel(text(row.action, "")),
         status: auditTargetLabel(text(row.target_type, "")),
+        detail: actorRole(row.actor_role),
       };
     case "signups":
       return { ...common, title: "회원 가입", status: "가입 기록" };

@@ -245,6 +245,7 @@ export function auditActionLabel(action: string): string {
     case "CLEAR_SAFE_MODE":
       return "안전 모드 변경";
     case "ACK_RECONCILIATION_MISMATCH":
+    case "RECONCILIATION_EXCEPTION_ACK":
       return "예외 확인";
     case "BOOTSTRAP_FIRST_SUPER_ADMIN":
       return "최초 운영자 등록";

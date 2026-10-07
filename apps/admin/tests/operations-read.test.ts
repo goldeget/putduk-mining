@@ -77,6 +77,40 @@ describe("read-only operations", () => {
       detail: "마지막 정산 시각 확인 필요",
     });
   });
+  it("presents the existing succeeded job state as a record, not inferred financial success", () => {
+    expect(
+      projectOperationRecord("jobs", {
+        id,
+        status: "SUCCEEDED",
+        job_type: "FINANCIAL_RECONCILIATION",
+        attempts: 1,
+        updated_at: at,
+      }),
+    ).toMatchObject({ title: "거래 대사", status: "완료 기록" });
+    expect(operationStatus("constructor")).toBe("상태 확인 필요");
+  });
+  it("summarizes the recorded audit role without exposing actor identity or raw evidence", () => {
+    const projected = projectOperationRecord("audit", {
+      id,
+      action: "RECONCILIATION_EXCEPTION_ACK",
+      target_type: "reconciliation_mismatch",
+      actor_role: "ADMIN",
+      created_at: at,
+      actor_user_id: "private-operator",
+      metadata: { token: "private-token" },
+      reason: "private-reason",
+    });
+    expect(projected).toMatchObject({
+      title: "예외 확인",
+      status: "대사 예외",
+      detail: "처리한 운영 권한 · 운영자",
+    });
+    expect(JSON.stringify(projected)).not.toContain("private");
+    expect(
+      projectOperationRecord("audit", { id, actor_role: "constructor" })
+        ?.detail,
+    ).toBe("처리한 운영 권한 확인 필요");
+  });
   it("returns empty only for a successful exact zero", async () => {
     const { db, calls } = database({ data: [], count: 0, error: null });
     const result = await readOperationsSnapshot(db, "notices", new Date(at));
