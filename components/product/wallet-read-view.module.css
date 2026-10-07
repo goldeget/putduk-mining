@@ -708,13 +708,6 @@
   }
 }
 
-/* 글자가 칸보다 커지면 한글 단어가 들어갈 너비로 쌓는다. 320px 기본 글자에서는 세 칸을 유지한다. */
-@container (max-width: 12rem) {
-  .metrics {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
-
 @container (max-width: 30rem) {
   .metrics:has([data-wallet-long-amount="true"]) {
     grid-template-columns: minmax(0, 1fr);
@@ -774,6 +767,22 @@
   .tabContent svg {
     width: 0.95rem;
     height: 0.95rem;
+  }
+}
+
+/* 좁은 화면과 글자 확대에서는 정확한 금액과 단위를 읽을 너비로 쌓는다. */
+@container (max-width: 20rem) {
+  .metrics {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .metric {
+    min-height: auto;
+  }
+
+  .metric dt {
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
   }
 }
 

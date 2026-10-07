@@ -57,7 +57,11 @@ async function browserJson(
 
 async function captureMatrix(page: Page, info: TestInfo, label: string) {
   const records = [];
-  for (const width of [320, 390, 834, 1440]) {
+  const widths =
+    label === "funded-wallet-real-principal"
+      ? [320, 360, 390, 430, 834, 1024, 1440]
+      : [320, 390, 834, 1440];
+  for (const width of widths) {
     await page.setViewportSize({ width, height: width === 834 ? 1112 : 900 });
     for (const theme of ["dark", "light"] as const) {
       await page.emulateMedia({ colorScheme: theme, reducedMotion: "reduce" });
@@ -71,9 +75,11 @@ async function captureMatrix(page: Page, info: TestInfo, label: string) {
         theme,
       );
       const textScales =
-        label === "funded-home-server-status" && width < 600
-          ? [100, 200]
-          : [100];
+        label === "funded-wallet-real-principal"
+          ? [100, 125, 150, 200]
+          : label === "funded-home-server-status" && width < 600
+            ? [100, 200]
+            : [100];
       for (const textScale of textScales) {
         await page.evaluate((scale) => {
           document.documentElement.style.fontSize = `${16 * (scale / 100)}px`;
@@ -90,6 +96,75 @@ async function captureMatrix(page: Page, info: TestInfo, label: string) {
           `${label}-${width}-${theme}-text-${textScale}`,
         );
         await page.evaluate(() => document.fonts.ready);
+        if (label === "funded-wallet-real-principal") {
+          const amounts = page.locator('[data-wallet-metrics="separate"] dd');
+          await expect(amounts).toHaveCount(3);
+          for (const amount of await amounts.all()) {
+            await expect(amount).toHaveText(/^-?[0-9][0-9,]*(?:\.[0-9]+)?원$/);
+            const geometry = await amount.evaluate((element) => {
+              const bounds = element.getBoundingClientRect();
+              const walker = document.createTreeWalker(
+                element,
+                NodeFilter.SHOW_TEXT,
+              );
+              const fragments: { top: number; left: number; right: number }[] =
+                [];
+              while (walker.nextNode()) {
+                const range = document.createRange();
+                range.selectNodeContents(walker.currentNode);
+                fragments.push(
+                  ...[...range.getClientRects()]
+                    .filter((rect) => rect.width > 0)
+                    .map(({ top, left, right }) => ({ top, left, right })),
+                );
+              }
+              return {
+                text: element.textContent,
+                oneLine:
+                  fragments.length > 0 &&
+                  fragments.every(
+                    (rect) => Math.abs(rect.top - fragments[0]!.top) <= 1,
+                  ),
+                fits: fragments.every(
+                  (rect) =>
+                    rect.left >= bounds.left - 1 &&
+                    rect.right <= bounds.right + 1,
+                ),
+                fontSize: Number.parseFloat(
+                  getComputedStyle(element.firstElementChild ?? element)
+                    .fontSize,
+                ),
+                fragments,
+              };
+            });
+            if (
+              !geometry.oneLine ||
+              !geometry.fits ||
+              geometry.fontSize < 16 * (textScale / 100)
+            ) {
+              await amount.scrollIntoViewIfNeeded();
+              const failure = info.outputPath(
+                `wallet-amount-failed-${width}-${theme}-text-${textScale}.png`,
+              );
+              await page.screenshot({ path: failure, animations: "disabled" });
+              await info.attach("wallet-painted-amount-failure", {
+                path: failure,
+                contentType: "image/png",
+              });
+            }
+            const context = JSON.stringify({
+              width,
+              theme,
+              textScale,
+              geometry,
+            });
+            expect(geometry.oneLine, context).toBe(true);
+            expect(geometry.fits, context).toBe(true);
+            expect(geometry.fontSize, context).toBeGreaterThanOrEqual(
+              16 * (textScale / 100),
+            );
+          }
+        }
         const main = page.getByRole("main");
         await expect(main).toHaveCount(1);
         // The previous viewport may have ended at the bottom of main. Reset
@@ -204,7 +279,7 @@ async function captureMatrix(page: Page, info: TestInfo, label: string) {
           const paintedImages = await awaitPaintedImages(page);
           const position =
             top === 0 ? "top" : top === range ? "bottom" : `middle-${index}`;
-          const scaleSuffix = textScale === 200 ? "-text-200" : "";
+          const scaleSuffix = textScale === 100 ? "" : `-text-${textScale}`;
           const name = `${label}-${width}-${theme}${scaleSuffix}-${position}`;
           const screenshot = `${name}.png`;
           const output = info.outputPath(screenshot);
