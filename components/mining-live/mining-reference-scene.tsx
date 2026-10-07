@@ -71,7 +71,7 @@ function Artwork({
                         `${mobile.prefix}${width}-v1.${format} ${width}w`,
                     )
                     .join(", ")}
-                  sizes="(min-width: 1100px) 65vw, 100vw"
+                  sizes="100vw"
                 />
               ))}
               {(["avif", "webp"] as const).map((format) => (
@@ -84,7 +84,7 @@ function Artwork({
                         `${desktop.prefix}${width}-v1.${format} ${width}w`,
                     )
                     .join(", ")}
-                  sizes="(min-width: 1100px) 65vw, 100vw"
+                  sizes="max(100vw, 1550px)"
                 />
               ))}
             </>

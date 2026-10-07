@@ -63,6 +63,12 @@ function SceneFrame({
       setMode("webp");
     } else if (mode === "webp") setMode("unavailable");
   }
+  function reconcileImage(image: HTMLImageElement | null) {
+    // The server-rendered image can fail before React attaches onError.
+    // Loading and successfully decoded images must keep their current mode.
+    if (image?.complete && image.currentSrc && image.naturalWidth === 0)
+      failed();
+  }
   function retry() {
     setAttempt((value) => value + 1);
     setDesktopFallback(false);
@@ -95,6 +101,7 @@ function SceneFrame({
               />
             ))}
             <img
+              ref={reconcileImage}
               src={url(mobileFamily, 640, "webp")}
               width={theme === "dark" ? 1983 : 1536}
               height={theme === "dark" ? 793 : 1024}
@@ -109,6 +116,7 @@ function SceneFrame({
         ) : mode === "webp" ? (
           <picture key={`fallback-${attempt}`}>
             <img
+              ref={reconcileImage}
               src={url(
                 desktopFallback ? desktopFamily : mobileFamily,
                 desktopFallback ? 1280 : 640,

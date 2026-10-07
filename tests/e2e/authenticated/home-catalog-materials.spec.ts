@@ -741,6 +741,15 @@ test("two real approved catalogs expose all five native Home categories, intrins
           controlledImagePhase = true;
           injectFailure = true;
           await themeSelect.selectOption(theme);
+          // A decoded image from the healthy matrix can remain available on
+          // theme remounts without a request. Exercise real transport failure
+          // in a fresh document, rather than treating a valid cache hit as an
+          // application error or changing decorative production URLs.
+          await memberPage.reload();
+          await expectSettledRoute(memberPage, "/products");
+          await memberPage.evaluate((scale) => {
+            document.documentElement.style.fontSize = `${(16 * scale) / 100}px`;
+          }, scale);
           await expect(memberPage.locator("html")).toHaveAttribute(
             "data-theme",
             theme,
@@ -750,6 +759,7 @@ test("two real approved catalogs expose all five native Home categories, intrins
             "data-catalog-hero-state",
             "unavailable",
           );
+          await search.fill("로컬");
           const status = scene.getByRole("status"),
             retry = status.getByRole("button", {
               name: "배경 다시 불러오기",

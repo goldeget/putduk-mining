@@ -5,6 +5,7 @@ export type CancelledSuccessfulLoginRedirect = {
   path: "/login";
   error: "net::ERR_ABORTED";
   observedDuringExplicitLogin: true;
+  exactProductsLoginTarget: true;
   postRequest: true;
   actionHeaderPresent: true;
   fetchResource: true;
@@ -66,7 +67,8 @@ export function observeSuccessfulProductsLogin(
     if (
       url.origin === origin &&
       url.pathname === "/login" &&
-      !url.search &&
+      [...url.searchParams].length === 1 &&
+      url.searchParams.get("next") === "/products" &&
       !url.hash &&
       request.method() === "POST" &&
       request.resourceType() === "fetch" &&
@@ -140,6 +142,7 @@ export function observeSuccessfulProductsLogin(
           path: "/login",
           error: "net::ERR_ABORTED",
           observedDuringExplicitLogin: true,
+          exactProductsLoginTarget: true,
           postRequest: true,
           actionHeaderPresent: true,
           fetchResource: true,

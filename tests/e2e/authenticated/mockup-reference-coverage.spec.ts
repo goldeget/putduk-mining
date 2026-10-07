@@ -382,6 +382,36 @@ async function captureRoutes(
             await page.evaluate(() => window.scrollTo(0, 0));
           }
           if (route === "/mining") {
+            const dock = page.locator("[data-ai-dock]:visible");
+            await expect(dock).toHaveCount(1);
+            await expectPaintedCopyFits(dock, "a, button", "[data-ai-dock]");
+            const dockControls = await dock.evaluate((element) =>
+              [...element.querySelectorAll("a, button")].map((control) => {
+                const box = control.getBoundingClientRect();
+                const center = document.elementFromPoint(
+                  box.left + box.width / 2,
+                  box.top + box.height / 2,
+                );
+                return {
+                  visible:
+                    box.left >= -1 &&
+                    box.right <= innerWidth + 1 &&
+                    box.top >= -1 &&
+                    box.bottom <= innerHeight + 1,
+                  reachable: Boolean(
+                    center && (center === control || control.contains(center)),
+                  ),
+                  touchHeight: box.height >= 44,
+                };
+              }),
+            );
+            expect(dockControls).toHaveLength(2);
+            expect(
+              dockControls.every(
+                (control) =>
+                  control.visible && control.reachable && control.touchHeight,
+              ),
+            ).toBe(true);
             const facts = ready
               .locator('section[aria-label="채굴 현황"] > dl')
               .first();
@@ -389,6 +419,58 @@ async function captureRoutes(
             // Full Korean labels and exact server amounts must stay inside
             // their own cards when text grows; scrollWidth misses painted text.
             await expectPaintedCopyFits(facts, "dt > span, dd", "dl > div");
+            const tierCopy = ready.getByText("확인된 채굴 원금 기준", {
+              exact: true,
+            });
+            const tier = tierCopy.locator("..").locator("..");
+            await expectPaintedCopyFits(tier, "span, strong, small", "div");
+            const tierLines = await tierCopy.evaluate((element) => {
+              const range = document.createRange();
+              range.selectNodeContents(element);
+              return new Set(
+                [...range.getClientRects()]
+                  .filter((rect) => rect.width > 0 && rect.height > 0)
+                  .map((rect) => Math.round(rect.top)),
+              ).size;
+            });
+            expect(tierLines).toBeLessThanOrEqual(3);
+            const narrowFactLines = await ready
+              .locator(
+                '[aria-labelledby="mining-capacity-title"] dl > div:not(:first-child) dd, [data-amount-weight="speed"] dd',
+              )
+              .evaluateAll((values) =>
+                values.map((value) => {
+                  const walker = document.createTreeWalker(
+                    value,
+                    NodeFilter.SHOW_TEXT,
+                  );
+                  const tops = new Set<number>();
+                  for (
+                    let node = walker.nextNode();
+                    node;
+                    node = walker.nextNode()
+                  ) {
+                    if (!node.textContent?.trim()) continue;
+                    const range = document.createRange();
+                    range.selectNodeContents(node);
+                    for (const rect of range.getClientRects()) {
+                      if (rect.width > 0 && rect.height > 0)
+                        tops.add(Math.round(rect.top));
+                    }
+                  }
+                  return tops.size;
+                }),
+              );
+            expect(narrowFactLines).toHaveLength(3);
+            for (const lines of narrowFactLines) {
+              expect(lines).toBeGreaterThan(0);
+              expect(lines).toBeLessThanOrEqual(2);
+            }
+            const tierLink = tier.getByRole("link", { name: "채굴 상품 보기" });
+            await expect(tierLink).toHaveAttribute("href", "/products");
+            expect(
+              (await tierLink.boundingBox())?.height,
+            ).toBeGreaterThanOrEqual(44);
             if (width >= 980) {
               const sidebar = page.locator("aside.product-sidebar:visible");
               await expectPaintedCopyFits(
@@ -415,6 +497,26 @@ async function captureRoutes(
                 .locator("img")
                 .evaluate((image: HTMLImageElement) => image.currentSrc),
             ).toContain(`/brand/scenes/${expectedFamily}/`);
+            if (width >= 700) {
+              const cover = await scene
+                .locator("img")
+                .evaluate((image: HTMLImageElement) => {
+                  const box = image.getBoundingClientRect();
+                  const selected = Number(
+                    new URL(image.currentSrc).pathname.match(
+                      /-(\d+)-v1\./,
+                    )?.[1],
+                  );
+                  return {
+                    selected,
+                    needed: Math.max(box.width, (box.height * 1983) / 793),
+                  };
+                });
+              expect(cover.selected).toBeGreaterThanOrEqual(
+                Math.min(1920, cover.needed),
+              );
+              expect(cover.needed).toBeLessThanOrEqual(1920 * 1.1);
+            }
             const title = ready.getByRole("heading", {
               level: 1,
               name: "채굴 월드",

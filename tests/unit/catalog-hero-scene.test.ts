@@ -1,6 +1,7 @@
 /** @vitest-environment jsdom */
 import { act, createElement } from "react";
-import { createRoot, type Root } from "react-dom/client";
+import { createRoot, hydrateRoot, type Root } from "react-dom/client";
+import { renderToString } from "react-dom/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { CatalogHeroScene } from "@/components/product/catalog-hero-scene";
 const theme = vi.hoisted(() => ({ value: "dark" as "dark" | "light" }));
@@ -50,6 +51,38 @@ async function failed() {
   );
 }
 describe("strict native Products scene and independent image recovery", () => {
+  it("recovers a server-rendered image that failed before hydration attached its error handler", async () => {
+    await act(async () => root.unmount());
+    host.innerHTML = renderToString(createElement(CatalogHeroScene));
+    const serverImage = host.querySelector("img")!;
+    Object.defineProperties(serverImage, {
+      complete: { value: true, configurable: true },
+      currentSrc: {
+        value:
+          "http://localhost/brand/scenes/products-semiconductor-hero/products-semiconductor-hero-480-v1.avif",
+        configurable: true,
+      },
+      naturalWidth: { value: 0, configurable: true },
+    });
+    // No React listener existed when this native error occurred.
+    serverImage.dispatchEvent(new Event("error"));
+    await act(async () => {
+      root = hydrateRoot(host, createElement(CatalogHeroScene));
+    });
+    expect(
+      host.querySelector('[data-catalog-hero-state="webp"]'),
+    ).not.toBeNull();
+    expect(host.querySelector("img")).not.toBe(serverImage);
+    expect(host.querySelector("img")?.getAttribute("src")).toContain(
+      "products-semiconductor-hero-640-v1.webp",
+    );
+    await failed();
+    expect(host.querySelector('[role="status"]')).not.toBeNull();
+    await act(async () => host.querySelector("button")!.click());
+    expect(
+      host.querySelector('[data-catalog-hero-state="responsive"]'),
+    ).not.toBeNull();
+  });
   it("uses the dedicated chip for mobile Dark and the approved six-layer tower for desktop", async () => {
     await render();
     const sources = host.querySelectorAll("source");

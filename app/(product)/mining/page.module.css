@@ -1,5 +1,6 @@
 .page {
   display: grid;
+  container: mining-page / inline-size;
   min-width: 0;
   gap: 1rem;
   color: var(--text-primary);
@@ -193,6 +194,7 @@
   z-index: 1;
   display: grid;
   min-width: 0;
+  container: mining-rail / inline-size;
   gap: 0.6rem;
   align-content: start;
 }
@@ -227,7 +229,8 @@
 }
 
 .tierCard {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
   gap: 0.75rem;
   padding: 0.8rem 0.9rem;
@@ -241,7 +244,6 @@
 .tierCard > div {
   display: grid;
   min-width: 0;
-  flex: 1;
   gap: 0.2rem;
 }
 
@@ -350,7 +352,7 @@
 .capacity dl {
   display: grid;
   min-width: 0;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 6rem), 1fr));
   gap: 0.6rem;
   margin: 0.75rem 0 0;
 }
@@ -565,6 +567,7 @@
 
 .records {
   display: grid;
+  container: mining-records / inline-size;
   min-width: 0;
   gap: 0.75rem;
 }
@@ -827,10 +830,12 @@
   .artwork img {
     object-position: 15% 50%;
   }
-  .records,
   .sessionList,
   .worldGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .records {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
   }
 }
 
@@ -893,8 +898,52 @@
   .value[data-mining-value="money"] {
     font-size: 1.55rem;
   }
-  .records {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+/* Reflow by available reading width, including enlarged root typography. */
+@container mining-page (max-width: 60rem) {
+  .controlRoom {
+    position: static;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.75rem;
+    padding: 0.65rem;
+    border: 1px solid var(--border-subtle);
+    border-radius: 1.35rem;
+    background: var(--background-canvas);
+  }
+  .hero {
+    position: relative;
+    min-height: clamp(370px, 108cqw, 620px);
+    overflow: hidden;
+    background: var(--surface-sunken);
+  }
+  .mainFacts {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 8rem), 1fr));
+  }
+}
+
+@container mining-rail (max-width: 14rem) {
+  .speedCard {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .tierCard > svg {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .tierCard > a {
+    grid-column: 3;
+    grid-row: 1;
+  }
+  .tierCard > div {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+}
+
+@container mining-records (min-width: 36.75rem) and (max-width: 55.49rem) {
+  .recordCard:last-child {
+    grid-column: 1 / -1;
   }
 }
 
