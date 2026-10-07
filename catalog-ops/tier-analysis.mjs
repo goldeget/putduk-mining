@@ -1,4 +1,6 @@
-// Offline proposals only. This module is not a financial engine or authority.
+// HISTORICAL TIER GATE: SUPERSEDED_BY_OWNER_CORRECTION. Used only to replay
+// archived evidence/tests. Current proposals use mining-power-analysis.mjs.
+// This module is not a financial engine or authority.
 import {
   UNIT,
   combineSpeed,

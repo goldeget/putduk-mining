@@ -1,0 +1,352 @@
+[
+  {
+    "slug": "catalog-support-ownership",
+    "title_ko": "실제 자산 소유 문의",
+    "body_ko": "문의하신 테마는 가상 채굴 주제를 설명합니다. 실제 주식·ETF·금속·코인을 매수하거나 보유하는 뜻이 아닙니다. 기업·운용사와의 제휴도 뜻하지 않습니다. 어느 화면의 표현이 헷갈리셨는지 알려 주시면 해당 안내를 확인하겠습니다.",
+    "operator_note_ko": "읽은 화면 문구만 확인. 법적 상품 분류 결론을 상담자가 추가하지 않음.",
+    "metadata": {
+      "audience": "MEMBERS",
+      "cta": {
+        "label": "알림 확인",
+        "route": "/notifications"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "publication_gate": "REVIEW_REQUIRED",
+      "registration_ready": false,
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "variables": [],
+      "required_phrases": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d"
+    },
+    "status": "DRAFT",
+    "review_before_send": true
+  },
+  {
+    "slug": "catalog-support-speed",
+    "title_ko": "속도와 한도 문의",
+    "body_ko": "속도와 주기 한도는 다른 조건입니다. 빠른 속도만으로 받을 수 있는 총액이 자동으로 늘지 않습니다. 문의하신 계정에 실제 적용된 안내를 확인하겠습니다. 확인할 화면과 시각을 알려 주세요. 지금 확인되지 않은 금액이나 완료 시각은 말씀드리지 않겠습니다.",
+    "operator_note_ko": "계정·policy·유효시각 확인 후 답변. 제안 배율을 붙여 넣지 않음.",
+    "metadata": {
+      "audience": "MEMBERS",
+      "cta": {
+        "label": "알림 확인",
+        "route": "/notifications"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "publication_gate": "REVIEW_REQUIRED",
+      "registration_ready": false,
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "variables": [],
+      "required_phrases": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d"
+    },
+    "status": "DRAFT",
+    "review_before_send": true
+  },
+  {
+    "slug": "catalog-support-availability",
+    "title_ko": "선택 불가 문의",
+    "body_ko": "상품 설명과 선택 가능 여부는 다를 수 있습니다. 문의하신 화면과 발생 시각을 알려 주시면 대상·적용 시각·중지 여부를 확인하겠습니다. 같은 요청을 반복하지 않아도 됩니다. 비밀번호와 인증 코드는 보내지 마세요.",
+    "operator_note_ko": "실제 선택 command 부재를 회원에게 구현 완료로 설명하지 않음.",
+    "metadata": {
+      "audience": "MEMBERS",
+      "cta": {
+        "label": "알림 확인",
+        "route": "/notifications"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "publication_gate": "REVIEW_REQUIRED",
+      "registration_ready": false,
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "variables": [],
+      "required_phrases": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d"
+    },
+    "status": "DRAFT",
+    "review_before_send": true
+  },
+  {
+    "slug": "catalog-support-scene",
+    "title_ko": "움직임과 금액 불일치 문의",
+    "body_ko": "장면의 불빛과 움직임은 금액의 확정 여부를 뜻하지 않습니다. 채굴의 확인 전 기록과 지갑의 확정 기록을 따로 확인하겠습니다. 화면과 발생 시각을 알려 주세요. 개인정보는 가려 주시고 같은 거래 요청은 반복하지 마세요.",
+    "operator_note_ko": "진짜 잔액 readback 없이 정상·오류·보상 지급을 확답하지 않음.",
+    "metadata": {
+      "audience": "MEMBERS",
+      "cta": {
+        "label": "알림 확인",
+        "route": "/notifications"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "publication_gate": "REVIEW_REQUIRED",
+      "registration_ready": false,
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "variables": [],
+      "required_phrases": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d"
+    },
+    "status": "DRAFT",
+    "review_before_send": true
+  },
+  {
+    "slug": "catalog-support-retire",
+    "title_ko": "새 선택 중지 문의",
+    "body_ko": "새 선택 중지와 기존 이용 기록은 별개입니다. 안내된 적용 시각과 내 기록에 미치는 영향을 확인하겠습니다. 문의하신 상품 안내와 해당 내역을 알려 주세요. 확인 전에는 환급·추가 보상·기록 삭제 여부를 확답하지 않겠습니다.",
+    "operator_note_ko": "기존 session/ledger 보존과 실제 변경 영수증 확인. 환급을 대신 실행하지 않음.",
+    "metadata": {
+      "audience": "MEMBERS",
+      "cta": {
+        "label": "알림 확인",
+        "route": "/notifications"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "publication_gate": "REVIEW_REQUIRED",
+      "registration_ready": false,
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "variables": [],
+      "required_phrases": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d"
+    },
+    "status": "DRAFT",
+    "review_before_send": true
+  },
+  {
+    "slug": "catalog-support-etf",
+    "title_ko": "ETF 배당 문의",
+    "body_ko": "퍼뜩의 ETF 테마는 묶음 개념을 표현하는 가상 장면입니다. 실제 ETF나 구성 종목을 매수·보유하는 뜻이 아니며 배당·분배금이 채굴보상으로 반영되지 않습니다. 추가로 헷갈리는 설명을 알려 주시면 확인하겠습니다.",
+    "operator_note_ko": "ETF 계약·법무 승인 전 공개 답변 금지.",
+    "metadata": {
+      "audience": "MEMBERS",
+      "cta": {
+        "label": "알림 확인",
+        "route": "/notifications"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "publication_gate": "REVIEW_REQUIRED",
+      "registration_ready": false,
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "variables": [],
+      "required_phrases": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d"
+    },
+    "status": "DRAFT",
+    "review_before_send": true
+  },
+  {
+    "slug": "catalog-support-rumor",
+    "title_ko": "SpaceX·새 상품 소문 문의",
+    "body_ko": "현재 공개된 공지에서 확인할 수 있는 상품만 안내드립니다. 소문을 근거로 출시 시각이나 선택 가능 여부를 약속하지 않습니다. 새 상품을 이유로 외부 링크에서 예약하거나 별도 송금하지 마세요. 확인된 안내가 나오면 공식 화면에서 확인할 수 있습니다.",
+    "operator_note_ko": "SPCX 상장/비상장을 기억으로 단정하지 않음. 실제 확인된 공개 항목만 전달.",
+    "metadata": {
+      "audience": "MEMBERS",
+      "cta": {
+        "label": "알림 확인",
+        "route": "/notifications"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "publication_gate": "REVIEW_REQUIRED",
+      "registration_ready": false,
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "variables": [],
+      "required_phrases": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d"
+    },
+    "status": "DRAFT",
+    "review_before_send": true
+  },
+  {
+    "slug": "catalog-support-hold",
+    "title_ko": "테마 변경과 출금 보류 문의",
+    "body_ko": "테마 변경과 출금 검토는 별개입니다. 기존 출금 신청의 안내를 확인하겠습니다. 필요한 자료는 공식 상담에서 최소한으로 요청하며 비밀번호·인증 코드·개인 키는 받지 않습니다. 보류 해제를 위해 외부 송금을 하지 마세요.",
+    "operator_note_ko": "출금 해제·승인을 실행하거나 약속하지 않음. 담당 승인 절차로 연결.",
+    "metadata": {
+      "audience": "MEMBERS",
+      "cta": {
+        "label": "알림 확인",
+        "route": "/notifications"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "publication_gate": "REVIEW_REQUIRED",
+      "registration_ready": false,
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "variables": [],
+      "required_phrases": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d"
+    },
+    "status": "DRAFT",
+    "review_before_send": true
+  },
+  {
+    "slug": "catalog-tier-support-unlock",
+    "title_ko": "테마 선택 조건 문의",
+    "body_ko": "문의하신 테마의 공개 여부와 계정의 선택 조건은 따로 확인합니다. 지금 선택 가능한 테마와 현재 안내를 확인한 뒤 알려 드리겠습니다. 안내만으로 선택이나 추가 보상이 완료되지는 않습니다. 어느 화면에서 어떤 안내가 보이는지 알려 주세요.",
+    "operator_note_ko": "승인된 읽기 화면에서 현재 정책 receipt·catalog 공개·eligibility 상태를 확인. 미확인 조건이나 입금 금액을 제안하지 않음.",
+    "metadata": {
+      "audience": "MEMBERS",
+      "cta": {
+        "label": "상품 안내 확인",
+        "route": "/products"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "publication_gate": "REVIEW_REQUIRED",
+      "registration_ready": false,
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "variables": [],
+      "required_phrases": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+      "tier_policy_status": "PROPOSED_NOT_APPROVED",
+      "requires_authoritative_eligibility_event": true,
+      "policy_approval_before_publication": true
+    },
+    "status": "DRAFT",
+    "review_before_send": true
+  },
+  {
+    "slug": "catalog-tier-support-pause",
+    "title_ko": "이용 조건 변경으로 채굴이 멈춘 경우",
+    "body_ko": "이용 조건이 바뀌면서 채굴이 잠시 멈출 수 있습니다. 이미 확정된 지갑 기록과 이전 이용 이력은 지워지지 않습니다. 지금 선택 중인 테마와 원금 회수 검토 상태를 확인하겠습니다. 확인 뒤 이용 가능한 선택지와 다음 절차를 안내해 드리겠습니다.",
+    "operator_note_ko": "PAUSE/HOLD와 최종 승인 상태를 읽기만 함. 원장 수정·임의 재개·소급 보상 약속 금지. 금융 승인과 대체 선택은 정식 권한 흐름 필요.",
+    "metadata": {
+      "audience": "MEMBERS",
+      "cta": {
+        "label": "상품 안내 확인",
+        "route": "/products"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "publication_gate": "REVIEW_REQUIRED",
+      "registration_ready": false,
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "variables": [],
+      "required_phrases": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+      "tier_policy_status": "PROPOSED_NOT_APPROVED",
+      "requires_authoritative_eligibility_event": true,
+      "policy_approval_before_publication": true
+    },
+    "status": "DRAFT",
+    "review_before_send": true
+  },
+  {
+    "slug": "catalog-tier-support-resume",
+    "title_ko": "보류 해제 뒤 재개 안내",
+    "body_ko": "보류 해제 뒤에도 이용 조건과 현재 진행 상태를 다시 확인해야 할 수 있습니다. 이전 기록을 지우거나 멈춘 시간의 보상을 자동 추가하는 방식은 아닙니다. 현재 표시된 안내를 확인한 뒤 필요한 선택 절차를 설명해 드리겠습니다.",
+    "operator_note_ko": "정확한 server effective boundary·receipt 확인 전 재개 시각/금액을 말하지 않음. 승인된 대체 선택을 회원이 확인하도록 안내.",
+    "metadata": {
+      "audience": "MEMBERS",
+      "cta": {
+        "label": "상품 안내 확인",
+        "route": "/products"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "publication_gate": "REVIEW_REQUIRED",
+      "registration_ready": false,
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "variables": [],
+      "required_phrases": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+      "tier_policy_status": "PROPOSED_NOT_APPROVED",
+      "requires_authoritative_eligibility_event": true,
+      "policy_approval_before_publication": true
+    },
+    "status": "DRAFT",
+    "review_before_send": true
+  }
+]

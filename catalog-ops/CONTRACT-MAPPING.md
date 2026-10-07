@@ -24,21 +24,20 @@ Primary가 연결해야 할 정확한 요구:
 
 1. 원래 권위에 맞는 catalog/content command 이름과 roles·session·origin·revision·idempotency·reason·audit 계약. 조작 불가 preview에는 대상/날짜/노출/경제/발송/기존 기록 영향이 나와야 한다.
 2. 신원 검증된 상품과 법무 승인된 원고만 수용. DTO에서 proposed/approved 값을 구분하고 unrecognized metadata를 명시적으로 반환. 숫자 값 범위·grade·효력 구간을 서버에서 검증.
-3. product×user×event×temporary와 최종 cap의 portion/시간/retention 분리 확정. 이번 추천 1.00–1.10은 기존 문서 band 안이지만 새 Tier gate와 미정 효과 scope 때문에 별도 사용자 policy version 승인이 필요하다. 1.12/1.18 비교는 기존 band 자체도 바꿔야 한다. 부분 미정이면 EFFECT_SCOPE_UNRESOLVED 유지.
+3. product×user×event×temporary와 최종 cap의 portion/시간/retention 분리 확정. 이번 추천 1.00–1.10은 기존 문서 band 안이지만 미정 효과 scope와 Tier speed 계약 때문에 별도 사용자 policy version 승인이 필요하다. 1.12/1.18 비교는 기존 band 자체도 바꿔야 한다. 부분 미정이면 EFFECT_SCOPE_UNRESOLVED 유지.
 4. 저장한 불변 snapshot/원고 digest와 readback·실제 렌더 일치. 앞선 snapshot의 세션/정산/원장 영수증 보존. 승인 이후 변경은 새 revision/재승인.
 5. 이벤트 body/CTA/audience와 FAQ/macro 등록/렌더·알림 전달 계약. 공지 게시를 자동 발송 영수증으로 간주하지 않음. 기존 경제 보상 rule에 운영 문구를 숨기지 않음.
 6. 격리 LOCAL만 먼저 검증. 권한 없는 역할·취소 세션·replay·revision race·중복 발송·rollback 숨김까지 증거. 공유 staging은 Primary 소유로 미뤄 두며 production은 별도 사용자 승인.
 
 Protected action: AI prepares → operator reviews → exact impact preview → confirmation → server authorization → audit. 서버만 돈의 권위다.
 
-## 새 Tier metadata의 정확한 Primary 요구
+## Owner correction 이후 Primary 요구
 
-`product-tier-eligibility.json`은 신규 proposal artifact이며 기존 `mining_products` 등록 payload가 아니다. `minimum_funding_tier`, `DERIVED_FROM_TIER`, `unlock_policy`, `why_this_tier`, downgrade, personality, source confidence는 현재 계약에 없는 metadata다. existing rule payload나 approved economy configuration에 임의로 삽입하지 않는다.
+1. 공개·사용 가능 catalog와 eligible member를 기존 server 권위에서 확인한다. 상품별 최소 Funding Tier, product unlock, Tier 하향 상품 PAUSE 계약은 만들지 않는다. 과거 PRODUCT-TIER-ELIGIBILITY 요구는 SUPERSEDED_BY_OWNER_CORRECTION이다.
+2. Funding SSOT에 없는 Tier base speed / derive rule은 TIER_SPEED_CONTRACT_REQUIRED다. 기존 원금 기반 capacity·중립 rate·slots·별도 retention 근거를 유지하면서 정확한 Tier speed 계약을 Owner와 Primary가 확정한다. slot/product별 capacity 증식은 금지한다.
+3. Tier 하향 후 상품 선택은 유지한다. 조건 변경 시각 이후 Tier economics만 재평가한다. slot 감소 시 유지·정지 allocation 선택은 PRIMARY_CONTRACT_REQUIRED다. 이 lane은 임의 우선순위·자동 대체·reset을 제안하지 않는다.
+4. 원금 withdrawal HOLD PAUSE_NOT_RESET, history/eligible age/cycle/used/carry/verified ledger 보존, capacity below used의 새 accrual 제한을 검증한다. 실제 시각·source revision·policy receipt는 서버만 결정한다.
+5. product/user/event/temporary의 portion·적용 시각·scope와 cap once를 기존 engine에 연결한다. Tier base economics는 먼저 결정하며 final1.50는 상대 modifier에 적용한다. retention에 임의 배율을 적용하거나 절대 Tier rate를1.50으로 clamp하지 않는다.
+6. safe member projection은 공개 테마 선택과 채굴 규모/슬롯 조건을 구분한다. 공개·HOLD·서버 eligibility 확인 없이 알림을 보내지 않는다. 과거 stable slug의 unlock 단어는 편집 ID일 뿐 Tier unlock event가 아니다.
 
-1. 기존 versioned catalog와 승인 economy receipt에 연결하는 minimum L-tier 계약 및 draft/preview/approval/publication의 불변 version/digest binding을 확정한다. 정책 문서만으로 현재 적용을 추측하지 않는다.
-2. 기존 source provenance의 남은 인정 원금에서 Tier를 읽고 rewards/bonus/trial/HOLD를 제외한다. min Tier만 참조하고 제품별 KRW 문턱을 따로 저장하지 않는다. 계정/상품 snapshot/availability/정책 시각/slot/allocation을 같은 권위로 확인한다.
-3. 추천 downgrade B의 서버 condition-change boundary에서 과거 accrual과 이후 PAUSE를 분리한다. 기존 cycle/age/used/carry/verified ledger/history를 보존한다. capacity 하향 시 clawback/RESET/자동 대체/소급 catch-up 없이 재확인한다. 원금 HOLD와 safe mode는 기존 guard가 우선한다.
-4. Member-facing safe projection은 선택 가능/조건 확인 중/진행 멈춤/다음 행동만 설명한다. raw L 코드, private formulas, financial enums, engine internals를 client에 내보내지 않는다. START 체험·첫 출금에 Funding Tier gate를 전용하지 않는다.
-5. 새로운 상품 공개/자격 변경 알림은 승인된 실제 domain event → user targeting/dedup/opt-in → delivery receipt로만 전달한다. 공지 publication을 notification delivery로 취급하지 않는다.
-
-위 구현은 Primary 소유다. 이 lane은 shared schema, API, backend, financial policy, engine, UI를 변경하지 않았다.
+현재 JSON은 offline proposal metadata이며 runtime registration DTO가 아니다. 이 lane은 기존 권위·schema·API·engine·UI를 바꾸지 않는다.

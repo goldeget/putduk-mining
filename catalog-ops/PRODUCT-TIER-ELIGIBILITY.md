@@ -1,3 +1,9 @@
+# SUPERSEDED_BY_OWNER_CORRECTION
+
+아래는 과거 기록이며 최종 추천 또는 구현 요구로 사용하지 않는다. Owner가 상품별 최소 Funding Tier·해금·Tier 하향에 따른 상품 잠금/PAUSE를 폐기했다. 현재 기준은 PRODUCT-ACCESS-POLICY.md와 TIER-MINING-POWER-MODEL.md다. 원본 SHA256은 evidence/superseded-tier-gate/manifest.json에 보존한다.
+
+---
+
 # Funding Tier 상품 자격 제안
 
 승인 JSON의 14단계·최소/최대 인정 원금·slot·retention 값을 read-only로 참조했다. 정책 문서 승인일과 현재 서버 적용 시각은 다르며 live publication/effective_from은 UNKNOWN이다. domain/mining/economy-policy.ts의 검증된 policy receipt와 fundingTierForPrincipal, tests/unit/funding-entitlement.test.ts의 최소/큰 정수/하향 capacity/PAUSE 테스트를 읽었다. 문서만으로 실제 자격 변경을 실행하지 않는다.

@@ -1,19 +1,12 @@
-# 경제 모델 비교와 단일 추천
+# 경제 모델 비교 — Owner correction 적용
 
-추천: **Policy A + Tier gate + inherited global capacity + product speed / 1.00–1.10**. 모든 값은 승인 전이며 runtime 적용/운영 수익 근거가 아니다.
+현재 추천은 Policy A + OPEN PRODUCT CHOICE + Tier mining power + inherited global capacity + secondary product modifier, 1.00–1.10이다. 기존 Policy A + Tier gate는 SUPERSEDED_BY_OWNER_CORRECTION이다.
 
-| Model | 속도                                     | Capacity                    | 결론                                                         |
-| ----- | ---------------------------------------- | --------------------------- | ------------------------------------------------------------ |
-| A     | 상품별 1.00–1.10, Tier별 accessible pool | 승인 Tier global cycle 상속 | 단일 추천; gate/effect scope 새 policy 승인 필요             |
-| B     | 상품별 차이                              | 상품마다 별도 capacity      | payable ceiling을 바꾸므로 추천하지 않음; 구현/등록하지 않음 |
-| C     | 모두 1.00, 성격만 다름                   | 승인 Tier global cycle 상속 | 속도 우위 제거 비교용; 최종 추천 아님                        |
+| 모델                                                        | 현재 판단                      | 이유                                                           |
+| ----------------------------------------------------------- | ------------------------------ | -------------------------------------------------------------- |
+| A: 열린 상품 접근 + 공통 global capacity + product modifier | 조건부 추천                    | Owner 방향에 맞음. Tier speed/effect 계약과 상품값 승인은 미정 |
+| B: 상품별 capacity 차등                                     | 추천하지 않음                  | 상품이 원금 기반 지급 한도를 바꾸며 승인되지 않음              |
+| C: 모든 상품 modifier1.00, personality 중심                 | 비교안만                       | 임의 적용하지 않음. Owner는 modifier 유지 가능                 |
+| 과거 Tier별 상품 해금                                       | SUPERSEDED_BY_OWNER_CORRECTION | 상품 선택은 열려 있으며 Tier는 채굴 규모를 정함                |
 
-| 제안 Band | 최단 base-cap 도달: 정규화 | 최종 1.50 headroom | 중간 modifier cap 적용 상품 수 | 승인 문서 band 변경 |
-| --------- | -------------------------- | ------------------ | ------------------------------ | ------------------- |
-| 1.00–1.10 | 300/11일                   | 15/11              | 0                              | False               |
-| 1.00–1.12 | 375/14일                   | 75/56              | 0                              | True                |
-| 1.00–1.18 | 1500/59일                  | 75/59              | 11                             | True                |
-
-1.10은 승인 문서 product 0.90–1.10 안에 있지만 아직 non-default effect scope/자격 contract가 없어 활성화할 수 없다. 1.12와 1.18은 기존 band도 바꾸므로 별도의 POLICY_VERSION_CHANGE_REQUIRED. Grade/기업 유명세/시세는 경제 근거가 아니다. 두 개 50% slot에서 1.10과 1.10을 선택해도 rate=1.10, 한도=global100, 200이 아니다. 세부 비교는 TIER-PROGRESSION-ANALYSIS.md와 JSON을 읽는다.
-
-제품×사용자×이벤트×임시 효과는 정확한 유리수 곱 후 최종 한 번 1.50 제한 제안. 기존 campaign 15000 cap이 전체 scope 구현을 입증하지 않는다. 1.20×1.15×1.10=1.518→1.50이며, 1.18×1.20×1.25×0.80은 중간 cap 없이 1.416으로 유지해야 한다. Primary가 portion/priority/effective interval/source changes와 안전한 정산 연결을 검증해야 한다. 이 lane은 backend·ledger를 수정하지 않는다.
+SSOT의 기본 capacity와 중립 절대 rate는 인정 원금에 비례한다. 상품 modifier는 capacity를 바꾸지 않는다. 고유 Tier base speed 규칙은 TIER_SPEED_CONTRACT_REQUIRED이며 높은 Tier의 모든 경계 우위를 자동 가정하지 않는다. PRODUCT-ACCESS-POLICY.md와 TIER-MINING-POWER-MODEL.md가 현재 기준이다.

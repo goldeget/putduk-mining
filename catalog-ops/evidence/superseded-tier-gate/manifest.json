@@ -1,0 +1,151 @@
+{
+  "status": "SUPERSEDED_BY_OWNER_CORRECTION",
+  "source_head": "783732492e70c312b33640e07ee0d8ffad68c3e5",
+  "active": false,
+  "replaced_by": [
+    "PRODUCT-ACCESS-POLICY.md",
+    "tier-mining-power-model.json"
+  ],
+  "files": [
+    {
+      "source_path": "catalog-ops/product-tier-eligibility.json",
+      "archive_path": "catalog-ops/evidence/superseded-tier-gate/product-tier-eligibility.json",
+      "sha256": "29bae8710f701bd1a593eaadb8853e92f868b6ec5979919dbe5c1fb8efafd503"
+    },
+    {
+      "source_path": "catalog-ops/product-economy-proposal.json",
+      "archive_path": "catalog-ops/evidence/superseded-tier-gate/product-economy-proposal.json",
+      "sha256": "e9f9c70e8ff9c96d657dbc86d4392bbe444d2f0a8ed9cd39ed3774d153ee3103"
+    },
+    {
+      "source_path": "catalog-ops/launch-catalog-proposal.json",
+      "archive_path": "catalog-ops/evidence/superseded-tier-gate/launch-catalog-proposal.json",
+      "sha256": "ca71b94059c717b2e5e089fb23420249b6fdf05486cd3155b1192993973df277"
+    },
+    {
+      "source_path": "catalog-ops/economy-simulation-results.json",
+      "archive_path": "catalog-ops/evidence/superseded-tier-gate/economy-simulation-results.json",
+      "sha256": "fa03fcb5e8d1c32dc72d7e3008a436194e22ee1c6b330ab483d47b50e7a503bf"
+    },
+    {
+      "source_path": "catalog-ops/tier-analysis.mjs",
+      "archive_path": "catalog-ops/evidence/superseded-tier-gate/tier-analysis.mjs",
+      "sha256": "71ecf411027a5b46d2113351c3061efc781a3e7156a5dae71c368023eff1c3e0"
+    },
+    {
+      "source_path": "catalog-ops/finalize.test.mjs",
+      "archive_path": "catalog-ops/evidence/superseded-tier-gate/finalize.test.mjs",
+      "sha256": "f8e673b8ebe42d9033f98ff5b15553c6dc5e31c10bad9b889645e134374e2312"
+    },
+    {
+      "source_path": "catalog-ops/validate-finalize.mjs",
+      "archive_path": "catalog-ops/evidence/superseded-tier-gate/validate-finalize.mjs",
+      "sha256": "cc7e31e151dba311f3a365627502b834a377161c961fd31dae5326c887b045ad"
+    },
+    {
+      "source_path": "catalog-ops/finalize-catalog.py",
+      "archive_path": "catalog-ops/evidence/superseded-tier-gate/finalize-catalog.py",
+      "sha256": "b8beb0aeebef21123fc59adc040e8cb01f2ac5da64c53fd5082758258a1ab270"
+    },
+    {
+      "source_path": "catalog-ops/report-finalize.py",
+      "archive_path": "catalog-ops/evidence/superseded-tier-gate/report-finalize.py",
+      "sha256": "f141f96e8af16a649f0aaf86daca6d9569173bc8672b3d52617b6bddd22eaa99"
+    },
+    {
+      "source_path": "catalog-ops/tier-content-delta.py",
+      "archive_path": "catalog-ops/evidence/superseded-tier-gate/tier-content-delta.py",
+      "sha256": "2498d094946a0e05094bbc143b689082edecfc0af5295c221a11825409e804e4"
+    },
+    {
+      "source_path": "catalog-ops/PRODUCT-TIER-ELIGIBILITY.md",
+      "archive_path": "catalog-ops/evidence/superseded-tier-gate/PRODUCT-TIER-ELIGIBILITY.md",
+      "sha256": "79daeb5ba53ea68bcb5b424a7d938c483f8e14299f6ae01f17920fe5c2239a61"
+    },
+    {
+      "source_path": "catalog-ops/TIER-PROGRESSION-ANALYSIS.md",
+      "archive_path": "catalog-ops/evidence/superseded-tier-gate/TIER-PROGRESSION-ANALYSIS.md",
+      "sha256": "b744c01185fad3f37eb82eabca8afa74f08ce6020b8dc8a29b4fc66a24efc728"
+    },
+    {
+      "source_path": "catalog-ops/PRODUCT-ECONOMY-MATRIX.md",
+      "archive_path": "catalog-ops/evidence/superseded-tier-gate/PRODUCT-ECONOMY-MATRIX.md",
+      "sha256": "423f5192800fa0271b5aea922e230ba97f452991c989a7801e917797a065690c"
+    },
+    {
+      "source_path": "catalog-ops/ECONOMY-SIMULATION.md",
+      "archive_path": "catalog-ops/evidence/superseded-tier-gate/ECONOMY-SIMULATION.md",
+      "sha256": "983584596a4d65c5e8aa80e02cca7f8087994aad81894f3e600498abce9c0a9f"
+    },
+    {
+      "source_path": "catalog-ops/ECONOMY-MODEL-COMPARISON.md",
+      "archive_path": "catalog-ops/evidence/superseded-tier-gate/ECONOMY-MODEL-COMPARISON.md",
+      "sha256": "72ebb4dd227c4348797f9c089d0f4edf8ed718b942d73c42d2fbbc5b45457ab4"
+    },
+    {
+      "source_path": "catalog-ops/INTEGRATION-HANDOFF.md",
+      "archive_path": "catalog-ops/evidence/superseded-tier-gate/INTEGRATION-HANDOFF.md",
+      "sha256": "458ea5c0c968e6f397520e28751d559f5a8c2ce318b2119206a0d9b644c028d9"
+    },
+    {
+      "source_path": "catalog-ops/CONTRACT-MAPPING.md",
+      "archive_path": "catalog-ops/evidence/superseded-tier-gate/CONTRACT-MAPPING.md",
+      "sha256": "c888f5e79acd93e4d00d24277dc87a0266939cef14ac8768286e4fb140f89a8f"
+    },
+    {
+      "source_path": "catalog-ops/README.md",
+      "archive_path": "catalog-ops/evidence/superseded-tier-gate/README.md",
+      "sha256": "036f0382588990987046ea391756792a584aaf6872b8e5f53f1bff48032f846b"
+    },
+    {
+      "source_path": "catalog-ops/TIER-CONTENT-DELTA.md",
+      "archive_path": "catalog-ops/evidence/superseded-tier-gate/TIER-CONTENT-DELTA.md",
+      "sha256": "e07fd22212955d344e4cbdf04eebc9faec4a8359c5e80cee5a5334194aeb2607"
+    },
+    {
+      "source_path": "catalog-ops/content-delta/events-additions.json",
+      "archive_path": "catalog-ops/evidence/superseded-tier-gate/content-delta/events-additions.json",
+      "sha256": "a6b322b6db61b295ffa317ec8e4c9aa489201bd608a4f0b0dc8eda632c473b23"
+    },
+    {
+      "source_path": "catalog-ops/content-delta/faq-additions.json",
+      "archive_path": "catalog-ops/evidence/superseded-tier-gate/content-delta/faq-additions.json",
+      "sha256": "15d254c9d1ef14e36df82064d9564654155987b00a927a23ef3162b35eda82fc"
+    },
+    {
+      "source_path": "catalog-ops/content-delta/notices-additions.json",
+      "archive_path": "catalog-ops/evidence/superseded-tier-gate/content-delta/notices-additions.json",
+      "sha256": "66764c88c15ae8363afa17613ce372787ad5baf57249e0e2d2de7a12047c35e9"
+    },
+    {
+      "source_path": "catalog-ops/content-delta/notifications-additions.json",
+      "archive_path": "catalog-ops/evidence/superseded-tier-gate/content-delta/notifications-additions.json",
+      "sha256": "d47c26b5e857be3aa25d4d4350313e568b5296d7a09400bf9c06f84b2642da9d"
+    },
+    {
+      "source_path": "catalog-ops/content-delta/support-additions.json",
+      "archive_path": "catalog-ops/evidence/superseded-tier-gate/content-delta/support-additions.json",
+      "sha256": "86dfc5b5acab93cd669c8e43dc619393ef3e83ef1d2e951f1d98aeb29b12d91a"
+    },
+    {
+      "source_path": "catalog-ops/evidence/finalize-summary.json",
+      "archive_path": "catalog-ops/evidence/superseded-tier-gate/evidence/finalize-summary.json",
+      "sha256": "350e31f8a8eb591c7a304736b17d0f3a73a1ac7f491da5f31d394eb88b6e921d"
+    },
+    {
+      "source_path": "catalog-ops/evidence/finalize-tests.tap",
+      "archive_path": "catalog-ops/evidence/superseded-tier-gate/evidence/finalize-tests.tap",
+      "sha256": "413a9c4ccdf2c12dda8cee8b1e5924931d5159c1e63a0c62c73f4ea86c4cf801"
+    },
+    {
+      "source_path": "catalog-ops/evidence/finalize-test-summary.json",
+      "archive_path": "catalog-ops/evidence/superseded-tier-gate/evidence/finalize-test-summary.json",
+      "sha256": "2cfc6d00903e029fa32ab851e067defb58aa010cd0d62ecdacf890eeeb3f2085"
+    },
+    {
+      "source_path": "catalog-ops/evidence/final-format-summary.json",
+      "archive_path": "catalog-ops/evidence/superseded-tier-gate/evidence/final-format-summary.json",
+      "sha256": "6edb5c638502445efe279d05f7fd094ae782f685167d1d8bf554abd84e2f6742"
+    }
+  ]
+}

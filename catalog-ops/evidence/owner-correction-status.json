@@ -1,0 +1,15 @@
+{
+  "status": "OWNER_CORRECTION_APPLIED_OFFLINE",
+  "source_head": "783732492e70c312b33640e07ee0d8ffad68c3e5",
+  "historical_files_preserved": 28,
+  "history_rewritten": false,
+  "active_product_count": 25,
+  "product_access_policy": "ALL_ELIGIBLE_MEMBERS",
+  "tier_speed": "TIER_SPEED_CONTRACT_REQUIRED",
+  "slot_downgrade": "PRIMARY_CONTRACT_REQUIRED",
+  "research": "UNCHANGED_13_VERIFIED_31_PARTIAL_11_UNKNOWN",
+  "registration": "BLOCKED_COMMAND_NOT_FOUND",
+  "runtime_changed": false,
+  "production_changed": false,
+  "member_ui_changed": false
+}

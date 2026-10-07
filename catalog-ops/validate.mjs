@@ -51,7 +51,13 @@ export function validDate(value) {
 }
 
 export function loadPackage({ ref } = {}) {
-  if (ref && ref !== "8f68be2005e16f1ac257626b3418cd3b8a96f1e3")
+  if (
+    ref &&
+    ![
+      "8f68be2005e16f1ac257626b3418cd3b8a96f1e3",
+      "783732492e70c312b33640e07ee0d8ffad68c3e5",
+    ].includes(ref)
+  )
     throw new Error("INVALID_BASELINE_REF");
   const read = (name) =>
     JSON.parse(
@@ -65,7 +71,10 @@ export function loadPackage({ ref } = {}) {
   const sourceResponseHashes = {};
   const sourceResponseTexts = {};
   const responseDir = resolve(root, "evidence/source-responses");
-  if (!ref && existsSync(responseDir)) {
+  if (
+    ref !== "8f68be2005e16f1ac257626b3418cd3b8a96f1e3" &&
+    existsSync(responseDir)
+  ) {
     for (const name of readdirSync(responseDir).filter((p) =>
       /^[a-z0-9-]+\.txt(?:\.gz)?$/.test(p),
     )) {
@@ -83,15 +92,16 @@ export function loadPackage({ ref } = {}) {
   return {
     sourceResponseHashes,
     sourceResponseTexts,
-    sourceResponseVisible: ref
-      ? {}
-      : JSON.parse(
-          execFileSync("python", [resolve(root, "source-text.py")], {
-            encoding: "utf8",
-            maxBuffer: 4000000,
-          }),
-        ),
-    ...(ref
+    sourceResponseVisible:
+      ref === "8f68be2005e16f1ac257626b3418cd3b8a96f1e3"
+        ? {}
+        : JSON.parse(
+            execFileSync("python", [resolve(root, "source-text.py")], {
+              encoding: "utf8",
+              maxBuffer: 4000000,
+            }),
+          ),
+    ...(ref === "8f68be2005e16f1ac257626b3418cd3b8a96f1e3"
       ? {}
       : {
           eligibility: existsSync(
@@ -119,6 +129,42 @@ export function loadPackage({ ref } = {}) {
             )
             .digest("hex"),
         }),
+    ...(!ref && existsSync(resolve(root, "tier-mining-power-model.json"))
+      ? (() => {
+          const power = read("tier-mining-power-model.json"),
+            archive = read("evidence/superseded-tier-gate/manifest.json");
+          const hash = (p) =>
+            createHash("sha256")
+              .update(readFileSync(resolve(root, "..", p)))
+              .digest("hex");
+          return {
+            power,
+            access: read("product-access-policy.json"),
+            archive,
+            ownerOriginalHash: createHash("sha256")
+              .update(
+                gunzipSync(
+                  readFileSync(
+                    resolve(
+                      root,
+                      "evidence/owner-product-access-correction.txt.gz",
+                    ),
+                  ),
+                ),
+              )
+              .digest("hex"),
+            ownerEvidenceHash: hash(
+              "catalog-ops/evidence/owner-product-access-correction.txt",
+            ),
+            archiveHashes: Object.fromEntries(
+              archive.files.map((f) => [f.archive_path, hash(f.archive_path)]),
+            ),
+            powerSourceHashes: Object.fromEntries(
+              power.source_evidence.map((f) => [f.path, hash(f.path)]),
+            ),
+          };
+        })()
+      : {}),
     candidates: read("product-candidates.json"),
     launch: read("launch-catalog-proposal.json"),
     economy: read("product-economy-proposal.json"),
@@ -409,7 +455,7 @@ export function validatePackage(data, { now = Date.now() } = {}) {
       economy.allowed_proposal_band.maximum_bps === 12000 &&
       economy.recommended_band.minimum === "1.00" &&
       economy.recommended_band.maximum ===
-        (economy.schema_version === 2 ? "1.10" : "1.18") &&
+        (economy.schema_version >= 2 ? "1.10" : "1.18") &&
       economy.recommended_band.step ===
         "0.01", "INVALID_ECONOMY_PROPOSAL_BAND", "economy");
     require(economy.status === "PROPOSED_NOT_APPROVED" &&
@@ -453,7 +499,7 @@ export function validatePackage(data, { now = Date.now() } = {}) {
         speed ===
           BigInt(p.proposed_product_speed_bps), "SPEED_BPS_MISMATCH", path);
       const band = (
-        economy.schema_version === 2
+        economy.schema_version >= 2
           ? {
               C: [10000n, 10200n],
               B: [10300n, 10500n],
@@ -704,17 +750,19 @@ export function validatePackage(data, { now = Date.now() } = {}) {
     require(data.actions.status === "PROPOSED_NOT_EXECUTED" &&
       data.actions.never_delete_historical_records ===
         true, "UNSAFE_CONTENT_REVIEW_ACTION", "actions");
-    if (data.candidates.research_revision === 2 || economy.schema_version === 2)
+    if (data.candidates.research_revision === 2 || economy.schema_version >= 2)
       errors.push(...validateFinalization(data));
     if (
       !errors.some((e) => /SPEED|GRADE|COVERAGE|PACKAGE_SHAPE/.test(e.code)) &&
-      !(economy.schema_version === 2 && errors.length > 0)
+      !(economy.schema_version >= 2 && errors.length > 0)
     ) {
       const expected = simulate(
         clone(economy),
         clone(data.candidates),
         clone(data.currentEvidence.current_policy),
-        data.eligibility,
+        economy.schema_version === 3
+          ? { power: data.power, access: data.access }
+          : data.eligibility,
       );
       require(JSON.stringify(expected) ===
         JSON.stringify(
@@ -722,9 +770,11 @@ export function validatePackage(data, { now = Date.now() } = {}) {
         ), "SIMULATION_READBACK_MISMATCH", "simulation");
       require(data.simulation.market_price_inputs.length === 0 &&
         data.simulation.live_policy_confirmed === false &&
-        (economy.schema_version === 2
-          ? data.simulation.concentration.after.observed_member_distribution
-          : data.simulation.concentration.observed_member_distribution) ===
+        (economy.schema_version === 3
+          ? data.simulation.concentration.observed_member_distribution
+          : economy.schema_version === 2
+            ? data.simulation.concentration.after.observed_member_distribution
+            : data.simulation.concentration.observed_member_distribution) ===
           "UNKNOWN", "FABRICATED_SIMULATION_DATA", "simulation");
     }
   } catch (error) {
@@ -757,7 +807,12 @@ if (
     note: "Passing validates safe proposal structure, not public identities, financial approval or product readiness.",
   };
   writeFileSync(
-    resolve(root, "evidence/validation.json"),
+    resolve(
+      root,
+      existsSync(resolve(root, "product-access-policy.json"))
+        ? "evidence/owner-validation.json"
+        : "evidence/validation.json",
+    ),
     JSON.stringify(evidence, null, 2) + "\n",
   );
   console.log(JSON.stringify(evidence));

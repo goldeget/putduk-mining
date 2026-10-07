@@ -1,4 +1,5 @@
 import { tierOrdinal } from "./tier-analysis.mjs";
+import { validateOwnerCorrection } from "./validate-owner-correction.mjs";
 
 const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 const decode = (s) =>
@@ -105,6 +106,8 @@ export function validateFinalization(data) {
       require(found, "OFFICIAL_QUOTE_NOT_IN_RESPONSE", path);
     }
   }
+  if (data.economy.schema_version === 3)
+    return [...errors, ...validateOwnerCorrection(data)];
   if (data.economy.schema_version !== 2) return errors;
   const e = data.eligibility;
   if (!e)

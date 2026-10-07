@@ -1,0 +1,14 @@
+{
+  "draft_id": "17fa9c03-0577-4c85-a75d-14c5e0448900~cecfgdraft_6ac659c4669c819bb36275fac0e4884c",
+  "requires_publish": true,
+  "status": "saved",
+  "field_changed": "start_skill",
+  "readback_matches": true,
+  "install_script_preserved": true,
+  "network_preserved": true,
+  "repositories_preserved": true,
+  "secret_metadata_preserved": true,
+  "runtime_requirements_preserved": true,
+  "runtime_apply_claimed": false,
+  "published": false
+}

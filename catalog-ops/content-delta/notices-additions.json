@@ -330,9 +330,9 @@
     "slug": "catalog-tier-notices-selection",
     "storage": {
       "slug": "catalog-tier-notices-selection",
-      "title_ko": "선택 가능한 테마를 확인해 주세요",
-      "summary_ko": "선택 가능한 테마를 확인해 주세요",
-      "body_markdown": "계정에서 확인된 이용 조건에 따라 선택 가능한 테마가 달라질 수 있습니다. 상품 목록에서 지금 선택할 수 있는 테마와 설명을 확인해 주세요.\n\n새 테마 안내를 보았다는 이유로 선택이나 추가 보상이 완료되지는 않습니다. 확인 중으로 표시되면 같은 신청을 반복하지 말고 고객지원으로 알려 주세요. 입금이나 상품 선택을 서두를 필요는 없습니다.\n\n실제 테마 공개와 이용 조건 변경은 별도의 승인 안내와 적용 시각을 따릅니다.",
+      "title_ko": "공개된 테마 선택 안내",
+      "summary_ko": "공개된 테마 선택 안내",
+      "body_markdown": "이용 가능한 회원은 공개되고 운영 중인 테마를 원금 단계와 관계없이 선택할 수 있습니다. 특정 테마를 고르기 위해 입금액을 늘릴 필요는 없습니다.\n\n원금 단계는 채굴 규모와 동시에 운영할 수 있는 수 등 이용 조건에 영향을 줍니다. 상품의 장면과 속도 조건은 그와 구분해서 확인해 주세요.\n\n공개 전인 테마는 선택 대상으로 안내하지 않습니다. 테마 선택이 어렵다면 같은 신청을 반복하지 말고 고객지원으로 알려 주세요.",
       "status": "DRAFT",
       "is_pinned": false,
       "published_at": null,
@@ -363,18 +363,20 @@
       "template": true,
       "schedule_status": "EFFECTIVE_TIME_REQUIRED",
       "operator_note": "실제 승인값·적용 시각·대상만 채움. 미지원 metadata를 rule_payload에 숨기지 않음.",
-      "tier_policy_status": "PROPOSED_NOT_APPROVED",
-      "requires_authoritative_eligibility_event": true,
-      "policy_approval_before_publication": true
+      "policy_approval_before_publication": true,
+      "owner_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "historical_draft_status": "SUPERSEDED_BY_OWNER_CORRECTION",
+      "historical_draft_head": "783732492e70c312b33640e07ee0d8ffad68c3e5",
+      "requires_authoritative_event": "EXISTING_AUTHORIZED_CONDITION_OR_NOTICE_EVENT_NO_PRODUCT_TIER_UNLOCK"
     }
   },
   {
     "slug": "catalog-tier-notices-condition-change",
     "storage": {
       "slug": "catalog-tier-notices-condition-change",
-      "title_ko": "이용 조건 변경에 따른 상품 선택 안내",
-      "summary_ko": "이용 조건 변경에 따른 상품 선택 안내",
-      "body_markdown": "확인된 남은 원금 등 이용 조건이 바뀌면 선택 가능한 테마도 달라질 수 있습니다. 채굴보상과 보너스는 원금과 따로 관리합니다.\n\n원금 회수 검토 중에는 채굴이 일시 멈출 수 있으며, 일부 테마의 선택 조건이 달라질 수 있습니다. 이미 확정된 지갑 기록과 이용 이력은 지워지지 않습니다. 다른 테마로 자동 변경하지 않고 확인된 선택지를 안내합니다.\n\n적용 내용과 현재 상태를 읽은 뒤 변경을 확인해 주세요. 계속 멈춰 있거나 안내가 보이지 않으면 고객지원에 문의해 주세요.",
+      "title_ko": "남은 원금 변경에 따른 채굴 이용 안내",
+      "summary_ko": "남은 원금 변경에 따른 채굴 이용 안내",
+      "body_markdown": "남은 인정 원금이 달라지면 이후 채굴 규모와 동시에 운영할 수 있는 수를 다시 확인합니다. 원금 단계가 내려갔다는 이유로 선택한 공개 테마를 잠그거나 다른 테마로 자동 변경하지 않습니다.\n\n원금 회수 검토 중에는 채굴이 일시 멈출 수 있습니다. 이미 확정된 지갑 기록과 이용 이력·채굴 기간·주기는 보존합니다.\n\n동시에 운영 중인 수의 조정이 필요한 경우 확인된 안내를 따르세요. 조정 방식이 확인되지 않았으면 임의로 종료하거나 재시작하지 말고 고객지원에 문의해 주세요.",
       "status": "DRAFT",
       "is_pinned": false,
       "published_at": null,
@@ -405,18 +407,20 @@
       "template": true,
       "schedule_status": "EFFECTIVE_TIME_REQUIRED",
       "operator_note": "실제 승인값·적용 시각·대상만 채움. 미지원 metadata를 rule_payload에 숨기지 않음.",
-      "tier_policy_status": "PROPOSED_NOT_APPROVED",
-      "requires_authoritative_eligibility_event": true,
-      "policy_approval_before_publication": true
+      "policy_approval_before_publication": true,
+      "owner_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "historical_draft_status": "SUPERSEDED_BY_OWNER_CORRECTION",
+      "historical_draft_head": "783732492e70c312b33640e07ee0d8ffad68c3e5",
+      "requires_authoritative_event": "EXISTING_AUTHORIZED_CONDITION_OR_NOTICE_EVENT_NO_PRODUCT_TIER_UNLOCK"
     }
   },
   {
     "slug": "catalog-tier-notices-new-groups",
     "storage": {
       "slug": "catalog-tier-notices-new-groups",
-      "title_ko": "새로운 테마군 안내를 읽어 주세요",
-      "summary_ko": "새로운 테마군 안내를 읽어 주세요",
-      "body_markdown": "새로운 주제의 테마를 준비하고 있습니다. 공개 전에는 선택 가능한 상품으로 안내하지 않으며, 실제 공개와 내 계정의 이용 가능 여부는 따로 확인합니다.\n\n장면과 이름은 실제 자산의 매수나 소유, 기업·운용사와의 제휴를 뜻하지 않습니다. 시세나 배당으로 채굴보상을 정하지 않습니다. 지금 선택할 수 있는 테마의 설명을 먼저 살펴보세요.",
+      "title_ko": "새로운 공개 테마 안내",
+      "summary_ko": "새로운 공개 테마 안내",
+      "body_markdown": "새로운 주제의 테마를 준비하고 있습니다. 정식 공개 전에는 선택 가능한 상품으로 안내하지 않습니다. 공개되고 운영 중인 테마는 이용 가능한 회원 누구나 원금 단계와 관계없이 선택할 수 있습니다.\n\n테마 이름과 장면은 실제 자산의 매수나 소유, 기업·운용사와의 제휴를 뜻하지 않습니다. 시세나 배당으로 채굴보상을 정하지 않습니다. 실제 공개 안내와 상품 설명을 확인해 주세요.",
       "status": "DRAFT",
       "is_pinned": false,
       "published_at": null,
@@ -447,18 +451,20 @@
       "template": true,
       "schedule_status": "EFFECTIVE_TIME_REQUIRED",
       "operator_note": "실제 승인값·적용 시각·대상만 채움. 미지원 metadata를 rule_payload에 숨기지 않음.",
-      "tier_policy_status": "PROPOSED_NOT_APPROVED",
-      "requires_authoritative_eligibility_event": true,
-      "policy_approval_before_publication": true
+      "policy_approval_before_publication": true,
+      "owner_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "historical_draft_status": "SUPERSEDED_BY_OWNER_CORRECTION",
+      "historical_draft_head": "783732492e70c312b33640e07ee0d8ffad68c3e5",
+      "requires_authoritative_event": "PUBLISHED_AVAILABLE_PRODUCT_AND_MEMBER_ELIGIBILITY"
     }
   },
   {
     "slug": "catalog-tier-notices-policy-guide",
     "storage": {
       "slug": "catalog-tier-notices-policy-guide",
-      "title_ko": "상품 이용 정책 변경 안내 양식",
-      "summary_ko": "상품 이용 정책 변경 안내 양식",
-      "body_markdown": "변경 내용: {{approved_change_summary}}\n적용 시각: {{effective_at_kst}}\n대상: {{approved_audience}}\n\n상품 선택 조건과 진행 방식이 바뀌는 경우 적용 전 안내합니다. 지금 선택 중인 테마에 영향이 있는지 상품 화면에서 확인해 주세요. 안내만으로 상품 선택이나 추가 보상이 완료되지는 않습니다.\n\n이미 확정된 지갑 기록과 이용 이력은 보존합니다. 원금 회수 보류 중에는 채굴이 일시 멈출 수 있습니다. 안내를 이해하기 어렵다면 변경을 확인하기 전에 고객지원에 문의해 주세요.",
+      "title_ko": "채굴 이용 정책 변경 안내 양식",
+      "summary_ko": "채굴 이용 정책 변경 안내 양식",
+      "body_markdown": "변경 내용: {{approved_change_summary}}\n적용 시각: {{effective_at_kst}}\n대상: {{approved_audience}}\n\n채굴 규모·동시 운영 수·적용 조건의 변경 내용과 시각을 안내합니다. 원금 단계가 특정 공개 테마의 선택을 제한하지 않습니다.\n\n이미 확정된 지갑 기록과 이용 이력은 보존합니다. 원금 회수 보류 중에는 채굴이 일시 멈출 수 있습니다. 변경 내용을 이해하기 어려우면 적용 안내를 확인한 뒤 고객지원에 문의해 주세요.",
       "status": "DRAFT",
       "is_pinned": false,
       "published_at": null,
@@ -493,9 +499,11 @@
       "template": true,
       "schedule_status": "EFFECTIVE_TIME_REQUIRED",
       "operator_note": "실제 승인값·적용 시각·대상만 채움. 미지원 metadata를 rule_payload에 숨기지 않음.",
-      "tier_policy_status": "PROPOSED_NOT_APPROVED",
-      "requires_authoritative_eligibility_event": true,
-      "policy_approval_before_publication": true
+      "policy_approval_before_publication": true,
+      "owner_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "historical_draft_status": "SUPERSEDED_BY_OWNER_CORRECTION",
+      "historical_draft_head": "783732492e70c312b33640e07ee0d8ffad68c3e5",
+      "requires_authoritative_event": "EXISTING_AUTHORIZED_CONDITION_OR_NOTICE_EVENT_NO_PRODUCT_TIER_UNLOCK"
     }
   }
 ]

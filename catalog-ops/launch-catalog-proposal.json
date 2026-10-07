@@ -35,10 +35,10 @@
       "registration_ready": false,
       "registration_status": "APPROVED_CATALOG_COMMAND_REQUIRED",
       "policy_status": "POLICY_APPROVAL_REQUIRED",
-      "minimum_funding_tier": "L1",
-      "minimum_eligible_principal": "DERIVED_FROM_TIER",
-      "eligibility_status": "PROPOSED_NOT_APPROVED",
-      "selection_available": false
+      "selection_available": false,
+      "product_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "access_condition": "AUTHORITATIVE_PUBLISHED_AVAILABLE_PRODUCT_AND_ELIGIBLE_MEMBER",
+      "tier_capacity": "INHERITED"
     },
     {
       "proposal_id": "catalog-v1-silver",
@@ -70,10 +70,10 @@
       "registration_ready": false,
       "registration_status": "APPROVED_CATALOG_COMMAND_REQUIRED",
       "policy_status": "POLICY_APPROVAL_REQUIRED",
-      "minimum_funding_tier": "L1",
-      "minimum_eligible_principal": "DERIVED_FROM_TIER",
-      "eligibility_status": "PROPOSED_NOT_APPROVED",
-      "selection_available": false
+      "selection_available": false,
+      "product_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "access_condition": "AUTHORITATIVE_PUBLISHED_AVAILABLE_PRODUCT_AND_ELIGIBLE_MEMBER",
+      "tier_capacity": "INHERITED"
     },
     {
       "proposal_id": "catalog-v1-spy",
@@ -106,10 +106,10 @@
       "registration_ready": false,
       "registration_status": "APPROVED_CATALOG_COMMAND_REQUIRED",
       "policy_status": "POLICY_APPROVAL_REQUIRED",
-      "minimum_funding_tier": "L1",
-      "minimum_eligible_principal": "DERIVED_FROM_TIER",
-      "eligibility_status": "PROPOSED_NOT_APPROVED",
-      "selection_available": false
+      "selection_available": false,
+      "product_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "access_condition": "AUTHORITATIVE_PUBLISHED_AVAILABLE_PRODUCT_AND_ELIGIBLE_MEMBER",
+      "tier_capacity": "INHERITED"
     },
     {
       "proposal_id": "catalog-v1-kb-financial",
@@ -142,10 +142,10 @@
       "registration_ready": false,
       "registration_status": "APPROVED_CATALOG_COMMAND_REQUIRED",
       "policy_status": "POLICY_APPROVAL_REQUIRED",
-      "minimum_funding_tier": "L1",
-      "minimum_eligible_principal": "DERIVED_FROM_TIER",
-      "eligibility_status": "PROPOSED_NOT_APPROVED",
-      "selection_available": false
+      "selection_available": false,
+      "product_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "access_condition": "AUTHORITATIVE_PUBLISHED_AVAILABLE_PRODUCT_AND_ELIGIBLE_MEMBER",
+      "tier_capacity": "INHERITED"
     },
     {
       "proposal_id": "catalog-v1-lg-electronics",
@@ -178,10 +178,10 @@
       "registration_ready": false,
       "registration_status": "APPROVED_CATALOG_COMMAND_REQUIRED",
       "policy_status": "POLICY_APPROVAL_REQUIRED",
-      "minimum_funding_tier": "L2",
-      "minimum_eligible_principal": "DERIVED_FROM_TIER",
-      "eligibility_status": "PROPOSED_NOT_APPROVED",
-      "selection_available": false
+      "selection_available": false,
+      "product_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "access_condition": "AUTHORITATIVE_PUBLISHED_AVAILABLE_PRODUCT_AND_ELIGIBLE_MEMBER",
+      "tier_capacity": "INHERITED"
     },
     {
       "proposal_id": "catalog-v1-schd",
@@ -214,10 +214,10 @@
       "registration_ready": false,
       "registration_status": "APPROVED_CATALOG_COMMAND_REQUIRED",
       "policy_status": "POLICY_APPROVAL_REQUIRED",
-      "minimum_funding_tier": "L2",
-      "minimum_eligible_principal": "DERIVED_FROM_TIER",
-      "eligibility_status": "PROPOSED_NOT_APPROVED",
-      "selection_available": false
+      "selection_available": false,
+      "product_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "access_condition": "AUTHORITATIVE_PUBLISHED_AVAILABLE_PRODUCT_AND_ELIGIBLE_MEMBER",
+      "tier_capacity": "INHERITED"
     },
     {
       "proposal_id": "catalog-v1-apple",
@@ -249,10 +249,10 @@
       "registration_ready": false,
       "registration_status": "APPROVED_CATALOG_COMMAND_REQUIRED",
       "policy_status": "POLICY_APPROVAL_REQUIRED",
-      "minimum_funding_tier": "L3",
-      "minimum_eligible_principal": "DERIVED_FROM_TIER",
-      "eligibility_status": "PROPOSED_NOT_APPROVED",
-      "selection_available": false
+      "selection_available": false,
+      "product_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "access_condition": "AUTHORITATIVE_PUBLISHED_AVAILABLE_PRODUCT_AND_ELIGIBLE_MEMBER",
+      "tier_capacity": "INHERITED"
     },
     {
       "proposal_id": "catalog-v1-naver",
@@ -285,10 +285,10 @@
       "registration_ready": false,
       "registration_status": "APPROVED_CATALOG_COMMAND_REQUIRED",
       "policy_status": "POLICY_APPROVAL_REQUIRED",
-      "minimum_funding_tier": "L3",
-      "minimum_eligible_principal": "DERIVED_FROM_TIER",
-      "eligibility_status": "PROPOSED_NOT_APPROVED",
-      "selection_available": false
+      "selection_available": false,
+      "product_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "access_condition": "AUTHORITATIVE_PUBLISHED_AVAILABLE_PRODUCT_AND_ELIGIBLE_MEMBER",
+      "tier_capacity": "INHERITED"
     },
     {
       "proposal_id": "catalog-v1-hyundai-motor",
@@ -321,10 +321,10 @@
       "registration_ready": false,
       "registration_status": "APPROVED_CATALOG_COMMAND_REQUIRED",
       "policy_status": "POLICY_APPROVAL_REQUIRED",
-      "minimum_funding_tier": "L4",
-      "minimum_eligible_principal": "DERIVED_FROM_TIER",
-      "eligibility_status": "PROPOSED_NOT_APPROVED",
-      "selection_available": false
+      "selection_available": false,
+      "product_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "access_condition": "AUTHORITATIVE_PUBLISHED_AVAILABLE_PRODUCT_AND_ELIGIBLE_MEMBER",
+      "tier_capacity": "INHERITED"
     },
     {
       "proposal_id": "catalog-v1-microsoft",
@@ -356,10 +356,10 @@
       "registration_ready": false,
       "registration_status": "APPROVED_CATALOG_COMMAND_REQUIRED",
       "policy_status": "POLICY_APPROVAL_REQUIRED",
-      "minimum_funding_tier": "L4",
-      "minimum_eligible_principal": "DERIVED_FROM_TIER",
-      "eligibility_status": "PROPOSED_NOT_APPROVED",
-      "selection_available": false
+      "selection_available": false,
+      "product_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "access_condition": "AUTHORITATIVE_PUBLISHED_AVAILABLE_PRODUCT_AND_ELIGIBLE_MEMBER",
+      "tier_capacity": "INHERITED"
     },
     {
       "proposal_id": "catalog-v1-lg-energy-solution",
@@ -392,10 +392,10 @@
       "registration_ready": false,
       "registration_status": "APPROVED_CATALOG_COMMAND_REQUIRED",
       "policy_status": "POLICY_APPROVAL_REQUIRED",
-      "minimum_funding_tier": "L5",
-      "minimum_eligible_principal": "DERIVED_FROM_TIER",
-      "eligibility_status": "PROPOSED_NOT_APPROVED",
-      "selection_available": false
+      "selection_available": false,
+      "product_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "access_condition": "AUTHORITATIVE_PUBLISHED_AVAILABLE_PRODUCT_AND_ELIGIBLE_MEMBER",
+      "tier_capacity": "INHERITED"
     },
     {
       "proposal_id": "catalog-v1-amazon",
@@ -428,10 +428,10 @@
       "registration_ready": false,
       "registration_status": "APPROVED_CATALOG_COMMAND_REQUIRED",
       "policy_status": "POLICY_APPROVAL_REQUIRED",
-      "minimum_funding_tier": "L5",
-      "minimum_eligible_principal": "DERIVED_FROM_TIER",
-      "eligibility_status": "PROPOSED_NOT_APPROVED",
-      "selection_available": false
+      "selection_available": false,
+      "product_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "access_condition": "AUTHORITATIVE_PUBLISHED_AVAILABLE_PRODUCT_AND_ELIGIBLE_MEMBER",
+      "tier_capacity": "INHERITED"
     },
     {
       "proposal_id": "catalog-v1-samsung-electronics",
@@ -463,10 +463,10 @@
       "registration_ready": false,
       "registration_status": "APPROVED_CATALOG_COMMAND_REQUIRED",
       "policy_status": "POLICY_APPROVAL_REQUIRED",
-      "minimum_funding_tier": "L6",
-      "minimum_eligible_principal": "DERIVED_FROM_TIER",
-      "eligibility_status": "PROPOSED_NOT_APPROVED",
-      "selection_available": false
+      "selection_available": false,
+      "product_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "access_condition": "AUTHORITATIVE_PUBLISHED_AVAILABLE_PRODUCT_AND_ELIGIBLE_MEMBER",
+      "tier_capacity": "INHERITED"
     },
     {
       "proposal_id": "catalog-v1-soxx",
@@ -499,10 +499,10 @@
       "registration_ready": false,
       "registration_status": "APPROVED_CATALOG_COMMAND_REQUIRED",
       "policy_status": "POLICY_APPROVAL_REQUIRED",
-      "minimum_funding_tier": "L6",
-      "minimum_eligible_principal": "DERIVED_FROM_TIER",
-      "eligibility_status": "PROPOSED_NOT_APPROVED",
-      "selection_available": false
+      "selection_available": false,
+      "product_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "access_condition": "AUTHORITATIVE_PUBLISHED_AVAILABLE_PRODUCT_AND_ELIGIBLE_MEMBER",
+      "tier_capacity": "INHERITED"
     },
     {
       "proposal_id": "catalog-v1-ethereum",
@@ -534,10 +534,10 @@
       "registration_ready": false,
       "registration_status": "APPROVED_CATALOG_COMMAND_REQUIRED",
       "policy_status": "POLICY_APPROVAL_REQUIRED",
-      "minimum_funding_tier": "L7",
-      "minimum_eligible_principal": "DERIVED_FROM_TIER",
-      "eligibility_status": "PROPOSED_NOT_APPROVED",
-      "selection_available": false
+      "selection_available": false,
+      "product_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "access_condition": "AUTHORITATIVE_PUBLISHED_AVAILABLE_PRODUCT_AND_ELIGIBLE_MEMBER",
+      "tier_capacity": "INHERITED"
     },
     {
       "proposal_id": "catalog-v1-alphabet-a",
@@ -570,10 +570,10 @@
       "registration_ready": false,
       "registration_status": "APPROVED_CATALOG_COMMAND_REQUIRED",
       "policy_status": "POLICY_APPROVAL_REQUIRED",
-      "minimum_funding_tier": "L7",
-      "minimum_eligible_principal": "DERIVED_FROM_TIER",
-      "eligibility_status": "PROPOSED_NOT_APPROVED",
-      "selection_available": false
+      "selection_available": false,
+      "product_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "access_condition": "AUTHORITATIVE_PUBLISHED_AVAILABLE_PRODUCT_AND_ELIGIBLE_MEMBER",
+      "tier_capacity": "INHERITED"
     },
     {
       "proposal_id": "catalog-v1-qqq",
@@ -606,10 +606,10 @@
       "registration_ready": false,
       "registration_status": "APPROVED_CATALOG_COMMAND_REQUIRED",
       "policy_status": "POLICY_APPROVAL_REQUIRED",
-      "minimum_funding_tier": "L8",
-      "minimum_eligible_principal": "DERIVED_FROM_TIER",
-      "eligibility_status": "PROPOSED_NOT_APPROVED",
-      "selection_available": false
+      "selection_available": false,
+      "product_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "access_condition": "AUTHORITATIVE_PUBLISHED_AVAILABLE_PRODUCT_AND_ELIGIBLE_MEMBER",
+      "tier_capacity": "INHERITED"
     },
     {
       "proposal_id": "catalog-v1-solana",
@@ -642,10 +642,10 @@
       "registration_ready": false,
       "registration_status": "APPROVED_CATALOG_COMMAND_REQUIRED",
       "policy_status": "POLICY_APPROVAL_REQUIRED",
-      "minimum_funding_tier": "L8",
-      "minimum_eligible_principal": "DERIVED_FROM_TIER",
-      "eligibility_status": "PROPOSED_NOT_APPROVED",
-      "selection_available": false
+      "selection_available": false,
+      "product_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "access_condition": "AUTHORITATIVE_PUBLISHED_AVAILABLE_PRODUCT_AND_ELIGIBLE_MEMBER",
+      "tier_capacity": "INHERITED"
     },
     {
       "proposal_id": "catalog-v1-bitcoin",
@@ -677,10 +677,10 @@
       "registration_ready": false,
       "registration_status": "APPROVED_CATALOG_COMMAND_REQUIRED",
       "policy_status": "POLICY_APPROVAL_REQUIRED",
-      "minimum_funding_tier": "L9",
-      "minimum_eligible_principal": "DERIVED_FROM_TIER",
-      "eligibility_status": "PROPOSED_NOT_APPROVED",
-      "selection_available": false
+      "selection_available": false,
+      "product_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "access_condition": "AUTHORITATIVE_PUBLISHED_AVAILABLE_PRODUCT_AND_ELIGIBLE_MEMBER",
+      "tier_capacity": "INHERITED"
     },
     {
       "proposal_id": "catalog-v1-sandisk",
@@ -713,10 +713,10 @@
       "registration_ready": false,
       "registration_status": "APPROVED_CATALOG_COMMAND_REQUIRED",
       "policy_status": "POLICY_APPROVAL_REQUIRED",
-      "minimum_funding_tier": "L10",
-      "minimum_eligible_principal": "DERIVED_FROM_TIER",
-      "eligibility_status": "PROPOSED_NOT_APPROVED",
-      "selection_available": false
+      "selection_available": false,
+      "product_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "access_condition": "AUTHORITATIVE_PUBLISHED_AVAILABLE_PRODUCT_AND_ELIGIBLE_MEMBER",
+      "tier_capacity": "INHERITED"
     },
     {
       "proposal_id": "catalog-v1-sk-hynix",
@@ -748,10 +748,10 @@
       "registration_ready": false,
       "registration_status": "APPROVED_CATALOG_COMMAND_REQUIRED",
       "policy_status": "POLICY_APPROVAL_REQUIRED",
-      "minimum_funding_tier": "L11",
-      "minimum_eligible_principal": "DERIVED_FROM_TIER",
-      "eligibility_status": "PROPOSED_NOT_APPROVED",
-      "selection_available": false
+      "selection_available": false,
+      "product_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "access_condition": "AUTHORITATIVE_PUBLISHED_AVAILABLE_PRODUCT_AND_ELIGIBLE_MEMBER",
+      "tier_capacity": "INHERITED"
     },
     {
       "proposal_id": "catalog-v1-tesla",
@@ -784,10 +784,10 @@
       "registration_ready": false,
       "registration_status": "APPROVED_CATALOG_COMMAND_REQUIRED",
       "policy_status": "POLICY_APPROVAL_REQUIRED",
-      "minimum_funding_tier": "L11",
-      "minimum_eligible_principal": "DERIVED_FROM_TIER",
-      "eligibility_status": "PROPOSED_NOT_APPROVED",
-      "selection_available": false
+      "selection_available": false,
+      "product_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "access_condition": "AUTHORITATIVE_PUBLISHED_AVAILABLE_PRODUCT_AND_ELIGIBLE_MEMBER",
+      "tier_capacity": "INHERITED"
     },
     {
       "proposal_id": "catalog-v1-rocket-lab",
@@ -820,10 +820,10 @@
       "registration_ready": false,
       "registration_status": "APPROVED_CATALOG_COMMAND_REQUIRED",
       "policy_status": "POLICY_APPROVAL_REQUIRED",
-      "minimum_funding_tier": "L12",
-      "minimum_eligible_principal": "DERIVED_FROM_TIER",
-      "eligibility_status": "PROPOSED_NOT_APPROVED",
-      "selection_available": false
+      "selection_available": false,
+      "product_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "access_condition": "AUTHORITATIVE_PUBLISHED_AVAILABLE_PRODUCT_AND_ELIGIBLE_MEMBER",
+      "tier_capacity": "INHERITED"
     },
     {
       "proposal_id": "catalog-v1-nvidia",
@@ -855,10 +855,10 @@
       "registration_ready": false,
       "registration_status": "APPROVED_CATALOG_COMMAND_REQUIRED",
       "policy_status": "POLICY_APPROVAL_REQUIRED",
-      "minimum_funding_tier": "L13",
-      "minimum_eligible_principal": "DERIVED_FROM_TIER",
-      "eligibility_status": "PROPOSED_NOT_APPROVED",
-      "selection_available": false
+      "selection_available": false,
+      "product_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "access_condition": "AUTHORITATIVE_PUBLISHED_AVAILABLE_PRODUCT_AND_ELIGIBLE_MEMBER",
+      "tier_capacity": "INHERITED"
     },
     {
       "proposal_id": "catalog-v1-spacex",
@@ -891,10 +891,10 @@
       "registration_ready": false,
       "registration_status": "APPROVED_CATALOG_COMMAND_REQUIRED",
       "policy_status": "POLICY_APPROVAL_REQUIRED",
-      "minimum_funding_tier": "L14",
-      "minimum_eligible_principal": "DERIVED_FROM_TIER",
-      "eligibility_status": "PROPOSED_NOT_APPROVED",
-      "selection_available": false
+      "selection_available": false,
+      "product_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "access_condition": "AUTHORITATIVE_PUBLISHED_AVAILABLE_PRODUCT_AND_ELIGIBLE_MEMBER",
+      "tier_capacity": "INHERITED"
     }
   ]
 }

@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "formatter": "Prettier 3.9.9",
+  "files_checked": 68,
+  "exit_code": 0,
+  "package_json_changed": false,
+  "pnpm_lock_changed": false
+}

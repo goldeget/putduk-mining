@@ -1,3 +1,9 @@
+# SUPERSEDED_BY_OWNER_CORRECTION
+
+아래는 과거 기록이며 최종 추천 또는 구현 요구로 사용하지 않는다. Owner가 상품별 최소 Funding Tier·해금·Tier 하향에 따른 상품 잠금/PAUSE를 폐기했다. 현재 기준은 PRODUCT-ACCESS-POLICY.md와 TIER-MINING-POWER-MODEL.md다. 원본 SHA256은 evidence/superseded-tier-gate/manifest.json에 보존한다.
+
+---
+
 # Tier-aware 선택 폭과 편중 분석
 
 NORMALIZED_INDEX_ONLY, 실제 수익/지급액 예측이 아니다. 승인 SSOT 14단계의 남은 인정 원금 범위와 slot을 그대로 참조했다. 아래 금액은 상품별 문턱이 아니라 정책 참조 표이며 회원 홍보 원고에 사용하지 않는다. live effective_from은 UNKNOWN이다. 각 비교는 해당 Tier의 accessible_product_set에만 적용한다. 모든 회원이 25개 전부 선택한다는 가정은 제거했다.

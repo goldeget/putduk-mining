@@ -1,0 +1,6194 @@
+{
+  "schema_version": 2,
+  "simulation_type": "NORMALIZED_INDEX_ONLY_TIER_GATED",
+  "source_base_sha": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+  "live_policy_confirmed": false,
+  "money_authority": "NONE_OFFLINE_PROPOSAL",
+  "market_price_inputs": [],
+  "existing_document_cycle_days": 30,
+  "capacity_index_base": "100",
+  "internal_micro_krw_per_krw": "1000000",
+  "recommended_policy": "A",
+  "recommended_band": "1.00–1.10",
+  "products": [
+    {
+      "proposal_id": "catalog-v1-gold",
+      "slug": "gold",
+      "proposed_speed": "1.00",
+      "minimum_funding_tier": "L1",
+      "A": {
+        "speed": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "10",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "30",
+          "denominator": "1"
+        },
+        "days_to_cap_display": "30.000000"
+      },
+      "B": {
+        "status": "REJECTED_PRODUCT_CAPACITY_VARIATION_NOT_RECOMMENDED"
+      },
+      "C": {
+        "speed": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "10",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "30",
+          "denominator": "1"
+        },
+        "days_to_cap_display": "30.000000",
+        "status": "COMPARISON_ONLY_PERSONALITY_MODEL"
+      },
+      "headroom_factor_to_final_cap": {
+        "numerator": "3",
+        "denominator": "2"
+      },
+      "stack_examples": [
+        {
+          "name": "product_only",
+          "raw": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "final": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "capped": false,
+          "raw_display": "1.000000",
+          "final_display": "1.000000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event_temporary",
+          "raw": {
+            "numerator": "5313",
+            "denominator": "4000"
+          },
+          "final": {
+            "numerator": "5313",
+            "denominator": "4000"
+          },
+          "capped": false,
+          "raw_display": "1.328250",
+          "final_display": "1.328250",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "cap_pressure",
+          "raw": {
+            "numerator": "33",
+            "denominator": "20"
+          },
+          "final": {
+            "numerator": "3",
+            "denominator": "2"
+          },
+          "capped": true,
+          "raw_display": "1.650000",
+          "final_display": "1.500000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        }
+      ]
+    },
+    {
+      "proposal_id": "catalog-v1-silver",
+      "slug": "silver",
+      "proposed_speed": "1.01",
+      "minimum_funding_tier": "L1",
+      "A": {
+        "speed": {
+          "numerator": "101",
+          "denominator": "100"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "101",
+          "denominator": "30"
+        },
+        "days_to_cap": {
+          "numerator": "3000",
+          "denominator": "101"
+        },
+        "days_to_cap_display": "29.702970"
+      },
+      "B": {
+        "status": "REJECTED_PRODUCT_CAPACITY_VARIATION_NOT_RECOMMENDED"
+      },
+      "C": {
+        "speed": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "10",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "30",
+          "denominator": "1"
+        },
+        "days_to_cap_display": "30.000000",
+        "status": "COMPARISON_ONLY_PERSONALITY_MODEL"
+      },
+      "headroom_factor_to_final_cap": {
+        "numerator": "150",
+        "denominator": "101"
+      },
+      "stack_examples": [
+        {
+          "name": "product_only",
+          "raw": {
+            "numerator": "101",
+            "denominator": "100"
+          },
+          "final": {
+            "numerator": "101",
+            "denominator": "100"
+          },
+          "capped": false,
+          "raw_display": "1.010000",
+          "final_display": "1.010000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event_temporary",
+          "raw": {
+            "numerator": "536613",
+            "denominator": "400000"
+          },
+          "final": {
+            "numerator": "536613",
+            "denominator": "400000"
+          },
+          "capped": false,
+          "raw_display": "1.341532",
+          "final_display": "1.341532",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "cap_pressure",
+          "raw": {
+            "numerator": "3333",
+            "denominator": "2000"
+          },
+          "final": {
+            "numerator": "3",
+            "denominator": "2"
+          },
+          "capped": true,
+          "raw_display": "1.666500",
+          "final_display": "1.500000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        }
+      ]
+    },
+    {
+      "proposal_id": "catalog-v1-spy",
+      "slug": "spy",
+      "proposed_speed": "1.01",
+      "minimum_funding_tier": "L1",
+      "A": {
+        "speed": {
+          "numerator": "101",
+          "denominator": "100"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "101",
+          "denominator": "30"
+        },
+        "days_to_cap": {
+          "numerator": "3000",
+          "denominator": "101"
+        },
+        "days_to_cap_display": "29.702970"
+      },
+      "B": {
+        "status": "REJECTED_PRODUCT_CAPACITY_VARIATION_NOT_RECOMMENDED"
+      },
+      "C": {
+        "speed": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "10",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "30",
+          "denominator": "1"
+        },
+        "days_to_cap_display": "30.000000",
+        "status": "COMPARISON_ONLY_PERSONALITY_MODEL"
+      },
+      "headroom_factor_to_final_cap": {
+        "numerator": "150",
+        "denominator": "101"
+      },
+      "stack_examples": [
+        {
+          "name": "product_only",
+          "raw": {
+            "numerator": "101",
+            "denominator": "100"
+          },
+          "final": {
+            "numerator": "101",
+            "denominator": "100"
+          },
+          "capped": false,
+          "raw_display": "1.010000",
+          "final_display": "1.010000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event_temporary",
+          "raw": {
+            "numerator": "536613",
+            "denominator": "400000"
+          },
+          "final": {
+            "numerator": "536613",
+            "denominator": "400000"
+          },
+          "capped": false,
+          "raw_display": "1.341532",
+          "final_display": "1.341532",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "cap_pressure",
+          "raw": {
+            "numerator": "3333",
+            "denominator": "2000"
+          },
+          "final": {
+            "numerator": "3",
+            "denominator": "2"
+          },
+          "capped": true,
+          "raw_display": "1.666500",
+          "final_display": "1.500000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        }
+      ]
+    },
+    {
+      "proposal_id": "catalog-v1-kb-financial",
+      "slug": "kb-financial",
+      "proposed_speed": "1.01",
+      "minimum_funding_tier": "L1",
+      "A": {
+        "speed": {
+          "numerator": "101",
+          "denominator": "100"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "101",
+          "denominator": "30"
+        },
+        "days_to_cap": {
+          "numerator": "3000",
+          "denominator": "101"
+        },
+        "days_to_cap_display": "29.702970"
+      },
+      "B": {
+        "status": "REJECTED_PRODUCT_CAPACITY_VARIATION_NOT_RECOMMENDED"
+      },
+      "C": {
+        "speed": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "10",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "30",
+          "denominator": "1"
+        },
+        "days_to_cap_display": "30.000000",
+        "status": "COMPARISON_ONLY_PERSONALITY_MODEL"
+      },
+      "headroom_factor_to_final_cap": {
+        "numerator": "150",
+        "denominator": "101"
+      },
+      "stack_examples": [
+        {
+          "name": "product_only",
+          "raw": {
+            "numerator": "101",
+            "denominator": "100"
+          },
+          "final": {
+            "numerator": "101",
+            "denominator": "100"
+          },
+          "capped": false,
+          "raw_display": "1.010000",
+          "final_display": "1.010000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event_temporary",
+          "raw": {
+            "numerator": "536613",
+            "denominator": "400000"
+          },
+          "final": {
+            "numerator": "536613",
+            "denominator": "400000"
+          },
+          "capped": false,
+          "raw_display": "1.341532",
+          "final_display": "1.341532",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "cap_pressure",
+          "raw": {
+            "numerator": "3333",
+            "denominator": "2000"
+          },
+          "final": {
+            "numerator": "3",
+            "denominator": "2"
+          },
+          "capped": true,
+          "raw_display": "1.666500",
+          "final_display": "1.500000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        }
+      ]
+    },
+    {
+      "proposal_id": "catalog-v1-lg-electronics",
+      "slug": "lg-electronics",
+      "proposed_speed": "1.03",
+      "minimum_funding_tier": "L2",
+      "A": {
+        "speed": {
+          "numerator": "103",
+          "denominator": "100"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "103",
+          "denominator": "30"
+        },
+        "days_to_cap": {
+          "numerator": "3000",
+          "denominator": "103"
+        },
+        "days_to_cap_display": "29.126213"
+      },
+      "B": {
+        "status": "REJECTED_PRODUCT_CAPACITY_VARIATION_NOT_RECOMMENDED"
+      },
+      "C": {
+        "speed": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "10",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "30",
+          "denominator": "1"
+        },
+        "days_to_cap_display": "30.000000",
+        "status": "COMPARISON_ONLY_PERSONALITY_MODEL"
+      },
+      "headroom_factor_to_final_cap": {
+        "numerator": "150",
+        "denominator": "103"
+      },
+      "stack_examples": [
+        {
+          "name": "product_only",
+          "raw": {
+            "numerator": "103",
+            "denominator": "100"
+          },
+          "final": {
+            "numerator": "103",
+            "denominator": "100"
+          },
+          "capped": false,
+          "raw_display": "1.030000",
+          "final_display": "1.030000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event_temporary",
+          "raw": {
+            "numerator": "547239",
+            "denominator": "400000"
+          },
+          "final": {
+            "numerator": "547239",
+            "denominator": "400000"
+          },
+          "capped": false,
+          "raw_display": "1.368097",
+          "final_display": "1.368097",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "cap_pressure",
+          "raw": {
+            "numerator": "3399",
+            "denominator": "2000"
+          },
+          "final": {
+            "numerator": "3",
+            "denominator": "2"
+          },
+          "capped": true,
+          "raw_display": "1.699500",
+          "final_display": "1.500000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        }
+      ]
+    },
+    {
+      "proposal_id": "catalog-v1-schd",
+      "slug": "schd",
+      "proposed_speed": "1.03",
+      "minimum_funding_tier": "L2",
+      "A": {
+        "speed": {
+          "numerator": "103",
+          "denominator": "100"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "103",
+          "denominator": "30"
+        },
+        "days_to_cap": {
+          "numerator": "3000",
+          "denominator": "103"
+        },
+        "days_to_cap_display": "29.126213"
+      },
+      "B": {
+        "status": "REJECTED_PRODUCT_CAPACITY_VARIATION_NOT_RECOMMENDED"
+      },
+      "C": {
+        "speed": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "10",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "30",
+          "denominator": "1"
+        },
+        "days_to_cap_display": "30.000000",
+        "status": "COMPARISON_ONLY_PERSONALITY_MODEL"
+      },
+      "headroom_factor_to_final_cap": {
+        "numerator": "150",
+        "denominator": "103"
+      },
+      "stack_examples": [
+        {
+          "name": "product_only",
+          "raw": {
+            "numerator": "103",
+            "denominator": "100"
+          },
+          "final": {
+            "numerator": "103",
+            "denominator": "100"
+          },
+          "capped": false,
+          "raw_display": "1.030000",
+          "final_display": "1.030000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event_temporary",
+          "raw": {
+            "numerator": "547239",
+            "denominator": "400000"
+          },
+          "final": {
+            "numerator": "547239",
+            "denominator": "400000"
+          },
+          "capped": false,
+          "raw_display": "1.368097",
+          "final_display": "1.368097",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "cap_pressure",
+          "raw": {
+            "numerator": "3399",
+            "denominator": "2000"
+          },
+          "final": {
+            "numerator": "3",
+            "denominator": "2"
+          },
+          "capped": true,
+          "raw_display": "1.699500",
+          "final_display": "1.500000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        }
+      ]
+    },
+    {
+      "proposal_id": "catalog-v1-apple",
+      "slug": "apple",
+      "proposed_speed": "1.04",
+      "minimum_funding_tier": "L3",
+      "A": {
+        "speed": {
+          "numerator": "26",
+          "denominator": "25"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "52",
+          "denominator": "15"
+        },
+        "days_to_cap": {
+          "numerator": "375",
+          "denominator": "13"
+        },
+        "days_to_cap_display": "28.846153"
+      },
+      "B": {
+        "status": "REJECTED_PRODUCT_CAPACITY_VARIATION_NOT_RECOMMENDED"
+      },
+      "C": {
+        "speed": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "10",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "30",
+          "denominator": "1"
+        },
+        "days_to_cap_display": "30.000000",
+        "status": "COMPARISON_ONLY_PERSONALITY_MODEL"
+      },
+      "headroom_factor_to_final_cap": {
+        "numerator": "75",
+        "denominator": "52"
+      },
+      "stack_examples": [
+        {
+          "name": "product_only",
+          "raw": {
+            "numerator": "26",
+            "denominator": "25"
+          },
+          "final": {
+            "numerator": "26",
+            "denominator": "25"
+          },
+          "capped": false,
+          "raw_display": "1.040000",
+          "final_display": "1.040000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event_temporary",
+          "raw": {
+            "numerator": "69069",
+            "denominator": "50000"
+          },
+          "final": {
+            "numerator": "69069",
+            "denominator": "50000"
+          },
+          "capped": false,
+          "raw_display": "1.381380",
+          "final_display": "1.381380",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "cap_pressure",
+          "raw": {
+            "numerator": "429",
+            "denominator": "250"
+          },
+          "final": {
+            "numerator": "3",
+            "denominator": "2"
+          },
+          "capped": true,
+          "raw_display": "1.716000",
+          "final_display": "1.500000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        }
+      ]
+    },
+    {
+      "proposal_id": "catalog-v1-naver",
+      "slug": "naver",
+      "proposed_speed": "1.04",
+      "minimum_funding_tier": "L3",
+      "A": {
+        "speed": {
+          "numerator": "26",
+          "denominator": "25"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "52",
+          "denominator": "15"
+        },
+        "days_to_cap": {
+          "numerator": "375",
+          "denominator": "13"
+        },
+        "days_to_cap_display": "28.846153"
+      },
+      "B": {
+        "status": "REJECTED_PRODUCT_CAPACITY_VARIATION_NOT_RECOMMENDED"
+      },
+      "C": {
+        "speed": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "10",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "30",
+          "denominator": "1"
+        },
+        "days_to_cap_display": "30.000000",
+        "status": "COMPARISON_ONLY_PERSONALITY_MODEL"
+      },
+      "headroom_factor_to_final_cap": {
+        "numerator": "75",
+        "denominator": "52"
+      },
+      "stack_examples": [
+        {
+          "name": "product_only",
+          "raw": {
+            "numerator": "26",
+            "denominator": "25"
+          },
+          "final": {
+            "numerator": "26",
+            "denominator": "25"
+          },
+          "capped": false,
+          "raw_display": "1.040000",
+          "final_display": "1.040000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event_temporary",
+          "raw": {
+            "numerator": "69069",
+            "denominator": "50000"
+          },
+          "final": {
+            "numerator": "69069",
+            "denominator": "50000"
+          },
+          "capped": false,
+          "raw_display": "1.381380",
+          "final_display": "1.381380",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "cap_pressure",
+          "raw": {
+            "numerator": "429",
+            "denominator": "250"
+          },
+          "final": {
+            "numerator": "3",
+            "denominator": "2"
+          },
+          "capped": true,
+          "raw_display": "1.716000",
+          "final_display": "1.500000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        }
+      ]
+    },
+    {
+      "proposal_id": "catalog-v1-hyundai-motor",
+      "slug": "hyundai-motor",
+      "proposed_speed": "1.05",
+      "minimum_funding_tier": "L4",
+      "A": {
+        "speed": {
+          "numerator": "21",
+          "denominator": "20"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "7",
+          "denominator": "2"
+        },
+        "days_to_cap": {
+          "numerator": "200",
+          "denominator": "7"
+        },
+        "days_to_cap_display": "28.571428"
+      },
+      "B": {
+        "status": "REJECTED_PRODUCT_CAPACITY_VARIATION_NOT_RECOMMENDED"
+      },
+      "C": {
+        "speed": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "10",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "30",
+          "denominator": "1"
+        },
+        "days_to_cap_display": "30.000000",
+        "status": "COMPARISON_ONLY_PERSONALITY_MODEL"
+      },
+      "headroom_factor_to_final_cap": {
+        "numerator": "10",
+        "denominator": "7"
+      },
+      "stack_examples": [
+        {
+          "name": "product_only",
+          "raw": {
+            "numerator": "21",
+            "denominator": "20"
+          },
+          "final": {
+            "numerator": "21",
+            "denominator": "20"
+          },
+          "capped": false,
+          "raw_display": "1.050000",
+          "final_display": "1.050000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event_temporary",
+          "raw": {
+            "numerator": "111573",
+            "denominator": "80000"
+          },
+          "final": {
+            "numerator": "111573",
+            "denominator": "80000"
+          },
+          "capped": false,
+          "raw_display": "1.394662",
+          "final_display": "1.394662",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "cap_pressure",
+          "raw": {
+            "numerator": "693",
+            "denominator": "400"
+          },
+          "final": {
+            "numerator": "3",
+            "denominator": "2"
+          },
+          "capped": true,
+          "raw_display": "1.732500",
+          "final_display": "1.500000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        }
+      ]
+    },
+    {
+      "proposal_id": "catalog-v1-microsoft",
+      "slug": "microsoft",
+      "proposed_speed": "1.05",
+      "minimum_funding_tier": "L4",
+      "A": {
+        "speed": {
+          "numerator": "21",
+          "denominator": "20"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "7",
+          "denominator": "2"
+        },
+        "days_to_cap": {
+          "numerator": "200",
+          "denominator": "7"
+        },
+        "days_to_cap_display": "28.571428"
+      },
+      "B": {
+        "status": "REJECTED_PRODUCT_CAPACITY_VARIATION_NOT_RECOMMENDED"
+      },
+      "C": {
+        "speed": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "10",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "30",
+          "denominator": "1"
+        },
+        "days_to_cap_display": "30.000000",
+        "status": "COMPARISON_ONLY_PERSONALITY_MODEL"
+      },
+      "headroom_factor_to_final_cap": {
+        "numerator": "10",
+        "denominator": "7"
+      },
+      "stack_examples": [
+        {
+          "name": "product_only",
+          "raw": {
+            "numerator": "21",
+            "denominator": "20"
+          },
+          "final": {
+            "numerator": "21",
+            "denominator": "20"
+          },
+          "capped": false,
+          "raw_display": "1.050000",
+          "final_display": "1.050000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event_temporary",
+          "raw": {
+            "numerator": "111573",
+            "denominator": "80000"
+          },
+          "final": {
+            "numerator": "111573",
+            "denominator": "80000"
+          },
+          "capped": false,
+          "raw_display": "1.394662",
+          "final_display": "1.394662",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "cap_pressure",
+          "raw": {
+            "numerator": "693",
+            "denominator": "400"
+          },
+          "final": {
+            "numerator": "3",
+            "denominator": "2"
+          },
+          "capped": true,
+          "raw_display": "1.732500",
+          "final_display": "1.500000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        }
+      ]
+    },
+    {
+      "proposal_id": "catalog-v1-lg-energy-solution",
+      "slug": "lg-energy-solution",
+      "proposed_speed": "1.06",
+      "minimum_funding_tier": "L5",
+      "A": {
+        "speed": {
+          "numerator": "53",
+          "denominator": "50"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "53",
+          "denominator": "15"
+        },
+        "days_to_cap": {
+          "numerator": "1500",
+          "denominator": "53"
+        },
+        "days_to_cap_display": "28.301886"
+      },
+      "B": {
+        "status": "REJECTED_PRODUCT_CAPACITY_VARIATION_NOT_RECOMMENDED"
+      },
+      "C": {
+        "speed": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "10",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "30",
+          "denominator": "1"
+        },
+        "days_to_cap_display": "30.000000",
+        "status": "COMPARISON_ONLY_PERSONALITY_MODEL"
+      },
+      "headroom_factor_to_final_cap": {
+        "numerator": "75",
+        "denominator": "53"
+      },
+      "stack_examples": [
+        {
+          "name": "product_only",
+          "raw": {
+            "numerator": "53",
+            "denominator": "50"
+          },
+          "final": {
+            "numerator": "53",
+            "denominator": "50"
+          },
+          "capped": false,
+          "raw_display": "1.060000",
+          "final_display": "1.060000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event_temporary",
+          "raw": {
+            "numerator": "281589",
+            "denominator": "200000"
+          },
+          "final": {
+            "numerator": "281589",
+            "denominator": "200000"
+          },
+          "capped": false,
+          "raw_display": "1.407945",
+          "final_display": "1.407945",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "cap_pressure",
+          "raw": {
+            "numerator": "1749",
+            "denominator": "1000"
+          },
+          "final": {
+            "numerator": "3",
+            "denominator": "2"
+          },
+          "capped": true,
+          "raw_display": "1.749000",
+          "final_display": "1.500000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        }
+      ]
+    },
+    {
+      "proposal_id": "catalog-v1-amazon",
+      "slug": "amazon",
+      "proposed_speed": "1.06",
+      "minimum_funding_tier": "L5",
+      "A": {
+        "speed": {
+          "numerator": "53",
+          "denominator": "50"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "53",
+          "denominator": "15"
+        },
+        "days_to_cap": {
+          "numerator": "1500",
+          "denominator": "53"
+        },
+        "days_to_cap_display": "28.301886"
+      },
+      "B": {
+        "status": "REJECTED_PRODUCT_CAPACITY_VARIATION_NOT_RECOMMENDED"
+      },
+      "C": {
+        "speed": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "10",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "30",
+          "denominator": "1"
+        },
+        "days_to_cap_display": "30.000000",
+        "status": "COMPARISON_ONLY_PERSONALITY_MODEL"
+      },
+      "headroom_factor_to_final_cap": {
+        "numerator": "75",
+        "denominator": "53"
+      },
+      "stack_examples": [
+        {
+          "name": "product_only",
+          "raw": {
+            "numerator": "53",
+            "denominator": "50"
+          },
+          "final": {
+            "numerator": "53",
+            "denominator": "50"
+          },
+          "capped": false,
+          "raw_display": "1.060000",
+          "final_display": "1.060000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event_temporary",
+          "raw": {
+            "numerator": "281589",
+            "denominator": "200000"
+          },
+          "final": {
+            "numerator": "281589",
+            "denominator": "200000"
+          },
+          "capped": false,
+          "raw_display": "1.407945",
+          "final_display": "1.407945",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "cap_pressure",
+          "raw": {
+            "numerator": "1749",
+            "denominator": "1000"
+          },
+          "final": {
+            "numerator": "3",
+            "denominator": "2"
+          },
+          "capped": true,
+          "raw_display": "1.749000",
+          "final_display": "1.500000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        }
+      ]
+    },
+    {
+      "proposal_id": "catalog-v1-samsung-electronics",
+      "slug": "samsung-electronics",
+      "proposed_speed": "1.07",
+      "minimum_funding_tier": "L6",
+      "A": {
+        "speed": {
+          "numerator": "107",
+          "denominator": "100"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "107",
+          "denominator": "30"
+        },
+        "days_to_cap": {
+          "numerator": "3000",
+          "denominator": "107"
+        },
+        "days_to_cap_display": "28.037383"
+      },
+      "B": {
+        "status": "REJECTED_PRODUCT_CAPACITY_VARIATION_NOT_RECOMMENDED"
+      },
+      "C": {
+        "speed": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "10",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "30",
+          "denominator": "1"
+        },
+        "days_to_cap_display": "30.000000",
+        "status": "COMPARISON_ONLY_PERSONALITY_MODEL"
+      },
+      "headroom_factor_to_final_cap": {
+        "numerator": "150",
+        "denominator": "107"
+      },
+      "stack_examples": [
+        {
+          "name": "product_only",
+          "raw": {
+            "numerator": "107",
+            "denominator": "100"
+          },
+          "final": {
+            "numerator": "107",
+            "denominator": "100"
+          },
+          "capped": false,
+          "raw_display": "1.070000",
+          "final_display": "1.070000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event_temporary",
+          "raw": {
+            "numerator": "568491",
+            "denominator": "400000"
+          },
+          "final": {
+            "numerator": "568491",
+            "denominator": "400000"
+          },
+          "capped": false,
+          "raw_display": "1.421227",
+          "final_display": "1.421227",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "cap_pressure",
+          "raw": {
+            "numerator": "3531",
+            "denominator": "2000"
+          },
+          "final": {
+            "numerator": "3",
+            "denominator": "2"
+          },
+          "capped": true,
+          "raw_display": "1.765500",
+          "final_display": "1.500000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        }
+      ]
+    },
+    {
+      "proposal_id": "catalog-v1-soxx",
+      "slug": "soxx",
+      "proposed_speed": "1.07",
+      "minimum_funding_tier": "L6",
+      "A": {
+        "speed": {
+          "numerator": "107",
+          "denominator": "100"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "107",
+          "denominator": "30"
+        },
+        "days_to_cap": {
+          "numerator": "3000",
+          "denominator": "107"
+        },
+        "days_to_cap_display": "28.037383"
+      },
+      "B": {
+        "status": "REJECTED_PRODUCT_CAPACITY_VARIATION_NOT_RECOMMENDED"
+      },
+      "C": {
+        "speed": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "10",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "30",
+          "denominator": "1"
+        },
+        "days_to_cap_display": "30.000000",
+        "status": "COMPARISON_ONLY_PERSONALITY_MODEL"
+      },
+      "headroom_factor_to_final_cap": {
+        "numerator": "150",
+        "denominator": "107"
+      },
+      "stack_examples": [
+        {
+          "name": "product_only",
+          "raw": {
+            "numerator": "107",
+            "denominator": "100"
+          },
+          "final": {
+            "numerator": "107",
+            "denominator": "100"
+          },
+          "capped": false,
+          "raw_display": "1.070000",
+          "final_display": "1.070000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event_temporary",
+          "raw": {
+            "numerator": "568491",
+            "denominator": "400000"
+          },
+          "final": {
+            "numerator": "568491",
+            "denominator": "400000"
+          },
+          "capped": false,
+          "raw_display": "1.421227",
+          "final_display": "1.421227",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "cap_pressure",
+          "raw": {
+            "numerator": "3531",
+            "denominator": "2000"
+          },
+          "final": {
+            "numerator": "3",
+            "denominator": "2"
+          },
+          "capped": true,
+          "raw_display": "1.765500",
+          "final_display": "1.500000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        }
+      ]
+    },
+    {
+      "proposal_id": "catalog-v1-ethereum",
+      "slug": "ethereum",
+      "proposed_speed": "1.08",
+      "minimum_funding_tier": "L7",
+      "A": {
+        "speed": {
+          "numerator": "27",
+          "denominator": "25"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "18",
+          "denominator": "5"
+        },
+        "days_to_cap": {
+          "numerator": "250",
+          "denominator": "9"
+        },
+        "days_to_cap_display": "27.777777"
+      },
+      "B": {
+        "status": "REJECTED_PRODUCT_CAPACITY_VARIATION_NOT_RECOMMENDED"
+      },
+      "C": {
+        "speed": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "10",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "30",
+          "denominator": "1"
+        },
+        "days_to_cap_display": "30.000000",
+        "status": "COMPARISON_ONLY_PERSONALITY_MODEL"
+      },
+      "headroom_factor_to_final_cap": {
+        "numerator": "25",
+        "denominator": "18"
+      },
+      "stack_examples": [
+        {
+          "name": "product_only",
+          "raw": {
+            "numerator": "27",
+            "denominator": "25"
+          },
+          "final": {
+            "numerator": "27",
+            "denominator": "25"
+          },
+          "capped": false,
+          "raw_display": "1.080000",
+          "final_display": "1.080000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event_temporary",
+          "raw": {
+            "numerator": "143451",
+            "denominator": "100000"
+          },
+          "final": {
+            "numerator": "143451",
+            "denominator": "100000"
+          },
+          "capped": false,
+          "raw_display": "1.434510",
+          "final_display": "1.434510",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "cap_pressure",
+          "raw": {
+            "numerator": "891",
+            "denominator": "500"
+          },
+          "final": {
+            "numerator": "3",
+            "denominator": "2"
+          },
+          "capped": true,
+          "raw_display": "1.782000",
+          "final_display": "1.500000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        }
+      ]
+    },
+    {
+      "proposal_id": "catalog-v1-alphabet-a",
+      "slug": "alphabet-a",
+      "proposed_speed": "1.08",
+      "minimum_funding_tier": "L7",
+      "A": {
+        "speed": {
+          "numerator": "27",
+          "denominator": "25"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "18",
+          "denominator": "5"
+        },
+        "days_to_cap": {
+          "numerator": "250",
+          "denominator": "9"
+        },
+        "days_to_cap_display": "27.777777"
+      },
+      "B": {
+        "status": "REJECTED_PRODUCT_CAPACITY_VARIATION_NOT_RECOMMENDED"
+      },
+      "C": {
+        "speed": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "10",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "30",
+          "denominator": "1"
+        },
+        "days_to_cap_display": "30.000000",
+        "status": "COMPARISON_ONLY_PERSONALITY_MODEL"
+      },
+      "headroom_factor_to_final_cap": {
+        "numerator": "25",
+        "denominator": "18"
+      },
+      "stack_examples": [
+        {
+          "name": "product_only",
+          "raw": {
+            "numerator": "27",
+            "denominator": "25"
+          },
+          "final": {
+            "numerator": "27",
+            "denominator": "25"
+          },
+          "capped": false,
+          "raw_display": "1.080000",
+          "final_display": "1.080000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event_temporary",
+          "raw": {
+            "numerator": "143451",
+            "denominator": "100000"
+          },
+          "final": {
+            "numerator": "143451",
+            "denominator": "100000"
+          },
+          "capped": false,
+          "raw_display": "1.434510",
+          "final_display": "1.434510",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "cap_pressure",
+          "raw": {
+            "numerator": "891",
+            "denominator": "500"
+          },
+          "final": {
+            "numerator": "3",
+            "denominator": "2"
+          },
+          "capped": true,
+          "raw_display": "1.782000",
+          "final_display": "1.500000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        }
+      ]
+    },
+    {
+      "proposal_id": "catalog-v1-qqq",
+      "slug": "qqq",
+      "proposed_speed": "1.09",
+      "minimum_funding_tier": "L8",
+      "A": {
+        "speed": {
+          "numerator": "109",
+          "denominator": "100"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "109",
+          "denominator": "30"
+        },
+        "days_to_cap": {
+          "numerator": "3000",
+          "denominator": "109"
+        },
+        "days_to_cap_display": "27.522935"
+      },
+      "B": {
+        "status": "REJECTED_PRODUCT_CAPACITY_VARIATION_NOT_RECOMMENDED"
+      },
+      "C": {
+        "speed": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "10",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "30",
+          "denominator": "1"
+        },
+        "days_to_cap_display": "30.000000",
+        "status": "COMPARISON_ONLY_PERSONALITY_MODEL"
+      },
+      "headroom_factor_to_final_cap": {
+        "numerator": "150",
+        "denominator": "109"
+      },
+      "stack_examples": [
+        {
+          "name": "product_only",
+          "raw": {
+            "numerator": "109",
+            "denominator": "100"
+          },
+          "final": {
+            "numerator": "109",
+            "denominator": "100"
+          },
+          "capped": false,
+          "raw_display": "1.090000",
+          "final_display": "1.090000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event_temporary",
+          "raw": {
+            "numerator": "579117",
+            "denominator": "400000"
+          },
+          "final": {
+            "numerator": "579117",
+            "denominator": "400000"
+          },
+          "capped": false,
+          "raw_display": "1.447792",
+          "final_display": "1.447792",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "cap_pressure",
+          "raw": {
+            "numerator": "3597",
+            "denominator": "2000"
+          },
+          "final": {
+            "numerator": "3",
+            "denominator": "2"
+          },
+          "capped": true,
+          "raw_display": "1.798500",
+          "final_display": "1.500000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        }
+      ]
+    },
+    {
+      "proposal_id": "catalog-v1-solana",
+      "slug": "solana",
+      "proposed_speed": "1.09",
+      "minimum_funding_tier": "L8",
+      "A": {
+        "speed": {
+          "numerator": "109",
+          "denominator": "100"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "109",
+          "denominator": "30"
+        },
+        "days_to_cap": {
+          "numerator": "3000",
+          "denominator": "109"
+        },
+        "days_to_cap_display": "27.522935"
+      },
+      "B": {
+        "status": "REJECTED_PRODUCT_CAPACITY_VARIATION_NOT_RECOMMENDED"
+      },
+      "C": {
+        "speed": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "10",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "30",
+          "denominator": "1"
+        },
+        "days_to_cap_display": "30.000000",
+        "status": "COMPARISON_ONLY_PERSONALITY_MODEL"
+      },
+      "headroom_factor_to_final_cap": {
+        "numerator": "150",
+        "denominator": "109"
+      },
+      "stack_examples": [
+        {
+          "name": "product_only",
+          "raw": {
+            "numerator": "109",
+            "denominator": "100"
+          },
+          "final": {
+            "numerator": "109",
+            "denominator": "100"
+          },
+          "capped": false,
+          "raw_display": "1.090000",
+          "final_display": "1.090000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event_temporary",
+          "raw": {
+            "numerator": "579117",
+            "denominator": "400000"
+          },
+          "final": {
+            "numerator": "579117",
+            "denominator": "400000"
+          },
+          "capped": false,
+          "raw_display": "1.447792",
+          "final_display": "1.447792",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "cap_pressure",
+          "raw": {
+            "numerator": "3597",
+            "denominator": "2000"
+          },
+          "final": {
+            "numerator": "3",
+            "denominator": "2"
+          },
+          "capped": true,
+          "raw_display": "1.798500",
+          "final_display": "1.500000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        }
+      ]
+    },
+    {
+      "proposal_id": "catalog-v1-bitcoin",
+      "slug": "bitcoin",
+      "proposed_speed": "1.09",
+      "minimum_funding_tier": "L9",
+      "A": {
+        "speed": {
+          "numerator": "109",
+          "denominator": "100"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "109",
+          "denominator": "30"
+        },
+        "days_to_cap": {
+          "numerator": "3000",
+          "denominator": "109"
+        },
+        "days_to_cap_display": "27.522935"
+      },
+      "B": {
+        "status": "REJECTED_PRODUCT_CAPACITY_VARIATION_NOT_RECOMMENDED"
+      },
+      "C": {
+        "speed": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "10",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "30",
+          "denominator": "1"
+        },
+        "days_to_cap_display": "30.000000",
+        "status": "COMPARISON_ONLY_PERSONALITY_MODEL"
+      },
+      "headroom_factor_to_final_cap": {
+        "numerator": "150",
+        "denominator": "109"
+      },
+      "stack_examples": [
+        {
+          "name": "product_only",
+          "raw": {
+            "numerator": "109",
+            "denominator": "100"
+          },
+          "final": {
+            "numerator": "109",
+            "denominator": "100"
+          },
+          "capped": false,
+          "raw_display": "1.090000",
+          "final_display": "1.090000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event_temporary",
+          "raw": {
+            "numerator": "579117",
+            "denominator": "400000"
+          },
+          "final": {
+            "numerator": "579117",
+            "denominator": "400000"
+          },
+          "capped": false,
+          "raw_display": "1.447792",
+          "final_display": "1.447792",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "cap_pressure",
+          "raw": {
+            "numerator": "3597",
+            "denominator": "2000"
+          },
+          "final": {
+            "numerator": "3",
+            "denominator": "2"
+          },
+          "capped": true,
+          "raw_display": "1.798500",
+          "final_display": "1.500000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        }
+      ]
+    },
+    {
+      "proposal_id": "catalog-v1-sandisk",
+      "slug": "sandisk",
+      "proposed_speed": "1.09",
+      "minimum_funding_tier": "L10",
+      "A": {
+        "speed": {
+          "numerator": "109",
+          "denominator": "100"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "109",
+          "denominator": "30"
+        },
+        "days_to_cap": {
+          "numerator": "3000",
+          "denominator": "109"
+        },
+        "days_to_cap_display": "27.522935"
+      },
+      "B": {
+        "status": "REJECTED_PRODUCT_CAPACITY_VARIATION_NOT_RECOMMENDED"
+      },
+      "C": {
+        "speed": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "10",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "30",
+          "denominator": "1"
+        },
+        "days_to_cap_display": "30.000000",
+        "status": "COMPARISON_ONLY_PERSONALITY_MODEL"
+      },
+      "headroom_factor_to_final_cap": {
+        "numerator": "150",
+        "denominator": "109"
+      },
+      "stack_examples": [
+        {
+          "name": "product_only",
+          "raw": {
+            "numerator": "109",
+            "denominator": "100"
+          },
+          "final": {
+            "numerator": "109",
+            "denominator": "100"
+          },
+          "capped": false,
+          "raw_display": "1.090000",
+          "final_display": "1.090000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event_temporary",
+          "raw": {
+            "numerator": "579117",
+            "denominator": "400000"
+          },
+          "final": {
+            "numerator": "579117",
+            "denominator": "400000"
+          },
+          "capped": false,
+          "raw_display": "1.447792",
+          "final_display": "1.447792",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "cap_pressure",
+          "raw": {
+            "numerator": "3597",
+            "denominator": "2000"
+          },
+          "final": {
+            "numerator": "3",
+            "denominator": "2"
+          },
+          "capped": true,
+          "raw_display": "1.798500",
+          "final_display": "1.500000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        }
+      ]
+    },
+    {
+      "proposal_id": "catalog-v1-sk-hynix",
+      "slug": "sk-hynix",
+      "proposed_speed": "1.10",
+      "minimum_funding_tier": "L11",
+      "A": {
+        "speed": {
+          "numerator": "11",
+          "denominator": "10"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "11",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "300",
+          "denominator": "11"
+        },
+        "days_to_cap_display": "27.272727"
+      },
+      "B": {
+        "status": "REJECTED_PRODUCT_CAPACITY_VARIATION_NOT_RECOMMENDED"
+      },
+      "C": {
+        "speed": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "10",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "30",
+          "denominator": "1"
+        },
+        "days_to_cap_display": "30.000000",
+        "status": "COMPARISON_ONLY_PERSONALITY_MODEL"
+      },
+      "headroom_factor_to_final_cap": {
+        "numerator": "15",
+        "denominator": "11"
+      },
+      "stack_examples": [
+        {
+          "name": "product_only",
+          "raw": {
+            "numerator": "11",
+            "denominator": "10"
+          },
+          "final": {
+            "numerator": "11",
+            "denominator": "10"
+          },
+          "capped": false,
+          "raw_display": "1.100000",
+          "final_display": "1.100000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event_temporary",
+          "raw": {
+            "numerator": "58443",
+            "denominator": "40000"
+          },
+          "final": {
+            "numerator": "58443",
+            "denominator": "40000"
+          },
+          "capped": false,
+          "raw_display": "1.461075",
+          "final_display": "1.461075",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "cap_pressure",
+          "raw": {
+            "numerator": "363",
+            "denominator": "200"
+          },
+          "final": {
+            "numerator": "3",
+            "denominator": "2"
+          },
+          "capped": true,
+          "raw_display": "1.815000",
+          "final_display": "1.500000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        }
+      ]
+    },
+    {
+      "proposal_id": "catalog-v1-tesla",
+      "slug": "tesla",
+      "proposed_speed": "1.10",
+      "minimum_funding_tier": "L11",
+      "A": {
+        "speed": {
+          "numerator": "11",
+          "denominator": "10"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "11",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "300",
+          "denominator": "11"
+        },
+        "days_to_cap_display": "27.272727"
+      },
+      "B": {
+        "status": "REJECTED_PRODUCT_CAPACITY_VARIATION_NOT_RECOMMENDED"
+      },
+      "C": {
+        "speed": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "10",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "30",
+          "denominator": "1"
+        },
+        "days_to_cap_display": "30.000000",
+        "status": "COMPARISON_ONLY_PERSONALITY_MODEL"
+      },
+      "headroom_factor_to_final_cap": {
+        "numerator": "15",
+        "denominator": "11"
+      },
+      "stack_examples": [
+        {
+          "name": "product_only",
+          "raw": {
+            "numerator": "11",
+            "denominator": "10"
+          },
+          "final": {
+            "numerator": "11",
+            "denominator": "10"
+          },
+          "capped": false,
+          "raw_display": "1.100000",
+          "final_display": "1.100000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event_temporary",
+          "raw": {
+            "numerator": "58443",
+            "denominator": "40000"
+          },
+          "final": {
+            "numerator": "58443",
+            "denominator": "40000"
+          },
+          "capped": false,
+          "raw_display": "1.461075",
+          "final_display": "1.461075",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "cap_pressure",
+          "raw": {
+            "numerator": "363",
+            "denominator": "200"
+          },
+          "final": {
+            "numerator": "3",
+            "denominator": "2"
+          },
+          "capped": true,
+          "raw_display": "1.815000",
+          "final_display": "1.500000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        }
+      ]
+    },
+    {
+      "proposal_id": "catalog-v1-rocket-lab",
+      "slug": "rocket-lab",
+      "proposed_speed": "1.10",
+      "minimum_funding_tier": "L12",
+      "A": {
+        "speed": {
+          "numerator": "11",
+          "denominator": "10"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "11",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "300",
+          "denominator": "11"
+        },
+        "days_to_cap_display": "27.272727"
+      },
+      "B": {
+        "status": "REJECTED_PRODUCT_CAPACITY_VARIATION_NOT_RECOMMENDED"
+      },
+      "C": {
+        "speed": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "10",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "30",
+          "denominator": "1"
+        },
+        "days_to_cap_display": "30.000000",
+        "status": "COMPARISON_ONLY_PERSONALITY_MODEL"
+      },
+      "headroom_factor_to_final_cap": {
+        "numerator": "15",
+        "denominator": "11"
+      },
+      "stack_examples": [
+        {
+          "name": "product_only",
+          "raw": {
+            "numerator": "11",
+            "denominator": "10"
+          },
+          "final": {
+            "numerator": "11",
+            "denominator": "10"
+          },
+          "capped": false,
+          "raw_display": "1.100000",
+          "final_display": "1.100000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event_temporary",
+          "raw": {
+            "numerator": "58443",
+            "denominator": "40000"
+          },
+          "final": {
+            "numerator": "58443",
+            "denominator": "40000"
+          },
+          "capped": false,
+          "raw_display": "1.461075",
+          "final_display": "1.461075",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "cap_pressure",
+          "raw": {
+            "numerator": "363",
+            "denominator": "200"
+          },
+          "final": {
+            "numerator": "3",
+            "denominator": "2"
+          },
+          "capped": true,
+          "raw_display": "1.815000",
+          "final_display": "1.500000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        }
+      ]
+    },
+    {
+      "proposal_id": "catalog-v1-nvidia",
+      "slug": "nvidia",
+      "proposed_speed": "1.10",
+      "minimum_funding_tier": "L13",
+      "A": {
+        "speed": {
+          "numerator": "11",
+          "denominator": "10"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "11",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "300",
+          "denominator": "11"
+        },
+        "days_to_cap_display": "27.272727"
+      },
+      "B": {
+        "status": "REJECTED_PRODUCT_CAPACITY_VARIATION_NOT_RECOMMENDED"
+      },
+      "C": {
+        "speed": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "10",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "30",
+          "denominator": "1"
+        },
+        "days_to_cap_display": "30.000000",
+        "status": "COMPARISON_ONLY_PERSONALITY_MODEL"
+      },
+      "headroom_factor_to_final_cap": {
+        "numerator": "15",
+        "denominator": "11"
+      },
+      "stack_examples": [
+        {
+          "name": "product_only",
+          "raw": {
+            "numerator": "11",
+            "denominator": "10"
+          },
+          "final": {
+            "numerator": "11",
+            "denominator": "10"
+          },
+          "capped": false,
+          "raw_display": "1.100000",
+          "final_display": "1.100000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event_temporary",
+          "raw": {
+            "numerator": "58443",
+            "denominator": "40000"
+          },
+          "final": {
+            "numerator": "58443",
+            "denominator": "40000"
+          },
+          "capped": false,
+          "raw_display": "1.461075",
+          "final_display": "1.461075",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "cap_pressure",
+          "raw": {
+            "numerator": "363",
+            "denominator": "200"
+          },
+          "final": {
+            "numerator": "3",
+            "denominator": "2"
+          },
+          "capped": true,
+          "raw_display": "1.815000",
+          "final_display": "1.500000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        }
+      ]
+    },
+    {
+      "proposal_id": "catalog-v1-spacex",
+      "slug": "spacex",
+      "proposed_speed": "1.10",
+      "minimum_funding_tier": "L14",
+      "A": {
+        "speed": {
+          "numerator": "11",
+          "denominator": "10"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "11",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "300",
+          "denominator": "11"
+        },
+        "days_to_cap_display": "27.272727"
+      },
+      "B": {
+        "status": "REJECTED_PRODUCT_CAPACITY_VARIATION_NOT_RECOMMENDED"
+      },
+      "C": {
+        "speed": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "10",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "30",
+          "denominator": "1"
+        },
+        "days_to_cap_display": "30.000000",
+        "status": "COMPARISON_ONLY_PERSONALITY_MODEL"
+      },
+      "headroom_factor_to_final_cap": {
+        "numerator": "15",
+        "denominator": "11"
+      },
+      "stack_examples": [
+        {
+          "name": "product_only",
+          "raw": {
+            "numerator": "11",
+            "denominator": "10"
+          },
+          "final": {
+            "numerator": "11",
+            "denominator": "10"
+          },
+          "capped": false,
+          "raw_display": "1.100000",
+          "final_display": "1.100000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event_temporary",
+          "raw": {
+            "numerator": "58443",
+            "denominator": "40000"
+          },
+          "final": {
+            "numerator": "58443",
+            "denominator": "40000"
+          },
+          "capped": false,
+          "raw_display": "1.461075",
+          "final_display": "1.461075",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "cap_pressure",
+          "raw": {
+            "numerator": "363",
+            "denominator": "200"
+          },
+          "final": {
+            "numerator": "3",
+            "denominator": "2"
+          },
+          "capped": true,
+          "raw_display": "1.815000",
+          "final_display": "1.500000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        }
+      ]
+    }
+  ],
+  "comparison_bands": [
+    {
+      "name": "1.00–1.10",
+      "status": "PROPOSED_NOT_APPROVED",
+      "minimum_speed": "1.00",
+      "maximum_speed": "1.10",
+      "mapping": "LINEAR_REMAP_FROM_1_00_1_10_FLOOR_TO_0_01_FIXED_POINT",
+      "policy_version_change_required": true,
+      "approved_document_band_change_required": false,
+      "product_speed_bps": [
+        {
+          "proposal_id": "catalog-v1-gold",
+          "bps": "10000"
+        },
+        {
+          "proposal_id": "catalog-v1-silver",
+          "bps": "10100"
+        },
+        {
+          "proposal_id": "catalog-v1-spy",
+          "bps": "10100"
+        },
+        {
+          "proposal_id": "catalog-v1-kb-financial",
+          "bps": "10100"
+        },
+        {
+          "proposal_id": "catalog-v1-lg-electronics",
+          "bps": "10300"
+        },
+        {
+          "proposal_id": "catalog-v1-schd",
+          "bps": "10300"
+        },
+        {
+          "proposal_id": "catalog-v1-apple",
+          "bps": "10400"
+        },
+        {
+          "proposal_id": "catalog-v1-naver",
+          "bps": "10400"
+        },
+        {
+          "proposal_id": "catalog-v1-hyundai-motor",
+          "bps": "10500"
+        },
+        {
+          "proposal_id": "catalog-v1-microsoft",
+          "bps": "10500"
+        },
+        {
+          "proposal_id": "catalog-v1-lg-energy-solution",
+          "bps": "10600"
+        },
+        {
+          "proposal_id": "catalog-v1-amazon",
+          "bps": "10600"
+        },
+        {
+          "proposal_id": "catalog-v1-samsung-electronics",
+          "bps": "10700"
+        },
+        {
+          "proposal_id": "catalog-v1-soxx",
+          "bps": "10700"
+        },
+        {
+          "proposal_id": "catalog-v1-ethereum",
+          "bps": "10800"
+        },
+        {
+          "proposal_id": "catalog-v1-alphabet-a",
+          "bps": "10800"
+        },
+        {
+          "proposal_id": "catalog-v1-qqq",
+          "bps": "10900"
+        },
+        {
+          "proposal_id": "catalog-v1-solana",
+          "bps": "10900"
+        },
+        {
+          "proposal_id": "catalog-v1-bitcoin",
+          "bps": "10900"
+        },
+        {
+          "proposal_id": "catalog-v1-sandisk",
+          "bps": "10900"
+        },
+        {
+          "proposal_id": "catalog-v1-sk-hynix",
+          "bps": "11000"
+        },
+        {
+          "proposal_id": "catalog-v1-tesla",
+          "bps": "11000"
+        },
+        {
+          "proposal_id": "catalog-v1-rocket-lab",
+          "bps": "11000"
+        },
+        {
+          "proposal_id": "catalog-v1-nvidia",
+          "bps": "11000"
+        },
+        {
+          "proposal_id": "catalog-v1-spacex",
+          "bps": "11000"
+        }
+      ],
+      "fastest_days_to_cap": {
+        "numerator": "300",
+        "denominator": "11"
+      },
+      "fastest_headroom": {
+        "numerator": "15",
+        "denominator": "11"
+      },
+      "moderate_stack_capped_count": 0,
+      "tiers": [
+        {
+          "tier": "L1",
+          "principal_range_krw_from_ssot_only": ["100000", "499999"],
+          "tier_name_from_ssot": "STARTER",
+          "slots_from_ssot": 1,
+          "retention_bps_from_ssot": 1500,
+          "available_product_count": 4,
+          "eligible_product_ids": [
+            "catalog-v1-gold",
+            "catalog-v1-silver",
+            "catalog-v1-spy",
+            "catalog-v1-kb-financial"
+          ],
+          "newly_unlocked": ["gold", "silver", "spy", "kb-financial"],
+          "fastest_products": ["silver", "spy", "kb-financial"],
+          "slowest_speed": "1.00",
+          "fastest_speed": "1.01",
+          "mean_speed": {
+            "numerator": "403",
+            "denominator": "400"
+          },
+          "fastest_vs_average": {
+            "numerator": "404",
+            "denominator": "403"
+          },
+          "spread_ratio": {
+            "numerator": "101",
+            "denominator": "100"
+          },
+          "days_to_base_cap_fastest": {
+            "numerator": "3000",
+            "denominator": "101"
+          },
+          "days_to_base_cap_slowest": {
+            "numerator": "30",
+            "denominator": "1"
+          },
+          "day_difference": {
+            "numerator": "30",
+            "denominator": "101"
+          },
+          "fastest_modifier_headroom": {
+            "numerator": "150",
+            "denominator": "101"
+          },
+          "fastest_pool_size": 3,
+          "speed_only_top_pool_share": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "hypothetical_equal_tie_share_each": {
+            "numerator": "1",
+            "denominator": "3"
+          },
+          "tie_share_assumption": "ILLUSTRATIVE_UNIFORM_TIE_BREAK_NOT_OBSERVED_MEMBER_BEHAVIOR",
+          "asset_classes": ["PRECIOUS", "ETF", "KR_STOCK"],
+          "top_asset_classes": ["PRECIOUS", "ETF", "KR_STOCK"],
+          "next_unlock": "L2",
+          "global_base_capacity_index": "100",
+          "product_capacity_override": null,
+          "risk": "SLOWER_AVAILABLE_CHOICES_REMAIN_SPEED_ONLY_DOMINATED_NO_RANDOM_COMPENSATION"
+        },
+        {
+          "tier": "L2",
+          "principal_range_krw_from_ssot_only": ["500000", "999999"],
+          "tier_name_from_ssot": "STARTER+",
+          "slots_from_ssot": 1,
+          "retention_bps_from_ssot": 1600,
+          "available_product_count": 6,
+          "eligible_product_ids": [
+            "catalog-v1-gold",
+            "catalog-v1-silver",
+            "catalog-v1-spy",
+            "catalog-v1-kb-financial",
+            "catalog-v1-lg-electronics",
+            "catalog-v1-schd"
+          ],
+          "newly_unlocked": ["lg-electronics", "schd"],
+          "fastest_products": ["lg-electronics", "schd"],
+          "slowest_speed": "1.00",
+          "fastest_speed": "1.03",
+          "mean_speed": {
+            "numerator": "203",
+            "denominator": "200"
+          },
+          "fastest_vs_average": {
+            "numerator": "206",
+            "denominator": "203"
+          },
+          "spread_ratio": {
+            "numerator": "103",
+            "denominator": "100"
+          },
+          "days_to_base_cap_fastest": {
+            "numerator": "3000",
+            "denominator": "103"
+          },
+          "days_to_base_cap_slowest": {
+            "numerator": "30",
+            "denominator": "1"
+          },
+          "day_difference": {
+            "numerator": "90",
+            "denominator": "103"
+          },
+          "fastest_modifier_headroom": {
+            "numerator": "150",
+            "denominator": "103"
+          },
+          "fastest_pool_size": 2,
+          "speed_only_top_pool_share": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "hypothetical_equal_tie_share_each": {
+            "numerator": "1",
+            "denominator": "2"
+          },
+          "tie_share_assumption": "ILLUSTRATIVE_UNIFORM_TIE_BREAK_NOT_OBSERVED_MEMBER_BEHAVIOR",
+          "asset_classes": ["PRECIOUS", "ETF", "KR_STOCK"],
+          "top_asset_classes": ["KR_STOCK", "ETF"],
+          "next_unlock": "L3",
+          "global_base_capacity_index": "100",
+          "product_capacity_override": null,
+          "risk": "SLOWER_AVAILABLE_CHOICES_REMAIN_SPEED_ONLY_DOMINATED_NO_RANDOM_COMPENSATION"
+        },
+        {
+          "tier": "L3",
+          "principal_range_krw_from_ssot_only": ["1000000", "2999999"],
+          "tier_name_from_ssot": "ACTIVE",
+          "slots_from_ssot": 2,
+          "retention_bps_from_ssot": 1700,
+          "available_product_count": 8,
+          "eligible_product_ids": [
+            "catalog-v1-gold",
+            "catalog-v1-silver",
+            "catalog-v1-spy",
+            "catalog-v1-kb-financial",
+            "catalog-v1-lg-electronics",
+            "catalog-v1-schd",
+            "catalog-v1-apple",
+            "catalog-v1-naver"
+          ],
+          "newly_unlocked": ["apple", "naver"],
+          "fastest_products": ["apple", "naver"],
+          "slowest_speed": "1.00",
+          "fastest_speed": "1.04",
+          "mean_speed": {
+            "numerator": "817",
+            "denominator": "800"
+          },
+          "fastest_vs_average": {
+            "numerator": "832",
+            "denominator": "817"
+          },
+          "spread_ratio": {
+            "numerator": "26",
+            "denominator": "25"
+          },
+          "days_to_base_cap_fastest": {
+            "numerator": "375",
+            "denominator": "13"
+          },
+          "days_to_base_cap_slowest": {
+            "numerator": "30",
+            "denominator": "1"
+          },
+          "day_difference": {
+            "numerator": "15",
+            "denominator": "13"
+          },
+          "fastest_modifier_headroom": {
+            "numerator": "75",
+            "denominator": "52"
+          },
+          "fastest_pool_size": 2,
+          "speed_only_top_pool_share": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "hypothetical_equal_tie_share_each": {
+            "numerator": "1",
+            "denominator": "2"
+          },
+          "tie_share_assumption": "ILLUSTRATIVE_UNIFORM_TIE_BREAK_NOT_OBSERVED_MEMBER_BEHAVIOR",
+          "asset_classes": ["PRECIOUS", "ETF", "KR_STOCK", "US_STOCK"],
+          "top_asset_classes": ["US_STOCK", "KR_STOCK"],
+          "next_unlock": "L4",
+          "global_base_capacity_index": "100",
+          "product_capacity_override": null,
+          "risk": "SLOWER_AVAILABLE_CHOICES_REMAIN_SPEED_ONLY_DOMINATED_NO_RANDOM_COMPENSATION"
+        },
+        {
+          "tier": "L4",
+          "principal_range_krw_from_ssot_only": ["3000000", "4999999"],
+          "tier_name_from_ssot": "ADVANCED",
+          "slots_from_ssot": 2,
+          "retention_bps_from_ssot": 1800,
+          "available_product_count": 10,
+          "eligible_product_ids": [
+            "catalog-v1-gold",
+            "catalog-v1-silver",
+            "catalog-v1-spy",
+            "catalog-v1-kb-financial",
+            "catalog-v1-lg-electronics",
+            "catalog-v1-schd",
+            "catalog-v1-apple",
+            "catalog-v1-naver",
+            "catalog-v1-hyundai-motor",
+            "catalog-v1-microsoft"
+          ],
+          "newly_unlocked": ["hyundai-motor", "microsoft"],
+          "fastest_products": ["hyundai-motor", "microsoft"],
+          "slowest_speed": "1.00",
+          "fastest_speed": "1.05",
+          "mean_speed": {
+            "numerator": "1027",
+            "denominator": "1000"
+          },
+          "fastest_vs_average": {
+            "numerator": "1050",
+            "denominator": "1027"
+          },
+          "spread_ratio": {
+            "numerator": "21",
+            "denominator": "20"
+          },
+          "days_to_base_cap_fastest": {
+            "numerator": "200",
+            "denominator": "7"
+          },
+          "days_to_base_cap_slowest": {
+            "numerator": "30",
+            "denominator": "1"
+          },
+          "day_difference": {
+            "numerator": "10",
+            "denominator": "7"
+          },
+          "fastest_modifier_headroom": {
+            "numerator": "10",
+            "denominator": "7"
+          },
+          "fastest_pool_size": 2,
+          "speed_only_top_pool_share": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "hypothetical_equal_tie_share_each": {
+            "numerator": "1",
+            "denominator": "2"
+          },
+          "tie_share_assumption": "ILLUSTRATIVE_UNIFORM_TIE_BREAK_NOT_OBSERVED_MEMBER_BEHAVIOR",
+          "asset_classes": ["PRECIOUS", "ETF", "KR_STOCK", "US_STOCK"],
+          "top_asset_classes": ["KR_STOCK", "US_STOCK"],
+          "next_unlock": "L5",
+          "global_base_capacity_index": "100",
+          "product_capacity_override": null,
+          "risk": "SLOWER_AVAILABLE_CHOICES_REMAIN_SPEED_ONLY_DOMINATED_NO_RANDOM_COMPENSATION"
+        },
+        {
+          "tier": "L5",
+          "principal_range_krw_from_ssot_only": ["5000000", "9999999"],
+          "tier_name_from_ssot": "PRO",
+          "slots_from_ssot": 2,
+          "retention_bps_from_ssot": 1900,
+          "available_product_count": 12,
+          "eligible_product_ids": [
+            "catalog-v1-gold",
+            "catalog-v1-silver",
+            "catalog-v1-spy",
+            "catalog-v1-kb-financial",
+            "catalog-v1-lg-electronics",
+            "catalog-v1-schd",
+            "catalog-v1-apple",
+            "catalog-v1-naver",
+            "catalog-v1-hyundai-motor",
+            "catalog-v1-microsoft",
+            "catalog-v1-lg-energy-solution",
+            "catalog-v1-amazon"
+          ],
+          "newly_unlocked": ["lg-energy-solution", "amazon"],
+          "fastest_products": ["lg-energy-solution", "amazon"],
+          "slowest_speed": "1.00",
+          "fastest_speed": "1.06",
+          "mean_speed": {
+            "numerator": "413",
+            "denominator": "400"
+          },
+          "fastest_vs_average": {
+            "numerator": "424",
+            "denominator": "413"
+          },
+          "spread_ratio": {
+            "numerator": "53",
+            "denominator": "50"
+          },
+          "days_to_base_cap_fastest": {
+            "numerator": "1500",
+            "denominator": "53"
+          },
+          "days_to_base_cap_slowest": {
+            "numerator": "30",
+            "denominator": "1"
+          },
+          "day_difference": {
+            "numerator": "90",
+            "denominator": "53"
+          },
+          "fastest_modifier_headroom": {
+            "numerator": "75",
+            "denominator": "53"
+          },
+          "fastest_pool_size": 2,
+          "speed_only_top_pool_share": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "hypothetical_equal_tie_share_each": {
+            "numerator": "1",
+            "denominator": "2"
+          },
+          "tie_share_assumption": "ILLUSTRATIVE_UNIFORM_TIE_BREAK_NOT_OBSERVED_MEMBER_BEHAVIOR",
+          "asset_classes": ["PRECIOUS", "ETF", "KR_STOCK", "US_STOCK"],
+          "top_asset_classes": ["KR_STOCK", "US_STOCK"],
+          "next_unlock": "L6",
+          "global_base_capacity_index": "100",
+          "product_capacity_override": null,
+          "risk": "SLOWER_AVAILABLE_CHOICES_REMAIN_SPEED_ONLY_DOMINATED_NO_RANDOM_COMPENSATION"
+        },
+        {
+          "tier": "L6",
+          "principal_range_krw_from_ssot_only": ["10000000", "29999999"],
+          "tier_name_from_ssot": "PREMIUM",
+          "slots_from_ssot": 3,
+          "retention_bps_from_ssot": 2000,
+          "available_product_count": 14,
+          "eligible_product_ids": [
+            "catalog-v1-gold",
+            "catalog-v1-silver",
+            "catalog-v1-spy",
+            "catalog-v1-kb-financial",
+            "catalog-v1-lg-electronics",
+            "catalog-v1-schd",
+            "catalog-v1-apple",
+            "catalog-v1-naver",
+            "catalog-v1-hyundai-motor",
+            "catalog-v1-microsoft",
+            "catalog-v1-lg-energy-solution",
+            "catalog-v1-amazon",
+            "catalog-v1-samsung-electronics",
+            "catalog-v1-soxx"
+          ],
+          "newly_unlocked": ["samsung-electronics", "soxx"],
+          "fastest_products": ["samsung-electronics", "soxx"],
+          "slowest_speed": "1.00",
+          "fastest_speed": "1.07",
+          "mean_speed": {
+            "numerator": "1453",
+            "denominator": "1400"
+          },
+          "fastest_vs_average": {
+            "numerator": "1498",
+            "denominator": "1453"
+          },
+          "spread_ratio": {
+            "numerator": "107",
+            "denominator": "100"
+          },
+          "days_to_base_cap_fastest": {
+            "numerator": "3000",
+            "denominator": "107"
+          },
+          "days_to_base_cap_slowest": {
+            "numerator": "30",
+            "denominator": "1"
+          },
+          "day_difference": {
+            "numerator": "210",
+            "denominator": "107"
+          },
+          "fastest_modifier_headroom": {
+            "numerator": "150",
+            "denominator": "107"
+          },
+          "fastest_pool_size": 2,
+          "speed_only_top_pool_share": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "hypothetical_equal_tie_share_each": {
+            "numerator": "1",
+            "denominator": "2"
+          },
+          "tie_share_assumption": "ILLUSTRATIVE_UNIFORM_TIE_BREAK_NOT_OBSERVED_MEMBER_BEHAVIOR",
+          "asset_classes": ["PRECIOUS", "ETF", "KR_STOCK", "US_STOCK"],
+          "top_asset_classes": ["KR_STOCK", "ETF"],
+          "next_unlock": "L7",
+          "global_base_capacity_index": "100",
+          "product_capacity_override": null,
+          "risk": "SLOWER_AVAILABLE_CHOICES_REMAIN_SPEED_ONLY_DOMINATED_NO_RANDOM_COMPENSATION"
+        },
+        {
+          "tier": "L7",
+          "principal_range_krw_from_ssot_only": ["30000000", "49999999"],
+          "tier_name_from_ssot": "PREMIUM+",
+          "slots_from_ssot": 3,
+          "retention_bps_from_ssot": 2100,
+          "available_product_count": 16,
+          "eligible_product_ids": [
+            "catalog-v1-gold",
+            "catalog-v1-silver",
+            "catalog-v1-spy",
+            "catalog-v1-kb-financial",
+            "catalog-v1-lg-electronics",
+            "catalog-v1-schd",
+            "catalog-v1-apple",
+            "catalog-v1-naver",
+            "catalog-v1-hyundai-motor",
+            "catalog-v1-microsoft",
+            "catalog-v1-lg-energy-solution",
+            "catalog-v1-amazon",
+            "catalog-v1-samsung-electronics",
+            "catalog-v1-soxx",
+            "catalog-v1-ethereum",
+            "catalog-v1-alphabet-a"
+          ],
+          "newly_unlocked": ["ethereum", "alphabet-a"],
+          "fastest_products": ["ethereum", "alphabet-a"],
+          "slowest_speed": "1.00",
+          "fastest_speed": "1.08",
+          "mean_speed": {
+            "numerator": "1669",
+            "denominator": "1600"
+          },
+          "fastest_vs_average": {
+            "numerator": "1728",
+            "denominator": "1669"
+          },
+          "spread_ratio": {
+            "numerator": "27",
+            "denominator": "25"
+          },
+          "days_to_base_cap_fastest": {
+            "numerator": "250",
+            "denominator": "9"
+          },
+          "days_to_base_cap_slowest": {
+            "numerator": "30",
+            "denominator": "1"
+          },
+          "day_difference": {
+            "numerator": "20",
+            "denominator": "9"
+          },
+          "fastest_modifier_headroom": {
+            "numerator": "25",
+            "denominator": "18"
+          },
+          "fastest_pool_size": 2,
+          "speed_only_top_pool_share": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "hypothetical_equal_tie_share_each": {
+            "numerator": "1",
+            "denominator": "2"
+          },
+          "tie_share_assumption": "ILLUSTRATIVE_UNIFORM_TIE_BREAK_NOT_OBSERVED_MEMBER_BEHAVIOR",
+          "asset_classes": [
+            "PRECIOUS",
+            "ETF",
+            "KR_STOCK",
+            "US_STOCK",
+            "CRYPTO"
+          ],
+          "top_asset_classes": ["CRYPTO", "US_STOCK"],
+          "next_unlock": "L8",
+          "global_base_capacity_index": "100",
+          "product_capacity_override": null,
+          "risk": "SLOWER_AVAILABLE_CHOICES_REMAIN_SPEED_ONLY_DOMINATED_NO_RANDOM_COMPENSATION"
+        },
+        {
+          "tier": "L8",
+          "principal_range_krw_from_ssot_only": ["50000000", "99999999"],
+          "tier_name_from_ssot": "ELITE",
+          "slots_from_ssot": 3,
+          "retention_bps_from_ssot": 2200,
+          "available_product_count": 18,
+          "eligible_product_ids": [
+            "catalog-v1-gold",
+            "catalog-v1-silver",
+            "catalog-v1-spy",
+            "catalog-v1-kb-financial",
+            "catalog-v1-lg-electronics",
+            "catalog-v1-schd",
+            "catalog-v1-apple",
+            "catalog-v1-naver",
+            "catalog-v1-hyundai-motor",
+            "catalog-v1-microsoft",
+            "catalog-v1-lg-energy-solution",
+            "catalog-v1-amazon",
+            "catalog-v1-samsung-electronics",
+            "catalog-v1-soxx",
+            "catalog-v1-ethereum",
+            "catalog-v1-alphabet-a",
+            "catalog-v1-qqq",
+            "catalog-v1-solana"
+          ],
+          "newly_unlocked": ["qqq", "solana"],
+          "fastest_products": ["qqq", "solana"],
+          "slowest_speed": "1.00",
+          "fastest_speed": "1.09",
+          "mean_speed": {
+            "numerator": "629",
+            "denominator": "600"
+          },
+          "fastest_vs_average": {
+            "numerator": "654",
+            "denominator": "629"
+          },
+          "spread_ratio": {
+            "numerator": "109",
+            "denominator": "100"
+          },
+          "days_to_base_cap_fastest": {
+            "numerator": "3000",
+            "denominator": "109"
+          },
+          "days_to_base_cap_slowest": {
+            "numerator": "30",
+            "denominator": "1"
+          },
+          "day_difference": {
+            "numerator": "270",
+            "denominator": "109"
+          },
+          "fastest_modifier_headroom": {
+            "numerator": "150",
+            "denominator": "109"
+          },
+          "fastest_pool_size": 2,
+          "speed_only_top_pool_share": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "hypothetical_equal_tie_share_each": {
+            "numerator": "1",
+            "denominator": "2"
+          },
+          "tie_share_assumption": "ILLUSTRATIVE_UNIFORM_TIE_BREAK_NOT_OBSERVED_MEMBER_BEHAVIOR",
+          "asset_classes": [
+            "PRECIOUS",
+            "ETF",
+            "KR_STOCK",
+            "US_STOCK",
+            "CRYPTO"
+          ],
+          "top_asset_classes": ["ETF", "CRYPTO"],
+          "next_unlock": "L9",
+          "global_base_capacity_index": "100",
+          "product_capacity_override": null,
+          "risk": "SLOWER_AVAILABLE_CHOICES_REMAIN_SPEED_ONLY_DOMINATED_NO_RANDOM_COMPENSATION"
+        },
+        {
+          "tier": "L9",
+          "principal_range_krw_from_ssot_only": ["100000000", "299999999"],
+          "tier_name_from_ssot": "ULTRA",
+          "slots_from_ssot": 4,
+          "retention_bps_from_ssot": 2300,
+          "available_product_count": 19,
+          "eligible_product_ids": [
+            "catalog-v1-gold",
+            "catalog-v1-silver",
+            "catalog-v1-spy",
+            "catalog-v1-kb-financial",
+            "catalog-v1-lg-electronics",
+            "catalog-v1-schd",
+            "catalog-v1-apple",
+            "catalog-v1-naver",
+            "catalog-v1-hyundai-motor",
+            "catalog-v1-microsoft",
+            "catalog-v1-lg-energy-solution",
+            "catalog-v1-amazon",
+            "catalog-v1-samsung-electronics",
+            "catalog-v1-soxx",
+            "catalog-v1-ethereum",
+            "catalog-v1-alphabet-a",
+            "catalog-v1-qqq",
+            "catalog-v1-solana",
+            "catalog-v1-bitcoin"
+          ],
+          "newly_unlocked": ["bitcoin"],
+          "fastest_products": ["qqq", "solana", "bitcoin"],
+          "slowest_speed": "1.00",
+          "fastest_speed": "1.09",
+          "mean_speed": {
+            "numerator": "499",
+            "denominator": "475"
+          },
+          "fastest_vs_average": {
+            "numerator": "2071",
+            "denominator": "1996"
+          },
+          "spread_ratio": {
+            "numerator": "109",
+            "denominator": "100"
+          },
+          "days_to_base_cap_fastest": {
+            "numerator": "3000",
+            "denominator": "109"
+          },
+          "days_to_base_cap_slowest": {
+            "numerator": "30",
+            "denominator": "1"
+          },
+          "day_difference": {
+            "numerator": "270",
+            "denominator": "109"
+          },
+          "fastest_modifier_headroom": {
+            "numerator": "150",
+            "denominator": "109"
+          },
+          "fastest_pool_size": 3,
+          "speed_only_top_pool_share": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "hypothetical_equal_tie_share_each": {
+            "numerator": "1",
+            "denominator": "3"
+          },
+          "tie_share_assumption": "ILLUSTRATIVE_UNIFORM_TIE_BREAK_NOT_OBSERVED_MEMBER_BEHAVIOR",
+          "asset_classes": [
+            "PRECIOUS",
+            "ETF",
+            "KR_STOCK",
+            "US_STOCK",
+            "CRYPTO"
+          ],
+          "top_asset_classes": ["ETF", "CRYPTO"],
+          "next_unlock": "L10",
+          "global_base_capacity_index": "100",
+          "product_capacity_override": null,
+          "risk": "SLOWER_AVAILABLE_CHOICES_REMAIN_SPEED_ONLY_DOMINATED_NO_RANDOM_COMPENSATION"
+        },
+        {
+          "tier": "L10",
+          "principal_range_krw_from_ssot_only": ["300000000", "499999999"],
+          "tier_name_from_ssot": "ULTRA+",
+          "slots_from_ssot": 4,
+          "retention_bps_from_ssot": 2400,
+          "available_product_count": 20,
+          "eligible_product_ids": [
+            "catalog-v1-gold",
+            "catalog-v1-silver",
+            "catalog-v1-spy",
+            "catalog-v1-kb-financial",
+            "catalog-v1-lg-electronics",
+            "catalog-v1-schd",
+            "catalog-v1-apple",
+            "catalog-v1-naver",
+            "catalog-v1-hyundai-motor",
+            "catalog-v1-microsoft",
+            "catalog-v1-lg-energy-solution",
+            "catalog-v1-amazon",
+            "catalog-v1-samsung-electronics",
+            "catalog-v1-soxx",
+            "catalog-v1-ethereum",
+            "catalog-v1-alphabet-a",
+            "catalog-v1-qqq",
+            "catalog-v1-solana",
+            "catalog-v1-bitcoin",
+            "catalog-v1-sandisk"
+          ],
+          "newly_unlocked": ["sandisk"],
+          "fastest_products": ["qqq", "solana", "bitcoin", "sandisk"],
+          "slowest_speed": "1.00",
+          "fastest_speed": "1.09",
+          "mean_speed": {
+            "numerator": "421",
+            "denominator": "400"
+          },
+          "fastest_vs_average": {
+            "numerator": "436",
+            "denominator": "421"
+          },
+          "spread_ratio": {
+            "numerator": "109",
+            "denominator": "100"
+          },
+          "days_to_base_cap_fastest": {
+            "numerator": "3000",
+            "denominator": "109"
+          },
+          "days_to_base_cap_slowest": {
+            "numerator": "30",
+            "denominator": "1"
+          },
+          "day_difference": {
+            "numerator": "270",
+            "denominator": "109"
+          },
+          "fastest_modifier_headroom": {
+            "numerator": "150",
+            "denominator": "109"
+          },
+          "fastest_pool_size": 4,
+          "speed_only_top_pool_share": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "hypothetical_equal_tie_share_each": {
+            "numerator": "1",
+            "denominator": "4"
+          },
+          "tie_share_assumption": "ILLUSTRATIVE_UNIFORM_TIE_BREAK_NOT_OBSERVED_MEMBER_BEHAVIOR",
+          "asset_classes": [
+            "PRECIOUS",
+            "ETF",
+            "KR_STOCK",
+            "US_STOCK",
+            "CRYPTO"
+          ],
+          "top_asset_classes": ["ETF", "CRYPTO", "US_STOCK"],
+          "next_unlock": "L11",
+          "global_base_capacity_index": "100",
+          "product_capacity_override": null,
+          "risk": "SLOWER_AVAILABLE_CHOICES_REMAIN_SPEED_ONLY_DOMINATED_NO_RANDOM_COMPENSATION"
+        },
+        {
+          "tier": "L11",
+          "principal_range_krw_from_ssot_only": ["500000000", "999999999"],
+          "tier_name_from_ssot": "PRIVATE",
+          "slots_from_ssot": 5,
+          "retention_bps_from_ssot": 2500,
+          "available_product_count": 22,
+          "eligible_product_ids": [
+            "catalog-v1-gold",
+            "catalog-v1-silver",
+            "catalog-v1-spy",
+            "catalog-v1-kb-financial",
+            "catalog-v1-lg-electronics",
+            "catalog-v1-schd",
+            "catalog-v1-apple",
+            "catalog-v1-naver",
+            "catalog-v1-hyundai-motor",
+            "catalog-v1-microsoft",
+            "catalog-v1-lg-energy-solution",
+            "catalog-v1-amazon",
+            "catalog-v1-samsung-electronics",
+            "catalog-v1-soxx",
+            "catalog-v1-ethereum",
+            "catalog-v1-alphabet-a",
+            "catalog-v1-qqq",
+            "catalog-v1-solana",
+            "catalog-v1-bitcoin",
+            "catalog-v1-sandisk",
+            "catalog-v1-sk-hynix",
+            "catalog-v1-tesla"
+          ],
+          "newly_unlocked": ["sk-hynix", "tesla"],
+          "fastest_products": ["sk-hynix", "tesla"],
+          "slowest_speed": "1.00",
+          "fastest_speed": "1.10",
+          "mean_speed": {
+            "numerator": "93",
+            "denominator": "88"
+          },
+          "fastest_vs_average": {
+            "numerator": "484",
+            "denominator": "465"
+          },
+          "spread_ratio": {
+            "numerator": "11",
+            "denominator": "10"
+          },
+          "days_to_base_cap_fastest": {
+            "numerator": "300",
+            "denominator": "11"
+          },
+          "days_to_base_cap_slowest": {
+            "numerator": "30",
+            "denominator": "1"
+          },
+          "day_difference": {
+            "numerator": "30",
+            "denominator": "11"
+          },
+          "fastest_modifier_headroom": {
+            "numerator": "15",
+            "denominator": "11"
+          },
+          "fastest_pool_size": 2,
+          "speed_only_top_pool_share": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "hypothetical_equal_tie_share_each": {
+            "numerator": "1",
+            "denominator": "2"
+          },
+          "tie_share_assumption": "ILLUSTRATIVE_UNIFORM_TIE_BREAK_NOT_OBSERVED_MEMBER_BEHAVIOR",
+          "asset_classes": [
+            "PRECIOUS",
+            "ETF",
+            "KR_STOCK",
+            "US_STOCK",
+            "CRYPTO"
+          ],
+          "top_asset_classes": ["KR_STOCK", "US_STOCK"],
+          "next_unlock": "L12",
+          "global_base_capacity_index": "100",
+          "product_capacity_override": null,
+          "risk": "SLOWER_AVAILABLE_CHOICES_REMAIN_SPEED_ONLY_DOMINATED_NO_RANDOM_COMPENSATION"
+        },
+        {
+          "tier": "L12",
+          "principal_range_krw_from_ssot_only": ["1000000000", "2999999999"],
+          "tier_name_from_ssot": "PRIVATE+",
+          "slots_from_ssot": 5,
+          "retention_bps_from_ssot": 2500,
+          "available_product_count": 23,
+          "eligible_product_ids": [
+            "catalog-v1-gold",
+            "catalog-v1-silver",
+            "catalog-v1-spy",
+            "catalog-v1-kb-financial",
+            "catalog-v1-lg-electronics",
+            "catalog-v1-schd",
+            "catalog-v1-apple",
+            "catalog-v1-naver",
+            "catalog-v1-hyundai-motor",
+            "catalog-v1-microsoft",
+            "catalog-v1-lg-energy-solution",
+            "catalog-v1-amazon",
+            "catalog-v1-samsung-electronics",
+            "catalog-v1-soxx",
+            "catalog-v1-ethereum",
+            "catalog-v1-alphabet-a",
+            "catalog-v1-qqq",
+            "catalog-v1-solana",
+            "catalog-v1-bitcoin",
+            "catalog-v1-sandisk",
+            "catalog-v1-sk-hynix",
+            "catalog-v1-tesla",
+            "catalog-v1-rocket-lab"
+          ],
+          "newly_unlocked": ["rocket-lab"],
+          "fastest_products": ["sk-hynix", "tesla", "rocket-lab"],
+          "slowest_speed": "1.00",
+          "fastest_speed": "1.10",
+          "mean_speed": {
+            "numerator": "487",
+            "denominator": "460"
+          },
+          "fastest_vs_average": {
+            "numerator": "506",
+            "denominator": "487"
+          },
+          "spread_ratio": {
+            "numerator": "11",
+            "denominator": "10"
+          },
+          "days_to_base_cap_fastest": {
+            "numerator": "300",
+            "denominator": "11"
+          },
+          "days_to_base_cap_slowest": {
+            "numerator": "30",
+            "denominator": "1"
+          },
+          "day_difference": {
+            "numerator": "30",
+            "denominator": "11"
+          },
+          "fastest_modifier_headroom": {
+            "numerator": "15",
+            "denominator": "11"
+          },
+          "fastest_pool_size": 3,
+          "speed_only_top_pool_share": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "hypothetical_equal_tie_share_each": {
+            "numerator": "1",
+            "denominator": "3"
+          },
+          "tie_share_assumption": "ILLUSTRATIVE_UNIFORM_TIE_BREAK_NOT_OBSERVED_MEMBER_BEHAVIOR",
+          "asset_classes": [
+            "PRECIOUS",
+            "ETF",
+            "KR_STOCK",
+            "US_STOCK",
+            "CRYPTO"
+          ],
+          "top_asset_classes": ["KR_STOCK", "US_STOCK"],
+          "next_unlock": "L13",
+          "global_base_capacity_index": "100",
+          "product_capacity_override": null,
+          "risk": "SLOWER_AVAILABLE_CHOICES_REMAIN_SPEED_ONLY_DOMINATED_NO_RANDOM_COMPENSATION"
+        },
+        {
+          "tier": "L13",
+          "principal_range_krw_from_ssot_only": ["3000000000", "4999999999"],
+          "tier_name_from_ssot": "PRIVATE ELITE",
+          "slots_from_ssot": 5,
+          "retention_bps_from_ssot": 2500,
+          "available_product_count": 24,
+          "eligible_product_ids": [
+            "catalog-v1-gold",
+            "catalog-v1-silver",
+            "catalog-v1-spy",
+            "catalog-v1-kb-financial",
+            "catalog-v1-lg-electronics",
+            "catalog-v1-schd",
+            "catalog-v1-apple",
+            "catalog-v1-naver",
+            "catalog-v1-hyundai-motor",
+            "catalog-v1-microsoft",
+            "catalog-v1-lg-energy-solution",
+            "catalog-v1-amazon",
+            "catalog-v1-samsung-electronics",
+            "catalog-v1-soxx",
+            "catalog-v1-ethereum",
+            "catalog-v1-alphabet-a",
+            "catalog-v1-qqq",
+            "catalog-v1-solana",
+            "catalog-v1-bitcoin",
+            "catalog-v1-sandisk",
+            "catalog-v1-sk-hynix",
+            "catalog-v1-tesla",
+            "catalog-v1-rocket-lab",
+            "catalog-v1-nvidia"
+          ],
+          "newly_unlocked": ["nvidia"],
+          "fastest_products": ["sk-hynix", "tesla", "rocket-lab", "nvidia"],
+          "slowest_speed": "1.00",
+          "fastest_speed": "1.10",
+          "mean_speed": {
+            "numerator": "509",
+            "denominator": "480"
+          },
+          "fastest_vs_average": {
+            "numerator": "528",
+            "denominator": "509"
+          },
+          "spread_ratio": {
+            "numerator": "11",
+            "denominator": "10"
+          },
+          "days_to_base_cap_fastest": {
+            "numerator": "300",
+            "denominator": "11"
+          },
+          "days_to_base_cap_slowest": {
+            "numerator": "30",
+            "denominator": "1"
+          },
+          "day_difference": {
+            "numerator": "30",
+            "denominator": "11"
+          },
+          "fastest_modifier_headroom": {
+            "numerator": "15",
+            "denominator": "11"
+          },
+          "fastest_pool_size": 4,
+          "speed_only_top_pool_share": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "hypothetical_equal_tie_share_each": {
+            "numerator": "1",
+            "denominator": "4"
+          },
+          "tie_share_assumption": "ILLUSTRATIVE_UNIFORM_TIE_BREAK_NOT_OBSERVED_MEMBER_BEHAVIOR",
+          "asset_classes": [
+            "PRECIOUS",
+            "ETF",
+            "KR_STOCK",
+            "US_STOCK",
+            "CRYPTO"
+          ],
+          "top_asset_classes": ["KR_STOCK", "US_STOCK"],
+          "next_unlock": "L14",
+          "global_base_capacity_index": "100",
+          "product_capacity_override": null,
+          "risk": "SLOWER_AVAILABLE_CHOICES_REMAIN_SPEED_ONLY_DOMINATED_NO_RANDOM_COMPENSATION"
+        },
+        {
+          "tier": "L14",
+          "principal_range_krw_from_ssot_only": ["5000000000", null],
+          "tier_name_from_ssot": "PRIVATE ELITE+",
+          "slots_from_ssot": 5,
+          "retention_bps_from_ssot": 2500,
+          "available_product_count": 25,
+          "eligible_product_ids": [
+            "catalog-v1-gold",
+            "catalog-v1-silver",
+            "catalog-v1-spy",
+            "catalog-v1-kb-financial",
+            "catalog-v1-lg-electronics",
+            "catalog-v1-schd",
+            "catalog-v1-apple",
+            "catalog-v1-naver",
+            "catalog-v1-hyundai-motor",
+            "catalog-v1-microsoft",
+            "catalog-v1-lg-energy-solution",
+            "catalog-v1-amazon",
+            "catalog-v1-samsung-electronics",
+            "catalog-v1-soxx",
+            "catalog-v1-ethereum",
+            "catalog-v1-alphabet-a",
+            "catalog-v1-qqq",
+            "catalog-v1-solana",
+            "catalog-v1-bitcoin",
+            "catalog-v1-sandisk",
+            "catalog-v1-sk-hynix",
+            "catalog-v1-tesla",
+            "catalog-v1-rocket-lab",
+            "catalog-v1-nvidia",
+            "catalog-v1-spacex"
+          ],
+          "newly_unlocked": ["spacex"],
+          "fastest_products": [
+            "sk-hynix",
+            "tesla",
+            "rocket-lab",
+            "nvidia",
+            "spacex"
+          ],
+          "slowest_speed": "1.00",
+          "fastest_speed": "1.10",
+          "mean_speed": {
+            "numerator": "531",
+            "denominator": "500"
+          },
+          "fastest_vs_average": {
+            "numerator": "550",
+            "denominator": "531"
+          },
+          "spread_ratio": {
+            "numerator": "11",
+            "denominator": "10"
+          },
+          "days_to_base_cap_fastest": {
+            "numerator": "300",
+            "denominator": "11"
+          },
+          "days_to_base_cap_slowest": {
+            "numerator": "30",
+            "denominator": "1"
+          },
+          "day_difference": {
+            "numerator": "30",
+            "denominator": "11"
+          },
+          "fastest_modifier_headroom": {
+            "numerator": "15",
+            "denominator": "11"
+          },
+          "fastest_pool_size": 5,
+          "speed_only_top_pool_share": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "hypothetical_equal_tie_share_each": {
+            "numerator": "1",
+            "denominator": "5"
+          },
+          "tie_share_assumption": "ILLUSTRATIVE_UNIFORM_TIE_BREAK_NOT_OBSERVED_MEMBER_BEHAVIOR",
+          "asset_classes": [
+            "PRECIOUS",
+            "ETF",
+            "KR_STOCK",
+            "US_STOCK",
+            "CRYPTO"
+          ],
+          "top_asset_classes": ["KR_STOCK", "US_STOCK"],
+          "next_unlock": null,
+          "global_base_capacity_index": "100",
+          "product_capacity_override": null,
+          "risk": "SLOWER_AVAILABLE_CHOICES_REMAIN_SPEED_ONLY_DOMINATED_NO_RANDOM_COMPENSATION"
+        }
+      ]
+    },
+    {
+      "name": "1.00–1.12",
+      "status": "PROPOSED_NOT_APPROVED",
+      "minimum_speed": "1.00",
+      "maximum_speed": "1.12",
+      "mapping": "LINEAR_REMAP_FROM_1_00_1_10_FLOOR_TO_0_01_FIXED_POINT",
+      "policy_version_change_required": true,
+      "approved_document_band_change_required": true,
+      "product_speed_bps": [
+        {
+          "proposal_id": "catalog-v1-gold",
+          "bps": "10000"
+        },
+        {
+          "proposal_id": "catalog-v1-silver",
+          "bps": "10100"
+        },
+        {
+          "proposal_id": "catalog-v1-spy",
+          "bps": "10100"
+        },
+        {
+          "proposal_id": "catalog-v1-kb-financial",
+          "bps": "10100"
+        },
+        {
+          "proposal_id": "catalog-v1-lg-electronics",
+          "bps": "10300"
+        },
+        {
+          "proposal_id": "catalog-v1-schd",
+          "bps": "10300"
+        },
+        {
+          "proposal_id": "catalog-v1-apple",
+          "bps": "10400"
+        },
+        {
+          "proposal_id": "catalog-v1-naver",
+          "bps": "10400"
+        },
+        {
+          "proposal_id": "catalog-v1-hyundai-motor",
+          "bps": "10600"
+        },
+        {
+          "proposal_id": "catalog-v1-microsoft",
+          "bps": "10600"
+        },
+        {
+          "proposal_id": "catalog-v1-lg-energy-solution",
+          "bps": "10700"
+        },
+        {
+          "proposal_id": "catalog-v1-amazon",
+          "bps": "10700"
+        },
+        {
+          "proposal_id": "catalog-v1-samsung-electronics",
+          "bps": "10800"
+        },
+        {
+          "proposal_id": "catalog-v1-soxx",
+          "bps": "10800"
+        },
+        {
+          "proposal_id": "catalog-v1-ethereum",
+          "bps": "10900"
+        },
+        {
+          "proposal_id": "catalog-v1-alphabet-a",
+          "bps": "10900"
+        },
+        {
+          "proposal_id": "catalog-v1-qqq",
+          "bps": "11000"
+        },
+        {
+          "proposal_id": "catalog-v1-solana",
+          "bps": "11000"
+        },
+        {
+          "proposal_id": "catalog-v1-bitcoin",
+          "bps": "11000"
+        },
+        {
+          "proposal_id": "catalog-v1-sandisk",
+          "bps": "11000"
+        },
+        {
+          "proposal_id": "catalog-v1-sk-hynix",
+          "bps": "11200"
+        },
+        {
+          "proposal_id": "catalog-v1-tesla",
+          "bps": "11200"
+        },
+        {
+          "proposal_id": "catalog-v1-rocket-lab",
+          "bps": "11200"
+        },
+        {
+          "proposal_id": "catalog-v1-nvidia",
+          "bps": "11200"
+        },
+        {
+          "proposal_id": "catalog-v1-spacex",
+          "bps": "11200"
+        }
+      ],
+      "fastest_days_to_cap": {
+        "numerator": "375",
+        "denominator": "14"
+      },
+      "fastest_headroom": {
+        "numerator": "75",
+        "denominator": "56"
+      },
+      "moderate_stack_capped_count": 0,
+      "tiers": [
+        {
+          "tier": "L1",
+          "principal_range_krw_from_ssot_only": ["100000", "499999"],
+          "tier_name_from_ssot": "STARTER",
+          "slots_from_ssot": 1,
+          "retention_bps_from_ssot": 1500,
+          "available_product_count": 4,
+          "eligible_product_ids": [
+            "catalog-v1-gold",
+            "catalog-v1-silver",
+            "catalog-v1-spy",
+            "catalog-v1-kb-financial"
+          ],
+          "newly_unlocked": ["gold", "silver", "spy", "kb-financial"],
+          "fastest_products": ["silver", "spy", "kb-financial"],
+          "slowest_speed": "1.00",
+          "fastest_speed": "1.01",
+          "mean_speed": {
+            "numerator": "403",
+            "denominator": "400"
+          },
+          "fastest_vs_average": {
+            "numerator": "404",
+            "denominator": "403"
+          },
+          "spread_ratio": {
+            "numerator": "101",
+            "denominator": "100"
+          },
+          "days_to_base_cap_fastest": {
+            "numerator": "3000",
+            "denominator": "101"
+          },
+          "days_to_base_cap_slowest": {
+            "numerator": "30",
+            "denominator": "1"
+          },
+          "day_difference": {
+            "numerator": "30",
+            "denominator": "101"
+          },
+          "fastest_modifier_headroom": {
+            "numerator": "150",
+            "denominator": "101"
+          },
+          "fastest_pool_size": 3,
+          "speed_only_top_pool_share": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "hypothetical_equal_tie_share_each": {
+            "numerator": "1",
+            "denominator": "3"
+          },
+          "tie_share_assumption": "ILLUSTRATIVE_UNIFORM_TIE_BREAK_NOT_OBSERVED_MEMBER_BEHAVIOR",
+          "asset_classes": ["PRECIOUS", "ETF", "KR_STOCK"],
+          "top_asset_classes": ["PRECIOUS", "ETF", "KR_STOCK"],
+          "next_unlock": "L2",
+          "global_base_capacity_index": "100",
+          "product_capacity_override": null,
+          "risk": "SLOWER_AVAILABLE_CHOICES_REMAIN_SPEED_ONLY_DOMINATED_NO_RANDOM_COMPENSATION"
+        },
+        {
+          "tier": "L2",
+          "principal_range_krw_from_ssot_only": ["500000", "999999"],
+          "tier_name_from_ssot": "STARTER+",
+          "slots_from_ssot": 1,
+          "retention_bps_from_ssot": 1600,
+          "available_product_count": 6,
+          "eligible_product_ids": [
+            "catalog-v1-gold",
+            "catalog-v1-silver",
+            "catalog-v1-spy",
+            "catalog-v1-kb-financial",
+            "catalog-v1-lg-electronics",
+            "catalog-v1-schd"
+          ],
+          "newly_unlocked": ["lg-electronics", "schd"],
+          "fastest_products": ["lg-electronics", "schd"],
+          "slowest_speed": "1.00",
+          "fastest_speed": "1.03",
+          "mean_speed": {
+            "numerator": "203",
+            "denominator": "200"
+          },
+          "fastest_vs_average": {
+            "numerator": "206",
+            "denominator": "203"
+          },
+          "spread_ratio": {
+            "numerator": "103",
+            "denominator": "100"
+          },
+          "days_to_base_cap_fastest": {
+            "numerator": "3000",
+            "denominator": "103"
+          },
+          "days_to_base_cap_slowest": {
+            "numerator": "30",
+            "denominator": "1"
+          },
+          "day_difference": {
+            "numerator": "90",
+            "denominator": "103"
+          },
+          "fastest_modifier_headroom": {
+            "numerator": "150",
+            "denominator": "103"
+          },
+          "fastest_pool_size": 2,
+          "speed_only_top_pool_share": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "hypothetical_equal_tie_share_each": {
+            "numerator": "1",
+            "denominator": "2"
+          },
+          "tie_share_assumption": "ILLUSTRATIVE_UNIFORM_TIE_BREAK_NOT_OBSERVED_MEMBER_BEHAVIOR",
+          "asset_classes": ["PRECIOUS", "ETF", "KR_STOCK"],
+          "top_asset_classes": ["KR_STOCK", "ETF"],
+          "next_unlock": "L3",
+          "global_base_capacity_index": "100",
+          "product_capacity_override": null,
+          "risk": "SLOWER_AVAILABLE_CHOICES_REMAIN_SPEED_ONLY_DOMINATED_NO_RANDOM_COMPENSATION"
+        },
+        {
+          "tier": "L3",
+          "principal_range_krw_from_ssot_only": ["1000000", "2999999"],
+          "tier_name_from_ssot": "ACTIVE",
+          "slots_from_ssot": 2,
+          "retention_bps_from_ssot": 1700,
+          "available_product_count": 8,
+          "eligible_product_ids": [
+            "catalog-v1-gold",
+            "catalog-v1-silver",
+            "catalog-v1-spy",
+            "catalog-v1-kb-financial",
+            "catalog-v1-lg-electronics",
+            "catalog-v1-schd",
+            "catalog-v1-apple",
+            "catalog-v1-naver"
+          ],
+          "newly_unlocked": ["apple", "naver"],
+          "fastest_products": ["apple", "naver"],
+          "slowest_speed": "1.00",
+          "fastest_speed": "1.04",
+          "mean_speed": {
+            "numerator": "817",
+            "denominator": "800"
+          },
+          "fastest_vs_average": {
+            "numerator": "832",
+            "denominator": "817"
+          },
+          "spread_ratio": {
+            "numerator": "26",
+            "denominator": "25"
+          },
+          "days_to_base_cap_fastest": {
+            "numerator": "375",
+            "denominator": "13"
+          },
+          "days_to_base_cap_slowest": {
+            "numerator": "30",
+            "denominator": "1"
+          },
+          "day_difference": {
+            "numerator": "15",
+            "denominator": "13"
+          },
+          "fastest_modifier_headroom": {
+            "numerator": "75",
+            "denominator": "52"
+          },
+          "fastest_pool_size": 2,
+          "speed_only_top_pool_share": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "hypothetical_equal_tie_share_each": {
+            "numerator": "1",
+            "denominator": "2"
+          },
+          "tie_share_assumption": "ILLUSTRATIVE_UNIFORM_TIE_BREAK_NOT_OBSERVED_MEMBER_BEHAVIOR",
+          "asset_classes": ["PRECIOUS", "ETF", "KR_STOCK", "US_STOCK"],
+          "top_asset_classes": ["US_STOCK", "KR_STOCK"],
+          "next_unlock": "L4",
+          "global_base_capacity_index": "100",
+          "product_capacity_override": null,
+          "risk": "SLOWER_AVAILABLE_CHOICES_REMAIN_SPEED_ONLY_DOMINATED_NO_RANDOM_COMPENSATION"
+        },
+        {
+          "tier": "L4",
+          "principal_range_krw_from_ssot_only": ["3000000", "4999999"],
+          "tier_name_from_ssot": "ADVANCED",
+          "slots_from_ssot": 2,
+          "retention_bps_from_ssot": 1800,
+          "available_product_count": 10,
+          "eligible_product_ids": [
+            "catalog-v1-gold",
+            "catalog-v1-silver",
+            "catalog-v1-spy",
+            "catalog-v1-kb-financial",
+            "catalog-v1-lg-electronics",
+            "catalog-v1-schd",
+            "catalog-v1-apple",
+            "catalog-v1-naver",
+            "catalog-v1-hyundai-motor",
+            "catalog-v1-microsoft"
+          ],
+          "newly_unlocked": ["hyundai-motor", "microsoft"],
+          "fastest_products": ["hyundai-motor", "microsoft"],
+          "slowest_speed": "1.00",
+          "fastest_speed": "1.06",
+          "mean_speed": {
+            "numerator": "1029",
+            "denominator": "1000"
+          },
+          "fastest_vs_average": {
+            "numerator": "1060",
+            "denominator": "1029"
+          },
+          "spread_ratio": {
+            "numerator": "53",
+            "denominator": "50"
+          },
+          "days_to_base_cap_fastest": {
+            "numerator": "1500",
+            "denominator": "53"
+          },
+          "days_to_base_cap_slowest": {
+            "numerator": "30",
+            "denominator": "1"
+          },
+          "day_difference": {
+            "numerator": "90",
+            "denominator": "53"
+          },
+          "fastest_modifier_headroom": {
+            "numerator": "75",
+            "denominator": "53"
+          },
+          "fastest_pool_size": 2,
+          "speed_only_top_pool_share": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "hypothetical_equal_tie_share_each": {
+            "numerator": "1",
+            "denominator": "2"
+          },
+          "tie_share_assumption": "ILLUSTRATIVE_UNIFORM_TIE_BREAK_NOT_OBSERVED_MEMBER_BEHAVIOR",
+          "asset_classes": ["PRECIOUS", "ETF", "KR_STOCK", "US_STOCK"],
+          "top_asset_classes": ["KR_STOCK", "US_STOCK"],
+          "next_unlock": "L5",
+          "global_base_capacity_index": "100",
+          "product_capacity_override": null,
+          "risk": "SLOWER_AVAILABLE_CHOICES_REMAIN_SPEED_ONLY_DOMINATED_NO_RANDOM_COMPENSATION"
+        },
+        {
+          "tier": "L5",
+          "principal_range_krw_from_ssot_only": ["5000000", "9999999"],
+          "tier_name_from_ssot": "PRO",
+          "slots_from_ssot": 2,
+          "retention_bps_from_ssot": 1900,
+          "available_product_count": 12,
+          "eligible_product_ids": [
+            "catalog-v1-gold",
+            "catalog-v1-silver",
+            "catalog-v1-spy",
+            "catalog-v1-kb-financial",
+            "catalog-v1-lg-electronics",
+            "catalog-v1-schd",
+            "catalog-v1-apple",
+            "catalog-v1-naver",
+            "catalog-v1-hyundai-motor",
+            "catalog-v1-microsoft",
+            "catalog-v1-lg-energy-solution",
+            "catalog-v1-amazon"
+          ],
+          "newly_unlocked": ["lg-energy-solution", "amazon"],
+          "fastest_products": ["lg-energy-solution", "amazon"],
+          "slowest_speed": "1.00",
+          "fastest_speed": "1.07",
+          "mean_speed": {
+            "numerator": "1243",
+            "denominator": "1200"
+          },
+          "fastest_vs_average": {
+            "numerator": "1284",
+            "denominator": "1243"
+          },
+          "spread_ratio": {
+            "numerator": "107",
+            "denominator": "100"
+          },
+          "days_to_base_cap_fastest": {
+            "numerator": "3000",
+            "denominator": "107"
+          },
+          "days_to_base_cap_slowest": {
+            "numerator": "30",
+            "denominator": "1"
+          },
+          "day_difference": {
+            "numerator": "210",
+            "denominator": "107"
+          },
+          "fastest_modifier_headroom": {
+            "numerator": "150",
+            "denominator": "107"
+          },
+          "fastest_pool_size": 2,
+          "speed_only_top_pool_share": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "hypothetical_equal_tie_share_each": {
+            "numerator": "1",
+            "denominator": "2"
+          },
+          "tie_share_assumption": "ILLUSTRATIVE_UNIFORM_TIE_BREAK_NOT_OBSERVED_MEMBER_BEHAVIOR",
+          "asset_classes": ["PRECIOUS", "ETF", "KR_STOCK", "US_STOCK"],
+          "top_asset_classes": ["KR_STOCK", "US_STOCK"],
+          "next_unlock": "L6",
+          "global_base_capacity_index": "100",
+          "product_capacity_override": null,
+          "risk": "SLOWER_AVAILABLE_CHOICES_REMAIN_SPEED_ONLY_DOMINATED_NO_RANDOM_COMPENSATION"
+        },
+        {
+          "tier": "L6",
+          "principal_range_krw_from_ssot_only": ["10000000", "29999999"],
+          "tier_name_from_ssot": "PREMIUM",
+          "slots_from_ssot": 3,
+          "retention_bps_from_ssot": 2000,
+          "available_product_count": 14,
+          "eligible_product_ids": [
+            "catalog-v1-gold",
+            "catalog-v1-silver",
+            "catalog-v1-spy",
+            "catalog-v1-kb-financial",
+            "catalog-v1-lg-electronics",
+            "catalog-v1-schd",
+            "catalog-v1-apple",
+            "catalog-v1-naver",
+            "catalog-v1-hyundai-motor",
+            "catalog-v1-microsoft",
+            "catalog-v1-lg-energy-solution",
+            "catalog-v1-amazon",
+            "catalog-v1-samsung-electronics",
+            "catalog-v1-soxx"
+          ],
+          "newly_unlocked": ["samsung-electronics", "soxx"],
+          "fastest_products": ["samsung-electronics", "soxx"],
+          "slowest_speed": "1.00",
+          "fastest_speed": "1.08",
+          "mean_speed": {
+            "numerator": "1459",
+            "denominator": "1400"
+          },
+          "fastest_vs_average": {
+            "numerator": "1512",
+            "denominator": "1459"
+          },
+          "spread_ratio": {
+            "numerator": "27",
+            "denominator": "25"
+          },
+          "days_to_base_cap_fastest": {
+            "numerator": "250",
+            "denominator": "9"
+          },
+          "days_to_base_cap_slowest": {
+            "numerator": "30",
+            "denominator": "1"
+          },
+          "day_difference": {
+            "numerator": "20",
+            "denominator": "9"
+          },
+          "fastest_modifier_headroom": {
+            "numerator": "25",
+            "denominator": "18"
+          },
+          "fastest_pool_size": 2,
+          "speed_only_top_pool_share": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "hypothetical_equal_tie_share_each": {
+            "numerator": "1",
+            "denominator": "2"
+          },
+          "tie_share_assumption": "ILLUSTRATIVE_UNIFORM_TIE_BREAK_NOT_OBSERVED_MEMBER_BEHAVIOR",
+          "asset_classes": ["PRECIOUS", "ETF", "KR_STOCK", "US_STOCK"],
+          "top_asset_classes": ["KR_STOCK", "ETF"],
+          "next_unlock": "L7",
+          "global_base_capacity_index": "100",
+          "product_capacity_override": null,
+          "risk": "SLOWER_AVAILABLE_CHOICES_REMAIN_SPEED_ONLY_DOMINATED_NO_RANDOM_COMPENSATION"
+        },
+        {
+          "tier": "L7",
+          "principal_range_krw_from_ssot_only": ["30000000", "49999999"],
+          "tier_name_from_ssot": "PREMIUM+",
+          "slots_from_ssot": 3,
+          "retention_bps_from_ssot": 2100,
+          "available_product_count": 16,
+          "eligible_product_ids": [
+            "catalog-v1-gold",
+            "catalog-v1-silver",
+            "catalog-v1-spy",
+            "catalog-v1-kb-financial",
+            "catalog-v1-lg-electronics",
+            "catalog-v1-schd",
+            "catalog-v1-apple",
+            "catalog-v1-naver",
+            "catalog-v1-hyundai-motor",
+            "catalog-v1-microsoft",
+            "catalog-v1-lg-energy-solution",
+            "catalog-v1-amazon",
+            "catalog-v1-samsung-electronics",
+            "catalog-v1-soxx",
+            "catalog-v1-ethereum",
+            "catalog-v1-alphabet-a"
+          ],
+          "newly_unlocked": ["ethereum", "alphabet-a"],
+          "fastest_products": ["ethereum", "alphabet-a"],
+          "slowest_speed": "1.00",
+          "fastest_speed": "1.09",
+          "mean_speed": {
+            "numerator": "1677",
+            "denominator": "1600"
+          },
+          "fastest_vs_average": {
+            "numerator": "1744",
+            "denominator": "1677"
+          },
+          "spread_ratio": {
+            "numerator": "109",
+            "denominator": "100"
+          },
+          "days_to_base_cap_fastest": {
+            "numerator": "3000",
+            "denominator": "109"
+          },
+          "days_to_base_cap_slowest": {
+            "numerator": "30",
+            "denominator": "1"
+          },
+          "day_difference": {
+            "numerator": "270",
+            "denominator": "109"
+          },
+          "fastest_modifier_headroom": {
+            "numerator": "150",
+            "denominator": "109"
+          },
+          "fastest_pool_size": 2,
+          "speed_only_top_pool_share": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "hypothetical_equal_tie_share_each": {
+            "numerator": "1",
+            "denominator": "2"
+          },
+          "tie_share_assumption": "ILLUSTRATIVE_UNIFORM_TIE_BREAK_NOT_OBSERVED_MEMBER_BEHAVIOR",
+          "asset_classes": [
+            "PRECIOUS",
+            "ETF",
+            "KR_STOCK",
+            "US_STOCK",
+            "CRYPTO"
+          ],
+          "top_asset_classes": ["CRYPTO", "US_STOCK"],
+          "next_unlock": "L8",
+          "global_base_capacity_index": "100",
+          "product_capacity_override": null,
+          "risk": "SLOWER_AVAILABLE_CHOICES_REMAIN_SPEED_ONLY_DOMINATED_NO_RANDOM_COMPENSATION"
+        },
+        {
+          "tier": "L8",
+          "principal_range_krw_from_ssot_only": ["50000000", "99999999"],
+          "tier_name_from_ssot": "ELITE",
+          "slots_from_ssot": 3,
+          "retention_bps_from_ssot": 2200,
+          "available_product_count": 18,
+          "eligible_product_ids": [
+            "catalog-v1-gold",
+            "catalog-v1-silver",
+            "catalog-v1-spy",
+            "catalog-v1-kb-financial",
+            "catalog-v1-lg-electronics",
+            "catalog-v1-schd",
+            "catalog-v1-apple",
+            "catalog-v1-naver",
+            "catalog-v1-hyundai-motor",
+            "catalog-v1-microsoft",
+            "catalog-v1-lg-energy-solution",
+            "catalog-v1-amazon",
+            "catalog-v1-samsung-electronics",
+            "catalog-v1-soxx",
+            "catalog-v1-ethereum",
+            "catalog-v1-alphabet-a",
+            "catalog-v1-qqq",
+            "catalog-v1-solana"
+          ],
+          "newly_unlocked": ["qqq", "solana"],
+          "fastest_products": ["qqq", "solana"],
+          "slowest_speed": "1.00",
+          "fastest_speed": "1.10",
+          "mean_speed": {
+            "numerator": "1897",
+            "denominator": "1800"
+          },
+          "fastest_vs_average": {
+            "numerator": "1980",
+            "denominator": "1897"
+          },
+          "spread_ratio": {
+            "numerator": "11",
+            "denominator": "10"
+          },
+          "days_to_base_cap_fastest": {
+            "numerator": "300",
+            "denominator": "11"
+          },
+          "days_to_base_cap_slowest": {
+            "numerator": "30",
+            "denominator": "1"
+          },
+          "day_difference": {
+            "numerator": "30",
+            "denominator": "11"
+          },
+          "fastest_modifier_headroom": {
+            "numerator": "15",
+            "denominator": "11"
+          },
+          "fastest_pool_size": 2,
+          "speed_only_top_pool_share": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "hypothetical_equal_tie_share_each": {
+            "numerator": "1",
+            "denominator": "2"
+          },
+          "tie_share_assumption": "ILLUSTRATIVE_UNIFORM_TIE_BREAK_NOT_OBSERVED_MEMBER_BEHAVIOR",
+          "asset_classes": [
+            "PRECIOUS",
+            "ETF",
+            "KR_STOCK",
+            "US_STOCK",
+            "CRYPTO"
+          ],
+          "top_asset_classes": ["ETF", "CRYPTO"],
+          "next_unlock": "L9",
+          "global_base_capacity_index": "100",
+          "product_capacity_override": null,
+          "risk": "SLOWER_AVAILABLE_CHOICES_REMAIN_SPEED_ONLY_DOMINATED_NO_RANDOM_COMPENSATION"
+        },
+        {
+          "tier": "L9",
+          "principal_range_krw_from_ssot_only": ["100000000", "299999999"],
+          "tier_name_from_ssot": "ULTRA",
+          "slots_from_ssot": 4,
+          "retention_bps_from_ssot": 2300,
+          "available_product_count": 19,
+          "eligible_product_ids": [
+            "catalog-v1-gold",
+            "catalog-v1-silver",
+            "catalog-v1-spy",
+            "catalog-v1-kb-financial",
+            "catalog-v1-lg-electronics",
+            "catalog-v1-schd",
+            "catalog-v1-apple",
+            "catalog-v1-naver",
+            "catalog-v1-hyundai-motor",
+            "catalog-v1-microsoft",
+            "catalog-v1-lg-energy-solution",
+            "catalog-v1-amazon",
+            "catalog-v1-samsung-electronics",
+            "catalog-v1-soxx",
+            "catalog-v1-ethereum",
+            "catalog-v1-alphabet-a",
+            "catalog-v1-qqq",
+            "catalog-v1-solana",
+            "catalog-v1-bitcoin"
+          ],
+          "newly_unlocked": ["bitcoin"],
+          "fastest_products": ["qqq", "solana", "bitcoin"],
+          "slowest_speed": "1.00",
+          "fastest_speed": "1.10",
+          "mean_speed": {
+            "numerator": "2007",
+            "denominator": "1900"
+          },
+          "fastest_vs_average": {
+            "numerator": "2090",
+            "denominator": "2007"
+          },
+          "spread_ratio": {
+            "numerator": "11",
+            "denominator": "10"
+          },
+          "days_to_base_cap_fastest": {
+            "numerator": "300",
+            "denominator": "11"
+          },
+          "days_to_base_cap_slowest": {
+            "numerator": "30",
+            "denominator": "1"
+          },
+          "day_difference": {
+            "numerator": "30",
+            "denominator": "11"
+          },
+          "fastest_modifier_headroom": {
+            "numerator": "15",
+            "denominator": "11"
+          },
+          "fastest_pool_size": 3,
+          "speed_only_top_pool_share": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "hypothetical_equal_tie_share_each": {
+            "numerator": "1",
+            "denominator": "3"
+          },
+          "tie_share_assumption": "ILLUSTRATIVE_UNIFORM_TIE_BREAK_NOT_OBSERVED_MEMBER_BEHAVIOR",
+          "asset_classes": [
+            "PRECIOUS",
+            "ETF",
+            "KR_STOCK",
+            "US_STOCK",
+            "CRYPTO"
+          ],
+          "top_asset_classes": ["ETF", "CRYPTO"],
+          "next_unlock": "L10",
+          "global_base_capacity_index": "100",
+          "product_capacity_override": null,
+          "risk": "SLOWER_AVAILABLE_CHOICES_REMAIN_SPEED_ONLY_DOMINATED_NO_RANDOM_COMPENSATION"
+        },
+        {
+          "tier": "L10",
+          "principal_range_krw_from_ssot_only": ["300000000", "499999999"],
+          "tier_name_from_ssot": "ULTRA+",
+          "slots_from_ssot": 4,
+          "retention_bps_from_ssot": 2400,
+          "available_product_count": 20,
+          "eligible_product_ids": [
+            "catalog-v1-gold",
+            "catalog-v1-silver",
+            "catalog-v1-spy",
+            "catalog-v1-kb-financial",
+            "catalog-v1-lg-electronics",
+            "catalog-v1-schd",
+            "catalog-v1-apple",
+            "catalog-v1-naver",
+            "catalog-v1-hyundai-motor",
+            "catalog-v1-microsoft",
+            "catalog-v1-lg-energy-solution",
+            "catalog-v1-amazon",
+            "catalog-v1-samsung-electronics",
+            "catalog-v1-soxx",
+            "catalog-v1-ethereum",
+            "catalog-v1-alphabet-a",
+            "catalog-v1-qqq",
+            "catalog-v1-solana",
+            "catalog-v1-bitcoin",
+            "catalog-v1-sandisk"
+          ],
+          "newly_unlocked": ["sandisk"],
+          "fastest_products": ["qqq", "solana", "bitcoin", "sandisk"],
+          "slowest_speed": "1.00",
+          "fastest_speed": "1.10",
+          "mean_speed": {
+            "numerator": "2117",
+            "denominator": "2000"
+          },
+          "fastest_vs_average": {
+            "numerator": "2200",
+            "denominator": "2117"
+          },
+          "spread_ratio": {
+            "numerator": "11",
+            "denominator": "10"
+          },
+          "days_to_base_cap_fastest": {
+            "numerator": "300",
+            "denominator": "11"
+          },
+          "days_to_base_cap_slowest": {
+            "numerator": "30",
+            "denominator": "1"
+          },
+          "day_difference": {
+            "numerator": "30",
+            "denominator": "11"
+          },
+          "fastest_modifier_headroom": {
+            "numerator": "15",
+            "denominator": "11"
+          },
+          "fastest_pool_size": 4,
+          "speed_only_top_pool_share": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "hypothetical_equal_tie_share_each": {
+            "numerator": "1",
+            "denominator": "4"
+          },
+          "tie_share_assumption": "ILLUSTRATIVE_UNIFORM_TIE_BREAK_NOT_OBSERVED_MEMBER_BEHAVIOR",
+          "asset_classes": [
+            "PRECIOUS",
+            "ETF",
+            "KR_STOCK",
+            "US_STOCK",
+            "CRYPTO"
+          ],
+          "top_asset_classes": ["ETF", "CRYPTO", "US_STOCK"],
+          "next_unlock": "L11",
+          "global_base_capacity_index": "100",
+          "product_capacity_override": null,
+          "risk": "SLOWER_AVAILABLE_CHOICES_REMAIN_SPEED_ONLY_DOMINATED_NO_RANDOM_COMPENSATION"
+        },
+        {
+          "tier": "L11",
+          "principal_range_krw_from_ssot_only": ["500000000", "999999999"],
+          "tier_name_from_ssot": "PRIVATE",
+          "slots_from_ssot": 5,
+          "retention_bps_from_ssot": 2500,
+          "available_product_count": 22,
+          "eligible_product_ids": [
+            "catalog-v1-gold",
+            "catalog-v1-silver",
+            "catalog-v1-spy",
+            "catalog-v1-kb-financial",
+            "catalog-v1-lg-electronics",
+            "catalog-v1-schd",
+            "catalog-v1-apple",
+            "catalog-v1-naver",
+            "catalog-v1-hyundai-motor",
+            "catalog-v1-microsoft",
+            "catalog-v1-lg-energy-solution",
+            "catalog-v1-amazon",
+            "catalog-v1-samsung-electronics",
+            "catalog-v1-soxx",
+            "catalog-v1-ethereum",
+            "catalog-v1-alphabet-a",
+            "catalog-v1-qqq",
+            "catalog-v1-solana",
+            "catalog-v1-bitcoin",
+            "catalog-v1-sandisk",
+            "catalog-v1-sk-hynix",
+            "catalog-v1-tesla"
+          ],
+          "newly_unlocked": ["sk-hynix", "tesla"],
+          "fastest_products": ["sk-hynix", "tesla"],
+          "slowest_speed": "1.00",
+          "fastest_speed": "1.12",
+          "mean_speed": {
+            "numerator": "2341",
+            "denominator": "2200"
+          },
+          "fastest_vs_average": {
+            "numerator": "2464",
+            "denominator": "2341"
+          },
+          "spread_ratio": {
+            "numerator": "28",
+            "denominator": "25"
+          },
+          "days_to_base_cap_fastest": {
+            "numerator": "375",
+            "denominator": "14"
+          },
+          "days_to_base_cap_slowest": {
+            "numerator": "30",
+            "denominator": "1"
+          },
+          "day_difference": {
+            "numerator": "45",
+            "denominator": "14"
+          },
+          "fastest_modifier_headroom": {
+            "numerator": "75",
+            "denominator": "56"
+          },
+          "fastest_pool_size": 2,
+          "speed_only_top_pool_share": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "hypothetical_equal_tie_share_each": {
+            "numerator": "1",
+            "denominator": "2"
+          },
+          "tie_share_assumption": "ILLUSTRATIVE_UNIFORM_TIE_BREAK_NOT_OBSERVED_MEMBER_BEHAVIOR",
+          "asset_classes": [
+            "PRECIOUS",
+            "ETF",
+            "KR_STOCK",
+            "US_STOCK",
+            "CRYPTO"
+          ],
+          "top_asset_classes": ["KR_STOCK", "US_STOCK"],
+          "next_unlock": "L12",
+          "global_base_capacity_index": "100",
+          "product_capacity_override": null,
+          "risk": "SLOWER_AVAILABLE_CHOICES_REMAIN_SPEED_ONLY_DOMINATED_NO_RANDOM_COMPENSATION"
+        },
+        {
+          "tier": "L12",
+          "principal_range_krw_from_ssot_only": ["1000000000", "2999999999"],
+          "tier_name_from_ssot": "PRIVATE+",
+          "slots_from_ssot": 5,
+          "retention_bps_from_ssot": 2500,
+          "available_product_count": 23,
+          "eligible_product_ids": [
+            "catalog-v1-gold",
+            "catalog-v1-silver",
+            "catalog-v1-spy",
+            "catalog-v1-kb-financial",
+            "catalog-v1-lg-electronics",
+            "catalog-v1-schd",
+            "catalog-v1-apple",
+            "catalog-v1-naver",
+            "catalog-v1-hyundai-motor",
+            "catalog-v1-microsoft",
+            "catalog-v1-lg-energy-solution",
+            "catalog-v1-amazon",
+            "catalog-v1-samsung-electronics",
+            "catalog-v1-soxx",
+            "catalog-v1-ethereum",
+            "catalog-v1-alphabet-a",
+            "catalog-v1-qqq",
+            "catalog-v1-solana",
+            "catalog-v1-bitcoin",
+            "catalog-v1-sandisk",
+            "catalog-v1-sk-hynix",
+            "catalog-v1-tesla",
+            "catalog-v1-rocket-lab"
+          ],
+          "newly_unlocked": ["rocket-lab"],
+          "fastest_products": ["sk-hynix", "tesla", "rocket-lab"],
+          "slowest_speed": "1.00",
+          "fastest_speed": "1.12",
+          "mean_speed": {
+            "numerator": "2453",
+            "denominator": "2300"
+          },
+          "fastest_vs_average": {
+            "numerator": "2576",
+            "denominator": "2453"
+          },
+          "spread_ratio": {
+            "numerator": "28",
+            "denominator": "25"
+          },
+          "days_to_base_cap_fastest": {
+            "numerator": "375",
+            "denominator": "14"
+          },
+          "days_to_base_cap_slowest": {
+            "numerator": "30",
+            "denominator": "1"
+          },
+          "day_difference": {
+            "numerator": "45",
+            "denominator": "14"
+          },
+          "fastest_modifier_headroom": {
+            "numerator": "75",
+            "denominator": "56"
+          },
+          "fastest_pool_size": 3,
+          "speed_only_top_pool_share": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "hypothetical_equal_tie_share_each": {
+            "numerator": "1",
+            "denominator": "3"
+          },
+          "tie_share_assumption": "ILLUSTRATIVE_UNIFORM_TIE_BREAK_NOT_OBSERVED_MEMBER_BEHAVIOR",
+          "asset_classes": [
+            "PRECIOUS",
+            "ETF",
+            "KR_STOCK",
+            "US_STOCK",
+            "CRYPTO"
+          ],
+          "top_asset_classes": ["KR_STOCK", "US_STOCK"],
+          "next_unlock": "L13",
+          "global_base_capacity_index": "100",
+          "product_capacity_override": null,
+          "risk": "SLOWER_AVAILABLE_CHOICES_REMAIN_SPEED_ONLY_DOMINATED_NO_RANDOM_COMPENSATION"
+        },
+        {
+          "tier": "L13",
+          "principal_range_krw_from_ssot_only": ["3000000000", "4999999999"],
+          "tier_name_from_ssot": "PRIVATE ELITE",
+          "slots_from_ssot": 5,
+          "retention_bps_from_ssot": 2500,
+          "available_product_count": 24,
+          "eligible_product_ids": [
+            "catalog-v1-gold",
+            "catalog-v1-silver",
+            "catalog-v1-spy",
+            "catalog-v1-kb-financial",
+            "catalog-v1-lg-electronics",
+            "catalog-v1-schd",
+            "catalog-v1-apple",
+            "catalog-v1-naver",
+            "catalog-v1-hyundai-motor",
+            "catalog-v1-microsoft",
+            "catalog-v1-lg-energy-solution",
+            "catalog-v1-amazon",
+            "catalog-v1-samsung-electronics",
+            "catalog-v1-soxx",
+            "catalog-v1-ethereum",
+            "catalog-v1-alphabet-a",
+            "catalog-v1-qqq",
+            "catalog-v1-solana",
+            "catalog-v1-bitcoin",
+            "catalog-v1-sandisk",
+            "catalog-v1-sk-hynix",
+            "catalog-v1-tesla",
+            "catalog-v1-rocket-lab",
+            "catalog-v1-nvidia"
+          ],
+          "newly_unlocked": ["nvidia"],
+          "fastest_products": ["sk-hynix", "tesla", "rocket-lab", "nvidia"],
+          "slowest_speed": "1.00",
+          "fastest_speed": "1.12",
+          "mean_speed": {
+            "numerator": "171",
+            "denominator": "160"
+          },
+          "fastest_vs_average": {
+            "numerator": "896",
+            "denominator": "855"
+          },
+          "spread_ratio": {
+            "numerator": "28",
+            "denominator": "25"
+          },
+          "days_to_base_cap_fastest": {
+            "numerator": "375",
+            "denominator": "14"
+          },
+          "days_to_base_cap_slowest": {
+            "numerator": "30",
+            "denominator": "1"
+          },
+          "day_difference": {
+            "numerator": "45",
+            "denominator": "14"
+          },
+          "fastest_modifier_headroom": {
+            "numerator": "75",
+            "denominator": "56"
+          },
+          "fastest_pool_size": 4,
+          "speed_only_top_pool_share": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "hypothetical_equal_tie_share_each": {
+            "numerator": "1",
+            "denominator": "4"
+          },
+          "tie_share_assumption": "ILLUSTRATIVE_UNIFORM_TIE_BREAK_NOT_OBSERVED_MEMBER_BEHAVIOR",
+          "asset_classes": [
+            "PRECIOUS",
+            "ETF",
+            "KR_STOCK",
+            "US_STOCK",
+            "CRYPTO"
+          ],
+          "top_asset_classes": ["KR_STOCK", "US_STOCK"],
+          "next_unlock": "L14",
+          "global_base_capacity_index": "100",
+          "product_capacity_override": null,
+          "risk": "SLOWER_AVAILABLE_CHOICES_REMAIN_SPEED_ONLY_DOMINATED_NO_RANDOM_COMPENSATION"
+        },
+        {
+          "tier": "L14",
+          "principal_range_krw_from_ssot_only": ["5000000000", null],
+          "tier_name_from_ssot": "PRIVATE ELITE+",
+          "slots_from_ssot": 5,
+          "retention_bps_from_ssot": 2500,
+          "available_product_count": 25,
+          "eligible_product_ids": [
+            "catalog-v1-gold",
+            "catalog-v1-silver",
+            "catalog-v1-spy",
+            "catalog-v1-kb-financial",
+            "catalog-v1-lg-electronics",
+            "catalog-v1-schd",
+            "catalog-v1-apple",
+            "catalog-v1-naver",
+            "catalog-v1-hyundai-motor",
+            "catalog-v1-microsoft",
+            "catalog-v1-lg-energy-solution",
+            "catalog-v1-amazon",
+            "catalog-v1-samsung-electronics",
+            "catalog-v1-soxx",
+            "catalog-v1-ethereum",
+            "catalog-v1-alphabet-a",
+            "catalog-v1-qqq",
+            "catalog-v1-solana",
+            "catalog-v1-bitcoin",
+            "catalog-v1-sandisk",
+            "catalog-v1-sk-hynix",
+            "catalog-v1-tesla",
+            "catalog-v1-rocket-lab",
+            "catalog-v1-nvidia",
+            "catalog-v1-spacex"
+          ],
+          "newly_unlocked": ["spacex"],
+          "fastest_products": [
+            "sk-hynix",
+            "tesla",
+            "rocket-lab",
+            "nvidia",
+            "spacex"
+          ],
+          "slowest_speed": "1.00",
+          "fastest_speed": "1.12",
+          "mean_speed": {
+            "numerator": "2677",
+            "denominator": "2500"
+          },
+          "fastest_vs_average": {
+            "numerator": "2800",
+            "denominator": "2677"
+          },
+          "spread_ratio": {
+            "numerator": "28",
+            "denominator": "25"
+          },
+          "days_to_base_cap_fastest": {
+            "numerator": "375",
+            "denominator": "14"
+          },
+          "days_to_base_cap_slowest": {
+            "numerator": "30",
+            "denominator": "1"
+          },
+          "day_difference": {
+            "numerator": "45",
+            "denominator": "14"
+          },
+          "fastest_modifier_headroom": {
+            "numerator": "75",
+            "denominator": "56"
+          },
+          "fastest_pool_size": 5,
+          "speed_only_top_pool_share": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "hypothetical_equal_tie_share_each": {
+            "numerator": "1",
+            "denominator": "5"
+          },
+          "tie_share_assumption": "ILLUSTRATIVE_UNIFORM_TIE_BREAK_NOT_OBSERVED_MEMBER_BEHAVIOR",
+          "asset_classes": [
+            "PRECIOUS",
+            "ETF",
+            "KR_STOCK",
+            "US_STOCK",
+            "CRYPTO"
+          ],
+          "top_asset_classes": ["KR_STOCK", "US_STOCK"],
+          "next_unlock": null,
+          "global_base_capacity_index": "100",
+          "product_capacity_override": null,
+          "risk": "SLOWER_AVAILABLE_CHOICES_REMAIN_SPEED_ONLY_DOMINATED_NO_RANDOM_COMPENSATION"
+        }
+      ]
+    },
+    {
+      "name": "1.00–1.18",
+      "status": "PROPOSED_NOT_APPROVED",
+      "minimum_speed": "1.00",
+      "maximum_speed": "1.18",
+      "mapping": "LINEAR_REMAP_FROM_1_00_1_10_FLOOR_TO_0_01_FIXED_POINT",
+      "policy_version_change_required": true,
+      "approved_document_band_change_required": true,
+      "product_speed_bps": [
+        {
+          "proposal_id": "catalog-v1-gold",
+          "bps": "10000"
+        },
+        {
+          "proposal_id": "catalog-v1-silver",
+          "bps": "10100"
+        },
+        {
+          "proposal_id": "catalog-v1-spy",
+          "bps": "10100"
+        },
+        {
+          "proposal_id": "catalog-v1-kb-financial",
+          "bps": "10100"
+        },
+        {
+          "proposal_id": "catalog-v1-lg-electronics",
+          "bps": "10500"
+        },
+        {
+          "proposal_id": "catalog-v1-schd",
+          "bps": "10500"
+        },
+        {
+          "proposal_id": "catalog-v1-apple",
+          "bps": "10700"
+        },
+        {
+          "proposal_id": "catalog-v1-naver",
+          "bps": "10700"
+        },
+        {
+          "proposal_id": "catalog-v1-hyundai-motor",
+          "bps": "10900"
+        },
+        {
+          "proposal_id": "catalog-v1-microsoft",
+          "bps": "10900"
+        },
+        {
+          "proposal_id": "catalog-v1-lg-energy-solution",
+          "bps": "11000"
+        },
+        {
+          "proposal_id": "catalog-v1-amazon",
+          "bps": "11000"
+        },
+        {
+          "proposal_id": "catalog-v1-samsung-electronics",
+          "bps": "11200"
+        },
+        {
+          "proposal_id": "catalog-v1-soxx",
+          "bps": "11200"
+        },
+        {
+          "proposal_id": "catalog-v1-ethereum",
+          "bps": "11400"
+        },
+        {
+          "proposal_id": "catalog-v1-alphabet-a",
+          "bps": "11400"
+        },
+        {
+          "proposal_id": "catalog-v1-qqq",
+          "bps": "11600"
+        },
+        {
+          "proposal_id": "catalog-v1-solana",
+          "bps": "11600"
+        },
+        {
+          "proposal_id": "catalog-v1-bitcoin",
+          "bps": "11600"
+        },
+        {
+          "proposal_id": "catalog-v1-sandisk",
+          "bps": "11600"
+        },
+        {
+          "proposal_id": "catalog-v1-sk-hynix",
+          "bps": "11800"
+        },
+        {
+          "proposal_id": "catalog-v1-tesla",
+          "bps": "11800"
+        },
+        {
+          "proposal_id": "catalog-v1-rocket-lab",
+          "bps": "11800"
+        },
+        {
+          "proposal_id": "catalog-v1-nvidia",
+          "bps": "11800"
+        },
+        {
+          "proposal_id": "catalog-v1-spacex",
+          "bps": "11800"
+        }
+      ],
+      "fastest_days_to_cap": {
+        "numerator": "1500",
+        "denominator": "59"
+      },
+      "fastest_headroom": {
+        "numerator": "75",
+        "denominator": "59"
+      },
+      "moderate_stack_capped_count": 11,
+      "tiers": [
+        {
+          "tier": "L1",
+          "principal_range_krw_from_ssot_only": ["100000", "499999"],
+          "tier_name_from_ssot": "STARTER",
+          "slots_from_ssot": 1,
+          "retention_bps_from_ssot": 1500,
+          "available_product_count": 4,
+          "eligible_product_ids": [
+            "catalog-v1-gold",
+            "catalog-v1-silver",
+            "catalog-v1-spy",
+            "catalog-v1-kb-financial"
+          ],
+          "newly_unlocked": ["gold", "silver", "spy", "kb-financial"],
+          "fastest_products": ["silver", "spy", "kb-financial"],
+          "slowest_speed": "1.00",
+          "fastest_speed": "1.01",
+          "mean_speed": {
+            "numerator": "403",
+            "denominator": "400"
+          },
+          "fastest_vs_average": {
+            "numerator": "404",
+            "denominator": "403"
+          },
+          "spread_ratio": {
+            "numerator": "101",
+            "denominator": "100"
+          },
+          "days_to_base_cap_fastest": {
+            "numerator": "3000",
+            "denominator": "101"
+          },
+          "days_to_base_cap_slowest": {
+            "numerator": "30",
+            "denominator": "1"
+          },
+          "day_difference": {
+            "numerator": "30",
+            "denominator": "101"
+          },
+          "fastest_modifier_headroom": {
+            "numerator": "150",
+            "denominator": "101"
+          },
+          "fastest_pool_size": 3,
+          "speed_only_top_pool_share": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "hypothetical_equal_tie_share_each": {
+            "numerator": "1",
+            "denominator": "3"
+          },
+          "tie_share_assumption": "ILLUSTRATIVE_UNIFORM_TIE_BREAK_NOT_OBSERVED_MEMBER_BEHAVIOR",
+          "asset_classes": ["PRECIOUS", "ETF", "KR_STOCK"],
+          "top_asset_classes": ["PRECIOUS", "ETF", "KR_STOCK"],
+          "next_unlock": "L2",
+          "global_base_capacity_index": "100",
+          "product_capacity_override": null,
+          "risk": "SLOWER_AVAILABLE_CHOICES_REMAIN_SPEED_ONLY_DOMINATED_NO_RANDOM_COMPENSATION"
+        },
+        {
+          "tier": "L2",
+          "principal_range_krw_from_ssot_only": ["500000", "999999"],
+          "tier_name_from_ssot": "STARTER+",
+          "slots_from_ssot": 1,
+          "retention_bps_from_ssot": 1600,
+          "available_product_count": 6,
+          "eligible_product_ids": [
+            "catalog-v1-gold",
+            "catalog-v1-silver",
+            "catalog-v1-spy",
+            "catalog-v1-kb-financial",
+            "catalog-v1-lg-electronics",
+            "catalog-v1-schd"
+          ],
+          "newly_unlocked": ["lg-electronics", "schd"],
+          "fastest_products": ["lg-electronics", "schd"],
+          "slowest_speed": "1.00",
+          "fastest_speed": "1.05",
+          "mean_speed": {
+            "numerator": "613",
+            "denominator": "600"
+          },
+          "fastest_vs_average": {
+            "numerator": "630",
+            "denominator": "613"
+          },
+          "spread_ratio": {
+            "numerator": "21",
+            "denominator": "20"
+          },
+          "days_to_base_cap_fastest": {
+            "numerator": "200",
+            "denominator": "7"
+          },
+          "days_to_base_cap_slowest": {
+            "numerator": "30",
+            "denominator": "1"
+          },
+          "day_difference": {
+            "numerator": "10",
+            "denominator": "7"
+          },
+          "fastest_modifier_headroom": {
+            "numerator": "10",
+            "denominator": "7"
+          },
+          "fastest_pool_size": 2,
+          "speed_only_top_pool_share": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "hypothetical_equal_tie_share_each": {
+            "numerator": "1",
+            "denominator": "2"
+          },
+          "tie_share_assumption": "ILLUSTRATIVE_UNIFORM_TIE_BREAK_NOT_OBSERVED_MEMBER_BEHAVIOR",
+          "asset_classes": ["PRECIOUS", "ETF", "KR_STOCK"],
+          "top_asset_classes": ["KR_STOCK", "ETF"],
+          "next_unlock": "L3",
+          "global_base_capacity_index": "100",
+          "product_capacity_override": null,
+          "risk": "SLOWER_AVAILABLE_CHOICES_REMAIN_SPEED_ONLY_DOMINATED_NO_RANDOM_COMPENSATION"
+        },
+        {
+          "tier": "L3",
+          "principal_range_krw_from_ssot_only": ["1000000", "2999999"],
+          "tier_name_from_ssot": "ACTIVE",
+          "slots_from_ssot": 2,
+          "retention_bps_from_ssot": 1700,
+          "available_product_count": 8,
+          "eligible_product_ids": [
+            "catalog-v1-gold",
+            "catalog-v1-silver",
+            "catalog-v1-spy",
+            "catalog-v1-kb-financial",
+            "catalog-v1-lg-electronics",
+            "catalog-v1-schd",
+            "catalog-v1-apple",
+            "catalog-v1-naver"
+          ],
+          "newly_unlocked": ["apple", "naver"],
+          "fastest_products": ["apple", "naver"],
+          "slowest_speed": "1.00",
+          "fastest_speed": "1.07",
+          "mean_speed": {
+            "numerator": "827",
+            "denominator": "800"
+          },
+          "fastest_vs_average": {
+            "numerator": "856",
+            "denominator": "827"
+          },
+          "spread_ratio": {
+            "numerator": "107",
+            "denominator": "100"
+          },
+          "days_to_base_cap_fastest": {
+            "numerator": "3000",
+            "denominator": "107"
+          },
+          "days_to_base_cap_slowest": {
+            "numerator": "30",
+            "denominator": "1"
+          },
+          "day_difference": {
+            "numerator": "210",
+            "denominator": "107"
+          },
+          "fastest_modifier_headroom": {
+            "numerator": "150",
+            "denominator": "107"
+          },
+          "fastest_pool_size": 2,
+          "speed_only_top_pool_share": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "hypothetical_equal_tie_share_each": {
+            "numerator": "1",
+            "denominator": "2"
+          },
+          "tie_share_assumption": "ILLUSTRATIVE_UNIFORM_TIE_BREAK_NOT_OBSERVED_MEMBER_BEHAVIOR",
+          "asset_classes": ["PRECIOUS", "ETF", "KR_STOCK", "US_STOCK"],
+          "top_asset_classes": ["US_STOCK", "KR_STOCK"],
+          "next_unlock": "L4",
+          "global_base_capacity_index": "100",
+          "product_capacity_override": null,
+          "risk": "SLOWER_AVAILABLE_CHOICES_REMAIN_SPEED_ONLY_DOMINATED_NO_RANDOM_COMPENSATION"
+        },
+        {
+          "tier": "L4",
+          "principal_range_krw_from_ssot_only": ["3000000", "4999999"],
+          "tier_name_from_ssot": "ADVANCED",
+          "slots_from_ssot": 2,
+          "retention_bps_from_ssot": 1800,
+          "available_product_count": 10,
+          "eligible_product_ids": [
+            "catalog-v1-gold",
+            "catalog-v1-silver",
+            "catalog-v1-spy",
+            "catalog-v1-kb-financial",
+            "catalog-v1-lg-electronics",
+            "catalog-v1-schd",
+            "catalog-v1-apple",
+            "catalog-v1-naver",
+            "catalog-v1-hyundai-motor",
+            "catalog-v1-microsoft"
+          ],
+          "newly_unlocked": ["hyundai-motor", "microsoft"],
+          "fastest_products": ["hyundai-motor", "microsoft"],
+          "slowest_speed": "1.00",
+          "fastest_speed": "1.09",
+          "mean_speed": {
+            "numerator": "209",
+            "denominator": "200"
+          },
+          "fastest_vs_average": {
+            "numerator": "218",
+            "denominator": "209"
+          },
+          "spread_ratio": {
+            "numerator": "109",
+            "denominator": "100"
+          },
+          "days_to_base_cap_fastest": {
+            "numerator": "3000",
+            "denominator": "109"
+          },
+          "days_to_base_cap_slowest": {
+            "numerator": "30",
+            "denominator": "1"
+          },
+          "day_difference": {
+            "numerator": "270",
+            "denominator": "109"
+          },
+          "fastest_modifier_headroom": {
+            "numerator": "150",
+            "denominator": "109"
+          },
+          "fastest_pool_size": 2,
+          "speed_only_top_pool_share": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "hypothetical_equal_tie_share_each": {
+            "numerator": "1",
+            "denominator": "2"
+          },
+          "tie_share_assumption": "ILLUSTRATIVE_UNIFORM_TIE_BREAK_NOT_OBSERVED_MEMBER_BEHAVIOR",
+          "asset_classes": ["PRECIOUS", "ETF", "KR_STOCK", "US_STOCK"],
+          "top_asset_classes": ["KR_STOCK", "US_STOCK"],
+          "next_unlock": "L5",
+          "global_base_capacity_index": "100",
+          "product_capacity_override": null,
+          "risk": "SLOWER_AVAILABLE_CHOICES_REMAIN_SPEED_ONLY_DOMINATED_NO_RANDOM_COMPENSATION"
+        },
+        {
+          "tier": "L5",
+          "principal_range_krw_from_ssot_only": ["5000000", "9999999"],
+          "tier_name_from_ssot": "PRO",
+          "slots_from_ssot": 2,
+          "retention_bps_from_ssot": 1900,
+          "available_product_count": 12,
+          "eligible_product_ids": [
+            "catalog-v1-gold",
+            "catalog-v1-silver",
+            "catalog-v1-spy",
+            "catalog-v1-kb-financial",
+            "catalog-v1-lg-electronics",
+            "catalog-v1-schd",
+            "catalog-v1-apple",
+            "catalog-v1-naver",
+            "catalog-v1-hyundai-motor",
+            "catalog-v1-microsoft",
+            "catalog-v1-lg-energy-solution",
+            "catalog-v1-amazon"
+          ],
+          "newly_unlocked": ["lg-energy-solution", "amazon"],
+          "fastest_products": ["lg-energy-solution", "amazon"],
+          "slowest_speed": "1.00",
+          "fastest_speed": "1.10",
+          "mean_speed": {
+            "numerator": "253",
+            "denominator": "240"
+          },
+          "fastest_vs_average": {
+            "numerator": "24",
+            "denominator": "23"
+          },
+          "spread_ratio": {
+            "numerator": "11",
+            "denominator": "10"
+          },
+          "days_to_base_cap_fastest": {
+            "numerator": "300",
+            "denominator": "11"
+          },
+          "days_to_base_cap_slowest": {
+            "numerator": "30",
+            "denominator": "1"
+          },
+          "day_difference": {
+            "numerator": "30",
+            "denominator": "11"
+          },
+          "fastest_modifier_headroom": {
+            "numerator": "15",
+            "denominator": "11"
+          },
+          "fastest_pool_size": 2,
+          "speed_only_top_pool_share": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "hypothetical_equal_tie_share_each": {
+            "numerator": "1",
+            "denominator": "2"
+          },
+          "tie_share_assumption": "ILLUSTRATIVE_UNIFORM_TIE_BREAK_NOT_OBSERVED_MEMBER_BEHAVIOR",
+          "asset_classes": ["PRECIOUS", "ETF", "KR_STOCK", "US_STOCK"],
+          "top_asset_classes": ["KR_STOCK", "US_STOCK"],
+          "next_unlock": "L6",
+          "global_base_capacity_index": "100",
+          "product_capacity_override": null,
+          "risk": "SLOWER_AVAILABLE_CHOICES_REMAIN_SPEED_ONLY_DOMINATED_NO_RANDOM_COMPENSATION"
+        },
+        {
+          "tier": "L6",
+          "principal_range_krw_from_ssot_only": ["10000000", "29999999"],
+          "tier_name_from_ssot": "PREMIUM",
+          "slots_from_ssot": 3,
+          "retention_bps_from_ssot": 2000,
+          "available_product_count": 14,
+          "eligible_product_ids": [
+            "catalog-v1-gold",
+            "catalog-v1-silver",
+            "catalog-v1-spy",
+            "catalog-v1-kb-financial",
+            "catalog-v1-lg-electronics",
+            "catalog-v1-schd",
+            "catalog-v1-apple",
+            "catalog-v1-naver",
+            "catalog-v1-hyundai-motor",
+            "catalog-v1-microsoft",
+            "catalog-v1-lg-energy-solution",
+            "catalog-v1-amazon",
+            "catalog-v1-samsung-electronics",
+            "catalog-v1-soxx"
+          ],
+          "newly_unlocked": ["samsung-electronics", "soxx"],
+          "fastest_products": ["samsung-electronics", "soxx"],
+          "slowest_speed": "1.00",
+          "fastest_speed": "1.12",
+          "mean_speed": {
+            "numerator": "1489",
+            "denominator": "1400"
+          },
+          "fastest_vs_average": {
+            "numerator": "1568",
+            "denominator": "1489"
+          },
+          "spread_ratio": {
+            "numerator": "28",
+            "denominator": "25"
+          },
+          "days_to_base_cap_fastest": {
+            "numerator": "375",
+            "denominator": "14"
+          },
+          "days_to_base_cap_slowest": {
+            "numerator": "30",
+            "denominator": "1"
+          },
+          "day_difference": {
+            "numerator": "45",
+            "denominator": "14"
+          },
+          "fastest_modifier_headroom": {
+            "numerator": "75",
+            "denominator": "56"
+          },
+          "fastest_pool_size": 2,
+          "speed_only_top_pool_share": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "hypothetical_equal_tie_share_each": {
+            "numerator": "1",
+            "denominator": "2"
+          },
+          "tie_share_assumption": "ILLUSTRATIVE_UNIFORM_TIE_BREAK_NOT_OBSERVED_MEMBER_BEHAVIOR",
+          "asset_classes": ["PRECIOUS", "ETF", "KR_STOCK", "US_STOCK"],
+          "top_asset_classes": ["KR_STOCK", "ETF"],
+          "next_unlock": "L7",
+          "global_base_capacity_index": "100",
+          "product_capacity_override": null,
+          "risk": "SLOWER_AVAILABLE_CHOICES_REMAIN_SPEED_ONLY_DOMINATED_NO_RANDOM_COMPENSATION"
+        },
+        {
+          "tier": "L7",
+          "principal_range_krw_from_ssot_only": ["30000000", "49999999"],
+          "tier_name_from_ssot": "PREMIUM+",
+          "slots_from_ssot": 3,
+          "retention_bps_from_ssot": 2100,
+          "available_product_count": 16,
+          "eligible_product_ids": [
+            "catalog-v1-gold",
+            "catalog-v1-silver",
+            "catalog-v1-spy",
+            "catalog-v1-kb-financial",
+            "catalog-v1-lg-electronics",
+            "catalog-v1-schd",
+            "catalog-v1-apple",
+            "catalog-v1-naver",
+            "catalog-v1-hyundai-motor",
+            "catalog-v1-microsoft",
+            "catalog-v1-lg-energy-solution",
+            "catalog-v1-amazon",
+            "catalog-v1-samsung-electronics",
+            "catalog-v1-soxx",
+            "catalog-v1-ethereum",
+            "catalog-v1-alphabet-a"
+          ],
+          "newly_unlocked": ["ethereum", "alphabet-a"],
+          "fastest_products": ["ethereum", "alphabet-a"],
+          "slowest_speed": "1.00",
+          "fastest_speed": "1.14",
+          "mean_speed": {
+            "numerator": "1717",
+            "denominator": "1600"
+          },
+          "fastest_vs_average": {
+            "numerator": "1824",
+            "denominator": "1717"
+          },
+          "spread_ratio": {
+            "numerator": "57",
+            "denominator": "50"
+          },
+          "days_to_base_cap_fastest": {
+            "numerator": "500",
+            "denominator": "19"
+          },
+          "days_to_base_cap_slowest": {
+            "numerator": "30",
+            "denominator": "1"
+          },
+          "day_difference": {
+            "numerator": "70",
+            "denominator": "19"
+          },
+          "fastest_modifier_headroom": {
+            "numerator": "25",
+            "denominator": "19"
+          },
+          "fastest_pool_size": 2,
+          "speed_only_top_pool_share": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "hypothetical_equal_tie_share_each": {
+            "numerator": "1",
+            "denominator": "2"
+          },
+          "tie_share_assumption": "ILLUSTRATIVE_UNIFORM_TIE_BREAK_NOT_OBSERVED_MEMBER_BEHAVIOR",
+          "asset_classes": [
+            "PRECIOUS",
+            "ETF",
+            "KR_STOCK",
+            "US_STOCK",
+            "CRYPTO"
+          ],
+          "top_asset_classes": ["CRYPTO", "US_STOCK"],
+          "next_unlock": "L8",
+          "global_base_capacity_index": "100",
+          "product_capacity_override": null,
+          "risk": "SLOWER_AVAILABLE_CHOICES_REMAIN_SPEED_ONLY_DOMINATED_NO_RANDOM_COMPENSATION"
+        },
+        {
+          "tier": "L8",
+          "principal_range_krw_from_ssot_only": ["50000000", "99999999"],
+          "tier_name_from_ssot": "ELITE",
+          "slots_from_ssot": 3,
+          "retention_bps_from_ssot": 2200,
+          "available_product_count": 18,
+          "eligible_product_ids": [
+            "catalog-v1-gold",
+            "catalog-v1-silver",
+            "catalog-v1-spy",
+            "catalog-v1-kb-financial",
+            "catalog-v1-lg-electronics",
+            "catalog-v1-schd",
+            "catalog-v1-apple",
+            "catalog-v1-naver",
+            "catalog-v1-hyundai-motor",
+            "catalog-v1-microsoft",
+            "catalog-v1-lg-energy-solution",
+            "catalog-v1-amazon",
+            "catalog-v1-samsung-electronics",
+            "catalog-v1-soxx",
+            "catalog-v1-ethereum",
+            "catalog-v1-alphabet-a",
+            "catalog-v1-qqq",
+            "catalog-v1-solana"
+          ],
+          "newly_unlocked": ["qqq", "solana"],
+          "fastest_products": ["qqq", "solana"],
+          "slowest_speed": "1.00",
+          "fastest_speed": "1.16",
+          "mean_speed": {
+            "numerator": "1949",
+            "denominator": "1800"
+          },
+          "fastest_vs_average": {
+            "numerator": "2088",
+            "denominator": "1949"
+          },
+          "spread_ratio": {
+            "numerator": "29",
+            "denominator": "25"
+          },
+          "days_to_base_cap_fastest": {
+            "numerator": "750",
+            "denominator": "29"
+          },
+          "days_to_base_cap_slowest": {
+            "numerator": "30",
+            "denominator": "1"
+          },
+          "day_difference": {
+            "numerator": "120",
+            "denominator": "29"
+          },
+          "fastest_modifier_headroom": {
+            "numerator": "75",
+            "denominator": "58"
+          },
+          "fastest_pool_size": 2,
+          "speed_only_top_pool_share": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "hypothetical_equal_tie_share_each": {
+            "numerator": "1",
+            "denominator": "2"
+          },
+          "tie_share_assumption": "ILLUSTRATIVE_UNIFORM_TIE_BREAK_NOT_OBSERVED_MEMBER_BEHAVIOR",
+          "asset_classes": [
+            "PRECIOUS",
+            "ETF",
+            "KR_STOCK",
+            "US_STOCK",
+            "CRYPTO"
+          ],
+          "top_asset_classes": ["ETF", "CRYPTO"],
+          "next_unlock": "L9",
+          "global_base_capacity_index": "100",
+          "product_capacity_override": null,
+          "risk": "SLOWER_AVAILABLE_CHOICES_REMAIN_SPEED_ONLY_DOMINATED_NO_RANDOM_COMPENSATION"
+        },
+        {
+          "tier": "L9",
+          "principal_range_krw_from_ssot_only": ["100000000", "299999999"],
+          "tier_name_from_ssot": "ULTRA",
+          "slots_from_ssot": 4,
+          "retention_bps_from_ssot": 2300,
+          "available_product_count": 19,
+          "eligible_product_ids": [
+            "catalog-v1-gold",
+            "catalog-v1-silver",
+            "catalog-v1-spy",
+            "catalog-v1-kb-financial",
+            "catalog-v1-lg-electronics",
+            "catalog-v1-schd",
+            "catalog-v1-apple",
+            "catalog-v1-naver",
+            "catalog-v1-hyundai-motor",
+            "catalog-v1-microsoft",
+            "catalog-v1-lg-energy-solution",
+            "catalog-v1-amazon",
+            "catalog-v1-samsung-electronics",
+            "catalog-v1-soxx",
+            "catalog-v1-ethereum",
+            "catalog-v1-alphabet-a",
+            "catalog-v1-qqq",
+            "catalog-v1-solana",
+            "catalog-v1-bitcoin"
+          ],
+          "newly_unlocked": ["bitcoin"],
+          "fastest_products": ["qqq", "solana", "bitcoin"],
+          "slowest_speed": "1.00",
+          "fastest_speed": "1.16",
+          "mean_speed": {
+            "numerator": "413",
+            "denominator": "380"
+          },
+          "fastest_vs_average": {
+            "numerator": "2204",
+            "denominator": "2065"
+          },
+          "spread_ratio": {
+            "numerator": "29",
+            "denominator": "25"
+          },
+          "days_to_base_cap_fastest": {
+            "numerator": "750",
+            "denominator": "29"
+          },
+          "days_to_base_cap_slowest": {
+            "numerator": "30",
+            "denominator": "1"
+          },
+          "day_difference": {
+            "numerator": "120",
+            "denominator": "29"
+          },
+          "fastest_modifier_headroom": {
+            "numerator": "75",
+            "denominator": "58"
+          },
+          "fastest_pool_size": 3,
+          "speed_only_top_pool_share": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "hypothetical_equal_tie_share_each": {
+            "numerator": "1",
+            "denominator": "3"
+          },
+          "tie_share_assumption": "ILLUSTRATIVE_UNIFORM_TIE_BREAK_NOT_OBSERVED_MEMBER_BEHAVIOR",
+          "asset_classes": [
+            "PRECIOUS",
+            "ETF",
+            "KR_STOCK",
+            "US_STOCK",
+            "CRYPTO"
+          ],
+          "top_asset_classes": ["ETF", "CRYPTO"],
+          "next_unlock": "L10",
+          "global_base_capacity_index": "100",
+          "product_capacity_override": null,
+          "risk": "SLOWER_AVAILABLE_CHOICES_REMAIN_SPEED_ONLY_DOMINATED_NO_RANDOM_COMPENSATION"
+        },
+        {
+          "tier": "L10",
+          "principal_range_krw_from_ssot_only": ["300000000", "499999999"],
+          "tier_name_from_ssot": "ULTRA+",
+          "slots_from_ssot": 4,
+          "retention_bps_from_ssot": 2400,
+          "available_product_count": 20,
+          "eligible_product_ids": [
+            "catalog-v1-gold",
+            "catalog-v1-silver",
+            "catalog-v1-spy",
+            "catalog-v1-kb-financial",
+            "catalog-v1-lg-electronics",
+            "catalog-v1-schd",
+            "catalog-v1-apple",
+            "catalog-v1-naver",
+            "catalog-v1-hyundai-motor",
+            "catalog-v1-microsoft",
+            "catalog-v1-lg-energy-solution",
+            "catalog-v1-amazon",
+            "catalog-v1-samsung-electronics",
+            "catalog-v1-soxx",
+            "catalog-v1-ethereum",
+            "catalog-v1-alphabet-a",
+            "catalog-v1-qqq",
+            "catalog-v1-solana",
+            "catalog-v1-bitcoin",
+            "catalog-v1-sandisk"
+          ],
+          "newly_unlocked": ["sandisk"],
+          "fastest_products": ["qqq", "solana", "bitcoin", "sandisk"],
+          "slowest_speed": "1.00",
+          "fastest_speed": "1.16",
+          "mean_speed": {
+            "numerator": "2181",
+            "denominator": "2000"
+          },
+          "fastest_vs_average": {
+            "numerator": "2320",
+            "denominator": "2181"
+          },
+          "spread_ratio": {
+            "numerator": "29",
+            "denominator": "25"
+          },
+          "days_to_base_cap_fastest": {
+            "numerator": "750",
+            "denominator": "29"
+          },
+          "days_to_base_cap_slowest": {
+            "numerator": "30",
+            "denominator": "1"
+          },
+          "day_difference": {
+            "numerator": "120",
+            "denominator": "29"
+          },
+          "fastest_modifier_headroom": {
+            "numerator": "75",
+            "denominator": "58"
+          },
+          "fastest_pool_size": 4,
+          "speed_only_top_pool_share": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "hypothetical_equal_tie_share_each": {
+            "numerator": "1",
+            "denominator": "4"
+          },
+          "tie_share_assumption": "ILLUSTRATIVE_UNIFORM_TIE_BREAK_NOT_OBSERVED_MEMBER_BEHAVIOR",
+          "asset_classes": [
+            "PRECIOUS",
+            "ETF",
+            "KR_STOCK",
+            "US_STOCK",
+            "CRYPTO"
+          ],
+          "top_asset_classes": ["ETF", "CRYPTO", "US_STOCK"],
+          "next_unlock": "L11",
+          "global_base_capacity_index": "100",
+          "product_capacity_override": null,
+          "risk": "SLOWER_AVAILABLE_CHOICES_REMAIN_SPEED_ONLY_DOMINATED_NO_RANDOM_COMPENSATION"
+        },
+        {
+          "tier": "L11",
+          "principal_range_krw_from_ssot_only": ["500000000", "999999999"],
+          "tier_name_from_ssot": "PRIVATE",
+          "slots_from_ssot": 5,
+          "retention_bps_from_ssot": 2500,
+          "available_product_count": 22,
+          "eligible_product_ids": [
+            "catalog-v1-gold",
+            "catalog-v1-silver",
+            "catalog-v1-spy",
+            "catalog-v1-kb-financial",
+            "catalog-v1-lg-electronics",
+            "catalog-v1-schd",
+            "catalog-v1-apple",
+            "catalog-v1-naver",
+            "catalog-v1-hyundai-motor",
+            "catalog-v1-microsoft",
+            "catalog-v1-lg-energy-solution",
+            "catalog-v1-amazon",
+            "catalog-v1-samsung-electronics",
+            "catalog-v1-soxx",
+            "catalog-v1-ethereum",
+            "catalog-v1-alphabet-a",
+            "catalog-v1-qqq",
+            "catalog-v1-solana",
+            "catalog-v1-bitcoin",
+            "catalog-v1-sandisk",
+            "catalog-v1-sk-hynix",
+            "catalog-v1-tesla"
+          ],
+          "newly_unlocked": ["sk-hynix", "tesla"],
+          "fastest_products": ["sk-hynix", "tesla"],
+          "slowest_speed": "1.00",
+          "fastest_speed": "1.18",
+          "mean_speed": {
+            "numerator": "2417",
+            "denominator": "2200"
+          },
+          "fastest_vs_average": {
+            "numerator": "2596",
+            "denominator": "2417"
+          },
+          "spread_ratio": {
+            "numerator": "59",
+            "denominator": "50"
+          },
+          "days_to_base_cap_fastest": {
+            "numerator": "1500",
+            "denominator": "59"
+          },
+          "days_to_base_cap_slowest": {
+            "numerator": "30",
+            "denominator": "1"
+          },
+          "day_difference": {
+            "numerator": "270",
+            "denominator": "59"
+          },
+          "fastest_modifier_headroom": {
+            "numerator": "75",
+            "denominator": "59"
+          },
+          "fastest_pool_size": 2,
+          "speed_only_top_pool_share": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "hypothetical_equal_tie_share_each": {
+            "numerator": "1",
+            "denominator": "2"
+          },
+          "tie_share_assumption": "ILLUSTRATIVE_UNIFORM_TIE_BREAK_NOT_OBSERVED_MEMBER_BEHAVIOR",
+          "asset_classes": [
+            "PRECIOUS",
+            "ETF",
+            "KR_STOCK",
+            "US_STOCK",
+            "CRYPTO"
+          ],
+          "top_asset_classes": ["KR_STOCK", "US_STOCK"],
+          "next_unlock": "L12",
+          "global_base_capacity_index": "100",
+          "product_capacity_override": null,
+          "risk": "SLOWER_AVAILABLE_CHOICES_REMAIN_SPEED_ONLY_DOMINATED_NO_RANDOM_COMPENSATION"
+        },
+        {
+          "tier": "L12",
+          "principal_range_krw_from_ssot_only": ["1000000000", "2999999999"],
+          "tier_name_from_ssot": "PRIVATE+",
+          "slots_from_ssot": 5,
+          "retention_bps_from_ssot": 2500,
+          "available_product_count": 23,
+          "eligible_product_ids": [
+            "catalog-v1-gold",
+            "catalog-v1-silver",
+            "catalog-v1-spy",
+            "catalog-v1-kb-financial",
+            "catalog-v1-lg-electronics",
+            "catalog-v1-schd",
+            "catalog-v1-apple",
+            "catalog-v1-naver",
+            "catalog-v1-hyundai-motor",
+            "catalog-v1-microsoft",
+            "catalog-v1-lg-energy-solution",
+            "catalog-v1-amazon",
+            "catalog-v1-samsung-electronics",
+            "catalog-v1-soxx",
+            "catalog-v1-ethereum",
+            "catalog-v1-alphabet-a",
+            "catalog-v1-qqq",
+            "catalog-v1-solana",
+            "catalog-v1-bitcoin",
+            "catalog-v1-sandisk",
+            "catalog-v1-sk-hynix",
+            "catalog-v1-tesla",
+            "catalog-v1-rocket-lab"
+          ],
+          "newly_unlocked": ["rocket-lab"],
+          "fastest_products": ["sk-hynix", "tesla", "rocket-lab"],
+          "slowest_speed": "1.00",
+          "fastest_speed": "1.18",
+          "mean_speed": {
+            "numerator": "507",
+            "denominator": "460"
+          },
+          "fastest_vs_average": {
+            "numerator": "2714",
+            "denominator": "2535"
+          },
+          "spread_ratio": {
+            "numerator": "59",
+            "denominator": "50"
+          },
+          "days_to_base_cap_fastest": {
+            "numerator": "1500",
+            "denominator": "59"
+          },
+          "days_to_base_cap_slowest": {
+            "numerator": "30",
+            "denominator": "1"
+          },
+          "day_difference": {
+            "numerator": "270",
+            "denominator": "59"
+          },
+          "fastest_modifier_headroom": {
+            "numerator": "75",
+            "denominator": "59"
+          },
+          "fastest_pool_size": 3,
+          "speed_only_top_pool_share": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "hypothetical_equal_tie_share_each": {
+            "numerator": "1",
+            "denominator": "3"
+          },
+          "tie_share_assumption": "ILLUSTRATIVE_UNIFORM_TIE_BREAK_NOT_OBSERVED_MEMBER_BEHAVIOR",
+          "asset_classes": [
+            "PRECIOUS",
+            "ETF",
+            "KR_STOCK",
+            "US_STOCK",
+            "CRYPTO"
+          ],
+          "top_asset_classes": ["KR_STOCK", "US_STOCK"],
+          "next_unlock": "L13",
+          "global_base_capacity_index": "100",
+          "product_capacity_override": null,
+          "risk": "SLOWER_AVAILABLE_CHOICES_REMAIN_SPEED_ONLY_DOMINATED_NO_RANDOM_COMPENSATION"
+        },
+        {
+          "tier": "L13",
+          "principal_range_krw_from_ssot_only": ["3000000000", "4999999999"],
+          "tier_name_from_ssot": "PRIVATE ELITE",
+          "slots_from_ssot": 5,
+          "retention_bps_from_ssot": 2500,
+          "available_product_count": 24,
+          "eligible_product_ids": [
+            "catalog-v1-gold",
+            "catalog-v1-silver",
+            "catalog-v1-spy",
+            "catalog-v1-kb-financial",
+            "catalog-v1-lg-electronics",
+            "catalog-v1-schd",
+            "catalog-v1-apple",
+            "catalog-v1-naver",
+            "catalog-v1-hyundai-motor",
+            "catalog-v1-microsoft",
+            "catalog-v1-lg-energy-solution",
+            "catalog-v1-amazon",
+            "catalog-v1-samsung-electronics",
+            "catalog-v1-soxx",
+            "catalog-v1-ethereum",
+            "catalog-v1-alphabet-a",
+            "catalog-v1-qqq",
+            "catalog-v1-solana",
+            "catalog-v1-bitcoin",
+            "catalog-v1-sandisk",
+            "catalog-v1-sk-hynix",
+            "catalog-v1-tesla",
+            "catalog-v1-rocket-lab",
+            "catalog-v1-nvidia"
+          ],
+          "newly_unlocked": ["nvidia"],
+          "fastest_products": ["sk-hynix", "tesla", "rocket-lab", "nvidia"],
+          "slowest_speed": "1.00",
+          "fastest_speed": "1.18",
+          "mean_speed": {
+            "numerator": "2653",
+            "denominator": "2400"
+          },
+          "fastest_vs_average": {
+            "numerator": "2832",
+            "denominator": "2653"
+          },
+          "spread_ratio": {
+            "numerator": "59",
+            "denominator": "50"
+          },
+          "days_to_base_cap_fastest": {
+            "numerator": "1500",
+            "denominator": "59"
+          },
+          "days_to_base_cap_slowest": {
+            "numerator": "30",
+            "denominator": "1"
+          },
+          "day_difference": {
+            "numerator": "270",
+            "denominator": "59"
+          },
+          "fastest_modifier_headroom": {
+            "numerator": "75",
+            "denominator": "59"
+          },
+          "fastest_pool_size": 4,
+          "speed_only_top_pool_share": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "hypothetical_equal_tie_share_each": {
+            "numerator": "1",
+            "denominator": "4"
+          },
+          "tie_share_assumption": "ILLUSTRATIVE_UNIFORM_TIE_BREAK_NOT_OBSERVED_MEMBER_BEHAVIOR",
+          "asset_classes": [
+            "PRECIOUS",
+            "ETF",
+            "KR_STOCK",
+            "US_STOCK",
+            "CRYPTO"
+          ],
+          "top_asset_classes": ["KR_STOCK", "US_STOCK"],
+          "next_unlock": "L14",
+          "global_base_capacity_index": "100",
+          "product_capacity_override": null,
+          "risk": "SLOWER_AVAILABLE_CHOICES_REMAIN_SPEED_ONLY_DOMINATED_NO_RANDOM_COMPENSATION"
+        },
+        {
+          "tier": "L14",
+          "principal_range_krw_from_ssot_only": ["5000000000", null],
+          "tier_name_from_ssot": "PRIVATE ELITE+",
+          "slots_from_ssot": 5,
+          "retention_bps_from_ssot": 2500,
+          "available_product_count": 25,
+          "eligible_product_ids": [
+            "catalog-v1-gold",
+            "catalog-v1-silver",
+            "catalog-v1-spy",
+            "catalog-v1-kb-financial",
+            "catalog-v1-lg-electronics",
+            "catalog-v1-schd",
+            "catalog-v1-apple",
+            "catalog-v1-naver",
+            "catalog-v1-hyundai-motor",
+            "catalog-v1-microsoft",
+            "catalog-v1-lg-energy-solution",
+            "catalog-v1-amazon",
+            "catalog-v1-samsung-electronics",
+            "catalog-v1-soxx",
+            "catalog-v1-ethereum",
+            "catalog-v1-alphabet-a",
+            "catalog-v1-qqq",
+            "catalog-v1-solana",
+            "catalog-v1-bitcoin",
+            "catalog-v1-sandisk",
+            "catalog-v1-sk-hynix",
+            "catalog-v1-tesla",
+            "catalog-v1-rocket-lab",
+            "catalog-v1-nvidia",
+            "catalog-v1-spacex"
+          ],
+          "newly_unlocked": ["spacex"],
+          "fastest_products": [
+            "sk-hynix",
+            "tesla",
+            "rocket-lab",
+            "nvidia",
+            "spacex"
+          ],
+          "slowest_speed": "1.00",
+          "fastest_speed": "1.18",
+          "mean_speed": {
+            "numerator": "2771",
+            "denominator": "2500"
+          },
+          "fastest_vs_average": {
+            "numerator": "2950",
+            "denominator": "2771"
+          },
+          "spread_ratio": {
+            "numerator": "59",
+            "denominator": "50"
+          },
+          "days_to_base_cap_fastest": {
+            "numerator": "1500",
+            "denominator": "59"
+          },
+          "days_to_base_cap_slowest": {
+            "numerator": "30",
+            "denominator": "1"
+          },
+          "day_difference": {
+            "numerator": "270",
+            "denominator": "59"
+          },
+          "fastest_modifier_headroom": {
+            "numerator": "75",
+            "denominator": "59"
+          },
+          "fastest_pool_size": 5,
+          "speed_only_top_pool_share": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "hypothetical_equal_tie_share_each": {
+            "numerator": "1",
+            "denominator": "5"
+          },
+          "tie_share_assumption": "ILLUSTRATIVE_UNIFORM_TIE_BREAK_NOT_OBSERVED_MEMBER_BEHAVIOR",
+          "asset_classes": [
+            "PRECIOUS",
+            "ETF",
+            "KR_STOCK",
+            "US_STOCK",
+            "CRYPTO"
+          ],
+          "top_asset_classes": ["KR_STOCK", "US_STOCK"],
+          "next_unlock": null,
+          "global_base_capacity_index": "100",
+          "product_capacity_override": null,
+          "risk": "SLOWER_AVAILABLE_CHOICES_REMAIN_SPEED_ONLY_DOMINATED_NO_RANDOM_COMPENSATION"
+        }
+      ]
+    }
+  ],
+  "concentration": {
+    "before": {
+      "source_ref": "8f68be2005e16f1ac257626b3418cd3b8a96f1e3",
+      "maximum": "1.18",
+      "dominant_products": ["nvidia"],
+      "pool_size": 1,
+      "assumption": "HISTORICAL_UNRESTRICTED_SPEED_ONLY_MODEL_NOT_ACTUAL_RUNTIME"
+    },
+    "after": {
+      "maximum": "1.10",
+      "dominant_products": [
+        "sk-hynix",
+        "tesla",
+        "rocket-lab",
+        "nvidia",
+        "spacex"
+      ],
+      "pool_size": 5,
+      "economic_unique_winner_removed": true,
+      "top_pool_modeled_share": {
+        "numerator": "1",
+        "denominator": "1"
+      },
+      "hypothetical_equal_tie_share_each": {
+        "numerator": "1",
+        "denominator": "5"
+      },
+      "observed_member_distribution": "UNKNOWN",
+      "observed_fastest_share": null,
+      "risk": "TIES_REMOVE_UNIQUE_SPEED_WINNER_BUT_DO_NOT_PROVE_FAIR_OR_DIVERSE_MEMBER_SELECTION"
+    }
+  },
+  "global_capacity_assertion": "ONE_GLOBAL_BASE_CAPACITY_100; SUM_ALLOCATION_BPS<=10000; NO_SLOT_OR_PRODUCT_MULTIPLICATION; RETENTION_SEPARATE_CONDITIONAL",
+  "two_slots_example": {
+    "allocations_bps": ["5000", "5000"],
+    "total_capacity_index": "100",
+    "combined_rate": {
+      "numerator": "11",
+      "denominator": "10"
+    }
+  },
+  "cap_example_requested": {
+    "raw": {
+      "numerator": "759",
+      "denominator": "500"
+    },
+    "final": {
+      "numerator": "3",
+      "denominator": "2"
+    },
+    "capped": true,
+    "raw_display": "1.518000",
+    "final_display": "1.500000",
+    "clamp_stage": "FINAL_COMBINED_ONCE"
+  },
+  "once_only_order_example": {
+    "input_bps": ["11800", "12000", "12500", "8000"],
+    "final_once": {
+      "raw": {
+        "numerator": "177",
+        "denominator": "125"
+      },
+      "final": {
+        "numerator": "177",
+        "denominator": "125"
+      },
+      "capped": false,
+      "raw_display": "1.416000",
+      "final_display": "1.416000",
+      "clamp_stage": "FINAL_COMBINED_ONCE"
+    },
+    "naive_intermediate_clamp_result": "1.200000"
+  },
+  "runtime_blocker": "EFFECT_SCOPE_UNRESOLVED; NO_APPROVED_PRODUCT_TIER_GATE; NO_LIVE_PUBLICATION_RECEIPT",
+  "trial_boundary": "START_IS_SEPARATE_NO_FUNDING_REQUIREMENT_INFERRED"
+}

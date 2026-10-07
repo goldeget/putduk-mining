@@ -1,5 +1,5 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "status": "PROPOSED_NOT_APPROVED",
   "recommended_policy": "A",
   "recommended_band": {
@@ -46,7 +46,7 @@
       "capacity_scope": "GLOBAL_CYCLE",
       "retention_policy": "INHERIT_SEPARATE_APPROVED_RETENTION",
       "slots_policy": "INHERIT_TIER_SLOTS_NOT_MULTIPLICATIVE",
-      "speed_rationale_ko": "가상 카탈로그의 선택 폭을 단계적으로 늘리는 1.00 제안. 시장가격·배당·기업 실적과 무관하다. 동일 단계 및 상위 풀의 비슷한 속도 선택지를 유지하며 capacity는 증가시키지 않는다.",
+      "speed_rationale_ko": "PUTDUK 내부 운영 modifier의 1.00 제안. 시장 수익률과 무관하며 상품 접근을 원금 단계로 제한하지 않는다. Tier 기본 경제가 우선이고 상품 modifier는 보조다. 같은 Tier의 낮은 배율 선택에 속도상 불리함은 남는다.",
       "catalog_role": "경제·시각 기준점",
       "visual_intensity": "차분함",
       "main_money_display": "WHOLE_KRW_ONLY",
@@ -57,13 +57,12 @@
         "PROPOSAL_NOT_ACTIVE",
         "NON_DEFAULT_EFFECT_SCOPE_UNRESOLVED",
         "LOWER_PRODUCT_SPEED_ONLY_DOMINANCE",
-        "HIGH_THRESHOLD_ACCESSIBILITY_REVIEW",
         "LEGAL_BRAND_REVIEW_REQUIRED"
       ],
-      "minimum_funding_tier": "L1",
-      "minimum_eligible_principal": "DERIVED_FROM_TIER",
-      "unlock_policy": "FUNDING_TIER",
-      "policy_version_change_required": true
+      "policy_version_change_required": true,
+      "product_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "access_condition": "AUTHORITATIVE_PUBLISHED_AVAILABLE_PRODUCT_AND_ELIGIBLE_MEMBER",
+      "tier_capacity": "INHERITED"
     },
     {
       "proposal_id": "catalog-v1-silver",
@@ -86,7 +85,7 @@
       "capacity_scope": "GLOBAL_CYCLE",
       "retention_policy": "INHERIT_SEPARATE_APPROVED_RETENTION",
       "slots_policy": "INHERIT_TIER_SLOTS_NOT_MULTIPLICATIVE",
-      "speed_rationale_ko": "가상 카탈로그의 선택 폭을 단계적으로 늘리는 1.01 제안. 시장가격·배당·기업 실적과 무관하다. 동일 단계 및 상위 풀의 비슷한 속도 선택지를 유지하며 capacity는 증가시키지 않는다.",
+      "speed_rationale_ko": "PUTDUK 내부 운영 modifier의 1.01 제안. 시장 수익률과 무관하며 상품 접근을 원금 단계로 제한하지 않는다. Tier 기본 경제가 우선이고 상품 modifier는 보조다. 같은 Tier의 낮은 배율 선택에 속도상 불리함은 남는다.",
       "catalog_role": "귀금속 대비",
       "visual_intensity": "차분함",
       "main_money_display": "WHOLE_KRW_ONLY",
@@ -97,13 +96,12 @@
         "PROPOSAL_NOT_ACTIVE",
         "NON_DEFAULT_EFFECT_SCOPE_UNRESOLVED",
         "LOWER_PRODUCT_SPEED_ONLY_DOMINANCE",
-        "HIGH_THRESHOLD_ACCESSIBILITY_REVIEW",
         "LEGAL_BRAND_REVIEW_REQUIRED"
       ],
-      "minimum_funding_tier": "L1",
-      "minimum_eligible_principal": "DERIVED_FROM_TIER",
-      "unlock_policy": "FUNDING_TIER",
-      "policy_version_change_required": true
+      "policy_version_change_required": true,
+      "product_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "access_condition": "AUTHORITATIVE_PUBLISHED_AVAILABLE_PRODUCT_AND_ELIGIBLE_MEMBER",
+      "tier_capacity": "INHERITED"
     },
     {
       "proposal_id": "catalog-v1-spy",
@@ -126,7 +124,7 @@
       "capacity_scope": "GLOBAL_CYCLE",
       "retention_policy": "INHERIT_SEPARATE_APPROVED_RETENTION",
       "slots_policy": "INHERIT_TIER_SLOTS_NOT_MULTIPLICATIVE",
-      "speed_rationale_ko": "가상 카탈로그의 선택 폭을 단계적으로 늘리는 1.01 제안. 시장가격·배당·기업 실적과 무관하다. 동일 단계 및 상위 풀의 비슷한 속도 선택지를 유지하며 capacity는 증가시키지 않는다.",
+      "speed_rationale_ko": "PUTDUK 내부 운영 modifier의 1.01 제안. 시장 수익률과 무관하며 상품 접근을 원금 단계로 제한하지 않는다. Tier 기본 경제가 우선이고 상품 modifier는 보조다. 같은 Tier의 낮은 배율 선택에 속도상 불리함은 남는다.",
       "catalog_role": "넓은 묶음 입문",
       "visual_intensity": "차분함",
       "main_money_display": "WHOLE_KRW_ONLY",
@@ -137,13 +135,12 @@
         "PROPOSAL_NOT_ACTIVE",
         "NON_DEFAULT_EFFECT_SCOPE_UNRESOLVED",
         "LOWER_PRODUCT_SPEED_ONLY_DOMINANCE",
-        "HIGH_THRESHOLD_ACCESSIBILITY_REVIEW",
         "LEGAL_BRAND_REVIEW_REQUIRED"
       ],
-      "minimum_funding_tier": "L1",
-      "minimum_eligible_principal": "DERIVED_FROM_TIER",
-      "unlock_policy": "FUNDING_TIER",
-      "policy_version_change_required": true
+      "policy_version_change_required": true,
+      "product_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "access_condition": "AUTHORITATIVE_PUBLISHED_AVAILABLE_PRODUCT_AND_ELIGIBLE_MEMBER",
+      "tier_capacity": "INHERITED"
     },
     {
       "proposal_id": "catalog-v1-kb-financial",
@@ -166,7 +163,7 @@
       "capacity_scope": "GLOBAL_CYCLE",
       "retention_policy": "INHERIT_SEPARATE_APPROVED_RETENTION",
       "slots_policy": "INHERIT_TIER_SLOTS_NOT_MULTIPLICATIVE",
-      "speed_rationale_ko": "가상 카탈로그의 선택 폭을 단계적으로 늘리는 1.01 제안. 시장가격·배당·기업 실적과 무관하다. 동일 단계 및 상위 풀의 비슷한 속도 선택지를 유지하며 capacity는 증가시키지 않는다.",
+      "speed_rationale_ko": "PUTDUK 내부 운영 modifier의 1.01 제안. 시장 수익률과 무관하며 상품 접근을 원금 단계로 제한하지 않는다. Tier 기본 경제가 우선이고 상품 modifier는 보조다. 같은 Tier의 낮은 배율 선택에 속도상 불리함은 남는다.",
       "catalog_role": "낮은 강도 선택",
       "visual_intensity": "차분함",
       "main_money_display": "WHOLE_KRW_ONLY",
@@ -177,13 +174,12 @@
         "PROPOSAL_NOT_ACTIVE",
         "NON_DEFAULT_EFFECT_SCOPE_UNRESOLVED",
         "LOWER_PRODUCT_SPEED_ONLY_DOMINANCE",
-        "HIGH_THRESHOLD_ACCESSIBILITY_REVIEW",
         "LEGAL_BRAND_REVIEW_REQUIRED"
       ],
-      "minimum_funding_tier": "L1",
-      "minimum_eligible_principal": "DERIVED_FROM_TIER",
-      "unlock_policy": "FUNDING_TIER",
-      "policy_version_change_required": true
+      "policy_version_change_required": true,
+      "product_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "access_condition": "AUTHORITATIVE_PUBLISHED_AVAILABLE_PRODUCT_AND_ELIGIBLE_MEMBER",
+      "tier_capacity": "INHERITED"
     },
     {
       "proposal_id": "catalog-v1-lg-electronics",
@@ -206,7 +202,7 @@
       "capacity_scope": "GLOBAL_CYCLE",
       "retention_policy": "INHERIT_SEPARATE_APPROVED_RETENTION",
       "slots_policy": "INHERIT_TIER_SLOTS_NOT_MULTIPLICATIVE",
-      "speed_rationale_ko": "가상 카탈로그의 선택 폭을 단계적으로 늘리는 1.03 제안. 시장가격·배당·기업 실적과 무관하다. 동일 단계 및 상위 풀의 비슷한 속도 선택지를 유지하며 capacity는 증가시키지 않는다.",
+      "speed_rationale_ko": "PUTDUK 내부 운영 modifier의 1.03 제안. 시장 수익률과 무관하며 상품 접근을 원금 단계로 제한하지 않는다. Tier 기본 경제가 우선이고 상품 modifier는 보조다. 같은 Tier의 낮은 배율 선택에 속도상 불리함은 남는다.",
       "catalog_role": "한국 생활 산업 분산",
       "visual_intensity": "중간",
       "main_money_display": "WHOLE_KRW_ONLY",
@@ -217,13 +213,12 @@
         "PROPOSAL_NOT_ACTIVE",
         "NON_DEFAULT_EFFECT_SCOPE_UNRESOLVED",
         "LOWER_PRODUCT_SPEED_ONLY_DOMINANCE",
-        "HIGH_THRESHOLD_ACCESSIBILITY_REVIEW",
         "LEGAL_BRAND_REVIEW_REQUIRED"
       ],
-      "minimum_funding_tier": "L2",
-      "minimum_eligible_principal": "DERIVED_FROM_TIER",
-      "unlock_policy": "FUNDING_TIER",
-      "policy_version_change_required": true
+      "policy_version_change_required": true,
+      "product_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "access_condition": "AUTHORITATIVE_PUBLISHED_AVAILABLE_PRODUCT_AND_ELIGIBLE_MEMBER",
+      "tier_capacity": "INHERITED"
     },
     {
       "proposal_id": "catalog-v1-schd",
@@ -246,7 +241,7 @@
       "capacity_scope": "GLOBAL_CYCLE",
       "retention_policy": "INHERIT_SEPARATE_APPROVED_RETENTION",
       "slots_policy": "INHERIT_TIER_SLOTS_NOT_MULTIPLICATIVE",
-      "speed_rationale_ko": "가상 카탈로그의 선택 폭을 단계적으로 늘리는 1.03 제안. 시장가격·배당·기업 실적과 무관하다. 동일 단계 및 상위 풀의 비슷한 속도 선택지를 유지하며 capacity는 증가시키지 않는다.",
+      "speed_rationale_ko": "PUTDUK 내부 운영 modifier의 1.03 제안. 시장 수익률과 무관하며 상품 접근을 원금 단계로 제한하지 않는다. Tier 기본 경제가 우선이고 상품 modifier는 보조다. 같은 Tier의 낮은 배율 선택에 속도상 불리함은 남는다.",
       "catalog_role": "차분한 ETF 선택",
       "visual_intensity": "차분함",
       "main_money_display": "WHOLE_KRW_ONLY",
@@ -257,13 +252,12 @@
         "PROPOSAL_NOT_ACTIVE",
         "NON_DEFAULT_EFFECT_SCOPE_UNRESOLVED",
         "LOWER_PRODUCT_SPEED_ONLY_DOMINANCE",
-        "HIGH_THRESHOLD_ACCESSIBILITY_REVIEW",
         "LEGAL_BRAND_REVIEW_REQUIRED"
       ],
-      "minimum_funding_tier": "L2",
-      "minimum_eligible_principal": "DERIVED_FROM_TIER",
-      "unlock_policy": "FUNDING_TIER",
-      "policy_version_change_required": true
+      "policy_version_change_required": true,
+      "product_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "access_condition": "AUTHORITATIVE_PUBLISHED_AVAILABLE_PRODUCT_AND_ELIGIBLE_MEMBER",
+      "tier_capacity": "INHERITED"
     },
     {
       "proposal_id": "catalog-v1-apple",
@@ -286,7 +280,7 @@
       "capacity_scope": "GLOBAL_CYCLE",
       "retention_policy": "INHERIT_SEPARATE_APPROVED_RETENTION",
       "slots_policy": "INHERIT_TIER_SLOTS_NOT_MULTIPLICATIVE",
-      "speed_rationale_ko": "가상 카탈로그의 선택 폭을 단계적으로 늘리는 1.04 제안. 시장가격·배당·기업 실적과 무관하다. 동일 단계 및 상위 풀의 비슷한 속도 선택지를 유지하며 capacity는 증가시키지 않는다.",
+      "speed_rationale_ko": "PUTDUK 내부 운영 modifier의 1.04 제안. 시장 수익률과 무관하며 상품 접근을 원금 단계로 제한하지 않는다. Tier 기본 경제가 우선이고 상품 modifier는 보조다. 같은 Tier의 낮은 배율 선택에 속도상 불리함은 남는다.",
       "catalog_role": "쉬운 글로벌 입문",
       "visual_intensity": "중간",
       "main_money_display": "WHOLE_KRW_ONLY",
@@ -297,13 +291,12 @@
         "PROPOSAL_NOT_ACTIVE",
         "NON_DEFAULT_EFFECT_SCOPE_UNRESOLVED",
         "LOWER_PRODUCT_SPEED_ONLY_DOMINANCE",
-        "HIGH_THRESHOLD_ACCESSIBILITY_REVIEW",
         "LEGAL_BRAND_REVIEW_REQUIRED"
       ],
-      "minimum_funding_tier": "L3",
-      "minimum_eligible_principal": "DERIVED_FROM_TIER",
-      "unlock_policy": "FUNDING_TIER",
-      "policy_version_change_required": true
+      "policy_version_change_required": true,
+      "product_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "access_condition": "AUTHORITATIVE_PUBLISHED_AVAILABLE_PRODUCT_AND_ELIGIBLE_MEMBER",
+      "tier_capacity": "INHERITED"
     },
     {
       "proposal_id": "catalog-v1-naver",
@@ -326,7 +319,7 @@
       "capacity_scope": "GLOBAL_CYCLE",
       "retention_policy": "INHERIT_SEPARATE_APPROVED_RETENTION",
       "slots_policy": "INHERIT_TIER_SLOTS_NOT_MULTIPLICATIVE",
-      "speed_rationale_ko": "가상 카탈로그의 선택 폭을 단계적으로 늘리는 1.04 제안. 시장가격·배당·기업 실적과 무관하다. 동일 단계 및 상위 풀의 비슷한 속도 선택지를 유지하며 capacity는 증가시키지 않는다.",
+      "speed_rationale_ko": "PUTDUK 내부 운영 modifier의 1.04 제안. 시장 수익률과 무관하며 상품 접근을 원금 단계로 제한하지 않는다. Tier 기본 경제가 우선이고 상품 modifier는 보조다. 같은 Tier의 낮은 배율 선택에 속도상 불리함은 남는다.",
       "catalog_role": "국내 인터넷 분산",
       "visual_intensity": "중간",
       "main_money_display": "WHOLE_KRW_ONLY",
@@ -337,13 +330,12 @@
         "PROPOSAL_NOT_ACTIVE",
         "NON_DEFAULT_EFFECT_SCOPE_UNRESOLVED",
         "LOWER_PRODUCT_SPEED_ONLY_DOMINANCE",
-        "HIGH_THRESHOLD_ACCESSIBILITY_REVIEW",
         "LEGAL_BRAND_REVIEW_REQUIRED"
       ],
-      "minimum_funding_tier": "L3",
-      "minimum_eligible_principal": "DERIVED_FROM_TIER",
-      "unlock_policy": "FUNDING_TIER",
-      "policy_version_change_required": true
+      "policy_version_change_required": true,
+      "product_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "access_condition": "AUTHORITATIVE_PUBLISHED_AVAILABLE_PRODUCT_AND_ELIGIBLE_MEMBER",
+      "tier_capacity": "INHERITED"
     },
     {
       "proposal_id": "catalog-v1-hyundai-motor",
@@ -366,7 +358,7 @@
       "capacity_scope": "GLOBAL_CYCLE",
       "retention_policy": "INHERIT_SEPARATE_APPROVED_RETENTION",
       "slots_policy": "INHERIT_TIER_SLOTS_NOT_MULTIPLICATIVE",
-      "speed_rationale_ko": "가상 카탈로그의 선택 폭을 단계적으로 늘리는 1.05 제안. 시장가격·배당·기업 실적과 무관하다. 동일 단계 및 상위 풀의 비슷한 속도 선택지를 유지하며 capacity는 증가시키지 않는다.",
+      "speed_rationale_ko": "PUTDUK 내부 운영 modifier의 1.05 제안. 시장 수익률과 무관하며 상품 접근을 원금 단계로 제한하지 않는다. Tier 기본 경제가 우선이고 상품 modifier는 보조다. 같은 Tier의 낮은 배율 선택에 속도상 불리함은 남는다.",
       "catalog_role": "한국 비반도체 분산",
       "visual_intensity": "중간",
       "main_money_display": "WHOLE_KRW_ONLY",
@@ -377,13 +369,12 @@
         "PROPOSAL_NOT_ACTIVE",
         "NON_DEFAULT_EFFECT_SCOPE_UNRESOLVED",
         "LOWER_PRODUCT_SPEED_ONLY_DOMINANCE",
-        "HIGH_THRESHOLD_ACCESSIBILITY_REVIEW",
         "LEGAL_BRAND_REVIEW_REQUIRED"
       ],
-      "minimum_funding_tier": "L4",
-      "minimum_eligible_principal": "DERIVED_FROM_TIER",
-      "unlock_policy": "FUNDING_TIER",
-      "policy_version_change_required": true
+      "policy_version_change_required": true,
+      "product_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "access_condition": "AUTHORITATIVE_PUBLISHED_AVAILABLE_PRODUCT_AND_ELIGIBLE_MEMBER",
+      "tier_capacity": "INHERITED"
     },
     {
       "proposal_id": "catalog-v1-microsoft",
@@ -406,7 +397,7 @@
       "capacity_scope": "GLOBAL_CYCLE",
       "retention_policy": "INHERIT_SEPARATE_APPROVED_RETENTION",
       "slots_policy": "INHERIT_TIER_SLOTS_NOT_MULTIPLICATIVE",
-      "speed_rationale_ko": "가상 카탈로그의 선택 폭을 단계적으로 늘리는 1.05 제안. 시장가격·배당·기업 실적과 무관하다. 동일 단계 및 상위 풀의 비슷한 속도 선택지를 유지하며 capacity는 증가시키지 않는다.",
+      "speed_rationale_ko": "PUTDUK 내부 운영 modifier의 1.05 제안. 시장 수익률과 무관하며 상품 접근을 원금 단계로 제한하지 않는다. Tier 기본 경제가 우선이고 상품 modifier는 보조다. 같은 Tier의 낮은 배율 선택에 속도상 불리함은 남는다.",
       "catalog_role": "연결형 기준",
       "visual_intensity": "중간",
       "main_money_display": "WHOLE_KRW_ONLY",
@@ -417,13 +408,12 @@
         "PROPOSAL_NOT_ACTIVE",
         "NON_DEFAULT_EFFECT_SCOPE_UNRESOLVED",
         "LOWER_PRODUCT_SPEED_ONLY_DOMINANCE",
-        "HIGH_THRESHOLD_ACCESSIBILITY_REVIEW",
         "LEGAL_BRAND_REVIEW_REQUIRED"
       ],
-      "minimum_funding_tier": "L4",
-      "minimum_eligible_principal": "DERIVED_FROM_TIER",
-      "unlock_policy": "FUNDING_TIER",
-      "policy_version_change_required": true
+      "policy_version_change_required": true,
+      "product_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "access_condition": "AUTHORITATIVE_PUBLISHED_AVAILABLE_PRODUCT_AND_ELIGIBLE_MEMBER",
+      "tier_capacity": "INHERITED"
     },
     {
       "proposal_id": "catalog-v1-lg-energy-solution",
@@ -446,7 +436,7 @@
       "capacity_scope": "GLOBAL_CYCLE",
       "retention_policy": "INHERIT_SEPARATE_APPROVED_RETENTION",
       "slots_policy": "INHERIT_TIER_SLOTS_NOT_MULTIPLICATIVE",
-      "speed_rationale_ko": "가상 카탈로그의 선택 폭을 단계적으로 늘리는 1.06 제안. 시장가격·배당·기업 실적과 무관하다. 동일 단계 및 상위 풀의 비슷한 속도 선택지를 유지하며 capacity는 증가시키지 않는다.",
+      "speed_rationale_ko": "PUTDUK 내부 운영 modifier의 1.06 제안. 시장 수익률과 무관하며 상품 접근을 원금 단계로 제한하지 않는다. Tier 기본 경제가 우선이고 상품 modifier는 보조다. 같은 Tier의 낮은 배율 선택에 속도상 불리함은 남는다.",
       "catalog_role": "에너지 산업 분산",
       "visual_intensity": "중간",
       "main_money_display": "WHOLE_KRW_ONLY",
@@ -457,13 +447,12 @@
         "PROPOSAL_NOT_ACTIVE",
         "NON_DEFAULT_EFFECT_SCOPE_UNRESOLVED",
         "LOWER_PRODUCT_SPEED_ONLY_DOMINANCE",
-        "HIGH_THRESHOLD_ACCESSIBILITY_REVIEW",
         "LEGAL_BRAND_REVIEW_REQUIRED"
       ],
-      "minimum_funding_tier": "L5",
-      "minimum_eligible_principal": "DERIVED_FROM_TIER",
-      "unlock_policy": "FUNDING_TIER",
-      "policy_version_change_required": true
+      "policy_version_change_required": true,
+      "product_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "access_condition": "AUTHORITATIVE_PUBLISHED_AVAILABLE_PRODUCT_AND_ELIGIBLE_MEMBER",
+      "tier_capacity": "INHERITED"
     },
     {
       "proposal_id": "catalog-v1-amazon",
@@ -486,7 +475,7 @@
       "capacity_scope": "GLOBAL_CYCLE",
       "retention_policy": "INHERIT_SEPARATE_APPROVED_RETENTION",
       "slots_policy": "INHERIT_TIER_SLOTS_NOT_MULTIPLICATIVE",
-      "speed_rationale_ko": "가상 카탈로그의 선택 폭을 단계적으로 늘리는 1.06 제안. 시장가격·배당·기업 실적과 무관하다. 동일 단계 및 상위 풀의 비슷한 속도 선택지를 유지하며 capacity는 증가시키지 않는다.",
+      "speed_rationale_ko": "PUTDUK 내부 운영 modifier의 1.06 제안. 시장 수익률과 무관하며 상품 접근을 원금 단계로 제한하지 않는다. Tier 기본 경제가 우선이고 상품 modifier는 보조다. 같은 Tier의 낮은 배율 선택에 속도상 불리함은 남는다.",
       "catalog_role": "연산 밖 글로벌 분산",
       "visual_intensity": "중간",
       "main_money_display": "WHOLE_KRW_ONLY",
@@ -497,13 +486,12 @@
         "PROPOSAL_NOT_ACTIVE",
         "NON_DEFAULT_EFFECT_SCOPE_UNRESOLVED",
         "LOWER_PRODUCT_SPEED_ONLY_DOMINANCE",
-        "HIGH_THRESHOLD_ACCESSIBILITY_REVIEW",
         "LEGAL_BRAND_REVIEW_REQUIRED"
       ],
-      "minimum_funding_tier": "L5",
-      "minimum_eligible_principal": "DERIVED_FROM_TIER",
-      "unlock_policy": "FUNDING_TIER",
-      "policy_version_change_required": true
+      "policy_version_change_required": true,
+      "product_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "access_condition": "AUTHORITATIVE_PUBLISHED_AVAILABLE_PRODUCT_AND_ELIGIBLE_MEMBER",
+      "tier_capacity": "INHERITED"
     },
     {
       "proposal_id": "catalog-v1-samsung-electronics",
@@ -526,7 +514,7 @@
       "capacity_scope": "GLOBAL_CYCLE",
       "retention_policy": "INHERIT_SEPARATE_APPROVED_RETENTION",
       "slots_policy": "INHERIT_TIER_SLOTS_NOT_MULTIPLICATIVE",
-      "speed_rationale_ko": "가상 카탈로그의 선택 폭을 단계적으로 늘리는 1.07 제안. 시장가격·배당·기업 실적과 무관하다. 동일 단계 및 상위 풀의 비슷한 속도 선택지를 유지하며 capacity는 증가시키지 않는다.",
+      "speed_rationale_ko": "PUTDUK 내부 운영 modifier의 1.07 제안. 시장 수익률과 무관하며 상품 접근을 원금 단계로 제한하지 않는다. Tier 기본 경제가 우선이고 상품 modifier는 보조다. 같은 Tier의 낮은 배율 선택에 속도상 불리함은 남는다.",
       "catalog_role": "한국 입문 대표",
       "visual_intensity": "중간",
       "main_money_display": "WHOLE_KRW_ONLY",
@@ -537,13 +525,12 @@
         "PROPOSAL_NOT_ACTIVE",
         "NON_DEFAULT_EFFECT_SCOPE_UNRESOLVED",
         "LOWER_PRODUCT_SPEED_ONLY_DOMINANCE",
-        "HIGH_THRESHOLD_ACCESSIBILITY_REVIEW",
         "LEGAL_BRAND_REVIEW_REQUIRED"
       ],
-      "minimum_funding_tier": "L6",
-      "minimum_eligible_principal": "DERIVED_FROM_TIER",
-      "unlock_policy": "FUNDING_TIER",
-      "policy_version_change_required": true
+      "policy_version_change_required": true,
+      "product_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "access_condition": "AUTHORITATIVE_PUBLISHED_AVAILABLE_PRODUCT_AND_ELIGIBLE_MEMBER",
+      "tier_capacity": "INHERITED"
     },
     {
       "proposal_id": "catalog-v1-soxx",
@@ -566,7 +553,7 @@
       "capacity_scope": "GLOBAL_CYCLE",
       "retention_policy": "INHERIT_SEPARATE_APPROVED_RETENTION",
       "slots_policy": "INHERIT_TIER_SLOTS_NOT_MULTIPLICATIVE",
-      "speed_rationale_ko": "가상 카탈로그의 선택 폭을 단계적으로 늘리는 1.07 제안. 시장가격·배당·기업 실적과 무관하다. 동일 단계 및 상위 풀의 비슷한 속도 선택지를 유지하며 capacity는 증가시키지 않는다.",
+      "speed_rationale_ko": "PUTDUK 내부 운영 modifier의 1.07 제안. 시장 수익률과 무관하며 상품 접근을 원금 단계로 제한하지 않는다. Tier 기본 경제가 우선이고 상품 modifier는 보조다. 같은 Tier의 낮은 배율 선택에 속도상 불리함은 남는다.",
       "catalog_role": "단일 회사 밖 반도체",
       "visual_intensity": "중간",
       "main_money_display": "WHOLE_KRW_ONLY",
@@ -577,13 +564,12 @@
         "PROPOSAL_NOT_ACTIVE",
         "NON_DEFAULT_EFFECT_SCOPE_UNRESOLVED",
         "LOWER_PRODUCT_SPEED_ONLY_DOMINANCE",
-        "HIGH_THRESHOLD_ACCESSIBILITY_REVIEW",
         "LEGAL_BRAND_REVIEW_REQUIRED"
       ],
-      "minimum_funding_tier": "L6",
-      "minimum_eligible_principal": "DERIVED_FROM_TIER",
-      "unlock_policy": "FUNDING_TIER",
-      "policy_version_change_required": true
+      "policy_version_change_required": true,
+      "product_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "access_condition": "AUTHORITATIVE_PUBLISHED_AVAILABLE_PRODUCT_AND_ELIGIBLE_MEMBER",
+      "tier_capacity": "INHERITED"
     },
     {
       "proposal_id": "catalog-v1-ethereum",
@@ -606,7 +592,7 @@
       "capacity_scope": "GLOBAL_CYCLE",
       "retention_policy": "INHERIT_SEPARATE_APPROVED_RETENTION",
       "slots_policy": "INHERIT_TIER_SLOTS_NOT_MULTIPLICATIVE",
-      "speed_rationale_ko": "가상 카탈로그의 선택 폭을 단계적으로 늘리는 1.08 제안. 시장가격·배당·기업 실적과 무관하다. 동일 단계 및 상위 풀의 비슷한 속도 선택지를 유지하며 capacity는 증가시키지 않는다.",
+      "speed_rationale_ko": "PUTDUK 내부 운영 modifier의 1.08 제안. 시장 수익률과 무관하며 상품 접근을 원금 단계로 제한하지 않는다. Tier 기본 경제가 우선이고 상품 modifier는 보조다. 같은 Tier의 낮은 배율 선택에 속도상 불리함은 남는다.",
       "catalog_role": "크립토 구조 대비",
       "visual_intensity": "중간",
       "main_money_display": "WHOLE_KRW_ONLY",
@@ -617,13 +603,12 @@
         "PROPOSAL_NOT_ACTIVE",
         "NON_DEFAULT_EFFECT_SCOPE_UNRESOLVED",
         "LOWER_PRODUCT_SPEED_ONLY_DOMINANCE",
-        "HIGH_THRESHOLD_ACCESSIBILITY_REVIEW",
         "LEGAL_BRAND_REVIEW_REQUIRED"
       ],
-      "minimum_funding_tier": "L7",
-      "minimum_eligible_principal": "DERIVED_FROM_TIER",
-      "unlock_policy": "FUNDING_TIER",
-      "policy_version_change_required": true
+      "policy_version_change_required": true,
+      "product_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "access_condition": "AUTHORITATIVE_PUBLISHED_AVAILABLE_PRODUCT_AND_ELIGIBLE_MEMBER",
+      "tier_capacity": "INHERITED"
     },
     {
       "proposal_id": "catalog-v1-alphabet-a",
@@ -646,7 +631,7 @@
       "capacity_scope": "GLOBAL_CYCLE",
       "retention_policy": "INHERIT_SEPARATE_APPROVED_RETENTION",
       "slots_policy": "INHERIT_TIER_SLOTS_NOT_MULTIPLICATIVE",
-      "speed_rationale_ko": "가상 카탈로그의 선택 폭을 단계적으로 늘리는 1.08 제안. 시장가격·배당·기업 실적과 무관하다. 동일 단계 및 상위 풀의 비슷한 속도 선택지를 유지하며 capacity는 증가시키지 않는다.",
+      "speed_rationale_ko": "PUTDUK 내부 운영 modifier의 1.08 제안. 시장 수익률과 무관하며 상품 접근을 원금 단계로 제한하지 않는다. Tier 기본 경제가 우선이고 상품 modifier는 보조다. 같은 Tier의 낮은 배율 선택에 속도상 불리함은 남는다.",
       "catalog_role": "정보 연결 확장",
       "visual_intensity": "중간",
       "main_money_display": "WHOLE_KRW_ONLY",
@@ -657,13 +642,12 @@
         "PROPOSAL_NOT_ACTIVE",
         "NON_DEFAULT_EFFECT_SCOPE_UNRESOLVED",
         "LOWER_PRODUCT_SPEED_ONLY_DOMINANCE",
-        "HIGH_THRESHOLD_ACCESSIBILITY_REVIEW",
         "LEGAL_BRAND_REVIEW_REQUIRED"
       ],
-      "minimum_funding_tier": "L7",
-      "minimum_eligible_principal": "DERIVED_FROM_TIER",
-      "unlock_policy": "FUNDING_TIER",
-      "policy_version_change_required": true
+      "policy_version_change_required": true,
+      "product_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "access_condition": "AUTHORITATIVE_PUBLISHED_AVAILABLE_PRODUCT_AND_ELIGIBLE_MEMBER",
+      "tier_capacity": "INHERITED"
     },
     {
       "proposal_id": "catalog-v1-qqq",
@@ -686,7 +670,7 @@
       "capacity_scope": "GLOBAL_CYCLE",
       "retention_policy": "INHERIT_SEPARATE_APPROVED_RETENTION",
       "slots_policy": "INHERIT_TIER_SLOTS_NOT_MULTIPLICATIVE",
-      "speed_rationale_ko": "가상 카탈로그의 선택 폭을 단계적으로 늘리는 1.09 제안. 시장가격·배당·기업 실적과 무관하다. 동일 단계 및 상위 풀의 비슷한 속도 선택지를 유지하며 capacity는 증가시키지 않는다.",
+      "speed_rationale_ko": "PUTDUK 내부 운영 modifier의 1.09 제안. 시장 수익률과 무관하며 상품 접근을 원금 단계로 제한하지 않는다. Tier 기본 경제가 우선이고 상품 modifier는 보조다. 같은 Tier의 낮은 배율 선택에 속도상 불리함은 남는다.",
       "catalog_role": "기술 묶음 대비",
       "visual_intensity": "중간",
       "main_money_display": "WHOLE_KRW_ONLY",
@@ -697,13 +681,12 @@
         "PROPOSAL_NOT_ACTIVE",
         "NON_DEFAULT_EFFECT_SCOPE_UNRESOLVED",
         "LOWER_PRODUCT_SPEED_ONLY_DOMINANCE",
-        "HIGH_THRESHOLD_ACCESSIBILITY_REVIEW",
         "LEGAL_BRAND_REVIEW_REQUIRED"
       ],
-      "minimum_funding_tier": "L8",
-      "minimum_eligible_principal": "DERIVED_FROM_TIER",
-      "unlock_policy": "FUNDING_TIER",
-      "policy_version_change_required": true
+      "policy_version_change_required": true,
+      "product_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "access_condition": "AUTHORITATIVE_PUBLISHED_AVAILABLE_PRODUCT_AND_ELIGIBLE_MEMBER",
+      "tier_capacity": "INHERITED"
     },
     {
       "proposal_id": "catalog-v1-solana",
@@ -726,7 +709,7 @@
       "capacity_scope": "GLOBAL_CYCLE",
       "retention_policy": "INHERIT_SEPARATE_APPROVED_RETENTION",
       "slots_policy": "INHERIT_TIER_SLOTS_NOT_MULTIPLICATIVE",
-      "speed_rationale_ko": "가상 카탈로그의 선택 폭을 단계적으로 늘리는 1.09 제안. 시장가격·배당·기업 실적과 무관하다. 동일 단계 및 상위 풀의 비슷한 속도 선택지를 유지하며 capacity는 증가시키지 않는다.",
+      "speed_rationale_ko": "PUTDUK 내부 운영 modifier의 1.09 제안. 시장 수익률과 무관하며 상품 접근을 원금 단계로 제한하지 않는다. Tier 기본 경제가 우선이고 상품 modifier는 보조다. 같은 Tier의 낮은 배율 선택에 속도상 불리함은 남는다.",
       "catalog_role": "크립토 후속 분산",
       "visual_intensity": "중간",
       "main_money_display": "WHOLE_KRW_ONLY",
@@ -737,13 +720,12 @@
         "PROPOSAL_NOT_ACTIVE",
         "NON_DEFAULT_EFFECT_SCOPE_UNRESOLVED",
         "LOWER_PRODUCT_SPEED_ONLY_DOMINANCE",
-        "HIGH_THRESHOLD_ACCESSIBILITY_REVIEW",
         "LEGAL_BRAND_REVIEW_REQUIRED"
       ],
-      "minimum_funding_tier": "L8",
-      "minimum_eligible_principal": "DERIVED_FROM_TIER",
-      "unlock_policy": "FUNDING_TIER",
-      "policy_version_change_required": true
+      "policy_version_change_required": true,
+      "product_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "access_condition": "AUTHORITATIVE_PUBLISHED_AVAILABLE_PRODUCT_AND_ELIGIBLE_MEMBER",
+      "tier_capacity": "INHERITED"
     },
     {
       "proposal_id": "catalog-v1-bitcoin",
@@ -766,7 +748,7 @@
       "capacity_scope": "GLOBAL_CYCLE",
       "retention_policy": "INHERIT_SEPARATE_APPROVED_RETENTION",
       "slots_policy": "INHERIT_TIER_SLOTS_NOT_MULTIPLICATIVE",
-      "speed_rationale_ko": "가상 카탈로그의 선택 폭을 단계적으로 늘리는 1.09 제안. 시장가격·배당·기업 실적과 무관하다. 동일 단계 및 상위 풀의 비슷한 속도 선택지를 유지하며 capacity는 증가시키지 않는다.",
+      "speed_rationale_ko": "PUTDUK 내부 운영 modifier의 1.09 제안. 시장 수익률과 무관하며 상품 접근을 원금 단계로 제한하지 않는다. Tier 기본 경제가 우선이고 상품 modifier는 보조다. 같은 Tier의 낮은 배율 선택에 속도상 불리함은 남는다.",
       "catalog_role": "크립토 기준",
       "visual_intensity": "중간",
       "main_money_display": "WHOLE_KRW_ONLY",
@@ -777,13 +759,12 @@
         "PROPOSAL_NOT_ACTIVE",
         "NON_DEFAULT_EFFECT_SCOPE_UNRESOLVED",
         "LOWER_PRODUCT_SPEED_ONLY_DOMINANCE",
-        "HIGH_THRESHOLD_ACCESSIBILITY_REVIEW",
         "LEGAL_BRAND_REVIEW_REQUIRED"
       ],
-      "minimum_funding_tier": "L9",
-      "minimum_eligible_principal": "DERIVED_FROM_TIER",
-      "unlock_policy": "FUNDING_TIER",
-      "policy_version_change_required": true
+      "policy_version_change_required": true,
+      "product_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "access_condition": "AUTHORITATIVE_PUBLISHED_AVAILABLE_PRODUCT_AND_ELIGIBLE_MEMBER",
+      "tier_capacity": "INHERITED"
     },
     {
       "proposal_id": "catalog-v1-sandisk",
@@ -806,7 +787,7 @@
       "capacity_scope": "GLOBAL_CYCLE",
       "retention_policy": "INHERIT_SEPARATE_APPROVED_RETENTION",
       "slots_policy": "INHERIT_TIER_SLOTS_NOT_MULTIPLICATIVE",
-      "speed_rationale_ko": "가상 카탈로그의 선택 폭을 단계적으로 늘리는 1.09 제안. 시장가격·배당·기업 실적과 무관하다. 동일 단계 및 상위 풀의 비슷한 속도 선택지를 유지하며 capacity는 증가시키지 않는다.",
+      "speed_rationale_ko": "PUTDUK 내부 운영 modifier의 1.09 제안. 시장 수익률과 무관하며 상품 접근을 원금 단계로 제한하지 않는다. Tier 기본 경제가 우선이고 상품 modifier는 보조다. 같은 Tier의 낮은 배율 선택에 속도상 불리함은 남는다.",
       "catalog_role": "메모리와 저장 구별",
       "visual_intensity": "중간",
       "main_money_display": "WHOLE_KRW_ONLY",
@@ -817,13 +798,12 @@
         "PROPOSAL_NOT_ACTIVE",
         "NON_DEFAULT_EFFECT_SCOPE_UNRESOLVED",
         "LOWER_PRODUCT_SPEED_ONLY_DOMINANCE",
-        "HIGH_THRESHOLD_ACCESSIBILITY_REVIEW",
         "LEGAL_BRAND_REVIEW_REQUIRED"
       ],
-      "minimum_funding_tier": "L10",
-      "minimum_eligible_principal": "DERIVED_FROM_TIER",
-      "unlock_policy": "FUNDING_TIER",
-      "policy_version_change_required": true
+      "policy_version_change_required": true,
+      "product_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "access_condition": "AUTHORITATIVE_PUBLISHED_AVAILABLE_PRODUCT_AND_ELIGIBLE_MEMBER",
+      "tier_capacity": "INHERITED"
     },
     {
       "proposal_id": "catalog-v1-sk-hynix",
@@ -846,7 +826,7 @@
       "capacity_scope": "GLOBAL_CYCLE",
       "retention_policy": "INHERIT_SEPARATE_APPROVED_RETENTION",
       "slots_policy": "INHERIT_TIER_SLOTS_NOT_MULTIPLICATIVE",
-      "speed_rationale_ko": "가상 카탈로그의 선택 폭을 단계적으로 늘리는 1.10 제안. 시장가격·배당·기업 실적과 무관하다. 동일 단계 및 상위 풀의 비슷한 속도 선택지를 유지하며 capacity는 증가시키지 않는다.",
+      "speed_rationale_ko": "PUTDUK 내부 운영 modifier의 1.10 제안. 시장 수익률과 무관하며 상품 접근을 원금 단계로 제한하지 않는다. Tier 기본 경제가 우선이고 상품 modifier는 보조다. 같은 Tier의 낮은 배율 선택에 속도상 불리함은 남는다.",
       "catalog_role": "정밀 기술 확장",
       "visual_intensity": "높음",
       "main_money_display": "WHOLE_KRW_ONLY",
@@ -857,13 +837,12 @@
         "PROPOSAL_NOT_ACTIVE",
         "NON_DEFAULT_EFFECT_SCOPE_UNRESOLVED",
         "LOWER_PRODUCT_SPEED_ONLY_DOMINANCE",
-        "HIGH_THRESHOLD_ACCESSIBILITY_REVIEW",
         "LEGAL_BRAND_REVIEW_REQUIRED"
       ],
-      "minimum_funding_tier": "L11",
-      "minimum_eligible_principal": "DERIVED_FROM_TIER",
-      "unlock_policy": "FUNDING_TIER",
-      "policy_version_change_required": true
+      "policy_version_change_required": true,
+      "product_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "access_condition": "AUTHORITATIVE_PUBLISHED_AVAILABLE_PRODUCT_AND_ELIGIBLE_MEMBER",
+      "tier_capacity": "INHERITED"
     },
     {
       "proposal_id": "catalog-v1-tesla",
@@ -886,7 +865,7 @@
       "capacity_scope": "GLOBAL_CYCLE",
       "retention_policy": "INHERIT_SEPARATE_APPROVED_RETENTION",
       "slots_policy": "INHERIT_TIER_SLOTS_NOT_MULTIPLICATIVE",
-      "speed_rationale_ko": "가상 카탈로그의 선택 폭을 단계적으로 늘리는 1.10 제안. 시장가격·배당·기업 실적과 무관하다. 동일 단계 및 상위 풀의 비슷한 속도 선택지를 유지하며 capacity는 증가시키지 않는다.",
+      "speed_rationale_ko": "PUTDUK 내부 운영 modifier의 1.10 제안. 시장 수익률과 무관하며 상품 접근을 원금 단계로 제한하지 않는다. Tier 기본 경제가 우선이고 상품 modifier는 보조다. 같은 Tier의 낮은 배율 선택에 속도상 불리함은 남는다.",
       "catalog_role": "모빌리티 대비",
       "visual_intensity": "중간",
       "main_money_display": "WHOLE_KRW_ONLY",
@@ -897,13 +876,12 @@
         "PROPOSAL_NOT_ACTIVE",
         "NON_DEFAULT_EFFECT_SCOPE_UNRESOLVED",
         "LOWER_PRODUCT_SPEED_ONLY_DOMINANCE",
-        "HIGH_THRESHOLD_ACCESSIBILITY_REVIEW",
         "LEGAL_BRAND_REVIEW_REQUIRED"
       ],
-      "minimum_funding_tier": "L11",
-      "minimum_eligible_principal": "DERIVED_FROM_TIER",
-      "unlock_policy": "FUNDING_TIER",
-      "policy_version_change_required": true
+      "policy_version_change_required": true,
+      "product_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "access_condition": "AUTHORITATIVE_PUBLISHED_AVAILABLE_PRODUCT_AND_ELIGIBLE_MEMBER",
+      "tier_capacity": "INHERITED"
     },
     {
       "proposal_id": "catalog-v1-rocket-lab",
@@ -926,7 +904,7 @@
       "capacity_scope": "GLOBAL_CYCLE",
       "retention_policy": "INHERIT_SEPARATE_APPROVED_RETENTION",
       "slots_policy": "INHERIT_TIER_SLOTS_NOT_MULTIPLICATIVE",
-      "speed_rationale_ko": "가상 카탈로그의 선택 폭을 단계적으로 늘리는 1.10 제안. 시장가격·배당·기업 실적과 무관하다. 동일 단계 및 상위 풀의 비슷한 속도 선택지를 유지하며 capacity는 증가시키지 않는다.",
+      "speed_rationale_ko": "PUTDUK 내부 운영 modifier의 1.10 제안. 시장 수익률과 무관하며 상품 접근을 원금 단계로 제한하지 않는다. Tier 기본 경제가 우선이고 상품 modifier는 보조다. 같은 Tier의 낮은 배율 선택에 속도상 불리함은 남는다.",
       "catalog_role": "우주 장면 대비",
       "visual_intensity": "높음",
       "main_money_display": "WHOLE_KRW_ONLY",
@@ -937,13 +915,12 @@
         "PROPOSAL_NOT_ACTIVE",
         "NON_DEFAULT_EFFECT_SCOPE_UNRESOLVED",
         "LOWER_PRODUCT_SPEED_ONLY_DOMINANCE",
-        "HIGH_THRESHOLD_ACCESSIBILITY_REVIEW",
         "LEGAL_BRAND_REVIEW_REQUIRED"
       ],
-      "minimum_funding_tier": "L12",
-      "minimum_eligible_principal": "DERIVED_FROM_TIER",
-      "unlock_policy": "FUNDING_TIER",
-      "policy_version_change_required": true
+      "policy_version_change_required": true,
+      "product_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "access_condition": "AUTHORITATIVE_PUBLISHED_AVAILABLE_PRODUCT_AND_ELIGIBLE_MEMBER",
+      "tier_capacity": "INHERITED"
     },
     {
       "proposal_id": "catalog-v1-nvidia",
@@ -966,7 +943,7 @@
       "capacity_scope": "GLOBAL_CYCLE",
       "retention_policy": "INHERIT_SEPARATE_APPROVED_RETENTION",
       "slots_policy": "INHERIT_TIER_SLOTS_NOT_MULTIPLICATIVE",
-      "speed_rationale_ko": "가상 카탈로그의 선택 폭을 단계적으로 늘리는 1.10 제안. 시장가격·배당·기업 실적과 무관하다. 동일 단계 및 상위 풀의 비슷한 속도 선택지를 유지하며 capacity는 증가시키지 않는다.",
+      "speed_rationale_ko": "PUTDUK 내부 운영 modifier의 1.10 제안. 시장 수익률과 무관하며 상품 접근을 원금 단계로 제한하지 않는다. Tier 기본 경제가 우선이고 상품 modifier는 보조다. 같은 Tier의 낮은 배율 선택에 속도상 불리함은 남는다.",
       "catalog_role": "연산 주력",
       "visual_intensity": "높음",
       "main_money_display": "WHOLE_KRW_ONLY",
@@ -977,13 +954,12 @@
         "PROPOSAL_NOT_ACTIVE",
         "NON_DEFAULT_EFFECT_SCOPE_UNRESOLVED",
         "LOWER_PRODUCT_SPEED_ONLY_DOMINANCE",
-        "HIGH_THRESHOLD_ACCESSIBILITY_REVIEW",
         "LEGAL_BRAND_REVIEW_REQUIRED"
       ],
-      "minimum_funding_tier": "L13",
-      "minimum_eligible_principal": "DERIVED_FROM_TIER",
-      "unlock_policy": "FUNDING_TIER",
-      "policy_version_change_required": true
+      "policy_version_change_required": true,
+      "product_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "access_condition": "AUTHORITATIVE_PUBLISHED_AVAILABLE_PRODUCT_AND_ELIGIBLE_MEMBER",
+      "tier_capacity": "INHERITED"
     },
     {
       "proposal_id": "catalog-v1-spacex",
@@ -1006,7 +982,7 @@
       "capacity_scope": "GLOBAL_CYCLE",
       "retention_policy": "INHERIT_SEPARATE_APPROVED_RETENTION",
       "slots_policy": "INHERIT_TIER_SLOTS_NOT_MULTIPLICATIVE",
-      "speed_rationale_ko": "가상 카탈로그의 선택 폭을 단계적으로 늘리는 1.10 제안. 시장가격·배당·기업 실적과 무관하다. 동일 단계 및 상위 풀의 비슷한 속도 선택지를 유지하며 capacity는 증가시키지 않는다.",
+      "speed_rationale_ko": "PUTDUK 내부 운영 modifier의 1.10 제안. 시장 수익률과 무관하며 상품 접근을 원금 단계로 제한하지 않는다. Tier 기본 경제가 우선이고 상품 modifier는 보조다. 같은 Tier의 낮은 배율 선택에 속도상 불리함은 남는다.",
       "catalog_role": "우주 통신 주제 분산",
       "visual_intensity": "중간",
       "main_money_display": "WHOLE_KRW_ONLY",
@@ -1017,16 +993,15 @@
         "PROPOSAL_NOT_ACTIVE",
         "NON_DEFAULT_EFFECT_SCOPE_UNRESOLVED",
         "LOWER_PRODUCT_SPEED_ONLY_DOMINANCE",
-        "HIGH_THRESHOLD_ACCESSIBILITY_REVIEW",
         "LEGAL_BRAND_REVIEW_REQUIRED"
       ],
-      "minimum_funding_tier": "L14",
-      "minimum_eligible_principal": "DERIVED_FROM_TIER",
-      "unlock_policy": "FUNDING_TIER",
-      "policy_version_change_required": true
+      "policy_version_change_required": true,
+      "product_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "access_condition": "AUTHORITATIVE_PUBLISHED_AVAILABLE_PRODUCT_AND_ELIGIBLE_MEMBER",
+      "tier_capacity": "INHERITED"
     }
   ],
-  "recommendation": "POLICY_A_PLUS_TIER_GATE_PLUS_INHERITED_GLOBAL_CAPACITY_PLUS_PRODUCT_SPEED",
+  "recommendation": "POLICY_A_OPEN_PRODUCT_CHOICE_TIER_MINING_POWER_PRODUCT_MODIFIER_SECONDARY",
   "grade_bands_bps": {
     "C": [10000, 10200],
     "B": [10300, 10500],
@@ -1055,8 +1030,12 @@
   ],
   "policy_version_change_required": true,
   "policy_version_change_reasons": [
-    "NEW_FUNDING_TIER_PRODUCT_GATE",
-    "NON_DEFAULT_MODIFIER_SCOPE_AND_EFFECTIVE_BOUNDARY_UNRESOLVED"
+    "NON_DEFAULT_MODIFIER_SCOPE_AND_EFFECTIVE_BOUNDARY_UNRESOLVED",
+    "TIER_SPEED_CONTRACT_REQUIRED"
   ],
-  "approved_document_band_change_required": false
+  "approved_document_band_change_required": false,
+  "product_access_policy": "ALL_ELIGIBLE_MEMBERS",
+  "tier_base_speed_status": "TIER_SPEED_CONTRACT_REQUIRED",
+  "owner_access_direction": "CONFIRMED_BY_OWNER_CORRECTION_NOT_RUNTIME_ACTIVATED",
+  "supersedes_head": "783732492e70c312b33640e07ee0d8ffad68c3e5"
 }

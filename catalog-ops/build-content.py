@@ -1,4 +1,9 @@
 """Audit frozen launch content and author delta only. No CMS writes."""
+# OWNER_CORRECTION_GENERATOR_GUARD
+from pathlib import Path as _OwnerPath
+if __name__ == "__main__" and (_OwnerPath(__file__).parent / "product-access-policy.json").exists():
+    raise SystemExit("SUPERSEDED_BY_OWNER_CORRECTION: use owner-correction.py; do not regenerate the rejected Tier access model or overwrite reviewed evidence")
+
 import collections
 import hashlib
 import json

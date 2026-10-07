@@ -1,0 +1,264 @@
+IMPORTANT OWNER CORRECTION — PRODUCT ACCESS MODEL
+
+현재 Tier-gated Product Eligibility 해석을 수정한다.
+
+Owner의 실제 정책 의도는:
+
+"입금액 / Eligible Principal에 따라 선택 가능한 상품을 제한하는 것"
+
+이 아니다.
+
+모든 정상적으로 공개된 상품은 원칙적으로
+모든 eligible member가 선택할 수 있어야 한다.
+
+즉:
+
+L1 회원도 NVIDIA / Tesla / SK hynix / SpaceX / BTC / ETF 등을
+상품이 공개되어 있는 한 선택할 수 있다.
+
+Funding Tier가 제한하는 것은 PRODUCT ACCESS가 아니라:
+
+- base mining speed
+- mining capacity / entitlement
+- concurrent slots
+- principal-based mining scale
+- 기타 승인된 Tier economic benefits
+
+이다.
+
+상품은:
+
+- product-specific mining personality
+- scene / visual identity
+- product speed modifier
+- product experience
+
+를 제공한다.
+
+올바른 구조는:
+
+Eligible Principal
+→ Funding Tier
+→ Tier Base Mining Speed
+→ Tier Capacity / Entitlement
+→ Product Selection (all published products available)
+→ Product Speed Modifier
+→ User/Event/Temporary Modifiers
+→ Final 1.50x Cap Once
+→ Reward Producer
+→ Pending
+→ Settlement
+→ Verified
+
+이다.
+
+==================================================
+CORRECTION REQUIRED
+==================================================
+
+기존에 만든 다음 개념은 Owner 정책으로 승인되지 않았다:
+
+- minimum_funding_tier per product
+- product unlock by Tier
+- NVIDIA only at L13
+- SpaceX only at L14
+- Tier downgrade causing product ineligibility
+- PAUSE because selected product is no longer Tier-eligible
+
+이러한 Tier-gated product access 모델을:
+
+SUPERSEDED_BY_OWNER_CORRECTION
+
+으로 표시한다.
+
+기존 evidence/history를 삭제하거나 rewrite하지 말고,
+최종 proposal에서 사용하지 않도록 명확히 supersede한다.
+
+==================================================
+NEW ECONOMY MODEL
+==================================================
+
+모든 P0/P1 공개상품:
+
+product_access_policy =
+ALL_ELIGIBLE_MEMBERS
+
+로 제안한다.
+
+Tier는 product access가 아니라 mining power를 결정한다.
+
+각 Tier에 대해 실제 SSOT를 사용하여:
+
+- Eligible Principal range
+- base mining speed
+- global capacity / entitlement
+- slot count
+- retention-related policy
+- effective reward scaling
+
+을 분석한다.
+
+현재 repo에 Tier별 base mining speed가 명시되어 있지 않거나
+derive rule이 불명확하면 숫자를 발명하지 말고:
+
+TIER_SPEED_CONTRACT_REQUIRED
+
+로 표시한다.
+
+==================================================
+PRODUCT DIFFERENTIATION
+==================================================
+
+상품별 speed modifier는 계속 유지할 수 있다.
+
+예:
+
+Gold 1.00
+ETF 1.01~1.05
+Samsung / Apple etc.
+...
+NVIDIA / SK hynix / Tesla / SpaceX up to 1.10
+
+단 이것은 시장 수익률이 아니라
+PUTDUK 내부 운영자가 설정하는 Product Modifier다.
+
+중요:
+
+Funding Tier의 경제적 차이가
+Product Modifier 차이보다 훨씬 중요한 구조여야 한다.
+
+낮은 Tier 회원이 NVIDIA 1.10을 선택했다고 해서
+높은 Tier 회원의 Gold 1.00보다
+전체 entitlement/mining capacity가 커지는 구조를
+자동 가정하지 마라.
+
+Tier base economics가 primary.
+Product modifier는 secondary.
+
+==================================================
+TIER DOWNGRADE
+==================================================
+
+Eligible Principal 감소로 Tier가 내려가도
+선택한 상품 자체를 잠그거나 변경하도록 강제하지 않는다.
+
+대신 서버는 새 Tier 기준으로:
+
+- base speed
+- capacity / entitlement
+- available slot count
+- future accrual
+
+을 재평가해야 한다.
+
+기존 확정:
+
+principal withdrawal HOLD = PAUSE_NOT_RESET
+
+history / eligible age / cycle / carry / verified ledger
+보존 원칙을 유지한다.
+
+상품 접근권 때문에 PAUSE하지 않는다.
+
+단 slot count가 감소했을 때 어떤 allocation을 유지/정지할지는
+별도 authoritative engine policy로 분석하고
+PRIMARY_CONTRACT_REQUIRED로 넘긴다.
+
+==================================================
+REQUIRED OUTPUT UPDATE
+==================================================
+
+기존:
+
+PRODUCT-TIER-ELIGIBILITY
+
+모델은 superseded 처리한다.
+
+대신 다음을 작성/갱신한다:
+
+- TIER-MINING-POWER-MODEL.md
+- tier-mining-power-model.json
+- PRODUCT-ACCESS-POLICY.md
+- ECONOMY-SIMULATION.md
+- PRODUCT-ECONOMY-MATRIX.md
+- INTEGRATION-HANDOFF.md
+
+P0/P1 표는:
+
+Product
+Grade
+Personality
+Product Speed Modifier
+Product Access = ALL_ELIGIBLE_MEMBERS
+Tier Capacity = INHERITED
+Market Linked = false
+Policy Status
+Scene Status
+
+형태로 갱신한다.
+
+그리고 Tier별 표는:
+
+Tier
+Eligible Principal
+Slots
+Base Speed / Derived Speed Status
+Capacity / Entitlement
+Product Access
+
+형태로 만든다.
+
+Product Access는 공개된 상품에 대해 동일하게:
+
+ALL_PUBLISHED_PRODUCTS
+
+가 기본이다.
+
+==================================================
+SIMULATION UPDATE
+==================================================
+
+기존 Tier-gated concentration simulation은
+최종 추천에서 제거한다.
+
+대신 시뮬레이션은:
+
+same product across different tiers
+different product modifiers within same tier
+Tier base economics vs Product modifier impact
+slot count impact
+capacity / time-to-cap
+user/event modifiers
+final 1.50 cap
+
+을 비교한다.
+
+핵심 질문:
+
+"입금액이 증가할수록 상품 제한 없이도
+채굴속도/채굴량/동시 운영 능력이 명확히 증가하는가?"
+
+를 검증한다.
+
+==================================================
+FINAL PRINCIPLE
+==================================================
+
+MORE ELIGIBLE PRINCIPAL
+→ HIGHER FUNDING TIER
+→ MORE MINING POWER / CAPACITY / SLOTS
+
+NOT:
+
+MORE ELIGIBLE PRINCIPAL
+→ ACCESS TO A SPECIFIC STOCK PRODUCT
+
+PRODUCT CHOICE IS OPEN.
+MINING POWER IS TIER-DEPENDENT.
+
+Product identity and Product modifier remain separate from
+Funding Tier entitlement.
+
+모든 수정은 catalog-ops/** only.
+Production/backend/member UI/Mining Runtime은 수정하지 않는다.
+기존 branch에서 계속하고 checkpoint commit 후 push한다.

@@ -1,0 +1,554 @@
+[
+  {
+    "slug": "catalog-notification-product-release",
+    "storage": {
+      "category": "events",
+      "title_ko": "새 테마 안내가 있습니다",
+      "body_ko": "공개된 상품 설명과 적용 조건을 확인해 주세요. 알림은 상품 선택 완료를 뜻하지 않습니다.",
+      "route": "/products",
+      "expires_at": null
+    },
+    "metadata": {
+      "audience": "MEMBERS",
+      "cta": {
+        "label": "안내 보기",
+        "route": "/products"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "publication_gate": "REVIEW_REQUIRED",
+      "registration_ready": false,
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "variables": [],
+      "required_phrases": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+      "channels": ["IN_APP", "WEB_PUSH"],
+      "user_id": null,
+      "source_event_id": null,
+      "deduplication_key": null,
+      "scheduled_at": null,
+      "fanout_status": "APPROVED_DELIVERY_COMMAND_REQUIRED",
+      "push_opt_in_required": true,
+      "publication_is_delivery": false,
+      "critical_override": false,
+      "delivery_policy": "인앱 기록 먼저. 실제 푸시 동의·수신 선택·조용한 시간·cooldown·cap·재시도 dedup을 승인된 command가 검증. 발송 receipt 없으면 UNKNOWN.",
+      "trigger_evidence": "실제 승인된 상품/공지/지원 답변 상태와 버전별 domain event readback 필요",
+      "sensitive_data": "회원 이름·잔액·계좌·주소·risk 사유·거래 식별자를 push에 포함하지 않음"
+    }
+  },
+  {
+    "slug": "catalog-notification-product-delay",
+    "storage": {
+      "category": "service",
+      "title_ko": "테마 공개 일정 안내",
+      "body_ko": "테마 공개 안내가 변경되었습니다. 확인된 일정과 이용 가능한 대안은 공지에서 읽어 주세요.",
+      "route": "/events",
+      "expires_at": null
+    },
+    "metadata": {
+      "audience": "MEMBERS",
+      "cta": {
+        "label": "안내 보기",
+        "route": "/events"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "publication_gate": "REVIEW_REQUIRED",
+      "registration_ready": false,
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "variables": [],
+      "required_phrases": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+      "channels": ["IN_APP", "WEB_PUSH"],
+      "user_id": null,
+      "source_event_id": null,
+      "deduplication_key": null,
+      "scheduled_at": null,
+      "fanout_status": "APPROVED_DELIVERY_COMMAND_REQUIRED",
+      "push_opt_in_required": true,
+      "publication_is_delivery": false,
+      "critical_override": false,
+      "delivery_policy": "인앱 기록 먼저. 실제 푸시 동의·수신 선택·조용한 시간·cooldown·cap·재시도 dedup을 승인된 command가 검증. 발송 receipt 없으면 UNKNOWN.",
+      "trigger_evidence": "실제 승인된 상품/공지/지원 답변 상태와 버전별 domain event readback 필요",
+      "sensitive_data": "회원 이름·잔액·계좌·주소·risk 사유·거래 식별자를 push에 포함하지 않음"
+    }
+  },
+  {
+    "slug": "catalog-notification-product-paused",
+    "storage": {
+      "category": "service",
+      "title_ko": "상품 선택 상태 안내",
+      "body_ko": "상품의 선택 가능 상태가 변경되었습니다. 대상과 적용 시각을 상품 안내에서 확인해 주세요.",
+      "route": "/products",
+      "expires_at": null
+    },
+    "metadata": {
+      "audience": "MEMBERS",
+      "cta": {
+        "label": "안내 보기",
+        "route": "/products"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "publication_gate": "REVIEW_REQUIRED",
+      "registration_ready": false,
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "variables": [],
+      "required_phrases": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+      "channels": ["IN_APP", "WEB_PUSH"],
+      "user_id": null,
+      "source_event_id": null,
+      "deduplication_key": null,
+      "scheduled_at": null,
+      "fanout_status": "APPROVED_DELIVERY_COMMAND_REQUIRED",
+      "push_opt_in_required": true,
+      "publication_is_delivery": false,
+      "critical_override": false,
+      "delivery_policy": "인앱 기록 먼저. 실제 푸시 동의·수신 선택·조용한 시간·cooldown·cap·재시도 dedup을 승인된 command가 검증. 발송 receipt 없으면 UNKNOWN.",
+      "trigger_evidence": "실제 승인된 상품/공지/지원 답변 상태와 버전별 domain event readback 필요",
+      "sensitive_data": "회원 이름·잔액·계좌·주소·risk 사유·거래 식별자를 push에 포함하지 않음"
+    }
+  },
+  {
+    "slug": "catalog-notification-product-retired",
+    "storage": {
+      "category": "service",
+      "title_ko": "새 선택 중지 안내",
+      "body_ko": "테마의 새 선택 중지와 기존 이용 영향은 공지에서 확인해 주세요. 금액은 내 기록에서 따로 확인합니다.",
+      "route": "/events",
+      "expires_at": null
+    },
+    "metadata": {
+      "audience": "MEMBERS",
+      "cta": {
+        "label": "안내 보기",
+        "route": "/events"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "publication_gate": "REVIEW_REQUIRED",
+      "registration_ready": false,
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "variables": [],
+      "required_phrases": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+      "channels": ["IN_APP", "WEB_PUSH"],
+      "user_id": null,
+      "source_event_id": null,
+      "deduplication_key": null,
+      "scheduled_at": null,
+      "fanout_status": "APPROVED_DELIVERY_COMMAND_REQUIRED",
+      "push_opt_in_required": true,
+      "publication_is_delivery": false,
+      "critical_override": false,
+      "delivery_policy": "인앱 기록 먼저. 실제 푸시 동의·수신 선택·조용한 시간·cooldown·cap·재시도 dedup을 승인된 command가 검증. 발송 receipt 없으면 UNKNOWN.",
+      "trigger_evidence": "실제 승인된 상품/공지/지원 답변 상태와 버전별 domain event readback 필요",
+      "sensitive_data": "회원 이름·잔액·계좌·주소·risk 사유·거래 식별자를 push에 포함하지 않음"
+    }
+  },
+  {
+    "slug": "catalog-notification-speed-policy",
+    "storage": {
+      "category": "service",
+      "title_ko": "채굴 조건 변경 안내",
+      "body_ko": "속도 조건의 적용 시각과 기존 이용 영향을 확인해 주세요. 주기 한도와 속도는 다릅니다.",
+      "route": "/mining",
+      "expires_at": null
+    },
+    "metadata": {
+      "audience": "MEMBERS",
+      "cta": {
+        "label": "안내 보기",
+        "route": "/mining"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "publication_gate": "REVIEW_REQUIRED",
+      "registration_ready": false,
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "variables": [],
+      "required_phrases": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+      "channels": ["IN_APP", "WEB_PUSH"],
+      "user_id": null,
+      "source_event_id": null,
+      "deduplication_key": null,
+      "scheduled_at": null,
+      "fanout_status": "APPROVED_DELIVERY_COMMAND_REQUIRED",
+      "push_opt_in_required": true,
+      "publication_is_delivery": false,
+      "critical_override": false,
+      "delivery_policy": "인앱 기록 먼저. 실제 푸시 동의·수신 선택·조용한 시간·cooldown·cap·재시도 dedup을 승인된 command가 검증. 발송 receipt 없으면 UNKNOWN.",
+      "trigger_evidence": "실제 승인된 상품/공지/지원 답변 상태와 버전별 domain event readback 필요",
+      "sensitive_data": "회원 이름·잔액·계좌·주소·risk 사유·거래 식별자를 push에 포함하지 않음"
+    }
+  },
+  {
+    "slug": "catalog-notification-theme-guide",
+    "storage": {
+      "category": "service",
+      "title_ko": "테마 이름 읽는 방법",
+      "body_ko": "테마 이름은 실제 자산 매수나 소유를 뜻하지 않습니다. 상품 설명을 먼저 읽어 주세요.",
+      "route": "/products",
+      "expires_at": null
+    },
+    "metadata": {
+      "audience": "MEMBERS",
+      "cta": {
+        "label": "안내 보기",
+        "route": "/products"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "publication_gate": "REVIEW_REQUIRED",
+      "registration_ready": false,
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "variables": [],
+      "required_phrases": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+      "channels": ["IN_APP", "WEB_PUSH"],
+      "user_id": null,
+      "source_event_id": null,
+      "deduplication_key": null,
+      "scheduled_at": null,
+      "fanout_status": "APPROVED_DELIVERY_COMMAND_REQUIRED",
+      "push_opt_in_required": true,
+      "publication_is_delivery": false,
+      "critical_override": false,
+      "delivery_policy": "인앱 기록 먼저. 실제 푸시 동의·수신 선택·조용한 시간·cooldown·cap·재시도 dedup을 승인된 command가 검증. 발송 receipt 없으면 UNKNOWN.",
+      "trigger_evidence": "실제 승인된 상품/공지/지원 답변 상태와 버전별 domain event readback 필요",
+      "sensitive_data": "회원 이름·잔액·계좌·주소·risk 사유·거래 식별자를 push에 포함하지 않음"
+    }
+  },
+  {
+    "slug": "catalog-notification-scene-guide",
+    "storage": {
+      "category": "service",
+      "title_ko": "장면과 금액 안내",
+      "body_ko": "빛과 움직임이 금액을 확정하지 않습니다. 확인 전 기록과 확정 기록을 구분해 주세요.",
+      "route": "/mining",
+      "expires_at": null
+    },
+    "metadata": {
+      "audience": "MEMBERS",
+      "cta": {
+        "label": "안내 보기",
+        "route": "/mining"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "publication_gate": "REVIEW_REQUIRED",
+      "registration_ready": false,
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "variables": [],
+      "required_phrases": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+      "channels": ["IN_APP", "WEB_PUSH"],
+      "user_id": null,
+      "source_event_id": null,
+      "deduplication_key": null,
+      "scheduled_at": null,
+      "fanout_status": "APPROVED_DELIVERY_COMMAND_REQUIRED",
+      "push_opt_in_required": true,
+      "publication_is_delivery": false,
+      "critical_override": false,
+      "delivery_policy": "인앱 기록 먼저. 실제 푸시 동의·수신 선택·조용한 시간·cooldown·cap·재시도 dedup을 승인된 command가 검증. 발송 receipt 없으면 UNKNOWN.",
+      "trigger_evidence": "실제 승인된 상품/공지/지원 답변 상태와 버전별 domain event readback 필요",
+      "sensitive_data": "회원 이름·잔액·계좌·주소·risk 사유·거래 식별자를 push에 포함하지 않음"
+    }
+  },
+  {
+    "slug": "catalog-notification-product-support",
+    "storage": {
+      "category": "service",
+      "title_ko": "상품 문의 답변 안내",
+      "body_ko": "공식 고객지원에서 문의 답변을 확인해 주세요. 확인되지 않은 금액과 이용 조건은 답변으로 확정하지 않습니다.",
+      "route": "/notifications",
+      "expires_at": null
+    },
+    "metadata": {
+      "audience": "MEMBERS",
+      "cta": {
+        "label": "안내 보기",
+        "route": "/notifications"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "publication_gate": "REVIEW_REQUIRED",
+      "registration_ready": false,
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "variables": [],
+      "required_phrases": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+      "channels": ["IN_APP", "WEB_PUSH"],
+      "user_id": null,
+      "source_event_id": null,
+      "deduplication_key": null,
+      "scheduled_at": null,
+      "fanout_status": "APPROVED_DELIVERY_COMMAND_REQUIRED",
+      "push_opt_in_required": true,
+      "publication_is_delivery": false,
+      "critical_override": false,
+      "delivery_policy": "인앱 기록 먼저. 실제 푸시 동의·수신 선택·조용한 시간·cooldown·cap·재시도 dedup을 승인된 command가 검증. 발송 receipt 없으면 UNKNOWN.",
+      "trigger_evidence": "실제 승인된 상품/공지/지원 답변 상태와 버전별 domain event readback 필요",
+      "sensitive_data": "회원 이름·잔액·계좌·주소·risk 사유·거래 식별자를 push에 포함하지 않음"
+    }
+  },
+  {
+    "slug": "catalog-tier-notifications-unlock",
+    "storage": {
+      "category": "events",
+      "title_ko": "테마 선택 안내가 있습니다",
+      "body_ko": "내 계정에서 선택 가능한 테마와 이용 조건을 확인해 주세요. 이 알림은 선택 완료나 추가 보상을 뜻하지 않습니다.",
+      "route": "/products",
+      "expires_at": null
+    },
+    "metadata": {
+      "audience": "MEMBERS",
+      "cta": {
+        "label": "상품 안내 확인",
+        "route": "/products"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "publication_gate": "REVIEW_REQUIRED",
+      "registration_ready": false,
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "variables": [],
+      "required_phrases": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+      "channels": ["IN_APP", "WEB_PUSH"],
+      "user_id": null,
+      "source_event_id": null,
+      "deduplication_key": null,
+      "scheduled_at": null,
+      "fanout_status": "APPROVED_DELIVERY_COMMAND_REQUIRED",
+      "push_opt_in_required": true,
+      "publication_is_delivery": false,
+      "critical_override": false,
+      "delivery_policy": "인앱 기록 먼저. 실제 푸시 동의·수신 선택·조용한 시간·cooldown·cap·재시도 dedup을 승인된 command가 검증. 발송 receipt 없으면 UNKNOWN.",
+      "trigger_evidence": "승인된 정책 적용·catalog 공개·계정 eligibility 상태와 버전별 domain event readback 필요. 해금/HOLD 추측 발송 금지.",
+      "sensitive_data": "회원 이름·잔액·계좌·주소·risk 사유·거래 식별자를 push에 포함하지 않음",
+      "tier_policy_status": "PROPOSED_NOT_APPROVED",
+      "requires_authoritative_eligibility_event": true,
+      "policy_approval_before_publication": true
+    }
+  },
+  {
+    "slug": "catalog-tier-notifications-condition-change",
+    "storage": {
+      "category": "events",
+      "title_ko": "테마 이용 상태를 확인해 주세요",
+      "body_ko": "이용 조건 변경에 따른 안내가 있습니다. 상품 화면에서 지금 선택 가능한 테마와 진행 상태를 확인해 주세요.",
+      "route": "/products",
+      "expires_at": null
+    },
+    "metadata": {
+      "audience": "MEMBERS",
+      "cta": {
+        "label": "상품 안내 확인",
+        "route": "/products"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "publication_gate": "REVIEW_REQUIRED",
+      "registration_ready": false,
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "variables": [],
+      "required_phrases": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+      "channels": ["IN_APP", "WEB_PUSH"],
+      "user_id": null,
+      "source_event_id": null,
+      "deduplication_key": null,
+      "scheduled_at": null,
+      "fanout_status": "APPROVED_DELIVERY_COMMAND_REQUIRED",
+      "push_opt_in_required": true,
+      "publication_is_delivery": false,
+      "critical_override": false,
+      "delivery_policy": "인앱 기록 먼저. 실제 푸시 동의·수신 선택·조용한 시간·cooldown·cap·재시도 dedup을 승인된 command가 검증. 발송 receipt 없으면 UNKNOWN.",
+      "trigger_evidence": "승인된 정책 적용·catalog 공개·계정 eligibility 상태와 버전별 domain event readback 필요. 해금/HOLD 추측 발송 금지.",
+      "sensitive_data": "회원 이름·잔액·계좌·주소·risk 사유·거래 식별자를 push에 포함하지 않음",
+      "tier_policy_status": "PROPOSED_NOT_APPROVED",
+      "requires_authoritative_eligibility_event": true,
+      "policy_approval_before_publication": true
+    }
+  },
+  {
+    "slug": "catalog-tier-notifications-pause",
+    "storage": {
+      "category": "events",
+      "title_ko": "채굴 진행 안내가 있습니다",
+      "body_ko": "채굴 진행에 확인이 필요한 내용이 있습니다. 앱에서 현재 상태와 다음 안내를 읽어 주세요.",
+      "route": "/products",
+      "expires_at": null
+    },
+    "metadata": {
+      "audience": "MEMBERS",
+      "cta": {
+        "label": "상품 안내 확인",
+        "route": "/products"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "publication_gate": "REVIEW_REQUIRED",
+      "registration_ready": false,
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "variables": [],
+      "required_phrases": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+      "channels": ["IN_APP", "WEB_PUSH"],
+      "user_id": null,
+      "source_event_id": null,
+      "deduplication_key": null,
+      "scheduled_at": null,
+      "fanout_status": "APPROVED_DELIVERY_COMMAND_REQUIRED",
+      "push_opt_in_required": true,
+      "publication_is_delivery": false,
+      "critical_override": false,
+      "delivery_policy": "인앱 기록 먼저. 실제 푸시 동의·수신 선택·조용한 시간·cooldown·cap·재시도 dedup을 승인된 command가 검증. 발송 receipt 없으면 UNKNOWN.",
+      "trigger_evidence": "승인된 정책 적용·catalog 공개·계정 eligibility 상태와 버전별 domain event readback 필요. 해금/HOLD 추측 발송 금지.",
+      "sensitive_data": "회원 이름·잔액·계좌·주소·risk 사유·거래 식별자를 push에 포함하지 않음",
+      "tier_policy_status": "PROPOSED_NOT_APPROVED",
+      "requires_authoritative_eligibility_event": true,
+      "policy_approval_before_publication": true
+    }
+  },
+  {
+    "slug": "catalog-tier-notifications-policy",
+    "storage": {
+      "category": "events",
+      "title_ko": "상품 이용 정책 안내가 있습니다",
+      "body_ko": "적용 전 확인할 안내가 있습니다. 변경 내용과 적용 시각을 공지에서 읽어 주세요.",
+      "route": "/products",
+      "expires_at": null
+    },
+    "metadata": {
+      "audience": "MEMBERS",
+      "cta": {
+        "label": "상품 안내 확인",
+        "route": "/products"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "publication_gate": "REVIEW_REQUIRED",
+      "registration_ready": false,
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "variables": [],
+      "required_phrases": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+      "channels": ["IN_APP", "WEB_PUSH"],
+      "user_id": null,
+      "source_event_id": null,
+      "deduplication_key": null,
+      "scheduled_at": null,
+      "fanout_status": "APPROVED_DELIVERY_COMMAND_REQUIRED",
+      "push_opt_in_required": true,
+      "publication_is_delivery": false,
+      "critical_override": false,
+      "delivery_policy": "인앱 기록 먼저. 실제 푸시 동의·수신 선택·조용한 시간·cooldown·cap·재시도 dedup을 승인된 command가 검증. 발송 receipt 없으면 UNKNOWN.",
+      "trigger_evidence": "승인된 정책 적용·catalog 공개·계정 eligibility 상태와 버전별 domain event readback 필요. 해금/HOLD 추측 발송 금지.",
+      "sensitive_data": "회원 이름·잔액·계좌·주소·risk 사유·거래 식별자를 push에 포함하지 않음",
+      "tier_policy_status": "PROPOSED_NOT_APPROVED",
+      "requires_authoritative_eligibility_event": true,
+      "policy_approval_before_publication": true
+    }
+  }
+]

@@ -1,0 +1,35 @@
+{
+  "command": [
+    "node",
+    "--test",
+    "--test-reporter=tap",
+    "catalog-ops/validate.test.mjs",
+    "catalog-ops/research.test.mjs",
+    "catalog-ops/finalize.test.mjs",
+    "catalog-ops/owner-correction.test.mjs"
+  ],
+  "started_at": "2026-10-07T14:45:35.855755+00:00",
+  "finished_at": "2026-10-07T14:45:46.479731+00:00",
+  "exit_code": 0,
+  "counts": {
+    "tests": 320,
+    "pass": 320,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  "historical_baseline_cases": 108,
+  "historical_superseded_tier_cases": 100,
+  "current_research_cases": 6,
+  "current_owner_cases": 106,
+  "current_model_cases": 112,
+  "evidence": "catalog-ops/evidence/owner-correction-tests.tap",
+  "not_run": [
+    "full_repository_ci",
+    "db_e2e",
+    "browser_e2e",
+    "registration",
+    "production"
+  ]
+}

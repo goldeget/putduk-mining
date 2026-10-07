@@ -363,8 +363,8 @@
     "slug": "catalog-tier-notifications-unlock",
     "storage": {
       "category": "events",
-      "title_ko": "테마 선택 안내가 있습니다",
-      "body_ko": "내 계정에서 선택 가능한 테마와 이용 조건을 확인해 주세요. 이 알림은 선택 완료나 추가 보상을 뜻하지 않습니다.",
+      "title_ko": "새 테마가 공개되었습니다",
+      "body_ko": "새로 공개된 테마를 살펴보세요. 이용 가능한 회원은 원금 단계와 관계없이 선택할 수 있어요. 이 알림은 추가 보상을 뜻하지 않아요.",
       "route": "/products",
       "expires_at": null
     },
@@ -400,19 +400,21 @@
       "publication_is_delivery": false,
       "critical_override": false,
       "delivery_policy": "인앱 기록 먼저. 실제 푸시 동의·수신 선택·조용한 시간·cooldown·cap·재시도 dedup을 승인된 command가 검증. 발송 receipt 없으면 UNKNOWN.",
-      "trigger_evidence": "승인된 정책 적용·catalog 공개·계정 eligibility 상태와 버전별 domain event readback 필요. 해금/HOLD 추측 발송 금지.",
+      "trigger_evidence": "실제 catalog 공개 또는 원금/HOLD/승인 정책 적용 event와 readback 확인. Tier 상품 해금 event를 만들거나 추측하지 않음. opt-in/dedup/receipt 필수.",
       "sensitive_data": "회원 이름·잔액·계좌·주소·risk 사유·거래 식별자를 push에 포함하지 않음",
-      "tier_policy_status": "PROPOSED_NOT_APPROVED",
-      "requires_authoritative_eligibility_event": true,
-      "policy_approval_before_publication": true
+      "policy_approval_before_publication": true,
+      "owner_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "historical_draft_status": "SUPERSEDED_BY_OWNER_CORRECTION",
+      "historical_draft_head": "783732492e70c312b33640e07ee0d8ffad68c3e5",
+      "requires_authoritative_event": "PUBLISHED_AVAILABLE_PRODUCT_AND_MEMBER_ELIGIBILITY"
     }
   },
   {
     "slug": "catalog-tier-notifications-condition-change",
     "storage": {
       "category": "events",
-      "title_ko": "테마 이용 상태를 확인해 주세요",
-      "body_ko": "이용 조건 변경에 따른 안내가 있습니다. 상품 화면에서 지금 선택 가능한 테마와 진행 상태를 확인해 주세요.",
+      "title_ko": "채굴 이용 조건을 확인해 주세요",
+      "body_ko": "남은 원금 변경에 따른 채굴 규모와 동시 운영 수 안내가 있어요. 선택한 공개 테마는 원금 단계 때문에 잠기지 않아요.",
       "route": "/products",
       "expires_at": null
     },
@@ -448,11 +450,13 @@
       "publication_is_delivery": false,
       "critical_override": false,
       "delivery_policy": "인앱 기록 먼저. 실제 푸시 동의·수신 선택·조용한 시간·cooldown·cap·재시도 dedup을 승인된 command가 검증. 발송 receipt 없으면 UNKNOWN.",
-      "trigger_evidence": "승인된 정책 적용·catalog 공개·계정 eligibility 상태와 버전별 domain event readback 필요. 해금/HOLD 추측 발송 금지.",
+      "trigger_evidence": "실제 catalog 공개 또는 원금/HOLD/승인 정책 적용 event와 readback 확인. Tier 상품 해금 event를 만들거나 추측하지 않음. opt-in/dedup/receipt 필수.",
       "sensitive_data": "회원 이름·잔액·계좌·주소·risk 사유·거래 식별자를 push에 포함하지 않음",
-      "tier_policy_status": "PROPOSED_NOT_APPROVED",
-      "requires_authoritative_eligibility_event": true,
-      "policy_approval_before_publication": true
+      "policy_approval_before_publication": true,
+      "owner_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "historical_draft_status": "SUPERSEDED_BY_OWNER_CORRECTION",
+      "historical_draft_head": "783732492e70c312b33640e07ee0d8ffad68c3e5",
+      "requires_authoritative_event": "EXISTING_AUTHORIZED_CONDITION_OR_NOTICE_EVENT_NO_PRODUCT_TIER_UNLOCK"
     }
   },
   {
@@ -460,7 +464,7 @@
     "storage": {
       "category": "events",
       "title_ko": "채굴 진행 안내가 있습니다",
-      "body_ko": "채굴 진행에 확인이 필요한 내용이 있습니다. 앱에서 현재 상태와 다음 안내를 읽어 주세요.",
+      "body_ko": "채굴 진행에 확인이 필요한 내용이 있어요. 앱에서 현재 상태와 다음 안내를 읽어 주세요.",
       "route": "/products",
       "expires_at": null
     },
@@ -496,19 +500,21 @@
       "publication_is_delivery": false,
       "critical_override": false,
       "delivery_policy": "인앱 기록 먼저. 실제 푸시 동의·수신 선택·조용한 시간·cooldown·cap·재시도 dedup을 승인된 command가 검증. 발송 receipt 없으면 UNKNOWN.",
-      "trigger_evidence": "승인된 정책 적용·catalog 공개·계정 eligibility 상태와 버전별 domain event readback 필요. 해금/HOLD 추측 발송 금지.",
+      "trigger_evidence": "실제 catalog 공개 또는 원금/HOLD/승인 정책 적용 event와 readback 확인. Tier 상품 해금 event를 만들거나 추측하지 않음. opt-in/dedup/receipt 필수.",
       "sensitive_data": "회원 이름·잔액·계좌·주소·risk 사유·거래 식별자를 push에 포함하지 않음",
-      "tier_policy_status": "PROPOSED_NOT_APPROVED",
-      "requires_authoritative_eligibility_event": true,
-      "policy_approval_before_publication": true
+      "policy_approval_before_publication": true,
+      "owner_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "historical_draft_status": "SUPERSEDED_BY_OWNER_CORRECTION",
+      "historical_draft_head": "783732492e70c312b33640e07ee0d8ffad68c3e5",
+      "requires_authoritative_event": "EXISTING_AUTHORIZED_CONDITION_OR_NOTICE_EVENT_NO_PRODUCT_TIER_UNLOCK"
     }
   },
   {
     "slug": "catalog-tier-notifications-policy",
     "storage": {
       "category": "events",
-      "title_ko": "상품 이용 정책 안내가 있습니다",
-      "body_ko": "적용 전 확인할 안내가 있습니다. 변경 내용과 적용 시각을 공지에서 읽어 주세요.",
+      "title_ko": "채굴 이용 정책 안내가 있습니다",
+      "body_ko": "적용 전 확인할 안내가 있어요. 변경 내용과 적용 시각을 공지에서 읽어 주세요.",
       "route": "/products",
       "expires_at": null
     },
@@ -544,11 +550,13 @@
       "publication_is_delivery": false,
       "critical_override": false,
       "delivery_policy": "인앱 기록 먼저. 실제 푸시 동의·수신 선택·조용한 시간·cooldown·cap·재시도 dedup을 승인된 command가 검증. 발송 receipt 없으면 UNKNOWN.",
-      "trigger_evidence": "승인된 정책 적용·catalog 공개·계정 eligibility 상태와 버전별 domain event readback 필요. 해금/HOLD 추측 발송 금지.",
+      "trigger_evidence": "실제 catalog 공개 또는 원금/HOLD/승인 정책 적용 event와 readback 확인. Tier 상품 해금 event를 만들거나 추측하지 않음. opt-in/dedup/receipt 필수.",
       "sensitive_data": "회원 이름·잔액·계좌·주소·risk 사유·거래 식별자를 push에 포함하지 않음",
-      "tier_policy_status": "PROPOSED_NOT_APPROVED",
-      "requires_authoritative_eligibility_event": true,
-      "policy_approval_before_publication": true
+      "policy_approval_before_publication": true,
+      "owner_access_policy": "ALL_ELIGIBLE_MEMBERS",
+      "historical_draft_status": "SUPERSEDED_BY_OWNER_CORRECTION",
+      "historical_draft_head": "783732492e70c312b33640e07ee0d8ffad68c3e5",
+      "requires_authoritative_event": "EXISTING_AUTHORIZED_CONDITION_OR_NOTICE_EVENT_NO_PRODUCT_TIER_UNLOCK"
     }
   }
 ]

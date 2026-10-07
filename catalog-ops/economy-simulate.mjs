@@ -2,6 +2,7 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { resolve } from "node:path";
 import { simulateTiered } from "./tier-analysis.mjs";
+import { simulateOpen } from "./mining-power-analysis.mjs";
 
 const root = fileURLToPath(new URL(".", import.meta.url));
 export const UNIT = 10000n;
@@ -146,6 +147,8 @@ export function allocationRate(products) {
 }
 
 export function simulate(proposal, candidates, policy, eligibility) {
+  if (proposal.schema_version === 3)
+    return simulateOpen(proposal, candidates, policy, eligibility);
   if (proposal.schema_version === 2)
     return simulateTiered(proposal, candidates, policy, eligibility);
   const cycle = BigInt(policy.cycleDays);
@@ -346,11 +349,24 @@ if (
     read("product-economy-proposal.json"),
     read("product-candidates.json"),
     read("evidence/current-catalog-evidence.json").current_policy,
-    read("product-tier-eligibility.json"),
+    read("product-economy-proposal.json").schema_version === 3
+      ? {
+          power: read("tier-mining-power-model.json"),
+          access: read("product-access-policy.json"),
+        }
+      : read("product-tier-eligibility.json"),
   );
   const text = JSON.stringify(result, null, 2) + "\n";
   writeFileSync(resolve(root, "economy-simulation-results.json"), text);
-  writeFileSync(resolve(root, "evidence/economy-simulation.json"), text);
+  writeFileSync(
+    resolve(
+      root,
+      result.schema_version === 3
+        ? "evidence/owner-economy-simulation.json"
+        : "evidence/economy-simulation.json",
+    ),
+    text,
+  );
   console.log(
     JSON.stringify({
       status: "PASS_OFFLINE_SIMULATION",
@@ -364,9 +380,11 @@ if (
       })),
       actual_runtime: "UNVERIFIED_NOT_ACTIVATED",
       concentration:
-        result.schema_version === 2
-          ? "UNIQUE_FASTEST_REMOVED_ACTUAL_BEHAVIOR_UNKNOWN"
-          : "HIGH",
+        result.schema_version === 3
+          ? "TIER_GATED_MODEL_SUPERSEDED_ACTUAL_BEHAVIOR_UNKNOWN"
+          : result.schema_version === 2
+            ? "UNIQUE_FASTEST_REMOVED_ACTUAL_BEHAVIOR_UNKNOWN"
+            : "HIGH",
     }),
   );
 }

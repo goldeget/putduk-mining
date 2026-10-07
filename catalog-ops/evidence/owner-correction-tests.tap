@@ -1,0 +1,1930 @@
+TAP version 13
+# Subtest: current 25-product proposal validates with 14 real Tier references
+ok 1 - current 25-product proposal validates with 14 real Tier references
+  ---
+  duration_ms: 182.932146
+  type: 'test'
+  ...
+# Subtest: L1 immediately below threshold remains in previous Tier
+ok 2 - L1 immediately below threshold remains in previous Tier
+  ---
+  duration_ms: 0.591477
+  type: 'test'
+  ...
+# Subtest: L1 exact threshold unlocks correct Tier
+ok 3 - L1 exact threshold unlocks correct Tier
+  ---
+  duration_ms: 0.146196
+  type: 'test'
+  ...
+# Subtest: L1 immediately above threshold stays in this Tier
+ok 4 - L1 immediately above threshold stays in this Tier
+  ---
+  duration_ms: 0.182793
+  type: 'test'
+  ...
+# Subtest: L2 immediately below threshold remains in previous Tier
+ok 5 - L2 immediately below threshold remains in previous Tier
+  ---
+  duration_ms: 0.102583
+  type: 'test'
+  ...
+# Subtest: L2 exact threshold unlocks correct Tier
+ok 6 - L2 exact threshold unlocks correct Tier
+  ---
+  duration_ms: 0.087798
+  type: 'test'
+  ...
+# Subtest: L2 immediately above threshold stays in this Tier
+ok 7 - L2 immediately above threshold stays in this Tier
+  ---
+  duration_ms: 0.072167
+  type: 'test'
+  ...
+# Subtest: L3 immediately below threshold remains in previous Tier
+ok 8 - L3 immediately below threshold remains in previous Tier
+  ---
+  duration_ms: 0.104179
+  type: 'test'
+  ...
+# Subtest: L3 exact threshold unlocks correct Tier
+ok 9 - L3 exact threshold unlocks correct Tier
+  ---
+  duration_ms: 0.194891
+  type: 'test'
+  ...
+# Subtest: L3 immediately above threshold stays in this Tier
+ok 10 - L3 immediately above threshold stays in this Tier
+  ---
+  duration_ms: 0.241421
+  type: 'test'
+  ...
+# Subtest: L4 immediately below threshold remains in previous Tier
+ok 11 - L4 immediately below threshold remains in previous Tier
+  ---
+  duration_ms: 0.180877
+  type: 'test'
+  ...
+# Subtest: L4 exact threshold unlocks correct Tier
+ok 12 - L4 exact threshold unlocks correct Tier
+  ---
+  duration_ms: 0.075454
+  type: 'test'
+  ...
+# Subtest: L4 immediately above threshold stays in this Tier
+ok 13 - L4 immediately above threshold stays in this Tier
+  ---
+  duration_ms: 0.050388
+  type: 'test'
+  ...
+# Subtest: L5 immediately below threshold remains in previous Tier
+ok 14 - L5 immediately below threshold remains in previous Tier
+  ---
+  duration_ms: 0.042804
+  type: 'test'
+  ...
+# Subtest: L5 exact threshold unlocks correct Tier
+ok 15 - L5 exact threshold unlocks correct Tier
+  ---
+  duration_ms: 0.040535
+  type: 'test'
+  ...
+# Subtest: L5 immediately above threshold stays in this Tier
+ok 16 - L5 immediately above threshold stays in this Tier
+  ---
+  duration_ms: 0.179373
+  type: 'test'
+  ...
+# Subtest: L6 immediately below threshold remains in previous Tier
+ok 17 - L6 immediately below threshold remains in previous Tier
+  ---
+  duration_ms: 0.054119
+  type: 'test'
+  ...
+# Subtest: L6 exact threshold unlocks correct Tier
+ok 18 - L6 exact threshold unlocks correct Tier
+  ---
+  duration_ms: 0.042036
+  type: 'test'
+  ...
+# Subtest: L6 immediately above threshold stays in this Tier
+ok 19 - L6 immediately above threshold stays in this Tier
+  ---
+  duration_ms: 0.073645
+  type: 'test'
+  ...
+# Subtest: L7 immediately below threshold remains in previous Tier
+ok 20 - L7 immediately below threshold remains in previous Tier
+  ---
+  duration_ms: 0.102639
+  type: 'test'
+  ...
+# Subtest: L7 exact threshold unlocks correct Tier
+ok 21 - L7 exact threshold unlocks correct Tier
+  ---
+  duration_ms: 0.080248
+  type: 'test'
+  ...
+# Subtest: L7 immediately above threshold stays in this Tier
+ok 22 - L7 immediately above threshold stays in this Tier
+  ---
+  duration_ms: 0.050492
+  type: 'test'
+  ...
+# Subtest: L8 immediately below threshold remains in previous Tier
+ok 23 - L8 immediately below threshold remains in previous Tier
+  ---
+  duration_ms: 0.080847
+  type: 'test'
+  ...
+# Subtest: L8 exact threshold unlocks correct Tier
+ok 24 - L8 exact threshold unlocks correct Tier
+  ---
+  duration_ms: 0.065442
+  type: 'test'
+  ...
+# Subtest: L8 immediately above threshold stays in this Tier
+ok 25 - L8 immediately above threshold stays in this Tier
+  ---
+  duration_ms: 0.089443
+  type: 'test'
+  ...
+# Subtest: L9 immediately below threshold remains in previous Tier
+ok 26 - L9 immediately below threshold remains in previous Tier
+  ---
+  duration_ms: 0.12781
+  type: 'test'
+  ...
+# Subtest: L9 exact threshold unlocks correct Tier
+ok 27 - L9 exact threshold unlocks correct Tier
+  ---
+  duration_ms: 0.079334
+  type: 'test'
+  ...
+# Subtest: L9 immediately above threshold stays in this Tier
+ok 28 - L9 immediately above threshold stays in this Tier
+  ---
+  duration_ms: 0.048291
+  type: 'test'
+  ...
+# Subtest: L10 immediately below threshold remains in previous Tier
+ok 29 - L10 immediately below threshold remains in previous Tier
+  ---
+  duration_ms: 0.044708
+  type: 'test'
+  ...
+# Subtest: L10 exact threshold unlocks correct Tier
+ok 30 - L10 exact threshold unlocks correct Tier
+  ---
+  duration_ms: 0.041735
+  type: 'test'
+  ...
+# Subtest: L10 immediately above threshold stays in this Tier
+ok 31 - L10 immediately above threshold stays in this Tier
+  ---
+  duration_ms: 0.038398
+  type: 'test'
+  ...
+# Subtest: L11 immediately below threshold remains in previous Tier
+ok 32 - L11 immediately below threshold remains in previous Tier
+  ---
+  duration_ms: 0.072053
+  type: 'test'
+  ...
+# Subtest: L11 exact threshold unlocks correct Tier
+ok 33 - L11 exact threshold unlocks correct Tier
+  ---
+  duration_ms: 0.039766
+  type: 'test'
+  ...
+# Subtest: L11 immediately above threshold stays in this Tier
+ok 34 - L11 immediately above threshold stays in this Tier
+  ---
+  duration_ms: 0.080691
+  type: 'test'
+  ...
+# Subtest: L12 immediately below threshold remains in previous Tier
+ok 35 - L12 immediately below threshold remains in previous Tier
+  ---
+  duration_ms: 0.065371
+  type: 'test'
+  ...
+# Subtest: L12 exact threshold unlocks correct Tier
+ok 36 - L12 exact threshold unlocks correct Tier
+  ---
+  duration_ms: 0.059561
+  type: 'test'
+  ...
+# Subtest: L12 immediately above threshold stays in this Tier
+ok 37 - L12 immediately above threshold stays in this Tier
+  ---
+  duration_ms: 0.059632
+  type: 'test'
+  ...
+# Subtest: L13 immediately below threshold remains in previous Tier
+ok 38 - L13 immediately below threshold remains in previous Tier
+  ---
+  duration_ms: 0.120772
+  type: 'test'
+  ...
+# Subtest: L13 exact threshold unlocks correct Tier
+ok 39 - L13 exact threshold unlocks correct Tier
+  ---
+  duration_ms: 0.068225
+  type: 'test'
+  ...
+# Subtest: L13 immediately above threshold stays in this Tier
+ok 40 - L13 immediately above threshold stays in this Tier
+  ---
+  duration_ms: 0.080671
+  type: 'test'
+  ...
+# Subtest: L14 immediately below threshold remains in previous Tier
+ok 41 - L14 immediately below threshold remains in previous Tier
+  ---
+  duration_ms: 0.040897
+  type: 'test'
+  ...
+# Subtest: L14 exact threshold unlocks correct Tier
+ok 42 - L14 exact threshold unlocks correct Tier
+  ---
+  duration_ms: 0.036348
+  type: 'test'
+  ...
+# Subtest: L14 immediately above threshold stays in this Tier
+ok 43 - L14 immediately above threshold stays in this Tier
+  ---
+  duration_ms: 0.064296
+  type: 'test'
+  ...
+# Subtest: arbitrarily large integer principal remains exact at final unbounded Tier
+ok 44 - arbitrarily large integer principal remains exact at final unbounded Tier
+  ---
+  duration_ms: 0.495908
+  type: 'test'
+  ...
+# Subtest: invalid and unknown tiers are rejected rather than treated as eligible
+ok 45 - invalid and unknown tiers are rejected rather than treated as eligible
+  ---
+  duration_ms: 0.233791
+  type: 'test'
+  ...
+# Subtest: non-contiguous SSOT intervals cannot resolve funding eligibility
+ok 46 - non-contiguous SSOT intervals cannot resolve funding eligibility
+  ---
+  duration_ms: 0.286062
+  type: 'test'
+  ...
+# Subtest: product unlock happens at its inherited threshold, not at a rounded amount
+ok 47 - product unlock happens at its inherited threshold, not at a rounded amount
+  ---
+  duration_ms: 0.269596
+  type: 'test'
+  ...
+# Subtest: available sets are monotone and all 14 levels add a product
+ok 48 - available sets are monotone and all 14 levels add a product
+  ---
+  duration_ms: 0.296478
+  type: 'test'
+  ...
+# Subtest: L1 has four choices and cannot select the highest-stage SpaceX proposal
+ok 49 - L1 has four choices and cannot select the highest-stage SpaceX proposal
+  ---
+  duration_ms: 0.095759
+  type: 'test'
+  ...
+# Subtest: highest Tier has five equal-fastest choices with distinct scene personalities
+ok 50 - highest Tier has five equal-fastest choices with distinct scene personalities
+  ---
+  duration_ms: 0.195521
+  type: 'test'
+  ...
+# Subtest: tier downgrade pauses ineligible selection and preserves all old state
+ok 51 - tier downgrade pauses ineligible selection and preserves all old state
+  ---
+  duration_ms: 0.195212
+  type: 'test'
+  ...
+# Subtest: principal hold pauses even an eligible gold selection without reset
+ok 52 - principal hold pauses even an eligible gold selection without reset
+  ---
+  duration_ms: 0.079256
+  type: 'test'
+  ...
+# Subtest: hold release reevaluates forward and is not an automatic authorization
+ok 53 - hold release reevaluates forward and is not an automatic authorization
+  ---
+  duration_ms: 0.085624
+  type: 'test'
+  ...
+# Subtest: safe mode wins over hold, pause and capacity-driven eligibility
+ok 54 - safe mode wins over hold, pause and capacity-driven eligibility
+  ---
+  duration_ms: 0.072691
+  type: 'test'
+  ...
+# Subtest: Tier slots restrict allocations without multiplying cycle capacity
+ok 55 - Tier slots restrict allocations without multiplying cycle capacity
+  ---
+  duration_ms: 0.169667
+  type: 'test'
+  ...
+# Subtest: empty, duplicate and unknown selections never become authorization
+ok 56 - empty, duplicate and unknown selections never become authorization
+  ---
+  duration_ms: 0.230341
+  type: 'test'
+  ...
+# Subtest: 1.10 recommended band retains moderate modifier headroom; 1.18 pressures final cap
+ok 57 - 1.10 recommended band retains moderate modifier headroom; 1.18 pressures final cap
+  ---
+  duration_ms: 0.101184
+  type: 'test'
+  ...
+# Subtest: requested modifier stack is exact and clamped once at final 1.50
+ok 58 - requested modifier stack is exact and clamped once at final 1.50
+  ---
+  duration_ms: 0.083739
+  type: 'test'
+  ...
+# Subtest: normalized days-to-cap uses exact rational arithmetic, with no KRW payout forecast
+ok 59 - normalized days-to-cap uses exact rational arithmetic, with no KRW payout forecast
+  ---
+  duration_ms: 0.055565
+  type: 'test'
+  ...
+# Subtest: speed-only ties do not fabricate actual member distribution
+ok 60 - speed-only ties do not fabricate actual member distribution
+  ---
+  duration_ms: 0.103581
+  type: 'test'
+  ...
+# Subtest: each comparison band uses accessible sets per Tier instead of all 25 everywhere
+ok 61 - each comparison band uses accessible sets per Tier instead of all 25 everywhere
+  ---
+  duration_ms: 0.093262
+  type: 'test'
+  ...
+# Subtest: bands above existing 1.10 document require an explicit policy band change
+ok 62 - bands above existing 1.10 document require an explicit policy band change
+  ---
+  duration_ms: 0.04894
+  type: 'test'
+  ...
+# Subtest: high proposed speeds never populate any approved field
+ok 63 - high proposed speeds never populate any approved field
+  ---
+  duration_ms: 0.105092
+  type: 'test'
+  ...
+# Subtest: missing eligibility row
+ok 64 - missing eligibility row
+  ---
+  duration_ms: 219.36398
+  type: 'test'
+  ...
+# Subtest: duplicate eligibility row
+ok 65 - duplicate eligibility row
+  ---
+  duration_ms: 181.296997
+  type: 'test'
+  ...
+# Subtest: unknown Tier in product profile
+ok 66 - unknown Tier in product profile
+  ---
+  duration_ms: 180.650073
+  type: 'test'
+  ...
+# Subtest: missing minimum Funding Tier
+ok 67 - missing minimum Funding Tier
+  ---
+  duration_ms: 173.07807
+  type: 'test'
+  ...
+# Subtest: raw KRW threshold in eligibility
+ok 68 - raw KRW threshold in eligibility
+  ---
+  duration_ms: 179.790824
+  type: 'test'
+  ...
+# Subtest: raw KRW threshold in catalog
+ok 69 - raw KRW threshold in catalog
+  ---
+  duration_ms: 202.767303
+  type: 'test'
+  ...
+# Subtest: raw KRW threshold in economy
+ok 70 - raw KRW threshold in economy
+  ---
+  duration_ms: 201.220773
+  type: 'test'
+  ...
+# Subtest: derived principal replaced by copied threshold
+ok 71 - derived principal replaced by copied threshold
+  ---
+  duration_ms: 262.130354
+  type: 'test'
+  ...
+# Subtest: published document Tier threshold edited in proposal
+ok 72 - published document Tier threshold edited in proposal
+  ---
+  duration_ms: 235.543868
+  type: 'test'
+  ...
+# Subtest: unproven live publication timestamp
+ok 73 - unproven live publication timestamp
+  ---
+  duration_ms: 242.788237
+  type: 'test'
+  ...
+# Subtest: populated approved minimum Tier
+ok 74 - populated approved minimum Tier
+  ---
+  duration_ms: 234.669625
+  type: 'test'
+  ...
+# Subtest: higher speed moved to entry Tier without reviewed rationale
+ok 75 - higher speed moved to entry Tier without reviewed rationale
+  ---
+  duration_ms: 232.750814
+  type: 'test'
+  ...
+# Subtest: missing individual Tier rationale
+ok 76 - missing individual Tier rationale
+  ---
+  duration_ms: 177.375221
+  type: 'test'
+  ...
+# Subtest: missing per-product downgrade behavior
+ok 77 - missing per-product downgrade behavior
+  ---
+  duration_ms: 214.328288
+  type: 'test'
+  ...
+# Subtest: downgrade reset substituted for PAUSE
+ok 78 - downgrade reset substituted for PAUSE
+  ---
+  duration_ms: 165.166594
+  type: 'test'
+  ...
+# Subtest: principal HOLD behavior removed
+ok 79 - principal HOLD behavior removed
+  ---
+  duration_ms: 228.7988
+  type: 'test'
+  ...
+# Subtest: automatic substitute product on downgrade
+ok 80 - automatic substitute product on downgrade
+  ---
+  duration_ms: 235.766287
+  type: 'test'
+  ...
+# Subtest: source carry history lost on downgrade
+ok 81 - source carry history lost on downgrade
+  ---
+  duration_ms: 231.468032
+  type: 'test'
+  ...
+# Subtest: product available despite effective HOLD
+ok 82 - product available despite effective HOLD
+  ---
+  duration_ms: 230.306256
+  type: 'test'
+  ...
+# Subtest: eligibility available despite effective HOLD
+ok 83 - eligibility available despite effective HOLD
+  ---
+  duration_ms: 199.753233
+  type: 'test'
+  ...
+# Subtest: invalid unlock set
+ok 84 - invalid unlock set
+  ---
+  duration_ms: 173.162956
+  type: 'test'
+  ...
+# Subtest: technical Tier code in member copy
+ok 85 - technical Tier code in member copy
+  ---
+  duration_ms: 160.767542
+  type: 'test'
+  ...
+# Subtest: extra funding solicitation in unlock copy
+ok 86 - extra funding solicitation in unlock copy
+  ---
+  duration_ms: 163.732154
+  type: 'test'
+  ...
+# Subtest: Tier gate policy version omitted
+ok 87 - Tier gate policy version omitted
+  ---
+  duration_ms: 197.863751
+  type: 'test'
+  ...
+# Subtest: final cap headroom analysis omitted
+ok 88 - final cap headroom analysis omitted
+  ---
+  duration_ms: 196.902082
+  type: 'test'
+  ...
+# Subtest: fake actual concentration
+ok 89 - fake actual concentration
+  ---
+  duration_ms: 166.113619
+  type: 'test'
+  ...
+# Subtest: unresolved identity promoted into P0
+ok 90 - unresolved identity promoted into P0
+  ---
+  duration_ms: 164.628966
+  type: 'test'
+  ...
+# Subtest: canonical ticker differs from actual SEC directory
+ok 91 - canonical ticker differs from actual SEC directory
+  ---
+  duration_ms: 166.163991
+  type: 'test'
+  ...
+# Subtest: fabricated official quote does not occur in original bytes
+ok 92 - fabricated official quote does not occur in original bytes
+  ---
+  duration_ms: 166.732266
+  type: 'test'
+  ...
+# Subtest: legacy UNKNOWN added to current research
+ok 93 - legacy UNKNOWN added to current research
+  ---
+  duration_ms: 166.173164
+  type: 'test'
+  ...
+# Subtest: unapproved speed incorrectly activated
+ok 94 - unapproved speed incorrectly activated
+  ---
+  duration_ms: 168.830563
+  type: 'test'
+  ...
+# Subtest: non-inherited product capacity
+ok 95 - non-inherited product capacity
+  ---
+  duration_ms: 185.105829
+  type: 'test'
+  ...
+# Subtest: market linked economy value
+ok 96 - market linked economy value
+  ---
+  duration_ms: 182.456285
+  type: 'test'
+  ...
+# Subtest: legal review omitted
+ok 97 - legal review omitted
+  ---
+  duration_ms: 189.771836
+  type: 'test'
+  ...
+# Subtest: final cap raised to 1.60
+ok 98 - final cap raised to 1.60
+  ---
+  duration_ms: 166.266713
+  type: 'test'
+  ...
+# Subtest: above-document speed loses required band change acknowledgement
+ok 99 - above-document speed loses required band change acknowledgement
+  ---
+  duration_ms: 172.299084
+  type: 'test'
+  ...
+# Subtest: fresh simulation reproduces the stored full Tier analysis
+ok 100 - fresh simulation reproduces the stored full Tier analysis
+  ---
+  duration_ms: 4.494564
+  type: 'test'
+  ...
+# Subtest: current Owner proposal validates without product Tier thresholds
+ok 101 - current Owner proposal validates without product Tier thresholds
+  ---
+  duration_ms: 258.560479
+  type: 'test'
+  ...
+# Subtest: L1 can preview NVIDIA, Tesla, SK hynix, SpaceX, BTC and ETF if actually published
+ok 102 - L1 can preview NVIDIA, Tesla, SK hynix, SpaceX, BTC and ETF if actually published
+  ---
+  duration_ms: 1.285936
+  type: 'test'
+  ...
+# Subtest: L1 derives exact principal-proportional base capacity without inventing Tier speed
+ok 103 - L1 derives exact principal-proportional base capacity without inventing Tier speed
+  ---
+  duration_ms: 0.589576
+  type: 'test'
+  ...
+# Subtest: L1 product modifiers and concurrent slots never multiply global capacity
+ok 104 - L1 product modifiers and concurrent slots never multiply global capacity
+  ---
+  duration_ms: 0.550775
+  type: 'test'
+  ...
+# Subtest: L2 can preview NVIDIA, Tesla, SK hynix, SpaceX, BTC and ETF if actually published
+ok 105 - L2 can preview NVIDIA, Tesla, SK hynix, SpaceX, BTC and ETF if actually published
+  ---
+  duration_ms: 0.591103
+  type: 'test'
+  ...
+# Subtest: L2 derives exact principal-proportional base capacity without inventing Tier speed
+ok 106 - L2 derives exact principal-proportional base capacity without inventing Tier speed
+  ---
+  duration_ms: 0.155926
+  type: 'test'
+  ...
+# Subtest: L2 product modifiers and concurrent slots never multiply global capacity
+ok 107 - L2 product modifiers and concurrent slots never multiply global capacity
+  ---
+  duration_ms: 0.206789
+  type: 'test'
+  ...
+# Subtest: L3 can preview NVIDIA, Tesla, SK hynix, SpaceX, BTC and ETF if actually published
+ok 108 - L3 can preview NVIDIA, Tesla, SK hynix, SpaceX, BTC and ETF if actually published
+  ---
+  duration_ms: 0.636351
+  type: 'test'
+  ...
+# Subtest: L3 derives exact principal-proportional base capacity without inventing Tier speed
+ok 109 - L3 derives exact principal-proportional base capacity without inventing Tier speed
+  ---
+  duration_ms: 0.237819
+  type: 'test'
+  ...
+# Subtest: L3 product modifiers and concurrent slots never multiply global capacity
+ok 110 - L3 product modifiers and concurrent slots never multiply global capacity
+  ---
+  duration_ms: 0.362225
+  type: 'test'
+  ...
+# Subtest: L4 can preview NVIDIA, Tesla, SK hynix, SpaceX, BTC and ETF if actually published
+ok 111 - L4 can preview NVIDIA, Tesla, SK hynix, SpaceX, BTC and ETF if actually published
+  ---
+  duration_ms: 0.459431
+  type: 'test'
+  ...
+# Subtest: L4 derives exact principal-proportional base capacity without inventing Tier speed
+ok 112 - L4 derives exact principal-proportional base capacity without inventing Tier speed
+  ---
+  duration_ms: 0.113988
+  type: 'test'
+  ...
+# Subtest: L4 product modifiers and concurrent slots never multiply global capacity
+ok 113 - L4 product modifiers and concurrent slots never multiply global capacity
+  ---
+  duration_ms: 0.122075
+  type: 'test'
+  ...
+# Subtest: L5 can preview NVIDIA, Tesla, SK hynix, SpaceX, BTC and ETF if actually published
+ok 114 - L5 can preview NVIDIA, Tesla, SK hynix, SpaceX, BTC and ETF if actually published
+  ---
+  duration_ms: 0.853675
+  type: 'test'
+  ...
+# Subtest: L5 derives exact principal-proportional base capacity without inventing Tier speed
+ok 115 - L5 derives exact principal-proportional base capacity without inventing Tier speed
+  ---
+  duration_ms: 0.135585
+  type: 'test'
+  ...
+# Subtest: L5 product modifiers and concurrent slots never multiply global capacity
+ok 116 - L5 product modifiers and concurrent slots never multiply global capacity
+  ---
+  duration_ms: 0.166085
+  type: 'test'
+  ...
+# Subtest: L6 can preview NVIDIA, Tesla, SK hynix, SpaceX, BTC and ETF if actually published
+ok 117 - L6 can preview NVIDIA, Tesla, SK hynix, SpaceX, BTC and ETF if actually published
+  ---
+  duration_ms: 0.344804
+  type: 'test'
+  ...
+# Subtest: L6 derives exact principal-proportional base capacity without inventing Tier speed
+ok 118 - L6 derives exact principal-proportional base capacity without inventing Tier speed
+  ---
+  duration_ms: 0.118512
+  type: 'test'
+  ...
+# Subtest: L6 product modifiers and concurrent slots never multiply global capacity
+ok 119 - L6 product modifiers and concurrent slots never multiply global capacity
+  ---
+  duration_ms: 0.231746
+  type: 'test'
+  ...
+# Subtest: L7 can preview NVIDIA, Tesla, SK hynix, SpaceX, BTC and ETF if actually published
+ok 120 - L7 can preview NVIDIA, Tesla, SK hynix, SpaceX, BTC and ETF if actually published
+  ---
+  duration_ms: 0.566693
+  type: 'test'
+  ...
+# Subtest: L7 derives exact principal-proportional base capacity without inventing Tier speed
+ok 121 - L7 derives exact principal-proportional base capacity without inventing Tier speed
+  ---
+  duration_ms: 0.102286
+  type: 'test'
+  ...
+# Subtest: L7 product modifiers and concurrent slots never multiply global capacity
+ok 122 - L7 product modifiers and concurrent slots never multiply global capacity
+  ---
+  duration_ms: 0.206144
+  type: 'test'
+  ...
+# Subtest: L8 can preview NVIDIA, Tesla, SK hynix, SpaceX, BTC and ETF if actually published
+ok 123 - L8 can preview NVIDIA, Tesla, SK hynix, SpaceX, BTC and ETF if actually published
+  ---
+  duration_ms: 0.389716
+  type: 'test'
+  ...
+# Subtest: L8 derives exact principal-proportional base capacity without inventing Tier speed
+ok 124 - L8 derives exact principal-proportional base capacity without inventing Tier speed
+  ---
+  duration_ms: 0.121132
+  type: 'test'
+  ...
+# Subtest: L8 product modifiers and concurrent slots never multiply global capacity
+ok 125 - L8 product modifiers and concurrent slots never multiply global capacity
+  ---
+  duration_ms: 0.115901
+  type: 'test'
+  ...
+# Subtest: L9 can preview NVIDIA, Tesla, SK hynix, SpaceX, BTC and ETF if actually published
+ok 126 - L9 can preview NVIDIA, Tesla, SK hynix, SpaceX, BTC and ETF if actually published
+  ---
+  duration_ms: 0.360301
+  type: 'test'
+  ...
+# Subtest: L9 derives exact principal-proportional base capacity without inventing Tier speed
+ok 127 - L9 derives exact principal-proportional base capacity without inventing Tier speed
+  ---
+  duration_ms: 0.086227
+  type: 'test'
+  ...
+# Subtest: L9 product modifiers and concurrent slots never multiply global capacity
+ok 128 - L9 product modifiers and concurrent slots never multiply global capacity
+  ---
+  duration_ms: 0.170446
+  type: 'test'
+  ...
+# Subtest: L10 can preview NVIDIA, Tesla, SK hynix, SpaceX, BTC and ETF if actually published
+ok 129 - L10 can preview NVIDIA, Tesla, SK hynix, SpaceX, BTC and ETF if actually published
+  ---
+  duration_ms: 0.304989
+  type: 'test'
+  ...
+# Subtest: L10 derives exact principal-proportional base capacity without inventing Tier speed
+ok 130 - L10 derives exact principal-proportional base capacity without inventing Tier speed
+  ---
+  duration_ms: 0.125773
+  type: 'test'
+  ...
+# Subtest: L10 product modifiers and concurrent slots never multiply global capacity
+ok 131 - L10 product modifiers and concurrent slots never multiply global capacity
+  ---
+  duration_ms: 0.203933
+  type: 'test'
+  ...
+# Subtest: L11 can preview NVIDIA, Tesla, SK hynix, SpaceX, BTC and ETF if actually published
+ok 132 - L11 can preview NVIDIA, Tesla, SK hynix, SpaceX, BTC and ETF if actually published
+  ---
+  duration_ms: 0.230354
+  type: 'test'
+  ...
+# Subtest: L11 derives exact principal-proportional base capacity without inventing Tier speed
+ok 133 - L11 derives exact principal-proportional base capacity without inventing Tier speed
+  ---
+  duration_ms: 0.291969
+  type: 'test'
+  ...
+# Subtest: L11 product modifiers and concurrent slots never multiply global capacity
+ok 134 - L11 product modifiers and concurrent slots never multiply global capacity
+  ---
+  duration_ms: 0.172483
+  type: 'test'
+  ...
+# Subtest: L12 can preview NVIDIA, Tesla, SK hynix, SpaceX, BTC and ETF if actually published
+ok 135 - L12 can preview NVIDIA, Tesla, SK hynix, SpaceX, BTC and ETF if actually published
+  ---
+  duration_ms: 0.265553
+  type: 'test'
+  ...
+# Subtest: L12 derives exact principal-proportional base capacity without inventing Tier speed
+ok 136 - L12 derives exact principal-proportional base capacity without inventing Tier speed
+  ---
+  duration_ms: 0.063898
+  type: 'test'
+  ...
+# Subtest: L12 product modifiers and concurrent slots never multiply global capacity
+ok 137 - L12 product modifiers and concurrent slots never multiply global capacity
+  ---
+  duration_ms: 0.297622
+  type: 'test'
+  ...
+# Subtest: L13 can preview NVIDIA, Tesla, SK hynix, SpaceX, BTC and ETF if actually published
+ok 138 - L13 can preview NVIDIA, Tesla, SK hynix, SpaceX, BTC and ETF if actually published
+  ---
+  duration_ms: 0.305813
+  type: 'test'
+  ...
+# Subtest: L13 derives exact principal-proportional base capacity without inventing Tier speed
+ok 139 - L13 derives exact principal-proportional base capacity without inventing Tier speed
+  ---
+  duration_ms: 0.063071
+  type: 'test'
+  ...
+# Subtest: L13 product modifiers and concurrent slots never multiply global capacity
+ok 140 - L13 product modifiers and concurrent slots never multiply global capacity
+  ---
+  duration_ms: 0.198566
+  type: 'test'
+  ...
+# Subtest: L14 can preview NVIDIA, Tesla, SK hynix, SpaceX, BTC and ETF if actually published
+ok 141 - L14 can preview NVIDIA, Tesla, SK hynix, SpaceX, BTC and ETF if actually published
+  ---
+  duration_ms: 0.259059
+  type: 'test'
+  ...
+# Subtest: L14 derives exact principal-proportional base capacity without inventing Tier speed
+ok 142 - L14 derives exact principal-proportional base capacity without inventing Tier speed
+  ---
+  duration_ms: 0.070275
+  type: 'test'
+  ...
+# Subtest: L14 product modifiers and concurrent slots never multiply global capacity
+ok 143 - L14 product modifiers and concurrent slots never multiply global capacity
+  ---
+  duration_ms: 0.140784
+  type: 'test'
+  ...
+# Subtest: all actually unpublished draft products remain unavailable even at L14
+ok 144 - all actually unpublished draft products remain unavailable even at L14
+  ---
+  duration_ms: 0.211642
+  type: 'test'
+  ...
+# Subtest: publication or account eligibility cannot be inferred from proposed access metadata
+ok 145 - publication or account eligibility cannot be inferred from proposed access metadata
+  ---
+  duration_ms: 0.725462
+  type: 'test'
+  ...
+# Subtest: below funding minimum does not create a specific product access lock
+ok 146 - below funding minimum does not create a specific product access lock
+  ---
+  duration_ms: 0.16888
+  type: 'test'
+  ...
+# Subtest: Tier downgrade keeps selected NVIDIA and all historical state
+ok 147 - Tier downgrade keeps selected NVIDIA and all historical state
+  ---
+  duration_ms: 0.83569
+  type: 'test'
+  ...
+# Subtest: slot reduction needs Primary policy and never selects or stops allocations automatically
+ok 148 - slot reduction needs Primary policy and never selects or stops allocations automatically
+  ---
+  duration_ms: 0.232668
+  type: 'test'
+  ...
+# Subtest: principal withdrawal HOLD retains PAUSE_NOT_RESET independently of product access
+ok 149 - principal withdrawal HOLD retains PAUSE_NOT_RESET independently of product access
+  ---
+  duration_ms: 0.172852
+  type: 'test'
+  ...
+# Subtest: safe mode and account ineligibility remain independent authoritative guards
+ok 150 - safe mode and account ineligibility remain independent authoritative guards
+  ---
+  duration_ms: 0.371745
+  type: 'test'
+  ...
+# Subtest: unknown and duplicate selections fail rather than silently substituting
+ok 151 - unknown and duplicate selections fail rather than silently substituting
+  ---
+  duration_ms: 0.402468
+  type: 'test'
+  ...
+# Subtest: same product scales across 14 tiers with actual principal and no product unlock progression
+ok 152 - same product scales across 14 tiers with actual principal and no product unlock progression
+  ---
+  duration_ms: 0.20398
+  type: 'test'
+  ...
+# Subtest: L2 minimum Gold has five times L1 minimum NVIDIA capacity regardless of product modifier
+ok 153 - L2 minimum Gold has five times L1 minimum NVIDIA capacity regardless of product modifier
+  ---
+  duration_ms: 0.121087
+  type: 'test'
+  ...
+# Subtest: near a Tier boundary the missing distinct Tier speed rule remains a blocker
+ok 154 - near a Tier boundary the missing distinct Tier speed rule remains a blocker
+  ---
+  duration_ms: 0.091508
+  type: 'test'
+  ...
+# Subtest: within one Tier, Gold vs NVIDIA changes reference time, not entitlement ceiling
+ok 155 - within one Tier, Gold vs NVIDIA changes reference time, not entitlement ceiling
+  ---
+  duration_ms: 0.163312
+  type: 'test'
+  ...
+# Subtest: two half allocations combine to 1.05 rather than 2.10 or doubled capacity
+ok 156 - two half allocations combine to 1.05 rather than 2.10 or doubled capacity
+  ---
+  duration_ms: 0.168821
+  type: 'test'
+  ...
+# Subtest: more principal within same Tier increases exact capacity continuously
+ok 157 - more principal within same Tier increases exact capacity continuously
+  ---
+  duration_ms: 0.149918
+  type: 'test'
+  ...
+# Subtest: very large principal is never narrowed to floating point in current power analysis
+ok 158 - very large principal is never narrowed to floating point in current power analysis
+  ---
+  duration_ms: 0.211325
+  type: 'test'
+  ...
+# Subtest: conditional retention is separate and never promoted to settlement-ready base
+ok 159 - conditional retention is separate and never promoted to settlement-ready base
+  ---
+  duration_ms: 0.094618
+  type: 'test'
+  ...
+# Subtest: 1.20 times 1.15 times 1.10 is clamped once to 1.50 after exact multiplication
+ok 160 - 1.20 times 1.15 times 1.10 is clamped once to 1.50 after exact multiplication
+  ---
+  duration_ms: 0.115718
+  type: 'test'
+  ...
+# Subtest: a final lower modifier can bring the exact product below cap; intermediate clamp is wrong
+ok 161 - a final lower modifier can bring the exact product below cap; intermediate clamp is wrong
+  ---
+  duration_ms: 0.086165
+  type: 'test'
+  ...
+# Subtest: all 28 archived files are byte-identical to the preserved exact Git HEAD
+ok 162 - all 28 archived files are byte-identical to the preserved exact Git HEAD
+  ---
+  duration_ms: 153.007345
+  type: 'test'
+  ...
+# Subtest: all 18 affected content drafts retain stable IDs but no Tier unlock publication meaning
+ok 163 - all 18 affected content drafts retain stable IDs but no Tier unlock publication meaning
+  ---
+  duration_ms: 0.283053
+  type: 'test'
+  ...
+# Subtest: reject reintroduced product minimum Tier
+ok 164 - reject reintroduced product minimum Tier
+  ---
+  duration_ms: 203.35362
+  type: 'test'
+  ...
+# Subtest: reject reintroduced principal access threshold
+ok 165 - reject reintroduced principal access threshold
+  ---
+  duration_ms: 175.595031
+  type: 'test'
+  ...
+# Subtest: reject Tier access policy changed
+ok 166 - reject Tier access policy changed
+  ---
+  duration_ms: 234.644484
+  type: 'test'
+  ...
+# Subtest: reject Tier-specific published subset
+ok 167 - reject Tier-specific published subset
+  ---
+  duration_ms: 308.893638
+  type: 'test'
+  ...
+# Subtest: reject invented Tier speed
+ok 168 - reject invented Tier speed
+  ---
+  duration_ms: 243.941371
+  type: 'test'
+  ...
+# Subtest: reject invented top-level Tier speed
+ok 169 - reject invented top-level Tier speed
+  ---
+  duration_ms: 172.282551
+  type: 'test'
+  ...
+# Subtest: reject forged speed contract approval
+ok 170 - reject forged speed contract approval
+  ---
+  duration_ms: 179.292291
+  type: 'test'
+  ...
+# Subtest: reject changed Tier principal bound
+ok 171 - reject changed Tier principal bound
+  ---
+  duration_ms: 177.748063
+  type: 'test'
+  ...
+# Subtest: reject changed Tier slots
+ok 172 - reject changed Tier slots
+  ---
+  duration_ms: 180.496119
+  type: 'test'
+  ...
+# Subtest: reject changed retention
+ok 173 - reject changed retention
+  ---
+  duration_ms: 179.42727
+  type: 'test'
+  ...
+# Subtest: reject forged source policy hash
+ok 174 - reject forged source policy hash
+  ---
+  duration_ms: 175.63266
+  type: 'test'
+  ...
+# Subtest: reject forged live publication
+ok 175 - reject forged live publication
+  ---
+  duration_ms: 198.117635
+  type: 'test'
+  ...
+# Subtest: reject unverified effective date
+ok 176 - reject unverified effective date
+  ---
+  duration_ms: 209.716843
+  type: 'test'
+  ...
+# Subtest: reject slot capacity multiplication
+ok 177 - reject slot capacity multiplication
+  ---
+  duration_ms: 174.783434
+  type: 'test'
+  ...
+# Subtest: reject unsourced capacity formula
+ok 178 - reject unsourced capacity formula
+  ---
+  duration_ms: 175.359155
+  type: 'test'
+  ...
+# Subtest: reject unsourced retention formula
+ok 179 - reject unsourced retention formula
+  ---
+  duration_ms: 173.925897
+  type: 'test'
+  ...
+# Subtest: reject lifetime deposit as eligible principal
+ok 180 - reject lifetime deposit as eligible principal
+  ---
+  duration_ms: 175.820719
+  type: 'test'
+  ...
+# Subtest: reject product capacity multiplication
+ok 181 - reject product capacity multiplication
+  ---
+  duration_ms: 176.839731
+  type: 'test'
+  ...
+# Subtest: reject retention counted as settlement-ready
+ok 182 - reject retention counted as settlement-ready
+  ---
+  duration_ms: 173.550912
+  type: 'test'
+  ...
+# Subtest: reject downgrade locks selected product
+ok 183 - reject downgrade locks selected product
+  ---
+  duration_ms: 193.09619
+  type: 'test'
+  ...
+# Subtest: reject product access PAUSE
+ok 184 - reject product access PAUSE
+  ---
+  duration_ms: 184.246815
+  type: 'test'
+  ...
+# Subtest: reject downgrade clears history
+ok 185 - reject downgrade clears history
+  ---
+  duration_ms: 181.880049
+  type: 'test'
+  ...
+# Subtest: reject automatic slot winner invented
+ok 186 - reject automatic slot winner invented
+  ---
+  duration_ms: 179.027242
+  type: 'test'
+  ...
+# Subtest: reject principal HOLD reset
+ok 187 - reject principal HOLD reset
+  ---
+  duration_ms: 168.810251
+  type: 'test'
+  ...
+# Subtest: reject catch-up invented
+ok 188 - reject catch-up invented
+  ---
+  duration_ms: 176.101306
+  type: 'test'
+  ...
+# Subtest: reject automatic product substitution
+ok 189 - reject automatic product substitution
+  ---
+  duration_ms: 215.972118
+  type: 'test'
+  ...
+# Subtest: reject superseded gate used again
+ok 190 - reject superseded gate used again
+  ---
+  duration_ms: 247.945633
+  type: 'test'
+  ...
+# Subtest: reject historical file hash altered
+ok 191 - reject historical file hash altered
+  ---
+  duration_ms: 275.374341
+  type: 'test'
+  ...
+# Subtest: reject archive manifest points at wrong HEAD
+ok 192 - reject archive manifest points at wrong HEAD
+  ---
+  duration_ms: 249.271765
+  type: 'test'
+  ...
+# Subtest: reject source engine hash altered
+ok 193 - reject source engine hash altered
+  ---
+  duration_ms: 250.177137
+  type: 'test'
+  ...
+# Subtest: reject Owner correction hash altered
+ok 194 - reject Owner correction hash altered
+  ---
+  duration_ms: 234.278077
+  type: 'test'
+  ...
+# Subtest: reject draft product marked actually public
+ok 195 - reject draft product marked actually public
+  ---
+  duration_ms: 208.601698
+  type: 'test'
+  ...
+# Subtest: reject offline access marked runtime activated
+ok 196 - reject offline access marked runtime activated
+  ---
+  duration_ms: 245.43436
+  type: 'test'
+  ...
+# Subtest: reject open access coverage missing
+ok 197 - reject open access coverage missing
+  ---
+  duration_ms: 268.711081
+  type: 'test'
+  ...
+# Subtest: reject duplicate open access product
+ok 198 - reject duplicate open access product
+  ---
+  duration_ms: 253.238099
+  type: 'test'
+  ...
+# Subtest: reject final cap changed
+ok 199 - reject final cap changed
+  ---
+  duration_ms: 215.801908
+  type: 'test'
+  ...
+# Subtest: reject absolute Tier rate capped instead
+ok 200 - reject absolute Tier rate capped instead
+  ---
+  duration_ms: 179.127296
+  type: 'test'
+  ...
+# Subtest: reject false actual concentration
+ok 201 - reject false actual concentration
+  ---
+  duration_ms: 172.751899
+  type: 'test'
+  ...
+# Subtest: reject false actual reward
+ok 202 - reject false actual reward
+  ---
+  duration_ms: 164.527977
+  type: 'test'
+  ...
+# Subtest: reject stale Tier unlock content metadata
+ok 203 - reject stale Tier unlock content metadata
+  ---
+  duration_ms: 180.052781
+  type: 'test'
+  ...
+# Subtest: reject simulation daily rate tampering
+ok 204 - reject simulation daily rate tampering
+  ---
+  duration_ms: 182.46441
+  type: 'test'
+  ...
+# Subtest: all previous evidence files remain byte-identical to the historical HEAD
+ok 205 - all previous evidence files remain byte-identical to the historical HEAD
+  ---
+  duration_ms: 523.01572
+  type: 'test'
+  ...
+# Subtest: old mutating generators fail before overwriting the current Owner proposal
+ok 206 - old mutating generators fail before overwriting the current Owner proposal
+  ---
+  duration_ms: 187.608768
+  type: 'test'
+  ...
+# Subtest: all 55 current candidates use evidence-qualified identity states
+ok 207 - all 55 current candidates use evidence-qualified identity states
+  ---
+  duration_ms: 1176.017595
+  type: 'test'
+  ...
+# Subtest: SEC actually identifies SPCX; missing share class stays partial
+ok 208 - SEC actually identifies SPCX; missing share class stays partial
+  ---
+  duration_ms: 1158.300234
+  type: 'test'
+  ...
+# Subtest: lossless downloaded response hashes are validated, not URL-only evidence
+ok 209 - lossless downloaded response hashes are validated, not URL-only evidence
+  ---
+  duration_ms: 1637.0125
+  type: 'test'
+  ...
+# Subtest: a successful Invesco QQQ response cannot verify ProShares TQQQ
+ok 210 - a successful Invesco QQQ response cannot verify ProShares TQQQ
+  ---
+  duration_ms: 1225.610307
+  type: 'test'
+  ...
+# Subtest: a real primary sponsor response resolves the AI investigation slot only partially
+ok 211 - a real primary sponsor response resolves the AI investigation slot only partially
+  ---
+  duration_ms: 919.824299
+  type: 'test'
+  ...
+# Subtest: current sponsor identity supersedes the historical VTI name hint
+ok 212 - current sponsor identity supersedes the historical VTI name hint
+  ---
+  duration_ms: 1474.423055
+  type: 'test'
+  ...
+# Subtest: a complete gated draft passes while research and registration remain blocked
+ok 213 - a complete gated draft passes while research and registration remain blocked
+  ---
+  duration_ms: 17.428875
+  type: 'test'
+  ...
+# Subtest: planned P0 can be researched later but UNKNOWN never becomes effective launch
+ok 214 - planned P0 can be researched later but UNKNOWN never becomes effective launch
+  ---
+  duration_ms: 14.024925
+  type: 'test'
+  ...
+# Subtest: verified source bookkeeping requires a real response and fresh factual evidence
+ok 215 - verified source bookkeeping requires a real response and fresh factual evidence
+  ---
+  duration_ms: 11.248315
+  type: 'test'
+  ...
+# Subtest: duplicate proposal identity
+ok 216 - duplicate proposal identity
+  ---
+  duration_ms: 11.527922
+  type: 'test'
+  ...
+# Subtest: duplicate product slug
+ok 217 - duplicate product slug
+  ---
+  duration_ms: 8.672928
+  type: 'test'
+  ...
+# Subtest: duplicate market and ticker
+ok 218 - duplicate market and ticker
+  ---
+  duration_ms: 8.714295
+  type: 'test'
+  ...
+# Subtest: uncontracted asset class
+ok 219 - uncontracted asset class
+  ---
+  duration_ms: 9.310319
+  type: 'test'
+  ...
+# Subtest: empty product identity hint
+ok 220 - empty product identity hint
+  ---
+  duration_ms: 8.247255
+  type: 'test'
+  ...
+# Subtest: invalid planned launch wave
+ok 221 - invalid planned launch wave
+  ---
+  duration_ms: 8.708856
+  type: 'test'
+  ...
+# Subtest: market linked product
+ok 222 - market linked product
+  ---
+  duration_ms: 8.643442
+  type: 'test'
+  ...
+# Subtest: fake operator approval
+ok 223 - fake operator approval
+  ---
+  duration_ms: 8.909639
+  type: 'test'
+  ...
+# Subtest: unreviewed brand clearance
+ok 224 - unreviewed brand clearance
+  ---
+  duration_ms: 9.799243
+  type: 'test'
+  ...
+# Subtest: invented partnership claim
+ok 225 - invented partnership claim
+  ---
+  duration_ms: 7.809865
+  type: 'test'
+  ...
+# Subtest: unproven live catalog
+ok 226 - unproven live catalog
+  ---
+  duration_ms: 8.7933
+  type: 'test'
+  ...
+# Subtest: fabricated new database UUID
+ok 227 - fabricated new database UUID
+  ---
+  duration_ms: 9.225744
+  type: 'test'
+  ...
+# Subtest: candidate without a source
+ok 228 - candidate without a source
+  ---
+  duration_ms: 7.067393
+  type: 'test'
+  ...
+# Subtest: verified identity without factual evidence
+ok 229 - verified identity without factual evidence
+  ---
+  duration_ms: 8.405118
+  type: 'test'
+  ...
+# Subtest: UNKNOWN P0 effective candidate
+ok 230 - UNKNOWN P0 effective candidate
+  ---
+  duration_ms: 9.96494
+  type: 'test'
+  ...
+# Subtest: UNKNOWN P1 effective candidate
+ok 231 - UNKNOWN P1 effective candidate
+  ---
+  duration_ms: 7.949764
+  type: 'test'
+  ...
+# Subtest: SpaceX hint promoted to canonical ticker without checking
+ok 232 - SpaceX hint promoted to canonical ticker without checking
+  ---
+  duration_ms: 7.925151
+  type: 'test'
+  ...
+# Subtest: unmeasured scoring sold as measurement
+ok 233 - unmeasured scoring sold as measurement
+  ---
+  duration_ms: 9.08153
+  type: 'test'
+  ...
+# Subtest: ETF category contract omitted
+ok 234 - ETF category contract omitted
+  ---
+  duration_ms: 8.264941
+  type: 'test'
+  ...
+# Subtest: official source URL with credentials
+ok 235 - official source URL with credentials
+  ---
+  duration_ms: 8.056167
+  type: 'test'
+  ...
+# Subtest: blocked source falsely verified
+ok 236 - blocked source falsely verified
+  ---
+  duration_ms: 9.802099
+  type: 'test'
+  ...
+# Subtest: stale fetched source cannot verify current listing
+ok 237 - stale fetched source cannot verify current listing
+  ---
+  duration_ms: 9.612908
+  type: 'test'
+  ...
+# Subtest: future accessed date cannot verify source
+ok 238 - future accessed date cannot verify source
+  ---
+  duration_ms: 8.781698
+  type: 'test'
+  ...
+# Subtest: research completed without a verified response
+ok 239 - research completed without a verified response
+  ---
+  duration_ms: 9.121196
+  type: 'test'
+  ...
+# Subtest: response hash invented without an obtained file
+ok 240 - response hash invented without an obtained file
+  ---
+  duration_ms: 9.387117
+  type: 'test'
+  ...
+# Subtest: launch missing a product entry
+ok 241 - launch missing a product entry
+  ---
+  duration_ms: 5.391576
+  type: 'test'
+  ...
+# Subtest: duplicate display order
+ok 242 - duplicate display order
+  ---
+  duration_ms: 9.569486
+  type: 'test'
+  ...
+# Subtest: unproven launch approval
+ok 243 - unproven launch approval
+  ---
+  duration_ms: 9.29478
+  type: 'test'
+  ...
+# Subtest: new product without Scene spec gate
+ok 244 - new product without Scene spec gate
+  ---
+  duration_ms: 8.858927
+  type: 'test'
+  ...
+# Subtest: missing mobile master gate
+ok 245 - missing mobile master gate
+  ---
+  duration_ms: 7.990888
+  type: 'test'
+  ...
+# Subtest: fabricated ready Scene asset
+ok 246 - fabricated ready Scene asset
+  ---
+  duration_ms: 8.936297
+  type: 'test'
+  ...
+# Subtest: invalid calendar date
+ok 247 - invalid calendar date
+  ---
+  duration_ms: 7.271953
+  type: 'test'
+  ...
+# Subtest: reversed availability dates
+ok 248 - reversed availability dates
+  ---
+  duration_ms: 7.564553
+  type: 'test'
+  ...
+# Subtest: numeric floating speed instead of decimal string
+ok 249 - numeric floating speed instead of decimal string
+  ---
+  duration_ms: 5.196963
+  type: 'test'
+  ...
+# Subtest: three-decimal speed violates 0.01 step
+ok 250 - three-decimal speed violates 0.01 step
+  ---
+  duration_ms: 6.501872
+  type: 'test'
+  ...
+# Subtest: proposed speed exceeds allowed 1.20
+ok 251 - proposed speed exceeds allowed 1.20
+  ---
+  duration_ms: 5.467244
+  type: 'test'
+  ...
+# Subtest: proposal band silently changed
+ok 252 - proposal band silently changed
+  ---
+  duration_ms: 7.224514
+  type: 'test'
+  ...
+# Subtest: suggested yield invented
+ok 253 - suggested yield invented
+  ---
+  duration_ms: 8.186419
+  type: 'test'
+  ...
+# Subtest: proposed speed below 1.00
+ok 254 - proposed speed below 1.00
+  ---
+  duration_ms: 6.248769
+  type: 'test'
+  ...
+# Subtest: bps and decimal disagree
+ok 255 - bps and decimal disagree
+  ---
+  duration_ms: 5.713508
+  type: 'test'
+  ...
+# Subtest: grade contradicts speed band
+ok 256 - grade contradicts speed band
+  ---
+  duration_ms: 5.507941
+  type: 'test'
+  ...
+# Subtest: mining personality omitted
+ok 257 - mining personality omitted
+  ---
+  duration_ms: 8.020441
+  type: 'test'
+  ...
+# Subtest: approved value invented
+ok 258 - approved value invented
+  ---
+  duration_ms: 5.659698
+  type: 'test'
+  ...
+# Subtest: human policy gate disabled
+ok 259 - human policy gate disabled
+  ---
+  duration_ms: 5.608986
+  type: 'test'
+  ...
+# Subtest: market price controls proposed economy
+ok 260 - market price controls proposed economy
+  ---
+  duration_ms: 5.241466
+  type: 'test'
+  ...
+# Subtest: product capacity override added
+ok 261 - product capacity override added
+  ---
+  duration_ms: 4.754055
+  type: 'test'
+  ...
+# Subtest: per-slot global capacity replicated
+ok 262 - per-slot global capacity replicated
+  ---
+  duration_ms: 9.511239
+  type: 'test'
+  ...
+# Subtest: fractional won main display
+ok 263 - fractional won main display
+  ---
+  duration_ms: 8.305368
+  type: 'test'
+  ...
+# Subtest: new speed above existing policy passed silently
+ok 264 - new speed above existing policy passed silently
+  ---
+  duration_ms: 7.807372
+  type: 'test'
+  ...
+# Subtest: final cap increased
+ok 265 - final cap increased
+  ---
+  duration_ms: 10.20407
+  type: 'test'
+  ...
+# Subtest: intermediate cap applied
+ok 266 - intermediate cap applied
+  ---
+  duration_ms: 8.178193
+  type: 'test'
+  ...
+# Subtest: micro unit altered
+ok 267 - micro unit altered
+  ---
+  duration_ms: 8.112502
+  type: 'test'
+  ...
+# Subtest: missing one launch economy value
+ok 268 - missing one launch economy value
+  ---
+  duration_ms: 5.239557
+  type: 'test'
+  ...
+# Subtest: money guarantee in member copy
+ok 269 - money guarantee in member copy
+  ---
+  duration_ms: 9.625047
+  type: 'test'
+  ...
+# Subtest: numeric payout invented in member copy
+ok 270 - numeric payout invented in member copy
+  ---
+  duration_ms: 11.327773
+  type: 'test'
+  ...
+# Subtest: market linked payout copy
+ok 271 - market linked payout copy
+  ---
+  duration_ms: 9.896705
+  type: 'test'
+  ...
+# Subtest: technical enum exposed to member
+ok 272 - technical enum exposed to member
+  ---
+  duration_ms: 9.163458
+  type: 'test'
+  ...
+# Subtest: positioning disclaimer removed
+ok 273 - positioning disclaimer removed
+  ---
+  duration_ms: 8.536294
+  type: 'test'
+  ...
+# Subtest: linked FAQ not present
+ok 274 - linked FAQ not present
+  ---
+  duration_ms: 8.331642
+  type: 'test'
+  ...
+# Subtest: delta collides with frozen internal slug
+ok 275 - delta collides with frozen internal slug
+  ---
+  duration_ms: 7.501291
+  type: 'test'
+  ...
+# Subtest: delta collides with frozen storage slug
+ok 276 - delta collides with frozen storage slug
+  ---
+  duration_ms: 8.819745
+  type: 'test'
+  ...
+# Subtest: empty content title
+ok 277 - empty content title
+  ---
+  duration_ms: 9.410188
+  type: 'test'
+  ...
+# Subtest: empty content full body
+ok 278 - empty content full body
+  ---
+  duration_ms: 8.797855
+  type: 'test'
+  ...
+# Subtest: missing CTA
+ok 279 - missing CTA
+  ---
+  duration_ms: 11.372977
+  type: 'test'
+  ...
+# Subtest: fabricated product detail route
+ok 280 - fabricated product detail route
+  ---
+  duration_ms: 9.32727
+  type: 'test'
+  ...
+# Subtest: invalid audience
+ok 281 - invalid audience
+  ---
+  duration_ms: 8.531367
+  type: 'test'
+  ...
+# Subtest: invalid mining segment
+ok 282 - invalid mining segment
+  ---
+  duration_ms: 7.184857
+  type: 'test'
+  ...
+# Subtest: required copy missing
+ok 283 - required copy missing
+  ---
+  duration_ms: 6.94571
+  type: 'test'
+  ...
+# Subtest: template variable not declared
+ok 284 - template variable not declared
+  ---
+  duration_ms: 7.355202
+  type: 'test'
+  ...
+# Subtest: unapproved content financial value
+ok 285 - unapproved content financial value
+  ---
+  duration_ms: 8.984094
+  type: 'test'
+  ...
+# Subtest: content published without receipt
+ok 286 - content published without receipt
+  ---
+  duration_ms: 12.155872
+  type: 'test'
+  ...
+# Subtest: event ends before it starts
+ok 287 - event ends before it starts
+  ---
+  duration_ms: 9.514122
+  type: 'test'
+  ...
+# Subtest: in-app notification links outside protected allowlist
+ok 288 - in-app notification links outside protected allowlist
+  ---
+  duration_ms: 7.90507
+  type: 'test'
+  ...
+# Subtest: uppercase notification category is not mapped
+ok 289 - uppercase notification category is not mapped
+  ---
+  duration_ms: 7.322629
+  type: 'test'
+  ...
+# Subtest: push opt-in bypass
+ok 290 - push opt-in bypass
+  ---
+  duration_ms: 8.156328
+  type: 'test'
+  ...
+# Subtest: invented member notification target
+ok 291 - invented member notification target
+  ---
+  duration_ms: 7.576304
+  type: 'test'
+  ...
+# Subtest: support macro sends automatically
+ok 292 - support macro sends automatically
+  ---
+  duration_ms: 8.239519
+  type: 'test'
+  ...
+# Subtest: missing a frozen event review
+ok 293 - missing a frozen event review
+  ---
+  duration_ms: 8.052066
+  type: 'test'
+  ...
+# Subtest: drop deletes historical records
+ok 294 - drop deletes historical records
+  ---
+  duration_ms: 8.476904
+  type: 'test'
+  ...
+# Subtest: unobserved external benchmark claimed complete
+ok 295 - unobserved external benchmark claimed complete
+  ---
+  duration_ms: 8.053546
+  type: 'test'
+  ...
+# Subtest: registration ready without readback evidence
+ok 296 - registration ready without readback evidence
+  ---
+  duration_ms: 7.320994
+  type: 'test'
+  ...
+# Subtest: production ready without approval
+ok 297 - production ready without approval
+  ---
+  duration_ms: 7.140955
+  type: 'test'
+  ...
+# Subtest: catalog command invented
+ok 298 - catalog command invented
+  ---
+  duration_ms: 8.143297
+  type: 'test'
+  ...
+# Subtest: direct SQL used to bypass command absence
+ok 299 - direct SQL used to bypass command absence
+  ---
+  duration_ms: 9.285792
+  type: 'test'
+  ...
+# Subtest: shared staging not owned by this lane
+ok 300 - shared staging not owned by this lane
+  ---
+  duration_ms: 8.221931
+  type: 'test'
+  ...
+# Subtest: fabricated readback PASS
+ok 301 - fabricated readback PASS
+  ---
+  duration_ms: 8.114526
+  type: 'test'
+  ...
+# Subtest: fake screenshot used as real registration proof
+ok 302 - fake screenshot used as real registration proof
+  ---
+  duration_ms: 7.457159
+  type: 'test'
+  ...
+# Subtest: fake rollback receipt
+ok 303 - fake rollback receipt
+  ---
+  duration_ms: 6.997487
+  type: 'test'
+  ...
+# Subtest: simulated outputs edited after computation
+ok 304 - simulated outputs edited after computation
+  ---
+  duration_ms: 8.510743
+  type: 'test'
+  ...
+# Subtest: invented live selection distribution
+ok 305 - invented live selection distribution
+  ---
+  duration_ms: 7.55232
+  type: 'test'
+  ...
+# Subtest: leap and invalid-calendar dates are distinguished
+ok 306 - leap and invalid-calendar dates are distinguished
+  ---
+  duration_ms: 0.155011
+  type: 'test'
+  ...
+# Subtest: decimal bps use exact 0.01 increments
+ok 307 - decimal bps use exact 0.01 increments
+  ---
+  duration_ms: 0.439938
+  type: 'test'
+  ...
+# Subtest: combined cap matches requested product user event example
+ok 308 - combined cap matches requested product user event example
+  ---
+  duration_ms: 0.103001
+  type: 'test'
+  ...
+# Subtest: exact cap boundary and one bps below stay distinguishable
+ok 309 - exact cap boundary and one bps below stay distinguishable
+  ---
+  duration_ms: 0.193732
+  type: 'test'
+  ...
+# Subtest: final-only clamp preserves a later reduction modifier
+ok 310 - final-only clamp preserves a later reduction modifier
+  ---
+  duration_ms: 0.59415
+  type: 'test'
+  ...
+# Subtest: maximum proposed speed keeps exact calculable modifier headroom
+ok 311 - maximum proposed speed keeps exact calculable modifier headroom
+  ---
+  duration_ms: 0.335322
+  type: 'test'
+  ...
+# Subtest: sub-micro carry survives until the third tick
+ok 312 - sub-micro carry survives until the third tick
+  ---
+  duration_ms: 0.282448
+  type: 'test'
+  ...
+# Subtest: chunked accrual equals one interval without losing residue
+ok 313 - chunked accrual equals one interval without losing residue
+  ---
+  duration_ms: 0.203365
+  type: 'test'
+  ...
+# Subtest: capacity cannot be exceeded by large elapsed time
+ok 314 - capacity cannot be exceeded by large elapsed time
+  ---
+  duration_ms: 0.261752
+  type: 'test'
+  ...
+# Subtest: whole won display stays below the next verified 1-won boundary
+ok 315 - whole won display stays below the next verified 1-won boundary
+  ---
+  duration_ms: 0.32645
+  type: 'test'
+  ...
+# Subtest: two slots share global capacity and cannot allocate more than 100%
+ok 316 - two slots share global capacity and cannot allocate more than 100%
+  ---
+  duration_ms: 0.213308
+  type: 'test'
+  ...
+# Subtest: Policy A and B differ in capacity rather than silently changing reward rate
+ok 317 - Policy A and B differ in capacity rather than silently changing reward rate
+  ---
+  duration_ms: 0.606449
+  type: 'test'
+  ...
+# Subtest: rational arithmetic is exact beyond Number safe integer range
+ok 318 - rational arithmetic is exact beyond Number safe integer range
+  ---
+  duration_ms: 0.215797
+  type: 'test'
+  ...
+# Subtest: invalid negative or zero inputs fail instead of producing money
+ok 319 - invalid negative or zero inputs fail instead of producing money
+  ---
+  duration_ms: 0.230906
+  type: 'test'
+  ...
+# Subtest: restored default draft remains valid after all isolated mutations
+ok 320 - restored default draft remains valid after all isolated mutations
+  ---
+  duration_ms: 5.460336
+  type: 'test'
+  ...
+1..320
+# tests 320
+# suites 0
+# pass 320
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 10577.476262

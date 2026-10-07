@@ -1,0 +1,654 @@
+[
+  {
+    "slug": "catalog-event-theme-reading",
+    "storage": {
+      "slug": "catalog-event-theme-reading",
+      "title_ko": "테마 이름과 이용 조건 따로 읽기",
+      "summary_ko": "상품 이름은 장면의 주제를 구별하기 위한 이름입니다. 실제 주식·ETF·금속·코인을 사거나 보유하는 뜻이 아니에요. 기업이나 운용사와의 제휴를 뜻하지 않습니다.",
+      "status": "DRAFT",
+      "starts_at": null,
+      "ends_at": null,
+      "published_at": null
+    },
+    "metadata": {
+      "audience": "MEMBERS",
+      "cta": {
+        "label": "상품 안내 보기",
+        "route": "/products"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "publication_gate": "REVIEW_REQUIRED",
+      "registration_ready": false,
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "variables": [],
+      "required_phrases": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+      "card_title_ko": "테마 이름과 이용 조건 따로 읽기",
+      "body_markdown": "상품 이름은 장면의 주제를 구별하기 위한 이름입니다. 실제 주식·ETF·금속·코인을 사거나 보유하는 뜻이 아니에요. 기업이나 운용사와의 제휴를 뜻하지 않습니다.\n\n장면 설명과 실제 적용 조건을 각각 읽어 보세요. 속도와 한도는 다르며, 이름이나 그림으로 금액을 예상하지 않습니다. 이 안내를 읽어도 추가 보상은 없습니다.",
+      "segment": "ALL_MEMBERS",
+      "start_condition": "원고·법무·실제 대상·일정·렌더 확인 후 사람이 승인",
+      "end_condition": "승인된 종료 또는 cancel receipt 확인",
+      "schedule": {
+        "starts_at": null,
+        "ends_at": null,
+        "timezone": "Asia/Seoul",
+        "status": "SCHEDULE_REQUIRED"
+      },
+      "participation": "설명 읽기; 입금·상품 선택·문의 생성 불필요",
+      "exclusion": "미승인·미공개·사용 불가 기능을 실제 참여 대상으로 안내하지 않음",
+      "scene_brief": "무표식 산업 장치와 읽기용 여백; 로고 없음",
+      "notification_copy": "테마 이름과 이용 조건 따로 읽기 안내를 읽어 주세요. 추가 보상은 없습니다.",
+      "kpi": {
+        "definition": "실제 승인된 공지 노출/도움말 클릭 및 관련 오해 문의의 확인 가능한 집계",
+        "target": null,
+        "measurement": "집계 계약 없음: UNKNOWN"
+      },
+      "operator_note": "보상 없는 교육 안내. reward rule/0원 reward를 만들지 않음. 본문·CTA 저장 계약 확인 필요.",
+      "rollback": "기존 command cancel/archive와 노출·예약 중지 readback. 기존 기록 삭제 금지.",
+      "abuse_risk": "기업 이름으로 실제 자산 소유·제휴를 기대하는 오해",
+      "registration_kind": "INFORMATIONAL_CAMPAIGN_PROPOSAL"
+    }
+  },
+  {
+    "slug": "catalog-event-semiconductor-worlds",
+    "storage": {
+      "slug": "catalog-event-semiconductor-worlds",
+      "title_ko": "반도체 장면의 차이 살펴보기",
+      "summary_ko": "반도체를 주제로 한 장면은 웨이퍼 공정, 메모리 층, 저장 장치처럼 서로 다른 모습을 보여 줄 수 있어요. 같은 반도체 분류라도 장면의 중심 물체와 움직임은 다릅니다.",
+      "status": "DRAFT",
+      "starts_at": null,
+      "ends_at": null,
+      "published_at": null
+    },
+    "metadata": {
+      "audience": "MEMBERS",
+      "cta": {
+        "label": "장면 안내 보기",
+        "route": "/products"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "publication_gate": "REVIEW_REQUIRED",
+      "registration_ready": false,
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "variables": [],
+      "required_phrases": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+      "card_title_ko": "반도체 장면의 차이 살펴보기",
+      "body_markdown": "반도체를 주제로 한 장면은 웨이퍼 공정, 메모리 층, 저장 장치처럼 서로 다른 모습을 보여 줄 수 있어요. 같은 반도체 분류라도 장면의 중심 물체와 움직임은 다릅니다.\n\n어떤 모습이 더 편하게 보이는지 설명부터 살펴보세요. 장면의 정교함은 투자 성과나 받을 금액을 뜻하지 않습니다. 아직 공개되지 않은 테마는 이용 가능한 상품으로 안내하지 않습니다. 추가 보상은 없습니다.",
+      "segment": "ALL_MEMBERS",
+      "start_condition": "원고·법무·실제 대상·일정·렌더 확인 후 사람이 승인",
+      "end_condition": "승인된 종료 또는 cancel receipt 확인",
+      "schedule": {
+        "starts_at": null,
+        "ends_at": null,
+        "timezone": "Asia/Seoul",
+        "status": "SCHEDULE_REQUIRED"
+      },
+      "participation": "설명 읽기; 입금·상품 선택·문의 생성 불필요",
+      "exclusion": "미승인·미공개·사용 불가 기능을 실제 참여 대상으로 안내하지 않음",
+      "scene_brief": "웨이퍼·적층 패키지·저장 블록의 서로 다른 실루엣",
+      "notification_copy": "반도체 장면의 차이 살펴보기 안내를 읽어 주세요. 추가 보상은 없습니다.",
+      "kpi": {
+        "definition": "실제 승인된 공지 노출/도움말 클릭 및 관련 오해 문의의 확인 가능한 집계",
+        "target": null,
+        "measurement": "집계 계약 없음: UNKNOWN"
+      },
+      "operator_note": "보상 없는 교육 안내. reward rule/0원 reward를 만들지 않음. 본문·CTA 저장 계약 확인 필요.",
+      "rollback": "기존 command cancel/archive와 노출·예약 중지 readback. 기존 기록 삭제 금지.",
+      "abuse_risk": "산업 이미지를 실제 회사 설비나 생산 성과로 오인",
+      "registration_kind": "INFORMATIONAL_CAMPAIGN_PROPOSAL"
+    }
+  },
+  {
+    "slug": "catalog-event-ai-compute-reading",
+    "storage": {
+      "slug": "catalog-event-ai-compute-reading",
+      "title_ko": "AI 연산 장면 읽는 방법",
+      "summary_ko": "AI 연산을 주제로 한 장면에서는 연산 장치와 냉각관, 연결선을 볼 수 있어요. 화면의 빛과 작은 움직임은 가상 장면을 표현합니다. 실제 회사의 작업량이나 외부 AI 사용량을 보여 주는 자료가 아닙니다.",
+      "status": "DRAFT",
+      "starts_at": null,
+      "ends_at": null,
+      "published_at": null
+    },
+    "metadata": {
+      "audience": "MEMBERS",
+      "cta": {
+        "label": "상품 설명 읽기",
+        "route": "/products"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "publication_gate": "REVIEW_REQUIRED",
+      "registration_ready": false,
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "variables": [],
+      "required_phrases": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+      "card_title_ko": "AI 연산 장면 읽는 방법",
+      "body_markdown": "AI 연산을 주제로 한 장면에서는 연산 장치와 냉각관, 연결선을 볼 수 있어요. 화면의 빛과 작은 움직임은 가상 장면을 표현합니다. 실제 회사의 작업량이나 외부 AI 사용량을 보여 주는 자료가 아닙니다.\n\n확인 전 금액과 확정 금액은 채굴·지갑의 안내에서 구별해 주세요. 반짝임이 늘었다고 추가 보상이 생기지 않습니다. 이 안내의 별도 보상은 없습니다.",
+      "segment": "ALL_MEMBERS",
+      "start_condition": "원고·법무·실제 대상·일정·렌더 확인 후 사람이 승인",
+      "end_condition": "승인된 종료 또는 cancel receipt 확인",
+      "schedule": {
+        "starts_at": null,
+        "ends_at": null,
+        "timezone": "Asia/Seoul",
+        "status": "SCHEDULE_REQUIRED"
+      },
+      "participation": "설명 읽기; 입금·상품 선택·문의 생성 불필요",
+      "exclusion": "미승인·미공개·사용 불가 기능을 실제 참여 대상으로 안내하지 않음",
+      "scene_brief": "고정 카메라 GPU 장치와 냉각관의 국소 반사",
+      "notification_copy": "AI 연산 장면 읽는 방법 안내를 읽어 주세요. 추가 보상은 없습니다.",
+      "kpi": {
+        "definition": "실제 승인된 공지 노출/도움말 클릭 및 관련 오해 문의의 확인 가능한 집계",
+        "target": null,
+        "measurement": "집계 계약 없음: UNKNOWN"
+      },
+      "operator_note": "보상 없는 교육 안내. reward rule/0원 reward를 만들지 않음. 본문·CTA 저장 계약 확인 필요.",
+      "rollback": "기존 command cancel/archive와 노출·예약 중지 readback. 기존 기록 삭제 금지.",
+      "abuse_risk": "AI 성장·연산량을 보상과 연결",
+      "registration_kind": "INFORMATIONAL_CAMPAIGN_PROPOSAL"
+    }
+  },
+  {
+    "slug": "catalog-event-mobility-reading",
+    "storage": {
+      "slug": "catalog-event-mobility-reading",
+      "title_ko": "자동차 테마의 작업 흐름 보기",
+      "summary_ko": "자동차를 주제로 한 테마는 조립 장치와 검사등처럼 작업 흐름을 보여 주는 가상 장면입니다. 차를 구매하거나 차량 소유권을 얻는 서비스가 아닙니다.",
+      "status": "DRAFT",
+      "starts_at": null,
+      "ends_at": null,
+      "published_at": null
+    },
+    "metadata": {
+      "audience": "MEMBERS",
+      "cta": {
+        "label": "테마 살펴보기",
+        "route": "/products"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "publication_gate": "REVIEW_REQUIRED",
+      "registration_ready": false,
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "variables": [],
+      "required_phrases": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+      "card_title_ko": "자동차 테마의 작업 흐름 보기",
+      "body_markdown": "자동차를 주제로 한 테마는 조립 장치와 검사등처럼 작업 흐름을 보여 주는 가상 장면입니다. 차를 구매하거나 차량 소유권을 얻는 서비스가 아닙니다.\n\n검사등이 순서대로 켜지는 모습은 화면 표현입니다. 속도나 한도는 공개된 이용 조건을 따로 읽어 주세요. 선택하지 않아도 이 안내를 확인할 수 있으며 추가 보상은 없습니다.",
+      "segment": "ALL_MEMBERS",
+      "start_condition": "원고·법무·실제 대상·일정·렌더 확인 후 사람이 승인",
+      "end_condition": "승인된 종료 또는 cancel receipt 확인",
+      "schedule": {
+        "starts_at": null,
+        "ends_at": null,
+        "timezone": "Asia/Seoul",
+        "status": "SCHEDULE_REQUIRED"
+      },
+      "participation": "설명 읽기; 입금·상품 선택·문의 생성 불필요",
+      "exclusion": "미승인·미공개·사용 불가 기능을 실제 참여 대상으로 안내하지 않음",
+      "scene_brief": "자동차 로고 없는 구동계 검사실",
+      "notification_copy": "자동차 테마의 작업 흐름 보기 안내를 읽어 주세요. 추가 보상은 없습니다.",
+      "kpi": {
+        "definition": "실제 승인된 공지 노출/도움말 클릭 및 관련 오해 문의의 확인 가능한 집계",
+        "target": null,
+        "measurement": "집계 계약 없음: UNKNOWN"
+      },
+      "operator_note": "보상 없는 교육 안내. reward rule/0원 reward를 만들지 않음. 본문·CTA 저장 계약 확인 필요.",
+      "rollback": "기존 command cancel/archive와 노출·예약 중지 readback. 기존 기록 삭제 금지.",
+      "abuse_risk": "차량·차량 소유권 제공 오인",
+      "registration_kind": "INFORMATIONAL_CAMPAIGN_PROPOSAL"
+    }
+  },
+  {
+    "slug": "catalog-event-battery-reading",
+    "storage": {
+      "slug": "catalog-event-battery-reading",
+      "title_ko": "배터리 테마의 순서등 살펴보기",
+      "summary_ko": "배터리 테마에서는 작은 셀 묶음과 검사 장치를 주제로 한 장면을 볼 수 있어요. 실제 배터리의 생산량·충전량·전력 판매량을 보여 주는 화면은 아닙니다.",
+      "status": "DRAFT",
+      "starts_at": null,
+      "ends_at": null,
+      "published_at": null
+    },
+    "metadata": {
+      "audience": "MEMBERS",
+      "cta": {
+        "label": "테마 설명 보기",
+        "route": "/products"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "publication_gate": "REVIEW_REQUIRED",
+      "registration_ready": false,
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "variables": [],
+      "required_phrases": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+      "card_title_ko": "배터리 테마의 순서등 살펴보기",
+      "body_markdown": "배터리 테마에서는 작은 셀 묶음과 검사 장치를 주제로 한 장면을 볼 수 있어요. 실제 배터리의 생산량·충전량·전력 판매량을 보여 주는 화면은 아닙니다.\n\n셀의 밝기가 달라져도 보상이 자동으로 늘지 않습니다. 금액은 정산 후 지갑의 확정 기록으로 확인합니다. 이용 조건을 이해하지 못했다면 선택 전에 도움말을 읽어 주세요. 추가 보상은 없습니다.",
+      "segment": "ALL_MEMBERS",
+      "start_condition": "원고·법무·실제 대상·일정·렌더 확인 후 사람이 승인",
+      "end_condition": "승인된 종료 또는 cancel receipt 확인",
+      "schedule": {
+        "starts_at": null,
+        "ends_at": null,
+        "timezone": "Asia/Seoul",
+        "status": "SCHEDULE_REQUIRED"
+      },
+      "participation": "설명 읽기; 입금·상품 선택·문의 생성 불필요",
+      "exclusion": "미승인·미공개·사용 불가 기능을 실제 참여 대상으로 안내하지 않음",
+      "scene_brief": "밀폐 셀 모듈과 국소 검사등",
+      "notification_copy": "배터리 테마의 순서등 살펴보기 안내를 읽어 주세요. 추가 보상은 없습니다.",
+      "kpi": {
+        "definition": "실제 승인된 공지 노출/도움말 클릭 및 관련 오해 문의의 확인 가능한 집계",
+        "target": null,
+        "measurement": "집계 계약 없음: UNKNOWN"
+      },
+      "operator_note": "보상 없는 교육 안내. reward rule/0원 reward를 만들지 않음. 본문·CTA 저장 계약 확인 필요.",
+      "rollback": "기존 command cancel/archive와 노출·예약 중지 readback. 기존 기록 삭제 금지.",
+      "abuse_risk": "전력 생산·에너지 판매 수익과 연결",
+      "registration_kind": "INFORMATIONAL_CAMPAIGN_PROPOSAL"
+    }
+  },
+  {
+    "slug": "catalog-event-space-reading",
+    "storage": {
+      "slug": "catalog-event-space-reading",
+      "title_ko": "우주 테마의 임무 장면 이해하기",
+      "summary_ko": "우주 테마는 발사체 점검과 임무 준비를 떠올린 가상 장면입니다. 실제 발사 일정이나 성공 결과에 따라 보상이 바뀌는 서비스가 아닙니다.",
+      "status": "DRAFT",
+      "starts_at": null,
+      "ends_at": null,
+      "published_at": null
+    },
+    "metadata": {
+      "audience": "MEMBERS",
+      "cta": {
+        "label": "상품 안내 읽기",
+        "route": "/products"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "publication_gate": "REVIEW_REQUIRED",
+      "registration_ready": false,
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "variables": [],
+      "required_phrases": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+      "card_title_ko": "우주 테마의 임무 장면 이해하기",
+      "body_markdown": "우주 테마는 발사체 점검과 임무 준비를 떠올린 가상 장면입니다. 실제 발사 일정이나 성공 결과에 따라 보상이 바뀌는 서비스가 아닙니다.\n\n짧고 강한 불빛은 장면의 리듬일 뿐 당첨·추가 지급을 뜻하지 않습니다. 기업 이름과 상품 이용 가능 여부는 현재 공개된 안내로 확인해 주세요. 이 안내에는 추가 보상이 없습니다.",
+      "segment": "ALL_MEMBERS",
+      "start_condition": "원고·법무·실제 대상·일정·렌더 확인 후 사람이 승인",
+      "end_condition": "승인된 종료 또는 cancel receipt 확인",
+      "schedule": {
+        "starts_at": null,
+        "ends_at": null,
+        "timezone": "Asia/Seoul",
+        "status": "SCHEDULE_REQUIRED"
+      },
+      "participation": "설명 읽기; 입금·상품 선택·문의 생성 불필요",
+      "exclusion": "미승인·미공개·사용 불가 기능을 실제 참여 대상으로 안내하지 않음",
+      "scene_brief": "화염·발사 없이 고정된 점검 격납고",
+      "notification_copy": "우주 테마의 임무 장면 이해하기 안내를 읽어 주세요. 추가 보상은 없습니다.",
+      "kpi": {
+        "definition": "실제 승인된 공지 노출/도움말 클릭 및 관련 오해 문의의 확인 가능한 집계",
+        "target": null,
+        "measurement": "집계 계약 없음: UNKNOWN"
+      },
+      "operator_note": "보상 없는 교육 안내. reward rule/0원 reward를 만들지 않음. 본문·CTA 저장 계약 확인 필요.",
+      "rollback": "기존 command cancel/archive와 노출·예약 중지 readback. 기존 기록 삭제 금지.",
+      "abuse_risk": "실제 발사 결과·상장 소문·당첨 보상 오인",
+      "registration_kind": "INFORMATIONAL_CAMPAIGN_PROPOSAL"
+    }
+  },
+  {
+    "slug": "catalog-event-etf-reading",
+    "storage": {
+      "slug": "catalog-event-etf-reading",
+      "title_ko": "ETF 테마는 어떤 이름인가요?",
+      "summary_ko": "ETF는 여러 대상을 묶는 금융 상품의 한 종류입니다. 퍼뜩의 ETF 테마는 그 묶음 개념을 가상 장면으로 표현합니다. 실제 ETF를 매수하거나 구성 종목을 보유하는 뜻이 아닙니다.",
+      "status": "DRAFT",
+      "starts_at": null,
+      "ends_at": null,
+      "published_at": null
+    },
+    "metadata": {
+      "audience": "MEMBERS",
+      "cta": {
+        "label": "묶음 테마 안내",
+        "route": "/products"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "publication_gate": "REVIEW_REQUIRED",
+      "registration_ready": false,
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "variables": [],
+      "required_phrases": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+      "card_title_ko": "ETF 테마는 어떤 이름인가요?",
+      "body_markdown": "ETF는 여러 대상을 묶는 금융 상품의 한 종류입니다. 퍼뜩의 ETF 테마는 그 묶음 개념을 가상 장면으로 표현합니다. 실제 ETF를 매수하거나 구성 종목을 보유하는 뜻이 아닙니다.\n\n실제 배당·분배금·지수 수익률이 퍼뜩 채굴보상으로 들어오지 않습니다. 공개 여부와 이용 조건은 별도 안내로 확인해 주세요. 이 안내의 추가 보상은 없습니다.",
+      "segment": "ALL_MEMBERS",
+      "start_condition": "원고·법무·실제 대상·일정·렌더 확인 후 사람이 승인",
+      "end_condition": "승인된 종료 또는 cancel receipt 확인",
+      "schedule": {
+        "starts_at": null,
+        "ends_at": null,
+        "timezone": "Asia/Seoul",
+        "status": "SCHEDULE_REQUIRED"
+      },
+      "participation": "설명 읽기; 입금·상품 선택·문의 생성 불필요",
+      "exclusion": "미승인·미공개·사용 불가 기능을 실제 참여 대상으로 안내하지 않음",
+      "scene_brief": "서로 다른 작업 구역을 연결한 장면; 종목 로고 없음",
+      "notification_copy": "ETF 테마는 어떤 이름인가요? 안내를 읽어 주세요. 추가 보상은 없습니다.",
+      "kpi": {
+        "definition": "실제 승인된 공지 노출/도움말 클릭 및 관련 오해 문의의 확인 가능한 집계",
+        "target": null,
+        "measurement": "집계 계약 없음: UNKNOWN"
+      },
+      "operator_note": "보상 없는 교육 안내. reward rule/0원 reward를 만들지 않음. 본문·CTA 저장 계약 확인 필요.",
+      "rollback": "기존 command cancel/archive와 노출·예약 중지 readback. 기존 기록 삭제 금지.",
+      "abuse_risk": "실제 ETF 투자·배당·분산투자 안전성 오인",
+      "registration_kind": "INFORMATIONAL_CAMPAIGN_PROPOSAL"
+    }
+  },
+  {
+    "slug": "catalog-event-single-and-basket",
+    "storage": {
+      "slug": "catalog-event-single-and-basket",
+      "title_ko": "한 기업 테마와 묶음 테마 구별하기",
+      "summary_ko": "한 기업에서 떠올린 테마와 여러 대상을 묶는 상품에서 떠올린 테마는 설명 방식이 다릅니다. 하나는 특정 산업 장면을, 다른 하나는 여러 작업 구역을 함께 보여 줄 수 있어요.",
+      "status": "DRAFT",
+      "starts_at": null,
+      "ends_at": null,
+      "published_at": null
+    },
+    "metadata": {
+      "audience": "MEMBERS",
+      "cta": {
+        "label": "설명 비교하기",
+        "route": "/products"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "publication_gate": "REVIEW_REQUIRED",
+      "registration_ready": false,
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "variables": [],
+      "required_phrases": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+      "card_title_ko": "한 기업 테마와 묶음 테마 구별하기",
+      "body_markdown": "한 기업에서 떠올린 테마와 여러 대상을 묶는 상품에서 떠올린 테마는 설명 방식이 다릅니다. 하나는 특정 산업 장면을, 다른 하나는 여러 작업 구역을 함께 보여 줄 수 있어요.\n\n묶음 장면을 선택한다고 실제 자산이 분산되거나 한도가 늘어나는 것은 아닙니다. 테마 수나 슬롯 수만 보고 받을 금액을 더하지 마세요. 실제 적용 조건을 읽어 주세요. 추가 보상은 없습니다.",
+      "segment": "ALL_MEMBERS",
+      "start_condition": "원고·법무·실제 대상·일정·렌더 확인 후 사람이 승인",
+      "end_condition": "승인된 종료 또는 cancel receipt 확인",
+      "schedule": {
+        "starts_at": null,
+        "ends_at": null,
+        "timezone": "Asia/Seoul",
+        "status": "SCHEDULE_REQUIRED"
+      },
+      "participation": "설명 읽기; 입금·상품 선택·문의 생성 불필요",
+      "exclusion": "미승인·미공개·사용 불가 기능을 실제 참여 대상으로 안내하지 않음",
+      "scene_brief": "단일 모듈과 다중 작업 구역의 대비",
+      "notification_copy": "한 기업 테마와 묶음 테마 구별하기 안내를 읽어 주세요. 추가 보상은 없습니다.",
+      "kpi": {
+        "definition": "실제 승인된 공지 노출/도움말 클릭 및 관련 오해 문의의 확인 가능한 집계",
+        "target": null,
+        "measurement": "집계 계약 없음: UNKNOWN"
+      },
+      "operator_note": "보상 없는 교육 안내. reward rule/0원 reward를 만들지 않음. 본문·CTA 저장 계약 확인 필요.",
+      "rollback": "기존 command cancel/archive와 노출·예약 중지 readback. 기존 기록 삭제 금지.",
+      "abuse_risk": "슬롯·ETF 구성 수만큼 global 용량 중복 계산",
+      "registration_kind": "INFORMATIONAL_CAMPAIGN_PROPOSAL"
+    }
+  },
+  {
+    "slug": "catalog-event-crypto-labels",
+    "storage": {
+      "slug": "catalog-event-crypto-labels",
+      "title_ko": "코인 이름과 지갑 금액 구별하기",
+      "summary_ko": "코인 이름을 쓴 테마는 디지털 자산을 떠올린 가상 장면입니다. 그 코인을 직접 채굴해 내 코인 지갑으로 보내는 뜻이 아닙니다. 외부 네트워크 활동이나 코인 가격으로 보상이 정해지지 않습니다.",
+      "status": "DRAFT",
+      "starts_at": null,
+      "ends_at": null,
+      "published_at": null
+    },
+    "metadata": {
+      "audience": "MEMBERS",
+      "cta": {
+        "label": "테마 이름 읽기",
+        "route": "/products"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "publication_gate": "REVIEW_REQUIRED",
+      "registration_ready": false,
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "variables": [],
+      "required_phrases": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+      "card_title_ko": "코인 이름과 지갑 금액 구별하기",
+      "body_markdown": "코인 이름을 쓴 테마는 디지털 자산을 떠올린 가상 장면입니다. 그 코인을 직접 채굴해 내 코인 지갑으로 보내는 뜻이 아닙니다. 외부 네트워크 활동이나 코인 가격으로 보상이 정해지지 않습니다.\n\nUSDT 입출금 안내와 채굴 테마는 별도로 읽어 주세요. 입출금 방식이 있다고 같은 이름의 채굴 상품이 자동으로 생기지 않습니다. 지갑의 실제 확정 기록을 확인하세요. 추가 보상은 없습니다.",
+      "segment": "ALL_MEMBERS",
+      "start_condition": "원고·법무·실제 대상·일정·렌더 확인 후 사람이 승인",
+      "end_condition": "승인된 종료 또는 cancel receipt 확인",
+      "schedule": {
+        "starts_at": null,
+        "ends_at": null,
+        "timezone": "Asia/Seoul",
+        "status": "SCHEDULE_REQUIRED"
+      },
+      "participation": "설명 읽기; 입금·상품 선택·문의 생성 불필요",
+      "exclusion": "미승인·미공개·사용 불가 기능을 실제 참여 대상으로 안내하지 않음",
+      "scene_brief": "통화 기호·금화 없이 블록과 연결판 장면",
+      "notification_copy": "코인 이름과 지갑 금액 구별하기 안내를 읽어 주세요. 추가 보상은 없습니다.",
+      "kpi": {
+        "definition": "실제 승인된 공지 노출/도움말 클릭 및 관련 오해 문의의 확인 가능한 집계",
+        "target": null,
+        "measurement": "집계 계약 없음: UNKNOWN"
+      },
+      "operator_note": "보상 없는 교육 안내. reward rule/0원 reward를 만들지 않음. 본문·CTA 저장 계약 확인 필요.",
+      "rollback": "기존 command cancel/archive와 노출·예약 중지 readback. 기존 기록 삭제 금지.",
+      "abuse_risk": "실제 코인 채굴·사용자 USDT 잔액 오인",
+      "registration_kind": "INFORMATIONAL_CAMPAIGN_PROPOSAL"
+    }
+  },
+  {
+    "slug": "catalog-event-metal-reading",
+    "storage": {
+      "slug": "catalog-event-metal-reading",
+      "title_ko": "금·은 장면을 차분하게 살펴보기",
+      "summary_ko": "금과 은 테마는 광물 정제와 표면 검사를 떠올린 가상 장면입니다. 실제 금속을 사거나 맡겨 두는 서비스가 아닙니다. 테마 이름은 원금 보장이나 가격 상승을 뜻하지 않습니다.",
+      "status": "DRAFT",
+      "starts_at": null,
+      "ends_at": null,
+      "published_at": null
+    },
+    "metadata": {
+      "audience": "MEMBERS",
+      "cta": {
+        "label": "귀금속 테마 보기",
+        "route": "/products"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "publication_gate": "REVIEW_REQUIRED",
+      "registration_ready": false,
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "variables": [],
+      "required_phrases": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+      "card_title_ko": "금·은 장면을 차분하게 살펴보기",
+      "body_markdown": "금과 은 테마는 광물 정제와 표면 검사를 떠올린 가상 장면입니다. 실제 금속을 사거나 맡겨 두는 서비스가 아닙니다. 테마 이름은 원금 보장이나 가격 상승을 뜻하지 않습니다.\n\n움직임이 차분해도 다른 테마보다 안전한 금융 상품이라는 뜻은 아닙니다. 화면의 색과 속도 대신 실제 이용 조건을 확인해 주세요. 이 안내의 추가 보상은 없습니다.",
+      "segment": "ALL_MEMBERS",
+      "start_condition": "원고·법무·실제 대상·일정·렌더 확인 후 사람이 승인",
+      "end_condition": "승인된 종료 또는 cancel receipt 확인",
+      "schedule": {
+        "starts_at": null,
+        "ends_at": null,
+        "timezone": "Asia/Seoul",
+        "status": "SCHEDULE_REQUIRED"
+      },
+      "participation": "설명 읽기; 입금·상품 선택·문의 생성 불필요",
+      "exclusion": "미승인·미공개·사용 불가 기능을 실제 참여 대상으로 안내하지 않음",
+      "scene_brief": "정제 받침·은 표면 검사선; 소유증서 없음",
+      "notification_copy": "금·은 장면을 차분하게 살펴보기 안내를 읽어 주세요. 추가 보상은 없습니다.",
+      "kpi": {
+        "definition": "실제 승인된 공지 노출/도움말 클릭 및 관련 오해 문의의 확인 가능한 집계",
+        "target": null,
+        "measurement": "집계 계약 없음: UNKNOWN"
+      },
+      "operator_note": "보상 없는 교육 안내. reward rule/0원 reward를 만들지 않음. 본문·CTA 저장 계약 확인 필요.",
+      "rollback": "기존 command cancel/archive와 노출·예약 중지 readback. 기존 기록 삭제 금지.",
+      "abuse_risk": "금 실물 보관·안전자산·원금 보장 오인",
+      "registration_kind": "INFORMATIONAL_CAMPAIGN_PROPOSAL"
+    }
+  },
+  {
+    "slug": "catalog-tier-events-reading",
+    "storage": {
+      "slug": "catalog-tier-events-reading",
+      "title_ko": "지금 고를 수 있는 테마 살펴보기",
+      "summary_ko": "상품 화면에서 지금 선택할 수 있는 테마의 설명을 읽어 보세요. 장면의 주제와 이용 조건은 따로 살펴볼 수 있어요.",
+      "status": "DRAFT",
+      "starts_at": null,
+      "ends_at": null,
+      "published_at": null
+    },
+    "metadata": {
+      "audience": "MEMBERS",
+      "cta": {
+        "label": "상품 안내 확인",
+        "route": "/products"
+      },
+      "approval": {
+        "required": true,
+        "status": "PENDING",
+        "approved_by": null
+      },
+      "economy": {
+        "impact": "NONE",
+        "policy_status": "NOT_APPLICABLE",
+        "values": {}
+      },
+      "publication_gate": "REVIEW_REQUIRED",
+      "registration_ready": false,
+      "legal_copy_status": "LEGAL_COPY_REQUIRED",
+      "variables": [],
+      "required_phrases": [],
+      "source_baseline": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+      "card_title_ko": "지금 고를 수 있는 테마 살펴보기",
+      "body_markdown": "상품 화면에서 지금 선택할 수 있는 테마의 설명을 읽어 보세요. 장면의 주제와 이용 조건은 따로 살펴볼 수 있어요.\n\n새 테마는 정식 공개와 내 이용 조건 확인이 끝난 뒤 선택할 수 있습니다. 이름이나 장면만으로 받을 금액을 판단하지 않습니다. 안내 참여를 위해 입금하거나 테마를 바꿀 필요는 없습니다. 추가 보상은 없습니다.",
+      "segment": "ALL_MEMBERS",
+      "start_condition": "원고·법무·실제 대상·일정·렌더 확인 후 사람이 승인",
+      "end_condition": "승인된 종료 또는 cancel receipt 확인",
+      "schedule": {
+        "starts_at": null,
+        "ends_at": null,
+        "timezone": "Asia/Seoul",
+        "status": "SCHEDULE_REQUIRED"
+      },
+      "participation": "안내 읽기만 참여. 입금·상품 변경 불필요",
+      "exclusion": "미승인·미공개·사용 불가 기능을 실제 참여 대상으로 안내하지 않음",
+      "scene_brief": "무표식 산업 장치와 읽기용 여백; 로고 없음",
+      "notification_copy": "지금 고를 수 있는 테마 살펴보기 안내를 읽어 주세요. 추가 보상은 없습니다.",
+      "kpi": {
+        "definition": "실제 승인된 공지 노출/도움말 클릭 및 관련 오해 문의의 확인 가능한 집계",
+        "target": null,
+        "measurement": "집계 계약 없음: UNKNOWN"
+      },
+      "operator_note": "보상 없는 교육 안내. reward rule/0원 reward를 만들지 않음. 본문·CTA 저장 계약 확인 필요.",
+      "rollback": "기존 command cancel/archive와 노출·예약 중지 readback. 기존 기록 삭제 금지.",
+      "abuse_risk": "기업 이름으로 실제 자산 소유·제휴를 기대하는 오해",
+      "registration_kind": "INFORMATIONAL_CAMPAIGN_PROPOSAL",
+      "tier_policy_status": "PROPOSED_NOT_APPROVED",
+      "requires_authoritative_eligibility_event": true,
+      "policy_approval_before_publication": true
+    }
+  }
+]

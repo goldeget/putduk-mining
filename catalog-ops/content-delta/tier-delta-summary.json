@@ -28,5 +28,28 @@
   },
   "financial_rules_created": false,
   "notification_delivery": false,
-  "production": false
+  "production": false,
+  "access_model": "ALL_ELIGIBLE_MEMBERS",
+  "historical_tier_gate_status": "SUPERSEDED_BY_OWNER_CORRECTION",
+  "corrected_existing_draft_slugs": [
+    "catalog-tier-events-reading",
+    "catalog-tier-faq-choices",
+    "catalog-tier-faq-unlock",
+    "catalog-tier-faq-principal",
+    "catalog-tier-faq-downgrade",
+    "catalog-tier-faq-hold",
+    "catalog-tier-faq-top",
+    "catalog-tier-notices-selection",
+    "catalog-tier-notices-condition-change",
+    "catalog-tier-notices-new-groups",
+    "catalog-tier-notices-policy-guide",
+    "catalog-tier-notifications-unlock",
+    "catalog-tier-notifications-condition-change",
+    "catalog-tier-notifications-pause",
+    "catalog-tier-notifications-policy",
+    "catalog-tier-support-unlock",
+    "catalog-tier-support-pause",
+    "catalog-tier-support-resume"
+  ],
+  "stable_slugs_are_editorial_identifiers_not_tier_unlock_events": true
 }

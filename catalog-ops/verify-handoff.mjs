@@ -60,6 +60,8 @@ for (const [ref, sha] of Object.entries(freezes)) {
 }
 const continuationStart = "8f68be2005e16f1ac257626b3418cd3b8a96f1e3";
 git("merge-base", "--is-ancestor", continuationStart, "HEAD");
+const ownerCorrectionStart = "783732492e70c312b33640e07ee0d8ffad68c3e5";
+git("merge-base", "--is-ancestor", ownerCorrectionStart, "HEAD");
 const research = JSON.parse(
   readFileSync(
     new URL("evidence/research-sources.json", import.meta.url),
@@ -95,6 +97,15 @@ console.log(
         counts: research.status_counts,
       },
       continuation_start_sha: continuationStart,
+      owner_correction_start_sha: ownerCorrectionStart,
+      owner_correction_commits: git(
+        "log",
+        "--reverse",
+        "--format=%H %s",
+        `${ownerCorrectionStart}..HEAD`,
+      )
+        .split("\n")
+        .filter(Boolean),
       new_commits: git(
         "log",
         "--reverse",

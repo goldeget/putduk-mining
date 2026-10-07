@@ -12,7 +12,7 @@ import {
 } from "./economy-simulate.mjs";
 
 // Preserve all 108 historical cases against their exact input contract.
-// Current researched/Tier-gated inputs have independent tests in finalize.test.
+// Current Owner inputs have independent tests in owner-correction.test.
 const base = loadPackage({ ref: "8f68be2005e16f1ac257626b3418cd3b8a96f1e3" });
 const now = Date.parse("2026-10-07T23:59:59Z");
 const fresh = () => structuredClone(base);

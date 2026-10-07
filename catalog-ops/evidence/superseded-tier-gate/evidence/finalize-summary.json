@@ -1,0 +1,306 @@
+{
+  "continuation_start_sha": "8f68be2005e16f1ac257626b3418cd3b8a96f1e3",
+  "base_sha": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+  "identity_counts": {
+    "PUBLIC_MARKET_VERIFIED": 13,
+    "PUBLIC_MARKET_PARTIAL": 31,
+    "PUBLIC_MARKET_UNKNOWN": 11
+  },
+  "wave_counts": {
+    "P0_LAUNCH_CORE": 6,
+    "P1_LAUNCH_EXPANSION": 19,
+    "P2_LATER": 24,
+    "HOLD": 4,
+    "REJECT": 2
+  },
+  "approved_speed_count": 0,
+  "eligibility_count": 25,
+  "tier_count": 14,
+  "recommendation": "POLICY_A_PLUS_TIER_GATE_PLUS_INHERITED_GLOBAL_CAPACITY_PLUS_PRODUCT_SPEED",
+  "speed_band": {
+    "minimum": "1.00",
+    "maximum": "1.10",
+    "step": "0.01"
+  },
+  "policy_approval_ready": false,
+  "primary_review_ready": true,
+  "production_ready": false,
+  "actual_user_concentration": "UNKNOWN",
+  "scene_gaps": {
+    "status": "BLOCKED_SCENE_PRODUCT_QA_REQUIRED",
+    "frozen_scene_ref": "505e20c097be8de1b5d02bc65a2dcbd054fe56d1",
+    "proposed_product_count": 25,
+    "new_specs_required": 16,
+    "product_browser_acceptance_required": 25,
+    "desktop_masters_generated": 0,
+    "mobile_masters_generated": 0,
+    "requirements": [
+      {
+        "slug": "gold",
+        "requirements": [
+          "DESKTOP_MASTER_REQUIRED",
+          "MOBILE_MASTER_REQUIRED",
+          "REAL_BROWSER_ACCEPTANCE_REQUIRED"
+        ],
+        "approved_desktop_master": null,
+        "approved_mobile_master": null
+      },
+      {
+        "slug": "silver",
+        "requirements": [
+          "DESKTOP_MASTER_REQUIRED",
+          "MOBILE_MASTER_REQUIRED",
+          "REAL_BROWSER_ACCEPTANCE_REQUIRED"
+        ],
+        "approved_desktop_master": null,
+        "approved_mobile_master": null
+      },
+      {
+        "slug": "spy",
+        "requirements": [
+          "SCENE_SPEC_REQUIRED",
+          "DESKTOP_MASTER_REQUIRED",
+          "MOBILE_MASTER_REQUIRED",
+          "REAL_BROWSER_ACCEPTANCE_REQUIRED"
+        ],
+        "approved_desktop_master": null,
+        "approved_mobile_master": null
+      },
+      {
+        "slug": "kb-financial",
+        "requirements": [
+          "SCENE_SPEC_REQUIRED",
+          "DESKTOP_MASTER_REQUIRED",
+          "MOBILE_MASTER_REQUIRED",
+          "REAL_BROWSER_ACCEPTANCE_REQUIRED"
+        ],
+        "approved_desktop_master": null,
+        "approved_mobile_master": null
+      },
+      {
+        "slug": "lg-electronics",
+        "requirements": [
+          "SCENE_SPEC_REQUIRED",
+          "DESKTOP_MASTER_REQUIRED",
+          "MOBILE_MASTER_REQUIRED",
+          "REAL_BROWSER_ACCEPTANCE_REQUIRED"
+        ],
+        "approved_desktop_master": null,
+        "approved_mobile_master": null
+      },
+      {
+        "slug": "schd",
+        "requirements": [
+          "SCENE_SPEC_REQUIRED",
+          "DESKTOP_MASTER_REQUIRED",
+          "MOBILE_MASTER_REQUIRED",
+          "REAL_BROWSER_ACCEPTANCE_REQUIRED"
+        ],
+        "approved_desktop_master": null,
+        "approved_mobile_master": null
+      },
+      {
+        "slug": "apple",
+        "requirements": [
+          "DESKTOP_MASTER_REQUIRED",
+          "MOBILE_MASTER_REQUIRED",
+          "REAL_BROWSER_ACCEPTANCE_REQUIRED"
+        ],
+        "approved_desktop_master": null,
+        "approved_mobile_master": null
+      },
+      {
+        "slug": "naver",
+        "requirements": [
+          "SCENE_SPEC_REQUIRED",
+          "DESKTOP_MASTER_REQUIRED",
+          "MOBILE_MASTER_REQUIRED",
+          "REAL_BROWSER_ACCEPTANCE_REQUIRED"
+        ],
+        "approved_desktop_master": null,
+        "approved_mobile_master": null
+      },
+      {
+        "slug": "hyundai-motor",
+        "requirements": [
+          "SCENE_SPEC_REQUIRED",
+          "DESKTOP_MASTER_REQUIRED",
+          "MOBILE_MASTER_REQUIRED",
+          "REAL_BROWSER_ACCEPTANCE_REQUIRED"
+        ],
+        "approved_desktop_master": null,
+        "approved_mobile_master": null
+      },
+      {
+        "slug": "microsoft",
+        "requirements": [
+          "DESKTOP_MASTER_REQUIRED",
+          "MOBILE_MASTER_REQUIRED",
+          "REAL_BROWSER_ACCEPTANCE_REQUIRED"
+        ],
+        "approved_desktop_master": null,
+        "approved_mobile_master": null
+      },
+      {
+        "slug": "lg-energy-solution",
+        "requirements": [
+          "SCENE_SPEC_REQUIRED",
+          "DESKTOP_MASTER_REQUIRED",
+          "MOBILE_MASTER_REQUIRED",
+          "REAL_BROWSER_ACCEPTANCE_REQUIRED"
+        ],
+        "approved_desktop_master": null,
+        "approved_mobile_master": null
+      },
+      {
+        "slug": "amazon",
+        "requirements": [
+          "SCENE_SPEC_REQUIRED",
+          "DESKTOP_MASTER_REQUIRED",
+          "MOBILE_MASTER_REQUIRED",
+          "REAL_BROWSER_ACCEPTANCE_REQUIRED"
+        ],
+        "approved_desktop_master": null,
+        "approved_mobile_master": null
+      },
+      {
+        "slug": "samsung-electronics",
+        "requirements": [
+          "DESKTOP_MASTER_REQUIRED",
+          "MOBILE_MASTER_REQUIRED",
+          "REAL_BROWSER_ACCEPTANCE_REQUIRED"
+        ],
+        "approved_desktop_master": null,
+        "approved_mobile_master": null
+      },
+      {
+        "slug": "soxx",
+        "requirements": [
+          "SCENE_SPEC_REQUIRED",
+          "DESKTOP_MASTER_REQUIRED",
+          "MOBILE_MASTER_REQUIRED",
+          "REAL_BROWSER_ACCEPTANCE_REQUIRED"
+        ],
+        "approved_desktop_master": null,
+        "approved_mobile_master": null
+      },
+      {
+        "slug": "ethereum",
+        "requirements": [
+          "DESKTOP_MASTER_REQUIRED",
+          "MOBILE_MASTER_REQUIRED",
+          "REAL_BROWSER_ACCEPTANCE_REQUIRED"
+        ],
+        "approved_desktop_master": null,
+        "approved_mobile_master": null
+      },
+      {
+        "slug": "alphabet-a",
+        "requirements": [
+          "SCENE_SPEC_REQUIRED",
+          "DESKTOP_MASTER_REQUIRED",
+          "MOBILE_MASTER_REQUIRED",
+          "REAL_BROWSER_ACCEPTANCE_REQUIRED"
+        ],
+        "approved_desktop_master": null,
+        "approved_mobile_master": null
+      },
+      {
+        "slug": "qqq",
+        "requirements": [
+          "SCENE_SPEC_REQUIRED",
+          "DESKTOP_MASTER_REQUIRED",
+          "MOBILE_MASTER_REQUIRED",
+          "REAL_BROWSER_ACCEPTANCE_REQUIRED"
+        ],
+        "approved_desktop_master": null,
+        "approved_mobile_master": null
+      },
+      {
+        "slug": "solana",
+        "requirements": [
+          "SCENE_SPEC_REQUIRED",
+          "DESKTOP_MASTER_REQUIRED",
+          "MOBILE_MASTER_REQUIRED",
+          "REAL_BROWSER_ACCEPTANCE_REQUIRED"
+        ],
+        "approved_desktop_master": null,
+        "approved_mobile_master": null
+      },
+      {
+        "slug": "bitcoin",
+        "requirements": [
+          "DESKTOP_MASTER_REQUIRED",
+          "MOBILE_MASTER_REQUIRED",
+          "REAL_BROWSER_ACCEPTANCE_REQUIRED"
+        ],
+        "approved_desktop_master": null,
+        "approved_mobile_master": null
+      },
+      {
+        "slug": "sandisk",
+        "requirements": [
+          "SCENE_SPEC_REQUIRED",
+          "DESKTOP_MASTER_REQUIRED",
+          "MOBILE_MASTER_REQUIRED",
+          "REAL_BROWSER_ACCEPTANCE_REQUIRED"
+        ],
+        "approved_desktop_master": null,
+        "approved_mobile_master": null
+      },
+      {
+        "slug": "sk-hynix",
+        "requirements": [
+          "DESKTOP_MASTER_REQUIRED",
+          "MOBILE_MASTER_REQUIRED",
+          "REAL_BROWSER_ACCEPTANCE_REQUIRED"
+        ],
+        "approved_desktop_master": null,
+        "approved_mobile_master": null
+      },
+      {
+        "slug": "tesla",
+        "requirements": [
+          "SCENE_SPEC_REQUIRED",
+          "DESKTOP_MASTER_REQUIRED",
+          "MOBILE_MASTER_REQUIRED",
+          "REAL_BROWSER_ACCEPTANCE_REQUIRED"
+        ],
+        "approved_desktop_master": null,
+        "approved_mobile_master": null
+      },
+      {
+        "slug": "rocket-lab",
+        "requirements": [
+          "SCENE_SPEC_REQUIRED",
+          "DESKTOP_MASTER_REQUIRED",
+          "MOBILE_MASTER_REQUIRED",
+          "REAL_BROWSER_ACCEPTANCE_REQUIRED"
+        ],
+        "approved_desktop_master": null,
+        "approved_mobile_master": null
+      },
+      {
+        "slug": "nvidia",
+        "requirements": [
+          "DESKTOP_MASTER_REQUIRED",
+          "MOBILE_MASTER_REQUIRED",
+          "REAL_BROWSER_ACCEPTANCE_REQUIRED"
+        ],
+        "approved_desktop_master": null,
+        "approved_mobile_master": null
+      },
+      {
+        "slug": "spacex",
+        "requirements": [
+          "SCENE_SPEC_REQUIRED",
+          "DESKTOP_MASTER_REQUIRED",
+          "MOBILE_MASTER_REQUIRED",
+          "REAL_BROWSER_ACCEPTANCE_REQUIRED"
+        ],
+        "approved_desktop_master": null,
+        "approved_mobile_master": null
+      }
+    ]
+  }
+}

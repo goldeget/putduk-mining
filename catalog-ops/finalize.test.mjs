@@ -16,7 +16,9 @@ import {
   simulate,
 } from "./economy-simulate.mjs";
 
-const base = loadPackage(),
+// Replay the rejected proposal as historical evidence only. Current Owner
+// policy assertions are in owner-correction.test.mjs and run current files.
+const base = loadPackage({ ref: "783732492e70c312b33640e07ee0d8ffad68c3e5" }),
   eligibility = base.eligibility;
 const tiers = eligibility.source_policy.tiers;
 const fresh = () => structuredClone(base);

@@ -3,6 +3,11 @@
 Reads the approved repository document and existing draft. Never writes any
 application, financial policy, source ledger, SceneRegistry or remote record.
 """
+# OWNER_CORRECTION_GENERATOR_GUARD
+from pathlib import Path as _OwnerPath
+if __name__ == "__main__" and (_OwnerPath(__file__).parent / "product-access-policy.json").exists():
+    raise SystemExit("SUPERSEDED_BY_OWNER_CORRECTION: use owner-correction.py; do not regenerate the rejected Tier access model or overwrite reviewed evidence")
+
 import collections
 import copy
 import hashlib
