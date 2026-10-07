@@ -1001,6 +1001,24 @@ async function captureRoutes(
               element.scrollTo({ top: 0, behavior: "instant" }),
             );
           }
+          if (route === "/products" && width >= 720) {
+            const cards = ready.locator("[data-catalog-artwork]");
+            const artworkSizes = await cards.evaluateAll((elements) => {
+              const rootSize = Number.parseFloat(
+                getComputedStyle(document.documentElement).fontSize,
+              );
+              return elements.map((element) => ({
+                width: element.getBoundingClientRect().width,
+                maxWidth: 18 * rootSize,
+              }));
+            });
+            expect(artworkSizes.length).toBeGreaterThan(0);
+            // A filtered single product remains a card, never a full-page
+            // enlargement of its decorative source image.
+            for (const artwork of artworkSizes) {
+              expect(artwork.width).toBeLessThanOrEqual(artwork.maxWidth);
+            }
+          }
           if (width >= 980 && ["/products", "/menu", "/ai"].includes(route)) {
             const sidebar = page.locator("aside.product-sidebar:visible");
             await expect(sidebar).toHaveCount(1);
@@ -1030,6 +1048,29 @@ async function captureRoutes(
           const filename = `${route.slice(1)}-${width}-${theme}${suffix}.png`;
           const output = testInfo.outputPath(filename);
           const paintedImages = await awaitPaintedImages(page);
+          if (route === "/products" && width >= 720) {
+            const imageSamples = await ready
+              .locator("[data-catalog-artwork] img")
+              .evaluateAll((images) =>
+                images.map((element) => {
+                  const image = element as HTMLImageElement;
+                  return {
+                    decoded: image.complete && image.naturalWidth > 0,
+                    sourceWidth: image.naturalWidth,
+                    paintedWidth:
+                      image.getBoundingClientRect().width * devicePixelRatio,
+                  };
+                }),
+              );
+            expect(imageSamples.length).toBeGreaterThan(0);
+            for (const image of imageSamples.filter(
+              (sample) => sample.decoded,
+            )) {
+              expect(image.sourceWidth).toBeGreaterThanOrEqual(
+                Math.min(1536, image.paintedWidth) * 0.95,
+              );
+            }
+          }
           await page.screenshot({
             path: output,
             fullPage: true,

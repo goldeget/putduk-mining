@@ -63,7 +63,7 @@ export function CatalogProduct({
             data-catalog-artwork="GOLD"
             aria-hidden="true"
           >
-            <GoldCategoryArtwork sizes="(min-width: 980px) 220px, (min-width: 720px) 33vw, 33vw" />
+            <GoldCategoryArtwork sizes="(min-width: 980px) 440px, (min-width: 720px) 33vw, 100vw" />
           </span>
         ) : (
           <span
@@ -72,7 +72,10 @@ export function CatalogProduct({
             data-catalog-artwork={product.category}
             aria-hidden="true"
           >
-            <CatalogMaterialArtwork category={product.category} />
+            <CatalogMaterialArtwork
+              category={product.category}
+              sizes="(min-width: 980px) 440px, (min-width: 720px) 33vw, 100vw"
+            />
           </span>
         )}
         <span className={styles.cardFooter}>
