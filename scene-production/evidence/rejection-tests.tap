@@ -1,0 +1,310 @@
+TAP version 13
+# Subtest: actual complete draft package validates without granting publication or image approval
+ok 1 - actual complete draft package validates without granting publication or image approval
+  ---
+  duration_ms: 35.416935
+  type: 'test'
+  ...
+# Subtest: duplicate seed UUID cannot create ambiguous product identity
+ok 2 - duplicate seed UUID cannot create ambiguous product identity
+  ---
+  duration_ms: 34.393773
+  type: 'test'
+  ...
+# Subtest: duplicate canonical slug is rejected
+ok 3 - duplicate canonical slug is rejected
+  ---
+  duration_ms: 33.35028
+  type: 'test'
+  ...
+# Subtest: duplicate prompt identifier is rejected
+ok 4 - duplicate prompt identifier is rejected
+  ---
+  duration_ms: 29.109452
+  type: 'test'
+  ...
+# Subtest: removing a row from inventory and manifest together cannot hide source coverage loss
+ok 5 - removing a row from inventory and manifest together cannot hide source coverage loss
+  ---
+  duration_ms: 24.786181
+  type: 'test'
+  ...
+# Subtest: member-visible item without manifest is caught even when catalog approval is also invalid
+ok 6 - member-visible item without manifest is caught even when catalog approval is also invalid
+  ---
+  duration_ms: 29.860802
+  type: 'test'
+  ...
+# Subtest: unknown live catalog must not be silently declared published
+ok 7 - unknown live catalog must not be silently declared published
+  ---
+  duration_ms: 32.174252
+  type: 'test'
+  ...
+# Subtest: missing exact catalog source is rejected
+ok 8 - missing exact catalog source is rejected
+  ---
+  duration_ms: 31.705775
+  type: 'test'
+  ...
+# Subtest: name changed from canonical SQL record is rejected
+ok 9 - name changed from canonical SQL record is rejected
+  ---
+  duration_ms: 29.605965
+  type: 'test'
+  ...
+# Subtest: invented production product ID is rejected
+ok 10 - invented production product ID is rejected
+  ---
+  duration_ms: 30.315364
+  type: 'test'
+  ...
+# Subtest: prompt for a nonexistent product is rejected
+ok 11 - prompt for a nonexistent product is rejected
+  ---
+  duration_ms: 30.670299
+  type: 'test'
+  ...
+# Subtest: missing scene family cannot pass as generic stock art
+ok 12 - missing scene family cannot pass as generic stock art
+  ---
+  duration_ms: 29.153437
+  type: 'test'
+  ...
+# Subtest: blank visual story is rejected
+ok 13 - blank visual story is rejected
+  ---
+  duration_ms: 30.699767
+  type: 'test'
+  ...
+# Subtest: blank hero is rejected
+ok 14 - blank hero is rejected
+  ---
+  duration_ms: 32.586081
+  type: 'test'
+  ...
+# Subtest: missing desktop prompt is rejected
+ok 15 - missing desktop prompt is rejected
+  ---
+  duration_ms: 30.683458
+  type: 'test'
+  ...
+# Subtest: arbitrary scene status does not become approval
+ok 16 - arbitrary scene status does not become approval
+  ---
+  duration_ms: 28.629422
+  type: 'test'
+  ...
+# Subtest: missing UNKNOWN state cannot permit inferred running
+ok 17 - missing UNKNOWN state cannot permit inferred running
+  ---
+  duration_ms: 30.539475
+  type: 'test'
+  ...
+# Subtest: missing desktop composition is rejected
+ok 18 - missing desktop composition is rejected
+  ---
+  duration_ms: 29.68324
+  type: 'test'
+  ...
+# Subtest: missing mobile strategy is rejected
+ok 19 - missing mobile strategy is rejected
+  ---
+  duration_ms: 31.475879
+  type: 'test'
+  ...
+# Subtest: untested landscape center crop cannot be called accepted
+ok 20 - untested landscape center crop cannot be called accepted
+  ---
+  duration_ms: 30.886188
+  type: 'test'
+  ...
+# Subtest: missing brand review is rejected
+ok 21 - missing brand review is rejected
+  ---
+  duration_ms: 30.172012
+  type: 'test'
+  ...
+# Subtest: self-approved trademark without evidence is rejected
+ok 22 - self-approved trademark without evidence is rejected
+  ---
+  duration_ms: 30.294023
+  type: 'test'
+  ...
+# Subtest: family art cannot be self-promoted to accepted product master
+ok 23 - family art cannot be self-promoted to accepted product master
+  ---
+  duration_ms: 31.254142
+  type: 'test'
+  ...
+# Subtest: name-only reused scene story is rejected
+ok 24 - name-only reused scene story is rejected
+  ---
+  duration_ms: 29.103693
+  type: 'test'
+  ...
+# Subtest: copied prompt with renamed product is rejected
+ok 25 - copied prompt with renamed product is rejected
+  ---
+  duration_ms: 29.427091
+  type: 'test'
+  ...
+# Subtest: forbidden generated financial claim: Show guaranteed earnings
+ok 26 - forbidden generated financial claim: Show guaranteed earnings
+  ---
+  duration_ms: 29.418438
+  type: 'test'
+  ...
+# Subtest: forbidden generated financial claim: APR 19%
+ok 27 - forbidden generated financial claim: APR 19%
+  ---
+  duration_ms: 29.693034
+  type: 'test'
+  ...
+# Subtest: forbidden generated financial claim: yield: 3.5%
+ok 28 - forbidden generated financial claim: yield: 3.5%
+  ---
+  duration_ms: 28.753955
+  type: 'test'
+  ...
+# Subtest: forbidden generated financial claim: Display 5000 KRW balance
+ok 29 - forbidden generated financial claim: Display 5000 KRW balance
+  ---
+  duration_ms: 31.633683
+  type: 'test'
+  ...
+# Subtest: forbidden generated financial claim: Give bonus 700 USDT
+ok 30 - forbidden generated financial claim: Give bonus 700 USDT
+  ---
+  duration_ms: 29.035883
+  type: 'test'
+  ...
+# Subtest: forbidden generated financial claim: Add 4x speed
+ok 31 - forbidden generated financial claim: Add 4x speed
+  ---
+  duration_ms: 28.439892
+  type: 'test'
+  ...
+# Subtest: forbidden generated financial claim: 보상 900원
+ok 32 - forbidden generated financial claim: 보상 900원
+  ---
+  duration_ms: 36.080718
+  type: 'test'
+  ...
+# Subtest: forbidden generated financial claim: 수익률 8%
+ok 33 - forbidden generated financial claim: 수익률 8%
+  ---
+  duration_ms: 32.736841
+  type: 'test'
+  ...
+# Subtest: safe zones must include all four actual directions
+ok 34 - safe zones must include all four actual directions
+  ---
+  duration_ms: 32.598294
+  type: 'test'
+  ...
+# Subtest: safe rectangle cannot leave normalized image bounds
+ok 35 - safe rectangle cannot leave normalized image bounds
+  ---
+  duration_ms: 31.289109
+  type: 'test'
+  ...
+# Subtest: timer may never advance member money
+ok 36 - timer may never advance member money
+  ---
+  duration_ms: 29.221543
+  type: 'test'
+  ...
+# Subtest: camera sway cannot be requested as local motion
+ok 37 - camera sway cannot be requested as local motion
+  ---
+  duration_ms: 29.162205
+  type: 'test'
+  ...
+# Subtest: stale dangling prompt IDs are rejected
+ok 38 - stale dangling prompt IDs are rejected
+  ---
+  duration_ms: 29.581866
+  type: 'test'
+  ...
+# Subtest: removed money/UI prohibitions are rejected
+ok 39 - removed money/UI prohibitions are rejected
+  ---
+  duration_ms: 29.479694
+  type: 'test'
+  ...
+# Subtest: source counts cannot silently exaggerate launched products
+ok 40 - source counts cannot silently exaggerate launched products
+  ---
+  duration_ms: 29.943039
+  type: 'test'
+  ...
+# Subtest: malformed JSON object fields fail with diagnostic rather than crashing
+ok 41 - malformed JSON object fields fail with diagnostic rather than crashing
+  ---
+  duration_ms: 1.784077
+  type: 'test'
+  ...
+# Subtest: prompt and manifest geometry/story mismatch is rejected
+ok 42 - prompt and manifest geometry/story mismatch is rejected
+  ---
+  duration_ms: 28.798537
+  type: 'test'
+  ...
+# Subtest: currency scaling is a contract, not an arbitrary multiplier
+ok 43 - currency scaling is a contract, not an arbitrary multiplier
+  ---
+  duration_ms: 29.823482
+  type: 'test'
+  ...
+# Subtest: revision metadata across files cannot drift
+ok 44 - revision metadata across files cannot drift
+  ---
+  duration_ms: 29.376291
+  type: 'test'
+  ...
+# Subtest: source fingerprint drift forces a new catalog and scene audit
+ok 45 - source fingerprint drift forces a new catalog and scene audit
+  ---
+  duration_ms: 5.176092
+  type: 'test'
+  ...
+# Subtest: unrun generation cannot be marked completed
+ok 46 - unrun generation cannot be marked completed
+  ---
+  duration_ms: 29.103568
+  type: 'test'
+  ...
+# Subtest: draft metadata must not be marked publishable
+ok 47 - draft metadata must not be marked publishable
+  ---
+  duration_ms: 29.433727
+  type: 'test'
+  ...
+# Subtest: SPEC_ONLY cannot be marked visual PASS without actual images
+ok 48 - SPEC_ONLY cannot be marked visual PASS without actual images
+  ---
+  duration_ms: 29.568095
+  type: 'test'
+  ...
+# Subtest: generation status must preserve approval gate
+ok 49 - generation status must preserve approval gate
+  ---
+  duration_ms: 30.100302
+  type: 'test'
+  ...
+# Subtest: prompt focal geometry must match the intended device composition
+ok 50 - prompt focal geometry must match the intended device composition
+  ---
+  duration_ms: 35.589396
+  type: 'test'
+  ...
+1..50
+# tests 50
+# suites 0
+# pass 50
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1561.663522

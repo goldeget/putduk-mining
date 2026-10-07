@@ -116,84 +116,44 @@
         "desktop_ui_safe_zones": [
           {
             "side": "left",
-            "rect": [
-              0,
-              0.12,
-              0.25,
-              0.7
-            ],
+            "rect": [0, 0.12, 0.25, 0.7],
             "purpose": "Low-detail operational overlay region; hero remains outside it"
           },
           {
             "side": "right",
-            "rect": [
-              0.82,
-              0.12,
-              1,
-              0.7
-            ],
+            "rect": [0.82, 0.12, 1, 0.7],
             "purpose": "Low-detail secondary information region; no essential machinery"
           },
           {
             "side": "top",
-            "rect": [
-              0,
-              0,
-              1,
-              0.18
-            ],
+            "rect": [0, 0, 1, 0.18],
             "purpose": "Low-contrast product/status heading region"
           },
           {
             "side": "bottom",
-            "rect": [
-              0,
-              0.8,
-              1,
-              1
-            ],
+            "rect": [0, 0.8, 1, 1],
             "purpose": "Low-detail session amount/receipt region, real HTML only"
           }
         ],
         "mobile_ui_safe_zones": [
           {
             "side": "left",
-            "rect": [
-              0,
-              0,
-              0.1,
-              1
-            ],
+            "rect": [0, 0, 0.1, 1],
             "purpose": "Keep edge structures low contrast; no indispensable machinery here"
           },
           {
             "side": "right",
-            "rect": [
-              0.9,
-              0,
-              1,
-              1
-            ],
+            "rect": [0.9, 0, 1, 1],
             "purpose": "Keep edge low contrast; portrait machinery remains inside these edges"
           },
           {
             "side": "top",
-            "rect": [
-              0,
-              0,
-              1,
-              0.24
-            ],
+            "rect": [0, 0, 1, 0.24],
             "purpose": "Quiet status/product heading region; no critical hero detail behind real HTML"
           },
           {
             "side": "bottom",
-            "rect": [
-              0,
-              0.76,
-              1,
-              1
-            ],
+            "rect": [0, 0.76, 1, 1],
             "purpose": "Quiet session amount/status region; controls/help/navigation remain normal HTML flow outside art"
           }
         ],
@@ -331,12 +291,7 @@
           "fine copper interconnect edges"
         ],
         "lighting": "Cyan fab columns and controlled amber edge reflections on the HBM layers; white task lights reveal microscopic material detail",
-        "palette": [
-          "cyan",
-          "warm gold",
-          "mineral white",
-          "black titanium"
-        ],
+        "palette": ["cyan", "warm gold", "mineral white", "black titanium"],
         "machinery": [
           "HBM alignment arm",
           "wafer scanner",
@@ -369,84 +324,44 @@
         "desktop_ui_safe_zones": [
           {
             "side": "left",
-            "rect": [
-              0,
-              0.12,
-              0.25,
-              0.7
-            ],
+            "rect": [0, 0.12, 0.25, 0.7],
             "purpose": "Low-detail operational overlay region; hero remains outside it"
           },
           {
             "side": "right",
-            "rect": [
-              0.82,
-              0.12,
-              1,
-              0.7
-            ],
+            "rect": [0.82, 0.12, 1, 0.7],
             "purpose": "Low-detail secondary information region; no essential machinery"
           },
           {
             "side": "top",
-            "rect": [
-              0,
-              0,
-              1,
-              0.18
-            ],
+            "rect": [0, 0, 1, 0.18],
             "purpose": "Low-contrast product/status heading region"
           },
           {
             "side": "bottom",
-            "rect": [
-              0,
-              0.8,
-              1,
-              1
-            ],
+            "rect": [0, 0.8, 1, 1],
             "purpose": "Low-detail session amount/receipt region, real HTML only"
           }
         ],
         "mobile_ui_safe_zones": [
           {
             "side": "left",
-            "rect": [
-              0,
-              0,
-              0.1,
-              1
-            ],
+            "rect": [0, 0, 0.1, 1],
             "purpose": "Keep edge structures low contrast; no indispensable machinery here"
           },
           {
             "side": "right",
-            "rect": [
-              0.9,
-              0,
-              1,
-              1
-            ],
+            "rect": [0.9, 0, 1, 1],
             "purpose": "Keep edge low contrast; portrait machinery remains inside these edges"
           },
           {
             "side": "top",
-            "rect": [
-              0,
-              0,
-              1,
-              0.24
-            ],
+            "rect": [0, 0, 1, 0.24],
             "purpose": "Quiet status/product heading region; no critical hero detail behind real HTML"
           },
           {
             "side": "bottom",
-            "rect": [
-              0,
-              0.76,
-              1,
-              1
-            ],
+            "rect": [0, 0.76, 1, 1],
             "purpose": "Quiet session amount/status region; controls/help/navigation remain normal HTML flow outside art"
           }
         ],
@@ -583,12 +498,7 @@
           "silicon with subtle interference color"
         ],
         "lighting": "Large soft ivory area lights, cool silver edge lighting and a restrained rose-copper bounce under the lens; luxury product-photography discipline",
-        "palette": [
-          "soft ivory",
-          "silver",
-          "graphite",
-          "rose copper"
-        ],
+        "palette": ["soft ivory", "silver", "graphite", "rose copper"],
         "machinery": [
           "microassembly grippers",
           "optical inspection lens",
@@ -621,84 +531,44 @@
         "desktop_ui_safe_zones": [
           {
             "side": "left",
-            "rect": [
-              0,
-              0.12,
-              0.25,
-              0.7
-            ],
+            "rect": [0, 0.12, 0.25, 0.7],
             "purpose": "Low-detail operational overlay region; hero remains outside it"
           },
           {
             "side": "right",
-            "rect": [
-              0.82,
-              0.12,
-              1,
-              0.7
-            ],
+            "rect": [0.82, 0.12, 1, 0.7],
             "purpose": "Low-detail secondary information region; no essential machinery"
           },
           {
             "side": "top",
-            "rect": [
-              0,
-              0,
-              1,
-              0.18
-            ],
+            "rect": [0, 0, 1, 0.18],
             "purpose": "Low-contrast product/status heading region"
           },
           {
             "side": "bottom",
-            "rect": [
-              0,
-              0.8,
-              1,
-              1
-            ],
+            "rect": [0, 0.8, 1, 1],
             "purpose": "Low-detail session amount/receipt region, real HTML only"
           }
         ],
         "mobile_ui_safe_zones": [
           {
             "side": "left",
-            "rect": [
-              0,
-              0,
-              0.1,
-              1
-            ],
+            "rect": [0, 0, 0.1, 1],
             "purpose": "Keep edge structures low contrast; no indispensable machinery here"
           },
           {
             "side": "right",
-            "rect": [
-              0.9,
-              0,
-              1,
-              1
-            ],
+            "rect": [0.9, 0, 1, 1],
             "purpose": "Keep edge low contrast; portrait machinery remains inside these edges"
           },
           {
             "side": "top",
-            "rect": [
-              0,
-              0,
-              1,
-              0.24
-            ],
+            "rect": [0, 0, 1, 0.24],
             "purpose": "Quiet status/product heading region; no critical hero detail behind real HTML"
           },
           {
             "side": "bottom",
-            "rect": [
-              0,
-              0.76,
-              1,
-              1
-            ],
+            "rect": [0, 0.76, 1, 1],
             "purpose": "Quiet session amount/status region; controls/help/navigation remain normal HTML flow outside art"
           }
         ],
@@ -760,10 +630,7 @@
       "generation": {
         "status": "PREPRODUCTION_CATALOG_GATE_REQUIRED",
         "prompt_id": "apple-desktop-master-v1",
-        "prompt_ids": [
-          "apple-desktop-master-v1",
-          "apple-mobile-master-v1"
-        ],
+        "prompt_ids": ["apple-desktop-master-v1", "apple-mobile-master-v1"],
         "desktop_master_required": true,
         "mobile_master_required": true,
         "regen_required": false,
@@ -835,12 +702,7 @@
           "braided fiber bundles"
         ],
         "lighting": "Daylight from the atrium clerestory with azure optical paths and warm white service lights; balanced architectural scale",
-        "palette": [
-          "azure",
-          "navy",
-          "frosted white",
-          "muted teal"
-        ],
+        "palette": ["azure", "navy", "frosted white", "muted teal"],
         "machinery": [
           "optical switching arrays",
           "rack cooling manifolds",
@@ -873,84 +735,44 @@
         "desktop_ui_safe_zones": [
           {
             "side": "left",
-            "rect": [
-              0,
-              0.12,
-              0.25,
-              0.7
-            ],
+            "rect": [0, 0.12, 0.25, 0.7],
             "purpose": "Low-detail operational overlay region; hero remains outside it"
           },
           {
             "side": "right",
-            "rect": [
-              0.82,
-              0.12,
-              1,
-              0.7
-            ],
+            "rect": [0.82, 0.12, 1, 0.7],
             "purpose": "Low-detail secondary information region; no essential machinery"
           },
           {
             "side": "top",
-            "rect": [
-              0,
-              0,
-              1,
-              0.18
-            ],
+            "rect": [0, 0, 1, 0.18],
             "purpose": "Low-contrast product/status heading region"
           },
           {
             "side": "bottom",
-            "rect": [
-              0,
-              0.8,
-              1,
-              1
-            ],
+            "rect": [0, 0.8, 1, 1],
             "purpose": "Low-detail session amount/receipt region, real HTML only"
           }
         ],
         "mobile_ui_safe_zones": [
           {
             "side": "left",
-            "rect": [
-              0,
-              0,
-              0.1,
-              1
-            ],
+            "rect": [0, 0, 0.1, 1],
             "purpose": "Keep edge structures low contrast; no indispensable machinery here"
           },
           {
             "side": "right",
-            "rect": [
-              0.9,
-              0,
-              1,
-              1
-            ],
+            "rect": [0.9, 0, 1, 1],
             "purpose": "Keep edge low contrast; portrait machinery remains inside these edges"
           },
           {
             "side": "top",
-            "rect": [
-              0,
-              0,
-              1,
-              0.24
-            ],
+            "rect": [0, 0, 1, 0.24],
             "purpose": "Quiet status/product heading region; no critical hero detail behind real HTML"
           },
           {
             "side": "bottom",
-            "rect": [
-              0,
-              0.76,
-              1,
-              1
-            ],
+            "rect": [0, 0.76, 1, 1],
             "purpose": "Quiet session amount/status region; controls/help/navigation remain normal HTML flow outside art"
           }
         ],
@@ -1087,12 +909,7 @@
           "clear coolant tubing"
         ],
         "lighting": "Emerald rack accents with cyan coolant reflections and a warm copper key on the GPU carrier; volumetric beams reveal the long rack canyon",
-        "palette": [
-          "emerald",
-          "cyan",
-          "copper",
-          "carbon black"
-        ],
+        "palette": ["emerald", "cyan", "copper", "carbon black"],
         "machinery": [
           "GPU carrier service arm",
           "liquid cooling manifold",
@@ -1125,84 +942,44 @@
         "desktop_ui_safe_zones": [
           {
             "side": "left",
-            "rect": [
-              0,
-              0.12,
-              0.25,
-              0.7
-            ],
+            "rect": [0, 0.12, 0.25, 0.7],
             "purpose": "Low-detail operational overlay region; hero remains outside it"
           },
           {
             "side": "right",
-            "rect": [
-              0.82,
-              0.12,
-              1,
-              0.7
-            ],
+            "rect": [0.82, 0.12, 1, 0.7],
             "purpose": "Low-detail secondary information region; no essential machinery"
           },
           {
             "side": "top",
-            "rect": [
-              0,
-              0,
-              1,
-              0.18
-            ],
+            "rect": [0, 0, 1, 0.18],
             "purpose": "Low-contrast product/status heading region"
           },
           {
             "side": "bottom",
-            "rect": [
-              0,
-              0.8,
-              1,
-              1
-            ],
+            "rect": [0, 0.8, 1, 1],
             "purpose": "Low-detail session amount/receipt region, real HTML only"
           }
         ],
         "mobile_ui_safe_zones": [
           {
             "side": "left",
-            "rect": [
-              0,
-              0,
-              0.1,
-              1
-            ],
+            "rect": [0, 0, 0.1, 1],
             "purpose": "Keep edge structures low contrast; no indispensable machinery here"
           },
           {
             "side": "right",
-            "rect": [
-              0.9,
-              0,
-              1,
-              1
-            ],
+            "rect": [0.9, 0, 1, 1],
             "purpose": "Keep edge low contrast; portrait machinery remains inside these edges"
           },
           {
             "side": "top",
-            "rect": [
-              0,
-              0,
-              1,
-              0.24
-            ],
+            "rect": [0, 0, 1, 0.24],
             "purpose": "Quiet status/product heading region; no critical hero detail behind real HTML"
           },
           {
             "side": "bottom",
-            "rect": [
-              0,
-              0.76,
-              1,
-              1
-            ],
+            "rect": [0, 0.76, 1, 1],
             "purpose": "Quiet session amount/status region; controls/help/navigation remain normal HTML flow outside art"
           }
         ],
@@ -1264,10 +1041,7 @@
       "generation": {
         "status": "PREPRODUCTION_CATALOG_GATE_REQUIRED",
         "prompt_id": "nvidia-desktop-master-v1",
-        "prompt_ids": [
-          "nvidia-desktop-master-v1",
-          "nvidia-mobile-master-v1"
-        ],
+        "prompt_ids": ["nvidia-desktop-master-v1", "nvidia-mobile-master-v1"],
         "desktop_master_required": true,
         "mobile_master_required": true,
         "regen_required": false,
@@ -1377,84 +1151,44 @@
         "desktop_ui_safe_zones": [
           {
             "side": "left",
-            "rect": [
-              0,
-              0.12,
-              0.25,
-              0.7
-            ],
+            "rect": [0, 0.12, 0.25, 0.7],
             "purpose": "Low-detail operational overlay region; hero remains outside it"
           },
           {
             "side": "right",
-            "rect": [
-              0.82,
-              0.12,
-              1,
-              0.7
-            ],
+            "rect": [0.82, 0.12, 1, 0.7],
             "purpose": "Low-detail secondary information region; no essential machinery"
           },
           {
             "side": "top",
-            "rect": [
-              0,
-              0,
-              1,
-              0.18
-            ],
+            "rect": [0, 0, 1, 0.18],
             "purpose": "Low-contrast product/status heading region"
           },
           {
             "side": "bottom",
-            "rect": [
-              0,
-              0.8,
-              1,
-              1
-            ],
+            "rect": [0, 0.8, 1, 1],
             "purpose": "Low-detail session amount/receipt region, real HTML only"
           }
         ],
         "mobile_ui_safe_zones": [
           {
             "side": "left",
-            "rect": [
-              0,
-              0,
-              0.1,
-              1
-            ],
+            "rect": [0, 0, 0.1, 1],
             "purpose": "Keep edge structures low contrast; no indispensable machinery here"
           },
           {
             "side": "right",
-            "rect": [
-              0.9,
-              0,
-              1,
-              1
-            ],
+            "rect": [0.9, 0, 1, 1],
             "purpose": "Keep edge low contrast; portrait machinery remains inside these edges"
           },
           {
             "side": "top",
-            "rect": [
-              0,
-              0,
-              1,
-              0.24
-            ],
+            "rect": [0, 0, 1, 0.24],
             "purpose": "Quiet status/product heading region; no critical hero detail behind real HTML"
           },
           {
             "side": "bottom",
-            "rect": [
-              0,
-              0.76,
-              1,
-              1
-            ],
+            "rect": [0, 0.76, 1, 1],
             "purpose": "Quiet session amount/status region; controls/help/navigation remain normal HTML flow outside art"
           }
         ],
@@ -1516,10 +1250,7 @@
       "generation": {
         "status": "PREPRODUCTION_CATALOG_GATE_REQUIRED",
         "prompt_id": "gold-desktop-master-v1",
-        "prompt_ids": [
-          "gold-desktop-master-v1",
-          "gold-mobile-master-v1"
-        ],
+        "prompt_ids": ["gold-desktop-master-v1", "gold-mobile-master-v1"],
         "desktop_master_required": true,
         "mobile_master_required": true,
         "regen_required": false,
@@ -1591,12 +1322,7 @@
           "pale ceramic bath lining"
         ],
         "lighting": "Cold daylight broken across silver facets, violet inspection light and narrow white highlights on brushed metal; no gold furnace glow",
-        "palette": [
-          "silver white",
-          "ice blue",
-          "soft violet",
-          "steel gray"
-        ],
+        "palette": ["silver white", "ice blue", "soft violet", "steel gray"],
         "machinery": [
           "crystal lifting gantry",
           "electrorefining plate exchanger",
@@ -1629,84 +1355,44 @@
         "desktop_ui_safe_zones": [
           {
             "side": "left",
-            "rect": [
-              0,
-              0.12,
-              0.25,
-              0.7
-            ],
+            "rect": [0, 0.12, 0.25, 0.7],
             "purpose": "Low-detail operational overlay region; hero remains outside it"
           },
           {
             "side": "right",
-            "rect": [
-              0.82,
-              0.12,
-              1,
-              0.7
-            ],
+            "rect": [0.82, 0.12, 1, 0.7],
             "purpose": "Low-detail secondary information region; no essential machinery"
           },
           {
             "side": "top",
-            "rect": [
-              0,
-              0,
-              1,
-              0.18
-            ],
+            "rect": [0, 0, 1, 0.18],
             "purpose": "Low-contrast product/status heading region"
           },
           {
             "side": "bottom",
-            "rect": [
-              0,
-              0.8,
-              1,
-              1
-            ],
+            "rect": [0, 0.8, 1, 1],
             "purpose": "Low-detail session amount/receipt region, real HTML only"
           }
         ],
         "mobile_ui_safe_zones": [
           {
             "side": "left",
-            "rect": [
-              0,
-              0,
-              0.1,
-              1
-            ],
+            "rect": [0, 0, 0.1, 1],
             "purpose": "Keep edge structures low contrast; no indispensable machinery here"
           },
           {
             "side": "right",
-            "rect": [
-              0.9,
-              0,
-              1,
-              1
-            ],
+            "rect": [0.9, 0, 1, 1],
             "purpose": "Keep edge low contrast; portrait machinery remains inside these edges"
           },
           {
             "side": "top",
-            "rect": [
-              0,
-              0,
-              1,
-              0.24
-            ],
+            "rect": [0, 0, 1, 0.24],
             "purpose": "Quiet status/product heading region; no critical hero detail behind real HTML"
           },
           {
             "side": "bottom",
-            "rect": [
-              0,
-              0.76,
-              1,
-              1
-            ],
+            "rect": [0, 0.76, 1, 1],
             "purpose": "Quiet session amount/status region; controls/help/navigation remain normal HTML flow outside art"
           }
         ],
@@ -1768,10 +1454,7 @@
       "generation": {
         "status": "PREPRODUCTION_CATALOG_GATE_REQUIRED",
         "prompt_id": "silver-desktop-master-v1",
-        "prompt_ids": [
-          "silver-desktop-master-v1",
-          "silver-mobile-master-v1"
-        ],
+        "prompt_ids": ["silver-desktop-master-v1", "silver-mobile-master-v1"],
         "desktop_master_required": true,
         "mobile_master_required": true,
         "regen_required": false,
@@ -1843,12 +1526,7 @@
           "amber optical inserts"
         ],
         "lighting": "Low amber channel light with broad cool roof shafts and a precise bronze rim on the seal press; strong heavy shadows",
-        "palette": [
-          "basalt black",
-          "oxidized bronze",
-          "amber",
-          "slate blue"
-        ],
+        "palette": ["basalt black", "oxidized bronze", "amber", "slate blue"],
         "machinery": [
           "mechanical block seal press",
           "block carrier carriage",
@@ -1881,84 +1559,44 @@
         "desktop_ui_safe_zones": [
           {
             "side": "left",
-            "rect": [
-              0,
-              0.12,
-              0.25,
-              0.7
-            ],
+            "rect": [0, 0.12, 0.25, 0.7],
             "purpose": "Low-detail operational overlay region; hero remains outside it"
           },
           {
             "side": "right",
-            "rect": [
-              0.82,
-              0.12,
-              1,
-              0.7
-            ],
+            "rect": [0.82, 0.12, 1, 0.7],
             "purpose": "Low-detail secondary information region; no essential machinery"
           },
           {
             "side": "top",
-            "rect": [
-              0,
-              0,
-              1,
-              0.18
-            ],
+            "rect": [0, 0, 1, 0.18],
             "purpose": "Low-contrast product/status heading region"
           },
           {
             "side": "bottom",
-            "rect": [
-              0,
-              0.8,
-              1,
-              1
-            ],
+            "rect": [0, 0.8, 1, 1],
             "purpose": "Low-detail session amount/receipt region, real HTML only"
           }
         ],
         "mobile_ui_safe_zones": [
           {
             "side": "left",
-            "rect": [
-              0,
-              0,
-              0.1,
-              1
-            ],
+            "rect": [0, 0, 0.1, 1],
             "purpose": "Keep edge structures low contrast; no indispensable machinery here"
           },
           {
             "side": "right",
-            "rect": [
-              0.9,
-              0,
-              1,
-              1
-            ],
+            "rect": [0.9, 0, 1, 1],
             "purpose": "Keep edge low contrast; portrait machinery remains inside these edges"
           },
           {
             "side": "top",
-            "rect": [
-              0,
-              0,
-              1,
-              0.24
-            ],
+            "rect": [0, 0, 1, 0.24],
             "purpose": "Quiet status/product heading region; no critical hero detail behind real HTML"
           },
           {
             "side": "bottom",
-            "rect": [
-              0,
-              0.76,
-              1,
-              1
-            ],
+            "rect": [0, 0.76, 1, 1],
             "purpose": "Quiet session amount/status region; controls/help/navigation remain normal HTML flow outside art"
           }
         ],
@@ -2020,10 +1658,7 @@
       "generation": {
         "status": "PREPRODUCTION_CATALOG_GATE_REQUIRED",
         "prompt_id": "bitcoin-desktop-master-v1",
-        "prompt_ids": [
-          "bitcoin-desktop-master-v1",
-          "bitcoin-mobile-master-v1"
-        ],
+        "prompt_ids": ["bitcoin-desktop-master-v1", "bitcoin-mobile-master-v1"],
         "desktop_master_required": true,
         "mobile_master_required": true,
         "regen_required": false,
@@ -2095,12 +1730,7 @@
           "smoked structural glass"
         ],
         "lighting": "Soft violet node interiors, ice-blue lattice reflections and diffuse high clerestory light; balanced luminous transparency",
-        "palette": [
-          "violet",
-          "ice blue",
-          "smoked gray",
-          "ceramic white"
-        ],
+        "palette": ["violet", "ice blue", "smoked gray", "ceramic white"],
         "machinery": [
           "validator relay shutters",
           "optical lattice junctions",
@@ -2133,84 +1763,44 @@
         "desktop_ui_safe_zones": [
           {
             "side": "left",
-            "rect": [
-              0,
-              0.12,
-              0.25,
-              0.7
-            ],
+            "rect": [0, 0.12, 0.25, 0.7],
             "purpose": "Low-detail operational overlay region; hero remains outside it"
           },
           {
             "side": "right",
-            "rect": [
-              0.82,
-              0.12,
-              1,
-              0.7
-            ],
+            "rect": [0.82, 0.12, 1, 0.7],
             "purpose": "Low-detail secondary information region; no essential machinery"
           },
           {
             "side": "top",
-            "rect": [
-              0,
-              0,
-              1,
-              0.18
-            ],
+            "rect": [0, 0, 1, 0.18],
             "purpose": "Low-contrast product/status heading region"
           },
           {
             "side": "bottom",
-            "rect": [
-              0,
-              0.8,
-              1,
-              1
-            ],
+            "rect": [0, 0.8, 1, 1],
             "purpose": "Low-detail session amount/receipt region, real HTML only"
           }
         ],
         "mobile_ui_safe_zones": [
           {
             "side": "left",
-            "rect": [
-              0,
-              0,
-              0.1,
-              1
-            ],
+            "rect": [0, 0, 0.1, 1],
             "purpose": "Keep edge structures low contrast; no indispensable machinery here"
           },
           {
             "side": "right",
-            "rect": [
-              0.9,
-              0,
-              1,
-              1
-            ],
+            "rect": [0.9, 0, 1, 1],
             "purpose": "Keep edge low contrast; portrait machinery remains inside these edges"
           },
           {
             "side": "top",
-            "rect": [
-              0,
-              0,
-              1,
-              0.24
-            ],
+            "rect": [0, 0, 1, 0.24],
             "purpose": "Quiet status/product heading region; no critical hero detail behind real HTML"
           },
           {
             "side": "bottom",
-            "rect": [
-              0,
-              0.76,
-              1,
-              1
-            ],
+            "rect": [0, 0.76, 1, 1],
             "purpose": "Quiet session amount/status region; controls/help/navigation remain normal HTML flow outside art"
           }
         ],
@@ -2347,12 +1937,7 @@
           "brushed nickel junctions"
         ],
         "lighting": "Honey-yellow conduit edges against graphite with clean white skylight illumination and cool nickel reflections; restrained color, no exchange branding",
-        "palette": [
-          "saffron",
-          "graphite",
-          "nickel silver",
-          "warm white"
-        ],
+        "palette": ["saffron", "graphite", "nickel silver", "warm white"],
         "machinery": [
           "multi-lane routing switches",
           "packet gate actuators",
@@ -2385,84 +1970,44 @@
         "desktop_ui_safe_zones": [
           {
             "side": "left",
-            "rect": [
-              0,
-              0.12,
-              0.25,
-              0.7
-            ],
+            "rect": [0, 0.12, 0.25, 0.7],
             "purpose": "Low-detail operational overlay region; hero remains outside it"
           },
           {
             "side": "right",
-            "rect": [
-              0.82,
-              0.12,
-              1,
-              0.7
-            ],
+            "rect": [0.82, 0.12, 1, 0.7],
             "purpose": "Low-detail secondary information region; no essential machinery"
           },
           {
             "side": "top",
-            "rect": [
-              0,
-              0,
-              1,
-              0.18
-            ],
+            "rect": [0, 0, 1, 0.18],
             "purpose": "Low-contrast product/status heading region"
           },
           {
             "side": "bottom",
-            "rect": [
-              0,
-              0.8,
-              1,
-              1
-            ],
+            "rect": [0, 0.8, 1, 1],
             "purpose": "Low-detail session amount/receipt region, real HTML only"
           }
         ],
         "mobile_ui_safe_zones": [
           {
             "side": "left",
-            "rect": [
-              0,
-              0,
-              0.1,
-              1
-            ],
+            "rect": [0, 0, 0.1, 1],
             "purpose": "Keep edge structures low contrast; no indispensable machinery here"
           },
           {
             "side": "right",
-            "rect": [
-              0.9,
-              0,
-              1,
-              1
-            ],
+            "rect": [0.9, 0, 1, 1],
             "purpose": "Keep edge low contrast; portrait machinery remains inside these edges"
           },
           {
             "side": "top",
-            "rect": [
-              0,
-              0,
-              1,
-              0.24
-            ],
+            "rect": [0, 0, 1, 0.24],
             "purpose": "Quiet status/product heading region; no critical hero detail behind real HTML"
           },
           {
             "side": "bottom",
-            "rect": [
-              0,
-              0.76,
-              1,
-              1
-            ],
+            "rect": [0, 0.76, 1, 1],
             "purpose": "Quiet session amount/status region; controls/help/navigation remain normal HTML flow outside art"
           }
         ],
@@ -2524,10 +2069,7 @@
       "generation": {
         "status": "PREPRODUCTION_CATALOG_GATE_REQUIRED",
         "prompt_id": "bnb-desktop-master-v1",
-        "prompt_ids": [
-          "bnb-desktop-master-v1",
-          "bnb-mobile-master-v1"
-        ],
+        "prompt_ids": ["bnb-desktop-master-v1", "bnb-mobile-master-v1"],
         "desktop_master_required": true,
         "mobile_master_required": true,
         "regen_required": false,
@@ -2637,84 +2179,44 @@
         "desktop_ui_safe_zones": [
           {
             "side": "left",
-            "rect": [
-              0,
-              0.12,
-              0.25,
-              0.7
-            ],
+            "rect": [0, 0.12, 0.25, 0.7],
             "purpose": "Low-detail operational overlay region; hero remains outside it"
           },
           {
             "side": "right",
-            "rect": [
-              0.82,
-              0.12,
-              1,
-              0.7
-            ],
+            "rect": [0.82, 0.12, 1, 0.7],
             "purpose": "Low-detail secondary information region; no essential machinery"
           },
           {
             "side": "top",
-            "rect": [
-              0,
-              0,
-              1,
-              0.18
-            ],
+            "rect": [0, 0, 1, 0.18],
             "purpose": "Low-contrast product/status heading region"
           },
           {
             "side": "bottom",
-            "rect": [
-              0,
-              0.8,
-              1,
-              1
-            ],
+            "rect": [0, 0.8, 1, 1],
             "purpose": "Low-detail session amount/receipt region, real HTML only"
           }
         ],
         "mobile_ui_safe_zones": [
           {
             "side": "left",
-            "rect": [
-              0,
-              0,
-              0.1,
-              1
-            ],
+            "rect": [0, 0, 0.1, 1],
             "purpose": "Keep edge structures low contrast; no indispensable machinery here"
           },
           {
             "side": "right",
-            "rect": [
-              0.9,
-              0,
-              1,
-              1
-            ],
+            "rect": [0.9, 0, 1, 1],
             "purpose": "Keep edge low contrast; portrait machinery remains inside these edges"
           },
           {
             "side": "top",
-            "rect": [
-              0,
-              0,
-              1,
-              0.24
-            ],
+            "rect": [0, 0, 1, 0.24],
             "purpose": "Quiet status/product heading region; no critical hero detail behind real HTML"
           },
           {
             "side": "bottom",
-            "rect": [
-              0,
-              0.76,
-              1,
-              1
-            ],
+            "rect": [0, 0.76, 1, 1],
             "purpose": "Quiet session amount/status region; controls/help/navigation remain normal HTML flow outside art"
           }
         ],
@@ -2776,10 +2278,7 @@
       "generation": {
         "status": "PREPRODUCTION_CATALOG_GATE_REQUIRED",
         "prompt_id": "xrp-desktop-master-v1",
-        "prompt_ids": [
-          "xrp-desktop-master-v1",
-          "xrp-mobile-master-v1"
-        ],
+        "prompt_ids": ["xrp-desktop-master-v1", "xrp-mobile-master-v1"],
         "desktop_master_required": true,
         "mobile_master_required": true,
         "regen_required": false,

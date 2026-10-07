@@ -1,0 +1,53 @@
+{
+  "status": "PASS_SPEC_ONLY",
+  "checked_at": "2026-10-07T11:57:26.012Z",
+  "node": "v24.21.0",
+  "base_sha": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+  "checks": "JSON shape, source identity/hash, coverage, statuses, prompts, generic reuse heuristic, financial claims, composition, runtime and approval boundaries",
+  "counts": {
+    "audited": 11,
+    "repository_member_visible": 0,
+    "live_member_visible": "UNKNOWN",
+    "US_STOCK": 3,
+    "KR_STOCK": 2,
+    "ETF": 0,
+    "CRYPTO": 4,
+    "PRECIOUS_OTHER": 2,
+    "approved_product_specific_masters": 0,
+    "family_only": 1,
+    "new_product_master_required": 11,
+    "regeneration_required": 0,
+    "mobile_master_required": 11,
+    "legal_review_required": 11,
+    "catalog_unknown": 11,
+    "current_family_unassigned": 10,
+    "runtime_mapping_required": 11,
+    "desktop_prompts": 11,
+    "mobile_prompts": 11,
+    "prompt_count": 22
+  },
+  "artifact_hashes": [
+    {
+      "file": "product-catalog-inventory.json",
+      "sha256": "1af906f59d20701a5778d8b2efdc9fa03e4c45702de2cb8664b69ab15ced9017"
+    },
+    {
+      "file": "product-scene-manifest.json",
+      "sha256": "a2495f0417039d6359bd9df77d58b8336dcea36bd00b68a5860d3384bed792a3"
+    },
+    {
+      "file": "scene-generation-prompts.json",
+      "sha256": "8b845a42c60f6c8ae60416f94b5c7fdd573b90a37a07c68b065822443dbd8602"
+    },
+    {
+      "file": "visual-profiles.json",
+      "sha256": "a6b910c8a08c1ec5fe068462c450678860b7323afc4703b45a8868d7ccf73520"
+    }
+  ],
+  "errors": [],
+  "not_validated": [
+    "Live published catalog",
+    "Actual generation/visual/legal acceptance",
+    "Browser/runtime/backend/production readiness"
+  ]
+}

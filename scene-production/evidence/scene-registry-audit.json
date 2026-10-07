@@ -131,18 +131,23 @@
           "reviewScope": "Owner-delegated 2026-10-03 visual selection: approved complete 1539x1022 clean semiconductor scene; responsive encoding only, no crop, recoloring or upscale; no product mapping, economic runtime or other family approval."
         }
       ],
-      "actual_product_mappings": [
-        "30000000-0000-4000-8000-000000000002"
-      ],
+      "actual_product_mappings": ["30000000-0000-4000-8000-000000000002"],
       "missing_products": [],
-      "missing_products_scope": "Proposed assignments belong to manifest; registry alone does not define catalog",
+      "missing_products_scope": "Repository candidates requiring explicit product assignment; proposals are not catalog or runtime approvals",
       "runtime_consumers": [
         "lib/mining-scene/resolve-scene.ts",
         "lib/mining-scene/stage-input.ts",
         "lib/mining-scene/default-stage.ts",
         "components/mining-live/mining-live-stage.tsx"
       ],
-      "economic_policy": "NONE"
+      "economic_policy": "NONE",
+      "proposed_product_mappings": [
+        {
+          "product_id": "30000000-0000-4000-8000-000000000002",
+          "code": "000660",
+          "scope": "CREATIVE_PROPOSAL_NOT_CURRENT_RUNTIME_ASSIGNMENT"
+        }
+      ]
     },
     {
       "key": "SEMICONDUCTOR_FOUNDRY",
@@ -151,15 +156,22 @@
       "master": null,
       "asset_allowlist": [],
       "actual_product_mappings": [],
-      "missing_products": [],
-      "missing_products_scope": "Proposed assignments belong to manifest; registry alone does not define catalog",
+      "missing_products": ["30000000-0000-4000-8000-000000000001"],
+      "missing_products_scope": "Repository candidates requiring explicit product assignment; proposals are not catalog or runtime approvals",
       "runtime_consumers": [
         "lib/mining-scene/resolve-scene.ts",
         "lib/mining-scene/stage-input.ts",
         "lib/mining-scene/default-stage.ts",
         "components/mining-live/mining-live-stage.tsx"
       ],
-      "economic_policy": "NONE"
+      "economic_policy": "NONE",
+      "proposed_product_mappings": [
+        {
+          "product_id": "30000000-0000-4000-8000-000000000001",
+          "code": "005930",
+          "scope": "CREATIVE_PROPOSAL_NOT_CURRENT_RUNTIME_ASSIGNMENT"
+        }
+      ]
     },
     {
       "key": "SEMICONDUCTOR_COMPUTE",
@@ -168,15 +180,30 @@
       "master": null,
       "asset_allowlist": [],
       "actual_product_mappings": [],
-      "missing_products": [],
-      "missing_products_scope": "Proposed assignments belong to manifest; registry alone does not define catalog",
+      "missing_products": [
+        "30000000-0000-4000-8000-000000000003",
+        "30000000-0000-4000-8000-000000000004"
+      ],
+      "missing_products_scope": "Repository candidates requiring explicit product assignment; proposals are not catalog or runtime approvals",
       "runtime_consumers": [
         "lib/mining-scene/resolve-scene.ts",
         "lib/mining-scene/stage-input.ts",
         "lib/mining-scene/default-stage.ts",
         "components/mining-live/mining-live-stage.tsx"
       ],
-      "economic_policy": "NONE"
+      "economic_policy": "NONE",
+      "proposed_product_mappings": [
+        {
+          "product_id": "30000000-0000-4000-8000-000000000003",
+          "code": "AAPL",
+          "scope": "CREATIVE_PROPOSAL_NOT_CURRENT_RUNTIME_ASSIGNMENT"
+        },
+        {
+          "product_id": "30000000-0000-4000-8000-000000000004",
+          "code": "MSFT",
+          "scope": "CREATIVE_PROPOSAL_NOT_CURRENT_RUNTIME_ASSIGNMENT"
+        }
+      ]
     },
     {
       "key": "AI_GPU_COMPUTE",
@@ -185,15 +212,22 @@
       "master": null,
       "asset_allowlist": [],
       "actual_product_mappings": [],
-      "missing_products": [],
-      "missing_products_scope": "Proposed assignments belong to manifest; registry alone does not define catalog",
+      "missing_products": ["30000000-0000-4000-8000-000000000005"],
+      "missing_products_scope": "Repository candidates requiring explicit product assignment; proposals are not catalog or runtime approvals",
       "runtime_consumers": [
         "lib/mining-scene/resolve-scene.ts",
         "lib/mining-scene/stage-input.ts",
         "lib/mining-scene/default-stage.ts",
         "components/mining-live/mining-live-stage.tsx"
       ],
-      "economic_policy": "NONE"
+      "economic_policy": "NONE",
+      "proposed_product_mappings": [
+        {
+          "product_id": "30000000-0000-4000-8000-000000000005",
+          "code": "NVDA",
+          "scope": "CREATIVE_PROPOSAL_NOT_CURRENT_RUNTIME_ASSIGNMENT"
+        }
+      ]
     },
     {
       "key": "PRECIOUS_GOLD",
@@ -202,15 +236,22 @@
       "master": null,
       "asset_allowlist": [],
       "actual_product_mappings": [],
-      "missing_products": [],
-      "missing_products_scope": "Proposed assignments belong to manifest; registry alone does not define catalog",
+      "missing_products": ["30000000-0000-4000-8000-000000000006"],
+      "missing_products_scope": "Repository candidates requiring explicit product assignment; proposals are not catalog or runtime approvals",
       "runtime_consumers": [
         "lib/mining-scene/resolve-scene.ts",
         "lib/mining-scene/stage-input.ts",
         "lib/mining-scene/default-stage.ts",
         "components/mining-live/mining-live-stage.tsx"
       ],
-      "economic_policy": "NONE"
+      "economic_policy": "NONE",
+      "proposed_product_mappings": [
+        {
+          "product_id": "30000000-0000-4000-8000-000000000006",
+          "code": "XAU",
+          "scope": "CREATIVE_PROPOSAL_NOT_CURRENT_RUNTIME_ASSIGNMENT"
+        }
+      ]
     },
     {
       "key": "PRECIOUS_SILVER",
@@ -219,15 +260,22 @@
       "master": null,
       "asset_allowlist": [],
       "actual_product_mappings": [],
-      "missing_products": [],
-      "missing_products_scope": "Proposed assignments belong to manifest; registry alone does not define catalog",
+      "missing_products": ["30000000-0000-4000-8000-000000000007"],
+      "missing_products_scope": "Repository candidates requiring explicit product assignment; proposals are not catalog or runtime approvals",
       "runtime_consumers": [
         "lib/mining-scene/resolve-scene.ts",
         "lib/mining-scene/stage-input.ts",
         "lib/mining-scene/default-stage.ts",
         "components/mining-live/mining-live-stage.tsx"
       ],
-      "economic_policy": "NONE"
+      "economic_policy": "NONE",
+      "proposed_product_mappings": [
+        {
+          "product_id": "30000000-0000-4000-8000-000000000007",
+          "code": "XAG",
+          "scope": "CREATIVE_PROPOSAL_NOT_CURRENT_RUNTIME_ASSIGNMENT"
+        }
+      ]
     },
     {
       "key": "BLOCKCHAIN_HASH",
@@ -236,15 +284,22 @@
       "master": null,
       "asset_allowlist": [],
       "actual_product_mappings": [],
-      "missing_products": [],
-      "missing_products_scope": "Proposed assignments belong to manifest; registry alone does not define catalog",
+      "missing_products": ["30000000-0000-4000-8000-000000000008"],
+      "missing_products_scope": "Repository candidates requiring explicit product assignment; proposals are not catalog or runtime approvals",
       "runtime_consumers": [
         "lib/mining-scene/resolve-scene.ts",
         "lib/mining-scene/stage-input.ts",
         "lib/mining-scene/default-stage.ts",
         "components/mining-live/mining-live-stage.tsx"
       ],
-      "economic_policy": "NONE"
+      "economic_policy": "NONE",
+      "proposed_product_mappings": [
+        {
+          "product_id": "30000000-0000-4000-8000-000000000008",
+          "code": "BTC",
+          "scope": "CREATIVE_PROPOSAL_NOT_CURRENT_RUNTIME_ASSIGNMENT"
+        }
+      ]
     },
     {
       "key": "CRYPTO_NETWORK",
@@ -253,15 +308,36 @@
       "master": null,
       "asset_allowlist": [],
       "actual_product_mappings": [],
-      "missing_products": [],
-      "missing_products_scope": "Proposed assignments belong to manifest; registry alone does not define catalog",
+      "missing_products": [
+        "30000000-0000-4000-8000-000000000009",
+        "30000000-0000-4000-8000-000000000010",
+        "30000000-0000-4000-8000-000000000011"
+      ],
+      "missing_products_scope": "Repository candidates requiring explicit product assignment; proposals are not catalog or runtime approvals",
       "runtime_consumers": [
         "lib/mining-scene/resolve-scene.ts",
         "lib/mining-scene/stage-input.ts",
         "lib/mining-scene/default-stage.ts",
         "components/mining-live/mining-live-stage.tsx"
       ],
-      "economic_policy": "NONE"
+      "economic_policy": "NONE",
+      "proposed_product_mappings": [
+        {
+          "product_id": "30000000-0000-4000-8000-000000000009",
+          "code": "ETH",
+          "scope": "CREATIVE_PROPOSAL_NOT_CURRENT_RUNTIME_ASSIGNMENT"
+        },
+        {
+          "product_id": "30000000-0000-4000-8000-000000000010",
+          "code": "BNB",
+          "scope": "CREATIVE_PROPOSAL_NOT_CURRENT_RUNTIME_ASSIGNMENT"
+        },
+        {
+          "product_id": "30000000-0000-4000-8000-000000000011",
+          "code": "XRP",
+          "scope": "CREATIVE_PROPOSAL_NOT_CURRENT_RUNTIME_ASSIGNMENT"
+        }
+      ]
     },
     {
       "key": "AUTO_MOBILITY",
@@ -271,14 +347,15 @@
       "asset_allowlist": [],
       "actual_product_mappings": [],
       "missing_products": [],
-      "missing_products_scope": "Proposed assignments belong to manifest; registry alone does not define catalog",
+      "missing_products_scope": "Repository candidates requiring explicit product assignment; proposals are not catalog or runtime approvals",
       "runtime_consumers": [
         "lib/mining-scene/resolve-scene.ts",
         "lib/mining-scene/stage-input.ts",
         "lib/mining-scene/default-stage.ts",
         "components/mining-live/mining-live-stage.tsx"
       ],
-      "economic_policy": "NONE"
+      "economic_policy": "NONE",
+      "proposed_product_mappings": []
     },
     {
       "key": "ENERGY_OIL",
@@ -288,14 +365,15 @@
       "asset_allowlist": [],
       "actual_product_mappings": [],
       "missing_products": [],
-      "missing_products_scope": "Proposed assignments belong to manifest; registry alone does not define catalog",
+      "missing_products_scope": "Repository candidates requiring explicit product assignment; proposals are not catalog or runtime approvals",
       "runtime_consumers": [
         "lib/mining-scene/resolve-scene.ts",
         "lib/mining-scene/stage-input.ts",
         "lib/mining-scene/default-stage.ts",
         "components/mining-live/mining-live-stage.tsx"
       ],
-      "economic_policy": "NONE"
+      "economic_policy": "NONE",
+      "proposed_product_mappings": []
     },
     {
       "key": "FINANCE_CAPITAL",
@@ -305,14 +383,15 @@
       "asset_allowlist": [],
       "actual_product_mappings": [],
       "missing_products": [],
-      "missing_products_scope": "Proposed assignments belong to manifest; registry alone does not define catalog",
+      "missing_products_scope": "Repository candidates requiring explicit product assignment; proposals are not catalog or runtime approvals",
       "runtime_consumers": [
         "lib/mining-scene/resolve-scene.ts",
         "lib/mining-scene/stage-input.ts",
         "lib/mining-scene/default-stage.ts",
         "components/mining-live/mining-live-stage.tsx"
       ],
-      "economic_policy": "NONE"
+      "economic_policy": "NONE",
+      "proposed_product_mappings": []
     },
     {
       "key": "BIO_HEALTH",
@@ -322,14 +401,15 @@
       "asset_allowlist": [],
       "actual_product_mappings": [],
       "missing_products": [],
-      "missing_products_scope": "Proposed assignments belong to manifest; registry alone does not define catalog",
+      "missing_products_scope": "Repository candidates requiring explicit product assignment; proposals are not catalog or runtime approvals",
       "runtime_consumers": [
         "lib/mining-scene/resolve-scene.ts",
         "lib/mining-scene/stage-input.ts",
         "lib/mining-scene/default-stage.ts",
         "components/mining-live/mining-live-stage.tsx"
       ],
-      "economic_policy": "NONE"
+      "economic_policy": "NONE",
+      "proposed_product_mappings": []
     },
     {
       "key": "CONSUMER_RETAIL",
@@ -339,14 +419,15 @@
       "asset_allowlist": [],
       "actual_product_mappings": [],
       "missing_products": [],
-      "missing_products_scope": "Proposed assignments belong to manifest; registry alone does not define catalog",
+      "missing_products_scope": "Repository candidates requiring explicit product assignment; proposals are not catalog or runtime approvals",
       "runtime_consumers": [
         "lib/mining-scene/resolve-scene.ts",
         "lib/mining-scene/stage-input.ts",
         "lib/mining-scene/default-stage.ts",
         "components/mining-live/mining-live-stage.tsx"
       ],
-      "economic_policy": "NONE"
+      "economic_policy": "NONE",
+      "proposed_product_mappings": []
     },
     {
       "key": "ETF_BASKET",
@@ -356,14 +437,15 @@
       "asset_allowlist": [],
       "actual_product_mappings": [],
       "missing_products": [],
-      "missing_products_scope": "Proposed assignments belong to manifest; registry alone does not define catalog",
+      "missing_products_scope": "Repository candidates requiring explicit product assignment; proposals are not catalog or runtime approvals",
       "runtime_consumers": [
         "lib/mining-scene/resolve-scene.ts",
         "lib/mining-scene/stage-input.ts",
         "lib/mining-scene/default-stage.ts",
         "components/mining-live/mining-live-stage.tsx"
       ],
-      "economic_policy": "DECISION_REQUIRED"
+      "economic_policy": "DECISION_REQUIRED",
+      "proposed_product_mappings": []
     }
   ],
   "runtime_audit": {
@@ -380,7 +462,7 @@
     "degraded_fps": 15,
     "degraded_particles": 4,
     "degraded_dpr": 1,
-    "low_power": "saveData or hardwareConcurrency <= 2; expensive/delayed frames degrade",
+    "low_power": "saveData, positive hardwareConcurrency <= 2, or deviceMemory <= 2; expensive/delayed frames also degrade",
     "visibility": "IntersectionObserver + document.hidden; scroll fallback",
     "reduced_motion": "matchMedia stops RAF; static master retained",
     "anchor": {

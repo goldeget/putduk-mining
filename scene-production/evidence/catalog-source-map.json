@@ -218,10 +218,7 @@
   "discovery": {
     "search": "rg mining_products/product_catalog_versions/product_code/code/slug across migrations, seeds, fixtures, read models, routes and tests",
     "finding": "One production seed VALUES set: 11 DRAFT rows; other identifiers found only in tests. No Tesla or ETF product row.",
-    "excluded_test_examples": [
-      "TEST_THEME",
-      "OTHER"
-    ],
+    "excluded_test_examples": ["TEST_THEME", "OTHER"],
     "remote_database": "NOT_READ_OR_WRITTEN"
   },
   "visual_inspection": {

@@ -1,13 +1,34 @@
 [
   {
-    "code": "005930", "proposed_family": "SEMICONDUCTOR_FOUNDRY", "proposed_sector": "Foundry / device integration", "visual_story": "실리콘 웨이퍼가 정밀 가공을 거쳐 다양한 전자 장치의 기반이 되는 삼성전자 테마의 제조 세계.",
+    "code": "005930",
+    "proposed_family": "SEMICONDUCTOR_FOUNDRY",
+    "proposed_sector": "Foundry / device integration",
+    "visual_story": "실리콘 웨이퍼가 정밀 가공을 거쳐 다양한 전자 장치의 기반이 되는 삼성전자 테마의 제조 세계.",
     "environment": "A vast white-ceramic foundry with nested lithography chambers and a distant device-integration gallery, viewed across an asymmetric diagonal service aisle",
     "hero_object": "An upright patterned silicon wafer in a precision lithography cradle, offset right of center, not an HBM tower",
-    "secondary_objects": ["sealed wafer cassettes", "layered cleanroom process chambers", "unmarked device chassis behind glass"],
-    "materials": ["iridescent etched silicon", "white sintered ceramic", "brushed stainless steel", "smoked observation glass"],
+    "secondary_objects": [
+      "sealed wafer cassettes",
+      "layered cleanroom process chambers",
+      "unmarked device chassis behind glass"
+    ],
+    "materials": [
+      "iridescent etched silicon",
+      "white sintered ceramic",
+      "brushed stainless steel",
+      "smoked observation glass"
+    ],
     "lighting": "Broad pearl-white ceiling panels with thin cobalt scanner lines and soft warm rim reflections; bright cleanroom depth without blown highlights",
-    "palette": ["pearl white", "cobalt blue", "iridescent violet", "pale champagne"],
-    "machinery": ["lithography scanner carriage", "sealed wafer transfer arm", "precision cassette elevator"],
+    "palette": [
+      "pearl white",
+      "cobalt blue",
+      "iridescent violet",
+      "pale champagne"
+    ],
+    "machinery": [
+      "lithography scanner carriage",
+      "sealed wafer transfer arm",
+      "precision cassette elevator"
+    ],
     "energy_flow": "Fine scan lines travel from the overhead exposure chamber across wafer traces into the lower-right silicon collection cradle",
     "extraction_target": "A faceted silicon tile seated in the lower-right ceramic inspection cradle; no coins, currency or floating reward cubes",
     "foreground_plan": "Low service rails at left lead past a textured ceramic inspection surface at right",
@@ -15,18 +36,37 @@
     "background_plan": "Repeated cleanroom portals retreat diagonally toward a quiet vanishing point above center",
     "desktop_composition": "Three-quarter elevated aisle perspective; wafer center at 0.62,0.40 and collection cradle at 0.61,0.67; leave upper-left operational space quiet",
     "mobile_composition": "Stack the wafer above its collection cradle in a narrow vertical cleanroom bay; keep the scanner arm entering from the middle-right instead of cropping an entire side process bay",
-    "desktop_anchor": {"x":0.62,"y":0.40}, "desktop_target": {"x":0.61,"y":0.67}, "mobile_anchor": {"x":0.52,"y":0.37}, "mobile_target": {"x":0.52,"y":0.65},
+    "desktop_anchor": { "x": 0.62, "y": 0.4 },
+    "desktop_target": { "x": 0.61, "y": 0.67 },
+    "mobile_anchor": { "x": 0.52, "y": 0.37 },
+    "mobile_target": { "x": 0.52, "y": 0.65 },
     "crop_risk": "A centered landscape cover would cut the right-side wafer and scanner; a dedicated portrait composition is required"
   },
   {
-    "code": "000660", "proposed_family": "SEMICONDUCTOR_MEMORY", "proposed_sector": "HBM / memory", "visual_story": "HBM 적층 메모리의 정교한 층과 웨이퍼 공정이 하나의 메모리 추출 장치로 모이는 SK하이닉스 테마의 팹.",
+    "code": "000660",
+    "proposed_family": "SEMICONDUCTOR_MEMORY",
+    "proposed_sector": "HBM / memory",
+    "visual_story": "HBM 적층 메모리의 정교한 층과 웨이퍼 공정이 하나의 메모리 추출 장치로 모이는 SK하이닉스 테마의 팹.",
     "environment": "A deep reflective semiconductor memory fab with a suspended HBM stack, a wafer-scanning station on the left and memory-processing towers on the right",
     "hero_object": "A physically detailed tiered HBM package with visible interposer edges suspended above a dormant circular memory collection platform",
-    "secondary_objects": ["left silicon wafer disk", "right memory processing towers", "robotic fab arms behind the stack"],
-    "materials": ["dark titanium package plates", "etched silicon wafer", "black polished glass", "fine copper interconnect edges"],
+    "secondary_objects": [
+      "left silicon wafer disk",
+      "right memory processing towers",
+      "robotic fab arms behind the stack"
+    ],
+    "materials": [
+      "dark titanium package plates",
+      "etched silicon wafer",
+      "black polished glass",
+      "fine copper interconnect edges"
+    ],
     "lighting": "Cyan fab columns and controlled amber edge reflections on the HBM layers; white task lights reveal microscopic material detail",
     "palette": ["cyan", "warm gold", "mineral white", "black titanium"],
-    "machinery": ["HBM alignment arm", "wafer scanner", "memory tower service mechanism"],
+    "machinery": [
+      "HBM alignment arm",
+      "wafer scanner",
+      "memory tower service mechanism"
+    ],
     "energy_flow": "Local pin lights step down the HBM layer edges toward the platform; reserve every dynamic trail for a later transparent runtime layer",
     "extraction_target": "The lower memory collection ring under the suspended package, visibly idle in the raster master",
     "foreground_plan": "A wide low extraction platform with engraved physical seams, without glyphs or numerical markings",
@@ -34,18 +74,37 @@
     "background_plan": "Blue-lit fab columns and robots diminish through several physically separated depth planes",
     "desktop_composition": "Recompose the approved 1539x1022 family direction as a true 16:9 master without stretching or cropping wafer/tower; HBM 0.50,0.37, ring 0.50,0.68",
     "mobile_composition": "Keep the complete HBM tier silhouette above a smaller lower ring; bring wafer and tower inward as shallow side stations, rather than cutting them off with center-cover",
-    "desktop_anchor": {"x":0.5,"y":0.37}, "desktop_target": {"x":0.5,"y":0.68}, "mobile_anchor": {"x":0.5,"y":0.36}, "mobile_target": {"x":0.5,"y":0.65},
+    "desktop_anchor": { "x": 0.5, "y": 0.37 },
+    "desktop_target": { "x": 0.5, "y": 0.68 },
+    "mobile_anchor": { "x": 0.5, "y": 0.36 },
+    "mobile_target": { "x": 0.5, "y": 0.65 },
     "crop_risk": "Existing ratio is about 1.506:1, not 16:9. Existing mobile cover is not accepted product QA; new portrait preserves wafer and tower identity"
   },
   {
-    "code": "AAPL", "proposed_family": "SEMICONDUCTOR_COMPUTE", "proposed_sector": "Precision silicon / device ecosystem", "visual_story": "정밀 실리콘과 장치 조립의 절제된 질감을 보여 주는 애플 테마. 대형 서버나 HBM 공장과 다른 작은 부품의 정교함이 핵심이다.",
+    "code": "AAPL",
+    "proposed_family": "SEMICONDUCTOR_COMPUTE",
+    "proposed_sector": "Precision silicon / device ecosystem",
+    "visual_story": "정밀 실리콘과 장치 조립의 절제된 질감을 보여 주는 애플 테마. 대형 서버나 HBM 공장과 다른 작은 부품의 정교함이 핵심이다.",
     "environment": "An architectural precision-device atelier with curved frosted partitions and an immaculate microassembly island, quiet rather than cavernous",
     "hero_object": "A sculpted unbranded silicon package held in a levitating precision fixture above a circular sapphire inspection lens",
-    "secondary_objects": ["unmarked machined device shells", "tiny precision grippers", "sapphire optical inspection discs"],
-    "materials": ["satin aluminum", "bead-blasted titanium", "frosted glass", "silicon with subtle interference color"],
+    "secondary_objects": [
+      "unmarked machined device shells",
+      "tiny precision grippers",
+      "sapphire optical inspection discs"
+    ],
+    "materials": [
+      "satin aluminum",
+      "bead-blasted titanium",
+      "frosted glass",
+      "silicon with subtle interference color"
+    ],
     "lighting": "Large soft ivory area lights, cool silver edge lighting and a restrained rose-copper bounce under the lens; luxury product-photography discipline",
     "palette": ["soft ivory", "silver", "graphite", "rose copper"],
-    "machinery": ["microassembly grippers", "optical inspection lens", "precision device-shell turntable"],
+    "machinery": [
+      "microassembly grippers",
+      "optical inspection lens",
+      "precision device-shell turntable"
+    ],
     "energy_flow": "Fine optical paths converge through the sapphire lens from individually arranged microassembly tools",
     "extraction_target": "A precision-finished silicon module in the sapphire inspection lens, never a currency-shaped reward",
     "foreground_plan": "One satin metal bench edge with tactile finish, leaving the lower information area calm",
@@ -53,18 +112,37 @@
     "background_plan": "Frosted curved partitions reveal two distant assembly rooms without generic server racks",
     "desktop_composition": "Low oblique macro-industrial lens with fixture at 0.56,0.43 and inspection lens 0.56,0.66; quiet ivory volume in upper-left",
     "mobile_composition": "Compose a vertical optical inspection tower with silicon fixture above lens and two visible grippers from opposite sides; distant partitions rise behind it",
-    "desktop_anchor": {"x":0.56,"y":0.43}, "desktop_target": {"x":0.56,"y":0.66}, "mobile_anchor": {"x":0.5,"y":0.40}, "mobile_target": {"x":0.5,"y":0.63},
+    "desktop_anchor": { "x": 0.56, "y": 0.43 },
+    "desktop_target": { "x": 0.56, "y": 0.66 },
+    "mobile_anchor": { "x": 0.5, "y": 0.4 },
+    "mobile_target": { "x": 0.5, "y": 0.63 },
     "crop_risk": "Side grippers and curved partition identity would vanish in landscape center crop"
   },
   {
-    "code": "MSFT", "proposed_family": "SEMICONDUCTOR_COMPUTE", "proposed_sector": "Distributed cloud fabric", "visual_story": "분산 컴퓨팅 노드가 안정적인 광섬유 망으로 연결되는 마이크로소프트 테마. 단일 GPU 공장 대신 여러 구역이 협력하는 공간이다.",
+    "code": "MSFT",
+    "proposed_family": "SEMICONDUCTOR_COMPUTE",
+    "proposed_sector": "Distributed cloud fabric",
+    "visual_story": "분산 컴퓨팅 노드가 안정적인 광섬유 망으로 연결되는 마이크로소프트 테마. 단일 GPU 공장 대신 여러 구역이 협력하는 공간이다.",
     "environment": "A monumental enterprise-cloud atrium with terraced distributed compute halls joined by visible optical bridges and an open central light well",
     "hero_object": "A layered translucent cloud-fabric routing hub suspended between several physically distinct server halls",
-    "secondary_objects": ["optical bridge conduits", "distributed compute terraces", "coolant service ribs"],
-    "materials": ["translucent optical glass", "powder-coated navy steel", "matte ceramic racks", "braided fiber bundles"],
+    "secondary_objects": [
+      "optical bridge conduits",
+      "distributed compute terraces",
+      "coolant service ribs"
+    ],
+    "materials": [
+      "translucent optical glass",
+      "powder-coated navy steel",
+      "matte ceramic racks",
+      "braided fiber bundles"
+    ],
     "lighting": "Daylight from the atrium clerestory with azure optical paths and warm white service lights; balanced architectural scale",
     "palette": ["azure", "navy", "frosted white", "muted teal"],
-    "machinery": ["optical switching arrays", "rack cooling manifolds", "local node-routing relays"],
+    "machinery": [
+      "optical switching arrays",
+      "rack cooling manifolds",
+      "local node-routing relays"
+    ],
     "energy_flow": "Several sparse node paths join the routing hub and descend to a small lower optical receiver; keep endpoints distinct",
     "extraction_target": "A transparent optical receiver below the routing hub; no token mint or balance display",
     "foreground_plan": "A quiet mezzanine rail at left establishes human scale without characters",
@@ -72,18 +150,37 @@
     "background_plan": "Compute halls recede to different heights below a pale atrium ceiling",
     "desktop_composition": "Architectural wide interior with hub at 0.60,0.43 and receiver 0.58,0.67; left mezzanine stays low-contrast for factual UI",
     "mobile_composition": "Arrange three compute terraces vertically around a tall routing hub; preserve the optical joins inside the middle portrait width",
-    "desktop_anchor": {"x":0.60,"y":0.43}, "desktop_target": {"x":0.58,"y":0.67}, "mobile_anchor": {"x":0.5,"y":0.39}, "mobile_target": {"x":0.5,"y":0.64},
+    "desktop_anchor": { "x": 0.6, "y": 0.43 },
+    "desktop_target": { "x": 0.58, "y": 0.67 },
+    "mobile_anchor": { "x": 0.5, "y": 0.39 },
+    "mobile_target": { "x": 0.5, "y": 0.64 },
     "crop_risk": "Landscape distributed halls communicate identity through breadth; portrait must restage them as vertical terraces"
   },
   {
-    "code": "NVDA", "proposed_family": "AI_GPU_COMPUTE", "proposed_sector": "GPU / AI supercompute", "visual_story": "액체 냉각 GPU와 정렬된 연산 모듈이 광학 인터커넥트로 연결되는 엔비디아 테마의 고성능 연산 시설.",
+    "code": "NVDA",
+    "proposed_family": "AI_GPU_COMPUTE",
+    "proposed_sector": "GPU / AI supercompute",
+    "visual_story": "액체 냉각 GPU와 정렬된 연산 모듈이 광학 인터커넥트로 연결되는 엔비디아 테마의 고성능 연산 시설.",
     "environment": "A dense liquid-cooled AI supercompute hall with a diagonal rack canyon and a visible GPU carrier at its near terminus",
     "hero_object": "An exposed multi-die GPU module in a heavy copper cold-plate cradle with surrounding coolant plumbing",
-    "secondary_objects": ["liquid-cooled GPU racks", "optical interconnect looms", "transparent coolant distribution headers"],
-    "materials": ["brushed copper cold plates", "black anodized rack metal", "optical glass fibers", "clear coolant tubing"],
+    "secondary_objects": [
+      "liquid-cooled GPU racks",
+      "optical interconnect looms",
+      "transparent coolant distribution headers"
+    ],
+    "materials": [
+      "brushed copper cold plates",
+      "black anodized rack metal",
+      "optical glass fibers",
+      "clear coolant tubing"
+    ],
     "lighting": "Emerald rack accents with cyan coolant reflections and a warm copper key on the GPU carrier; volumetric beams reveal the long rack canyon",
     "palette": ["emerald", "cyan", "copper", "carbon black"],
-    "machinery": ["GPU carrier service arm", "liquid cooling manifold", "optical interconnect switch"],
+    "machinery": [
+      "GPU carrier service arm",
+      "liquid cooling manifold",
+      "optical interconnect switch"
+    ],
     "energy_flow": "Aligned interconnect lanes trace from the rack canyon into the GPU carrier and terminate at a low compute output aperture",
     "extraction_target": "A narrow optical output aperture beneath the GPU carrier, distinct from HBM ring and cloud hub",
     "foreground_plan": "Copper cold plate and restrained coolant connections create tactile high-performance detail",
@@ -91,18 +188,37 @@
     "background_plan": "Rack canyon repeats toward a cool distant vanishing point with controlled atmospheric falloff",
     "desktop_composition": "Diagonal rack canyon, near GPU at 0.58,0.46 and aperture 0.56,0.66; quiet dark upper-left plane for overlay",
     "mobile_composition": "Use a vertical GPU carrier with coolant headers framing both sides and stacked rack depth behind; preserve the entire aperture below",
-    "desktop_anchor": {"x":0.58,"y":0.46}, "desktop_target": {"x":0.56,"y":0.66}, "mobile_anchor": {"x":0.5,"y":0.42}, "mobile_target": {"x":0.5,"y":0.65},
+    "desktop_anchor": { "x": 0.58, "y": 0.46 },
+    "desktop_target": { "x": 0.56, "y": 0.66 },
+    "mobile_anchor": { "x": 0.5, "y": 0.42 },
+    "mobile_target": { "x": 0.5, "y": 0.65 },
     "crop_risk": "Diagonal rack context and coolant silhouette need portrait-specific positioning"
   },
   {
-    "code": "XAU", "proposed_family": "PRECIOUS_GOLD", "proposed_sector": "Gold refinement metaphor", "visual_story": "거친 광석부터 정제된 금속까지 질감이 달라지는 골드 테마의 정련소. 화면 속 금은 화폐나 실물 소유권 표시가 아니다.",
+    "code": "XAU",
+    "proposed_family": "PRECIOUS_GOLD",
+    "proposed_sector": "Gold refinement metaphor",
+    "visual_story": "거친 광석부터 정제된 금속까지 질감이 달라지는 골드 테마의 정련소. 화면 속 금은 화폐나 실물 소유권 표시가 아니다.",
     "environment": "A vaulted industrial gold refinery with a refractory furnace, a gravity-fed casting channel and substantial stone service architecture",
     "hero_object": "A covered refractory crucible above a long precision ingot mold, with a restrained molten-gold surface visible through the furnace aperture",
-    "secondary_objects": ["ore sorting tray", "refractory furnace bricks", "cooled unmarked ingot molds"],
-    "materials": ["rough mineral ore", "heat-darkened refractory ceramic", "molten metallic gold", "heavy cast iron"],
+    "secondary_objects": [
+      "ore sorting tray",
+      "refractory furnace bricks",
+      "cooled unmarked ingot molds"
+    ],
+    "materials": [
+      "rough mineral ore",
+      "heat-darkened refractory ceramic",
+      "molten metallic gold",
+      "heavy cast iron"
+    ],
     "lighting": "Warm furnace bounce against deep umber masonry with cool skylight shafts; metallic gold reads through physically plausible reflections rather than global gold tint",
     "palette": ["molten gold", "deep umber", "charcoal", "cool skylight blue"],
-    "machinery": ["sealed crucible tilt mechanism", "ore sorting conveyor", "ingot mold cooling assembly"],
+    "machinery": [
+      "sealed crucible tilt mechanism",
+      "ore sorting conveyor",
+      "ingot mold cooling assembly"
+    ],
     "energy_flow": "A short contained casting channel links the crucible to the mold; actual animated pouring is an optional local server-gated layer",
     "extraction_target": "The precision ingot mold at the near end of the casting channel; unmarked industrial metal without coins or payment symbolism",
     "foreground_plan": "Heavy refractory mold and ore textures establish tactile weight",
@@ -110,18 +226,37 @@
     "background_plan": "Arched refinery roof and furnace stacks recede through warm haze",
     "desktop_composition": "Wide refinery aisle with crucible at 0.60,0.43 and mold at 0.55,0.68; lower-left service wall leaves calm overlay room",
     "mobile_composition": "Place crucible above the mold in a tall furnace bay; a short visible channel connects them with ore tray tucked mid-left",
-    "desktop_anchor": {"x":0.60,"y":0.43}, "desktop_target": {"x":0.55,"y":0.68}, "mobile_anchor": {"x":0.53,"y":0.39}, "mobile_target": {"x":0.5,"y":0.65},
+    "desktop_anchor": { "x": 0.6, "y": 0.43 },
+    "desktop_target": { "x": 0.55, "y": 0.68 },
+    "mobile_anchor": { "x": 0.53, "y": 0.39 },
+    "mobile_target": { "x": 0.5, "y": 0.65 },
     "crop_risk": "Wide casting channel and ore stage cannot be lost to a center crop"
   },
   {
-    "code": "XAG", "proposed_family": "PRECIOUS_SILVER", "proposed_sector": "Silver purification metaphor", "visual_story": "차가운 은 결정이 전해 정제와 정밀 가공을 거쳐 정제 금속으로 이어지는 실버 테마. 골드 장면의 색만 바꾸지 않는다.",
+    "code": "XAG",
+    "proposed_family": "PRECIOUS_SILVER",
+    "proposed_sector": "Silver purification metaphor",
+    "visual_story": "차가운 은 결정이 전해 정제와 정밀 가공을 거쳐 정제 금속으로 이어지는 실버 테마. 골드 장면의 색만 바꾸지 않는다.",
     "environment": "A cool silver electrorefining laboratory with a long segmented electrolytic bath and a crystal inspection station under sawtooth roof daylight",
     "hero_object": "A dendritic silver crystal lifted over a rectangular purification bath by a precision gantry",
-    "secondary_objects": ["electrorefining plate arrays", "quartz inspection vessel", "unmarked brushed silver bar cradle"],
-    "materials": ["dendritic silver", "polished stainless steel", "quartz glass", "pale ceramic bath lining"],
+    "secondary_objects": [
+      "electrorefining plate arrays",
+      "quartz inspection vessel",
+      "unmarked brushed silver bar cradle"
+    ],
+    "materials": [
+      "dendritic silver",
+      "polished stainless steel",
+      "quartz glass",
+      "pale ceramic bath lining"
+    ],
     "lighting": "Cold daylight broken across silver facets, violet inspection light and narrow white highlights on brushed metal; no gold furnace glow",
     "palette": ["silver white", "ice blue", "soft violet", "steel gray"],
-    "machinery": ["crystal lifting gantry", "electrorefining plate exchanger", "precision polishing head"],
+    "machinery": [
+      "crystal lifting gantry",
+      "electrorefining plate exchanger",
+      "precision polishing head"
+    ],
     "energy_flow": "Fine local charge traces pass through bath plates into the crystal inspection station, ending at a cooled bar cradle",
     "extraction_target": "A brushed silver bar cradle below the inspection station, unmarked and industrial rather than monetary",
     "foreground_plan": "Bath rim and textured plate edges catch narrow silver highlights",
@@ -129,18 +264,37 @@
     "background_plan": "Sawtooth windows and repeating laboratory bays provide cool receding depth",
     "desktop_composition": "Side-oblique view along the bath; crystal at 0.58,0.42 and bar cradle 0.55,0.67; reserve quiet top-left daylight wall",
     "mobile_composition": "Use a vertically suspended crystal above stacked short purification cells and lower bar cradle; gantry remains readable across the middle width",
-    "desktop_anchor": {"x":0.58,"y":0.42}, "desktop_target": {"x":0.55,"y":0.67}, "mobile_anchor": {"x":0.5,"y":0.39}, "mobile_target": {"x":0.5,"y":0.65},
+    "desktop_anchor": { "x": 0.58, "y": 0.42 },
+    "desktop_target": { "x": 0.55, "y": 0.67 },
+    "mobile_anchor": { "x": 0.5, "y": 0.39 },
+    "mobile_target": { "x": 0.5, "y": 0.65 },
     "crop_risk": "Horizontal bath and plate geometry need restaging, not hue-swapping the gold refinery"
   },
   {
-    "code": "BTC", "proposed_family": "BLOCKCHAIN_HASH", "proposed_sector": "Hash / block forge metaphor", "visual_story": "해시 경로가 무거운 블록 봉인 장치로 모이는 비트코인 테마. 실제 외부 네트워크 채굴이나 토큰 지급을 주장하지 않는 가상 세계.",
+    "code": "BTC",
+    "proposed_family": "BLOCKCHAIN_HASH",
+    "proposed_sector": "Hash / block forge metaphor",
+    "visual_story": "해시 경로가 무거운 블록 봉인 장치로 모이는 비트코인 테마. 실제 외부 네트워크 채굴이나 토큰 지급을 주장하지 않는 가상 세계.",
     "environment": "A basalt block-forging hall with substantial parallel hash-channel grooves and a mechanical seal press under a cavernous ribbed roof",
     "hero_object": "A dark interlocking block assembly seated under a heavy seal press; architectural block, not a coin or logo",
-    "secondary_objects": ["parallel hash channel rails", "physical block carrier trays", "distant sealed node cabinets"],
-    "materials": ["basalt", "oxidized bronze", "black forged steel", "amber optical inserts"],
+    "secondary_objects": [
+      "parallel hash channel rails",
+      "physical block carrier trays",
+      "distant sealed node cabinets"
+    ],
+    "materials": [
+      "basalt",
+      "oxidized bronze",
+      "black forged steel",
+      "amber optical inserts"
+    ],
     "lighting": "Low amber channel light with broad cool roof shafts and a precise bronze rim on the seal press; strong heavy shadows",
     "palette": ["basalt black", "oxidized bronze", "amber", "slate blue"],
-    "machinery": ["mechanical block seal press", "block carrier carriage", "hash channel switching gates"],
+    "machinery": [
+      "mechanical block seal press",
+      "block carrier carriage",
+      "hash channel switching gates"
+    ],
     "energy_flow": "Parallel hash lanes converge at the block press and end at the visible sealed-block receiving tray",
     "extraction_target": "The physical block receiving tray beneath the press; no token logo, payment stamp or financial implication",
     "foreground_plan": "Large worn rail surfaces lead toward a heavy near block tray",
@@ -148,18 +302,37 @@
     "background_plan": "Parallel cabinets and roof ribs retreat through a deep basalt nave",
     "desktop_composition": "Low fixed aisle perspective; block press at 0.56,0.44 and receiving tray 0.56,0.68; sparse upper-left stone wall",
     "mobile_composition": "Frame the entire tall press above its tray; hash rails enter diagonally within the middle portrait area and roof ribs provide vertical depth",
-    "desktop_anchor": {"x":0.56,"y":0.44}, "desktop_target": {"x":0.56,"y":0.68}, "mobile_anchor": {"x":0.5,"y":0.40}, "mobile_target": {"x":0.5,"y":0.65},
+    "desktop_anchor": { "x": 0.56, "y": 0.44 },
+    "desktop_target": { "x": 0.56, "y": 0.68 },
+    "mobile_anchor": { "x": 0.5, "y": 0.4 },
+    "mobile_target": { "x": 0.5, "y": 0.65 },
     "crop_risk": "Parallel hash lanes at the landscape edges establish identity and need a new portrait entry direction"
   },
   {
-    "code": "ETH", "proposed_family": "CRYPTO_NETWORK", "proposed_sector": "Validator / network metaphor", "visual_story": "여러 검증 노드가 투명한 연결 구조로 협력하는 이더리움 테마. 비트코인의 봉인 공장과 다른 분산 네트워크 공간.",
+    "code": "ETH",
+    "proposed_family": "CRYPTO_NETWORK",
+    "proposed_sector": "Validator / network metaphor",
+    "visual_story": "여러 검증 노드가 투명한 연결 구조로 협력하는 이더리움 테마. 비트코인의 봉인 공장과 다른 분산 네트워크 공간.",
     "environment": "A tall vaulted validator conservatory with separate polygonal node pedestals connected by suspended optical lattice bridges",
     "hero_object": "A faceted transparent consensus prism surrounded by distinct validator pedestals, not a branded diamond logo",
-    "secondary_objects": ["validator pedestals", "optical lattice bridges", "small translucent routing relays"],
-    "materials": ["optical quartz", "anodized violet metal", "matte white ceramic", "smoked structural glass"],
+    "secondary_objects": [
+      "validator pedestals",
+      "optical lattice bridges",
+      "small translucent routing relays"
+    ],
+    "materials": [
+      "optical quartz",
+      "anodized violet metal",
+      "matte white ceramic",
+      "smoked structural glass"
+    ],
     "lighting": "Soft violet node interiors, ice-blue lattice reflections and diffuse high clerestory light; balanced luminous transparency",
     "palette": ["violet", "ice blue", "smoked gray", "ceramic white"],
-    "machinery": ["validator relay shutters", "optical lattice junctions", "consensus prism support actuator"],
+    "machinery": [
+      "validator relay shutters",
+      "optical lattice junctions",
+      "consensus prism support actuator"
+    ],
     "energy_flow": "Sparse short paths from separate pedestals meet around the prism and terminate in a clear lower consensus receiver",
     "extraction_target": "A clear consensus receiver directly below the prism; abstract presentation without network finality or financial guarantee",
     "foreground_plan": "A glass walkway edge exposes the nearest node pedestal below",
@@ -167,18 +340,37 @@
     "background_plan": "Tall lattice arches and distant validators fall into cool atmospheric depth",
     "desktop_composition": "Open asymmetric validator arc with prism at 0.59,0.42 and receiver 0.58,0.66; nodes distributed at different depths, upper-left quiet",
     "mobile_composition": "Build a vertical validator spiral around the prism with three complete nodes visible in the middle; keep receiver below and arches above",
-    "desktop_anchor": {"x":0.59,"y":0.42}, "desktop_target": {"x":0.58,"y":0.66}, "mobile_anchor": {"x":0.5,"y":0.39}, "mobile_target": {"x":0.5,"y":0.64},
+    "desktop_anchor": { "x": 0.59, "y": 0.42 },
+    "desktop_target": { "x": 0.58, "y": 0.66 },
+    "mobile_anchor": { "x": 0.5, "y": 0.39 },
+    "mobile_target": { "x": 0.5, "y": 0.64 },
     "crop_risk": "A wide node graph needs a portrait spiral; cutting to the prism alone removes distributed identity"
   },
   {
-    "code": "BNB", "proposed_family": "CRYPTO_NETWORK", "proposed_sector": "Multi-lane network routing metaphor", "visual_story": "여러 경로가 규칙적으로 교차하는 BNB 테마의 네트워크 허브. 거래소 제휴·실제 전송·코인 지급을 암시하지 않는다.",
+    "code": "BNB",
+    "proposed_family": "CRYPTO_NETWORK",
+    "proposed_sector": "Multi-lane network routing metaphor",
+    "visual_story": "여러 경로가 규칙적으로 교차하는 BNB 테마의 네트워크 허브. 거래소 제휴·실제 전송·코인 지급을 암시하지 않는다.",
     "environment": "A stepped ceramic network-routing transit hall with intersecting hexagonal conduit galleries and a central switchyard beneath a geometric skylight",
     "hero_object": "An unbranded hexagonal routing switchboard built from mechanically interlocking ceramic modules, deliberately unlike Ethereum's transparent prism",
-    "secondary_objects": ["tiered routing channels", "hexagonal service galleries", "individual packet transfer gates"],
-    "materials": ["saffron ceramic", "matte graphite steel", "clear conduit glass", "brushed nickel junctions"],
+    "secondary_objects": [
+      "tiered routing channels",
+      "hexagonal service galleries",
+      "individual packet transfer gates"
+    ],
+    "materials": [
+      "saffron ceramic",
+      "matte graphite steel",
+      "clear conduit glass",
+      "brushed nickel junctions"
+    ],
     "lighting": "Honey-yellow conduit edges against graphite with clean white skylight illumination and cool nickel reflections; restrained color, no exchange branding",
     "palette": ["saffron", "graphite", "nickel silver", "warm white"],
-    "machinery": ["multi-lane routing switches", "packet gate actuators", "modular service elevators"],
+    "machinery": [
+      "multi-lane routing switches",
+      "packet gate actuators",
+      "modular service elevators"
+    ],
     "energy_flow": "Several orthogonal and diagonal lanes converge through distinct gate modules and terminate at a lower routing collector",
     "extraction_target": "A ceramic routing collector at the lower switchyard edge; not a token dispenser or currency tray",
     "foreground_plan": "Two conduit bridges frame the near collector without covering the lower safe area",
@@ -186,18 +378,37 @@
     "background_plan": "Hexagonal galleries and skylight beams reveal successive network tiers",
     "desktop_composition": "Fixed elevated switchyard perspective; hub 0.60,0.45, collector 0.58,0.68; geometry flows from upper-right to lower-middle, left wall stays calm",
     "mobile_composition": "Restage the switchyard as three vertical routing tiers; compact hexagonal hub and lower collector stay fully inside the central portrait corridor",
-    "desktop_anchor": {"x":0.60,"y":0.45}, "desktop_target": {"x":0.58,"y":0.68}, "mobile_anchor": {"x":0.5,"y":0.41}, "mobile_target": {"x":0.5,"y":0.65},
+    "desktop_anchor": { "x": 0.6, "y": 0.45 },
+    "desktop_target": { "x": 0.58, "y": 0.68 },
+    "mobile_anchor": { "x": 0.5, "y": 0.41 },
+    "mobile_target": { "x": 0.5, "y": 0.65 },
     "crop_risk": "Lateral conduit bridges cannot be center-cropped without losing the routing story"
   },
   {
-    "code": "XRP", "proposed_family": "CRYPTO_NETWORK", "proposed_sector": "Relay / interoperability metaphor", "visual_story": "두 구역을 연결하는 정밀 릴레이 다리와 경로 확인 장치가 보이는 XRP 테마. 실제 결제·은행 제휴를 의미하지 않는다.",
+    "code": "XRP",
+    "proposed_family": "CRYPTO_NETWORK",
+    "proposed_sector": "Relay / interoperability metaphor",
+    "visual_story": "두 구역을 연결하는 정밀 릴레이 다리와 경로 확인 장치가 보이는 XRP 테마. 실제 결제·은행 제휴를 의미하지 않는다.",
     "environment": "A long cool-metal relay terminal with two distinct infrastructure halls joined by a suspended optical transfer bridge across an open central void",
     "hero_object": "A precision relay bridge with a visible optical handshake coupler at its center, not a crystal, coin or exchange mark",
-    "secondary_objects": ["separate relay terminal chambers", "optical verification shutters", "suspended bridge cable ribs"],
-    "materials": ["brushed palladium-toned metal", "clear optical glass", "dark blue structural steel", "white ceramic relay housings"],
+    "secondary_objects": [
+      "separate relay terminal chambers",
+      "optical verification shutters",
+      "suspended bridge cable ribs"
+    ],
+    "materials": [
+      "brushed palladium-toned metal",
+      "clear optical glass",
+      "dark blue structural steel",
+      "white ceramic relay housings"
+    ],
     "lighting": "Silver-white bridge illumination, deep-blue void reflections and a quiet cyan line at the coupler; no gold token atmosphere",
     "palette": ["palladium silver", "deep blue", "white", "restrained cyan"],
-    "machinery": ["relay verification shutters", "handshake coupler actuator", "bridge channel selector"],
+    "machinery": [
+      "relay verification shutters",
+      "handshake coupler actuator",
+      "bridge channel selector"
+    ],
     "energy_flow": "A single clearly traceable relay path crosses between halls through the coupler and descends into the lower verification dock",
     "extraction_target": "The small verification dock below the bridge coupler; no banking symbols, payment claims or external-network success assertion",
     "foreground_plan": "Near terminal platform edge and suspended bridge ribs establish a deep void",
@@ -205,7 +416,10 @@
     "background_plan": "Far terminal chamber glows through narrow steel portals across the void",
     "desktop_composition": "Oblique long-bridge view; coupler 0.61,0.43 and dock 0.59,0.66; leave upper-left structural wall low detail",
     "mobile_composition": "Turn the bridge into a diagonal rising relay span connecting two vertically separated halls; keep coupler and verification dock centered without cropping bridge endpoints",
-    "desktop_anchor": {"x":0.61,"y":0.43}, "desktop_target": {"x":0.59,"y":0.66}, "mobile_anchor": {"x":0.5,"y":0.40}, "mobile_target": {"x":0.5,"y":0.64},
+    "desktop_anchor": { "x": 0.61, "y": 0.43 },
+    "desktop_target": { "x": 0.59, "y": 0.66 },
+    "mobile_anchor": { "x": 0.5, "y": 0.4 },
+    "mobile_target": { "x": 0.5, "y": 0.64 },
     "crop_risk": "Horizontal two-terminal bridge needs a separately staged diagonal portrait master"
   }
 ]
