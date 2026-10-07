@@ -370,34 +370,41 @@ export default async function ProductHomePage() {
         </section>
 
         <nav className={styles.quickActions} aria-label="바로 가기">
-          <Link href="/mining">
-            <PutdukHomeIcon name="bolt" size={28} />
-            <strong>채굴 보기</strong>
-            <small>내 채굴 상태</small>
-          </Link>
-          <Link href="/wallet/deposit">
-            <PutdukHomeIcon name="bank" size={28} />
-            <strong>
-              <span className={styles.darkActionLabel}>입금하기</span>
-              <span className={styles.lightActionLabel}>자산 추가하기</span>
-            </strong>
-            <small>입금 안내</small>
-          </Link>
-          <Link href="/wallet/withdraw">
-            <PutdukHomeIcon name="wallet" size={28} />
-            <strong>출금하기</strong>
-            <small>출금 신청</small>
-          </Link>
-          <Link href="/events" className={styles.darkQuickAction}>
-            <PutdukHomeIcon name="gift" size={28} />
-            <strong>이벤트</strong>
-            <small>소식 보기</small>
-          </Link>
-          <Link href="/wallet?view=history" className={styles.lightQuickAction}>
-            <PutdukHomeIcon name="ledger" size={28} />
-            <strong>거래 내역</strong>
-          </Link>
-          <PutdukAiDock presentation="inline" />
+          <div className={styles.quickActionsLayout}>
+            <div className={styles.quickActionGrid} data-home-primary-actions>
+              <Link href="/mining">
+                <PutdukHomeIcon name="bolt" size={28} />
+                <strong>채굴 보기</strong>
+                <small>내 채굴 상태</small>
+              </Link>
+              <Link href="/wallet/deposit">
+                <PutdukHomeIcon name="bank" size={28} />
+                <strong>
+                  <span className={styles.darkActionLabel}>입금하기</span>
+                  <span className={styles.lightActionLabel}>자산 추가하기</span>
+                </strong>
+                <small>입금 안내</small>
+              </Link>
+              <Link href="/wallet/withdraw">
+                <PutdukHomeIcon name="wallet" size={28} />
+                <strong>출금하기</strong>
+                <small>출금 신청</small>
+              </Link>
+              <Link href="/events" className={styles.darkQuickAction}>
+                <PutdukHomeIcon name="gift" size={28} />
+                <strong>이벤트</strong>
+                <small>소식 보기</small>
+              </Link>
+              <Link
+                href="/wallet?view=history"
+                className={styles.lightQuickAction}
+              >
+                <PutdukHomeIcon name="ledger" size={28} />
+                <strong>거래 내역</strong>
+              </Link>
+            </div>
+            <PutdukAiDock presentation="inline" />
+          </div>
         </nav>
 
         <section className={styles.catalogAndNotices}>

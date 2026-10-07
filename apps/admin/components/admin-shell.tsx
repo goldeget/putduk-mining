@@ -1,6 +1,7 @@
 import { logoutAction, logoutAllAction } from "@/app/actions";
 import type { AdminPrincipal } from "@/lib/auth/principal";
 import { AdminRailMenu } from "./admin-rail-menu";
+import { AdminScreenGuide } from "./presentation/admin-screen-guide";
 import { ThemeControl } from "../../../components/system/theme-control";
 
 const operatorRoleLabel: Record<AdminPrincipal["role"], string> = {
@@ -20,6 +21,9 @@ export function AdminShell({
 }) {
   return (
     <div className="control-shell">
+      <a className="admin-skip-link" href="#admin-main-content">
+        본문 바로가기
+      </a>
       <AdminRailMenu>
         <div className="operator-card">
           <span>보안 세션</span>
@@ -40,11 +44,14 @@ export function AdminShell({
             운영자 본인 확인 완료
           </div>
           <div className="control-topbar__tools">
+            <AdminScreenGuide />
             <ThemeControl />
             <p>admin.mining.putduk.com</p>
           </div>
         </header>
-        <main className="control-main">{children}</main>
+        <main className="control-main" id="admin-main-content" tabIndex={-1}>
+          {children}
+        </main>
       </div>
     </div>
   );

@@ -1,11 +1,13 @@
 import type {
   AmbientPreset,
   ApprovedSceneDefinition,
+  ApprovedMasterVariant,
   ParticleEmphasis,
   PendingSceneDefinition,
   SceneDefinition,
   SceneFamilyKey,
   ScenePoint,
+  ProductCategory,
 } from "@/lib/mining-scene/types";
 
 /**
@@ -267,6 +269,696 @@ export const SEMICONDUCTOR_MEMORY_APPROVED_SCENE = {
   },
 } as const satisfies ApprovedSceneDefinition;
 
+/** Product-specific NVDA GPU master; family default remains visually pending. */
+export const NVDA_GPU_APPROVED_SCENE = {
+  familyKey: "AI_GPU_COMPUTE",
+  version: 1,
+  packStatus: "APPROVED",
+  master: {
+    sha256: "b20cc60947fdddf7d8f02733658d9f0fabdce786ea5f9614ce1694e44d1fe3f1",
+    assetPath:
+      "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-dark-landscape-1672.webp",
+    width: 1672,
+    height: 941,
+    altKo: "GPU 연산 장치와 원형 추출 장치가 놓인 짙은 서버실",
+    lightVariant: {
+      master: {
+        sha256:
+          "abfc46f87a1822c5e705b527432da85d638bd500379f7a6fccf282e66392c736",
+        assetPath:
+          "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-light-landscape-1672.webp",
+        width: 1672,
+        height: 941,
+        altKo: "GPU 연산 장치와 원형 추출 장치가 놓인 밝은 서버실",
+      },
+      responsiveSources: [
+        {
+          media: "(max-width: 699px)",
+          assetPath:
+            "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-light-portrait-480.avif",
+          width: 480,
+          height: 720,
+          mimeType: "image/avif",
+          composition: {
+            masterSha256:
+              "56638dce5ebe61b38c21da4249e3474e5a62a7d17f32cb885d945c8ee41a1115",
+            anchor: {
+              x: 0.5,
+              y: 0.5,
+            },
+            extractionTarget: {
+              x: 0.5,
+              y: 0.75,
+            },
+          },
+        },
+        {
+          media: "(max-width: 699px)",
+          assetPath:
+            "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-light-portrait-480.webp",
+          width: 480,
+          height: 720,
+          mimeType: "image/webp",
+          composition: {
+            masterSha256:
+              "56638dce5ebe61b38c21da4249e3474e5a62a7d17f32cb885d945c8ee41a1115",
+            anchor: {
+              x: 0.5,
+              y: 0.5,
+            },
+            extractionTarget: {
+              x: 0.5,
+              y: 0.75,
+            },
+          },
+        },
+        {
+          media: "(max-width: 699px)",
+          assetPath:
+            "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-light-portrait-640.avif",
+          width: 640,
+          height: 960,
+          mimeType: "image/avif",
+          composition: {
+            masterSha256:
+              "56638dce5ebe61b38c21da4249e3474e5a62a7d17f32cb885d945c8ee41a1115",
+            anchor: {
+              x: 0.5,
+              y: 0.5,
+            },
+            extractionTarget: {
+              x: 0.5,
+              y: 0.75,
+            },
+          },
+        },
+        {
+          media: "(max-width: 699px)",
+          assetPath:
+            "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-light-portrait-640.webp",
+          width: 640,
+          height: 960,
+          mimeType: "image/webp",
+          composition: {
+            masterSha256:
+              "56638dce5ebe61b38c21da4249e3474e5a62a7d17f32cb885d945c8ee41a1115",
+            anchor: {
+              x: 0.5,
+              y: 0.5,
+            },
+            extractionTarget: {
+              x: 0.5,
+              y: 0.75,
+            },
+          },
+        },
+        {
+          media: "(max-width: 699px)",
+          assetPath:
+            "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-light-portrait-960.avif",
+          width: 960,
+          height: 1440,
+          mimeType: "image/avif",
+          composition: {
+            masterSha256:
+              "56638dce5ebe61b38c21da4249e3474e5a62a7d17f32cb885d945c8ee41a1115",
+            anchor: {
+              x: 0.5,
+              y: 0.5,
+            },
+            extractionTarget: {
+              x: 0.5,
+              y: 0.75,
+            },
+          },
+        },
+        {
+          media: "(max-width: 699px)",
+          assetPath:
+            "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-light-portrait-960.webp",
+          width: 960,
+          height: 1440,
+          mimeType: "image/webp",
+          composition: {
+            masterSha256:
+              "56638dce5ebe61b38c21da4249e3474e5a62a7d17f32cb885d945c8ee41a1115",
+            anchor: {
+              x: 0.5,
+              y: 0.5,
+            },
+            extractionTarget: {
+              x: 0.5,
+              y: 0.75,
+            },
+          },
+        },
+        {
+          media: "(max-width: 699px)",
+          assetPath:
+            "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-light-portrait-1024.avif",
+          width: 1024,
+          height: 1536,
+          mimeType: "image/avif",
+          composition: {
+            masterSha256:
+              "56638dce5ebe61b38c21da4249e3474e5a62a7d17f32cb885d945c8ee41a1115",
+            anchor: {
+              x: 0.5,
+              y: 0.5,
+            },
+            extractionTarget: {
+              x: 0.5,
+              y: 0.75,
+            },
+          },
+        },
+        {
+          media: "(max-width: 699px)",
+          assetPath:
+            "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-light-portrait-1024.webp",
+          width: 1024,
+          height: 1536,
+          mimeType: "image/webp",
+          composition: {
+            masterSha256:
+              "56638dce5ebe61b38c21da4249e3474e5a62a7d17f32cb885d945c8ee41a1115",
+            anchor: {
+              x: 0.5,
+              y: 0.5,
+            },
+            extractionTarget: {
+              x: 0.5,
+              y: 0.75,
+            },
+          },
+        },
+        {
+          media: "",
+          assetPath:
+            "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-light-landscape-640.avif",
+          width: 640,
+          height: 360,
+          mimeType: "image/avif",
+          composition: {
+            masterSha256:
+              "abfc46f87a1822c5e705b527432da85d638bd500379f7a6fccf282e66392c736",
+            anchor: {
+              x: 0.73,
+              y: 0.5,
+            },
+            extractionTarget: {
+              x: 0.73,
+              y: 0.78,
+            },
+          },
+        },
+        {
+          media: "",
+          assetPath:
+            "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-light-landscape-640.webp",
+          width: 640,
+          height: 360,
+          mimeType: "image/webp",
+          composition: {
+            masterSha256:
+              "abfc46f87a1822c5e705b527432da85d638bd500379f7a6fccf282e66392c736",
+            anchor: {
+              x: 0.73,
+              y: 0.5,
+            },
+            extractionTarget: {
+              x: 0.73,
+              y: 0.78,
+            },
+          },
+        },
+        {
+          media: "",
+          assetPath:
+            "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-light-landscape-960.avif",
+          width: 960,
+          height: 540,
+          mimeType: "image/avif",
+          composition: {
+            masterSha256:
+              "abfc46f87a1822c5e705b527432da85d638bd500379f7a6fccf282e66392c736",
+            anchor: {
+              x: 0.73,
+              y: 0.5,
+            },
+            extractionTarget: {
+              x: 0.73,
+              y: 0.78,
+            },
+          },
+        },
+        {
+          media: "",
+          assetPath:
+            "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-light-landscape-960.webp",
+          width: 960,
+          height: 540,
+          mimeType: "image/webp",
+          composition: {
+            masterSha256:
+              "abfc46f87a1822c5e705b527432da85d638bd500379f7a6fccf282e66392c736",
+            anchor: {
+              x: 0.73,
+              y: 0.5,
+            },
+            extractionTarget: {
+              x: 0.73,
+              y: 0.78,
+            },
+          },
+        },
+        {
+          media: "",
+          assetPath:
+            "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-light-landscape-1280.avif",
+          width: 1280,
+          height: 720,
+          mimeType: "image/avif",
+          composition: {
+            masterSha256:
+              "abfc46f87a1822c5e705b527432da85d638bd500379f7a6fccf282e66392c736",
+            anchor: {
+              x: 0.73,
+              y: 0.5,
+            },
+            extractionTarget: {
+              x: 0.73,
+              y: 0.78,
+            },
+          },
+        },
+        {
+          media: "",
+          assetPath:
+            "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-light-landscape-1280.webp",
+          width: 1280,
+          height: 720,
+          mimeType: "image/webp",
+          composition: {
+            masterSha256:
+              "abfc46f87a1822c5e705b527432da85d638bd500379f7a6fccf282e66392c736",
+            anchor: {
+              x: 0.73,
+              y: 0.5,
+            },
+            extractionTarget: {
+              x: 0.73,
+              y: 0.78,
+            },
+          },
+        },
+        {
+          media: "",
+          assetPath:
+            "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-light-landscape-1672.avif",
+          width: 1672,
+          height: 941,
+          mimeType: "image/avif",
+          composition: {
+            masterSha256:
+              "abfc46f87a1822c5e705b527432da85d638bd500379f7a6fccf282e66392c736",
+            anchor: {
+              x: 0.73,
+              y: 0.5,
+            },
+            extractionTarget: {
+              x: 0.73,
+              y: 0.78,
+            },
+          },
+        },
+        {
+          media: "",
+          assetPath:
+            "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-light-landscape-1672.webp",
+          width: 1672,
+          height: 941,
+          mimeType: "image/webp",
+          composition: {
+            masterSha256:
+              "abfc46f87a1822c5e705b527432da85d638bd500379f7a6fccf282e66392c736",
+            anchor: {
+              x: 0.73,
+              y: 0.5,
+            },
+            extractionTarget: {
+              x: 0.73,
+              y: 0.78,
+            },
+          },
+        },
+      ],
+    },
+  },
+  responsiveSources: [
+    {
+      media: "(max-width: 699px)",
+      assetPath:
+        "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-dark-portrait-480.avif",
+      width: 480,
+      height: 720,
+      mimeType: "image/avif",
+      composition: {
+        masterSha256:
+          "0cf2635fdd6637757c5a56d90c27cb2b9e7b6c925a66da332f36e268f4fd300d",
+        anchor: {
+          x: 0.5,
+          y: 0.5,
+        },
+        extractionTarget: {
+          x: 0.5,
+          y: 0.75,
+        },
+      },
+    },
+    {
+      media: "(max-width: 699px)",
+      assetPath:
+        "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-dark-portrait-480.webp",
+      width: 480,
+      height: 720,
+      mimeType: "image/webp",
+      composition: {
+        masterSha256:
+          "0cf2635fdd6637757c5a56d90c27cb2b9e7b6c925a66da332f36e268f4fd300d",
+        anchor: {
+          x: 0.5,
+          y: 0.5,
+        },
+        extractionTarget: {
+          x: 0.5,
+          y: 0.75,
+        },
+      },
+    },
+    {
+      media: "(max-width: 699px)",
+      assetPath:
+        "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-dark-portrait-640.avif",
+      width: 640,
+      height: 960,
+      mimeType: "image/avif",
+      composition: {
+        masterSha256:
+          "0cf2635fdd6637757c5a56d90c27cb2b9e7b6c925a66da332f36e268f4fd300d",
+        anchor: {
+          x: 0.5,
+          y: 0.5,
+        },
+        extractionTarget: {
+          x: 0.5,
+          y: 0.75,
+        },
+      },
+    },
+    {
+      media: "(max-width: 699px)",
+      assetPath:
+        "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-dark-portrait-640.webp",
+      width: 640,
+      height: 960,
+      mimeType: "image/webp",
+      composition: {
+        masterSha256:
+          "0cf2635fdd6637757c5a56d90c27cb2b9e7b6c925a66da332f36e268f4fd300d",
+        anchor: {
+          x: 0.5,
+          y: 0.5,
+        },
+        extractionTarget: {
+          x: 0.5,
+          y: 0.75,
+        },
+      },
+    },
+    {
+      media: "(max-width: 699px)",
+      assetPath:
+        "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-dark-portrait-960.avif",
+      width: 960,
+      height: 1440,
+      mimeType: "image/avif",
+      composition: {
+        masterSha256:
+          "0cf2635fdd6637757c5a56d90c27cb2b9e7b6c925a66da332f36e268f4fd300d",
+        anchor: {
+          x: 0.5,
+          y: 0.5,
+        },
+        extractionTarget: {
+          x: 0.5,
+          y: 0.75,
+        },
+      },
+    },
+    {
+      media: "(max-width: 699px)",
+      assetPath:
+        "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-dark-portrait-960.webp",
+      width: 960,
+      height: 1440,
+      mimeType: "image/webp",
+      composition: {
+        masterSha256:
+          "0cf2635fdd6637757c5a56d90c27cb2b9e7b6c925a66da332f36e268f4fd300d",
+        anchor: {
+          x: 0.5,
+          y: 0.5,
+        },
+        extractionTarget: {
+          x: 0.5,
+          y: 0.75,
+        },
+      },
+    },
+    {
+      media: "(max-width: 699px)",
+      assetPath:
+        "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-dark-portrait-1024.avif",
+      width: 1024,
+      height: 1536,
+      mimeType: "image/avif",
+      composition: {
+        masterSha256:
+          "0cf2635fdd6637757c5a56d90c27cb2b9e7b6c925a66da332f36e268f4fd300d",
+        anchor: {
+          x: 0.5,
+          y: 0.5,
+        },
+        extractionTarget: {
+          x: 0.5,
+          y: 0.75,
+        },
+      },
+    },
+    {
+      media: "(max-width: 699px)",
+      assetPath:
+        "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-dark-portrait-1024.webp",
+      width: 1024,
+      height: 1536,
+      mimeType: "image/webp",
+      composition: {
+        masterSha256:
+          "0cf2635fdd6637757c5a56d90c27cb2b9e7b6c925a66da332f36e268f4fd300d",
+        anchor: {
+          x: 0.5,
+          y: 0.5,
+        },
+        extractionTarget: {
+          x: 0.5,
+          y: 0.75,
+        },
+      },
+    },
+    {
+      media: "",
+      assetPath:
+        "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-dark-landscape-640.avif",
+      width: 640,
+      height: 360,
+      mimeType: "image/avif",
+      composition: {
+        masterSha256:
+          "b20cc60947fdddf7d8f02733658d9f0fabdce786ea5f9614ce1694e44d1fe3f1",
+        anchor: {
+          x: 0.73,
+          y: 0.5,
+        },
+        extractionTarget: {
+          x: 0.73,
+          y: 0.78,
+        },
+      },
+    },
+    {
+      media: "",
+      assetPath:
+        "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-dark-landscape-640.webp",
+      width: 640,
+      height: 360,
+      mimeType: "image/webp",
+      composition: {
+        masterSha256:
+          "b20cc60947fdddf7d8f02733658d9f0fabdce786ea5f9614ce1694e44d1fe3f1",
+        anchor: {
+          x: 0.73,
+          y: 0.5,
+        },
+        extractionTarget: {
+          x: 0.73,
+          y: 0.78,
+        },
+      },
+    },
+    {
+      media: "",
+      assetPath:
+        "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-dark-landscape-960.avif",
+      width: 960,
+      height: 540,
+      mimeType: "image/avif",
+      composition: {
+        masterSha256:
+          "b20cc60947fdddf7d8f02733658d9f0fabdce786ea5f9614ce1694e44d1fe3f1",
+        anchor: {
+          x: 0.73,
+          y: 0.5,
+        },
+        extractionTarget: {
+          x: 0.73,
+          y: 0.78,
+        },
+      },
+    },
+    {
+      media: "",
+      assetPath:
+        "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-dark-landscape-960.webp",
+      width: 960,
+      height: 540,
+      mimeType: "image/webp",
+      composition: {
+        masterSha256:
+          "b20cc60947fdddf7d8f02733658d9f0fabdce786ea5f9614ce1694e44d1fe3f1",
+        anchor: {
+          x: 0.73,
+          y: 0.5,
+        },
+        extractionTarget: {
+          x: 0.73,
+          y: 0.78,
+        },
+      },
+    },
+    {
+      media: "",
+      assetPath:
+        "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-dark-landscape-1280.avif",
+      width: 1280,
+      height: 720,
+      mimeType: "image/avif",
+      composition: {
+        masterSha256:
+          "b20cc60947fdddf7d8f02733658d9f0fabdce786ea5f9614ce1694e44d1fe3f1",
+        anchor: {
+          x: 0.73,
+          y: 0.5,
+        },
+        extractionTarget: {
+          x: 0.73,
+          y: 0.78,
+        },
+      },
+    },
+    {
+      media: "",
+      assetPath:
+        "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-dark-landscape-1280.webp",
+      width: 1280,
+      height: 720,
+      mimeType: "image/webp",
+      composition: {
+        masterSha256:
+          "b20cc60947fdddf7d8f02733658d9f0fabdce786ea5f9614ce1694e44d1fe3f1",
+        anchor: {
+          x: 0.73,
+          y: 0.5,
+        },
+        extractionTarget: {
+          x: 0.73,
+          y: 0.78,
+        },
+      },
+    },
+    {
+      media: "",
+      assetPath:
+        "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-dark-landscape-1672.avif",
+      width: 1672,
+      height: 941,
+      mimeType: "image/avif",
+      composition: {
+        masterSha256:
+          "b20cc60947fdddf7d8f02733658d9f0fabdce786ea5f9614ce1694e44d1fe3f1",
+        anchor: {
+          x: 0.73,
+          y: 0.5,
+        },
+        extractionTarget: {
+          x: 0.73,
+          y: 0.78,
+        },
+      },
+    },
+    {
+      media: "",
+      assetPath:
+        "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-dark-landscape-1672.webp",
+      width: 1672,
+      height: 941,
+      mimeType: "image/webp",
+      composition: {
+        masterSha256:
+          "b20cc60947fdddf7d8f02733658d9f0fabdce786ea5f9614ce1694e44d1fe3f1",
+        anchor: {
+          x: 0.73,
+          y: 0.5,
+        },
+        extractionTarget: {
+          x: 0.73,
+          y: 0.78,
+        },
+      },
+    },
+  ],
+  productionAssetActive: true,
+  anchor: {
+    x: 0.73,
+    y: 0.5,
+  },
+  extractionTarget: {
+    x: 0.73,
+    y: 0.78,
+  },
+  particle: "steady",
+  ambient: "cool",
+  reducedMotion: "static",
+  performance: {
+    maxParticles: 12,
+    maxFps: 30,
+    maxDpr: 1.5,
+    renderer: "canvas-2d",
+    webgl: false,
+    timerAdvancesValue: false,
+  },
+} as const satisfies ApprovedSceneDefinition;
+
 /** 명시 승인된 기본 시각 배경. 상품/카테고리/회원 상태에서 추론하지 않는다. */
 export const DEFAULT_STAGE_BACKDROP = {
   definition: SEMICONDUCTOR_MEMORY_APPROVED_SCENE,
@@ -392,4 +1084,54 @@ export function getSceneRow<K extends SceneFamilyKey>(
   familyKey: K,
 ): SceneRegistryRow<K> {
   return SCENE_REGISTRY[familyKey];
+}
+
+/**
+ * Reviewed product variants are independent from family defaults. New products
+ * sharing a family need their own reviewed entry; a caller cannot borrow one by
+ * supplying the same family or a known master hash.
+ */
+export const APPROVED_PRODUCT_MASTER_VARIANTS = {
+  "semiconductor-memory-v1": {
+    productCodes: ["000660"],
+    category: "KR_STOCK",
+    familyKey: "SEMICONDUCTOR_MEMORY",
+    familyVersion: 1,
+    definition: SEMICONDUCTOR_MEMORY_APPROVED_SCENE,
+  },
+  "product-nvda-gpu-v1": {
+    productCodes: ["NVDA"],
+    category: "US_STOCK",
+    familyKey: "AI_GPU_COMPUTE",
+    familyVersion: 1,
+    definition: NVDA_GPU_APPROVED_SCENE,
+  },
+} as const satisfies Record<
+  ApprovedMasterVariant,
+  {
+    readonly productCodes: readonly string[];
+    readonly category: ProductCategory;
+    readonly familyKey: SceneFamilyKey;
+    readonly familyVersion: 1;
+    readonly definition: ApprovedSceneDefinition;
+  }
+>;
+
+export function getApprovedProductMasterVariant(
+  variant: ApprovedMasterVariant,
+  productCode: string,
+  familyKey: SceneFamilyKey,
+  familyVersion: number,
+  productCategory: ProductCategory,
+): ApprovedSceneDefinition | null {
+  const row = APPROVED_PRODUCT_MASTER_VARIANTS[variant];
+  if (
+    !row ||
+    !(row.productCodes as readonly string[]).includes(productCode) ||
+    row.familyKey !== familyKey ||
+    row.familyVersion !== familyVersion ||
+    row.category !== productCategory
+  )
+    return null;
+  return row.definition;
 }

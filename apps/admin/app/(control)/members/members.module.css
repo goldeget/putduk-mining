@@ -58,11 +58,31 @@
   border-radius: 16px;
   background: var(--surface);
 }
+.searchResults strong {
+  word-break: break-all;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
 .searchResults dl {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
   gap: 12px 24px;
   margin: 0;
+}
+.searchResults dl > div {
+  min-width: 0;
+}
+.resultAction {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25em;
+  word-break: keep-all;
+}
+.resultActionTail {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25em;
+  white-space: nowrap;
 }
 .searchResults dt {
   color: var(--muted);

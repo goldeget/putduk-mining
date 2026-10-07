@@ -206,12 +206,9 @@ export function formatMiningMicroKrw(micro: string | null) {
   if (fraction === 0n) {
     return `${wholeText}원`;
   }
-  const width = MICRO_KRW_PER_KRW.toString().length - 1;
-  const fractionText = fraction
-    .toString()
-    .padStart(width, "0")
-    .replace(/0+$/, "");
-  return `${wholeText}.${fractionText}원`;
+  // Member copy uses whole won. Truncate only this label; authoritative
+  // amounts, fractional accrual and ledger carry remain untouched.
+  return whole === 0n ? "1원 미만" : `약 ${wholeText}원`;
 }
 
 /** 이미 계산된 basis point를 배속으로만 보여 준다. */

@@ -221,6 +221,9 @@ export function OperationsAssistant({
           <p className={styles.note}>
             입금 내역에서 이체 증빙을 확인한 뒤 승인해요.
           </p>
+          <p className={styles.note}>
+            초안을 준비해도 승인되거나 잔액이 바뀌지 않습니다.
+          </p>
           {unavailable ? (
             <div role="alert" className={styles.notice}>
               입금 신청을 불러오지 못했습니다.

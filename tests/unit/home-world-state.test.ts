@@ -424,9 +424,10 @@ describe("Home server funding facts", () => {
   it("formats server principal and remaining limit without deriving a capacity percentage", () => {
     expect(presentHomeFundingFacts(confirmed)).toEqual({
       principal: "9,007,199,254,740,993원",
-      remainingCapacity: "1.5원",
+      remainingCapacity: "약 1원",
     });
     expect(confirmed.funded_runtime?.committed_reward_total_atomic).toBe("7");
+    expect(confirmed.remaining_capacity_micro_krw).toBe("1500000");
   });
 
   it.each([null, undefined, emptyMiningServerDisplay])(

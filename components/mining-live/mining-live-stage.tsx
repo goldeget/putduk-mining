@@ -1,12 +1,22 @@
 "use client";
 
 import Image from "next/image";
-import { useState, type CSSProperties, type ReactNode } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type ReactNode,
+} from "react";
 
 import { useResolvedTheme } from "@/lib/design/use-resolved-theme";
 
 import { SAFE_SCENE_COPY } from "@/lib/mining-scene/safe-scene-copy";
 import type { StageSceneInput } from "@/lib/mining-scene/stage-input";
+import {
+  resolveResponsiveComposition,
+  type SceneImageComposition,
+} from "@/lib/mining-scene/responsive-composition";
 import {
   ACCENT_TOKENS,
   APPROVED_SCENE_ASSET_PATHS,
@@ -26,6 +36,8 @@ const SCENE_IMAGE_SIZES = "(max-width: 599px) 52rem, 100vw";
 
 type MiningLiveStageProps = {
   scene: StageSceneInput;
+  presentation?: "standalone" | "backdrop";
+  className?: string | undefined;
   /** 서버가 이미 확인한 채굴 상태의 장식 힌트. 중지 명령은 호출하지 않는다. */
   running?: boolean;
   reducedMotion?: boolean;
@@ -111,7 +123,55 @@ function ApprovedArt({
   const [sourceFailed, setSourceFailed] = useState(false);
   const [unavailable, setUnavailable] = useState(false);
   const [attempt, setAttempt] = useState(0);
+  const imageRef = useRef<HTMLImageElement>(null);
+  const [composition, setComposition] = useState<SceneImageComposition | null>(
+    null,
+  );
+  const [objectPosition, setObjectPosition] = useState({ x: 0.5, y: 0.5 });
   const groups = responsiveGroups(sources);
+  const imageSizes = sources.some((source) => source.composition)
+    ? "100vw"
+    : SCENE_IMAGE_SIZES;
+
+  useEffect(() => {
+    const element = imageRef.current;
+    if (!element) return;
+    function synchronize() {
+      if (!element?.complete || element.naturalWidth === 0) {
+        setComposition(null);
+        return;
+      }
+      setComposition(
+        resolveResponsiveComposition({
+          currentSrc: element.currentSrc || element.src,
+          origin: window.location.origin,
+          master,
+          sources,
+          anchor: scene.anchor,
+          extractionTarget: scene.extractionTarget,
+        }),
+      );
+      const positions = getComputedStyle(element).objectPosition.split(" ");
+      const values = positions.map((part) =>
+        /^\d+(?:\.\d+)?%$/.test(part) ? Number.parseFloat(part) / 100 : NaN,
+      );
+      setObjectPosition(
+        values.length === 2 &&
+          values.every(
+            (value) => Number.isFinite(value) && value >= 0 && value <= 1,
+          )
+          ? { x: values[0]!, y: values[1]! }
+          : { x: 0.5, y: 0.5 },
+      );
+    }
+    element.addEventListener("load", synchronize);
+    window.addEventListener("resize", synchronize);
+    synchronize();
+    return () => {
+      element.removeEventListener("load", synchronize);
+      window.removeEventListener("resize", synchronize);
+    };
+  }, [master, sources, scene.anchor, scene.extractionTarget, attempt]);
 
   return (
     <>
@@ -129,17 +189,18 @@ function ApprovedArt({
                 media={group.media || undefined}
                 type={group.type}
                 srcSet={group.candidates.join(", ")}
-                sizes={SCENE_IMAGE_SIZES}
+                sizes={imageSizes}
               />
             ))
           : null}
         <Image
+          ref={imageRef}
           className={styles.master}
           alt=""
           src={master.assetPath}
           width={master.width}
           height={master.height}
-          sizes={SCENE_IMAGE_SIZES}
+          sizes={imageSizes}
           loading="eager"
           fetchPriority="high"
           unoptimized
@@ -155,13 +216,15 @@ function ApprovedArt({
         />
       </picture>
       <SceneDecoration
-        enabled={decoration && loaded && !unavailable}
-        anchor={scene.anchor}
+        enabled={decoration && loaded && !unavailable && composition !== null}
+        anchor={composition?.anchor ?? null}
+        extractionTarget={composition?.extractionTarget ?? null}
+        objectPosition={objectPosition}
         particleCount={scene.performance?.maxParticles ?? 0}
         maxFps={scene.performance?.maxFps}
         maxDpr={scene.performance?.maxDpr}
-        imageWidth={master.width}
-        imageHeight={master.height}
+        imageWidth={composition?.width ?? 0}
+        imageHeight={composition?.height ?? 0}
       />
       {unavailable ? (
         <div className={styles.imageRecovery}>
@@ -199,6 +262,8 @@ function accentStyle(token: AccentToken | null): CSSProperties | undefined {
  */
 export function MiningLiveStage({
   scene,
+  presentation = "standalone",
+  className,
   running = false,
   reducedMotion = false,
   children,
@@ -232,12 +297,13 @@ export function MiningLiveStage({
 
   return (
     <section
-      className={styles.stage}
+      className={`${styles.stage}${className ? ` ${className}` : ""}`}
       style={accentStyle(scene.accentToken)}
       data-scene-family={scene.familyKey ?? ""}
       data-scene-version={scene.version ?? ""}
       data-scene-art={artState(scene, master)}
       data-scene-theme={theme}
+      data-scene-layout={presentation}
       data-mining-running={running ? "true" : "false"}
       data-motion={paintDecoration ? "ambient" : "static"}
       aria-label={scene.a11yLabelKo}

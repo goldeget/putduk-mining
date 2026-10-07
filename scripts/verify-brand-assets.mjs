@@ -4,13 +4,17 @@ import { fileURLToPath } from "node:url";
 import path from "node:path";
 import { verifyCatalogMaterialAssets } from "./verify-catalog-material-assets.mjs";
 import { verifyMiningResponsiveAssets } from "./verify-mining-responsive-assets.mjs";
+import {
+  productNvdaMetadataFailures,
+  verifyProductNvdaAssets,
+} from "./verify-product-nvda-assets.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const manifestPath = path.join(root, "public", "brand", "assets.manifest.json");
 const manifest = JSON.parse(await readFile(manifestPath, "utf8"));
 
 const failures = [];
-const requiredVersion = "2026.10.06-v17";
+const requiredVersion = "2026.10.06-v18";
 const aiHelpSource =
   "docs/design/generated-masters/ai-help-face-2026-10-03/putduk-ai-help-face-master-v1.png";
 const aiHelpSourceHash =
@@ -955,6 +959,7 @@ export function aiHelpMetadataFailures(asset) {
       !delegatedSignupPaths.has(asset.path) &&
       !delegatedWalletPaths.has(asset.path) &&
       !delegatedMiningPaths.has(asset.path) &&
+      !asset.path?.startsWith("/brand/scenes/product-nvda-gpu-v1/") &&
       provenanceKeys.some((key) => key in asset)
       ? [`unapproved provenance path: ${asset.path}`]
       : [];
@@ -991,6 +996,8 @@ export function aiHelpMetadataFailures(asset) {
 }
 
 export function approvedSceneMetadataFailures(asset) {
+  if (asset.path?.startsWith("/brand/scenes/product-nvda-gpu-v1/"))
+    return productNvdaMetadataFailures(asset);
   if (
     delegatedAIProfiles.some(({ family }) =>
       asset.path?.startsWith(`/brand/scenes/${family}/`),
@@ -1295,6 +1302,7 @@ for (const relative of wordmarks) {
 
 failures.push(...(await verifyCatalogMaterialAssets(root)));
 failures.push(...(await verifyMiningResponsiveAssets(root)));
+failures.push(...(await verifyProductNvdaAssets(root)));
 
 if (failures.length > 0) {
   console.error(

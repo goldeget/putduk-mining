@@ -235,13 +235,25 @@
 }
 
 .quickActions {
+  min-width: 0;
+  container: home-actions / inline-size;
+}
+
+.quickActionsLayout {
   display: grid;
   min-width: 0;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 3.35rem), 1fr));
+  grid-template-columns: minmax(0, 4fr) minmax(0, 1fr);
   gap: 0.35rem;
 }
 
-.quickActions > a {
+.quickActionGrid {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.35rem;
+}
+
+.quickActionGrid > a {
   display: grid;
   min-width: 0;
   min-height: 5.5rem;
@@ -261,7 +273,7 @@
   text-decoration: none;
 }
 
-.quickActions > footer {
+.quickActionsLayout > footer {
   min-width: 0;
   height: 100%;
 }
@@ -271,7 +283,7 @@
   display: none;
 }
 
-.quickActions > a > svg {
+.quickActionGrid > a > svg {
   color: var(--brand-primary);
   filter: drop-shadow(
     0 2px 4px color-mix(in srgb, var(--brand-primary) 20%, transparent)
@@ -295,7 +307,7 @@
   overflow-wrap: anywhere;
 }
 
-.quickActions > a:hover,
+.quickActionGrid > a:hover,
 .summary a:hover,
 .productCard:hover {
   border-color: var(--brand-primary);
@@ -973,22 +985,9 @@
     font-size: 1.1rem;
   }
 
-  .quickActions {
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 8.5rem), 1fr));
+  .quickActionsLayout,
+  .quickActionGrid {
     gap: 0.8rem;
-  }
-
-  .quickActions > a {
-    min-height: 94px;
-    grid-template-columns: 38px minmax(0, 1fr);
-    column-gap: 0.6rem;
-    justify-items: start;
-    padding-inline: 0.85rem;
-    text-align: left;
-  }
-
-  .quickActions > a > svg {
-    grid-row: 1 / 3;
   }
 
   .quickActions strong {
@@ -1096,7 +1095,7 @@
 }
 
 .page:has([data-scene-theme="light"]) .quickActions .darkQuickAction,
-.page:has([data-scene-theme="light"]) .quickActions > footer,
+.page:has([data-scene-theme="light"]) .quickActionsLayout > footer,
 .page:has([data-scene-theme="light"]) .quickActions .darkActionLabel,
 .page:has([data-scene-theme="light"]) .quickActions small {
   display: none;
@@ -1114,7 +1113,7 @@
   display: inline;
 }
 
-.page:has([data-scene-theme="light"]) .quickActions > a > svg {
+.page:has([data-scene-theme="light"]) .quickActionGrid > a > svg {
   width: 42px;
   height: 42px;
   padding: 7px;
@@ -1291,7 +1290,7 @@
     grid-column: 1 / -1;
   }
 
-  .quickActions > footer[data-ai-dock] button strong {
+  .quickActionsLayout > footer[data-ai-dock] button strong {
     font-size: 0.8125rem;
     line-height: 1.25;
     white-space: normal;
@@ -1299,7 +1298,7 @@
     overflow-wrap: anywhere;
   }
 
-  .quickActions > footer[data-ai-dock] button small {
+  .quickActionsLayout > footer[data-ai-dock] button small {
     font-size: 0.75rem;
     line-height: 1.3;
     white-space: normal;
@@ -1324,9 +1323,9 @@
     margin-inline: -0.35rem;
   }
 
-  .page:has([data-scene-theme="dark"]) .quickActions > a,
+  .page:has([data-scene-theme="dark"]) .quickActionGrid > a,
   .page:has([data-scene-theme="dark"])
-    .quickActions
+    .quickActionsLayout
     > footer[data-ai-dock]
     button[aria-haspopup="dialog"] {
     gap: 0.15rem;
@@ -1334,7 +1333,7 @@
   }
 
   .page:has([data-scene-theme="dark"])
-    .quickActions
+    .quickActionsLayout
     > footer[data-ai-dock]
     button[aria-haspopup="dialog"]
     > span:has(> strong) {
@@ -1342,7 +1341,7 @@
   }
 
   .page:has([data-scene-theme="dark"])
-    .quickActions
+    .quickActionsLayout
     > footer[data-ai-dock]
     button[aria-haspopup="dialog"]
     strong {
@@ -1437,7 +1436,7 @@
 
 .quickActions strong,
 .quickActions small,
-.quickActions > footer[data-ai-dock] button :is(strong, small) {
+.quickActionsLayout > footer[data-ai-dock] button :is(strong, small) {
   overflow-wrap: normal;
 }
 
@@ -1536,4 +1535,84 @@
 .productCard:has(.productArtworkNative) .productAvailability {
   padding-right: 1.2rem;
   overflow-wrap: anywhere;
+}
+
+/* Keep the four navigation actions balanced; AI remains its own help action. */
+.page:has([data-scene-theme="light"]) .quickActionsLayout {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.quickActions strong,
+.quickActionsLayout > footer[data-ai-dock] button strong {
+  white-space: nowrap;
+}
+
+@container home-actions (max-width: 22rem) {
+  .page:has([data-scene-theme="light"]) .quickActionGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@container home-actions (max-width: 16rem) {
+  .quickActionGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@container home-actions (max-width: 13rem) {
+  .page:has([data-scene-theme="light"]) .quickActionGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@container home-actions (max-width: 10rem) {
+  .quickActionGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@container home-actions (min-width: 50rem) {
+  .quickActionGrid > a {
+    min-height: 94px;
+    grid-template-columns: 38px minmax(0, 1fr);
+    column-gap: 0.6rem;
+    justify-items: start;
+    padding-inline: 0.85rem;
+    text-align: left;
+  }
+
+  .quickActionGrid > a > svg {
+    grid-row: 1 / 3;
+  }
+}
+
+@container home-actions (max-width: 50rem) {
+  .quickActionsLayout > footer[data-ai-dock] button[aria-haspopup="dialog"] {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    padding-inline: 0.15rem;
+    text-align: center;
+  }
+
+  .quickActionsLayout > footer[data-ai-dock] button > span:has(> strong) {
+    text-align: center;
+  }
+}
+
+@container home-actions (max-width: 26rem) {
+  .quickActionsLayout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .quickActionsLayout > footer[data-ai-dock] button[aria-haspopup="dialog"] {
+    grid-template-columns: 38px minmax(0, 1fr);
+    justify-items: start;
+    column-gap: 0.65rem;
+    padding: 0.65rem 0.85rem;
+    text-align: left;
+  }
+
+  .quickActionsLayout > footer[data-ai-dock] button > span:has(> strong) {
+    text-align: left;
+  }
 }

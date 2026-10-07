@@ -2,6 +2,7 @@ import type { CSSProperties } from "react";
 import Link from "next/link";
 
 import { MiningReferenceScene } from "@/components/mining-live/mining-reference-scene";
+import { MiningLiveStage } from "@/components/mining-live/mining-live-stage";
 import { PutdukHomeIcon } from "@/components/icons/putduk-home-icon";
 import { PutdukIcon } from "@/components/icons/putduk-icon";
 import { FundedRuntimeSummary } from "@/components/product/funded-runtime-summary";
@@ -29,6 +30,8 @@ import {
 } from "@/lib/product/mining-presentation";
 import { parseMiningServerDisplay } from "@/lib/product/mining-server-display";
 import { readOwnMiningServerDisplay } from "@/lib/product/read-mining-server-display";
+import { readMemberSceneBinding } from "@/lib/product/read-member-scene-binding.server";
+import { projectStageInput } from "@/lib/mining-scene/stage-input";
 
 import styles from "./page.module.css";
 
@@ -93,6 +96,7 @@ export default async function MiningPage() {
     { data: krwAccount, error: accountError },
     { data: receipts, error: receiptsError },
     { data: trial, error: trialError },
+    sceneBinding,
   ] = await Promise.all([
     identity.supabase
       .from("mining_active_session_snapshots")
@@ -125,6 +129,7 @@ export default async function MiningPage() {
       .select("status")
       .eq("user_id", identity.userId)
       .maybeSingle(),
+    readMemberSceneBinding(identity),
   ]);
   const { data: rewardEntries, error: rewardError } =
     !accountError && krwAccount?.wallet_account_id
@@ -152,6 +157,12 @@ export default async function MiningPage() {
   const facts = presentMiningReferenceFacts(display, displayError);
   const capacityProgress = presentHomeCapacityProgress(display, displayError);
   const runtime = display?.funded_runtime;
+  const selectedProduct =
+    sceneBinding.state === "ready" ? sceneBinding.products[0] : null;
+  // Confirmed allocation intent is not current-session or per-product accrual proof.
+  const selectedArt = selectedProduct?.scene.productionAssetActive
+    ? selectedProduct
+    : null;
   const trialView = presentMiningTrial(trial?.status, Boolean(trialError));
   const hasFailedRead =
     displayError ||
@@ -182,11 +193,23 @@ export default async function MiningPage() {
       }
     >
       <section className={styles.controlRoom} aria-label="현재 채굴 현황">
-        <div className={styles.hero}>
-          <MiningReferenceScene
-            running={presentation.running}
-            className={styles.artwork}
-          />
+        <div
+          className={styles.hero}
+          data-member-product-art={selectedArt?.code}
+        >
+          {selectedArt ? (
+            <MiningLiveStage
+              scene={projectStageInput(selectedArt.scene)}
+              presentation="backdrop"
+              className={styles.artwork}
+              running={false}
+            />
+          ) : (
+            <MiningReferenceScene
+              running={presentation.running}
+              className={styles.artwork}
+            />
+          )}
           <div className={styles.heroScrim} aria-hidden="true" />
           <header className={styles.heroCopy}>
             <div className={styles.brand}>
@@ -208,6 +231,11 @@ export default async function MiningPage() {
             />
             <h2 id="world-hero-title">{presentation.title}</h2>
             <p>{presentation.lead}</p>
+            {selectedArt ? (
+              <p data-member-scene-binding="confirmed-allocation">
+                선택 상품 테마 · {selectedArt.nameKo}
+              </p>
+            ) : null}
           </div>
           <div className={styles.tierCard}>
             <PutdukHomeIcon name="crown" size={38} />

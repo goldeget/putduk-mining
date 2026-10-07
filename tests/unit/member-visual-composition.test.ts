@@ -81,9 +81,34 @@ describe("회원 화면 구도", () => {
       /\.summaryGrid\s*\{[^}]*grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\)/s,
     );
 
-    expect(homeCss).toMatch(
-      /\.quickActions\s*\{[^}]*repeat\(auto-fit,\s*minmax\(min\(100%,\s*3\.35rem\),\s*1fr\)\)/s,
+    const quickActions = homePage.slice(
+      homePage.indexOf("<nav className={styles.quickActions}"),
+      homePage.indexOf(
+        "</nav>",
+        homePage.indexOf("<nav className={styles.quickActions}"),
+      ),
     );
+    const primaryActions = quickActions.slice(
+      quickActions.indexOf("data-home-primary-actions"),
+      quickActions.indexOf("</div>"),
+    );
+    // The theme substitutes the fourth action; all three money/mining links
+    // stay navigable, and the dialog launcher is outside the four-action group.
+    const hrefs = [...primaryActions.matchAll(/href="([^"]+)"/g)].map(
+      (match) => match[1],
+    );
+    expect(hrefs).toEqual([
+      "/mining",
+      "/wallet/deposit",
+      "/wallet/withdraw",
+      "/events",
+      "/wallet?view=history",
+    ]);
+    expect(primaryActions).not.toContain("PutdukAiDock");
+    expect(quickActions.indexOf("<PutdukAiDock")).toBeGreaterThan(
+      quickActions.indexOf("</div>"),
+    );
+    expect(homeCss).not.toMatch(/\.quickActions\s*\{[^}]*auto-fit/s);
     expect(homeCss).toMatch(/\.profileStats\s*\{/);
     expect(homeCss).toMatch(/\.featureBand\s*\{/);
     expect(homeCss).toMatch(

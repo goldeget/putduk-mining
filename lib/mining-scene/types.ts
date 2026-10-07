@@ -88,6 +88,10 @@ export type ScenePerformance = {
 export const APPROVED_SCENE_MASTER_SHA256 = [
   "5d398a3155635d46a6d0b1f639c25d349ddf21607a16a4e6f948655744b8a6dd",
   "113fdbc5c41772145f98f3357f27754fa1bd20602a5261c133becc0fa1126d52",
+  "0cf2635fdd6637757c5a56d90c27cb2b9e7b6c925a66da332f36e268f4fd300d",
+  "b20cc60947fdddf7d8f02733658d9f0fabdce786ea5f9614ce1694e44d1fe3f1",
+  "56638dce5ebe61b38c21da4249e3474e5a62a7d17f32cb885d945c8ee41a1115",
+  "abfc46f87a1822c5e705b527432da85d638bd500379f7a6fccf282e66392c736",
 ] as const;
 
 export type ApprovedSceneMasterSha256 =
@@ -111,12 +115,47 @@ export const APPROVED_SCENE_ASSET_PATHS = [
   "/brand/scenes/semiconductor-memory-light/semiconductor-memory-light-1280-v1.webp",
   "/brand/scenes/semiconductor-memory-light/semiconductor-memory-light-1536-v1.avif",
   "/brand/scenes/semiconductor-memory-light/semiconductor-memory-light-1536-v1.webp",
+  "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-dark-portrait-480.avif",
+  "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-dark-portrait-480.webp",
+  "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-dark-portrait-640.avif",
+  "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-dark-portrait-640.webp",
+  "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-dark-portrait-960.avif",
+  "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-dark-portrait-960.webp",
+  "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-dark-portrait-1024.avif",
+  "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-dark-portrait-1024.webp",
+  "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-dark-landscape-640.avif",
+  "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-dark-landscape-640.webp",
+  "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-dark-landscape-960.avif",
+  "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-dark-landscape-960.webp",
+  "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-dark-landscape-1280.avif",
+  "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-dark-landscape-1280.webp",
+  "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-dark-landscape-1672.avif",
+  "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-dark-landscape-1672.webp",
+  "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-light-portrait-480.avif",
+  "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-light-portrait-480.webp",
+  "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-light-portrait-640.avif",
+  "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-light-portrait-640.webp",
+  "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-light-portrait-960.avif",
+  "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-light-portrait-960.webp",
+  "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-light-portrait-1024.avif",
+  "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-light-portrait-1024.webp",
+  "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-light-landscape-640.avif",
+  "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-light-landscape-640.webp",
+  "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-light-landscape-960.avif",
+  "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-light-landscape-960.webp",
+  "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-light-landscape-1280.avif",
+  "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-light-landscape-1280.webp",
+  "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-light-landscape-1672.avif",
+  "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-light-landscape-1672.webp",
 ] as const;
 
 export type ApprovedSceneAssetPath =
   (typeof APPROVED_SCENE_ASSET_PATHS)[number];
 
-export const APPROVED_MASTER_VARIANTS = ["semiconductor-memory-v1"] as const;
+export const APPROVED_MASTER_VARIANTS = [
+  "semiconductor-memory-v1",
+  "product-nvda-gpu-v1",
+] as const;
 
 export type ApprovedMasterVariant = (typeof APPROVED_MASTER_VARIANTS)[number];
 
@@ -142,6 +181,12 @@ export type ApprovedResponsiveSource = {
   readonly width: number;
   readonly height: number;
   readonly mimeType: "image/avif" | "image/webp";
+  /** Exact reviewed source geometry; this never advances runtime value. */
+  readonly composition?: {
+    readonly masterSha256: ApprovedSceneMasterSha256;
+    readonly anchor: ScenePoint;
+    readonly extractionTarget: ScenePoint;
+  };
 };
 
 type SceneDefinitionBase = {
@@ -202,6 +247,7 @@ export type SceneVisualStatus =
   | "VISUAL_MASTER_REQUIRED"
   | "FAMILY_UNASSIGNED"
   | "UNSUPPORTED_FAMILY"
+  | "MASTER_VARIANT_UNAVAILABLE"
   | "PRESENTATION_MISSING"
   | "PRESENTATION_MISMATCH";
 
@@ -221,6 +267,78 @@ export function isApprovedMasterSha256(
   return (APPROVED_SCENE_MASTER_SHA256 as readonly string[]).includes(value);
 }
 
+export function isApprovedMasterVariant(
+  value: unknown,
+): value is ApprovedMasterVariant {
+  return (
+    typeof value === "string" &&
+    (APPROVED_MASTER_VARIANTS as readonly string[]).includes(value)
+  );
+}
+
+export const APPROVED_GPU_COMPOSITION_BINDINGS = [
+  {
+    sha256: "0cf2635fdd6637757c5a56d90c27cb2b9e7b6c925a66da332f36e268f4fd300d",
+    prefix:
+      "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-dark-portrait-",
+    width: 1024,
+    height: 1536,
+    anchor: {
+      x: 0.5,
+      y: 0.5,
+    },
+    extractionTarget: {
+      x: 0.5,
+      y: 0.75,
+    },
+  },
+  {
+    sha256: "b20cc60947fdddf7d8f02733658d9f0fabdce786ea5f9614ce1694e44d1fe3f1",
+    prefix:
+      "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-dark-landscape-",
+    width: 1672,
+    height: 941,
+    anchor: {
+      x: 0.73,
+      y: 0.5,
+    },
+    extractionTarget: {
+      x: 0.73,
+      y: 0.78,
+    },
+  },
+  {
+    sha256: "56638dce5ebe61b38c21da4249e3474e5a62a7d17f32cb885d945c8ee41a1115",
+    prefix:
+      "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-light-portrait-",
+    width: 1024,
+    height: 1536,
+    anchor: {
+      x: 0.5,
+      y: 0.5,
+    },
+    extractionTarget: {
+      x: 0.5,
+      y: 0.75,
+    },
+  },
+  {
+    sha256: "abfc46f87a1822c5e705b527432da85d638bd500379f7a6fccf282e66392c736",
+    prefix:
+      "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-light-landscape-",
+    width: 1672,
+    height: 941,
+    anchor: {
+      x: 0.73,
+      y: 0.5,
+    },
+    extractionTarget: {
+      x: 0.73,
+      y: 0.78,
+    },
+  },
+] as const;
+
 /** Bind each reviewed hash to its own exact responsive paths and dimensions. */
 export function isApprovedSceneMasterImage(
   master: ApprovedSceneMasterImage,
@@ -232,6 +350,20 @@ export function isApprovedSceneMasterImage(
     )
   )
     return false;
+  const gpu = APPROVED_GPU_COMPOSITION_BINDINGS.find(
+    (binding) => binding.sha256 === master.sha256,
+  );
+  if (gpu) {
+    if (!master.assetPath.startsWith(gpu.prefix)) return false;
+    const width = Number(
+      master.assetPath.slice(gpu.prefix.length).split(".")[0],
+    );
+    return (
+      Number.isSafeInteger(width) &&
+      master.width === width &&
+      master.height === Math.round((width * gpu.height) / gpu.width)
+    );
+  }
   const light = master.sha256 === APPROVED_SCENE_MASTER_SHA256[1];
   const prefix = light
     ? "/brand/scenes/semiconductor-memory-light/semiconductor-memory-light-"
@@ -248,4 +380,30 @@ export function isApprovedSceneMasterImage(
 /** 허용 목록 밖의 해시는 프로덕션 마스터가 되지 않는다. */
 export function tryActivateProductionMaster(sha256: string): null {
   return isApprovedMasterSha256(sha256) ? null : null;
+}
+
+/** A responsive GPU image must carry only its own hash-locked source geometry. */
+export function isApprovedResponsiveComposition(
+  source: ApprovedResponsiveSource,
+): boolean {
+  const binding = APPROVED_GPU_COMPOSITION_BINDINGS.find((candidate) =>
+    source.assetPath.startsWith(candidate.prefix),
+  );
+  if (!binding) return source.composition === undefined;
+  const composition = source.composition;
+  return (
+    composition !== undefined &&
+    composition.masterSha256 === binding.sha256 &&
+    composition.anchor.x === binding.anchor.x &&
+    composition.anchor.y === binding.anchor.y &&
+    composition.extractionTarget.x === binding.extractionTarget.x &&
+    composition.extractionTarget.y === binding.extractionTarget.y &&
+    isApprovedSceneMasterImage({
+      sha256: binding.sha256,
+      assetPath: source.assetPath,
+      width: source.width,
+      height: source.height,
+      altKo: "GPU 장면",
+    })
+  );
 }

@@ -48,11 +48,11 @@ describe("original-bound funded display envelope", () => {
       });
       expect(presented.rows).toContainEqual({
         label: "정산 전",
-        value: "0.73원",
+        value: "1원 미만",
       });
       expect(presented.rows).toContainEqual({
         label: "확인 전",
-        value: "12.73원",
+        value: "약 12원",
       });
       expect(presented.rows.some((row) => row.label.includes("지갑"))).toBe(
         false,

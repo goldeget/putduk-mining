@@ -1050,3 +1050,18 @@
     padding: 0.5rem 1rem 1.5rem;
   }
 }
+
+/* Keep the selected GPU equipment visible in the reading area. Its landscape
+   master places the module to the right; the financial rail remains separate. */
+@media (min-width: 700px) {
+  .hero[data-member-product-art="NVDA"] .artwork img {
+    object-position: 100% 50%;
+  }
+}
+
+@media (min-width: 1100px) {
+  .hero[data-member-product-art="NVDA"] {
+    position: relative;
+    overflow: hidden;
+  }
+}

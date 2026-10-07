@@ -77,7 +77,7 @@ describe("catalog scene resolution", () => {
     );
   });
 
-  test("keeps catalog identity and assigns a family only to 000660", () => {
+  test("keeps catalog identity and assigns only independently reviewed product variants", () => {
     for (const product of CATALOG_V1_PRODUCTS) {
       const resolved = resolveCatalogProduct(product);
       expect(resolved.identity).toEqual({
@@ -94,6 +94,14 @@ describe("catalog scene resolution", () => {
         expect(resolved.scene?.familyKey).toBe(ASSIGNED_FAMILY);
         expect(resolved.visualStatus).toBe("MASTER_READY");
         expect(resolved.scene?.packStatus).toBe("APPROVED");
+      } else if (product.code === "NVDA") {
+        expect(resolved.productionAssetActive).toBe(true);
+        expect(resolved.presentation?.sceneFamilyKey).toBe("AI_GPU_COMPUTE");
+        expect(resolved.presentation?.profile.masterVariant).toBe(
+          "product-nvda-gpu-v1",
+        );
+        expect(resolved.scene?.packStatus).toBe("APPROVED");
+        expect(resolved.visualStatus).toBe("MASTER_READY");
       } else {
         expect(resolved.productionAssetActive).toBe(false);
         expect(resolved.userCopyKo).toBe(SAFE_SCENE_COPY);
@@ -120,7 +128,7 @@ describe("catalog scene resolution", () => {
     expect(disguised.scene?.familyKey).toBe("PRECIOUS_GOLD");
     expect(disguised.presentation?.profile.displayNameKo).toBe("엔비디아 테마");
     expect(
-      resolveCatalogProduct(identity("NVDA", "US_STOCK")).scene,
+      resolveCatalogProduct(identity("NVDA", "KR_STOCK")).scene,
     ).toBeNull();
   });
 
@@ -192,15 +200,7 @@ describe("scene selection without a renderer branch", () => {
     expect(first.presentation?.profile.particleEmphasis).toBe("none");
     expect(second.presentation?.profile.particleEmphasis).toBe("steady");
 
-    for (const code of [
-      "ETH",
-      "BNB",
-      "XRP",
-      "BTC",
-      "NVDA",
-      "XAU",
-      "XAG",
-    ] as const) {
+    for (const code of ["ETH", "BNB", "XRP", "BTC", "XAU", "XAG"] as const) {
       const resolved = resolveCatalogProduct(
         CATALOG_V1_PRODUCTS.find((item) => item.code === code)!,
       );
@@ -376,6 +376,10 @@ describe("registry contract", () => {
     expect(APPROVED_SCENE_MASTER_SHA256).toEqual([
       "5d398a3155635d46a6d0b1f639c25d349ddf21607a16a4e6f948655744b8a6dd",
       "113fdbc5c41772145f98f3357f27754fa1bd20602a5261c133becc0fa1126d52",
+      "0cf2635fdd6637757c5a56d90c27cb2b9e7b6c925a66da332f36e268f4fd300d",
+      "b20cc60947fdddf7d8f02733658d9f0fabdce786ea5f9614ce1694e44d1fe3f1",
+      "56638dce5ebe61b38c21da4249e3474e5a62a7d17f32cb885d945c8ee41a1115",
+      "abfc46f87a1822c5e705b527432da85d638bd500379f7a6fccf282e66392c736",
     ]);
     expect(SK_HYNIX_V3_REFERENCE.activatesProductionScene).toBe(false);
     expect(SK_HYNIX_V3_REFERENCE.productionAssetApproval).toBe("NOT_APPROVED");
@@ -407,9 +411,11 @@ describe("registry contract", () => {
     );
     expect(assigned.map((item) => item.productCode)).toEqual([
       ASSIGNED_PRODUCT_CODE,
+      "NVDA",
     ]);
     expect(assigned.map((item) => item.sceneFamilyKey)).toEqual([
       ASSIGNED_FAMILY,
+      "AI_GPU_COMPUTE",
     ]);
   });
 

@@ -15,6 +15,17 @@
   min-height: 10rem;
 }
 
+.stage[data-scene-layout="backdrop"] {
+  min-height: 0;
+  height: 100%;
+  border: 0;
+  border-radius: 0;
+}
+
+.stage[data-scene-layout="backdrop"] .content {
+  display: none;
+}
+
 .content {
   position: relative;
   z-index: 2;

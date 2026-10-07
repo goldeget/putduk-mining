@@ -135,7 +135,7 @@ describe("registered default mining backdrop", () => {
   test("does not assign the default art to unrelated catalog products", () => {
     for (const identity of [
       { code: "005930", category: "KR_STOCK" },
-      { code: "NVDA", category: "US_STOCK" },
+      { code: "AAPL", category: "US_STOCK" },
       { code: "XAU", category: "GOLD" },
       { code: "BTC", category: "CRYPTO" },
     ] as const) {

@@ -180,8 +180,8 @@ describe("facts are formatted server facts, not economics", () => {
       speed: "0.5배",
       pending: "250원",
       committed: "9,876,543,210,987,654,321원",
-      used: "76,543.210988원",
-      remaining: "123,456.789012원",
+      used: "약 76,543원",
+      remaining: "약 123,456원",
     });
   });
   it("never presents the legacy policy multiplier as the missing paid current speed", () => {

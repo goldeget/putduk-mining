@@ -11,6 +11,33 @@ import type {
   SceneVisualStatus,
 } from "@/lib/mining-scene/types";
 
+function projectSource(
+  source: ApprovedResponsiveSource,
+): ApprovedResponsiveSource {
+  return {
+    media: source.media,
+    assetPath: source.assetPath,
+    width: source.width,
+    height: source.height,
+    mimeType: source.mimeType,
+    ...(source.composition
+      ? {
+          composition: {
+            masterSha256: source.composition.masterSha256,
+            anchor: {
+              x: source.composition.anchor.x,
+              y: source.composition.anchor.y,
+            },
+            extractionTarget: {
+              x: source.composition.extractionTarget.x,
+              y: source.composition.extractionTarget.y,
+            },
+          },
+        }
+      : {}),
+  };
+}
+
 /**
  * 공통 렌더러 입력.
  * 상품 코드와 패밀리별 컴포넌트 분기를 넣지 않는다.
@@ -86,6 +113,7 @@ export const STAGE_INPUT_HAS_NO_ECONOMIC_IDENTITY: [StageLeak] extends [never]
   ? true
   : never = true;
 
+/** The resolver selects a reviewed product variant before identity is removed. */
 export function projectStageInput(resolved: ResolvedScene): StageSceneInput {
   const scene = resolved.scene;
   const performance = scene?.performance;
@@ -138,28 +166,14 @@ export function projectStageInput(resolved: ResolvedScene): StageSceneInput {
                     height: master.lightVariant.master.height,
                     altKo: master.lightVariant.master.altKo,
                   },
-                  responsiveSources: master.lightVariant.responsiveSources.map(
-                    (source) => ({
-                      media: source.media,
-                      assetPath: source.assetPath,
-                      width: source.width,
-                      height: source.height,
-                      mimeType: source.mimeType,
-                    }),
-                  ),
+                  responsiveSources:
+                    master.lightVariant.responsiveSources.map(projectSource),
                 },
               }
             : {}),
         }
       : null,
-    responsiveSources:
-      scene?.responsiveSources.map((source) => ({
-        media: source.media,
-        assetPath: source.assetPath,
-        width: source.width,
-        height: source.height,
-        mimeType: source.mimeType,
-      })) ?? [],
+    responsiveSources: scene?.responsiveSources.map(projectSource) ?? [],
     productionAssetActive: resolved.productionAssetActive,
     decoration,
   };

@@ -11,7 +11,7 @@ import type {
  * 앞자리 0 은 문자열로 유지한다.
  *
  * display_profile 은 difficulty/risk 표시값뿐이라 scene family 를 주지 않는다.
- * 생산 배정은 000660 하나다. V3 시각 원본이 그 상품의 메모리 장면이기 때문이다.
+ * 생산 시각 배정은 000660과 NVDA의 독립 검토 마스터다. V3 시각 원본이 그 상품의 메모리 장면이기 때문이다.
  * 다른 코드의 sceneFamilyKey 는 null 이고, 비슷한 family 로 채우지 않는다.
  */
 export const CATALOG_V1_PRODUCTS = [
@@ -83,12 +83,26 @@ export const APPROVED_PRODUCT_PRESENTATIONS = {
       ambientPreset: "cool",
       htmlCopyKo: SAFE_SCENE_COPY,
       a11yLabelKo: SAFE_SCENE_COPY,
-      masterVariant: null,
+      masterVariant: "semiconductor-memory-v1",
     },
   },
   AAPL: unassigned("AAPL", "애플 테마"),
   MSFT: unassigned("MSFT", "마이크로소프트 테마"),
-  NVDA: unassigned("NVDA", "엔비디아 테마"),
+  NVDA: {
+    productCode: "NVDA",
+    sceneFamilyKey: "AI_GPU_COMPUTE",
+    sceneFamilyVersion: 1,
+    profile: {
+      displayNameKo: "엔비디아 테마",
+      accentToken: "--world-usa",
+      particleEmphasis: "steady",
+      decorativeObjects: ["halo"],
+      ambientPreset: "cool",
+      htmlCopyKo: SAFE_SCENE_COPY,
+      a11yLabelKo: SAFE_SCENE_COPY,
+      masterVariant: "product-nvda-gpu-v1",
+    },
+  },
   XAU: unassigned("XAU", "골드 테마"),
   XAG: unassigned("XAG", "실버 테마"),
   BTC: unassigned("BTC", "비트코인 테마"),

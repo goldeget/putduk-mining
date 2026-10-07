@@ -68,9 +68,18 @@ async function render({
 }
 
 async function imageEvent(type: "load" | "error") {
-  await act(async () =>
-    host.querySelector("img")!.dispatchEvent(new Event(type)),
-  );
+  const image = host.querySelector("img")!;
+  // jsdom does not load image bytes. A successful load must include the
+  // browser's selected source and decoded dimensions, not an event alone.
+  if (type === "load") {
+    Object.defineProperties(image, {
+      complete: { configurable: true, value: true },
+      naturalWidth: { configurable: true, value: image.width },
+      naturalHeight: { configurable: true, value: image.height },
+      currentSrc: { configurable: true, value: image.src },
+    });
+  }
+  await act(async () => image.dispatchEvent(new Event(type)));
 }
 
 beforeEach(() => {

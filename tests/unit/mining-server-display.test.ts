@@ -104,6 +104,16 @@ describe("presentMiningServerDisplay", () => {
     expect(formatMiningMicroKrw("1000000")).toBe("1원");
     expect(formatMiningSpeedBps("10000")).toBe("1배");
   });
+  test("keeps sub-won accrual truthful without exposing micro units or rounding a credit", () => {
+    expect(formatMiningMicroKrw("0")).toBe("0원");
+    expect(formatMiningMicroKrw("1")).toBe("1원 미만");
+    expect(formatMiningMicroKrw("999999")).toBe("1원 미만");
+    expect(formatMiningMicroKrw("1999999")).toBe("약 1원");
+    expect(formatMiningMicroKrw("29999983878")).toBe("약 29,999원");
+    expect(formatMiningMicroKrw("9007199254740993000001")).toBe(
+      "약 9,007,199,254,740,993원",
+    );
+  });
   test("shows server amounts and keeps unconfirmed retention apart from pending", () => {
     const view = presentMiningServerDisplay(readyDisplay);
     expect(view.state).toBe("ready");

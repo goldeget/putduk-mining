@@ -1,10 +1,14 @@
 import { presentationForCode } from "@/lib/mining-scene/product-presentation";
 import { SAFE_SCENE_COPY } from "@/lib/mining-scene/safe-scene-copy";
-import { getSceneRow } from "@/lib/mining-scene/scene-registry";
+import {
+  getApprovedProductMasterVariant,
+  getSceneRow,
+} from "@/lib/mining-scene/scene-registry";
 import {
   ACCENT_TOKENS,
   DECORATIVE_OBJECTS,
   isSceneFamilyKey,
+  isApprovedMasterVariant,
   type AccentToken,
   type AmbientPreset,
   type DecorativeObject,
@@ -66,7 +70,10 @@ function isSafeProfile(profile: ProductSceneProfile): boolean {
   if (!AMBIENT_PRESETS.has(profile.ambientPreset)) {
     return false;
   }
-  if (profile.masterVariant !== null) {
+  if (
+    profile.masterVariant !== null &&
+    !isApprovedMasterVariant(profile.masterVariant)
+  ) {
     return false;
   }
   if (!Array.isArray(profile.decorativeObjects)) {
@@ -107,7 +114,9 @@ function fallbackProfile(profile: ProductSceneProfile): ProductSceneProfile {
     ambientPreset,
     htmlCopyKo: safeCopy(profile?.htmlCopyKo ?? "", SAFE_SCENE_COPY),
     a11yLabelKo: safeCopy(profile?.a11yLabelKo ?? "", "채굴 테마"),
-    masterVariant: null,
+    masterVariant: isApprovedMasterVariant(profile?.masterVariant)
+      ? profile.masterVariant
+      : null,
   };
 }
 
@@ -122,7 +131,7 @@ function projectProfile(profile: ProductSceneProfile): ProductSceneProfile {
     ambientPreset: source.ambientPreset,
     htmlCopyKo: source.htmlCopyKo,
     a11yLabelKo: source.a11yLabelKo,
-    masterVariant: null,
+    masterVariant: source.masterVariant,
   };
 }
 
@@ -172,7 +181,21 @@ export function resolveScene(
   }
 
   const profile = projectProfile(binding.profile);
-  const scene = registryRow.definition;
+  const variant = binding.profile.masterVariant;
+  if (variant !== null && !isApprovedMasterVariant(variant))
+    return closed(identity, "MASTER_VARIANT_UNAVAILABLE", SAFE_SCENE_COPY);
+  const scene =
+    variant === null
+      ? registryRow.definition
+      : getApprovedProductMasterVariant(
+          variant,
+          identity.code,
+          registryRow.familyKey,
+          registryRow.version,
+          identity.category,
+        );
+  if (!scene)
+    return closed(identity, "MASTER_VARIANT_UNAVAILABLE", SAFE_SCENE_COPY);
   const presentation: ProductPresentation = {
     productCode: identity.code,
     sceneFamilyKey: registryRow.familyKey,

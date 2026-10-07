@@ -362,6 +362,23 @@ type ManifestAsset = {
   reviewScope?: string;
 };
 
+// Only the independently verified32 new NVDA paths are absent from historical snapshots.
+const nvdaPaths = new Set(
+  (["dark", "light"] as const).flatMap((theme) =>
+    (["portrait", "landscape"] as const).flatMap((orientation) =>
+      (orientation === "portrait"
+        ? [480, 640, 960, 1024]
+        : [640, 960, 1280, 1672]
+      ).flatMap((width) =>
+        ["avif", "webp"].map(
+          (format) =>
+            `/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-${theme}-${orientation}-${width}.${format}`,
+        ),
+      ),
+    ),
+  ),
+);
+
 type AssetManifest = {
   schemaVersion: number;
   assetVersion: string;
@@ -382,7 +399,7 @@ describe("PUTDUK brand asset contract", () => {
     const manifest = await loadManifest();
 
     expect(manifest.schemaVersion).toBe(1);
-    expect(manifest.assetVersion).toBe("2026.10.06-v17");
+    expect(manifest.assetVersion).toBe("2026.10.06-v18");
     expect(manifest.sourcePolicy).toContain(
       "generated pixels contain no production copy",
     );
@@ -502,6 +519,7 @@ describe("PUTDUK brand asset contract", () => {
   it("adds only eight complete-composition derivatives from the approved clean master while preserving all 88 prior assets", async () => {
     const manifest = await loadManifest();
     const prior = manifest.assets
+      .filter((asset) => !nvdaPaths.has(asset.path))
       .filter(
         (asset) =>
           !aiPaths.has(asset.path) &&
@@ -533,7 +551,7 @@ describe("PUTDUK brand asset contract", () => {
       asset.path.startsWith("/brand/scenes/semiconductor-memory/"),
     );
     expect(scenes).toHaveLength(8);
-    expect(manifest.assets).toHaveLength(262);
+    expect(manifest.assets).toHaveLength(294);
     for (const width of [640, 960, 1280, 1539]) {
       for (const format of ["avif", "webp"]) {
         const relative = `/brand/scenes/semiconductor-memory/semiconductor-memory-${width}-v1.${format}`;
@@ -565,6 +583,7 @@ describe("PUTDUK brand asset contract", () => {
     const manifest = await loadManifest();
     const prefix = "/brand/scenes/global-pavilion/";
     const prior = manifest.assets
+      .filter((asset) => !nvdaPaths.has(asset.path))
       .filter(
         (asset) =>
           !aiPaths.has(asset.path) &&
@@ -673,6 +692,7 @@ console.log(JSON.stringify(variants.map(approvedSceneMetadataFailures)));`,
       ),
     );
     const prior = manifest.assets
+      .filter((asset) => !nvdaPaths.has(asset.path))
       .filter(
         (asset) =>
           !aiPaths.has(asset.path) &&
@@ -790,6 +810,7 @@ console.log(JSON.stringify(variants.map(approvedSceneMetadataFailures)));`,
   it("adds only the eight exact HOME tower derivatives while preserving every prior record and byte", async () => {
     const manifest = await loadManifest();
     const prior = manifest.assets
+      .filter((asset) => !nvdaPaths.has(asset.path))
       .filter(
         (asset) =>
           !aiPaths.has(asset.path) &&
@@ -910,6 +931,7 @@ console.log(JSON.stringify(variants.map(approvedSceneMetadataFailures)));`,
   it("adds only the eight exact Light HOME wafer derivatives while preserving every prior record and byte", async () => {
     const manifest = await loadManifest();
     const prior = manifest.assets
+      .filter((asset) => !nvdaPaths.has(asset.path))
       .filter(
         (asset) =>
           !aiPaths.has(asset.path) &&
@@ -1031,6 +1053,7 @@ console.log(JSON.stringify(variants.map(approvedSceneMetadataFailures)));`,
   it("adds only the eight neutral GOLD category derivatives while preserving every prior record and byte", async () => {
     const manifest = await loadManifest();
     const prior = manifest.assets
+      .filter((asset) => !nvdaPaths.has(asset.path))
       .filter(
         (asset) =>
           !aiPaths.has(asset.path) &&
@@ -1152,6 +1175,7 @@ console.log(JSON.stringify(variants.map(approvedSceneMetadataFailures)));`,
   it("adds only the eight semiconductor-tower-desktop derivatives while preserving every prior record and byte", async () => {
     const manifest = await loadManifest();
     const prior = manifest.assets
+      .filter((asset) => !nvdaPaths.has(asset.path))
       .filter(
         (asset) =>
           !aiPaths.has(asset.path) &&
@@ -1272,6 +1296,7 @@ console.log(JSON.stringify(variants.map(approvedSceneMetadataFailures)));`,
   it("adds only the eight semiconductor-wafer-light-desktop derivatives while preserving every prior record and byte", async () => {
     const manifest = await loadManifest();
     const prior = manifest.assets
+      .filter((asset) => !nvdaPaths.has(asset.path))
       .filter(
         (asset) =>
           !aiPaths.has(asset.path) &&
@@ -1464,6 +1489,7 @@ console.log(JSON.stringify(variants.map(aiHelpMetadataFailures)));`,
   it("preserves the exact 152-entry pre-Login snapshot and every existing runtime byte", async () => {
     const manifest = await loadManifest();
     const prior = manifest.assets
+      .filter((asset) => !nvdaPaths.has(asset.path))
       .filter(
         (asset) =>
           !aiPaths.has(asset.path) &&
@@ -1603,6 +1629,7 @@ console.log(JSON.stringify(variants.map(aiHelpMetadataFailures)));`,
   it("preserves all174 pre-Gift metadata records and actual runtime bytes", async () => {
     const manifest = await loadManifest();
     const prior = manifest.assets
+      .filter((asset) => !nvdaPaths.has(asset.path))
       .filter(
         (asset) =>
           !aiPaths.has(asset.path) &&
@@ -1709,14 +1736,16 @@ console.log(JSON.stringify(variants.map(aiHelpMetadataFailures)));`,
 
   it("preserves the exact182 pre-Mining records and every runtime byte", async () => {
     const manifest = await loadManifest();
-    const prior = manifest.assets.filter(
-      (asset) =>
-        !aiPaths.has(asset.path) &&
-        !productsPaths.has(asset.path) &&
-        !signupPaths.has(asset.path) &&
-        !walletPaths.has(asset.path) &&
-        !miningPaths.has(asset.path),
-    );
+    const prior = manifest.assets
+      .filter((asset) => !nvdaPaths.has(asset.path))
+      .filter(
+        (asset) =>
+          !aiPaths.has(asset.path) &&
+          !productsPaths.has(asset.path) &&
+          !signupPaths.has(asset.path) &&
+          !walletPaths.has(asset.path) &&
+          !miningPaths.has(asset.path),
+      );
     expect(prior).toHaveLength(182);
     expect(
       createHash("sha256").update(JSON.stringify(prior)).digest("hex"),
@@ -1838,13 +1867,15 @@ console.log(JSON.stringify(variants.map(aiHelpMetadataFailures)));`,
   }
   it("preserves exact204 pre-Wallet records and every actual runtime byte", async () => {
     const manifest = await loadManifest();
-    const prior = manifest.assets.filter(
-      (asset) =>
-        !aiPaths.has(asset.path) &&
-        !productsPaths.has(asset.path) &&
-        !signupPaths.has(asset.path) &&
-        !walletPaths.has(asset.path),
-    );
+    const prior = manifest.assets
+      .filter((asset) => !nvdaPaths.has(asset.path))
+      .filter(
+        (asset) =>
+          !aiPaths.has(asset.path) &&
+          !productsPaths.has(asset.path) &&
+          !signupPaths.has(asset.path) &&
+          !walletPaths.has(asset.path),
+      );
     expect(prior).toHaveLength(204);
     expect(
       createHash("sha256").update(JSON.stringify(prior)).digest("hex"),
@@ -1969,12 +2000,14 @@ console.log(JSON.stringify(variants.map(aiHelpMetadataFailures)));`,
   }
   it("preserves exact232 pre-Signup records and every actual runtime byte", async () => {
     const manifest = await loadManifest();
-    const prior = manifest.assets.filter(
-      (asset) =>
-        !aiPaths.has(asset.path) &&
-        !productsPaths.has(asset.path) &&
-        !signupPaths.has(asset.path),
-    );
+    const prior = manifest.assets
+      .filter((asset) => !nvdaPaths.has(asset.path))
+      .filter(
+        (asset) =>
+          !aiPaths.has(asset.path) &&
+          !productsPaths.has(asset.path) &&
+          !signupPaths.has(asset.path),
+      );
     expect(prior).toHaveLength(232);
     expect(
       createHash("sha256").update(JSON.stringify(prior)).digest("hex"),
@@ -2099,9 +2132,11 @@ console.log(JSON.stringify(variants.map(aiHelpMetadataFailures)));`,
   }
   it("preserves exact238 pre-Products records and every actual runtime byte", async () => {
     const manifest = await loadManifest();
-    const prior = manifest.assets.filter(
-      (asset) => !aiPaths.has(asset.path) && !productsPaths.has(asset.path),
-    );
+    const prior = manifest.assets
+      .filter((asset) => !nvdaPaths.has(asset.path))
+      .filter(
+        (asset) => !aiPaths.has(asset.path) && !productsPaths.has(asset.path),
+      );
     expect(prior).toHaveLength(238);
     expect(
       createHash("sha256").update(JSON.stringify(prior)).digest("hex"),
@@ -2226,7 +2261,9 @@ console.log(JSON.stringify(variants.map(aiHelpMetadataFailures)));`,
   }
   it("preserves exact250 pre-AI records and every actual runtime byte", async () => {
     const manifest = await loadManifest();
-    const prior = manifest.assets.filter((asset) => !aiPaths.has(asset.path));
+    const prior = manifest.assets
+      .filter((asset) => !nvdaPaths.has(asset.path))
+      .filter((asset) => !aiPaths.has(asset.path));
     expect(prior).toHaveLength(250);
     expect(
       createHash("sha256").update(JSON.stringify(prior)).digest("hex"),

@@ -165,7 +165,12 @@ export function MemberSearch({
                       </dd>
                     </div>
                   </dl>
-                  <span className="text-link">회원 정보 보기 →</span>
+                  <span className={`text-link ${styles.resultAction}`}>
+                    회원 정보{" "}
+                    <span className={styles.resultActionTail}>
+                      보기 <span aria-hidden="true">→</span>
+                    </span>
+                  </span>
                 </Link>
               </li>
             ))}

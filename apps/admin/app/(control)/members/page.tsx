@@ -546,7 +546,7 @@ export default async function MembersPage({
 
         <article className="detail-panel" id="evidence-kyc">
           <header>
-            <p className="eyebrow">민 · 감사 기록</p>
+            <p className="eyebrow">민감 정보 · 조회 기록</p>
             <h2>본인 확인 요약</h2>
           </header>
           {!canReadKyc ? (
@@ -575,7 +575,7 @@ export default async function MembersPage({
           ) : (
             <p className="empty-state">본인 확인 접수 기록이 없습니다.</p>
           )}
-          <p className="panel-note">문서 원문·바이트는 표시하지 않습니다.</p>
+          <p className="panel-note">본인 확인 문서 원문은 표시하지 않습니다.</p>
           <Link className="text-link" href={"/kyc" as Route}>
             본인 확인 대기열
           </Link>

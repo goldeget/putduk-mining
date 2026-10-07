@@ -337,7 +337,8 @@ input:focus-visible {
   min-width: 0;
 }
 .control-topbar {
-  height: 58px;
+  min-height: 58px;
+  height: auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -345,6 +346,20 @@ input:focus-visible {
   padding: 0 clamp(20px, 4vw, 56px);
   color: var(--muted);
   font-size: 0.875rem;
+}
+.admin-skip-link {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 100;
+  transform: translateY(-200%);
+  border-radius: 12px;
+  padding: 14px 20px;
+  background: var(--gold-soft);
+  color: var(--base);
+}
+.admin-skip-link:focus {
+  transform: translateY(0);
 }
 .control-topbar div {
   display: flex;
