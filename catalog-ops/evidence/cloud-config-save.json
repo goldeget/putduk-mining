@@ -1,0 +1,18 @@
+{
+  "status": "saved",
+  "draft_id": "17fa9c03-0577-4c85-a75d-14c5e0448900~cecfgdraft_6ac63c71dda8819b8babd7df394e9db2",
+  "requires_publish": true,
+  "fields_changed": ["start_skill", "network.allowed_domains"],
+  "official_hosts_attempted_and_added": 52,
+  "preserved": [
+    "install_script",
+    "package_managers preset",
+    "cdn.playwright.dev",
+    "public.ecr.aws",
+    "environment variable bindings",
+    "empty secret requirements"
+  ],
+  "runtime_applied": false,
+  "published_by_agent": false,
+  "note": "Saving does not apply current egress policy. User reviews and publishes in environment settings; retry official requests after propagation."
+}

@@ -1,0 +1,194 @@
+{
+  "base_sha": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+  "main_sha": "fbea85eebf1084bfc02bf1c452392b20f2f497ce",
+  "develop_ahead_of_main": 420,
+  "frozen_branches": {
+    "parallel/admin-release": "f9b454a7c1b86dde1099b6e5a264092118258ead",
+    "parallel/launch-ops-content": "ba9ed931f756488ce4f67f945cffad9552842c09",
+    "parallel/product-scene-production": "505e20c097be8de1b5d02bc65a2dcbd054fe56d1"
+  },
+  "catalog_seed": "supabase/migrations/20260926192208_ws02_commands_and_catalog_seed.sql",
+  "catalog_seed_sha256": "9df1118fc49fb91d1fbbe28154238afd8ff2bb56c877ff48333a4ddeca615369",
+  "repository_catalog_status": "REPOSITORY_DRAFT",
+  "repository_published_products": 0,
+  "live_catalog_status": "LIVE_DB_UNKNOWN",
+  "live_ids": null,
+  "current_policy": {
+    "schemaVersion": 1,
+    "policyVersion": "PUTDUK-MINING-V1-2026-10-03",
+    "approvalState": "OWNER_APPROVED",
+    "approvalEvidence": "docs/product/ECONOMY-V1-USER-APPROVAL-2026-10-03.md",
+    "minimumPrincipalKrw": "100000",
+    "cycleDays": 30,
+    "baseCycleRateBps": 1500,
+    "microKrwPerKrw": "1000000",
+    "carryAcrossCycles": true,
+    "tiers": [
+      {
+        "code": "L1",
+        "name": "STARTER",
+        "minimumPrincipalKrw": "100000",
+        "maximumPrincipalKrw": "499999",
+        "retentionBonusBps": 1500,
+        "slots": 1
+      },
+      {
+        "code": "L2",
+        "name": "STARTER+",
+        "minimumPrincipalKrw": "500000",
+        "maximumPrincipalKrw": "999999",
+        "retentionBonusBps": 1600,
+        "slots": 1
+      },
+      {
+        "code": "L3",
+        "name": "ACTIVE",
+        "minimumPrincipalKrw": "1000000",
+        "maximumPrincipalKrw": "2999999",
+        "retentionBonusBps": 1700,
+        "slots": 2
+      },
+      {
+        "code": "L4",
+        "name": "ADVANCED",
+        "minimumPrincipalKrw": "3000000",
+        "maximumPrincipalKrw": "4999999",
+        "retentionBonusBps": 1800,
+        "slots": 2
+      },
+      {
+        "code": "L5",
+        "name": "PRO",
+        "minimumPrincipalKrw": "5000000",
+        "maximumPrincipalKrw": "9999999",
+        "retentionBonusBps": 1900,
+        "slots": 2
+      },
+      {
+        "code": "L6",
+        "name": "PREMIUM",
+        "minimumPrincipalKrw": "10000000",
+        "maximumPrincipalKrw": "29999999",
+        "retentionBonusBps": 2000,
+        "slots": 3
+      },
+      {
+        "code": "L7",
+        "name": "PREMIUM+",
+        "minimumPrincipalKrw": "30000000",
+        "maximumPrincipalKrw": "49999999",
+        "retentionBonusBps": 2100,
+        "slots": 3
+      },
+      {
+        "code": "L8",
+        "name": "ELITE",
+        "minimumPrincipalKrw": "50000000",
+        "maximumPrincipalKrw": "99999999",
+        "retentionBonusBps": 2200,
+        "slots": 3
+      },
+      {
+        "code": "L9",
+        "name": "ULTRA",
+        "minimumPrincipalKrw": "100000000",
+        "maximumPrincipalKrw": "299999999",
+        "retentionBonusBps": 2300,
+        "slots": 4
+      },
+      {
+        "code": "L10",
+        "name": "ULTRA+",
+        "minimumPrincipalKrw": "300000000",
+        "maximumPrincipalKrw": "499999999",
+        "retentionBonusBps": 2400,
+        "slots": 4
+      },
+      {
+        "code": "L11",
+        "name": "PRIVATE",
+        "minimumPrincipalKrw": "500000000",
+        "maximumPrincipalKrw": "999999999",
+        "retentionBonusBps": 2500,
+        "slots": 5
+      },
+      {
+        "code": "L12",
+        "name": "PRIVATE+",
+        "minimumPrincipalKrw": "1000000000",
+        "maximumPrincipalKrw": "2999999999",
+        "retentionBonusBps": 2500,
+        "slots": 5
+      },
+      {
+        "code": "L13",
+        "name": "PRIVATE ELITE",
+        "minimumPrincipalKrw": "3000000000",
+        "maximumPrincipalKrw": "4999999999",
+        "retentionBonusBps": 2500,
+        "slots": 5
+      },
+      {
+        "code": "L14",
+        "name": "PRIVATE ELITE+",
+        "minimumPrincipalKrw": "5000000000",
+        "maximumPrincipalKrw": null,
+        "retentionBonusBps": 2500,
+        "slots": 5
+      }
+    ],
+    "productMultiplier": {
+      "defaultBps": 10000,
+      "minimumBps": 9000,
+      "maximumBps": 11000
+    },
+    "allocation": {
+      "maximumTotalBps": 10000,
+      "maximumPerProductBps": 10000,
+      "capacityScope": "GLOBAL_CYCLE"
+    },
+    "campaign": {
+      "defaultCapacityBoostBps": 0,
+      "maximumSingleCapacityBoostBps": 1000,
+      "maximumCombinedCapacityBoostBps": 2000,
+      "defaultSpeedMultiplierBps": 10000,
+      "maximumSingleSpeedMultiplierBps": 12500,
+      "maximumCombinedSpeedMultiplierBps": 15000
+    },
+    "userOverride": {
+      "defaultMultiplierBps": 10000,
+      "minimumMultiplierBps": 8000,
+      "maximumMultiplierBps": 12000,
+      "requiresAuditReasonStepUp": true
+    },
+    "withdrawalSources": {
+      "miningReward": "MINING_REWARD",
+      "principalRecovery": "PRINCIPAL",
+      "automaticSourceFallback": false,
+      "mixedSources": false,
+      "miningRewardMustBeVerified": true,
+      "bonus": "SEPARATE_BONUS_POLICY"
+    },
+    "platformFeesKrw": {
+      "krwDeposit": "0",
+      "usdtDepositConversion": "0",
+      "mining": "0",
+      "krwMiningRewardWithdrawal": "0",
+      "principalRecovery": "0"
+    },
+    "futureFeeSource": "SAME_WITHDRAWAL_SOURCE_ONLY",
+    "usdt": {
+      "network": "TRC20",
+      "creditCurrency": "KRW",
+      "userUsdtWallet": false,
+      "miningRewardCurrency": "KRW",
+      "networkFeeIncludedInPrincipal": false,
+      "actualReceiptRequired": true
+    }
+  },
+  "runtime_effect_guard": {
+    "source": "domain/mining/funding-entitlement.ts:206",
+    "state": "EFFECT_SCOPE_UNRESOLVED",
+    "non_default_modifiers_usable": false
+  }
+}

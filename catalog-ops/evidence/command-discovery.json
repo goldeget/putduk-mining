@@ -1,0 +1,1628 @@
+{
+  "base_sha": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+  "searched_files": [
+    {
+      "path": "app/api/v1/ai/chat/route.ts",
+      "sha256": "eaa247db8e62cd43c7ba599ed7ad9e3573f0c06d9c826dd58e6101b26e5700d0"
+    },
+    {
+      "path": "app/api/v1/ai/feedback/route.ts",
+      "sha256": "fdddb2d117e89c4743ec4714f5c3c41f5f46862ab42eeb3c3dc28dee653c9ba1"
+    },
+    {
+      "path": "app/api/v1/analytics/route.ts",
+      "sha256": "ebd60a26d8aedbe175442e69007287e4b2d61e390f06c4d442d0e6df6c636d1e"
+    },
+    {
+      "path": "app/api/v1/auth/login-id-availability/route.ts",
+      "sha256": "bcd13f0b36860229cfdd9cde1238dc575c0cbf5d05a6247bfe0a952a99554e2b"
+    },
+    {
+      "path": "app/api/v1/auth/phone-availability/route.ts",
+      "sha256": "6c653039ada67c2bda904099d39c9663457ac3cb4f07e58359ac5b96a98bcfb7"
+    },
+    {
+      "path": "app/api/v1/deposits/route.ts",
+      "sha256": "bee5b13911f2cc35080e99fefe3ac8e7d587858afeb6430db1b97c2e72aca0a7"
+    },
+    {
+      "path": "app/api/v1/deposits/usdt/route.ts",
+      "sha256": "6bb323140999f54b60836210c8ef34190ed78cfba1c4fe9c9da2252e5568d1e1"
+    },
+    {
+      "path": "app/api/v1/health/route.ts",
+      "sha256": "f1a724a35666b1c610c22a8b31c30bb02d878fcd1a5a9cb8fbe5ec59d3d3bb35"
+    },
+    {
+      "path": "app/api/v1/me/bootstrap/route.ts",
+      "sha256": "44ec9240386a3847e2577be33be6b0efbae33d4a3d32146d1fc3a86a48f5be5b"
+    },
+    {
+      "path": "app/api/v1/notifications/[notificationId]/read/route.ts",
+      "sha256": "6f24f56dca9043454eff2e51a84c45ec97bdbca0a5b7619170ddb025b4f634d3"
+    },
+    {
+      "path": "app/api/v1/notifications/preferences/route.ts",
+      "sha256": "e91a4fd40bd205c0fe3abb77c5fcffa51a87169e918f3e917f3ad2b5a18d7861"
+    },
+    {
+      "path": "app/api/v1/notifications/subscriptions/route.ts",
+      "sha256": "6491f893c4c6d640014d88d715a40c350f449d847f628d8f589ae930dbbd9d66"
+    },
+    {
+      "path": "app/api/v1/public/facts/route.ts",
+      "sha256": "f528c9732607314cb0d74cf33f4a5c7b8d8e4149d11fffbab4ff29ea2f2cc098"
+    },
+    {
+      "path": "app/api/v1/readiness/route.ts",
+      "sha256": "b62e6378f53de386f90d4801141635f46411b7cfa99796e931534a13cf412158"
+    },
+    {
+      "path": "app/api/v1/support/channel-session/route.ts",
+      "sha256": "4af4b5b3c05a5914ab6fc12653e36643306314a27ffd242896e9961dd43d147c"
+    },
+    {
+      "path": "app/api/v1/trial/convert/route.ts",
+      "sha256": "8402f80353a98b374bf350604b5f1d92d81fbffd045f59b66d43478ac032ee8c"
+    },
+    {
+      "path": "app/api/v1/trial/settle/route.ts",
+      "sha256": "cf522351423de55e7e9d44ba2938f06503ae4675740193a66b858aa3f2461cec"
+    },
+    {
+      "path": "app/api/v1/trial/start/route.ts",
+      "sha256": "3dada8de78b0131c345a39c7690a69d6cc7da67105c0105ee7e50a0d3bc78739"
+    },
+    {
+      "path": "app/api/v1/trial/status/route.ts",
+      "sha256": "06bb0adffa48db1d44e1fe16d4a8a86cf8cf1ecac02dc646852393630aa9319a"
+    },
+    {
+      "path": "app/api/v1/wallet/summary/route.ts",
+      "sha256": "761b2e9dc8f2de590a0179b70cf71fe6d483f7aace1da3a42b4b07a867ba30fb"
+    },
+    {
+      "path": "app/api/v1/withdrawals/destinations/reauth/route.ts",
+      "sha256": "df9b43bde9749aee57d5fda5c6e559652acbefd2079cdb6dcca8b6d913f491b8"
+    },
+    {
+      "path": "app/api/v1/withdrawals/destinations/route.ts",
+      "sha256": "eb0dc18d82d42b7aa132449ed9cf5bb17c38a53722bd895570f3c4f8ed395795"
+    },
+    {
+      "path": "app/api/v1/withdrawals/hold/route.ts",
+      "sha256": "f64d9c516d83ff580dab4ce819292c9818c058c7e101c84c48e47f2a3411d91c"
+    },
+    {
+      "path": "app/api/v1/withdrawals/intents/route.ts",
+      "sha256": "2ccce39ceddcf6d67cbfa210c5387da5c8951948996934797ae44676019d7b5e"
+    },
+    {
+      "path": "app/api/v1/withdrawals/route.ts",
+      "sha256": "3d7d25555feb1d25eebac76cacfd85342df332c3e25a494f019b1dfd3dd03765"
+    },
+    {
+      "path": "app/api/v1/withdrawals/welcome/route.ts",
+      "sha256": "c4f7ae42239c6b880c2b10065fb7bef27bbc243ac468359d34d30b96d5419240"
+    },
+    {
+      "path": "apps/admin/app/api/v1/admin/assistant/prepare/route.ts",
+      "sha256": "9c917ae3e58f5a3b87264dee2101ee76a6f90b881ac8d0bf22ad5fcd15d63ad7"
+    },
+    {
+      "path": "apps/admin/app/api/v1/admin/deposits/approve/route.ts",
+      "sha256": "c3e6201d9b48e449d020374658faa6744190d4a16a4a144ea61eacd0f7295d7f"
+    },
+    {
+      "path": "apps/admin/app/api/v1/admin/deposits/krw/status/route.ts",
+      "sha256": "277075cb77e8b9d82045f55b8b57a92517867ac4d22e1329a0c1ee8a016469a8"
+    },
+    {
+      "path": "apps/admin/app/api/v1/admin/economy/command/route.ts",
+      "sha256": "ba6998bb7975ed5c1bf9123e3f9fcd2544a338f3c5d7180c6f6ba3f98d9bb5e3"
+    },
+    {
+      "path": "apps/admin/app/api/v1/admin/economy/state/route.ts",
+      "sha256": "c3a4f707c6d20fc3dfff335e4e9f8a0143e9168b93fcd71d7f24b6890238d25c"
+    },
+    {
+      "path": "apps/admin/app/api/v1/admin/session/mfa-confirmed/route.ts",
+      "sha256": "b8f2dfc12c4bd4f2067fd918a4a3bf4d2cc99c15813ec75058ec94ca2d53a74b"
+    },
+    {
+      "path": "apps/admin/app/api/v1/admin/session/step-up/route.ts",
+      "sha256": "0d38a3901c55b0214d683a33c359305906063dbfe01ac9527e3c2e17f87d6d97"
+    },
+    {
+      "path": "apps/admin/app/api/v1/admin/session/totp-verify/route.ts",
+      "sha256": "a2b429b86b38d2e516991ede4ca39d49015ed433858ae4a2365cd15e0385feef"
+    },
+    {
+      "path": "apps/admin/app/api/v1/admin/withdrawals/command/route.ts",
+      "sha256": "47b797e453b890fda5bdd56fa10c160604c5a7768ee785252e5cdcd6fc272907"
+    },
+    {
+      "path": "apps/admin/lib/assistant/draft.ts",
+      "sha256": "a40a656ee3c0a85e20e4daa1542f77f348dd632c0ac39206cbf7ed2832e75b5b"
+    },
+    {
+      "path": "apps/admin/lib/assistant/operations.ts",
+      "sha256": "079fc4cf3e83b7a44bb92f56f54e3abf90b6cf292264c63cc9c773ef16efadfa"
+    },
+    {
+      "path": "apps/admin/lib/auth/command-families.ts",
+      "sha256": "53e2c66fd9f593f182e6620e714f4e7d08a4f15ee07f61bb4209da0b8dc79975"
+    },
+    {
+      "path": "apps/admin/lib/auth/failure-limit-policy.ts",
+      "sha256": "d907668b65ddea1928d609b7eada66e41fec6574773a20242c089549ac5ad476"
+    },
+    {
+      "path": "apps/admin/lib/auth/failure-limit.ts",
+      "sha256": "8edcf6fe0dcd0a38c2272f79fd71c29cc0ded422408deebd058273173582b9fa"
+    },
+    {
+      "path": "apps/admin/lib/auth/mfa-prepare-types.ts",
+      "sha256": "9349636475a9d320a53c282f616e0e864f668547b6e8762ec2b5a08296461806"
+    },
+    {
+      "path": "apps/admin/lib/auth/mfa-prepare.ts",
+      "sha256": "6e87eec84efa35ca9653ca7f5d3c5b2ee576a42a83a974d40158fa9af1309503"
+    },
+    {
+      "path": "apps/admin/lib/auth/policy.ts",
+      "sha256": "1965ed4b99537e805494e4dd9ec937e4cd851d0cf11b5a5ca63fe0d2893cc0c9"
+    },
+    {
+      "path": "apps/admin/lib/auth/principal.ts",
+      "sha256": "c1bb88c7afa2398be085e74baf63b0baf9e7b20806471c5863296432238fa2d9"
+    },
+    {
+      "path": "apps/admin/lib/auth/rate-limit.ts",
+      "sha256": "ff56bd925f403931c9dd5d602ccea97a085bb73d29175c819bb53d94c429a35b"
+    },
+    {
+      "path": "apps/admin/lib/auth/request-origin.ts",
+      "sha256": "fe42b0d58cb7d90fc648f9e7a3c761facd628eede759298b9555f8e74c3de7f6"
+    },
+    {
+      "path": "apps/admin/lib/auth/return-path.ts",
+      "sha256": "3d9323d56ec07813c1e5303b2d51adaf75e2c54b0c9ad7be68deb2b7f0fb0496"
+    },
+    {
+      "path": "apps/admin/lib/auth/session-registry.ts",
+      "sha256": "eeb116ff9375f0057a3ca0d7eac3f9f25b177551b8b949a41c1623cc87da45e6"
+    },
+    {
+      "path": "apps/admin/lib/auth/session.ts",
+      "sha256": "bb544c1445dad499325ade15f0930ca7332180538e3fccbd1ece33f897073553"
+    },
+    {
+      "path": "apps/admin/lib/auth/step-up.ts",
+      "sha256": "566fdacdc51640d08e9b614f4457ede368c74b5e15bb21ec71ebdf89e01c3842"
+    },
+    {
+      "path": "apps/admin/lib/content-security-policy.ts",
+      "sha256": "0526b080eb8d671a1eec79e75dcd890acc2fa52685a15c680db8e83ad73852a5"
+    },
+    {
+      "path": "apps/admin/lib/deposits/krw-approve-state.ts",
+      "sha256": "38c4d4ab5f048af01bf54fe3d5774941a8dac5ac05dd2297643301de4408fadc"
+    },
+    {
+      "path": "apps/admin/lib/deposits/krw-queue.ts",
+      "sha256": "a3496b2ddfe699f1d7b57670a6ee49a7d3ca816f6794df534c3f86558e880134"
+    },
+    {
+      "path": "apps/admin/lib/deposits/usdt-confirm-input.ts",
+      "sha256": "5eec7a7161cc5ddfe55a883c68cf6f1f2d856a62e3f79e805ba9dcf4161c7cc1"
+    },
+    {
+      "path": "apps/admin/lib/deposits/usdt-confirm-receipt.ts",
+      "sha256": "19f47cd3ed6cf1a011044b093d801969cc544e1dc705d04295a25bf2dc8d6435"
+    },
+    {
+      "path": "apps/admin/lib/economy/editor-input.ts",
+      "sha256": "87bc817e70b25d8577c6d4cb89879e27a9de354cf4d50d193cf4ae05e40b8435"
+    },
+    {
+      "path": "apps/admin/lib/economy/handler.ts",
+      "sha256": "e2b868c5881490d5406ae981777df6f10f4e5b4cffd2659b485f9c92646fb56d"
+    },
+    {
+      "path": "apps/admin/lib/economy/input.ts",
+      "sha256": "55d8d39c3b92e692216620cce05fd438f2eb8717affa03c0b34104a7d34f0264"
+    },
+    {
+      "path": "apps/admin/lib/economy/policy-read-view.ts",
+      "sha256": "66b2f2f1bcd127535e6513159204fb73e4248cf1075b1af651a86ac8b29a0eb7"
+    },
+    {
+      "path": "apps/admin/lib/economy/server.ts",
+      "sha256": "db22648d970304d31c8ef7c4f0d0085518491aa58a47dfde65f64ef9c95c7ef4"
+    },
+    {
+      "path": "apps/admin/lib/economy/state.ts",
+      "sha256": "f8cf495d7fb5d99ddf8b77f152f32f2276638ba3de8db3b757bcc9b9a6683f4c"
+    },
+    {
+      "path": "apps/admin/lib/economy/types.ts",
+      "sha256": "c34c353dc4e44cceac51db07bcf96c8473228d413603f8b9390f67545dc36ffe"
+    },
+    {
+      "path": "apps/admin/lib/env.ts",
+      "sha256": "12491c4474e3d8035b1b18db7f337112c25ce0bd1a50711fed38219373be123f"
+    },
+    {
+      "path": "apps/admin/lib/money/logical-operation.ts",
+      "sha256": "f9b058683823f00b3db3fc14092bf53128f3b4bbcc4c44281955f531a0f2a42a"
+    },
+    {
+      "path": "apps/admin/lib/security/events.ts",
+      "sha256": "2b47409ef207a03384255f4927dd84dc8ae7ed4a587200ed02ca134277ddffa3"
+    },
+    {
+      "path": "apps/admin/lib/supabase/browser.ts",
+      "sha256": "291cf79550545986d1adcc1f94896467027f9dc53eadb9ddd0dc64c1c2f16b3b"
+    },
+    {
+      "path": "apps/admin/lib/supabase/cookie.ts",
+      "sha256": "ff1058ea3166f0c878a439285dd24f2bc717efb2558b8a8ce424067d112b1e0c"
+    },
+    {
+      "path": "apps/admin/lib/supabase/proxy.ts",
+      "sha256": "d2a720596dd2d78b760b0d83e5e368631f57fb5291a769a5797e1d8416190701"
+    },
+    {
+      "path": "apps/admin/lib/supabase/server.ts",
+      "sha256": "2a656f359b0b7251598bf4e5c19f05b82e870ee851a66b286041f693091e85b9"
+    },
+    {
+      "path": "apps/admin/lib/supabase/service.ts",
+      "sha256": "5068311f51bf9dab8185cd5df485f2f9e5cb249efd019495c35bbfe512ee32e6"
+    },
+    {
+      "path": "apps/admin/lib/time/kst-input.ts",
+      "sha256": "16705b80ae3ceb1f71354253d4e0effe686be932649cb5bcbb50a2a85ed1fb3e"
+    },
+    {
+      "path": "apps/admin/lib/ui/abortable.ts",
+      "sha256": "5d1a0ae3bc8a93639f79a8519244990d2d1742b10efaa795d18baf2bce7f0855"
+    },
+    {
+      "path": "supabase/migrations/20260926090727_foundation_extensions_and_types.sql",
+      "sha256": "e0af5c5a5fecec7f4a7ec67e3e26f5157512785fc4d1cfdae3ae95570c8ab465"
+    },
+    {
+      "path": "supabase/migrations/20260926090729_identity_and_user.sql",
+      "sha256": "747174740b287513107f178882822b6ba86f87feb8c06b6e972c37eadb0d8c4f"
+    },
+    {
+      "path": "supabase/migrations/20260926090730_trial_world_and_economy.sql",
+      "sha256": "43b88a30a5cdcda38d619ac762d5d84062631b8e7f65ada2758375284ad351c0"
+    },
+    {
+      "path": "supabase/migrations/20260926090732_mining_and_settlement.sql",
+      "sha256": "0e619714004264313af0072886db140f578264feea8a1de72ad3a14262270179"
+    },
+    {
+      "path": "supabase/migrations/20260926090733_wallet_funding_and_withdrawal.sql",
+      "sha256": "fb709e4fac2f5d6fbb8f63da3a082b1b8f1979d82e6a64fc2360e3f75207211d"
+    },
+    {
+      "path": "supabase/migrations/20260926090813_audit_and_system.sql",
+      "sha256": "80169dd2f0ccce4bfca5a064c410fc9fef03ce7dbf9952c117704effce829f43"
+    },
+    {
+      "path": "supabase/migrations/20260926094147_liveops_notifications_and_ranks.sql",
+      "sha256": "2ca5e3d1be6d6f2ed66c8ec8cd7d3551dae5f35ab51f5bfc11534cfd5e9edbc4"
+    },
+    {
+      "path": "supabase/migrations/20260926094152_ai_trust_and_analytics.sql",
+      "sha256": "286cd5fdf62e16d526094fa7d26ef86639fb41a66ed9114d6ad90508d767c176"
+    },
+    {
+      "path": "supabase/migrations/20260926094853_server_command_functions.sql",
+      "sha256": "1f857092ebb2fb50c20c7e87808fae2b6c567dbff67ba1b9aac8b6168131ec5a"
+    },
+    {
+      "path": "supabase/migrations/20260926095627_secure_read_models.sql",
+      "sha256": "1a42e7320f5edcb7b7a718f4068ebf71b002beb925824759484cef5af5d75555"
+    },
+    {
+      "path": "supabase/migrations/20260926103000_analytics_event_deduplication.sql",
+      "sha256": "a0ee040b0f5cd97f65676c0b698fde9e5f80ddf8c6d2c1339d6ce0d51794dc33"
+    },
+    {
+      "path": "supabase/migrations/20260926104500_trial_settlement_command.sql",
+      "sha256": "d993213ee2459c0b9ea3b47607f48034a79b3403143acda71c04c3295931253b"
+    },
+    {
+      "path": "supabase/migrations/20260926105500_economy_version_hardening.sql",
+      "sha256": "bbb1e96380b3546a6030ee97467aba934cf0ff2de090840eb14e507220237063"
+    },
+    {
+      "path": "supabase/migrations/20260926110500_push_subscription_commands.sql",
+      "sha256": "3d89ae14597635ab56069541b223a498a3638edfc361a0fba36dba246f39dbb6"
+    },
+    {
+      "path": "supabase/migrations/20260926112000_withdrawal_policy_and_secure_command.sql",
+      "sha256": "34876b870e3de234f0d4286b1033b47533934814fd2885676f02a8f0ba704c98"
+    },
+    {
+      "path": "supabase/migrations/20260926113500_ai_orchestration_and_admin_bootstrap.sql",
+      "sha256": "6ad9295412d61849d4652a972cfe1927f90eaeaeed1ea3046aa788219d389615"
+    },
+    {
+      "path": "supabase/migrations/20260926192203_ws02_foundation_schema.sql",
+      "sha256": "9ed8926c80f55352976f78e0f7b6f12a43c69e6e8715ecdac32f07a9cb9a80c3"
+    },
+    {
+      "path": "supabase/migrations/20260926192208_ws02_commands_and_catalog_seed.sql",
+      "sha256": "9df1118fc49fb91d1fbbe28154238afd8ff2bb56c877ff48333a4ddeca615369"
+    },
+    {
+      "path": "supabase/migrations/20260926233338_universal_putduk_ai_audit_routes.sql",
+      "sha256": "8bd266ef5919b36af902b4b785c3135dad2a31725e9d84c6aa534a6bf7869628"
+    },
+    {
+      "path": "supabase/migrations/20260927003000_identity_consent_productization.sql",
+      "sha256": "43409568620c9fc5b91f8ec3cf57eb9844e7b58821207592152c95912d483e08"
+    },
+    {
+      "path": "supabase/migrations/20260927004500_withdrawal_destination_safe_read.sql",
+      "sha256": "f3abcb6f3605f5016cdf3a05a6f3ee60ff7107d66129c0656a05be2ede0d0bec"
+    },
+    {
+      "path": "supabase/migrations/20260927005000_ai_service_role_execution.sql",
+      "sha256": "16c360788a26d8f7a11c0a8822c836ab6129652d6aa494c9a974853f8e7dd629"
+    },
+    {
+      "path": "supabase/migrations/20260927120000_ws04_enum_extensions.sql",
+      "sha256": "947c0cdd9060e4a7b7c5ffce3572a6e6c619be5d697b4954ea9692c4f05238d8"
+    },
+    {
+      "path": "supabase/migrations/20260927120100_ws04_security_money_schema.sql",
+      "sha256": "484e60798e33edc02587156a909fa30669ec5fe9c173ef9be6730ee80185e1f6"
+    },
+    {
+      "path": "supabase/migrations/20260927120200_ws04_phone_and_usdt_deposit_commands.sql",
+      "sha256": "89607019c523c8daba529d59035e8f70009144c5c240accda613c5617eb7f534"
+    },
+    {
+      "path": "supabase/migrations/20260927120300_ws04_destination_and_request_commands.sql",
+      "sha256": "ec8acc08773597787feed7ca80b062590a8c673e94bce74f4076916d5b0bfb0c"
+    },
+    {
+      "path": "supabase/migrations/20260927120400_ws04_withdrawal_lifecycle_commands.sql",
+      "sha256": "446853ec5c1bedc063f8f9d3d31695a6e084868f856ff972b0844d7992bd5a75"
+    },
+    {
+      "path": "supabase/migrations/20260927120500_ws04_kyc_admin_session_welcome_seed.sql",
+      "sha256": "84bfb1b11871a529f011b8fc855c6e7e291a865fcb70646ac3e273e70efb4ceb"
+    },
+    {
+      "path": "supabase/migrations/20260927120600_ws04_signup_phone_history_trigger.sql",
+      "sha256": "5f7e9e10a0d09c5579122202e8854dd93882032abbebabbd3761587735ba007f"
+    },
+    {
+      "path": "supabase/migrations/20260927120700_ws04_release_disposition_and_first_destination.sql",
+      "sha256": "c9f6549cf289e55770c0a84fa9f0f0b507e13c1b47a3ff5bfa0b3544c6fee941"
+    },
+    {
+      "path": "supabase/migrations/20260927120800_ws05_admin_session_assert_touch.sql",
+      "sha256": "86dfd17f5f4b073d8cde6065ebf3f6e0e5c2420f88eb61aee2bbcc9c42f041f9"
+    },
+    {
+      "path": "supabase/migrations/20260927120900_ws05_worker_service_role_grants.sql",
+      "sha256": "ab7e6c9f4564ed35430636ec65eab01ac121922901634accea9b6840c6d21cfd"
+    },
+    {
+      "path": "supabase/migrations/20260927123000_ws05_worker_lease_replay.sql",
+      "sha256": "306e36aeea13cf048458f0d05d1e51b0bccc68eeef375055e5eb8b9d3b3a6aa1"
+    },
+    {
+      "path": "supabase/migrations/20260927124500_ws05_e2e_service_role_read_grants.sql",
+      "sha256": "a98696bc34ecd028bf65676fe467ff4d26a9b896c79b84402b02bc6b2b6d261f"
+    },
+    {
+      "path": "supabase/migrations/20260927131000_ws05_convert_service_role_grants.sql",
+      "sha256": "a62b97e19df57fdc4dbfa0b1a8b4fb970acd88254b2b7e3a6cce1e9ed4dc9af1"
+    },
+    {
+      "path": "supabase/migrations/20260927132000_ws05_bootstrap_krw_wallet_only.sql",
+      "sha256": "7e26df9a8695446ee0f2b16587d50207767b0c316c589bcea713b1a805c6c73b"
+    },
+    {
+      "path": "supabase/migrations/20260927132500_ws05_bootstrap_service_role_grants.sql",
+      "sha256": "55acd28283bc4e1f1457875ad056a3d7b4aa4bd98cfe77fe21dee9e9447dbeee"
+    },
+    {
+      "path": "supabase/migrations/20260927133000_ws05_consume_step_up_security_definer.sql",
+      "sha256": "a9fbf88c10424d12a6b2e721b8da8b13028c2c0c0ad3551e827d27701392a7d0"
+    },
+    {
+      "path": "supabase/migrations/20260927140000_ws05_restore_definer_allowlist.sql",
+      "sha256": "26fc81b6a8519c8b033618c0e01329376fd23a063e8da01ce8efcfc631aa9a4c"
+    },
+    {
+      "path": "supabase/migrations/20260928035854_analytics_service_role_ingest.sql",
+      "sha256": "6f1dec51d0dabd1da602ea5632e5a44c3403aff353ed216490987797b200b704"
+    },
+    {
+      "path": "supabase/migrations/20260928051514_ws06_bind_step_up_admin_session.sql",
+      "sha256": "93b34e028b03b968233d1c838ff06c65f4770c5fdab231a911b7c61fb60397dd"
+    },
+    {
+      "path": "supabase/migrations/20260929143000_deposit_request_service_role_insert.sql",
+      "sha256": "662cf2223fa4812ade6c705454891e7b8200237fadaf76895ab5f13776ebd0a6"
+    },
+    {
+      "path": "supabase/migrations/20260929151000_admin_member_mining_sessions_select.sql",
+      "sha256": "f267ec704f46999be1bbab2f4894bc4ad6c2addd6d20c2ad22da9443eae807b1"
+    },
+    {
+      "path": "supabase/migrations/20260930052429_withdrawal_logical_lifecycle.sql",
+      "sha256": "6313876ec0e630c7368a4fd0383f47d73fcd865557e70ec52628677336b8bffa"
+    },
+    {
+      "path": "supabase/migrations/20260930114500_acknowledge_reconciliation_mismatch.sql",
+      "sha256": "5ba871163711e3a83a9d78bb3e6a6565d153782f75bae7d6eadd22607912f06d"
+    },
+    {
+      "path": "supabase/migrations/20261001040951_withdrawal_destination_reauthentication.sql",
+      "sha256": "0ca376fdeff9122cf70715cedda939d1bad9edd28349f463ab50735587dd687d"
+    },
+    {
+      "path": "supabase/migrations/20261001045129_withdrawal_reauth_consumption_clock.sql",
+      "sha256": "1209033608951da012071756f7d57884bbed3f3e2e8a80642deabbb76297751f"
+    },
+    {
+      "path": "supabase/migrations/20261001135427_admin_crypto_withdrawal_service_read.sql",
+      "sha256": "5901bccd3819b8e75ba32990982ae1182be75c7d249ea7d6bcdb1476fc467bc4"
+    },
+    {
+      "path": "supabase/migrations/20261001152950_service_role_default_privilege_lock.sql",
+      "sha256": "c2acd070c8c8b3f9b7e1b39922b086ac15b4608011ab17b29c5b197ab925b59c"
+    },
+    {
+      "path": "supabase/migrations/20261002103000_service_role_revoke_image_default_writes.sql",
+      "sha256": "0cbdaa43dc227bed6f6006273a2f20ceda51a37c0a850ca7db9a1dea2fdf8ef2"
+    },
+    {
+      "path": "supabase/migrations/20261002230000_krw_deposit_journal_integrity.sql",
+      "sha256": "c23e54fe80d9789db7746ff4082e0446c30a9c450e516aff312f53b4f2da89f4"
+    },
+    {
+      "path": "supabase/migrations/20261003051211_usdt_approval_receipt_integrity.sql",
+      "sha256": "7336770bf29a8693452b49b864ba9e19728890223077ea79d9dc8e3aa40250d8"
+    },
+    {
+      "path": "supabase/migrations/20261003065443_safe_mode_atomic_audit_command.sql",
+      "sha256": "12b7ea60c01363a669d540de45614e430b9646b3bc149399322278382cbd463e"
+    },
+    {
+      "path": "supabase/migrations/20261003072238_safe_mode_audit_consumer.sql",
+      "sha256": "6bfd0232f59711b57364900a72a684e0b33e7dac0dec4906bcfd9ff1c48b4bd4"
+    },
+    {
+      "path": "supabase/migrations/20261003081200_money_source_credit_provenance.sql",
+      "sha256": "c9574a3997e3717d05c606af3d672ee998ef3c3a7b328180580820445fa2203e"
+    },
+    {
+      "path": "supabase/migrations/20261003140000_economy_policy_v1.sql",
+      "sha256": "74de44b21580944c98f7e1768afeac77783d5a1aa053962495aa1c225ae4976c"
+    },
+    {
+      "path": "supabase/migrations/20261003150000_legacy_withdrawal_entrypoint_closure.sql",
+      "sha256": "a0b6454c72cb89bc663d837018cef9b2601d3c47bfec45f0a1deb577ed5c8435"
+    },
+    {
+      "path": "supabase/migrations/20261003160000_effective_economy_policy_reader.sql",
+      "sha256": "26a09302cfe112ac10ac2630e24b5937a86551594513567d2ea000a7a3dbba43"
+    },
+    {
+      "path": "supabase/migrations/20261004100000_withdrawal_verified_source_guard.sql",
+      "sha256": "ca664ebb391179bc30938e5e450ca6e23c65e51c9bd3d527d6a0fed53a44e14a"
+    },
+    {
+      "path": "supabase/migrations/20261004121000_funding_principal_revision_foundation.sql",
+      "sha256": "3fbd799d8f704ac9a55b77af4e5da38b2c520481960ffeaabbe64137e52dde3a"
+    },
+    {
+      "path": "supabase/migrations/20261004123000_funding_entitlement_foundation.sql",
+      "sha256": "404b585420d0a9f4a6875d6da395fa4bd3783cc3866de7d198fb01866dbd7706"
+    },
+    {
+      "path": "supabase/migrations/20261004140000_funding_cycle_foundation.sql",
+      "sha256": "2acb575413250de8fcef554185c3587b5978220f796f99d42d68ec15349b4aa4"
+    },
+    {
+      "path": "supabase/migrations/20261004170000_funding_capacity_speed.sql",
+      "sha256": "57e78e5d45ee8e0d558ea9955f15bc601efd4c9ea765a5237e526ce7c596d13c"
+    },
+    {
+      "path": "supabase/migrations/20261004183000_funding_segment_proration.sql",
+      "sha256": "cf9fbc44afc05eaf94bc1301a89c6b534565ac35201181557ee0134993106e88"
+    },
+    {
+      "path": "supabase/migrations/20261004203000_principal_recovery_newest_first.sql",
+      "sha256": "4171fe66726e1566868015dd33de09258e130dae6f3104700c29a07b9780cd2b"
+    },
+    {
+      "path": "supabase/migrations/20261004203100_remove_unread_principal_lot_variable.sql",
+      "sha256": "1c8e12476d1801e324b4790a866795881d4acf1697392145f6c02432d40e2bc6"
+    },
+    {
+      "path": "supabase/migrations/20261004221500_funding_reward_pending.sql",
+      "sha256": "437ea737c4038698fb274f6a683ebcf91bec6acdafe88100d712e140b7427ba2"
+    },
+    {
+      "path": "supabase/migrations/20261004223000_mark_pending_reward_function_stable.sql",
+      "sha256": "d3f7fa554357dbda9df5d2e80d519ea4a3e754be468fbe669053b388e596307e"
+    },
+    {
+      "path": "supabase/migrations/20261004235000_member_mining_server_display.sql",
+      "sha256": "283d5861dcb4849dea6f19c89fd0850764f63b8355a669c4fa4f7801a7f1018e"
+    },
+    {
+      "path": "supabase/migrations/20261005003000_mining_server_display_service_role.sql",
+      "sha256": "635416164a80d4160a5f5497b9b1b737d4a95e2fe0fcec1ca9bc438d71135d8d"
+    },
+    {
+      "path": "supabase/migrations/20261005040000_ai_conversation_storage.sql",
+      "sha256": "c31206e6c51797f5e77db801b1883afe9ca1b5849380e18949627880780ebdf7"
+    },
+    {
+      "path": "supabase/migrations/20261005054518_ai_tool_evidence_storage.sql",
+      "sha256": "e785ba22f9c009009ffeaeb388b3f91cd7aae462e92befecbbd235711dd6b0c5"
+    },
+    {
+      "path": "supabase/migrations/20261005064600_ai_conversation_summary_storage.sql",
+      "sha256": "9747c8d6454e4c66f89a14c8bdb33f8ce48ddba598cedb2ea5b5e48204871ff3"
+    },
+    {
+      "path": "supabase/migrations/20261005143000_withdrawal_idempotency_key_reuse.sql",
+      "sha256": "cb4a45f20990819df71feff39abc6553765ffcc51b5f91a0e6178d0b590892e1"
+    },
+    {
+      "path": "supabase/migrations/20261005160000_worker_permanent_failure_and_reconciliation_idempotency.sql",
+      "sha256": "50be37cc455623624d0a1c7deaf2dff1424f02f0a0b21c03bfbdd05dafd246fe"
+    },
+    {
+      "path": "supabase/migrations/20261006032821_withdrawal_verified_source_hold.sql",
+      "sha256": "69be9bb9f2c41f92cc80171037f5c35cbdf23e9a433501e09a88160145ad9eef"
+    },
+    {
+      "path": "supabase/migrations/20261006043058_mining_reward_withdrawal_reservation.sql",
+      "sha256": "94d180cfacbe7cbccbe515eb88a41d58b1621ae4bd72ea0013dd234330b932fa"
+    },
+    {
+      "path": "supabase/migrations/20261006050208_withdrawal_reserved_source_disposition.sql",
+      "sha256": "2d8a85f408bd6d746e66c8f88bb1e01af212bcfeb8eb8f50b6f929efc63b0ce6"
+    }
+  ],
+  "sql_functions": [
+    {
+      "name": "app_private.set_updated_at",
+      "source": "supabase/migrations/20260926090727_foundation_extensions_and_types.sql",
+      "line": 69
+    },
+    {
+      "name": "app_private.prevent_row_mutation",
+      "source": "supabase/migrations/20260926090727_foundation_extensions_and_types.sql",
+      "line": 81
+    },
+    {
+      "name": "app_private.require_operator_role",
+      "source": "supabase/migrations/20260926094853_server_command_functions.sql",
+      "line": 6
+    },
+    {
+      "name": "public.bootstrap_user",
+      "source": "supabase/migrations/20260926094853_server_command_functions.sql",
+      "line": 42
+    },
+    {
+      "name": "public.start_trial",
+      "source": "supabase/migrations/20260926094853_server_command_functions.sql",
+      "line": 82
+    },
+    {
+      "name": "public.create_deposit_request",
+      "source": "supabase/migrations/20260926094853_server_command_functions.sql",
+      "line": 202
+    },
+    {
+      "name": "public.create_withdrawal_request",
+      "source": "supabase/migrations/20260926094853_server_command_functions.sql",
+      "line": 263
+    },
+    {
+      "name": "public.approve_deposit_request",
+      "source": "supabase/migrations/20260926094853_server_command_functions.sql",
+      "line": 381
+    },
+    {
+      "name": "public.record_mining_settlement",
+      "source": "supabase/migrations/20260926094853_server_command_functions.sql",
+      "line": 532
+    },
+    {
+      "name": "public.settle_trial",
+      "source": "supabase/migrations/20260926104500_trial_settlement_command.sql",
+      "line": 3
+    },
+    {
+      "name": "app_private.validate_enabled_trial_program",
+      "source": "supabase/migrations/20260926105500_economy_version_hardening.sql",
+      "line": 19
+    },
+    {
+      "name": "public.upsert_push_subscription",
+      "source": "supabase/migrations/20260926110500_push_subscription_commands.sql",
+      "line": 7
+    },
+    {
+      "name": "public.revoke_push_subscription",
+      "source": "supabase/migrations/20260926110500_push_subscription_commands.sql",
+      "line": 78
+    },
+    {
+      "name": "public.create_withdrawal_request",
+      "source": "supabase/migrations/20260926112000_withdrawal_policy_and_secure_command.sql",
+      "line": 55
+    },
+    {
+      "name": "public.begin_ai_request",
+      "source": "supabase/migrations/20260926113500_ai_orchestration_and_admin_bootstrap.sql",
+      "line": 30
+    },
+    {
+      "name": "public.complete_ai_request",
+      "source": "supabase/migrations/20260926113500_ai_orchestration_and_admin_bootstrap.sql",
+      "line": 153
+    },
+    {
+      "name": "public.fail_ai_request",
+      "source": "supabase/migrations/20260926113500_ai_orchestration_and_admin_bootstrap.sql",
+      "line": 250
+    },
+    {
+      "name": "public.bootstrap_first_super_admin",
+      "source": "supabase/migrations/20260926113500_ai_orchestration_and_admin_bootstrap.sql",
+      "line": 307
+    },
+    {
+      "name": "app_private.enforce_balanced_ledger_transaction",
+      "source": "supabase/migrations/20260926192203_ws02_foundation_schema.sql",
+      "line": 152
+    },
+    {
+      "name": "app_private.enforce_balanced_ledger_header",
+      "source": "supabase/migrations/20260926192203_ws02_foundation_schema.sql",
+      "line": 204
+    },
+    {
+      "name": "app_private.enforce_first_funding_promotion_cap",
+      "source": "supabase/migrations/20260926192203_ws02_foundation_schema.sql",
+      "line": 498
+    },
+    {
+      "name": "app_private.enforce_catalog_version_transition",
+      "source": "supabase/migrations/20260926192203_ws02_foundation_schema.sql",
+      "line": 571
+    },
+    {
+      "name": "app_private.enforce_draft_product_mutation",
+      "source": "supabase/migrations/20260926192203_ws02_foundation_schema.sql",
+      "line": 705
+    },
+    {
+      "name": "app_private.enforce_draft_product_child_mutation",
+      "source": "supabase/migrations/20260926192203_ws02_foundation_schema.sql",
+      "line": 739
+    },
+    {
+      "name": "public.bootstrap_user",
+      "source": "supabase/migrations/20260926192208_ws02_commands_and_catalog_seed.sql",
+      "line": 20
+    },
+    {
+      "name": "public.convert_trial_welcome_reward",
+      "source": "supabase/migrations/20260926192208_ws02_commands_and_catalog_seed.sql",
+      "line": 83
+    },
+    {
+      "name": "public.create_welcome_reward_withdrawal_request",
+      "source": "supabase/migrations/20260926192208_ws02_commands_and_catalog_seed.sql",
+      "line": 416
+    },
+    {
+      "name": "public.run_financial_reconciliation",
+      "source": "supabase/migrations/20260926192208_ws02_commands_and_catalog_seed.sql",
+      "line": 635
+    },
+    {
+      "name": "public.claim_outbox_events",
+      "source": "supabase/migrations/20260926192208_ws02_commands_and_catalog_seed.sql",
+      "line": 761
+    },
+    {
+      "name": "public.complete_outbox_event",
+      "source": "supabase/migrations/20260926192208_ws02_commands_and_catalog_seed.sql",
+      "line": 817
+    },
+    {
+      "name": "public.fail_outbox_event",
+      "source": "supabase/migrations/20260926192208_ws02_commands_and_catalog_seed.sql",
+      "line": 845
+    },
+    {
+      "name": "public.claim_system_jobs",
+      "source": "supabase/migrations/20260926192208_ws02_commands_and_catalog_seed.sql",
+      "line": 888
+    },
+    {
+      "name": "public.complete_system_job",
+      "source": "supabase/migrations/20260926192208_ws02_commands_and_catalog_seed.sql",
+      "line": 957
+    },
+    {
+      "name": "public.fail_system_job",
+      "source": "supabase/migrations/20260926192208_ws02_commands_and_catalog_seed.sql",
+      "line": 992
+    },
+    {
+      "name": "public.begin_ai_request_v2",
+      "source": "supabase/migrations/20260926233338_universal_putduk_ai_audit_routes.sql",
+      "line": 134
+    },
+    {
+      "name": "public.is_login_id_available",
+      "source": "supabase/migrations/20260927003000_identity_consent_productization.sql",
+      "line": 104
+    },
+    {
+      "name": "public.resolve_login_email",
+      "source": "supabase/migrations/20260927003000_identity_consent_productization.sql",
+      "line": 125
+    },
+    {
+      "name": "app_private.capture_public_signup_identity",
+      "source": "supabase/migrations/20260927003000_identity_consent_productization.sql",
+      "line": 144
+    },
+    {
+      "name": "app_private.assert_not_safe_mode",
+      "source": "supabase/migrations/20260927120100_ws04_security_money_schema.sql",
+      "line": 23
+    },
+    {
+      "name": "app_private.touch_command_rate_limit",
+      "source": "supabase/migrations/20260927120100_ws04_security_money_schema.sql",
+      "line": 45
+    },
+    {
+      "name": "public.normalize_signup_phone",
+      "source": "supabase/migrations/20260927120200_ws04_phone_and_usdt_deposit_commands.sql",
+      "line": 7
+    },
+    {
+      "name": "public.signup_phone_availability",
+      "source": "supabase/migrations/20260927120200_ws04_phone_and_usdt_deposit_commands.sql",
+      "line": 52
+    },
+    {
+      "name": "public.set_usdt_deposit_instructions",
+      "source": "supabase/migrations/20260927120200_ws04_phone_and_usdt_deposit_commands.sql",
+      "line": 102
+    },
+    {
+      "name": "public.submit_usdt_manual_deposit",
+      "source": "supabase/migrations/20260927120200_ws04_phone_and_usdt_deposit_commands.sql",
+      "line": 203
+    },
+    {
+      "name": "public.confirm_usdt_manual_deposit",
+      "source": "supabase/migrations/20260927120200_ws04_phone_and_usdt_deposit_commands.sql",
+      "line": 312
+    },
+    {
+      "name": "app_private.ensure_withdrawal_hold_accounts",
+      "source": "supabase/migrations/20260927120300_ws04_destination_and_request_commands.sql",
+      "line": 7
+    },
+    {
+      "name": "app_private.post_withdrawal_hold",
+      "source": "supabase/migrations/20260927120300_ws04_destination_and_request_commands.sql",
+      "line": 43
+    },
+    {
+      "name": "app_private.available_krw_balance",
+      "source": "supabase/migrations/20260927120300_ws04_destination_and_request_commands.sql",
+      "line": 99
+    },
+    {
+      "name": "app_private.consume_admin_step_up_token",
+      "source": "supabase/migrations/20260927120300_ws04_destination_and_request_commands.sql",
+      "line": 126
+    },
+    {
+      "name": "public.register_krw_bank_destination",
+      "source": "supabase/migrations/20260927120300_ws04_destination_and_request_commands.sql",
+      "line": 191
+    },
+    {
+      "name": "public.register_usdt_withdrawal_destination",
+      "source": "supabase/migrations/20260927120300_ws04_destination_and_request_commands.sql",
+      "line": 306
+    },
+    {
+      "name": "app_private.request_withdrawal_with_hold",
+      "source": "supabase/migrations/20260927120300_ws04_destination_and_request_commands.sql",
+      "line": 439
+    },
+    {
+      "name": "public.request_krw_withdrawal",
+      "source": "supabase/migrations/20260927120300_ws04_destination_and_request_commands.sql",
+      "line": 641
+    },
+    {
+      "name": "public.request_usdt_withdrawal",
+      "source": "supabase/migrations/20260927120300_ws04_destination_and_request_commands.sql",
+      "line": 664
+    },
+    {
+      "name": "public.record_krw_external_send",
+      "source": "supabase/migrations/20260927120400_ws04_withdrawal_lifecycle_commands.sql",
+      "line": 7
+    },
+    {
+      "name": "public.record_usdt_external_send",
+      "source": "supabase/migrations/20260927120400_ws04_withdrawal_lifecycle_commands.sql",
+      "line": 129
+    },
+    {
+      "name": "public.release_withdrawal_hold",
+      "source": "supabase/migrations/20260927120400_ws04_withdrawal_lifecycle_commands.sql",
+      "line": 260
+    },
+    {
+      "name": "public.finalize_withdrawal_ledger",
+      "source": "supabase/migrations/20260927120400_ws04_withdrawal_lifecycle_commands.sql",
+      "line": 385
+    },
+    {
+      "name": "public.create_welcome_reward_withdrawal_request",
+      "source": "supabase/migrations/20260927120400_ws04_withdrawal_lifecycle_commands.sql",
+      "line": 555
+    },
+    {
+      "name": "public.open_kyc_case",
+      "source": "supabase/migrations/20260927120500_ws04_kyc_admin_session_welcome_seed.sql",
+      "line": 7
+    },
+    {
+      "name": "public.submit_kyc_documents",
+      "source": "supabase/migrations/20260927120500_ws04_kyc_admin_session_welcome_seed.sql",
+      "line": 51
+    },
+    {
+      "name": "public.review_kyc_case",
+      "source": "supabase/migrations/20260927120500_ws04_kyc_admin_session_welcome_seed.sql",
+      "line": 124
+    },
+    {
+      "name": "public.register_admin_session",
+      "source": "supabase/migrations/20260927120500_ws04_kyc_admin_session_welcome_seed.sql",
+      "line": 236
+    },
+    {
+      "name": "public.revoke_admin_session",
+      "source": "supabase/migrations/20260927120500_ws04_kyc_admin_session_welcome_seed.sql",
+      "line": 323
+    },
+    {
+      "name": "public.revoke_all_admin_sessions",
+      "source": "supabase/migrations/20260927120500_ws04_kyc_admin_session_welcome_seed.sql",
+      "line": 374
+    },
+    {
+      "name": "public.issue_admin_step_up",
+      "source": "supabase/migrations/20260927120500_ws04_kyc_admin_session_welcome_seed.sql",
+      "line": 430
+    },
+    {
+      "name": "public.consume_admin_step_up",
+      "source": "supabase/migrations/20260927120500_ws04_kyc_admin_session_welcome_seed.sql",
+      "line": 523
+    },
+    {
+      "name": "app_private.record_signup_phone_history",
+      "source": "supabase/migrations/20260927120600_ws04_signup_phone_history_trigger.sql",
+      "line": 3
+    },
+    {
+      "name": "app_private.record_signup_phone_history",
+      "source": "supabase/migrations/20260927120600_ws04_signup_phone_history_trigger.sql",
+      "line": 37
+    },
+    {
+      "name": "public.register_krw_bank_destination",
+      "source": "supabase/migrations/20260927120700_ws04_release_disposition_and_first_destination.sql",
+      "line": 8
+    },
+    {
+      "name": "public.register_usdt_withdrawal_destination",
+      "source": "supabase/migrations/20260927120700_ws04_release_disposition_and_first_destination.sql",
+      "line": 124
+    },
+    {
+      "name": "public.release_withdrawal_hold",
+      "source": "supabase/migrations/20260927120700_ws04_release_disposition_and_first_destination.sql",
+      "line": 261
+    },
+    {
+      "name": "public.assert_admin_session",
+      "source": "supabase/migrations/20260927120800_ws05_admin_session_assert_touch.sql",
+      "line": 7
+    },
+    {
+      "name": "public.issue_admin_step_up",
+      "source": "supabase/migrations/20260927120800_ws05_admin_session_assert_touch.sql",
+      "line": 76
+    },
+    {
+      "name": "public.extend_outbox_event_lease",
+      "source": "supabase/migrations/20260927123000_ws05_worker_lease_replay.sql",
+      "line": 6
+    },
+    {
+      "name": "public.extend_system_job_lease",
+      "source": "supabase/migrations/20260927123000_ws05_worker_lease_replay.sql",
+      "line": 54
+    },
+    {
+      "name": "public.replay_outbox_event",
+      "source": "supabase/migrations/20260927123000_ws05_worker_lease_replay.sql",
+      "line": 102
+    },
+    {
+      "name": "public.replay_system_job",
+      "source": "supabase/migrations/20260927123000_ws05_worker_lease_replay.sql",
+      "line": 211
+    },
+    {
+      "name": "public.bootstrap_user",
+      "source": "supabase/migrations/20260927132000_ws05_bootstrap_krw_wallet_only.sql",
+      "line": 5
+    },
+    {
+      "name": "public.consume_admin_step_up",
+      "source": "supabase/migrations/20260927133000_ws05_consume_step_up_security_definer.sql",
+      "line": 6
+    },
+    {
+      "name": "public.consume_admin_step_up",
+      "source": "supabase/migrations/20260927140000_ws05_restore_definer_allowlist.sql",
+      "line": 9
+    },
+    {
+      "name": "app_private.consume_admin_step_up_token",
+      "source": "supabase/migrations/20260928051514_ws06_bind_step_up_admin_session.sql",
+      "line": 16
+    },
+    {
+      "name": "public.consume_admin_step_up",
+      "source": "supabase/migrations/20260928051514_ws06_bind_step_up_admin_session.sql",
+      "line": 96
+    },
+    {
+      "name": "app_private.withdrawal_logical_record",
+      "source": "supabase/migrations/20260930052429_withdrawal_logical_lifecycle.sql",
+      "line": 34
+    },
+    {
+      "name": "public.prepare_withdrawal_logical_request",
+      "source": "supabase/migrations/20260930052429_withdrawal_logical_lifecycle.sql",
+      "line": 53
+    },
+    {
+      "name": "public.bind_withdrawal_logical_destination",
+      "source": "supabase/migrations/20260930052429_withdrawal_logical_lifecycle.sql",
+      "line": 122
+    },
+    {
+      "name": "public.hold_withdrawal_logical_request",
+      "source": "supabase/migrations/20260930052429_withdrawal_logical_lifecycle.sql",
+      "line": 166
+    },
+    {
+      "name": "public.resolve_withdrawal_logical_request",
+      "source": "supabase/migrations/20260930052429_withdrawal_logical_lifecycle.sql",
+      "line": 217
+    },
+    {
+      "name": "public.acknowledge_reconciliation_mismatch",
+      "source": "supabase/migrations/20260930114500_acknowledge_reconciliation_mismatch.sql",
+      "line": 8
+    },
+    {
+      "name": "app_private.guard_withdrawal_destination_step_up",
+      "source": "supabase/migrations/20261001040951_withdrawal_destination_reauthentication.sql",
+      "line": 40
+    },
+    {
+      "name": "app_private.audit_withdrawal_destination_step_up",
+      "source": "supabase/migrations/20261001040951_withdrawal_destination_reauthentication.sql",
+      "line": 75
+    },
+    {
+      "name": "app_private.authorize_withdrawal_destination_replacement",
+      "source": "supabase/migrations/20261001040951_withdrawal_destination_reauthentication.sql",
+      "line": 93
+    },
+    {
+      "name": "public.register_krw_bank_destination",
+      "source": "supabase/migrations/20261001040951_withdrawal_destination_reauthentication.sql",
+      "line": 119
+    },
+    {
+      "name": "public.register_usdt_withdrawal_destination",
+      "source": "supabase/migrations/20261001040951_withdrawal_destination_reauthentication.sql",
+      "line": 162
+    },
+    {
+      "name": "app_private.guard_withdrawal_destination_step_up",
+      "source": "supabase/migrations/20261001045129_withdrawal_reauth_consumption_clock.sql",
+      "line": 5
+    },
+    {
+      "name": "app_private.authorize_withdrawal_destination_replacement",
+      "source": "supabase/migrations/20261001045129_withdrawal_reauth_consumption_clock.sql",
+      "line": 39
+    },
+    {
+      "name": "app_private.record_money_command_link",
+      "source": "supabase/migrations/20261002230000_krw_deposit_journal_integrity.sql",
+      "line": 47
+    },
+    {
+      "name": "public.approve_deposit_request",
+      "source": "supabase/migrations/20261002230000_krw_deposit_journal_integrity.sql",
+      "line": 132
+    },
+    {
+      "name": "public.record_krw_external_send",
+      "source": "supabase/migrations/20261002230000_krw_deposit_journal_integrity.sql",
+      "line": 535
+    },
+    {
+      "name": "public.record_usdt_external_send",
+      "source": "supabase/migrations/20261002230000_krw_deposit_journal_integrity.sql",
+      "line": 668
+    },
+    {
+      "name": "public.release_withdrawal_hold",
+      "source": "supabase/migrations/20261002230000_krw_deposit_journal_integrity.sql",
+      "line": 811
+    },
+    {
+      "name": "public.finalize_withdrawal_ledger",
+      "source": "supabase/migrations/20261002230000_krw_deposit_journal_integrity.sql",
+      "line": 966
+    },
+    {
+      "name": "public.run_financial_reconciliation",
+      "source": "supabase/migrations/20261002230000_krw_deposit_journal_integrity.sql",
+      "line": 1148
+    },
+    {
+      "name": "public.confirm_usdt_manual_deposit",
+      "source": "supabase/migrations/20261003051211_usdt_approval_receipt_integrity.sql",
+      "line": 5
+    },
+    {
+      "name": "app_private.apply_safe_mode_audit_command",
+      "source": "supabase/migrations/20261003065443_safe_mode_atomic_audit_command.sql",
+      "line": 5
+    },
+    {
+      "name": "public.complete_outbox_event",
+      "source": "supabase/migrations/20261003072238_safe_mode_audit_consumer.sql",
+      "line": 7
+    },
+    {
+      "name": "app_private.assert_money_source_credit",
+      "source": "supabase/migrations/20261003081200_money_source_credit_provenance.sql",
+      "line": 46
+    },
+    {
+      "name": "app_private.guard_money_source_movement",
+      "source": "supabase/migrations/20261003081200_money_source_credit_provenance.sql",
+      "line": 174
+    },
+    {
+      "name": "app_private.capture_money_source_credit",
+      "source": "supabase/migrations/20261003081200_money_source_credit_provenance.sql",
+      "line": 188
+    },
+    {
+      "name": "app_private.assert_money_source_credit_complete",
+      "source": "supabase/migrations/20261003081200_money_source_credit_provenance.sql",
+      "line": 246
+    },
+    {
+      "name": "app_private.guard_money_source_terminal_receipt",
+      "source": "supabase/migrations/20261003081200_money_source_credit_provenance.sql",
+      "line": 310
+    },
+    {
+      "name": "app_private.money_source_credit_verified",
+      "source": "supabase/migrations/20261003081200_money_source_credit_provenance.sql",
+      "line": 380
+    },
+    {
+      "name": "app_private.validate_economy_policy_config",
+      "source": "supabase/migrations/20261003140000_economy_policy_v1.sql",
+      "line": 175
+    },
+    {
+      "name": "app_private.guard_economy_policy_insert",
+      "source": "supabase/migrations/20261003140000_economy_policy_v1.sql",
+      "line": 314
+    },
+    {
+      "name": "app_private.assert_economy_policy_receipt",
+      "source": "supabase/migrations/20261003140000_economy_policy_v1.sql",
+      "line": 326
+    },
+    {
+      "name": "app_private.validate_economy_policy_storage_trigger",
+      "source": "supabase/migrations/20261003140000_economy_policy_v1.sql",
+      "line": 397
+    },
+    {
+      "name": "app_private.validate_economy_policy_receipt_trigger",
+      "source": "supabase/migrations/20261003140000_economy_policy_v1.sql",
+      "line": 427
+    },
+    {
+      "name": "app_private.assert_economy_policy_admin_context",
+      "source": "supabase/migrations/20261003140000_economy_policy_v1.sql",
+      "line": 435
+    },
+    {
+      "name": "app_private.apply_economy_policy_audit_command",
+      "source": "supabase/migrations/20261003140000_economy_policy_v1.sql",
+      "line": 465
+    },
+    {
+      "name": "app_private.guard_economy_policy_outbox",
+      "source": "supabase/migrations/20261003140000_economy_policy_v1.sql",
+      "line": 664
+    },
+    {
+      "name": "public.manage_economy_policy_version",
+      "source": "supabase/migrations/20261003140000_economy_policy_v1.sql",
+      "line": 684
+    },
+    {
+      "name": "app_private.economy_policy_version_document",
+      "source": "supabase/migrations/20261003140000_economy_policy_v1.sql",
+      "line": 710
+    },
+    {
+      "name": "public.read_economy_policy_version_state",
+      "source": "supabase/migrations/20261003140000_economy_policy_v1.sql",
+      "line": 738
+    },
+    {
+      "name": "public.read_effective_economy_policy",
+      "source": "supabase/migrations/20261003160000_effective_economy_policy_reader.sql",
+      "line": 6
+    },
+    {
+      "name": "app_private.request_withdrawal_with_hold",
+      "source": "supabase/migrations/20261004100000_withdrawal_verified_source_guard.sql",
+      "line": 8
+    },
+    {
+      "name": "app_private.funding_principal_micro_krw",
+      "source": "supabase/migrations/20261004121000_funding_principal_revision_foundation.sql",
+      "line": 78
+    },
+    {
+      "name": "app_private.guard_funding_principal_lot",
+      "source": "supabase/migrations/20261004121000_funding_principal_revision_foundation.sql",
+      "line": 95
+    },
+    {
+      "name": "app_private.guard_funding_principal_revision",
+      "source": "supabase/migrations/20261004121000_funding_principal_revision_foundation.sql",
+      "line": 132
+    },
+    {
+      "name": "app_private.capture_funding_principal_lot",
+      "source": "supabase/migrations/20261004121000_funding_principal_revision_foundation.sql",
+      "line": 176
+    },
+    {
+      "name": "app_private.read_funding_principal_foundation",
+      "source": "supabase/migrations/20261004121000_funding_principal_revision_foundation.sql",
+      "line": 228
+    },
+    {
+      "name": "app_private.reject_undecided_principal_recovery",
+      "source": "supabase/migrations/20261004121000_funding_principal_revision_foundation.sql",
+      "line": 357
+    },
+    {
+      "name": "app_private.funding_entitlement_portion_micro",
+      "source": "supabase/migrations/20261004123000_funding_entitlement_foundation.sql",
+      "line": 10
+    },
+    {
+      "name": "app_private.read_funding_entitlement_foundation",
+      "source": "supabase/migrations/20261004123000_funding_entitlement_foundation.sql",
+      "line": 52
+    },
+    {
+      "name": "app_private.guard_funding_cycle_window",
+      "source": "supabase/migrations/20261004140000_funding_cycle_foundation.sql",
+      "line": 32
+    },
+    {
+      "name": "app_private.funding_cycle_server_instant",
+      "source": "supabase/migrations/20261004140000_funding_cycle_foundation.sql",
+      "line": 84
+    },
+    {
+      "name": "app_private.funding_cycle_policy_days",
+      "source": "supabase/migrations/20261004140000_funding_cycle_foundation.sql",
+      "line": 123
+    },
+    {
+      "name": "app_private.ensure_funding_cycle_windows",
+      "source": "supabase/migrations/20261004140000_funding_cycle_foundation.sql",
+      "line": 174
+    },
+    {
+      "name": "app_private.read_funding_cycle_foundation",
+      "source": "supabase/migrations/20261004140000_funding_cycle_foundation.sql",
+      "line": 300
+    },
+    {
+      "name": "app_private.funding_capacity_speed_scale_micro",
+      "source": "supabase/migrations/20261004170000_funding_capacity_speed.sql",
+      "line": 13
+    },
+    {
+      "name": "app_private.funding_capacity_speed_boost_bps",
+      "source": "supabase/migrations/20261004170000_funding_capacity_speed.sql",
+      "line": 59
+    },
+    {
+      "name": "app_private.funding_capacity_speed_multiplier_bps",
+      "source": "supabase/migrations/20261004170000_funding_capacity_speed.sql",
+      "line": 96
+    },
+    {
+      "name": "app_private.funding_capacity_speed_boosted_base",
+      "source": "supabase/migrations/20261004170000_funding_capacity_speed.sql",
+      "line": 144
+    },
+    {
+      "name": "app_private.funding_capacity_speed_compute",
+      "source": "supabase/migrations/20261004170000_funding_capacity_speed.sql",
+      "line": 178
+    },
+    {
+      "name": "app_private.funding_capacity_policy_limit",
+      "source": "supabase/migrations/20261004170000_funding_capacity_speed.sql",
+      "line": 346
+    },
+    {
+      "name": "app_private.read_funding_capacity_speed",
+      "source": "supabase/migrations/20261004170000_funding_capacity_speed.sql",
+      "line": 372
+    },
+    {
+      "name": "app_private.funding_segment_span_microseconds",
+      "source": "supabase/migrations/20261004183000_funding_segment_proration.sql",
+      "line": 58
+    },
+    {
+      "name": "app_private.funding_segment_epoch_microseconds",
+      "source": "supabase/migrations/20261004183000_funding_segment_proration.sql",
+      "line": 85
+    },
+    {
+      "name": "app_private.funding_segment_scale_micro",
+      "source": "supabase/migrations/20261004183000_funding_segment_proration.sql",
+      "line": 108
+    },
+    {
+      "name": "app_private.funding_segment_principal_micro",
+      "source": "supabase/migrations/20261004183000_funding_segment_proration.sql",
+      "line": 136
+    },
+    {
+      "name": "app_private.funding_segment_condition",
+      "source": "supabase/migrations/20261004183000_funding_segment_proration.sql",
+      "line": 168
+    },
+    {
+      "name": "app_private.funding_segment_plan",
+      "source": "supabase/migrations/20261004183000_funding_segment_proration.sql",
+      "line": 290
+    },
+    {
+      "name": "app_private.funding_segment_assert_matches",
+      "source": "supabase/migrations/20261004183000_funding_segment_proration.sql",
+      "line": 395
+    },
+    {
+      "name": "app_private.guard_funding_cycle_segment",
+      "source": "supabase/migrations/20261004183000_funding_segment_proration.sql",
+      "line": 431
+    },
+    {
+      "name": "app_private.ensure_funding_cycle_segments",
+      "source": "supabase/migrations/20261004183000_funding_segment_proration.sql",
+      "line": 482
+    },
+    {
+      "name": "app_private.read_funding_segment_foundation",
+      "source": "supabase/migrations/20261004183000_funding_segment_proration.sql",
+      "line": 676
+    },
+    {
+      "name": "app_private.funding_principal_mining_eligible_micro",
+      "source": "supabase/migrations/20261004203000_principal_recovery_newest_first.sql",
+      "line": 76
+    },
+    {
+      "name": "app_private.guard_funding_principal_revision",
+      "source": "supabase/migrations/20261004203000_principal_recovery_newest_first.sql",
+      "line": 170
+    },
+    {
+      "name": "app_private.plan_principal_recovery_newest_first",
+      "source": "supabase/migrations/20261004203000_principal_recovery_newest_first.sql",
+      "line": 237
+    },
+    {
+      "name": "app_private.preview_principal_recovery_newest_first",
+      "source": "supabase/migrations/20261004203000_principal_recovery_newest_first.sql",
+      "line": 315
+    },
+    {
+      "name": "app_private.lock_principal_recovery_hold",
+      "source": "supabase/migrations/20261004203000_principal_recovery_newest_first.sql",
+      "line": 333
+    },
+    {
+      "name": "app_private.finish_principal_recovery_hold",
+      "source": "supabase/migrations/20261004203000_principal_recovery_newest_first.sql",
+      "line": 417
+    },
+    {
+      "name": "app_private.apply_principal_recovery_newest_first",
+      "source": "supabase/migrations/20261004203000_principal_recovery_newest_first.sql",
+      "line": 498
+    },
+    {
+      "name": "app_private.apply_principal_recovery_original_lot",
+      "source": "supabase/migrations/20261004203000_principal_recovery_newest_first.sql",
+      "line": 593
+    },
+    {
+      "name": "app_private.record_principal_recovery_release",
+      "source": "supabase/migrations/20261004203000_principal_recovery_newest_first.sql",
+      "line": 703
+    },
+    {
+      "name": "app_private.read_funding_principal_foundation",
+      "source": "supabase/migrations/20261004203000_principal_recovery_newest_first.sql",
+      "line": 835
+    },
+    {
+      "name": "app_private.assert_principal_recovery_movement",
+      "source": "supabase/migrations/20261004203000_principal_recovery_newest_first.sql",
+      "line": 996
+    },
+    {
+      "name": "app_private.guard_money_source_movement",
+      "source": "supabase/migrations/20261004203000_principal_recovery_newest_first.sql",
+      "line": 1062
+    },
+    {
+      "name": "app_private.money_source_credit_verified",
+      "source": "supabase/migrations/20261004203000_principal_recovery_newest_first.sql",
+      "line": 1082
+    },
+    {
+      "name": "app_private.read_funding_principal_foundation",
+      "source": "supabase/migrations/20261004203100_remove_unread_principal_lot_variable.sql",
+      "line": 8
+    },
+    {
+      "name": "app_private.funding_reward_pending_fill_microseconds",
+      "source": "supabase/migrations/20261004221500_funding_reward_pending.sql",
+      "line": 14
+    },
+    {
+      "name": "app_private.funding_reward_pending_segment_micro",
+      "source": "supabase/migrations/20261004221500_funding_reward_pending.sql",
+      "line": 59
+    },
+    {
+      "name": "app_private.funding_reward_pending_cap_micro",
+      "source": "supabase/migrations/20261004221500_funding_reward_pending.sql",
+      "line": 104
+    },
+    {
+      "name": "app_private.read_funding_reward_pending",
+      "source": "supabase/migrations/20261004221500_funding_reward_pending.sql",
+      "line": 129
+    },
+    {
+      "name": "app_private.funding_reward_pending_segment_micro",
+      "source": "supabase/migrations/20261004223000_mark_pending_reward_function_stable.sql",
+      "line": 8
+    },
+    {
+      "name": "public.read_own_mining_server_display",
+      "source": "supabase/migrations/20261004235000_member_mining_server_display.sql",
+      "line": 12
+    },
+    {
+      "name": "public.read_own_mining_server_display",
+      "source": "supabase/migrations/20261005003000_mining_server_display_service_role.sql",
+      "line": 9
+    },
+    {
+      "name": "public.release_withdrawal_hold",
+      "source": "supabase/migrations/20261005143000_withdrawal_idempotency_key_reuse.sql",
+      "line": 8
+    },
+    {
+      "name": "public.finalize_withdrawal_ledger",
+      "source": "supabase/migrations/20261005143000_withdrawal_idempotency_key_reuse.sql",
+      "line": 171
+    },
+    {
+      "name": "public.fail_outbox_event",
+      "source": "supabase/migrations/20261005160000_worker_permanent_failure_and_reconciliation_idempotency.sql",
+      "line": 10
+    },
+    {
+      "name": "public.fail_system_job",
+      "source": "supabase/migrations/20261005160000_worker_permanent_failure_and_reconciliation_idempotency.sql",
+      "line": 60
+    },
+    {
+      "name": "public.run_financial_reconciliation",
+      "source": "supabase/migrations/20261005160000_worker_permanent_failure_and_reconciliation_idempotency.sql",
+      "line": 125
+    },
+    {
+      "name": "app_private.verified_mining_reward_remaining_atomic",
+      "source": "supabase/migrations/20261006032821_withdrawal_verified_source_hold.sql",
+      "line": 11
+    },
+    {
+      "name": "app_private.verified_principal_remaining_atomic",
+      "source": "supabase/migrations/20261006032821_withdrawal_verified_source_hold.sql",
+      "line": 38
+    },
+    {
+      "name": "app_private.assert_general_withdrawal_source_present",
+      "source": "supabase/migrations/20261006032821_withdrawal_verified_source_hold.sql",
+      "line": 61
+    },
+    {
+      "name": "app_private.assert_general_withdrawal_source_covers",
+      "source": "supabase/migrations/20261006032821_withdrawal_verified_source_hold.sql",
+      "line": 78
+    },
+    {
+      "name": "app_private.request_withdrawal_with_hold",
+      "source": "supabase/migrations/20261006032821_withdrawal_verified_source_hold.sql",
+      "line": 120
+    },
+    {
+      "name": "app_private.assert_money_source_credit",
+      "source": "supabase/migrations/20261006043058_mining_reward_withdrawal_reservation.sql",
+      "line": 77
+    },
+    {
+      "name": "app_private.verified_mining_reward_remaining_atomic",
+      "source": "supabase/migrations/20261006043058_mining_reward_withdrawal_reservation.sql",
+      "line": 215
+    },
+    {
+      "name": "app_private.assert_general_withdrawal_source_covers",
+      "source": "supabase/migrations/20261006043058_mining_reward_withdrawal_reservation.sql",
+      "line": 254
+    },
+    {
+      "name": "app_private.guard_mining_reward_withdrawal_reservation",
+      "source": "supabase/migrations/20261006043058_mining_reward_withdrawal_reservation.sql",
+      "line": 297
+    },
+    {
+      "name": "app_private.reserve_verified_mining_reward_newest_first",
+      "source": "supabase/migrations/20261006043058_mining_reward_withdrawal_reservation.sql",
+      "line": 349
+    },
+    {
+      "name": "app_private.request_withdrawal_with_hold",
+      "source": "supabase/migrations/20261006043058_mining_reward_withdrawal_reservation.sql",
+      "line": 448
+    },
+    {
+      "name": "app_private.mining_reward_hold_released",
+      "source": "supabase/migrations/20261006050208_withdrawal_reserved_source_disposition.sql",
+      "line": 10
+    },
+    {
+      "name": "app_private.verified_mining_reward_remaining_atomic",
+      "source": "supabase/migrations/20261006050208_withdrawal_reserved_source_disposition.sql",
+      "line": 43
+    },
+    {
+      "name": "app_private.guard_mining_reward_withdrawal_reservation",
+      "source": "supabase/migrations/20261006050208_withdrawal_reserved_source_disposition.sql",
+      "line": 85
+    },
+    {
+      "name": "app_private.reserve_verified_mining_reward_newest_first",
+      "source": "supabase/migrations/20261006050208_withdrawal_reserved_source_disposition.sql",
+      "line": 136
+    },
+    {
+      "name": "app_private.assert_mining_reward_withdrawal_disposition",
+      "source": "supabase/migrations/20261006050208_withdrawal_reserved_source_disposition.sql",
+      "line": 237
+    },
+    {
+      "name": "app_private.assert_principal_recovery_movement",
+      "source": "supabase/migrations/20261006050208_withdrawal_reserved_source_disposition.sql",
+      "line": 399
+    },
+    {
+      "name": "app_private.guard_money_source_movement",
+      "source": "supabase/migrations/20261006050208_withdrawal_reserved_source_disposition.sql",
+      "line": 544
+    },
+    {
+      "name": "app_private.money_source_credit_verified",
+      "source": "supabase/migrations/20261006050208_withdrawal_reserved_source_disposition.sql",
+      "line": 572
+    },
+    {
+      "name": "app_private.record_reserved_withdrawal_source_disposition",
+      "source": "supabase/migrations/20261006050208_withdrawal_reserved_source_disposition.sql",
+      "line": 608
+    }
+  ],
+  "catalog_command": "NOT_FOUND",
+  "content_command": "NOT_FOUND",
+  "present_but_different": [
+    "manage_economy_policy_version",
+    "read_economy_policy_version_state",
+    "app_private.enforce_catalog_version_transition (trigger; revoked execution)"
+  ],
+  "excluded": [
+    "events-fixtures.ts direct SQL test inserts",
+    "schema triggers",
+    "economy policy publisher"
+  ],
+  "catalog_blocker": "APPROVED_CATALOG_COMMAND_REQUIRED",
+  "content_blocker": "APPROVED_CONTENT_COMMAND_REQUIRED",
+  "live_environment": "NOT_QUERIED",
+  "production": "NOT_TOUCHED"
+}

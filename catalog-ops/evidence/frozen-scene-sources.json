@@ -1,0 +1,18 @@
+{
+  "ref": "505e20c097be8de1b5d02bc65a2dcbd054fe56d1",
+  "product_codes": [
+    "005930",
+    "000660",
+    "AAPL",
+    "MSFT",
+    "NVDA",
+    "XAU",
+    "XAG",
+    "BTC",
+    "ETH",
+    "BNB",
+    "XRP"
+  ],
+  "family_master_only": ["000660"],
+  "scope": "11 scene specifications/prompts; none are approved product browser acceptance evidence"
+}
