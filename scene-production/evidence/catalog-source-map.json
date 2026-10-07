@@ -1,0 +1,239 @@
+{
+  "base_sha": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+  "files": [
+    {
+      "file": "supabase/migrations/20260926192208_ws02_commands_and_catalog_seed.sql",
+      "sha256": "9df1118fc49fb91d1fbbe28154238afd8ff2bb56c877ff48333a4ddeca615369"
+    },
+    {
+      "file": "supabase/migrations/20260926192203_ws02_foundation_schema.sql",
+      "sha256": "9ed8926c80f55352976f78e0f7b6f12a43c69e6e8715ecdac32f07a9cb9a80c3"
+    },
+    {
+      "file": "supabase/seed/000_no_production_rules.sql",
+      "sha256": "5c827f684656671885f1f74e9a98d05a9b7f917f8326260a0177ba28954b28d3"
+    },
+    {
+      "file": "lib/product/published-catalog.ts",
+      "sha256": "3f74aedfb172b99df96b001ed58f8db1107b4e72d08085b17a861d5286083b01"
+    },
+    {
+      "file": "domain/products/published-catalog.ts",
+      "sha256": "39dc4e363861a712ed73838f2125578a9c8bff7d32ccd06261755aa311ab5c8b"
+    },
+    {
+      "file": "lib/mining-scene/types.ts",
+      "sha256": "7d26a02be638784061175f54e7c6476294b6b95a1a8483082b0844543fe49e3a"
+    },
+    {
+      "file": "lib/mining-scene/scene-registry.ts",
+      "sha256": "843ca25243772d6954ef8fee0a48fe711a75c519213d34ed4b19695991433508"
+    },
+    {
+      "file": "lib/mining-scene/product-presentation.ts",
+      "sha256": "3f81c34bb3bb027bb168d3a07c40e344ed0b9d243ea2e743868ce3f5657f01b2"
+    },
+    {
+      "file": "lib/mining-scene/resolve-scene.ts",
+      "sha256": "161066cb1a749b4f21f710e2962cc2ed01273e18bcf480030c8e4c05bc74846c"
+    },
+    {
+      "file": "lib/mining-scene/stage-input.ts",
+      "sha256": "0ea9346f6bf7d8bf2ed302c9af9828ca448de24cd88fa7689e93760212a6b771"
+    },
+    {
+      "file": "lib/mining-scene/default-stage.ts",
+      "sha256": "c5d9a33e791fc0c0f399f409ab5945d0053fc572f88d17638f45cff06e280a2f"
+    },
+    {
+      "file": "lib/mining-scene/sk-hynix-v3-reference.ts",
+      "sha256": "94d30bd7a5196e1f1f534eab0c035ef51335051b363d24f03fd4b3a3d60c613c"
+    },
+    {
+      "file": "components/mining-live/mining-live-stage.tsx",
+      "sha256": "50aaac16ce6a920c5a3cd9d2957083bfd47cafbce1fe899d8c064538a4f7b3d4"
+    },
+    {
+      "file": "components/mining-live/scene-decoration.tsx",
+      "sha256": "e481c1afec61ff342662e369e8167237aa22fe87a709414d14f29a4870ca675e"
+    },
+    {
+      "file": "components/mining-live/mining-live-stage.module.css",
+      "sha256": "34fb0d051af479422d78d9dc544338c7e73a1bfe1ab4c728cc6d445814558f66"
+    },
+    {
+      "file": "app/(product)/mining/page.tsx",
+      "sha256": "d08a9072d11e21669a2ed9580800a40479dc332cd8d20afb023c295a95ec202a"
+    },
+    {
+      "file": "app/(product)/products/page.tsx",
+      "sha256": "69ba191ccbdf0fad7660b846c79430e33be460a7762077fdb1f6e0719e67ecf0"
+    },
+    {
+      "file": "components/product/published-catalog-view.tsx",
+      "sha256": "9cef975324098e2db39472840522fccf8cefcbf231b0be54f857496cd6516765"
+    },
+    {
+      "file": "lib/product/mining-display.ts",
+      "sha256": "7dd4c017298a20036ea4e1c26d336c2275690e7ba105a3c5eba062f26fa6fe06"
+    },
+    {
+      "file": "lib/product/mining-server-display.ts",
+      "sha256": "326300de914cb0ed66fdde86650653ed636b9439c8ed1cf4fc758fb014e8ac92"
+    },
+    {
+      "file": "lib/product/read-mining-server-display.ts",
+      "sha256": "f7526aa149bf97aab130ddf0f8e383f187b28fc77248e09f64fa8dc567cbf73b"
+    },
+    {
+      "file": "domain/mining/funding-entitlement.ts",
+      "sha256": "26659a14a7ba3654a44eb873f90daa3779c0ca13dcefd69308289932fac80593"
+    },
+    {
+      "file": "domain/mining/economy-policy.ts",
+      "sha256": "c775659bef685ea03c15cace44d6671c41a0c40e7b7d2a193ca1aa6cce4af464"
+    },
+    {
+      "file": "tests/unit/published-catalog.test.ts",
+      "sha256": "85d4a6d702098552960fcc03d3751709a69edf71fd158246ff3cc552b689b6d4"
+    },
+    {
+      "file": "tests/e2e/authenticated/products-catalog.spec.ts",
+      "sha256": "c7d144e7a5182f982fed9e16137ad94598df6f808fcd749765b354fcbe5ad677"
+    },
+    {
+      "file": "tests/unit/mining-scene/scene-platform.test.ts",
+      "sha256": "cc4c1f548d13c391db4eae88fe0416d1257a577a8ab4d67b6fb5b070c1b92a8b"
+    },
+    {
+      "file": "tests/unit/mining-scene/default-stage.test.ts",
+      "sha256": "d898dd69d1afba77b67d43c3673afec7cf8161db435682305def63a6a1f13f81"
+    },
+    {
+      "file": "tests/unit/mining-scene/mining-live-stage.test.ts",
+      "sha256": "7f8c4ec555a13721b665463e6a5ce79a8a170ab359f354603ad66fe62791130e"
+    },
+    {
+      "file": "tests/unit/mining-scene/scene-decoration-runtime.test.ts",
+      "sha256": "f24f48b69dd47c2246a9072368cd459c710be196778c971f2276ffe0bc7fa1de"
+    },
+    {
+      "file": "public/brand/assets.manifest.json",
+      "sha256": "65a65f6f6f329b21c3d95dfa025877557175842fb59eb7b865ec6d98e36826dc"
+    },
+    {
+      "file": "docs/design/generated-masters/semiconductor-memory-v3-clean-2026-10-03/semiconductor-memory-v3-clean-master-v1.png",
+      "sha256": "5d398a3155635d46a6d0b1f639c25d349ddf21607a16a4e6f948655744b8a6dd"
+    },
+    {
+      "file": "docs/design/generated-masters/semiconductor-memory-v3-clean-2026-10-03/REVIEW.md",
+      "sha256": "7abd2d52860c144e6978453f0d74dffea46e5ba6d01521430942609b5dfea816"
+    },
+    {
+      "file": "AGENTS.md",
+      "sha256": "66ab2ba97b65b987900955c7b1c59113400c167f70c92291feda4dec97f6f5af"
+    },
+    {
+      "file": "README.md",
+      "sha256": "401b8db16700213b5e9775e5e442a6c19b916e38a3de056edf085d27a440b0bb"
+    },
+    {
+      "file": "docs/architecture/PUTDUK-MINING-MASTER-ARCHITECTURE.md",
+      "sha256": "b8052d205c2234564b78cb23d5a69063798fb4ac8fc54195dd8cdcbbcef85e01"
+    },
+    {
+      "file": "docs/architecture/ARCHITECTURE-CLOSURE-AUDIT.md",
+      "sha256": "6fb2e3f33cd4229d9b91ce1df3fd03ae52c01ffd420969b16f21fb2d622531c7"
+    },
+    {
+      "file": "docs/product/PUTDUK-START.md",
+      "sha256": "9dc6b32d8a840c346608eb6e5c034d21fc8f0a3431820216078376657d4ade6f"
+    },
+    {
+      "file": "docs/product/PRODUCT-CATALOG.md",
+      "sha256": "a90aeb80a0909c0b1e3b81b2c85d0fcd6965bf1e1467da216090c5bc6b5f1296"
+    },
+    {
+      "file": "docs/product/V1-SCOPE-PRIORITIES.md",
+      "sha256": "6150023c2919eadfb177f96bcc9d17361d4b6cca2d6282d41ed5d07cdc25ae54"
+    },
+    {
+      "file": "docs/design/PUTDUK-DESIGN-SYSTEM.md",
+      "sha256": "32da76e1c9888f88df25e32c920ba1976da09f332f07b91d1823a23253c15bd2"
+    },
+    {
+      "file": "docs/design/PUTDUK-VISUAL-DIRECTION.md",
+      "sha256": "e14a5cc9a7a5635dd2c737fdbdfa741d65741a10028c01906e44c8bcd1eecef1"
+    },
+    {
+      "file": "docs/design/PUTDUK-BRAND-ASSET-SYSTEM.md",
+      "sha256": "7679d1af0f20b126fdcb007c866fbbf017640e0b8d2d79c13e3019f8b598d1de"
+    },
+    {
+      "file": "docs/design/PUTDUK-THEME-SYSTEM.md",
+      "sha256": "6f07bc13aa7fb5ae9ca2fae55ec918d10f9234fd6610e9db4ef30b89c55d9af7"
+    },
+    {
+      "file": "docs/design/PUTDUK-MOTION-EXPERIENCE.md",
+      "sha256": "3df16f2f3f223a5dc7ad89f7c34512c1793b8ab604586909332b70076745a064"
+    },
+    {
+      "file": "docs/design/visual-lab/CANONICAL-VISUAL-BENCHMARK.md",
+      "sha256": "dbde410acff1f72e0cb0a25b73381042cc4df28a9212e974c99ebb483d8176e5"
+    },
+    {
+      "file": "docs/development/CONVENTIONS.md",
+      "sha256": "c30121959a7b43cff785949771ae4b301b686d0731fcd299ab1918096d59b532"
+    },
+    {
+      "file": ".cursor/rules/putduk-master.mdc",
+      "sha256": "91a8e45937f8ea18b3a94d1b2bd00d9a756070aee5195a02a9f08ae3d507d9f5"
+    },
+    {
+      "file": ".cursor/rules/putduk-e2e-agent-verification.mdc",
+      "sha256": "4933247ae163823f3a0236f1e28ba9f0a50fe38cef14c9398d5939f9b61eddfd"
+    },
+    {
+      "file": ".cursor/rules/putduk-ci-wall-clock.mdc",
+      "sha256": "4c8a5b253e71cda089f7eb27a980c7c1d7d0dab556abe443a6d023ed313fbcb9"
+    },
+    {
+      "file": "package.json",
+      "sha256": "50911e84ec2fe3461b28d0fa945d62767e276c90fe768effc082994f7abdc6d9"
+    },
+    {
+      "file": ".node-version",
+      "sha256": "73fb1b615e2043a933be1c0895cde4358036acc28d785692509b822aa53c761f"
+    },
+    {
+      "file": "pnpm-lock.yaml",
+      "sha256": "3fd4f5333a783d74af3a12c7370e36adaf6304eacc92bbb60b659d6a09869e46"
+    },
+    {
+      "file": ".github/workflows/ci.yml",
+      "sha256": "66d7720ea8128ff7f0bb9dcf283ab49e5c644427f3bb6f8c481f5d9e21270048"
+    }
+  ],
+  "authoritative_candidate": "Immutable latest operator-approved published catalog + mining_products child rows; not React presentation table",
+  "discovery": {
+    "search": "rg mining_products/product_catalog_versions/product_code/code/slug across migrations, seeds, fixtures, read models, routes and tests",
+    "finding": "One production seed VALUES set: 11 DRAFT rows; other identifiers found only in tests. No Tesla or ETF product row.",
+    "excluded_test_examples": [
+      "TEST_THEME",
+      "OTHER"
+    ],
+    "remote_database": "NOT_READ_OR_WRITTEN"
+  },
+  "visual_inspection": {
+    "file": "docs/design/generated-masters/semiconductor-memory-v3-clean-2026-10-03/semiconductor-memory-v3-clean-master-v1.png",
+    "sha256": "5d398a3155635d46a6d0b1f639c25d349ddf21607a16a4e6f948655744b8a6dd",
+    "method": "view_image direct master inspection",
+    "finding": "Floating HBM stack, left wafer, right processing towers, lower extraction ring; reflective black metal and amber/blue depth. 1539x1022 is not 16:9; no mobile crop acceptance inferred.",
+    "tesla_reference": "UNAVAILABLE_IN_REPOSITORY; user supplied direction only",
+    "sk_hynix_prototype": "REFERENCE_APPROVED / NOT_PRODUCTION_APPROVED, see sk-hynix-v3-reference.ts; not reused as runtime master"
+  },
+  "freeze": {
+    "parallel/admin-release": "f9b454a7c1b86dde1099b6e5a264092118258ead",
+    "parallel/launch-ops-content": "ba9ed931f756488ce4f67f945cffad9552842c09"
+  }
+}

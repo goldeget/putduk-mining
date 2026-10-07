@@ -1,0 +1,400 @@
+{
+  "base_sha": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+  "scope": "READ_ONLY_SOURCE_AUDIT",
+  "family_count": 14,
+  "approved_family_count": 1,
+  "pending_family_count": 13,
+  "approved_product_specific_master_count": 0,
+  "approval_scope": "Family/default backdrop only; no product-complete acceptance",
+  "families": [
+    {
+      "key": "SEMICONDUCTOR_MEMORY",
+      "source": "lib/mining-scene/scene-registry.ts",
+      "current_status": "APPROVED",
+      "master": {
+        "path": "docs/design/generated-masters/semiconductor-memory-v3-clean-2026-10-03/semiconductor-memory-v3-clean-master-v1.png",
+        "sha256": "5d398a3155635d46a6d0b1f639c25d349ddf21607a16a4e6f948655744b8a6dd",
+        "width": 1539,
+        "height": 1022
+      },
+      "asset_allowlist": [
+        {
+          "path": "/brand/scenes/semiconductor-memory/semiconductor-memory-1280-v1.avif",
+          "bytes": 472877,
+          "sha256": "5c448cfd6a5cf9a9d4e7b423ce373eef5b3942c5e76b1100f9364ec9c0068b7f",
+          "mimeType": "image/avif",
+          "alt": "금빛과 푸른빛이 반사되는 반도체 시설과 중앙 추출 장치",
+          "width": 1280,
+          "height": 850,
+          "theme": "system",
+          "assetVersion": "2026.10.03-semiconductor-memory-v1",
+          "sourceMaster": "docs/design/generated-masters/semiconductor-memory-v3-clean-2026-10-03/semiconductor-memory-v3-clean-master-v1.png",
+          "sourceSha256": "5d398a3155635d46a6d0b1f639c25d349ddf21607a16a4e6f948655744b8a6dd",
+          "reviewScope": "Owner-delegated 2026-10-03 visual selection: approved complete 1539x1022 clean semiconductor scene; responsive encoding only, no crop, recoloring or upscale; no product mapping, economic runtime or other family approval."
+        },
+        {
+          "path": "/brand/scenes/semiconductor-memory/semiconductor-memory-1280-v1.webp",
+          "bytes": 1488754,
+          "sha256": "109c576ce906c26b813a4c40e56935dd5a9b4bfe4ed5075c65bd3e7ba1ce63d6",
+          "mimeType": "image/webp",
+          "alt": "금빛과 푸른빛이 반사되는 반도체 시설과 중앙 추출 장치",
+          "width": 1280,
+          "height": 850,
+          "theme": "system",
+          "assetVersion": "2026.10.03-semiconductor-memory-v1",
+          "sourceMaster": "docs/design/generated-masters/semiconductor-memory-v3-clean-2026-10-03/semiconductor-memory-v3-clean-master-v1.png",
+          "sourceSha256": "5d398a3155635d46a6d0b1f639c25d349ddf21607a16a4e6f948655744b8a6dd",
+          "reviewScope": "Owner-delegated 2026-10-03 visual selection: approved complete 1539x1022 clean semiconductor scene; responsive encoding only, no crop, recoloring or upscale; no product mapping, economic runtime or other family approval."
+        },
+        {
+          "path": "/brand/scenes/semiconductor-memory/semiconductor-memory-1539-v1.avif",
+          "bytes": 605625,
+          "sha256": "1377ff213325758c966e96f610c16481776345cd345068e643ccb946ec0b46b8",
+          "mimeType": "image/avif",
+          "alt": "금빛과 푸른빛이 반사되는 반도체 시설과 중앙 추출 장치",
+          "width": 1539,
+          "height": 1022,
+          "theme": "system",
+          "assetVersion": "2026.10.03-semiconductor-memory-v1",
+          "sourceMaster": "docs/design/generated-masters/semiconductor-memory-v3-clean-2026-10-03/semiconductor-memory-v3-clean-master-v1.png",
+          "sourceSha256": "5d398a3155635d46a6d0b1f639c25d349ddf21607a16a4e6f948655744b8a6dd",
+          "reviewScope": "Owner-delegated 2026-10-03 visual selection: approved complete 1539x1022 clean semiconductor scene; responsive encoding only, no crop, recoloring or upscale; no product mapping, economic runtime or other family approval."
+        },
+        {
+          "path": "/brand/scenes/semiconductor-memory/semiconductor-memory-1539-v1.webp",
+          "bytes": 1996884,
+          "sha256": "6653e1daf67cf711976ebaa1567b6d36f184460d63f58c5d4a62755f9ccbd935",
+          "mimeType": "image/webp",
+          "alt": "금빛과 푸른빛이 반사되는 반도체 시설과 중앙 추출 장치",
+          "width": 1539,
+          "height": 1022,
+          "theme": "system",
+          "assetVersion": "2026.10.03-semiconductor-memory-v1",
+          "sourceMaster": "docs/design/generated-masters/semiconductor-memory-v3-clean-2026-10-03/semiconductor-memory-v3-clean-master-v1.png",
+          "sourceSha256": "5d398a3155635d46a6d0b1f639c25d349ddf21607a16a4e6f948655744b8a6dd",
+          "reviewScope": "Owner-delegated 2026-10-03 visual selection: approved complete 1539x1022 clean semiconductor scene; responsive encoding only, no crop, recoloring or upscale; no product mapping, economic runtime or other family approval."
+        },
+        {
+          "path": "/brand/scenes/semiconductor-memory/semiconductor-memory-640-v1.avif",
+          "bytes": 176502,
+          "sha256": "288df00f217e0392b70196063f2125c4cab222c6e0927e3b7b43f8cc02281050",
+          "mimeType": "image/avif",
+          "alt": "금빛과 푸른빛이 반사되는 반도체 시설과 중앙 추출 장치",
+          "width": 640,
+          "height": 425,
+          "theme": "system",
+          "assetVersion": "2026.10.03-semiconductor-memory-v1",
+          "sourceMaster": "docs/design/generated-masters/semiconductor-memory-v3-clean-2026-10-03/semiconductor-memory-v3-clean-master-v1.png",
+          "sourceSha256": "5d398a3155635d46a6d0b1f639c25d349ddf21607a16a4e6f948655744b8a6dd",
+          "reviewScope": "Owner-delegated 2026-10-03 visual selection: approved complete 1539x1022 clean semiconductor scene; responsive encoding only, no crop, recoloring or upscale; no product mapping, economic runtime or other family approval."
+        },
+        {
+          "path": "/brand/scenes/semiconductor-memory/semiconductor-memory-640-v1.webp",
+          "bytes": 439468,
+          "sha256": "b38e99091fba9f706de9b209926f05cc1a8ffe3938505b905bc7c5679e51f535",
+          "mimeType": "image/webp",
+          "alt": "금빛과 푸른빛이 반사되는 반도체 시설과 중앙 추출 장치",
+          "width": 640,
+          "height": 425,
+          "theme": "system",
+          "assetVersion": "2026.10.03-semiconductor-memory-v1",
+          "sourceMaster": "docs/design/generated-masters/semiconductor-memory-v3-clean-2026-10-03/semiconductor-memory-v3-clean-master-v1.png",
+          "sourceSha256": "5d398a3155635d46a6d0b1f639c25d349ddf21607a16a4e6f948655744b8a6dd",
+          "reviewScope": "Owner-delegated 2026-10-03 visual selection: approved complete 1539x1022 clean semiconductor scene; responsive encoding only, no crop, recoloring or upscale; no product mapping, economic runtime or other family approval."
+        },
+        {
+          "path": "/brand/scenes/semiconductor-memory/semiconductor-memory-960-v1.avif",
+          "bytes": 320779,
+          "sha256": "f84105a2717ff2dd500bf8b539b5b6c68560a959f40b04fbf21e8da74af33c23",
+          "mimeType": "image/avif",
+          "alt": "금빛과 푸른빛이 반사되는 반도체 시설과 중앙 추출 장치",
+          "width": 960,
+          "height": 638,
+          "theme": "system",
+          "assetVersion": "2026.10.03-semiconductor-memory-v1",
+          "sourceMaster": "docs/design/generated-masters/semiconductor-memory-v3-clean-2026-10-03/semiconductor-memory-v3-clean-master-v1.png",
+          "sourceSha256": "5d398a3155635d46a6d0b1f639c25d349ddf21607a16a4e6f948655744b8a6dd",
+          "reviewScope": "Owner-delegated 2026-10-03 visual selection: approved complete 1539x1022 clean semiconductor scene; responsive encoding only, no crop, recoloring or upscale; no product mapping, economic runtime or other family approval."
+        },
+        {
+          "path": "/brand/scenes/semiconductor-memory/semiconductor-memory-960-v1.webp",
+          "bytes": 884072,
+          "sha256": "937ee14baba1cf55c35343123ad8425be9e72494705e8fad3b68c6b76bf018af",
+          "mimeType": "image/webp",
+          "alt": "금빛과 푸른빛이 반사되는 반도체 시설과 중앙 추출 장치",
+          "width": 960,
+          "height": 638,
+          "theme": "system",
+          "assetVersion": "2026.10.03-semiconductor-memory-v1",
+          "sourceMaster": "docs/design/generated-masters/semiconductor-memory-v3-clean-2026-10-03/semiconductor-memory-v3-clean-master-v1.png",
+          "sourceSha256": "5d398a3155635d46a6d0b1f639c25d349ddf21607a16a4e6f948655744b8a6dd",
+          "reviewScope": "Owner-delegated 2026-10-03 visual selection: approved complete 1539x1022 clean semiconductor scene; responsive encoding only, no crop, recoloring or upscale; no product mapping, economic runtime or other family approval."
+        }
+      ],
+      "actual_product_mappings": [
+        "30000000-0000-4000-8000-000000000002"
+      ],
+      "missing_products": [],
+      "missing_products_scope": "Proposed assignments belong to manifest; registry alone does not define catalog",
+      "runtime_consumers": [
+        "lib/mining-scene/resolve-scene.ts",
+        "lib/mining-scene/stage-input.ts",
+        "lib/mining-scene/default-stage.ts",
+        "components/mining-live/mining-live-stage.tsx"
+      ],
+      "economic_policy": "NONE"
+    },
+    {
+      "key": "SEMICONDUCTOR_FOUNDRY",
+      "source": "lib/mining-scene/scene-registry.ts",
+      "current_status": "VISUAL_MASTER_REQUIRED",
+      "master": null,
+      "asset_allowlist": [],
+      "actual_product_mappings": [],
+      "missing_products": [],
+      "missing_products_scope": "Proposed assignments belong to manifest; registry alone does not define catalog",
+      "runtime_consumers": [
+        "lib/mining-scene/resolve-scene.ts",
+        "lib/mining-scene/stage-input.ts",
+        "lib/mining-scene/default-stage.ts",
+        "components/mining-live/mining-live-stage.tsx"
+      ],
+      "economic_policy": "NONE"
+    },
+    {
+      "key": "SEMICONDUCTOR_COMPUTE",
+      "source": "lib/mining-scene/scene-registry.ts",
+      "current_status": "VISUAL_MASTER_REQUIRED",
+      "master": null,
+      "asset_allowlist": [],
+      "actual_product_mappings": [],
+      "missing_products": [],
+      "missing_products_scope": "Proposed assignments belong to manifest; registry alone does not define catalog",
+      "runtime_consumers": [
+        "lib/mining-scene/resolve-scene.ts",
+        "lib/mining-scene/stage-input.ts",
+        "lib/mining-scene/default-stage.ts",
+        "components/mining-live/mining-live-stage.tsx"
+      ],
+      "economic_policy": "NONE"
+    },
+    {
+      "key": "AI_GPU_COMPUTE",
+      "source": "lib/mining-scene/scene-registry.ts",
+      "current_status": "VISUAL_MASTER_REQUIRED",
+      "master": null,
+      "asset_allowlist": [],
+      "actual_product_mappings": [],
+      "missing_products": [],
+      "missing_products_scope": "Proposed assignments belong to manifest; registry alone does not define catalog",
+      "runtime_consumers": [
+        "lib/mining-scene/resolve-scene.ts",
+        "lib/mining-scene/stage-input.ts",
+        "lib/mining-scene/default-stage.ts",
+        "components/mining-live/mining-live-stage.tsx"
+      ],
+      "economic_policy": "NONE"
+    },
+    {
+      "key": "PRECIOUS_GOLD",
+      "source": "lib/mining-scene/scene-registry.ts",
+      "current_status": "VISUAL_MASTER_REQUIRED",
+      "master": null,
+      "asset_allowlist": [],
+      "actual_product_mappings": [],
+      "missing_products": [],
+      "missing_products_scope": "Proposed assignments belong to manifest; registry alone does not define catalog",
+      "runtime_consumers": [
+        "lib/mining-scene/resolve-scene.ts",
+        "lib/mining-scene/stage-input.ts",
+        "lib/mining-scene/default-stage.ts",
+        "components/mining-live/mining-live-stage.tsx"
+      ],
+      "economic_policy": "NONE"
+    },
+    {
+      "key": "PRECIOUS_SILVER",
+      "source": "lib/mining-scene/scene-registry.ts",
+      "current_status": "VISUAL_MASTER_REQUIRED",
+      "master": null,
+      "asset_allowlist": [],
+      "actual_product_mappings": [],
+      "missing_products": [],
+      "missing_products_scope": "Proposed assignments belong to manifest; registry alone does not define catalog",
+      "runtime_consumers": [
+        "lib/mining-scene/resolve-scene.ts",
+        "lib/mining-scene/stage-input.ts",
+        "lib/mining-scene/default-stage.ts",
+        "components/mining-live/mining-live-stage.tsx"
+      ],
+      "economic_policy": "NONE"
+    },
+    {
+      "key": "BLOCKCHAIN_HASH",
+      "source": "lib/mining-scene/scene-registry.ts",
+      "current_status": "VISUAL_MASTER_REQUIRED",
+      "master": null,
+      "asset_allowlist": [],
+      "actual_product_mappings": [],
+      "missing_products": [],
+      "missing_products_scope": "Proposed assignments belong to manifest; registry alone does not define catalog",
+      "runtime_consumers": [
+        "lib/mining-scene/resolve-scene.ts",
+        "lib/mining-scene/stage-input.ts",
+        "lib/mining-scene/default-stage.ts",
+        "components/mining-live/mining-live-stage.tsx"
+      ],
+      "economic_policy": "NONE"
+    },
+    {
+      "key": "CRYPTO_NETWORK",
+      "source": "lib/mining-scene/scene-registry.ts",
+      "current_status": "VISUAL_MASTER_REQUIRED",
+      "master": null,
+      "asset_allowlist": [],
+      "actual_product_mappings": [],
+      "missing_products": [],
+      "missing_products_scope": "Proposed assignments belong to manifest; registry alone does not define catalog",
+      "runtime_consumers": [
+        "lib/mining-scene/resolve-scene.ts",
+        "lib/mining-scene/stage-input.ts",
+        "lib/mining-scene/default-stage.ts",
+        "components/mining-live/mining-live-stage.tsx"
+      ],
+      "economic_policy": "NONE"
+    },
+    {
+      "key": "AUTO_MOBILITY",
+      "source": "lib/mining-scene/scene-registry.ts",
+      "current_status": "VISUAL_MASTER_REQUIRED",
+      "master": null,
+      "asset_allowlist": [],
+      "actual_product_mappings": [],
+      "missing_products": [],
+      "missing_products_scope": "Proposed assignments belong to manifest; registry alone does not define catalog",
+      "runtime_consumers": [
+        "lib/mining-scene/resolve-scene.ts",
+        "lib/mining-scene/stage-input.ts",
+        "lib/mining-scene/default-stage.ts",
+        "components/mining-live/mining-live-stage.tsx"
+      ],
+      "economic_policy": "NONE"
+    },
+    {
+      "key": "ENERGY_OIL",
+      "source": "lib/mining-scene/scene-registry.ts",
+      "current_status": "VISUAL_MASTER_REQUIRED",
+      "master": null,
+      "asset_allowlist": [],
+      "actual_product_mappings": [],
+      "missing_products": [],
+      "missing_products_scope": "Proposed assignments belong to manifest; registry alone does not define catalog",
+      "runtime_consumers": [
+        "lib/mining-scene/resolve-scene.ts",
+        "lib/mining-scene/stage-input.ts",
+        "lib/mining-scene/default-stage.ts",
+        "components/mining-live/mining-live-stage.tsx"
+      ],
+      "economic_policy": "NONE"
+    },
+    {
+      "key": "FINANCE_CAPITAL",
+      "source": "lib/mining-scene/scene-registry.ts",
+      "current_status": "VISUAL_MASTER_REQUIRED",
+      "master": null,
+      "asset_allowlist": [],
+      "actual_product_mappings": [],
+      "missing_products": [],
+      "missing_products_scope": "Proposed assignments belong to manifest; registry alone does not define catalog",
+      "runtime_consumers": [
+        "lib/mining-scene/resolve-scene.ts",
+        "lib/mining-scene/stage-input.ts",
+        "lib/mining-scene/default-stage.ts",
+        "components/mining-live/mining-live-stage.tsx"
+      ],
+      "economic_policy": "NONE"
+    },
+    {
+      "key": "BIO_HEALTH",
+      "source": "lib/mining-scene/scene-registry.ts",
+      "current_status": "VISUAL_MASTER_REQUIRED",
+      "master": null,
+      "asset_allowlist": [],
+      "actual_product_mappings": [],
+      "missing_products": [],
+      "missing_products_scope": "Proposed assignments belong to manifest; registry alone does not define catalog",
+      "runtime_consumers": [
+        "lib/mining-scene/resolve-scene.ts",
+        "lib/mining-scene/stage-input.ts",
+        "lib/mining-scene/default-stage.ts",
+        "components/mining-live/mining-live-stage.tsx"
+      ],
+      "economic_policy": "NONE"
+    },
+    {
+      "key": "CONSUMER_RETAIL",
+      "source": "lib/mining-scene/scene-registry.ts",
+      "current_status": "VISUAL_MASTER_REQUIRED",
+      "master": null,
+      "asset_allowlist": [],
+      "actual_product_mappings": [],
+      "missing_products": [],
+      "missing_products_scope": "Proposed assignments belong to manifest; registry alone does not define catalog",
+      "runtime_consumers": [
+        "lib/mining-scene/resolve-scene.ts",
+        "lib/mining-scene/stage-input.ts",
+        "lib/mining-scene/default-stage.ts",
+        "components/mining-live/mining-live-stage.tsx"
+      ],
+      "economic_policy": "NONE"
+    },
+    {
+      "key": "ETF_BASKET",
+      "source": "lib/mining-scene/scene-registry.ts",
+      "current_status": "VISUAL_MASTER_REQUIRED",
+      "master": null,
+      "asset_allowlist": [],
+      "actual_product_mappings": [],
+      "missing_products": [],
+      "missing_products_scope": "Proposed assignments belong to manifest; registry alone does not define catalog",
+      "runtime_consumers": [
+        "lib/mining-scene/resolve-scene.ts",
+        "lib/mining-scene/stage-input.ts",
+        "lib/mining-scene/default-stage.ts",
+        "components/mining-live/mining-live-stage.tsx"
+      ],
+      "economic_policy": "DECISION_REQUIRED"
+    }
+  ],
+  "runtime_audit": {
+    "route": "/mining",
+    "source": "app/(product)/mining/page.tsx",
+    "input": "resolveDefaultStageInput() has no selected-product parameter",
+    "server_gate": "isConfirmedMiningRunning permits NORMAL or REDUCED only",
+    "renderer": "canvas-2d over approved static art",
+    "fps": 30,
+    "dpr": 1.5,
+    "max_particles": 12,
+    "max_dimension": 2048,
+    "max_pixels": 1572864,
+    "degraded_fps": 15,
+    "degraded_particles": 4,
+    "degraded_dpr": 1,
+    "low_power": "saveData or hardwareConcurrency <= 2; expensive/delayed frames degrade",
+    "visibility": "IntersectionObserver + document.hidden; scroll fallback",
+    "reduced_motion": "matchMedia stops RAF; static master retained",
+    "anchor": {
+      "x": 0.5,
+      "y": 0.235
+    },
+    "extraction_target": {
+      "x": 0.5,
+      "y": 0.695
+    },
+    "extraction_target_consumed": false,
+    "timerAdvancesValue": false,
+    "particle_behavior": "bounded light motes around cover-projected anchor; no extraction path or money events",
+    "actual_product_binding": "ABSENT_ON_MEMBER_MINING_ROUTE",
+    "scope": "Source behavior inspected; no browser/device/runtime QA executed"
+  }
+}
