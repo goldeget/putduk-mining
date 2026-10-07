@@ -145,7 +145,7 @@ where account.user_id = ws04_ctx.user_a
 -- Phone availability shape
 select ok(
   (
-    select count(*) = 23
+    select count(*) = 29
       and bool_and(procedure.proconfig @> array['search_path=pg_catalog']::text[])
     from pg_proc as procedure
     join pg_namespace as namespace on namespace.oid = procedure.pronamespace
@@ -174,7 +174,13 @@ select ok(
         'app_private.capture_funding_global_control_original()'::regprocedure,
         'app_private.verify_funding_global_control_commit()'::regprocedure,
         'app_private.capture_funding_withdrawal_clock_admission(uuid,text,uuid)'::regprocedure,
-        'app_private.verify_funding_withdrawal_clock_commit()'::regprocedure
+        'app_private.verify_funding_withdrawal_clock_commit()'::regprocedure,
+        'app_private.prepare_principal_recovery_intent(uuid,uuid)'::regprocedure,
+        'app_private.verify_principal_recovery_intent_commit()'::regprocedure,
+        'app_private.finish_principal_runtime_boundary(uuid)'::regprocedure,
+        'app_private.verify_principal_boundary_commit()'::regprocedure,
+        'public.prepare_withdrawal_logical_request(uuid,text,bigint,uuid,integer,text,uuid,jsonb)'::regprocedure,
+        'app_private.verify_member_principal_confirmation_commit()'::regprocedure
       )
   )
     and not exists (
@@ -206,10 +212,16 @@ select ok(
         'app_private.capture_funding_global_control_original()'::regprocedure,
         'app_private.verify_funding_global_control_commit()'::regprocedure,
         'app_private.capture_funding_withdrawal_clock_admission(uuid,text,uuid)'::regprocedure,
-        'app_private.verify_funding_withdrawal_clock_commit()'::regprocedure
+        'app_private.verify_funding_withdrawal_clock_commit()'::regprocedure,
+        'app_private.prepare_principal_recovery_intent(uuid,uuid)'::regprocedure,
+        'app_private.verify_principal_recovery_intent_commit()'::regprocedure,
+        'app_private.finish_principal_runtime_boundary(uuid)'::regprocedure,
+        'app_private.verify_principal_boundary_commit()'::regprocedure,
+        'public.prepare_withdrawal_logical_request(uuid,text,bigint,uuid,integer,text,uuid,jsonb)'::regprocedure,
+        'app_private.verify_member_principal_confirmation_commit()'::regprocedure
         )
     ),
-  'application schemas allow exactly twenty-three reviewed SECURITY DEFINER functions'
+  'application schemas allow exactly twenty-nine reviewed SECURITY DEFINER functions'
 );
 
 select is(

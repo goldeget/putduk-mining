@@ -111,11 +111,17 @@ select ok(
         'app_private.capture_funding_global_control_original()'::regprocedure,
         'app_private.verify_funding_global_control_commit()'::regprocedure,
         'app_private.capture_funding_withdrawal_clock_admission(uuid,text,uuid)'::regprocedure,
-        'app_private.verify_funding_withdrawal_clock_commit()'::regprocedure
+        'app_private.verify_funding_withdrawal_clock_commit()'::regprocedure,
+        'app_private.prepare_principal_recovery_intent(uuid,uuid)'::regprocedure,
+        'app_private.verify_principal_recovery_intent_commit()'::regprocedure,
+        'app_private.finish_principal_runtime_boundary(uuid)'::regprocedure,
+        'app_private.verify_principal_boundary_commit()'::regprocedure,
+        'public.prepare_withdrawal_logical_request(uuid,text,bigint,uuid,integer,text,uuid,jsonb)'::regprocedure,
+        'app_private.verify_member_principal_confirmation_commit()'::regprocedure
       )
   )
     and (
-      select count(*) = 23
+      select count(*) = 29
         and coalesce(
           bool_and(
             procedure.proconfig @> array['search_path=pg_catalog']::text[]

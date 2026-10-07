@@ -127,10 +127,8 @@ describe("withdrawal idempotency key reuse", () => {
   });
 
   it("limits the admitted principal clock extension to its three existing functions", () => {
-    const file = latestFileDefining("release_withdrawal_hold");
-    expect(file).toBe(
-      "supabase/migrations/20261006130100_principal_hold_cancel_clock_connections.sql",
-    );
+    const file =
+      "supabase/migrations/20261006130100_principal_hold_cancel_clock_connections.sql";
     const text = source(file);
     expect(
       [
@@ -152,5 +150,36 @@ describe("withdrawal idempotency key reuse", () => {
     expect(guards(latestFunction("release_withdrawal_hold"))).toEqual([
       canonicalGuard,
     ]);
+  });
+
+  it("keeps the current principal release callback within its existing closed clock functions", () => {
+    const file = latestFileDefining("release_withdrawal_hold");
+    expect(file).toBe(
+      "supabase/migrations/20261006133350_principal_canonical_admission_callback.sql",
+    );
+    const text = source(file);
+    expect(
+      [
+        ...text.matchAll(/create or replace function ([a-z_]+\.[a-z_]+)\(/g),
+      ].map((match) => match[1]),
+    ).toEqual([
+      "app_private.capture_funding_withdrawal_clock_admission",
+      "app_private.finish_principal_recovery_hold",
+      "public.release_withdrawal_hold",
+    ]);
+    expect(text).not.toContain("request_withdrawal_with_hold");
+    expect(text).not.toContain(
+      "WITHDRAWAL_VERIFIED_SOURCE_LIFECYCLE_UNAVAILABLE",
+    );
+    expect(text).not.toMatch(/\bgrant\s+execute\s+on\s+function\s+public\./i);
+    expect(text).toContain("WITHDRAWAL_CLOCK_SERVICE_ROLE_REQUIRED");
+    const release = latestFunction("release_withdrawal_hold");
+    expect(release).toContain(
+      "app_private.capture_funding_withdrawal_clock_admission",
+    );
+    expect(release).toContain(
+      "app_private.finish_principal_runtime_boundary(v_admission.admission_id)",
+    );
+    expect(guards(release)).toEqual([canonicalGuard]);
   });
 });

@@ -1,5 +1,8 @@
 import Link from "next/link";
 
+import { PrincipalCryptoWithdrawalForm } from "@/components/product/principal-crypto-withdrawal-form";
+import { PrincipalWithdrawalForm } from "@/components/product/principal-withdrawal-form";
+
 import { PutdukIcon } from "@/components/icons/putduk-icon";
 import {
   normalizeDestinationMethod,
@@ -377,6 +380,20 @@ export default async function WithdrawalPage() {
             <PutdukIcon name="arrow-right" size={17} />
           </Link>
         )}
+      </Surface>
+
+      <Surface as="section" tone="raised">
+        <PrincipalWithdrawalForm
+          key={`principal:${identity.userId}`}
+          ownerId={identity.userId}
+        />
+      </Surface>
+
+      <Surface as="section" tone="raised">
+        <PrincipalCryptoWithdrawalForm
+          key={`principal-crypto:${identity.userId}`}
+          ownerId={identity.userId}
+        />
       </Surface>
 
       <div className={styles.fundingWorkspace}>

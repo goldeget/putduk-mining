@@ -1,5 +1,42 @@
 begin;
 
+-- Private bounded-history helper permission and forged-proof rejection gate.
+do $bounded_privileges$
+declare f record; rejected boolean; call text;
+begin
+ if(select count(*) from pg_proc q join pg_namespace n on n.oid=q.pronamespace
+    where n.nspname='app_private' and q.proname=any(array[
+    'assert_principal_history_transition_bounded','assert_input3_history_transition_bounded',
+    'verify_principal_history_portion_fact_bounded','verify_input3_history_portion_fact_bounded',
+    'assert_principal_history_clock_original_bounded','assert_input3_history_clock_original_bounded']))<>6 then
+  raise exception 'BOUND_HELPER_EXACT_SIX_REQUIRED';end if;
+ for f in select q.*,pg_get_userbyid(q.proowner) as owner_name
+  from pg_proc q join pg_namespace n on n.oid=q.pronamespace
+  where n.nspname='app_private' and q.proname=any(array[
+    'assert_principal_history_transition_bounded','assert_input3_history_transition_bounded',
+    'verify_principal_history_portion_fact_bounded','verify_input3_history_portion_fact_bounded',
+    'assert_principal_history_clock_original_bounded','assert_input3_history_clock_original_bounded']) loop
+  if f.owner_name<>'postgres' or f.prosecdef or f.proconfig is distinct from array['search_path=pg_catalog']::text[]
+   or has_function_privilege('anon',f.oid,'EXECUTE') or has_function_privilege('authenticated',f.oid,'EXECUTE')
+   or has_function_privilege('service_role',f.oid,'EXECUTE')
+   or exists(select 1 from aclexplode(coalesce(f.proacl,acldefault('f',f.proowner))) a where a.grantee=0 and a.privilege_type='EXECUTE') then
+   raise exception 'BOUND_HELPER_OWNER_ONLY_PERMISSION_REQUIRED';end if;
+  call:=format('select app_private.%I(null::%s,null::uuid,null::bigint)',f.proname,
+   case when f.proname like '%clock_original%' then 'uuid' else 'app_private.funding_portion_transitions' end);
+  rejected:=false;
+  begin execute call;exception when insufficient_privilege then rejected:=true;end;
+  if not rejected then raise exception 'BOUND_HELPER_NULL_PROOF_MUST_REJECT';end if;
+  call:=replace(call,'null::bigint','1::bigint');
+  execute 'set local role service_role';
+  rejected:=false;
+  begin execute call;exception when insufficient_privilege then rejected:=true;end;
+  execute 'reset role';
+  if not rejected then raise exception 'BOUND_HELPER_SERVICE_FORGED_PROOF_MUST_REJECT';end if;
+ end loop;
+end;
+$bounded_privileges$;
+
+
 create extension if not exists pgtap with schema extensions;
 
 select plan(65);
@@ -133,11 +170,17 @@ select ok(
         'app_private.capture_funding_global_control_original()'::regprocedure,
         'app_private.verify_funding_global_control_commit()'::regprocedure,
         'app_private.capture_funding_withdrawal_clock_admission(uuid,text,uuid)'::regprocedure,
-        'app_private.verify_funding_withdrawal_clock_commit()'::regprocedure
+        'app_private.verify_funding_withdrawal_clock_commit()'::regprocedure,
+        'app_private.prepare_principal_recovery_intent(uuid,uuid)'::regprocedure,
+        'app_private.verify_principal_recovery_intent_commit()'::regprocedure,
+        'app_private.finish_principal_runtime_boundary(uuid)'::regprocedure,
+        'app_private.verify_principal_boundary_commit()'::regprocedure,
+        'public.prepare_withdrawal_logical_request(uuid,text,bigint,uuid,integer,text,uuid,jsonb)'::regprocedure,
+        'app_private.verify_member_principal_confirmation_commit()'::regprocedure
       )
   )
     and (
-      select count(*) = 23
+      select count(*) = 29
         and coalesce(
           bool_and(
             procedure.proconfig @> array['search_path=pg_catalog']::text[]
@@ -149,7 +192,7 @@ select ok(
       where namespace.nspname in ('public', 'app_private')
         and procedure.prosecdef
     ),
-  'application schemas contain only the twenty-three reviewed fixed-search-path SECURITY DEFINER functions'
+  'application schemas contain only the twenty-nine reviewed fixed-search-path SECURITY DEFINER functions'
 );
 
 select ok(

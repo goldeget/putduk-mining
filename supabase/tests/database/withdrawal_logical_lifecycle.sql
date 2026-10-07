@@ -181,10 +181,21 @@ select ok(not has_table_privilege('authenticated', 'public.withdrawal_logical_re
 select ok(has_table_privilege('service_role', 'public.withdrawal_logical_requests', 'SELECT,INSERT,UPDATE'), 'server can manage lifecycle');
 select ok(not has_table_privilege('service_role', 'public.withdrawal_logical_requests', 'DELETE'), 'server cannot delete recovery records');
 select ok(not exists (
-  select 1 from pg_proc where proname in ('withdrawal_logical_record','prepare_withdrawal_logical_request','bind_withdrawal_logical_destination','hold_withdrawal_logical_request','resolve_withdrawal_logical_request')
-    and (prosecdef or not ('search_path=pg_catalog' = any(proconfig))
-      or has_function_privilege('anon', oid, 'EXECUTE') or has_function_privilege('authenticated', oid, 'EXECUTE'))
-), 'all lifecycle RPCs are invoker, fixed path and service-only');
+  select 1 from pg_proc p join pg_namespace n on n.oid=p.pronamespace
+  where n.nspname='public' and p.proname in ('withdrawal_logical_record','prepare_withdrawal_logical_request','bind_withdrawal_logical_destination','hold_withdrawal_logical_request','resolve_withdrawal_logical_request')
+    and case when p.oid='public.prepare_withdrawal_logical_request(uuid,text,bigint,uuid,integer,text,uuid,jsonb)'::regprocedure then
+      not p.prosecdef or p.proowner<>'postgres'::regrole
+      or p.proconfig is distinct from array['search_path=pg_catalog']::text[]
+      or has_function_privilege('anon',p.oid,'EXECUTE')
+      or has_function_privilege('service_role',p.oid,'EXECUTE')
+      or not has_function_privilege('authenticated',p.oid,'EXECUTE')
+      or exists(select 1 from aclexplode(coalesce(p.proacl,acldefault('f',p.proowner))) a
+        where a.grantee=0 and a.privilege_type='EXECUTE')
+    else p.prosecdef or p.proconfig is distinct from array['search_path=pg_catalog']::text[]
+      or has_function_privilege('anon',p.oid,'EXECUTE')
+      or has_function_privilege('authenticated',p.oid,'EXECUTE')
+      or not has_function_privilege('service_role',p.oid,'EXECUTE') end
+), 'ordinary lifecycle stays service-only INVOKER; only exact mandatory8 member consent is owner-hardened authenticated-only DEFINER');
 select is((select count(*)::integer from information_schema.columns where table_schema = 'public' and table_name = 'withdrawal_logical_requests'
   and column_name in ('account_number','account_holder','address','encrypted_value','private_key','secret')), 0, 'no raw/cipher destination column on lifecycle table');
 

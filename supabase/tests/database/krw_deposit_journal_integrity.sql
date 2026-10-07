@@ -730,10 +730,25 @@ select throws_ok(
   'STEP_UP_REQUIRED',
   'deposit approval step-up rejects a short token without a session'
 );
-select skip(
-  1,
-  'NOT_RUN: approve_deposit_request signature is frozen without a step-up token'
+-- The frozen six-argument service RPC never accepts a step-up token.
+-- Exercise its actual caller boundary instead of declaring that test skipped.
+-- A signed browser role cannot call the native approval writer directly;
+-- real operator AAL2/step-up remains the server command adapter's duty.
+set local role authenticated;
+select throws_ok(
+  $$select public.approve_deposit_request(
+    '0d100000-0000-4000-8000-0000000000b1'::uuid,
+    '0d100000-0000-4000-8000-0000000000a1'::uuid,
+    1::bigint,
+    'krw-journal-direct-member-denied',
+    'direct browser approval must be rejected',
+    '0d100000-0000-4000-8000-00000000d305'::uuid
+  )$$,
+  '42501',
+  'permission denied for function approve_deposit_request',
+  'a browser role cannot bypass the operator command and call native approval'
 );
+reset role;
 
 -- 5. safe mode는 새 승인을 거절하고, 완료된 같은 키 재실행은 분개를 늘리지 않는다.
 insert into public.safe_mode_controls (
