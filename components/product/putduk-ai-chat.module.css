@@ -759,7 +759,7 @@
   order: 1;
   flex: 0 0 auto;
   height: auto;
-  min-height: 28rem;
+  min-height: 20rem;
   overflow: hidden;
   border: 1px solid var(--border-control);
   border-radius: 0.8rem;
@@ -772,42 +772,26 @@
     inset 0 1px 0 rgb(255 255 255 / 6%),
     0 0.8rem 2rem rgb(0 0 0 / 12%);
 }
-.surfacePage .pageStatus {
-  position: relative;
-  gap: 0.3rem;
-  padding: 1rem 1.25rem;
-}
-.chatIdentity {
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
-  margin-bottom: 0.3rem;
-  color: var(--brand-strong);
-}
-.chatIdentity svg {
-  width: 1.5rem;
-  height: 2rem;
-  flex-shrink: 0;
-}
-.chatIdentity strong {
-  font-size: 1.1rem;
-  letter-spacing: 0.03em;
-}
-.surfacePage .pageStatus > strong,
-.surfacePage .pageStatus > span {
-  font-size: 0.8rem;
-  line-height: 1.5;
-}
 .surfacePage .notices {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.2rem 1rem;
   max-height: 7.5rem;
   overflow: auto;
-  padding: 0.65rem 1.25rem;
+  padding: 0.55rem 1rem;
+}
+.surfacePage .notices p {
+  max-width: none;
+  margin: 0;
+  font-size: 0.78rem;
+  line-height: 1.5;
 }
 .surfacePage .transcript {
-  height: clamp(12rem, 24dvh, 20rem);
+  height: clamp(12rem, 20dvh, 20rem);
   min-height: 8rem;
   flex: 0 1 auto;
-  padding: 1.3rem;
+  padding: 1rem;
 }
 .partnerWelcome {
   display: flex;
@@ -824,7 +808,7 @@
 .welcomeBubble {
   min-width: 0;
   flex: 1;
-  padding: 1.1rem;
+  padding: 0.75rem;
   border: 1px solid var(--border-control);
   border-radius: 0.75rem;
   background: color-mix(in srgb, var(--surface-raised) 78%, transparent);
@@ -833,17 +817,20 @@
   font-size: 1.05rem;
 }
 .welcomeBubble > p {
-  margin: 0.7rem 0 0;
+  margin: 0.4rem 0 0;
   color: var(--text-secondary);
   font-size: 0.9rem;
-  line-height: 1.7;
+  line-height: 1.5;
   word-break: keep-all;
 }
 .surfacePage .welcomeBubble .suggestions {
-  grid-template-columns: 1fr;
-  gap: 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.65rem;
 }
 .surfacePage .welcomeBubble .suggestions button {
+  flex: 0 1 auto;
   min-height: 2.75rem;
   padding: 0.65rem 0.8rem;
 }
@@ -851,28 +838,52 @@
   display: none;
 }
 .surfacePage .composer {
-  padding: 0.8rem 1.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: start;
+  gap: 0.5rem 0.6rem;
+  padding: 0.75rem 1rem;
   border-top: 1px solid var(--border-control);
 }
+.surfacePage .composer > label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
 .surfacePage .composer footer {
-  display: flex;
+  display: contents;
   min-width: 0;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
 }
 .surfacePage .composer footer > p {
-  flex: 1 1 16rem;
+  order: 2;
+  flex: 1 1 calc(100% - 9rem);
   min-width: 0;
+  margin: 0;
+  font-size: 0.75rem;
+  line-height: 1.5;
 }
 .surfacePage .composer footer > span {
-  min-width: 0;
-  flex-wrap: wrap;
-  justify-content: end;
+  display: contents;
+}
+.surfacePage .composer footer small {
+  order: 2;
+  margin-left: auto;
+  text-align: end;
+}
+.surfacePage .composer footer button {
+  order: 1;
+  flex: 0 0 auto;
+  margin-left: auto;
+  min-height: 3.25rem;
 }
 .surfacePage .composer textarea {
-  min-height: 3.8rem;
+  width: auto;
+  min-width: min(100%, 8rem);
+  flex: 1 1 8rem;
+  min-height: 3.25rem;
 }
 .surfacePage .contextRail {
   order: 2;
@@ -984,7 +995,29 @@
     grid-row: 3;
   }
   .pagePrompts button {
-    padding: 1rem;
+    padding: 0.85rem;
+  }
+}
+@media (max-width: 479px) {
+  .surfacePage .composer footer small {
+    flex: 1 0 100%;
+  }
+  .surfacePage .composer footer > p {
+    order: 3;
+    flex: 1 0 100%;
+  }
+}
+@media (max-width: 639px) {
+  .surfacePage .pagePrompts {
+    display: flex;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity;
+    padding-bottom: 0.25rem;
+  }
+  .pagePrompts button {
+    flex: 0 0 min(14rem, 72vw);
+    scroll-snap-align: start;
   }
 }
 @media (min-width: 960px) and (max-width: 1279px) {

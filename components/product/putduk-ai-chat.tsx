@@ -126,7 +126,8 @@ export function PutdukAiChat({
 
   useEffect(() => {
     if (followLatest.current && transcriptRef.current) {
-      transcriptRef.current.scrollTop = transcriptRef.current.scrollHeight;
+      transcriptRef.current.scrollTop =
+        session.messages.length === 0 ? 0 : transcriptRef.current.scrollHeight;
     }
   }, [session.messages]);
 
@@ -201,6 +202,13 @@ export function PutdukAiChat({
                 key={suggestion.question}
                 type="button"
                 disabled={!session.canSubmit || session.pending}
+                onFocus={(event) =>
+                  event.currentTarget.scrollIntoView({
+                    block: "nearest",
+                    inline: "nearest",
+                    behavior: "instant",
+                  })
+                }
                 onClick={() => {
                   session.setDraft(suggestion.question);
                   questionInputRef.current?.focus();
@@ -342,14 +350,8 @@ export function PutdukAiChat({
               않아요.
             </p>
           ) : null}
-          {presentation === "page" ? (
+          {presentation === "page" && surface !== "page" ? (
             <header className={styles.pageStatus}>
-              {surface === "page" ? (
-                <div className={styles.chatIdentity}>
-                  <AiPartnerMark />
-                  <strong>PUTDUK AI</strong>
-                </div>
-              ) : null}
               <strong>내 기록과 퍼뜩 이용 안내</strong>
               <span>확인하지 못한 내용은 추측하지 않아요.</span>
             </header>
@@ -361,7 +363,9 @@ export function PutdukAiChat({
             aria-label="대화 안내"
             tabIndex={0}
           >
-            <span className={styles.screenLabel}>{pageHelp.title}</span>
+            {surface !== "page" ? (
+              <span className={styles.screenLabel}>{pageHelp.title}</span>
+            ) : null}
             <p
               className={styles.continuityNotice}
               data-testid="ai-continuity-notice"
@@ -377,7 +381,9 @@ export function PutdukAiChat({
             ) : null}
             {!session.providerConfigured ? (
               <p className={styles.providerNotice}>
-                내 기록과 퍼뜩 안내를 확인해요. 일반 질문은 답변이 제한돼요.
+                {surface === "page"
+                  ? "내 기록과 이용 안내만 답변해요."
+                  : "내 기록과 퍼뜩 안내를 확인해요. 일반 질문은 답변이 제한돼요."}
               </p>
             ) : null}
             {!session.online ? (
@@ -666,10 +672,14 @@ export function PutdukAiChat({
               value={session.draft}
               onChange={(event) => session.setDraft(event.target.value)}
               maxLength={AI_QUESTION_MAX_CHARACTERS}
-              placeholder="어떤 내용을 확인할까요?"
+              placeholder={
+                surface === "page"
+                  ? "질문을 적어주세요."
+                  : "어떤 내용을 확인할까요?"
+              }
               disabled={!session.canSubmit}
               required
-              rows={2}
+              rows={surface === "page" ? 1 : 2}
             />
             <footer>
               <p>확인과 설명을 도와요. 송금이나 잔액 변경은 할 수 없어요.</p>

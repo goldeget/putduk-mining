@@ -925,17 +925,77 @@ async function captureRoutes(
               return failures;
             });
             expect(overflowingPromptText).toEqual([]);
-            const button = quick.getByRole("button", {
-              name: "내 채굴 상태 내 채굴 상태 알려줘",
-              exact: true,
-            });
-            await expect(button).toBeEnabled();
-            await button.focus();
-            await button.press("Enter");
             const composer = ready.getByTestId("putduk-ai-question");
-            await expect(composer).toBeFocused();
-            await expect(composer).toHaveValue("내 채굴 상태 알려줘");
-            await composer.fill("");
+            const inputReadability = await composer.evaluate(
+              (element: HTMLTextAreaElement) => {
+                const style = getComputedStyle(element);
+                const context = document
+                  .createElement("canvas")
+                  .getContext("2d");
+                if (!context) throw new Error("Text measurement unavailable");
+                context.font = style.font;
+                return {
+                  availableWidth:
+                    element.clientWidth -
+                    parseFloat(style.paddingLeft) -
+                    parseFloat(style.paddingRight),
+                  placeholderWidth: context.measureText(element.placeholder)
+                    .width,
+                  availableHeight:
+                    element.clientHeight -
+                    parseFloat(style.paddingTop) -
+                    parseFloat(style.paddingBottom),
+                  lineHeight: parseFloat(style.lineHeight),
+                  noticeOffset:
+                    element
+                      .form!.querySelector("footer > p")!
+                      .getBoundingClientRect().top -
+                    element.getBoundingClientRect().bottom,
+                };
+              },
+            );
+            expect(inputReadability.placeholderWidth).toBeLessThanOrEqual(
+              inputReadability.availableWidth + 1,
+            );
+            expect(inputReadability.availableHeight + 1).toBeGreaterThanOrEqual(
+              inputReadability.lineHeight,
+            );
+            expect(inputReadability.noticeOffset).toBeGreaterThanOrEqual(-1);
+            for (const [label, question] of [
+              ["내 채굴 상태", "내 채굴 상태 알려줘"],
+              ["START 확인", "내 PUTDUK START 체험 상태 알려줘"],
+              ["출금 준비", "첫 출금은 어떻게 준비하나요?"],
+              ["이벤트 안내", "이벤트 참여 방법 알려줘"],
+              ["고객지원", "고객지원은 어디에 있나요?"],
+            ] as const) {
+              const button = quick.getByRole("button", {
+                name: `${label} ${question}`,
+                exact: true,
+              });
+              await expect(button).toBeEnabled();
+              await button.focus();
+              await expect(button).toBeFocused();
+              await expect
+                .poll(() =>
+                  button.evaluate((element) => {
+                    const box = element.getBoundingClientRect();
+                    return element.contains(
+                      document.elementFromPoint(
+                        box.x + box.width / 2,
+                        box.y + box.height / 2,
+                      ),
+                    );
+                  }),
+                )
+                .toBe(true);
+              await button.press("Enter");
+              await expect(composer).toBeFocused();
+              await expect(composer).toHaveValue(question);
+              await composer.fill("");
+            }
+            await quick.evaluate((element) =>
+              element.scrollTo({ left: 0, behavior: "instant" }),
+            );
             await composer.evaluate((element: HTMLElement) => element.blur());
             await main.evaluate((element) =>
               element.scrollTo({ top: 0, behavior: "instant" }),
