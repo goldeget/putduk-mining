@@ -1,0 +1,3732 @@
+{
+  "schema_version": 1,
+  "simulation_type": "NORMALIZED_INDEX_ONLY",
+  "source_base_sha": "0a7e95ba8bf55539fe32fd6f4654ee49a0be226d",
+  "live_policy_confirmed": false,
+  "existing_document_cycle_days": 30,
+  "capacity_index_base": "100",
+  "internal_micro_krw_per_krw": "1000000",
+  "money_authority": "NONE_OFFLINE_PROPOSAL",
+  "market_price_inputs": [],
+  "existing_approved_document_capacity_example": {
+    "principal_krw": "100000",
+    "base_capacity_micro_krw": "15000000000",
+    "scope": "DOCUMENT_ARITHMETIC_ONLY_NOT_LIVE_ENTITLEMENT_OR_PAYOUT_FORECAST",
+    "retention_included": false
+  },
+  "recommended_policy": "A",
+  "recommended_band": "1.00–1.18",
+  "products": [
+    {
+      "proposal_id": "catalog-v1-samsung-electronics",
+      "slug": "samsung-electronics",
+      "proposed_speed": "1.12",
+      "A": {
+        "speed": {
+          "numerator": "28",
+          "denominator": "25"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "56",
+          "denominator": "15"
+        },
+        "days_to_cap": {
+          "numerator": "375",
+          "denominator": "14"
+        },
+        "days_to_cap_display": "26.785714"
+      },
+      "B": {
+        "speed": {
+          "numerator": "28",
+          "denominator": "25"
+        },
+        "capacity_index": {
+          "numerator": "110",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "56",
+          "denominator": "15"
+        },
+        "days_to_cap": {
+          "numerator": "825",
+          "denominator": "28"
+        },
+        "days_to_cap_display": "29.464285",
+        "status": "COMPARISON_ONLY_UNAPPROVED_CAPACITY_CHANGE"
+      },
+      "C": {
+        "speed": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "10",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "30",
+          "denominator": "1"
+        },
+        "days_to_cap_display": "30.000000"
+      },
+      "headroom_factor_to_final_cap": {
+        "numerator": "75",
+        "denominator": "56"
+      },
+      "headroom_display": "1.339285",
+      "stack_examples": [
+        {
+          "name": "product_only",
+          "modifiers_bps": ["11200", "10000", "10000", "10000"],
+          "raw": {
+            "numerator": "28",
+            "denominator": "25"
+          },
+          "final": {
+            "numerator": "28",
+            "denominator": "25"
+          },
+          "capped": false,
+          "raw_display": "1.120000",
+          "final_display": "1.120000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event",
+          "modifiers_bps": ["11200", "11500", "11000", "10000"],
+          "raw": {
+            "numerator": "1771",
+            "denominator": "1250"
+          },
+          "final": {
+            "numerator": "1771",
+            "denominator": "1250"
+          },
+          "capped": false,
+          "raw_display": "1.416800",
+          "final_display": "1.416800",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event_temporary",
+          "modifiers_bps": ["11200", "11500", "11000", "10500"],
+          "raw": {
+            "numerator": "37191",
+            "denominator": "25000"
+          },
+          "final": {
+            "numerator": "37191",
+            "denominator": "25000"
+          },
+          "capped": false,
+          "raw_display": "1.487640",
+          "final_display": "1.487640",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "cap_pressure",
+          "modifiers_bps": ["11200", "12000", "12500", "11000"],
+          "raw": {
+            "numerator": "231",
+            "denominator": "125"
+          },
+          "final": {
+            "numerator": "3",
+            "denominator": "2"
+          },
+          "capped": true,
+          "raw_display": "1.848000",
+          "final_display": "1.500000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        }
+      ]
+    },
+    {
+      "proposal_id": "catalog-v1-sk-hynix",
+      "slug": "sk-hynix",
+      "proposed_speed": "1.15",
+      "A": {
+        "speed": {
+          "numerator": "23",
+          "denominator": "20"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "23",
+          "denominator": "6"
+        },
+        "days_to_cap": {
+          "numerator": "600",
+          "denominator": "23"
+        },
+        "days_to_cap_display": "26.086956"
+      },
+      "B": {
+        "speed": {
+          "numerator": "23",
+          "denominator": "20"
+        },
+        "capacity_index": {
+          "numerator": "115",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "23",
+          "denominator": "6"
+        },
+        "days_to_cap": {
+          "numerator": "30",
+          "denominator": "1"
+        },
+        "days_to_cap_display": "30.000000",
+        "status": "COMPARISON_ONLY_UNAPPROVED_CAPACITY_CHANGE"
+      },
+      "C": {
+        "speed": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "10",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "30",
+          "denominator": "1"
+        },
+        "days_to_cap_display": "30.000000"
+      },
+      "headroom_factor_to_final_cap": {
+        "numerator": "30",
+        "denominator": "23"
+      },
+      "headroom_display": "1.304347",
+      "stack_examples": [
+        {
+          "name": "product_only",
+          "modifiers_bps": ["11500", "10000", "10000", "10000"],
+          "raw": {
+            "numerator": "23",
+            "denominator": "20"
+          },
+          "final": {
+            "numerator": "23",
+            "denominator": "20"
+          },
+          "capped": false,
+          "raw_display": "1.150000",
+          "final_display": "1.150000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event",
+          "modifiers_bps": ["11500", "11500", "11000", "10000"],
+          "raw": {
+            "numerator": "5819",
+            "denominator": "4000"
+          },
+          "final": {
+            "numerator": "5819",
+            "denominator": "4000"
+          },
+          "capped": false,
+          "raw_display": "1.454750",
+          "final_display": "1.454750",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event_temporary",
+          "modifiers_bps": ["11500", "11500", "11000", "10500"],
+          "raw": {
+            "numerator": "122199",
+            "denominator": "80000"
+          },
+          "final": {
+            "numerator": "3",
+            "denominator": "2"
+          },
+          "capped": true,
+          "raw_display": "1.527487",
+          "final_display": "1.500000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "cap_pressure",
+          "modifiers_bps": ["11500", "12000", "12500", "11000"],
+          "raw": {
+            "numerator": "759",
+            "denominator": "400"
+          },
+          "final": {
+            "numerator": "3",
+            "denominator": "2"
+          },
+          "capped": true,
+          "raw_display": "1.897500",
+          "final_display": "1.500000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        }
+      ]
+    },
+    {
+      "proposal_id": "catalog-v1-hyundai-motor",
+      "slug": "hyundai-motor",
+      "proposed_speed": "1.09",
+      "A": {
+        "speed": {
+          "numerator": "109",
+          "denominator": "100"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "109",
+          "denominator": "30"
+        },
+        "days_to_cap": {
+          "numerator": "3000",
+          "denominator": "109"
+        },
+        "days_to_cap_display": "27.522935"
+      },
+      "B": {
+        "speed": {
+          "numerator": "109",
+          "denominator": "100"
+        },
+        "capacity_index": {
+          "numerator": "105",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "109",
+          "denominator": "30"
+        },
+        "days_to_cap": {
+          "numerator": "3150",
+          "denominator": "109"
+        },
+        "days_to_cap_display": "28.899082",
+        "status": "COMPARISON_ONLY_UNAPPROVED_CAPACITY_CHANGE"
+      },
+      "C": {
+        "speed": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "10",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "30",
+          "denominator": "1"
+        },
+        "days_to_cap_display": "30.000000"
+      },
+      "headroom_factor_to_final_cap": {
+        "numerator": "150",
+        "denominator": "109"
+      },
+      "headroom_display": "1.376146",
+      "stack_examples": [
+        {
+          "name": "product_only",
+          "modifiers_bps": ["10900", "10000", "10000", "10000"],
+          "raw": {
+            "numerator": "109",
+            "denominator": "100"
+          },
+          "final": {
+            "numerator": "109",
+            "denominator": "100"
+          },
+          "capped": false,
+          "raw_display": "1.090000",
+          "final_display": "1.090000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event",
+          "modifiers_bps": ["10900", "11500", "11000", "10000"],
+          "raw": {
+            "numerator": "27577",
+            "denominator": "20000"
+          },
+          "final": {
+            "numerator": "27577",
+            "denominator": "20000"
+          },
+          "capped": false,
+          "raw_display": "1.378850",
+          "final_display": "1.378850",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event_temporary",
+          "modifiers_bps": ["10900", "11500", "11000", "10500"],
+          "raw": {
+            "numerator": "579117",
+            "denominator": "400000"
+          },
+          "final": {
+            "numerator": "579117",
+            "denominator": "400000"
+          },
+          "capped": false,
+          "raw_display": "1.447792",
+          "final_display": "1.447792",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "cap_pressure",
+          "modifiers_bps": ["10900", "12000", "12500", "11000"],
+          "raw": {
+            "numerator": "3597",
+            "denominator": "2000"
+          },
+          "final": {
+            "numerator": "3",
+            "denominator": "2"
+          },
+          "capped": true,
+          "raw_display": "1.798500",
+          "final_display": "1.500000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        }
+      ]
+    },
+    {
+      "proposal_id": "catalog-v1-lg-energy-solution",
+      "slug": "lg-energy-solution",
+      "proposed_speed": "1.08",
+      "A": {
+        "speed": {
+          "numerator": "27",
+          "denominator": "25"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "18",
+          "denominator": "5"
+        },
+        "days_to_cap": {
+          "numerator": "250",
+          "denominator": "9"
+        },
+        "days_to_cap_display": "27.777777"
+      },
+      "B": {
+        "speed": {
+          "numerator": "27",
+          "denominator": "25"
+        },
+        "capacity_index": {
+          "numerator": "105",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "18",
+          "denominator": "5"
+        },
+        "days_to_cap": {
+          "numerator": "175",
+          "denominator": "6"
+        },
+        "days_to_cap_display": "29.166666",
+        "status": "COMPARISON_ONLY_UNAPPROVED_CAPACITY_CHANGE"
+      },
+      "C": {
+        "speed": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "10",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "30",
+          "denominator": "1"
+        },
+        "days_to_cap_display": "30.000000"
+      },
+      "headroom_factor_to_final_cap": {
+        "numerator": "25",
+        "denominator": "18"
+      },
+      "headroom_display": "1.388888",
+      "stack_examples": [
+        {
+          "name": "product_only",
+          "modifiers_bps": ["10800", "10000", "10000", "10000"],
+          "raw": {
+            "numerator": "27",
+            "denominator": "25"
+          },
+          "final": {
+            "numerator": "27",
+            "denominator": "25"
+          },
+          "capped": false,
+          "raw_display": "1.080000",
+          "final_display": "1.080000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event",
+          "modifiers_bps": ["10800", "11500", "11000", "10000"],
+          "raw": {
+            "numerator": "6831",
+            "denominator": "5000"
+          },
+          "final": {
+            "numerator": "6831",
+            "denominator": "5000"
+          },
+          "capped": false,
+          "raw_display": "1.366200",
+          "final_display": "1.366200",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event_temporary",
+          "modifiers_bps": ["10800", "11500", "11000", "10500"],
+          "raw": {
+            "numerator": "143451",
+            "denominator": "100000"
+          },
+          "final": {
+            "numerator": "143451",
+            "denominator": "100000"
+          },
+          "capped": false,
+          "raw_display": "1.434510",
+          "final_display": "1.434510",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "cap_pressure",
+          "modifiers_bps": ["10800", "12000", "12500", "11000"],
+          "raw": {
+            "numerator": "891",
+            "denominator": "500"
+          },
+          "final": {
+            "numerator": "3",
+            "denominator": "2"
+          },
+          "capped": true,
+          "raw_display": "1.782000",
+          "final_display": "1.500000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        }
+      ]
+    },
+    {
+      "proposal_id": "catalog-v1-naver",
+      "slug": "naver",
+      "proposed_speed": "1.07",
+      "A": {
+        "speed": {
+          "numerator": "107",
+          "denominator": "100"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "107",
+          "denominator": "30"
+        },
+        "days_to_cap": {
+          "numerator": "3000",
+          "denominator": "107"
+        },
+        "days_to_cap_display": "28.037383"
+      },
+      "B": {
+        "speed": {
+          "numerator": "107",
+          "denominator": "100"
+        },
+        "capacity_index": {
+          "numerator": "105",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "107",
+          "denominator": "30"
+        },
+        "days_to_cap": {
+          "numerator": "3150",
+          "denominator": "107"
+        },
+        "days_to_cap_display": "29.439252",
+        "status": "COMPARISON_ONLY_UNAPPROVED_CAPACITY_CHANGE"
+      },
+      "C": {
+        "speed": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "10",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "30",
+          "denominator": "1"
+        },
+        "days_to_cap_display": "30.000000"
+      },
+      "headroom_factor_to_final_cap": {
+        "numerator": "150",
+        "denominator": "107"
+      },
+      "headroom_display": "1.401869",
+      "stack_examples": [
+        {
+          "name": "product_only",
+          "modifiers_bps": ["10700", "10000", "10000", "10000"],
+          "raw": {
+            "numerator": "107",
+            "denominator": "100"
+          },
+          "final": {
+            "numerator": "107",
+            "denominator": "100"
+          },
+          "capped": false,
+          "raw_display": "1.070000",
+          "final_display": "1.070000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event",
+          "modifiers_bps": ["10700", "11500", "11000", "10000"],
+          "raw": {
+            "numerator": "27071",
+            "denominator": "20000"
+          },
+          "final": {
+            "numerator": "27071",
+            "denominator": "20000"
+          },
+          "capped": false,
+          "raw_display": "1.353550",
+          "final_display": "1.353550",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event_temporary",
+          "modifiers_bps": ["10700", "11500", "11000", "10500"],
+          "raw": {
+            "numerator": "568491",
+            "denominator": "400000"
+          },
+          "final": {
+            "numerator": "568491",
+            "denominator": "400000"
+          },
+          "capped": false,
+          "raw_display": "1.421227",
+          "final_display": "1.421227",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "cap_pressure",
+          "modifiers_bps": ["10700", "12000", "12500", "11000"],
+          "raw": {
+            "numerator": "3531",
+            "denominator": "2000"
+          },
+          "final": {
+            "numerator": "3",
+            "denominator": "2"
+          },
+          "capped": true,
+          "raw_display": "1.765500",
+          "final_display": "1.500000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        }
+      ]
+    },
+    {
+      "proposal_id": "catalog-v1-kb-financial",
+      "slug": "kb-financial",
+      "proposed_speed": "1.02",
+      "A": {
+        "speed": {
+          "numerator": "51",
+          "denominator": "50"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "17",
+          "denominator": "5"
+        },
+        "days_to_cap": {
+          "numerator": "500",
+          "denominator": "17"
+        },
+        "days_to_cap_display": "29.411764"
+      },
+      "B": {
+        "speed": {
+          "numerator": "51",
+          "denominator": "50"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "17",
+          "denominator": "5"
+        },
+        "days_to_cap": {
+          "numerator": "500",
+          "denominator": "17"
+        },
+        "days_to_cap_display": "29.411764",
+        "status": "COMPARISON_ONLY_UNAPPROVED_CAPACITY_CHANGE"
+      },
+      "C": {
+        "speed": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "10",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "30",
+          "denominator": "1"
+        },
+        "days_to_cap_display": "30.000000"
+      },
+      "headroom_factor_to_final_cap": {
+        "numerator": "25",
+        "denominator": "17"
+      },
+      "headroom_display": "1.470588",
+      "stack_examples": [
+        {
+          "name": "product_only",
+          "modifiers_bps": ["10200", "10000", "10000", "10000"],
+          "raw": {
+            "numerator": "51",
+            "denominator": "50"
+          },
+          "final": {
+            "numerator": "51",
+            "denominator": "50"
+          },
+          "capped": false,
+          "raw_display": "1.020000",
+          "final_display": "1.020000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event",
+          "modifiers_bps": ["10200", "11500", "11000", "10000"],
+          "raw": {
+            "numerator": "12903",
+            "denominator": "10000"
+          },
+          "final": {
+            "numerator": "12903",
+            "denominator": "10000"
+          },
+          "capped": false,
+          "raw_display": "1.290300",
+          "final_display": "1.290300",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event_temporary",
+          "modifiers_bps": ["10200", "11500", "11000", "10500"],
+          "raw": {
+            "numerator": "270963",
+            "denominator": "200000"
+          },
+          "final": {
+            "numerator": "270963",
+            "denominator": "200000"
+          },
+          "capped": false,
+          "raw_display": "1.354815",
+          "final_display": "1.354815",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "cap_pressure",
+          "modifiers_bps": ["10200", "12000", "12500", "11000"],
+          "raw": {
+            "numerator": "1683",
+            "denominator": "1000"
+          },
+          "final": {
+            "numerator": "3",
+            "denominator": "2"
+          },
+          "capped": true,
+          "raw_display": "1.683000",
+          "final_display": "1.500000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        }
+      ]
+    },
+    {
+      "proposal_id": "catalog-v1-nvidia",
+      "slug": "nvidia",
+      "proposed_speed": "1.18",
+      "A": {
+        "speed": {
+          "numerator": "59",
+          "denominator": "50"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "59",
+          "denominator": "15"
+        },
+        "days_to_cap": {
+          "numerator": "1500",
+          "denominator": "59"
+        },
+        "days_to_cap_display": "25.423728"
+      },
+      "B": {
+        "speed": {
+          "numerator": "59",
+          "denominator": "50"
+        },
+        "capacity_index": {
+          "numerator": "115",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "59",
+          "denominator": "15"
+        },
+        "days_to_cap": {
+          "numerator": "1725",
+          "denominator": "59"
+        },
+        "days_to_cap_display": "29.237288",
+        "status": "COMPARISON_ONLY_UNAPPROVED_CAPACITY_CHANGE"
+      },
+      "C": {
+        "speed": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "10",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "30",
+          "denominator": "1"
+        },
+        "days_to_cap_display": "30.000000"
+      },
+      "headroom_factor_to_final_cap": {
+        "numerator": "75",
+        "denominator": "59"
+      },
+      "headroom_display": "1.271186",
+      "stack_examples": [
+        {
+          "name": "product_only",
+          "modifiers_bps": ["11800", "10000", "10000", "10000"],
+          "raw": {
+            "numerator": "59",
+            "denominator": "50"
+          },
+          "final": {
+            "numerator": "59",
+            "denominator": "50"
+          },
+          "capped": false,
+          "raw_display": "1.180000",
+          "final_display": "1.180000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event",
+          "modifiers_bps": ["11800", "11500", "11000", "10000"],
+          "raw": {
+            "numerator": "14927",
+            "denominator": "10000"
+          },
+          "final": {
+            "numerator": "14927",
+            "denominator": "10000"
+          },
+          "capped": false,
+          "raw_display": "1.492700",
+          "final_display": "1.492700",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event_temporary",
+          "modifiers_bps": ["11800", "11500", "11000", "10500"],
+          "raw": {
+            "numerator": "313467",
+            "denominator": "200000"
+          },
+          "final": {
+            "numerator": "3",
+            "denominator": "2"
+          },
+          "capped": true,
+          "raw_display": "1.567335",
+          "final_display": "1.500000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "cap_pressure",
+          "modifiers_bps": ["11800", "12000", "12500", "11000"],
+          "raw": {
+            "numerator": "1947",
+            "denominator": "1000"
+          },
+          "final": {
+            "numerator": "3",
+            "denominator": "2"
+          },
+          "capped": true,
+          "raw_display": "1.947000",
+          "final_display": "1.500000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        }
+      ]
+    },
+    {
+      "proposal_id": "catalog-v1-tesla",
+      "slug": "tesla",
+      "proposed_speed": "1.13",
+      "A": {
+        "speed": {
+          "numerator": "113",
+          "denominator": "100"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "113",
+          "denominator": "30"
+        },
+        "days_to_cap": {
+          "numerator": "3000",
+          "denominator": "113"
+        },
+        "days_to_cap_display": "26.548672"
+      },
+      "B": {
+        "speed": {
+          "numerator": "113",
+          "denominator": "100"
+        },
+        "capacity_index": {
+          "numerator": "110",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "113",
+          "denominator": "30"
+        },
+        "days_to_cap": {
+          "numerator": "3300",
+          "denominator": "113"
+        },
+        "days_to_cap_display": "29.203539",
+        "status": "COMPARISON_ONLY_UNAPPROVED_CAPACITY_CHANGE"
+      },
+      "C": {
+        "speed": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "10",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "30",
+          "denominator": "1"
+        },
+        "days_to_cap_display": "30.000000"
+      },
+      "headroom_factor_to_final_cap": {
+        "numerator": "150",
+        "denominator": "113"
+      },
+      "headroom_display": "1.327433",
+      "stack_examples": [
+        {
+          "name": "product_only",
+          "modifiers_bps": ["11300", "10000", "10000", "10000"],
+          "raw": {
+            "numerator": "113",
+            "denominator": "100"
+          },
+          "final": {
+            "numerator": "113",
+            "denominator": "100"
+          },
+          "capped": false,
+          "raw_display": "1.130000",
+          "final_display": "1.130000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event",
+          "modifiers_bps": ["11300", "11500", "11000", "10000"],
+          "raw": {
+            "numerator": "28589",
+            "denominator": "20000"
+          },
+          "final": {
+            "numerator": "28589",
+            "denominator": "20000"
+          },
+          "capped": false,
+          "raw_display": "1.429450",
+          "final_display": "1.429450",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event_temporary",
+          "modifiers_bps": ["11300", "11500", "11000", "10500"],
+          "raw": {
+            "numerator": "600369",
+            "denominator": "400000"
+          },
+          "final": {
+            "numerator": "3",
+            "denominator": "2"
+          },
+          "capped": true,
+          "raw_display": "1.500922",
+          "final_display": "1.500000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "cap_pressure",
+          "modifiers_bps": ["11300", "12000", "12500", "11000"],
+          "raw": {
+            "numerator": "3729",
+            "denominator": "2000"
+          },
+          "final": {
+            "numerator": "3",
+            "denominator": "2"
+          },
+          "capped": true,
+          "raw_display": "1.864500",
+          "final_display": "1.500000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        }
+      ]
+    },
+    {
+      "proposal_id": "catalog-v1-rocket-lab",
+      "slug": "rocket-lab",
+      "proposed_speed": "1.16",
+      "A": {
+        "speed": {
+          "numerator": "29",
+          "denominator": "25"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "58",
+          "denominator": "15"
+        },
+        "days_to_cap": {
+          "numerator": "750",
+          "denominator": "29"
+        },
+        "days_to_cap_display": "25.862068"
+      },
+      "B": {
+        "speed": {
+          "numerator": "29",
+          "denominator": "25"
+        },
+        "capacity_index": {
+          "numerator": "115",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "58",
+          "denominator": "15"
+        },
+        "days_to_cap": {
+          "numerator": "1725",
+          "denominator": "58"
+        },
+        "days_to_cap_display": "29.741379",
+        "status": "COMPARISON_ONLY_UNAPPROVED_CAPACITY_CHANGE"
+      },
+      "C": {
+        "speed": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "10",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "30",
+          "denominator": "1"
+        },
+        "days_to_cap_display": "30.000000"
+      },
+      "headroom_factor_to_final_cap": {
+        "numerator": "75",
+        "denominator": "58"
+      },
+      "headroom_display": "1.293103",
+      "stack_examples": [
+        {
+          "name": "product_only",
+          "modifiers_bps": ["11600", "10000", "10000", "10000"],
+          "raw": {
+            "numerator": "29",
+            "denominator": "25"
+          },
+          "final": {
+            "numerator": "29",
+            "denominator": "25"
+          },
+          "capped": false,
+          "raw_display": "1.160000",
+          "final_display": "1.160000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event",
+          "modifiers_bps": ["11600", "11500", "11000", "10000"],
+          "raw": {
+            "numerator": "7337",
+            "denominator": "5000"
+          },
+          "final": {
+            "numerator": "7337",
+            "denominator": "5000"
+          },
+          "capped": false,
+          "raw_display": "1.467400",
+          "final_display": "1.467400",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event_temporary",
+          "modifiers_bps": ["11600", "11500", "11000", "10500"],
+          "raw": {
+            "numerator": "154077",
+            "denominator": "100000"
+          },
+          "final": {
+            "numerator": "3",
+            "denominator": "2"
+          },
+          "capped": true,
+          "raw_display": "1.540770",
+          "final_display": "1.500000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "cap_pressure",
+          "modifiers_bps": ["11600", "12000", "12500", "11000"],
+          "raw": {
+            "numerator": "957",
+            "denominator": "500"
+          },
+          "final": {
+            "numerator": "3",
+            "denominator": "2"
+          },
+          "capped": true,
+          "raw_display": "1.914000",
+          "final_display": "1.500000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        }
+      ]
+    },
+    {
+      "proposal_id": "catalog-v1-sandisk",
+      "slug": "sandisk",
+      "proposed_speed": "1.09",
+      "A": {
+        "speed": {
+          "numerator": "109",
+          "denominator": "100"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "109",
+          "denominator": "30"
+        },
+        "days_to_cap": {
+          "numerator": "3000",
+          "denominator": "109"
+        },
+        "days_to_cap_display": "27.522935"
+      },
+      "B": {
+        "speed": {
+          "numerator": "109",
+          "denominator": "100"
+        },
+        "capacity_index": {
+          "numerator": "105",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "109",
+          "denominator": "30"
+        },
+        "days_to_cap": {
+          "numerator": "3150",
+          "denominator": "109"
+        },
+        "days_to_cap_display": "28.899082",
+        "status": "COMPARISON_ONLY_UNAPPROVED_CAPACITY_CHANGE"
+      },
+      "C": {
+        "speed": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "10",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "30",
+          "denominator": "1"
+        },
+        "days_to_cap_display": "30.000000"
+      },
+      "headroom_factor_to_final_cap": {
+        "numerator": "150",
+        "denominator": "109"
+      },
+      "headroom_display": "1.376146",
+      "stack_examples": [
+        {
+          "name": "product_only",
+          "modifiers_bps": ["10900", "10000", "10000", "10000"],
+          "raw": {
+            "numerator": "109",
+            "denominator": "100"
+          },
+          "final": {
+            "numerator": "109",
+            "denominator": "100"
+          },
+          "capped": false,
+          "raw_display": "1.090000",
+          "final_display": "1.090000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event",
+          "modifiers_bps": ["10900", "11500", "11000", "10000"],
+          "raw": {
+            "numerator": "27577",
+            "denominator": "20000"
+          },
+          "final": {
+            "numerator": "27577",
+            "denominator": "20000"
+          },
+          "capped": false,
+          "raw_display": "1.378850",
+          "final_display": "1.378850",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event_temporary",
+          "modifiers_bps": ["10900", "11500", "11000", "10500"],
+          "raw": {
+            "numerator": "579117",
+            "denominator": "400000"
+          },
+          "final": {
+            "numerator": "579117",
+            "denominator": "400000"
+          },
+          "capped": false,
+          "raw_display": "1.447792",
+          "final_display": "1.447792",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "cap_pressure",
+          "modifiers_bps": ["10900", "12000", "12500", "11000"],
+          "raw": {
+            "numerator": "3597",
+            "denominator": "2000"
+          },
+          "final": {
+            "numerator": "3",
+            "denominator": "2"
+          },
+          "capped": true,
+          "raw_display": "1.798500",
+          "final_display": "1.500000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        }
+      ]
+    },
+    {
+      "proposal_id": "catalog-v1-apple",
+      "slug": "apple",
+      "proposed_speed": "1.08",
+      "A": {
+        "speed": {
+          "numerator": "27",
+          "denominator": "25"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "18",
+          "denominator": "5"
+        },
+        "days_to_cap": {
+          "numerator": "250",
+          "denominator": "9"
+        },
+        "days_to_cap_display": "27.777777"
+      },
+      "B": {
+        "speed": {
+          "numerator": "27",
+          "denominator": "25"
+        },
+        "capacity_index": {
+          "numerator": "105",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "18",
+          "denominator": "5"
+        },
+        "days_to_cap": {
+          "numerator": "175",
+          "denominator": "6"
+        },
+        "days_to_cap_display": "29.166666",
+        "status": "COMPARISON_ONLY_UNAPPROVED_CAPACITY_CHANGE"
+      },
+      "C": {
+        "speed": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "10",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "30",
+          "denominator": "1"
+        },
+        "days_to_cap_display": "30.000000"
+      },
+      "headroom_factor_to_final_cap": {
+        "numerator": "25",
+        "denominator": "18"
+      },
+      "headroom_display": "1.388888",
+      "stack_examples": [
+        {
+          "name": "product_only",
+          "modifiers_bps": ["10800", "10000", "10000", "10000"],
+          "raw": {
+            "numerator": "27",
+            "denominator": "25"
+          },
+          "final": {
+            "numerator": "27",
+            "denominator": "25"
+          },
+          "capped": false,
+          "raw_display": "1.080000",
+          "final_display": "1.080000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event",
+          "modifiers_bps": ["10800", "11500", "11000", "10000"],
+          "raw": {
+            "numerator": "6831",
+            "denominator": "5000"
+          },
+          "final": {
+            "numerator": "6831",
+            "denominator": "5000"
+          },
+          "capped": false,
+          "raw_display": "1.366200",
+          "final_display": "1.366200",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event_temporary",
+          "modifiers_bps": ["10800", "11500", "11000", "10500"],
+          "raw": {
+            "numerator": "143451",
+            "denominator": "100000"
+          },
+          "final": {
+            "numerator": "143451",
+            "denominator": "100000"
+          },
+          "capped": false,
+          "raw_display": "1.434510",
+          "final_display": "1.434510",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "cap_pressure",
+          "modifiers_bps": ["10800", "12000", "12500", "11000"],
+          "raw": {
+            "numerator": "891",
+            "denominator": "500"
+          },
+          "final": {
+            "numerator": "3",
+            "denominator": "2"
+          },
+          "capped": true,
+          "raw_display": "1.782000",
+          "final_display": "1.500000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        }
+      ]
+    },
+    {
+      "proposal_id": "catalog-v1-microsoft",
+      "slug": "microsoft",
+      "proposed_speed": "1.10",
+      "A": {
+        "speed": {
+          "numerator": "11",
+          "denominator": "10"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "11",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "300",
+          "denominator": "11"
+        },
+        "days_to_cap_display": "27.272727"
+      },
+      "B": {
+        "speed": {
+          "numerator": "11",
+          "denominator": "10"
+        },
+        "capacity_index": {
+          "numerator": "110",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "11",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "30",
+          "denominator": "1"
+        },
+        "days_to_cap_display": "30.000000",
+        "status": "COMPARISON_ONLY_UNAPPROVED_CAPACITY_CHANGE"
+      },
+      "C": {
+        "speed": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "10",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "30",
+          "denominator": "1"
+        },
+        "days_to_cap_display": "30.000000"
+      },
+      "headroom_factor_to_final_cap": {
+        "numerator": "15",
+        "denominator": "11"
+      },
+      "headroom_display": "1.363636",
+      "stack_examples": [
+        {
+          "name": "product_only",
+          "modifiers_bps": ["11000", "10000", "10000", "10000"],
+          "raw": {
+            "numerator": "11",
+            "denominator": "10"
+          },
+          "final": {
+            "numerator": "11",
+            "denominator": "10"
+          },
+          "capped": false,
+          "raw_display": "1.100000",
+          "final_display": "1.100000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event",
+          "modifiers_bps": ["11000", "11500", "11000", "10000"],
+          "raw": {
+            "numerator": "2783",
+            "denominator": "2000"
+          },
+          "final": {
+            "numerator": "2783",
+            "denominator": "2000"
+          },
+          "capped": false,
+          "raw_display": "1.391500",
+          "final_display": "1.391500",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event_temporary",
+          "modifiers_bps": ["11000", "11500", "11000", "10500"],
+          "raw": {
+            "numerator": "58443",
+            "denominator": "40000"
+          },
+          "final": {
+            "numerator": "58443",
+            "denominator": "40000"
+          },
+          "capped": false,
+          "raw_display": "1.461075",
+          "final_display": "1.461075",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "cap_pressure",
+          "modifiers_bps": ["11000", "12000", "12500", "11000"],
+          "raw": {
+            "numerator": "363",
+            "denominator": "200"
+          },
+          "final": {
+            "numerator": "3",
+            "denominator": "2"
+          },
+          "capped": true,
+          "raw_display": "1.815000",
+          "final_display": "1.500000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        }
+      ]
+    },
+    {
+      "proposal_id": "catalog-v1-amazon",
+      "slug": "amazon",
+      "proposed_speed": "1.07",
+      "A": {
+        "speed": {
+          "numerator": "107",
+          "denominator": "100"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "107",
+          "denominator": "30"
+        },
+        "days_to_cap": {
+          "numerator": "3000",
+          "denominator": "107"
+        },
+        "days_to_cap_display": "28.037383"
+      },
+      "B": {
+        "speed": {
+          "numerator": "107",
+          "denominator": "100"
+        },
+        "capacity_index": {
+          "numerator": "105",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "107",
+          "denominator": "30"
+        },
+        "days_to_cap": {
+          "numerator": "3150",
+          "denominator": "107"
+        },
+        "days_to_cap_display": "29.439252",
+        "status": "COMPARISON_ONLY_UNAPPROVED_CAPACITY_CHANGE"
+      },
+      "C": {
+        "speed": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "10",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "30",
+          "denominator": "1"
+        },
+        "days_to_cap_display": "30.000000"
+      },
+      "headroom_factor_to_final_cap": {
+        "numerator": "150",
+        "denominator": "107"
+      },
+      "headroom_display": "1.401869",
+      "stack_examples": [
+        {
+          "name": "product_only",
+          "modifiers_bps": ["10700", "10000", "10000", "10000"],
+          "raw": {
+            "numerator": "107",
+            "denominator": "100"
+          },
+          "final": {
+            "numerator": "107",
+            "denominator": "100"
+          },
+          "capped": false,
+          "raw_display": "1.070000",
+          "final_display": "1.070000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event",
+          "modifiers_bps": ["10700", "11500", "11000", "10000"],
+          "raw": {
+            "numerator": "27071",
+            "denominator": "20000"
+          },
+          "final": {
+            "numerator": "27071",
+            "denominator": "20000"
+          },
+          "capped": false,
+          "raw_display": "1.353550",
+          "final_display": "1.353550",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event_temporary",
+          "modifiers_bps": ["10700", "11500", "11000", "10500"],
+          "raw": {
+            "numerator": "568491",
+            "denominator": "400000"
+          },
+          "final": {
+            "numerator": "568491",
+            "denominator": "400000"
+          },
+          "capped": false,
+          "raw_display": "1.421227",
+          "final_display": "1.421227",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "cap_pressure",
+          "modifiers_bps": ["10700", "12000", "12500", "11000"],
+          "raw": {
+            "numerator": "3531",
+            "denominator": "2000"
+          },
+          "final": {
+            "numerator": "3",
+            "denominator": "2"
+          },
+          "capped": true,
+          "raw_display": "1.765500",
+          "final_display": "1.500000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        }
+      ]
+    },
+    {
+      "proposal_id": "catalog-v1-alphabet-a",
+      "slug": "alphabet-a",
+      "proposed_speed": "1.11",
+      "A": {
+        "speed": {
+          "numerator": "111",
+          "denominator": "100"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "37",
+          "denominator": "10"
+        },
+        "days_to_cap": {
+          "numerator": "1000",
+          "denominator": "37"
+        },
+        "days_to_cap_display": "27.027027"
+      },
+      "B": {
+        "speed": {
+          "numerator": "111",
+          "denominator": "100"
+        },
+        "capacity_index": {
+          "numerator": "110",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "37",
+          "denominator": "10"
+        },
+        "days_to_cap": {
+          "numerator": "1100",
+          "denominator": "37"
+        },
+        "days_to_cap_display": "29.729729",
+        "status": "COMPARISON_ONLY_UNAPPROVED_CAPACITY_CHANGE"
+      },
+      "C": {
+        "speed": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "10",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "30",
+          "denominator": "1"
+        },
+        "days_to_cap_display": "30.000000"
+      },
+      "headroom_factor_to_final_cap": {
+        "numerator": "50",
+        "denominator": "37"
+      },
+      "headroom_display": "1.351351",
+      "stack_examples": [
+        {
+          "name": "product_only",
+          "modifiers_bps": ["11100", "10000", "10000", "10000"],
+          "raw": {
+            "numerator": "111",
+            "denominator": "100"
+          },
+          "final": {
+            "numerator": "111",
+            "denominator": "100"
+          },
+          "capped": false,
+          "raw_display": "1.110000",
+          "final_display": "1.110000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event",
+          "modifiers_bps": ["11100", "11500", "11000", "10000"],
+          "raw": {
+            "numerator": "28083",
+            "denominator": "20000"
+          },
+          "final": {
+            "numerator": "28083",
+            "denominator": "20000"
+          },
+          "capped": false,
+          "raw_display": "1.404150",
+          "final_display": "1.404150",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event_temporary",
+          "modifiers_bps": ["11100", "11500", "11000", "10500"],
+          "raw": {
+            "numerator": "589743",
+            "denominator": "400000"
+          },
+          "final": {
+            "numerator": "589743",
+            "denominator": "400000"
+          },
+          "capped": false,
+          "raw_display": "1.474357",
+          "final_display": "1.474357",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "cap_pressure",
+          "modifiers_bps": ["11100", "12000", "12500", "11000"],
+          "raw": {
+            "numerator": "3663",
+            "denominator": "2000"
+          },
+          "final": {
+            "numerator": "3",
+            "denominator": "2"
+          },
+          "capped": true,
+          "raw_display": "1.831500",
+          "final_display": "1.500000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        }
+      ]
+    },
+    {
+      "proposal_id": "catalog-v1-meta",
+      "slug": "meta",
+      "proposed_speed": "1.06",
+      "A": {
+        "speed": {
+          "numerator": "53",
+          "denominator": "50"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "53",
+          "denominator": "15"
+        },
+        "days_to_cap": {
+          "numerator": "1500",
+          "denominator": "53"
+        },
+        "days_to_cap_display": "28.301886"
+      },
+      "B": {
+        "speed": {
+          "numerator": "53",
+          "denominator": "50"
+        },
+        "capacity_index": {
+          "numerator": "105",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "53",
+          "denominator": "15"
+        },
+        "days_to_cap": {
+          "numerator": "1575",
+          "denominator": "53"
+        },
+        "days_to_cap_display": "29.716981",
+        "status": "COMPARISON_ONLY_UNAPPROVED_CAPACITY_CHANGE"
+      },
+      "C": {
+        "speed": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "10",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "30",
+          "denominator": "1"
+        },
+        "days_to_cap_display": "30.000000"
+      },
+      "headroom_factor_to_final_cap": {
+        "numerator": "75",
+        "denominator": "53"
+      },
+      "headroom_display": "1.415094",
+      "stack_examples": [
+        {
+          "name": "product_only",
+          "modifiers_bps": ["10600", "10000", "10000", "10000"],
+          "raw": {
+            "numerator": "53",
+            "denominator": "50"
+          },
+          "final": {
+            "numerator": "53",
+            "denominator": "50"
+          },
+          "capped": false,
+          "raw_display": "1.060000",
+          "final_display": "1.060000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event",
+          "modifiers_bps": ["10600", "11500", "11000", "10000"],
+          "raw": {
+            "numerator": "13409",
+            "denominator": "10000"
+          },
+          "final": {
+            "numerator": "13409",
+            "denominator": "10000"
+          },
+          "capped": false,
+          "raw_display": "1.340900",
+          "final_display": "1.340900",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event_temporary",
+          "modifiers_bps": ["10600", "11500", "11000", "10500"],
+          "raw": {
+            "numerator": "281589",
+            "denominator": "200000"
+          },
+          "final": {
+            "numerator": "281589",
+            "denominator": "200000"
+          },
+          "capped": false,
+          "raw_display": "1.407945",
+          "final_display": "1.407945",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "cap_pressure",
+          "modifiers_bps": ["10600", "12000", "12500", "11000"],
+          "raw": {
+            "numerator": "1749",
+            "denominator": "1000"
+          },
+          "final": {
+            "numerator": "3",
+            "denominator": "2"
+          },
+          "capped": true,
+          "raw_display": "1.749000",
+          "final_display": "1.500000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        }
+      ]
+    },
+    {
+      "proposal_id": "catalog-v1-spy",
+      "slug": "spy",
+      "proposed_speed": "1.03",
+      "A": {
+        "speed": {
+          "numerator": "103",
+          "denominator": "100"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "103",
+          "denominator": "30"
+        },
+        "days_to_cap": {
+          "numerator": "3000",
+          "denominator": "103"
+        },
+        "days_to_cap_display": "29.126213"
+      },
+      "B": {
+        "speed": {
+          "numerator": "103",
+          "denominator": "100"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "103",
+          "denominator": "30"
+        },
+        "days_to_cap": {
+          "numerator": "3000",
+          "denominator": "103"
+        },
+        "days_to_cap_display": "29.126213",
+        "status": "COMPARISON_ONLY_UNAPPROVED_CAPACITY_CHANGE"
+      },
+      "C": {
+        "speed": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "10",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "30",
+          "denominator": "1"
+        },
+        "days_to_cap_display": "30.000000"
+      },
+      "headroom_factor_to_final_cap": {
+        "numerator": "150",
+        "denominator": "103"
+      },
+      "headroom_display": "1.456310",
+      "stack_examples": [
+        {
+          "name": "product_only",
+          "modifiers_bps": ["10300", "10000", "10000", "10000"],
+          "raw": {
+            "numerator": "103",
+            "denominator": "100"
+          },
+          "final": {
+            "numerator": "103",
+            "denominator": "100"
+          },
+          "capped": false,
+          "raw_display": "1.030000",
+          "final_display": "1.030000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event",
+          "modifiers_bps": ["10300", "11500", "11000", "10000"],
+          "raw": {
+            "numerator": "26059",
+            "denominator": "20000"
+          },
+          "final": {
+            "numerator": "26059",
+            "denominator": "20000"
+          },
+          "capped": false,
+          "raw_display": "1.302950",
+          "final_display": "1.302950",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event_temporary",
+          "modifiers_bps": ["10300", "11500", "11000", "10500"],
+          "raw": {
+            "numerator": "547239",
+            "denominator": "400000"
+          },
+          "final": {
+            "numerator": "547239",
+            "denominator": "400000"
+          },
+          "capped": false,
+          "raw_display": "1.368097",
+          "final_display": "1.368097",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "cap_pressure",
+          "modifiers_bps": ["10300", "12000", "12500", "11000"],
+          "raw": {
+            "numerator": "3399",
+            "denominator": "2000"
+          },
+          "final": {
+            "numerator": "3",
+            "denominator": "2"
+          },
+          "capped": true,
+          "raw_display": "1.699500",
+          "final_display": "1.500000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        }
+      ]
+    },
+    {
+      "proposal_id": "catalog-v1-qqq",
+      "slug": "qqq",
+      "proposed_speed": "1.06",
+      "A": {
+        "speed": {
+          "numerator": "53",
+          "denominator": "50"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "53",
+          "denominator": "15"
+        },
+        "days_to_cap": {
+          "numerator": "1500",
+          "denominator": "53"
+        },
+        "days_to_cap_display": "28.301886"
+      },
+      "B": {
+        "speed": {
+          "numerator": "53",
+          "denominator": "50"
+        },
+        "capacity_index": {
+          "numerator": "105",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "53",
+          "denominator": "15"
+        },
+        "days_to_cap": {
+          "numerator": "1575",
+          "denominator": "53"
+        },
+        "days_to_cap_display": "29.716981",
+        "status": "COMPARISON_ONLY_UNAPPROVED_CAPACITY_CHANGE"
+      },
+      "C": {
+        "speed": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "10",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "30",
+          "denominator": "1"
+        },
+        "days_to_cap_display": "30.000000"
+      },
+      "headroom_factor_to_final_cap": {
+        "numerator": "75",
+        "denominator": "53"
+      },
+      "headroom_display": "1.415094",
+      "stack_examples": [
+        {
+          "name": "product_only",
+          "modifiers_bps": ["10600", "10000", "10000", "10000"],
+          "raw": {
+            "numerator": "53",
+            "denominator": "50"
+          },
+          "final": {
+            "numerator": "53",
+            "denominator": "50"
+          },
+          "capped": false,
+          "raw_display": "1.060000",
+          "final_display": "1.060000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event",
+          "modifiers_bps": ["10600", "11500", "11000", "10000"],
+          "raw": {
+            "numerator": "13409",
+            "denominator": "10000"
+          },
+          "final": {
+            "numerator": "13409",
+            "denominator": "10000"
+          },
+          "capped": false,
+          "raw_display": "1.340900",
+          "final_display": "1.340900",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event_temporary",
+          "modifiers_bps": ["10600", "11500", "11000", "10500"],
+          "raw": {
+            "numerator": "281589",
+            "denominator": "200000"
+          },
+          "final": {
+            "numerator": "281589",
+            "denominator": "200000"
+          },
+          "capped": false,
+          "raw_display": "1.407945",
+          "final_display": "1.407945",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "cap_pressure",
+          "modifiers_bps": ["10600", "12000", "12500", "11000"],
+          "raw": {
+            "numerator": "1749",
+            "denominator": "1000"
+          },
+          "final": {
+            "numerator": "3",
+            "denominator": "2"
+          },
+          "capped": true,
+          "raw_display": "1.749000",
+          "final_display": "1.500000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        }
+      ]
+    },
+    {
+      "proposal_id": "catalog-v1-soxx",
+      "slug": "soxx",
+      "proposed_speed": "1.10",
+      "A": {
+        "speed": {
+          "numerator": "11",
+          "denominator": "10"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "11",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "300",
+          "denominator": "11"
+        },
+        "days_to_cap_display": "27.272727"
+      },
+      "B": {
+        "speed": {
+          "numerator": "11",
+          "denominator": "10"
+        },
+        "capacity_index": {
+          "numerator": "110",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "11",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "30",
+          "denominator": "1"
+        },
+        "days_to_cap_display": "30.000000",
+        "status": "COMPARISON_ONLY_UNAPPROVED_CAPACITY_CHANGE"
+      },
+      "C": {
+        "speed": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "10",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "30",
+          "denominator": "1"
+        },
+        "days_to_cap_display": "30.000000"
+      },
+      "headroom_factor_to_final_cap": {
+        "numerator": "15",
+        "denominator": "11"
+      },
+      "headroom_display": "1.363636",
+      "stack_examples": [
+        {
+          "name": "product_only",
+          "modifiers_bps": ["11000", "10000", "10000", "10000"],
+          "raw": {
+            "numerator": "11",
+            "denominator": "10"
+          },
+          "final": {
+            "numerator": "11",
+            "denominator": "10"
+          },
+          "capped": false,
+          "raw_display": "1.100000",
+          "final_display": "1.100000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event",
+          "modifiers_bps": ["11000", "11500", "11000", "10000"],
+          "raw": {
+            "numerator": "2783",
+            "denominator": "2000"
+          },
+          "final": {
+            "numerator": "2783",
+            "denominator": "2000"
+          },
+          "capped": false,
+          "raw_display": "1.391500",
+          "final_display": "1.391500",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event_temporary",
+          "modifiers_bps": ["11000", "11500", "11000", "10500"],
+          "raw": {
+            "numerator": "58443",
+            "denominator": "40000"
+          },
+          "final": {
+            "numerator": "58443",
+            "denominator": "40000"
+          },
+          "capped": false,
+          "raw_display": "1.461075",
+          "final_display": "1.461075",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "cap_pressure",
+          "modifiers_bps": ["11000", "12000", "12500", "11000"],
+          "raw": {
+            "numerator": "363",
+            "denominator": "200"
+          },
+          "final": {
+            "numerator": "3",
+            "denominator": "2"
+          },
+          "capped": true,
+          "raw_display": "1.815000",
+          "final_display": "1.500000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        }
+      ]
+    },
+    {
+      "proposal_id": "catalog-v1-schd",
+      "slug": "schd",
+      "proposed_speed": "1.01",
+      "A": {
+        "speed": {
+          "numerator": "101",
+          "denominator": "100"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "101",
+          "denominator": "30"
+        },
+        "days_to_cap": {
+          "numerator": "3000",
+          "denominator": "101"
+        },
+        "days_to_cap_display": "29.702970"
+      },
+      "B": {
+        "speed": {
+          "numerator": "101",
+          "denominator": "100"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "101",
+          "denominator": "30"
+        },
+        "days_to_cap": {
+          "numerator": "3000",
+          "denominator": "101"
+        },
+        "days_to_cap_display": "29.702970",
+        "status": "COMPARISON_ONLY_UNAPPROVED_CAPACITY_CHANGE"
+      },
+      "C": {
+        "speed": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "10",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "30",
+          "denominator": "1"
+        },
+        "days_to_cap_display": "30.000000"
+      },
+      "headroom_factor_to_final_cap": {
+        "numerator": "150",
+        "denominator": "101"
+      },
+      "headroom_display": "1.485148",
+      "stack_examples": [
+        {
+          "name": "product_only",
+          "modifiers_bps": ["10100", "10000", "10000", "10000"],
+          "raw": {
+            "numerator": "101",
+            "denominator": "100"
+          },
+          "final": {
+            "numerator": "101",
+            "denominator": "100"
+          },
+          "capped": false,
+          "raw_display": "1.010000",
+          "final_display": "1.010000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event",
+          "modifiers_bps": ["10100", "11500", "11000", "10000"],
+          "raw": {
+            "numerator": "25553",
+            "denominator": "20000"
+          },
+          "final": {
+            "numerator": "25553",
+            "denominator": "20000"
+          },
+          "capped": false,
+          "raw_display": "1.277650",
+          "final_display": "1.277650",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event_temporary",
+          "modifiers_bps": ["10100", "11500", "11000", "10500"],
+          "raw": {
+            "numerator": "536613",
+            "denominator": "400000"
+          },
+          "final": {
+            "numerator": "536613",
+            "denominator": "400000"
+          },
+          "capped": false,
+          "raw_display": "1.341532",
+          "final_display": "1.341532",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "cap_pressure",
+          "modifiers_bps": ["10100", "12000", "12500", "11000"],
+          "raw": {
+            "numerator": "3333",
+            "denominator": "2000"
+          },
+          "final": {
+            "numerator": "3",
+            "denominator": "2"
+          },
+          "capped": true,
+          "raw_display": "1.666500",
+          "final_display": "1.500000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        }
+      ]
+    },
+    {
+      "proposal_id": "catalog-v1-bitcoin",
+      "slug": "bitcoin",
+      "proposed_speed": "1.14",
+      "A": {
+        "speed": {
+          "numerator": "57",
+          "denominator": "50"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "19",
+          "denominator": "5"
+        },
+        "days_to_cap": {
+          "numerator": "500",
+          "denominator": "19"
+        },
+        "days_to_cap_display": "26.315789"
+      },
+      "B": {
+        "speed": {
+          "numerator": "57",
+          "denominator": "50"
+        },
+        "capacity_index": {
+          "numerator": "110",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "19",
+          "denominator": "5"
+        },
+        "days_to_cap": {
+          "numerator": "550",
+          "denominator": "19"
+        },
+        "days_to_cap_display": "28.947368",
+        "status": "COMPARISON_ONLY_UNAPPROVED_CAPACITY_CHANGE"
+      },
+      "C": {
+        "speed": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "10",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "30",
+          "denominator": "1"
+        },
+        "days_to_cap_display": "30.000000"
+      },
+      "headroom_factor_to_final_cap": {
+        "numerator": "25",
+        "denominator": "19"
+      },
+      "headroom_display": "1.315789",
+      "stack_examples": [
+        {
+          "name": "product_only",
+          "modifiers_bps": ["11400", "10000", "10000", "10000"],
+          "raw": {
+            "numerator": "57",
+            "denominator": "50"
+          },
+          "final": {
+            "numerator": "57",
+            "denominator": "50"
+          },
+          "capped": false,
+          "raw_display": "1.140000",
+          "final_display": "1.140000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event",
+          "modifiers_bps": ["11400", "11500", "11000", "10000"],
+          "raw": {
+            "numerator": "14421",
+            "denominator": "10000"
+          },
+          "final": {
+            "numerator": "14421",
+            "denominator": "10000"
+          },
+          "capped": false,
+          "raw_display": "1.442100",
+          "final_display": "1.442100",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event_temporary",
+          "modifiers_bps": ["11400", "11500", "11000", "10500"],
+          "raw": {
+            "numerator": "302841",
+            "denominator": "200000"
+          },
+          "final": {
+            "numerator": "3",
+            "denominator": "2"
+          },
+          "capped": true,
+          "raw_display": "1.514205",
+          "final_display": "1.500000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "cap_pressure",
+          "modifiers_bps": ["11400", "12000", "12500", "11000"],
+          "raw": {
+            "numerator": "1881",
+            "denominator": "1000"
+          },
+          "final": {
+            "numerator": "3",
+            "denominator": "2"
+          },
+          "capped": true,
+          "raw_display": "1.881000",
+          "final_display": "1.500000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        }
+      ]
+    },
+    {
+      "proposal_id": "catalog-v1-ethereum",
+      "slug": "ethereum",
+      "proposed_speed": "1.12",
+      "A": {
+        "speed": {
+          "numerator": "28",
+          "denominator": "25"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "56",
+          "denominator": "15"
+        },
+        "days_to_cap": {
+          "numerator": "375",
+          "denominator": "14"
+        },
+        "days_to_cap_display": "26.785714"
+      },
+      "B": {
+        "speed": {
+          "numerator": "28",
+          "denominator": "25"
+        },
+        "capacity_index": {
+          "numerator": "110",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "56",
+          "denominator": "15"
+        },
+        "days_to_cap": {
+          "numerator": "825",
+          "denominator": "28"
+        },
+        "days_to_cap_display": "29.464285",
+        "status": "COMPARISON_ONLY_UNAPPROVED_CAPACITY_CHANGE"
+      },
+      "C": {
+        "speed": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "10",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "30",
+          "denominator": "1"
+        },
+        "days_to_cap_display": "30.000000"
+      },
+      "headroom_factor_to_final_cap": {
+        "numerator": "75",
+        "denominator": "56"
+      },
+      "headroom_display": "1.339285",
+      "stack_examples": [
+        {
+          "name": "product_only",
+          "modifiers_bps": ["11200", "10000", "10000", "10000"],
+          "raw": {
+            "numerator": "28",
+            "denominator": "25"
+          },
+          "final": {
+            "numerator": "28",
+            "denominator": "25"
+          },
+          "capped": false,
+          "raw_display": "1.120000",
+          "final_display": "1.120000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event",
+          "modifiers_bps": ["11200", "11500", "11000", "10000"],
+          "raw": {
+            "numerator": "1771",
+            "denominator": "1250"
+          },
+          "final": {
+            "numerator": "1771",
+            "denominator": "1250"
+          },
+          "capped": false,
+          "raw_display": "1.416800",
+          "final_display": "1.416800",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event_temporary",
+          "modifiers_bps": ["11200", "11500", "11000", "10500"],
+          "raw": {
+            "numerator": "37191",
+            "denominator": "25000"
+          },
+          "final": {
+            "numerator": "37191",
+            "denominator": "25000"
+          },
+          "capped": false,
+          "raw_display": "1.487640",
+          "final_display": "1.487640",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "cap_pressure",
+          "modifiers_bps": ["11200", "12000", "12500", "11000"],
+          "raw": {
+            "numerator": "231",
+            "denominator": "125"
+          },
+          "final": {
+            "numerator": "3",
+            "denominator": "2"
+          },
+          "capped": true,
+          "raw_display": "1.848000",
+          "final_display": "1.500000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        }
+      ]
+    },
+    {
+      "proposal_id": "catalog-v1-solana",
+      "slug": "solana",
+      "proposed_speed": "1.13",
+      "A": {
+        "speed": {
+          "numerator": "113",
+          "denominator": "100"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "113",
+          "denominator": "30"
+        },
+        "days_to_cap": {
+          "numerator": "3000",
+          "denominator": "113"
+        },
+        "days_to_cap_display": "26.548672"
+      },
+      "B": {
+        "speed": {
+          "numerator": "113",
+          "denominator": "100"
+        },
+        "capacity_index": {
+          "numerator": "110",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "113",
+          "denominator": "30"
+        },
+        "days_to_cap": {
+          "numerator": "3300",
+          "denominator": "113"
+        },
+        "days_to_cap_display": "29.203539",
+        "status": "COMPARISON_ONLY_UNAPPROVED_CAPACITY_CHANGE"
+      },
+      "C": {
+        "speed": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "10",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "30",
+          "denominator": "1"
+        },
+        "days_to_cap_display": "30.000000"
+      },
+      "headroom_factor_to_final_cap": {
+        "numerator": "150",
+        "denominator": "113"
+      },
+      "headroom_display": "1.327433",
+      "stack_examples": [
+        {
+          "name": "product_only",
+          "modifiers_bps": ["11300", "10000", "10000", "10000"],
+          "raw": {
+            "numerator": "113",
+            "denominator": "100"
+          },
+          "final": {
+            "numerator": "113",
+            "denominator": "100"
+          },
+          "capped": false,
+          "raw_display": "1.130000",
+          "final_display": "1.130000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event",
+          "modifiers_bps": ["11300", "11500", "11000", "10000"],
+          "raw": {
+            "numerator": "28589",
+            "denominator": "20000"
+          },
+          "final": {
+            "numerator": "28589",
+            "denominator": "20000"
+          },
+          "capped": false,
+          "raw_display": "1.429450",
+          "final_display": "1.429450",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event_temporary",
+          "modifiers_bps": ["11300", "11500", "11000", "10500"],
+          "raw": {
+            "numerator": "600369",
+            "denominator": "400000"
+          },
+          "final": {
+            "numerator": "3",
+            "denominator": "2"
+          },
+          "capped": true,
+          "raw_display": "1.500922",
+          "final_display": "1.500000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "cap_pressure",
+          "modifiers_bps": ["11300", "12000", "12500", "11000"],
+          "raw": {
+            "numerator": "3729",
+            "denominator": "2000"
+          },
+          "final": {
+            "numerator": "3",
+            "denominator": "2"
+          },
+          "capped": true,
+          "raw_display": "1.864500",
+          "final_display": "1.500000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        }
+      ]
+    },
+    {
+      "proposal_id": "catalog-v1-gold",
+      "slug": "gold",
+      "proposed_speed": "1.00",
+      "A": {
+        "speed": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "10",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "30",
+          "denominator": "1"
+        },
+        "days_to_cap_display": "30.000000"
+      },
+      "B": {
+        "speed": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "10",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "30",
+          "denominator": "1"
+        },
+        "days_to_cap_display": "30.000000",
+        "status": "COMPARISON_ONLY_UNAPPROVED_CAPACITY_CHANGE"
+      },
+      "C": {
+        "speed": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "10",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "30",
+          "denominator": "1"
+        },
+        "days_to_cap_display": "30.000000"
+      },
+      "headroom_factor_to_final_cap": {
+        "numerator": "3",
+        "denominator": "2"
+      },
+      "headroom_display": "1.500000",
+      "stack_examples": [
+        {
+          "name": "product_only",
+          "modifiers_bps": ["10000", "10000", "10000", "10000"],
+          "raw": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "final": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "capped": false,
+          "raw_display": "1.000000",
+          "final_display": "1.000000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event",
+          "modifiers_bps": ["10000", "11500", "11000", "10000"],
+          "raw": {
+            "numerator": "253",
+            "denominator": "200"
+          },
+          "final": {
+            "numerator": "253",
+            "denominator": "200"
+          },
+          "capped": false,
+          "raw_display": "1.265000",
+          "final_display": "1.265000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event_temporary",
+          "modifiers_bps": ["10000", "11500", "11000", "10500"],
+          "raw": {
+            "numerator": "5313",
+            "denominator": "4000"
+          },
+          "final": {
+            "numerator": "5313",
+            "denominator": "4000"
+          },
+          "capped": false,
+          "raw_display": "1.328250",
+          "final_display": "1.328250",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "cap_pressure",
+          "modifiers_bps": ["10000", "12000", "12500", "11000"],
+          "raw": {
+            "numerator": "33",
+            "denominator": "20"
+          },
+          "final": {
+            "numerator": "3",
+            "denominator": "2"
+          },
+          "capped": true,
+          "raw_display": "1.650000",
+          "final_display": "1.500000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        }
+      ]
+    },
+    {
+      "proposal_id": "catalog-v1-silver",
+      "slug": "silver",
+      "proposed_speed": "1.04",
+      "A": {
+        "speed": {
+          "numerator": "26",
+          "denominator": "25"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "52",
+          "denominator": "15"
+        },
+        "days_to_cap": {
+          "numerator": "375",
+          "denominator": "13"
+        },
+        "days_to_cap_display": "28.846153"
+      },
+      "B": {
+        "speed": {
+          "numerator": "26",
+          "denominator": "25"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "52",
+          "denominator": "15"
+        },
+        "days_to_cap": {
+          "numerator": "375",
+          "denominator": "13"
+        },
+        "days_to_cap_display": "28.846153",
+        "status": "COMPARISON_ONLY_UNAPPROVED_CAPACITY_CHANGE"
+      },
+      "C": {
+        "speed": {
+          "numerator": "1",
+          "denominator": "1"
+        },
+        "capacity_index": {
+          "numerator": "100",
+          "denominator": "1"
+        },
+        "daily_index_rate": {
+          "numerator": "10",
+          "denominator": "3"
+        },
+        "days_to_cap": {
+          "numerator": "30",
+          "denominator": "1"
+        },
+        "days_to_cap_display": "30.000000"
+      },
+      "headroom_factor_to_final_cap": {
+        "numerator": "75",
+        "denominator": "52"
+      },
+      "headroom_display": "1.442307",
+      "stack_examples": [
+        {
+          "name": "product_only",
+          "modifiers_bps": ["10400", "10000", "10000", "10000"],
+          "raw": {
+            "numerator": "26",
+            "denominator": "25"
+          },
+          "final": {
+            "numerator": "26",
+            "denominator": "25"
+          },
+          "capped": false,
+          "raw_display": "1.040000",
+          "final_display": "1.040000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event",
+          "modifiers_bps": ["10400", "11500", "11000", "10000"],
+          "raw": {
+            "numerator": "3289",
+            "denominator": "2500"
+          },
+          "final": {
+            "numerator": "3289",
+            "denominator": "2500"
+          },
+          "capped": false,
+          "raw_display": "1.315600",
+          "final_display": "1.315600",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "user_event_temporary",
+          "modifiers_bps": ["10400", "11500", "11000", "10500"],
+          "raw": {
+            "numerator": "69069",
+            "denominator": "50000"
+          },
+          "final": {
+            "numerator": "69069",
+            "denominator": "50000"
+          },
+          "capped": false,
+          "raw_display": "1.381380",
+          "final_display": "1.381380",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        },
+        {
+          "name": "cap_pressure",
+          "modifiers_bps": ["10400", "12000", "12500", "11000"],
+          "raw": {
+            "numerator": "429",
+            "denominator": "250"
+          },
+          "final": {
+            "numerator": "3",
+            "denominator": "2"
+          },
+          "capped": true,
+          "raw_display": "1.716000",
+          "final_display": "1.500000",
+          "clamp_stage": "FINAL_COMBINED_ONCE"
+        }
+      ]
+    }
+  ],
+  "comparison_bands": [
+    {
+      "name": "CONSERVATIVE",
+      "status": "SCENARIO_ONLY_NOT_PRODUCT_APPROVAL",
+      "minimum_speed": "1.00",
+      "maximum_speed": "1.12",
+      "mapping": "LINEAR_RANK_REMAP_ROUND_DOWN_TO_0_01",
+      "fastest_days_to_cap": {
+        "numerator": "375",
+        "denominator": "14"
+      },
+      "fastest_days_display": "26.785714",
+      "fastest_headroom": {
+        "numerator": "75",
+        "denominator": "56"
+      },
+      "product_speed_bps": [
+        {
+          "proposal_id": "catalog-v1-samsung-electronics",
+          "bps": "10800"
+        },
+        {
+          "proposal_id": "catalog-v1-sk-hynix",
+          "bps": "11000"
+        },
+        {
+          "proposal_id": "catalog-v1-hyundai-motor",
+          "bps": "10600"
+        },
+        {
+          "proposal_id": "catalog-v1-lg-energy-solution",
+          "bps": "10500"
+        },
+        {
+          "proposal_id": "catalog-v1-naver",
+          "bps": "10400"
+        },
+        {
+          "proposal_id": "catalog-v1-kb-financial",
+          "bps": "10100"
+        },
+        {
+          "proposal_id": "catalog-v1-nvidia",
+          "bps": "11200"
+        },
+        {
+          "proposal_id": "catalog-v1-tesla",
+          "bps": "10800"
+        },
+        {
+          "proposal_id": "catalog-v1-rocket-lab",
+          "bps": "11000"
+        },
+        {
+          "proposal_id": "catalog-v1-sandisk",
+          "bps": "10600"
+        },
+        {
+          "proposal_id": "catalog-v1-apple",
+          "bps": "10500"
+        },
+        {
+          "proposal_id": "catalog-v1-microsoft",
+          "bps": "10600"
+        },
+        {
+          "proposal_id": "catalog-v1-amazon",
+          "bps": "10400"
+        },
+        {
+          "proposal_id": "catalog-v1-alphabet-a",
+          "bps": "10700"
+        },
+        {
+          "proposal_id": "catalog-v1-meta",
+          "bps": "10400"
+        },
+        {
+          "proposal_id": "catalog-v1-spy",
+          "bps": "10200"
+        },
+        {
+          "proposal_id": "catalog-v1-qqq",
+          "bps": "10400"
+        },
+        {
+          "proposal_id": "catalog-v1-soxx",
+          "bps": "10600"
+        },
+        {
+          "proposal_id": "catalog-v1-schd",
+          "bps": "10000"
+        },
+        {
+          "proposal_id": "catalog-v1-bitcoin",
+          "bps": "10900"
+        },
+        {
+          "proposal_id": "catalog-v1-ethereum",
+          "bps": "10800"
+        },
+        {
+          "proposal_id": "catalog-v1-solana",
+          "bps": "10800"
+        },
+        {
+          "proposal_id": "catalog-v1-gold",
+          "bps": "10000"
+        },
+        {
+          "proposal_id": "catalog-v1-silver",
+          "bps": "10200"
+        }
+      ],
+      "moderate_stack_capped_count": 0
+    },
+    {
+      "name": "BALANCED",
+      "status": "SCENARIO_ONLY_NOT_PRODUCT_APPROVAL",
+      "minimum_speed": "1.00",
+      "maximum_speed": "1.20",
+      "mapping": "LINEAR_RANK_REMAP_ROUND_DOWN_TO_0_01",
+      "fastest_days_to_cap": {
+        "numerator": "25",
+        "denominator": "1"
+      },
+      "fastest_days_display": "25.000000",
+      "fastest_headroom": {
+        "numerator": "5",
+        "denominator": "4"
+      },
+      "product_speed_bps": [
+        {
+          "proposal_id": "catalog-v1-samsung-electronics",
+          "bps": "11300"
+        },
+        {
+          "proposal_id": "catalog-v1-sk-hynix",
+          "bps": "11600"
+        },
+        {
+          "proposal_id": "catalog-v1-hyundai-motor",
+          "bps": "11000"
+        },
+        {
+          "proposal_id": "catalog-v1-lg-energy-solution",
+          "bps": "10800"
+        },
+        {
+          "proposal_id": "catalog-v1-naver",
+          "bps": "10700"
+        },
+        {
+          "proposal_id": "catalog-v1-kb-financial",
+          "bps": "10200"
+        },
+        {
+          "proposal_id": "catalog-v1-nvidia",
+          "bps": "12000"
+        },
+        {
+          "proposal_id": "catalog-v1-tesla",
+          "bps": "11400"
+        },
+        {
+          "proposal_id": "catalog-v1-rocket-lab",
+          "bps": "11700"
+        },
+        {
+          "proposal_id": "catalog-v1-sandisk",
+          "bps": "11000"
+        },
+        {
+          "proposal_id": "catalog-v1-apple",
+          "bps": "10800"
+        },
+        {
+          "proposal_id": "catalog-v1-microsoft",
+          "bps": "11100"
+        },
+        {
+          "proposal_id": "catalog-v1-amazon",
+          "bps": "10700"
+        },
+        {
+          "proposal_id": "catalog-v1-alphabet-a",
+          "bps": "11200"
+        },
+        {
+          "proposal_id": "catalog-v1-meta",
+          "bps": "10600"
+        },
+        {
+          "proposal_id": "catalog-v1-spy",
+          "bps": "10300"
+        },
+        {
+          "proposal_id": "catalog-v1-qqq",
+          "bps": "10600"
+        },
+        {
+          "proposal_id": "catalog-v1-soxx",
+          "bps": "11100"
+        },
+        {
+          "proposal_id": "catalog-v1-schd",
+          "bps": "10100"
+        },
+        {
+          "proposal_id": "catalog-v1-bitcoin",
+          "bps": "11500"
+        },
+        {
+          "proposal_id": "catalog-v1-ethereum",
+          "bps": "11300"
+        },
+        {
+          "proposal_id": "catalog-v1-solana",
+          "bps": "11400"
+        },
+        {
+          "proposal_id": "catalog-v1-gold",
+          "bps": "10000"
+        },
+        {
+          "proposal_id": "catalog-v1-silver",
+          "bps": "10400"
+        }
+      ],
+      "moderate_stack_capped_count": 8
+    },
+    {
+      "name": "AGGRESSIVE",
+      "status": "SCENARIO_ONLY_NOT_PRODUCT_APPROVAL",
+      "minimum_speed": "1.00",
+      "maximum_speed": "1.25",
+      "mapping": "LINEAR_RANK_REMAP_ROUND_DOWN_TO_0_01",
+      "fastest_days_to_cap": {
+        "numerator": "24",
+        "denominator": "1"
+      },
+      "fastest_days_display": "24.000000",
+      "fastest_headroom": {
+        "numerator": "6",
+        "denominator": "5"
+      },
+      "product_speed_bps": [
+        {
+          "proposal_id": "catalog-v1-samsung-electronics",
+          "bps": "11600"
+        },
+        {
+          "proposal_id": "catalog-v1-sk-hynix",
+          "bps": "12000"
+        },
+        {
+          "proposal_id": "catalog-v1-hyundai-motor",
+          "bps": "11200"
+        },
+        {
+          "proposal_id": "catalog-v1-lg-energy-solution",
+          "bps": "11100"
+        },
+        {
+          "proposal_id": "catalog-v1-naver",
+          "bps": "10900"
+        },
+        {
+          "proposal_id": "catalog-v1-kb-financial",
+          "bps": "10200"
+        },
+        {
+          "proposal_id": "catalog-v1-nvidia",
+          "bps": "12500"
+        },
+        {
+          "proposal_id": "catalog-v1-tesla",
+          "bps": "11800"
+        },
+        {
+          "proposal_id": "catalog-v1-rocket-lab",
+          "bps": "12200"
+        },
+        {
+          "proposal_id": "catalog-v1-sandisk",
+          "bps": "11200"
+        },
+        {
+          "proposal_id": "catalog-v1-apple",
+          "bps": "11100"
+        },
+        {
+          "proposal_id": "catalog-v1-microsoft",
+          "bps": "11300"
+        },
+        {
+          "proposal_id": "catalog-v1-amazon",
+          "bps": "10900"
+        },
+        {
+          "proposal_id": "catalog-v1-alphabet-a",
+          "bps": "11500"
+        },
+        {
+          "proposal_id": "catalog-v1-meta",
+          "bps": "10800"
+        },
+        {
+          "proposal_id": "catalog-v1-spy",
+          "bps": "10400"
+        },
+        {
+          "proposal_id": "catalog-v1-qqq",
+          "bps": "10800"
+        },
+        {
+          "proposal_id": "catalog-v1-soxx",
+          "bps": "11300"
+        },
+        {
+          "proposal_id": "catalog-v1-schd",
+          "bps": "10100"
+        },
+        {
+          "proposal_id": "catalog-v1-bitcoin",
+          "bps": "11900"
+        },
+        {
+          "proposal_id": "catalog-v1-ethereum",
+          "bps": "11600"
+        },
+        {
+          "proposal_id": "catalog-v1-solana",
+          "bps": "11800"
+        },
+        {
+          "proposal_id": "catalog-v1-gold",
+          "bps": "10000"
+        },
+        {
+          "proposal_id": "catalog-v1-silver",
+          "bps": "10500"
+        }
+      ],
+      "moderate_stack_capped_count": 11
+    }
+  ],
+  "category_averages": [
+    {
+      "asset_class": "KR_STOCK",
+      "product_count": 6,
+      "mean_speed": {
+        "numerator": "653",
+        "denominator": "600"
+      },
+      "mean_speed_display": "1.088333"
+    },
+    {
+      "asset_class": "US_STOCK",
+      "product_count": 9,
+      "mean_speed": {
+        "numerator": "499",
+        "denominator": "450"
+      },
+      "mean_speed_display": "1.108888"
+    },
+    {
+      "asset_class": "ETF",
+      "product_count": 4,
+      "mean_speed": {
+        "numerator": "21",
+        "denominator": "20"
+      },
+      "mean_speed_display": "1.050000"
+    },
+    {
+      "asset_class": "CRYPTO",
+      "product_count": 3,
+      "mean_speed": {
+        "numerator": "113",
+        "denominator": "100"
+      },
+      "mean_speed_display": "1.130000"
+    },
+    {
+      "asset_class": "PRECIOUS",
+      "product_count": 2,
+      "mean_speed": {
+        "numerator": "51",
+        "denominator": "50"
+      },
+      "mean_speed_display": "1.020000"
+    }
+  ],
+  "spread": {
+    "fastest": "1.18",
+    "slowest": "1.00",
+    "full_allocation_rate_ratio": {
+      "numerator": "59",
+      "denominator": "50"
+    },
+    "slowest_days": {
+      "numerator": "30",
+      "denominator": "1"
+    },
+    "fastest_days": {
+      "numerator": "1500",
+      "denominator": "59"
+    },
+    "day_difference": {
+      "numerator": "270",
+      "denominator": "59"
+    },
+    "mean_speed": {
+      "numerator": "1307",
+      "denominator": "1200"
+    },
+    "fastest_vs_mean": {
+      "numerator": "1416",
+      "denominator": "1307"
+    }
+  },
+  "global_capacity_assertion": "Capacity stays 100 across products and slots under A; allocations sum <=10000bps.",
+  "two_slots_example": {
+    "slots": 2,
+    "products": ["nvidia", "gold"],
+    "allocations_bps": ["5000", "5000"],
+    "total_capacity_index": "100",
+    "combined_rate": {
+      "numerator": "109",
+      "denominator": "100"
+    }
+  },
+  "concentration": {
+    "observed_member_distribution": "UNKNOWN",
+    "modeled_behavior": "SPEED_ONLY_RATIONAL_CHOOSER_FULL_ALLOCATION",
+    "dominant_products": ["nvidia"],
+    "modeled_fastest_share": "1/1",
+    "observed_fastest_share": null,
+    "fastest_vs_slowest_daily_advantage": {
+      "numerator": "9",
+      "denominator": "50"
+    },
+    "identical_cycle_maximum_under_A": true,
+    "risk": "HIGH: equal capacity does not remove faster arrival/preference incentive; lower choices have no compensating economic benefit.",
+    "mitigation": [
+      "Do not publish as balanced by default",
+      "Review bounded narrower band 1.00–1.12 or C fallback",
+      "Use measured opt-in preference/selection evidence after launch",
+      "Do not add random money/capacity/hidden penalties to force diversity"
+    ]
+  },
+  "cap_example_requested": {
+    "raw": {
+      "numerator": "759",
+      "denominator": "500"
+    },
+    "final": {
+      "numerator": "3",
+      "denominator": "2"
+    },
+    "capped": true,
+    "raw_display": "1.518000",
+    "final_display": "1.500000",
+    "clamp_stage": "FINAL_COMBINED_ONCE"
+  },
+  "once_only_order_example": {
+    "input_bps": ["11800", "12000", "12500", "8000"],
+    "final_once": {
+      "raw": {
+        "numerator": "177",
+        "denominator": "125"
+      },
+      "final": {
+        "numerator": "177",
+        "denominator": "125"
+      },
+      "capped": false,
+      "raw_display": "1.416000",
+      "final_display": "1.416000",
+      "clamp_stage": "FINAL_COMBINED_ONCE"
+    },
+    "naive_intermediate_clamp_result": "1.200000",
+    "caution": "Illustrative lower modifier, not a proposed temporary promotion"
+  },
+  "rounding": {
+    "unit": "MICRO_KRW",
+    "denominator": "3",
+    "ticks": ["0", "0", "1"],
+    "fractional_carry": ["1", "2", "0"],
+    "whole_krw_main_display": "FLOOR_INTERNAL_MICRO_DIV_1000000",
+    "remainder_is_not_verified_wallet": true
+  },
+  "policy_B_warning": "Different per-product capacity changes entitlement and payable ceiling; not recommended and not implemented.",
+  "runtime_blocker": "EFFECT_SCOPE_UNRESOLVED; proposal stacking is not established existing backend behavior"
+}
