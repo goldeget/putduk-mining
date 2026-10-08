@@ -142,30 +142,39 @@ describe("route-scoped Mining chrome with real navigation", () => {
     expect(window.localStorage.getItem("putduk-theme")).toBe("dark");
   });
 
-  it("retains default Wallet subroute and Home structure when navigating out of Mining", async () => {
-    await render();
-    host.querySelector("main")!.scrollTo = vi.fn();
-    await render("/wallet/deposit");
-    expect(host.querySelector("[data-mining-header]")).toBeNull();
-    expect(host.querySelector('nav[aria-label="채굴 전체 메뉴"]')).toBeNull();
-    expect(
-      host.querySelector(".product-workspace > .product-header"),
-    ).not.toBeNull();
-    expect(host.querySelector(".product-sidebar")).not.toBeNull();
-    expect(host.querySelector("[data-ai-dock]")).not.toBeNull();
-    await render("/home");
-    expect(host.querySelector("[data-mining-header]")).toBeNull();
-    expect(host.querySelector(".product-sidebar")).toBeNull();
-    expect(
-      host.querySelector(".product-workspace > .product-header"),
-    ).toBeNull();
-    expect(host.querySelector("[data-ai-dock]")).toBeNull();
-    expect(
-      host
-        .querySelector(".product-shell")
-        ?.getAttribute("data-home-page-active"),
-    ).toBe("true");
-  });
+  it.each(["/wallet/deposit", "/wallet/withdraw"])(
+    "retains Wallet chrome at %s and Home structure when navigating out of Mining",
+    async (walletPath) => {
+      await render();
+      host.querySelector("main")!.scrollTo = vi.fn();
+      await render(walletPath);
+      expect(host.querySelector("[data-mining-header]")).toBeNull();
+      expect(host.querySelector('nav[aria-label="채굴 전체 메뉴"]')).toBeNull();
+      expect(
+        host.querySelector(".product-workspace > .product-header"),
+      ).toBeNull();
+      expect(
+        host.querySelector('main [data-wallet-header="mobile"]'),
+      ).not.toBeNull();
+      expect(
+        host.querySelector('[data-wallet-header="desktop"]'),
+      ).not.toBeNull();
+      expect(host.querySelector(".product-sidebar")).not.toBeNull();
+      expect(host.querySelector("[data-ai-dock]")).not.toBeNull();
+      await render("/home");
+      expect(host.querySelector("[data-mining-header]")).toBeNull();
+      expect(host.querySelector(".product-sidebar")).toBeNull();
+      expect(
+        host.querySelector(".product-workspace > .product-header"),
+      ).toBeNull();
+      expect(host.querySelector("[data-ai-dock]")).toBeNull();
+      expect(
+        host
+          .querySelector(".product-shell")
+          ?.getAttribute("data-home-page-active"),
+      ).toBe("true");
+    },
+  );
 
   it("preserves five native bottom destinations and marks only Mining active", async () => {
     await act(async () => root.render(createElement(ProductNavigation)));

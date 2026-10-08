@@ -92,7 +92,7 @@ describe("product main scroll history", () => {
     expect(main.querySelector("[data-mining-header]")).not.toBeNull();
     expect(scrollTo).not.toHaveBeenCalled();
   });
-  it("keeps Wallet's actual main and restores its position through Mining and default subroutes", async () => {
+  it("keeps Wallet's actual main and restores its position through Mining and Wallet subroutes", async () => {
     await render("/wallet");
     const main = host.querySelector("main")!;
     const mainScrollTo = vi.fn();
@@ -112,13 +112,22 @@ describe("product main scroll history", () => {
     expect(main.querySelector('[data-wallet-header="mobile"]')).not.toBeNull();
     await render("/wallet/deposit");
     expect(host.querySelector("main")).toBe(main);
-    expect(host.querySelector("[data-wallet-header]")).toBeNull();
+    expect(main.querySelector('[data-wallet-header="mobile"]')).not.toBeNull();
     expect(mainScrollTo).toHaveBeenLastCalledWith({
       top: 0,
       left: 0,
       behavior: "instant",
     });
     expect(scrollTo).not.toHaveBeenCalled();
+    await scrollMain(310);
+    await render("/mining");
+    await backTo("/wallet/deposit");
+    expect(host.querySelector("main")).toBe(main);
+    expect(mainScrollTo).toHaveBeenLastCalledWith({
+      top: 310,
+      left: 0,
+      behavior: "instant",
+    });
   });
 
   it("does not turn a Wallet history-view query into restoration for the next normal route", async () => {
