@@ -15,6 +15,7 @@ import {
 import {
   isPublicPushAddress,
   classifyPushResponse,
+  sendWebPush,
 } from "@/lib/notifications/web-push-transport.server";
 import { parsePushProviderEndpoint } from "@/domain/notifications/push-provider-endpoint";
 import { safeNotificationDeepLink } from "@/domain/notifications/safe-deep-link";
@@ -178,8 +179,29 @@ describe("encrypted Web Push recovery", () => {
     expect(classifyPushResponse(201).status).toBe("ACCEPTED");
     expect(classifyPushResponse(410).status).toBe("EXPIRED");
     expect(classifyPushResponse(429).status).toBe("RETRY");
+    expect(classifyPushResponse(408).status).toBe("RETRY");
     expect(classifyPushResponse(302).status).toBe("REJECTED");
     expect(isPublicPushAddress("8.8.8.8")).toBe(true);
+  });
+  it("records a pre-send abort without inventing an HTTP status or transport acceptance", async () => {
+    const controller = new AbortController();
+    controller.abort();
+    const result = await sendWebPush(
+      {
+        endpoint,
+        p256dh: "unused-before-abort",
+        authSecret: "unused-before-abort",
+        notificationId: "10000000-0000-4000-8000-000000000001",
+        deepLink: "/notifications",
+      },
+      { publicKey: "unused", privateKey: "unused", subject: "unused" },
+      controller.signal,
+    );
+    expect(result).toEqual({
+      status: "ABORTED",
+      httpStatus: null,
+      errorCode: "PUSH_ABORTED",
+    });
   });
   it.each([
     "//evil.test",
