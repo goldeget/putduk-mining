@@ -17,6 +17,8 @@ const items = [
   { href: "/economy", label: "채굴 정책" },
   { href: "/catalog", label: "상품 검토" },
   { href: "/members", label: "회원 종합 정보" },
+  { href: "/ai-conversations", label: "회원 AI 대화" },
+  { href: "/content", label: "이벤트·공지" },
 ] as const;
 
 export function AdminNavigation({ onNavigate }: { onNavigate?: () => void }) {

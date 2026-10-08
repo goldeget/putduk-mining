@@ -73,7 +73,9 @@ describe("admin labelled navigation disclosure", () => {
     const region = document.getElementById(
       toggle().getAttribute("aria-controls")!,
     )!;
-    expect(region.querySelectorAll("nav a")).toHaveLength(12);
+    expect(region.querySelectorAll("nav a")).toHaveLength(14);
+    expect(region.querySelector('a[href="/ai-conversations"]')).not.toBeNull();
+    expect(region.querySelector('a[href="/content"]')).not.toBeNull();
     expect(region.querySelector('a[href="/catalog"]')?.textContent).toContain(
       "상품 검토",
     );
