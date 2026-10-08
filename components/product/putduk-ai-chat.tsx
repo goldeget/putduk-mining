@@ -1,6 +1,11 @@
 "use client";
 
 import {
+  readOwnUsageResponse,
+  type OwnUsage,
+} from "@/lib/ai/read-own-usage-response";
+
+import {
   useEffect,
   useId,
   useRef,
@@ -66,44 +71,6 @@ function conversationTime(value: string) {
     minute: "2-digit",
     hour12: false,
   }).format(date);
-}
-
-type UsageWindow = {
-  used: number;
-  limit: number;
-  nextAvailableAt: string | null;
-};
-type OwnUsage = {
-  ownerId: string;
-  observedAt: string;
-  providerAttempts?: unknown;
-  rolling24h: UsageWindow;
-  rollingMinute: UsageWindow;
-};
-
-function readOwnUsage(value: unknown, ownerId: string): OwnUsage | null {
-  if (!value || typeof value !== "object") return null;
-  const data = value as Partial<OwnUsage>;
-  if (
-    data.ownerId !== ownerId ||
-    typeof data.observedAt !== "string" ||
-    !Number.isFinite(Date.parse(data.observedAt))
-  )
-    return null;
-  for (const window of [data.rolling24h, data.rollingMinute]) {
-    if (
-      !window ||
-      !Number.isSafeInteger(window.used) ||
-      window.used < 0 ||
-      !Number.isSafeInteger(window.limit) ||
-      window.limit < 1 ||
-      (window.nextAvailableAt !== null &&
-        (typeof window.nextAvailableAt !== "string" ||
-          !Number.isFinite(Date.parse(window.nextAvailableAt))))
-    )
-      return null;
-  }
-  return data as OwnUsage;
 }
 
 export function PutdukAiChat({
@@ -194,7 +161,7 @@ export function PutdukAiChat({
     })
       .then(async (response) => {
         const value = response.ok
-          ? readOwnUsage(await response.json(), ownerId)
+          ? readOwnUsageResponse(await response.json(), ownerId)
           : null;
         if (current) setUsageRead({ ownerId, value });
       })
@@ -365,7 +332,10 @@ export function PutdukAiChat({
           >
             <span aria-hidden="true">＋</span> 새 대화
           </button>
-          <details className={styles.history}>
+          <details
+            className={styles.history}
+            open={session.historyStatus === "unavailable" ? true : undefined}
+          >
             <summary>이전 대화</summary>
             <div className={styles.historyBody}>
               {session.historyStatus === "loading" ? (
@@ -373,7 +343,7 @@ export function PutdukAiChat({
               ) : null}
               {session.historyStatus === "unavailable" ? (
                 <div>
-                  <p>이전 대화를 불러오지 못했어요.</p>
+                  <p role="alert">이전 대화를 불러오지 못했어요.</p>
                   <button
                     type="button"
                     className="button button--secondary"
