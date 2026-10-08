@@ -27,8 +27,10 @@ nano precision, atomic transcript and admin tests remain necessary.
 The first full native baseline observed 70 files / 4,035 assertions with four
 failing files: historical Docker hostname fixture, closed Definer roster, and
 queue fixture pollution from an earlier wrong-name Worker harness. The hostname
-and exact roster corrections are separate uncommitted work pending targeted
-verification. Final clean reset and full suite remain required.
+and exact roster corrections passed targeted native checks in the later mission
+wave (reconciliation 33, RLS 65, WS-04 43). The current roster explicitly retains
+63 reviewed fixed-path signatures; no wildcard is introduced. Final clean reset
+and full suite remain required.
 
 Worker: full current run observed 19 passing tests and one 5-second timeout;
 the isolated DLQ replay passed in 2,776 ms. No assertions were weakened. The

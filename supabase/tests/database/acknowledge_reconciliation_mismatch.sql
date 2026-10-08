@@ -14,8 +14,7 @@ begin
 end;
 $$;
 
--- dblink 는 루프백 trust 가 아니라 이 DB 컨테이너의 scram 호스트로 붙는다.
--- 프로젝트 이름이 바뀌어도 공유 스택과 분리 스택을 같은 검사로 고른다.
+-- Connect only to this server. Never probe a historical project's Docker name.
 create temporary table recon_ack_db_host (host text);
 
 do $$
@@ -33,11 +32,10 @@ begin
     raise exception 'DBLINK_EXTENSION_MISSING';
   end if;
 
-  foreach v_candidate in array array[
-    'supabase_db_putduk-mining-clean',
-    'supabase_db_putduk-mining'
-  ]
-  loop
+  v_candidate := coalesce(inet_server_addr()::text, current_setting('putduk.qa_db_host', true));
+  if v_candidate is null or (inet_server_addr() is null and v_candidate !~ '^supabase_db_putduk-mining[-a-z0-9]*$') then
+    raise exception 'EXACT_LOCAL_DB_HOST_REQUIRED';
+  end if;
     v_conn := format(
       'host=%s dbname=postgres user=postgres password=postgres',
       v_candidate
@@ -55,12 +53,10 @@ begin
         'recon_ack_probe'
       );
       insert into recon_ack_db_host (host) values (v_candidate);
-      exit;
     exception
       when others then
         null;
     end;
-  end loop;
 
   if not exists (select 1 from recon_ack_db_host) then
     raise exception 'LOCAL_DB_HOST_UNRESOLVED';
@@ -86,7 +82,7 @@ select lives_ok(
         raise exception 'DBLINK_EXTENSION_MISSING';
       end if;
 
-      -- 루프백은 trust 라 비밀번호가 쓰이지 않는다. 위에서 고른 컨테이너 이름으로 scram 에 붙는다.
+      -- 현재 TCP 서버 또는 격리 실행기가 검증한 이 프로젝트 호스트만 사용한다.
       select 'host=' || host || ' dbname=postgres user=postgres password=postgres'
         into v_conn
       from recon_ack_db_host;

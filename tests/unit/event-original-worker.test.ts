@@ -49,7 +49,41 @@ const sources: WorkerOutboxEnvelope[] = [
     },
   },
 ];
+for (const event_type of [
+  "MINING_STARTED.v1",
+  "MINING_SETTLEMENT_COMPLETED.v1",
+]) {
+  sources.push({
+    id,
+    aggregate_id: id,
+    attempt_count: 1,
+    schema_version: 1,
+    event_type,
+    aggregate_type: "funded_mining_mission",
+    payload: {
+      user_id: id,
+      original_id: id,
+      earned_receipt_id: id,
+      settlement_id: id,
+      digest: "a".repeat(64),
+    },
+  });
+}
 const depositSource = sources[0];
+sources.push({
+  id,
+  aggregate_id: id,
+  attempt_count: 1,
+  schema_version: 1,
+  event_type: "TRIAL_COMPLETED.v1",
+  aggregate_type: "trial_completion",
+  payload: {
+    user_id: id,
+    original_id: id,
+    completion_id: id,
+    digest: "a".repeat(64),
+  },
+});
 if (!depositSource) throw new Error("SOURCE_FIXTURE_REQUIRED");
 function fixture(row: WorkerOutboxEnvelope, completionError = false) {
   const rpc = vi.fn(async (name: string) => {
@@ -128,24 +162,22 @@ describe("DB-only source-bound reward dispatch", () => {
     );
     expect(rpc.mock.calls).toHaveLength(4);
   });
-  it.each([
-    "MINING_STARTED.v1",
-    "MINING_SETTLEMENT_COMPLETED.v1",
-    "TRIAL_COMPLETED.v1",
-    "REFERRAL_REWARD_PAID.v1",
-  ])("does not register absent canonical producer %s", async (event_type) => {
-    const { rpc, db } = fixture({ ...depositSource, event_type });
-    expect(
-      (
-        await processOutboxBatch(db, {
-          workerId: "source-worker",
-          batchSize: 1,
-          randomUnit: 0,
-        })
-      ).unsupported,
-    ).toBe(1);
-    expect(rpc.mock.calls.map(([name]) => name)).not.toContain(
-      "complete_outbox_event",
-    );
-  });
+  it.each(["REFERRAL_REWARD_PAID.v1"])(
+    "does not register absent canonical producer %s",
+    async (event_type) => {
+      const { rpc, db } = fixture({ ...depositSource, event_type });
+      expect(
+        (
+          await processOutboxBatch(db, {
+            workerId: "source-worker",
+            batchSize: 1,
+            randomUnit: 0,
+          })
+        ).unsupported,
+      ).toBe(1);
+      expect(rpc.mock.calls.map(([name]) => name)).not.toContain(
+        "complete_outbox_event",
+      );
+    },
+  );
 });

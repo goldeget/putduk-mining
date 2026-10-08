@@ -72,10 +72,43 @@ export const SUPPORTED_OUTBOX_HANDLERS = Object.freeze({
   "DEPOSIT_CONFIRMED.v1": prepareNonmoneyOriginalDelivery,
   "WITHDRAWAL_COMPLETED.v1": prepareNonmoneyOriginalDelivery,
   "TRIAL_REWARD_CONVERTED.v1": prepareNonmoneyOriginalDelivery,
+  "MINING_STARTED.v1": prepareNonmoneyOriginalDelivery,
+  "MINING_SETTLEMENT_COMPLETED.v1": prepareNonmoneyOriginalDelivery,
+  "TRIAL_COMPLETED.v1": prepareNonmoneyOriginalDelivery,
 });
 
 function prepareNonmoneyOriginalDelivery(_client, event) {
   const contracts = {
+    "TRIAL_COMPLETED.v1": {
+      aggregate: "trial_completion",
+      fields: ["user_id", "original_id", "completion_id", "digest"],
+      uuids: ["user_id", "original_id", "completion_id"],
+      amounts: [],
+    },
+    "MINING_STARTED.v1": {
+      aggregate: "funded_mining_mission",
+      fields: [
+        "user_id",
+        "original_id",
+        "earned_receipt_id",
+        "settlement_id",
+        "digest",
+      ],
+      uuids: ["user_id", "original_id", "earned_receipt_id", "settlement_id"],
+      amounts: [],
+    },
+    "MINING_SETTLEMENT_COMPLETED.v1": {
+      aggregate: "funded_mining_mission",
+      fields: [
+        "user_id",
+        "original_id",
+        "earned_receipt_id",
+        "settlement_id",
+        "digest",
+      ],
+      uuids: ["user_id", "original_id", "earned_receipt_id", "settlement_id"],
+      amounts: [],
+    },
     "DEPOSIT_CONFIRMED.v1": {
       aggregate: "deposit_request",
       fields: [
@@ -129,6 +162,14 @@ function prepareNonmoneyOriginalDelivery(_client, event) {
         typeof payload[field] !== "string" ||
         !/^[1-9][0-9]*$/.test(payload[field]),
     ) ||
+    (contract.fields.includes("digest") &&
+      (payload[
+        contract.aggregate === "trial_completion"
+          ? "completion_id"
+          : "original_id"
+      ] !== event.aggregate_id ||
+        typeof payload.digest !== "string" ||
+        !/^[a-f0-9]{64}$/.test(payload.digest))) ||
     (contract.fields.includes("currency") && payload.currency !== "KRW") ||
     (event.event_type === "TRIAL_REWARD_CONVERTED.v1" &&
       payload.funding_required !== false)
