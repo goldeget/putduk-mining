@@ -1,4 +1,4 @@
-import { isSafeProtectedReturnPath } from "@/lib/auth/return-path";
+import { safeNotificationDeepLink } from "./safe-deep-link";
 
 /** 멤버 알림 센터에 노출하는 읽기 전용 행. */
 export type MemberNotificationRow = {
@@ -69,7 +69,7 @@ export function resolveSafeNotificationRoute(
   if (!route) {
     return null;
   }
-  return isSafeProtectedReturnPath(route) ? route : null;
+  return safeNotificationDeepLink(route);
 }
 
 export function countUnreadMemberNotifications(
