@@ -23,8 +23,8 @@ type TableName =
   | "ai_feedback";
 type Result = { data: Row[] | null; error: { code: string } | null };
 
-// Unit-test transport double: executes the production Supabase adapter, not a
-// copied implementation of appendOwnMemberTurn. Not a PostgreSQL/RLS test.
+// Legacy partial-record recovery transport double. Atomic runtime writes are
+// tested separately with the canonical RPC and native PostgreSQL checks.
 function storage() {
   const tables: Record<TableName, Row[]> = {
     ai_conversations: [],
@@ -173,12 +173,16 @@ function storage() {
     };
     return builder;
   }
+  const legacyPort = createSupabaseMemberConversationPort({
+    from,
+  } as unknown as SupabaseClient);
+  // Preserve these old partial-storage fixtures without enabling a production
+  // fallback. The real factory always supplies appendAtomicTurn.
+  delete legacyPort.appendAtomicTurn;
   return {
     tables,
     failures,
-    port: createSupabaseMemberConversationPort({
-      from,
-    } as unknown as SupabaseClient),
+    port: legacyPort,
     touches: () => touches,
   };
 }

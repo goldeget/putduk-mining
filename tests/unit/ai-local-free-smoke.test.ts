@@ -67,6 +67,9 @@ it.skipIf(process.env.PUTDUK_LOCAL_FREE_SMOKE !== "1")(
     if (!admission?.is_new || typeof admission.request_id !== "string")
       throw new Error("LOCAL_ADMISSION_UNVERIFIED");
     let answer = "";
+    let attemptStartedAt = 0;
+    let firstTokenMs: number | null = null;
+    const dispatchEvidence: { model: string; status: number }[] = [];
     const metadata = vi.fn();
     const completed = await runMemberProviderChain({
       nvidiaApiKey: nvidia,
@@ -76,7 +79,7 @@ it.skipIf(process.env.PUTDUK_LOCAL_FREE_SMOKE !== "1")(
       question: "집중을 위해 잠깐 쉬는 방법을 한 문장으로 알려 주세요.",
       history: [],
       maxOutputTokens: 256,
-      firstTokenTimeoutMs: 30_000,
+      firstTokenTimeoutMs: 15_000,
       signal: AbortSignal.timeout(60_000),
       port: createProviderAttemptPort(admin, {
         userId,
@@ -85,9 +88,19 @@ it.skipIf(process.env.PUTDUK_LOCAL_FREE_SMOKE !== "1")(
         perDayLimit: 100,
       }),
       onDelta: (text) => {
+        firstTokenMs ??= Math.round(performance.now() - attemptStartedAt);
         answer += text;
       },
       registryReader: metadata,
+      fetcher: async (target, options) => {
+        // Log only model/status/timing. Never headers, request or response bodies.
+        const model = (JSON.parse(String(options?.body)) as { model: string })
+          .model;
+        attemptStartedAt = performance.now();
+        const response = await fetch(target, options);
+        dispatchEvidence.push({ model, status: response.status });
+        return response;
+      },
     });
     expect(metadata).not.toHaveBeenCalled();
     expect(completed.model).toBe(NVIDIA_MODELS[0]);
@@ -156,6 +169,9 @@ it.skipIf(process.env.PUTDUK_LOCAL_FREE_SMOKE !== "1")(
         model: completed.model,
         inputTokens: completed.inputTokens,
         outputTokens: completed.outputTokens,
+        firstTokenMs,
+        firstTokenTimeoutMs: 15_000,
+        dispatchEvidence,
         paidCalls: 0,
       }),
     );

@@ -107,7 +107,8 @@ export async function POST(request: Request) {
   } catch {
     return apiError({
       code: "AI_SERVICE_NOT_CONFIGURED",
-      message: "PUTDUK AI 서비스 구성이 아직 완료되지 않았습니다.",
+      message:
+        "지금은 AI 답변을 준비하지 못했어요. 잠시 후 다시 시도해 주세요.",
       status: 503,
     });
   }
@@ -388,7 +389,7 @@ export async function POST(request: Request) {
       await recordFailure("FAILED", "AI_AUDIT_PERSISTENCE_FAILED");
       return apiError({
         code: "AI_AUDIT_PERSISTENCE_FAILED",
-        message: "응답 기록을 검증하지 못해 완료 처리하지 않았습니다.",
+        message: "답변을 저장하지 못했어요. 잠시 후 다시 시도해 주세요.",
         status: 503,
       });
     }

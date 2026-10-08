@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { z } from "zod";
 
 import {
   conversationTitle,
@@ -64,6 +65,19 @@ type FeedbackInsert = {
 };
 
 export type MemberConversationPort = {
+  appendAtomicTurn?: (input: {
+    userId: string;
+    clientMessageId: string;
+    conversationId: string | null;
+    title: string;
+    questionParts: readonly string[];
+    answerParts: readonly string[];
+    sourceKey: string;
+    knowledgeVersion: string | null;
+    toolName: string | null;
+    toolOutcome: "FAILED" | "SUCCEEDED" | null;
+    toolLatencyMs: number | null;
+  }) => Promise<{ conversationId: string; assistantMessageId: string }>;
   findAssistantAfter: (
     userId: string,
     conversationId: string,
@@ -179,6 +193,29 @@ export async function appendOwnMemberTurn(
   const answer = redactMemberTranscript(input.answer);
   const questionParts = splitStoredBody(question);
   const answerParts = splitStoredBody(answer);
+
+  if (port.appendAtomicTurn) {
+    if (input.toolCall && !TOOL_NAME_PATTERN.test(input.toolCall.toolName))
+      return { code: "CONVERSATION_NOT_SAVED", ok: false };
+    try {
+      const saved = await port.appendAtomicTurn({
+        userId: input.userId,
+        clientMessageId: input.clientMessageId,
+        conversationId: input.conversationId ?? null,
+        title: conversationTitle(question),
+        questionParts,
+        answerParts,
+        sourceKey: sanitizeSourceKey(input.sourceKey),
+        knowledgeVersion: sanitizeKnowledgeVersion(input.knowledgeVersion),
+        toolName: input.toolCall?.toolName ?? null,
+        toolOutcome: input.toolCall?.outcome ?? null,
+        toolLatencyMs: latencyOrNull(input.toolCall?.latencyMs ?? null),
+      });
+      return { ...saved, ok: true };
+    } catch (error) {
+      return { code: failureCode(error), ok: false };
+    }
+  }
 
   try {
     const existing = await port.findMemberMessage(
@@ -371,6 +408,34 @@ export function createSupabaseMemberConversationPort(
   supabase: SupabaseClient,
 ): MemberConversationPort {
   return {
+    async appendAtomicTurn(input) {
+      const { data, error } = await supabase.rpc("append_ai_member_turn", {
+        p_user_id: input.userId,
+        p_client_message_id: input.clientMessageId,
+        p_conversation_id: input.conversationId,
+        p_title_text: input.title,
+        p_question_parts: input.questionParts,
+        p_answer_parts: input.answerParts,
+        p_source_key: input.sourceKey,
+        p_knowledge_version: input.knowledgeVersion,
+        p_tool_name: input.toolName,
+        p_tool_outcome: input.toolOutcome,
+        p_tool_latency_ms: input.toolLatencyMs,
+      });
+      if (error) throw writeError(error);
+      const receipt = z
+        .object({
+          conversationId: z.uuid(),
+          assistantMessageId: z.uuid(),
+          replay: z.boolean(),
+        })
+        .safeParse(data);
+      if (!receipt.success) throw new MemberConversationWriteError("FAILED");
+      return {
+        conversationId: receipt.data.conversationId,
+        assistantMessageId: receipt.data.assistantMessageId,
+      };
+    },
     async findAssistantAfter(userId, conversationId, afterPosition, expected) {
       if (expected) {
         const expectedBodies = [

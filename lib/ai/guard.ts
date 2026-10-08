@@ -16,13 +16,13 @@ export type AiGuardResult =
     };
 
 const INTERNAL_DATA_PATTERN =
-  /(비밀번호|패스워드|otp|인증번호|복구\s*코드|비밀\s*(키|값)|api\s*key|service[_ -]?role|private\s*key|access[_ -]?token|refresh[_ -]?token|시스템\s*프롬프트|내부\s*(지침|프롬프트|인프라|소스)|환경\s*변수|secret|(cloudflare|supabase|database).*(계정\s*id|프로젝트\s*ref|서비스\s*키|연결\s*문자열|내부\s*구성))/i;
+  /(비밀번호|패스워드|\bpassword\b|\bpasswd\b|\bpin\b|otp|인증번호|복구\s*코드|recovery\s*code|비밀\s*(키|값)|api\s*key|service[_ -]?role|private\s*key|access[_ -]?token|refresh[_ -]?token|시스템\s*프롬프트|내부\s*(지침|프롬프트|인프라|소스)|환경\s*변수|secret|(cloudflare|supabase|database).*(계정\s*id|프로젝트\s*ref|서비스\s*키|연결\s*문자열|내부\s*구성))/i;
 
 const PROMPT_INJECTION_PATTERN =
   /(이전|위의?|앞선)\s*(지시|명령|규칙).*(무시|잊어|폐기)|ignore\s+(all\s+)?(previous|prior|above)\s+(instructions|rules)|developer\s*message|system\s*message|jailbreak|탈옥|숨겨진\s*(지시|추론)|정책을?\s*(우회|무시)|프롬프트\s*인젝션/i;
 
 const CROSS_USER_PATTERN =
-  /(다른\s*(사람|회원|사용자)|타인|남의|전체\s*회원|모든\s*(회원|사용자)).*(계정|개인정보|정보|잔액|지갑|원장|입금|출금|kyc|인증|대화|채굴|보상|이벤트|알림)|((계정|개인정보|잔액|지갑|원장|입금|출금|kyc|대화).*(다른\s*(사람|회원|사용자)|타인|남의))/i;
+  /(다른\s*(사람|회원|사용자)|타인|남의|전체\s*회원|모든\s*(회원|사용자)).*(계정|개인정보|정보|잔액|지갑|원장|입금|출금|kyc|인증|대화|채굴|보상|이벤트|알림)|((계정|개인정보|잔액|지갑|원장|입금|출금|kyc|대화).*(다른\s*(사람|회원|사용자)|타인|남의))|(?:other|all|every)\s+(?:member|user|customer|people)s?.{0,80}(?:data|account|balance|wallet|ledger|withdrawal|deposit|kyc|conversation|chat|message|reward)|(?:data|account|balance|wallet|ledger|conversation|chat|message).{0,80}(?:other|all|every)\s+(?:member|user|customer|people)s?/i;
 
 const PRIVILEGE_PATTERN =
   /(관리자|어드민|admin|운영자).*(권한|역할|role|승격|부여|접근|로그인|세션).*(줘|해|만들|우회|탈취|가져|얻|획득)|권한\s*(상승|에스컬레이션)|관리자\s*사칭/i;
@@ -57,8 +57,7 @@ export function guardAiQuestion(question: string): AiGuardResult {
   if (PROMPT_INJECTION_PATTERN.test(normalized)) {
     return {
       allowed: false,
-      answer:
-        "안전 정책과 신뢰 경계는 대화 지시로 변경할 수 없습니다. 필요한 PUTDUK 기능이나 공개 정보를 정상적인 방식으로 질문해 주세요.",
+      answer: "내부 지침은 바꿀 수 없어요. 궁금한 내용을 다시 물어봐 주세요.",
       classification: "PROMPT_INJECTION",
     };
   }
@@ -67,7 +66,7 @@ export function guardAiQuestion(question: string): AiGuardResult {
     return {
       allowed: false,
       answer:
-        "비밀번호, 인증번호, 비밀 키, 내부 지침 또는 비공개 인프라 정보는 제공하거나 요청하지 않습니다.",
+        "비밀번호나 인증번호, 비밀 키는 확인해 드릴 수 없어요. 이런 정보는 대화에 보내지 마세요.",
       classification: "INTERNAL_DATA_REQUEST",
     };
   }
@@ -76,7 +75,7 @@ export function guardAiQuestion(question: string): AiGuardResult {
     return {
       allowed: false,
       answer:
-        "다른 사용자의 계정, 금융, 인증 또는 활동 정보에는 접근할 수 없습니다. 본인 계정의 허용된 정보만 확인할 수 있습니다.",
+        "다른 회원의 개인정보나 대화는 볼 수 없어요. 내 계정 정보만 확인할 수 있어요.",
       classification: "CROSS_USER_DATA",
     };
   }
@@ -84,7 +83,8 @@ export function guardAiQuestion(question: string): AiGuardResult {
   if (PRIVILEGE_PATTERN.test(normalized)) {
     return {
       allowed: false,
-      answer: "관리자 권한 획득, 사칭 또는 접근 우회는 도와드릴 수 없습니다.",
+      answer:
+        "관리자 권한을 얻거나 로그인 절차를 우회하는 방법은 안내할 수 없어요.",
       classification: "PRIVILEGE_ESCALATION",
     };
   }
@@ -93,7 +93,7 @@ export function guardAiQuestion(question: string): AiGuardResult {
     return {
       allowed: false,
       answer:
-        "본인 인증, 체험·추천 보상, 기기·IP·차단 또는 부정 이용 방지 절차를 우회하거나 악용하는 방법은 안내할 수 없습니다.",
+        "본인 확인이나 보상 지급 절차를 우회하는 방법은 안내할 수 없어요.",
       classification: "ABUSE_EVASION",
     };
   }
@@ -105,7 +105,7 @@ export function guardAiQuestion(question: string): AiGuardResult {
     return {
       allowed: false,
       answer:
-        "PUTDUK AI는 설명과 본인 상태 확인만 제공하며 잔액, 입출금 승인, 채굴 결과, 보상, 인증 또는 권한을 변경할 수 없습니다.",
+        "퍼뜩 AI는 설명과 내 상태 확인을 도와드려요. 잔액이나 출금 승인, 보상, 권한은 바꿀 수 없어요.",
       classification: "ACTION_BOUNDARY",
     };
   }

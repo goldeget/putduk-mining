@@ -20,6 +20,7 @@ export function buildOwnedProviderHistory(
     role: "MEMBER" | "ASSISTANT";
     content: string;
     safe: boolean;
+    endPosition: number;
   }[] = [];
   let position = 0;
   for (const message of messages) {
@@ -32,7 +33,10 @@ export function buildOwnedProviderHistory(
       message.source === "cache" ||
       message.source === "static";
     const previous = groups.at(-1);
-    if (previous?.role === message.authorRole) {
+    if (
+      previous?.role === message.authorRole &&
+      !(message.authorRole === "MEMBER" && message.clientMessageId)
+    ) {
       previous.content += `\n${message.bodyText}`;
       // Storage attaches the source receipt to the first assistant fragment.
       // Only a contiguous fragment may inherit that already verified receipt.
@@ -40,12 +44,15 @@ export function buildOwnedProviderHistory(
         safe ||
         (message.authorRole === "ASSISTANT" &&
           message.source === undefined &&
-          message.toolOutcome === undefined);
+          message.toolOutcome === undefined &&
+          message.position === previous.endPosition + 1);
+      previous.endPosition = message.position;
     } else
       groups.push({
         role: message.authorRole,
         content: message.bodyText,
         safe,
+        endPosition: message.position,
       });
   }
   const pairs: ProviderHistoryMessage[][] = [];

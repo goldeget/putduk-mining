@@ -33,7 +33,7 @@ describe("PUTDUK AI money mutation denial", () => {
       expect(route.kind).toBe("static");
       expect(route).toMatchObject({ classification: "ACTION_BOUNDARY" });
       if (route.kind === "static") {
-        expect(route.answer).toContain("변경할 수 없습니다");
+        expect(route.answer).toContain("바꿀 수 없어요");
         expect(route.answer).not.toMatch(/\d[\d,]*\s*원/);
       }
     },
