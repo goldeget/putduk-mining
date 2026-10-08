@@ -272,17 +272,18 @@ describe("one PUTDUK AI request and session owner", () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it("adapts the genuine page scene to Light without claiming a separate Light source", async () => {
+  it("uses the approved intact mascot and usable text-only composer in Light", async () => {
     document.documentElement.dataset.theme = "light";
     try {
       await render("member-a", 1, false, "member-a:server-render-1", "page");
-      const scene = host.querySelector(
-        'img[src="/brand/scenes/ai-partner-hero/ai-partner-hero-1280-v1.webp"]',
-      );
-      expect(scene?.getAttribute("alt")).toBe("");
-      expect(scene?.getAttribute("aria-hidden")).toBe("true");
-      expect(scene?.getAttribute("width")).toBe("1983");
-      expect(scene?.getAttribute("height")).toBe("793");
+      expect(
+        host
+          .querySelector(
+            'img[src="/brand/mascot/putduk-ai-help-face-256-v1.webp"]',
+          )
+          ?.getAttribute("alt"),
+      ).toBe("");
+      expect(host.querySelector("[data-ai-partner-hero]")).toBeNull();
       expect(host.querySelector("textarea")?.disabled).toBe(false);
       expect(fetchMock).not.toHaveBeenCalled();
     } finally {
@@ -346,18 +347,17 @@ describe("one PUTDUK AI request and session owner", () => {
     ).not.toBeNull();
   });
 
-  it("fills all five real quick questions only as drafts with composer focus", async () => {
+  it("fills the four approved page suggestions only as drafts with composer focus", async () => {
     navigation.pathname = "/ai";
-    await render("member-a", 1, false, "member-a:server-render-1", "page");
-    const group = host.querySelector('[aria-label="빠른 질문"]')!;
+    await render("member-a", 1, true, "member-a:server-render-1", "page");
+    const group = host.querySelector('[aria-label="추천 질문"]')!;
     const buttons = Array.from(group.querySelectorAll("button"));
-    expect(buttons).toHaveLength(5);
+    expect(buttons).toHaveLength(4);
     const questions = [
       "내 채굴 상태 알려줘",
-      "내 PUTDUK START 체험 상태 알려줘",
       "첫 출금은 어떻게 준비하나요?",
       "이벤트 참여 방법 알려줘",
-      "고객지원은 어디에 있나요?",
+      "일상에서 스트레스를 줄이는 방법을 알려 주세요.",
     ];
     for (let index = 0; index < buttons.length; index++) {
       await act(async () => buttons[index]!.click());
@@ -374,31 +374,18 @@ describe("one PUTDUK AI request and session owner", () => {
     ).toBe(true);
   });
 
-  it("recovers a failed decorative scene without losing or submitting the real draft", async () => {
+  it("does not let failed decorative imagery erase or submit a draft", async () => {
     await render("member-a", 1, false, "member-a:server-render-1", "page");
     await act(async () => session.setDraft("작성한 질문을 유지해 주세요"));
-    const scene = () => host.querySelector("[data-ai-partner-hero] img")!;
-    await act(async () => scene().dispatchEvent(new Event("error")));
-    expect(
-      host
-        .querySelector("[data-ai-partner-hero]")
-        ?.getAttribute("data-ai-art-state"),
-    ).toBe("webp");
-    await act(async () => scene().dispatchEvent(new Event("error")));
-    expect(
-      host
-        .querySelector("[data-ai-partner-hero]")
-        ?.getAttribute("data-ai-art-state"),
-    ).toBe("unavailable");
-    const retry = Array.from(host.querySelectorAll("button")).find(
-      (button) => button.textContent === "배경 다시 불러오기",
+    const mascot = host.querySelector(
+      'img[src="/brand/mascot/putduk-ai-help-face-256-v1.webp"]',
     )!;
-    await act(async () => retry.click());
-    expect(scene().getAttribute("src")).toContain("?ai-art-retry=1");
+    await act(async () => mascot.dispatchEvent(new Event("error")));
     expect(host.querySelector("textarea")?.value).toBe(
       "작성한 질문을 유지해 주세요",
     );
     expect(fetchMock).not.toHaveBeenCalled();
+    expect(host.querySelector("[data-ai-partner-hero]")).toBeNull();
   });
 
   it("puts a contextual suggestion in the draft and focuses it without sending", async () => {
@@ -434,7 +421,7 @@ describe("one PUTDUK AI request and session owner", () => {
     expect(host.textContent).toContain("인터넷 연결이 끊겼어요");
     expect(host.querySelector("textarea")?.disabled).toBe(false);
     const send = Array.from(host.querySelectorAll("button")).find(
-      (button) => button.textContent === "질문 보내기",
+      (button) => button.getAttribute("aria-label") === "질문 보내기",
     );
     expect(send?.disabled).toBe(true);
     await act(async () => session.submit());

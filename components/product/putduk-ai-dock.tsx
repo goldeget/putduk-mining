@@ -184,6 +184,7 @@ function RouteAiDock({
       if (!dialog) return;
       const height = viewport?.height ?? window.innerHeight;
       const top = viewport?.offsetTop ?? 0;
+      dialog.dataset.aiCompact = String(height < 560);
       if (Number.isFinite(height) && height > 0)
         dialog.style.setProperty("--ai-viewport-height", `${height}px`);
       if (Number.isFinite(top) && top >= 0)
@@ -219,6 +220,7 @@ function RouteAiDock({
       window.removeEventListener("resize", syncViewport);
       dialog.style.removeProperty("--ai-viewport-height");
       dialog.style.removeProperty("--ai-viewport-top");
+      delete dialog.dataset.aiCompact;
       unlock();
     };
     setStatus("");
@@ -318,7 +320,10 @@ function RouteAiDock({
             >
               <PutdukAiMascot />
             </button>
-            <h2 id={titleId}>퍼뜩 AI</h2>
+            <div>
+              <h2 id={titleId}>퍼뜩 AI 도우미</h2>
+              <p className={styles.subtitle}>텍스트 대화</p>
+            </div>
           </div>
           <div className={styles.headerActions}>
             <Link

@@ -9,13 +9,12 @@
   margin-inline: auto;
 }
 .page :global(.ai-chat) {
-  height: auto;
   min-height: 0;
   margin-top: 0;
 }
 .principles {
   position: relative;
-  color: #efe2c8;
+  color: var(--text-primary);
   font-size: 0.85rem;
 }
 .principles summary,
@@ -24,16 +23,16 @@
   min-height: 2.75rem;
   align-items: center;
   padding: 0.5rem 0.75rem;
-  border: 1px solid #666c70;
+  border: 1px solid var(--border-default);
   border-radius: 0.5rem;
-  color: #f1e5ce;
-  background: rgb(9 18 28 / 85%);
+  color: var(--text-primary);
+  background: var(--surface-default);
   cursor: pointer;
   text-decoration: none;
 }
 .principles summary:focus-visible,
 .close:focus-visible {
-  outline: 2px solid #f0ca80;
+  outline: 2px solid var(--brand-strong);
   outline-offset: 3px;
 }
 .principles > div {
@@ -45,9 +44,9 @@
   max-height: 18rem;
   overflow: auto;
   padding: 0.75rem 1rem;
-  border: 1px solid #666c70;
+  border: 1px solid var(--border-default);
   border-radius: 0.5rem;
-  background: #101c29;
+  background: var(--surface-default);
   box-shadow: 0 1rem 2rem rgb(0 0 0 / 35%);
 }
 .principles p {
