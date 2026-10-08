@@ -1,5 +1,3 @@
-import { NextResponse } from "next/server";
-
 import {
   type AiClientStreamEvent,
   aiChatRequestSchema,
@@ -16,10 +14,16 @@ import {
   createSupabaseMemberConversationPort,
   MemberConversationWriteError,
 } from "@/lib/ai/member-conversation";
-import { extractSseData, parseOpenAiSseData } from "@/lib/ai/openai-stream";
+import { readOwnAiMessages } from "@/lib/ai/member-conversation-read";
+import { createProviderAttemptPort } from "@/lib/ai/provider-attempts";
+import {
+  runMemberProviderChain,
+  ProviderChainError,
+} from "@/lib/ai/provider-chain";
+import { buildOwnedProviderHistory } from "@/lib/ai/provider-history";
+import { NVIDIA_MODELS } from "@/lib/ai/provider-models";
 import { planAiTurn } from "@/lib/ai/orchestrator";
 import { buildAiInstructions, hashAiPrompt } from "@/lib/ai/prompt";
-import { buildMemberProviderRequestBody } from "@/lib/ai/provider-turn";
 import { createAiProviderOutputGuard } from "@/lib/ai/response-guard";
 import { executeAiTool } from "@/lib/ai/tool-executor";
 import { assertAiToolBoundary } from "@/lib/ai/tools";
@@ -37,15 +41,11 @@ import { TRUST_CONTENT_VERSION } from "@/lib/trust/public-content";
 
 const MAX_BODY_BYTES = 8_192;
 const MAX_RESPONSE_CHARACTERS = 32_000;
-const PROVIDER_TIMEOUT_MS = 90_000;
-const OPENAI_RESPONSES_URL = "https://api.openai.com/v1/responses";
 const STATIC_MODEL_KEY = "putduk-static-v1";
 const TOOL_MODEL_KEY = "putduk-owned-read-tool-v1";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
-
-type StreamSource = "cache" | "provider" | "static" | "tool";
 
 function sseEvent(event: AiClientStreamEvent) {
   return `event: ${event.type}\ndata: ${JSON.stringify(event)}\n\n`;
@@ -80,16 +80,6 @@ function createSseResponse(stream: ReadableStream<Uint8Array>) {
 function hasAllowedOrigin(request: Request, appUrl: string) {
   const origin = request.headers.get("origin");
   return Boolean(origin && origin === new URL(appUrl).origin);
-}
-
-function providerFailureCode(status: number) {
-  if (status === 429) {
-    return "PROVIDER_RATE_LIMITED";
-  }
-  if (status === 401 || status === 403) {
-    return "PROVIDER_AUTH_REJECTED";
-  }
-  return status >= 500 ? "PROVIDER_UNAVAILABLE" : "PROVIDER_REQUEST_REJECTED";
 }
 
 export async function POST(request: Request) {
@@ -162,23 +152,20 @@ export async function POST(request: Request) {
   const aiContext = aiPlan.context;
   const aiRoute = aiPlan.route;
   const providerConfigured = Boolean(
-    env.AI_PROVIDER && env.AI_API_KEY && env.AI_MODEL_LOW_COST,
+    env.AI_PROVIDER === "nvidia" &&
+    env.AI_API_KEY &&
+    env.AI_MODEL_LOW_COST === NVIDIA_MODELS[0] &&
+    env.APP_ENV !== "production",
   );
-  const needsHighCapability =
-    aiRoute.kind === "high_capability" ||
-    (aiRoute.kind === "general_safe" &&
-      aiRoute.modelTier === "high_capability");
   const selectedModel =
     aiRoute.kind === "static"
       ? STATIC_MODEL_KEY
       : aiRoute.kind === "tool"
         ? TOOL_MODEL_KEY
-        : needsHighCapability && env.AI_MODEL_HIGH_CAPABILITY
-          ? env.AI_MODEL_HIGH_CAPABILITY
-          : (env.AI_MODEL_LOW_COST ?? "provider-unconfigured");
+        : NVIDIA_MODELS[0];
   const instructions = buildAiInstructions(aiContext);
   const providerQuestion = redactMemberTranscript(parsed.data.question);
-  const promptHash = hashAiPrompt({
+  let promptHash = hashAiPrompt({
     instructions,
     model: selectedModel,
     question: providerQuestion,
@@ -212,8 +199,41 @@ export async function POST(request: Request) {
       throw error;
     }
   }
+  let providerHistory: ReturnType<typeof buildOwnedProviderHistory> = [];
+  if (
+    chatRequest.conversationId &&
+    aiRoute.kind !== "static" &&
+    aiRoute.kind !== "tool"
+  ) {
+    const history = await readOwnAiMessages(
+      identity.supabase,
+      userId,
+      chatRequest.conversationId,
+    );
+    if (!history.ok)
+      return apiError({
+        code: "AI_HISTORY_UNAVAILABLE",
+        message: "이전 대화를 확인하지 못했어요. 잠시 후 다시 시도해 주세요.",
+        status: 503,
+      });
+    try {
+      providerHistory = buildOwnedProviderHistory(history.messages);
+    } catch {
+      return apiError({
+        code: "AI_HISTORY_UNAVAILABLE",
+        message: "이전 대화를 확인하지 못했어요.",
+        status: 503,
+      });
+    }
+    promptHash = hashAiPrompt({
+      instructions,
+      model: selectedModel,
+      question: providerQuestion,
+      requestContext: providerHistory,
+    });
+  }
   const cachedResponse =
-    aiPlan.cacheable && providerConfigured
+    aiPlan.cacheable && providerConfigured && !chatRequest.conversationId
       ? await readAiCache(
           admin,
           promptHash,
@@ -221,14 +241,6 @@ export async function POST(request: Request) {
           "PUBLIC_KNOWLEDGE",
         )
       : null;
-  const source: StreamSource =
-    aiRoute.kind === "static"
-      ? "static"
-      : aiRoute.kind === "tool"
-        ? "tool"
-        : cachedResponse
-          ? "cache"
-          : "provider";
   const auditContextScope =
     aiRoute.kind === "tool"
       ? "ACCOUNT_STATE"
@@ -501,252 +513,155 @@ export async function POST(request: Request) {
   }
 
   const providerAbort = new AbortController();
-  let timedOut = false;
-  const timeout = setTimeout(() => {
-    timedOut = true;
-    providerAbort.abort();
-  }, PROVIDER_TIMEOUT_MS);
-  const handleRequestAbort = () => providerAbort.abort();
-  request.signal.addEventListener("abort", handleRequestAbort, { once: true });
-
-  let providerResponse: Response;
-  try {
-    providerResponse = await fetch(OPENAI_RESPONSES_URL, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${env.AI_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(
-        buildMemberProviderRequestBody({
-          instructions,
-          maxOutputTokens: env.AI_MAX_OUTPUT_TOKENS,
-          model: selectedModel,
-          question: providerQuestion,
-        }),
-      ),
-      cache: "no-store",
-      signal: providerAbort.signal,
-    });
-  } catch {
-    clearTimeout(timeout);
-    request.signal.removeEventListener("abort", handleRequestAbort);
-    const cancelled = request.signal.aborted && !timedOut;
-    await recordFailure(
-      cancelled ? "CANCELLED" : "FAILED",
-      timedOut
-        ? "PROVIDER_TIMEOUT"
-        : cancelled
-          ? "CLIENT_CANCELLED"
-          : "PROVIDER_UNREACHABLE",
-    );
-
-    if (cancelled) {
-      return new NextResponse(null, { status: 499 });
-    }
-
-    return apiError({
-      code: timedOut ? "AI_TIMEOUT" : "AI_PROVIDER_UNAVAILABLE",
-      message: timedOut
-        ? "응답 시간이 초과되었습니다. 잠시 후 다시 시도해 주세요."
-        : "AI 제공자에 연결하지 못했습니다.",
-      status: 503,
-    });
-  }
-
-  if (!providerResponse.ok || !providerResponse.body) {
-    clearTimeout(timeout);
-    request.signal.removeEventListener("abort", handleRequestAbort);
-    const failureCode = providerFailureCode(providerResponse.status);
-    await recordFailure("FAILED", failureCode);
-    return apiError({
-      code: "AI_PROVIDER_UNAVAILABLE",
-      message:
-        providerResponse.status === 429
-          ? "AI 제공자 사용량이 혼잡합니다. 잠시 후 다시 시도해 주세요."
-          : "AI 응답을 시작하지 못했습니다.",
-      status: providerResponse.status === 429 ? 429 : 503,
-    });
-  }
-
-  const providerHeaderRequestId = providerResponse.headers.get("x-request-id");
+  const abortClient = () => providerAbort.abort();
+  request.signal.addEventListener("abort", abortClient, { once: true });
+  if (request.signal.aborted) providerAbort.abort();
   const encoder = new TextEncoder();
-  const reader = providerResponse.body.getReader();
-  let clientStreamCancelled = false;
-  let terminalStateRecorded = false;
-
+  let clientCancelled = false;
   const stream = new ReadableStream<Uint8Array>({
     async start(controller) {
-      let buffer = "";
-      let responseCharacterCount = 0;
-      let responseText = "";
-      const decoder = new TextDecoder();
-      const outputGuard = createAiProviderOutputGuard();
-
+      let answer = "";
+      let sent = 0;
+      let emittedPrefix = "";
+      const guard = createAiProviderOutputGuard();
       const emit = (event: AiClientStreamEvent) => {
-        if (!clientStreamCancelled) {
+        if (!clientCancelled)
           controller.enqueue(encoder.encode(sseEvent(event)));
+      };
+      const emitSafePrefix = (final = false) => {
+        const safe = redactMemberTranscript(answer);
+        if (!safe.startsWith(emittedPrefix))
+          throw new ProviderChainError("AI_OUTPUT_REDACTION_CHANGED");
+        // Keep a bounded trailing window so split secret labels/keys and hidden
+        // reasoning markers cannot be emitted before the next network frame.
+        const boundary = Math.max(0, safe.length - 256);
+        // Never emit the beginning of an unfinished token (for example a long
+        // email/key arriving in several frames before its identifying suffix).
+        const end = final
+          ? safe.length
+          : Math.max(0, safe.slice(0, boundary).search(/\S+$/));
+        if (end > sent) {
+          emit({ type: "delta", text: safe.slice(sent, end) });
+          sent = end;
+          emittedPrefix = safe.slice(0, end);
         }
       };
-
-      const failStream = async (code: string, message: string) => {
-        if (!terminalStateRecorded) {
-          terminalStateRecorded = true;
-          await recordFailure("FAILED", code);
-        }
-        emit({ code, message, type: "error" });
-        providerAbort.abort();
-      };
-
-      emit({ requestId: aiRequestId, source, type: "ready" });
-
+      emit({ requestId: aiRequestId, source: "provider", type: "ready" });
       try {
-        while (!terminalStateRecorded) {
-          const { done, value } = await reader.read();
-          buffer += decoder
-            .decode(value, { stream: !done })
-            .replaceAll("\r\n", "\n");
-
-          const blocks = buffer.split("\n\n");
-          buffer = done ? "" : (blocks.pop() ?? "");
-
-          for (const block of blocks) {
-            const data = extractSseData(block);
-            if (!data) {
-              continue;
-            }
-
-            const event = parseOpenAiSseData(data);
-            if (event.kind === "delta") {
-              const outputDecision = outputGuard.inspect(event.text);
-              if (!outputDecision.allowed) {
-                await failStream(
-                  outputDecision.code,
-                  "안전 정책에 맞는 응답을 완료하지 못했습니다.",
-                );
-                break;
-              }
-              responseCharacterCount += event.text.length;
-              if (responseCharacterCount > MAX_RESPONSE_CHARACTERS) {
-                await failStream(
-                  "AI_RESPONSE_LIMIT_EXCEEDED",
-                  "응답 안전 한도를 초과해 생성을 중단했습니다.",
-                );
-                break;
-              }
-              responseText += event.text;
-              emit({ text: event.text, type: "delta" });
-              continue;
-            }
-
-            if (event.kind === "failed") {
-              await failStream(
-                event.code,
-                "AI 응답을 완료하지 못했습니다. 다시 시도해 주세요.",
-              );
-              break;
-            }
-
-            if (event.kind === "completed") {
-              const providerModel = event.model ?? selectedModel;
-              const { error } = await completeAiRequest(admin, {
-                cachedInputTokens: event.cachedInputTokens,
-                inputTokens: event.inputTokens,
-                model: providerModel,
-                outputTokens: event.outputTokens,
-                providerRequestId:
-                  event.providerRequestId ??
-                  providerHeaderRequestId ??
-                  "unreported",
-                requestId: aiRequestId,
-                responseCharacterCount,
-                userId,
-              });
-
-              if (error) {
-                await failStream(
-                  "AI_AUDIT_PERSISTENCE_FAILED",
-                  "응답 기록을 검증하지 못해 완료 처리하지 않았습니다.",
-                );
-                break;
-              }
-
-              terminalStateRecorded = true;
-              if (responseText && aiPlan.cacheable) {
-                await writeAiCache(admin, {
-                  answer: redactMemberTranscript(responseText),
-                  cacheKey: promptHash,
-                  knowledgeVersion: TRUST_CONTENT_VERSION,
-                  model: providerModel,
-                  scope: "PUBLIC_KNOWLEDGE",
-                  ttlSeconds: env.AI_CACHE_TTL_SECONDS,
-                });
-              }
-              const saved = await saveMemberTurn({
-                answer: responseText,
-                sourceKey: "guide:provider",
-              });
-              emit({
-                knowledgeVersion: TRUST_CONTENT_VERSION,
-                requestId: aiRequestId,
-                type: "done",
-                ...savedFields(saved),
-              });
-              break;
-            }
-          }
-
-          if (done || terminalStateRecorded) {
-            break;
-          }
-        }
-
-        if (!terminalStateRecorded && !providerAbort.signal.aborted) {
-          await failStream(
-            "PROVIDER_STREAM_INCOMPLETE",
-            "AI 응답이 완전히 도착하지 않았습니다. 다시 시도해 주세요.",
-          );
-        }
-      } catch {
-        if (!terminalStateRecorded) {
-          const cancelled = clientStreamCancelled || request.signal.aborted;
-          terminalStateRecorded = true;
-          await recordFailure(
-            cancelled ? "CANCELLED" : "FAILED",
-            timedOut
-              ? "PROVIDER_TIMEOUT"
-              : cancelled
-                ? "CLIENT_CANCELLED"
-                : "PROVIDER_STREAM_INTERRUPTED",
-          );
-          emit({
-            code: timedOut ? "AI_TIMEOUT" : "AI_STREAM_INTERRUPTED",
-            message: timedOut
-              ? "응답 시간이 초과되었습니다."
-              : "응답 연결이 중단되었습니다. 다시 시도해 주세요.",
-            type: "error",
+        const completed = await runMemberProviderChain({
+          nvidiaApiKey: env.AI_API_KEY!,
+          ...(env.OPENROUTER_FREE_API_KEY
+            ? { openRouterFreeApiKey: env.OPENROUTER_FREE_API_KEY }
+            : {}),
+          ...(env.OPENROUTER_API_KEY
+            ? { openRouterPaidApiKey: env.OPENROUTER_API_KEY }
+            : {}),
+          // This task has no approval for paid calls. A key or .env flag cannot
+          // enable them. A future authorized phase must change this boundary.
+          paidCallAuthorized: false,
+          instructions,
+          question: providerQuestion,
+          history: providerHistory,
+          maxOutputTokens: env.AI_MAX_OUTPUT_TOKENS,
+          firstTokenTimeoutMs: env.AI_FIRST_TOKEN_TIMEOUT_MS,
+          signal: providerAbort.signal,
+          port: createProviderAttemptPort(admin, {
+            userId,
+            requestId: aiRequestId,
+            perMinuteLimit: env.AI_MAX_REQUESTS_PER_MINUTE,
+            perDayLimit: env.AI_MAX_REQUESTS_PER_DAY,
+          }),
+          onDelta(text) {
+            const decision = guard.inspect(text);
+            if (
+              !decision.allowed ||
+              answer.length + text.length > MAX_RESPONSE_CHARACTERS ||
+              /<think>|<\|(?:channel|im_start)\|>\s*analysis|\[start_header_id\]analysis/i.test(
+                answer.slice(-80) + text,
+              )
+            )
+              throw new Error("AI_OUTPUT_POLICY_REJECTED");
+            answer += text;
+            emitSafePrefix();
+          },
+        });
+        if (providerAbort.signal.aborted)
+          throw new ProviderChainError("CLIENT_CANCELLED", true);
+        const safeAnswer = redactMemberTranscript(answer);
+        const saved = await saveMemberTurn({
+          answer: safeAnswer,
+          sourceKey: "guide:provider",
+        });
+        if (!saved.ok)
+          throw new ProviderChainError("AI_CONVERSATION_SAVE_FAILED");
+        const { error } = await completeAiRequest(admin, {
+          requestId: aiRequestId,
+          userId,
+          model: completed.model,
+          providerRequestId: completed.providerRequestId,
+          inputTokens: completed.inputTokens,
+          outputTokens: completed.outputTokens,
+          cachedInputTokens: completed.cachedInputTokens,
+          responseCharacterCount: safeAnswer.length,
+        });
+        if (error) throw new ProviderChainError("AI_AUDIT_PERSISTENCE_FAILED");
+        if (aiPlan.cacheable && !chatRequest.conversationId)
+          await writeAiCache(admin, {
+            answer: safeAnswer,
+            cacheKey: promptHash,
+            knowledgeVersion: TRUST_CONTENT_VERSION,
+            model: completed.model,
+            scope: "PUBLIC_KNOWLEDGE",
+            ttlSeconds: env.AI_CACHE_TTL_SECONDS,
           });
-        }
+        emitSafePrefix(true);
+        emit({
+          type: "done",
+          knowledgeVersion: TRUST_CONTENT_VERSION,
+          requestId: aiRequestId,
+          ...savedFields(saved),
+        });
+      } catch (error) {
+        const cancelled =
+          providerAbort.signal.aborted ||
+          (error instanceof ProviderChainError && error.cancelled);
+        const code =
+          error instanceof ProviderChainError
+            ? error.code
+            : "AI_PROVIDER_UNAVAILABLE";
+        await recordFailure(cancelled ? "CANCELLED" : "FAILED", code);
+        const message = cancelled
+          ? "답변 생성을 중단했어요."
+          : code === "AI_FREE_POOL_LIMIT" ||
+              code === "AI_PAID_CALL_NOT_AUTHORIZED"
+            ? "현재 AI 사용 한도에 도달했어요. 잠시 후 다시 시도해 주세요."
+            : "답변을 완료하지 못했어요. 다시 시도해 주세요.";
+        const saved = await saveMemberTurn({
+          answer: message,
+          sourceKey: "failure:provider",
+        });
+        emit({
+          type: "error",
+          code,
+          message,
+          ...(saved.ok
+            ? { saved: true, conversationId: saved.conversationId }
+            : { saved: false }),
+        });
       } finally {
-        clearTimeout(timeout);
-        request.signal.removeEventListener("abort", handleRequestAbort);
-        reader.releaseLock();
+        providerAbort.abort();
+        request.signal.removeEventListener("abort", abortClient);
         try {
           controller.close();
         } catch {
-          // The client may have already cancelled the response stream.
+          /* cancelled response */
         }
       }
     },
-    async cancel() {
-      clientStreamCancelled = true;
+    cancel() {
+      clientCancelled = true;
       providerAbort.abort();
-      if (!terminalStateRecorded) {
-        terminalStateRecorded = true;
-        await recordFailure("CANCELLED", "CLIENT_CANCELLED");
-      }
     },
   });
-
   return createSseResponse(stream);
 }

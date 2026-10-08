@@ -30,13 +30,17 @@ const serverEnvSchema = z
     ),
     VAPID_PRIVATE_KEY: optionalServerString(z.string().min(20)),
     VAPID_SUBJECT: optionalServerString(z.string().startsWith("mailto:")),
-    AI_PROVIDER: optionalServerString(z.literal("openai")),
+    AI_PROVIDER: optionalServerString(z.enum(["openai", "nvidia"])),
     AI_API_KEY: optionalServerString(z.string().min(20)),
+    NVIDIA_API_KEY: optionalServerString(z.string().min(20)),
+    OPENROUTER_FREE_API_KEY: optionalServerString(z.string().min(20)),
+    OPENROUTER_API_KEY: optionalServerString(z.string().min(20)),
+    AI_FIRST_TOKEN_TIMEOUT_MS: boundedInteger(1000, 90000, 15000),
     AI_MODEL_LOW_COST: optionalServerString(
-      z.string().regex(/^[A-Za-z0-9][A-Za-z0-9._-]{0,119}$/),
+      z.string().regex(/^[A-Za-z0-9][A-Za-z0-9._/-]{0,119}$/),
     ),
     AI_MODEL_HIGH_CAPABILITY: optionalServerString(
-      z.string().regex(/^[A-Za-z0-9][A-Za-z0-9._-]{0,119}$/),
+      z.string().regex(/^[A-Za-z0-9][A-Za-z0-9._/-]{0,119}$/),
     ),
     AI_MAX_OUTPUT_TOKENS: boundedInteger(128, 4096, 900),
     AI_MAX_REQUESTS_PER_MINUTE: boundedInteger(1, 60, 5),
@@ -44,6 +48,25 @@ const serverEnvSchema = z
     AI_CACHE_TTL_SECONDS: boundedInteger(60, 86400, 3600),
   })
   .superRefine((value, context) => {
+    if (
+      value.AI_API_KEY &&
+      value.NVIDIA_API_KEY &&
+      value.AI_API_KEY !== value.NVIDIA_API_KEY
+    )
+      context.addIssue({
+        code: "custom",
+        path: ["NVIDIA_API_KEY"],
+        message: "NVIDIA key aliases conflict.",
+      });
+    if (
+      value.AI_PROVIDER === "nvidia" &&
+      value.AI_MODEL_LOW_COST !== "openai/gpt-oss-20b"
+    )
+      context.addIssue({
+        code: "custom",
+        path: ["AI_MODEL_LOW_COST"],
+        message: "The owner-approved NVIDIA chain must start at GPT OSS 20B.",
+      });
     const aiValues = [
       value.AI_PROVIDER,
       value.AI_API_KEY,
@@ -104,7 +127,7 @@ export function hasConfiguredAiProvider(): boolean {
     process.env.AI_PROVIDER,
   );
   const key = serverEnvSchema.shape.AI_API_KEY.safeParse(
-    process.env.AI_API_KEY,
+    process.env.AI_API_KEY || process.env.NVIDIA_API_KEY,
   );
   const model = serverEnvSchema.shape.AI_MODEL_LOW_COST.safeParse(
     process.env.AI_MODEL_LOW_COST,
@@ -113,9 +136,13 @@ export function hasConfiguredAiProvider(): boolean {
     provider.success &&
     key.success &&
     model.success &&
-    provider.data &&
+    provider.data === "nvidia" &&
     key.data &&
-    model.data,
+    model.data === "openai/gpt-oss-20b" &&
+    (!process.env.AI_API_KEY ||
+      !process.env.NVIDIA_API_KEY ||
+      process.env.AI_API_KEY === process.env.NVIDIA_API_KEY) &&
+    process.env.APP_ENV !== "production",
   );
 }
 
@@ -128,7 +155,11 @@ export function getServerEnv(): ServerEnv {
     VAPID_PRIVATE_KEY: process.env.VAPID_PRIVATE_KEY,
     VAPID_SUBJECT: process.env.VAPID_SUBJECT,
     AI_PROVIDER: process.env.AI_PROVIDER,
-    AI_API_KEY: process.env.AI_API_KEY,
+    AI_API_KEY: process.env.AI_API_KEY || process.env.NVIDIA_API_KEY,
+    NVIDIA_API_KEY: process.env.NVIDIA_API_KEY,
+    OPENROUTER_FREE_API_KEY: process.env.OPENROUTER_FREE_API_KEY,
+    OPENROUTER_API_KEY: process.env.OPENROUTER_API_KEY,
+    AI_FIRST_TOKEN_TIMEOUT_MS: process.env.AI_FIRST_TOKEN_TIMEOUT_MS,
     AI_MODEL_LOW_COST: process.env.AI_MODEL_LOW_COST,
     AI_MODEL_HIGH_CAPABILITY: process.env.AI_MODEL_HIGH_CAPABILITY,
     AI_MAX_OUTPUT_TOKENS: process.env.AI_MAX_OUTPUT_TOKENS,

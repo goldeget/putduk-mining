@@ -1,4 +1,5 @@
 export type AiDeniedClassification =
+  | "UNSUPPORTED_MEDIA"
   | "ABUSE_EVASION"
   | "ACTION_BOUNDARY"
   | "CROSS_USER_DATA"
@@ -39,6 +40,19 @@ const ACTION_REQUEST_PATTERN =
 
 export function guardAiQuestion(question: string): AiGuardResult {
   const normalized = question.replace(/\s+/g, " ").trim();
+
+  if (
+    /(?:사진|이미지|동영상|영상|비디오|음성|오디오|노래|그림).{0,24}(?:생성해|만들어|그려|합성해|편집해|변환해)|(?:generate|create|make|edit)\s+(?:a\s+|an\s+)?(?:image|photo|video|audio|song)/i.test(
+      normalized,
+    )
+  ) {
+    return {
+      allowed: false,
+      classification: "UNSUPPORTED_MEDIA",
+      answer:
+        "사진, 영상, 음성 파일은 만들 수 없어요. 글로 설명하거나 방법을 안내해 드릴 수 있어요.",
+    };
+  }
 
   if (PROMPT_INJECTION_PATTERN.test(normalized)) {
     return {

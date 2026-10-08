@@ -32,6 +32,12 @@ const SHORT_CODE = new RegExp(
 );
 
 const SECRET_PATTERNS: readonly RegExp[] = [
+  /\bnvapi-[A-Za-z0-9_-]{8,}\b/g,
+  /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/g,
+  /(?<!\d)(?:\+82[- ]?1[016789]|01[016789])[- ]?\d{3,4}[- ]?\d{4}(?!\d)/g,
+  /(?<!\d)\d{6}[- ]?[1-8]\d{6}(?!\d)/g,
+  /(?:계좌\s*번호|account\s*number)\s*(?:은|는|:|=)?\s*[\d-]{8,30}/gi,
+  /\b0x[0-9a-f]{40}\b/gi,
   /\bBearer\s+[A-Za-z0-9\-._~+/]+=*/gi,
   /\bsk-[A-Za-z0-9_\-]{8,}\b/g,
   /\beyJ[A-Za-z0-9_-]{4,}(?:\.[A-Za-z0-9_+\/=-]{4,}){2}/g,
