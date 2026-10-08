@@ -1,5 +1,5 @@
 /* global self, clients, caches */
-const CACHE_NAME = "putduk-shell-v5";
+const CACHE_NAME = "putduk-shell-v6";
 const APP_SHELL = [
   "/offline",
   "/brand/favicon/favicon.svg",
@@ -63,7 +63,7 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
   const url = new URL(event.request.url);
-  if (url.origin !== self.location.origin || url.search) return;
+  if (url.origin !== self.location.origin) return;
   if (event.request.mode === "navigate") {
     event.respondWith(
       fetch(event.request).catch(
@@ -75,7 +75,11 @@ self.addEventListener("fetch", (event) => {
           }),
       ),
     );
-  } else if (APP_SHELL.includes(url.pathname) && url.pathname !== "/offline") {
+  } else if (
+    !url.search &&
+    APP_SHELL.includes(url.pathname) &&
+    url.pathname !== "/offline"
+  ) {
     // Exact public artwork only. No private API, account, auth, query or chunk caching.
     event.respondWith(
       caches

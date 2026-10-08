@@ -270,7 +270,19 @@ export function ContentConsole() {
               ? [kind === "EVENT" ? "CANCEL" : "ARCHIVE"]
               : [];
   return (
-    <section className={styles.console}>
+    <section
+      className={styles.console}
+      data-ui-ready="/content"
+      data-ui-state={
+        busy
+          ? "loading"
+          : problem
+            ? "error"
+            : uncertain
+              ? "uncertain"
+              : "loaded"
+      }
+    >
       <header>
         <p className="eyebrow">회원 안내 관리</p>
         <h1>이벤트와 공지</h1>

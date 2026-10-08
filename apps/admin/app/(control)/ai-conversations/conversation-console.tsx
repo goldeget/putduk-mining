@@ -188,7 +188,11 @@ export function AiConversationConsole() {
       }));
   }
   return (
-    <section className={styles.console}>
+    <section
+      className={styles.console}
+      data-ui-ready="/ai-conversations"
+      data-ui-state={busy ? "loading" : error ? "error" : "loaded"}
+    >
       <header>
         <p className={styles.eyebrow}>회원 상담 관리</p>
         <h1>퍼뜩 AI 대화 기록</h1>

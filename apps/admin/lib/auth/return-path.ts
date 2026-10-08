@@ -1,6 +1,8 @@
 const SAFE_ADMIN_PATHS = [
   "/",
   "/assistant",
+  "/ai-conversations",
+  "/content",
   "/members",
   "/deposits/usdt",
   "/deposits/krw",

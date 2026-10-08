@@ -30,6 +30,7 @@ function worker() {
       "other-app-cache",
       "putduk-shell-v3",
       "putduk-shell-v5",
+      "putduk-shell-v6",
     ]),
     delete: vi.fn(async () => true),
     match: vi.fn(async () => new Response("offline")),
@@ -74,7 +75,10 @@ describe("actual service worker privacy and offline recovery", () => {
   it("retains other apps' caches and deletes only old PUTDUK shell versions", async () => {
     const w = worker();
     await w.emit("activate", {});
-    expect(w.caches.delete.mock.calls).toEqual([["putduk-shell-v3"]]);
+    expect(w.caches.delete.mock.calls).toEqual([
+      ["putduk-shell-v3"],
+      ["putduk-shell-v5"],
+    ]);
   });
   it("caches exact public offline artwork, never application/API or auth chunks", async () => {
     const w = worker();
@@ -121,6 +125,61 @@ describe("actual service worker privacy and offline recovery", () => {
         },
       }),
     ).not.toHaveBeenCalled();
+  });
+  it.each([
+    "/wallet?view=history",
+    "/login?next=%2Fwallet",
+    "/events?receipt=private",
+  ])(
+    "uses public offline shell for query navigation %s without caching private URL",
+    async (path) => {
+      const w = worker();
+      w.fetch.mockRejectedValue(new Error("offline"));
+      const response = await w.emit("fetch", {
+        request: {
+          method: "GET",
+          url: `https://mining.putduk.com${path}`,
+          mode: "navigate",
+        },
+      });
+      expect(response).toHaveBeenCalledOnce();
+      expect(w.fetch).toHaveBeenCalledOnce();
+      expect(w.caches.match.mock.calls).toEqual([["/offline"]]);
+      expect(w.caches.open).not.toHaveBeenCalled();
+      expect(w.cache.addAll).not.toHaveBeenCalled();
+    },
+  );
+  it("keeps online query navigation network-first and ignores unowned navigation and every POST", async () => {
+    const w = worker();
+    await w.emit("fetch", {
+      request: {
+        method: "GET",
+        url: "https://mining.putduk.com/wallet?view=history",
+        mode: "navigate",
+      },
+    });
+    expect(w.fetch).toHaveBeenCalledOnce();
+    expect(w.caches.match).not.toHaveBeenCalled();
+    expect(w.caches.open).not.toHaveBeenCalled();
+    expect(
+      await w.emit("fetch", {
+        request: {
+          method: "GET",
+          url: "https://evil.test/wallet?view=history",
+          mode: "navigate",
+        },
+      }),
+    ).not.toHaveBeenCalled();
+    expect(
+      await w.emit("fetch", {
+        request: {
+          method: "POST",
+          url: "https://mining.putduk.com/wallet?view=history",
+          mode: "navigate",
+        },
+      }),
+    ).not.toHaveBeenCalled();
+    expect(w.fetch).toHaveBeenCalledOnce();
   });
   it("shows a generic lockscreen body, stable UUID tag, and sanitizes payload content/links", async () => {
     const w = worker();
