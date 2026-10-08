@@ -1,5 +1,5 @@
 export function assertPrincipalCandidateSources(root?: string): {
-  runtimeSources: 14;
-  migrationSources: 32;
+  runtimeSources: 15;
+  migrationSources: 171;
   manifestSha256: string;
 };
