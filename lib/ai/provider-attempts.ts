@@ -43,6 +43,8 @@ export type ProviderAttemptPort = {
     outputTokens?: number;
     cachedInputTokens?: number;
     costMicroUsd?: bigint | null;
+    costNanoUsd?: bigint | null;
+    upstreamProvider?: string | null;
   }) => Promise<AttemptReceipt>;
 };
 
@@ -75,8 +77,15 @@ export function createProviderAttemptPort(
           p_per_day_limit: Math.min(input.perDayLimit, 100),
         },
       );
-      if (error || !data || data.admitted !== true)
-        throw new Error("AI_FREE_POOL_LIMIT");
+      if (error) {
+        if (
+          /^AI_OPENROUTER_FREE_RATE_LIMITED_(?:MINUTE|DAY)$/.test(error.message)
+        )
+          throw new Error("AI_FREE_POOL_LIMIT");
+        throw new Error("AI_PROVIDER_ADMISSION_FAILED");
+      }
+      if (!data || data.admitted !== true)
+        throw new Error("AI_PROVIDER_AUDIT_UNVERIFIED");
     },
     reserve(attempt) {
       return call("reserve_ai_provider_attempt", {
@@ -100,6 +109,8 @@ export function createProviderAttemptPort(
         p_output_tokens: attempt.outputTokens ?? null,
         p_cached_input_tokens: attempt.cachedInputTokens ?? null,
         p_cost_micro_usd: attempt.costMicroUsd?.toString() ?? null,
+        p_cost_nano_usd: attempt.costNanoUsd?.toString() ?? null,
+        p_upstream_provider: attempt.upstreamProvider ?? null,
       });
     },
   };

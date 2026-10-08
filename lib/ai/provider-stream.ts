@@ -10,6 +10,7 @@ export type ProviderCompletion = {
   outputTokens: number;
   cachedInputTokens: number;
   costMicroUsd: bigint | null;
+  costNanoUsd: bigint | null;
   upstreamProvider: string | null;
 };
 export type ProviderStreamEvent =
@@ -38,6 +39,7 @@ export function createProviderStreamParser(input: {
   let provider: string | null = null;
   let tokens: { input: number; output: number; cached: number } | null = null;
   let cost: bigint | null = null;
+  let costNano: bigint | null = null;
   let stopped = false,
     terminal = false,
     hasText = false;
@@ -68,6 +70,7 @@ export function createProviderStreamParser(input: {
         outputTokens: tokens.output,
         cachedInputTokens: tokens.cached,
         costMicroUsd: cost,
+        costNanoUsd: costNano,
         upstreamProvider: provider,
       };
     }
@@ -128,11 +131,12 @@ export function createProviderStreamParser(input: {
         if (nano === null) return fail("PROVIDER_COST_INVALID");
         const nextCost = nanoUsdToMicroCeiling(nano);
         if (
-          (cost !== null && cost !== nextCost) ||
+          (costNano !== null && costNano !== nano) ||
           (input.tier === "free" && nextCost !== 0n)
         )
           return fail("PROVIDER_COST_INVALID");
         cost = nextCost;
+        costNano = nano;
       }
     }
     if (!Array.isArray(chunk.choices)) return fail("PROVIDER_EVENT_INVALID");

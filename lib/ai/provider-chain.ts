@@ -124,7 +124,17 @@ export async function runMemberProviderChain(input: {
         throw new ProviderChainError("OPENROUTER_MODEL_UNVERIFIED");
       }
       checkCancelled();
-      if (tier === "free") await input.port.admitFree();
+      if (tier === "free") {
+        try {
+          await input.port.admitFree();
+        } catch (error) {
+          throw new ProviderChainError(
+            error instanceof Error && error.message === "AI_FREE_POOL_LIMIT"
+              ? "AI_FREE_POOL_LIMIT"
+              : "AI_PROVIDER_ADMISSION_FAILED",
+          );
+        }
+      }
     }
     const body = buildMemberProviderRequestBody({
       provider,
@@ -273,7 +283,7 @@ export async function runMemberProviderChain(input: {
         reason = "POLICY";
         throw new ProviderChainError("PROVIDER_COMPLETION_UNVERIFIED");
       }
-      await input.port.settle({
+      const settled = await input.port.settle({
         attemptId: lease.id,
         status: "SUCCEEDED",
         providerRequestId: completed.providerRequestId,
@@ -281,7 +291,13 @@ export async function runMemberProviderChain(input: {
         outputTokens: completed.outputTokens,
         cachedInputTokens: completed.cachedInputTokens,
         costMicroUsd: completed.costMicroUsd,
+        costNanoUsd: completed.costNanoUsd,
+        upstreamProvider: completed.upstreamProvider,
       });
+      if (settled.status !== "SUCCEEDED" || settled.replay) {
+        reason = "AUDIT";
+        throw new ProviderChainError("AI_PROVIDER_AUDIT_UNVERIFIED");
+      }
       return completed;
     } catch (error) {
       const cancelled = input.signal.aborted;

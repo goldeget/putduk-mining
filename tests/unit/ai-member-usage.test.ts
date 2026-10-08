@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { readOwnAiQuota } from "@/lib/ai/member-usage";
+import { readOwnAiQuota, readOwnProviderUsage } from "@/lib/ai/member-usage";
 
 function fixture(used: number | null, createdAt?: string, failure = false) {
   const query: Record<string, ReturnType<typeof vi.fn>> = {};
@@ -26,6 +26,39 @@ const input = {
 };
 
 describe("own member rolling usage", () => {
+  it("preserves unknown provider usage and strips private global budget fields", async () => {
+    const aggregate = {
+      attemptCount: 1,
+      succeeded: 0,
+      failed: 0,
+      cancelled: 0,
+      unknown: 1,
+      inputTokens: null,
+      outputTokens: null,
+      costMicroUsd: null,
+      reservedCostMicroUsd: "123",
+    };
+    const rpc = vi.fn(async () => ({
+      error: null,
+      data: {
+        nvidia: aggregate,
+        free: aggregate,
+        paid: aggregate,
+        memberPaidEnabled: false,
+        memberPaidCapMicroUsd: null,
+        globalBudget: "private",
+      },
+    }));
+    const data = await readOwnProviderUsage(
+      { rpc } as unknown as SupabaseClient,
+      "own-member",
+    );
+    expect(rpc).toHaveBeenCalledWith("read_ai_provider_usage", {
+      p_user_id: "own-member",
+    });
+    expect(data.paid.costMicroUsd).toBeNull();
+    expect(data).not.toHaveProperty("globalBudget");
+  });
   it("counts all admitted statuses exactly within the same rolling window", async () => {
     const { client, query } = fixture(3);
     expect(await readOwnAiQuota(client, input)).toEqual({

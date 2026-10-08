@@ -301,6 +301,60 @@ describe("strict streaming receipts", () => {
       createProviderSseDecoder()(new TextEncoder().encode("x".repeat(64_001))),
     ).toThrow();
     expect(() => createProviderSseDecoder()(Uint8Array.of(255))).toThrow();
+    expect(() =>
+      createProviderSseDecoder()(
+        new TextEncoder().encode(`data: ${"x".repeat(64_001)}\n\n`),
+      ),
+    ).toThrow();
+  });
+
+  it("preserves actual nanoUSD separately from conservatively rounded budget microUSD", async () => {
+    const decode = createProviderSseDecoder();
+    const parse = createProviderStreamParser({
+      model: OPENROUTER_PAID_MODEL,
+      provider: "openrouter",
+      tier: "paid",
+      providerName: "Anthropic",
+      reservedCostMicroUsd: 10n,
+    });
+    const events = decode(
+      new Uint8Array(
+        await response(
+          OPENROUTER_PAID_MODEL,
+          "Anthropic",
+          "0.0000004",
+        ).arrayBuffer(),
+      ),
+      true,
+    ).map(parse);
+    expect(events.at(-1)).toMatchObject({
+      kind: "completed",
+      costNanoUsd: 400n,
+      costMicroUsd: 1n,
+    });
+  });
+
+  it("does not hide conflicting actual cost receipts in the same rounded microUSD", () => {
+    const parse = createProviderStreamParser({
+      model: OPENROUTER_PAID_MODEL,
+      provider: "openrouter",
+      tier: "paid",
+      providerName: "Anthropic",
+      reservedCostMicroUsd: 10n,
+    });
+    const usage = {
+      model: OPENROUTER_PAID_MODEL,
+      id: "request",
+      provider: "Anthropic",
+      choices: [],
+      usage: { prompt_tokens: 2, completion_tokens: 1, cost: "0.0000004" },
+    };
+    expect(parse(JSON.stringify(usage))).toMatchObject({ kind: "ignored" });
+    usage.usage.cost = "0.0000005";
+    expect(parse(JSON.stringify(usage))).toMatchObject({
+      kind: "failed",
+      code: "PROVIDER_COST_INVALID",
+    });
   });
 });
 
@@ -400,6 +454,34 @@ describe("actual provider dispatch, privacy and failover", () => {
     ).rejects.toMatchObject({ code: "AI_PROVIDER_ATTEMPT_ALREADY_EXISTS" });
     expect(fetcher).not.toHaveBeenCalled();
   });
+
+  it("does not call a successful answer complete without the exact terminal DB receipt", async () => {
+    const input = chainInput();
+    const originalSettle = input.port.settle.getMockImplementation()!;
+    input.port.settle.mockImplementation(async (attempt) => {
+      if (attempt.status === "SUCCEEDED")
+        return { id: attempt.attemptId, status: "UNKNOWN", replay: false };
+      return originalSettle(attempt);
+    });
+    const fetcher = vi.fn(async () => response(NVIDIA_MODELS[0]));
+    await expect(
+      runMemberProviderChain({ ...input, fetcher }),
+    ).rejects.toMatchObject({ code: "AI_PROVIDER_AUDIT_UNVERIFIED" });
+    expect(fetcher).toHaveBeenCalledOnce();
+  });
+
+  it("never bypasses a member's separate free admission quota with paid fallback", async () => {
+    const input = chainInput();
+    input.port.admitFree.mockRejectedValueOnce(new Error("AI_FREE_POOL_LIMIT"));
+    const fetcher = vi.fn(async () => new Response(null, { status: 503 }));
+    await expect(
+      runMemberProviderChain({ ...input, fetcher, paidCallAuthorized: true }),
+    ).rejects.toMatchObject({ code: "AI_FREE_POOL_LIMIT" });
+    expect(fetcher).toHaveBeenCalledTimes(2);
+    expect(input.registryReader.mock.calls.map((args) => args[0])).toEqual([
+      OPENROUTER_FREE_MODEL,
+    ]);
+  });
   it("keeps unknown dispatched costs reserved and stops when cancellation arrives", async () => {
     const input = chainInput();
     const abort = new AbortController();
@@ -491,6 +573,34 @@ describe("actual provider dispatch, privacy and failover", () => {
     expect(history).toHaveLength(40);
     expect(history[0]!.content).toBe("일반 질문 4");
     expect(JSON.stringify(history)).not.toContain("내잔액");
+  });
+
+  it("preserves contiguous long-answer fragments with first-fragment source evidence", () => {
+    const history = buildOwnedProviderHistory([
+      {
+        id: "member",
+        authorRole: "MEMBER",
+        bodyText: "안전한 일반 질문",
+        position: 1,
+      },
+      {
+        id: "assistant1",
+        authorRole: "ASSISTANT",
+        bodyText: "첫 문단",
+        position: 2,
+        source: "provider",
+      },
+      {
+        id: "assistant2",
+        authorRole: "ASSISTANT",
+        bodyText: "두 번째 문단",
+        position: 3,
+      },
+    ]);
+    expect(history).toEqual([
+      { role: "user", content: "안전한 일반 질문" },
+      { role: "assistant", content: "첫 문단\n두 번째 문단" },
+    ]);
   });
   it("rejects media generation but allows text advice about photography", () => {
     expect(guardAiQuestion("사진을 만들어 줘")).toMatchObject({
