@@ -157,12 +157,10 @@ describe("verified own AI tools safe facts", () => {
       ai_requests: [{ user_id: owner, status: "CANCELLED" }],
     });
     let claims = 0;
-    member.port.auth.getClaims = vi
-      .fn()
-      .mockImplementation(async () => ({
-        data: { claims: { sub: ++claims === 1 ? owner : other } },
-        error: null,
-      }));
+    member.port.auth.getClaims = vi.fn().mockImplementation(async () => ({
+      data: { claims: { sub: ++claims === 1 ? owner : other } },
+      error: null,
+    }));
     const result = await executeAiTool(member.port, "ai.cancelled_history", {
       verifiedIdentity: { supabase: member.port, userId: owner },
     });
