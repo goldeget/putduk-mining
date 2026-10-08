@@ -3,6 +3,7 @@ import { randomUUID } from "node:crypto";
 import { apiError, apiSuccess } from "@/lib/api/http";
 import { readBoundedJsonBody } from "@/lib/api/request-body";
 import { getVerifiedIdentity } from "@/lib/auth/session";
+import { getPublicEnv } from "@/lib/env/public";
 import {
   eventParticipationInputSchema,
   eventParticipationReceiptSchema,
@@ -11,7 +12,7 @@ import {
 
 /** New parent-approved contract extension. Authenticated RPC owns all qualification. */
 async function participate(request: Request) {
-  if (!hasEventCommandOrigin(request))
+  if (!hasEventCommandOrigin(request, getPublicEnv().NEXT_PUBLIC_APP_URL))
     return apiError({
       code: "ORIGIN_DENIED",
       message: "앱에서 직접 다시 시도해 주세요.",
@@ -54,10 +55,17 @@ async function participate(request: Request) {
     },
   );
   if (error) {
+    if (error.message.includes("EVENT_AUTH_REQUIRED"))
+      return apiError({
+        code: "UNAUTHENTICATED",
+        message: "다시 로그인해 주세요.",
+        status: 401,
+      });
     const unavailable = [
       "EVENT_NOT_AVAILABLE",
       "EVENT_REVISION_CHANGED",
       "EVENT_MEMBER_REQUIRED",
+      "EVENT_MEMBER_RESTRICTED",
       "EVENT_RISK_DENIED",
       "EVENT_IDEMPOTENCY_CONFLICT",
     ].find((code) => error.message.includes(code));

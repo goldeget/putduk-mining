@@ -9,6 +9,9 @@ const fixture = vi.hoisted(() => ({
 vi.mock("@/lib/auth/session", () => ({
   getVerifiedIdentity: fixture.identity,
 }));
+vi.mock("@/lib/env/public", () => ({
+  getPublicEnv: () => ({ NEXT_PUBLIC_APP_URL: "http://127.0.0.1:61441" }),
+}));
 import { handleMemberEventParticipation } from "@/lib/events/participation-handler.server";
 const id = "11111111-1111-4111-8111-111111111111",
   other = "22222222-2222-4222-8222-222222222222",
@@ -117,6 +120,55 @@ describe("member event canonical command", () => {
     );
     fixture.rpc.mockRejectedValue(new Error("private token"));
     expect((await handleMemberEventParticipation(request())).status).toBe(503);
+  });
+  it("reports a current DB restriction or lost authenticated SQL context as a definite denial", async () => {
+    fixture.rpc.mockResolvedValue({
+      data: null,
+      error: { message: "EVENT_MEMBER_RESTRICTED" },
+    });
+    expect((await handleMemberEventParticipation(request())).status).toBe(409);
+    fixture.rpc.mockResolvedValue({
+      data: null,
+      error: { message: "EVENT_AUTH_REQUIRED" },
+    });
+    const denied = await handleMemberEventParticipation(request());
+    expect(denied.status).toBe(401);
+    expect((await denied.json()).error.code).toBe("UNAUTHENTICATED");
+    expect(fixture.read).not.toHaveBeenCalled();
+  });
+  it("accepts the configured browser origin behind a reconstructed internal host and never trusts forwarding headers", async () => {
+    const internal = new Request(
+      "http://localhost:61441/api/v1/events/participation",
+      {
+        method: "POST",
+        headers: {
+          origin: "http://127.0.0.1:61441",
+          "Content-Type": "application/json",
+          "x-forwarded-host": "evil.invalid",
+        },
+        body: JSON.stringify({
+          eventId: id,
+          revisionId: id,
+          idempotencyKey: other,
+        }),
+      },
+    );
+    expect((await handleMemberEventParticipation(internal)).status).toBe(200);
+    const hostile = new Request(internal.url, {
+      method: "POST",
+      headers: {
+        origin: "https://evil.invalid",
+        "Content-Type": "application/json",
+        "x-forwarded-host": "127.0.0.1:61441",
+      },
+      body: JSON.stringify({
+        eventId: id,
+        revisionId: id,
+        idempotencyKey: other,
+      }),
+    });
+    expect((await handleMemberEventParticipation(hostile)).status).toBe(403);
+    expect(fixture.rpc).toHaveBeenCalledTimes(1);
   });
   it("denies stale/risk/idempotency conflicts and mismatched ownership readback", async () => {
     fixture.rpc.mockResolvedValue({

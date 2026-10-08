@@ -37,9 +37,19 @@ export const memberEventContentSchema = z.object({
     .refine((value) => safeNotificationDeepLink(value) !== null),
   reward_mode: z.literal("NONE"),
 });
-export function hasEventCommandOrigin(request: Request) {
+export function hasEventCommandOrigin(
+  request: Request,
+  configuredAppUrl: string = request.url,
+) {
   if (request.headers.get("sec-fetch-site") === "cross-site") return false;
-  return request.headers.get("origin") === new URL(request.url).origin;
+  try {
+    // Server callers provide the configured public URL. A reverse proxy's
+    // reconstructed request host and client-supplied forwarding headers do not
+    // establish a trusted browser origin.
+    return request.headers.get("origin") === new URL(configuredAppUrl).origin;
+  } catch {
+    return false;
+  }
 }
 
 export function canJoinMemberEvent(
