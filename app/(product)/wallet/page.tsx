@@ -1,4 +1,4 @@
-import { WalletReadView } from "@/components/product/wallet-read-view";
+import { WalletOverviewView } from "@/components/product/wallet-overview-view";
 import {
   buildKrwWalletProjection,
   classifyLedgerHistoryRead,
@@ -132,7 +132,7 @@ export default async function WalletPage({
           : "loaded"
       }
     >
-      <WalletReadView
+      <WalletOverviewView
         initialView={initialView}
         balanceState={balanceState}
         funding={funding}
