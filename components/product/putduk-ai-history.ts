@@ -23,7 +23,7 @@ export function restoreOwnAiMessages(
       row.clientMessageId === null &&
       !row.source
     ) {
-      previous.text += `\n${row.bodyText}`;
+      previous.text += row.bodyText;
       if (role === "user") question = previous.text;
       continue;
     }

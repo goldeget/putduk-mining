@@ -154,7 +154,7 @@ describe("own historical AI evidence", () => {
       {
         id: "a",
         authorRole: "ASSISTANT",
-        bodyText: "조회 실패.",
+        bodyText: "조회 실패.\n",
         position: 2,
         source: "tool",
         toolOutcome: "FAILED",
@@ -175,6 +175,37 @@ describe("own historical AI evidence", () => {
       failure: { code: "AI_TOOL_UNAVAILABLE" },
     });
   });
+
+  it.each([
+    ["문장 안의 ", "공백을 보존해요."],
+    ["첫 문단\n\n", "다음 문단"],
+    ["긴 ".repeat(4000), " 답변 끝까지 그대로 보여요."],
+    ["기호와 문자 ✨", "를 붙여요."],
+  ])(
+    "restores exact original chunk boundaries without adding layout text",
+    (first, second) => {
+      const restored = restoreOwnAiMessages(CONVERSATION, [
+        {
+          id: "long-answer",
+          authorRole: "ASSISTANT",
+          bodyText: first,
+          position: 2,
+          source: "provider",
+        },
+        {
+          id: "long-answer-continuation",
+          authorRole: "ASSISTANT",
+          bodyText: second,
+          position: 3,
+          clientMessageId: null,
+        },
+      ]);
+      expect(restored).toHaveLength(1);
+      expect(restored[0]?.text).toBe(first + second);
+      expect(restored[0]?.assistantMessageId).toBe("long-answer");
+      expect(restored[0]?.state).toBe("complete");
+    },
+  );
 
   it("keeps separately identified member turns distinct when an earlier answer was never saved", () => {
     const restored = restoreOwnAiMessages(CONVERSATION, [
