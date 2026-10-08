@@ -15,14 +15,22 @@ export type WorkerCycleSummary = {
   jobs: WorkerBatchSummary;
 };
 
+export type WorkerOutboxEnvelope = {
+  id: string;
+  event_type: string;
+  attempt_count: number;
+  aggregate_id?: string;
+  aggregate_type?: string;
+  schema_version?: number;
+  payload?: Record<string, unknown>;
+};
+
 type OutboxHandler = (
   client: SupabaseClient,
-  event: {
-    id: string;
-    event_type: string;
-    attempt_count: number;
-  },
+  event: WorkerOutboxEnvelope,
 ) => unknown;
+
+export const SUPPORTED_OUTBOX_HANDLERS: Readonly<Record<string, OutboxHandler>>;
 
 export type WorkerJobEnvelope = {
   id: string;

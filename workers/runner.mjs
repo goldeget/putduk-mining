@@ -12,8 +12,7 @@
  * 지원하지 않는 아웃박스와 PERMANENT 작업은 그 시도에서 DEAD_LETTER가 된다.
  * 재시도 지연은 상한 있는 지수 백오프에 지터를 더한 값이다.
  * 같은 재조정 작업의 재시도는 작업 id를 요청 id로 다시 쓴다.
- * Still missing:
- *   - member notification fanout commands
+ * Device push delivery uses its separately fenced command consumer.
  */
 
 import { createClient } from "@supabase/supabase-js";
@@ -65,11 +64,115 @@ function prepareFundingMiningTick(_client, job) {
 /**
  * Outbox event types with a registered command handler.
  * Internal safe-mode audit acknowledgement is committed by the existing
- * complete_outbox_event command. Other event types remain unsupported.
+ * complete_outbox_event command. Reward qualification stays inside the DB.
  */
 export const SUPPORTED_OUTBOX_HANDLERS = Object.freeze({
   "SAFE_MODE_CHANGED.v1": prepareSafeModeAuditDelivery,
+  "EVENT_PARTICIPATION_JOINED.v1": prepareMemberEventJoinDelivery,
+  "DEPOSIT_CONFIRMED.v1": prepareNonmoneyOriginalDelivery,
+  "WITHDRAWAL_COMPLETED.v1": prepareNonmoneyOriginalDelivery,
+  "TRIAL_REWARD_CONVERTED.v1": prepareNonmoneyOriginalDelivery,
 });
+
+function prepareNonmoneyOriginalDelivery(_client, event) {
+  const contracts = {
+    "DEPOSIT_CONFIRMED.v1": {
+      aggregate: "deposit_request",
+      fields: [
+        "user_id",
+        "currency",
+        "approved_amount_atomic",
+        "requested_amount_atomic",
+        "ledger_transaction_id",
+        "wallet_ledger_id",
+      ],
+      uuids: ["user_id", "ledger_transaction_id", "wallet_ledger_id"],
+      amounts: ["approved_amount_atomic", "requested_amount_atomic"],
+    },
+    "WITHDRAWAL_COMPLETED.v1": {
+      aggregate: "withdrawal_request",
+      fields: ["finalize_ledger_transaction_id", "amount_atomic"],
+      uuids: ["finalize_ledger_transaction_id"],
+      amounts: ["amount_atomic"],
+    },
+    "TRIAL_REWARD_CONVERTED.v1": {
+      aggregate: "trial_reward_conversion",
+      fields: [
+        "user_id",
+        "amount_atomic",
+        "currency",
+        "funding_required",
+        "ledger_transaction_id",
+      ],
+      uuids: ["user_id", "ledger_transaction_id"],
+      amounts: ["amount_atomic"],
+    },
+  };
+  const contract = contracts[event.event_type];
+  const payload = event.payload;
+  if (
+    !contract ||
+    event.schema_version !== 1 ||
+    event.aggregate_type !== contract.aggregate ||
+    !FUNDING_JOB_UUID.test(event.id ?? "") ||
+    !FUNDING_JOB_UUID.test(event.aggregate_id ?? "") ||
+    !payload ||
+    typeof payload !== "object" ||
+    Array.isArray(payload) ||
+    Object.keys(payload).length !== contract.fields.length ||
+    contract.fields.some((field) => !Object.hasOwn(payload, field)) ||
+    contract.uuids.some(
+      (field) => !FUNDING_JOB_UUID.test(payload[field] ?? ""),
+    ) ||
+    contract.amounts.some(
+      (field) =>
+        typeof payload[field] !== "string" ||
+        !/^[1-9][0-9]*$/.test(payload[field]),
+    ) ||
+    (contract.fields.includes("currency") && payload.currency !== "KRW") ||
+    (event.event_type === "TRIAL_REWARD_CONVERTED.v1" &&
+      payload.funding_required !== false)
+  ) {
+    throw new Error("NONMONEY_SOURCE_ENVELOPE_INVALID");
+  }
+  // A matching payload never proves qualification. Completion verifies the
+  // canonical money writer's original, owner, business clock and current policy.
+}
+
+function prepareMemberEventJoinDelivery(_client, event) {
+  const fields = [
+    "event_id",
+    "participant_id",
+    "user_id",
+    "content_revision_id",
+    "reward_mode",
+    "join_original_id",
+    "audit_id",
+    "digest",
+  ];
+  if (
+    event.event_type !== "EVENT_PARTICIPATION_JOINED.v1" ||
+    event.schema_version !== 1 ||
+    event.aggregate_type !== "event_participant" ||
+    !event.payload ||
+    Object.keys(event.payload).length !== fields.length ||
+    fields.some((field) => !Object.hasOwn(event.payload, field)) ||
+    fields
+      .filter((field) => !["digest", "reward_mode"].includes(field))
+      .some(
+        (field) =>
+          typeof event.payload[field] !== "string" ||
+          !FUNDING_JOB_UUID.test(event.payload[field]),
+      ) ||
+    event.payload.reward_mode !== "NONE" ||
+    typeof event.payload.digest !== "string" ||
+    !/^[a-f0-9]{64}$/.test(event.payload.digest)
+  ) {
+    throw new Error("EVENT_JOIN_ENVELOPE_INVALID");
+  }
+  // Existing completion RPC verifies the sealed DB original and writes one
+  // internal delivery receipt. Joining does not qualify or grant a reward.
+}
 
 function prepareSafeModeAuditDelivery(_client, event) {
   // This is only envelope preflight. The DB completion command verifies the
