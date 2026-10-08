@@ -4,6 +4,7 @@ import {
   appendOwnMemberTurn,
   createSupabaseMemberConversationPort,
 } from "@/lib/ai/member-conversation";
+import { splitStoredBody } from "@/domain/ai/member-transcript";
 
 const owner = "11111111-1111-4111-8111-111111111111";
 const clientMessage = "22222222-2222-4222-8222-222222222222";
@@ -19,6 +20,12 @@ const draft = {
 };
 
 describe("atomic durable member turns", () => {
+  it("preserves whitespace and Unicode at the original 8000-character fragment boundary", () => {
+    const body = "가".repeat(7999) + " \n😀" + "나".repeat(8000);
+    const parts = splitStoredBody(body);
+    expect(parts.join("")).toBe(body);
+    expect(parts.every((part) => Array.from(part).length <= 8000)).toBe(true);
+  });
   it("submits every fragment and its evidence in one canonical transaction without individual writes", async () => {
     const rpc = vi.fn(async (...args: [string, Record<string, unknown>]) => {
       void args;

@@ -1,4 +1,5 @@
-import { randomUUID } from "node:crypto";
+import { randomInt, randomUUID } from "node:crypto";
+import { mkdirSync, writeFileSync } from "node:fs";
 import { loadEnvFile } from "node:process";
 import { createClient } from "@supabase/supabase-js";
 import { expect, it, vi } from "vitest";
@@ -12,6 +13,7 @@ import {
 } from "@/lib/ai/member-conversation";
 import { readOwnAiMessages } from "@/lib/ai/member-conversation-read";
 import { readOwnAiQuota } from "@/lib/ai/member-usage";
+import { buildOwnedProviderHistory } from "@/lib/ai/provider-history";
 
 // Opt-in only: authorized fresh Local DB + NVIDIA trial. Never run via CI and
 // never enable paid keys. Ordinary unit runs do not read an environment file.
@@ -36,9 +38,27 @@ it.skipIf(process.env.PUTDUK_LOCAL_FREE_SMOKE !== "1")(
       email,
       password,
       email_confirm: true,
+      user_metadata: {
+        signup_source: "PUBLIC_V1",
+        login_id: `qa_${randomUUID().replaceAll("-", "").slice(0, 16)}`,
+        legal_name: "제공자검증",
+        date_of_birth: "1990-01-01",
+        phone_e164: `+8210${String(randomInt(100_000_000)).padStart(8, "0")}`,
+        recovery_email: email,
+        service_terms_version: "TERMS-KO-2026-09-27",
+        privacy_version: "PRIVACY-KO-2026-09-27",
+        marketing_version: "MARKETING-KO-2026-09-27",
+        service_terms_granted: true,
+        privacy_granted: true,
+        marketing_granted: false,
+      },
     });
-    if (created.error || !created.data.user)
-      throw new Error("LOCAL_FIXTURE_NOT_CREATED");
+    if (created.error || !created.data.user) {
+      const code = created.error?.code;
+      throw new Error(
+        `LOCAL_FIXTURE_NOT_CREATED_${created.error?.status ?? 0}_${code && /^[a-z_]+$/.test(code) ? code : "UNCLASSIFIED"}`,
+      );
+    }
     const userId = created.data.user.id;
     const member = createClient(url, publishable, {
       auth: { persistSession: false, autoRefreshToken: false },
@@ -159,23 +179,108 @@ it.skipIf(process.env.PUTDUK_LOCAL_FREE_SMOKE !== "1")(
       output_tokens: completed.outputTokens,
       model_key: completed.model,
     });
-    // No secret/body in test logs. Fixture rows remain durable QA evidence.
-    console.info(
-      JSON.stringify({
-        proof: "NVIDIA_LOCAL_DURABLE",
+    // No additional inference: deterministic API storage/restore evidence.
+    const port = createSupabaseMemberConversationPort(admin);
+    let sequenceConversation: string | undefined;
+    const sequenceProof: { turns: number; messages: number }[] = [];
+    for (let turn = 1; turn <= 20; turn++) {
+      const savedTurn = await appendOwnMemberTurn(port, {
         userId,
-        requestId: admission.request_id,
-        conversationId: saved.conversationId,
-        model: completed.model,
-        inputTokens: completed.inputTokens,
-        outputTokens: completed.outputTokens,
-        firstTokenMs,
-        firstTokenTimeoutMs: 15_000,
-        dispatchEvidence,
-        paidCalls: 0,
-      }),
-    );
+        clientMessageId: randomUUID(),
+        ...(sequenceConversation
+          ? { conversationId: sequenceConversation }
+          : {}),
+        question: `문맥 질문 ${turn}`,
+        answer: `문맥 답변 ${turn}`,
+        sourceKey: "guide:provider",
+        knowledgeVersion: "2026.09",
+      });
+      if (!savedTurn.ok) throw new Error("LOCAL_SEQUENCE_NOT_SAVED");
+      sequenceConversation = savedTurn.conversationId;
+      if ([5, 10, 20].includes(turn)) {
+        const restored = await readOwnAiMessages(
+          member,
+          userId,
+          sequenceConversation,
+        );
+        if (!restored.ok) throw new Error("LOCAL_SEQUENCE_NOT_RESTORED");
+        expect(restored.messages).toHaveLength(turn * 2);
+        expect(buildOwnedProviderHistory(restored.messages)).toHaveLength(
+          turn * 2,
+        );
+        sequenceProof.push({ turns: turn, messages: restored.messages.length });
+      }
+    }
+    const longAnswer = "a".repeat(7999) + " \n😀" + "b".repeat(12000);
+    const longClientMessageId = randomUUID();
+    const longDraft = {
+      userId,
+      clientMessageId: longClientMessageId,
+      question: "긴 원문 복원 검증",
+      answer: longAnswer,
+      sourceKey: "guide:provider",
+      knowledgeVersion: "2026.09",
+    };
+    const longSaved = await appendOwnMemberTurn(port, longDraft);
+    if (!longSaved.ok) throw new Error("LOCAL_LONG_TURN_NOT_SAVED");
+    const replayed = await appendOwnMemberTurn(port, longDraft);
+    expect(replayed).toEqual(longSaved);
     await member.auth.signOut();
+    const freshMember = createClient(url, publishable, {
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
+    const freshLogin = await freshMember.auth.signInWithPassword({
+      email,
+      password,
+    });
+    if (freshLogin.error) throw new Error("LOCAL_FRESH_SESSION_FAILED");
+    const restoredLong = await readOwnAiMessages(
+      freshMember,
+      userId,
+      longSaved.conversationId,
+    );
+    if (!restoredLong.ok) throw new Error("LOCAL_LONG_TURN_NOT_RESTORED");
+    expect(
+      restoredLong.messages
+        .filter((message) => message.authorRole === "ASSISTANT")
+        .map((message) => message.bodyText)
+        .join(""),
+    ).toBe(longAnswer);
+    expect(buildOwnedProviderHistory(restoredLong.messages)).toEqual([
+      { role: "user", content: longDraft.question },
+      { role: "assistant", content: longAnswer },
+    ]);
+    const freshSequence = await readOwnAiMessages(
+      freshMember,
+      userId,
+      sequenceConversation!,
+    );
+    if (!freshSequence.ok) throw new Error("LOCAL_FRESH_SEQUENCE_NOT_RESTORED");
+    expect(buildOwnedProviderHistory(freshSequence.messages)).toHaveLength(40);
+    await freshMember.auth.signOut();
+    // No secret/body in test logs. Fixture rows remain durable QA evidence.
+    const proof = {
+      proof: "NVIDIA_LOCAL_DURABLE",
+      userId,
+      requestId: admission.request_id,
+      conversationId: saved.conversationId,
+      model: completed.model,
+      inputTokens: completed.inputTokens,
+      outputTokens: completed.outputTokens,
+      firstTokenMs,
+      firstTokenTimeoutMs: 15_000,
+      dispatchEvidence,
+      sequenceProof,
+      longRestoredCharacters: Array.from(longAnswer).length,
+      freshSessionRestore: true,
+      paidCalls: 0,
+    };
+    mkdirSync("test-results/provider-smoke", { recursive: true });
+    writeFileSync(
+      `test-results/provider-smoke/nvidia-${admission.request_id}.json`,
+      JSON.stringify(proof, null, 2) + "\n",
+    );
+    console.info(JSON.stringify(proof));
   },
   90_000,
 );

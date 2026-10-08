@@ -108,10 +108,7 @@ export function splitStoredBody(redactedText: string) {
   const characters = Array.from(redactedText.trim() || "내용이 가려졌어요.");
   const parts: string[] = [];
   for (let index = 0; index < characters.length; index += STORED_BODY_MAX) {
-    const part = characters
-      .slice(index, index + STORED_BODY_MAX)
-      .join("")
-      .trim();
+    const part = characters.slice(index, index + STORED_BODY_MAX).join("");
     if (part) parts.push(part);
   }
   return parts.length > 0 ? parts : ["내용이 가려졌어요."];

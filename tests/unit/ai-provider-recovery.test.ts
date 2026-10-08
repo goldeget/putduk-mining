@@ -586,7 +586,7 @@ describe("actual provider dispatch, privacy and failover", () => {
       {
         id: "assistant1",
         authorRole: "ASSISTANT",
-        bodyText: "첫 문단",
+        bodyText: "첫 문단\n",
         position: 2,
         source: "provider",
       },
