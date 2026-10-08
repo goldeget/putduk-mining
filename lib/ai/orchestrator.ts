@@ -38,6 +38,9 @@ export function planAiTurn({
 }
 
 const TOOL_FAILURE_COPY: Record<AiToolName, string> = {
+  "ai.usage": "AI 이용 횟수를 확인하지 못했어요. 잠시 후 다시 확인해 주세요.",
+  "ai.cancelled_history":
+    "취소된 AI 요청 기록을 확인하지 못했어요. 잠시 후 다시 확인해 주세요.",
   "deposit.latest_status":
     "입금 상태를 안전하게 확인하지 못했습니다. 잠시 후 입금 화면에서 다시 확인해 주세요.",
   "event.progress":

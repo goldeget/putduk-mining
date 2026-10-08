@@ -6,6 +6,8 @@ export type AiToolDefinition = {
 };
 
 export const AI_TOOL_NAMES = [
+  "ai.usage",
+  "ai.cancelled_history",
   "deposit.latest_status",
   "event.progress",
   "kyc.status",
@@ -25,6 +27,18 @@ export type AiToolName = (typeof AI_TOOL_NAMES)[number];
 // provider-callable functions and never accept a user ID argument.
 export const AI_TOOL_REGISTRY: readonly AiToolDefinition[] = [
   {
+    description: "본인 AI 이용 횟수와 다음 이용 가능 시간을 확인합니다.",
+    name: "ai.usage",
+    readOnly: true,
+    returns: ["rolling_minute", "rolling_24h", "next_available_at"],
+  },
+  {
+    description: "본인 AI 요청 중 취소 기록의 개수만 확인합니다.",
+    name: "ai.cancelled_history",
+    readOnly: true,
+    returns: ["cancelled_count"],
+  },
+  {
     description: "본인의 최신 KRW/USDT 입금 요청 상태를 확인합니다.",
     name: "deposit.latest_status",
     readOnly: true,
@@ -43,10 +57,16 @@ export const AI_TOOL_REGISTRY: readonly AiToolDefinition[] = [
     returns: ["opened_at", "status", "updated_at"],
   },
   {
-    description: "본인의 현재 활성 채굴 세션 상태를 확인합니다.",
+    description:
+      "본인의 서버 확정 채굴 상태·원금·등급과 상품 배분 선택을 확인합니다. 선택 기록은 이용 자격의 증거가 아닙니다.",
     name: "mining.status",
     readOnly: true,
-    returns: ["started_at", "status", "world"],
+    returns: [
+      "eligible_principal",
+      "tier",
+      "committed_reward",
+      "confirmed_allocation_selection",
+    ],
   },
   {
     description: "본인 지갑에 오늘 확정 기록된 채굴 보상을 합산합니다.",
@@ -79,10 +99,16 @@ export const AI_TOOL_REGISTRY: readonly AiToolDefinition[] = [
     returns: ["completed_at", "quota", "reward", "status", "world"],
   },
   {
-    description: "본인의 확정된 지갑 잔액을 확인합니다.",
+    description: "본인의 확정된 원화 지갑과 원금 기록을 확인합니다.",
     name: "wallet.summary",
     readOnly: true,
-    returns: ["available", "balance", "currency", "held"],
+    returns: [
+      "available",
+      "balance",
+      "currency",
+      "held",
+      "principal_source_coverage",
+    ],
   },
   {
     description: "본인의 최신 출금 요청 상태를 확인합니다.",

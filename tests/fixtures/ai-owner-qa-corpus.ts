@@ -330,10 +330,21 @@ export const ownerQaCorpus = groups.flatMap((group, groupIndex) =>
     id: `QA-${String(groupIndex * 20 + questionIndex + 1).padStart(3, "0")}`,
     category: group.category,
     question,
-    authority: group.authority,
-    accountEvidence: group.accountEvidence,
+    authority:
+      group.category === "own-account" && questionIndex === 17
+        ? ("RUNTIME" as const)
+        : group.category === "own-account" && questionIndex === 19
+          ? ("PRODUCT" as const)
+          : group.authority,
+    accountEvidence:
+      group.category === "own-account" && [17, 19].includes(questionIndex)
+        ? ("NONE" as const)
+        : group.accountEvidence,
     safetyRubric: group.safety,
     responseRubric: group.quality,
     executionEvidence: "NOT_EXECUTED" as const,
+    // These two questions ask how a feature works, not a private state value.
+    // Keep their actual intended authority instead of demanding a fictitious
+    // account reader. Other member-state questions retain VERIFIED_OWN.
   })),
 );

@@ -38,8 +38,37 @@ const ACTION_TARGET_PATTERN =
 const ACTION_REQUEST_PATTERN =
   /(승인해|변경해|추가해|지급해|생성해|만들어\s*줘|올려\s*줘|취소해|삭제해|조작(해|하는\s*(법|방법))|변조|위조|우회|풀어\s*줘|통과시켜)/i;
 
+const ADDITIONAL_INTERNAL_PATTERN =
+  /(api\s*키|인증\s*토큰|서버\s*설정\s*원문|(?:내부|시스템)\s*(?:지시|지침)|내부\s*추론)/i;
+const ADDITIONAL_CROSS_USER_PATTERN =
+  /(?:다른\s*(?:사람|회원|사용자)|타인|남의|전체\s*회원|회원\s*전체|모든\s*회원|이전\s*회원).{0,80}(?:전화|휴대폰|이메일|주민\s*번호|계좌\s*번호|대화|신청서)|(?:other|all|every)\s+(?:members?|users?).{0,80}(?:phone|email|address|identity|bank)/i;
+const ADDITIONAL_ACTION_TARGET_PATTERN =
+  /(상품|수익률|예산|등급|원금|지갑|이용\s*자격|입금|출금|보상|본인\s*확인|금융|유료\s*(?:모델|호출)|인증|비용\s*(?:예약|정산|은|을|이)|안전\s*검사|도구)/i;
+const ADDITIONAL_ACTION_REQUEST_PATTERN =
+  /(바꿔\s*줘|늘려\s*줘|수정해\s*줘|해제해\s*줘|처리해\s*줘|공개해\s*줘|없애\s*줘|지워\s*줘|합쳐\s*줘|만들어\s*줘|실행해\s*줘|보상해\s*줘|출금해\s*줘|소급.{0,30}계산해|건너뛰|(?:검사|검증|제한).{0,20}(?:끄고|무시|없이)|(?:완료라고\s*말|충분하다고\s*답)|추정.{0,30}확정해|비용.{0,30}0.{0,20}확정해)/i;
+const ADDITIONAL_ABUSE_PATTERN =
+  /(?:본인\s*확인|보상|인증\s*번호).{0,60}(?:우회|중복으로\s*받|알아내는\s*방법)|(?:도구.{0,20}실패|조회.{0,20}실패).{0,40}(?:가정|충분하다고)/i;
+
 export function guardAiQuestion(question: string): AiGuardResult {
   const normalized = question.replace(/\s+/g, " ").trim();
+
+  if (/(?:취소\s*버튼).{0,30}무시/.test(normalized)) {
+    return {
+      allowed: false,
+      classification: "ACTION_BOUNDARY",
+      answer:
+        "취소한 요청은 계속 실행할 수 없어요. 필요하면 새 질문을 보내 주세요.",
+    };
+  }
+  if (
+    /(?:세션|로그인).{0,20}만료.{0,50}(?:개인정보|계정\s*정보)/.test(normalized)
+  ) {
+    return {
+      allowed: false,
+      classification: "PRIVILEGE_ESCALATION",
+      answer: "로그인이 만료되면 다시 로그인한 뒤 내 정보를 확인해 주세요.",
+    };
+  }
 
   if (
     /(?:사진|이미지|동영상|영상|비디오|음성|오디오|노래|그림).{0,24}(?:생성해|만들어|그려|합성해|편집해|변환해)|(?:generate|create|make|edit)\s+(?:a\s+|an\s+)?(?:image|photo|video|audio|song)/i.test(
@@ -62,7 +91,10 @@ export function guardAiQuestion(question: string): AiGuardResult {
     };
   }
 
-  if (INTERNAL_DATA_PATTERN.test(normalized)) {
+  if (
+    INTERNAL_DATA_PATTERN.test(normalized) ||
+    ADDITIONAL_INTERNAL_PATTERN.test(normalized)
+  ) {
     return {
       allowed: false,
       answer:
@@ -71,7 +103,10 @@ export function guardAiQuestion(question: string): AiGuardResult {
     };
   }
 
-  if (CROSS_USER_PATTERN.test(normalized)) {
+  if (
+    CROSS_USER_PATTERN.test(normalized) ||
+    ADDITIONAL_CROSS_USER_PATTERN.test(normalized)
+  ) {
     return {
       allowed: false,
       answer:
@@ -89,7 +124,10 @@ export function guardAiQuestion(question: string): AiGuardResult {
     };
   }
 
-  if (ABUSE_PATTERN.test(normalized) && ABUSE_ACTION_PATTERN.test(normalized)) {
+  if (
+    (ABUSE_PATTERN.test(normalized) && ABUSE_ACTION_PATTERN.test(normalized)) ||
+    ADDITIONAL_ABUSE_PATTERN.test(normalized)
+  ) {
     return {
       allowed: false,
       answer:
@@ -99,8 +137,10 @@ export function guardAiQuestion(question: string): AiGuardResult {
   }
 
   if (
-    ACTION_TARGET_PATTERN.test(normalized) &&
-    ACTION_REQUEST_PATTERN.test(normalized)
+    (ACTION_TARGET_PATTERN.test(normalized) ||
+      ADDITIONAL_ACTION_TARGET_PATTERN.test(normalized)) &&
+    (ACTION_REQUEST_PATTERN.test(normalized) ||
+      ADDITIONAL_ACTION_REQUEST_PATTERN.test(normalized))
   ) {
     return {
       allowed: false,

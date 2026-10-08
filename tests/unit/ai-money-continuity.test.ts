@@ -52,7 +52,9 @@ describe("PUTDUK AI unavailable-data fail closed", () => {
     for (const tool of AI_TOOL_NAMES) {
       const copy = getAiToolFailureCopy(tool);
       expect(copy).not.toMatch(/\d/);
-      expect(copy).toMatch(/확인하지 못했습니다|안내하지 않습니다/);
+      expect(copy).toMatch(
+        /확인하지 못했습니다|확인하지 못했어요|안내하지 않습니다/,
+      );
     }
   });
 

@@ -9,6 +9,15 @@ import {
   type DisplayCurrency,
 } from "@/domain/wallet/format-amount";
 import { formatProductDateTime } from "@/lib/i18n/date-time";
+import type { VerifiedIdentity } from "@/lib/auth/session";
+import {
+  assertOwnedToolIdentity,
+  ownedMiningFacts,
+  ownedPrincipalFacts,
+  ownedPrincipalCancellationFacts,
+  ownedAiQuotaFacts,
+  ownedCancelledAiFacts,
+} from "./owned-state-tools";
 
 import { getAiToolFailureCopy } from "./orchestrator";
 import type { AiToolName } from "./tools";
@@ -38,6 +47,7 @@ export type AiToolResult =
 type ToolOptions = {
   now?: Date;
   screenContext?: AiScreenContext;
+  verifiedIdentity?: VerifiedIdentity;
 };
 
 const STATUS_LABELS: Readonly<Record<string, string>> = {
@@ -94,29 +104,38 @@ function kstDayWindow(now: Date) {
   };
 }
 
-async function walletSummary(supabase: SupabaseClient, now: Date) {
+async function walletSummary(
+  supabase: SupabaseClient,
+  now: Date,
+  ownerId?: string,
+) {
   const rowSchema = z.object({
     available_balance_atomic: atomicSchema,
     balance_atomic: atomicSchema,
-    currency: currencySchema,
+    currency: z.literal("KRW"),
   });
-  const { data, error } = await supabase
+  let query = supabase
     .from("wallet_balance_snapshots")
     .select("currency, balance_atomic, available_balance_atomic")
+    .eq("currency", "KRW")
     .order("currency");
+  if (ownerId) query = query.eq("user_id", ownerId);
+  const { data, error } = await query;
   if (error) throw new Error("WALLET_QUERY_FAILED");
   const rows = rowSchema.array().parse(data ?? []);
   const answer = rows.length
-    ? `현재 본인 지갑은 ${rows
+    ? `${rows
         .map((row) => {
           const heldAtomic =
             BigInt(row.balance_atomic) - BigInt(row.available_balance_atomic);
           if (heldAtomic < 0n) {
             throw new Error("INVALID_WALLET_PROJECTION");
           }
-          return `${row.currency} 총 ${formatAtomicAmount(row.balance_atomic, row.currency)}, 사용 가능 ${formatAtomicAmount(row.available_balance_atomic, row.currency)}, 예약·보류 ${formatAtomicAmount(heldAtomic.toString(), row.currency)}`;
+          const won = (atomic: string) =>
+            formatAtomicAmount(atomic, "KRW").replace(/\sKRW$/, "원");
+          return `현재 원화 지갑 잔액은 ${won(row.balance_atomic)}이에요. 사용할 수 있는 금액은 ${won(row.available_balance_atomic)}, 예약·보류된 금액은 ${won(heldAtomic.toString())}이에요.`;
         })
-        .join(" / ")}입니다. 확정된 잔액만 표시했습니다.`
+        .join("\n")}`
     : "아직 확인할 수 있는 본인 지갑이 없습니다.";
   return success("wallet.summary", answer, now, [
     "available",
@@ -476,17 +495,14 @@ async function kycStatus(supabase: SupabaseClient, now: Date) {
     .maybeSingle();
   if (error) throw new Error("KYC_QUERY_FAILED");
   if (!data) {
-    return success(
-      "kyc.status",
-      "확인 가능한 본인 인증 사례가 없습니다.",
-      now,
-      ["status"],
-    );
+    return success("kyc.status", "확인 가능한 본인 확인 기록이 없어요.", now, [
+      "status",
+    ]);
   }
   const row = rowSchema.parse(data);
   return success(
     "kyc.status",
-    `본인 인증은 현재 ${statusLabel(row.status)} 상태입니다. 마지막 갱신 시각은 ${formatProductDateTime(row.updated_at)}입니다. 내부 위험 점수나 심사 기준은 표시하지 않습니다.`,
+    `본인 확인은 현재 ${statusLabel(row.status)} 상태예요. 마지막 확인 시각은 ${formatProductDateTime(row.updated_at)}이에요.`,
     now,
     ["opened_at", "status", "updated_at"],
   );
@@ -525,7 +541,30 @@ export async function executeAiTool(
   }
   const now = options.now ?? new Date();
   try {
+    const identity = options.verifiedIdentity;
+    if (identity) {
+      if (identity.supabase !== supabase)
+        throw Error("AI_TOOL_OWNER_CLIENT_MISMATCH");
+      await assertOwnedToolIdentity(identity);
+    }
     switch (tool) {
+      case "ai.usage":
+      case "ai.cancelled_history": {
+        if (!identity) throw Error("AI_TOOL_OWNER_REQUIRED");
+        const answer =
+          tool === "ai.usage"
+            ? await ownedAiQuotaFacts(identity, now)
+            : await ownedCancelledAiFacts(identity);
+        await assertOwnedToolIdentity(identity);
+        return success(
+          tool,
+          answer,
+          now,
+          tool === "ai.usage"
+            ? ["rolling_minute", "rolling_24h", "next_available_at"]
+            : ["cancelled_count"],
+        );
+      }
       case "deposit.latest_status":
         return await latestDeposit(supabase, now, options.screenContext);
       case "event.progress":
@@ -533,6 +572,16 @@ export async function executeAiTool(
       case "kyc.status":
         return await kycStatus(supabase, now);
       case "mining.status":
+        if (identity) {
+          const answer = await ownedMiningFacts(identity);
+          await assertOwnedToolIdentity(identity);
+          return success(tool, answer, now, [
+            "eligible_principal",
+            "tier",
+            "committed_reward",
+            "confirmed_allocation_selection",
+          ]);
+        }
         return await miningStatus(supabase, now);
       case "mining.today_reward":
         return await todayMiningReward(supabase, now);
@@ -543,6 +592,24 @@ export async function executeAiTool(
       case "trial.status":
         return await trialStatus(supabase, now);
       case "wallet.summary":
+        if (identity) {
+          const base = await walletSummary(supabase, now, identity.userId);
+          if (!base.ok) return base;
+          const [principal, cancelled] = await Promise.all([
+            ownedPrincipalFacts(identity),
+            ownedPrincipalCancellationFacts(identity),
+          ]);
+          await assertOwnedToolIdentity(identity);
+          return {
+            ...base,
+            answer: `${base.answer}\n${principal}\n${cancelled}`,
+            fields: [
+              ...base.fields,
+              "principal_source_coverage",
+              "verified_principal_cancellation_count",
+            ],
+          };
+        }
         return await walletSummary(supabase, now);
       case "withdrawal.latest_status":
         return await latestWithdrawal(supabase, now, options.screenContext);

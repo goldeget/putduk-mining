@@ -447,6 +447,7 @@ export async function POST(request: Request) {
   if (aiRoute.kind === "tool") {
     const toolStarted = Date.now();
     const toolResult = await executeAiTool(identity.supabase, aiRoute.tool, {
+      verifiedIdentity: identity,
       ...(parsed.data.screenContext
         ? { screenContext: parsed.data.screenContext }
         : {}),
