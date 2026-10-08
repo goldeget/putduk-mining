@@ -29,7 +29,7 @@ export function ProductShell({
   const pathname = usePathname();
   const isHome = pathname === "/home";
   const isMining = pathname === "/mining";
-  const isWallet = pathname === "/wallet";
+  const isWallet = pathname === "/wallet" || pathname.startsWith("/wallet/");
   const isMenu = pathname === "/menu";
   const chromeView =
     pathname === "/products"

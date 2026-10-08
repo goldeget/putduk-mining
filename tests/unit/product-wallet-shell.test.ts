@@ -179,25 +179,33 @@ describe("root Wallet chrome preserves real destinations and native controls", (
   });
 
   it.each(["/wallet/deposit", "/wallet/withdraw", "/wallet/deposit/receipt"])(
-    "retains the generic child-route header, navigation and dock for %s",
+    "keeps the wallet tools, navigation and dock throughout the wallet family for %s",
     async (pathname) => {
       await render(pathname);
-      expect(host.querySelector("[data-wallet-header]")).toBeNull();
-      expect(host.querySelector('nav[aria-label="지갑 전체 메뉴"]')).toBeNull();
+      expect(host.querySelectorAll("[data-wallet-header]")).toHaveLength(2);
+      expect(
+        host.querySelector('nav[aria-label="지갑 전체 메뉴"]'),
+      ).not.toBeNull();
       expect(
         host.querySelector(".product-workspace > .product-header"),
-      ).not.toBeNull();
-      expect(
-        host.querySelector(".product-sidebar > .brand-lockup"),
-      ).not.toBeNull();
+      ).toBeNull();
+      expect(host.querySelector(".product-sidebar > .brand-lockup")).toBeNull();
       expect(host.querySelector("[data-ai-dock]")).not.toBeNull();
       expect(
         host
           .querySelector(".product-shell")
           ?.getAttribute("data-wallet-page-active"),
-      ).toBe("false");
+      ).toBe("true");
     },
   );
+
+  it("does not apply financial chrome to a similarly prefixed non-wallet route", async () => {
+    await render("/wallet-preview");
+    expect(host.querySelector("[data-wallet-header]")).toBeNull();
+    expect(
+      host.querySelector(".product-workspace > .product-header"),
+    ).not.toBeNull();
+  });
 
   it("marks only Wallet active among the five native bottom destinations", async () => {
     await act(async () => root.render(createElement(ProductNavigation)));

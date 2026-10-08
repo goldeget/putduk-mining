@@ -10,7 +10,8 @@ import {
   type WithdrawalDestinationMethod,
 } from "@/components/product/destination-type";
 import styles from "@/components/product/product-experience.module.css";
-import { PageHeading } from "@/components/product/page-heading";
+import { WalletScene } from "@/components/product/wallet-scene";
+import withdrawalStyles from "@/components/product/withdrawal-page.module.css";
 import {
   ProductStatusPill,
   type ProductStatusTone,
@@ -279,6 +280,7 @@ export default async function WithdrawalPage() {
 
   return (
     <div
+      className={withdrawalStyles.page}
       data-ui-ready="/wallet/withdraw"
       data-ui-state={
         accountsError ||
@@ -290,101 +292,50 @@ export default async function WithdrawalPage() {
           : "loaded"
       }
     >
-      <Link className={styles.pageBack} href="/wallet">
-        ← 내 자산으로
-      </Link>
-      <PageHeading
-        eyebrow="출금"
-        title="출금하기"
-        lead="정산된 KRW 잔액만 출금할 수 있어요. 은행 계좌와 USDT 주소를 지원합니다."
-      />
+      <header className={withdrawalStyles.heading}>
+        <Link className={withdrawalStyles.back} href="/wallet">
+          <span aria-hidden="true">←</span> 내 자산
+        </Link>
+        <h1>출금하기</h1>
+        <p>원화 잔액을 은행 계좌 또는 USDT 주소로 받을 수 있어요.</p>
+      </header>
 
-      <Surface as="section" className={styles.balanceStrip} tone="raised">
-        <div>
-          <small>사용 가능</small>
+      <section className={withdrawalStyles.hero} aria-label="출금 잔액">
+        <WalletScene className={withdrawalStyles.scene} priority />
+        <div className={withdrawalStyles.balance}>
+          <span>출금 가능 금액</span>
           <strong>
             {availableAtomic === null
               ? "확인할 수 없음"
-              : formatAtomicAmount(availableAtomic, "KRW")}
+              : `${new Intl.NumberFormat("ko-KR").format(BigInt(availableAtomic))}원`}
           </strong>
-        </div>
-        <div>
-          <small>출금 보류</small>
-          <strong>
-            {heldAtomic === null
-              ? "확인할 수 없음"
-              : formatAtomicAmount(heldAtomic, "KRW")}
-          </strong>
-        </div>
-      </Surface>
-
-      <Surface as="section" className={styles.welcomePanel}>
-        <header className={styles.welcomePanelHeader}>
-          <PutdukIcon name="shield" size={24} />
-          <span>
-            <h2>입금 없이도 가능한 첫 출금</h2>
-            <p>
-              환영 보상은 최대 5,000원까지 출금할 수 있어요. 출금 전 본인 확인이
-              필요해요.
-            </p>
-          </span>
-        </header>
-
-        <dl className={styles.welcomeFacts}>
-          <div>
-            <dt>환영 보상</dt>
-            <dd>
-              {conversionError
-                ? "상태 확인 불가"
-                : welcomeConverted
-                  ? "KRW 전환 완료"
-                  : "자격 확인 전"}
-            </dd>
-          </div>
-          <div>
-            <dt>사전 입금</dt>
-            <dd>필요 없음</dd>
-          </div>
-          <div>
-            <dt>한도</dt>
-            <dd>최대 5,000원</dd>
-          </div>
-        </dl>
-
-        {conversionError ? (
-          <p
-            className={`${styles.feedback} ${styles.feedbackError}`}
-            role="status"
-          >
-            환영 보상 상태를 확인하지 못했어요. 잠시 후 다시 시도해 주세요.
+          <p>
+            출금 보류{" "}
+            <b>
+              {heldAtomic === null
+                ? "확인할 수 없음"
+                : `${new Intl.NumberFormat("ko-KR").format(BigInt(heldAtomic))}원`}
+            </b>
           </p>
-        ) : welcomeConverted ? (
-          <>
-            <strong className={styles.summaryAmount}>
-              {formatAtomicAmount(
-                String(conversion.converted_amount_atomic),
-                "KRW",
-              )}
-            </strong>
-            <WelcomeWithdrawalAction
-              conversionId={conversion.id}
-              destinations={welcomeOptions}
-              requested={welcomeRequested}
-              {...(welcomeDisabledReason
-                ? { disabledReason: welcomeDisabledReason }
-                : {})}
-            />
-          </>
-        ) : (
-          <Link className={styles.textLink} href="/start">
-            PUTDUK START 보상 상태 확인
-            <PutdukIcon name="arrow-right" size={17} />
-          </Link>
-        )}
-      </Surface>
+          <nav className={withdrawalStyles.actions} aria-label="출금 메뉴">
+            <a className="button button--primary" href="#withdrawal-request">
+              출금 요청
+            </a>
+            <a className="button button--secondary" href="#withdrawal-history">
+              내역 보기
+            </a>
+          </nav>
+        </div>
+      </section>
 
-      <div className={styles.fundingWorkspace}>
-        <Surface as="section" className={styles.fundingPanel} tone="raised">
+      <div className={withdrawalStyles.workspace}>
+        <Surface
+          as="section"
+          id="withdrawal-request"
+          className={withdrawalStyles.formPanel}
+          tone="raised"
+        >
+          <h2>금액과 받을 방법</h2>
           {accountsError || policiesError ? (
             <StatePanel
               tone="error"
@@ -445,29 +396,88 @@ export default async function WithdrawalPage() {
           )}
         </Surface>
 
-        <Surface as="aside" className={styles.summaryPanel}>
-          <p className="eyebrow">출금 안내</p>
-          <h2>요청 후 처리 순서</h2>
-          <p>접수된 금액은 보류되며, 완료 또는 취소 결과가 반영됩니다.</p>
-          <ol className={styles.flowList}>
-            <li>
-              <span>01</span>
-              금액·방법 확인
-            </li>
-            <li>
-              <span>02</span>
-              요청 접수 및 보류
-            </li>
-            <li>
-              <span>03</span>
-              송금 처리
-            </li>
-            <li>
-              <span>04</span>
-              완료 확인
-            </li>
-          </ol>
-        </Surface>
+        <aside className={withdrawalStyles.aside}>
+          <details
+            className={withdrawalStyles.welcome}
+            open={welcomeConverted && !welcomeRequested}
+          >
+            <summary>
+              <PutdukIcon name="shield" size={20} /> 입금 없이 첫 출금
+            </summary>
+            <div className={withdrawalStyles.welcomeBody}>
+              <p>
+                환영 보상은 최대 5,000원까지 출금할 수 있어요. 출금 전 본인
+                확인이 필요해요.
+              </p>
+
+              <dl className={withdrawalStyles.welcomeFacts}>
+                <div>
+                  <dt>환영 보상</dt>
+                  <dd>
+                    {conversionError
+                      ? "상태 확인 불가"
+                      : welcomeConverted
+                        ? "KRW 전환 완료"
+                        : "자격 확인 전"}
+                  </dd>
+                </div>
+                <div>
+                  <dt>사전 입금</dt>
+                  <dd>필요 없음</dd>
+                </div>
+                <div>
+                  <dt>한도</dt>
+                  <dd>최대 5,000원</dd>
+                </div>
+              </dl>
+
+              {conversionError ? (
+                <p
+                  className={`${styles.feedback} ${styles.feedbackError}`}
+                  role="status"
+                >
+                  환영 보상 상태를 확인하지 못했어요. 잠시 후 다시 시도해
+                  주세요.
+                </p>
+              ) : welcomeConverted ? (
+                <>
+                  <strong className={styles.summaryAmount}>
+                    {formatAtomicAmount(
+                      String(conversion.converted_amount_atomic),
+                      "KRW",
+                    )}
+                  </strong>
+                  <WelcomeWithdrawalAction
+                    conversionId={conversion.id}
+                    destinations={welcomeOptions}
+                    requested={welcomeRequested}
+                    {...(welcomeDisabledReason
+                      ? { disabledReason: welcomeDisabledReason }
+                      : {})}
+                  />
+                </>
+              ) : (
+                <Link className={styles.textLink} href="/start">
+                  PUTDUK START 보상 상태 확인
+                  <PutdukIcon name="arrow-right" size={17} />
+                </Link>
+              )}
+            </div>
+          </details>
+
+          <section
+            className={withdrawalStyles.guide}
+            aria-labelledby="withdrawal-guide"
+          >
+            <h2 id="withdrawal-guide">요청 후에는</h2>
+            <ol>
+              <li>금액과 받을 방법을 확인해요.</li>
+              <li>접수한 금액은 처리 중 보류돼요.</li>
+              <li>송금이 끝나면 내역에 표시돼요.</li>
+            </ol>
+            <p>취소가 완료되면 보류 금액을 다시 사용할 수 있어요.</p>
+          </section>
+        </aside>
       </div>
 
       <div className={principalStyles.workspace}>
