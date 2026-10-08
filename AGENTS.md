@@ -1,5 +1,22 @@
 # PUTDUK MINING — ABSOLUTE PROJECT BOUNDARY
 
+## User-authorized isolated Local recovery — 2026-10-09
+
+The user's current Cloud-original recovery master command authorizes local implementation, tests and local commits for this exact project in these fresh isolated checkouts:
+- `C:/Users/PC/.codex/worktrees/putduk-local-recovery-integration/putduk-mining`
+- `C:/Users/PC/.codex/worktrees/putduk-local-recovery-provider/putduk-mining`
+- `C:/Users/PC/.codex/worktrees/putduk-local-recovery-finance-db/putduk-mining`
+- `C:/Users/PC/.codex/worktrees/putduk-local-recovery-admin-content-pwa/putduk-mining`
+
+The primary `C:/Users/PC/Desktop/putduk-mining` remains protected: do not edit, overwrite, delete, reset or clean its source or user changes. Do not alter existing worktrees or stash. The coordinator verified source backup and full Git backup under `D:/PUTDUK-MINING-QA/local-redevelopment-20261009-033553` before implementation.
+
+The exact project's user-authorized Cloud history audit at `D:/PUTDUK-MINING-QA/cloud-history-audit-20261009-031452`, and Cloud thread `01a110f7-9d9d-76ac-8aae-e59be20c10b9`, may be used as recovery evidence. Preserve direct user instructions, later corrections and source/patch provenance; assistant suggestions are not user approval. Unknown or truncated evidence remains UNKNOWN. This exception is limited to the same project and supersedes the prior local-discovery/source-reference prohibitions only for this user's recovery task.
+
+GitHub push, PR, remote merge, deployment, remote Supabase/Cloudflare/DNS changes, real money/rewards and paid AI calls remain forbidden without separate explicit approval. A key or configuration flag does not authorize a paid call. Create no new Cloud workspace.
+
+Each lane owns explicitly assigned files. All Supabase schema changes have one finance/DB owner; the coordinator integrates reviewed local commits. Run fresh project-scoped local infrastructure only, and do not inspect existing Docker resources. Never claim source hash equality, functional verification or PRODUCT COMPLETE without its corresponding evidence.
+
+
 This repository is a greenfield project. The following scope lock is an absolute rule for every agent, tool, script, and implementation task.
 
 ## Authorized targets only
