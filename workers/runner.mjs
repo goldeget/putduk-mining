@@ -146,6 +146,7 @@ export const SUPPORTED_OUTBOX_HANDLERS = Object.freeze({
   "LIVEOPS_CONTENT_CHANGED.v1": prepareLiveopsPublicationDelivery,
   "EVENT_PARTICIPATION_JOINED.v1": prepareMemberEventJoinDelivery,
   "DEPOSIT_CONFIRMED.v1": prepareNonmoneyOriginalDelivery,
+  "USDT_MANUAL_DEPOSIT_CONFIRMED.v1": prepareNonmoneyOriginalDelivery,
   "WITHDRAWAL_COMPLETED.v1": prepareNonmoneyOriginalDelivery,
   "TRIAL_REWARD_CONVERTED.v1": prepareNonmoneyOriginalDelivery,
   "MINING_STARTED.v1": prepareNonmoneyOriginalDelivery,
@@ -184,6 +185,12 @@ function prepareNonmoneyOriginalDelivery(_client, event) {
       ],
       uuids: ["user_id", "original_id", "earned_receipt_id", "settlement_id"],
       amounts: [],
+    },
+    "USDT_MANUAL_DEPOSIT_CONFIRMED.v1": {
+      aggregate: "usdt_manual_deposit",
+      fields: ["user_id", "credited_krw", "ledger_transaction_id"],
+      uuids: ["user_id", "ledger_transaction_id"],
+      amounts: ["credited_krw"],
     },
     "DEPOSIT_CONFIRMED.v1": {
       aggregate: "deposit_request",

@@ -258,6 +258,13 @@ select lives_ok($proof$set constraints all immediate$proof$,'trial source and wo
 reset role;
 select is((select count(*)from public.member_event_awards where user_id=(select user_id from test_context)),0::bigint,'trial original alone never creates an award without approved rule and join');
 select is((select count(*)from public.outbox_events where id in(select outbox_id from local_trial_source)and status='PROCESSED'),1::bigint,'terminal source closes through the actual worker command');
+select is((select count(*)from app_private.domain_notification_originals where source_event_id in(select outbox_id from local_trial_source)),1::bigint,'actual sole-writer sources create one ordinary notice per distinct original');
+select is((select count(*)from public.notifications where source_event_id in(select outbox_id from local_trial_source)),1::bigint,'ordinary milestone notices reuse actual original owner only');
+select is((select count(*)from public.notifications where source_event_id in(select outbox_id from local_trial_source)and user_id<>(select user_id from test_context)),0::bigint,'milestone notice cannot target a different member');
+select is((select count(*)from public.member_event_awards where user_id=(select user_id from test_context)),0::bigint,'ordinary milestone notice does not invent rewards');
+set local role service_role;
+select lives_ok('set constraints all immediate','milestone ordinary notification source and private projection seals are valid');
+reset role;
 select * from finish();
 
 rollback;

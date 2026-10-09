@@ -190,5 +190,12 @@ select lives_ok($proof$set constraints all immediate$proof$,'new source and work
 reset role;
 select is((select count(*) from public.member_event_awards where user_id=(select member_id from mature_ctx)),0::bigint,'source alone creates no award without current approved policy and valid join');
 select is((select count(*) from public.outbox_events where id in(select outbox_id from local_mining_sources) and status='PROCESSED'),2::bigint,'two source receipts complete through the canonical worker command');
+select is((select count(*)from app_private.domain_notification_originals where source_event_id in(select outbox_id from local_mining_sources)),2::bigint,'actual sole-writer sources create one ordinary notice per distinct original');
+select is((select count(*)from public.notifications where source_event_id in(select outbox_id from local_mining_sources)),2::bigint,'ordinary milestone notices reuse actual original owner only');
+select is((select count(*)from public.notifications where source_event_id in(select outbox_id from local_mining_sources)and user_id<>(select member_id from mature_ctx)),0::bigint,'milestone notice cannot target a different member');
+select is((select count(*)from public.member_event_awards where user_id=(select member_id from mature_ctx)),0::bigint,'ordinary milestone notice does not invent rewards');
+set local role service_role;
+select lives_ok('set constraints all immediate','milestone ordinary notification source and private projection seals are valid');
+reset role;
 select * from finish();
 rollback;

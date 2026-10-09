@@ -69,6 +69,15 @@ for (const event_type of [
     },
   });
 }
+sources.push({
+  id,
+  aggregate_id: id,
+  attempt_count: 1,
+  schema_version: 1,
+  event_type: "USDT_MANUAL_DEPOSIT_CONFIRMED.v1",
+  aggregate_type: "usdt_manual_deposit",
+  payload: { user_id: id, credited_krw: "100000", ledger_transaction_id: id },
+});
 const depositSource = sources[0];
 sources.push({
   id,

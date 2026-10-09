@@ -140,7 +140,7 @@ reset role;
 set local role authenticated;
 select set_config('request.jwt.claims','{"role":"authenticated","sub":"38500000-0000-4000-8000-000000000006"}',true);
 select is((select count(id)from public.member_event_awards),1::bigint,'member sees own safe achievement readback');
-select is((select count(*)from public.notifications),1::bigint,'member reads own persisted reward notice');
+select is((select count(*)from public.notifications where deduplication_key in(select 'nonmoney-award:'||id::text from public.member_event_awards)),1::bigint,'member reads own persisted reward notice using only safe granted award ID');
 select throws_ok('select qualification from public.member_event_awards','42501',null,'member cannot read private qualification/source evidence');
 select set_config('request.jwt.claims','{"role":"authenticated","sub":"38500000-0000-4000-8000-000000000007"}',true);
 select is((select count(id)from public.member_event_awards),0::bigint,'another member sees no foreign achievement');
@@ -148,7 +148,10 @@ reset role;
 
 create temporary table push_ctx(first_batch jsonb,second_batch jsonb,next_batch jsonb);
 insert into push_ctx values(null,null,null);grant select,update on push_ctx to service_role;
-select is((select count(*)from app_private.notification_device_deliveries),5::bigint,'same notification producer fans out exactly once per active owned device');
+select is((select count(*)from app_private.notification_device_deliveries where notification_id in(select notification_id from app_private.nonmoney_reward_notification_originals)),5::bigint,'same reward notification producer fans out exactly once per active owned device');
+-- Retain independent ordinary notices; this rollback fixture exercises only reward delivery leases.
+update app_private.notification_device_deliveries set available_at='infinity'
+ where notification_id not in(select notification_id from app_private.nonmoney_reward_notification_originals);
 select ok(not has_function_privilege('authenticated','public.claim_notification_push_deliveries(text,integer,integer)','EXECUTE'),'authenticated members cannot obtain endpoint/key leases');
 select ok(not has_table_privilege('service_role','app_private.notification_device_deliveries','SELECT'),'service API has no raw private endpoint/delivery table grant');
 set local role service_role;
