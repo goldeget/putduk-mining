@@ -3,9 +3,10 @@ import { readFileSync } from "node:fs";
 import { randomUUID } from "node:crypto";
 
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
 
 import {
+  SUPPORTED_OUTBOX_HANDLERS,
   activeLeaseRenewalCount,
   backoffSeconds,
   processJobBatch,
@@ -181,6 +182,12 @@ function cleanupWorkerFixtures() {
   });
 }
 
+// Remove only exact run-owned synthetic probes between cases. Otherwise a prior
+// delayed unsupported probe can be claimed before the next canonical original.
+afterEach(() => {
+  cleanupWorkerFixtures();
+});
+
 afterAll(async () => {
   stopAllLeaseRenewals();
   try {
@@ -283,6 +290,72 @@ async function insertOutboxEvent(
     throw new Error(`outbox insert failed: ${error.message}`);
   }
   return data;
+}
+
+/** Real audit command -> transactionally produced canonical original; no raw ACK. */
+async function insertCanonicalSafeModeEvent(
+  client: SupabaseClient,
+  overrides: { max_attempts?: number; available_at?: string } = {},
+) {
+  const actorId = randomUUID();
+  const requestId = randomUUID();
+  const operationKey = `safe-worker-${fixtureRunId}-${randomUUID()}`;
+  sql(`
+    insert into auth.users (id,aud,role,email,encrypted_password,email_confirmed_at,
+      raw_app_meta_data,raw_user_meta_data,created_at,updated_at,
+      confirmation_token,recovery_token,email_change,email_change_token_new)
+    values ('${actorId}','authenticated','authenticated','safe-worker-${actorId}@putduk.test','',
+      statement_timestamp(),'{}','{}',statement_timestamp(),statement_timestamp(),'','','','');
+    insert into public.user_roles(user_id,role,granted_by) values ('${actorId}','ADMIN','${actorId}');
+  `);
+  const prior = await client
+    .from("safe_mode_controls")
+    .select("request_id")
+    .eq("component", "AI")
+    .maybeSingle();
+  if (prior.error) throw new Error(prior.error.message);
+  const command = await client.from("audit_logs").insert({
+    actor_user_id: actorId,
+    actor_role: "ADMIN",
+    action: "SAFE_MODE_DISABLED",
+    target_type: "SAFE_MODE",
+    target_id: "AI",
+    reason: "Local canonical worker lease verification",
+    request_id: requestId,
+    metadata: {
+      command_version: 1,
+      idempotency_key: operationKey,
+      component: "AI",
+      is_paused: false,
+      review_at: null,
+      expected_request_id: prior.data?.request_id ?? null,
+    },
+  });
+  if (command.error) throw new Error(command.error.message);
+  const original = await client
+    .from("outbox_events")
+    .select("*")
+    .eq("request_id", requestId)
+    .single();
+  if (original.error) throw new Error(original.error.message);
+  if (original.data.event_type !== "SAFE_MODE_CHANGED.v1")
+    throw new Error("CANONICAL_SAFE_MODE_ORIGINAL_REQUIRED");
+  // Scheduling / attempt fields are lease state; never rewrite the source envelope.
+  const leaseConfiguration = {
+    available_at: "1900-01-01T00:00:00Z",
+    ...overrides,
+  };
+  if (Object.keys(leaseConfiguration).length) {
+    const configured = await client
+      .from("outbox_events")
+      .update(leaseConfiguration)
+      .eq("id", original.data.id)
+      .select("*")
+      .single();
+    if (configured.error) throw new Error(configured.error.message);
+    return configured.data;
+  }
+  return original.data;
 }
 
 async function insertSystemJob(
@@ -392,17 +465,34 @@ describe("worker process execution against local Supabase", () => {
     const db = client();
     const workerId = `ws05-owner-${randomUUID().slice(0, 8)}`;
     const stranger = `ws05-stranger-${randomUUID().slice(0, 8)}`;
-    const event = await insertOutboxEvent(db, {
+    const synthetic = await insertOutboxEvent(db, {
       event_type: "WORKER_RUNTIME_ACK.v1",
-      max_attempts: 3,
+      max_attempts: 1,
+      available_at: "1900-01-01T00:00:00Z",
     });
+    const rejected = await processOutboxBatch(db, {
+      workerId,
+      batchSize: 1,
+      leaseSeconds: 60,
+      outboxHandlers: {
+        ...SUPPORTED_OUTBOX_HANDLERS,
+        "WORKER_RUNTIME_ACK.v1": async () => undefined,
+      },
+    });
+    expect(rejected.completed).toBe(0);
+    expect(rejected.failed).toBe(1);
+    expect((await readOutbox(db, synthetic.id)).last_error_code).toBe(
+      "OUTBOX_HANDLER_UNSUPPORTED",
+    );
+    const event = await insertCanonicalSafeModeEvent(db, { max_attempts: 3 });
 
     const claimed = await processOutboxBatch(db, {
       workerId,
       batchSize: 5,
       leaseSeconds: 60,
       outboxHandlers: {
-        "WORKER_RUNTIME_ACK.v1": async () => undefined,
+        ...SUPPORTED_OUTBOX_HANDLERS,
+        "SAFE_MODE_CHANGED.v1": async () => undefined,
       },
     });
     expect(claimed.claimed).toBeGreaterThanOrEqual(1);
@@ -425,12 +515,13 @@ describe("worker process execution against local Supabase", () => {
     const event = await insertOutboxEvent(db, {
       event_type: "UNKNOWN_FANOUT.v1",
       max_attempts: 4,
+      available_at: "1900-01-01T00:00:00Z",
     });
 
     const before = Date.now();
     const summary = await processOutboxBatch(db, {
       workerId,
-      batchSize: 10,
+      batchSize: 1,
       leaseSeconds: 60,
     });
     expect(summary.unsupported).toBeGreaterThanOrEqual(1);
@@ -452,12 +543,15 @@ describe("worker process execution against local Supabase", () => {
     const event = await insertOutboxEvent(db, {
       event_type: "WORKER_RUNTIME_RETRY.v1",
       max_attempts: 2,
+      available_at: "1900-01-01T00:00:00Z",
     });
 
     const first = await processOutboxBatch(db, {
       workerId,
+      batchSize: 1,
       retryDelaySeconds: 0,
       outboxHandlers: {
+        ...SUPPORTED_OUTBOX_HANDLERS,
         "WORKER_RUNTIME_RETRY.v1": async () => {
           throw new Error("TRANSIENT_PROBE");
         },
@@ -470,10 +564,16 @@ describe("worker process execution against local Supabase", () => {
     expect(afterFail.last_error_code).toMatch(/TRANSIENT_PROBE/);
     expect(afterFail.attempt_count).toBe(1);
 
+    // Select only this tested retry; the backoff receipt above is already verified.
+    sql(
+      `update public.outbox_events set available_at='1900-01-01' where id='${event.id}';`,
+    );
     const second = await processOutboxBatch(db, {
       workerId: `${workerId}-b`,
+      batchSize: 1,
       retryDelaySeconds: 0,
       outboxHandlers: {
+        ...SUPPORTED_OUTBOX_HANDLERS,
         "WORKER_RUNTIME_RETRY.v1": async () => {
           throw new Error("TRANSIENT_PROBE");
         },
@@ -489,9 +589,7 @@ describe("worker process execution against local Supabase", () => {
   it("extends an owned outbox lease without resetting the attempt", async () => {
     const db = client();
     const workerId = `ws05-lease-${randomUUID().slice(0, 8)}`;
-    const event = await insertOutboxEvent(db, {
-      event_type: "WORKER_RUNTIME_ACK.v1",
-    });
+    const event = await insertCanonicalSafeModeEvent(db);
     const { data: claimed, error: claimError } = await db.rpc(
       "claim_outbox_events",
       {
@@ -575,15 +673,13 @@ insert into auth.users (
       throw new Error(roleError.message);
     }
 
-    const event = await insertOutboxEvent(db, {
-      event_type: "WORKER_RUNTIME_REPLAY.v1",
-      max_attempts: 1,
-    });
+    const event = await insertCanonicalSafeModeEvent(db, { max_attempts: 1 });
 
     await processOutboxBatch(db, {
       workerId,
       outboxHandlers: {
-        "WORKER_RUNTIME_REPLAY.v1": async () => {
+        ...SUPPORTED_OUTBOX_HANDLERS,
+        "SAFE_MODE_CHANGED.v1": async () => {
           throw new Error("FORCE_DLQ");
         },
       },
@@ -622,7 +718,8 @@ insert into auth.users (
     const replay = await processOutboxBatch(db, {
       workerId: `${workerId}-replay`,
       outboxHandlers: {
-        "WORKER_RUNTIME_REPLAY.v1": async () => undefined,
+        ...SUPPORTED_OUTBOX_HANDLERS,
+        "SAFE_MODE_CHANGED.v1": async () => undefined,
       },
     });
     expect(replay.completed).toBeGreaterThanOrEqual(1);
@@ -997,10 +1094,7 @@ insert into auth.users (
     const db = client();
     const workerId = `ws06-long-${randomUUID().slice(0, 8)}`;
     const stranger = `ws06-stranger-${randomUUID().slice(0, 8)}`;
-    const event = await insertOutboxEvent(db, {
-      event_type: "WORKER_RUNTIME_LONG.v1",
-      max_attempts: 3,
-    });
+    const event = await insertCanonicalSafeModeEvent(db, { max_attempts: 3 });
     let periodicExtends = 0;
     let handlerStarted = false;
     let completes = 0;
@@ -1021,7 +1115,8 @@ insert into auth.users (
       leaseSeconds: 10,
       leaseRenewIntervalMs: 1_000,
       outboxHandlers: {
-        "WORKER_RUNTIME_LONG.v1": async () => {
+        ...SUPPORTED_OUTBOX_HANDLERS,
+        "SAFE_MODE_CHANGED.v1": async () => {
           handlerStarted = true;
           const started = Date.now();
           await delay(11_000);
@@ -1098,6 +1193,7 @@ insert into auth.users (
       leaseSeconds: 10,
       leaseRenewIntervalMs: 400,
       outboxHandlers: {
+        ...SUPPORTED_OUTBOX_HANDLERS,
         "WORKER_RUNTIME_LONG_FAIL.v1": async () => {
           handlerStarted = true;
           await delay(1_200);
@@ -1232,6 +1328,11 @@ describe("safe-mode actual command and registered worker delivery", () => {
         .single();
       expect(created.error).toBeNull();
       expect(created.data?.payload.audit_id).toMatch(/^[a-f0-9-]{36}$/);
+      const scheduled = await db
+        .from("outbox_events")
+        .update({ available_at: "1900-01-01T00:00:00Z" })
+        .eq("id", created.data!.id);
+      expect(scheduled.error).toBeNull();
       return created.data!;
     }
     const first = await command(true, firstRequest, firstKey);
@@ -1269,6 +1370,9 @@ describe("safe-mode actual command and registered worker delivery", () => {
     });
     expect(replayed.error).toBeNull();
     expect(replayed.data).toBe(first.id);
+    sql(
+      `update public.outbox_events set available_at='1900-01-01' where id='${first.id}';`,
+    );
     await processOutboxBatch(db, {
       workerId: `safe-replay-${randomUUID()}`,
       batchSize: 100,
@@ -1307,8 +1411,7 @@ describe("worker waiting-item ownership against local Supabase", () => {
       const type = `WAITING_OWNERSHIP_${randomUUID().replaceAll("-", "").toUpperCase()}`;
       const first =
         lane === "outbox"
-          ? await insertOutboxEvent(db, {
-              event_type: `${type}.v1`,
+          ? await insertCanonicalSafeModeEvent(db, {
               available_at: "2000-01-01T00:00:00Z",
             })
           : await insertSystemJob(db, {
@@ -1318,8 +1421,7 @@ describe("worker waiting-item ownership against local Supabase", () => {
             });
       const second =
         lane === "outbox"
-          ? await insertOutboxEvent(db, {
-              event_type: `${type}.v1`,
+          ? await insertCanonicalSafeModeEvent(db, {
               available_at: "2000-01-01T00:00:01Z",
             })
           : await insertSystemJob(db, {
@@ -1346,7 +1448,10 @@ describe("worker waiting-item ownership against local Supabase", () => {
         batchSize: 2,
         leaseSeconds: 10,
         leaseRenewIntervalMs: 1_000,
-        outboxHandlers: { [`${type}.v1`]: handler },
+        outboxHandlers: {
+          ...SUPPORTED_OUTBOX_HANDLERS,
+          "SAFE_MODE_CHANGED.v1": handler,
+        },
         jobHandlers: { [type]: handler },
       };
       const summary =
@@ -1430,6 +1535,7 @@ describe("periodic lease renewal without a database", () => {
         leaseSeconds: 10,
         leaseRenewIntervalMs: 50,
         outboxHandlers: {
+          ...SUPPORTED_OUTBOX_HANDLERS,
           "LEASE_EXTEND_FAIL.v1": async () => {
             await delay(300);
           },

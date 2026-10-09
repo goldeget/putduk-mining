@@ -91,8 +91,6 @@ select ok(
     'system_jobs',
     'transaction_receipts',
     'trial_accounts',
-    'trial_completions',
-    'trial_ledger',
     'trial_programs',
     'trial_qualification_snapshots',
     'trial_reward_conversions',
