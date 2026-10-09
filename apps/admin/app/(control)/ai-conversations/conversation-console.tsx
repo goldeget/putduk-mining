@@ -6,6 +6,8 @@ import {
   adminAiListResultSchema,
   adminAiMessagesResultSchema,
   formatAdminAiUsd,
+  formatAdminAiAttemptStatus,
+  formatAdminAiTokenCount,
   type AdminAiReadInput,
   type AdminAiSearchResult,
   type AdminAiListResult,
@@ -376,8 +378,8 @@ export function AiConversationConsole() {
                     <dd>{request.upstreamProvider ?? "확인할 수 없음"}</dd>
                     <dt>입력·출력 사용량</dt>
                     <dd>
-                      {request.inputTokens ?? "미확인"} ·{" "}
-                      {request.outputTokens ?? "미확인"}
+                      {formatAdminAiTokenCount(request.inputTokens)} ·{" "}
+                      {formatAdminAiTokenCount(request.outputTokens)}
                     </dd>
                     <dt>유료 비용</dt>
                     <dd>{formatAdminAiUsd(request.providerCostNanoUsd)}</dd>
@@ -406,7 +408,7 @@ export function AiConversationConsole() {
                             </dd>
                             <dt>상태</dt>
                             <dd>
-                              {statusLabels[attempt.status] ?? "처리 확인 중"}
+                              {formatAdminAiAttemptStatus(attempt.status)}
                             </dd>
                             <dt>유료 사용</dt>
                             <dd>{attempt.paid ? "유료" : "무료"}</dd>
@@ -424,8 +426,8 @@ export function AiConversationConsole() {
                             </dd>
                             <dt>입력·출력 사용량</dt>
                             <dd>
-                              {attempt.inputTokens ?? "미확인"} ·{" "}
-                              {attempt.outputTokens ?? "미확인"}
+                              {formatAdminAiTokenCount(attempt.inputTokens)} ·{" "}
+                              {formatAdminAiTokenCount(attempt.outputTokens)}
                             </dd>
                           </dl>
                         </article>

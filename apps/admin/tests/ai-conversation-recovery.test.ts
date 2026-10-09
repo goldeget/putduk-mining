@@ -11,6 +11,8 @@ import { handleAdminAiConversationRead } from "@/lib/ai/conversation-handler";
 import {
   redactAdminAiCredentials,
   formatAdminAiUsd,
+  formatAdminAiAttemptStatus,
+  formatAdminAiTokenCount,
 } from "../../../domain/ai/admin-conversation";
 const user = "10000000-0000-4000-8000-000000000001",
   conversation = "10000000-0000-4000-8000-000000000002",
@@ -72,6 +74,26 @@ beforeEach(() => {
   });
 });
 describe("full admin transcript recovery boundary", () => {
+  it("separates unsent, dispatched and uncertain provider outcomes", () => {
+    expect(formatAdminAiAttemptStatus("RESERVED")).toBe("전송 준비");
+    expect(formatAdminAiAttemptStatus("DISPATCHED")).toBe("전송 시작");
+    expect(formatAdminAiAttemptStatus("UNKNOWN")).toBe("결과 확인 필요");
+    expect(formatAdminAiAttemptStatus("NOT_SENT")).toBe("전송하지 않음");
+    expect(formatAdminAiAttemptStatus("FAILED")).toBe("실패");
+    expect(formatAdminAiAttemptStatus("UNRECOGNIZED")).toBe(
+      "처리 상태 확인 필요",
+    );
+  });
+  it("preserves unobserved token and cost values separately from observed zero", () => {
+    expect(formatAdminAiTokenCount(null)).toBe("미확인");
+    expect(formatAdminAiTokenCount("0")).toBe("0");
+    expect(formatAdminAiTokenCount(0)).toBe("0");
+    expect(formatAdminAiTokenCount("99999999999999999999")).toBe(
+      "99999999999999999999",
+    );
+    expect(formatAdminAiUsd(null)).toBe("확인할 수 없음");
+    expect(formatAdminAiUsd("0")).toBe("$0");
+  });
   it.each([
     "ROLE_FORBIDDEN",
     "ORIGIN_DENIED",

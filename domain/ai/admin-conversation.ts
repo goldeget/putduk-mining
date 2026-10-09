@@ -169,5 +169,23 @@ export function formatAdminAiUsd(value: string | null): string {
   return `$${whole}${fraction ? `.${fraction}` : ""}`;
 }
 
+/** An uncertain provider attempt is distinct from an unsent or failed attempt. */
+export function formatAdminAiAttemptStatus(value: string): string {
+  const labels: Record<string, string> = {
+    RESERVED: "전송 준비",
+    DISPATCHED: "전송 시작",
+    SUCCEEDED: "완료",
+    FAILED: "실패",
+    CANCELLED: "취소",
+    UNKNOWN: "결과 확인 필요",
+    NOT_SENT: "전송하지 않음",
+  };
+  return labels[value] ?? "처리 상태 확인 필요";
+}
+
+export function formatAdminAiTokenCount(value: string | number | null): string {
+  return value === null ? "미확인" : String(value);
+}
+
 export type AdminAiSearchResult = z.infer<typeof adminAiSearchResultSchema>;
 export type AdminAiListResult = z.infer<typeof adminAiListResultSchema>;
