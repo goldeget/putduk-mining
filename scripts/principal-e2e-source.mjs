@@ -12,10 +12,14 @@ const PREVIOUS_MANIFEST =
   "tests/e2e/fixtures/principal-local-recovery-source.json";
 const PREVIOUS_SHA =
   "7b84b1a76b113a9bc24d58eada9d31be2b93b9484ef28f1b4abde688d4a6858d";
-const MANIFEST = "tests/e2e/fixtures/principal-local-recovery-source-v3.json";
-const MANIFEST_SHA =
+const PREVIOUS_SOURCE_MANIFEST =
+  "tests/e2e/fixtures/principal-local-recovery-source-v3.json";
+const PREVIOUS_SOURCE_SHA =
   "435d6e9cffa1e3feb40742bf9100a1c030fe6a5139a902bec4a2839098e34ceb";
-const MIGRATION_COUNT = 174;
+const MANIFEST = "tests/e2e/fixtures/principal-local-recovery-source-v4.json";
+const MANIFEST_SHA =
+  "6d4af5c25f3a4fe45f3c60a860838c9f1d2857fa36cd51e1b287e6e5e09e53ce";
+const MIGRATION_COUNT = 175;
 const RUNTIME = [
   "components/product/withdrawal-page.module.css",
   "components/product/principal-money.tsx",
@@ -56,16 +60,22 @@ export function assertPrincipalCandidateSources(root = ROOT) {
     throw new Error("PRINCIPAL_E2E_LEGACY_MAP_CHANGED");
   if (digest(readFileSync(owned(PREVIOUS_MANIFEST))) !== PREVIOUS_SHA)
     throw new Error("PRINCIPAL_E2E_PREVIOUS_MAP_CHANGED");
+  if (
+    digest(readFileSync(owned(PREVIOUS_SOURCE_MANIFEST))) !==
+    PREVIOUS_SOURCE_SHA
+  )
+    throw new Error("PRINCIPAL_E2E_PREVIOUS_SOURCE_MAP_CHANGED");
   const bytes = readFileSync(owned(MANIFEST));
   if (digest(bytes) !== MANIFEST_SHA)
     throw new Error("PRINCIPAL_E2E_FROZEN_MAP_CHANGED");
   const map = JSON.parse(bytes.toString("utf8"));
   if (
-    map.version !== 3 ||
+    map.version !== 4 ||
     map.repository !== "goldeget/putduk-mining" ||
     map.migration_count !== MIGRATION_COUNT ||
     map.baselineManifestSha256 !== LEGACY_SHA ||
     map.previousManifestSha256 !== PREVIOUS_SHA ||
+    map.previousSourceManifestSha256 !== PREVIOUS_SOURCE_SHA ||
     !Array.isArray(map.sources) ||
     map.sources.length !== RUNTIME.length + MIGRATION_COUNT
   ) {

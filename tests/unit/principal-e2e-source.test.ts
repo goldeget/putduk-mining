@@ -22,8 +22,10 @@ const legacyManifestPath =
   "tests/e2e/fixtures/principal-integrated-source.json";
 const previousManifestPath =
   "tests/e2e/fixtures/principal-local-recovery-source.json";
-const manifestPath =
+const previousSourceManifestPath =
   "tests/e2e/fixtures/principal-local-recovery-source-v3.json";
+const manifestPath =
+  "tests/e2e/fixtures/principal-local-recovery-source-v4.json";
 const fixtureBase = resolve("test-results/principal-source-guards");
 mkdirSync(fixtureBase, { recursive: true });
 const source = readFileSync(manifestPath);
@@ -53,6 +55,7 @@ function copyCandidate() {
     manifestPath,
     legacyManifestPath,
     previousManifestPath,
+    previousSourceManifestPath,
     ...manifest.sources.map((row) => row.path),
   ]) {
     const target = join(root, path);
@@ -94,6 +97,16 @@ describe("portable principal candidate guard", () => {
     );
     expect(() => assertPrincipalCandidateSources(root)).toThrow(
       "PRINCIPAL_E2E_FROZEN_MAP_CHANGED",
+    );
+  });
+  it("preserves the preceding notification source binding independently", () => {
+    const root = copyCandidate();
+    writeFileSync(
+      join(root, previousSourceManifestPath),
+      "changed preceding source manifest",
+    );
+    expect(() => assertPrincipalCandidateSources(root)).toThrow(
+      "PRINCIPAL_E2E_PREVIOUS_SOURCE_MAP_CHANGED",
     );
   });
   it("preserves the previous recovery source binding independently", () => {
