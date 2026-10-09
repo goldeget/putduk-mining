@@ -50,7 +50,7 @@ function port(): ProviderAttemptPort {
     admitFree: vi.fn(async () => undefined),
     reserve: vi.fn(async () => ({
       id: `00000000-0000-4000-8000-${String(++n).padStart(12, "0")}`,
-      status: "RESERVED",
+      status: "RESERVED" as const,
       replay: false,
     })),
     settle: vi.fn(async (a) => ({

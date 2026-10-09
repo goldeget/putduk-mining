@@ -14,7 +14,7 @@ type NotificationFixture = {
   expires_at: string | null;
   read_at: string | null;
 };
-const notifications = [
+const notifications: [NotificationFixture, NotificationFixture] = [
   {
     title_ko: "EXPIRED PRIVATE NOTICE",
     created_at: "2026-10-05T23:00:00Z",
