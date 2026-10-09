@@ -10,8 +10,9 @@ import { dirname, isAbsolute, join, relative, resolve } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import { assertReviewedPrincipalCandidateSources } from "../../scripts/principal-review-r2-source.mjs";
 
-const manifestPath = "tests/e2e/fixtures/principal-review-r2-source.json";
+const manifestPath = "tests/e2e/fixtures/principal-review-r2-ci-source.json";
 const previous = [
+  "principal-review-r2-source.json",
   "principal-integrated-source.json",
   "principal-local-recovery-source.json",
   "principal-local-recovery-source-v3.json",
@@ -57,9 +58,9 @@ describe("independently reviewed successor source boundary", () => {
     const { root, map } = fixture();
     expect(assertReviewedPrincipalCandidateSources(root)).toMatchObject({
       migrationSources: map.migration_count,
-      runtimeSources: 26,
-      projectId: "putduk-mining-review-r2-20261009-e-20064",
-      apiPort: 62441,
+      runtimeSources: 29,
+      projectId: "putduk-mining-ci-r2-20261009",
+      apiPort: 63421,
     });
   }, 20_000);
   for (const kind of ["migration", "runtime"]) {

@@ -196,3 +196,13 @@ This version has breaking changes — APIs, conventions, and file structure may 
 This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
 <!-- END:nextjs-agent-rules -->
+
+## User-authorized commit and CI phase — 2026-10-09
+
+The user explicitly instructed: "커밋해야될거 너가 완벽하게 다 하고 깃허브에 까지 올려서 CI통과시켜라".
+This authorizes reviewed local commits, a feature branch push, a PR to develop and CI repairs for goldeget/putduk-mining in the fresh isolated checkout under the primary workspace:
+`C:/Users/PC/Desktop/putduk-mining/.worktrees/backend-review-r2-ci-20261009`.
+
+The primary workspace source, earlier recovery/review checkouts, uncommitted files and original QA evidence remain protected. Integrate explicit reviewed paths only; exclude temporary helpers, credentials, raw archives and generated output. No blanket staging.
+
+This phase does not authorize merge, production deployment, remote Supabase/Cloudflare/DNS mutation, production rewards, paid AI calls, account/session changes or changes to connected app settings. Follow the production coupling guard before remote Git/CI operations. Preserve current login sessions and existing development processes.

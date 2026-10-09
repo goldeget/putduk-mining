@@ -5,15 +5,19 @@ import { isAbsolute, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = fileURLToPath(new URL("../", import.meta.url));
-const MANIFEST = "tests/e2e/fixtures/principal-review-r2-source.json";
+const MANIFEST = "tests/e2e/fixtures/principal-review-r2-ci-source.json";
 // Set only after the complete per-file migration/runtime delta is independently reviewed.
 const MANIFEST_SHA =
-  "c67be88e77c998e56e0df793fc0705c9e4dff2966ee17db415953aa707adc289";
+  "338ea5ab29065a5962d40047e3c2e4fd76825fd8ce453ac299b9152d08396bc1";
 // Installed CLI truncates configured IDs to 36 characters; the exact newly
 // created resource identity was independently captured before using this ID.
-const PROJECT = "putduk-mining-review-r2-20261009-e-20064";
-const CONFIGURED_PROJECT = "putduk-mining-review-r2-20261009-e-200642";
+const PROJECT = "putduk-mining-ci-r2-20261009";
+const CONFIGURED_PROJECT = "putduk-mining-ci-r2-20261009";
 const PREVIOUS = [
+  [
+    "tests/e2e/fixtures/principal-review-r2-source.json",
+    "c67be88e77c998e56e0df793fc0705c9e4dff2966ee17db415953aa707adc289",
+  ],
   [
     "tests/e2e/fixtures/principal-integrated-source.json",
     "7c20596498cea26d9943a8fbaf3b56815cbaf65c934f468a6214815f7bfc4baf",
@@ -32,6 +36,9 @@ const PREVIOUS = [
   ],
 ];
 const RUNTIME = [
+  "supabase/config.toml",
+  "components/layout/product-shell.module.css",
+  "app/globals.css",
   "components/product/withdrawal-page.module.css",
   "components/product/principal-money.tsx",
   "components/product/principal-recovery.module.css",
@@ -86,17 +93,17 @@ export function assertReviewedPrincipalCandidateSources(root = ROOT) {
     throw new Error("REVIEW_R2_FROZEN_MAP_CHANGED");
   const map = JSON.parse(bytes.toString("utf8"));
   if (
-    map.version !== 1 ||
+    map.version !== 2 ||
     map.repository !== "goldeget/putduk-mining" ||
     map.project_id !== PROJECT ||
     map.configured_project_id !== CONFIGURED_PROJECT ||
-    map.api_port !== 62441 ||
+    map.api_port !== 63421 ||
     map.baseHead !== "c08a59c20213c85a166f4338539804603faa5e69" ||
     map.baseCandidateManifestSha256 !==
       "b31d55471cca3d4520a2e0081f3458d3395d7edf408156c7a7551ef0da50d5f2" ||
-    map.previousFrozenManifestSha256 !== PREVIOUS[3][1] ||
+    map.previousFrozenManifestSha256 !== PREVIOUS[0][1] ||
     !Number.isSafeInteger(map.migration_count) ||
-    map.migration_count < 179 ||
+    map.migration_count !== 183 ||
     !Array.isArray(map.sources) ||
     map.sources.length !== RUNTIME.length + map.migration_count
   )

@@ -65,18 +65,14 @@ function copyCandidate() {
   return root;
 }
 describe("portable principal candidate guard", () => {
-  it(
-    "verifies all runtime and migration bytes after moving to another checkout",
-    () => {
-      expect(assertPrincipalCandidateSources(copyCandidate())).toMatchObject({
-        runtimeSources: 15,
-        migrationSources: manifest.migration_count,
-      });
-    },
-    // Copying and hashing the owned 190-file fixture can exceed five seconds
-    // on constrained Windows hosts. Domain timing assertions remain unchanged.
-    20_000,
-  );
+  // The owned 190-file copy uses a 20-second filesystem budget on Windows.
+  // Domain timing assertions remain unchanged.
+  it("verifies all runtime and migration bytes after moving to another checkout", () => {
+    expect(assertPrincipalCandidateSources(copyCandidate())).toMatchObject({
+      runtimeSources: 15,
+      migrationSources: manifest.migration_count,
+    });
+  }, 20_000); // on constrained Windows hosts. Domain timing assertions remain unchanged. // Copying and hashing the owned 190-file fixture can exceed five seconds
   for (const kind of ["runtime", "migration"]) {
     it(`rejects a changed ${kind} original even if the manifest is unchanged`, () => {
       const root = copyCandidate();
