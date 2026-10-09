@@ -32,7 +32,7 @@ begin
     raise exception 'DBLINK_EXTENSION_MISSING';
   end if;
 
-  v_candidate := coalesce(inet_server_addr()::text, current_setting('putduk.qa_db_host', true));
+  v_candidate := coalesce(pg_catalog.host(inet_server_addr()), current_setting('putduk.qa_db_host', true));
   if v_candidate is null or (inet_server_addr() is null and v_candidate !~ '^supabase_db_putduk-mining[-a-z0-9]*$') then
     raise exception 'EXACT_LOCAL_DB_HOST_REQUIRED';
   end if;

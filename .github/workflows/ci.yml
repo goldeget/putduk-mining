@@ -499,7 +499,7 @@ jobs:
 
       - name: Assert public typography evidence
         if: always()
-        run: node scripts/assert-typography-report.mjs test-results/typography/report.json --passed 115 --screenshots 110 --redact
+        run: node scripts/assert-typography-report.mjs test-results/typography/report.json --passed 119 --screenshots 110 --redact
 
       - name: Preserve public typography evidence
         if: always()

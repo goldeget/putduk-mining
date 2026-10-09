@@ -15,9 +15,9 @@ The preserved R2 source manifest digest is `a4bb9fe048e54cde09d8487715c60c5de4c4
 | Common AI admission and fallback | `5d25593f5b905b612a38a005c62c1a6215b37072` |
 | Administrator conversation context | `cb578a83189010fb4dd411686eaa3b73cfcb6843` |
 | Coupled financial scheduler/referral/cash flow | `57edd751e6c0f8ae2d9db4db0c65c0ce9ec788fb` |
-| Withdrawal coverage aggregate | `6eefa1d` |
-| Push acknowledgement validation | `ef6c1da` |
-| Member-facing public facts | `6c39efe` |
+| Withdrawal coverage aggregate | `6eefa1d6f074d7294d9e48435da9bf7c56315504` |
+| Push acknowledgement validation | `ef6c1da934bd9c7faa1067cfb4674324637ec6d1` |
+| Member-facing public facts | `6c39efe40ad7b1616b2cfc482dc14ee1322b82b3` |
 | Native roster and final182 source binding | `73b0ed285f597a0e019d05a44b113e8627f53771` |
 
 The subsequent CI repair retains all 182 earlier migration files and all five frozen source maps. A forward-only migration removes two unused declarations, explicitly casts the fixed JSON literal and corrects notification-copy volatility to STABLE. Function signatures, owners, ACLs, qualification rules, financial posting and consent boundaries remain intact.
@@ -39,3 +39,11 @@ Before CI repair, the current local full unit run passed 2,487 tests with four e
 Review evidence is stored separately under the authorized QA volume in `backend-commit-ci-20261009-2352`. Source snapshots and earlier QA records remain unchanged. CI is pending at the time this handoff is written; use the PR's actual final checks and the separate final delivery receipt for the observed outcome.
 
 Cash configuration remains disabled. The controlled-history referral stage-two test does not prove a natural 24-hour journey. Source preservation, unit tests and CI do not establish Cloud-original fidelity, complete product journeys, production financial approval or launch readiness.
+
+## First CI findings
+
+At head `c0c340c34ea782616549a9a9fc97ef305f3a494c`, run `37949831402` passed Application, production build, worker, exact-diff and server-lifecycle gates. The public typography lane executed all 119 current tests with 110 screenshots, zero hydration findings and zero unexpected failures. Its count assertion still required the older 115-test inventory. The workflow now requires exactly 119, retaining the 110 screenshot count and every failure/flaky/skip check; the dependency graph, eight shards and 20-minute ceiling are unchanged.
+
+The foundation test also expected the old signup title `계정 만들기`. The canonical current signup experience renders `회원가입`. The corrected test requires that exact level-one heading and the accessible signup form, retaining all field and consent checks. These are corrections to stale CI contracts, not product redesign or reduced acceptance.
+
+The native suite executed 5,147 assertions successfully, but the remaining 33-assertion reconciliation file failed before its first assertion. Its same-server dblink fixture cast an `inet` address to text, retaining `/32` and producing an invalid host. It now uses `pg_catalog.host(inet_server_addr())` to obtain the same server's bare IP. The exact-project fallback, real second session, lock contention and all 33 assertions are retained. PostgreSQL documents both representations in its [network address functions](https://www.postgresql.org/docs/17/functions-net.html).

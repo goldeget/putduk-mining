@@ -113,7 +113,10 @@ test("renders distinct product login and signup states", async ({ page }) => {
   await page.getByRole("link", { name: "회원가입", exact: true }).click();
   await expect(page).toHaveURL(/\/signup$/);
   await expect(
-    page.getByRole("heading", { name: "계정 만들기" }),
+    page.getByRole("heading", { name: "회원가입", level: 1, exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("form", { name: "회원가입", exact: true }),
   ).toBeVisible();
   await expect(page.getByLabel("이름")).toBeVisible();
   await expect(page.getByLabel("생년월일")).toBeVisible();
