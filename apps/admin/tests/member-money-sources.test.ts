@@ -6,13 +6,15 @@ import { presentMemberMoneySources } from "@/app/(control)/members/_lib/money-so
 const owner = "0d460000-0000-4000-8000-000000000101";
 const snapshot = {
   user_id: owner,
-  schema_version: 1,
+  schema_version: 2,
   coverage: "COMPLETE",
   unclassified_wallet_entries: "0",
   unconnected_withdrawals: "0",
   unclassified_journals: "0",
   invalid_source_receipts: "0",
   eligible_principal_atomic: "15000",
+  held_principal_atomic: "0",
+  recovered_principal_atomic: "0",
   recorded_krw_principal_deposits_atomic: "10000",
   recorded_usdt_principal_credits_atomic: "5000",
   recorded_bonus_atomic: "3000",
@@ -35,7 +37,8 @@ describe("money source operator evidence", () => {
     expect(result.rows.map((row) => row[1])).not.toContain("설정 전");
     expect(result.rows).toContainEqual(["누적 채굴 수익", "확인 필요"]);
     expect(result.rows).toContainEqual(["확정 채굴 수익", "확인 필요"]);
-    expect(result.rows).toContainEqual(["누적 원금 회수", "확인 필요"]);
+    expect(result.rows).toContainEqual(["누적 원금 회수", "0원"]);
+    expect(result.rows).toContainEqual(["출금 대기 원금", "0원"]);
     expect(result.rows).toContainEqual(["총 출금", "확인 필요"]);
     expect(result.rows.map((row) => row[1])).not.toContain("18,000원");
     expect(result.rows.map((row) => row[0])).not.toContain("미확정 채굴 수익");
@@ -46,6 +49,8 @@ describe("money source operator evidence", () => {
       coverage: "UNRESOLVED",
       unclassified_wallet_entries: "1",
       eligible_principal_atomic: null,
+      held_principal_atomic: null,
+      recovered_principal_atomic: null,
     });
     expect(result.available).toBe(true);
     expect(result.complete).toBe(false);
@@ -53,10 +58,27 @@ describe("money source operator evidence", () => {
     expect(result.rows).toContainEqual(["누적 원화 원금 입금", "확인 필요"]);
     expect(result.recordedKrwDeposits).toBe("10,000원");
   });
+  it("keeps available, held, recovered and cumulative principal distinct", () => {
+    const result = present({
+      ...snapshot,
+      eligible_principal_atomic: "5000",
+      held_principal_atomic: "4000",
+      recovered_principal_atomic: "6000",
+    });
+    expect(result.complete).toBe(true);
+    expect(result.rows).toContainEqual(["채굴 인정 원금", "5,000원"]);
+    expect(result.rows).toContainEqual(["출금 대기 원금", "4,000원"]);
+    expect(result.rows).toContainEqual(["누적 원금 회수", "6,000원"]);
+    expect(result.rows).toContainEqual(["누적 원화 원금 입금", "10,000원"]);
+    expect(result.rows).toContainEqual(["누적 USDT 환산 원금", "5,000원"]);
+  });
   it.each([
     null,
     { ...snapshot, user_id: "0d460000-0000-4000-8000-000000000102" },
     { ...snapshot, eligible_principal_atomic: "18000" },
+    { ...snapshot, schema_version: 1 },
+    { ...snapshot, held_principal_atomic: "1" },
+    { ...snapshot, recovered_principal_atomic: null },
     { ...snapshot, eligible_principal_atomic: "-1" },
     { ...snapshot, eligible_principal_atomic: 15000 },
     { ...snapshot, unconnected_withdrawals: "1" },

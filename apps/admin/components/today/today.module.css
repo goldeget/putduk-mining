@@ -1,5 +1,74 @@
 .root {
   min-width: 0;
+  container: admin-today / inline-size;
+}
+
+.nextAction,
+.memberLookup,
+.beginnerGuide {
+  margin-top: 20px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: clamp(16px, 3vw, 24px);
+  background: var(--surface);
+  min-width: 0;
+}
+
+.nextAction {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.nextAction > div {
+  min-width: 0;
+  flex: 1 1 18rem;
+}
+
+.nextAction p,
+.beginnerGuide p,
+.beginnerGuide li {
+  max-width: 36rem;
+  color: var(--muted);
+  line-height: 1.65;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+.nextAction p {
+  margin: 8px 0 0;
+}
+
+.memberLookup h2 {
+  margin: 0 0 20px;
+  font-size: 1.35rem;
+}
+
+.beginnerGuide summary {
+  min-height: 44px;
+  padding-block: 10px;
+  color: var(--gold-soft);
+  cursor: pointer;
+  font-weight: 750;
+  word-break: keep-all;
+}
+
+.beginnerGuide summary:focus-visible {
+  outline: 3px solid var(--gold-soft);
+  outline-offset: 3px;
+}
+
+.beginnerGuide ol {
+  padding-left: 1.5rem;
+  display: grid;
+  gap: 12px;
+}
+
+.beginnerGuide li strong {
+  display: block;
+  color: var(--ink);
 }
 
 .eyebrow {
@@ -86,6 +155,8 @@
 .orbit small {
   color: var(--muted);
   font-size: 0.875rem;
+  word-break: keep-all;
+  text-wrap: balance;
 }
 
 .orbit strong {
@@ -158,6 +229,8 @@
 
 .sectionHead {
   display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
   align-items: end;
   justify-content: space-between;
   margin: 54px 0 18px;
@@ -166,11 +239,15 @@
 .sectionHead h2 {
   margin: 0;
   font-size: 1.35rem;
+  word-break: keep-all;
+  text-wrap: balance;
 }
 
 .sectionHead > span {
   color: var(--muted);
   font-size: 0.875rem;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .attentionGrid {
@@ -261,10 +338,14 @@
 .panel h2 {
   margin: 0;
   font-size: 1.35rem;
+  word-break: keep-all;
+  text-wrap: balance;
 }
 
 .panelHeader {
   display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
   justify-content: space-between;
 }
 
@@ -276,6 +357,8 @@
   padding: 6px 9px;
   font-size: 0.875rem;
   letter-spacing: 0.08em;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .metrics {
@@ -299,6 +382,8 @@
 .metrics span {
   color: var(--muted);
   font-size: 0.875rem;
+  word-break: keep-all;
+  text-wrap: balance;
 }
 
 .metrics strong {
@@ -425,6 +510,23 @@
 
   .attentionGrid {
     grid-template-columns: 1fr;
+  }
+}
+
+@container admin-today (max-width: 32rem) {
+  .hero {
+    display: grid;
+  }
+
+  .orbit {
+    justify-items: start;
+    text-align: start;
+  }
+
+  .sectionHead,
+  .panelHeader {
+    flex-direction: column;
+    align-items: start;
   }
 }
 

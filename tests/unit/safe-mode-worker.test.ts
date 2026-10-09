@@ -31,6 +31,7 @@ describe("registered internal safe-mode consumer", () => {
   it("runs envelope preflight and uses the existing owned completion command", async () => {
     const db = client(fixture());
     const result = await processOutboxBatch(db as unknown as SupabaseClient, {
+      batchSize: 1,
       workerId: "safe-worker-unit",
     });
     expect(result).toEqual({
@@ -56,7 +57,9 @@ describe("registered internal safe-mode consumer", () => {
     "rejects an incompatible envelope before completing it",
     async (change) => {
       const db = client(fixture(change));
-      const result = await processOutboxBatch(db as unknown as SupabaseClient);
+      const result = await processOutboxBatch(db as unknown as SupabaseClient, {
+        batchSize: 1,
+      });
       expect(result.completed).toBe(0);
       expect(result.failed).toBe(1);
       expect(db.rpc.mock.calls.map(([name]) => name)).not.toContain(
@@ -74,7 +77,9 @@ describe("registered internal safe-mode consumer", () => {
     "never reports completion when the actual command rejects %s",
     async (error) => {
       const db = client(fixture(), error);
-      const result = await processOutboxBatch(db as unknown as SupabaseClient);
+      const result = await processOutboxBatch(db as unknown as SupabaseClient, {
+        batchSize: 1,
+      });
       expect(result.completed).toBe(0);
       expect(result.failed).toBe(1);
       expect(db.rpc).toHaveBeenCalledWith(

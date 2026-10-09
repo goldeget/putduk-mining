@@ -31,6 +31,24 @@ application state. It currently includes:
   database rate limits and redacted audit records;
 - local database, unit, build and browser verification gates.
 
+The funded mining engine is **NOT CONNECTED TO RUNTIME**. Owner-approved V1 numbers,
+publication readers, principal/cycle foundations and exact arithmetic previews
+exist. New migrations `20261006123000`–`20261006123200` are a disconnected private
+foundation source candidate pending actual local SQL gates. They do not create a
+published catalog/member allocation, connect credit hooks or schedule earning.
+Ordinary withdrawal uses
+verified `MINING_REWARD` only. Its sealed reservations and qualified START originals
+now keep source coverage and principal eligibility truthful through hold,
+finalization and release; unknown historical sources stay unresolved. This
+coverage fix adds no mining producer or replacement wallet debit.
+
+Prior local baseline evidence on 2026-10-06: 47 database files / 1,522 pgTAP assertions,
+database lint, and 1,602 pure assertions passed. The source-coverage regression
+passed 36 actual-lifecycle assertions. Current concurrency, browser and product
+gates are separate; these results do not establish launch readiness. The concrete
+remaining implementation is tracked in the
+[default funded engine design](docs/development/design-reviews/DEFAULT-FUNDED-ENGINE-2026-10-06.md).
+
 No remote database migration, first-admin mutation, Cloudflare resource,
 production deployment or domain switch is implied by this code. Those are
 separate, explicit operational approvals.
@@ -82,6 +100,10 @@ Admin / Audit / Analytics / System
 - [Master architecture](docs/architecture/PUTDUK-MINING-MASTER-ARCHITECTURE.md)
 - [Architecture closure audit](docs/architecture/ARCHITECTURE-CLOSURE-AUDIT.md)
 - [Balanced ledger and reconciliation](docs/architecture/LEDGER-RECONCILIATION.md)
+- [Money source and principal](docs/architecture/MONEY-SOURCE-PROVENANCE.md)
+- [Mining entitlement and cycle](docs/architecture/MINING-ENTITLEMENT-CYCLE-CONTRACT.md)
+- [Approved V1 economic values](docs/product/ECONOMY-V1-USER-APPROVAL-2026-10-03.md)
+- [Approved retention and multiplier semantics](docs/product/ECONOMY-V1-USER-APPROVAL-2026-10-06.md)
 - [Domain events and outbox](docs/architecture/DOMAIN-EVENTS-OUTBOX.md)
 - [Notification and PWA architecture](docs/architecture/NOTIFICATION-PWA.md)
 - [24-hour trial system](docs/product/PUTDUK-START.md)
@@ -159,7 +181,7 @@ scripts/
 ```
 
 ## Branches
-- `main` — production-ready
+- `main` — protected release source; release evidence and approval remain separate
 - `develop` — integration
 - `feature/*`
 - `fix/*`

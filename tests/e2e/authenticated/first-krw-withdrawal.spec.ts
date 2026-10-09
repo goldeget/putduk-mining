@@ -88,9 +88,12 @@ test.describe("first KRW_BANK welcome withdrawal", () => {
       page.getByText(/환영 보상 첫 출금|출금/).first(),
     ).toBeVisible();
     // 로딩 카피·브랜드 잠금과 구분 — 내비 '채굴' 링크가 보여야 한다.
-    await expect(
-      page.getByRole("link", { name: "채굴", exact: true }),
-    ).toBeVisible();
+    const miningLink = page
+      .getByRole("navigation", { name: /^(지갑 전체 메뉴|주요 메뉴)$/ })
+      .getByRole("link", { name: "채굴", exact: true });
+    await expect(miningLink).toHaveCount(1);
+    await expect(miningLink).toBeVisible();
+    await expect(miningLink).toHaveAttribute("href", "/mining");
     await expect(page.getByText(/가상 채굴/)).toHaveCount(0);
 
     const after = await readWalletAvailableKrw(member.userId);

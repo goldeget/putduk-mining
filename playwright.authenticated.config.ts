@@ -1,4 +1,5 @@
 import { defineConfig, devices } from "@playwright/test";
+import { needsAdminWebServer } from "./scripts/e2e-admin-server.mjs";
 
 const isCI = Boolean(process.env.CI);
 const isListing = process.argv.includes("--list");
@@ -45,25 +46,6 @@ const sharedEnv = {
   FORCE_COLOR: process.env.FORCE_COLOR ?? "0",
 };
 
-/** 회원 머니 포커스 스펙은 admin 앱을 기동하지 않아 로컬 콜드스타트 경쟁을 줄인다. */
-function needsAdminWebServer() {
-  if (process.env.E2E_WITH_ADMIN_SERVER === "1") return true;
-  if (process.env.E2E_SKIP_ADMIN_SERVER === "1") return false;
-  const args = process.argv.join(" ");
-  const memberMoneyOnly =
-    /first-krw-withdrawal|first-usdt-withdrawal|withdrawal-negative-guards|public-admin-boundary|support-channel-talk|mining-product|deposit-product/.test(
-      args,
-    );
-  const adminSpecs =
-    /admin-session-totp|success-visual-evidence|admin-krw-browser-money|admin-usdt-browser-money|admin-withdrawal-step-up/.test(
-      args,
-    ) ||
-    args.includes("test:e2e:auth:admin") ||
-    args.includes("test:e2e:auth:visual");
-  if (memberMoneyOnly && !adminSpecs) return false;
-  return true;
-}
-
 const adminWebServerNeeded = needsAdminWebServer();
 /**
  * 로컬에서 회원 앱과 관리자 앱을 동시에 next dev로 컴파일하면
@@ -95,6 +77,7 @@ if (
 
 export default defineConfig({
   testDir: "./tests/e2e/authenticated",
+  globalSetup: "./tests/e2e/fixtures/authenticated-setup.ts",
   fullyParallel: false,
   workers: 1,
   forbidOnly: isCI,

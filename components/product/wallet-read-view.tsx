@@ -1,6 +1,7 @@
 import Link from "next/link";
+import type { CSSProperties } from "react";
 
-import { PageHeading } from "@/components/product/page-heading";
+import { WalletScene } from "@/components/product/wallet-scene";
 import { WalletReadRecovery } from "@/components/product/wallet-read-recovery";
 import { StatePanel } from "@/components/ui/states";
 import { Surface } from "@/components/ui/surface";
@@ -31,17 +32,84 @@ function WalletAmountText({ value }: { value: string }) {
   if (!figure || unit === undefined) {
     return value;
   }
+  const displayUnit = unit === " KRW" ? "원" : unit;
   return (
-    <span className={styles.amountValue}>
+    <span
+      className={styles.amountValue}
+      data-wallet-long-amount={figure.length > 14 ? "true" : undefined}
+      style={
+        {
+          "--wallet-amount-length": figure.length + displayUnit.length,
+        } as CSSProperties
+      }
+    >
       <span className={styles.amountFigure}>{figure}</span>
-      <span className={styles.amountUnit}>{unit}</span>
+      <span className={styles.amountUnit}>{displayUnit}</span>
     </span>
+  );
+}
+
+function WalletIcon({
+  kind,
+}: {
+  kind:
+    | "principal"
+    | "pending"
+    | "unconfirmed"
+    | "deposit"
+    | "withdraw"
+    | "history";
+}) {
+  return (
+    <svg
+      aria-hidden="true"
+      data-wallet-decoration="glyph"
+      focusable="false"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      {kind === "principal" ? (
+        <>
+          <ellipse cx="12" cy="6" rx="7" ry="3" />
+          <path d="M5 6v5c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 11v5c0 1.7 3.1 3 7 3s7-1.3 7-3v-5" />
+        </>
+      ) : null}
+      {kind === "pending" ? (
+        <>
+          <path d="M6 3h12M6 21h12M7 3v4l5 5-5 5v4m10-18v4l-5 5 5 5v4" />
+          <path d="M9 6h6m-6 12h6" />
+        </>
+      ) : null}
+      {kind === "unconfirmed" ? (
+        <>
+          <circle cx="12" cy="12" r="8" strokeDasharray="3 3" />
+          <path d="M9 12h6" />
+        </>
+      ) : null}
+      {kind === "deposit" || kind === "withdraw" ? (
+        <>
+          <path d="M4 15v5h16v-5M12 4v11" />
+          <path d={kind === "deposit" ? "m7 10 5 5 5-5" : "m7 9 5-5 5 5"} />
+        </>
+      ) : null}
+      {kind === "history" ? (
+        <>
+          <rect x="5" y="3" width="14" height="18" rx="2" />
+          <path d="M9 8h6M9 12h6M9 16h3" />
+        </>
+      ) : null}
+    </svg>
   );
 }
 
 export type WalletFundingPanel = { state: "error" } | WalletFundingView;
 
 export type WalletReadViewProps = {
+  initialView?: "principal" | "profit" | "history";
   balanceState: WalletReadState;
   funding: WalletFundingPanel;
   krw: KrwWalletProjection | null;
@@ -54,6 +122,7 @@ export type WalletReadViewProps = {
 };
 
 export function WalletReadView({
+  initialView = "principal",
   balanceState,
   funding,
   krw,
@@ -65,154 +134,218 @@ export function WalletReadView({
   trialState,
 }: WalletReadViewProps) {
   return (
-    <div className={styles.page}>
-      <PageHeading
-        eyebrow="지갑"
-        title="출금 가능 잔액"
-        lead="사용 가능 원화와 출금 보류를 나눠 보여 드려요. 체험 값은 아래에 따로 있어요."
-      />
-
-      <section aria-label="실제 KRW 지갑">
-        {balanceState === "error" ? (
-          <StatePanel
-            tone="error"
-            title="지갑을 불러오지 못했어요"
-            description="연결을 확인한 뒤 다시 시도해 주세요. 실제 잔액은 바뀌지 않아요."
-            action={<WalletReadRecovery />}
-          />
-        ) : balanceState === "empty" || !krw ? (
-          <StatePanel
-            title="아직 표시할 지갑이 없어요"
-            description="계정 준비가 끝나면 KRW 지갑이 이곳에 표시됩니다."
-          />
-        ) : (
-          <Surface as="article" className={styles.heroCard} tone="raised">
-            <div className={styles.heroKicker}>
-              <span>실제 지갑</span>
-              <small>출금 가능</small>
-            </div>
-            <small className={styles.heroLabel}>사용 가능 잔액</small>
-            <strong className={styles.heroValue}>
-              <WalletAmountText
-                value={formatAtomicAmount(krw.availableAtomic, "KRW")}
-              />
-            </strong>
-            <dl className={styles.breakdown}>
-              <div>
-                <dt>출금 보류</dt>
-                <dd>
-                  <WalletAmountText
-                    value={formatAtomicAmount(krw.heldAtomic, "KRW")}
-                  />
-                </dd>
-              </div>
-              <div>
-                <dt>전체</dt>
-                <dd>
-                  <WalletAmountText
-                    value={formatAtomicAmount(krw.balanceAtomic, "KRW")}
-                  />
-                </dd>
-              </div>
-            </dl>
-            {balanceState === "zero" ? (
-              <p className={styles.note}>
-                지금 사용 가능한 원화는 0원이에요. 입금하거나 전환이 끝나면
-                여기에 반영됩니다.
-              </p>
-            ) : null}
-          </Surface>
-        )}
-      </section>
-
-      <section
-        className={styles.funding}
-        aria-labelledby="wallet-funding-title"
-      >
-        <header>
-          <h2 id="wallet-funding-title">원금과 대기 수익</h2>
-          <p className={styles.fundingLead}>
-            정산 전 금액은 출금 가능 잔액에 포함되지 않아요.
-          </p>
+    <div
+      className={styles.page}
+      data-wallet-presentation="reference-reconstruction"
+    >
+      <div className={styles.overview}>
+        <div className={styles.sceneLayer}>
+          <WalletScene priority />
+          <div className={styles.sceneScrim} />
+        </div>
+        <header className={styles.heading} data-wallet-heading="native">
+          <div className={styles.headingTitle}>
+            <svg
+              viewBox="0 0 40 56"
+              fill="none"
+              aria-hidden="true"
+              focusable="false"
+              data-wallet-brand-symbol="approved-gold-p"
+            >
+              <path d="M3 10 21 1l16 8-18 9L3 10Z" fill="#ffe6a0" />
+              <path d="M3 10v36l16 9V18L3 10Z" fill="#b98b3c" />
+              <path d="m19 18 18-9v37l-18 9V18Z" fill="#f0c66c" />
+              <path d="m10 14 7 4v32l-7-4V14Z" fill="#fbe7a9" />
+              <path d="m24 20 7-4v26l-7 4V20Z" fill="#31240f" />
+              <path d="m3 10 18-9 16 8v37l-18 9-16-9V10Z" stroke="#f8d88c" />
+            </svg>
+            <h1>지갑</h1>
+          </div>
+          <p>실제 원화 잔액과 금액 기록을 확인하세요.</p>
         </header>
-        {funding.state === "error" ? (
-          <StatePanel
-            tone="error"
-            title="원금과 대기 수익을 불러오지 못했어요"
-            description="잠시 후 다시 시도해 주세요."
-            action={<WalletReadRecovery label="금액 다시 확인" />}
-          />
-        ) : (
-          <dl className={styles.metrics} data-wallet-metrics="separate">
-            {(funding.state === "ready"
-              ? funding.rows
-              : [
-                  {
-                    label: "인정 원금",
-                    tone: "separate" as const,
-                    value: "아직 없어요",
-                  },
-                  {
-                    label: "정산 전 대기 수익",
-                    tone: "separate" as const,
-                    value: "아직 없어요",
-                  },
-                  {
-                    label: "아직 확정 전",
-                    tone: "unconfirmed" as const,
-                    value: "아직 없어요",
-                  },
-                ]
-            ).map((row) => (
-              <div
-                key={row.label}
-                className={styles.metric}
-                data-funding-tone={row.tone}
-              >
-                <dt>{row.label}</dt>
-                <dd>
-                  <WalletAmountText value={row.value} />
-                </dd>
-                {row.tone === "unconfirmed" ? (
-                  <p>확정된 수익이 아니에요.</p>
-                ) : null}
-              </div>
-            ))}
-          </dl>
-        )}
-      </section>
+        <div className={styles.summary}>
+          <div className={styles.balanceGroup} data-wallet-summary="KRW_ONLY">
+            <section aria-label="실제 KRW 지갑">
+              {balanceState === "error" ? (
+                <StatePanel
+                  tone="error"
+                  title="지갑을 불러오지 못했어요"
+                  description="연결을 확인한 뒤 다시 시도해 주세요. 실제 잔액은 바뀌지 않아요."
+                  action={<WalletReadRecovery />}
+                />
+              ) : balanceState === "empty" || !krw ? (
+                <StatePanel
+                  title="아직 표시할 지갑이 없어요"
+                  description="계정 준비가 끝나면 KRW 지갑이 이곳에 표시됩니다."
+                />
+              ) : (
+                <Surface as="article" className={styles.heroCard} tone="raised">
+                  <div className={styles.heroKicker} data-wallet-balance-labels>
+                    <span>실제 지갑</span>
+                    <small>출금 가능 잔액</small>
+                  </div>
+                  <div className={styles.heroOverview}>
+                    <div className={styles.heroBalance}>
+                      <small className={styles.heroLabel}>사용 가능 잔액</small>
+                      <strong className={styles.heroValue}>
+                        <WalletAmountText
+                          value={formatAtomicAmount(krw.availableAtomic, "KRW")}
+                        />
+                      </strong>
+                    </div>
+                  </div>
+                  <dl className={styles.breakdown}>
+                    <div>
+                      <dt>출금 보류</dt>
+                      <dd>
+                        <WalletAmountText
+                          value={formatAtomicAmount(krw.heldAtomic, "KRW")}
+                        />
+                      </dd>
+                    </div>
+                    <div>
+                      <dt>전체</dt>
+                      <dd>
+                        <WalletAmountText
+                          value={formatAtomicAmount(krw.balanceAtomic, "KRW")}
+                        />
+                      </dd>
+                    </div>
+                  </dl>
+                  {balanceState === "zero" ? (
+                    <p className={styles.note}>
+                      지금 사용 가능한 원화는 0원이에요. 입금하거나 전환이
+                      끝나면 여기에 반영됩니다.
+                    </p>
+                  ) : null}
+                </Surface>
+              )}
+            </section>
 
-      <div className={styles.actions}>
-        <Link className="button button--primary" href="/wallet/deposit">
-          입금하기
-        </Link>
-        <Link className="button button--secondary" href="/wallet/withdraw">
-          출금하기
-        </Link>
+            <section
+              className={styles.funding}
+              aria-labelledby="wallet-funding-title"
+            >
+              <header>
+                <h2 id="wallet-funding-title">원금과 대기 수익</h2>
+                <p className={styles.fundingLead}>
+                  정산 전 금액은 출금 가능 잔액에 포함되지 않아요.
+                </p>
+              </header>
+              {funding.state === "error" ? (
+                <StatePanel
+                  tone="error"
+                  title="원금과 대기 수익을 불러오지 못했어요"
+                  description="잠시 후 다시 시도해 주세요."
+                  action={<WalletReadRecovery label="금액 다시 확인" />}
+                />
+              ) : (
+                <dl className={styles.metrics} data-wallet-metrics="separate">
+                  {(funding.state === "ready"
+                    ? funding.rows
+                    : [
+                        {
+                          label: "인정 원금",
+                          tone: "separate" as const,
+                          value: "아직 없어요",
+                        },
+                        {
+                          label: "정산 전 대기 수익",
+                          tone: "separate" as const,
+                          value: "아직 없어요",
+                        },
+                        {
+                          label: "아직 확정 전",
+                          tone: "unconfirmed" as const,
+                          value: "아직 없어요",
+                        },
+                      ]
+                  ).map((row, index) => (
+                    <div
+                      key={row.label}
+                      className={styles.metric}
+                      data-funding-tone={row.tone}
+                    >
+                      <dt>
+                        <span className={styles.metricIcon}>
+                          <WalletIcon
+                            kind={
+                              row.tone === "unconfirmed"
+                                ? "unconfirmed"
+                                : index === 0
+                                  ? "principal"
+                                  : "pending"
+                            }
+                          />
+                        </span>
+                        {row.label}
+                      </dt>
+                      <dd>
+                        <WalletAmountText value={row.value} />
+                      </dd>
+                      {row.tone === "unconfirmed" ? (
+                        <p>확정된 수익이 아니에요.</p>
+                      ) : null}
+                    </div>
+                  ))}
+                </dl>
+              )}
+            </section>
+          </div>
+          <div className={styles.actions} aria-label="입금과 출금">
+            <Link className="button button--primary" href="/wallet/deposit">
+              <WalletIcon kind="deposit" />
+              입금하기
+            </Link>
+            <Link className="button button--secondary" href="/wallet/withdraw">
+              <WalletIcon kind="withdraw" />
+              출금하기
+            </Link>
+          </div>
+        </div>
       </div>
 
       <div className={styles.ledgerTabs}>
         <div
           className={styles.tabList}
-          role="tablist"
+          role="radiogroup"
           aria-label="원금, 수익, 거래내역"
         >
           <label className={styles.tab}>
             <input
-              defaultChecked
+              defaultChecked={initialView === "principal"}
               name="wallet-view"
               type="radio"
               value="principal"
             />
-            원금
+            <span className={styles.tabContent}>
+              <WalletIcon kind="principal" />
+              원금
+            </span>
           </label>
           <label className={styles.tab}>
-            <input name="wallet-view" type="radio" value="profit" />
-            수익
+            <input
+              defaultChecked={initialView === "profit"}
+              name="wallet-view"
+              type="radio"
+              value="profit"
+            />
+            <span className={styles.tabContent}>
+              <WalletIcon kind="pending" />
+              수익
+            </span>
           </label>
           <label className={styles.tab}>
-            <input name="wallet-view" type="radio" value="history" />
-            거래내역
+            <input
+              defaultChecked={initialView === "history"}
+              name="wallet-view"
+              type="radio"
+              value="history"
+            />
+            <span className={styles.tabContent}>
+              <WalletIcon kind="history" />
+              거래내역
+            </span>
           </label>
         </div>
 
@@ -257,15 +390,6 @@ export function WalletReadView({
         </div>
 
         <div className={styles.tabPanel} data-panel="history">
-          <Surface as="section" className="ledger-principle">
-            <p className="eyebrow">금액 기록</p>
-            <h2>금액 변화는 이유와 상태를 함께 남겨요.</h2>
-            <p>
-              출금 보류는 사용 가능 금액과 분리됩니다. 수동 USDT 입금과 KRW 잔액
-              출금도 이곳에 기록돼요.
-            </p>
-          </Surface>
-
           <div className={styles.history}>
             <section
               className="ledger-history"
@@ -285,7 +409,11 @@ export function WalletReadView({
               ) : ledgerState === "ready" ? (
                 <div className={styles.ledgerList}>
                   {ledgerEntries.map((entry) => (
-                    <article className={styles.ledgerRow} key={entry.id}>
+                    <article
+                      className={styles.ledgerRow}
+                      data-wallet-entry-direction={entry.direction}
+                      key={entry.id}
+                    >
                       <span
                         className={`ledger-direction ledger-direction--${entry.direction.toLowerCase()}`}
                       >
@@ -314,7 +442,7 @@ export function WalletReadView({
           </div>
 
           <section
-            className="wallet-receipts"
+            className={`wallet-receipts ${styles.receipts}`}
             aria-labelledby="wallet-receipts-title"
           >
             <header>
@@ -369,6 +497,24 @@ export function WalletReadView({
               />
             )}
           </section>
+
+          <Surface
+            as="aside"
+            className={`ledger-principle ${styles.historyIntro}`}
+            aria-labelledby="wallet-money-guide-title"
+          >
+            <div>
+              <p className="eyebrow">입출금 안내</p>
+              <h2 id="wallet-money-guide-title">원화 지갑과 수동 USDT 입금</h2>
+            </div>
+            <p>
+              출금 보류는 사용 가능 금액과 분리됩니다. USDT 입금은 수동 확인 후
+              KRW 지갑에 반영돼요. 출금은 사용 가능한 KRW 잔액에서 처리됩니다.
+            </p>
+            <Link className={styles.guideLink} href="/wallet/deposit">
+              수동 USDT 입금 안내
+            </Link>
+          </Surface>
         </div>
       </div>
     </div>

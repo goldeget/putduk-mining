@@ -77,7 +77,15 @@ export function buildPutdukAiScreenContext({
     return undefined;
   }
 
-  const context: AiScreenContext = { currentRoute };
+  // Wide view may explain its originating page. This is a public hint, never
+  // authorization; selected records still require the current owner's RLS.
+  const originRoute =
+    pathname === "/ai" || pathname === "/menu/ai"
+      ? validContextValue("currentRoute", searchParams?.get("aiOrigin"))
+      : undefined;
+  const context: AiScreenContext = {
+    currentRoute: originRoute ?? currentRoute,
+  };
   const currentProduct = readContextValue(
     "currentProduct",
     explicitContext,
@@ -114,4 +122,18 @@ export function buildPutdukAiScreenContext({
 
   const parsed = aiScreenContextSchema.safeParse(context);
   return parsed.success ? parsed.data : undefined;
+}
+
+/** Copy only the validated hint fields; never forward the full URL or query. */
+export function buildPutdukAiWideViewHref(context?: AiScreenContext): string {
+  const parsed = aiScreenContextSchema.safeParse(context);
+  if (!parsed.success || !parsed.data.currentRoute) return "/ai";
+  const query = new URLSearchParams({ aiOrigin: parsed.data.currentRoute });
+  for (const field of Object.keys(
+    QUERY_KEY_BY_CONTEXT_FIELD,
+  ) as QueryContextField[]) {
+    const value = parsed.data[field];
+    if (value) query.set(QUERY_KEY_BY_CONTEXT_FIELD[field], value);
+  }
+  return `/ai?${query.toString()}`;
 }

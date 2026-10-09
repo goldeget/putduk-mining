@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 
-import { buildPutdukAiScreenContext } from "@/components/product/putduk-ai-screen-context";
+import {
+  buildPutdukAiScreenContext,
+  buildPutdukAiWideViewHref,
+} from "@/components/product/putduk-ai-screen-context";
 
 const PRODUCT_ID = "4d3e1c33-1086-4e59-97f8-2b06759147ce";
 const EVENT_ID = "1fe5c6bf-1b1e-49b4-a8bd-c0ab925ac7ee";
@@ -165,7 +168,7 @@ describe("PUTDUK AI client screen context", () => {
     ).toBeUndefined();
   });
 
-  it("reads only the four approved query keys and ignores route or identity input", () => {
+  it("reads only the approved origin and context keys, ignoring arbitrary route or identity input", () => {
     const reads: string[] = [];
     const values = new Map([
       ["currentRoute", "/admin"],
@@ -189,6 +192,7 @@ describe("PUTDUK AI client screen context", () => {
 
     expect(context).toEqual({ currentRoute: "/menu/ai" });
     expect(reads).toEqual([
+      "aiOrigin",
       "currentProduct",
       "currentWorld",
       "selectedEvent",
@@ -197,5 +201,54 @@ describe("PUTDUK AI client screen context", () => {
     expect(JSON.stringify(context)).not.toMatch(
       /admin|person@example|01012345678|outside|secret/,
     );
+  });
+
+  it("preserves the validated originating screen through wide view without copying unrelated query fields", () => {
+    const context = buildPutdukAiScreenContext({
+      pathname: "/wallet/withdraw",
+      searchParams: new URLSearchParams({
+        selectedTransaction: TRANSACTION_ID,
+        email: "private@example.com",
+        token: "secret",
+      }),
+    });
+    const href = buildPutdukAiWideViewHref(context);
+    const url = new URL(href, "https://mining.putduk.com");
+    expect(url.pathname).toBe("/ai");
+    expect(url.searchParams.get("aiOrigin")).toBe("/wallet/withdraw");
+    expect(href).not.toMatch(/private|email|token|secret/);
+    expect(
+      buildPutdukAiScreenContext({
+        pathname: "/ai",
+        searchParams: url.searchParams,
+      }),
+    ).toEqual(context);
+  });
+
+  it.each([
+    "/admin",
+    "//outside.example/wallet",
+    "https://outside.example/wallet",
+    "/wallet?token=secret",
+    "/wallet/private",
+  ])("ignores unsafe wide-view origin hints: %s", (origin) => {
+    expect(
+      buildPutdukAiScreenContext({
+        pathname: "/ai",
+        searchParams: new URLSearchParams({ aiOrigin: origin }),
+      }),
+    ).toEqual({ currentRoute: "/ai" });
+    expect(buildPutdukAiWideViewHref({ currentRoute: origin } as never)).toBe(
+      "/ai",
+    );
+  });
+
+  it("does not let an origin hint override the actual page after navigating away from AI", () => {
+    expect(
+      buildPutdukAiScreenContext({
+        pathname: "/events",
+        searchParams: new URLSearchParams({ aiOrigin: "/wallet" }),
+      }),
+    ).toEqual({ currentRoute: "/events" });
   });
 });

@@ -4,7 +4,7 @@ const FACT_LABELS: Readonly<Record<string, string>> = {
   PRODUCT_NAME: "서비스 이름",
   PRODUCT_TYPE: "서비스 종류",
   OFFICIAL_DOMAIN: "공식 서비스 주소",
-  ADMIN_DOMAIN: "운영자 서비스 주소",
+  MEMBER_SUPPORT_PATH: "고객지원",
   SUPPORTED_WORLDS: "채굴 월드",
   TRIAL_DURATION: "체험 기간",
   TRIAL_LEDGER: "체험 값과 실제 지갑",

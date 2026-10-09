@@ -8,7 +8,7 @@ Cursor 규칙: `.cursor/rules/putduk-e2e-agent-verification.mdc` (`alwaysApply: 
 
 ## 목표
 
-- 1건 실패 때문에 **full regression(약 186 tests)** 을 반복 돌리지 않는다.
+- 1건 실패 때문에 **현재 후보의 전체 authenticated inventory** 를 반복 돌리지 않는다.
 - triage → **실패·변경 spec만** 재실행 → merge/CI 직전 **full 1회**.
 - DB reset과 full E2E를 한 흐름에 묶지 않는다.
 
@@ -50,20 +50,27 @@ Cursor 규칙: `.cursor/rules/putduk-e2e-agent-verification.mdc` (`alwaysApply: 
 
 ### 공유 production build (`e2e-app-build`)
 
-1. workflow당 **1회** `pnpm build` (회원 + `apps/admin`).
+1. `e2e-app-build`에서 **1회** `pnpm build` (회원 + `apps/admin`). `Application gates`의 일반 build 검증과 구분한다.
 2. artifact `e2e-next-production`: `.next`, `apps/admin/.next` (repo 상대 경로).
 3. 소비 job: **authenticated** 8-shard matrix, **typography-protected** (병렬 가능).
 
 ### authenticated shard
 
-- PR CI는 authenticated 186 tests를 **8-way `--shard=i/8`** matrix job으로 병렬 실행한다 (`Authenticated product gates (1/8)` … `(8/8)`). chromium·mobile-chrome 프로젝트를 모두 포함한다.
+- PR CI는 현재 후보의 전체 authenticated inventory를 **8개 matrix job**으로 병렬 실행한다 (`Authenticated product gates (1/8)` … `(8/8)`). `scripts/ci-authenticated-shards.mjs`가 각 파일·브라우저 조합을 통째로 배분하며 새 파일도 빠짐없이 수집한다. PR #71 head `402f186`의 검증 inventory는 196건이었다. 이 숫자는 이후 후보의 고정 합격 기준이 아니다.
 - `needs: [webserver-lifecycle, e2e-app-build]` — shard마다 isolated `supabase start` + `db:reset`은 유지한다.
 - Playwright 전 **artifact download**; step env **`E2E_NEXT_START=1`** → `playwright.authenticated.config.ts`는 **next start only** (CI `next dev` 금지).
 - branch protection / required checks는 예전 단일 job 이름 `Authenticated product gates` 대신 **위 여덟 job을 모두** 등록해야 한다.
-- shard 합집합은 로컬 `pnpm test:e2e:auth:full` 과 동일하다. CI에서는 `pnpm exec playwright test --config playwright.authenticated.config.ts --shard=i/8` 로 넘긴다 (`pnpm run … -- --shard` 는 CI에서 shard가 무시될 수 있음).
+- shard 합집합은 로컬 `pnpm test:e2e:auth:full` 과 동일하다. Application job은 `node scripts/ci-authenticated-shards.mjs --verify-only`, 각 lane은 `node scripts/ci-authenticated-shards.mjs i/8`을 실행한다. 전체·선택 목록과 실제 실행의 test identity를 비교해 누락·중복·예상 밖 test를 거절한다. 시간 추정치는 배치에만 사용한다.
 - Playwright browser cache는 `actions/cache@v5`, key `~/.cache/ms-playwright` (workflow `ci.yml`).
-- CI authenticated config는 **`reporter: "line"`만** 쓴다. `github` reporter와 `reportSlowTests` slow warning은 Run Summary·check annotation 노이즈를 만든다. slow 상한은 `reportSlowTests: { max: 5, threshold: 480_000 }` 이며 `exactOptionalPropertyTypes` 때문에 `undefined`를 넘기지 않고 CI일 때만 spread로 병합한다 (`9cfc2ef`).
+- authenticated config의 기본 CI reporter는 `line`이다. scheduler는 목록을 JSON으로 수집하고 실제 실행에 `line,json`을 사용한 뒤 `playwright-report/ci-shard-evidence/`에 민감한 원문을 제외한 plan·coverage·execution 증거를 저장한다. 실행 시작 시 비워지는 `test-results`와 경로를 분리한다. `github` reporter는 사용하지 않는다. slow 상한은 `reportSlowTests: { max: 5, threshold: 480_000 }` 이며 `exactOptionalPropertyTypes` 때문에 `undefined`를 넘기지 않고 CI일 때만 spread로 병합한다 (`9cfc2ef`).
 - shard job 한도는 **19분**, 실행 step 한도는 **18분**이며 전체 감시기는 대기·빌드 시간을 포함한 더 이른 마감도 적용한다. 실제 TOTP 대기, 개별 테스트 시간, assertion, retry는 유지한다. 시간 초과·취소는 실패이며 일부 검사를 통과로 바꿀 수 없다. 속도는 prebuilt + next start + 8-way 병렬 실행으로 확보한다.
+
+### worker와 후보 출처 증거
+
+- worker JSON reporter는 실제 실행을 `test-results/worker/vitest.json`에 저장한다. `assert-worker-report.mjs`는 현재 step 이후의 시작 시각, 비어 있지 않은 결과, 합계 일치, 모든 test 통과를 확인한다. 실패·skip·todo는 전체 worker gate 통과가 아니다.
+- 업로드할 `test-results/worker/report.json`에는 source/run identity, test 수, 파일, test 이름 hash, status, duration만 담는다. 원문 오류·console·env·payload는 보관하지 않는다. `worker-runtime` 업로드는 이 파일이 없으면 실패한다.
+- PR CI는 head와 base를 결합한 synthetic merge checkout을 검증할 수 있다. source SHA와 candidate head SHA, parent SHA, run/attempt를 함께 기록한다. dirty local tree는 로컬 증거로만 기록하며 commit SHA 검증으로 확대하지 않는다.
+- 모든 job 종료 뒤 전체 20분 예산과 필수 artifact를 다시 확인한다. 이전 SHA의 green run은 현재 변경분이나 develop 병합 뒤의 검증을 대신하지 않는다.
 
 ### typography-protected
 
@@ -88,7 +95,7 @@ e2e-app-build ─┬─► authenticated (×8, needs webserver-lifecycle)
 | `36975011504` | `2f349c9` | cancelled | merge queue 우선 취소 + Application gates TS (`reportSlowTests`); 후속 `9cfc2ef` |
 | `36975512027` | `9cfc2ef` | success | **최종 green**, check annotation **0건**, wall ~16m |
 
-로컬 검증·문서·CI truth는 worktree `local/pr38-followup-20261001` / remote `review/pr38-cde4b203` 기준이다. 루트 `develop` 체크아웃의 uncommitted Playwright diff는 merge 전까지 동기화하지 않는다.
+위 표는 PR #39 당시의 역사적 baseline이다. 현재 후보는 실제 checkout과 최신 inventory를 사용한다. 과거 branch/worktree나 test 수를 현재 출처·합격 증거로 대신하지 않는다.
 
 ## 허용 / 금지
 
@@ -106,6 +113,7 @@ e2e-app-build ─┬─► authenticated (×8, needs webserver-lifecycle)
 - assertion 완화, `test.skip`, `test.only`, spec 삭제로 green 만들기.
 - 동일 SHA에서 full **3회째** (사용자 또는 CI 승인 없이).
 - push, merge, 원격 CI (명시 승인 전).
+- production coupling이 UNKNOWN인 원격 작업. GitHub hook/app/배포 정책을 확인할 수 없으면 안전으로 간주하지 않는다. live 영향이 가능한 작업은 정확한 대상·SHA·효과에 대한 사람의 명시 승인이 필요하다 (`GIT-CI-CD-POLICY.md`).
 - PowerShell `pnpm … *> log.txt` 만 켜 두고 **block_until_ms / Tee-Object 없이** 장시간 방치.
 
 ## hung 판정

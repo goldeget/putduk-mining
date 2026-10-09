@@ -7,6 +7,7 @@ import {
   depositStatusLabel,
   formatKst,
   formatKrw,
+  formatUsdt,
   shortId,
   withdrawalDestinationLabel,
   withdrawalStatusLabel,
@@ -16,10 +17,12 @@ import { createAdminServiceClient } from "@/lib/supabase/service";
 
 import {
   anyMemberCountFailed,
+  combineMemberCounts,
   countMemberMiningSessions,
   memberCountLabel,
 } from "./_lib/member-evidence";
 import styles from "./members.module.css";
+import { MemberSearch } from "./member-search";
 import {
   presentMemberLifecycle,
   presentMemberProfile,
@@ -59,37 +62,21 @@ export default async function MembersPage({
           <p className="eyebrow">회원 한눈에</p>
           <h1>회원 한 사람의 맥락</h1>
           <p>
-            정확한 회원 식별자로만 조회합니다. 비밀번호·문서 원문·출금 목적지
-            원문은 보이지 않습니다.
+            이름·아이디·전화번호로 회원을 찾습니다. 비밀번호·본인 확인 문서와
+            출금 목적지는 보이지 않습니다.
           </p>
         </section>
-        <form className="member-search" method="get" action="/members">
-          <label htmlFor="member-id">회원 식별자</label>
-          <div>
-            <input
-              id="member-id"
-              name="id"
-              defaultValue={id ?? ""}
-              placeholder="00000000-0000-0000-0000-000000000000"
-              autoComplete="off"
-              spellCheck={false}
-              required
-            />
-            <button className="gold-button" type="submit">
-              안전 조회
-            </button>
-          </div>
-          {id ? (
-            <p className="form-error" role="alert">
-              올바른 회원 식별자를 입력해 주세요.
-            </p>
-          ) : null}
-        </form>
+        <MemberSearch
+          key={id ?? "lookup"}
+          initialQuery={(id ?? "").slice(0, 80)}
+          initialError={id ? "올바른 회원 식별자를 입력해 주세요." : ""}
+        />
         <section className="member-empty">
           <span aria-hidden="true">360°</span>
           <h2>조회할 회원을 선택하세요.</h2>
           <p>
-            이름이나 전화번호로 검색하지 않습니다. 정확한 식별자만 받습니다.
+            검색 결과에서 회원을 선택해 주세요. 전화번호와 아이디는 일부만
+            표시합니다.
           </p>
         </section>
       </div>
@@ -105,6 +92,7 @@ export default async function MembersPage({
     mining,
     wallet,
     deposits,
+    usdtDeposits,
     withdrawals,
     events,
     notifications,
@@ -112,6 +100,7 @@ export default async function MembersPage({
     timeline,
     security,
     depositRows,
+    usdtDepositRows,
     withdrawalRows,
     riskFlags,
     moneySources,
@@ -141,6 +130,11 @@ export default async function MembersPage({
       .eq("user_id", userId),
     db
       .from("deposit_requests")
+      .select("id", { count: "exact", head: true })
+      .eq("currency", "KRW")
+      .eq("user_id", userId),
+    db
+      .from("usdt_manual_deposits")
       .select("id", { count: "exact", head: true })
       .eq("user_id", userId),
     db
@@ -172,8 +166,15 @@ export default async function MembersPage({
     db
       .from("deposit_requests")
       .select("id, status, amount_atomic, currency, requested_at")
+      .eq("currency", "KRW")
       .eq("user_id", userId)
       .order("requested_at", { ascending: false })
+      .limit(5),
+    db
+      .from("usdt_manual_deposits")
+      .select("id,status,sent_usdt_amount,credited_krw,created_at")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false })
       .limit(5),
     db
       .from("withdrawal_requests")
@@ -192,7 +193,7 @@ export default async function MembersPage({
     db
       .from("money_source_summaries")
       .select(
-        "user_id,schema_version,coverage,unclassified_wallet_entries,unconnected_withdrawals,unclassified_journals,invalid_source_receipts,eligible_principal_atomic,recorded_krw_principal_deposits_atomic,recorded_usdt_principal_credits_atomic,recorded_bonus_atomic,observed_at,capture_started_at",
+        "user_id,schema_version,coverage,unclassified_wallet_entries,unconnected_withdrawals,unclassified_journals,invalid_source_receipts,eligible_principal_atomic,held_principal_atomic,recovered_principal_atomic,recorded_krw_principal_deposits_atomic,recorded_usdt_principal_credits_atomic,recorded_bonus_atomic,observed_at,capture_started_at",
       )
       .eq("user_id", userId)
       .maybeSingle(),
@@ -279,7 +280,7 @@ export default async function MembersPage({
     ["체험 시작", trial],
     ["채굴 · 정산", mining],
     ["지갑 · 거래", wallet],
-    ["입금", deposits],
+    ["입금", combineMemberCounts(deposits, usdtDeposits)],
     ["출금", withdrawals],
     ["이벤트", events],
     ["알림", notifications],
@@ -294,6 +295,7 @@ export default async function MembersPage({
     mining,
     wallet,
     deposits,
+    usdtDeposits,
     withdrawals,
     ai,
     security,
@@ -301,6 +303,7 @@ export default async function MembersPage({
   const evidenceFailed = Boolean(
     timeline.error ||
     depositRows.error ||
+    usdtDepositRows.error ||
     withdrawalRows.error ||
     riskFlags.error ||
     profile.error ||
@@ -357,6 +360,11 @@ export default async function MembersPage({
           </small>
         </div>
       </section>
+
+      <details className={styles.lookupPanel}>
+        <summary>다른 회원 찾기</summary>
+        <MemberSearch key={userId} />
+      </details>
 
       {countFailed ||
       evidenceFailed ||
@@ -538,7 +546,7 @@ export default async function MembersPage({
 
         <article className="detail-panel" id="evidence-kyc">
           <header>
-            <p className="eyebrow">민 · 감사 기록</p>
+            <p className="eyebrow">민감 정보 · 조회 기록</p>
             <h2>본인 확인 요약</h2>
           </header>
           {!canReadKyc ? (
@@ -567,7 +575,7 @@ export default async function MembersPage({
           ) : (
             <p className="empty-state">본인 확인 접수 기록이 없습니다.</p>
           )}
-          <p className="panel-note">문서 원문·바이트는 표시하지 않습니다.</p>
+          <p className="panel-note">본인 확인 문서 원문은 표시하지 않습니다.</p>
           <Link className="text-link" href={"/kyc" as Route}>
             본인 확인 대기열
           </Link>
@@ -583,7 +591,7 @@ export default async function MembersPage({
           </header>
           <div className="evidence-split">
             <div>
-              <h3>최근 입금</h3>
+              <h3>최근 원화 입금</h3>
               {depositRows.error ? (
                 <p className="empty-state">입금 기록을 확인할 수 없습니다.</p>
               ) : depositRows.data?.length ? (
@@ -598,7 +606,36 @@ export default async function MembersPage({
                   ))}
                 </ul>
               ) : (
-                <p className="empty-state">입금 기록 없음</p>
+                <p className="empty-state">원화 입금 기록 없음</p>
+              )}
+              <Link className="text-link" href={"/deposits/krw" as Route}>
+                원화 입금 대기열
+              </Link>
+              <h3>최근 USDT 입금</h3>
+              {usdtDepositRows.error ? (
+                <p className="empty-state">
+                  USDT 입금 기록을 확인할 수 없습니다.
+                </p>
+              ) : usdtDepositRows.data?.length ? (
+                <ul className="evidence-list">
+                  {usdtDepositRows.data.map((row) => (
+                    <li key={row.id}>
+                      <strong>{depositStatusLabel(row.status)}</strong>
+                      <span>
+                        보낸 금액 · {formatUsdt(row.sent_usdt_amount)}
+                      </span>
+                      {row.status === "CONFIRMED" ? (
+                        <span>반영된 원화 · {formatKrw(row.credited_krw)}</span>
+                      ) : null}
+                      <time dateTime={row.created_at}>
+                        {formatKst(row.created_at)}
+                      </time>
+                      <small>{shortId(row.id)}</small>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="empty-state">USDT 입금 기록 없음</p>
               )}
               <Link className="text-link" href={"/deposits/usdt" as Route}>
                 USDT 입금 대기열

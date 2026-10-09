@@ -15,7 +15,8 @@ export function PwaRegistrar() {
       void navigator.serviceWorker.register("/sw.js", { scope: "/" });
     };
 
-    window.addEventListener("load", register, { once: true });
+    if (document.readyState === "complete") register();
+    else window.addEventListener("load", register, { once: true });
     return () => window.removeEventListener("load", register);
   }, []);
 

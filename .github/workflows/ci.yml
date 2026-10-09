@@ -126,6 +126,14 @@ jobs:
       - name: Unit tests
         run: pnpm test
 
+      - name: Verify authenticated scheduling invariants
+        run: node --test scripts/ci-authenticated-shards.test.mjs scripts/assert-worker-report.test.mjs scripts/e2e-admin-server.test.mjs
+
+      - name: Verify every authenticated test is assigned exactly once
+        env:
+          CI_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: node scripts/ci-authenticated-shards.mjs --verify-only
+
       - name: Production build
         run: pnpm build
 
@@ -189,6 +197,21 @@ jobs:
 
       - name: Run two-session safe-mode command
         run: supabase test db supabase/tests-concurrent/safe_mode_concurrent_command.sql
+
+      - name: Run two-session withdrawal member lock order
+        run: supabase test db supabase/tests-concurrent/withdrawal_member_lock_order.sql
+
+      - name: Prepare canonical funded fixture for GLOBAL admission
+        run: supabase test db supabase/test-fixtures/funding_global_admission_canonical.sql
+
+      - name: Verify member allocation clock after GLOBAL admission
+        run: supabase test db supabase/tests-concurrent/global_allocation_admission_concurrent.sql
+
+      - name: Prepare principal HOLD clock admission fixture
+        run: supabase test db supabase/test-fixtures/hold_clock_admission_concurrency.sql
+
+      - name: Verify HOLD and CANCEL clock admission after real contention
+        run: supabase test db supabase/tests-concurrent/hold_cancel_admission_concurrent.sql
 
       - name: Verify published policy reader against concurrent publication
         run: node scripts/assert-economy-policy-reader-concurrency.mjs
@@ -328,6 +351,8 @@ jobs:
           version: 2.113.0
 
       - name: Start local Supabase
+        env:
+          CI_SUPABASE_START_STAGGER_SECONDS: ${{ matrix.shard }}
         run: bash scripts/ci-supabase-start.sh
 
       - name: Rebuild migrations from zero
@@ -362,13 +387,13 @@ jobs:
 
       - name: Run authenticated browser tests
         # 실제 TOTP 창과 모든 assertion/retry는 유지한다. 중단은 실패이며 통과가 아니다.
-        # 186개(chromium + mobile-chrome)를 8-way --shard로 나누면 shard당 약 23건이다. wall time은 가장 느린 shard 기준.
+        # 파일/브라우저 조합은 통째로 배분한다. 전체 목록과 선택 목록의 exact coverage를 검사한다.
         # CI wall-clock: e2e-app-build 산출물 + E2E_NEXT_START=1 (next start). next dev 금지 — putduk-ci-wall-clock.mdc.
         timeout-minutes: 18
         env:
           E2E_NEXT_START: "1"
-        # pnpm run … -- --shard 는 CI에서 playwright 인자 앞에 `--` 가 한 번 더 붙어 shard가 무시된다.
-        run: pnpm exec playwright test --config playwright.authenticated.config.ts --shard=${{ matrix.shard }}/8 --fail-on-flaky-tests
+          CI_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: node scripts/ci-authenticated-shards.mjs ${{ matrix.shard }}/8
 
       - name: Preserve authenticated browser evidence
         if: always()
@@ -416,16 +441,31 @@ jobs:
       - name: Export local Supabase env
         run: node scripts/capture-local-supabase-env.mjs
 
+      - name: Verify concurrent admin authentication admission
+        env:
+          APP_ENV: test
+        run: node scripts/assert-admin-auth-admission-concurrency.mjs
+
       - name: Run worker runtime tests
-        run: pnpm test:worker
+        run: |
+          rm -f test-results/worker/vitest.json test-results/worker/report.json
+          worker_started_after="$(node -e 'process.stdout.write(String(Date.now()))')"
+          echo "WORKER_REPORT_STARTED_AFTER=$worker_started_after" >> "$GITHUB_ENV"
+          pnpm test:worker
+
+      - name: Assert current worker runtime evidence
+        if: always()
+        env:
+          CI_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: node scripts/assert-worker-report.mjs test-results/worker/vitest.json --started-after "$WORKER_REPORT_STARTED_AFTER"
 
       - name: Preserve worker evidence
         if: always()
         uses: actions/upload-artifact@v7
         with:
           name: worker-runtime
-          path: test-results
-          if-no-files-found: ignore
+          path: test-results/worker/report.json
+          if-no-files-found: error
 
   # 공개 화면 감사. 로컬 가짜 키만 쓰고 Supabase는 시작하지 않는다.
   typography-public:
@@ -459,7 +499,7 @@ jobs:
 
       - name: Assert public typography evidence
         if: always()
-        run: node scripts/assert-typography-report.mjs test-results/typography/report.json --passed 115 --screenshots 110 --redact
+        run: node scripts/assert-typography-report.mjs test-results/typography/report.json --passed 119 --screenshots 110 --redact
 
       - name: Preserve public typography evidence
         if: always()

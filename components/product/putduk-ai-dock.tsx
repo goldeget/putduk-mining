@@ -1,11 +1,16 @@
 "use client";
 
 import Link from "next/link";
+import type { Route } from "next";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 
 import { PutdukAiChat } from "./putduk-ai-chat";
 import { PutdukAiMascot } from "./putduk-ai-mascot";
+import {
+  buildPutdukAiScreenContext,
+  buildPutdukAiWideViewHref,
+} from "./putduk-ai-screen-context";
 import styles from "./putduk-ai-dock.module.css";
 
 const coreRoutes = [
@@ -84,8 +89,12 @@ function lockDocumentScroll() {
   };
 }
 
-/** ProductShell supplies the normal-flow row outside its scrolling main. */
-export function PutdukAiDock() {
+/** The home shortcut shares the same authorized conversation and dialog. */
+export function PutdukAiDock({
+  presentation = "dock",
+}: {
+  presentation?: "dock" | "inline";
+}) {
   const pathname = usePathname();
   const dedicatedAi =
     pathname === "/ai" ||
@@ -99,10 +108,22 @@ export function PutdukAiDock() {
 
   // A route owns only the panel lifecycle. The shared conversation provider
   // stays mounted above this keyed presentation when the route changes.
-  return <RouteAiDock key={pathname} pathname={pathname} />;
+  return (
+    <RouteAiDock
+      key={pathname}
+      pathname={pathname}
+      presentation={presentation}
+    />
+  );
 }
 
-function RouteAiDock({ pathname }: { pathname: string }) {
+function RouteAiDock({
+  pathname,
+  presentation,
+}: {
+  pathname: string;
+  presentation: "dock" | "inline";
+}) {
   const dialogId = useId();
   const titleId = useId();
   const statusId = useId();
@@ -113,6 +134,7 @@ function RouteAiDock({ pathname }: { pathname: string }) {
   const restoreFocusRef = useRef(true);
   const [open, setOpen] = useState(false);
   const [status, setStatus] = useState("");
+  const [wideViewHref, setWideViewHref] = useState("/ai");
 
   const closePanel = useCallback((restoreFocus = true, updateState = true) => {
     restoreFocusRef.current = restoreFocus;
@@ -162,6 +184,7 @@ function RouteAiDock({ pathname }: { pathname: string }) {
       if (!dialog) return;
       const height = viewport?.height ?? window.innerHeight;
       const top = viewport?.offsetTop ?? 0;
+      dialog.dataset.aiCompact = String(height < 560);
       if (Number.isFinite(height) && height > 0)
         dialog.style.setProperty("--ai-viewport-height", `${height}px`);
       if (Number.isFinite(top) && top >= 0)
@@ -197,15 +220,28 @@ function RouteAiDock({ pathname }: { pathname: string }) {
       window.removeEventListener("resize", syncViewport);
       dialog.style.removeProperty("--ai-viewport-height");
       dialog.style.removeProperty("--ai-viewport-top");
+      delete dialog.dataset.aiCompact;
       unlock();
     };
     setStatus("");
+    setWideViewHref(
+      buildPutdukAiWideViewHref(
+        buildPutdukAiScreenContext({
+          pathname,
+          searchParams: new URLSearchParams(window.location.search),
+        }),
+      ),
+    );
     setOpen(true);
   }
 
   return (
     <>
-      <footer className={styles.dock} data-ai-dock aria-label="화면 도움">
+      <footer
+        className={`${styles.dock} ${presentation === "inline" ? styles.inline : ""}`}
+        data-ai-dock
+        aria-label="화면 도움"
+      >
         <div className={styles.actions}>
           {pathname === "/mining" ? (
             <a
@@ -241,7 +277,14 @@ function RouteAiDock({ pathname }: { pathname: string }) {
             onClick={(event) => openPanel(event.currentTarget)}
           >
             <PutdukAiMascot />
-            <span>AI 도움</span>
+            {presentation === "inline" ? (
+              <span className={styles.inlineCopy}>
+                <strong>PUTDUK AI</strong>
+                <small>질문하기</small>
+              </span>
+            ) : (
+              <span>AI 도움</span>
+            )}
           </button>
         </div>
         {status ? (
@@ -277,12 +320,15 @@ function RouteAiDock({ pathname }: { pathname: string }) {
             >
               <PutdukAiMascot />
             </button>
-            <h2 id={titleId}>퍼뜩 AI</h2>
+            <div>
+              <h2 id={titleId}>퍼뜩 AI 도우미</h2>
+              <p className={styles.subtitle}>텍스트 대화</p>
+            </div>
           </div>
           <div className={styles.headerActions}>
             <Link
               className={styles.expandLink}
-              href="/ai"
+              href={wideViewHref as Route}
               onNavigate={() => closePanel(false)}
             >
               넓게 보기

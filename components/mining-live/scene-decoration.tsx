@@ -22,6 +22,8 @@ type SceneDecorationProps = {
   maxDpr?: number | undefined;
   imageWidth?: number;
   imageHeight?: number;
+  extractionTarget?: ScenePoint | null;
+  objectPosition?: ScenePoint;
 };
 
 function bounded(value: number, minimum: number, maximum: number): number {
@@ -55,6 +57,7 @@ export function sceneAnchorPosition(
   imageWidth: number,
   imageHeight: number,
   point: ScenePoint,
+  objectPosition: ScenePoint = { x: 0.5, y: 0.5 },
 ) {
   if (
     !Number.isFinite(imageWidth + imageHeight) ||
@@ -67,8 +70,8 @@ export function sceneAnchorPosition(
   const coverWidth = imageWidth * scale;
   const coverHeight = imageHeight * scale;
   return {
-    x: coverWidth * point.x - (coverWidth - width) / 2,
-    y: coverHeight * point.y - (coverHeight - height) / 2,
+    x: coverWidth * point.x - (coverWidth - width) * objectPosition.x,
+    y: coverHeight * point.y - (coverHeight - height) * objectPosition.y,
   };
 }
 
@@ -84,10 +87,16 @@ export function SceneDecoration({
   maxDpr = SCENE_MOTION_LIMITS.maxDpr,
   imageWidth = 0,
   imageHeight = 0,
+  extractionTarget = null,
+  objectPosition = { x: 0.5, y: 0.5 },
 }: SceneDecorationProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const anchorX = anchor?.x;
   const anchorY = anchor?.y;
+  const targetX = extractionTarget?.x;
+  const targetY = extractionTarget?.y;
+  const positionX = objectPosition.x;
+  const positionY = objectPosition.y;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -232,8 +241,52 @@ export function SceneDecoration({
         imageWidth,
         imageHeight,
         { x: anchorX!, y: anchorY! },
+        { x: positionX, y: positionY },
       );
       const seconds = timestamp / 1000;
+      if (
+        targetX !== undefined &&
+        targetY !== undefined &&
+        Number.isFinite(targetX + targetY) &&
+        targetX >= 0 &&
+        targetX <= 1 &&
+        targetY >= 0 &&
+        targetY <= 1
+      ) {
+        const target = sceneAnchorPosition(
+          cssWidth,
+          cssHeight,
+          imageWidth,
+          imageHeight,
+          { x: targetX, y: targetY },
+          { x: positionX, y: positionY },
+        );
+        const radius = Math.min(cssWidth, cssHeight) * 0.075;
+        // Only local reactor light and energy change. Camera, master pixels,
+        // browser text and authoritative money never move or accrue here.
+        paint.shadowBlur = 5;
+        paint.shadowColor = "#98ceef";
+        paint.strokeStyle = "#98ceef";
+        paint.globalAlpha = 0.13;
+        paint.lineWidth = 1;
+        paint.beginPath();
+        paint.ellipse(
+          target.x,
+          target.y,
+          radius,
+          radius * 0.4,
+          0,
+          seconds * 0.45,
+          seconds * 0.45 + Math.PI * 0.7,
+        );
+        paint.stroke();
+        paint.strokeStyle = "#efc987";
+        paint.globalAlpha = 0.06 + (Math.sin(seconds * 1.1) + 1) * 0.025;
+        paint.beginPath();
+        paint.moveTo(origin.x, origin.y);
+        paint.lineTo(target.x, target.y);
+        paint.stroke();
+      }
       for (let index = 0; index < actualCount; index += 1) {
         const phase = index * 2.399963;
         const spread = Math.min(cssWidth, cssHeight) * (0.07 + index * 0.009);
@@ -360,6 +413,10 @@ export function SceneDecoration({
   }, [
     anchorX,
     anchorY,
+    targetX,
+    targetY,
+    positionX,
+    positionY,
     enabled,
     imageHeight,
     imageWidth,

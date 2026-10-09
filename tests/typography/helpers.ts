@@ -38,6 +38,7 @@ type OverflowIssue = {
 };
 
 type TypographyAudit = {
+  copySpacing: { selector: string; text: string; issue: string }[];
   koreanBreaks: KoreanBreakIssue[];
   overflow: OverflowIssue;
 };
@@ -177,7 +178,29 @@ async function readTypographyAudit(page: Page): Promise<TypographyAudit> {
             .slice(0, 20)
         : [];
 
+    const copySpacing: TypographyAudit["copySpacing"] = [];
+    for (const element of document.querySelectorAll<HTMLElement>(
+      "p, h1, h2, h3, h4, h5, h6, button, a, label, dt, dd, [role='alert'], [role='status'], [aria-label]",
+    )) {
+      if (!isVisible(element)) continue;
+      // innerText preserves semantic br/block boundaries and includes joined
+      // inline JSX. Soft viewport wrapping does not excuse missing copy spacing.
+      const copies = [element.innerText, element.getAttribute("aria-label")];
+      for (const text of copies) {
+        if (!text || !/[가-힣]/u.test(text)) continue;
+        const issue = /[가-힣][.!?][가-힣A-Za-z]/u.test(text)
+          ? "missing-sentence-space"
+          : /(?:운영자|회원|상태) 입니다/u.test(text)
+            ? "obvious-copula-space"
+            : null;
+        if (issue) {
+          copySpacing.push({ selector: selectorFor(element), text, issue });
+        }
+      }
+    }
+
     return {
+      copySpacing,
       koreanBreaks,
       overflow: { clientWidth, offenders, scrollWidth },
     };
@@ -352,6 +375,10 @@ export async function auditTypographyRoute(input: {
 
   const result = await readTypographyAudit(input.page);
   expect(
+    result.copySpacing,
+    `${input.routeName}: Korean rendered copy spacing`,
+  ).toEqual([]);
+  expect(
     result.overflow.scrollWidth,
     `${input.routeName} ${input.viewport.label}px ${input.theme}: horizontal overflow\n${JSON.stringify(result.overflow.offenders, null, 2)}`,
   ).toBeLessThanOrEqual(result.overflow.clientWidth + 1);
@@ -362,11 +389,38 @@ export async function auditTypographyRoute(input: {
 }
 
 /** 현재 페이지 타이포 청결도만 검사한다(전역 매트릭스 카운트에 포함되지 않음). */
-export async function assertTypographyClean(page: Page, label: string) {
+export async function assertTypographyClean(
+  page: Page,
+  label: string,
+  testInfo?: TestInfo,
+) {
   await page.evaluate(async () => {
     await document.fonts.ready;
   });
   const result = await readTypographyAudit(page);
+  if (
+    testInfo &&
+    (result.copySpacing.length ||
+      result.koreanBreaks.length ||
+      result.overflow.scrollWidth > result.overflow.clientWidth + 1)
+  ) {
+    const selector =
+      result.copySpacing[0]?.selector ??
+      result.koreanBreaks[0]?.selector ??
+      result.overflow.offenders[0]?.selector;
+    if (selector) await page.locator(selector).first().scrollIntoViewIfNeeded();
+    await testInfo.attach(`${label}-typography-failure`, {
+      body: await page.screenshot({ animations: "disabled" }),
+      contentType: "image/png",
+    });
+    await testInfo.attach(`${label}-typography-audit`, {
+      body: JSON.stringify(result),
+      contentType: "application/json",
+    });
+  }
+  expect(result.copySpacing, `${label}: Korean rendered copy spacing`).toEqual(
+    [],
+  );
   expect(
     result.overflow.scrollWidth,
     `${label}: horizontal overflow\n${JSON.stringify(result.overflow.offenders, null, 2)}`,

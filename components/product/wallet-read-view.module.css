@@ -1,6 +1,137 @@
 .page {
+  --wallet-gold: #dec28a;
+  --wallet-panel: rgb(11 23 42 / 94%);
   display: grid;
-  gap: 0.85rem;
+  gap: 1.2rem;
+  min-width: 0;
+}
+
+.overview {
+  position: relative;
+  display: grid;
+  gap: 1.4rem;
+  min-width: 0;
+  min-height: clamp(35rem, 155vw, 41rem);
+  padding: 1.25rem 0.85rem 1rem;
+  isolation: isolate;
+}
+
+.sceneLayer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 1.2rem;
+  pointer-events: none;
+  background: #081629;
+}
+
+.sceneScrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgb(6 17 32 / 8%),
+    rgb(6 17 32 / 8%) 35%,
+    rgb(6 17 32 / 62%)
+  );
+  pointer-events: none;
+}
+
+:global(:root[data-theme="light"]) .sceneLayer {
+  background: #f4f8fd;
+}
+
+:global(:root[data-theme="light"]) .sceneScrim {
+  background: linear-gradient(
+    180deg,
+    rgb(255 255 255 / 5%),
+    rgb(255 255 255 / 5%) 35%,
+    rgb(246 249 253 / 45%)
+  );
+}
+
+.overview:has([data-wallet-scene-state="unavailable"]) .heading {
+  max-width: calc(100% - 8rem);
+}
+
+.heading {
+  position: relative;
+  z-index: 1;
+  padding: 0.45rem 0.25rem 0;
+}
+
+.headingTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.headingTitle > svg {
+  flex: none;
+  width: 1.65rem;
+  height: 2.3rem;
+}
+
+.headingTitle > h1 {
+  margin: 0;
+  font-size: clamp(1.7rem, 3vw, 2.5rem);
+  font-weight: 720;
+  letter-spacing: -0.055em;
+}
+
+.heading > p {
+  max-width: 31rem;
+  margin-top: 0.65rem;
+  font-size: 0.875rem;
+  line-height: 1.55;
+}
+
+.summary {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+  width: 100%;
+}
+
+.balanceGroup {
+  overflow: hidden;
+  min-width: 0;
+  border: 1px solid
+    color-mix(in srgb, var(--brand-primary) 36%, var(--border-default));
+  border-radius: 1.35rem;
+  background:
+    linear-gradient(
+      125deg,
+      color-mix(in srgb, var(--brand-primary) 7%, transparent),
+      transparent 60%
+    ),
+    var(--wallet-panel);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--brand-primary) 14%, transparent),
+    var(--shadow-lift);
+}
+
+.balanceGroup > section > :global(.state-panel) {
+  margin: 1rem;
+}
+
+:global(:root[data-theme="light"]) .page {
+  --wallet-gold: var(--text-primary);
+  --wallet-panel: #fff;
+}
+
+:global(:root[data-theme="light"]) .balanceGroup {
+  border-color: color-mix(
+    in srgb,
+    var(--brand-primary) 22%,
+    var(--border-default)
+  );
+  background: linear-gradient(120deg, #fff 40%, #f3f6fb);
+  box-shadow:
+    0 12px 30px rgb(73 96 122 / 8%),
+    inset 0 1px 0 #fff;
 }
 
 .heroCard,
@@ -12,22 +143,29 @@
 .heroCard {
   display: grid;
   gap: 0.35rem;
-  padding: clamp(1.2rem, 3vw, 1.85rem);
-  border-color: color-mix(
-    in srgb,
-    var(--brand-primary) 46%,
-    var(--border-default)
-  );
+  min-width: 0;
+  padding: clamp(1.2rem, 2.5vw, 1.85rem);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  container: wallet-hero / inline-size;
 }
 
 .heroKicker {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
   color: var(--text-secondary);
   font-size: 0.875rem;
   font-weight: 700;
+}
+
+.heroKicker > span,
+.heroKicker > small {
+  white-space: nowrap;
 }
 
 .heroKicker small,
@@ -37,13 +175,34 @@
   font-weight: 650;
 }
 
+.heroKicker small {
+  padding: 0.25rem 0.55rem;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-full);
+  color: var(--brand-primary);
+  background: color-mix(in srgb, var(--brand-quiet) 35%, transparent);
+}
+
+.heroOverview {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.heroBalance {
+  display: grid;
+  min-width: 0;
+  gap: 0.35rem;
+}
+
 .heroValue {
   margin: 0.35rem 0 0.15rem;
   min-width: 0;
-  color: var(--text-primary);
-  font-size: clamp(2rem, 5vw, 3.15rem);
+  color: var(--wallet-gold);
+  font-size: clamp(2.25rem, 5vw, 3.55rem);
   font-variant-numeric: tabular-nums;
-  font-weight: 650;
+  font-weight: 740;
   letter-spacing: -0.05em;
   line-height: 1.05;
   line-break: strict;
@@ -55,7 +214,7 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.65rem;
-  margin: 0.85rem 0 0;
+  margin: 0.5rem 0 0;
 }
 
 .breakdown div {
@@ -94,14 +253,29 @@
 
 .funding {
   display: grid;
-  gap: 0.7rem;
+  gap: 0.75rem;
+  padding: 1rem clamp(0.8rem, 2.5vw, 1.85rem) 1.15rem;
+  border-top: 1px solid var(--border-default);
+  background: color-mix(in srgb, var(--surface-default) 60%, transparent);
   container-type: inline-size;
+}
+
+.funding > header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 0.75rem;
+  align-items: baseline;
+}
+
+.funding > header .fundingLead {
+  margin: 0;
+  font-size: 0.75rem;
 }
 
 .funding h2 {
   margin: 0;
   color: var(--text-primary);
-  font-size: 1.05rem;
+  font-size: 0.85rem;
   font-weight: 650;
   letter-spacing: -0.03em;
   line-break: strict;
@@ -122,7 +296,7 @@
 .metrics {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.7rem;
+  gap: 0.5rem;
   margin: 0;
 }
 
@@ -130,21 +304,40 @@
   --metric-pad-inline: 0.8rem;
   display: flex;
   min-width: 0;
-  min-height: 6.5rem;
+  min-height: 6.2rem;
   flex-direction: column;
   gap: 0.35rem;
   padding: 0.9rem var(--metric-pad-inline);
   border: 1px solid var(--border-default);
+  border-radius: 0.7rem;
   background: var(--surface-default);
 }
 
 .metric dt {
+  display: grid;
+  gap: 0.45rem;
   color: var(--text-tertiary);
   font-size: 0.8125rem;
   font-weight: 650;
   line-height: 1.35;
   line-break: strict;
   word-break: keep-all;
+}
+
+.metricIcon {
+  display: inline-flex;
+  width: 1.4rem;
+  height: 1.4rem;
+  color: var(--brand-primary);
+}
+
+.metricIcon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.metric[data-funding-tone="unconfirmed"] .metricIcon {
+  color: var(--text-tertiary);
 }
 
 .metric dd {
@@ -195,12 +388,26 @@
 
 .actions {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.7rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 8rem), 1fr));
+  gap: 0.75rem;
 }
 
 .actions :global(.button) {
   width: 100%;
+  min-width: 0;
+  min-height: 3.35rem;
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  font-weight: 760;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  text-align: center;
+}
+
+.actions svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex: none;
 }
 
 .trialCard {
@@ -235,11 +442,12 @@
   min-width: 0;
   flex-wrap: wrap;
   align-items: baseline;
+  /* 숫자와 단위는 함께 맞춘다. 단위만 큰 글자로 남기지 않는다. */
+  font-size: min(1em, 20cqi, calc(170cqi / var(--wallet-amount-length, 1)));
 }
 
 .amountFigure {
   max-width: 100%;
-  font-size: min(1em, 20cqi);
   white-space: nowrap;
 }
 
@@ -265,20 +473,24 @@
 
 .ledgerTabs {
   display: grid;
-  gap: 0.75rem;
+  gap: 0.85rem;
 }
 
 .tabList {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 5rem), 1fr));
   gap: 0.35rem;
-  border-bottom: 1px solid var(--border-subtle);
+  padding: 0.3rem;
+  border: 1px solid var(--border-default);
+  border-radius: 0.8rem;
+  background: var(--wallet-panel);
 }
 
 .tab {
   position: relative;
   display: grid;
-  min-height: 2.75rem;
+  min-width: 0;
+  min-height: 3rem;
   place-items: center;
   color: var(--text-secondary);
   font-size: 0.9375rem;
@@ -299,7 +511,30 @@
 
 .tab:has(input:checked) {
   color: var(--brand-primary);
-  box-shadow: inset 0 -2px 0 var(--brand-primary);
+  border-radius: var(--radius-md);
+  background: linear-gradient(
+    125deg,
+    color-mix(in srgb, var(--brand-primary) 18%, var(--surface-raised)),
+    var(--surface-raised)
+  );
+  box-shadow: inset 0 0 0 1px
+    color-mix(in srgb, var(--brand-primary) 32%, transparent);
+}
+
+.tabContent {
+  display: flex;
+  max-width: 100%;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  text-align: center;
+}
+
+.tabContent svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  flex: none;
 }
 
 .tab:has(input:focus-visible) {
@@ -327,7 +562,95 @@
 }
 
 .history :global(.ledger-history) {
-  margin-top: 0.4rem;
+  margin-top: 0;
+}
+
+.historyIntro {
+  display: grid;
+  gap: 0.65rem;
+  padding: 1rem 1.15rem;
+  border-radius: var(--radius-lg);
+  background: transparent;
+  box-shadow: none;
+}
+
+.historyIntro h2 {
+  margin: 0.3rem 0 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.historyIntro > p {
+  max-width: 46rem;
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  line-height: 1.6;
+}
+
+.guideLink {
+  width: fit-content;
+  padding-block: 0.25rem;
+  color: var(--brand-primary);
+  font-size: 0.875rem;
+  font-weight: 750;
+  text-underline-offset: 0.2rem;
+}
+
+.guideLink:focus-visible {
+  border-radius: var(--radius-sm);
+  outline: 2px solid var(--brand-primary);
+  outline-offset: 3px;
+}
+
+.history,
+.receipts {
+  min-width: 0;
+  padding: clamp(1rem, 2vw, 1.5rem);
+  border: 1px solid var(--border-default);
+  border-radius: 1rem;
+  background: var(--wallet-panel);
+}
+
+.history {
+  container: wallet-history / inline-size;
+}
+
+.history :global(.ledger-history) > header {
+  margin-bottom: 1rem;
+}
+
+.history :global(.ledger-history) h2 {
+  margin: 0.3rem 0 0;
+  font-size: 1.1rem;
+  font-weight: 720;
+}
+
+.receipts {
+  display: grid;
+  gap: 1.25rem;
+  align-content: start;
+}
+
+.receipts h2 {
+  margin: 0.5rem 0 0;
+  font-size: 1.1rem;
+  font-weight: 650;
+  letter-spacing: -0.03em;
+}
+
+.receipts header > p:last-child {
+  max-width: 28rem;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.55;
+  word-break: keep-all;
+}
+
+.receipts :global(.state-panel) {
+  margin: 0;
+  max-width: 100%;
+  box-shadow: none;
 }
 
 .ledgerList {
@@ -342,35 +665,122 @@
   align-items: center;
   gap: 0.85rem;
   min-width: 0;
-  min-height: 4.5rem;
+  min-height: 4.75rem;
+  padding-block: 0.75rem;
   border-bottom: 1px solid var(--border-default);
+}
+
+.ledgerRow > :global(.ledger-direction) {
+  width: 2.1rem;
+  height: 2.1rem;
+  border-color: color-mix(in srgb, currentColor 22%, transparent);
+  background: color-mix(in srgb, currentColor 8%, transparent);
+}
+
+.history .ledgerRow > strong {
+  max-width: 14rem;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 740;
+  line-break: strict;
+  word-break: keep-all;
+  white-space: nowrap;
+  overflow-wrap: normal;
+}
+
+/* 좁은 읽기 폭에서는 날짜와 금액에 각각 전체 행을 제공한다. */
+@container wallet-history (max-width: 20rem) {
+  .history .ledgerRow {
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 0.45rem 0.8rem;
+  }
+
+  .history .ledgerRow > strong {
+    grid-column: 1 / -1;
+    justify-self: end;
+    max-width: 100%;
+  }
+}
+
+.ledgerRow[data-wallet-entry-direction="CREDIT"] > strong {
+  color: var(--status-success);
+}
+
+.ledgerRow[data-wallet-entry-direction="DEBIT"] > strong {
+  color: var(--status-warning);
 }
 
 @media (max-width: 759px) {
   .heroCard {
     padding: 1.15rem 1.05rem 1.2rem;
-    background:
-      linear-gradient(
-        180deg,
-        color-mix(in srgb, var(--brand-primary) 12%, transparent),
-        transparent 5.5rem
-      ),
-      var(--surface-raised);
+    background: transparent;
   }
 
   .heroValue {
-    font-size: clamp(1.85rem, 8vw, 2.4rem);
+    font-size: clamp(2rem, 8.75vw, 2.85rem);
+  }
+
+  .heroOverview:has([data-wallet-long-amount="true"]) {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
-/* 글자가 칸보다 커지면 한글 단어가 들어갈 너비로 쌓는다. 320px 기본 글자에서는 세 칸을 유지한다. */
-@container (max-width: 12rem) {
-  .metrics {
+/* 글자 확대 때는 장식을 비워 잔액 숫자와 단위를 읽을 너비를 확보한다. */
+@container wallet-hero (max-width: 12rem) {
+  .heroKicker {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: start;
+  }
+
+  .heroKicker small {
+    padding-inline: 0.35rem;
+  }
+
+  .heroOverview {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@container (max-width: 30rem) {
+  .metrics:has([data-wallet-long-amount="true"]) {
     grid-template-columns: minmax(0, 1fr);
   }
 }
 
 @media (max-width: 520px) {
+  .heading :global(.product-page-heading) h1 {
+    font-size: 1.75rem;
+  }
+
+  .heading :global(.product-page-heading) > div > p:last-child {
+    font-size: 0.8125rem;
+  }
+
+  .overview {
+    gap: 1.1rem;
+    padding: 1.15rem 0.6rem 0.8rem;
+  }
+
+  .balanceGroup {
+    border-radius: 1.15rem;
+  }
+
+  .history,
+  .receipts {
+    padding: 1rem 0.85rem;
+  }
+
+  .ledgerRow {
+    gap: 0.55rem;
+  }
+
+  .history .ledgerRow > strong {
+    max-width: 8rem;
+    font-size: 0.8125rem;
+  }
+
   .metrics {
     gap: 0.45rem;
   }
@@ -384,12 +794,80 @@
   .metric dt {
     font-size: 0.75rem;
   }
+
+  .tabContent {
+    gap: 0.3rem;
+  }
+
+  .tabContent svg {
+    width: 0.95rem;
+    height: 0.95rem;
+  }
+}
+
+/* 좁은 화면과 글자 확대에서는 정확한 금액과 단위를 읽을 너비로 쌓는다. */
+@container (max-width: 20rem) {
+  .metrics {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .metric {
+    min-height: auto;
+  }
+
+  .metric dt {
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+  }
+}
+
+@media (min-width: 1100px) {
+  .overview {
+    gap: 1.75rem;
+    min-height: 28rem;
+    padding: 1.4rem 1.6rem 1.5rem;
+  }
+
+  .summary {
+    max-width: 42rem;
+  }
+
+  .heading {
+    padding-top: 0.25rem;
+  }
+
+  .sceneScrim {
+    background: linear-gradient(90deg, rgb(6 17 32 / 22%), transparent 60%);
+  }
+
+  :global(:root[data-theme="light"]) .sceneScrim {
+    background: linear-gradient(90deg, rgb(255 255 255 / 20%), transparent 60%);
+  }
+
+  .ledgerTabs .tabPanel[data-panel="history"] {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    align-items: start;
+  }
+
+  .historyIntro {
+    grid-column: 1 / -1;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .balanceGroup,
   .heroCard,
   .metric,
   .trialCard {
     box-shadow: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .sceneLayer {
+    display: none;
+  }
+  .overview {
+    min-height: 0;
   }
 }

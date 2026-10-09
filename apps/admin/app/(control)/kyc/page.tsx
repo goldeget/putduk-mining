@@ -1,10 +1,13 @@
-﻿import Link from "next/link";
+﻿import { randomUUID } from "node:crypto";
+import Link from "next/link";
 import type { Route } from "next";
+import { redirect } from "next/navigation";
 
 import { formatKst, shortId } from "@/app/(control)/_lib/format";
 import { EmptyQueue, QueueCard, QueueShell } from "@/components/queue-shell";
 import { RouteRetryButton } from "@/components/route-retry-button";
 import { requireAdminPage } from "@/lib/auth/principal";
+import { HIGH_IMPACT_ROLES } from "@/lib/auth/policy";
 import { createAdminServiceClient } from "@/lib/supabase/service";
 
 import { kycRiskLabel, kycStatusLabel } from "./labels";
@@ -29,8 +32,40 @@ function countSubmissions(
 }
 
 export default async function KycQueuePage() {
-  await requireAdminPage("/kyc");
+  const principal = await requireAdminPage("/kyc");
+  if (!HIGH_IMPACT_ROLES.includes(principal.role)) {
+    redirect("/unauthorized?code=ROLE_FORBIDDEN" as Route);
+  }
   const db = createAdminServiceClient();
+  // Match Member 360: privileged summary reads require a successful audit first.
+  const audit = await db.from("audit_logs").insert({
+    actor_user_id: principal.userId,
+    actor_role: principal.role,
+    action: "ADMIN_KYC_QUEUE_VIEW",
+    target_type: "KYC_QUEUE",
+    reason: "본인 확인 대기열에서 상태·위험 요약 조회",
+    request_id: randomUUID(),
+    metadata: {
+      surface: "admin_kyc_queue",
+      fields: ["status", "risk_level", "decision_reason", "submission_count"],
+      limit: 40,
+    },
+  });
+  if (audit.error) {
+    return (
+      <div data-ui-ready="/kyc" data-ui-state="error">
+        <QueueShell
+          eyebrow="본인 확인"
+          lead="본인 확인 건을 검토하고 결과와 사유를 남깁니다."
+          title="본인 확인 검토"
+        />
+        <p className="queue-flash" role="alert">
+          조회 기록을 남기지 못해 본인 확인 정보를 열지 않았습니다.
+          <RouteRetryButton />
+        </p>
+      </div>
+    );
+  }
 
   const { data, error } = await db
     .from("kyc_cases")

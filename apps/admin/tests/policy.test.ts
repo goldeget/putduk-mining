@@ -76,6 +76,9 @@ describe("admin authorization policy", () => {
 
   it("allows only known admin return paths", () => {
     expect(safeAdminReturnPath("/members?id=one")).toBe("/members?id=one");
+    expect(safeAdminReturnPath("/assistant")).toBe("/assistant");
+    expect(safeAdminReturnPath("/assistant/unknown")).toBe("/");
+    expect(safeAdminReturnPath("https://attacker.invalid/assistant")).toBe("/");
     expect(safeAdminReturnPath("/deposits/usdt")).toBe("/deposits/usdt");
     expect(safeAdminReturnPath("/deposits/krw")).toBe("/deposits/krw");
     expect(

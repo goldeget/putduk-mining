@@ -35,6 +35,7 @@ describe("admin auth failure limit", () => {
     const inserted: Record<string, unknown>[] = [];
     let failures = 0;
     const events = createSecurityEventFailureStore({
+      rpc: async () => ({ data: null, error: null }),
       from(table) {
         expect(table).toBe("security_events");
         const chain = {
@@ -97,6 +98,8 @@ describe("admin auth failure limit", () => {
 
   it("fails closed when the shared store cannot be read", async () => {
     const events: FailureLimitStore = {
+      admitAttempt: async () => ({ allowed: false, code: "UNAVAILABLE" }),
+      finishAttempt: async () => false,
       countFailures: async () => null,
       insertFailure: async () => false,
       insertProof: async () => false,
@@ -117,15 +120,16 @@ describe("admin auth failure limit", () => {
     const issue = read("app/api/v1/admin/session/step-up/route.ts");
     const approve = read("app/api/v1/admin/deposits/approve/route.ts");
 
-    expect(login.indexOf("readAdminAuthFailureBudget")).toBeLessThan(
+    expect(login.indexOf("admitAdminAuthAttempt")).toBeLessThan(
       login.indexOf("signInWithPassword"),
     );
-    expect(login).toContain("recordAdminAuthFailure");
+    expect(login).toContain("finishAdminAuthAttempt");
     expect(rateLimit).not.toContain("new Map");
     expect(rateLimit).toContain("security_events");
     expect(gate).not.toContain("challengeAndVerify");
     expect(stepUp).not.toContain("challengeAndVerify");
-    expect(totp).toContain("readAdminAuthFailureBudget");
+    expect(totp).toContain("admitAdminAuthAttempt");
+    expect(totp).toContain("finishAdminAuthAttempt");
     expect(totp).toContain("challengeAndVerify");
     expect(totp).toContain("postVerifySessionId");
     expect(totp).toContain("sessionTarget.sessionId");

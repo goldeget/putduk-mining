@@ -1,8 +1,7 @@
-import Link from "next/link";
-
 import { logoutAction, logoutAllAction } from "@/app/actions";
 import type { AdminPrincipal } from "@/lib/auth/principal";
-import { AdminNavigation } from "./admin-navigation";
+import { AdminRailMenu } from "./admin-rail-menu";
+import { AdminScreenGuide } from "./presentation/admin-screen-guide";
 import { ThemeControl } from "../../../components/system/theme-control";
 
 const operatorRoleLabel: Record<AdminPrincipal["role"], string> = {
@@ -22,13 +21,10 @@ export function AdminShell({
 }) {
   return (
     <div className="control-shell">
-      <aside className="control-rail">
-        <Link className="brand-lockup brand-lockup--rail" href="/">
-          <span className="brand-symbol">P</span>
-          <strong>퍼뜩</strong>
-          <small>운영</small>
-        </Link>
-        <AdminNavigation />
+      <a className="admin-skip-link" href="#admin-main-content">
+        본문 바로가기
+      </a>
+      <AdminRailMenu>
         <div className="operator-card">
           <span>보안 세션</span>
           <strong>{operatorRoleLabel[principal.role]}</strong>
@@ -40,7 +36,7 @@ export function AdminShell({
             <button type="submit">모든 세션 종료</button>
           </form>
         </div>
-      </aside>
+      </AdminRailMenu>
       <div className="control-workspace">
         <header className="control-topbar">
           <div>
@@ -48,11 +44,14 @@ export function AdminShell({
             운영자 본인 확인 완료
           </div>
           <div className="control-topbar__tools">
+            <AdminScreenGuide />
             <ThemeControl />
             <p>admin.mining.putduk.com</p>
           </div>
         </header>
-        <main className="control-main">{children}</main>
+        <main className="control-main" id="admin-main-content" tabIndex={-1}>
+          {children}
+        </main>
       </div>
     </div>
   );

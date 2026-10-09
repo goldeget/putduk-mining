@@ -1,13 +1,12 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useState } from "react";
 import { useOperatorDraft } from "@/components/assistant/operator-draft-provider";
 import {
   usableOperatorDraft,
   type UsdtOperatorDraft,
 } from "@/lib/assistant/draft";
 
-import type { CommandActionResult } from "@/app/(control)/_lib/command-gate";
 import {
   bindMoneyFormSubmit,
   MoneyOfflineNote,
@@ -22,6 +21,10 @@ import {
 } from "@/components/operator-fields";
 import { QueueFlash } from "@/components/queue-shell";
 import { StepUpTokenField } from "@/components/step-up-token-field";
+import {
+  useReviewConfirmation,
+  useReviewedAction,
+} from "@/components/review-confirmation";
 import { ADMIN_COMMAND_FAMILIES } from "@/lib/auth/command-families";
 
 import { confirmUsdtManualDepositAction } from "./actions";
@@ -78,31 +81,24 @@ function ConfirmUsdtDepositFields({
   depositId: string;
   initial?: UsdtOperatorDraft["input"] | undefined;
 }) {
-  const [reviewRevision, setReviewRevision] = useState(0);
+  const review = useReviewConfirmation(["creditedKrw", "reason"]);
   const operationKey = useLogicalOperationKey("usdt_dep");
   const [offlineNote, setOfflineNote] = useState<string | null>(null);
-  const [result, action] = useActionState<CommandActionResult | null, FormData>(
+  const response = useReviewedAction(
     confirmUsdtManualDepositAction,
-    null,
+    review.revision,
   );
 
   return (
     <form
-      action={action}
+      action={response.action}
       className="operator-form"
       onReset={(event) => event.preventDefault()}
       onSubmit={(event) => bindMoneyFormSubmit(event, setOfflineNote)}
-      onChange={(event) => {
-        const field = event.target;
-        if (
-          (field instanceof HTMLInputElement ||
-            field instanceof HTMLTextAreaElement) &&
-          (field.name === "creditedKrw" || field.name === "reason")
-        )
-          setReviewRevision((value) => value + 1);
-      }}
+      onChange={review.onChange}
     >
       <input name="depositId" type="hidden" value={depositId} />
+      <input {...response.revisionField} />
       <MoneyOperationFields operationKey={operationKey} />
       <TextField
         inputMode="numeric"
@@ -113,18 +109,18 @@ function ConfirmUsdtDepositFields({
       />
       <ReasonField label="확인 사유" defaultValue={initial?.reason} />
       <ConfirmCheckbox
-        key={`confirm-${reviewRevision}`}
+        key={`confirm-${review.revision}`}
         label="외부 이체를 확인했고, 원화 입금만 반영합니다. 출금과는 별개입니다."
         name="confirmation"
         value="CONFIRM_USDT_DEPOSIT"
       />
       <StepUpTokenField
-        key={`step-up-${reviewRevision}`}
+        key={`step-up-${review.revision}`}
         commandFamily={ADMIN_COMMAND_FAMILIES.DEPOSIT_CONFIRM}
       />
       <SubmitButton pendingLabel="확인 중…">입금 확인 · 원화 반영</SubmitButton>
       <MoneyOfflineNote message={offlineNote} />
-      <QueueFlash result={result} />
+      <QueueFlash result={response.result} stale={response.stale} />
     </form>
   );
 }

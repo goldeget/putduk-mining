@@ -1,0 +1,19 @@
+.scene {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.scene img {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+  object-position: var(--tower-scene-position, 65% 45%);
+}
+
+.scene[data-scene-theme="light"] img {
+  object-position: var(--tower-scene-position, 50% 50%);
+}

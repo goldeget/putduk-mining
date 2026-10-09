@@ -3270,6 +3270,10 @@ select {
     grid-template-columns: 244px minmax(0, 1fr);
   }
 
+  .product-shell[data-home-page-active="true"] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
   .product-sidebar {
     position: sticky;
     top: 0;

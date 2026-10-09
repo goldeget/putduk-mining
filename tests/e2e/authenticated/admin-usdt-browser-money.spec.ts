@@ -7,6 +7,7 @@ import {
 } from "./helpers/admin-totp";
 import {
   confirmOperatorStepUp,
+  expectEditedReviewInvalidated,
   formWithSubmit,
   openAdminQueue,
   readExternalSends,
@@ -96,12 +97,32 @@ test.describe("admin browser USDT withdrawal", () => {
     expect(await countExternalSends(withdrawalId)).toBe(1);
 
     await sendForm.getByLabel("거래 해시").fill(`${txHash}b`);
-    await sendForm.getByRole("button", { name: "USDT 외부 송금 기록" }).click();
+    await expectEditedReviewInvalidated(sendForm);
     await expect(sendForm.getByRole("status")).toContainText(
-      "인증 앱으로 다시 확인",
+      "입력이 바뀌었습니다. 내용을 다시 확인해 주세요.",
     );
+    await expect(
+      sendForm.getByText("USDT 외부 송금을 기록했습니다", { exact: true }),
+    ).toHaveCount(0);
+    await sendForm.getByRole("button", { name: "USDT 외부 송금 기록" }).click();
+    const confirmation = sendForm.getByRole("checkbox", {
+      name: /KRW 잔액 기준 출금/,
+    });
+    expect(
+      await confirmation.evaluate(
+        (field: HTMLInputElement) => field.validity.valueMissing,
+      ),
+    ).toBe(true);
+    expect(
+      await confirmation.evaluate(
+        (field: HTMLInputElement) => field.validationMessage,
+      ),
+    ).not.toBe("");
     expect(await countExternalSends(withdrawalId)).toBe(1);
 
+    await sendForm
+      .getByRole("checkbox", { name: /KRW 잔액 기준 출금/ })
+      .check();
     await confirmOperatorStepUp(sendForm, secret);
     await sendForm.getByRole("button", { name: "USDT 외부 송금 기록" }).click();
     await expect(sendForm.getByRole("status")).toContainText(

@@ -186,6 +186,59 @@ function publication(
 }
 
 describe("read-only V1 funding entitlement engine", () => {
+  it.each(source.tiers)(
+    "keeps principal-proportional BASE speed without an extra Tier multiplier at $code",
+    (tier) => {
+      const principal = BigInt(tier.minimumPrincipalKrw);
+      const initial = start(condition(principal));
+      const baselinePrincipal = BigInt(source.minimumPrincipalKrw);
+      const baseline = run(start(condition(baselinePrincipal)), day)
+        .segments[0]!.baseAccrued;
+      const actual = run(initial, day).segments[0]!.baseAccrued;
+
+      expect(initial.condition.tierCode).toBe(tier.code);
+      expect(initial.condition.slots).toBe(tier.slots);
+      expect(initial.condition.allocatedBaseSpeedMultiplier).toEqual(
+        exactMicroKrw(1n),
+      );
+      expect(actual.numerator * baseline.denominator * baselinePrincipal).toBe(
+        baseline.numerator * actual.denominator * principal,
+      );
+    },
+  );
+
+  it("does not gate a source-confirmed published Product identity by Funding Tier", () => {
+    // Preview-only trusted-source fixtures; no real catalog publication or
+    // proposed product modifier is implied by these descriptive identities.
+    const input = condition(BigInt(source.minimumPrincipalKrw));
+    const baseline = run(start(input), day);
+    for (const identity of [
+      "nvidia",
+      "tesla",
+      "spacex",
+      "sk-hynix",
+      "btc",
+      "etf",
+      "gold",
+    ]) {
+      const state = start({
+        ...input,
+        allocations: [
+          {
+            ...input.allocations[0]!,
+            productId: `published-fixture-${identity}`,
+          },
+        ],
+      });
+      expect(state.condition.tierCode).toBe("L1");
+      expect(state.condition.slots).toBe(1);
+      expect(state.baseCapacity).toEqual(baseline.state.baseCapacity);
+      expect(run(state, day).segments[0]!.baseAccrued).toEqual(
+        baseline.segments[0]!.baseAccrued,
+      );
+    }
+  });
+
   it("reads base, conditional retention and minimum activation from approved policy data", () => {
     const state = start();
     expect(state.mode).toBe("PREVIEW_ONLY");
@@ -225,6 +278,42 @@ describe("read-only V1 funding entitlement engine", () => {
     expect(result.conditionalRetentionSettlementReadyKrw).toBe(0n);
     expect(result.retentionQualificationRequired).toBe(true);
     expect(result.state.conditionalRetentionUsed.numerator).toBeGreaterThan(0n);
+  });
+
+  it("matches the private SQL default 12.73 vector without qualifying maintenance", () => {
+    // Same approved reference vector as default_funding_engine_exact_math.sql;
+    // this verifier neither accepts earnings nor supplies a command amount.
+    const result = run(start(condition(100000n)), 2_199_744_000n);
+    expect(result.state.baseUsed).toEqual(exactMicroKrw(12_730_000n));
+    expect(result.state.conditionalRetentionUsed).toEqual(
+      exactMicroKrw(12_730_000n),
+    );
+    expect(result.settlementReadyKrw).toBe(12n);
+    expect(result.rewardCarryMicroKrw).toBe(730000n);
+    expect(result.rewardCarrySubMicroKrw).toEqual(exactMicroKrw(0n));
+    expect(result.conditionalRetentionSettlementReadyKrw).toBe(0n);
+    expect(result.retentionQualificationRequired).toBe(true);
+  });
+
+  it("keeps exact default partial-allocation parity with SQL and independent maintenance", () => {
+    const input = condition(100000n);
+    const result = run(
+      start({
+        ...input,
+        allocations: [{ ...input.allocations[0]!, allocationBps: 5000 }],
+      }),
+      2_199_744_000n,
+    );
+    expect(result.state.baseUsed).toEqual(exactMicroKrw(6_365_000n));
+    expect(result.state.conditionalRetentionUsed).toEqual(
+      exactMicroKrw(12_730_000n),
+    );
+    expect(result.state.baseCapacity).toEqual(
+      exactMicroKrw(15_000n * microPerKrw),
+    );
+    expect(result.settlementReadyKrw).toBe(6n);
+    expect(result.rewardCarryMicroKrw).toBe(365000n);
+    expect(result.retentionQualificationRequired).toBe(true);
   });
 
   it("produces identical exact accrual and carry for whole and arbitrarily partitioned intervals", () => {
@@ -383,7 +472,7 @@ describe("read-only V1 funding entitlement engine", () => {
     expect(result.settlementReadyKrw).toBe(0n);
   });
 
-  it("does not invent effect scope or allow a speed-only request to increase exhausted capacity", () => {
+  it("applies approved effect scope without allowing speed-only changes to reopen exhausted capacity", () => {
     const initial = exhausted();
     const boosted = {
       ...condition(),
@@ -396,7 +485,7 @@ describe("read-only V1 funding entitlement engine", () => {
     expect(result.state.conditionalRetentionCapacity).toEqual(
       initial.conditionalRetentionCapacity,
     );
-    expect(result.status).toBe("EFFECT_SCOPE_UNRESOLVED");
+    expect(result.status).toBe("CAPACITY_EXHAUSTED");
     expect(result.state.baseUsed).toEqual(initial.baseUsed);
     expect(result.settlementReadyKrw).toBe(0n);
     const capacityBoost = {
@@ -405,9 +494,164 @@ describe("read-only V1 funding entitlement engine", () => {
         capacityBoostsBps: [source.campaign.maximumSingleCapacityBoostBps],
       },
     };
-    expect(run(start(), day, [change(0n, capacityBoost)]).status).toBe(
-      "EFFECT_SCOPE_UNRESOLVED",
+    const reopened = run(initial, 6n * day, [change(5n * day, capacityBoost)]);
+    expect(reopened.status).toBe("ACTIVE");
+    expect(reopened.state.baseCapacity.numerator).toBeGreaterThan(
+      initial.baseCapacity.numerator,
     );
+    expect(reopened.state.conditionalRetentionCapacity).toEqual(
+      initial.conditionalRetentionCapacity,
+    );
+  });
+
+  it("caps globally after weighted product and common speed effects, without increasing either capacity or retention", () => {
+    const input = condition(1000000n);
+    const baseline = run(start(input), day);
+    const modified = {
+      ...input,
+      allocations: [
+        {
+          ...input.allocations[0]!,
+          productId: "product-70",
+          allocationBps: 7000,
+          productMultiplierBps: 11000,
+        },
+        {
+          ...input.allocations[0]!,
+          productId: "product-30",
+          allocationBps: 3000,
+          productMultiplierBps: 9000,
+        },
+      ],
+      effects: {
+        userOverrideMultiplierBps: 12000,
+        speedMultipliersBps: [12500],
+      },
+    };
+    const result = run(start(modified), day);
+    expect(result.status).toBe("ACTIVE");
+    expect(result.state.baseCapacity).toEqual(baseline.state.baseCapacity);
+    expect(result.state.conditionalRetentionCapacity).toEqual(
+      baseline.state.conditionalRetentionCapacity,
+    );
+    expect(result.segments[0]!.baseAccrued).toEqual(
+      exactMicroKrw(7500n * microPerKrw),
+    );
+    expect(result.segments[0]!.conditionalRetentionAccrued).toEqual(
+      baseline.segments[0]!.conditionalRetentionAccrued,
+    );
+  });
+
+  it("multiplies all speed ratios exactly before one final cap and preserves split interval equivalence", () => {
+    const input = {
+      ...condition(),
+      allocations: [
+        { ...condition().allocations[0]!, productMultiplierBps: 10001 },
+      ],
+      effects: {
+        userOverrideMultiplierBps: 10003,
+        speedMultipliersBps: [10007, 10009],
+      },
+    };
+    const initial = start(input);
+    const whole = run(initial, day);
+    const numerator = 500n * microPerKrw * 10001n * 10003n * 10007n * 10009n;
+    expect(whole.segments[0]!.baseAccrued).toEqual(
+      exactMicroKrw(numerator, 10000n ** 4n),
+    );
+    const first = run(initial, day / 3n);
+    const split = run(first.state, day);
+    expect(split.state.baseUsed).toEqual(whole.state.baseUsed);
+    expect(split.state.baseRewardCarry).toEqual(whole.state.baseRewardCarry);
+    expect(first.settlementReadyKrw + split.settlementReadyKrw).toBe(
+      whole.settlementReadyKrw,
+    );
+    const reordered = run(
+      start({
+        ...input,
+        effects: { ...input.effects, speedMultipliersBps: [10009, 10007] },
+      }),
+      day,
+    );
+    expect(reordered.state.baseUsed).toEqual(whole.state.baseUsed);
+    const capped = run(
+      start({
+        ...input,
+        effects: {
+          userOverrideMultiplierBps: 12000,
+          speedMultipliersBps: [12500, 12500],
+        },
+      }),
+      day,
+    );
+    expect(capped.segments[0]!.baseAccrued).toEqual(
+      exactMicroKrw(750n * microPerKrw),
+    );
+  });
+
+  it("applies a speed publication only to its future BASE interval and never replenishes cycle usage", () => {
+    const initial = start();
+    const before = run(initial, 5n * day);
+    const input = {
+      ...condition(),
+      effects: {
+        userOverrideMultiplierBps: 12000,
+        speedMultipliersBps: [12500],
+      },
+    };
+    const result = run(before.state, 6n * day, [change(5n * day, input)]);
+    expect(before.state.baseUsed).toEqual(exactMicroKrw(2500n * microPerKrw));
+    expect(result.state.baseUsed).toEqual(exactMicroKrw(3250n * microPerKrw));
+    expect(result.state.conditionalRetentionUsed).toEqual(
+      exactMicroKrw(3000n * microPerKrw),
+    );
+    expect(result.settlementReadyKrw).toBe(750n);
+    expect(result.state.anchorMicroseconds).toBe(initial.anchorMicroseconds);
+    expect(result.state.cycleEndMicroseconds).toBe(
+      initial.cycleEndMicroseconds,
+    );
+    expect(result.state.baseCapacity).toEqual(initial.baseCapacity);
+    expect(result.state.conditionalRetentionCapacity).toEqual(
+      initial.conditionalRetentionCapacity,
+    );
+  });
+
+  it("uses explicit capacity boosts only for base ceiling, preserving base speed, retention and individual approved limits", () => {
+    const plain = run(start(), day);
+    const input = {
+      ...condition(),
+      effects: { capacityBoostsBps: [1000, 1000] },
+    };
+    const result = run(start(input), day);
+    expect(result.state.baseCapacity).toEqual(
+      exactMicroKrw(18000n * microPerKrw),
+    );
+    expect(result.state.conditionalRetentionCapacity).toEqual(
+      plain.state.conditionalRetentionCapacity,
+    );
+    expect(result.segments[0]!.baseAccrued).toEqual(
+      plain.segments[0]!.baseAccrued,
+    );
+    expect(result.segments[0]!.conditionalRetentionAccrued).toEqual(
+      plain.segments[0]!.conditionalRetentionAccrued,
+    );
+    expect(() =>
+      start({
+        ...condition(),
+        allocations: [
+          { ...condition().allocations[0]!, productMultiplierBps: 12000 },
+        ],
+      }),
+    ).toThrow("PRODUCT_ALLOCATION_INVALID");
+    expect(() =>
+      start({ ...condition(), effects: { speedMultipliersBps: [12501] } }),
+    ).toThrow("SPEED_CAMPAIGN_LIMIT");
+    expect(() =>
+      start({
+        ...condition(),
+        effects: { capacityBoostsBps: [1000, 1000, 1] },
+      }),
+    ).toThrow("CAPACITY_CAMPAIGN_LIMIT");
   });
 
   it("keeps safe mode, pause and eligibility ahead of a capacity-driven resume", () => {
@@ -619,7 +863,286 @@ describe("read-only V1 funding entitlement engine", () => {
       wholeMicro(shared.state.baseUsed),
     );
     expect(half.state.baseCapacity).toEqual(shared.state.baseCapacity);
+    expect(half.segments[0]!.conditionalRetentionAccrued).toEqual(
+      shared.segments[0]!.conditionalRetentionAccrued,
+    );
   });
+
+  it("changes partial allocation BASE speed prospectively while maintenance follows eligible principal independently", () => {
+    const input = condition();
+    const half = {
+      ...input,
+      allocations: [{ ...input.allocations[0]!, allocationBps: 5000 }],
+    };
+    const lower = {
+      ...input,
+      allocations: [{ ...input.allocations[0]!, allocationBps: 3000 }],
+    };
+    const result = run(start(half), 2n * day, [change(day, lower)]);
+    expect(result.segments.map((segment) => segment.baseAccrued)).toEqual([
+      exactMicroKrw(250n * microPerKrw),
+      exactMicroKrw(150n * microPerKrw),
+    ]);
+    expect(
+      result.segments.map((segment) => segment.conditionalRetentionAccrued),
+    ).toEqual([
+      exactMicroKrw(500n * microPerKrw),
+      exactMicroKrw(500n * microPerKrw),
+    ]);
+    expect(result.settlementReadyKrw).toBe(400n);
+    expect(result.retentionQualificationRequired).toBe(true);
+  });
+
+  it("keeps principal-based conditional maintenance independent of partial allocation, speed and capacity effects", () => {
+    const input = condition();
+    const half = {
+      ...input,
+      allocations: [{ ...input.allocations[0]!, allocationBps: 5000 }],
+    };
+    const baseline = run(start(half), day);
+    const modified = run(
+      start({
+        ...half,
+        allocations: [{ ...half.allocations[0]!, productMultiplierBps: 11000 }],
+        effects: {
+          userOverrideMultiplierBps: 12000,
+          speedMultipliersBps: [12500],
+          capacityBoostsBps: [1000, 1000],
+        },
+      }),
+      day,
+    );
+    expect(modified.segments[0]!.baseAccrued).toEqual(
+      exactMicroKrw(412_500_000n),
+    );
+    expect(modified.state.baseCapacity).toEqual(
+      exactMicroKrw(18000n * microPerKrw),
+    );
+    expect(modified.state.conditionalRetentionCapacity).toEqual(
+      baseline.state.conditionalRetentionCapacity,
+    );
+    expect(modified.segments[0]!.conditionalRetentionAccrued).toEqual(
+      exactMicroKrw(500n * microPerKrw),
+    );
+    expect(modified.settlementReadyKrw).toBe(412n);
+    expect(modified.rewardCarryMicroKrw).toBe(500000n);
+    expect(modified.retentionQualificationRequired).toBe(true);
+  });
+
+  it("applies partial global weights before common speed modifiers and the final cap", () => {
+    const input = condition();
+    const modified = {
+      ...input,
+      allocations: [
+        {
+          ...input.allocations[0]!,
+          allocationBps: 5000,
+          productMultiplierBps: 11000,
+        },
+      ],
+      effects: {
+        userOverrideMultiplierBps: 12000,
+        speedMultipliersBps: [12500, 12500],
+      },
+    };
+    const result = run(start(modified), day);
+    // 0.50 × 1.10 × 1.20 × 1.25 × 1.25 = 1.03125, below the final1.50cap.
+    expect(result.segments[0]!.baseAccrued).toEqual(
+      exactMicroKrw(515_625_000n),
+    );
+    expect(result.state.condition.allocatedBaseSpeedMultiplier).toEqual(
+      exactMicroKrw(33n, 32n),
+    );
+    expect(result.state.baseCapacity).toEqual(start(input).baseCapacity);
+    expect(result.segments[0]!.conditionalRetentionAccrued).toEqual(
+      exactMicroKrw(500n * microPerKrw),
+    );
+    const capped = run(
+      start({
+        ...modified,
+        effects: {
+          ...modified.effects,
+          speedMultipliersBps: [12500, 12500, 12500, 12500],
+        },
+      }),
+      day,
+    );
+    expect(capped.state.condition.allocatedBaseSpeedMultiplier).toEqual(
+      exactMicroKrw(3n, 2n),
+    );
+    expect(capped.segments[0]!.baseAccrued).toEqual(
+      exactMicroKrw(750n * microPerKrw),
+    );
+    expect(capped.segments[0]!.conditionalRetentionAccrued).toEqual(
+      result.segments[0]!.conditionalRetentionAccrued,
+    );
+  });
+
+  it("composes mixed product weights exactly before a single global speed cap regardless of declaration order", () => {
+    const input = condition(1000000n);
+    const allocations = [
+      {
+        ...input.allocations[0]!,
+        productId: "approved-speed-fixture-a",
+        allocationBps: 6000,
+        productMultiplierBps: 11000,
+      },
+      {
+        ...input.allocations[0]!,
+        productId: "approved-speed-fixture-b",
+        allocationBps: 4000,
+        productMultiplierBps: 9000,
+      },
+    ];
+    const effects = {
+      userOverrideMultiplierBps: 8000,
+      speedMultipliersBps: [12500, 12500],
+    };
+    const result = run(start({ ...input, allocations, effects }), day);
+    // (0.6 × 1.1 + 0.4 × 0.9) × 0.8 × 1.25 × 1.25 = 1.275.
+    // Capping the campaign ingredients before multiplying the user override
+    // would produce 1.224 instead, changing the approved exact composition.
+    expect(result.state.condition.allocatedBaseSpeedMultiplier).toEqual(
+      exactMicroKrw(51n, 40n),
+    );
+    expect(result.segments[0]!.baseAccrued).toEqual(
+      exactMicroKrw(6375n * microPerKrw),
+    );
+    expect(result.state.baseCapacity).toEqual(start(input).baseCapacity);
+    expect(result.segments[0]!.conditionalRetentionAccrued).toEqual(
+      run(start(input), day).segments[0]!.conditionalRetentionAccrued,
+    );
+    const reordered = run(
+      start({ ...input, allocations: [...allocations].reverse(), effects }),
+      day,
+    );
+    expect(reordered.state.baseUsed).toEqual(result.state.baseUsed);
+    expect(reordered.state.baseRewardCarry).toEqual(
+      result.state.baseRewardCarry,
+    );
+    expect(reordered.state.conditionalRetentionUsed).toEqual(
+      result.state.conditionalRetentionUsed,
+    );
+  });
+
+  it("reduces only future aggregate economics on a partial HOLD while preserving the original lot and cycle", () => {
+    // The trusted aggregate is supplied by the native portion reader. This
+    // preview does not infer which portion was held or qualify its clock.
+    const input = condition(1000000n);
+    const original = start(input);
+    const before = run(original, 20n * day);
+    const held: FundingConditionInput = {
+      ...input,
+      expectedPrincipalRevision: 2n,
+      funding: {
+        ...input.funding,
+        principalRevision: 2n,
+        eligiblePrincipalKrw: 700000n,
+        lots: [
+          {
+            ...input.funding.lots[0]!,
+            remainingEligiblePrincipalKrw: 700000n,
+          },
+        ],
+      },
+    };
+    const atHold = run(before.state, 20n * day, [change(20n * day, held)]);
+    expect(atHold.state.condition.tierCode).toBe("L2");
+    expect(atHold.state.baseUsed).toEqual(before.state.baseUsed);
+    expect(atHold.state.conditionalRetentionUsed).toEqual(
+      before.state.conditionalRetentionUsed,
+    );
+    expect(atHold.state.baseRewardCarry).toEqual(before.state.baseRewardCarry);
+    expect(atHold.state.baseCapacity).toEqual(
+      exactMicroKrw(135000n * microPerKrw),
+    );
+    const after = run(atHold.state, 23n * day);
+    expect(after.segments[0]!.baseAccrued).toEqual(
+      exactMicroKrw(10500n * microPerKrw),
+    );
+    expect(after.segments[0]!.conditionalRetentionAccrued).toEqual(
+      exactMicroKrw(11200n * microPerKrw),
+    );
+    expect(after.settlementReadyKrw).toBe(10500n);
+    expect(after.conditionalRetentionSettlementReadyKrw).toBe(0n);
+    expect(after.retentionQualificationRequired).toBe(true);
+    expect(after.state.anchorMicroseconds).toBe(original.anchorMicroseconds);
+    expect(after.state.cycleEndMicroseconds).toBe(
+      original.cycleEndMicroseconds,
+    );
+    expect(
+      after.state.condition.input.funding.lots[0]!.effectiveFromMicroseconds,
+    ).toBe(0n);
+    const first = run(atHold.state, 21n * day);
+    const split = run(first.state, 23n * day);
+    expect(first.settlementReadyKrw + split.settlementReadyKrw).toBe(
+      after.settlementReadyKrw,
+    );
+    expect(split.state.baseUsed).toEqual(after.state.baseUsed);
+    expect(split.state.baseRewardCarry).toEqual(after.state.baseRewardCarry);
+    expect(split.state.conditionalRetentionUsed).toEqual(
+      after.state.conditionalRetentionUsed,
+    );
+    // A RELEASE needs native source/portion originals; a generic lot increase
+    // cannot impersonate a cancellation or supply retroactive compensation.
+    expect(() =>
+      run(after.state, 24n * day, [
+        change(23n * day, condition(1000000n, 3n), 2n),
+      ]),
+    ).toThrow("PRINCIPAL_LOT_INCREASE_REQUIRES_CORRECTION_CONTRACT");
+    expect(after.state.cursorMicroseconds).toBe(23n * day);
+  });
+
+  it("keeps principal maintenance conditional with zero BASE allocation and starts selection prospectively", () => {
+    const input = condition();
+    const unassigned = { ...input, allocations: [] };
+    const original = start(unassigned);
+    const result = run(original, 2n * day, [change(day, input)]);
+    expect(result.segments.map((segment) => segment.status)).toEqual([
+      "NO_ACTIVE_ALLOCATION",
+      "ACTIVE",
+    ]);
+    expect(result.segments.map((segment) => segment.baseAccrued)).toEqual([
+      exactMicroKrw(0n),
+      exactMicroKrw(500n * microPerKrw),
+    ]);
+    expect(
+      result.segments.map((segment) => segment.conditionalRetentionAccrued),
+    ).toEqual([
+      exactMicroKrw(500n * microPerKrw),
+      exactMicroKrw(500n * microPerKrw),
+    ]);
+    expect(result.settlementReadyKrw).toBe(500n);
+    expect(result.conditionalRetentionSettlementReadyKrw).toBe(0n);
+    expect(result.retentionQualificationRequired).toBe(true);
+    expect(result.state.anchorMicroseconds).toBe(original.anchorMicroseconds);
+    expect(result.state.cycleEndMicroseconds).toBe(
+      original.cycleEndMicroseconds,
+    );
+  });
+
+  it.each([
+    ["safe mode", { safeMode: true, paused: false, eligible: true }],
+    ["operator pause", { safeMode: false, paused: true, eligible: true }],
+    [
+      "eligibility restriction",
+      { safeMode: false, paused: false, eligible: false },
+    ],
+  ])(
+    "keeps %s distinct from zero allocation and stops both accrual axes",
+    (_label, controls) => {
+      const result = run(
+        start({ ...condition(), allocations: [], controls }),
+        day,
+      );
+      expect(result.segments[0]!.baseAccrued).toEqual(exactMicroKrw(0n));
+      expect(result.segments[0]!.conditionalRetentionAccrued).toEqual(
+        exactMicroKrw(0n),
+      );
+      expect(result.settlementReadyKrw).toBe(0n);
+      expect(result.conditionalRetentionSettlementReadyKrw).toBe(0n);
+    },
+  );
 
   it("rejects missing source, lot coverage, stale revisions and non-published allocations", () => {
     const input = condition();

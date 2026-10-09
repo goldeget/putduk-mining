@@ -28,6 +28,72 @@ const readyDisplay: MiningServerDisplay = {
 };
 
 describe("presentMiningServerDisplay", () => {
+  test("shows the effective paid ratio instead of the configured legacy factor", () => {
+    const runtime = {
+      schema_version: 2,
+      runtime_version: 2,
+      state_revision: "1",
+      condition_revision: "1",
+      accepted_cursor_at: "2026-10-06T11:00:00.000000Z",
+      evaluated_at: "2026-10-06T11:00:01.000000Z",
+      allocation_bps: "5000",
+      committed_reward_total_atomic: "12",
+      reward_carry: { numerator: "0", denominator: "1", unit: "KRW" },
+      conditional_maintenance: {
+        numerator: "7",
+        denominator: "1",
+        unit: "KRW",
+        qualification: "UNCONFIRMED",
+      },
+      status: "ACTIVE",
+      stop_reason: null,
+      speed: {
+        product_multiplier_bps: "10000",
+        user_multiplier_bps: "10000",
+        common_multiplier: { numerator: "1", denominator: "1" },
+        effective_global_multiplier: { numerator: "1", denominator: "2" },
+      },
+    } as const;
+    const speed = (funded_runtime: unknown) => {
+      const parsed = parseMiningServerDisplay({
+        ...readyDisplay,
+        funded_runtime,
+      });
+      expect(parsed).not.toBeNull();
+      const view = presentMiningServerDisplay(parsed!);
+      return view.state === "ready"
+        ? view.rows.find((row) => row.label === "속도")?.value
+        : undefined;
+    };
+    expect(speed(runtime)).toBe("0.5배");
+    expect(
+      speed({
+        ...runtime,
+        speed: {
+          ...runtime.speed,
+          effective_global_multiplier: { numerator: "33", denominator: "40" },
+        },
+      }),
+    ).toBe("0.825배");
+    expect(
+      speed({
+        ...runtime,
+        speed: {
+          ...runtime.speed,
+          effective_global_multiplier: { numerator: "1", denominator: "3" },
+        },
+      }),
+    ).toBe("약 0.333333배");
+    const historical = Object.fromEntries(
+      Object.entries(runtime).filter(
+        ([field]) => !["status", "stop_reason", "speed"].includes(field),
+      ),
+    );
+    expect(speed({ ...historical, schema_version: 1 })).toBe(
+      "확인할 수 없어요",
+    );
+  });
+
   test("uses the published micro and basis-point units only for display", () => {
     const policy = readFileSync(
       new URL("../../domain/mining/economy-policy.ts", import.meta.url),
@@ -37,6 +103,16 @@ describe("presentMiningServerDisplay", () => {
     expect(policy).toMatch(/export const BASIS_POINT_UNIT = 10_000n/);
     expect(formatMiningMicroKrw("1000000")).toBe("1원");
     expect(formatMiningSpeedBps("10000")).toBe("1배");
+  });
+  test("keeps sub-won accrual truthful without exposing micro units or rounding a credit", () => {
+    expect(formatMiningMicroKrw("0")).toBe("0원");
+    expect(formatMiningMicroKrw("1")).toBe("1원 미만");
+    expect(formatMiningMicroKrw("999999")).toBe("1원 미만");
+    expect(formatMiningMicroKrw("1999999")).toBe("약 1원");
+    expect(formatMiningMicroKrw("29999983878")).toBe("약 29,999원");
+    expect(formatMiningMicroKrw("9007199254740993000001")).toBe(
+      "약 9,007,199,254,740,993원",
+    );
   });
   test("shows server amounts and keeps unconfirmed retention apart from pending", () => {
     const view = presentMiningServerDisplay(readyDisplay);
@@ -102,9 +178,12 @@ describe("presentMiningServerDisplay", () => {
       "utf8",
     );
     expect(page).toContain("readOwnMiningServerDisplay(identity)");
-    expect(page).toContain("displayResponse.data != null");
-    expect(page).not.toContain(
-      "const displayError = Boolean(displayResponse.error) || !parsedDisplay",
+    expect(page).toContain("parseMiningServerDisplay(displayResponse.data)");
+    expect(page).toContain(
+      "const displayError = Boolean(displayResponse.error) || !display",
+    );
+    expect(page).toMatch(
+      /resolveMiningPresentation\(\{\s*display,\s*displayError,/s,
     );
     expect(page).not.toContain("identity.supabase.rpc");
     expect(reader).toContain('import "server-only"');

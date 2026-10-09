@@ -87,6 +87,90 @@ revoke all on function pg_temp.seed_historical_held_withdrawal(uuid, uuid, bigin
   from public, anon, authenticated, service_role;
 -- END TEST-ONLY HISTORICAL HOLD FIXTURE
 
+-- BEGIN TEST-ONLY VERIFIED MINING REWARD FIXTURE
+-- Owner-only sealed mining CREDIT fixture for local rollback/concurrency tests.
+-- This is not a producer command or legacy settlement activation.
+-- The actual tested withdrawal commands must create their own reservations.
+create function pg_temp.plant_verified_mining_reward(
+  p_user_id uuid,
+  p_movement_id uuid,
+  p_amount bigint,
+  p_effective_at timestamptz,
+  p_recorded_at timestamptz,
+  p_key text
+) returns void
+language plpgsql security invoker set search_path = pg_catalog
+as $$
+declare
+  v_credit uuid := gen_random_uuid();
+  v_journal uuid := gen_random_uuid();
+  v_wallet uuid := gen_random_uuid();
+  v_event uuid := gen_random_uuid();
+  v_request uuid := gen_random_uuid();
+  v_correlation uuid := gen_random_uuid();
+  v_wallet_account uuid;
+begin
+  if current_user <> 'postgres' then
+    raise exception using errcode = '42501', message = 'VERIFIED_MINING_FIXTURE_OWNER_ONLY';
+  end if;
+  select account.id into v_wallet_account
+  from public.wallet_accounts as account
+  where account.user_id = p_user_id and account.currency = 'KRW' and account.closed_at is null;
+  insert into public.ledger_transactions(
+    id, category, currency, idempotency_key, reference_type, reference_id,
+    member_user_id, request_id, correlation_id, description, posted_at
+  ) values (
+    v_journal, 'MINING_REWARD', 'KRW', p_key || ':ledger', 'mining_reward_credit', v_credit,
+    p_user_id, v_request, v_correlation, 'verified mining reward credit', p_effective_at
+  );
+  insert into public.ledger_entries(transaction_id, account_id, sequence, side, amount_atomic)
+  values
+    (v_journal, (select id from public.ledger_accounts where code = 'PUTDUK:MINING_REWARD_EXPENSE:KRW'),
+      0, 'DEBIT', p_amount),
+    (v_journal, (select id from public.ledger_accounts
+      where code = 'USER:' || upper(p_user_id::text) || ':KRW:LIABILITY'),
+      1, 'CREDIT', p_amount);
+  insert into public.wallet_ledger(
+    id, wallet_account_id, user_id, direction, entry_type, amount_atomic,
+    idempotency_key, reference_type, reference_id
+  ) values (
+    v_wallet, v_wallet_account, p_user_id, 'CREDIT', 'MINING_REWARD', p_amount,
+    p_key || ':wallet', 'mining_reward_credit', v_credit
+  );
+  insert into public.outbox_events(
+    id, event_type, schema_version, aggregate_type, aggregate_id, actor_user_id,
+    payload, correlation_id, request_id, idempotency_key
+  ) values (
+    v_event, 'MINING_REWARD_CREDITED.v1', 1, 'mining_reward_credit', v_credit, p_user_id,
+    jsonb_build_object(
+      'user_id', p_user_id,
+      'amount_atomic', p_amount,
+      'currency', 'KRW',
+      'ledger_transaction_id', v_journal,
+      'wallet_ledger_id', v_wallet
+    ),
+    v_correlation, v_request, p_key || ':event'
+  );
+  insert into public.mining_reward_credits(
+    id, user_id, amount_atomic, ledger_transaction_id, wallet_ledger_id,
+    source_event_id, effective_at
+  ) values (
+    v_credit, p_user_id, p_amount, v_journal, v_wallet, v_event, p_effective_at
+  );
+  insert into public.money_source_movements(
+    id, user_id, source_bucket, movement_kind, origin_code, amount_atomic,
+    ledger_transaction_id, wallet_ledger_id, source_event_id, effective_at, recorded_at
+  ) values (
+    p_movement_id, p_user_id, 'MINING_REWARD', 'CREDIT', 'MINING_REWARD', p_amount,
+    v_journal, v_wallet, v_event, p_effective_at, p_recorded_at
+  );
+end;
+$$;
+
+revoke all on function pg_temp.plant_verified_mining_reward(uuid,uuid,bigint,timestamptz,timestamptz,text)
+  from public, anon, authenticated, service_role;
+-- END TEST-ONLY VERIFIED MINING REWARD FIXTURE
+
 
 create extension if not exists pgtap with schema extensions;
 
@@ -646,10 +730,25 @@ select throws_ok(
   'STEP_UP_REQUIRED',
   'deposit approval step-up rejects a short token without a session'
 );
-select skip(
-  1,
-  'NOT_RUN: approve_deposit_request signature is frozen without a step-up token'
+-- The frozen six-argument service RPC never accepts a step-up token.
+-- Exercise its actual caller boundary instead of declaring that test skipped.
+-- A signed browser role cannot call the native approval writer directly;
+-- real operator AAL2/step-up remains the server command adapter's duty.
+set local role authenticated;
+select throws_ok(
+  $$select public.approve_deposit_request(
+    '0d100000-0000-4000-8000-0000000000b1'::uuid,
+    '0d100000-0000-4000-8000-0000000000a1'::uuid,
+    1::bigint,
+    'krw-journal-direct-member-denied',
+    'direct browser approval must be rejected',
+    '0d100000-0000-4000-8000-00000000d305'::uuid
+  )$$,
+  '42501',
+  'permission denied for function approve_deposit_request',
+  'a browser role cannot bypass the operator command and call native approval'
 );
+reset role;
 
 -- 5. safe mode는 새 승인을 거절하고, 완료된 같은 키 재실행은 분개를 늘리지 않는다.
 insert into public.safe_mode_controls (
@@ -817,7 +916,13 @@ select is(
   'failed approval leaves no audit'
 );
 
--- 7. 입금 후 hold, 외부 송금 기록, 확정, 대사.
+-- 7. 입금 분개 증명 뒤 검증된 채굴 수익으로 hold, 외부 송금 기록, 확정, 대사.
+-- The ordinary withdrawal owns a real mining CREDIT; approved deposit principal
+-- remains intact and must not silently fund the hold or its release.
+select pg_temp.plant_verified_mining_reward(
+  happy_id, '0d100000-0000-4000-8000-00000000d550', 30000,
+  statement_timestamp(), statement_timestamp(), 'krw-journal-happy-mining-credit'
+) from krw_ctx;
 insert into public.withdrawal_policies (
   currency,
   destination_type,
@@ -917,10 +1022,16 @@ reset role;
 select ok(
   (
     select status = 'HELD' and hold_ledger_transaction_id is not null
-    from public.withdrawal_requests
+      and (select sum(reservation.amount_atomic)
+        from public.mining_reward_withdrawal_reservations as reservation
+        join public.money_source_movements as movement on movement.id = reservation.credit_movement_id
+        where reservation.hold_ledger_transaction_id = request.hold_ledger_transaction_id
+          and movement.source_bucket = 'MINING_REWARD'
+          and app_private.money_source_credit_verified(movement)) = 20000
+    from public.withdrawal_requests as request
     where id = (select hold_id from krw_ctx)
   ),
-  'withdrawal hold is posted before external send'
+  'withdrawal reserves verified mining reward and posts its hold before external send'
 );
 
 select public.run_financial_reconciliation('0d100000-0000-4000-8000-00000000d601');
@@ -1159,6 +1270,11 @@ set happy_ledger_id = public.approve_deposit_request(
   'fund usdt withdrawal subject',
   '0d100000-0000-4000-8000-00000000e201'
 );
+
+select pg_temp.plant_verified_mining_reward(
+  usdt_send_id, '0d100000-0000-4000-8000-00000000e250', 1500,
+  statement_timestamp(), statement_timestamp(), 'krw-journal-usdt-mining-credit'
+) from krw_ctx;
 
 insert into public.withdrawal_destinations (
   user_id,

@@ -26,6 +26,7 @@ export type EventRewardDecision =
       outcome: "REWARD";
       qualificationSnapshot: Readonly<Record<string, EventRewardFact>>;
       rewardKrw: bigint;
+      ruleVersion: number;
     }
   | {
       outcome: "INELIGIBLE";
@@ -89,7 +90,8 @@ export function evaluateEventReward({
     return { outcome: "INELIGIBLE", reason: "AI_NOT_AUTHORITY" };
   }
 
-  const idempotencyKey = `event-reward:${rule.eventId}:${rule.rewardId}:${userId}:v${rule.ruleVersion}`;
+  // Rule revisions change decision evidence, never the canonical claim identity.
+  const idempotencyKey = `event-reward:${rule.eventId}:${rule.rewardId}:${userId}`;
   if (claimedIdempotencyKeys.has(idempotencyKey)) {
     return { outcome: "INELIGIBLE", reason: "ALREADY_CLAIMED" };
   }
@@ -115,5 +117,6 @@ export function evaluateEventReward({
     outcome: "REWARD",
     qualificationSnapshot: Object.freeze({ ...facts }),
     rewardKrw: rule.rewardKrw,
+    ruleVersion: rule.ruleVersion,
   };
 }

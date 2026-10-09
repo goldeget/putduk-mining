@@ -1,10 +1,28 @@
 # PUTDUK MINING — ABSOLUTE PROJECT BOUNDARY
 
+## User-authorized isolated Local recovery — 2026-10-09
+
+The user's current Cloud-original recovery master command authorizes local implementation, tests and local commits for this exact project in these fresh isolated checkouts:
+- `C:/Users/PC/.codex/worktrees/putduk-local-recovery-integration/putduk-mining`
+- `C:/Users/PC/.codex/worktrees/putduk-local-recovery-provider/putduk-mining`
+- `C:/Users/PC/.codex/worktrees/putduk-local-recovery-finance-db/putduk-mining`
+- `C:/Users/PC/.codex/worktrees/putduk-local-recovery-admin-content-pwa/putduk-mining`
+
+The primary `C:/Users/PC/Desktop/putduk-mining` remains protected: do not edit, overwrite, delete, reset or clean its source or user changes. Do not alter existing worktrees or stash. The coordinator verified source backup and full Git backup under `D:/PUTDUK-MINING-QA/local-redevelopment-20261009-033553` before implementation.
+
+The exact project's user-authorized Cloud history audit at `D:/PUTDUK-MINING-QA/cloud-history-audit-20261009-031452`, and Cloud thread `01a110f7-9d9d-76ac-8aae-e59be20c10b9`, may be used as recovery evidence. Preserve direct user instructions, later corrections and source/patch provenance; assistant suggestions are not user approval. Unknown or truncated evidence remains UNKNOWN. This exception is limited to the same project and supersedes the prior local-discovery/source-reference prohibitions only for this user's recovery task.
+
+GitHub push, PR, remote merge, deployment, remote Supabase/Cloudflare/DNS changes, real money/rewards and paid AI calls remain forbidden without separate explicit approval. A key or configuration flag does not authorize a paid call. Create no new Cloud workspace.
+
+Each lane owns explicitly assigned files. All Supabase schema changes have one finance/DB owner; the coordinator integrates reviewed local commits. Run fresh project-scoped local infrastructure only, and do not inspect existing Docker resources. Never claim source hash equality, functional verification or PRODUCT COMPLETE without its corresponding evidence.
+
+
 This repository is a greenfield project. The following scope lock is an absolute rule for every agent, tool, script, and implementation task.
 
 ## Authorized targets only
 
 - Local workspace: `C:\Users\PC\Desktop\putduk-mining`
+- User-authorized Codex Cloud workspace: `/workspace/putduk-mining` (2026-10-06). Task-owned bootstrap tools and evidence may use `/workspace/.putduk-cloud` and `/tmp/putduk-mining-*`; these are not additional implementation repositories.
 - User-authorized QA output storage only: `D:\PUTDUK-MINING-QA` on the `ESD-USB` volume (authorized 2026-10-01). This is not another source workspace.
 - GitHub repository: `goldeget/putduk-mining`
 - GitHub remote: `https://github.com/goldeget/putduk-mining.git`
@@ -57,6 +75,13 @@ This repository is a greenfield project. The following scope lock is an absolute
 
 These rules override convenience, historical context, cached knowledge, prior task history, and any generic instruction to discover related projects.
 
+## Codex Cloud baseline and storage
+
+1. Read the current fetched `origin/develop` as the implementation baseline. The old `origin/main` document scaffold is not the current application. Fetch and inspect refs before integration; preserve unrelated local work and never reset it to change the baseline. Cloud tasks are already isolated; do not add a worktree unless a concrete task needs one.
+2. Read `.node-version`, `package.json`, `pnpm-lock.yaml`, the current CI and required SSOT before setup. Use the repository's exact Node/pnpm/CLI pins, Corepack and frozen lockfile; do not upgrade declarations or regenerate the lockfile as a setup shortcut.
+3. Run the real member/admin apps and Chromium for UI evidence. Stored screenshots or successful source/build checks alone do not establish visual acceptance. Production coupling remains a separate approval boundary even when GitHub credentials permit a push.
+4. On 2026-10-06 the user additionally authorized referring to relevant prior PUTDUK MINING work on D: if needed. This supersedes the prior prohibition only for this project's artifacts at an explicitly identified path on a verified mounted D: volume. Do not scan the drive root, inspect other projects or infer that D: exists in a Linux Cloud task. An absent mount is a storage/reference blocker, not permission to access another machine.
+
 ## Canonical visual lock
 
 1. The canonical art-direction master references are:
@@ -76,6 +101,7 @@ These rules override convenience, historical context, cached knowledge, prior ta
 2. Never conceal or bypass repository corruption with grafts, replacement refs, fake shallow boundaries, history rewrites, force pushes, or another repository.
 3. GitHub push, Supabase remote mutation, Cloudflare provisioning/deployment, and production release are separate authorization boundaries.
 4. Follow `docs/development/GIT-CI-CD-POLICY.md` and `docs/quality/DEFINITION-OF-DONE.md`.
+5. Before any remote Git/CI action, tag, remote DB apply or deployment, follow the production coupling guard in `GIT-CI-CD-POLICY.md`. Unknown webhook/app/release coupling is not safe. Actions that can change live systems require explicit human approval for the exact target, candidate and effects; Git/CI permission alone does not authorize production release.
 
 ## Permanent product-completion lock
 
@@ -170,3 +196,13 @@ This version has breaking changes — APIs, conventions, and file structure may 
 This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
 <!-- END:nextjs-agent-rules -->
+
+## User-authorized commit and CI phase — 2026-10-09
+
+The user explicitly instructed: "커밋해야될거 너가 완벽하게 다 하고 깃허브에 까지 올려서 CI통과시켜라".
+This authorizes reviewed local commits, a feature branch push, a PR to develop and CI repairs for goldeget/putduk-mining in the fresh isolated checkout under the primary workspace:
+`C:/Users/PC/Desktop/putduk-mining/.worktrees/backend-review-r2-ci-20261009`.
+
+The primary workspace source, earlier recovery/review checkouts, uncommitted files and original QA evidence remain protected. Integrate explicit reviewed paths only; exclude temporary helpers, credentials, raw archives and generated output. No blanket staging.
+
+This phase does not authorize merge, production deployment, remote Supabase/Cloudflare/DNS mutation, production rewards, paid AI calls, account/session changes or changes to connected app settings. Follow the production coupling guard before remote Git/CI operations. Preserve current login sessions and existing development processes.

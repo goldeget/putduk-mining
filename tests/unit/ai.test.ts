@@ -212,17 +212,32 @@ describe("PUTDUK AI request boundary", () => {
     });
   });
 
-  it("never permits personalized routes into the shared response cache", () => {
-    const accountRoute = routeAiQuestion("내 지갑 잔액 얼마야?");
-    const generalRoute = routeAiQuestion("집중하는 방법 알려줘");
-    const knowledgeRoute = routeAiQuestion(
+  it("keeps every free-form member turn out of the shared response cache", () => {
+    expect(isAiResponseCacheable()).toBe(false);
+    for (const question of [
+      "내 지갑 잔액 얼마야?",
+      "집중하는 방법 알려줘",
       "퍼뜩 마스코트가 어떤 의미인지 설명해 줘",
-    );
-
-    expect(isAiResponseCacheable(accountRoute)).toBe(false);
-    expect(isAiResponseCacheable(generalRoute)).toBe(false);
-    expect(isAiResponseCacheable(knowledgeRoute)).toBe(true);
+    ]) {
+      expect(planAiTurn({ question }).cacheable).toBe(false);
+    }
   });
+
+  it.each([
+    "제 입금 계좌번호 110-123-456789를 설명해 줘",
+    "채굴 문의 연락처 member@example.com, 010-1234-5678를 포함해서 답해 줘",
+    "퍼뜩 이용 안내를 설명해 줘",
+    "퍼뜩 이용 안내를 여러 관점에서 비교 분석해 줘",
+  ])(
+    "keeps personal text out of the shared cache after topic matching: %s",
+    (question) => {
+      const plan = planAiTurn({ question });
+      expect(["PUTDUK_KNOWLEDGE", "STATIC_FACT"]).toContain(
+        plan.route.classification,
+      );
+      expect(plan.cacheable).toBe(false);
+    },
+  );
 
   it("returns deterministic number-free copy when an account tool fails", () => {
     for (const tool of AI_TOOL_NAMES) {
@@ -280,7 +295,7 @@ describe("PUTDUK AI request boundary", () => {
     expect(result.answer).not.toMatch(/KRW|원(?:입니다|으로|\s|$)/);
   });
 
-  it("uses safe screen context only for UI help", () => {
+  it("uses an unverified screen selection only to choose a public guide", () => {
     const selectedTransaction = "9c833f95-77bf-45c7-8e9e-1bf06e9fb487";
     const plan = planAiTurn({
       question: "이 화면에서 무엇을 할 수 있어?",
@@ -288,13 +303,12 @@ describe("PUTDUK AI request boundary", () => {
     });
 
     expect(plan.route).toMatchObject({
-      classification: "UI_HELP",
-      kind: "ui_help",
+      classification: "STATIC_FACT",
+      kind: "static",
+      routeKey: "member_help_wallet",
     });
-    expect(plan.context.screenContext).toEqual({
-      currentRoute: "/wallet",
-      hasSelectedTransaction: true,
-    });
+    expect(plan.context.scope).toBe("PUBLIC_FACTS_ONLY");
+    expect(plan.context.screenContext).toBeUndefined();
     expect(JSON.stringify(plan.context)).not.toContain(selectedTransaction);
     expect(plan.cacheable).toBe(false);
   });

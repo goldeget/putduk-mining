@@ -4,7 +4,10 @@ import { act, createElement, Fragment, useEffect } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { PutdukAiChat } from "@/components/product/putduk-ai-chat";
+import {
+  PutdukAiChat,
+  type PutdukAiPageFacts,
+} from "@/components/product/putduk-ai-chat";
 import { AI_PRESENTATION_OWNER_HEADER } from "@/domain/ai/presentation-owner";
 import {
   PutdukAiSessionProvider,
@@ -13,6 +16,15 @@ import {
 } from "@/components/product/putduk-ai-session";
 
 const navigation = vi.hoisted(() => ({ pathname: "/wallet", search: "" }));
+const historyReads = vi.hoisted(() => ({
+  enabled: false,
+  list: vi.fn(),
+  read: vi.fn(),
+}));
+vi.mock("@/lib/ai/member-conversation-read", () => ({
+  listOwnAiConversations: historyReads.list,
+  readOwnAiMessages: historyReads.read,
+}));
 type AuthObserver = (
   event: string,
   browserSession: { user: { id: string } } | null,
@@ -37,6 +49,7 @@ vi.mock("@/lib/supabase/browser", () => ({
     browserAuth.configurations.push(configuration);
     if (browserAuth.createError) throw new Error("AUTH_OBSERVER_UNAVAILABLE");
     return {
+      ...(historyReads.enabled ? { from: vi.fn() } : {}),
       auth: {
         onAuthStateChange(observer: AuthObserver) {
           browserAuth.observers.add(observer);
@@ -88,6 +101,8 @@ function render(
   views = 1,
   providerConfigured = true,
   ownerVerificationId = `${ownerUserId}:server-render-1`,
+  surface: "dock" | "page" = "dock",
+  pageFacts?: PutdukAiPageFacts,
 ) {
   return act(async () =>
     root.render(
@@ -108,7 +123,12 @@ function render(
           null,
           createElement(Probe),
           ...Array.from({ length: views }, (_, index) =>
-            createElement(PutdukAiChat, { key: index, presentation: "panel" }),
+            createElement(PutdukAiChat, {
+              key: index,
+              presentation: surface === "page" ? "page" : "panel",
+              surface,
+              ...(pageFacts ? { pageFacts } : {}),
+            }),
           ),
         ),
       ),
@@ -147,6 +167,14 @@ function responseStream() {
   };
 }
 
+function deferred<T>() {
+  let resolve!: (value: T) => void;
+  const promise = new Promise<T>((complete) => {
+    resolve = complete;
+  });
+  return { promise, resolve };
+}
+
 function immediateAnswer(source: "static" | "tool" | "provider" = "static") {
   const stream = responseStream();
   stream.send({ type: "ready", requestId, source });
@@ -183,6 +211,13 @@ async function begin(
 }
 
 beforeEach(() => {
+  historyReads.enabled = false;
+  historyReads.list
+    .mockReset()
+    .mockResolvedValue({ ok: true, conversations: [] });
+  historyReads.read
+    .mockReset()
+    .mockResolvedValue({ ok: true, messages: [], hasEarlierMessages: false });
   Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
   navigation.pathname = "/wallet";
   navigation.search = "";
@@ -209,6 +244,603 @@ afterEach(async () => {
 });
 
 describe("one PUTDUK AI request and session owner", () => {
+  it("shows originating page guide links without guessing member figures or sending a request", async () => {
+    navigation.pathname = "/ai";
+    navigation.search = "aiOrigin=%2Fwallet";
+    await render("member-a", 1, false, "member-a:server-render-1", "page");
+    const guide = host.querySelector('[aria-label="현재 화면 도움"]');
+    expect(guide?.textContent).toContain("자산 화면 도움");
+    expect(
+      Array.from(guide?.querySelectorAll("a") ?? []).map((link) =>
+        link.getAttribute("href"),
+      ),
+    ).toEqual(["/wallet", "/wallet/deposit", "/wallet/withdraw"]);
+    expect(host.textContent).not.toMatch(/L5 PRO|5,000,000|54,281|54%/);
+    expect(fetchMock).not.toHaveBeenCalled();
+
+    await act(async () => session.setDraft("작성 중인 질문이에요"));
+    navigation.search = "aiOrigin=%2Fmenu%2Fnotifications";
+    await render("member-a", 1, false, "member-a:server-render-1", "page");
+    const updated = host.querySelector('[aria-label="현재 화면 도움"]');
+    expect(updated?.textContent).toContain("알림 설정 도움");
+    expect(
+      Array.from(updated?.querySelectorAll("a") ?? []).map((link) =>
+        link.getAttribute("href"),
+      ),
+    ).toEqual(["/menu/notifications", "/notifications"]);
+    expect(session.draft).toBe("작성 중인 질문이에요");
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("uses the approved intact mascot and usable text-only composer in Light", async () => {
+    document.documentElement.dataset.theme = "light";
+    try {
+      await render("member-a", 1, false, "member-a:server-render-1", "page");
+      expect(
+        host
+          .querySelector(
+            'img[src="/brand/mascot/putduk-ai-help-face-256-v1.webp"]',
+          )
+          ?.getAttribute("alt"),
+      ).toBe("");
+      expect(host.querySelector("[data-ai-partner-hero]")).toBeNull();
+      expect(host.querySelector("textarea")?.disabled).toBe(false);
+      expect(fetchMock).not.toHaveBeenCalled();
+    } finally {
+      delete document.documentElement.dataset.theme;
+    }
+  });
+
+  it("keeps the approved face in the dock instead of substituting the page robot", async () => {
+    await render();
+    expect(
+      host
+        .querySelector(
+          'img[src="/brand/mascot/putduk-ai-help-face-256-v1.webp"]',
+        )
+        ?.getAttribute("alt"),
+    ).toBe("");
+    expect(host.querySelector("[data-ai-partner-hero]")).toBeNull();
+    expect(host.querySelector('[aria-label="빠른 질문"]')).toBeNull();
+  });
+
+  it("binds server facts to the verified ready owner and hides them through an auth change", async () => {
+    const facts = {
+      ownerUserId: "member-a",
+      displayName: "검증된 A",
+      rankName: "확인된 등급",
+      availableKrwLabel: "12,345원",
+    };
+    browserAuth.autoInitial = false;
+    await render(
+      "member-a",
+      1,
+      false,
+      "member-a:server-render-1",
+      "page",
+      facts,
+    );
+    expect(session.ownerStatus).toBe("checking");
+    expect(host.textContent).not.toMatch(/검증된 A|확인된 등급|12,345원/);
+    await act(async () => emitAuth("INITIAL_SESSION", "member-a"));
+    expect(session.ownerStatus).toBe("ready");
+    expect(session.ownerUserId).toBe("member-a");
+    expect(host.textContent).toContain("검증된 A님");
+    expect(host.textContent).toContain("12,345원");
+    await act(async () => emitAuth("SIGNED_IN", "member-b"));
+    expect(session.ownerStatus).toBe("refreshing");
+    expect(host.textContent).not.toMatch(/검증된 A|확인된 등급|12,345원/);
+    browserAuth.autoInitial = true;
+    await render(
+      "member-b",
+      1,
+      false,
+      "member-b:server-render-1",
+      "page",
+      facts,
+    );
+    expect(session.ownerStatus).toBe("ready");
+    expect(session.ownerUserId).toBe("member-b");
+    expect(host.textContent).not.toMatch(/검증된 A|확인된 등급|12,345원/);
+    expect(
+      host.querySelector('[data-ai-account-facts] [role="status"]'),
+    ).not.toBeNull();
+  });
+
+  it("fills the four approved page suggestions only as drafts with composer focus", async () => {
+    navigation.pathname = "/ai";
+    await render("member-a", 1, true, "member-a:server-render-1", "page");
+    const group = host.querySelector('[aria-label="추천 질문"]')!;
+    const buttons = Array.from(group.querySelectorAll("button"));
+    expect(buttons).toHaveLength(4);
+    const questions = [
+      "내 채굴 상태 알려줘",
+      "첫 출금은 어떻게 준비하나요?",
+      "이벤트 참여 방법 알려줘",
+      "일상에서 스트레스를 줄이는 방법을 알려 주세요.",
+    ];
+    for (let index = 0; index < buttons.length; index++) {
+      await act(async () => buttons[index]!.click());
+      expect(session.draft).toBe(questions[index]);
+      expect(document.activeElement).toBe(host.querySelector("textarea"));
+      expect(session.messages).toEqual([]);
+      expect(fetchMock).not.toHaveBeenCalled();
+    }
+    await act(async () => emitAuth("SIGNED_OUT", null));
+    expect(
+      Array.from(group.querySelectorAll("button")).every(
+        (button) => button.disabled,
+      ),
+    ).toBe(true);
+  });
+
+  it("does not let failed decorative imagery erase or submit a draft", async () => {
+    await render("member-a", 1, false, "member-a:server-render-1", "page");
+    await act(async () => session.setDraft("작성한 질문을 유지해 주세요"));
+    const mascot = host.querySelector(
+      'img[src="/brand/mascot/putduk-ai-help-face-256-v1.webp"]',
+    )!;
+    await act(async () => mascot.dispatchEvent(new Event("error")));
+    expect(host.querySelector("textarea")?.value).toBe(
+      "작성한 질문을 유지해 주세요",
+    );
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(host.querySelector("[data-ai-partner-hero]")).toBeNull();
+  });
+
+  it("puts a contextual suggestion in the draft and focuses it without sending", async () => {
+    navigation.pathname = "/wallet";
+    await render();
+    const suggestion = Array.from(host.querySelectorAll("button")).find(
+      (button) => button.textContent?.includes("자산 화면 도움"),
+    );
+    expect(suggestion).toBeDefined();
+    await act(async () => suggestion?.click());
+    expect(session.draft).toBe("사용 가능 금액과 보류 금액은 무슨 뜻인가요?");
+    expect(document.activeElement).toBe(host.querySelector("textarea"));
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(session.messages).toEqual([]);
+    navigation.pathname = "/menu/notifications";
+    await render();
+    expect(host.textContent).toContain("알림 설정 도움");
+    expect(session.draft).toBe("사용 가능 금액과 보류 금액은 무슨 뜻인가요?");
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("preserves an offline draft and requires explicit submit after reconnection", async () => {
+    let online = true;
+    vi.spyOn(navigator, "onLine", "get").mockImplementation(() => online);
+    fetchMock.mockResolvedValue(immediateAnswer().response);
+    await render();
+    await act(async () => {
+      session.setDraft("알림 설정은 어디에 있나요?");
+      online = false;
+      window.dispatchEvent(new Event("offline"));
+    });
+    expect(session.online).toBe(false);
+    expect(host.textContent).toContain("인터넷 연결이 끊겼어요");
+    expect(host.querySelector("textarea")?.disabled).toBe(false);
+    const send = Array.from(host.querySelectorAll("button")).find(
+      (button) => button.getAttribute("aria-label") === "질문 보내기",
+    );
+    expect(send?.disabled).toBe(true);
+    await act(async () => session.submit());
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(session.draft).toBe("알림 설정은 어디에 있나요?");
+    await act(async () => {
+      online = true;
+      window.dispatchEvent(new Event("online"));
+    });
+    expect(session.online).toBe(true);
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(session.draft).toBe("알림 설정은 어디에 있나요?");
+    await act(async () => session.submit());
+    expect(fetchMock).toHaveBeenCalledOnce();
+  });
+
+  it("preserves wide-view origin help and displays only registered completion links", async () => {
+    navigation.pathname = "/ai";
+    navigation.search = "aiOrigin=%2Fmenu%2Fnotifications&token=secret";
+    const stream = responseStream();
+    stream.send({ type: "ready", requestId, source: "static" });
+    stream.send({ type: "delta", text: "알림 설정에서 선택해 주세요." });
+    stream.send({
+      type: "done",
+      requestId,
+      knowledgeVersion: "v1",
+      helpTopic: "notification_settings",
+    });
+    stream.close();
+    fetchMock.mockResolvedValue(stream.response);
+    await render();
+    await act(async () => {
+      session.setDraft("이 화면은 어떻게 쓰나요?");
+      await session.submit({
+        screenContext: { currentRoute: "/menu/notifications" },
+      });
+    });
+    expect(host.textContent).toContain("알림 설정 도움");
+    expect(session.messages.at(-1)?.helpTopic).toBe("notification_settings");
+    expect(
+      Array.from(host.querySelectorAll('nav[aria-label="관련 화면"] a')).map(
+        (link) => link.getAttribute("href"),
+      ),
+    ).toEqual(["/menu/notifications", "/notifications"]);
+    expect(host.querySelector('a[href*="secret"]')).toBeNull();
+  });
+
+  it("keeps a rate-limited question recoverable without automatic retry", async () => {
+    fetchMock.mockResolvedValue(
+      Response.json(
+        {
+          error: {
+            code: "AI_RATE_LIMITED",
+            message: "요청이 많아요. 잠시 후 다시 질문해 주세요.",
+          },
+        },
+        { status: 429 },
+      ),
+    );
+    await render();
+    await act(async () => {
+      session.setDraft("알림 설정은 어디에 있나요?");
+      await session.submit();
+    });
+    expect(session.messages.at(-1)).toMatchObject({
+      state: "error",
+      failure: { code: "AI_RATE_LIMITED" },
+    });
+    expect(host.textContent).toContain("요청 제한");
+    const id = session.messages.at(-1)!.id;
+    await act(async () => {
+      expect(session.restoreQuestion(id)).toBe(true);
+    });
+    expect(session.draft).toBe("알림 설정은 어디에 있나요?");
+    expect(fetchMock).toHaveBeenCalledOnce();
+  });
+
+  it("discards a delayed automatic transcript restore after account invalidation", async () => {
+    historyReads.enabled = true;
+    historyReads.list.mockResolvedValue({
+      ok: true,
+      conversations: [{ id: "conversation-a", title: "A history" }],
+    });
+    const read = deferred<unknown>();
+    historyReads.read.mockReturnValueOnce(read.promise);
+    await render();
+    expect(historyReads.read).toHaveBeenCalledOnce();
+    await act(async () => emitAuth("SIGNED_IN", "member-b"));
+    await act(async () =>
+      read.resolve({
+        ok: true,
+        messages: [
+          {
+            id: "old",
+            authorRole: "MEMBER",
+            bodyText: "A PRIVATE",
+            position: 1,
+          },
+        ],
+        hasEarlierMessages: false,
+      }),
+    );
+    expect(session.messages).toEqual([]);
+    expect(session.activeConversationId).toBeNull();
+    expect(host.textContent).not.toContain("A PRIVATE");
+  });
+
+  it("discards a delayed opened transcript across replacement of the auth observer", async () => {
+    historyReads.enabled = true;
+    const read = deferred<unknown>();
+    historyReads.read.mockReturnValueOnce(read.promise);
+    await render();
+    let opening!: Promise<void>;
+    await act(async () => {
+      opening = session.openConversation("conversation-old");
+    });
+    browserAuth.refresh = vi.fn();
+    await render();
+    expect(browserAuth.unsubscribes[0]).toHaveBeenCalledOnce();
+    expect(session.ownerStatus).toBe("ready");
+    await act(async () => {
+      read.resolve({
+        ok: true,
+        messages: [
+          {
+            id: "old",
+            authorRole: "MEMBER",
+            bodyText: "OLD OBSERVER READ",
+            position: 1,
+          },
+        ],
+        hasEarlierMessages: false,
+      });
+      await opening;
+    });
+    expect(session.messages).toEqual([]);
+    expect(session.activeConversationId).toBeNull();
+  });
+
+  it("reloads history after a failed list read through the recovery control", async () => {
+    historyReads.enabled = true;
+    historyReads.list.mockRejectedValueOnce(new Error("offline"));
+    await render();
+    expect(session.historyStatus).toBe("unavailable");
+    historyReads.list.mockResolvedValue({
+      ok: true,
+      conversations: [
+        {
+          id: "conversation-a",
+          title: "Recovered",
+          updatedAt: "2026-10-06T00:00:00Z",
+        },
+      ],
+    });
+    historyReads.read.mockResolvedValue({
+      ok: true,
+      messages: [
+        {
+          id: "recovered",
+          authorRole: "MEMBER",
+          bodyText: "RECOVERED HISTORY",
+          position: 1,
+        },
+      ],
+      hasEarlierMessages: false,
+    });
+    const retry = Array.from(host.querySelectorAll("button")).find(
+      (button) => button.textContent === "다시 불러오기",
+    );
+    expect(retry).toBeDefined();
+    await act(async () => retry?.click());
+    expect(session.historyStatus).toBe("ready");
+    expect(host.textContent).toContain("RECOVERED HISTORY");
+  });
+
+  it("retries the failed selected transcript rather than silently retaining another conversation", async () => {
+    historyReads.enabled = true;
+    await render();
+    historyReads.read.mockResolvedValueOnce({
+      ok: true,
+      messages: [
+        { id: "a", authorRole: "MEMBER", bodyText: "A HISTORY", position: 1 },
+      ],
+      hasEarlierMessages: false,
+    });
+    await act(async () => session.openConversation("conversation-a"));
+    historyReads.read.mockResolvedValueOnce({ ok: false });
+    await act(async () => session.openConversation("conversation-b"));
+    expect(session.historyStatus).toBe("unavailable");
+    expect(session.activeConversationId).toBe("conversation-a");
+    historyReads.read.mockResolvedValueOnce({
+      ok: true,
+      messages: [
+        { id: "b", authorRole: "MEMBER", bodyText: "B HISTORY", position: 1 },
+      ],
+      hasEarlierMessages: false,
+    });
+    await act(async () => session.reloadHistory());
+    expect(historyReads.read).toHaveBeenLastCalledWith(
+      expect.anything(),
+      "member-a",
+      "conversation-b",
+    );
+    expect(session.activeConversationId).toBe("conversation-b");
+    expect(session.historyStatus).toBe("ready");
+    expect(host.textContent).toContain("B HISTORY");
+  });
+
+  it("does not report an owner mismatch as feedback already saved", async () => {
+    historyReads.enabled = true;
+    await render();
+    await act(async () => session.openConversation("conversation-a"));
+    fetchMock.mockResolvedValue(
+      Response.json({ error: { code: "AI_SESSION_CHANGED" } }, { status: 409 }),
+    );
+    await act(async () => {
+      expect(await session.sendFeedback("answer-a", "UP")).toBe("failed");
+    });
+    expect(session.ownerStatus).toBe("refreshing");
+    expect(session.activeConversationId).toBeNull();
+    expect(browserAuth.refresh).toHaveBeenCalledOnce();
+  });
+
+  it("discards feedback receipts whose body arrives after owner invalidation", async () => {
+    historyReads.enabled = true;
+    await render();
+    await act(async () => session.openConversation("conversation-a"));
+    const body = deferred<unknown>();
+    fetchMock.mockResolvedValue({
+      status: 409,
+      ok: false,
+      json: () => body.promise,
+    });
+    let sending!: ReturnType<PutdukAiSession["sendFeedback"]>;
+    await act(async () => {
+      sending = session.sendFeedback("answer-a", "UP");
+    });
+    await act(async () => emitAuth("SIGNED_IN", "member-b"));
+    await act(async () => {
+      body.resolve({ error: { code: "AI_FEEDBACK_EXISTS" } });
+      expect(await sending).toBe("failed");
+    });
+    expect(session.messages).toEqual([]);
+  });
+
+  it("discards a delayed opened transcript after an account change without relying on router refresh", async () => {
+    historyReads.enabled = true;
+    let resolveRead!: (value: unknown) => void;
+    historyReads.read.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveRead = resolve;
+        }),
+    );
+    await render();
+    let opening!: Promise<void>;
+    await act(async () => {
+      opening = session.openConversation("conversation-a");
+    });
+    await act(async () => emitAuth("SIGNED_IN", "member-b"));
+    await act(async () => {
+      resolveRead({
+        ok: true,
+        messages: [
+          {
+            id: "a-private",
+            authorRole: "ASSISTANT",
+            bodyText: "A PRIVATE BALANCE",
+            position: 1,
+          },
+        ],
+        hasEarlierMessages: false,
+      });
+      await opening;
+    });
+    expect(session.ownerStatus).toBe("refreshing");
+    expect(session.messages).toEqual([]);
+    expect(session.activeConversationId).toBeNull();
+    expect(host.textContent).not.toContain("A PRIVATE BALANCE");
+  });
+
+  it("discards delayed history titles after sign-out", async () => {
+    historyReads.enabled = true;
+    let resolveList!: (value: unknown) => void;
+    historyReads.list.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveList = resolve;
+        }),
+    );
+    await render();
+    await act(async () => emitAuth("SIGNED_OUT", null));
+    await act(async () =>
+      resolveList({
+        ok: true,
+        conversations: [
+          {
+            id: "a-private",
+            title: "A PRIVATE TITLE",
+            updatedAt: "2026-10-06T00:00:00Z",
+          },
+        ],
+      }),
+    );
+    expect(session.history).toEqual([]);
+    expect(session.historyStatus).toBe("hidden");
+    expect(historyReads.read).not.toHaveBeenCalled();
+  });
+
+  it("discards a pre-sign-out read even after the same owner is freshly verified", async () => {
+    historyReads.enabled = true;
+    let resolveRead!: (value: unknown) => void;
+    historyReads.read.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveRead = resolve;
+        }),
+    );
+    await render();
+    let opening!: Promise<void>;
+    await act(async () => {
+      opening = session.openConversation("conversation-old");
+    });
+    await act(async () => emitAuth("SIGNED_OUT", null));
+    await act(async () => emitAuth("SIGNED_IN", "member-a"));
+    await render("member-a", 1, true, "member-a:server-render-2");
+    expect(session.ownerStatus).toBe("ready");
+    await act(async () => {
+      resolveRead({
+        ok: true,
+        messages: [
+          {
+            id: "old",
+            authorRole: "ASSISTANT",
+            bodyText: "OLD REQUEST",
+            position: 1,
+          },
+        ],
+        hasEarlierMessages: false,
+      });
+      await opening;
+    });
+    expect(session.messages).toEqual([]);
+    expect(session.activeConversationId).toBeNull();
+  });
+
+  it("does not replace a new conversation with a delayed opened transcript", async () => {
+    historyReads.enabled = true;
+    let resolveRead!: (value: unknown) => void;
+    historyReads.read.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveRead = resolve;
+        }),
+    );
+    await render();
+    let opening!: Promise<void>;
+    await act(async () => {
+      opening = session.openConversation("conversation-old");
+      session.startNewConversation();
+    });
+    await act(async () => {
+      resolveRead({
+        ok: true,
+        messages: [
+          {
+            id: "old",
+            authorRole: "MEMBER",
+            bodyText: "OLD QUESTION",
+            position: 1,
+          },
+        ],
+        hasEarlierMessages: false,
+      });
+      await opening;
+    });
+    expect(session.messages).toEqual([]);
+    expect(session.activeConversationId).toBeNull();
+  });
+
+  it("keeps restored tool failures retryable and labels successful tool answers as historical", async () => {
+    historyReads.enabled = true;
+    historyReads.read.mockResolvedValue({
+      ok: true,
+      hasEarlierMessages: true,
+      messages: [
+        {
+          id: "question",
+          authorRole: "MEMBER",
+          bodyText: "내 지갑 잔액 얼마야?",
+          position: 1,
+        },
+        {
+          id: "failed",
+          authorRole: "ASSISTANT",
+          bodyText: "상태를 확인하지 못했어요.",
+          position: 2,
+          source: "tool",
+          toolOutcome: "FAILED",
+          recordedAt: "2026-10-06T00:00:00Z",
+        },
+      ],
+    });
+    await render();
+    await act(async () => session.openConversation("conversation-a"));
+    expect(session.messages[1]).toMatchObject({
+      state: "error",
+      historical: true,
+      source: "tool",
+    });
+    expect(session.messages[1]?.grounding).toBeUndefined();
+    expect(host.textContent).toContain("당시 조회 시각은 저장되지 않았어요.");
+    expect(host.textContent).toContain("최근 대화 일부를 표시해요.");
+    await act(async () => {
+      expect(session.restoreQuestion("failed")).toBe(true);
+    });
+    expect(session.draft).toBe("내 지갑 잔액 얼마야?");
+  });
+
   it("uses the server runtime auth tuple without browser build environment values", async () => {
     vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", undefined);
     vi.stubEnv("NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY", undefined);

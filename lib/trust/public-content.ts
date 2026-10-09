@@ -34,14 +34,14 @@ export const PUBLIC_FACTS: readonly PublicFact[] = [
       "사용자용 공식 서비스 도메인입니다. 정식 서비스 연결 전에는 준비 상태로 표시됩니다.",
   },
   {
-    key: "ADMIN_DOMAIN",
-    value: "admin.mining.putduk.com",
-    description: "권한을 가진 운영자만 접근하는 별도 관리자 도메인입니다.",
+    key: "MEMBER_SUPPORT_PATH",
+    value: "/support",
+    description: "이용 중 궁금한 점은 고객지원에서 확인할 수 있어요.",
   },
   {
     key: "SUPPORTED_WORLDS",
     value: "KOREA, USA, GOLD, SILVER, CRYPTO",
-    description: "V1에서 정의된 다섯 개의 채굴 월드입니다.",
+    description: "현재 이용 가능한 5개의 채굴 월드입니다.",
   },
   {
     key: "TRIAL_DURATION",
@@ -320,7 +320,7 @@ export const TRUST_DOCUMENTS: readonly TrustDocument[] = [
         ],
       },
       {
-        heading: "V1 운영",
+        heading: "출금 안내",
         body: [
           "KRW와 USDT 모두 승인된 운영 절차에 따라 처리됩니다. 실제 출금 기능은 계좌·네트워크·보안 정책이 최종 운영 승인을 마친 뒤 활성화됩니다.",
         ],

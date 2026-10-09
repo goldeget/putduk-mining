@@ -1,0 +1,348 @@
+.summary {
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  container-name: funded-summary;
+  container-type: inline-size;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  background: var(--surface-default);
+  color: var(--text-primary);
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 1rem 1rem 0;
+}
+
+.header > div {
+  min-width: 0;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--brand-strong);
+  font-size: 0.75rem;
+  font-weight: 650;
+}
+
+.header h2 {
+  margin: 0.45rem 0 0;
+  font-size: 1.0625rem;
+  line-height: 1.5;
+  word-break: keep-all;
+}
+
+.receiptLabel,
+.conditionalLabel {
+  flex: 0 0 auto;
+  padding: 0.3rem 0.55rem;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+.content {
+  display: grid;
+  gap: 1rem;
+  padding: 1.25rem 1rem 1rem;
+}
+
+.confirmed {
+  min-width: 0;
+}
+
+.figures {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.8rem;
+  align-items: end;
+  margin: 0 0 0.85rem;
+}
+
+.figures > div {
+  min-width: 0;
+}
+
+.figures dt {
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  word-break: keep-all;
+}
+
+.figures dd {
+  margin: 0.4rem 0 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.total dd {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.3rem;
+  font-size: clamp(1.65rem, 7cqi, 2.75rem);
+  font-weight: 720;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+}
+
+.total dd > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.total small {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.allocation {
+  padding-block-end: 0.2rem;
+  text-align: end;
+}
+
+.allocation dd {
+  color: var(--brand-strong);
+  font-size: 1.15rem;
+  font-weight: 650;
+  line-height: 1.5;
+}
+
+.explanation,
+.carry {
+  max-width: 36ch;
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  line-height: 1.65;
+  word-break: keep-all;
+}
+
+.carry {
+  margin-top: 0.5rem;
+}
+
+.conditional {
+  min-width: 0;
+  padding: 0.85rem 1rem;
+  border-inline-start: 2px solid var(--border-strong);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  background: var(--surface-sunken);
+}
+
+.conditionalLabel {
+  display: inline-block;
+  padding: 0;
+  border: 0;
+}
+
+.conditional h3 {
+  margin: 0.3rem 0 0;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.conditional p {
+  max-width: 34ch;
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  line-height: 1.65;
+  word-break: keep-all;
+}
+
+.conditional .conditionalAmount {
+  margin: 0.45rem 0;
+  color: var(--text-primary);
+  font-size: 1.05rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.footer {
+  padding: 0.85rem 1rem 1rem;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.times {
+  display: grid;
+  gap: 0.4rem;
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  line-height: 1.6;
+}
+
+.times > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.15rem 0.75rem;
+}
+
+.times dt {
+  min-width: 6rem;
+}
+
+.times dd {
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.timeZone {
+  margin: 0.25rem 0 0;
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.2rem;
+  margin-top: 0.65rem;
+}
+
+.actions a,
+.recovery {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  padding: 0.45rem 0;
+  color: var(--brand-strong);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.actions a:hover,
+.recovery:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.actions a:active,
+.recovery:active {
+  color: var(--text-primary);
+}
+
+.actions a:focus-visible,
+.recovery:focus-visible {
+  outline: 2px solid var(--brand-strong);
+  outline-offset: 4px;
+  border-radius: var(--radius-sm);
+}
+
+.loading,
+.unavailable {
+  padding: 1rem;
+}
+
+.loading p,
+.unavailable p {
+  max-width: 32ch;
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.65;
+  word-break: keep-all;
+}
+
+.unavailable .unavailableTitle {
+  margin-bottom: 0.35rem;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.recovery {
+  margin-top: 0.6rem;
+  border: 0;
+  background: transparent;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.recovery:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+
+.skeleton {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.skeleton span {
+  height: 1rem;
+  border-radius: var(--radius-sm);
+  background: var(--border-subtle);
+}
+
+.skeleton span:first-child {
+  width: 65%;
+  height: 2.75rem;
+}
+
+.skeleton span:last-child {
+  height: 5rem;
+}
+
+@container funded-summary (min-width: 38rem) {
+  .header,
+  .content,
+  .footer {
+    padding-inline: 1.5rem;
+  }
+
+  .content {
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.9fr);
+    gap: 1.5rem;
+    align-items: start;
+  }
+}
+
+@container funded-summary (max-width: 18rem) {
+  .figures {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .allocation {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem;
+    text-align: start;
+  }
+
+  .allocation dd {
+    margin: 0;
+  }
+
+  .receiptLabel {
+    display: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .conditional {
+    border: 1px dashed CanvasText;
+  }
+
+  .actions a:focus-visible,
+  .recovery:focus-visible {
+    outline-color: Highlight;
+  }
+}

@@ -1,0 +1,283 @@
+.root {
+  min-width: 0;
+  margin-top: var(--space-10);
+  container: failed-jobs / inline-size;
+  color: var(--text-primary);
+}
+
+.heading,
+.jobHeader {
+  display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  align-items: start;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.heading > div,
+.jobHeader > div {
+  min-width: 0;
+}
+
+.eyebrow {
+  margin: 0 0 var(--space-2);
+  color: var(--brand-primary);
+  font-size: 0.875rem;
+  font-weight: 800;
+}
+
+.heading h2,
+.job h3,
+.readState h3,
+.boundary h3 {
+  margin: 0;
+  line-height: 1.45;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+.heading h2 {
+  font-size: 1.4rem;
+}
+
+.description,
+.listSummary,
+.readState p,
+.observed,
+.boundary p {
+  max-width: 38rem;
+  margin: var(--space-3) 0 0;
+  color: var(--text-secondary);
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+.toolbar {
+  display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.toolbar :global(button),
+.secondaryAction,
+.primaryAction {
+  display: inline-flex;
+  min-width: 0;
+  max-width: 100%;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  border: 1px solid var(--border-control);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  font-size: 0.9375rem;
+  line-height: 1.4;
+  text-align: center;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+.secondaryAction {
+  color: var(--text-primary);
+  background: var(--surface-default);
+}
+
+.primaryAction {
+  color: var(--brand-primary);
+  background: var(--surface-default);
+  font-weight: 800;
+}
+
+.primaryAction span {
+  flex: 0 0 auto;
+}
+
+.primaryAction .actionLabel {
+  min-width: 0;
+  flex: 0 1 auto;
+}
+
+.primaryAction,
+.secondaryAction {
+  transition:
+    background var(--motion-fast) var(--motion-easing),
+    border-color var(--motion-fast) var(--motion-easing);
+}
+
+.primaryAction:hover,
+.secondaryAction:hover {
+  border-color: var(--brand-primary);
+  background: var(--surface-interactive);
+}
+
+.primaryAction:active,
+.secondaryAction:active {
+  background: var(--surface-sunken);
+}
+
+.primaryAction:focus-visible,
+.secondaryAction:focus-visible {
+  outline: 3px solid var(--brand-primary);
+  outline-offset: 3px;
+}
+
+.readState,
+.jobList {
+  margin-top: var(--space-5);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-xl);
+  background: var(--surface-default);
+}
+
+.readState {
+  padding: var(--space-6);
+}
+
+.job {
+  min-width: 0;
+  padding: clamp(1rem, 3vw, 1.5rem);
+}
+
+.job + .job {
+  border-top: 1px solid var(--border-default);
+}
+
+.job h3,
+.readState h3,
+.boundary h3 {
+  font-size: 1.125rem;
+}
+
+.status {
+  max-width: 100%;
+  border: 1px solid currentColor;
+  border-radius: var(--radius-full);
+  padding: var(--space-2) var(--space-3);
+  color: var(--status-warning);
+  font-size: 0.875rem;
+  font-weight: 800;
+  line-height: 1.4;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+.status[data-state="stopped"] {
+  color: var(--status-danger);
+}
+
+.jobBody {
+  display: grid;
+  min-width: 0;
+  gap: var(--space-5);
+  margin-top: var(--space-4);
+}
+
+.context,
+.nextSteps {
+  min-width: 0;
+}
+
+.context p,
+.nextSteps li {
+  max-width: 34rem;
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+.context p + p {
+  margin-top: var(--space-2);
+}
+
+.evidence {
+  display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-6);
+  margin: var(--space-4) 0 0;
+}
+
+.evidence > div {
+  min-width: 0;
+}
+
+.evidence dt {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.evidence dd {
+  margin: var(--space-1) 0 0;
+  font-size: 0.9375rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.5;
+  overflow-wrap: break-word;
+}
+
+.nextSteps {
+  border-top: 1px solid var(--border-subtle);
+  padding-top: var(--space-4);
+}
+
+.nextSteps h4 {
+  margin: 0;
+  font-size: 0.9375rem;
+}
+
+.nextSteps ol {
+  display: grid;
+  gap: var(--space-2);
+  margin: var(--space-3) 0 var(--space-4);
+  padding-left: var(--space-5);
+}
+
+.boundary {
+  margin-top: var(--space-5);
+  border-left: 3px solid var(--status-warning);
+  padding: var(--space-4) var(--space-5);
+  background: var(--background-subtle);
+}
+
+.observed {
+  font-size: 0.875rem;
+}
+
+@container failed-jobs (min-width: 45rem) {
+  .jobBody {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
+    gap: var(--space-6);
+  }
+
+  .nextSteps {
+    border-top: 0;
+    border-left: 1px solid var(--border-subtle);
+    padding: 0 0 0 var(--space-6);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .primaryAction,
+  .secondaryAction {
+    transition: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .status,
+  .boundary,
+  .primaryAction,
+  .secondaryAction {
+    border-color: CanvasText;
+    color: CanvasText;
+    background: Canvas;
+  }
+}

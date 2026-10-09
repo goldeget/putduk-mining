@@ -2,6 +2,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 import type { AiRoute } from "./router";
 import type { AiToolName } from "./tools";
+import { assertMemberAiLimits } from "./member-policy";
 
 export type AiAuditContextScope =
   "ACCOUNT_STATE" | "GENERAL_SAFE" | "PUBLIC_FACTS_ONLY" | "UI_HELP";
@@ -33,6 +34,7 @@ export async function beginAiRequest(
     userId: string;
   },
 ) {
+  assertMemberAiLimits(input);
   return supabase.rpc("begin_ai_request_v2", {
     p_client_message_id: input.clientMessageId,
     p_context_scope: input.contextScope,

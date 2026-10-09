@@ -73,6 +73,80 @@ afterEach(async () => {
 });
 
 describe("product main scroll history", () => {
+  it("preserves the same actual main and Mining position across other-route history", async () => {
+    await render("/mining");
+    const main = host.querySelector("main")!;
+    const mainScrollTo = vi.fn();
+    main.scrollTo = mainScrollTo;
+    await scrollMain(640);
+    await render("/wallet");
+    expect(host.querySelector("main")).toBe(main);
+    await scrollMain(125);
+    await backTo("/mining");
+    expect(host.querySelector("main")).toBe(main);
+    expect(mainScrollTo).toHaveBeenLastCalledWith({
+      top: 640,
+      left: 0,
+      behavior: "instant",
+    });
+    expect(main.querySelector("[data-mining-header]")).not.toBeNull();
+    expect(scrollTo).not.toHaveBeenCalled();
+  });
+  it("keeps Wallet's actual main and restores its position through Mining and Wallet subroutes", async () => {
+    await render("/wallet");
+    const main = host.querySelector("main")!;
+    const mainScrollTo = vi.fn();
+    main.scrollTo = mainScrollTo;
+    await scrollMain(735);
+    await render("/mining");
+    expect(host.querySelector("main")).toBe(main);
+    expect(main.querySelector("[data-wallet-header]")).toBeNull();
+    await scrollMain(245);
+    await backTo("/wallet");
+    expect(host.querySelector("main")).toBe(main);
+    expect(mainScrollTo).toHaveBeenLastCalledWith({
+      top: 735,
+      left: 0,
+      behavior: "instant",
+    });
+    expect(main.querySelector('[data-wallet-header="mobile"]')).not.toBeNull();
+    await render("/wallet/deposit");
+    expect(host.querySelector("main")).toBe(main);
+    expect(main.querySelector('[data-wallet-header="mobile"]')).not.toBeNull();
+    expect(mainScrollTo).toHaveBeenLastCalledWith({
+      top: 0,
+      left: 0,
+      behavior: "instant",
+    });
+    expect(scrollTo).not.toHaveBeenCalled();
+    await scrollMain(310);
+    await render("/mining");
+    await backTo("/wallet/deposit");
+    expect(host.querySelector("main")).toBe(main);
+    expect(mainScrollTo).toHaveBeenLastCalledWith({
+      top: 310,
+      left: 0,
+      behavior: "instant",
+    });
+  });
+
+  it("does not turn a Wallet history-view query into restoration for the next normal route", async () => {
+    await render("/wallet");
+    const main = host.querySelector("main")!;
+    const mainScrollTo = vi.fn();
+    main.scrollTo = mainScrollTo;
+    await scrollMain(270);
+    await backTo("/wallet?view=history", "/wallet");
+    expect(host.querySelector("main")).toBe(main);
+    expect(mainScrollTo).not.toHaveBeenCalled();
+    await render("/mining");
+    expect(mainScrollTo).toHaveBeenLastCalledWith({
+      top: 0,
+      left: 0,
+      behavior: "instant",
+    });
+  });
+
   it("uses the current route when a hidden previous AI page remains in the DOM", async () => {
     const previousAi = document.createElement("div");
     previousAi.hidden = true;
