@@ -9,11 +9,13 @@ export type MemberNotificationRow = {
   id: string;
   read_at: string | null;
   route: string | null;
+  scheduled_at?: string;
   title_ko: string;
 };
 
 const CATEGORY_LABELS_KO: Readonly<Record<string, string>> = {
   events: "이벤트",
+  notices: "공지",
   marketing: "혜택과 소식",
   mining: "채굴",
   service: "중요 안내",
@@ -25,9 +27,15 @@ const CATEGORY_LABELS_KO: Readonly<Record<string, string>> = {
  * 만료된 행은 멤버 UI 진실에서 제외한다.
  */
 export function isActiveMemberNotification(
-  notification: Pick<MemberNotificationRow, "expires_at">,
+  notification: Pick<MemberNotificationRow, "expires_at" | "scheduled_at">,
   now: Date,
 ): boolean {
+  if (notification.scheduled_at !== undefined) {
+    const scheduledAt = Date.parse(notification.scheduled_at);
+    if (!Number.isFinite(scheduledAt) || scheduledAt > now.getTime()) {
+      return false;
+    }
+  }
   if (!notification.expires_at) {
     return true;
   }
@@ -39,7 +47,7 @@ export function isActiveMemberNotification(
 }
 
 export function filterActiveMemberNotifications<
-  T extends Pick<MemberNotificationRow, "expires_at">,
+  T extends Pick<MemberNotificationRow, "expires_at" | "scheduled_at">,
 >(notifications: readonly T[], now: Date): T[] {
   return notifications.filter((notification) =>
     isActiveMemberNotification(notification, now),
