@@ -483,3 +483,56 @@ describe("audited, read-only admin operational context", () => {
     expect(db.queries[0]!.limit).toBe(6);
   });
 });
+
+describe("current job evidence contradictions", () => {
+  const job = {
+    id: recordId,
+    status: "FAILED",
+    attempts: 3,
+    updated_at: stamp,
+    dead_lettered_at: null,
+  };
+  it.each(["SUCCEEDED", "RUNNING", "PENDING", "CANCELLED"])(
+    "does not label a %s job with a historical dead letter as currently stopped",
+    async (status) => {
+      const db = database(() => ({
+        count: 1,
+        data: [{ ...job, status, dead_lettered_at: stamp }],
+      }));
+      const { payload } = await result({ topic: "jobs" });
+      expect(text(payload.data, "FACT")).not.toContain("격리됨");
+      expect(text(payload.data, "FACT")).not.toContain(
+        "실패·격리된 자동 작업 1건",
+      );
+      expect(text(payload.data, "UNKNOWN")).toContain(
+        "건수를 확인하지 못했습니다",
+      );
+      expect(text(payload.data, "FACT")).not.toContain("실패 기록 있음");
+      expect(text(payload.data, "UNKNOWN")).toContain("현재 상태");
+      expect(text(payload.data, "UNKNOWN")).toContain("복구 성공 여부");
+      expect(db.rpc).not.toHaveBeenCalled();
+    },
+  );
+  it.each([
+    { count: 0, data: [job] },
+    { count: 2, data: [job] },
+    { count: null, data: [job] },
+    { count: 1, data: [{ ...job, status: "PRIVATE_PROVIDER_SECRET" }] },
+    { count: 1, data: [{ ...job, updated_at: "2999-01-01T00:00:00Z" }] },
+    { count: 1, data: [{ ...job, dead_lettered_at: "2999-01-01T00:00:00Z" }] },
+    { count: 1, data: [{ ...job, dead_lettered_at: "2026-10-02T00:00:00Z" }] },
+  ])("keeps inconsistent row evidence unknown: %j", async (data) => {
+    database(() => data);
+    const { payload } = await result({ topic: "jobs" });
+    expect(text(payload.data, "FACT")).not.toContain("시도 3회");
+    expect(text(payload.data, "UNKNOWN")).toContain("시도 횟수와 시각");
+    expect(JSON.stringify(payload)).not.toContain("PRIVATE_PROVIDER_SECRET");
+  });
+  it("shows an actual DEAD_LETTER without requiring the optional historical timestamp", async () => {
+    database(() => ({ count: 1, data: [{ ...job, status: "DEAD_LETTER" }] }));
+    const { payload } = await result({ topic: "jobs" });
+    expect(text(payload.data, "FACT")).toContain("격리됨");
+    expect(text(payload.data, "UNKNOWN")).toContain("복구 성공 여부");
+    expect(payload.data.canExecute).toBe(false);
+  });
+});

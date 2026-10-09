@@ -729,7 +729,7 @@ async function member(db: SupabaseClient, builder: Builder, userId: string) {
   );
 }
 
-async function jobs(db: SupabaseClient, builder: Builder) {
+async function jobs(db: SupabaseClient, builder: Builder, now: Date) {
   const result = await read(
     db
       .from("system_jobs")
@@ -740,22 +740,46 @@ async function jobs(db: SupabaseClient, builder: Builder) {
       .order("updated_at")
       .limit(10),
   );
+  let selected = rows(
+    result,
+    z
+      .object({
+        id: z.uuid(),
+        status: z.enum([
+          "PENDING",
+          "RUNNING",
+          "SUCCEEDED",
+          "FAILED",
+          "CANCELLED",
+          "DEAD_LETTER",
+        ]),
+        attempts: countSchema,
+        updated_at: when,
+        dead_lettered_at: when.nullable(),
+      })
+      .refine(
+        (row) =>
+          Date.parse(row.updated_at) <= now.getTime() &&
+          (row.dead_lettered_at === null ||
+            Date.parse(row.dead_lettered_at) <= Date.parse(row.updated_at)),
+      ),
+    10,
+  );
+  const count = countSchema.safeParse(result.count);
+  // Count and bounded rows belong to the same read. Partial or contradictory
+  // data must not become a successful empty queue or current job evidence.
+  if (!count.success || selected?.length !== Math.min(10, count.data))
+    selected = null;
   const total = addCount(
     builder,
-    result,
+    selected === null ||
+      selected.some(
+        (row) => row.status !== "FAILED" && row.status !== "DEAD_LETTER",
+      )
+      ? { error: true }
+      : result,
     "실패·격리된 자동 작업",
     "/exceptions",
-  );
-  const selected = rows(
-    result,
-    z.object({
-      id: z.uuid(),
-      status: z.string(),
-      attempts: countSchema,
-      updated_at: when,
-      dead_lettered_at: when.nullable(),
-    }),
-    10,
   );
   if (selected === null)
     builder.add(
@@ -764,13 +788,27 @@ async function jobs(db: SupabaseClient, builder: Builder) {
       "/exceptions",
       "실패 작업",
     );
-  for (const [index, row] of (selected ?? []).entries())
+  for (const [index, row] of (selected ?? []).entries()) {
+    // A historical dead-letter marker alone cannot prove a current stop.
+    // In particular, SUCCEEDED is not proof of reconciled recovery either.
+    if (row.status !== "FAILED" && row.status !== "DEAD_LETTER") {
+      builder.add(
+        "UNKNOWN",
+        `작업 ${index + 1}: 현재 상태와 과거 중단 기록을 함께 확인해야 합니다. 복구 완료로 판단하지 않습니다.`,
+        "/exceptions",
+        "현재 작업 상태 확인",
+      );
+      continue;
+    }
+    const stopped =
+      row.status === "DEAD_LETTER" || row.dead_lettered_at !== null;
     builder.add(
       "FACT",
-      `작업 ${index + 1}: ${row.dead_lettered_at ? "반복 처리를 멈추고 격리됨" : "실패 기록 있음"}, 시도 ${row.attempts}회, 마지막 변경 ${formatKst(row.updated_at)}.`,
+      `작업 ${index + 1}: ${stopped ? "반복 처리를 멈추고 격리됨" : "실패 기록 있음"}, 시도 ${row.attempts}회, 마지막 변경 ${formatKst(row.updated_at)}.`,
       "/exceptions",
       "실패 작업 근거",
     );
+  }
   if (total !== null && total > 0)
     builder.add(
       "INFERENCE",
@@ -902,7 +940,7 @@ export async function readAssistantContext(
     await transactionQueues(db, builder, input.topic);
   else if (input.topic === "deposit-case" || input.topic === "withdrawal-case")
     await transactionCase(db, builder, input);
-  else if (input.topic === "jobs") await jobs(db, builder);
+  else if (input.topic === "jobs") await jobs(db, builder, now);
   else if (input.topic === "security") await security(db, builder);
   else await audits(db, builder);
   return builder.finish();
