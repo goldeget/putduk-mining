@@ -40,7 +40,7 @@ begin
  proof:=coalesce(p_proof,'cms-proof:'||p_key::text);
  if p_proof is null and not exists(select 1 from public.admin_step_up_grants where token_hash=encode(extensions.digest(proof,'sha256'),'hex')) then
   perform public.issue_admin_step_up(x.admin_session,x.actor,'LIVEOPS_CONTENT',proof,600);end if;
- previous:=case p_operation when 'PREVIEW' then c.draft when 'APPROVE' then c.preview when 'PUBLISH' then c.approval when 'ARCHIVE' then c.publication else null end;
+ previous:=case p_operation when 'PREVIEW' then c.draft when 'APPROVE' then c.preview when 'PUBLISH' then c.approval when 'ARCHIVE' then c.publication when 'CANCEL' then c.publication else null end;
  return public.manage_liveops_content(p_operation,c.kind,(previous->>'contentId')::uuid,coalesce(p_revision,(previous->>'revisionId')::uuid),
  coalesce(p_digest,previous->>'digest'),case p_operation when 'CREATE_DRAFT' then c.payload else null end,
  x.actor,x.admin_session,x.auth_session::text,'aal2',proof,p_reason,p_key::text);
@@ -59,7 +59,7 @@ begin
   if j.id is null then exit;end if;
   if j.job_type<>'LIVEOPS_PUBLICATION_FANOUT_V1'then raise exception 'QA_UNRELATED_READY_JOB';end if;
   perform public.complete_system_job(j.id,p_worker);processed:=processed+1;
-  if processed>1000then raise exception 'QA_PUBLICATION_LOOP_BOUND';end if;
+  if processed>1000 then raise exception 'QA_PUBLICATION_LOOP_BOUND';end if;
  end loop;return processed;
 end;$$;
 grant execute on function pg_temp.process_publication_jobs(text)to service_role;
@@ -112,7 +112,7 @@ select throws_ok($direct$do $body$begin
  where id=(select id from pg_temp.publication_claimed);
  set constraints all immediate;
 end;$body$;$direct$,'55000','LIVEOPS_FANOUT_CHUNK_INVALID','raw service terminal update cannot manufacture a completed publication chunk');
-select throws_ok($select public.complete_system_job(id,'wrong-worker')from publication_claimed$,'55000','JOB_LEASE_NOT_OWNED','wrong worker cannot process cohort');
+select throws_ok($$select public.complete_system_job(id,'wrong-worker')from publication_claimed$$,'55000','JOB_LEASE_NOT_OWNED','wrong worker cannot process cohort');
 select throws_ok($$select public.complete_system_job(id,'qa-publication')from publication_claimed$$,'P0001','QA_NEXT_CHUNK_FAULT','next-job insertion failure rolls back all current chunk outputs');
 reset role;drop trigger qa_next_chunk_fault on public.system_jobs;
 select is((select count(*)::integer from app_private.liveops_fanout_chunk_receipts),0,'fault leaves no misleading successful chunk receipt');
@@ -131,7 +131,9 @@ select is((select count(*)::integer from public.notifications where source_event
 select is((select count(*)::integer from public.notifications where user_id='00000000-0000-4000-8000-000000000102'),0,'late signup is excluded from publication audience');
 select is((select sum(processed_count)::integer from app_private.liveops_fanout_chunk_receipts),101,'sealed batch counts equal exact frozen cohort');
 select ok(not exists(select 1 from app_private.liveops_fanout_chunk_receipts where processed_count>100),'no completed chunk exceeds deterministic bound');
+set local role service_role;
 select lives_ok('set constraints all immediate','all original notifications survive actual native constraints');set constraints all deferred;
+reset role;
 create temporary table first_due_publication_notification as select id from public.notifications where source_event_id=(select event_id from publication_test_source)and user_id='00000000-0000-4000-8000-000000000001';
 grant select on first_due_publication_notification to authenticated;
 insert into public.notifications(id,user_id,category,title_ko,body_ko,route,deduplication_key,created_at,scheduled_at,expires_at)
@@ -179,9 +181,9 @@ update public.push_subscriptions set expires_at=clock_timestamp()-interval'1 min
 select is((select app_private.push_send_available_at(device_id,scheduled_at+interval'1 second')is null from future_publication_notification),true,'expired device subscription remains suppressed');
 update public.push_subscriptions set expires_at=null where id='38900000-0000-4000-8000-000000000001';
 
--- Archive between EVENT batches: finish the queued source with a sealed zero chunk.
+-- Cancel between EVENT batches: finish the queued source with a sealed zero chunk.
 update recovery_cms_ctx set kind='EVENT',draft=null,preview=null,approval=null,publication=null,payload=jsonb_build_object(
- 'slug','bounded-event-archive','title','로컬 안내 참여','cardTitle','안내 읽기','summary','로컬에서 안내를 읽고 참여해 주세요.','body','이 안내는 로컬 테스트에서만 사용합니다.',
+ 'slug','bounded-event-cancel','title','로컬 안내 참여','cardTitle','안내 읽기','summary','로컬에서 안내를 읽고 참여해 주세요.','body','이 안내는 로컬 테스트에서만 사용합니다.',
  'participation','안내를 읽고 참여해 주세요.','exclusion','운영 혜택이나 금전 보상은 없습니다.','rewardMode','NONE','ctaLabel','안내 보기','ctaRoute','/events','audience','MEMBERS','segment','ALL_MEMBERS',
  'startsAt',to_char((clock_timestamp()-interval'1 minute')at time zone'UTC','YYYY-MM-DD"T"HH24:MI:SS.US"Z"'),'endsAt',to_char((clock_timestamp()+interval'1 day')at time zone'UTC','YYYY-MM-DD"T"HH24:MI:SS.US"Z"'));
 set local role service_role;
@@ -198,21 +200,28 @@ select lives_ok($$select public.complete_outbox_event(id,'qa-publication')from p
 truncate publication_claimed;
 insert into publication_claimed select *from public.claim_system_jobs('qa-publication',1,120);
 select lives_ok($$select public.complete_system_job(id,'qa-publication')from publication_claimed$$,'first EVENT chunk processes exactly100 frozen recipients');
-select lives_ok($$select pg_temp.recovery_cms_command('ARCHIVE',gen_random_uuid())$$,'canonical operator archive is the current source authority');
-select is(pg_temp.process_publication_jobs('qa-publication'),1,'archived source remaining job completes as sealed zero chunk');
+select lives_ok($$select pg_temp.recovery_cms_command('CANCEL',gen_random_uuid())$$,'canonical operator cancellation is the current source authority');
+select is(pg_temp.process_publication_jobs('qa-publication'),1,'cancelled source remaining job completes as sealed zero chunk');
 reset role;
-select is((select count(*)::integer from public.notifications where source_event_id=(select event_id from publication_test_source)),100,'archive prevents the remaining2 recipients from receiving an obsolete event announcement');
+select is((select count(*)::integer from public.notifications where source_event_id=(select event_id from publication_test_source)),100,'cancellation prevents the remaining2 recipients from receiving an obsolete event announcement');
 select is((select processed_count from app_private.liveops_fanout_chunk_receipts c join app_private.liveops_fanout_job_originals j on j.job_id=c.job_id where j.revision_id=(select revision_id from publication_test_source)and j.chunk_number=2),0,'stale publication completes with explicit zero processed count');
-select is((select count(*)::integer from app_private.liveops_fanout_job_originals where revision_id=(select revision_id from publication_test_source)),2,'archive produces no fake third continuation job');
+select is((select count(*)::integer from app_private.liveops_fanout_job_originals where revision_id=(select revision_id from publication_test_source)),2,'cancellation produces no fake third continuation job');
 select ok(not exists(select 1 from public.ledger_transactions where member_user_id in(select user_id from public.user_profiles)),'bounded publication changes no actual money');
-select lives_ok('set constraints all immediate','future NOTICE and archived EVENT source-bound chunks pass native seals');set constraints all deferred;
 set local role service_role;
+select lives_ok('set constraints all immediate','future NOTICE and cancelled EVENT source-bound chunks pass native seals');set constraints all deferred;
+reset role;
+set local role service_role;
+select throws_ok($forged$insert into public.notifications(user_id,category,title_ko,body_ko,route,source_event_id,deduplication_key,scheduled_at)
+ values('00000000-0000-4000-8000-000000000001','events','위조 게시 알림','실제 발행 원본이 없는 알림입니다.','/events',
+ (select event_id from pg_temp.publication_test_source),'liveops-publication:forged',clock_timestamp())$forged$,
+ '42501','permission denied for table notifications','raw service insert stays denied by the existing minimum privilege');
+reset role;
+-- Owner-only fixture exercises the deferred seal without broadening service grants.
 select throws_ok($forged$do $body$begin
  insert into public.notifications(user_id,category,title_ko,body_ko,route,source_event_id,deduplication_key,scheduled_at)
  values('00000000-0000-4000-8000-000000000001','events','위조 게시 알림','실제 발행 원본이 없는 알림입니다.','/events',
  (select event_id from pg_temp.publication_test_source),'liveops-publication:forged',clock_timestamp());
- set constraints all immediate;
-end;$body$;$forged$,'55000','LIVEOPS_NOTIFICATION_ORIGINAL_MISMATCH','raw service insert cannot forge source-bound publication notification');
-reset role;
+ set constraints liveops_notification_insert_original immediate;
+end;$body$;$forged$,'55000','LIVEOPS_NOTIFICATION_ORIGINAL_MISMATCH','owner-only forged fixture cannot bypass the deferred source seal');
 select is((select count(*)::integer from public.notifications where deduplication_key='liveops-publication:forged'),0,'failed forged insert leaves no orphan notification');
 select * from finish();rollback;
