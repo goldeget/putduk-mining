@@ -145,6 +145,7 @@ export const SUPPORTED_OUTBOX_HANDLERS = Object.freeze({
   "SAFE_MODE_CHANGED.v1": prepareSafeModeAuditDelivery,
   "LIVEOPS_CONTENT_CHANGED.v1": prepareLiveopsPublicationDelivery,
   "EVENT_PARTICIPATION_JOINED.v1": prepareMemberEventJoinDelivery,
+  "MEMBER_PROFILE_CAPTURED.v1": prepareMemberProfileAuditDelivery,
   "DEPOSIT_CONFIRMED.v1": prepareNonmoneyOriginalDelivery,
   "USDT_MANUAL_DEPOSIT_CONFIRMED.v1": prepareNonmoneyOriginalDelivery,
   "WITHDRAWAL_COMPLETED.v1": prepareNonmoneyOriginalDelivery,
@@ -296,6 +297,34 @@ function prepareMemberEventJoinDelivery(_client, event) {
   }
   // Existing completion RPC verifies the sealed DB original and writes one
   // internal delivery receipt. Joining does not qualify or grant a reward.
+}
+
+function prepareMemberProfileAuditDelivery(_client, event) {
+  const fields = ["user_id", "required_consent_versions", "marketing_granted"];
+  const requiredVersions = ["TERMS-KO-2026-09-27", "PRIVACY-KO-2026-09-27"];
+  if (
+    event.event_type !== "MEMBER_PROFILE_CAPTURED.v1" ||
+    event.schema_version !== 1 ||
+    event.aggregate_type !== "user_identity_profile" ||
+    typeof event.aggregate_id !== "string" ||
+    !FUNDING_JOB_UUID.test(event.aggregate_id) ||
+    !event.payload ||
+    Object.keys(event.payload).length !== fields.length ||
+    fields.some((field) => !Object.hasOwn(event.payload, field)) ||
+    event.payload.user_id !== event.aggregate_id ||
+    typeof event.payload.marketing_granted !== "boolean" ||
+    !Array.isArray(event.payload.required_consent_versions) ||
+    event.payload.required_consent_versions.length !==
+      requiredVersions.length ||
+    requiredVersions.some(
+      (version, index) =>
+        event.payload.required_consent_versions[index] !== version,
+    )
+  ) {
+    throw new Error("MEMBER_PROFILE_CAPTURE_ENVELOPE_INVALID");
+  }
+  // Preflight only. Canonical completion checks immutable DB signup originals.
+  // No profile, timeline, notification or monetary mutation is performed in JS.
 }
 
 function prepareSafeModeAuditDelivery(_client, event) {

@@ -145,7 +145,7 @@ where account.user_id = ws04_ctx.user_a
 -- Phone availability shape
 select ok(
   (
-    select count(*) = 67
+    select count(*) = 68
       and bool_and(procedure.proconfig @> array['search_path=pg_catalog']::text[])
     from pg_proc as procedure
     join pg_namespace as namespace on namespace.oid = procedure.pronamespace
@@ -164,6 +164,7 @@ select ok(
         'app_private.carry_forward_funding_capacity(uuid,uuid,uuid)'::regprocedure,
         'app_private.claim_notification_push_deliveries(text,integer,integer)'::regprocedure,
         'app_private.consume_event_join(uuid,text)'::regprocedure,
+        'app_private.consume_member_profile_audit(uuid,text)'::regprocedure,
         'app_private.consume_nonmoney_source(uuid,text)'::regprocedure,
         'app_private.consume_liveops_publication(uuid,text)'::regprocedure,
         'app_private.process_liveops_fanout_job(uuid,text)'::regprocedure,
@@ -240,6 +241,7 @@ select ok(
         'app_private.carry_forward_funding_capacity(uuid,uuid,uuid)'::regprocedure,
         'app_private.claim_notification_push_deliveries(text,integer,integer)'::regprocedure,
         'app_private.consume_event_join(uuid,text)'::regprocedure,
+        'app_private.consume_member_profile_audit(uuid,text)'::regprocedure,
         'app_private.consume_nonmoney_source(uuid,text)'::regprocedure,
         'app_private.consume_liveops_publication(uuid,text)'::regprocedure,
         'app_private.process_liveops_fanout_job(uuid,text)'::regprocedure,
@@ -297,7 +299,7 @@ select ok(
         'public.signup_phone_availability(text)'::regprocedure
         )
     ),
-  'application schemas allow exactly sixty-seven reviewed SECURITY DEFINER functions'
+  'application schemas allow exactly sixty-eight reviewed SECURITY DEFINER functions'
 );
 
 select is(
