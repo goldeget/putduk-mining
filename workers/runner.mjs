@@ -28,10 +28,85 @@ const POLL_MS = 3_000;
 export const SUPPORTED_JOB_HANDLERS = Object.freeze({
   FINANCIAL_RECONCILIATION: handleFinancialReconciliation,
   FUNDING_MINING_TICK_V1: prepareFundingMiningTick,
+  LIVEOPS_PUBLICATION_FANOUT_V1: prepareLiveopsPublicationFanout,
 });
 
 const FUNDING_JOB_UUID =
   /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i;
+
+function prepareLiveopsPublicationFanout(_client, job) {
+  const p = job?.payload;
+  if (
+    job?.job_type !== "LIVEOPS_PUBLICATION_FANOUT_V1" ||
+    typeof job.id !== "string" ||
+    !FUNDING_JOB_UUID.test(job.id) ||
+    job.payload_version !== 1 ||
+    !Number.isSafeInteger(job.attempts) ||
+    job.attempts < 1 ||
+    !p ||
+    typeof p !== "object" ||
+    Array.isArray(p) ||
+    Object.keys(p).length !== 4 ||
+    typeof p.revision_id !== "string" ||
+    !FUNDING_JOB_UUID.test(p.revision_id) ||
+    typeof p.source_event_id !== "string" ||
+    !FUNDING_JOB_UUID.test(p.source_event_id) ||
+    !Number.isSafeInteger(p.chunk_number) ||
+    p.chunk_number < 1 ||
+    !Object.hasOwn(p, "after_user_id") ||
+    (p.after_user_id !== null &&
+      (typeof p.after_user_id !== "string" ||
+        !FUNDING_JOB_UUID.test(p.after_user_id))) ||
+    (p.chunk_number === 1 && p.after_user_id !== null) ||
+    (p.chunk_number > 1 && p.after_user_id === null) ||
+    job.idempotency_key !== `liveops-fanout:${p.revision_id}:${p.chunk_number}`
+  ) {
+    throw new Error("LIVEOPS_FANOUT_JOB_ENVELOPE_INVALID");
+  }
+  // The current leased DB completion validates the sealed cohort and commits
+  // one bounded chunk plus its deterministic continuation in one transaction.
+}
+
+function prepareLiveopsPublicationDelivery(_client, event) {
+  const p = event?.payload;
+  const fields = [
+    "receipt_id",
+    "audit_id",
+    "content_kind",
+    "content_id",
+    "state",
+    "digest",
+  ];
+  if (
+    event?.event_type !== "LIVEOPS_CONTENT_CHANGED.v1" ||
+    event.schema_version !== 1 ||
+    event.aggregate_type !== "liveops_content" ||
+    !p ||
+    typeof p !== "object" ||
+    Array.isArray(p) ||
+    Object.keys(p).length !== fields.length ||
+    fields.some((field) => !Object.hasOwn(p, field)) ||
+    ["receipt_id", "audit_id", "content_id"].some(
+      (field) =>
+        typeof p[field] !== "string" || !FUNDING_JOB_UUID.test(p[field]),
+    ) ||
+    event.aggregate_id !== p.content_id ||
+    !["NOTICE", "EVENT"].includes(p.content_kind) ||
+    ![
+      "DRAFT",
+      "PREVIEWED",
+      "APPROVED",
+      "PUBLISHED",
+      "CANCELLED",
+      "ARCHIVED",
+    ].includes(p.state) ||
+    typeof p.digest !== "string" ||
+    !/^[a-f0-9]{64}$/.test(p.digest)
+  ) {
+    throw new Error("LIVEOPS_PUBLICATION_ENVELOPE_INVALID");
+  }
+  // JavaScript is envelope validation only, never a publication success receipt.
+}
 
 function prepareFundingMiningTick(_client, job) {
   const payload = job?.payload;
@@ -68,6 +143,7 @@ function prepareFundingMiningTick(_client, job) {
  */
 export const SUPPORTED_OUTBOX_HANDLERS = Object.freeze({
   "SAFE_MODE_CHANGED.v1": prepareSafeModeAuditDelivery,
+  "LIVEOPS_CONTENT_CHANGED.v1": prepareLiveopsPublicationDelivery,
   "EVENT_PARTICIPATION_JOINED.v1": prepareMemberEventJoinDelivery,
   "DEPOSIT_CONFIRMED.v1": prepareNonmoneyOriginalDelivery,
   "WITHDRAWAL_COMPLETED.v1": prepareNonmoneyOriginalDelivery,
@@ -270,7 +346,8 @@ export function classifyJobFailure(errorCode) {
   if (
     errorCode === "UNSUPPORTED_JOB_TYPE" ||
     errorCode === "RECONCILIATION_JOB_ID_REQUIRED" ||
-    errorCode === "FUNDING_JOB_ENVELOPE_INVALID"
+    errorCode === "FUNDING_JOB_ENVELOPE_INVALID" ||
+    errorCode === "LIVEOPS_FANOUT_JOB_ENVELOPE_INVALID"
   ) {
     return "PERMANENT";
   }
