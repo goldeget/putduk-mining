@@ -195,3 +195,131 @@ describe("member event canonical command", () => {
     expect((await handleMemberEventParticipation(request())).status).toBe(503);
   });
 });
+
+describe("explicit local cash terms acknowledgement", () => {
+  const digest = "a".repeat(64);
+  const cashInput = {
+    eventId: id,
+    revisionId: id,
+    idempotencyKey: other,
+    cashTermsDigest: digest,
+  };
+  const cashReceipt = {
+    ...receipt,
+    cashTermsDigest: digest,
+    cashTermsVersion: 1,
+    cashConsentRecorded: true,
+    scope: "LOCAL_QA",
+  };
+  it("passes only the acknowledged digest to the owned authenticated overload and confirms its receipt", async () => {
+    fixture.rpc.mockResolvedValue({ data: cashReceipt, error: null });
+    const response = await handleMemberEventParticipation(request(cashInput));
+    expect(response.status).toBe(200);
+    expect((await response.json()).data).toEqual(cashReceipt);
+    const args = fixture.rpc.mock.calls[0]?.[1];
+    expect(args).toEqual({
+      p_event_id: id,
+      p_revision_id: id,
+      p_idempotency_key: other,
+      p_request_id: expect.any(String),
+      p_cash_terms_digest: digest,
+    });
+    expect(args).not.toHaveProperty("p_user_id");
+    expect(args).not.toHaveProperty("p_amount");
+    expect(fixture.read).toHaveBeenCalledOnce();
+  });
+  it("preserves NONE joins without inventing consent and rejects unsolicited cash acknowledgements", async () => {
+    expect((await handleMemberEventParticipation(request())).status).toBe(200);
+    expect(fixture.rpc.mock.calls[0]?.[1]).not.toHaveProperty(
+      "p_cash_terms_digest",
+    );
+    fixture.rpc.mockResolvedValue({ data: cashReceipt, error: null });
+    expect((await handleMemberEventParticipation(request())).status).toBe(503);
+  });
+  for (const invalid of ["", "A".repeat(64), "a".repeat(63), null, 1000]) {
+    it(`rejects malformed cash acknowledgement ${JSON.stringify(invalid)} before authentication`, async () => {
+      const response = await handleMemberEventParticipation(
+        request({ ...cashInput, cashTermsDigest: invalid }),
+      );
+      expect(response.status).toBe(400);
+      expect(fixture.identity).not.toHaveBeenCalled();
+      expect(fixture.rpc).not.toHaveBeenCalled();
+    });
+  }
+  for (const patch of [
+    { cashTermsDigest: "b".repeat(64) },
+    { cashConsentRecorded: false },
+    { cashTermsVersion: 0 },
+    { scope: "production" },
+    { privateBudget: 400000 },
+  ]) {
+    it(`rejects unconfirmed or inconsistent cash receipt ${Object.keys(patch)[0]}`, async () => {
+      fixture.rpc.mockResolvedValue({
+        data: { ...cashReceipt, ...patch },
+        error: null,
+      });
+      expect(
+        (await handleMemberEventParticipation(request(cashInput))).status,
+      ).toBe(503);
+      expect(fixture.read).not.toHaveBeenCalled();
+    });
+  }
+  it("requires a positive explicit consent receipt even when legacy join succeeded", async () => {
+    fixture.rpc.mockResolvedValue({ data: receipt, error: null });
+    expect(
+      (await handleMemberEventParticipation(request(cashInput))).status,
+    ).toBe(503);
+    expect(fixture.read).not.toHaveBeenCalled();
+  });
+  for (const code of [
+    "LOCAL_CASH_DISABLED",
+    "LOCAL_CASH_EXPLICIT_TERMS_MISMATCH",
+    "LOCAL_CASH_CONSENT_REPLAY_CONFLICT",
+  ]) {
+    it(`reports ${code} as a definite participation denial`, async () => {
+      fixture.rpc.mockResolvedValue({ data: null, error: { message: code } });
+      const response = await handleMemberEventParticipation(request(cashInput));
+      expect(response.status).toBe(409);
+      expect((await response.json()).error.code).toBe(code);
+      expect(fixture.read).not.toHaveBeenCalled();
+    });
+  }
+  it("keeps cross-site, unauthenticated and client money claims outside the cash command", async () => {
+    expect(
+      (
+        await handleMemberEventParticipation(
+          request(cashInput, "https://evil.invalid"),
+        )
+      ).status,
+    ).toBe(403);
+    expect(
+      (
+        await handleMemberEventParticipation(
+          request({ ...cashInput, beneficiaryUserId: other, amount: 1000 }),
+        )
+      ).status,
+    ).toBe(400);
+    expect(fixture.identity).not.toHaveBeenCalled();
+    fixture.identity.mockResolvedValue(null);
+    expect(
+      (await handleMemberEventParticipation(request(cashInput))).status,
+    ).toBe(401);
+    expect(fixture.rpc).not.toHaveBeenCalled();
+  });
+  it("still verifies cash participation readback belongs to the authenticated member", async () => {
+    fixture.rpc.mockResolvedValue({ data: cashReceipt, error: null });
+    fixture.read.mockResolvedValue({
+      data: {
+        id,
+        event_id: id,
+        user_id: other,
+        status: "JOINED",
+        joined_at: when,
+      },
+      error: null,
+    });
+    expect(
+      (await handleMemberEventParticipation(request(cashInput))).status,
+    ).toBe(503);
+  });
+});

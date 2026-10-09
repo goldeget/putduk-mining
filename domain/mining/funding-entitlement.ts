@@ -127,6 +127,40 @@ function validBps(value: number) {
   return Number.isSafeInteger(value) && value >= 0;
 }
 
+/** Validate the complete original declaration before any slot prefix is cut. */
+function allocationFacts(input: FundingConditionInput) {
+  const document = input.policy.document;
+  let allocation = 0n;
+  let weightedProductSpeed = 0n;
+  const products = new Set<string>();
+  for (const product of input.allocations) {
+    const multiplier =
+      product.productMultiplierBps ?? document.productMultiplier.defaultBps;
+    if (
+      !product.productId.trim() ||
+      products.has(product.productId) ||
+      product.published !== true ||
+      product.sourceComplete !== true
+    )
+      fail("PRODUCT_ALLOCATION_SOURCE_UNCONFIRMED");
+    if (
+      !validBps(product.allocationBps) ||
+      product.allocationBps <= 0 ||
+      product.allocationBps > document.allocation.maximumPerProductBps ||
+      !validBps(multiplier) ||
+      multiplier < document.productMultiplier.minimumBps ||
+      multiplier > document.productMultiplier.maximumBps
+    )
+      fail("PRODUCT_ALLOCATION_INVALID");
+    products.add(product.productId);
+    allocation += BigInt(product.allocationBps);
+    weightedProductSpeed += BigInt(product.allocationBps) * BigInt(multiplier);
+  }
+  if (allocation > BigInt(document.allocation.maximumTotalBps))
+    fail("GLOBAL_ALLOCATION_OR_SLOT_LIMIT");
+  return { allocation, weightedProductSpeed, productCount: products.size };
+}
+
 function conditions(input: FundingConditionInput, instant: bigint): Conditions {
   assertEffectiveEconomyPolicy(input.policy, instant);
   const { funding, policy, controls } = input;
@@ -168,39 +202,12 @@ function conditions(input: FundingConditionInput, instant: bigint): Conditions {
     fail("PRINCIPAL_LOT_COVERAGE_MISMATCH");
   const document = policy.document;
   const tier = fundingTierForPrincipal(policy, principal);
-  let allocation = 0n;
   const unresolved = Object.values(document.platformFeesKrw).some(
     (fee) => BigInt(fee) !== 0n,
   );
-  let weightedProductSpeed = 0n;
-  const products = new Set<string>();
-  for (const product of input.allocations) {
-    const multiplier =
-      product.productMultiplierBps ?? document.productMultiplier.defaultBps;
-    if (
-      !product.productId.trim() ||
-      products.has(product.productId) ||
-      product.published !== true ||
-      product.sourceComplete !== true
-    )
-      fail("PRODUCT_ALLOCATION_SOURCE_UNCONFIRMED");
-    if (
-      !validBps(product.allocationBps) ||
-      product.allocationBps <= 0 ||
-      product.allocationBps > document.allocation.maximumPerProductBps ||
-      !validBps(multiplier) ||
-      multiplier < document.productMultiplier.minimumBps ||
-      multiplier > document.productMultiplier.maximumBps
-    )
-      fail("PRODUCT_ALLOCATION_INVALID");
-    products.add(product.productId);
-    allocation += BigInt(product.allocationBps);
-    weightedProductSpeed += BigInt(product.allocationBps) * BigInt(multiplier);
-  }
-  if (
-    allocation > BigInt(document.allocation.maximumTotalBps) ||
-    (tier && products.size > tier.slots)
-  )
+  const { allocation, weightedProductSpeed, productCount } =
+    allocationFacts(input);
+  if (tier && productCount > tier.slots)
     fail("GLOBAL_ALLOCATION_OR_SLOT_LIMIT");
   if (
     input.effects &&
@@ -545,6 +552,9 @@ export function previewFundingSlotDowngrade({
     change.condition.policy,
     change.effectiveFromMicroseconds,
   );
+  // Paused suffix entries are still preserved intent. Validate their source,
+  // weights and approved multipliers even when none remain in the active prefix.
+  allocationFacts(change.condition);
   const nextTier = fundingTierForPrincipal(
     change.condition.policy,
     change.condition.funding.eligiblePrincipalKrw,

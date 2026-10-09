@@ -5,6 +5,12 @@ export const eventParticipationInputSchema = z.strictObject({
   eventId: z.uuid(),
   revisionId: z.uuid(),
   idempotencyKey: z.uuid(),
+  // Acknowledges the exact published cash terms; absence preserves NONE join.
+  // The client never supplies an amount, beneficiary, qualification or budget.
+  cashTermsDigest: z
+    .string()
+    .regex(/^[a-f0-9]{64}$/)
+    .optional(),
 });
 const date = z.iso.datetime({ offset: true });
 export const memberEventAwardSchema = z.strictObject({
@@ -25,6 +31,13 @@ export const eventParticipationReceiptSchema = z.strictObject({
   outboxId: z.uuid(),
   replayed: z.boolean(),
 });
+export const cashEventParticipationReceiptSchema =
+  eventParticipationReceiptSchema.extend({
+    cashTermsDigest: z.string().regex(/^[a-f0-9]{64}$/),
+    cashTermsVersion: z.number().int().positive(),
+    cashConsentRecorded: z.literal(true),
+    scope: z.literal("LOCAL_QA"),
+  });
 export const memberEventContentSchema = z.object({
   event_id: z.uuid(),
   revision_id: z.uuid(),

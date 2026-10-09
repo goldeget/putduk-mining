@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import type { FundingSchedulerSummary } from "./funding-scheduler.mjs";
 
 export type WorkerBatchSummary = {
   claimed: number;
@@ -11,6 +12,7 @@ export type WorkerBatchSummary = {
 export type WorkerCycleSummary = {
   workerId: string;
   at: string;
+  scheduler: FundingSchedulerSummary | { error: string };
   outbox: WorkerBatchSummary;
   jobs: WorkerBatchSummary;
 };
@@ -48,6 +50,8 @@ export const SUPPORTED_JOB_HANDLERS: Readonly<Record<string, JobHandler>>;
 type BatchOptions = {
   workerId?: string;
   batchSize?: number;
+  schedulerBatchSize?: number;
+  allowFundingJobs?: boolean;
   leaseSeconds?: number;
   retryDelaySeconds?: number;
   randomUnit?: number;

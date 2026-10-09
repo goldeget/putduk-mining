@@ -8,6 +8,48 @@ must not invent schema, columns, or public function aliases. Agent **A**
 implements them in a **new** migration only. Applied migrations must not be
 edited.
 
+2026-10-09 isolated review extension: `claim_system_jobs(text,integer,integer)`
+retains its name and required service authority. A same-name overload adds an
+explicit required `p_allow_funding boolean`; false excludes funding jobs while
+permitting independent operational jobs. The original three-argument path is
+also gated by the database's GLOBAL/SETTLEMENT/NEW_MINING controls. Component
+locks use the canonical safe-mode command's matching shared/exclusive keys.
+Funding completion retains member-lock, live-fence and sole-writer authority.
+The closed private trigger `app_private.seal_worker_pause_attempt()` is the
+explicitly reviewed 69th definer: it seals actual funding-attempt start and
+canonical pause exemptions, with no callable role grant or raw private writer.
+Mutable service failure labels and caller timestamps never grant retry budget.
+This extends local verification only; it authorizes no Production operation.
+
+2026-10-09 delegated local cash extension: the canonical
+`participate_published_event` name gains an explicit fifth
+`p_cash_terms_digest text` argument. The four-argument NONE participation path
+is unchanged. The member API accepts an optional exact digest, uses only the
+verified member client, and requires a separately validated positive cash
+consent receipt plus owned participant readback. It accepts no client amount,
+beneficiary, qualification or budget. Member consent UI remains a separate
+product acceptance gate.
+
+The four additional private fixed-path definers are
+`consume_local_cash_source(uuid,text)`,
+`assert_local_cash_credit(public.money_source_movements)`,
+`verify_local_cash_commit()`, and
+`participate_published_event(uuid,uuid,uuid,uuid,text)`. The exact roster is now
+73. The commit verifier is trigger-only; source consumption and BONUS
+validation require the closed service boundary, while explicit participation
+uses the authenticated same-name public INVOKER wrapper. All other cash
+helpers are INVOKER with no client/service generic writer grant. Canonical
+ledger/source integrity and outbox lease checks remain mandatory.
+
+Private originals have FORCE RLS and no raw service write grants. The small
+`member_cash_event_terms` view intentionally uses an owner projection with
+`security_barrier`; it is not a security-invoker view. It exposes only sealed
+event/revision/terms/digest/amount/window fields to authenticated members,
+with current event availability gating. It exposes no budget, risk formula
+or private source map. Installation creates no enabled configuration or
+funded policy. Only synthetic LOCAL_QA activation has been verified; real
+treasury, operator activation and Production remain separately locked.
+
 Existing `withdrawal_destinations.destination_type` already includes
 `KRW_BANK` and `USDT_ADDRESS`. That migration stays untouched.
 `USDT_ADDRESS` is an **active V1 withdrawal destination**, not dormant.
@@ -537,3 +579,10 @@ UNRESOLVED with principal NULL. The actual canonical lifecycle regression passed
 assertions and DB lint passed. These facts do not activate funded mining. The
 trusted funded producer/cursor/used/carry/earned posting and worker completion
 integration remain unimplemented; `record_mining_settlement` stays revoked.
+
+
+## Local reviewed operational extension — 2026-10-09
+
+`public.schedule_due_funding_jobs(integer, uuid)` is a service-role-only, SECURITY INVOKER operational producer. It accepts a bounded batch of 1–100 members and a UUID continuation cursor; it accepts no amount, rate, time or allocation input. The current runtime-2 sealed state, original source coverage and existing safe-mode/condition validators determine eligibility. It releases only a never-attempted dormant `FUNDING_MINING_TICK_V1` original produced by the existing private producer; retry, running, terminal and unrelated jobs remain unchanged.
+
+The worker invokes this producer before canonical job claim. The existing fenced `complete_system_job` path remains the sole mining ledger writer. The next poll discovers the next-cycle state created atomically by that writer. This operational extension does not alias any WS-04 financial command, approve a new economy rule, change allocations, or authorize remote deployment. Native acceptance evidence is required before declaring the local connection verified.

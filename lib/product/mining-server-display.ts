@@ -75,7 +75,12 @@ const fundedRuntimeV2 = z
     ...fundedRuntimeFields,
     status: z.enum(["ACTIVE", "STOPPED"]),
     stop_reason: z
-      .enum(["NO_ACTIVE_ALLOCATION", "CAPACITY_USED", "SAFE_MODE"])
+      .enum([
+        "NO_ACTIVE_ALLOCATION",
+        "CAPACITY_USED",
+        "SAFE_MODE",
+        "FUNDING_BELOW_MINIMUM",
+      ])
       .nullable(),
     speed: z
       .object({
@@ -114,7 +119,10 @@ const fundedRuntimeV2 = z
     if (value.stop_reason === "SAFE_MODE") {
       return activeAllocation === positiveSpeed;
     }
-    if (value.stop_reason === "NO_ACTIVE_ALLOCATION") {
+    if (
+      value.stop_reason === "NO_ACTIVE_ALLOCATION" ||
+      value.stop_reason === "FUNDING_BELOW_MINIMUM"
+    ) {
       return !activeAllocation && !positiveSpeed;
     }
     return (
@@ -164,7 +172,16 @@ export const miningServerDisplaySchema = z
     retention_unconfirmed_micro_krw: microText,
     funded_runtime: fundedRuntimeDisplaySchema.optional(),
   })
-  .strict();
+  .strict()
+  .refine((value) => {
+    const runtime = value.funded_runtime;
+    if (
+      runtime?.schema_version !== 2 ||
+      runtime.stop_reason !== "FUNDING_BELOW_MINIMUM"
+    )
+      return true;
+    return value.tier_activated === false && value.tier_code === null;
+  });
 
 export type MiningServerDisplay = z.infer<typeof miningServerDisplaySchema>;
 

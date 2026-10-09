@@ -171,22 +171,46 @@ describe("DB-only source-bound reward dispatch", () => {
     );
     expect(rpc.mock.calls).toHaveLength(4);
   });
-  it.each(["REFERRAL_REWARD_PAID.v1"])(
-    "does not register absent canonical producer %s",
-    async (event_type) => {
-      const { rpc, db } = fixture({ ...depositSource, event_type });
-      expect(
-        (
-          await processOutboxBatch(db, {
-            workerId: "source-worker",
-            batchSize: 1,
-            randomUnit: 0,
-          })
-        ).unsupported,
-      ).toBe(1);
-      expect(rpc.mock.calls.map(([name]) => name)).not.toContain(
-        "complete_outbox_event",
-      );
-    },
-  );
+  it("rejects a deposit envelope relabeled as a registered cash reward", async () => {
+    const { rpc, db } = fixture({
+      ...depositSource,
+      event_type: "REFERRAL_REWARD_PAID.v1",
+    });
+    expect(
+      await processOutboxBatch(db, {
+        workerId: "source-worker",
+        batchSize: 1,
+        randomUnit: 0,
+      }),
+    ).toEqual({ claimed: 1, completed: 0, failed: 1, unsupported: 0 });
+    expect(rpc.mock.calls.map(([name]) => name)).not.toContain(
+      "complete_outbox_event",
+    );
+    expect(rpc).toHaveBeenLastCalledWith(
+      "fail_outbox_event",
+      expect.objectContaining({
+        p_error_code: "LOCAL_CASH_SOURCE_ENVELOPE_INVALID",
+      }),
+    );
+  });
+  it("rejects an event with no registered canonical producer", async () => {
+    const { rpc, db } = fixture({
+      ...depositSource,
+      event_type: "UNREGISTERED_REWARD.v1",
+    });
+    expect(
+      await processOutboxBatch(db, {
+        workerId: "source-worker",
+        batchSize: 1,
+        randomUnit: 0,
+      }),
+    ).toEqual({ claimed: 1, completed: 0, failed: 1, unsupported: 1 });
+    expect(rpc.mock.calls.map(([name]) => name)).not.toContain(
+      "complete_outbox_event",
+    );
+    expect(rpc).toHaveBeenLastCalledWith(
+      "fail_outbox_event",
+      expect.objectContaining({ p_error_code: "UNSUPPORTED_EVENT_TYPE" }),
+    );
+  });
 });

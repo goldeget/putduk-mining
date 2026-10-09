@@ -18,6 +18,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
+import { scheduleFundingJobs } from "./funding-scheduler.mjs";
 
 const WORKER_ID =
   process.env.PUTDUK_WORKER_ID?.trim() || `putduk-worker-${process.pid}`;
@@ -133,7 +134,7 @@ function prepareFundingMiningTick(_client, job) {
     throw new Error("FUNDING_JOB_ENVELOPE_INVALID");
   // No calculation or monetary RPC here. The existing complete_system_job
   // command verifies originals and commits the producer with the current fence.
-  // Registration does not release jobs held at infinity or create new jobs.
+  // The separate original-backed scheduler prepares eligible jobs before claim.
 }
 
 /**
@@ -143,6 +144,9 @@ function prepareFundingMiningTick(_client, job) {
  */
 export const SUPPORTED_OUTBOX_HANDLERS = Object.freeze({
   "SAFE_MODE_CHANGED.v1": prepareSafeModeAuditDelivery,
+  "LOCAL_CASH_REVIEW.v1": prepareLocalCashSourceDelivery,
+  "REFERRAL_REWARD_PAID.v1": prepareLocalCashSourceDelivery,
+  "EVENT_REWARD_PAID.v1": prepareLocalCashSourceDelivery,
   "LIVEOPS_CONTENT_CHANGED.v1": prepareLiveopsPublicationDelivery,
   "EVENT_PARTICIPATION_JOINED.v1": prepareMemberEventJoinDelivery,
   "MEMBER_PROFILE_CAPTURED.v1": prepareMemberProfileAuditDelivery,
@@ -154,6 +158,73 @@ export const SUPPORTED_OUTBOX_HANDLERS = Object.freeze({
   "MINING_SETTLEMENT_COMPLETED.v1": prepareNonmoneyOriginalDelivery,
   "TRIAL_COMPLETED.v1": prepareNonmoneyOriginalDelivery,
 });
+
+function prepareLocalCashSourceDelivery(_client, event) {
+  const payload = event?.payload;
+  const review = event?.event_type === "LOCAL_CASH_REVIEW.v1";
+  const aggregate = review
+    ? "local_cash_pending"
+    : event?.event_type === "REFERRAL_REWARD_PAID.v1"
+      ? "referral_reward_claim"
+      : event?.event_type === "EVENT_REWARD_PAID.v1"
+        ? "event_reward_claim"
+        : null;
+  const fields = review
+    ? ["review_original_id", "digest"]
+    : [
+        "cash_original_id",
+        "digest",
+        "user_id",
+        "claim_id",
+        "amount_atomic",
+        "currency",
+        "ledger_transaction_id",
+        "wallet_ledger_id",
+      ];
+  const uuids = review
+    ? ["review_original_id"]
+    : [
+        "cash_original_id",
+        "user_id",
+        "claim_id",
+        "ledger_transaction_id",
+        "wallet_ledger_id",
+      ];
+  if (
+    !aggregate ||
+    event.schema_version !== 1 ||
+    event.aggregate_type !== aggregate ||
+    typeof event.id !== "string" ||
+    !FUNDING_JOB_UUID.test(event.id) ||
+    typeof event.aggregate_id !== "string" ||
+    !FUNDING_JOB_UUID.test(event.aggregate_id) ||
+    !payload ||
+    typeof payload !== "object" ||
+    Array.isArray(payload) ||
+    Object.keys(payload).length !== fields.length ||
+    fields.some((field) => !Object.hasOwn(payload, field)) ||
+    uuids.some(
+      (field) =>
+        typeof payload[field] !== "string" ||
+        !FUNDING_JOB_UUID.test(payload[field]),
+    ) ||
+    typeof payload.digest !== "string" ||
+    !/^[a-f0-9]{64}$/.test(payload.digest) ||
+    (review
+      ? payload.review_original_id !== event.id
+      : payload.claim_id !== event.aggregate_id ||
+        payload.user_id !== event.actor_user_id ||
+        payload.currency !== "KRW" ||
+        typeof payload.amount_atomic !== "string" ||
+        !/^[1-9][0-9]*$/.test(payload.amount_atomic) ||
+        payload.amount_atomic.length > 19 ||
+        (payload.amount_atomic.length === 19 &&
+          payload.amount_atomic > "9223372036854775807"))
+  )
+    throw new Error("LOCAL_CASH_SOURCE_ENVELOPE_INVALID");
+  // Qualification, budget, posting and original seals remain in the existing
+  // leased DB completion. This handler only validates the versioned envelope.
+}
 
 function prepareNonmoneyOriginalDelivery(_client, event) {
   const contracts = {
@@ -711,6 +782,7 @@ export async function processJobBatch(
     batchSize = 10,
     leaseSeconds = 120,
     jobHandlers = SUPPORTED_JOB_HANDLERS,
+    allowFundingJobs = true,
     leaseRenewIntervalMs,
     randomUnit,
   } = {},
@@ -733,6 +805,7 @@ export async function processJobBatch(
       p_worker_id: workerId,
       p_batch_size: 1,
       p_lease_seconds: leaseSeconds,
+      ...(allowFundingJobs ? {} : { p_allow_funding: false }),
     });
     if (error) {
       console.error("claim_system_jobs failed", error.message);
@@ -826,23 +899,41 @@ export async function processJobBatch(
   return summary;
 }
 
-/** One deterministic poll cycle: outbox then jobs. */
+/** One bounded preparation followed by canonical outbox/job claims. */
 export async function runWorkerCycle(client, options = {}) {
   const workerId = options.workerId ?? WORKER_ID;
+  let scheduler;
+  try {
+    scheduler = await scheduleFundingJobs(client, {
+      batchSize: options.schedulerBatchSize ?? 25,
+    });
+  } catch (cause) {
+    // Retain the preparation failure while independent operational work runs.
+    // The scoped database claim excludes funding when this boundary is unknown.
+    scheduler = { error: errorCode(cause, "FUNDING_SCHEDULER_FAILED") };
+  }
   const outbox = await processOutboxBatch(client, { ...options, workerId });
-  const jobs = await processJobBatch(client, { ...options, workerId });
+  const jobs = await processJobBatch(client, {
+    ...options,
+    workerId,
+    allowFundingJobs: !scheduler.error && !scheduler.paused,
+  });
   return {
     workerId,
     at: new Date().toISOString(),
+    scheduler,
     outbox,
     jobs,
   };
 }
 
 export function workerCycleFailed(summary) {
-  return [summary.outbox, summary.jobs].some(
-    (batch) =>
-      Boolean(batch.claimError) || batch.failed > 0 || batch.unsupported > 0,
+  return (
+    Boolean(summary.scheduler?.error) ||
+    [summary.outbox, summary.jobs].some(
+      (batch) =>
+        Boolean(batch.claimError) || batch.failed > 0 || batch.unsupported > 0,
+    )
   );
 }
 

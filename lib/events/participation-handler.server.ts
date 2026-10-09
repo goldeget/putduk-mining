@@ -7,6 +7,7 @@ import { getPublicEnv } from "@/lib/env/public";
 import {
   eventParticipationInputSchema,
   eventParticipationReceiptSchema,
+  cashEventParticipationReceiptSchema,
   hasEventCommandOrigin,
 } from "@/domain/events/participation";
 
@@ -52,10 +53,16 @@ async function participate(request: Request) {
       p_revision_id: input.revisionId,
       p_idempotency_key: input.idempotencyKey,
       p_request_id: randomUUID(),
+      ...(input.cashTermsDigest === undefined
+        ? {}
+        : { p_cash_terms_digest: input.cashTermsDigest }),
     },
   );
   if (error) {
-    if (error.message.includes("EVENT_AUTH_REQUIRED"))
+    if (
+      error.message.includes("EVENT_AUTH_REQUIRED") ||
+      error.message.includes("LOCAL_CASH_MEMBER_REQUIRED")
+    )
       return apiError({
         code: "UNAUTHENTICATED",
         message: "다시 로그인해 주세요.",
@@ -68,6 +75,9 @@ async function participate(request: Request) {
       "EVENT_MEMBER_RESTRICTED",
       "EVENT_RISK_DENIED",
       "EVENT_IDEMPOTENCY_CONFLICT",
+      "LOCAL_CASH_DISABLED",
+      "LOCAL_CASH_EXPLICIT_TERMS_MISMATCH",
+      "LOCAL_CASH_CONSENT_REPLAY_CONFLICT",
     ].find((code) => error.message.includes(code));
     return apiError({
       code: unavailable ?? "EVENT_PARTICIPATION_UNCERTAIN",
@@ -77,11 +87,18 @@ async function participate(request: Request) {
       status: unavailable ? 409 : 503,
     });
   }
-  const receipt = eventParticipationReceiptSchema.safeParse(data);
+  const receipt = (
+    input.cashTermsDigest === undefined
+      ? eventParticipationReceiptSchema
+      : cashEventParticipationReceiptSchema
+  ).safeParse(data);
   if (
     !receipt.success ||
     receipt.data.eventId !== input.eventId ||
-    receipt.data.revisionId !== input.revisionId
+    receipt.data.revisionId !== input.revisionId ||
+    (input.cashTermsDigest !== undefined &&
+      (!("cashTermsDigest" in receipt.data) ||
+        receipt.data.cashTermsDigest !== input.cashTermsDigest))
   )
     return apiError({
       code: "EVENT_PARTICIPATION_UNCERTAIN",

@@ -441,6 +441,66 @@ describe("server-only exact slot downgrade preview", () => {
     );
   });
 
+  it.each([
+    [
+      "unpublished paused product",
+      { published: false },
+      "PRODUCT_ALLOCATION_SOURCE_UNCONFIRMED",
+    ],
+    [
+      "unconfirmed paused source",
+      { sourceComplete: false },
+      "PRODUCT_ALLOCATION_SOURCE_UNCONFIRMED",
+    ],
+    [
+      "invalid paused multiplier",
+      { productMultiplierBps: Number.MAX_SAFE_INTEGER },
+      "PRODUCT_ALLOCATION_INVALID",
+    ],
+  ] as const)(
+    "rejects %s on a second downgrade before cutting every active slot",
+    (_name, override, error) => {
+      const input = fixture();
+      const first = previewFundingSlotDowngrade(input);
+      const originalCursor = first.interval.state.cursorMicroseconds;
+      expect(() =>
+        previewFundingSlotDowngrade({
+          ...input,
+          state: first.interval.state,
+          change: {
+            effectiveFromMicroseconds: 2n * day,
+            expectedEntitlementRevision: 2n,
+            entitlementRevision: 3n,
+            condition: {
+              ...input.change.condition,
+              allocations: input.change.condition.allocations.map(
+                (product, index) =>
+                  index === 2 ? { ...product, ...override } : product,
+              ),
+              expectedPrincipalRevision: 3n,
+              funding: {
+                ...input.change.condition.funding,
+                principalRevision: 3n,
+                eligiblePrincipalKrw: 99999n,
+                lots: [
+                  {
+                    ...input.change.condition.funding.lots[0]!,
+                    remainingEligiblePrincipalKrw: 99999n,
+                  },
+                ],
+              },
+            },
+          },
+        }),
+      ).toThrow(error);
+      expect(first.interval.state.cursorMicroseconds).toBe(originalCursor);
+      expect(first.interval.state.entitlementRevision).toBe(2n);
+      expect(first.allocationOriginal.products).toEqual(
+        input.allocationOriginal.products,
+      );
+    },
+  );
+
   it("does not authorize later Tier recovery or resume paused intent without a new reviewed command", () => {
     const input = fixture(day, 10000000n);
     expect(() => previewFundingSlotDowngrade(input)).toThrow(

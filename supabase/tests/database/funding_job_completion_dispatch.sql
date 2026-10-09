@@ -119,6 +119,8 @@ select ok((select not prosecdef and proconfig @> array['search_path=pg_catalog']
  'funding dispatch keeps fixed-path invoker authority');
 select ok((select available_at='infinity'::timestamptz from public.system_jobs where id=(select job from dispatch_ctx)),
  'handler connection does not make the prepared job due');
+-- Match the actual service JWT together with the existing SQL service role.
+select set_config('request.jwt.claims','{"role":"service_role"}',true);
 set local role service_role;
 select is((select count(*)::integer from public.claim_system_jobs('dormant-worker',100,300)),0,
  'actual claim cannot take dormant funding work');

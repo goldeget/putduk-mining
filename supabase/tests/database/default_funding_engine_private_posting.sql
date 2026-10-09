@@ -175,6 +175,8 @@ reset role;
 -- Owner releases only this rollback fixture job; production preparation remains
 -- at infinity. Actual canonical claim supplies the attempt/lease original.
 update public.system_jobs set available_at=clock_timestamp() where id=(select job from engine_ctx);
+-- Match the actual service JWT together with the existing SQL service role.
+select set_config('request.jwt.claims','{"role":"service_role"}',true);
 set local role service_role;
 select id from public.claim_system_jobs('engine-worker',100,300);
 select throws_ok($$select app_private.process_default_funding_job(job,'another-worker',1) from engine_ctx$$,
