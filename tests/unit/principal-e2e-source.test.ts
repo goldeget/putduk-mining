@@ -20,7 +20,10 @@ import { assertPrincipalCandidateSources } from "../../scripts/principal-e2e-sou
 
 const legacyManifestPath =
   "tests/e2e/fixtures/principal-integrated-source.json";
-const manifestPath = "tests/e2e/fixtures/principal-local-recovery-source.json";
+const previousManifestPath =
+  "tests/e2e/fixtures/principal-local-recovery-source.json";
+const manifestPath =
+  "tests/e2e/fixtures/principal-local-recovery-source-v3.json";
 const fixtureBase = resolve("test-results/principal-source-guards");
 mkdirSync(fixtureBase, { recursive: true });
 const source = readFileSync(manifestPath);
@@ -49,6 +52,7 @@ function copyCandidate() {
   for (const path of [
     manifestPath,
     legacyManifestPath,
+    previousManifestPath,
     ...manifest.sources.map((row) => row.path),
   ]) {
     const target = join(root, path);
@@ -90,6 +94,16 @@ describe("portable principal candidate guard", () => {
     );
     expect(() => assertPrincipalCandidateSources(root)).toThrow(
       "PRINCIPAL_E2E_FROZEN_MAP_CHANGED",
+    );
+  });
+  it("preserves the previous recovery source binding independently", () => {
+    const root = copyCandidate();
+    writeFileSync(
+      join(root, previousManifestPath),
+      "changed previous recovery manifest",
+    );
+    expect(() => assertPrincipalCandidateSources(root)).toThrow(
+      "PRINCIPAL_E2E_PREVIOUS_MAP_CHANGED",
     );
   });
   it("preserves the historical frozen manifest as independent evidence", () => {
