@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { assertPrincipalCandidateSources } from "../../../../scripts/principal-e2e-source.mjs";
+import { assertReviewedPrincipalCandidateSources } from "../../../../scripts/principal-review-r2-source.mjs";
 
 import {
   expect,
@@ -83,16 +83,22 @@ function dataOf(result: HttpResult): Record<string, unknown> {
 
 /** Exact coherent source identity, not a declaration that SQL/HTTP gates passed. */
 export function requirePrincipalIntegratedCandidate() {
+  const reviewed = assertReviewedPrincipalCandidateSources();
   const localApi = new URL(process.env.NEXT_PUBLIC_SUPABASE_URL ?? "");
   if (
     localApi.protocol !== "http:" ||
     !["127.0.0.1", "localhost"].includes(localApi.hostname) ||
-    (process.env.LOCAL_SUPABASE_PROJECT_ID ?? "putduk-mining") !==
-      "putduk-mining"
+    localApi.port !== String(reviewed.apiPort) ||
+    process.env.LOCAL_SUPABASE_PROJECT_ID !== reviewed.projectId
   )
     throw new Error("PRINCIPAL_E2E_LOCAL_TARGET_REQUIRED");
-  assertPrincipalCandidateSources();
-  const accepted = execLocalAdminSql(`select count(*)=152
+  // Versions are validated 14-digit source identifiers in the reviewed map.
+  // Compare the exact normal-migration history set, not a hand-edited count.
+  const versions = reviewed.migrationVersions
+    .map((version) => `'${version}'`)
+    .join(",");
+  const accepted =
+    execLocalAdminSql(`select array_agg(version order by version)=array[${versions}]::text[]
     and to_regprocedure('public.prepare_withdrawal_logical_request(uuid,text,bigint,uuid,integer,text,uuid,jsonb)') is not null
     and not has_function_privilege('service_role','public.prepare_withdrawal_logical_request(uuid,text,bigint,uuid,integer,text,uuid,jsonb)','execute')
     and has_function_privilege('authenticated','public.prepare_withdrawal_logical_request(uuid,text,bigint,uuid,integer,text,uuid,jsonb)','execute')

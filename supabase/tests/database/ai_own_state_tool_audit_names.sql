@@ -8,10 +8,10 @@ grant select,insert on tool_requests to service_role;
 select set_config('request.jwt.claims','{"role":"service_role"}',true);
 set local role service_role;
 insert into tool_requests select t,request_id from unnest(array['ai.usage','ai.cancelled_history','wallet.summary']) t
-cross join lateral public.begin_ai_request_v2('10639200-0000-4000-8000-000000000001',gen_random_uuid(),repeat('a',64),'{}','local-static','local-recovery',60,100,'tool','account_read','ACCOUNT_STATE','ACCOUNT_STATE',t);
+cross join lateral public.begin_ai_request_v2('10639200-0000-4000-8000-000000000001',gen_random_uuid(),repeat('a',64),'{}','local-static','local-recovery',5,100,'tool','account_read','ACCOUNT_STATE','ACCOUNT_STATE',t);
 select is((select count(*) from tool_requests),3::bigint,'two approved own-state tools and the existing wallet tool use canonical admission');
 select is((select count(*) from public.ai_requests where id in(select id from tool_requests) and tool_name in('ai.usage','ai.cancelled_history')),2::bigint,'new own-state names are durably audited as read-only tools');
-select throws_like($$select public.begin_ai_request_v2('10639200-0000-4000-8000-000000000001',gen_random_uuid(),repeat('a',64),'{}','local-static','local-recovery',60,100,'tool','account_read','ACCOUNT_STATE','ACCOUNT_STATE','ai.money_write')$$,
+select throws_like($$select public.begin_ai_request_v2('10639200-0000-4000-8000-000000000001',gen_random_uuid(),repeat('a',64),'{}','local-static','local-recovery',5,100,'tool','account_read','ACCOUNT_STATE','ACCOUNT_STATE','ai.money_write')$$,
  '%','unapproved money tool name is refused');
 reset role;
 select ok(not has_function_privilege('anon','public.begin_ai_request_v2(uuid,uuid,text,jsonb,text,text,integer,integer,text,text,text,text,text)','EXECUTE'),'anon cannot forge own-state tool admission');

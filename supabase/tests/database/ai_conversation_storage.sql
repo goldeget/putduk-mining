@@ -89,6 +89,11 @@ select ok(
     where namespace.nspname in ('public', 'app_private')
       and procedure.prosecdef
       and procedure.oid not in (
+        'app_private.seal_worker_pause_attempt()'::regprocedure,
+        'app_private.consume_local_cash_source(uuid,text)'::regprocedure,
+        'app_private.assert_local_cash_credit(public.money_source_movements)'::regprocedure,
+        'app_private.verify_local_cash_commit()'::regprocedure,
+        'app_private.participate_published_event(uuid,uuid,uuid,uuid,text)'::regprocedure,
         'public.admin_read_ai_conversations(uuid,uuid,uuid,text,jsonb)'::regprocedure,
         'public.admit_openrouter_free_request(uuid,uuid,integer,integer)'::regprocedure,
         'app_private.approve_local_nonmoney_policy(uuid,uuid,uuid,integer,text,text,text,text,uuid,uuid,text,text,text,text,uuid)'::regprocedure,
@@ -102,6 +107,7 @@ select ok(
         'app_private.claim_notification_push_deliveries(text,integer,integer)'::regprocedure,
         'app_private.consume_event_join(uuid,text)'::regprocedure,
         'app_private.consume_nonmoney_source(uuid,text)'::regprocedure,
+        'app_private.consume_member_profile_audit(uuid,text)'::regprocedure,
         'app_private.consume_liveops_publication(uuid,text)'::regprocedure,
         'app_private.process_liveops_fanout_job(uuid,text)'::regprocedure,
         'app_private.verify_liveops_publication_notification()'::regprocedure,
@@ -159,7 +165,7 @@ select ok(
       )
   )
     and (
-      select count(*) = 67
+      select count(*) = 73
         and coalesce(
           bool_and(
             procedure.proconfig @> array['search_path=pg_catalog']::text[]
@@ -171,7 +177,7 @@ select ok(
       where namespace.nspname in ('public', 'app_private')
         and procedure.prosecdef
     ),
-  'application schemas contain only the sixty-three reviewed fixed-search-path SECURITY DEFINER functions'
+  'application schemas contain only the seventy-three reviewed fixed-search-path SECURITY DEFINER functions'
 );
 
 select ok(

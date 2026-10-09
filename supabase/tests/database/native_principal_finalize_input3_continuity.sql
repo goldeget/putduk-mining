@@ -100,6 +100,10 @@ grant select,update on prospective_ctx to service_role,authenticated;
 grant execute on function pg_temp.prospective_catalog_command(text,text) to service_role;
 select set_config('request.jwt.claims','{"role":"service_role"}',true);
 set local role service_role;
+-- Schedule only after fixture setup. The previous setup-time +1s deadline could
+-- expire before PREVIEW on a loaded runner; retain the real future-time guard,
+-- identical lifecycle receipts and the real wait below (no clock substitution).
+update prospective_ctx set publish_at=clock_timestamp()+interval '15 seconds';
 update prospective_ctx set review=pg_temp.prospective_catalog_command('PREVIEW','prospective-preview');
 update prospective_ctx set review=pg_temp.prospective_catalog_command('APPROVE','prospective-approve');
 update prospective_ctx set publication=pg_temp.prospective_catalog_command('PUBLISH','prospective-publish');

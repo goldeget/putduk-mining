@@ -534,6 +534,17 @@ with inserted as (
 )
 update ws02_context set job_id = inserted.id from inserted;
 
+-- Exercise actual worker commands with both SQL and synthetic JWT service identity.
+do $temp_grant$
+begin
+  execute format('grant usage, create on schema %I to service_role',
+    (select nspname from pg_namespace where oid = pg_my_temp_schema()));
+end;
+$temp_grant$;
+grant select on ws02_context to service_role;
+select set_config('request.jwt.claim.role', 'service_role', true);
+select set_config('request.jwt.claims', '{"role":"service_role"}', true);
+set local role service_role;
 create temporary table ws02_claimed_job as
 select * from public.claim_system_jobs('ws02-job-worker', 1, 60);
 
@@ -592,6 +603,9 @@ select is(
   'SUCCEEDED',
   'the second lease owner can complete the durable job'
 );
+reset role;
+select set_config('request.jwt.claim.role', '', true);
+select set_config('request.jwt.claims', '{}', true);
 
 select throws_ok(
   $sql$

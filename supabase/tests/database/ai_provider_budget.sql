@@ -9,14 +9,25 @@ insert into auth.users(id,aud,role,email,encrypted_password,email_confirmed_at,
 values ('aa000000-0000-4000-8000-000000000001','authenticated','authenticated','ai-budget-1@putduk.test','',now(),'{}','{}',now(),now(),'','','',''),
  ('aa000000-0000-4000-8000-000000000002','authenticated','authenticated','ai-budget-2@putduk.test','',now(),'{}','{}',now(),now(),'','','','');
 create temporary table ai_budget_requests(n integer primary key, id uuid, user_id uuid);
-insert into ai_budget_requests
-select n, request_id, 'aa000000-0000-4000-8000-000000000001'::uuid
-from generate_series(1,12) n cross join lateral public.begin_ai_request(
- 'aa000000-0000-4000-8000-000000000001',gen_random_uuid(),repeat('a',64),
- jsonb_build_object('fixture',n),'approved-model','local-recovery',60,100) admitted;
+-- Preserve all twelve provider-state cases without bypassing the member 5/minute cap.
+-- Only these synthetic request timestamps are moved outside the minute window;
+-- all remain inside the daily window and no provider/budget evidence is changed.
+do $$
+declare fixture_n integer; fixture_request uuid;
+begin
+ for fixture_n in 1..12 loop
+  select request_id into fixture_request from public.begin_ai_request(
+   'aa000000-0000-4000-8000-000000000001',gen_random_uuid(),repeat('a',64),
+   jsonb_build_object('fixture',fixture_n),'approved-model','local-recovery',5,100);
+  insert into ai_budget_requests values
+   (fixture_n,fixture_request,'aa000000-0000-4000-8000-000000000001');
+  update public.ai_requests set created_at=statement_timestamp()-interval '2 minutes'
+   where id=fixture_request;
+ end loop;
+end; $$;
 insert into ai_budget_requests
 select 13, request_id, 'aa000000-0000-4000-8000-000000000002'::uuid
-from public.begin_ai_request('aa000000-0000-4000-8000-000000000002',gen_random_uuid(),repeat('b',64),'{}','approved-model','local-recovery',60,100);
+from public.begin_ai_request('aa000000-0000-4000-8000-000000000002',gen_random_uuid(),repeat('b',64),'{}','approved-model','local-recovery',5,100);
 
 create function pg_temp.provider_command(command text) returns jsonb
 language plpgsql as $$

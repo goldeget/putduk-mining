@@ -161,6 +161,7 @@ select ok(
         'app_private.claim_notification_push_deliveries(text,integer,integer)'::regprocedure,
         'app_private.consume_event_join(uuid,text)'::regprocedure,
         'app_private.consume_nonmoney_source(uuid,text)'::regprocedure,
+        'app_private.consume_member_profile_audit(uuid,text)'::regprocedure,
         'app_private.consume_liveops_publication(uuid,text)'::regprocedure,
         'app_private.process_liveops_fanout_job(uuid,text)'::regprocedure,
         'app_private.verify_liveops_publication_notification()'::regprocedure,
@@ -206,6 +207,11 @@ select ok(
         'app_private.verify_principal_boundary_commit()'::regprocedure,
         'app_private.verify_principal_recovery_intent_commit()'::regprocedure,
         'app_private.verify_trial_completion_original_commit()'::regprocedure,
+        'app_private.seal_worker_pause_attempt()'::regprocedure,
+        'app_private.consume_local_cash_source(uuid,text)'::regprocedure,
+        'app_private.assert_local_cash_credit(public.money_source_movements)'::regprocedure,
+        'app_private.verify_local_cash_commit()'::regprocedure,
+        'app_private.participate_published_event(uuid,uuid,uuid,uuid,text)'::regprocedure,
         'public.bootstrap_user(uuid)'::regprocedure,
         'public.confirm_funding_allocation(text,uuid,text,bigint,jsonb,text)'::regprocedure,
         'public.is_login_id_available(text)'::regprocedure,
@@ -218,7 +224,7 @@ select ok(
       )
   )
     and (
-      select count(*) = 67
+      select count(*) = 73
         and coalesce(
           bool_and(
             procedure.proconfig @> array['search_path=pg_catalog']::text[]
@@ -230,7 +236,7 @@ select ok(
       where namespace.nspname in ('public', 'app_private')
         and procedure.prosecdef
     ),
-  'application schemas contain only the sixty-three reviewed fixed-search-path SECURITY DEFINER functions'
+  'application schemas contain only the sixty-nine reviewed fixed-search-path SECURITY DEFINER functions'
 );
 
 select ok(

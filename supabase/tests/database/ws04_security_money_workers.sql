@@ -145,13 +145,18 @@ where account.user_id = ws04_ctx.user_a
 -- Phone availability shape
 select ok(
   (
-    select count(*) = 68
+    select count(*) = 73
       and bool_and(procedure.proconfig @> array['search_path=pg_catalog']::text[])
     from pg_proc as procedure
     join pg_namespace as namespace on namespace.oid = procedure.pronamespace
     where namespace.nspname in ('public', 'app_private')
       and procedure.prosecdef
       and procedure.oid in (
+        'app_private.seal_worker_pause_attempt()'::regprocedure,
+        'app_private.consume_local_cash_source(uuid,text)'::regprocedure,
+        'app_private.assert_local_cash_credit(public.money_source_movements)'::regprocedure,
+        'app_private.verify_local_cash_commit()'::regprocedure,
+        'app_private.participate_published_event(uuid,uuid,uuid,uuid,text)'::regprocedure,
         'public.admin_read_ai_conversations(uuid,uuid,uuid,text,jsonb)'::regprocedure,
         'public.admit_openrouter_free_request(uuid,uuid,integer,integer)'::regprocedure,
         'app_private.approve_local_nonmoney_policy(uuid,uuid,uuid,integer,text,text,text,text,uuid,uuid,text,text,text,text,uuid)'::regprocedure,
@@ -229,6 +234,11 @@ select ok(
       where namespace.nspname in ('public', 'app_private')
         and procedure.prosecdef
         and procedure.oid not in (
+          'app_private.seal_worker_pause_attempt()'::regprocedure,
+          'app_private.consume_local_cash_source(uuid,text)'::regprocedure,
+          'app_private.assert_local_cash_credit(public.money_source_movements)'::regprocedure,
+          'app_private.verify_local_cash_commit()'::regprocedure,
+          'app_private.participate_published_event(uuid,uuid,uuid,uuid,text)'::regprocedure,
         'public.admin_read_ai_conversations(uuid,uuid,uuid,text,jsonb)'::regprocedure,
         'public.admit_openrouter_free_request(uuid,uuid,integer,integer)'::regprocedure,
         'app_private.approve_local_nonmoney_policy(uuid,uuid,uuid,integer,text,text,text,text,uuid,uuid,text,text,text,text,uuid)'::regprocedure,
@@ -299,7 +309,7 @@ select ok(
         'public.signup_phone_availability(text)'::regprocedure
         )
     ),
-  'application schemas allow exactly sixty-eight reviewed SECURITY DEFINER functions'
+  'application schemas allow exactly seventy-three reviewed SECURITY DEFINER functions'
 );
 
 select is(
