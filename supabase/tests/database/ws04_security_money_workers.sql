@@ -241,6 +241,10 @@ select ok(
         'app_private.claim_notification_push_deliveries(text,integer,integer)'::regprocedure,
         'app_private.consume_event_join(uuid,text)'::regprocedure,
         'app_private.consume_nonmoney_source(uuid,text)'::regprocedure,
+        'app_private.consume_liveops_publication(uuid,text)'::regprocedure,
+        'app_private.process_liveops_fanout_job(uuid,text)'::regprocedure,
+        'app_private.verify_liveops_publication_notification()'::regprocedure,
+        'app_private.guard_liveops_notification_projection()'::regprocedure,
         'app_private.emit_funded_mining_missions(uuid)'::regprocedure,
         'app_private.execute_liveops_content(text,text,uuid,uuid,text,jsonb,uuid,uuid,text,text,text,text,uuid)'::regprocedure,
         'app_private.execute_product_catalog_command(text,uuid,uuid,text,timestamp with time zone,uuid,uuid,text,text,text,text,text)'::regprocedure,
@@ -293,7 +297,7 @@ select ok(
         'public.signup_phone_availability(text)'::regprocedure
         )
     ),
-  'application schemas allow exactly sixty-three reviewed SECURITY DEFINER functions'
+  'application schemas allow exactly sixty-seven reviewed SECURITY DEFINER functions'
 );
 
 select is(
