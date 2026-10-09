@@ -3,6 +3,10 @@ import "server-only";
 import { z } from "zod";
 
 import { getPublicEnv } from "./public";
+import {
+  MEMBER_AI_MAX_REQUESTS_PER_DAY,
+  MEMBER_AI_MAX_REQUESTS_PER_MINUTE,
+} from "../ai/member-policy";
 
 const optionalServerString = <T extends z.ZodType<string>>(schema: T) =>
   z.preprocess(
@@ -35,7 +39,7 @@ const serverEnvSchema = z
     NVIDIA_API_KEY: optionalServerString(z.string().min(20)),
     OPENROUTER_FREE_API_KEY: optionalServerString(z.string().min(20)),
     OPENROUTER_API_KEY: optionalServerString(z.string().min(20)),
-    AI_FIRST_TOKEN_TIMEOUT_MS: boundedInteger(1000, 90000, 15000),
+    AI_FIRST_TOKEN_TIMEOUT_MS: boundedInteger(1000, 90000, 2000),
     AI_MODEL_LOW_COST: optionalServerString(
       z.string().regex(/^[A-Za-z0-9][A-Za-z0-9._/-]{0,119}$/),
     ),
@@ -43,8 +47,16 @@ const serverEnvSchema = z
       z.string().regex(/^[A-Za-z0-9][A-Za-z0-9._/-]{0,119}$/),
     ),
     AI_MAX_OUTPUT_TOKENS: boundedInteger(128, 4096, 900),
-    AI_MAX_REQUESTS_PER_MINUTE: boundedInteger(1, 60, 5),
-    AI_MAX_REQUESTS_PER_DAY: boundedInteger(1, 5000, 100),
+    AI_MAX_REQUESTS_PER_MINUTE: boundedInteger(
+      1,
+      MEMBER_AI_MAX_REQUESTS_PER_MINUTE,
+      MEMBER_AI_MAX_REQUESTS_PER_MINUTE,
+    ),
+    AI_MAX_REQUESTS_PER_DAY: boundedInteger(
+      1,
+      MEMBER_AI_MAX_REQUESTS_PER_DAY,
+      MEMBER_AI_MAX_REQUESTS_PER_DAY,
+    ),
     AI_CACHE_TTL_SECONDS: boundedInteger(60, 86400, 3600),
   })
   .superRefine((value, context) => {
