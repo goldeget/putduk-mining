@@ -454,6 +454,7 @@ async function recentNotification(supabase: SupabaseClient, now: Date) {
       .from("notifications")
       .select("title_ko, created_at")
       .or(activeMemberNotificationExpiryOr(now))
+      .lte("scheduled_at", now.toISOString())
       .order("created_at", { ascending: false })
       .limit(1)
       .maybeSingle(),
@@ -461,6 +462,7 @@ async function recentNotification(supabase: SupabaseClient, now: Date) {
       .from("notifications")
       .select("id", { count: "exact", head: true })
       .or(activeMemberNotificationExpiryOr(now))
+      .lte("scheduled_at", now.toISOString())
       .is("read_at", null),
   ]);
   if (error || countError) throw new Error("NOTIFICATION_QUERY_FAILED");
