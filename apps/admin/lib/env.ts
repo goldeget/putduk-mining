@@ -14,6 +14,8 @@ export type AdminEnv = z.infer<typeof schema>;
 
 export function getAdminEnv(): AdminEnv {
   // Read public values at server runtime when a build is promoted across targets.
+  // 키 역할 거절은 브라우저 클라이언트 경계에서만 한다. 프록시가 이 값을
+  // 읽을 때 타이포그래피용 가짜 공개 키까지 막으면 서버가 뜨지 않는다.
   const runtimeEnv = process.env;
   return schema.parse({
     APP_ENV: process.env.APP_ENV,
