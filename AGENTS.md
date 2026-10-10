@@ -17,6 +17,10 @@ This repository is a greenfield project. The following scope lock is an absolute
 
 ## Hard-stop rules
 
+### User-authorized preservation audit exception — 2026-10-09
+
+For the user's explicit request "확대해서 조사해", permit read-only discovery across accessible C: and D: locations to locate preservation evidence for this exact `goldeget/putduk-mining` project: repositories/worktrees, backups, archives, Cloud exports, and copies of the 174 checkpoint paths. Existing D: contents and external local copies may be inspected for this audit only. Verify repository identity before inspecting Git contents. Unrelated project contents, credentials, browser/editor/shell histories and prior agent memory remain excluded. Discovered evidence must not be used as implementation context. Do not restore, extract onto disk, checkout, fetch, modify or delete discovered files, or run their code. Record inaccessible and excluded locations; do not claim a complete physical-disk or deleted-file recovery. This exception overrides local discovery and existing-D-content restrictions only for this preservation audit; all remote, implementation and release boundaries remain locked.
+
 1. Never open, list, search, inspect, query, clone, compare, or modify any other GitHub repository or Supabase project.
 2. Never open or use any previous project, repository, database, schema, migration, document, screenshot, design, code, asset, configuration, deployment, or remembered implementation as a reference for this project.
 3. Do not copy, port, infer, or resurrect implementation or product decisions from any previous PUTDUK or unrelated project. The documents and code inside this repository are the only project source of truth.
