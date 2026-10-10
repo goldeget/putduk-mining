@@ -44,5 +44,5 @@
 
 ## D:-only QA 스크립트 (제품 코드 변경 없음)
 
-`scripts/run-qa-on-d.mjs` 및 `docs/development/QA-D-DRIVE.md`는 **D:\PUTDUK-MINING-QA** 아래 실행·산출을 전제로 한다.  
+`scripts/run-qa-on-d.mjs` 및 `docs/development/QA-D-DRIVE.md`는 **D:\PUTDUK-MINING-QA** 아래 실행·산출을 전제로 한다.
 본 감사의 Git/번들/exports는 D:+F:에 직접 기록했으며, E2E/유닛 QA 재실행 시에도 C: 대신 D: (필요 시 F:) 여유를 사용한다.

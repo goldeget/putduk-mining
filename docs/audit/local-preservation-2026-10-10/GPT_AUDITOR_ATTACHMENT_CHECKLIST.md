@@ -1,8 +1,8 @@
 # GPT 감사관 첨부 체크리스트
 
-**감사 ID:** `audit-2026-10-10-164902`  
-**대상:** ChatGPT 등 Cursor 맥락 없는 외부 GPT 감사관  
-**정본 핸드오프:** [`GPT_HANDOFF_COMPLETE_REPORT_2026-10-10.md`](./GPT_HANDOFF_COMPLETE_REPORT_2026-10-10.md) §12  
+**감사 ID:** `audit-2026-10-10-164902`
+**대상:** ChatGPT 등 Cursor 맥락 없는 외부 GPT 감사관
+**정본 핸드오프:** [`GPT_HANDOFF_COMPLETE_REPORT_2026-10-10.md`](./GPT_HANDOFF_COMPLETE_REPORT_2026-10-10.md) §12
 **백업 경로 정본:** [`08_COMMIT_AND_BACKUP_RECEIPT.md`](./08_COMMIT_AND_BACKUP_RECEIPT.md)
 
 > 비밀 값·`.env`·자격 증명은 **절대 첨부하지 않는다.** launch ready / PRODUCT COMPLETE 주장 기대하지 않는다.

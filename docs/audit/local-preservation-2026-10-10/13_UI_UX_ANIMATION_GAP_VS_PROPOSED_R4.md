@@ -2,7 +2,7 @@
 
 **상태:** 검토 전용 감사 산출물. **PROPOSED·RESTORED·Work mockup은 사용자 승인 전 production truth가 아니다.**
 
-**증거 위치 (Git 외부):** `F:\PUTDUK-MINING-QA\design-review-2026-10-10\`  
+**증거 위치 (Git 외부):** `F:\PUTDUK-MINING-QA\design-review-2026-10-10\`
 **매니페스트:** `manifest/sha256-manifest.csv` (579행), `manifest/dedupe-canonical-table.csv` (52 논리 키)
 
 **정본 잠금 (repo):**

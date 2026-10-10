@@ -1,10 +1,10 @@
 # PUTDUK MINING — 로컬 보존·통합 감사 통합 보고서 (GPT 핸드오프)
 
-**감사 ID:** `audit-2026-10-10-164902`  
-**작성일:** 2026-10-10 (KST)  
-**대상 저장소:** `goldeget/putduk-mining` — 로컬 `C:\Users\PC\Desktop\putduk-mining`  
-**원격:** `https://github.com/goldeget/putduk-mining.git`  
-**Supabase 프로젝트 ref:** `osrmyjgmpdspdcwqjwuv` (region `ap-northeast-2`, 이름 `putduk-mining`)  
+**감사 ID:** `audit-2026-10-10-164902`
+**작성일:** 2026-10-10 (KST)
+**대상 저장소:** `goldeget/putduk-mining` — 로컬 `C:\Users\PC\Desktop\putduk-mining`
+**원격:** `https://github.com/goldeget/putduk-mining.git`
+**Supabase 프로젝트 ref:** `osrmyjgmpdspdcwqjwuv` (region `ap-northeast-2`, 이름 `putduk-mining`)
 **독자:** Cursor·로컬 맥락 없이 ChatGPT 등 외부 에이전트가 이어서 작업할 수 있도록 자급자족(self-contained) 서술.
 
 > **면책:** 본 보고서는 **launch ready** 또는 **PRODUCT COMPLETE** 주장을 하지 않는다. 검증되지 않은 항목은 `UNKNOWN` / `PARTIAL` / `BLOCKED`로 표기한다. 비밀 값·`.env` 내용·자격 증명은 포함하지 않는다.
@@ -228,7 +228,7 @@ stash@{0}: On develop: agent: root drift off develop (E2E local)
 
 ## 6. File classification summary (266 rows)
 
-**정본 CSV:** [`03_COMMIT_REQUIRED_VS_NEVER_COMMIT.csv`](./03_COMMIT_REQUIRED_VS_NEVER_COMMIT.csv)  
+**정본 CSV:** [`03_COMMIT_REQUIRED_VS_NEVER_COMMIT.csv`](./03_COMMIT_REQUIRED_VS_NEVER_COMMIT.csv)
 **Delta:** [`03_CLASSIFICATION_DELTA.md`](./03_CLASSIFICATION_DELTA.md)
 
 | category | 건수 | 의미 |
@@ -288,7 +288,7 @@ stash@{0}: On develop: agent: root drift off develop (E2E local)
 
 ## 8. PR #72 / CI strategy options
 
-**브랜치:** `codex/backend-review-r2-ci-20261009` @ `1490cb7`  
+**브랜치:** `codex/backend-review-r2-ci-20261009` @ `1490cb7`
 **PR:** https://github.com/goldeget/putduk-mining/pull/72 → base **`develop`**
 
 | 옵션 | 설명 | 장점 | 단점 |

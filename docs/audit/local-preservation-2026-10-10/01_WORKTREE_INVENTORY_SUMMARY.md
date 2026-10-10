@@ -1,6 +1,6 @@
 # Worktree 인벤토리 요약 (84)
 
-정본 CSV: `D:\PUTDUK-MINING-QA\audit-2026-10-10-164902\exports\worktree-inventory.csv`  
+정본 CSV: `D:\PUTDUK-MINING-QA\audit-2026-10-10-164902\exports\worktree-inventory.csv`
 상세 서술: `01_LOCAL_WORKTREE_AND_GIT_INVENTORY.md`
 
 | 구분 | 수 | 비고 |

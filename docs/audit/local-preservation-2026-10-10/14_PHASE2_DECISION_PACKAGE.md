@@ -1,6 +1,6 @@
 # 2차 보고 — Phase 2 결정 패키지 (2026-10-10)
 
-**전제:** Phase 2 prep 완료(stash export, unpushed 전수, prunable 물리 스캔 — **prune deferred**).  
+**전제:** Phase 2 prep 완료(stash export, unpushed 전수, prunable 물리 스캔 — **prune deferred**).
 **본 문서는 결정·계획만 담는다.** staging·commit·push·merge·fetch는 **사용자 승인 전 실행하지 않는다.**
 
 **상태:** 사용자-facing **2차 보고** 초안. 증거는 기존 감사 산출물만 인용.
@@ -28,7 +28,7 @@
 | [`01_PHASE1_FIRST_REPORT.md`](./01_PHASE1_FIRST_REPORT.md) | Desktop @ `af14c2f`는 admin-money·audit·루트 초안이 한 트리에 혼재 |
 | [`03_COMMIT_REQUIRED_VS_NEVER_COMMIT.csv`](./03_COMMIT_REQUIRED_VS_NEVER_COMMIT.csv) | 전 worktree **96**건 `COMMIT_REQUIRED` — 대부분 **소유 parallel/lane worktree**; desktop 제품 10건은 **별 wave** |
 
-**결론:** CI·recovery 통합의 **base·첫 merge 대상**은 `codex/backend-review-r2-ci-20261009` @ `1490cb7bad365e26a8ee1c771d7ff86df6eded7d` (**PR #72**).  
+**결론:** CI·recovery 통합의 **base·첫 merge 대상**은 `codex/backend-review-r2-ci-20261009` @ `1490cb7bad365e26a8ee1c771d7ff86df6eded7d` (**PR #72**).
 D: `ci-worktree-1490cb7/` diff export로 오프라인 검증 가능 ([`08`](./08_COMMIT_AND_BACKUP_RECEIPT.md)).
 
 ### 비권장(당장 primary base): Desktop @ `af14c2f` + 일괄 merge
@@ -45,7 +45,7 @@ D: `ci-worktree-1490cb7/` diff export로 오프라인 검증 가능 ([`08`](./08
 
 ## 2. 제안 커밋 wave (staging **전** — 논리 그룹만)
 
-> 카운트·경로 정본: [`03_COMMIT_REQUIRED_VS_NEVER_COMMIT.csv`](./03_COMMIT_REQUIRED_VS_NEVER_COMMIT.csv).  
+> 카운트·경로 정본: [`03_COMMIT_REQUIRED_VS_NEVER_COMMIT.csv`](./03_COMMIT_REQUIRED_VS_NEVER_COMMIT.csv).
 > **아래 wave는 desktop 루트 + parallel lane 방향만 제안**하며, 아직 `git add` 하지 않는다.
 
 ### Wave 0 — CI / recovery (Primary integration)
