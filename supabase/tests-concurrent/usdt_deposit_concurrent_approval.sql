@@ -14,7 +14,7 @@ $$;
 create temporary table usdt_conc_context (host text, blocked_sessions integer);
 create temporary table usdt_conc_outcome (session_name text primary key, receipt text);
 
-\ir ../snippets/resolve_disposable_dblink_host.sql
+\ir resolve_disposable_dblink_host.inc
 
 do $test$
 declare

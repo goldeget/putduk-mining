@@ -10,7 +10,7 @@ create temporary table safe_conc_context (host text, blocked_sessions integer);
 create temporary table safe_conc_outcome (session_name text primary key, receipt text);
 
 -- 새로 reset 한 이 프로젝트 DB만 사용한다. 공유 이력은 지우지 않는다.
-\ir ../snippets/resolve_disposable_dblink_host.sql
+\ir resolve_disposable_dblink_host.inc
 
 do $test$
 declare

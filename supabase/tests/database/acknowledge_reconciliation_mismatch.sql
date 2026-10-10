@@ -17,7 +17,7 @@ $$;
 -- 이 세션의 서버 주소만 쓴다. 과거 컨테이너 이름 목록은 쓰지 않는다.
 create temporary table recon_ack_db_host (host text);
 
-\ir ../../snippets/resolve_disposable_dblink_host.sql
+\ir ../snippets/resolve_disposable_dblink_host.inc
 
 insert into recon_ack_db_host (host)
 select pg_temp.putduk_disposable_dblink_host('LOCAL_DB_HOST_UNRESOLVED');
