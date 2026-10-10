@@ -14,59 +14,13 @@ begin
 end;
 $$;
 
--- dblink 는 루프백 trust 가 아니라 이 DB 컨테이너의 scram 호스트로 붙는다.
--- 프로젝트 이름이 바뀌어도 공유 스택과 분리 스택을 같은 검사로 고른다.
+-- 이 세션의 서버 주소만 쓴다. 과거 컨테이너 이름 목록은 쓰지 않는다.
 create temporary table recon_ack_db_host (host text);
 
-do $$
-declare
-  v_schema text;
-  v_candidate text;
-  v_conn text;
-begin
-  select namespace.nspname into v_schema
-  from pg_extension as extension
-  join pg_namespace as namespace on namespace.oid = extension.extnamespace
-  where extension.extname = 'dblink';
+\ir ../snippets/resolve_disposable_dblink_host.inc
 
-  if v_schema is null then
-    raise exception 'DBLINK_EXTENSION_MISSING';
-  end if;
-
-  foreach v_candidate in array array[
-    'supabase_db_putduk-mining-clean',
-    'supabase_db_putduk-mining'
-  ]
-  loop
-    v_conn := format(
-      'host=%s dbname=postgres user=postgres password=postgres',
-      v_candidate
-    );
-    begin
-      execute format(
-        'select %I.dblink_connect(%L, %L)',
-        v_schema,
-        'recon_ack_probe',
-        v_conn
-      );
-      execute format(
-        'select %I.dblink_disconnect(%L)',
-        v_schema,
-        'recon_ack_probe'
-      );
-      insert into recon_ack_db_host (host) values (v_candidate);
-      exit;
-    exception
-      when others then
-        null;
-    end;
-  end loop;
-
-  if not exists (select 1 from recon_ack_db_host) then
-    raise exception 'LOCAL_DB_HOST_UNRESOLVED';
-  end if;
-end;
-$$;
+insert into recon_ack_db_host (host)
+select pg_temp.putduk_disposable_dblink_host('LOCAL_DB_HOST_UNRESOLVED');
 
 select lives_ok(
   $concurrent$
@@ -86,7 +40,7 @@ select lives_ok(
         raise exception 'DBLINK_EXTENSION_MISSING';
       end if;
 
-      -- 루프백은 trust 라 비밀번호가 쓰이지 않는다. 위에서 고른 컨테이너 이름으로 scram 에 붙는다.
+      -- 위에서 고른 이 서버 주소로 두 번째 세션을 연다.
       select 'host=' || host || ' dbname=postgres user=postgres password=postgres'
         into v_conn
       from recon_ack_db_host;
