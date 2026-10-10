@@ -23,55 +23,11 @@ create temporary table krw_conc_outcome (
   detail text not null
 );
 
-do $$
-declare
-  v_schema text;
-  v_candidate text;
-  v_conn text;
-begin
-  select namespace.nspname into v_schema
-  from pg_extension as extension
-  join pg_namespace as namespace on namespace.oid = extension.extnamespace
-  where extension.extname = 'dblink';
+-- 이 세션의 서버 주소만 쓴다. 과거 컨테이너 이름 목록은 쓰지 않는다.
+\ir ../snippets/resolve_disposable_dblink_host.sql
 
-  if v_schema is null then
-    raise exception 'DBLINK_EXTENSION_MISSING';
-  end if;
-
-  foreach v_candidate in array array[
-    'supabase_db_putduk-mining-clean',
-    'supabase_db_putduk-mining'
-  ]
-  loop
-    v_conn := format(
-      'host=%s dbname=postgres user=postgres password=postgres',
-      v_candidate
-    );
-    begin
-      execute format(
-        'select %I.dblink_connect(%L, %L)',
-        v_schema,
-        'krw_conc_probe',
-        v_conn
-      );
-      execute format(
-        'select %I.dblink_disconnect(%L)',
-        v_schema,
-        'krw_conc_probe'
-      );
-      insert into krw_conc_host (host) values (v_candidate);
-      exit;
-    exception
-      when others then
-        null;
-    end;
-  end loop;
-
-  if not exists (select 1 from krw_conc_host) then
-    raise exception 'LOCAL_DB_HOST_UNRESOLVED';
-  end if;
-end;
-$$;
+insert into krw_conc_host (host)
+select pg_temp.putduk_disposable_dblink_host('LOCAL_DB_HOST_UNRESOLVED');
 
 do $$
 declare
