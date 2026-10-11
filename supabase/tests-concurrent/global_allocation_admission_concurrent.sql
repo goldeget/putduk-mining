@@ -12,6 +12,8 @@ create temporary table global_admission_result(
 -- canonical fixture. Two independent transactions prove the actual advisory
 -- wait, not an arbitrary sleep. Only existing commands write money/control.
 -- The committed source/control/selection originals are never deleted.
+\ir resolve_disposable_dblink_host.inc
+
 do $race$
 declare schema_name text; connection text; host_name text; result text; run_key text:=gen_random_uuid()::text;
  holder_pid integer; member_pid integer; deadline timestamptz; busy integer; actual_waiter boolean:=false;
@@ -32,15 +34,8 @@ begin
   where r.catalog_id=original.catalog_version_id and r.state='PUBLISHED';
  select s.id into previous_state from app_private.funding_engine_state s where s.user_id=original.user_id;
  select n.nspname into schema_name from pg_extension e join pg_namespace n on n.oid=e.extnamespace where e.extname='dblink';
- foreach host_name in array array['supabase_db_putduk-mining-clean','supabase_db_putduk-mining'] loop
-  connection:=format('host=%s dbname=postgres user=postgres password=postgres connect_timeout=2',host_name);
-  begin
-   execute format('select %I.dblink_connect(%L,%L)',schema_name,'global_admission_holder',connection);
-   exit;
-  exception when others then connection:=null;
-  end;
- end loop;
- if connection is null then raise exception 'PUTDUK_LOCAL_DB_HOST_UNRESOLVED'; end if;
+ connection:=pg_temp.putduk_disposable_dblink_connection('PUTDUK_LOCAL_DB_HOST_UNRESOLVED');
+ execute format('select %I.dblink_connect(%L,%L)',schema_name,'global_admission_holder',connection);
  execute format('select %I.dblink_connect(%L,%L)',schema_name,'global_admission_member',connection);
  execute format('select %I.dblink_exec(%L,%L)',schema_name,'global_admission_holder','begin');
  execute format('select %I.dblink_exec(%L,%L)',schema_name,'global_admission_holder','set local role service_role');

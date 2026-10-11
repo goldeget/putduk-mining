@@ -10,6 +10,8 @@ create temporary table safe_conc_context (host text, blocked_sessions integer);
 create temporary table safe_conc_outcome (session_name text primary key, receipt text);
 
 -- Only the CI job's freshly reset putduk-mining DB. No shared history is deleted.
+\ir resolve_disposable_dblink_host.inc
+
 do $test$
 declare
   v_schema text;
@@ -26,18 +28,9 @@ begin
   select namespace.nspname into v_schema from pg_extension as extension
   join pg_namespace as namespace on namespace.oid = extension.extnamespace
   where extension.extname = 'dblink';
-  foreach v_host in array array['supabase_db_putduk-mining-clean', 'supabase_db_putduk-mining'] loop
-    v_conn := format('host=%s dbname=postgres user=postgres password=postgres connect_timeout=2', v_host);
-    begin
-      execute format('select %I.dblink_connect(%L, %L)', v_schema, 'safe_conc_setup', v_conn);
-      insert into safe_conc_context (host) values (v_host);
-      exit;
-    exception when others then null;
-    end;
-  end loop;
-  if not exists (select 1 from safe_conc_context) then
-    raise exception 'PUTDUK_LOCAL_DB_HOST_UNRESOLVED';
-  end if;
+  v_conn := pg_temp.putduk_disposable_dblink_connection('PUTDUK_LOCAL_DB_HOST_UNRESOLVED');
+  insert into safe_conc_context(host) values(v_conn);
+  execute format('select %I.dblink_connect(%L,%L)',v_schema,'safe_conc_setup',v_conn);
   execute format('select %I.dblink_exec(%L, %L)', v_schema, 'safe_conc_setup', $setup$
     insert into auth.users (id, aud, role, email, encrypted_password, email_confirmed_at,
       raw_app_meta_data, raw_user_meta_data, created_at, updated_at,

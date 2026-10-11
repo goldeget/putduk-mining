@@ -15,6 +15,8 @@ create temporary table withdrawal_lock_result (
 -- fixture commits for independent sessions; append-only financial history is
 -- never deleted. The principal request is an owner-only fixture, not a newly
 -- enabled generic principal recovery command.
+\ir resolve_disposable_dblink_host.inc
+
 do $probe$
 declare
   v_schema text; v_host text; v_conn text; v_result text; v_action text;
@@ -26,15 +28,8 @@ declare
 begin
   select namespace.nspname into v_schema from pg_extension extension
   join pg_namespace namespace on namespace.oid=extension.extnamespace where extension.extname='dblink';
-  foreach v_host in array array['supabase_db_putduk-mining-clean','supabase_db_putduk-mining'] loop
-    v_conn:=format('host=%s dbname=postgres user=postgres password=postgres connect_timeout=2',v_host);
-    begin
-      execute format('select %I.dblink_connect(%L,%L)',v_schema,'withdrawal_lock_setup',v_conn);
-      exit;
-    exception when others then v_conn:=null;
-    end;
-  end loop;
-  if v_conn is null then raise exception 'PUTDUK_LOCAL_DB_HOST_UNRESOLVED'; end if;
+ v_conn:=pg_temp.putduk_disposable_dblink_connection('PUTDUK_LOCAL_DB_HOST_UNRESOLVED');
+ execute format('select %I.dblink_connect(%L,%L)',v_schema,'withdrawal_lock_setup',v_conn);
   execute format('select %I.dblink_exec(%L,%L)',v_schema,'withdrawal_lock_setup',$fixture$
 -- Owner-only synthetic held request for reservation/terminal regression tests.
 -- This is not an enabled source-confirmation command or historical backfill.

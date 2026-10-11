@@ -5,6 +5,7 @@ begin;
 create extension if not exists pgtap with schema extensions;
 create extension if not exists dblink with schema extensions;
 select no_plan();
+\ir resolve_disposable_dblink_host.inc
 create temporary table r139_checks(id integer generated always as identity,passed boolean,description text);
 create temporary table r139_context(member_id uuid,admin_id uuid,bank_id uuid,policy_id uuid,catalog_id uuid,catalog_digest text,product_id uuid,last_key text,last_withdrawal uuid);
 insert into r139_context
@@ -341,7 +342,7 @@ begin
   or(select recovered_principal_atomic from public.money_source_summaries where user_id=context.member_id) is distinct from '200000' then
   raise exception 'R139_STRICT_CANONICAL388_BASIS_REQUIRED';end if;
  select n.nspname into extension_schema from pg_extension e join pg_namespace n on n.oid=e.extnamespace where e.extname='dblink';
- connection:='host=supabase_db_putduk-mining dbname=postgres user=postgres password=postgres connect_timeout=2';
+ connection:=pg_temp.putduk_disposable_dblink_connection('PUTDUK_LOCAL_DB_HOST_UNRESOLVED');
  execute format('select %I.dblink_connect(%L,%L)',extension_schema,'r139_holder',connection);
  execute format('select %I.dblink_connect(%L,%L)',extension_schema,'r139_writer',connection);
  helper_sql:=$helper$

@@ -5,16 +5,16 @@ import {
   readSupabaseStatus,
 } from "../../../../scripts/capture-local-supabase-env.mjs";
 
-/**
- * supabase/config.toml project_id = putduk-mining 의 로컬 데이터베이스 컨테이너.
- * 비밀번호와 포트는 여기에 두지 않는다.
- * 실행 전에 status 의 DB URL 이 로컬인지 확인한다.
- */
-const localProjectId = process.env.LOCAL_SUPABASE_PROJECT_ID ?? "putduk-mining";
-if (!/^putduk-mining(?:-[a-z0-9-]+)?$/.test(localProjectId)) {
-  throw new Error("LOCAL_DB_PROJECT_SCOPE_REJECTED");
-}
-const LOCAL_DB_CONTAINER = `supabase_db_${localProjectId}`;
+import {
+  assertLocalDbContainerMetadata,
+  resolveLocalDbTarget,
+} from "../../../../scripts/local-db-target.mjs";
+
+const localTarget = resolveLocalDbTarget(
+  undefined,
+  process.env.LOCAL_SUPABASE_PROJECT_ID,
+);
+const LOCAL_DB_CONTAINER = localTarget.container;
 
 const DB_URL_ENV = "LOCAL_SUPABASE_DB_URL";
 
@@ -44,11 +44,25 @@ export function execLocalAdminSql(
   variables: Readonly<Record<string, string>> = {},
 ) {
   resolveLocalDatabaseUrl();
+  const metadata = execFileSync(
+    "docker",
+    [
+      "inspect",
+      "--type",
+      "container",
+      "--format",
+      '{"name":{{json .Name}},"project":{{json (index .Config.Labels "com.supabase.cli.project")}}}',
+      LOCAL_DB_CONTAINER,
+    ],
+    { encoding: "utf8", timeout: 5000, windowsHide: true },
+  );
+  assertLocalDbContainerMetadata(metadata, localTarget);
   const args = [
     "exec",
     "-i",
     LOCAL_DB_CONTAINER,
     "psql",
+    "-X",
     "-U",
     "postgres",
     "-d",

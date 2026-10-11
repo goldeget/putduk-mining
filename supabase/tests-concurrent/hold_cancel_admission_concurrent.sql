@@ -26,6 +26,8 @@ create function pg_temp.clock_finance_snapshot(p_user uuid) returns jsonb langua
  'engine_state',(select to_jsonb(st) from app_private.funding_engine_state st where st.user_id=p_user));
 $$;
 
+\ir resolve_disposable_dblink_host.inc
+
 do $race$
 declare extension_schema text; connection text; host_name text; result text; hold_id uuid; release_id uuid;
  holder_pid integer; writer_pid integer; deadline timestamptz; busy integer; waited boolean; release_bound timestamptz;
@@ -38,15 +40,8 @@ begin
   and r.status='REQUESTED' and r.hold_ledger_transaction_id is null) then
   raise exception 'HOLD_ADMISSION_FRESH_OWNER_FIXTURE_REQUIRED'; end if;
  select n.nspname into extension_schema from pg_extension e join pg_namespace n on n.oid=e.extnamespace where e.extname='dblink';
- foreach host_name in array array['supabase_db_putduk-mining-clean','supabase_db_putduk-mining'] loop
-  connection:=format('host=%s dbname=postgres user=postgres password=postgres connect_timeout=2',host_name);
-  begin
-   execute format('select %I.dblink_connect(%L,%L)',extension_schema,'hold_cancel_admission_holder',connection);
-   exit;
-  exception when others then connection:=null;
-  end;
- end loop;
- if connection is null then raise exception 'PUTDUK_LOCAL_DB_HOST_UNRESOLVED'; end if;
+ connection:=pg_temp.putduk_disposable_dblink_connection('PUTDUK_LOCAL_DB_HOST_UNRESOLVED');
+ execute format('select %I.dblink_connect(%L,%L)',extension_schema,'hold_cancel_admission_holder',connection);
  execute format('select %I.dblink_connect(%L,%L)',extension_schema,'hold_cancel_admission_writer',connection);
  -- A TEMP INVOKER captures the actual remote SQLSTATE after its subtransaction
  -- rolls back. It grants no finance authority and accepts no economic clock.

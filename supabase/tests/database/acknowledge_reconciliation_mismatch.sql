@@ -17,52 +17,10 @@ $$;
 -- Connect only to this server. Never probe a historical project's Docker name.
 create temporary table recon_ack_db_host (host text);
 
-do $$
-declare
-  v_schema text;
-  v_candidate text;
-  v_conn text;
-begin
-  select namespace.nspname into v_schema
-  from pg_extension as extension
-  join pg_namespace as namespace on namespace.oid = extension.extnamespace
-  where extension.extname = 'dblink';
+\ir ../snippets/resolve_disposable_dblink_host.inc
 
-  if v_schema is null then
-    raise exception 'DBLINK_EXTENSION_MISSING';
-  end if;
-
-  v_candidate := coalesce(pg_catalog.host(inet_server_addr()), current_setting('putduk.qa_db_host', true));
-  if v_candidate is null or (inet_server_addr() is null and v_candidate !~ '^supabase_db_putduk-mining[-a-z0-9]*$') then
-    raise exception 'EXACT_LOCAL_DB_HOST_REQUIRED';
-  end if;
-    v_conn := format(
-      'host=%s dbname=postgres user=postgres password=postgres',
-      v_candidate
-    );
-    begin
-      execute format(
-        'select %I.dblink_connect(%L, %L)',
-        v_schema,
-        'recon_ack_probe',
-        v_conn
-      );
-      execute format(
-        'select %I.dblink_disconnect(%L)',
-        v_schema,
-        'recon_ack_probe'
-      );
-      insert into recon_ack_db_host (host) values (v_candidate);
-    exception
-      when others then
-        null;
-    end;
-
-  if not exists (select 1 from recon_ack_db_host) then
-    raise exception 'LOCAL_DB_HOST_UNRESOLVED';
-  end if;
-end;
-$$;
+insert into recon_ack_db_host(host)
+select pg_temp.putduk_disposable_dblink_connection();
 
 select lives_ok(
   $concurrent$
@@ -83,7 +41,7 @@ select lives_ok(
       end if;
 
       -- 현재 TCP 서버 또는 격리 실행기가 검증한 이 프로젝트 호스트만 사용한다.
-      select 'host=' || host || ' dbname=postgres user=postgres password=postgres'
+      select host
         into v_conn
       from recon_ack_db_host;
       execute format(
@@ -271,7 +229,7 @@ begin
   join pg_namespace as namespace on namespace.oid = extension.extnamespace
   where extension.extname = 'dblink';
 
-  select 'host=' || host || ' dbname=postgres user=postgres password=postgres'
+  select host
     into v_conn
   from recon_ack_db_host;
 

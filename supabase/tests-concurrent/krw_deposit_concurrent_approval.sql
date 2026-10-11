@@ -23,55 +23,10 @@ create temporary table krw_conc_outcome (
   detail text not null
 );
 
-do $$
-declare
-  v_schema text;
-  v_candidate text;
-  v_conn text;
-begin
-  select namespace.nspname into v_schema
-  from pg_extension as extension
-  join pg_namespace as namespace on namespace.oid = extension.extnamespace
-  where extension.extname = 'dblink';
+\ir resolve_disposable_dblink_host.inc
 
-  if v_schema is null then
-    raise exception 'DBLINK_EXTENSION_MISSING';
-  end if;
-
-  foreach v_candidate in array array[
-    'supabase_db_putduk-mining-clean',
-    'supabase_db_putduk-mining'
-  ]
-  loop
-    v_conn := format(
-      'host=%s dbname=postgres user=postgres password=postgres',
-      v_candidate
-    );
-    begin
-      execute format(
-        'select %I.dblink_connect(%L, %L)',
-        v_schema,
-        'krw_conc_probe',
-        v_conn
-      );
-      execute format(
-        'select %I.dblink_disconnect(%L)',
-        v_schema,
-        'krw_conc_probe'
-      );
-      insert into krw_conc_host (host) values (v_candidate);
-      exit;
-    exception
-      when others then
-        null;
-    end;
-  end loop;
-
-  if not exists (select 1 from krw_conc_host) then
-    raise exception 'LOCAL_DB_HOST_UNRESOLVED';
-  end if;
-end;
-$$;
+insert into krw_conc_host(host)
+select pg_temp.putduk_disposable_dblink_connection();
 
 do $$
 declare
@@ -84,7 +39,7 @@ begin
   join pg_namespace as namespace on namespace.oid = extension.extnamespace
   where extension.extname = 'dblink';
 
-  select 'host=' || host || ' dbname=postgres user=postgres password=postgres'
+  select host
     into v_conn
   from krw_conc_host;
 
@@ -192,7 +147,7 @@ begin
   join pg_namespace as namespace on namespace.oid = extension.extnamespace
   where extension.extname = 'dblink';
 
-  select 'host=' || host || ' dbname=postgres user=postgres password=postgres'
+  select host
     into v_conn
   from krw_conc_host;
   select deposit_id into v_deposit_id from krw_conc_deposit;
