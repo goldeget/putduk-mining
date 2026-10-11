@@ -93,12 +93,16 @@ export function captureFromCliResult(result: {
   dbUrl: string;
 };
 
-export function formatGithubEnv(credentials: {
-  apiUrl: string;
-  publishableKey: string;
-  secretKey: string;
-  dbUrl: string;
-}): string;
+export function formatGithubEnv(
+  credentials: {
+    apiUrl: string;
+    publishableKey: string;
+    secretKey: string;
+    dbUrl: string;
+    projectId?: string;
+  },
+  env?: EnvLike,
+): string;
 
 export function readSupabaseStatus(): {
   apiUrl: string;

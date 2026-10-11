@@ -126,7 +126,7 @@ test.describe("admin browser USDT withdrawal", () => {
     await confirmOperatorStepUp(sendForm, secret);
     await sendForm.getByRole("button", { name: "USDT 외부 송금 기록" }).click();
     await expect(sendForm.getByRole("status")).toContainText(
-      "외부 송금은 이미 기록되어 있습니다",
+      "기록된 송금과 입력 내용이 다릅니다. 다시 송금하지 말고 기존 기록을 확인해 주세요.",
     );
     const sends = await readExternalSends(withdrawalId);
     expect(sends).toHaveLength(1);

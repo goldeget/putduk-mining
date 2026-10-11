@@ -49,10 +49,11 @@ SECRET_KEY=${SECRET}
     expect(captured.publishableKey).toBe(PUBLISHABLE);
     expect(captured.secretKey).toBe(SECRET);
     expect(captured.dbUrl).toBe(LOCAL_DB);
-    const payload = formatGithubEnv(captured);
+    const payload = formatGithubEnv(captured, {});
     expect(payload).toContain(`LOCAL_SUPABASE_DB_URL=${LOCAL_DB}`);
     expect(payload).toContain(`NEXT_PUBLIC_SUPABASE_URL=${LOCAL_URL}`);
     expect(payload).toContain(`SUPABASE_SECRET_KEY=${SECRET}`);
+    expect(payload).toContain(`LOCAL_SUPABASE_PROJECT_ID=${allow.projectId}\n`);
   });
 
   it("maps dotted override names and reads env lines from stderr", () => {
@@ -248,6 +249,118 @@ SECRET_KEY=${SECRET}
         error: undefined,
       }),
     ).toThrow(/postgres and postgresql/);
+  });
+});
+
+describe("checked GitHub local-project environment export", () => {
+  const local = {
+    apiUrl: LOCAL_URL,
+    publishableKey: PUBLISHABLE,
+    secretKey: SECRET,
+    dbUrl: LOCAL_DB,
+  };
+
+  it("exports only the configuration identity bound to the checked local endpoints", () => {
+    const values = parseShellEnv(formatGithubEnv(local, {}));
+    expect(values).toEqual({
+      NEXT_PUBLIC_SUPABASE_URL: LOCAL_URL,
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: PUBLISHABLE,
+      SUPABASE_SECRET_KEY: SECRET,
+      LOCAL_SUPABASE_DB_URL: LOCAL_DB,
+      LOCAL_SUPABASE_PROJECT_ID: allow.projectId,
+    });
+  });
+
+  it("accepts matching caller metadata without choosing a different project", () => {
+    const values = parseShellEnv(
+      formatGithubEnv(
+        { ...local, projectId: allow.projectId },
+        { APP_ENV: "test", LOCAL_SUPABASE_PROJECT_ID: allow.projectId },
+      ),
+    );
+    expect(values.LOCAL_SUPABASE_PROJECT_ID).toBe(allow.projectId);
+  });
+
+  it.each([
+    "putduk-mining-unrelated",
+    "osrmyjgmpdspdcwqjwuv",
+    "",
+    `${allow.projectId}\nINJECTED_PROJECT=value`,
+  ])("rejects caller-supplied project metadata %j", (projectId) => {
+    expect(() => formatGithubEnv({ ...local, projectId }, {})).toThrow(
+      "LOCAL_PROJECT_SCOPE_REJECTED",
+    );
+  });
+
+  it.each([
+    "LOCAL_SUPABASE_PROJECT_ID",
+    "SUPABASE_PROJECT_ID",
+    "SUPABASE_PROJECT_REF",
+  ])("cannot overwrite an existing unrelated local %s", (name) => {
+    expect(() =>
+      formatGithubEnv(local, {
+        [name]: "putduk-mining-unrelated",
+      }),
+    ).toThrow("LOCAL_PROJECT_SCOPE_REJECTED");
+  });
+
+  it.each([
+    "LOCAL_SUPABASE_PROJECT_ID",
+    "SUPABASE_PROJECT_ID",
+    "SUPABASE_PROJECT_REF",
+  ])("rejects remote or multiline existing %s", (name) => {
+    expect(() =>
+      formatGithubEnv(local, {
+        [name]: "osrmyjgmpdspdcwqjwuv",
+      }),
+    ).toThrow("REMOTE_SUPABASE_SECRET_REJECTED");
+    expect(() =>
+      formatGithubEnv(local, {
+        [name]: `${allow.projectId}\n`,
+      }),
+    ).toThrow("LOCAL_PROJECT_SCOPE_REJECTED");
+  });
+
+  it.each([
+    ["apiUrl", "https://osrmyjgmpdspdcwqjwuv.supabase.co"],
+    ["apiUrl", "http://127.0.0.1:1"],
+    ["apiUrl", `${LOCAL_URL}\nINJECTED_PROJECT=value`],
+    [
+      "dbUrl",
+      "postgresql://postgres:synthetic@db.osrmyjgmpdspdcwqjwuv.supabase.co:5432/postgres",
+    ],
+    ["dbUrl", "postgresql://postgres:synthetic@127.0.0.1:1/postgres"],
+    [
+      "dbUrl",
+      `postgresql://postgres.putduk-mining-unrelated:synthetic@127.0.0.1:${allow.dbPort}/postgres`,
+    ],
+    ["dbUrl", ""],
+  ])(
+    "revalidates %s before exporting the configuration identity",
+    (field, value) => {
+      expect(() => formatGithubEnv({ ...local, [field]: value }, {})).toThrow();
+    },
+  );
+
+  it.each(["publishableKey", "secretKey"])(
+    "rejects unsafe %s without returning an environment payload",
+    (field) => {
+      expect(() =>
+        formatGithubEnv(
+          { ...local, [field]: `synthetic\nINJECTED_KEY=value` },
+          {},
+        ),
+      ).toThrow(/newline/);
+      expect(() =>
+        formatGithubEnv({ ...local, [field]: "osrmyjgmpdspdcwqjwuv" }, {}),
+      ).toThrow("REMOTE_SUPABASE_SECRET_REJECTED");
+    },
+  );
+
+  it("refuses a production base environment even when local status is valid", () => {
+    expect(() => formatGithubEnv(local, { APP_ENV: "production" })).toThrow(
+      "PRODUCTION_ENV_REJECTED",
+    );
   });
 });
 

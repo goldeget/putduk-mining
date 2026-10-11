@@ -157,7 +157,7 @@ test("AI ownership, money denial, continuity, themes, and keyboard path", async 
   expect(denyResponse.ok()).toBe(true);
   await expect(
     page.getByText(
-      /잔액, 입출금 승인, 채굴 결과, 보상, 인증 또는 권한을 변경할 수 없습니다/,
+      "퍼뜩 AI는 설명과 내 상태 확인을 도와드려요. 잔액이나 출금 승인, 보상, 권한은 바꿀 수 없어요.",
     ),
   ).toBeVisible({ timeout: 30_000 });
 
@@ -182,7 +182,7 @@ test("AI ownership, money denial, continuity, themes, and keyboard path", async 
     page.getByRole("region", { name: "퍼뜩 AI 도우미 대화" }),
   ).toHaveCount(1);
   await expect(dialog.locator(".ai-message--assistant")).toContainText(
-    /잔액, 입출금 승인/,
+    "퍼뜩 AI는 설명과 내 상태 확인을 도와드려요. 잔액이나 출금 승인, 보상, 권한은 바꿀 수 없어요.",
   );
   await expect(page.locator("#main-content")).toHaveCSS("overflow", "hidden");
   const composer = dialog.getByRole("textbox", {

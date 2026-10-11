@@ -626,12 +626,46 @@ export function captureFromCliResult({ status, stdout, stderr, error }) {
   return credentials;
 }
 
-export function formatGithubEnv(credentials) {
+export function formatGithubEnv(credentials, env = process.env) {
+  const allow = loadJobLocalAllowlist();
+  assertCiTestTarget(env);
+  // Publish the checked configuration identity, never a caller override. An
+  // existing conflicting local ID must fail instead of being silently replaced.
+  for (const name of PROJECT_ENV_NAMES) {
+    const value = env[name];
+    if (value === undefined || value === "") continue;
+    if (/[\r\n]/.test(value) || value !== allow.projectId)
+      throw new Error("LOCAL_PROJECT_SCOPE_REJECTED");
+  }
+  if (
+    credentials.projectId !== undefined &&
+    credentials.projectId !== allow.projectId
+  )
+    throw new Error("LOCAL_PROJECT_SCOPE_REJECTED");
+  const apiUrl = assertLocalApiUrl(
+    requireSingleLine(credentials.apiUrl, "NEXT_PUBLIC_SUPABASE_URL"),
+    allow,
+  );
+  const dbUrl = assertLocalDbUrl(
+    requireSingleLine(credentials.dbUrl, "LOCAL_SUPABASE_DB_URL"),
+    allow,
+  );
+  const publishableKey = requireSingleLine(
+    credentials.publishableKey,
+    "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+  );
+  const secretKey = requireSingleLine(
+    credentials.secretKey,
+    "SUPABASE_SECRET_KEY",
+  );
+  if ([publishableKey, secretKey].some(hasRemoteProjectRef))
+    throw new Error("REMOTE_SUPABASE_SECRET_REJECTED");
   const lines = [
-    `NEXT_PUBLIC_SUPABASE_URL=${requireSingleLine(credentials.apiUrl, "NEXT_PUBLIC_SUPABASE_URL")}`,
-    `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=${requireSingleLine(credentials.publishableKey, "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY")}`,
-    `SUPABASE_SECRET_KEY=${requireSingleLine(credentials.secretKey, "SUPABASE_SECRET_KEY")}`,
-    `LOCAL_SUPABASE_DB_URL=${requireSingleLine(credentials.dbUrl, "LOCAL_SUPABASE_DB_URL")}`,
+    `NEXT_PUBLIC_SUPABASE_URL=${apiUrl}`,
+    `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=${publishableKey}`,
+    `SUPABASE_SECRET_KEY=${secretKey}`,
+    `LOCAL_SUPABASE_DB_URL=${dbUrl}`,
+    `LOCAL_SUPABASE_PROJECT_ID=${allow.projectId}`,
   ];
   return `${lines.join("\n")}\n`;
 }
@@ -687,7 +721,7 @@ function main() {
   );
   appendFileSync(process.env.GITHUB_ENV, payload);
   process.stdout.write(
-    "captured local supabase env keys: NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY, SUPABASE_SECRET_KEY, LOCAL_SUPABASE_DB_URL\n",
+    "captured local supabase env keys: NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY, SUPABASE_SECRET_KEY, LOCAL_SUPABASE_DB_URL, LOCAL_SUPABASE_PROJECT_ID\n",
   );
 }
 
