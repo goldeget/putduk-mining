@@ -531,21 +531,15 @@ select throws_ok(
 );
 reset role;
 
-insert into public.withdrawal_policies(
-  currency, destination_type, version, is_enabled, minimum_amount_atomic,
-  fee_atomic, destination_config, effective_at, approved_by, allows_welcome_reward
-)
-select 'KRW', 'KRW_BANK', 1062102, true, 1, 50, '{}'::jsonb,
-  statement_timestamp() - interval '1 hour', admin_id, false
-from reward_hold_ctx;
-set local role service_role;
 select throws_ok(
-  $$select public.request_krw_withdrawal(fee_id, fee_bank_id, 1000, 'reward-hold-fee-0009')
-    from reward_hold_ctx$$,
-  '55000', 'WITHDRAWAL_SOURCE_INSUFFICIENT',
-  'a non-zero fee does not hold even when mining reward covers the amount'
+  $$insert into public.withdrawal_policies(
+    currency, destination_type, version, is_enabled, minimum_amount_atomic,
+    fee_atomic, destination_config, effective_at, approved_by, allows_welcome_reward
+  ) select 'KRW', 'KRW_BANK', 1062102, true, 1, 50, '{}'::jsonb,
+    statement_timestamp() - interval '1 hour', admin_id, false from reward_hold_ctx$$,
+  '22023', 'PLATFORM_FEES_PERMANENTLY_DISABLED',
+  'a non-zero platform fee policy is rejected before a withdrawal can use it'
 );
-reset role;
 select is(
   (select count(*)::integer from public.withdrawal_requests
     where user_id = (select fee_id from reward_hold_ctx)),

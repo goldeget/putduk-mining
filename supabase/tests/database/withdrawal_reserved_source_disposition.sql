@@ -666,21 +666,15 @@ select ok(
   'one hold does not keep both finalize and release source rows'
 );
 
-insert into public.withdrawal_policies(
-  currency, destination_type, version, is_enabled, minimum_amount_atomic,
-  fee_atomic, destination_config, effective_at, approved_by, allows_welcome_reward
-)
-select 'KRW', 'KRW_BANK', 1063102, true, 1, 50, '{}'::jsonb,
-  statement_timestamp() - interval '1 hour', admin_id, false
-from disposition_ctx;
-set local role service_role;
 select throws_ok(
-  $$select public.request_krw_withdrawal(fee_id, fee_bank_id, 1000, 'disposition-fee-0006')
-    from disposition_ctx$$,
-  '55000', 'WITHDRAWAL_SOURCE_INSUFFICIENT',
-  'a non-zero fee still does not open a reserved hold'
+  $$insert into public.withdrawal_policies(
+    currency, destination_type, version, is_enabled, minimum_amount_atomic,
+    fee_atomic, destination_config, effective_at, approved_by, allows_welcome_reward
+  ) select 'KRW', 'KRW_BANK', 1063102, true, 1, 50, '{}'::jsonb,
+    statement_timestamp() - interval '1 hour', admin_id, false from disposition_ctx$$,
+  '22023', 'PLATFORM_FEES_PERMANENTLY_DISABLED',
+  'a non-zero platform fee policy cannot create a reserved hold'
 );
-reset role;
 select is(
   (select count(*)::integer from public.withdrawal_requests
     where user_id = (select fee_id from disposition_ctx)),
