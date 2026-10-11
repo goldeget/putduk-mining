@@ -216,6 +216,11 @@ jobs:
       - name: Verify published policy reader against concurrent publication
         run: node scripts/assert-economy-policy-reader-concurrency.mjs
 
+      - name: Verify two-session external send replay and payload binding
+        env:
+          APP_ENV: test
+        run: python3 -B tests/integration/external-send-concurrency.py
+
       - name: Lint application schemas
         run: pnpm db:lint
 
