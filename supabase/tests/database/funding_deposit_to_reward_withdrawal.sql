@@ -220,6 +220,16 @@ select ok((select count(*)=1 and sum(r.amount_atomic)=15000 and bool_and(m.sourc
  'hold reserves exactly the installed canonical writer earned credit and its original wallet/journal');
 select is((select count(*) from public.funding_principal_recovery_allocations where user_id=(select member_id from mature_ctx)),0::bigint,
  'reward withdrawal never reserves or recovers principal');
+select throws_ok($$select public.record_krw_external_send((select withdrawal from full_chain_ctx),'FULL-CHAIN-UNDERPAY',14999,
+ (select admin_id from mature_ctx),clock_timestamp(),'full-chain-underpay-rejected')$$,
+ '22023','KRW_SEND_AMOUNT_MUST_EQUAL_REQUEST','partial manual transfer cannot be recorded as a full requested payout');
+select throws_ok($$select public.record_krw_external_send((select withdrawal from full_chain_ctx),'FULL-CHAIN-OVERPAY',15001,
+ (select admin_id from mature_ctx),clock_timestamp(),'full-chain-overpay-rejected')$$,
+ '22023','KRW_SEND_AMOUNT_MUST_EQUAL_REQUEST','overpayment cannot be recorded as the requested payout');
+select is((select count(*) from public.withdrawal_external_sends where withdrawal_id=(select withdrawal from full_chain_ctx)),0::bigint,
+ 'rejected amount mismatches leave no irreversible send receipt');
+select is((select status::text from public.withdrawal_requests where id=(select withdrawal from full_chain_ctx)),'HELD',
+ 'mismatched send attempts retain the pending original reward hold');
 update full_chain_ctx set sent_at=clock_timestamp();
 update full_chain_ctx set send=public.record_krw_external_send(withdrawal,'FULL-CHAIN-SYNTHETIC-BANK-RECEIPT',15000,
  (select admin_id from mature_ctx),sent_at,'full-chain-earned-send');

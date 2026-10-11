@@ -50,12 +50,25 @@ not send money, manufacture transfer evidence or automatically finalize requests
 Historical exception behavior requires the original lifecycle's authorization,
 source provenance, transaction and reconciliation checks.
 
-## Unresolved payment contract
+## Confirmed manual KRW payout contract
 
-Zero fees do not decide whether partial or split payouts are supported. Until the
-user confirms that policy, the relation between requested KRW and actual transferred
-KRW remains a release blocker. Do not infer an amount equality/completion rule from
-the fee instruction or silently introduce installment transfers.
+The user's subsequent direct instruction is:
+
+> 요청한 금액을 운영자가 직접 수동 송금후 어드민에서 완료처리 누르면 유저에게도 반영
+
+The operator manually transfers the full requested KRW amount, then records the
+transfer evidence and completes the existing authorized admin ledger command.
+There is no partial/split payout workflow. The platform does not initiate a bank
+transfer. Migration `20261011003244` rejects new KRW send receipts unless their
+actual amount equals the request, and rejects completion of an existing mismatched
+receipt. The canonical finalizer atomically reconciles the held reward, records one
+debit and updates the member projection. An unsuccessful completion rolls back
+all financial writes; retrying a confirmed command returns its original receipt.
+
+Historical immutable sends remain evidence. A previously recorded mismatch needs
+reconciliation rather than rewriting the send or falsely marking it complete.
+Administrator responses verify the requested withdrawal and its terminal journal;
+an unreadable or unconfirmed result is not reported as success.
 
 External bank or blockchain provider costs are distinct from platform fees. This
 decision does not authorize charging those costs to a member, changing conversion

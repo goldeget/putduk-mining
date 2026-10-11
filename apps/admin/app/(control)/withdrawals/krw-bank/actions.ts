@@ -41,6 +41,28 @@ const unconfirmedSend: CommandActionResult = {
     "송금 기록을 아직 확인하지 못했습니다. 같은 요청으로 다시 확인해 주세요.",
 };
 
+const unconfirmedFinalize: CommandActionResult = {
+  ok: false,
+  code: "UNCONFIRMED",
+  message:
+    "원장 확정을 아직 확인하지 못했습니다. 같은 요청으로 다시 확인해 주세요.",
+};
+
+function krwPayoutFailure(message: string): CommandActionResult | null {
+  const code = message.includes("KRW_SEND_AMOUNT_MUST_EQUAL_REQUEST")
+    ? "KRW_SEND_AMOUNT_MUST_EQUAL_REQUEST"
+    : message.includes("WITHDRAWAL_KRW_PAYOUT_AMOUNT_MISMATCH")
+      ? "WITHDRAWAL_KRW_PAYOUT_AMOUNT_MISMATCH"
+      : null;
+  if (!code) return null;
+  return {
+    ok: false,
+    code,
+    message:
+      "출금 요청 금액 전액을 수수료 없이 수동 송금해야 합니다. 실제 송금액과 요청 금액을 확인해 주세요. 금액이 다르면 완료 처리할 수 없습니다.",
+  };
+}
+
 function releaseDisposition(
   confirmation: "REJECT_HOLD" | "CANCEL_HOLD",
 ): "REJECTED" | "CANCELLED" {
@@ -97,6 +119,8 @@ export async function recordKrwExternalSendAction(
   );
 
   if (error) {
+    const payoutFailure = krwPayoutFailure(error.message);
+    if (payoutFailure) return payoutFailure;
     if (
       error.message.includes("IDEMPOTENCY_KEY_REUSED") ||
       error.message.includes("EXTERNAL_SEND_PAYLOAD_MISMATCH")
@@ -162,39 +186,57 @@ export async function finalizeWithdrawalLedgerAction(
   const service = createAdminServiceClient();
   const { data: current, error: currentError } = await service
     .from("withdrawal_requests")
-    .select("finalize_ledger_transaction_id")
+    .select("id,status,finalize_ledger_transaction_id")
     .eq("id", parsed.data.withdrawalId)
     .maybeSingle();
-  if (!currentError && current?.finalize_ledger_transaction_id) {
+  if (
+    !currentError &&
+    current?.id === parsed.data.withdrawalId &&
+    (current.status === "COMPLETED" || current.status === "LEDGER_FINALIZED") &&
+    z.uuid().safeParse(current.finalize_ledger_transaction_id).success
+  ) {
     return { ok: true, message: "출금 원장은 이미 확정되어 있습니다." };
   }
 
-  const { error } = await service.rpc("finalize_withdrawal_ledger", {
-    p_withdrawal_id: parsed.data.withdrawalId,
-    p_actor: access.principal.userId,
-    p_idempotency_key: prepared.idempotencyKey,
-  });
+  const { data: finalizeId, error } = await service.rpc(
+    "finalize_withdrawal_ledger",
+    {
+      p_withdrawal_id: parsed.data.withdrawalId,
+      p_actor: access.principal.userId,
+      p_idempotency_key: prepared.idempotencyKey,
+    },
+  );
 
   if (error) {
+    const payoutFailure = krwPayoutFailure(error.message);
+    if (payoutFailure) return payoutFailure;
     return mapRpcFailure(
       error.message,
       "원장 확정을 완료하지 못했습니다. 외부 송금이 먼저 기록됐는지 확인하세요.",
     );
   }
+  if (!z.uuid().safeParse(finalizeId).success) return unconfirmedFinalize;
   const finalized = await service
     .from("withdrawal_requests")
-    .select("finalize_ledger_transaction_id")
+    .select("id,status,finalize_ledger_transaction_id")
     .eq("id", parsed.data.withdrawalId)
     .maybeSingle();
-  if (finalized.error || !finalized.data?.finalize_ledger_transaction_id) {
-    return {
-      ok: false,
-      code: "UNCONFIRMED",
-      message:
-        "원장 확정을 아직 확인하지 못했습니다. 같은 요청으로 다시 확인해 주세요.",
-    };
+  if (
+    finalized.error ||
+    finalized.data?.id !== parsed.data.withdrawalId ||
+    (finalized.data.status !== "COMPLETED" &&
+      finalized.data.status !== "LEDGER_FINALIZED") ||
+    finalized.data.finalize_ledger_transaction_id !== finalizeId
+  ) {
+    return unconfirmedFinalize;
   }
-  return { ok: true, message: "출금 원장을 확정했습니다." };
+  return {
+    ok: true,
+    message:
+      finalized.data.status === "LEDGER_FINALIZED"
+        ? "출금 원장은 이미 확정되어 있습니다."
+        : "출금 원장을 확정했습니다.",
+  };
 }
 
 export async function releaseWithdrawalHoldAction(

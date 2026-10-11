@@ -57,6 +57,24 @@ const bodySchema = z.discriminatedUnion("action", [
 
 export const dynamic = "force-dynamic";
 
+function krwPayoutFailure(message: string): Response | null {
+  const code = message.includes("KRW_SEND_AMOUNT_MUST_EQUAL_REQUEST")
+    ? "KRW_SEND_AMOUNT_MUST_EQUAL_REQUEST"
+    : message.includes("WITHDRAWAL_KRW_PAYOUT_AMOUNT_MISMATCH")
+      ? "WITHDRAWAL_KRW_PAYOUT_AMOUNT_MISMATCH"
+      : null;
+  if (!code) return null;
+  return Response.json(
+    {
+      ok: false,
+      code,
+      message:
+        "출금 요청 금액 전액을 수수료 없이 수동 송금해야 합니다. 실제 송금액과 요청 금액을 확인해 주세요. 금액이 다르면 완료 처리할 수 없습니다.",
+    },
+    { status: 409 },
+  );
+}
+
 function externalSendFailure(message: string) {
   const code = message.includes("IDEMPOTENCY_KEY_REUSED")
     ? "IDEMPOTENCY_KEY_REUSED"
@@ -144,7 +162,9 @@ export async function POST(request: Request) {
       p_idempotency_key: body.idempotencyKey,
     });
     if (error) {
-      return externalSendFailure(error.message);
+      return (
+        krwPayoutFailure(error.message) ?? externalSendFailure(error.message)
+      );
     }
     if (
       !(await confirmedExternalSend(db, data, body.withdrawalId, "KRW_BANK"))
@@ -188,13 +208,33 @@ export async function POST(request: Request) {
       p_idempotency_key: body.idempotencyKey,
     });
     if (error) {
+      const payoutFailure = krwPayoutFailure(error.message);
+      if (payoutFailure) return payoutFailure;
       return Response.json(
         { ok: false, code: "COMMAND_FAILED" },
         { status: 503 },
       );
     }
+    if (!z.uuid().safeParse(data).success) {
+      return Response.json({ ok: false, code: "UNCONFIRMED" }, { status: 503 });
+    }
+    const finalized = await db
+      .from("withdrawal_requests")
+      .select("id,status,finalize_ledger_transaction_id")
+      .eq("id", body.withdrawalId)
+      .limit(1);
+    const receipt = finalized.data?.[0];
+    if (
+      finalized.error ||
+      receipt?.id !== body.withdrawalId ||
+      (receipt.status !== "COMPLETED" &&
+        receipt.status !== "LEDGER_FINALIZED") ||
+      receipt.finalize_ledger_transaction_id !== data
+    ) {
+      return Response.json({ ok: false, code: "UNCONFIRMED" }, { status: 503 });
+    }
     return Response.json(
-      { ok: true, ledgerTransactionId: data },
+      { ok: true, ledgerTransactionId: data, status: receipt.status },
       { status: 200 },
     );
   }

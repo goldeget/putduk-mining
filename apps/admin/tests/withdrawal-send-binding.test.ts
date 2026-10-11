@@ -20,7 +20,10 @@ vi.mock("@/lib/supabase/service", () => ({
 }));
 
 import { requireHighImpactPrincipal } from "@/app/(control)/_lib/command-gate";
-import { recordKrwExternalSendAction } from "@/app/(control)/withdrawals/krw-bank/actions";
+import {
+  finalizeWithdrawalLedgerAction,
+  recordKrwExternalSendAction,
+} from "@/app/(control)/withdrawals/krw-bank/actions";
 import { recordUsdtExternalSendAction } from "@/app/(control)/withdrawals/usdt/actions";
 import { POST } from "@/app/api/v1/admin/withdrawals/command/route";
 import { requireAdminCommand } from "@/lib/auth/principal";
@@ -45,9 +48,11 @@ function client(
   rpcError: { message: string } | null,
   receipt: unknown[] | null,
   readError: unknown = null,
+  initialReceipt: unknown = null,
 ) {
   const rpc = vi.fn().mockResolvedValue({ data: sendId, error: rpcError });
   const filters: [string, unknown][] = [];
+  let singleReads = 0;
   const from = vi.fn(() => {
     const query = {
       select: () => query,
@@ -56,6 +61,11 @@ function client(
         return query;
       },
       limit: () => Promise.resolve({ data: receipt, error: readError }),
+      maybeSingle: () =>
+        Promise.resolve({
+          data: singleReads++ === 0 ? initialReceipt : (receipt?.[0] ?? null),
+          error: readError,
+        }),
     };
     return query;
   });
@@ -110,6 +120,29 @@ function request(method: "KRW" | "USDT") {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify(body),
+    },
+  );
+}
+
+function finalizeForm() {
+  const data = new FormData();
+  data.set("withdrawalId", withdrawal);
+  data.set("confirmation", "FINALIZE_LEDGER");
+  return data;
+}
+
+function finalizeRequest() {
+  return new Request(
+    "https://admin.mining.putduk.com/api/v1/admin/withdrawals/command",
+    {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        action: "FINALIZE_LEDGER",
+        withdrawalId: withdrawal,
+        stepUpToken: "fresh-single-use-step-up",
+        idempotencyKey: "send-binding-key-01",
+      }),
     },
   );
 }
@@ -205,6 +238,354 @@ describe("external send result binding", () => {
       expect(await response.json()).toEqual({ ok: false, code: "UNCONFIRMED" });
     });
   }
+
+  it.each([
+    "KRW_SEND_AMOUNT_MUST_EQUAL_REQUEST",
+    "WITHDRAWAL_KRW_PAYOUT_AMOUNT_MISMATCH",
+  ])(
+    "KRW action exposes %s without confirming a failed manual send",
+    async (code) => {
+      const db = client({ message: `22023: ${code}` }, []);
+      const result = await recordKrwExternalSendAction(null, form("KRW"));
+      expect(result).toMatchObject({ ok: false, code });
+      expect(result.message).toContain("요청 금액 전액");
+      expect(result.message).toContain("수수료 없이 수동 송금");
+      expect(db.rpc).toHaveBeenCalledExactlyOnceWith(
+        "record_krw_external_send",
+        {
+          p_withdrawal_id: withdrawal,
+          p_bank_reference: "BANK-REF-01",
+          p_actual_krw_amount: "5000",
+          p_actor: owner,
+          p_sent_at: "2026-10-02T15:15:00.000Z",
+          p_idempotency_key: "send-binding-key-01",
+        },
+      );
+      expect(db.from).not.toHaveBeenCalled();
+    },
+  );
+
+  it.each([
+    "KRW_SEND_AMOUNT_MUST_EQUAL_REQUEST",
+    "WITHDRAWAL_KRW_PAYOUT_AMOUNT_MISMATCH",
+  ])("KRW API exposes %s as conflict without a false receipt", async (code) => {
+    const db = client({ message: code }, []);
+    const response = await POST(request("KRW"));
+    expect(response.status).toBe(409);
+    const result = await response.json();
+    expect(result).toMatchObject({ ok: false, code });
+    expect(result.message).toContain("요청 금액 전액");
+    expect(result).not.toHaveProperty("sendId");
+    expect(db.rpc).toHaveBeenCalledTimes(1);
+    expect(db.from).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    "KRW_SEND_AMOUNT_MUST_EQUAL_REQUEST",
+    "WITHDRAWAL_KRW_PAYOUT_AMOUNT_MISMATCH",
+  ])(
+    "completion action exposes %s without another financial command",
+    async (code) => {
+      const db = client({ message: `55000: ${code}` }, []);
+      const result = await finalizeWithdrawalLedgerAction(null, finalizeForm());
+      expect(result).toMatchObject({ ok: false, code });
+      expect(result.message).toContain("완료 처리할 수 없습니다");
+      expect(db.rpc).toHaveBeenCalledExactlyOnceWith(
+        "finalize_withdrawal_ledger",
+        {
+          p_withdrawal_id: withdrawal,
+          p_actor: owner,
+          p_idempotency_key: "send-binding-key-01",
+        },
+      );
+      // Only the existing pre-read ran. A rejected command cannot be confirmed
+      // through a follow-up read or trigger another adapter-side financial RPC.
+      expect(db.from).toHaveBeenCalledExactlyOnceWith("withdrawal_requests");
+    },
+  );
+
+  it.each([
+    "KRW_SEND_AMOUNT_MUST_EQUAL_REQUEST",
+    "WITHDRAWAL_KRW_PAYOUT_AMOUNT_MISMATCH",
+  ])(
+    "completion API exposes %s as conflict without false completion",
+    async (code) => {
+      const db = client({ message: code }, []);
+      const response = await POST(finalizeRequest());
+      expect(response.status).toBe(409);
+      const result = await response.json();
+      expect(result).toMatchObject({ ok: false, code });
+      expect(result.message).toContain("완료 처리할 수 없습니다");
+      expect(result).not.toHaveProperty("ledgerTransactionId");
+      expect(db.rpc).toHaveBeenCalledTimes(1);
+      expect(db.from).not.toHaveBeenCalled();
+    },
+  );
+
+  it("completion API confirms the requested completed ledger before success", async () => {
+    const db = client(null, [
+      {
+        id: withdrawal,
+        status: "COMPLETED",
+        finalize_ledger_transaction_id: sendId,
+      },
+    ]);
+    const response = await POST(finalizeRequest());
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual({
+      ok: true,
+      ledgerTransactionId: sendId,
+      status: "COMPLETED",
+    });
+    expect(db.from).toHaveBeenCalledExactlyOnceWith("withdrawal_requests");
+    expect(db.filters).toContainEqual(["id", withdrawal]);
+    expect(db.rpc).toHaveBeenCalledTimes(1);
+  });
+
+  it.each([
+    null,
+    {
+      id: otherWithdrawal,
+      status: "COMPLETED",
+      finalize_ledger_transaction_id: sendId,
+    },
+    {
+      id: withdrawal,
+      status: "EXTERNAL_SENT",
+      finalize_ledger_transaction_id: sendId,
+    },
+    {
+      id: withdrawal,
+      status: "COMPLETED",
+      finalize_ledger_transaction_id: otherWithdrawal,
+    },
+  ])(
+    "completion API cannot confirm a missing or unrelated completed ledger: %j",
+    async (receipt) => {
+      client(null, receipt ? [receipt] : []);
+      const response = await POST(finalizeRequest());
+      expect(response.status).toBe(503);
+      expect(await response.json()).toEqual({ ok: false, code: "UNCONFIRMED" });
+    },
+  );
+
+  it("completion API keeps an unreadable completed result unconfirmed", async () => {
+    client(
+      null,
+      [
+        {
+          id: withdrawal,
+          status: "COMPLETED",
+          finalize_ledger_transaction_id: sendId,
+        },
+      ],
+      { message: "read failed" },
+    );
+    const response = await POST(finalizeRequest());
+    expect(response.status).toBe(503);
+    expect(await response.json()).toEqual({ ok: false, code: "UNCONFIRMED" });
+  });
+
+  it("completion API cannot report a null RPC result as completed", async () => {
+    const db = client(null, []);
+    db.rpc.mockResolvedValue({ data: null, error: null });
+    const response = await POST(finalizeRequest());
+    expect(response.status).toBe(503);
+    expect(await response.json()).toEqual({ ok: false, code: "UNCONFIRMED" });
+    expect(db.from).not.toHaveBeenCalled();
+  });
+
+  it("completion action confirms the recorded finalized ledger", async () => {
+    const db = client(null, [
+      {
+        id: withdrawal,
+        status: "COMPLETED",
+        finalize_ledger_transaction_id: sendId,
+      },
+    ]);
+    expect(
+      await finalizeWithdrawalLedgerAction(null, finalizeForm()),
+    ).toMatchObject({ ok: true });
+    expect(db.rpc).toHaveBeenCalledTimes(1);
+    expect(db.from).toHaveBeenCalledTimes(2);
+  });
+
+  it("completion action keeps an unconfirmed ledger result unresolved", async () => {
+    const db = client(null, []);
+    expect(
+      await finalizeWithdrawalLedgerAction(null, finalizeForm()),
+    ).toMatchObject({ ok: false, code: "UNCONFIRMED" });
+    expect(db.rpc).toHaveBeenCalledTimes(1);
+    expect(db.from).toHaveBeenCalledTimes(2);
+  });
+
+  it("completion API preserves a bound legacy terminal replay and its actual status", async () => {
+    const db = client(null, [
+      {
+        id: withdrawal,
+        status: "LEDGER_FINALIZED",
+        finalize_ledger_transaction_id: sendId,
+      },
+    ]);
+    const response = await POST(finalizeRequest());
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual({
+      ok: true,
+      ledgerTransactionId: sendId,
+      status: "LEDGER_FINALIZED",
+    });
+    expect(db.rpc).toHaveBeenCalledExactlyOnceWith(
+      "finalize_withdrawal_ledger",
+      {
+        p_withdrawal_id: withdrawal,
+        p_actor: owner,
+        p_idempotency_key: "send-binding-key-01",
+      },
+    );
+  });
+
+  it.each(["COMPLETED", "LEDGER_FINALIZED"])(
+    "completion action preserves an already confirmed %s ledger without rerunning payment",
+    async (status) => {
+      const db = client(null, [], null, {
+        id: withdrawal,
+        status,
+        finalize_ledger_transaction_id: sendId,
+      });
+      const result = await finalizeWithdrawalLedgerAction(null, finalizeForm());
+      expect(result).toEqual({
+        ok: true,
+        message: "출금 원장은 이미 확정되어 있습니다.",
+      });
+      expect(db.rpc).not.toHaveBeenCalled();
+      expect(db.from).toHaveBeenCalledExactlyOnceWith("withdrawal_requests");
+    },
+  );
+
+  it("completion action accepts authoritative legacy replay without claiming promotion", async () => {
+    const db = client(null, [
+      {
+        id: withdrawal,
+        status: "LEDGER_FINALIZED",
+        finalize_ledger_transaction_id: sendId,
+      },
+    ]);
+    expect(await finalizeWithdrawalLedgerAction(null, finalizeForm())).toEqual({
+      ok: true,
+      message: "출금 원장은 이미 확정되어 있습니다.",
+    });
+    expect(db.rpc).toHaveBeenCalledExactlyOnceWith(
+      "finalize_withdrawal_ledger",
+      {
+        p_withdrawal_id: withdrawal,
+        p_actor: owner,
+        p_idempotency_key: "send-binding-key-01",
+      },
+    );
+  });
+
+  it.each([
+    {
+      id: withdrawal,
+      status: "PENDING",
+      finalize_ledger_transaction_id: sendId,
+    },
+    {
+      id: otherWithdrawal,
+      status: "COMPLETED",
+      finalize_ledger_transaction_id: sendId,
+    },
+    { status: "COMPLETED", finalize_ledger_transaction_id: sendId },
+    {
+      id: withdrawal,
+      status: "COMPLETED",
+      finalize_ledger_transaction_id: "not-a-uuid",
+    },
+  ])(
+    "completion action cannot confirm an invalid initial stored ledger: %j",
+    async (initialReceipt) => {
+      const db = client(null, [], null, initialReceipt);
+      expect(
+        await finalizeWithdrawalLedgerAction(null, finalizeForm()),
+      ).toMatchObject({
+        ok: false,
+        code: "UNCONFIRMED",
+      });
+      expect(db.rpc).toHaveBeenCalledExactlyOnceWith(
+        "finalize_withdrawal_ledger",
+        {
+          p_withdrawal_id: withdrawal,
+          p_actor: owner,
+          p_idempotency_key: "send-binding-key-01",
+        },
+      );
+      expect(db.from).toHaveBeenCalledTimes(2);
+    },
+  );
+
+  it.each([
+    {
+      id: withdrawal,
+      status: "PENDING",
+      finalize_ledger_transaction_id: sendId,
+    },
+    {
+      id: otherWithdrawal,
+      status: "COMPLETED",
+      finalize_ledger_transaction_id: sendId,
+    },
+    { status: "COMPLETED", finalize_ledger_transaction_id: sendId },
+    {
+      id: withdrawal,
+      status: "COMPLETED",
+      finalize_ledger_transaction_id: "not-a-uuid",
+    },
+    {
+      id: withdrawal,
+      status: "COMPLETED",
+      finalize_ledger_transaction_id: otherWithdrawal,
+    },
+  ])(
+    "completion action rejects an unbound RPC/read ledger result: %j",
+    async (receipt) => {
+      const db = client(null, [receipt]);
+      expect(
+        await finalizeWithdrawalLedgerAction(null, finalizeForm()),
+      ).toMatchObject({
+        ok: false,
+        code: "UNCONFIRMED",
+      });
+      expect(db.rpc).toHaveBeenCalledTimes(1);
+      expect(db.from).toHaveBeenCalledTimes(2);
+    },
+  );
+
+  it("completion action cannot confirm an unreadable finalized record", async () => {
+    const db = client(
+      null,
+      [
+        {
+          id: withdrawal,
+          status: "COMPLETED",
+          finalize_ledger_transaction_id: sendId,
+        },
+      ],
+      { message: "read failed" },
+    );
+    expect(
+      await finalizeWithdrawalLedgerAction(null, finalizeForm()),
+    ).toMatchObject({ ok: false, code: "UNCONFIRMED" });
+    expect(db.rpc).toHaveBeenCalledTimes(1);
+  });
+
+  it("completion action cannot confirm a null returned ledger id", async () => {
+    const db = client(null, []);
+    db.rpc.mockResolvedValue({ data: null, error: null });
+    expect(
+      await finalizeWithdrawalLedgerAction(null, finalizeForm()),
+    ).toMatchObject({ ok: false, code: "UNCONFIRMED" });
+    expect(db.from).toHaveBeenCalledExactlyOnceWith("withdrawal_requests");
+  });
 
   it("denied API access creates no service client or step-up consumption", async () => {
     vi.mocked(requireAdminCommand).mockResolvedValue({
