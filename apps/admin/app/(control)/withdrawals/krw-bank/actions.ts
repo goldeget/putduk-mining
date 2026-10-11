@@ -14,7 +14,7 @@ import { parseKstDateTimeInput } from "@/lib/time/kst-input";
 
 const recordSchema = z.object({
   withdrawalId: z.uuid(),
-  bankReference: z.string().trim().min(2).max(200),
+  bankReference: z.string().trim().min(4).max(200),
   actualKrw: z
     .string()
     .trim()
@@ -84,37 +84,51 @@ export async function recordKrwExternalSendAction(
   if (!access.ok) return access.result;
 
   const service = createAdminServiceClient();
-  const { data: existingSends, error: existingError } = await service
-    .from("withdrawal_external_sends")
-    .select("id")
-    .eq("withdrawal_id", parsed.data.withdrawalId)
-    .limit(1);
-  if (!existingError && existingSends && existingSends.length > 0) {
-    return {
-      ok: true,
-      message:
-        "외부 송금은 이미 기록되어 있습니다. 다시 보내지 말고 원장만 확정하세요.",
-    };
-  }
-
-  const { error } = await service.rpc("record_krw_external_send", {
-    p_withdrawal_id: parsed.data.withdrawalId,
-    p_bank_reference: parsed.data.bankReference,
-    p_actual_krw_amount: parsed.data.actualKrw,
-    p_actor: access.principal.userId,
-    p_sent_at: sentAt,
-    p_idempotency_key: prepared.idempotencyKey,
-  });
+  const { data: sendId, error } = await service.rpc(
+    "record_krw_external_send",
+    {
+      p_withdrawal_id: parsed.data.withdrawalId,
+      p_bank_reference: parsed.data.bankReference,
+      p_actual_krw_amount: parsed.data.actualKrw,
+      p_actor: access.principal.userId,
+      p_sent_at: sentAt,
+      p_idempotency_key: prepared.idempotencyKey,
+    },
+  );
 
   if (error) {
+    if (
+      error.message.includes("IDEMPOTENCY_KEY_REUSED") ||
+      error.message.includes("EXTERNAL_SEND_PAYLOAD_MISMATCH")
+    ) {
+      return {
+        ok: false,
+        code: error.message.includes("IDEMPOTENCY_KEY_REUSED")
+          ? "IDEMPOTENCY_KEY_REUSED"
+          : "EXTERNAL_SEND_PAYLOAD_MISMATCH",
+        message:
+          "기록된 송금과 입력 내용이 다릅니다. 다시 송금하지 말고 기존 기록을 확인해 주세요.",
+      };
+    }
     return mapRpcFailure(error.message, "계좌 송금 기록을 남기지 못했습니다.");
   }
+  if (!z.uuid().safeParse(sendId).success) return unconfirmedSend;
   const recordedSend = await service
     .from("withdrawal_external_sends")
-    .select("id")
+    .select("id,withdrawal_id,method")
+    .eq("id", sendId)
     .eq("withdrawal_id", parsed.data.withdrawalId)
+    .eq("method", "KRW_BANK")
     .limit(1);
-  if (recordedSend.error || !recordedSend.data?.length) return unconfirmedSend;
+  const receipt = recordedSend.data?.[0];
+  if (
+    recordedSend.error ||
+    !receipt ||
+    receipt.id !== sendId ||
+    receipt.withdrawal_id !== parsed.data.withdrawalId ||
+    receipt.method !== "KRW_BANK"
+  )
+    return unconfirmedSend;
   return {
     ok: true,
     message: "계좌 송금을 기록했습니다. 이제 원장만 확정하면 됩니다.",

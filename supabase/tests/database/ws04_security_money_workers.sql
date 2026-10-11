@@ -145,7 +145,7 @@ where account.user_id = ws04_ctx.user_a
 -- Phone availability shape
 select ok(
   (
-    select count(*) = 73
+    select count(*) = 74
       and bool_and(procedure.proconfig @> array['search_path=pg_catalog']::text[])
     from pg_proc as procedure
     join pg_namespace as namespace on namespace.oid = procedure.pronamespace
@@ -154,6 +154,7 @@ select ok(
       and procedure.oid in (
         'app_private.seal_worker_pause_attempt()'::regprocedure,
         'app_private.consume_local_cash_source(uuid,text)'::regprocedure,
+        'app_private.read_member_cash_event_terms()'::regprocedure,
         'app_private.assert_local_cash_credit(public.money_source_movements)'::regprocedure,
         'app_private.verify_local_cash_commit()'::regprocedure,
         'app_private.participate_published_event(uuid,uuid,uuid,uuid,text)'::regprocedure,
@@ -236,6 +237,7 @@ select ok(
         and procedure.oid not in (
           'app_private.seal_worker_pause_attempt()'::regprocedure,
           'app_private.consume_local_cash_source(uuid,text)'::regprocedure,
+        'app_private.read_member_cash_event_terms()'::regprocedure,
           'app_private.assert_local_cash_credit(public.money_source_movements)'::regprocedure,
           'app_private.verify_local_cash_commit()'::regprocedure,
           'app_private.participate_published_event(uuid,uuid,uuid,uuid,text)'::regprocedure,
@@ -309,7 +311,7 @@ select ok(
         'public.signup_phone_availability(text)'::regprocedure
         )
     ),
-  'application schemas allow exactly seventy-three reviewed SECURITY DEFINER functions'
+  'application schemas allow exactly seventy-four reviewed SECURITY DEFINER functions'
 );
 
 select is(
@@ -520,7 +522,7 @@ select is(
     'BANK-REF-WS04-001',
     5000,
     (select operator_id from ws04_ctx),
-    statement_timestamp(),
+    (select sent_at from public.withdrawal_external_sends where id = (select send_id from ws04_ctx)),
     'ws04-krw-send-0001'
   ),
   (select send_id from ws04_ctx),

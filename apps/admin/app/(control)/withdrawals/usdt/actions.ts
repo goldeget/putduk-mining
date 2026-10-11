@@ -14,12 +14,17 @@ import { parseKstDateTimeInput } from "@/lib/time/kst-input";
 
 const recordSchema = z.object({
   withdrawalId: z.uuid(),
-  network: z.string().trim().min(2).max(64),
-  txHash: z.string().trim().min(8).max(200),
+  network: z
+    .string()
+    .trim()
+    .toUpperCase()
+    .pipe(z.enum(["TRC20", "ERC20", "BEP20"])),
+  txHash: z.string().trim().min(8).max(128),
   actualUsdt: z
     .string()
     .trim()
-    .regex(/^[0-9]+(\.[0-9]{1,8})?$/),
+    .regex(/^[0-9]+(\.[0-9]{1,6})?$/)
+    .refine((value) => /[1-9]/.test(value)),
   conversionEvidence: z.string().trim().max(1000).optional(),
   sentAt: z.string().trim().min(1),
   confirmation: z.literal("RECORD_USDT_SEND"),
@@ -86,46 +91,59 @@ export async function recordUsdtExternalSendAction(
     : null;
 
   const service = createAdminServiceClient();
-  const { data: existingSends, error: existingError } = await service
-    .from("withdrawal_external_sends")
-    .select("id")
-    .eq("withdrawal_id", parsed.data.withdrawalId)
-    .limit(1);
-  if (!existingError && existingSends && existingSends.length > 0) {
-    return {
-      ok: true,
-      message:
-        "외부 송금은 이미 기록되어 있습니다. 다시 보내지 말고 원장만 확정하세요.",
-    };
-  }
-
-  const { error } = await service.rpc("record_usdt_external_send", {
-    p_withdrawal_id: parsed.data.withdrawalId,
-    p_network: parsed.data.network,
-    p_tx_hash: parsed.data.txHash,
-    p_actual_usdt_amount: parsed.data.actualUsdt,
-    p_conversion_evidence: conversionEvidence,
-    p_actor: access.principal.userId,
-    p_sent_at: sentAt,
-    p_idempotency_key: prepared.idempotencyKey,
-  });
+  const { data: sendId, error } = await service.rpc(
+    "record_usdt_external_send",
+    {
+      p_withdrawal_id: parsed.data.withdrawalId,
+      p_network: parsed.data.network,
+      p_tx_hash: parsed.data.txHash,
+      p_actual_usdt_amount: parsed.data.actualUsdt,
+      p_conversion_evidence: conversionEvidence,
+      p_actor: access.principal.userId,
+      p_sent_at: sentAt,
+      p_idempotency_key: prepared.idempotencyKey,
+    },
+  );
 
   if (error) {
+    if (
+      error.message.includes("IDEMPOTENCY_KEY_REUSED") ||
+      error.message.includes("EXTERNAL_SEND_PAYLOAD_MISMATCH")
+    ) {
+      return {
+        ok: false,
+        code: error.message.includes("IDEMPOTENCY_KEY_REUSED")
+          ? "IDEMPOTENCY_KEY_REUSED"
+          : "EXTERNAL_SEND_PAYLOAD_MISMATCH",
+        message:
+          "기록된 송금과 입력 내용이 다릅니다. 다시 송금하지 말고 기존 기록을 확인해 주세요.",
+      };
+    }
     return mapRpcFailure(error.message, "USDT 송금 기록을 남기지 못했습니다.");
   }
+  const unconfirmed: CommandActionResult = {
+    ok: false,
+    code: "UNCONFIRMED",
+    message:
+      "송금 기록을 아직 확인하지 못했습니다. 같은 요청으로 다시 확인해 주세요.",
+  };
+  if (!z.uuid().safeParse(sendId).success) return unconfirmed;
   const recordedSend = await service
     .from("withdrawal_external_sends")
-    .select("id")
+    .select("id,withdrawal_id,method")
+    .eq("id", sendId)
     .eq("withdrawal_id", parsed.data.withdrawalId)
+    .eq("method", "USDT_ADDRESS")
     .limit(1);
-  if (recordedSend.error || !recordedSend.data?.length) {
-    return {
-      ok: false,
-      code: "UNCONFIRMED",
-      message:
-        "송금 기록을 아직 확인하지 못했습니다. 같은 요청으로 다시 확인해 주세요.",
-    };
-  }
+  const receipt = recordedSend.data?.[0];
+  if (
+    recordedSend.error ||
+    !receipt ||
+    receipt.id !== sendId ||
+    receipt.withdrawal_id !== parsed.data.withdrawalId ||
+    receipt.method !== "USDT_ADDRESS"
+  )
+    return unconfirmed;
   return {
     ok: true,
     message:

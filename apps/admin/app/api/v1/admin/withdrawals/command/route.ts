@@ -25,7 +25,10 @@ const bodySchema = z.discriminatedUnion("action", [
       withdrawalId: z.string().uuid(),
       network: z.enum(["TRC20", "ERC20", "BEP20"]),
       txHash: z.string().trim().min(8).max(128),
-      actualUsdtAmount: z.string().regex(/^[0-9]+(\.[0-9]{1,6})?$/),
+      actualUsdtAmount: z
+        .string()
+        .regex(/^[0-9]+(\.[0-9]{1,6})?$/)
+        .refine((value) => /[1-9]/.test(value)),
       conversionEvidence: z.record(z.string(), z.unknown()).optional(),
       sentAt: z.string().datetime(),
       stepUpToken: z.string().min(16),
@@ -53,6 +56,42 @@ const bodySchema = z.discriminatedUnion("action", [
 ]);
 
 export const dynamic = "force-dynamic";
+
+function externalSendFailure(message: string) {
+  const code = message.includes("IDEMPOTENCY_KEY_REUSED")
+    ? "IDEMPOTENCY_KEY_REUSED"
+    : message.includes("EXTERNAL_SEND_PAYLOAD_MISMATCH")
+      ? "EXTERNAL_SEND_PAYLOAD_MISMATCH"
+      : "COMMAND_FAILED";
+  return Response.json(
+    { ok: false, code },
+    { status: code === "COMMAND_FAILED" ? 503 : 409 },
+  );
+}
+
+async function confirmedExternalSend(
+  db: ReturnType<typeof createAdminServiceClient>,
+  sendId: unknown,
+  withdrawalId: string,
+  method: "KRW_BANK" | "USDT_ADDRESS",
+): Promise<boolean> {
+  const id = z.uuid().safeParse(sendId);
+  if (!id.success) return false;
+  const { data, error } = await db
+    .from("withdrawal_external_sends")
+    .select("id,withdrawal_id,method")
+    .eq("id", id.data)
+    .eq("withdrawal_id", withdrawalId)
+    .eq("method", method)
+    .limit(1);
+  const receipt = data?.[0];
+  return (
+    !error &&
+    receipt?.id === id.data &&
+    receipt.withdrawal_id === withdrawalId &&
+    receipt.method === method
+  );
+}
 
 export async function POST(request: Request) {
   const access = await requireAdminCommand(request, HIGH_IMPACT_ROLES);
@@ -105,10 +144,12 @@ export async function POST(request: Request) {
       p_idempotency_key: body.idempotencyKey,
     });
     if (error) {
-      return Response.json(
-        { ok: false, code: "COMMAND_FAILED" },
-        { status: 503 },
-      );
+      return externalSendFailure(error.message);
+    }
+    if (
+      !(await confirmedExternalSend(db, data, body.withdrawalId, "KRW_BANK"))
+    ) {
+      return Response.json({ ok: false, code: "UNCONFIRMED" }, { status: 503 });
     }
     return Response.json({ ok: true, sendId: data }, { status: 200 });
   }
@@ -125,10 +166,17 @@ export async function POST(request: Request) {
       p_idempotency_key: body.idempotencyKey,
     });
     if (error) {
-      return Response.json(
-        { ok: false, code: "COMMAND_FAILED" },
-        { status: 503 },
-      );
+      return externalSendFailure(error.message);
+    }
+    if (
+      !(await confirmedExternalSend(
+        db,
+        data,
+        body.withdrawalId,
+        "USDT_ADDRESS",
+      ))
+    ) {
+      return Response.json({ ok: false, code: "UNCONFIRMED" }, { status: 503 });
     }
     return Response.json({ ok: true, sendId: data }, { status: 200 });
   }

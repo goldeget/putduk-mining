@@ -1100,12 +1100,54 @@ select is(
     'KRWREF1001',
     20000,
     (select admin_id from krw_ctx),
-    statement_timestamp(),
+    (select sent_at from public.withdrawal_external_sends where id = (select krw_send_id from krw_ctx)),
     'krw-journal-krw-send-0001'
   ),
   (select krw_send_id from krw_ctx),
   'completed KRW external send replay returns the original send'
 );
+
+-- Before-patch regressions: canonical command identity includes the transfer facts.
+select throws_ok($q$select public.record_krw_external_send(
+  gen_random_uuid(), 'KRWREF1001', 20000,
+  (select admin_id from krw_ctx),
+  (select sent_at from public.withdrawal_external_sends where id = (select krw_send_id from krw_ctx)),
+  'krw-journal-krw-send-0001')$q$, '22023', 'IDEMPOTENCY_KEY_REUSED',
+  'KRW key cannot report success for a different withdrawal');
+select throws_ok($q$select public.record_krw_external_send(
+  (select hold_id from krw_ctx), 'KRWREF1001', 19999,
+  (select admin_id from krw_ctx),
+  (select sent_at from public.withdrawal_external_sends where id = (select krw_send_id from krw_ctx)),
+  'krw-journal-krw-send-0001')$q$, '22023', 'IDEMPOTENCY_KEY_REUSED',
+  'KRW key cannot accept a changed actual amount');
+select throws_ok($q$select public.record_krw_external_send(
+  (select hold_id from krw_ctx), 'KRWREF_CHANGED', 20000,
+  (select admin_id from krw_ctx),
+  (select sent_at from public.withdrawal_external_sends where id = (select krw_send_id from krw_ctx)),
+  'krw-journal-krw-send-0002')$q$, '22023', 'EXTERNAL_SEND_PAYLOAD_MISMATCH',
+  'new KRW key cannot change the already recorded transfer');
+select throws_ok($q$select public.record_krw_external_send(
+  (select hold_id from krw_ctx), 'KRWREF1001', 20000,
+  (select admin_id from krw_ctx),
+  (select sent_at + interval '1 second' from public.withdrawal_external_sends where id = (select krw_send_id from krw_ctx)),
+  'krw-journal-krw-send-0001')$q$, '22023', 'IDEMPOTENCY_KEY_REUSED',
+  'KRW key preserves the originally supplied actual sent time');
+select is(public.record_krw_external_send(
+  (select hold_id from krw_ctx), '  KRWREF1001  ', 20000,
+  (select admin_id from krw_ctx),
+  (select sent_at from public.withdrawal_external_sends where id = (select krw_send_id from krw_ctx)),
+  'krw-journal-krw-send-0002'), (select krw_send_id from krw_ctx),
+  'same normalized KRW transfer under a fresh key cannot send again');
+select throws_ok($q$select public.record_krw_external_send(
+  gen_random_uuid(), 'KRWREF1001', 20000,
+  (select admin_id from krw_ctx),
+  (select sent_at from public.withdrawal_external_sends where id = (select krw_send_id from krw_ctx)),
+  'krw-journal-krw-send-0002')$q$, '22023', 'IDEMPOTENCY_KEY_REUSED',
+  'a successful fresh KRW retry key remains bound to its original withdrawal');
+select is((select count(*)::integer from public.withdrawal_external_sends
+  where withdrawal_id = (select hold_id from krw_ctx)), 1,
+  'KRW rejection and retry leave exactly one external transfer');
+
 select ok(
   exists (
     select 1
@@ -1333,12 +1375,71 @@ select is(
     1.250000,
     null,
     (select admin_id from krw_ctx),
-    statement_timestamp(),
+    (select sent_at from public.withdrawal_external_sends where id = (select usdt_external_send_id from krw_ctx)),
     'krw-journal-usdt-send-0001'
   ),
   (select usdt_external_send_id from krw_ctx),
   'completed USDT external send replay returns the original send'
 );
+
+select throws_ok($q$select public.record_usdt_external_send(
+  gen_random_uuid(), 'TRC20', 'abc123def456', 1.25, null,
+  (select admin_id from krw_ctx),
+  (select sent_at from public.withdrawal_external_sends where id = (select usdt_external_send_id from krw_ctx)),
+  'krw-journal-usdt-send-0001')$q$, '22023', 'IDEMPOTENCY_KEY_REUSED',
+  'USDT key cannot report success for a different withdrawal');
+select throws_ok($q$select public.record_usdt_external_send(
+  (select usdt_withdrawal_id from krw_ctx), 'ERC20', 'abc123def456', 1.25, null,
+  (select admin_id from krw_ctx),
+  (select sent_at from public.withdrawal_external_sends where id = (select usdt_external_send_id from krw_ctx)),
+  'krw-journal-usdt-send-0001')$q$, '22023', 'IDEMPOTENCY_KEY_REUSED',
+  'USDT key cannot change network');
+select throws_ok($q$select public.record_usdt_external_send(
+  (select usdt_withdrawal_id from krw_ctx), 'TRC20', 'abc123def457', 1.25, null,
+  (select admin_id from krw_ctx),
+  (select sent_at from public.withdrawal_external_sends where id = (select usdt_external_send_id from krw_ctx)),
+  'krw-journal-usdt-send-0002')$q$, '22023', 'EXTERNAL_SEND_PAYLOAD_MISMATCH',
+  'fresh USDT key cannot replace the recorded transaction');
+select throws_ok($q$select public.record_usdt_external_send(
+  (select usdt_withdrawal_id from krw_ctx), 'TRC20', 'abc123def456', 1.250001, null,
+  (select admin_id from krw_ctx),
+  (select sent_at from public.withdrawal_external_sends where id = (select usdt_external_send_id from krw_ctx)),
+  'krw-journal-usdt-send-0001')$q$, '22023', 'IDEMPOTENCY_KEY_REUSED',
+  'USDT key cannot change precision-safe actual amount');
+select throws_ok($q$select public.record_usdt_external_send(
+  (select usdt_withdrawal_id from krw_ctx), 'TRC20', 'abc123def456', 1.25, '{"rate":"1000"}',
+  (select admin_id from krw_ctx),
+  (select sent_at from public.withdrawal_external_sends where id = (select usdt_external_send_id from krw_ctx)),
+  'krw-journal-usdt-send-0001')$q$, '22023', 'IDEMPOTENCY_KEY_REUSED',
+  'USDT key binds conversion evidence');
+select throws_ok($q$select public.record_usdt_external_send(
+  (select usdt_withdrawal_id from krw_ctx), 'TRC20', 'abc123def456', 1.25, null,
+  (select admin_id from krw_ctx),
+  (select sent_at + interval '1 second' from public.withdrawal_external_sends where id = (select usdt_external_send_id from krw_ctx)),
+  'krw-journal-usdt-send-0001')$q$, '22023', 'IDEMPOTENCY_KEY_REUSED',
+  'USDT key preserves actual sent time');
+select is(public.record_usdt_external_send(
+  (select usdt_withdrawal_id from krw_ctx), ' trc20 ', ' ABC123DEF456 ', 1.250000, null,
+  (select admin_id from krw_ctx),
+  (select sent_at from public.withdrawal_external_sends where id = (select usdt_external_send_id from krw_ctx)),
+  'krw-journal-usdt-send-0002'), (select usdt_external_send_id from krw_ctx),
+  'same normalized USDT facts under a fresh key preserve original transfer');
+select throws_ok($q$select public.record_usdt_external_send(
+  gen_random_uuid(), 'TRC20', 'abc123def456', 1.25, null,
+  (select admin_id from krw_ctx),
+  (select sent_at from public.withdrawal_external_sends where id = (select usdt_external_send_id from krw_ctx)),
+  'krw-journal-usdt-send-0002')$q$, '22023', 'IDEMPOTENCY_KEY_REUSED',
+  'a successful fresh USDT retry key remains bound to its original withdrawal');
+select throws_ok($q$select public.record_usdt_external_send(
+  (select usdt_withdrawal_id from krw_ctx), 'TRC20', 'abc123def456', 'NaN'::numeric, null,
+  (select admin_id from krw_ctx),
+  (select sent_at from public.withdrawal_external_sends where id = (select usdt_external_send_id from krw_ctx)),
+  'krw-journal-usdt-send-nan')$q$, '22023', 'INVALID_USDT_EXTERNAL_SEND',
+  'nonfinite numeric cannot be accepted as a positive USDT payout fact');
+select is((select count(*)::integer from public.withdrawal_external_sends
+  where withdrawal_id = (select usdt_withdrawal_id from krw_ctx)), 1,
+  'USDT rejection and retry leave exactly one external transfer');
+
 
 update krw_ctx
 set finalize_id = public.finalize_withdrawal_ledger(
