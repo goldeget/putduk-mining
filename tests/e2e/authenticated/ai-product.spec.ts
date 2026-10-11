@@ -139,7 +139,7 @@ test("AI ownership, money denial, continuity, themes, and keyboard path", async 
   await loginAsMember(page, member, "/ai");
   await openAi(page);
 
-  const chat = page.getByRole("region", { name: "퍼뜩 AI 대화" });
+  const chat = page.getByRole("region", { name: "퍼뜩 AI 도우미 대화" });
   await expect(chat).toHaveAttribute(
     "data-ai-continuity",
     AI_CONVERSATION_CONTINUITY_MODE,
@@ -157,22 +157,32 @@ test("AI ownership, money denial, continuity, themes, and keyboard path", async 
   expect(denyResponse.ok()).toBe(true);
   await expect(
     page.getByText(
-      /잔액, 입출금 승인, 채굴 결과, 보상, 인증 또는 권한을 변경할 수 없습니다/,
+      "퍼뜩 AI는 설명과 내 상태 확인을 도와드려요. 잔액이나 출금 승인, 보상, 권한은 바꿀 수 없어요.",
     ),
   ).toBeVisible({ timeout: 30_000 });
 
   // The actual native dialog shares the verified member conversation with /ai.
   await page.getByRole("link", { name: "AI 화면 닫기" }).click();
   await expect(page).toHaveURL(/\/menu$/);
+  // The reconstructed Menu has its native AI destination. The same real
+  // conversation remains available in the Wallet help dialog.
+  await page
+    .locator("nav.product-navigation:visible")
+    .getByRole("link", { name: "지갑", exact: true })
+    .click();
+  await expect(page).toHaveURL(/\/wallet$/);
   const launcher = page.getByRole("button", { name: "AI 도움", exact: true });
   await launcher.click();
-  const dialog = page.getByRole("dialog", { name: "퍼뜩 AI", exact: true });
+  const dialog = page.getByRole("dialog", {
+    name: "퍼뜩 AI 도우미",
+    exact: true,
+  });
   await expect(dialog).toBeVisible();
-  await expect(page.getByRole("region", { name: "퍼뜩 AI 대화" })).toHaveCount(
-    1,
-  );
+  await expect(
+    page.getByRole("region", { name: "퍼뜩 AI 도우미 대화" }),
+  ).toHaveCount(1);
   await expect(dialog.locator(".ai-message--assistant")).toContainText(
-    /잔액, 입출금 승인/,
+    "퍼뜩 AI는 설명과 내 상태 확인을 도와드려요. 잔액이나 출금 승인, 보상, 권한은 바꿀 수 없어요.",
   );
   await expect(page.locator("#main-content")).toHaveCSS("overflow", "hidden");
   const composer = dialog.getByRole("textbox", {
@@ -191,6 +201,11 @@ test("AI ownership, money denial, continuity, themes, and keyboard path", async 
     await dialog.getByRole("link", { name: "넓게 보기", exact: true }).click();
   } else {
     await dialog.getByRole("button", { name: "닫기", exact: true }).click();
+    await page
+      .locator("nav.product-navigation:visible")
+      .getByRole("link", { name: "더보기", exact: true })
+      .click();
+    await expect(page).toHaveURL(/\/menu$/);
     // 메뉴 카드 접근 이름은 제목과 설명을 함께 가진다. exact "퍼뜩 AI"는 0건이라
     // 액션 제한시간(테스트 전체)까지 기다린다. 정착된 메뉴 링크 1개만 연다.
     const aiMenuLink = page
@@ -199,7 +214,7 @@ test("AI ownership, money denial, continuity, themes, and keyboard path", async 
     await expect(aiMenuLink).toHaveCount(1);
     await aiMenuLink.click();
   }
-  await expect(page).toHaveURL(/\/ai$/);
+  await expect(page).toHaveURL(/\/ai(?:\?|$)/);
   await expect(page.locator("dialog[open]")).toHaveCount(0);
   await expect(page.locator("#main-content")).toHaveCSS("overflow", "auto");
   await expect(

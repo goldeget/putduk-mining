@@ -16,11 +16,13 @@ alwaysApply: true
 
 ## 필수 hybrid 패턴 (`.github/workflows/ci.yml`)
 
-1. **`e2e-app-build`** — workflow당 1회 `pnpm build` (회원+운영자). artifact `e2e-next-production`: `.next`, `apps/admin/.next` (repo 상대 경로 유지).
+1. **`e2e-app-build`** — E2E 소비 job용 `pnpm build` 1회 (회원+운영자). `Application gates`의 일반 build 검증과 구분한다. artifact `e2e-next-production`: `.next`, `apps/admin/.next` (repo 상대 경로 유지).
 2. **`authenticated`** — `needs: [webserver-lifecycle, e2e-app-build]`, matrix **8-shard** 유지, shard마다 isolated `supabase start` + `db:reset`, artifact download 후 Playwright step에 **`E2E_NEXT_START=1`** (next start only).
 3. **`typography-protected`** — `needs: [e2e-app-build]`, 동일 artifact download, **`E2E_PREBUILT_APPS=1`** 로 `typography-protected-servers.mjs` 빌드 생략·next start only.
 4. **`ci-budget`** — 다른 job과 함께 시작해 정확한 repo/run/attempt/head와 필수 품질 job 17개를 확인한다. 18m30s에 미완료면 취소하고, 응답하지 않으면 force cancel한다. 종료 여유를 포함한 전체 20분 초과는 병합 불가다.
 5. authenticated step 18m / job 19m는 실패 실행의 상한이다. 개별 테스트 시간·실제 TOTP 대기·assertion·retry는 유지한다. 취소/timeout을 통과로 기록하지 않는다. 속도 개선은 서버 모드·공유 빌드·병렬화·캐시로 한다.
+6. authenticated scheduler는 현재 후보의 전체 목록을 8개 lane에 정확히 한 번씩 배분하며, `playwright-report/ci-shard-evidence/`의 목록·실행 증거로 확인한다. source/head/base와 run/attempt를 구분하고 dirty local tree를 exact commit 검증으로 확대하지 않는다.
+7. worker는 실제 Vitest JSON 실행을 검사한 sanitized `test-results/worker/report.json`을 `worker-runtime`으로 반드시 업로드한다. missing/empty/stale/failed/skipped/todo 결과는 전체 worker gate 통과가 아니다.
 
 ## 금지 회귀 (에이전트·리뷰어 공통)
 
@@ -32,6 +34,7 @@ alwaysApply: true
 - 전체 CI가 **20분 초과**한 후보 병합. 후속 개선 계획이나 GitHub green만으로 예외를 만들지 않는다.
 - 필수 job 누락·중복·skip·일부 재실행을 전체 성공으로 기록. push의 PR 전용 diff skip만 허용한다.
 - Playwright CI의 `--fail-on-flaky-tests` 제거. retry로만 성공한 불안정 검사는 원인을 고치며, retry 자체는 진단 증거를 위해 유지한다.
+- production coupling UNKNOWN 상태의 원격 작업·배포. hook/app/정책 접근 거절은 안전 증거가 아니다. live 영향은 정확한 대상·SHA·효과에 대한 사람의 명시 승인 전 금지 (`GIT-CI-CD-POLICY.md`).
 
 ## workflow 변경 전 체크리스트
 

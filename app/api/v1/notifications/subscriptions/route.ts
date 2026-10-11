@@ -3,26 +3,36 @@ import { z } from "zod";
 import { apiError, apiSuccess } from "@/lib/api/http";
 import { getVerifiedIdentity } from "@/lib/auth/session";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { readBoundedJsonBody } from "@/lib/api/request-body";
+import {
+  hasPushSubscriptionOrigin,
+  pushSubscriptionSchema,
+} from "@/domain/notifications/push-subscription";
 
-const subscriptionSchema = z.object({
+const removalSchema = z.strictObject({
   endpoint: z.url().startsWith("https://").max(2048),
-  expirationTime: z
-    .number()
-    .int()
-    .positive()
-    .max(8_640_000_000_000_000)
-    .nullable(),
-  keys: z.object({
-    auth: z.string().min(8).max(256),
-    p256dh: z.string().min(32).max(512),
-  }),
 });
-
-const removalSchema = z.object({ endpoint: z.url().startsWith("https://") });
+async function input(request: Request) {
+  if (
+    request.headers.get("content-type")?.split(";")[0]?.trim().toLowerCase() !==
+    "application/json"
+  )
+    return null;
+  const result = await readBoundedJsonBody(request, 8192);
+  return result.ok ? result.value : null;
+}
+function originDenied() {
+  return apiError({
+    code: "ORIGIN_DENIED",
+    message: "앱에서 직접 다시 시도해 주세요.",
+    status: 403,
+  });
+}
 
 export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
+  if (!hasPushSubscriptionOrigin(request)) return originDenied();
   const identity = await getVerifiedIdentity();
   if (!identity) {
     return apiError({
@@ -32,9 +42,7 @@ export async function POST(request: Request) {
     });
   }
 
-  const body = subscriptionSchema.safeParse(
-    await request.json().catch(() => null),
-  );
+  const body = pushSubscriptionSchema.safeParse(await input(request));
   if (!body.success) {
     return apiError({
       code: "INVALID_PUSH_SUBSCRIPTION",
@@ -75,6 +83,7 @@ export async function POST(request: Request) {
 }
 
 export async function DELETE(request: Request) {
+  if (!hasPushSubscriptionOrigin(request)) return originDenied();
   const identity = await getVerifiedIdentity();
   if (!identity) {
     return apiError({
@@ -84,7 +93,7 @@ export async function DELETE(request: Request) {
     });
   }
 
-  const body = removalSchema.safeParse(await request.json().catch(() => null));
+  const body = removalSchema.safeParse(await input(request));
   if (!body.success) {
     return apiError({
       code: "INVALID_PUSH_SUBSCRIPTION",

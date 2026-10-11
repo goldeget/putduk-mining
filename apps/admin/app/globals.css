@@ -242,8 +242,29 @@ input:focus-visible {
   flex-shrink: 0;
   margin: 0 7px 48px;
 }
+.control-menu-toggle {
+  display: none;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: 13px;
+  background: var(--surface);
+  color: var(--ink);
+  padding: 10px 14px;
+  font-weight: 720;
+  cursor: pointer;
+}
+.control-rail__menu {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
 .control-rail nav {
   display: grid;
+  grid-auto-rows: max-content;
   flex: 1;
   min-height: 80px;
   overflow-y: auto;
@@ -252,7 +273,8 @@ input:focus-visible {
   margin-bottom: 16px;
 }
 .control-rail nav a {
-  display: flex;
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
   align-items: center;
   gap: 13px;
   border: 1px solid transparent;
@@ -266,10 +288,14 @@ input:focus-visible {
   background: rgba(226, 183, 92, 0.055);
   color: var(--ink);
 }
-.control-rail nav span {
+.control-rail nav .control-nav__index {
   color: var(--gold);
   font-size: 0.875rem;
   letter-spacing: 0.12em;
+}
+.control-nav__label {
+  min-width: 0;
+  line-height: 1.5;
 }
 .operator-card {
   display: grid;
@@ -311,7 +337,8 @@ input:focus-visible {
   min-width: 0;
 }
 .control-topbar {
-  height: 58px;
+  min-height: 58px;
+  height: auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -319,6 +346,20 @@ input:focus-visible {
   padding: 0 clamp(20px, 4vw, 56px);
   color: var(--muted);
   font-size: 0.875rem;
+}
+.admin-skip-link {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 100;
+  transform: translateY(-200%);
+  border-radius: 12px;
+  padding: 14px 20px;
+  background: var(--gold-soft);
+  color: var(--base);
+}
+.admin-skip-link:focus {
+  transform: translateY(0);
 }
 .control-topbar div {
   display: flex;
@@ -1015,51 +1056,65 @@ input:focus-visible {
     grid-template-columns: 1fr;
   }
 }
-@media (max-width: 760px) {
+@media (max-width: 1099px) {
   .control-shell {
     display: block;
-    /* 본문을 위로 올려도 세션 종료가 화면 아래에 남는다. */
-    padding-bottom: calc(13rem + env(safe-area-inset-bottom));
   }
   .control-rail {
     position: static;
     height: auto;
     overflow-y: visible;
-    display: grid;
-    grid-template-columns: 1fr auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
     border-right: 0;
     border-bottom: 1px solid var(--line);
     padding: 16px;
   }
+  .control-rail[data-menu-open="true"] {
+    max-height: calc(
+      100svh - env(safe-area-inset-top) - env(safe-area-inset-bottom)
+    );
+    flex-wrap: nowrap;
+  }
   .brand-lockup--rail {
-    grid-column: 1 / -1;
-    grid-row: 1;
     margin: 0;
   }
+  .control-menu-toggle {
+    display: inline-flex;
+    flex-shrink: 0;
+    max-width: 100%;
+  }
+  .control-rail__menu {
+    flex: 0 1 auto;
+    width: 100%;
+    overflow: hidden;
+  }
+  .control-rail[data-menu-open="false"] .control-rail__menu {
+    display: none;
+  }
   .control-rail nav {
-    grid-column: 1 / -1;
-    grid-row: 3;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
     min-width: 0;
-    min-height: 0;
-    max-width: 100%;
-    margin-top: 16px;
-    margin-bottom: 0;
-    overflow: visible;
-  }
-  /* 메뉴 11개는 줄바꿈한 채 두고, 세션 종료는 화면 아래에 고정한다. */
-  .operator-card {
-    position: fixed;
-    z-index: 20;
-    right: max(16px, env(safe-area-inset-right));
-    bottom: max(12px, env(safe-area-inset-bottom));
-    left: max(16px, env(safe-area-inset-left));
-    margin-top: 0;
-  }
-  .operator-card form button {
     min-height: 44px;
+    max-width: 100%;
+    padding: 4px;
+    margin-bottom: 16px;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    scroll-padding-block: 4px;
   }
+  .operator-card {
+    margin-top: 0;
+    max-height: 45svh;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+  }
+}
+@media (max-width: 760px) {
   .control-topbar {
     display: flex;
     height: auto;

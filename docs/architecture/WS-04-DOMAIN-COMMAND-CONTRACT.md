@@ -8,6 +8,57 @@ must not invent schema, columns, or public function aliases. Agent **A**
 implements them in a **new** migration only. Applied migrations must not be
 edited.
 
+2026-10-09 isolated review extension: `claim_system_jobs(text,integer,integer)`
+retains its name and required service authority. A same-name overload adds an
+explicit required `p_allow_funding boolean`; false excludes funding jobs while
+permitting independent operational jobs. The original three-argument path is
+also gated by the database's GLOBAL/SETTLEMENT/NEW_MINING controls. Component
+locks use the canonical safe-mode command's matching shared/exclusive keys.
+Funding completion retains member-lock, live-fence and sole-writer authority.
+The closed private trigger `app_private.seal_worker_pause_attempt()` is the
+explicitly reviewed 69th definer: it seals actual funding-attempt start and
+canonical pause exemptions, with no callable role grant or raw private writer.
+Mutable service failure labels and caller timestamps never grant retry budget.
+This extends local verification only; it authorizes no Production operation.
+
+2026-10-09 delegated local cash extension: the canonical
+`participate_published_event` name gains an explicit fifth
+`p_cash_terms_digest text` argument. The four-argument NONE participation path
+is unchanged. The member API accepts an optional exact digest, uses only the
+verified member client, and requires a separately validated positive cash
+consent receipt plus owned participant readback. It accepts no client amount,
+beneficiary, qualification or budget. Member consent UI remains a separate
+product acceptance gate.
+
+The four additional private fixed-path definers are
+`consume_local_cash_source(uuid,text)`,
+`assert_local_cash_credit(public.money_source_movements)`,
+`verify_local_cash_commit()`, and
+`participate_published_event(uuid,uuid,uuid,uuid,text)`. The exact roster is now
+74 after the 2026-10-11 read-boundary hardening below. The commit verifier is
+trigger-only; source consumption and BONUS
+validation require the closed service boundary, while explicit participation
+uses the authenticated same-name public INVOKER wrapper. Except for the
+read-only terms boundary below, all other cash helpers are INVOKER with no
+client/service generic writer grant. Canonical
+ledger/source integrity and outbox lease checks remain mandatory.
+
+Private originals have FORCE RLS and no raw service write grants. The small
+`member_cash_event_terms` originally used an intentional owner projection.
+The 2026-10-11 hardening keeps the same view name and eight field types, with
+`security_invoker` and `security_barrier`. Its only source is the reviewed
+private no-argument definer `read_member_cash_event_terms()`, which checks
+the actual authenticated role, JWT role and non-null member UID even when
+called directly. Missing identity or disabled configuration returns zero rows.
+The exact roster is 74; no raw private-table role grant is added. It exposes
+only sealed
+event/revision/terms/digest/amount/window fields to authenticated members,
+with current event availability and publication-time gating. It exposes no
+budget, risk formula
+or private source map. Installation creates no enabled configuration or
+funded policy. Only synthetic LOCAL_QA activation has been verified; real
+treasury, operator activation and Production remain separately locked.
+
 Existing `withdrawal_destinations.destination_type` already includes
 `KRW_BANK` and `USDT_ADDRESS`. That migration stays untouched.
 `USDT_ADDRESS` is an **active V1 withdrawal destination**, not dormant.
@@ -37,6 +88,54 @@ If a welcome withdrawal policy row is absent, a later migration may seed only
 the already approved no-funding KRW 5,000 ceiling. Do not activate DRAFT
 catalog rows or invent economic values. Any value not already contracted is
 `HUMAN_DECISION_REQUIRED`.
+
+### Phase 2 catalog and allocation command extension (2026-10-07)
+
+The user-authorized Phase 2 implementation adds these canonical entrypoints;
+they are not aliases for a ledger writer or the legacy settlement function:
+
+- `public.read_product_catalog_review_state`: operator-bound review of the
+  draft snapshot, exact content digest, revision and approval/publication history.
+- `public.manage_product_catalog`: explicit `PREVIEW`, `APPROVE`, `PUBLISH`
+  operations against one catalog ID, expected revision and exact preview digest.
+  Trusted arguments bind the verified actor, live admin application session,
+  authentication session and AAL2. Approval and publication additionally consume
+  their one-use step-up proof atomically with the logical operation receipt,
+  audit and outbox event. The API origin guard is mandatory; database authority
+  validation is independent. A completed same-key replay returns its original
+  receipt; a changed payload is rejected.
+- `public.confirm_funding_allocation`: authenticated member confirmation of a
+  published catalog, expected allocation revision and selected product/rule
+  IDs with exact integer allocation basis points. Its explicit operation is
+  `READ` or `CONFIRM`: READ requires every mutation argument to be null and
+  returns only the owner's safe revision, catalog and selection projection;
+  missing confirmation fields never become an implicit successful read. The
+  confirmation request supplies product IDs and allocation basis points; the
+  database derives the exact approved rule IDs without exposing rule payloads.
+  The owner comes exclusively
+  from the verified authenticated database identity. The command accepts no
+  owner override, reward, purchase price, fee, client effective time or settlement
+  amount. It seals an append-only allocation original with member audit and
+  outbox provenance under the member lock, then applies its server-time boundary
+  through the private engine adapter in the same transaction. If that adapter
+  cannot prove the transition, the entire confirmation fails without an effect.
+  This one narrow member writer is `SECURITY DEFINER`, with a fixed `pg_catalog`
+  search path and fully qualified internal references. EXECUTE belongs only to
+  `authenticated`; PUBLIC, anon and service-role execution are revoked. It
+  validates `auth.uid()` and `auth.role()` without granting members direct
+  private-table, audit, event or policy-reader privileges. The definer context
+  does not replace signed member authority or the private adapter's proof checks.
+
+These interfaces implement the existing operator-approved catalog workflow and
+global allocation contract. They do not approve the seeded draft identities,
+sources or visuals and do not authorize production publication or remote writes.
+Published snapshots and their children remain immutable. A seed digest is not
+an operator preview or approval receipt. Existing unapproved immutable rule
+originals cannot be rewritten into approval evidence. The bounded neutral rule
+adapter requires an explicit operator attestation of the unchanged 1.00x rule;
+unrecognized effects are rejected rather than interpreted as an empty rule.
+The actual migration and tested receipt schemas define the implemented argument
+types; command existence alone is not functional or product-completion evidence.
 
 ---
 
@@ -464,3 +563,35 @@ deposit, withdrawal, wallet, source movement or settlement writer. The
 existing names and separation rules above remain authoritative. Approved
 policy publication does not establish principal coverage, activate the
 economic engine or approve a product/catalog selection.
+
+## 8. Current source coverage correctness (2026-10-06)
+
+The current ordinary `request_krw_withdrawal` / `request_usdt_withdrawal` paths
+reserve verified `MINING_REWARD` only; insufficient mining does not fall back to
+principal. Qualified START retains its existing no-funding, KRW 5,000 ceiling and
+zero-fee conversion/withdrawal path. Principal recovery is a separate explicit
+confirmation contract and is not enabled by the ordinary mining command.
+
+`app_private.non_principal_withdrawal_coverage_verified(public.withdrawal_requests)`
+and `app_private.withdrawal_coverage_entries_verified(uuid,uuid,bigint,text)` are
+service-only INVOKER readers with a fixed path. They bind source coverage to exact
+immutable mining reservations or qualified START conversion originals, the existing
+balanced hold/request/event/receipt, and actual terminal journal/audit/event/send
+and finalized wallet debit. They add no monetary writer, public RPC alias, source
+backfill, HOLD debit or synthetic refund. Existing mining terminal source receipts
+remain required; qualified START does not acquire fabricated movement rows.
+
+Migration `20261006121500` retains summary schema 2 and the separate available,
+held, recovered and cumulative principal values. Unknown originals still return
+UNRESOLVED with principal NULL. The actual canonical lifecycle regression passed
+36 SQL assertions; the full current local pgTAP baseline passed 47 files / 1,522
+assertions and DB lint passed. These facts do not activate funded mining. The
+trusted funded producer/cursor/used/carry/earned posting and worker completion
+integration remain unimplemented; `record_mining_settlement` stays revoked.
+
+
+## Local reviewed operational extension — 2026-10-09
+
+`public.schedule_due_funding_jobs(integer, uuid)` is a service-role-only, SECURITY INVOKER operational producer. It accepts a bounded batch of 1–100 members and a UUID continuation cursor; it accepts no amount, rate, time or allocation input. The current runtime-2 sealed state, original source coverage and existing safe-mode/condition validators determine eligibility. It releases only a never-attempted dormant `FUNDING_MINING_TICK_V1` original produced by the existing private producer; retry, running, terminal and unrelated jobs remain unchanged.
+
+The worker invokes this producer before canonical job claim. The existing fenced `complete_system_job` path remains the sole mining ledger writer. The next poll discovers the next-cycle state created atomically by that writer. This operational extension does not alias any WS-04 financial command, approve a new economy rule, change allocations, or authorize remote deployment. Native acceptance evidence is required before declaring the local connection verified.

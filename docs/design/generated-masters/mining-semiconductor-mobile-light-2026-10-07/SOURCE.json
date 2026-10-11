@@ -1,0 +1,21 @@
+{
+  "generated_at_utc": "2026-10-07",
+  "generator": "native GPT image generation",
+  "original": "/workspace/generated_images/exec-360c8ae7-6c2a-4ace-947d-c66ead171df6.png",
+  "original_sha256": "3dcf4cfc2c023fd86fd64d7a8c3f7c762316767600bd9743f1dc05feccd1b62e",
+  "original_dimensions": [1086, 1448],
+  "source_references": [
+    {
+      "path": "docs/design/generated-masters/mining-semiconductor-desktop-light-2026-10-06/mining-semiconductor-desktop-light-master-v1.png",
+      "sha256": "ed3a5b8276cc839199bb4cfe638bb030af0b4cfa5bb29a236bc9e607e45504cd",
+      "full_original_viewed": true
+    },
+    {
+      "path": "docs/design/generated-masters/mining-semiconductor-mobile-dark-2026-10-06/mining-semiconductor-mobile-dark-master-v1.png",
+      "sha256": "00bf415bfdf3fd8c79e05d36ba47e1e0a3617414d6d824f140923dd15a1f2d41",
+      "full_original_viewed": true
+    }
+  ],
+  "mobile_light_original_supplied": false,
+  "visual_acceptance": false
+}

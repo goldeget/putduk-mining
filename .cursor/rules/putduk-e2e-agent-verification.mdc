@@ -13,17 +13,17 @@ alwaysApply: true
 2. **좁은 재실행** — 아래 npm 스크립트로 **실패·변경 spec만** 돌린다.
 3. **full 1회** — merge/CI 직전·사용자가 full을 요청했을 때만 `pnpm test:e2e:auth:full`(또는 `test:e2e:authenticated`).
 
-1건 실패 직후 **186개 전체 authenticated config를 반복 재실행하지 않는다.**
+1건 실패 직후 **현재 후보의 전체 authenticated inventory를 반복 재실행하지 않는다.** 고정 test 수 대신 해당 후보의 목록·실행 증거를 확인한다.
 
 ## npm (authenticated config)
 
-| 목적 | 명령 |
-| --- | --- |
-| 직전 실패만 | `pnpm test:e2e:auth:last-failed` |
-| 파일 지정 | `pnpm test:e2e:auth:file -- tests/e2e/authenticated/<파일>.spec.ts` |
-| grep | `pnpm test:e2e:auth:grep -- --grep "패턴"` |
-| domain focused | `pnpm test:e2e:auth:smoke` 등 (WS-05 표) |
-| full regression | `pnpm test:e2e:auth:full` |
+| 목적            | 명령                                                                |
+| --------------- | ------------------------------------------------------------------- |
+| 직전 실패만     | `pnpm test:e2e:auth:last-failed`                                    |
+| 파일 지정       | `pnpm test:e2e:auth:file -- tests/e2e/authenticated/<파일>.spec.ts` |
+| grep            | `pnpm test:e2e:auth:grep -- --grep "패턴"`                          |
+| domain focused  | `pnpm test:e2e:auth:smoke` 등 (WS-05 표)                            |
+| full regression | `pnpm test:e2e:auth:full`                                           |
 
 `auth:file` / `auth:grep` / `auth:one`은 **반드시 `--` 뒤에 인자**를 넘긴다. 경로·grep 없이 돌리면 chromium 프로젝트 전체가 잡힌다.
 
@@ -33,6 +33,7 @@ alwaysApply: true
 - **`pnpm db:reset` 직후 full E2E** — reset 후에는 focused/`last-failed`만; full은 stack·env 안정 확인 후 **별도** 실행
 - **동일 후보 SHA에서 authenticated full 3회 이상** (허용: 1차 + 수정 후 최종 1회 = **최대 2회**; 그 이상은 사용자·CI 승인)
 - **push / merge / 원격 CI** — 사용자 명시 승인 전 (프로젝트 boundary)
+- **production coupling UNKNOWN인 원격 작업** — hook/app/배포 정책 미확인을 안전으로 간주하지 않는다. live 영향은 정확한 대상·SHA·효과에 대한 사람의 명시 승인 전 금지 (`GIT-CI-CD-POLICY.md`).
 - PowerShell에서 `pnpm … *> log.txt`만 두고 장시간 방치 — `Tee-Object -FilePath … -Append` 또는 Shell **`block_until_ms`** 로 주기 확인
 
 ## hung (무한 대기 금지)

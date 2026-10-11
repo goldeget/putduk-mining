@@ -1,0 +1,258 @@
+.page {
+  max-inline-size: 76rem;
+  margin-inline: auto;
+  padding: clamp(1rem, 3vw, 2.5rem);
+  color: var(--text-primary);
+}
+
+.heading {
+  display: grid;
+  gap: 0.6rem;
+  margin-block-end: 1.5rem;
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-block-size: 2.75rem;
+  inline-size: fit-content;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.heading h1 {
+  margin: 0;
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+  letter-spacing: -0.055em;
+}
+
+.heading p {
+  max-inline-size: 33rem;
+  margin: 0;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  word-break: keep-all;
+}
+
+.hero {
+  position: relative;
+  min-block-size: 18rem;
+  overflow: hidden;
+  isolation: isolate;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-xl);
+  background: var(--surface-default);
+  margin-block-end: 2rem;
+}
+
+.scene {
+  position: absolute;
+  z-index: -1;
+  inset-block: 0;
+  inset-inline-end: 0;
+  inline-size: 54%;
+  opacity: 0.85;
+}
+
+.balance {
+  position: relative;
+  display: grid;
+  gap: 0.7rem;
+  inline-size: 56%;
+  padding: clamp(1.5rem, 4vw, 3rem);
+  background: var(--surface-default);
+}
+
+.balance > span {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.balance > strong {
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.05em;
+  overflow-wrap: anywhere;
+}
+
+.balance p {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+.balance b {
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-block-start: 0.75rem;
+}
+
+.actions a {
+  flex: 1;
+  min-inline-size: 7rem;
+  text-align: center;
+}
+
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(15rem, 1fr);
+  align-items: start;
+  gap: 1.5rem;
+  margin-block-end: 2rem;
+}
+
+.formPanel {
+  min-inline-size: 0;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border-radius: var(--radius-xl);
+  scroll-margin-block-start: 1rem;
+}
+
+.formPanel > h2,
+.guide h2 {
+  margin: 0 0 1.25rem;
+  font-size: 1.25rem;
+  letter-spacing: -0.03em;
+}
+
+.aside {
+  display: grid;
+  gap: 1rem;
+  min-inline-size: 0;
+}
+
+.welcome,
+.guide {
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  background: var(--surface-default);
+}
+
+.welcome > summary {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-block-size: 3.5rem;
+  padding: 1rem 1.25rem;
+  color: var(--brand-primary);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.welcome > summary::after {
+  content: "+";
+  margin-inline-start: auto;
+}
+
+.welcome[open] > summary::after {
+  content: "−";
+}
+
+.welcomeBody {
+  display: grid;
+  gap: 1rem;
+  padding: 0 1.25rem 1.25rem;
+}
+
+.welcomeBody p,
+.guide p,
+.guide li {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  word-break: keep-all;
+}
+
+.welcomeFacts {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0;
+}
+
+.welcomeFacts > div {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.welcomeFacts dt {
+  color: var(--text-secondary);
+}
+
+.welcomeFacts dd {
+  margin: 0;
+  font-weight: 600;
+}
+
+.guide {
+  padding: 1.25rem;
+}
+
+.guide ol {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0 0 1rem;
+  padding-inline-start: 1.25rem;
+}
+
+.back:focus-visible,
+.welcome > summary:focus-visible {
+  outline: 2px solid var(--brand-primary);
+  outline-offset: 4px;
+}
+
+@media (max-width: 799px) {
+  .workspace {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 479px) {
+  .hero {
+    min-block-size: 0;
+  }
+
+  .scene {
+    inset-block-start: 0;
+    block-size: 9rem;
+    inline-size: 42%;
+  }
+
+  .balance {
+    inline-size: 100%;
+    background: transparent;
+    padding: 1.25rem;
+  }
+
+  .balance > span,
+  .balance > strong,
+  .balance > p {
+    max-inline-size: 64%;
+  }
+
+  .balance > strong {
+    font-size: clamp(1.75rem, 7vw, 2.4rem);
+  }
+
+  .actions {
+    padding-block-start: 0.5rem;
+    background: var(--surface-default);
+  }
+}
+
+@media (forced-colors: active) {
+  .scene {
+    display: none;
+  }
+}

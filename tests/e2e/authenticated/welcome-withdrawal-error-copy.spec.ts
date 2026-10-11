@@ -5,8 +5,10 @@ import {
   registerFirstKrwDestination,
   requireWithdrawalDataKey,
 } from "./helpers/journey";
-import { dismissGuidedQuestIfPresent } from "./helpers/member-session";
-import { expectSettledRoute } from "./helpers/settled-route";
+import {
+  dismissGuidedQuestIfPresent,
+  expectWelcomeWithdrawalPanel,
+} from "./helpers/member-session";
 
 const RAW_MESSAGE =
   "relation withdrawal_requests does not exist; service_role; schema cache error";
@@ -63,21 +65,7 @@ test("알 수 없는 서버 원문은 첫 출금 화면에 보이지 않는다",
 
   await page.goto("/wallet/withdraw");
   await dismissGuidedQuestIfPresent(page);
-  const route = await expectSettledRoute(page, "/wallet/withdraw");
-  const heading = route.getByRole("heading", {
-    level: 2,
-    name: "입금 없이도 가능한 첫 출금",
-  });
-  await expect(heading).toHaveCount(1);
-  await expect(heading).toBeVisible();
-
-  const panel = route.locator("section").filter({
-    has: page.getByRole("heading", {
-      level: 2,
-      name: "입금 없이도 가능한 첫 출금",
-    }),
-  });
-  await expect(panel).toHaveCount(1);
+  const panel = await expectWelcomeWithdrawalPanel(page);
   const requestButton = panel.getByRole("button", {
     name: "입금 없이 첫 출금 요청",
     exact: true,

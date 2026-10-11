@@ -30,6 +30,7 @@ export function createLocalServiceRoleClient(): SupabaseClient {
 
 export async function createConfirmedMember(
   label: string,
+  identity: { legalName?: string; phoneE164?: string } = {},
 ): Promise<ConfirmedMember> {
   const client = createLocalServiceRoleClient();
   const suffix =
@@ -41,9 +42,11 @@ export async function createConfirmedMember(
   const password = `Putduk-test-${suffix}-Aa1`;
   const loginId = `u${suffix}`.slice(0, 20);
   // E.164 한국 휴대폰(+8210XXXXXXXX) — 빠른 연속 생성에서도 충돌을 피한다.
-  const phone = `+8210${String(Date.now()).slice(-7)}${Math.floor(
-    Math.random() * 90 + 10,
-  )}${Math.floor(Math.random() * 10)}`;
+  const phone =
+    identity.phoneE164 ??
+    `+8210${String(Date.now()).slice(-7)}${Math.floor(
+      Math.random() * 90 + 10,
+    )}${Math.floor(Math.random() * 10)}`;
   const { data, error } = await client.auth.admin.createUser({
     email,
     password,
@@ -51,7 +54,7 @@ export async function createConfirmedMember(
     user_metadata: {
       signup_source: "PUBLIC_V1",
       login_id: loginId,
-      legal_name: "퍼뜩테스트",
+      legal_name: identity.legalName ?? "퍼뜩테스트",
       date_of_birth: "1990-01-15",
       phone_e164: phone,
       recovery_email: email,

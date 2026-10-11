@@ -138,40 +138,45 @@ describe("채굴 금액 카드 구도", () => {
     expect(html).not.toContain(">정산 전</dt><dd>0원</dd>");
   });
 
-  it("채굴 페이지는 보이는 장면 캡션 아래 금액 보드를 두고 기간은 상세에 둔다", () => {
+  it("채굴 재구축은 장면과 실제 금액을 분리하고 기간은 상세에 둔다", () => {
     const page = readFileSync("app/(product)/mining/page.tsx", "utf8");
     const css = readFileSync("app/(product)/mining/page.module.css", "utf8");
     const board = readFileSync(
       "components/product/mining-amount-board.tsx",
       "utf8",
     );
-    const stageStart = page.indexOf("<MiningLiveStage");
-    const stageEnd = page.indexOf("</MiningLiveStage>");
+    const stageStart = page.indexOf("<MiningReferenceScene");
+    const stageEnd = page.indexOf('aria-label="채굴 현황"');
     const stage = page.slice(stageStart, stageEnd);
-    const caption = stage.indexOf("sceneCaption");
-    const below = page.indexOf('aria-label="채굴 현황"');
-    const lead = page.indexOf('placement="lead"');
-    const follow = page.indexOf('placement="follow"');
+    const caption = page.indexOf("className={styles.sceneCaption}");
+    const principal = page.indexOf("value={facts.principal}");
+    const capacity = page.indexOf('id="mining-capacity-title"');
+    const period = page.indexOf('aria-label="채굴 기간"');
 
     expect(page).toContain("readOwnMiningServerDisplay(identity)");
-    expect(page).toContain("resolveDefaultStageInput()");
+    expect(page).toContain("resolveMiningPresentation({");
+    expect(stage).toContain("running={presentation.running}");
     expect(stageStart).toBeGreaterThan(-1);
     expect(stageEnd).toBeGreaterThan(stageStart);
-    expect(caption).toBeGreaterThan(-1);
-    expect(stage).toContain("world-hero-title");
+    expect(caption).toBeGreaterThan(stageEnd);
+    expect(page.slice(caption, principal)).toContain("world-hero-title");
     expect(stage).not.toContain("MiningAmountBoard");
-    expect(below).toBeGreaterThan(stageEnd);
-    expect(lead).toBeGreaterThan(below);
-    expect(follow).toBeGreaterThan(lead);
+    expect(principal).toBeGreaterThan(caption);
+    expect(capacity).toBeGreaterThan(principal);
+    expect(period).toBeGreaterThan(capacity);
+    expect(page).toContain("<dd>{facts.pending}</dd>");
+    expect(page).toContain("<dd>{facts.committed}</dd>");
     expect(page).toContain('aria-label="채굴 기간"');
     expect(page).not.toContain("moneyFacts");
     expect(page).not.toContain("formatMiningMicroKrw");
     expect(page).not.toContain("Math.random");
-    expect(css).toMatch(/\.sceneCaption\s*\{[^}]*display:\s*flex/s);
+    expect(css).toMatch(/\.sceneCaption\s*\{[^}]*position:\s*relative/s);
     expect(css).not.toMatch(
       /\.sceneCaption[^{]*\{[^}]*(?:display:\s*none|visibility:\s*hidden)/s,
     );
-    expect(css).toMatch(/\.below\s*\{/);
+    expect(css).toMatch(/\.rail\s*\{/);
+    expect(css).toMatch(/\.controlRoom\s*\{[^}]*display:\s*grid/s);
+    expect(css).toMatch(/\.records\s*\{[^}]*display:\s*grid/s);
     expect(css).not.toMatch(/\.moneyFacts/);
     expect(board).not.toMatch(/Math\.random|setInterval|18,489|₩ 428/);
   });

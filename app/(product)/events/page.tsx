@@ -268,8 +268,10 @@ export default async function EventsPage() {
             <article className={styles.noticeItem} key={notice.id}>
               <span>
                 <strong>
-                  {notice.is_pinned ? "중요 · " : ""}
-                  {notice.title_ko}
+                  <Link href={`/events/notices/${notice.slug}` as Route}>
+                    {notice.is_pinned ? "중요 · " : ""}
+                    {notice.title_ko}
+                  </Link>
                 </strong>
                 <p>{notice.summary_ko}</p>
               </span>
@@ -290,9 +292,7 @@ export default async function EventsPage() {
 
       <span className={styles.formNotice}>
         <PutdukIcon name="shield" size={19} />
-        <p>
-          이벤트 조건과 지급 상태는 서버에 기록된 내 참여 결과만 보여 줍니다.
-        </p>
+        <p>참여 조건과 내 보상 상태를 확인하세요.</p>
       </span>
     </div>
   );

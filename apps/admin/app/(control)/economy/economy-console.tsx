@@ -6,6 +6,7 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 
 import { useAdminPublicBrowserConfig } from "../../../components/assistant/operator-draft-provider";
 import { StepUpTokenField } from "../../../components/step-up-token-field";
+import { useReviewConfirmation } from "../../../components/review-confirmation";
 import {
   createAdminBrowserClient,
   type AdminPublicBrowserConfig,
@@ -84,7 +85,7 @@ function Field({
     </label>
   );
 }
-function Proof({ busy }: { busy: boolean }) {
+function Proof({ busy, revision }: { busy: boolean; revision: number }) {
   return (
     <div className={styles.proof}>
       <label className={styles.field}>
@@ -98,11 +99,12 @@ function Proof({ busy }: { busy: boolean }) {
           rows={3}
         />
       </label>
-      <label className={styles.confirm}>
+      <label className={styles.confirm} key={`confirm-${revision}`}>
         <input type="checkbox" name="confirmation" required />
         <span>정책 값과 적용 시간을 확인했습니다.</span>
       </label>
       <StepUpTokenField
+        key={`step-up-${revision}`}
         commandFamily="ECONOMY_POLICY"
         submissionPending={busy}
       />
@@ -124,6 +126,8 @@ export function EconomyConsole({
   publicConfig: AdminPublicBrowserConfig;
 }) {
   const publicConfig = useAdminPublicBrowserConfig() ?? initialPublicConfig;
+  const selectedReview = useReviewConfirmation(["effectiveFrom", "reason"]);
+  const createReview = useReviewConfirmation();
   const [view, setView] = useState(initial);
   const [busy, setBusy] = useState(false);
   const [uncertain, setUncertain] = useState(false);
@@ -439,6 +443,7 @@ export function EconomyConsole({
             <form
               key={revision.revisionId}
               onSubmit={(event) => submit(event, next)}
+              onChange={selectedReview.onChange}
               aria-label={label}
             >
               <fieldset disabled={disabled}>
@@ -459,7 +464,7 @@ export function EconomyConsole({
                     그대로 확인합니다.
                   </p>
                 )}
-                <Proof busy={busy} />
+                <Proof busy={busy} revision={selectedReview.revision} />
                 <button className="gold-button" type="submit">
                   {busy ? "결과 확인 중" : label}
                 </button>
@@ -527,6 +532,7 @@ export function EconomyConsole({
           <form
             key={`new:${revision.revisionId}`}
             onSubmit={(event) => submit(event, "CREATE")}
+            onChange={createReview.onChange}
             aria-label="새 정책 저장"
           >
             <fieldset disabled={disabled}>
@@ -699,7 +705,7 @@ export function EconomyConsole({
                   ))}
                 </div>
               </details>
-              <Proof busy={busy} />
+              <Proof busy={busy} revision={createReview.revision} />
               <button className="gold-button" type="submit">
                 새 정책 저장
               </button>

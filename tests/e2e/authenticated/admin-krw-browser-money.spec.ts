@@ -7,6 +7,7 @@ import {
 } from "./helpers/admin-totp";
 import {
   confirmOperatorStepUp,
+  expectEditedReviewInvalidated,
   formWithSubmit,
   openAdminQueue,
   readExternalSends,
@@ -87,10 +88,12 @@ test.describe("admin browser KRW withdrawal", () => {
     await sendForm
       .getByLabel("은행 이체 참조(증빙)")
       .fill(`WS06RETRY${withdrawalId.slice(0, 8)}`);
+    await expectEditedReviewInvalidated(sendForm);
+    await sendForm.getByRole("checkbox", { name: /계좌로 실제 송금/ }).check();
     await confirmOperatorStepUp(sendForm, secret);
     await sendForm.getByRole("button", { name: "계좌 송금 기록" }).click();
     await expect(sendForm.getByRole("status")).toContainText(
-      "외부 송금은 이미 기록되어 있습니다",
+      "기록된 송금과 입력 내용이 다릅니다. 다시 송금하지 말고 기존 기록을 확인해 주세요.",
     );
     const sends = await readExternalSends(withdrawalId);
     expect(sends).toHaveLength(1);

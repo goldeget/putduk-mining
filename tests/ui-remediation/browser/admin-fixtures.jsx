@@ -13,6 +13,7 @@ function todaySnapshot(state) {
     error: null,
   });
   return buildTodaySnapshot({
+    krwDeposits: ready(1),
     usdtDeposits: ready(2),
     krwWithdrawals: ready(3),
     usdtWithdrawals: ready(1),

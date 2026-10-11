@@ -25,6 +25,16 @@ git rev-list --objects --all --missing=print
 
 The repository must have no missing reachable objects. A shallow clone may be repaired only by retrieving the exact authorized history. Do not hide corruption with a graft, replacement ref, fake shallow boundary, rewritten branch or force push.
 
+### Production coupling guard
+
+Before any push, PR update, merge, tag, workflow dispatch, remote database apply or deployment, determine whether that exact action can trigger an automatic production release or live mutation. Inspect this repository's workflow triggers, deployment scripts, webhooks, connected apps, branch/tag release policies, environments and deployment history. Record only sanitized names, states and hostnames; never secret values, webhook payloads or signed URLs.
+
+Classify the action as proven isolated, production-coupled or unknown. **UNKNOWN is not safe.** Missing tracked deployment code, empty deployment history, a green CI run or denied metadata access does not prove an external integration is absent. A denied check remains an evidence blocker; do not search another account or project to work around it.
+
+Production-coupled actions require explicit human approval for the exact target, candidate SHA, operation and live effects, with a reviewed rollback plan. If coupling remains unknown, leave a reviewable local candidate and request the precise owner evidence or explicit approval for the described live-impact operation. Existing development or Git authorization does not grant production-release authorization. Do not disable or change integrations to manufacture a safe classification without separate authorization.
+
+Local edits, local builds and project-scoped local tests may continue within their existing authorization after verifying local targets and excluding live credentials. Remote Supabase and Cloudflare freezes remain in force. CI acceptance and production approval are separate evidence states.
+
 ## 3. Branch and change policy
 
 - Default agent branch names use `codex/<scope>` unless the user specifies another name.
@@ -55,6 +65,8 @@ pnpm build
 
 Schema changes additionally require a project-scoped isolated Supabase reset/tests/lint/advisors gate on the developer host or at the exact target SHA in CI. An unavailable local runtime is reported as an environment limitation and never converted into a pass; exact-head CI may provide independent execution evidence. Docker commands remain deterministically scoped to this repository; no global inventory or prune is permitted.
 
+The existing database job also runs four actual two-session probes after a fresh disposable reset: KRW deposit approval, USDT deposit approval, safe-mode command and withdrawal member-lock ordering. The existing worker job runs the local full-API admin-auth admission probe after reset and guarded CLI env capture, before worker runtime tests. The probe inventory and fixture boundaries are defined in `docs/quality/WS-05-EXECUTION-CONTRACT.md`. These checks retain the same required jobs and whole-workflow budget; their new runtime evidence must come from the current candidate, not a previous green run.
+
 Critical UI changes add browser E2E, accessibility, visual and performance evidence. A green sub-job is not release acceptance unless the workflow ran the exact target SHA and all required jobs/artifacts are present.
 
 ### CI wall-clock contract (PR / push to `main` or `develop`)
@@ -72,6 +84,12 @@ All four Playwright CI lanes use `--fail-on-flaky-tests`. Existing retries remai
 1. Job **`e2e-app-build`** runs **`pnpm build` once** per workflow and uploads artifact **`e2e-next-production`** (`.next` and `apps/admin/.next` at repo-relative paths).
 2. **`authenticated`** matrix jobs (eight shards) **`need`** `e2e-app-build` and `webserver-lifecycle`, download the artifact, set **`E2E_NEXT_START=1`**, and run Playwright with **production `next start`** — not `next dev`. Each shard still runs isolated local Supabase reset for data isolation.
 3. **`typography-protected`** **`needs`** `e2e-app-build`, downloads the same artifact, and sets **`E2E_PREBUILT_APPS=1`** so protected typography servers skip duplicate builds.
+
+The authenticated scheduler collects the current Playwright inventory, keeps each file/project together and assigns every collected test exactly once across eight lanes. Timing hints affect placement only; they never change assertions, deadlines or acceptance. `playwright-report/ci-shard-evidence/{plan,coverage,execution}.json` records the actual checkout SHA, parent SHAs, candidate/run/attempt identity in CI and whether the source tree is clean. This ignored path stays outside Playwright's cleared `test-results` output directory. Local dirty-tree evidence is identified as local validation, not exact committed-candidate evidence. A PR's synthetic merge checkout must include the candidate head as a direct parent; record both SHAs instead of claiming a head-only build.
+
+Worker Vitest writes `test-results/worker/vitest.json`. The evidence check requires a report started during the current worker step, consistent nonzero test counts and no failed, skipped or todo tests. It writes a sanitized `test-results/worker/report.json` containing counts, file identities, hashed test names, statuses, durations and source/run identity. CI must upload that actual report as `worker-runtime` with missing files treated as failure. Raw failure messages, console payloads and credentials are not uploaded in this artifact. All eight authenticated artifacts, the shared build, both typography reports and this worker report must be present for evidence completeness.
+
+After all jobs finish, independently verify the exact candidate, base/merge checkout, workflow/run/attempt, all required results, artifact identifiers/digests and final whole-workflow duration. Evidence from the earlier PR #71 candidate does not validate a later local patch, new commit or develop push. Only one complete attempt can establish a candidate's CI acceptance.
 
 **Forbidden regressions:** authenticated CI using `next dev`; removing the eight-shard matrix without a documented replacement; adding a serial full authenticated suite job; per-shard full app builds without the shared artifact; weakening assertions, removing specs, skipping tests or treating timeout/cancellation as a pass. Test-level timeouts, real TOTP waits and retries remain intact. Workflow/job deadlines bound a failed run; they do not make a partial suite acceptable.
 

@@ -1,0 +1,237 @@
+{
+  "version": 1,
+  "repository": "goldeget/putduk-mining",
+  "migration_count": 152,
+  "sources": [
+    {
+      "path": "app/(product)/wallet/withdraw/page.tsx",
+      "sha256": "3b7f88a1a3de43a2bbe124593b2fb7ade5452a4d993b1b4b61f212fc444a3dd0",
+      "kind": "runtime"
+    },
+    {
+      "path": "app/api/v1/withdrawals/intents/route.ts",
+      "sha256": "d349282a4c1dffe72041424d9a6998e268a73e6c86e6e21a9d00f8fb264d8379",
+      "kind": "runtime"
+    },
+    {
+      "path": "components/product/principal-crypto-withdrawal-form.tsx",
+      "sha256": "b71e00a8c2f156c99804b0d68064c535dfc0ca82286bd6d8e208f9486785dab1",
+      "kind": "runtime"
+    },
+    {
+      "path": "components/product/principal-withdrawal-form.tsx",
+      "sha256": "6be8818f2afb11fac9e751e4c4f244634c5061f831cda1f5f3994621ab5ef5df",
+      "kind": "runtime"
+    },
+    {
+      "path": "lib/wallet/principal-crypto-withdrawal-read.ts",
+      "sha256": "2719f4a3b34a17dd532243c0a158ec4be874e7f72dd24c10486f437f83004695",
+      "kind": "runtime"
+    },
+    {
+      "path": "lib/wallet/principal-withdrawal-client.ts",
+      "sha256": "df956239456f15480ac38d888272adcacf1e690bbebc4612f76b2f3e5cdedd6e",
+      "kind": "runtime"
+    },
+    {
+      "path": "lib/wallet/principal-withdrawal-logical-request.ts",
+      "sha256": "43fb39fe2819d9271a4f592f2a1ffa40570f931aad70a7c2ae3665890edf269e",
+      "kind": "runtime"
+    },
+    {
+      "path": "lib/wallet/principal-withdrawal-read.ts",
+      "sha256": "cff4d5549a61a31cb799e41c173dc6ae9c57bf06c5fdd25ce0b6a2c746511734",
+      "kind": "runtime"
+    },
+    {
+      "path": "lib/wallet/read-principal-crypto-withdrawal.server.ts",
+      "sha256": "db2083250fe7c7616cecf3f83898f74b3873c09b71e9305c7c0a002871274c62",
+      "kind": "runtime"
+    },
+    {
+      "path": "lib/wallet/read-principal-withdrawal.server.ts",
+      "sha256": "2aa68fb972bf4414f776b7d0cac965b1861703576e0665cedfb6fb64d7b9afcd",
+      "kind": "runtime"
+    },
+    {
+      "path": "lib/wallet/withdrawal-logical-record.ts",
+      "sha256": "7a95b6bf5b46fbaa85bf75eaf43ffb52bb3bded0c16bc71d2398d75bdb36bad4",
+      "kind": "runtime"
+    },
+    {
+      "path": "lib/wallet/withdrawal-logical-recovery.ts",
+      "sha256": "4ef439344e5b7cf553d16b0f21eae7654d1df163f94f1c75badde914f5acfbed",
+      "kind": "runtime"
+    },
+    {
+      "path": "supabase/migrations/20261006131000_private_principal_recovery_intent_originals.sql",
+      "sha256": "12553d013296528ba0a95296dfb2a22719fd0ab7007ab177dc7e975ec4fe66a1",
+      "kind": "migration"
+    },
+    {
+      "path": "supabase/migrations/20261006132000_verified_principal_portion_inputs.sql",
+      "sha256": "449d2895ef55aa01aacaf66f4ee057a606f2ab579e504a4d30de04a3f14d50b0",
+      "kind": "migration"
+    },
+    {
+      "path": "supabase/migrations/20261006132050_first_principal_hold_capacity_reference.sql",
+      "sha256": "e442b5a9904b12492352acff5369f542e7175171748bde6e2bd64fa0f07bcec1",
+      "kind": "migration"
+    },
+    {
+      "path": "supabase/migrations/20261006133000_principal_runtime_boundary_originals.sql",
+      "sha256": "a592f43a6d3060b0643e2d327569b962488d725fdbce16dd7ca72c485120f03e",
+      "kind": "migration"
+    },
+    {
+      "path": "supabase/migrations/20261006133050_principal_sealed_prefinance_inputs.sql",
+      "sha256": "8d6ab7a8ec9cc49f4ad37f2b51f304a0b238d0058449b6c5d9072a342f31997b",
+      "kind": "migration"
+    },
+    {
+      "path": "supabase/migrations/20261006133100_principal_preparation_and_exact_interval.sql",
+      "sha256": "772aaf1532eeebc7630da8250ebdacd8397bb8c3f22a055df10b6d0959044abd",
+      "kind": "migration"
+    },
+    {
+      "path": "supabase/migrations/20261006133150_principal_boundary_producers.sql",
+      "sha256": "e859df8d65836deddef653439536752c70117a76934caf3e91ed13016a21f2ca",
+      "kind": "migration"
+    },
+    {
+      "path": "supabase/migrations/20261006133200_principal_immutable_input_replay.sql",
+      "sha256": "d7d95abf2bbb81ed6515b1677d88be5fe830685172cac1cda98c141904ca5f6b",
+      "kind": "migration"
+    },
+    {
+      "path": "supabase/migrations/20261006133250_principal_boundary_completion_integrity.sql",
+      "sha256": "a357939a326c69ace599ab718abe84b08aa8e9a9f5197ba12f06f27d1e9f6beb",
+      "kind": "migration"
+    },
+    {
+      "path": "supabase/migrations/20261006133300_principal_existing_guard_dispatch.sql",
+      "sha256": "346c27a838b2dbac2bff3cdd8ec0705e647e229c2d7a19b69f2a6c3f88af740a",
+      "kind": "migration"
+    },
+    {
+      "path": "supabase/migrations/20261006133350_principal_canonical_admission_callback.sql",
+      "sha256": "962e3801d43fd35ec4cf78c8a6864a3e7a69f0bf0917ed93fec396a1ea98a243",
+      "kind": "migration"
+    },
+    {
+      "path": "supabase/migrations/20261006133400_principal_current_worker_and_display_dispatch.sql",
+      "sha256": "723e52a208ba74a6caf2c8dd4aa8219cf1d75a510e42fa3347f2301777e22ae2",
+      "kind": "migration"
+    },
+    {
+      "path": "supabase/migrations/20261006134000_member_principal_confirmation_originals.sql",
+      "sha256": "543de4ba5ab66add213c7a26c2e63360fd6e6dcf080f7dc80f534b8db6f09215",
+      "kind": "migration"
+    },
+    {
+      "path": "supabase/migrations/20261006134050_member_principal_hold_and_commit.sql",
+      "sha256": "4d660acfb9830c208b2b042edbbe80d1838627cd2f5fbc0f191137e327f181ab",
+      "kind": "migration"
+    },
+    {
+      "path": "supabase/migrations/20261006134100_existing_logical_principal_source_dispatch.sql",
+      "sha256": "ad87836d252b4f4f9eaae96d676adbf308ee214324a16e510cabb4f9ac1346ba",
+      "kind": "migration"
+    },
+    {
+      "path": "supabase/migrations/20261006134150_existing_principal_replay_closed_executor_dispatch.sql",
+      "sha256": "10c8cd5ef9d34689120d8a798488a89933a029d2dc1647f785110a2642e1ec8b",
+      "kind": "migration"
+    },
+    {
+      "path": "supabase/migrations/20261006135000_closed_input3_principal_prefinance_reader.sql",
+      "sha256": "a2a7059e9147180af10b56061cf48defdcdc3da951c9733c3b9032a7e1177a7f",
+      "kind": "migration"
+    },
+    {
+      "path": "supabase/migrations/20261006135050_existing_principal_intent_input3_dispatch.sql",
+      "sha256": "86651518424d9659665f10cf4e87adbfc54f21108f93daaaf79543278e167a80",
+      "kind": "migration"
+    },
+    {
+      "path": "supabase/migrations/20261006135100_existing_principal_prefinance_input3_dispatch.sql",
+      "sha256": "91f4110008de040ffbb82375fece3b9b5b31484e9984ff6bd38f8a0e2c3867b0",
+      "kind": "migration"
+    },
+    {
+      "path": "supabase/migrations/20261006135150_existing_principal_completion_input3_original_proof.sql",
+      "sha256": "d12884dd51fd594175d060a232e44878854df4189cb01eecc28402c78e633111",
+      "kind": "migration"
+    },
+    {
+      "path": "supabase/migrations/20261006136000_closed_input3_member_current_read_context.sql",
+      "sha256": "680ccb819c2d7248c3a0a9087ab981f850703517c6a6a8100223ec27a279bf03",
+      "kind": "migration"
+    },
+    {
+      "path": "supabase/migrations/20261006136050_input3_condition_cause_archived_originals.sql",
+      "sha256": "d90e1e93a2518fb3c0c83563dba82a913863b29b9de5491e9782bdfe97679451",
+      "kind": "migration"
+    },
+    {
+      "path": "supabase/migrations/20261006136100_existing_credit_allocation_input3_producer_dispatch.sql",
+      "sha256": "2515656d66ea84d845fb295282571f53a8e6f8b621c37378265698648ce4cd3a",
+      "kind": "migration"
+    },
+    {
+      "path": "supabase/migrations/20261006136150_existing_input3_principal_worker_cause_dispatch.sql",
+      "sha256": "985633d25cf8e8dc8ed3120993f5f2cdc9d4f7e3eb6f4a588435c30be8d62339",
+      "kind": "migration"
+    },
+    {
+      "path": "supabase/migrations/20261006139000_native_principal_finalize_clock_originals.sql",
+      "sha256": "85de44cf3be650e543a524e61287d253b861765a11027c606450cd31bbc932c9",
+      "kind": "migration"
+    },
+    {
+      "path": "supabase/migrations/20261006139050_native_principal_finalize_canonical_clock.sql",
+      "sha256": "5324024709c69e2b714a033aac6aa2f5d1f8c6adaa86e631c22ea4c0c480eaf2",
+      "kind": "migration"
+    },
+    {
+      "path": "supabase/migrations/20261006139100_native_finalize_source_event_clock.sql",
+      "sha256": "b280180ada292310f3ed2129db0f76d5560085861f7c15134123fc340f83ea54",
+      "kind": "migration"
+    },
+    {
+      "path": "supabase/migrations/20261006139150_principal_finalize_boundary_completion.sql",
+      "sha256": "6212411f7a3bddaac5554caec496562dcfdcaca14af245b6f88ef63eef163c5e",
+      "kind": "migration"
+    },
+    {
+      "path": "supabase/migrations/20261006139200_principal_finalize_portion_originals.sql",
+      "sha256": "26b0db064aaf2880ed628851c73ce6b2fdbd8e89b382efba47aaea62bec802e6",
+      "kind": "migration"
+    },
+    {
+      "path": "supabase/migrations/20261006139250_verified_finalized_principal_current_inputs.sql",
+      "sha256": "51479013c4f954bcf773aaae4037756e2098c80bc0b7f6879cd0473f00f96cb9",
+      "kind": "migration"
+    },
+    {
+      "path": "supabase/migrations/20261006139300_finalized_principal_immutable_input_replay.sql",
+      "sha256": "da838ca531087ea96d12dbaead2b4397d7d3869d0ce83dbe72f97b837831fc60",
+      "kind": "migration"
+    },
+    {
+      "path": "supabase/migrations/20261006139350_closed_native_finalize_request_links.sql",
+      "sha256": "7d6187ffaa405863d680e91c3f6406e42bea64e7b15a4489ec5cc3310d9b6e04",
+      "kind": "migration"
+    },
+    {
+      "kind": "runtime",
+      "path": "components/product/principal-recovery.module.css",
+      "sha256": "e43a89fece04535234e6111b37f3213ad962a7c8a5334dae63fb59fe09b3e6ee"
+    },
+    {
+      "path": "components/product/principal-money.tsx",
+      "kind": "runtime",
+      "sha256": "7f467a3693b3d2db2f29c3879fe0f25d366ed6ee1f40466bf39586f57c013121"
+    }
+  ]
+}

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Route } from "next";
+import { MemberSearch } from "@/app/(control)/members/member-search";
 
 import type { TodaySnapshot } from "@/app/(control)/_lib/today-snapshot";
 import {
@@ -16,6 +17,27 @@ import styles from "./today.module.css";
 export function TodayView({ snapshot }: { snapshot: TodaySnapshot }) {
   const totalLabel = formatCountDisplay(snapshot.attentionTotal);
   const observed = formatObservedAtKst(snapshot.observedAtIso);
+  // This changes the reading order only; the snapshot remains authoritative.
+  const priority = [
+    "SAFE",
+    "EXCEPTION",
+    "KRW_BANK",
+    "USDT_WD",
+    "KYC",
+    "KRW_DEPOSIT",
+    "USDT_DEPOSIT",
+  ];
+  const attention = [...snapshot.attention].sort((left, right) => {
+    const group = (item: (typeof snapshot.attention)[number]) =>
+      item.status.kind === "unavailable" ? 0 : item.status.count > 0 ? 1 : 2;
+    return (
+      group(left) - group(right) ||
+      priority.indexOf(left.code) - priority.indexOf(right.code)
+    );
+  });
+  const next = attention.find(
+    (item) => item.status.kind === "unavailable" || item.status.count > 0,
+  );
 
   return (
     <div className={styles.root} data-testid="admin-today">
@@ -80,6 +102,52 @@ export function TodayView({ snapshot }: { snapshot: TodaySnapshot }) {
         </section>
       ) : null}
 
+      {next ? (
+        <aside className={styles.nextAction} aria-label="먼저 확인할 일">
+          <div>
+            <strong>
+              {next.status.kind === "unavailable"
+                ? "먼저 조회 상태를 확인하세요"
+                : "이 일부터 확인하세요"}
+            </strong>
+            <p>{next.label} 화면에서 최신 기록과 증빙을 확인하세요.</p>
+          </div>
+          <Link className="ghost-button" href={next.href as Route}>
+            확인 화면 열기
+          </Link>
+        </aside>
+      ) : null}
+
+      <section
+        className={styles.memberLookup}
+        aria-labelledby="today-member-search-title"
+      >
+        <h2 id="today-member-search-title">회원 바로 찾기</h2>
+        <MemberSearch />
+      </section>
+
+      <details className={styles.beginnerGuide}>
+        <summary>처음 운영한다면</summary>
+        <ol>
+          <li>
+            <strong>대기 내용을 읽으세요.</strong> 조회 시각과 신청 상태를
+            확인하세요.
+          </li>
+          <li>
+            <strong>증빙과 회원을 대조하세요.</strong> 같은 이름이나 비슷한
+            금액만으로 처리하지 마세요.
+          </li>
+          <li>
+            <strong>처리 화면에서 직접 확인하세요.</strong> 승인 전 금액과
+            사유를 검토하고, 처리 후 결과를 다시 확인하세요.
+          </li>
+        </ol>
+        <p>
+          운영 도우미는 조회와 초안 준비를 돕습니다. 이 안내를 읽어도
+          승인·송금·게시가 실행되지 않습니다.
+        </p>
+      </details>
+
       <section className={styles.sectionHead}>
         <div>
           <p className={styles.eyebrow}>우선 확인</p>
@@ -93,7 +161,7 @@ export function TodayView({ snapshot }: { snapshot: TodaySnapshot }) {
         aria-label="운영 확인 항목"
         data-testid="today-attention-grid"
       >
-        {snapshot.attention.map((item, index) => {
+        {attention.map((item, index) => {
           const unavailable = item.status.kind === "unavailable";
           const empty = item.status.kind === "ready" && item.status.count === 0;
           return (

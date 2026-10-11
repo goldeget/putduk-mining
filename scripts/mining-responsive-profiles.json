@@ -1,0 +1,11 @@
+[
+  {
+    "family": "mining-semiconductor-mobile-light",
+    "sourceMaster": "docs/design/generated-masters/mining-semiconductor-mobile-light-2026-10-07/mining-semiconductor-mobile-light-master-v1.png",
+    "sourceSha256": "3dcf4cfc2c023fd86fd64d7a8c3f7c762316767600bd9743f1dc05feccd1b62e",
+    "assetVersion": "2026.10.07-mining-responsive-v1",
+    "reviewScope": "Native GPT mobile Light adaptation from existing full-viewed desktop Light and mobile Dark generated masters. No supplied mobile Light Mining reference exists; this is a responsive material/composition inference. Complete portrait frame, mechanical downscale and full-frame encoding only. Decorative gold module/wafer/robot clean-room; no raster text, interactive UI, money, running-state or economic approval. Actual-browser visual acceptance pending.",
+    "theme": "light",
+    "alt": "밝은 반도체 공장의 금색 설비와 은빛 웨이퍼"
+  }
+]

@@ -24,7 +24,7 @@ MASTER_PATH = (
     "putduk-ai-help-face-master-v1.png"
 )
 MASTER_HASH = "d7aa8e5c8ddf1215ca3be650699a6c18fe168c9eefbba86a7204718f9d39ffd2"
-SNAPSHOT_VERSION = "2026.10.03-v3"
+SNAPSHOT_VERSION = "2026.10.06-v17"
 ASSET_VERSION = "2026.10.03-ai-help-face-v1"
 REVIEW_SCOPE = (
     "Owner-approved batch 7 AI help launcher face; preserve the complete "
@@ -143,7 +143,7 @@ def main() -> None:
     updated = {
         **manifest,
         "assetVersion": SNAPSHOT_VERSION,
-        "generatedAt": "2026-10-03T00:00:00Z",
+        "generatedAt": "2026-10-06T00:00:00Z",
         "assets": sorted(
             [*legacy, *replacements.values()], key=lambda asset: asset["path"]
         ),

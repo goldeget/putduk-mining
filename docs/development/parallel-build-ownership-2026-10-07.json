@@ -1,0 +1,394 @@
+{
+  "schema_version": 1,
+  "primary_role": "Primary Builder / Integrator",
+  "secondary_role": "Secondary Builder: Admin presentation and dedicated UI QA",
+  "coordination_checkpoint_head": "7b34cd3ef30c4b746733e2c439a537247f009344",
+  "current_branch": "codex/phase2-cloud-candidate-20261006",
+  "secondary_presentation_base_head": "7350ff9fed370df9e45acae6bc2a55941a652772",
+  "secondary_safe_existing_files": [
+    {
+      "path": "apps/admin/app/(control)/assistant/loading.tsx",
+      "sha256": "c930b2ef3f4d728d8017771df0bf7734b280ea33d6e2ca61787658a7d6fdb566"
+    },
+    {
+      "path": "apps/admin/app/(control)/assistant/page.tsx",
+      "sha256": "474b990dfe5803626238513ce90933e4482cfe6e99973bf52e9f5193d90f882b"
+    },
+    {
+      "path": "apps/admin/app/(control)/catalog/catalog.module.css",
+      "sha256": "aec5229053f81bd5f39ee75e4cf0d5fd69f736f9581cd17d6f7967c11988c2e6"
+    },
+    {
+      "path": "apps/admin/app/(control)/catalog/page.tsx",
+      "sha256": "0d4a2a6d8c625f9a8e058f38805741a6820659e5f1adce639ac09de883630b98"
+    },
+    {
+      "path": "apps/admin/app/(control)/deposits/krw/[id]/page.tsx",
+      "sha256": "24007e1049c86b886e7704141f0dcdd37772b43c7cd10d0ce25166de665fee8a"
+    },
+    {
+      "path": "apps/admin/app/(control)/deposits/krw/loading.tsx",
+      "sha256": "ab04c8205ec9361eacf6cd9ad4d6763b373e85925e3e657d8e1285ac68aaf143"
+    },
+    {
+      "path": "apps/admin/app/(control)/deposits/krw/page.tsx",
+      "sha256": "e5ebfdeba4171da95cec4c12bf2646fa079f8cb2cf07987b50fd3e561a225028"
+    },
+    {
+      "path": "apps/admin/app/(control)/deposits/usdt/page.tsx",
+      "sha256": "c961577a31b2b158893f3e5c74964f3511db331f81ef7a6eb19e5de80aa7c5df"
+    },
+    {
+      "path": "apps/admin/app/(control)/economy/economy.module.css",
+      "sha256": "b614e8c457b0572455262dc6518dadb45ed661f63224b3be157ef8df482ccf46"
+    },
+    {
+      "path": "apps/admin/app/(control)/economy/loading.tsx",
+      "sha256": "cfa2f05b4f9b960d2aca27ebc6cf4a1daf16f9bfff30696f551a48dc5a9c5e0f"
+    },
+    {
+      "path": "apps/admin/app/(control)/economy/page.tsx",
+      "sha256": "98e17104e3bda3998429ccd533ca0a7940ff50dba397c9ef9f3025376bf12738"
+    },
+    {
+      "path": "apps/admin/app/(control)/error.tsx",
+      "sha256": "0cfd9e0cc6a95df6afb62be11d91ae682f93d8a6f547cfe5c70c8f457b52c903"
+    },
+    {
+      "path": "apps/admin/app/(control)/exceptions/failed-jobs.module.css",
+      "sha256": "93b87d01d2df554353fa25e553e66c7417ab5b82cb51714fa9b87b3042f28f2d"
+    },
+    {
+      "path": "apps/admin/app/(control)/exceptions/page.tsx",
+      "sha256": "82c172a95acfe7e04906b83a4f03e315819fc37cf84ebf81c77ef2d2c82a2c68"
+    },
+    {
+      "path": "apps/admin/app/(control)/kyc/page.tsx",
+      "sha256": "d27c2aaf5a733d19b17e28894b41c0abe28b3d0dae1b44b781a7755a295ed141"
+    },
+    {
+      "path": "apps/admin/app/(control)/loading.tsx",
+      "sha256": "57bf1771aee264b0076a7378d3918264bc2897d4f1ba90a59e24edee867e9934"
+    },
+    {
+      "path": "apps/admin/app/(control)/members/error.tsx",
+      "sha256": "b41f110ba02fbce0d401c076b3e45b7aee0d9fb833812a220c560ef7da12c97f"
+    },
+    {
+      "path": "apps/admin/app/(control)/members/loading.tsx",
+      "sha256": "8ca897202ad8bd56c29634419489a686943decd72dafa9a0861cf1e184388b49"
+    },
+    {
+      "path": "apps/admin/app/(control)/members/members.module.css",
+      "sha256": "e8ad2845b4d899e77361c34196b608aecdbee6767f3f8db4a746e172fd58941e"
+    },
+    {
+      "path": "apps/admin/app/(control)/members/page.tsx",
+      "sha256": "54acaf44742ef78a1800b1d30040a9406be9e10a922581ad46e3a3dc3e80dc37"
+    },
+    {
+      "path": "apps/admin/app/(control)/page.tsx",
+      "sha256": "bed36f178cc3f940c347a67096ba41f3baac3f7d6212cdc7cdb99c61d8dd9513"
+    },
+    {
+      "path": "apps/admin/app/(control)/restrictions/page.tsx",
+      "sha256": "40b1cbcb633f115224b4aad34f31462cf8f22b8bf59c9dae2ec9e54f65b60802"
+    },
+    {
+      "path": "apps/admin/app/(control)/withdrawals/_components/queue-states.module.css",
+      "sha256": "f2538384badc8e9740d8eb373d22705ed580eeeff3e80dfa30835b4599a484c0"
+    },
+    {
+      "path": "apps/admin/app/(control)/withdrawals/error.tsx",
+      "sha256": "ffcf0236fdf972d1f1ba688f188d37ec54ce7a20a15cf18846c381464702d6aa"
+    },
+    {
+      "path": "apps/admin/app/(control)/withdrawals/krw-bank/page.tsx",
+      "sha256": "ed43c3adcb6fd7b243bfa9c9db93cf0960d471813ce75da91ca96f0a4fffb089"
+    },
+    {
+      "path": "apps/admin/app/(control)/withdrawals/loading.tsx",
+      "sha256": "f58fdd0739ffa1c21fe500dc69d8e8ce279a79365d8ecc3e619e09d07c45c673"
+    },
+    {
+      "path": "apps/admin/app/(control)/withdrawals/usdt/page.tsx",
+      "sha256": "3431758568a66a474cd4d77bca3ae87366790517bf7820462fe0e0f6c3fb1e60"
+    },
+    {
+      "path": "apps/admin/app/error.tsx",
+      "sha256": "e7f55c17045b49af9b804eedc96b55cbc1a83982655b330af283133512b3acc7"
+    },
+    {
+      "path": "apps/admin/app/global-error.tsx",
+      "sha256": "1c21a3bba300d2b9418fbb36cef9b232c7b2d951e1dc7fd3cb476e054e673eae"
+    },
+    {
+      "path": "apps/admin/app/globals.css",
+      "sha256": "2ad41911429f662f65253bc277a78a37cdc564cb7c50ddb0a7953e89b94c0686"
+    },
+    {
+      "path": "apps/admin/app/login/page.tsx",
+      "sha256": "51929e7885d06efce5482554e4ab950b6fbbd9eb00834ca2cdf7eb130fd4cd92"
+    },
+    {
+      "path": "apps/admin/app/mfa/page.tsx",
+      "sha256": "5fcd672589e56fb1a371c94914fcb8142c761d8d41ed802eec24f3139ad868d3"
+    },
+    {
+      "path": "apps/admin/app/not-found.tsx",
+      "sha256": "afa6278a8ac9783593294c8af1f2955ad506ed5663106984f82b52a93d3003bb"
+    },
+    {
+      "path": "apps/admin/app/reauth/page.tsx",
+      "sha256": "ecb5856e20d96dba3222450817a42ad1fed3bcfee91f30bc0b621dec05bcdd0f"
+    },
+    {
+      "path": "apps/admin/app/session-expired/page.tsx",
+      "sha256": "b149d3e1087367646aa06c5384c84a7884477416c2eca8a0ed58e95dd2a3fb4a"
+    },
+    {
+      "path": "apps/admin/app/unauthorized/page.tsx",
+      "sha256": "bf21554fb4d1558f61dcd60a6d1817933ef53226a51a8e27461fcf83ba528a4e"
+    },
+    {
+      "path": "apps/admin/components/admin-navigation.tsx",
+      "sha256": "dd41606874f4b384b1af07e676db23d5d6f3824a00c1a63b71145c8026ce8eaa"
+    },
+    {
+      "path": "apps/admin/components/admin-rail-menu.tsx",
+      "sha256": "72c85fc8712da36f9f02abdd4036529e531c109f4bf24fef2c2cfbd40ff1a79b"
+    },
+    {
+      "path": "apps/admin/components/admin-route-error.tsx",
+      "sha256": "55c8bf847bd43a6b25fbe1686fa528f135fc158071e32cbb7e623b5cafab70c7"
+    },
+    {
+      "path": "apps/admin/components/admin-shell.tsx",
+      "sha256": "7da79d12c3b9ab551b3a0b0f64961785ec764723c49886631d114af90ef5f536"
+    },
+    {
+      "path": "apps/admin/components/assistant/assistant.module.css",
+      "sha256": "2e9377ca079fa3e131b9aa71b3f0001e43968ff27bf3d92f0038d7fb0daf365f"
+    },
+    {
+      "path": "apps/admin/components/assistant/operations-assistant.tsx",
+      "sha256": "dfa841a4f6a1636544e2c2462e6176ea328025fdfd46511059781adc9106abb8"
+    },
+    {
+      "path": "apps/admin/components/assistant/operations-context.tsx",
+      "sha256": "506be5ab56e41f099ffe97566b58cec25b772661ab090128599866f3a8c4283b"
+    },
+    {
+      "path": "apps/admin/components/assistant/operator-draft-provider.tsx",
+      "sha256": "362ad39d835aa5ccb3916fd4f5827c9e42d419e7bac1dcaa22d01e44a7ae08e5"
+    },
+    {
+      "path": "apps/admin/components/auth/admin-auth-connection-boundary.tsx",
+      "sha256": "4771d0df005d803e7a236985c3bbf5216c8e5e250bc70d773d7d7a38c3f7cae1"
+    },
+    {
+      "path": "apps/admin/components/auth/admin-auth-entry.module.css",
+      "sha256": "9a68265d47bb28ee60db903d420ede39b4b539151745a4aebae703ed533bcaee"
+    },
+    {
+      "path": "apps/admin/components/auth/admin-auth-entry.tsx",
+      "sha256": "07ce4c31e0d4b212646357d72b06eb1ad699e8e68e2be4087abafe1fea798831"
+    },
+    {
+      "path": "apps/admin/components/login-form.tsx",
+      "sha256": "75436818c13ca5724748b75a24f0b9085ccf649ea6bda97da281511f9f123c14"
+    },
+    {
+      "path": "apps/admin/components/mfa-gate.tsx",
+      "sha256": "fba473fe8de25ee5328d4e1d9e5879025b7985bbf691e5a3a8d45d3c228095ea"
+    },
+    {
+      "path": "apps/admin/components/money-operation-form.tsx",
+      "sha256": "87bdea7f9d412b022b5e1df1c432666f5453ad45ace2f2b2450b7cffb55bfcee"
+    },
+    {
+      "path": "apps/admin/components/operator-fields.tsx",
+      "sha256": "2a989f24366db16291976361cf12a99d6eec4429b421f22dd165a6f741f85db0"
+    },
+    {
+      "path": "apps/admin/components/queue-shell.tsx",
+      "sha256": "de395ccf0cd142aec5143f30b91437bf88b59547ddf6c7a07dc746e6f5e89374"
+    },
+    {
+      "path": "apps/admin/components/route-retry-button.tsx",
+      "sha256": "0510314a33044514dfa153e572bcf39b35b767716bec3f5fe7cf6809ee962baf"
+    },
+    {
+      "path": "apps/admin/components/step-up-token-field.tsx",
+      "sha256": "3bacdbf85488fe56599bef94e1252bae7e57dabdd5a65ffaf5ac20565e703ca9"
+    },
+    {
+      "path": "apps/admin/components/today/today-refresh-button.tsx",
+      "sha256": "59a49e8cc1811b1943c352a4afff379d306249e4b96ff0896d639bccc4f74477"
+    },
+    {
+      "path": "apps/admin/components/today/today-view.tsx",
+      "sha256": "77a1f45356d7ad97e49ae25cdd871e7b934e62d91a132a823f9ee3fdf4bd8025"
+    },
+    {
+      "path": "apps/admin/components/today/today.module.css",
+      "sha256": "89884fa365c872e8c60b2cf9993c704dc3681c17447b70febc3afeefd871b341"
+    },
+    {
+      "path": "tests/e2e/authenticated/admin-today.spec.ts",
+      "sha256": "e1ff8e454c9864c616496f7e9bc8200bfa4dad4b652aa7778abca0262291104a"
+    },
+    {
+      "path": "tests/e2e/authenticated/admin-members-product.spec.ts",
+      "sha256": "bb4df7601d8c35685abc41b3e200bf885b3c6105c7959d2f0fdb827a2a5bb3c0"
+    },
+    {
+      "path": "tests/e2e/authenticated/admin-assistant-context.spec.ts",
+      "sha256": "b12abe15f81a30496fc223c18bea218a50a8f9a8c16e79457071a3a24e49864d"
+    },
+    {
+      "path": "tests/e2e/authenticated/admin-assistant-read-draft.spec.ts",
+      "sha256": "ef0ec9a5d3c8ee588f21ce565869c726e339a2bc9f606db73c6d2189879cd31d"
+    },
+    {
+      "path": "apps/admin/tests/admin-rail-menu.test.ts",
+      "sha256": "6ebf7f2729dfb86742f786f1e4725ccab9be78366f0cb2c903872f4d2bbba104"
+    },
+    {
+      "path": "apps/admin/tests/admin-auth-entry.test.ts",
+      "sha256": "e3fee9898a1ce7834a7ee7686598150b7b36b944916747dd1366f70971fc0c04"
+    },
+    {
+      "path": "apps/admin/tests/assistant-context-panel.test.ts",
+      "sha256": "d1aeee23628d9cdf9cd6b5a40bd3ac62ebd6777a66341ec960bbcc20dd5896e3"
+    },
+    {
+      "path": "apps/admin/tests/member-record-labels.test.ts",
+      "sha256": "786c3caba41398407ca99e746679e58b86fc8063b828b2deb40f7ffda07e2863"
+    },
+    {
+      "path": "apps/admin/tests/member-state-display.test.ts",
+      "sha256": "e2254a3d88ca798a5710d36f5b11b5eb773a45924508bcfca387a91309b33b82"
+    }
+  ],
+  "secondary_safe_new_paths": [
+    "apps/admin/components/presentation/**",
+    "apps/admin/styles/**",
+    "tests/e2e/authenticated/admin-presentation-*.spec.ts",
+    "apps/admin/tests/admin-presentation-*.test.ts"
+  ],
+  "primary_owned_paths": [
+    "app/**",
+    "components/**",
+    "domain/**",
+    "lib/**",
+    "workers/**",
+    "supabase/**",
+    "scripts/**",
+    ".github/**",
+    "apps/admin/lib/**",
+    "apps/admin/app/api/**",
+    "apps/admin/**/actions.ts",
+    "apps/admin/app/layout.tsx",
+    "apps/admin/app/(control)/layout.tsx",
+    "apps/admin/proxy.ts",
+    "apps/admin/components/review-confirmation.ts",
+    "apps/admin/package.json",
+    "apps/admin/next.config.ts",
+    "apps/admin/tsconfig.json",
+    "tests/e2e/authenticated/helpers/**",
+    "tests/e2e/fixtures/**",
+    "tests/e2e/** except explicit Secondary UI spec allowlist",
+    "package.json",
+    "pnpm-lock.yaml",
+    "pnpm-workspace.yaml",
+    "playwright*.ts",
+    "docs/architecture/**",
+    "docs/development/**",
+    "/workspace/.putduk-cloud/**"
+  ],
+  "no_touch_for_primary": [
+    "apps/admin/app/(control)/assistant/loading.tsx",
+    "apps/admin/app/(control)/assistant/page.tsx",
+    "apps/admin/app/(control)/catalog/catalog.module.css",
+    "apps/admin/app/(control)/catalog/page.tsx",
+    "apps/admin/app/(control)/deposits/krw/[id]/page.tsx",
+    "apps/admin/app/(control)/deposits/krw/loading.tsx",
+    "apps/admin/app/(control)/deposits/krw/page.tsx",
+    "apps/admin/app/(control)/deposits/usdt/page.tsx",
+    "apps/admin/app/(control)/economy/economy.module.css",
+    "apps/admin/app/(control)/economy/loading.tsx",
+    "apps/admin/app/(control)/economy/page.tsx",
+    "apps/admin/app/(control)/error.tsx",
+    "apps/admin/app/(control)/exceptions/failed-jobs.module.css",
+    "apps/admin/app/(control)/exceptions/page.tsx",
+    "apps/admin/app/(control)/kyc/page.tsx",
+    "apps/admin/app/(control)/loading.tsx",
+    "apps/admin/app/(control)/members/error.tsx",
+    "apps/admin/app/(control)/members/loading.tsx",
+    "apps/admin/app/(control)/members/members.module.css",
+    "apps/admin/app/(control)/members/page.tsx",
+    "apps/admin/app/(control)/page.tsx",
+    "apps/admin/app/(control)/restrictions/page.tsx",
+    "apps/admin/app/(control)/withdrawals/_components/queue-states.module.css",
+    "apps/admin/app/(control)/withdrawals/error.tsx",
+    "apps/admin/app/(control)/withdrawals/krw-bank/page.tsx",
+    "apps/admin/app/(control)/withdrawals/loading.tsx",
+    "apps/admin/app/(control)/withdrawals/usdt/page.tsx",
+    "apps/admin/app/error.tsx",
+    "apps/admin/app/global-error.tsx",
+    "apps/admin/app/globals.css",
+    "apps/admin/app/login/page.tsx",
+    "apps/admin/app/mfa/page.tsx",
+    "apps/admin/app/not-found.tsx",
+    "apps/admin/app/reauth/page.tsx",
+    "apps/admin/app/session-expired/page.tsx",
+    "apps/admin/app/unauthorized/page.tsx",
+    "apps/admin/components/admin-navigation.tsx",
+    "apps/admin/components/admin-rail-menu.tsx",
+    "apps/admin/components/admin-route-error.tsx",
+    "apps/admin/components/admin-shell.tsx",
+    "apps/admin/components/assistant/assistant.module.css",
+    "apps/admin/components/assistant/operations-assistant.tsx",
+    "apps/admin/components/assistant/operations-context.tsx",
+    "apps/admin/components/assistant/operator-draft-provider.tsx",
+    "apps/admin/components/auth/admin-auth-connection-boundary.tsx",
+    "apps/admin/components/auth/admin-auth-entry.module.css",
+    "apps/admin/components/auth/admin-auth-entry.tsx",
+    "apps/admin/components/login-form.tsx",
+    "apps/admin/components/mfa-gate.tsx",
+    "apps/admin/components/money-operation-form.tsx",
+    "apps/admin/components/operator-fields.tsx",
+    "apps/admin/components/queue-shell.tsx",
+    "apps/admin/components/route-retry-button.tsx",
+    "apps/admin/components/step-up-token-field.tsx",
+    "apps/admin/components/today/today-refresh-button.tsx",
+    "apps/admin/components/today/today-view.tsx",
+    "apps/admin/components/today/today.module.css",
+    "tests/e2e/authenticated/admin-today.spec.ts",
+    "tests/e2e/authenticated/admin-members-product.spec.ts",
+    "tests/e2e/authenticated/admin-assistant-context.spec.ts",
+    "tests/e2e/authenticated/admin-assistant-read-draft.spec.ts",
+    "apps/admin/tests/admin-rail-menu.test.ts",
+    "apps/admin/tests/admin-auth-entry.test.ts",
+    "apps/admin/tests/assistant-context-panel.test.ts",
+    "apps/admin/tests/member-record-labels.test.ts",
+    "apps/admin/tests/member-state-display.test.ts",
+    "apps/admin/components/presentation/**",
+    "apps/admin/styles/**",
+    "tests/e2e/authenticated/admin-presentation-*.spec.ts",
+    "apps/admin/tests/admin-presentation-*.test.ts"
+  ],
+  "no_touch_for_secondary": "All Primary owned paths, generated .next/node_modules/report artifacts, private bootstrap/evidence, financial/security contracts and assertions",
+  "shared_contracts": [
+    "Existing admin API request/response shapes and command family names unchanged",
+    "AAL2, TOTP step-up, owner/user scope, RLS, CSRF/origin, audit and no-store boundaries unchanged",
+    "Admin AI remains read-only facts/draft-only; publication/finance deterministic authorized commands",
+    "Existing mutation/replay/idempotency/recovery semantics and financial assertions retained",
+    "Member search name/login ID/full phone/UUID existing safe masked audited contract retained",
+    "No fabricated catalog, history, provider, prices or financial values"
+  ],
+  "handoff_rule": "One file has one builder. To change a reserved contract or move ownership, provide exact path/interface/proposal and complete explicit ownership handoff before editing. Primary integrates returned reviewed patch/commit only after Secondary closes its wave.",
+  "reviewable_checkpoint_commit": "7b34cd3ef30c4b746733e2c439a537247f009344",
+  "production_guard": "No push/merge/tag/dispatch/remote DB/deploy when production coupling unknown or live-impacting without explicit human approval."
+}

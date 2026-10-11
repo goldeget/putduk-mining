@@ -25,7 +25,10 @@ const bodySchema = z.discriminatedUnion("action", [
       withdrawalId: z.string().uuid(),
       network: z.enum(["TRC20", "ERC20", "BEP20"]),
       txHash: z.string().trim().min(8).max(128),
-      actualUsdtAmount: z.string().regex(/^[0-9]+(\.[0-9]{1,6})?$/),
+      actualUsdtAmount: z
+        .string()
+        .regex(/^[0-9]+(\.[0-9]{1,6})?$/)
+        .refine((value) => /[1-9]/.test(value)),
       conversionEvidence: z.record(z.string(), z.unknown()).optional(),
       sentAt: z.string().datetime(),
       stepUpToken: z.string().min(16),
@@ -53,6 +56,60 @@ const bodySchema = z.discriminatedUnion("action", [
 ]);
 
 export const dynamic = "force-dynamic";
+
+function krwPayoutFailure(message: string): Response | null {
+  const code = message.includes("KRW_SEND_AMOUNT_MUST_EQUAL_REQUEST")
+    ? "KRW_SEND_AMOUNT_MUST_EQUAL_REQUEST"
+    : message.includes("WITHDRAWAL_KRW_PAYOUT_AMOUNT_MISMATCH")
+      ? "WITHDRAWAL_KRW_PAYOUT_AMOUNT_MISMATCH"
+      : null;
+  if (!code) return null;
+  return Response.json(
+    {
+      ok: false,
+      code,
+      message:
+        "출금 요청 금액 전액을 수수료 없이 수동 송금해야 합니다. 실제 송금액과 요청 금액을 확인해 주세요. 금액이 다르면 완료 처리할 수 없습니다.",
+    },
+    { status: 409 },
+  );
+}
+
+function externalSendFailure(message: string) {
+  const code = message.includes("IDEMPOTENCY_KEY_REUSED")
+    ? "IDEMPOTENCY_KEY_REUSED"
+    : message.includes("EXTERNAL_SEND_PAYLOAD_MISMATCH")
+      ? "EXTERNAL_SEND_PAYLOAD_MISMATCH"
+      : "COMMAND_FAILED";
+  return Response.json(
+    { ok: false, code },
+    { status: code === "COMMAND_FAILED" ? 503 : 409 },
+  );
+}
+
+async function confirmedExternalSend(
+  db: ReturnType<typeof createAdminServiceClient>,
+  sendId: unknown,
+  withdrawalId: string,
+  method: "KRW_BANK" | "USDT_ADDRESS",
+): Promise<boolean> {
+  const id = z.uuid().safeParse(sendId);
+  if (!id.success) return false;
+  const { data, error } = await db
+    .from("withdrawal_external_sends")
+    .select("id,withdrawal_id,method")
+    .eq("id", id.data)
+    .eq("withdrawal_id", withdrawalId)
+    .eq("method", method)
+    .limit(1);
+  const receipt = data?.[0];
+  return (
+    !error &&
+    receipt?.id === id.data &&
+    receipt.withdrawal_id === withdrawalId &&
+    receipt.method === method
+  );
+}
 
 export async function POST(request: Request) {
   const access = await requireAdminCommand(request, HIGH_IMPACT_ROLES);
@@ -105,10 +162,14 @@ export async function POST(request: Request) {
       p_idempotency_key: body.idempotencyKey,
     });
     if (error) {
-      return Response.json(
-        { ok: false, code: "COMMAND_FAILED" },
-        { status: 503 },
+      return (
+        krwPayoutFailure(error.message) ?? externalSendFailure(error.message)
       );
+    }
+    if (
+      !(await confirmedExternalSend(db, data, body.withdrawalId, "KRW_BANK"))
+    ) {
+      return Response.json({ ok: false, code: "UNCONFIRMED" }, { status: 503 });
     }
     return Response.json({ ok: true, sendId: data }, { status: 200 });
   }
@@ -125,10 +186,17 @@ export async function POST(request: Request) {
       p_idempotency_key: body.idempotencyKey,
     });
     if (error) {
-      return Response.json(
-        { ok: false, code: "COMMAND_FAILED" },
-        { status: 503 },
-      );
+      return externalSendFailure(error.message);
+    }
+    if (
+      !(await confirmedExternalSend(
+        db,
+        data,
+        body.withdrawalId,
+        "USDT_ADDRESS",
+      ))
+    ) {
+      return Response.json({ ok: false, code: "UNCONFIRMED" }, { status: 503 });
     }
     return Response.json({ ok: true, sendId: data }, { status: 200 });
   }
@@ -140,13 +208,33 @@ export async function POST(request: Request) {
       p_idempotency_key: body.idempotencyKey,
     });
     if (error) {
+      const payoutFailure = krwPayoutFailure(error.message);
+      if (payoutFailure) return payoutFailure;
       return Response.json(
         { ok: false, code: "COMMAND_FAILED" },
         { status: 503 },
       );
     }
+    if (!z.uuid().safeParse(data).success) {
+      return Response.json({ ok: false, code: "UNCONFIRMED" }, { status: 503 });
+    }
+    const finalized = await db
+      .from("withdrawal_requests")
+      .select("id,status,finalize_ledger_transaction_id")
+      .eq("id", body.withdrawalId)
+      .limit(1);
+    const receipt = finalized.data?.[0];
+    if (
+      finalized.error ||
+      receipt?.id !== body.withdrawalId ||
+      (receipt.status !== "COMPLETED" &&
+        receipt.status !== "LEDGER_FINALIZED") ||
+      receipt.finalize_ledger_transaction_id !== data
+    ) {
+      return Response.json({ ok: false, code: "UNCONFIRMED" }, { status: 503 });
+    }
     return Response.json(
-      { ok: true, ledgerTransactionId: data },
+      { ok: true, ledgerTransactionId: data, status: receipt.status },
       { status: 200 },
     );
   }

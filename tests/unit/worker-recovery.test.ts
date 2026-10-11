@@ -91,6 +91,7 @@ describe("worker retry jitter and permanent classification", () => {
     });
 
     const summary = await processOutboxBatch(db, {
+      batchSize: 1,
       workerId: "lane-c",
       randomUnit: 0,
     });
@@ -121,8 +122,8 @@ describe("reconciliation orchestration idempotency", () => {
       claim_system_jobs: () => ({ data: [job], error: null }),
     });
 
-    await processJobBatch(db, { workerId: "lane-c-recon" });
-    await processJobBatch(db, { workerId: "lane-c-recon-retry" });
+    await processJobBatch(db, { batchSize: 1, workerId: "lane-c-recon" });
+    await processJobBatch(db, { batchSize: 1, workerId: "lane-c-recon-retry" });
 
     const requests = calls.filter(
       ([name]) => name === "run_financial_reconciliation",
@@ -148,7 +149,10 @@ describe("reconciliation orchestration idempotency", () => {
       }),
     });
 
-    const summary = await processJobBatch(db, { workerId: "lane-c-recon" });
+    const summary = await processJobBatch(db, {
+      batchSize: 1,
+      workerId: "lane-c-recon",
+    });
     expect(summary.completed).toBe(0);
     expect(summary.failed).toBe(1);
     expect(calls).toContainEqual([
@@ -175,6 +179,7 @@ describe("reconciliation orchestration idempotency", () => {
     });
 
     await processJobBatch(db, {
+      batchSize: 1,
       workerId: "lane-c-recon",
       randomUnit: 0,
       jobHandlers: {

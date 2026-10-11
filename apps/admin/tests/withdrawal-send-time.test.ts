@@ -31,7 +31,7 @@ function form(method: "KRW" | "USDT", sentAt: string) {
     data.set("actualKrw", "5000");
     data.set("confirmation", "RECORD_KRW_SEND");
   } else {
-    data.set("network", "TRON");
+    data.set("network", "TRC20");
     data.set("txHash", "transfer-hash-0123456789");
     data.set("actualUsdt", "5.5");
     data.set("confirmation", "RECORD_USDT_SEND");
@@ -62,8 +62,7 @@ describe("외부 송금 시각", () => {
     ["USDT", recordUsdtExternalSendAction, "record_usdt_external_send"],
   ] as const) {
     it(`${method} 송금 시각을 한국 시간에서 UTC로 변환해 기존 명령에 전달한다`, async () => {
-      let reads = 0;
-      const rpc = vi.fn().mockResolvedValue({ error: null });
+      const rpc = vi.fn().mockResolvedValue({ data: withdrawal, error: null });
       service.mockReturnValue({
         rpc,
         from() {
@@ -72,7 +71,13 @@ describe("외부 송금 시각", () => {
             eq: () => query,
             limit: () =>
               Promise.resolve({
-                data: ++reads === 1 ? [] : [{ id: withdrawal }],
+                data: [
+                  {
+                    id: withdrawal,
+                    withdrawal_id: withdrawal,
+                    method: method === "KRW" ? "KRW_BANK" : "USDT_ADDRESS",
+                  },
+                ],
                 error: null,
               }),
           };

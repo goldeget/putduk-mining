@@ -23,11 +23,10 @@ create temporary table krw_conc_outcome (
   detail text not null
 );
 
--- 이 세션의 서버 주소만 쓴다. 과거 컨테이너 이름 목록은 쓰지 않는다.
 \ir resolve_disposable_dblink_host.inc
 
-insert into krw_conc_host (host)
-select pg_temp.putduk_disposable_dblink_host('LOCAL_DB_HOST_UNRESOLVED');
+insert into krw_conc_host(host)
+select pg_temp.putduk_disposable_dblink_connection();
 
 do $$
 declare
@@ -40,7 +39,7 @@ begin
   join pg_namespace as namespace on namespace.oid = extension.extnamespace
   where extension.extname = 'dblink';
 
-  select 'host=' || host || ' dbname=postgres user=postgres password=postgres'
+  select host
     into v_conn
   from krw_conc_host;
 
@@ -148,7 +147,7 @@ begin
   join pg_namespace as namespace on namespace.oid = extension.extnamespace
   where extension.extname = 'dblink';
 
-  select 'host=' || host || ' dbname=postgres user=postgres password=postgres'
+  select host
     into v_conn
   from krw_conc_host;
   select deposit_id into v_deposit_id from krw_conc_deposit;

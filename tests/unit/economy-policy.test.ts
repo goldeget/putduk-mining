@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   assertEffectiveEconomyPolicy,
+  assertZeroPlatformFeesForNewPolicy,
   fundingTierForPrincipal,
   policyTextDigest,
   validateEconomyPolicy,
@@ -279,5 +280,86 @@ describe("published V1 economy policy validation", () => {
     expect(() => validateEconomyPolicy(fixture(changed))).toThrow(
       "ECONOMY_POLICY_PRECISION_CHANGED",
     );
+  });
+});
+
+describe("permanent zero platform fees for new policy commands", () => {
+  const keys = Object.keys(
+    approved.platformFeesKrw,
+  ) as (keyof EconomyPolicyDocument["platformFeesKrw"])[];
+
+  it("accepts every approved zero without mutating source text or digests", () => {
+    const originalText = manifest;
+    const originalDigest = policyTextDigest(originalText);
+    const original = structuredClone(approved);
+    assertZeroPlatformFeesForNewPolicy(original);
+    expect(original).toEqual(approved);
+    expect(policyTextDigest(manifest)).toBe(originalDigest);
+    expect(manifest).toBe(originalText);
+  });
+
+  it.each(keys)("rejects a new charge in %s", (key) => {
+    const next = structuredClone(approved);
+    next.platformFeesKrw[key] = "1";
+    expect(() => assertZeroPlatformFeesForNewPolicy(next)).toThrow(
+      "ECONOMY_POLICY_PLATFORM_FEES_FORBIDDEN",
+    );
+    expect(next.platformFeesKrw[key]).toBe("1");
+  });
+
+  it.each([
+    "9007199254740993",
+    "9223372036854775807",
+    "-1",
+    "0.0",
+    "00",
+    "NaN",
+    "1e3",
+  ])(
+    "rejects a noncanonical fee %s rather than rounding it to zero",
+    (value) => {
+      const next = structuredClone(approved);
+      next.platformFeesKrw.mining = value;
+      expect(() => assertZeroPlatformFeesForNewPolicy(next)).toThrow(
+        "ECONOMY_POLICY_PLATFORM_FEES_FORBIDDEN",
+      );
+    },
+  );
+
+  it("cannot admit missing or extra fee fields through a cast", () => {
+    for (const fees of [
+      {},
+      { ...approved.platformFeesKrw, extraCharge: "0" },
+      null,
+    ]) {
+      expect(() =>
+        assertZeroPlatformFeesForNewPolicy({ platformFeesKrw: fees } as never),
+      ).toThrow("ECONOMY_POLICY_PLATFORM_FEES_FORBIDDEN");
+    }
+  });
+
+  it("still validates immutable historical fee manifests for read-only evidence", () => {
+    const historical = structuredClone(approved);
+    historical.policyVersion = "HISTORICAL-FEE-VERSION";
+    historical.platformFeesKrw.mining = "100";
+    const input = fixture(historical);
+    const texts = [
+      input.configText,
+      input.manifestText,
+      input.expected.configDigest,
+      input.expected.manifestDigest,
+    ];
+    const read = validateEconomyPolicy(input);
+    expect(read.document.platformFeesKrw.mining).toBe("100");
+    expect(Object.isFrozen(read.document.platformFeesKrw)).toBe(true);
+    expect(() => assertZeroPlatformFeesForNewPolicy(read.document)).toThrow(
+      "ECONOMY_POLICY_PLATFORM_FEES_FORBIDDEN",
+    );
+    expect([
+      input.configText,
+      input.manifestText,
+      input.expected.configDigest,
+      input.expected.manifestDigest,
+    ]).toEqual(texts);
   });
 });

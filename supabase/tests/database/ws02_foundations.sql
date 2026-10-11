@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(47);
+select plan(53);
 
 select has_table('public', 'ledger_accounts', 'balanced ledger accounts exist');
 select has_table('public', 'ledger_transactions', 'balanced ledger headers exist');
@@ -491,15 +491,26 @@ select ok(
   (select bool_and(status = 'PROCESSING') from ws02_claimed_outbox),
   'claimed outbox events enter PROCESSING under a lease'
 );
+create temporary table ws02_source_ack_before as select count(*)::bigint as ledger_count from public.ledger_transactions;
+
+-- The canonical original consumer requires both SQL and JWT service identity.
+-- The producer and lease above remain the existing public commands.
+grant select on ws02_claimed_outbox to service_role;
+select set_config('request.jwt.claim.role', 'service_role', true);
+select set_config('request.jwt.claims', '{"role":"service_role"}', true);
+set local role service_role;
 select public.complete_outbox_event(
-  (select id from ws02_claimed_outbox order by created_at limit 1),
+  (select id from ws02_claimed_outbox where event_type='TRIAL_REWARD_CONVERTED.v1'),
   'ws02-worker'
 );
+reset role;
+select set_config('request.jwt.claim.role', '', true);
+select set_config('request.jwt.claims', '{}', true);
 select is(
   (
     select status::text
     from public.outbox_events
-    where id = (select id from ws02_claimed_outbox order by created_at limit 1)
+    where id = (select id from ws02_claimed_outbox where event_type='TRIAL_REWARD_CONVERTED.v1')
   ),
   'PROCESSED',
   'the owning worker can complete its outbox lease'
@@ -523,6 +534,17 @@ with inserted as (
 )
 update ws02_context set job_id = inserted.id from inserted;
 
+-- Exercise actual worker commands with both SQL and synthetic JWT service identity.
+do $temp_grant$
+begin
+  execute format('grant usage, create on schema %I to service_role',
+    (select nspname from pg_namespace where oid = pg_my_temp_schema()));
+end;
+$temp_grant$;
+grant select on ws02_context to service_role;
+select set_config('request.jwt.claim.role', 'service_role', true);
+select set_config('request.jwt.claims', '{"role":"service_role"}', true);
+set local role service_role;
 create temporary table ws02_claimed_job as
 select * from public.claim_system_jobs('ws02-job-worker', 1, 60);
 
@@ -581,6 +603,9 @@ select is(
   'SUCCEEDED',
   'the second lease owner can complete the durable job'
 );
+reset role;
+select set_config('request.jwt.claim.role', '', true);
+select set_config('request.jwt.claims', '{}', true);
 
 select throws_ok(
   $sql$
@@ -627,6 +652,27 @@ select throws_ok(
   null,
   'standard referral rewards cannot exceed the 10,000 KRW pair cap'
 );
+
+-- Default-disabled reward evaluation must not prevent sealed START delivery.
+select is((select count(*) from app_private.nonmoney_executor_configuration),0::bigint,
+ 'ordinary source delivery never implicitly activates local reward configuration');
+select is((select count(*) from public.member_event_awards where user_id=(select user_id from ws02_context)),0::bigint,
+ 'default-disabled source acknowledgement produces no member reward');
+select is((select count(*) from public.event_consumer_deliveries where event_id=(select id from ws02_claimed_outbox where event_type='TRIAL_REWARD_CONVERTED.v1')and consumer_name='nonmoney_mission_original.v1'and status='SUCCEEDED'),1::bigint,
+ 'valid START source commits one delivery receipt without a reward policy');
+select is((select count(*) from public.ledger_transactions),
+ (select ledger_count from ws02_source_ack_before),
+ 'source acknowledgement never creates a monetary ledger transaction');
+create temporary table ws02_forged_source(id uuid);
+insert into ws02_forged_source values(gen_random_uuid());
+select throws_ok($$
+ insert into public.outbox_events(id,event_type,schema_version,aggregate_type,aggregate_id,payload,correlation_id,request_id,idempotency_key,status,lease_owner,lease_expires_at)
+ select id,'TRIAL_REWARD_CONVERTED.v1',1,'trial_reward_conversion',gen_random_uuid(),'{}',gen_random_uuid(),gen_random_uuid(),'ws02-forged-source','PROCESSING','ws02-invalid',clock_timestamp()+interval '60 seconds'from ws02_forged_source
+$$,'55000','MONEY_SOURCE_RECEIPT_UNVERIFIED',
+ 'default-disabled reward config never allows an outbox-only forged source');
+select is((select count(*) from public.event_consumer_deliveries where event_id=(select id from ws02_forged_source)),0::bigint,
+ 'failed sealed source validation leaves no acknowledgement receipt');
+select set_config('request.jwt.claims','{}',true);
 
 select * from finish();
 

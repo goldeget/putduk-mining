@@ -49,10 +49,11 @@ SECRET_KEY=${SECRET}
     expect(captured.publishableKey).toBe(PUBLISHABLE);
     expect(captured.secretKey).toBe(SECRET);
     expect(captured.dbUrl).toBe(LOCAL_DB);
-    const payload = formatGithubEnv(captured);
+    const payload = formatGithubEnv(captured, {});
     expect(payload).toContain(`LOCAL_SUPABASE_DB_URL=${LOCAL_DB}`);
     expect(payload).toContain(`NEXT_PUBLIC_SUPABASE_URL=${LOCAL_URL}`);
     expect(payload).toContain(`SUPABASE_SECRET_KEY=${SECRET}`);
+    expect(payload).toContain(`LOCAL_SUPABASE_PROJECT_ID=${allow.projectId}\n`);
   });
 
   it("maps dotted override names and reads env lines from stderr", () => {
@@ -251,11 +252,182 @@ SECRET_KEY=${SECRET}
   });
 });
 
+describe("checked GitHub local-project environment export", () => {
+  const local = {
+    apiUrl: LOCAL_URL,
+    publishableKey: PUBLISHABLE,
+    secretKey: SECRET,
+    dbUrl: LOCAL_DB,
+  };
+
+  it("exports only the configuration identity bound to the checked local endpoints", () => {
+    const values = parseShellEnv(formatGithubEnv(local, {}));
+    expect(values).toEqual({
+      NEXT_PUBLIC_SUPABASE_URL: LOCAL_URL,
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: PUBLISHABLE,
+      SUPABASE_SECRET_KEY: SECRET,
+      LOCAL_SUPABASE_DB_URL: LOCAL_DB,
+      LOCAL_SUPABASE_PROJECT_ID: allow.projectId,
+    });
+  });
+
+  it("accepts matching caller metadata without choosing a different project", () => {
+    const values = parseShellEnv(
+      formatGithubEnv(
+        { ...local, projectId: allow.projectId },
+        { APP_ENV: "test", LOCAL_SUPABASE_PROJECT_ID: allow.projectId },
+      ),
+    );
+    expect(values.LOCAL_SUPABASE_PROJECT_ID).toBe(allow.projectId);
+  });
+
+  it.each([
+    "putduk-mining-unrelated",
+    "osrmyjgmpdspdcwqjwuv",
+    "",
+    `${allow.projectId}\nINJECTED_PROJECT=value`,
+  ])("rejects caller-supplied project metadata %j", (projectId) => {
+    expect(() => formatGithubEnv({ ...local, projectId }, {})).toThrow(
+      "LOCAL_PROJECT_SCOPE_REJECTED",
+    );
+  });
+
+  it.each([
+    "LOCAL_SUPABASE_PROJECT_ID",
+    "SUPABASE_PROJECT_ID",
+    "SUPABASE_PROJECT_REF",
+  ])("cannot overwrite an existing unrelated local %s", (name) => {
+    expect(() =>
+      formatGithubEnv(local, {
+        [name]: "putduk-mining-unrelated",
+      }),
+    ).toThrow("LOCAL_PROJECT_SCOPE_REJECTED");
+  });
+
+  it.each([
+    "LOCAL_SUPABASE_PROJECT_ID",
+    "SUPABASE_PROJECT_ID",
+    "SUPABASE_PROJECT_REF",
+  ])("rejects remote or multiline existing %s", (name) => {
+    expect(() =>
+      formatGithubEnv(local, {
+        [name]: "osrmyjgmpdspdcwqjwuv",
+      }),
+    ).toThrow("REMOTE_SUPABASE_SECRET_REJECTED");
+    expect(() =>
+      formatGithubEnv(local, {
+        [name]: `${allow.projectId}\n`,
+      }),
+    ).toThrow("LOCAL_PROJECT_SCOPE_REJECTED");
+  });
+
+  it.each([
+    ["apiUrl", "https://osrmyjgmpdspdcwqjwuv.supabase.co"],
+    ["apiUrl", "http://127.0.0.1:1"],
+    ["apiUrl", `${LOCAL_URL}\nINJECTED_PROJECT=value`],
+    [
+      "dbUrl",
+      "postgresql://postgres:synthetic@db.osrmyjgmpdspdcwqjwuv.supabase.co:5432/postgres",
+    ],
+    ["dbUrl", "postgresql://postgres:synthetic@127.0.0.1:1/postgres"],
+    [
+      "dbUrl",
+      `postgresql://postgres.putduk-mining-unrelated:synthetic@127.0.0.1:${allow.dbPort}/postgres`,
+    ],
+    ["dbUrl", ""],
+  ])(
+    "revalidates %s before exporting the configuration identity",
+    (field, value) => {
+      expect(() => formatGithubEnv({ ...local, [field]: value }, {})).toThrow();
+    },
+  );
+
+  it.each(["publishableKey", "secretKey"])(
+    "rejects unsafe %s without returning an environment payload",
+    (field) => {
+      expect(() =>
+        formatGithubEnv(
+          { ...local, [field]: `synthetic\nINJECTED_KEY=value` },
+          {},
+        ),
+      ).toThrow(/newline/);
+      expect(() =>
+        formatGithubEnv({ ...local, [field]: "osrmyjgmpdspdcwqjwuv" }, {}),
+      ).toThrow("REMOTE_SUPABASE_SECRET_REJECTED");
+    },
+  );
+
+  it("refuses a production base environment even when local status is valid", () => {
+    expect(() => formatGithubEnv(local, { APP_ENV: "production" })).toThrow(
+      "PRODUCTION_ENV_REJECTED",
+    );
+  });
+});
+
 describe("supabase start log redaction", () => {
   const jwt = "eyJhbGciOiJub25lIn0.eyJyb2xlIjoidGVzdCJ9.c2ln";
   const storageSecret = "ab".repeat(32);
   const accessKey = "cd".repeat(16);
   const digest = `sha256:${"ef".repeat(32)}`;
+
+  const cliCredentialFields = [
+    "ANON_KEY",
+    "PUBLISHABLE_KEY",
+    "SERVICE_ROLE_KEY",
+    "SECRET_KEY",
+    "JWT_SECRET",
+    "S3_PROTOCOL_ACCESS_KEY_ID",
+    "S3_PROTOCOL_ACCESS_KEY_SECRET",
+    "auth.anon_key",
+    "auth.publishable_key",
+    "auth.service_role_key",
+    "auth.secret_key",
+    "auth.jwt_secret",
+    "storage.s3_access_key_id",
+    "storage.s3_secret_access_key",
+  ];
+
+  it.each(cliCredentialFields)(
+    "redacts CLI credential %s in JSON and env formats without relying on its value shape",
+    (field) => {
+      const credential =
+        'synthetic opaque value with spaces, punctuation and \\"quote';
+      const json = JSON.stringify({ API_URL: LOCAL_URL, [field]: credential });
+      const safeJson = redactSupabaseCliLine(json);
+      expect(safeJson).not.toContain("synthetic opaque");
+      expect(JSON.parse(safeJson)).toEqual({
+        API_URL: LOCAL_URL,
+        [field]: "<redacted>",
+      });
+      const env = `API_URL=${LOCAL_URL}\nexport ${field}=${JSON.stringify(credential)}`;
+      expect(redactSupabaseCliLine(env)).toBe(
+        `API_URL=${LOCAL_URL}\nexport ${field}=<redacted>`,
+      );
+    },
+  );
+
+  it("redacts multiple JSON fields across pretty lines while preserving nonsecret service URLs", () => {
+    const input = JSON.stringify(
+      {
+        API_URL: LOCAL_URL,
+        STUDIO_URL: "http://127.0.0.1:58423",
+        S3_PROTOCOL_URL: `${LOCAL_URL}/storage/v1/s3`,
+        JWT_SECRET: "synthetic signing material",
+        S3_PROTOCOL_ACCESS_KEY_ID: "synthetic access identifier",
+        S3_PROTOCOL_ACCESS_KEY_SECRET: "synthetic storage material",
+      },
+      null,
+      2,
+    );
+    expect(JSON.parse(redactSupabaseCliLine(input))).toEqual({
+      API_URL: LOCAL_URL,
+      STUDIO_URL: "http://127.0.0.1:58423",
+      S3_PROTOCOL_URL: `${LOCAL_URL}/storage/v1/s3`,
+      JWT_SECRET: "<redacted>",
+      S3_PROTOCOL_ACCESS_KEY_ID: "<redacted>",
+      S3_PROTOCOL_ACCESS_KEY_SECRET: "<redacted>",
+    });
+  });
 
   it("masks key-shaped strings and keeps the database password mask", () => {
     const input = [
@@ -305,6 +477,36 @@ describe("supabase start log redaction", () => {
     expect(result.stdout).not.toContain(SECRET);
     expect(result.stdout).toContain("<redacted>");
     expect(result.stderr ?? "").not.toContain(SECRET);
+  });
+
+  it("redacts opaque JSON and env credentials in the actual streaming consumer", () => {
+    const result = spawnSync(
+      process.execPath,
+      ["scripts/redact-supabase-cli-stream.mjs"],
+      {
+        input: [
+          JSON.stringify({
+            API_URL: LOCAL_URL,
+            JWT_SECRET: "synthetic signing material",
+            S3_PROTOCOL_ACCESS_KEY_ID: "synthetic access identifier",
+            S3_PROTOCOL_ACCESS_KEY_SECRET: "synthetic storage material",
+          }),
+          "S3_PROTOCOL_ACCESS_KEY_SECRET='synthetic env storage material'",
+        ].join("\n"),
+        encoding: "utf8",
+        cwd: fileURLToPath(new URL("../..", import.meta.url)),
+      },
+    );
+    expect(result.status).toBe(0);
+    expect(result.stdout).not.toContain("synthetic");
+    expect(result.stderr ?? "").not.toContain("synthetic");
+    expect(JSON.parse(result.stdout.split("\n")[0]!)).toEqual({
+      API_URL: LOCAL_URL,
+      JWT_SECRET: "<redacted>",
+      S3_PROTOCOL_ACCESS_KEY_ID: "<redacted>",
+      S3_PROTOCOL_ACCESS_KEY_SECRET: "<redacted>",
+    });
+    expect(result.stdout).toContain("S3_PROTOCOL_ACCESS_KEY_SECRET=<redacted>");
   });
 
   it("pipes supabase start through redaction without shell tracing", () => {

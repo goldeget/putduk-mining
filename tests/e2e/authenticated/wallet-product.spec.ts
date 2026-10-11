@@ -21,7 +21,7 @@ test.describe("지갑 제품 읽기 화면", () => {
     await page.goto("/wallet");
     await expect(
       page.getByRole("heading", {
-        name: "출금 가능 잔액",
+        name: "지갑",
         exact: true,
         level: 1,
       }),
@@ -82,7 +82,7 @@ test.describe("지갑 제품 읽기 화면", () => {
       await page.setViewportSize({ width, height: 900 });
       await expect(
         page.getByRole("heading", {
-          name: "출금 가능 잔액",
+          name: "지갑",
           exact: true,
           level: 1,
         }),
@@ -93,7 +93,7 @@ test.describe("지갑 제품 읽기 화면", () => {
       await page.emulateMedia({ colorScheme: theme });
       await expect(
         page.getByRole("heading", {
-          name: "출금 가능 잔액",
+          name: "지갑",
           exact: true,
           level: 1,
         }),

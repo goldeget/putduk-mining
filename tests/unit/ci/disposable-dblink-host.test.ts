@@ -4,85 +4,124 @@ import { fileURLToPath } from "node:url";
 
 import { describe, expect, it } from "vitest";
 
-const repoRoot = fileURLToPath(new URL("../../..", import.meta.url));
+import {
+  assertLocalDbContainerMetadata,
+  resolveLocalDbTarget,
+} from "../../../scripts/local-db-target.mjs";
 
-const helper = readFileSync(
-  new URL(
-    "../../../supabase/snippets/resolve_disposable_dblink_host.sql",
-    import.meta.url,
-  ),
-  "utf8",
-);
-
-const mountedCopies = [
-  "supabase/tests/snippets/resolve_disposable_dblink_host.inc",
-  "supabase/tests-concurrent/resolve_disposable_dblink_host.inc",
-];
-
+const repoRoot = fileURLToPath(new URL("../../../", import.meta.url));
+const helperPath =
+  "supabase/tests-concurrent/resolve_disposable_dblink_host.inc";
+const helper = readFileSync(path.join(repoRoot, helperPath), "utf8");
+const concurrent = [
+  "krw_deposit_concurrent_approval.sql",
+  "usdt_deposit_concurrent_approval.sql",
+  "safe_mode_concurrent_command.sql",
+  "withdrawal_member_lock_order.sql",
+  "global_allocation_admission_concurrent.sql",
+  "hold_cancel_admission_concurrent.sql",
+  "principal_finalize_native_contention.sql",
+].map((name) => ({
+  relative: `supabase/tests-concurrent/${name}`,
+  mountRoot: "supabase/tests-concurrent",
+}));
 const callers = [
-  {
-    relative: "supabase/tests-concurrent/krw_deposit_concurrent_approval.sql",
-    mountRoot: "supabase/tests-concurrent",
-  },
-  {
-    relative: "supabase/tests-concurrent/usdt_deposit_concurrent_approval.sql",
-    mountRoot: "supabase/tests-concurrent",
-  },
-  {
-    relative: "supabase/tests-concurrent/safe_mode_concurrent_command.sql",
-    mountRoot: "supabase/tests-concurrent",
-  },
+  ...concurrent,
   {
     relative: "supabase/tests/database/acknowledge_reconciliation_mismatch.sql",
     mountRoot: "supabase/tests",
   },
-].map((caller) => ({
-  ...caller,
-  source: readFileSync(
-    new URL(`../../../${caller.relative}`, import.meta.url),
-    "utf8",
-  ),
-}));
+];
+const config =
+  'project_id = "putduk-mining-backend-patch-test"\n[api]\nport = 65421\n[db]\nport = 65422\n';
 
-function includedPath(sqlRelative: string, includeRelative: string) {
-  return path.resolve(repoRoot, path.dirname(sqlRelative), includeRelative);
-}
-
-describe("일회용 dblink 호스트", () => {
-  it("이 세션의 서버 주소만 쓰고 과거 컨테이너 이름을 probe 하지 않는다", () => {
-    expect(helper).toContain("pg_catalog.inet_server_addr()");
-    expect(helper).toContain("putduk.qa_db_host");
-    expect(helper).toContain("^supabase_db_putduk-mining[-a-z0-9]*$");
-    expect(helper).toContain("EXACT_LOCAL_DB_HOST_REQUIRED");
-    expect(helper).not.toContain("supabase_db_putduk-mining-clean");
-    expect(helper).not.toContain("host=127.0.0.1");
-    expect(helper).not.toContain("host=localhost");
-  });
-
-  it("동시성 검사와 정산 확인이 pg_prove 마운트 안의 같은 헬퍼를 포함한다", () => {
-    for (const copy of mountedCopies) {
-      expect(
-        readFileSync(new URL(`../../../${copy}`, import.meta.url), "utf8"),
-      ).toBe(helper);
-    }
-
+describe("disposable database identity admission", () => {
+  it("keeps all dblink dependencies inside pg_prove's mounted directory", () => {
     for (const caller of callers) {
-      const include = caller.source.match(/^\\ir\s+(\S+)\s*$/m)?.[1];
+      const source = readFileSync(path.join(repoRoot, caller.relative), "utf8");
+      const include = source.match(/^\\ir\s+(\S+)\s*$/m)?.[1];
       expect(include, caller.relative).toBeTruthy();
-      const resolved = includedPath(caller.relative, include ?? "");
-      const mount = path.resolve(repoRoot, caller.mountRoot);
-      const fromMount = path.relative(mount, resolved);
+      const resolved = path.resolve(
+        repoRoot,
+        path.dirname(caller.relative),
+        include ?? "",
+      );
+      const relative = path.relative(
+        path.join(repoRoot, caller.mountRoot),
+        resolved,
+      );
       expect(
-        fromMount.startsWith("..") || path.isAbsolute(fromMount),
+        relative.startsWith("..") || path.isAbsolute(relative),
         caller.relative,
       ).toBe(false);
       expect(readFileSync(resolved, "utf8"), caller.relative).toBe(helper);
-      expect(caller.source, caller.relative).toContain(
-        "pg_temp.putduk_disposable_dblink_host(",
+      expect(source, caller.relative).toContain(
+        "pg_temp.putduk_disposable_dblink_connection(",
       );
-      expect(caller.source, caller.relative).not.toContain(
-        "supabase_db_putduk-mining-clean",
+      expect(source, caller.relative).not.toMatch(
+        /supabase_db_putduk-mining|host=.*password=postgres/,
       );
     }
+  });
+
+  it("uses only the current TCP server and verifies its cluster before remote fixture writes", () => {
+    expect(helper).toContain("pg_catalog.inet_server_addr()");
+    expect(helper).toContain("server_address is null");
+    expect(helper).toContain("server_address <<= '127.0.0.0/8'::inet");
+    expect(helper).toContain("server_address = '::1'::inet");
+    expect(helper).toContain("EXACT_LOCAL_DB_TCP_SERVER_REQUIRED");
+    expect(helper).toContain("pg_catalog.host(server_address)");
+    expect(helper).toContain("current_setting('port')");
+    expect(helper).toContain("pg_control_system()");
+    expect(helper).toContain("remote_cluster is distinct from local_cluster");
+    expect(helper).toContain(
+      "remote_database is distinct from current_database()",
+    );
+    expect(helper).not.toMatch(
+      /putduk.qa_db_host|supabase_db_|dblink_connect_u|host=127\.0\.0\.1/,
+    );
+  });
+
+  it("derives the container from configuration without a historical default", () => {
+    expect(resolveLocalDbTarget(config)).toMatchObject({
+      projectId: "putduk-mining-backend-patch-test",
+      container: "supabase_db_putduk-mining-backend-patch-test",
+      dbPort: "65422",
+    });
+    expect(() => resolveLocalDbTarget(config, "putduk-mining")).toThrow(
+      "LOCAL_DB_PROJECT_SCOPE_REJECTED",
+    );
+    expect(() => resolveLocalDbTarget(config, "osrmyjgmpdspdcwqjwuv")).toThrow(
+      "LOCAL_DB_PROJECT_SCOPE_REJECTED",
+    );
+    expect(() => resolveLocalDbTarget(config, "")).toThrow(
+      "LOCAL_DB_PROJECT_SCOPE_REJECTED",
+    );
+  });
+
+  it("rejects a mismatched container identity even when the name has the project prefix", () => {
+    const target = resolveLocalDbTarget(config);
+    expect(() =>
+      assertLocalDbContainerMetadata(
+        JSON.stringify({
+          name: `/${target.container}`,
+          project: target.projectId,
+        }),
+        target,
+      ),
+    ).not.toThrow();
+    for (const metadata of [
+      { name: "/supabase_db_putduk-mining", project: target.projectId },
+      { name: `/${target.container}`, project: "putduk-mining" },
+      { name: `/${target.container}`, project: null },
+      null,
+    ]) {
+      expect(() =>
+        assertLocalDbContainerMetadata(JSON.stringify(metadata), target),
+      ).toThrow("LOCAL_DB_CONTAINER_METADATA_REJECTED");
+    }
+    expect(() => assertLocalDbContainerMetadata("not-json", target)).toThrow(
+      "LOCAL_DB_CONTAINER_METADATA_REJECTED",
+    );
   });
 });

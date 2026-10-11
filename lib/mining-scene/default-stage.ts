@@ -3,6 +3,7 @@ import type { StageSceneInput } from "@/lib/mining-scene/stage-input";
 import {
   APPROVED_SCENE_ASSET_PATHS,
   isApprovedMasterSha256,
+  isApprovedSceneMasterImage,
   type ApprovedResponsiveSource,
   type ApprovedSceneMaster,
   type ScenePoint,
@@ -30,6 +31,7 @@ function approvedMaster(master: ApprovedSceneMaster | null): boolean {
   return (
     master !== null &&
     isApprovedMasterSha256(master.sha256) &&
+    isApprovedSceneMasterImage(master) &&
     ASSET_PATH_SET.has(master.assetPath) &&
     validDimension(master.width) &&
     validDimension(master.height)
@@ -82,6 +84,18 @@ export function resolveDefaultStageInput(): StageSceneInput {
     scene.packStatus !== "APPROVED" ||
     scene.productionAssetActive !== true ||
     !approvedMaster(scene.master) ||
+    (scene.master.lightVariant !== undefined &&
+      (!approvedMaster(scene.master.lightVariant.master) ||
+        !scene.master.lightVariant.responsiveSources.every(
+          (source) =>
+            approvedResponsiveSource(source) &&
+            isApprovedSceneMasterImage({
+              ...scene.master.lightVariant.master,
+              assetPath: source.assetPath,
+              width: source.width,
+              height: source.height,
+            }),
+        ))) ||
     !scene.responsiveSources.every(approvedResponsiveSource) ||
     !validPoint(scene.anchor) ||
     !validPoint(scene.extractionTarget) ||
@@ -127,6 +141,29 @@ export function resolveDefaultStageInput(): StageSceneInput {
           width: scene.master.width,
           height: scene.master.height,
           altKo: scene.master.altKo,
+          ...(scene.master.lightVariant
+            ? {
+                lightVariant: {
+                  master: {
+                    sha256: scene.master.lightVariant.master.sha256,
+                    assetPath: scene.master.lightVariant.master.assetPath,
+                    width: scene.master.lightVariant.master.width,
+                    height: scene.master.lightVariant.master.height,
+                    altKo: scene.master.lightVariant.master.altKo,
+                  },
+                  responsiveSources:
+                    scene.master.lightVariant.responsiveSources.map(
+                      (source) => ({
+                        media: source.media,
+                        assetPath: source.assetPath,
+                        width: source.width,
+                        height: source.height,
+                        mimeType: source.mimeType,
+                      }),
+                    ),
+                },
+              }
+            : {}),
         }
       : null,
     responsiveSources: scene.responsiveSources.map((source) => ({

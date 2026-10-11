@@ -6,3 +6,11 @@ docs/design/USER-PROVIDED-VISUAL-PROMPT-2026-10-03.txt -text whitespace=cr-at-eo
 # The V1 policy's byte digest binds the approved seed on Windows and CI.
 docs/product/ECONOMY-V1-USER-APPROVAL-2026-10-03.md -text whitespace=cr-at-eol
 docs/product/economy-v1-approved-2026-10-03.json -text whitespace=cr-at-eol
+
+# SQL originals are byte-bound by the reviewed migration manifests. CRLF is
+# valid SQL line termination, not trailing content. Preserve applied originals
+# across Windows and Linux; real trailing spaces remain errors by default.
+supabase/**/*.sql -text whitespace=cr-at-eol
+# This historical, applied principal original contains one blank line with a
+# space. Preserve its approved digest rather than rewriting an applied file.
+supabase/migrations/20261006133100_principal_preparation_and_exact_interval.sql -text whitespace=cr-at-eol,-blank-at-eol

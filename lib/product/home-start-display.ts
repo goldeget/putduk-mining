@@ -141,7 +141,7 @@ export function formatTrialQuotaPercent(
 }
 
 export type HomePrimaryAction = {
-  href: "/home" | "/mining" | "/start";
+  href: "/home" | "/mining" | "/start" | "/products/allocation";
   label: string;
 };
 

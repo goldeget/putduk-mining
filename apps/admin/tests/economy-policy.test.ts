@@ -239,9 +239,10 @@ describe("admin economic policy authority and exact input", () => {
   });
   it("preserves large integer KRW and rejects float, scientific, overflow and malformed tier inputs", () => {
     const next = structuredClone(settings);
-    next.platformFeesKrw.principalRecovery = "9007199254740993";
+    next.tiers[12]!.maximumPrincipalKrw = "9007199254740992";
+    next.tiers[13]!.minimumPrincipalKrw = "9007199254740993";
     expect(
-      economySettingsSchema.parse(next).platformFeesKrw.principalRecovery,
+      economySettingsSchema.parse(next).tiers[13]!.minimumPrincipalKrw,
     ).toBe("9007199254740993");
     for (const invalid of [
       1.5,
@@ -272,18 +273,17 @@ describe("admin economic policy authority and exact input", () => {
       }).success,
     ).toBe(false);
   });
-  it("allows new approved numeric ranges and fees while preserving fixed source/carry/manual-KRW protocol", () => {
+  it("allows new approved numeric ranges with permanently zero platform fees and unchanged source/carry/manual-KRW protocol", () => {
     const next = structuredClone(settings);
     next.baseCycleRateBps = 1200;
     next.productMultiplier.maximumBps = 15000;
     next.campaign.maximumCombinedCapacityBoostBps = 5000;
-    next.platformFeesKrw.krwMiningRewardWithdrawal = "100";
     const document = JSON.parse(
       buildEconomyManifest(source, "APPROVED-NEW-VERSION", next),
     );
     expect(document.baseCycleRateBps).toBe(1200);
     expect(document.productMultiplier.maximumBps).toBe(15000);
-    expect(document.platformFeesKrw.krwMiningRewardWithdrawal).toBe("100");
+    expect(document.platformFeesKrw).toEqual(source.platformFeesKrw);
     expect(document.withdrawalSources).toEqual(source.withdrawalSources);
     expect(document.microKrwPerKrw).toBe(source.microKrwPerKrw);
     expect(document.allocation.capacityScope).toBe("GLOBAL_CYCLE");
@@ -674,5 +674,193 @@ describe("admin economic policy authority and exact input", () => {
     expect(
       (await createEconomyStateHandler(dependencies([{}]))(request({}))).status,
     ).toBe(503);
+  });
+});
+
+describe("permanent zero platform fee command boundary", () => {
+  const keys = Object.keys(
+    settings.platformFeesKrw,
+  ) as (keyof typeof settings.platformFeesKrw)[];
+
+  it.each(keys)(
+    "rejects %s before any CREATE RPC or proof consumption",
+    async (key) => {
+      const next = structuredClone(settings);
+      next.platformFeesKrw[key] = "1";
+      expect(economySettingsSchema.safeParse(next).success).toBe(false);
+      expect(() =>
+        buildEconomyManifest(source, "NO-FEE-NEW-VERSION", next),
+      ).toThrow("ECONOMY_POLICY_PLATFORM_FEES_FORBIDDEN");
+      const deps = dependencies([]);
+      const result = await createEconomyCommandHandler(deps)(
+        request({ ...createInput, settings: next }),
+      );
+      expect(result.status).toBe(400);
+      expect(deps.rpc).not.toHaveBeenCalled();
+    },
+  );
+
+  it.each([
+    "100",
+    "9007199254740993",
+    "9223372036854775807",
+    "-1",
+    "0.0",
+    "00",
+    "NaN",
+    "1e3",
+  ])("rejects positive or noncanonical fee %s in new settings", (value) => {
+    const next = structuredClone(settings);
+    next.platformFeesKrw.principalRecovery = value;
+    expect(economySettingsSchema.safeParse(next).success).toBe(false);
+  });
+
+  it("does not lose historical fees, manifest text or digests during read projection", async () => {
+    const historical = structuredClone(source);
+    historical.policyVersion = "HISTORICAL-FEE-POLICY";
+    historical.platformFeesKrw.mining = "100";
+    const row = rawPolicy(historical);
+    const original = structuredClone(row);
+    expect(settingsFromConfiguration(historical).platformFeesKrw.mining).toBe(
+      "100",
+    );
+    expect(
+      economyConsoleView(parseEconomyState(rawState(row))).selectedVersion
+        .settings.platformFeesKrw.mining,
+    ).toBe("100");
+    const deps = dependencies([rawState(row)]);
+    const result = await createEconomyStateHandler(deps)(
+      request({ policyVersion: historical.policyVersion }),
+    );
+    expect(result.status).toBe(200);
+    expect(deps.rpc.mock.calls.map((call) => call[0])).toEqual([
+      "read_economy_policy_version_state",
+    ]);
+    expect(row).toEqual(original);
+  });
+
+  it.each(["PREVIEW", "APPROVE", "PUBLISH"] as const)(
+    "returns the authoritative new-write fee rejection for %s without false success",
+    async (operation) => {
+      const historical = structuredClone(source);
+      historical.policyVersion = "HISTORICAL-FEE-POLICY";
+      historical.platformFeesKrw.usdtDepositConversion = "100";
+      const state = {
+        PREVIEW: ["DRAFT", 1],
+        APPROVE: ["PREVIEWED", 2],
+        PUBLISH: ["APPROVED", 3],
+      } as const;
+      const [priorState, revision] = state[operation];
+      const row = rawPolicy(historical, priorState, revision);
+      const original = structuredClone(row);
+      const deps = dependencies([]);
+      deps.rpc
+        .mockResolvedValueOnce({ data: rawState(row), error: null })
+        .mockResolvedValueOnce({
+          data: null,
+          error: { message: "PLATFORM_FEES_PERMANENTLY_DISABLED" },
+        });
+      const result = await createEconomyCommandHandler(deps)(
+        request({
+          operation,
+          policyVersion: historical.policyVersion,
+          expectedRevision: row.latestRevision.revisionId,
+          expectedDigest: row.configDigest,
+          effectiveFrom: future,
+          ...proof,
+        }),
+      );
+      expect(result.status).toBe(400);
+      const payload = await result.json();
+      expect(payload.error.code).toBe("PLATFORM_FEES_PERMANENTLY_DISABLED");
+      expect(payload.error.message).toContain("0원");
+      expect(payload.data).toBeUndefined();
+      expect(deps.rpc.mock.calls.map((call) => call[0])).toEqual([
+        "read_economy_policy_version_state",
+        "manage_economy_policy_version",
+      ]);
+      expect(row).toEqual(original);
+    },
+  );
+
+  it.each(["PREVIEW", "APPROVE", "PUBLISH"] as const)(
+    "preserves the DB-verified completed positive-fee same-key %s receipt",
+    async (operation) => {
+      const historical = structuredClone(source);
+      historical.policyVersion = "COMPLETED-HISTORICAL-FEE";
+      historical.platformFeesKrw.krwDeposit = "100";
+      const states = {
+        PREVIEW: ["PREVIEWED", 2],
+        APPROVE: ["APPROVED", 3],
+        PUBLISH: ["PUBLISHED", 4],
+      } as const;
+      const [completedState, revision] = states[operation];
+      const original = rawPolicy(historical, completedState, revision);
+      original.latestRevision.effectiveFrom = future;
+      const current = rawPolicy(historical, "PUBLISHED", 4);
+      current.latestRevision.effectiveFrom = future;
+      for (const row of current.history)
+        if (row.revision > 1) row.effectiveFrom = future;
+      const state = rawState(current);
+      state.serverNow = "2027-01-01T00:00:00.000Z";
+      const texts = [
+        current.configText,
+        current.manifestText,
+        current.configDigest,
+        current.manifestDigest,
+      ];
+      const deps = dependencies([state, receipt(original), state]);
+      const result = await createEconomyCommandHandler(deps)(
+        request({
+          operation,
+          policyVersion: historical.policyVersion,
+          expectedRevision: uuid(10 + revision - 1),
+          expectedDigest: current.configDigest,
+          effectiveFrom: future,
+          ...proof,
+        }),
+      );
+      expect(result.status).toBe(200);
+      const payload = await result.json();
+      expect(payload.data.confirmed).toBe(true);
+      expect(payload.data.receipt).toEqual(receipt(original));
+      expect(
+        payload.data.console.selectedVersion.settings.platformFeesKrw
+          .krwDeposit,
+      ).toBe("100");
+      expect(deps.rpc.mock.calls.map((call) => call[0])).toEqual([
+        "read_economy_policy_version_state",
+        "manage_economy_policy_version",
+        "read_economy_policy_version_state",
+      ]);
+      expect(deps.rpc.mock.calls[1]?.[1]).toMatchObject({
+        p_operation: operation,
+        p_actor: principal.userId,
+        p_admin_session_id: principal.adminSessionId,
+        p_auth_session_id: principal.sessionId,
+        p_verified_aal: "aal2",
+        p_step_up_token: proof.stepUpToken,
+        p_expected_digest: current.configDigest,
+      });
+      expect([
+        current.configText,
+        current.manifestText,
+        current.configDigest,
+        current.manifestDigest,
+      ]).toEqual(texts);
+    },
+  );
+
+  it("creates zero-fee settings from a historical reference without rewriting that reference", () => {
+    const historical = structuredClone(source);
+    historical.platformFeesKrw.krwDeposit = "100";
+    const original = JSON.stringify(historical);
+    const next = JSON.parse(
+      buildEconomyManifest(historical, "PERMANENT-NO-FEE", settings),
+    );
+    expect(next.platformFeesKrw).toEqual(settings.platformFeesKrw);
+    expect(next.withdrawalSources).toEqual(historical.withdrawalSources);
+    expect(next.futureFeeSource).toBe(historical.futureFeeSource);
+    expect(JSON.stringify(historical)).toBe(original);
   });
 });

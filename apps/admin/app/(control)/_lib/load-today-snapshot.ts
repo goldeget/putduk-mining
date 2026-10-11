@@ -1,6 +1,8 @@
 import "server-only";
 
 import { createAdminServiceClient } from "@/lib/supabase/service";
+import { PENDING_KRW_DEPOSIT_STATUSES } from "@/lib/deposits/krw-queue";
+import { ACTIONABLE_WITHDRAWAL_STATUSES } from "@/lib/withdrawals/queue-statuses";
 
 import {
   buildTodaySnapshot,
@@ -31,6 +33,7 @@ export async function loadTodaySnapshot(
   const db = createAdminServiceClient();
   const [
     kyc,
+    krwDeposits,
     usdtDeposits,
     krwWithdrawals,
     usdtWithdrawals,
@@ -50,6 +53,11 @@ export async function loadTodaySnapshot(
         "ON_HOLD",
         "REQUIRES_RESUBMISSION",
       ]),
+    db
+      .from("deposit_requests")
+      .select("id", { count: "exact", head: true })
+      .eq("currency", "KRW")
+      .in("status", [...PENDING_KRW_DEPOSIT_STATUSES]),
     // USDT 입금 확인 대기열은 canonical usdt_manual_deposits(SUBMITTED)만 센다.
     db
       .from("usdt_manual_deposits")
@@ -59,12 +67,12 @@ export async function loadTodaySnapshot(
       .from("withdrawal_requests")
       .select("id", { count: "exact", head: true })
       .eq("destination_type", "KRW_BANK")
-      .in("status", ["REQUESTED", "REVIEWING", "APPROVED", "PROCESSING"]),
+      .in("status", [...ACTIONABLE_WITHDRAWAL_STATUSES]),
     db
       .from("withdrawal_requests")
       .select("id", { count: "exact", head: true })
       .eq("destination_type", "USDT_ADDRESS")
-      .in("status", ["REQUESTED", "REVIEWING", "APPROVED", "PROCESSING"]),
+      .in("status", [...ACTIONABLE_WITHDRAWAL_STATUSES]),
     db
       .from("reconciliation_mismatches")
       .select("id", { count: "exact", head: true })
@@ -100,6 +108,7 @@ export async function loadTodaySnapshot(
       }));
 
   return buildTodaySnapshot({
+    krwDeposits: asCountSource(krwDeposits),
     usdtDeposits: asCountSource(usdtDeposits),
     krwWithdrawals: asCountSource(krwWithdrawals),
     usdtWithdrawals: asCountSource(usdtWithdrawals),

@@ -12,13 +12,13 @@
  * 지원하지 않는 아웃박스와 PERMANENT 작업은 그 시도에서 DEAD_LETTER가 된다.
  * 재시도 지연은 상한 있는 지수 백오프에 지터를 더한 값이다.
  * 같은 재조정 작업의 재시도는 작업 id를 요청 id로 다시 쓴다.
- * Still missing:
- *   - member notification fanout commands
+ * Device push delivery uses its separately fenced command consumer.
  */
 
 import { createClient } from "@supabase/supabase-js";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
+import { scheduleFundingJobs } from "./funding-scheduler.mjs";
 
 const WORKER_ID =
   process.env.PUTDUK_WORKER_ID?.trim() || `putduk-worker-${process.pid}`;
@@ -28,16 +28,375 @@ const POLL_MS = 3_000;
 /** Job types with a registered command handler. */
 export const SUPPORTED_JOB_HANDLERS = Object.freeze({
   FINANCIAL_RECONCILIATION: handleFinancialReconciliation,
+  FUNDING_MINING_TICK_V1: prepareFundingMiningTick,
+  LIVEOPS_PUBLICATION_FANOUT_V1: prepareLiveopsPublicationFanout,
 });
+
+const FUNDING_JOB_UUID =
+  /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i;
+
+function prepareLiveopsPublicationFanout(_client, job) {
+  const p = job?.payload;
+  if (
+    job?.job_type !== "LIVEOPS_PUBLICATION_FANOUT_V1" ||
+    typeof job.id !== "string" ||
+    !FUNDING_JOB_UUID.test(job.id) ||
+    job.payload_version !== 1 ||
+    !Number.isSafeInteger(job.attempts) ||
+    job.attempts < 1 ||
+    !p ||
+    typeof p !== "object" ||
+    Array.isArray(p) ||
+    Object.keys(p).length !== 4 ||
+    typeof p.revision_id !== "string" ||
+    !FUNDING_JOB_UUID.test(p.revision_id) ||
+    typeof p.source_event_id !== "string" ||
+    !FUNDING_JOB_UUID.test(p.source_event_id) ||
+    !Number.isSafeInteger(p.chunk_number) ||
+    p.chunk_number < 1 ||
+    !Object.hasOwn(p, "after_user_id") ||
+    (p.after_user_id !== null &&
+      (typeof p.after_user_id !== "string" ||
+        !FUNDING_JOB_UUID.test(p.after_user_id))) ||
+    (p.chunk_number === 1 && p.after_user_id !== null) ||
+    (p.chunk_number > 1 && p.after_user_id === null) ||
+    job.idempotency_key !== `liveops-fanout:${p.revision_id}:${p.chunk_number}`
+  ) {
+    throw new Error("LIVEOPS_FANOUT_JOB_ENVELOPE_INVALID");
+  }
+  // The current leased DB completion validates the sealed cohort and commits
+  // one bounded chunk plus its deterministic continuation in one transaction.
+}
+
+function prepareLiveopsPublicationDelivery(_client, event) {
+  const p = event?.payload;
+  const fields = [
+    "receipt_id",
+    "audit_id",
+    "content_kind",
+    "content_id",
+    "state",
+    "digest",
+  ];
+  if (
+    event?.event_type !== "LIVEOPS_CONTENT_CHANGED.v1" ||
+    event.schema_version !== 1 ||
+    event.aggregate_type !== "liveops_content" ||
+    !p ||
+    typeof p !== "object" ||
+    Array.isArray(p) ||
+    Object.keys(p).length !== fields.length ||
+    fields.some((field) => !Object.hasOwn(p, field)) ||
+    ["receipt_id", "audit_id", "content_id"].some(
+      (field) =>
+        typeof p[field] !== "string" || !FUNDING_JOB_UUID.test(p[field]),
+    ) ||
+    event.aggregate_id !== p.content_id ||
+    !["NOTICE", "EVENT"].includes(p.content_kind) ||
+    ![
+      "DRAFT",
+      "PREVIEWED",
+      "APPROVED",
+      "PUBLISHED",
+      "CANCELLED",
+      "ARCHIVED",
+    ].includes(p.state) ||
+    typeof p.digest !== "string" ||
+    !/^[a-f0-9]{64}$/.test(p.digest)
+  ) {
+    throw new Error("LIVEOPS_PUBLICATION_ENVELOPE_INVALID");
+  }
+  // JavaScript is envelope validation only, never a publication success receipt.
+}
+
+function prepareFundingMiningTick(_client, job) {
+  const payload = job?.payload;
+  const fields = ["user_id", "activation_id", "expected_state_id"];
+  if (
+    job?.job_type !== "FUNDING_MINING_TICK_V1" ||
+    typeof job.id !== "string" ||
+    !FUNDING_JOB_UUID.test(job.id) ||
+    job.payload_version !== 1 ||
+    !Number.isSafeInteger(job.attempts) ||
+    job.attempts < 1 ||
+    !payload ||
+    typeof payload !== "object" ||
+    Array.isArray(payload) ||
+    Object.keys(payload).length !== fields.length ||
+    fields.some(
+      (field) =>
+        !Object.hasOwn(payload, field) ||
+        typeof payload[field] !== "string" ||
+        !FUNDING_JOB_UUID.test(payload[field]),
+    ) ||
+    job.idempotency_key !== `funding:state:${payload.expected_state_id}`
+  )
+    throw new Error("FUNDING_JOB_ENVELOPE_INVALID");
+  // No calculation or monetary RPC here. The existing complete_system_job
+  // command verifies originals and commits the producer with the current fence.
+  // The separate original-backed scheduler prepares eligible jobs before claim.
+}
 
 /**
  * Outbox event types with a registered command handler.
  * Internal safe-mode audit acknowledgement is committed by the existing
- * complete_outbox_event command. Other event types remain unsupported.
+ * complete_outbox_event command. Reward qualification stays inside the DB.
  */
 export const SUPPORTED_OUTBOX_HANDLERS = Object.freeze({
   "SAFE_MODE_CHANGED.v1": prepareSafeModeAuditDelivery,
+  "LOCAL_CASH_REVIEW.v1": prepareLocalCashSourceDelivery,
+  "REFERRAL_REWARD_PAID.v1": prepareLocalCashSourceDelivery,
+  "EVENT_REWARD_PAID.v1": prepareLocalCashSourceDelivery,
+  "LIVEOPS_CONTENT_CHANGED.v1": prepareLiveopsPublicationDelivery,
+  "EVENT_PARTICIPATION_JOINED.v1": prepareMemberEventJoinDelivery,
+  "MEMBER_PROFILE_CAPTURED.v1": prepareMemberProfileAuditDelivery,
+  "DEPOSIT_CONFIRMED.v1": prepareNonmoneyOriginalDelivery,
+  "USDT_MANUAL_DEPOSIT_CONFIRMED.v1": prepareNonmoneyOriginalDelivery,
+  "WITHDRAWAL_COMPLETED.v1": prepareNonmoneyOriginalDelivery,
+  "TRIAL_REWARD_CONVERTED.v1": prepareNonmoneyOriginalDelivery,
+  "MINING_STARTED.v1": prepareNonmoneyOriginalDelivery,
+  "MINING_SETTLEMENT_COMPLETED.v1": prepareNonmoneyOriginalDelivery,
+  "TRIAL_COMPLETED.v1": prepareNonmoneyOriginalDelivery,
 });
+
+function prepareLocalCashSourceDelivery(_client, event) {
+  const payload = event?.payload;
+  const review = event?.event_type === "LOCAL_CASH_REVIEW.v1";
+  const aggregate = review
+    ? "local_cash_pending"
+    : event?.event_type === "REFERRAL_REWARD_PAID.v1"
+      ? "referral_reward_claim"
+      : event?.event_type === "EVENT_REWARD_PAID.v1"
+        ? "event_reward_claim"
+        : null;
+  const fields = review
+    ? ["review_original_id", "digest"]
+    : [
+        "cash_original_id",
+        "digest",
+        "user_id",
+        "claim_id",
+        "amount_atomic",
+        "currency",
+        "ledger_transaction_id",
+        "wallet_ledger_id",
+      ];
+  const uuids = review
+    ? ["review_original_id"]
+    : [
+        "cash_original_id",
+        "user_id",
+        "claim_id",
+        "ledger_transaction_id",
+        "wallet_ledger_id",
+      ];
+  if (
+    !aggregate ||
+    event.schema_version !== 1 ||
+    event.aggregate_type !== aggregate ||
+    typeof event.id !== "string" ||
+    !FUNDING_JOB_UUID.test(event.id) ||
+    typeof event.aggregate_id !== "string" ||
+    !FUNDING_JOB_UUID.test(event.aggregate_id) ||
+    !payload ||
+    typeof payload !== "object" ||
+    Array.isArray(payload) ||
+    Object.keys(payload).length !== fields.length ||
+    fields.some((field) => !Object.hasOwn(payload, field)) ||
+    uuids.some(
+      (field) =>
+        typeof payload[field] !== "string" ||
+        !FUNDING_JOB_UUID.test(payload[field]),
+    ) ||
+    typeof payload.digest !== "string" ||
+    !/^[a-f0-9]{64}$/.test(payload.digest) ||
+    (review
+      ? payload.review_original_id !== event.id
+      : payload.claim_id !== event.aggregate_id ||
+        payload.user_id !== event.actor_user_id ||
+        payload.currency !== "KRW" ||
+        typeof payload.amount_atomic !== "string" ||
+        !/^[1-9][0-9]*$/.test(payload.amount_atomic) ||
+        payload.amount_atomic.length > 19 ||
+        (payload.amount_atomic.length === 19 &&
+          payload.amount_atomic > "9223372036854775807"))
+  )
+    throw new Error("LOCAL_CASH_SOURCE_ENVELOPE_INVALID");
+  // Qualification, budget, posting and original seals remain in the existing
+  // leased DB completion. This handler only validates the versioned envelope.
+}
+
+function prepareNonmoneyOriginalDelivery(_client, event) {
+  const contracts = {
+    "TRIAL_COMPLETED.v1": {
+      aggregate: "trial_completion",
+      fields: ["user_id", "original_id", "completion_id", "digest"],
+      uuids: ["user_id", "original_id", "completion_id"],
+      amounts: [],
+    },
+    "MINING_STARTED.v1": {
+      aggregate: "funded_mining_mission",
+      fields: [
+        "user_id",
+        "original_id",
+        "earned_receipt_id",
+        "settlement_id",
+        "digest",
+      ],
+      uuids: ["user_id", "original_id", "earned_receipt_id", "settlement_id"],
+      amounts: [],
+    },
+    "MINING_SETTLEMENT_COMPLETED.v1": {
+      aggregate: "funded_mining_mission",
+      fields: [
+        "user_id",
+        "original_id",
+        "earned_receipt_id",
+        "settlement_id",
+        "digest",
+      ],
+      uuids: ["user_id", "original_id", "earned_receipt_id", "settlement_id"],
+      amounts: [],
+    },
+    "USDT_MANUAL_DEPOSIT_CONFIRMED.v1": {
+      aggregate: "usdt_manual_deposit",
+      fields: ["user_id", "credited_krw", "ledger_transaction_id"],
+      uuids: ["user_id", "ledger_transaction_id"],
+      amounts: ["credited_krw"],
+    },
+    "DEPOSIT_CONFIRMED.v1": {
+      aggregate: "deposit_request",
+      fields: [
+        "user_id",
+        "currency",
+        "approved_amount_atomic",
+        "requested_amount_atomic",
+        "ledger_transaction_id",
+        "wallet_ledger_id",
+      ],
+      uuids: ["user_id", "ledger_transaction_id", "wallet_ledger_id"],
+      amounts: ["approved_amount_atomic", "requested_amount_atomic"],
+    },
+    "WITHDRAWAL_COMPLETED.v1": {
+      aggregate: "withdrawal_request",
+      fields: ["finalize_ledger_transaction_id", "amount_atomic"],
+      uuids: ["finalize_ledger_transaction_id"],
+      amounts: ["amount_atomic"],
+    },
+    "TRIAL_REWARD_CONVERTED.v1": {
+      aggregate: "trial_reward_conversion",
+      fields: [
+        "user_id",
+        "amount_atomic",
+        "currency",
+        "funding_required",
+        "ledger_transaction_id",
+      ],
+      uuids: ["user_id", "ledger_transaction_id"],
+      amounts: ["amount_atomic"],
+    },
+  };
+  const contract = contracts[event.event_type];
+  const payload = event.payload;
+  if (
+    !contract ||
+    event.schema_version !== 1 ||
+    event.aggregate_type !== contract.aggregate ||
+    !FUNDING_JOB_UUID.test(event.id ?? "") ||
+    !FUNDING_JOB_UUID.test(event.aggregate_id ?? "") ||
+    !payload ||
+    typeof payload !== "object" ||
+    Array.isArray(payload) ||
+    Object.keys(payload).length !== contract.fields.length ||
+    contract.fields.some((field) => !Object.hasOwn(payload, field)) ||
+    contract.uuids.some(
+      (field) => !FUNDING_JOB_UUID.test(payload[field] ?? ""),
+    ) ||
+    contract.amounts.some(
+      (field) =>
+        typeof payload[field] !== "string" ||
+        !/^[1-9][0-9]*$/.test(payload[field]),
+    ) ||
+    (contract.fields.includes("digest") &&
+      (payload[
+        contract.aggregate === "trial_completion"
+          ? "completion_id"
+          : "original_id"
+      ] !== event.aggregate_id ||
+        typeof payload.digest !== "string" ||
+        !/^[a-f0-9]{64}$/.test(payload.digest))) ||
+    (contract.fields.includes("currency") && payload.currency !== "KRW") ||
+    (event.event_type === "TRIAL_REWARD_CONVERTED.v1" &&
+      payload.funding_required !== false)
+  ) {
+    throw new Error("NONMONEY_SOURCE_ENVELOPE_INVALID");
+  }
+  // A matching payload never proves qualification. Completion verifies the
+  // canonical money writer's original, owner, business clock and current policy.
+}
+
+function prepareMemberEventJoinDelivery(_client, event) {
+  const fields = [
+    "event_id",
+    "participant_id",
+    "user_id",
+    "content_revision_id",
+    "reward_mode",
+    "join_original_id",
+    "audit_id",
+    "digest",
+  ];
+  if (
+    event.event_type !== "EVENT_PARTICIPATION_JOINED.v1" ||
+    event.schema_version !== 1 ||
+    event.aggregate_type !== "event_participant" ||
+    !event.payload ||
+    Object.keys(event.payload).length !== fields.length ||
+    fields.some((field) => !Object.hasOwn(event.payload, field)) ||
+    fields
+      .filter((field) => !["digest", "reward_mode"].includes(field))
+      .some(
+        (field) =>
+          typeof event.payload[field] !== "string" ||
+          !FUNDING_JOB_UUID.test(event.payload[field]),
+      ) ||
+    event.payload.reward_mode !== "NONE" ||
+    typeof event.payload.digest !== "string" ||
+    !/^[a-f0-9]{64}$/.test(event.payload.digest)
+  ) {
+    throw new Error("EVENT_JOIN_ENVELOPE_INVALID");
+  }
+  // Existing completion RPC verifies the sealed DB original and writes one
+  // internal delivery receipt. Joining does not qualify or grant a reward.
+}
+
+function prepareMemberProfileAuditDelivery(_client, event) {
+  const fields = ["user_id", "required_consent_versions", "marketing_granted"];
+  const requiredVersions = ["TERMS-KO-2026-09-27", "PRIVACY-KO-2026-09-27"];
+  if (
+    event.event_type !== "MEMBER_PROFILE_CAPTURED.v1" ||
+    event.schema_version !== 1 ||
+    event.aggregate_type !== "user_identity_profile" ||
+    typeof event.aggregate_id !== "string" ||
+    !FUNDING_JOB_UUID.test(event.aggregate_id) ||
+    !event.payload ||
+    Object.keys(event.payload).length !== fields.length ||
+    fields.some((field) => !Object.hasOwn(event.payload, field)) ||
+    event.payload.user_id !== event.aggregate_id ||
+    typeof event.payload.marketing_granted !== "boolean" ||
+    !Array.isArray(event.payload.required_consent_versions) ||
+    event.payload.required_consent_versions.length !==
+      requiredVersions.length ||
+    requiredVersions.some(
+      (version, index) =>
+        event.payload.required_consent_versions[index] !== version,
+    )
+  ) {
+    throw new Error("MEMBER_PROFILE_CAPTURE_ENVELOPE_INVALID");
+  }
+  // Preflight only. Canonical completion checks immutable DB signup originals.
+  // No profile, timeline, notification or monetary mutation is performed in JS.
+}
 
 function prepareSafeModeAuditDelivery(_client, event) {
   // This is only envelope preflight. The DB completion command verifies the
@@ -93,7 +452,9 @@ export function jitteredRetryDelaySeconds(attempt, randomUnit = Math.random()) {
 export function classifyJobFailure(errorCode) {
   if (
     errorCode === "UNSUPPORTED_JOB_TYPE" ||
-    errorCode === "RECONCILIATION_JOB_ID_REQUIRED"
+    errorCode === "RECONCILIATION_JOB_ID_REQUIRED" ||
+    errorCode === "FUNDING_JOB_ENVELOPE_INVALID" ||
+    errorCode === "LIVEOPS_FANOUT_JOB_ENVELOPE_INVALID"
   ) {
     return "PERMANENT";
   }
@@ -304,17 +665,27 @@ export async function processOutboxBatch(
     unsupported: 0,
   };
 
-  const { data, error } = await client.rpc("claim_outbox_events", {
-    p_worker_id: workerId,
-    p_batch_size: batchSize,
-    p_lease_seconds: leaseSeconds,
-  });
-  if (error) {
-    console.error("claim_outbox_events failed", error.message);
-    return { ...summary, claimError: error.message };
+  if (!Number.isInteger(batchSize) || batchSize < 1 || batchSize > 200) {
+    throw new Error("INVALID_WORKER_BATCH_SIZE");
   }
 
-  for (const event of data ?? []) {
+  // Claim only the item that can start now. batchSize bounds the cycle's work;
+  // waiting rows keep their original availability and never consume a lease.
+  while (summary.claimed < batchSize) {
+    const { data, error } = await client.rpc("claim_outbox_events", {
+      p_worker_id: workerId,
+      p_batch_size: 1,
+      p_lease_seconds: leaseSeconds,
+    });
+    if (error) {
+      console.error("claim_outbox_events failed", error.message);
+      summary.claimError = error.message;
+      break;
+    }
+    const event = data?.[0];
+    if (!event) {
+      break;
+    }
     summary.claimed += 1;
     const { error: extendError } = await client.rpc(
       "extend_outbox_event_lease",
@@ -327,7 +698,7 @@ export async function processOutboxBatch(
     if (extendError) {
       summary.failed += 1;
       console.error("extend_outbox_event_lease failed", extendError.message);
-      continue;
+      break;
     }
     const handler = outboxHandlers[event.event_type];
 
@@ -343,10 +714,9 @@ export async function processOutboxBatch(
           randomUnit,
         ),
       });
+      summary.failed += 1;
       if (failError) {
         console.error("fail_outbox_event failed", failError.message);
-      } else {
-        summary.failed += 1;
       }
       continue;
     }
@@ -391,11 +761,11 @@ export async function processOutboxBatch(
           randomUnit,
         ),
       });
+      summary.failed += 1;
       if (failError) {
         console.error("fail_outbox_event failed", failError.message);
-      } else {
-        summary.failed += 1;
       }
+      break;
     }
   }
 
@@ -412,6 +782,7 @@ export async function processJobBatch(
     batchSize = 10,
     leaseSeconds = 120,
     jobHandlers = SUPPORTED_JOB_HANDLERS,
+    allowFundingJobs = true,
     leaseRenewIntervalMs,
     randomUnit,
   } = {},
@@ -423,17 +794,28 @@ export async function processJobBatch(
     unsupported: 0,
   };
 
-  const { data, error } = await client.rpc("claim_system_jobs", {
-    p_worker_id: workerId,
-    p_batch_size: batchSize,
-    p_lease_seconds: leaseSeconds,
-  });
-  if (error) {
-    console.error("claim_system_jobs failed", error.message);
-    return { ...summary, claimError: error.message };
+  if (!Number.isInteger(batchSize) || batchSize < 1 || batchSize > 100) {
+    throw new Error("INVALID_WORKER_BATCH_SIZE");
   }
 
-  for (const job of data ?? []) {
+  // Claim only the item that can start now. batchSize bounds the cycle's work;
+  // waiting rows keep their original availability and never consume a lease.
+  while (summary.claimed < batchSize) {
+    const { data, error } = await client.rpc("claim_system_jobs", {
+      p_worker_id: workerId,
+      p_batch_size: 1,
+      p_lease_seconds: leaseSeconds,
+      ...(allowFundingJobs ? {} : { p_allow_funding: false }),
+    });
+    if (error) {
+      console.error("claim_system_jobs failed", error.message);
+      summary.claimError = error.message;
+      break;
+    }
+    const job = data?.[0];
+    if (!job) {
+      break;
+    }
     summary.claimed += 1;
     const { error: extendError } = await client.rpc("extend_system_job_lease", {
       p_job_id: job.id,
@@ -443,7 +825,7 @@ export async function processJobBatch(
     if (extendError) {
       summary.failed += 1;
       console.error("extend_system_job_lease failed", extendError.message);
-      continue;
+      break;
     }
     const handler = jobHandlers[job.job_type];
 
@@ -460,10 +842,9 @@ export async function processJobBatch(
           randomUnit,
         ),
       });
+      summary.failed += 1;
       if (failError) {
         console.error("fail_system_job failed", failError.message);
-      } else {
-        summary.failed += 1;
       }
       continue;
     }
@@ -507,28 +888,53 @@ export async function processJobBatch(
           randomUnit,
         ),
       });
+      summary.failed += 1;
       if (failError) {
         console.error("fail_system_job failed", failError.message);
-      } else {
-        summary.failed += 1;
       }
+      break;
     }
   }
 
   return summary;
 }
 
-/** One deterministic poll cycle: outbox then jobs. */
+/** One bounded preparation followed by canonical outbox/job claims. */
 export async function runWorkerCycle(client, options = {}) {
   const workerId = options.workerId ?? WORKER_ID;
+  let scheduler;
+  try {
+    scheduler = await scheduleFundingJobs(client, {
+      batchSize: options.schedulerBatchSize ?? 25,
+    });
+  } catch (cause) {
+    // Retain the preparation failure while independent operational work runs.
+    // The scoped database claim excludes funding when this boundary is unknown.
+    scheduler = { error: errorCode(cause, "FUNDING_SCHEDULER_FAILED") };
+  }
   const outbox = await processOutboxBatch(client, { ...options, workerId });
-  const jobs = await processJobBatch(client, { ...options, workerId });
+  const jobs = await processJobBatch(client, {
+    ...options,
+    workerId,
+    allowFundingJobs: !scheduler.error && !scheduler.paused,
+  });
   return {
     workerId,
     at: new Date().toISOString(),
+    scheduler,
     outbox,
     jobs,
   };
+}
+
+export function workerCycleFailed(summary) {
+  return (
+    Boolean(summary.scheduler?.error) ||
+    [summary.outbox, summary.jobs].some(
+      (batch) =>
+        Boolean(batch.claimError) || batch.failed > 0 || batch.unsupported > 0,
+    )
+  );
 }
 
 export async function runDurableLoop({
@@ -582,6 +988,9 @@ export async function runDurableLoop({
           at: new Date().toISOString(),
         }),
       );
+      if (workerCycleFailed(summary)) {
+        throw new Error("WORKER_ONCE_FAILED");
+      }
       return summary;
     }
 

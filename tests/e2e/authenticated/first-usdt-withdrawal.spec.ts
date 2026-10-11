@@ -55,11 +55,13 @@ test.describe("first USDT_ADDRESS welcome withdrawal", () => {
     expect(usdtAccounts ?? 0).toBe(0);
 
     const sendKey = `ws05-usdt-send-${held!.id}`;
-    await recordUsdtExternalSend({
+    const sentAt = new Date().toISOString();
+    const txHash = `0xws05manual${held!.id.replaceAll("-", "").slice(0, 40)}`;
+    const sendId = await recordUsdtExternalSend({
       actorId: operator.userId,
       withdrawalId: held!.id,
       network: "TRC20",
-      txHash: `0xws05manual${held!.id.replaceAll("-", "").slice(0, 40)}`,
+      txHash,
       // Operator-entered evidence only — not an exchange API quote.
       actualUsdtAmount: "3.85",
       conversionEvidence: {
@@ -67,21 +69,43 @@ test.describe("first USDT_ADDRESS welcome withdrawal", () => {
         krw_atomic: String(WELCOME_CAP_KRW),
       },
       idempotencyKey: sendKey,
+      sentAt,
     });
     expect(await countExternalSends(held!.id)).toBe(1);
 
-    await recordUsdtExternalSend({
+    const replayId = await recordUsdtExternalSend({
       actorId: operator.userId,
       withdrawalId: held!.id,
       network: "TRC20",
-      txHash: `0xws05manual${held!.id.replaceAll("-", "").slice(0, 40)}b`,
+      txHash,
       actualUsdtAmount: "3.85",
       conversionEvidence: {
         source: "manual_operator_record",
         krw_atomic: String(WELCOME_CAP_KRW),
       },
       idempotencyKey: `${sendKey}-second`,
+      sentAt,
     });
+    expect(replayId).toBe(sendId);
+    expect(await countExternalSends(held!.id)).toBe(1);
+
+    // A new command key can recover the identical transfer, but it cannot
+    // replace the original blockchain reference with another transfer's facts.
+    await expect(
+      recordUsdtExternalSend({
+        actorId: operator.userId,
+        withdrawalId: held!.id,
+        network: "TRC20",
+        txHash: `${txHash}b`,
+        actualUsdtAmount: "3.85",
+        conversionEvidence: {
+          source: "manual_operator_record",
+          krw_atomic: String(WELCOME_CAP_KRW),
+        },
+        idempotencyKey: `${sendKey}-changed-payload`,
+        sentAt,
+      }),
+    ).rejects.toThrow("EXTERNAL_SEND_PAYLOAD_MISMATCH");
     expect(await countExternalSends(held!.id)).toBe(1);
 
     const { data: sendRow } = await client
@@ -90,7 +114,7 @@ test.describe("first USDT_ADDRESS welcome withdrawal", () => {
       .eq("withdrawal_id", held!.id)
       .maybeSingle();
     expect(sendRow?.network).toBe("TRC20");
-    expect(sendRow?.tx_hash).toBeTruthy();
+    expect(sendRow?.tx_hash).toBe(txHash);
     expect(String(sendRow?.actual_usdt_amount)).toContain("3.85");
     expect(sendRow?.conversion_evidence).toMatchObject({
       source: "manual_operator_record",
