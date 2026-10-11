@@ -988,6 +988,9 @@ insert into auth.users (
     expect(provenance.error).toBeNull();
     expect(provenance.data?.coverage).toBe("UNRESOLVED");
 
+    // Lost-response recovery resubmits the original transfer facts, including
+    // its recorded timestamp; retry time is not another actual sent timestamp.
+    const sentAt = new Date().toISOString();
     const { data: sendId, error: sendError } = await db.rpc(
       "record_krw_external_send",
       {
@@ -995,7 +998,7 @@ insert into auth.users (
         p_bank_reference: `BANK-REF-WORKER-${suffix}`,
         p_actual_krw_amount: 5000,
         p_actor: operatorId,
-        p_sent_at: new Date().toISOString(),
+        p_sent_at: sentAt,
         p_idempotency_key: `worker-send-${suffix}`,
       },
     );
@@ -1010,7 +1013,7 @@ insert into auth.users (
         p_bank_reference: `BANK-REF-WORKER-${suffix}`,
         p_actual_krw_amount: 5000,
         p_actor: operatorId,
-        p_sent_at: new Date().toISOString(),
+        p_sent_at: sentAt,
         p_idempotency_key: `worker-send-${suffix}`,
       },
     );

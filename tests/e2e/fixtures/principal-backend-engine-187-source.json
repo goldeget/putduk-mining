@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "repository": "goldeget/putduk-mining",
+  "project_id": "putduk-mining-ci-r2-20261009",
+  "configured_project_id": "putduk-mining-ci-r2-20261009",
+  "api_port": 63421,
+  "reviewedSourceHead": "c4414fae676aae959bdaeb16b02caf6d2be9b992",
+  "baselineManifestPath": "tests/e2e/fixtures/principal-review-r2-ci-source.json",
+  "baselineManifestSha256": "338ea5ab29065a5962d40047e3c2e4fd76825fd8ce453ac299b9152d08396bc1",
+  "baselineMigrationCount": 183,
+  "baselineRuntimeCount": 29,
+  "migration_count": 187,
+  "additional_migration_count": 4,
+  "sources": [
+    {
+      "kind": "migration",
+      "path": "supabase/migrations/20261010233034_external_send_payload_binding_and_fixed_cycle_duration.sql",
+      "sha256": "571edd2e56a00fe5c9d6e4de0d360a12ddf763e1dc97443967d777ab64cea3d7"
+    },
+    {
+      "kind": "migration",
+      "path": "supabase/migrations/20261011001426_explicit_member_cash_terms_read_boundary.sql",
+      "sha256": "0f3a02fbbebf87bbe2cfc7fa404debee2f5cab1219ed6ed77e24329471ddb874"
+    },
+    {
+      "kind": "migration",
+      "path": "supabase/migrations/20261011001444_permanent_zero_fee_policy.sql",
+      "sha256": "a3ab3737cffdf20c82e9816734d7e939dbb2ef52f34bac3defd4ad35b181bb4e"
+    },
+    {
+      "kind": "migration",
+      "path": "supabase/migrations/20261011003244_krw_manual_full_payout_completion.sql",
+      "sha256": "d20f18a4938816d625a71d5fd8d1823145ba7600578c7d5d5288730ca22b93f2"
+    }
+  ]
+}

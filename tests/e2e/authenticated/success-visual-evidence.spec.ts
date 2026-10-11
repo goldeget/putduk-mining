@@ -183,7 +183,7 @@ test.describe("authenticated success visual evidence", () => {
       {
         route: "wallet-withdraw",
         url: "/wallet/withdraw",
-        ready: "입금 없이도 가능한 첫 출금",
+        ready: "입금 없이 첫 출금",
       },
     ] as const;
 

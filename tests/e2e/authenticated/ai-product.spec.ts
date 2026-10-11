@@ -139,7 +139,7 @@ test("AI ownership, money denial, continuity, themes, and keyboard path", async 
   await loginAsMember(page, member, "/ai");
   await openAi(page);
 
-  const chat = page.getByRole("region", { name: "퍼뜩 AI 대화" });
+  const chat = page.getByRole("region", { name: "퍼뜩 AI 도우미 대화" });
   await expect(chat).toHaveAttribute(
     "data-ai-continuity",
     AI_CONVERSATION_CONTINUITY_MODE,
@@ -173,11 +173,14 @@ test("AI ownership, money denial, continuity, themes, and keyboard path", async 
   await expect(page).toHaveURL(/\/wallet$/);
   const launcher = page.getByRole("button", { name: "AI 도움", exact: true });
   await launcher.click();
-  const dialog = page.getByRole("dialog", { name: "퍼뜩 AI", exact: true });
+  const dialog = page.getByRole("dialog", {
+    name: "퍼뜩 AI 도우미",
+    exact: true,
+  });
   await expect(dialog).toBeVisible();
-  await expect(page.getByRole("region", { name: "퍼뜩 AI 대화" })).toHaveCount(
-    1,
-  );
+  await expect(
+    page.getByRole("region", { name: "퍼뜩 AI 도우미 대화" }),
+  ).toHaveCount(1);
   await expect(dialog.locator(".ai-message--assistant")).toContainText(
     /잔액, 입출금 승인/,
   );

@@ -1,4 +1,4 @@
-/** Explicitly reviewed successor. The four earlier frozen maps stay unchanged. */
+/** Reviewed 187-migration successor; all earlier source maps remain immutable. */
 import { createHash } from "node:crypto";
 import { readFileSync, readdirSync, realpathSync } from "node:fs";
 import { isAbsolute, relative, resolve } from "node:path";
@@ -9,6 +9,19 @@ const MANIFEST = "tests/e2e/fixtures/principal-review-r2-ci-source.json";
 // Set only after the complete per-file migration/runtime delta is independently reviewed.
 const MANIFEST_SHA =
   "338ea5ab29065a5962d40047e3c2e4fd76825fd8ce453ac299b9152d08396bc1";
+// Append-only authorization: the original 183-migration/29-runtime map is
+// independently pinned above, and only these four reviewed additions follow it.
+const SUCCESSOR_MANIFEST =
+  "tests/e2e/fixtures/principal-backend-engine-187-source.json";
+const SUCCESSOR_MANIFEST_SHA =
+  "1dc13d2b2c71524d37bc1c6bdde4bba4d4f988b707b1959d4597430b621eb9f3";
+const REVIEWED_SOURCE_HEAD = "c4414fae676aae959bdaeb16b02caf6d2be9b992";
+const ADDITIONAL_MIGRATIONS = [
+  "supabase/migrations/20261010233034_external_send_payload_binding_and_fixed_cycle_duration.sql",
+  "supabase/migrations/20261011001426_explicit_member_cash_terms_read_boundary.sql",
+  "supabase/migrations/20261011001444_permanent_zero_fee_policy.sql",
+  "supabase/migrations/20261011003244_krw_manual_full_payout_completion.sql",
+];
 // Installed CLI truncates configured IDs to 36 characters; the exact newly
 // created resource identity was independently captured before using this ID.
 const PROJECT = "putduk-mining-ci-r2-20261009";
@@ -108,7 +121,32 @@ export function assertReviewedPrincipalCandidateSources(root = ROOT) {
     map.sources.length !== RUNTIME.length + map.migration_count
   )
     throw new Error("REVIEW_R2_SOURCE_MAP_INVALID");
-  const migrations = map.sources.filter((row) => row.kind === "migration");
+  const successorBytes = readFileSync(owned(SUCCESSOR_MANIFEST));
+  if (digest(successorBytes) !== SUCCESSOR_MANIFEST_SHA)
+    throw new Error("REVIEW_R2_SUCCESSOR_FROZEN_MAP_CHANGED");
+  const successor = JSON.parse(successorBytes.toString("utf8"));
+  if (
+    successor.version !== 1 ||
+    successor.repository !== map.repository ||
+    successor.project_id !== PROJECT ||
+    successor.configured_project_id !== CONFIGURED_PROJECT ||
+    successor.api_port !== map.api_port ||
+    successor.reviewedSourceHead !== REVIEWED_SOURCE_HEAD ||
+    successor.baselineManifestPath !== MANIFEST ||
+    successor.baselineManifestSha256 !== MANIFEST_SHA ||
+    successor.baselineMigrationCount !== 183 ||
+    successor.baselineRuntimeCount !== RUNTIME.length ||
+    successor.migration_count !== 187 ||
+    successor.additional_migration_count !== 4 ||
+    !Array.isArray(successor.sources) ||
+    successor.sources.length !== 4 ||
+    successor.sources.some((row) => row.kind !== "migration") ||
+    JSON.stringify(successor.sources.map((row) => row.path).sort()) !==
+      JSON.stringify(ADDITIONAL_MIGRATIONS)
+  )
+    throw new Error("REVIEW_R2_SUCCESSOR_SOURCE_MAP_INVALID");
+  const sources = [...map.sources, ...successor.sources];
+  const migrations = sources.filter((row) => row.kind === "migration");
   const runtime = map.sources
     .filter((row) => row.kind === "runtime")
     .map((row) => row.path)
@@ -123,12 +161,12 @@ export function assertReviewedPrincipalCandidateSources(root = ROOT) {
   )
     throw new Error("REVIEW_R2_MIGRATION_INVENTORY_CHANGED");
   if (
-    migrations.length !== map.migration_count ||
+    migrations.length !== successor.migration_count ||
     JSON.stringify(runtime) !== JSON.stringify(RUNTIME) ||
-    new Set(map.sources.map((row) => row.path)).size !== map.sources.length
+    new Set(sources.map((row) => row.path)).size !== sources.length
   )
     throw new Error("REVIEW_R2_SOURCE_MAP_INVALID");
-  for (const row of map.sources) {
+  for (const row of sources) {
     if (
       typeof row.path !== "string" ||
       isAbsolute(row.path) ||
@@ -146,10 +184,11 @@ export function assertReviewedPrincipalCandidateSources(root = ROOT) {
     projectId: PROJECT,
     apiPort: map.api_port,
     runtimeSources: RUNTIME.length,
-    migrationSources: map.migration_count,
+    migrationSources: successor.migration_count,
     migrationVersions: migrations
       .map((row) => row.path.split("/").at(-1).slice(0, 14))
       .sort(),
-    manifestSha256: MANIFEST_SHA,
+    manifestSha256: SUCCESSOR_MANIFEST_SHA,
+    baselineManifestSha256: MANIFEST_SHA,
   };
 }

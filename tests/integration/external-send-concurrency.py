@@ -89,7 +89,7 @@ def guard():
             "https://github.com/goldeget/putduk-mining",
             "https://github.com/goldeget/putduk-mining.git",
         ), "APPROVED_CI_CHECKOUT_ORIGIN")
-        expected_project = "putduk-mining"
+        expected_project = "putduk-mining-ci-r2-20261009"
         expected_port = 63422
     else:
         require(False, "UNAPPROVED_EXECUTION_PLATFORM")

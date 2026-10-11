@@ -302,37 +302,61 @@ export async function registerDestinationViaProductionApi(
   return payload.data.destinationId;
 }
 
+export async function expectWelcomeWithdrawalPanel(page: Page) {
+  const route = await expectSettledRoute(page, "/wallet/withdraw");
+  const panel = route.locator("details").filter({
+    has: page.locator("summary").filter({ hasText: "입금 없이 첫 출금" }),
+  });
+  await expect(panel).toHaveCount(1);
+  const summary = panel.locator("summary");
+  await expect(summary).toBeVisible();
+  if (!(await panel.evaluate((element: HTMLDetailsElement) => element.open))) {
+    await summary.click();
+  }
+  await expect(panel).toHaveAttribute("open", "");
+  return panel;
+}
+
+export async function expectWelcomeWithdrawalComplete(page: Page) {
+  const route = await expectSettledRoute(page, "/wallet/withdraw");
+  // Successful refresh closes the real details panel. Wait for the completed
+  // control to exist, then open the panel and verify its visible disabled state.
+  const completed = route.getByRole("button", {
+    name: "첫 출금 접수 완료",
+    exact: true,
+    includeHidden: true,
+  });
+  await expect(completed).toHaveCount(1, { timeout: 60_000 });
+  const panel = await expectWelcomeWithdrawalPanel(page);
+  const button = panel.getByRole("button", {
+    name: "첫 출금 접수 완료",
+    exact: true,
+  });
+  await expect(button).toBeVisible();
+  await expect(button).toBeDisabled();
+}
+
 export async function requestWelcomeWithdrawalFromUi(
   page: Page,
   method: "KRW_BANK" | "USDT_ADDRESS",
 ) {
   await page.goto("/wallet/withdraw");
-  // 제목은 이미 하나여도 hidden S: 슬롯의 라디오는 남아 strict check가 바로 실패한다.
-  const route = await expectSettledRoute(page, "/wallet/withdraw");
-  const welcomeHeading = route.getByRole("heading", {
-    level: 2,
-    name: "입금 없이도 가능한 첫 출금",
-  });
-  await expect(welcomeHeading).toHaveCount(1);
-  await expect(welcomeHeading).toBeVisible();
+  const panel = await expectWelcomeWithdrawalPanel(page);
 
   const value = method === "KRW_BANK" ? "KRW_BANK" : "USDT_ADDRESS";
-  const radio = page.locator(`input[name="welcomeMethod"][value="${value}"]`);
+  const radio = panel.locator(`input[name="welcomeMethod"][value="${value}"]`);
   await expect.poll(async () => radio.count()).toBeLessThanOrEqual(1);
   if ((await radio.count()) === 1) {
     await expect(radio).toHaveCount(1);
     await radio.check();
   }
 
-  const requestButton = page.getByRole("button", {
+  const requestButton = panel.getByRole("button", {
     name: "입금 없이 첫 출금 요청",
     exact: true,
   });
   await requestButton.waitFor({ state: "visible" });
   await expect(requestButton).toBeEnabled({ timeout: 30_000 });
   await requestButton.click();
-  // refresh 이후에도 안정적인 완료 신호는 disabled 완료 버튼이다.
-  await page
-    .getByRole("button", { name: "첫 출금 접수 완료" })
-    .waitFor({ timeout: 60_000 });
+  await expectWelcomeWithdrawalComplete(page);
 }
