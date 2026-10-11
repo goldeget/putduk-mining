@@ -35,17 +35,26 @@ The four additional private fixed-path definers are
 `assert_local_cash_credit(public.money_source_movements)`,
 `verify_local_cash_commit()`, and
 `participate_published_event(uuid,uuid,uuid,uuid,text)`. The exact roster is now
-73. The commit verifier is trigger-only; source consumption and BONUS
+74 after the 2026-10-11 read-boundary hardening below. The commit verifier is
+trigger-only; source consumption and BONUS
 validation require the closed service boundary, while explicit participation
-uses the authenticated same-name public INVOKER wrapper. All other cash
-helpers are INVOKER with no client/service generic writer grant. Canonical
+uses the authenticated same-name public INVOKER wrapper. Except for the
+read-only terms boundary below, all other cash helpers are INVOKER with no
+client/service generic writer grant. Canonical
 ledger/source integrity and outbox lease checks remain mandatory.
 
 Private originals have FORCE RLS and no raw service write grants. The small
-`member_cash_event_terms` view intentionally uses an owner projection with
-`security_barrier`; it is not a security-invoker view. It exposes only sealed
+`member_cash_event_terms` originally used an intentional owner projection.
+The 2026-10-11 hardening keeps the same view name and eight field types, with
+`security_invoker` and `security_barrier`. Its only source is the reviewed
+private no-argument definer `read_member_cash_event_terms()`, which checks
+the actual authenticated role, JWT role and non-null member UID even when
+called directly. Missing identity or disabled configuration returns zero rows.
+The exact roster is 74; no raw private-table role grant is added. It exposes
+only sealed
 event/revision/terms/digest/amount/window fields to authenticated members,
-with current event availability gating. It exposes no budget, risk formula
+with current event availability and publication-time gating. It exposes no
+budget, risk formula
 or private source map. Installation creates no enabled configuration or
 funded policy. Only synthetic LOCAL_QA activation has been verified; real
 treasury, operator activation and Production remain separately locked.

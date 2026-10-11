@@ -91,6 +91,7 @@ select ok(
       and procedure.oid not in (
         'app_private.seal_worker_pause_attempt()'::regprocedure,
         'app_private.consume_local_cash_source(uuid,text)'::regprocedure,
+        'app_private.read_member_cash_event_terms()'::regprocedure,
         'app_private.assert_local_cash_credit(public.money_source_movements)'::regprocedure,
         'app_private.verify_local_cash_commit()'::regprocedure,
         'app_private.participate_published_event(uuid,uuid,uuid,uuid,text)'::regprocedure,
@@ -165,7 +166,7 @@ select ok(
       )
   )
     and (
-      select count(*) = 73
+      select count(*) = 74
         and coalesce(
           bool_and(
             procedure.proconfig @> array['search_path=pg_catalog']::text[]
@@ -177,7 +178,7 @@ select ok(
       where namespace.nspname in ('public', 'app_private')
         and procedure.prosecdef
     ),
-  'application schemas contain only the seventy-three reviewed fixed-search-path SECURITY DEFINER functions'
+  'application schemas contain only the seventy-four reviewed fixed-search-path SECURITY DEFINER functions'
 );
 
 select ok(
