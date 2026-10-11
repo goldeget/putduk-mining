@@ -48,6 +48,11 @@ afterEach(() => {
     rmSync(root, { recursive: true, force: true });
   }
 });
+function firstAdditionalMigration() {
+  const row = successor.sources[0];
+  if (!row) throw new Error("REVIEW_R2_SUCCESSOR_TEST_FIXTURE_EMPTY");
+  return row;
+}
 function fixture() {
   const map = JSON.parse(readFileSync(manifestPath, "utf8")) as {
     migration_count: number;
@@ -130,7 +135,7 @@ describe("independently reviewed successor source boundary", () => {
   }
   it("rejects a caller-rehashed successor instead of trusting new source bytes", () => {
     const { root } = fixture();
-    const path = successor.sources[0].path;
+    const path = firstAdditionalMigration().path;
     const replacement = "unreviewed replacement with caller-supplied digest";
     writeFileSync(join(root, path), replacement);
     const rewritten = {
@@ -176,7 +181,7 @@ describe("independently reviewed successor source boundary", () => {
   }, 20_000);
   it("rejects an unapproved replacement even when the migration count remains 187", () => {
     const { root } = fixture();
-    const approved = join(root, successor.sources[0].path);
+    const approved = join(root, firstAdditionalMigration().path);
     const bytes = readFileSync(approved);
     rmSync(approved);
     writeFileSync(
