@@ -29,7 +29,7 @@ No previous implementation, schema, asset, Docker resource, repository or simila
 
 ## 2. Product definition
 
-PUTDUK MINING is a Korean-first virtual mining platform. Users enter a guided trial, operate mining worlds, receive server-authoritative settlement and inspect a ledger-backed wallet. The product combines fintech clarity, premium game-world immersion and operational transparency without coupling its economy to external securities or exchange-market prices.
+PUTDUK MINING is a Korean-first digital mining platform whose results follow PUTDUK's own versioned rules rather than physical mining operations. Users enter a guided trial, operate mining worlds, receive server-authoritative settlement and inspect a ledger-backed wallet. The product combines fintech clarity, premium game-world immersion and operational transparency without coupling its economy to external securities or exchange-market prices.
 
 V1 worlds:
 
@@ -605,7 +605,7 @@ A restore rehearsal uses only an explicitly authorized isolated recovery target 
 
 ## 29. Mining product catalog
 
-Mining products are versioned virtual themes across Korean stocks, U.S. stocks,
+Mining products are versioned, internally defined digital themes across Korean stocks, U.S. stocks,
 Gold, Silver and top-tier crypto. There is no runtime market API and no market
 price enters the economy. AI produces a sourced dated `DRAFT` proposal;
 operators approve/schedule; deterministic code publishes. React never hardcodes

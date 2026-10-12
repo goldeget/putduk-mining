@@ -1,6 +1,6 @@
 # PUTDUK MINING
 
-Premium virtual mining platform built around a simple user experience, server-authoritative mining, ledger-based assets, operator-controlled economics, PWA notifications, PUTDUK AI, and public trust/discovery.
+Premium digital mining platform built around a simple user experience, server-authoritative mining, ledger-based assets, operator-controlled economics, PWA notifications, PUTDUK AI, and public trust/discovery. Mining outcomes are computed by PUTDUK's own versioned rules, not by physical mining hardware.
 
 > Product principle: V1 ships fast, but it must never look or feel like a cheap MVP.
 
