@@ -4,6 +4,17 @@
   min-width: 0;
 }
 
+/* 도메인처럼 긴 값도 확대된 사실 표의 칸 안에서 읽을 수 있어야 한다. */
+.document :global(.trust-facts article) {
+  min-width: 0;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.document :global(.trust-facts article > strong) {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
 @media (max-width: 759px) {
   .document :global(.trust-document) {
     padding-top: 1.25rem;
@@ -85,7 +96,7 @@
   .document :global(.trust-facts article > strong) {
     min-width: 0;
     margin-top: 0.25rem;
-    overflow-wrap: break-word;
+    overflow-wrap: anywhere;
     word-break: keep-all;
   }
 

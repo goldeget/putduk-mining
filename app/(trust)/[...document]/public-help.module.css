@@ -159,6 +159,16 @@
   text-decoration: none;
 }
 
+:global(html[data-theme="light"]) .note a {
+  color: var(--brand-strong);
+}
+
+@media (prefers-color-scheme: light) {
+  :global(:root:not([data-theme])) .note a {
+    color: var(--brand-strong);
+  }
+}
+
 .note a:focus-visible {
   border-radius: var(--radius-sm);
   outline: none;
