@@ -13,6 +13,10 @@ export function verifyHistoricalRecoveryBytes(
   bytes: Buffer,
   generation: number,
 ): true;
+export function readHistoricalBrowserTransportSource(
+  root: string,
+  path: string,
+): Buffer;
 export function stageHistoricalRecoveryTestSource(
   source: string,
   name: string,
@@ -40,3 +44,16 @@ export function prepareHistorical195UnitFixtures(
   prepare(name: string): void;
   root(mode: "canonical" | "local"): string;
 };
+
+export function readHistoricalNativeProvenance(path: string): Buffer;
+
+export function stageHistoricalRecoveryGuardSource(
+  source: string,
+  name: string,
+): string;
+
+export function verifyPreparedHistoricalFixture(
+  root: string,
+  entries: Iterable<readonly [string, Uint8Array | string]>,
+  prefix: string,
+): void;

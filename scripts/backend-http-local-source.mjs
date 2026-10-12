@@ -1,9 +1,15 @@
 /** Independently pinned 193-source boundary with two closed execution contexts. */
 import { createHash } from "node:crypto";
-import { readFileSync, readdirSync, realpathSync } from "node:fs";
+import {
+  readFileSync,
+  readdirSync,
+  realpathSync as nodeRealpathSync,
+} from "node:fs";
 import { isAbsolute, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
+// Resolve the same physical paths with libuv, retaining all scope/junction checks.
+const realpathSync = nodeRealpathSync.native;
 const ROOT = fileURLToPath(new URL("../", import.meta.url));
 const REPOSITORY = "goldeget/putduk-mining";
 const REVIEWED_HEAD = "e220356be85a56e21e3469023b19b0c2fd4aebba";

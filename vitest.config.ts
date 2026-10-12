@@ -1,5 +1,6 @@
 import { backend197UnitFixturePlugin } from "./scripts/backend-successor-197-unit-fixture.mjs";
 import { historicalRecoveryUnitPlugin } from "./scripts/historical-recovery-unit-stage.mjs";
+import UnitCompletenessReporter from "./scripts/unit-completeness-reporter.mjs";
 import { fileURLToPath } from "node:url";
 
 import { defineConfig } from "vitest/config";
@@ -19,6 +20,7 @@ export default defineConfig({
     },
   },
   test: {
+    reporters: ["default", new UnitCompletenessReporter()],
     environment: "node",
     include: ["tests/unit/**/*.test.ts"],
     coverage: {
