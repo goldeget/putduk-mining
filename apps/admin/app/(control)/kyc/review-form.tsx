@@ -11,6 +11,10 @@ import { ADMIN_COMMAND_FAMILIES } from "@/lib/auth/command-families";
 
 import { reviewKycCaseFromFields } from "./actions";
 import { useKycReviewFeedback } from "./review-feedback";
+import {
+  acknowledgedSubmissionForCase,
+  useKycAcknowledgedEvidence,
+} from "./acknowledged-evidence";
 
 const DECISIONS = [
   { value: "IN_REVIEW", label: "검토 중으로 유지" },
@@ -32,6 +36,7 @@ export function KycReviewForm({
   caseId: string;
   evidenceAvailable?: boolean;
 }) {
+  const evidence = useKycAcknowledgedEvidence();
   const stepUpTokenRef = useRef("");
   const review = useReviewConfirmation(["decision", "reason"]);
   const [decision, setDecision] = useState<string>("IN_REVIEW");
@@ -46,6 +51,10 @@ export function KycReviewForm({
     const fromRef = stepUpTokenRef.current.trim();
     const fromDom = String(formData.get("stepUpToken") ?? "").trim();
     const stepUpToken = fromRef.length >= 16 ? fromRef : fromDom;
+    const acknowledgedSubmissionId = acknowledgedSubmissionForCase(
+      evidence,
+      caseId,
+    );
     publishFeedback?.(null);
     startTransition(async () => {
       const next = await reviewKycCaseFromFields({
@@ -54,6 +63,9 @@ export function KycReviewForm({
         reason: String(formData.get("reason") ?? ""),
         confirmation: String(formData.get("confirmation") ?? ""),
         stepUpToken,
+        ...(acknowledgedSubmissionId === undefined
+          ? {}
+          : { acknowledgedSubmissionId }),
       });
       if (next.ok) publishFeedback?.(next);
       setResult(next);

@@ -79,6 +79,7 @@ test.describe("admin KYC product queue", () => {
     const member = await createConfirmedMember("lane-f-kyc-member");
     const seeded = await seedOpenKycCase({
       userId: member.userId,
+      member: member,
       riskLevel: "MEDIUM",
       withDocument: true,
     });
@@ -125,10 +126,12 @@ test.describe("admin KYC product queue", () => {
     const rejectMember = await createConfirmedMember("lane-f-kyc-no");
     const approve = await seedOpenKycCase({
       userId: approveMember.userId,
+      member: approveMember,
       withDocument: true,
     });
     const reject = await seedOpenKycCase({
       userId: rejectMember.userId,
+      member: rejectMember,
       withDocument: true,
     });
 
@@ -197,6 +200,7 @@ test.describe("admin KYC product queue", () => {
     const member = await createConfirmedMember("lane-f-kyc-family-m");
     const seeded = await seedOpenKycCase({
       userId: member.userId,
+      member: member,
       withDocument: true,
     });
 
@@ -225,6 +229,7 @@ test.describe("admin KYC product queue", () => {
     const member = await createConfirmedMember("lane-f-kyc-support-m");
     const seeded = await seedOpenKycCase({
       userId: member.userId,
+      member: member,
       withDocument: true,
     });
     const before = await readKycCase(seeded.caseId);
@@ -308,6 +313,7 @@ test.describe("admin KYC product queue", () => {
     const member = await createConfirmedMember("lane-f-kyc-a11y-m");
     const seeded = await seedOpenKycCase({
       userId: member.userId,
+      member: member,
       withDocument: true,
     });
 

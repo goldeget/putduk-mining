@@ -190,8 +190,11 @@ select ok(
     'funding_principal_recovery_allocations',
     'funding_principal_recovery_releases',
     'funding_principal_revisions',
+    'kyc_active_member_sessions',
     'kyc_cases',
     'kyc_document_view_audit',
+    'kyc_evidence_delivery_receipts',
+    'kyc_operation_receipts',
     'kyc_status_history',
     'kyc_submissions',
     'ledger_accounts',
@@ -270,10 +273,12 @@ select ok(
         'ai_cache',
         'ai_requests',
         'ai_usage',
+        'kyc_evidence_delivery_receipts',
+        'kyc_operation_receipts',
         'withdrawal_destination_step_ups'
       )
   ),
-  'column insert without table insert stays on the reviewed AI and step-up tables'
+  'column insert without table insert stays on the reviewed AI, KYC, and step-up tables'
 );
 
 select ok(

@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { AccountLogoutControls } from "@/components/product/account-logout-controls";
+import { KycIntake } from "@/components/product/kyc-intake";
 import {
   maskEmail,
   maskPhone,
@@ -91,6 +92,8 @@ export default async function AccountPage({
           </Surface>
         </section>
       )}
+
+      <KycIntake />
 
       <Surface
         as="section"
