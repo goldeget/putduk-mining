@@ -16,6 +16,27 @@ import {
 import styles from "./conversation.module.css";
 
 type Message = AdminAiMessagesResult["messages"][number];
+class AdminAiReadDenied extends Error {}
+const readError =
+  "대화 기록을 불러오지 못했습니다. 연결과 접속 권한을 확인한 뒤 다시 조회해 주세요.";
+
+async function fetchConversationRead(
+  input: AdminAiReadInput,
+  signal: AbortSignal,
+): Promise<unknown> {
+  const response = await fetch("/api/ai/conversations", {
+    method: "POST",
+    cache: "no-store",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(input),
+    signal,
+  });
+  if (response.status === 401 || response.status === 403)
+    throw new AdminAiReadDenied();
+  if (!response.ok) throw new Error("READ_FAILED");
+  const body = await response.json();
+  return body.data as unknown;
+}
 const statusLabels: Record<string, string> = {
   RECEIVED: "접수",
   RUNNING: "답변 중",
@@ -68,10 +89,39 @@ export function AiConversationConsole() {
   const [status, setStatus] = useState("");
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
-  const [busy, setBusy] = useState(false);
+  const appliedList = useRef<AdminAiReadInput>({
+    operation: "LIST",
+    limit: 25,
+  });
+  const [busy, setBusy] = useState(true);
   const [error, setError] = useState("");
   const current = useRef<AbortController | null>(null);
-  useEffect(() => () => current.current?.abort(), []);
+  useEffect(() => {
+    const controller = new AbortController();
+    current.current = controller;
+    const timeout = setTimeout(() => controller.abort(), 15000);
+    // Restore the Cloud overview through the existing audited SUPER_ADMIN API.
+    void fetchConversationRead(
+      { operation: "LIST", limit: 25 },
+      controller.signal,
+    )
+      .then((value) => {
+        if (current.current !== controller || controller.signal.aborted) return;
+        setList(adminAiListResultSchema.parse(value));
+      })
+      .catch(() => {
+        if (current.current === controller) setError(readError);
+      })
+      .finally(() => {
+        clearTimeout(timeout);
+        if (current.current === controller) setBusy(false);
+      });
+    return () => {
+      clearTimeout(timeout);
+      current.current?.abort();
+      current.current = null;
+    };
+  }, []);
 
   async function read(input: AdminAiReadInput): Promise<unknown | null> {
     current.current?.abort();
@@ -81,30 +131,20 @@ export function AiConversationConsole() {
     setError("");
     const timeout = setTimeout(() => controller.abort(), 15000);
     try {
-      const response = await fetch("/api/ai/conversations", {
-        method: "POST",
-        cache: "no-store",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(input),
-        signal: controller.signal,
-      });
-      const body = await response.json();
-      if (response.status === 401 || response.status === 403) {
-        setMembers(null);
-        setList(null);
-        setUserId(null);
-        setSelected(null);
-      }
-      if (!response.ok) throw new Error("READ_FAILED");
+      const data = await fetchConversationRead(input, controller.signal);
       if (current.current !== controller || controller.signal.aborted)
         return null;
-      return body.data as unknown;
-    } catch {
+      return data;
+    } catch (reason) {
       if (current.current === controller) {
+        if (reason instanceof AdminAiReadDenied) {
+          setMembers(null);
+          setList(null);
+          setUserId(null);
+          setSelected(null);
+        }
         setTranscript(null);
-        setError(
-          "대화 기록을 불러오지 못했습니다. 연결과 접속 권한을 확인한 뒤 다시 조회해 주세요.",
-        );
+        setError(readError);
       }
       return null;
     } finally {
@@ -123,13 +163,13 @@ export function AiConversationConsole() {
     );
     if (result.success) setMembers(result.data);
   }
-  async function loadList(id: string, more = false) {
+  async function loadList(id: string | null, more = false) {
     setUserId(id);
     setTranscript(null);
     setSelected(null);
-    const input: AdminAiReadInput = {
+    const queryInput: AdminAiReadInput = {
       operation: "LIST",
-      userId: id,
+      ...(id ? { userId: id } : {}),
       limit: 25,
       ...(status
         ? {
@@ -147,26 +187,43 @@ export function AiConversationConsole() {
             ).toISOString(),
           }
         : {}),
-      ...(more && list?.nextCursor ? { cursor: list.nextCursor } : {}),
     };
+    // A cursor belongs to the last successful query, not the editable draft.
+    const input: AdminAiReadInput = more
+      ? {
+          ...appliedList.current,
+          ...(list?.nextCursor ? { cursor: list.nextCursor } : {}),
+        }
+      : queryInput;
     if (!more) setList(null);
     const result = adminAiListResultSchema.safeParse(await read(input));
-    if (result.success)
+    if (result.success) {
+      if (!more) appliedList.current = queryInput;
       setList((previous) => ({
         ...result.data,
         conversations: more
-          ? [...(previous?.conversations ?? []), ...result.data.conversations]
+          ? [
+              ...(previous?.conversations ?? []),
+              ...result.data.conversations.filter(
+                (row) =>
+                  !previous?.conversations.some((old) => old.id === row.id),
+              ),
+            ]
           : result.data.conversations,
       }));
+    }
   }
   async function loadMessages(conversationId: string, more = false) {
-    if (!userId) return;
+    const conversationUserId = list?.conversations.find(
+      (row) => row.id === conversationId,
+    )?.userId;
+    if (!conversationUserId) return;
     setSelected(conversationId);
     if (!more) setTranscript(null);
     const result = adminAiMessagesResultSchema.safeParse(
       await read({
         operation: "MESSAGES",
-        userId,
+        userId: conversationUserId,
         conversationId,
         afterPosition: more ? (transcript?.nextPosition ?? 0) : 0,
         limit: 100,
@@ -225,6 +282,20 @@ export function AiConversationConsole() {
           회원 찾기
         </button>
       </form>
+      <button
+        type="button"
+        disabled={busy}
+        onClick={() => {
+          setMembers(null);
+          void loadList(null);
+        }}
+      >
+        전체 회원 보기
+      </button>
+      <p role="status">
+        조회 대상: {userId ? "선택한 회원" : "전체 회원"} · 날짜는 한국 시간
+        기준
+      </p>
       {error && (
         <p role="alert" className={styles.alert}>
           {error}
@@ -255,7 +326,7 @@ export function AiConversationConsole() {
           )}
         </section>
       )}
-      {userId && (
+      {list && (
         <form
           className={styles.filters}
           onSubmit={(event) => {
@@ -314,7 +385,7 @@ export function AiConversationConsole() {
               <small>{row.id}</small>
             </button>
           ))}
-          {list?.nextCursor && userId && (
+          {list?.nextCursor && (
             <button disabled={busy} onClick={() => void loadList(userId, true)}>
               이전 대화 더 보기
             </button>

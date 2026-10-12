@@ -83,6 +83,8 @@
 .composition {
   position: relative;
   isolation: isolate;
+  container-name: signup-composition;
+  container-type: inline-size;
   display: grid;
   min-width: 0;
   max-width: 1600px;
@@ -657,6 +659,18 @@
   height: 1px;
   overflow: hidden;
   clip-path: inset(50%);
+}
+
+@media (max-width: 1099px) {
+  .header {
+    left: auto;
+  }
+}
+
+@container signup-composition (max-width: 12rem) {
+  .story {
+    padding-top: 4rem;
+  }
 }
 
 @media (min-width: 600px) {

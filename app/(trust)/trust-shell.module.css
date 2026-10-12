@@ -1,6 +1,7 @@
 /* 도움말 껍질. 넓은 화면의 가로 메뉴를 좁은 화면에서 줄줄이 쌓지 않는다. */
 
 .frame {
+  container: trust-reading / inline-size;
   min-width: 0;
 }
 
@@ -87,6 +88,7 @@
   }
 
   .frame :global(.trust-footer) {
+    grid-template-columns: minmax(0, 1fr);
     gap: 1rem;
     padding-top: 1.5rem;
   }
@@ -94,6 +96,7 @@
   .frame :global(.trust-footer nav) {
     display: flex;
     flex-wrap: wrap;
+    min-width: 0;
     gap: 0.4rem;
   }
 
@@ -101,9 +104,21 @@
     display: inline-flex;
     align-items: center;
     min-height: 44px;
+    max-width: 100%;
     padding-inline: 0.75rem;
     border: 1px solid var(--border-default);
     border-radius: var(--radius-full);
-    white-space: nowrap;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+}
+
+@container trust-reading (max-width: 12rem) {
+  .frame :global(.trust-header__inner) {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "brand"
+      "tools"
+      "nav";
   }
 }

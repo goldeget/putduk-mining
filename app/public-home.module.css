@@ -3,7 +3,14 @@
    문구는 장면 위에 두고, 시작은 겹친 카드, 단계와 월드는 가로 레일이다. */
 
 .home :global(.landing-header) {
+  flex-wrap: wrap;
   gap: 0.75rem 1rem;
+}
+
+.home :global(.site-header__tools) {
+  flex-wrap: wrap;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .home :global(.landing-hero) {
@@ -478,5 +485,73 @@
 
   .home :global(.landing-footer) {
     gap: 0.75rem;
+  }
+}
+
+/* Enlarged text needs its own reading space instead of sharing the art stage. */
+@container landing-reading (max-width: 12rem) {
+  .home :global(.landing-hero) {
+    grid-template-areas:
+      "copy"
+      "stage"
+      "sheet";
+    gap: 0.75rem;
+  }
+
+  .home :global(.hero__copy) {
+    grid-area: copy;
+    padding: 0;
+    color: var(--text-primary);
+  }
+
+  .home :global(.hero h1) {
+    color: var(--text-primary);
+    text-shadow: none;
+  }
+
+  .home :global(.hero h1 span),
+  .home :global(.hero__copy) :global(.eyebrow) {
+    color: var(--brand-strong);
+    text-shadow: none;
+  }
+
+  .home :global(.hero__lead) {
+    color: var(--text-secondary);
+    text-shadow: none;
+  }
+
+  .home :global(.hero__visual) {
+    height: auto;
+    min-height: 20rem;
+    padding: 10rem 0.75rem 0.75rem;
+  }
+
+  .home :global(.hero__signal) {
+    position: relative;
+    inset: auto;
+    max-width: 100%;
+    padding: 0.5rem;
+    border-radius: var(--radius-sm);
+    background: rgb(0 0 0 / 70%);
+  }
+
+  .home :global(.hero__mascot) {
+    top: 0.75rem;
+    bottom: auto;
+    height: 8rem;
+  }
+
+  .action {
+    margin-top: 0;
+  }
+
+  .action :global(.hero__facts) {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.65rem;
+  }
+
+  .action :global(.hero__facts div + div) {
+    padding-left: 0;
+    border-left: 0;
   }
 }

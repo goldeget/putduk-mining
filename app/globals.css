@@ -3092,6 +3092,16 @@ select {
   font-weight: 650;
 }
 
+html[data-theme="light"] .trust-document__body aside > a {
+  color: var(--brand-strong);
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) .trust-document__body aside > a {
+    color: var(--brand-strong);
+  }
+}
+
 .trust-footer {
   display: grid;
   width: min(100% - 2rem, 1180px);
@@ -3698,4 +3708,28 @@ select {
     flex: 1 1 auto;
     justify-content: flex-end;
   }
+}
+/* Keep the approved landing composition readable with enlarged Korean text. */
+.consumer-landing {
+  container: landing-reading / inline-size;
+}
+
+@media (min-width: 1100px) {
+  @container landing-reading (width < 49rem) {
+    html[lang="ko"] .consumer-landing .landing-hero {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+
+    html[lang="ko"] .consumer-landing .landing-hero > aside {
+      grid-column: 1 / -1;
+    }
+  }
+}
+
+html[data-theme="light"] .trust-document__hero dd {
+  color: var(--brand-strong);
+}
+
+html[data-theme="light"] .product-sidebar__principle small {
+  color: var(--brand-strong);
 }

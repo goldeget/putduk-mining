@@ -1,5 +1,17 @@
 # PUTDUK MINING — ABSOLUTE PROJECT BOUNDARY
 
+## User-authorized Cloud UI recovery and integration — 2026-10-12
+
+The human owner explicitly instructed this chat to restore Cloud Codex product UI/UX, compare and integrate it with the current project, preserve all existing work, proceed through the agreed architecture toward release, record in Linear, and use subagents. This section supersedes older visual-source and local-edit freezes only for this exact project's recovery task.
+
+- Final UI/UX recovery baseline: Cloud product work from durable thread 01a110f7-9d9d-76ac-8aae-e59be20c10b9 and its verified child source records. Sites/Visual Lab V1–V9 remain references, not the default implementation baseline.
+- Current isolated integration checkout: C:/Users/PC/Desktop/putduk-mining/.worktrees/cloud-ui-20261012, branch codex/cloud-ui-recovery-20261012. Preserve the original backend-engine-patch-20261011 checkout and all other work.
+- Source preservation checkpoint 630ca8ac2cfda90e39cdf6e04b0df906986cb275 includes the original 180 dirty paths; it is preservation, not implementation acceptance. Snapshot/hash/restore receipts are outside the product repository.
+- Use only provenance-reviewed complete source or exact-context partial changes. Mark historical versions, missing bodies, truncation, incomplete reconstruction, and independent reimplementation truthfully. Never execute historical shell commands as recovery.
+- Keep current fee-zero/full manual payout, 720-hour effective-time policies, RLS/AAL2/audit and current server contracts. Do not roll back the whole project to old Cloud code.
+- Subagent file ownership is explicit. Local edits, exact-pin installation, focused and required verification, isolated commits and preparation are authorized. Existing effects/release gates still apply; unresolved production coupling blocks remote push/release claims. Do not treat high-level release intent as bypassing exact target/artifact/rollback acceptance.
+- New platform settings automation follows the latest Linear architecture. Existing destructive teardown, new paid contracts, actual payout and identity enrollment retain concrete effect decisions. No production data or provider secrets in source, evidence or Linear.
+
 ## User-authorized isolated Local recovery — 2026-10-09
 
 The user's current Cloud-original recovery master command authorizes local implementation, tests and local commits for this exact project in these fresh isolated checkouts:
