@@ -23,6 +23,11 @@ insert into auth.mfa_amr_claims(id,session_id,created_at,updated_at,authenticati
 select gen_random_uuid(),auth_session,clock_timestamp(),clock_timestamp(),'totp' from recovery_admin_ctx;
 insert into public.admin_sessions(id,user_id,auth_session_id,session_fingerprint,idle_expires_at,absolute_expires_at)
 select admin_session,actor,auth_session::text,'putduk-native-recovery-fixture',clock_timestamp()+interval '30 minutes',clock_timestamp()+interval '2 hours' from recovery_admin_ctx;
+-- New contract setup only: use actual active Auth member sessions, no HTTP.
+insert into auth.sessions(id,user_id,created_at,updated_at,aal,not_after)
+select member_a,member_a,clock_timestamp(),clock_timestamp(),'aal1',clock_timestamp()+interval '2 hours' from recovery_admin_ctx
+union all select member_b,member_b,clock_timestamp(),clock_timestamp(),'aal1',clock_timestamp()+interval '2 hours' from recovery_admin_ctx;
+
 grant select,update on recovery_admin_ctx to service_role;
 do $$begin execute format('grant usage on schema %I to service_role',(select nspname from pg_namespace where oid=pg_my_temp_schema()));end$$;
 select set_config('request.jwt.claims','{"role":"service_role"}',true);
@@ -47,6 +52,23 @@ begin
 end;
 $$;
 grant execute on function pg_temp.recovery_cms_command(text,uuid,uuid,text,text,text) to service_role;
+
+
+-- Test setup adapter only: production callers must present explicit click intent.
+create function pg_temp.register_bound_push_fixture(p_user uuid,p_session uuid,p_operation text,p_endpoint text,
+ p_key text,p_secret text,p_expiry timestamptz,p_agent text)returns jsonb
+ language plpgsql security invoker as $fixture$
+declare snapshot jsonb;permit jsonb;intent uuid:=gen_random_uuid();
+begin
+ if p_operation<>'REGISTER'then raise exception 'FIXTURE_REGISTER_ONLY';end if;
+ snapshot:=public.member_push_endpoint_command(p_user,p_session,'SNAPSHOT',p_endpoint,null,null,null,null,null,null,null);
+ permit:=public.member_push_endpoint_command(p_user,p_session,'ISSUE',p_endpoint,p_key,p_secret,p_expiry,p_agent,
+  (snapshot->>'endpointEpoch')::bigint,intent,null);
+ return public.member_push_endpoint_command(p_user,p_session,'REGISTER',p_endpoint,p_key,p_secret,p_expiry,p_agent,
+  (snapshot->>'endpointEpoch')::bigint,intent,(permit->>'permitId')::uuid);
+end;$fixture$;
+do $$begin execute format('grant usage on schema %I to service_role',(select nspname from pg_namespace where oid=pg_my_temp_schema()));end$$;
+grant execute on function pg_temp.register_bound_push_fixture(uuid,uuid,text,text,text,text,timestamptz,text)to service_role;
 
 set local role service_role;
 update recovery_cms_ctx set draft=pg_temp.recovery_cms_command('CREATE_DRAFT',gen_random_uuid());
@@ -106,7 +128,7 @@ update nonmoney_ctx set policy=pg_temp.approve_nonmoney_fixture();
 select lives_ok('set constraints all immediate','synthetic operator review retains real TOTP grant/audit/approval seals');set constraints all deferred;
 select public.bootstrap_user(member_a)from recovery_admin_ctx;
 -- Dummy native-only registration: zero HTTP requests, no actual device.
-select public.upsert_push_subscription(member_a,'https://fcm.googleapis.com/fcm/send/putduk-native-'||g,repeat('a',80),repeat('b',24),null,'LOCAL_NATIVE_FIXTURE')from recovery_admin_ctx cross join generate_series(1,5)g;
+select pg_temp.register_bound_push_fixture(member_a,member_a,'REGISTER','https://fcm.googleapis.com/fcm/send/putduk-native-'||g,repeat('a',80),repeat('b',24),null,'LOCAL_NATIVE_FIXTURE')from recovery_admin_ctx cross join generate_series(1,5)g;
 select public.approve_deposit_request(public.create_deposit_request(member_a,'KRW',100000,'local-nonmoney-source'),actor,100000,'local-nonmoney-actual-credit','Local actual deposit original for mission proof',gen_random_uuid())from recovery_admin_ctx;
 reset role;
 update nonmoney_ctx set source=(select source_event_id from public.money_source_movements where user_id=(select member_a from recovery_admin_ctx)and origin_code='KRW_DEPOSIT'and movement_kind='CREDIT'),balance_before=(select balance_atomic::bigint from public.wallet_balance_snapshots where user_id=(select member_a from recovery_admin_ctx)and currency='KRW');
@@ -169,7 +191,15 @@ reset role;
 select is((select status from app_private.notification_device_deliveries where id=(select(first_batch->0->>'deliveryId')::uuid from push_ctx)),'ACCEPTED','HTTP acceptance is transport acceptance only');
 select is((select status from app_private.notification_device_deliveries where id=(select(first_batch->1->>'deliveryId')::uuid from push_ctx)),'RETRY','unknown provider outcome uses bounded retry instead of fabricated success');
 select is((select result from app_private.notification_device_receipts where delivery_id=(select(first_batch->1->>'deliveryId')::uuid from push_ctx)),'UNKNOWN','original unknown outcome is append-only');
-update public.push_subscriptions set auth_secret=repeat('c',24)where id=(select subscription_id from app_private.notification_device_deliveries where id=(select(second_batch->0->>'deliveryId')::uuid from push_ctx));
+-- Refresh through the bound registration command, preserving the original
+-- stale410 assertion and exact endpoint identity while recording new keys.
+create temporary table push_refresh_fixture as select s.endpoint,s.p256dh,s.expires_at,s.user_agent from public.push_subscriptions s
+  where s.id=(select subscription_id from app_private.notification_device_deliveries where id=(select(second_batch->0->>'deliveryId')::uuid from push_ctx));
+grant select on push_refresh_fixture to service_role;
+set local role service_role;
+select pg_temp.register_bound_push_fixture(x.member_a,x.member_a,'REGISTER',s.endpoint,s.p256dh,repeat('c',24),s.expires_at,s.user_agent)
+  from recovery_admin_ctx x cross join push_refresh_fixture s;
+reset role;
 update public.push_subscriptions set revoked_at=clock_timestamp()where id=(select subscription_id from app_private.notification_device_deliveries where id=(select(second_batch->1->>'deliveryId')::uuid from push_ctx));
 set local role service_role;
 select lives_ok($$select public.settle_notification_push_delivery((second_batch->0->>'deliveryId')::uuid,'push-native-owner-b',(second_batch->0->>'leaseToken')::uuid,1,'EXPIRED',410,'PUSH_SUBSCRIPTION_EXPIRED')from push_ctx$$,'old endpoint HTTP410 receipt is recorded');

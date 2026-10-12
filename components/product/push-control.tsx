@@ -4,6 +4,9 @@ import { useEffect, useRef, useState } from "react";
 
 import {
   beginPushOperation,
+  assertPushOperationCurrent,
+  currentPushIntentFence,
+  pushIntentFenceKey,
   finishPushOperation,
   hasPendingPushDisableIntent,
   rememberPushDisableIntent,
@@ -12,6 +15,12 @@ import {
   trackPushBrowserWork as trackBrowserWork,
   trackPushTransportWork,
 } from "@/lib/notifications/push-client-coordinator";
+
+import {
+  readPushEndpointSnapshot,
+  enablePushEndpoint,
+  type PushEndpointSnapshot,
+} from "@/lib/notifications/push-enable-protocol";
 
 function decodeVapidKey(value: string) {
   const padding = "=".repeat((4 - (value.length % 4)) % 4);
@@ -29,6 +38,7 @@ export function PushControl() {
   >("off");
   const active = useRef<AbortController | null>(null);
   const mounted = useRef(false);
+  const endpointSnapshot = useRef<PushEndpointSnapshot | null>(null);
 
   useEffect(() => {
     const available =
@@ -37,6 +47,19 @@ export function PushControl() {
       "Notification" in window;
     mounted.current = true;
     const controller = new AbortController();
+    const snapshotFence = currentPushIntentFence();
+    const externalIntent = (event: StorageEvent) => {
+      if (event.key !== pushIntentFenceKey) return;
+      active.current?.abort();
+      endpointSnapshot.current = null;
+      setSubscriptionState(
+        hasPendingPushDisableIntent() ? "revoke-unconfirmed" : "unconfirmed",
+      );
+      setMessage(
+        "다른 화면에서 알림 설정이 변경되었어요. 현재 상태를 다시 확인해 주세요.",
+      );
+    };
+    window.addEventListener("storage", externalIntent);
     let timedOut = false;
     const timer = setTimeout(() => {
       timedOut = true;
@@ -56,7 +79,22 @@ export function PushControl() {
               )
             : null,
         )
-        .then((subscription) => {
+        .then(async (subscription) => {
+          if (subscription) {
+            try {
+              const snapshot = await readPushEndpointSnapshot(
+                subscription.endpoint,
+                controller.signal,
+              );
+              if (
+                !controller.signal.aborted &&
+                snapshotFence === currentPushIntentFence()
+              )
+                endpointSnapshot.current = snapshot;
+            } catch {
+              /* Unknown stays unconfirmed. */
+            }
+          }
           if (mounted.current && !controller.signal.aborted) {
             setSupported(true);
             // A browser subscription is not evidence of a current server/account
@@ -80,6 +118,7 @@ export function PushControl() {
     }
 
     return () => {
+      window.removeEventListener("storage", externalIntent);
       mounted.current = false;
       controller.abort();
       clearTimeout(timer);
@@ -119,7 +158,10 @@ export function PushControl() {
     const signal = controller.signal;
     const timer = setTimeout(() => controller.abort(), 10_000);
     let created: PushSubscription | null = null;
-    let retiredEndpoint: string | null = null;
+    const baseline = endpointSnapshot.current; // capture before asynchronous user-intent work
+    const intentId = crypto.randomUUID();
+    let registrationAttempted = false;
+    let knownEndpoint: string | null = null;
 
     try {
       await waitForPushBrowserWork(signal);
@@ -132,7 +174,7 @@ export function PushControl() {
           ? await waitFor(previous.pushManager.getSubscription(), signal)
           : null;
         if (old) {
-          retiredEndpoint = old.endpoint;
+          knownEndpoint = old.endpoint;
           const removed = await waitFor(
             trackBrowserWork(old.unsubscribe()),
             signal,
@@ -157,10 +199,6 @@ export function PushControl() {
         registration.pushManager.getSubscription(),
         signal,
       );
-      if (subscription && subscription.endpoint === retiredEndpoint) {
-        rememberPushDisableIntent(true);
-        throw new Error("CLEANUP_REQUIRED");
-      }
       if (!subscription) {
         const subscribing = trackBrowserWork(
           registration.pushManager
@@ -177,55 +215,65 @@ export function PushControl() {
         );
         subscription = await waitFor(subscribing, signal);
       }
-      if (subscription.endpoint === retiredEndpoint) {
-        rememberPushDisableIntent(true);
-        throw new Error("CLEANUP_REQUIRED");
-      }
-      if (signal.aborted) throw new DOMException("Stopped", "AbortError");
-      const response = await waitFor(
-        trackPushTransportWork(
-          fetch("/api/v1/notifications/subscriptions", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(subscription.toJSON()),
-            signal,
-          }),
-        ),
+      knownEndpoint = subscription.endpoint;
+      const expectedEpoch =
+        baseline?.endpoint === subscription.endpoint
+          ? baseline.epoch
+          : created
+            ? 0
+            : null;
+      if (expectedEpoch === null) throw new Error("BASELINE_REQUIRED");
+      endpointSnapshot.current = await enablePushEndpoint({
+        subscription: subscription.toJSON(),
+        expectedEpoch,
+        intentId,
         signal,
-      );
-
-      if (!response.ok) {
-        throw new Error("SAVE_FAILED");
-      }
-      const body: unknown = await waitFor(response.json(), signal);
-      if (
-        !body ||
-        typeof body !== "object" ||
-        !("data" in body) ||
-        !body.data ||
-        typeof body.data !== "object" ||
-        !("subscribed" in body.data) ||
-        body.data.subscribed !== true
-      )
-        throw new Error("SAVE_FAILED");
+        onRegister: () => {
+          registrationAttempted = true;
+          rememberPushDisableIntent(true);
+        },
+      });
       if (signal.aborted) throw new DOMException("Stopped", "AbortError");
+      assertPushOperationCurrent(controller);
+      rememberPushDisableIntent(false);
       setSubscriptionState("on");
       setMessage("이 기기에서 푸시 알림을 받을 수 있습니다.");
     } catch (error) {
-      // Roll back only a subscription created by this attempt. An existing
-      // subscription may belong to another account; never remove it on conflict.
+      // An unknown REGISTER may already have committed. Keep the native endpoint
+      // available for DELETE/reload reconciliation rather than losing its handle.
       const cleanup = created as PushSubscription | null;
-      if (cleanup)
+      if (cleanup && !registrationAttempted)
         void trackBrowserWork(cleanup.unsubscribe()).catch(() => undefined);
+      if (registrationAttempted) {
+        rememberPushDisableIntent(true);
+        setSubscriptionState("revoke-unconfirmed");
+      }
+      if (
+        error instanceof Error &&
+        error.message === "BASELINE_REQUIRED" &&
+        knownEndpoint &&
+        !signal.aborted
+      ) {
+        try {
+          endpointSnapshot.current = await readPushEndpointSnapshot(
+            knownEndpoint,
+            signal,
+          );
+        } catch {
+          /* Another explicit click is still required. */
+        }
+      }
       if (mounted.current)
         setMessage(
           signal.aborted
             ? "알림 설정을 마치지 못했어요. 다시 확인해 주세요."
-            : error instanceof Error && error.message === "CLEANUP_REQUIRED"
-              ? "이전 알림 해제를 마치지 못했어요. 브라우저 알림 설정을 확인한 뒤 다시 시도해 주세요."
-              : error instanceof Error && error.message === "SAVE_FAILED"
-                ? "알림 구독을 저장하지 못했습니다. 다시 확인해 주세요."
-                : "브라우저의 푸시 기능을 준비하지 못했습니다. 다시 확인해 주세요.",
+            : error instanceof Error && error.message === "BASELINE_REQUIRED"
+              ? "알림 상태를 다시 확인했어요. 알림을 켜려면 다시 선택해 주세요."
+              : error instanceof Error && error.message === "CLEANUP_REQUIRED"
+                ? "이전 알림 해제를 마치지 못했어요. 브라우저 알림 설정을 확인한 뒤 다시 시도해 주세요."
+                : error instanceof Error && error.message === "SAVE_FAILED"
+                  ? "알림 구독을 저장하지 못했습니다. 다시 확인해 주세요."
+                  : "브라우저의 푸시 기능을 준비하지 못했습니다. 다시 확인해 주세요.",
         );
     } finally {
       clearTimeout(timer);
@@ -239,6 +287,7 @@ export function PushControl() {
     const signal = controller.signal;
     const timer = setTimeout(() => controller.abort(), 10_000);
     let revoked = false;
+    const intentId = crypto.randomUUID();
     rememberPushDisableIntent(true);
 
     try {
@@ -263,7 +312,7 @@ export function PushControl() {
           fetch("/api/v1/notifications/subscriptions", {
             method: "DELETE",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ endpoint: subscription.endpoint }),
+            body: JSON.stringify({ endpoint: subscription.endpoint, intentId }),
             signal,
           }),
         ),
@@ -285,12 +334,23 @@ export function PushControl() {
         body.data.subscribed !== false
       )
         throw new Error("REVOKE_UNCONFIRMED");
+      assertPushOperationCurrent(controller);
       revoked = true;
+      if (
+        "endpointEpoch" in body.data &&
+        Number.isSafeInteger(body.data.endpointEpoch)
+      )
+        endpointSnapshot.current = {
+          endpoint: subscription.endpoint,
+          epoch: body.data.endpointEpoch as number,
+        };
+      else throw new Error("REVOKE_UNCONFIRMED");
       setSubscriptionState("off");
       const removed = await waitFor(
         trackBrowserWork(subscription.unsubscribe()),
         signal,
       );
+      assertPushOperationCurrent(controller);
       if (removed) rememberPushDisableIntent(false);
       setMessage(
         removed

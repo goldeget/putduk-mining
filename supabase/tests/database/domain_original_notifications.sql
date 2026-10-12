@@ -23,6 +23,11 @@ insert into auth.mfa_amr_claims(id,session_id,created_at,updated_at,authenticati
 select gen_random_uuid(),auth_session,clock_timestamp(),clock_timestamp(),'totp' from recovery_admin_ctx;
 insert into public.admin_sessions(id,user_id,auth_session_id,session_fingerprint,idle_expires_at,absolute_expires_at)
 select admin_session,actor,auth_session::text,'putduk-native-recovery-fixture',clock_timestamp()+interval '30 minutes',clock_timestamp()+interval '2 hours' from recovery_admin_ctx;
+-- New contract setup only: use actual active Auth member sessions, no HTTP.
+insert into auth.sessions(id,user_id,created_at,updated_at,aal,not_after)
+select member_a,member_a,clock_timestamp(),clock_timestamp(),'aal1',clock_timestamp()+interval '2 hours' from recovery_admin_ctx
+union all select member_b,member_b,clock_timestamp(),clock_timestamp(),'aal1',clock_timestamp()+interval '2 hours' from recovery_admin_ctx;
+
 grant select,update on recovery_admin_ctx to service_role;
 do $$begin execute format('grant usage on schema %I to service_role',(select nspname from pg_namespace where oid=pg_my_temp_schema()));end$$;
 select set_config('request.jwt.claims','{"role":"service_role"}',true);
@@ -34,6 +39,23 @@ create temporary table domain_notice_ctx(source uuid,balance_before bigint,journ
 insert into domain_notice_ctx default values;
 grant select,update on domain_notice_ctx to service_role;
 grant select on domain_notice_ctx,recovery_admin_ctx to authenticated;
+
+-- Test setup adapter only: production callers must present explicit click intent.
+create function pg_temp.register_bound_push_fixture(p_user uuid,p_session uuid,p_operation text,p_endpoint text,
+ p_key text,p_secret text,p_expiry timestamptz,p_agent text)returns jsonb
+ language plpgsql security invoker as $fixture$
+declare snapshot jsonb;permit jsonb;intent uuid:=gen_random_uuid();
+begin
+ if p_operation<>'REGISTER'then raise exception 'FIXTURE_REGISTER_ONLY';end if;
+ snapshot:=public.member_push_endpoint_command(p_user,p_session,'SNAPSHOT',p_endpoint,null,null,null,null,null,null,null);
+ permit:=public.member_push_endpoint_command(p_user,p_session,'ISSUE',p_endpoint,p_key,p_secret,p_expiry,p_agent,
+  (snapshot->>'endpointEpoch')::bigint,intent,null);
+ return public.member_push_endpoint_command(p_user,p_session,'REGISTER',p_endpoint,p_key,p_secret,p_expiry,p_agent,
+  (snapshot->>'endpointEpoch')::bigint,intent,(permit->>'permitId')::uuid);
+end;$fixture$;
+do $$begin execute format('grant usage on schema %I to service_role',(select nspname from pg_namespace where oid=pg_my_temp_schema()));end$$;
+grant execute on function pg_temp.register_bound_push_fixture(uuid,uuid,text,text,text,text,timestamptz,text)to service_role;
+
 set local role service_role;
 select public.bootstrap_user(member_a)from recovery_admin_ctx;
 select public.bootstrap_user(member_b)from recovery_admin_ctx;
@@ -44,8 +66,8 @@ update domain_notice_ctx set source=(select source_event_id from public.money_so
  journals_before=(select count(*)from public.ledger_transactions);
 select is((select count(*)from app_private.nonmoney_executor_configuration where local_qa_enabled),0::bigint,'ordinary domain notifications do not require synthetic reward activation');
 set local role service_role;
-select public.upsert_push_subscription(member_a,'https://fcm.googleapis.com/fcm/send/domain-notice-fixture',repeat('a',80),repeat('b',24),null,'LOCAL_NATIVE_FIXTURE')from recovery_admin_ctx;
-select public.upsert_push_subscription(member_b,'https://fcm.googleapis.com/fcm/send/domain-notice-foreign-fixture',repeat('a',80),repeat('b',24),null,'LOCAL_NATIVE_FIXTURE')from recovery_admin_ctx;
+select pg_temp.register_bound_push_fixture(member_a,member_a,'REGISTER','https://fcm.googleapis.com/fcm/send/domain-notice-fixture',repeat('a',80),repeat('b',24),null,'LOCAL_NATIVE_FIXTURE')from recovery_admin_ctx;
+select pg_temp.register_bound_push_fixture(member_b,member_b,'REGISTER','https://fcm.googleapis.com/fcm/send/domain-notice-foreign-fixture',repeat('a',80),repeat('b',24),null,'LOCAL_NATIVE_FIXTURE')from recovery_admin_ctx;
 reset role;
 update public.notification_preferences set web_push_enabled=true,wallet_enabled=true,quiet_hours_start='00:00',quiet_hours_end='00:00'where user_id=(select member_a from recovery_admin_ctx);
 update public.outbox_events set available_at='infinity'where id<>(select source from domain_notice_ctx);

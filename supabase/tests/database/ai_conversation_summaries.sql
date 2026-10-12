@@ -73,6 +73,10 @@ select ok(
     where namespace.nspname in ('public', 'app_private')
       and procedure.prosecdef
       and procedure.oid not in (
+        'app_private.bind_push_delivery_epoch()'::regprocedure,
+        'app_private.apply_member_push_binding(uuid,uuid,text,text,text,text,timestamp with time zone,text)'::regprocedure,
+        'app_private.member_push_endpoint_command(uuid,uuid,text,text,text,text,timestamp with time zone,text,bigint,uuid,uuid)'::regprocedure,
+        'app_private.check_push_delivery_admission(uuid,text,uuid,integer)'::regprocedure,
         'app_private.bind_notice_content_projection()'::regprocedure,
         'app_private.guard_notice_content_projection()'::regprocedure,
         'public.read_member_faq()'::regprocedure,
@@ -155,7 +159,7 @@ select ok(
       )
   )
     and (
-      select count(*) = 79
+      select count(*) = 83
         and coalesce(
           bool_and(
             procedure.proconfig @> array['search_path=pg_catalog']::text[]
@@ -214,6 +218,50 @@ select ok(
         'app_private.bind_notice_content_projection()'::regprocedure,
         'app_private.guard_notice_content_projection()'::regprocedure
       )
+    )
+    and (
+      -- Frozen Push adds one private trigger and three service-context transport functions.
+      select count(*) = 4 and coalesce(bool_and(
+        procedure.prosecdef
+        and procedure.proowner = 'postgres'::regrole
+        and procedure.prorettype = expected.return_type
+        and procedure.proconfig = array['search_path=pg_catalog']::text[]
+        -- Only line-ending CRLF pairs may normalize; every canonical body byte is pinned.
+        and position(chr(13) in replace(procedure.prosrc, chr(13)||chr(10), chr(10))) = 0
+        and encode(extensions.digest(replace(procedure.prosrc, chr(13)||chr(10), chr(10)), 'sha256'), 'hex') = expected.source_sha256
+        and not exists (
+          select 1 from aclexplode(coalesce(procedure.proacl,
+            acldefault('f', procedure.proowner))) as privilege
+          where privilege.privilege_type = 'EXECUTE'
+            and privilege.grantee <> procedure.proowner
+            and not (expected.service_transport and privilege.grantee = 'service_role'::regrole
+              and privilege.is_grantable = false)
+        )
+        and not has_function_privilege('anon', procedure.oid, 'EXECUTE')
+        and not has_function_privilege('authenticated', procedure.oid, 'EXECUTE')
+        and has_function_privilege('service_role', procedure.oid, 'EXECUTE') = expected.service_transport
+      ), false)
+      from (values
+        ('app_private.bind_push_delivery_epoch()'::regprocedure, 'fde05c05151e3d065729a06ccae6e8a31230113b40c8f7459fc8f4dc0d595553', 'pg_catalog.trigger'::regtype, false),
+        ('app_private.apply_member_push_binding(uuid,uuid,text,text,text,text,timestamp with time zone,text)'::regprocedure, '20e311bec30fb7b92f118ba325110b20fc755bd29eabe2cda6aa1a7c5f80af3a', 'pg_catalog.jsonb'::regtype, true),
+        ('app_private.member_push_endpoint_command(uuid,uuid,text,text,text,text,timestamp with time zone,text,bigint,uuid,uuid)'::regprocedure, 'b553103c7bfa2c363e49ba8169cc90e00a436654393764903a3a47fa4719cbe2', 'pg_catalog.jsonb'::regtype, true),
+        ('app_private.check_push_delivery_admission(uuid,text,uuid,integer)'::regprocedure, '10379eb3851f86be2445d3b8d764bc8ac089612c3cc8ee181a4cc2873643b5dd', 'pg_catalog.jsonb'::regtype, true)
+      ) as expected(function_oid, source_sha256, return_type, service_transport)
+      join pg_proc as procedure on procedure.oid = expected.function_oid
+    )
+    and (
+      -- The trigger-only entry point has exactly its reviewed unconditional ROW binding.
+      select count(*) = 1 and coalesce(bool_and(
+        trigger.tgrelid = 'app_private.notification_device_deliveries'::regclass
+        and trigger.tgname = 'push_delivery_epoch_immutable'
+        and trigger.tgenabled = 'O' and not trigger.tgisinternal
+        and trigger.tgconstraint = 0 and trigger.tgnargs = 0
+        and trigger.tgqual is null
+        and trigger.tgattr = ''::pg_catalog.int2vector
+        and trigger.tgtype::integer = 23
+      ), false)
+      from pg_trigger as trigger
+      where trigger.tgfoid = 'app_private.bind_push_delivery_epoch()'::regprocedure
     ),
   'application schemas contain only the reviewed fixed-search-path SECURITY DEFINER functions'
 );

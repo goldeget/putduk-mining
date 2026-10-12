@@ -98,11 +98,41 @@ export async function processPushDeliveryBatch(
     const row = claim.data[0];
     validateClaim(row, workerId);
     summary.claimed += 1;
+    // Fresh DB admission reduces stale-claim sends. It cannot recall HTTP
+    // already dispatched after this boundary; settlement preserves that fact.
+    const admission = await client.rpc("check_push_delivery_admission", {
+      p_delivery_id: row.deliveryId,
+      p_worker_id: workerId,
+      p_lease_token: row.leaseToken,
+      p_attempt: row.attempt,
+    });
+    if (
+      admission.error ||
+      !admission.data ||
+      admission.data.deliveryId !== row.deliveryId ||
+      typeof admission.data.allowed !== "boolean" ||
+      Object.keys(admission.data).length !== 2
+    )
+      throw new Error("PUSH_ADMISSION_FAILED");
     let outcome;
-    try {
-      outcome = classifyResult(await transport(row.subscription, row.payload));
-    } catch {
-      outcome = { status: "UNKNOWN", http: null, code: "PUSH_OUTCOME_UNKNOWN" };
+    if (!admission.data.allowed) {
+      outcome = {
+        status: "ABORTED",
+        http: null,
+        code: "PUSH_ADMISSION_DENIED",
+      };
+    } else {
+      try {
+        outcome = classifyResult(
+          await transport(row.subscription, row.payload),
+        );
+      } catch {
+        outcome = {
+          status: "UNKNOWN",
+          http: null,
+          code: "PUSH_OUTCOME_UNKNOWN",
+        };
+      }
     }
     if (outcome.status === "UNKNOWN") summary.unknown += 1;
     const settled = await client.rpc("settle_notification_push_delivery", {

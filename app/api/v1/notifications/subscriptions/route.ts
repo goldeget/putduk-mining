@@ -1,8 +1,10 @@
 import { z } from "zod";
 
 import { apiError, apiSuccess } from "@/lib/api/http";
-import { getVerifiedIdentity } from "@/lib/auth/session";
-import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import {
+  getVerifiedPushIdentity,
+  applyPushEndpoint,
+} from "@/lib/notifications/push-binding.server";
 import { readBoundedJsonBody } from "@/lib/api/request-body";
 import {
   hasPushSubscriptionOrigin,
@@ -11,7 +13,30 @@ import {
 
 const removalSchema = z.strictObject({
   endpoint: z.url().startsWith("https://").max(2048),
+  intentId: z.uuid(),
 });
+const endpoint = z.url().startsWith("https://").max(2048);
+const epoch = z
+  .number()
+  .int()
+  .min(0)
+  .max(Number.MAX_SAFE_INTEGER - 1);
+const commandSchema = z.discriminatedUnion("operation", [
+  z.strictObject({ operation: z.literal("SNAPSHOT"), endpoint }),
+  z.strictObject({
+    operation: z.literal("ISSUE"),
+    subscription: pushSubscriptionSchema,
+    expectedEpoch: epoch,
+    intentId: z.uuid(),
+  }),
+  z.strictObject({
+    operation: z.literal("REGISTER"),
+    subscription: pushSubscriptionSchema,
+    expectedEpoch: epoch,
+    intentId: z.uuid(),
+    permitId: z.uuid(),
+  }),
+]);
 async function input(request: Request) {
   if (
     request.headers.get("content-type")?.split(";")[0]?.trim().toLowerCase() !==
@@ -33,7 +58,7 @@ export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
   if (!hasPushSubscriptionOrigin(request)) return originDenied();
-  const identity = await getVerifiedIdentity();
+  const identity = await getVerifiedPushIdentity();
   if (!identity) {
     return apiError({
       code: "UNAUTHENTICATED",
@@ -42,7 +67,7 @@ export async function POST(request: Request) {
     });
   }
 
-  const body = pushSubscriptionSchema.safeParse(await input(request));
+  const body = commandSchema.safeParse(await input(request));
   if (!body.success) {
     return apiError({
       code: "INVALID_PUSH_SUBSCRIPTION",
@@ -51,40 +76,36 @@ export async function POST(request: Request) {
     });
   }
 
-  const admin = createSupabaseAdminClient();
-  const expiresAt = body.data.expirationTime
-    ? new Date(body.data.expirationTime).toISOString()
-    : null;
-
-  const { error } = await admin.rpc("upsert_push_subscription", {
-    p_auth_secret: body.data.keys.auth,
-    p_endpoint: body.data.endpoint,
-    p_expires_at: expiresAt,
-    p_p256dh: body.data.keys.p256dh,
-    p_user_agent: request.headers.get("user-agent")?.slice(0, 512) ?? "",
-    p_user_id: identity.userId,
-  });
-  if (error) {
-    const conflict = error.message.includes(
-      "PUSH_SUBSCRIPTION_OWNERSHIP_CONFLICT",
-    );
+  const value = body.data;
+  const result = await applyPushEndpoint(
+    identity,
+    value.operation === "SNAPSHOT"
+      ? value
+      : { ...value, userAgent: request.headers.get("user-agent") ?? "" },
+  );
+  if (!result.ok)
     return apiError({
-      code: conflict
-        ? "PUSH_SUBSCRIPTION_CONFLICT"
-        : "PUSH_SUBSCRIPTION_UNAVAILABLE",
-      message: conflict
-        ? "이 알림 구독은 다른 계정에 연결되어 있습니다."
-        : "알림 구독을 저장하지 못했습니다.",
-      status: conflict ? 409 : 503,
+      code: result.code,
+      message:
+        result.code === "PUSH_INTENT_STALE"
+          ? "알림 상태가 변경되었어요. 상태를 확인한 뒤 다시 선택해 주세요."
+          : "알림 설정을 확인하지 못했습니다.",
+      status:
+        result.code === "PUSH_SESSION_REQUIRED"
+          ? 401
+          : ["PUSH_INTENT_STALE", "PUSH_SUBSCRIPTION_CONFLICT"].includes(
+                result.code,
+              )
+            ? 409
+            : 503,
     });
-  }
 
-  return apiSuccess({ subscribed: true }, 201);
+  return apiSuccess(result.receipt, value.operation === "REGISTER" ? 201 : 200);
 }
 
 export async function DELETE(request: Request) {
   if (!hasPushSubscriptionOrigin(request)) return originDenied();
-  const identity = await getVerifiedIdentity();
+  const identity = await getVerifiedPushIdentity();
   if (!identity) {
     return apiError({
       code: "UNAUTHENTICATED",
@@ -102,19 +123,26 @@ export async function DELETE(request: Request) {
     });
   }
 
-  const admin = createSupabaseAdminClient();
-  const { error } = await admin.rpc("revoke_push_subscription", {
-    p_endpoint: body.data.endpoint,
-    p_user_id: identity.userId,
+  const result = await applyPushEndpoint(identity, {
+    operation: "REVOKE",
+    ...body.data,
   });
-
-  if (error) {
+  if (!result.ok)
     return apiError({
-      code: "PUSH_SUBSCRIPTION_UNAVAILABLE",
-      message: "알림 구독을 해제하지 못했습니다.",
-      status: 503,
+      code: result.code,
+      message:
+        result.code === "PUSH_REVOKE_SUPERSEDED"
+          ? "이전 알림 해제는 처리되었지만 그 뒤 설정이 변경되었어요. 현재 상태를 다시 확인해 주세요."
+          : "알림 해제를 확인하지 못했습니다.",
+      status:
+        result.code === "PUSH_SESSION_REQUIRED"
+          ? 401
+          : ["PUSH_INTENT_STALE", "PUSH_REVOKE_SUPERSEDED"].includes(
+                result.code,
+              )
+            ? 409
+            : 503,
     });
-  }
 
-  return apiSuccess({ subscribed: false });
+  return apiSuccess(result.receipt);
 }

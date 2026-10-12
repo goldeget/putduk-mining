@@ -99,9 +99,13 @@ describe("logout browser fence and bounded cleanup contract", () => {
       "/api/v1/notifications/subscriptions",
       expect.objectContaining({
         method: "DELETE",
-        body: JSON.stringify({ endpoint: local.endpoint }),
+        body: expect.any(String),
       }),
     );
+    expect(JSON.parse(fetcher.mock.calls[0]![1].body)).toEqual({
+      endpoint: local.endpoint,
+      intentId: expect.stringMatching(/^[a-f0-9-]{36}$/),
+    });
     release();
   });
 
@@ -176,5 +180,27 @@ describe("logout browser fence and bounded cleanup contract", () => {
     await coordinator.cleanupCurrentDevicePush(new AbortController().signal);
     expect(fetcher).not.toHaveBeenCalled();
     release();
+  });
+  it("discards an older operation after another tab advances the intent version", () => {
+    const operation = new AbortController();
+    expect(coordinator.beginPushOperation(operation)).toBe(true);
+    expect(() =>
+      coordinator.assertPushOperationCurrent(operation),
+    ).not.toThrow();
+    const next = crypto.randomUUID();
+    localStorage.setItem(coordinator.pushIntentFenceKey, next);
+    // Even before storage event delivery, the current storage version rejects
+    // the old UI result. DB epoch serializes the corresponding server commands.
+    expect(() => coordinator.assertPushOperationCurrent(operation)).toThrow(
+      "Stopped",
+    );
+    window.dispatchEvent(
+      new StorageEvent("storage", {
+        key: coordinator.pushIntentFenceKey,
+        newValue: next,
+      }),
+    );
+    expect(operation.signal.aborted).toBe(true);
+    coordinator.finishPushOperation(operation);
   });
 });

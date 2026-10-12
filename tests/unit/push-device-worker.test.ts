@@ -32,6 +32,7 @@ function fixture(
     row?: ReturnType<typeof envelope>;
     settlementError?: boolean;
     settleStatus?: string;
+    admission?: boolean | "ERROR";
   } = {},
 ) {
   let claimed = false;
@@ -41,6 +42,13 @@ function fixture(
       claimed = true;
       return { data: [options.row ?? envelope()], error: null };
     }
+    if (name === "check_push_delivery_admission")
+      return options.admission === "ERROR"
+        ? { data: null, error: { message: "fixture fault" } }
+        : {
+            data: { deliveryId: id, allowed: options.admission ?? true },
+            error: null,
+          };
     if (name !== "settle_notification_push_delivery")
       throw new Error("UNEXPECTED_RPC");
     if (options.settlementError)
@@ -81,7 +89,7 @@ describe("per-device worker outcome and lease boundaries (no network)", () => {
       expect(result.claimed).toBe(1);
       expect(transport).toHaveBeenCalledTimes(1);
       expect(db.rpc).toHaveBeenNthCalledWith(
-        2,
+        3,
         "settle_notification_push_delivery",
         expect.objectContaining({
           p_status: status,
@@ -103,7 +111,7 @@ describe("per-device worker outcome and lease boundaries (no network)", () => {
       });
       expect(result.accepted).toBe(0);
       expect(db.rpc).toHaveBeenNthCalledWith(
-        2,
+        3,
         "settle_notification_push_delivery",
         expect.objectContaining({ p_status: status, p_http_status: null }),
       );
@@ -119,7 +127,7 @@ describe("per-device worker outcome and lease boundaries (no network)", () => {
     });
     expect(result.unknown).toBe(1);
     expect(db.rpc).toHaveBeenNthCalledWith(
-      2,
+      3,
       "settle_notification_push_delivery",
       expect.objectContaining({
         p_status: "UNKNOWN",
@@ -140,7 +148,7 @@ describe("per-device worker outcome and lease boundaries (no network)", () => {
       processPushDeliveryBatch(db, { workerId: "device-worker", transport }),
     ).rejects.toThrow("PUSH_SETTLEMENT_FAILED");
     expect(transport).toHaveBeenCalledTimes(1);
-    expect(db.rpc).toHaveBeenCalledTimes(2);
+    expect(db.rpc).toHaveBeenCalledTimes(3);
   });
   it.each(["foreign-owner", "expired", "personal-body", "private-extra"])(
     "blocks %s before any send",
@@ -172,6 +180,7 @@ describe("per-device worker outcome and lease boundaries (no network)", () => {
     });
     expect(db.rpc.mock.calls.map(([name]) => name)).toEqual([
       "claim_notification_push_deliveries",
+      "check_push_delivery_admission",
       "settle_notification_push_delivery",
       "claim_notification_push_deliveries",
     ]);
@@ -180,5 +189,39 @@ describe("per-device worker outcome and lease boundaries (no network)", () => {
         .filter(([name]) => name === "claim_notification_push_deliveries")
         .every(([, args]) => args.p_batch_size === 1),
     ).toBe(true);
+  });
+  it("does not dispatch a claimed envelope after fresh DB admission is denied", async () => {
+    const db = fixture({ admission: false, settleStatus: "CANCELLED" });
+    const transport = vi.fn(async () => ({
+      status: "ACCEPTED",
+      httpStatus: 201,
+    }));
+    const result = await processPushDeliveryBatch(db, {
+      workerId: "device-worker",
+      transport,
+    });
+    expect(transport).not.toHaveBeenCalled();
+    expect(result.cancelled).toBe(1);
+    expect(db.rpc).toHaveBeenNthCalledWith(
+      3,
+      "settle_notification_push_delivery",
+      expect.objectContaining({
+        p_status: "ABORTED",
+        p_http_status: null,
+        p_error_code: "PUSH_ADMISSION_DENIED",
+      }),
+    );
+  });
+  it("leaves an unresolved lease without sending on DB admission failure", async () => {
+    const db = fixture({ admission: "ERROR" });
+    const transport = vi.fn(async () => ({
+      status: "ACCEPTED",
+      httpStatus: 201,
+    }));
+    await expect(
+      processPushDeliveryBatch(db, { workerId: "device-worker", transport }),
+    ).rejects.toThrow("PUSH_ADMISSION_FAILED");
+    expect(transport).not.toHaveBeenCalled();
+    expect(db.rpc).toHaveBeenCalledTimes(2);
   });
 });

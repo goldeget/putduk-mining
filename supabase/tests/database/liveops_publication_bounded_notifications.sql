@@ -76,6 +76,23 @@ insert into public.notification_preferences(user_id,events_enabled,web_push_enab
 select user_id,true,false,0 from public.user_profiles;
 -- Existing recovery_cms_ctx canonical NOTICE payload/approval helpers reused.
 update recovery_cms_ctx set payload=jsonb_set(payload,'{publishedAt}',to_jsonb(to_char((clock_timestamp()-interval'1 second')at time zone'UTC','YYYY-MM-DD"T"HH24:MI:SS.US"Z"')));
+
+-- Test setup adapter only: production callers must present explicit click intent.
+create function pg_temp.register_bound_push_fixture(p_user uuid,p_session uuid,p_operation text,p_endpoint text,
+ p_key text,p_secret text,p_expiry timestamptz,p_agent text)returns jsonb
+ language plpgsql security invoker as $fixture$
+declare snapshot jsonb;permit jsonb;intent uuid:=gen_random_uuid();
+begin
+ if p_operation<>'REGISTER'then raise exception 'FIXTURE_REGISTER_ONLY';end if;
+ snapshot:=public.member_push_endpoint_command(p_user,p_session,'SNAPSHOT',p_endpoint,null,null,null,null,null,null,null);
+ permit:=public.member_push_endpoint_command(p_user,p_session,'ISSUE',p_endpoint,p_key,p_secret,p_expiry,p_agent,
+  (snapshot->>'endpointEpoch')::bigint,intent,null);
+ return public.member_push_endpoint_command(p_user,p_session,'REGISTER',p_endpoint,p_key,p_secret,p_expiry,p_agent,
+  (snapshot->>'endpointEpoch')::bigint,intent,(permit->>'permitId')::uuid);
+end;$fixture$;
+do $$begin execute format('grant usage on schema %I to service_role',(select nspname from pg_namespace where oid=pg_my_temp_schema()));end$$;
+grant execute on function pg_temp.register_bound_push_fixture(uuid,uuid,text,text,text,text,timestamptz,text)to service_role;
+
 set local role service_role;
 update recovery_cms_ctx set draft=pg_temp.recovery_cms_command('CREATE_DRAFT',gen_random_uuid());
 update recovery_cms_ctx set preview=pg_temp.recovery_cms_command('PREVIEW',gen_random_uuid());
@@ -141,6 +158,13 @@ values('38900000-0000-4000-8000-000000000003','00000000-0000-4000-8000-000000000
 -- Future publication: persisted queue, trusted due RLS, current device policy.
 update public.notification_preferences set web_push_enabled=true where user_id='00000000-0000-4000-8000-000000000001';
 insert into public.push_subscriptions(id,user_id,endpoint,p256dh,auth_secret)values('38900000-0000-4000-8000-000000000001','00000000-0000-4000-8000-000000000001','https://updates.push.services.mozilla.com/wpush/v2/local-publication-bounded',repeat('a',87),repeat('b',24));
+insert into auth.sessions(id,user_id,created_at,updated_at,aal,not_after)values(
+ '38900000-0000-4000-8000-000000000011','00000000-0000-4000-8000-000000000001',clock_timestamp(),clock_timestamp(),'aal1',clock_timestamp()+interval '2 hours');
+set local role service_role;
+select pg_temp.register_bound_push_fixture('00000000-0000-4000-8000-000000000001','38900000-0000-4000-8000-000000000011','REGISTER',
+ 'https://updates.push.services.mozilla.com/wpush/v2/local-publication-bounded',repeat('a',87),repeat('b',24),null,'LOCAL_NATIVE_FIXTURE');
+reset role;
+
 update recovery_cms_ctx set draft=null,preview=null,approval=null,publication=null,payload=jsonb_set(jsonb_set(payload,'{slug}','"future-bounded-publication"'),'{publishedAt}',to_jsonb(to_char((clock_timestamp()+interval'1 hour')at time zone'UTC','YYYY-MM-DD"T"HH24:MI:SS.US"Z"')));
 set local role service_role;
 update recovery_cms_ctx set draft=pg_temp.recovery_cms_command('CREATE_DRAFT',gen_random_uuid());

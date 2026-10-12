@@ -147,9 +147,13 @@ describe("device cleanup preceding canonical server logout", () => {
         "/api/v1/notifications/subscriptions",
         expect.objectContaining({
           method: "DELETE",
-          body: JSON.stringify({ endpoint: local.endpoint }),
+          body: expect.any(String),
         }),
       );
+      expect(JSON.parse(fetch.mock.calls[0]![1].body)).toEqual({
+        endpoint: local.endpoint,
+        intentId: expect.stringMatching(/^[a-f0-9-]{36}$/),
+      });
       expect(
         global ? actions.logoutAllAction : actions.logoutAction,
       ).toHaveBeenCalledOnce();

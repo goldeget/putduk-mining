@@ -1,12 +1,48 @@
 /** Client memory/fences provide best-effort browser sequencing, not DB ordering. */
 export const pushCleanupWaitMs = 10_000;
+export const pushIntentFenceKey = "putduk-push-intent-version";
+let currentIntentFence: string | null = null;
+let listeningForIntentFence = false;
+export function currentPushIntentFence(): string | null {
+  try {
+    return localStorage.getItem(pushIntentFenceKey) ?? currentIntentFence;
+  } catch {
+    return currentIntentFence;
+  }
+}
+function advanceIntentFence() {
+  currentIntentFence = crypto.randomUUID();
+  try {
+    localStorage.setItem(pushIntentFenceKey, currentIntentFence);
+  } catch {
+    /* DB epoch remains authoritative. */
+  }
+  if (!listeningForIntentFence && typeof window !== "undefined") {
+    listeningForIntentFence = true;
+    window.addEventListener("storage", (event) => {
+      if (event.key !== pushIntentFenceKey) return;
+      currentIntentFence = event.newValue;
+      for (const controller of active.keys()) controller.abort();
+    });
+  }
+  return currentIntentFence;
+}
+export function assertPushOperationCurrent(controller: AbortController): void {
+  const operation = active.get(controller);
+  if (
+    controller.signal.aborted ||
+    !operation ||
+    operation.fence !== currentPushIntentFence()
+  )
+    throw new DOMException("Stopped", "AbortError");
+}
 export const pushDisableIntentKey = "putduk-push-disable-pending";
 let memoryDisableIntent: boolean | undefined;
 let browserWork: Promise<void> = Promise.resolve();
 let transportWork: Promise<void> = Promise.resolve();
 const active = new Map<
   AbortController,
-  { done: Promise<void>; finish: () => void }
+  { done: Promise<void>; finish: () => void; fence: string }
 >();
 let canceledOperations: Promise<void> = Promise.resolve();
 let logoutOwner: object | null = null;
@@ -74,7 +110,8 @@ export function beginPushOperation(controller: AbortController): boolean {
   const done = new Promise<void>((resolve) => {
     finish = resolve;
   });
-  active.set(controller, { done, finish });
+  const fence = advanceIntentFence();
+  active.set(controller, { done, finish, fence });
   return true;
 }
 export function finishPushOperation(controller: AbortController): void {
@@ -87,6 +124,7 @@ export function beginPushLogout(): (() => void) | null {
   if (logoutOwner) return null;
   const owner = {};
   logoutOwner = owner;
+  advanceIntentFence();
   rememberPushDisableIntent(true);
   canceledOperations = Promise.all(
     [...active.values()].map((operation) => operation.done),
@@ -127,6 +165,7 @@ export async function cleanupCurrentDevicePush(
   if (!subscription || signal.aborted) return;
   // Capture this object/endpoint. Never look up a replacement after sign-out.
   const endpoint = subscription.endpoint;
+  const intentId = crypto.randomUUID();
   const local = trackPushBrowserWork(
     Promise.resolve().then(() => subscription.unsubscribe()),
   );
@@ -140,7 +179,7 @@ export async function cleanupCurrentDevicePush(
         fetch("/api/v1/notifications/subscriptions", {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ endpoint }),
+          body: JSON.stringify({ endpoint, intentId }),
           signal,
         }),
       ),

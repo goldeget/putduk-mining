@@ -31,7 +31,11 @@ let worker: {
   ready: Promise<unknown>;
 };
 let requestPermission: ReturnType<typeof vi.fn>;
-let fetcher: ReturnType<typeof vi.fn>;
+let fetcher: ReturnType<
+  typeof vi.fn<
+    (_url: string, init: RequestInit & { body: string }) => Promise<unknown>
+  >
+>;
 const settle = () =>
   act(async () => {
     await Promise.resolve();
@@ -90,9 +94,24 @@ beforeEach(() => {
   vi.stubGlobal("navigator", { serviceWorker: worker });
   vi.stubGlobal("PushManager", function PushManager() {});
   vi.stubGlobal("Notification", { permission: "granted", requestPermission });
-  fetcher = vi.fn().mockResolvedValue({
-    ok: true,
-    json: async () => ({ data: { subscribed: true } }),
+  fetcher = vi.fn(async (_url: string, init: RequestInit) => {
+    const body = JSON.parse(init.body as string);
+    const endpointEpoch =
+      body.operation === "REGISTER"
+        ? body.expectedEpoch + 1
+        : (body.expectedEpoch ?? 3);
+    return {
+      ok: true,
+      json: async () => ({
+        data: {
+          operation: body.operation,
+          endpointEpoch,
+          subscribed: body.operation === "REGISTER",
+          intentId: body.intentId,
+          permitId: body.permitId ?? "22222222-2222-4222-8222-222222222222",
+        },
+      }),
+    };
   });
   vi.stubGlobal("fetch", fetcher);
   host = document.createElement("div");
@@ -125,7 +144,12 @@ describe("Push and logout interleavings across component boundaries", () => {
     await mount();
     expect(localStorage.getItem("putduk-push-disable-pending")).toBe("true");
     expect(host.textContent).toContain("알림 해제 다시 확인");
-    expect(fetcher).not.toHaveBeenCalled();
+    expect(
+      fetcher.mock.calls.every(
+        ([, init]) => JSON.parse(init.body).operation === "SNAPSHOT",
+      ),
+    ).toBe(true);
+    expect(fetcher).toHaveBeenCalled();
     expect(requestPermission).not.toHaveBeenCalled();
   });
 
@@ -151,11 +175,15 @@ describe("Push and logout interleavings across component boundaries", () => {
   it("unblocks auth on an unknown old POST deadline and never starts late DELETE with next-account cookies", async () => {
     let resolvePost!: (value: unknown) => void;
     registration.pushManager.getSubscription.mockResolvedValue(subscription);
+    const normal = fetcher.getMockImplementation()!;
     fetcher.mockImplementation(
-      () =>
-        new Promise((resolve) => {
+      (url: string, init: RequestInit & { body: string }) => {
+        if (JSON.parse(init.body as string).operation !== "REGISTER")
+          return normal(url, init);
+        return new Promise((resolve) => {
           resolvePost = resolve;
-        }),
+        });
+      },
     );
     await mount();
     await click("알림 연결 확인");
@@ -167,12 +195,24 @@ describe("Push and logout interleavings across component boundaries", () => {
     await act(async () =>
       resolvePost({
         ok: true,
-        json: async () => ({ data: { subscribed: true } }),
+        json: async () => ({
+          data: {
+            subscribed: true,
+            operation: "REGISTER",
+            endpointEpoch: 4,
+            ...JSON.parse(fetcher.mock.calls[2]![1].body),
+          },
+        }),
       }),
     );
     await settle();
-    expect(fetcher).toHaveBeenCalledOnce();
-    expect(fetcher.mock.calls[0]![1].method).toBe("POST");
+    expect(fetcher).toHaveBeenCalledTimes(3);
+    expect(
+      fetcher.mock.calls.map(([, init]) => JSON.parse(init.body).operation),
+    ).toEqual(["SNAPSHOT", "ISSUE", "REGISTER"]);
+    expect(fetcher.mock.calls.every(([, init]) => init.method === "POST")).toBe(
+      true,
+    );
     expect(host.textContent).not.toContain(
       "이 기기에서 푸시 알림을 받을 수 있습니다.",
     );
@@ -186,7 +226,12 @@ describe("Push and logout interleavings across component boundaries", () => {
     rememberPushDisableIntent(true);
     await click("알림 연결 확인");
     expect(subscription.unsubscribe).toHaveBeenCalledOnce();
-    expect(fetcher).not.toHaveBeenCalled();
+    expect(
+      fetcher.mock.calls.every(
+        ([, init]) => JSON.parse(init.body).operation === "SNAPSHOT",
+      ),
+    ).toBe(true);
+    expect(fetcher).toHaveBeenCalled();
     expect(requestPermission).not.toHaveBeenCalled();
     expect(host.textContent).toContain("이전 알림 해제를 마치지 못했어요");
   });
@@ -214,13 +259,20 @@ describe("Push and logout interleavings across component boundaries", () => {
     rememberPushDisableIntent(true);
     await click("알림 연결 확인");
     expect(old.unsubscribe).toHaveBeenCalledOnce();
-    expect(fetcher).toHaveBeenCalledOnce();
-    expect(JSON.parse(fetcher.mock.calls[0]![1].body).endpoint).toBe(
-      next.endpoint,
-    );
+    expect(fetcher).toHaveBeenCalledTimes(3);
+    const mutations = fetcher.mock.calls
+      .map(([, init]) => JSON.parse(init.body))
+      .filter((body) => body.operation !== "SNAPSHOT");
+    expect(mutations.map((body) => body.operation)).toEqual([
+      "ISSUE",
+      "REGISTER",
+    ]);
+    expect(
+      mutations.every((body) => body.subscription.endpoint === next.endpoint),
+    ).toBe(true);
   });
 
-  it("rejects a subscribe result that reuses the retired old endpoint before POST", async () => {
+  it("allows same-endpoint native reactivation only with a fresh explicit epoch permit", async () => {
     registration.pushManager.getSubscription
       .mockResolvedValueOnce(subscription)
       .mockResolvedValueOnce(subscription)
@@ -229,7 +281,20 @@ describe("Push and logout interleavings across component boundaries", () => {
     await mount();
     rememberPushDisableIntent(true);
     await click("알림 연결 확인");
-    expect(fetcher).not.toHaveBeenCalled();
-    expect(host.textContent).toContain("이전 알림 해제를 마치지 못했어요");
+    const writes = fetcher.mock.calls
+      .map(([, init]) => JSON.parse(init.body))
+      .filter((body) => body.operation !== "SNAPSHOT");
+    expect(writes.map((body) => body.operation)).toEqual(["ISSUE", "REGISTER"]);
+    expect(
+      writes.every(
+        (body) =>
+          body.expectedEpoch === 3 &&
+          body.subscription.endpoint === subscription.endpoint,
+      ),
+    ).toBe(true);
+    expect(writes[1].permitId).toBe("22222222-2222-4222-8222-222222222222");
+    expect(host.textContent).toContain(
+      "이 기기에서 푸시 알림을 받을 수 있습니다.",
+    );
   });
 });

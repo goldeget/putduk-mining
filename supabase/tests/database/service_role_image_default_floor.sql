@@ -427,6 +427,28 @@ insert into public.outbox_events (
   'priv-floor-outbox-0001'
 );
 
+-- Contract setup only; retains the existing privilege-floor registration assertion.
+insert into auth.sessions(id,user_id,created_at,updated_at,aal,not_after)values(
+ 'a1100001-1030-4000-8000-000000000011','a1100001-1030-4000-8000-000000000001',clock_timestamp(),clock_timestamp(),'aal1',clock_timestamp()+interval '2 hours');
+
+select set_config('request.jwt.claims','{"role":"service_role"}',true);
+
+-- Test setup adapter only: production callers must present explicit click intent.
+create function pg_temp.register_bound_push_fixture(p_user uuid,p_session uuid,p_operation text,p_endpoint text,
+ p_key text,p_secret text,p_expiry timestamptz,p_agent text)returns jsonb
+ language plpgsql security invoker as $fixture$
+declare snapshot jsonb;permit jsonb;intent uuid:=gen_random_uuid();
+begin
+ if p_operation<>'REGISTER'then raise exception 'FIXTURE_REGISTER_ONLY';end if;
+ snapshot:=public.member_push_endpoint_command(p_user,p_session,'SNAPSHOT',p_endpoint,null,null,null,null,null,null,null);
+ permit:=public.member_push_endpoint_command(p_user,p_session,'ISSUE',p_endpoint,p_key,p_secret,p_expiry,p_agent,
+  (snapshot->>'endpointEpoch')::bigint,intent,null);
+ return public.member_push_endpoint_command(p_user,p_session,'REGISTER',p_endpoint,p_key,p_secret,p_expiry,p_agent,
+  (snapshot->>'endpointEpoch')::bigint,intent,(permit->>'permitId')::uuid);
+end;$fixture$;
+do $$begin execute format('grant usage on schema %I to service_role',(select nspname from pg_namespace where oid=pg_my_temp_schema()));end$$;
+grant execute on function pg_temp.register_bound_push_fixture(uuid,uuid,text,text,text,text,timestamptz,text)to service_role;
+
 set local role service_role;
 
 select throws_ok(
@@ -543,14 +565,16 @@ select lives_ok(
 );
 
 select isnt(
-  public.upsert_push_subscription(
+  (pg_temp.register_bound_push_fixture(
     'a1100001-1030-4000-8000-000000000001',
+    'a1100001-1030-4000-8000-000000000011',
+    'REGISTER',
     'https://push.example.test/priv-floor',
     repeat('a', 40),
     repeat('b', 16),
     null,
     'priv-floor'
-  ),
+  )->>'subscriptionId')::uuid,
   null,
   'service_role can save a push subscription'
 );

@@ -25,6 +25,70 @@ let worker: {
 };
 let requestPermission: ReturnType<typeof vi.fn>;
 let fetcher: ReturnType<typeof vi.fn>;
+const sessionId = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
+const permitId = "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb";
+const receiptId = "cccccccc-cccc-4ccc-8ccc-cccccccccccc";
+const subscriptionId = "dddddddd-dddd-4ddd-8ddd-dddddddddddd";
+function reply(data: unknown, status = 200) {
+  return {
+    ok: status >= 200 && status < 300,
+    status,
+    json: async () => ({ data }),
+  };
+}
+function responseFor(init: RequestInit) {
+  const body = JSON.parse(init.body as string);
+  if (init.method === "DELETE")
+    return reply({
+      operation: "REVOKE",
+      scope: "CURRENT_ENDPOINT",
+      authSessionId: sessionId,
+      receiptId,
+      subscriptionId: null,
+      subscribed: false,
+      endpointEpoch: 5,
+      intentId: body.intentId,
+      permitId: null,
+    });
+  if (body.operation === "SNAPSHOT")
+    return reply({
+      operation: "SNAPSHOT",
+      authSessionId: sessionId,
+      endpointEpoch: 3,
+      subscribed: false,
+    });
+  if (body.operation === "ISSUE")
+    return reply({
+      operation: "ISSUE",
+      authSessionId: sessionId,
+      endpointEpoch: body.expectedEpoch,
+      intentId: body.intentId,
+      permitId,
+    });
+  if (body.operation === "REGISTER")
+    return reply({
+      operation: "REGISTER",
+      scope: "CURRENT_SESSION",
+      authSessionId: sessionId,
+      receiptId,
+      subscriptionId,
+      subscribed: true,
+      endpointEpoch: body.expectedEpoch + 1,
+      intentId: body.intentId,
+      permitId: body.permitId,
+    });
+  throw new Error("UNEXPECTED_PUSH_COMMAND");
+}
+function operations() {
+  return fetcher.mock.calls.map(([, init]) =>
+    init.method === "DELETE"
+      ? "REVOKE"
+      : (JSON.parse(init.body as string).operation as string),
+  );
+}
+function mutationOperations() {
+  return operations().filter((operation) => operation !== "SNAPSHOT");
+}
 const settle = () =>
   act(async () => {
     await Promise.resolve();
@@ -71,10 +135,7 @@ beforeEach(() => {
   vi.stubGlobal("navigator", { serviceWorker: worker });
   vi.stubGlobal("PushManager", function PushManager() {});
   vi.stubGlobal("Notification", { permission: "granted", requestPermission });
-  fetcher = vi.fn().mockResolvedValue({
-    ok: true,
-    json: async () => ({ data: { subscribed: true } }),
-  });
+  fetcher = vi.fn(async (_url: string, init: RequestInit) => responseFor(init));
   vi.stubGlobal("fetch", fetcher);
   host = document.createElement("div");
   document.body.append(host);
@@ -97,7 +158,7 @@ describe("push registration reflects server confirmation", () => {
           cleaned = done;
         }),
     );
-    fetcher.mockResolvedValueOnce({ ok: false });
+    fetcher.mockResolvedValueOnce(reply(null, 503));
     await mount();
     await click("알림 켜기");
     const readsBeforeRetry =
@@ -110,7 +171,8 @@ describe("push registration reflects server confirmation", () => {
     expect(host.textContent).toContain("설정 중");
     await act(async () => cleaned(true));
     await settle();
-    expect(fetcher).toHaveBeenCalledTimes(2);
+    expect(fetcher).toHaveBeenCalledTimes(3);
+    expect(operations()).toEqual(["ISSUE", "ISSUE", "REGISTER"]);
     expect(host.textContent).toContain("알림 끄기");
   });
   it("keeps the native mutation fence through cancellation and remount", async () => {
@@ -143,7 +205,8 @@ describe("push registration reflects server confirmation", () => {
     );
     await act(async () => cleaned(true));
     await settle();
-    expect(fetcher).toHaveBeenCalledTimes(1);
+    expect(fetcher).toHaveBeenCalledTimes(2);
+    expect(operations()).toEqual(["ISSUE", "REGISTER"]);
     expect(host.textContent).toContain("알림 끄기");
   });
   it("does not claim a browser-only subscription is confirmed after remount", async () => {
@@ -151,14 +214,17 @@ describe("push registration reflects server confirmation", () => {
     await mount();
     expect(host.textContent).toContain("알림 연결 확인");
     expect(host.textContent).not.toContain("알림 끄기");
-    expect(fetcher).not.toHaveBeenCalled();
+    expect(operations()).toEqual(["SNAPSHOT"]);
+    expect(mutationOperations()).toEqual([]);
     await click("알림 연결 확인");
     expect(registration.pushManager.subscribe).not.toHaveBeenCalled();
-    expect(fetcher).toHaveBeenCalledTimes(1);
+    expect(fetcher).toHaveBeenCalledTimes(3);
+    expect(operations()).toEqual(["SNAPSHOT", "ISSUE", "REGISTER"]);
+    expect(mutationOperations()).toEqual(["ISSUE", "REGISTER"]);
     expect(host.textContent).toContain("알림 끄기");
   });
   it("cleans up a newly created browser subscription when server save fails", async () => {
-    fetcher.mockResolvedValue({ ok: false });
+    fetcher.mockResolvedValue(reply(null, 503));
     await mount();
     await click("알림 켜기");
     expect(subscription.unsubscribe).toHaveBeenCalledTimes(1);
@@ -167,7 +233,7 @@ describe("push registration reflects server confirmation", () => {
   });
   it("keeps an existing subscription when the current account cannot confirm it", async () => {
     registration.pushManager.getSubscription.mockResolvedValue(subscription);
-    fetcher.mockResolvedValue({ ok: false, status: 409 });
+    fetcher.mockResolvedValue(reply(null, 409));
     await mount();
     await click("알림 연결 확인");
     expect(subscription.unsubscribe).not.toHaveBeenCalled();
@@ -221,7 +287,7 @@ describe("push registration reflects server confirmation", () => {
     registration.pushManager.getSubscription.mockResolvedValue(subscription);
     await mount();
     await click("알림 연결 확인");
-    fetcher.mockResolvedValue({ ok: false });
+    fetcher.mockResolvedValue(reply(null, 503));
     await click("알림 끄기");
     expect(subscription.unsubscribe).not.toHaveBeenCalled();
     expect(host.textContent).toContain("알림 끄기");
@@ -235,10 +301,9 @@ describe("push registration reflects server confirmation", () => {
     await click("알림 끄기");
     await act(async () => vi.advanceTimersByTimeAsync(15000));
     expect(host.textContent).toContain("알림 해제 다시 확인");
-    fetcher.mockResolvedValue({
-      ok: true,
-      json: async () => ({ data: { subscribed: false } }),
-    });
+    fetcher.mockImplementation(async (_url: string, init: RequestInit) =>
+      responseFor(init),
+    );
     await click("알림 해제 다시 확인");
     expect(fetcher.mock.calls.at(-1)?.[1].method).toBe("DELETE");
     expect(host.textContent).toContain("알림 켜기");
@@ -247,10 +312,9 @@ describe("push registration reflects server confirmation", () => {
     registration.pushManager.getSubscription.mockResolvedValue(subscription);
     await mount();
     await click("알림 연결 확인");
-    fetcher.mockResolvedValue({
-      ok: true,
-      json: async () => ({ data: { subscribed: false } }),
-    });
+    fetcher.mockImplementation(async (_url: string, init: RequestInit) =>
+      responseFor(init),
+    );
     subscription.unsubscribe.mockRejectedValue(new Error("browser failure"));
     await click("알림 끄기");
     expect(host.textContent).toContain("알림 발송은 해제했어요");
@@ -268,13 +332,101 @@ describe("push registration reflects server confirmation", () => {
     expect(host.textContent).toContain("다시 확인");
   });
   it("rejects a successful HTTP response without the expected server registration receipt", async () => {
-    fetcher.mockResolvedValue({
-      ok: true,
-      json: async () => ({ data: { subscribed: false } }),
+    fetcher.mockImplementation(async (_url: string, init: RequestInit) => {
+      const body = JSON.parse(init.body as string);
+      return body.operation === "REGISTER"
+        ? reply({ subscribed: false })
+        : responseFor(init);
     });
     await mount();
     await click("알림 켜기");
-    expect(subscription.unsubscribe).toHaveBeenCalledTimes(1);
+    // REGISTER may have committed despite a malformed/lost result. Preserve its native handle.
+    expect(subscription.unsubscribe).not.toHaveBeenCalled();
     expect(host.textContent).not.toContain("알림 끄기");
+    expect(host.textContent).toContain("알림 해제 다시 확인");
+    expect(localStorage.getItem("putduk-push-disable-pending")).toBe("true");
+    expect(mutationOperations()).toEqual(["ISSUE", "REGISTER"]);
+    registration.pushManager.getSubscription.mockResolvedValue(subscription);
+    await act(async () => root.render(null));
+    await mount();
+    expect(operations()).toEqual(["ISSUE", "REGISTER", "SNAPSHOT"]);
+    expect(mutationOperations()).toEqual(["ISSUE", "REGISTER"]);
+    expect(host.textContent).toContain("알림 해제 다시 확인");
+    await click("알림 해제 다시 확인");
+    expect(operations()).toEqual(["ISSUE", "REGISTER", "SNAPSHOT", "REVOKE"]);
+    const revoke = JSON.parse(fetcher.mock.calls.at(-1)![1].body as string);
+    expect(revoke.endpoint).toBe(subscription.endpoint);
+    expect(revoke.intentId).toMatch(/^[a-f0-9-]{36}$/);
+    expect(subscription.unsubscribe).toHaveBeenCalledOnce();
+    expect(host.textContent).toContain("알림 켜기");
+  });
+  it("preserves an existing native endpoint when its session is refused after snapshot", async () => {
+    registration.pushManager.getSubscription.mockResolvedValue(subscription);
+    fetcher.mockImplementation(async (_url: string, init: RequestInit) => {
+      const body = JSON.parse(init.body as string);
+      return body.operation === "ISSUE" ? reply(null, 401) : responseFor(init);
+    });
+    await mount();
+    await click("알림 연결 확인");
+    expect(operations()).toEqual(["SNAPSHOT", "ISSUE"]);
+    expect(mutationOperations()).toEqual(["ISSUE"]);
+    expect(subscription.unsubscribe).not.toHaveBeenCalled();
+    expect(host.textContent).not.toContain("알림 끄기");
+    expect(host.textContent).toContain("저장하지 못했습니다");
+  });
+
+  it("keeps an unknown REGISTER binding for reconciliation after a session refusal", async () => {
+    registration.pushManager.getSubscription.mockResolvedValue(subscription);
+    let sessionRefused = false;
+    fetcher.mockImplementation(async (_url: string, init: RequestInit) => {
+      const body = JSON.parse(init.body as string);
+      if (body.operation === "REGISTER") sessionRefused = true;
+      return sessionRefused ? reply(null, 401) : responseFor(init);
+    });
+    await mount();
+    await click("알림 연결 확인");
+    expect(operations()).toEqual(["SNAPSHOT", "ISSUE", "REGISTER"]);
+    expect(subscription.unsubscribe).not.toHaveBeenCalled();
+    expect(localStorage.getItem("putduk-push-disable-pending")).toBe("true");
+    expect(host.textContent).toContain("알림 해제 다시 확인");
+    await act(async () => root.render(null));
+    await mount();
+    expect(operations()).toEqual(["SNAPSHOT", "ISSUE", "REGISTER", "SNAPSHOT"]);
+    expect(mutationOperations()).toEqual(["ISSUE", "REGISTER"]);
+    expect(subscription.unsubscribe).not.toHaveBeenCalled();
+  });
+
+  it("does not claim off or remove the endpoint when a revoke receipt is superseded", async () => {
+    registration.pushManager.getSubscription.mockResolvedValue(subscription);
+    await mount();
+    await click("알림 연결 확인");
+    fetcher.mockImplementation(async (_url: string, init: RequestInit) =>
+      init.method === "DELETE"
+        ? reply({ code: "PUSH_REVOKE_SUPERSEDED" }, 409)
+        : responseFor(init),
+    );
+    await click("알림 끄기");
+    expect(operations()).toEqual(["SNAPSHOT", "ISSUE", "REGISTER", "REVOKE"]);
+    expect(subscription.unsubscribe).not.toHaveBeenCalled();
+    expect(localStorage.getItem("putduk-push-disable-pending")).toBe("true");
+    expect(host.textContent).not.toContain("해제했습니다");
+    expect(host.textContent).toContain("알림 끄기");
+    const first = JSON.parse(fetcher.mock.calls.at(-1)![1].body as string);
+    fetcher.mockImplementation(async (_url: string, init: RequestInit) =>
+      responseFor(init),
+    );
+    await click("알림 끄기");
+    const second = JSON.parse(fetcher.mock.calls.at(-1)![1].body as string);
+    expect(operations()).toEqual([
+      "SNAPSHOT",
+      "ISSUE",
+      "REGISTER",
+      "REVOKE",
+      "REVOKE",
+    ]);
+    expect(second.endpoint).toBe(first.endpoint);
+    expect(second.intentId).not.toBe(first.intentId);
+    expect(subscription.unsubscribe).toHaveBeenCalledOnce();
+    expect(host.textContent).toContain("알림 켜기");
   });
 });
