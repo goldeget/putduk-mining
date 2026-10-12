@@ -13,7 +13,7 @@ timestamp. Contradictory published facts block publication.
 
 Public content states plainly:
 
-- PUTDUK is a virtual mining platform;
+- PUTDUK is an internally governed digital mining platform;
 - it is not actual blockchain mining;
 - rewards, difficulty and economy rules are internal PUTDUK rules;
 - PUTDUK START conversion is capped at KRW 5,000 and does not require funding
