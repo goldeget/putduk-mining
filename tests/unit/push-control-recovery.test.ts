@@ -4,6 +4,7 @@ import { act, createElement } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { PushControl } from "@/components/product/push-control";
+import { rememberPushDisableIntent } from "@/lib/notifications/push-client-coordinator";
 
 let root: Root;
 let host: HTMLDivElement;
@@ -45,6 +46,8 @@ async function click(label: string) {
 beforeEach(() => {
   Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
   vi.useFakeTimers();
+  localStorage.clear();
+  rememberPushDisableIntent(false);
   vi.stubEnv("NEXT_PUBLIC_VAPID_PUBLIC_KEY", "AQID");
   subscription = {
     endpoint: "https://push.example.test/subscription",

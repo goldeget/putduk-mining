@@ -1,9 +1,6 @@
 import Link from "next/link";
 
-import {
-  logoutAction,
-  logoutAllAction,
-} from "@/app/(product)/menu/account/actions";
+import { AccountLogoutControls } from "@/components/product/account-logout-controls";
 import {
   maskEmail,
   maskPhone,
@@ -108,18 +105,7 @@ export default async function AccountPage({
             안에 반영될 수 있어요.
           </p>
         </div>
-        <div className={menuStyles.sessionsActions}>
-          <form action={logoutAction} aria-label="이 기기 로그아웃">
-            <button className="button button--secondary" type="submit">
-              이 기기에서 로그아웃
-            </button>
-          </form>
-          <form action={logoutAllAction} aria-label="모든 기기 로그아웃">
-            <button className="button button--danger" type="submit">
-              모든 기기에서 로그아웃
-            </button>
-          </form>
-        </div>
+        <AccountLogoutControls className={menuStyles.sessionsActions} />
       </Surface>
     </div>
   );

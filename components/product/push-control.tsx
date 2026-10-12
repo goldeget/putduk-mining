@@ -2,41 +2,22 @@
 
 import { useEffect, useRef, useState } from "react";
 
-/** Browser permission/ready/subscribe cannot be aborted natively. Stop waiting,
- * and check the signal again before any subsequent server mutation. */
-function waitFor<T>(promise: Promise<T>, signal: AbortSignal): Promise<T> {
-  return new Promise((resolve, reject) => {
-    const abort = () => reject(new DOMException("Stopped", "AbortError"));
-    if (signal.aborted) {
-      abort();
-      return;
-    }
-    signal.addEventListener("abort", abort, { once: true });
-    promise
-      .then(resolve, reject)
-      .finally(() => signal.removeEventListener("abort", abort));
-  });
-}
+import {
+  beginPushOperation,
+  finishPushOperation,
+  hasPendingPushDisableIntent,
+  rememberPushDisableIntent,
+  waitForPushWork as waitFor,
+  waitForPushBrowserWork,
+  trackPushBrowserWork as trackBrowserWork,
+  trackPushTransportWork,
+} from "@/lib/notifications/push-client-coordinator";
 
 function decodeVapidKey(value: string) {
   const padding = "=".repeat((4 - (value.length % 4)) % 4);
   const base64 = (value + padding).replace(/-/g, "+").replace(/_/g, "/");
   const bytes = atob(base64);
   return Uint8Array.from(bytes, (character) => character.charCodeAt(0));
-}
-
-// This fence survives component unmount/remount. Native browser mutations may
-// finish after a UI timeout, and must settle before another control reuses them.
-let browserWork: Promise<void> = Promise.resolve();
-function trackBrowserWork<T>(promise: Promise<T>): Promise<T> {
-  browserWork = Promise.all([
-    browserWork,
-    promise.then(
-      () => undefined,
-      () => undefined,
-    ),
-  ]).then(() => undefined);
-  return promise;
 }
 
 export function PushControl() {
@@ -80,7 +61,13 @@ export function PushControl() {
             setSupported(true);
             // A browser subscription is not evidence of a current server/account
             // registration. Confirmation requires an explicit authenticated POST.
-            setSubscriptionState(subscription ? "unconfirmed" : "off");
+            setSubscriptionState(
+              hasPendingPushDisableIntent()
+                ? "revoke-unconfirmed"
+                : subscription
+                  ? "unconfirmed"
+                  : "off",
+            );
           }
         })
         .catch(() => {
@@ -103,6 +90,7 @@ export function PushControl() {
   function start() {
     if (active.current) return null;
     const controller = new AbortController();
+    if (!beginPushOperation(controller)) return null;
     active.current = controller;
     setPending(true);
     setMessage("");
@@ -110,6 +98,7 @@ export function PushControl() {
   }
 
   function finish(controller: AbortController) {
+    finishPushOperation(controller);
     if (active.current === controller) {
       active.current = null;
       if (mounted.current) setPending(false);
@@ -130,9 +119,28 @@ export function PushControl() {
     const signal = controller.signal;
     const timer = setTimeout(() => controller.abort(), 10_000);
     let created: PushSubscription | null = null;
+    let retiredEndpoint: string | null = null;
 
     try {
-      await waitFor(browserWork, signal);
+      await waitForPushBrowserWork(signal);
+      if (hasPendingPushDisableIntent()) {
+        const previous = await waitFor(
+          navigator.serviceWorker.getRegistration("/"),
+          signal,
+        );
+        const old = previous
+          ? await waitFor(previous.pushManager.getSubscription(), signal)
+          : null;
+        if (old) {
+          retiredEndpoint = old.endpoint;
+          const removed = await waitFor(
+            trackBrowserWork(old.unsubscribe()),
+            signal,
+          );
+          if (!removed) throw new Error("CLEANUP_REQUIRED");
+        }
+        rememberPushDisableIntent(false);
+      }
       const permission = await waitFor(
         Notification.requestPermission(),
         signal,
@@ -149,6 +157,10 @@ export function PushControl() {
         registration.pushManager.getSubscription(),
         signal,
       );
+      if (subscription && subscription.endpoint === retiredEndpoint) {
+        rememberPushDisableIntent(true);
+        throw new Error("CLEANUP_REQUIRED");
+      }
       if (!subscription) {
         const subscribing = trackBrowserWork(
           registration.pushManager
@@ -165,13 +177,20 @@ export function PushControl() {
         );
         subscription = await waitFor(subscribing, signal);
       }
+      if (subscription.endpoint === retiredEndpoint) {
+        rememberPushDisableIntent(true);
+        throw new Error("CLEANUP_REQUIRED");
+      }
+      if (signal.aborted) throw new DOMException("Stopped", "AbortError");
       const response = await waitFor(
-        fetch("/api/v1/notifications/subscriptions", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(subscription.toJSON()),
-          signal,
-        }),
+        trackPushTransportWork(
+          fetch("/api/v1/notifications/subscriptions", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(subscription.toJSON()),
+            signal,
+          }),
+        ),
         signal,
       );
 
@@ -189,6 +208,7 @@ export function PushControl() {
         body.data.subscribed !== true
       )
         throw new Error("SAVE_FAILED");
+      if (signal.aborted) throw new DOMException("Stopped", "AbortError");
       setSubscriptionState("on");
       setMessage("이 기기에서 푸시 알림을 받을 수 있습니다.");
     } catch (error) {
@@ -201,9 +221,11 @@ export function PushControl() {
         setMessage(
           signal.aborted
             ? "알림 설정을 마치지 못했어요. 다시 확인해 주세요."
-            : error instanceof Error && error.message === "SAVE_FAILED"
-              ? "알림 구독을 저장하지 못했습니다. 다시 확인해 주세요."
-              : "브라우저의 푸시 기능을 준비하지 못했습니다. 다시 확인해 주세요.",
+            : error instanceof Error && error.message === "CLEANUP_REQUIRED"
+              ? "이전 알림 해제를 마치지 못했어요. 브라우저 알림 설정을 확인한 뒤 다시 시도해 주세요."
+              : error instanceof Error && error.message === "SAVE_FAILED"
+                ? "알림 구독을 저장하지 못했습니다. 다시 확인해 주세요."
+                : "브라우저의 푸시 기능을 준비하지 못했습니다. 다시 확인해 주세요.",
         );
     } finally {
       clearTimeout(timer);
@@ -217,9 +239,10 @@ export function PushControl() {
     const signal = controller.signal;
     const timer = setTimeout(() => controller.abort(), 10_000);
     let revoked = false;
+    rememberPushDisableIntent(true);
 
     try {
-      await waitFor(browserWork, signal);
+      await waitForPushBrowserWork(signal);
       const registration = await waitFor(
         navigator.serviceWorker.getRegistration("/"),
         signal,
@@ -228,18 +251,22 @@ export function PushControl() {
         ? await waitFor(registration.pushManager.getSubscription(), signal)
         : null;
       if (!subscription) {
+        rememberPushDisableIntent(false);
         setSubscriptionState("off");
         setMessage("이 기기에 활성화된 푸시 구독이 없습니다.");
         return;
       }
 
+      if (signal.aborted) throw new DOMException("Stopped", "AbortError");
       const response = await waitFor(
-        fetch("/api/v1/notifications/subscriptions", {
-          method: "DELETE",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ endpoint: subscription.endpoint }),
-          signal,
-        }),
+        trackPushTransportWork(
+          fetch("/api/v1/notifications/subscriptions", {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ endpoint: subscription.endpoint }),
+            signal,
+          }),
+        ),
         signal,
       );
       if (!response.ok) {
@@ -264,6 +291,7 @@ export function PushControl() {
         trackBrowserWork(subscription.unsubscribe()),
         signal,
       );
+      if (removed) rememberPushDisableIntent(false);
       setMessage(
         removed
           ? "이 기기의 푸시 알림을 해제했습니다."
