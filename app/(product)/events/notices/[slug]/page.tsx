@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { PageHeading } from "@/components/product/page-heading";
+import { MemberNoticeCta } from "@/components/product/member-notice-cta";
 import productStyles from "@/components/product/product-experience.module.css";
 import { ProductStatusPill } from "@/components/product/product-status-pill";
 import { StatePanel } from "@/components/ui/states";
@@ -31,7 +32,7 @@ export default async function NoticeDetailPage({
   const { data, error } = await identity.supabase
     .from("notices")
     .select(
-      "id,slug,title_ko,summary_ko,body_markdown,status,published_at,expires_at,is_pinned",
+      "id,slug,title_ko,summary_ko,body_markdown,status,published_at,expires_at,is_pinned,cta_label_ko,cta_route,content_revision_id",
     )
     .eq("slug", slug)
     .eq("status", "PUBLISHED")
@@ -121,6 +122,7 @@ export default async function NoticeDetailPage({
           )}
         </div>
         <div className={styles.back}>
+          <MemberNoticeCta notice={notice} />
           <Link className="button button--secondary" href={"/events" as Route}>
             목록으로
           </Link>

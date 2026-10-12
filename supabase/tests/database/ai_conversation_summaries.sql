@@ -73,6 +73,8 @@ select ok(
     where namespace.nspname in ('public', 'app_private')
       and procedure.prosecdef
       and procedure.oid not in (
+        'app_private.bind_notice_content_projection()'::regprocedure,
+        'app_private.guard_notice_content_projection()'::regprocedure,
         'public.read_member_faq()'::regprocedure,
         'app_private.seal_worker_pause_attempt()'::regprocedure,
         'app_private.consume_local_cash_source(uuid,text)'::regprocedure,
@@ -153,7 +155,7 @@ select ok(
       )
   )
     and (
-      select count(*) = 77
+      select count(*) = 79
         and coalesce(
           bool_and(
             procedure.proconfig @> array['search_path=pg_catalog']::text[]
@@ -164,8 +166,56 @@ select ok(
       join pg_namespace as namespace on namespace.oid = procedure.pronamespace
       where namespace.nspname in ('public', 'app_private')
         and procedure.prosecdef
+    )
+    and (
+      -- The two Notice additions are private, fixed-context trigger functions.
+      -- Keep the original exact global roster check and audit each new identity.
+      select count(*) = 2 and coalesce(bool_and(
+        procedure.prosecdef
+        and procedure.prorettype = 'pg_catalog.trigger'::regtype
+        and procedure.proowner = 'postgres'::regrole
+        and procedure.proconfig = array['search_path=pg_catalog']::text[]
+        and encode(extensions.digest(procedure.prosrc, 'sha256'), 'hex') = expected.source_sha256
+        and not exists (
+          select 1 from aclexplode(coalesce(procedure.proacl,
+            acldefault('f', procedure.proowner))) as privilege
+          where privilege.privilege_type = 'EXECUTE'
+            and privilege.grantee <> procedure.proowner
+        )
+        and not has_function_privilege('anon', procedure.oid, 'EXECUTE')
+        and not has_function_privilege('authenticated', procedure.oid, 'EXECUTE')
+        and not has_function_privilege('service_role', procedure.oid, 'EXECUTE')
+      ), false)
+      from (values
+        ('app_private.bind_notice_content_projection()'::regprocedure,
+          '716796e00270b54026e50a6e6805b13793e045fbc1f9915a714223b9d3fff252'),
+        ('app_private.guard_notice_content_projection()'::regprocedure,
+          '8500d2dfbc5d022448d4ece02aab177e1391a8bca2d2026ac09dbd5ca07539ad')
+      ) as expected(function_oid, source_sha256)
+      join pg_proc as procedure on procedure.oid = expected.function_oid
+    )
+    and (
+      -- Reject a missing, disabled, redirected, conditional, or extra binding.
+      select count(*) = 2 and coalesce(bool_and(
+        trigger.tgrelid = 'public.notices'::regclass
+        and trigger.tgenabled = 'O'
+        and not trigger.tgisinternal
+        and trigger.tgconstraint = 0
+        and trigger.tgnargs = 0
+        and trigger.tgqual is null
+        and trigger.tgattr = ''::pg_catalog.int2vector
+        and ((trigger.tgfoid = 'app_private.bind_notice_content_projection()'::regprocedure
+          and trigger.tgname = 'notice_content_source_bind' and trigger.tgtype::integer = 7)
+          or (trigger.tgfoid = 'app_private.guard_notice_content_projection()'::regprocedure
+          and trigger.tgname = 'notice_content_source_guard' and trigger.tgtype::integer = 27))
+      ), false)
+      from pg_trigger as trigger
+      where trigger.tgfoid in (
+        'app_private.bind_notice_content_projection()'::regprocedure,
+        'app_private.guard_notice_content_projection()'::regprocedure
+      )
     ),
-  'application schemas contain only the seventy-six reviewed fixed-search-path SECURITY DEFINER functions'
+  'application schemas contain only the reviewed fixed-search-path SECURITY DEFINER functions'
 );
 
 select ok(

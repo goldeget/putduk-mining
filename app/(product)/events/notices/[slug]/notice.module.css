@@ -41,5 +41,15 @@
   margin-top: 0.5rem;
 }
 .back {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
   margin-top: 2rem;
+}
+
+.back > a {
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: center;
 }
