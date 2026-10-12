@@ -157,8 +157,8 @@ create function public.apply_member_push_binding(
   p_user_id uuid,p_auth_session_id uuid,p_operation text,p_endpoint text,
   p_p256dh text,p_auth_secret text,p_expires_at timestamptz,p_user_agent text
 ) returns jsonb language sql security invoker set search_path=pg_catalog
-begin atomic select app_private.apply_member_push_binding(p_user_id,p_auth_session_id,p_operation,
-  p_endpoint,p_p256dh,p_auth_secret,p_expires_at,p_user_agent);end;
+return app_private.apply_member_push_binding(p_user_id,p_auth_session_id,p_operation,
+  p_endpoint,p_p256dh,p_auth_secret,p_expires_at,p_user_agent);
 
 
 create function app_private.member_push_endpoint_command(
@@ -282,8 +282,8 @@ create function public.member_push_endpoint_command(
  p_p256dh text,p_auth_secret text,p_expires_at timestamptz,p_user_agent text,
  p_expected_epoch bigint,p_intent_id uuid,p_permit_id uuid
 ) returns jsonb language sql security invoker set search_path=pg_catalog
-begin atomic select app_private.member_push_endpoint_command(p_user_id,p_auth_session_id,p_operation,p_endpoint,
- p_p256dh,p_auth_secret,p_expires_at,p_user_agent,p_expected_epoch,p_intent_id,p_permit_id);end;
+return app_private.member_push_endpoint_command(p_user_id,p_auth_session_id,p_operation,p_endpoint,
+ p_p256dh,p_auth_secret,p_expires_at,p_user_agent,p_expected_epoch,p_intent_id,p_permit_id);
 revoke all on function app_private.member_push_endpoint_command(uuid,uuid,text,text,text,text,timestamptz,text,bigint,uuid,uuid),
  public.member_push_endpoint_command(uuid,uuid,text,text,text,text,timestamptz,text,bigint,uuid,uuid)from public,anon,authenticated,service_role;
 grant execute on function app_private.member_push_endpoint_command(uuid,uuid,text,text,text,text,timestamptz,text,bigint,uuid,uuid),
@@ -319,7 +319,7 @@ end;$$;
 create function public.check_push_delivery_admission(
   p_delivery_id uuid,p_worker_id text,p_lease_token uuid,p_attempt integer
 ) returns jsonb language sql security invoker set search_path=pg_catalog
-begin atomic select app_private.check_push_delivery_admission(p_delivery_id,p_worker_id,p_lease_token,p_attempt);end;
+return app_private.check_push_delivery_admission(p_delivery_id,p_worker_id,p_lease_token,p_attempt);
 
 revoke all on function app_private.push_session_is_admissible(uuid,uuid),
   app_private.push_binding_send_allowed(uuid),
