@@ -12,7 +12,9 @@ export function PwaRegistrar() {
     }
 
     const register = () => {
-      void navigator.serviceWorker.register("/sw.js", { scope: "/" });
+      void navigator.serviceWorker
+        .register("/sw.js", { scope: "/" })
+        .catch(() => undefined);
     };
 
     if (document.readyState === "complete") register();

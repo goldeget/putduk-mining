@@ -74,6 +74,7 @@ export function NotificationItem({
             {new Intl.DateTimeFormat("ko-KR", {
               dateStyle: "medium",
               timeStyle: "short",
+              timeZone: "Asia/Seoul",
             }).format(new Date(notification.createdAt))}
           </time>
         </div>
