@@ -45,7 +45,11 @@ const backendFirst = JSON.parse(
 };
 const canonicalConfig = execFileSync(
   "git",
-  ["--no-optional-locks", "show", "e220356be85a56e21e3469023b19b0c2fd4aebba:supabase/config.toml"],
+  [
+    "--no-optional-locks",
+    "show",
+    "e220356be85a56e21e3469023b19b0c2fd4aebba:supabase/config.toml",
+  ],
   { cwd: resolve(".") },
 );
 // Only relocated historical fixtures use these independently frozen Worker bytes.

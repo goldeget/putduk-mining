@@ -31,12 +31,14 @@ type Boundary = {
 };
 type Guard = (root?: string) => Boundary;
 const require = createRequire(import.meta.url);
-const { assertBackendHttpCanonicalSources } = require(
-  "../../scripts/backend-http-canonical-source.mjs",
-) as { assertBackendHttpCanonicalSources: Guard };
-const { assertBackendHttpLocalCandidateSources } = require(
-  "../../scripts/backend-http-local-source.mjs",
-) as { assertBackendHttpLocalCandidateSources: Guard };
+const { assertBackendHttpCanonicalSources } =
+  require("../../scripts/backend-http-canonical-source.mjs") as {
+    assertBackendHttpCanonicalSources: Guard;
+  };
+const { assertBackendHttpLocalCandidateSources } =
+  require("../../scripts/backend-http-local-source.mjs") as {
+    assertBackendHttpLocalCandidateSources: Guard;
+  };
 const checkout = resolve(".");
 const frozenHead = "e220356be85a56e21e3469023b19b0c2fd4aebba";
 const canonicalConfigHash =
@@ -47,7 +49,8 @@ const manifestHash =
   "8957473c3170a41ca19835fc39a73542921dcd71abad4a58261ff7a760bda922";
 const baselinePath = "tests/e2e/fixtures/principal-review-r2-ci-source.json";
 const manifestPath = "tests/e2e/fixtures/backend-http-local-193-source.json";
-const profilePath = "tests/e2e/fixtures/backend-http-local-execution-profile.json";
+const profilePath =
+  "tests/e2e/fixtures/backend-http-local-execution-profile.json";
 const layers = [
   "tests/e2e/fixtures/principal-backend-engine-187-source.json",
   "tests/e2e/fixtures/principal-backend-first-188-source.json",
@@ -76,7 +79,8 @@ afterEach(() => {
       rel.includes("/") ||
       rel.includes("\\") ||
       !rel.startsWith(tempPrefix)
-    ) throw new Error("CANONICAL_FIXTURE_DELETE_SCOPE_REJECTED");
+    )
+      throw new Error("CANONICAL_FIXTURE_DELETE_SCOPE_REJECTED");
     rmSync(target, { recursive: true, force: true });
   }
 });
@@ -127,15 +131,17 @@ function newOwnedRoot() {
   return root;
 }
 function fixture(local = false) {
-  const sourcePaths = [baselinePath, ...layers, manifestPath].flatMap((path) => {
-    const map = JSON.parse(readFileSync(join(checkout, path), "utf8")) as {
-      sources: Source[];
-      additionalRuntimeSources?: Source[];
-    };
-    return [...map.sources, ...(map.additionalRuntimeSources ?? [])].map(
-      (row) => row.path,
-    );
-  });
+  const sourcePaths = [baselinePath, ...layers, manifestPath].flatMap(
+    (path) => {
+      const map = JSON.parse(readFileSync(join(checkout, path), "utf8")) as {
+        sources: Source[];
+        additionalRuntimeSources?: Source[];
+      };
+      return [...map.sources, ...(map.additionalRuntimeSources ?? [])].map(
+        (row) => row.path,
+      );
+    },
+  );
   const root = newOwnedRoot();
   const names = new Set([
     baselinePath,
@@ -158,9 +164,15 @@ function fixture(local = false) {
 }
 function append(root: string, name: string) {
   const path = join(root, name);
-  writeFileSync(path, Buffer.concat([readFileSync(path), Buffer.from("\n# altered\n")]));
+  writeFileSync(
+    path,
+    Buffer.concat([readFileSync(path), Buffer.from("\n# altered\n")]),
+  );
 }
-function changeMap(root: string, mutate: (map: Record<string, unknown>) => void) {
+function changeMap(
+  root: string,
+  mutate: (map: Record<string, unknown>) => void,
+) {
   const path = join(root, manifestPath);
   const map = JSON.parse(readFileSync(path, "utf8")) as Record<string, unknown>;
   mutate(map);
@@ -190,8 +202,12 @@ describe("closed canonical CI 193-source boundary", () => {
     expect(digest(localTestConfig())).toBe(localConfigHash);
     const result = assertBackendHttpLocalCandidateSources(fixture(true));
     expect(result).toMatchObject({
-      scope: "LOCAL_QA", projectId: "putduk-mining-backend-patch-20261011",
-      apiPort: 65421, dbPort: 65422, migrationSources: 193, runtimeSources: 30,
+      scope: "LOCAL_QA",
+      projectId: "putduk-mining-backend-patch-20261011",
+      apiPort: 65421,
+      dbPort: 65422,
+      migrationSources: 193,
+      runtimeSources: 30,
     });
   });
   it("rejects independently pinned LOCAL_QA config on the canonical entry", () => {
@@ -235,8 +251,14 @@ describe("closed canonical CI 193-source boundary", () => {
   it("rejects exact-count SQL path substitution", () => {
     const root = fixture();
     renameSync(
-      join(root, "supabase/migrations/20261011112058_nonmoney_award_outbox_ack.sql"),
-      join(root, "supabase/migrations/20261011999999_unreviewed_same_count.sql"),
+      join(
+        root,
+        "supabase/migrations/20261011112058_nonmoney_award_outbox_ack.sql",
+      ),
+      join(
+        root,
+        "supabase/migrations/20261011999999_unreviewed_same_count.sql",
+      ),
     );
     expect(() => assertBackendHttpCanonicalSources(root)).toThrow(
       "BACKEND_HTTP_CANONICAL_MIGRATION_INVENTORY_CHANGED",
@@ -244,14 +266,22 @@ describe("closed canonical CI 193-source boundary", () => {
   });
   it("rejects an extra SQL and never accepts a minimum-only count", () => {
     const root = fixture();
-    writeFileSync(join(root, "supabase/migrations/20261011999999_extra.sql"), "select 1;\n");
+    writeFileSync(
+      join(root, "supabase/migrations/20261011999999_extra.sql"),
+      "select 1;\n",
+    );
     expect(() => assertBackendHttpCanonicalSources(root)).toThrow(
       "BACKEND_HTTP_CANONICAL_MIGRATION_INVENTORY_CHANGED",
     );
   });
   it("rejects a missing approved SQL", () => {
     const root = fixture();
-    rmSync(join(root, "supabase/migrations/20261011112058_nonmoney_award_outbox_ack.sql"));
+    rmSync(
+      join(
+        root,
+        "supabase/migrations/20261011112058_nonmoney_award_outbox_ack.sql",
+      ),
+    );
     expect(() => assertBackendHttpCanonicalSources(root)).toThrow(
       "BACKEND_HTTP_CANONICAL_MIGRATION_INVENTORY_CHANGED",
     );
@@ -261,7 +291,9 @@ describe("closed canonical CI 193-source boundary", () => {
     append(root, "workers/runner.mjs");
     changeMap(root, (map) => {
       const rows = map.reviewedRuntimeOverrides as { reviewedSha256: string }[];
-      rows[0]!.reviewedSha256 = digest(readFileSync(join(root, "workers/runner.mjs")));
+      rows[0]!.reviewedSha256 = digest(
+        readFileSync(join(root, "workers/runner.mjs")),
+      );
     });
     expect(() => assertBackendHttpCanonicalSources(root)).toThrow(
       "BACKEND_HTTP_CANONICAL_FROZEN_MAP_CHANGED",
@@ -282,7 +314,11 @@ describe("closed canonical CI 193-source boundary", () => {
     const root = fixture();
     const external = newOwnedRoot();
     renameSync(join(root, "workers"), join(external, "workers"));
-    symlinkSync(join(external, "workers"), join(root, "workers"), process.platform === "win32" ? "junction" : "dir");
+    symlinkSync(
+      join(external, "workers"),
+      join(root, "workers"),
+      process.platform === "win32" ? "junction" : "dir",
+    );
     expect(() => assertBackendHttpCanonicalSources(root)).toThrow(
       "BACKEND_HTTP_CANONICAL_SOURCE_SCOPE_REJECTED",
     );
@@ -292,10 +328,12 @@ describe("closed canonical CI 193-source boundary", () => {
     const old = process.env.PUTDUK_SKIP_SOURCE_GUARD;
     process.env.PUTDUK_SKIP_SOURCE_GUARD = "1";
     try {
-      const call = assertBackendHttpCanonicalSources as unknown as (...args: unknown[]) => unknown;
-      expect(() => call(root, { scope: "LOCAL_QA", configSha256: localConfigHash })).toThrow(
-        "BACKEND_HTTP_CANONICAL_SOURCE_CHANGED",
-      );
+      const call = assertBackendHttpCanonicalSources as unknown as (
+        ...args: unknown[]
+      ) => unknown;
+      expect(() =>
+        call(root, { scope: "LOCAL_QA", configSha256: localConfigHash }),
+      ).toThrow("BACKEND_HTTP_CANONICAL_SOURCE_CHANGED");
     } finally {
       if (old === undefined) delete process.env.PUTDUK_SKIP_SOURCE_GUARD;
       else process.env.PUTDUK_SKIP_SOURCE_GUARD = old;

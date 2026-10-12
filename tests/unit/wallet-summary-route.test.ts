@@ -32,15 +32,32 @@ describe("wallet summary read boundary", () => {
 
   it("returns exact large atomic amounts and an explicitly unknown update clock", async () => {
     order.mockResolvedValue({
-      data: [{ wallet_account_id: "wallet", currency: "KRW", balance_atomic: "9007199254740993", available_balance_atomic: "9007199254740990" }],
+      data: [
+        {
+          wallet_account_id: "wallet",
+          currency: "KRW",
+          balance_atomic: "9007199254740993",
+          available_balance_atomic: "9007199254740990",
+        },
+      ],
       error: null,
     });
     const response = await GET();
     expect(response.status).toBe(200);
-    expect(await response.json()).toEqual({ data: { accounts: [{
-      walletAccountId: "wallet", currency: "KRW", balanceAtomic: "9007199254740993",
-      availableBalanceAtomic: "9007199254740990", heldBalanceAtomic: "3", updatedAt: null,
-    }] } });
+    expect(await response.json()).toEqual({
+      data: {
+        accounts: [
+          {
+            walletAccountId: "wallet",
+            currency: "KRW",
+            balanceAtomic: "9007199254740993",
+            availableBalanceAtomic: "9007199254740990",
+            heldBalanceAtomic: "3",
+            updatedAt: null,
+          },
+        ],
+      },
+    });
     expect(eq).toHaveBeenCalledWith("user_id", userId);
     expect(eq).toHaveBeenCalledWith("currency", "KRW");
     expect(response.headers.get("Cache-Control")).toBe("private, no-store");
@@ -51,7 +68,10 @@ describe("wallet summary read boundary", () => {
   });
 
   it("fails closed without leaking database errors", async () => {
-    order.mockResolvedValue({ data: null, error: { message: "private database detail" } });
+    order.mockResolvedValue({
+      data: null,
+      error: { message: "private database detail" },
+    });
     const response = await GET();
     expect(response.status).toBe(503);
     expect(await response.text()).not.toContain("private database detail");

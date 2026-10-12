@@ -6,7 +6,8 @@ import { fileURLToPath } from "node:url";
 const ROOT = fileURLToPath(new URL("../", import.meta.url));
 const MAP = "tests/e2e/fixtures/backend-successor-197-source.json";
 // Coordinator sets only after independent review. Empty is deliberately fail-closed.
-const MANIFEST_SHA256 = "0e7b8386c41c4e242bab233d4ef03eab095f6f74c39a2beb29b13819df9bc28e";
+const MANIFEST_SHA256 =
+  "0e7b8386c41c4e242bab233d4ef03eab095f6f74c39a2beb29b13819df9bc28e";
 const LOCAL_CONFIG =
   "10d9f6c49fb454daccca63f534bb75b1e0decd6be3184b51c492b02a2ee863a7";
 const CANONICAL_CONFIG =

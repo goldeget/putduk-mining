@@ -33,7 +33,10 @@ const bodySchema = z.discriminatedUnion("action", [
       // Opaque/null historical evidence is preserved for identical receipt
       // replay. Fresh receipts require typed manual full-payment evidence at
       // the DB admission boundary; legacy input never bypasses that trigger.
-      conversionEvidence: z.record(z.string(), z.unknown()).nullable().optional(),
+      conversionEvidence: z
+        .record(z.string(), z.unknown())
+        .nullable()
+        .optional(),
       sentAt: z.string().datetime(),
       stepUpToken: z.string().min(16),
       idempotencyKey: z.string().min(8).max(200),

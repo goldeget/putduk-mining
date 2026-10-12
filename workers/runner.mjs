@@ -180,40 +180,69 @@ function withdrawalBigint(value, allowZero = false) {
 function withdrawalEnvelope(event, eventType, fields, error) {
   const payload = event?.payload;
   const key = event?.idempotency_key;
-  const commandKey = typeof key === "string" && key.endsWith(":event")
-    ? postgresTrim(key.slice(0, -6)) : "";
+  const commandKey =
+    typeof key === "string" && key.endsWith(":event")
+      ? postgresTrim(key.slice(0, -6))
+      : "";
   if (
     event?.event_type !== eventType ||
     event.schema_version !== 1 ||
     event.aggregate_type !== "withdrawal_request" ||
-    ["id", "aggregate_id", "actor_user_id", "correlation_id", "request_id"].some(
-      (field) => typeof event[field] !== "string" || !FUNDING_JOB_UUID.test(event[field]),
+    [
+      "id",
+      "aggregate_id",
+      "actor_user_id",
+      "correlation_id",
+      "request_id",
+    ].some(
+      (field) =>
+        typeof event[field] !== "string" ||
+        !FUNDING_JOB_UUID.test(event[field]),
     ) ||
-    characterCount(commandKey) < 8 || characterCount(commandKey) > 200 ||
-    !payload || typeof payload !== "object" || Array.isArray(payload) ||
+    characterCount(commandKey) < 8 ||
+    characterCount(commandKey) > 200 ||
+    !payload ||
+    typeof payload !== "object" ||
+    Array.isArray(payload) ||
     Object.keys(payload).length !== fields.length ||
     fields.some((field) => !Object.hasOwn(payload, field))
-  ) throw new Error(error);
+  )
+    throw new Error(error);
   return payload;
 }
 
 function prepareWithdrawalRequestedAcknowledgement(_client, event) {
   const error = "WITHDRAWAL_REQUESTED_ENVELOPE_INVALID";
-  const payload = withdrawalEnvelope(event, "WITHDRAWAL_REQUESTED.v1", [
-    "user_id", "amount_atomic", "fee_atomic", "currency", "destination_type",
-    "hold_ledger_transaction_id", "welcome_reward",
-  ], error);
+  const payload = withdrawalEnvelope(
+    event,
+    "WITHDRAWAL_REQUESTED.v1",
+    [
+      "user_id",
+      "amount_atomic",
+      "fee_atomic",
+      "currency",
+      "destination_type",
+      "hold_ledger_transaction_id",
+      "welcome_reward",
+    ],
+    error,
+  );
   if (
     ["user_id", "hold_ledger_transaction_id"].some(
-      (field) => typeof payload[field] !== "string" || !FUNDING_JOB_UUID.test(payload[field]),
+      (field) =>
+        typeof payload[field] !== "string" ||
+        !FUNDING_JOB_UUID.test(payload[field]),
     ) ||
     event.actor_user_id !== payload.user_id ||
-    !withdrawalBigint(payload.amount_atomic) || !withdrawalBigint(payload.fee_atomic, true) ||
-    BigInt(payload.amount_atomic) + BigInt(payload.fee_atomic) > BigInt(WITHDRAWAL_BIGINT_MAX) ||
+    !withdrawalBigint(payload.amount_atomic) ||
+    !withdrawalBigint(payload.fee_atomic, true) ||
+    BigInt(payload.amount_atomic) + BigInt(payload.fee_atomic) >
+      BigInt(WITHDRAWAL_BIGINT_MAX) ||
     payload.currency !== "KRW" ||
     !["KRW_BANK", "USDT_ADDRESS"].includes(payload.destination_type) ||
     typeof payload.welcome_reward !== "boolean"
-  ) throw new Error(error);
+  )
+    throw new Error(error);
   // Historical fees remain original facts; this cannot authorize any new fee.
   // DB ACK checks request/hold journal/owner/amount/welcome originals even after
   // the request advances. No hold, money, payment or notification is created.
@@ -222,28 +251,45 @@ function prepareWithdrawalRequestedAcknowledgement(_client, event) {
 function prepareWithdrawalExternalSendAcknowledgement(_client, event) {
   const error = "WITHDRAWAL_EXTERNAL_SEND_ENVELOPE_INVALID";
   const method = event?.payload?.method;
-  const fields = method === "KRW_BANK"
-    ? ["method", "bank_reference", "actual_krw_amount"]
-    : ["method", "network", "tx_hash", "actual_usdt_amount", "conversion_evidence_present"];
-  const payload = withdrawalEnvelope(event, "WITHDRAWAL_EXTERNAL_SENT.v1", fields, error);
+  const fields =
+    method === "KRW_BANK"
+      ? ["method", "bank_reference", "actual_krw_amount"]
+      : [
+          "method",
+          "network",
+          "tx_hash",
+          "actual_usdt_amount",
+          "conversion_evidence_present",
+        ];
+  const payload = withdrawalEnvelope(
+    event,
+    "WITHDRAWAL_EXTERNAL_SENT.v1",
+    fields,
+    error,
+  );
   if (method === "KRW_BANK") {
     if (
       typeof payload.bank_reference !== "string" ||
       payload.bank_reference !== postgresTrim(payload.bank_reference) ||
       characterCount(payload.bank_reference) < 4 ||
       !withdrawalBigint(payload.actual_krw_amount)
-    ) throw new Error(error);
+    )
+      throw new Error(error);
   } else if (method === "USDT_ADDRESS") {
     if (
       !["TRC20", "ERC20", "BEP20"].includes(payload.network) ||
       typeof payload.tx_hash !== "string" ||
       payload.tx_hash !== postgresTrim(payload.tx_hash).toLowerCase() ||
-      characterCount(payload.tx_hash) < 8 || characterCount(payload.tx_hash) > 128 ||
+      characterCount(payload.tx_hash) < 8 ||
+      characterCount(payload.tx_hash) > 128 ||
       typeof payload.actual_usdt_amount !== "string" ||
-      !/^(0|[1-9][0-9]{0,31})(\.[0-9]{1,6})?$/.test(payload.actual_usdt_amount) ||
+      !/^(0|[1-9][0-9]{0,31})(\.[0-9]{1,6})?$/.test(
+        payload.actual_usdt_amount,
+      ) ||
       /^0(\.0{1,6})?$/.test(payload.actual_usdt_amount) ||
       typeof payload.conversion_evidence_present !== "boolean"
-    ) throw new Error(error);
+    )
+      throw new Error(error);
   } else {
     throw new Error(error);
   }
@@ -254,15 +300,20 @@ function prepareWithdrawalExternalSendAcknowledgement(_client, event) {
 
 function prepareWithdrawalHoldReleaseAcknowledgement(_client, event) {
   const error = "WITHDRAWAL_HOLD_RELEASE_ENVELOPE_INVALID";
-  const payload = withdrawalEnvelope(event, "WITHDRAWAL_HOLD_RELEASED.v1", [
-    "release_ledger_transaction_id", "reason", "disposition",
-  ], error);
+  const payload = withdrawalEnvelope(
+    event,
+    "WITHDRAWAL_HOLD_RELEASED.v1",
+    ["release_ledger_transaction_id", "reason", "disposition"],
+    error,
+  );
   if (
     typeof payload.release_ledger_transaction_id !== "string" ||
     !FUNDING_JOB_UUID.test(payload.release_ledger_transaction_id) ||
-    typeof payload.reason !== "string" || characterCount(postgresTrim(payload.reason)) < 4 ||
+    typeof payload.reason !== "string" ||
+    characterCount(postgresTrim(payload.reason)) < 4 ||
     !["CANCELLED", "REJECTED"].includes(payload.disposition)
-  ) throw new Error(error);
+  )
+    throw new Error(error);
   // DB ACK checks the existing release journal/terminal disposition, original
   // actor/reason/key and absence of external send. It never releases a hold.
 }

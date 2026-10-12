@@ -5,8 +5,7 @@ const positiveKrwAtomic = z
   .regex(/^[1-9][0-9]{0,18}$/)
   .refine(
     (value) =>
-      /^[1-9][0-9]{0,18}$/.test(value) &&
-      BigInt(value) <= 9223372036854775807n,
+      /^[1-9][0-9]{0,18}$/.test(value) && BigInt(value) <= 9223372036854775807n,
   );
 
 const canonicalUsdtAmount = z
@@ -66,7 +65,8 @@ export function parseManualUsdtFullPayoutEvidence(
   if (!parsed.success) return null;
   const evidence = parsed.data;
   if (
-    evidence.withdrawalId.toLowerCase() !== original.withdrawalId.toLowerCase() ||
+    evidence.withdrawalId.toLowerCase() !==
+      original.withdrawalId.toLowerCase() ||
     evidence.requestedKrwAmount !== original.requestedKrwAmount ||
     evidence.network !== original.network ||
     evidence.actualUsdtAmount !==

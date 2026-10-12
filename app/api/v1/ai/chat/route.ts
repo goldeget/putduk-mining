@@ -610,10 +610,9 @@ export async function POST(request: Request) {
   let clientCancelled = false;
   const stream = new ReadableStream<Uint8Array>({
     async start(controller) {
-      let durableTurn: Extract<
-        Awaited<ReturnType<typeof saveMemberTurn>>,
-        { ok: true }
-      > | undefined;
+      let durableTurn:
+        | Extract<Awaited<ReturnType<typeof saveMemberTurn>>, { ok: true }>
+        | undefined;
       let answer = "";
       let sent = 0;
       let emittedPrefix = "";
@@ -648,7 +647,9 @@ export async function POST(request: Request) {
         }
       };
       try {
-        if (!emit({ requestId: aiRequestId, source: "provider", type: "ready" }))
+        if (
+          !emit({ requestId: aiRequestId, source: "provider", type: "ready" })
+        )
           throw new ProviderChainError("CLIENT_CANCELLED", true);
         const completed = await runMemberProviderChain({
           nvidiaApiKey: env.AI_API_KEY!,
@@ -768,8 +769,10 @@ export async function POST(request: Request) {
           // Never append a different turn for an already-persisted client ID.
           // Secondary storage shares the failure deadline so cleanup is bounded.
           saved = await withinDeadline(
-            saveMemberTurn({ answer: message, sourceKey: "failure:provider" })
-              .catch(() => unsaved),
+            saveMemberTurn({
+              answer: message,
+              sourceKey: "failure:provider",
+            }).catch(() => unsaved),
             failureDeadline,
             unsaved,
           );

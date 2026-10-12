@@ -1,8 +1,6 @@
 import { defineConfig } from "@playwright/test";
 import authenticated from "./playwright.authenticated.config";
-import {
-  assertBackendHttpCanonicalSources,
-} from "./scripts/backend-http-canonical-source.mjs";
+import { assertBackendHttpCanonicalSources } from "./scripts/backend-http-canonical-source.mjs";
 
 // Current canonical generation; the frozen 191 configuration stays historical.
 assertBackendHttpCanonicalSources();

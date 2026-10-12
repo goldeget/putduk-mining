@@ -86,8 +86,10 @@ describe("manual USDT full-payment evidence contract", () => {
       ).toBe(false);
     }
     expect(
-      manualUsdtFullPayoutEvidenceSchema.safeParse({ ...evidence, rate: "1500" })
-        .success,
+      manualUsdtFullPayoutEvidenceSchema.safeParse({
+        ...evidence,
+        rate: "1500",
+      }).success,
     ).toBe(false);
     expect(
       manualUsdtFullPayoutEvidenceSchema.safeParse({
@@ -105,9 +107,9 @@ describe("manual USDT full-payment evidence contract", () => {
   });
 
   it("provides actionable conflicts and preserves unknown infrastructure failures", () => {
-    expect(
-      manualUsdtPayoutFailure("USDT_SEND_NETWORK_MISMATCH"),
-    ).toMatchObject({ code: "USDT_SEND_NETWORK_MISMATCH" });
+    expect(manualUsdtPayoutFailure("USDT_SEND_NETWORK_MISMATCH")).toMatchObject(
+      { code: "USDT_SEND_NETWORK_MISMATCH" },
+    );
     expect(
       manualUsdtPayoutFailure("USDT_MANUAL_FULL_PAYOUT_EVIDENCE_REQUIRED")
         ?.message,

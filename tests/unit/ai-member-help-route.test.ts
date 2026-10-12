@@ -35,7 +35,12 @@ vi.mock("@/lib/supabase/admin", () => ({
         maybeSingle: vi.fn(async () => {
           const input = mocks.fail.mock.calls.at(-1)?.[1];
           return {
-            data: { id: REQUEST, user_id: OWNER, status: input?.status, error_code: input?.errorCode },
+            data: {
+              id: REQUEST,
+              user_id: OWNER,
+              status: input?.status,
+              error_code: input?.errorCode,
+            },
             error: null,
           };
         }),

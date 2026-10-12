@@ -1,4 +1,8 @@
 import type { BackendHttp195SourceBoundary } from "./backend-http-195-source.mjs";
-export function assertUsdt195RunnerSources(root: string, scope: "LOCAL_QA" | "CANONICAL_CI"): Readonly<{
-  candidate: BackendHttp195SourceBoundary; runnerManifestSha256: string;
+export function assertUsdt195RunnerSources(
+  root: string,
+  scope: "LOCAL_QA" | "CANONICAL_CI",
+): Readonly<{
+  candidate: BackendHttp195SourceBoundary;
+  runnerManifestSha256: string;
 }>;

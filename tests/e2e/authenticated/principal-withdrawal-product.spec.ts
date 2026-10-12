@@ -45,9 +45,7 @@ import {
   type PrincipalMethod,
   type PrincipalOperator,
 } from "./helpers/principal-product-fixture";
-import {
-  requirePrincipalCanonical193Candidate,
-} from "./helpers/principal-canonical-193-fixture";
+import { requirePrincipalCanonical193Candidate } from "./helpers/principal-canonical-193-fixture";
 import { expectSettledRoute } from "./helpers/settled-route";
 import {
   capturePrincipalPresentation,

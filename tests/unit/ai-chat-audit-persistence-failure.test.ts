@@ -69,7 +69,10 @@ vi.mock("@/lib/ai/provider-attempts", () => ({
 vi.mock("@/lib/ai/provider-chain", () => ({
   runMemberProviderChain: mocks.provider,
   ProviderChainError: class extends Error {
-    constructor(public code: string, public cancelled = false) {
+    constructor(
+      public code: string,
+      public cancelled = false,
+    ) {
       super(code);
     }
   },
@@ -85,14 +88,21 @@ function setRoute(kind: "static" | "tool" | "low_cost", cacheable = false) {
       scope: "PUBLIC_FACTS_ONLY",
       locale: "ko-KR",
       userContextIncluded: false,
-      knowledge: { version: "synthetic-v1", lastUpdated: "2026-10-11", facts: [] },
+      knowledge: {
+        version: "synthetic-v1",
+        lastUpdated: "2026-10-11",
+        facts: [],
+      },
     },
     route: {
       kind,
       routeKey: "member_help_ai",
-      classification: kind === "static"
-        ? "STATIC_FACT"
-        : kind === "tool" ? "ACCOUNT_STATE" : "PUTDUK_KNOWLEDGE",
+      classification:
+        kind === "static"
+          ? "STATIC_FACT"
+          : kind === "tool"
+            ? "ACCOUNT_STATE"
+            : "PUTDUK_KNOWLEDGE",
       answer: "확인된 안내입니다.",
       tool: "wallet.summary",
     },
@@ -153,7 +163,12 @@ beforeEach(() => {
       if (result?.error) return { data: null, error: null };
       const input = mocks.fail.mock.calls.at(-1)?.[1];
       return {
-        data: { id: REQUEST, user_id: OWNER, status: input?.status, error_code: input?.errorCode },
+        data: {
+          id: REQUEST,
+          user_id: OWNER,
+          status: input?.status,
+          error_code: input?.errorCode,
+        },
         error: null,
       };
     } catch {
@@ -172,9 +187,12 @@ beforeEach(() => {
     tool: "wallet.summary",
   });
   setRoute("static");
-  vi.stubGlobal("fetch", vi.fn(() => {
-    throw new Error("No network is permitted in this synthetic unit fixture");
-  }));
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(() => {
+      throw new Error("No network is permitted in this synthetic unit fixture");
+    }),
+  );
 });
 afterEach(() => {
   vi.useRealTimers();
@@ -197,7 +215,11 @@ describe("AI audit persistence failures remain explicit without exposing RPC det
       await expectAuditJson(await POST(request()));
       expect(mocks.fail).toHaveBeenCalledWith(
         expect.anything(),
-        expect.objectContaining({ userId: OWNER, requestId: REQUEST, status: "FAILED" }),
+        expect.objectContaining({
+          userId: OWNER,
+          requestId: REQUEST,
+          status: "FAILED",
+        }),
         expect.objectContaining({ signal: expect.any(AbortSignal) }),
       );
     },
@@ -211,7 +233,10 @@ describe("AI audit persistence failures remain explicit without exposing RPC det
       await expectAuditJson(await POST(request()));
       expect(mocks.fail).toHaveBeenCalledWith(
         expect.anything(),
-        expect.objectContaining({ errorCode: "AI_TOOL_UNAVAILABLE", status: "FAILED" }),
+        expect.objectContaining({
+          errorCode: "AI_TOOL_UNAVAILABLE",
+          status: "FAILED",
+        }),
         expect.objectContaining({ signal: expect.any(AbortSignal) }),
       );
     },
@@ -230,27 +255,46 @@ describe("AI audit persistence failures remain explicit without exposing RPC det
       let upstreamSignal: AbortSignal | undefined;
       mocks.provider.mockImplementation(async (input) => {
         upstreamSignal = input.signal;
-        throw new ProviderChainError(cancelled ? "CLIENT_CANCELLED" : "AI_PROVIDER_UNAVAILABLE", cancelled);
+        throw new ProviderChainError(
+          cancelled ? "CLIENT_CANCELLED" : "AI_PROVIDER_UNAVAILABLE",
+          cancelled,
+        );
       });
       const req = request();
       const removeListener = vi.spyOn(req.signal, "removeEventListener");
       const response = await POST(req);
-      expect(response.headers.get("content-type")).toContain("text/event-stream");
+      expect(response.headers.get("content-type")).toContain(
+        "text/event-stream",
+      );
       const text = await response.text();
       const events = parseEvents(text);
-      expect(events).toContainEqual(expect.objectContaining({
-        type: "error", code: "AI_AUDIT_PERSISTENCE_FAILED", saved: false,
-      }));
+      expect(events).toContainEqual(
+        expect.objectContaining({
+          type: "error",
+          code: "AI_AUDIT_PERSISTENCE_FAILED",
+          saved: false,
+        }),
+      );
       expect(events.some((event) => event.type === "done")).toBe(false);
       expect(text).not.toContain(RAW_FAILURE);
       expect(text).not.toContain("답변 생성을 중단했어요.");
-      expect(mocks.fail).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({
-        status: cancelled ? "CANCELLED" : "FAILED", userId: OWNER,
-      }), expect.objectContaining({ signal: expect.any(AbortSignal) }));
+      expect(mocks.fail).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining({
+          status: cancelled ? "CANCELLED" : "FAILED",
+          userId: OWNER,
+        }),
+        expect.objectContaining({ signal: expect.any(AbortSignal) }),
+      );
       expect(mocks.append).not.toHaveBeenCalled();
       expect(upstreamSignal?.aborted).toBe(true);
-      expect(removeListener).toHaveBeenCalledWith("abort", expect.any(Function));
-      expect(mocks.provider).toHaveBeenCalledWith(expect.objectContaining({ paidCallAuthorized: false }));
+      expect(removeListener).toHaveBeenCalledWith(
+        "abort",
+        expect.any(Function),
+      );
+      expect(mocks.provider).toHaveBeenCalledWith(
+        expect.objectContaining({ paidCallAuthorized: false }),
+      );
     },
   );
 
@@ -286,13 +330,21 @@ describe("AI audit persistence failures remain explicit without exposing RPC det
       });
       const text = await (await POST(request())).text();
       const events = parseEvents(text);
-      expect(events).toContainEqual(expect.objectContaining({
-        type: "error", code: "AI_AUDIT_PERSISTENCE_FAILED", saved: true,
-      }));
+      expect(events).toContainEqual(
+        expect.objectContaining({
+          type: "error",
+          code: "AI_AUDIT_PERSISTENCE_FAILED",
+          saved: true,
+        }),
+      );
       expect(events.some((event) => event.type === "done")).toBe(false);
       expect(text).not.toContain(RAW_FAILURE);
       expect(mocks.append).toHaveBeenCalledTimes(1);
-      expect(mocks.fail).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ status: "FAILED" }), expect.objectContaining({ signal: expect.any(AbortSignal) }));
+      expect(mocks.fail).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining({ status: "FAILED" }),
+        expect.objectContaining({ signal: expect.any(AbortSignal) }),
+      );
     },
   );
 
@@ -306,9 +358,13 @@ describe("AI audit persistence failures remain explicit without exposing RPC det
     mocks.append.mockRejectedValue(new Error(RAW_FAILURE));
     const response = await POST(request());
     const text = await response.text();
-    expect(parseEvents(text)).toContainEqual(expect.objectContaining({
-      type: "error", code: "AI_PROVIDER_UNAVAILABLE", saved: false,
-    }));
+    expect(parseEvents(text)).toContainEqual(
+      expect.objectContaining({
+        type: "error",
+        code: "AI_PROVIDER_UNAVAILABLE",
+        saved: false,
+      }),
+    );
     expect(text).not.toContain(RAW_FAILURE);
     expect(upstreamSignal?.aborted).toBe(true);
   });
@@ -317,14 +373,22 @@ describe("AI audit persistence failures remain explicit without exposing RPC det
     setRoute("low_cost");
     let upstreamSignal: AbortSignal | undefined;
     let signalStarted: () => void = () => {};
-    const started = new Promise<void>((resolve) => { signalStarted = resolve; });
+    const started = new Promise<void>((resolve) => {
+      signalStarted = resolve;
+    });
     let auditCalled: () => void = () => {};
-    const audited = new Promise<void>((resolve) => { auditCalled = resolve; });
+    const audited = new Promise<void>((resolve) => {
+      auditCalled = resolve;
+    });
     mocks.provider.mockImplementation((input) => {
       upstreamSignal = input.signal;
       signalStarted();
       return new Promise((_resolve, reject) => {
-        input.signal.addEventListener("abort", () => reject(new ProviderChainError("CLIENT_CANCELLED", true)), { once: true });
+        input.signal.addEventListener(
+          "abort",
+          () => reject(new ProviderChainError("CLIENT_CANCELLED", true)),
+          { once: true },
+        );
       });
     });
     mocks.fail.mockImplementation(async () => {
@@ -339,16 +403,27 @@ describe("AI audit persistence failures remain explicit without exposing RPC det
     await reader.read();
     await reader.cancel();
     await audited;
-    await vi.waitFor(() => expect(removeListener).toHaveBeenCalledWith("abort", expect.any(Function)));
+    await vi.waitFor(() =>
+      expect(removeListener).toHaveBeenCalledWith(
+        "abort",
+        expect.any(Function),
+      ),
+    );
     expect(upstreamSignal?.aborted).toBe(true);
-    expect(mocks.fail).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ status: "CANCELLED" }), expect.objectContaining({ signal: expect.any(AbortSignal) }));
+    expect(mocks.fail).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ status: "CANCELLED" }),
+      expect.objectContaining({ signal: expect.any(AbortSignal) }),
+    );
     expect(mocks.append).not.toHaveBeenCalled();
   });
 
   it("preserves deterministic successful completion", async () => {
     const response = await POST(request());
     expect(response.status).toBe(200);
-    expect(parseEvents(await response.text())).toContainEqual(expect.objectContaining({ type: "done", saved: true }));
+    expect(parseEvents(await response.text())).toContainEqual(
+      expect.objectContaining({ type: "done", saved: true }),
+    );
     expect(mocks.fail).not.toHaveBeenCalled();
     expect(mocks.provider).not.toHaveBeenCalled();
   });
@@ -357,7 +432,9 @@ describe("AI audit persistence failures remain explicit without exposing RPC det
     setRoute("low_cost");
     mocks.env.APP_ENV = "production";
     const response = await POST(request());
-    expect(parseEvents(await response.text())).toContainEqual(expect.objectContaining({ type: "done" }));
+    expect(parseEvents(await response.text())).toContainEqual(
+      expect.objectContaining({ type: "done" }),
+    );
     expect(mocks.provider).not.toHaveBeenCalled();
   });
   it.each([
@@ -365,13 +442,26 @@ describe("AI audit persistence failures remain explicit without exposing RPC det
     ["RUNNING", null, OWNER, REQUEST],
     ["CANCELLED", "AI_TOOL_UNAVAILABLE", OWNER, REQUEST],
     ["FAILED", "DIFFERENT_FAILURE", OWNER, REQUEST],
-    ["FAILED", "AI_TOOL_UNAVAILABLE", "99999999-9999-4999-8999-999999999999", REQUEST],
-    ["FAILED", "AI_TOOL_UNAVAILABLE", OWNER, "99999999-9999-4999-8999-999999999999"],
+    [
+      "FAILED",
+      "AI_TOOL_UNAVAILABLE",
+      "99999999-9999-4999-8999-999999999999",
+      REQUEST,
+    ],
+    [
+      "FAILED",
+      "AI_TOOL_UNAVAILABLE",
+      OWNER,
+      "99999999-9999-4999-8999-999999999999",
+    ],
   ] as const)(
     "rejects a void RPC no-op or mismatched receipt %s/%s/%s/%s",
     async (status, errorCode, owner, id) => {
       setRoute("tool");
-      mocks.readback.mockResolvedValue({ data: { id, user_id: owner, status, error_code: errorCode }, error: null });
+      mocks.readback.mockResolvedValue({
+        data: { id, user_id: owner, status, error_code: errorCode },
+        error: null,
+      });
       await expectAuditJson(await POST(request()));
       expect(mocks.complete).not.toHaveBeenCalled();
       expect(mocks.auditSignal?.aborted).toBe(true);
@@ -382,11 +472,18 @@ describe("AI audit persistence failures remain explicit without exposing RPC det
     setRoute("tool");
     mocks.fail.mockRejectedValue(new Error(RAW_FAILURE));
     mocks.readback.mockResolvedValue({
-      data: { id: REQUEST, user_id: OWNER, status: "FAILED", error_code: "AI_TOOL_UNAVAILABLE" },
+      data: {
+        id: REQUEST,
+        user_id: OWNER,
+        status: "FAILED",
+        error_code: "AI_TOOL_UNAVAILABLE",
+      },
       error: null,
     });
     const text = await (await POST(request())).text();
-    expect(parseEvents(text)).toContainEqual(expect.objectContaining({ type: "error", code: "AI_TOOL_UNAVAILABLE" }));
+    expect(parseEvents(text)).toContainEqual(
+      expect.objectContaining({ type: "error", code: "AI_TOOL_UNAVAILABLE" }),
+    );
     expect(text).not.toContain(RAW_FAILURE);
   });
 
@@ -401,33 +498,54 @@ describe("AI audit persistence failures remain explicit without exposing RPC det
   it("rejects an exact-looking receipt when readback also reports an error", async () => {
     setRoute("tool");
     mocks.readback.mockResolvedValue({
-      data: { id: REQUEST, user_id: OWNER, status: "FAILED", error_code: "AI_TOOL_UNAVAILABLE" },
+      data: {
+        id: REQUEST,
+        user_id: OWNER,
+        status: "FAILED",
+        error_code: "AI_TOOL_UNAVAILABLE",
+      },
       error: { message: RAW_FAILURE },
     });
     await expectAuditJson(await POST(request()));
     expect(mocks.complete).not.toHaveBeenCalled();
   });
 
-  it.each(["error", "throw"] as const)("handles readback %s without raw details", async (mode) => {
-    setRoute("tool");
-    if (mode === "error") mocks.readback.mockResolvedValue({ data: null, error: { message: RAW_FAILURE } });
-    else mocks.readback.mockRejectedValue(new Error(RAW_FAILURE));
-    await expectAuditJson(await POST(request()));
-  });
+  it.each(["error", "throw"] as const)(
+    "handles readback %s without raw details",
+    async (mode) => {
+      setRoute("tool");
+      if (mode === "error")
+        mocks.readback.mockResolvedValue({
+          data: null,
+          error: { message: RAW_FAILURE },
+        });
+      else mocks.readback.mockRejectedValue(new Error(RAW_FAILURE));
+      await expectAuditJson(await POST(request()));
+    },
+  );
 
   it.each(["rpc", "readback"] as const)(
     "bounds hung %s work and aborts audit/provider requests before closing",
     async (stage) => {
       vi.useFakeTimers();
       setRoute("low_cost");
-      mocks.provider.mockRejectedValue(new ProviderChainError("AI_PROVIDER_UNAVAILABLE"));
-      if (stage === "rpc") mocks.fail.mockImplementation(() => new Promise(() => {}));
+      mocks.provider.mockRejectedValue(
+        new ProviderChainError("AI_PROVIDER_UNAVAILABLE"),
+      );
+      if (stage === "rpc")
+        mocks.fail.mockImplementation(() => new Promise(() => {}));
       else mocks.readback.mockImplementation(() => new Promise(() => {}));
       const response = await POST(request());
       const body = response.text();
       await vi.advanceTimersByTimeAsync(5_001);
       const text = await body;
-      expect(parseEvents(text)).toContainEqual(expect.objectContaining({ type: "error", code: "AI_AUDIT_PERSISTENCE_FAILED", saved: false }));
+      expect(parseEvents(text)).toContainEqual(
+        expect.objectContaining({
+          type: "error",
+          code: "AI_AUDIT_PERSISTENCE_FAILED",
+          saved: false,
+        }),
+      );
       const auditSignal = mocks.fail.mock.calls[0]?.[2]?.signal as AbortSignal;
       expect(auditSignal.aborted).toBe(true);
       expect(mocks.provider.mock.calls[0]?.[0]?.signal.aborted).toBe(true);
@@ -435,81 +553,139 @@ describe("AI audit persistence failures remain explicit without exposing RPC det
     },
   );
 
-  it.each(["throw", "hang"] as const)("keeps completed durable output when optional cache %s", async (mode) => {
-    if (mode === "hang") vi.useFakeTimers();
-    setRoute("low_cost", true);
-    mocks.provider.mockImplementation(async (input) => {
-      input.onDelta("합성 완료 답변입니다.");
-      return { model: "openai/gpt-oss-20b", providerRequestId: "synthetic-response", inputTokens: 1, outputTokens: 1, cachedInputTokens: 0 };
-    });
-    if (mode === "throw") mocks.cacheWrite.mockRejectedValue(new Error(RAW_FAILURE));
-    else mocks.cacheWrite.mockImplementation(() => new Promise(() => {}));
-    const response = await POST(request());
-    const body = response.text();
-    if (mode === "hang") await vi.advanceTimersByTimeAsync(5_001);
-    const text = await body;
-    expect(parseEvents(text)).toContainEqual(expect.objectContaining({ type: "done", saved: true }));
-    expect(mocks.fail).not.toHaveBeenCalled();
-    expect(mocks.append).toHaveBeenCalledTimes(1);
-    expect(text).not.toContain(RAW_FAILURE);
-  });
-
-  it.each([false, true])("retains fail RPC caller compatibility signal=%s", async (withSignal) => {
-    const actual = await vi.importActual<typeof import("@/lib/ai/usage")>("@/lib/ai/usage");
-    const result = { error: null };
-    const abortSignal = vi.fn(() => result);
-    const builder = { abortSignal };
-    const rpc = vi.fn(() => builder);
-    const client = { rpc } as unknown as Parameters<typeof actual.failAiRequest>[0];
-    const input = { errorCode: "AI_TOOL_UNAVAILABLE", requestId: REQUEST, status: "FAILED" as const, userId: OWNER };
-    const signal = new AbortController().signal;
-    const response = withSignal
-      ? await actual.failAiRequest(client, input, { signal })
-      : await actual.failAiRequest(client, input);
-    expect(response).toBe(withSignal ? result : builder);
-    expect(abortSignal).toHaveBeenCalledTimes(withSignal ? 1 : 0);
-  });
-
-  it.each(["static", "provider"] as const)("bounds hung completion for %s responses", async (kind) => {
-    vi.useFakeTimers();
-    setRoute(kind === "static" ? "static" : "low_cost");
-    mocks.complete.mockImplementation(() => new Promise(() => {}));
-    mocks.provider.mockImplementation(async (input) => {
-      input.onDelta("합성 답변입니다.");
-      return { model: "openai/gpt-oss-20b", providerRequestId: "synthetic-response", inputTokens: 1, outputTokens: 1, cachedInputTokens: 0 };
-    });
-    const pending = POST(request());
-    if (kind === "static") {
-      await vi.advanceTimersByTimeAsync(5_001);
-      const response = await pending;
-      await expectAuditJson(response);
-    } else {
-      const response = await pending;
+  it.each(["throw", "hang"] as const)(
+    "keeps completed durable output when optional cache %s",
+    async (mode) => {
+      if (mode === "hang") vi.useFakeTimers();
+      setRoute("low_cost", true);
+      mocks.provider.mockImplementation(async (input) => {
+        input.onDelta("합성 완료 답변입니다.");
+        return {
+          model: "openai/gpt-oss-20b",
+          providerRequestId: "synthetic-response",
+          inputTokens: 1,
+          outputTokens: 1,
+          cachedInputTokens: 0,
+        };
+      });
+      if (mode === "throw")
+        mocks.cacheWrite.mockRejectedValue(new Error(RAW_FAILURE));
+      else mocks.cacheWrite.mockImplementation(() => new Promise(() => {}));
+      const response = await POST(request());
       const body = response.text();
-      await vi.advanceTimersByTimeAsync(5_001);
+      if (mode === "hang") await vi.advanceTimersByTimeAsync(5_001);
       const text = await body;
-      expect(parseEvents(text)).toContainEqual(expect.objectContaining({ type: "error", code: "AI_AUDIT_PERSISTENCE_FAILED", saved: true }));
-      expect(parseEvents(text).some((event) => event.type === "done")).toBe(false);
+      expect(parseEvents(text)).toContainEqual(
+        expect.objectContaining({ type: "done", saved: true }),
+      );
+      expect(mocks.fail).not.toHaveBeenCalled();
       expect(mocks.append).toHaveBeenCalledTimes(1);
-    }
-    const signal = mocks.complete.mock.calls[0]?.[2]?.signal as AbortSignal;
-    expect(signal.aborted).toBe(true);
-  });
+      expect(text).not.toContain(RAW_FAILURE);
+    },
+  );
+
+  it.each([false, true])(
+    "retains fail RPC caller compatibility signal=%s",
+    async (withSignal) => {
+      const actual =
+        await vi.importActual<typeof import("@/lib/ai/usage")>(
+          "@/lib/ai/usage",
+        );
+      const result = { error: null };
+      const abortSignal = vi.fn(() => result);
+      const builder = { abortSignal };
+      const rpc = vi.fn(() => builder);
+      const client = { rpc } as unknown as Parameters<
+        typeof actual.failAiRequest
+      >[0];
+      const input = {
+        errorCode: "AI_TOOL_UNAVAILABLE",
+        requestId: REQUEST,
+        status: "FAILED" as const,
+        userId: OWNER,
+      };
+      const signal = new AbortController().signal;
+      const response = withSignal
+        ? await actual.failAiRequest(client, input, { signal })
+        : await actual.failAiRequest(client, input);
+      expect(response).toBe(withSignal ? result : builder);
+      expect(abortSignal).toHaveBeenCalledTimes(withSignal ? 1 : 0);
+    },
+  );
+
+  it.each(["static", "provider"] as const)(
+    "bounds hung completion for %s responses",
+    async (kind) => {
+      vi.useFakeTimers();
+      setRoute(kind === "static" ? "static" : "low_cost");
+      mocks.complete.mockImplementation(() => new Promise(() => {}));
+      mocks.provider.mockImplementation(async (input) => {
+        input.onDelta("합성 답변입니다.");
+        return {
+          model: "openai/gpt-oss-20b",
+          providerRequestId: "synthetic-response",
+          inputTokens: 1,
+          outputTokens: 1,
+          cachedInputTokens: 0,
+        };
+      });
+      const pending = POST(request());
+      if (kind === "static") {
+        await vi.advanceTimersByTimeAsync(5_001);
+        const response = await pending;
+        await expectAuditJson(response);
+      } else {
+        const response = await pending;
+        const body = response.text();
+        await vi.advanceTimersByTimeAsync(5_001);
+        const text = await body;
+        expect(parseEvents(text)).toContainEqual(
+          expect.objectContaining({
+            type: "error",
+            code: "AI_AUDIT_PERSISTENCE_FAILED",
+            saved: true,
+          }),
+        );
+        expect(parseEvents(text).some((event) => event.type === "done")).toBe(
+          false,
+        );
+        expect(mocks.append).toHaveBeenCalledTimes(1);
+      }
+      const signal = mocks.complete.mock.calls[0]?.[2]?.signal as AbortSignal;
+      expect(signal.aborted).toBe(true);
+    },
+  );
 
   it("bounds cancellation during hung completion and preserves an already successful terminal receipt", async () => {
     vi.useFakeTimers();
     setRoute("low_cost");
     mocks.provider.mockImplementation(async (input) => {
       input.onDelta("이미 저장된 합성 답변입니다.");
-      return { model: "openai/gpt-oss-20b", providerRequestId: "synthetic-response", inputTokens: 1, outputTokens: 1, cachedInputTokens: 0 };
+      return {
+        model: "openai/gpt-oss-20b",
+        providerRequestId: "synthetic-response",
+        inputTokens: 1,
+        outputTokens: 1,
+        cachedInputTokens: 0,
+      };
     });
     let completionStarted: () => void = () => {};
-    const started = new Promise<void>((resolve) => { completionStarted = resolve; });
+    const started = new Promise<void>((resolve) => {
+      completionStarted = resolve;
+    });
     mocks.complete.mockImplementation(() => {
       completionStarted();
       return new Promise(() => {});
     });
-    mocks.readback.mockResolvedValue({ data: { id: REQUEST, user_id: OWNER, status: "SUCCEEDED", error_code: null }, error: null });
+    mocks.readback.mockResolvedValue({
+      data: {
+        id: REQUEST,
+        user_id: OWNER,
+        status: "SUCCEEDED",
+        error_code: null,
+      },
+      error: null,
+    });
     const req = request();
     const removeListener = vi.spyOn(req.signal, "removeEventListener");
     const response = await POST(req);
@@ -519,27 +695,47 @@ describe("AI audit persistence failures remain explicit without exposing RPC det
     await reader.cancel();
     await vi.advanceTimersByTimeAsync(5_001);
     expect(mocks.complete.mock.calls[0]?.[2]?.signal.aborted).toBe(true);
-    expect(mocks.fail).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ status: "CANCELLED" }), expect.objectContaining({ signal: expect.any(AbortSignal) }));
+    expect(mocks.fail).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ status: "CANCELLED" }),
+      expect.objectContaining({ signal: expect.any(AbortSignal) }),
+    );
     expect(mocks.append).toHaveBeenCalledTimes(1);
     expect(removeListener).toHaveBeenCalledWith("abort", expect.any(Function));
     // Actual SQL no-ops on SUCCEEDED; readback mismatch is not rewritten.
     expect(mocks.readback).toHaveBeenCalledTimes(1);
   });
 
-  it.each([false, true])("retains completion RPC caller compatibility signal=%s", async (withSignal) => {
-    const actual = await vi.importActual<typeof import("@/lib/ai/usage")>("@/lib/ai/usage");
-    const result = { error: null };
-    const abortSignal = vi.fn(() => result);
-    const builder = { abortSignal };
-    const rpc = vi.fn(() => builder);
-    const client = { rpc } as unknown as Parameters<typeof actual.completeAiRequest>[0];
-    const input = { cachedInputTokens: 0, inputTokens: 1, model: "synthetic-model", outputTokens: 1, providerRequestId: "synthetic-response", requestId: REQUEST, responseCharacterCount: 1, userId: OWNER };
-    const signal = new AbortController().signal;
-    const response = withSignal
-      ? await actual.completeAiRequest(client, input, { signal })
-      : await actual.completeAiRequest(client, input);
-    expect(response).toBe(withSignal ? result : builder);
-    expect(abortSignal).toHaveBeenCalledTimes(withSignal ? 1 : 0);
-  });
-
+  it.each([false, true])(
+    "retains completion RPC caller compatibility signal=%s",
+    async (withSignal) => {
+      const actual =
+        await vi.importActual<typeof import("@/lib/ai/usage")>(
+          "@/lib/ai/usage",
+        );
+      const result = { error: null };
+      const abortSignal = vi.fn(() => result);
+      const builder = { abortSignal };
+      const rpc = vi.fn(() => builder);
+      const client = { rpc } as unknown as Parameters<
+        typeof actual.completeAiRequest
+      >[0];
+      const input = {
+        cachedInputTokens: 0,
+        inputTokens: 1,
+        model: "synthetic-model",
+        outputTokens: 1,
+        providerRequestId: "synthetic-response",
+        requestId: REQUEST,
+        responseCharacterCount: 1,
+        userId: OWNER,
+      };
+      const signal = new AbortController().signal;
+      const response = withSignal
+        ? await actual.completeAiRequest(client, input, { signal })
+        : await actual.completeAiRequest(client, input);
+      expect(response).toBe(withSignal ? result : builder);
+      expect(abortSignal).toHaveBeenCalledTimes(withSignal ? 1 : 0);
+    },
+  );
 });
