@@ -95,7 +95,7 @@ html[data-theme="light"] {
   --border-default: rgba(74, 52, 19, 0.3);
   --border-strong: rgba(124, 75, 6, 0.34);
   --border-control: rgba(74, 52, 19, 0.6);
-  --brand-primary: #9b650d;
+  --brand-primary: #95600d;
   --brand-strong: #7c4b06;
   --brand-hover: #7c4b06;
   --brand-active: #633b03;
@@ -137,7 +137,7 @@ html[data-theme="dark"] {
     --border-default: rgba(74, 52, 19, 0.3);
     --border-strong: rgba(124, 75, 6, 0.34);
     --border-control: rgba(74, 52, 19, 0.6);
-    --brand-primary: #9b650d;
+    --brand-primary: #95600d;
     --brand-strong: #7c4b06;
     --brand-hover: #7c4b06;
     --brand-active: #633b03;
@@ -180,4 +180,15 @@ html[data-theme="dark"] {
 /* Native <small> must not apply another 80% reduction to readable helpers. */
 small {
   font-size: var(--font-helper);
+}
+
+/* Gold text needs the stronger brand shade on the light paper surfaces. */
+html[data-theme="light"] :is(.eyebrow, .text-link, .brand-lockup small) {
+  color: var(--brand-strong);
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) :is(.eyebrow, .text-link, .brand-lockup small) {
+    color: var(--brand-strong);
+  }
 }
