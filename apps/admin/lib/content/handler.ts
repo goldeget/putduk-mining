@@ -6,6 +6,7 @@ import {
   contentKindSchema,
   contentReceiptSchema,
   contentReviewSchema,
+  type ContentKind,
   type ContentReceipt,
 } from "../../../../domain/content/contract";
 import { readBoundedJsonBody } from "../../../../lib/api/request-body";
@@ -90,7 +91,7 @@ async function body(request: Request, bytes: number) {
 async function review(
   deps: ContentDependencies,
   principal: AdminPrincipal,
-  kind: "EVENT" | "NOTICE",
+  kind: ContentKind,
   id: string | null,
 ) {
   const result = await deps.rpc("read_liveops_content_review", {

@@ -64,8 +64,9 @@ export async function completeAiRequest(
     responseCharacterCount: number;
     userId: string;
   },
+  options: { signal?: AbortSignal } = {},
 ) {
-  return supabase.rpc("complete_ai_request", {
+  const request = supabase.rpc("complete_ai_request", {
     p_cached_input_tokens: input.cachedInputTokens,
     p_input_tokens: input.inputTokens,
     p_output_tokens: input.outputTokens,
@@ -75,6 +76,7 @@ export async function completeAiRequest(
     p_response_character_count: input.responseCharacterCount,
     p_user_id: input.userId,
   });
+  return options.signal ? request.abortSignal(options.signal) : request;
 }
 
 export async function failAiRequest(
@@ -85,11 +87,13 @@ export async function failAiRequest(
     status: "CANCELLED" | "FAILED";
     userId: string;
   },
+  options: { signal?: AbortSignal } = {},
 ) {
-  return supabase.rpc("fail_ai_request", {
+  const request = supabase.rpc("fail_ai_request", {
     p_error_code: input.errorCode,
     p_request_id: input.requestId,
     p_status: input.status,
     p_user_id: input.userId,
   });
+  return options.signal ? request.abortSignal(options.signal) : request;
 }

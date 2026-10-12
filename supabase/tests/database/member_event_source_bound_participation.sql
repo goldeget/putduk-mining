@@ -100,4 +100,54 @@ select throws_like($$update app_private.event_join_consumer_receipts set digest=
 select lives_ok('set constraints all immediate','join and worker completion retain exact original seals');
 set constraints all deferred;
 
+
+-- Guide contract: synthetic source receipt only; never imports owner drafts.
+select is((select participation_mode from public.event_member_content where event_id=(select event_id from event_join_ctx)),
+ 'JOIN','missing historical mode retains the existing join projection');
+select throws_like($$select app_private.validate_liveops_payload('EVENT',payload||'{"participationMode":null}'::jsonb,false)from recovery_cms_ctx$$,
+ 'INVALID_EVENT_PARTICIPATION_MODE','present null cannot silently become JOIN');
+select throws_like($$select app_private.validate_liveops_payload('EVENT',payload||'{"participationMode":"CASH"}'::jsonb,false)from recovery_cms_ctx$$,
+ 'INVALID_EVENT_PARTICIPATION_MODE','unknown participation mode is closed');
+select throws_like($$select app_private.validate_liveops_payload('EVENT',payload||'{"participationMode":true}'::jsonb,false)from recovery_cms_ctx$$,
+ 'INVALID_EVENT_PARTICIPATION_MODE','boolean mode cannot become JOIN');
+select throws_like($$select app_private.validate_liveops_payload('NOTICE',jsonb_build_object('slug','notice-guide-mode','title','공지','summary','공지 설명','body','공지 본문','ctaLabel','보기','ctaRoute','/events','audience','MEMBERS','segment','ALL_MEMBERS','publishedAt',null,'expiresAt',null,'isPinned',false,'participationMode','GUIDE'),false)$$,
+ 'INVALID_LIVEOPS_PAYLOAD','event mode does not expand the notice payload contract');
+update recovery_cms_ctx set payload=payload||jsonb_build_object('slug','rollback-informational-guide','participationMode','GUIDE','ctaRoute','/faq',
+ 'participation','안내 확인만 하며 참여 실적이나 보상 청구를 생성하지 않습니다.'),draft=null,preview=null,approval=null,publication=null;
+set local role service_role;
+select set_config('request.jwt.claims','{"role":"service_role"}',true);
+update recovery_cms_ctx set draft=pg_temp.recovery_cms_command('CREATE_DRAFT',gen_random_uuid());
+update recovery_cms_ctx set preview=pg_temp.recovery_cms_command('PREVIEW',gen_random_uuid());
+update recovery_cms_ctx set approval=pg_temp.recovery_cms_command('APPROVE',gen_random_uuid());
+update recovery_cms_ctx set publication=pg_temp.recovery_cms_command('PUBLISH',gen_random_uuid());
+select lives_ok('set constraints all immediate','GUIDE passes exact approval, audit, outbox and projection seals');
+set constraints all deferred;
+reset role;
+update event_join_ctx set event_id=(select(publication->>'contentId')::uuid from recovery_cms_ctx),
+ revision_id=(select(publication->>'revisionId')::uuid from recovery_cms_ctx),key=gen_random_uuid(),receipt=null;
+set local role authenticated;
+select set_config('request.jwt.claims','{"role":"authenticated","sub":"38500000-0000-4000-8000-000000000006"}',true);
+select is((select participation_mode from public.event_member_content where event_id=(select event_id from event_join_ctx)),
+ 'GUIDE','member DTO reads reviewed GUIDE mode');
+select is((select cta_route from public.event_member_content where event_id=(select event_id from event_join_ctx)),
+ '/faq','GUIDE preserves the source-backed informational CTA');
+select throws_like($$select public.participate_published_event(event_id,revision_id,key,gen_random_uuid())from event_join_ctx$$,
+ 'EVENT_GUIDE_NOT_JOINABLE','GUIDE mode forbids native joining before any member write');
+select throws_like($$select public.participate_published_event(event_id,revision_id,key,gen_random_uuid())from event_join_ctx$$,
+ 'EVENT_GUIDE_NOT_JOINABLE','repeated GUIDE action also has no participation side effects');
+reset role;
+select is((select count(*)from public.event_participants where event_id=(select event_id from event_join_ctx)),0::bigint,'GUIDE creates no participant');
+select is((select count(*)from app_private.event_join_originals where event_id=(select event_id from event_join_ctx)),0::bigint,'GUIDE creates no join original');
+select is((select count(*)from app_private.event_join_idempotency where event_id=(select event_id from event_join_ctx)),0::bigint,'GUIDE creates no join idempotency receipt');
+select is((select count(*)from public.audit_logs where action='EVENT_PARTICIPATION_JOINED' and after_state->>'event_id'=(select event_id::text from event_join_ctx)),0::bigint,'GUIDE creates no member participation audit');
+select is((select count(*)from public.outbox_events where event_type='EVENT_PARTICIPATION_JOINED.v1' and payload->>'event_id'=(select event_id::text from event_join_ctx)),0::bigint,'GUIDE creates no join event or reward source');
+select is((select count(*)from public.event_rewards where event_id=(select event_id from event_join_ctx)),0::bigint,'GUIDE publication creates no reward policy');
+select throws_like($$update public.event_member_content set participation_mode='JOIN'where event_id=(select event_id from event_join_ctx)$$,
+ '%append-only%','GUIDE projection cannot be changed into a join');
+set local role anon;
+select set_config('request.jwt.claims','{"role":"anon"}',true);
+select throws_like('select * from public.event_member_content','%permission denied%','guide does not expand anonymous content privileges');
+reset role;
+select lives_ok('set constraints all immediate','all GUIDE and original JOIN receipts remain valid at commit boundary');
+
 select * from finish();rollback;

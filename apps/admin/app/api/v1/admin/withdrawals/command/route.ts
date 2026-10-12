@@ -6,6 +6,7 @@ import { requireAdminCommand } from "@/lib/auth/principal";
 import { consumeAdminStepUpGrant } from "@/lib/auth/step-up";
 import { requestDeclaredOffline } from "@/lib/money/logical-operation";
 import { createAdminServiceClient } from "@/lib/supabase/service";
+import { manualUsdtPayoutFailure } from "@/lib/withdrawals/usdt-manual-payout-contract";
 
 const bodySchema = z.discriminatedUnion("action", [
   z
@@ -29,7 +30,10 @@ const bodySchema = z.discriminatedUnion("action", [
         .string()
         .regex(/^[0-9]+(\.[0-9]{1,6})?$/)
         .refine((value) => /[1-9]/.test(value)),
-      conversionEvidence: z.record(z.string(), z.unknown()).optional(),
+      // Opaque/null historical evidence is preserved for identical receipt
+      // replay. Fresh receipts require typed manual full-payment evidence at
+      // the DB admission boundary; legacy input never bypasses that trigger.
+      conversionEvidence: z.record(z.string(), z.unknown()).nullable().optional(),
       sentAt: z.string().datetime(),
       stepUpToken: z.string().min(16),
       idempotencyKey: z.string().min(8).max(200),
@@ -76,6 +80,13 @@ function krwPayoutFailure(message: string): Response | null {
 }
 
 function externalSendFailure(message: string) {
+  const manualPayoutFailure = manualUsdtPayoutFailure(message);
+  if (manualPayoutFailure) {
+    return Response.json(
+      { ok: false, ...manualPayoutFailure },
+      { status: 409 },
+    );
+  }
   const code = message.includes("IDEMPOTENCY_KEY_REUSED")
     ? "IDEMPOTENCY_KEY_REUSED"
     : message.includes("EXTERNAL_SEND_PAYLOAD_MISMATCH")
@@ -210,6 +221,13 @@ export async function POST(request: Request) {
     if (error) {
       const payoutFailure = krwPayoutFailure(error.message);
       if (payoutFailure) return payoutFailure;
+      const manualPayoutFailure = manualUsdtPayoutFailure(error.message);
+      if (manualPayoutFailure) {
+        return Response.json(
+          { ok: false, ...manualPayoutFailure },
+          { status: 409 },
+        );
+      }
       return Response.json(
         { ok: false, code: "COMMAND_FAILED" },
         { status: 503 },

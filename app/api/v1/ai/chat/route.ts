@@ -43,6 +43,9 @@ const MAX_BODY_BYTES = 8_192;
 const MAX_RESPONSE_CHARACTERS = 32_000;
 const STATIC_MODEL_KEY = "putduk-static-v1";
 const TOOL_MODEL_KEY = "putduk-owned-read-tool-v1";
+const AUDIT_FAILURE_DEADLINE_MS = 5_000;
+const AUDIT_FAILURE_MESSAGE =
+  "요청 처리 기록을 저장하지 못했어요. 잠시 후 다시 시도해 주세요.";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -313,16 +316,91 @@ export async function POST(request: Request) {
     });
   }
 
+  async function withinDeadline<T>(
+    work: Promise<T>,
+    deadline: number,
+    fallback: T,
+  ): Promise<T> {
+    let timeout: ReturnType<typeof setTimeout> | undefined;
+    try {
+      return await Promise.race([
+        work,
+        new Promise<T>((resolve) => {
+          timeout = setTimeout(
+            () => resolve(fallback),
+            Math.max(0, deadline - Date.now()),
+          );
+        }),
+      ]);
+    } finally {
+      if (timeout !== undefined) clearTimeout(timeout);
+    }
+  }
+
+  async function recordCompletion(
+    input: Parameters<typeof completeAiRequest>[1],
+    clientSignal?: AbortSignal,
+  ) {
+    const abort = new AbortController();
+    const abortClient = () => abort.abort();
+    clientSignal?.addEventListener("abort", abortClient, { once: true });
+    if (clientSignal?.aborted) abort.abort();
+    try {
+      const work = (async () => {
+        const { error } = await completeAiRequest(admin, input, {
+          signal: abort.signal,
+        });
+        return !error && !abort.signal.aborted;
+      })().catch(() => false);
+      return await withinDeadline(
+        work,
+        Date.now() + AUDIT_FAILURE_DEADLINE_MS,
+        false,
+      );
+    } finally {
+      abort.abort();
+      clientSignal?.removeEventListener("abort", abortClient);
+    }
+  }
+
   async function recordFailure(
     status: "CANCELLED" | "FAILED",
     errorCode: string,
+    deadline = Date.now() + AUDIT_FAILURE_DEADLINE_MS,
   ) {
-    await failAiRequest(admin, {
-      errorCode,
-      requestId: aiRequestId,
-      status,
-      userId,
-    });
+    const abort = new AbortController();
+    try {
+      const work = (async () => {
+        try {
+          await failAiRequest(
+            admin,
+            { errorCode, requestId: aiRequestId, status, userId },
+            { signal: abort.signal },
+          );
+        } catch {
+          // A lost RPC response can follow a committed write; read it back.
+        }
+        const { data, error } = await admin
+          .from("ai_requests")
+          .select("id,user_id,status,error_code")
+          .eq("id", aiRequestId)
+          .eq("user_id", userId)
+          .abortSignal(abort.signal)
+          .maybeSingle();
+        // The RPC is void and may no-op on an existing terminal state.
+        // Only this owned exact failure receipt proves the requested transition.
+        if (error || !data) return false;
+        return (
+          data.id === aiRequestId &&
+          data.user_id === userId &&
+          data.status === status &&
+          data.error_code === errorCode
+        );
+      })().catch(() => false);
+      return await withinDeadline(work, deadline, false);
+    } finally {
+      abort.abort();
+    }
   }
 
   async function saveMemberTurn(turn: {
@@ -374,22 +452,25 @@ export async function POST(request: Request) {
     },
     toolLatencyMs?: number,
   ) {
-    const { error } = await completeAiRequest(admin, {
-      cachedInputTokens: 0,
-      inputTokens: 0,
-      model,
-      outputTokens: 0,
-      providerRequestId,
-      requestId: aiRequestId,
-      responseCharacterCount: answer.length,
-      userId,
-    });
+    const auditCompleted = await recordCompletion(
+      {
+        cachedInputTokens: 0,
+        inputTokens: 0,
+        model,
+        outputTokens: 0,
+        providerRequestId,
+        requestId: aiRequestId,
+        responseCharacterCount: answer.length,
+        userId,
+      },
+      request.signal,
+    );
 
-    if (error) {
+    if (!auditCompleted) {
       await recordFailure("FAILED", "AI_AUDIT_PERSISTENCE_FAILED");
       return apiError({
         code: "AI_AUDIT_PERSISTENCE_FAILED",
-        message: "답변을 저장하지 못했어요. 잠시 후 다시 시도해 주세요.",
+        message: AUDIT_FAILURE_MESSAGE,
         status: 503,
       });
     }
@@ -455,7 +536,14 @@ export async function POST(request: Request) {
     const latencyMs = Math.max(0, Date.now() - toolStarted);
 
     if (!toolResult.ok) {
-      await recordFailure("FAILED", toolResult.code);
+      const auditRecorded = await recordFailure("FAILED", toolResult.code);
+      if (!auditRecorded) {
+        return apiError({
+          code: "AI_AUDIT_PERSISTENCE_FAILED",
+          message: AUDIT_FAILURE_MESSAGE,
+          status: 503,
+        });
+      }
       const saved = await saveMemberTurn({
         answer: toolResult.answer,
         sourceKey: `tool:${toolResult.tool}`,
@@ -522,13 +610,24 @@ export async function POST(request: Request) {
   let clientCancelled = false;
   const stream = new ReadableStream<Uint8Array>({
     async start(controller) {
+      let durableTurn: Extract<
+        Awaited<ReturnType<typeof saveMemberTurn>>,
+        { ok: true }
+      > | undefined;
       let answer = "";
       let sent = 0;
       let emittedPrefix = "";
       const guard = createAiProviderOutputGuard();
       const emit = (event: AiClientStreamEvent) => {
-        if (!clientCancelled)
+        if (clientCancelled) return false;
+        try {
           controller.enqueue(encoder.encode(sseEvent(event)));
+          return true;
+        } catch {
+          clientCancelled = true;
+          providerAbort.abort();
+          return false;
+        }
       };
       const emitSafePrefix = (final = false) => {
         const safe = redactMemberTranscript(answer);
@@ -548,8 +647,9 @@ export async function POST(request: Request) {
           emittedPrefix = safe.slice(0, end);
         }
       };
-      emit({ requestId: aiRequestId, source: "provider", type: "ready" });
       try {
+        if (!emit({ requestId: aiRequestId, source: "provider", type: "ready" }))
+          throw new ProviderChainError("CLIENT_CANCELLED", true);
         const completed = await runMemberProviderChain({
           nvidiaApiKey: env.AI_API_KEY!,
           ...(env.OPENROUTER_FREE_API_KEY
@@ -596,26 +696,38 @@ export async function POST(request: Request) {
         });
         if (!saved.ok)
           throw new ProviderChainError("AI_CONVERSATION_SAVE_FAILED");
-        const { error } = await completeAiRequest(admin, {
-          requestId: aiRequestId,
-          userId,
-          model: completed.model,
-          providerRequestId: completed.providerRequestId,
-          inputTokens: completed.inputTokens,
-          outputTokens: completed.outputTokens,
-          cachedInputTokens: completed.cachedInputTokens,
-          responseCharacterCount: safeAnswer.length,
-        });
-        if (error) throw new ProviderChainError("AI_AUDIT_PERSISTENCE_FAILED");
-        if (aiPlan.cacheable && !chatRequest.conversationId)
-          await writeAiCache(admin, {
-            answer: safeAnswer,
-            cacheKey: promptHash,
-            knowledgeVersion: TRUST_CONTENT_VERSION,
+        durableTurn = saved;
+        const auditCompleted = await recordCompletion(
+          {
+            requestId: aiRequestId,
+            userId,
             model: completed.model,
-            scope: "PUBLIC_KNOWLEDGE",
-            ttlSeconds: env.AI_CACHE_TTL_SECONDS,
-          });
+            providerRequestId: completed.providerRequestId,
+            inputTokens: completed.inputTokens,
+            outputTokens: completed.outputTokens,
+            cachedInputTokens: completed.cachedInputTokens,
+            responseCharacterCount: safeAnswer.length,
+          },
+          providerAbort.signal,
+        );
+        if (!auditCompleted)
+          throw new ProviderChainError("AI_AUDIT_PERSISTENCE_FAILED");
+        if (aiPlan.cacheable && !chatRequest.conversationId) {
+          // Cache is optional after durable turn and completion. Its failure
+          // cannot turn a completed request into a failed/cancelled one.
+          await withinDeadline(
+            writeAiCache(admin, {
+              answer: safeAnswer,
+              cacheKey: promptHash,
+              knowledgeVersion: TRUST_CONTENT_VERSION,
+              model: completed.model,
+              scope: "PUBLIC_KNOWLEDGE",
+              ttlSeconds: env.AI_CACHE_TTL_SECONDS,
+            }).catch(() => undefined),
+            Date.now() + AUDIT_FAILURE_DEADLINE_MS,
+            undefined,
+          );
+        }
         emitSafePrefix(true);
         emit({
           type: "done",
@@ -627,21 +739,41 @@ export async function POST(request: Request) {
         const cancelled =
           providerAbort.signal.aborted ||
           (error instanceof ProviderChainError && error.cancelled);
-        const code =
+        providerAbort.abort();
+        const failureDeadline = Date.now() + AUDIT_FAILURE_DEADLINE_MS;
+        const failureCode =
           error instanceof ProviderChainError
             ? error.code
             : "AI_PROVIDER_UNAVAILABLE";
-        await recordFailure(cancelled ? "CANCELLED" : "FAILED", code);
-        const message = cancelled
-          ? "답변 생성을 중단했어요."
-          : code === "AI_FREE_POOL_LIMIT" ||
-              code === "AI_PAID_CALL_NOT_AUTHORIZED"
-            ? "현재 AI 사용 한도에 도달했어요. 잠시 후 다시 시도해 주세요."
-            : "답변을 완료하지 못했어요. 다시 시도해 주세요.";
-        const saved = await saveMemberTurn({
-          answer: message,
-          sourceKey: "failure:provider",
-        });
+        const auditRecorded = await recordFailure(
+          cancelled ? "CANCELLED" : "FAILED",
+          failureCode,
+          failureDeadline,
+        );
+        const code = auditRecorded
+          ? failureCode
+          : "AI_AUDIT_PERSISTENCE_FAILED";
+        const message = !auditRecorded
+          ? AUDIT_FAILURE_MESSAGE
+          : cancelled
+            ? "답변 생성을 중단했어요."
+            : code === "AI_FREE_POOL_LIMIT" ||
+                code === "AI_PAID_CALL_NOT_AUTHORIZED"
+              ? "현재 AI 사용 한도에 도달했어요. 잠시 후 다시 시도해 주세요."
+              : "답변을 완료하지 못했어요. 다시 시도해 주세요.";
+        const unsaved = { code: "CONVERSATION_NOT_SAVED", ok: false } as const;
+        let saved: Awaited<ReturnType<typeof saveMemberTurn>> =
+          durableTurn ?? unsaved;
+        if (!durableTurn && auditRecorded && Date.now() < failureDeadline) {
+          // Never append a different turn for an already-persisted client ID.
+          // Secondary storage shares the failure deadline so cleanup is bounded.
+          saved = await withinDeadline(
+            saveMemberTurn({ answer: message, sourceKey: "failure:provider" })
+              .catch(() => unsaved),
+            failureDeadline,
+            unsaved,
+          );
+        }
         emit({
           type: "error",
           code,

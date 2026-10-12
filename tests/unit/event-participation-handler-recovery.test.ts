@@ -196,6 +196,52 @@ describe("member event canonical command", () => {
   });
 });
 
+describe("informational event participation denial", () => {
+  it.each([undefined, "a".repeat(64)])(
+    "returns the exact GUIDE denial without retrying or reading participation (%s)",
+    async (cashTermsDigest) => {
+      fixture.rpc.mockResolvedValue({
+        data: null,
+        error: { message: "EVENT_GUIDE_NOT_JOINABLE" },
+      });
+      const response = await handleMemberEventParticipation(
+        request({
+          eventId: id,
+          revisionId: id,
+          idempotencyKey: other,
+          ...(cashTermsDigest === undefined ? {} : { cashTermsDigest }),
+        }),
+      );
+      expect(response.status).toBe(409);
+      expect((await response.json()).error).toEqual({
+        code: "EVENT_GUIDE_NOT_JOINABLE",
+        message:
+          "참여 기록을 만들지 않는 안내입니다. 안내 내용을 확인해 주세요.",
+      });
+      expect(fixture.rpc).toHaveBeenCalledOnce();
+      expect(fixture.from).not.toHaveBeenCalled();
+      expect(fixture.read).not.toHaveBeenCalled();
+    },
+  );
+  it.each([
+    "private EVENT_GUIDE_NOT_JOINABLE",
+    "EVENT_GUIDE_NOT_JOINABLE: private context",
+  ])(
+    "does not disclose or classify an unknown wrapped error (%s)",
+    async (message) => {
+      fixture.rpc.mockResolvedValue({ data: null, error: { message } });
+      const response = await handleMemberEventParticipation(request());
+      expect(response.status).toBe(503);
+      const body = await response.json();
+      expect(body.error.code).toBe("EVENT_PARTICIPATION_UNCERTAIN");
+      expect(JSON.stringify(body)).not.toContain("EVENT_GUIDE_NOT_JOINABLE");
+      expect(JSON.stringify(body)).not.toContain("private");
+      expect(fixture.rpc).toHaveBeenCalledOnce();
+      expect(fixture.read).not.toHaveBeenCalled();
+    },
+  );
+});
+
 describe("explicit local cash terms acknowledgement", () => {
   const digest = "a".repeat(64);
   const cashInput = {

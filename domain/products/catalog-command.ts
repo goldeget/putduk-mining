@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { serverProductCategorySchema } from "./catalog-server";
 
 const digest = z.string().regex(/^[a-f0-9]{64}$/);
 const instant = z.iso.datetime({ offset: true });
@@ -45,7 +46,7 @@ const product = z.object({
   nameKo: z.string(),
   nameEn: z.string(),
   descriptionKo: z.string(),
-  category: z.string(),
+  category: serverProductCategorySchema,
   displayOrder: z.number().int(),
 });
 export const catalogReviewSchema = z.object({

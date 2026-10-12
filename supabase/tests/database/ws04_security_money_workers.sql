@@ -145,13 +145,14 @@ where account.user_id = ws04_ctx.user_a
 -- Phone availability shape
 select ok(
   (
-    select count(*) = 74
+    select count(*) = 77
       and bool_and(procedure.proconfig @> array['search_path=pg_catalog']::text[])
     from pg_proc as procedure
     join pg_namespace as namespace on namespace.oid = procedure.pronamespace
     where namespace.nspname in ('public', 'app_private')
       and procedure.prosecdef
       and procedure.oid in (
+        'public.read_member_faq()'::regprocedure,
         'app_private.seal_worker_pause_attempt()'::regprocedure,
         'app_private.consume_local_cash_source(uuid,text)'::regprocedure,
         'app_private.read_member_cash_event_terms()'::regprocedure,
@@ -161,6 +162,8 @@ select ok(
         'public.admin_read_ai_conversations(uuid,uuid,uuid,text,jsonb)'::regprocedure,
         'public.admit_openrouter_free_request(uuid,uuid,integer,integer)'::regprocedure,
         'app_private.approve_local_nonmoney_policy(uuid,uuid,uuid,integer,text,text,text,text,uuid,uuid,text,text,text,text,uuid)'::regprocedure,
+        'app_private.ack_nonmoney_award_outbox(uuid,text)'::regprocedure,
+        'app_private.ack_withdrawal_lifecycle_outbox(uuid,text)'::regprocedure,
         'app_private.assert_event_join(uuid)'::regprocedure,
         'app_private.assert_nonmoney_notification(uuid)'::regprocedure,
         'app_private.begin_funding_credit_boundary(uuid,text)'::regprocedure,
@@ -235,6 +238,7 @@ select ok(
       where namespace.nspname in ('public', 'app_private')
         and procedure.prosecdef
         and procedure.oid not in (
+          'public.read_member_faq()'::regprocedure,
           'app_private.seal_worker_pause_attempt()'::regprocedure,
           'app_private.consume_local_cash_source(uuid,text)'::regprocedure,
         'app_private.read_member_cash_event_terms()'::regprocedure,
@@ -244,6 +248,8 @@ select ok(
         'public.admin_read_ai_conversations(uuid,uuid,uuid,text,jsonb)'::regprocedure,
         'public.admit_openrouter_free_request(uuid,uuid,integer,integer)'::regprocedure,
         'app_private.approve_local_nonmoney_policy(uuid,uuid,uuid,integer,text,text,text,text,uuid,uuid,text,text,text,text,uuid)'::regprocedure,
+        'app_private.ack_nonmoney_award_outbox(uuid,text)'::regprocedure,
+        'app_private.ack_withdrawal_lifecycle_outbox(uuid,text)'::regprocedure,
         'app_private.assert_event_join(uuid)'::regprocedure,
         'app_private.assert_nonmoney_notification(uuid)'::regprocedure,
         'app_private.begin_funding_credit_boundary(uuid,text)'::regprocedure,
@@ -311,7 +317,7 @@ select ok(
         'public.signup_phone_availability(text)'::regprocedure
         )
     ),
-  'application schemas allow exactly seventy-four reviewed SECURITY DEFINER functions'
+  'application schemas allow exactly seventy-six reviewed SECURITY DEFINER functions'
 );
 
 select is(

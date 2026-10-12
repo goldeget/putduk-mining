@@ -93,6 +93,8 @@ jobs:
     steps:
       - name: Check out source
         uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
 
       - name: Install pnpm
         uses: pnpm/action-setup@v6.1.0
@@ -138,9 +140,12 @@ jobs:
         run: pnpm build
 
   database:
+    needs: e2e-app-build
     name: Database security gates
     runs-on: ubuntu-24.04
     timeout-minutes: 20
+    env:
+      CI_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
     steps:
       - name: Check out source
         uses: actions/checkout@v7
@@ -175,14 +180,34 @@ jobs:
         with:
           version: 2.113.0
 
-      - name: Start isolated PostgreSQL
-        run: pnpm db:start
+      - name: Verify successor197 canonical source before local infrastructure
+        run: node scripts/ci-backend-197.mjs --plan
+
+      - name: Start isolated PostgreSQL Auth and REST for successor197
+        run: pnpm exec supabase start -x studio,imgproxy,realtime,storage-api,edge-runtime,logflare,vector,postgres-meta,supavisor
 
       - name: Rebuild migrations from zero
         run: pnpm db:reset
 
-      - name: Run pgTAP tests
-        run: pnpm db:test
+      - name: Bind successor197 source and stage exact native adapters
+        id: successor197-stage
+        env:
+          APP_ENV: test
+        run: |
+          node scripts/ci-backend-197.mjs --plan
+          STAGED="$RUNNER_TEMP/putduk-mining-native197-$(node -e 'console.log(require("node:crypto").randomUUID())')"
+          node scripts/backend-successor-197-native-stage.mjs --prepare --output="$STAGED"
+          printf 'staged=%s\n' "$STAGED" >> "$GITHUB_OUTPUT"
+
+      - name: Prepare test-only pgTAP after exact fresh successor197 preflight
+        env:
+          APP_ENV: test
+        run: |
+          CONTAINER_ID="$(docker inspect --format '{{.Id}}' supabase_db_putduk-mining-ci-r2-20261009)"
+          node scripts/usdt-manual-197-runner.mjs --prepare-test-tool --fresh-container-id="$CONTAINER_ID"
+
+      - name: Run pgTAP tests through exact successor197 staging
+        run: pnpm exec supabase test db "${{ steps.successor197-stage.outputs.staged }}/supabase/tests/database"
 
       # 두 세션 검사는 커밋이 남는다. 공유 suite 를 오염시키지 않도록
       # 러너의 일회용 DB 를 다시 만든 뒤 그 파일만 실행한다.
@@ -216,10 +241,56 @@ jobs:
       - name: Verify published policy reader against concurrent publication
         run: node scripts/assert-economy-policy-reader-concurrency.mjs
 
-      - name: Verify two-session external send replay and payload binding
+      - name: Verify successor197 native and full-id external-send concurrency
+        id: successor197-native
+        timeout-minutes: 18
         env:
           APP_ENV: test
-        run: python3 -B tests/integration/external-send-concurrency.py
+        run: |
+          pnpm db:reset
+          CONTAINER_ID="$(docker inspect --format '{{.Id}}' supabase_db_putduk-mining-ci-r2-20261009)"
+          OUTPUT="$RUNNER_TEMP/putduk-mining-usdt197-$(node -e 'console.log(require("node:crypto").randomUUID())')"
+          printf 'output=%s\n' "$OUTPUT" >> "$GITHUB_OUTPUT"
+          node scripts/usdt-manual-197-runner.mjs --execute --allow-synthetic-db-writes --confirmed-full-payout --fresh-container-id="$CONTAINER_ID" --output="$OUTPUT"
+          node scripts/ci-backend-197.mjs --verify-native="$OUTPUT" --fresh-id="$CONTAINER_ID"
+
+      - name: Restore shared production build for successor197 API
+        uses: actions/download-artifact@v7
+        with:
+          name: e2e-next-production
+          path: .
+
+      - name: Capture masked successor197 local Auth environment
+        env:
+          APP_ENV: test
+        run: node scripts/capture-local-supabase-env.mjs
+
+      - name: Prepare ephemeral successor197 encryption key
+        run: node scripts/write-ephemeral-withdrawal-key.mjs
+
+      - name: Verify successor197 API and exact current report
+        timeout-minutes: 18
+        env:
+          APP_ENV: test
+          E2E_WITH_ADMIN_SERVER: "1"
+          E2E_NEXT_START: "1"
+          E2E_PREBUILT_APPS: "1"
+          E2E_ADMIN_PORT: "3100"
+        run: |
+          node scripts/ci-backend-197.mjs --record-http-start
+          pnpm exec playwright test --config playwright.backend-http-197.config.ts --project backend-api --fail-on-flaky-tests
+          node scripts/ci-backend-197.mjs --verify-http
+
+      - name: Preserve successor197 current raw native and API evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: backend-successor197-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ steps.successor197-stage.outputs.staged }}/staging-manifest.json
+            ${{ steps.successor197-native.outputs.output }}
+            test-results/backend-http-197-api
+          if-no-files-found: error
 
       - name: Lint application schemas
         run: pnpm db:lint

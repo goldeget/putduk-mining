@@ -1,8 +1,10 @@
+import { backend197UnitFixturePlugin } from "./scripts/backend-successor-197-unit-fixture.mjs";
 import { fileURLToPath } from "node:url";
 
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
+  plugins: [backend197UnitFixturePlugin()],
   resolve: {
     alias: {
       "@": fileURLToPath(new URL(".", import.meta.url)),

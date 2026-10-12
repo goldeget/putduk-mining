@@ -1,4 +1,4 @@
-/** Reviewed 187-migration successor; all earlier source maps remain immutable. */
+/** Reviewed 191-migration successor; all earlier source maps remain immutable. */
 import { createHash } from "node:crypto";
 import { readFileSync, readdirSync, realpathSync } from "node:fs";
 import { isAbsolute, relative, resolve } from "node:path";
@@ -21,6 +21,31 @@ const ADDITIONAL_MIGRATIONS = [
   "supabase/migrations/20261011001426_explicit_member_cash_terms_read_boundary.sql",
   "supabase/migrations/20261011001444_permanent_zero_fee_policy.sql",
   "supabase/migrations/20261011003244_krw_manual_full_payout_completion.sql",
+];
+// Backend-first adds only the independently reviewed ETF enum migration. The
+// 187 generation and its metadata checks above remain a separate frozen layer.
+const BACKEND_FIRST_MANIFEST =
+  "tests/e2e/fixtures/principal-backend-first-188-source.json";
+const BACKEND_FIRST_MANIFEST_SHA =
+  "9c2ea55a0c06f07c3570f25ff80341e6ff67b37623ec497fde3062646882d616";
+const BACKEND_FIRST_REVIEWED_SOURCE_HEAD =
+  "e220356be85a56e21e3469023b19b0c2fd4aebba";
+const BACKEND_FIRST_MIGRATION =
+  "supabase/migrations/20261011021000_backend_catalog_etf_category.sql";
+// Append only: 188 remains independently pinned; this reviewed successor
+// permits exactly the guide contract and sealed, DTO-only member FAQ lifecycle.
+const CONTENT_BACKEND_MANIFEST =
+  "tests/e2e/fixtures/principal-backend-first-191-source.json";
+const CONTENT_BACKEND_MANIFEST_SHA =
+  "899bf27e5def9a2c48af491eaa1d2115134f0efbd40581f919c6155e5bb86adb";
+const CONTENT_BACKEND_MIGRATIONS = [
+  "supabase/migrations/20261011031000_informational_event_participation_contract.sql",
+  "supabase/migrations/20261011033000_member_faq_sealed_content_lifecycle.sql",
+  "supabase/migrations/20261011035000_member_faq_expiry_read_boundary.sql",
+];
+const CONTENT_BACKEND_RUNTIME_PATHS = [
+  "domain/events/participation.ts",
+  "lib/events/participation-handler.server.ts",
 ];
 // Installed CLI truncates configured IDs to 36 characters; the exact newly
 // created resource identity was independently captured before using this ID.
@@ -145,7 +170,91 @@ export function assertReviewedPrincipalCandidateSources(root = ROOT) {
       JSON.stringify(ADDITIONAL_MIGRATIONS)
   )
     throw new Error("REVIEW_R2_SUCCESSOR_SOURCE_MAP_INVALID");
-  const sources = [...map.sources, ...successor.sources];
+  const backendFirstBytes = readFileSync(owned(BACKEND_FIRST_MANIFEST));
+  if (digest(backendFirstBytes) !== BACKEND_FIRST_MANIFEST_SHA)
+    throw new Error("REVIEW_R2_BACKEND_FIRST_FROZEN_MAP_CHANGED");
+  const backendFirst = JSON.parse(backendFirstBytes.toString("utf8"));
+  if (
+    backendFirst.version !== 1 ||
+    backendFirst.repository !== map.repository ||
+    backendFirst.project_id !== PROJECT ||
+    backendFirst.configured_project_id !== CONFIGURED_PROJECT ||
+    backendFirst.api_port !== map.api_port ||
+    backendFirst.reviewedSourceHead !== BACKEND_FIRST_REVIEWED_SOURCE_HEAD ||
+    backendFirst.baselineManifestPath !== MANIFEST ||
+    backendFirst.baselineManifestSha256 !== MANIFEST_SHA ||
+    backendFirst.baselineMigrationCount !== map.migration_count ||
+    backendFirst.baselineRuntimeCount !== RUNTIME.length ||
+    backendFirst.previousManifestPath !== SUCCESSOR_MANIFEST ||
+    backendFirst.previousManifestSha256 !== SUCCESSOR_MANIFEST_SHA ||
+    backendFirst.previousMigrationCount !== successor.migration_count ||
+    backendFirst.migration_count !== 188 ||
+    backendFirst.additional_migration_count !== 1 ||
+    !Array.isArray(backendFirst.sources) ||
+    backendFirst.sources.length !== 1 ||
+    backendFirst.sources[0]?.kind !== "migration" ||
+    backendFirst.sources[0]?.path !== BACKEND_FIRST_MIGRATION
+  )
+    throw new Error("REVIEW_R2_BACKEND_FIRST_SOURCE_MAP_INVALID");
+  const contentBackendBytes = readFileSync(owned(CONTENT_BACKEND_MANIFEST));
+  if (digest(contentBackendBytes) !== CONTENT_BACKEND_MANIFEST_SHA)
+    throw new Error("REVIEW_R2_CONTENT_BACKEND_FROZEN_MAP_CHANGED");
+  const contentBackend = JSON.parse(contentBackendBytes.toString("utf8"));
+  if (
+    contentBackend.version !== 1 ||
+    contentBackend.repository !== map.repository ||
+    contentBackend.project_id !== PROJECT ||
+    contentBackend.configured_project_id !== CONFIGURED_PROJECT ||
+    contentBackend.api_port !== map.api_port ||
+    contentBackend.reviewedSourceHead !== BACKEND_FIRST_REVIEWED_SOURCE_HEAD ||
+    contentBackend.baselineManifestPath !== MANIFEST ||
+    contentBackend.baselineManifestSha256 !== MANIFEST_SHA ||
+    contentBackend.baselineMigrationCount !== map.migration_count ||
+    contentBackend.baselineRuntimeCount !== RUNTIME.length ||
+    contentBackend.previousManifestPath !== BACKEND_FIRST_MANIFEST ||
+    contentBackend.previousManifestSha256 !== BACKEND_FIRST_MANIFEST_SHA ||
+    contentBackend.previousMigrationCount !== backendFirst.migration_count ||
+    contentBackend.migration_count !== 191 ||
+    contentBackend.additional_migration_count !== 3 ||
+    !Array.isArray(contentBackend.sources) ||
+    contentBackend.sources.length !== 3 ||
+    contentBackend.sources.some((row) => row.kind !== "migration") ||
+    JSON.stringify(contentBackend.sources.map((row) => row.path).sort()) !==
+      JSON.stringify(CONTENT_BACKEND_MIGRATIONS)
+  )
+    throw new Error("REVIEW_R2_CONTENT_BACKEND_SOURCE_MAP_INVALID");
+  const overrides = contentBackend.reviewedRuntimeOverrides;
+  if (
+    !Array.isArray(overrides) ||
+    overrides.length !== 2 ||
+    JSON.stringify(overrides.map((row) => row.path).sort()) !==
+      JSON.stringify(CONTENT_BACKEND_RUNTIME_PATHS) ||
+    overrides.some(
+      (row) =>
+        row.kind !== "runtime" ||
+        !/^[a-f0-9]{64}$/.test(row.previousSha256) ||
+        !/^[a-f0-9]{64}$/.test(row.reviewedSha256) ||
+        row.previousSha256 === row.reviewedSha256 ||
+        map.sources.find(
+          (source) => source.kind === "runtime" && source.path === row.path,
+        )?.sha256 !== row.previousSha256,
+    )
+  )
+    throw new Error("REVIEW_R2_CONTENT_BACKEND_RUNTIME_MAP_INVALID");
+  // Only exact reviewed replacements apply to the effective 29-runtime set;
+  // the historical manifest bytes and its original hashes are never rewritten.
+  const effectiveBaseline = map.sources.map((row) => {
+    const replacement = overrides.find(
+      (override) => override.path === row.path,
+    );
+    return replacement ? { ...row, sha256: replacement.reviewedSha256 } : row;
+  });
+  const sources = [
+    ...effectiveBaseline,
+    ...successor.sources,
+    ...backendFirst.sources,
+    ...contentBackend.sources,
+  ];
   const migrations = sources.filter((row) => row.kind === "migration");
   const runtime = map.sources
     .filter((row) => row.kind === "runtime")
@@ -161,7 +270,7 @@ export function assertReviewedPrincipalCandidateSources(root = ROOT) {
   )
     throw new Error("REVIEW_R2_MIGRATION_INVENTORY_CHANGED");
   if (
-    migrations.length !== successor.migration_count ||
+    migrations.length !== contentBackend.migration_count ||
     JSON.stringify(runtime) !== JSON.stringify(RUNTIME) ||
     new Set(sources.map((row) => row.path)).size !== sources.length
   )
@@ -184,11 +293,12 @@ export function assertReviewedPrincipalCandidateSources(root = ROOT) {
     projectId: PROJECT,
     apiPort: map.api_port,
     runtimeSources: RUNTIME.length,
-    migrationSources: successor.migration_count,
+    migrationSources: contentBackend.migration_count,
     migrationVersions: migrations
       .map((row) => row.path.split("/").at(-1).slice(0, 14))
       .sort(),
-    manifestSha256: SUCCESSOR_MANIFEST_SHA,
+    manifestSha256: CONTENT_BACKEND_MANIFEST_SHA,
     baselineManifestSha256: MANIFEST_SHA,
+    previousManifestSha256: BACKEND_FIRST_MANIFEST_SHA,
   };
 }

@@ -59,6 +59,13 @@ async function participate(request: Request) {
     },
   );
   if (error) {
+    if (error.message === "EVENT_GUIDE_NOT_JOINABLE")
+      return apiError({
+        code: "EVENT_GUIDE_NOT_JOINABLE",
+        message:
+          "참여 기록을 만들지 않는 안내입니다. 안내 내용을 확인해 주세요.",
+        status: 409,
+      });
     if (
       error.message.includes("EVENT_AUTH_REQUIRED") ||
       error.message.includes("LOCAL_CASH_MEMBER_REQUIRED")

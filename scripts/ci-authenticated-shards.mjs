@@ -10,6 +10,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { collectCiSourceEvidence } from "./ci-source-evidence.mjs";
+import { assertBackend197BrowserCanonicalSources } from "./backend-successor-197-browser-source.mjs";
 
 // Scheduling hints only, NOT timeouts, product policy, or acceptance thresholds.
 // Admin hints are rounded project/file elapsed times from CI 37441515296,
@@ -40,7 +41,7 @@ const TIMING_HINTS = {
   // Conservative hint from the existing authenticated config's recovery note.
   "withdrawal-p1-recovery.spec.ts": 480,
 };
-const CONFIG = "playwright.authenticated.config.ts";
+const CONFIG = "playwright.backend-browser-197.config.ts";
 const TOTAL = 8;
 const compare = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
 
@@ -116,6 +117,42 @@ export function assertSameInventory(expected, actual) {
       "Authenticated test coverage mismatch: missing, duplicate, or unexpected tests",
     );
   }
+}
+
+export function assertAuthenticatedExecution(
+  report,
+  expected,
+  cwd = process.cwd(),
+) {
+  const executed = inventoryFromReport(report, cwd);
+  assertSameInventory(expected, executed);
+  const durationIsValid = (value) =>
+    typeof value === "number" && Number.isFinite(value) && value >= 0;
+  if (
+    report.config?.configFile !== path.resolve(cwd, CONFIG) ||
+    report.config?.rootDir !== path.resolve(cwd, "tests/e2e/authenticated") ||
+    !Array.isArray(report.errors) ||
+    report.errors.length !== 0 ||
+    report.stats?.expected !== expected.length ||
+    report.stats?.unexpected !== 0 ||
+    report.stats?.flaky !== 0 ||
+    report.stats?.skipped !== 0 ||
+    !durationIsValid(report.stats?.duration) ||
+    executed.some(
+      (test) =>
+        test.expectedStatus !== "passed" ||
+        test.status !== "expected" ||
+        test.results.length !== 1 ||
+        test.results[0].status !== "passed" ||
+        test.results[0].retry !== 0 ||
+        !durationIsValid(test.results[0].duration),
+    )
+  ) {
+    throw new Error(
+      "Incomplete or unsuccessful authenticated execution evidence",
+    );
+  }
+  return executed;
 }
 
 export function balanceInventory(inventory, total = TOTAL) {
@@ -203,7 +240,9 @@ async function main() {
       "Usage: node scripts/ci-authenticated-shards.mjs --verify-only | 1/8 ... 8/8",
     );
   }
-  const source = collectCiSourceEvidence();
+  // Reject an unreviewed source/context before creating evidence or spawning tests.
+  const sourceBoundary = assertBackend197BrowserCanonicalSources();
+  const source = { ...collectCiSourceEvidence(), sourceBoundary };
   const temporary = mkdtempSync(path.join(tmpdir(), "putduk-ci-shards-"));
   // Playwright clears its test-results output directory before execution.
   // line/json reporters do not clear this separately ignored evidence path.
@@ -306,17 +345,7 @@ async function main() {
           false,
         );
         const report = JSON.parse(readFileSync(output, "utf8"));
-        const executed = inventoryFromReport(report);
-        assertSameInventory(shard.tests, executed);
-        if (
-          executed.some((test) => !test.results.length) ||
-          report.stats?.unexpected ||
-          report.stats?.flaky
-        ) {
-          throw new Error(
-            "Incomplete or unsuccessful authenticated execution evidence",
-          );
-        }
+        const executed = assertAuthenticatedExecution(report, shard.tests);
         // No raw report config, credentials, stdout, or error bodies in this evidence.
         writeFileSync(
           path.join(evidence, "execution.json"),

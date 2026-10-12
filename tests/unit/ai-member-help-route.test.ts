@@ -26,7 +26,23 @@ const mocks = vi.hoisted(() => ({
 vi.mock("@/lib/auth/session", () => ({ getVerifiedIdentity: mocks.identity }));
 vi.mock("@/lib/env/server", () => ({ getServerEnv: () => mocks.env }));
 vi.mock("@/lib/supabase/admin", () => ({
-  createSupabaseAdminClient: () => ({}),
+  createSupabaseAdminClient: () => ({
+    from: () => {
+      const query = {
+        select: vi.fn(() => query),
+        eq: vi.fn(() => query),
+        abortSignal: vi.fn(() => query),
+        maybeSingle: vi.fn(async () => {
+          const input = mocks.fail.mock.calls.at(-1)?.[1];
+          return {
+            data: { id: REQUEST, user_id: OWNER, status: input?.status, error_code: input?.errorCode },
+            error: null,
+          };
+        }),
+      };
+      return query;
+    },
+  }),
 }));
 vi.mock("@/lib/ai/usage", () => ({
   beginAiRequest: mocks.begin,
@@ -143,6 +159,7 @@ describe("actual member AI route with deterministic help and isolated persistenc
           inputTokens: 0,
           outputTokens: 0,
         }),
+        expect.objectContaining({ signal: expect.any(AbortSignal) }),
       );
       expect(mocks.append).toHaveBeenCalledWith(
         expect.anything(),
@@ -211,6 +228,7 @@ describe("actual member AI route with deterministic help and isolated persistenc
     expect(mocks.fail).toHaveBeenCalledWith(
       expect.anything(),
       expect.objectContaining({ status: "FAILED" }),
+      expect.objectContaining({ signal: expect.any(AbortSignal) }),
     );
     expect(mocks.append).not.toHaveBeenCalled();
   });

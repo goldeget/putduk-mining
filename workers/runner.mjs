@@ -147,17 +147,186 @@ export const SUPPORTED_OUTBOX_HANDLERS = Object.freeze({
   "LOCAL_CASH_REVIEW.v1": prepareLocalCashSourceDelivery,
   "REFERRAL_REWARD_PAID.v1": prepareLocalCashSourceDelivery,
   "EVENT_REWARD_PAID.v1": prepareLocalCashSourceDelivery,
+  "EVENT_REWARD_GRANTED.v1": prepareNonmoneyAwardAcknowledgement,
   "LIVEOPS_CONTENT_CHANGED.v1": prepareLiveopsPublicationDelivery,
   "EVENT_PARTICIPATION_JOINED.v1": prepareMemberEventJoinDelivery,
   "MEMBER_PROFILE_CAPTURED.v1": prepareMemberProfileAuditDelivery,
   "DEPOSIT_CONFIRMED.v1": prepareNonmoneyOriginalDelivery,
   "USDT_MANUAL_DEPOSIT_CONFIRMED.v1": prepareNonmoneyOriginalDelivery,
   "WITHDRAWAL_COMPLETED.v1": prepareNonmoneyOriginalDelivery,
+  "WITHDRAWAL_REQUESTED.v1": prepareWithdrawalRequestedAcknowledgement,
+  "WITHDRAWAL_EXTERNAL_SENT.v1": prepareWithdrawalExternalSendAcknowledgement,
+  "WITHDRAWAL_HOLD_RELEASED.v1": prepareWithdrawalHoldReleaseAcknowledgement,
   "TRIAL_REWARD_CONVERTED.v1": prepareNonmoneyOriginalDelivery,
   "MINING_STARTED.v1": prepareNonmoneyOriginalDelivery,
   "MINING_SETTLEMENT_COMPLETED.v1": prepareNonmoneyOriginalDelivery,
   "TRIAL_COMPLETED.v1": prepareNonmoneyOriginalDelivery,
 });
+
+const WITHDRAWAL_BIGINT_MAX = "9223372036854775807";
+const postgresTrim = (value) => value.replace(/^ +| +$/g, "");
+const characterCount = (value) => Array.from(value).length;
+
+function withdrawalBigint(value, allowZero = false) {
+  return (
+    typeof value === "string" &&
+    (allowZero ? /^(0|[1-9][0-9]*)$/ : /^[1-9][0-9]*$/).test(value) &&
+    value.length <= 19 &&
+    (value.length < 19 || value <= WITHDRAWAL_BIGINT_MAX)
+  );
+}
+
+/** Shape only: the fenced DB completion verifies durable command originals. */
+function withdrawalEnvelope(event, eventType, fields, error) {
+  const payload = event?.payload;
+  const key = event?.idempotency_key;
+  const commandKey = typeof key === "string" && key.endsWith(":event")
+    ? postgresTrim(key.slice(0, -6)) : "";
+  if (
+    event?.event_type !== eventType ||
+    event.schema_version !== 1 ||
+    event.aggregate_type !== "withdrawal_request" ||
+    ["id", "aggregate_id", "actor_user_id", "correlation_id", "request_id"].some(
+      (field) => typeof event[field] !== "string" || !FUNDING_JOB_UUID.test(event[field]),
+    ) ||
+    characterCount(commandKey) < 8 || characterCount(commandKey) > 200 ||
+    !payload || typeof payload !== "object" || Array.isArray(payload) ||
+    Object.keys(payload).length !== fields.length ||
+    fields.some((field) => !Object.hasOwn(payload, field))
+  ) throw new Error(error);
+  return payload;
+}
+
+function prepareWithdrawalRequestedAcknowledgement(_client, event) {
+  const error = "WITHDRAWAL_REQUESTED_ENVELOPE_INVALID";
+  const payload = withdrawalEnvelope(event, "WITHDRAWAL_REQUESTED.v1", [
+    "user_id", "amount_atomic", "fee_atomic", "currency", "destination_type",
+    "hold_ledger_transaction_id", "welcome_reward",
+  ], error);
+  if (
+    ["user_id", "hold_ledger_transaction_id"].some(
+      (field) => typeof payload[field] !== "string" || !FUNDING_JOB_UUID.test(payload[field]),
+    ) ||
+    event.actor_user_id !== payload.user_id ||
+    !withdrawalBigint(payload.amount_atomic) || !withdrawalBigint(payload.fee_atomic, true) ||
+    BigInt(payload.amount_atomic) + BigInt(payload.fee_atomic) > BigInt(WITHDRAWAL_BIGINT_MAX) ||
+    payload.currency !== "KRW" ||
+    !["KRW_BANK", "USDT_ADDRESS"].includes(payload.destination_type) ||
+    typeof payload.welcome_reward !== "boolean"
+  ) throw new Error(error);
+  // Historical fees remain original facts; this cannot authorize any new fee.
+  // DB ACK checks request/hold journal/owner/amount/welcome originals even after
+  // the request advances. No hold, money, payment or notification is created.
+}
+
+function prepareWithdrawalExternalSendAcknowledgement(_client, event) {
+  const error = "WITHDRAWAL_EXTERNAL_SEND_ENVELOPE_INVALID";
+  const method = event?.payload?.method;
+  const fields = method === "KRW_BANK"
+    ? ["method", "bank_reference", "actual_krw_amount"]
+    : ["method", "network", "tx_hash", "actual_usdt_amount", "conversion_evidence_present"];
+  const payload = withdrawalEnvelope(event, "WITHDRAWAL_EXTERNAL_SENT.v1", fields, error);
+  if (method === "KRW_BANK") {
+    if (
+      typeof payload.bank_reference !== "string" ||
+      payload.bank_reference !== postgresTrim(payload.bank_reference) ||
+      characterCount(payload.bank_reference) < 4 ||
+      !withdrawalBigint(payload.actual_krw_amount)
+    ) throw new Error(error);
+  } else if (method === "USDT_ADDRESS") {
+    if (
+      !["TRC20", "ERC20", "BEP20"].includes(payload.network) ||
+      typeof payload.tx_hash !== "string" ||
+      payload.tx_hash !== postgresTrim(payload.tx_hash).toLowerCase() ||
+      characterCount(payload.tx_hash) < 8 || characterCount(payload.tx_hash) > 128 ||
+      typeof payload.actual_usdt_amount !== "string" ||
+      !/^(0|[1-9][0-9]{0,31})(\.[0-9]{1,6})?$/.test(payload.actual_usdt_amount) ||
+      /^0(\.0{1,6})?$/.test(payload.actual_usdt_amount) ||
+      typeof payload.conversion_evidence_present !== "boolean"
+    ) throw new Error(error);
+  } else {
+    throw new Error(error);
+  }
+  // The actor is the recorded operator, not necessarily the withdrawal owner.
+  // DB ACK binds the immutable send/key/method/actor and normalized facts; it
+  // compares numeric USDT values without inventing a conversion or sending funds.
+}
+
+function prepareWithdrawalHoldReleaseAcknowledgement(_client, event) {
+  const error = "WITHDRAWAL_HOLD_RELEASE_ENVELOPE_INVALID";
+  const payload = withdrawalEnvelope(event, "WITHDRAWAL_HOLD_RELEASED.v1", [
+    "release_ledger_transaction_id", "reason", "disposition",
+  ], error);
+  if (
+    typeof payload.release_ledger_transaction_id !== "string" ||
+    !FUNDING_JOB_UUID.test(payload.release_ledger_transaction_id) ||
+    typeof payload.reason !== "string" || characterCount(postgresTrim(payload.reason)) < 4 ||
+    !["CANCELLED", "REJECTED"].includes(payload.disposition)
+  ) throw new Error(error);
+  // DB ACK checks the existing release journal/terminal disposition, original
+  // actor/reason/key and absence of external send. It never releases a hold.
+}
+
+function prepareNonmoneyAwardAcknowledgement(_client, event) {
+  const payload = event?.payload;
+  const fields = [
+    "award_id",
+    "event_id",
+    "user_id",
+    "rule_id",
+    "policy_id",
+    "scope",
+    "reward_kind",
+    "reward_code",
+    "audit_id",
+    "source_event_id",
+    "source_digest",
+    "qualification_digest",
+  ];
+  const uuids = [
+    "award_id",
+    "event_id",
+    "user_id",
+    "rule_id",
+    "policy_id",
+    "audit_id",
+    "source_event_id",
+  ];
+  if (
+    event?.event_type !== "EVENT_REWARD_GRANTED.v1" ||
+    event.schema_version !== 1 ||
+    event.aggregate_type !== "event_reward" ||
+    typeof event.id !== "string" ||
+    !FUNDING_JOB_UUID.test(event.id) ||
+    !payload ||
+    typeof payload !== "object" ||
+    Array.isArray(payload) ||
+    Object.keys(payload).length !== fields.length ||
+    fields.some((field) => !Object.hasOwn(payload, field)) ||
+    uuids.some(
+      (field) =>
+        typeof payload[field] !== "string" ||
+        !FUNDING_JOB_UUID.test(payload[field]),
+    ) ||
+    event.aggregate_id !== payload.award_id ||
+    event.actor_user_id !== payload.user_id ||
+    payload.scope !== "LOCAL_QA" ||
+    !["BADGE", "PROFILE_TITLE"].includes(payload.reward_kind) ||
+    typeof payload.reward_code !== "string" ||
+    !/^[A-Z][A-Z0-9_]{1,47}$/.test(payload.reward_code) ||
+    ["source_digest", "qualification_digest"].some(
+      (field) =>
+        typeof payload[field] !== "string" ||
+        !/^[a-f0-9]{64}$/.test(payload[field]),
+    ) ||
+    event.idempotency_key !==
+      `event-reward:${payload.event_id}:${payload.user_id}:${payload.rule_id}`
+  ) {
+    throw new Error("NONMONEY_AWARD_EVENT_ENVELOPE_INVALID");
+  }
+  // The DB verifies sealed award/notice originals and acknowledges the owned
+  // lease. This handler never grants, pays, publishes or sends notifications.
+}
 
 function prepareLocalCashSourceDelivery(_client, event) {
   const payload = event?.payload;

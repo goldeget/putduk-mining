@@ -41,11 +41,13 @@ import {
   readPrincipalFacts,
   recoverPrincipalRecord,
   releaseAgeEvidence,
-  requirePrincipalIntegratedCandidate,
   signedJson,
   type PrincipalMethod,
   type PrincipalOperator,
 } from "./helpers/principal-product-fixture";
+import {
+  requirePrincipalCanonical193Candidate,
+} from "./helpers/principal-canonical-193-fixture";
 import { expectSettledRoute } from "./helpers/settled-route";
 import {
   capturePrincipalPresentation,
@@ -318,7 +320,7 @@ test.describe("signed member principal source-v3 product", () => {
   test.beforeAll(async ({ browser }) => {
     test.setTimeout(360_000); // Existing canonical catalog fixture budget; no config/CI timeout changes.
     requireWithdrawalDataKey();
-    requirePrincipalIntegratedCandidate();
+    requirePrincipalCanonical193Candidate();
     operator = await preparePrincipalOperator(browser);
   });
   test.afterAll(async () => {

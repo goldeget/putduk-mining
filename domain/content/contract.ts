@@ -1,4 +1,7 @@
 import { z } from "zod";
+import { faqContentSchema, isBoundedFaqPayload, type FaqContent } from "./faq";
+
+export { faqContentSchema } from "./faq";
 
 export const CONTENT_CTA_ROUTES = [
   "/home",
@@ -42,6 +45,7 @@ export const eventContentSchema = z
     title: text(100),
     cardTitle: text(100),
     rewardMode: z.literal("NONE"),
+    participationMode: z.enum(["GUIDE", "JOIN"]).optional(),
     participation: text(2000),
     exclusion: text(2000),
     startsAt: time,
@@ -58,8 +62,14 @@ export const noticeContentSchema = z
   .strict();
 export type EventContent = z.infer<typeof eventContentSchema>;
 export type NoticeContent = z.infer<typeof noticeContentSchema>;
-export type LiveopsContent = EventContent | NoticeContent;
-export const contentKindSchema = z.enum(["EVENT", "NOTICE"]);
+export type LiveopsContent = EventContent | NoticeContent | FaqContent;
+export const contentKindSchema = z.enum(["EVENT", "NOTICE", "FAQ"]);
+export type ContentKind = z.infer<typeof contentKindSchema>;
+export const CONTENT_PAYLOAD_SCHEMAS = {
+  EVENT: eventContentSchema,
+  NOTICE: noticeContentSchema,
+  FAQ: faqContentSchema,
+} as const;
 export const contentOperationSchema = z.enum([
   "CREATE_DRAFT",
   "UPDATE_DRAFT",
@@ -107,10 +117,12 @@ export const contentCommandSchema = z
       input.operation === "CREATE_DRAFT" ||
       input.operation === "UPDATE_DRAFT"
     ) {
-      const result = (
-        input.kind === "EVENT" ? eventContentSchema : noticeContentSchema
-      ).safeParse(input.payload);
+      const result = CONTENT_PAYLOAD_SCHEMAS[input.kind].safeParse(
+        input.payload,
+      );
       if (!result.success) invalid("Unsupported content payload");
+      else if (input.kind === "FAQ" && !isBoundedFaqPayload(input.payload))
+        invalid("FAQ payload exceeds byte limit");
       else if (!isSafeContentCopy(result.data)) invalid("Unsafe member copy");
       else if (!hasValidContentWindow(result.data, false))
         invalid("Invalid content window");
@@ -118,7 +130,7 @@ export const contentCommandSchema = z
       invalid("Reviewed operation cannot replace content");
     if (
       (input.kind === "EVENT" && input.operation === "ARCHIVE") ||
-      (input.kind === "NOTICE" && input.operation === "CANCEL")
+      (["NOTICE", "FAQ"].includes(input.kind) && input.operation === "CANCEL")
     )
       invalid("Unsupported lifecycle operation");
   });
@@ -137,17 +149,14 @@ export const contentReceiptSchema = z
   .strict()
   .superRefine((r, ctx) => {
     if (
-      !(
-        r.contentKind === "EVENT" ? eventContentSchema : noticeContentSchema
-      ).safeParse(r.snapshot).success
+      !CONTENT_PAYLOAD_SCHEMAS[r.contentKind].safeParse(r.snapshot).success ||
+      (r.contentKind === "FAQ" && !isBoundedFaqPayload(r.snapshot))
     )
       ctx.addIssue({
         code: "custom",
         message: "Content receipt snapshot unconfirmed",
       });
-    const parsed = (
-      r.contentKind === "EVENT" ? eventContentSchema : noticeContentSchema
-    ).safeParse(r.snapshot);
+    const parsed = CONTENT_PAYLOAD_SCHEMAS[r.contentKind].safeParse(r.snapshot);
     if (
       parsed.success &&
       ["PREVIEWED", "APPROVED", "PUBLISHED"].includes(r.state) &&
@@ -165,7 +174,7 @@ export const contentReviewSchema = z
   .object({ items: z.array(contentReceiptSchema) })
   .strict();
 export function isSafeContentCopy(payload: LiveopsContent, ready = false) {
-  const originalCopy = Object.entries(payload)
+  const copyFields = Object.entries(payload)
     .filter(([key]) =>
       [
         "title",
@@ -178,8 +187,11 @@ export function isSafeContentCopy(payload: LiveopsContent, ready = false) {
       ].includes(key),
     )
     .map(([, value]) => value)
-    .filter((x): x is string => typeof x === "string")
-    .join(" ");
+    .filter((x): x is string => typeof x === "string");
+  if ("entries" in payload)
+    for (const entry of payload.entries)
+      copyFields.push(entry.question, entry.answer);
+  const originalCopy = copyFields.join(" ");
   const copy = ready
     ? originalCopy
     : originalCopy.replace(/\{\{[a-z_]+\}\}/g, "");
@@ -187,7 +199,9 @@ export function isSafeContentCopy(payload: LiveopsContent, ready = false) {
     !/<[!/?a-z]|admin\.mining\.putduk\.com|service_role|SUPABASE_SECRET_KEY|(?:^|[^a-z0-9])(?:V1|revision|policy|server|snapshot|internal|architecture)(?:[^a-z0-9]|$)|가상\s*채굴|virtual\s+mining/i.test(
       copy,
     ) &&
-    (!ready || !/\{\{|\}\}/.test(copy))
+    (!ready || !/\{\{|\}\}/.test(copy)) &&
+    (!("entries" in payload) ||
+      !/[a-z]:[\\/]|app_private|auth\.sessions/i.test(copy))
   );
 }
 export function hasValidContentWindow(payload: LiveopsContent, ready: boolean) {

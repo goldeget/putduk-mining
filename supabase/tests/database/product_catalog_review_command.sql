@@ -2,6 +2,17 @@ begin;
 create extension if not exists pgtap with schema extensions;
 select no_plan();
 
+select is((select count(*)::integer from pg_enum where enumtypid='public.product_category'::regtype),6,
+ 'backend category contract contains exactly six asset categories');
+select ok(exists(select 1 from pg_enum where enumtypid='public.product_category'::regtype and enumlabel='ETF'),
+ 'ETF has its own category instead of being relabeled as a stock or crypto');
+create temporary table original_catalog_seed_snapshot as
+ select app_private.funding_engine_digest(app_private.product_catalog_source_snapshot(
+ '20000000-0000-4000-8000-000000000001'::uuid)) as digest;
+select is((select count(*)::integer from public.mining_products
+ where catalog_version_id='20000000-0000-4000-8000-000000000001'),11,
+ 'original eleven product drafts remain present');
+
 -- New rollback-only catalog; this never approves the installed DRAFT seed.
 create temporary table catalog_ctx(admin_id uuid,viewer_id uuid,session_id uuid,catalog_id uuid,product_id uuid,publish_at timestamptz,
  source_digest text,preview jsonb,approval jsonb,publication jsonb);
@@ -21,6 +32,10 @@ insert into public.product_catalog_versions(id,version,snapshot_date,methodology
  '[{"name":"LBMA category identity","url":"https://www.lbma.org.uk/"}]',app_private.funding_engine_digest(jsonb_build_object('test_catalog',catalog_id)),'SYNTHETIC_LOCAL_TEST_ONLY' from catalog_ctx;
 insert into public.mining_products(id,catalog_version_id,world_id,code,slug,category,name_ko,name_en,description_ko,display_order)
  select product_id,catalog_id,(select id from public.asset_worlds order by id limit 1),'CAT_NEUTRAL','catalog-neutral','GOLD','시험 상품','Test Theme','상품 승인 명령의 로컬 시험입니다.',1 from catalog_ctx;
+-- Synthetic, rollback-only ETF. This is not a selected launch ETF or a scene.
+insert into public.mining_products(catalog_version_id,world_id,code,slug,category,name_ko,name_en,description_ko,display_order)
+ select catalog_id,(select id from public.asset_worlds order by id limit 1),'CAT_ETF_TEST','catalog-etf-test','ETF',
+ '격리 ETF 시험','Isolated ETF Test','ETF 서버 승인 계약을 검증하는 합성 자료입니다.',2 from catalog_ctx;
 update catalog_ctx set source_digest=app_private.funding_engine_digest(app_private.product_catalog_source_snapshot(catalog_id));
 grant select,update on catalog_ctx to service_role;
 do $$begin execute format('grant usage on schema %I to service_role',(select nspname from pg_namespace where oid=pg_my_temp_schema()));end$$;
@@ -109,6 +124,9 @@ update catalog_ctx set publication=pg_temp.catalog_command('PUBLISH','catalog-pu
 select lives_ok('set constraints all immediate','real service PUBLISH commit validator reads complete private seals');
 set constraints all deferred;
 select is((select publication->>'state' from catalog_ctx),'PUBLISHED','deterministic publish completes reviewed lifecycle');
+select is((select count(*)::integer from public.product_rule_versions r join public.mining_products p on p.id=r.product_id
+ where p.catalog_version_id=(select catalog_id from catalog_ctx) and p.category='ETF' and r.rule_payload='{}'),1,
+ 'ETF uses the existing approved neutral rule lifecycle without a second engine');
 reset role;
 select lives_ok($$select app_private.assert_published_product_catalog(catalog_id) from catalog_ctx$$,'publication verifies all three audit/event/proof receipts and exact rule plan');
 set local timezone='Asia/Seoul';
@@ -147,6 +165,9 @@ select throws_ok($$update public.mining_products set name_ko='변경' where id=(
 select throws_ok($$update public.product_catalog_versions set status='DRAFT' where id=(select catalog_id from catalog_ctx)$$,
  '55000','INVALID_CATALOG_STATUS_TRANSITION','existing catalog transition guard rejects published-to-draft downgrade');
 select is((select status::text from public.product_catalog_versions where id='20000000-0000-4000-8000-000000000001'),'DRAFT','installed seed remains DRAFT');
+select is(app_private.funding_engine_digest(app_private.product_catalog_source_snapshot(
+ '20000000-0000-4000-8000-000000000001'::uuid)),(select digest from original_catalog_seed_snapshot),
+ 'preview approval and publication of synthetic ETF leave original eleven drafts byte-equivalent');
 set constraints all immediate;
 select * from finish();
 rollback;

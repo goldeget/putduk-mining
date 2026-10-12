@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "repository": "goldeget/putduk-mining",
+  "reviewedSourceHead": "e220356be85a56e21e3469023b19b0c2fd4aebba",
+  "previousManifestPath": "tests/e2e/fixtures/principal-backend-first-191-source.json",
+  "previousManifestSha256": "899bf27e5def9a2c48af491eaa1d2115134f0efbd40581f919c6155e5bb86adb",
+  "previousMigrationCount": 191,
+  "migration_count": 193,
+  "additional_migration_count": 2,
+  "baselineRuntimeCount": 29,
+  "runtime_count": 30,
+  "additional_runtime_count": 1,
+  "sources": [
+    {
+      "kind": "migration",
+      "path": "supabase/migrations/20261011110300_backend_referral_nonmoney_bridge.sql",
+      "sha256": "3389a828e745afd23c13fbb4f80e449c2f4f0d976bd4ed5208f5827ffb5a4cd6"
+    },
+    {
+      "kind": "migration",
+      "path": "supabase/migrations/20261011112058_nonmoney_award_outbox_ack.sql",
+      "sha256": "96d977e238c2f40fcc244ab4c0e615cc878e348b01393e55f5d2a66069db647c"
+    }
+  ],
+  "reviewedRuntimeOverrides": [
+    {
+      "kind": "runtime",
+      "path": "workers/runner.mjs",
+      "previousSha256": "ec34f3e6c1d411d7922bc19fe3534cc2990868be54b0665e3fcd46195d3797a9",
+      "reviewedSha256": "4c5153a182955f7a22f1363e410353f4a948b939bb92cbe0269dd3096f6c5f2b"
+    }
+  ],
+  "additionalRuntimeSources": [
+    {
+      "kind": "runtime",
+      "path": "app/api/v1/wallet/summary/route.ts",
+      "sha256": "00c5e5dc02e1e8578062a8a717d8008764d9e1397a18569050024975ee2f9a0c"
+    }
+  ]
+}

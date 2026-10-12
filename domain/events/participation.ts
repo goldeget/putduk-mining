@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { safeNotificationDeepLink } from "@/domain/notifications/safe-deep-link";
+import { CONTENT_CTA_ROUTES } from "@/domain/content/contract";
 
 export const eventParticipationInputSchema = z.strictObject({
   eventId: z.uuid(),
@@ -45,10 +45,9 @@ export const memberEventContentSchema = z.object({
   participation_ko: z.string().min(1).max(2000),
   exclusion_ko: z.string().min(1).max(2000),
   cta_label: z.string().min(1).max(80),
-  cta_route: z
-    .string()
-    .refine((value) => safeNotificationDeepLink(value) !== null),
+  cta_route: z.enum(CONTENT_CTA_ROUTES),
   reward_mode: z.literal("NONE"),
+  participation_mode: z.enum(["GUIDE", "JOIN"]).optional(),
 });
 export function hasEventCommandOrigin(
   request: Request,
