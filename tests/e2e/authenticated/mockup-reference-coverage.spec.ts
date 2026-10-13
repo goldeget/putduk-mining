@@ -262,6 +262,33 @@ async function captureRoutes(
     testInfo.project.use.baseURL ??
       `http://127.0.0.1:${process.env.E2E_WEB_PORT ?? "3000"}`,
   ).origin;
+  const pendingWalletRequests = new Set<Request>();
+  const trackWalletRequest = (request: Request) => {
+    const url = new URL(request.url());
+    if (
+      url.origin === ownedOrigin &&
+      url.pathname === "/wallet" &&
+      request.method() === "GET" &&
+      request.resourceType() === "fetch" &&
+      !request.isNavigationRequest() &&
+      request.serviceWorker() === null &&
+      request.headers().rsc === "1"
+    )
+      pendingWalletRequests.add(request);
+  };
+  const finishWalletRequest = (request: Request) => {
+    pendingWalletRequests.delete(request);
+  };
+  const waitForWalletRender = async () => {
+    // URL and aria-current can commit before the Flight response closes.
+    // Finish the selected render before another keyboard navigation; failed
+    // requests retain the original fatal error handling below.
+    await expect.poll(() => pendingWalletRequests.size).toBe(0);
+    expect(errors).toEqual([]);
+  };
+  page.on("request", trackWalletRequest);
+  page.on("requestfinished", finishWalletRequest);
+  page.on("requestfailed", finishWalletRequest);
   const publicCapture = routes.includes("/login");
   let diagnosticSession: CDPSession | null = null;
   const workerFailed = (request: Request) => {
@@ -1112,6 +1139,7 @@ async function captureRoutes(
                 name: "거래내역",
                 exact: true,
               });
+              await waitForWalletRender();
               await principal.focus();
               await expect(principal).toBeFocused();
               await principal.press("Tab");
@@ -1123,6 +1151,7 @@ async function captureRoutes(
                   url.searchParams.get("view") === "profit",
               );
               await expect(profit).toHaveAttribute("aria-current", "page");
+              await waitForWalletRender();
               await expect(
                 ready
                   .getByRole("region", {
@@ -1150,6 +1179,7 @@ async function captureRoutes(
                   url.searchParams.get("view") === "history",
               );
               await expect(history).toHaveAttribute("aria-current", "page");
+              await waitForWalletRender();
               await expect(
                 ready.getByRole("region", {
                   name: "최근 거래 내역",
@@ -1168,6 +1198,7 @@ async function captureRoutes(
                   url.searchParams.get("view") === "principal",
               );
               await expect(principal).toHaveAttribute("aria-current", "page");
+              await waitForWalletRender();
               await principal.evaluate((element: HTMLAnchorElement) =>
                 element.blur(),
               );
@@ -1757,6 +1788,9 @@ async function captureRoutes(
     );
     expect(errors).toEqual([]);
   } finally {
+    page.off("request", trackWalletRequest);
+    page.off("requestfinished", finishWalletRequest);
+    page.off("requestfailed", finishWalletRequest);
     if (publicCapture) page.context().off("requestfailed", workerFailed);
     if (diagnosticSession) {
       // The page may already have closed on the original test failure.

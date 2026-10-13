@@ -1,6 +1,13 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  assertSameInventory,
+  balanceInventory,
+  parseAuthenticatedShardChoice,
+  type AuthenticatedTestEvidence,
+} from "../../../scripts/ci-authenticated-shards-201.mjs";
+
+import {
   CI_BUDGET_JOB,
   CI_BUDGET_MS,
   CI_CANCEL_AT_MS,
@@ -38,7 +45,7 @@ describe("whole-workflow CI acceptance", () => {
     const result = evaluateCiJobs(run, completed(), start + 960_000);
     expect(result.accepted).toBe(true);
     expect(result.elapsedMs).toBe(960_000);
-    expect(CI_REQUIRED_JOBS).toHaveLength(17);
+    expect(CI_REQUIRED_JOBS).toHaveLength(21);
   });
 
   it("rejects a green attempt that finishes over 20 minutes", () => {
@@ -137,7 +144,7 @@ describe("whole-workflow CI acceptance", () => {
 
   it("reserves cancellation time before the absolute deadline", () => {
     const jobs = completed().map((job) =>
-      job.name === "Authenticated product gates (8/8)"
+      job.name === "Authenticated product gates (12/12)"
         ? { ...job, status: "in_progress", conclusion: null }
         : job,
     );
@@ -220,7 +227,7 @@ describe("whole-workflow CI acceptance", () => {
         identity,
         report: () => {},
         request: async (path: string) =>
-          path.includes("/jobs?") ? { jobs: [], total_count: 18 } : run,
+          path.includes("/jobs?") ? { jobs: [], total_count: 22 } : run,
       }),
     ).rejects.toThrow(/incomplete/);
   });
@@ -265,7 +272,7 @@ describe("whole-workflow CI acceptance", () => {
           if (++reads === 1) throw new DOMException("fixture", "TimeoutError");
           return run;
         }
-        return { jobs: completed(), total_count: 18 };
+        return { jobs: completed(), total_count: 22 };
       },
     });
     expect(result.accepted).toBe(true);
@@ -362,7 +369,7 @@ describe("whole-workflow CI acceptance", () => {
             mutations.push(path);
             return null;
           }
-          if (path.includes("/jobs?")) return { jobs, total_count: 18 };
+          if (path.includes("/jobs?")) return { jobs, total_count: 22 };
           return ++runReads === 4 ? { ...run, run_attempt: 2 } : run;
         },
       }),
@@ -408,7 +415,7 @@ describe("whole-workflow CI acceptance", () => {
             mutations.push(path);
             return null;
           }
-          if (path.includes("/jobs?")) return { jobs, total_count: 18 };
+          if (path.includes("/jobs?")) return { jobs, total_count: 22 };
           return {
             ...run,
             status: ++runReads === 4 ? "completed" : "in_progress",
@@ -456,7 +463,7 @@ describe("whole-workflow CI acceptance", () => {
             cancelled = true;
             throw new DOMException("fixture", "TimeoutError");
           }
-          if (path.includes("/jobs?")) return { jobs, total_count: 18 };
+          if (path.includes("/jobs?")) return { jobs, total_count: 22 };
           return { ...run, status: cancelled ? "completed" : "in_progress" };
         },
       }),
@@ -480,5 +487,120 @@ describe("whole-workflow CI acceptance", () => {
           : "CiTransientApiError",
       });
     }
+  });
+});
+
+describe("twelve isolated authenticated CI lanes", () => {
+  const inventory: AuthenticatedTestEvidence[] = Array.from(
+    { length: 48 },
+    (_, index) => ({
+      key: JSON.stringify(["chromium", `case-${index}`]),
+      project: "chromium",
+      file: `tests/e2e/authenticated/fixture-${Math.floor(index / 2)}.spec.ts`,
+      expectedStatus: "passed",
+      status: "expected",
+      results: [{ status: "passed", duration: 1, retry: 0 }],
+    }),
+  );
+
+  it("requires all twelve exact lane names and twenty-one quality jobs", () => {
+    const auth = CI_REQUIRED_JOBS.filter((name) =>
+      name.startsWith("Authenticated product gates"),
+    );
+    expect(auth).toEqual(
+      Array.from(
+        { length: 12 },
+        (_, index) => `Authenticated product gates (${index + 1}/12)`,
+      ),
+    );
+    expect(CI_REQUIRED_JOBS).toHaveLength(21);
+    for (const name of auth) {
+      const result = evaluateCiJobs(
+        run,
+        completed().filter((job) => job.name !== name),
+        start + 960_000,
+      );
+      expect(result.accepted).toBe(false);
+      expect(result.pending).toContain(name);
+    }
+  });
+
+  it("selects the whole lane index including ten, eleven and twelve", () => {
+    expect(parseAuthenticatedShardChoice("--verify-only")).toBeNull();
+    for (let index = 1; index <= 12; index += 1) {
+      expect(parseAuthenticatedShardChoice(`${index}/12`)).toBe(index - 1);
+    }
+  });
+
+  it("rejects invalid, ambiguous and former eight-lane CLI choices", () => {
+    for (const choice of [
+      undefined,
+      null,
+      10,
+      "",
+      "0/12",
+      "13/12",
+      "01/12",
+      "10/8",
+      "1/8",
+      "10/012",
+      "10/12x",
+      "10.0/12",
+      "-1/12",
+      "--verify-only ",
+    ]) {
+      expect(() => parseAuthenticatedShardChoice(choice)).toThrow(/Usage:/);
+    }
+  });
+
+  it("keeps every test and project-file group in one of twelve disjoint lanes", () => {
+    const shards = balanceInventory(inventory) as Array<{
+      index: number;
+      tests: AuthenticatedTestEvidence[];
+      groups: Array<{ project: string; file: string }>;
+    }>;
+    expect(shards).toHaveLength(12);
+    expect(shards.map((shard) => shard.index)).toEqual(
+      Array.from({ length: 12 }, (_, index) => index + 1),
+    );
+    expect(shards.every((shard) => shard.tests.length > 0)).toBe(true);
+    const union = shards.flatMap((shard) => shard.tests);
+    assertSameInventory(inventory, union);
+    expect(new Set(union.map((test) => test.key)).size).toBe(48);
+    const groups = shards.flatMap((shard) =>
+      shard.groups.map((group) => JSON.stringify([group.project, group.file])),
+    );
+    expect(groups).toHaveLength(24);
+    expect(new Set(groups).size).toBe(24);
+    for (const shard of shards) {
+      for (const group of shard.groups) {
+        expect(
+          shard.tests.filter(
+            (test) =>
+              test.project === group.project && test.file === group.file,
+          ),
+        ).toHaveLength(2);
+      }
+    }
+    expect(() => assertSameInventory(inventory, union.slice(1))).toThrow(
+      /coverage mismatch/,
+    );
+    expect(() => assertSameInventory(inventory, [...union, union[0]!])).toThrow(
+      /coverage mismatch/,
+    );
+  });
+
+  it("rejects duplicate inventory, invalid lane totals and empty coverage", () => {
+    expect(() => balanceInventory([...inventory, inventory[0]!])).toThrow(
+      /coverage mismatch/,
+    );
+    for (const total of [0, 13, 1.5, Number.NaN]) {
+      expect(() => balanceInventory(inventory, total)).toThrow(
+        /Invalid authenticated shard plan/,
+      );
+    }
+    expect(() => balanceInventory([])).toThrow(
+      /Invalid authenticated shard plan/,
+    );
   });
 });

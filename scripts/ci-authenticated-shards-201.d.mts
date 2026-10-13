@@ -28,3 +28,4 @@ export function testListFor(
   rootDir: string,
   cwd?: string,
 ): string;
+export function parseAuthenticatedShardChoice(choice: unknown): number | null;

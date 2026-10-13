@@ -732,6 +732,12 @@
     font-size: 0.95rem;
     line-height: 1.75;
   }
+  .chat .composer textarea {
+    grid-column: 1 / -1;
+  }
+  .chat .composer footer button {
+    grid-row: 2;
+  }
   .composer {
     margin: 0.35rem 0.65rem 0;
     padding: 0.5rem;

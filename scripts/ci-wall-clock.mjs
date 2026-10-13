@@ -19,8 +19,8 @@ export const CI_REQUIRED_JOBS = Object.freeze([
   "Korean typography public gates",
   "Korean typography protected gates",
   ...Array.from(
-    { length: 8 },
-    (_, index) => `Authenticated product gates (${index + 1}/8)`,
+    { length: 12 },
+    (_, index) => `Authenticated product gates (${index + 1}/12)`,
   ),
 ]);
 
@@ -271,7 +271,7 @@ export async function monitorCi({
     if (evaluation.complete) {
       if (!evaluation.accepted) throw new Error(evaluation.problems.join("; "));
       report(
-        `[ci-budget] PASS: all 17 quality jobs complete in ${evaluation.elapsedMs}ms`,
+        `[ci-budget] PASS: all ${CI_REQUIRED_JOBS.length} quality jobs complete in ${evaluation.elapsedMs}ms`,
       );
       return evaluation;
     }
@@ -309,7 +309,7 @@ async function main() {
   if (process.env.GITHUB_STEP_SUMMARY) {
     appendFileSync(
       process.env.GITHUB_STEP_SUMMARY,
-      `All 17 quality jobs completed. Whole attempt: ${evaluation.elapsedMs}ms / ${CI_BUDGET_MS}ms. Queue, build dependencies and evidence uploads are included.\n`,
+      `All ${CI_REQUIRED_JOBS.length} quality jobs completed. Whole attempt: ${evaluation.elapsedMs}ms / ${CI_BUDGET_MS}ms. Queue, build dependencies and evidence uploads are included.\n`,
     );
   }
 }

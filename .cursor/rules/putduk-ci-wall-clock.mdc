@@ -17,17 +17,17 @@ alwaysApply: true
 ## 필수 hybrid 패턴 (`.github/workflows/ci.yml`)
 
 1. **`e2e-app-build`** — E2E 소비 job용 `pnpm build` 1회 (회원+운영자). `Application gates`의 일반 build 검증과 구분한다. artifact `e2e-next-production`: `.next`, `apps/admin/.next` (repo 상대 경로 유지).
-2. **`authenticated`** — `needs: [webserver-lifecycle, e2e-app-build]`, matrix **8-shard** 유지, shard마다 isolated `supabase start` + `db:reset`, artifact download 후 Playwright step에 **`E2E_NEXT_START=1`** (next start only).
+2. **`authenticated`** — `needs: [webserver-lifecycle, e2e-app-build]`, matrix **12-shard** (아래의 기록된 8→12 대체), shard마다 isolated `supabase start` + `db:reset`, artifact download 후 Playwright step에 **`E2E_NEXT_START=1`** (next start only).
 3. **`typography-protected`** — `needs: [e2e-app-build]`, 동일 artifact download, **`E2E_PREBUILT_APPS=1`** 로 `typography-protected-servers.mjs` 빌드 생략·next start only.
-4. **`ci-budget`** — 다른 job과 함께 시작해 정확한 repo/run/attempt/head와 필수 품질 job 17개를 확인한다. 18m30s에 미완료면 취소하고, 응답하지 않으면 force cancel한다. 종료 여유를 포함한 전체 20분 초과는 병합 불가다.
+4. **`ci-budget`** — 다른 job과 함께 시작해 정확한 repo/run/attempt/head와 필수 품질 job 21개를 확인한다. 18m30s에 미완료면 취소하고, 응답하지 않으면 force cancel한다. 종료 여유를 포함한 전체 20분 초과는 병합 불가다.
 5. authenticated step 18m / job 19m는 실패 실행의 상한이다. 개별 테스트 시간·실제 TOTP 대기·assertion·retry는 유지한다. 취소/timeout을 통과로 기록하지 않는다. 속도 개선은 서버 모드·공유 빌드·병렬화·캐시로 한다.
-6. authenticated scheduler는 현재 후보의 전체 목록을 8개 lane에 정확히 한 번씩 배분하며, `playwright-report/ci-shard-evidence/`의 목록·실행 증거로 확인한다. source/head/base와 run/attempt를 구분하고 dirty local tree를 exact commit 검증으로 확대하지 않는다.
+6. authenticated scheduler는 현재 후보의 전체 목록을 12개 lane에 정확히 한 번씩 배분하며, `playwright-report/ci-shard-evidence/`의 목록·실행 증거로 확인한다. source/head/base와 run/attempt를 구분하고 dirty local tree를 exact commit 검증으로 확대하지 않는다.
 7. worker는 실제 Vitest JSON 실행을 검사한 sanitized `test-results/worker/report.json`을 `worker-runtime`으로 반드시 업로드한다. missing/empty/stale/failed/skipped/todo 결과는 전체 worker gate 통과가 아니다.
 
 ## 금지 회귀 (에이전트·리뷰어 공통)
 
 - CI authenticated shard에서 **`next dev`** (`playwright.authenticated.config.ts` webServer, `E2E_NEXT_START` 미설정).
-- 8-shard matrix **제거·축소** without documented 대체 (단일 serial full-suite job 추가 포함).
+- 현재 12-shard matrix **제거·축소** without documented 대체 (단일 serial full-suite job 추가 포함).
 - shard/job마다 **전체 production build 중복** (공유 artifact 없이).
 - assertion 약화, `test.skip`/`test.only`, spec 삭제, **timeout만 줄여** green 만들기.
 - CI workflow 변경 전 **`E2E-AGENT-WORKFLOW.md` CI 섹션 + 본 rule** 미독.
@@ -46,3 +46,9 @@ alwaysApply: true
 
 - 로컬 focused E2E: `E2E_NEXT_START=1` 권장 (관리자 앱 동시 dev 컴파일 회피).
 - CI는 **항상** prebuilt artifact + `E2E_NEXT_START=1` — 로컬과 동일 서버 모드 유지.
+
+## 2026-10-14 기록된 8→12 대체
+
+R7 run38467268179/head01578의256 tests·97 project/file groups에서85그룹의관측합6252.317초, 준비wholeoffset최대320.120초를확인했다. 기존8lane hint842~845초와실제큰화면행렬의시간이달라 전체21분51초·11success/1failure/6cancelled로미수락이었다. 현재12개의독립Supabase runner로배분하고측정기반placement hints를갱신한다. 테스트는현재전체inventory를각각정확히한번실행하며file/project단위·실제TOTP·금융조건·workers1을유지한다.
+
+필수21quality+budget=22jobs, authenticated12+build/worker/public/protected/database=17artifacts. 이전8lane/18jobs/13artifacts는과거기준이며새후보의수락에는사용하지않는다. 전체1200초·18:30취소/force·missing/duplicate/skip拒否는유지한다. 모델상시간여유는실제CI통과증거가아니며새exacthead/run/attempt의전체종료로판정한다. 197보호209/native332는불변, 현재201scheduler만재심사해201source/browser-binding을갱신한다.

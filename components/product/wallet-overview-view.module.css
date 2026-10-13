@@ -425,7 +425,7 @@
   padding: 1rem 0.15rem;
 }
 .entryIcon {
-  grid-row: span 3;
+  grid-row: span 2;
   align-self: start;
   display: grid;
   place-items: center;
@@ -456,6 +456,7 @@
   color: var(--text-secondary);
 }
 .entryAmount {
+  grid-column: 1 / -1;
   color: var(--wallet-metal);
   font-weight: 700;
   font-size: 1rem;
@@ -683,6 +684,7 @@
     align-self: center;
   }
   .entryAmount {
+    grid-column: auto;
     text-align: end;
   }
   .ledgerList time {

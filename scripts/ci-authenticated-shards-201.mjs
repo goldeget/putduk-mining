@@ -13,36 +13,65 @@ import { collectCiSourceEvidence } from "./ci-source-evidence.mjs";
 import { assertBackend201BrowserCanonicalSources } from "./backend-successor-201-browser-source.mjs";
 
 // Scheduling hints only, NOT timeouts, product policy, or acceptance thresholds.
-// Admin hints are rounded project/file elapsed times from CI 37441515296,
-// job 112197234692. Reuse for mobile is an estimate. Unknown/new files are
-// always discovered and included; they get a per-test estimate, never omitted.
+// Rounded-up per-file observed project peaks from CI 38467268179 (R7).
+// Failed/partial observations and unstarted sibling projects are estimates only;
+// these hints do not establish a green runtime or the whole-run 20-minute gate.
+// Files with no R7 observation retain the existing per-test fallback estimate.
+// Unknown/new files are always discovered and included, never omitted.
 const TIMING_HINTS = {
-  "admin-assistant-read-draft.spec.ts": 12,
-  "admin-economy-policy.spec.ts": 32,
-  "admin-exceptions-product.spec.ts": 119,
-  "admin-exceptions-recon-ack.spec.ts": 60,
-  "admin-krw-browser-money.spec.ts": 124,
-  "admin-kyc-product.spec.ts": 105,
-  "admin-members-product.spec.ts": 14,
-  "admin-restrictions-safe-mode.spec.ts": 10,
-  "admin-session-totp.spec.ts": 6,
-  "admin-today.spec.ts": 2,
-  "admin-usdt-browser-money.spec.ts": 116,
-  "admin-withdrawal-step-up.spec.ts": 121,
-  // Rounded current local Chromium file durations from the 2026-10-06
-  // Phase 2 browser runs; other projects reuse these as estimates only.
-  "admin-assistant-context.spec.ts": 12,
-  "catalog-allocation.spec.ts": 155,
-  "ai-context-help.spec.ts": 30,
-  "mockup-reference-coverage.spec.ts": 85,
-  // All four freshness-fix cases passed in 441.622s on the 2026-10-07
-  // Cloud Chromium run, source-bound to 3d2b039; mobile estimate only.
-  "principal-withdrawal-product.spec.ts": 450,
-  // Conservative hint from the existing authenticated config's recovery note.
-  "withdrawal-p1-recovery.spec.ts": 480,
+  "admin-assistant-context.spec.ts": 10,
+  "admin-assistant-read-draft.spec.ts": 23,
+  "admin-economy-policy.spec.ts": 31,
+  "admin-exceptions-product.spec.ts": 142,
+  "admin-exceptions-recon-ack.spec.ts": 59,
+  "admin-krw-browser-money.spec.ts": 120,
+  "admin-kyc-product.spec.ts": 100,
+  "admin-members-product.spec.ts": 38,
+  "admin-restrictions-safe-mode.spec.ts": 32,
+  "admin-session-totp.spec.ts": 10,
+  "admin-today.spec.ts": 3,
+  "admin-usdt-browser-money.spec.ts": 120,
+  "admin-v7-operator-ux.spec.ts": 18,
+  "admin-withdrawal-step-up.spec.ts": 124,
+  "admin-withdrawals-product.spec.ts": 24,
+  "ai-context-help.spec.ts": 16,
+  "ai-product.spec.ts": 26,
+  "catalog-allocation.spec.ts": 262,
+  "catalog-materials.spec.ts": 204,
+  "deposit-product.spec.ts": 57,
+  "events-product.spec.ts": 23,
+  "first-krw-withdrawal.spec.ts": 14,
+  "first-usdt-withdrawal.spec.ts": 13,
+  "funded-home-typography.spec.ts": 117,
+  "home-catalog-materials.spec.ts": 389,
+  "home-start-product.spec.ts": 190,
+  "home-typography.spec.ts": 125,
+  "member-product-scene.spec.ts": 25,
+  "menu-product.spec.ts": 47,
+  "mining-product.spec.ts": 16,
+  "mockup-reference-coverage.spec.ts": 359,
+  "notifications-product.spec.ts": 24,
+  "operator-fixture-isolation.spec.ts": 2,
+  "principal-withdrawal-product.spec.ts": 446,
+  "products-catalog.spec.ts": 9,
+  "public-admin-boundary.spec.ts": 1,
+  "signup-reconstruction.spec.ts": 4,
+  "start-onboarding-eligibility.spec.ts": 17,
+  "success-visual-evidence.spec.ts": 20,
+  "support-channel-talk.spec.ts": 6,
+  "usdt-manual-full-payout-195.spec.ts": 5,
+  "usdt-manual-full-payout-197.spec.ts": 5,
+  "wallet-product.spec.ts": 14,
+  "welcome-withdrawal-error-copy.spec.ts": 18,
+  "withdrawal-destination-reauth.spec.ts": 122,
+  "withdrawal-hydration.spec.ts": 14,
+  "withdrawal-logical-idempotency.spec.ts": 25,
+  "withdrawal-negative-guards.spec.ts": 92,
+  "withdrawal-p1-recovery.spec.ts": 272,
+  "withdrawal-product.spec.ts": 47,
 };
 const CONFIG = "playwright.backend-browser-201.config.ts";
-const TOTAL = 8;
+const TOTAL = 12;
 const compare = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
 
 export function inventoryFromReport(report, cwd = process.cwd()) {
@@ -230,16 +259,24 @@ export function testListFor(shard, rootDir, cwd = process.cwd()) {
   );
 }
 
-async function main() {
-  const choice = process.argv[2];
-  if (
-    process.argv.length !== 3 ||
-    (choice !== "--verify-only" && !/^[1-8]\/8$/.test(choice ?? ""))
-  ) {
+export function parseAuthenticatedShardChoice(choice) {
+  if (choice === "--verify-only") return null;
+  if (typeof choice !== "string" || !/^(?:[1-9]|1[0-2])\/12$/.test(choice)) {
     throw new Error(
-      "Usage: node scripts/ci-authenticated-shards.mjs --verify-only | 1/8 ... 8/8",
+      "Usage: node scripts/ci-authenticated-shards-201.mjs --verify-only | 1/12 ... 12/12",
     );
   }
+  return Number(choice.split("/")[0]) - 1;
+}
+
+async function main() {
+  const choice = process.argv[2];
+  if (process.argv.length !== 3) {
+    throw new Error(
+      "Usage: node scripts/ci-authenticated-shards-201.mjs --verify-only | 1/12 ... 12/12",
+    );
+  }
+  const selectedIndex = parseAuthenticatedShardChoice(choice);
   // Reject an unreviewed source/context before creating evidence or spawning tests.
   const sourceBoundary = assertBackend201BrowserCanonicalSources();
   const source = { ...collectCiSourceEvidence(), sourceBoundary };
@@ -321,8 +358,7 @@ async function main() {
       path.join(evidence, "plan.json"),
       JSON.stringify(plan, null, 2) + "\n",
     );
-    const selected =
-      choice === "--verify-only" ? shards : [shards[Number(choice[0]) - 1]];
+    const selected = selectedIndex === null ? shards : [shards[selectedIndex]];
     const checked = [];
     for (const shard of selected) {
       const list = path.join(temporary, `shard-${shard.index}.txt`);

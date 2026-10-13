@@ -1029,7 +1029,7 @@ export function PutdukAiChat({
                 composing.current = false;
               }}
               maxLength={AI_QUESTION_MAX_CHARACTERS}
-              placeholder="궁금한 내용을 적어 주세요."
+              placeholder="질문 입력"
               disabled={!session.canSubmit}
               required
               rows={2}
