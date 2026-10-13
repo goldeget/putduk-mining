@@ -25,8 +25,8 @@ insert into public.admin_sessions(id,user_id,auth_session_id,session_fingerprint
 select admin_session,actor,auth_session::text,'putduk-native-recovery-fixture',clock_timestamp()+interval '30 minutes',clock_timestamp()+interval '2 hours' from recovery_admin_ctx;
 -- New contract setup only: use actual active Auth member sessions, no HTTP.
 insert into auth.sessions(id,user_id,created_at,updated_at,aal,not_after)
-select member_a,member_a,clock_timestamp(),clock_timestamp(),'aal1',clock_timestamp()+interval '2 hours' from recovery_admin_ctx
-union all select member_b,member_b,clock_timestamp(),clock_timestamp(),'aal1',clock_timestamp()+interval '2 hours' from recovery_admin_ctx;
+select member_a,member_a,clock_timestamp(),clock_timestamp(),'aal1'::auth.aal_level,clock_timestamp()+interval '2 hours' from recovery_admin_ctx
+union all select member_b,member_b,clock_timestamp(),clock_timestamp(),'aal1'::auth.aal_level,clock_timestamp()+interval '2 hours' from recovery_admin_ctx;
 
 grant select,update on recovery_admin_ctx to service_role;
 do $$begin execute format('grant usage on schema %I to service_role',(select nspname from pg_namespace where oid=pg_my_temp_schema()));end$$;
