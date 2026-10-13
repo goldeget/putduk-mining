@@ -14,6 +14,43 @@ import {
   loginAsMember,
 } from "./helpers/member-session";
 
+/** Read only the genuine response ACK; assertion output contains no transcript. */
+async function durableAnswerAck(response: Response) {
+  const summary = {
+    status: response.status(),
+    bodyAvailable: false,
+    doneCount: 0,
+    doneSaved: false,
+    conversationIdPresent: false,
+    assistantMessageIdPresent: false,
+  };
+  try {
+    const text = await response.text();
+    if (text.length > 65_536) return summary;
+    summary.bodyAvailable = true;
+    for (const line of text.split("\n")) {
+      if (!line.startsWith("data:")) continue;
+      let value: unknown;
+      try {
+        value = JSON.parse(line.slice(5));
+      } catch {
+        continue;
+      }
+      if (!value || typeof value !== "object" || Array.isArray(value)) continue;
+      const event = value as Record<string, unknown>;
+      if (event.type !== "done") continue;
+      summary.doneCount += 1;
+      summary.doneSaved = event.saved === true;
+      summary.conversationIdPresent = typeof event.conversationId === "string";
+      summary.assistantMessageIdPresent =
+        typeof event.assistantMessageId === "string";
+    }
+  } catch {
+    // A closed navigation/connection must fail the boolean ACK assertion.
+  }
+  return summary;
+}
+
 /** Bounded metadata only: no answer body, identifier, credential or URL query. */
 function observeHistoryRestoration(page: Page) {
   const records: Record<string, unknown>[] = [];
@@ -235,6 +272,14 @@ test("context suggestions, wide view, persisted help and real destination work w
         .getByRole("link", { name: "출금 안내", exact: true }),
     ).toHaveAttribute("href", "/wallet/withdraw");
     expect(submitted).toBe(1);
+    expect(await durableAnswerAck(await answered)).toEqual({
+      status: 200,
+      bodyAvailable: true,
+      doneCount: 1,
+      doneSaved: true,
+      conversationIdPresent: true,
+      assistantMessageIdPresent: true,
+    });
     await page.reload({ waitUntil: "domcontentloaded" });
     await expect(answer).toContainText("저장된 답변");
     const destination = answer

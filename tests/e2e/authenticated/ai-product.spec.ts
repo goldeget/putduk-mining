@@ -1,7 +1,7 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Page, type Response } from "@playwright/test";
 
 import {
   AI_CONVERSATION_CONTINUITY_COPY,
@@ -13,6 +13,43 @@ import {
   dismissGuidedQuestIfPresent,
   loginAsMember,
 } from "./helpers/member-session";
+
+/** Read only the genuine response ACK; assertion output contains no transcript. */
+async function durableAnswerAck(response: Response) {
+  const summary = {
+    status: response.status(),
+    bodyAvailable: false,
+    doneCount: 0,
+    doneSaved: false,
+    conversationIdPresent: false,
+    assistantMessageIdPresent: false,
+  };
+  try {
+    const text = await response.text();
+    if (text.length > 65_536) return summary;
+    summary.bodyAvailable = true;
+    for (const line of text.split("\n")) {
+      if (!line.startsWith("data:")) continue;
+      let value: unknown;
+      try {
+        value = JSON.parse(line.slice(5));
+      } catch {
+        continue;
+      }
+      if (!value || typeof value !== "object" || Array.isArray(value)) continue;
+      const event = value as Record<string, unknown>;
+      if (event.type !== "done") continue;
+      summary.doneCount += 1;
+      summary.doneSaved = event.saved === true;
+      summary.conversationIdPresent = typeof event.conversationId === "string";
+      summary.assistantMessageIdPresent =
+        typeof event.assistantMessageId === "string";
+    }
+  } catch {
+    // A closed navigation/connection must fail the boolean ACK assertion.
+  }
+  return summary;
+}
 
 const VIEWPORTS = [
   { height: 844, name: "390", width: 390 },
@@ -236,6 +273,15 @@ test("AI ownership, money denial, continuity, themes, and keyboard path", async 
       timeout: 30_000,
     },
   );
+
+  expect(await durableAnswerAck(staticResponse)).toEqual({
+    status: 200,
+    bodyAvailable: true,
+    doneCount: 1,
+    doneSaved: true,
+    conversationIdPresent: true,
+    assistantMessageIdPresent: true,
+  });
 
   // 계정 대화: 새로고침 뒤에도 이 계정의 답변이 다시 보여야 한다.
   await page.reload({ waitUntil: "domcontentloaded" });

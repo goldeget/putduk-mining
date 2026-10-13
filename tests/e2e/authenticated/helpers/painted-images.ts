@@ -8,6 +8,10 @@ export async function awaitPaintedImages(page: Page) {
         const images = [...document.images].filter((image) => {
           const box = image.getBoundingClientRect();
           return (
+            image.checkVisibility({
+              opacityProperty: true,
+              visibilityProperty: true,
+            }) &&
             box.width > 0 &&
             box.height > 0 &&
             box.bottom > 0 &&
@@ -44,10 +48,16 @@ export async function awaitPaintedImages(page: Page) {
       .filter((image) => {
         const box = image.getBoundingClientRect();
         return (
+          image.checkVisibility({
+            opacityProperty: true,
+            visibilityProperty: true,
+          }) &&
           box.width > 0 &&
           box.height > 0 &&
           box.bottom > 0 &&
-          box.top < innerHeight
+          box.top < innerHeight &&
+          box.right > 0 &&
+          box.left < innerWidth
         );
       })
       .map((image) => ({

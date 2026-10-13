@@ -60,4 +60,68 @@ begin
   return jsonb_build_object('subscribed',p_operation='REGISTER','operation',p_operation,'scope',v_scope,
     'authSessionId',p_auth_session_id,'receiptId',rid,'subscriptionId',sid);
 end;$$;
+
+-- Current compatibility closures and immutable scalar evidence comparisons.
+create or replace function app_private.assert_usdt_manual_full_payout(
+  p_withdrawal uuid, p_requested_krw bigint, p_fee_krw bigint,
+  p_network text, p_actual_usdt numeric, p_evidence jsonb
+) returns void language plpgsql immutable security invoker
+set search_path=pg_catalog as $$
+begin
+  if p_evidence is null then
+    raise exception using errcode='22023',message='USDT_MANUAL_FULL_PAYOUT_EVIDENCE_REQUIRED';
+  end if;
+  if jsonb_typeof(p_evidence) is distinct from 'object'
+    or p_evidence - array['version','basis','withdrawalId','requestedKrwAmount',
+      'actualUsdtAmount','network','feeKrw','fullPayoutConfirmed'] <> '{}'::jsonb
+    or p_evidence->'version' is distinct from '1'::jsonb
+    or p_evidence->'basis' is distinct from '"OPERATOR_MANUAL_FULL_PAYOUT"'::jsonb
+    or p_evidence->'fullPayoutConfirmed' is distinct from 'true'::jsonb
+    or p_evidence->'feeKrw' is distinct from '"0"'::jsonb
+    or jsonb_typeof(p_evidence->'requestedKrwAmount') is distinct from 'string'
+    or coalesce(p_evidence->>'requestedKrwAmount','') !~ '^[1-9][0-9]{0,18}$'
+    or jsonb_typeof(p_evidence->'actualUsdtAmount') is distinct from 'string'
+    or coalesce(p_evidence->>'actualUsdtAmount','') !~ '^(0|[1-9][0-9]{0,31})([.][0-9]{0,5}[1-9])?$'
+    or case when p_withdrawal::text is null
+      then p_evidence->'withdrawalId' is not null
+      else jsonb_typeof(p_evidence->'withdrawalId') is distinct from 'string'
+        or p_evidence->>'withdrawalId' is distinct from p_withdrawal::text
+      end
+    or case when p_network is null
+      then p_evidence->'network' is not null
+      else jsonb_typeof(p_evidence->'network') is distinct from 'string'
+        or p_evidence->>'network' is distinct from p_network
+      end then
+    raise exception using errcode='22023',message='USDT_MANUAL_FULL_PAYOUT_EVIDENCE_INVALID';
+  end if;
+  if p_withdrawal is null or p_requested_krw is null or p_requested_krw<=0
+    or p_fee_krw is distinct from 0
+    or p_evidence->>'requestedKrwAmount' is distinct from p_requested_krw::text then
+    raise exception using errcode='22023',message='USDT_MANUAL_FULL_PAYOUT_REQUEST_MISMATCH';
+  end if;
+  if p_network is null or p_network not in ('TRC20','ERC20','BEP20')
+    or p_actual_usdt is null or p_actual_usdt::text in ('NaN','Infinity','-Infinity')
+    or p_actual_usdt<=0 or scale(p_actual_usdt)>6
+    or (p_evidence->>'actualUsdtAmount')::numeric is distinct from p_actual_usdt then
+    raise exception using errcode='22023',message='USDT_MANUAL_FULL_PAYOUT_AMOUNT_MISMATCH';
+  end if;
+end;
+$$;
+
+create or replace function public.upsert_push_subscription(
+  p_user_id uuid,p_endpoint text,p_p256dh text,p_auth_secret text,p_expires_at timestamptz,p_user_agent text)
+returns uuid language plpgsql security invoker set search_path=pg_catalog as $$
+begin
+  -- Compatibility parameters remain named; this retired unbound command never writes.
+  perform p_user_id,p_endpoint,p_p256dh,p_auth_secret,p_expires_at,p_user_agent;
+  raise exception using errcode='42501',message='PUSH_SESSION_BINDING_REQUIRED';
+end;$$;
+create or replace function public.revoke_push_subscription(p_user_id uuid,p_endpoint text)
+returns boolean language plpgsql security invoker set search_path=pg_catalog as $$
+begin
+  -- Compatibility parameters remain named; this retired unbound command never writes.
+  perform p_user_id,p_endpoint;
+  raise exception using errcode='42501',message='PUSH_SESSION_BINDING_REQUIRED';
+end;$$;
+
 commit;

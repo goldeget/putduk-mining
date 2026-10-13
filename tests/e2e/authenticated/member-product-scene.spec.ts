@@ -138,10 +138,18 @@ test("L1 selected GPU art is responsive without fabricating session rewards", as
         browserHealth.serverErrors++;
     });
     await memberPage.goto("/mining");
-    await expect(
-      memberPage.locator('[data-member-scene-binding="confirmed-allocation"]'),
-    ).toHaveText("선택 상품 테마 · NVIDIA");
-    const stage = memberPage.locator('[data-scene-family="AI_GPU_COMPUTE"]');
+    const controlRoom = memberPage.getByRole("region", {
+      name: "현재 채굴 현황",
+      exact: true,
+    });
+    await expect(controlRoom).toHaveCount(1);
+    await expect(controlRoom).toBeVisible();
+    const binding = controlRoom.locator(
+      '[data-member-scene-binding="confirmed-allocation"]',
+    );
+    await expect(binding).toHaveCount(1);
+    await expect(binding).toHaveText("선택 상품 테마 · NVIDIA");
+    const stage = controlRoom.locator('[data-scene-family="AI_GPU_COMPUTE"]');
     await expect(stage).toHaveAttribute("data-scene-art", "ready");
     await expect(stage).toHaveAttribute("data-motion", "static");
     await expect(stage).toHaveAttribute("data-mining-running", "false");

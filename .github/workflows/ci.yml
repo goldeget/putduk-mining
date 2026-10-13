@@ -394,6 +394,7 @@ jobs:
         env:
           APP_ENV: test
           NEXT_PUBLIC_APP_ENV: test
+          NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:63421
           NEXT_PUBLIC_CHANNEL_TALK_PLUGIN_KEY: putduk-e2e-plugin-key
           CHANNEL_TALK_MEMBER_HASH_SECRET: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 

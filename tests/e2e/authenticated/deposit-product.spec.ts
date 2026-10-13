@@ -601,7 +601,13 @@ test("covers deposit layout, theme, focus, and reduced motion", async ({
 
       await page.setViewportSize({ height: 844, width: 390 });
       await selectDepositMethod(page, "bank");
-      await page.getByLabel("화면 테마").selectOption("system");
+      const themeControl = page.getByRole("combobox", {
+        name: "화면 테마",
+        exact: true,
+      });
+      await expect(themeControl).toHaveCount(1);
+      await expect(themeControl).toBeVisible();
+      await themeControl.selectOption("system");
       await expect(page.locator("html")).toHaveAttribute(
         "data-theme-preference",
         "system",

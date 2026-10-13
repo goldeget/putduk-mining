@@ -7,6 +7,7 @@ import {
   test,
   type Locator,
   type Page,
+  type Request,
   type TestInfo,
 } from "@playwright/test";
 
@@ -148,7 +149,24 @@ async function captureRoutes(
 ) {
   const records = [];
   const errors: string[] = [];
-  const diagnostics: { type: string; path: string; message: string }[] = [];
+  type CapturePhase = "prepare-next-capture" | "rendering" | "checking";
+  type RequestDiagnostic = {
+    method: string;
+    resourceType: string;
+    navigation: boolean;
+    prefetchHeader: boolean;
+    rscHeader: boolean;
+    phase: CapturePhase;
+    startedPhase?: CapturePhase | undefined;
+  };
+  let phase: CapturePhase = "rendering";
+  const requestPhases = new WeakMap<Request, CapturePhase>();
+  const diagnostics: {
+    type: string;
+    path: string;
+    message: string;
+    request?: RequestDiagnostic;
+  }[] = [];
   const safePath = (value: string) => {
     try {
       return new URL(value).pathname.replace(
@@ -174,9 +192,19 @@ async function captureRoutes(
       .replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi, "[email]")
       .replace(/[0-9a-f]{8}-[0-9a-f-]{27,}/gi, "[id]")
       .slice(0, 400);
-  const diagnostic = (type: string, path: string, message: string) => {
+  const diagnostic = (
+    type: string,
+    path: string,
+    message: string,
+    request?: RequestDiagnostic,
+  ) => {
     if (diagnostics.length < 60)
-      diagnostics.push({ type, path, message: safeMessage(message) });
+      diagnostics.push({
+        type,
+        path,
+        message: safeMessage(message),
+        ...(request ? { request } : {}),
+      });
   };
   const cancelledPrefetches: { path: string; error: string }[] = [];
   const ownedOrigin = new URL(
@@ -194,6 +222,7 @@ async function captureRoutes(
       );
     }
   });
+  page.on("request", (request) => requestPhases.set(request, phase));
   page.on("requestfailed", (request) => {
     const url = new URL(request.url());
     const error = request.failure()?.errorText ?? "unknown";
@@ -215,6 +244,15 @@ async function captureRoutes(
         `requestfailed:${request.resourceType()}`,
         safePath(request.url()),
         error,
+        {
+          method: request.method(),
+          resourceType: request.resourceType(),
+          navigation: request.isNavigationRequest(),
+          prefetchHeader: request.headers()["next-router-prefetch"] === "1",
+          rscHeader: request.headers().rsc === "1",
+          phase,
+          startedPhase: requestPhases.get(request),
+        },
       );
     }
   });
@@ -241,12 +279,16 @@ async function captureRoutes(
           : widths;
       for (const width of routeWidths) {
         for (const theme of themes) {
+          phase = "prepare-next-capture";
           await page.evaluate((value) => {
             localStorage.setItem("putduk-theme", value);
           }, theme);
           // Configure the next capture on a blank document. Resizing the previous
           // route starts responsive image requests that the immediate navigation
           // would cancel; retain strict failures for the actual rendered route.
+          // Let interaction-triggered requests settle before intentional teardown.
+          // This drain is a hypothesis until the next CI; failures stay fatal.
+          await page.waitForLoadState("networkidle");
           await page.goto("about:blank");
           await page.setViewportSize({
             width,
@@ -256,7 +298,9 @@ async function captureRoutes(
             colorScheme: theme,
             reducedMotion: "reduce",
           });
+          phase = "rendering";
           const response = await page.goto(route, { waitUntil: "networkidle" });
+          phase = "checking";
           expect(response?.status()).toBe(200);
           await expect(page).toHaveURL((url) => url.pathname === route);
           const main = page.getByRole("main");
