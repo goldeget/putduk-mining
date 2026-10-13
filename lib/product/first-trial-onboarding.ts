@@ -35,23 +35,25 @@ export function isFirstTrialOnboardingEligible(input: {
     input.trialReadFailed ||
     input.conversionReadFailed ||
     input.lifecycleReadFailed ||
-    !lifecycle ||
-    lifecycle.user_id !== ownerId ||
+    (lifecycle !== null && lifecycle.user_id !== ownerId) ||
     (trial !== null && trial.user_id !== ownerId) ||
     (trial !== null && trial.completed_at !== null) ||
     conversion !== null ||
-    lifecycle.first_funding_at !== null ||
-    lifecycle.welcome_withdrawal_completed_at !== null
+    (lifecycle !== null && lifecycle.first_funding_at !== null) ||
+    (lifecycle !== null && lifecycle.welcome_withdrawal_completed_at !== null)
   )
     return false;
 
-  // A successful empty snapshot is the existing not-started contract, but only
-  // the matching server SIGNED_UP lifecycle can admit that first visit.
+  // The current KRW-only bootstrap does not create a lifecycle row. Successful
+  // empty reads are distinct from failed reads: an absent lifecycle may admit
+  // the first trial, while its durable owner-scoped completion/conversion still
+  // closes guidance. No client preference can clear that server history.
   if (trial === null || trial.status === "READY")
-    return lifecycle.stage === "SIGNED_UP";
+    return lifecycle === null || lifecycle.stage === "SIGNED_UP";
   if (trial.status === "ACTIVE")
-    return ["SIGNED_UP", "TRIAL_STARTED", "FIRST_MINING"].includes(
-      lifecycle.stage,
+    return (
+      lifecycle === null ||
+      ["SIGNED_UP", "TRIAL_STARTED", "FIRST_MINING"].includes(lifecycle.stage)
     );
   // Includes COMPLETED/EXPIRED and every unknown/future server status.
   return false;

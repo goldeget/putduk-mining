@@ -41,7 +41,6 @@ export function UsdtSendForm({
     "network",
     "txHash",
     "actualUsdt",
-    "conversionEvidence",
     "sentAt",
   ]);
   const operationKey = useLogicalOperationKey("usdt_send");
@@ -78,15 +77,11 @@ export function UsdtSendForm({
         name="actualUsdt"
         placeholder="예: 35.5"
       />
-      <label className="operator-field">
-        <span>환산 증빙 (사용한 경우만)</span>
-        <textarea
-          maxLength={1000}
-          name="conversionEvidence"
-          placeholder="사용한 환산 근거만. 시세 API 값은 넣지 마세요."
-          rows={2}
-        />
-      </label>
+      <p className="panel-note">
+        원화 요청액과 등록된 네트워크는 서버 원본으로 확인합니다. 실제 송금한
+        USDT와 송금 시각을 입력하고 전액 지급 여부를 직접 확인하세요. 환율을
+        자동 계산하지 않습니다.
+      </p>
       <TextField
         defaultValue={formatKstDateTimeInput()}
         label="송금 시각(한국 시간)"
@@ -98,6 +93,12 @@ export function UsdtSendForm({
         label="KRW 잔액 기준 출금이며, 회원 USDT 잔액은 없습니다."
         name="confirmation"
         value="RECORD_USDT_SEND"
+      />
+      <ConfirmCheckbox
+        key={`full-payout-${review.revision}`}
+        label="요청한 원화 금액 전액을 수수료 없이 실제로 송금했습니다."
+        name="fullPayoutConfirmed"
+        value="true"
       />
       <StepUpTokenField
         key={`step-up-${review.revision}`}

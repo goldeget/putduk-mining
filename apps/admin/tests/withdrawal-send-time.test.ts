@@ -34,6 +34,7 @@ function form(method: "KRW" | "USDT", sentAt: string) {
     data.set("network", "TRC20");
     data.set("txHash", "transfer-hash-0123456789");
     data.set("actualUsdt", "5.5");
+    data.set("fullPayoutConfirmed", "true");
     data.set("confirmation", "RECORD_USDT_SEND");
   }
   return data;
@@ -65,7 +66,41 @@ describe("외부 송금 시각", () => {
       const rpc = vi.fn().mockResolvedValue({ data: withdrawal, error: null });
       service.mockReturnValue({
         rpc,
-        from() {
+        from(table: string) {
+          if (
+            table === "withdrawal_requests" ||
+            table === "withdrawal_destination_history"
+          ) {
+            const originalQuery = {
+              select: () => originalQuery,
+              eq: () => originalQuery,
+              maybeSingle: () =>
+                Promise.resolve({
+                  data: {
+                    id: withdrawal,
+                    user_id: owner,
+                    amount_atomic: "5000",
+                    fee_atomic: "0",
+                    currency: "KRW",
+                    destination_type: "USDT_ADDRESS",
+                    withdrawal_destination_id: owner,
+                  },
+                  error: null,
+                }),
+              limit: () =>
+                Promise.resolve({
+                  data: [
+                    {
+                      user_id: owner,
+                      destination_type: "USDT_ADDRESS",
+                      metadata: { network: "TRC20" },
+                    },
+                  ],
+                  error: null,
+                }),
+            };
+            return originalQuery;
+          }
           const query = {
             select: () => query,
             eq: () => query,

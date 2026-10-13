@@ -11,6 +11,23 @@ import {
 import { createLocalServiceRoleClient } from "./helpers/eligibility";
 import { grantNamedAdminRole } from "./helpers/admin-kyc-ui";
 
+const EXPECTED_OPERATOR_DESTINATIONS = [
+  ["/", "오늘의 퍼뜩"],
+  ["/assistant", "운영 도우미"],
+  ["/deposits/usdt", "USDT 입금 확인"],
+  ["/deposits/krw", "원화 입금 확인"],
+  ["/withdrawals/krw-bank", "계좌 출금"],
+  ["/withdrawals/usdt", "USDT 출금"],
+  ["/kyc", "본인 확인 검토"],
+  ["/exceptions", "정산·대사 예외"],
+  ["/restrictions", "제한·안전 모드"],
+  ["/economy", "채굴 정책"],
+  ["/catalog", "상품 검토"],
+  ["/members", "회원 종합 정보"],
+  ["/ai-conversations", "회원 AI 대화"],
+  ["/content", "이벤트·공지"],
+] as const;
+
 test.describe("admin Member 360 product states", () => {
   test("labelled navigation keeps member work above the fold across screen sizes", async ({
     page,
@@ -56,7 +73,15 @@ test.describe("admin Member 360 product states", () => {
           await menu.focus();
           await menu.press("Enter");
           await expect(menu).toHaveAttribute("aria-expanded", "true");
-          await expect(navigation.getByRole("link")).toHaveCount(12);
+          const links = navigation.getByRole("link");
+          await expect(links).toHaveCount(14);
+          for (const [
+            index,
+            [href, label],
+          ] of EXPECTED_OPERATOR_DESTINATIONS.entries()) {
+            await expect(links.nth(index)).toHaveAttribute("href", href);
+            await expect(links.nth(index)).toContainText(label);
+          }
           await expect(logout).toBeVisible();
           await expect(
             page.getByRole("button", { name: "모든 세션 종료" }),

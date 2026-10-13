@@ -2,6 +2,7 @@ import type { HomePrimaryAction } from "@/lib/product/home-start-display";
 import { formatAtomicAmount } from "@/domain/wallet/format-amount";
 import {
   formatMiningMicroKrw,
+  isInactiveZeroPrincipalDisplay,
   resolveFundedRuntimeStatus,
   type FundedRuntimeDisplay,
   type MiningServerDisplay,
@@ -56,8 +57,16 @@ export function resolveHomeWorldState(input: {
     (funded.available && fundedStatus === "UNKNOWN") ||
     (!funded.available && funded.funded_runtime !== undefined);
 
-  // A paid read takes priority. Only verified absence permits legacy/START fallback.
-  if (fundedUnknown || funded?.available) {
+  const inactiveZeroWithoutSession =
+    input.fundedUnavailable === false &&
+    input.miningUnavailable === false &&
+    (input.mining === null || input.mining === undefined) &&
+    funded !== null &&
+    funded !== undefined &&
+    isInactiveZeroPrincipalDisplay(funded);
+
+  // A paid read takes priority. Only verified absence or the strict inactive-zero DTO permits fallback.
+  if ((fundedUnknown || funded?.available) && !inactiveZeroWithoutSession) {
     const unavailable = input.fundedUnavailable;
     const partial = input.trialUnavailable || input.miningUnavailable;
     const sourceState = unavailable

@@ -185,6 +185,25 @@ export const miningServerDisplaySchema = z
 
 export type MiningServerDisplay = z.infer<typeof miningServerDisplaySchema>;
 
+/** Current inactive zero-principal display, not first-user or trial eligibility proof. */
+export function isInactiveZeroPrincipalDisplay(display: MiningServerDisplay) {
+  return (
+    display.available === true &&
+    display.funded_runtime === undefined &&
+    display.eligible_principal_micro_krw === "0" &&
+    display.tier_activated === false &&
+    display.tier_code === null &&
+    display.cycle_started_at === null &&
+    display.cycle_end === null &&
+    display.effective_capacity_micro_krw === null &&
+    display.remaining_capacity_micro_krw === "0" &&
+    display.used_capacity_micro_krw === "0" &&
+    display.speed_multiplier_bps === null &&
+    display.pending_micro_krw === "0" &&
+    display.retention_unconfirmed_micro_krw === "0"
+  );
+}
+
 export type MiningAmountRow = {
   label: string;
   value: string;

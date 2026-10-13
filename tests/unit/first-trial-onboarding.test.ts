@@ -103,10 +103,51 @@ describe("server-owned first trial guidance eligibility", () => {
       expect(isFirstTrialOnboardingEligible(input)).toBe(false);
     },
   );
-  it("requires a present, owned lifecycle and owned trial on account switches", () => {
-    expect(
-      isFirstTrialOnboardingEligible({ ...firstVisit(), lifecycle: null }),
-    ).toBe(false);
+  it.each([null, "READY", "ACTIVE"])(
+    "admits successful first %s reads without the lifecycle omitted by current bootstrap",
+    (status) => {
+      const input = firstVisit();
+      input.lifecycle = null;
+      input.trial = status === null ? null : { ...input.trial!, status };
+      expect(isFirstTrialOnboardingEligible(input)).toBe(true);
+    },
+  );
+  it.each(["COMPLETED", "EXPIRED", "UNKNOWN", "SETTLING", ""])(
+    "absent lifecycle never reopens %s trial history",
+    (status) => {
+      const input = firstVisit();
+      input.lifecycle = null;
+      input.trial!.status = status;
+      expect(isFirstTrialOnboardingEligible(input)).toBe(false);
+    },
+  );
+  it.each(["READY", "ACTIVE"])(
+    "absent lifecycle cannot override a canonical completion receipt with %s display status",
+    (status) => {
+      const input = firstVisit();
+      input.lifecycle = null;
+      input.trial!.status = status;
+      input.trial!.completed_at = "2026-10-13T00:00:00Z";
+      expect(isFirstTrialOnboardingEligible(input)).toBe(false);
+    },
+  );
+  it.each([
+    "trialReadFailed",
+    "conversionReadFailed",
+    "lifecycleReadFailed",
+  ] as const)("empty lifecycle still fails closed on %s", (field) => {
+    const input = firstVisit();
+    input.lifecycle = null;
+    input[field] = true;
+    expect(isFirstTrialOnboardingEligible(input)).toBe(false);
+  });
+  it("absent lifecycle cannot override any existing conversion", () => {
+    const input = firstVisit();
+    input.lifecycle = null;
+    input.conversion = { user_id: ownerId, status: "CONVERTED" };
+    expect(isFirstTrialOnboardingEligible(input)).toBe(false);
+  });
+  it("requires owned lifecycle when present and an owned trial on account switches", () => {
     expect(
       isFirstTrialOnboardingEligible({
         ...firstVisit(),
@@ -115,6 +156,8 @@ describe("server-owned first trial guidance eligibility", () => {
     ).toBe(false);
     const input = firstVisit();
     input.trial!.user_id = "another-owner";
+    expect(isFirstTrialOnboardingEligible(input)).toBe(false);
+    input.lifecycle = null;
     expect(isFirstTrialOnboardingEligible(input)).toBe(false);
   });
   it.each(["first_funding_at", "welcome_withdrawal_completed_at"] as const)(

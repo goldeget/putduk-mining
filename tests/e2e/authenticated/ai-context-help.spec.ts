@@ -23,7 +23,10 @@ test("context suggestions, wide view, persisted help and real destination work w
   await loginAsMember(page, member, "/wallet");
   await dismissGuidedQuestIfPresent(page);
   await page.getByRole("button", { name: "AI 도움", exact: true }).click();
-  const dialog = page.getByRole("dialog", { name: "퍼뜩 AI", exact: true });
+  const dialog = page.getByRole("dialog", {
+    name: "퍼뜩 AI 도우미",
+    exact: true,
+  });
   await expect(dialog).toBeVisible();
   await dialog.getByRole("button", { name: /^자산 화면 도움/ }).click();
   await expect(

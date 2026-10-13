@@ -13,6 +13,23 @@ import {
   grantAdminRole,
 } from "./helpers/admin-totp";
 
+const EXPECTED_OPERATOR_DESTINATIONS = [
+  ["/", "오늘의 퍼뜩"],
+  ["/assistant", "운영 도우미"],
+  ["/deposits/usdt", "USDT 입금 확인"],
+  ["/deposits/krw", "원화 입금 확인"],
+  ["/withdrawals/krw-bank", "계좌 출금"],
+  ["/withdrawals/usdt", "USDT 출금"],
+  ["/kyc", "본인 확인 검토"],
+  ["/exceptions", "정산·대사 예외"],
+  ["/restrictions", "제한·안전 모드"],
+  ["/economy", "채굴 정책"],
+  ["/catalog", "상품 검토"],
+  ["/members", "회원 종합 정보"],
+  ["/ai-conversations", "회원 AI 대화"],
+  ["/content", "이벤트·공지"],
+] as const;
+
 test("operator guide and Today search preserve readable, audited operation", async ({
   page,
 }, info) => {
@@ -115,9 +132,20 @@ test("operator guide and Today search preserve readable, audited operation", asy
     if (collapsible) await toggle.click();
     const navigation = page.getByRole("navigation", { name: "운영자 주 메뉴" });
     const links = navigation.getByRole("link");
-    await expect(links).toHaveCount(12);
+    await expect(links).toHaveCount(14);
+    for (const [
+      index,
+      [href, label],
+    ] of EXPECTED_OPERATOR_DESTINATIONS.entries()) {
+      await expect(links.nth(index)).toHaveAttribute("href", href);
+      await expect(links.nth(index)).toContainText(label);
+    }
     await links.first().focus();
-    for (let index = 0; index < 12; index++) {
+    for (
+      let index = 0;
+      index < EXPECTED_OPERATOR_DESTINATIONS.length;
+      index++
+    ) {
       if (index > 0) await page.keyboard.press("Tab");
       await expect(links.nth(index)).toBeFocused();
       await expect(links.nth(index)).toBeInViewport();
@@ -127,7 +155,7 @@ test("operator guide and Today search preserve readable, audited operation", asy
       await expect(toggle).toBeFocused();
       await expect(toggle).toHaveAttribute("aria-expanded", "false");
     }
-    navigationEvidence.push({ width, scale: 200, reachableLinks: 12 });
+    navigationEvidence.push({ width, scale: 200, reachableLinks: 14 });
   }
   await info.attach("admin-v7-navigation-keyboard", {
     body: JSON.stringify(navigationEvidence),

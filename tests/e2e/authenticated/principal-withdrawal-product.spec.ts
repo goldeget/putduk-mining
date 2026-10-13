@@ -226,10 +226,10 @@ async function recordAndFinalizeViaAdmin(
     // Established admin browser fixture quantity, manually recorded. No FX/quote or USDT wallet is inferred.
     await send.getByLabel("실제 보낸 USDT").fill("4.25");
     await send
-      .locator('textarea[name="conversionEvidence"]')
-      .fill(
-        "LOCAL TEST ONLY: 수동 송금 기록 검증. 실제 체인 송금이나 환율을 주장하지 않음.",
-      );
+      .getByRole("checkbox", {
+        name: "요청한 원화 금액 전액을 수수료 없이 실제로 송금했습니다.",
+      })
+      .check();
     await send.getByRole("checkbox", { name: /KRW 잔액 기준 출금/ }).check();
   }
   const before = nativeBoundaryEvidence(member.member.userId, id, "HOLD");

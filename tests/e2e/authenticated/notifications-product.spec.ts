@@ -13,6 +13,7 @@ import {
   seedMemberNotification,
   seedUnsafeRouteNotification,
 } from "./helpers/notification-fixtures";
+import { execLocalAdminSql } from "./helpers/local-db";
 
 const VIEWPORTS = [
   { height: 844, name: "390", width: 390 },
@@ -255,7 +256,15 @@ test("lists own notifications, marks read, hides expired and unsafe links", asyn
   const expiredRead = await page.request.post(
     `/api/v1/notifications/${expired.id}/read`,
   );
-  expect(expiredRead.status()).toBe(410);
+  // The restrictive expiry RLS hides the row from the member before API lookup.
+  expect(expiredRead.status()).toBe(404);
+  expect((await expiredRead.json()).error.code).toBe("NOTIFICATION_NOT_FOUND");
+  expect(
+    execLocalAdminSql(
+      "select count(*)::text from public.notifications where id=:'notification'::uuid and user_id=:'owner'::uuid and read_at is null",
+      { notification: expired.id, owner: owner.userId },
+    ),
+  ).toBe("1");
 
   const invalidRead = await page.request.post(
     "/api/v1/notifications/not-a-uuid/read",

@@ -96,8 +96,11 @@ export async function loginAsMember(
     const more = navigation.getByRole("link", { name: "더보기", exact: true });
     await expect(more).toBeVisible();
     await expect(more).toHaveAttribute("aria-current", "page");
-  } else if (nextPath.split(/[?#]/, 1)[0] === "/wallet") {
-    await expectSettledRoute(page, "/wallet");
+  } else if (
+    nextPath.split(/[?#]/, 1)[0] === "/wallet" ||
+    nextPath.startsWith("/wallet/")
+  ) {
+    await expectSettledRoute(page, nextPath.split(/[?#]/, 1)[0]!);
     const header = page.locator("[data-wallet-header]:visible");
     await expect(header).toHaveCount(1);
     const account = header.getByRole("link", {

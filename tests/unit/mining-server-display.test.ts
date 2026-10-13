@@ -6,6 +6,7 @@ import {
   emptyMiningServerDisplay,
   formatMiningMicroKrw,
   formatMiningSpeedBps,
+  isInactiveZeroPrincipalDisplay,
   parseMiningServerDisplay,
   presentMiningServerDisplay,
   resolveMiningServerDisplayRead,
@@ -275,5 +276,31 @@ describe("presentMiningServerDisplay", () => {
     expect(
       parseMiningServerDisplay(JSON.stringify(readyDisplay))?.tier_code,
     ).toBe("L1");
+  });
+});
+
+describe("shared inactive zero-principal display predicate", () => {
+  test("accepts only the parsed complete inactive DTO and does not mutate it", () => {
+    const raw = {
+      ...emptyMiningServerDisplay,
+      available: true,
+      eligible_principal_micro_krw: "0",
+      remaining_capacity_micro_krw: "0",
+      used_capacity_micro_krw: "0",
+      pending_micro_krw: "0",
+      retention_unconfirmed_micro_krw: "0",
+    };
+    const display = parseMiningServerDisplay(raw);
+    expect(display).toEqual(raw);
+    const before = structuredClone(display);
+    expect(isInactiveZeroPrincipalDisplay(display!)).toBe(true);
+    expect(display).toEqual(before);
+    expect(isInactiveZeroPrincipalDisplay(emptyMiningServerDisplay)).toBe(
+      false,
+    );
+    expect(isInactiveZeroPrincipalDisplay(readyDisplay)).toBe(false);
+    expect(
+      isInactiveZeroPrincipalDisplay({ ...display!, pending_micro_krw: "1" }),
+    ).toBe(false);
   });
 });

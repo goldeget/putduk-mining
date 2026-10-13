@@ -484,8 +484,10 @@ test("홈·START 반응형·테마 스크린샷을 남긴다", async ({ page }) 
             .click();
           await expect(page).toHaveURL(/\/wallet\?view=history$/);
           await expect(
-            page.getByRole("radio", { name: "거래내역", exact: true }),
-          ).toBeChecked();
+            page
+              .getByRole("navigation", { name: "지갑 내역 선택", exact: true })
+              .getByRole("link", { name: "거래내역", exact: true }),
+          ).toHaveAttribute("aria-current", "page");
           await expect(
             page.getByRole("heading", { name: "최근 거래 내역", exact: true }),
           ).toBeVisible();
@@ -497,13 +499,16 @@ test("홈·START 반응형·테마 스크린샷을 남긴다", async ({ page }) 
           await expect(page.locator("[data-ai-page]:visible")).toHaveCount(1);
           expect(submitted).toBe(0);
         } else {
+          // Home has a dedicated AI destination; the actual help dialog is on Wallet.
+          await page.goto("/wallet");
+          await expectSettledRoute(page, "/wallet");
           const launcher = page.getByRole("button", {
             name: "AI 도움",
             exact: true,
           });
           await launcher.click();
           const dialog = page.getByRole("dialog", {
-            name: "퍼뜩 AI",
+            name: "퍼뜩 AI 도우미",
             exact: true,
           });
           await expect(dialog).toBeVisible();

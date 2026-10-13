@@ -136,11 +136,14 @@ jobs:
       - name: Typecheck
         run: pnpm typecheck
 
+      - name: Stage exact original content fixtures
+        run: node scripts/stage-content-source-ci.mjs
+
       - name: Unit tests
         run: pnpm test
 
       - name: Verify authenticated scheduling invariants
-        run: node --test scripts/ci-authenticated-shards.test.mjs scripts/assert-worker-report.test.mjs scripts/e2e-admin-server.test.mjs scripts/backend-successor-201-contract.test.mjs scripts/backend-successor-201-native-contract.test.mjs
+        run: node --test scripts/ci-authenticated-shards.test.mjs scripts/assert-worker-report.test.mjs scripts/e2e-admin-server.test.mjs scripts/backend-successor-201-contract.test.mjs scripts/backend-successor-201-native-contract.test.mjs scripts/stage-content-source-ci.test.mjs
 
       - name: Verify every authenticated test is assigned exactly once
         env:
@@ -494,6 +497,8 @@ jobs:
         timeout-minutes: 18
         env:
           E2E_NEXT_START: "1"
+          E2E_WEB_PORT: "3000"
+          E2E_ADMIN_PORT: "3100"
           CI_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
           APP_ENV: test
           PUTDUK_BACKEND_SOURCE_REVISION: "201"
@@ -597,6 +602,13 @@ jobs:
       - name: Install Chromium
         run: pnpm exec playwright install --with-deps chromium
 
+      - name: Verify typography harness against rendered regression fixtures
+        run: pnpm exec playwright test --config playwright.typography-harness.config.ts --fail-on-flaky-tests
+
+      - name: Assert typography harness regression evidence
+        if: always()
+        run: node scripts/assert-typography-report.mjs test-results/typography-harness/report.json --passed 3 --screenshots 0 --hydration 0 --redact
+
       - name: Run public Korean typography
         timeout-minutes: 15
         run: pnpm exec playwright test --config playwright.typography.config.ts --fail-on-flaky-tests
@@ -611,6 +623,7 @@ jobs:
         with:
           name: typography-public
           path: |
+            test-results/typography-harness/report.json
             test-results/typography/report.json
             test-results/typography/**/*.png
           if-no-files-found: ignore

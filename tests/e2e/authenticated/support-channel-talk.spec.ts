@@ -180,6 +180,11 @@ test("member support identity does not leak across login", async ({ page }) => {
   const width = page.viewportSize()?.width ?? 1280;
   await page.goto("/home");
   await expect(page.locator("#putduk-support-launcher")).toHaveCount(0);
+  await expect(page.locator('[data-ui-ready="/home"]')).toBeVisible();
+  // Home uses its dedicated route layout; the floating AI control belongs to
+  // the wallet workspace, where its separation from navigation is required.
+  await page.goto("/wallet");
+  await expect(page.locator('[data-ui-ready="/wallet"]')).toBeVisible();
   const launcher = page.getByRole("button", { name: "AI 도움", exact: true });
   await expect(launcher).toBeVisible();
   if (width < 980) {
@@ -221,7 +226,10 @@ test("signed-in support route keeps Korean guidance and ready state", async ({
   const member = await createConfirmedMember("support-ready");
   await installSupportPort(page);
   await loginAsMember(page, member, "/home");
-  await expect(page.getByText("회원", { exact: true }).first()).toBeVisible();
+  await expect(page.locator('[data-ui-ready="/home"]')).toBeVisible();
+  await expect(
+    page.getByRole("region", { name: "오늘의 채굴 상태", exact: true }),
+  ).toBeVisible();
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/support");
   await waitForBoot(page, member.userId);

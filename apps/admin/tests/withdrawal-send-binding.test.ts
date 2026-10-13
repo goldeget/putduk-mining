@@ -53,7 +53,8 @@ function client(
   const rpc = vi.fn().mockResolvedValue({ data: sendId, error: rpcError });
   const filters: [string, unknown][] = [];
   let singleReads = 0;
-  const from = vi.fn(() => {
+  const from = vi.fn((table?: string) => {
+    if (!table) throw new Error("RECEIPT_TABLE_REQUIRED");
     const query = {
       select: () => query,
       eq: (field: string, value: unknown) => {
@@ -69,7 +70,48 @@ function client(
     };
     return query;
   });
-  vi.mocked(createAdminServiceClient).mockReturnValue({ rpc, from } as never);
+  // `from` continues to observe receipt lookups for the original assertions.
+  // New admission-only originals have their own fixture and are tested separately.
+  const original = {
+    id: withdrawal,
+    user_id: owner,
+    amount_atomic: "5000",
+    fee_atomic: "0",
+    currency: "KRW",
+    destination_type: "USDT_ADDRESS",
+    withdrawal_destination_id: otherWithdrawal,
+  };
+  const originals = {
+    select: () => originals,
+    eq: () => originals,
+    maybeSingle: () => Promise.resolve({ data: original, error: null }),
+    limit: () =>
+      Promise.resolve({
+        data: [
+          {
+            user_id: owner,
+            destination_type: "USDT_ADDRESS",
+            metadata: { network: "TRC20" },
+          },
+        ],
+        error: null,
+      }),
+  };
+  const dispatch = (table: string) => {
+    if (table === "withdrawal_destination_history") return originals;
+    if (table === "withdrawal_requests")
+      return {
+        select: (columns: string) =>
+          columns.startsWith("id,user_id,amount_atomic,")
+            ? originals
+            : from(table).select(),
+      };
+    return from(table);
+  };
+  vi.mocked(createAdminServiceClient).mockReturnValue({
+    rpc,
+    from: dispatch,
+  } as never);
   return { rpc, from, filters };
 }
 
@@ -88,6 +130,7 @@ function form(method: "KRW" | "USDT") {
     data.set("network", "TRC20");
     data.set("txHash", "transfer-hash-0123456789");
     data.set("actualUsdt", "5.5");
+    data.set("fullPayoutConfirmed", "true");
   }
   return data;
 }

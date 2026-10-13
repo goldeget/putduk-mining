@@ -227,8 +227,10 @@ test("AI ownership, money denial, continuity, themes, and keyboard path", async 
   );
   expect(staticResponse.ok()).toBe(true);
   await expect(
-    page.getByText(/실제 지갑과 완전 분리|분리/).first(),
-  ).toBeVisible({
+    page
+      .locator('.ai-message--assistant[data-message-state="complete"]')
+      .last(),
+  ).toContainText("체험 결과가 실제 지갑으로 자동 합쳐지지는 않아요.", {
     timeout: 30_000,
   });
 
@@ -236,8 +238,10 @@ test("AI ownership, money denial, continuity, themes, and keyboard path", async 
   await page.reload({ waitUntil: "domcontentloaded" });
   await openAi(page);
   await expect(
-    page.getByText(/실제 지갑과 완전 분리|분리/).first(),
-  ).toBeVisible({
+    page
+      .locator('.ai-message--assistant[data-message-state="complete"]')
+      .last(),
+  ).toContainText("체험 결과가 실제 지갑으로 자동 합쳐지지는 않아요.", {
     timeout: 30_000,
   });
   await expect(page.locator(".ai-message").first()).toBeVisible();

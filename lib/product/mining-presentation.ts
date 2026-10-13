@@ -5,6 +5,7 @@ import {
   type MiningStatusTone,
 } from "@/lib/product/mining-display";
 import {
+  isInactiveZeroPrincipalDisplay,
   presentMiningServerDisplay,
   resolveFundedRuntimeStatus,
   type MiningServerDisplay,
@@ -44,7 +45,15 @@ export function resolveMiningPresentation(input: {
 }): Presentation {
   if (input.displayError || !input.display) return unknown;
   const display = input.display;
-  if (display.available || display.funded_runtime !== undefined) {
+  const inactiveZeroWithoutSession =
+    input.displayError === false &&
+    input.sessionError === false &&
+    (input.session === null || input.session === undefined) &&
+    isInactiveZeroPrincipalDisplay(display);
+  if (
+    (display.available || display.funded_runtime !== undefined) &&
+    !inactiveZeroWithoutSession
+  ) {
     if (!display.available) return unknown;
     const runtime = display.funded_runtime;
     const status = resolveFundedRuntimeStatus(runtime);

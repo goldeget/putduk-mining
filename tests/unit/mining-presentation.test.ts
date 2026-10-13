@@ -61,6 +61,25 @@ function funded(
 }
 
 const legacy = { status: "NORMAL", world_name_ko: "코리아" };
+
+/** Exact successful no-activation zero DTO from the canonical public SQL reader. */
+function inactiveZeroDisplay(): MiningServerDisplay {
+  return {
+    available: true,
+    eligible_principal_micro_krw: "0",
+    tier_code: null,
+    tier_activated: false,
+    cycle_started_at: null,
+    cycle_end: null,
+    effective_capacity_micro_krw: null,
+    remaining_capacity_micro_krw: "0",
+    used_capacity_micro_krw: "0",
+    speed_multiplier_bps: null,
+    pending_micro_krw: "0",
+    retention_unconfirmed_micro_krw: "0",
+  };
+}
+
 const resolve = (
   display: MiningServerDisplay | null,
   session = legacy,
@@ -70,6 +89,132 @@ const resolve = (
   resolveMiningPresentation({ display, session, displayError, sessionError });
 
 describe("mining reference presentation source boundary", () => {
+  for (const session of [null, undefined]) {
+    it(`shows current inactive zero display with a successful ${String(session)} session read`, () => {
+      const rawDisplay = inactiveZeroDisplay();
+      const display = parseMiningServerDisplay(rawDisplay);
+      expect(display).not.toBeNull();
+      expect(display).toEqual(rawDisplay);
+      const before = JSON.stringify(display);
+      expect(
+        resolveMiningPresentation({
+          display,
+          displayError: false,
+          session,
+          sessionError: false,
+        }),
+      ).toEqual({
+        source: "empty",
+        running: false,
+        label: "시작 전",
+        title: "첫 월드에서 채굴을 시작해 보세요",
+        lead: "PUTDUK START로 첫 채굴을 시작해 보세요.",
+        tone: "neutral",
+        action: "start",
+      });
+      expect(JSON.stringify(display)).toBe(before);
+    });
+  }
+
+  for (const [field, value] of [
+    ["eligible_principal_micro_krw", "1"],
+    ["eligible_principal_micro_krw", null],
+    ["tier_activated", true],
+    ["tier_code", "L1"],
+    ["cycle_started_at", "2026-10-06T00:00:00.000000Z"],
+    ["cycle_end", "2026-10-07T00:00:00.000000Z"],
+    ["effective_capacity_micro_krw", "0"],
+    ["remaining_capacity_micro_krw", "1"],
+    ["used_capacity_micro_krw", "1"],
+    ["speed_multiplier_bps", "0"],
+    ["pending_micro_krw", "1"],
+    ["retention_unconfirmed_micro_krw", "1"],
+  ] as const) {
+    it(`keeps ${field}=${String(value)} outside the inactive-zero exception`, () => {
+      expect(
+        resolveMiningPresentation({
+          display: parseMiningServerDisplay({
+            ...inactiveZeroDisplay(),
+            [field]: value,
+          }),
+          displayError: false,
+          session: null,
+          sessionError: false,
+        }),
+      ).toMatchObject({ source: "unknown", running: false, action: "reload" });
+    });
+  }
+
+  for (const field of Object.keys(inactiveZeroDisplay())) {
+    for (const variant of ["missing", "undefined"] as const) {
+      it(`rejects ${variant} ${field} instead of treating it as an exact zero/null fact`, () => {
+        const raw: Record<string, unknown> = { ...inactiveZeroDisplay() };
+        if (variant === "missing") delete raw[field];
+        else raw[field] = undefined;
+        expect(parseMiningServerDisplay(raw)).toBeNull();
+        expect(
+          resolveMiningPresentation({
+            display: parseMiningServerDisplay(raw),
+            displayError: false,
+            session: null,
+            sessionError: false,
+          }),
+        ).toMatchObject({ source: "unknown", running: false });
+      });
+    }
+  }
+
+  it("does not reuse the zero exception across read errors or an existing legacy session", () => {
+    for (const context of [
+      { displayError: true, sessionError: false, session: null },
+      { displayError: false, sessionError: true, session: null },
+      { displayError: false, sessionError: false, session: legacy },
+      {
+        displayError: false,
+        sessionError: false,
+        session: { status: "STOPPED" },
+      },
+    ]) {
+      expect(
+        resolveMiningPresentation({
+          display: inactiveZeroDisplay(),
+          ...context,
+        }),
+      ).toMatchObject({ source: "unknown", running: false, action: "reload" });
+    }
+  });
+
+  it("retains paid runtime authority even when the outer zero facts are supplied", () => {
+    const current = funded();
+    expect(
+      resolveMiningPresentation({
+        display: {
+          ...inactiveZeroDisplay(),
+          funded_runtime: current.funded_runtime,
+        },
+        displayError: false,
+        session: null,
+        sessionError: false,
+      }),
+    ).toMatchObject({ source: "funded", running: true, action: "allocation" });
+    const receipt = Object.fromEntries(
+      Object.entries(current.funded_runtime!).filter(
+        ([key]) => !["status", "stop_reason", "speed"].includes(key),
+      ),
+    );
+    expect(
+      resolveMiningPresentation({
+        display: parseMiningServerDisplay({
+          ...inactiveZeroDisplay(),
+          funded_runtime: { ...receipt, schema_version: 1 },
+        }),
+        displayError: false,
+        session: null,
+        sessionError: false,
+      }),
+    ).toMatchObject({ source: "unknown", running: false, action: "reload" });
+  });
+
   it("prioritizes authoritative funded ACTIVE even when legacy is stopped or failed", () => {
     expect(
       resolve(

@@ -1059,6 +1059,7 @@ input:focus-visible {
     display: block;
   }
   .control-rail {
+    flex-direction: row;
     position: static;
     height: auto;
     overflow-y: visible;

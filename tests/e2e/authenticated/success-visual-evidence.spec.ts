@@ -118,7 +118,9 @@ async function captureSuccess(
           level: 1,
           exact: true,
         })
-      : page.getByText(input.ready).first();
+      : input.route === "home"
+        ? page.getByRole("region", { name: "오늘의 채굴 상태", exact: true })
+        : page.getByText(input.ready).first();
   await expect(ready).toBeVisible({
     timeout: 60_000,
   });
@@ -168,7 +170,7 @@ test.describe("authenticated success visual evidence", () => {
       {
         route: "home",
         url: "/home",
-        ready: "오늘의 채굴 상태를 확인해요.",
+        ready: "오늘의 채굴 상태",
       },
       {
         route: "start",

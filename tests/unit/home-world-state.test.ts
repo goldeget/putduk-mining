@@ -472,3 +472,205 @@ describe("Home server funding facts", () => {
     );
   });
 });
+
+describe("Home strict inactive-zero server display compatibility", () => {
+  const inactiveZero = {
+    ...emptyMiningServerDisplay,
+    available: true,
+    eligible_principal_micro_krw: "0",
+    remaining_capacity_micro_krw: "0",
+    used_capacity_micro_krw: "0",
+    pending_micro_krw: "0",
+    retention_unconfirmed_micro_krw: "0",
+  } satisfies MiningServerDisplay;
+
+  it.each([null, undefined])(
+    "uses the parsed current zero DTO only after a successful empty mining read (%s)",
+    (mining) => {
+      const display = parseMiningServerDisplay(JSON.stringify(inactiveZero));
+      expect(display).toEqual(inactiveZero);
+      const before = structuredClone(display);
+      const state = resolveHomeWorldState({
+        ...emptyReads,
+        fundedDisplay: display,
+        mining,
+      });
+      expect(state).toMatchObject({
+        sourceState: "loaded",
+        needsRequery: false,
+        running: false,
+        notStarted: true,
+      });
+      expect(state.primary).toEqual({ href: "/start", label: "첫 채굴 시작" });
+      expect(display).toEqual(before);
+    },
+  );
+
+  it.each(["READY", "ACTIVE", "COMPLETED", "EXPIRED"])(
+    "preserves confirmed START %s with the parsed current zero DTO",
+    (status) => {
+      const display = parseMiningServerDisplay(inactiveZero);
+      expect(display).not.toBeNull();
+      const state = resolveHomeWorldState({
+        ...emptyReads,
+        fundedDisplay: display,
+        trial: { status },
+      });
+      expect(state.needsRequery).toBe(false);
+      expect(state.trialStatusKnown).toBe(true);
+      expect(state.running).toBe(status === "ACTIVE");
+      expect(state.primary.href).toBe("/start");
+      expect(state.notStarted).toBe(false);
+    },
+  );
+
+  for (const field of Object.keys(inactiveZero)) {
+    for (const variant of ["missing", "undefined"] as const) {
+      it(`keeps ${variant} ${field} unknown after the real DTO parser`, () => {
+        const raw: Record<string, unknown> = { ...inactiveZero };
+        if (variant === "missing") delete raw[field];
+        else raw[field] = undefined;
+        const display = parseMiningServerDisplay(raw);
+        expect(display).toBeNull();
+        const state = resolveHomeWorldState({
+          ...emptyReads,
+          fundedDisplay: display,
+          trial: { status: "ACTIVE" },
+        });
+        expect(state).toMatchObject({
+          running: false,
+          needsRequery: true,
+          notStarted: false,
+          sourceState: "unknown",
+        });
+        expect(state.primary.href).toBe("/home");
+      });
+    }
+  }
+
+  it.each([
+    { field: "eligible_principal_micro_krw", value: "1" },
+    { field: "tier_code", value: "L1" },
+    { field: "tier_activated", value: true },
+    { field: "cycle_started_at", value: "2026-10-14T00:00:00.000Z" },
+    { field: "cycle_end", value: "2026-11-13T00:00:00.000Z" },
+    { field: "effective_capacity_micro_krw", value: "1" },
+    { field: "remaining_capacity_micro_krw", value: "1" },
+    { field: "used_capacity_micro_krw", value: "1" },
+    { field: "speed_multiplier_bps", value: "1" },
+    { field: "pending_micro_krw", value: "1" },
+    { field: "retention_unconfirmed_micro_krw", value: "1" },
+  ])(
+    "does not call $field=$value an inactive-zero principal",
+    ({ field, value }) => {
+      const display = parseMiningServerDisplay({
+        ...inactiveZero,
+        [field]: value,
+      });
+      expect(display).not.toBeNull();
+      const state = resolveHomeWorldState({
+        ...emptyReads,
+        fundedDisplay: display,
+        trial: { status: "ACTIVE" },
+      });
+      expect(state).toMatchObject({
+        running: false,
+        needsRequery: true,
+        notStarted: false,
+      });
+      expect(state.primary.href).toBe("/home");
+    },
+  );
+
+  it.each([
+    { fundedUnavailable: true, miningUnavailable: false, mining: null },
+    { fundedUnavailable: false, miningUnavailable: true, mining: null },
+    {
+      fundedUnavailable: false,
+      miningUnavailable: false,
+      mining: { status: "NORMAL" },
+    },
+    {
+      fundedUnavailable: false,
+      miningUnavailable: false,
+      mining: { status: "STOPPED" },
+    },
+    {
+      fundedUnavailable: false,
+      miningUnavailable: false,
+      mining: { status: "FUTURE_STATE" },
+    },
+  ])(
+    "does not infer empty mining across a read failure or existing session %j",
+    (context) => {
+      const state = resolveHomeWorldState({
+        ...emptyReads,
+        fundedDisplay: parseMiningServerDisplay(inactiveZero),
+        trial: { status: "ACTIVE" },
+        ...context,
+      });
+      expect(state).toMatchObject({
+        running: false,
+        needsRequery: true,
+        notStarted: false,
+      });
+      expect(state.primary.href).toBe("/home");
+    },
+  );
+
+  it("keeps failed or future trial facts unknown after the exact-zero exception", () => {
+    const display = parseMiningServerDisplay(inactiveZero);
+    for (const trialRead of [
+      { trial: { status: "ACTIVE" }, trialUnavailable: true },
+      { trial: { status: "FUTURE_STATE" }, trialUnavailable: false },
+    ]) {
+      const state = resolveHomeWorldState({
+        ...emptyReads,
+        fundedDisplay: display,
+        ...trialRead,
+      });
+      expect(state).toMatchObject({
+        running: false,
+        needsRequery: true,
+        notStarted: false,
+        trialStatusKnown: false,
+      });
+      expect(state.primary.href).toBe("/home");
+    }
+  });
+
+  it("preserves runtime priority and rejects unknown runtime revisions instead of treating them as absent", () => {
+    const active = parseMiningServerDisplay({
+      ...inactiveZero,
+      funded_runtime: activeReceipt,
+    });
+    expect(active).not.toBeNull();
+    expect(
+      resolveHomeWorldState({ ...emptyReads, fundedDisplay: active }),
+    ).toMatchObject({ running: true, needsRequery: false, notStarted: false });
+    const legacy = parseMiningServerDisplay({
+      ...inactiveZero,
+      funded_runtime: acceptedReceipt,
+    });
+    expect(legacy).not.toBeNull();
+    expect(
+      resolveHomeWorldState({
+        ...emptyReads,
+        fundedDisplay: legacy,
+        trial: { status: "ACTIVE" },
+      }),
+    ).toMatchObject({ running: false, needsRequery: true });
+    const future = parseMiningServerDisplay({
+      ...inactiveZero,
+      funded_runtime: { ...activeReceipt, schema_version: 99 },
+    });
+    expect(future).toBeNull();
+    expect(
+      resolveHomeWorldState({
+        ...emptyReads,
+        fundedDisplay: future,
+        trial: { status: "ACTIVE" },
+      }),
+    ).toMatchObject({ running: false, needsRequery: true });
+  });
+});

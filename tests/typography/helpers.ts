@@ -89,6 +89,16 @@ async function readTypographyAudit(page: Page): Promise<TypographyAudit> {
       ) {
         return false;
       }
+      // Closed details use a UA content-visibility boundary. A nonzero rect
+      // alone does not prove that their descendants are actually painted.
+      if (
+        !element.checkVisibility({
+          opacityProperty: true,
+          visibilityProperty: true,
+        })
+      ) {
+        return false;
+      }
       const style = getComputedStyle(element);
       if (
         style.display === "none" ||
@@ -253,6 +263,153 @@ async function readTypographyAudit(page: Page): Promise<TypographyAudit> {
   });
 }
 
+/** Exercise rendered lazy images without waiting forever on hidden content. */
+export async function settleRenderedTypographyImages(page: Page) {
+  const scrollState = await page.evaluateHandle(() => ({
+    windowX: window.scrollX,
+    windowY: window.scrollY,
+    elements: Array.from(document.querySelectorAll<HTMLElement>("*"))
+      .filter(
+        (element) =>
+          element.scrollHeight > element.clientHeight ||
+          element.scrollWidth > element.clientWidth,
+      )
+      .map((element) => ({
+        element,
+        top: element.scrollTop,
+        left: element.scrollLeft,
+      })),
+  }));
+  try {
+    for (const image of await page.locator("img").all()) {
+      const painted = await image.evaluate(
+        (element) =>
+          element.checkVisibility({
+            opacityProperty: true,
+            visibilityProperty: true,
+          }) &&
+          element.getBoundingClientRect().width > 0 &&
+          element.getBoundingClientRect().height > 0,
+      );
+      if (!painted) continue;
+      await image.scrollIntoViewIfNeeded();
+      await expect
+        .poll(
+          () =>
+            image.evaluate(
+              (element) =>
+                element instanceof HTMLImageElement &&
+                element.complete &&
+                element.naturalWidth > 0,
+            ),
+          {
+            message: "rendered image must load before typography capture",
+            timeout: 5_000,
+          },
+        )
+        .toBe(true);
+      await image.evaluate(async (element) => {
+        if (!(element instanceof HTMLImageElement))
+          throw new Error("TYPOGRAPHY_IMAGE_ELEMENT_REQUIRED");
+        let timer: ReturnType<typeof setTimeout> | undefined;
+        try {
+          await Promise.race([
+            element.decode(),
+            new Promise<never>((_, reject) => {
+              timer = setTimeout(
+                () => reject(new Error("TYPOGRAPHY_IMAGE_DECODE_DEADLINE")),
+                5_000,
+              );
+            }),
+          ]);
+        } finally {
+          if (timer !== undefined) clearTimeout(timer);
+        }
+      });
+    }
+  } finally {
+    await scrollState.evaluate((state) => {
+      for (const saved of state.elements) {
+        saved.element.scrollTo({
+          top: saved.top,
+          left: saved.left,
+          behavior: "instant",
+        });
+      }
+      window.scrollTo({
+        top: state.windowY,
+        left: state.windowX,
+        behavior: "instant",
+      });
+    });
+    await scrollState.dispose();
+  }
+  await page.evaluate(
+    () =>
+      new Promise<void>((resolve) =>
+        requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+      ),
+  );
+}
+
+/** The closed subtree is not a visual pass: inspect the real opened help too. */
+export async function assertOpenedAiHelpTypography(
+  page: Page,
+  testInfo?: TestInfo,
+) {
+  const details = page.locator('details[aria-label="현재 화면 도움"]');
+  await expect(details).toHaveCount(1);
+  const wasOpen = await details.evaluate(
+    (element) => element instanceof HTMLDetailsElement && element.open,
+  );
+  const summary = details.locator(":scope > summary");
+  if (!wasOpen) await summary.click();
+  try {
+    await expect(details).toHaveAttribute("open", "");
+    const actions = details.getByRole("navigation", {
+      name: "이 화면 안내",
+      exact: true,
+    });
+    await expect(actions).toBeVisible();
+    const links = actions.getByRole("link");
+    expect(await links.count()).toBeGreaterThan(0);
+    const metrics = [];
+    for (const link of await links.all()) {
+      await expect(link).toBeVisible();
+      await expect(link).toHaveAccessibleName(/\S/);
+      const metric = await link.evaluate((element) => {
+        const css = getComputedStyle(element),
+          box = element.getBoundingClientRect();
+        return {
+          text: element.textContent,
+          width: box.width,
+          height: box.height,
+          wordBreak: css.wordBreak,
+          overflowWrap: css.overflowWrap,
+        };
+      });
+      metrics.push(metric);
+      expect(
+        metric.height,
+        "AI help destination retains a 44px touch target",
+      ).toBeGreaterThanOrEqual(44);
+    }
+    if (testInfo)
+      await testInfo.attach("ai-open-help-computed-layout", {
+        body: JSON.stringify(metrics),
+        contentType: "application/json",
+      });
+    await assertTypographyClean(page, "ai-open-help", testInfo);
+    await assertVisibleControlsNamed(page);
+    await assertUniqueDocumentIds(page);
+  } finally {
+    if (!wasOpen) {
+      await summary.click();
+      await expect(details).not.toHaveAttribute("open", "");
+    }
+  }
+}
+
 export async function installTypographyTheme(
   page: Page,
   theme: TypographyTheme,
@@ -329,16 +486,7 @@ export async function auditTypographyRoute(input: {
       document.documentElement.style.fontSize = `${scale * 100}%`;
     }
   }, textScale);
-  await input.page.evaluate(async () => {
-    await Promise.all(
-      Array.from(document.images).map((image) =>
-        image.decode().catch(() => undefined),
-      ),
-    );
-    await new Promise<void>((resolve) =>
-      requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
-    );
-  });
+  await settleRenderedTypographyImages(input.page);
 
   const name = evidenceName({
     routeName: input.routeName,
@@ -495,6 +643,9 @@ export async function auditTypographyRoute(input: {
     result.koreanBreaks,
     `${input.routeName} ${input.viewport.label}px ${input.theme}: Korean token split across lines`,
   ).toEqual([]);
+  if (input.pathname === "/ai") {
+    await assertOpenedAiHelpTypography(input.page, input.testInfo);
+  }
 }
 
 /** 현재 페이지 타이포 청결도만 검사한다(전역 매트릭스 카운트에 포함되지 않음). */

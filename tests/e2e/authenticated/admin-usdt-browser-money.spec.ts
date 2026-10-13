@@ -83,8 +83,10 @@ test.describe("admin browser USDT withdrawal", () => {
     await sendForm.getByLabel("거래 해시").fill(txHash);
     await sendForm.getByLabel("실제 보낸 USDT").fill(OPERATOR_ENTERED_USDT);
     await sendForm
-      .locator('textarea[name="conversionEvidence"]')
-      .fill("수동 송금 증빙. 시세 API를 쓰지 않았다.");
+      .getByRole("checkbox", {
+        name: "요청한 원화 금액 전액을 수수료 없이 실제로 송금했습니다.",
+      })
+      .check();
     await sendForm
       .getByRole("checkbox", { name: /KRW 잔액 기준 출금/ })
       .check();
@@ -98,6 +100,9 @@ test.describe("admin browser USDT withdrawal", () => {
 
     await sendForm.getByLabel("거래 해시").fill(`${txHash}b`);
     await expectEditedReviewInvalidated(sendForm);
+    await expect(
+      sendForm.locator('input[name="fullPayoutConfirmed"]'),
+    ).not.toBeChecked();
     await expect(sendForm.getByRole("status")).toContainText(
       "입력이 바뀌었습니다. 내용을 다시 확인해 주세요.",
     );
@@ -123,6 +128,7 @@ test.describe("admin browser USDT withdrawal", () => {
     await sendForm
       .getByRole("checkbox", { name: /KRW 잔액 기준 출금/ })
       .check();
+    await sendForm.locator('input[name="fullPayoutConfirmed"]').check();
     await confirmOperatorStepUp(sendForm, secret);
     await sendForm.getByRole("button", { name: "USDT 외부 송금 기록" }).click();
     await expect(sendForm.getByRole("status")).toContainText(
@@ -135,8 +141,15 @@ test.describe("admin browser USDT withdrawal", () => {
     expect(String(sends[0]?.actual_usdt_amount)).toContain(
       OPERATOR_ENTERED_USDT,
     );
-    expect(sends[0]?.conversion_evidence).toMatchObject({
-      note: "수동 송금 증빙. 시세 API를 쓰지 않았다.",
+    expect(sends[0]?.conversion_evidence).toEqual({
+      version: 1,
+      basis: "OPERATOR_MANUAL_FULL_PAYOUT",
+      withdrawalId,
+      requestedKrwAmount: String(held!.amount_atomic),
+      actualUsdtAmount: OPERATOR_ENTERED_USDT,
+      network: "TRC20",
+      feeKrw: "0",
+      fullPayoutConfirmed: true,
     });
 
     await adminPage.reload();

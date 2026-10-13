@@ -156,7 +156,11 @@ test("menu hub, account, and settings cover states and navigation", async ({
   await expect(eventsLink).toBeVisible();
   await expect(eventsLink).toHaveAttribute("href", "/events");
   const headerNotificationLink = page
-    .locator("header.product-header")
+    .locator(
+      (page.viewportSize()?.width ?? 1280) >= 980
+        ? "[data-menu-header]:visible"
+        : '[data-ui-ready="/menu"] > header [data-menu-mobile-tools="true"]:visible',
+    )
     .getByRole("link", { name: "알림 센터", exact: true });
   const menuNotificationLink = menuNav.locator('a[href="/notifications"]');
   await expect(menuNav.getByRole("link", { name: /내 정보/ })).toBeVisible();
@@ -288,6 +292,9 @@ test("logout failure query shows recovery without ending the session", async ({
   await expect(
     page.getByRole("button", { name: "이 기기에서 로그아웃" }),
   ).toBeVisible();
-  await expect(page.getByText("회원", { exact: true }).first()).toBeVisible();
+  await expect(page.locator('[data-ui-ready="/menu/account"]')).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "이 기기에서 로그아웃", exact: true }),
+  ).toBeEnabled();
   expect(hydration).toEqual([]);
 });

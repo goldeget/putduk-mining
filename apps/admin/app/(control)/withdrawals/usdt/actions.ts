@@ -11,6 +11,11 @@ import {
 import { ADMIN_COMMAND_FAMILIES } from "@/lib/auth/command-families";
 import { createAdminServiceClient } from "@/lib/supabase/service";
 import { parseKstDateTimeInput } from "@/lib/time/kst-input";
+import {
+  manualUsdtPayoutFailure,
+  normalizeManualUsdtAmount,
+  parseManualUsdtFullPayoutEvidence,
+} from "@/lib/withdrawals/usdt-manual-payout-contract";
 
 const recordSchema = z.object({
   withdrawalId: z.uuid(),
@@ -25,7 +30,7 @@ const recordSchema = z.object({
     .trim()
     .regex(/^[0-9]+(\.[0-9]{1,6})?$/)
     .refine((value) => /[1-9]/.test(value)),
-  conversionEvidence: z.string().trim().max(1000).optional(),
+  fullPayoutConfirmed: z.literal("true"),
   sentAt: z.string().trim().min(1),
   confirmation: z.literal("RECORD_USDT_SEND"),
 });
@@ -53,13 +58,12 @@ export async function recordUsdtExternalSendAction(
 ): Promise<CommandActionResult> {
   const prepared = prepareMoneyAttempt(formData);
   if (!prepared.ok) return prepared.result;
-  const conversionRaw = String(formData.get("conversionEvidence") ?? "").trim();
   const parsed = recordSchema.safeParse({
     withdrawalId: formData.get("withdrawalId"),
     network: formData.get("network"),
     txHash: formData.get("txHash"),
     actualUsdt: formData.get("actualUsdt"),
-    conversionEvidence: conversionRaw || undefined,
+    fullPayoutConfirmed: formData.get("fullPayoutConfirmed"),
     sentAt: formData.get("sentAt"),
     confirmation: formData.get("confirmation"),
   });
@@ -86,18 +90,104 @@ export async function recordUsdtExternalSendAction(
   );
   if (!access.ok) return access.result;
 
-  const conversionEvidence = parsed.data.conversionEvidence
-    ? { note: parsed.data.conversionEvidence }
-    : null;
-
   const service = createAdminServiceClient();
+  // Hidden fields and free-form notes cannot establish the requested KRW amount.
+  const original = await service
+    .from("withdrawal_requests")
+    .select(
+      "id,user_id,amount_atomic,fee_atomic,currency,destination_type,withdrawal_destination_id",
+    )
+    .eq("id", parsed.data.withdrawalId)
+    .maybeSingle();
+  const originalSchema = z.object({
+    id: z.uuid(),
+    user_id: z.uuid(),
+    amount_atomic: z.union([
+      z.string().regex(/^[1-9][0-9]{0,18}$/),
+      z.number().int().positive().max(Number.MAX_SAFE_INTEGER),
+    ]),
+    fee_atomic: z.union([z.literal(0), z.literal("0")]),
+    currency: z.literal("KRW"),
+    destination_type: z.literal("USDT_ADDRESS"),
+    withdrawal_destination_id: z.uuid(),
+  });
+  const request = originalSchema.safeParse(original.data);
+  const unavailable: CommandActionResult = {
+    ok: false,
+    code: "USDT_MANUAL_FULL_PAYOUT_REQUEST_MISMATCH",
+    message:
+      "원화 출금 요청 원본을 확인하지 못했습니다. 다시 송금하지 말고 기존 요청을 확인해 주세요.",
+  };
+  if (
+    original.error ||
+    !request.success ||
+    request.data.id !== parsed.data.withdrawalId
+  )
+    return unavailable;
+  const history = await service
+    .from("withdrawal_destination_history")
+    .select("user_id,destination_type,metadata")
+    .eq("destination_id", request.data.withdrawal_destination_id)
+    .eq("action", "REGISTERED")
+    .limit(2);
+  const registered = z
+    .object({
+      user_id: z.uuid(),
+      destination_type: z.literal("USDT_ADDRESS"),
+      metadata: z.object({ network: z.enum(["TRC20", "ERC20", "BEP20"]) }),
+    })
+    .safeParse(history.data?.[0]);
+  if (
+    history.error ||
+    history.data?.length !== 1 ||
+    !registered.success ||
+    registered.data.user_id !== request.data.user_id
+  ) {
+    return {
+      ok: false,
+      ...manualUsdtPayoutFailure("USDT_DESTINATION_NETWORK_ORIGINAL_REQUIRED")!,
+    };
+  }
+  if (registered.data.metadata.network !== parsed.data.network) {
+    return {
+      ok: false,
+      ...manualUsdtPayoutFailure("USDT_SEND_NETWORK_MISMATCH")!,
+    };
+  }
+  const actualUsdtAmount = normalizeManualUsdtAmount(parsed.data.actualUsdt);
+  if (!actualUsdtAmount)
+    return {
+      ok: false,
+      code: "INVALID_INPUT",
+      message: "실제 USDT 송금액을 확인해 주세요.",
+    };
+  const requestedKrwAmount = String(request.data.amount_atomic);
+  const conversionEvidence = parseManualUsdtFullPayoutEvidence(
+    {
+      version: 1,
+      basis: "OPERATOR_MANUAL_FULL_PAYOUT",
+      withdrawalId: request.data.id,
+      requestedKrwAmount,
+      actualUsdtAmount,
+      network: registered.data.metadata.network,
+      feeKrw: "0",
+      fullPayoutConfirmed: parsed.data.fullPayoutConfirmed === "true",
+    },
+    {
+      withdrawalId: request.data.id,
+      requestedKrwAmount,
+      actualUsdtAmount,
+      network: registered.data.metadata.network,
+    },
+  );
+  if (!conversionEvidence) return unavailable;
   const { data: sendId, error } = await service.rpc(
     "record_usdt_external_send",
     {
       p_withdrawal_id: parsed.data.withdrawalId,
       p_network: parsed.data.network,
       p_tx_hash: parsed.data.txHash,
-      p_actual_usdt_amount: parsed.data.actualUsdt,
+      p_actual_usdt_amount: actualUsdtAmount,
       p_conversion_evidence: conversionEvidence,
       p_actor: access.principal.userId,
       p_sent_at: sentAt,
@@ -119,6 +209,8 @@ export async function recordUsdtExternalSendAction(
           "기록된 송금과 입력 내용이 다릅니다. 다시 송금하지 말고 기존 기록을 확인해 주세요.",
       };
     }
+    const manualFailure = manualUsdtPayoutFailure(error.message);
+    if (manualFailure) return { ok: false, ...manualFailure };
     return mapRpcFailure(error.message, "USDT 송금 기록을 남기지 못했습니다.");
   }
   const unconfirmed: CommandActionResult = {

@@ -17,6 +17,7 @@ import {
   finalizeWithdrawalLedger,
   recordUsdtExternalSend,
 } from "./helpers/operator-commands";
+import { manual195Evidence } from "./helpers/usdt-manual-195-fixture";
 
 test.describe("first USDT_ADDRESS welcome withdrawal", () => {
   test.beforeAll(() => {
@@ -57,6 +58,13 @@ test.describe("first USDT_ADDRESS welcome withdrawal", () => {
     const sendKey = `ws05-usdt-send-${held!.id}`;
     const sentAt = new Date().toISOString();
     const txHash = `0xws05manual${held!.id.replaceAll("-", "").slice(0, 40)}`;
+    const conversionEvidence = manual195Evidence({
+      withdrawalId: held!.id,
+      requestedKrwAmount: String(held!.amount_atomic),
+      actualUsdtAmount: "3.85",
+      network: "TRC20",
+      fullPayoutConfirmed: true,
+    });
     const sendId = await recordUsdtExternalSend({
       actorId: operator.userId,
       withdrawalId: held!.id,
@@ -64,10 +72,7 @@ test.describe("first USDT_ADDRESS welcome withdrawal", () => {
       txHash,
       // Operator-entered evidence only — not an exchange API quote.
       actualUsdtAmount: "3.85",
-      conversionEvidence: {
-        source: "manual_operator_record",
-        krw_atomic: String(WELCOME_CAP_KRW),
-      },
+      conversionEvidence,
       idempotencyKey: sendKey,
       sentAt,
     });
@@ -79,10 +84,7 @@ test.describe("first USDT_ADDRESS welcome withdrawal", () => {
       network: "TRC20",
       txHash,
       actualUsdtAmount: "3.85",
-      conversionEvidence: {
-        source: "manual_operator_record",
-        krw_atomic: String(WELCOME_CAP_KRW),
-      },
+      conversionEvidence,
       idempotencyKey: `${sendKey}-second`,
       sentAt,
     });
@@ -98,10 +100,7 @@ test.describe("first USDT_ADDRESS welcome withdrawal", () => {
         network: "TRC20",
         txHash: `${txHash}b`,
         actualUsdtAmount: "3.85",
-        conversionEvidence: {
-          source: "manual_operator_record",
-          krw_atomic: String(WELCOME_CAP_KRW),
-        },
+        conversionEvidence,
         idempotencyKey: `${sendKey}-changed-payload`,
         sentAt,
       }),
@@ -116,9 +115,7 @@ test.describe("first USDT_ADDRESS welcome withdrawal", () => {
     expect(sendRow?.network).toBe("TRC20");
     expect(sendRow?.tx_hash).toBe(txHash);
     expect(String(sendRow?.actual_usdt_amount)).toContain("3.85");
-    expect(sendRow?.conversion_evidence).toMatchObject({
-      source: "manual_operator_record",
-    });
+    expect(sendRow?.conversion_evidence).toEqual(conversionEvidence);
 
     const finalizeKey = `ws05-finalize-usdt-${held!.id}`;
     await finalizeWithdrawalLedger({
