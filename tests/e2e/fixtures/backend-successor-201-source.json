@@ -2962,7 +2962,7 @@
     "supabase/migrations/20261012140511_kyc_durable_receipts_evidence_attestation.sql": "074bcab73e2b386364f73f5e4cee7091cc91b089f9c6ae1aec16950dcecfd94c",
     "supabase/migrations/20261012171020_member_notice_cta_projection.sql": "1531033d1b591e3edb5164f9f4678bbc7ccfa31ad7b01ba94a8d414f78e86297",
     "supabase/migrations/20261012182820_member_push_endpoint_epoch_binding.sql": "792dd07cc7bbe5e657c12fcb3f26f99afabaa24d459e02718a0d904d7b9925c7",
-    "supabase/migrations/20261013080342_member_push_logout_binding_variable_fix.sql": "f099b68cf51698c6e86498587327c91c98dc2709a99e510b739dee90466d6285",
+    "supabase/migrations/20261013080342_member_push_logout_binding_variable_fix.sql": "32b4077e77e39c209fd4977d63fc78fcdebb118ef20703b2dba20f5ffc2fcc94",
     "supabase/seed/000_no_production_rules.sql": "5c827f684656671885f1f74e9a98d05a9b7f917f8326260a0177ba28954b28d3",
     "supabase/snippets/resolve_disposable_dblink_host.sql": "fc05305f2bbbdb70fa822475d510d5a6571f97111d63509e06af94da5a469da9",
     "supabase/test-fixtures/default-funding-allocation-original.sql": "4e18eb90824aa7ced3ac6fab2b5de44cbdd2c00f734db2ed0568ba869cdfc8bd",
@@ -4938,8 +4938,8 @@
     },
     {
       "path": "supabase/migrations/20261013080342_member_push_logout_binding_variable_fix.sql",
-      "sourceSha256": "f099b68cf51698c6e86498587327c91c98dc2709a99e510b739dee90466d6285",
-      "derivativeSha256": "f099b68cf51698c6e86498587327c91c98dc2709a99e510b739dee90466d6285",
+      "sourceSha256": "32b4077e77e39c209fd4977d63fc78fcdebb118ef20703b2dba20f5ffc2fcc94",
+      "derivativeSha256": "32b4077e77e39c209fd4977d63fc78fcdebb118ef20703b2dba20f5ffc2fcc94",
       "changes": [],
       "reverseExact": true
     },

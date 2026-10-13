@@ -82,16 +82,16 @@ begin
     or coalesce(p_evidence->>'requestedKrwAmount','') !~ '^[1-9][0-9]{0,18}$'
     or jsonb_typeof(p_evidence->'actualUsdtAmount') is distinct from 'string'
     or coalesce(p_evidence->>'actualUsdtAmount','') !~ '^(0|[1-9][0-9]{0,31})([.][0-9]{0,5}[1-9])?$'
-    or case when p_withdrawal::text is null
+    or (case when p_withdrawal::text is null
       then p_evidence->'withdrawalId' is not null
       else jsonb_typeof(p_evidence->'withdrawalId') is distinct from 'string'
         or p_evidence->>'withdrawalId' is distinct from p_withdrawal::text
-      end
-    or case when p_network is null
+      end)
+    or (case when p_network is null
       then p_evidence->'network' is not null
       else jsonb_typeof(p_evidence->'network') is distinct from 'string'
         or p_evidence->>'network' is distinct from p_network
-      end then
+      end) then
     raise exception using errcode='22023',message='USDT_MANUAL_FULL_PAYOUT_EVIDENCE_INVALID';
   end if;
   if p_withdrawal is null or p_requested_krw is null or p_requested_krw<=0
