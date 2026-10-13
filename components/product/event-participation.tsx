@@ -1,4 +1,6 @@
 "use client";
+import { FeedbackMessage } from "@/components/ui/feedback-message";
+
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { eventParticipationReceiptSchema } from "@/domain/events/participation";
@@ -100,9 +102,9 @@ export function EventParticipation({
                 : "이벤트 참여"}
       </button>
       {message ? (
-        <p role="status" aria-live="polite">
+        <FeedbackMessage role="status" aria-live="polite">
           {message}
-        </p>
+        </FeedbackMessage>
       ) : null}
     </div>
   );

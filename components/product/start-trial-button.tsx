@@ -1,4 +1,5 @@
 "use client";
+import { FeedbackMessage } from "@/components/ui/feedback-message";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -77,12 +78,12 @@ export function StartTrialButton() {
         <PutdukIcon name="arrow-right" size={18} />
       </button>
       {message ? (
-        <p
+        <FeedbackMessage
           className={`${styles.actionMessage} ${styles.actionMessageError}`}
           role="status"
         >
           {message}
-        </p>
+        </FeedbackMessage>
       ) : null}
     </div>
   );

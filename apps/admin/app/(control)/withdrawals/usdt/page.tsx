@@ -1,4 +1,5 @@
-﻿import Link from "next/link";
+import { FeedbackMessage } from "../../../../../../components/ui/feedback-message";
+import Link from "next/link";
 import type { Route } from "next";
 
 import {
@@ -194,9 +195,9 @@ export default async function UsdtWithdrawalQueuePage() {
               </dl>
 
               {cryptoReadFailed ? (
-                <p className="panel-note" role="alert">
+                <FeedbackMessage className="panel-note" role="alert">
                   송금 기록 확인 후 작업할 수 있습니다.
-                </p>
+                </FeedbackMessage>
               ) : sent ? (
                 <UsdtFinalizeForm withdrawalId={row.id} />
               ) : (

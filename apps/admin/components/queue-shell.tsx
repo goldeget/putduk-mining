@@ -1,3 +1,4 @@
+import { FeedbackMessage } from "../../../components/ui/feedback-message";
 import Link from "next/link";
 import type { Route } from "next";
 
@@ -40,19 +41,19 @@ export function QueueFlash({
 }) {
   if (stale) {
     return (
-      <p className="panel-note" role="status">
+      <FeedbackMessage className="panel-note" role="status">
         입력이 바뀌었습니다. 내용을 다시 확인해 주세요.
-      </p>
+      </FeedbackMessage>
     );
   }
   if (!result) return null;
   return (
-    <p
+    <FeedbackMessage
       className={result.ok ? "queue-flash queue-flash--ok" : "queue-flash"}
       role="status"
     >
       {result.message}
-    </p>
+    </FeedbackMessage>
   );
 }
 

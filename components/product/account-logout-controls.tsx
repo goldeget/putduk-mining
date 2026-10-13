@@ -1,4 +1,5 @@
 "use client";
+import { FeedbackMessage } from "@/components/ui/feedback-message";
 
 import {
   useCallback,
@@ -134,7 +135,9 @@ export function AccountLogoutControls({
         로그아웃 전에 현재 브라우저의 알림 해제를 시도해요. 다른 기기의 알림
         설정은 별도로 확인해 주세요.
       </p>
-      {message ? <p role="status">{message}</p> : null}
+      {message ? (
+        <FeedbackMessage role="status">{message}</FeedbackMessage>
+      ) : null}
     </div>
   );
 }

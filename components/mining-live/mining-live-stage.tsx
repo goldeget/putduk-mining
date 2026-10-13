@@ -1,4 +1,5 @@
 "use client";
+import { FeedbackMessage } from "@/components/ui/feedback-message";
 
 import Image from "next/image";
 import {
@@ -225,10 +226,13 @@ function ApprovedArt({
         maxDpr={scene.performance?.maxDpr}
         imageWidth={composition?.width ?? 0}
         imageHeight={composition?.height ?? 0}
+        process={scene.process}
       />
       {unavailable ? (
         <div className={styles.imageRecovery}>
-          <p role="status">배경을 불러오지 못했어요.</p>
+          <FeedbackMessage role="status">
+            배경을 불러오지 못했어요.
+          </FeedbackMessage>
           <button
             type="button"
             onClick={() => {
@@ -300,6 +304,7 @@ export function MiningLiveStage({
       className={`${styles.stage}${className ? ` ${className}` : ""}`}
       style={accentStyle(scene.accentToken)}
       data-scene-family={scene.familyKey ?? ""}
+      data-scene-process={scene.process?.mode}
       data-scene-version={scene.version ?? ""}
       data-scene-art={artState(scene, master)}
       data-scene-theme={theme}

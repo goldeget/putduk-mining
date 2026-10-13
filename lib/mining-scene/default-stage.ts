@@ -68,6 +68,7 @@ function closedBackdrop(): StageSceneInput {
     responsiveSources: [],
     productionAssetActive: false,
     decoration: "none",
+    process: null,
   };
 }
 
@@ -174,6 +175,7 @@ export function resolveDefaultStageInput(): StageSceneInput {
       mimeType: source.mimeType,
     })),
     productionAssetActive: true,
+    process: null,
     decoration:
       scene.performance.renderer === "canvas-2d" ? "canvas-2d" : "none",
   };

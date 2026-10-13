@@ -1,3 +1,4 @@
+import { PRODUCT_PROCESS_VARIANT_ROWS } from "./product-scene-packs";
 import type {
   AmbientPreset,
   ApprovedSceneDefinition,
@@ -1070,6 +1071,22 @@ export const SCENE_REGISTRY: SceneRegistry = {
     "none",
     "warm",
   ),
+  CONSUMER_DEVICE_ASSEMBLY: row(
+    "CONSUMER_DEVICE_ASSEMBLY",
+    "NONE",
+    { x: 0.5, y: 0.46 },
+    { x: 0.5, y: 0.73 },
+    "none",
+    "neutral",
+  ),
+  CLOUD_INFRASTRUCTURE: row(
+    "CLOUD_INFRASTRUCTURE",
+    "NONE",
+    { x: 0.5, y: 0.44 },
+    { x: 0.5, y: 0.68 },
+    "none",
+    "cool",
+  ),
   ETF_BASKET: row(
     "ETF_BASKET",
     "DECISION_REQUIRED",
@@ -1092,6 +1109,7 @@ export function getSceneRow<K extends SceneFamilyKey>(
  * supplying the same family or a known master hash.
  */
 export const APPROVED_PRODUCT_MASTER_VARIANTS = {
+  ...PRODUCT_PROCESS_VARIANT_ROWS,
   "semiconductor-memory-v1": {
     productCodes: ["000660"],
     category: "KR_STOCK",

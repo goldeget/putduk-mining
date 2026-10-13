@@ -1,4 +1,5 @@
 "use client";
+import { FeedbackMessage } from "@/components/ui/feedback-message";
 
 import { useActionState, useState } from "react";
 
@@ -81,21 +82,21 @@ export function UpdatePasswordForm() {
         />
       </label>
       {mismatch ? (
-        <p
+        <FeedbackMessage
           id="password-mismatch"
           className="auth-form__message auth-form__message--error"
           role="alert"
         >
           비밀번호가 서로 일치하지 않습니다.
-        </p>
+        </FeedbackMessage>
       ) : null}
       {state.status === "error" ? (
-        <p
+        <FeedbackMessage
           className="auth-form__message auth-form__message--error"
           role="alert"
         >
           {state.message}
-        </p>
+        </FeedbackMessage>
       ) : null}
       <div className="auth-form__actions">
         <AuthSubmitButton

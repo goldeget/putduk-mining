@@ -1,4 +1,5 @@
 "use client";
+import { FeedbackMessage } from "../../../../../../../components/ui/feedback-message";
 
 import { useReducer, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -264,7 +265,7 @@ export function KrwDepositApproveForm({
         </p>
       ) : null}
       {clientMessage || state.message ? (
-        <p
+        <FeedbackMessage
           className={
             state.phase === "confirmed"
               ? "queue-flash queue-flash--ok"
@@ -273,7 +274,7 @@ export function KrwDepositApproveForm({
           role="status"
         >
           {clientMessage || state.message}
-        </p>
+        </FeedbackMessage>
       ) : null}
     </form>
   );

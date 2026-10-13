@@ -96,6 +96,17 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Canonicalize the approved checkout origin
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = "goldeget/putduk-mining"
+          checkout_origin="$(git remote get-url origin)"
+          case "$checkout_origin" in
+            https://github.com/goldeget/putduk-mining|https://github.com/goldeget/putduk-mining.git) ;;
+            *) echo "BLOCKED_TARGET_SCOPE: checkout origin mismatch" >&2; exit 1 ;;
+          esac
+          git remote set-url origin https://github.com/goldeget/putduk-mining.git
+
       - name: Install pnpm
         uses: pnpm/action-setup@v6.1.0
         with:
@@ -129,12 +140,14 @@ jobs:
         run: pnpm test
 
       - name: Verify authenticated scheduling invariants
-        run: node --test scripts/ci-authenticated-shards.test.mjs scripts/assert-worker-report.test.mjs scripts/e2e-admin-server.test.mjs
+        run: node --test scripts/ci-authenticated-shards.test.mjs scripts/assert-worker-report.test.mjs scripts/e2e-admin-server.test.mjs scripts/backend-successor-201-contract.test.mjs scripts/backend-successor-201-native-contract.test.mjs
 
       - name: Verify every authenticated test is assigned exactly once
         env:
           CI_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
-        run: node scripts/ci-authenticated-shards.mjs --verify-only
+          APP_ENV: test
+          PUTDUK_BACKEND_SOURCE_REVISION: "201"
+        run: node scripts/ci-authenticated-shards-201.mjs --verify-only
 
       - name: Production build
         run: pnpm build
@@ -180,33 +193,33 @@ jobs:
         with:
           version: 2.113.0
 
-      - name: Verify successor197 canonical source before local infrastructure
-        run: node scripts/ci-backend-197.mjs --plan
+      - name: Verify successor201 canonical source before local infrastructure
+        run: node scripts/ci-backend-201.mjs --plan
 
-      - name: Start isolated PostgreSQL Auth and REST for successor197
+      - name: Start isolated PostgreSQL Auth and REST for successor201
         run: pnpm exec supabase start -x studio,imgproxy,realtime,storage-api,edge-runtime,logflare,vector,postgres-meta,supavisor
 
       - name: Rebuild migrations from zero
         run: pnpm db:reset
 
-      - name: Bind successor197 source and stage exact native adapters
+      - name: Bind successor201 source and stage exact native adapters
         id: successor197-stage
         env:
           APP_ENV: test
         run: |
-          node scripts/ci-backend-197.mjs --plan
-          STAGED="$RUNNER_TEMP/putduk-mining-native197-$(node -e 'console.log(require("node:crypto").randomUUID())')"
-          node scripts/backend-successor-197-native-stage.mjs --prepare --output="$STAGED"
+          node scripts/ci-backend-201.mjs --plan
+          STAGED="$RUNNER_TEMP/putduk-mining-native201-$(node -e 'console.log(require("node:crypto").randomUUID())')"
+          node scripts/backend-successor-201-native-stage.mjs --prepare --output="$STAGED"
           printf 'staged=%s\n' "$STAGED" >> "$GITHUB_OUTPUT"
 
-      - name: Prepare test-only pgTAP after exact fresh successor197 preflight
+      - name: Prepare test-only pgTAP after exact fresh successor201 preflight
         env:
           APP_ENV: test
         run: |
           CONTAINER_ID="$(docker inspect --format '{{.Id}}' supabase_db_putduk-mining-ci-r2-20261009)"
-          node scripts/usdt-manual-197-runner.mjs --prepare-test-tool --fresh-container-id="$CONTAINER_ID"
+          node scripts/usdt-manual-201-runner.mjs --prepare-test-tool --fresh-container-id="$CONTAINER_ID"
 
-      - name: Run pgTAP tests through exact successor197 staging
+      - name: Run pgTAP tests through exact successor201 staging
         run: pnpm exec supabase test db "${{ steps.successor197-stage.outputs.staged }}/supabase/tests/database"
 
       # 두 세션 검사는 커밋이 남는다. 공유 suite 를 오염시키지 않도록
@@ -241,7 +254,7 @@ jobs:
       - name: Verify published policy reader against concurrent publication
         run: node scripts/assert-economy-policy-reader-concurrency.mjs
 
-      - name: Verify successor197 native and full-id external-send concurrency
+      - name: Verify successor201 native and full-id external-send concurrency
         id: successor197-native
         timeout-minutes: 18
         env:
@@ -249,26 +262,26 @@ jobs:
         run: |
           pnpm db:reset
           CONTAINER_ID="$(docker inspect --format '{{.Id}}' supabase_db_putduk-mining-ci-r2-20261009)"
-          OUTPUT="$RUNNER_TEMP/putduk-mining-usdt197-$(node -e 'console.log(require("node:crypto").randomUUID())')"
+          OUTPUT="$RUNNER_TEMP/putduk-mining-usdt201-$(node -e 'console.log(require("node:crypto").randomUUID())')"
           printf 'output=%s\n' "$OUTPUT" >> "$GITHUB_OUTPUT"
-          node scripts/usdt-manual-197-runner.mjs --execute --allow-synthetic-db-writes --confirmed-full-payout --fresh-container-id="$CONTAINER_ID" --output="$OUTPUT"
-          node scripts/ci-backend-197.mjs --verify-native="$OUTPUT" --fresh-id="$CONTAINER_ID"
+          node scripts/usdt-manual-201-runner.mjs --execute --allow-synthetic-db-writes --confirmed-full-payout --fresh-container-id="$CONTAINER_ID" --output="$OUTPUT"
+          node scripts/ci-backend-201.mjs --verify-native="$OUTPUT" --fresh-id="$CONTAINER_ID"
 
-      - name: Restore shared production build for successor197 API
+      - name: Restore shared production build for successor201 API
         uses: actions/download-artifact@v7
         with:
           name: e2e-next-production
           path: .
 
-      - name: Capture masked successor197 local Auth environment
+      - name: Capture masked successor201 local Auth environment
         env:
           APP_ENV: test
         run: node scripts/capture-local-supabase-env.mjs
 
-      - name: Prepare ephemeral successor197 encryption key
+      - name: Prepare ephemeral successor201 encryption key
         run: node scripts/write-ephemeral-withdrawal-key.mjs
 
-      - name: Verify successor197 API and exact current report
+      - name: Verify successor201 API and exact current report
         timeout-minutes: 18
         env:
           APP_ENV: test
@@ -276,20 +289,22 @@ jobs:
           E2E_NEXT_START: "1"
           E2E_PREBUILT_APPS: "1"
           E2E_ADMIN_PORT: "3100"
+          PUTDUK_BACKEND_SOURCE_REVISION: "201"
         run: |
-          node scripts/ci-backend-197.mjs --record-http-start
-          pnpm exec playwright test --config playwright.backend-http-197.config.ts --project backend-api --fail-on-flaky-tests
-          node scripts/ci-backend-197.mjs --verify-http
+          node scripts/ci-backend-201.mjs --record-http-start
+          pnpm exec playwright test --config playwright.backend-http-201.config.ts --project backend-api --fail-on-flaky-tests
+          node scripts/ci-backend-201.mjs --verify-http
 
-      - name: Preserve successor197 current raw native and API evidence
+      - name: Preserve successor201 current raw native and API evidence
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: backend-successor197-${{ github.run_id }}-${{ github.run_attempt }}
+          name: backend-successor201-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
             ${{ steps.successor197-stage.outputs.staged }}/staging-manifest.json
             ${{ steps.successor197-native.outputs.output }}
-            test-results/backend-http-197-api
+            test-results/backend-http-201-api
+            playwright-report/backend201-http-evidence/**
           if-no-files-found: error
 
       - name: Lint application schemas
@@ -402,6 +417,17 @@ jobs:
       - name: Check out source
         uses: actions/checkout@v7
 
+      - name: Canonicalize the approved checkout origin
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = "goldeget/putduk-mining"
+          checkout_origin="$(git remote get-url origin)"
+          case "$checkout_origin" in
+            https://github.com/goldeget/putduk-mining|https://github.com/goldeget/putduk-mining.git) ;;
+            *) echo "BLOCKED_TARGET_SCOPE: checkout origin mismatch" >&2; exit 1 ;;
+          esac
+          git remote set-url origin https://github.com/goldeget/putduk-mining.git
+
       - name: Install pnpm
         uses: pnpm/action-setup@v6.1.0
         with:
@@ -469,7 +495,9 @@ jobs:
         env:
           E2E_NEXT_START: "1"
           CI_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
-        run: node scripts/ci-authenticated-shards.mjs ${{ matrix.shard }}/8
+          APP_ENV: test
+          PUTDUK_BACKEND_SOURCE_REVISION: "201"
+        run: node scripts/ci-authenticated-shards-201.mjs ${{ matrix.shard }}/8
 
       - name: Preserve authenticated browser evidence
         if: always()
@@ -575,7 +603,7 @@ jobs:
 
       - name: Assert public typography evidence
         if: always()
-        run: node scripts/assert-typography-report.mjs test-results/typography/report.json --passed 119 --screenshots 110 --redact
+        run: node scripts/assert-typography-report.mjs test-results/typography/report.json --passed 155 --screenshots 138 --redact
 
       - name: Preserve public typography evidence
         if: always()
@@ -659,7 +687,7 @@ jobs:
 
       - name: Assert protected typography evidence
         if: always()
-        run: node scripts/assert-typography-report.mjs test-results/typography-protected/report.json --passed 135 --screenshots 133 --hydration 0 --redact
+        run: node scripts/assert-typography-report.mjs test-results/typography-protected/report.json --passed 149 --screenshots 147 --hydration 0 --redact
 
       - name: Preserve protected typography evidence
         if: always()

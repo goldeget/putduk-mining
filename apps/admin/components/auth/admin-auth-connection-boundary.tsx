@@ -1,4 +1,5 @@
 "use client";
+import { FeedbackMessage } from "../../../../components/ui/feedback-message";
 
 import { useSyncExternalStore, type ReactNode } from "react";
 
@@ -35,9 +36,9 @@ export function AdminAuthConnectionBoundary({
       }}
     >
       {!connected ? (
-        <p className={styles.connectionNotice} role="status">
+        <FeedbackMessage className={styles.connectionNotice} role="status">
           인터넷 연결이 끊겼어요. 연결을 확인한 뒤 다시 시도해 주세요.
-        </p>
+        </FeedbackMessage>
       ) : null}
       <fieldset disabled={!connected} className={styles.controls}>
         <legend className={styles.srOnly}>계정 및 접속 확인</legend>

@@ -279,7 +279,7 @@ describe("one PUTDUK AI request and session owner", () => {
       expect(
         host
           .querySelector(
-            'img[src="/brand/mascot/putduk-ai-help-face-256-v1.webp"]',
+            'img[src="/brand/identity/20261013/logo/putduk-ai-symbol.svg"]',
           )
           ?.getAttribute("alt"),
       ).toBe("");
@@ -296,7 +296,7 @@ describe("one PUTDUK AI request and session owner", () => {
     expect(
       host
         .querySelector(
-          'img[src="/brand/mascot/putduk-ai-help-face-256-v1.webp"]',
+          'img[src="/brand/identity/20261013/logo/putduk-ai-symbol.svg"]',
         )
         ?.getAttribute("alt"),
     ).toBe("");
@@ -378,7 +378,7 @@ describe("one PUTDUK AI request and session owner", () => {
     await render("member-a", 1, false, "member-a:server-render-1", "page");
     await act(async () => session.setDraft("작성한 질문을 유지해 주세요"));
     const mascot = host.querySelector(
-      'img[src="/brand/mascot/putduk-ai-help-face-256-v1.webp"]',
+      'img[src="/brand/identity/20261013/logo/putduk-ai-symbol.svg"]',
     )!;
     await act(async () => mascot.dispatchEvent(new Event("error")));
     expect(host.querySelector("textarea")?.value).toBe(
@@ -527,6 +527,289 @@ describe("one PUTDUK AI request and session owner", () => {
     expect(session.messages).toEqual([]);
     expect(session.activeConversationId).toBeNull();
     expect(host.textContent).not.toContain("A PRIVATE");
+  });
+
+  it("prepends raw chunks across history pages without losing the stored answer receipt", async () => {
+    historyReads.enabled = true;
+    await render();
+    historyReads.read.mockResolvedValueOnce({
+      ok: true,
+      hasEarlierMessages: true,
+      messages: [
+        {
+          id: "tail",
+          authorRole: "ASSISTANT",
+          bodyText: "이어지는 답변",
+          position: 12,
+          clientMessageId: null,
+        },
+      ],
+    });
+    await act(async () => session.openConversation("conversation-a"));
+    historyReads.read.mockResolvedValueOnce({
+      ok: true,
+      hasEarlierMessages: false,
+      messages: [
+        {
+          id: "head",
+          authorRole: "ASSISTANT",
+          bodyText: "저장된 ",
+          position: 11,
+          source: "provider",
+          clientMessageId: null,
+        },
+      ],
+    });
+    await act(async () => {
+      expect(await session.loadEarlierMessages()).toBe(true);
+    });
+    expect(historyReads.read).toHaveBeenLastCalledWith(
+      expect.anything(),
+      "member-a",
+      "conversation-a",
+      12,
+    );
+    expect(session.messages).toHaveLength(1);
+    expect(session.messages[0]).toMatchObject({
+      id: "head",
+      text: "저장된 이어지는 답변",
+      source: "provider",
+      historical: true,
+      state: "complete",
+    });
+    expect(session.historyHasEarlierMessages).toBe(false);
+    expect(session.earlierMessagesStatus).toBe("idle");
+  });
+
+  it("keeps view metadata within its verified owner and active conversation only", async () => {
+    historyReads.enabled = true;
+    await render();
+    await act(async () => session.openConversation("conversation-a"));
+    session.rememberTranscriptPosition("dock", {
+      conversationId: "conversation-a",
+      scrollTop: 250,
+      followLatest: false,
+    });
+    expect(session.readTranscriptPosition("dock")).toMatchObject({
+      scrollTop: 250,
+      followLatest: false,
+    });
+    expect(session.readTranscriptPosition("page")).toBeNull();
+    session.rememberTranscriptPosition("dock", {
+      conversationId: "foreign-conversation",
+      scrollTop: 100,
+      followLatest: false,
+    });
+    expect(session.readTranscriptPosition("dock")?.conversationId).toBe(
+      "conversation-a",
+    );
+    await act(async () => session.startNewConversation());
+    expect(session.readTranscriptPosition("dock")).toBeNull();
+    await act(async () => session.openConversation("conversation-a"));
+    expect(session.readTranscriptPosition("dock")).toBeNull();
+    session.rememberTranscriptPosition("dock", {
+      conversationId: "conversation-a",
+      scrollTop: 200,
+      followLatest: false,
+    });
+    await act(async () => emitAuth("SIGNED_OUT", null));
+    expect(session.readTranscriptPosition("dock")).toBeNull();
+  });
+
+  it("deduplicates simultaneous older reads and discards the result after a new conversation", async () => {
+    historyReads.enabled = true;
+    await render();
+    historyReads.read.mockResolvedValueOnce({
+      ok: true,
+      hasEarlierMessages: true,
+      messages: [
+        {
+          id: "current",
+          authorRole: "MEMBER",
+          bodyText: "현재 기록",
+          position: 12,
+        },
+      ],
+    });
+    await act(async () => session.openConversation("conversation-a"));
+    const read = deferred<unknown>();
+    historyReads.read.mockReturnValueOnce(read.promise);
+    const calls = historyReads.read.mock.calls.length;
+    let loading!: Promise<boolean>;
+    await act(async () => {
+      loading = session.loadEarlierMessages();
+      expect(await session.loadEarlierMessages()).toBe(false);
+    });
+    expect(historyReads.read.mock.calls.length).toBe(calls + 1);
+    await act(async () => session.startNewConversation());
+    await act(async () => {
+      read.resolve({
+        ok: true,
+        hasEarlierMessages: false,
+        messages: [
+          {
+            id: "old",
+            authorRole: "MEMBER",
+            bodyText: "이전 기록",
+            position: 11,
+          },
+        ],
+      });
+      expect(await loading).toBe(false);
+    });
+    expect(session.messages).toEqual([]);
+    expect(session.activeConversationId).toBeNull();
+  });
+
+  it("unlocks older history after a same-owner observer replacement and rejects the old read", async () => {
+    historyReads.enabled = true;
+    await render();
+    historyReads.read.mockResolvedValueOnce({
+      ok: true,
+      hasEarlierMessages: true,
+      messages: [
+        {
+          id: "current",
+          authorRole: "MEMBER",
+          bodyText: "현재 기록",
+          position: 12,
+        },
+      ],
+    });
+    await act(async () => session.openConversation("conversation-a"));
+    const read = deferred<unknown>();
+    historyReads.read.mockReturnValueOnce(read.promise);
+    let loading!: Promise<boolean>;
+    await act(async () => {
+      loading = session.loadEarlierMessages();
+    });
+    expect(session.earlierMessagesStatus).toBe("loading");
+    browserAuth.refresh = vi.fn();
+    await render();
+    expect(session.ownerStatus).toBe("ready");
+    expect(session.earlierMessagesStatus).toBe("idle");
+    await act(async () => {
+      read.resolve({
+        ok: true,
+        hasEarlierMessages: false,
+        messages: [
+          {
+            id: "obsolete",
+            authorRole: "MEMBER",
+            bodyText: "폐기할 관찰기 응답",
+            position: 11,
+          },
+        ],
+      });
+      expect(await loading).toBe(false);
+    });
+    expect(session.messages).toHaveLength(1);
+    expect(host.textContent).not.toContain("폐기할 관찰기 응답");
+    historyReads.read.mockResolvedValueOnce({
+      ok: true,
+      hasEarlierMessages: false,
+      messages: [
+        {
+          id: "earlier",
+          authorRole: "MEMBER",
+          bodyText: "이전 질문",
+          position: 11,
+        },
+      ],
+    });
+    await act(async () => {
+      expect(await session.loadEarlierMessages()).toBe(true);
+    });
+    expect(historyReads.read).toHaveBeenLastCalledWith(
+      expect.anything(),
+      "member-a",
+      "conversation-a",
+      12,
+    );
+    expect(session.earlierMessagesStatus).toBe("idle");
+    expect(session.historyHasEarlierMessages).toBe(false);
+    expect(session.messages.map((message) => message.id)).toEqual([
+      "earlier",
+      "current",
+    ]);
+  });
+
+  it("preserves shown history on an earlier-page error and retries the same cursor", async () => {
+    historyReads.enabled = true;
+    await render();
+    historyReads.read.mockResolvedValueOnce({
+      ok: true,
+      hasEarlierMessages: true,
+      messages: [
+        {
+          id: "current",
+          authorRole: "MEMBER",
+          bodyText: "현재 기록",
+          position: 12,
+        },
+      ],
+    });
+    await act(async () => session.openConversation("conversation-a"));
+    const shown = session.messages;
+    historyReads.read.mockRejectedValueOnce(new Error("read unavailable"));
+    await act(async () => {
+      expect(await session.loadEarlierMessages()).toBe(false);
+    });
+    expect(session.messages).toBe(shown);
+    expect(session.earlierMessagesStatus).toBe("error");
+    historyReads.read.mockResolvedValueOnce({
+      ok: true,
+      hasEarlierMessages: false,
+      messages: [],
+    });
+    await act(async () => {
+      expect(await session.loadEarlierMessages()).toBe(false);
+    });
+    expect(historyReads.read).toHaveBeenLastCalledWith(
+      expect.anything(),
+      "member-a",
+      "conversation-a",
+      12,
+    );
+    expect(session.earlierMessagesStatus).toBe("idle");
+  });
+
+  it("discards an older conversation page after the verified owner changes", async () => {
+    historyReads.enabled = true;
+    const cursor = { id: "conversation-a", updatedAt: "2026-10-13T00:00:00Z" };
+    historyReads.list.mockResolvedValueOnce({
+      ok: true,
+      conversations: [{ ...cursor, title: "대화" }],
+      hasMore: true,
+      nextCursor: cursor,
+    });
+    await render();
+    const page = deferred<unknown>();
+    historyReads.list.mockReturnValueOnce(page.promise);
+    let loading!: Promise<void>;
+    await act(async () => {
+      loading = session.loadMoreHistory();
+    });
+    expect(session.historyListPageStatus).toBe("loading");
+    await act(async () => emitAuth("SIGNED_OUT", null));
+    await act(async () => {
+      page.resolve({
+        ok: true,
+        conversations: [
+          {
+            id: "private",
+            title: "PRIVATE HISTORY",
+            updatedAt: cursor.updatedAt,
+          },
+        ],
+        hasMore: false,
+        nextCursor: null,
+      });
+      await loading;
+    });
+    expect(session.history).toEqual([]);
+    expect(host.textContent).not.toContain("PRIVATE HISTORY");
+    expect(session.historyListHasMore).toBe(false);
   });
 
   it("discards a delayed opened transcript across replacement of the auth observer", async () => {

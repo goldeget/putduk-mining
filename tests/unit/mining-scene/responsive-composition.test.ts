@@ -89,10 +89,12 @@ describe("reviewed responsive composition follows the actual selected image", ()
       extractionTarget: scene.extractionTarget,
     });
     expect(result?.anchor).toEqual(scene.anchor);
-    expect(
-      resolveCatalogProduct({ code: "AAPL", category: "US_STOCK" })
-        .productionAssetActive,
-    ).toBe(false);
+    const apple = resolveCatalogProduct({ code: "AAPL", category: "US_STOCK" });
+    expect(apple.productionAssetActive).toBe(true);
+    expect(apple.scene?.master?.sha256).not.toBe(scene.master!.sha256);
+    expect(apple.presentation?.profile.masterVariant).toBe(
+      "product-aapl-device-v1",
+    );
   });
 
   it("registers local effects to the actual CSS cover alignment", () => {

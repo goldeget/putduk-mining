@@ -16,8 +16,18 @@ vi.mock("next/navigation", () => ({
   useSearchParams: () => new URLSearchParams(),
 }));
 vi.mock("next/link", () => ({
-  default: ({ children, ...props }: { children: ReactNode; href: string }) =>
-    createElement("a", props, children),
+  default: ({
+    children,
+    ...props
+  }: {
+    children: ReactNode;
+    href: string;
+    prefetch?: boolean;
+  }) => {
+    const anchorProps = { ...props };
+    delete anchorProps.prefetch;
+    return createElement("a", anchorProps, children);
+  },
 }));
 vi.mock("@/lib/analytics/client", () => ({
   trackAnalyticsEvent: vi.fn().mockResolvedValue(undefined),
@@ -72,6 +82,9 @@ beforeEach(() => {
     ],
     historyStatus: "ready",
     historyHasEarlierMessages: false,
+    historyListHasMore: false,
+    historyListPageStatus: "idle",
+    earlierMessagesStatus: "idle",
     knowledgeVersion: "local-test",
     messages: [answer("처음 읽는 답변")],
     pending: true,
@@ -85,6 +98,10 @@ beforeEach(() => {
     startNewConversation: vi.fn(),
     openConversation: vi.fn().mockResolvedValue(undefined),
     reloadHistory: vi.fn().mockResolvedValue(undefined),
+    loadMoreHistory: vi.fn().mockResolvedValue(undefined),
+    loadEarlierMessages: vi.fn().mockResolvedValue(false),
+    readTranscriptPosition: vi.fn().mockReturnValue(null),
+    rememberTranscriptPosition: vi.fn(),
     sendFeedback: vi.fn().mockResolvedValue("saved"),
   };
 });
@@ -97,6 +114,99 @@ afterEach(async () => {
 });
 
 describe("Member AI preserves reading position during long answers", () => {
+  it("restores the same conversation reading position after closing and reopening the presentation", async () => {
+    let saved: ReturnType<PutdukAiSession["readTranscriptPosition"]> = null;
+    fixture.session!.readTranscriptPosition = vi.fn(() => saved);
+    fixture.session!.rememberTranscriptPosition = vi.fn(
+      (_surface, position) => {
+        saved = position;
+      },
+    );
+    await render();
+    const node = scrollMetrics(250);
+    await act(async () => node.dispatchEvent(new Event("scroll")));
+    await act(async () => root.unmount());
+    expect(saved).toMatchObject({
+      conversationId: "owned-conversation",
+      scrollTop: 250,
+      followLatest: false,
+    });
+    root = createRoot(host);
+    await render();
+    expect(transcript().scrollTop).toBe(250);
+    expect(button("최신 답변 보기")).toBeDefined();
+  });
+
+  it("preserves the viewport when older history is prepended instead of following the bottom", async () => {
+    fixture.session!.pending = false;
+    fixture.session!.historyHasEarlierMessages = true;
+    fixture.session!.loadEarlierMessages = vi.fn().mockResolvedValue(true);
+    await render();
+    const node = scrollMetrics(250);
+    await act(async () => button("이전 내용 더 보기")!.click());
+    expect(fixture.session!.loadEarlierMessages).toHaveBeenCalledOnce();
+    Object.defineProperty(node, "scrollHeight", {
+      configurable: true,
+      value: 2_600,
+    });
+    await render([
+      { ...answer("이전 답변"), id: "older" },
+      answer("처음 읽는 답변"),
+    ]);
+    expect(node.scrollTop).toBe(850);
+    expect(button("최신 답변 보기")).toBeDefined();
+  });
+
+  it("keeps the existing reading position and exposes retry when an older read fails", async () => {
+    fixture.session!.pending = false;
+    fixture.session!.historyHasEarlierMessages = true;
+    await render();
+    const node = scrollMetrics(250);
+    await act(async () => button("이전 내용 더 보기")!.click());
+    fixture.session!.earlierMessagesStatus = "error";
+    await render();
+    expect(node.scrollTop).toBe(250);
+    expect(host.querySelector('[role="alert"]')?.textContent).toContain(
+      "읽던 내용은 그대로 남아 있어요.",
+    );
+    expect(button("이전 내용 다시 불러오기")).toBeDefined();
+  });
+
+  it("does not submit an unfinished Korean IME composition", async () => {
+    await render();
+    const input = host.querySelector("textarea")!;
+    const form = host.querySelector("form")!;
+    await act(async () => {
+      input.dispatchEvent(
+        new CompositionEvent("compositionstart", { bubbles: true }),
+      );
+      form.dispatchEvent(
+        new Event("submit", { bubbles: true, cancelable: true }),
+      );
+    });
+    expect(fixture.session!.submit).not.toHaveBeenCalled();
+    await act(async () => {
+      input.dispatchEvent(
+        new CompositionEvent("compositionend", { bubbles: true }),
+      );
+      form.dispatchEvent(
+        new Event("submit", { bubbles: true, cancelable: true }),
+      );
+    });
+    expect(fixture.session!.submit).toHaveBeenCalledOnce();
+  });
+
+  it("exposes bounded conversation paging and prevents another click while loading", async () => {
+    fixture.session!.pending = false;
+    fixture.session!.historyListHasMore = true;
+    await render();
+    await act(async () => button("이전 대화 더 보기")!.click());
+    expect(fixture.session!.loadMoreHistory).toHaveBeenCalledOnce();
+    fixture.session!.historyListPageStatus = "loading";
+    await render();
+    expect(button("불러오는 중…")!.disabled).toBe(true);
+  });
+
   it("follows streaming when already at the latest answer", async () => {
     await render();
     const node = scrollMetrics(1_600);

@@ -1,4 +1,5 @@
 "use client";
+import { FeedbackMessage } from "@/components/ui/feedback-message";
 
 import { useActionState, useEffect, useRef, useState } from "react";
 
@@ -545,13 +546,13 @@ export function SignupForm() {
         </label>
         {state.fieldErrors.serviceTermsConsent ||
         state.fieldErrors.privacyConsent ? (
-          <p
+          <FeedbackMessage
             id="required-consent-error"
             className="auth-form__message auth-form__message--error"
             role="alert"
           >
             서비스 이용약관과 개인정보 수집·이용에 동의해 주세요.
-          </p>
+          </FeedbackMessage>
         ) : null}
       </fieldset>
       {state.status !== "idle" ? (

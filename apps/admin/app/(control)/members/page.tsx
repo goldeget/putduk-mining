@@ -1,3 +1,4 @@
+import { FeedbackMessage } from "../../../../../components/ui/feedback-message";
 import { randomUUID } from "node:crypto";
 import Link from "next/link";
 import type { Route } from "next";
@@ -370,10 +371,10 @@ export default async function MembersPage({
       evidenceFailed ||
       !lifecycleDisplay.available ||
       !profileDisplay.available ? (
-        <p className={styles.partialAlert} role="alert">
+        <FeedbackMessage className={styles.partialAlert} role="alert">
           일부 운영 증거를 불러오지 못했습니다. 숫자는 0으로 바꾸지 않습니다.{" "}
           <Link href={`/members?id=${userId}` as Route}>다시 불러오기</Link>
-        </p>
+        </FeedbackMessage>
       ) : null}
 
       <nav className="member-anchors" aria-label="증거 구역">
@@ -405,14 +406,14 @@ export default async function MembersPage({
             <h2>자금 구분</h2>
           </header>
           {!moneyDisplay.available ? (
-            <p className={styles.partialAlert} role="status">
+            <FeedbackMessage className={styles.partialAlert} role="status">
               자금 구분을 확인하지 못했습니다. 다시 불러와 주세요.
-            </p>
+            </FeedbackMessage>
           ) : !moneyDisplay.complete ? (
-            <p className={styles.partialAlert} role="status">
+            <FeedbackMessage className={styles.partialAlert} role="status">
               거래의 자금 출처를 확인해야 합니다. 채굴 인정 원금은 아직 확정하지
               않았어요.
-            </p>
+            </FeedbackMessage>
           ) : null}
           <dl className={styles.sourceStats}>
             {moneyDisplay.rows.map(([label, value]) => (
@@ -428,9 +429,9 @@ export default async function MembersPage({
           ) : (
             <>
               {fundingDisplay.state === "unavailable" ? (
-                <p className={styles.partialAlert} role="status">
+                <FeedbackMessage className={styles.partialAlert} role="status">
                   원금과 대기 수익을 확인하지 못했습니다. 다시 불러와 주세요.
-                </p>
+                </FeedbackMessage>
               ) : null}
               <dl className={styles.sourceStats}>
                 {fundingDisplay.rows.map((row) => (

@@ -1,4 +1,5 @@
 "use client";
+import { FeedbackMessage } from "@/components/ui/feedback-message";
 
 import { useEffect, useRef, useState } from "react";
 
@@ -410,7 +411,9 @@ export function PushControl() {
           취소
         </button>
       ) : null}
-      {message ? <p role="status">{message}</p> : null}
+      {message ? (
+        <FeedbackMessage role="status">{message}</FeedbackMessage>
+      ) : null}
     </div>
   );
 }

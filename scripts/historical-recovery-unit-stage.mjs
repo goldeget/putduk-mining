@@ -344,6 +344,10 @@ export function prepareHistorical195UnitFixtures(root, scratch, prefix, roots) {
   };
 }
 const changes = {
+  "principal-e2e-source.test.ts": [
+    "writeFileSync(target, readFileSync(path));",
+    'writeFileSync(target, readHistoricalRecoveryFixtureSource(resolve("."), path, 191));',
+  ],
   "usdt-manual-195-native-fixture-v2.test.ts": [
     'import { readFileSync } from "node:fs";',
     'import { readHistoricalNativeProvenance as readFileSync } from "../../scripts/historical-recovery-unit-stage.mjs";',

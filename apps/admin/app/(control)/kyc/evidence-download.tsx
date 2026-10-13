@@ -1,4 +1,5 @@
 "use client";
+import { FeedbackMessage } from "../../../../../components/ui/feedback-message";
 
 import { useEffect, useRef, useState } from "react";
 import { useKycAcknowledgedEvidence } from "./acknowledged-evidence";
@@ -305,7 +306,9 @@ export function KycEvidenceDownload({
           </fieldset>
         </form>
       ) : null}
-      {message ? <p role="status">{message}</p> : null}
+      {message ? (
+        <FeedbackMessage role="status">{message}</FeedbackMessage>
+      ) : null}
     </>
   );
 }

@@ -1,3 +1,4 @@
+import { FeedbackMessage } from "../../../../../components/ui/feedback-message";
 import Link from "next/link";
 import type { Route } from "next";
 
@@ -130,10 +131,10 @@ export function FailedJobs({
         </div>
       ) : (
         <>
-          <p className={styles.listSummary} role="status">
+          <FeedbackMessage className={styles.listSummary} role="status">
             불러온 작업 {jobs.length.toLocaleString("ko-KR")}건 · 오래된
             기록부터 최대 20건
-          </p>
+          </FeedbackMessage>
           <section className={styles.jobList} aria-label="실패 작업">
             {jobs.map((job, index) => {
               const guidance = guidanceFor(job.job_type);

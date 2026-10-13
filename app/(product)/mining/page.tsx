@@ -6,6 +6,7 @@ import { MiningLiveStage } from "@/components/mining-live/mining-live-stage";
 import { PutdukHomeIcon } from "@/components/icons/putduk-home-icon";
 import { PutdukIcon } from "@/components/icons/putduk-icon";
 import { FundedRuntimeSummary } from "@/components/product/funded-runtime-summary";
+import { MiningLiveSummary } from "@/components/product/mining-live-summary";
 import {
   WorldThemeArtwork,
   resolveWorldThemeArtwork,
@@ -20,6 +21,8 @@ import {
   labelWalletReceiptType,
 } from "@/domain/wallet/wallet-read";
 import { requirePageUser } from "@/lib/auth/session";
+import { getPublicEnv } from "@/lib/env/public";
+import { toMiningLiveSnapshot } from "@/lib/product/mining-live-snapshot";
 import { presentHomeCapacityProgress } from "@/lib/product/home-capacity-progress";
 import {
   isConfirmedMiningRunning,
@@ -160,6 +163,8 @@ export default async function MiningPage() {
   });
   const facts = presentMiningReferenceFacts(display, displayError);
   const capacityProgress = presentHomeCapacityProgress(display, displayError);
+  const liveSnapshot = toMiningLiveSnapshot(display);
+  const publicEnv = liveSnapshot ? getPublicEnv() : null;
   const runtime = display?.funded_runtime;
   const selectedProduct =
     sceneBinding.state === "ready" ? sceneBinding.products[0] : null;
@@ -280,33 +285,47 @@ export default async function MiningPage() {
               <PutdukHomeIcon name="capacity" size={25} />
               채굴 용량
             </h2>
-            <dl>
-              <div className={styles.capacityLead}>
-                <dt>남은 한도</dt>
-                <dd>
-                  <FactValue value={facts.remaining} />
-                </dd>
-              </div>
-              <div>
-                <dt>사용한 한도</dt>
-                <dd>{facts.used}</dd>
-              </div>
-              <div>
-                <dt>이번 한도</dt>
-                <dd>{facts.capacity}</dd>
-              </div>
-            </dl>
-            {capacityProgress ? (
-              <div className={styles.capacityProgress}>
-                <progress
-                  aria-label="채굴 한도 사용률"
-                  aria-valuetext={capacityProgress.usedLabel}
-                  max={10_000}
-                  value={capacityProgress.usedBps}
-                />
-                <small>{capacityProgress.usedLabel}</small>
-              </div>
-            ) : null}
+            {liveSnapshot && publicEnv ? (
+              <MiningLiveSummary
+                ownerId={identity.userId}
+                initialSnapshot={liveSnapshot}
+                authConfig={{
+                  url: publicEnv.NEXT_PUBLIC_SUPABASE_URL,
+                  publishableKey:
+                    publicEnv.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
+                }}
+              />
+            ) : (
+              <>
+                <dl>
+                  <div className={styles.capacityLead}>
+                    <dt>남은 한도</dt>
+                    <dd>
+                      <FactValue value={facts.remaining} />
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>사용한 한도</dt>
+                    <dd>{facts.used}</dd>
+                  </div>
+                  <div>
+                    <dt>이번 한도</dt>
+                    <dd>{facts.capacity}</dd>
+                  </div>
+                </dl>
+                {capacityProgress ? (
+                  <div className={styles.capacityProgress}>
+                    <progress
+                      aria-label="채굴 한도 사용률"
+                      aria-valuetext={capacityProgress.usedLabel}
+                      max={10_000}
+                      value={capacityProgress.usedBps}
+                    />
+                    <small>{capacityProgress.usedLabel}</small>
+                  </div>
+                ) : null}
+              </>
+            )}
           </section>
           <div className={styles.speedCard}>
             <PutdukHomeIcon name="bolt" size={34} />
@@ -526,14 +545,18 @@ export default async function MiningPage() {
               <dt>기간</dt>
               <dd>{facts.period}</dd>
             </div>
-            <div>
-              <dt>확정 채굴 합계</dt>
-              <dd>{facts.committed}</dd>
-            </div>
-            <div>
-              <dt>정산 전</dt>
-              <dd>{facts.pending}</dd>
-            </div>
+            {!liveSnapshot ? (
+              <div>
+                <dt>확정 채굴 합계</dt>
+                <dd>{facts.committed}</dd>
+              </div>
+            ) : null}
+            {!liveSnapshot ? (
+              <div>
+                <dt>정산 전</dt>
+                <dd>{facts.pending}</dd>
+              </div>
+            ) : null}
             <div>
               <dt>현재 상태</dt>
               <dd>{presentation.label}</dd>

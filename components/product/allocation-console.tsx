@@ -1,4 +1,6 @@
 "use client";
+import { FeedbackMessage } from "@/components/ui/feedback-message";
+
 import { useEffect, useRef, useState } from "react";
 import {
   allocationCommandSchema,
@@ -253,18 +255,20 @@ export function AllocationConsole({ initial }: { initial: AllocationState }) {
               별도 조건을 따릅니다.
             </p>
             {!state.runtimeReady && (
-              <p role="status">
+              <FeedbackMessage role="status">
                 지금은 선택을 적용할 수 없어요. 현재 저장된 내용만 확인할 수
                 있어요.
-              </p>
+              </FeedbackMessage>
             )}
             {invalid && (
-              <p role="alert">
+              <FeedbackMessage role="alert">
                 선택한 상품에 0보다 크고 100 이하인 비율을 입력해 주세요.
-              </p>
+              </FeedbackMessage>
             )}
             {total > 10000n && (
-              <p role="alert">전체 비율은 100%를 넘을 수 없어요.</p>
+              <FeedbackMessage role="alert">
+                전체 비율은 100%를 넘을 수 없어요.
+              </FeedbackMessage>
             )}
             <label className={styles.confirm}>
               <input
@@ -292,7 +296,9 @@ export function AllocationConsole({ initial }: { initial: AllocationState }) {
         </div>
       )}
       {!online && (
-        <p role="status">연결이 끊겼어요. 연결된 뒤 직접 다시 눌러 주세요.</p>
+        <FeedbackMessage role="status">
+          연결이 끊겼어요. 연결된 뒤 직접 다시 눌러 주세요.
+        </FeedbackMessage>
       )}
       <p className={styles.result} aria-live="polite">
         {message}

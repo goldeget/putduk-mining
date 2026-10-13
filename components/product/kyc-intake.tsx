@@ -1,4 +1,5 @@
 "use client";
+import { FeedbackMessage } from "@/components/ui/feedback-message";
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { requestKyc } from "@/lib/kyc/client-request";
@@ -471,19 +472,23 @@ export function KycIntake() {
         </p>
       </div>
       {loading ? (
-        <p role="status">본인 확인 상태를 불러오고 있어요.</p>
+        <FeedbackMessage role="status">
+          본인 확인 상태를 불러오고 있어요.
+        </FeedbackMessage>
       ) : readFailed ? (
-        <p role="alert">현재 본인 확인 상태를 확인하지 못했어요.</p>
+        <FeedbackMessage role="alert">
+          현재 본인 확인 상태를 확인하지 못했어요.
+        </FeedbackMessage>
       ) : current ? (
         <p className={styles.status}>{STATUS_COPY[current.status]}</p>
       ) : (
         <p>아직 제출한 본인 확인 서류가 없어요.</p>
       )}
       {incomplete ? (
-        <p role="alert">
+        <FeedbackMessage role="alert">
           확인할 요청을 모두 불러오지 못했어요. 새 서류를 제출하지 말고
           고객센터에 확인해 주세요.
-        </p>
+        </FeedbackMessage>
       ) : null}
       {!loading &&
       !readFailed &&
@@ -542,10 +547,10 @@ export function KycIntake() {
         </label>
       ) : null}
       {uncertain && submissionIdentity?.caseId !== current?.id ? (
-        <p role="status">
+        <FeedbackMessage role="status">
           이전 본인 확인 신청의 제출 결과를 확인하고 있어요. 새 요청을 만들지
           않습니다.
-        </p>
+        </FeedbackMessage>
       ) : null}
       {canSubmit ? (
         <div className={styles.form}>
@@ -594,9 +599,9 @@ export function KycIntake() {
         </div>
       ) : null}
       {message ? (
-        <p role="status" className={styles.message}>
+        <FeedbackMessage role="status" className={styles.message}>
           {message}
-        </p>
+        </FeedbackMessage>
       ) : null}
       {!loading ? (
         <button

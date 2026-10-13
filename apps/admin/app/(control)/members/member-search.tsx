@@ -1,4 +1,5 @@
 "use client";
+import { FeedbackMessage } from "../../../../../components/ui/feedback-message";
 
 import Link from "next/link";
 import type { Route } from "next";
@@ -121,23 +122,23 @@ export function MemberSearch({
           수 있어요.
         </p>
         {message ? (
-          <p className="form-error" role="alert">
+          <FeedbackMessage className="form-error" role="alert">
             {message}
-          </p>
+          </FeedbackMessage>
         ) : null}
         {pending ? (
-          <p className="panel-note" role="status">
+          <FeedbackMessage className="panel-note" role="status">
             회원을 찾는 중입니다.
-          </p>
+          </FeedbackMessage>
         ) : null}
       </form>
       {result ? (
         <div aria-live="polite">
-          <p className="panel-note" role="status">
+          <FeedbackMessage className="panel-note" role="status">
             {result.members.length
               ? `${result.members.length}명의 회원을 찾았습니다.`
               : "검색 결과가 없습니다. 입력 내용을 다시 확인해 주세요."}
-          </p>
+          </FeedbackMessage>
           {result.hasMore ? (
             <p className="panel-note">
               결과가 많아 20명까지 표시합니다. 이름이나 아이디를 더 자세히 적어

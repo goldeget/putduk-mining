@@ -1,3 +1,4 @@
+import { FeedbackMessage } from "../../../../../../../components/ui/feedback-message";
 import type { Route } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
@@ -90,11 +91,14 @@ export default async function KrwDepositDetailPage({
           ) : null}
         </dl>
         {row.status === "APPROVED" ? (
-          <p className="queue-flash queue-flash--ok" role="status">
+          <FeedbackMessage
+            className="queue-flash queue-flash--ok"
+            role="status"
+          >
             {receipt?.auditRecorded
               ? "원장에 반영되어 있습니다. 확인 기록도 있습니다."
               : "원장에 반영되어 있습니다."}
-          </p>
+          </FeedbackMessage>
         ) : null}
         {pending ? (
           <KrwDepositApproveForm

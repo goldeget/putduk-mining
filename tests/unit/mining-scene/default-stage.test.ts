@@ -140,9 +140,11 @@ describe("registered default mining backdrop", () => {
       { code: "BTC", category: "CRYPTO" },
     ] as const) {
       const product = resolveCatalogProduct(identity);
-      expect(product.scene).toBeNull();
-      expect(product.productionAssetActive).toBe(false);
-      expect(product.presentation?.sceneFamilyKey).toBeNull();
+      expect(product.scene?.master).not.toEqual(
+        resolveDefaultStageInput().master,
+      );
+      expect(product.productionAssetActive).toBe(true);
+      expect(product.scene?.process).toBeDefined();
     }
     expect(resolveDefaultStageInput().productionAssetActive).toBe(true);
   });

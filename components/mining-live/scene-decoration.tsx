@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
-import type { ScenePoint } from "@/lib/mining-scene/types";
+import { projectProcessProfile } from "@/lib/mining-scene/process-profile";
+import { drawProcessDecoration } from "./process-decoration";
+import type { ScenePoint, SceneProcessProfile } from "@/lib/mining-scene/types";
 
 import styles from "./mining-live-stage.module.css";
 
@@ -24,6 +26,7 @@ type SceneDecorationProps = {
   imageHeight?: number;
   extractionTarget?: ScenePoint | null;
   objectPosition?: ScenePoint;
+  process?: SceneProcessProfile | null | undefined;
 };
 
 function bounded(value: number, minimum: number, maximum: number): number {
@@ -89,7 +92,12 @@ export function SceneDecoration({
   imageHeight = 0,
   extractionTarget = null,
   objectPosition = { x: 0.5, y: 0.5 },
+  process = null,
 }: SceneDecorationProps) {
+  const processProfile = useMemo(
+    () => projectProcessProfile(process),
+    [process],
+  );
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const anchorX = anchor?.x;
   const anchorY = anchor?.y;
@@ -244,6 +252,26 @@ export function SceneDecoration({
         { x: positionX, y: positionY },
       );
       const seconds = timestamp / 1000;
+      if (processProfile) {
+        drawProcessDecoration(
+          paint,
+          processProfile,
+          seconds,
+          actualCount,
+          (point) =>
+            sceneAnchorPosition(
+              cssWidth,
+              cssHeight,
+              imageWidth,
+              imageHeight,
+              point,
+              { x: positionX, y: positionY },
+            ),
+          origin,
+          Math.min(cssWidth, cssHeight) * 0.09,
+        );
+        return;
+      }
       if (
         targetX !== undefined &&
         targetY !== undefined &&
@@ -423,6 +451,7 @@ export function SceneDecoration({
     maxDpr,
     maxFps,
     particleCount,
+    processProfile,
   ]);
 
   if (!enabled) {
@@ -436,7 +465,8 @@ export function SceneDecoration({
       className={styles.canvas}
       width={0}
       height={0}
-      data-decoration="light-motes"
+      data-decoration={processProfile ? "process-paths" : "light-motes"}
+      data-process-mode={processProfile?.mode}
       data-motion-state="paused"
     />
   );

@@ -1,4 +1,5 @@
 "use client";
+import { FeedbackMessage } from "@/components/ui/feedback-message";
 
 import { useSyncExternalStore, type FormEvent } from "react";
 import { useFormStatus } from "react-dom";
@@ -31,9 +32,12 @@ export function preventOfflineAuthSubmission(
 export function AuthConnectionNotice() {
   const online = useAuthOnline();
   return online ? null : (
-    <p className="auth-form__message auth-form__message--offline" role="status">
+    <FeedbackMessage
+      className="auth-form__message auth-form__message--offline"
+      role="status"
+    >
       인터넷 연결이 끊겼어요. 연결을 확인한 뒤 다시 시도해 주세요.
-    </p>
+    </FeedbackMessage>
   );
 }
 

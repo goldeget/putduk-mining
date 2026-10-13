@@ -62,14 +62,14 @@ const journey = [
   {
     icon: "mining" as const,
     step: "01",
-    title: "한국 월드에서 첫 채굴",
-    description: "PUTDUK START로 핵심 채굴 흐름을 경험합니다.",
+    title: "가입하고 무료 체험 시작",
+    description: "무료 체험에서 채굴 흐름을 먼저 경험해요.",
   },
   {
     icon: "clock" as const,
     step: "02",
     title: "앱을 닫아도 이어지는 시간",
-    description: "다시 접속하면 결과를 확인할 수 있어요.",
+    description: "정해진 기간과 이용 조건 안에서 채굴이 진행돼요.",
   },
   {
     icon: "wallet" as const,
@@ -89,7 +89,7 @@ const structuredData = {
   operatingSystem: "Web, PWA",
   url: "https://mining.putduk.com",
   description:
-    "한국 월드에서 시작해 채굴 상태와 결과를 확인하는 PUTDUK의 채굴 서비스입니다.",
+    "무료 체험으로 채굴을 시작하고, 내 채굴 기록과 확정된 보상을 확인하는 퍼뜩 채굴 앱입니다.",
 };
 
 export default function HomePage() {
@@ -127,7 +127,7 @@ export default function HomePage() {
             className="button button--primary landing-header__signup"
             href="/signup"
           >
-            무료로 시작
+            무료 체험하기
           </Link>
         </div>
       </header>
@@ -141,16 +141,16 @@ export default function HomePage() {
 
       <section className="hero shell landing-hero" id="top">
         <div className="hero__copy">
-          <p className="eyebrow">쉽게 시작하는 채굴</p>
+          <p className="eyebrow">무료 체험으로 시작하는 자동채굴 앱</p>
           <h1>
-            작은 시작이,
+            일상에 더하는 부수입,
             <br />
-            <span>나만의 채굴 세계</span>를
-            <br />
-            엽니다.
+            <span>퍼뜩 채굴로 시작하세요.</span>
           </h1>
           <p className="hero__lead">
-            한국 월드에서 채굴을 시작해요. 앱을 닫아도 채굴은 계속돼요.
+            앱에서 채굴을 시작하면, 화면을 꺼도 채굴이 진행돼요.
+            <br />
+            다시 접속해 내 채굴 기록과 확정된 보상을 확인하세요.
           </p>
         </div>
 
@@ -175,7 +175,7 @@ export default function HomePage() {
             />
           </picture>
           <div className="hero__signal">
-            <span>첫 번째 월드 · 한국</span>
+            <span>첫 번째 채굴 여정</span>
             <strong>지금, 퍼뜩.</strong>
           </div>
         </div>
@@ -186,38 +186,48 @@ export default function HomePage() {
               className={`button button--primary ${styles.start}`}
               href="/signup"
             >
-              PUTDUK START 시작하기 <PutdukIcon name="arrow-right" size={20} />
+              무료로 채굴 체험하기 <PutdukIcon name="arrow-right" size={20} />
             </Link>
             <Link className={styles.learnLink} href="/how-it-works">
-              어떻게 시작하나요? <PutdukIcon name="arrow-right" size={18} />
+              이용 방법 보기 <PutdukIcon name="arrow-right" size={18} />
             </Link>
           </div>
+          <p className="ko-copy">
+            채굴은 정해진 기간과 이용 조건에 따라 진행됩니다.
+          </p>
+          <p className="ko-copy">
+            보상 전환·출금에는 본인 확인 등의 조건이 적용됩니다.
+          </p>
           <Link className={styles.returnLink} href="/login">
             내 채굴로 돌아가기 <PutdukIcon name="arrow-right" size={16} />
           </Link>
         </aside>
         <div className={styles.heroFooter}>
           <span>나의 시간에, 새로운 가능성을.</span>
-          <a href="#start">
+          <a href="#free-trial">
             아래에서 알아보기 <span aria-hidden="true">↓</span>
           </a>
         </div>
       </section>
 
-      <aside className={styles.welcome} aria-label="환영 보상 안내">
+      <aside
+        className={styles.welcome}
+        id="free-trial"
+        aria-label="무료 체험 안내"
+      >
         <div className={styles.welcomeTitle}>
-          <PutdukIcon name="spark" size={26} />
+          <PutdukIcon name="mining" size={26} />
           <div>
-            <span>처음 만나는 퍼뜩</span>
-            <strong>최대 5,000원 환영 보상</strong>
+            <span>무료 체험으로 먼저 시작하세요</span>
+            <strong>한국 월드 · PUTDUK START</strong>
           </div>
         </div>
-        <p>
-          자격 확인 후 전환되며,
-          <br />첫 출금에 사전 입금은 필요하지 않습니다.
-        </p>
+        <div>
+          <p>체험 목표를 채우거나 최대 24시간이 지나면 끝나요.</p>
+          <p>체험 값은 실제 원화와 분리돼요.</p>
+        </div>
         <Link href="/trial">
-          조건 자세히 보기 <PutdukIcon name="arrow-right" size={18} />
+          체험 조건 보기 <PutdukIcon name="arrow-right" size={18} />
         </Link>
       </aside>
 
@@ -227,8 +237,8 @@ export default function HomePage() {
         aria-labelledby="journey-title"
       >
         <div className="section-heading">
-          <p className="eyebrow">PUTDUK START</p>
-          <h2 id="journey-title">복잡한 설명 없이, 한 걸음씩.</h2>
+          <p className="eyebrow">이용 방법</p>
+          <h2 id="journey-title">무료 체험부터 보상 확인까지.</h2>
           <p className="ko-copy">
             체험 값은 실제 지갑과 분리됩니다. 전환된 환영 보상만 실제 KRW가
             됩니다.
@@ -238,9 +248,7 @@ export default function HomePage() {
               내 첫 채굴 시작하기
               <PutdukIcon name="arrow-right" size={19} />
             </Link>
-            <p className="ko-copy">
-              가입 후 한국 월드의 안내에 따라 시작합니다.
-            </p>
+            <p className="ko-copy">가입 후 무료 체험 안내에 따라 시작합니다.</p>
           </div>
         </div>
         <div
@@ -265,11 +273,11 @@ export default function HomePage() {
         aria-labelledby="worlds-title"
       >
         <div className="section-heading">
-          <p className="eyebrow">다섯 개의 채굴 월드</p>
-          <h2 id="worlds-title">시작은 한국에서. 경험은 더 넓은 세계로.</h2>
+          <p className="eyebrow">다섯 개의 상품 테마</p>
+          <h2 id="worlds-title">상품마다 다른 채굴 테마를 만나보세요.</h2>
           <p className="ko-copy">
-            한국 월드에서 시작해요. 미국, 금, 은, 디지털 자산 월드로 채굴 경험을
-            넓혀갈 수 있어요.
+            한국, 미국, 금, 은, 디지털 자산 테마를 둘러보세요. 상품의 제공
+            여부와 이용 조건은 상품 안내에서 확인하세요.
           </p>
         </div>
         <div className="world-list" tabIndex={0} aria-label="채굴 월드 목록">
@@ -330,12 +338,32 @@ export default function HomePage() {
         </div>
       </section>
 
+      <aside className={styles.welcome} aria-label="환영 보상 안내">
+        <div className={styles.welcomeTitle}>
+          <PutdukIcon name="spark" size={26} />
+          <div>
+            <span>처음 만나는 퍼뜩</span>
+            <strong>최대 5,000원 환영 보상</strong>
+          </div>
+        </div>
+        <p>
+          자격 확인 후 전환되며,
+          <br />첫 출금에 사전 입금은 필요하지 않습니다.
+        </p>
+        <Link href="/trial">
+          조건 자세히 보기 <PutdukIcon name="arrow-right" size={18} />
+        </Link>
+      </aside>
+
       <section className="landing-trust shell" aria-labelledby="trust-title">
         <div>
-          <p className="eyebrow">신뢰와 검증</p>
+          <p className="eyebrow">보상과 출금</p>
           <h2 className="ko-heading" id="trust-title">
-            보이는 숫자보다, 확인 가능한 과정.
+            확정된 보상만, 실제 원화로.
           </h2>
+          <p className="ko-copy">
+            환영 보상은 자격 확인 후 한 번만 전환되며, 최대 5,000원까지예요.
+          </p>
           <p className="ko-copy">
             잔액, 채굴 상태와 처리 결과는 확인된 정보만 표시합니다. 화면 효과가
             금액이나 완료를 대신하지 않습니다.
@@ -346,7 +374,7 @@ export default function HomePage() {
             검증 원칙
           </Link>
           <Link className="ko-copy" href="/trial">
-            PUTDUK START 안내
+            무료 체험 안내
           </Link>
           <Link className="ko-copy" href="/withdrawal">
             출금 안내
@@ -397,8 +425,8 @@ export default function HomePage() {
               앱을 계속 켜 두어야 하나요?<span aria-hidden="true">+</span>
             </summary>
             <p>
-              앱을 닫아도 채굴은 계속돼요. 다시 접속하면 내 채굴 화면에서 상태와
-              결과를 확인할 수 있어요.
+              정해진 기간과 이용 조건 안에서는 화면을 꺼도 채굴이 진행돼요. 다시
+              접속하면 내 채굴 기록과 확정된 보상을 확인할 수 있어요.
             </p>
           </details>
         </div>
@@ -409,19 +437,19 @@ export default function HomePage() {
         aria-labelledby="landing-closing-title"
       >
         <BrandMark title="" />
-        <p className="eyebrow">퍼뜩, 나만의 가능성을 발견하는 순간</p>
+        <p className="eyebrow">무료 체험으로 시작하는 퍼뜩 채굴</p>
         <h2 id="landing-closing-title">
-          당신의 첫 채굴 세계를
+          내 첫 채굴,
           <br />
-          열어보세요.
+          무료 체험으로 시작하세요.
         </h2>
         <Link
           className={`button button--primary ${styles.start}`}
           href="/signup"
         >
-          무료로 시작하기 <PutdukIcon name="arrow-right" size={20} />
+          무료로 채굴 체험하기 <PutdukIcon name="arrow-right" size={20} />
         </Link>
-        <p>PUTDUK START와 함께 한국 월드에서 시작해요.</p>
+        <p>보상 전환과 출금에는 본인 확인 등의 조건이 적용됩니다.</p>
       </section>
 
       <footer className="site-footer shell landing-footer">

@@ -1,3 +1,4 @@
+import { FeedbackMessage } from "@/components/ui/feedback-message";
 import type { Metadata } from "next";
 
 import { AuthForm } from "@/app/login/auth-form";
@@ -39,12 +40,12 @@ export default async function LoginPage({
   return (
     <LoginExperience>
       {statusMessage ? (
-        <p
+        <FeedbackMessage
           className="auth-form__message auth-form__message--success"
           role="status"
         >
           {statusMessage}
-        </p>
+        </FeedbackMessage>
       ) : null}
       <AuthForm nextPath={nextPath} />
     </LoginExperience>

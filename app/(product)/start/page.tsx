@@ -10,6 +10,7 @@ import { Surface } from "@/components/ui/surface";
 import { formatTrialValue } from "@/domain/trial/format-trial-value";
 import { requirePageUser } from "@/lib/auth/session";
 import { resolveStartPageState } from "@/lib/product/start-page-state";
+import { isFirstTrialOnboardingEligible } from "@/lib/product/first-trial-onboarding";
 import {
   formatTrialQuotaPercent,
   formatTrialRemaining,
@@ -29,20 +30,22 @@ export default async function StartPage() {
     identity.supabase
       .from("trial_account_snapshots")
       .select(
-        "status, world_name_ko, reward_atomic, quota_consumed_bps, remaining_seconds",
+        "user_id, status, completed_at, world_name_ko, reward_atomic, quota_consumed_bps, remaining_seconds",
       )
       .eq("user_id", identity.userId)
       .maybeSingle(),
     identity.supabase
       .from("trial_reward_conversions")
-      .select("id, status, converted_amount_atomic")
+      .select("id, user_id, status, converted_amount_atomic")
       .eq("user_id", identity.userId)
       .order("created_at", { ascending: false })
       .limit(1)
       .maybeSingle(),
     identity.supabase
       .from("member_lifecycle_states")
-      .select("stage")
+      .select(
+        "user_id, stage, first_funding_at, welcome_withdrawal_completed_at",
+      )
       .eq("user_id", identity.userId)
       .maybeSingle(),
   ]);
@@ -58,11 +61,15 @@ export default async function StartPage() {
   const quotaPercent = formatTrialQuotaPercent(trial?.quota_consumed_bps);
   const isActive = state.active;
   const isComplete = state.complete;
-  const questReady =
-    !state.uncertain &&
-    !conversionError &&
-    !lifecycleError &&
-    typeof lifecycle?.stage === "string";
+  const questReady = isFirstTrialOnboardingEligible({
+    ownerId: identity.userId,
+    trial,
+    conversion,
+    lifecycle,
+    trialReadFailed: Boolean(trialError),
+    conversionReadFailed: Boolean(conversionError),
+    lifecycleReadFailed: Boolean(lifecycleError),
+  });
 
   return (
     <div
@@ -79,6 +86,8 @@ export default async function StartPage() {
       <TrialSynchronizer active={isActive} />
       {questReady ? (
         <GuidedQuest
+          eligible={questReady}
+          key={identity.userId}
           ownerId={identity.userId}
           serverStage={`${lifecycle?.stage ?? "SIGNED_UP"}:${trialStatus}:${conversion?.status ?? "NONE"}`}
         />

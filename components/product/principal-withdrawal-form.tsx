@@ -1,4 +1,5 @@
 "use client";
+import { FeedbackMessage } from "@/components/ui/feedback-message";
 
 import {
   useCallback,
@@ -327,9 +328,9 @@ export function PrincipalWithdrawalForm({
         </div>
       </header>
       {refreshingFacts ? (
-        <p className={styles.freshness} role="status">
+        <FeedbackMessage className={styles.freshness} role="status">
           최신 원금 정보를 확인하고 있어요…
-        </p>
+        </FeedbackMessage>
       ) : null}
       {facts ? (
         <>
@@ -362,22 +363,22 @@ export function PrincipalWithdrawalForm({
           </p>
         </>
       ) : (
-        <p className={styles.notice} role="status">
+        <FeedbackMessage className={styles.notice} role="status">
           {read === null && !feedback
             ? "원금 정보를 확인하고 있어요…"
             : "현재 원금 회수 조건을 확인하지 못했어요. 이전 요청 확인은 계속 이용할 수 있어요."}
-        </p>
+        </FeedbackMessage>
       )}
       {otherPrincipalPending ? (
-        <p className={styles.notice} role="status">
+        <FeedbackMessage className={styles.notice} role="status">
           이전 원금 회수 요청의 수단이 은행 계좌와 달라요. 이전 요청 확인을
           이용해 주세요.
-        </p>
+        </FeedbackMessage>
       ) : null}
       {ordinaryPending ? (
-        <p className={styles.notice} role="status">
+        <FeedbackMessage className={styles.notice} role="status">
           채굴 수익 출금의 이전 요청을 먼저 위에서 확인해 주세요.
-        </p>
+        </FeedbackMessage>
       ) : null}
       <form onSubmit={submit} noValidate className={styles.form}>
         <div className={styles.step}>
@@ -502,9 +503,9 @@ export function PrincipalWithdrawalForm({
         </div>
       </form>
       {feedback ? (
-        <p className={styles.feedback} role="status">
+        <FeedbackMessage className={styles.feedback} role="status">
           {feedback}
-        </p>
+        </FeedbackMessage>
       ) : null}
     </section>
   );

@@ -1,10 +1,20 @@
 import { expect } from "@playwright/test";
 import { assertBackend197BrowserCanonicalSources } from "../../../../scripts/backend-successor-197-browser-source.mjs";
+import { assertBackend201BrowserCanonicalSources } from "../../../../scripts/backend-successor-201-browser-source.mjs";
+import { resolveBackend201Context } from "../../../../scripts/backend-successor-201-http-context.mjs";
 import { execLocalAdminSql } from "./local-db";
 
 /** Compatibility export for the existing spec; requires the strict 197 source and DB set. */
 export function requirePrincipalCanonical193Candidate() {
-  const reviewed = assertBackend197BrowserCanonicalSources();
+  const reviewed = resolveBackend201Context(
+    process.env.PUTDUK_BACKEND_SOURCE_REVISION,
+    assertBackend197BrowserCanonicalSources,
+    () => {
+      if (process.env.APP_ENV !== "test")
+        throw new Error("BACKEND201_EXPLICIT_TEST_CONTEXT_REQUIRED");
+      return assertBackend201BrowserCanonicalSources();
+    },
+  );
   const localApi = new URL(process.env.NEXT_PUBLIC_SUPABASE_URL ?? "");
   if (
     localApi.protocol !== "http:" ||

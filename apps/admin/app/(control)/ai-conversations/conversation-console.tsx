@@ -1,4 +1,5 @@
 "use client";
+import { FeedbackMessage } from "../../../../../components/ui/feedback-message";
 
 import { useEffect, useRef, useState } from "react";
 import {
@@ -292,16 +293,20 @@ export function AiConversationConsole() {
       >
         전체 회원 보기
       </button>
-      <p role="status">
+      <FeedbackMessage role="status">
         조회 대상: {userId ? "선택한 회원" : "전체 회원"} · 날짜는 한국 시간
         기준
-      </p>
+      </FeedbackMessage>
       {error && (
-        <p role="alert" className={styles.alert}>
+        <FeedbackMessage role="alert" className={styles.alert}>
           {error}
-        </p>
+        </FeedbackMessage>
       )}
-      {busy && <p role="status">기록을 불러오는 중입니다.</p>}
+      {busy && (
+        <FeedbackMessage role="status">
+          기록을 불러오는 중입니다.
+        </FeedbackMessage>
+      )}
       {members && (
         <section aria-label="회원 검색 결과" className={styles.members}>
           {members.members.length === 0 && (
@@ -429,7 +434,9 @@ export function AiConversationConsole() {
                   다음 질문·답변 더 보기
                 </button>
               ) : (
-                <p role="status">현재 대화의 마지막 기록입니다.</p>
+                <FeedbackMessage role="status">
+                  현재 대화의 마지막 기록입니다.
+                </FeedbackMessage>
               )}
               <h2>답변 처리 기록</h2>
               {transcript.requests.length === 0 && (

@@ -1,4 +1,5 @@
 "use client";
+import { FeedbackMessage } from "@/components/ui/feedback-message";
 
 import { useId, useMemo, useState, type ReactNode } from "react";
 import type {
@@ -107,9 +108,9 @@ export function CatalogBrowse({
       >
         <header className={styles.resultsHeading}>
           <h2>공개 상품</h2>
-          <p role="status" aria-live="polite">
+          <FeedbackMessage role="status" aria-live="polite">
             {filtered.length}개 상품
-          </p>
+          </FeedbackMessage>
         </header>
         <div className={styles.scopeNotice}>
           <p>상품별 특징과 보상·지급 조건은 공개된 안내에서 확인해 주세요.</p>

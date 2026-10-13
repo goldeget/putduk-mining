@@ -892,6 +892,31 @@
   outline: 2px solid var(--brand-strong);
   outline-offset: 3px;
 }
+.historyPagination,
+.earlierMessages {
+  display: grid;
+  justify-items: start;
+  gap: 0.5rem;
+  padding-block: 0.5rem;
+}
+.earlierMessages {
+  justify-items: center;
+}
+.historyPagination button,
+.earlierMessages button {
+  min-height: 44px;
+  max-width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--ai-line);
+  border-radius: 0.75rem;
+  background: var(--ai-raised);
+  color: var(--text-primary);
+}
+.historyPagination button:focus-visible,
+.earlierMessages button:focus-visible {
+  outline: 2px solid var(--brand-strong);
+  outline-offset: 3px;
+}
 .chat[data-ai-compact="true"] .pageHeader {
   padding-block: 0.35rem;
 }

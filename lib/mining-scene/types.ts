@@ -1,3 +1,10 @@
+import {
+  PRODUCT_PROCESS_PACKS,
+  PRODUCT_PROCESS_MASTER_HASHES,
+  PRODUCT_PROCESS_ASSET_PATHS,
+  PRODUCT_PROCESS_VARIANTS,
+} from "./product-scene-assets";
+
 /**
  * Scene 플랫폼 타입.
  * 상품 정본은 mining_products 다. 여기 타입은 presentation 전용이다.
@@ -19,6 +26,8 @@ export const SCENE_FAMILY_KEYS = [
   "BIO_HEALTH",
   "CONSUMER_RETAIL",
   "ETF_BASKET",
+  "CONSUMER_DEVICE_ASSEMBLY",
+  "CLOUD_INFRASTRUCTURE",
 ] as const;
 
 export type SceneFamilyKey = (typeof SCENE_FAMILY_KEYS)[number];
@@ -92,6 +101,7 @@ export const APPROVED_SCENE_MASTER_SHA256 = [
   "b20cc60947fdddf7d8f02733658d9f0fabdce786ea5f9614ce1694e44d1fe3f1",
   "56638dce5ebe61b38c21da4249e3474e5a62a7d17f32cb885d945c8ee41a1115",
   "abfc46f87a1822c5e705b527432da85d638bd500379f7a6fccf282e66392c736",
+  ...PRODUCT_PROCESS_MASTER_HASHES,
 ] as const;
 
 export type ApprovedSceneMasterSha256 =
@@ -147,6 +157,7 @@ export const APPROVED_SCENE_ASSET_PATHS = [
   "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-light-landscape-1280.webp",
   "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-light-landscape-1672.avif",
   "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-light-landscape-1672.webp",
+  ...PRODUCT_PROCESS_ASSET_PATHS,
 ] as const;
 
 export type ApprovedSceneAssetPath =
@@ -155,6 +166,7 @@ export type ApprovedSceneAssetPath =
 export const APPROVED_MASTER_VARIANTS = [
   "semiconductor-memory-v1",
   "product-nvda-gpu-v1",
+  ...PRODUCT_PROCESS_VARIANTS,
 ] as const;
 
 export type ApprovedMasterVariant = (typeof APPROVED_MASTER_VARIANTS)[number];
@@ -189,7 +201,30 @@ export type ApprovedResponsiveSource = {
   };
 };
 
+export const SCENE_PROCESS_MODES = [
+  "raster-scan",
+  "vertical-assembly",
+  "layered-routing",
+  "gravity-flow",
+  "electrode-rise",
+  "block-lattice",
+  "orbital-consensus",
+  "hex-routing",
+  "gateway-stream",
+] as const;
+export type SceneProcessProfile = {
+  readonly mode: (typeof SCENE_PROCESS_MODES)[number];
+  readonly palette: readonly [string, string];
+  readonly cycleSeconds: number;
+  readonly paths: readonly {
+    readonly from: ScenePoint;
+    readonly control: ScenePoint;
+    readonly to: ScenePoint;
+  }[];
+};
+
 type SceneDefinitionBase = {
+  readonly process?: SceneProcessProfile;
   readonly version: 1;
   readonly anchor: ScenePoint;
   readonly extractionTarget: ScenePoint;
@@ -350,6 +385,16 @@ export function isApprovedSceneMasterImage(
     )
   )
     return false;
+  const commissioned = Object.values(PRODUCT_PROCESS_PACKS).find(
+    (pack) => pack.master.sha256 === master.sha256,
+  );
+  if (commissioned)
+    return commissioned.responsiveSources.some(
+      (source) =>
+        source.assetPath === master.assetPath &&
+        source.width === master.width &&
+        source.height === master.height,
+    );
   const gpu = APPROVED_GPU_COMPOSITION_BINDINGS.find(
     (binding) => binding.sha256 === master.sha256,
   );
@@ -386,6 +431,22 @@ export function tryActivateProductionMaster(sha256: string): null {
 export function isApprovedResponsiveComposition(
   source: ApprovedResponsiveSource,
 ): boolean {
+  const commissioned = Object.values(PRODUCT_PROCESS_PACKS).find((pack) =>
+    pack.responsiveSources.some((item) => item.assetPath === source.assetPath),
+  );
+  if (commissioned) {
+    const reviewed = commissioned.responsiveSources.find(
+      (item) => item.assetPath === source.assetPath,
+    );
+    return (
+      reviewed !== undefined &&
+      source.width === reviewed.width &&
+      source.height === reviewed.height &&
+      source.mimeType === reviewed.mimeType &&
+      JSON.stringify(source.composition) ===
+        JSON.stringify(reviewed.composition)
+    );
+  }
   const binding = APPROVED_GPU_COMPOSITION_BINDINGS.find((candidate) =>
     source.assetPath.startsWith(candidate.prefix),
   );

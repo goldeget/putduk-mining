@@ -1,3 +1,4 @@
+import { FeedbackMessage } from "@/components/ui/feedback-message";
 import Link from "next/link";
 import type { Route } from "next";
 import { SemiconductorTowerScene } from "@/components/brand/semiconductor-tower-scene";
@@ -217,9 +218,9 @@ export function PublishedCatalogLoading() {
       <header className={styles.pageHeading}>
         <h1>상품</h1>
       </header>
-      <p className={styles.loadingLabel} role="status">
+      <FeedbackMessage className={styles.loadingLabel} role="status">
         상품을 확인하고 있어요.
-      </p>
+      </FeedbackMessage>
       <div className={styles.loadingScene} aria-hidden="true" />
       <div className={styles.loadingLines} aria-hidden="true">
         <span />

@@ -1,4 +1,5 @@
 "use client";
+import { FeedbackMessage } from "@/components/ui/feedback-message";
 
 import Link from "next/link";
 import { useActionState, useState } from "react";
@@ -95,13 +96,13 @@ export function AuthForm({ nextPath }: { nextPath: string }) {
         </div>
       </div>
       {state.status !== "idle" ? (
-        <p
+        <FeedbackMessage
           id="login-error"
           className="auth-form__message auth-form__message--error"
           role="alert"
         >
           {state.message}
-        </p>
+        </FeedbackMessage>
       ) : null}
       <nav
         className={`auth-form__recovery ${styles.recovery}`}

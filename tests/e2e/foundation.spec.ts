@@ -76,10 +76,14 @@ test("renders the productized PUTDUK landing with accessible primary navigation"
   await page.goto("/");
 
   await expect(
-    page.getByRole("heading", { name: /작은 시작이.*나만의 채굴 세계/ }),
+    page.getByRole("heading", {
+      name: /일상에 더하는 부수입,.*퍼뜩 채굴로 시작하세요\./,
+    }),
   ).toBeVisible();
   await expect(
-    page.getByRole("link", { name: /PUTDUK START 시작하기/ }),
+    page
+      .locator(".landing-hero")
+      .getByRole("link", { name: /무료로 채굴 체험하기/ }),
   ).toBeVisible();
   const publicNavigation = page.locator('nav[aria-label="공개 메뉴"]');
   await expect(publicNavigation).toHaveCount(1);

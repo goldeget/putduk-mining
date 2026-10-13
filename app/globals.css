@@ -1034,7 +1034,7 @@ select {
   box-shadow: var(--shadow-md);
 }
 
-.toast > span:first-child {
+.toast > span:first-child:not([data-feedback-symbol]) {
   width: 7px;
   height: 7px;
   margin-top: 0.35rem;
@@ -1042,15 +1042,15 @@ select {
   background: var(--status-info);
 }
 
-.toast--success > span:first-child {
+.toast--success > span:first-child:not([data-feedback-symbol]) {
   background: var(--status-success);
 }
 
-.toast--warning > span:first-child {
+.toast--warning > span:first-child:not([data-feedback-symbol]) {
   background: var(--status-warning);
 }
 
-.toast--danger > span:first-child {
+.toast--danger > span:first-child:not([data-feedback-symbol]) {
   background: var(--status-danger);
 }
 

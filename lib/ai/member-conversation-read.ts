@@ -8,11 +8,17 @@ import {
 import { AI_TOOL_NAMES } from "@/lib/ai/tools";
 
 const HISTORY_MESSAGE_LIMIT = 120;
+const HISTORY_CONVERSATION_LIMIT = 40;
+const conversationCursorSchema = z.strictObject({
+  id: z.uuid(),
+  updatedAt: z.iso.datetime({ offset: true }),
+});
+export type OwnAiConversationCursor = z.infer<typeof conversationCursorSchema>;
 
 const summarySchema = z.object({
   id: z.uuid(),
   title_text: z.string().nullable(),
-  updated_at: z.string().min(1),
+  updated_at: z.iso.datetime({ offset: true }),
   user_id: z.uuid(),
 });
 
@@ -105,19 +111,36 @@ function messageEvidence(row: z.infer<typeof messageSchema>) {
 export async function listOwnAiConversations(
   supabase: SupabaseClient,
   userId: string,
+  before?: OwnAiConversationCursor,
 ): Promise<
-  | { conversations: readonly OwnAiConversationSummary[]; ok: true }
+  | {
+      conversations: readonly OwnAiConversationSummary[];
+      hasMore: boolean;
+      nextCursor: OwnAiConversationCursor | null;
+      ok: true;
+    }
   | { code: "OWN_CONVERSATION_UNAVAILABLE"; ok: false }
 > {
-  if (!z.uuid().safeParse(userId).success) {
+  if (
+    !z.uuid().safeParse(userId).success ||
+    (before !== undefined &&
+      !conversationCursorSchema.safeParse(before).success)
+  ) {
     return { code: "OWN_CONVERSATION_UNAVAILABLE", ok: false };
   }
-  const { data, error } = await supabase
+  let query = supabase
     .from("ai_conversations")
     .select("id, title_text, updated_at, user_id")
     .eq("user_id", userId)
     .order("updated_at", { ascending: false })
-    .limit(40);
+    .order("id", { ascending: false });
+  if (before) {
+    // Both values are closed UUID/ISO schemas before entering PostgREST syntax.
+    query = query.or(
+      `updated_at.lt.${before.updatedAt},and(updated_at.eq.${before.updatedAt},id.lt.${before.id})`,
+    );
+  }
+  const { data, error } = await query.limit(HISTORY_CONVERSATION_LIMIT + 1);
   if (error) return { code: "OWN_CONVERSATION_UNAVAILABLE", ok: false };
   const conversations = summarySchema
     .array()
@@ -135,30 +158,54 @@ export async function listOwnAiConversations(
     );
   if (!conversations)
     return { code: "OWN_CONVERSATION_UNAVAILABLE", ok: false };
-  return { conversations, ok: true };
+  if (
+    conversations.length > HISTORY_CONVERSATION_LIMIT + 1 ||
+    new Set(conversations.map((row) => row.id)).size !== conversations.length ||
+    (before !== undefined && conversations.some((row) => row.id === before.id))
+  )
+    return { code: "OWN_CONVERSATION_UNAVAILABLE", ok: false };
+  const page = conversations.slice(0, HISTORY_CONVERSATION_LIMIT);
+  const last = page.at(-1);
+  const hasMore = conversations.length > HISTORY_CONVERSATION_LIMIT;
+  return {
+    conversations: page,
+    hasMore,
+    nextCursor:
+      hasMore && last ? { id: last.id, updatedAt: last.updatedAt } : null,
+    ok: true,
+  };
 }
 
 export async function readOwnAiMessages(
   supabase: SupabaseClient,
   userId: string,
   conversationId: string,
+  beforePosition?: number,
 ): Promise<
   | { messages: readonly OwnAiMessage[]; hasEarlierMessages: boolean; ok: true }
   | { code: "OWN_CONVERSATION_UNAVAILABLE"; ok: false }
 > {
   if (
     !z.uuid().safeParse(userId).success ||
-    !z.uuid().safeParse(conversationId).success
+    !z.uuid().safeParse(conversationId).success ||
+    (beforePosition !== undefined &&
+      (!Number.isSafeInteger(beforePosition) ||
+        beforePosition <= 0 ||
+        beforePosition > 2_147_483_647))
   ) {
     return { code: "OWN_CONVERSATION_UNAVAILABLE", ok: false };
   }
-  const { data, error } = await supabase
+  let query = supabase
     .from("ai_messages")
     .select(
       "id, author_role, body_text, position, user_id, conversation_id, client_message_id, created_at, ai_answer_sources(source_key, knowledge_version, position), ai_tool_calls(tool_name, outcome, position)",
     )
     .eq("user_id", userId)
-    .eq("conversation_id", conversationId)
+    .eq("conversation_id", conversationId);
+  // The existing DB unique(conversation_id, position) makes this cursor stable.
+  if (beforePosition !== undefined)
+    query = query.lt("position", beforePosition);
+  const { data, error } = await query
     .order("position", { ascending: false })
     .limit(HISTORY_MESSAGE_LIMIT + 1);
   if (error) return { code: "OWN_CONVERSATION_UNAVAILABLE", ok: false };
@@ -170,6 +217,13 @@ export async function readOwnAiMessages(
       (row) => row.user_id === userId && row.conversation_id === conversationId,
     )
     .sort((left, right) => right.position - left.position);
+  if (
+    owned.length > HISTORY_MESSAGE_LIMIT + 1 ||
+    new Set(owned.map((row) => row.position)).size !== owned.length ||
+    (beforePosition !== undefined &&
+      owned.some((row) => row.position >= beforePosition))
+  )
+    return { code: "OWN_CONVERSATION_UNAVAILABLE", ok: false };
   return {
     hasEarlierMessages: owned.length > HISTORY_MESSAGE_LIMIT,
     messages: owned

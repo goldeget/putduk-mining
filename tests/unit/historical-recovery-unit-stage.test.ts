@@ -5,6 +5,7 @@ import { createHash } from "node:crypto";
 import { describe, expect, it } from "vitest";
 import {
   readHistoricalRecoverySource,
+  readHistoricalRecoveryFixtureSource,
   verifyHistoricalRecoveryBytes,
   stageHistoricalRecoveryTestSource,
   prepareBackend197UnitFixtures,
@@ -84,6 +85,7 @@ describe("historical recovery test-only staging", () => {
   });
   it.each([
     "principal-review-r2-source.test.ts",
+    "principal-e2e-source.test.ts",
     "backend-http-canonical-source.test.ts",
     "backend-http-local-source.test.ts",
     "backend-http-195-source.test.ts",
@@ -99,6 +101,85 @@ describe("historical recovery test-only staging", () => {
     );
     expect(() =>
       stageHistoricalRecoveryTestSource(input + "\n// changed", name),
+    ).toThrow("TEST_SOURCE_CHANGED");
+  });
+});
+
+describe("principal-v4 current UI separation", () => {
+  it.each([
+    [
+      "app/(product)/wallet/withdraw/page.tsx",
+      "feadc26536a19f5173b9fad961fcb93002783fa62fc11c14af92c83251eb3215",
+    ],
+    [
+      "components/product/principal-crypto-withdrawal-form.tsx",
+      "b71e00a8c2f156c99804b0d68064c535dfc0ca82286bd6d8e208f9486785dab1",
+    ],
+    [
+      "components/product/principal-withdrawal-form.tsx",
+      "6be8818f2afb11fac9e751e4c4f244634c5061f831cda1f5f3994621ab5ef5df",
+    ],
+  ])(
+    "copies only the exact original %s and rejects its current UI bytes",
+    (path, expected) => {
+      const original = readHistoricalRecoveryFixtureSource(root, path, 191);
+      expect(digest(original)).toBe(expected);
+      expect(original.equals(preserved(path))).toBe(true);
+      expect(digest(readFileSync(path))).not.toBe(expected);
+      expect(verifyHistoricalRecoveryBytes(path, original, 191)).toBe(true);
+      expect(() =>
+        verifyHistoricalRecoveryBytes(path, readFileSync(path), 191),
+      ).toThrow("BLOB_CHANGED");
+      expect(() =>
+        verifyHistoricalRecoveryBytes(
+          path,
+          Buffer.from("caller rewritten source"),
+          191,
+        ),
+      ).toThrow("BLOB_CHANGED");
+    },
+  );
+  it("keeps all190 v4 pins and the complete original principal test assertions and timeouts", () => {
+    const bytes = readFileSync(
+      "tests/e2e/fixtures/principal-local-recovery-source-v4.json",
+    );
+    expect(digest(bytes)).toBe(
+      "6d4af5c25f3a4fe45f3c60a860838c9f1d2857fa36cd51e1b287e6e5e09e53ce",
+    );
+    const map = JSON.parse(bytes.toString("utf8")) as {
+      sources: { path: string; sha256: string }[];
+    };
+    expect(map.sources).toHaveLength(190);
+    for (const row of map.sources) {
+      const historical = readHistoricalRecoveryFixtureSource(
+        root,
+        row.path,
+        191,
+      );
+      expect(digest(historical)).toBe(row.sha256);
+    }
+    const original = preserved(
+      "tests/unit/principal-e2e-source.test.ts",
+    ).toString("utf8");
+    const staged = stageHistoricalRecoveryTestSource(
+      original,
+      "principal-e2e-source.test.ts",
+    );
+    const imported =
+      'import { readHistoricalRecoveryFixtureSource } from "../../scripts/historical-recovery-unit-stage.mjs";\n';
+    expect(
+      staged
+        .slice(imported.length)
+        .replace(
+          'writeFileSync(target, readHistoricalRecoveryFixtureSource(resolve("."), path, 191));',
+          "writeFileSync(target, readFileSync(path));",
+        ),
+    ).toBe(original);
+    expect(() =>
+      stageHistoricalRecoveryTestSource(
+        original.replace("runtimeSources: 15", "runtimeSources: 14"),
+        "principal-e2e-source.test.ts",
+      ),
     ).toThrow("TEST_SOURCE_CHANGED");
   });
 });

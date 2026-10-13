@@ -1,4 +1,5 @@
 "use client";
+import { FeedbackMessage } from "../../../../../components/ui/feedback-message";
 
 import Link from "next/link";
 import type { Route } from "next";
@@ -354,7 +355,7 @@ export function EconomyConsole({
           </p>
         </div>
       </section>
-      <p
+      <FeedbackMessage
         ref={status}
         className={styles.result}
         role="status"
@@ -362,7 +363,7 @@ export function EconomyConsole({
         tabIndex={-1}
       >
         {message || "저장된 정책을 확인한 뒤 새 버전으로 작성해 주세요."}
-      </p>
+      </FeedbackMessage>
       {sessionChanged ? (
         <Link href={"/economy" as Route} className="ghost-button">
           저장된 정책 다시 열기

@@ -7,6 +7,7 @@ import {
 
 import {
   useEffect,
+  useLayoutEffect,
   useId,
   useRef,
   useState,
@@ -16,6 +17,10 @@ import {
 import { usePathname, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { PutdukIcon } from "@/components/icons/putduk-icon";
+import {
+  FeedbackMessage,
+  FeedbackSymbol,
+} from "@/components/ui/feedback-message";
 
 import { AI_QUESTION_MAX_CHARACTERS } from "@/domain/ai/chat";
 import {
@@ -88,8 +93,19 @@ export function PutdukAiChat({
   const composerId = useId();
   const questionInputRef = useRef<HTMLTextAreaElement | null>(null);
   const transcriptRef = useRef<HTMLDivElement | null>(null);
-  const followLatest = useRef(true);
-  const [readingEarlier, setReadingEarlier] = useState(false);
+  const [readingEarlier, setReadingEarlier] = useState(
+    () => session.readTranscriptPosition(surface)?.followLatest === false,
+  );
+  const followLatest = useRef(!readingEarlier);
+  const composing = useRef(false);
+  const earlierAnchor = useRef<{
+    conversationId: string | null;
+    messages: typeof session.messages;
+    messageId: string | undefined;
+    offset: number;
+    scrollTop: number;
+    scrollHeight: number;
+  } | null>(null);
   const [usageOpen, setUsageOpen] = useState(false);
   const [usageRead, setUsageRead] = useState<{
     ownerId: string;
@@ -211,6 +227,74 @@ export function PutdukAiChat({
     }
   }, [session.messages]);
 
+  const { readTranscriptPosition, rememberTranscriptPosition } = session;
+  useLayoutEffect(() => {
+    const node = transcriptRef.current;
+    const conversationId = session.activeConversationId;
+    if (!node || !conversationId) return;
+    const saved = readTranscriptPosition(surface);
+    if (saved?.conversationId === conversationId) {
+      followLatest.current = saved.followLatest;
+      node.scrollTop = saved.followLatest ? node.scrollHeight : saved.scrollTop;
+    }
+    return () =>
+      rememberTranscriptPosition(surface, {
+        conversationId,
+        scrollTop: node.scrollTop,
+        followLatest: followLatest.current,
+      });
+  }, [
+    session.activeConversationId,
+    surface,
+    readTranscriptPosition,
+    rememberTranscriptPosition,
+  ]);
+
+  useLayoutEffect(() => {
+    const anchor = earlierAnchor.current;
+    const node = transcriptRef.current;
+    if (!anchor || !node) return;
+    if (anchor.conversationId !== session.activeConversationId) {
+      earlierAnchor.current = null;
+      return;
+    }
+    if (anchor.messages === session.messages) return;
+    const message = Array.from(
+      node.querySelectorAll<HTMLElement>("[data-ai-message-id]"),
+    ).find((item) => item.dataset.aiMessageId === anchor.messageId);
+    node.scrollTop = message
+      ? node.scrollTop +
+        message.getBoundingClientRect().top -
+        node.getBoundingClientRect().top -
+        anchor.offset
+      : anchor.scrollTop + node.scrollHeight - anchor.scrollHeight;
+    earlierAnchor.current = null;
+  }, [session.messages, session.activeConversationId]);
+
+  function captureEarlierAnchor() {
+    const node = transcriptRef.current;
+    if (!node) return null;
+    const top = node.getBoundingClientRect().top;
+    const message = Array.from(
+      node.querySelectorAll<HTMLElement>("[data-ai-message-id]"),
+    ).find((item) => item.getBoundingClientRect().bottom > top);
+    return {
+      conversationId: session.activeConversationId,
+      messages: session.messages,
+      messageId: message?.dataset.aiMessageId,
+      offset: message ? message.getBoundingClientRect().top - top : 0,
+      scrollTop: node.scrollTop,
+      scrollHeight: node.scrollHeight,
+    };
+  }
+
+  async function loadEarlier() {
+    earlierAnchor.current = captureEarlierAnchor();
+    followLatest.current = false;
+    setReadingEarlier(true);
+    if (!(await session.loadEarlierMessages())) earlierAnchor.current = null;
+  }
+
   useEffect(() => {
     const node = transcriptRef.current;
     if (!node || typeof ResizeObserver === "undefined") return;
@@ -227,12 +311,15 @@ export function PutdukAiChat({
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (composing.current) return;
+    earlierAnchor.current = null;
     followLatest.current = true;
     setReadingEarlier(false);
     void session.submit(screenContext ? { screenContext } : {});
   }
 
   function showLatest() {
+    earlierAnchor.current = null;
     followLatest.current = true;
     setReadingEarlier(false);
     const node = transcriptRef.current;
@@ -343,7 +430,9 @@ export function PutdukAiChat({
               ) : null}
               {session.historyStatus === "unavailable" ? (
                 <div>
-                  <p role="alert">이전 대화를 불러오지 못했어요.</p>
+                  <FeedbackMessage role="alert">
+                    이전 대화를 불러오지 못했어요.
+                  </FeedbackMessage>
                   <button
                     type="button"
                     className="button button--secondary"
@@ -386,6 +475,31 @@ export function PutdukAiChat({
                   </li>
                 ))}
               </ul>
+              {session.historyListHasMore ? (
+                <div className={styles.historyPagination}>
+                  {session.historyListPageStatus === "error" ? (
+                    <FeedbackMessage role="alert">
+                      이전 대화를 더 불러오지 못했어요.
+                    </FeedbackMessage>
+                  ) : null}
+                  <button
+                    type="button"
+                    disabled={
+                      !session.canSubmit ||
+                      !session.online ||
+                      session.pending ||
+                      session.historyListPageStatus === "loading"
+                    }
+                    onClick={() => void session.loadMoreHistory()}
+                  >
+                    {session.historyListPageStatus === "loading"
+                      ? "불러오는 중…"
+                      : session.historyListPageStatus === "error"
+                        ? "이전 대화 다시 불러오기"
+                        : "이전 대화 더 보기"}
+                  </button>
+                </div>
+              ) : null}
             </div>
           </details>
           <details
@@ -427,10 +541,15 @@ export function PutdukAiChat({
                       visibleUsage.value.rolling24h.limit ||
                     visibleUsage.value.rollingMinute.used >=
                       visibleUsage.value.rollingMinute.limit ? (
-                      <p role="status" aria-live="polite" aria-atomic="true">
+                      <FeedbackMessage
+                        tone="warning"
+                        role="status"
+                        aria-live="polite"
+                        aria-atomic="true"
+                      >
                         지금은 이용 한도에 도달했어요. 잠시 후 다시 질문해
                         주세요.
-                      </p>
+                      </FeedbackMessage>
                     ) : null}
                     <small>
                       확인 시각:{" "}
@@ -500,12 +619,6 @@ export function PutdukAiChat({
           ) : null}
         </aside>
         <div className={styles.thread}>
-          {session.historyHasEarlierMessages ? (
-            <p className={styles.unsaved}>
-              최근 대화 일부를 표시해요. 더 오래된 내용은 여기에 표시되지
-              않아요.
-            </p>
-          ) : null}
           {presentation === "page" && surface !== "page" ? (
             <header className={styles.pageStatus}>
               <strong>내 기록과 퍼뜩 이용 안내</strong>
@@ -543,10 +656,14 @@ export function PutdukAiChat({
               </p>
             ) : null}
             {!session.online ? (
-              <p className={styles.providerNotice} role="status">
+              <FeedbackMessage
+                className={styles.providerNotice}
+                role="status"
+                tone="warning"
+              >
                 인터넷 연결이 끊겼어요. 작성한 질문은 그대로 남아 있어요.
                 연결되면 직접 다시 보내 주세요.
-              </p>
+              </FeedbackMessage>
             ) : null}
           </div>
 
@@ -561,11 +678,41 @@ export function PutdukAiChat({
               tabIndex={0}
               onScroll={(event) => {
                 const node = event.currentTarget;
+                if (earlierAnchor.current)
+                  earlierAnchor.current = captureEarlierAnchor();
                 followLatest.current =
                   node.scrollHeight - node.scrollTop - node.clientHeight < 72;
                 setReadingEarlier(!followLatest.current);
               }}
             >
+              {session.historyHasEarlierMessages ? (
+                <div className={styles.earlierMessages}>
+                  <p className={styles.unsaved}>최근 대화 일부를 표시해요.</p>
+                  {session.earlierMessagesStatus === "error" ? (
+                    <FeedbackMessage role="alert">
+                      이전 내용을 불러오지 못했어요. 읽던 내용은 그대로 남아
+                      있어요.
+                    </FeedbackMessage>
+                  ) : null}
+                  <button
+                    type="button"
+                    aria-controls={`${composerId}-transcript`}
+                    disabled={
+                      !session.canSubmit ||
+                      !session.online ||
+                      session.pending ||
+                      session.earlierMessagesStatus === "loading"
+                    }
+                    onClick={() => void loadEarlier()}
+                  >
+                    {session.earlierMessagesStatus === "loading"
+                      ? "이전 내용 불러오는 중…"
+                      : session.earlierMessagesStatus === "error"
+                        ? "이전 내용 다시 불러오기"
+                        : "이전 내용 더 보기"}
+                  </button>
+                </div>
+              ) : null}
               {session.messages.length === 0 ? (
                 <div className={`ai-chat__welcome ${styles.welcome}`}>
                   <picture className={styles.welcomeMascot}>
@@ -596,6 +743,7 @@ export function PutdukAiChat({
                   <article
                     className={`ai-message ai-message--${message.role} ${styles.message}`}
                     key={message.id}
+                    data-ai-message-id={message.id}
                     data-message-state={message.state}
                     data-answer-source={message.source}
                   >
@@ -683,7 +831,10 @@ export function PutdukAiChat({
                     {message.failure ? (
                       <div className={styles.failure}>
                         <strong>{message.failure.label}</strong>
-                        <p>{message.failure.message}</p>
+                        <p>
+                          <FeedbackSymbol tone="danger" />
+                          {message.failure.message}
+                        </p>
                         <button
                           className={`button button--secondary ${styles.recoveryButton}`}
                           type="button"
@@ -700,6 +851,7 @@ export function PutdukAiChat({
                     ) : null}
                     {message.saved === false ? (
                       <p className={styles.unsaved}>
+                        <FeedbackSymbol tone="warning" />
                         이번 답변은 계정에 남지 않았어요.
                       </p>
                     ) : null}
@@ -737,7 +889,9 @@ export function PutdukAiChat({
                           "saved" ||
                         feedbackChoice[message.assistantMessageId] ===
                           "exists" ? (
-                          <p role="status">의견을 남겼어요.</p>
+                          <FeedbackMessage role="status" tone="success">
+                            의견을 남겼어요.
+                          </FeedbackMessage>
                         ) : (
                           <>
                             <button
@@ -819,7 +973,9 @@ export function PutdukAiChat({
                             ) : null}
                             {feedbackChoice[message.assistantMessageId] ===
                             "failed" ? (
-                              <p role="status">의견을 남기지 못했어요.</p>
+                              <FeedbackMessage role="status" tone="warning">
+                                의견을 남기지 못했어요.
+                              </FeedbackMessage>
                             ) : null}
                           </>
                         )}
@@ -866,6 +1022,12 @@ export function PutdukAiChat({
               ref={questionInputRef}
               value={session.draft}
               onChange={(event) => session.setDraft(event.target.value)}
+              onCompositionStart={() => {
+                composing.current = true;
+              }}
+              onCompositionEnd={() => {
+                composing.current = false;
+              }}
               maxLength={AI_QUESTION_MAX_CHARACTERS}
               placeholder="궁금한 내용을 적어 주세요."
               disabled={!session.canSubmit}

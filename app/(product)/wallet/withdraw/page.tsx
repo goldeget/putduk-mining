@@ -1,3 +1,4 @@
+import { FeedbackMessage } from "@/components/ui/feedback-message";
 import Link from "next/link";
 
 import { PrincipalCryptoWithdrawalForm } from "@/components/product/principal-crypto-withdrawal-form";
@@ -432,13 +433,13 @@ export default async function WithdrawalPage() {
               </dl>
 
               {conversionError ? (
-                <p
+                <FeedbackMessage
                   className={`${styles.feedback} ${styles.feedbackError}`}
                   role="status"
                 >
                   환영 보상 상태를 확인하지 못했어요. 잠시 후 다시 시도해
                   주세요.
-                </p>
+                </FeedbackMessage>
               ) : welcomeConverted ? (
                 <>
                   <strong className={styles.summaryAmount}>

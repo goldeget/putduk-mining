@@ -1,3 +1,4 @@
+import { FeedbackMessage } from "../../../../../components/ui/feedback-message";
 import Link from "next/link";
 import type { Route } from "next";
 
@@ -60,12 +61,12 @@ export default async function ExceptionsPage() {
       />
 
       {loadFailed ? (
-        <p className="queue-flash" role="alert">
+        <FeedbackMessage className="queue-flash" role="alert">
           예외 목록을 일부 불러오지 못했습니다.{" "}
           <Link className="text-link" href={"/exceptions" as Route}>
             다시 불러오기
           </Link>
-        </p>
+        </FeedbackMessage>
       ) : null}
 
       <section className="section-heading">

@@ -1,4 +1,5 @@
 "use client";
+import { FeedbackMessage } from "../../../../components/ui/feedback-message";
 
 import Link from "next/link";
 import type { Route } from "next";
@@ -300,11 +301,11 @@ export function OperationsContext() {
             </div>
           ) : null}
           {member ? (
-            <p className={styles.note} role="status">
+            <FeedbackMessage className={styles.note} role="status">
               선택한 회원: {member.name} ·{" "}
               {member.loginId ?? "아이디 확인 불가"} ·{" "}
               {member.phone ?? "전화번호 확인 불가"}
-            </p>
+            </FeedbackMessage>
           ) : (
             <p className={styles.note}>
               먼저 회원을 찾아 선택해 주세요. 회원 식별자를 직접 입력할 필요가
@@ -325,14 +326,14 @@ export function OperationsContext() {
         기록 확인
       </button>
       {busy ? (
-        <p role="status" className={styles.note}>
+        <FeedbackMessage role="status" className={styles.note}>
           현재 기록을 확인하고 있습니다.
-        </p>
+        </FeedbackMessage>
       ) : null}
       {message ? (
-        <p role="alert" className={styles.notice}>
+        <FeedbackMessage role="alert" className={styles.notice}>
           {message}
-        </p>
+        </FeedbackMessage>
       ) : null}
       {report ? (
         <article className={styles.contextReport} aria-label="운영 기록 설명">

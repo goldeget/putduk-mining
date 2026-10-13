@@ -1,4 +1,5 @@
 "use client";
+import { FeedbackMessage } from "../../../../../../components/ui/feedback-message";
 
 import { useState } from "react";
 import { useOperatorDraft } from "@/components/assistant/operator-draft-provider";
@@ -61,9 +62,9 @@ export function ConfirmUsdtDepositForm({ depositId }: { depositId: string }) {
         </div>
       ) : null}
       {draftNote ? (
-        <p className="panel-note" role="status">
+        <FeedbackMessage className="panel-note" role="status">
           {draftNote}
-        </p>
+        </FeedbackMessage>
       ) : null}
       <ConfirmUsdtDepositFields
         key={appliedRevision}

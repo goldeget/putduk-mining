@@ -1,4 +1,5 @@
-﻿import { randomUUID } from "node:crypto";
+import { FeedbackMessage } from "../../../../../components/ui/feedback-message";
+import { randomUUID } from "node:crypto";
 import Link from "next/link";
 import type { Route } from "next";
 import { redirect } from "next/navigation";
@@ -67,10 +68,10 @@ export default async function KycQueuePage() {
           lead="본인 확인 건을 검토하고 결과와 사유를 남깁니다."
           title="본인 확인 검토"
         />
-        <p className="queue-flash" role="alert">
+        <FeedbackMessage className="queue-flash" role="alert">
           조회 기록을 남기지 못해 본인 확인 정보를 열지 않았습니다.
           <RouteRetryButton />
-        </p>
+        </FeedbackMessage>
       </div>
     );
   }
@@ -130,10 +131,10 @@ export default async function KycQueuePage() {
       </p>
 
       {error ? (
-        <p className="queue-flash" role="alert">
+        <FeedbackMessage className="queue-flash" role="alert">
           본인 확인 대기열을 불러오지 못했습니다. 잠시 후 다시 열어 주세요.
           <RouteRetryButton />
-        </p>
+        </FeedbackMessage>
       ) : null}
       {submissionsUnavailable ? (
         <div className="queue-flash" role="alert">

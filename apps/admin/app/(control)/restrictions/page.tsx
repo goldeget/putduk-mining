@@ -1,3 +1,4 @@
+import { FeedbackMessage } from "../../../../../components/ui/feedback-message";
 import Link from "next/link";
 import type { Route } from "next";
 
@@ -70,10 +71,10 @@ export default async function RestrictionsPage() {
       </p>
 
       {!canMutate ? (
-        <p className="queue-flash" role="status">
+        <FeedbackMessage className="queue-flash" role="status">
           현재 역할로는 조회만 가능합니다. 제한 변경은 상위 운영자만 할 수
           있습니다.
-        </p>
+        </FeedbackMessage>
       ) : null}
 
       {loadFailed ? (
@@ -150,9 +151,9 @@ export default async function RestrictionsPage() {
                 </p>
               )}
               {safeMode.error ? (
-                <p className="panel-note" role="alert">
+                <FeedbackMessage className="panel-note" role="alert">
                   현재 안전 모드를 확인한 뒤 변경할 수 있습니다.
-                </p>
+                </FeedbackMessage>
               ) : (
                 <SafeModeForm
                   canMutate={canMutate}

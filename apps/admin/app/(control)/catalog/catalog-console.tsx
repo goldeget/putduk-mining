@@ -1,4 +1,6 @@
 "use client";
+import { FeedbackMessage } from "../../../../../components/ui/feedback-message";
+
 import Link from "next/link";
 import type { Route } from "next";
 import { useEffect, useRef, useState } from "react";
@@ -200,9 +202,9 @@ export function CatalogConsole({ initial }: { initial: CatalogState }) {
             <li>정해진 시간에 공개</li>
           </ol>
           {!selected.supported ? (
-            <p role="alert">
+            <FeedbackMessage role="alert">
               이 초안은 현재 승인할 수 없습니다. 새 초안으로 다시 검토해 주세요.
-            </p>
+            </FeedbackMessage>
           ) : operation ? (
             <>
               <label className={styles.field}>
@@ -264,9 +266,9 @@ export function CatalogConsole({ initial }: { initial: CatalogState }) {
             </p>
           )}
           {!online && (
-            <p role="status">
+            <FeedbackMessage role="status">
               연결이 끊겼습니다. 연결된 뒤 직접 다시 눌러 주세요.
-            </p>
+            </FeedbackMessage>
           )}
           <p className={styles.result} aria-live="polite">
             {message}

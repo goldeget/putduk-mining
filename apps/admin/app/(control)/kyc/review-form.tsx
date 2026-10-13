@@ -1,4 +1,5 @@
 "use client";
+import { FeedbackMessage } from "../../../../../components/ui/feedback-message";
 
 import { useRef, useState, useTransition } from "react";
 
@@ -83,9 +84,9 @@ export function KycReviewForm({
     >
       <input name="caseId" type="hidden" value={caseId} />
       {!evidenceAvailable ? (
-        <p role="alert" className="panel-note">
+        <FeedbackMessage role="alert" className="panel-note">
           제출 서류를 확인한 뒤 검토 결과를 저장할 수 있습니다.
-        </p>
+        </FeedbackMessage>
       ) : null}
       <fieldset
         disabled={!evidenceAvailable || pending}

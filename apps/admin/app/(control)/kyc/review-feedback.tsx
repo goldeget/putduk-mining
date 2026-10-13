@@ -1,4 +1,5 @@
 "use client";
+import { FeedbackMessage } from "../../../../../components/ui/feedback-message";
 
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 
@@ -23,14 +24,14 @@ export function KycReviewFeedback({ children }: { children: React.ReactNode }) {
   return (
     <ReviewFeedback.Provider value={setResult}>
       {result?.ok ? (
-        <p
+        <FeedbackMessage
           ref={feedbackRef}
           aria-label="본인 확인 검토 결과"
           className="queue-flash queue-flash--ok"
           role="status"
         >
           {result.message}
-        </p>
+        </FeedbackMessage>
       ) : null}
       {children}
     </ReviewFeedback.Provider>

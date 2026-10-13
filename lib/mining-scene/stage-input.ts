@@ -1,3 +1,4 @@
+import { projectProcessProfile } from "./process-profile";
 import type {
   AccentToken,
   AmbientPreset,
@@ -7,6 +8,7 @@ import type {
   ResolvedScene,
   SceneFamilyKey,
   ScenePerformance,
+  SceneProcessProfile,
   ScenePoint,
   SceneVisualStatus,
 } from "@/lib/mining-scene/types";
@@ -61,6 +63,7 @@ export const STAGE_SCENE_INPUT_KEYS = [
   "responsiveSources",
   "productionAssetActive",
   "decoration",
+  "process",
 ] as const;
 
 export type StageSceneInputKey = (typeof STAGE_SCENE_INPUT_KEYS)[number];
@@ -82,6 +85,7 @@ export type StageSceneInput = {
   readonly master: ApprovedSceneMaster | null;
   readonly responsiveSources: readonly ApprovedResponsiveSource[];
   readonly productionAssetActive: boolean;
+  readonly process?: SceneProcessProfile | null;
   readonly decoration: "none" | "canvas-2d";
 };
 
@@ -176,5 +180,6 @@ export function projectStageInput(resolved: ResolvedScene): StageSceneInput {
     responsiveSources: scene?.responsiveSources.map(projectSource) ?? [],
     productionAssetActive: resolved.productionAssetActive,
     decoration,
+    process: projectProcessProfile(scene?.process),
   };
 }

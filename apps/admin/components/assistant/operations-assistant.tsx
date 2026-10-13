@@ -1,4 +1,5 @@
 "use client";
+import { FeedbackMessage } from "../../../../components/ui/feedback-message";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -318,18 +319,18 @@ export function OperationsAssistant({
         </section>
       </div>
       {drafts.clearedReason === "EXPIRED" ? (
-        <p className={styles.notice} role="status">
+        <FeedbackMessage className={styles.notice} role="status">
           초안이 만료됐습니다. 다시 준비해 주세요.
-        </p>
+        </FeedbackMessage>
       ) : drafts.clearedReason === "SESSION" ? (
-        <p className={styles.notice} role="status">
+        <FeedbackMessage className={styles.notice} role="status">
           운영 세션이 바뀌었습니다. 운영 화면을 다시 열어 주세요.
-        </p>
+        </FeedbackMessage>
       ) : message &&
         (message !== "입금 초안을 준비했습니다." || drafts.draft) ? (
-        <p className={styles.notice} role="status">
+        <FeedbackMessage className={styles.notice} role="status">
           {message}
-        </p>
+        </FeedbackMessage>
       ) : null}
       {drafts.draft ? (
         <section

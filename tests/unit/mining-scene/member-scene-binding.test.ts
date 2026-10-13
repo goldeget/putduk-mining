@@ -167,14 +167,21 @@ describe("owner-derived selected-product scene presentation", () => {
     expect(result.products[0]!.productComplete).toBe(false);
   });
 
-  it("preserves null art for published products that lack an accepted master", async () => {
+  it("selects newly commissioned art without promoting allocation to a live runtime", async () => {
     source!.mining_products[0]!.code = "AAPL";
     source!.mining_products[0]!.category = "US_STOCK";
     const result = await readMemberSceneBinding(identity);
     expect(result.state).toBe("ready");
     if (result.state !== "ready") throw new Error("expected binding");
-    expect(result.products[0]!.scene.visualStatus).toBe("FAMILY_UNASSIGNED");
-    expect(result.products[0]!.scene.scene).toBeNull();
+    expect(result.products[0]!.scene.visualStatus).toBe("MASTER_READY");
+    expect(result.products[0]!.scene.presentation?.profile.masterVariant).toBe(
+      "product-aapl-device-v1",
+    );
+    expect(result.products[0]!.productComplete).toBe(false);
+    expect(result.runtimeBinding).toBe("UNCONFIRMED");
+    expect(result.scope).toBe("CONFIRMED_ALLOCATION_ONLY");
+    expect(result).not.toHaveProperty("running");
+    expect(result).not.toHaveProperty("sessionReward");
   });
 
   it("uses the independent GPU scene only for an authoritative available NVDA product", async () => {

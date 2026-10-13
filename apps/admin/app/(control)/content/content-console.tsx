@@ -1,4 +1,5 @@
 "use client";
+import { FeedbackMessage } from "../../../../../components/ui/feedback-message";
 
 import { useEffect, useRef, useState } from "react";
 import { StepUpTokenField } from "@/components/step-up-token-field";
@@ -315,12 +316,12 @@ export function ContentConsole() {
         </button>
       </div>
       {message && (
-        <p
+        <FeedbackMessage
           role={problem ? "alert" : "status"}
           className={problem ? styles.alert : styles.feedback}
         >
           {message}
-        </p>
+        </FeedbackMessage>
       )}
       {uncertain && (
         <button

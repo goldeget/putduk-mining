@@ -341,7 +341,11 @@ describe("non-modal guidance and reduced scroll", () => {
       document.body.append(node);
     }
     await mount(
-      createElement(GuidedQuest, { serverStage: "READY", ownerId: "qa-owner" }),
+      createElement(GuidedQuest, {
+        serverStage: "READY",
+        ownerId: "qa-owner",
+        eligible: true,
+      }),
     );
     await act(async () => {
       await new Promise((resolve) => setTimeout(resolve, 10));
@@ -466,6 +470,7 @@ describe("non-modal guidance and reduced scroll", () => {
         createElement(GuidedQuest, {
           serverStage: "ACTIVE",
           ownerId: "qa-owner",
+          eligible: true,
         }),
       );
     });
