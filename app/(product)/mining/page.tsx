@@ -599,6 +599,7 @@ export default async function MiningPage() {
           ) : null}
           <header className={styles.sectionHeader}>
             <h2>월드 목록</h2>
+            <p>월드별 이용 조건과 적용 중인 채굴 규칙을 확인해 주세요.</p>
             <p>월드는 채굴 테마예요. 시세나 투자 수익을 따르지 않습니다.</p>
           </header>
           {worldsError ? (

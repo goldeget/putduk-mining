@@ -111,9 +111,10 @@ export function CatalogBrowse({
             {filtered.length}개 상품
           </p>
         </header>
-        <p className={styles.scopeNotice}>
-          퍼뜩 채굴에 사용하는 상품이에요. 주식이나 투자 상품이 아니에요.
-        </p>
+        <div className={styles.scopeNotice}>
+          <p>상품별 특징과 보상·지급 조건은 공개된 안내에서 확인해 주세요.</p>
+          <p>퍼뜩 채굴에 사용하는 상품이에요. 주식이나 투자 상품이 아니에요.</p>
+        </div>
         {filtered.length ? (
           <div className={styles.products}>
             {filtered.map((product) => (
