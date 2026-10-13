@@ -1,3 +1,4 @@
+import { PUTDUK_SYMBOL_PATH } from "@/components/brand/putduk-symbol";
 // @vitest-environment jsdom
 import { readFileSync } from "node:fs";
 import { createElement } from "react";
@@ -469,14 +470,11 @@ describe("Wallet reference reconstruction preserves real contracts", () => {
       Array.from(symbol?.querySelectorAll("path") ?? []).map((path) =>
         path.getAttribute("d"),
       ),
-    ).toEqual([
-      "M3 10 21 1l16 8-18 9L3 10Z",
-      "M3 10v36l16 9V18L3 10Z",
-      "m19 18 18-9v37l-18 9V18Z",
-      "m10 14 7 4v32l-7-4V14Z",
-      "m24 20 7-4v26l-7 4V20Z",
-      "m3 10 18-9 16 8v37l-18 9-16-9V10Z",
-    ]);
+    ).toEqual([PUTDUK_SYMBOL_PATH]);
+    expect(symbol?.getAttribute("data-putduk-brand")).toBe("canonical");
+    expect(symbol?.getAttribute("data-putduk-brand-version")).toBe(
+      "2026.10.13-sprout-p-v1",
+    );
     const realWallet = document.querySelector('[aria-label="실제 KRW 지갑"]');
     expect(realWallet?.textContent).toContain("출금 가능 잔액");
     expect(realWallet?.textContent).toContain("사용 가능 잔액");

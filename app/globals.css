@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 @import "../lib/design/theme.css";
+@import "../lib/design/korean-typography.css";
 
 * {
   box-sizing: border-box;
@@ -24,10 +25,7 @@ body {
   color: var(--text-primary);
   font-family: var(--font-sans);
   font-synthesis: none;
-  line-break: strict;
-  overflow-wrap: normal;
   text-rendering: optimizeLegibility;
-  word-break: keep-all;
 }
 
 body::before {

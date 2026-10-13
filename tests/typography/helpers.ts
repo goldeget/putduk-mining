@@ -1,5 +1,10 @@
 import { expect, type Page, type TestInfo } from "@playwright/test";
 import { waitForRouteBody, type UiTerminalState } from "./route-readiness";
+import {
+  assertUniqueDocumentIds,
+  assertVisibleControlsNamed,
+  readRenderedPresentationHealth,
+} from "./rendered-health";
 
 export type TypographyTheme = "dark" | "light";
 
@@ -40,6 +45,12 @@ type OverflowIssue = {
 type TypographyAudit = {
   copySpacing: { selector: string; text: string; issue: string }[];
   koreanBreaks: KoreanBreakIssue[];
+  permittedLongTokenWraps: Array<{
+    selector: string;
+    token: string;
+    unbrokenWidth: number;
+    availableWidth: number;
+  }>;
   overflow: OverflowIssue;
 };
 
@@ -114,6 +125,8 @@ async function readTypographyAudit(page: Page): Promise<TypographyAudit> {
     }
 
     const koreanBreaks: KoreanBreakIssue[] = [];
+    const permittedLongTokenWraps: TypographyAudit["permittedLongTokenWraps"] =
+      [];
     const walker = document.createTreeWalker(
       document.body,
       NodeFilter.SHOW_TEXT,
@@ -136,18 +149,50 @@ async function readTypographyAudit(page: Page): Promise<TypographyAudit> {
         const token = match[0];
         const start = match.index ?? 0;
         const tops: number[] = [];
+        let unbrokenWidth = 0;
         for (let index = 0; index < token.length; index += 1) {
           const range = document.createRange();
           range.setStart(node, start + index);
           range.setEnd(node, start + index + 1);
           const rect = range.getBoundingClientRect();
           if (rect.width <= 0 || rect.height <= 0) continue;
+          unbrokenWidth += rect.width;
           const roundedTop = Math.round(rect.top * 2) / 2;
           if (!tops.some((top) => Math.abs(top - roundedTop) <= 1)) {
             tops.push(roundedTop);
           }
         }
         if (tops.length > 1 && node.parentElement) {
+          // Only a token wider than an empty containing line may use the
+          // owner's required emergency-wrap policy. Never use character count.
+          let container: Element | null = node.parentElement;
+          while (
+            container &&
+            ["inline", "contents"].includes(getComputedStyle(container).display)
+          )
+            container = container.parentElement;
+          const style = getComputedStyle(node.parentElement);
+          const containerStyle = container ? getComputedStyle(container) : null;
+          const availableWidth =
+            container && containerStyle
+              ? container.clientWidth -
+                parseFloat(containerStyle.paddingLeft || "0") -
+                parseFloat(containerStyle.paddingRight || "0")
+              : 0;
+          if (
+            style.wordBreak === "keep-all" &&
+            ["break-word", "anywhere"].includes(style.overflowWrap) &&
+            availableWidth > 0 &&
+            unbrokenWidth > availableWidth + 1
+          ) {
+            permittedLongTokenWraps.push({
+              selector: selectorFor(node.parentElement),
+              token,
+              unbrokenWidth,
+              availableWidth,
+            });
+            continue;
+          }
           koreanBreaks.push({
             selector: selectorFor(node.parentElement),
             token,
@@ -202,6 +247,7 @@ async function readTypographyAudit(page: Page): Promise<TypographyAudit> {
     return {
       copySpacing,
       koreanBreaks,
+      permittedLongTokenWraps,
       overflow: { clientWidth, offenders, scrollWidth },
     };
   });
@@ -244,9 +290,17 @@ export async function auditTypographyRoute(input: {
     width: input.viewport.width,
     height: input.viewport.height,
   });
-  await input.page.goto(input.url, {
+  const response = await input.page.goto(input.url, {
     waitUntil: input.waitUntil ?? "networkidle",
   });
+  expect(
+    response,
+    `${input.routeName}: navigation must return a response`,
+  ).not.toBeNull();
+  expect(
+    response!.status(),
+    `${input.routeName}: navigation cannot be a missing/error page`,
+  ).toBeLessThan(400);
   if (input.origin) {
     await expect
       .poll(() => new URL(input.page.url()).origin, { timeout: 60_000 })
@@ -347,6 +401,7 @@ export async function auditTypographyRoute(input: {
         })),
     };
   });
+  const runtimeHealth = await readRenderedPresentationHealth(input.page);
   await input.testInfo.attach(`${name}-state`, {
     body: JSON.stringify({
       route: new URL(input.page.url()).pathname,
@@ -359,6 +414,11 @@ export async function auditTypographyRoute(input: {
       fixtureId: input.fixtureId ?? "unspecified-existing-route-fixture",
       browser: input.page.context().browser()?.version() ?? "unavailable",
       presentation,
+      runtimeHealth,
+      brandException:
+        input.pathname === "/offline"
+          ? "PUBLIC_OFFLINE_DOCUMENT_HAS_NO_HEADER_OR_BRAND_SVG"
+          : null,
     }),
     contentType: "application/json",
   });
@@ -369,11 +429,60 @@ export async function auditTypographyRoute(input: {
     ).toContain(state);
 
   expect(
+    runtimeHealth.projectFont,
+    `${input.routeName}: bundled font variable is required`,
+  ).not.toBe("");
+  expect(
+    runtimeHealth.loadedProjectFaces.length,
+    `${input.routeName}: declared Korean font face must be loaded`,
+  ).toBeGreaterThan(0);
+  expect(
+    runtimeHealth.bodyFont,
+    `${input.routeName}: body uses the project font`,
+  ).toContain(runtimeHealth.projectFont);
+  expect(
+    runtimeHealth.projectFontUrls.length,
+    `${input.routeName}: project face must have a bundled source`,
+  ).toBeGreaterThan(0);
+  expect(
+    runtimeHealth.nonLocalProjectFontUrls,
+    `${input.routeName}: project font is local to this app`,
+  ).toEqual([]);
+  expect(
+    runtimeHealth.failedViewportImages,
+    `${input.routeName}: viewport images must decode`,
+  ).toEqual([]);
+  await assertUniqueDocumentIds(input.page);
+  await assertVisibleControlsNamed(input.page);
+  if (input.pathname !== "/offline") {
+    // Mobile mining/wallet may place a symbol outside the header. Require the
+    // canonical geometry in the document, not a new logo placement or count=1.
+    expect(
+      runtimeHealth.brandMarkers.length,
+      `${input.routeName}: canonical brand must exist`,
+    ).toBeGreaterThan(0);
+    expect(
+      runtimeHealth.brandMarkers.every(
+        (marker) => marker.version === "2026.10.13-sprout-p-v1",
+      ),
+      `${input.routeName}: canonical brand versions agree`,
+    ).toBe(true);
+    expect(
+      runtimeHealth.visibleBrandPlacementsMissingCanonical,
+      `${input.routeName}: visible chrome brands are canonical`,
+    ).toEqual([]);
+  }
+
+  expect(
     presentation.monoKoreanWithoutProjectFont,
     `${input.routeName}: Korean mono labels require the bundled Korean font, rather than unverified runner fonts`,
   ).toEqual([]);
 
   const result = await readTypographyAudit(input.page);
+  await input.testInfo.attach(`${name}-audit`, {
+    body: JSON.stringify(result),
+    contentType: "application/json",
+  });
   expect(
     result.copySpacing,
     `${input.routeName}: Korean rendered copy spacing`,
@@ -398,6 +507,12 @@ export async function assertTypographyClean(
     await document.fonts.ready;
   });
   const result = await readTypographyAudit(page);
+  if (testInfo && result.permittedLongTokenWraps.length) {
+    await testInfo.attach(`${label}-long-token-wraps`, {
+      body: JSON.stringify(result.permittedLongTokenWraps),
+      contentType: "application/json",
+    });
+  }
   if (
     testInfo &&
     (result.copySpacing.length ||

@@ -9,11 +9,46 @@ import { ThemeControl } from "@/components/system/theme-control";
 import styles from "./public-home.module.css";
 
 const worlds = [
-  { code: "KR", label: "한국", state: "첫 여정", tone: "korea" },
-  { code: "US", label: "미국", state: "확장 월드", tone: "usa" },
-  { code: "AU", label: "금", state: "금빛 월드", tone: "gold" },
-  { code: "AG", label: "은", state: "은빛 월드", tone: "silver" },
-  { code: "CX", label: "디지털 자산", state: "디지털 월드", tone: "crypto" },
+  {
+    code: "KR",
+    label: "한국",
+    state: "첫 여정",
+    tone: "korea",
+    scene: "korea",
+    alt: "한옥과 현대 도시, 산세를 담아 상상한 퍼뜩 한국 월드",
+  },
+  {
+    code: "US",
+    label: "미국",
+    state: "확장 월드",
+    tone: "usa",
+    scene: "usa",
+    alt: "도시의 고층 건물과 다리를 담아 상상한 퍼뜩 미국 월드",
+  },
+  {
+    code: "AU",
+    label: "금",
+    state: "금빛 월드",
+    tone: "gold",
+    scene: "gold",
+    alt: "금빛 광물의 질감과 새싹을 담아 상상한 퍼뜩 금 월드",
+  },
+  {
+    code: "AG",
+    label: "은",
+    state: "은빛 월드",
+    tone: "silver",
+    scene: "silver",
+    alt: "은빛 결정과 차분한 빛을 담아 상상한 퍼뜩 은 월드",
+  },
+  {
+    code: "CX",
+    label: "디지털 자산",
+    state: "디지털 월드",
+    tone: "crypto",
+    scene: "digital",
+    alt: "투명한 연결 구조를 담아 상상한 퍼뜩 디지털 자산 월드",
+  },
 ] as const;
 
 export const metadata: Metadata = {
@@ -123,86 +158,68 @@ export default function HomePage() {
           <picture className="hero__world">
             <source
               type="image/avif"
-              srcSet="/brand/worlds/orbital-earth-960-v1.avif 960w, /brand/worlds/orbital-earth-1600-v1.avif 1600w"
-              sizes="(min-width: 980px) 46vw, 100vw"
+              srcSet="/brand/scenes/first-world/first-world-640-v1.avif 640w, /brand/scenes/first-world/first-world-960-v1.avif 960w, /brand/scenes/first-world/first-world-1536-v1.avif 1536w"
+              sizes="(max-width: 760px) 100vw, 92vw"
             />
             <source
               type="image/webp"
-              srcSet="/brand/worlds/orbital-earth-960-v1.webp 960w, /brand/worlds/orbital-earth-1600-v1.webp 1600w"
-              sizes="(min-width: 980px) 46vw, 100vw"
+              srcSet="/brand/scenes/first-world/first-world-640-v1.webp 640w, /brand/scenes/first-world/first-world-960-v1.webp 960w, /brand/scenes/first-world/first-world-1536-v1.webp 1536w"
+              sizes="(max-width: 760px) 100vw, 92vw"
             />
             <img
-              src="/brand/worlds/orbital-earth-960-v1.webp"
-              alt=""
-              width="960"
-              height="540"
+              src="/brand/scenes/first-world/first-world-1536-v1.webp"
+              alt="금빛 새싹과 광물 섬으로 표현한 퍼뜩의 첫 채굴 월드"
+              width="1536"
+              height="1024"
               fetchPriority="high"
             />
           </picture>
           <div className="hero__signal">
-            <span>나만의 채굴 세계</span>
+            <span>첫 번째 월드 · 한국</span>
             <strong>지금, 퍼뜩.</strong>
-            <p>앱을 닫아도 채굴은 계속돼요</p>
-          </div>
-          <picture className="hero__mascot">
-            <source
-              type="image/avif"
-              srcSet="/brand/mascot/putduk-miner-384-v1.avif 384w, /brand/mascot/putduk-miner-768-v1.avif 768w"
-              sizes="(min-width: 980px) 27vw, 58vw"
-            />
-            <source
-              type="image/webp"
-              srcSet="/brand/mascot/putduk-miner-384-v1.webp 384w, /brand/mascot/putduk-miner-768-v1.webp 768w"
-              sizes="(min-width: 980px) 27vw, 58vw"
-            />
-            <img
-              src="/brand/mascot/putduk-miner-384-v1.webp"
-              alt="금빛 광부 헬멧과 새싹을 쓴 퍼뜩 마스코트"
-              width="384"
-              height="487"
-              fetchPriority="high"
-            />
-          </picture>
-          <div className="hero__index" aria-hidden="true">
-            01 / 한국
           </div>
         </div>
 
         <aside className={styles.action} aria-label="시작 안내">
-          <Link
-            className={`button button--primary ${styles.start}`}
-            href="/signup"
-          >
-            PUTDUK START 시작하기
-            <PutdukIcon name="arrow-right" size={19} />
-          </Link>
-          <div className="landing-welcome-proof" role="note">
-            <PutdukIcon name="shield" size={21} />
-            <p className="ko-copy">
-              <strong>최대 5,000원 환영 보상</strong>
-              자격 확인 후 전환되며, 첫 출금에 사전 입금은 필요하지 않습니다.
-            </p>
+          <div className={styles.heroActions}>
+            <Link
+              className={`button button--primary ${styles.start}`}
+              href="/signup"
+            >
+              PUTDUK START 시작하기 <PutdukIcon name="arrow-right" size={20} />
+            </Link>
+            <Link className={styles.learnLink} href="/how-it-works">
+              어떻게 시작하나요? <PutdukIcon name="arrow-right" size={18} />
+            </Link>
           </div>
-          <dl className="hero__facts">
-            <div>
-              <dt>첫 월드</dt>
-              <dd>한국</dd>
-            </div>
-            <div>
-              <dt>채굴 결과</dt>
-              <dd className="ko-copy">확인 가능</dd>
-            </div>
-            <div>
-              <dt>기본 지갑</dt>
-              <dd>원화 · KRW</dd>
-            </div>
-          </dl>
           <Link className={styles.returnLink} href="/login">
-            내 채굴로 돌아가기
-            <PutdukIcon name="arrow-right" size={17} />
+            내 채굴로 돌아가기 <PutdukIcon name="arrow-right" size={16} />
           </Link>
         </aside>
+        <div className={styles.heroFooter}>
+          <span>나의 시간에, 새로운 가능성을.</span>
+          <a href="#start">
+            아래에서 알아보기 <span aria-hidden="true">↓</span>
+          </a>
+        </div>
       </section>
+
+      <aside className={styles.welcome} aria-label="환영 보상 안내">
+        <div className={styles.welcomeTitle}>
+          <PutdukIcon name="spark" size={26} />
+          <div>
+            <span>처음 만나는 퍼뜩</span>
+            <strong>최대 5,000원 환영 보상</strong>
+          </div>
+        </div>
+        <p>
+          자격 확인 후 전환되며,
+          <br />첫 출금에 사전 입금은 필요하지 않습니다.
+        </p>
+        <Link href="/trial">
+          조건 자세히 보기 <PutdukIcon name="arrow-right" size={18} />
+        </Link>
+      </aside>
 
       <section
         className="landing-journey shell"
@@ -211,7 +228,7 @@ export default function HomePage() {
       >
         <div className="section-heading">
           <p className="eyebrow">PUTDUK START</p>
-          <h2 id="journey-title">첫 결과까지, 가치의 경계는 정확히.</h2>
+          <h2 id="journey-title">복잡한 설명 없이, 한 걸음씩.</h2>
           <p className="ko-copy">
             체험 값은 실제 지갑과 분리됩니다. 전환된 환영 보상만 실제 KRW가
             됩니다.
@@ -247,7 +264,7 @@ export default function HomePage() {
       >
         <div className="section-heading">
           <p className="eyebrow">다섯 개의 채굴 월드</p>
-          <h2 id="worlds-title">한 번의 시작, 다섯 개의 채굴 세계.</h2>
+          <h2 id="worlds-title">시작은 한국에서. 경험은 더 넓은 세계로.</h2>
           <p className="ko-copy">
             한국 월드에서 시작해요. 미국, 금, 은, 디지털 자산 월드로 채굴 경험을
             넓혀갈 수 있어요.
@@ -259,6 +276,47 @@ export default function HomePage() {
               className={`world-row world-row--${world.tone}`}
               key={world.label}
             >
+              <picture
+                className={styles.worldScene}
+                data-world-scene={world.scene}
+              >
+                <source
+                  type="image/avif"
+                  srcSet={[320, 640, 960]
+                    .map(
+                      (width) =>
+                        `/brand/scenes/world-collection/${world.scene}-${width}-v1.avif ${width}w`,
+                    )
+                    .join(", ")}
+                  sizes={
+                    world.scene === "digital"
+                      ? "(max-width: 759px) 100vw, 20vw"
+                      : "(max-width: 759px) 50vw, 20vw"
+                  }
+                />
+                <source
+                  type="image/webp"
+                  srcSet={[320, 640, 960]
+                    .map(
+                      (width) =>
+                        `/brand/scenes/world-collection/${world.scene}-${width}-v1.webp ${width}w`,
+                    )
+                    .join(", ")}
+                  sizes={
+                    world.scene === "digital"
+                      ? "(max-width: 759px) 100vw, 20vw"
+                      : "(max-width: 759px) 50vw, 20vw"
+                  }
+                />
+                <img
+                  src={`/brand/scenes/world-collection/${world.scene}-640-v1.webp`}
+                  width={1536}
+                  height={1024}
+                  alt={world.alt}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </picture>
               <span className="world-row__number">
                 {String(index + 1).padStart(2, "0")}
               </span>
@@ -298,6 +356,70 @@ export default function HomePage() {
             상담 안내
           </Link>
         </nav>
+      </section>
+
+      <section className={styles.faq} aria-labelledby="landing-faq-title">
+        <div>
+          <p className="eyebrow">시작하기 전에</p>
+          <h2 id="landing-faq-title">
+            궁금한 마음까지,
+            <br />
+            편안하게.
+          </h2>
+          <Link className={styles.textLink} href="/faq">
+            자주 묻는 질문 모두 보기 <PutdukIcon name="arrow-right" size={18} />
+          </Link>
+        </div>
+        <div className={styles.questions}>
+          <details>
+            <summary>
+              처음 시작하려면 입금해야 하나요?<span aria-hidden="true">+</span>
+            </summary>
+            <p>
+              PUTDUK START와 자격을 충족한 첫 출금에는 사전 입금이 필요하지
+              않아요. 보상 전환 전 본인 확인 등 자격을 확인합니다.
+            </p>
+          </details>
+          <details>
+            <summary>
+              체험 중에 보이는 값이 바로 현금인가요?
+              <span aria-hidden="true">+</span>
+            </summary>
+            <p>
+              체험 값과 실제 원화 지갑은 별개예요. 자격 확인 후 전환된 환영
+              보상만 실제 KRW가 되며, 전환은 한 번만 가능합니다.
+            </p>
+          </details>
+          <details>
+            <summary>
+              앱을 계속 켜 두어야 하나요?<span aria-hidden="true">+</span>
+            </summary>
+            <p>
+              앱을 닫아도 채굴은 계속돼요. 다시 접속하면 내 채굴 화면에서 상태와
+              결과를 확인할 수 있어요.
+            </p>
+          </details>
+        </div>
+      </section>
+
+      <section
+        className={styles.closing}
+        aria-labelledby="landing-closing-title"
+      >
+        <BrandMark title="" />
+        <p className="eyebrow">퍼뜩, 나만의 가능성을 발견하는 순간</p>
+        <h2 id="landing-closing-title">
+          당신의 첫 채굴 세계를
+          <br />
+          열어보세요.
+        </h2>
+        <Link
+          className={`button button--primary ${styles.start}`}
+          href="/signup"
+        >
+          무료로 시작하기 <PutdukIcon name="arrow-right" size={20} />
+        </Link>
+        <p>PUTDUK START와 함께 한국 월드에서 시작해요.</p>
       </section>
 
       <footer className="site-footer shell landing-footer">

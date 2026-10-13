@@ -105,3 +105,21 @@ export function registerProtectedTypographyMatrix(
     });
   }
 }
+
+/** Additive route coverage only; the original six-view and 200% matrix is unchanged. */
+export function registerFocusedProtectedTypographyRoutes(
+  routes: readonly ProtectedTypographyRoute[],
+) {
+  const viewport = TYPOGRAPHY_VIEWPORTS[0];
+  if (!viewport)
+    throw new Error("390 viewport is required for route coverage.");
+  for (const theme of TYPOGRAPHY_THEMES) {
+    for (const route of routes) {
+      test(`${route.name} additional ${viewport.label}px ${theme}`, async ({
+        page,
+      }, testInfo) => {
+        await auditProtectedRoute({ page, route, testInfo, theme, viewport });
+      });
+    }
+  }
+}

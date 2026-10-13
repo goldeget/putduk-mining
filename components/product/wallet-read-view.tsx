@@ -1,3 +1,4 @@
+import { WalletBrandSymbol } from "@/components/product/wallet-brand-symbol";
 import Link from "next/link";
 import type { CSSProperties } from "react";
 
@@ -145,20 +146,7 @@ export function WalletReadView({
         </div>
         <header className={styles.heading} data-wallet-heading="native">
           <div className={styles.headingTitle}>
-            <svg
-              viewBox="0 0 40 56"
-              fill="none"
-              aria-hidden="true"
-              focusable="false"
-              data-wallet-brand-symbol="approved-gold-p"
-            >
-              <path d="M3 10 21 1l16 8-18 9L3 10Z" fill="#ffe6a0" />
-              <path d="M3 10v36l16 9V18L3 10Z" fill="#b98b3c" />
-              <path d="m19 18 18-9v37l-18 9V18Z" fill="#f0c66c" />
-              <path d="m10 14 7 4v32l-7-4V14Z" fill="#fbe7a9" />
-              <path d="m24 20 7-4v26l-7 4V20Z" fill="#31240f" />
-              <path d="m3 10 18-9 16 8v37l-18 9-16-9V10Z" stroke="#f8d88c" />
-            </svg>
+            <WalletBrandSymbol data-wallet-brand-symbol="approved-gold-p" />
             <h1>지갑</h1>
           </div>
           <p>실제 원화 잔액과 금액 기록을 확인하세요.</p>

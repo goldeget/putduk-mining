@@ -569,13 +569,10 @@ export function PutdukAiChat({
               {session.messages.length === 0 ? (
                 <div className={`ai-chat__welcome ${styles.welcome}`}>
                   <picture className={styles.welcomeMascot}>
-                    <source
-                      type="image/avif"
-                      srcSet="/brand/mascot/putduk-ai-help-face-128-v1.avif 128w, /brand/mascot/putduk-ai-help-face-256-v1.avif 256w"
-                      sizes="96px"
-                    />
                     <img
-                      src="/brand/mascot/putduk-ai-help-face-256-v1.webp"
+                      src="/brand/identity/20261013/logo/putduk-ai-symbol.svg"
+                      data-putduk-brand="canonical"
+                      data-putduk-brand-version="2026.10.13-sprout-p-v1"
                       width="256"
                       height="256"
                       alt=""

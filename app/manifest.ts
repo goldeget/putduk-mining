@@ -15,19 +15,19 @@ export default function manifest(): MetadataRoute.Manifest {
     categories: ["finance", "business", "utilities"],
     icons: [
       {
-        src: "/brand/pwa/putduk-pwa-dark-192.png",
+        src: "/brand/identity/20261013/pwa/putduk-pwa-dark-192.png",
         sizes: "192x192",
         type: "image/png",
         purpose: "any",
       },
       {
-        src: "/brand/pwa/putduk-pwa-dark-512.png",
+        src: "/brand/identity/20261013/pwa/putduk-pwa-dark-512.png",
         sizes: "512x512",
         type: "image/png",
         purpose: "any",
       },
       {
-        src: "/brand/pwa/putduk-pwa-maskable-512.png",
+        src: "/brand/identity/20261013/pwa/putduk-pwa-maskable-512.png",
         sizes: "512x512",
         type: "image/png",
         purpose: "maskable",

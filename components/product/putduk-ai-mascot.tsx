@@ -1,17 +1,13 @@
 import styles from "./putduk-ai-dock.module.css";
 
-/** The reviewed launcher face is decorative; its button supplies the name. */
+/** The current canonical emblem is decorative; its button supplies the name. */
 export function PutdukAiMascot() {
   return (
     <picture className={styles.mascot}>
-      <source
-        type="image/avif"
-        srcSet="/brand/mascot/putduk-ai-help-face-128-v1.avif 128w, /brand/mascot/putduk-ai-help-face-256-v1.avif 256w"
-        sizes="44px"
-      />
       <img
-        src="/brand/mascot/putduk-ai-help-face-128-v1.webp"
-        srcSet="/brand/mascot/putduk-ai-help-face-128-v1.webp 128w, /brand/mascot/putduk-ai-help-face-256-v1.webp 256w"
+        src="/brand/identity/20261013/logo/putduk-ai-symbol.svg"
+        data-putduk-brand="canonical"
+        data-putduk-brand-version="2026.10.13-sprout-p-v1"
         sizes="44px"
         width="128"
         height="128"

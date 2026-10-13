@@ -57,15 +57,18 @@ export const metadata: Metadata = {
   applicationName: "PUTDUK MINING",
   icons: {
     icon: [
-      { url: "/brand/favicon/favicon.svg", type: "image/svg+xml" },
       {
-        url: "/brand/favicon/favicon-32.png",
+        url: "/brand/identity/20261013/favicon/favicon.svg",
+        type: "image/svg+xml",
+      },
+      {
+        url: "/brand/identity/20261013/favicon/favicon-32.png",
         sizes: "32x32",
         type: "image/png",
       },
     ],
-    shortcut: "/brand/favicon/favicon.ico",
-    apple: "/brand/pwa/putduk-pwa-dark-192.png",
+    shortcut: "/brand/identity/20261013/favicon/favicon.ico",
+    apple: "/brand/identity/20261013/pwa/putduk-pwa-dark-192.png",
   },
   alternates: { canonical: "/" },
   openGraph: {

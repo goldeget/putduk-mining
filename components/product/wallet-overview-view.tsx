@@ -1,3 +1,4 @@
+import { WalletBrandSymbol } from "@/components/product/wallet-brand-symbol";
 import Link from "next/link";
 import type { CSSProperties } from "react";
 
@@ -93,25 +94,7 @@ function Icon({
 }
 
 function BrandMark() {
-  return (
-    <svg
-      viewBox="0 0 40 56"
-      fill="none"
-      aria-hidden="true"
-      focusable="false"
-      data-wallet-brand-symbol="approved-gold-p"
-    >
-      <path d="M3 10 21 1l16 8-18 9L3 10Z" fill="var(--brand-mineral)" />
-      <path d="M3 10v36l16 9V18L3 10Z" fill="var(--brand-strong)" />
-      <path d="m19 18 18-9v37l-18 9V18Z" fill="var(--brand-primary)" />
-      <path d="m10 14 7 4v32l-7-4V14Z" fill="var(--brand-mineral)" />
-      <path d="m24 20 7-4v26l-7 4V20Z" fill="var(--surface-sunken)" />
-      <path
-        d="m3 10 18-9 16 8v37l-18 9-16-9V10Z"
-        stroke="var(--brand-primary)"
-      />
-    </svg>
-  );
+  return <WalletBrandSymbol data-wallet-brand-symbol="approved-gold-p" />;
 }
 
 /** Presentation consumes the existing owner-bound, integer financial read model. */

@@ -1,0 +1,18 @@
+.artwork {
+  display: block;
+  flex: 0 0 clamp(5.5rem, 22vw, 7rem);
+  width: clamp(5.5rem, 22vw, 7rem);
+  max-width: 100%;
+  align-self: flex-start;
+  overflow: hidden;
+  border-radius: 0.5rem;
+  background: var(--surface-sunken);
+  aspect-ratio: 320 / 213;
+}
+
+.artwork img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}

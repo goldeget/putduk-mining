@@ -33,7 +33,7 @@ const supportCss = readFileSync(
 const forbiddenAmounts = ["5,054,281", "50,000,000", "₩5,000,000"];
 
 describe("공개 화면 구도", () => {
-  it("첫 화면은 문구, 그림, 시작 카드 순이다", () => {
+  it("첫 화면은 읽을 수 있는 문구와 월드, 시작 안내를 제공한다", () => {
     const copyAt = home.indexOf('className="hero__copy"');
     const visualAt = home.indexOf(
       'className="hero__visual landing-hero__visual"',
@@ -54,7 +54,10 @@ describe("공개 화면 구도", () => {
     for (const amount of forbiddenAmounts) {
       expect(home).not.toContain(amount);
     }
-    expect(homeCss).toContain("minmax(15rem, 0.86fr)");
+    expect(home).toContain("조건 자세히 보기");
+    expect(home).toContain("체험 값과 실제 원화 지갑은 별개");
+    expect(homeCss).toContain("prefers-reduced-motion: reduce");
+    expect(home).not.toContain("putduk-miner-384-v1");
   });
 
   it("소개와 질문, 이용 방법만 목록 구도를 쓴다", () => {

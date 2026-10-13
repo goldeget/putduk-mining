@@ -4,6 +4,8 @@ import { fileURLToPath } from "node:url";
 import path from "node:path";
 import { verifyCatalogMaterialAssets } from "./verify-catalog-material-assets.mjs";
 import { verifyMiningResponsiveAssets } from "./verify-mining-responsive-assets.mjs";
+import { verifyCanonicalBrandIdentity } from "./verify-canonical-brand-identity.mjs";
+import { verifyPublicLandingAssets } from "./verify-public-landing-assets.mjs";
 import {
   productNvdaMetadataFailures,
   verifyProductNvdaAssets,
@@ -1311,6 +1313,8 @@ export async function verifyBrandAssets() {
       failures.push(`wordmark must contain 퍼뜩: ${relative}`);
   }
 
+  failures.push(...(await verifyCanonicalBrandIdentity(root)));
+  failures.push(...(await verifyPublicLandingAssets(root)));
   failures.push(...(await verifyCatalogMaterialAssets(root)));
   failures.push(...(await verifyMiningResponsiveAssets(root)));
   failures.push(...(await verifyProductNvdaAssets(root)));

@@ -1,4 +1,5 @@
 import type { SVGProps } from "react";
+import { PUTDUK_SYMBOL_PATH } from "../brand/putduk-symbol";
 
 export type PutdukIconName =
   | "ai"
@@ -24,10 +25,13 @@ type PutdukIconProps = Omit<SVGProps<SVGSVGElement>, "name"> & {
 
 const paths: Record<PutdukIconName, React.ReactNode> = {
   ai: (
-    <>
-      <path d="M12 3.75 19 7.8v8.4L12 20.25 5 16.2V7.8L12 3.75Z" />
-      <path d="M8.6 10.25h6.8M9.5 14h5M9 8.25l1.2 2M15 8.25l-1.2 2" />
-    </>
+    <path
+      d={PUTDUK_SYMBOL_PATH}
+      transform="scale(.375)"
+      fill="currentColor"
+      fillRule="evenodd"
+      stroke="none"
+    />
   ),
   "arrow-right": (
     <>

@@ -6,6 +6,10 @@ import { MiningLiveStage } from "@/components/mining-live/mining-live-stage";
 import { PutdukHomeIcon } from "@/components/icons/putduk-home-icon";
 import { PutdukIcon } from "@/components/icons/putduk-icon";
 import { FundedRuntimeSummary } from "@/components/product/funded-runtime-summary";
+import {
+  WorldThemeArtwork,
+  resolveWorldThemeArtwork,
+} from "@/components/product/world-theme-artwork";
 import { ProductStatusPill } from "@/components/product/product-status-pill";
 import { RouteReloadButton } from "@/components/product/route-reload-button";
 import { StatePanel } from "@/components/ui/states";
@@ -621,7 +625,11 @@ export default async function MiningPage() {
                     } as CSSProperties
                   }
                 >
-                  <PutdukIcon name="products" size={28} />
+                  {resolveWorldThemeArtwork(world.code) ? (
+                    <WorldThemeArtwork worldCode={world.code} />
+                  ) : (
+                    <PutdukIcon name="products" size={28} />
+                  )}
                   <div>
                     <h3>{world.display_name_ko}</h3>
                     <p>

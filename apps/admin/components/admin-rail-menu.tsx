@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { BrandMark } from "../../../components/brand/brand-mark";
 import { useId, useRef, useState, type ReactNode } from "react";
 
 import { AdminNavigation } from "./admin-navigation";
@@ -31,7 +32,9 @@ export function AdminRailMenu({ children }: { children: ReactNode }) {
         href="/"
         onNavigate={closeMenu}
       >
-        <span className="brand-symbol">P</span>
+        <span className="brand-symbol">
+          <BrandMark title="" width="100%" height="100%" />
+        </span>
         <strong>퍼뜩</strong>
         <small>운영</small>
       </Link>

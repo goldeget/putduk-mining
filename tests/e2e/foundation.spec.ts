@@ -1,5 +1,75 @@
 import { expect, test } from "@playwright/test";
 
+test("landing world artwork and reward disclosures work through real controls", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const sources = new Set<string>();
+  for (const world of ["korea", "usa", "gold", "silver", "digital"]) {
+    const picture = page.locator(`[data-world-scene="${world}"]`);
+    await expect(picture).toHaveCount(1);
+    await picture.scrollIntoViewIfNeeded();
+    const image = picture.locator("img");
+    await expect(image).toBeVisible();
+    await expect
+      .poll(() =>
+        image.evaluate(
+          (element: HTMLImageElement) =>
+            element.complete && element.naturalWidth > 0,
+        ),
+      )
+      .toBe(true);
+    const source = await image.evaluate(
+      (element: HTMLImageElement) => new URL(element.currentSrc).pathname,
+    );
+    expect(source).toContain(`/world-collection/${world}-`);
+    sources.add(source);
+  }
+  expect(sources.size).toBe(5);
+  const question = page
+    .locator("summary")
+    .filter({ hasText: "처음 시작하려면 입금해야 하나요?" });
+  await question.focus();
+  await question.press("Enter");
+  const answer = question.locator("..");
+  await expect(answer).toHaveAttribute("open", "");
+  await expect(answer.locator("p")).toContainText(
+    "첫 출금에는 사전 입금이 필요하지 않아요",
+  );
+  await question.press("Enter");
+  await expect(answer).not.toHaveAttribute("open", "");
+  const conversion = page
+    .locator("details")
+    .filter({ hasText: "체험 중에 보이는 값이 바로 현금인가요?" });
+  await conversion.locator("summary").click();
+  await expect(conversion.locator("p")).toContainText(
+    "체험 값과 실제 원화 지갑은 별개",
+  );
+  await expect(conversion.locator("p")).toContainText(
+    "전환은 한 번만 가능합니다",
+  );
+});
+
+test("landing system theme follows OS changes without replacing the user preference", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const theme = page.getByLabel("화면 테마", { exact: true });
+  await theme.selectOption("system");
+  for (const colorScheme of ["dark", "light"] as const) {
+    await page.emulateMedia({ colorScheme });
+    await expect(theme).toHaveValue("system");
+    await expect(page.locator("html")).toHaveAttribute(
+      "data-theme",
+      colorScheme,
+    );
+  }
+  await theme.selectOption("dark");
+  await page.emulateMedia({ colorScheme: "light" });
+  await expect(theme).toHaveValue("dark");
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+});
+
 test("renders the productized PUTDUK landing with accessible primary navigation", async ({
   page,
 }) => {
@@ -31,7 +101,7 @@ test("exposes install and discovery metadata", async ({ page }) => {
     icons: expect.arrayContaining([
       expect.objectContaining({
         purpose: "maskable",
-        src: "/brand/pwa/putduk-pwa-maskable-512.png",
+        src: "/brand/identity/20261013/pwa/putduk-pwa-maskable-512.png",
       }),
     ]),
     name: "퍼뜩 채굴",
@@ -66,7 +136,7 @@ test("renders canonical real copy and persists an explicit theme", async ({
   await expect(page.getByText("지금, 퍼뜩.")).toBeVisible();
   await expect(
     page.getByRole("img", {
-      name: "금빛 광부 헬멧과 새싹을 쓴 퍼뜩 마스코트",
+      name: "금빛 새싹과 광물 섬으로 표현한 퍼뜩의 첫 채굴 월드",
     }),
   ).toBeVisible();
 
