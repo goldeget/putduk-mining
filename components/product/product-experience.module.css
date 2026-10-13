@@ -1222,6 +1222,21 @@
 }
 
 @media (max-width: 699px) {
+  .formNotice {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .formNotice p,
+  .formNoticeBody {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .formNotice .inlineReveal {
+    max-inline-size: 100%;
+    margin-inline-start: 0;
+    overflow-wrap: anywhere;
+  }
   .historyHeader,
   .sectionHeader {
     align-items: start;

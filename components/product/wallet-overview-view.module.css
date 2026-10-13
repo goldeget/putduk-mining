@@ -171,7 +171,8 @@
 }
 .metrics {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 8rem), 1fr));
+  gap: 1rem 0.6rem;
   padding: 1rem 0.1rem 0.2rem;
   margin: 0;
   border-block-start: 1px solid var(--wallet-edge);
@@ -209,14 +210,14 @@
   min-inline-size: 0;
 }
 .metrics .amount {
-  font-size: clamp(0.8125rem, 2.6vw, 1.25rem);
+  font-size: clamp(1rem, 2.6vw, 1.25rem);
 }
 .metrics .amount small {
   font-size: 0.8125rem;
 }
 .actions {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 8rem), 1fr));
   gap: 0.6rem;
   margin-block-start: 0.85rem;
 }
@@ -275,7 +276,7 @@
 }
 .tabs {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 6rem), 1fr));
   border: 1px solid var(--wallet-edge);
   border-radius: 0.95rem;
   padding: 0.2rem;
@@ -724,6 +725,7 @@
     );
   }
   .metrics {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
     gap: 0.6rem;
   }
   .metrics > div {

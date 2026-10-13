@@ -112,10 +112,20 @@ async function captureMatrix(page: Page, info: TestInfo, label: string) {
         if (label === "funded-wallet-real-principal") {
           // Audit the whole rendered name, including the separate JSX suffix.
           // Per-text-node Korean checks previously missed a lone wrapped 님.
-          const labels = await page
-            .locator("[data-wallet-balance-labels] > *")
-            .all();
-          expect(labels).toHaveLength(2);
+          const balance = page.getByRole("region", {
+            name: "원화 지갑 잔액",
+            exact: true,
+          });
+          await expect(balance).toHaveCount(1);
+          await expect(balance).toBeVisible();
+          const labels = [
+            balance.getByText("총 원화 잔액", { exact: true }),
+            balance.getByText("원화 지갑", { exact: true }),
+          ];
+          for (const label of labels) {
+            await expect(label).toHaveCount(1);
+            await expect(label).toBeVisible();
+          }
           if (width >= 980) {
             const name = page.locator("[data-wallet-account-name]");
             await expect(name).toHaveText("퍼뜩테스트님");
@@ -152,8 +162,13 @@ async function captureMatrix(page: Page, info: TestInfo, label: string) {
             expect(geometry.oneLine, context).toBe(true);
             expect(geometry.fits, context).toBe(true);
           }
-          const amounts = page.locator('[data-wallet-metrics="separate"] dd');
+          const amounts = balance.locator("dl > div > dd");
           await expect(amounts).toHaveCount(3);
+          await expect(balance.locator("dl dt")).toHaveText([
+            "인정 원금",
+            "대기 수익",
+            "출금 가능",
+          ]);
           for (const amount of await amounts.all()) {
             await expect(amount).toHaveText(/^-?[0-9][0-9,]*(?:\.[0-9]+)?원$/);
             const geometry = await amount.evaluate((element) => {
@@ -162,24 +177,35 @@ async function captureMatrix(page: Page, info: TestInfo, label: string) {
                 element,
                 NodeFilter.SHOW_TEXT,
               );
-              const fragments: { top: number; left: number; right: number }[] =
-                [];
+              const fragments: {
+                top: number;
+                bottom: number;
+                left: number;
+                right: number;
+              }[] = [];
               while (walker.nextNode()) {
                 const range = document.createRange();
                 range.selectNodeContents(walker.currentNode);
                 fragments.push(
                   ...[...range.getClientRects()]
                     .filter((rect) => rect.width > 0)
-                    .map(({ top, left, right }) => ({ top, left, right })),
+                    .map(({ top, bottom, left, right }) => ({
+                      top,
+                      bottom,
+                      left,
+                      right,
+                    })),
                 );
               }
               return {
                 text: element.textContent,
                 oneLine:
                   fragments.length > 0 &&
-                  fragments.every(
-                    (rect) => Math.abs(rect.top - fragments[0]!.top) <= 1,
-                  ),
+                  // A smaller currency unit shares the number's visual line
+                  // through vertical overlap, even when glyph tops differ.
+                  // A wrapped number or unit has no common vertical interval.
+                  Math.max(...fragments.map((rect) => rect.top)) <
+                    Math.min(...fragments.map((rect) => rect.bottom)) - 1,
                 fits: fragments.every(
                   (rect) =>
                     rect.left >= bounds.left - 1 &&
@@ -219,11 +245,17 @@ async function captureMatrix(page: Page, info: TestInfo, label: string) {
               16 * (textScale / 100),
             );
           }
-          const historyAmount = page.locator(
-            "[data-wallet-entry-direction] > strong",
+          const history = page.getByRole("region", {
+            name: "최근 거래 내역",
+            exact: true,
+          });
+          const credit = history.locator(
+            '[data-wallet-entry-direction="CREDIT"]',
           );
+          await expect(credit).toHaveCount(1);
+          const historyAmount = credit.getByText("+100,000원", { exact: true });
           await expect(historyAmount).toHaveCount(1);
-          await expect(historyAmount).toHaveText("+100,000 KRW");
+          await expect(historyAmount).toHaveText("+100,000원");
           const historyGeometry = await historyAmount.evaluate((element) => {
             const range = document.createRange();
             range.selectNodeContents(element);

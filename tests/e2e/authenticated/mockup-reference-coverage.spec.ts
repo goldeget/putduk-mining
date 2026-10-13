@@ -5,6 +5,7 @@ import path from "node:path";
 import {
   expect,
   test,
+  type CDPSession,
   type Locator,
   type Page,
   type Request,
@@ -152,10 +153,19 @@ async function captureRoutes(
   type CapturePhase = "prepare-next-capture" | "rendering" | "checking";
   type RequestDiagnostic = {
     method: string;
+    sameOrigin: boolean;
     resourceType: string;
     navigation: boolean;
     prefetchHeader: boolean;
     rscHeader: boolean;
+    serviceWorkerOwned: boolean;
+    redirected: boolean;
+    rscQueryPresent: boolean;
+    initiatorType?: string;
+    initiatorFromNext?: boolean;
+    initiatorFromServiceWorker?: boolean;
+    networkCancelled?: boolean;
+    blockedReasonPresent?: boolean;
     phase: CapturePhase;
     startedPhase?: CapturePhase | undefined;
   };
@@ -211,6 +221,35 @@ async function captureRoutes(
     testInfo.project.use.baseURL ??
       `http://127.0.0.1:${process.env.E2E_WEB_PORT ?? "3000"}`,
   ).origin;
+  const publicCapture = routes.includes("/login");
+  let diagnosticSession: CDPSession | null = null;
+  const workerFailed = (request: Request) => {
+    const url = new URL(request.url());
+    if (
+      !publicCapture ||
+      request.serviceWorker() === null ||
+      url.pathname !== "/login"
+    )
+      return;
+    diagnostic(
+      "service-worker-requestfailed",
+      "/login",
+      request.failure()?.errorText ?? "unknown",
+      {
+        method: request.method(),
+        sameOrigin: url.origin === ownedOrigin,
+        resourceType: request.resourceType(),
+        navigation: request.isNavigationRequest(),
+        prefetchHeader: request.headers()["next-router-prefetch"] === "1",
+        rscHeader: request.headers().rsc === "1",
+        serviceWorkerOwned: true,
+        redirected: request.redirectedFrom() !== null,
+        rscQueryPresent: url.searchParams.has("_rsc"),
+        phase,
+      },
+    );
+  };
+  if (publicCapture) page.context().on("requestfailed", workerFailed);
   page.on("pageerror", (error) => errors.push(`page:${error.name}`));
   page.on("console", (message) => {
     if (message.type() === "error") {
@@ -246,10 +285,14 @@ async function captureRoutes(
         error,
         {
           method: request.method(),
+          sameOrigin: url.origin === ownedOrigin,
           resourceType: request.resourceType(),
           navigation: request.isNavigationRequest(),
           prefetchHeader: request.headers()["next-router-prefetch"] === "1",
           rscHeader: request.headers().rsc === "1",
+          serviceWorkerOwned: request.serviceWorker() !== null,
+          redirected: request.redirectedFrom() !== null,
+          rscQueryPresent: url.searchParams.has("_rsc"),
           phase,
           startedPhase: requestPhases.get(request),
         },
@@ -263,6 +306,66 @@ async function captureRoutes(
       );
   });
   try {
+    if (publicCapture) {
+      // Passive Chromium metadata only: no routing, header/body capture or mocking.
+      diagnosticSession = await page.context().newCDPSession(page);
+      const requests = new Map<string, RequestDiagnostic>();
+      diagnosticSession.on("Network.requestWillBeSent", (event) => {
+        const url = new URL(event.request.url);
+        if (url.pathname !== "/login" || requests.size >= 60) return;
+        const frames = event.initiator.stack?.callFrames ?? [];
+        const scriptPaths = frames.map((frame: { url: string }) =>
+          safePath(frame.url),
+        );
+        const headers = Object.fromEntries(
+          Object.entries(event.request.headers).map(([name, value]) => [
+            name.toLowerCase(),
+            value,
+          ]),
+        );
+        requests.set(event.requestId, {
+          method: event.request.method,
+          sameOrigin: url.origin === ownedOrigin,
+          resourceType: event.type ?? "unknown",
+          navigation: event.type === "Document",
+          prefetchHeader: headers["next-router-prefetch"] === "1",
+          rscHeader: headers.rsc === "1",
+          serviceWorkerOwned: false,
+          redirected: Boolean(event.redirectResponse),
+          rscQueryPresent: url.searchParams.has("_rsc"),
+          initiatorType: [
+            "script",
+            "parser",
+            "preload",
+            "preflight",
+            "other",
+          ].includes(event.initiator.type)
+            ? event.initiator.type
+            : "unknown",
+          initiatorFromNext: scriptPaths.some((value: string) =>
+            value.startsWith("/_next/"),
+          ),
+          initiatorFromServiceWorker: scriptPaths.includes("/sw.js"),
+          phase,
+          startedPhase: phase,
+        });
+      });
+      diagnosticSession.on("Network.loadingFinished", (event) =>
+        requests.delete(event.requestId),
+      );
+      diagnosticSession.on("Network.loadingFailed", (event) => {
+        const request = requests.get(event.requestId);
+        if (!request) return;
+        requests.delete(event.requestId);
+        diagnostic("cdp-requestfailed", "/login", event.errorText, {
+          ...request,
+          phase,
+          networkCancelled: Boolean(event.canceled),
+          blockedReasonPresent: Boolean(event.blockedReason),
+        });
+      });
+      await diagnosticSession.send("Network.enable");
+    }
     await page.goto(routes[0]!, { waitUntil: "networkidle" });
     for (const route of routes) {
       const routeWidths = [
@@ -657,16 +760,30 @@ async function captureRoutes(
                     return tops.size;
                   }),
                 );
-              const trialRecovery = ready.getByRole("group", {
-                name: "START 상태 다시 확인",
+              // These fixtures have a successfully read, inactive zero-principal
+              // display and no mining session. Recovery belongs to UNKNOWN only.
+              await expect(ready).toHaveAttribute("data-ui-state", "empty");
+              await expect(
+                hero.getByText("시작 전", { exact: true }),
+              ).toBeVisible();
+              await expect(
+                ready.getByRole("group", {
+                  name: "START 상태 다시 확인",
+                  exact: true,
+                }),
+              ).toHaveCount(0);
+              const startAction = hero.getByRole("link", {
+                name: "PUTDUK START 확인",
                 exact: true,
               });
-              const trialRetry = trialRecovery.getByRole("button", {
-                name: "다시 확인",
-                exact: true,
-              });
-              await expectPaintedCopyFits(trialRecovery, "button", "button");
-              const retryLines = await trialRetry.evaluate((button) => {
+              await expect(startAction).toHaveCount(1);
+              await expect(startAction).toHaveAttribute("href", "/start");
+              await expectPaintedCopyFits(
+                hero,
+                'a[href="/start"]',
+                'a[href="/start"]',
+              );
+              const retryLines = await startAction.evaluate((button) => {
                 const walker = document.createTreeWalker(
                   button,
                   NodeFilter.SHOW_TEXT,
@@ -690,7 +807,7 @@ async function captureRoutes(
               expect(retryLines).toBeGreaterThan(0);
               expect(retryLines).toBeLessThanOrEqual(2);
               expect(
-                (await trialRetry.boundingBox())?.height,
+                (await startAction.boundingBox())?.height,
               ).toBeGreaterThanOrEqual(44);
               const guide = ready.getByRole("link", {
                 name: /채굴과 지갑 안내/,
@@ -851,7 +968,28 @@ async function captureRoutes(
               });
               await expect(title).toHaveCount(1);
               await expect(title).toBeVisible();
-              const scene = ready.locator("[data-scene-theme]");
+              // The overview backdrop and the balance-card decoration are
+              // distinct approved scenes. Geometry below belongs to the backdrop.
+              const overview = ready.getByRole("region", {
+                name: "지갑",
+                exact: true,
+              });
+              const scene = overview.locator(
+                ":scope > div:first-child > [data-scene-theme]",
+              );
+              const balanceScene = ready
+                .getByRole("region", { name: "원화 지갑 잔액", exact: true })
+                .locator("[data-scene-theme]");
+              await expect(ready.locator("[data-scene-theme]")).toHaveCount(2);
+              await expect(balanceScene).toHaveCount(1);
+              await expect(balanceScene).toHaveAttribute(
+                "data-scene-theme",
+                theme,
+              );
+              await expect(balanceScene).toHaveAttribute(
+                "data-wallet-scene-state",
+                "responsive",
+              );
               await expect(scene).toHaveCount(1);
               await expect(scene).toHaveAttribute("data-scene-theme", theme);
               await expect(scene).toHaveAttribute(
@@ -868,6 +1006,11 @@ async function captureRoutes(
                     : "wallet-vault-mobile-dark";
               expect(
                 await scene
+                  .locator("img")
+                  .evaluate((image: HTMLImageElement) => image.currentSrc),
+              ).toContain(`/brand/scenes/${expectedFamily}/`);
+              expect(
+                await balanceScene
                   .locator("img")
                   .evaluate((image: HTMLImageElement) => image.currentSrc),
               ).toContain(`/brand/scenes/${expectedFamily}/`);
@@ -1399,6 +1542,11 @@ async function captureRoutes(
     );
     expect(errors).toEqual([]);
   } finally {
+    if (publicCapture) page.context().off("requestfailed", workerFailed);
+    if (diagnosticSession) {
+      // The page may already have closed on the original test failure.
+      await diagnosticSession.detach().catch(() => undefined);
+    }
     const diagnosticPath = testInfo.outputPath(
       "sanitized-browser-diagnostics.json",
     );

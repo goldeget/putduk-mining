@@ -165,6 +165,9 @@ function responseStream() {
     close() {
       controller.close();
     },
+    fail() {
+      controller.error(new Error("synthetic transport closed after done"));
+    },
   };
 }
 
@@ -245,6 +248,128 @@ afterEach(async () => {
 });
 
 describe("one PUTDUK AI request and session owner", () => {
+  it("leaves a verified done response open for genuine EOF without transport cancellation", async () => {
+    const stream = responseStream();
+    const conversationId = "22222222-2222-4222-8222-222222222222";
+    const assistantMessageId = "44444444-4444-4444-8444-444444444444";
+    fetchMock.mockResolvedValue(stream.response);
+    await render();
+    const { turn } = await begin("저장된 안내를 확인해 주세요");
+    await act(async () => {
+      stream.send({ type: "ready", requestId, source: "static" });
+      stream.send({ type: "delta", text: "서버 저장을 확인한 안내예요." });
+      stream.send({
+        type: "done",
+        requestId,
+        knowledgeVersion: "v1",
+        saved: true,
+        conversationId,
+        assistantMessageId,
+      });
+      await Promise.resolve();
+    });
+    expect(session.messages.at(-1)).toMatchObject({
+      state: "complete",
+      saved: true,
+      conversationId,
+      assistantMessageId,
+    });
+    expect(stream.cancelled).not.toHaveBeenCalled();
+    expect(session.pending).toBe(true);
+    await act(async () => {
+      stream.close();
+      await turn;
+    });
+    expect(stream.cancelled).not.toHaveBeenCalled();
+    expect(stream.response.body?.locked).toBe(false);
+    expect(session.pending).toBe(false);
+    expect(fetchMock).toHaveBeenCalledOnce();
+  });
+
+  it("preserves the verified done receipt if genuine EOF transport fails later", async () => {
+    const stream = responseStream();
+    fetchMock.mockResolvedValue(stream.response);
+    await render();
+    const { turn } = await begin("완료된 답변을 확인해 주세요");
+    await act(async () => {
+      stream.send({ type: "ready", requestId, source: "static" });
+      stream.send({ type: "delta", text: "완료된 안내예요." });
+      stream.send({ type: "done", requestId, knowledgeVersion: "v1" });
+      await Promise.resolve();
+    });
+    expect(stream.cancelled).not.toHaveBeenCalled();
+    await act(async () => {
+      stream.fail();
+      await turn;
+    });
+    expect(session.messages.at(-1)).toMatchObject({
+      state: "complete",
+      requestId,
+      text: "완료된 안내예요.",
+    });
+    expect(session.messages.at(-1)?.failure).toBeUndefined();
+    expect(session.pending).toBe(false);
+  });
+
+  it("clears an old owner's done receipt and cancels its pending EOF on account change", async () => {
+    const stream = responseStream();
+    fetchMock.mockResolvedValue(stream.response);
+    await render();
+    const { turn } = await begin("내 계정 안내를 확인해 주세요");
+    await act(async () => {
+      stream.send({ type: "ready", requestId, source: "static" });
+      stream.send({ type: "delta", text: "이전 계정의 완료된 안내예요." });
+      stream.send({ type: "done", requestId, knowledgeVersion: "v1" });
+      await Promise.resolve();
+    });
+    expect(stream.cancelled).not.toHaveBeenCalled();
+    await act(async () => {
+      emitAuth("SIGNED_IN", "member-b");
+      await turn;
+    });
+    expect(stream.cancelled).toHaveBeenCalledOnce();
+    expect((fetchMock.mock.calls[0]![1] as RequestInit).signal?.aborted).toBe(
+      true,
+    );
+    expect(session.messages).toEqual([]);
+    expect(session.pending).toBe(false);
+    expect(session.ownerStatus).toBe("refreshing");
+    expect(session.canSubmit).toBe(false);
+    expect(browserAuth.refresh).toHaveBeenCalledOnce();
+  });
+
+  it("bounds a transport that remains open after genuine done without downgrading its receipt", async () => {
+    vi.useFakeTimers();
+    try {
+      const stream = responseStream();
+      fetchMock.mockResolvedValue(stream.response);
+      await render();
+      const { turn } = await begin("완료된 안내를 확인해 주세요");
+      await act(async () => {
+        stream.send({ type: "ready", requestId, source: "static" });
+        stream.send({ type: "delta", text: "완료된 안내예요." });
+        stream.send({ type: "done", requestId, knowledgeVersion: "v1" });
+        await Promise.resolve();
+      });
+      expect(stream.cancelled).not.toHaveBeenCalled();
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(5_000);
+        await turn;
+      });
+      expect(stream.cancelled).toHaveBeenCalledOnce();
+      expect(session.messages.at(-1)).toMatchObject({
+        state: "complete",
+        requestId,
+      });
+      expect(session.messages.at(-1)?.failure).toBeUndefined();
+      expect(session.pending).toBe(false);
+      expect(stream.response.body?.locked).toBe(false);
+      expect(vi.getTimerCount()).toBe(0);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it.each(["verified", "missing", "malformed"] as const)(
     "uses the actual owned history parser for fresh-mount static restoration (%s receipt)",
     async (receiptState) => {

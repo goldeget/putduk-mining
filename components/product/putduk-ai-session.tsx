@@ -777,13 +777,38 @@ function OwnedAiSession({
             if (request.message.state !== "streaming") break;
           }
           if (request.message.state !== "streaming") {
-            await reader.cancel().catch(() => undefined);
+            if (request.message.state === "complete" && !done) {
+              // A verified done receipt ends the answer, not the HTTP body.
+              // Let normal EOF finish so transport observers can read its ACK.
+              const closeTimer = setTimeout(() => {
+                request.controller.abort();
+                void reader.cancel().catch(() => undefined);
+              }, 5_000);
+              try {
+                let trailingBytes = 0;
+                while (isCurrent()) {
+                  const trailing = await reader.read();
+                  if (trailing.done) break;
+                  trailingBytes += trailing.value?.byteLength ?? 0;
+                  if (trailingBytes > 64_000) {
+                    request.controller.abort();
+                    await reader.cancel().catch(() => undefined);
+                    break;
+                  }
+                }
+              } finally {
+                clearTimeout(closeTimer);
+              }
+            } else if (request.message.state !== "complete") {
+              await reader.cancel().catch(() => undefined);
+            }
             break;
           }
           if (done) throw new Error("AI_STREAM_INTERRUPTED");
         }
       } catch (error) {
-        if (isCurrent()) {
+        // A later transport close cannot undo a genuine terminal receipt.
+        if (isCurrent() && request.message.state === "streaming") {
           const code =
             error instanceof PutdukAiProtocolError
               ? "AI_STREAM_INVALID"
