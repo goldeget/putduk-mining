@@ -259,7 +259,7 @@ select ok(
       ), false)
       from (values
         ('app_private.bind_push_delivery_epoch()'::regprocedure, 'fde05c05151e3d065729a06ccae6e8a31230113b40c8f7459fc8f4dc0d595553', 'pg_catalog.trigger'::regtype, false),
-        ('app_private.apply_member_push_binding(uuid,uuid,text,text,text,text,timestamp with time zone,text)'::regprocedure, '20e311bec30fb7b92f118ba325110b20fc755bd29eabe2cda6aa1a7c5f80af3a', 'pg_catalog.jsonb'::regtype, true),
+        ('app_private.apply_member_push_binding(uuid,uuid,text,text,text,text,timestamp with time zone,text)'::regprocedure, 'fff205f83e8ae30cfdc7fdde37e7548bf5c0c5978ca1b1955a5b185d6b798e25', 'pg_catalog.jsonb'::regtype, true),
         ('app_private.member_push_endpoint_command(uuid,uuid,text,text,text,text,timestamp with time zone,text,bigint,uuid,uuid)'::regprocedure, 'b553103c7bfa2c363e49ba8169cc90e00a436654393764903a3a47fa4719cbe2', 'pg_catalog.jsonb'::regtype, true),
         ('app_private.check_push_delivery_admission(uuid,text,uuid,integer)'::regprocedure, '10379eb3851f86be2445d3b8d764bc8ac089612c3cc8ee181a4cc2873643b5dd', 'pg_catalog.jsonb'::regtype, true)
       ) as expected(function_oid, source_sha256, return_type, service_transport)
