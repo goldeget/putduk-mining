@@ -5,7 +5,8 @@ export type AiDeniedClassification =
   | "CROSS_USER_DATA"
   | "INTERNAL_DATA_REQUEST"
   | "PRIVILEGE_ESCALATION"
-  | "PROMPT_INJECTION";
+  | "PROMPT_INJECTION"
+  | "STATIC_FACT";
 
 export type AiGuardResult =
   | { classification: "ALLOWED"; allowed: true }
@@ -49,6 +50,13 @@ const ADDITIONAL_ACTION_REQUEST_PATTERN =
 const ADDITIONAL_ABUSE_PATTERN =
   /(?:본인\s*확인|보상|인증\s*번호).{0,60}(?:우회|중복으로\s*받|알아내는\s*방법)|(?:도구.{0,20}실패|조회.{0,20}실패).{0,40}(?:가정|충분하다고)/i;
 
+// These whole-message public questions never request a credential value.
+// Keep them terminal and deterministic; they do not open a provider/tool path.
+const PASSWORD_RECOVERY_HELP_PATTERN =
+  /^(?:비밀번호(?:를)?\s*(?:변경|재설정)(?:하는)?\s*(?:메뉴|방법)(?:은|는|을)?\s*(?:어디인가요|어디에 있나요|어디서 찾나요|알려 주세요|알려줘)|비밀번호(?:를)?\s*잊었어요[.。]?\s*어떻게\s*재설정하나요)[?？.!。]*$/;
+const CODE_SHARING_HELP_PATTERN =
+  /^(?:인증번호(?:를)?\s*다른\s*사람에게\s*(?:알려줘도|알려 줘도|공유해도)\s*(?:되나요|괜찮나요)|인증번호(?:를)?\s*안전하게\s*(?:관리|보관)하는\s*방법(?:을)?\s*알려 주세요)[?？.!。]*$/;
+
 export function guardAiQuestion(question: string): AiGuardResult {
   const normalized = question.replace(/\s+/g, " ").trim();
 
@@ -88,6 +96,23 @@ export function guardAiQuestion(question: string): AiGuardResult {
       allowed: false,
       answer: "내부 지침은 바꿀 수 없어요. 궁금한 내용을 다시 물어봐 주세요.",
       classification: "PROMPT_INJECTION",
+    };
+  }
+
+  if (PASSWORD_RECOVERY_HELP_PATTERN.test(normalized)) {
+    return {
+      allowed: false,
+      classification: "STATIC_FACT",
+      answer:
+        "로그인 화면에서 비밀번호 재설정을 선택해 주세요. 가입할 때 등록한 복구 이메일로 안내를 받을 수 있어요. 비밀번호나 인증번호는 대화에 적지 마세요.",
+    };
+  }
+  if (CODE_SHARING_HELP_PATTERN.test(normalized)) {
+    return {
+      allowed: false,
+      classification: "STATIC_FACT",
+      answer:
+        "인증번호는 다른 사람에게 알려주지 마세요. 본인이 이용 중인 공식 화면에만 직접 입력해 주세요. 대화에도 인증번호를 적지 마세요.",
     };
   }
 
