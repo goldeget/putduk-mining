@@ -233,6 +233,15 @@ export default function HomePage() {
             체험 값은 실제 지갑과 분리됩니다. 전환된 환영 보상만 실제 KRW가
             됩니다.
           </p>
+          <div className="landing-journey__action">
+            <Link className="button button--primary" href="/signup">
+              내 첫 채굴 시작하기
+              <PutdukIcon name="arrow-right" size={19} />
+            </Link>
+            <p className="ko-copy">
+              가입 후 한국 월드의 안내에 따라 시작합니다.
+            </p>
+          </div>
         </div>
         <div
           className="landing-journey__grid"
@@ -247,13 +256,6 @@ export default function HomePage() {
               <p className="ko-copy">{item.description}</p>
             </article>
           ))}
-        </div>
-        <div className="landing-journey__action">
-          <Link className="button button--primary" href="/signup">
-            내 첫 채굴 시작하기
-            <PutdukIcon name="arrow-right" size={19} />
-          </Link>
-          <p className="ko-copy">가입 후 한국 월드의 안내에 따라 시작합니다.</p>
         </div>
       </section>
 

@@ -240,3 +240,149 @@ test("marks account and protected surfaces as non-indexable", async ({
   const wallet = await page.request.get("/wallet", { maxRedirects: 0 });
   expect(wallet.headers()["location"]).toContain("/login?next=%2Fwallet");
 });
+
+test.describe("Landing journey CTA geometry", () => {
+  for (const width of [320, 360, 375, 390, 430, 768, 1024, 1440]) {
+    for (const theme of ["light", "dark"] as const) {
+      test(`landing journey CTA stays below intro ${width}px ${theme}`, async ({
+        page,
+      }, testInfo) => {
+        await page.setViewportSize({ width, height: 1000 });
+        await page.emulateMedia({
+          colorScheme: theme,
+          reducedMotion: "reduce",
+        });
+        await page.addInitScript((selectedTheme) => {
+          localStorage.setItem("putduk-theme", selectedTheme);
+        }, theme);
+        await page.goto("/");
+        await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
+        await page.evaluate(() => document.fonts.ready);
+
+        const section = page.locator("#start");
+        const intro = section.locator(":scope > .section-heading");
+        const action = intro.locator(":scope > .landing-journey__action");
+        const copy = intro.locator(":scope > .ko-copy");
+        const steps = section.locator(":scope > .landing-journey__grid");
+        await expect(section).toHaveCount(1);
+        await expect(intro).toHaveCount(1);
+        await expect(copy).toHaveCount(1);
+        await expect(section.locator(".landing-journey__action")).toHaveCount(
+          1,
+        );
+        await expect(action).toHaveCount(1);
+        await expect(steps).toHaveCount(1);
+        const button = action.getByRole("link", {
+          name: "내 첫 채굴 시작하기",
+        });
+        await expect(button).toHaveAttribute("href", "/signup");
+        await button.scrollIntoViewIfNeeded();
+        await expect(button).toBeVisible();
+
+        const geometry = await section.evaluate((element) => {
+          const intro = element.querySelector<HTMLElement>(
+            ":scope > .section-heading",
+          );
+          const copy = intro?.querySelector<HTMLElement>(":scope > .ko-copy");
+          const action = intro?.querySelector<HTMLElement>(
+            ":scope > .landing-journey__action",
+          );
+          const button =
+            action?.querySelector<HTMLAnchorElement>("a[href='/signup']");
+          const steps = element.querySelector<HTMLElement>(
+            ":scope > .landing-journey__grid",
+          );
+          if (!intro || !copy || !action || !button || !steps) {
+            throw new Error(
+              "Journey CTA geometry requires the real intro, copy, action, link and steps",
+            );
+          }
+          const rect = (node: Element) => {
+            const box = node.getBoundingClientRect();
+            return {
+              left: box.left,
+              right: box.right,
+              top: box.top,
+              bottom: box.bottom,
+              width: box.width,
+              height: box.height,
+            };
+          };
+          const style = getComputedStyle(action);
+          return {
+            intro: rect(intro),
+            copy: rect(copy),
+            action: rect(action),
+            button: rect(button),
+            steps: rect(steps),
+            parentIsIntro: action.parentElement === intro,
+            borderTop: parseFloat(style.borderTopWidth),
+            margins: [
+              style.marginTop,
+              style.marginRight,
+              style.marginBottom,
+              style.marginLeft,
+            ].map(parseFloat),
+            flexDirection: style.flexDirection,
+            viewportWidth: document.documentElement.clientWidth,
+            scrollWidth: document.documentElement.scrollWidth,
+          };
+        });
+        expect(geometry.parentIsIntro).toBe(true);
+        expect(geometry.action.top).toBeGreaterThanOrEqual(
+          geometry.copy.bottom + 16,
+        );
+        expect(
+          Math.abs(geometry.action.left - geometry.intro.left),
+        ).toBeLessThanOrEqual(2);
+        expect(
+          Math.abs(geometry.button.left - geometry.intro.left),
+        ).toBeLessThanOrEqual(2);
+        expect(geometry.button.width).toBeGreaterThanOrEqual(44);
+        expect(geometry.button.height).toBeGreaterThanOrEqual(48);
+        expect(geometry.borderTop).toBe(0);
+        expect(
+          geometry.margins.every(
+            (margin) => Number.isFinite(margin) && margin >= 0,
+          ),
+        ).toBe(true);
+        expect(geometry.flexDirection).toBe("column");
+        expect(geometry.scrollWidth).toBeLessThanOrEqual(
+          geometry.viewportWidth + 1,
+        );
+        const overlapWidth =
+          Math.min(geometry.action.right, geometry.steps.right) -
+          Math.max(geometry.action.left, geometry.steps.left);
+        const overlapHeight =
+          Math.min(geometry.action.bottom, geometry.steps.bottom) -
+          Math.max(geometry.action.top, geometry.steps.top);
+        expect(
+          overlapWidth <= 0 || overlapHeight <= 0,
+          "CTA must not overlap the real steps",
+        ).toBe(true);
+        if (width <= 759) {
+          expect(geometry.action.bottom).toBeLessThanOrEqual(
+            geometry.steps.top,
+          );
+          expect(
+            Math.abs(geometry.button.width - geometry.intro.width),
+          ).toBeLessThanOrEqual(2);
+        } else {
+          expect(geometry.action.right).toBeLessThanOrEqual(
+            geometry.steps.left + 2,
+          );
+        }
+        await testInfo.attach(`journey-cta-${width}-${theme}-geometry`, {
+          body: Buffer.from(JSON.stringify(geometry)),
+          contentType: "application/json",
+        });
+        if (theme === "light" && (width === 390 || width === 768)) {
+          await testInfo.attach(`journey-cta-${width}-${theme}`, {
+            body: await section.screenshot({ animations: "disabled" }),
+            contentType: "image/png",
+          });
+        }
+      });
+    }
+  }
+});
