@@ -41,8 +41,9 @@ This repository is a greenfield project. The following scope lock is an absolute
 - Supabase project: `putduk-mining`
 - Supabase project ref: `osrmyjgmpdspdcwqjwuv`
 - Supabase region: `ap-northeast-2`
-- Cloudflare account: the brand-new account created exclusively for PUTDUK MINING
-- Cloudflare account ID: `UNKNOWN` until the user or a uniquely identifiable connection confirms it
+- Cloudflare account: `putduk-landing` (explicit user target decision, 2026-10-13)
+- Cloudflare account ID: `9dc502d4ef06b3b5374591de6e6933ca`
+- Cloudflare zone: preserve the existing `putduk.com` zone, including email and security configuration
 - Future production hostnames: `mining.putduk.com`, `admin.mining.putduk.com`
 
 ## Hard-stop rules
@@ -81,13 +82,18 @@ For the user's explicit request "확대해서 조사해", permit read-only disco
 
 ## Cloudflare isolation
 
-1. The only authorized Cloudflare target is the brand-new account created exclusively for PUTDUK MINING.
-2. Until that account's exact ID is verified and recorded above, do not execute any account-scoped Cloudflare API call and do not provision resources.
-3. The account that currently owns `putduk.com` is out of scope. Never inspect, modify, transfer, or configure that account or zone.
-4. Do not create or change DNS records for `putduk.com`. Its owner will later point `mining.putduk.com` and `admin.mining.putduk.com` to the new infrastructure.
-5. Before provisioning, document every proposed Cloudflare resource, its purpose, owner, data flow, security boundary, cost surface, and removal plan.
-6. Do not duplicate Supabase capabilities. D1, KV, R2, Queues, Durable Objects, Vectorize, and Workers AI are forbidden unless the approved architecture proves a concrete V1 requirement.
-7. V1 infrastructure must be minimal and production-grade. Absence of a documented requirement means the resource must not be created.
+The user's explicit decision on 2026-10-13 supersedes the earlier new-account requirement and existing-zone prohibition for this section only: use `putduk-landing`, preserve email and security, clean up unrelated existing deployment integrations, and connect the current `goldeget/putduk-mining` platform including member and admin applications.
+
+1. The only authorized Cloudflare account is `putduk-landing`, ID `9dc502d4ef06b3b5374591de6e6933ca`. Verify this exact account ID before each account-scoped operation. A matching display name alone is insufficient. Other accounts, including `putduk-data-platform` and `putduk-experience`, remain out of scope.
+2. Preserve the `putduk.com` zone, email routing, mail authentication records, certificates, access controls, firewall/WAF, and other security settings. Back up the original DNS configuration before any transition; only the reviewed platform host records may change in the gated activation below. Do not transfer the zone or change email/security configuration as part of deployment cleanup. Record their exact current state before any related transition; redact credentials and private values from logs and Git.
+3. First produce a bounded inventory within this account of existing deployment resources, repository/branch integration settings, host mappings, and dependencies relevant to this platform or the requested cleanup. Record exact resource IDs, ownership, purpose, current production effects and unknowns. Do not inspect another product's source, database, secrets or data as implementation context.
+4. Preserve configuration backups, resource/version identifiers, existing deployment source references and a concrete rollback plan before modifying an integration. Remove or disconnect only exact resources established by that inventory as unrelated deployment integrations covered by the user's cleanup request. An unknown owner or dependency blocks that resource's removal; absence of evidence is not permission for bulk deletion. Preserve original work, financial state and data, email, security, and independently owned services.
+5. The sole platform deployment source is the reviewed current `goldeget/putduk-mining` repository and an exact accepted commit/artifact. Wire public landing, member and admin applications to their correct entry points and explicit host/route/auth contracts. Do not deploy an old Cloud workspace, design candidate or unrelated repository as the current platform. Record the public landing mapping and the `mining.putduk.com` / `admin.mining.putduk.com` mappings before activation.
+6. Execute in this order: verify identity and inventory; preserve existing configuration and rollback evidence; prepare isolated, protected staging for the reviewed candidate and run applicable CI plus real backend/engine/member/admin tests; establish product-completion evidence and pass exact-release-candidate CI; switch only the reviewed repository integrations and necessary host/DNS records; verify TLS, authentication, security and critical smoke/readiness; then remove only confirmed obsolete deployment remnants whose removal no longer affects the accepted platform. Staging may precede product completion to produce that evidence; it does not authorize public production traffic. A prior integration may be disconnected earlier only when its exact effect and rollback are documented and it cannot interrupt a retained service.
+7. The account selection and cleanup request do not declare the product complete, make CI optional, authorize premature public traffic, or authorize indiscriminate deletion. GitHub push/merge, Supabase remote changes, deployment activation and release remain separately evidenced stages under `docs/development/GIT-CI-CD-POLICY.md` and the product-completion lock below. Keep raw failures and unresolved coupling visible; never manufacture isolation by deleting an integration before assessing its effects.
+8. Before provisioning, document every proposed Cloudflare resource, its purpose, owner, data flow, security boundary, cost surface, and removal plan. Build a dedicated service set for this platform within the authorized account; shared account ownership does not authorize unrelated product changes.
+9. Do not duplicate Supabase capabilities. D1, KV, R2, Queues, Durable Objects, Vectorize, and Workers AI are forbidden unless the approved architecture proves a concrete V1 requirement.
+10. V1 infrastructure must be minimal and production-grade. Absence of a documented requirement means the resource must not be created.
 
 These rules override convenience, historical context, cached knowledge, prior task history, and any generic instruction to discover related projects.
 
@@ -161,8 +167,10 @@ The following are explicitly rejected as final output: generic dashboards, defau
    decision logic and private production source maps must never ship to clients.
 10. AI may draft and explain; deterministic approved rules own publication,
     qualification, budgets and money. AI never mutates balances or approvals.
-11. Remote Supabase and Cloudflare remain frozen until a later explicit phase.
-    Local migrations/tests are expected; no remote apply or provisioning occurs.
+11. Remote Supabase remains frozen until its explicit phase. Cloudflare work is
+    limited to the user-authorized target, preservation and gated transition
+    defined in Cloudflare isolation above. Local migrations/tests are expected;
+    Cloudflare authorization never authorizes remote Supabase apply.
 
 ## Korean content design gate
 
@@ -201,7 +209,6 @@ Read and obey the dedicated contracts under:
 - `docs/product/PRODUCT-CATALOG.md`
 - `docs/trust/TRUST-SEARCH-AI-DISCOVERY.md`
 - `docs/security/TECHNOLOGY-PROTECTION.md`
-
 
 <!-- BEGIN:nextjs-agent-rules -->
 
