@@ -57,7 +57,11 @@ describe("successor197 staging preserves native assertions and full-id owner sco
   ] as const)(
     "appends only actual SAFE ACK to immutable roster %s",
     (name, count) => {
-      const source = read("supabase/tests/database/" + name),
+      const source = read(
+          "tests/unit/fixtures/backend197-native-originals/" +
+            name +
+            ".source.txt",
+        ),
         derivative = adaptBackend197DefinerRoster(name, source);
       expect(derivative.changes[0]?.matches).toBe(count);
       expect(derivative.changes).toHaveLength(2);
@@ -90,7 +94,7 @@ describe("successor197 staging preserves native assertions and full-id owner sco
     ).toThrow("ACL_SOURCE_CHANGED"));
   it("removes only the explicitly revoked delivery INSERT entry and reverses to original bytes", () => {
     const source = read(
-        "supabase/tests/database/service_role_image_default_floor.sql",
+        "tests/unit/fixtures/backend197-native-originals/service_role_image_default_floor.sql.source.txt",
       ),
       original = source.toString("utf8"),
       derivative = adaptBackend197ServiceRoleInsertFloor(source),
@@ -118,14 +122,16 @@ describe("successor197 staging preserves native assertions and full-id owner sco
     expect(() =>
       adaptBackend197ServiceRoleInsertFloor(
         Buffer.concat([
-          read("supabase/tests/database/service_role_image_default_floor.sql"),
+          read(
+            "tests/unit/fixtures/backend197-native-originals/service_role_image_default_floor.sql.source.txt",
+          ),
           Buffer.from("\n"),
         ]),
       ),
     ).toThrow("INSERT_FLOOR_SOURCE_CHANGED"));
   it("cannot drop the still-granted delivery SELECT entry via a caller-modified fixture", () => {
     const source = read(
-      "supabase/tests/database/service_role_image_default_floor.sql",
+      "tests/unit/fixtures/backend197-native-originals/service_role_image_default_floor.sql.source.txt",
     ).toString("utf8");
     expect(() =>
       adaptBackend197ServiceRoleInsertFloor(
@@ -170,5 +176,29 @@ describe("successor197 staging preserves native assertions and full-id owner sco
     expect(() =>
       bindBackend197Concurrency(derivative, "LOCAL_QA", {}, "a".repeat(64)),
     ).toThrow("EXACT_PROFILE_REQUIRED");
+  });
+  it.each([
+    "rls.sql",
+    "ws04_security_money_workers.sql",
+    "ai_conversation_storage.sql",
+    "ai_conversation_summaries.sql",
+    "ai_tool_evidence.sql",
+  ] as const)(
+    "rejects current successor ACL bytes through frozen197 adapter %s",
+    (name) => {
+      expect(() =>
+        adaptBackend197DefinerRoster(
+          name,
+          read("supabase/tests/database/" + name),
+        ),
+      ).toThrow("ACL_SOURCE_CHANGED");
+    },
+  );
+  it("rejects current successor privilege floor through frozen197 adapter", () => {
+    expect(() =>
+      adaptBackend197ServiceRoleInsertFloor(
+        read("supabase/tests/database/service_role_image_default_floor.sql"),
+      ),
+    ).toThrow("INSERT_FLOOR_SOURCE_CHANGED");
   });
 });

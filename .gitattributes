@@ -14,3 +14,6 @@ supabase/**/*.sql -text whitespace=cr-at-eol
 # This historical, applied principal original contains one blank line with a
 # space. Preserve its approved digest rather than rewriting an applied file.
 supabase/migrations/20261006133100_principal_preparation_and_exact_interval.sql -text whitespace=cr-at-eol,-blank-at-eol
+
+# Frozen backend197 test inputs retain the exact reviewed SQL source bytes.
+tests/unit/fixtures/backend197-native-originals/*.source.txt -text whitespace=cr-at-eol
