@@ -230,9 +230,12 @@ test("AI ownership, money denial, continuity, themes, and keyboard path", async 
     page
       .locator('.ai-message--assistant[data-message-state="complete"]')
       .last(),
-  ).toContainText("체험 결과가 실제 지갑으로 자동 합쳐지지는 않아요.", {
-    timeout: 30_000,
-  });
+  ).toContainText(
+    /실제 지갑과 완전 분리[\s\S]*체험 결과는 체험 전용 계정에만 기록됩니다\.[\s\S]*최대 5,000원, 1회[\s\S]*자격을 확인하면 출금할 수 있는 원화로 바꿀 수 있어요\.[\s\S]*한 번만 가능해요\.[\s\S]*최대 5,000원까지예요\.[\s\S]*출금 전에 입금하지 않아도 돼요\./,
+    {
+      timeout: 30_000,
+    },
+  );
 
   // 계정 대화: 새로고침 뒤에도 이 계정의 답변이 다시 보여야 한다.
   await page.reload({ waitUntil: "domcontentloaded" });
@@ -241,9 +244,12 @@ test("AI ownership, money denial, continuity, themes, and keyboard path", async 
     page
       .locator('.ai-message--assistant[data-message-state="complete"]')
       .last(),
-  ).toContainText("체험 결과가 실제 지갑으로 자동 합쳐지지는 않아요.", {
-    timeout: 30_000,
-  });
+  ).toContainText(
+    /실제 지갑과 완전 분리[\s\S]*체험 결과는 체험 전용 계정에만 기록됩니다\.[\s\S]*최대 5,000원, 1회[\s\S]*자격을 확인하면 출금할 수 있는 원화로 바꿀 수 있어요\.[\s\S]*한 번만 가능해요\.[\s\S]*최대 5,000원까지예요\.[\s\S]*출금 전에 입금하지 않아도 돼요\./,
+    {
+      timeout: 30_000,
+    },
+  );
   await expect(page.locator(".ai-message").first()).toBeVisible();
 
   const walletResponse = await askAi(page, "내 지갑 잔액 얼마야?");

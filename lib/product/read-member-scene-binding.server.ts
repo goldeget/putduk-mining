@@ -2,17 +2,22 @@ import "server-only";
 
 import { z } from "zod";
 
-import { presentPublishedCatalogRead } from "@/domain/products/published-catalog";
+import { presentServerCatalogRead } from "@/domain/products/catalog-server";
 import type { AllocationState } from "@/domain/products/allocation-command";
 import type { VerifiedIdentity } from "@/lib/auth/session";
 import { resolveCatalogProduct } from "@/lib/mining-scene/resolve-scene";
-import type { ResolvedScene } from "@/lib/mining-scene/types";
+import {
+  PRODUCT_CATEGORIES,
+  type ResolvedScene,
+} from "@/lib/mining-scene/types";
 import { readAllocation } from "@/lib/product/allocation-handler";
 
 const catalogProjection =
   "id,version,status,snapshot_date,source_references,content_digest,approved_by,approved_at,published_at,created_at," +
   "mining_products(id,code,slug,category,name_ko,name_en,description_ko,display_order,is_featured,trial_available,created_at," +
   "product_availability(id,status,available_from,available_to,segment_key,created_at))";
+
+const sceneCategorySchema = z.enum(PRODUCT_CATEGORIES);
 
 type ClosedBinding = {
   schemaVersion: 1;
@@ -132,7 +137,9 @@ export async function readMemberSceneBinding(
     if (!(await matchesOwner(identity))) return closed("unknown");
     if (sourceKey(first) !== sourceKey(second)) return closed("stale");
     const observedAt = new Date().toISOString();
-    const catalog = presentPublishedCatalogRead(data, null, observedAt);
+    // Validate every canonical category before projecting selected scene support.
+    // An unselected ETF must not invalidate an otherwise supported selection.
+    const catalog = presentServerCatalogRead(data, null, observedAt);
     if (catalog.state !== "loaded") return closed("unknown");
     if (
       catalog.catalog.id !== first.catalogId ||
@@ -153,15 +160,19 @@ export async function readMemberSceneBinding(
         return closed("unavailable");
       if (Date.parse(product.createdAt) > Date.parse(first.effectiveAt))
         return closed("stale");
+      const category = sceneCategorySchema.safeParse(product.category);
+      // Preserve the complete selection: never silently drop an unsupported row
+      // or borrow a scene family from its code, name or another category.
+      if (!category.success) return closed("unavailable");
       products.push({
         productId: product.id,
         code: product.code,
-        category: product.category,
+        category: category.data,
         nameKo: product.nameKo,
         allocationBps: selected.allocationBps,
         scene: resolveCatalogProduct({
           code: product.code,
-          category: product.category,
+          category: category.data,
         }),
         productComplete: false,
       });

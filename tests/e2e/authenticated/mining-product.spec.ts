@@ -160,7 +160,9 @@ test("shows the empty session, world directory, themes, and keyboard path", asyn
   await openMiningDetails(page);
 
   const mainText = await page.locator("main").innerText();
-  expect(mainText).toContain("앱을 닫아도 채굴은 계속돼요.");
+  expect(mainText).toContain(
+    "월드별 이용 조건과 적용 중인 채굴 규칙을 확인해 주세요.",
+  );
   expect(mainText).toContain(
     "월드는 채굴 테마예요. 시세나 투자 수익을 따르지 않습니다.",
   );

@@ -3,6 +3,7 @@
 import { act, createElement, Fragment, useEffect } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 import {
   PutdukAiChat,
@@ -244,6 +245,140 @@ afterEach(async () => {
 });
 
 describe("one PUTDUK AI request and session owner", () => {
+  it.each(["verified", "missing", "malformed"] as const)(
+    "uses the actual owned history parser for fresh-mount static restoration (%s receipt)",
+    async (receiptState) => {
+      const actual = await vi.importActual<
+        typeof import("@/lib/ai/member-conversation-read")
+      >("@/lib/ai/member-conversation-read");
+      const owner = "11111111-1111-4111-8111-111111111111";
+      const conversation = "22222222-2222-4222-8222-222222222222";
+      const questionId = "33333333-3333-4333-8333-333333333333";
+      const answerId = "44444444-4444-4444-8444-444444444444";
+      const createdAt = "2026-10-13T01:02:03.123456+00:00";
+      const filters: [string, string, unknown][] = [];
+      const queries = vi.fn((table: string) => {
+        const rows =
+          table === "ai_conversations"
+            ? [
+                {
+                  id: conversation,
+                  user_id: owner,
+                  title_text: "저장된 안내",
+                  updated_at: createdAt,
+                },
+              ]
+            : [
+                {
+                  id: answerId,
+                  user_id: owner,
+                  conversation_id: conversation,
+                  author_role: "ASSISTANT",
+                  body_text: "서버에 저장한 출금 안내입니다.",
+                  position: 2,
+                  client_message_id: null,
+                  created_at: createdAt,
+                  ai_answer_sources:
+                    receiptState === "verified"
+                      ? [
+                          {
+                            source_key: "guide:member_help_wallet",
+                            knowledge_version: "v1",
+                            position: 1,
+                          },
+                        ]
+                      : receiptState === "missing"
+                        ? []
+                        : null,
+                  ai_tool_calls: [],
+                },
+                {
+                  id: questionId,
+                  user_id: owner,
+                  conversation_id: conversation,
+                  author_role: "MEMBER",
+                  body_text: "출금 안내를 보여 주세요.",
+                  position: 1,
+                  client_message_id: questionId,
+                  created_at: createdAt,
+                  ai_answer_sources: [],
+                  ai_tool_calls: [],
+                },
+              ];
+        const query = {
+          select: () => query,
+          eq: (field: string, value: unknown) => {
+            filters.push([table, field, value]);
+            return query;
+          },
+          order: () => query,
+          limit: () => query,
+          then(resolve: (value: unknown) => unknown) {
+            return Promise.resolve({ data: rows, error: null }).then(resolve);
+          },
+        };
+        return query;
+      });
+      const database = { from: queries } as unknown as SupabaseClient;
+      historyReads.enabled = true;
+      historyReads.list.mockImplementation((_browser, userId, cursor) =>
+        actual.listOwnAiConversations(database, userId, cursor),
+      );
+      historyReads.read.mockImplementation((_browser, userId, id, before) =>
+        actual.readOwnAiMessages(database, userId, id, before),
+      );
+      browserAuth.ownerId = owner;
+      navigation.pathname = "/ai";
+      await render(owner, 1, false, `${owner}:fresh-mount`, "page");
+      expect(session.ownerStatus).toBe("ready");
+      expect(queries.mock.calls.map(([table]) => table)).toEqual([
+        "ai_conversations",
+        "ai_messages",
+      ]);
+      expect(filters).toContainEqual(["ai_conversations", "user_id", owner]);
+      expect(filters).toContainEqual(["ai_messages", "user_id", owner]);
+      expect(filters).toContainEqual([
+        "ai_messages",
+        "conversation_id",
+        conversation,
+      ]);
+      expect(fetchMock).not.toHaveBeenCalled();
+      if (receiptState === "malformed") {
+        expect(session.historyStatus).toBe("unavailable");
+        expect(session.messages).toEqual([]);
+        return;
+      }
+      expect(session.activeConversationId).toBe(conversation);
+      expect(session.messages.at(-1)).toMatchObject({
+        id: answerId,
+        historical: true,
+        saved: true,
+        state: receiptState === "verified" ? "complete" : "unverified",
+      });
+      if (receiptState === "verified") {
+        expect(session.messages.at(-1)).toMatchObject({
+          source: "static",
+          helpTopic: "wallet",
+        });
+        expect(host.textContent).toContain("저장된 답변");
+        expect(
+          host.querySelector(
+            'nav[aria-label="관련 화면"] a[href="/wallet/withdraw"]',
+          ),
+        ).not.toBeNull();
+      } else {
+        expect(session.messages.at(-1)?.failure?.code).toBe(
+          "AI_HISTORY_UNVERIFIED",
+        );
+        expect(
+          host.querySelector(
+            '.ai-message--assistant[data-message-state="complete"]',
+          ),
+        ).toBeNull();
+      }
+    },
+  );
+
   it("shows originating page guide links without guessing member figures or sending a request", async () => {
     navigation.pathname = "/ai";
     navigation.search = "aiOrigin=%2Fwallet";

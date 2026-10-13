@@ -12,6 +12,7 @@ import {
 
 import { createConfirmedMember } from "../fixtures/local-auth";
 import { awaitPaintedImages } from "./helpers/painted-images";
+import { settleRenderedTypographyImages } from "../../typography/helpers";
 import {
   dismissGuidedQuestIfPresent,
   loginAsMember,
@@ -305,26 +306,9 @@ async function captureRoutes(
                 /[가-힣]/.test(document.body.innerText),
               ),
             ).toBe(true);
-            // Exercise each rendered lazy image before requiring the whole document to be decoded.
-            for (const image of await page.locator("img").all()) {
-              if (
-                await image.evaluate(
-                  (node) => node.getBoundingClientRect().width > 0,
-                )
-              ) {
-                await image.scrollIntoViewIfNeeded();
-                await expect
-                  .poll(() =>
-                    image.evaluate(
-                      (node) =>
-                        node instanceof HTMLImageElement &&
-                        node.complete &&
-                        node.naturalWidth > 0,
-                    ),
-                  )
-                  .toBe(true);
-              }
-            }
+            // Reuse the bounded painted-image loader, including closed-details
+            // visibility and restoration of nested scroll positions.
+            await settleRenderedTypographyImages(page);
             await main.evaluate((element) =>
               element.scrollTo({ top: 0, behavior: "instant" }),
             );
@@ -335,7 +319,15 @@ async function captureRoutes(
               .poll(() =>
                 page.evaluate(() =>
                   [...document.images]
-                    .filter((image) => image.getBoundingClientRect().width > 0)
+                    .filter(
+                      (image) =>
+                        image.checkVisibility({
+                          opacityProperty: true,
+                          visibilityProperty: true,
+                        }) &&
+                        image.getBoundingClientRect().width > 0 &&
+                        image.getBoundingClientRect().height > 0,
+                    )
                     .every((image) => image.complete && image.naturalWidth > 0),
                 ),
               )
@@ -1363,14 +1355,29 @@ async function captureRoutes(
     );
     expect(errors).toEqual([]);
   } finally {
-    await testInfo.attach("sanitized-browser-diagnostics", {
-      body: JSON.stringify(
+    const diagnosticPath = testInfo.outputPath(
+      "sanitized-browser-diagnostics.json",
+    );
+    await writeFile(
+      diagnosticPath,
+      JSON.stringify(
         { diagnostics, cappedAt: 60, fatalErrors: errors.map(safeMessage) },
         null,
         2,
-      ),
+      ) + "\n",
+    );
+    await testInfo.attach("sanitized-browser-diagnostics", {
+      path: diagnosticPath,
       contentType: "application/json",
     });
+    console.info(
+      "[sanitized-browser-diagnostics] " +
+        JSON.stringify({
+          diagnostics: diagnostics.slice(0, 6),
+          cappedAt: 6,
+          fatalErrorCount: errors.length,
+        }),
+    );
   }
 }
 

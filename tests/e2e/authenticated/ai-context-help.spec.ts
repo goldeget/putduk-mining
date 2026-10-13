@@ -1,9 +1,180 @@
-import { expect, test } from "@playwright/test";
+import { writeFile } from "node:fs/promises";
+
+import {
+  expect,
+  test,
+  type Page,
+  type Request,
+  type Response,
+  type TestInfo,
+} from "@playwright/test";
 import { createConfirmedMember } from "../fixtures/local-auth";
 import {
   dismissGuidedQuestIfPresent,
   loginAsMember,
 } from "./helpers/member-session";
+
+/** Bounded metadata only: no answer body, identifier, credential or URL query. */
+function observeHistoryRestoration(page: Page) {
+  const records: Record<string, unknown>[] = [];
+  const pending = new Set<Promise<void>>();
+  function endpoint(urlText: string) {
+    const url = new URL(urlText);
+    if (!["127.0.0.1", "localhost"].includes(url.hostname)) return null;
+    const names: Record<string, string> = {
+      "/api/v1/ai/chat": "ai_chat",
+      "/rest/v1/ai_conversations": "ai_conversations",
+      "/rest/v1/ai_messages": "ai_messages",
+    };
+    const name = names[url.pathname];
+    return name
+      ? {
+          name,
+          port: Number(url.port || (url.protocol === "https:" ? "443" : "80")),
+        }
+      : null;
+  }
+  function safeCode(value: unknown) {
+    return typeof value === "string" && /^[A-Za-z0-9_:.-]{1,80}$/.test(value)
+      ? value
+      : null;
+  }
+  function observeResponse(response: Response) {
+    const target = endpoint(response.url());
+    if (!target || records.length >= 24) return;
+    const record: Record<string, unknown> = {
+      endpoint: target.name,
+      port: target.port,
+      method: response.request().method(),
+      status: response.status(),
+    };
+    records.push(record);
+    const task = (async () => {
+      try {
+        if (target.name === "ai_chat") {
+          const text = await response.text();
+          if (text.length > 65_536) {
+            record.bodyMetadata = "OVER_BOUND";
+            return;
+          }
+          for (const line of text.split("\n")) {
+            if (!line.startsWith("data:")) continue;
+            let event: Record<string, unknown>;
+            try {
+              event = JSON.parse(line.slice(5)) as Record<string, unknown>;
+            } catch {
+              continue;
+            }
+            if (event.type === "done") {
+              record.doneSaved = event.saved === true;
+              record.conversationIdPresent =
+                typeof event.conversationId === "string";
+              record.assistantMessageIdPresent =
+                typeof event.assistantMessageId === "string";
+            }
+          }
+        } else {
+          const payload: unknown = await response.json();
+          record.rowCount = Array.isArray(payload) ? payload.length : null;
+          if (payload && !Array.isArray(payload) && typeof payload === "object")
+            record.errorCode = safeCode(
+              (payload as Record<string, unknown>).code,
+            );
+          if (target.name === "ai_messages" && Array.isArray(payload)) {
+            const assistant = payload.filter(
+              (row) => row?.author_role === "ASSISTANT",
+            );
+            record.assistantRows = assistant.length;
+            record.assistantWithSourceReceipt = assistant.filter(
+              (row) =>
+                Array.isArray(row.ai_answer_sources) &&
+                row.ai_answer_sources.length > 0,
+            ).length;
+            record.malformedSourceEmbeds = assistant.filter(
+              (row) => !Array.isArray(row.ai_answer_sources),
+            ).length;
+            record.positionType = payload.length
+              ? typeof payload[0]?.position
+              : "empty";
+          }
+        }
+      } catch {
+        record.bodyMetadata = "UNAVAILABLE";
+      }
+    })();
+    pending.add(task);
+    void task.finally(() => pending.delete(task));
+  }
+  function observeFailure(request: Request) {
+    const target = endpoint(request.url());
+    if (!target || records.length >= 24) return;
+    records.push({
+      endpoint: target.name,
+      port: target.port,
+      method: request.method(),
+      status: null,
+      errorCode: safeCode(request.failure()?.errorText) ?? "NETWORK_FAILURE",
+    });
+  }
+  page.on("response", observeResponse);
+  page.on("requestfailed", observeFailure);
+  return async (info: TestInfo) => {
+    page.off("response", observeResponse);
+    page.off("requestfailed", observeFailure);
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    try {
+      await Promise.race([
+        Promise.allSettled([...pending]),
+        new Promise<void>((resolve) => {
+          timer = setTimeout(resolve, 1_500);
+        }),
+      ]);
+    } finally {
+      if (timer !== undefined) clearTimeout(timer);
+    }
+    const ui = await page
+      .evaluate(() => ({
+        complete: document.querySelectorAll(
+          '.ai-message--assistant[data-message-state="complete"]',
+        ).length,
+        unverified: document.querySelectorAll(
+          '.ai-message--assistant[data-message-state="unverified"]',
+        ).length,
+        error: document.querySelectorAll(
+          '.ai-message--assistant[data-message-state="error"]',
+        ).length,
+        historyUnavailable: Array.from(
+          document.querySelectorAll('[role="alert"]'),
+        ).some((element) =>
+          element.textContent?.includes("이전 대화를 불러오지 못했어요."),
+        ),
+      }))
+      .catch(() => null);
+    const diagnosticPath = info.outputPath(
+      "ai-history-reload-diagnostics.json",
+    );
+    try {
+      await writeFile(
+        diagnosticPath,
+        JSON.stringify(
+          {
+            records,
+            ui,
+            pendingMetadata: pending.size,
+            bodyOrSecretsStored: false,
+          },
+          null,
+          2,
+        ) + "\n",
+      );
+      console.info(
+        JSON.stringify({ diagnosticPath, observations: records.length, ui }),
+      );
+    } catch {
+      console.info("AI_HISTORY_DIAGNOSTIC_WRITE_UNAVAILABLE");
+    }
+  };
+}
 
 test("context suggestions, wide view, persisted help and real destination work without an external model", async ({
   page,
@@ -43,39 +214,46 @@ test("context suggestions, wide view, persisted help and real destination work w
   await expect(input).toHaveValue(
     "사용 가능 금액과 보류 금액은 무슨 뜻인가요?",
   );
-  const answered = page.waitForResponse(
-    (response) =>
-      response.request().method() === "POST" &&
-      new URL(response.url()).pathname === "/api/v1/ai/chat",
-  );
-  await page.getByRole("button", { name: "질문 보내기", exact: true }).click();
-  expect((await answered).ok()).toBe(true);
-  const answer = page
-    .locator('.ai-message--assistant[data-message-state="complete"]')
-    .last();
-  await expect(answer).toHaveAttribute("data-answer-source", "static");
-  await expect(
-    answer
+  const finishDiagnostics = observeHistoryRestoration(page);
+  try {
+    const answered = page.waitForResponse(
+      (response) =>
+        response.request().method() === "POST" &&
+        new URL(response.url()).pathname === "/api/v1/ai/chat",
+    );
+    await page
+      .getByRole("button", { name: "질문 보내기", exact: true })
+      .click();
+    expect((await answered).ok()).toBe(true);
+    const answer = page
+      .locator('.ai-message--assistant[data-message-state="complete"]')
+      .last();
+    await expect(answer).toHaveAttribute("data-answer-source", "static");
+    await expect(
+      answer
+        .getByRole("navigation", { name: "관련 화면" })
+        .getByRole("link", { name: "출금 안내", exact: true }),
+    ).toHaveAttribute("href", "/wallet/withdraw");
+    expect(submitted).toBe(1);
+    await page.reload({ waitUntil: "domcontentloaded" });
+    await expect(answer).toContainText("저장된 답변");
+    const destination = answer
       .getByRole("navigation", { name: "관련 화면" })
-      .getByRole("link", { name: "출금 안내", exact: true }),
-  ).toHaveAttribute("href", "/wallet/withdraw");
-  expect(submitted).toBe(1);
-  await page.reload({ waitUntil: "domcontentloaded" });
-  await expect(answer).toContainText("저장된 답변");
-  const destination = answer
-    .getByRole("navigation", { name: "관련 화면" })
-    .getByRole("link", { name: "출금 안내", exact: true });
-  await expect(destination).toHaveAttribute("href", "/wallet/withdraw");
-  await page.screenshot({
-    path: test.info().outputPath("member-ai-context-history.png"),
-    fullPage: true,
-    animations: "disabled",
-  });
-  await destination.click();
-  await expect(page).toHaveURL((url) => url.pathname === "/wallet/withdraw");
-  await expect(
-    page.getByRole("heading", { name: "출금하기", exact: true }),
-  ).toBeVisible();
+      .getByRole("link", { name: "출금 안내", exact: true });
+    await expect(destination).toHaveAttribute("href", "/wallet/withdraw");
+    await page.screenshot({
+      path: test.info().outputPath("member-ai-context-history.png"),
+      fullPage: true,
+      animations: "disabled",
+    });
+    await destination.click();
+    await expect(page).toHaveURL((url) => url.pathname === "/wallet/withdraw");
+    await expect(
+      page.getByRole("heading", { name: "출금하기", exact: true }),
+    ).toBeVisible();
+  } finally {
+    await finishDiagnostics(test.info());
+  }
 });
 
 test("offline drafting survives reconnection and never resubmits automatically", async ({

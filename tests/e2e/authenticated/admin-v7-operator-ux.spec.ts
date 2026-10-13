@@ -140,6 +140,9 @@ test("operator guide and Today search preserve readable, audited operation", asy
       await expect(links.nth(index)).toHaveAttribute("href", href);
       await expect(links.nth(index)).toContainText(label);
     }
+    // Normalize the initial rail position only; later destinations must scroll
+    // into view through keyboard focus without per-link scroll assistance.
+    await links.first().scrollIntoViewIfNeeded();
     await links.first().focus();
     for (
       let index = 0;

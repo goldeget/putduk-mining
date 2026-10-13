@@ -41,7 +41,23 @@ export async function confirmOperatorStepUp(form: Locator, secret: string) {
 
 /** Changed evidence must discard both the human confirmation and old grant. */
 export async function expectEditedReviewInvalidated(form: Locator) {
-  await expect(form.getByRole("checkbox")).not.toBeChecked();
+  await expect(
+    form.locator('input[name="bankReference"], input[name="txHash"]'),
+  ).toHaveCount(1);
+  const expectedNames =
+    (await form.locator('input[name="txHash"]').count()) === 1
+      ? ["confirmation", "fullPayoutConfirmed"]
+      : ["confirmation"];
+  const checkboxes = form.getByRole("checkbox");
+  await expect(checkboxes).toHaveCount(expectedNames.length);
+  expect(
+    await checkboxes.evaluateAll((elements) =>
+      elements.map((element) => element.getAttribute("name")).sort(),
+    ),
+  ).toEqual(expectedNames);
+  for (const checkbox of await checkboxes.all()) {
+    await expect(checkbox).not.toBeChecked();
+  }
   await expect(form.locator('input[name="stepUpToken"]')).toHaveValue("");
 }
 

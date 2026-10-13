@@ -7,6 +7,8 @@ const owner = "11111111-1111-4111-8111-111111111111";
 const catalogId = "22222222-2222-4222-8222-222222222222";
 const productId = "33333333-3333-4333-8333-333333333333";
 const allocationId = "44444444-4444-4444-8444-444444444444";
+const etfProductId = "66666666-6666-4666-8666-666666666666";
+const secondProductId = "88888888-8888-4888-8888-888888888888";
 const publicationDigest = "a".repeat(64);
 const contentDigest = "b".repeat(64);
 const now = "2026-10-07T12:00:00.000Z";
@@ -81,6 +83,25 @@ const select = vi.fn();
 const eq = vi.fn();
 const from = vi.fn();
 let identity: VerifiedIdentity;
+
+function addCatalogProduct(
+  id: string,
+  code: string,
+  category: string,
+  displayOrder: number,
+) {
+  if (!source) throw new Error("catalog fixture required");
+  const row = structuredClone(source.mining_products[0]!);
+  row.id = id;
+  row.code = code;
+  row.slug = `reviewed-${code.toLowerCase()}-theme`;
+  row.category = category;
+  row.name_ko = `${code} 조회 상품`;
+  row.display_order = displayOrder;
+  row.product_availability[0]!.id = id;
+  source.mining_products.push(row);
+}
+
 beforeEach(() => {
   vi.resetAllMocks();
   vi.useFakeTimers();
@@ -111,6 +132,175 @@ beforeEach(() => {
 afterEach(() => vi.useRealTimers());
 
 describe("owner-derived selected-product scene presentation", () => {
+  it("keeps an exact supported selection when the same canonical catalog includes an unselected ETF", async () => {
+    source!.mining_products[0]!.code = "NVDA";
+    source!.mining_products[0]!.category = "US_STOCK";
+    addCatalogProduct(etfProductId, "VTI", "ETF", 2);
+    const originalCatalog = structuredClone(source);
+    const result = await readMemberSceneBinding(identity);
+    expect(result.state).toBe("ready");
+    if (result.state !== "ready") throw new Error("expected binding");
+    expect(result.products).toHaveLength(1);
+    expect(result.products[0]).toMatchObject({
+      productId,
+      code: "NVDA",
+      category: "US_STOCK",
+      productComplete: false,
+    });
+    expect(result.products[0]!.scene.presentation?.profile.masterVariant).toBe(
+      "product-nvda-gpu-v1",
+    );
+    expect(result.runtimeBinding).toBe("UNCONFIRMED");
+    expect(result.source.catalogPublicationDigest).toBe(publicationDigest);
+    expect(result.source.catalogContentDigest).toBe(contentDigest);
+    expect(result).not.toHaveProperty("running");
+    expect(result).not.toHaveProperty("sessionReward");
+    expect(source).toEqual(originalCatalog);
+    expect(rpc).toHaveBeenCalledTimes(2);
+    expect(from).toHaveBeenCalledOnce();
+  });
+
+  it.each([
+    { products: [{ productId: etfProductId, allocationBps: "10000" }] },
+    {
+      products: [
+        { productId, allocationBps: "5000" },
+        { productId: etfProductId, allocationBps: "5000" },
+      ],
+    },
+    {
+      products: [
+        { productId: etfProductId, allocationBps: "5000" },
+        { productId, allocationBps: "5000" },
+      ],
+    },
+  ])(
+    "closes the complete selection instead of dropping a selected unsupported ETF: %j",
+    async ({ products }) => {
+      addCatalogProduct(etfProductId, "VTI", "ETF", 2);
+      first = state({ products });
+      second = structuredClone(first);
+      expect(await readMemberSceneBinding(identity)).toEqual({
+        schemaVersion: 1,
+        scope: "CONFIRMED_ALLOCATION_ONLY",
+        runtimeBinding: "UNCONFIRMED",
+        state: "unavailable",
+        products: [],
+      });
+      expect(rpc).toHaveBeenCalledTimes(2);
+    },
+  );
+
+  it("does not borrow an approved code's scene for a selected ETF identity", async () => {
+    source!.mining_products[0]!.code = "NVDA";
+    source!.mining_products[0]!.category = "ETF";
+    expect(await readMemberSceneBinding(identity)).toMatchObject({
+      state: "unavailable",
+      runtimeBinding: "UNCONFIRMED",
+      products: [],
+    });
+  });
+
+  it("retains both supported selections without adopting an unselected ETF", async () => {
+    source!.mining_products[0]!.code = "NVDA";
+    source!.mining_products[0]!.category = "US_STOCK";
+    addCatalogProduct(secondProductId, "AAPL", "US_STOCK", 2);
+    addCatalogProduct(etfProductId, "VTI", "ETF", 3);
+    first = state({
+      products: [
+        { productId, allocationBps: "5000" },
+        { productId: secondProductId, allocationBps: "5000" },
+      ],
+    });
+    second = structuredClone(first);
+    const result = await readMemberSceneBinding(identity);
+    expect(result.state).toBe("ready");
+    if (result.state !== "ready") throw new Error("expected binding");
+    expect(
+      result.products.map((product) => ({
+        id: product.productId,
+        allocation: product.allocationBps,
+        variant: product.scene.presentation?.profile.masterVariant,
+        complete: product.productComplete,
+      })),
+    ).toEqual([
+      {
+        id: productId,
+        allocation: "5000",
+        variant: "product-nvda-gpu-v1",
+        complete: false,
+      },
+      {
+        id: secondProductId,
+        allocation: "5000",
+        variant: "product-aapl-device-v1",
+        complete: false,
+      },
+    ]);
+    expect(result.runtimeBinding).toBe("UNCONFIRMED");
+  });
+
+  it("validates unsupported unselected rows instead of filtering malformed canonical source", async () => {
+    addCatalogProduct(etfProductId, "VTI", "ETF", 2);
+    source!.mining_products[1]!.category = "UNSUPPORTED_CATEGORY";
+    expect(await readMemberSceneBinding(identity)).toMatchObject({
+      state: "unknown",
+      products: [],
+    });
+  });
+
+  it("does not borrow an approved variant across two supported categories", async () => {
+    source!.mining_products[0]!.code = "AAPL";
+    source!.mining_products[0]!.category = "CRYPTO";
+    const result = await readMemberSceneBinding(identity);
+    expect(result.state).toBe("ready");
+    if (result.state !== "ready") throw new Error("expected binding");
+    expect(result.products[0]!.scene.visualStatus).toBe(
+      "MASTER_VARIANT_UNAVAILABLE",
+    );
+    expect(result.products[0]!.scene.productionAssetActive).toBe(false);
+    expect(result.products[0]!.productComplete).toBe(false);
+  });
+
+  it.each([
+    ["005930", "KR_STOCK", "product-samsung-foundry-v1"],
+    ["000660", "KR_STOCK", "semiconductor-memory-v1"],
+    ["AAPL", "US_STOCK", "product-aapl-device-v1"],
+    ["MSFT", "US_STOCK", "product-msft-cloud-v1"],
+    ["NVDA", "US_STOCK", "product-nvda-gpu-v1"],
+    ["XAU", "GOLD", "product-xau-refinery-v1"],
+    ["XAG", "SILVER", "product-xag-electrorefinery-v1"],
+    ["BTC", "CRYPTO", "product-btc-hash-v1"],
+    ["ETH", "CRYPTO", "product-eth-validator-v1"],
+    ["BNB", "CRYPTO", "product-bnb-routing-v1"],
+    ["XRP", "CRYPTO", "product-xrp-gateway-v1"],
+  ])(
+    "preserves exact approved visual identity %s/%s without runtime authority",
+    async (code, category, variant) => {
+      source!.mining_products[0]!.code = code;
+      source!.mining_products[0]!.category = category;
+      const result = await readMemberSceneBinding(identity);
+      expect(result.state).toBe("ready");
+      if (result.state !== "ready") throw new Error("expected binding");
+      expect(result.products).toHaveLength(1);
+      expect(result.products[0]).toMatchObject({
+        productId,
+        code,
+        category,
+        productComplete: false,
+      });
+      expect(result.products[0]!.scene.visualStatus).toBe("MASTER_READY");
+      expect(
+        result.products[0]!.scene.presentation?.profile.masterVariant,
+      ).toBe(variant);
+      expect(result.products[0]!.scene.productionAssetActive).toBe(true);
+      expect(result.runtimeBinding).toBe("UNCONFIRMED");
+      expect(result.scope).toBe("CONFIRMED_ALLOCATION_ONLY");
+      expect(result).not.toHaveProperty("running");
+      expect(result).not.toHaveProperty("sessionReward");
+    },
+  );
+
   it("joins exact current publication without conflating publication and content digests", async () => {
     const result = await readMemberSceneBinding(identity);
     expect(result.state).toBe("ready");

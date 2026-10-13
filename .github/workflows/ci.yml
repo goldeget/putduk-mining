@@ -223,7 +223,8 @@ jobs:
           node scripts/usdt-manual-201-runner.mjs --prepare-test-tool --fresh-container-id="$CONTAINER_ID"
 
       - name: Run pgTAP tests through exact successor201 staging
-        run: pnpm exec supabase test db "${{ steps.successor197-stage.outputs.staged }}/supabase/tests/database"
+        # Keep database SQL and its relative snippets in the same mounted tree.
+        run: pnpm exec supabase test db "${{ steps.successor197-stage.outputs.staged }}/supabase/tests"
 
       # 두 세션 검사는 커밋이 남는다. 공유 suite 를 오염시키지 않도록
       # 러너의 일회용 DB 를 다시 만든 뒤 그 파일만 실행한다.

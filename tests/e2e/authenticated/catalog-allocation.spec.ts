@@ -19,7 +19,10 @@ import { execLocalAdminSql } from "./helpers/local-db";
 import { expectSettledRoute } from "./helpers/settled-route";
 import { awaitPaintedImages } from "./helpers/painted-images";
 import { assertViewportFits } from "./helpers/viewport-geometry";
-import { assertTypographyClean } from "../../typography/helpers";
+import {
+  assertTypographyClean,
+  settleRenderedTypographyImages,
+} from "../../typography/helpers";
 import {
   dismissGuidedQuestIfPresent,
   loginAsMember,
@@ -254,11 +257,20 @@ async function captureMatrix(page: Page, info: TestInfo, label: string) {
           element.scrollTo({ top: 0, behavior: "instant" }),
         );
         await page.evaluate(() => window.scrollTo(0, 0));
+        await settleRenderedTypographyImages(page);
         await expect
           .poll(() =>
             page.evaluate(() =>
               [...document.images]
-                .filter((image) => image.getBoundingClientRect().width > 0)
+                .filter(
+                  (image) =>
+                    image.checkVisibility({
+                      opacityProperty: true,
+                      visibilityProperty: true,
+                    }) &&
+                    image.getBoundingClientRect().width > 0 &&
+                    image.getBoundingClientRect().height > 0,
+                )
                 .every((image) => image.complete && image.naturalWidth > 0),
             ),
           )

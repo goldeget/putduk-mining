@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { writeFile } from "node:fs/promises";
 
 import {
   expect,
@@ -158,9 +159,11 @@ async function requestPrincipalViaUi(
   const response = await wait;
   expect(response.status()).toBe(201);
   const id = (await response.json()).data.withdrawalId as string;
-  await expect(section.getByRole("status")).toContainText(
-    "원금 회수 요청을 접수했어요.",
-  );
+  const acceptedFeedback = section.getByRole("status").filter({
+    hasText: "원금 회수 요청을 접수했어요.",
+  });
+  await expect(acceptedFeedback).toHaveCount(1);
+  await expect(acceptedFeedback).toContainText("원금 회수 요청을 접수했어요.");
   // The API and actual immutable source, not optimistic UI copy, establish the hold.
   const record = await recoverPrincipalRecord(
     page,
@@ -898,15 +901,101 @@ test.describe("signed member principal source-v3 product", () => {
           expect(
             await main.evaluate((root) => root.clientHeight),
           ).toBeGreaterThanOrEqual(page.viewportSize()!.height / 2);
-          await expect
-            .poll(() =>
-              main.evaluate(
-                (root) =>
-                  root.scrollWidth <= root.clientWidth + 1 &&
-                  document.documentElement.scrollWidth <= innerWidth + 1,
-              ),
-            )
-            .toBe(true);
+          try {
+            await expect
+              .poll(() =>
+                main.evaluate(
+                  (root) =>
+                    root.scrollWidth <= root.clientWidth + 1 &&
+                    document.documentElement.scrollWidth <= innerWidth + 1,
+                ),
+              )
+              .toBe(true);
+          } catch (error) {
+            try {
+              const layout = await main.evaluate((root) => {
+                const bounds = root.getBoundingClientRect();
+                const staticToken = (value: string | null) =>
+                  value && /^[a-z][a-z-]{0,60}$/.test(value)
+                    ? value
+                    : undefined;
+                const offenders = [...root.querySelectorAll("*")]
+                  .filter((element) =>
+                    element.checkVisibility({
+                      opacityProperty: true,
+                      visibilityProperty: true,
+                    }),
+                  )
+                  .map((element) => {
+                    const box = element.getBoundingClientRect();
+                    return {
+                      tag: element.tagName.toLowerCase(),
+                      testId: staticToken(element.getAttribute("data-testid")),
+                      classes: [...element.classList]
+                        .slice(0, 2)
+                        .map((name) =>
+                          name
+                            .replace(
+                              /[0-9a-f]{8}-[0-9a-f-]{27,}|[0-9a-f]{32,}/gi,
+                              "redacted-id",
+                            )
+                            .slice(0, 80),
+                        ),
+                      left: box.left,
+                      right: box.right,
+                      width: box.width,
+                      clientWidth: element.clientWidth,
+                      scrollWidth: element.scrollWidth,
+                    };
+                  })
+                  .filter(
+                    (box) =>
+                      box.width > 0 &&
+                      (box.right > bounds.right + 1 ||
+                        box.left < bounds.left - 1 ||
+                        box.scrollWidth > box.clientWidth + 1),
+                  )
+                  .sort((a, b) => b.right - a.right)
+                  .slice(0, 12);
+                return {
+                  pathname: location.pathname.replace(
+                    /[0-9a-f]{8}-[0-9a-f-]{27,}|[0-9a-f]{32,}/gi,
+                    "[id]",
+                  ),
+                  viewportWidth: innerWidth,
+                  viewportHeight: innerHeight,
+                  htmlFontSize: getComputedStyle(document.documentElement)
+                    .fontSize,
+                  mainLeft: bounds.left,
+                  mainRight: bounds.right,
+                  mainClientWidth: root.clientWidth,
+                  mainScrollWidth: root.scrollWidth,
+                  documentScrollWidth: document.documentElement.scrollWidth,
+                  offenders,
+                };
+              });
+              const diagnostic = { width, theme, textScale, ...layout };
+              const diagnosticPath = info.outputPath(
+                "principal-viewport-overflow.json",
+              );
+              await writeFile(
+                diagnosticPath,
+                JSON.stringify(diagnostic, null, 2) + "\n",
+              );
+              await info.attach("principal-viewport-overflow", {
+                path: diagnosticPath,
+                contentType: "application/json",
+              });
+              console.info(
+                "[principal-viewport-overflow] " + JSON.stringify(diagnostic),
+              );
+            } catch {
+              console.info(
+                "[principal-viewport-overflow] diagnostic capture unavailable",
+              );
+            }
+            throw error;
+          }
           for (const method of ["KRW_BANK", "USDT_ADDRESS"] as const) {
             const section = principalSection(page, method);
             const moneyGroups = await section

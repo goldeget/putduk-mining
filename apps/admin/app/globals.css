@@ -1076,7 +1076,10 @@ input:focus-visible {
     max-height: calc(
       100svh - env(safe-area-inset-top) - env(safe-area-inset-bottom)
     );
-    flex-wrap: nowrap;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto minmax(0, 1fr);
+    align-items: start;
   }
   .brand-lockup--rail {
     margin: 0;
@@ -1087,6 +1090,9 @@ input:focus-visible {
     max-width: 100%;
   }
   .control-rail__menu {
+    grid-column: 1 / -1;
+    align-self: stretch;
+    min-width: 0;
     flex: 0 1 auto;
     width: 100%;
     overflow: hidden;
