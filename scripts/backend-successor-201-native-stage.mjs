@@ -21,6 +21,13 @@ import {
   USDT_195_FROZEN_SOURCES,
 } from "./usdt-manual-195-native-fixture-v3.mjs";
 const ROOT = realpathSync(fileURLToPath(new URL("../", import.meta.url)));
+/** Closed input trees shared by real staging and its complete-roster regression. */
+export const BACKEND201_NATIVE_SOURCE_ROOTS = Object.freeze([
+  "supabase/migrations",
+  "supabase/tests",
+  "supabase/test-fixtures",
+  "supabase/tests-concurrent",
+]);
 const hash = (x) => createHash("sha256").update(x).digest("hex");
 const ACL = Object.freeze({
   "rls.sql": [
@@ -276,9 +283,7 @@ function main() {
       });
     }
   }
-  copyTree("supabase/migrations");
-  copyTree("supabase/tests");
-  copyTree("supabase/test-fixtures");
+  for (const sourceRoot of BACKEND201_NATIVE_SOURCE_ROOTS) copyTree(sourceRoot);
   if (
     records.length !== 332 ||
     records

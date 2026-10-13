@@ -21,3 +21,10 @@ export function adaptBackend201DefinerRoster(
 export function adaptBackend201ServiceRoleInsertFloor(
   source: Buffer | string,
 ): Native201Derivative;
+
+export const BACKEND201_NATIVE_SOURCE_ROOTS: readonly [
+  "supabase/migrations",
+  "supabase/tests",
+  "supabase/test-fixtures",
+  "supabase/tests-concurrent",
+];

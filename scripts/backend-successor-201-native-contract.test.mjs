@@ -1,8 +1,9 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import {
+  BACKEND201_NATIVE_SOURCE_ROOTS,
   adaptBackend201DefinerRoster,
   adaptBackend201ServiceRoleInsertFloor,
   adaptBackend201NativeInput3,
@@ -115,5 +116,84 @@ test("201 input3 uses frozen full-payout fixture spans and preserves all other s
     () =>
       adaptBackend201NativeInput3(Buffer.concat([bytes, Buffer.from("\n")])),
     /SOURCE_CHANGED/,
+  );
+});
+
+test("201 staging traverses all332 pinned native files including the nine concurrent originals", () => {
+  assert.ok(Object.isFrozen(BACKEND201_NATIVE_SOURCE_ROOTS));
+  assert.deepEqual(BACKEND201_NATIVE_SOURCE_ROOTS, [
+    "supabase/migrations",
+    "supabase/tests",
+    "supabase/test-fixtures",
+    "supabase/tests-concurrent",
+  ]);
+  const actualPaths = [];
+  function walk(directory) {
+    for (const entry of readdirSync(new URL(directory + "/", root), {
+      withFileTypes: true,
+    })) {
+      assert.equal(
+        entry.isSymbolicLink(),
+        false,
+        "native inputs must be owned regular files",
+      );
+      const path = directory + "/" + entry.name;
+      if (entry.isDirectory()) walk(path);
+      else {
+        assert.ok(entry.isFile(), "unexpected native input type");
+        actualPaths.push(path);
+      }
+    }
+  }
+  for (const directory of BACKEND201_NATIVE_SOURCE_ROOTS) walk(directory);
+  assert.equal(actualPaths.length, 332);
+  assert.equal(
+    new Set(actualPaths).size,
+    332,
+    "overlapping roots or repeated files are forbidden",
+  );
+  assert.deepEqual(
+    actualPaths.sort(),
+    manifest.nativeFiles.map((row) => row.path).sort(),
+  );
+  const concurrent = actualPaths.filter((path) =>
+    path.startsWith("supabase/tests-concurrent/"),
+  );
+  assert.equal(concurrent.length, 9);
+  assert.deepEqual(
+    concurrent,
+    manifest.nativeFiles
+      .filter((row) => row.path.startsWith("supabase/tests-concurrent/"))
+      .map((row) => row.path)
+      .sort(),
+  );
+  for (const path of actualPaths) {
+    const row = manifest.nativeFiles.find((entry) => entry.path === path);
+    assert.ok(row);
+    assert.equal(
+      digest(readFileSync(new URL(path, root))),
+      row.sourceSha256,
+      "the traversal must copy each exact mapped input",
+    );
+    if (path.startsWith("supabase/tests-concurrent/")) {
+      assert.deepEqual(row.changes, []);
+      assert.equal(
+        row.sourceSha256,
+        row.derivativeSha256,
+        "all nine concurrent originals remain byte-identical",
+      );
+    }
+  }
+  assert.equal(
+    actualPaths.filter((path) => path.startsWith("supabase/migrations/"))
+      .length,
+    201,
+  );
+  assert.equal(
+    actualPaths.filter(
+      (path) =>
+        path.startsWith("supabase/tests/database/") && path.endsWith(".sql"),
+    ).length,
+    114,
   );
 });
