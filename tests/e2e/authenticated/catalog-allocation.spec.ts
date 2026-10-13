@@ -169,8 +169,23 @@ async function captureMatrix(page: Page, info: TestInfo, label: string) {
             "대기 수익",
             "출금 가능",
           ]);
-          for (const amount of await amounts.all()) {
-            await expect(amount).toHaveText(/^-?[0-9][0-9,]*(?:\.[0-9]+)?원$/);
+          for (const [amountIndex, amount] of (await amounts.all()).entries()) {
+            if (amountIndex === 1) {
+              // Pending is the server's micro-KRW display, not settled wallet won.
+              // formatMiningMicroKrw intentionally preserves sub-won accrual.
+              await expect(amount).toHaveText(
+                /^(?:(?:0|[1-9][0-9]{0,2}(?:,[0-9]{3})*)원|1원 미만|약 [1-9][0-9]{0,2}(?:,[0-9]{3})*원)$/,
+              );
+              const displayedValue = await amount
+                .locator("[data-wallet-value]")
+                .getAttribute("data-wallet-value");
+              expect(displayedValue).not.toBeNull();
+              await expect(amount).toHaveText(displayedValue!);
+            } else {
+              await expect(amount).toHaveText(
+                /^-?[0-9][0-9,]*(?:\.[0-9]+)?원$/,
+              );
+            }
             const geometry = await amount.evaluate((element) => {
               const bounds = element.getBoundingClientRect();
               const walker = document.createTreeWalker(

@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 
-import { expect, test } from "@playwright/test";
+import { expect, test, type BrowserContext } from "@playwright/test";
 
 import { createConfirmedMember } from "../fixtures/local-auth";
 import { assertTypographyClean } from "../../typography/helpers";
@@ -14,9 +14,12 @@ import { awaitPaintedImages } from "./helpers/painted-images";
 import { assertViewportFits } from "./helpers/viewport-geometry";
 
 /** Real native publication/credit commands; isolated local source material only. */
-function publishLocalGpuFixture(operator: string, member: string) {
-  const catalog = randomUUID();
-  const product = randomUUID();
+function publishLocalGpuFixture(
+  operator: string,
+  member: string,
+  ids: { catalog: string; product: string },
+) {
+  const { catalog, product } = ids;
   execLocalAdminSql(
     `begin;
     create temporary table scene_ctx as
@@ -81,12 +84,14 @@ test("L1 selected GPU art is responsive without fabricating session rewards", as
   const member = await createConfirmedMember("scene-owner");
   await grantAdminRole(operator.userId);
   await completeAdminLoginWithTotp(page, operator.email, operator.password);
-  const ids = publishLocalGpuFixture(operator.userId, member.userId);
-  const context = await browser.newContext({
-    baseURL: `http://127.0.0.1:${process.env.E2E_WEB_PORT ?? "3000"}`,
-  });
-  const memberPage = await context.newPage();
+  const ids = { catalog: randomUUID(), product: randomUUID() };
+  let context: BrowserContext | null = null;
   try {
+    publishLocalGpuFixture(operator.userId, member.userId, ids);
+    context = await browser.newContext({
+      baseURL: `http://127.0.0.1:${process.env.E2E_WEB_PORT ?? "3000"}`,
+    });
+    const memberPage = await context.newPage();
     await loginAsMember(memberPage, member, "/products/allocation");
     const choice = memberPage.getByRole("checkbox", {
       name: "NVIDIA",
@@ -269,6 +274,23 @@ test("L1 selected GPU art is responsive without fabricating session rewards", as
       serverErrors: 0,
     });
   } finally {
-    await context.close();
+    try {
+      // Retire only this native-published fixture; preserve its receipts and money.
+      // Known IDs also cover publication success followed by context setup failure.
+      const remaining = execLocalAdminSql(
+        `update public.product_catalog_versions c set status='RETIRED'
+         where c.id=:'catalog'::uuid and c.proposed_by='LOCAL_BROWSER_TEST_ONLY'
+           and c.status='PUBLISHED' and exists(
+             select 1 from public.mining_products p
+             where p.id=:'product'::uuid and p.catalog_version_id=c.id
+               and p.code='NVDA' and p.slug='local-nvda-scene');
+         select count(*) from public.product_catalog_versions
+         where id=:'catalog'::uuid and proposed_by='LOCAL_BROWSER_TEST_ONLY' and status='PUBLISHED';`,
+        ids,
+      );
+      expect(remaining.trim().split(/\r?\n/).at(-1)).toBe("0");
+    } finally {
+      await context?.close();
+    }
   }
 });

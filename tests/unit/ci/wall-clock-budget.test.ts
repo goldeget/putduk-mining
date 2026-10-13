@@ -249,4 +249,236 @@ describe("whole-workflow CI acceptance", () => {
     );
     expect(calls).toHaveLength(1);
   });
+
+  it("recovers a transient read before the deadline without losing completeness", async () => {
+    let reads = 0;
+    const waits: number[] = [];
+    const result = await monitorCi({
+      identity,
+      now: () => start + 960_000,
+      report: () => {},
+      wait: async (ms) => {
+        waits.push(ms);
+      },
+      request: async (path) => {
+        if (!path.includes("/jobs?")) {
+          if (++reads === 1) throw new DOMException("fixture", "TimeoutError");
+          return run;
+        }
+        return { jobs: completed(), total_count: 18 };
+      },
+    });
+    expect(result.accepted).toBe(true);
+    expect(reads).toBe(2);
+    expect(waits).toEqual([1_000]);
+  });
+
+  it("retains the verified clock through exhausted reads and cancels at the deadline", async () => {
+    let clock = start + CI_CANCEL_AT_MS - 5_000;
+    let cancelled = false;
+    let failedReads = 0;
+    const mutations: string[] = [];
+    await expect(
+      monitorCi({
+        identity,
+        now: () => clock,
+        report: () => {},
+        wait: async (ms) => {
+          clock += ms;
+        },
+        request: async (path, method = "GET") => {
+          if (method === "POST") {
+            mutations.push(path);
+            cancelled = true;
+            return null;
+          }
+          if (path.includes("/jobs?")) {
+            failedReads += 1;
+            throw new DOMException("fixture", "TimeoutError");
+          }
+          return { ...run, status: cancelled ? "completed" : "in_progress" };
+        },
+      }),
+    ).rejects.toThrow(/did not complete/);
+    expect(failedReads).toBe(4);
+    expect(mutations).toEqual(["/actions/runs/1234/cancel"]);
+    expect(clock).toBe(start + CI_CANCEL_AT_MS + 20_000);
+    expect(clock).toBeLessThan(start + CI_BUDGET_MS);
+  });
+
+  it("never cancels without an initial verified identity even after bounded timeouts", async () => {
+    let reads = 0;
+    let mutations = 0;
+    await expect(
+      monitorCi({
+        identity,
+        now: () => start + CI_CANCEL_AT_MS,
+        report: () => {},
+        wait: async () => {},
+        request: async (_path, method = "GET") => {
+          if (method !== "GET") mutations += 1;
+          reads += 1;
+          throw new DOMException("fixture", "TimeoutError");
+        },
+      }),
+    ).rejects.toThrow(/temporarily unavailable/);
+    expect(reads).toBe(3);
+    expect(mutations).toBe(0);
+  });
+
+  it("requires fresh matching identity after a deadline job-read failure", async () => {
+    let runReads = 0;
+    let mutations = 0;
+    await expect(
+      monitorCi({
+        identity,
+        now: () => start + CI_CANCEL_AT_MS,
+        report: () => {},
+        wait: async () => {},
+        request: async (path, method = "GET") => {
+          if (method !== "GET") mutations += 1;
+          if (path.includes("/jobs?"))
+            throw new DOMException("fixture", "TimeoutError");
+          return ++runReads === 1 ? run : { ...run, head_sha: "b".repeat(40) };
+        },
+      }),
+    ).rejects.toThrow(/BLOCKED_TARGET_SCOPE/);
+    expect(runReads).toBe(2);
+    expect(mutations).toBe(0);
+  });
+
+  it("requires another fresh identity before force-cancel", async () => {
+    let runReads = 0;
+    const mutations: string[] = [];
+    const jobs = completed().map((job) => ({ ...job, status: "in_progress" }));
+    await expect(
+      monitorCi({
+        identity,
+        now: () => start + CI_CANCEL_AT_MS,
+        report: () => {},
+        wait: async () => {},
+        request: async (path, method = "GET") => {
+          if (method === "POST") {
+            mutations.push(path);
+            return null;
+          }
+          if (path.includes("/jobs?")) return { jobs, total_count: 18 };
+          return ++runReads === 4 ? { ...run, run_attempt: 2 } : run;
+        },
+      }),
+    ).rejects.toThrow(/BLOCKED_TARGET_SCOPE/);
+    expect(runReads).toBe(4);
+    expect(mutations).toEqual(["/actions/runs/1234/cancel"]);
+  });
+
+  it("does not cancel when the fresh deadline identity stays unavailable", async () => {
+    let runReads = 0;
+    let mutations = 0;
+    await expect(
+      monitorCi({
+        identity,
+        now: () => start + CI_CANCEL_AT_MS,
+        report: () => {},
+        wait: async () => {},
+        request: async (path, method = "GET") => {
+          if (method !== "GET") mutations += 1;
+          if (path.includes("/jobs?") || ++runReads > 1) {
+            throw new DOMException("fixture", "TimeoutError");
+          }
+          return run;
+        },
+      }),
+    ).rejects.toThrow(/temporarily unavailable/);
+    expect(runReads).toBe(4);
+    expect(mutations).toBe(0);
+  });
+
+  it("does not force-cancel a run that finishes during the fresh verification", async () => {
+    let runReads = 0;
+    const mutations: string[] = [];
+    const jobs = completed().map((job) => ({ ...job, status: "in_progress" }));
+    await expect(
+      monitorCi({
+        identity,
+        now: () => start + CI_CANCEL_AT_MS,
+        report: () => {},
+        wait: async () => {},
+        request: async (path, method = "GET") => {
+          if (method === "POST") {
+            mutations.push(path);
+            return null;
+          }
+          if (path.includes("/jobs?")) return { jobs, total_count: 18 };
+          return {
+            ...run,
+            status: ++runReads === 4 ? "completed" : "in_progress",
+          };
+        },
+      }),
+    ).rejects.toThrow(/did not complete/);
+    expect(mutations).toEqual(["/actions/runs/1234/cancel"]);
+  });
+
+  it("rejects a changed attempt timestamp instead of resetting its deadline", async () => {
+    let runReads = 0;
+    let mutations = 0;
+    await expect(
+      monitorCi({
+        identity,
+        now: () => start + 960_000,
+        report: () => {},
+        wait: async () => {},
+        request: async (path, method = "GET") => {
+          if (method !== "GET") mutations += 1;
+          if (path.includes("/jobs?")) return { jobs: [], total_count: 0 };
+          return ++runReads === 1
+            ? run
+            : { ...run, created_at: new Date(start + 1).toISOString() };
+        },
+      }),
+    ).rejects.toThrow(/attempt clock changed/);
+    expect(mutations).toBe(0);
+  });
+
+  it("verifies shutdown when cancel acknowledgement is lost without replaying POST", async () => {
+    let cancelled = false;
+    const mutations: string[] = [];
+    const jobs = completed().map((job) => ({ ...job, status: "in_progress" }));
+    await expect(
+      monitorCi({
+        identity,
+        now: () => start + CI_CANCEL_AT_MS,
+        report: () => {},
+        wait: async () => {},
+        request: async (path, method = "GET") => {
+          if (method === "POST") {
+            mutations.push(path);
+            cancelled = true;
+            throw new DOMException("fixture", "TimeoutError");
+          }
+          if (path.includes("/jobs?")) return { jobs, total_count: 18 };
+          return { ...run, status: cancelled ? "completed" : "in_progress" };
+        },
+      }),
+    ).rejects.toThrow(/did not complete/);
+    expect(mutations).toEqual(["/actions/runs/1234/cancel"]);
+  });
+
+  it("classifies only transient HTTP responses for retry, never permission failures", async () => {
+    for (const status of [429, 500, 502, 503, 504, 401, 403, 404]) {
+      const request = createCiApi({
+        token: "fixture-token",
+        fetchImpl: async () => ({
+          ok: false,
+          status,
+          json: async () => null,
+        }),
+      });
+      await expect(request("/actions/runs/1234")).rejects.toMatchObject({
+        name: [401, 403, 404].includes(status)
+          ? "Error"
+          : "CiTransientApiError",
+      });
+    }
+  });
 });

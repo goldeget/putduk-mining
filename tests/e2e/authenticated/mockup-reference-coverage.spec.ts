@@ -142,6 +142,42 @@ async function sourceReferences() {
   return index.images;
 }
 
+function isObservedNextPrefetchCancellation(
+  request: Request,
+  ownedOrigin: string,
+) {
+  if (request.failure()?.errorText !== "net::ERR_ABORTED") return false;
+  const seen = new Set<Request>();
+  let hop: Request | null = request;
+  let hasObservedPrefetch = false;
+  for (let depth = 0; depth < 10 && hop; depth += 1) {
+    if (seen.has(hop)) return false;
+    seen.add(hop);
+    let url: URL;
+    try {
+      url = new URL(hop.url());
+    } catch {
+      return false;
+    }
+    if (
+      url.origin !== ownedOrigin ||
+      hop.method() !== "GET" ||
+      hop.resourceType() !== "fetch" ||
+      hop.isNavigationRequest() ||
+      hop.serviceWorker() !== null ||
+      url.pathname === "/api" ||
+      url.pathname.startsWith("/api/")
+    )
+      return false;
+    const headers = hop.headers();
+    hasObservedPrefetch ||=
+      headers.rsc === "1" && headers["next-router-prefetch"] === "1";
+    hop = hop.redirectedFrom();
+    if (hop === null) return hasObservedPrefetch;
+  }
+  return false;
+}
+
 async function captureRoutes(
   page: Page,
   testInfo: TestInfo,
@@ -216,7 +252,12 @@ async function captureRoutes(
         ...(request ? { request } : {}),
       });
   };
-  const cancelledPrefetches: { path: string; error: string }[] = [];
+  const cancelledPrefetches: {
+    path: string;
+    error: string;
+    redirected: boolean;
+    chainPrefetchProven: true;
+  }[] = [];
   const ownedOrigin = new URL(
     testInfo.project.use.baseURL ??
       `http://127.0.0.1:${process.env.E2E_WEB_PORT ?? "3000"}`,
@@ -267,16 +308,13 @@ async function captureRoutes(
     const error = request.failure()?.errorText ?? "unknown";
     // Only an observed same-origin Next GET prefetch cancellation is expected.
     // Failed documents, API calls, assets and unknown aborts stay fatal.
-    if (
-      error === "net::ERR_ABORTED" &&
-      request.method() === "GET" &&
-      request.resourceType() === "fetch" &&
-      !request.isNavigationRequest() &&
-      request.headers()["next-router-prefetch"] === "1" &&
-      url.origin === ownedOrigin &&
-      !url.pathname.startsWith("/api/")
-    )
-      cancelledPrefetches.push({ path: url.pathname, error });
+    if (isObservedNextPrefetchCancellation(request, ownedOrigin))
+      cancelledPrefetches.push({
+        path: safePath(request.url()),
+        error,
+        redirected: request.redirectedFrom() !== null,
+        chainPrefetchProven: true,
+      });
     else {
       errors.push(`network:${url.pathname}`);
       diagnostic(
@@ -1009,11 +1047,27 @@ async function captureRoutes(
                   .locator("img")
                   .evaluate((image: HTMLImageElement) => image.currentSrc),
               ).toContain(`/brand/scenes/${expectedFamily}/`);
-              expect(
-                await balanceScene
-                  .locator("img")
-                  .evaluate((image: HTMLImageElement) => image.currentSrc),
-              ).toContain(`/brand/scenes/${expectedFamily}/`);
+              if (theme === "light") {
+                await expect(balanceScene).toBeVisible();
+                await expect
+                  .poll(() =>
+                    balanceScene
+                      .locator("img")
+                      .evaluate(
+                        (image: HTMLImageElement) =>
+                          image.complete && image.naturalWidth > 0,
+                      ),
+                  )
+                  .toBe(true);
+                expect(
+                  await balanceScene
+                    .locator("img")
+                    .evaluate((image: HTMLImageElement) => image.currentSrc),
+                ).toContain(`/brand/scenes/${expectedFamily}/`);
+              } else {
+                // The decorative balance artwork is deliberately hidden in dark mode.
+                await expect(balanceScene).toBeHidden();
+              }
               const titleBox = await title.boundingBox();
               const imageBox = await scene.locator("img").boundingBox();
               expect(titleBox).not.toBeNull();
@@ -1032,73 +1086,104 @@ async function captureRoutes(
                 const box = await control.boundingBox();
                 expect(box?.height).toBeGreaterThanOrEqual(44);
               }
-              const selectors = ready.getByRole("radiogroup", {
-                name: "원금, 수익, 거래내역",
+              const selectors = ready.getByRole("navigation", {
+                name: "지갑 내역 선택",
                 exact: true,
               });
-              const principal = selectors.getByRole("radio", {
+              await expect(selectors.getByRole("link")).toHaveCount(3);
+              for (const [name, view] of [
+                ["원금", "principal"],
+                ["수익", "profit"],
+                ["거래내역", "history"],
+              ] as const) {
+                await expect(
+                  selectors.getByRole("link", { name, exact: true }),
+                ).toHaveAttribute("href", `/wallet?view=${view}`);
+              }
+              const principal = selectors.getByRole("link", {
                 name: "원금",
                 exact: true,
               });
+              const profit = selectors.getByRole("link", {
+                name: "수익",
+                exact: true,
+              });
+              const history = selectors.getByRole("link", {
+                name: "거래내역",
+                exact: true,
+              });
               await principal.focus();
-              await principal.press("ArrowRight");
+              await expect(principal).toBeFocused();
+              await principal.press("Tab");
+              await expect(profit).toBeFocused();
+              await profit.press("Enter");
+              await expect(page).toHaveURL(
+                (url) =>
+                  url.pathname === "/wallet" &&
+                  url.searchParams.get("view") === "profit",
+              );
+              await expect(profit).toHaveAttribute("aria-current", "page");
               await expect(
-                selectors.getByRole("radio", { name: "수익", exact: true }),
-              ).toBeChecked();
-              await expect(
-                ready.getByText(
-                  "체험 값은 원화가 아니에요. 전환된 금액만 실제 지갑에 반영됩니다.",
-                  { exact: true },
-                ),
+                ready
+                  .getByRole("region", {
+                    name: "원화와 분리된 체험 보상",
+                    exact: true,
+                  })
+                  .getByText(
+                    "체험 값은 원화가 아니에요. 전환된 금액만 지갑에 반영돼요.",
+                    { exact: true },
+                  ),
               ).toBeVisible();
-              await selectors
-                .getByRole("radio", { name: "수익", exact: true })
-                .press("ArrowRight");
               await expect(
-                selectors.getByRole("radio", { name: "거래내역", exact: true }),
-              ).toBeChecked();
+                ready.getByRole("link", {
+                  name: "전환 자격 안내",
+                  exact: true,
+                }),
+              ).toHaveAttribute("href", "/start");
+              await profit.focus();
+              await profit.press("Tab");
+              await expect(history).toBeFocused();
+              await history.press("Enter");
+              await expect(page).toHaveURL(
+                (url) =>
+                  url.pathname === "/wallet" &&
+                  url.searchParams.get("view") === "history",
+              );
+              await expect(history).toHaveAttribute("aria-current", "page");
               await expect(
                 ready.getByRole("region", {
                   name: "최근 거래 내역",
                   exact: true,
                 }),
               ).toBeVisible();
-              await selectors
-                .getByRole("radio", { name: "거래내역", exact: true })
-                .press("ArrowRight");
-              await expect(principal).toBeChecked();
-              await principal.evaluate((element: HTMLInputElement) =>
+              await history.focus();
+              await history.press("Shift+Tab");
+              await expect(profit).toBeFocused();
+              await profit.press("Shift+Tab");
+              await expect(principal).toBeFocused();
+              await principal.press("Enter");
+              await expect(page).toHaveURL(
+                (url) =>
+                  url.pathname === "/wallet" &&
+                  url.searchParams.get("view") === "principal",
+              );
+              await expect(principal).toHaveAttribute("aria-current", "page");
+              await principal.evaluate((element: HTMLAnchorElement) =>
                 element.blur(),
               );
               await main.evaluate((element) =>
                 element.scrollTo({ top: 0, behavior: "instant" }),
               );
             }
+            const catalogProducts = ready.getByRole("region", {
+              name: "공개 상품",
+              exact: true,
+            });
+            const catalogHasProducts =
+              route === "/products" && (await catalogProducts.count()) === 1;
             if (route === "/products") {
-              const search = ready.getByRole("searchbox", {
-                name: "상품 검색",
-              });
-              const searchReadability = await search.evaluate(
-                (element: HTMLInputElement) => {
-                  const style = getComputedStyle(element);
-                  const context = document
-                    .createElement("canvas")
-                    .getContext("2d");
-                  if (!context) throw new Error("Text measurement unavailable");
-                  context.font = style.font;
-                  return {
-                    placeholderWidth: context.measureText(element.placeholder)
-                      .width,
-                    availableWidth:
-                      element.clientWidth -
-                      parseFloat(style.paddingLeft) -
-                      parseFloat(style.paddingRight),
-                  };
-                },
-              );
-              expect(searchReadability.placeholderWidth).toBeLessThanOrEqual(
-                searchReadability.availableWidth + 1,
-              );
+              const catalogState = await ready.getAttribute("data-ui-state");
+              expect(["empty", "loaded"]).toContain(catalogState);
               await expect(
                 ready.getByRole("heading", {
                   level: 1,
@@ -1106,15 +1191,97 @@ async function captureRoutes(
                   exact: true,
                 }),
               ).toBeVisible();
-              const action = ready.getByRole("link", {
-                name: "채굴 보기",
+              const search = ready.getByRole("searchbox", {
+                name: "상품 검색",
                 exact: true,
               });
-              if (await action.count()) {
+              if (catalogHasProducts) {
+                expect(catalogState).toBe("loaded");
+                await expect(catalogProducts).toHaveCount(1);
+                await expect(search).toHaveCount(1);
+                await expect(search).toBeVisible();
+                await expect(search).toHaveAttribute("type", "search");
+                await expect(search).toHaveAttribute("maxlength", "120");
+                expect(await search.getAttribute("aria-controls")).toBe(
+                  await catalogProducts.getAttribute("id"),
+                );
+                await expect(
+                  ready
+                    .getByRole("group", { name: "상품 분류", exact: true })
+                    .getByRole("radio"),
+                ).toHaveCount(6);
+                const searchReadability = await search.evaluate(
+                  (element: HTMLInputElement) => {
+                    const style = getComputedStyle(element);
+                    const context = document
+                      .createElement("canvas")
+                      .getContext("2d");
+                    if (!context)
+                      throw new Error("Text measurement unavailable");
+                    context.font = style.font;
+                    return {
+                      placeholderWidth: context.measureText(element.placeholder)
+                        .width,
+                      availableWidth:
+                        element.clientWidth -
+                        parseFloat(style.paddingLeft) -
+                        parseFloat(style.paddingRight),
+                    };
+                  },
+                );
+                expect(searchReadability.placeholderWidth).toBeLessThanOrEqual(
+                  searchReadability.availableWidth + 1,
+                );
+                await expect(
+                  ready.getByRole("heading", {
+                    level: 1,
+                    name: "상품",
+                    exact: true,
+                  }),
+                ).toBeVisible();
+                const action = ready.getByRole("link", {
+                  name: "상품 선택",
+                  exact: true,
+                });
+                await expect(action).toHaveCount(1);
+                await expect(action).toHaveAttribute(
+                  "href",
+                  "/products/allocation",
+                );
+                expect(
+                  (await action.boundingBox())?.height,
+                ).toBeGreaterThanOrEqual(44);
+                expect(
+                  await ready.locator("[data-catalog-artwork]").count(),
+                ).toBeGreaterThan(0);
+              } else {
+                // A successful empty snapshot must not invent browse controls.
+                await expect(catalogProducts).toHaveCount(0);
+                await expect(search).toHaveCount(0);
+                await expect(
+                  ready.locator("[data-catalog-artwork]"),
+                ).toHaveCount(0);
+                await expect(
+                  ready.getByRole("heading", {
+                    level: 2,
+                    name: /공개된 상품이\s*아직 없어요/,
+                  }),
+                ).toBeVisible();
+                const action = ready.getByRole("link", {
+                  name: "채굴 보기",
+                  exact: true,
+                });
+                await expect(action).toHaveCount(1);
                 await expect(action).toHaveAttribute("href", "/mining");
                 expect(
                   (await action.boundingBox())?.height,
                 ).toBeGreaterThanOrEqual(44);
+                const evidence = ready
+                  .locator("summary")
+                  .filter({ hasText: "공개 정보와 출처" });
+                await expect(evidence).toHaveCount(
+                  catalogState === "loaded" ? 1 : 0,
+                );
               }
             }
             if (route === "/menu") {
@@ -1203,15 +1370,25 @@ async function captureRoutes(
               await expect(
                 ready.getByRole("heading", {
                   level: 1,
-                  name: "퍼뜩 AI",
+                  name: "퍼뜩 AI 도우미",
                   exact: true,
                 }),
               ).toBeVisible();
               const quick = ready.getByRole("group", {
-                name: "빠른 질문",
+                name: "추천 질문",
                 exact: true,
               });
-              await expect(quick.getByRole("button")).toHaveCount(5);
+              await expect(quick.getByRole("button")).toHaveCount(4);
+              await expect(quick.locator("button strong")).toHaveCount(4);
+              await expect(quick.locator("button small")).toHaveCount(4);
+              const chat = ready.getByRole("region", {
+                name: "퍼뜩 AI 도우미 대화",
+                exact: true,
+              });
+              const providerConfigured = await chat.getAttribute(
+                "data-provider-configured",
+              );
+              expect(["true", "false"]).toContain(providerConfigured);
               const overflowingPromptText = await quick.evaluate((element) => {
                 const failures: string[] = [];
                 for (const card of element.querySelectorAll("button")) {
@@ -1270,15 +1447,28 @@ async function captureRoutes(
               expect(inputReadability.noticeOffset).toBeGreaterThanOrEqual(-1);
               for (const [label, question] of [
                 ["내 채굴 상태", "내 채굴 상태 알려줘"],
-                ["START 확인", "내 PUTDUK START 체험 상태 알려줘"],
                 ["출금 준비", "첫 출금은 어떻게 준비하나요?"],
                 ["이벤트 안내", "이벤트 참여 방법 알려줘"],
-                ["고객지원", "고객지원은 어디에 있나요?"],
+                providerConfigured === "true"
+                  ? ([
+                      "자유롭게 질문",
+                      "일상에서 스트레스를 줄이는 방법을 알려 주세요.",
+                    ] as const)
+                  : (["고객지원", "고객지원은 어디에 있나요?"] as const),
               ] as const) {
-                const button = quick.getByRole("button", {
-                  name: `${label} ${question}`,
-                  exact: true,
-                });
+                const button = quick
+                  .getByRole("button")
+                  .filter({ hasText: question });
+                await expect(button).toHaveCount(1);
+                await expect(button.locator("strong")).toHaveText(label);
+                await expect(button.locator("strong")).toBeVisible();
+                await expect(button.locator("small")).toHaveText(question);
+                await expect(button).toHaveAccessibleName(
+                  width <= 600 ? label : `${label} ${question}`,
+                );
+                if (width <= 600)
+                  await expect(button.locator("small")).toBeHidden();
+                else await expect(button.locator("small")).toBeVisible();
                 await expect(button).toBeEnabled();
                 await button.focus();
                 await expect(button).toBeFocused();
@@ -1308,7 +1498,7 @@ async function captureRoutes(
                 element.scrollTo({ top: 0, behavior: "instant" }),
               );
             }
-            if (route === "/products" && width >= 720) {
+            if (route === "/products" && catalogHasProducts && width >= 720) {
               const cards = ready.locator("[data-catalog-artwork]");
               const artworkSizes = await cards.evaluateAll((elements) => {
                 const rootSize = Number.parseFloat(
@@ -1355,19 +1545,44 @@ async function captureRoutes(
             const filename = `${route.slice(1)}-${width}-${theme}${suffix}.png`;
             const output = testInfo.outputPath(filename);
             const paintedImages = await awaitPaintedImages(page);
-            if (route === "/products" && width >= 720) {
+            if (route === "/products" && catalogHasProducts && width >= 720) {
               const imageSamples = await ready
                 .locator("[data-catalog-artwork] img")
-                .evaluateAll((images) =>
-                  images.map((element) => {
-                    const image = element as HTMLImageElement;
-                    return {
-                      decoded: image.complete && image.naturalWidth > 0,
-                      sourceWidth: image.naturalWidth,
-                      paintedWidth:
-                        image.getBoundingClientRect().width * devicePixelRatio,
-                    };
-                  }),
+                .evaluateAll(async (images) =>
+                  Promise.all(
+                    images.map(async (element) => {
+                      const image = element as HTMLImageElement;
+                      if (!image.complete || image.naturalWidth <= 0)
+                        throw new Error("Catalog artwork is not decoded");
+                      const source = new URL(image.currentSrc, location.href);
+                      if (
+                        source.origin !== location.origin ||
+                        !source.pathname.startsWith("/brand/scenes/")
+                      )
+                        throw new Error(
+                          "Catalog artwork source is outside the owned static assets",
+                        );
+                      const response = await fetch(source.href, {
+                        cache: "force-cache",
+                      });
+                      if (!response.ok)
+                        throw new Error("Catalog artwork bytes unavailable");
+                      // naturalWidth is density-corrected CSS px. Decode the actual
+                      // same-origin bytes to compare physical pixels with the DPR target.
+                      const bitmap = await createImageBitmap(
+                        await response.blob(),
+                      );
+                      const sourceWidth = bitmap.width;
+                      bitmap.close();
+                      return {
+                        decoded: true,
+                        sourceWidth,
+                        paintedWidth:
+                          image.getBoundingClientRect().width *
+                          devicePixelRatio,
+                      };
+                    }),
+                  ),
                 );
               expect(imageSamples.length).toBeGreaterThan(0);
               for (const image of imageSamples.filter(

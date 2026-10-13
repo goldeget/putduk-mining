@@ -37,6 +37,7 @@ import {
   nativeBoundaryEvidence,
   preparePrincipalMember,
   preparePrincipalOperator,
+  retirePrincipalOperatorCatalog,
   prepareSignedPrincipal,
   principalBody,
   readPrincipalFacts,
@@ -325,7 +326,12 @@ test.describe("signed member principal source-v3 product", () => {
     operator = await preparePrincipalOperator(browser);
   });
   test.afterAll(async () => {
-    await operator?.context.close();
+    if (!operator) return;
+    try {
+      retirePrincipalOperatorCatalog(operator);
+    } finally {
+      await operator.context.close();
+    }
   });
 
   test("explicit member consent, logical cleanup, real lost HOLD reply/reload/replay, and native CANCEL stay distinct", async ({
@@ -481,9 +487,14 @@ test.describe("signed member principal source-v3 product", () => {
     await section
       .getByRole("button", { name: "접수 전 요청 정리", exact: true })
       .click();
-    await expect(section.getByRole("status")).toContainText(
-      "접수 전 요청을 정리했어요.",
-    );
+    const cleanupMessage =
+      "접수 전 요청을 정리했어요. 이미 접수된 출금은 처리 상태에서 확인해 주세요.";
+    const cleanupFeedback = section.getByRole("status").filter({
+      hasText: cleanupMessage,
+    });
+    await expect(cleanupFeedback).toHaveCount(1);
+    await expect(cleanupFeedback).toBeVisible();
+    await expect(cleanupFeedback).toHaveText(cleanupMessage);
     expect(
       (
         await recoverPrincipalRecord(

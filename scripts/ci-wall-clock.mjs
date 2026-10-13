@@ -34,6 +34,8 @@ function timestamp(value, name) {
 
 export function assertCiRunIdentity(run, { runId, attempt, headSha }) {
   if (
+    !run ||
+    typeof run !== "object" ||
     run.repository?.full_name !== CI_REPOSITORY ||
     run.head_repository?.full_name !== CI_REPOSITORY ||
     String(run.id) !== String(runId) ||
@@ -124,15 +126,25 @@ export function createCiApi({ token, fetchImpl = fetch }) {
           Authorization: `Bearer ${token}`,
           "X-GitHub-Api-Version": "2026-03-10",
         },
-        signal: AbortSignal.timeout(10_000),
+        signal: AbortSignal.timeout(3_000),
       },
     );
-    if (!response.ok) throw new Error(`CI API HTTP ${response.status}`);
+    if (!response.ok) {
+      const error = new Error(`CI API HTTP ${response.status}`);
+      if ([429, 500, 502, 503, 504].includes(response.status)) {
+        error.name = "CiTransientApiError";
+      }
+      throw error;
+    }
     return method === "GET" ? response.json() : null;
   };
 }
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const transientApiError = (error) =>
+  ["TimeoutError", "AbortError", "TypeError", "CiTransientApiError"].includes(
+    error?.name,
+  );
 
 export async function monitorCi({
   identity,
@@ -142,12 +154,105 @@ export async function monitorCi({
   report = console.log,
 }) {
   let lastReport = "";
-  for (;;) {
-    const run = await request(`/actions/runs/${identity.runId}`);
+  let attemptStartMs = null;
+  async function read(path, protectDeadline = false) {
+    for (let retry = 0; ; retry += 1) {
+      try {
+        return await request(path);
+      } catch (error) {
+        if (!transientApiError(error)) throw error;
+        if (
+          retry === 2 ||
+          (protectDeadline &&
+            attemptStartMs !== null &&
+            now() - attemptStartMs >= CI_CANCEL_AT_MS)
+        ) {
+          const exhausted = new Error("CI API read temporarily unavailable");
+          exhausted.name = "CiTransientReadError";
+          throw exhausted;
+        }
+        await wait(1_000);
+      }
+    }
+  }
+  async function readRun(protectDeadline = false) {
+    const run = await read(`/actions/runs/${identity.runId}`, protectDeadline);
     assertCiRunIdentity(run, identity);
-    const result = await request(
-      `/actions/runs/${identity.runId}/attempts/${identity.attempt}/jobs?per_page=100`,
+    const startMs = timestamp(
+      run.run_attempt === 1 ? run.created_at : run.run_started_at,
+      "attempt start",
     );
+    if (attemptStartMs !== null && attemptStartMs !== startMs) {
+      throw new Error("BLOCKED_TARGET_SCOPE: CI attempt clock changed");
+    }
+    attemptStartMs = startMs;
+    return run;
+  }
+  async function cancelIncompleteRun() {
+    // Every mutation requires a fresh identity read, including force-cancel.
+    // A permanently unavailable identity is a hard failure, never a stale target.
+    await readRun();
+    report("[ci-budget] incomplete at 18m30s: cancelling; this is not a pass");
+    try {
+      await request(`/actions/runs/${identity.runId}/cancel`, "POST");
+    } catch (error) {
+      if (!transientApiError(error)) throw error;
+      report("[ci-budget] cancel response unavailable; verifying shutdown");
+    }
+    await wait(20_000);
+    let afterCancel = null;
+    let afterJobs = null;
+    try {
+      afterCancel = await readRun();
+      if (afterCancel.status !== "completed") {
+        afterJobs = await read(
+          `/actions/runs/${identity.runId}/attempts/${identity.attempt}/jobs?per_page=100`,
+        );
+      }
+    } catch (error) {
+      if (error?.name !== "CiTransientReadError") throw error;
+      report(
+        "[ci-budget] shutdown read unavailable; fresh force-cancel check required",
+      );
+    }
+    if (
+      afterCancel?.status !== "completed" &&
+      (!Array.isArray(afterJobs?.jobs) ||
+        afterJobs.total_count !== afterJobs.jobs.length ||
+        afterJobs.jobs.some(
+          (job) => job.name !== CI_BUDGET_JOB && job.status !== "completed",
+        ))
+    ) {
+      const fresh = await readRun();
+      if (fresh.status !== "completed") {
+        report("[ci-budget] cancellation still pending: force cancelling");
+        await request(`/actions/runs/${identity.runId}/force-cancel`, "POST");
+      }
+    }
+    throw new Error("CI did not complete within the workflow budget");
+  }
+  for (;;) {
+    let run;
+    let result;
+    try {
+      run = await readRun(true);
+      result = await read(
+        `/actions/runs/${identity.runId}/attempts/${identity.attempt}/jobs?per_page=100`,
+        true,
+      );
+    } catch (error) {
+      if (error?.name !== "CiTransientReadError" || attemptStartMs === null) {
+        throw error;
+      }
+      if (now() - attemptStartMs >= CI_CANCEL_AT_MS) {
+        await cancelIncompleteRun();
+      }
+      report(
+        "[ci-budget] transient read failure; verified attempt clock retained",
+      );
+      await wait(Math.min(15_000, CI_CANCEL_AT_MS - (now() - attemptStartMs)));
+      continue;
+    }
     if (
       !Array.isArray(result.jobs) ||
       result.total_count !== result.jobs.length
@@ -161,34 +266,7 @@ export async function monitorCi({
       lastReport = line;
     }
     if (evaluation.cancel) {
-      // Verify the exact target again before each mutation. No cancel URL from
-      // the response is used; the endpoint is constructed from the locked repo.
-      assertCiRunIdentity(
-        await request(`/actions/runs/${identity.runId}`),
-        identity,
-      );
-      report(
-        "[ci-budget] incomplete at 18m30s: cancelling; this is not a pass",
-      );
-      await request(`/actions/runs/${identity.runId}/cancel`, "POST");
-      await wait(20_000);
-      const afterCancel = await request(`/actions/runs/${identity.runId}`);
-      assertCiRunIdentity(afterCancel, identity);
-      const afterJobs = await request(
-        `/actions/runs/${identity.runId}/attempts/${identity.attempt}/jobs?per_page=100`,
-      );
-      if (
-        afterCancel.status !== "completed" &&
-        (!Array.isArray(afterJobs.jobs) ||
-          afterJobs.total_count !== afterJobs.jobs.length ||
-          afterJobs.jobs.some(
-            (job) => job.name !== CI_BUDGET_JOB && job.status !== "completed",
-          ))
-      ) {
-        report("[ci-budget] cancellation still pending: force cancelling");
-        await request(`/actions/runs/${identity.runId}/force-cancel`, "POST");
-      }
-      throw new Error("CI did not complete within the workflow budget");
+      await cancelIncompleteRun();
     }
     if (evaluation.complete) {
       if (!evaluation.accepted) throw new Error(evaluation.problems.join("; "));
@@ -199,7 +277,7 @@ export async function monitorCi({
     }
     // A failed test still receives its normal evidence upload. We keep watching
     // other jobs until completion or the deadline; a partial run cannot pass.
-    await wait(15_000);
+    await wait(Math.min(15_000, CI_CANCEL_AT_MS - evaluation.elapsedMs));
   }
 }
 

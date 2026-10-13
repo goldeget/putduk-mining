@@ -858,40 +858,46 @@ test("two real approved catalogs expose all five native Home categories, intrins
     expect(await sourceHashes()).toEqual(beforeSources);
     expect(browserErrors).toEqual([]);
   } finally {
-    await settleBrowserClassifications(pendingClassifications);
-    successfulLogin.dispose();
-    // Preserve partial failures and their exact SHA as well as successful views.
-    await writeFile(
-      info.outputPath("home-catalog-materials-render-index.json"),
-      JSON.stringify(
-        {
-          fixture_scope:
-            "LOCAL_BROWSER_TEST_ONLY; DRAFT content becomes authoritative only through actual AAL2 commands",
-          source_hashes_before: beforeSources,
-          source_hashes_after: await sourceHashes(),
-          runtime_archive_binding:
-            "Root must bind its exact prebuild source archive separately; local file hashes alone do not establish deployed source",
-          publications,
-          records,
-          geometryRecords,
-          recoveryRecords,
-          browserErrors,
-          cancelledPrefetches,
-          cancelledSuccessfulLoginRedirects,
-          injectedImageFailures,
-          ledger_transactions: ledgerTransactions,
-          visual_qa_complete: false,
-        },
-        null,
-        2,
-      ) + "\n",
-    );
-    injectFailure = false;
-    for (const catalog of catalogs)
-      execLocalAdminSql(
-        "update public.product_catalog_versions set status='RETIRED' where id=:'catalog'::uuid and proposed_by='LOCAL_BROWSER_TEST_ONLY' and status='PUBLISHED';",
-        { catalog },
+    try {
+      await settleBrowserClassifications(pendingClassifications);
+      successfulLogin.dispose();
+      // Preserve partial failures and their exact SHA as well as successful views.
+      await writeFile(
+        info.outputPath("home-catalog-materials-render-index.json"),
+        JSON.stringify(
+          {
+            fixture_scope:
+              "LOCAL_BROWSER_TEST_ONLY; DRAFT content becomes authoritative only through actual AAL2 commands",
+            source_hashes_before: beforeSources,
+            source_hashes_after: await sourceHashes(),
+            runtime_archive_binding:
+              "Root must bind its exact prebuild source archive separately; local file hashes alone do not establish deployed source",
+            publications,
+            records,
+            geometryRecords,
+            recoveryRecords,
+            browserErrors,
+            cancelledPrefetches,
+            cancelledSuccessfulLoginRedirects,
+            injectedImageFailures,
+            ledger_transactions: ledgerTransactions,
+            visual_qa_complete: false,
+          },
+          null,
+          2,
+        ) + "\n",
       );
-    await context.close();
+    } finally {
+      try {
+        injectFailure = false;
+        for (const catalog of catalogs)
+          execLocalAdminSql(
+            "update public.product_catalog_versions set status='RETIRED' where id=:'catalog'::uuid and proposed_by='LOCAL_BROWSER_TEST_ONLY' and status='PUBLISHED';",
+            { catalog },
+          );
+      } finally {
+        await context.close();
+      }
+    }
   }
 });

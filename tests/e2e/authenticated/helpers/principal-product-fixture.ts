@@ -118,6 +118,24 @@ export type PrincipalOperator = {
   digest: string;
 };
 
+/** Only this fixture's original is retired; financial and receipt evidence stays. */
+export function retirePrincipalOperatorCatalog(
+  ids: Pick<PrincipalOperator, "catalog" | "product">,
+) {
+  const remaining = execLocalAdminSql(
+    `update public.product_catalog_versions c set status='RETIRED'
+     where c.id=:'catalog'::uuid and c.proposed_by='LOCAL_BROWSER_TEST_ONLY'
+       and c.status='PUBLISHED' and exists(
+         select 1 from public.mining_products p
+         where p.id=:'product'::uuid and p.catalog_version_id=c.id
+           and p.name_en='Local principal browser fixture');
+     select count(*) from public.product_catalog_versions
+     where id=:'catalog'::uuid and proposed_by='LOCAL_BROWSER_TEST_ONLY' and status='PUBLISHED';`,
+    ids,
+  );
+  expect(remaining.trim().split(/\r?\n/).at(-1)).toBe("0");
+}
+
 /** Existing local DRAFT fixture; actual AAL2 preview/approval/publication establishes every published original. */
 export async function preparePrincipalOperator(
   browser: Browser,
@@ -125,86 +143,109 @@ export async function preparePrincipalOperator(
   const member = await createConfirmedMember("principal-http-operator");
   await grantAdminRole(member.userId);
   await ensureWithdrawalPolicies(member.userId);
-  const context = await browser.newContext();
-  const page = await context.newPage();
-  const secret = await completeAdminLoginWithTotp(
-    page,
-    member.email,
-    member.password,
-  );
   const catalog = randomUUID();
   const product = randomUUID();
-  execLocalAdminSql(
-    `begin;
-    insert into public.product_catalog_versions(id,version,snapshot_date,methodology,source_references,content_digest,proposed_by)
-    values(:'catalog'::uuid,(select max(version)+1 from public.product_catalog_versions),current_date,
-      'Local principal HTTP regression; not an operating catalog or product approval',
-      '[{"name":"Local browser regression source","url":"https://putduk.test/catalog-browser-fixture"}]',
-      app_private.funding_engine_digest(jsonb_build_object('local_browser_catalog',:'catalog')),'LOCAL_BROWSER_TEST_ONLY');
-    insert into public.mining_products(id,catalog_version_id,world_id,code,slug,category,name_ko,name_en,description_ko,display_order)
-    values(:'product'::uuid,:'catalog'::uuid,(select id from public.asset_worlds order by id limit 1),
-      'LOCAL_'||upper(left(replace(:'product','-',''),26)),'local-'||:'product','GOLD','로컬 원금 검증 상품',
-      'Local principal browser fixture','실제 운영 상품이 아닌 원금 확인 흐름 검증 자료입니다.',1);
-    commit;`,
-    { catalog, product },
-  );
-  await page.goto(`${ADMIN_ORIGIN}/catalog?catalog=${catalog}`);
-  const review = page.locator("section").filter({
-    has: page.getByRole("heading", { name: "공개 전 확인", exact: true }),
-  });
-  let publication: ReturnType<typeof catalogReceiptSchema.parse> | null = null;
-  for (const label of ["검토 내용 확인", "상품 승인", "공개 예약"]) {
-    await review
-      .getByLabel("검토 사유", { exact: true })
-      .fill(`로컬 브라우저 원금 검증: ${label}. 실제 운영 상품 승인 아님.`);
-    await confirmOperatorStepUp(review, secret);
-    if (label === "검토 내용 확인") {
-      // Same two-minute, minute-precision future schedule as the accepted catalog browser fixture.
-      const now = new Date();
-      const scheduled = Math.ceil((now.getTime() + 120_000) / 60_000) * 60_000;
+  const context = await browser.newContext();
+  try {
+    const page = await context.newPage();
+    const secret = await completeAdminLoginWithTotp(
+      page,
+      member.email,
+      member.password,
+    );
+    execLocalAdminSql(
+      `begin;
+      insert into public.product_catalog_versions(id,version,snapshot_date,methodology,source_references,content_digest,proposed_by)
+      values(:'catalog'::uuid,(select max(version)+1 from public.product_catalog_versions),current_date,
+        'Local principal HTTP regression; not an operating catalog or product approval',
+        '[{"name":"Local browser regression source","url":"https://putduk.test/catalog-browser-fixture"}]',
+        app_private.funding_engine_digest(jsonb_build_object('local_browser_catalog',:'catalog')),'LOCAL_BROWSER_TEST_ONLY');
+      insert into public.mining_products(id,catalog_version_id,world_id,code,slug,category,name_ko,name_en,description_ko,display_order)
+      values(:'product'::uuid,:'catalog'::uuid,(select id from public.asset_worlds order by id limit 1),
+        'LOCAL_'||upper(left(replace(:'product','-',''),26)),'local-'||:'product','GOLD','로컬 원금 검증 상품',
+        'Local principal browser fixture','실제 운영 상품이 아닌 원금 확인 흐름 검증 자료입니다.',1);
+      commit;`,
+      { catalog, product },
+    );
+    await page.goto(`${ADMIN_ORIGIN}/catalog?catalog=${catalog}`);
+    const review = page.locator("section").filter({
+      has: page.getByRole("heading", { name: "공개 전 확인", exact: true }),
+    });
+    let publication: ReturnType<typeof catalogReceiptSchema.parse> | null =
+      null;
+    for (const label of ["검토 내용 확인", "상품 승인", "공개 예약"]) {
       await review
-        .getByLabel("공개 시간", { exact: true })
-        .fill(
-          new Date(scheduled - now.getTimezoneOffset() * 60_000)
-            .toISOString()
-            .slice(0, 16),
-        );
+        .getByLabel("검토 사유", { exact: true })
+        .fill(`로컬 브라우저 원금 검증: ${label}. 실제 운영 상품 승인 아님.`);
+      await confirmOperatorStepUp(review, secret);
+      if (label === "검토 내용 확인") {
+        // Same two-minute, minute-precision future schedule as the accepted catalog browser fixture.
+        const now = new Date();
+        const scheduled =
+          Math.ceil((now.getTime() + 120_000) / 60_000) * 60_000;
+        await review
+          .getByLabel("공개 시간", { exact: true })
+          .fill(
+            new Date(scheduled - now.getTimezoneOffset() * 60_000)
+              .toISOString()
+              .slice(0, 16),
+          );
+      }
+      const wait = page.waitForResponse(
+        (response) =>
+          new URL(response.url()).pathname ===
+            "/api/v1/admin/catalog/command" &&
+          response.request().method() === "POST",
+      );
+      await review.getByRole("button", { name: label, exact: true }).click();
+      const response = await wait;
+      expect(response.status()).toBe(200);
+      const payload = await response.json();
+      expect(payload.data.confirmed).toBe(true);
+      const receipt = catalogReceiptSchema.parse(payload.data.receipt);
+      expect(receipt.catalogId).toBe(catalog);
+      expect(receipt.state).toBe(
+        label === "검토 내용 확인"
+          ? "PREVIEWED"
+          : label === "상품 승인"
+            ? "APPROVED"
+            : "PUBLISHED",
+      );
+      publication = receipt;
     }
-    const wait = page.waitForResponse(
-      (response) =>
-        new URL(response.url()).pathname === "/api/v1/admin/catalog/command" &&
-        response.request().method() === "POST",
-    );
-    await review.getByRole("button", { name: label, exact: true }).click();
-    const response = await wait;
-    expect(response.status()).toBe(200);
-    const payload = await response.json();
-    expect(payload.data.confirmed).toBe(true);
-    const receipt = catalogReceiptSchema.parse(payload.data.receipt);
-    expect(receipt.catalogId).toBe(catalog);
-    expect(receipt.state).toBe(
-      label === "검토 내용 확인"
-        ? "PREVIEWED"
-        : label === "상품 승인"
-          ? "APPROVED"
-          : "PUBLISHED",
-    );
-    publication = receipt;
+    if (!publication || publication.state !== "PUBLISHED")
+      throw new Error("CANONICAL_CATALOG_PUBLICATION_REQUIRED");
+    await expect
+      .poll(() => Date.now(), { timeout: 130_000 })
+      .toBeGreaterThanOrEqual(Date.parse(publication.publishAt));
+    return {
+      member,
+      context,
+      page,
+      secret,
+      catalog,
+      product,
+      digest: publication.snapshotDigest,
+    };
+  } catch (error) {
+    const failures: unknown[] = [error];
+    try {
+      retirePrincipalOperatorCatalog({ catalog, product });
+    } catch (cleanupError) {
+      failures.push(cleanupError);
+    }
+    try {
+      await context.close();
+    } catch (cleanupError) {
+      failures.push(cleanupError);
+    }
+    if (failures.length > 1)
+      throw new AggregateError(
+        failures,
+        "PRINCIPAL_FIXTURE_SETUP_AND_CLEANUP_FAILED",
+      );
+    throw error;
   }
-  if (!publication || publication.state !== "PUBLISHED")
-    throw new Error("CANONICAL_CATALOG_PUBLICATION_REQUIRED");
-  await expect
-    .poll(() => Date.now(), { timeout: 130_000 })
-    .toBeGreaterThanOrEqual(Date.parse(publication.publishAt));
-  return {
-    member,
-    context,
-    page,
-    secret,
-    catalog,
-    product,
-    digest: publication.snapshotDigest,
-  };
 }
 
 /** Local funded original, through the existing canonical deposit command. No raw wallet/source/receipt writes. */

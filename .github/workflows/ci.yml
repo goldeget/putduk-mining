@@ -118,6 +118,18 @@ jobs:
           node-version-file: .node-version
           cache: pnpm
 
+      # pnpm's content store does not contain registry metadata or policy verification.
+      # Restore only an exact trusted input key; frozen install still verifies policies.
+      - name: Resolve pnpm metadata cache
+        id: pnpm-metadata
+        run: echo "path=$(pnpm cache path)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache pnpm registry metadata
+        uses: actions/cache@v5
+        with:
+          path: ${{ steps.pnpm-metadata.outputs.path }}
+          key: pnpm-metadata-v1-${{ runner.os }}-${{ runner.arch }}-node24.21.0-pnpm12.6.0-${{ hashFiles('pnpm-lock.yaml', 'pnpm-workspace.yaml', '.node-version', '.npmrc', 'package.json', 'apps/*/package.json', '.pnpmfile.cjs', '.pnpmfile.mjs') }}
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
@@ -187,6 +199,18 @@ jobs:
         with:
           node-version-file: .node-version
           cache: pnpm
+
+      # pnpm's content store does not contain registry metadata or policy verification.
+      # Restore only an exact trusted input key; frozen install still verifies policies.
+      - name: Resolve pnpm metadata cache
+        id: pnpm-metadata
+        run: echo "path=$(pnpm cache path)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache pnpm registry metadata
+        uses: actions/cache@v5
+        with:
+          path: ${{ steps.pnpm-metadata.outputs.path }}
+          key: pnpm-metadata-v1-${{ runner.os }}-${{ runner.arch }}-node24.21.0-pnpm12.6.0-${{ hashFiles('pnpm-lock.yaml', 'pnpm-workspace.yaml', '.node-version', '.npmrc', 'package.json', 'apps/*/package.json', '.pnpmfile.cjs', '.pnpmfile.mjs') }}
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -336,6 +360,18 @@ jobs:
           node-version-file: .node-version
           cache: pnpm
 
+      # pnpm's content store does not contain registry metadata or policy verification.
+      # Restore only an exact trusted input key; frozen install still verifies policies.
+      - name: Resolve pnpm metadata cache
+        id: pnpm-metadata
+        run: echo "path=$(pnpm cache path)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache pnpm registry metadata
+        uses: actions/cache@v5
+        with:
+          path: ${{ steps.pnpm-metadata.outputs.path }}
+          key: pnpm-metadata-v1-${{ runner.os }}-${{ runner.arch }}-node24.21.0-pnpm12.6.0-${{ hashFiles('pnpm-lock.yaml', 'pnpm-workspace.yaml', '.node-version', '.npmrc', 'package.json', 'apps/*/package.json', '.pnpmfile.cjs', '.pnpmfile.mjs') }}
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
@@ -383,6 +419,18 @@ jobs:
         with:
           node-version-file: .node-version
           cache: pnpm
+
+      # pnpm's content store does not contain registry metadata or policy verification.
+      # Restore only an exact trusted input key; frozen install still verifies policies.
+      - name: Resolve pnpm metadata cache
+        id: pnpm-metadata
+        run: echo "path=$(pnpm cache path)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache pnpm registry metadata
+        uses: actions/cache@v5
+        with:
+          path: ${{ steps.pnpm-metadata.outputs.path }}
+          key: pnpm-metadata-v1-${{ runner.os }}-${{ runner.arch }}-node24.21.0-pnpm12.6.0-${{ hashFiles('pnpm-lock.yaml', 'pnpm-workspace.yaml', '.node-version', '.npmrc', 'package.json', 'apps/*/package.json', '.pnpmfile.cjs', '.pnpmfile.mjs') }}
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -443,6 +491,18 @@ jobs:
         with:
           node-version-file: .node-version
           cache: pnpm
+
+      # pnpm's content store does not contain registry metadata or policy verification.
+      # Restore only an exact trusted input key; frozen install still verifies policies.
+      - name: Resolve pnpm metadata cache
+        id: pnpm-metadata
+        run: echo "path=$(pnpm cache path)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache pnpm registry metadata
+        uses: actions/cache@v5
+        with:
+          path: ${{ steps.pnpm-metadata.outputs.path }}
+          key: pnpm-metadata-v1-${{ runner.os }}-${{ runner.arch }}-node24.21.0-pnpm12.6.0-${{ hashFiles('pnpm-lock.yaml', 'pnpm-workspace.yaml', '.node-version', '.npmrc', 'package.json', 'apps/*/package.json', '.pnpmfile.cjs', '.pnpmfile.mjs') }}
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -535,6 +595,18 @@ jobs:
           node-version-file: .node-version
           cache: pnpm
 
+      # pnpm's content store does not contain registry metadata or policy verification.
+      # Restore only an exact trusted input key; frozen install still verifies policies.
+      - name: Resolve pnpm metadata cache
+        id: pnpm-metadata
+        run: echo "path=$(pnpm cache path)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache pnpm registry metadata
+        uses: actions/cache@v5
+        with:
+          path: ${{ steps.pnpm-metadata.outputs.path }}
+          key: pnpm-metadata-v1-${{ runner.os }}-${{ runner.arch }}-node24.21.0-pnpm12.6.0-${{ hashFiles('pnpm-lock.yaml', 'pnpm-workspace.yaml', '.node-version', '.npmrc', 'package.json', 'apps/*/package.json', '.pnpmfile.cjs', '.pnpmfile.mjs') }}
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
@@ -598,6 +670,18 @@ jobs:
           node-version-file: .node-version
           cache: pnpm
 
+      # pnpm's content store does not contain registry metadata or policy verification.
+      # Restore only an exact trusted input key; frozen install still verifies policies.
+      - name: Resolve pnpm metadata cache
+        id: pnpm-metadata
+        run: echo "path=$(pnpm cache path)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache pnpm registry metadata
+        uses: actions/cache@v5
+        with:
+          path: ${{ steps.pnpm-metadata.outputs.path }}
+          key: pnpm-metadata-v1-${{ runner.os }}-${{ runner.arch }}-node24.21.0-pnpm12.6.0-${{ hashFiles('pnpm-lock.yaml', 'pnpm-workspace.yaml', '.node-version', '.npmrc', 'package.json', 'apps/*/package.json', '.pnpmfile.cjs', '.pnpmfile.mjs') }}
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
@@ -650,6 +734,18 @@ jobs:
         with:
           node-version-file: .node-version
           cache: pnpm
+
+      # pnpm's content store does not contain registry metadata or policy verification.
+      # Restore only an exact trusted input key; frozen install still verifies policies.
+      - name: Resolve pnpm metadata cache
+        id: pnpm-metadata
+        run: echo "path=$(pnpm cache path)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache pnpm registry metadata
+        uses: actions/cache@v5
+        with:
+          path: ${{ steps.pnpm-metadata.outputs.path }}
+          key: pnpm-metadata-v1-${{ runner.os }}-${{ runner.arch }}-node24.21.0-pnpm12.6.0-${{ hashFiles('pnpm-lock.yaml', 'pnpm-workspace.yaml', '.node-version', '.npmrc', 'package.json', 'apps/*/package.json', '.pnpmfile.cjs', '.pnpmfile.mjs') }}
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
