@@ -33,11 +33,14 @@ export function ProductShell({
   const isWallet = pathname === "/wallet" || pathname.startsWith("/wallet/");
   const isMenu = pathname === "/menu";
   const chromeView =
-    pathname === "/products"
+    pathname === "/products" || pathname.startsWith("/products/")
       ? "products"
       : pathname === "/ai" || pathname === "/menu/ai"
         ? "ai"
-        : null;
+        : !isHome && !isMining && !isWallet && !isMenu
+          ? "member"
+          : null;
+  const secondaryActiveHref = pathname === "/start" ? "/home" : "/menu";
   const mainRef = useRef<HTMLElement | null>(null);
   const scrollPositions = useRef(new Map<string, number>());
   const renderedPath = useRef(pathname);
@@ -74,7 +77,7 @@ export function ProductShell({
             : isMenu
               ? `product-shell ${menuStyles.shell}`
               : chromeView
-                ? `product-shell ${routeStyles.shell} ${chromeView === "ai" ? routeStyles.aiShell : routeStyles.productsShell}`
+                ? `product-shell ${routeStyles.shell} ${chromeView === "ai" ? routeStyles.aiShell : chromeView === "products" ? routeStyles.productsShell : routeStyles.memberShell}`
                 : "product-shell"
       }
       data-home-page-active={isHome}
@@ -84,7 +87,11 @@ export function ProductShell({
       <ConnectivityStatus />
       {isMenu ? <MenuHeader displayName={displayName} /> : null}
       {chromeView ? (
-        <RouteBrandHeader view={chromeView} displayName={displayName} />
+        <RouteBrandHeader
+          view={chromeView}
+          displayName={displayName}
+          activeHref={secondaryActiveHref}
+        />
       ) : null}
       {isWallet ? (
         <ProductHeader wallet="desktop" displayName={displayName} />
@@ -95,7 +102,10 @@ export function ProductShell({
         </aside>
       ) : chromeView ? (
         <aside className={`product-sidebar ${routeStyles.sidebar}`}>
-          <RouteBrandSidebar view={chromeView} />
+          <RouteBrandSidebar
+            view={chromeView}
+            activeHref={secondaryActiveHref}
+          />
         </aside>
       ) : isWallet ? (
         <aside className={`product-sidebar ${styles.walletSidebar}`}>

@@ -17,6 +17,26 @@ Visual Lab remains `visual-lab-2026.09.27-v1`; it is a separate benchmark versio
 
 ## 1. Source and runtime boundary
 
+### Current additive platform material family — 2026-10-14
+
+The v18 collection described above is preserved historical artwork. Current
+sprout-P identity remains in `public/brand/identity.manifest.json`. The additive
+`public/brand/premium.manifest.json` registers the owner-delegated Dark/Light
+material pair for consistent page headings and the empty AI welcome area, with
+eight responsive AVIF/WebP derivatives and eight identical admin public copies.
+Neither preceding manifest or its asset bytes is changed.
+
+Masters, native dimensions, hashes, prompts and review limits are under
+`generated-masters/premium-material-2026-10-14/`. The main asset verifier invokes
+`verify-premium-material-assets.mjs`, which requires the exact registered paths,
+metadata, master hashes, derivative hashes and admin copies. This is presentation
+only; it neither replaces identity/scenes nor establishes product completion.
+
+Shared theme selection is in `lib/design/premium-material.css`. Decorative art
+is bounded to headings and the empty welcome area; controls, financial data and
+long replies remain real text on readable surfaces. Actual theme, accessibility,
+performance and authenticated product review remain release gates.
+
 Canonical visual references live only in `docs/design/visual-references/`. They are evidence of art direction and are not application assets. Generated lossless source masters live in `docs/design/generated-masters/`; they are build inputs, not publicly served files.
 
 Runtime assets live under:

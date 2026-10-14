@@ -9,7 +9,7 @@ import { MenuBrandSymbol } from "@/components/product/menu-brand-symbol";
 import { ThemeControl } from "@/components/system/theme-control";
 import styles from "./route-brand-chrome.module.css";
 
-export type RouteChromeView = "products" | "ai";
+export type RouteChromeView = "products" | "ai" | "member";
 
 type Destination = {
   href: Route;
@@ -61,16 +61,25 @@ function NavigationIcon({ icon }: Pick<Destination, "icon">) {
   return <PutdukHomeIcon name={icon} metallic={false} size={25} />;
 }
 
-function isActive(item: Destination, view: RouteChromeView) {
-  return item.href === (view === "ai" ? "/ai" : "/products");
+function isActive(
+  item: Destination,
+  view: RouteChromeView,
+  activeHref?: "/home" | "/menu",
+) {
+  return (
+    item.href ===
+    (view === "ai" ? "/ai" : view === "products" ? "/products" : activeHref)
+  );
 }
 
 export function RouteBrandHeader({
   view,
   displayName,
+  activeHref,
 }: {
   view: RouteChromeView;
   displayName: string;
+  activeHref?: "/home" | "/menu";
 }) {
   return (
     <header
@@ -87,13 +96,15 @@ export function RouteBrandHeader({
           <br />A MORE VALUABLE TOMORROW
         </small>
       </Link>
-      {view === "products" ? (
-        <nav className={styles.topNavigation} aria-label="상품 주요 메뉴">
+      {view !== "ai" ? (
+        <nav className={styles.topNavigation} aria-label="주요 메뉴">
           {primaryDestinations.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              aria-current={isActive(item, view) ? "page" : undefined}
+              aria-current={
+                isActive(item, view, activeHref) ? "page" : undefined
+              }
             >
               <NavigationIcon icon={item.icon} />
               <span>{item.label}</span>
@@ -137,20 +148,28 @@ export function RouteBrandHeader({
   );
 }
 
-export function RouteBrandSidebar({ view }: { view: RouteChromeView }) {
+export function RouteBrandSidebar({
+  view,
+  activeHref,
+}: {
+  view: RouteChromeView;
+  activeHref?: "/home" | "/menu";
+}) {
   const destinations = view === "ai" ? aiDestinations : primaryDestinations;
   return (
     <>
       <nav
         className={`product-navigation ${styles.sideNavigation}`}
-        aria-label={view === "ai" ? "AI 전체 메뉴" : "상품 전체 메뉴"}
+        aria-label={view === "ai" ? "AI 전체 메뉴" : "주요 메뉴"}
       >
         {destinations.map((item) => (
           <Link
             key={item.href}
             href={item.href}
-            className={isActive(item, view) ? "is-active" : undefined}
-            aria-current={isActive(item, view) ? "page" : undefined}
+            className={
+              isActive(item, view, activeHref) ? "is-active" : undefined
+            }
+            aria-current={isActive(item, view, activeHref) ? "page" : undefined}
           >
             <NavigationIcon icon={item.icon} />
             <span>{item.label}</span>

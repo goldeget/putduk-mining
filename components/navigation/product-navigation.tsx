@@ -89,11 +89,13 @@ export function ProductNavigation({
         const active =
           pathname === item.href ||
           pathname.startsWith(`${item.href}/`) ||
+          (item.href === "/home" && pathname === "/start") ||
           (item.href === "/menu" &&
             (pathname === "/ai" ||
               pathname === "/notifications" ||
               pathname === "/events" ||
-              pathname.startsWith("/events/")));
+              pathname.startsWith("/events/") ||
+              pathname === "/support"));
         return (
           <Link
             className={active ? "is-active" : undefined}
@@ -101,21 +103,11 @@ export function ProductNavigation({
             aria-current={active ? "page" : undefined}
             key={item.href}
           >
-            {pathname === "/home" ||
-            pathname === "/mining" ||
-            pathname === "/wallet" ||
-            pathname === "/menu" ||
-            pathname === "/products" ||
-            pathname === "/ai" ||
-            pathname === "/menu/ai" ? (
-              <PutdukHomeIcon
-                name={homeNavigationIcons[item.href]}
-                size={24}
-                metallic={false}
-              />
-            ) : (
-              <PutdukIcon name={item.icon} size={21} />
-            )}
+            <PutdukHomeIcon
+              name={homeNavigationIcons[item.href]}
+              size={24}
+              metallic={false}
+            />
             <span>{item.label}</span>
           </Link>
         );

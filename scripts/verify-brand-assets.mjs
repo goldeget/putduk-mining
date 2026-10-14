@@ -6,6 +6,7 @@ import { verifyCatalogMaterialAssets } from "./verify-catalog-material-assets.mj
 import { verifyMiningResponsiveAssets } from "./verify-mining-responsive-assets.mjs";
 import { verifyCanonicalBrandIdentity } from "./verify-canonical-brand-identity.mjs";
 import { verifyPublicLandingAssets } from "./verify-public-landing-assets.mjs";
+import { verifyPremiumMaterialAssets } from "./verify-premium-material-assets.mjs";
 import {
   productNvdaMetadataFailures,
   verifyProductNvdaAssets,
@@ -1315,6 +1316,7 @@ export async function verifyBrandAssets() {
 
   failures.push(...(await verifyCanonicalBrandIdentity(root)));
   failures.push(...(await verifyPublicLandingAssets(root)));
+  failures.push(...(await verifyPremiumMaterialAssets(root)));
   failures.push(...(await verifyCatalogMaterialAssets(root)));
   failures.push(...(await verifyMiningResponsiveAssets(root)));
   failures.push(...(await verifyProductNvdaAssets(root)));
@@ -1328,7 +1330,7 @@ export async function verifyBrandAssets() {
   }
 
   console.log(
-    `Verified ${manifest.assets.length} PUTDUK brand assets (${manifest.assetVersion}) and 24 catalog material plus 6 mobile Light mining derivatives.`,
+    `Verified ${manifest.assets.length} PUTDUK brand assets (${manifest.assetVersion}) and 24 catalog material plus 6 mobile Light mining derivatives; additionally 8 premium material derivatives and their admin copies.`,
   );
 }
 

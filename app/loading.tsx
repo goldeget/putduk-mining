@@ -14,9 +14,8 @@ export default function Loading() {
         </span>
       </header>
       <section className="state-panel">
-        <p className="eyebrow">LOADING SYSTEM</p>
-        <h2>안전한 채굴 환경을 준비하고 있습니다.</h2>
-        <Skeleton />
+        <h2>화면을 불러오고 있어요</h2>
+        <Skeleton label="화면 불러오는 중" />
       </section>
     </main>
   );

@@ -33,7 +33,8 @@
   --border-subtle: #cedaea;
 }
 .productsShell,
-.aiShell {
+.aiShell,
+.memberShell {
   min-width: 0;
 }
 .shell .workspace {
@@ -51,11 +52,17 @@
 .productsShell .main {
   padding: clamp(12px, 4vw, 16px);
 }
+.memberShell .main {
+  width: min(100%, 76rem);
+  margin-inline: auto;
+  padding: clamp(1rem, 3vw, 2rem);
+}
 .header:global(.product-header) {
   position: relative;
   z-index: 5;
   min-width: 0;
   min-height: 64px;
+  flex-wrap: wrap;
   gap: 0.4rem;
   padding: 0.5rem 0.75rem;
   border-bottom: 1px solid var(--border-default);
@@ -195,7 +202,7 @@
 @media (min-width: 980px) {
   .shell:global(.product-shell) {
     grid-template-columns: 11.75rem minmax(0, 1fr);
-    grid-template-rows: 68px minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
   }
   .productsShell .main {
     padding: clamp(24px, 2vw, 32px);
@@ -231,6 +238,7 @@
     min-width: 0;
     flex: 1;
     align-items: center;
+    flex-wrap: wrap;
     justify-content: center;
     gap: clamp(0.2rem, 1.6vw, 1.6rem);
   }

@@ -345,6 +345,6 @@
   display: none;
 }
 :global(html[data-theme="dark"]) .dialog {
-  background: #10161e;
-  border-color: #38404b;
+  background: var(--background-elevated);
+  border-color: var(--border-default);
 }
