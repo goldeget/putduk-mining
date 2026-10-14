@@ -26,7 +26,14 @@
 }
 .page {
   height: var(--ai-page-height, calc(100dvh - 8rem));
+  min-height: var(--ai-page-min-height, 0px);
   max-height: 70rem;
+}
+.page .thread {
+  min-height: var(--ai-thread-min-height, 0px);
+}
+.page .transcriptFrame {
+  min-height: var(--ai-transcript-min-height, calc(44px + 3rem));
 }
 .panel {
   height: 100%;
@@ -38,9 +45,13 @@
   width: min(100%, 76rem);
   margin-inline: auto;
 }
+.chat.page.surfacePage {
+  min-height: var(--ai-page-min-height, 0px);
+}
 .pageHeader {
   display: flex;
-  align-items: center;
+  flex-wrap: wrap;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 0.75rem;
   padding: 1rem 1.5rem;
@@ -49,8 +60,13 @@
 }
 .identity {
   display: flex;
+  flex: 1 1 15rem;
+  min-width: 0;
   align-items: center;
   gap: 0.7rem;
+}
+.identity > div {
+  min-width: 0;
 }
 .identity h1 {
   margin: 0;
@@ -65,8 +81,14 @@
 }
 .pageTools {
   display: flex;
+  min-width: 0;
+  max-width: 100%;
+  flex-wrap: wrap;
   align-items: center;
   gap: 0.4rem;
+}
+.pageTools > * {
+  flex: 0 0 auto;
 }
 .workspace {
   display: flex;
@@ -84,6 +106,12 @@
   padding: 0.5rem 1.25rem;
   border-bottom: 1px solid var(--ai-line);
   flex-shrink: 0;
+}
+.surfacePage .contextRail {
+  flex-wrap: wrap;
+}
+.surfacePage .contextRail > * {
+  max-width: 100%;
 }
 .newConversation,
 .history > summary,
@@ -193,6 +221,7 @@
   min-width: 0;
   min-height: 0;
   overflow: hidden;
+  padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
 }
 .notices {
   flex-shrink: 0;
@@ -290,6 +319,11 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.65rem;
   margin-top: 1rem;
+}
+@container ai-page (max-width: 30rem) {
+  .surfacePage .suggestions {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 .suggestions button {
   display: flex;
@@ -650,11 +684,6 @@
 .chat :is(button, summary, a):focus-visible {
   outline: 2px solid var(--brand-strong);
   outline-offset: 3px;
-}
-.thread::after {
-  content: "";
-  height: max(0.75rem, env(safe-area-inset-bottom));
-  flex-shrink: 0;
 }
 .pageStatus {
   display: none;

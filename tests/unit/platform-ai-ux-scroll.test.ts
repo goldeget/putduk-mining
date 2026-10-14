@@ -114,6 +114,162 @@ afterEach(async () => {
 });
 
 describe("Member AI preserves reading position during long answers", () => {
+  it("reserves a readable transcript when enlarged fixed content exceeds the viewport, and recalculates on content resize", async () => {
+    const heights = {
+      header: 240,
+      rail: 80,
+      notices: 160,
+      composer: 220,
+      control: 150,
+    };
+    const observed = new Set<Element>();
+    const resizeCallbacks: ResizeObserverCallback[] = [];
+    const disconnect = vi.fn();
+    vi.stubGlobal(
+      "ResizeObserver",
+      class {
+        constructor(callback: ResizeObserverCallback) {
+          resizeCallbacks.push(callback);
+        }
+        observe(element: Element) {
+          observed.add(element);
+        }
+        disconnect = disconnect;
+      },
+    );
+    let queuedResize: FrameRequestCallback | undefined;
+    const cancelFrame = vi.fn();
+    vi.spyOn(window, "requestAnimationFrame").mockImplementation((callback) => {
+      queuedResize = callback;
+      return 1;
+    });
+    vi.spyOn(window, "cancelAnimationFrame").mockImplementation(cancelFrame);
+    vi.stubGlobal("innerHeight", 900);
+    vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockImplementation(
+      function (this: HTMLElement) {
+        const height = this.matches("header")
+          ? heights.header
+          : this.matches("aside")
+            ? heights.rail
+            : this.matches('[role="note"]')
+              ? heights.notices
+              : this.matches("form")
+                ? heights.composer
+                : this.matches('[role="group"] button')
+                  ? heights.control
+                  : 0;
+        return {
+          height,
+          top: this.matches("section.ai-chat") ? 172 : 0,
+          width: 390,
+          left: 0,
+          right: 390,
+          bottom: height,
+          x: 0,
+          y: 0,
+          toJSON() {},
+        };
+      },
+    );
+    const computedStyle = window.getComputedStyle.bind(window);
+    vi.spyOn(window, "getComputedStyle").mockImplementation((element) => {
+      const style = computedStyle(element);
+      if (element.matches('[role="log"]')) {
+        Object.defineProperties(style, {
+          paddingTop: { value: "24px" },
+          paddingBottom: { value: "24px" },
+        });
+      }
+      if (element.matches("form"))
+        Object.defineProperty(style, "marginTop", { value: "20px" });
+      if (element.querySelector(':scope > div > [role="log"]'))
+        Object.defineProperty(style, "paddingBottom", { value: "24px" });
+      if (element.matches("section.ai-chat")) {
+        Object.defineProperties(style, {
+          borderTopWidth: { value: "1px" },
+          borderBottomWidth: { value: "1px" },
+        });
+      }
+      return style;
+    });
+
+    await render([]);
+    const chat = host.querySelector<HTMLElement>("section.ai-chat")!;
+    expect(chat.style.getPropertyValue("--ai-page-height")).toBe("716px");
+    expect(chat.style.getPropertyValue("--ai-transcript-min-height")).toBe(
+      "198px",
+    );
+    expect(chat.style.getPropertyValue("--ai-thread-min-height")).toBe("622px");
+    expect(chat.style.getPropertyValue("--ai-page-min-height")).toBe("944px");
+    for (const block of host.querySelectorAll(
+      "header, aside, [role=note], form",
+    ))
+      expect(observed.has(block)).toBe(true);
+
+    heights.header = 340;
+    heights.composer = 320;
+    heights.control = 200;
+    await act(async () => {
+      for (const callback of resizeCallbacks)
+        callback([], {} as ResizeObserver);
+      queuedResize?.(0);
+      queuedResize = undefined;
+    });
+    expect(chat.style.getPropertyValue("--ai-transcript-min-height")).toBe(
+      "248px",
+    );
+    expect(chat.style.getPropertyValue("--ai-page-min-height")).toBe("1194px");
+    Object.defineProperty(transcript(), "scrollHeight", {
+      configurable: true,
+      value: 100_000,
+    });
+    await act(async () => {
+      for (const callback of resizeCallbacks)
+        callback([], {} as ResizeObserver);
+      queuedResize?.(0);
+      queuedResize = undefined;
+    });
+    expect(chat.style.getPropertyValue("--ai-page-min-height")).toBe("1194px");
+
+    await act(async () => {
+      for (const callback of resizeCallbacks)
+        callback([], {} as ResizeObserver);
+      root.unmount();
+    });
+    expect(disconnect).toHaveBeenCalled();
+    expect(cancelFrame).toHaveBeenCalledWith(1);
+    root = createRoot(host);
+  });
+
+  it("recalculates available height and compact layout when the visual viewport shrinks for the keyboard", async () => {
+    const viewport = Object.assign(new EventTarget(), {
+      height: 900,
+      offsetTop: 0,
+    });
+    vi.stubGlobal("visualViewport", viewport);
+    let queuedResize: FrameRequestCallback | undefined;
+    vi.spyOn(window, "requestAnimationFrame").mockImplementation((callback) => {
+      queuedResize = callback;
+      return 1;
+    });
+    await render([]);
+    const chat = host.querySelector<HTMLElement>("section.ai-chat")!;
+    expect(chat.dataset.aiCompact).toBe("false");
+    expect(chat.style.getPropertyValue("--ai-page-height")).toBe("888px");
+    const initialMinimum = chat.style.getPropertyValue("--ai-page-min-height");
+    viewport.height = 400;
+    viewport.offsetTop = 20;
+    await act(async () => {
+      viewport.dispatchEvent(new Event("resize"));
+      queuedResize?.(0);
+    });
+    expect(chat.dataset.aiCompact).toBe("true");
+    expect(chat.style.getPropertyValue("--ai-page-height")).toBe("408px");
+    expect(chat.style.getPropertyValue("--ai-page-min-height")).toBe(
+      initialMinimum,
+    );
+  });
+
   it("restores the same conversation reading position after closing and reopening the presentation", async () => {
     let saved: ReturnType<PutdukAiSession["readTranscriptPosition"]> = null;
     fixture.session!.readTranscriptPosition = vi.fn(() => saved);

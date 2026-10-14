@@ -93,6 +93,9 @@ export function PutdukAiChat({
   const composerId = useId();
   const questionInputRef = useRef<HTMLTextAreaElement | null>(null);
   const transcriptRef = useRef<HTMLDivElement | null>(null);
+  const workspaceRef = useRef<HTMLDivElement | null>(null);
+  const threadRef = useRef<HTMLDivElement | null>(null);
+  const transcriptFrameRef = useRef<HTMLDivElement | null>(null);
   const [readingEarlier, setReadingEarlier] = useState(
     () => session.readTranscriptPosition(surface)?.followLatest === false,
   );
@@ -350,32 +353,112 @@ export function PutdukAiChat({
     );
   }
 
-  useEffect(() => {
-    function resize() {
-      const node = chatRef.current;
-      if (!node) return;
+  const emptyTranscript = session.messages.length === 0;
+  useLayoutEffect(() => {
+    const node = chatRef.current;
+    const workspace = workspaceRef.current;
+    const thread = threadRef.current;
+    const frame = transcriptFrameRef.current;
+    const transcript = transcriptRef.current;
+    if (!node || !workspace || !thread || !frame || !transcript) return;
+    const pixels = (value: string) => Number.parseFloat(value) || 0;
+    const outerHeight = (element: Element) => {
+      const style = window.getComputedStyle(element);
+      if (style.display === "none" || style.position === "absolute") return 0;
+      return (
+        element.getBoundingClientRect().height +
+        pixels(style.marginTop) +
+        pixels(style.marginBottom)
+      );
+    };
+    const fixedBlocks = [
+      ...Array.from(node.children).filter((child) => child !== workspace),
+      ...Array.from(workspace.children).filter((child) => child !== thread),
+      ...Array.from(thread.children).filter((child) => child !== frame),
+    ];
+    let scheduled: number | undefined;
+    const resize = () => {
       const viewport = window.visualViewport;
       node.dataset.aiCompact = String(
         (viewport?.height ?? window.innerHeight) < 560,
       );
       if (presentation !== "page") return;
+      const transcriptStyle = window.getComputedStyle(transcript);
+      // Reserve a whole readable control plus padding, not the full history.
+      // Enlarged copy and keyboard shrinkage can otherwise collapse the frame
+      // while its padding still paints beneath the non-shrinking composer.
+      const controlHeight = Math.max(
+        44,
+        ...Array.from(transcript.querySelectorAll("button, summary, a")).map(
+          (control) => control.getBoundingClientRect().height,
+        ),
+      );
+      const transcriptMinimum = Math.ceil(
+        controlHeight +
+          pixels(transcriptStyle.paddingTop) +
+          pixels(transcriptStyle.paddingBottom),
+      );
+      const threadStyle = window.getComputedStyle(thread);
+      const threadMinimum = Math.ceil(
+        transcriptMinimum +
+          Array.from(thread.children)
+            .filter((child) => child !== frame)
+            .reduce((height, child) => height + outerHeight(child), 0) +
+          pixels(threadStyle.paddingTop) +
+          pixels(threadStyle.paddingBottom),
+      );
+      const chatStyle = window.getComputedStyle(node);
+      const pageMinimum = Math.ceil(
+        threadMinimum +
+          fixedBlocks
+            .filter((child) => child.parentElement !== thread)
+            .reduce((height, child) => height + outerHeight(child), 0) +
+          pixels(chatStyle.borderTopWidth) +
+          pixels(chatStyle.borderBottomWidth),
+      );
+      node.style.setProperty(
+        "--ai-transcript-min-height",
+        `${transcriptMinimum}px`,
+      );
+      node.style.setProperty("--ai-thread-min-height", `${threadMinimum}px`);
+      node.style.setProperty("--ai-page-min-height", `${pageMinimum}px`);
       const bottom =
         (viewport?.height ?? window.innerHeight) + (viewport?.offsetTop ?? 0);
       node.style.setProperty(
         "--ai-page-height",
         `${Math.max(160, bottom - node.getBoundingClientRect().top - 12)}px`,
       );
+    };
+    function scheduleResize() {
+      if (scheduled !== undefined) return;
+      scheduled = window.requestAnimationFrame(() => {
+        scheduled = undefined;
+        resize();
+      });
     }
     resize();
-    window.addEventListener("resize", resize);
-    window.visualViewport?.addEventListener("resize", resize);
-    window.visualViewport?.addEventListener("scroll", resize);
+    const observer =
+      typeof ResizeObserver === "undefined"
+        ? null
+        : new ResizeObserver(scheduleResize);
+    for (const block of fixedBlocks) observer?.observe(block);
+    observer?.observe(transcript);
+    if (node.parentElement) observer?.observe(node.parentElement);
+    for (const control of transcript.querySelectorAll("button, summary, a"))
+      observer?.observe(control);
+    node.addEventListener("focusin", scheduleResize);
+    window.addEventListener("resize", scheduleResize);
+    window.visualViewport?.addEventListener("resize", scheduleResize);
+    window.visualViewport?.addEventListener("scroll", scheduleResize);
     return () => {
-      window.removeEventListener("resize", resize);
-      window.visualViewport?.removeEventListener("resize", resize);
-      window.visualViewport?.removeEventListener("scroll", resize);
+      observer?.disconnect();
+      if (scheduled !== undefined) window.cancelAnimationFrame(scheduled);
+      node.removeEventListener("focusin", scheduleResize);
+      window.removeEventListener("resize", scheduleResize);
+      window.visualViewport?.removeEventListener("resize", scheduleResize);
+      window.visualViewport?.removeEventListener("scroll", scheduleResize);
     };
-  }, [presentation]);
+  }, [presentation, surface, emptyTranscript]);
 
   return (
     <section
@@ -401,7 +484,7 @@ export function PutdukAiChat({
           <div className={styles.pageTools}>{pageTools}</div>
         </header>
       ) : null}
-      <div className={styles.workspace}>
+      <div ref={workspaceRef} className={styles.workspace}>
         <aside
           className={styles.contextRail}
           aria-label="화면 도움과 이전 대화"
@@ -618,7 +701,7 @@ export function PutdukAiChat({
             </span>
           ) : null}
         </aside>
-        <div className={styles.thread}>
+        <div ref={threadRef} className={styles.thread}>
           {presentation === "page" && surface !== "page" ? (
             <header className={styles.pageStatus}>
               <strong>내 기록과 퍼뜩 이용 안내</strong>
@@ -667,7 +750,7 @@ export function PutdukAiChat({
             ) : null}
           </div>
 
-          <div className={styles.transcriptFrame}>
+          <div ref={transcriptFrameRef} className={styles.transcriptFrame}>
             <div
               ref={transcriptRef}
               id={`${composerId}-transcript`}

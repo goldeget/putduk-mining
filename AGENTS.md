@@ -1,5 +1,34 @@
 # PUTDUK MINING — ABSOLUTE PROJECT BOUNDARY
 
+## Owner-confirmed scope and precedence — 2026-10-14
+
+The project owner directly approved this exception in the current chat on
+2026-10-14. It takes precedence over conflicting older boundary text and the
+older AGENTS.md supplied with the handoff, only within the scope below.
+
+- Read this project's R10 handoff, addendum and evidence, and write subsequent
+  evidence, preservation copies and handoff documents under
+  `F:/PUTDUK_Codex/20261013-release/`. This is evidence storage, not another
+  source workspace. Do not scan the F: drive or unrelated material.
+- Continue implementation only in
+  `C:/Users/PC/Desktop/putduk-mining/.worktrees/cloud-ui-20261012`, on
+  `codex/cloud-ui-recovery-20261012`. GitHub remains
+  `goldeget/putduk-mining`; Supabase remains `osrmyjgmpdspdcwqjwuv`.
+- The existing Cloudflare target section below is reaffirmed, not replaced:
+  `putduk-landing`, account `9dc502d4ef06b3b5374591de6e6933ca`. Preserve
+  `putduk.com` email, mail-authentication DNS, security, certificates and retained
+  services. Compare the platform hosts `mining.putduk.com` and
+  `admin.mining.putduk.com` with current settings and the final architecture.
+  Unknown ownership or dependencies prohibit bulk removal.
+- Preserve the complete prior instructions and all existing work. Assign
+  non-overlapping ownership to subagents, record scope resolution and resumed
+  work in Linear, and include this AGENTS.md change in source-integrity review
+  and any applicable reviewed manifest updates.
+- This exception authorizes development and verification to resume. It does
+  not authorize merging a failed candidate into develop/main, deployment before
+  verification, real payouts or separate paid contracts. Exact candidate,
+  target, verification, rollback and existing release gates remain mandatory.
+
 ## User-authorized Cloud UI recovery and integration — 2026-10-12
 
 The human owner explicitly instructed this chat to restore Cloud Codex product UI/UX, compare and integrate it with the current project, preserve all existing work, proceed through the agreed architecture toward release, record in Linear, and use subagents. This section supersedes older visual-source and local-edit freezes only for this exact project's recovery task.

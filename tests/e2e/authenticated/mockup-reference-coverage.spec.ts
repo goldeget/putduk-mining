@@ -9,6 +9,7 @@ import {
   type Locator,
   type Page,
   type Request,
+  type Response,
   type TestInfo,
 } from "@playwright/test";
 
@@ -204,6 +205,12 @@ async function captureRoutes(
     blockedReasonPresent?: boolean;
     phase: CapturePhase;
     startedPhase?: CapturePhase | undefined;
+    observedPath?: "/login" | "/wallet";
+    walletView?: WalletView;
+    walletActionPhase?: WalletActionPhase;
+    responseStatus?: number;
+    responseSeen?: boolean;
+    responseRscMime?: boolean;
   };
   let phase: CapturePhase = "rendering";
   const requestPhases = new WeakMap<Request, CapturePhase>();
@@ -263,6 +270,65 @@ async function captureRoutes(
       `http://127.0.0.1:${process.env.E2E_WEB_PORT ?? "3000"}`,
   ).origin;
   const pendingWalletRequests = new Set<Request>();
+  type WalletActionPhase =
+    | "idle"
+    | "profit-enter"
+    | "history-enter"
+    | "principal-enter"
+    | "capture-teardown";
+  type WalletView = "principal" | "profit" | "history" | "unknown";
+  const walletView = (url: URL): WalletView => {
+    const value = url.searchParams.get("view");
+    return value === "principal" || value === "profit" || value === "history"
+      ? value
+      : "unknown";
+  };
+  let walletActionPhase: WalletActionPhase = "idle";
+  const walletRequestIds = new WeakMap<Request, number>();
+  const walletResponseStates = new WeakMap<
+    Request,
+    { view: WalletView; responseSeen: boolean; responseStatus?: number }
+  >();
+  let walletRequestCount = 0;
+  let walletLifecycleTotal = 0;
+  const walletLifecycle: {
+    event: "request" | "response" | "finish" | "fail" | "action";
+    phase: CapturePhase;
+    actionPhase: WalletActionPhase;
+    requestId?: number;
+    pending: number;
+    view?: WalletView;
+    responseSeen?: boolean;
+    responseStatus?: number;
+    finishSucceeded?: boolean;
+  }[] = [];
+  const walletLifecycleEvent = (
+    event: "request" | "response" | "finish" | "fail" | "action",
+    request?: Request,
+  ) => {
+    const requestId = request ? walletRequestIds.get(request) : undefined;
+    const responseState = request
+      ? walletResponseStates.get(request)
+      : undefined;
+    if (request && requestId === undefined) return;
+    walletLifecycleTotal += 1;
+    if (walletLifecycle.length === 160) walletLifecycle.shift();
+    walletLifecycle.push({
+      event,
+      phase,
+      actionPhase: walletActionPhase,
+      ...(requestId === undefined ? {} : { requestId }),
+      pending: pendingWalletRequests.size,
+      ...(responseState ?? {}),
+      ...(event === "finish" || event === "fail"
+        ? { finishSucceeded: event === "finish" }
+        : {}),
+    });
+  };
+  const walletAction = (next: WalletActionPhase) => {
+    walletActionPhase = next;
+    walletLifecycleEvent("action");
+  };
   const trackWalletRequest = (request: Request) => {
     const url = new URL(request.url());
     if (
@@ -273,11 +339,31 @@ async function captureRoutes(
       !request.isNavigationRequest() &&
       request.serviceWorker() === null &&
       request.headers().rsc === "1"
-    )
+    ) {
+      walletRequestIds.set(request, ++walletRequestCount);
+      walletResponseStates.set(request, {
+        view: walletView(url),
+        responseSeen: false,
+      });
       pendingWalletRequests.add(request);
+      walletLifecycleEvent("request", request);
+    }
   };
   const finishWalletRequest = (request: Request) => {
     pendingWalletRequests.delete(request);
+    walletLifecycleEvent("finish", request);
+  };
+  const failWalletRequest = (request: Request) => {
+    pendingWalletRequests.delete(request);
+    walletLifecycleEvent("fail", request);
+  };
+  const walletResponse = (response: Response) => {
+    const state = walletResponseStates.get(response.request());
+    if (state) {
+      state.responseSeen = true;
+      state.responseStatus = response.status();
+    }
+    walletLifecycleEvent("response", response.request());
   };
   const waitForWalletRender = async () => {
     // URL and aria-current can commit before the Flight response closes.
@@ -288,7 +374,8 @@ async function captureRoutes(
   };
   page.on("request", trackWalletRequest);
   page.on("requestfinished", finishWalletRequest);
-  page.on("requestfailed", finishWalletRequest);
+  page.on("requestfailed", failWalletRequest);
+  page.on("response", walletResponse);
   const publicCapture = routes.includes("/login");
   let diagnosticSession: CDPSession | null = null;
   const workerFailed = (request: Request) => {
@@ -371,13 +458,19 @@ async function captureRoutes(
       );
   });
   try {
-    if (publicCapture) {
+    if (publicCapture || routes.includes("/wallet")) {
       // Passive Chromium metadata only: no routing, header/body capture or mocking.
       diagnosticSession = await page.context().newCDPSession(page);
       const requests = new Map<string, RequestDiagnostic>();
       diagnosticSession.on("Network.requestWillBeSent", (event) => {
         const url = new URL(event.request.url);
-        if (url.pathname !== "/login" || requests.size >= 60) return;
+        if (
+          !(publicCapture ? ["/login", "/wallet"] : ["/wallet"]).includes(
+            url.pathname,
+          ) ||
+          requests.size >= 60
+        )
+          return;
         const frames = event.initiator.stack?.callFrames ?? [];
         const scriptPaths = frames.map((frame: { url: string }) =>
           safePath(frame.url),
@@ -389,6 +482,10 @@ async function captureRoutes(
           ]),
         );
         requests.set(event.requestId, {
+          observedPath: url.pathname === "/wallet" ? "/wallet" : "/login",
+          ...(url.pathname === "/wallet"
+            ? { walletView: walletView(url), walletActionPhase }
+            : {}),
           method: event.request.method,
           sameOrigin: url.origin === ownedOrigin,
           resourceType: event.type ?? "unknown",
@@ -413,7 +510,16 @@ async function captureRoutes(
           initiatorFromServiceWorker: scriptPaths.includes("/sw.js"),
           phase,
           startedPhase: phase,
+          responseSeen: false,
         });
+      });
+      diagnosticSession.on("Network.responseReceived", (event) => {
+        const request = requests.get(event.requestId);
+        if (!request) return;
+        request.responseSeen = true;
+        request.responseStatus = event.response.status;
+        request.responseRscMime =
+          event.response.mimeType === "text/x-component";
       });
       diagnosticSession.on("Network.loadingFinished", (event) =>
         requests.delete(event.requestId),
@@ -422,12 +528,17 @@ async function captureRoutes(
         const request = requests.get(event.requestId);
         if (!request) return;
         requests.delete(event.requestId);
-        diagnostic("cdp-requestfailed", "/login", event.errorText, {
-          ...request,
-          phase,
-          networkCancelled: Boolean(event.canceled),
-          blockedReasonPresent: Boolean(event.blockedReason),
-        });
+        diagnostic(
+          "cdp-requestfailed",
+          request.observedPath ?? "[unavailable]",
+          event.errorText,
+          {
+            ...request,
+            phase,
+            networkCancelled: Boolean(event.canceled),
+            blockedReasonPresent: Boolean(event.blockedReason),
+          },
+        );
       });
       await diagnosticSession.send("Network.enable");
     }
@@ -448,6 +559,7 @@ async function captureRoutes(
       for (const width of routeWidths) {
         for (const theme of themes) {
           phase = "prepare-next-capture";
+          if (route === "/wallet") walletAction("capture-teardown");
           await page.evaluate((value) => {
             localStorage.setItem("putduk-theme", value);
           }, theme);
@@ -469,6 +581,7 @@ async function captureRoutes(
           phase = "rendering";
           const response = await page.goto(route, { waitUntil: "networkidle" });
           phase = "checking";
+          if (route === "/wallet") walletAction("idle");
           expect(response?.status()).toBe(200);
           await expect(page).toHaveURL((url) => url.pathname === route);
           const main = page.getByRole("main");
@@ -1144,6 +1257,7 @@ async function captureRoutes(
               await expect(principal).toBeFocused();
               await principal.press("Tab");
               await expect(profit).toBeFocused();
+              walletAction("profit-enter");
               await profit.press("Enter");
               await expect(page).toHaveURL(
                 (url) =>
@@ -1172,6 +1286,7 @@ async function captureRoutes(
               await profit.focus();
               await profit.press("Tab");
               await expect(history).toBeFocused();
+              walletAction("history-enter");
               await history.press("Enter");
               await expect(page).toHaveURL(
                 (url) =>
@@ -1191,6 +1306,7 @@ async function captureRoutes(
               await expect(profit).toBeFocused();
               await profit.press("Shift+Tab");
               await expect(principal).toBeFocused();
+              walletAction("principal-enter");
               await principal.press("Enter");
               await expect(page).toHaveURL(
                 (url) =>
@@ -1199,6 +1315,7 @@ async function captureRoutes(
               );
               await expect(principal).toHaveAttribute("aria-current", "page");
               await waitForWalletRender();
+              walletAction("idle");
               await principal.evaluate((element: HTMLAnchorElement) =>
                 element.blur(),
               );
@@ -1790,7 +1907,8 @@ async function captureRoutes(
   } finally {
     page.off("request", trackWalletRequest);
     page.off("requestfinished", finishWalletRequest);
-    page.off("requestfailed", finishWalletRequest);
+    page.off("requestfailed", failWalletRequest);
+    page.off("response", walletResponse);
     if (publicCapture) page.context().off("requestfailed", workerFailed);
     if (diagnosticSession) {
       // The page may already have closed on the original test failure.
@@ -1802,7 +1920,14 @@ async function captureRoutes(
     await writeFile(
       diagnosticPath,
       JSON.stringify(
-        { diagnostics, cappedAt: 60, fatalErrors: errors.map(safeMessage) },
+        {
+          diagnostics,
+          cappedAt: 60,
+          fatalErrors: errors.map(safeMessage),
+          walletLifecycle,
+          walletLifecycleCappedAt: 160,
+          walletLifecycleTotal,
+        },
         null,
         2,
       ) + "\n",

@@ -311,7 +311,8 @@ export async function expectWelcomeWithdrawalPanel(page: Page) {
     has: page.locator("summary").filter({ hasText: "입금 없이 첫 출금" }),
   });
   await expect(panel).toHaveCount(1);
-  const summary = panel.locator("summary");
+  const summary = panel.locator(":scope > summary");
+  await expect(summary).toHaveCount(1);
   await expect(summary).toBeVisible();
   if (!(await panel.evaluate((element: HTMLDetailsElement) => element.open))) {
     await summary.click();

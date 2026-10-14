@@ -18,6 +18,10 @@ import { assertBackend201BrowserCanonicalSources } from "./backend-successor-201
 // these hints do not establish a green runtime or the whole-run 20-minute gate.
 // Files with no R7 observation retain the existing per-test fallback estimate.
 // Unknown/new files are always discovered and included, never omitted.
+// R10 allocation split units have no completed timing observation yet. Reserve
+// their unchanged 360-second test ceiling for placement only, including repeated
+// real AAL2/publication setup; stage telemetry must replace these estimates.
+// This does not change any deadline or establish the whole-run 20-minute gate.
 const TIMING_HINTS = {
   "admin-assistant-context.spec.ts": 10,
   "admin-assistant-read-draft.spec.ts": 23,
@@ -36,7 +40,11 @@ const TIMING_HINTS = {
   "admin-withdrawals-product.spec.ts": 24,
   "ai-context-help.spec.ts": 16,
   "ai-product.spec.ts": 26,
-  "catalog-allocation.spec.ts": 262,
+  "catalog-allocation.spec.ts": 360,
+  "catalog-allocated-home-dark.spec.ts": 360,
+  "catalog-allocated-home-light.spec.ts": 360,
+  "catalog-allocated-wallet-dark.spec.ts": 360,
+  "catalog-allocated-wallet-light.spec.ts": 360,
   "catalog-materials.spec.ts": 204,
   "deposit-product.spec.ts": 57,
   "events-product.spec.ts": 23,
