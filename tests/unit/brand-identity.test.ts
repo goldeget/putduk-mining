@@ -7,8 +7,12 @@ import { BrandMark } from "@/components/brand/brand-mark";
 import { MenuBrandSymbol } from "@/components/product/menu-brand-symbol";
 import { MiningBrandSymbol } from "@/components/product/mining-brand-symbol";
 import { WalletBrandSymbol } from "@/components/product/wallet-brand-symbol";
+import { PutdukAiMascot } from "@/components/product/putduk-ai-mascot";
 import { PutdukIcon } from "@/components/icons/putduk-icon";
-import { PUTDUK_SYMBOL_PATH } from "@/components/brand/putduk-symbol";
+import {
+  PUTDUK_SYMBOL_PATH,
+  PUTDUK_SYMBOL_VIEW_BOX,
+} from "@/components/brand/putduk-symbol";
 
 describe("canonical native PUTDUK identity", () => {
   it("separates current identity authority from the unchanged historical collection", async () => {
@@ -25,10 +29,10 @@ describe("canonical native PUTDUK identity", () => {
       ),
     );
     expect(historic.assetVersion).toBe("2026.10.06-v18");
-    expect(current.assetVersion).toBe("2026.10.13-sprout-p-v1");
+    expect(current.assetVersion).toBe("2026.10.14-sprout-p-v2");
     expect(
       current.assets.every((asset: { path: string }) =>
-        asset.path.startsWith("/brand/identity/20261013/"),
+        asset.path.startsWith("/brand/identity/20261014/"),
       ),
     ).toBe(true);
     expect(
@@ -65,7 +69,7 @@ describe("canonical native PUTDUK identity", () => {
       expect(html).toContain(`d="${PUTDUK_SYMBOL_PATH}"`);
       expect(html).toContain('data-putduk-brand="canonical"');
       expect(html).toContain(
-        'data-putduk-brand-version="2026.10.13-sprout-p-v1"',
+        'data-putduk-brand-version="2026.10.14-sprout-p-v2"',
       );
     }
   });
@@ -75,7 +79,10 @@ describe("canonical native PUTDUK identity", () => {
       createElement(PutdukIcon, { name: "ai", size: 24, label: "퍼뜩 AI" }),
     );
     expect(html).toContain(`d="${PUTDUK_SYMBOL_PATH}"`);
-    expect(html).toContain('transform="scale(.375)"');
+    expect(html).toContain(`viewBox="${PUTDUK_SYMBOL_VIEW_BOX}"`);
+    expect(html).toContain(
+      'data-putduk-brand-version="2026.10.14-sprout-p-v2"',
+    );
     expect(html).toContain("퍼뜩 AI");
   });
 
@@ -85,7 +92,7 @@ describe("canonical native PUTDUK identity", () => {
         const png = await readFile(
           path.join(
             process.cwd(),
-            `public/brand/identity/20261013/pwa/putduk-pwa-${theme}-${size}.png`,
+            `public/brand/identity/20261014/pwa/putduk-pwa-${theme}-${size}.png`,
           ),
         );
         expect(png.subarray(0, 8)).toEqual(
@@ -98,7 +105,7 @@ describe("canonical native PUTDUK identity", () => {
     const ico = await readFile(
       path.join(
         process.cwd(),
-        "public/brand/identity/20261013/favicon/favicon.ico",
+        "public/brand/identity/20261014/favicon/favicon.ico",
       ),
     );
     expect(ico.readUInt16LE(2)).toBe(1);
@@ -106,17 +113,25 @@ describe("canonical native PUTDUK identity", () => {
     expect([ico[6], ico[22], ico[38]]).toEqual([16, 32, 48]);
   });
 
-  it("uses a new AI entry asset while preserving the old reviewed face originals", async () => {
+  it("uses the shared decorative AI identity while preserving the old reviewed face originals", async () => {
     for (const file of ["putduk-ai-mascot.tsx", "putduk-ai-chat.tsx"]) {
       const source = await readFile(
         path.join(process.cwd(), "components/product", file),
         "utf8",
       );
       expect(source).toContain(
-        "/brand/identity/20261013/logo/putduk-ai-symbol.svg",
+        'import { BrandMark } from "@/components/brand/brand-mark"',
       );
+      expect(source).toContain("<BrandMark");
       expect(source).not.toContain("/brand/mascot/putduk-ai-help-face-");
     }
+    const html = renderToStaticMarkup(createElement(PutdukAiMascot, {}));
+    expect(html).toContain('data-putduk-brand="canonical"');
+    expect(html).toContain(
+      'data-putduk-brand-version="2026.10.14-sprout-p-v2"',
+    );
+    expect(html).toContain('aria-hidden="true"');
+    expect(html).not.toContain("<img");
     const master = await readFile(
       path.join(
         process.cwd(),

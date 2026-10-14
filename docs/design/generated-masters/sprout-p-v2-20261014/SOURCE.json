@@ -1,0 +1,15 @@
+{
+  "version": "2026.10.14-sprout-p-v2",
+  "authorization": "Owner selected the generated gold P/sprout logo and explicitly requested complete monochrome vector, favicon, all-menu and AI theme integration on 2026-10-14",
+  "masterSha256": "516aca1df4dde6ff3cb5fa97df3cb009403cc4174ad93f899195bb9250b30e7c",
+  "nativeGeometry": "M18 57V25C18 22 18 20 16 19C9 17 5 12 5 4C16 5 23 10 22 18L28 12Q30 10 33 10H44Q47 10 49 12L56 19Q59 22 59 26V35Q59 38 56 41L50 43Q47 45 43 45H30V57Q30 60 27 60H21Q18 60 18 57ZM30 24V36Q30 37 31 37H41Q42 37 43 36L48 31Q49 30 48 29L43 24Q42 23 41 23H31Q30 23 30 24Z",
+  "generationPrompt": "F:/PUTDUK_Codex/20261013-release/evidence/logo-concept-20261014/preview-v1/IMAGE_GENERATION_PROMPT.txt",
+  "previousIdentityManifestSha256": "8df270c14d28f2515b81468de58d9cd7459c4f22fae1628da2876034ce08d787",
+  "recipeEvidence": "F:/PUTDUK_Codex/20261013-release/evidence/logo-application-20261014/",
+  "tools": {
+    "fonttools": "4.60.1",
+    "brotli": "1.1.0",
+    "raster": "bundled sharp"
+  },
+  "previousFilesModified": false
+}

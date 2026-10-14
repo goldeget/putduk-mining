@@ -108,8 +108,8 @@ export default function HomePage() {
         <Link className="brand-lockup" href="/" aria-label="퍼뜩 채굴 홈">
           <BrandMark title="" />
           <span>
-            <strong>PUTDUK</strong>
-            <small>MINING</small>
+            <strong>퍼뜩 채굴</strong>
+            <small>PUTDUK MINING</small>
           </span>
         </Link>
         <nav className="landing-header__nav" aria-label="공개 메뉴">
@@ -456,8 +456,8 @@ export default function HomePage() {
         <div className="brand-lockup brand-lockup--footer">
           <BrandMark title="" />
           <span>
-            <strong>PUTDUK</strong>
-            <small>MINING</small>
+            <strong>퍼뜩 채굴</strong>
+            <small>PUTDUK MINING</small>
           </span>
         </div>
         <p className="ko-copy">작은 행동이 더 나은 내일을 만듭니다.</p>

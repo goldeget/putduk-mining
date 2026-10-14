@@ -473,7 +473,7 @@ describe("Wallet reference reconstruction preserves real contracts", () => {
     ).toEqual([PUTDUK_SYMBOL_PATH]);
     expect(symbol?.getAttribute("data-putduk-brand")).toBe("canonical");
     expect(symbol?.getAttribute("data-putduk-brand-version")).toBe(
-      "2026.10.13-sprout-p-v1",
+      "2026.10.14-sprout-p-v2",
     );
     const realWallet = document.querySelector('[aria-label="실제 KRW 지갑"]');
     expect(realWallet?.textContent).toContain("출금 가능 잔액");

@@ -35,7 +35,7 @@ export function AdminRailMenu({ children }: { children: ReactNode }) {
         <span className="brand-symbol">
           <BrandMark title="" width="100%" height="100%" />
         </span>
-        <strong>퍼뜩</strong>
+        <strong>퍼뜩 채굴</strong>
         <small>운영</small>
       </Link>
       <button

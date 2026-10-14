@@ -279,7 +279,7 @@ function RouteAiDock({
             <PutdukAiMascot />
             {presentation === "inline" ? (
               <span className={styles.inlineCopy}>
-                <strong>PUTDUK AI</strong>
+                <strong>퍼뜩 AI</strong>
                 <small>질문하기</small>
               </span>
             ) : (

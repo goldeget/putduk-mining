@@ -11,7 +11,7 @@ import styles from "./signup-experience.module.css";
 function SignupBrand() {
   return (
     <span className={styles.brand}>
-      <BrandMark title="" style={{ color: "var(--brand-primary)" }} />
+      <BrandMark title="" />
       <span>
         <strong>퍼뜩 채굴</strong>
         <small>PUTDUK MINING</small>

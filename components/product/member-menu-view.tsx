@@ -128,9 +128,9 @@ export function MemberMenuView({ facts }: { facts: MemberScreenFacts }) {
           <MenuBrandSymbol />
           <div>
             <strong>
-              PUTDUK
+              퍼뜩
               <br />
-              MINING
+              채굴
             </strong>
             <span>
               더 빠른 오늘,

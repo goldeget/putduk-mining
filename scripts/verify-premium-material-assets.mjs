@@ -128,7 +128,7 @@ const approvedAssets = [
 const preserved = {
   "public/brand/assets.manifest.json":
     "96ef1731f792d3e7bbf306cf44f0042e2809a8851185affda61160179d14e624",
-  "public/brand/identity.manifest.json":
+  "docs/design/generated-masters/sprout-p-v2-20261014/previous-identity.manifest.json":
     "8df270c14d28f2515b81468de58d9cd7459c4f22fae1628da2876034ce08d787",
 };
 const digest = (bytes) => createHash("sha256").update(bytes).digest("hex");

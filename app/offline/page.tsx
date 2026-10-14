@@ -15,12 +15,12 @@ export default function OfflinePage() {
         {/* A cached public image and native link work without JavaScript or external styles. */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="/brand/identity/20261013/logo/putduk-sprout-p-master.svg"
+          src="/brand/identity/20261014/logo/putduk-sprout-p-master.svg"
           width="160"
           height="160"
           alt="PUTDUK MINING 새싹 P 심벌"
           data-putduk-brand="canonical"
-          data-putduk-brand-version="2026.10.13-sprout-p-v1"
+          data-putduk-brand-version="2026.10.14-sprout-p-v2"
         />
         <h1 id="offline-title">잠시 연결이 끊겼어요.</h1>
         <p>

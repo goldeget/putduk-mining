@@ -10,7 +10,7 @@ import styles from "./login-experience.module.css";
 function LoginBrand({ panel = false }: { panel?: boolean }) {
   return (
     <span className={`${styles.brandLockup} ${panel ? styles.panelBrand : ""}`}>
-      <BrandMark title="" style={{ color: "var(--brand-primary)" }} />
+      <BrandMark title="" />
       <span>
         <strong>
           <span className={styles.brandKorean}>퍼뜩 채굴</span>

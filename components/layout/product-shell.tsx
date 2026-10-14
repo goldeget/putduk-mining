@@ -126,8 +126,8 @@ export function ProductShell({
           <Link className="brand-lockup" href="/home" aria-label="퍼뜩 채굴 홈">
             {isMining ? <MiningBrandSymbol /> : <BrandMark title="" />}
             <span>
-              <strong>PUTDUK</strong>
-              <small>MINING</small>
+              <strong>퍼뜩 채굴</strong>
+              <small>PUTDUK MINING</small>
             </span>
           </Link>
           <ProductNavigation

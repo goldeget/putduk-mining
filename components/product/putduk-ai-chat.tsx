@@ -16,6 +16,7 @@ import {
 } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { BrandMark } from "@/components/brand/brand-mark";
 import { PutdukIcon } from "@/components/icons/putduk-icon";
 import {
   FeedbackMessage,
@@ -798,18 +799,15 @@ export function PutdukAiChat({
               ) : null}
               {session.messages.length === 0 ? (
                 <div className={`ai-chat__welcome ${styles.welcome}`}>
-                  <picture className={styles.welcomeMascot}>
-                    <img
-                      src="/brand/identity/20261013/logo/putduk-ai-symbol.svg"
-                      data-putduk-brand="canonical"
-                      data-putduk-brand-version="2026.10.13-sprout-p-v1"
-                      width="256"
-                      height="256"
-                      alt=""
-                      decoding="async"
+                  <span className={styles.welcomeMascot} aria-hidden="true">
+                    <BrandMark
+                      title=""
+                      width="100%"
+                      height="100%"
+                      style={{ color: "var(--brand-identity)" }}
                     />
-                  </picture>
-                  <span className={styles.welcomeEyebrow}>PUTDUK AI</span>
+                  </span>
+                  <span className={styles.welcomeEyebrow}>퍼뜩 채굴</span>
                   <h2>무엇이 궁금하세요?</h2>
                   <p>
                     {session.providerConfigured

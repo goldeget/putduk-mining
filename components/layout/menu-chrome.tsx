@@ -21,9 +21,9 @@ export function MenuHeader({ displayName }: { displayName: string }) {
       <Link className={styles.brand} href="/home" aria-label="퍼뜩 채굴 홈">
         <MenuBrandSymbol idPrefix="menu-header-brand" />
         <strong>
-          PUTDUK
+          퍼뜩
           <br />
-          MINING
+          채굴
         </strong>
         <span>
           TECHNOLOGY CREATES
@@ -88,7 +88,7 @@ export function MenuSidebar() {
           <br />
           TOMORROW
         </p>
-        <strong>PUTDUK MINING</strong>
+        <strong>퍼뜩 채굴</strong>
         <small>
           TECHNOLOGY CREATES
           <br />A MORE VALUABLE TOMORROW

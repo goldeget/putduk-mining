@@ -21,6 +21,7 @@
   --border-control: rgba(246, 224, 174, 0.48);
 
   --brand-primary: #f6c85b;
+  --brand-identity: #e8c983;
   --brand-strong: #d99a2b;
   --brand-hover: #ffdb83;
   --brand-active: #e6b340;
@@ -96,6 +97,7 @@ html[data-theme="light"] {
   --border-strong: rgba(124, 75, 6, 0.34);
   --border-control: rgba(74, 52, 19, 0.6);
   --brand-primary: #95600d;
+  --brand-identity: #77541f;
   --brand-strong: #7c4b06;
   --brand-hover: #7c4b06;
   --brand-active: #633b03;
@@ -138,6 +140,7 @@ html[data-theme="dark"] {
     --border-strong: rgba(124, 75, 6, 0.34);
     --border-control: rgba(74, 52, 19, 0.6);
     --brand-primary: #95600d;
+    --brand-identity: #77541f;
     --brand-strong: #7c4b06;
     --brand-hover: #7c4b06;
     --brand-active: #633b03;
@@ -159,6 +162,14 @@ html[data-theme="dark"] {
 }
 
 /* Administrator aliases consume the same resolved theme as the member app. */
+@media (forced-colors: active) {
+  :root,
+  :root:not([data-theme]),
+  html[data-theme="light"] {
+    --brand-identity: CanvasText;
+  }
+}
+
 :root {
   --ink: var(--text-primary);
   --muted: var(--text-secondary);

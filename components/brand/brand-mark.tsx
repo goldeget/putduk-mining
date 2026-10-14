@@ -7,9 +7,10 @@ import {
 
 type BrandMarkProps = SVGProps<SVGSVGElement> & { title?: string };
 
-/** One original silhouette across every size; repeated placements create no duplicate IDs. */
+/** One small monochrome silhouette; inherited color follows every resolved theme. */
 export function BrandMark({
-  title = "PUTDUK MINING",
+  title = "퍼뜩 채굴",
+  style,
   ...props
 }: BrandMarkProps) {
   return (
@@ -22,7 +23,9 @@ export function BrandMark({
       fill="none"
       data-putduk-brand="canonical"
       data-putduk-brand-version={PUTDUK_BRAND_VERSION}
+      data-putduk-brand-render="monochrome"
       {...props}
+      style={{ color: "var(--brand-identity, var(--brand-primary))", ...style }}
     >
       {title ? <title>{title}</title> : null}
       <path d={PUTDUK_SYMBOL_PATH} fill="currentColor" fillRule="evenodd" />

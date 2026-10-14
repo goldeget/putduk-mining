@@ -105,7 +105,7 @@ test("exposes install and discovery metadata", async ({ page }) => {
     icons: expect.arrayContaining([
       expect.objectContaining({
         purpose: "maskable",
-        src: "/brand/identity/20261013/pwa/putduk-pwa-maskable-512.png",
+        src: "/brand/identity/20261014/pwa/putduk-pwa-maskable-512.png",
       }),
     ]),
     name: "퍼뜩 채굴",

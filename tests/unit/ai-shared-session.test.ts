@@ -532,17 +532,17 @@ describe("one PUTDUK AI request and session owner", () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it("uses the approved intact mascot and usable text-only composer in Light", async () => {
+  it("uses the shared decorative identity and usable text-only composer in Light", async () => {
     document.documentElement.dataset.theme = "light";
     try {
       await render("member-a", 1, false, "member-a:server-render-1", "page");
       expect(
         host
           .querySelector(
-            'img[src="/brand/identity/20261013/logo/putduk-ai-symbol.svg"]',
+            'svg[data-putduk-brand="canonical"][data-putduk-brand-version="2026.10.14-sprout-p-v2"]',
           )
-          ?.getAttribute("alt"),
-      ).toBe("");
+          ?.getAttribute("aria-hidden"),
+      ).toBe("true");
       expect(host.querySelector("[data-ai-partner-hero]")).toBeNull();
       expect(host.querySelector("textarea")?.disabled).toBe(false);
       expect(fetchMock).not.toHaveBeenCalled();
@@ -551,15 +551,15 @@ describe("one PUTDUK AI request and session owner", () => {
     }
   });
 
-  it("keeps the approved face in the dock instead of substituting the page robot", async () => {
+  it("keeps the shared decorative identity in the dock", async () => {
     await render();
     expect(
       host
         .querySelector(
-          'img[src="/brand/identity/20261013/logo/putduk-ai-symbol.svg"]',
+          'svg[data-putduk-brand="canonical"][data-putduk-brand-version="2026.10.14-sprout-p-v2"]',
         )
-        ?.getAttribute("alt"),
-    ).toBe("");
+        ?.getAttribute("aria-hidden"),
+    ).toBe("true");
     expect(host.querySelector("[data-ai-partner-hero]")).toBeNull();
     expect(host.querySelector('[aria-label="빠른 질문"]')).toBeNull();
   });
@@ -634,11 +634,11 @@ describe("one PUTDUK AI request and session owner", () => {
     ).toBe(true);
   });
 
-  it("does not let failed decorative imagery erase or submit a draft", async () => {
+  it("does not let a decorative identity error event erase or submit a draft", async () => {
     await render("member-a", 1, false, "member-a:server-render-1", "page");
     await act(async () => session.setDraft("작성한 질문을 유지해 주세요"));
     const mascot = host.querySelector(
-      'img[src="/brand/identity/20261013/logo/putduk-ai-symbol.svg"]',
+      'svg[data-putduk-brand="canonical"][data-putduk-brand-version="2026.10.14-sprout-p-v2"]',
     )!;
     await act(async () => mascot.dispatchEvent(new Event("error")));
     expect(host.querySelector("textarea")?.value).toBe(

@@ -64,7 +64,7 @@ export function AiPartnerHero({ tools }: { tools?: ReactNode }) {
       <div className={styles.copy}>
         <div className={styles.identity}>
           <AiPartnerMark />
-          <h1 aria-label="퍼뜩 AI">PUTDUK AI</h1>
+          <h1 aria-label="퍼뜩 AI">퍼뜩 AI</h1>
         </div>
         <p className={styles.lead}>
           당신의 기록을 함께 살펴보는

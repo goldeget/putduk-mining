@@ -12,17 +12,17 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       {
-        url: "/brand/identity/20261013/favicon/favicon.svg",
+        url: "/brand/identity/20261014/favicon/favicon.svg",
         type: "image/svg+xml",
       },
       {
-        url: "/brand/identity/20261013/favicon/favicon-32.png",
+        url: "/brand/identity/20261014/favicon/favicon-32.png",
         sizes: "32x32",
         type: "image/png",
       },
     ],
-    shortcut: "/brand/identity/20261013/favicon/favicon.ico",
-    apple: "/brand/identity/20261013/pwa/putduk-pwa-dark-192.png",
+    shortcut: "/brand/identity/20261014/favicon/favicon.ico",
+    apple: "/brand/identity/20261014/pwa/putduk-pwa-dark-192.png",
   },
 };
 export const viewport: Viewport = {

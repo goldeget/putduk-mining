@@ -1,5 +1,9 @@
 import type { SVGProps } from "react";
-import { PUTDUK_SYMBOL_PATH } from "../brand/putduk-symbol";
+import {
+  PUTDUK_BRAND_VERSION,
+  PUTDUK_SYMBOL_PATH,
+  PUTDUK_SYMBOL_VIEW_BOX,
+} from "../brand/putduk-symbol";
 
 export type PutdukIconName =
   | "ai"
@@ -27,7 +31,6 @@ const paths: Record<PutdukIconName, React.ReactNode> = {
   ai: (
     <path
       d={PUTDUK_SYMBOL_PATH}
-      transform="scale(.375)"
       fill="currentColor"
       fillRule="evenodd"
       stroke="none"
@@ -122,7 +125,7 @@ export function PutdukIcon({
 }: PutdukIconProps) {
   return (
     <svg
-      viewBox="0 0 24 24"
+      viewBox={name === "ai" ? PUTDUK_SYMBOL_VIEW_BOX : "0 0 24 24"}
       width={size}
       height={size}
       fill="none"
@@ -133,6 +136,11 @@ export function PutdukIcon({
       role={label ? "img" : undefined}
       aria-hidden={label ? undefined : true}
       aria-label={label}
+      data-putduk-brand={name === "ai" ? "canonical" : undefined}
+      data-putduk-brand-version={
+        name === "ai" ? PUTDUK_BRAND_VERSION : undefined
+      }
+      data-putduk-brand-render={name === "ai" ? "monochrome" : undefined}
       {...props}
     >
       {paths[name]}

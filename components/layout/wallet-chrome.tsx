@@ -65,7 +65,7 @@ export function WalletDesktopHeader({ displayName }: { displayName: string }) {
     <header className={styles.desktopHeader} data-wallet-header="desktop">
       <Link className={styles.brand} href="/home" aria-label="퍼뜩 채굴 홈">
         <WalletBrandSymbol />
-        <span className={styles.wordmark}>PUTDUK MINING</span>
+        <span className={styles.wordmark}>퍼뜩 채굴</span>
         <span className={styles.tagline}>
           TECHNOLOGY CREATES
           <br />A MORE VALUABLE TOMORROW
@@ -146,7 +146,7 @@ export function WalletSidebar({ displayName }: { displayName: string }) {
       </nav>
       <div className={styles.aiCard}>
         <BrandMark title="" />
-        <strong>PUTDUK AI</strong>
+        <strong>퍼뜩 AI</strong>
         <p>궁금한 내용을 물어보세요.</p>
         <Link href="/ai">
           AI와 대화하기
