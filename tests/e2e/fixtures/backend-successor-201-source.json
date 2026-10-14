@@ -2687,7 +2687,7 @@
     "scripts/build-mining-semiconductor-desktop-dark-assets.py": "7a9a1e8866b56758a29cb52a47c019bfa37cbf2520b30349defbc3d7284a1059",
     "scripts/build-mining-semiconductor-desktop-light-assets.py": "25d3f799e9e3d4ede69be7e6da75605a801c27f25e420fd931962eee085be41d",
     "scripts/build-mining-semiconductor-mobile-dark-assets.py": "8980e50f4667cae4397126afde77e3ea9b6bb9128ecad33301d7ad0495f44f11",
-    "scripts/build-premium-material-assets.py": "36af11a5067580dbd9d77ee55deb1713cb8afbf34646658fdf10da4edbc2f712",
+    "scripts/build-premium-material-assets.py": "dc0386bd28b98421e6669997d46b0a913404560ce5a409845536ac3dea3652c6",
     "scripts/build-products-semiconductor-hero-assets.py": "8d7453e0886e60544db7bc7f031512f8f615ec7c4b5da58f5e930a37203d6724",
     "scripts/build-semiconductor-light-assets.py": "126e18a3970259a0210f2e04e3dd0e176000cf702213327dfffe3f9acdb4fa70",
     "scripts/build-semiconductor-scene-assets.py": "51ba5468d2320807f9f8fc4b3bd8987bbdcf9e3ac7a2b08def6739d9dd579ac4",

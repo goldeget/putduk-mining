@@ -66,7 +66,7 @@ def main() -> None:
                     "path": PREFIX + name, "bytes": len(data), "sha256": digest(data),
                     "mimeType": "image/" + extension, "width": width, "height": height,
                     "theme": theme, "purpose": "decorative-heading-material",
-                    "alt": "유리와 금속의 곡면에 은은한 금빛이 비치는 장식", 
+                    "alt": "유리와 금속의 곡면에 은은한 금빛이 비치는 장식",
                     "sourceMaster": source.relative_to(ROOT).as_posix(), "sourceSha256": expected,
                 })
                 products.append((runtime, data))
