@@ -1,6 +1,10 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
-const REMOTE_PROJECT_REF = "osrmyjgmpdspdcwqjwuv";
+import {
+  assertCiTestTarget,
+  assertLocalApiUrl,
+  loadJobLocalAllowlist,
+} from "../../../scripts/capture-local-supabase-env.mjs";
 
 export type ConfirmedMember = {
   userId: string;
@@ -17,12 +21,22 @@ function requiredEnv(name: string) {
 }
 
 export function createLocalServiceRoleClient(): SupabaseClient {
-  const url = requiredEnv("NEXT_PUBLIC_SUPABASE_URL");
-  if (url.includes(REMOTE_PROJECT_REF) || !url.startsWith("http://")) {
-    throw new Error(
-      "Service role fixtures are limited to the isolated local Supabase API.",
-    );
+  assertCiTestTarget();
+  const allowlist = loadJobLocalAllowlist();
+  for (const name of [
+    "LOCAL_SUPABASE_PROJECT_ID",
+    "SUPABASE_PROJECT_ID",
+    "SUPABASE_PROJECT_REF",
+  ]) {
+    const projectId = process.env[name]?.trim();
+    if (projectId && projectId !== allowlist.projectId) {
+      throw new Error("LOCAL_AUTH_PROJECT_SCOPE_REJECTED");
+    }
   }
+  const url = assertLocalApiUrl(
+    requiredEnv("NEXT_PUBLIC_SUPABASE_URL"),
+    allowlist,
+  );
   return createClient(url, requiredEnv("SUPABASE_SECRET_KEY"), {
     auth: { autoRefreshToken: false, persistSession: false },
   });
