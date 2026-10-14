@@ -638,7 +638,7 @@
   }
   @container menu-options (max-width: 22rem) {
     .row {
-      grid-template-columns: 34px minmax(0, 1fr) 18px;
+      grid-template-columns: 34px minmax(0, 1fr) 20px;
       grid-template-areas:
         "icon label arrow"
         "icon description arrow";
