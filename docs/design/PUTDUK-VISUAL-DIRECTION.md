@@ -1,6 +1,25 @@
 # PUTDUK Visual Direction
 
-Status: **CANONICAL / APPROVED ART DIRECTION**
+Status: **CANONICAL ART DIRECTION / VERSIONED IDENTITY**
+
+## Current identity and source precedence — 2026-10-15
+
+The owner-selected identity is `2026.10.14-sprout-p-v2`. Preserve the selected
+gold P/sprout concept and its native monochrome redraw. The active identity is
+`public/brand/identity.manifest.json` and `public/brand/identity/20261014/`;
+`BrandMark` shares that geometry across compact menus and AI entries. Do not
+replace the chosen logo with the earlier robot, helmet or complete-face art.
+
+The verified Cloud product work is the recovery baseline for current product
+UI/UX. Visual Lab and the canonical images below remain quality and provenance
+references; their historical logo or launcher choices do not override the
+later owner-selected identity. Preserve their source files and manifests.
+
+Dark, Light and System share the current identity, real Korean copy, typography
+and state semantics. System must be checked with both OS palettes. Asset/source
+checks and historical captures do not establish current authenticated render,
+accessibility, all-menu acceptance or product completion. Financial and
+authorization behavior remains governed by the existing server contracts.
 
 Runtime asset manifest snapshot: `2026.10.03-v3` (96 assets; prior 88 preserved).
 
@@ -32,8 +51,8 @@ become application controls or implemented features.
 The approved member layout is a dominant scene with concise factual information,
 followed by one normal-flow row for `상세 보기` and the complete-face `AI 도움`
 launcher, then the five-tab navigation. The detailed link applies to the mining
-view; dedicated AI routes provide their own conversation UI. The robot face and
-this arrangement are approved. At the handoff, the semiconductor scene master
+view; dedicated AI routes provide their own conversation UI. The historical robot face and
+this arrangement were approved on 2026-10-03. That historical launcher choice is superseded by the current shared P/sprout identity above. At the handoff, the semiconductor scene master
 and economic values were pending; that historical state is superseded within
 the scope of the follow-up decisions below. Reference images alone do not
 extend approval.
@@ -101,16 +120,16 @@ The emotional sequence is **dark space → warm discovery light → a clear next
 - Gold city lights and orbital paths communicate participation and continuity.
 - The horizon can frame a hero, splash, rank transition or milestone; it should not repeat on every surface.
 
-### Mascot
+### Historical mascot references
 
-- The canonical silhouette is a compact premium mining robot with a two-leaf sprout, gold helmet, single headlamp and black glass face.
+- The historical reference silhouette is a compact premium mining robot with a two-leaf sprout, gold helmet, single headlamp and black glass face. Preserve it as source provenance, not the current compact identity.
 - Expression is conveyed through minimal face-light geometry and body pose.
 - The mascot guides, celebrates and explains. It must never impersonate an operator, promise returns or obscure a critical warning.
-- Full mascot renders are selective; the simplified sprout-miner symbol is used for compact product identity.
-- The approved `AI 도움` launcher uses the complete 1254×1254 face composition,
+- Historical mascot renders and their derivatives remain preserved. Current compact product identity uses the versioned P/sprout geometry and shared BrandMark.
+- The historical 2026-10-03 `AI 도움` launcher used the complete 1254×1254 face composition,
   including leaves, helmet, ears and chin, through its four versioned runtime
   derivatives. Preserve it with `object-fit: contain`; do not regenerate, crop,
-  repaint or replace it with the previous cropped upper-body presentation.
+  repaint or replace its preserved source with the previous cropped upper-body presentation. This preservation rule does not require the historical face in current AI navigation or chat.
 
 ### Planetary ranks
 

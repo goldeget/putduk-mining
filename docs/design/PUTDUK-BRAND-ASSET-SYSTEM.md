@@ -1,5 +1,48 @@
 # PUTDUK Brand Asset System
 
+## Owner-selected identity — 2026-10-14
+
+The owner selected the new champagne-gold P/sprout proposal and explicitly
+authorized monochrome vector, favicon, global menu and AI integration.
+The active identity is `2026.10.14-sprout-p-v2`, delivered through
+`public/brand/identity.manifest.json` and `public/brand/identity/20261014/`.
+The earlier `20261013` pack and historical `assets.manifest.json` are preserved.
+This changes visual identity only; it grants no deployment or money authority.
+This section takes precedence over the historical mascot and AI-help roles
+below. Preserve those original files, hashes and approval provenance; do not
+restore their robot/helmet/face as the current menu or AI identity.
+
+The verified Cloud product UI/UX is the recovery baseline. Visual Lab is a
+quality reference, not an instruction to revert the later owner-selected logo.
+Current member and admin surfaces use the same P/sprout identity and typography;
+theme, device and authenticated page acceptance still require actual renders.
+
+The shared native geometry has rounded corners and one continuous sprout
+connection. Small menus, AI avatars and favicons omit bevel, grain and leaf
+veins, using one accessible monochrome silhouette. Larger presentation artwork
+uses the selected gold concept. The raster master is stored separately under
+`docs/design/generated-masters/sprout-p-v2-20261014/`.
+
+Dark surfaces use champagne gold; Light surfaces use dark bronze. System mode
+resolves to the same two palettes through the existing OS theme contract.
+Inline `BrandMark` consumes currentColor so forced app themes and forced colors
+apply consistently. Browser favicon SVG follows OS color scheme; installed PWA
+icons are static navy/gold identity tiles. The maskable tile keeps the complete
+sprout inside the central safe circle.
+
+The exact `퍼뜩 채굴` wordmark is outlined from the repository's Pretendard
+Variable at weight 750. Korean and Latin outlines have no font or generated
+raster copy dependency. The identity verifier checks current hashes, native
+geometry, admin delivery copies, typography provenance and the unchanged bytes
+of the previous identity pack. These checks do not establish all-route browser
+or product acceptance.
+
+The premium-material preservation binding now points to the byte-identical
+archived v1 identity manifest, retaining SHA-256
+`8df270c14d28f2515b81468de58d9cd7459c4f22fae1628da2876034ce08d787`.
+It still verifies the historical collection; the separate canonical verifier
+checks the owner's new active v2 manifest. No preservation check is removed.
+
 Product composition and interaction are governed by `docs/design/visual-lab/` benchmark `visual-lab-2026.09.27-v1`. That benchmark may select or crop the versioned assets documented here, but it is not an asset source, runtime dependency, economic source or backend truth. Reference captures stay under `docs/design/visual-lab/references/`; production assets stay in the manifest-controlled runtime paths below.
 
 Status: **CANONICAL / IMPLEMENTED FOUNDATION**
@@ -74,10 +117,10 @@ No runtime component may import a canonical reference file. No generated raster 
 - Generation explicitly prohibited typography, letters, numbers, logos, watermarks and UI chrome.
 - SVG symbols, wordmarks and lockups were authored as repository-native vectors. The Korean wordmark contains the reviewed text `퍼뜩`.
 - Raster derivatives are deterministic outputs of `scripts/build-brand-assets.py` from the approved masters.
-- The owner approved the complete AI help face and normal-flow help row on
+- Historically, the owner approved the complete AI help face and normal-flow help row on
   2026-10-03. `scripts/build-ai-help-assets.py` supplies only its 128/256 AVIF/WebP
   derivatives. It preserves the full square composition with premultiplied-alpha
-  resampling; this approval does not include the semiconductor scene or economy.
+  resampling; this approval does not include the semiconductor scene or economy. The 2026-10-14 P/sprout selection supersedes this historical face as the current AI identity, without changing its preserved bytes.
 - A separate 2026-10-03 owner delegation selected the existing clean semiconductor
   master for app use. `scripts/build-semiconductor-scene-assets.py` preserves its
   complete RGB 1539×1022 composition with width-only downsampling. AVIF uses
@@ -94,8 +137,8 @@ Any replacement master requires a new asset version, a review record and a regen
 | `symbol` | Navigation, compact identity, UI chrome | SVG; select light/dark variant by surface |
 | `wordmark` | Branded headers and approved lockups | SVG; preserve clear space and exact Korean spelling |
 | `logo` | Full identity lockup | SVG; do not place below minimum legibility size |
-| `mascot` | Onboarding, guidance, celebration, selected empty states | Transparent AVIF first, WebP fallback; responsive `srcset` |
-| `mascot/putduk-ai-help-face-{128,256}-v1` | Approved `AI 도움` launcher and panel identity | Whole-face AVIF/WebP; `object-fit: contain`; preserve source hash and narrow review scope |
+| `mascot` | Preserved historical guidance and art references | Transparent AVIF first, WebP fallback; responsive `srcset`; no current identity implied |
+| `mascot/putduk-ai-help-face-{128,256}-v1` | Historical 2026-10-03 `AI 도움` launcher provenance; current AI uses BrandMark | Preserve whole-face AVIF/WebP, source hashes and narrow historical review scope |
 | `worlds` | Hero/mining atmospheric backgrounds | AVIF first, WebP fallback; responsive width; decorative alt when copy conveys meaning |
 | `scenes/semiconductor-memory` | Explicit approved default mining backdrop and approved memory family | Complete 640/960/1280/1539 AVIF plus lossless WebP; immutable clean-master hash, no runtime PNG |
 | `pwa` | Install icons | PNG 192/512 plus 512 maskable; never use a transparent unsafe-zone composition |
