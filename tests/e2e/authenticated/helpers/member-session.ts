@@ -28,12 +28,13 @@ export async function loginAsMember(
       `MEMBER_LOGIN_FAILED: alert=${alert ?? "none"}; cause=${error instanceof Error ? error.message : String(error)}`,
     );
   }
+  const routePath = nextPath.split(/[?#]/, 1)[0]!;
   // Dedicated AI intentionally hides the account header. Check the current
   // authenticated presentation rather than hidden text from a prior route.
   if (nextPath === "/ai" || nextPath === "/menu/ai") {
     await expect(page.locator("[data-ai-page]:visible")).toHaveCount(1);
-  } else if (nextPath.split(/[?#]/, 1)[0] === "/products") {
-    await expectSettledRoute(page, "/products");
+  } else if (routePath === "/products" || routePath.startsWith("/products/")) {
+    await expectSettledRoute(page, routePath);
     const header = page.locator('[data-route-brand-header="products"]:visible');
     await expect(header).toHaveCount(1);
     const account = header.getByRole("link", {
@@ -44,11 +45,20 @@ export async function loginAsMember(
     await expect(account).toHaveAttribute("href", "/menu/account");
     const navigation =
       (page.viewportSize()?.width ?? 1280) >= 980
-        ? page.getByRole("navigation", { name: "상품 전체 메뉴", exact: true })
+        ? header.getByRole("navigation", {
+            name: "상품 주요 메뉴",
+            exact: true,
+          })
         : page.getByRole("navigation", { name: "주요 메뉴", exact: true });
-    await expect(
-      navigation.getByRole("link", { name: "상품", exact: true }),
-    ).toHaveAttribute("aria-current", "page");
+    await expect(navigation).toHaveCount(1);
+    await expect(navigation).toBeVisible();
+    const products = navigation.getByRole("link", {
+      name: "상품",
+      exact: true,
+    });
+    await expect(products).toHaveCount(1);
+    await expect(products).toBeVisible();
+    await expect(products).toHaveAttribute("aria-current", "page");
   } else if (nextPath.split(/[?#]/, 1)[0] === "/mining") {
     await expectSettledRoute(page, "/mining");
     const header = page.locator("[data-mining-header]:visible");
@@ -135,6 +145,55 @@ export async function loginAsMember(
           .getByRole("link", { name: "홈", exact: true }),
       ).toHaveAttribute("aria-current", "page");
     }
+  } else if (
+    [
+      "/start",
+      "/events",
+      "/notifications",
+      "/menu/notifications",
+      "/menu/account",
+    ].includes(routePath)
+  ) {
+    await expect(page).toHaveURL((url) => url.pathname === routePath);
+    if (routePath === "/menu/account") {
+      // Account has no data-ui-ready marker. Check its actual route heading
+      // inside the single visible main instead of inventing a ready state.
+      const main = page.locator("#main-content");
+      await expect(main).toHaveCount(1);
+      await expect(main).toBeVisible();
+      const title = main.getByRole("heading", {
+        level: 1,
+        name: "내 정보",
+        exact: true,
+      });
+      await expect(title).toHaveCount(1);
+      await expect(title).toBeVisible();
+    } else {
+      await expectSettledRoute(page, routePath);
+    }
+    const header = page.locator('[data-route-brand-header="member"]:visible');
+    await expect(header).toHaveCount(1);
+    await expect(header).toBeVisible();
+    const account = header.getByRole("link", {
+      name: "내 계정 보기",
+      exact: true,
+    });
+    await expect(account).toHaveCount(1);
+    await expect(account).toBeVisible();
+    await expect(account).toHaveAttribute("href", "/menu/account");
+    const navigation =
+      (page.viewportSize()?.width ?? 1280) >= 980
+        ? header.getByRole("navigation", { name: "주요 메뉴", exact: true })
+        : page.getByRole("navigation", { name: "주요 메뉴", exact: true });
+    await expect(navigation).toHaveCount(1);
+    await expect(navigation).toBeVisible();
+    const active = navigation.getByRole("link", {
+      name: routePath === "/start" ? "홈" : "더보기",
+      exact: true,
+    });
+    await expect(active).toHaveCount(1);
+    await expect(active).toBeVisible();
+    await expect(active).toHaveAttribute("aria-current", "page");
   } else {
     await expect(
       page.locator(".product-header__identity:visible small"),

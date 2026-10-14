@@ -97,7 +97,10 @@ export function RouteBrandHeader({
         </small>
       </Link>
       {view !== "ai" ? (
-        <nav className={styles.topNavigation} aria-label="주요 메뉴">
+        <nav
+          className={styles.topNavigation}
+          aria-label={view === "products" ? "상품 주요 메뉴" : "주요 메뉴"}
+        >
           {primaryDestinations.map((item) => (
             <Link
               key={item.href}
@@ -160,7 +163,13 @@ export function RouteBrandSidebar({
     <>
       <nav
         className={`product-navigation ${styles.sideNavigation}`}
-        aria-label={view === "ai" ? "AI 전체 메뉴" : "주요 메뉴"}
+        aria-label={
+          view === "ai"
+            ? "AI 전체 메뉴"
+            : view === "products"
+              ? "상품 전체 메뉴"
+              : "주요 메뉴"
+        }
       >
         {destinations.map((item) => (
           <Link

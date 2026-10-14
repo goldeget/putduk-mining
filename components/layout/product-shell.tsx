@@ -37,7 +37,11 @@ export function ProductShell({
       ? "products"
       : pathname === "/ai" || pathname === "/menu/ai"
         ? "ai"
-        : !isHome && !isMining && !isWallet && !isMenu
+        : pathname.startsWith("/menu/") ||
+            pathname === "/events" ||
+            pathname.startsWith("/events/") ||
+            pathname === "/notifications" ||
+            pathname === "/start"
           ? "member"
           : null;
   const secondaryActiveHref = pathname === "/start" ? "/home" : "/menu";
