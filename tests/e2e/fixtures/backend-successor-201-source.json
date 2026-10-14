@@ -1539,7 +1539,7 @@
     "components/product/guided-quest.tsx": "6dda2c2f092c0df4ee136e139435e3fbad38980f24f4ff23acb6bea28bf16039",
     "components/product/kyc-intake.module.css": "b8b0841d9c6806a7ee76e9b83a22fb006d77f1128f7eee5051b19a806f993c7b",
     "components/product/kyc-intake.tsx": "ec87a8adb8cbfb5b012ce0c5079f0ba85ef4bb00f0dbb6815e67beae7289dacd",
-    "components/product/member-menu-view.module.css": "6f36d97abd97e5415e090aaf78a0ad4ab8e5c1447453ef4db926ab684989cfe3",
+    "components/product/member-menu-view.module.css": "81d87c6a8469d0592b3c7de4381342d192d7c5d9533abe7df864f616bd6fe992",
     "components/product/member-menu-view.tsx": "26c17a5a12788105e9bbd58c108e081d6388dd90579a0eaea1b38ee3b07ad3ed",
     "components/product/member-notice-cta.tsx": "c460cd19a8152d49aeca1bc671a935857d9931c7cffc654f16918e42786c61af",
     "components/product/member-withdrawal-errors.ts": "ad9686969d68bc89ad2705eabd7af2b54c4df7a56b7ab21fb50dfb4a4ea0c102",
