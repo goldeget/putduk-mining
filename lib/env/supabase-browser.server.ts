@@ -1,7 +1,9 @@
 import "server-only";
 
-import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
+import {
+  assertLocalApiUrl,
+  loadJobLocalAllowlist,
+} from "../../scripts/capture-local-supabase-env.mjs";
 
 import {
   getPublicEnv,
@@ -23,21 +25,11 @@ export function getSupabaseBrowserAuthConfig(): SupabaseBrowserAuthConfig {
       throw new Error("SUPABASE_BROWSER_CONFIG_INVALID");
     // Local credentials belong to this checkout's isolated project and port.
     // Production uses the exact approved remote and does not read local files.
-    const localConfig = readFileSync(
-      resolve(process.cwd(), "supabase/config.toml"),
-      "utf8",
-    );
-    const projectId = localConfig.match(/^project_id\s*=\s*"([^"]+)"/m)?.[1];
-    const apiSection = localConfig
-      .split(/^\[api\][ \t]*\r?$/m)[1]
-      ?.split(/^\[/m)[0];
-    const apiPort = apiSection?.match(/^port\s*=\s*([0-9]+)\s*$/m)?.[1];
-    if (
-      !projectId ||
-      !/^putduk-mining(?:-[a-z0-9-]+)?$/.test(projectId) ||
-      url.port !== apiPort
-    )
+    try {
+      assertLocalApiUrl(config.url, loadJobLocalAllowlist());
+    } catch {
       throw new Error("SUPABASE_BROWSER_CONFIG_INVALID");
+    }
   }
   return config;
 }

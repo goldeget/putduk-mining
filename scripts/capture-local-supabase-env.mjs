@@ -1,5 +1,13 @@
 import { spawnSync } from "node:child_process";
-import { appendFileSync, readFileSync } from "node:fs";
+import { appendFileSync, lstatSync, readFileSync, realpathSync } from "node:fs";
+import {
+  dirname,
+  isAbsolute,
+  normalize,
+  relative,
+  resolve,
+  sep,
+} from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 const REMOTE_PROJECT_REF = "osrmyjgmpdspdcwqjwuv";
@@ -30,6 +38,9 @@ const SECRET_ENV_NAMES = [
 export const LIVE_EXTERNAL_ENV_KEYS = Object.freeze([
   "AI_API_KEY",
   "OPENAI_API_KEY",
+  "NVIDIA_API_KEY",
+  "OPENROUTER_FREE_API_KEY",
+  "OPENROUTER_API_KEY",
   "RESEND_API_KEY",
   "SENDGRID_API_KEY",
   "SMTP_PASSWORD",
@@ -111,8 +122,66 @@ function firstPresent(values, names) {
   return "";
 }
 
-function configPath() {
-  return fileURLToPath(new URL("../supabase/config.toml", import.meta.url));
+const SOURCE_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const CONFIG_OVERRIDE = "PUTDUK_LOCAL_SUPABASE_CONFIG_PATH";
+const equivalentPath = (left, right) => {
+  const normalized = (value) =>
+    process.platform === "win32"
+      ? normalize(value).toLowerCase()
+      : normalize(value);
+  return normalized(left) === normalized(right);
+};
+
+/** Only an ignored task-owned configuration inside this exact source root. */
+export function resolveJobLocalConfig(env = process.env) {
+  const requested = env[CONFIG_OVERRIDE];
+  if (requested === undefined || requested === "") {
+    return {
+      configPath: resolve(SOURCE_ROOT, "supabase/config.toml"),
+      workdir: SOURCE_ROOT,
+    };
+  }
+  const reject = () => {
+    throw new Error("LOCAL_CONFIG_OVERRIDE_REJECTED");
+  };
+  if (!["development", "test"].includes(env.APP_ENV ?? "")) reject();
+  if (
+    !isAbsolute(requested) ||
+    requested.split(/[\\/]/).some((p) => p === "." || p === "..")
+  )
+    reject();
+  const root = realpathSync(SOURCE_ROOT);
+  const target = resolve(requested);
+  const rel = relative(root, target);
+  const parts = rel.split(sep);
+  if (
+    isAbsolute(rel) ||
+    parts.length !== 3 ||
+    !/^\.next-qa-[a-z0-9-]{1,64}$/.test(parts[0]) ||
+    parts[1] !== "supabase" ||
+    parts[2] !== "config.toml" ||
+    !equivalentPath(requested, target)
+  )
+    reject();
+  if (
+    !readFileSync(resolve(root, ".gitignore"), "utf8")
+      .split(/\r?\n/)
+      .includes(".next-qa-*/")
+  )
+    reject();
+  let at = root;
+  for (const part of parts) {
+    at = resolve(at, part);
+    const stat = lstatSync(at);
+    if (
+      stat.isSymbolicLink() ||
+      (part === "config.toml" ? !stat.isFile() : !stat.isDirectory())
+    )
+      reject();
+    if (!equivalentPath(realpathSync(at), at)) reject();
+  }
+  if (!equivalentPath(realpathSync(target), target)) reject();
+  return { configPath: target, workdir: dirname(dirname(target)) };
 }
 
 function sectionBody(text, name) {
@@ -137,11 +206,13 @@ function sectionPort(text, name) {
 let cachedAllowlist;
 
 /** 이 작업 트리의 로컬 프로젝트·API 포트·DB 포트. 접두사 검사가 아니다. */
-export function loadJobLocalAllowlist(configText) {
-  if (!configText && cachedAllowlist) {
+export function loadJobLocalAllowlist(configText, env = process.env) {
+  const hasOverride = Boolean(env[CONFIG_OVERRIDE]);
+  if (!configText && !hasOverride && cachedAllowlist) {
     return cachedAllowlist;
   }
-  const text = configText ?? readFileSync(configPath(), "utf8");
+  const text =
+    configText ?? readFileSync(resolveJobLocalConfig(env).configPath, "utf8");
   const projectId = text.match(/^project_id\s*=\s*"([^"]+)"/m)?.[1] ?? "";
   if (
     projectId === REMOTE_PROJECT_REF ||
@@ -154,7 +225,7 @@ export function loadJobLocalAllowlist(configText) {
     apiPort: sectionPort(text, "api"),
     dbPort: sectionPort(text, "db"),
   };
-  if (!configText) {
+  if (!configText && !hasOverride) {
     cachedAllowlist = allowlist;
   }
   return allowlist;
@@ -301,6 +372,7 @@ export function assertCiTestTarget(env = process.env) {
   if (PRODUCTION_APP_ENVS.has(appEnv)) {
     throw new Error("PRODUCTION_ENV_REJECTED");
   }
+  const allowlist = loadJobLocalAllowlist(undefined, env);
   for (const name of PROJECT_ENV_NAMES) {
     const value = String(env[name] ?? "").trim();
     if (!value) {
@@ -313,13 +385,13 @@ export function assertCiTestTarget(env = process.env) {
   for (const name of API_URL_ENV_NAMES) {
     const value = String(env[name] ?? "").trim();
     if (value) {
-      assertLocalApiUrl(value);
+      assertLocalApiUrl(value, allowlist);
     }
   }
   for (const name of DB_URL_ENV_NAMES) {
     const value = String(env[name] ?? "").trim();
     if (value) {
-      assertLocalDbUrl(value);
+      assertLocalDbUrl(value, allowlist);
     }
   }
   for (const name of SECRET_ENV_NAMES) {
@@ -422,14 +494,30 @@ export function credentialMaskValues(credentials) {
 
 export function buildIsolatedTestEnv(baseEnv, credentials, overrides = {}) {
   assertCiTestTarget(baseEnv);
-  const apiUrl = assertLocalApiUrl(credentials.apiUrl);
-  const dbUrl = assertLocalDbUrl(credentials.dbUrl);
+  if (
+    overrides[CONFIG_OVERRIDE] !== undefined &&
+    overrides[CONFIG_OVERRIDE] !== baseEnv[CONFIG_OVERRIDE]
+  ) {
+    throw new Error("LOCAL_CONFIG_OVERRIDE_REJECTED");
+  }
+  const target = loadJobLocalAllowlist(undefined, baseEnv);
+  for (const name of PROJECT_ENV_NAMES) {
+    if (
+      overrides[name] !== undefined &&
+      overrides[name] !== "" &&
+      overrides[name] !== target.projectId
+    ) {
+      throw new Error("LOCAL_PROJECT_SCOPE_REJECTED");
+    }
+  }
+  const apiUrl = assertLocalApiUrl(credentials.apiUrl, target);
+  const dbUrl = assertLocalDbUrl(credentials.dbUrl, target);
   for (const value of [credentials.publishableKey, credentials.secretKey]) {
     if (!value || /[\r\n]/.test(value) || hasRemoteProjectRef(value)) {
       throw new Error("REMOTE_SUPABASE_SECRET_REJECTED");
     }
   }
-  return omitLiveProviders({
+  const isolated = omitLiveProviders({
     ...omitLiveProviders(baseEnv),
     ...overrides,
     APP_ENV: "test",
@@ -438,6 +526,8 @@ export function buildIsolatedTestEnv(baseEnv, credentials, overrides = {}) {
     SUPABASE_SECRET_KEY: credentials.secretKey,
     LOCAL_SUPABASE_DB_URL: dbUrl,
   });
+  assertCiTestTarget(isolated);
+  return isolated;
 }
 
 export function selectLocalCredentials(values) {
@@ -678,10 +768,17 @@ function requireSingleLine(value, name) {
 }
 
 export function readSupabaseStatus() {
-  const result = spawnSync("supabase", ["status", "-o", "env"], {
-    encoding: "utf8",
-    stdio: ["ignore", "pipe", "pipe"],
-  });
+  const location = resolveJobLocalConfig();
+  loadJobLocalAllowlist(); // Validate the selected project and ports before spawn.
+  const result = spawnSync(
+    "supabase",
+    ["status", "--workdir", location.workdir, "-o", "env"],
+    {
+      cwd: SOURCE_ROOT,
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "pipe"],
+    },
+  );
   return captureFromCliResult({
     status: result.status,
     stdout: result.stdout,

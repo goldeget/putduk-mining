@@ -6,7 +6,7 @@ import {
 
 /** Validate before creating either a service client or a SQL fixture session. */
 export function requireLocalWorkerTestEnv(env = process.env) {
-  const target = loadJobLocalAllowlist();
+  const target = loadJobLocalAllowlist(undefined, env);
   assertCiTestTarget(env);
   for (const name of [
     "LOCAL_SUPABASE_PROJECT_ID",

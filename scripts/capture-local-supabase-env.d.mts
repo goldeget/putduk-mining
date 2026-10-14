@@ -20,7 +20,14 @@ export function mergeStatusStreams(
   stderr: string,
 ): Record<string, string>;
 
-export function loadJobLocalAllowlist(configText?: string): JobLocalAllowlist;
+export function resolveJobLocalConfig(env?: EnvLike): {
+  configPath: string;
+  workdir: string;
+};
+export function loadJobLocalAllowlist(
+  configText?: string,
+  env?: EnvLike,
+): JobLocalAllowlist;
 
 export function hasRemoteProjectRef(value: unknown): boolean;
 

@@ -1,3 +1,7 @@
+import { randomUUID } from "node:crypto";
+import { mkdirSync, realpathSync, rmSync, writeFileSync } from "node:fs";
+import { isAbsolute, join, relative, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { getPublicEnv, parseSupabaseBrowserAuthConfig } from "@/lib/env/public";
@@ -20,6 +24,7 @@ function legacyKey(role: string) {
 
 beforeEach(() => {
   vi.stubEnv("APP_ENV", "test");
+  vi.stubEnv("PUTDUK_LOCAL_SUPABASE_CONFIG_PATH", undefined);
   vi.stubEnv("NEXT_PUBLIC_APP_URL", "http://127.0.0.1:3000");
   vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", localUrl);
   vi.stubEnv("NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY", publishableKey);
@@ -139,3 +144,64 @@ describe("public Supabase runtime configuration", () => {
     );
   });
 });
+
+describe("browser config task runtime selection", () => {
+  it("uses source-root config from admin cwd and preserves public-only tuple", () => {
+    const root = fileURLToPath(new URL("../..", import.meta.url));
+    const task = createOwnedTask(root, "browser-config-");
+    const cwd = vi.spyOn(process, "cwd");
+    try {
+      mkdirSync(join(task, "supabase"));
+      const path = join(task, "supabase/config.toml");
+      writeFileSync(
+        path,
+        'project_id = "putduk-mining-browser-unit"\n[api]\nport = 65131\n[db]\nport = 65132\n',
+      );
+      vi.stubEnv("PUTDUK_LOCAL_SUPABASE_CONFIG_PATH", path);
+      vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "http://127.0.0.1:65131");
+      cwd.mockReturnValue(join(root, "apps/admin"));
+      expect(getSupabaseBrowserAuthConfig()).toEqual({
+        url: "http://127.0.0.1:65131",
+        publishableKey,
+      });
+      vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", localUrl);
+      expect(() => getSupabaseBrowserAuthConfig()).toThrow(
+        "SUPABASE_BROWSER_CONFIG_INVALID",
+      );
+      vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "http://127.0.0.1:65131");
+      vi.stubEnv(
+        "PUTDUK_LOCAL_SUPABASE_CONFIG_PATH",
+        join(root, "supabase/config.toml"),
+      );
+      expect(() => getSupabaseBrowserAuthConfig()).toThrow(
+        "SUPABASE_BROWSER_CONFIG_INVALID",
+      );
+      vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", remoteUrl);
+      vi.stubEnv("APP_ENV", "production");
+      expect(getSupabaseBrowserAuthConfig()).toEqual({
+        url: remoteUrl,
+        publishableKey,
+      });
+    } finally {
+      cwd.mockRestore();
+      removeOwnedTask(task, root);
+    }
+  });
+});
+
+function createOwnedTask(root: string, prefix: string) {
+  const task = join(root, `.next-qa-${prefix}${randomUUID()}`);
+  mkdirSync(task); // Exclusive creation; never overwrite a pre-existing path.
+  return task;
+}
+function removeOwnedTask(task: string, root: string) {
+  const at = realpathSync(task);
+  const rel = relative(realpathSync(root), at);
+  if (
+    isAbsolute(rel) ||
+    !/^\.next-qa-[a-z0-9-]{1,64}$/.test(rel) ||
+    at !== resolve(task)
+  )
+    throw new Error("UNIT_TEMP_DELETE_SCOPE_REJECTED");
+  rmSync(at, { recursive: true });
+}

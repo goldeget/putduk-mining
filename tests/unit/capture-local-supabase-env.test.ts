@@ -1,4 +1,13 @@
-import { readFileSync } from "node:fs";
+import { randomUUID } from "node:crypto";
+import {
+  mkdirSync,
+  readFileSync,
+  realpathSync,
+  rmSync,
+  symlinkSync,
+  writeFileSync,
+} from "node:fs";
+import { isAbsolute, join, relative, resolve } from "node:path";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
@@ -11,6 +20,9 @@ import {
   formatGithubEnv,
   loadJobLocalAllowlist,
   parseShellEnv,
+  resolveJobLocalConfig,
+  assertCiTestTarget,
+  buildIsolatedTestEnv,
   redactSupabaseCliLine,
 } from "../../scripts/capture-local-supabase-env.mjs";
 
@@ -523,3 +535,172 @@ describe("supabase start log redaction", () => {
     );
   });
 });
+
+describe("contained local config selection", () => {
+  const root = fileURLToPath(new URL("../..", import.meta.url));
+  const owned = () => createOwnedTask(root, "config-test-");
+  const body = (project = "putduk-mining-config-unit", api = 65131) =>
+    `project_id = "${project}"\n[api]\nport = ${api}\n[db]\nport = 65132\n`;
+  function withConfig(run: (path: string, task: string) => void) {
+    const task = owned();
+    const path = join(task, "supabase/config.toml");
+    mkdirSync(join(task, "supabase"));
+    writeFileSync(path, body());
+    try {
+      run(path, task);
+    } finally {
+      removeOwnedTask(task, root);
+    }
+  }
+  const envFor = (path: string) => ({
+    APP_ENV: "test",
+    PUTDUK_LOCAL_SUPABASE_CONFIG_PATH: path,
+  });
+  it("selects a supplied environment without poisoning cached default or explicit text", () => {
+    const before = loadJobLocalAllowlist(undefined, {});
+    withConfig((path) => {
+      expect(loadJobLocalAllowlist(undefined, envFor(path))).toEqual({
+        projectId: "putduk-mining-config-unit",
+        apiPort: "65131",
+        dbPort: "65132",
+      });
+      expect(resolveJobLocalConfig(envFor(path)).workdir).toBe(
+        resolve(path, "../.."),
+      );
+      expect(
+        loadJobLocalAllowlist(body("putduk-mining-explicit", 65231), {
+          APP_ENV: "production",
+          PUTDUK_LOCAL_SUPABASE_CONFIG_PATH: "not-a-path",
+        }).apiPort,
+      ).toBe("65231");
+      writeFileSync(path, body("putduk-mining-changed", 65231));
+      expect(loadJobLocalAllowlist(undefined, envFor(path)).apiPort).toBe(
+        "65231",
+      );
+    });
+    expect(loadJobLocalAllowlist(undefined, {})).toBe(before);
+  });
+  it.each(["production", "staging", "", "unknown"])(
+    "rejects %s override environment",
+    (APP_ENV) => {
+      withConfig((path) =>
+        expect(() =>
+          loadJobLocalAllowlist(undefined, { ...envFor(path), APP_ENV }),
+        ).toThrow(),
+      );
+    },
+  );
+  it("rejects noncontained, malformed, missing, and nonfile paths", () => {
+    withConfig((path, task) => {
+      const bad = [
+        "supabase/config.toml",
+        join(root, "supabase/config.toml"),
+        join(task, "missing/config.toml"),
+        join(task, "supabase"),
+        path.replace("supabase", "supabase/../supabase"),
+        join(task, "supabase/config.toml/extra"),
+        join(task, "supabase/missing.toml"),
+      ];
+      for (const input of bad)
+        expect(() => resolveJobLocalConfig(envFor(input))).toThrow();
+      writeFileSync(path, body("osrmyjgmpdspdcwqjwuv"));
+      expect(() => loadJobLocalAllowlist(undefined, envFor(path))).toThrow(
+        "LOCAL_PROJECT_SCOPE_REJECTED",
+      );
+      writeFileSync(path, body("putduk-mining-config-unit", 65536));
+      expect(() => loadJobLocalAllowlist(undefined, envFor(path))).toThrow(
+        "LOCAL_PORT_SCOPE_REJECTED",
+      );
+    });
+  });
+  it("rejects a symlink or Windows junction component without following it", () => {
+    withConfig((_path, targetTask) => {
+      const task = owned();
+      try {
+        symlinkSync(
+          join(targetTask, "supabase"),
+          join(task, "supabase"),
+          process.platform === "win32" ? "junction" : "dir",
+        );
+        expect(() =>
+          resolveJobLocalConfig(envFor(join(task, "supabase/config.toml"))),
+        ).toThrow();
+      } finally {
+        removeOwnedTask(task, root);
+      }
+    });
+  });
+  it("keeps strict API/DB matching and rejects late target changes", () => {
+    withConfig((path) => {
+      const env = envFor(path);
+      expect(() =>
+        assertCiTestTarget({
+          ...env,
+          NEXT_PUBLIC_SUPABASE_URL: "http://127.0.0.1:63421",
+        }),
+      ).toThrow();
+      expect(() =>
+        assertCiTestTarget({
+          ...env,
+          LOCAL_SUPABASE_DB_URL:
+            "postgresql://postgres:dummy@127.0.0.1:63422/postgres",
+        }),
+      ).toThrow();
+      const credentials = {
+        apiUrl: "http://127.0.0.1:65131",
+        dbUrl: "postgresql://postgres:dummy@127.0.0.1:65132/postgres",
+        publishableKey: "sb_publishable_unit_only",
+        secretKey: "sb_secret_unit_only",
+      };
+      expect(
+        buildIsolatedTestEnv(env, credentials).NEXT_PUBLIC_SUPABASE_URL,
+      ).toBe(credentials.apiUrl);
+      expect(() =>
+        buildIsolatedTestEnv(env, credentials, {
+          PUTDUK_LOCAL_SUPABASE_CONFIG_PATH: "another",
+        }),
+      ).toThrow("LOCAL_CONFIG_OVERRIDE_REJECTED");
+      const lateOverrides: Record<string, string>[] = [
+        { SUPABASE_URL: "http://127.0.0.1:63421" },
+        {
+          DATABASE_URL: "postgresql://postgres:dummy@127.0.0.1:63422/postgres",
+        },
+        { SUPABASE_PROJECT_ID: "putduk-mining-other" },
+        { SUPABASE_PROJECT_REF: "osrmyjgmpdspdcwqjwuv" },
+      ];
+      for (const overrides of lateOverrides)
+        expect(() =>
+          buildIsolatedTestEnv(env, credentials, overrides),
+        ).toThrow();
+      const external = {
+        NVIDIA_API_KEY: "dummy-nvidia",
+        OPENROUTER_FREE_API_KEY: "dummy-openrouter-free",
+        OPENROUTER_API_KEY: "dummy-openrouter",
+      };
+      const isolated = buildIsolatedTestEnv(
+        { ...env, ...external },
+        credentials,
+        external,
+      );
+      for (const name of Object.keys(external))
+        expect(isolated[name]).toBeUndefined();
+    });
+  });
+});
+
+function createOwnedTask(root: string, prefix: string) {
+  const task = join(root, `.next-qa-${prefix}${randomUUID()}`);
+  mkdirSync(task); // Exclusive creation; never overwrite a pre-existing path.
+  return task;
+}
+function removeOwnedTask(task: string, root: string) {
+  const at = realpathSync(task);
+  const rel = relative(realpathSync(root), at);
+  if (
+    isAbsolute(rel) ||
+    !/^\.next-qa-[a-z0-9-]{1,64}$/.test(rel) ||
+    at !== resolve(task)
+  )
+    throw new Error("UNIT_TEMP_DELETE_SCOPE_REJECTED");
+  rmSync(at, { recursive: true });
+}
