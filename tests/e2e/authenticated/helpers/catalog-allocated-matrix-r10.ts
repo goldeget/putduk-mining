@@ -24,6 +24,40 @@ async function captureAllocatedOverflowDiagnostics(
     const mainOverflow = main ? main.scrollWidth - main.clientWidth : null;
     if (documentOverflow <= 1 && mainOverflow !== null && mainOverflow <= 1)
       return null;
+    const mainStyle = main ? getComputedStyle(main) : null;
+    const numericCss = (value: string) => {
+      const number = Number.parseFloat(value);
+      return Number.isFinite(number) ? number : null;
+    };
+    const mainGeometry =
+      main && mainBounds && mainStyle
+        ? {
+            clientWidth: main.clientWidth,
+            clientHeight: main.clientHeight,
+            scrollWidth: main.scrollWidth,
+            scrollHeight: main.scrollHeight,
+            offsetWidth: main.offsetWidth,
+            offsetHeight: main.offsetHeight,
+            rectWidth: mainBounds.width,
+            rectHeight: mainBounds.height,
+            scrollTop: main.scrollTop,
+            scrollLeft: main.scrollLeft,
+            clientLeft: main.clientLeft,
+            clientTop: main.clientTop,
+            scrollbarGutter: mainStyle.scrollbarGutter,
+            overflowX: mainStyle.overflowX,
+            overflowY: mainStyle.overflowY,
+            boxSizing: mainStyle.boxSizing,
+            paddingTop: numericCss(mainStyle.paddingTop),
+            paddingRight: numericCss(mainStyle.paddingRight),
+            paddingBottom: numericCss(mainStyle.paddingBottom),
+            paddingLeft: numericCss(mainStyle.paddingLeft),
+            borderTopWidth: numericCss(mainStyle.borderTopWidth),
+            borderRightWidth: numericCss(mainStyle.borderRightWidth),
+            borderBottomWidth: numericCss(mainStyle.borderBottomWidth),
+            borderLeftWidth: numericCss(mainStyle.borderLeftWidth),
+          }
+        : null;
     const bounds = (element: Element) => {
       const { left, right, top, bottom, width, height } =
         element.getBoundingClientRect();
@@ -93,6 +127,7 @@ async function captureAllocatedOverflowDiagnostics(
       documentOverflow,
       mainOverflow,
       main: main ? bounds(main) : null,
+      mainGeometry,
       candidateCount: candidates.length,
       cappedAt: 40,
       // Include offscreen descendants: a clipped main can hide their overflow.

@@ -736,7 +736,7 @@
   padding: 0;
   border: 1px solid var(--brand-strong);
   border-radius: 0.8rem;
-  color: var(--text-on-brand, #17130a);
+  color: var(--text-inverse);
   background: var(--brand-primary);
   cursor: pointer;
 }

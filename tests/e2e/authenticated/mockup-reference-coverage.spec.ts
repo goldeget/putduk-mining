@@ -187,6 +187,15 @@ async function captureRoutes(
 ) {
   const records = [];
   const errors: string[] = [];
+  // One latest sample, captured in the existing fit poll without another wait.
+  let mainGeometry: Record<string, number | string | null> | null = null;
+  let mainGeometryContext: {
+    route: string;
+    width: number;
+    theme: string;
+    textScale: number;
+    stage: "initial-layout-fit-poll";
+  } | null = null;
   type CapturePhase = "prepare-next-capture" | "rendering" | "checking";
   type RequestDiagnostic = {
     method: string;
@@ -558,6 +567,8 @@ async function captureRoutes(
           : widths;
       for (const width of routeWidths) {
         for (const theme of themes) {
+          mainGeometry = null;
+          mainGeometryContext = null;
           phase = "prepare-next-capture";
           if (route === "/wallet") walletAction("capture-teardown");
           await page.evaluate((value) => {
@@ -606,6 +617,8 @@ async function captureRoutes(
             (["/signup", "/products"].includes(route) && width === 320))
             ? [1, 2]
             : [1]) {
+            mainGeometry = null;
+            mainGeometryContext = null;
             await page.evaluate((scale) => {
               document.documentElement.style.fontSize =
                 scale === 2 ? "200%" : "";
@@ -616,14 +629,69 @@ async function captureRoutes(
             await page.evaluate(() => document.fonts.ready);
             await expect
               .poll(() =>
-                page.evaluate(() => {
-                  const main = document.querySelector("main");
-                  return (
-                    document.documentElement.scrollWidth <= innerWidth + 1 &&
-                    main !== null &&
-                    main.scrollWidth <= main.clientWidth + 1
-                  );
-                }),
+                page
+                  .evaluate(() => {
+                    const main = document.querySelector("main");
+                    const fits =
+                      document.documentElement.scrollWidth <= innerWidth + 1 &&
+                      main !== null &&
+                      main.scrollWidth <= main.clientWidth + 1;
+                    const rect = main?.getBoundingClientRect();
+                    const style = main ? getComputedStyle(main) : null;
+                    const numericCss = (value: string) => {
+                      const number = Number.parseFloat(value);
+                      return Number.isFinite(number) ? number : null;
+                    };
+                    return {
+                      fits,
+                      mainGeometry:
+                        main && rect && style
+                          ? {
+                              clientWidth: main.clientWidth,
+                              clientHeight: main.clientHeight,
+                              scrollWidth: main.scrollWidth,
+                              scrollHeight: main.scrollHeight,
+                              offsetWidth: main.offsetWidth,
+                              offsetHeight: main.offsetHeight,
+                              rectWidth: rect.width,
+                              rectHeight: rect.height,
+                              scrollTop: main.scrollTop,
+                              scrollLeft: main.scrollLeft,
+                              clientLeft: main.clientLeft,
+                              clientTop: main.clientTop,
+                              scrollbarGutter: style.scrollbarGutter,
+                              overflowX: style.overflowX,
+                              overflowY: style.overflowY,
+                              boxSizing: style.boxSizing,
+                              paddingTop: numericCss(style.paddingTop),
+                              paddingRight: numericCss(style.paddingRight),
+                              paddingBottom: numericCss(style.paddingBottom),
+                              paddingLeft: numericCss(style.paddingLeft),
+                              borderTopWidth: numericCss(style.borderTopWidth),
+                              borderRightWidth: numericCss(
+                                style.borderRightWidth,
+                              ),
+                              borderBottomWidth: numericCss(
+                                style.borderBottomWidth,
+                              ),
+                              borderLeftWidth: numericCss(
+                                style.borderLeftWidth,
+                              ),
+                            }
+                          : null,
+                    };
+                  })
+                  .then((sample) => {
+                    mainGeometry = sample.mainGeometry;
+                    mainGeometryContext = {
+                      route,
+                      width,
+                      theme,
+                      textScale,
+                      stage: "initial-layout-fit-poll",
+                    };
+                    return sample.fits;
+                  }),
               )
               .toBe(true);
             expect(
@@ -1927,6 +1995,8 @@ async function captureRoutes(
           walletLifecycle,
           walletLifecycleCappedAt: 160,
           walletLifecycleTotal,
+          mainGeometry,
+          mainGeometryContext,
         },
         null,
         2,
