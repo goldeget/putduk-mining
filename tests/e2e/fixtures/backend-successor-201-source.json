@@ -3602,7 +3602,7 @@
     "workers/runner.mjs": "edae5b36bc6584c097281ea0d13a86525d2b59b260fc2c50e5b5a005ba977475",
     "components/product/wallet-view-selector.tsx": "833b96fc904a6fb12d18f2e7c0d7b4fc063b19e138fad3caa485cdff6e149a3a",
     "tests/unit/wallet-view-selector.test.ts": "1fa3df944ddd5eee0ae011d35f84e6b5337682fec424274cbd061f82fbbae6d5",
-    "scripts/ci-authenticated-shards-201.test.mjs": "a8926d9e6ba67ca03ac9d4451cdd7aff7d5666f7611cb1a7beaf0fe7c000da31"
+    "scripts/ci-authenticated-shards-201.test.mjs": "e716b22cf9f567a64debba0353e87c19625eb05a58b572f1942d3ddd42accf18"
   },
   "selfExcludedPaths": [
     "tests/e2e/fixtures/backend-successor-201-source.json",

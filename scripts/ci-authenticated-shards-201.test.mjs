@@ -217,10 +217,7 @@ test("pinned Playwright test-list selects one exact reviewed test, including loo
       config,
       `module.exports = { testDir: ${JSON.stringify(root)}, projects: [{name:"chromium"},{name:"mobile-chrome"}] };\n`,
     );
-    const cli = path.join(
-      path.dirname(require.resolve("playwright/package.json")),
-      "cli.js",
-    );
+    const cli = require.resolve("@playwright/test/cli");
     const collect = (extra = []) => {
       const result = spawnSync(
         process.execPath,
