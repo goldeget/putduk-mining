@@ -1,5 +1,42 @@
 # Fresh201 independent restore in CI
 
+The locale bootstrap preserves the observed PostgreSQL17 ICU contract: provider `i`,
+locale `en-US`, libc collate/ctype `en_US.UTF-8`, UTF8, and the actual collation
+version. Source and exact image must agree on the four allowlisted locale environment
+keys. Only `/nix/var/nix/profiles/default/lib/locale/locale-archive` is propagated into
+the target's otherwise cleared environment. Its resolved glibc-locales file must stay
+under `/nix/store/`, be a readable regular file with mode444, and match the source's
+actual path/size/type in the same pinned image. An unknown provider, archive or locale
+fails rather than falling back to `C`. PostgreSQL17 documents both the
+[ICU and libc initialization contract](https://www.postgresql.org/docs/17/app-initdb.html).
+
+Only `pg_net` is preloaded in the target. `max_worker_processes=0`, no network,
+empty TCP listen addresses, fsync and the existing capability limits remain enforced.
+Target-only metadata checks before restore, after restore and after supplements require
+zero unexpected backend types; no query text is collected. Both source net queue and
+response tables must be empty, and their counts/hashes are included in all-table equality.
+No HTTP or worker-restart function is invoked. PostgreSQL17 bounds registered workers
+by [max_worker_processes](https://www.postgresql.org/docs/17/bgworker.html); actual
+zero-worker observations are required in addition to this configuration.
+
+The DETAILS SQL itself returns database, current role, system identifier and server
+version. The unchanged comparator requires this identity envelope; it is not filled
+with constants or inferred values during CI verification.
+
+The separate local original-archive preflight restored the preserved4206472-byte
+archive `e4f5405019ace614de35f6479ed35a4af7c540f1da6134fe060fb2ed3d32fcd4`
+into an independent99b-image cluster: native restore exited0, all original248 table
+counts/hashes and201 ordered migration versions matched, roles/memberships/extensions/
+DB ACL matched, three worker observations were zero, source stayed unchanged, and
+owned resources were removed. Its raw A4 receipt remains NOT_ACCEPTED because the
+evidence adapter omitted DETAILS identity. A separate offline replay, bound to the
+actual same-CID/database/role/query-hash captures, passed the unchanged semantic
+comparator with96 representation differences; raw digest differences remain DIFFERENT.
+That derived replay envelope is explicitly separate from actual SQL-returned identity.
+The current CI source had the same missing DETAILS fields, now corrected in SQL.
+The hosted1ea9 image differs from local99b; this local evidence is not hosted CI,
+full role-secret/Storage recovery, staging or production acceptance.
+
 The worker job runs `node --max-old-space-size=48 --test tests/ci/ci-independent-restore.test.mjs`
 in a separate one-minute step, then `node scripts/ci-independent-restore.mjs --ci`
 in a three-minute step immediately after its local Supabase reset, before fixtures.

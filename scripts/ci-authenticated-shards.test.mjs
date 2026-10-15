@@ -11,6 +11,8 @@ import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { test } from "node:test";
+// Keep 201 planner regressions in the existing enumerated CI tools entrypoint.
+import "./ci-authenticated-shards-201.test.mjs";
 import {
   assertSameInventory,
   balanceInventory,

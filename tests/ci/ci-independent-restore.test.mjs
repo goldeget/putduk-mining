@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import * as restore from "../../scripts/ci-independent-restore.mjs";
 import {
   admitSource,
   admitOwnedTarget,
@@ -11,6 +12,131 @@ import {
   buildDatabaseAcl,
   buildTargetPreparation,
 } from "../../scripts/ci-independent-restore.mjs";
+
+const observedLocale = {
+  owner: "postgres",
+  encoding: "UTF8",
+  provider: "i",
+  locale: "en-US",
+  collate: "en_US.UTF-8",
+  ctype: "en_US.UTF-8",
+  collversion: "153.121",
+};
+const observedLocaleEnv = {
+  LANG: "en_US.UTF-8",
+  LC_ALL: "en_US.UTF-8",
+  LOCALE_ARCHIVE: "/nix/var/nix/profiles/default/lib/locale/locale-archive",
+};
+const observedArchiveMetadata = {
+  realpath:
+    "/nix/store/2niswdif86b71z2v1ljr8q4j4qg76xha-glibc-locales-2.40-66/lib/locale/locale-archive",
+  type: "regular file",
+  bytes: 3055776,
+  mode: "444",
+  readable: true,
+};
+test("preserves the observed ICU and Nix locale archive contract without a C fallback", () => {
+  const result = restore.buildNativeLocale(
+    observedLocale,
+    observedLocaleEnv,
+    observedLocaleEnv,
+  );
+  assert.equal(result.archivePath, observedLocaleEnv.LOCALE_ARCHIVE);
+  assert.deepEqual(result.initdbArgs, [
+    "--lc-collate=en_US.UTF-8",
+    "--lc-ctype=en_US.UTF-8",
+    "--locale-provider=icu",
+    "--icu-locale=en-US",
+  ]);
+  assert.equal(
+    result.createDatabaseClause,
+    "LC_COLLATE 'en_US.UTF-8' LC_CTYPE 'en_US.UTF-8' LOCALE_PROVIDER icu ICU_LOCALE 'en-US'",
+  );
+  assert.equal(
+    restore.admitLocaleArchiveMetadata(observedArchiveMetadata),
+    observedArchiveMetadata,
+  );
+  assert.throws(
+    () =>
+      restore.admitLocaleArchiveMetadata({
+        ...observedArchiveMetadata,
+        realpath: "/tmp/locale-archive",
+      }),
+    /LOCALE_ARCHIVE_METADATA/,
+  );
+  assert.throws(
+    () =>
+      restore.admitLocaleArchiveMetadata({
+        ...observedArchiveMetadata,
+        readable: false,
+      }),
+    /LOCALE_ARCHIVE_METADATA/,
+  );
+});
+test("rejects absent or mismatched locale archives and unproven database providers", () => {
+  for (const env of [
+    {},
+    { ...observedLocaleEnv, LOCALE_ARCHIVE: "/tmp/locale-archive" },
+  ])
+    assert.throws(
+      () => restore.buildNativeLocale(observedLocale, env, env),
+      /LOCALE_ENV_CONTRACT/,
+    );
+  assert.throws(
+    () =>
+      restore.buildNativeLocale(observedLocale, observedLocaleEnv, {
+        ...observedLocaleEnv,
+        LANG: "C",
+      }),
+    /LOCALE_ENV_CONTRACT/,
+  );
+  for (const db of [
+    { ...observedLocale, provider: "c" },
+    { ...observedLocale, locale: "C" },
+    { ...observedLocale, collversion: null },
+  ])
+    assert.throws(
+      () => restore.buildNativeLocale(db, observedLocaleEnv, observedLocaleEnv),
+      /DATABASE_LOCALE_CONTRACT/,
+    );
+});
+test("DETAILS SQL returns actual identity required by the unchanged catalog comparator", () => {
+  assert.equal(typeof restore.DETAILS_SQL, "string");
+  for (const pattern of [
+    /'database',current_database\(\)/,
+    /'role',current_user/,
+    /'system_identifier',\(select system_identifier::text from pg_control_system\(\)\)/,
+    /'server_version',current_setting\('server_version'\)/,
+  ])
+    assert.match(restore.DETAILS_SQL, pattern);
+});
+test("accepts observed pg_net preload with zero workers and rejects dispatch-capable metadata", () => {
+  const value = {
+    preload: "pg_net",
+    max_worker_processes: 0,
+    listen: "",
+    fsync: "on",
+    unexpected_workers: 0,
+    backend_types: {
+      walwriter: 1,
+      checkpointer: 1,
+      "client backend": 1,
+      "background writer": 1,
+    },
+  };
+  assert.equal(restore.admitWorkerRuntime(value), value);
+  for (const bad of [
+    { ...value, preload: "pg_net,pg_cron" },
+    { ...value, max_worker_processes: 1 },
+    { ...value, unexpected_workers: 1 },
+    { ...value, backend_types: { ...value.backend_types, "pg_net worker": 1 } },
+    { ...value, listen: "*" },
+  ])
+    assert.throws(
+      () => restore.admitWorkerRuntime(bad),
+      /PGNET_ZERO_WORKER_ADMISSION/,
+    );
+});
 
 const id = "a".repeat(64),
   image = `sha256:${"b".repeat(64)}`;

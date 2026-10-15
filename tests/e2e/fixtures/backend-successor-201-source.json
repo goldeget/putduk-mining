@@ -1918,7 +1918,7 @@
     "docs/quality/DEFINITION-OF-DONE.md": "2d7be80ac08bcd63e5e76cb6dbdb77b8e1815614f419179b203825a719286ac6",
     "docs/quality/DOMAIN-ORIGINAL-NOTIFICATION-LOCAL-RECOVERY.md": "39d22b8b6fb49e2df4550dbaf9a3242ac74e2bbd0395b381d37b51c0ca6b77a1",
     "docs/quality/EVENTS-MEMBER-LANE-EVIDENCE.md": "af90d8eb3c0da9ad0fa2bf49806666b8e28c5e110236c9d594d09edadfad2c6b",
-    "docs/quality/INDEPENDENT-RESTORE-CI.md": "65bdb407135961ee0ed0c0f4107492c5d25dbf42068c8d3c966b5b5245c76f81",
+    "docs/quality/INDEPENDENT-RESTORE-CI.md": "4b89df8a2c6c17333f5ad3b35a29b2ce0a81e1d38a55f03b6fb507966d9def4c",
     "docs/quality/KOREAN-TYPOGRAPHY-AUDIT.md": "35ccfc740ef2787fc2040ecfdec928d2cc0ecdb07fdbe53a099c498c4c288f4c",
     "docs/quality/LIVEOPS-PUBLICATION-LOCAL-RECOVERY.md": "ee01611dcaba57b287e6373314329b3963e372aa01f0a0907774c121ac756e9a",
     "docs/quality/MEMBER-PROFILE-AUDIT-ACK-LOCAL-RECOVERY.md": "1d92f0f7b6b50ea82e0467297e2c01fe7e7e965befc85be5f402e21c10c35f1a",
@@ -2735,11 +2735,11 @@
     "scripts/capture-local-supabase-env.d.mts": "e46880e03d282520759dcf51da0067541008c5c4af2470424139067fe8170484",
     "scripts/capture-local-supabase-env.mjs": "9cba07936f1e46cc6f536cd9783df51e11f671406238102877c00c9a36cb16f8",
     "scripts/catalog-material-profiles.json": "cf305a321f8ebda27006e65d0efcb61388e448c88980b0e935d45875cda02560",
-    "scripts/ci-authenticated-shards-201.d.mts": "9ca0a0d3413fb8b72cce27540aded1471edaf2b81b912dc612e57bfe3dfff949",
-    "scripts/ci-authenticated-shards-201.mjs": "1d7d702ff3ff4a035cc9c6c7805882b64187e0d6bf901308794b9ad187f94b97",
+    "scripts/ci-authenticated-shards-201.d.mts": "ce39291d1fd8130777bcecf1d184a8532f91a5ade9bd6549d00f46b203362180",
+    "scripts/ci-authenticated-shards-201.mjs": "628c869d6a9572df479fe019811f9f1f51862f84086fe52f1ea3a252a8f61967",
     "scripts/ci-authenticated-shards.d.mts": "e377f11a96a91d45c2cf3b3c62f18902684ec1816f9ae30c3fdaaf71d939695d",
     "scripts/ci-authenticated-shards.mjs": "c956696b96bc6b5670000917f512ac15dbd503018a85c39aeea5d8e36bc2b24c",
-    "scripts/ci-authenticated-shards.test.mjs": "e511850e434a6b1fbc0f8a359a42e0fe81e7dec27b06185c36239707c1a09c65",
+    "scripts/ci-authenticated-shards.test.mjs": "622a5e03ce670c1aea25bfb0c242f276b6e279b3751bae30365e0fa6f99923bf",
     "scripts/ci-backend-195-usdt-artifacts.d.mts": "f1c0be005cbf55bed640e8c904f1bd10a9a13408c8cb9460f600a9a46d7335e0",
     "scripts/ci-backend-195-usdt-artifacts.mjs": "3e8d4779402508823080d9a5f1608e8a507d3be33f0e3e34c2492c450f43f035",
     "scripts/ci-backend-195-usdt-source.d.mts": "d81c90494153f7188edf4ae5997151baf5f9c3a3d6c47781cb25f977bccbb52c",
@@ -2752,7 +2752,7 @@
     "scripts/ci-backend-197.mjs": "ef3f65da9058913bcc9c96473c6ee2046ba0308a59522af17ade1e893f41370e",
     "scripts/ci-backend-201.d.mts": "f71f55caee93d210562e2a6e6d1b033d87ca85088e44375166e0b0d929b24ff0",
     "scripts/ci-backend-201.mjs": "de7eaa48edf0cae5475f1bb13eed54508fc063f61ba7d91af2f9ae5fff8503e3",
-    "scripts/ci-independent-restore.mjs": "459880a61a333d851637fd94005ac1a25b82d126d71aa278363f280b9849b8f6",
+    "scripts/ci-independent-restore.mjs": "e5f7745f14627dbcd1d24171f67edb875dbe61d9b52115f8093bc5db87bddd77",
     "scripts/ci-source-evidence.mjs": "287633b4548cb026a6323ac6bfea69b097d8a3e1c412d495b3eed7dff0fbeef1",
     "scripts/ci-supabase-start.sh": "fb333344985716bb818717cbe17b243b2109185a8d8cc562db22fe5743aa756e",
     "scripts/ci-wall-clock.d.mts": "4358bf575bb33fc64eea5e5827947af0eb56e1d5f2a04fb38a7799d658255072",
@@ -3156,7 +3156,7 @@
     "supabase/tests/database/ws06_step_up_session_binding.sql": "25217088d59b64538f0b995137df031fe510f31408b5c09936ca57f744d3b5e6",
     "supabase/tests/snippets/resolve_disposable_dblink_host.inc": "461f1df73a459da387d7f704500db39801f57b954511183eea2f123d9200d99e",
     "tests/README.md": "7f0338e4ed0da4ecd8fe75abedcc325d82f2c23e58d5287bc5655890800f6258",
-    "tests/ci/ci-independent-restore.test.mjs": "924a76c8e6e07f52fa53a224bc90733503b918a7ee54a4eb624aa9be037eb74d",
+    "tests/ci/ci-independent-restore.test.mjs": "c7de60ae78d064162081c4c8409796b9521fad3c8345d657669ec1fd50a5b68d",
     "tests/e2e/admin-isolation.spec.ts": "4cc7bd158a2bc5ce533d66ad7f746681694dba676e4d86e19d22ef3f83396c04",
     "tests/e2e/authenticated/admin-assistant-context.spec.ts": "b12abe15f81a30496fc223c18bea218a50a8f9a8c16e79457071a3a24e49864d",
     "tests/e2e/authenticated/admin-assistant-read-draft.spec.ts": "ef0ec9a5d3c8ee588f21ce565869c726e339a2bc9f606db73c6d2189879cd31d",
@@ -3601,7 +3601,8 @@
     "workers/runner.d.mts": "0c8dc665bdaf683664379e5f303fd1dedf7b2b9f664c8f6ea6a3e69c1d80c9d1",
     "workers/runner.mjs": "edae5b36bc6584c097281ea0d13a86525d2b59b260fc2c50e5b5a005ba977475",
     "components/product/wallet-view-selector.tsx": "833b96fc904a6fb12d18f2e7c0d7b4fc063b19e138fad3caa485cdff6e149a3a",
-    "tests/unit/wallet-view-selector.test.ts": "1fa3df944ddd5eee0ae011d35f84e6b5337682fec424274cbd061f82fbbae6d5"
+    "tests/unit/wallet-view-selector.test.ts": "1fa3df944ddd5eee0ae011d35f84e6b5337682fec424274cbd061f82fbbae6d5",
+    "scripts/ci-authenticated-shards-201.test.mjs": "a8926d9e6ba67ca03ac9d4451cdd7aff7d5666f7611cb1a7beaf0fe7c000da31"
   },
   "selfExcludedPaths": [
     "tests/e2e/fixtures/backend-successor-201-source.json",
@@ -6101,7 +6102,7 @@
     "tests/e2e/authenticated/helpers/backend-http-197-auth.ts": "72c2b67f0e3316991142a8f233446fb8fdfd7055f4cc6d282b36f6a8fa131928",
     "tests/e2e/authenticated/usdt-manual-full-payout-197.spec.ts": "841bcd1995b980ca18e059f9082148dae3b42bcc17f3026d8b958b0fac79fae7",
     "playwright.backend-browser-201.config.ts": "055f7323c0dc2a112c17446477ae9535f7cb83c287b611d9779fe21cebe8fe62",
-    "scripts/ci-authenticated-shards-201.mjs": "1d7d702ff3ff4a035cc9c6c7805882b64187e0d6bf901308794b9ad187f94b97"
+    "scripts/ci-authenticated-shards-201.mjs": "628c869d6a9572df479fe019811f9f1f51862f84086fe52f1ea3a252a8f61967"
   },
   "provenanceOnlyExternalStageSha256": "0a6533af9542d46d91484ff82e0cb90921144aa4625df30af974f892c9726a65",
   "provenanceOnlyExternalNativeReceiptSha256": "717f143b6254a014274571cd61e2c3beed6aba63544865575a9fa1fe7d36d3f3"

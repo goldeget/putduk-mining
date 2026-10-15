@@ -179,6 +179,92 @@ export function assertSupportedFilesystem(token) {
   need(["ext2/ext3", "ext4"].includes(token), "UNSUPPORTED_FILESYSTEM");
 }
 
+const LOCALE_ARCHIVE_PATH =
+  "/nix/var/nix/profiles/default/lib/locale/locale-archive";
+const LOCALE_ENV_KEYS = [
+  "LANG",
+  "LC_ALL",
+  "LOCALE_ARCHIVE",
+  "NIX_GLIBC_LOCALES_PATH",
+];
+export function buildNativeLocale(database, sourceEnv, imageEnv) {
+  need(
+    sourceEnv &&
+      imageEnv &&
+      same(sourceEnv, imageEnv) &&
+      Object.keys(sourceEnv).every((key) => LOCALE_ENV_KEYS.includes(key)) &&
+      sourceEnv.LOCALE_ARCHIVE === LOCALE_ARCHIVE_PATH &&
+      sourceEnv.LANG === "en_US.UTF-8" &&
+      sourceEnv.LC_ALL === "en_US.UTF-8" &&
+      (!Object.hasOwn(sourceEnv, "NIX_GLIBC_LOCALES_PATH") ||
+        sourceEnv.NIX_GLIBC_LOCALES_PATH === LOCALE_ARCHIVE_PATH),
+    "LOCALE_ENV_CONTRACT",
+  );
+  need(
+    database?.owner === "postgres" &&
+      database.encoding === "UTF8" &&
+      database.provider === "i" &&
+      database.locale === "en-US" &&
+      database.collate === "en_US.UTF-8" &&
+      database.ctype === "en_US.UTF-8" &&
+      typeof database.collversion === "string" &&
+      /^\d+(?:\.\d+)+$/.test(database.collversion),
+    "DATABASE_LOCALE_CONTRACT",
+  );
+  return {
+    archivePath: LOCALE_ARCHIVE_PATH,
+    initdbArgs: [
+      "--lc-collate=en_US.UTF-8",
+      "--lc-ctype=en_US.UTF-8",
+      "--locale-provider=icu",
+      "--icu-locale=en-US",
+    ],
+    createDatabaseClause:
+      "LC_COLLATE 'en_US.UTF-8' LC_CTYPE 'en_US.UTF-8' LOCALE_PROVIDER icu ICU_LOCALE 'en-US'",
+  };
+}
+export function admitLocaleArchiveMetadata(metadata) {
+  need(
+    metadata &&
+      typeof metadata.realpath === "string" &&
+      /^\/nix\/store\/[a-z0-9]{32}-glibc-locales-[a-zA-Z0-9.+_-]+\/lib\/locale\/locale-archive$/.test(
+        metadata.realpath,
+      ) &&
+      metadata.type === "regular file" &&
+      Number.isSafeInteger(metadata.bytes) &&
+      metadata.bytes > 0 &&
+      metadata.bytes < 64 * 1024 * 1024 &&
+      metadata.mode === "444" &&
+      metadata.readable === true,
+    "LOCALE_ARCHIVE_METADATA",
+  );
+  return metadata;
+}
+export function admitWorkerRuntime(value) {
+  const allowed = [
+    "client backend",
+    "checkpointer",
+    "background writer",
+    "walwriter",
+    "autovacuum launcher",
+  ];
+  need(
+    value?.preload === "pg_net" &&
+      value.max_worker_processes === 0 &&
+      value.listen === "" &&
+      value.fsync === "on" &&
+      value.unexpected_workers === 0 &&
+      value.backend_types &&
+      Object.keys(value.backend_types).length > 0 &&
+      Object.entries(value.backend_types).every(
+        ([type, count]) =>
+          allowed.includes(type) && Number.isSafeInteger(count) && count > 0,
+      ),
+    "PGNET_ZERO_WORKER_ADMISSION",
+  );
+  return value;
+}
+
 // Reviewed nonsecret role attributes: login/inherit/createdb/createrole/superuser/replication/bypassrls.
 const ROLE_FLAGS = Object.freeze({
   anon: "0100000",
@@ -513,8 +599,9 @@ const ROLE_SQL = readOnly(`select jsonb_build_object(
  'roles',(select jsonb_agg(jsonb_build_object('name',rolname,'login',rolcanlogin,'inherit',rolinherit,'create_db',rolcreatedb,'create_role',rolcreaterole,'superuser',rolsuper,'replication',rolreplication,'bypass_rls',rolbypassrls,'connection_limit',rolconnlimit,'valid_until',rolvaliduntil) order by rolname) from pg_roles),
  'memberships',(select jsonb_agg(jsonb_build_object('granted_role',pg_get_userbyid(roleid),'member',pg_get_userbyid(member),'grantor',pg_get_userbyid(grantor),'admin_option',admin_option,'inherit_option',inherit_option,'set_option',set_option) order by pg_get_userbyid(roleid),pg_get_userbyid(member),pg_get_userbyid(grantor)) from pg_auth_members),
  'extensions',(select jsonb_agg(jsonb_build_object('name',e.extname,'version',e.extversion,'schema',n.nspname,'owner',pg_get_userbyid(e.extowner)) order by e.extname) from pg_extension e join pg_namespace n on n.oid=e.extnamespace),
- 'database',(select jsonb_build_object('owner',pg_get_userbyid(datdba),'encoding',pg_encoding_to_char(encoding),'collate',datcollate,'ctype',datctype,'grants',${grantsSql("datacl", "acldefault('d',datdba)")}) from pg_database where datname=current_database()))::text;`);
-const DETAILS_SQL = readOnly(`select jsonb_build_object(
+ 'database',(select jsonb_build_object('owner',pg_get_userbyid(datdba),'encoding',pg_encoding_to_char(encoding),'collate',datcollate,'ctype',datctype,'provider',datlocprovider,'locale',datlocale,'collversion',datcollversion,'grants',${grantsSql("datacl", "acldefault('d',datdba)")}) from pg_database where datname=current_database()))::text;`);
+export const DETAILS_SQL = readOnly(`select jsonb_build_object(
+ 'database',current_database(),'role',current_user,'system_identifier',(select system_identifier::text from pg_control_system()),'server_version',current_setting('server_version'),
  'dropped_columns',coalesce((select jsonb_agg(jsonb_build_object('schema',n.nspname,'relation',c.relname,'ordinal',a.attnum) order by n.nspname,c.relname,a.attnum) from pg_attribute a join pg_class c on c.oid=a.attrelid join pg_namespace n on n.oid=c.relnamespace where ${NS} and a.attisdropped),'[]'::jsonb),
  'constraints',(select jsonb_agg(jsonb_build_array(n.nspname,c.relname,k.conname,k.contype,k.convalidated,pg_get_constraintdef(k.oid,true)) order by n.nspname,c.relname,k.conname) from pg_constraint k join pg_class c on c.oid=k.conrelid join pg_namespace n on n.oid=c.relnamespace where ${NS}),
  'policies',(select jsonb_agg(jsonb_build_array(n.nspname,c.relname,p.polname,p.polcmd,p.polpermissive,(select jsonb_agg(case when r=0 then 'PUBLIC' else pg_get_userbyid(r) end order by case when r=0 then 'PUBLIC' else pg_get_userbyid(r) end) from unnest(p.polroles) r),pg_get_expr(p.polqual,p.polrelid),pg_get_expr(p.polwithcheck,p.polrelid)) order by n.nspname,c.relname,p.polname) from pg_policy p join pg_class c on c.oid=p.polrelid join pg_namespace n on n.oid=c.relnamespace where ${NS}),
@@ -551,6 +638,11 @@ const CONTAINER_FORMAT =
   '{"Id":{{json .Id}},"Name":{{json .Name}},"Image":{{json .Image}},"Config":{"User":{{json .Config.User}},"Entrypoint":{{json .Config.Entrypoint}},"Cmd":{{json .Config.Cmd}},"Healthcheck":{{json (index .Config "Healthcheck")}},"Labels":{"com.supabase.cli.project":{{json (index .Config.Labels "com.supabase.cli.project")}},"putduk.owner":{{json (index .Config.Labels "putduk.owner")}},"putduk.nonce":{{json (index .Config.Labels "putduk.nonce")}},"putduk.run":{{json (index .Config.Labels "putduk.run")}}}},"State":{"Running":{{json .State.Running}}},"Mounts":{{json .Mounts}},"HostConfig":{"NetworkMode":{{json .HostConfig.NetworkMode}},"ReadonlyRootfs":{{json .HostConfig.ReadonlyRootfs}},"PortBindings":{{json .HostConfig.PortBindings}},"GroupAdd":{{json .HostConfig.GroupAdd}},"Memory":{{json .HostConfig.Memory}},"MemorySwap":{{json .HostConfig.MemorySwap}},"PidsLimit":{{json .HostConfig.PidsLimit}},"CapAdd":{{json .HostConfig.CapAdd}},"CapDrop":{{json .HostConfig.CapDrop}},"SecurityOpt":{{json .HostConfig.SecurityOpt}},"NanoCpus":{{json .HostConfig.NanoCpus}},"LogConfig":{{json .HostConfig.LogConfig}}}}';
 const VOLUME_FORMAT =
   '{"Name":{{json .Name}},"Labels":{"putduk.owner":{{json (index .Labels "putduk.owner")}},"putduk.nonce":{{json (index .Labels "putduk.nonce")}},"putduk.run":{{json (index .Labels "putduk.run")}}}}';
+const LOCALE_ENV_FORMAT =
+  '{{range .Config.Env}}{{$p := split . "="}}{{if or (eq (index $p 0) "LOCALE_ARCHIVE") (eq (index $p 0) "NIX_GLIBC_LOCALES_PATH") (eq (index $p 0) "LANG") (eq (index $p 0) "LC_ALL")}}{{println .}}{{end}}{{end}}';
+const WORKER_SQL = readOnly(
+  "select jsonb_build_object('preload',current_setting('shared_preload_libraries'),'max_worker_processes',current_setting('max_worker_processes')::integer,'listen',current_setting('listen_addresses'),'fsync',current_setting('fsync'),'unexpected_workers',(select count(*) from pg_stat_activity where backend_type not in ('client backend','checkpointer','background writer','walwriter','autovacuum launcher')),'backend_types',(select jsonb_object_agg(backend_type,amount) from (select backend_type,count(*) amount from pg_stat_activity group by backend_type) q))::text;",
+);
 
 export function runCiRestore() {
   const start = Date.now(),
@@ -581,7 +673,8 @@ export function runCiRestore() {
     containerId,
     bin,
     uid,
-    gid;
+    gid,
+    localeArchive;
   const safeEnv = {
     PATH: process.env.PATH ?? "/usr/bin:/bin",
     HOME: process.env.HOME ?? "/home/runner",
@@ -682,6 +775,9 @@ export function runCiRestore() {
         "-i",
         "PATH=/usr/bin:/bin",
         "LANG=C.UTF-8",
+        ...(id === containerId && localeArchive
+          ? [`LOCALE_ARCHIVE=${localeArchive}`]
+          : []),
         ...args,
       ],
       options,
@@ -857,6 +953,83 @@ export function runCiRestore() {
         before.catalog.system_identifier === fresh.metadata.systemIdentifier,
       "SOURCE_PG_IDENTITY",
     );
+    const readLocaleEnv = (kind, id) => {
+      const rows = execute(`${kind}-locale-env`, [
+        kind,
+        "inspect",
+        "--format",
+        LOCALE_ENV_FORMAT,
+        id,
+      ])
+        .stdout.trim()
+        .split("\n")
+        .filter(Boolean)
+        .map((row) => {
+          const index = row.indexOf("=");
+          need(index > 0, "LOCALE_ENV_PROJECTION");
+          return [row.slice(0, index), row.slice(index + 1)];
+        });
+      need(
+        new Set(rows.map(([key]) => key)).size === rows.length,
+        "LOCALE_ENV_DUPLICATE",
+      );
+      return Object.fromEntries(rows);
+    };
+    const sourceLocaleEnv = readLocaleEnv("container", source.Id),
+      imageLocaleEnv = readLocaleEnv("image", source.Image);
+    report.localeEnvironment = {
+      source: sourceLocaleEnv,
+      image: imageLocaleEnv,
+    };
+    const locale = buildNativeLocale(
+      before.roles.database,
+      sourceLocaleEnv,
+      imageLocaleEnv,
+    );
+    const netData = before.data.filter((row) =>
+      ["net.http_request_queue", "net._http_response"].includes(row.table),
+    );
+    need(
+      netData.length === 2 && netData.every((row) => row.count === 0),
+      "SOURCE_NET_QUEUE_RESPONSE_NOT_EMPTY",
+    );
+    localeArchive = locale.archivePath;
+    const archiveMetadata = (id) => {
+      const lines = cleanExec(
+        id,
+        `${uid}:${gid}`,
+        [
+          "/bin/sh",
+          "-c",
+          'set -eu; p=$(readlink -f -- "$1"); test -r "$p"; printf "%s\\n" "$p"; stat -L -c "%F|%s|%a" -- "$p"',
+          "locale-archive-metadata",
+          localeArchive,
+        ],
+        {
+          label:
+            id === source.Id
+              ? "source-locale-archive-metadata"
+              : "target-locale-archive-metadata",
+          timeout: 5000,
+        },
+      )
+        .stdout.trim()
+        .split("\n");
+      need(lines.length === 2, "LOCALE_ARCHIVE_METADATA");
+      const [type, bytes, mode] = lines[1].split("|");
+      return admitLocaleArchiveMetadata({
+        realpath: lines[0],
+        type,
+        bytes: Number(bytes),
+        mode,
+        readable: true,
+      });
+    };
+    const sourceArchiveMetadata = archiveMetadata(source.Id);
+    report.locale = {
+      database: before.roles.database,
+      archive: sourceArchiveMetadata,
+    };
     const sourceRoleNames = before.roles.roles.map((x) => x.name);
     need(
       before.roles.roles.length === 31 &&
@@ -1017,6 +1190,10 @@ export function runCiRestore() {
       uid,
       gid,
     );
+    need(
+      same(archiveMetadata(containerId), sourceArchiveMetadata),
+      "TARGET_LOCALE_ARCHIVE_IDENTITY",
+    );
     const db = before.roles.database;
     need(
       db.encoding === "UTF8" &&
@@ -1037,14 +1214,13 @@ export function runCiRestore() {
         "--auth-local=peer",
         "--auth-host=reject",
         "--encoding=UTF8",
-        `--lc-collate=${db.collate}`,
-        `--lc-ctype=${db.ctype}`,
+        ...locale.initdbArgs,
         "--no-clean",
         "--no-instructions",
         "--wal-segsize=1",
         "--sync-method=fsync",
         "-c",
-        "shared_preload_libraries=",
+        "shared_preload_libraries=pg_net",
         "-c",
         "max_connections=10",
         "-c",
@@ -1086,7 +1262,7 @@ export function runCiRestore() {
     );
     targetQuery(roleSql, "supabase_admin", "template1");
     targetQuery(
-      `DROP DATABASE postgres; CREATE DATABASE postgres WITH OWNER postgres TEMPLATE template0 ENCODING 'UTF8' LC_COLLATE ${qs(db.collate)} LC_CTYPE ${qs(db.ctype)};`,
+      `DROP DATABASE postgres; CREATE DATABASE postgres WITH OWNER postgres TEMPLATE template0 ENCODING 'UTF8' ${locale.createDatabaseClause};`,
       "supabase_admin",
       "template1",
     );
@@ -1101,11 +1277,18 @@ export function runCiRestore() {
     need(
       initIdentity.fsync === "on" &&
         initIdentity.listen === "" &&
-        initIdentity.preload === "" &&
+        initIdentity.preload === "pg_net" &&
         initIdentity.system_identifier !== before.catalog.system_identifier,
       "TARGET_INDEPENDENT_SYNC_IDENTITY",
     );
     report.target.systemIdentifier = initIdentity.system_identifier;
+    const workerAdmission = (stage) => {
+      const value = admitWorkerRuntime(
+        JSON.parse(targetQuery(WORKER_SQL, "supabase_admin").stdout),
+      );
+      (report.workerAdmissions ??= []).push({ stage, ...value });
+    };
+    workerAdmission("before-restore");
     const restoreFd = openSync(archive, "r"),
       restoreOut = openSync(join(privateDir, "restore.stdout"), "wx", 0o600);
     try {
@@ -1149,6 +1332,7 @@ export function runCiRestore() {
       same(before.roles.database, databaseAclAfter),
       "DATABASE_ACL_RESTORE_DIFFERENCE",
     );
+    workerAdmission("after-restore");
     const rawTarget = snapshot(targetQuery);
     report.rawPreSupplement = {
       source: fingerprint(before.catalog),
@@ -1166,6 +1350,7 @@ export function runCiRestore() {
       statements: supplement.split(";\n").length - 2,
     };
     targetQuery(supplement, "supabase_admin");
+    workerAdmission("after-supplement");
     const afterTarget = snapshot(targetQuery),
       comparison = compareRestoreCatalogs(before.catalog, afterTarget.catalog, {
         sourceDetails: before.details,

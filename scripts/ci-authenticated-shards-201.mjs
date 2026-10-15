@@ -81,6 +81,31 @@ const TIMING_HINTS = {
 const CONFIG = "playwright.backend-browser-201.config.ts";
 const TOTAL = 12;
 const compare = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
+// Only this reviewed file has independent per-test pages, members and outputs.
+// Reservations are unchanged test ceilings, NOT observed durations/deadlines.
+const MOCKUP_FILE = "tests/e2e/authenticated/mockup-reference-coverage.spec.ts";
+const MOCKUP_RESERVATIONS = new Map([
+  [
+    "captures every public authentication reference family with live controls",
+    240,
+  ],
+  [
+    "captures every member reference family without fabricated balances or activity",
+    360,
+  ],
+  [
+    "captures reconstructed mining at seven widths with genuine read-only controls",
+    240,
+  ],
+  [
+    "captures reconstructed wallet at seven widths with real links and keyboard selection",
+    240,
+  ],
+  ...["products", "menu", "ai"].map((screen) => [
+    `captures reconstructed ${screen} at seven widths and 200 percent Korean text`,
+    240,
+  ]),
+]);
 
 export function inventoryFromReport(report, cwd = process.cwd()) {
   if (!report || !Array.isArray(report.suites) || report.errors?.length) {
@@ -91,8 +116,9 @@ export function inventoryFromReport(report, cwd = process.cwd()) {
     throw new Error("Missing absolute Playwright rootDir");
   }
   const inventory = [];
-  function visit(suites) {
+  function visit(suites, parents = [], fileLevel = true) {
     for (const suite of suites) {
+      const titles = fileLevel ? [] : [...parents, suite.title];
       for (const spec of suite.specs ?? []) {
         for (const test of spec.tests ?? []) {
           const project = test.projectName;
@@ -116,6 +142,9 @@ export function inventoryFromReport(report, cwd = process.cwd()) {
             key: JSON.stringify([project, spec.id]),
             project,
             file,
+            ...(typeof spec.title === "string"
+              ? { titlePath: [...titles, spec.title] }
+              : {}),
             expectedStatus: test.expectedStatus,
             status: test.status,
             results: (test.results ?? []).map((result) => ({
@@ -126,7 +155,7 @@ export function inventoryFromReport(report, cwd = process.cwd()) {
           });
         }
       }
-      visit(suite.suites ?? []);
+      visit(suite.suites ?? [], titles, false);
     }
   }
   visit(report.suites);
@@ -214,10 +243,34 @@ export function balanceInventory(inventory, total = TOTAL) {
     group.tests.push(test);
     groups.set(key, group);
   }
-  const weighted = [...groups.values()].map((group) => ({
+  const units = [...groups.values()].flatMap((group) => {
+    const reviewed =
+      group.file === MOCKUP_FILE &&
+      ["chromium", "mobile-chrome"].includes(group.project) &&
+      group.tests.length === MOCKUP_RESERVATIONS.size &&
+      group.tests.every(
+        (test) =>
+          test.titlePath?.length === 1 &&
+          MOCKUP_RESERVATIONS.has(test.titlePath[0]),
+      ) &&
+      new Set(group.tests.map((test) => test.titlePath[0])).size ===
+        MOCKUP_RESERVATIONS.size;
+    // New titles, nesting or roster drift retain the whole fixture boundary.
+    if (!reviewed) return [group];
+    return group.tests.map((test) => ({
+      ...group,
+      key: JSON.stringify([group.project, group.file, test.key]),
+      tests: [test],
+      titlePath: test.titlePath,
+      reservation: MOCKUP_RESERVATIONS.get(test.titlePath[0]),
+    }));
+  });
+  const weighted = units.map((group) => ({
     ...group,
     estimateSeconds:
-      TIMING_HINTS[path.basename(group.file)] ?? group.tests.length * 20,
+      group.reservation ??
+      TIMING_HINTS[path.basename(group.file)] ??
+      group.tests.length * 20,
   }));
   weighted.sort(
     (a, b) => b.estimateSeconds - a.estimateSeconds || compare(a.key, b.key),
@@ -233,7 +286,11 @@ export function balanceInventory(inventory, total = TOTAL) {
       (a, b) => a.estimateSeconds - b.estimateSeconds || a.index - b.index,
     )[0];
     target.estimateSeconds += group.estimateSeconds;
-    target.groups.push({ project: group.project, file: group.file });
+    target.groups.push({
+      project: group.project,
+      file: group.file,
+      ...(group.titlePath ? { titlePath: group.titlePath } : {}),
+    });
     target.tests.push(...group.tests);
   }
   if (shards.some((shard) => !shard.tests.length)) {
@@ -250,9 +307,41 @@ export function testListFor(shard, rootDir, cwd = process.cwd()) {
   if (typeof rootDir !== "string" || !path.isAbsolute(rootDir)) {
     throw new Error("Missing absolute test-list rootDir");
   }
+  for (const group of shard.groups) {
+    if (
+      group.titlePath !== undefined &&
+      (!Array.isArray(group.titlePath) ||
+        !group.titlePath.length ||
+        group.titlePath.some(
+          (title) =>
+            typeof title !== "string" ||
+            !title ||
+            title.trim() !== title ||
+            /[>›\r\n]/u.test(title),
+        ))
+    ) {
+      throw new Error("Unsafe authenticated test title path");
+    }
+    for (const other of shard.groups) {
+      if (
+        group === other ||
+        group.project !== other.project ||
+        group.file !== other.file
+      )
+        continue;
+      const left = group.titlePath ?? [];
+      const right = other.titlePath ?? [];
+      if (
+        left.length <= right.length &&
+        left.every((title, index) => title === right[index])
+      ) {
+        throw new Error("Authenticated test title prefix collision");
+      }
+    }
+  }
   return (
     shard.groups
-      .map(({ project, file }) => {
+      .map(({ project, file, titlePath }) => {
         // Playwright compares against config.rootDir, not cwd or list location.
         const relative = path
           .relative(rootDir, path.resolve(cwd, file))
@@ -261,7 +350,7 @@ export function testListFor(shard, rootDir, cwd = process.cwd()) {
         if (!/^(?:[a-zA-Z0-9_-]+\/)*[a-zA-Z0-9_-]+\.spec\.ts$/.test(relative)) {
           throw new Error("Test-list entry is outside the collected rootDir");
         }
-        return `[${project}] > ${relative}`;
+        return `[${project}] > ${relative}${titlePath ? ` > ${titlePath.join(" > ")}` : ""}`;
       })
       .join("\n") + "\n"
   );

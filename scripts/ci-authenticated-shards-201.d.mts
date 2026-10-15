@@ -2,6 +2,7 @@ export interface AuthenticatedTestEvidence {
   key: string;
   project: string;
   file: string;
+  titlePath?: string[];
   expectedStatus: unknown;
   status: unknown;
   results: { status: unknown; duration: unknown; retry: unknown }[];
