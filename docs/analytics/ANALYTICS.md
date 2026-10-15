@@ -64,8 +64,12 @@ Properties use snake_case.
 ## Ingestion boundary
 
 - The browser sends allowlisted events to `/api/v1/analytics` only in production.
-- The endpoint accepts only the official app/admin origins and an 8 KiB bounded payload.
+- The member endpoint accepts its configured app origin and an 8 KiB bounded payload.
 - Event and property names are allowlisted; property values are primitive and bounded.
+- Browser ingestion uses the explicit `BROWSER_ANALYTICS_EVENT_NAMES` subset.
+  Payment completion, reward qualification/conversion, committed lifecycle,
+  participation and delivery events are rejected before identity or database
+  admission. Adding a canonical event does not automatically allow browser input.
 - Authenticated activity is stored against the verified user. Anonymous activity receives
   a first-party HttpOnly identifier.
 - `request_id` is unique so browser retries do not create duplicate events.
@@ -91,6 +95,12 @@ Server-confirmed money/lifecycle events originate from committed domain/outbox
 facts, never browser self-report. Attribution follows campaign/creative/landing
 through signup, trial, welcome withdrawal, first funding, first real mining and
 7/30-day activity without storing sensitive query parameters.
+
+The complete `analyticsEventSchema` vocabulary remains available to trusted
+server producers. Browser callbacks after a domain response, including the
+existing `trial_start` callback, do not establish trusted facts and are rejected.
+This ingestion guard does not prove that every required server/outbox producer
+is connected, nor that hosted PostHog delivery or consent acceptance is complete.
 
 ## Observability signals
 

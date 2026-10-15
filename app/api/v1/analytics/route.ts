@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { NextResponse, type NextRequest } from "next/server";
 
-import { analyticsEventSchema } from "@/domain/analytics/events";
+import { browserAnalyticsEventSchema } from "@/domain/analytics/events";
 import { allowedAnalyticsOrigins } from "@/domain/analytics/observability";
 import { readBoundedJsonBody } from "@/lib/api/request-body";
 import { getVerifiedIdentity } from "@/lib/auth/session";
@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const parsed = analyticsEventSchema.safeParse(body.value);
+  const parsed = browserAnalyticsEventSchema.safeParse(body.value);
   if (!parsed.success) {
     return errorResponse(
       "INVALID_EVENT",
