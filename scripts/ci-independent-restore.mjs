@@ -110,7 +110,7 @@ export function admitOwnedTarget(target, expected, source) {
       same(target.Config.Healthcheck?.Test, ["NONE"]) &&
       same(h.LogConfig, {
         Type: "local",
-        Config: { "max-size": "10m", "max-file": "1" },
+        Config: { "max-size": "10m", "max-file": "1", compress: "false" },
       }),
     "OWN_TARGET_COMMAND_HEALTH_LOGS",
   );
@@ -321,8 +321,12 @@ export function buildDatabaseAcl(database) {
       "supabase_admin",
       "dashboard_user",
     ].includes(grant.grantee);
+    const provenBootstrapCreate =
+      grant.privilege === "CREATE" &&
+      grant.grantable === false &&
+      ["supabase_etl_admin", "supabase_storage_admin"].includes(grant.grantee);
     need(
-      (grant.privilege !== "CREATE" || privileged) &&
+      (grant.privilege !== "CREATE" || privileged || provenBootstrapCreate) &&
         (!grant.grantable || privileged),
       "DATABASE_ACL_UNTRUSTED_PRIVILEGE",
     );
@@ -846,6 +850,7 @@ export function runCiRestore() {
       before.roles.roles,
       before.roles.memberships,
     );
+    report.sourceDatabaseAcl = before.roles.database;
     const databaseAclSql = buildDatabaseAcl(before.roles.database);
     // Validate the exact source supplement contract before provisioning anything.
     buildSupplement(before.catalog, before.catalog);
@@ -947,6 +952,7 @@ export function runCiRestore() {
       "--log-driver=local",
       "--log-opt=max-size=10m",
       "--log-opt=max-file=1",
+      "--log-opt=compress=false",
       "--mount",
       `type=volume,source=${volume},target=/restore`,
       "--entrypoint=/bin/sh",

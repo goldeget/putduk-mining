@@ -36,7 +36,9 @@ dump is restored transactionally without `--clean`, `--no-owner`, `--no-acl` or 
 errors. Database ACLs are reconstructed separately on the new target: the source
 owner and grantor must be postgres, grantees must belong to the reviewed role roster
 or PUBLIC, and privileges are limited to CREATE/CONNECT/TEMPORARY. PUBLIC and member
-roles cannot receive CREATE or grant options. Any other contract fails before changes.
+roles cannot receive CREATE or grant options. The two proven bootstrap roles,
+supabase_etl_admin and supabase_storage_admin, may retain CREATE only with grantable
+false; this exception never permits grant options. Any other contract fails before changes.
 Fresh target defaults are revoked, exact source grants are applied under SET ROLE
 postgres, and expanded grants must compare equal afterwards. Source role/database
 settings remain excluded. PostgreSQL17 documents database ACL restoration under
@@ -68,6 +70,17 @@ The receipt records hashes, counts, identities, phases, bounded command exit res
 and cleanup. The twenty-two jobs, seventeen artifact names and whole-CI twenty-minute
 gate remain unchanged. Local pure guard tests do not establish hosted restore success.
 
+CI run 38764774517 at candidate 52783e2511aaa5d67818fc315839917220322dd7
+failed before target provisioning because its ten-row database ACL included those
+two bootstrap CREATE grants. A narrowly scoped, read-only local ROLE_SQL observation
+returned 12,300 bytes with SHA-256
+`14c62621203c693ac5b152ad971d715bc33aee548b6caed493ea1401f913c69d`,
+exactly matching the CI ROLE_SQL stdout hash. This proves equality of that nonsecret
+catalog result, including the two CREATE grants with grantable false. The local and
+CI image IDs differ; this evidence does not establish image or whole-database equality.
+The receipt retains sourceDatabaseAcl before its guard so future contract failures
+show the observed owner, locale and grants without passwords, role settings or row data.
+
 The CI DB lane owns these transient resources. Their purpose is fresh201 recovery
 verification; data flows only from that job's disposable local source into its private
 dump and independent local target. Network isolation, peer authentication and the
@@ -77,3 +90,12 @@ one named volume and a private dump capped at 64MiB after writing. This size che
 not a filesystem quota. No paid provider or hosted database resource is provisioned.
 The exact owned container/volume are removed in the reserved cleanup window, and
 the private dump is unlinked; a cleanup failure remains UNKNOWN and fails acceptance.
+
+The separate local synthetic native-volume N5 probe failed before its worker started:
+Docker reported "compression cannot be enabled when max file count is 1" while
+initializing the local logging driver. Its owned container and volume were removed;
+native initialization and filesystem compatibility were not tested. This restore
+target now explicitly sets `compress=false` and requires that exact inspected option,
+while retaining `max-size=10m` and `max-file=1`. No log budget is increased. Missing
+or enabled compression fails target admission. Hosted applicability and actual
+independent restore after this repair remain unverified until the next CI execution.

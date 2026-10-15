@@ -148,19 +148,44 @@ test.describe("admin Member 360 product states", () => {
         document.documentElement.style.fontSize = "200%";
       });
       try {
+        await expect(page.locator("html")).toHaveCSS("font-size", "32px");
+        await page.evaluate(() => document.fonts.ready.then(() => undefined));
         const destinations = await navigation.getByRole("link").all();
         await destinations[0]!.focus();
         for (const destination of destinations) {
           await expect(destination).toBeFocused();
           await expect(destination).toBeInViewport();
-          const linkBox = await destination.boundingBox();
-          const navBox = await navigation.boundingBox();
-          const cardBox = await page.locator(".operator-card").boundingBox();
-          expect(linkBox!.y).toBeGreaterThanOrEqual(navBox!.y - 1);
-          expect(linkBox!.y + linkBox!.height).toBeLessThanOrEqual(
-            navBox!.y + navBox!.height + 1,
+          // Keep all three bounds in one browser turn during text-size reflow.
+          const readGeometry = () =>
+            destination.evaluate((link) => {
+              const nav = link.closest("nav")!;
+              const card = document.querySelector(".operator-card")!;
+              const bounds = (element: Element) => {
+                const { y, height } = element.getBoundingClientRect();
+                return { y, height };
+              };
+              return {
+                linkBox: bounds(link),
+                navBox: bounds(nav),
+                cardBox: bounds(card),
+              };
+            });
+          await expect
+            .poll(async () => {
+              const { linkBox, navBox, cardBox } = await readGeometry();
+              return (
+                linkBox.y >= navBox.y - 1 &&
+                linkBox.y + linkBox.height <= navBox.y + navBox.height + 1 &&
+                linkBox.y + linkBox.height <= cardBox.y
+              );
+            })
+            .toBe(true);
+          const { linkBox, navBox, cardBox } = await readGeometry();
+          expect(linkBox.y).toBeGreaterThanOrEqual(navBox.y - 1);
+          expect(linkBox.y + linkBox.height).toBeLessThanOrEqual(
+            navBox.y + navBox.height + 1,
           );
-          expect(linkBox!.y + linkBox!.height).toBeLessThanOrEqual(cardBox!.y);
+          expect(linkBox.y + linkBox.height).toBeLessThanOrEqual(cardBox.y);
           expect(
             await destination.evaluate((link) => {
               const bounds = link.getBoundingClientRect();

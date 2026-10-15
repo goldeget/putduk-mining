@@ -179,6 +179,269 @@ function isObservedNextPrefetchCancellation(
   return false;
 }
 
+type WalletCancellationObservation = {
+  scope: "current-document";
+  association: "URL-candidates-only-not-proven-request-identity";
+  taggedFetches: number;
+  taggedBodies: number;
+  taggedReaders: number;
+  truncated: boolean;
+  events: {
+    kind: "abort-controller" | "reader-cancel" | "stream-cancel";
+    request: number;
+    view: string;
+    atMs: number;
+    requestStartMs: number;
+    reasonType: string;
+    callerFrames: string[];
+  }[];
+};
+
+async function observeWalletCancellationCalls(page: Page) {
+  await page.addInitScript(() => {
+    const observation: WalletCancellationObservation = {
+      scope: "current-document",
+      association: "URL-candidates-only-not-proven-request-identity",
+      taggedFetches: 0,
+      taggedBodies: 0,
+      taggedReaders: 0,
+      truncated: false,
+      events: [],
+    };
+    Object.defineProperty(window, "__putdukWalletCancellationObservation", {
+      value: observation,
+    });
+    type Tag = { request: number; view: string; requestStartMs: number };
+    const signals = new WeakMap<object, Tag[]>();
+    const streams = new WeakMap<object, Tag[]>();
+    const readers = new WeakMap<object, Tag[]>();
+    // Full URLs stay internal. Repeated URLs/redirects cannot prove attribution.
+    const urls = new Map<string, Tag[]>();
+    const record = (
+      kind: WalletCancellationObservation["events"][number]["kind"],
+      tag: Tag,
+      reason: unknown,
+    ) => {
+      // Persist only static script paths and coordinates, never raw stack/URLs.
+      const callerFrames: string[] = [];
+      for (const frame of (new Error().stack ?? "").split("\n").slice(1)) {
+        const match = frame.match(/(https?:\/\/[^\s)]+):(\d+):(\d+)\)?$/);
+        if (!match) continue;
+        const url = new URL(match[1]!);
+        if (
+          url.origin === location.origin &&
+          /^\/_next\/static\/[A-Za-z0-9_./%-]+\.js$/.test(url.pathname)
+        ) {
+          callerFrames.push(
+            `${url.pathname.slice(0, 240)}:${match[2]}:${match[3]}`,
+          );
+          if (callerFrames.length === 8) break;
+        }
+      }
+      observation.events.push({
+        kind,
+        ...tag,
+        atMs: Math.round(performance.now()),
+        reasonType: reason === null ? "null" : typeof reason,
+        callerFrames,
+      });
+      if (observation.events.length > 16) {
+        observation.events.shift();
+        observation.truncated = true;
+      }
+    };
+    // Proxies change method references. Original receivers, arguments, returned
+    // fetch promises/Responses/readers and native exceptions remain untouched.
+    window.fetch = new Proxy(window.fetch, {
+      apply(target, receiver, args: Parameters<typeof fetch>) {
+        const result = Reflect.apply(target, receiver, args) as ReturnType<
+          typeof fetch
+        >;
+        try {
+          const [input, init] = args;
+          const request = input instanceof Request ? input : null;
+          if (
+            !request &&
+            typeof input !== "string" &&
+            !(input instanceof URL)
+          ) {
+            return result;
+          }
+          const url = new URL(
+            request
+              ? Reflect.apply(
+                  Object.getOwnPropertyDescriptor(Request.prototype, "url")!
+                    .get!,
+                  request,
+                  [],
+                )
+              : typeof input === "string"
+                ? input
+                : Reflect.apply(
+                    Object.getOwnPropertyDescriptor(URL.prototype, "href")!
+                      .get!,
+                    input,
+                    [],
+                  ),
+            location.href,
+          );
+          if (
+            url.origin !== location.origin ||
+            url.pathname !== "/wallet" ||
+            !url.searchParams.has("_rsc")
+          ) {
+            return result;
+          }
+          const descriptors = init
+            ? Object.getOwnPropertyDescriptors(init)
+            : {};
+          if (
+            ["headers", "method", "signal"].some(
+              (key) =>
+                (descriptors[key] && !("value" in descriptors[key])) ||
+                (init && key in init && !descriptors[key]),
+            )
+          ) {
+            return result;
+          }
+          const method = descriptors.method?.value ?? request?.method ?? "GET";
+          if (typeof method !== "string" || method.toUpperCase() !== "GET") {
+            return result;
+          }
+          const headers: HeadersInit | undefined =
+            descriptors.headers?.value ?? request?.headers;
+          let rsc: string | null = null;
+          if (headers instanceof Headers) {
+            rsc = Reflect.apply(Headers.prototype.get, headers, ["RSC"]);
+          } else if (Array.isArray(headers)) {
+            rsc =
+              headers.find(([name]) => name.toLowerCase() === "rsc")?.[1] ??
+              null;
+          } else if (headers) {
+            const entries = Object.getOwnPropertyDescriptors(headers);
+            rsc = entries.RSC?.value ?? entries.rsc?.value ?? null;
+          }
+          if (rsc === "1") {
+            const view = url.searchParams.get("view");
+            const tag: Tag = {
+              request: ++observation.taggedFetches,
+              view:
+                view === "principal" || view === "profit" || view === "history"
+                  ? view
+                  : "unknown",
+              requestStartMs: Math.round(performance.now()),
+            };
+            const signal = descriptors.signal?.value ?? request?.signal;
+            if (signal) {
+              const tags = signals.get(signal) ?? [];
+              tags.push(tag);
+              if (tags.length > 16) {
+                tags.shift();
+                observation.truncated = true;
+              }
+              signals.set(signal, tags);
+            }
+            const candidates = urls.get(url.href) ?? [];
+            candidates.push(tag);
+            if (candidates.length > 16) {
+              candidates.shift();
+              observation.truncated = true;
+            }
+            urls.delete(url.href);
+            urls.set(url.href, candidates);
+            if (urls.size > 16) {
+              urls.delete(urls.keys().next().value!);
+              observation.truncated = true;
+            }
+          }
+        } catch {
+          // Unrecognized input remains unobserved.
+        }
+        return result;
+      },
+    });
+    // Observe only body getters already called by the app, never the promise.
+    // This changes the getter reference, without reading/cloning/teeing a body.
+    const bodyDescriptor = Object.getOwnPropertyDescriptor(
+      Response.prototype,
+      "body",
+    )!;
+    const responseUrlGetter = Object.getOwnPropertyDescriptor(
+      Response.prototype,
+      "url",
+    )!.get!;
+    Object.defineProperty(Response.prototype, "body", {
+      ...bodyDescriptor,
+      get: new Proxy(bodyDescriptor.get!, {
+        apply(target, receiver, args) {
+          const body = Reflect.apply(target, receiver, args);
+          try {
+            const url = Reflect.apply(responseUrlGetter, receiver, []);
+            const candidates = urls.get(url);
+            if (body && candidates && !streams.has(body)) {
+              streams.set(body, [...candidates]);
+              observation.taggedBodies += 1;
+            }
+          } catch {
+            // Missing/redirected associations remain unknown.
+          }
+          return body;
+        },
+      }),
+    });
+    AbortController.prototype.abort = new Proxy(
+      AbortController.prototype.abort,
+      {
+        apply(target, receiver, args) {
+          try {
+            for (const tag of signals.get(receiver.signal) ?? []) {
+              record("abort-controller", tag, args[0]);
+            }
+          } catch {
+            // Preserve the native call even when observation fails.
+          }
+          return Reflect.apply(target, receiver, args);
+        },
+      },
+    );
+    ReadableStream.prototype.getReader = new Proxy(
+      ReadableStream.prototype.getReader,
+      {
+        apply(target, receiver, args) {
+          const reader = Reflect.apply(target, receiver, args);
+          try {
+            const candidates = streams.get(receiver);
+            if (candidates) {
+              readers.set(reader, candidates);
+              observation.taggedReaders += 1;
+            }
+          } catch {
+            // Preserve the original reader.
+          }
+          return reader;
+        },
+      },
+    );
+    for (const [prototype, tags, kind] of [
+      [ReadableStream.prototype, streams, "stream-cancel"],
+      [ReadableStreamDefaultReader.prototype, readers, "reader-cancel"],
+      [ReadableStreamBYOBReader.prototype, readers, "reader-cancel"],
+    ] as const) {
+      prototype.cancel = new Proxy(prototype.cancel, {
+        apply(target, receiver, args) {
+          try {
+            for (const tag of tags.get(receiver) ?? [])
+              record(kind, tag, args[0]);
+          } catch {
+            // Record call attempts only; native success is unknown.
+          }
+          return Reflect.apply(target, receiver, args);
+        },
+      });
+    }
+  });
+}
+
 async function captureRoutes(
   page: Page,
   testInfo: TestInfo,
@@ -491,6 +754,9 @@ async function captureRoutes(
   });
   try {
     if (publicCapture || routes.includes("/wallet")) {
+      // Active test-only method proxies are separate from passive CDP metadata.
+      if (routes.includes("/wallet"))
+        await observeWalletCancellationCalls(page);
       // Passive Chromium metadata only: no routing, header/body capture or mocking.
       diagnosticSession = await page.context().newCDPSession(page);
       const requests = new Map<string, RequestDiagnostic>();
@@ -2049,6 +2315,16 @@ async function captureRoutes(
     );
     expect(errors).toEqual([]);
   } finally {
+    const walletCancellationObservation = await page
+      .evaluate(
+        () =>
+          (
+            window as Window & {
+              __putdukWalletCancellationObservation?: WalletCancellationObservation;
+            }
+          ).__putdukWalletCancellationObservation ?? null,
+      )
+      .catch(() => null);
     page.off("request", trackWalletRequest);
     page.off("requestfinished", finishWalletRequest);
     page.off("requestfailed", failWalletRequest);
@@ -2073,6 +2349,7 @@ async function captureRoutes(
           walletLifecycleTotal,
           mainGeometry,
           mainGeometryContext,
+          walletCancellationObservation,
         },
         null,
         2,

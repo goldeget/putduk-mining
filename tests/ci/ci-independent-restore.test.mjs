@@ -66,7 +66,7 @@ const target = () => ({
     SecurityOpt: ["no-new-privileges"],
     LogConfig: {
       Type: "local",
-      Config: { "max-size": "10m", "max-file": "1" },
+      Config: { "max-size": "10m", "max-file": "1", compress: "false" },
     },
   },
   Mounts: [
@@ -96,6 +96,16 @@ for (const [name, mutate] of [
   });
 test("cleanup accepts exact owned independent target", () =>
   assert.equal(admitOwnedTarget(target(), expected, source()).Id, expected.id));
+test("single-file local logging rejects implicit compression defaults", () => {
+  const x = target();
+  delete x.HostConfig.LogConfig.Config.compress;
+  assert.throws(() => admitOwnedTarget(x, expected, source()));
+});
+test("single-file local logging rejects compression enabled", () => {
+  const x = target();
+  x.HostConfig.LogConfig.Config.compress = "true";
+  assert.throws(() => admitOwnedTarget(x, expected, source()));
+});
 for (const [name, mutate] of [
   ["wrong nonce", (x) => (x.Config.Labels["putduk.nonce"] = "other")],
   ["wrong image", (x) => (x.Image = `sha256:${"d".repeat(64)}`)],
@@ -357,5 +367,107 @@ test("database ACL rejects unknown grantees, privileges and grantors", () => {
     const x = databaseFixture();
     Object.assign(x.grants.at(-1), change);
     assert.throws(() => buildDatabaseAcl(x));
+  }
+});
+
+// CI38764774517 ROLE_SQL stdout and the authorized local catalog read were
+// byte-identical: 14c62621203c693ac5b152ad971d715bc33aee548b6caed493ea1401f913c69d.
+const actualCiDatabaseAcl = () => ({
+  owner: "postgres",
+  encoding: "UTF8",
+  collate: "en_US.UTF-8",
+  ctype: "en_US.UTF-8",
+  grants: [
+    {
+      grantor: "postgres",
+      grantee: "PUBLIC",
+      privilege: "CONNECT",
+      grantable: false,
+    },
+    {
+      grantor: "postgres",
+      grantee: "PUBLIC",
+      privilege: "TEMPORARY",
+      grantable: false,
+    },
+    {
+      grantor: "postgres",
+      grantee: "dashboard_user",
+      privilege: "CONNECT",
+      grantable: false,
+    },
+    {
+      grantor: "postgres",
+      grantee: "dashboard_user",
+      privilege: "CREATE",
+      grantable: false,
+    },
+    {
+      grantor: "postgres",
+      grantee: "dashboard_user",
+      privilege: "TEMPORARY",
+      grantable: false,
+    },
+    {
+      grantor: "postgres",
+      grantee: "postgres",
+      privilege: "CONNECT",
+      grantable: false,
+    },
+    {
+      grantor: "postgres",
+      grantee: "postgres",
+      privilege: "CREATE",
+      grantable: false,
+    },
+    {
+      grantor: "postgres",
+      grantee: "postgres",
+      privilege: "TEMPORARY",
+      grantable: false,
+    },
+    {
+      grantor: "postgres",
+      grantee: "supabase_etl_admin",
+      privilege: "CREATE",
+      grantable: false,
+    },
+    {
+      grantor: "postgres",
+      grantee: "supabase_storage_admin",
+      privilege: "CREATE",
+      grantable: false,
+    },
+  ],
+});
+
+test("the proven fresh CI ten-row database ACL is restored without granting options", () => {
+  const database = actualCiDatabaseAcl();
+  const unchanged = structuredClone(database);
+  const sql = buildDatabaseAcl(database);
+  assert.match(
+    sql,
+    /GRANT CREATE ON DATABASE "postgres" TO "supabase_etl_admin" GRANTED BY "postgres";/,
+  );
+  assert.match(
+    sql,
+    /GRANT CREATE ON DATABASE "postgres" TO "supabase_storage_admin" GRANTED BY "postgres";/,
+  );
+  assert.doesNotMatch(sql, /WITH GRANT OPTION/);
+  assert.equal((sql.match(/\nGRANT /g) ?? []).length, 10);
+  assert.deepEqual(database, unchanged);
+});
+
+test("proven service CREATE grants cannot expand to grant options or other roles", () => {
+  for (const change of [
+    { grantee: "supabase_etl_admin", grantable: true },
+    { grantee: "supabase_storage_admin", grantable: true },
+    { grantee: "service_role", grantable: false },
+    { grantee: "authenticator", grantable: false },
+    { grantee: "PUBLIC", grantable: false },
+  ]) {
+    const database = actualCiDatabaseAcl();
+    Object.assign(database.grants.at(-1), change);
+    assert.throws(() => buildDatabaseAcl(database));
   }
 });
