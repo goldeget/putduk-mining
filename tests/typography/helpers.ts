@@ -1,6 +1,7 @@
 import { expect, type Page, type TestInfo } from "@playwright/test";
 import { waitForRouteBody, type UiTerminalState } from "./route-readiness";
 import {
+  TYPOGRAPHY_BRAND_VERSION,
   assertUniqueDocumentIds,
   assertVisibleControlsNamed,
   readRenderedPresentationHealth,
@@ -611,7 +612,7 @@ export async function auditTypographyRoute(input: {
     ).toBeGreaterThan(0);
     expect(
       runtimeHealth.brandMarkers.every(
-        (marker) => marker.version === "2026.10.13-sprout-p-v1",
+        (marker) => marker.version === TYPOGRAPHY_BRAND_VERSION,
       ),
       `${input.routeName}: canonical brand versions agree`,
     ).toBe(true);

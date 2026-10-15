@@ -1,5 +1,8 @@
 import { expect, type Page } from "@playwright/test";
 
+// Independent test authority: owner-selected identity in the versioned manifest.
+export const TYPOGRAPHY_BRAND_VERSION = "2026.10.14-sprout-p-v2";
+
 export async function assertVisibleControlsNamed(page: Page) {
   // Dialog/status/alert are not interactive controls. Decorative SVGs are not controls.
   const controls = page.locator(
@@ -33,7 +36,7 @@ export async function assertUniqueDocumentIds(page: Page) {
 }
 
 export async function readRenderedPresentationHealth(page: Page) {
-  return page.evaluate(() => {
+  return page.evaluate((canonicalBrandVersion) => {
     const normalize = (family: string) =>
       family.trim().replaceAll('"', "").replaceAll("'", "");
     const projectFont = normalize(
@@ -152,7 +155,7 @@ export async function readRenderedPresentationHealth(page: Page) {
       .filter(
         (element) =>
           !element.querySelector(
-            '[data-putduk-brand="canonical"][data-putduk-brand-version="2026.10.13-sprout-p-v1"]',
+            `[data-putduk-brand="canonical"][data-putduk-brand-version="${canonicalBrandVersion}"]`,
           ),
       )
       .map((element) => element.className);
@@ -168,5 +171,5 @@ export async function readRenderedPresentationHealth(page: Page) {
       brandMarkers,
       visibleBrandPlacementsMissingCanonical,
     };
-  });
+  }, TYPOGRAPHY_BRAND_VERSION);
 }
