@@ -201,6 +201,24 @@ function readHistoricalBytes(root, path, generation, fixtureCopy) {
   }
   throw Error("HISTORICAL_RECOVERY_EXACT_BLOB_UNAVAILABLE");
 }
+export function preloadHistorical193UnitFixtureSources(root) {
+  if (realpathSync(root) !== repository)
+    throw Error("HISTORICAL_RECOVERY_ROOT_REJECTED");
+  const paths = new Set([
+    ...effectivePins(193).keys(),
+    ...[
+      "backend-http-local-execution-profile.json",
+      "principal-review-r2-source.json",
+      "principal-integrated-source.json",
+      "principal-local-recovery-source.json",
+      "principal-local-recovery-source-v3.json",
+      "principal-local-recovery-source-v4.json",
+    ].map((name) => "tests/e2e/fixtures/" + name),
+  ]);
+  for (const path of paths)
+    if (path !== "supabase/config.toml")
+      readHistoricalRecoveryFixtureSource(root, path, 193);
+}
 // Construction readiness only: no guard result or source-read cache is retained.
 // The test body independently reads and hashes every source after this check.
 export function verifyPreparedHistoricalFixture(root, entries, prefix) {
@@ -478,6 +496,7 @@ export function stageHistoricalRecoveryTestSource(source, name) {
     if (span.split(finish).length !== 2)
       throw Error("HISTORICAL_RECOVERY_TEST_SOURCE_CHANGED");
     const replacement =
+      "preloadHistorical193UnitFixtureSources(checkout);\nlocalTestConfig();\n" +
       'let preparedLocalFixture: ReturnType<typeof constructHistoricalLocalFixture> | undefined;\nbeforeEach(() => { preparedLocalFixture = constructHistoricalLocalFixture(); });\nfunction fixture() {\n  const value = preparedLocalFixture;\n  if (!value) throw new Error("HISTORICAL_RECOVERY_FIXTURE_REQUIRED");\n  preparedLocalFixture = undefined;\n  return value;\n}\n' +
       span
         .replace(
@@ -491,7 +510,7 @@ export function stageHistoricalRecoveryTestSource(source, name) {
             finish,
         );
     const imported =
-      'import { readHistoricalRecoveryFixtureSource, verifyPreparedHistoricalFixture } from "../../scripts/historical-recovery-unit-stage.mjs";\n';
+      'import { readHistoricalRecoveryFixtureSource, verifyPreparedHistoricalFixture, preloadHistorical193UnitFixtureSources } from "../../scripts/historical-recovery-unit-stage.mjs";\n';
     if (source.split(span).length !== 2 || source.split(before).length !== 2)
       throw Error("HISTORICAL_RECOVERY_TEST_SOURCE_CHANGED");
     const staged =
