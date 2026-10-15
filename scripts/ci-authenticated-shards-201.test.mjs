@@ -293,8 +293,8 @@ test("project-specific scheduling retains slower mobile observation and unknown 
         (item) => item.project === project && item.file.endsWith(suffix),
       ),
     ).estimateSeconds;
-  assert.equal(weight("chromium", "home-catalog-materials.spec.ts"), 469);
-  assert.equal(weight("mobile-chrome", "home-catalog-materials.spec.ts"), 566);
+  assert.equal(weight("chromium", "home-catalog-materials.spec.ts"), 460);
+  assert.equal(weight("mobile-chrome", "home-catalog-materials.spec.ts"), 569);
   assert.equal(weight("future-project", "home-catalog-materials.spec.ts"), 389);
   assert.equal(weight("chromium", "unknown-new.spec.ts"), 20);
   assertSameInventory(
@@ -303,7 +303,7 @@ test("project-specific scheduling retains slower mobile observation and unknown 
   );
 });
 
-test("mockup scheduling uses project observations without reducing test coverage", () => {
+test("interrupted member mockup reserves its unchanged ceiling and margin without reducing coverage", () => {
   const all = inventoryFromReport(
     report([...specs(), ...specs("chromium")]),
     cwd,
@@ -322,6 +322,6 @@ test("mockup scheduling uses project observations without reducing test coverage
         shard.tests[0].project === project &&
         shard.tests[0].titlePath[0] === title,
     );
-  assert.equal(single("mobile-chrome", titles[1]).estimateSeconds, 285);
-  assert.equal(single("chromium", titles[1]).estimateSeconds, 205);
+  assert.equal(single("mobile-chrome", titles[1]).estimateSeconds, 396);
+  assert.equal(single("chromium", titles[1]).estimateSeconds, 198);
 });

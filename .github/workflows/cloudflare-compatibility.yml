@@ -1,0 +1,79 @@
+name: Cloudflare compatibility
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cloudflare-compatibility-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  local-workers:
+    name: Member and admin local Workers
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      CI_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+      APP_ENV: test
+      APP_TIMEZONE: UTC
+      NEXT_PUBLIC_APP_ENV: test
+      NEXT_PUBLIC_APP_URL: http://127.0.0.1:3000
+      ADMIN_APP_URL: http://127.0.0.1:3100
+      NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:63421
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: sb_publishable_local_cloudflare_compatibility_only
+      SUPABASE_SECRET_KEY: sb_secret_local_cloudflare_compatibility_only
+      WRANGLER_SEND_METRICS: "false"
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - name: Check out the exact candidate
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+
+      - name: Verify approved repository and candidate
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = "goldeget/putduk-mining"
+          test "$(git rev-parse HEAD)" = "$CI_HEAD_SHA"
+          case "$(git remote get-url origin)" in
+            https://github.com/goldeget/putduk-mining|https://github.com/goldeget/putduk-mining.git) ;;
+            *) echo "BLOCKED_TARGET_SCOPE: origin mismatch" >&2; exit 1 ;;
+          esac
+          git remote set-url origin https://github.com/goldeget/putduk-mining.git
+
+      - name: Install the pinned pnpm
+        uses: pnpm/action-setup@v6.1.0
+        with:
+          version: 12.6.0
+
+      - name: Install the pinned Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+
+      - name: Install frozen dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build the member Workers artifact locally
+        run: pnpm exec opennextjs-cloudflare build
+
+      - name: Build the admin Workers artifact locally
+        working-directory: apps/admin
+        run: pnpm exec opennextjs-cloudflare build
+
+      - name: Verify anonymous boundaries in local workerd
+        run: node scripts/ci-cloudflare-smoke.mjs
+
+      - name: Preserve local compatibility results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: cloudflare-local-workers-${{ github.event.pull_request.head.sha }}
+          path: test-results/cloudflare-compatibility/
+          if-no-files-found: warn
+          retention-days: 7

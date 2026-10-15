@@ -895,6 +895,14 @@ async function captureRoutes(
     }
     await page.goto(routes[0]!, { waitUntil: "networkidle" });
     for (const route of routes) {
+      console.info(
+        "[mockup-route-progress] " +
+          JSON.stringify({
+            project: testInfo.project.name,
+            route,
+            elapsedMs: diagnosticElapsedMs(),
+          }),
+      );
       const routeWidths = [
         "/mining",
         "/wallet",

@@ -4,6 +4,10 @@ packages:
 
 allowBuilds:
   unrs-resolver: true
+  "esbuild@0.28.1": false
+  "esbuild@0.28.2": false
+  "workerd@1.20261006.1": false
+  "rclone.js@0.6.6": false
 minimumReleaseAgeStrict: true
 minimumReleaseAgeExclude:
   - "@supabase/auth-js@2.117.2"
@@ -20,3 +24,10 @@ minimumReleaseAgeExclude:
   - motion-dom@13.4.4
   - motion@13.4.4
   - vitest@5.0.2
+  # Exact integrity-reviewed adapter pins for patched Next 16.4.1.
+  - "@opennextjs/cloudflare@1.20.12"
+  - "@opennextjs/aws@4.1.11"
+
+# Patch Miniflare's exact vendor pin; Next already uses the fixed sharp.
+overrides:
+  "miniflare@5.20261006.0-alpha>sharp": "0.35.5"
