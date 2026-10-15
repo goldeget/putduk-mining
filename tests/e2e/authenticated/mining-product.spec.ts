@@ -107,25 +107,60 @@ async function applyTheme(page: Page, theme: "dark" | "light") {
     document.documentElement.style.colorScheme = selected;
   }, theme);
   await page.reload({ waitUntil: "domcontentloaded" });
+  await page.waitForLoadState("load");
   await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
   await openMiningDetails(page);
 }
 
 async function openMiningDetails(page: Page) {
-  // 보이는 details만 고르면 hidden S: 슬롯의 같은 요약이 남아 텍스트 클릭이 둘로 실패한다.
+  // SSR markers can precede React commitment and later DOM changes.
   await expectSettledRoute(page, "/mining");
   const details = page.locator("#putduk-mining-details");
   await expect(details).toHaveCount(1);
   const summary = page.getByText("채굴 상세", { exact: true });
   await expect(summary).toHaveCount(1);
-  if (
-    !(await details.evaluate(
-      (node) => node instanceof HTMLDetailsElement && node.open,
-    ))
-  ) {
+  let detailsOpen: boolean | null = null;
+  await expect
+    .poll(async () => {
+      const state = await page.evaluate(() => {
+        const routes = document.querySelectorAll('[data-ui-ready="/mining"]');
+        const targets = document.querySelectorAll("#putduk-mining-details");
+        const summaries = Array.from(
+          document.querySelectorAll("summary"),
+        ).filter((node) => node.textContent?.trim() === "채굴 상세");
+        const target = targets.length === 1 ? targets.item(0) : null;
+        const hydrated =
+          target instanceof HTMLDetailsElement &&
+          Object.getOwnPropertyNames(target).some(
+            (key) =>
+              key.startsWith("__reactFiber") || key.startsWith("__reactProps"),
+          );
+        return {
+          documentLoaded: document.readyState === "complete",
+          routeCount: routes.length,
+          detailsCount: targets.length,
+          summaryCount: summaries.length,
+          hydrated,
+          open: target instanceof HTMLDetailsElement ? target.open : null,
+        };
+      });
+      detailsOpen = state.open;
+      return state;
+    })
+    .toMatchObject({
+      documentLoaded: true,
+      routeCount: 1,
+      detailsCount: 1,
+      summaryCount: 1,
+      hydrated: true,
+    });
+  if (!detailsOpen) {
     await summary.click();
   }
   await expect(details).toHaveAttribute("open", "");
+  await expectSettledRoute(page, "/mining");
+  await expect(details).toHaveCount(1);
+  await expect(summary).toHaveCount(1);
 }
 
 test("unsigned visitors keep the mining return path", async ({ page }) => {

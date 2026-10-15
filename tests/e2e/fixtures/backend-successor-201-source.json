@@ -3238,7 +3238,7 @@
     "tests/e2e/authenticated/home-typography.spec.ts": "1a1d6f60db67a135aa5c6f8b1778feb402f29424457b76a70484e37832972d12",
     "tests/e2e/authenticated/member-product-scene.spec.ts": "327f50fb0af334d9a0bb56f028880f04fb2e2f486d0ece78aa7a0afe0984e883",
     "tests/e2e/authenticated/menu-product.spec.ts": "152b733d6de97ec458c3e0b70f5c92056821f61c1d76cfca471ad7edbdeb4d3d",
-    "tests/e2e/authenticated/mining-product.spec.ts": "1c5aebcc63ed576d0c0612e81336b0cb76a414b672190ec0a7a1a0d9e8e33aa8",
+    "tests/e2e/authenticated/mining-product.spec.ts": "b7528aa66b517d9ca9232cc9bcb62a06ed68fea537589fdd53d346a01d1815c2",
     "tests/e2e/authenticated/mockup-reference-coverage.spec.ts": "f7efa67585030c08855b8959661a1c7bfd2524246d06074ddaba933888b6e5f7",
     "tests/e2e/authenticated/notifications-product.spec.ts": "c72f13016b1dc87191e8e3d73f69272dc35c9394ec8cb06076158a3664efe4c4",
     "tests/e2e/authenticated/operator-fixture-isolation.spec.ts": "17428b3599b63b66208e6a8dd7170aeb2b7dd3f608877500e4fa0b3df2a19d9b",
