@@ -155,7 +155,7 @@ jobs:
         run: pnpm test
 
       - name: Verify authenticated scheduling invariants
-        run: node --test scripts/ci-authenticated-shards.test.mjs scripts/assert-worker-report.test.mjs scripts/e2e-admin-server.test.mjs scripts/backend-successor-201-contract.test.mjs scripts/backend-successor-201-native-contract.test.mjs scripts/stage-content-source-ci.test.mjs
+        run: node --test scripts/ci-authenticated-shards.test.mjs scripts/assert-worker-report.test.mjs scripts/e2e-admin-server.test.mjs scripts/backend-successor-201-contract.test.mjs scripts/backend-successor-201-native-contract.test.mjs scripts/stage-content-source-ci.test.mjs tests/ci/historical-recovery-missing-file.test.mjs tests/ci/cloudflare-compatibility-date.test.mjs
 
       - name: Verify every authenticated test is assigned exactly once
         env:

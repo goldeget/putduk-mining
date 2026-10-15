@@ -11,8 +11,9 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  local-workers:
-    name: Member and admin local Workers
+  # Keep this key: the existing fresh-db guard only admits GITHUB_JOB=authenticated.
+  authenticated:
+    name: Five critical flows in real local workerd
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     env:
@@ -22,9 +23,7 @@ jobs:
       NEXT_PUBLIC_APP_ENV: test
       NEXT_PUBLIC_APP_URL: http://127.0.0.1:3000
       ADMIN_APP_URL: http://127.0.0.1:3100
-      NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:63421
-      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: sb_publishable_local_cloudflare_compatibility_only
-      SUPABASE_SECRET_KEY: sb_secret_local_cloudflare_compatibility_only
+      PUTDUK_BACKEND_SOURCE_REVISION: "201"
       WRANGLER_SEND_METRICS: "false"
       NEXT_TELEMETRY_DISABLED: "1"
     steps:
@@ -34,7 +33,7 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
           persist-credentials: false
 
-      - name: Verify approved repository and candidate
+      - name: Verify authorized repository and candidate
         run: |
           set -euo pipefail
           test "$GITHUB_REPOSITORY" = "goldeget/putduk-mining"
@@ -45,35 +44,87 @@ jobs:
           esac
           git remote set-url origin https://github.com/goldeget/putduk-mining.git
 
-      - name: Install the pinned pnpm
+      - name: Install pinned pnpm
         uses: pnpm/action-setup@v6.1.0
         with:
           version: 12.6.0
 
-      - name: Install the pinned Node.js
+      - name: Install pinned Node
         uses: actions/setup-node@v7
         with:
           node-version-file: .node-version
           cache: pnpm
 
-      - name: Install frozen dependencies
+      - name: Check pinned workerd compatibility dates before dependency install
+        run: |
+          node scripts/assert-cloudflare-compatibility-date.mjs
+          node --max-old-space-size=64 --test tests/ci/cloudflare-compatibility-date.test.mjs
+
+      - name: Resolve exact metadata cache
+        id: pnpm-metadata
+        run: echo "path=$(pnpm cache path)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache registry metadata for reviewed inputs
+        uses: actions/cache@v5
+        with:
+          path: ${{ steps.pnpm-metadata.outputs.path }}
+          key: pnpm-metadata-v1-${{ runner.os }}-${{ runner.arch }}-node24.21.0-pnpm12.6.0-${{ hashFiles('pnpm-lock.yaml', 'pnpm-workspace.yaml', '.node-version', '.npmrc', 'package.json', 'apps/*/package.json', '.pnpmfile.cjs', '.pnpmfile.mjs') }}
+
+      - name: Install frozen dependencies with exact build denials
         run: pnpm install --frozen-lockfile
 
-      - name: Build the member Workers artifact locally
+      - name: Install exact Supabase CLI
+        uses: supabase/setup-cli@v3
+        with:
+          version: 2.113.0
+
+      - name: Prove no owned database resources exist before start
+        id: fresh-before
+        run: node scripts/assert-ci-fresh-db.mjs before
+
+      - name: Start this job's fresh local Supabase
+        id: local-start
+        run: bash scripts/ci-supabase-start.sh
+
+      - name: Verify first-start migrations and empty financial state
+        run: node scripts/assert-ci-fresh-db.mjs after
+
+      - name: Export and mask real fresh local Supabase credentials
+        run: node scripts/capture-local-supabase-env.mjs
+
+      - name: Create the ephemeral local withdrawal encryption key
+        run: node scripts/write-ephemeral-withdrawal-key.mjs
+
+      - name: Build member Workers output once using local-only values
         run: pnpm exec opennextjs-cloudflare build
 
-      - name: Build the admin Workers artifact locally
+      - name: Build admin Workers output once using local-only values
         working-directory: apps/admin
         run: pnpm exec opennextjs-cloudflare build
 
-      - name: Verify anonymous boundaries in local workerd
+      - name: Verify anonymous boundaries with existing Workers output
         run: node scripts/ci-cloudflare-smoke.mjs
 
-      - name: Preserve local compatibility results
+      - name: Install Chromium
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run unchanged critical contracts against both real workerd apps
+        timeout-minutes: 16
+        run: node scripts/run-workerd-auth.mjs
+
+      - name: Stop only resources proven absent before this job's start
+        if: always() && steps.fresh-before.outcome == 'success' && steps.local-start.outcome != 'skipped'
+        run: supabase stop --project-id putduk-mining-ci-r2-20261009 --no-backup
+
+      - name: Preserve sanitized execution and freshness evidence
         if: always()
         uses: actions/upload-artifact@v7
         with:
           name: cloudflare-local-workers-${{ github.event.pull_request.head.sha }}
-          path: test-results/cloudflare-compatibility/
+          path: |
+            test-results/cloudflare-compatibility/
+            test-results/workerd-auth/
+            test-results/ci/fresh-db-prestart.json
+            test-results/ci/fresh-db-verified.json
           if-no-files-found: warn
           retention-days: 7

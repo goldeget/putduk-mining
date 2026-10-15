@@ -174,8 +174,17 @@ function readHistoricalBytes(root, path, generation, fixtureCopy) {
   const key = generation + ":" + path + ":" + expected;
   if (!fixtureCopy) owned(root, path);
   if (sourceCache.has(key)) return Buffer.from(sourceCache.get(key));
-  const current = readFileSync(owned(root, path));
-  if (digest(current) === expected) {
+  let current;
+  try {
+    current = readFileSync(owned(root, path));
+  } catch (error) {
+    // Fixture copies attest immutable historical bytes, not a current path.
+    // A reviewed rename may remove that path; only ENOENT can fall through
+    // to the existing exact-hash Git/archive recovery below. Runtime reads
+    // and all root/path/symlink or other filesystem errors remain failures.
+    if (!fixtureCopy || error.code !== "ENOENT") throw error;
+  }
+  if (current && digest(current) === expected) {
     sourceCache.set(key, current);
     return Buffer.from(current);
   }

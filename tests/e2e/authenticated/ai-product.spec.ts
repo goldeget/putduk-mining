@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
@@ -14,6 +15,78 @@ import {
   loginAsMember,
 } from "./helpers/member-session";
 
+type CapturedAckBody =
+  { ok: true; text: string } | { ok: false; error: unknown };
+
+const ackBodies = new WeakMap<Response, Promise<CapturedAckBody>>();
+
+function captureAckBody(response: Response) {
+  const existing = ackBodies.get(response);
+  if (existing) return existing;
+  // Begin CDP collection at response observation, before waiting for rendered UI.
+  // Convert rejection to data immediately; the final ACK check still fails closed.
+  const captured = response.text().then(
+    (text): CapturedAckBody => ({ ok: true, text }),
+    (error: unknown): CapturedAckBody => ({ ok: false, error }),
+  );
+  ackBodies.set(response, captured);
+  return captured;
+}
+
+/** Categorize transport failures without logging messages, bodies, keys or IDs. */
+function ackFailureCategory(error: unknown) {
+  const message = error instanceof Error ? error.message : String(error);
+  if (/No resource with given identifier found/i.test(message))
+    return "cdp-resource-unavailable";
+  if (/evicted from inspector cache/i.test(message)) return "cdp-body-evicted";
+  if (
+    /Target.*closed|page.*closed|context.*closed|browser.*closed/i.test(message)
+  )
+    return "target-closed";
+  if (/aborted|cancelled|canceled|ERR_ABORTED/i.test(message))
+    return "transport-aborted";
+  if (/timeout|timed out/i.test(message)) return "transport-timeout";
+  return "unclassified";
+}
+
+function recordAckFailure(
+  response: Response,
+  reason: "body-read-failed" | "body-limit-exceeded",
+  error?: unknown,
+  bodyCharacters?: number,
+) {
+  const request = response.request();
+  const message = error instanceof Error ? error.message : String(error);
+  const headers = response.headers();
+  console.error(
+    "[ai-ack-transport-diagnostic]",
+    JSON.stringify({
+      reason,
+      status: response.status(),
+      path:
+        new URL(response.url()).pathname === "/api/v1/ai/chat"
+          ? "/api/v1/ai/chat"
+          : "unexpected-path",
+      method: request.method() === "POST" ? "POST" : "unexpected-method",
+      navigation: request.isNavigationRequest(),
+      fromServiceWorker: response.fromServiceWorker(),
+      eventStream: /^text\/event-stream(?:;|$)/i.test(
+        headers["content-type"] ?? "",
+      ),
+      timing: request.timing(),
+      bodyCharacters: bodyCharacters ?? null,
+      errorCategory: error === undefined ? null : ackFailureCategory(error),
+      errorFingerprint:
+        error === undefined
+          ? null
+          : createHash("sha256").update(message).digest("hex"),
+      requestFailureCategory: request.failure()
+        ? ackFailureCategory(request.failure()?.errorText)
+        : null,
+    }),
+  );
+}
+
 /** Read only the genuine response ACK; assertion output contains no transcript. */
 async function durableAnswerAck(response: Response) {
   const summary = {
@@ -24,29 +97,36 @@ async function durableAnswerAck(response: Response) {
     conversationIdPresent: false,
     assistantMessageIdPresent: false,
   };
-  try {
-    const text = await response.text();
-    if (text.length > 65_536) return summary;
-    summary.bodyAvailable = true;
-    for (const line of text.split("\n")) {
-      if (!line.startsWith("data:")) continue;
-      let value: unknown;
-      try {
-        value = JSON.parse(line.slice(5));
-      } catch {
-        continue;
-      }
-      if (!value || typeof value !== "object" || Array.isArray(value)) continue;
-      const event = value as Record<string, unknown>;
-      if (event.type !== "done") continue;
-      summary.doneCount += 1;
-      summary.doneSaved = event.saved === true;
-      summary.conversationIdPresent = typeof event.conversationId === "string";
-      summary.assistantMessageIdPresent =
-        typeof event.assistantMessageId === "string";
+  const captured = await captureAckBody(response);
+  if (!captured.ok) {
+    recordAckFailure(response, "body-read-failed", captured.error);
+    // Never substitute UI state or persisted history for the genuine raw ACK.
+    throw new Error(
+      `AI_ACK_BODY_READ_FAILED:${ackFailureCategory(captured.error)}`,
+    );
+  }
+  const text = captured.text;
+  if (text.length > 65_536) {
+    recordAckFailure(response, "body-limit-exceeded", undefined, text.length);
+    return summary;
+  }
+  summary.bodyAvailable = true;
+  for (const line of text.split("\n")) {
+    if (!line.startsWith("data:")) continue;
+    let value: unknown;
+    try {
+      value = JSON.parse(line.slice(5));
+    } catch {
+      continue;
     }
-  } catch {
-    // A closed navigation/connection must fail the boolean ACK assertion.
+    if (!value || typeof value !== "object" || Array.isArray(value)) continue;
+    const event = value as Record<string, unknown>;
+    if (event.type !== "done") continue;
+    summary.doneCount += 1;
+    summary.doneSaved = event.saved === true;
+    summary.conversationIdPresent = typeof event.conversationId === "string";
+    summary.assistantMessageIdPresent =
+      typeof event.assistantMessageId === "string";
   }
   return summary;
 }
@@ -145,15 +225,20 @@ async function openAi(page: Page) {
 async function askAi(page: Page, question: string) {
   const input = page.getByRole("textbox", { name: "질문 입력", exact: true });
   await input.fill(question);
-  const responsePromise = page.waitForResponse(
-    (response) =>
-      response.url().includes("/api/v1/ai/chat") &&
-      response.request().method() === "POST",
-    { timeout: 90_000 },
-  );
+  const responsePromise = page
+    .waitForResponse(
+      (response) =>
+        new URL(response.url()).pathname === "/api/v1/ai/chat" &&
+        response.request().method() === "POST" &&
+        response.request().postDataJSON()?.question === question,
+      { timeout: 90_000 },
+    )
+    .then((response) => {
+      captureAckBody(response);
+      return response;
+    });
   await page.getByRole("button", { name: "질문 보내기" }).click();
-  const response = await responsePromise;
-  return response;
+  return responsePromise;
 }
 
 test("unsigned visitors keep the AI return path", async ({ page }) => {

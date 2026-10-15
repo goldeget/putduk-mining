@@ -77,6 +77,7 @@ test("operator guide and Today search preserve readable, audited operation", asy
   const guide = page.locator("summary").filter({ hasText: "이 화면 안내" });
   const panel = page.getByRole("region", { name: "운영 화면 사용 안내" });
   const evidence = [];
+  const screenshotScale = "css" as const;
   for (const width of [320, 390, 834, 1440]) {
     await page.setViewportSize({ width, height: width === 834 ? 1112 : 900 });
     for (const { scheme, preference } of [
@@ -109,13 +110,23 @@ test("operator guide and Today search preserve readable, audited operation", asy
         expect(geometry.left).toBeGreaterThanOrEqual(0);
         expect(geometry.right).toBeLessThanOrEqual(geometry.width + 1);
         await info.attach(label, {
-          body: await page.screenshot({ fullPage: true }),
+          body: await page.screenshot({
+            fullPage: true,
+            scale: screenshotScale,
+          }),
           contentType: "image/png",
         });
         await page.keyboard.press("Escape");
         await expect(panel).toBeHidden();
         await expect(guide).toBeFocused();
-        evidence.push({ width, preference, scheme, scale, geometry });
+        evidence.push({
+          width,
+          preference,
+          scheme,
+          scale,
+          geometry,
+          screenshotScale,
+        });
       }
     }
   }
