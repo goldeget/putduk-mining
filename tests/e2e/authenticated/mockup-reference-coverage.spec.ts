@@ -197,6 +197,18 @@ async function captureRoutes(
     stage: "initial-layout-fit-poll";
   } | null = null;
   type CapturePhase = "prepare-next-capture" | "rendering" | "checking";
+  const diagnosticStartedAt = performance.now();
+  const diagnosticElapsedMs = () =>
+    Math.round(performance.now() - diagnosticStartedAt);
+  const mainNavigation = {
+    events: [] as {
+      atMs: number;
+      kind: "full" | "within-document";
+      phase: CapturePhase;
+    }[],
+    truncated: false,
+    mainFrameObserved: false,
+  };
   type RequestDiagnostic = {
     method: string;
     sameOrigin: boolean;
@@ -220,6 +232,17 @@ async function captureRoutes(
     responseStatus?: number;
     responseSeen?: boolean;
     responseRscMime?: boolean;
+    receivedBytes?: { encoded: number | null; decoded: number | null };
+    responseCache?: {
+      disk: boolean | null;
+      serviceWorker: boolean | null;
+      prefetch: boolean | null;
+    };
+    navigationTimeline?: {
+      requestStartMs: number;
+      failureMs: number | null;
+      mainNavigation: typeof mainNavigation;
+    };
   };
   let phase: CapturePhase = "rendering";
   const requestPhases = new WeakMap<Request, CapturePhase>();
@@ -471,6 +494,28 @@ async function captureRoutes(
       // Passive Chromium metadata only: no routing, header/body capture or mocking.
       diagnosticSession = await page.context().newCDPSession(page);
       const requests = new Map<string, RequestDiagnostic>();
+      let mainFrameId: string | null = null;
+      const recordNavigation = (kind: "full" | "within-document") => {
+        mainNavigation.events.push({
+          atMs: diagnosticElapsedMs(),
+          kind,
+          phase,
+        });
+        if (mainNavigation.events.length > 16) {
+          mainNavigation.events.shift();
+          mainNavigation.truncated = true;
+        }
+      };
+      diagnosticSession.on("Page.frameNavigated", (event) => {
+        if (event.frame.parentId) return;
+        mainFrameId = event.frame.id;
+        mainNavigation.mainFrameObserved = true;
+        recordNavigation("full");
+      });
+      diagnosticSession.on("Page.navigatedWithinDocument", (event) => {
+        if (mainFrameId !== null && event.frameId === mainFrameId)
+          recordNavigation("within-document");
+      });
       diagnosticSession.on("Network.requestWillBeSent", (event) => {
         const url = new URL(event.request.url);
         if (
@@ -520,7 +565,30 @@ async function captureRoutes(
           phase,
           startedPhase: phase,
           responseSeen: false,
+          receivedBytes: { encoded: null, decoded: null },
+          responseCache: { disk: null, serviceWorker: null, prefetch: null },
+          navigationTimeline: {
+            requestStartMs: diagnosticElapsedMs(),
+            failureMs: null,
+            mainNavigation,
+          },
         });
+      });
+      diagnosticSession.on("Network.dataReceived", (event) => {
+        const bytes = requests.get(event.requestId)?.receivedBytes;
+        if (!bytes) return;
+        if (
+          Number.isFinite(event.encodedDataLength) &&
+          event.encodedDataLength >= 0 &&
+          Number.isFinite((bytes.encoded ?? 0) + event.encodedDataLength)
+        )
+          bytes.encoded = (bytes.encoded ?? 0) + event.encodedDataLength;
+        if (
+          Number.isFinite(event.dataLength) &&
+          event.dataLength >= 0 &&
+          Number.isFinite((bytes.decoded ?? 0) + event.dataLength)
+        )
+          bytes.decoded = (bytes.decoded ?? 0) + event.dataLength;
       });
       diagnosticSession.on("Network.responseReceived", (event) => {
         const request = requests.get(event.requestId);
@@ -529,6 +597,11 @@ async function captureRoutes(
         request.responseStatus = event.response.status;
         request.responseRscMime =
           event.response.mimeType === "text/x-component";
+        request.responseCache = {
+          disk: event.response.fromDiskCache ?? null,
+          serviceWorker: event.response.fromServiceWorker ?? null,
+          prefetch: event.response.fromPrefetchCache ?? null,
+        };
       });
       diagnosticSession.on("Network.loadingFinished", (event) =>
         requests.delete(event.requestId),
@@ -537,6 +610,8 @@ async function captureRoutes(
         const request = requests.get(event.requestId);
         if (!request) return;
         requests.delete(event.requestId);
+        if (request.navigationTimeline)
+          request.navigationTimeline.failureMs = diagnosticElapsedMs();
         diagnostic(
           "cdp-requestfailed",
           request.observedPath ?? "[unavailable]",
@@ -550,6 +625,7 @@ async function captureRoutes(
         );
       });
       await diagnosticSession.send("Network.enable");
+      await diagnosticSession.send("Page.enable");
     }
     await page.goto(routes[0]!, { waitUntil: "networkidle" });
     for (const route of routes) {

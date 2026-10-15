@@ -584,6 +584,17 @@ jobs:
       - name: Check out source
         uses: actions/checkout@v7
 
+      - name: Canonicalize the approved checkout origin
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = "goldeget/putduk-mining"
+          checkout_origin="$(git remote get-url origin)"
+          case "$checkout_origin" in
+            https://github.com/goldeget/putduk-mining|https://github.com/goldeget/putduk-mining.git) ;;
+            *) echo "BLOCKED_TARGET_SCOPE: checkout origin mismatch" >&2; exit 1 ;;
+          esac
+          git remote set-url origin https://github.com/goldeget/putduk-mining.git
+
       - name: Install pnpm
         uses: pnpm/action-setup@v6.1.0
         with:
@@ -624,6 +635,17 @@ jobs:
       - name: Export local Supabase env
         run: node scripts/capture-local-supabase-env.mjs
 
+      - name: Verify independent restore guard contracts
+        timeout-minutes: 1
+        run: node --max-old-space-size=48 --test tests/ci/ci-independent-restore.test.mjs
+
+      - name: Verify independent fresh-cluster recovery
+        timeout-minutes: 3
+        env:
+          APP_ENV: test
+          CI_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: node scripts/ci-independent-restore.mjs --ci
+
       - name: Verify concurrent admin authentication admission
         env:
           APP_ENV: test
@@ -647,7 +669,9 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: worker-runtime
-          path: test-results/worker/report.json
+          path: |
+            test-results/worker/report.json
+            test-results/worker/independent-restore.json
           if-no-files-found: error
 
   # 공개 화면 감사. 로컬 가짜 키만 쓰고 Supabase는 시작하지 않는다.

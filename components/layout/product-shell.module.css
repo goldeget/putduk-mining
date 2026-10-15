@@ -215,6 +215,7 @@
 
   .miningSidebar > :global(.brand-lockup) > span {
     min-width: 0;
+    white-space: normal;
   }
 
   .miningSidebar > :global(.brand-lockup) strong,
