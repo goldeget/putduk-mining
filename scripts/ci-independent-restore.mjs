@@ -56,6 +56,19 @@ export function admitSource(source) {
   );
   return source;
 }
+export function buildTargetPreparation(uid, gid) {
+  need(
+    Number.isSafeInteger(uid) &&
+      uid > 0 &&
+      Number.isSafeInteger(gid) &&
+      gid > 0,
+    "TARGET_NATIVE_UID_GID",
+  );
+  return {
+    rootCommand: `mkdir /restore/pgdata /restore/socket && chown ${uid}:${gid} /restore/pgdata /restore/socket && chmod 700 /restore/pgdata /restore/socket && test "$(stat -c '%u:%g:%a' /restore/pgdata)" = '${uid}:${gid}:700' && touch /restore/ready && chown ${uid}:${gid} /restore && chmod 700 /restore && exec sleep 160`,
+    permissionUser: `${uid}:${gid}`,
+  };
+}
 export function admitOwnedTarget(target, expected, source) {
   need(
     fullId(expected?.id) &&
@@ -107,7 +120,8 @@ export function admitOwnedTarget(target, expected, source) {
     "OWN_TARGET_CAPABILITIES_CPU",
   );
   need(
-    typeof expected.command === "string" &&
+    target.Config.User === "0:0" &&
+      typeof expected.command === "string" &&
       same(target.Config.Entrypoint, ["/bin/sh"]) &&
       same(target.Config.Cmd, ["-c", expected.command]) &&
       same(target.Config.Healthcheck?.Test, ["NONE"]) &&
@@ -534,7 +548,7 @@ const fingerprint = (catalog) =>
     ]),
   );
 const CONTAINER_FORMAT =
-  '{"Id":{{json .Id}},"Name":{{json .Name}},"Image":{{json .Image}},"Config":{"Entrypoint":{{json .Config.Entrypoint}},"Cmd":{{json .Config.Cmd}},"Healthcheck":{{json (index .Config "Healthcheck")}},"Labels":{"com.supabase.cli.project":{{json (index .Config.Labels "com.supabase.cli.project")}},"putduk.owner":{{json (index .Config.Labels "putduk.owner")}},"putduk.nonce":{{json (index .Config.Labels "putduk.nonce")}},"putduk.run":{{json (index .Config.Labels "putduk.run")}}}},"State":{"Running":{{json .State.Running}}},"Mounts":{{json .Mounts}},"HostConfig":{"NetworkMode":{{json .HostConfig.NetworkMode}},"ReadonlyRootfs":{{json .HostConfig.ReadonlyRootfs}},"PortBindings":{{json .HostConfig.PortBindings}},"GroupAdd":{{json .HostConfig.GroupAdd}},"Memory":{{json .HostConfig.Memory}},"MemorySwap":{{json .HostConfig.MemorySwap}},"PidsLimit":{{json .HostConfig.PidsLimit}},"CapAdd":{{json .HostConfig.CapAdd}},"CapDrop":{{json .HostConfig.CapDrop}},"SecurityOpt":{{json .HostConfig.SecurityOpt}},"NanoCpus":{{json .HostConfig.NanoCpus}},"LogConfig":{{json .HostConfig.LogConfig}}}}';
+  '{"Id":{{json .Id}},"Name":{{json .Name}},"Image":{{json .Image}},"Config":{"User":{{json .Config.User}},"Entrypoint":{{json .Config.Entrypoint}},"Cmd":{{json .Config.Cmd}},"Healthcheck":{{json (index .Config "Healthcheck")}},"Labels":{"com.supabase.cli.project":{{json (index .Config.Labels "com.supabase.cli.project")}},"putduk.owner":{{json (index .Config.Labels "putduk.owner")}},"putduk.nonce":{{json (index .Config.Labels "putduk.nonce")}},"putduk.run":{{json (index .Config.Labels "putduk.run")}}}},"State":{"Running":{{json .State.Running}}},"Mounts":{{json .Mounts}},"HostConfig":{"NetworkMode":{{json .HostConfig.NetworkMode}},"ReadonlyRootfs":{{json .HostConfig.ReadonlyRootfs}},"PortBindings":{{json .HostConfig.PortBindings}},"GroupAdd":{{json .HostConfig.GroupAdd}},"Memory":{{json .HostConfig.Memory}},"MemorySwap":{{json .HostConfig.MemorySwap}},"PidsLimit":{{json .HostConfig.PidsLimit}},"CapAdd":{{json .HostConfig.CapAdd}},"CapDrop":{{json .HostConfig.CapDrop}},"SecurityOpt":{{json .HostConfig.SecurityOpt}},"NanoCpus":{{json .HostConfig.NanoCpus}},"LogConfig":{{json .HostConfig.LogConfig}}}}';
 const VOLUME_FORMAT =
   '{"Name":{{json .Name}},"Labels":{"putduk.owner":{{json (index .Labels "putduk.owner")}},"putduk.nonce":{{json (index .Labels "putduk.nonce")}},"putduk.run":{{json (index .Labels "putduk.run")}}}}';
 
@@ -826,6 +840,7 @@ export function runCiRestore() {
       "NATIVE_NONROOT_IDS",
     );
     report.native = { bin, version: metadata[2], uid, gid };
+    const preparation = buildTargetPreparation(uid, gid);
     const fresh = readBackend201FreshCatalog(
       sourceQuery,
       boundary.migrationVersions,
@@ -926,7 +941,7 @@ export function runCiRestore() {
     ]);
     createdVolume = true;
     createAttempted = true;
-    const rootPrepare = `mkdir /restore/pgdata /restore/socket && chown ${uid}:${gid} /restore /restore/pgdata /restore/socket && chmod 700 /restore /restore/pgdata /restore/socket && test "$(stat -c '%u:%g:%a' /restore/pgdata)" = '${uid}:${gid}:700' && touch /restore/ready && exec sleep 160`;
+    const rootPrepare = preparation.rootCommand;
     expected.command = rootPrepare;
     containerId = execute("create-own-container", [
       "create",
@@ -952,6 +967,7 @@ export function runCiRestore() {
       "--cap-add=SETUID",
       "--cap-add=SETGID",
       "--security-opt=no-new-privileges",
+      "--user=0:0",
       "--log-driver=local",
       "--log-opt=max-size=10m",
       "--log-opt=max-file=1",
@@ -968,6 +984,7 @@ export function runCiRestore() {
     report.target.id = containerId;
     const targetBeforeStart = inspect(containerId);
     report.targetCapabilityAdmission = {
+      user: targetBeforeStart.Config?.User ?? null,
       capAdd: targetBeforeStart.HostConfig?.CapAdd ?? null,
       capDrop: targetBeforeStart.HostConfig?.CapDrop ?? null,
       securityOpt: targetBeforeStart.HostConfig?.SecurityOpt ?? null,
@@ -977,7 +994,7 @@ export function runCiRestore() {
     execute("start-own-container", ["start", containerId]);
     const stat = cleanExec(
       containerId,
-      null,
+      preparation.permissionUser,
       [
         "/bin/sh",
         "-c",

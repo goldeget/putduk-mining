@@ -7,6 +7,7 @@ import { WalletOverviewView } from "@/components/product/wallet-overview-view";
 import type { WalletReadViewProps } from "@/components/product/wallet-read-view";
 
 vi.mock("next/navigation", () => ({
+  useSearchParams: () => new URLSearchParams(window.location.search),
   useRouter: () => ({ refresh: () => undefined }),
 }));
 vi.mock("@/components/product/wallet-scene", () => ({

@@ -9,6 +9,7 @@ import {
   buildRoleBootstrap,
   buildSupplement,
   buildDatabaseAcl,
+  buildTargetPreparation,
 } from "../../scripts/ci-independent-restore.mjs";
 
 const id = "a".repeat(64),
@@ -43,6 +44,7 @@ const target = () => ({
   Name: `/${expected.name}`,
   Image: image,
   Config: {
+    User: "0:0",
     Entrypoint: ["/bin/sh"],
     Cmd: ["-c", expected.command],
     Healthcheck: { Test: ["NONE"] },
@@ -96,6 +98,33 @@ for (const [name, mutate] of [
   });
 test("cleanup accepts exact owned independent target", () =>
   assert.equal(admitOwnedTarget(target(), expected, source()).Id, expected.id));
+test("target preparation binds controlled root and the proven unprivileged probe", () => {
+  const preparation = buildTargetPreparation(100, 101);
+  // Exact successful N7 GREEN root command; external native runtime is the oracle.
+  assert.deepEqual(preparation, {
+    rootCommand:
+      "mkdir /restore/pgdata /restore/socket && chown 100:101 /restore/pgdata /restore/socket && chmod 700 /restore/pgdata /restore/socket && test \"$(stat -c '%u:%g:%a' /restore/pgdata)\" = '100:101:700' && touch /restore/ready && chown 100:101 /restore && chmod 700 /restore && exec sleep 160",
+    permissionUser: "100:101",
+  });
+});
+test("target preparation rejects root native IDs and shell injection", () => {
+  for (const [uid, gid] of [
+    [0, 101],
+    [100, 0],
+    [-1, 101],
+    [100, 1.5],
+    ["100; exit 1", 101],
+    [100, null],
+  ])
+    assert.throws(() => buildTargetPreparation(uid, gid));
+});
+test("owned target rejects an uncontrolled image default or nonroot bootstrap user", () => {
+  for (const user of ["", "postgres", "100:101", "0"]) {
+    const x = target();
+    x.Config.User = user;
+    assert.throws(() => admitOwnedTarget(x, expected, source()));
+  }
+});
 test("the actual N6 capability projection admits exact Docker CAP_ aliases", () => {
   const x = target();
   // N6 receipt117f56b57b793a6697a9d57c9d2aeac9b86683327cec544cb18c160be76f6b88:

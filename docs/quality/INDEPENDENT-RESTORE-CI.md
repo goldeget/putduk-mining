@@ -110,3 +110,17 @@ securityOpt and nanoCpus before first admission. Hosted candidate5fd failed the
 capability/CPU guard without these actual field values in its artifact; its precise
 failure field remains UNKNOWN. Reproducing the local alias false rejection does
 not establish the hosted cause or independent restore success.
+
+The separate N7 permission probe reproduced the current preparation order on a
+fresh local target: chmod700 on parent /restore removed traversal before child
+chmod, producing Permission denied for pgdata/socket and container exit1. A
+second fresh target passed after preparing/statting the children and creating the
+readiness marker before changing parent ownership/mode last, then probing as the
+observed postgres UID/GID. CI now uses that order, pins bootstrap user0:0 explicitly
+and requires it in target admission; the permission probe runs as postgres UID/GID.
+No DAC capability is added. Native IDs must be positive safe integers. N7 used
+128MiB, volume-nocopy and an empty fixed environment; CI retains256MiB and its
+existing mount contract. Local image99b had an empty default User, but hosted
+image1ea9 default User and exact root log were not observed. Hosted e8's stopped
+container stderr was reconstructed by its exact recorded SHA only. N7 proves the
+permission mechanism and minimal local repair, not complete hosted restoration.

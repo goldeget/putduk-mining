@@ -5,6 +5,11 @@ import type { CSSProperties } from "react";
 import { WalletReadRecovery } from "@/components/product/wallet-read-recovery";
 import type { WalletReadViewProps } from "@/components/product/wallet-read-view";
 import { WalletScene } from "@/components/product/wallet-scene";
+import {
+  WalletViewLink,
+  WalletViewPanel,
+  WalletViewSelector,
+} from "@/components/product/wallet-view-selector";
 import { formatTrialValue } from "@/domain/trial/format-trial-value";
 import { formatAtomicAmount } from "@/domain/wallet/format-amount";
 import {
@@ -125,14 +130,8 @@ export function WalletOverviewView({
       : undefined;
   const fundingMissing =
     funding.state === "empty" ? "아직 없음" : "확인할 수 없음";
-  const displayEntries =
-    initialView === "history" ? ledgerEntries : ledgerEntries.slice(0, 4);
   return (
-    <div
-      className={styles.page}
-      data-wallet-presentation="wallet-overview-scene"
-      data-wallet-active-view={initialView}
-    >
+    <WalletViewSelector className={styles.page} initialView={initialView}>
       <section
         className={styles.overview}
         aria-labelledby="wallet-overview-title"
@@ -235,57 +234,51 @@ export function WalletOverviewView({
           <nav className={styles.tabs} aria-label="지갑 내역 선택">
             {(["principal", "profit", "history"] as const).map(
               (view, index) => (
-                <Link
-                  href={`/wallet?view=${view}`}
-                  key={view}
-                  aria-current={initialView === view ? "page" : undefined}
-                >
+                <WalletViewLink view={view} key={view}>
                   <Icon
                     kind={
                       index === 0 ? "coins" : index === 1 ? "profit" : "history"
                     }
                   />
                   {["원금", "수익", "거래내역"][index]}
-                </Link>
+                </WalletViewLink>
               ),
             )}
           </nav>
-          {initialView !== "history" ? (
-            <section
-              className={styles.viewNote}
-              aria-label={
-                initialView === "principal" ? "원금 현황" : "수익 현황"
-              }
-            >
-              <div>
-                <span>
-                  {initialView === "principal"
-                    ? "인정 원금"
-                    : "정산 전 대기 수익"}
-                </span>
-                <Amount
-                  value={
-                    (initialView === "principal" ? principal : pending) ??
-                    fundingMissing
-                  }
-                />
-              </div>
-              <p>
-                {initialView === "principal"
-                  ? "인정 원금과 출금 가능한 원화는 서로 다른 값이에요."
-                  : "대기 수익은 정산된 뒤 원화 지갑에 반영돼요."}
-              </p>
-              {funding.state === "error" ? (
-                <WalletReadRecovery label="원금과 수익 다시 확인" />
-              ) : null}
-              {unconfirmed ? (
+          {(["principal", "profit"] as const).map((view) => (
+            <WalletViewPanel views={[view]} key={view}>
+              <section
+                className={styles.viewNote}
+                aria-label={view === "principal" ? "원금 현황" : "수익 현황"}
+              >
+                <div>
+                  <span>
+                    {view === "principal" ? "인정 원금" : "정산 전 대기 수익"}
+                  </span>
+                  <Amount
+                    value={
+                      (view === "principal" ? principal : pending) ??
+                      fundingMissing
+                    }
+                  />
+                </div>
                 <p>
-                  아직 확정 전 <b>{unconfirmed}</b> · 잔액에 합치지 않아요.
+                  {view === "principal"
+                    ? "인정 원금과 출금 가능한 원화는 서로 다른 값이에요."
+                    : "대기 수익은 정산된 뒤 원화 지갑에 반영돼요."}
                 </p>
-              ) : null}
-            </section>
-          ) : null}
-          {initialView === "profit" ? (
+                {funding.state === "error" ? (
+                  <WalletReadRecovery label="원금과 수익 다시 확인" />
+                ) : null}
+                {unconfirmed ? (
+                  <p>
+                    아직 확정 전 <b>{unconfirmed}</b> · 잔액에 합치지 않아요.
+                  </p>
+                ) : null}
+              </section>
+            </WalletViewPanel>
+          ))}
+          <WalletViewPanel views={["profit"]}>
             <section
               className={styles.trial}
               aria-label="원화와 분리된 체험 보상"
@@ -311,20 +304,21 @@ export function WalletOverviewView({
                 </Link>
               )}
             </section>
-          ) : null}
+          </WalletViewPanel>
           <section
             className={styles.history}
             aria-labelledby="wallet-ledger-title"
           >
             <header>
               <h2 id="wallet-ledger-title">최근 거래 내역</h2>
-              {initialView !== "history" ? (
-                <Link href="/wallet?view=history">
+              <WalletViewPanel views={["principal", "profit"]}>
+                <WalletViewLink view="history" markCurrent={false}>
                   전체보기 <span aria-hidden="true">›</span>
-                </Link>
-              ) : (
+                </WalletViewLink>
+              </WalletViewPanel>
+              <WalletViewPanel views={["history"]}>
                 <small>최근 12건</small>
-              )}
+              </WalletViewPanel>
             </header>
             <div className={styles.tableHead} aria-hidden="true">
               <span>거래</span>
@@ -338,27 +332,35 @@ export function WalletOverviewView({
               </div>
             ) : ledgerState === "ready" ? (
               <ul className={styles.ledgerList}>
-                {displayEntries.map((entry) => (
-                  <li
+                {ledgerEntries.map((entry, index) => (
+                  <WalletViewPanel
                     key={entry.id}
-                    data-wallet-entry-direction={entry.direction}
+                    views={
+                      index < 4
+                        ? ["principal", "profit", "history"]
+                        : ["history"]
+                    }
                   >
-                    <span className={styles.entryIcon}>
-                      <Icon
-                        kind={
-                          entry.direction === "CREDIT" ? "deposit" : "withdraw"
-                        }
-                      />
-                    </span>
-                    <strong>{labelWalletEntryType(entry.entryType)}</strong>
-                    <time dateTime={entry.createdAt}>
-                      {formatWalletEvidenceTime(entry.createdAt)}
-                    </time>
-                    <span className={styles.entryAmount}>
-                      {entry.direction === "CREDIT" ? "+" : "−"}
-                      {formatKrw(entry.amountAtomic)}
-                    </span>
-                  </li>
+                    <li data-wallet-entry-direction={entry.direction}>
+                      <span className={styles.entryIcon}>
+                        <Icon
+                          kind={
+                            entry.direction === "CREDIT"
+                              ? "deposit"
+                              : "withdraw"
+                          }
+                        />
+                      </span>
+                      <strong>{labelWalletEntryType(entry.entryType)}</strong>
+                      <time dateTime={entry.createdAt}>
+                        {formatWalletEvidenceTime(entry.createdAt)}
+                      </time>
+                      <span className={styles.entryAmount}>
+                        {entry.direction === "CREDIT" ? "+" : "−"}
+                        {formatKrw(entry.amountAtomic)}
+                      </span>
+                    </li>
+                  </WalletViewPanel>
                 ))}
               </ul>
             ) : (
@@ -369,7 +371,7 @@ export function WalletOverviewView({
               </div>
             )}
           </section>
-          {initialView === "history" ? (
+          <WalletViewPanel views={["history"]}>
             <section
               className={styles.receipts}
               aria-labelledby="wallet-receipts-title"
@@ -421,7 +423,7 @@ export function WalletOverviewView({
                 <p className={styles.empty}>아직 입출금 처리 내역이 없어요.</p>
               )}
             </section>
-          ) : null}
+          </WalletViewPanel>
         </div>
         <aside className={styles.guide} aria-labelledby="wallet-guide-title">
           <span className={styles.guideIcon}>
@@ -460,6 +462,6 @@ export function WalletOverviewView({
           </ul>
         </aside>
       </div>
-    </div>
+    </WalletViewSelector>
   );
 }
