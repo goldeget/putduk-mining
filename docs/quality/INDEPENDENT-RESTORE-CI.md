@@ -99,3 +99,14 @@ target now explicitly sets `compress=false` and requires that exact inspected op
 while retaining `max-size=10m` and `max-file=1`. No log budget is increased. Missing
 or enabled compression fails target admission. Hosted applicability and actual
 independent restore after this repair remain unverified until the next CI execution.
+
+The successful local N6 probe observed Docker's capability names as CAP_CHOWN,
+CAP_FOWNER, CAP_SETGID and CAP_SETUID. Target admission accepts only those four
+capabilities using their exact plain or CAP_ aliases; duplicates, unknown names,
+privileged additions and missing capabilities remain rejected. CapDrop ALL, the
+existing no-new-privileges forms and CPU0.5 requirements remain unchanged. The
+sanitized targetCapabilityAdmission projection records only capAdd, capDrop,
+securityOpt and nanoCpus before first admission. Hosted candidate5fd failed the
+capability/CPU guard without these actual field values in its artifact; its precise
+failure field remains UNKNOWN. Reproducing the local alias false rejection does
+not establish the hosted cause or independent restore success.

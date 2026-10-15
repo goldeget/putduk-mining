@@ -88,13 +88,16 @@ export function admitOwnedTarget(target, expected, source) {
       h.PidsLimit === 64,
     "OWN_TARGET_SECURITY",
   );
+  const requiredCaps = ["CHOWN", "FOWNER", "SETGID", "SETUID"];
+  const normalizedCaps = Array.isArray(h.CapAdd)
+    ? h.CapAdd.map((cap) =>
+        requiredCaps.find((known) => cap === known || cap === `CAP_${known}`),
+      )
+    : [];
   need(
-    same([...(h.CapAdd ?? [])].sort(), [
-      "CHOWN",
-      "FOWNER",
-      "SETGID",
-      "SETUID",
-    ]) &&
+    normalizedCaps.length === 4 &&
+      new Set(normalizedCaps).size === 4 &&
+      same([...normalizedCaps].sort(), requiredCaps) &&
       same(h.CapDrop, ["ALL"]) &&
       h.SecurityOpt?.length === 1 &&
       ["no-new-privileges", "no-new-privileges=true"].includes(
@@ -963,7 +966,14 @@ export function runCiRestore() {
     need(fullId(containerId), "OWN_CREATE_CID");
     expected.id = containerId;
     report.target.id = containerId;
-    admitOwnedTarget(inspect(containerId), expected, source);
+    const targetBeforeStart = inspect(containerId);
+    report.targetCapabilityAdmission = {
+      capAdd: targetBeforeStart.HostConfig?.CapAdd ?? null,
+      capDrop: targetBeforeStart.HostConfig?.CapDrop ?? null,
+      securityOpt: targetBeforeStart.HostConfig?.SecurityOpt ?? null,
+      nanoCpus: targetBeforeStart.HostConfig?.NanoCpus ?? null,
+    };
+    admitOwnedTarget(targetBeforeStart, expected, source);
     execute("start-own-container", ["start", containerId]);
     const stat = cleanExec(
       containerId,

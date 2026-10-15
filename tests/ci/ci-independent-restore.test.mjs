@@ -96,6 +96,30 @@ for (const [name, mutate] of [
   });
 test("cleanup accepts exact owned independent target", () =>
   assert.equal(admitOwnedTarget(target(), expected, source()).Id, expected.id));
+test("the actual N6 capability projection admits exact Docker CAP_ aliases", () => {
+  const x = target();
+  // N6 receipt117f56b57b793a6697a9d57c9d2aeac9b86683327cec544cb18c160be76f6b88:
+  // only these projected fields are reused, not its local resource identities.
+  x.HostConfig.CapAdd = ["CAP_CHOWN", "CAP_FOWNER", "CAP_SETGID", "CAP_SETUID"];
+  x.HostConfig.CapDrop = ["ALL"];
+  x.HostConfig.SecurityOpt = ["no-new-privileges=true"];
+  x.HostConfig.NanoCpus = 500000000;
+  assert.equal(admitOwnedTarget(x, expected, source()).Id, expected.id);
+});
+test("capability aliases cannot admit duplicates, unknown, privileged or missing capabilities", () => {
+  for (const caps of [
+    ["CAP_CHOWN", "CHOWN", "CAP_FOWNER", "CAP_SETGID", "CAP_SETUID"],
+    ["CAP_UNKNOWN", "CAP_FOWNER", "CAP_SETGID", "CAP_SETUID"],
+    ["CAP_SYS_ADMIN", "CAP_FOWNER", "CAP_SETGID", "CAP_SETUID"],
+    ["CAP_CHOWN", "CAP_FOWNER", "CAP_SETGID"],
+    ["CAP_CAP_CHOWN", "CAP_FOWNER", "CAP_SETGID", "CAP_SETUID"],
+    [null, "CAP_FOWNER", "CAP_SETGID", "CAP_SETUID"],
+  ]) {
+    const x = target();
+    x.HostConfig.CapAdd = caps;
+    assert.throws(() => admitOwnedTarget(x, expected, source()));
+  }
+});
 test("single-file local logging rejects implicit compression defaults", () => {
   const x = target();
   delete x.HostConfig.LogConfig.Config.compress;
