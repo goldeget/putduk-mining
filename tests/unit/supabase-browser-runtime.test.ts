@@ -341,3 +341,84 @@ describe("admitted CI workerd browser configuration", () => {
     );
   });
 });
+
+describe("safe server browser config failure phases", () => {
+  const allowlist = loadJobLocalAllowlist();
+  it.each([
+    "public-env",
+    "browser-schema",
+    "browser-public-key",
+    "http-app-env",
+    "local-filesystem",
+    "local-marker",
+    "local-json",
+    "local-shape",
+    "local-url",
+  ])("logs only the fixed %s phase and preserves rejection", (phase) => {
+    const log = vi.spyOn(console, "error").mockImplementation(() => {});
+    const read = vi.spyOn(localSupabaseEnv, "loadJobLocalAllowlist");
+    try {
+      vi.stubEnv("PUTDUK_WORKERD_LOCAL_AUTH_SCOPE", "ci-auth-v1");
+      vi.stubEnv("PUTDUK_WORKERD_LOCAL_ALLOWLIST", JSON.stringify(allowlist));
+      if (phase === "public-env")
+        vi.stubEnv("NEXT_PUBLIC_APP_URL", "secret-invalid-app-url");
+      if (phase === "browser-schema")
+        vi.stubEnv(
+          "NEXT_PUBLIC_SUPABASE_URL",
+          "https://different-project.supabase.co",
+        );
+      if (phase === "browser-public-key")
+        vi.stubEnv(
+          "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+          "sb_secret_never_log_this_fixture",
+        );
+      if (phase === "http-app-env") vi.stubEnv("APP_ENV", "production");
+      if (phase === "local-filesystem") {
+        vi.stubEnv("PUTDUK_WORKERD_LOCAL_AUTH_SCOPE", undefined);
+        vi.stubEnv("PUTDUK_WORKERD_LOCAL_ALLOWLIST", undefined);
+        read.mockImplementation(() => {
+          throw new Error("secret-filesystem-error");
+        });
+      }
+      if (phase === "local-marker")
+        vi.stubEnv("PUTDUK_WORKERD_LOCAL_AUTH_SCOPE", "secret-invalid-marker");
+      if (phase === "local-json")
+        vi.stubEnv("PUTDUK_WORKERD_LOCAL_ALLOWLIST", "secret-invalid-json");
+      if (phase === "local-shape")
+        vi.stubEnv("PUTDUK_WORKERD_LOCAL_ALLOWLIST", "[]");
+      if (phase === "local-url")
+        vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "http://127.0.0.1:1");
+      expect(() => getSupabaseBrowserAuthConfig()).toThrow();
+      expect(log.mock.calls).toEqual([
+        ["[supabase-browser-config-phase]", phase],
+      ]);
+      expect(JSON.stringify(log.mock.calls)).not.toMatch(
+        /secret|127|:\/\/|sb_|publishable|apiPort|dbPort|projectId/,
+      );
+    } finally {
+      read.mockRestore();
+      log.mockRestore();
+    }
+  });
+
+  it("does not log successful admitted or approved HTTPS configurations", () => {
+    const log = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      vi.stubEnv("PUTDUK_WORKERD_LOCAL_AUTH_SCOPE", "ci-auth-v1");
+      vi.stubEnv("PUTDUK_WORKERD_LOCAL_ALLOWLIST", JSON.stringify(allowlist));
+      expect(getSupabaseBrowserAuthConfig()).toEqual({
+        url: localUrl,
+        publishableKey,
+      });
+      vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", remoteUrl);
+      vi.stubEnv("APP_ENV", "production");
+      expect(getSupabaseBrowserAuthConfig()).toEqual({
+        url: remoteUrl,
+        publishableKey,
+      });
+      expect(log).not.toHaveBeenCalled();
+    } finally {
+      log.mockRestore();
+    }
+  });
+});
