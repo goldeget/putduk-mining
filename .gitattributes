@@ -1,3 +1,7 @@
+# Executable source and hash-bound fixtures use the same LF checkout on all OSes.
+# Explicit -text entries below retain their original reviewed bytes.
+* text=auto eol=lf
+
 # Owner-provided specifications retain their original UTF-8/CRLF bytes.
 # CRLF and the original Markdown hard-break spaces are immutable source data.
 # All executable files and maintained documentation keep the normal checks.
