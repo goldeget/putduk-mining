@@ -273,3 +273,55 @@ test("pinned Playwright test-list selects one exact reviewed test, including loo
     rmSync(temporary, { recursive: true, force: true });
   }
 });
+
+test("project-specific scheduling retains slower mobile observation and unknown fallbacks", () => {
+  const make = (project, file, id) => ({
+    key: JSON.stringify([project, id]),
+    project,
+    file: `tests/e2e/authenticated/${file}`,
+  });
+  const all = [
+    make("chromium", "home-catalog-materials.spec.ts", "desktop"),
+    make("mobile-chrome", "home-catalog-materials.spec.ts", "mobile"),
+    make("future-project", "home-catalog-materials.spec.ts", "future"),
+    make("chromium", "unknown-new.spec.ts", "unknown"),
+  ];
+  const shards = balanceInventory(all, 4);
+  const weight = (project, suffix) =>
+    shards.find((shard) =>
+      shard.tests.some(
+        (item) => item.project === project && item.file.endsWith(suffix),
+      ),
+    ).estimateSeconds;
+  assert.equal(weight("chromium", "home-catalog-materials.spec.ts"), 469);
+  assert.equal(weight("mobile-chrome", "home-catalog-materials.spec.ts"), 566);
+  assert.equal(weight("future-project", "home-catalog-materials.spec.ts"), 389);
+  assert.equal(weight("chromium", "unknown-new.spec.ts"), 20);
+  assertSameInventory(
+    all,
+    shards.flatMap((shard) => shard.tests),
+  );
+});
+
+test("mockup scheduling uses project observations without reducing test coverage", () => {
+  const all = inventoryFromReport(
+    report([...specs(), ...specs("chromium")]),
+    cwd,
+  );
+  const shards = balanceInventory(all, 12);
+  const units = shards.flatMap((shard) => shard.groups);
+  assert.equal(units.length, 14);
+  assertSameInventory(
+    all,
+    shards.flatMap((shard) => shard.tests),
+  );
+  const single = (project, title) =>
+    shards.find(
+      (shard) =>
+        shard.tests.length === 1 &&
+        shard.tests[0].project === project &&
+        shard.tests[0].titlePath[0] === title,
+    );
+  assert.equal(single("mobile-chrome", titles[1]).estimateSeconds, 285);
+  assert.equal(single("chromium", titles[1]).estimateSeconds, 205);
+});

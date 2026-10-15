@@ -461,7 +461,12 @@ jobs:
     name: Authenticated product gates (${{ matrix.shard }}/12)
     runs-on: ubuntu-24.04
     timeout-minutes: 19
-    needs: [webserver-lifecycle, e2e-app-build]
+    permissions:
+      contents: read
+      actions: read
+    # Prepare fresh local services while the separate production build runs.
+    # The exact build/run/attempt success gate below still precedes download/tests.
+    needs: [webserver-lifecycle]
     strategy:
       fail-fast: false
       matrix:
@@ -507,23 +512,33 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Download E2E production build
-        uses: actions/download-artifact@v7
-        with:
-          name: e2e-next-production
-
       - name: Install Supabase CLI
         uses: supabase/setup-cli@v3
         with:
           version: 2.113.0
+
+      - name: Prove authenticated database starts from absent resources
+        run: node scripts/assert-ci-fresh-db.mjs before
 
       - name: Start local Supabase
         env:
           CI_SUPABASE_START_STAGGER_SECONDS: ${{ matrix.shard }}
         run: bash scripts/ci-supabase-start.sh
 
-      - name: Rebuild migrations from zero
-        run: pnpm db:reset
+      - name: Verify fresh first-start migrations and empty financial state
+        run: node scripts/assert-ci-fresh-db.mjs after
+
+      - name: Require current production build success
+        timeout-minutes: 4
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CI_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: node scripts/await-ci-e2e-build.mjs
+
+      - name: Download E2E production build
+        uses: actions/download-artifact@v7
+        with:
+          name: e2e-next-production
 
       - name: Export local Supabase env
         run: node scripts/capture-local-supabase-env.mjs

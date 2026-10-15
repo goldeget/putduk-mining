@@ -18,6 +18,7 @@ import {
   dismissGuidedQuestIfPresent,
   loginAsMember,
 } from "./helpers/member-session";
+import { expectSettledRoute } from "./helpers/settled-route";
 
 const VIEWPORTS = [
   { height: 844, name: "390", width: 390 },
@@ -105,6 +106,10 @@ async function applyTheme(page: Page, theme: "dark" | "light") {
   }, theme);
   await page.reload({ waitUntil: "domcontentloaded" });
   await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
+  // DOMContentLoaded can precede React's queued streaming boundary swap.
+  // Keep global uniqueness checks: a retained hidden copy must disappear.
+  await expectSettledRoute(page, "/wallet/deposit");
+  await expect(page.locator("#deposit-amount")).toHaveCount(1);
 }
 
 async function selectDepositMethod(page: Page, method: "bank" | "usdt") {

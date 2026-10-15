@@ -13,6 +13,8 @@ import { fileURLToPath } from "node:url";
 import { test } from "node:test";
 // Keep 201 planner regressions in the existing enumerated CI tools entrypoint.
 import "./ci-authenticated-shards-201.test.mjs";
+import "../tests/ci/assert-ci-fresh-db.test.mjs";
+import "../tests/ci/await-ci-e2e-build.test.mjs";
 import {
   assertSameInventory,
   balanceInventory,
