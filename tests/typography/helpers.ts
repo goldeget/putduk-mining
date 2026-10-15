@@ -281,8 +281,21 @@ export async function settleRenderedTypographyImages(page: Page) {
         left: element.scrollLeft,
       })),
   }));
+  const disposeImages: Array<() => Promise<void>> = [];
+  const cleanupFailures: unknown[] = [];
+  let primaryFailed = false;
+  let primaryFailure: unknown;
+  let imageIndex = -1;
+  let imageCount = 0;
+  let phase = "snapshot";
   try {
-    for (const image of await page.locator("img").all()) {
+    // Bind DOM identities once: responsive insertion must not retarget nth locators.
+    const images = await page.locator("img").elementHandles();
+    imageCount = images.length;
+    disposeImages.push(...images.map((image) => () => image.dispose()));
+    for (const [index, image] of images.entries()) {
+      imageIndex = index;
+      phase = "visibility";
       const painted = await image.evaluate(
         (element) =>
           element.checkVisibility({
@@ -293,7 +306,9 @@ export async function settleRenderedTypographyImages(page: Page) {
           element.getBoundingClientRect().height > 0,
       );
       if (!painted) continue;
-      await image.scrollIntoViewIfNeeded();
+      phase = "scroll";
+      await image.scrollIntoViewIfNeeded({ timeout: 5_000 });
+      phase = "load";
       await expect
         .poll(
           () =>
@@ -309,6 +324,7 @@ export async function settleRenderedTypographyImages(page: Page) {
           },
         )
         .toBe(true);
+      phase = "decode";
       await image.evaluate(async (element) => {
         if (!(element instanceof HTMLImageElement))
           throw new Error("TYPOGRAPHY_IMAGE_ELEMENT_REQUIRED");
@@ -328,23 +344,55 @@ export async function settleRenderedTypographyImages(page: Page) {
         }
       });
     }
+  } catch (error) {
+    primaryFailed = true;
+    primaryFailure = error;
+    console.error(
+      "[typography-image-failure] " +
+        JSON.stringify({
+          phase,
+          imageIndex,
+          imageCount,
+          pageClosed: page.isClosed(),
+        }),
+    );
   } finally {
-    await scrollState.evaluate((state) => {
-      for (const saved of state.elements) {
-        saved.element.scrollTo({
-          top: saved.top,
-          left: saved.left,
+    try {
+      await scrollState.evaluate((state) => {
+        for (const saved of state.elements) {
+          saved.element.scrollTo({
+            top: saved.top,
+            left: saved.left,
+            behavior: "instant",
+          });
+        }
+        window.scrollTo({
+          top: state.windowY,
+          left: state.windowX,
           behavior: "instant",
         });
-      }
-      window.scrollTo({
-        top: state.windowY,
-        left: state.windowX,
-        behavior: "instant",
       });
-    });
-    await scrollState.dispose();
+    } catch (error) {
+      cleanupFailures.push(error);
+    }
+    for (const dispose of [() => scrollState.dispose(), ...disposeImages]) {
+      try {
+        await dispose();
+      } catch (error) {
+        cleanupFailures.push(error);
+      }
+    }
   }
+  if (cleanupFailures.length > 0) {
+    throw new AggregateError(
+      primaryFailed ? [primaryFailure, ...cleanupFailures] : cleanupFailures,
+      primaryFailed
+        ? "Typography image preparation failed; cleanup also failed"
+        : "Typography image preparation cleanup failed",
+      { cause: primaryFailure },
+    );
+  }
+  if (primaryFailed) throw primaryFailure;
   await page.evaluate(
     () =>
       new Promise<void>((resolve) =>
