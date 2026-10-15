@@ -54,4 +54,8 @@ flows. KYC documents are protected, least-privilege and every access is audited.
 Dependencies are pinned with a committed lockfile. Security/RLS tests,
 dependency review, private-source-map verification and secret/client-bundle
 scans are release gates. Cloudflare security products are not provisioned until
-the exact new account and approved runtime architecture are known.
+the approved runtime architecture and applicable effect gates are satisfied.
+The sole authorized Cloudflare account is the retained `putduk-landing` account,
+ID `9dc502d4ef06b3b5374591de6e6933ca`. Preserve the existing `putduk.com`
+zone, email, mail-authentication DNS, security, certificates and retained
+services. Unknown ownership or dependencies block removal of a resource.

@@ -1,5 +1,29 @@
 # PUTDUK MINING — ABSOLUTE PROJECT BOUNDARY
 
+## Owner-authorized isolated F: continuation — 2026-10-15
+
+The owner directly authorized an isolated F: checkout for this recovery task
+because the C: workspace lacks capacity. This exception supersedes conflicting
+older source-path restrictions only for the exact checkout below.
+
+- Continue local recovery in
+  `F:/_PUTDUK/Workspaces/release-resume-20261015-01a13e91`, initialized from
+  reviewed base `ed2c24263a5b683861dae69a498358d1f98d0541` of
+  `goldeget/putduk-mining`. Local edits, project-scoped verification and reviewed
+  local commits are authorized in this isolated checkout.
+- Preserve the original
+  `C:/Users/PC/Desktop/putduk-mining/.worktrees/cloud-ui-20261012`, the
+  `C:/Dev/putduk-mining` copies and all prior work, refs, evidence and runtimes.
+  Do not reset, clean, overwrite, relocate or delete them to resume here.
+- Record the actual checkout, candidate SHA, file ownership and verification
+  environment in each new source manifest and execution receipt. Historical
+  results do not establish acceptance of this checkout or a changed candidate.
+- Exact GitHub, Supabase and Cloudflare targets and all financial, security,
+  production-coupling and release gates below remain in force. This path
+  exception adds no remote push, PR, merge, workflow, database, deployment,
+  DNS, payout, identity-enrollment or paid-call authority. Each remote effect
+  still requires its applicable exact-target approval and evidence.
+
 ## Owner-confirmed scope and precedence — 2026-10-14
 
 The project owner directly approved this exception in the current chat on
