@@ -296,15 +296,18 @@ export async function settleRenderedTypographyImages(page: Page) {
     for (const [index, image] of images.entries()) {
       imageIndex = index;
       phase = "visibility";
-      const painted = await image.evaluate(
-        (element) =>
+      const painted = await image.evaluate((element) => {
+        if (!(element instanceof HTMLImageElement))
+          throw new Error("TYPOGRAPHY_IMAGE_ELEMENT_REQUIRED");
+        return (
           element.checkVisibility({
             opacityProperty: true,
             visibilityProperty: true,
           }) &&
           element.getBoundingClientRect().width > 0 &&
-          element.getBoundingClientRect().height > 0,
-      );
+          element.getBoundingClientRect().height > 0
+        );
+      });
       if (!painted) continue;
       phase = "scroll";
       await image.scrollIntoViewIfNeeded({ timeout: 5_000 });
