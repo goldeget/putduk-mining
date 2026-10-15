@@ -418,7 +418,26 @@ try {
     Buffer.from(required("WITHDRAWAL_DATA_KEY"), "base64").length,
     32,
   );
-  assertBackend201BrowserCanonicalSources();
+  try {
+    assertBackend201BrowserCanonicalSources();
+  } catch (error) {
+    // Keep admission strict; record filenames only when a build changed source.
+    // Never emit file contents, environment values or a permissive fallback.
+    try {
+      result.sourceStatus = execFileSync(
+        "git",
+        ["status", "--porcelain", "--untracked-files=all"],
+        { cwd: root, encoding: "utf8", timeout: 10000 },
+      )
+        .trim()
+        .split("\n")
+        .filter(Boolean)
+        .slice(0, 100);
+    } catch (statusError) {
+      result.sourceStatusError = String(statusError.code ?? "STATUS_FAILED");
+    }
+    throw error;
+  }
   for (const cwd of [root, resolve(root, "apps/admin")])
     assert.ok(
       existsSync(resolve(cwd, ".open-next/worker.js")),
