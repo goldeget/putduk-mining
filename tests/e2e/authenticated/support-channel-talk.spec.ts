@@ -4,7 +4,10 @@ import { createChannelMemberHash } from "../../../lib/support/member-hash";
 import { createConfirmedMember } from "../fixtures/local-auth";
 import { assertTypographyClean } from "../../typography/helpers";
 import { loginAsMember } from "./helpers/member-session";
-import { expectSettledRoute } from "./helpers/settled-route";
+import {
+  expectSettledRoute,
+  expectSettledVisibleRoute,
+} from "./helpers/settled-route";
 
 const secret = "aa".repeat(32);
 
@@ -181,11 +184,11 @@ test("member support identity does not leak across login", async ({ page }) => {
   const width = page.viewportSize()?.width ?? 1280;
   await page.goto("/home");
   await expect(page.locator("#putduk-support-launcher")).toHaveCount(0);
-  await expect(await expectSettledRoute(page, "/home")).toBeVisible();
+  await expectSettledVisibleRoute(page, "/home");
   // Home uses its dedicated route layout; the floating AI control belongs to
   // the wallet workspace, where its separation from navigation is required.
   await page.goto("/wallet");
-  await expect(await expectSettledRoute(page, "/wallet")).toBeVisible();
+  await expectSettledVisibleRoute(page, "/wallet");
   const launcher = page.getByRole("button", { name: "AI 도움", exact: true });
   await expect(launcher).toBeVisible();
   if (width < 980) {
