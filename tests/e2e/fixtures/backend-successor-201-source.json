@@ -2796,7 +2796,7 @@
     "scripts/run-with-watchdog.mjs": "d1428f7ac27fd9ce96acbe8ad90e82793571fbd7b371e58bbeff8f42f6e24090",
     "scripts/run-withdrawal-product-e2e.d.mts": "f7cc1602a099af8131f6c730937b2ab4475ca1fba88b9c8bb853591c0a73c6be",
     "scripts/run-withdrawal-product-e2e.mjs": "51303640a464db5000dbd7fd832d2cb3803695cbcbc7b56d66cda26c6d75441d",
-    "scripts/run-workerd-auth.mjs": "fc652c8cdd1fa6e466432259059c99401fbab9ae8934c619e50607adb98c2ada",
+    "scripts/run-workerd-auth.mjs": "5ac7ea6333e4dcde363610d44d801dc5184a83a7671b28a621f6ae1b5d4c129a",
     "scripts/stage-content-source-ci.mjs": "d45dc99bd6a60bdccb9bf43a45e38651adb2f9cc7832282f2668a23f7d604a77",
     "scripts/stage-content-source-ci.test.mjs": "d4cc1e76039990d5d6d0130d8cec08f4ef7814c8d089a13b73d4849a061a9f2a",
     "scripts/typography-protected-servers.d.mts": "be3ce0d4bf42353ae14c721bf4ff76bdce233aa44eb499b243090ec611366911",

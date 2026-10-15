@@ -239,7 +239,16 @@ function putVars(cwd, vars) {
   const path = join(cwd, ".dev.vars");
   const bytes = Buffer.from(
     Object.entries(vars)
-      .map(([key, value]) => `${key}=${JSON.stringify(value)}`)
+      .map(([key, value]) => {
+        if (key === "PUTDUK_WORKERD_LOCAL_ALLOWLIST") {
+          assert.ok(
+            typeof value === "string" && !/['\r\n]/.test(value),
+            "Workerd local allowlist must be a single safe JSON string",
+          );
+          return `${key}='${value}'`;
+        }
+        return `${key}=${JSON.stringify(value)}`;
+      })
       .join("\n") + "\n",
   );
   writeFileSync(path, bytes, { flag: "wx", mode: 0o600 });
