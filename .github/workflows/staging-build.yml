@@ -14,7 +14,8 @@ concurrency:
 jobs:
   build:
     name: Build separate member and admin staging artifacts
-    # Requested after required CI passes, so this build does not occupy its runners.
+    # Credential-free build only. Request after core runners free up;
+    # deployment still requires all checks for this exact candidate to pass.
     if: >-
       github.event.label.name == 'qa-protected-staging-build' &&
       github.event.pull_request.number == 77 &&
@@ -91,6 +92,7 @@ jobs:
             import { execFileSync } from "node:child_process";
             import { createReadStream, createWriteStream, lstatSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
             import { dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
+            import { isBuiltin } from "node:module";
             import { pipeline } from "node:stream/promises";
             import { Writable } from "node:stream";
             import { createGzip } from "node:zlib";
@@ -183,7 +185,7 @@ jobs:
                 inside(worker, emitted);
                 for (const imported of value.imports ?? []) {
                   if (/\.map(?:$|[?#])/.test(imported.path)) throw Error("PACKAGE_RUNTIME_MAP_REJECTED");
-                  if (/^(node|cloudflare):/.test(imported.path)) continue;
+                  if (imported.external && (isBuiltin(imported.path) || /^cloudflare:/.test(imported.path))) continue;
                   const dependency = imported.external
                     ? resolve(dirname(emitted), imported.path)
                     : resolve(configBase, imported.path);
