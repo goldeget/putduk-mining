@@ -418,21 +418,20 @@
   min-block-size: 3.4rem;
   inline-size: 100%;
   padding: 0.8rem 1rem;
-  border: 1px solid var(--brand-mineral);
+  border: 1px solid var(--action-primary-border);
   border-radius: 0.8rem;
-  background: linear-gradient(
-    110deg,
-    var(--brand-primary),
-    var(--brand-mineral) 35%,
-    var(--brand-primary) 75%,
-    var(--brand-strong)
-  );
-  color: var(--text-inverse);
+  background: var(--action-primary-background);
+  color: var(--action-primary-foreground);
   font-size: 1rem;
   font-weight: 750;
-  box-shadow:
-    inset 0 1px 1px var(--brand-mineral),
-    0 4px 12px color-mix(in srgb, var(--brand-primary) 15%, transparent);
+  box-shadow: var(--action-primary-shadow);
+}
+.formPanel form > button[type="submit"]:hover:not(:disabled) {
+  border-color: var(--brand-hover);
+  background: var(--action-primary-hover);
+}
+.formPanel form > button[type="submit"]:active:not(:disabled) {
+  background: var(--action-primary-active);
 }
 .formPanel button:disabled {
   opacity: 0.55;

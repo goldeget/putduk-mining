@@ -1134,7 +1134,7 @@
 
 .living-world__status h2 {
   margin: 0.8rem 0 0.4rem;
-  color: #fff8ea;
+  color: var(--scene-copy);
   font-size: clamp(2.4rem, 5vw, 5rem);
   letter-spacing: -0.07em;
 }

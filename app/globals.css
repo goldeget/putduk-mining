@@ -210,11 +210,11 @@ select {
   align-items: center;
   justify-content: center;
   gap: 0.65rem;
-  padding: 0.82rem 1.15rem;
+  padding: 0.72rem 1.2rem;
   border: 1px solid transparent;
-  border-radius: var(--radius-md);
+  border-radius: 0.85rem;
   cursor: pointer;
-  font-size: 0.9rem;
+  font-size: 0.9375rem;
   font-weight: 700;
   transition:
     transform var(--motion-fast) var(--motion-easing),
@@ -237,12 +237,19 @@ select {
 }
 
 .button--primary {
-  background: var(--brand-primary);
-  color: var(--text-inverse);
+  border-color: var(--action-primary-border);
+  background: var(--action-primary-background);
+  color: var(--action-primary-foreground);
+  box-shadow: var(--action-primary-shadow);
 }
 
 .button--primary:hover:not(:disabled) {
-  background: var(--brand-hover);
+  border-color: var(--brand-hover);
+  background: var(--action-primary-hover);
+}
+
+.button--primary:active:not(:disabled) {
+  background: var(--action-primary-active);
 }
 
 .button--secondary {
@@ -296,7 +303,7 @@ select {
   min-height: 440px;
   border: 1px solid var(--border-default);
   border-radius: 2rem 0.5rem 2rem 0.5rem;
-  background: #070706;
+  background: var(--scene-surface);
   box-shadow: var(--shadow-lift);
   isolation: isolate;
   overflow: hidden;
@@ -316,10 +323,14 @@ select {
     linear-gradient(
       180deg,
       rgba(7, 7, 6, 0.22),
-      rgba(7, 7, 6, 0.04) 45%,
-      rgba(7, 7, 6, 0.78)
+      color-mix(in srgb, var(--scene-surface) 4%, transparent) 45%,
+      color-mix(in srgb, var(--scene-surface) 78%, transparent)
     ),
-    linear-gradient(90deg, rgba(7, 7, 6, 0.82), transparent 66%);
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--scene-surface) 82%, transparent),
+      transparent 66%
+    );
 }
 
 .hero__visual::after {
@@ -328,7 +339,7 @@ select {
   top: 50%;
   left: 50%;
   border-radius: 50%;
-  background: rgba(246, 200, 91, 0.18);
+  background: color-mix(in srgb, var(--brand-primary) 18%, transparent);
   filter: blur(65px);
   transform: translate(-50%, -50%);
 }
@@ -338,7 +349,7 @@ select {
   top: 1.25rem;
   left: 1.25rem;
   z-index: 4;
-  color: #b8ad98;
+  color: var(--scene-copy-muted);
   font-family: var(--font-mono);
   font-size: 0.875rem;
   letter-spacing: 0.14em;
@@ -387,12 +398,12 @@ select {
   top: 22%;
   left: 7%;
   gap: 0.55rem;
-  color: #f8f2e4;
+  color: var(--scene-copy);
   text-wrap: balance;
 }
 
 .hero__signal span {
-  color: #f6c85b;
+  color: var(--scene-gold);
   font-family: var(--font-mono);
   font-size: 0.875rem;
   font-weight: 700;
@@ -410,7 +421,7 @@ select {
 
 .hero__signal p {
   margin: 0;
-  color: #d7cbb5;
+  color: var(--scene-copy-muted);
   font-size: 0.875rem;
   line-height: 1.7;
   word-break: keep-all;
@@ -433,7 +444,7 @@ select {
   left: 1.25rem;
   justify-content: space-between;
   z-index: 4;
-  color: #b8ad98;
+  color: var(--scene-copy-muted);
   font-family: var(--font-mono);
   font-size: 0.875rem;
   letter-spacing: 0.12em;
@@ -3641,7 +3652,7 @@ html[data-theme="light"] .trust-document__body aside > a {
 }
 
 .button--primary:active:not(:disabled) {
-  background: var(--brand-active);
+  background: var(--action-primary-active);
 }
 .button:disabled {
   opacity: 0.65;

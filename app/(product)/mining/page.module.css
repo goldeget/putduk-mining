@@ -8,34 +8,6 @@
   word-break: keep-all;
 }
 
-:global(:root[data-theme="dark"]) .page {
-  --background-canvas: #07101c;
-  --surface-default: #0d1928;
-  --surface-raised: #152336;
-  --surface-sunken: #0a1320;
-  --border-default: #344b68;
-  --border-subtle: #283b54;
-  --brand-primary: #f0cc7c;
-  --brand-strong: #ffe6a1;
-  --text-primary: #f5f7fb;
-  --text-secondary: #bdcce0;
-  --text-tertiary: #96aac5;
-}
-
-:global(:root[data-theme="light"]) .page {
-  --background-canvas: #f5f9fe;
-  --surface-default: #fff;
-  --surface-raised: #fff;
-  --surface-sunken: #f5f8fc;
-  --border-default: #c8d6e6;
-  --border-subtle: #dde6f1;
-  --brand-primary: #986618;
-  --brand-strong: #754600;
-  --text-primary: #10223d;
-  --text-secondary: #405b7d;
-  --text-tertiary: #5f7694;
-}
-
 .controlRoom {
   display: grid;
   min-width: 0;
@@ -416,12 +388,12 @@
 
 .capacityProgress progress::-webkit-progress-value {
   border-radius: 1rem;
-  background: linear-gradient(90deg, #d6a946, #ffe7a5);
+  background: linear-gradient(90deg, var(--brand-strong), var(--brand-mineral));
 }
 
 .capacityProgress progress::-moz-progress-bar {
   border-radius: 1rem;
-  background: linear-gradient(90deg, #d6a946, #ffe7a5);
+  background: linear-gradient(90deg, var(--brand-strong), var(--brand-mineral));
 }
 
 .capacityProgress small {
@@ -478,19 +450,11 @@
   justify-content: center;
   gap: 0.55rem;
   padding: 0.8rem;
-  border: 1px solid #f4d080;
+  border: 1px solid var(--action-primary-border);
   border-radius: 0.85rem;
-  color: #211707;
-  background: linear-gradient(
-    105deg,
-    #d3a03b,
-    #ffe3a0 40%,
-    #f0c86f 66%,
-    #bf8b34
-  );
-  box-shadow:
-    inset 0 1px 0 rgb(255 244 211 / 72%),
-    0 0 12px rgb(224 171 53 / 10%);
+  color: var(--action-primary-foreground);
+  background: var(--action-primary-background);
+  box-shadow: var(--action-primary-shadow);
   font-size: 0.95rem;
   font-weight: 750;
   line-height: 1.4;
@@ -499,11 +463,12 @@
 }
 
 .actions :global(.button:hover:not(:disabled)) {
-  filter: brightness(1.06);
+  border-color: var(--brand-hover);
+  background: var(--action-primary-hover);
 }
 
 .actions :global(.button:active:not(:disabled)) {
-  filter: brightness(0.94);
+  background: var(--action-primary-active);
 }
 
 .actions :global(.button:disabled) {

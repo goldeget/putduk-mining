@@ -1,35 +1,10 @@
 .root {
-  --background-canvas: #07101a;
-  --surface-default: #0d1723;
-  --surface-raised: #142132;
-  --surface-sunken: #0a121d;
-  --border-default: #435774;
-  --border-subtle: #2a3d55;
-  --brand-primary: #f0cc7c;
-  --brand-strong: #ffe8ac;
-  --text-primary: #f7f8fb;
-  --text-secondary: #bfcee1;
-  --text-tertiary: #97aac3;
   min-width: 0;
   min-height: 100svh;
   background: var(--background-canvas);
   color: var(--text-primary);
   line-break: strict;
   word-break: keep-all;
-}
-
-:global(:root[data-theme="light"]) .root {
-  --background-canvas: #f4f8fd;
-  --surface-default: #fff;
-  --surface-raised: #f4f8fc;
-  --surface-sunken: #eff5fb;
-  --border-default: #c4d4e8;
-  --border-subtle: #dbe5ef;
-  --brand-primary: #8d5b13;
-  --brand-strong: #6c410d;
-  --text-primary: #102340;
-  --text-secondary: #435c7b;
-  --text-tertiary: #5b7190;
 }
 
 .header {
@@ -555,21 +530,22 @@
   justify-content: center;
   gap: 0.8rem;
   margin-top: 0.35rem;
-  border: 1px solid #ffe7ac;
+  border: 1px solid var(--action-primary-border);
   border-radius: 1.1rem;
-  background: linear-gradient(120deg, #ba8734, #f7d98e 48%, #d2a451);
-  color: #191609;
+  background: var(--action-primary-background);
+  color: var(--action-primary-foreground);
   font-size: 1.05rem;
   font-weight: 750;
-  box-shadow: inset 0 1px 2px rgb(255 246 206 / 65%);
+  box-shadow: var(--action-primary-shadow);
 }
 
 .form > :global(.button--primary:hover:not(:disabled)) {
-  background: linear-gradient(120deg, #d3a954, #ffe7a7 48%, #ddb760);
+  border-color: var(--brand-hover);
+  background: var(--action-primary-hover);
 }
 
 .form > :global(.button--primary:active:not(:disabled)) {
-  background: #d5aa57;
+  background: var(--action-primary-active);
 }
 
 .form > :global(.button--primary:disabled) {
@@ -741,9 +717,9 @@
     text-decoration: none;
   }
   .headerSignup {
-    background: #f0cc7c;
-    color: #191609;
-    border-color: #ffe7ac;
+    background: var(--action-primary-background);
+    color: var(--action-primary-foreground);
+    border-color: var(--action-primary-border);
   }
   .composition {
     grid-template-columns: minmax(0, 1.15fr) minmax(28rem, 1fr);

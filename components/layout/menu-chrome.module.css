@@ -1,33 +1,5 @@
 .shell:global(.product-shell) {
   position: relative;
-  --background-canvas: #07101b;
-  --background-subtle: #09121e;
-  --surface-default: #0e1a29;
-  --surface-raised: #142236;
-  --surface-sunken: #08111d;
-  --text-primary: #f5f7fb;
-  --text-secondary: #bdcce0;
-  --text-tertiary: #98aecb;
-  --brand-primary: #f0cc7c;
-  --brand-strong: #ffe6a1;
-  --brand-quiet: #342d20;
-  --border-default: #536074;
-  --border-subtle: #30415a;
-}
-:global(:root[data-theme="light"]) .shell:global(.product-shell) {
-  --background-canvas: #f0f5fc;
-  --background-subtle: #edf3fa;
-  --surface-default: #fff;
-  --surface-raised: #fff;
-  --surface-sunken: #eff4fa;
-  --text-primary: #132845;
-  --text-secondary: #425d7c;
-  --text-tertiary: #5c6c82;
-  --brand-primary: #855719;
-  --brand-strong: #704409;
-  --brand-quiet: #fff3d8;
-  --border-default: #b8c8dc;
-  --border-subtle: #cedaea;
 }
 .shell .workspace {
   grid-template-rows: minmax(0, 1fr) auto;

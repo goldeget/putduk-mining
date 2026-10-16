@@ -183,7 +183,7 @@ Use `<picture>` with AVIF and WebP sources. Select only the sizes the layout can
 ## 5. Theme variants
 
 - `*-dark-*`: optimized for carbon/black surfaces.
-- `*-light-*`: outlined or surfaced for warm ivory backgrounds.
+- `*-light-*`: outlined or surfaced for clean white backgrounds.
 - no theme suffix or `theme: system`: safe in both themes or selected through semantic surface rules.
 - `maskable`: contains the complete mark inside the platform safe zone.
 

@@ -77,36 +77,28 @@ describe("route-scoped Mining chrome with real navigation", () => {
     expect(host.querySelector("[data-connectivity]")).not.toBeNull();
   });
 
-  it("uses real five desktop links and six sidebar links without unsupported destinations or benefits", async () => {
+  it("keeps the desktop rail and bottom tabs on the five approved destinations", async () => {
     await render();
-    const top = host.querySelector('nav[aria-label="채굴 주요 메뉴"]');
-    expect(
-      Array.from(top!.querySelectorAll("a"), (link) =>
-        link.getAttribute("href"),
-      ),
-    ).toEqual([
-      "/mining",
-      "/products",
-      "/wallet",
-      "/wallet?view=history",
-      "/support",
-    ]);
     const sidebar = host.querySelector('nav[aria-label="채굴 전체 메뉴"]');
     expect(
       Array.from(sidebar!.querySelectorAll("a"), (link) =>
         link.getAttribute("href"),
       ),
-    ).toEqual([
-      "/mining",
-      "/products",
-      "/wallet",
-      "/wallet?view=history",
-      "/menu/account",
-      "/support",
-    ]);
+    ).toEqual(["/home", "/mining", "/products", "/wallet", "/menu"]);
+
+    const bottomTabs = host.querySelector('nav[aria-label="주요 메뉴"]');
+    expect(
+      Array.from(bottomTabs!.querySelectorAll("a"), (link) =>
+        link.getAttribute("href"),
+      ),
+    ).toEqual(["/home", "/mining", "/products", "/wallet", "/menu"]);
     expect(
       sidebar?.querySelector('[aria-current="page"]')?.getAttribute("href"),
     ).toBe("/mining");
+    expect(
+      bottomTabs?.querySelector('[aria-current="page"]')?.getAttribute("href"),
+    ).toBe("/mining");
+    expect(host.querySelector('nav[aria-label="채굴 주요 메뉴"]')).toBeNull();
     expect(host.textContent).not.toContain("L5");
     expect(host.textContent).not.toContain("PRO");
     expect(host.querySelector('a[href="/security"]')).toBeNull();

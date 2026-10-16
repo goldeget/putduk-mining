@@ -45,6 +45,15 @@ export function ProductShell({
           ? "member"
           : null;
   const secondaryActiveHref = pathname === "/start" ? "/home" : "/menu";
+  const shellClassName = isMining
+    ? `product-shell ${styles.memberExperience}`
+    : isWallet
+      ? `product-shell ${styles.memberExperience} ${styles.walletShell}`
+      : isMenu
+        ? `product-shell ${styles.memberExperience} ${menuStyles.shell}`
+        : chromeView
+          ? `product-shell ${styles.memberExperience} ${routeStyles.shell} ${chromeView === "ai" ? routeStyles.aiShell : chromeView === "products" ? routeStyles.productsShell : routeStyles.memberShell}`
+          : `product-shell ${styles.memberExperience}`;
   const mainRef = useRef<HTMLElement | null>(null);
   const scrollPositions = useRef(new Map<string, number>());
   const renderedPath = useRef(pathname);
@@ -73,21 +82,14 @@ export function ProductShell({
 
   return (
     <div
-      className={
-        isMining
-          ? `product-shell ${styles.miningShell}`
-          : isWallet
-            ? `product-shell ${styles.walletShell}`
-            : isMenu
-              ? `product-shell ${menuStyles.shell}`
-              : chromeView
-                ? `product-shell ${routeStyles.shell} ${chromeView === "ai" ? routeStyles.aiShell : chromeView === "products" ? routeStyles.productsShell : routeStyles.memberShell}`
-                : "product-shell"
-      }
+      className={shellClassName}
       data-home-page-active={isHome}
       data-mining-page-active={isMining}
       data-wallet-page-active={isWallet}
     >
+      <a className={styles.skipLink} href="#main-content">
+        본문으로 건너뛰기
+      </a>
       <ConnectivityStatus />
       {isMenu ? <MenuHeader displayName={displayName} /> : null}
       {chromeView ? (

@@ -7,7 +7,7 @@
   margin-top: 18px;
   border: 1px solid color-mix(in srgb, var(--gold) 35%, var(--line));
   border-radius: 14px;
-  background: color-mix(in srgb, var(--surface) 88%, #3a2a10);
+  background: color-mix(in srgb, var(--surface) 88%, var(--brand-quiet));
   padding: 14px 16px;
   color: var(--ink);
   font-size: 0.88rem;

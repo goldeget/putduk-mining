@@ -1,34 +1,44 @@
 export const designTokens = {
   background: {
-    canvas: "#070706",
-    subtle: "#0e0c09",
-    elevated: "#15120d",
+    canvas: "#020a14",
+    subtle: "#07111d",
+    elevated: "#0d1a28",
   },
   surface: {
-    default: "#15120d",
-    raised: "#1d1811",
-    sunken: "#0a0907",
-    interactive: "#241c11",
+    default: "#0b1724",
+    raised: "#101e2d",
+    sunken: "#040a12",
+    interactive: "#16263a",
   },
   text: {
-    primary: "#f8f2e4",
-    secondary: "#b8ad98",
-    tertiary: "#b0a38c",
+    primary: "#f1f4f7",
+    secondary: "#b7c3d0",
+    tertiary: "#97a5b5",
     inverse: "#17130d",
   },
   border: {
-    subtle: "rgba(246, 224, 174, 0.09)",
-    default: "rgba(246, 224, 174, 0.32)",
-    strong: "rgba(246, 200, 91, 0.36)",
-    control: "rgba(246, 224, 174, 0.48)",
+    subtle: "rgba(163, 187, 214, 0.1)",
+    default: "rgba(145, 173, 205, 0.3)",
+    strong: "rgba(246, 200, 91, 0.42)",
+    control: "rgba(163, 187, 214, 0.52)",
   },
   brand: {
-    primary: "#f6c85b",
-    strong: "#d99a2b",
-    hover: "#ffdb83",
-    active: "#e6b340",
-    quiet: "#3a2810",
-    mineral: "#fff0a6",
+    primary: "#f4c76c",
+    strong: "#c58b35",
+    hover: "#ffdc91",
+    active: "#dcaa50",
+    quiet: "#2b251c",
+    mineral: "#fff1bf",
+  },
+  action: {
+    primaryBackground:
+      "linear-gradient(180deg, #ffe3a5 0%, #f1bd60 48%, #c98a30 100%)",
+    primaryHover:
+      "linear-gradient(180deg, #fff0c7 0%, #ffcf75 48%, #dda342 100%)",
+    primaryActive: "linear-gradient(180deg, #e6ad4f 0%, #c98a30 100%)",
+    primaryForeground: "#24180b",
+    primaryBorder: "#f5d68d",
+    primaryShadow: "0 6px 18px rgba(225, 168, 69, 0.24)",
   },
   status: {
     success: "#65d8a8",
@@ -37,7 +47,7 @@ export const designTokens = {
     info: "#79b8e8",
   },
   world: {
-    korea: "#f6c85b",
+    korea: "#f4c76c",
     usa: "#78aee8",
     gold: "#d9b873",
     silver: "#b9c4ca",
@@ -84,20 +94,20 @@ export const designTokens = {
 
 export const lightThemeTokens = {
   background: {
-    canvas: "#f8f4ea",
-    subtle: "#f1eadb",
-    elevated: "#fffdf8",
+    canvas: "#f8f8f8",
+    subtle: "#eff1f3",
+    elevated: "#ffffff",
   },
   surface: {
-    default: "#fffdf8",
+    default: "#ffffff",
     raised: "#ffffff",
-    sunken: "#eee5d4",
-    interactive: "#f5ead0",
+    sunken: "#f0f2f4",
+    interactive: "#f7f0e2",
   },
   text: {
-    primary: "#17130d",
-    secondary: "#605643",
-    tertiary: "#6f614b",
+    primary: "#161b21",
+    secondary: "#58616b",
+    tertiary: "#717b86",
     inverse: "#fffdf8",
   },
   status: {
@@ -107,19 +117,29 @@ export const lightThemeTokens = {
     info: "#1f5d88",
   },
   world: {
-    korea: "#9b650d",
+    korea: "#94600f",
     usa: "#225f98",
     gold: "#806018",
     silver: "#52616b",
     crypto: "#6650a5",
   },
   brand: {
-    primary: "#9b650d",
-    strong: "#7c4b06",
-    hover: "#7c4b06",
-    active: "#633b03",
-    quiet: "#f0ddb0",
-    mineral: "#b77a17",
+    primary: "#94600f",
+    strong: "#744b0b",
+    hover: "#825408",
+    active: "#693f06",
+    quiet: "#f6ead0",
+    mineral: "#a8731c",
+  },
+  action: {
+    primaryBackground:
+      "linear-gradient(180deg, #ffe9b7 0%, #e9b75b 48%, #ca8b30 100%)",
+    primaryHover:
+      "linear-gradient(180deg, #fff2d4 0%, #f5ca78 48%, #d9a246 100%)",
+    primaryActive: "linear-gradient(180deg, #dda84e 0%, #bd7d25 100%)",
+    primaryForeground: "#24180b",
+    primaryBorder: "#d7a64f",
+    primaryShadow: "0 5px 16px rgba(125, 83, 17, 0.18)",
   },
 } as const;
 

@@ -1,6 +1,6 @@
 .page {
-  --wallet-gold: #dec28a;
-  --wallet-panel: rgb(11 23 42 / 94%);
+  --wallet-gold: var(--brand-mineral);
+  --wallet-panel: color-mix(in srgb, var(--surface-default) 94%, transparent);
   display: grid;
   gap: 1.2rem;
   min-width: 0;
@@ -22,7 +22,7 @@
   overflow: hidden;
   border-radius: 1.2rem;
   pointer-events: none;
-  background: #081629;
+  background: var(--scene-surface);
 }
 
 .sceneScrim {
@@ -30,23 +30,23 @@
   inset: 0;
   background: linear-gradient(
     180deg,
-    rgb(6 17 32 / 8%),
-    rgb(6 17 32 / 8%) 35%,
-    rgb(6 17 32 / 62%)
+    color-mix(in srgb, var(--scene-surface) 8%, transparent),
+    color-mix(in srgb, var(--scene-surface) 8%, transparent) 35%,
+    color-mix(in srgb, var(--scene-surface) 62%, transparent)
   );
   pointer-events: none;
 }
 
 :global(:root[data-theme="light"]) .sceneLayer {
-  background: #f4f8fd;
+  background: var(--background-canvas);
 }
 
 :global(:root[data-theme="light"]) .sceneScrim {
   background: linear-gradient(
     180deg,
-    rgb(255 255 255 / 5%),
-    rgb(255 255 255 / 5%) 35%,
-    rgb(246 249 253 / 45%)
+    color-mix(in srgb, var(--surface-raised) 5%, transparent),
+    color-mix(in srgb, var(--surface-raised) 5%, transparent) 35%,
+    color-mix(in srgb, var(--background-subtle) 45%, transparent)
   );
 }
 
@@ -119,7 +119,7 @@
 
 :global(:root[data-theme="light"]) .page {
   --wallet-gold: var(--text-primary);
-  --wallet-panel: #fff;
+  --wallet-panel: var(--surface-raised);
 }
 
 :global(:root[data-theme="light"]) .balanceGroup {
@@ -128,10 +128,14 @@
     var(--brand-primary) 22%,
     var(--border-default)
   );
-  background: linear-gradient(120deg, #fff 40%, #f3f6fb);
+  background: linear-gradient(
+    120deg,
+    var(--surface-raised) 40%,
+    var(--background-subtle)
+  );
   box-shadow:
-    0 12px 30px rgb(73 96 122 / 8%),
-    inset 0 1px 0 #fff;
+    0 12px 30px rgb(37 49 62 / 8%),
+    inset 0 1px 0 var(--surface-raised);
 }
 
 .heroCard,
@@ -837,11 +841,19 @@
   }
 
   .sceneScrim {
-    background: linear-gradient(90deg, rgb(6 17 32 / 22%), transparent 60%);
+    background: linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--scene-surface) 22%, transparent),
+      transparent 60%
+    );
   }
 
   :global(:root[data-theme="light"]) .sceneScrim {
-    background: linear-gradient(90deg, rgb(255 255 255 / 20%), transparent 60%);
+    background: linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--surface-raised) 20%, transparent),
+      transparent 60%
+    );
   }
 
   .ledgerTabs .tabPanel[data-panel="history"] {

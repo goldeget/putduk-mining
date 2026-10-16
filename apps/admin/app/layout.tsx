@@ -42,12 +42,12 @@ export default function RootLayout({
       <head>
         <meta
           name="theme-color"
-          content="#070706"
+          content="#020a14"
           media="(prefers-color-scheme: dark)"
         />
         <meta
           name="theme-color"
-          content="#f8f4ea"
+          content="#f8f8f8"
           media="(prefers-color-scheme: light)"
         />
         <script

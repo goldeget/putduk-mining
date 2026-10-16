@@ -6,39 +6,6 @@
   overflow: hidden;
 }
 
-/* The Mining factory shell is scoped to the current route, never retained page DOM. */
-.miningShell {
-  --background-canvas: #07101c;
-  --background-subtle: #0a1421;
-  --surface-default: #0d1928;
-  --surface-raised: #152336;
-  --surface-sunken: #0a1320;
-  --border-default: #344b68;
-  --border-subtle: #283b54;
-  --brand-primary: #f0cc7c;
-  --brand-strong: #ffe6a1;
-  --brand-quiet: #342d20;
-  --text-primary: #f5f7fb;
-  --text-secondary: #bdcce0;
-  --text-tertiary: #96aac5;
-}
-
-:global(:root[data-theme="light"]) .miningShell {
-  --background-canvas: #f5f9fe;
-  --background-subtle: #f1f6fc;
-  --surface-default: #fff;
-  --surface-raised: #fff;
-  --surface-sunken: #f5f8fc;
-  --border-default: #c8d6e6;
-  --border-subtle: #dde6f1;
-  --brand-primary: #986618;
-  --brand-strong: #754600;
-  --brand-quiet: #fff3d8;
-  --text-primary: #10223d;
-  --text-secondary: #405b7d;
-  --text-tertiary: #5f7694;
-}
-
 .workspace[data-mining-page-active="true"] {
   grid-template-rows: minmax(0, 1fr) auto auto;
   background: var(--background-canvas);
@@ -183,7 +150,7 @@
 }
 
 @media (min-width: 980px) {
-  .miningShell {
+  .workspace[data-mining-page-active="true"] {
     grid-template-columns: max(9.75rem, clamp(176px, 12.7vw, 208px)) minmax(
         0,
         1fr
@@ -443,41 +410,6 @@
 
 .workspace[data-home-page-active="true"] {
   grid-template-rows: minmax(0, 1fr) auto;
-}
-
-:global(:root[data-theme="dark"]) .workspace[data-home-page-active="true"] {
-  --background-canvas: #080e16;
-  --background-subtle: #0d1520;
-  --surface-default: #0c1521;
-  --surface-raised: #111d2b;
-  --surface-sunken: #080f18;
-  --border-default: #34475c;
-  --border-subtle: #243243;
-  --brand-primary: #f0cc7c;
-  --brand-strong: #ffe3a4;
-  --brand-quiet: #3b301d;
-  --text-primary: #f5f6f8;
-  --text-secondary: #b8c4d5;
-  --text-tertiary: #8ea3bd;
-
-  background: var(--background-canvas);
-}
-
-:global(:root[data-theme="light"]) .workspace[data-home-page-active="true"] {
-  --background-canvas: #f4f7fb;
-  --background-subtle: #edf2f8;
-  --surface-default: #fff;
-  --surface-raised: #fff;
-  --surface-sunken: #f0f5fa;
-  --border-default: #d7e1ec;
-  --border-subtle: #e4ebf3;
-  --brand-primary: #9f6414;
-  --brand-strong: #805010;
-  --brand-quiet: #fbefda;
-  --text-primary: #101b2d;
-  --text-secondary: #546579;
-  --text-tertiary: #667b91;
-
   background: var(--background-canvas);
 }
 
@@ -550,25 +482,17 @@
   letter-spacing: 0.13em;
 }
 
-.homeBrand > .homeWordmarkLight {
-  display: none;
-}
-
-:global(:root[data-theme="light"]) .homeBrand > .homeWordmarkDark {
-  display: none;
-}
-
-:global(:root[data-theme="light"]) .homeBrand > .homeWordmarkLight {
+.homeWordmark {
   display: grid;
 }
 
-.homeWordmarkLight strong {
-  color: var(--text-primary);
+.homeWordmark strong {
+  color: var(--brand-identity, var(--brand-primary));
   font-size: 1.1rem;
   letter-spacing: -0.04em;
 }
 
-.homeWordmarkLight small {
+.homeWordmark small {
   color: var(--text-secondary);
   font-size: 0.65rem;
   letter-spacing: -0.02em;
@@ -725,10 +649,6 @@
     font-size: 0.75rem;
   }
 
-  .homeBrand small {
-    letter-spacing: 0.08em;
-  }
-
   .workspace[data-home-page-active="true"] .main {
     width: 100%;
     padding-block: 0 0.75rem;
@@ -776,38 +696,8 @@
 
 /* Only the root Wallet uses its full-width brand bar and below-bar sidebar. */
 .walletShell:global(.product-shell) {
-  --background-canvas: #07101c;
-  --background-subtle: #0a1421;
-  --surface-default: #0d1928;
-  --surface-raised: #152336;
-  --surface-sunken: #0a1320;
-  --border-default: #344b68;
-  --border-subtle: #283b54;
-  --brand-primary: #f0cc7c;
-  --brand-strong: #ffe6a1;
-  --brand-quiet: #342d20;
-  --text-primary: #f5f7fb;
-  --text-secondary: #bdcce0;
-  --text-tertiary: #96aac5;
-
   height: 100dvh;
   min-height: 0;
-}
-
-:global(:root[data-theme="light"]) .walletShell:global(.product-shell) {
-  --background-canvas: #f5f9fe;
-  --background-subtle: #f1f6fc;
-  --surface-default: #fff;
-  --surface-raised: #fff;
-  --surface-sunken: #f5f8fc;
-  --border-default: #c8d6e6;
-  --border-subtle: #dde6f1;
-  --brand-primary: #986618;
-  --brand-strong: #754600;
-  --brand-quiet: #fff3d8;
-  --text-primary: #10223d;
-  --text-secondary: #405b7d;
-  --text-tertiary: #5f7694;
 }
 
 .workspace[data-wallet-page-active="true"] {
@@ -918,5 +808,113 @@
   .workspace[data-wallet-page-active="true"] > :global(.product-navigation) {
     border: 1px solid ButtonText;
     box-shadow: none;
+  }
+}
+
+/* Shared member chrome keeps route-specific navigation and a consistent visual surface. */
+.memberExperience {
+  color: var(--text-primary);
+  background:
+    radial-gradient(
+      ellipse at 82% -12%,
+      color-mix(in srgb, var(--brand-primary) 8%, transparent),
+      transparent 38rem
+    ),
+    var(--background-canvas);
+}
+
+.memberExperience :global(.product-header) {
+  background: color-mix(in srgb, var(--surface-default) 90%, transparent);
+  backdrop-filter: blur(16px) saturate(125%);
+}
+
+.memberExperience :global(.product-sidebar) {
+  border-right: 1px solid var(--border-subtle);
+  background: linear-gradient(
+    155deg,
+    var(--surface-default),
+    var(--background-subtle)
+  );
+}
+
+.memberExperience :global(.product-navigation) {
+  border-color: var(--border-default);
+  background: color-mix(in srgb, var(--surface-default) 94%, transparent);
+  box-shadow: 0 -10px 34px
+    color-mix(in srgb, var(--text-primary) 8%, transparent);
+  backdrop-filter: blur(18px) saturate(130%);
+}
+
+.memberExperience :global(.product-navigation a) {
+  min-height: 56px;
+}
+
+.memberExperience :global(.product-navigation a[aria-current="page"]) {
+  background: color-mix(in srgb, var(--brand-primary) 12%, transparent);
+}
+
+.memberExperience :global(.theme-control select) {
+  min-height: 44px;
+  border: 1px solid var(--border-default);
+  border-radius: 0.75rem;
+  color: var(--text-primary);
+  background: var(--surface-sunken);
+  font: inherit;
+}
+
+.memberExperience
+  :is(a, button, input, select, textarea, summary):focus-visible {
+  outline: 2px solid var(--brand-strong);
+  outline-offset: 3px;
+}
+
+.skipLink {
+  position: fixed;
+  z-index: 1000;
+  top: max(0.75rem, env(safe-area-inset-top));
+  left: max(0.75rem, env(safe-area-inset-left));
+  padding: 0.75rem 1rem;
+  transform: translateY(-180%);
+  border: 1px solid var(--border-default);
+  border-radius: 0.75rem;
+  color: var(--text-primary);
+  background: var(--surface-raised);
+  box-shadow: 0 0.5rem 1.5rem
+    color-mix(in srgb, var(--text-primary) 16%, transparent);
+  text-decoration: none;
+  transition: transform 160ms ease-out;
+}
+
+.skipLink:focus {
+  transform: translateY(0);
+}
+
+@media (min-width: 980px) {
+  .memberExperience :global(.product-navigation) {
+    box-shadow: none;
+    backdrop-filter: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .memberExperience :global(*),
+  .skipLink {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (forced-colors: active) {
+  .memberExperience :global(.product-navigation),
+  .memberExperience :global(.product-sidebar),
+  .memberExperience :global(.theme-control select),
+  .skipLink {
+    border: 1px solid ButtonText;
+    color: CanvasText;
+    background: Canvas;
+    box-shadow: none;
+    backdrop-filter: none;
   }
 }

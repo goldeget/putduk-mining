@@ -11,36 +11,6 @@
   word-break: keep-all;
 }
 
-:global(:root[data-theme="dark"]) .root {
-  --background-canvas: #07111e;
-  --surface-default: #0d1726;
-  --surface-raised: #162234;
-  --surface-sunken: #0a1321;
-  --border-default: #455b76;
-  --border-subtle: #2d3e54;
-  --brand-primary: #f0cc7c;
-  --brand-strong: #ffe7a5;
-  --text-primary: #f7f8fb;
-  --text-secondary: #bdcadd;
-  --text-tertiary: #9aadc6;
-  --text-inverse: #1b1406;
-}
-
-:global(:root[data-theme="light"]) .root {
-  --background-canvas: #f6f9fd;
-  --surface-default: #fff;
-  --surface-raised: #fff;
-  --surface-sunken: #f6f9fd;
-  --border-default: #cbd5e3;
-  --border-subtle: #e2e8f1;
-  --brand-primary: #9a6716;
-  --brand-strong: #714507;
-  --text-primary: #141d30;
-  --text-secondary: #53647b;
-  --text-tertiary: #66768c;
-  --text-inverse: #1b1406;
-}
-
 .header {
   position: relative;
   z-index: 2;
@@ -387,27 +357,19 @@
 }
 
 .form .submitActions :global(.button--primary) {
-  border: 1px solid #f6d58a;
-  color: #201605;
-  background: linear-gradient(
-    110deg,
-    #d7a941 0%,
-    #f5d986 30%,
-    #ffe8aa 48%,
-    #d3a441 75%,
-    #bd872c 100%
-  );
-  box-shadow:
-    inset 0 1px 0 rgb(255 248 218 / 70%),
-    0 0 12px rgb(235 185 65 / 12%);
+  border: 1px solid var(--action-primary-border);
+  color: var(--action-primary-foreground);
+  background: var(--action-primary-background);
+  box-shadow: var(--action-primary-shadow);
 }
 
 .form .submitActions :global(.button--primary:hover:not(:disabled)) {
-  filter: brightness(1.07);
+  border-color: var(--brand-hover);
+  background: var(--action-primary-hover);
 }
 
 .form .submitActions :global(.button--primary:active:not(:disabled)) {
-  filter: brightness(0.95);
+  background: var(--action-primary-active);
 }
 
 .form .submitActions :global(.button:disabled) {

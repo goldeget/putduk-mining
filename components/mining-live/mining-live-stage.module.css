@@ -44,7 +44,7 @@
   border: 1px solid rgb(242 217 168 / 20%);
   border-radius: 0.75rem;
   background: rgb(12 17 24 / 88%);
-  color: #f7f2e8;
+  color: var(--scene-copy);
   line-height: 1.7;
   text-wrap: pretty;
 }
@@ -102,7 +102,7 @@
   padding: 1rem;
   border-radius: 0.75rem;
   background: rgb(12 17 24 / 94%);
-  color: #f7f2e8;
+  color: var(--scene-copy);
 }
 
 .imageRecovery p {
@@ -112,15 +112,15 @@
 .imageRecovery button {
   min-height: 2.75rem;
   padding-inline: 1rem;
-  border: 1px solid #d5b37b;
+  border: 1px solid var(--action-primary-border);
   border-radius: 0.5rem;
-  background: #171d24;
-  color: #f7f2e8;
+  background: var(--surface-default);
+  color: var(--text-primary);
   cursor: pointer;
 }
 
 .imageRecovery button:focus-visible {
-  outline: 3px solid #f2d9a8;
+  outline: 3px solid var(--brand-primary);
   outline-offset: 3px;
 }
 

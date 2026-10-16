@@ -15,36 +15,12 @@ const homeTopLinks = [
   { href: "/mining", label: "채굴", icon: "coins" },
   { href: "/products", label: "상품", icon: "cube" },
   { href: "/wallet", label: "지갑", icon: "wallet" },
-  { href: "/events", label: "이벤트", icon: "gift" },
-  { href: "/ai", label: "PUTDUK AI", icon: "ai" },
-] as const;
-
-const miningTopLinks = [
-  { href: "/mining", label: "채굴" },
-  { href: "/products", label: "상품" },
-  { href: "/wallet", label: "지갑" },
-  { href: "/wallet?view=history", label: "거래내역" },
-  { href: "/support", label: "고객센터" },
+  { href: "/menu", label: "더보기", icon: "more" },
 ] as const;
 
 function MiningHeader({ displayName }: { displayName: string }) {
   return (
     <header className={styles.miningHeader} data-mining-header>
-      <p className={styles.miningMotto}>
-        작은 한 걸음이
-        <br />더 큰 가치를 만듭니다.
-      </p>
-      <nav className={styles.miningTopNavigation} aria-label="채굴 주요 메뉴">
-        {miningTopLinks.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            aria-current={item.href === "/mining" ? "page" : undefined}
-          >
-            {item.label}
-          </Link>
-        ))}
-      </nav>
       <div className={styles.miningHeaderTools}>
         <Link href="/notifications" aria-label="알림 센터">
           <PutdukIcon name="bell" size={21} />
@@ -69,9 +45,6 @@ function MiningHeader({ displayName }: { displayName: string }) {
             />
           </svg>
         </Link>
-        <Link className={styles.miningMenu} href="/menu" aria-label="더보기">
-          <PutdukIcon name="menu" size={23} />
-        </Link>
       </div>
     </header>
   );
@@ -94,7 +67,11 @@ export function ProductHeader({
     return <WalletMobileTools displayName={displayName} />;
   if (mining) return <MiningHeader displayName={displayName} />;
   return (
-    <header className={`product-header ${home ? styles.homeHeader : ""}`}>
+    <header
+      className={`product-header ${home ? styles.homeHeader : ""}`}
+      aria-label={home ? "퍼뜩 채굴 홈" : "회원 메뉴"}
+      data-header-mode={home ? "home" : "member"}
+    >
       <Link
         className={`product-header__brand ${home ? styles.homeBrand : "brand-lockup"}`}
         href="/home"
@@ -103,14 +80,7 @@ export function ProductHeader({
         {home ? (
           <>
             <MiningBrandSymbol />
-            <span className={styles.homeWordmarkDark}>
-              <strong>퍼뜩 채굴</strong>
-              <small>
-                TECHNOLOGY CREATES
-                <br />A MORE VALUABLE TOMORROW
-              </small>
-            </span>
-            <span className={styles.homeWordmarkLight}>
+            <span className={styles.homeWordmark}>
               <strong>퍼뜩 채굴</strong>
               <small>프리미엄 채굴 플랫폼</small>
             </span>
@@ -132,11 +102,7 @@ export function ProductHeader({
               href={item.href}
               aria-current={item.href === "/home" ? "page" : undefined}
             >
-              {item.icon === "ai" ? (
-                <PutdukIcon name="ai" size={20} />
-              ) : (
-                <PutdukHomeIcon name={item.icon} size={20} metallic={false} />
-              )}
+              <PutdukHomeIcon name={item.icon} size={20} metallic={false} />
               <span>{item.label}</span>
             </Link>
           ))}

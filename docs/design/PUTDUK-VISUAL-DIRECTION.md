@@ -158,7 +158,7 @@ The emotional sequence is **dark space → warm discovery light → a clear next
 
 - `System` is the default preference.
 - `Dark` is the cinematic flagship expression.
-- `Light` uses warm ivory, ink and restrained gold; it is not an inverted dark theme.
+- `Light` uses clean white, ink and restrained gold; it is not an inverted dark theme.
 - Theme choice must preserve contrast, state semantics and asset intent.
 - Detailed token and persistence rules are defined in `PUTDUK-THEME-SYSTEM.md`.
 

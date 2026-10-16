@@ -3,10 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import {
-  PutdukIcon,
-  type PutdukIconName,
-} from "@/components/icons/putduk-icon";
+import type { PutdukIconName } from "@/components/icons/putduk-icon";
 import { PutdukHomeIcon } from "@/components/icons/putduk-home-icon";
 import styles from "@/components/layout/product-shell.module.css";
 
@@ -31,12 +28,11 @@ const items = [
 }>;
 
 const miningSidebarItems = [
+  { href: "/home", label: "홈", icon: "home" },
   { href: "/mining", label: "채굴", icon: "coins" },
   { href: "/products", label: "상품", icon: "cube" },
   { href: "/wallet", label: "지갑", icon: "wallet" },
-  { href: "/wallet?view=history", label: "거래내역", icon: "ledger" },
-  { href: "/menu/account", label: "계정 보안", icon: "shield" },
-  { href: "/support", label: "고객센터", icon: "support" },
+  { href: "/menu", label: "더보기", icon: "more" },
 ] as const;
 
 export function ProductNavigation({
@@ -55,27 +51,7 @@ export function ProductNavigation({
             href={item.href}
             aria-current={item.href === pathname ? "page" : undefined}
           >
-            {item.icon === "shield" ? (
-              <PutdukIcon name="shield" size={24} />
-            ) : item.icon === "support" ? (
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-              >
-                <path d="M4 14v-3a8 8 0 0 1 16 0v3M19 17v1a3 3 0 0 1-3 3h-3" />
-                <rect x="2" y="11" width="4" height="7" rx="2" />
-                <rect x="18" y="11" width="4" height="7" rx="2" />
-              </svg>
-            ) : (
-              <PutdukHomeIcon name={item.icon} size={25} metallic={false} />
-            )}
+            <PutdukHomeIcon name={item.icon} size={25} metallic={false} />
             <span>{item.label}</span>
           </Link>
         ))}

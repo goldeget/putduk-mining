@@ -70,8 +70,8 @@ input:focus-visible {
   place-items: center;
   border: 1px solid var(--line-strong);
   border-radius: 14px;
-  background: #dbaa48;
-  color: #15120c;
+  background: var(--action-primary-background);
+  color: var(--action-primary-foreground);
   font-weight: 950;
   transform: rotate(-4deg);
 }
@@ -80,18 +80,23 @@ input:focus-visible {
   min-height: 48px;
   align-items: center;
   justify-content: center;
-  border: 1px solid #f1d080;
+  border: 1px solid var(--action-primary-border);
   border-radius: 14px;
-  background: #f6c85b;
-  color: #17130d;
+  background: var(--action-primary-background);
+  color: var(--action-primary-foreground);
   padding: 0 22px;
   font-weight: 850;
   cursor: pointer;
-  box-shadow: 0 12px 32px rgba(219, 170, 68, 0.17);
+  box-shadow: var(--action-primary-shadow);
 }
 .gold-button:hover {
-  background: #ffdb83;
+  border-color: var(--brand-hover);
+  background: var(--action-primary-hover);
   transform: translateY(-1px);
+}
+.gold-button:active:not(:disabled) {
+  background: var(--action-primary-active);
+  transform: translateY(0);
 }
 .gold-button:disabled {
   cursor: wait;

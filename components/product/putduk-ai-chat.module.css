@@ -1051,6 +1051,75 @@
 .chat .composer textarea {
   font-size: 1rem;
 }
+
+/* Motion is tied to the real response state and never replays for saved history. */
+.message[data-message-state="streaming"] {
+  --ai-response-marker: var(--brand-primary);
+  border-color: color-mix(in srgb, var(--brand-primary) 34%, var(--ai-line));
+  animation: response-arrival 240ms var(--motion-easing) both;
+}
+
+.message[data-message-state="streaming"] .messageIdentity::after {
+  width: 0.38rem;
+  height: 0.38rem;
+  flex: 0 0 auto;
+  margin-inline-start: 0.15rem;
+  border-radius: 50%;
+  background: var(--ai-response-marker);
+  content: "";
+  animation: response-pulse 1.45s ease-in-out infinite;
+}
+
+.message[data-answer-source="tool"][data-message-state="streaming"] {
+  --ai-response-marker: var(--status-info);
+}
+
+@keyframes response-arrival {
+  from {
+    opacity: 0.78;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes response-pulse {
+  0%,
+  100% {
+    opacity: 0.52;
+    box-shadow: none;
+  }
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 0 0.22rem
+      color-mix(in srgb, var(--ai-response-marker) 12%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .message[data-message-state="streaming"] {
+    animation: none;
+  }
+
+  .message[data-message-state="streaming"] .messageIdentity::after {
+    animation: none;
+    opacity: 0.75;
+    box-shadow: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .message[data-message-state="streaming"] {
+    border-color: CanvasText;
+  }
+
+  .message[data-message-state="streaming"] .messageIdentity::after {
+    background: CanvasText;
+    box-shadow: none;
+  }
+}
 .chat .composer footer > p,
 .chat .composer footer small {
   font-size: 0.8125rem;

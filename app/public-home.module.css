@@ -101,10 +101,10 @@
   min-height: 710px;
   padding: 72px 64px 28px;
   overflow: hidden;
-  border: 1px solid #243140;
+  border: 1px solid var(--border-default);
   border-radius: 28px;
-  background: #07131f;
-  color: #f5f4ee;
+  background: var(--scene-surface);
+  color: var(--scene-copy);
 }
 .home :global(.landing-hero)::after {
   position: absolute;
@@ -115,12 +115,16 @@
   background:
     linear-gradient(
       90deg,
-      #07131ff5 0%,
-      #07131fc9 29%,
-      #07131f24 64%,
+      color-mix(in srgb, var(--scene-surface) 96%, transparent) 0%,
+      color-mix(in srgb, var(--scene-surface) 79%, transparent) 29%,
+      color-mix(in srgb, var(--scene-surface) 14%, transparent) 64%,
       transparent 100%
     ),
-    linear-gradient(0deg, #06111edd, transparent 30%);
+    linear-gradient(
+      0deg,
+      color-mix(in srgb, var(--scene-surface) 87%, transparent),
+      transparent 30%
+    );
 }
 .home :global(.hero__copy) {
   position: relative;
@@ -131,7 +135,7 @@
 }
 .home :global(.hero__copy .eyebrow) {
   margin-bottom: 24px;
-  color: #e4c47d;
+  color: var(--scene-gold);
   font-family: var(--font-sans);
   font-size: 15px;
   font-weight: 600;
@@ -145,15 +149,15 @@
   font-weight: 650;
   letter-spacing: -0.055em;
   line-height: 1.18;
-  color: #f5f4ee;
+  color: var(--scene-copy);
 }
 .home :global(.hero h1 span) {
-  color: #f4d589;
+  color: var(--scene-gold);
 }
 .home :global(.hero__lead) {
   max-width: 25em;
   margin-top: 26px;
-  color: #cad2d8;
+  color: var(--scene-copy-muted);
   font-size: 18px;
   line-height: 1.8;
   letter-spacing: -0.02em;
@@ -199,17 +203,17 @@
   gap: 4px;
   max-width: none;
   text-align: right;
-  color: #fff8e5;
-  text-shadow: 0 2px 16px #000;
+  color: var(--scene-copy);
+  text-shadow: 0 2px 16px rgb(0 0 0 / 72%);
 }
 .home :global(.hero__signal span) {
   font-family: var(--font-sans);
-  color: #fff8e5;
+  color: var(--scene-copy);
   font-size: 14px;
   letter-spacing: 0;
 }
 .home :global(.hero__signal strong) {
-  color: #fff8e5;
+  color: var(--scene-copy);
   font-size: 25px;
   font-weight: 600;
   letter-spacing: -0.04em;
@@ -239,22 +243,22 @@
   min-height: 56px;
   max-width: 100%;
   padding: 15px 25px;
-  border: 1px solid #f9da94;
+  border: 1px solid var(--action-primary-border);
   border-radius: 12px;
-  background: #f4cd72;
-  color: #20180c;
+  background: var(--action-primary-background);
+  color: var(--action-primary-foreground);
   font-size: 16px;
   font-weight: 700;
   line-height: 1.5;
-  box-shadow: 0 4px 24px #050b1233;
+  box-shadow: var(--action-primary-shadow);
   transition:
     background 160ms,
     transform 160ms;
 }
 .start:hover {
   transform: translateY(-2px);
-  background: #ffe0a0;
-  color: #20180c;
+  background: var(--action-primary-hover);
+  color: var(--action-primary-foreground);
 }
 .start:active {
   transform: translateY(0);
@@ -267,7 +271,7 @@
   align-items: center;
   gap: 8px;
   min-height: 48px;
-  color: #e2e5e7;
+  color: var(--scene-copy-muted);
   font-size: 15px;
   font-weight: 550;
 }
@@ -277,7 +281,7 @@
   gap: 8px;
   min-height: 44px;
   margin-top: 12px;
-  color: #bcc8d2;
+  color: var(--scene-copy-muted);
   font-size: 14px;
 }
 .heroFooter {
@@ -290,8 +294,8 @@
   gap: 24px;
   margin-top: 36px;
   padding-top: 20px;
-  border-top: 1px solid #ffffff24;
-  color: #bfc9d0;
+  border-top: 1px solid var(--border-default);
+  color: var(--scene-copy-muted);
   font-size: 13px;
 }
 .heroFooter a {
@@ -301,7 +305,7 @@
   min-height: 44px;
 }
 .heroFooter a > span {
-  color: #efd399;
+  color: var(--scene-gold);
   font-size: 20px;
 }
 .welcome {
@@ -506,17 +510,17 @@
   background: radial-gradient(
     circle at 28% 20%,
     color-mix(in srgb, var(--world-accent) 65%, #fff),
-    color-mix(in srgb, var(--world-accent) 32%, #1b222a) 46%,
-    #0b1019 80%
+    color-mix(in srgb, var(--world-accent) 32%, var(--surface-default)) 46%,
+    var(--scene-surface) 80%
   );
-  color: #fffcf1;
+  color: var(--scene-copy);
   font-family: var(--font-sans);
   font-size: 14px;
   font-weight: 650;
   letter-spacing: 0.06em;
   box-shadow:
-    inset -8px -10px 20px #0007,
-    0 12px 22px #0002;
+    inset -8px -10px 20px rgb(0 0 0 / 44%),
+    0 12px 22px rgb(0 0 0 / 12%);
 }
 .home :global(.world-row h3) {
   margin: 0;
@@ -777,13 +781,17 @@
     background:
       linear-gradient(
         180deg,
-        #07131ff2 0%,
-        #07131fe6 18%,
-        #07131f24 46%,
-        #07131f11 61%,
-        #07131ff5 82%
+        color-mix(in srgb, var(--scene-surface) 95%, transparent) 0%,
+        color-mix(in srgb, var(--scene-surface) 90%, transparent) 18%,
+        color-mix(in srgb, var(--scene-surface) 14%, transparent) 46%,
+        color-mix(in srgb, var(--scene-surface) 7%, transparent) 61%,
+        color-mix(in srgb, var(--scene-surface) 96%, transparent) 82%
       ),
-      linear-gradient(90deg, #07131f55, transparent 70%);
+      linear-gradient(
+        90deg,
+        color-mix(in srgb, var(--scene-surface) 33%, transparent),
+        transparent 70%
+      );
   }
   .home :global(.hero__copy) {
     width: 100%;
@@ -1016,7 +1024,7 @@
   margin-bottom: 14px;
   border: 1px solid var(--border-subtle);
   border-radius: 12px;
-  background: #07131f;
+  background: var(--background-canvas);
 }
 .worldScene img {
   display: block;

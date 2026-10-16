@@ -17,11 +17,11 @@ export default async function OpenGraphImage() {
     <div
       style={{
         alignItems: "stretch",
-        backgroundColor: "#070706",
+        backgroundColor: "#020a14",
         backgroundImage: `linear-gradient(90deg, rgba(7,7,6,.96) 0%, rgba(7,7,6,.77) 45%, rgba(7,7,6,.12) 78%), url(${backgroundUrl})`,
         backgroundPosition: "center",
         backgroundSize: "cover",
-        color: "#f8f2e4",
+        color: "#f1f4f7",
         display: "flex",
         fontFamily: "sans-serif",
         height: "100%",
@@ -50,7 +50,7 @@ export default async function OpenGraphImage() {
         >
           <div
             style={{
-              color: "#f6c85b",
+              color: "#f4c76c",
               display: "flex",
               fontSize: 20,
               fontWeight: 700,
@@ -73,7 +73,7 @@ export default async function OpenGraphImage() {
             </div>
             <div
               style={{
-                color: "#f6c85b",
+                color: "#f4c76c",
                 display: "flex",
                 fontSize: 54,
                 fontWeight: 650,
@@ -86,7 +86,7 @@ export default async function OpenGraphImage() {
           </div>
           <div
             style={{
-              color: "#b8ad98",
+              color: "#b7c3d0",
               display: "flex",
               fontSize: 18,
               letterSpacing: 2,

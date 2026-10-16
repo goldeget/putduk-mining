@@ -14,7 +14,7 @@ export type RouteChromeView = "products" | "ai" | "member";
 type Destination = {
   href: Route;
   label: string;
-  icon: PutdukHomeIconName | "ai" | "support";
+  icon: PutdukHomeIconName;
 };
 
 const primaryDestinations = [
@@ -25,39 +25,7 @@ const primaryDestinations = [
   { href: "/menu", label: "더보기", icon: "more" },
 ] as const satisfies readonly Destination[];
 
-const aiDestinations = [
-  primaryDestinations[0],
-  { href: "/ai", label: "퍼뜩 AI", icon: "ai" },
-  primaryDestinations[1],
-  primaryDestinations[2],
-  primaryDestinations[3],
-  { href: "/events", label: "이벤트", icon: "gift" },
-  { href: "/support", label: "고객지원", icon: "support" },
-  primaryDestinations[4],
-] as const satisfies readonly Destination[];
-
 function NavigationIcon({ icon }: Pick<Destination, "icon">) {
-  if (icon === "ai") return <PutdukIcon name="ai" size={25} />;
-  if (icon === "support") {
-    return (
-      <svg
-        width="25"
-        height="25"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        aria-hidden="true"
-        focusable="false"
-      >
-        <path d="M4 14v-3a8 8 0 0 1 16 0v3M19 17v1a3 3 0 0 1-3 3h-3" />
-        <rect x="2" y="11" width="4" height="7" rx="2" />
-        <rect x="18" y="11" width="4" height="7" rx="2" />
-      </svg>
-    );
-  }
   return <PutdukHomeIcon name={icon} metallic={false} size={25} />;
 }
 
@@ -75,7 +43,6 @@ function isActive(
 export function RouteBrandHeader({
   view,
   displayName,
-  activeHref,
 }: {
   view: RouteChromeView;
   displayName: string;
@@ -96,25 +63,6 @@ export function RouteBrandHeader({
           <br />A MORE VALUABLE TOMORROW
         </small>
       </Link>
-      {view !== "ai" ? (
-        <nav
-          className={styles.topNavigation}
-          aria-label={view === "products" ? "상품 주요 메뉴" : "주요 메뉴"}
-        >
-          {primaryDestinations.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              aria-current={
-                isActive(item, view, activeHref) ? "page" : undefined
-              }
-            >
-              <NavigationIcon icon={item.icon} />
-              <span>{item.label}</span>
-            </Link>
-          ))}
-        </nav>
-      ) : null}
       <div className={styles.tools}>
         <ThemeControl />
         <Link href="/notifications" aria-label="알림 센터">
@@ -158,7 +106,7 @@ export function RouteBrandSidebar({
   view: RouteChromeView;
   activeHref?: "/home" | "/menu";
 }) {
-  const destinations = view === "ai" ? aiDestinations : primaryDestinations;
+  const destinations = primaryDestinations;
   return (
     <>
       <nav

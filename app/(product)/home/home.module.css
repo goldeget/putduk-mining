@@ -1,21 +1,27 @@
 .page {
   min-width: 0;
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
   color: var(--text-primary);
+  background: var(--background-canvas);
 }
 
 .hero {
   position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
+  min-height: 250px;
   min-width: 0;
   overflow: hidden;
   isolation: isolate;
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--background-canvas);
 }
 
 .livingWorld {
   position: relative;
   z-index: 2;
-  min-height: 184px;
+  min-height: clamp(210px, 29vw, 360px);
+  align-content: center;
 }
 
 .livingVisual {
@@ -29,16 +35,24 @@
   z-index: 1;
   inset: 0;
   background:
-    linear-gradient(90deg, rgb(5 12 22 / 70%), transparent 70%),
-    linear-gradient(0deg, var(--background-canvas), transparent 22%);
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--background-canvas) 68%, transparent),
+      transparent 74%
+    ),
+    linear-gradient(0deg, var(--background-canvas), transparent 26%);
   content: "";
   pointer-events: none;
 }
 
 .hero:has([data-scene-theme="light"])::after {
   background:
-    linear-gradient(90deg, rgb(255 255 255 / 70%), transparent 75%),
-    linear-gradient(0deg, var(--background-canvas), transparent 22%);
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--background-canvas) 68%, transparent),
+      transparent 75%
+    ),
+    linear-gradient(0deg, var(--background-canvas), transparent 26%);
 }
 
 .hero:has([data-scene-theme="light"]) .livingVisual {
@@ -49,7 +63,9 @@
   position: relative;
   z-index: 2;
   width: max(56%, min(100%, calc(1.65rem * 6 + 20px)));
+  max-width: 40rem;
   padding: 20px 0 22px 20px;
+  padding-right: 1rem;
 }
 
 .desktopRank {
@@ -59,11 +75,16 @@
 .welcomeTitle {
   margin: 0;
   color: var(--brand-primary);
-  font-size: clamp(1.65rem, 7vw, 2rem);
+  font-size: clamp(1.75rem, 3.15vw, 3.1rem);
   font-weight: 750;
-  line-height: 1.18;
-  letter-spacing: -0.04em;
+  line-height: 1.1;
+  letter-spacing: -0.035em;
   word-break: keep-all;
+  text-wrap: balance;
+  text-shadow:
+    0 0.1rem 0.8rem
+      color-mix(in srgb, var(--background-canvas) 82%, transparent),
+    0 0 2rem color-mix(in srgb, var(--brand-primary) 14%, transparent);
 }
 
 .welcomeTitle span {
@@ -74,33 +95,43 @@
 
 .welcomeLead {
   margin: 0.8rem 0 0;
-  color: var(--text-secondary);
-  font-size: 0.85rem;
-  line-height: 1.55;
+  max-width: 28rem;
+  color: var(--text-primary);
+  font-size: clamp(0.92rem, 1.15vw, 1.08rem);
+  line-height: 1.6;
   word-break: keep-all;
+  text-shadow: 0 0.1rem 0.65rem
+    color-mix(in srgb, var(--background-canvas) 82%, transparent);
 }
 
 .dashboard {
   display: grid;
   min-width: 0;
   grid-template-columns: minmax(0, 1fr);
-  gap: 0.7rem;
+  gap: 1rem;
   padding: 0 0.75rem 1rem;
 }
 
 .summary {
   display: block;
   min-width: 0;
-  padding: 0.5rem;
+  padding: clamp(0.65rem, 1.4vw, 1rem);
   border: 1px solid var(--border-strong);
-  border-radius: 1rem;
-  background: linear-gradient(
-    135deg,
-    var(--surface-raised),
-    var(--surface-default)
+  border-color: color-mix(
+    in srgb,
+    var(--brand-primary) 24%,
+    var(--border-default)
   );
-  box-shadow: inset 0 1px 0
-    color-mix(in srgb, var(--text-primary) 8%, transparent);
+  border-radius: 1.2rem;
+  background: linear-gradient(
+    145deg,
+    color-mix(in srgb, var(--surface-raised) 96%, transparent),
+    color-mix(in srgb, var(--surface-default) 96%, transparent)
+  );
+  box-shadow:
+    0 1rem 2.5rem color-mix(in srgb, var(--background-canvas) 46%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--text-primary) 8%, transparent);
+  backdrop-filter: blur(16px);
   container: home-summary / inline-size;
 }
 
@@ -129,8 +160,18 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.55rem 0.35rem;
+  border-radius: 0.95rem;
   color: inherit;
   text-decoration: none;
+  transition:
+    transform 180ms ease-out,
+    border-color 180ms ease-out,
+    background-color 180ms ease-out;
+}
+
+.summaryCard:hover {
+  transform: translateY(-2px);
+  border-color: var(--brand-primary);
 }
 
 .summaryCard > div {
@@ -262,15 +303,29 @@
   gap: 0.45rem;
   padding: 0.65rem 0.15rem;
   border: 1px solid var(--border-default);
-  border-radius: 0.85rem;
+  border-color: color-mix(
+    in srgb,
+    var(--brand-primary) 28%,
+    var(--border-default)
+  );
+  border-radius: 0.95rem;
   color: var(--text-primary);
   background: linear-gradient(
     155deg,
     var(--surface-raised),
     var(--surface-default)
   );
+  background-color: color-mix(
+    in srgb,
+    var(--surface-default) 94%,
+    var(--background-canvas)
+  );
   text-align: center;
   text-decoration: none;
+  transition:
+    transform 180ms ease-out,
+    border-color 180ms ease-out,
+    box-shadow 180ms ease-out;
 }
 
 .quickActionsLayout > footer {
@@ -314,6 +369,12 @@
   background-color: var(--surface-raised);
 }
 
+.quickActionGrid > a:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0.75rem 1.5rem
+    color-mix(in srgb, var(--text-primary) 8%, transparent);
+}
+
 .quickActions a:focus-visible,
 .summary a:focus-visible,
 .dashboard a:focus-visible {
@@ -330,9 +391,16 @@
 .products {
   min-width: 0;
   padding: 0.65rem;
-  border: 1px solid var(--border-subtle);
-  border-radius: 0.9rem;
-  background: color-mix(in srgb, var(--surface-default) 85%, transparent);
+  border: 1px solid var(--border-default);
+  border-radius: 1rem;
+  background: linear-gradient(
+    145deg,
+    color-mix(in srgb, var(--surface-raised) 92%, transparent),
+    color-mix(in srgb, var(--surface-default) 96%, transparent)
+  );
+  box-shadow: inset 0 1px 0
+    color-mix(in srgb, var(--text-primary) 7%, transparent);
+  backdrop-filter: blur(14px);
 }
 
 .sectionHeader,
@@ -398,8 +466,8 @@
   overflow: hidden;
   padding: 0.6rem 0.45rem;
   border: 1px solid
-    color-mix(in srgb, var(--brand-primary) 48%, var(--border-default));
-  border-radius: 0.65rem;
+    color-mix(in srgb, var(--brand-primary) 28%, var(--border-default));
+  border-radius: 1rem;
   color: var(--text-primary);
   background:
     radial-gradient(
@@ -538,8 +606,15 @@
   min-width: 0;
   padding: 0.6rem 0.7rem;
   border: 1px solid var(--border-default);
-  border-radius: 0.85rem;
-  background: var(--surface-default);
+  border-radius: 1rem;
+  background: linear-gradient(
+    145deg,
+    color-mix(in srgb, var(--surface-raised) 92%, transparent),
+    color-mix(in srgb, var(--surface-default) 96%, transparent)
+  );
+  box-shadow: inset 0 1px 0
+    color-mix(in srgb, var(--text-primary) 7%, transparent);
+  backdrop-filter: blur(14px);
 }
 
 .notificationsHeader {
@@ -608,8 +683,8 @@
   overflow: hidden;
   padding: 0.8rem 0.9rem;
   border: 1px solid
-    color-mix(in srgb, var(--brand-primary) 50%, var(--border-default));
-  border-radius: 0.9rem;
+    color-mix(in srgb, var(--brand-primary) 28%, var(--border-default));
+  border-radius: 1rem;
   color: var(--text-primary);
   background:
     radial-gradient(
@@ -617,7 +692,11 @@
       color-mix(in srgb, var(--brand-primary) 18%, transparent),
       transparent 70%
     ),
-    var(--surface-default);
+    linear-gradient(
+      120deg,
+      color-mix(in srgb, var(--surface-raised) 92%, transparent),
+      color-mix(in srgb, var(--surface-default) 96%, transparent)
+    );
   text-decoration: none;
 }
 
@@ -888,8 +967,12 @@
     width: 100%;
   }
 
+  .hero {
+    min-height: clamp(26rem, 29vw, 29rem);
+  }
+
   .livingWorld {
-    min-height: 290px;
+    min-height: clamp(19rem, 23vw, 22rem);
   }
 
   .livingVisual {
@@ -901,8 +984,8 @@
   }
 
   .livingOverlay {
-    width: 40%;
-    padding: 36px 0 28px clamp(1.5rem, 4.5vw, 5rem);
+    width: min(42%, 42rem);
+    padding: 36px 1rem 28px clamp(2rem, 4vw, 4.25rem);
   }
 
   .desktopRank {
@@ -935,59 +1018,70 @@
   }
 
   .welcomeTitle {
-    font-size: clamp(1.8rem, 2.8vw, 2.8rem);
+    font-size: clamp(2.4rem, 3.3vw, 3.25rem);
   }
 
   .welcomeLead {
-    font-size: 0.95rem;
+    max-width: 32rem;
+    font-size: clamp(1rem, 1.2vw, 1.125rem);
   }
 
   .dashboard {
-    width: min(calc(100% - clamp(3rem, 9vw, 10rem)), 1440px);
+    width: min(calc(100% - clamp(2rem, 5.5vw, 5rem)), 1500px);
     margin-inline: auto;
-    gap: 0.9rem;
+    gap: 0.85rem;
     padding-inline: 0;
   }
 
   .summaryGrid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 0.8rem;
+    gap: 0.35rem;
   }
 
   .summary {
-    border-radius: 0.9rem;
+    padding: 0.45rem;
+    border-radius: 1.2rem;
   }
 
   .summaryCard {
-    min-height: 84px;
+    min-height: 5.75rem;
     gap: 0.6rem;
-    padding: 0.65rem;
-    border: 1px solid var(--border-default) !important;
+    padding: 0.65rem 0.8rem;
+    border: 0 !important;
     border-radius: 0.65rem;
-    background: linear-gradient(
-      135deg,
-      var(--surface-raised),
-      var(--surface-sunken)
-    );
+    background: transparent;
+  }
+
+  .page:has([data-scene-theme="dark"])
+    .summaryGrid
+    > .summaryCard:nth-child(-n + 3),
+  .page:has([data-scene-theme="light"])
+    .summaryGrid
+    > .summaryCard:is(:nth-child(1), :nth-child(3)) {
+    border-right: 1px solid var(--border-subtle) !important;
   }
 
   .summaryIcon {
-    width: 42px;
-    height: 48px;
-    flex-basis: 42px;
+    width: 44px;
+    height: 46px;
+    flex-basis: 44px;
   }
 
   .summaryLabel {
-    font-size: 0.78rem;
+    font-size: 0.8rem;
   }
 
   .summaryValue {
-    font-size: 1.1rem;
+    font-size: clamp(1.05rem, 1.35vw, 1.3rem);
   }
 
   .quickActionsLayout,
   .quickActionGrid {
     gap: 0.8rem;
+  }
+
+  .quickActionGrid > a {
+    min-height: 112px;
   }
 
   .quickActions strong {
@@ -999,8 +1093,8 @@
   }
 
   .catalogAndNotices {
-    grid-template-columns: minmax(0, 2.4fr) minmax(220px, 1fr);
-    gap: 1rem;
+    grid-template-columns: minmax(0, 2.25fr) minmax(220px, 1fr);
+    gap: 0.85rem;
   }
 
   .products {
@@ -1221,7 +1315,7 @@
   gap: 0.5rem;
   padding: 0.8rem;
   border: 1px solid var(--border-subtle);
-  border-radius: 0.9rem;
+  border-radius: 1rem;
   background: var(--surface-default);
 }
 
@@ -1309,12 +1403,49 @@
 
 /* Match the primary phone shortcut/notice density with intrinsic enlarged-text flow. */
 @media (max-width: 599px) {
+  .hero {
+    min-height: 13.75rem;
+  }
+
+  .livingWorld {
+    min-height: 10.75rem;
+  }
+
+  .livingOverlay {
+    width: min(88%, 24rem);
+    padding: 0.9rem 0.9rem 1.1rem 1rem;
+  }
+
+  .welcomeTitle {
+    font-size: clamp(1.48rem, 7vw, 1.88rem);
+  }
+
+  .welcomeLead {
+    max-width: 19rem;
+    font-size: 0.84rem;
+  }
+
+  .dashboard {
+    gap: 0.7rem;
+    padding-bottom: 0.9rem;
+  }
+
   .page:has([data-scene-theme="dark"]) .dashboard {
     padding-inline: 12px;
   }
 
   .page:has([data-scene-theme="dark"]) .summaryGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.2rem;
+  }
+
+  .page:has([data-scene-theme="dark"]) .summary {
+    padding: 0.45rem;
+  }
+
+  .page:has([data-scene-theme="dark"]) .summaryCard {
+    min-height: 3.8rem;
+    padding: 0.5rem 0.35rem;
   }
 
   .page:has([data-scene-theme="dark"])
@@ -1329,7 +1460,27 @@
     > footer[data-ai-dock]
     button[aria-haspopup="dialog"] {
     gap: 0.15rem;
+    min-height: 5.35rem;
     padding: 0.125rem 0.05rem;
+    border-radius: 0.8rem;
+  }
+
+  .page:has([data-scene-theme="dark"]) .quickActionGrid > a {
+    min-height: 5.35rem;
+    gap: 0.3rem;
+    padding: 0.5rem 0.12rem;
+    border-radius: 0.8rem;
+  }
+
+  .page:has([data-scene-theme="dark"]) .quickActionGrid > a > svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .page:has([data-scene-theme="dark"])
+    .quickActionsLayout
+    > footer[data-ai-dock] {
+    height: auto;
   }
 
   .page:has([data-scene-theme="dark"])
@@ -1385,6 +1536,19 @@
     a {
     flex: 0 0 auto;
     order: 3;
+  }
+
+  .page:has([data-scene-theme="dark"]) .catalogAndNotices {
+    gap: 0.65rem;
+  }
+
+  .page:has([data-scene-theme="dark"]) .products,
+  .page:has([data-scene-theme="dark"]) .notifications {
+    padding: 0.6rem;
+  }
+
+  .page:has([data-scene-theme="dark"]) .productList {
+    gap: 0.3rem;
   }
 }
 
@@ -1557,6 +1721,15 @@
   .quickActionGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .page:has([data-scene-theme="dark"]) .quickActionsLayout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .page:has([data-scene-theme="dark"]) .quickActionGrid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @container home-actions (max-width: 13rem) {
@@ -1614,5 +1787,59 @@
 
   .quickActionsLayout > footer[data-ai-dock] button > span:has(> strong) {
     text-align: left;
+  }
+
+  .page:has([data-scene-theme="dark"]) .quickActionsLayout {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 0.35rem;
+  }
+
+  .page:has([data-scene-theme="dark"]) .quickActionGrid {
+    display: contents;
+  }
+
+  .page:has([data-scene-theme="dark"])
+    .quickActionsLayout
+    > footer[data-ai-dock]
+    button[aria-haspopup="dialog"] {
+    min-height: 5.35rem;
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    gap: 0.3rem;
+    padding: 0.5rem 0.12rem;
+    border-radius: 0.8rem;
+    text-align: center;
+  }
+
+  .page:has([data-scene-theme="dark"])
+    .quickActionsLayout
+    > footer[data-ai-dock]
+    button
+    > span:has(> strong) {
+    text-align: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .summaryCard,
+  .quickActionGrid > a {
+    transition: none;
+  }
+
+  .summaryCard:hover,
+  .quickActionGrid > a:hover {
+    transform: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .summary,
+  .summaryCard,
+  .quickActionGrid > a,
+  .productCard,
+  .eventCard,
+  .lightStatus {
+    border: 1px solid CanvasText;
+    box-shadow: none;
   }
 }

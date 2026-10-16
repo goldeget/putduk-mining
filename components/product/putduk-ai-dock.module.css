@@ -351,3 +351,70 @@
   background: var(--background-elevated);
   border-color: var(--border-default);
 }
+
+.dock {
+  border-top-color: var(--border-default);
+  background: color-mix(in srgb, var(--background-canvas) 94%, transparent);
+  backdrop-filter: blur(18px) saturate(125%);
+}
+
+.launcher {
+  border-color: var(--border-default);
+  background: linear-gradient(
+    145deg,
+    var(--surface-raised),
+    var(--surface-default)
+  );
+  box-shadow: 0 0.5rem 1.5rem
+    color-mix(in srgb, var(--text-primary) 8%, transparent);
+  transition:
+    transform 160ms ease-out,
+    border-color 160ms ease-out,
+    box-shadow 160ms ease-out;
+}
+
+.launcher:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0.75rem 1.8rem
+    color-mix(in srgb, var(--brand-primary) 14%, transparent);
+}
+
+.dialog {
+  border: 1px solid var(--border-default);
+  border-radius: 1.25rem 1.25rem 0 0;
+  box-shadow: 0 -1rem 4rem
+    color-mix(in srgb, var(--text-primary) 18%, transparent);
+}
+
+.header {
+  background: var(--surface-raised);
+}
+
+@media (min-width: 760px) {
+  .dialog {
+    inset: auto max(1.5rem, env(safe-area-inset-right))
+      max(1.5rem, env(safe-area-inset-bottom)) auto;
+    width: min(28rem, calc(100vw - 3rem));
+    height: min(44rem, calc(100dvh - 3rem));
+    border-radius: 1.25rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .launcher:hover {
+    transform: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .dock,
+  .launcher,
+  .dialog,
+  .header {
+    border-color: CanvasText;
+    color: CanvasText;
+    background: Canvas;
+    box-shadow: none;
+    backdrop-filter: none;
+  }
+}
