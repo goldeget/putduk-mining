@@ -20,6 +20,7 @@ import {
   loginAsMember,
 } from "./helpers/member-session";
 import { expectSettledRoute } from "./helpers/settled-route";
+import { snapshotUniqueVisibleInput } from "./helpers/unique-visible-input";
 
 const VIEWPORTS = [
   { height: 844, name: "390", width: 390 },
@@ -575,20 +576,32 @@ test("covers deposit layout, theme, focus, and reduced motion", async ({
             await page.evaluate(() =>
               window.__putdukDepositDiagnostics?.mark("assert-before"),
             );
-            await expect(amount).toBeVisible();
+            // Observe global uniqueness and visibility together: a delayed DOM
+            // swap must not turn a previously unique locator into a strict gap.
+            await expect
+              .poll(() => amount.evaluateAll(snapshotUniqueVisibleInput), {
+                timeout: 5_000,
+              })
+              .toEqual({ count: 1, visible: true });
           } catch (error) {
-            // Diagnostics must never replace the original strict assertion failure.
+            // Diagnostics must never replace the original assertion failure.
             await page
               .evaluate(() => {
                 window.__putdukDepositDiagnostics?.mark("failure");
                 return window.__putdukDepositDiagnostics?.read();
               })
-              .then((report) =>
-                test.info().attach("deposit-dom-diagnostics", {
-                  body: JSON.stringify(report ?? { unavailable: true }),
+              .then((report) => {
+                const body = JSON.stringify(report ?? { unavailable: true });
+                console.info("[deposit-dom-diagnostics] " + body);
+                const diagnosticPath = test
+                  .info()
+                  .outputPath("deposit-dom-diagnostics.json");
+                writeFileSync(diagnosticPath, body + "\n");
+                return test.info().attach("deposit-dom-diagnostics", {
+                  path: diagnosticPath,
                   contentType: "application/json",
-                }),
-              )
+                });
+              })
               .catch(() => {});
             throw error;
           }
