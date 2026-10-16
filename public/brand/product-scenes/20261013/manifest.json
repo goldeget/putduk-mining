@@ -1,0 +1,558 @@
+{
+  "schemaVersion": 1,
+  "assetVersion": "2026.10.13-product-process-v1",
+  "status": "OWNER_DELEGATED_LOCAL_VISUAL_IMPLEMENTATION_CANDIDATE",
+  "sourcePolicy": "Nine independently generated conceptual process originals; existing000660/NVDA unchanged; not company premises, registration or economic authority",
+  "derivativePolicy": "Full composition resize/encode only; no crop/recolor/upscale",
+  "packs": [
+    {
+      "code": "005930",
+      "key": "samsung-foundry",
+      "sourceMaster": "docs/design/generated-masters/product-batch-20261013/samsung-foundry-master-v1.png",
+      "masterSha256": "3a0526ed3cccd5e13510aea3e5bf44cd482a74f93e57a8474b57688fa3f98e0f",
+      "bytes": 2504518,
+      "width": 1536,
+      "height": 1024,
+      "visualReview": "Viewed generated output: distinct conceptual process, no visible monetary text or corporate logos; rendered UI approval remains pending",
+      "rightsProvenance": "Original built-in image_gen output commissioned by user; no third-party file copied; no legal exclusivity claim",
+      "assets": [
+        {
+          "path": "/brand/product-scenes/20261013/samsung-foundry-480-v1.avif",
+          "sha256": "fb20118de83a677c8a40fb8ce274c9b382622ba0e8abf97243ca1b9f601c1891",
+          "bytes": 26357,
+          "width": 480,
+          "height": 320,
+          "mimeType": "image/avif"
+        },
+        {
+          "path": "/brand/product-scenes/20261013/samsung-foundry-480-v1.webp",
+          "sha256": "b25b297203c3880d2c9d3448157c17c391b351b3632e9358af96d7c070831765",
+          "bytes": 43258,
+          "width": 480,
+          "height": 320,
+          "mimeType": "image/webp"
+        },
+        {
+          "path": "/brand/product-scenes/20261013/samsung-foundry-960-v1.avif",
+          "sha256": "d11a636cc76fc2180b39b2ee5d3ae9e16762d830d12699a8e1b28eaaa58e5cbe",
+          "bytes": 82035,
+          "width": 960,
+          "height": 640,
+          "mimeType": "image/avif"
+        },
+        {
+          "path": "/brand/product-scenes/20261013/samsung-foundry-960-v1.webp",
+          "sha256": "f84365d9ff3059ab488e5eb0b17e2f3c9290505df2ef396d0ea4ef80624c8a42",
+          "bytes": 129680,
+          "width": 960,
+          "height": 640,
+          "mimeType": "image/webp"
+        },
+        {
+          "path": "/brand/product-scenes/20261013/samsung-foundry-1536-v1.avif",
+          "sha256": "e93ffa8779c08851a702079aec361f720eba64bc5e4db252f9a5c0bcb67eb261",
+          "bytes": 164642,
+          "width": 1536,
+          "height": 1024,
+          "mimeType": "image/avif"
+        },
+        {
+          "path": "/brand/product-scenes/20261013/samsung-foundry-1536-v1.webp",
+          "sha256": "85da13b799b426d42bb1335cb7d94cefb2ceb81ed12e84eb47daa90aa4e0b4e6",
+          "bytes": 263996,
+          "width": 1536,
+          "height": 1024,
+          "mimeType": "image/webp"
+        }
+      ]
+    },
+    {
+      "code": "AAPL",
+      "key": "aapl-device",
+      "sourceMaster": "docs/design/generated-masters/product-batch-20261013/aapl-device-master-v1.png",
+      "masterSha256": "9adac7009fa413fa867453ff87e80b344f8119479551fd3ee99574c1a2edc90e",
+      "bytes": 2415270,
+      "width": 1536,
+      "height": 1024,
+      "visualReview": "Viewed generated output: distinct conceptual process, no visible monetary text or corporate logos; rendered UI approval remains pending",
+      "rightsProvenance": "Original built-in image_gen output commissioned by user; no third-party file copied; no legal exclusivity claim",
+      "assets": [
+        {
+          "path": "/brand/product-scenes/20261013/aapl-device-480-v1.avif",
+          "sha256": "ec11ff6e67913675884cc12e9a67350339428db878306772ef84f6b1157a2413",
+          "bytes": 25670,
+          "width": 480,
+          "height": 320,
+          "mimeType": "image/avif"
+        },
+        {
+          "path": "/brand/product-scenes/20261013/aapl-device-480-v1.webp",
+          "sha256": "61fd68574b5cd7d38f6b0d30cdcf4c06c0166cf44034d236e345907ff8c45190",
+          "bytes": 42412,
+          "width": 480,
+          "height": 320,
+          "mimeType": "image/webp"
+        },
+        {
+          "path": "/brand/product-scenes/20261013/aapl-device-960-v1.avif",
+          "sha256": "6bc6b9339425eb31d2cdcc3dfc894283a53e087e36e05de2aee77c5d680b7654",
+          "bytes": 68338,
+          "width": 960,
+          "height": 640,
+          "mimeType": "image/avif"
+        },
+        {
+          "path": "/brand/product-scenes/20261013/aapl-device-960-v1.webp",
+          "sha256": "24ec1259d36fd9e98a04f94d048dd0bfcafa96e98785fd3f529cd9557cdad657",
+          "bytes": 108252,
+          "width": 960,
+          "height": 640,
+          "mimeType": "image/webp"
+        },
+        {
+          "path": "/brand/product-scenes/20261013/aapl-device-1536-v1.avif",
+          "sha256": "0b498ad82b8f61617cc2ae2c687b591742e0f7b5a2a0731b07ba90f8c3075978",
+          "bytes": 124965,
+          "width": 1536,
+          "height": 1024,
+          "mimeType": "image/avif"
+        },
+        {
+          "path": "/brand/product-scenes/20261013/aapl-device-1536-v1.webp",
+          "sha256": "15e984658c3b13ba21333f72fc3e99f94d4bb72344c72fcb1e59124fffa943d2",
+          "bytes": 193718,
+          "width": 1536,
+          "height": 1024,
+          "mimeType": "image/webp"
+        }
+      ]
+    },
+    {
+      "code": "MSFT",
+      "key": "msft-cloud",
+      "sourceMaster": "docs/design/generated-masters/product-batch-20261013/msft-cloud-master-v1.png",
+      "masterSha256": "19599b4354664eb09fe84271e498b2df8922ab71ba8d0dcb2208740cc5d68863",
+      "bytes": 2558725,
+      "width": 1536,
+      "height": 1024,
+      "visualReview": "Viewed generated output: distinct conceptual process, no visible monetary text or corporate logos; rendered UI approval remains pending",
+      "rightsProvenance": "Original built-in image_gen output commissioned by user; no third-party file copied; no legal exclusivity claim",
+      "assets": [
+        {
+          "path": "/brand/product-scenes/20261013/msft-cloud-480-v1.avif",
+          "sha256": "a5d3bb3cbcfab0d9635a20ec966784a09857b22894a5fd7d54d9437ea7582029",
+          "bytes": 24973,
+          "width": 480,
+          "height": 320,
+          "mimeType": "image/avif"
+        },
+        {
+          "path": "/brand/product-scenes/20261013/msft-cloud-480-v1.webp",
+          "sha256": "8a230b54d2392d1badd0d666d0a88233cad32ae96f1634b3750a68c2121687cc",
+          "bytes": 39132,
+          "width": 480,
+          "height": 320,
+          "mimeType": "image/webp"
+        },
+        {
+          "path": "/brand/product-scenes/20261013/msft-cloud-960-v1.avif",
+          "sha256": "f2b4dafb41470af997eec2bed2cd461cfc91507fc906b401a465641d242fe89c",
+          "bytes": 82308,
+          "width": 960,
+          "height": 640,
+          "mimeType": "image/avif"
+        },
+        {
+          "path": "/brand/product-scenes/20261013/msft-cloud-960-v1.webp",
+          "sha256": "8560317b8a42bd4ac95d61b083d33e750714ad5db86f1e43150717dcf38f1148",
+          "bytes": 126478,
+          "width": 960,
+          "height": 640,
+          "mimeType": "image/webp"
+        },
+        {
+          "path": "/brand/product-scenes/20261013/msft-cloud-1536-v1.avif",
+          "sha256": "c917457da491e2159450b8e4805a157487b6436ba076d2105bd1052a4168efed",
+          "bytes": 173506,
+          "width": 1536,
+          "height": 1024,
+          "mimeType": "image/avif"
+        },
+        {
+          "path": "/brand/product-scenes/20261013/msft-cloud-1536-v1.webp",
+          "sha256": "e9da6bb59f214eb3d37410ba9f3176fd5e507202c7bd3d444b41fd3d4097eb6f",
+          "bytes": 266618,
+          "width": 1536,
+          "height": 1024,
+          "mimeType": "image/webp"
+        }
+      ]
+    },
+    {
+      "code": "XAU",
+      "key": "xau-refinery",
+      "sourceMaster": "docs/design/generated-masters/product-batch-20261013/xau-refinery-master-v1.png",
+      "masterSha256": "3bc241827214b6529d0a2a173822cfe8c5bd47f94ebe6440439b184ca696f077",
+      "bytes": 2781752,
+      "width": 1536,
+      "height": 1024,
+      "visualReview": "Viewed generated output: distinct conceptual process, no visible monetary text or corporate logos; rendered UI approval remains pending",
+      "rightsProvenance": "Original built-in image_gen output commissioned by user; no third-party file copied; no legal exclusivity claim",
+      "assets": [
+        {
+          "path": "/brand/product-scenes/20261013/xau-refinery-480-v1.avif",
+          "sha256": "03d06e513d15923e4bdf57c17d847c41d9d75ef15608d6d8b585b13d4e1cf443",
+          "bytes": 26711,
+          "width": 480,
+          "height": 320,
+          "mimeType": "image/avif"
+        },
+        {
+          "path": "/brand/product-scenes/20261013/xau-refinery-480-v1.webp",
+          "sha256": "6799c3eb375101f423f8756a64a2d1c93be71899310ad5b04a8409d648d29494",
+          "bytes": 43210,
+          "width": 480,
+          "height": 320,
+          "mimeType": "image/webp"
+        },
+        {
+          "path": "/brand/product-scenes/20261013/xau-refinery-960-v1.avif",
+          "sha256": "ae2ccb1fcf0c9700438587723db8328fca894a0d71f979714991baac7ca9c916",
+          "bytes": 95125,
+          "width": 960,
+          "height": 640,
+          "mimeType": "image/avif"
+        },
+        {
+          "path": "/brand/product-scenes/20261013/xau-refinery-960-v1.webp",
+          "sha256": "9a04ccead7a5366095184a3094e3ac32e1feaa7f3dc28b7ae97f19dfbabb5b17",
+          "bytes": 148604,
+          "width": 960,
+          "height": 640,
+          "mimeType": "image/webp"
+        },
+        {
+          "path": "/brand/product-scenes/20261013/xau-refinery-1536-v1.avif",
+          "sha256": "7e4010f86fd36de6ec7a21d0fb67c14526b21425b89b28ab5a418c0b7659cfa5",
+          "bytes": 204270,
+          "width": 1536,
+          "height": 1024,
+          "mimeType": "image/avif"
+        },
+        {
+          "path": "/brand/product-scenes/20261013/xau-refinery-1536-v1.webp",
+          "sha256": "b352e936a1023e898d1eaf13259d956c4497dd422478187b1f534792cf0839de",
+          "bytes": 318204,
+          "width": 1536,
+          "height": 1024,
+          "mimeType": "image/webp"
+        }
+      ]
+    },
+    {
+      "code": "XAG",
+      "key": "xag-electrorefinery",
+      "sourceMaster": "docs/design/generated-masters/product-batch-20261013/xag-electrorefinery-master-v1.png",
+      "masterSha256": "7b8c9f326f7f42a0b67a0aae286062769c5dee6ca58d539ec60227d387c37363",
+      "bytes": 2577882,
+      "width": 1536,
+      "height": 1024,
+      "visualReview": "Viewed generated output: distinct conceptual process, no visible monetary text or corporate logos; rendered UI approval remains pending",
+      "rightsProvenance": "Original built-in image_gen output commissioned by user; no third-party file copied; no legal exclusivity claim",
+      "assets": [
+        {
+          "path": "/brand/product-scenes/20261013/xag-electrorefinery-480-v1.avif",
+          "sha256": "34231081cc445810f42665055f9943343f3d6cecd9923cc94bd674ddcedf3463",
+          "bytes": 23197,
+          "width": 480,
+          "height": 320,
+          "mimeType": "image/avif"
+        },
+        {
+          "path": "/brand/product-scenes/20261013/xag-electrorefinery-480-v1.webp",
+          "sha256": "7a69fb982dd9d7a56100e814a7f7c46cf698965b11266b06be5ab4b974daed16",
+          "bytes": 37228,
+          "width": 480,
+          "height": 320,
+          "mimeType": "image/webp"
+        },
+        {
+          "path": "/brand/product-scenes/20261013/xag-electrorefinery-960-v1.avif",
+          "sha256": "1528dc26c09303c958e739ac1ef1b6ca54dd0595137ba4b2fb74c137909e9f24",
+          "bytes": 74087,
+          "width": 960,
+          "height": 640,
+          "mimeType": "image/avif"
+        },
+        {
+          "path": "/brand/product-scenes/20261013/xag-electrorefinery-960-v1.webp",
+          "sha256": "ed49186b1729727045ce75c323bfae95ec0d35471b1b52c39df42c25a45dade0",
+          "bytes": 118308,
+          "width": 960,
+          "height": 640,
+          "mimeType": "image/webp"
+        },
+        {
+          "path": "/brand/product-scenes/20261013/xag-electrorefinery-1536-v1.avif",
+          "sha256": "16696503dd456756ac897173d023f442d7c87c2af296bfb698555e89702f119f",
+          "bytes": 153741,
+          "width": 1536,
+          "height": 1024,
+          "mimeType": "image/avif"
+        },
+        {
+          "path": "/brand/product-scenes/20261013/xag-electrorefinery-1536-v1.webp",
+          "sha256": "ee0f8f83409c9a0ad08b66d93b6eadd39db26d0b86f7f2c1a98dd648c977e034",
+          "bytes": 241928,
+          "width": 1536,
+          "height": 1024,
+          "mimeType": "image/webp"
+        }
+      ]
+    },
+    {
+      "code": "BTC",
+      "key": "btc-hash",
+      "sourceMaster": "docs/design/generated-masters/product-batch-20261013/btc-hash-master-v1.png",
+      "masterSha256": "a21b293fb35132bcde5893d834fcf4e23b9be6b62fa65a7382fec5dbc3ec7e79",
+      "bytes": 2921667,
+      "width": 1536,
+      "height": 1024,
+      "visualReview": "Viewed generated output: distinct conceptual process, no visible monetary text or corporate logos; rendered UI approval remains pending",
+      "rightsProvenance": "Original built-in image_gen output commissioned by user; no third-party file copied; no legal exclusivity claim",
+      "assets": [
+        {
+          "path": "/brand/product-scenes/20261013/btc-hash-480-v1.avif",
+          "sha256": "4341c6a04ed361103cc7ce47eee0b990874b0032165cddd82e526f858501edff",
+          "bytes": 29832,
+          "width": 480,
+          "height": 320,
+          "mimeType": "image/avif"
+        },
+        {
+          "path": "/brand/product-scenes/20261013/btc-hash-480-v1.webp",
+          "sha256": "0df5d00794c4d24d3e18138010769ba22b5b747653d584a23303fda9c8aaa01b",
+          "bytes": 49226,
+          "width": 480,
+          "height": 320,
+          "mimeType": "image/webp"
+        },
+        {
+          "path": "/brand/product-scenes/20261013/btc-hash-960-v1.avif",
+          "sha256": "6ef4ad651b8823ec43af4af5c63f4e091779151724ef3553a1a4152e32ec026d",
+          "bytes": 107089,
+          "width": 960,
+          "height": 640,
+          "mimeType": "image/avif"
+        },
+        {
+          "path": "/brand/product-scenes/20261013/btc-hash-960-v1.webp",
+          "sha256": "f24e2a39ce0e9d2bedf2457ed06ba82d4c396be0bc8b4d6869671186a059c27b",
+          "bytes": 172272,
+          "width": 960,
+          "height": 640,
+          "mimeType": "image/webp"
+        },
+        {
+          "path": "/brand/product-scenes/20261013/btc-hash-1536-v1.avif",
+          "sha256": "8a3b5be1c83fa0c8826479257546dee3a35ebea34461605c01b4212b42bd2e30",
+          "bytes": 225825,
+          "width": 1536,
+          "height": 1024,
+          "mimeType": "image/avif"
+        },
+        {
+          "path": "/brand/product-scenes/20261013/btc-hash-1536-v1.webp",
+          "sha256": "c51662e226c6fe6c5a1691eb575dc563ab5986e1f4694b72c3cfd5db72272ecc",
+          "bytes": 373980,
+          "width": 1536,
+          "height": 1024,
+          "mimeType": "image/webp"
+        }
+      ]
+    },
+    {
+      "code": "ETH",
+      "key": "eth-validator",
+      "sourceMaster": "docs/design/generated-masters/product-batch-20261013/eth-validator-master-v1.png",
+      "masterSha256": "7d92606cd0f303ee80d0bdecac799324ffd620dfcbdae550fbd10bb13a9b3686",
+      "bytes": 2825327,
+      "width": 1536,
+      "height": 1024,
+      "visualReview": "Viewed generated output: distinct conceptual process, no visible monetary text or corporate logos; rendered UI approval remains pending",
+      "rightsProvenance": "Original built-in image_gen output commissioned by user; no third-party file copied; no legal exclusivity claim",
+      "assets": [
+        {
+          "path": "/brand/product-scenes/20261013/eth-validator-480-v1.avif",
+          "sha256": "597825102ed7a03410ebcd57d39d844553c337330875b8539db95a4349a12cef",
+          "bytes": 28484,
+          "width": 480,
+          "height": 320,
+          "mimeType": "image/avif"
+        },
+        {
+          "path": "/brand/product-scenes/20261013/eth-validator-480-v1.webp",
+          "sha256": "1d4a7a2a5db7098756951270a6622430ced09e66df417a09c922e0f477d73f85",
+          "bytes": 44294,
+          "width": 480,
+          "height": 320,
+          "mimeType": "image/webp"
+        },
+        {
+          "path": "/brand/product-scenes/20261013/eth-validator-960-v1.avif",
+          "sha256": "d2a860f5a8e944bd1f306510a9fdecde78b225e737f00903ff5d84faf44dd99b",
+          "bytes": 95956,
+          "width": 960,
+          "height": 640,
+          "mimeType": "image/avif"
+        },
+        {
+          "path": "/brand/product-scenes/20261013/eth-validator-960-v1.webp",
+          "sha256": "f5768b816571ba62ae99efa5fd871cdaff4969d812bfd51ac3290191bf0e1ee0",
+          "bytes": 146422,
+          "width": 960,
+          "height": 640,
+          "mimeType": "image/webp"
+        },
+        {
+          "path": "/brand/product-scenes/20261013/eth-validator-1536-v1.avif",
+          "sha256": "1bbfc985fbf567b8d44ad30e3a19617630e08ba7c6d1227a6246ed4e50dae34c",
+          "bytes": 201093,
+          "width": 1536,
+          "height": 1024,
+          "mimeType": "image/avif"
+        },
+        {
+          "path": "/brand/product-scenes/20261013/eth-validator-1536-v1.webp",
+          "sha256": "9aa499148fb56fadcd7291f0ef4b3d77bf80896cbb5f48f7bc23cde73ab0efa4",
+          "bytes": 306336,
+          "width": 1536,
+          "height": 1024,
+          "mimeType": "image/webp"
+        }
+      ]
+    },
+    {
+      "code": "BNB",
+      "key": "bnb-routing",
+      "sourceMaster": "docs/design/generated-masters/product-batch-20261013/bnb-routing-master-v1.png",
+      "masterSha256": "6dea01a07fe1fba7b6fe2532096ba182603e966e37f6ab7bcc1fd5f81ba604d7",
+      "bytes": 3183101,
+      "width": 1536,
+      "height": 1024,
+      "visualReview": "Viewed generated output: distinct conceptual process, no visible monetary text or corporate logos; rendered UI approval remains pending",
+      "rightsProvenance": "Original built-in image_gen output commissioned by user; no third-party file copied; no legal exclusivity claim",
+      "assets": [
+        {
+          "path": "/brand/product-scenes/20261013/bnb-routing-480-v1.avif",
+          "sha256": "6e16ad3d7e04153204cafe5147cf937a4bcddb24a2b8eac407019dbd4730b4a1",
+          "bytes": 32789,
+          "width": 480,
+          "height": 320,
+          "mimeType": "image/avif"
+        },
+        {
+          "path": "/brand/product-scenes/20261013/bnb-routing-480-v1.webp",
+          "sha256": "d64818d638d1ec60a03f7eba17835a4009d50419e99a7d5618556b4c1f6d798d",
+          "bytes": 52410,
+          "width": 480,
+          "height": 320,
+          "mimeType": "image/webp"
+        },
+        {
+          "path": "/brand/product-scenes/20261013/bnb-routing-960-v1.avif",
+          "sha256": "f322b1fa8dd2de95c6e2756690d26418108f17297a8c02a402b166d6ade5bcac",
+          "bytes": 120507,
+          "width": 960,
+          "height": 640,
+          "mimeType": "image/avif"
+        },
+        {
+          "path": "/brand/product-scenes/20261013/bnb-routing-960-v1.webp",
+          "sha256": "1dd9eb65a4a109ba44d4e25964ebac15d56ef7fa3fa15b102a91d8dca87c88f2",
+          "bytes": 184802,
+          "width": 960,
+          "height": 640,
+          "mimeType": "image/webp"
+        },
+        {
+          "path": "/brand/product-scenes/20261013/bnb-routing-1536-v1.avif",
+          "sha256": "28ff22bdcde56ca69a2bcb908a34dd407e42e86532b652ef89ce58d9d1de89b6",
+          "bytes": 252709,
+          "width": 1536,
+          "height": 1024,
+          "mimeType": "image/avif"
+        },
+        {
+          "path": "/brand/product-scenes/20261013/bnb-routing-1536-v1.webp",
+          "sha256": "e56ac3133b64388b967fb59f68707de36f56ddd01652b2001dfbe604c1ec3cd4",
+          "bytes": 401872,
+          "width": 1536,
+          "height": 1024,
+          "mimeType": "image/webp"
+        }
+      ]
+    },
+    {
+      "code": "XRP",
+      "key": "xrp-gateway",
+      "sourceMaster": "docs/design/generated-masters/product-batch-20261013/xrp-gateway-master-v1.png",
+      "masterSha256": "d8f3e0b81c045bf5ecefa2758c1c0fb4d31d80bc67dde294c8d0a84ce1e450bf",
+      "bytes": 2797920,
+      "width": 1536,
+      "height": 1024,
+      "visualReview": "Viewed generated output: distinct conceptual process, no visible monetary text or corporate logos; rendered UI approval remains pending",
+      "rightsProvenance": "Original built-in image_gen output commissioned by user; no third-party file copied; no legal exclusivity claim",
+      "assets": [
+        {
+          "path": "/brand/product-scenes/20261013/xrp-gateway-480-v1.avif",
+          "sha256": "9b013b287ba3d0bd3fd28c3cb727b961b5c95f4b80bb8e971a6c80942f15ce9d",
+          "bytes": 26430,
+          "width": 480,
+          "height": 320,
+          "mimeType": "image/avif"
+        },
+        {
+          "path": "/brand/product-scenes/20261013/xrp-gateway-480-v1.webp",
+          "sha256": "daa904fe5264c4e92a57752e84e80e0f4c4c291b09a6698ef141911c12068cc4",
+          "bytes": 44394,
+          "width": 480,
+          "height": 320,
+          "mimeType": "image/webp"
+        },
+        {
+          "path": "/brand/product-scenes/20261013/xrp-gateway-960-v1.avif",
+          "sha256": "b2b80fb3e982cccbcbdb248794aad68f41dbcfc877d311c719a22273af941d2a",
+          "bytes": 86649,
+          "width": 960,
+          "height": 640,
+          "mimeType": "image/avif"
+        },
+        {
+          "path": "/brand/product-scenes/20261013/xrp-gateway-960-v1.webp",
+          "sha256": "c8fb3f9132dd08c01b39cfb9acd587884181165681febd09a5cd4603d49f8f96",
+          "bytes": 139646,
+          "width": 960,
+          "height": 640,
+          "mimeType": "image/webp"
+        },
+        {
+          "path": "/brand/product-scenes/20261013/xrp-gateway-1536-v1.avif",
+          "sha256": "7b81650a0548c44dfae121ba89baa82e10384c1be15083e6b0f0961a26e8ce87",
+          "bytes": 180038,
+          "width": 1536,
+          "height": 1024,
+          "mimeType": "image/avif"
+        },
+        {
+          "path": "/brand/product-scenes/20261013/xrp-gateway-1536-v1.webp",
+          "sha256": "2f5119856eef032b369792116f94d6e7aef1edcf5adf72e900adc08fd6f34b58",
+          "bytes": 288920,
+          "width": 1536,
+          "height": 1024,
+          "mimeType": "image/webp"
+        }
+      ]
+    }
+  ]
+}

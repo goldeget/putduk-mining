@@ -69,6 +69,18 @@ export type PublishedCatalogRead =
       reason: "query_failed" | "invalid_catalog" | "invalid_products";
     });
 
+/** A server projection can validate additional categories without widening UI types. */
+export type CatalogReadForCategory<Category extends string> =
+  | {
+      state: "loaded";
+      catalog: PublishedCatalogEvidence;
+      products: (Omit<PublishedCatalogProduct, "category"> & {
+        category: Category;
+      })[];
+      observedAt: string;
+    }
+  | Exclude<PublishedCatalogRead, { state: "loaded" }>;
+
 const timestamp = z.iso.datetime({ offset: true });
 const nonblank = z.string().trim().min(1);
 const positivePostgresInteger = z.number().int().positive().max(2_147_483_647);
@@ -190,6 +202,23 @@ export function presentPublishedCatalogRead(
   error: unknown,
   observedAt: string,
 ): PublishedCatalogRead {
+  return presentCatalogReadForCategories(
+    data,
+    error,
+    observedAt,
+    productCategories,
+  );
+}
+
+/** Shares approval, snapshot and availability validation with the legacy read. */
+export function presentCatalogReadForCategories<
+  const Categories extends readonly [string, ...string[]],
+>(
+  data: unknown,
+  error: unknown,
+  observedAt: string,
+  categories: Categories,
+): CatalogReadForCategory<Categories[number]> {
   const none = { catalog: null, products: [] as [], observedAt };
   if (error) return { ...none, state: "error", reason: "query_failed" };
   if (!timestamp.safeParse(observedAt).success) {
@@ -211,7 +240,7 @@ export function presentPublishedCatalogRead(
   }
 
   const parsedProducts = z
-    .array(productSchema)
+    .array(productSchema.extend({ category: z.enum(categories) }))
     .safeParse(catalog.mining_products);
   if (!parsedProducts.success) {
     return { ...none, state: "error", reason: "invalid_products" };
@@ -222,7 +251,10 @@ export function presentPublishedCatalogRead(
       return { ...none, state: "error", reason: "invalid_products" };
     }
   }
-  const products: PublishedCatalogProduct[] = [];
+  const products: Extract<
+    CatalogReadForCategory<Categories[number]>,
+    { state: "loaded" }
+  >["products"] = [];
   for (const row of rows) {
     const availability = presentAvailability(row.product_availability, now);
     if (availability === null) {

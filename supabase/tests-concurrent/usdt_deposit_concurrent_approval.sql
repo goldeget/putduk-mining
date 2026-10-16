@@ -33,19 +33,9 @@ begin
   select namespace.nspname into v_schema from pg_extension as extension
   join pg_namespace as namespace on namespace.oid = extension.extnamespace
   where extension.extname = 'dblink';
-  v_host := pg_temp.putduk_disposable_dblink_host('PUTDUK_LOCAL_DB_HOST_UNRESOLVED');
-  v_conn := format(
-    'host=%s dbname=postgres user=postgres password=postgres connect_timeout=2',
-    v_host
-  );
-  insert into usdt_conc_context (host) values (v_host);
-  execute format(
-    'select %I.dblink_connect(%L, %L)',
-    v_schema,
-    'usdt_conc_setup',
-    v_conn
-  );
-
+  v_conn := pg_temp.putduk_disposable_dblink_connection('PUTDUK_LOCAL_DB_HOST_UNRESOLVED');
+  insert into usdt_conc_context(host) values(v_conn);
+  execute format('select %I.dblink_connect(%L,%L)',v_schema,'usdt_conc_setup',v_conn);
   execute format('select %I.dblink_exec(%L, %L)', v_schema, 'usdt_conc_setup', $setup$
     do $body$
     begin

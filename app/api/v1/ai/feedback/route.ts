@@ -1,6 +1,7 @@
 import { aiMemberFeedbackSchema } from "@/domain/ai/member-feedback";
 import { matchesAiPresentationOwner } from "@/domain/ai/presentation-owner";
 import { apiError, apiSuccess } from "@/lib/api/http";
+import { readBoundedJsonBody } from "@/lib/api/request-body";
 import {
   createSupabaseMemberConversationPort,
   recordOwnMemberFeedback,
@@ -51,25 +52,15 @@ export async function POST(request: Request) {
     });
   }
 
-  const rawBody = await request.text();
-  if (new TextEncoder().encode(rawBody).byteLength > MAX_BODY_BYTES) {
+  const body = await readBoundedJsonBody(request, MAX_BODY_BYTES);
+  if (!body.ok) {
     return apiError({
-      code: "PAYLOAD_TOO_LARGE",
+      code: body.code,
       message: "의견을 확인하지 못했어요.",
-      status: 413,
+      status: body.code === "PAYLOAD_TOO_LARGE" ? 413 : 400,
     });
   }
-  let body: unknown;
-  try {
-    body = JSON.parse(rawBody);
-  } catch {
-    return apiError({
-      code: "INVALID_JSON",
-      message: "의견을 확인하지 못했어요.",
-      status: 400,
-    });
-  }
-  const parsed = aiMemberFeedbackSchema.safeParse(body);
+  const parsed = aiMemberFeedbackSchema.safeParse(body.value);
   if (!parsed.success) {
     return apiError({
       code: "INVALID_AI_FEEDBACK",

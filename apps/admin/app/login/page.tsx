@@ -1,3 +1,4 @@
+import { FeedbackMessage } from "../../../../components/ui/feedback-message";
 import type { Metadata, Route } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -42,9 +43,9 @@ export default async function LoginPage({
       }
     >
       {denied ? (
-        <p className="form-error" role="alert">
+        <FeedbackMessage className="form-error" role="alert">
           운영 권한이 없거나 세션이 거절되었습니다. 다시 시도해 주세요.
-        </p>
+        </FeedbackMessage>
       ) : null}
       <LoginForm returnTo={safeReturn} />
     </AdminAuthEntry>

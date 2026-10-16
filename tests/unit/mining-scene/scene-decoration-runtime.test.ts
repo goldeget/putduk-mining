@@ -1,4 +1,5 @@
 // @vitest-environment jsdom
+import { PRODUCT_PROCESS_PACKS } from "@/lib/mining-scene/product-scene-assets";
 
 import { act, createElement } from "react";
 import { createRoot, type Root } from "react-dom/client";
@@ -97,6 +98,12 @@ beforeEach(() => {
     clearRect: vi.fn(),
     setTransform: vi.fn(),
     beginPath: vi.fn(),
+    moveTo: vi.fn(),
+    lineTo: vi.fn(),
+    quadraticCurveTo: vi.fn(),
+    ellipse: vi.fn(),
+    rect: vi.fn(),
+    stroke: vi.fn(),
     arc: vi.fn(),
     fill: vi.fn(),
     globalAlpha: 1,
@@ -392,5 +399,32 @@ describe("bounded scene decoration", () => {
     expect(callbacks.size).toBe(0);
     // Recreate a root for the common cleanup hook.
     root = createRoot(host);
+  });
+});
+
+describe("individual product process decoration", () => {
+  it.each(Object.values(PRODUCT_PROCESS_PACKS))(
+    "mounts $code's own process and suspends it when hidden",
+    async (pack) => {
+      await render({ process: pack.process, particleCount: 8 });
+      expect(canvas().dataset.processMode).toBe(pack.process.mode);
+      expect(canvas().dataset.decoration).toBe("process-paths");
+      intersect(true);
+      tick(0);
+      expect(canvas().dataset.motionState).toBe("running");
+      expect(context.quadraticCurveTo).toHaveBeenCalled();
+      expect(context.stroke).toHaveBeenCalled();
+      hidden = true;
+      document.dispatchEvent(new Event("visibilitychange"));
+      expect(callbacks.size).toBe(0);
+      expect(canvas().dataset.motionState).toBe("paused");
+    },
+  );
+  it("does not schedule a commissioned process for reduced motion", async () => {
+    reduced = true;
+    await render({ process: PRODUCT_PROCESS_PACKS.XAU.process });
+    intersect(true);
+    expect(callbacks.size).toBe(0);
+    expect(context.quadraticCurveTo).not.toHaveBeenCalled();
   });
 });

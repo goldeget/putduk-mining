@@ -25,10 +25,16 @@ test.describe("admin app-owned session and real TOTP", () => {
       operator.password,
     );
     expect(secret.length).toBeGreaterThanOrEqual(16);
-    await expect(page.getByText("오늘의 퍼뜩").first()).toBeVisible({
-      timeout: 60_000,
-    });
+    await expect(
+      page.getByRole("heading", {
+        name: "오늘의 퍼뜩",
+        level: 1,
+        exact: true,
+      }),
+    ).toBeVisible({ timeout: 60_000 });
 
+    const menu = page.getByRole("button", { name: "운영 메뉴" });
+    if (await menu.isVisible()) await menu.click();
     const logout = page.getByRole("button", { name: "이 기기 로그아웃" });
     await expect(logout).toBeInViewport();
     await page.screenshot({

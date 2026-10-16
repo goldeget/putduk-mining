@@ -16,7 +16,7 @@ describe("public/admin physical boundary", () => {
   });
 
   it("does not expose admin routes through the public proxy", () => {
-    const proxy = readFileSync(resolve(root, "proxy.ts"), "utf8");
+    const proxy = readFileSync(resolve(root, "middleware.ts"), "utf8");
     expect(proxy).not.toContain("/admin");
     expect(proxy).not.toContain("/administrator");
     expect(proxy).not.toContain("/manage");

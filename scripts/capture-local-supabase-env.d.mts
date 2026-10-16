@@ -20,7 +20,14 @@ export function mergeStatusStreams(
   stderr: string,
 ): Record<string, string>;
 
-export function loadJobLocalAllowlist(configText?: string): JobLocalAllowlist;
+export function resolveJobLocalConfig(env?: EnvLike): {
+  configPath: string;
+  workdir: string;
+};
+export function loadJobLocalAllowlist(
+  configText?: string,
+  env?: EnvLike,
+): JobLocalAllowlist;
 
 export function hasRemoteProjectRef(value: unknown): boolean;
 
@@ -93,12 +100,16 @@ export function captureFromCliResult(result: {
   dbUrl: string;
 };
 
-export function formatGithubEnv(credentials: {
-  apiUrl: string;
-  publishableKey: string;
-  secretKey: string;
-  dbUrl: string;
-}): string;
+export function formatGithubEnv(
+  credentials: {
+    apiUrl: string;
+    publishableKey: string;
+    secretKey: string;
+    dbUrl: string;
+    projectId?: string;
+  },
+  env?: EnvLike,
+): string;
 
 export function readSupabaseStatus(): {
   apiUrl: string;

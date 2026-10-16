@@ -1,0 +1,329 @@
+{
+  "schemaVersion": 1,
+  "assetVersion": "2026.10.13-world-collection-v1",
+  "generation": "Built-in image_gen; five separate user-requested original images",
+  "reviewScope": "User-requested category artwork implementation candidate; conceptual worlds, no claim of real financial infrastructure or guaranteed rewards. Browser visual acceptance remains separate.",
+  "derivativePolicy": "Full composition resize/encoding only, no crop/recolor/upscale/baked copy.",
+  "worlds": [
+    {
+      "key": "korea",
+      "sourceMaster": "docs/design/generated-masters/world-collection-20261013/korea-master-v1.png",
+      "sourceSha256": "71d7eb33a655772741e19bd396986eaab892c8442bfd0100ab871130a9485e3b",
+      "width": 1536,
+      "height": 1024,
+      "alt": "한옥과 현대 도시, 산세를 담아 상상한 퍼뜩 한국 월드",
+      "assets": [
+        {
+          "path": "/brand/scenes/world-collection/korea-320-v1.avif",
+          "bytes": 6745,
+          "sha256": "339255b4b3e0abdfec11e28bf8077942d7c1037405e34ee65c8c74c753b80793",
+          "mimeType": "image/avif",
+          "width": 320,
+          "height": 213,
+          "alt": "한옥과 현대 도시, 산세를 담아 상상한 퍼뜩 한국 월드"
+        },
+        {
+          "path": "/brand/scenes/world-collection/korea-320-v1.webp",
+          "bytes": 17242,
+          "sha256": "6fcc9df7bc6dbf4eb95902f8f8c3c32e9bb0599cfc1274da3ca6db75889c1957",
+          "mimeType": "image/webp",
+          "width": 320,
+          "height": 213,
+          "alt": "한옥과 현대 도시, 산세를 담아 상상한 퍼뜩 한국 월드"
+        },
+        {
+          "path": "/brand/scenes/world-collection/korea-640-v1.avif",
+          "bytes": 22644,
+          "sha256": "f3da8aaba9995d5d65fc8ef5c4537aa94a91d72c5b51816fa7d7dc6a03cacead",
+          "mimeType": "image/avif",
+          "width": 640,
+          "height": 427,
+          "alt": "한옥과 현대 도시, 산세를 담아 상상한 퍼뜩 한국 월드"
+        },
+        {
+          "path": "/brand/scenes/world-collection/korea-640-v1.webp",
+          "bytes": 62620,
+          "sha256": "1ab6a6f8a9048cdbcf067caa781ab6504de65c2805964aafd612b6e89df0f3e1",
+          "mimeType": "image/webp",
+          "width": 640,
+          "height": 427,
+          "alt": "한옥과 현대 도시, 산세를 담아 상상한 퍼뜩 한국 월드"
+        },
+        {
+          "path": "/brand/scenes/world-collection/korea-960-v1.avif",
+          "bytes": 49405,
+          "sha256": "c5004f7eff8006a25fbbb7d1853cb4121e2f7203af1918d86c55bbd9109cddab",
+          "mimeType": "image/avif",
+          "width": 960,
+          "height": 640,
+          "alt": "한옥과 현대 도시, 산세를 담아 상상한 퍼뜩 한국 월드"
+        },
+        {
+          "path": "/brand/scenes/world-collection/korea-960-v1.webp",
+          "bytes": 132074,
+          "sha256": "a92ff080c525d921af14268a902b9b29b023a0313567cfb3628d286c2a133660",
+          "mimeType": "image/webp",
+          "width": 960,
+          "height": 640,
+          "alt": "한옥과 현대 도시, 산세를 담아 상상한 퍼뜩 한국 월드"
+        }
+      ]
+    },
+    {
+      "key": "usa",
+      "sourceMaster": "docs/design/generated-masters/world-collection-20261013/usa-master-v1.png",
+      "sourceSha256": "a36b4c7adb8dd65408e1d607cd955d5580a317f7c59b8b009e9cf8c973691ffd",
+      "width": 1536,
+      "height": 1024,
+      "alt": "도시의 고층 건물과 다리를 담아 상상한 퍼뜩 미국 월드",
+      "assets": [
+        {
+          "path": "/brand/scenes/world-collection/usa-320-v1.avif",
+          "bytes": 5909,
+          "sha256": "71eb57ff5a31e00abcc5285c34db3f052249ab9be48df2a998c621402b3b0d81",
+          "mimeType": "image/avif",
+          "width": 320,
+          "height": 213,
+          "alt": "도시의 고층 건물과 다리를 담아 상상한 퍼뜩 미국 월드"
+        },
+        {
+          "path": "/brand/scenes/world-collection/usa-320-v1.webp",
+          "bytes": 15930,
+          "sha256": "0f69ed5d0e3d0a1fb01d18b879ae2930555aa0339ed384e66ae6fbf4f1720b19",
+          "mimeType": "image/webp",
+          "width": 320,
+          "height": 213,
+          "alt": "도시의 고층 건물과 다리를 담아 상상한 퍼뜩 미국 월드"
+        },
+        {
+          "path": "/brand/scenes/world-collection/usa-640-v1.avif",
+          "bytes": 19609,
+          "sha256": "e3526e4859695ec20b76f3fd3290e6bf83321904942990c9e150ccf49d88241c",
+          "mimeType": "image/avif",
+          "width": 640,
+          "height": 427,
+          "alt": "도시의 고층 건물과 다리를 담아 상상한 퍼뜩 미국 월드"
+        },
+        {
+          "path": "/brand/scenes/world-collection/usa-640-v1.webp",
+          "bytes": 54908,
+          "sha256": "b4825343efd4a6dd639151a711eae7b28e56efcc425e27b737214cbf9f226b72",
+          "mimeType": "image/webp",
+          "width": 640,
+          "height": 427,
+          "alt": "도시의 고층 건물과 다리를 담아 상상한 퍼뜩 미국 월드"
+        },
+        {
+          "path": "/brand/scenes/world-collection/usa-960-v1.avif",
+          "bytes": 40541,
+          "sha256": "2be7f6430981abb591beeafbb542b8734c066146b3bddc4d8b3d8ead4adf9186",
+          "mimeType": "image/avif",
+          "width": 960,
+          "height": 640,
+          "alt": "도시의 고층 건물과 다리를 담아 상상한 퍼뜩 미국 월드"
+        },
+        {
+          "path": "/brand/scenes/world-collection/usa-960-v1.webp",
+          "bytes": 113778,
+          "sha256": "d328b3a8445f0c33b3e7c33feb5688d64d7e8a3e348655b827038fcacf1c7353",
+          "mimeType": "image/webp",
+          "width": 960,
+          "height": 640,
+          "alt": "도시의 고층 건물과 다리를 담아 상상한 퍼뜩 미국 월드"
+        }
+      ]
+    },
+    {
+      "key": "gold",
+      "sourceMaster": "docs/design/generated-masters/world-collection-20261013/gold-master-v1.png",
+      "sourceSha256": "6ffc641a4e1ef91e6ac1ddbfbbf8ce271fdba36515bea06614f22d9987a4e709",
+      "width": 1536,
+      "height": 1024,
+      "alt": "금빛 광물의 질감과 새싹을 담아 상상한 퍼뜩 금 월드",
+      "assets": [
+        {
+          "path": "/brand/scenes/world-collection/gold-320-v1.avif",
+          "bytes": 5657,
+          "sha256": "b96bb4db388bed2fffd65373d7b891aa2f39b73d0e694a0a68505584a4aec6d8",
+          "mimeType": "image/avif",
+          "width": 320,
+          "height": 213,
+          "alt": "금빛 광물의 질감과 새싹을 담아 상상한 퍼뜩 금 월드"
+        },
+        {
+          "path": "/brand/scenes/world-collection/gold-320-v1.webp",
+          "bytes": 14292,
+          "sha256": "8f8fff259e29b77602caf867921dbe8238ac2f767aa1a321aac6075aa608e014",
+          "mimeType": "image/webp",
+          "width": 320,
+          "height": 213,
+          "alt": "금빛 광물의 질감과 새싹을 담아 상상한 퍼뜩 금 월드"
+        },
+        {
+          "path": "/brand/scenes/world-collection/gold-640-v1.avif",
+          "bytes": 18845,
+          "sha256": "8f4394c1f09582e51d3d48aa26cce0defb7c7db3804ad0a06e5c86f56ed89ec3",
+          "mimeType": "image/avif",
+          "width": 640,
+          "height": 427,
+          "alt": "금빛 광물의 질감과 새싹을 담아 상상한 퍼뜩 금 월드"
+        },
+        {
+          "path": "/brand/scenes/world-collection/gold-640-v1.webp",
+          "bytes": 50504,
+          "sha256": "8c155c5afc854952d7c3aa1f441b347ee3ea1b4182e465bfcd6a81098c3b95fe",
+          "mimeType": "image/webp",
+          "width": 640,
+          "height": 427,
+          "alt": "금빛 광물의 질감과 새싹을 담아 상상한 퍼뜩 금 월드"
+        },
+        {
+          "path": "/brand/scenes/world-collection/gold-960-v1.avif",
+          "bytes": 38803,
+          "sha256": "bb1f3a836c932383ad7b7c7cf6f6976ee63ee0d163b20887f3a7e84158c7753f",
+          "mimeType": "image/avif",
+          "width": 960,
+          "height": 640,
+          "alt": "금빛 광물의 질감과 새싹을 담아 상상한 퍼뜩 금 월드"
+        },
+        {
+          "path": "/brand/scenes/world-collection/gold-960-v1.webp",
+          "bytes": 104052,
+          "sha256": "90c8ba90bc786e907a8a742c3b1e0072e9cf660da56862f0089bc4e44644519e",
+          "mimeType": "image/webp",
+          "width": 960,
+          "height": 640,
+          "alt": "금빛 광물의 질감과 새싹을 담아 상상한 퍼뜩 금 월드"
+        }
+      ]
+    },
+    {
+      "key": "silver",
+      "sourceMaster": "docs/design/generated-masters/world-collection-20261013/silver-master-v1.png",
+      "sourceSha256": "84c4eb4e688c2b2ef1fc8f8d5680c23eb8abbdfee3b9256cd24fa1c80d649928",
+      "width": 1536,
+      "height": 1024,
+      "alt": "은빛 결정과 차분한 빛을 담아 상상한 퍼뜩 은 월드",
+      "assets": [
+        {
+          "path": "/brand/scenes/world-collection/silver-320-v1.avif",
+          "bytes": 5935,
+          "sha256": "eb84c59c27083dbad6f0c8a45240e32ba441b112a70dc81f34c1715b7a08fe66",
+          "mimeType": "image/avif",
+          "width": 320,
+          "height": 213,
+          "alt": "은빛 결정과 차분한 빛을 담아 상상한 퍼뜩 은 월드"
+        },
+        {
+          "path": "/brand/scenes/world-collection/silver-320-v1.webp",
+          "bytes": 15214,
+          "sha256": "d0a13d0e6367d10c20852a0f026263854464da63585ac4e332824b9eb21ba8a4",
+          "mimeType": "image/webp",
+          "width": 320,
+          "height": 213,
+          "alt": "은빛 결정과 차분한 빛을 담아 상상한 퍼뜩 은 월드"
+        },
+        {
+          "path": "/brand/scenes/world-collection/silver-640-v1.avif",
+          "bytes": 18831,
+          "sha256": "8af26498d57121330067ec3cc9a541ea615bfb6b91f9a90fe527cb52a8562989",
+          "mimeType": "image/avif",
+          "width": 640,
+          "height": 427,
+          "alt": "은빛 결정과 차분한 빛을 담아 상상한 퍼뜩 은 월드"
+        },
+        {
+          "path": "/brand/scenes/world-collection/silver-640-v1.webp",
+          "bytes": 51034,
+          "sha256": "e40d4a645009b19fc2ddb513baa797b81190cefe6ea82b0b1cc89de6154e3e10",
+          "mimeType": "image/webp",
+          "width": 640,
+          "height": 427,
+          "alt": "은빛 결정과 차분한 빛을 담아 상상한 퍼뜩 은 월드"
+        },
+        {
+          "path": "/brand/scenes/world-collection/silver-960-v1.avif",
+          "bytes": 38132,
+          "sha256": "fe6af0471c07e765d4868137a64a7cbe39e9fb19026d20bd5308808b9f630a91",
+          "mimeType": "image/avif",
+          "width": 960,
+          "height": 640,
+          "alt": "은빛 결정과 차분한 빛을 담아 상상한 퍼뜩 은 월드"
+        },
+        {
+          "path": "/brand/scenes/world-collection/silver-960-v1.webp",
+          "bytes": 105054,
+          "sha256": "a1f112756f284337cbcf452adf5ac0a5292c4f9c9d500a4739d388a669753226",
+          "mimeType": "image/webp",
+          "width": 960,
+          "height": 640,
+          "alt": "은빛 결정과 차분한 빛을 담아 상상한 퍼뜩 은 월드"
+        }
+      ]
+    },
+    {
+      "key": "digital",
+      "sourceMaster": "docs/design/generated-masters/world-collection-20261013/digital-master-v1.png",
+      "sourceSha256": "39a1c47c85239602dfd72a7eda925003eb661eb568444283b92960a3cb47c656",
+      "width": 1536,
+      "height": 1024,
+      "alt": "투명한 연결 구조를 담아 상상한 퍼뜩 디지털 자산 월드",
+      "assets": [
+        {
+          "path": "/brand/scenes/world-collection/digital-320-v1.avif",
+          "bytes": 6571,
+          "sha256": "e0aa73def0c3dcd2e4b05320c585d528bd1cc1b322398c7790b92b64822384f1",
+          "mimeType": "image/avif",
+          "width": 320,
+          "height": 213,
+          "alt": "투명한 연결 구조를 담아 상상한 퍼뜩 디지털 자산 월드"
+        },
+        {
+          "path": "/brand/scenes/world-collection/digital-320-v1.webp",
+          "bytes": 16162,
+          "sha256": "b147b25e6a16800f617098d387eb9349b31676de741802bf7f56fd76ff4a6fd5",
+          "mimeType": "image/webp",
+          "width": 320,
+          "height": 213,
+          "alt": "투명한 연결 구조를 담아 상상한 퍼뜩 디지털 자산 월드"
+        },
+        {
+          "path": "/brand/scenes/world-collection/digital-640-v1.avif",
+          "bytes": 20961,
+          "sha256": "e4693cea2a8837d8a147369bf199bc74ec852db5a0c1df54e4247e68d1236981",
+          "mimeType": "image/avif",
+          "width": 640,
+          "height": 427,
+          "alt": "투명한 연결 구조를 담아 상상한 퍼뜩 디지털 자산 월드"
+        },
+        {
+          "path": "/brand/scenes/world-collection/digital-640-v1.webp",
+          "bytes": 55532,
+          "sha256": "485e8f048f43d43e105420b6e12b8535b77b43514f31bbb43e4d45e001728a2b",
+          "mimeType": "image/webp",
+          "width": 640,
+          "height": 427,
+          "alt": "투명한 연결 구조를 담아 상상한 퍼뜩 디지털 자산 월드"
+        },
+        {
+          "path": "/brand/scenes/world-collection/digital-960-v1.avif",
+          "bytes": 42448,
+          "sha256": "d4911aa77bf6c8480022ef92e3624a0dd5714c8ea39f31fa5c2879c27584def2",
+          "mimeType": "image/avif",
+          "width": 960,
+          "height": 640,
+          "alt": "투명한 연결 구조를 담아 상상한 퍼뜩 디지털 자산 월드"
+        },
+        {
+          "path": "/brand/scenes/world-collection/digital-960-v1.webp",
+          "bytes": 112832,
+          "sha256": "ddc9699c2ea2f7f55ce6b92b64e45b528c7be76db179370705437a94878eb5dc",
+          "mimeType": "image/webp",
+          "width": 960,
+          "height": 640,
+          "alt": "투명한 연결 구조를 담아 상상한 퍼뜩 디지털 자산 월드"
+        }
+      ]
+    }
+  ]
+}

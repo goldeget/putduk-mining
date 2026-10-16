@@ -1,0 +1,115 @@
+{
+  "scope": "NINE_ORIGINAL_INDEPENDENT_PRODUCT_PROCESS_MASTERS",
+  "method": "built-in image_gen nine separate requests",
+  "visualExecutionAuthority": "None; artwork approval does not authorize product registration, allocation runtime or financial calculation",
+  "items": [
+    {
+      "code": "005930",
+      "key": "samsung-foundry",
+      "prompt": "Original premium cinematic 3D industrial process environment for PUTDUK MINING, stylized-concept asset, not a UI mockup. Landscape 3:2 high-resolution composition. Black brushed metal, realistic precision machinery and controlled luminous materials, sophisticated architectural lighting, physically coherent shadows, extremely refined sharp production detail. Hero process/core entirely within center 35% of frame so centered mobile portrait cover keeps it visible; supporting machinery extends laterally; quiet lower corners. Distinct process silhouette, no humanoids, no robot faces. No typography, letters, numbers, currency, charts, screens with readable marks, corporate logos, symbols, watermarks, UI, coin insignia or monetary claims. No copied company logo. Illustrative conceptual facility only, not depiction of any actual company premises. A semiconductor foundry lithography cell: a large horizontal circular silicon wafer with a precise etched die grid on a central vacuum stage, surrounded by concentric stepper optical columns and tiny metrology probes. A distinct overhead optical lens projects a restrained violet-cyan scanning beam onto the wafer, golden rim reflections. Round wafer/lens is dominant, not HBM stack or graphics board. Technical violet/ice-blue and gold.",
+      "sourceMaster": "docs/design/generated-masters/product-batch-20261013/samsung-foundry-master-v1.png",
+      "masterSha256": "3a0526ed3cccd5e13510aea3e5bf44cd482a74f93e57a8474b57688fa3f98e0f",
+      "bytes": 2504518,
+      "width": 1536,
+      "height": 1024,
+      "visualReview": "Viewed generated output: distinct conceptual process, no visible monetary text or corporate logos; rendered UI approval remains pending",
+      "rightsProvenance": "Original built-in image_gen output commissioned by user; no third-party file copied; no legal exclusivity claim"
+    },
+    {
+      "code": "AAPL",
+      "key": "aapl-device",
+      "prompt": "Original premium cinematic 3D industrial process environment for PUTDUK MINING, stylized-concept asset, not a UI mockup. Landscape 3:2 high-resolution composition. Black brushed metal, realistic precision machinery and controlled luminous materials, sophisticated architectural lighting, physically coherent shadows, extremely refined sharp production detail. Hero process/core entirely within center 35% of frame so centered mobile portrait cover keeps it visible; supporting machinery extends laterally; quiet lower corners. Distinct process silhouette, no humanoids, no robot faces. No typography, letters, numbers, currency, charts, screens with readable marks, corporate logos, symbols, watermarks, UI, coin insignia or monetary claims. No copied company logo. Illustrative conceptual facility only, not depiction of any actual company premises. Precision consumer-device fabrication cell: an unbranded titanium device chassis held vertically at center above a small square SoC wafer module, optical glass elements and ceramic articulated micro-assembly tools aligning layered components. A refined circular precision alignment light behind the slim titanium slab, soft teal, pearl silver and rose-gold reflections. Main silhouette is slim assembled device and meticulous component layers, no apple-shaped elements.",
+      "sourceMaster": "docs/design/generated-masters/product-batch-20261013/aapl-device-master-v1.png",
+      "masterSha256": "9adac7009fa413fa867453ff87e80b344f8119479551fd3ee99574c1a2edc90e",
+      "bytes": 2415270,
+      "width": 1536,
+      "height": 1024,
+      "visualReview": "Viewed generated output: distinct conceptual process, no visible monetary text or corporate logos; rendered UI approval remains pending",
+      "rightsProvenance": "Original built-in image_gen output commissioned by user; no third-party file copied; no legal exclusivity claim"
+    },
+    {
+      "code": "MSFT",
+      "key": "msft-cloud",
+      "prompt": "Original premium cinematic 3D industrial process environment for PUTDUK MINING, stylized-concept asset, not a UI mockup. Landscape 3:2 high-resolution composition. Black brushed metal, realistic precision machinery and controlled luminous materials, sophisticated architectural lighting, physically coherent shadows, extremely refined sharp production detail. Hero process/core entirely within center 35% of frame so centered mobile portrait cover keeps it visible; supporting machinery extends laterally; quiet lower corners. Distinct process silhouette, no humanoids, no robot faces. No typography, letters, numbers, currency, charts, screens with readable marks, corporate logos, symbols, watermarks, UI, coin insignia or monetary claims. No copied company logo. Illustrative conceptual facility only, not depiction of any actual company premises. A hyperscale cloud orchestration chamber: central transparent cuboid computational module suspended inside a monumental square gantry, fiber-optic trunk lines descending from above then branching into distributed server bays. Clear rectangular architecture, luminous ice-blue network routing and warm brass trim; central glass cube with layered horizontal cloud-compute planes. No graphics card assembly and no wafer or giant round reactor.",
+      "sourceMaster": "docs/design/generated-masters/product-batch-20261013/msft-cloud-master-v1.png",
+      "masterSha256": "19599b4354664eb09fe84271e498b2df8922ab71ba8d0dcb2208740cc5d68863",
+      "bytes": 2558725,
+      "width": 1536,
+      "height": 1024,
+      "visualReview": "Viewed generated output: distinct conceptual process, no visible monetary text or corporate logos; rendered UI approval remains pending",
+      "rightsProvenance": "Original built-in image_gen output commissioned by user; no third-party file copied; no legal exclusivity claim"
+    },
+    {
+      "code": "XAU",
+      "key": "xau-refinery",
+      "prompt": "Original premium cinematic 3D industrial process environment for PUTDUK MINING, stylized-concept asset, not a UI mockup. Landscape 3:2 high-resolution composition. Black brushed metal, realistic precision machinery and controlled luminous materials, sophisticated architectural lighting, physically coherent shadows, extremely refined sharp production detail. Hero process/core entirely within center 35% of frame so centered mobile portrait cover keeps it visible; supporting machinery extends laterally; quiet lower corners. Distinct process silhouette, no humanoids, no robot faces. No typography, letters, numbers, currency, charts, screens with readable marks, corporate logos, symbols, watermarks, UI, coin insignia or monetary claims. No copied company logo. Illustrative conceptual facility only, not depiction of any actual company premises. A deep gold ore refining chamber: natural quartz-rich rock and gold veins above a central induction crucible, narrow controlled molten-gold stream pouring into an elegant ingot casting mold at center. Overhead extraction fixtures and dark mineral walls, blackened refractory surfaces, physically plausible amber heat light and gold reflections. Hero is crucible and molten casting process, not a generic gold bar showroom.",
+      "sourceMaster": "docs/design/generated-masters/product-batch-20261013/xau-refinery-master-v1.png",
+      "masterSha256": "3bc241827214b6529d0a2a173822cfe8c5bd47f94ebe6440439b184ca696f077",
+      "bytes": 2781752,
+      "width": 1536,
+      "height": 1024,
+      "visualReview": "Viewed generated output: distinct conceptual process, no visible monetary text or corporate logos; rendered UI approval remains pending",
+      "rightsProvenance": "Original built-in image_gen output commissioned by user; no third-party file copied; no legal exclusivity claim"
+    },
+    {
+      "code": "XAG",
+      "key": "xag-electrorefinery",
+      "prompt": "Original premium cinematic 3D industrial process environment for PUTDUK MINING, stylized-concept asset, not a UI mockup. Landscape 3:2 high-resolution composition. Black brushed metal, realistic precision machinery and controlled luminous materials, sophisticated architectural lighting, physically coherent shadows, extremely refined sharp production detail. Hero process/core entirely within center 35% of frame so centered mobile portrait cover keeps it visible; supporting machinery extends laterally; quiet lower corners. Distinct process silhouette, no humanoids, no robot faces. No typography, letters, numbers, currency, charts, screens with readable marks, corporate logos, symbols, watermarks, UI, coin insignia or monetary claims. No copied company logo. Illustrative conceptual facility only, not depiction of any actual company premises. A silver electrorefining atelier: parallel elongated electrolyte basins with polished silver cathode sheets and an overhead precision gantry lifting a central bright silver plate. Clear geometric rectilinear tanks and delicate cool-white electrode glows; calm silver, icy cyan and subtle muted gold trim. No molten gold furnace, no coin. Hero is lifted silver sheet above electrolytic bath.",
+      "sourceMaster": "docs/design/generated-masters/product-batch-20261013/xag-electrorefinery-master-v1.png",
+      "masterSha256": "7b8c9f326f7f42a0b67a0aae286062769c5dee6ca58d539ec60227d387c37363",
+      "bytes": 2577882,
+      "width": 1536,
+      "height": 1024,
+      "visualReview": "Viewed generated output: distinct conceptual process, no visible monetary text or corporate logos; rendered UI approval remains pending",
+      "rightsProvenance": "Original built-in image_gen output commissioned by user; no third-party file copied; no legal exclusivity claim"
+    },
+    {
+      "code": "BTC",
+      "key": "btc-hash",
+      "prompt": "Original premium cinematic 3D industrial process environment for PUTDUK MINING, stylized-concept asset, not a UI mockup. Landscape 3:2 high-resolution composition. Black brushed metal, realistic precision machinery and controlled luminous materials, sophisticated architectural lighting, physically coherent shadows, extremely refined sharp production detail. Hero process/core entirely within center 35% of frame so centered mobile portrait cover keeps it visible; supporting machinery extends laterally; quiet lower corners. Distinct process silhouette, no humanoids, no robot faces. No typography, letters, numbers, currency, charts, screens with readable marks, corporate logos, symbols, watermarks, UI, coin insignia or monetary claims. No copied company logo. Illustrative conceptual facility only, not depiction of any actual company premises. A proof-of-work hash-processing conceptual vault: dense unbranded ASIC heat-sink racks converging toward a central massive faceted amber crystalline block held inside a mechanical compression frame. Copper cooling pipes, finned processors and synchronized orange light paths from left and right into the central block. Hero is square hash block with heavy industrial mechanical frame. No Bitcoin glyph, no coin or cryptocurrency logo.",
+      "sourceMaster": "docs/design/generated-masters/product-batch-20261013/btc-hash-master-v1.png",
+      "masterSha256": "a21b293fb35132bcde5893d834fcf4e23b9be6b62fa65a7382fec5dbc3ec7e79",
+      "bytes": 2921667,
+      "width": 1536,
+      "height": 1024,
+      "visualReview": "Viewed generated output: distinct conceptual process, no visible monetary text or corporate logos; rendered UI approval remains pending",
+      "rightsProvenance": "Original built-in image_gen output commissioned by user; no third-party file copied; no legal exclusivity claim"
+    },
+    {
+      "code": "ETH",
+      "key": "eth-validator",
+      "prompt": "Original premium cinematic 3D industrial process environment for PUTDUK MINING, stylized-concept asset, not a UI mockup. Landscape 3:2 high-resolution composition. Black brushed metal, realistic precision machinery and controlled luminous materials, sophisticated architectural lighting, physically coherent shadows, extremely refined sharp production detail. Hero process/core entirely within center 35% of frame so centered mobile portrait cover keeps it visible; supporting machinery extends laterally; quiet lower corners. Distinct process silhouette, no humanoids, no robot faces. No typography, letters, numbers, currency, charts, screens with readable marks, corporate logos, symbols, watermarks, UI, coin insignia or monetary claims. No copied company logo. Illustrative conceptual facility only, not depiction of any actual company premises. A proof-of-stake validator consensus observatory: a tall central amethyst translucent double-pyramid crystal, surrounded by a constellation of slim validator pylons connected by delicate blue-violet laser paths and two thin horizontal orbital verification rings. Architectural crystalline structure, precise sapphire and violet light, subtle brushed-gold supports. Hero is vertical crystal and distributed consensus geometry, no Ethereum logo or coin.",
+      "sourceMaster": "docs/design/generated-masters/product-batch-20261013/eth-validator-master-v1.png",
+      "masterSha256": "7d92606cd0f303ee80d0bdecac799324ffd620dfcbdae550fbd10bb13a9b3686",
+      "bytes": 2825327,
+      "width": 1536,
+      "height": 1024,
+      "visualReview": "Viewed generated output: distinct conceptual process, no visible monetary text or corporate logos; rendered UI approval remains pending",
+      "rightsProvenance": "Original built-in image_gen output commissioned by user; no third-party file copied; no legal exclusivity claim"
+    },
+    {
+      "code": "BNB",
+      "key": "bnb-routing",
+      "prompt": "Original premium cinematic 3D industrial process environment for PUTDUK MINING, stylized-concept asset, not a UI mockup. Landscape 3:2 high-resolution composition. Black brushed metal, realistic precision machinery and controlled luminous materials, sophisticated architectural lighting, physically coherent shadows, extremely refined sharp production detail. Hero process/core entirely within center 35% of frame so centered mobile portrait cover keeps it visible; supporting machinery extends laterally; quiet lower corners. Distinct process silhouette, no humanoids, no robot faces. No typography, letters, numbers, currency, charts, screens with readable marks, corporate logos, symbols, watermarks, UI, coin insignia or monetary claims. No copied company logo. Illustrative conceptual facility only, not depiction of any actual company premises. A distributed routing-and-exchange network forge: a central layered hexagonal honeycomb routing hub inside a transparent amber dome, six physical bridge-like circuit pathways connecting six staggered modular processing islands. Warm amber/gold paths, dark titanium platforms, subtle teal edge light. Wide hexagonal routing geometry clearly different from rectangular server halls or vertical crystals. No BNB glyph, coin or company branding.",
+      "sourceMaster": "docs/design/generated-masters/product-batch-20261013/bnb-routing-master-v1.png",
+      "masterSha256": "6dea01a07fe1fba7b6fe2532096ba182603e966e37f6ab7bcc1fd5f81ba604d7",
+      "bytes": 3183101,
+      "width": 1536,
+      "height": 1024,
+      "visualReview": "Viewed generated output: distinct conceptual process, no visible monetary text or corporate logos; rendered UI approval remains pending",
+      "rightsProvenance": "Original built-in image_gen output commissioned by user; no third-party file copied; no legal exclusivity claim"
+    },
+    {
+      "code": "XRP",
+      "key": "xrp-gateway",
+      "prompt": "Original premium cinematic 3D industrial process environment for PUTDUK MINING, stylized-concept asset, not a UI mockup. Landscape 3:2 high-resolution composition. Black brushed metal, realistic precision machinery and controlled luminous materials, sophisticated architectural lighting, physically coherent shadows, extremely refined sharp production detail. Hero process/core entirely within center 35% of frame so centered mobile portrait cover keeps it visible; supporting machinery extends laterally; quiet lower corners. Distinct process silhouette, no humanoids, no robot faces. No typography, letters, numbers, currency, charts, screens with readable marks, corporate logos, symbols, watermarks, UI, coin insignia or monetary claims. No copied company logo. Illustrative conceptual facility only, not depiction of any actual company premises. A cross-border settlement-gateway conceptual chamber: two opposed silver-white gateway arches joined by three elegant suspended luminous bridge channels carrying cool-blue light toward a central clear spherical junction. Brushed platinum architecture, fluid parallel rails, broad airy symmetrical bridge silhouette and cyan-white light with restrained gold supports. Hero is gateway connection and flowing bridge paths, not crypto coin, logo, financial chart or literal money.",
+      "sourceMaster": "docs/design/generated-masters/product-batch-20261013/xrp-gateway-master-v1.png",
+      "masterSha256": "d8f3e0b81c045bf5ecefa2758c1c0fb4d31d80bc67dde294c8d0a84ce1e450bf",
+      "bytes": 2797920,
+      "width": 1536,
+      "height": 1024,
+      "visualReview": "Viewed generated output: distinct conceptual process, no visible monetary text or corporate logos; rendered UI approval remains pending",
+      "rightsProvenance": "Original built-in image_gen output commissioned by user; no third-party file copied; no legal exclusivity claim"
+    }
+  ]
+}

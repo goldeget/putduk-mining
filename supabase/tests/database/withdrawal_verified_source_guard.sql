@@ -83,35 +83,25 @@ create temporary table guard_before as select
   (select count(*) from public.transaction_receipts) receipts,
   (select count(*) from public.money_source_movements) sources;
 set local role service_role;
-update guard_ctx set bank_withdrawal=public.request_krw_withdrawal(principal_id,principal_bank,1000,'guard-general-bank');
-select is(public.request_krw_withdrawal((select principal_id from guard_ctx),(select principal_bank from guard_ctx),1000,'guard-general-bank'),
-  (select bank_withdrawal from guard_ctx),'same general KRW request does not open a second hold');
-select is((select status from public.withdrawal_requests where id=(select bank_withdrawal from guard_ctx)),
-  'HELD','verified principal credit reaches hold');
-select is((select count(*)::integer from public.ledger_transactions
-  where idempotency_key='guard-general-bank:hold'),1,'retry does not post a second hold journal');
-select ok((select count(*)=1 and bool_and(policy_code='NEWEST_FIRST')
-    and bool_and(allocation_micro_krw=app_private.funding_principal_micro_krw(1000))
-  from public.funding_principal_recovery_allocations
-  where hold_ledger_transaction_id=(select hold_ledger_transaction_id from public.withdrawal_requests
-    where id=(select bank_withdrawal from guard_ctx))),
-  'general hold reserves the verified principal lot once');
-update guard_ctx set usdt_withdrawal=public.request_usdt_withdrawal(principal_id,principal_usdt,1000,'guard-general-usdt');
-select is((select status from public.withdrawal_requests where id=(select usdt_withdrawal from guard_ctx)),
-  'HELD','verified principal also covers a manual USDT KRW hold');
-select lives_ok($$select app_private.request_withdrawal_with_hold(principal_id,principal_bank,1000,'KRW_BANK','guard-private-general',null) from guard_ctx$$,
-  'private writer reaches hold when verified principal covers the amount');
-select is(app_private.request_withdrawal_with_hold((select principal_id from guard_ctx),(select principal_bank from guard_ctx),1000,'KRW_BANK','guard-private-general',null),
-  (select id from public.withdrawal_requests where idempotency_key='guard-private-general'),
-  'private writer retry does not open a second hold');
+select throws_ok($$select public.request_krw_withdrawal(principal_id,principal_bank,1000,'guard-general-bank') from guard_ctx$$,
+  '55000','WITHDRAWAL_VERIFIED_SOURCE_LIFECYCLE_UNAVAILABLE','principal never becomes an implicit general withdrawal source');
+select throws_ok($$select public.request_usdt_withdrawal(principal_id,principal_usdt,1000,'guard-general-usdt') from guard_ctx$$,
+  '55000','WITHDRAWAL_VERIFIED_SOURCE_LIFECYCLE_UNAVAILABLE','manual USDT method cannot implicitly recover principal');
+select throws_ok($$select app_private.request_withdrawal_with_hold(principal_id,principal_bank,1000,'KRW_BANK','guard-private-general',null) from guard_ctx$$,
+  '55000','WITHDRAWAL_VERIFIED_SOURCE_LIFECYCLE_UNAVAILABLE','private ordinary writer cannot implicitly recover principal');
 update guard_ctx set logical=public.prepare_withdrawal_logical_request(principal_id,'KRW_BANK',1000,bank_policy,1041001,null,principal_bank);
-select lives_ok($$select public.hold_withdrawal_logical_request(principal_id,logical->>'key','KRW_BANK',principal_bank,1000) from guard_ctx$$,
-  'prepared logical intent holds against verified principal');
+select throws_ok($$select public.hold_withdrawal_logical_request(principal_id,logical->>'key','KRW_BANK',principal_bank,1000) from guard_ctx$$,
+  '55000','WITHDRAWAL_VERIFIED_SOURCE_LIFECYCLE_UNAVAILABLE','ordinary V2 confirmation cannot change mining intent to principal recovery');
 reset role;
 select is((select state from public.withdrawal_logical_requests where user_id=(select principal_id from guard_ctx)),
-  'OUTCOME_UNCERTAIN','held logical intent records the original outcome');
-select ok((select wallets=(select count(*) from public.wallet_ledger) from guard_before),
-  'source hold does not debit the wallet projection');
+  'DESTINATION_REGISTERED','rejected hold preserves the uncommitted logical intent');
+select ok((select requests=(select count(*) from public.withdrawal_requests)
+  and journals=(select count(*) from public.ledger_transactions)
+  and wallets=(select count(*) from public.wallet_ledger)
+  and events=(select count(*) from public.outbox_events)
+  and receipts=(select count(*) from public.transaction_receipts)
+  and sources=(select count(*) from public.money_source_movements) from guard_before),
+  'every generic path rejects with no partial money, source, receipt or event effect');
 
 -- An explicitly unclassified historical label is not a verified reward source.
 insert into public.wallet_ledger(wallet_account_id,user_id,direction,entry_type,amount_atomic,idempotency_key,reference_type,reference_id)
@@ -221,7 +211,7 @@ select is((select count(*)::integer from public.wallet_ledger where user_id=(sel
 select is((select count(*)::integer from public.wallet_ledger where user_id=(select usdt_owner from guard_ctx)),
   1,'START release has no second wallet CREDIT');
 select is((select coverage from public.money_source_summaries where user_id=(select bank_owner from guard_ctx)),
-  'UNRESOLVED','START lifecycle stays visibly unconnected to future source lifecycle');
+  'COMPLETE','qualified START lifecycle is covered by its actual immutable originals');
 select is((select count(*)::integer from public.wallet_accounts where currency='USDT'),0,
   'manual USDT withdrawal never creates a user USDT wallet');
 set constraints all immediate;

@@ -1,4 +1,5 @@
 "use client";
+import { FeedbackMessage } from "../../../components/ui/feedback-message";
 
 import { useActionState } from "react";
 
@@ -32,9 +33,9 @@ export function LoginForm({ returnTo }: { returnTo: string }) {
         />
       </label>
       {state?.message ? (
-        <p className="form-error" role="alert">
+        <FeedbackMessage className="form-error" role="alert">
           {state.message}
-        </p>
+        </FeedbackMessage>
       ) : null}
       <button className="gold-button" disabled={pending} type="submit">
         {pending ? "확인 중…" : "보안 로그인"}

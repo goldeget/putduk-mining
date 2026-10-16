@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
 
+import { FeedbackSymbol } from "./feedback-message";
+
 export function StatusToast({
   action,
   description,
@@ -19,7 +21,7 @@ export function StatusToast({
       role={urgent ? "alert" : "status"}
       aria-live={urgent ? "assertive" : "polite"}
     >
-      <span aria-hidden="true" />
+      <FeedbackSymbol tone={tone} />
       <div>
         <strong>{title}</strong>
         <p>{description}</p>

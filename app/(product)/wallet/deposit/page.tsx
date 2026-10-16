@@ -1,16 +1,8 @@
-import Link from "next/link";
-
-import { PutdukIcon } from "@/components/icons/putduk-icon";
-import { DepositForm } from "@/components/product/deposit-form";
-import styles from "@/components/product/product-experience.module.css";
-import { PageHeading } from "@/components/product/page-heading";
 import {
-  ProductStatusPill,
-  type ProductStatusTone,
-} from "@/components/product/product-status-pill";
-import { UsdtManualDepositForm } from "@/components/product/usdt-manual-deposit-form";
-import { StatePanel } from "@/components/ui/states";
-import { Surface } from "@/components/ui/surface";
+  WalletDepositView,
+  type DepositHistoryItem,
+} from "@/components/product/wallet-deposit-view";
+import type { ProductStatusTone } from "@/components/product/product-status-pill";
 import { classifyDepositRead } from "@/domain/wallet/deposit-read";
 import {
   formatAtomicAmount,
@@ -23,7 +15,6 @@ import {
 } from "@/domain/wallet/usdt-manual-deposit";
 import { formatProductDateTime } from "@/lib/i18n/date-time";
 import { requirePageUser } from "@/lib/auth/session";
-
 const krwStatusCopy: Record<
   string,
   { description: string; label: string; tone: ProductStatusTone }
@@ -149,14 +140,6 @@ function maskTx(value: string) {
   return `${value.slice(0, 8)}…${value.slice(-6)}`;
 }
 
-function reopenDeposit() {
-  return (
-    <Link className="button button--secondary" href="/wallet/deposit">
-      다시 열기
-    </Link>
-  );
-}
-
 export default async function DepositPage() {
   const identity = await requirePageUser("/wallet/deposit");
 
@@ -200,6 +183,50 @@ export default async function DepositPage() {
     error: Boolean(error),
   });
 
+  const krwHistory: DepositHistoryItem[] = (requests ?? []).map((request) => {
+    const status = krwStatusCopy[request.status] ?? {
+      description: "현재 처리 상태를 확인하고 있어요.",
+      label: "확인 중",
+      tone: "info" as const,
+    };
+    const timestamp = validTimestamp(
+      request.updated_at ?? request.requested_at,
+    );
+    return {
+      id: request.id,
+      amount:
+        request.currency === "KRW"
+          ? formatKrwAmount(request.amount_atomic, request.currency).replace(
+              / KRW$/,
+              "원",
+            )
+          : "통화 확인 중",
+      status: status.label,
+      description: status.description.replace(/KRW/g, "원화"),
+      tone: status.tone,
+      timestamp,
+      timeLabel: formatSeoul(timestamp),
+    };
+  });
+  const usdtHistory: DepositHistoryItem[] = usdtRequests.map((request) => {
+    const status = usdtStatusCopy[request.status] ?? {
+      description: "현재 처리 상태를 확인하고 있어요.",
+      label: "확인 중",
+      tone: "info" as const,
+    };
+    const timestamp = validTimestamp(request.updated_at ?? request.created_at);
+    return {
+      id: request.id,
+      amount: `${formatSentUsdtDisplay(request.sent_usdt_amount)} USDT 송금`,
+      status: status.label.replace(/KRW/g, "원화"),
+      description: status.description.replace(/KRW/g, "원화"),
+      tone: status.tone,
+      timestamp,
+      timeLabel: formatSeoul(timestamp),
+      detail: `${request.network_snapshot} · ${maskTx(String(request.tx_hash))}`,
+    };
+  });
+
   return (
     <div
       data-ui-ready="/wallet/deposit"
@@ -209,193 +236,14 @@ export default async function DepositPage() {
           : "loaded"
       }
     >
-      <Link className={styles.pageBack} href="/wallet">
-        ← 내 자산으로
-      </Link>
-      <PageHeading
-        eyebrow="DEPOSIT"
-        title="입금하기"
-        lead="입금은 선택 사항이에요. PUTDUK START 전환이나 첫 출금 조건이 아닙니다."
+      <WalletDepositView
+        instructions={instructions}
+        instructionRead={instructionRead}
+        krwHistoryRead={krwHistoryRead}
+        usdtHistoryRead={usdtHistoryRead}
+        krwHistory={krwHistory}
+        usdtHistory={usdtHistory}
       />
-
-      <div className={styles.fundingWorkspace}>
-        <Surface as="section" className={styles.fundingPanel} tone="raised">
-          <DepositForm />
-        </Surface>
-
-        <Surface as="aside" className={styles.summaryPanel}>
-          <p className="eyebrow">MANUAL TRANSFER</p>
-          <h2>직접 이체 후 확인</h2>
-          <p>요청만으로는 잔액이 바뀌지 않아요. 확인된 뒤 KRW에 반영됩니다.</p>
-          <ol className={styles.flowList}>
-            <li>
-              <span>01</span>
-              입금 요청
-            </li>
-            <li>
-              <span>02</span>
-              본인 명의로 이체·송금
-            </li>
-            <li>
-              <span>03</span>
-              입금 확인
-            </li>
-            <li>
-              <span>04</span>
-              KRW 지갑 반영
-            </li>
-          </ol>
-        </Surface>
-      </div>
-
-      <Surface as="section" className={styles.fundingPanel} tone="raised">
-        <UsdtManualDepositForm
-          instructions={instructions}
-          loadFailed={instructionRead === "error"}
-        />
-      </Surface>
-
-      <section
-        className={styles.historyPanel}
-        aria-labelledby="deposit-history"
-      >
-        <header className={styles.historyHeader}>
-          <span>
-            <p className="eyebrow">KRW BANK TRANSFER</p>
-            <h2 id="deposit-history">최근 원화 입금</h2>
-            <p>요청별 금액과 처리 단계예요.</p>
-          </span>
-          <PutdukIcon name="clock" size={22} aria-hidden="true" />
-        </header>
-
-        {krwHistoryRead === "error" ? (
-          <div className={styles.emptyInset}>
-            <StatePanel
-              tone="error"
-              title="입금 요청 내역을 불러오지 못했어요"
-              description="인터넷 연결을 확인한 뒤 다시 열어 주세요."
-              action={reopenDeposit()}
-            />
-          </div>
-        ) : krwHistoryRead === "ready" && requests ? (
-          <ul className={styles.historyList}>
-            {requests.map((request) => {
-              const status = krwStatusCopy[request.status] ?? {
-                description: "현재 처리 상태를 확인하고 있어요.",
-                label: "확인 중",
-                tone: "info" as const,
-              };
-              const timestamp = validTimestamp(
-                request.updated_at ?? request.requested_at,
-              );
-              return (
-                <li className={styles.historyItem} key={request.id}>
-                  <span>
-                    <span className={styles.historyPrimary}>
-                      <ProductStatusPill
-                        label={status.label}
-                        tone={status.tone}
-                      />
-                      <span>
-                        <strong>
-                          {formatKrwAmount(
-                            request.amount_atomic,
-                            request.currency,
-                          )}
-                        </strong>
-                        <small>{status.description}</small>
-                      </span>
-                    </span>
-                  </span>
-                  <time {...(timestamp ? { dateTime: timestamp } : {})}>
-                    {formatSeoul(timestamp)}
-                  </time>
-                </li>
-              );
-            })}
-          </ul>
-        ) : (
-          <div className={styles.emptyInset}>
-            <StatePanel
-              title="아직 원화 입금 요청이 없어요"
-              description="금액을 정해 요청하면 진행 상태가 이곳에 표시됩니다."
-            />
-          </div>
-        )}
-      </section>
-
-      <section
-        className={styles.historyPanel}
-        aria-labelledby="usdt-deposit-history"
-      >
-        <header className={styles.historyHeader}>
-          <span>
-            <p className="eyebrow">USDT MANUAL DEPOSIT</p>
-            <h2 id="usdt-deposit-history">최근 USDT 입금</h2>
-            <p>
-              코인을 따로 보관하지 않아요. 확인 후 KRW로 반영되는 요청이에요.
-            </p>
-          </span>
-          <PutdukIcon name="wallet" size={22} aria-hidden="true" />
-        </header>
-
-        {usdtHistoryRead === "error" ? (
-          <div className={styles.emptyInset}>
-            <StatePanel
-              tone="error"
-              title="USDT 입금 내역을 불러오지 못했어요"
-              description="인터넷 연결을 확인한 뒤 다시 열어 주세요."
-              action={reopenDeposit()}
-            />
-          </div>
-        ) : usdtHistoryRead === "ready" ? (
-          <ul className={styles.historyList}>
-            {usdtRequests.map((request) => {
-              const status = usdtStatusCopy[request.status] ?? {
-                description: "현재 처리 상태를 확인하고 있어요.",
-                label: "확인 중",
-                tone: "info" as const,
-              };
-              const timestamp = validTimestamp(
-                request.updated_at ?? request.created_at,
-              );
-              return (
-                <li className={styles.historyItem} key={request.id}>
-                  <span>
-                    <span className={styles.historyPrimary}>
-                      <ProductStatusPill
-                        label={status.label}
-                        tone={status.tone}
-                      />
-                      <span>
-                        <strong>
-                          {formatSentUsdtDisplay(request.sent_usdt_amount)} USDT
-                          송금
-                        </strong>
-                        <small>{status.description}</small>
-                        <small className={styles.historyDetail}>
-                          {request.network_snapshot} ·{" "}
-                          {maskTx(String(request.tx_hash))}
-                        </small>
-                      </span>
-                    </span>
-                  </span>
-                  <time {...(timestamp ? { dateTime: timestamp } : {})}>
-                    {formatSeoul(timestamp)}
-                  </time>
-                </li>
-              );
-            })}
-          </ul>
-        ) : (
-          <div className={styles.emptyInset}>
-            <StatePanel
-              title="아직 USDT 입금 내역이 없어요"
-              description="안내 주소로 보낸 뒤 거래 정보를 접수하면 이곳에 표시됩니다."
-            />
-          </div>
-        )}
-      </section>
     </div>
   );
 }

@@ -4,11 +4,12 @@ import {
   type AiAnswerSource,
   type AiClientStreamEvent,
 } from "@/domain/ai/chat";
+import type { MemberAiHelpTopic } from "@/domain/ai/member-help";
 
 export type PutdukAiMessage = {
   id: string;
   role: "assistant" | "user";
-  state: "cancelled" | "complete" | "error" | "streaming";
+  state: "cancelled" | "complete" | "error" | "streaming" | "unverified";
   text: string;
   question?: string;
   requestId?: string;
@@ -19,6 +20,9 @@ export type PutdukAiMessage = {
   conversationId?: string;
   assistantMessageId?: string;
   failure?: PutdukAiFailure;
+  historical?: boolean;
+  recordedAt?: string;
+  helpTopic?: MemberAiHelpTopic;
 };
 
 export type PutdukAiFailure = {
@@ -32,6 +36,23 @@ export class PutdukAiProtocolError extends Error {
     super("AI_STREAM_INVALID");
   }
 }
+
+// Only previously reviewed tool-unavailable copy may preserve domain detail.
+// A Korean-looking response or a known code alone never authorizes raw text.
+const TOOL_UNAVAILABLE_MESSAGES = new Set([
+  "잔액을 확인하지 못했어요.",
+  "확인되지 않은 금액은 안내하지 않아요.",
+  "입금 상태를 안전하게 확인하지 못했습니다. 잠시 후 입금 화면에서 다시 확인해 주세요.",
+  "이벤트 진행 상태를 안전하게 확인하지 못했습니다. 잠시 후 이벤트 화면에서 다시 확인해 주세요.",
+  "본인 인증 상태를 안전하게 확인하지 못했습니다. 잠시 후 다시 확인해 주세요.",
+  "채굴 상태를 안전하게 확인하지 못했습니다. 잠시 후 채굴 화면에서 다시 확인해 주세요.",
+  "오늘의 확정 채굴 보상을 안전하게 확인하지 못했습니다. 확인되지 않은 금액은 안내하지 않습니다.",
+  "최근 알림을 안전하게 확인하지 못했습니다. 잠시 후 알림 화면에서 다시 확인해 주세요.",
+  "추천 보상 상태를 안전하게 확인하지 못했습니다. 확인되지 않은 보상은 안내하지 않습니다.",
+  "PUTDUK START 상태를 안전하게 확인하지 못했습니다. 잠시 후 START 화면에서 다시 확인해 주세요.",
+  "지갑 상태를 안전하게 확인하지 못했습니다. 확인되지 않은 잔액은 안내하지 않습니다.",
+  "출금 상태를 안전하게 확인하지 못했습니다. 잠시 후 출금 화면에서 다시 확인해 주세요.",
+]);
 
 export function aiFailure(code: string, message?: string): PutdukAiFailure {
   const copy = (() => {
@@ -69,8 +90,18 @@ export function aiFailure(code: string, message?: string): PutdukAiFailure {
         ];
       case "AI_CONVERSATION_NOT_FOUND":
         return ["대화 확인", "대화를 찾지 못했어요. 새 대화로 질문해 주세요."];
+      case "AI_CONVERSATION_UNAVAILABLE":
+        return [
+          "대화 확인 실패",
+          "대화를 확인하지 못했어요. 잠시 후 다시 확인해 주세요.",
+        ];
       case "AI_FEEDBACK_EXISTS":
         return ["이미 남긴 의견", "이미 남긴 의견이에요."];
+      case "AI_HISTORY_UNVERIFIED":
+        return [
+          "저장된 답변 확인",
+          "답변 근거를 확인하지 못했어요. 현재 상태는 다시 질문해 주세요.",
+        ];
       case "AI_REQUEST_UNAVAILABLE":
         return [
           "질문 접수 실패",
@@ -86,6 +117,10 @@ export function aiFailure(code: string, message?: string): PutdukAiFailure {
           "질문 확인 필요",
           "질문을 3자 이상 2,000자 이하로 입력해 주세요.",
         ];
+      case "INVALID_JSON":
+        return ["질문 확인 필요", "질문을 다시 확인한 뒤 보내 주세요."];
+      case "PAYLOAD_TOO_LARGE":
+        return ["질문 길이 확인", "질문을 짧게 줄인 뒤 다시 보내 주세요."];
       case "CLIENT_CANCELLED":
         return [
           "답변 중단됨",
@@ -102,6 +137,7 @@ export function aiFailure(code: string, message?: string): PutdukAiFailure {
       case "AI_STREAM_INVALID":
       case "AI_AUDIT_PERSISTENCE_FAILED":
       case "AI_OUTPUT_POLICY_REJECTED":
+      case "AI_RESPONSE_LIMIT_EXCEEDED":
         return [
           "답변 확인 실패",
           "답변을 확인하지 못했어요. 완료된 답변으로 볼 수 없어요.",
@@ -113,13 +149,42 @@ export function aiFailure(code: string, message?: string): PutdukAiFailure {
         ];
     }
   })();
-  return { code, label: copy[0]!, message: message?.trim() || copy[1]! };
+  const reviewedMessage =
+    code === "AI_TOOL_UNAVAILABLE" &&
+    typeof message === "string" &&
+    TOOL_UNAVAILABLE_MESSAGES.has(message)
+      ? message
+      : copy[1]!;
+  return { code, label: copy[0]!, message: reviewedMessage };
 }
 
 export function readAiHttpFailure(payload: unknown, status: number) {
+  const expectedStatuses: Readonly<Record<string, readonly number[]>> = {
+    UNAUTHENTICATED: [401],
+    AI_SESSION_CHANGED: [409],
+    AI_SERVICE_NOT_CONFIGURED: [503],
+    ORIGIN_REJECTED: [403],
+    INVALID_JSON: [400],
+    PAYLOAD_TOO_LARGE: [413],
+    INVALID_AI_QUESTION: [400],
+    AI_CONVERSATION_NOT_FOUND: [404],
+    AI_CONVERSATION_UNAVAILABLE: [503],
+    AI_RATE_LIMITED: [429],
+    AI_REQUEST_UNAVAILABLE: [503],
+    AI_REQUEST_ALREADY_EXISTS: [409],
+    AI_PROVIDER_UNAVAILABLE: [429, 503],
+    AI_TIMEOUT: [503],
+    AI_AUDIT_PERSISTENCE_FAILED: [503],
+    AI_FEEDBACK_EXISTS: [409],
+  };
   if (payload && typeof payload === "object" && "error" in payload) {
     const error = payload.error;
-    if (error && typeof error === "object") {
+    if (
+      error &&
+      typeof error === "object" &&
+      !Array.isArray(error) &&
+      (!("message" in error) || typeof error.message === "string")
+    ) {
       const code =
         "code" in error && typeof error.code === "string"
           ? error.code
@@ -128,7 +193,11 @@ export function readAiHttpFailure(payload: unknown, status: number) {
         "message" in error && typeof error.message === "string"
           ? error.message
           : undefined;
-      return aiFailure(code, message);
+      if (
+        Object.hasOwn(expectedStatuses, code) &&
+        expectedStatuses[code]?.includes(status)
+      )
+        return aiFailure(code, message);
     }
   }
   return aiFailure(
@@ -214,13 +283,15 @@ export function applyAiStreamEvent(
   if (
     !message.text.trim() ||
     event.requestId !== message.requestId ||
-    (message.source === "tool") !== Boolean(event.grounding)
+    (message.source === "tool") !== Boolean(event.grounding) ||
+    (event.helpTopic !== undefined && message.source !== "static")
   )
     throw new PutdukAiProtocolError();
   return {
     ...message,
     state: "complete",
     knowledgeVersion: event.knowledgeVersion,
+    ...(event.helpTopic ? { helpTopic: event.helpTopic } : {}),
     ...(event.grounding ? { grounding: event.grounding } : {}),
     ...(event.saved !== undefined ? { saved: event.saved } : {}),
     ...(event.conversationId ? { conversationId: event.conversationId } : {}),

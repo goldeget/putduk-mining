@@ -116,6 +116,8 @@ type Conditions = {
   readonly tierCode: string | null;
   readonly slots: number;
   readonly fullBaseCapacity: ExactMicroKrw;
+  readonly fullBaseSpeedPerCycle: ExactMicroKrw;
+  readonly allocatedBaseSpeedMultiplier: ExactMicroKrw;
   readonly fullConditionalRetentionCapacity: ExactMicroKrw;
   readonly allocationBps: bigint;
   readonly effectScopeUnresolved: boolean;
@@ -123,6 +125,40 @@ type Conditions = {
 
 function validBps(value: number) {
   return Number.isSafeInteger(value) && value >= 0;
+}
+
+/** Validate the complete original declaration before any slot prefix is cut. */
+function allocationFacts(input: FundingConditionInput) {
+  const document = input.policy.document;
+  let allocation = 0n;
+  let weightedProductSpeed = 0n;
+  const products = new Set<string>();
+  for (const product of input.allocations) {
+    const multiplier =
+      product.productMultiplierBps ?? document.productMultiplier.defaultBps;
+    if (
+      !product.productId.trim() ||
+      products.has(product.productId) ||
+      product.published !== true ||
+      product.sourceComplete !== true
+    )
+      fail("PRODUCT_ALLOCATION_SOURCE_UNCONFIRMED");
+    if (
+      !validBps(product.allocationBps) ||
+      product.allocationBps <= 0 ||
+      product.allocationBps > document.allocation.maximumPerProductBps ||
+      !validBps(multiplier) ||
+      multiplier < document.productMultiplier.minimumBps ||
+      multiplier > document.productMultiplier.maximumBps
+    )
+      fail("PRODUCT_ALLOCATION_INVALID");
+    products.add(product.productId);
+    allocation += BigInt(product.allocationBps);
+    weightedProductSpeed += BigInt(product.allocationBps) * BigInt(multiplier);
+  }
+  if (allocation > BigInt(document.allocation.maximumTotalBps))
+    fail("GLOBAL_ALLOCATION_OR_SLOT_LIMIT");
+  return { allocation, weightedProductSpeed, productCount: products.size };
 }
 
 function conditions(input: FundingConditionInput, instant: bigint): Conditions {
@@ -166,43 +202,28 @@ function conditions(input: FundingConditionInput, instant: bigint): Conditions {
     fail("PRINCIPAL_LOT_COVERAGE_MISMATCH");
   const document = policy.document;
   const tier = fundingTierForPrincipal(policy, principal);
-  let allocation = 0n;
-  let unresolved =
-    BigInt(document.productMultiplier.defaultBps) !== BASIS_POINT_UNIT ||
-    BigInt(document.userOverride.defaultMultiplierBps) !== BASIS_POINT_UNIT ||
-    BigInt(document.campaign.defaultSpeedMultiplierBps) !== BASIS_POINT_UNIT ||
-    document.campaign.defaultCapacityBoostBps !== 0 ||
-    Object.values(document.platformFeesKrw).some((fee) => BigInt(fee) !== 0n);
-  const products = new Set<string>();
-  for (const product of input.allocations) {
-    const multiplier =
-      product.productMultiplierBps ?? document.productMultiplier.defaultBps;
-    if (
-      !product.productId.trim() ||
-      products.has(product.productId) ||
-      product.published !== true ||
-      product.sourceComplete !== true
-    )
-      fail("PRODUCT_ALLOCATION_SOURCE_UNCONFIRMED");
-    if (
-      !validBps(product.allocationBps) ||
-      product.allocationBps <= 0 ||
-      product.allocationBps > document.allocation.maximumPerProductBps ||
-      !validBps(multiplier) ||
-      multiplier < document.productMultiplier.minimumBps ||
-      multiplier > document.productMultiplier.maximumBps
-    )
-      fail("PRODUCT_ALLOCATION_INVALID");
-    products.add(product.productId);
-    allocation += BigInt(product.allocationBps);
-    unresolved ||= BigInt(multiplier) !== BASIS_POINT_UNIT;
-  }
-  if (
-    allocation > BigInt(document.allocation.maximumTotalBps) ||
-    (tier && products.size > tier.slots)
-  )
+  const unresolved = Object.values(document.platformFeesKrw).some(
+    (fee) => BigInt(fee) !== 0n,
+  );
+  const { allocation, weightedProductSpeed, productCount } =
+    allocationFacts(input);
+  if (tier && productCount > tier.slots)
     fail("GLOBAL_ALLOCATION_OR_SLOT_LIMIT");
-  const boosts = input.effects?.capacityBoostsBps ?? [];
+  if (
+    input.effects &&
+    Object.keys(input.effects).some(
+      (key) =>
+        ![
+          "capacityBoostsBps",
+          "speedMultipliersBps",
+          "userOverrideMultiplierBps",
+        ].includes(key),
+    )
+  )
+    fail("UNSUPPORTED_FUNDING_EFFECT");
+  const boosts = input.effects?.capacityBoostsBps ?? [
+    document.campaign.defaultCapacityBoostBps,
+  ];
   let combinedBoost = 0n;
   for (const boost of boosts) {
     if (
@@ -211,19 +232,19 @@ function conditions(input: FundingConditionInput, instant: bigint): Conditions {
     )
       fail("CAPACITY_CAMPAIGN_LIMIT");
     combinedBoost += BigInt(boost);
-    unresolved ||= boost !== 0;
   }
   if (combinedBoost > BigInt(document.campaign.maximumCombinedCapacityBoostBps))
     fail("CAPACITY_CAMPAIGN_LIMIT");
-  for (const speed of input.effects?.speedMultipliersBps ?? []) {
+  const speeds = input.effects?.speedMultipliersBps ?? [
+    document.campaign.defaultSpeedMultiplierBps,
+  ];
+  for (const speed of speeds) {
     if (
       !validBps(speed) ||
       speed < document.campaign.defaultSpeedMultiplierBps ||
       speed > document.campaign.maximumSingleSpeedMultiplierBps
     )
       fail("SPEED_CAMPAIGN_LIMIT");
-    // Combined speed stacking and portion scope are not invented from ceilings.
-    unresolved ||= BigInt(speed) !== BASIS_POINT_UNIT;
   }
   const override =
     input.effects?.userOverrideMultiplierBps ??
@@ -234,8 +255,27 @@ function conditions(input: FundingConditionInput, instant: bigint): Conditions {
     override > document.userOverride.maximumMultiplierBps
   )
     fail("USER_OVERRIDE_LIMIT");
-  unresolved ||= BigInt(override) !== BASIS_POINT_UNIT;
+  // Weight the product portion before common modifiers, preserving the exact
+  // rational. Only the final global BASE speed multiplier is capped.
+  let speedMultiplier =
+    allocation > 0n
+      ? exactMicroKrw(weightedProductSpeed, BASIS_POINT_UNIT * BASIS_POINT_UNIT)
+      : ZERO;
+  speedMultiplier = scale(speedMultiplier, BigInt(override), BASIS_POINT_UNIT);
+  for (const speed of speeds)
+    speedMultiplier = scale(speedMultiplier, BigInt(speed), BASIS_POINT_UNIT);
+  const speedCap = exactMicroKrw(
+    BigInt(document.campaign.maximumCombinedSpeedMultiplierBps),
+    BASIS_POINT_UNIT,
+  );
+  if (compare(speedMultiplier, speedCap) > 0) speedMultiplier = speedCap;
   const common = principal * BigInt(document.microKrwPerKrw);
+  const basePerCycle = tier
+    ? exactMicroKrw(
+        common * BigInt(document.baseCycleRateBps),
+        BASIS_POINT_UNIT,
+      )
+    : ZERO;
   return freeze({
     input: {
       ...input,
@@ -265,12 +305,13 @@ function conditions(input: FundingConditionInput, instant: bigint): Conditions {
     },
     tierCode: tier?.code ?? null,
     slots: tier?.slots ?? 0,
-    fullBaseCapacity: tier
-      ? exactMicroKrw(
-          common * BigInt(document.baseCycleRateBps),
-          BASIS_POINT_UNIT,
-        )
-      : ZERO,
+    fullBaseCapacity: scale(
+      basePerCycle,
+      BASIS_POINT_UNIT + combinedBoost,
+      BASIS_POINT_UNIT,
+    ),
+    fullBaseSpeedPerCycle: basePerCycle,
+    allocatedBaseSpeedMultiplier: speedMultiplier,
     fullConditionalRetentionCapacity: tier
       ? exactMicroKrw(common * BigInt(tier.retentionBonusBps), BASIS_POINT_UNIT)
       : ZERO,
@@ -428,6 +469,148 @@ export type FundingForwardChange = {
   readonly entitlementRevision: bigint;
   readonly condition: FundingConditionInput;
 };
+
+/** A server-derived sealed declaration, not a browser allocation proposal. */
+export type FundingSlotAllocationOriginal = {
+  readonly originalId: string;
+  readonly revision: bigint;
+  readonly catalogVersionId: string;
+  readonly effectiveFromMicroseconds: bigint;
+  readonly sourceComplete: boolean;
+  /** Array position is the immutable ordinal stored in the allocation original. */
+  readonly products: readonly {
+    readonly productId: string;
+    readonly ruleVersionId: string;
+    readonly allocationBps: number;
+  }[];
+};
+
+/**
+ * Read-only deterministic downgrade preview using the existing global engine.
+ * The caller must verify the native original's seal/catalog/rule receipts before
+ * supplying it. This helper neither manufactures that proof nor persists a
+ * pause, entitlement, source original, reward or ledger credit. The full intent
+ * remains separate from the prospective active condition. Later slot recovery
+ * requires a reviewed policy or explicit reselection; it never resumes here.
+ */
+export function previewFundingSlotDowngrade({
+  state,
+  change,
+  allocationOriginal,
+  expectedAllocationOriginalId,
+  expectedAllocationRevision,
+}: {
+  state: FundingEntitlementPreview;
+  change: FundingForwardChange;
+  allocationOriginal: FundingSlotAllocationOriginal;
+  expectedAllocationOriginalId: string;
+  expectedAllocationRevision: bigint;
+}) {
+  if (!previews.has(state)) fail("UNVALIDATED_PREVIEW_STATE");
+  if (
+    allocationOriginal.sourceComplete !== true ||
+    !allocationOriginal.originalId.trim() ||
+    !allocationOriginal.catalogVersionId.trim() ||
+    typeof allocationOriginal.revision !== "bigint" ||
+    allocationOriginal.revision <= 0n ||
+    allocationOriginal.originalId !== expectedAllocationOriginalId ||
+    allocationOriginal.revision !== expectedAllocationRevision
+  )
+    fail("SLOT_ALLOCATION_ORIGINAL_UNCONFIRMED");
+  if (
+    typeof allocationOriginal.effectiveFromMicroseconds !== "bigint" ||
+    allocationOriginal.effectiveFromMicroseconds < 0n ||
+    allocationOriginal.effectiveFromMicroseconds > state.cursorMicroseconds ||
+    typeof change.effectiveFromMicroseconds !== "bigint" ||
+    change.effectiveFromMicroseconds < state.cursorMicroseconds
+  )
+    fail("SLOT_ALLOCATION_EFFECTIVE_BOUNDARY_INVALID");
+  const declared = state.condition.input.allocations;
+  const incoming = change.condition.allocations;
+  if (
+    declared.length !==
+      Math.min(state.condition.slots, allocationOriginal.products.length) ||
+    incoming.length !== allocationOriginal.products.length ||
+    allocationOriginal.products.some((product, index) => {
+      const previous = declared[index];
+      const next = incoming[index]!;
+      return (
+        !product.ruleVersionId.trim() ||
+        next.productId !== product.productId ||
+        next.allocationBps !== product.allocationBps ||
+        (previous !== undefined &&
+          (product.productId !== previous.productId ||
+            product.allocationBps !== previous.allocationBps ||
+            next.productMultiplierBps !== previous.productMultiplierBps ||
+            next.published !== previous.published ||
+            next.sourceComplete !== previous.sourceComplete))
+      );
+    })
+  )
+    fail("SLOT_ALLOCATION_DECLARATION_MISMATCH");
+  assertEffectiveEconomyPolicy(
+    change.condition.policy,
+    change.effectiveFromMicroseconds,
+  );
+  // Paused suffix entries are still preserved intent. Validate their source,
+  // weights and approved multipliers even when none remain in the active prefix.
+  allocationFacts(change.condition);
+  const nextTier = fundingTierForPrincipal(
+    change.condition.policy,
+    change.condition.funding.eligiblePrincipalKrw,
+  );
+  const nextSlots = nextTier?.slots ?? 0;
+  if (
+    nextSlots >= state.condition.slots ||
+    allocationOriginal.products.length <= nextSlots
+  )
+    fail("SLOT_DOWNGRADE_WITH_EXCESS_REQUIRED");
+  const decisions = allocationOriginal.products.map((product, index) => ({
+    ...product,
+    ordinal: index + 1,
+    state: index < nextSlots ? ("RETAINED" as const) : ("PAUSED" as const),
+    pauseReason: index < nextSlots ? null : ("SLOT_LIMIT_REDUCED" as const),
+  }));
+  const prospectiveChange: FundingForwardChange = {
+    ...change,
+    condition: {
+      ...change.condition,
+      allocations: incoming.slice(0, nextSlots),
+    },
+  };
+  const interval = previewFundingInterval({
+    state,
+    serverNowMicroseconds: change.effectiveFromMicroseconds,
+    expectedEntitlementRevision: state.entitlementRevision,
+    changes: [prospectiveChange],
+  });
+  return freeze({
+    mode: "PREVIEW_ONLY" as const,
+    selectionPolicy: "ALLOCATION_ORIGINAL_ORDINAL_PREFIX" as const,
+    allocationOriginal: {
+      ...allocationOriginal,
+      products: allocationOriginal.products.map((product) => ({ ...product })),
+    },
+    previousSlots: state.condition.slots,
+    nextSlots,
+    decisions,
+    activeAllocationBps: decisions.reduce(
+      (sum, decision) =>
+        sum + (decision.state === "RETAINED" ? decision.allocationBps : 0),
+      0,
+    ),
+    pausedAllocationBps: decisions.reduce(
+      (sum, decision) =>
+        sum + (decision.state === "PAUSED" ? decision.allocationBps : 0),
+      0,
+    ),
+    prospectiveChange: {
+      ...prospectiveChange,
+      condition: interval.state.condition.input,
+    },
+    interval,
+  });
+}
 
 type PreviewSegment = {
   readonly startMicroseconds: bigint;
@@ -664,18 +847,25 @@ export function previewFundingInterval({
     const status = fundingPreviewStatus(current);
     let base = ZERO;
     let retention = ZERO;
-    if (status === "ACTIVE") {
+    // An absent BASE assignment does not stop principal-based maintenance.
+    // The status precedence still excludes pause, safe mode and ineligibility;
+    // maintenance remains conditional until separate cycle/portion proof.
+    if (status === "ACTIVE" || status === "NO_ACTIVE_ALLOCATION") {
       const elapsed = end - start;
-      const denominator = current.cycleDurationMicroseconds * BASIS_POINT_UNIT;
+      const baseAtNormalSpeed = scale(
+        current.condition.fullBaseSpeedPerCycle,
+        elapsed,
+        current.cycleDurationMicroseconds,
+      );
       const baseCandidate = scale(
-        current.condition.fullBaseCapacity,
-        elapsed * current.condition.allocationBps,
-        denominator,
+        baseAtNormalSpeed,
+        current.condition.allocatedBaseSpeedMultiplier.numerator,
+        current.condition.allocatedBaseSpeedMultiplier.denominator,
       );
       const retentionCandidate = scale(
         current.condition.fullConditionalRetentionCapacity,
-        elapsed * current.condition.allocationBps,
-        denominator,
+        elapsed,
+        current.cycleDurationMicroseconds,
       );
       const baseRemaining = remaining(current.baseCapacity, current.baseUsed);
       const retentionRemaining = remaining(

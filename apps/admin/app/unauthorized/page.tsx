@@ -3,6 +3,11 @@ import Link from "next/link";
 
 import { AdminAuthEntry } from "@/components/auth/admin-auth-entry";
 
+export const metadata = {
+  title: "권한 없음 | 퍼뜩 운영",
+  robots: { index: false, follow: false },
+};
+
 export const dynamic = "force-dynamic";
 
 export default async function UnauthorizedPage({

@@ -127,7 +127,9 @@ test("과거 출금의 응답이 유실돼도 같은 요청은 홀드·영수증
     expect(moneyAfterHistoricalHold.sourceMovements).toBe(
       moneyBeforeHold.sourceMovements,
     );
-    const upstream = await route.fetch();
+    // Reused loopback sockets may reset after the synchronous SQL fixture.
+    // Retry only ECONNRESET once with this same key; still drop the browser reply.
+    const upstream = await route.fetch({ maxRetries: 1 });
     committedStatus = upstream.status();
     expect((await upstream.json()).data.withdrawalId).toBe(historicalId);
     // 서버 응답은 버리고, 브라우저에는 전송 후 단절만 보이게 한다.

@@ -1,6 +1,7 @@
 # PUTDUK MINING Admin Control-Plane Security
 
-Status: WS-03 implemented foundation, not a production launch approval
+Status: historical WS-03 foundation record with the local security changes in
+section 10; not a production launch approval
 
 Application hostname: `admin.mining.putduk.com`
 
@@ -120,7 +121,7 @@ The canonical surfaces are implemented as deep reference screens:
 
 - **오늘의 퍼뜩**: exception-first KYC, deposit, withdrawal, settlement, and
   notification queues; automated success does not create manual work.
-- **Member 360**: exact-UUID lookup, identity/account status, lifecycle,
+- **Member 360**: audited, masked name/login-ID/phone search and exact-UUID lookup, identity/account status, lifecycle,
   START/mining/wallet/funding/event/notification/AI/security counts, audited KYC
   summary, and activity timeline.
 
@@ -144,11 +145,12 @@ Actual production acceptance additionally requires authenticated browser tests
 against an isolated local Supabase stack with operator and normal-member
 fixtures. WS-03 does not mutate remote Supabase.
 
-## 9. Remaining P0 before production operation
+## 9. Historical WS-03 remaining P0 before production operation
 
-These controls are intentionally not claimed as complete because they require a
-reviewed local schema/auth configuration phase and then separately authorized
-remote rollout:
+This list records the WS-03 assessment. Later schema/auth work must be assessed
+against its own code and verification evidence; this historical list is not a
+claim about the present implementation. Remote rollout requires separate
+authorization:
 
 1. App-owned admin session records with a short idle timeout and bounded
    absolute lifetime independent from refreshed JWT issuance.
@@ -167,3 +169,76 @@ remote rollout:
 Until those gates are implemented, locally verified, reviewed, and separately
 rolled out, the admin control plane is **FOUNDATION COMPLETE only**, not
 production-operational or launch ready.
+
+## 10. Local security changes, 2026-10-06
+
+`register_admin_session` now treats confirmation for one Auth session as an
+idempotent operation. Repeated confirmation returns the same live app session
+without changing either expiry. A revoked, idle-expired, absolute-expired, or
+fingerprint-mismatched session is rejected; a fresh password login establishes a
+new Auth session. The existing registration request ceiling also counts
+idempotent retries. The login page checks the app registry before redirecting an
+existing AAL2 identity, so an expired identity can reach the login form.
+
+Password and TOTP handlers reserve the existing five-failure allowance per
+hashed subject and scope in a 15-minute window before contacting Auth. The
+service-only, `SECURITY INVOKER` admission function locks the bucket and counts
+both failures and unfinished attempts. Success releases its reservation;
+failure appends one failure atomically. Finishing the same result again is
+idempotent, and a contradictory result is denied. An interrupted request stays
+charged until the existing window expires. Immutable events contain a hashed
+bucket and scope, without credentials or supplied identity/IP fields.
+
+Admin server components validate the Supabase URL and public key before
+constructing client props. An opaque secret key, a legacy service-role JWT, or
+an authenticated-role JWT cannot cross that boundary. Client validation remains
+an additional check. Member AI chat, feedback, and analytics read JSON through
+a byte-bounded stream reader, which cancels oversized bodies while reading and
+preserves the existing caps and response codes.
+
+The regression contract includes:
+
+- `apps/admin/tests/admin-auth-atomic-admission.test.ts`: concurrent live
+  password/TOTP handler calls honor the atomic RPC receipt and fail closed when
+  admission or completion storage is unavailable.
+- `apps/admin/tests/admin-public-config-serialization.test.ts` and
+  `tests/unit/bounded-api-body.test.ts`: validation precedes client props and
+  chunked body accumulation stops at the cap.
+- `supabase/tests/database/admin_security_auth_replay.sql`: session replay,
+  expiry/revocation, idempotent auth outcomes, privilege boundaries, and pending
+  attempt accounting.
+- `scripts/assert-admin-auth-admission-concurrency.mjs`: 20 actual concurrent
+  local RPCs starting with four failures must admit one attempt and deny 19.
+  This probe refuses non-loopback targets and checks the local checkout's
+  project and API port before constructing a credentialed client.
+
+These changes are local implementation evidence. Unit/type/lint checks do not
+substitute for executing the migrations, database regressions, concurrency
+probe, and authenticated browser scenarios. They do not establish remote
+deployment status or production readiness.
+
+## 11. User-authorized member search, 2026-10-06
+
+Member 360 now searches legal names and display names by literal substring,
+login IDs by literal prefix, exact UUIDs, and complete phone numbers normalized
+through the existing signup E.164 rules. Formatted Korean numbers and their
+international form find the same profile. Numeric queries retain the login-ID
+path; recognizing a phone does not replace it. Phone suffix search is not
+enabled because there is no approved policy for that additional match scope.
+
+The POST-only search endpoint repeats the existing active-role, live identity,
+AAL2, origin and app-session checks. It preserves Member 360's existing
+`ADMIN_ROLES` capability and returns masked names/login IDs/phone numbers with
+links to the separately authorized member detail. It does not grant SUPPORT,
+CONTENT or VIEWER access to KYC. Audit insertion must succeed before any search
+read; the audit contains query kind and allowed output fields, never query
+text, phone numbers or returned personal values.
+
+Each text source reads at most 21 rows; combined results contain at most 20
+distinct members and explicitly indicate additional matches. Exact phone and
+login-ID matches come first. Current profile rows are searched without an
+active/banned status filter so operators can find restricted accounts. Deleted
+accounts cascade out of the existing profile tables. Passwords, recovery email,
+birth dates, KYC records and money data are not search fields or results.
+Raw queries stay out of URLs and durable browser storage; API responses are
+`private, no-store`. No migration or privilege grant is introduced.

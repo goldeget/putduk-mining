@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "repository": "goldeget/putduk-mining",
+  "scope": "LOCAL_QA",
+  "project_id": "putduk-mining-backend-patch-20261011",
+  "api_port": 65421,
+  "db_port": 65422,
+  "configPath": "supabase/config.toml",
+  "previousSha256": "942e6721ffb77110895f3146b3ab53a285503120a2f0c90d50e8a5b28be8e1ac",
+  "reviewedSha256": "10d9f6c49fb454daccca63f534bb75b1e0decd6be3184b51c492b02a2ee863a7"
+}

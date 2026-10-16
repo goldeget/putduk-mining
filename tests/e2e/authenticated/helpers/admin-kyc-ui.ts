@@ -1,8 +1,10 @@
-import { createHash, randomUUID } from "node:crypto";
-
 import { expect, type Locator, type Page } from "@playwright/test";
 
-import { createLocalServiceRoleClient } from "../../fixtures/local-auth";
+import {
+  createLocalServiceRoleClient,
+  type ConfirmedMember,
+} from "../../fixtures/local-auth";
+import { prepareRealKycEvidence } from "../../fixtures/kyc-evidence";
 import { openAdminQueue } from "./admin-money-ui";
 import { ADMIN_ORIGIN } from "./admin-totp";
 
@@ -37,9 +39,10 @@ export async function closeOpenKycQueueForEmptyProof() {
   if (error) throw new Error(error.message);
 }
 
-/** 서비스 롤로 대기 KYC 건과 서류 메타만 준비. 원문 바이트는 넣지 않는다. */
+/** Actual member Auth/session, durable claims, and private Storage HTTP fixture. */
 export async function seedOpenKycCase(input: {
   userId: string;
+  member: ConfirmedMember;
   riskLevel?: "UNASSESSED" | "LOW" | "MEDIUM" | "HIGH";
   withDocument?: boolean;
 }): Promise<{
@@ -47,42 +50,24 @@ export async function seedOpenKycCase(input: {
   documentPath: string | null;
   contentHash: string | null;
 }> {
-  const client = createLocalServiceRoleClient();
-  const { data: caseId, error: openError } = await client.rpc("open_kyc_case", {
-    p_user_id: input.userId,
-    p_request_id: randomUUID(),
-  });
-  if (openError || !caseId) {
-    throw new Error(openError?.message ?? "KYC_OPEN_FAILED");
-  }
-
+  if (input.userId !== input.member.userId)
+    throw new Error("KYC_FIXTURE_OWNER_MISMATCH");
+  const prepared = await prepareRealKycEvidence(
+    input.member,
+    input.withDocument !== false,
+  );
   if (input.riskLevel && input.riskLevel !== "UNASSESSED") {
-    const { error: riskError } = await client
+    const risk = await createLocalServiceRoleClient()
       .from("kyc_cases")
       .update({ risk_level: input.riskLevel })
-      .eq("id", caseId);
-    if (riskError) throw new Error(riskError.message);
+      .eq("id", prepared.caseId);
+    if (risk.error) throw new Error("KYC_FIXTURE_RISK_FAILED");
   }
-
-  let documentPath: string | null = null;
-  let contentHash: string | null = null;
-  if (input.withDocument !== false) {
-    documentPath = `kyc/${input.userId}/${caseId}/id_card.bin`;
-    contentHash = createHash("sha256")
-      .update(`synthetic-kyc-${caseId}`)
-      .digest("hex");
-    const { error: submitError } = await client.rpc("submit_kyc_documents", {
-      p_case_id: caseId,
-      p_user_id: input.userId,
-      p_document_kind: "id_card",
-      p_protected_storage_path: documentPath,
-      p_content_sha256: contentHash,
-      p_request_id: randomUUID(),
-    });
-    if (submitError) throw new Error(submitError.message);
-  }
-
-  return { caseId: String(caseId), documentPath, contentHash };
+  return {
+    caseId: prepared.caseId,
+    documentPath: prepared.documentPath,
+    contentHash: prepared.contentHash,
+  };
 }
 
 export async function readKycCase(caseId: string) {

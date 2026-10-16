@@ -1,0 +1,264 @@
+name: Protected staging build
+
+on:
+  pull_request:
+    types: [labeled]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: protected-staging-build-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build separate member and admin staging artifacts
+    # Credential-free build only. Request after core runners free up;
+    # deployment still requires all checks for this exact candidate to pass.
+    if: >-
+      github.event.label.name == 'qa-protected-staging-build' &&
+      github.event.pull_request.number == 77 &&
+      github.event.pull_request.head.repo.full_name == 'goldeget/putduk-mining'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      APP_ENV: staging
+      NEXT_PUBLIC_APP_ENV: staging
+      APP_TIMEZONE: UTC
+      NEXT_PUBLIC_APP_URL: https://putduk-mining-member-staging-ab1de38.putduk-landing.workers.dev
+      ADMIN_APP_URL: https://putduk-mining-admin-staging-ab1de38.putduk-landing.workers.dev
+      NEXT_PUBLIC_SUPABASE_URL: https://mhchzipznxbwbocdihlg.supabase.co
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ vars.PUTDUK_STAGING_SUPABASE_PUBLISHABLE_KEY }}
+      # Inert build input only. This job has no server credential and cannot deploy.
+      SUPABASE_SECRET_KEY: sb_secret_inert_staging_build_only_no_remote_authority
+      WRANGLER_SEND_METRICS: "false"
+      WRANGLER_NO_UPDATE_CHECK: "1"
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - name: Check out the exact reviewed candidate
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+
+      - name: Admit only the isolated staging target
+        env:
+          CI_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = "goldeget/putduk-mining"
+          test "$(git rev-parse HEAD)" = "$CI_HEAD_SHA"
+          case "$(git remote get-url origin)" in
+            https://github.com/goldeget/putduk-mining|https://github.com/goldeget/putduk-mining.git) ;;
+            *) echo "BLOCKED_TARGET_SCOPE" >&2; exit 1 ;;
+          esac
+          git remote set-url origin https://github.com/goldeget/putduk-mining.git
+          node --input-type=module -e '
+            if (process.env.APP_ENV !== "staging" || process.env.NEXT_PUBLIC_APP_ENV !== "staging" ||
+                process.env.NEXT_PUBLIC_SUPABASE_URL !== "https://mhchzipznxbwbocdihlg.supabase.co" ||
+                !/^sb_publishable_[A-Za-z0-9_-]+$/.test(process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? ""))
+              throw Error("STAGING_BUILD_INPUT_REJECTED");
+          '
+
+      - name: Install pinned pnpm
+        uses: pnpm/action-setup@v6.1.0
+        with:
+          version: 12.6.0
+
+      - name: Install pinned Node
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+
+      - name: Install exact frozen dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build member staging output
+        run: pnpm exec opennextjs-cloudflare build
+
+      - name: Build admin staging output separately
+        working-directory: apps/admin
+        run: pnpm exec opennextjs-cloudflare build
+
+      - name: Package immutable build output without deploying
+        env:
+          CI_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          node --input-type=module <<'NODE'
+            import { createHash } from "node:crypto";
+            import { execFileSync } from "node:child_process";
+            import { createReadStream, createWriteStream, lstatSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
+            import { dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
+            import { isBuiltin } from "node:module";
+            import { pipeline } from "node:stream/promises";
+            import { Writable } from "node:stream";
+            import { createGzip } from "node:zlib";
+            import ts from "typescript";
+
+            const root = process.cwd();
+            const output = resolve("test-results/protected-staging-build");
+            const temporary = resolve(process.env.RUNNER_TEMP, "putduk-staging-package");
+            const account = "9dc502d4ef06b3b5374591de6e6933ca";
+            const sha = (data) => createHash("sha256").update(data).digest("hex");
+            const portable = (path) => path.split(sep).join("/");
+            const json = (path, value) => writeFileSync(path, JSON.stringify(value, null, 2) + "\n");
+            const inside = (base, path) => {
+              const rel = relative(base, path);
+              if (rel === ".." || rel.startsWith(".." + sep) || isAbsolute(rel)) throw Error("PACKAGE_PATH_ESCAPE");
+            };
+            const files = (base, path = base) => {
+              inside(base, path);
+              const stat = lstatSync(path);
+              if (stat.isSymbolicLink()) throw Error("PACKAGE_SYMLINK_REJECTED");
+              if (stat.isFile()) return [path];
+              if (!stat.isDirectory()) throw Error("PACKAGE_FILE_TYPE_REJECTED");
+              return readdirSync(path).sort().flatMap((name) => files(base, join(path, name)));
+            };
+            const checkedPath = (path) => {
+              inside(root, path);
+              for (let current = path; current !== root; current = dirname(current)) {
+                if (lstatSync(current).isSymbolicLink()) throw Error("PACKAGE_SYMLINK_REJECTED");
+              }
+              return path;
+            };
+            if (execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).trim() !== process.env.CI_HEAD_SHA)
+              throw Error("PACKAGE_CANDIDATE_MISMATCH");
+            if (["CLOUDFLARE_API_TOKEN", "CLOUDFLARE_API_KEY", "CLOUDFLARE_EMAIL", "CF_API_TOKEN", "CF_API_KEY"].some((key) => process.env[key]))
+              throw Error("PACKAGE_CREDENTIAL_REJECTED");
+            if (JSON.parse(readFileSync("package.json", "utf8")).devDependencies.wrangler !== "4.148.0")
+              throw Error("PACKAGE_WRANGLER_PIN_MISMATCH");
+            const actualWrangler = JSON.parse(readFileSync("node_modules/wrangler/package.json", "utf8")).version;
+            const actualPnpm = execFileSync("pnpm", ["--version"], { encoding: "utf8" }).trim();
+            if (actualWrangler !== "4.148.0" || actualPnpm !== "12.6.0")
+              throw Error("PACKAGE_INSTALLED_TOOL_PIN_MISMATCH");
+            mkdirSync(output, { recursive: true });
+            mkdirSync(temporary, { recursive: true });
+            const roles = [];
+            for (const [role, directory] of [["member", "."], ["admin", "apps/admin"]]) {
+              const app = resolve(root, directory);
+              const sourceConfig = checkedPath(join(app, "wrangler.jsonc"));
+              const sourceBytes = readFileSync(sourceConfig);
+              const parsed = ts.parseConfigFileTextToJson(sourceConfig, sourceBytes.toString("utf8"));
+              if (parsed.error) throw Error("PACKAGE_CONFIG_INVALID");
+              const config = parsed.config;
+              const allowed = ["$schema", "name", "account_id", "main", "compatibility_date", "compatibility_flags", "workers_dev", "preview_urls", "assets", "services"];
+              const candidateName = `putduk-mining-${role}-candidate`;
+              if (Object.keys(config).some((key) => !allowed.includes(key)) || config.name !== candidateName ||
+                  config.account_id !== account || config.main !== ".open-next/worker.js" ||
+                  config.compatibility_date !== "2026-10-06" ||
+                  JSON.stringify(config.compatibility_flags) !== JSON.stringify(["nodejs_compat", "global_fetch_strictly_public"]) ||
+                  config.workers_dev !== false || config.preview_urls !== false ||
+                  JSON.stringify(config.assets) !== JSON.stringify({ directory: ".open-next/assets", binding: "ASSETS" }) ||
+                  JSON.stringify(config.services) !== JSON.stringify([{ binding: "WORKER_SELF_REFERENCE", service: candidateName }]))
+                throw Error("PACKAGE_CONFIG_SCOPE_REJECTED");
+              const name = `putduk-mining-${role}-staging-ab1de38`;
+              const main = checkedPath(resolve(app, config.main));
+              const assets = checkedPath(resolve(app, config.assets.directory));
+              const stageConfig = {
+                name, account_id: account, main,
+                compatibility_date: config.compatibility_date,
+                compatibility_flags: config.compatibility_flags,
+                workers_dev: false, preview_urls: false, upload_source_maps: false,
+                assets: { directory: assets, binding: "ASSETS" },
+                services: [{ binding: "WORKER_SELF_REFERENCE", service: name }]
+              };
+              const configPath = join(temporary, role + ".json");
+              const configBase = dirname(configPath);
+              json(configPath, stageConfig);
+              const destination = join(temporary, role);
+              const worker = join(destination, "worker");
+              mkdirSync(worker, { recursive: true });
+              const metafile = join(destination, "bundle-meta.json");
+              execFileSync("pnpm", ["exec", "wrangler", "deploy", "--config", configPath, "--name", name,
+                "--dry-run", "--minify", "--outdir", worker, "--metafile", metafile], { cwd: app, stdio: "inherit" });
+              const metadata = JSON.parse(readFileSync(metafile, "utf8"));
+              const entries = Object.entries(metadata.outputs).filter(([, value]) => value.entryPoint);
+              if (entries.length !== 1) throw Error("PACKAGE_ENTRY_AMBIGUOUS");
+              const entry = resolve(configBase, entries[0][0]);
+              inside(worker, entry);
+              if (!lstatSync(entry).isFile()) throw Error("PACKAGE_ENTRY_MISSING");
+              for (const [path, value] of Object.entries(metadata.outputs)) {
+                const emitted = resolve(configBase, path);
+                inside(worker, emitted);
+                for (const imported of value.imports ?? []) {
+                  if (/\.map(?:$|[?#])/.test(imported.path)) throw Error("PACKAGE_RUNTIME_MAP_REJECTED");
+                  if (imported.external && (isBuiltin(imported.path) || /^cloudflare:/.test(imported.path))) continue;
+                  const dependency = imported.external
+                    ? resolve(dirname(emitted), imported.path)
+                    : resolve(configBase, imported.path);
+                  inside(worker, dependency);
+                  if (!lstatSync(dependency).isFile()) throw Error("PACKAGE_MODULE_MISSING");
+                }
+              }
+              const inventory = [];
+              for (const [kind, base] of [["worker", worker], ["assets", assets]]) {
+                for (const source of files(base)) {
+                  if (source.endsWith(".map")) continue;
+                  if (kind === "worker" && /\.[cm]?js$/.test(source)) {
+                    const imports = ts.preProcessFile(readFileSync(source, "utf8"), true, true).importedFiles;
+                    if (imports.some(({ fileName }) => /\.map(?:$|[?#])/.test(fileName)))
+                      throw Error("PACKAGE_RUNTIME_MAP_REJECTED");
+                  }
+                  const path = portable(join(kind, relative(base, source)));
+                  const target = join(destination, path);
+                  if (kind === "assets") {
+                    mkdirSync(dirname(target), { recursive: true });
+                    await pipeline(createReadStream(source), createWriteStream(target, { flags: "wx" }));
+                  }
+                  const hash = createHash("sha256");
+                  let bytes = 0;
+                  let gzipBytes = 0;
+                  await pipeline(createReadStream(source), async function* (chunks) {
+                    for await (const chunk of chunks) { hash.update(chunk); bytes += chunk.length; yield chunk; }
+                  }, createGzip(), new Writable({ write(chunk, encoding, done) { gzipBytes += chunk.length; done(); } }));
+                  inventory.push({ path, bytes, gzipBytes, sha256: hash.digest("hex") });
+                }
+              }
+              // Maps are not runtime modules; retain every other emitted file, including binaries.
+              const mapPaths = files(worker).filter((path) => path.endsWith(".map")).map((path) => portable(relative(destination, path)));
+              json(join(destination, "inventory.json"), inventory);
+              const receipt = { role, name, origin: `https://${name}.putduk-landing.workers.dev`,
+                entry: portable(join("worker", relative(worker, entry))), sourceConfigSha256: sha(sourceBytes),
+                dryRunConfigSha256: sha(readFileSync(configPath)), compatibilityDate: config.compatibility_date,
+                compatibilityFlags: config.compatibility_flags, accountId: account,
+                assets: { directory: "assets", binding: "ASSETS" }, services: stageConfig.services,
+                workersDev: false, previewUrls: false, deployed: false };
+              json(join(destination, "receipt.json"), receipt);
+              const archive = join(output, role + ".tar.gz");
+              execFileSync("tar", ["-czf", archive, ...mapPaths.map((path) => "--exclude=" + path),
+                "-C", destination, "worker", "assets", "bundle-meta.json", "inventory.json", "receipt.json"]);
+              roles.push(receipt);
+            }
+            // Generated/ignored output is allowed; tracked source changes are not.
+            execFileSync("git", ["diff", "--exit-code", "HEAD", "--"], { stdio: "inherit" });
+            if (execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).trim() !== process.env.CI_HEAD_SHA)
+              throw Error("PACKAGE_FINAL_CANDIDATE_MISMATCH");
+            json(join(output, "receipt.json"), {
+              repository: process.env.GITHUB_REPOSITORY,
+              candidateSha: process.env.CI_HEAD_SHA,
+              checkoutSha: execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).trim(),
+              workflowEventSha: process.env.GITHUB_SHA,
+              runId: process.env.GITHUB_RUN_ID,
+              attempt: process.env.GITHUB_RUN_ATTEMPT,
+              target: "mhchzipznxbwbocdihlg",
+              appEnv: "staging",
+              roles,
+              tools: { node: process.version, pnpm: actualPnpm, wrangler: actualWrangler,
+                declaredPins: { pnpm: "12.6.0", wrangler: "4.148.0", openNext: "1.20.12" } },
+              trackedSourceClean: true,
+              deployed: false,
+              serverCredentialPresent: false
+            });
+          NODE
+          (cd test-results/protected-staging-build && sha256sum member.tar.gz admin.tar.gz receipt.json > SHA256SUMS)
+
+      - name: Preserve separate staging artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: protected-staging-build-${{ github.event.pull_request.head.sha }}
+          path: test-results/protected-staging-build/
+          if-no-files-found: error
+          retention-days: 7

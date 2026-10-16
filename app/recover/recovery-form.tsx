@@ -1,4 +1,5 @@
 "use client";
+import { FeedbackMessage } from "@/components/ui/feedback-message";
 
 import { useActionState } from "react";
 
@@ -46,13 +47,13 @@ export function RecoveryForm() {
         />
       </label>
       {state.status === "confirmation" ? (
-        <p
+        <FeedbackMessage
           id="recovery-confirmation"
           className="auth-form__message auth-form__message--confirmation"
           role="status"
         >
           {state.message}
-        </p>
+        </FeedbackMessage>
       ) : null}
       <div className="auth-form__actions">
         <AuthSubmitButton

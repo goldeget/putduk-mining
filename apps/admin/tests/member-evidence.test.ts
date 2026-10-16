@@ -2,10 +2,25 @@ import { describe, expect, it } from "vitest";
 
 import {
   anyMemberCountFailed,
+  combineMemberCounts,
   memberCountLabel,
 } from "../app/(control)/members/_lib/member-evidence-labels";
 
 describe("member evidence labels", () => {
+  it("combines canonical KRW and USDT counts and keeps a partial read unknown", () => {
+    expect(
+      combineMemberCounts({ count: 0, error: null }, { count: 2, error: null }),
+    ).toEqual({ count: 2, error: null });
+    expect(
+      memberCountLabel(
+        combineMemberCounts(
+          { count: 3, error: null },
+          { count: null, error: null },
+        ),
+      ),
+    ).toBe("확인 필요");
+    expect(anyMemberCountFailed([{ count: null, error: null }])).toBe(true);
+  });
   it("실패와 null을 0으로 위장하지 않는다", () => {
     expect(memberCountLabel({ count: null, error: null })).toBe("확인 필요");
     expect(memberCountLabel({ count: 0, error: { message: "denied" } })).toBe(

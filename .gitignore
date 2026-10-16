@@ -44,6 +44,10 @@ build/Release
 
 # Dependency directories
 node_modules/
+.open-next/
+.wrangler/
+.dev.vars
+.dev.vars.*
 jspm_packages/
 
 # Snowpack dependency directory (https://snowpack.dev/)
@@ -51,6 +55,10 @@ web_modules/
 
 # TypeScript cache
 *.tsbuildinfo
+
+# Python asset-tool cache
+__pycache__/
+*.pyc
 
 # Optional npm cache directory
 .npm

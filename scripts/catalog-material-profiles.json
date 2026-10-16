@@ -1,0 +1,29 @@
+[
+  {
+    "family": "semiconductor",
+    "sourceMaster": "docs/design/generated-masters/catalog-materials-2026-10-06/semiconductor-master-v1.png",
+    "sourceSha256": "9791adfad8e2f1411b59e456f11f96436cbbe8f2362ca90be278d2162be2e9ee",
+    "assetVersion": "2026.10.06-catalog-materials-v1",
+    "reviewScope": "User-delegated 2026-10-06 reference-driven neutral category material reconstruction for a02-m00006 and a02-m00019. Native GPT generated artwork, full 1536x1024 frame and responsive encoding only; no crop, recoloring, upscale, raster UI, logo, product affiliation, actual holding, price, yield, catalog publication or economic approval. Dark source direction; Light reuse is explicitly inferred rather than a supplied Light category reference.",
+    "theme": "dark",
+    "alt": "금빛 핀과 푸른 회로판 위의 무표식 반도체 칩"
+  },
+  {
+    "family": "silver",
+    "sourceMaster": "docs/design/generated-masters/catalog-materials-2026-10-06/silver-master-v1.png",
+    "sourceSha256": "6ff7ec452562618d850c13052c0cd4587df42368af6185b4eef67dbb9b6b2170",
+    "assetVersion": "2026.10.06-catalog-materials-v1",
+    "reviewScope": "User-delegated 2026-10-06 reference-driven neutral category material reconstruction for a02-m00006 and a02-m00019. Native GPT generated artwork, full 1536x1024 frame and responsive encoding only; no crop, recoloring, upscale, raster UI, logo, product affiliation, actual holding, price, yield, catalog publication or economic approval. Dark source direction; Light reuse is explicitly inferred rather than a supplied Light category reference.",
+    "theme": "dark",
+    "alt": "짙은 푸른 실험실에서 빛나는 은색 금속 막대"
+  },
+  {
+    "family": "digital-asset",
+    "sourceMaster": "docs/design/generated-masters/catalog-materials-2026-10-06/digital-asset-master-v1.png",
+    "sourceSha256": "6ede9c1c09d34739d9cd890d25c25f49feaf92695a7cb42423c3dd01626cf581",
+    "assetVersion": "2026.10.06-catalog-materials-v1",
+    "reviewScope": "User-delegated 2026-10-06 reference-driven neutral category material reconstruction for a02-m00006 and a02-m00019. Native GPT generated artwork, full 1536x1024 frame and responsive encoding only; no crop, recoloring, upscale, raster UI, logo, product affiliation, actual holding, price, yield, catalog publication or economic approval. Dark source direction; Light reuse is explicitly inferred rather than a supplied Light category reference.",
+    "theme": "dark",
+    "alt": "무표식 금빛 토큰과 정교한 은빛 다면체"
+  }
+]

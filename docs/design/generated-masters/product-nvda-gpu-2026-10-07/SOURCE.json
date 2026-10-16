@@ -1,0 +1,600 @@
+{
+  "schemaVersion": 1,
+  "family": "product-nvda-gpu-v1",
+  "productIdentity": {
+    "code": "NVDA",
+    "category": "US_STOCK"
+  },
+  "generatedBy": "native GPT image generation",
+  "generatedAt": "2026-10-07T16:45:54.076Z",
+  "reviewScope": "Owner-delegated V7 native GPT visual selection: reviewed NVDA GPU computation scene, four independent dark/light portrait/landscape originals; full composition with responsive encoding only, no crop, recoloring or upscale; NVDA US_STOCK presentation only, no publication, availability, mining state, economic or PRODUCT COMPLETE approval.",
+  "visualAcceptance": "SOURCE_REVIEW_ONLY_BROWSER_PENDING",
+  "productComplete": false,
+  "encoding": {
+    "crop": false,
+    "recolor": false,
+    "upscale": false,
+    "webp": "lossless Lanczos derivative",
+    "avif": "quality 85 effort 6 4:4:4 Lanczos derivative"
+  },
+  "profiles": [
+    {
+      "theme": "dark",
+      "orientation": "portrait",
+      "sourceMaster": "docs/design/generated-masters/product-nvda-gpu-2026-10-07/product-nvda-gpu-v1-dark-portrait-master.png",
+      "sourceSha256": "0cf2635fdd6637757c5a56d90c27cb2b9e7b6c925a66da332f36e268f4fd300d",
+      "width": 1024,
+      "height": 1536,
+      "widths": [480, 640, 960, 1024],
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "extractionTarget": {
+        "x": 0.5,
+        "y": 0.75
+      },
+      "assetVersion": "2026.10.07-product-nvda-gpu-v1",
+      "reviewScope": "Owner-delegated V7 native GPT visual selection: reviewed NVDA GPU computation scene, four independent dark/light portrait/landscape originals; full composition with responsive encoding only, no crop, recoloring or upscale; NVDA US_STOCK presentation only, no publication, availability, mining state, economic or PRODUCT COMPLETE approval.",
+      "alt": "짙은 서버실의 GPU 연산 장치와 푸른 원형 추출 장치",
+      "geometryReview": {
+        "coordinateSpace": "full unmodified original image, normalized 0..1",
+        "anchorPixels": {
+          "x": 512.0,
+          "y": 768.0
+        },
+        "extractionTargetPixels": {
+          "x": 512.0,
+          "y": 1152.0
+        },
+        "basis": "Reviewed GPU-module and circular extraction-device visual centers; compositor must transform these original-image coordinates for responsive contain rendering, never economic values."
+      }
+    },
+    {
+      "theme": "dark",
+      "orientation": "landscape",
+      "sourceMaster": "docs/design/generated-masters/product-nvda-gpu-2026-10-07/product-nvda-gpu-v1-dark-landscape-master.png",
+      "sourceSha256": "b20cc60947fdddf7d8f02733658d9f0fabdce786ea5f9614ce1694e44d1fe3f1",
+      "width": 1672,
+      "height": 941,
+      "widths": [640, 960, 1280, 1672],
+      "anchor": {
+        "x": 0.73,
+        "y": 0.5
+      },
+      "extractionTarget": {
+        "x": 0.73,
+        "y": 0.78
+      },
+      "assetVersion": "2026.10.07-product-nvda-gpu-v1",
+      "reviewScope": "Owner-delegated V7 native GPT visual selection: reviewed NVDA GPU computation scene, four independent dark/light portrait/landscape originals; full composition with responsive encoding only, no crop, recoloring or upscale; NVDA US_STOCK presentation only, no publication, availability, mining state, economic or PRODUCT COMPLETE approval.",
+      "alt": "짙은 서버실의 GPU 연산 장치와 푸른 원형 추출 장치",
+      "geometryReview": {
+        "coordinateSpace": "full unmodified original image, normalized 0..1",
+        "anchorPixels": {
+          "x": 1220.56,
+          "y": 470.5
+        },
+        "extractionTargetPixels": {
+          "x": 1220.56,
+          "y": 733.98
+        },
+        "basis": "Reviewed GPU-module and circular extraction-device visual centers; compositor must transform these original-image coordinates for responsive contain rendering, never economic values."
+      }
+    },
+    {
+      "theme": "light",
+      "orientation": "portrait",
+      "sourceMaster": "docs/design/generated-masters/product-nvda-gpu-2026-10-07/product-nvda-gpu-v1-light-portrait-master.png",
+      "sourceSha256": "56638dce5ebe61b38c21da4249e3474e5a62a7d17f32cb885d945c8ee41a1115",
+      "width": 1024,
+      "height": 1536,
+      "widths": [480, 640, 960, 1024],
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "extractionTarget": {
+        "x": 0.5,
+        "y": 0.75
+      },
+      "assetVersion": "2026.10.07-product-nvda-gpu-v1",
+      "reviewScope": "Owner-delegated V7 native GPT visual selection: reviewed NVDA GPU computation scene, four independent dark/light portrait/landscape originals; full composition with responsive encoding only, no crop, recoloring or upscale; NVDA US_STOCK presentation only, no publication, availability, mining state, economic or PRODUCT COMPLETE approval.",
+      "alt": "밝은 서버실의 GPU 연산 장치와 푸른 원형 추출 장치",
+      "geometryReview": {
+        "coordinateSpace": "full unmodified original image, normalized 0..1",
+        "anchorPixels": {
+          "x": 512.0,
+          "y": 768.0
+        },
+        "extractionTargetPixels": {
+          "x": 512.0,
+          "y": 1152.0
+        },
+        "basis": "Reviewed GPU-module and circular extraction-device visual centers; compositor must transform these original-image coordinates for responsive contain rendering, never economic values."
+      }
+    },
+    {
+      "theme": "light",
+      "orientation": "landscape",
+      "sourceMaster": "docs/design/generated-masters/product-nvda-gpu-2026-10-07/product-nvda-gpu-v1-light-landscape-master.png",
+      "sourceSha256": "abfc46f87a1822c5e705b527432da85d638bd500379f7a6fccf282e66392c736",
+      "width": 1672,
+      "height": 941,
+      "widths": [640, 960, 1280, 1672],
+      "anchor": {
+        "x": 0.73,
+        "y": 0.5
+      },
+      "extractionTarget": {
+        "x": 0.73,
+        "y": 0.78
+      },
+      "assetVersion": "2026.10.07-product-nvda-gpu-v1",
+      "reviewScope": "Owner-delegated V7 native GPT visual selection: reviewed NVDA GPU computation scene, four independent dark/light portrait/landscape originals; full composition with responsive encoding only, no crop, recoloring or upscale; NVDA US_STOCK presentation only, no publication, availability, mining state, economic or PRODUCT COMPLETE approval.",
+      "alt": "밝은 서버실의 GPU 연산 장치와 푸른 원형 추출 장치",
+      "geometryReview": {
+        "coordinateSpace": "full unmodified original image, normalized 0..1",
+        "anchorPixels": {
+          "x": 1220.56,
+          "y": 470.5
+        },
+        "extractionTargetPixels": {
+          "x": 1220.56,
+          "y": 733.98
+        },
+        "basis": "Reviewed GPU-module and circular extraction-device visual centers; compositor must transform these original-image coordinates for responsive contain rendering, never economic values."
+      }
+    }
+  ],
+  "assets": [
+    {
+      "path": "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-dark-portrait-480.avif",
+      "bytes": 110930,
+      "sha256": "3a925cbc906cddc9237971731731a0647f14fd089cd3b14b0a10e218b6b32d43",
+      "mimeType": "image/avif",
+      "alt": "짙은 서버실의 GPU 연산 장치와 푸른 원형 추출 장치",
+      "width": 480,
+      "height": 720,
+      "theme": "dark",
+      "assetVersion": "2026.10.07-product-nvda-gpu-v1",
+      "sourceMaster": "docs/design/generated-masters/product-nvda-gpu-2026-10-07/product-nvda-gpu-v1-dark-portrait-master.png",
+      "sourceSha256": "0cf2635fdd6637757c5a56d90c27cb2b9e7b6c925a66da332f36e268f4fd300d",
+      "reviewScope": "Owner-delegated V7 native GPT visual selection: reviewed NVDA GPU computation scene, four independent dark/light portrait/landscape originals; full composition with responsive encoding only, no crop, recoloring or upscale; NVDA US_STOCK presentation only, no publication, availability, mining state, economic or PRODUCT COMPLETE approval."
+    },
+    {
+      "path": "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-dark-portrait-480.webp",
+      "bytes": 468680,
+      "sha256": "d6814e77ad3bffdce56bdcbd23835a45f2b6bd0b50fa54713551f58b4b8059fb",
+      "mimeType": "image/webp",
+      "alt": "짙은 서버실의 GPU 연산 장치와 푸른 원형 추출 장치",
+      "width": 480,
+      "height": 720,
+      "theme": "dark",
+      "assetVersion": "2026.10.07-product-nvda-gpu-v1",
+      "sourceMaster": "docs/design/generated-masters/product-nvda-gpu-2026-10-07/product-nvda-gpu-v1-dark-portrait-master.png",
+      "sourceSha256": "0cf2635fdd6637757c5a56d90c27cb2b9e7b6c925a66da332f36e268f4fd300d",
+      "reviewScope": "Owner-delegated V7 native GPT visual selection: reviewed NVDA GPU computation scene, four independent dark/light portrait/landscape originals; full composition with responsive encoding only, no crop, recoloring or upscale; NVDA US_STOCK presentation only, no publication, availability, mining state, economic or PRODUCT COMPLETE approval."
+    },
+    {
+      "path": "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-dark-portrait-640.avif",
+      "bytes": 170204,
+      "sha256": "5c498292324d6aad2efad9344e2e2dfc0262770c3873dcc5cc57966a8a3862d0",
+      "mimeType": "image/avif",
+      "alt": "짙은 서버실의 GPU 연산 장치와 푸른 원형 추출 장치",
+      "width": 640,
+      "height": 960,
+      "theme": "dark",
+      "assetVersion": "2026.10.07-product-nvda-gpu-v1",
+      "sourceMaster": "docs/design/generated-masters/product-nvda-gpu-2026-10-07/product-nvda-gpu-v1-dark-portrait-master.png",
+      "sourceSha256": "0cf2635fdd6637757c5a56d90c27cb2b9e7b6c925a66da332f36e268f4fd300d",
+      "reviewScope": "Owner-delegated V7 native GPT visual selection: reviewed NVDA GPU computation scene, four independent dark/light portrait/landscape originals; full composition with responsive encoding only, no crop, recoloring or upscale; NVDA US_STOCK presentation only, no publication, availability, mining state, economic or PRODUCT COMPLETE approval."
+    },
+    {
+      "path": "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-dark-portrait-640.webp",
+      "bytes": 786594,
+      "sha256": "37a5116fd9f3798c24ac151b432e3174607937b381e653d6dcc899e34ad495e5",
+      "mimeType": "image/webp",
+      "alt": "짙은 서버실의 GPU 연산 장치와 푸른 원형 추출 장치",
+      "width": 640,
+      "height": 960,
+      "theme": "dark",
+      "assetVersion": "2026.10.07-product-nvda-gpu-v1",
+      "sourceMaster": "docs/design/generated-masters/product-nvda-gpu-2026-10-07/product-nvda-gpu-v1-dark-portrait-master.png",
+      "sourceSha256": "0cf2635fdd6637757c5a56d90c27cb2b9e7b6c925a66da332f36e268f4fd300d",
+      "reviewScope": "Owner-delegated V7 native GPT visual selection: reviewed NVDA GPU computation scene, four independent dark/light portrait/landscape originals; full composition with responsive encoding only, no crop, recoloring or upscale; NVDA US_STOCK presentation only, no publication, availability, mining state, economic or PRODUCT COMPLETE approval."
+    },
+    {
+      "path": "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-dark-portrait-960.avif",
+      "bytes": 296293,
+      "sha256": "b621b10b377c3a997ba2c270721d026d2f4dc077de8f6df8b110e5925f34e7d7",
+      "mimeType": "image/avif",
+      "alt": "짙은 서버실의 GPU 연산 장치와 푸른 원형 추출 장치",
+      "width": 960,
+      "height": 1440,
+      "theme": "dark",
+      "assetVersion": "2026.10.07-product-nvda-gpu-v1",
+      "sourceMaster": "docs/design/generated-masters/product-nvda-gpu-2026-10-07/product-nvda-gpu-v1-dark-portrait-master.png",
+      "sourceSha256": "0cf2635fdd6637757c5a56d90c27cb2b9e7b6c925a66da332f36e268f4fd300d",
+      "reviewScope": "Owner-delegated V7 native GPT visual selection: reviewed NVDA GPU computation scene, four independent dark/light portrait/landscape originals; full composition with responsive encoding only, no crop, recoloring or upscale; NVDA US_STOCK presentation only, no publication, availability, mining state, economic or PRODUCT COMPLETE approval."
+    },
+    {
+      "path": "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-dark-portrait-960.webp",
+      "bytes": 1649304,
+      "sha256": "444c5acb7c19050b17fa0a685e6eba963ff0eb3fceb1e1023d7355885fc7a78e",
+      "mimeType": "image/webp",
+      "alt": "짙은 서버실의 GPU 연산 장치와 푸른 원형 추출 장치",
+      "width": 960,
+      "height": 1440,
+      "theme": "dark",
+      "assetVersion": "2026.10.07-product-nvda-gpu-v1",
+      "sourceMaster": "docs/design/generated-masters/product-nvda-gpu-2026-10-07/product-nvda-gpu-v1-dark-portrait-master.png",
+      "sourceSha256": "0cf2635fdd6637757c5a56d90c27cb2b9e7b6c925a66da332f36e268f4fd300d",
+      "reviewScope": "Owner-delegated V7 native GPT visual selection: reviewed NVDA GPU computation scene, four independent dark/light portrait/landscape originals; full composition with responsive encoding only, no crop, recoloring or upscale; NVDA US_STOCK presentation only, no publication, availability, mining state, economic or PRODUCT COMPLETE approval."
+    },
+    {
+      "path": "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-dark-portrait-1024.avif",
+      "bytes": 324912,
+      "sha256": "d63b76f1b5e0ea1e95c007c839bc2a6f8a2150472d79c3afac69e6b3b88b17d9",
+      "mimeType": "image/avif",
+      "alt": "짙은 서버실의 GPU 연산 장치와 푸른 원형 추출 장치",
+      "width": 1024,
+      "height": 1536,
+      "theme": "dark",
+      "assetVersion": "2026.10.07-product-nvda-gpu-v1",
+      "sourceMaster": "docs/design/generated-masters/product-nvda-gpu-2026-10-07/product-nvda-gpu-v1-dark-portrait-master.png",
+      "sourceSha256": "0cf2635fdd6637757c5a56d90c27cb2b9e7b6c925a66da332f36e268f4fd300d",
+      "reviewScope": "Owner-delegated V7 native GPT visual selection: reviewed NVDA GPU computation scene, four independent dark/light portrait/landscape originals; full composition with responsive encoding only, no crop, recoloring or upscale; NVDA US_STOCK presentation only, no publication, availability, mining state, economic or PRODUCT COMPLETE approval."
+    },
+    {
+      "path": "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-dark-portrait-1024.webp",
+      "bytes": 1782800,
+      "sha256": "6594a461b84ebd2e6a37f45018f2d42390016add01369c90a20c4ab3fbe082da",
+      "mimeType": "image/webp",
+      "alt": "짙은 서버실의 GPU 연산 장치와 푸른 원형 추출 장치",
+      "width": 1024,
+      "height": 1536,
+      "theme": "dark",
+      "assetVersion": "2026.10.07-product-nvda-gpu-v1",
+      "sourceMaster": "docs/design/generated-masters/product-nvda-gpu-2026-10-07/product-nvda-gpu-v1-dark-portrait-master.png",
+      "sourceSha256": "0cf2635fdd6637757c5a56d90c27cb2b9e7b6c925a66da332f36e268f4fd300d",
+      "reviewScope": "Owner-delegated V7 native GPT visual selection: reviewed NVDA GPU computation scene, four independent dark/light portrait/landscape originals; full composition with responsive encoding only, no crop, recoloring or upscale; NVDA US_STOCK presentation only, no publication, availability, mining state, economic or PRODUCT COMPLETE approval."
+    },
+    {
+      "path": "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-dark-landscape-640.avif",
+      "bytes": 88696,
+      "sha256": "5eea60309058cfc35e82ca70824dd7552079323ce565e05fd1abad4abede999c",
+      "mimeType": "image/avif",
+      "alt": "짙은 서버실의 GPU 연산 장치와 푸른 원형 추출 장치",
+      "width": 640,
+      "height": 360,
+      "theme": "dark",
+      "assetVersion": "2026.10.07-product-nvda-gpu-v1",
+      "sourceMaster": "docs/design/generated-masters/product-nvda-gpu-2026-10-07/product-nvda-gpu-v1-dark-landscape-master.png",
+      "sourceSha256": "b20cc60947fdddf7d8f02733658d9f0fabdce786ea5f9614ce1694e44d1fe3f1",
+      "reviewScope": "Owner-delegated V7 native GPT visual selection: reviewed NVDA GPU computation scene, four independent dark/light portrait/landscape originals; full composition with responsive encoding only, no crop, recoloring or upscale; NVDA US_STOCK presentation only, no publication, availability, mining state, economic or PRODUCT COMPLETE approval."
+    },
+    {
+      "path": "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-dark-landscape-640.webp",
+      "bytes": 343848,
+      "sha256": "47396157a3608e56efeb35d36ebab8b136b49483bee2dd56ccc9f1ca604b5a71",
+      "mimeType": "image/webp",
+      "alt": "짙은 서버실의 GPU 연산 장치와 푸른 원형 추출 장치",
+      "width": 640,
+      "height": 360,
+      "theme": "dark",
+      "assetVersion": "2026.10.07-product-nvda-gpu-v1",
+      "sourceMaster": "docs/design/generated-masters/product-nvda-gpu-2026-10-07/product-nvda-gpu-v1-dark-landscape-master.png",
+      "sourceSha256": "b20cc60947fdddf7d8f02733658d9f0fabdce786ea5f9614ce1694e44d1fe3f1",
+      "reviewScope": "Owner-delegated V7 native GPT visual selection: reviewed NVDA GPU computation scene, four independent dark/light portrait/landscape originals; full composition with responsive encoding only, no crop, recoloring or upscale; NVDA US_STOCK presentation only, no publication, availability, mining state, economic or PRODUCT COMPLETE approval."
+    },
+    {
+      "path": "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-dark-landscape-960.avif",
+      "bytes": 165256,
+      "sha256": "b71e98b2b9ad8f0bc450536714552aaa4287705a42b095382a051b544d452aa4",
+      "mimeType": "image/avif",
+      "alt": "짙은 서버실의 GPU 연산 장치와 푸른 원형 추출 장치",
+      "width": 960,
+      "height": 540,
+      "theme": "dark",
+      "assetVersion": "2026.10.07-product-nvda-gpu-v1",
+      "sourceMaster": "docs/design/generated-masters/product-nvda-gpu-2026-10-07/product-nvda-gpu-v1-dark-landscape-master.png",
+      "sourceSha256": "b20cc60947fdddf7d8f02733658d9f0fabdce786ea5f9614ce1694e44d1fe3f1",
+      "reviewScope": "Owner-delegated V7 native GPT visual selection: reviewed NVDA GPU computation scene, four independent dark/light portrait/landscape originals; full composition with responsive encoding only, no crop, recoloring or upscale; NVDA US_STOCK presentation only, no publication, availability, mining state, economic or PRODUCT COMPLETE approval."
+    },
+    {
+      "path": "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-dark-landscape-960.webp",
+      "bytes": 716616,
+      "sha256": "6091adc4d30af75852797ae63d16e39d7d178c2b475a649f2cef78e9d2e0c70c",
+      "mimeType": "image/webp",
+      "alt": "짙은 서버실의 GPU 연산 장치와 푸른 원형 추출 장치",
+      "width": 960,
+      "height": 540,
+      "theme": "dark",
+      "assetVersion": "2026.10.07-product-nvda-gpu-v1",
+      "sourceMaster": "docs/design/generated-masters/product-nvda-gpu-2026-10-07/product-nvda-gpu-v1-dark-landscape-master.png",
+      "sourceSha256": "b20cc60947fdddf7d8f02733658d9f0fabdce786ea5f9614ce1694e44d1fe3f1",
+      "reviewScope": "Owner-delegated V7 native GPT visual selection: reviewed NVDA GPU computation scene, four independent dark/light portrait/landscape originals; full composition with responsive encoding only, no crop, recoloring or upscale; NVDA US_STOCK presentation only, no publication, availability, mining state, economic or PRODUCT COMPLETE approval."
+    },
+    {
+      "path": "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-dark-landscape-1280.avif",
+      "bytes": 245867,
+      "sha256": "943d0aea07bc8a6ed0c95fecd98a69dad2b45af4627e638497b13fb9afabd29c",
+      "mimeType": "image/avif",
+      "alt": "짙은 서버실의 GPU 연산 장치와 푸른 원형 추출 장치",
+      "width": 1280,
+      "height": 720,
+      "theme": "dark",
+      "assetVersion": "2026.10.07-product-nvda-gpu-v1",
+      "sourceMaster": "docs/design/generated-masters/product-nvda-gpu-2026-10-07/product-nvda-gpu-v1-dark-landscape-master.png",
+      "sourceSha256": "b20cc60947fdddf7d8f02733658d9f0fabdce786ea5f9614ce1694e44d1fe3f1",
+      "reviewScope": "Owner-delegated V7 native GPT visual selection: reviewed NVDA GPU computation scene, four independent dark/light portrait/landscape originals; full composition with responsive encoding only, no crop, recoloring or upscale; NVDA US_STOCK presentation only, no publication, availability, mining state, economic or PRODUCT COMPLETE approval."
+    },
+    {
+      "path": "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-dark-landscape-1280.webp",
+      "bytes": 1208460,
+      "sha256": "c7f13c16af3a0e39070c57ac288e7ef59a7c708b58f7e3419bbffb30841abac8",
+      "mimeType": "image/webp",
+      "alt": "짙은 서버실의 GPU 연산 장치와 푸른 원형 추출 장치",
+      "width": 1280,
+      "height": 720,
+      "theme": "dark",
+      "assetVersion": "2026.10.07-product-nvda-gpu-v1",
+      "sourceMaster": "docs/design/generated-masters/product-nvda-gpu-2026-10-07/product-nvda-gpu-v1-dark-landscape-master.png",
+      "sourceSha256": "b20cc60947fdddf7d8f02733658d9f0fabdce786ea5f9614ce1694e44d1fe3f1",
+      "reviewScope": "Owner-delegated V7 native GPT visual selection: reviewed NVDA GPU computation scene, four independent dark/light portrait/landscape originals; full composition with responsive encoding only, no crop, recoloring or upscale; NVDA US_STOCK presentation only, no publication, availability, mining state, economic or PRODUCT COMPLETE approval."
+    },
+    {
+      "path": "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-dark-landscape-1672.avif",
+      "bytes": 347087,
+      "sha256": "194cea3275f72fe122dd0b312aecc3cafdb364b3c1dfa502c697b8c0c196d2bb",
+      "mimeType": "image/avif",
+      "alt": "짙은 서버실의 GPU 연산 장치와 푸른 원형 추출 장치",
+      "width": 1672,
+      "height": 941,
+      "theme": "dark",
+      "assetVersion": "2026.10.07-product-nvda-gpu-v1",
+      "sourceMaster": "docs/design/generated-masters/product-nvda-gpu-2026-10-07/product-nvda-gpu-v1-dark-landscape-master.png",
+      "sourceSha256": "b20cc60947fdddf7d8f02733658d9f0fabdce786ea5f9614ce1694e44d1fe3f1",
+      "reviewScope": "Owner-delegated V7 native GPT visual selection: reviewed NVDA GPU computation scene, four independent dark/light portrait/landscape originals; full composition with responsive encoding only, no crop, recoloring or upscale; NVDA US_STOCK presentation only, no publication, availability, mining state, economic or PRODUCT COMPLETE approval."
+    },
+    {
+      "path": "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-dark-landscape-1672.webp",
+      "bytes": 1895718,
+      "sha256": "a8c6c274a99690e5f747886254da3f2daa762663de98703fc2e71e8ad5d2154a",
+      "mimeType": "image/webp",
+      "alt": "짙은 서버실의 GPU 연산 장치와 푸른 원형 추출 장치",
+      "width": 1672,
+      "height": 941,
+      "theme": "dark",
+      "assetVersion": "2026.10.07-product-nvda-gpu-v1",
+      "sourceMaster": "docs/design/generated-masters/product-nvda-gpu-2026-10-07/product-nvda-gpu-v1-dark-landscape-master.png",
+      "sourceSha256": "b20cc60947fdddf7d8f02733658d9f0fabdce786ea5f9614ce1694e44d1fe3f1",
+      "reviewScope": "Owner-delegated V7 native GPT visual selection: reviewed NVDA GPU computation scene, four independent dark/light portrait/landscape originals; full composition with responsive encoding only, no crop, recoloring or upscale; NVDA US_STOCK presentation only, no publication, availability, mining state, economic or PRODUCT COMPLETE approval."
+    },
+    {
+      "path": "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-light-portrait-480.avif",
+      "bytes": 121606,
+      "sha256": "5f25126c6225f1c32823a3100946fff93d7366ce2e7eeb0fb199ef5741c243f9",
+      "mimeType": "image/avif",
+      "alt": "밝은 서버실의 GPU 연산 장치와 푸른 원형 추출 장치",
+      "width": 480,
+      "height": 720,
+      "theme": "light",
+      "assetVersion": "2026.10.07-product-nvda-gpu-v1",
+      "sourceMaster": "docs/design/generated-masters/product-nvda-gpu-2026-10-07/product-nvda-gpu-v1-light-portrait-master.png",
+      "sourceSha256": "56638dce5ebe61b38c21da4249e3474e5a62a7d17f32cb885d945c8ee41a1115",
+      "reviewScope": "Owner-delegated V7 native GPT visual selection: reviewed NVDA GPU computation scene, four independent dark/light portrait/landscape originals; full composition with responsive encoding only, no crop, recoloring or upscale; NVDA US_STOCK presentation only, no publication, availability, mining state, economic or PRODUCT COMPLETE approval."
+    },
+    {
+      "path": "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-light-portrait-480.webp",
+      "bytes": 504934,
+      "sha256": "0b0b8fa5edc093db2070c343c06b20f97f0efa4124ea38528d4ead45fa397681",
+      "mimeType": "image/webp",
+      "alt": "밝은 서버실의 GPU 연산 장치와 푸른 원형 추출 장치",
+      "width": 480,
+      "height": 720,
+      "theme": "light",
+      "assetVersion": "2026.10.07-product-nvda-gpu-v1",
+      "sourceMaster": "docs/design/generated-masters/product-nvda-gpu-2026-10-07/product-nvda-gpu-v1-light-portrait-master.png",
+      "sourceSha256": "56638dce5ebe61b38c21da4249e3474e5a62a7d17f32cb885d945c8ee41a1115",
+      "reviewScope": "Owner-delegated V7 native GPT visual selection: reviewed NVDA GPU computation scene, four independent dark/light portrait/landscape originals; full composition with responsive encoding only, no crop, recoloring or upscale; NVDA US_STOCK presentation only, no publication, availability, mining state, economic or PRODUCT COMPLETE approval."
+    },
+    {
+      "path": "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-light-portrait-640.avif",
+      "bytes": 186073,
+      "sha256": "0f1ece0ce39ba8a70a8895743b621e8d63f1c1baab7bee387f1deda759182814",
+      "mimeType": "image/avif",
+      "alt": "밝은 서버실의 GPU 연산 장치와 푸른 원형 추출 장치",
+      "width": 640,
+      "height": 960,
+      "theme": "light",
+      "assetVersion": "2026.10.07-product-nvda-gpu-v1",
+      "sourceMaster": "docs/design/generated-masters/product-nvda-gpu-2026-10-07/product-nvda-gpu-v1-light-portrait-master.png",
+      "sourceSha256": "56638dce5ebe61b38c21da4249e3474e5a62a7d17f32cb885d945c8ee41a1115",
+      "reviewScope": "Owner-delegated V7 native GPT visual selection: reviewed NVDA GPU computation scene, four independent dark/light portrait/landscape originals; full composition with responsive encoding only, no crop, recoloring or upscale; NVDA US_STOCK presentation only, no publication, availability, mining state, economic or PRODUCT COMPLETE approval."
+    },
+    {
+      "path": "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-light-portrait-640.webp",
+      "bytes": 837082,
+      "sha256": "94c68ffb344442bae4b1f1f2cd200fb0f790d32d0363e92da73d23b6aa1b6876",
+      "mimeType": "image/webp",
+      "alt": "밝은 서버실의 GPU 연산 장치와 푸른 원형 추출 장치",
+      "width": 640,
+      "height": 960,
+      "theme": "light",
+      "assetVersion": "2026.10.07-product-nvda-gpu-v1",
+      "sourceMaster": "docs/design/generated-masters/product-nvda-gpu-2026-10-07/product-nvda-gpu-v1-light-portrait-master.png",
+      "sourceSha256": "56638dce5ebe61b38c21da4249e3474e5a62a7d17f32cb885d945c8ee41a1115",
+      "reviewScope": "Owner-delegated V7 native GPT visual selection: reviewed NVDA GPU computation scene, four independent dark/light portrait/landscape originals; full composition with responsive encoding only, no crop, recoloring or upscale; NVDA US_STOCK presentation only, no publication, availability, mining state, economic or PRODUCT COMPLETE approval."
+    },
+    {
+      "path": "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-light-portrait-960.avif",
+      "bytes": 312605,
+      "sha256": "d6e85bbabb6f195e60ffe8bcfbdae4b77ebd4474b8334fcceacf2f4e78590b77",
+      "mimeType": "image/avif",
+      "alt": "밝은 서버실의 GPU 연산 장치와 푸른 원형 추출 장치",
+      "width": 960,
+      "height": 1440,
+      "theme": "light",
+      "assetVersion": "2026.10.07-product-nvda-gpu-v1",
+      "sourceMaster": "docs/design/generated-masters/product-nvda-gpu-2026-10-07/product-nvda-gpu-v1-light-portrait-master.png",
+      "sourceSha256": "56638dce5ebe61b38c21da4249e3474e5a62a7d17f32cb885d945c8ee41a1115",
+      "reviewScope": "Owner-delegated V7 native GPT visual selection: reviewed NVDA GPU computation scene, four independent dark/light portrait/landscape originals; full composition with responsive encoding only, no crop, recoloring or upscale; NVDA US_STOCK presentation only, no publication, availability, mining state, economic or PRODUCT COMPLETE approval."
+    },
+    {
+      "path": "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-light-portrait-960.webp",
+      "bytes": 1732892,
+      "sha256": "e31a9de2b26c4ddae9ff99b0b8f8ebbb167bb7194f07844394026e6a7affe1e9",
+      "mimeType": "image/webp",
+      "alt": "밝은 서버실의 GPU 연산 장치와 푸른 원형 추출 장치",
+      "width": 960,
+      "height": 1440,
+      "theme": "light",
+      "assetVersion": "2026.10.07-product-nvda-gpu-v1",
+      "sourceMaster": "docs/design/generated-masters/product-nvda-gpu-2026-10-07/product-nvda-gpu-v1-light-portrait-master.png",
+      "sourceSha256": "56638dce5ebe61b38c21da4249e3474e5a62a7d17f32cb885d945c8ee41a1115",
+      "reviewScope": "Owner-delegated V7 native GPT visual selection: reviewed NVDA GPU computation scene, four independent dark/light portrait/landscape originals; full composition with responsive encoding only, no crop, recoloring or upscale; NVDA US_STOCK presentation only, no publication, availability, mining state, economic or PRODUCT COMPLETE approval."
+    },
+    {
+      "path": "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-light-portrait-1024.avif",
+      "bytes": 342532,
+      "sha256": "4470ddc019c6e45a8560991dd9e954b8a297554c0ea136f4343a3931d0b805e8",
+      "mimeType": "image/avif",
+      "alt": "밝은 서버실의 GPU 연산 장치와 푸른 원형 추출 장치",
+      "width": 1024,
+      "height": 1536,
+      "theme": "light",
+      "assetVersion": "2026.10.07-product-nvda-gpu-v1",
+      "sourceMaster": "docs/design/generated-masters/product-nvda-gpu-2026-10-07/product-nvda-gpu-v1-light-portrait-master.png",
+      "sourceSha256": "56638dce5ebe61b38c21da4249e3474e5a62a7d17f32cb885d945c8ee41a1115",
+      "reviewScope": "Owner-delegated V7 native GPT visual selection: reviewed NVDA GPU computation scene, four independent dark/light portrait/landscape originals; full composition with responsive encoding only, no crop, recoloring or upscale; NVDA US_STOCK presentation only, no publication, availability, mining state, economic or PRODUCT COMPLETE approval."
+    },
+    {
+      "path": "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-light-portrait-1024.webp",
+      "bytes": 1871396,
+      "sha256": "60411735b718179fbfe3f90874964624dffffb0233b1a6a6ee45d7b621ab0a14",
+      "mimeType": "image/webp",
+      "alt": "밝은 서버실의 GPU 연산 장치와 푸른 원형 추출 장치",
+      "width": 1024,
+      "height": 1536,
+      "theme": "light",
+      "assetVersion": "2026.10.07-product-nvda-gpu-v1",
+      "sourceMaster": "docs/design/generated-masters/product-nvda-gpu-2026-10-07/product-nvda-gpu-v1-light-portrait-master.png",
+      "sourceSha256": "56638dce5ebe61b38c21da4249e3474e5a62a7d17f32cb885d945c8ee41a1115",
+      "reviewScope": "Owner-delegated V7 native GPT visual selection: reviewed NVDA GPU computation scene, four independent dark/light portrait/landscape originals; full composition with responsive encoding only, no crop, recoloring or upscale; NVDA US_STOCK presentation only, no publication, availability, mining state, economic or PRODUCT COMPLETE approval."
+    },
+    {
+      "path": "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-light-landscape-640.avif",
+      "bytes": 100948,
+      "sha256": "2cd0d8b580196888a9788d4a67d4e1c9a3f23ed8217598458f37a2c36cb1170d",
+      "mimeType": "image/avif",
+      "alt": "밝은 서버실의 GPU 연산 장치와 푸른 원형 추출 장치",
+      "width": 640,
+      "height": 360,
+      "theme": "light",
+      "assetVersion": "2026.10.07-product-nvda-gpu-v1",
+      "sourceMaster": "docs/design/generated-masters/product-nvda-gpu-2026-10-07/product-nvda-gpu-v1-light-landscape-master.png",
+      "sourceSha256": "abfc46f87a1822c5e705b527432da85d638bd500379f7a6fccf282e66392c736",
+      "reviewScope": "Owner-delegated V7 native GPT visual selection: reviewed NVDA GPU computation scene, four independent dark/light portrait/landscape originals; full composition with responsive encoding only, no crop, recoloring or upscale; NVDA US_STOCK presentation only, no publication, availability, mining state, economic or PRODUCT COMPLETE approval."
+    },
+    {
+      "path": "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-light-landscape-640.webp",
+      "bytes": 371712,
+      "sha256": "d7ca558ead95315b91ccbc11d3150852df21f4030f65360897240d7796e5acc6",
+      "mimeType": "image/webp",
+      "alt": "밝은 서버실의 GPU 연산 장치와 푸른 원형 추출 장치",
+      "width": 640,
+      "height": 360,
+      "theme": "light",
+      "assetVersion": "2026.10.07-product-nvda-gpu-v1",
+      "sourceMaster": "docs/design/generated-masters/product-nvda-gpu-2026-10-07/product-nvda-gpu-v1-light-landscape-master.png",
+      "sourceSha256": "abfc46f87a1822c5e705b527432da85d638bd500379f7a6fccf282e66392c736",
+      "reviewScope": "Owner-delegated V7 native GPT visual selection: reviewed NVDA GPU computation scene, four independent dark/light portrait/landscape originals; full composition with responsive encoding only, no crop, recoloring or upscale; NVDA US_STOCK presentation only, no publication, availability, mining state, economic or PRODUCT COMPLETE approval."
+    },
+    {
+      "path": "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-light-landscape-960.avif",
+      "bytes": 186749,
+      "sha256": "f963573be5f669e1bca1246eebaaf9c8a099f6b43d3c01fec974e6977225b378",
+      "mimeType": "image/avif",
+      "alt": "밝은 서버실의 GPU 연산 장치와 푸른 원형 추출 장치",
+      "width": 960,
+      "height": 540,
+      "theme": "light",
+      "assetVersion": "2026.10.07-product-nvda-gpu-v1",
+      "sourceMaster": "docs/design/generated-masters/product-nvda-gpu-2026-10-07/product-nvda-gpu-v1-light-landscape-master.png",
+      "sourceSha256": "abfc46f87a1822c5e705b527432da85d638bd500379f7a6fccf282e66392c736",
+      "reviewScope": "Owner-delegated V7 native GPT visual selection: reviewed NVDA GPU computation scene, four independent dark/light portrait/landscape originals; full composition with responsive encoding only, no crop, recoloring or upscale; NVDA US_STOCK presentation only, no publication, availability, mining state, economic or PRODUCT COMPLETE approval."
+    },
+    {
+      "path": "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-light-landscape-960.webp",
+      "bytes": 767422,
+      "sha256": "438f001f6207e88fbe99b1f78af321cc7cad27d84d0d6c8319248e66582350b9",
+      "mimeType": "image/webp",
+      "alt": "밝은 서버실의 GPU 연산 장치와 푸른 원형 추출 장치",
+      "width": 960,
+      "height": 540,
+      "theme": "light",
+      "assetVersion": "2026.10.07-product-nvda-gpu-v1",
+      "sourceMaster": "docs/design/generated-masters/product-nvda-gpu-2026-10-07/product-nvda-gpu-v1-light-landscape-master.png",
+      "sourceSha256": "abfc46f87a1822c5e705b527432da85d638bd500379f7a6fccf282e66392c736",
+      "reviewScope": "Owner-delegated V7 native GPT visual selection: reviewed NVDA GPU computation scene, four independent dark/light portrait/landscape originals; full composition with responsive encoding only, no crop, recoloring or upscale; NVDA US_STOCK presentation only, no publication, availability, mining state, economic or PRODUCT COMPLETE approval."
+    },
+    {
+      "path": "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-light-landscape-1280.avif",
+      "bytes": 272604,
+      "sha256": "69561768c0d5ca443f41e4c770e17b6a811520e185b6fb5ede049708daf0f740",
+      "mimeType": "image/avif",
+      "alt": "밝은 서버실의 GPU 연산 장치와 푸른 원형 추출 장치",
+      "width": 1280,
+      "height": 720,
+      "theme": "light",
+      "assetVersion": "2026.10.07-product-nvda-gpu-v1",
+      "sourceMaster": "docs/design/generated-masters/product-nvda-gpu-2026-10-07/product-nvda-gpu-v1-light-landscape-master.png",
+      "sourceSha256": "abfc46f87a1822c5e705b527432da85d638bd500379f7a6fccf282e66392c736",
+      "reviewScope": "Owner-delegated V7 native GPT visual selection: reviewed NVDA GPU computation scene, four independent dark/light portrait/landscape originals; full composition with responsive encoding only, no crop, recoloring or upscale; NVDA US_STOCK presentation only, no publication, availability, mining state, economic or PRODUCT COMPLETE approval."
+    },
+    {
+      "path": "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-light-landscape-1280.webp",
+      "bytes": 1287228,
+      "sha256": "39ab0972180e6a1eaa2ae0b3843c56080d3b9d2aff13e5a2e3314c8601711376",
+      "mimeType": "image/webp",
+      "alt": "밝은 서버실의 GPU 연산 장치와 푸른 원형 추출 장치",
+      "width": 1280,
+      "height": 720,
+      "theme": "light",
+      "assetVersion": "2026.10.07-product-nvda-gpu-v1",
+      "sourceMaster": "docs/design/generated-masters/product-nvda-gpu-2026-10-07/product-nvda-gpu-v1-light-landscape-master.png",
+      "sourceSha256": "abfc46f87a1822c5e705b527432da85d638bd500379f7a6fccf282e66392c736",
+      "reviewScope": "Owner-delegated V7 native GPT visual selection: reviewed NVDA GPU computation scene, four independent dark/light portrait/landscape originals; full composition with responsive encoding only, no crop, recoloring or upscale; NVDA US_STOCK presentation only, no publication, availability, mining state, economic or PRODUCT COMPLETE approval."
+    },
+    {
+      "path": "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-light-landscape-1672.avif",
+      "bytes": 378112,
+      "sha256": "8a9228d2996373267a16c71430ba51bb66d662d0ef49726f2d9fd8ab68f1d9e8",
+      "mimeType": "image/avif",
+      "alt": "밝은 서버실의 GPU 연산 장치와 푸른 원형 추출 장치",
+      "width": 1672,
+      "height": 941,
+      "theme": "light",
+      "assetVersion": "2026.10.07-product-nvda-gpu-v1",
+      "sourceMaster": "docs/design/generated-masters/product-nvda-gpu-2026-10-07/product-nvda-gpu-v1-light-landscape-master.png",
+      "sourceSha256": "abfc46f87a1822c5e705b527432da85d638bd500379f7a6fccf282e66392c736",
+      "reviewScope": "Owner-delegated V7 native GPT visual selection: reviewed NVDA GPU computation scene, four independent dark/light portrait/landscape originals; full composition with responsive encoding only, no crop, recoloring or upscale; NVDA US_STOCK presentation only, no publication, availability, mining state, economic or PRODUCT COMPLETE approval."
+    },
+    {
+      "path": "/brand/scenes/product-nvda-gpu-v1/product-nvda-gpu-v1-light-landscape-1672.webp",
+      "bytes": 2032520,
+      "sha256": "18888eea1ffbe22a523a609ad0533c1cd54535f5b092f6821493ed031529562c",
+      "mimeType": "image/webp",
+      "alt": "밝은 서버실의 GPU 연산 장치와 푸른 원형 추출 장치",
+      "width": 1672,
+      "height": 941,
+      "theme": "light",
+      "assetVersion": "2026.10.07-product-nvda-gpu-v1",
+      "sourceMaster": "docs/design/generated-masters/product-nvda-gpu-2026-10-07/product-nvda-gpu-v1-light-landscape-master.png",
+      "sourceSha256": "abfc46f87a1822c5e705b527432da85d638bd500379f7a6fccf282e66392c736",
+      "reviewScope": "Owner-delegated V7 native GPT visual selection: reviewed NVDA GPU computation scene, four independent dark/light portrait/landscape originals; full composition with responsive encoding only, no crop, recoloring or upscale; NVDA US_STOCK presentation only, no publication, availability, mining state, economic or PRODUCT COMPLETE approval."
+    }
+  ]
+}

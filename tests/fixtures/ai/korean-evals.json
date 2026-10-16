@@ -9,8 +9,9 @@
   {
     "category": "mining_language",
     "question": "채굴은 어떻게 되나요?",
-    "expectedKind": "low_cost",
-    "expectedClassification": "PUTDUK_KNOWLEDGE",
+    "expectedKind": "static",
+    "expectedClassification": "STATIC_FACT",
+    "expectedRouteKey": "member_help_mining",
     "expectedUserAnswer": "앱을 닫아도 채굴은 계속돼요. 다시 접속하면 결과를 확인할 수 있어요."
   },
   {

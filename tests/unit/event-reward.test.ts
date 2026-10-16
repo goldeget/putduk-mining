@@ -27,6 +27,18 @@ const input = {
 };
 
 describe("evaluateEventReward", () => {
+  it("does not mint the same reward again after an operator rule revision", () => {
+    expect(
+      evaluateEventReward({
+        ...input,
+        claimedIdempotencyKeys: new Set([
+          "event-reward:autumn-1:three-missions:member-1",
+        ]),
+        rule: { ...rule, ruleVersion: 2 },
+      }),
+    ).toEqual({ outcome: "INELIGIBLE", reason: "ALREADY_CLAIMED" });
+  });
+
   it.each(["activeFrom", "activeUntil", "occurredAt"] as const)(
     "rejects an unknown %s instead of bypassing the schedule",
     (field) => {
@@ -39,13 +51,14 @@ describe("evaluateEventReward", () => {
   );
   it("produces a deterministic versioned qualification snapshot", () => {
     expect(evaluateEventReward(input)).toEqual({
-      idempotencyKey: "event-reward:autumn-1:three-missions:member-1:v1",
+      idempotencyKey: "event-reward:autumn-1:three-missions:member-1",
       outcome: "REWARD",
       qualificationSnapshot: {
         kycApproved: true,
         missionsCompleted: 3n,
       },
       rewardKrw: 5_000n,
+      ruleVersion: 1,
     });
   });
 
@@ -63,7 +76,7 @@ describe("evaluateEventReward", () => {
       evaluateEventReward({
         ...input,
         claimedIdempotencyKeys: new Set([
-          "event-reward:autumn-1:three-missions:member-1:v1",
+          "event-reward:autumn-1:three-missions:member-1",
         ]),
       }),
     ).toEqual({ outcome: "INELIGIBLE", reason: "ALREADY_CLAIMED" });

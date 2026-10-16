@@ -96,7 +96,9 @@ export function isMemberVisibleEvent(
   if (!event.published_at) {
     return false;
   }
-  if (event.published_at > nowIso) {
+  const now = Date.parse(nowIso);
+  const published = Date.parse(event.published_at);
+  if (!Number.isFinite(now) || !Number.isFinite(published) || published > now) {
     return false;
   }
   return (MEMBER_VISIBLE_EVENT_STATUSES as readonly string[]).includes(
@@ -111,11 +113,14 @@ export function isMemberVisibleNotice(
   if (notice.status !== "PUBLISHED" || !notice.published_at) {
     return false;
   }
-  if (notice.published_at > nowIso) {
+  const now = Date.parse(nowIso);
+  const published = Date.parse(notice.published_at);
+  if (!Number.isFinite(now) || !Number.isFinite(published) || published > now) {
     return false;
   }
-  if (notice.expires_at !== null && notice.expires_at <= nowIso) {
-    return false;
+  if (notice.expires_at !== null) {
+    const expires = Date.parse(notice.expires_at);
+    if (!Number.isFinite(expires) || expires <= now) return false;
   }
   return true;
 }
@@ -143,7 +148,7 @@ export function sortMemberNotices(
     }
     const leftPublished = left.published_at ?? "";
     const rightPublished = right.published_at ?? "";
-    return rightPublished.localeCompare(leftPublished);
+    return (Date.parse(rightPublished) || 0) - (Date.parse(leftPublished) || 0);
   });
 }
 

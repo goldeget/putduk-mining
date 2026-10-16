@@ -1,0 +1,819 @@
+.page {
+  --deposit-glass: color-mix(
+    in srgb,
+    var(--surface-sunken) 94%,
+    var(--world-usa)
+  );
+  --deposit-edge: color-mix(
+    in srgb,
+    var(--world-silver) 35%,
+    var(--border-strong)
+  );
+  display: grid;
+  gap: 1.25rem;
+  min-inline-size: 0;
+  color: var(--text-primary);
+}
+.back {
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
+  gap: 0.5rem;
+  min-block-size: 2.75rem;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  text-decoration: none;
+}
+.back > span {
+  font-size: 1.5rem;
+  color: var(--brand-primary);
+}
+.hero {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  gap: 1.4rem;
+  padding: 1.6rem 1.25rem 1.2rem;
+  min-block-size: 17rem;
+  border: 1px solid var(--deposit-edge);
+  border-radius: 1.3rem;
+  overflow: hidden;
+}
+.scene {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: var(--background-canvas);
+}
+.scene [data-wallet-decoration="native-scene"] img {
+  object-fit: cover;
+  object-position: center 35%;
+}
+.shade {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--background-canvas) 88%, transparent),
+      color-mix(in srgb, var(--background-canvas) 12%, transparent)
+    ),
+    linear-gradient(0deg, var(--background-canvas), transparent 40%);
+}
+.heroCopy {
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr);
+  gap: 0.6rem 0.65rem;
+  align-content: start;
+}
+.heroSymbol {
+  grid-row: span 2;
+  display: grid;
+  place-items: center;
+  inline-size: 2rem;
+  block-size: 2.4rem;
+  color: var(--brand-mineral);
+}
+.heroSymbol svg {
+  inline-size: 2rem;
+  block-size: 2rem;
+}
+.heroCopy h1 {
+  margin: 0;
+  font-size: 1.9rem;
+  line-height: 1.2;
+  letter-spacing: -0.05em;
+}
+.heroCopy > p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.75;
+  word-break: keep-all;
+}
+.optional {
+  display: flex;
+  gap: 0.65rem;
+  align-items: start;
+  padding: 0.75rem 0.85rem;
+  align-self: end;
+  max-inline-size: 23rem;
+  border: 1px solid var(--deposit-edge);
+  border-radius: 0.85rem;
+  background: color-mix(in srgb, var(--deposit-glass) 94%, transparent);
+}
+.optional svg {
+  flex: none;
+  inline-size: 1.3rem;
+  block-size: 1.3rem;
+  color: var(--brand-primary);
+}
+.optional p {
+  margin: 0;
+  font-size: 0.8125rem;
+  line-height: 1.65;
+  word-break: keep-all;
+}
+.workspace {
+  display: grid;
+  gap: 1rem;
+  min-inline-size: 0;
+}
+.methods {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+.methods label {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-block-size: 5rem;
+  min-inline-size: 0;
+  padding: 0.85rem 0.7rem;
+  border: 1px solid var(--deposit-edge);
+  border-radius: 1rem;
+  background: var(--deposit-glass);
+  cursor: pointer;
+}
+.methods label > input {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  clip-path: inset(50%);
+  overflow: hidden;
+}
+.methods label > span:has(strong) {
+  display: grid;
+  gap: 0.35rem;
+  min-inline-size: 0;
+}
+.methods strong {
+  font-size: 0.9375rem;
+  line-height: 1.45;
+  word-break: keep-all;
+}
+.methods small {
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  word-break: keep-all;
+}
+.methodIcon {
+  flex: none;
+  inline-size: 1.6rem;
+  block-size: 1.6rem;
+  color: var(--world-silver);
+}
+.methodIcon svg {
+  inline-size: 100%;
+  block-size: 100%;
+}
+.selection {
+  display: none;
+  flex: none;
+  inline-size: 0.7rem;
+  block-size: 0.7rem;
+  margin-inline-start: auto;
+  border: 1px solid var(--brand-primary);
+  border-radius: 50%;
+  background: var(--brand-primary);
+  box-shadow: inset 0 0 0 2px var(--surface-sunken);
+}
+.methods label:has(input:checked) {
+  border-color: var(--brand-primary);
+  background: linear-gradient(
+    120deg,
+    color-mix(in srgb, var(--brand-primary) 15%, var(--deposit-glass)),
+    var(--deposit-glass)
+  );
+  box-shadow:
+    inset 0 1px 0 var(--border-strong),
+    0 1px 6px color-mix(in srgb, var(--brand-primary) 20%, transparent);
+}
+.methods label:has(input:checked) .selection {
+  display: block;
+}
+.methods label:has(input:checked) .methodIcon {
+  color: var(--brand-primary);
+}
+.methods label:has(input:focus-visible),
+.page a:focus-visible {
+  outline: 2px solid var(--brand-primary);
+  outline-offset: 4px;
+}
+.formLayout {
+  display: grid;
+  gap: 1rem;
+  min-inline-size: 0;
+}
+.formPanel {
+  padding: 1.15rem;
+  min-inline-size: 0;
+  border: 1px solid var(--deposit-edge);
+  border-radius: 1.15rem;
+  background:
+    linear-gradient(
+      125deg,
+      color-mix(in srgb, var(--world-silver) 6%, transparent),
+      transparent 45%
+    ),
+    var(--deposit-glass);
+  box-shadow: inset 0 1px 1px var(--border-subtle);
+}
+.usdt {
+  display: none;
+}
+.workspace:has(input[name="wallet-deposit-method"][value="usdt"]:checked)
+  .bank {
+  display: none;
+}
+.workspace:has(input[name="wallet-deposit-method"][value="usdt"]:checked)
+  .usdt {
+  display: block;
+}
+.formPanel form {
+  display: grid;
+  gap: 1.1rem;
+  min-inline-size: 0;
+}
+.formPanel form > header {
+  display: flex;
+  align-items: start;
+  gap: 0.8rem;
+  padding-block-end: 1.1rem;
+  margin: 0;
+  border-block-end: 1px solid var(--deposit-edge);
+}
+.formPanel form > header > span:first-child {
+  display: grid;
+  place-items: center;
+  flex: none;
+  padding: 0.4rem;
+  min-inline-size: 2.65rem;
+  min-block-size: 2.65rem;
+  border: 1px solid var(--brand-primary);
+  border-radius: 0.7rem;
+  background: var(--surface-interactive);
+  color: var(--brand-primary);
+  font-size: 0.75rem;
+  font-weight: 750;
+}
+.formPanel h2 {
+  font-size: 1.15rem;
+  line-height: 1.4;
+  letter-spacing: -0.03em;
+  margin: 0;
+}
+.formPanel header p {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.6;
+  margin: 0.4rem 0 0;
+  max-inline-size: 30rem;
+  word-break: keep-all;
+}
+.formPanel label {
+  display: grid;
+  gap: 0.6rem;
+  min-inline-size: 0;
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+.formPanel label > span:has(input) {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  border: 1px solid var(--border-control);
+  border-radius: 0.8rem;
+  padding-inline: 0.9rem;
+  background: var(--surface-sunken);
+}
+.formPanel input,
+.formPanel select {
+  inline-size: 100%;
+  min-inline-size: 0;
+  min-block-size: 3.1rem;
+  border: 1px solid var(--border-control);
+  border-radius: 0.8rem;
+  padding: 0.8rem 0.9rem;
+  background: var(--surface-sunken);
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 1rem;
+}
+.formPanel label > span > input {
+  padding-inline: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  font-size: 1.6rem;
+  font-variant-numeric: tabular-nums;
+}
+.formPanel label > span > strong {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+.formPanel input:focus-visible,
+.formPanel select:focus-visible,
+.formPanel button:focus-visible {
+  outline: 2px solid var(--brand-primary);
+  outline-offset: 3px;
+}
+.formPanel input[aria-invalid="true"] {
+  border-color: var(--status-danger);
+}
+.formPanel input:disabled,
+.formPanel select:disabled {
+  color: var(--text-secondary);
+  cursor: not-allowed;
+}
+.formPanel form > div[aria-label="빠른 금액 선택"] {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.4rem;
+}
+.formPanel form > div[aria-label="빠른 금액 선택"] button {
+  min-inline-size: 0;
+  min-block-size: 2.75rem;
+  padding: 0.6rem 0.3rem;
+  border: 1px solid var(--border-default);
+  border-radius: 0.65rem;
+  background: var(--surface-interactive);
+  color: var(--text-primary);
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+}
+.formPanel form > dl {
+  display: grid;
+  gap: 0.85rem;
+  margin: 0;
+  padding: 1rem;
+  border: 1px solid var(--deposit-edge);
+  border-radius: 0.85rem;
+  background: color-mix(in srgb, var(--world-silver) 4%, var(--surface-sunken));
+}
+.formPanel form > dl > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.8rem;
+  min-inline-size: 0;
+}
+.formPanel dt {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+.formPanel dd {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+.formPanel form > div:has(> svg) {
+  display: flex;
+  gap: 0.65rem;
+  align-items: start;
+  padding: 0.75rem 0;
+  border: 0;
+  background: transparent;
+  color: var(--text-secondary);
+}
+.formPanel form > div:has(> svg) svg {
+  flex: none;
+  color: var(--brand-primary);
+}
+.formPanel form > div:has(> svg) p {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.65;
+  max-inline-size: 34rem;
+  word-break: keep-all;
+}
+.formPanel form > div:has(> code) {
+  padding: 1rem;
+  border: 1px solid var(--brand-primary);
+  border-radius: 0.8rem;
+  background: var(--surface-sunken);
+}
+.formPanel code {
+  display: block;
+  inline-size: 100%;
+  overflow-wrap: anywhere;
+  margin-block: 0.7rem 1rem;
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+.formPanel form > button[type="submit"] {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-block-size: 3.4rem;
+  inline-size: 100%;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--brand-mineral);
+  border-radius: 0.8rem;
+  background: linear-gradient(
+    110deg,
+    var(--brand-primary),
+    var(--brand-mineral) 35%,
+    var(--brand-primary) 75%,
+    var(--brand-strong)
+  );
+  color: var(--text-inverse);
+  font-size: 1rem;
+  font-weight: 750;
+  box-shadow:
+    inset 0 1px 1px var(--brand-mineral),
+    0 4px 12px color-mix(in srgb, var(--brand-primary) 15%, transparent);
+}
+.formPanel button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.formPanel [role="alert"] {
+  color: var(--status-danger);
+  font-size: 0.875rem;
+  line-height: 1.65;
+}
+.formPanel [role="status"] {
+  color: var(--status-success);
+  font-size: 0.875rem;
+  line-height: 1.65;
+}
+.steps {
+  display: grid;
+  align-content: start;
+  gap: 0.85rem;
+  padding: 1.2rem;
+  min-inline-size: 0;
+  border: 1px solid var(--deposit-edge);
+  border-radius: 1.15rem;
+  background: var(--deposit-glass);
+}
+.stepsIcon {
+  inline-size: 2.2rem;
+  block-size: 2.2rem;
+  color: var(--brand-primary);
+}
+.stepsIcon svg {
+  inline-size: 100%;
+  block-size: 100%;
+}
+.steps h2 {
+  margin: 0;
+  font-size: 1.05rem;
+  letter-spacing: -0.03em;
+}
+.steps > p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.65;
+  max-inline-size: 28rem;
+  word-break: keep-all;
+}
+.steps ol {
+  display: grid;
+  gap: 0;
+  margin: 0.45rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.steps li {
+  position: relative;
+  display: flex;
+  align-items: start;
+  gap: 0.85rem;
+  padding-block: 0.75rem;
+}
+.steps li + li {
+  border-block-start: 1px solid var(--border-subtle);
+}
+.steps li > span {
+  display: grid;
+  place-items: center;
+  flex: none;
+  inline-size: 2rem;
+  block-size: 2rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 0.55rem;
+  color: var(--brand-primary);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.8125rem;
+}
+.steps li > div {
+  display: grid;
+  gap: 0.35rem;
+}
+.steps li > .usdt {
+  display: none;
+}
+.steps strong {
+  font-size: 0.875rem;
+}
+.steps small {
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  line-height: 1.6;
+}
+.caution {
+  display: flex;
+  align-items: start;
+  gap: 0.65rem;
+  padding-block-start: 1rem;
+  border-block-start: 1px solid var(--deposit-edge);
+}
+.caution svg {
+  flex: none;
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+  color: var(--world-silver);
+}
+.caution p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  line-height: 1.7;
+}
+.histories {
+  display: grid;
+  gap: 1rem;
+  min-inline-size: 0;
+}
+.history {
+  border: 1px solid var(--deposit-edge);
+  border-radius: 1.1rem;
+  background: var(--deposit-glass);
+  overflow: hidden;
+  min-inline-size: 0;
+}
+.history header {
+  display: flex;
+  align-items: start;
+  gap: 0.8rem;
+  padding: 1.1rem;
+  border-block-end: 1px solid var(--deposit-edge);
+}
+.historyIcon {
+  flex: none;
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+  color: var(--brand-primary);
+}
+.historyIcon svg {
+  inline-size: 100%;
+  block-size: 100%;
+}
+.history h2 {
+  margin: 0;
+  font-size: 1.05rem;
+  letter-spacing: -0.03em;
+}
+.history header p {
+  margin: 0.4rem 0 0;
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+.history ul {
+  list-style: none;
+  margin: 0;
+  padding: 0 1rem;
+}
+.history li {
+  display: grid;
+  grid-template-columns: 2.3rem minmax(0, 1fr);
+  gap: 0.55rem 0.65rem;
+  padding: 1rem 0;
+  align-items: start;
+}
+.history li + li {
+  border-block-start: 1px solid var(--border-default);
+}
+.recordIcon {
+  display: grid;
+  place-items: center;
+  grid-row: span 2;
+  inline-size: 2.25rem;
+  block-size: 2.25rem;
+  color: var(--status-info);
+  border: 1px solid
+    color-mix(in srgb, var(--status-info) 45%, var(--deposit-edge));
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at 30% 20%,
+    color-mix(in srgb, var(--status-info) 20%, var(--deposit-glass)),
+    var(--deposit-glass)
+  );
+}
+.recordIcon svg {
+  inline-size: 1.2rem;
+  block-size: 1.2rem;
+}
+.recordBody {
+  display: grid;
+  gap: 0.3rem;
+  min-inline-size: 0;
+}
+.recordBody > strong {
+  font-size: 1.05rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+  overflow-wrap: anywhere;
+}
+.recordBody > p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  word-break: keep-all;
+}
+.recordBody > small,
+.recordBody > time {
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  overflow-wrap: anywhere;
+}
+.history li > :last-child {
+  grid-column: 2;
+  justify-self: start;
+}
+.empty {
+  display: grid;
+  justify-items: start;
+  gap: 0.65rem;
+  padding: 1.2rem;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.65;
+}
+.empty svg {
+  inline-size: 1.7rem;
+  block-size: 1.7rem;
+  color: var(--world-silver);
+}
+.empty p {
+  margin: 0;
+  color: var(--text-primary);
+}
+.empty small {
+  font-size: 0.8125rem;
+}
+.empty a {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-block-size: 2.75rem;
+  color: var(--brand-primary);
+  text-underline-offset: 0.25rem;
+}
+:global(html[data-theme="light"]) .page {
+  --deposit-glass: var(--surface-raised);
+}
+:global(html[data-theme="light"]) .methods label:has(input:checked) {
+  background: linear-gradient(
+    120deg,
+    var(--brand-quiet),
+    var(--surface-raised)
+  );
+}
+@media (min-width: 640px) {
+  .hero {
+    padding: 2rem;
+    min-block-size: 15rem;
+  }
+  .heroCopy h1 {
+    font-size: 2.25rem;
+  }
+  .heroCopy > p {
+    font-size: 1rem;
+  }
+  .methods label {
+    padding: 1rem 1.2rem;
+    gap: 0.9rem;
+    min-block-size: 5.5rem;
+  }
+  .methods strong {
+    font-size: 1.05rem;
+  }
+  .methodIcon {
+    inline-size: 2rem;
+    block-size: 2rem;
+  }
+  .formPanel {
+    padding: 1.6rem;
+  }
+  .formPanel form {
+    gap: 1.25rem;
+  }
+  .formPanel form > dl {
+    padding: 1.15rem;
+  }
+  .steps ol {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem 1rem;
+  }
+  .history li {
+    grid-template-columns: 2.3rem minmax(0, 1fr) auto;
+  }
+  .history li > :last-child {
+    grid-column: 3;
+  }
+  .recordIcon {
+    grid-row: auto;
+  }
+}
+@media (min-width: 1100px) {
+  .hero {
+    grid-template-columns: minmax(0, 1fr) 21rem;
+    min-block-size: 13rem;
+  }
+  .scene [data-wallet-decoration="native-scene"] img {
+    object-position: right center;
+  }
+  .optional {
+    align-self: end;
+  }
+  .formLayout {
+    grid-template-columns: minmax(0, 1fr) 20rem;
+    align-items: start;
+    gap: 1.25rem;
+  }
+  .steps {
+    padding: 1.5rem;
+  }
+  .steps ol {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .histories {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .history li {
+    grid-template-columns: 2.3rem minmax(0, 1fr);
+  }
+  .history li > :last-child {
+    grid-column: 2;
+  }
+  .recordIcon {
+    grid-row: span 2;
+  }
+}
+@media (max-width: 359px) {
+  .methods {
+    gap: 0.4rem;
+  }
+  .methods label {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.75rem 0.6rem;
+  }
+  .selection {
+    position: absolute;
+    inset-block-start: 0.8rem;
+    inset-inline-end: 0.6rem;
+  }
+  .methods label > span:has(strong) {
+    inline-size: 100%;
+  }
+  .formPanel {
+    padding: 0.85rem;
+  }
+  .formPanel form > div[aria-label="빠른 금액 선택"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .methods label {
+    transition:
+      border-color var(--motion-fast),
+      box-shadow var(--motion-fast);
+  }
+}
+@media (forced-colors: active) {
+  .scene {
+    display: none;
+  }
+  .hero,
+  .optional,
+  .methods label,
+  .formPanel,
+  .steps,
+  .history,
+  .formPanel form > button[type="submit"] {
+    background: Canvas;
+    color: CanvasText;
+    border-color: CanvasText;
+    box-shadow: none;
+  }
+  .methods label:has(input:checked) {
+    border-color: Highlight;
+  }
+}

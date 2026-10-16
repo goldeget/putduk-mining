@@ -1,3 +1,7 @@
+import { randomUUID } from "node:crypto";
+import { mkdirSync, realpathSync, rmSync, writeFileSync } from "node:fs";
+import { isAbsolute, join, relative, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { getPublicEnv, parseSupabaseBrowserAuthConfig } from "@/lib/env/public";
@@ -5,6 +9,7 @@ import { getSupabaseBrowserAuthConfig } from "@/lib/env/supabase-browser.server"
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 import { createBrowserClient } from "@supabase/ssr";
 import { loadJobLocalAllowlist } from "../../scripts/capture-local-supabase-env.mjs";
+import * as localSupabaseEnv from "../../scripts/capture-local-supabase-env.mjs";
 
 vi.mock("@supabase/ssr", () => ({ createBrowserClient: vi.fn() }));
 
@@ -20,6 +25,9 @@ function legacyKey(role: string) {
 
 beforeEach(() => {
   vi.stubEnv("APP_ENV", "test");
+  vi.stubEnv("PUTDUK_LOCAL_SUPABASE_CONFIG_PATH", undefined);
+  vi.stubEnv("PUTDUK_WORKERD_LOCAL_AUTH_SCOPE", undefined);
+  vi.stubEnv("PUTDUK_WORKERD_LOCAL_ALLOWLIST", undefined);
   vi.stubEnv("NEXT_PUBLIC_APP_URL", "http://127.0.0.1:3000");
   vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", localUrl);
   vi.stubEnv("NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY", publishableKey);
@@ -137,5 +145,291 @@ describe("public Supabase runtime configuration", () => {
     expect(() => getSupabaseBrowserAuthConfig()).toThrow(
       "SUPABASE_BROWSER_CONFIG_INVALID",
     );
+  });
+});
+
+describe("browser config task runtime selection", () => {
+  it("uses source-root config from admin cwd and preserves public-only tuple", () => {
+    const root = fileURLToPath(new URL("../..", import.meta.url));
+    const task = createOwnedTask(root, "browser-config-");
+    const cwd = vi.spyOn(process, "cwd");
+    try {
+      mkdirSync(join(task, "supabase"));
+      const path = join(task, "supabase/config.toml");
+      writeFileSync(
+        path,
+        'project_id = "putduk-mining-browser-unit"\n[api]\nport = 65131\n[db]\nport = 65132\n',
+      );
+      vi.stubEnv("PUTDUK_LOCAL_SUPABASE_CONFIG_PATH", path);
+      vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "http://127.0.0.1:65131");
+      cwd.mockReturnValue(join(root, "apps/admin"));
+      expect(getSupabaseBrowserAuthConfig()).toEqual({
+        url: "http://127.0.0.1:65131",
+        publishableKey,
+      });
+      vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", localUrl);
+      expect(() => getSupabaseBrowserAuthConfig()).toThrow(
+        "SUPABASE_BROWSER_CONFIG_INVALID",
+      );
+      vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "http://127.0.0.1:65131");
+      vi.stubEnv(
+        "PUTDUK_LOCAL_SUPABASE_CONFIG_PATH",
+        join(root, "supabase/config.toml"),
+      );
+      expect(() => getSupabaseBrowserAuthConfig()).toThrow(
+        "SUPABASE_BROWSER_CONFIG_INVALID",
+      );
+      vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", remoteUrl);
+      vi.stubEnv("APP_ENV", "production");
+      expect(getSupabaseBrowserAuthConfig()).toEqual({
+        url: remoteUrl,
+        publishableKey,
+      });
+    } finally {
+      cwd.mockRestore();
+      removeOwnedTask(task, root);
+    }
+  });
+});
+
+function createOwnedTask(root: string, prefix: string) {
+  const task = join(root, `.next-qa-${prefix}${randomUUID()}`);
+  mkdirSync(task); // Exclusive creation; never overwrite a pre-existing path.
+  return task;
+}
+function removeOwnedTask(task: string, root: string) {
+  const at = realpathSync(task);
+  const rel = relative(realpathSync(root), at);
+  if (
+    isAbsolute(rel) ||
+    !/^\.next-qa-[a-z0-9-]{1,64}$/.test(rel) ||
+    at !== resolve(task)
+  )
+    throw new Error("UNIT_TEMP_DELETE_SCOPE_REJECTED");
+  rmSync(at, { recursive: true });
+}
+
+describe("admitted CI workerd browser configuration", () => {
+  const allowlist = loadJobLocalAllowlist();
+  const admit = () => {
+    vi.stubEnv("PUTDUK_WORKERD_LOCAL_AUTH_SCOPE", "ci-auth-v1");
+    vi.stubEnv("PUTDUK_WORKERD_LOCAL_ALLOWLIST", JSON.stringify(allowlist));
+  };
+
+  it("uses the independently admitted allowlist without checkout filesystem reads", () => {
+    admit();
+    const read = vi
+      .spyOn(localSupabaseEnv, "loadJobLocalAllowlist")
+      .mockImplementation(() => {
+        throw new Error("QA_CHECKOUT_FILESYSTEM_UNAVAILABLE");
+      });
+    try {
+      expect(getSupabaseBrowserAuthConfig()).toEqual({
+        url: localUrl,
+        publishableKey,
+      });
+      expect(Object.keys(getSupabaseBrowserAuthConfig())).toEqual([
+        "url",
+        "publishableKey",
+      ]);
+      expect(read).not.toHaveBeenCalled();
+    } finally {
+      read.mockRestore();
+    }
+  });
+
+  it.each([
+    undefined,
+    "not-json",
+    "[]",
+    JSON.stringify({ ...allowlist, projectId: "putduk-mining-other" }),
+    JSON.stringify({ ...allowlist, extra: "not-admitted" }),
+    JSON.stringify({ ...allowlist, apiPort: "0" }),
+    JSON.stringify({ ...allowlist, apiPort: "063421" }),
+    JSON.stringify({ ...allowlist, apiPort: "65536" }),
+    JSON.stringify({ ...allowlist, apiPort: 63421 }),
+    JSON.stringify({ ...allowlist, dbPort: "-1" }),
+    JSON.stringify({
+      projectId: allowlist.projectId,
+      apiPort: allowlist.apiPort,
+    }),
+  ])(
+    "rejects a malformed active allowlist without filesystem fallback",
+    (raw) => {
+      admit();
+      vi.stubEnv("PUTDUK_WORKERD_LOCAL_ALLOWLIST", raw);
+      expect(() => getSupabaseBrowserAuthConfig()).toThrow(
+        "SUPABASE_BROWSER_CONFIG_INVALID",
+      );
+    },
+  );
+
+  it.each([undefined, "", "other-scope"])(
+    "rejects partial or wrong admission markers",
+    (scope) => {
+      admit();
+      vi.stubEnv("PUTDUK_WORKERD_LOCAL_AUTH_SCOPE", scope);
+      expect(() => getSupabaseBrowserAuthConfig()).toThrow(
+        "SUPABASE_BROWSER_CONFIG_INVALID",
+      );
+    },
+  );
+
+  it.each(["development", "staging", "production"])(
+    "does not admit workerd HTTP in %s",
+    (appEnv) => {
+      admit();
+      vi.stubEnv("APP_ENV", appEnv);
+      expect(() => getSupabaseBrowserAuthConfig()).toThrow(
+        appEnv === "staging"
+          ? "STAGING_TARGET_MODE_OR_URL_REJECTED"
+          : "SUPABASE_BROWSER_CONFIG_INVALID",
+      );
+    },
+  );
+
+  it.each(["", "/tmp/unadmitted-config.toml"])(
+    "rejects a conflicting filesystem override",
+    (path) => {
+      admit();
+      vi.stubEnv("PUTDUK_LOCAL_SUPABASE_CONFIG_PATH", path);
+      expect(() => getSupabaseBrowserAuthConfig()).toThrow(
+        "SUPABASE_BROWSER_CONFIG_INVALID",
+      );
+    },
+  );
+
+  it("does not derive admission from the requested URL or serialize server scope", () => {
+    admit();
+    vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "http://127.0.0.1:1");
+    expect(() => getSupabaseBrowserAuthConfig()).toThrow(
+      "SUPABASE_BROWSER_CONFIG_INVALID",
+    );
+    vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", localUrl);
+    expect(JSON.stringify(getSupabaseBrowserAuthConfig())).not.toMatch(
+      /WORKERD|apiPort|dbPort|projectId|ci-auth/,
+    );
+  });
+
+  it.each(["production"])(
+    "preserves exact approved HTTPS validation in %s",
+    (appEnv) => {
+      admit();
+      vi.stubEnv("APP_ENV", appEnv);
+      vi.stubEnv("PUTDUK_WORKERD_LOCAL_ALLOWLIST", "not-json");
+      vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", remoteUrl);
+      expect(getSupabaseBrowserAuthConfig()).toEqual({
+        url: remoteUrl,
+        publishableKey,
+      });
+      vi.stubEnv(
+        "NEXT_PUBLIC_SUPABASE_URL",
+        "https://different-project.supabase.co",
+      );
+      expect(() => getSupabaseBrowserAuthConfig()).toThrow(
+        "SUPABASE_BROWSER_CONFIG_INVALID",
+      );
+    },
+  );
+
+  it("does not reuse the production HTTPS target for a staging runtime", () => {
+    admit();
+    vi.stubEnv("APP_ENV", "staging");
+    vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", remoteUrl);
+    expect(() => getSupabaseBrowserAuthConfig()).toThrow(
+      "STAGING_TARGET_MODE_OR_URL_REJECTED",
+    );
+  });
+
+  it("cannot use admission to forward a privileged key", () => {
+    admit();
+    vi.stubEnv(
+      "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+      legacyKey("service_role"),
+    );
+    expect(() => getSupabaseBrowserAuthConfig()).toThrow(
+      "SUPABASE_BROWSER_CONFIG_INVALID",
+    );
+  });
+});
+
+describe("safe server browser config failure phases", () => {
+  const allowlist = loadJobLocalAllowlist();
+  it.each([
+    "public-env",
+    "browser-schema",
+    "browser-public-key",
+    "http-app-env",
+    "local-filesystem",
+    "local-marker",
+    "local-json",
+    "local-shape",
+    "local-url",
+  ])("logs only the fixed %s phase and preserves rejection", (phase) => {
+    const log = vi.spyOn(console, "error").mockImplementation(() => {});
+    const read = vi.spyOn(localSupabaseEnv, "loadJobLocalAllowlist");
+    try {
+      vi.stubEnv("PUTDUK_WORKERD_LOCAL_AUTH_SCOPE", "ci-auth-v1");
+      vi.stubEnv("PUTDUK_WORKERD_LOCAL_ALLOWLIST", JSON.stringify(allowlist));
+      if (phase === "public-env")
+        vi.stubEnv("NEXT_PUBLIC_APP_URL", "secret-invalid-app-url");
+      if (phase === "browser-schema")
+        vi.stubEnv(
+          "NEXT_PUBLIC_SUPABASE_URL",
+          "https://different-project.supabase.co",
+        );
+      if (phase === "browser-public-key")
+        vi.stubEnv(
+          "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+          "sb_secret_never_log_this_fixture",
+        );
+      if (phase === "http-app-env") vi.stubEnv("APP_ENV", "production");
+      if (phase === "local-filesystem") {
+        vi.stubEnv("PUTDUK_WORKERD_LOCAL_AUTH_SCOPE", undefined);
+        vi.stubEnv("PUTDUK_WORKERD_LOCAL_ALLOWLIST", undefined);
+        read.mockImplementation(() => {
+          throw new Error("secret-filesystem-error");
+        });
+      }
+      if (phase === "local-marker")
+        vi.stubEnv("PUTDUK_WORKERD_LOCAL_AUTH_SCOPE", "secret-invalid-marker");
+      if (phase === "local-json")
+        vi.stubEnv("PUTDUK_WORKERD_LOCAL_ALLOWLIST", "secret-invalid-json");
+      if (phase === "local-shape")
+        vi.stubEnv("PUTDUK_WORKERD_LOCAL_ALLOWLIST", "[]");
+      if (phase === "local-url")
+        vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "http://127.0.0.1:1");
+      expect(() => getSupabaseBrowserAuthConfig()).toThrow();
+      expect(log.mock.calls).toEqual([
+        ["[supabase-browser-config-phase]", phase],
+      ]);
+      expect(JSON.stringify(log.mock.calls)).not.toMatch(
+        /secret|127|:\/\/|sb_|publishable|apiPort|dbPort|projectId/,
+      );
+    } finally {
+      read.mockRestore();
+      log.mockRestore();
+    }
+  });
+
+  it("does not log successful admitted or approved HTTPS configurations", () => {
+    const log = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      vi.stubEnv("PUTDUK_WORKERD_LOCAL_AUTH_SCOPE", "ci-auth-v1");
+      vi.stubEnv("PUTDUK_WORKERD_LOCAL_ALLOWLIST", JSON.stringify(allowlist));
+      expect(getSupabaseBrowserAuthConfig()).toEqual({
+        url: localUrl,
+        publishableKey,
+      });
+      vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", remoteUrl);
+      vi.stubEnv("APP_ENV", "production");
+      expect(getSupabaseBrowserAuthConfig()).toEqual({
+        url: remoteUrl,
+        publishableKey,
+      });
+      expect(log).not.toHaveBeenCalled();
+    } finally {
+      log.mockRestore();
+    }
   });
 });

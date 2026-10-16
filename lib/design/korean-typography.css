@@ -1,0 +1,24 @@
+/* Korean prose keeps eojeol boundaries; only overlong tokens may wrap. */
+:where(body) {
+  word-break: normal;
+  overflow-wrap: break-word;
+  line-break: auto;
+}
+
+/* Inherited language includes ko-KR. Nested lang boundaries reset below. */
+:where(body:lang(ko), [lang]:lang(ko)) {
+  word-break: keep-all;
+  line-break: strict;
+}
+
+:where([lang]:not(:lang(ko))) {
+  word-break: normal;
+  line-break: auto;
+}
+
+/* Explicit machine text may shrink intrinsically; prose is not machine text. */
+:where(.machine-token, [data-text-kind="url"], [data-text-kind="identifier"]) {
+  word-break: normal;
+  overflow-wrap: anywhere;
+  line-break: auto;
+}

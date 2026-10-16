@@ -42,7 +42,7 @@ export function AdminAuthEntry({
         <div className={styles.identity}>
           <BrandMark title="" />
           <div>
-            <strong>퍼뜩</strong>
+            <strong>퍼뜩 채굴</strong>
             <span>운영자 보안 접속</span>
           </div>
         </div>

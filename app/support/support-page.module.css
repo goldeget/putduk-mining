@@ -142,6 +142,10 @@
 }
 
 @media (max-width: 759px) {
+  .page :global(.support-center__topics) article {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
   .page :global(.site-header) {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;

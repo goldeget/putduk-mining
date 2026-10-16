@@ -107,25 +107,60 @@ async function applyTheme(page: Page, theme: "dark" | "light") {
     document.documentElement.style.colorScheme = selected;
   }, theme);
   await page.reload({ waitUntil: "domcontentloaded" });
+  await page.waitForLoadState("load");
   await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
   await openMiningDetails(page);
 }
 
 async function openMiningDetails(page: Page) {
-  // 보이는 details만 고르면 hidden S: 슬롯의 같은 요약이 남아 텍스트 클릭이 둘로 실패한다.
+  // SSR markers can precede React commitment and later DOM changes.
   await expectSettledRoute(page, "/mining");
   const details = page.locator("#putduk-mining-details");
   await expect(details).toHaveCount(1);
   const summary = page.getByText("채굴 상세", { exact: true });
   await expect(summary).toHaveCount(1);
-  if (
-    !(await details.evaluate(
-      (node) => node instanceof HTMLDetailsElement && node.open,
-    ))
-  ) {
+  let detailsOpen: boolean | null = null;
+  await expect
+    .poll(async () => {
+      const state = await page.evaluate(() => {
+        const routes = document.querySelectorAll('[data-ui-ready="/mining"]');
+        const targets = document.querySelectorAll("#putduk-mining-details");
+        const summaries = Array.from(
+          document.querySelectorAll("summary"),
+        ).filter((node) => node.textContent?.trim() === "채굴 상세");
+        const target = targets.length === 1 ? targets.item(0) : null;
+        const hydrated =
+          target instanceof HTMLDetailsElement &&
+          Object.getOwnPropertyNames(target).some(
+            (key) =>
+              key.startsWith("__reactFiber") || key.startsWith("__reactProps"),
+          );
+        return {
+          documentLoaded: document.readyState === "complete",
+          routeCount: routes.length,
+          detailsCount: targets.length,
+          summaryCount: summaries.length,
+          hydrated,
+          open: target instanceof HTMLDetailsElement ? target.open : null,
+        };
+      });
+      detailsOpen = state.open;
+      return state;
+    })
+    .toMatchObject({
+      documentLoaded: true,
+      routeCount: 1,
+      detailsCount: 1,
+      summaryCount: 1,
+      hydrated: true,
+    });
+  if (!detailsOpen) {
     await summary.click();
   }
   await expect(details).toHaveAttribute("open", "");
+  await expectSettledRoute(page, "/mining");
+  await expect(details).toHaveCount(1);
+  await expect(summary).toHaveCount(1);
 }
 
 test("unsigned visitors keep the mining return path", async ({ page }) => {
@@ -160,7 +195,9 @@ test("shows the empty session, world directory, themes, and keyboard path", asyn
   await openMiningDetails(page);
 
   const mainText = await page.locator("main").innerText();
-  expect(mainText).toContain("앱을 닫아도 채굴은 계속돼요.");
+  expect(mainText).toContain(
+    "월드별 이용 조건과 적용 중인 채굴 규칙을 확인해 주세요.",
+  );
   expect(mainText).toContain(
     "월드는 채굴 테마예요. 시세나 투자 수익을 따르지 않습니다.",
   );
@@ -322,7 +359,7 @@ test("shows the empty session, world directory, themes, and keyboard path", asyn
   expect(hydration).toEqual([]);
 });
 
-test("renders an active session and a maintenance session from the server snapshot", async ({
+test("renders recorded sessions while unverified funded mining stays unknown", async ({
   page,
 }) => {
   test.setTimeout(480_000);
@@ -352,14 +389,39 @@ test("renders an active session and a maintenance session from the server snapsh
 
   await loginAsMember(page, member, "/mining");
   await openMiningDetails(page);
+  // Recorded sessions are not proof of an active authoritative funded runtime.
+  // This fixture creates only legacy read rows, never funding/settlement receipts.
+  const ready = page.locator('[data-ui-ready="/mining"]');
+  await expect(ready).toHaveAttribute("data-ui-state", "unknown");
+  const overview = page.getByRole("region", {
+    name: "현재 채굴 현황",
+    exact: true,
+  });
   await expect(
-    page.getByRole("heading", { name: "코리아 · 채굴 중" }),
+    overview.getByRole("heading", { name: "채굴 상태를 다시 확인해 주세요" }),
   ).toBeVisible();
-  await expect(page.getByText("채굴 중").first()).toBeVisible();
-  await expect(page.getByText("점검 중").first()).toBeVisible();
-  await expect(page.getByText("1분 미만").first()).toBeVisible();
-  await expect(page.getByText("2개").first()).toBeVisible();
-  await expect(page.getByText("0개").first()).toBeVisible();
+  await expect(overview.getByText("채굴 중", { exact: true })).toHaveCount(0);
+  await expect(page.locator("[data-mining-running]")).toHaveAttribute(
+    "data-mining-running",
+    "false",
+  );
+  const sessions = page.getByRole("region", {
+    name: "현재 채굴 세션",
+    exact: true,
+  });
+  await expect(sessions.getByRole("article")).toHaveCount(2);
+  const korea = sessions.getByRole("article").filter({
+    has: page.getByRole("heading", { name: "코리아", exact: true, level: 3 }),
+  });
+  const usa = sessions.getByRole("article").filter({
+    has: page.getByRole("heading", { name: "미국", exact: true, level: 3 }),
+  });
+  await expect(korea.getByText("채굴 중", { exact: true })).toBeVisible();
+  await expect(usa.getByText("점검 중", { exact: true })).toBeVisible();
+  await expect(korea.getByText("1분 미만", { exact: true })).toBeVisible();
+  await expect(usa.getByText("1분 미만", { exact: true })).toBeVisible();
+  await expect(korea.getByText("2개", { exact: true })).toBeVisible();
+  await expect(usa.getByText("0개", { exact: true })).toBeVisible();
   await expect(
     page.getByText("현재 활성 세션이 이어지고 있어요.").first(),
   ).toBeVisible();
@@ -372,15 +434,20 @@ test("renders an active session and a maintenance session from the server snapsh
     hour: "2-digit",
     minute: "2-digit",
     timeZone: "Asia/Seoul",
-  }).format(new Date(settledRecently));
-  await expect(page.getByText(seoulClock).first()).toBeVisible();
+  });
+  await expect(
+    korea.getByText(seoulClock.format(new Date(startedRecently)), {
+      exact: true,
+    }),
+  ).toBeVisible();
+  await expect(
+    usa.getByText(seoulClock.format(new Date(startedEarlier)), { exact: true }),
+  ).toBeVisible();
 
-  const homeLink = page
-    .locator(
-      ".product-workspace > .product-navigation, .product-sidebar .product-navigation",
-    )
-    .getByRole("link", { name: "홈" })
-    .first();
+  const homeLink = page.getByRole("link", {
+    name: "퍼뜩 채굴 홈",
+    exact: true,
+  });
   await homeLink.focus();
   await expect(homeLink).toBeFocused();
   await page.keyboard.press("Enter");
@@ -388,7 +455,8 @@ test("renders an active session and a maintenance session from the server snapsh
   await page.goBack();
   await expect(page).toHaveURL(/\/mining$/);
   await openMiningDetails(page);
-  await expect(page.getByText("점검 중").first()).toBeVisible();
+  await expect(ready).toHaveAttribute("data-ui-state", "unknown");
+  await expect(usa.getByText("점검 중", { exact: true })).toBeVisible();
 
   for (const viewport of VIEWPORTS) {
     for (const theme of ["dark", "light"] as const) {
@@ -397,9 +465,25 @@ test("renders an active session and a maintenance session from the server snapsh
         width: viewport.width,
       });
       await applyTheme(page, theme);
-      await expect(page.getByText("점검 중").first()).toBeVisible();
+      await expect(ready).toHaveAttribute("data-ui-state", "unknown");
+      await expect(overview.getByText("채굴 중", { exact: true })).toHaveCount(
+        0,
+      );
+      await expect(korea.getByText("채굴 중", { exact: true })).toBeVisible();
+      await expect(usa.getByText("점검 중", { exact: true })).toBeVisible();
       await expectNoHorizontalOverflow(page);
-      await shoot(page, `active-${viewport.name}-${theme}.png`);
+      await shoot(page, `recorded-sessions-${viewport.name}-${theme}.png`);
+      await sessions.scrollIntoViewIfNeeded();
+      await expect(korea).toBeVisible();
+      await expect(usa).toBeVisible();
+      await page.screenshot({
+        animations: "disabled",
+        fullPage: true,
+        path: path.join(
+          OUTPUT_DIR,
+          `recorded-session-details-${viewport.name}-${theme}.png`,
+        ),
+      });
     }
   }
   expect(hydration).toEqual([]);

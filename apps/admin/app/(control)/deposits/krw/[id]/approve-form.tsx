@@ -1,10 +1,12 @@
 "use client";
+import { FeedbackMessage } from "../../../../../../../components/ui/feedback-message";
 
 import { useReducer, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { ReasonField, TextField } from "@/components/operator-fields";
 import { StepUpTokenField } from "@/components/step-up-token-field";
+import { useReviewConfirmation } from "@/components/review-confirmation";
 import { ADMIN_COMMAND_FAMILIES } from "@/lib/auth/command-families";
 import {
   createKrwApproveState,
@@ -46,6 +48,7 @@ export function KrwDepositApproveForm({
   requestedAmount: string;
 }) {
   const router = useRouter();
+  const review = useReviewConfirmation(["receivedAmountAtomic", "reason"]);
   const [logicalKey] = useState(() => createLogicalOperationKey("krw_dep"));
   const [state, dispatch] = useReducer(
     reduceKrwApprove,
@@ -212,7 +215,11 @@ export function KrwDepositApproveForm({
   }
 
   return (
-    <form className="operator-form" onSubmit={(event) => void submit(event)}>
+    <form
+      className="operator-form"
+      onSubmit={(event) => void submit(event)}
+      onChange={review.onChange}
+    >
       <p className="panel-note">
         확인은 10분 안에 한 번만 씁니다. 반영 여부는 서버 상태를 다시 읽은 뒤에
         알 수 있습니다.
@@ -224,7 +231,7 @@ export function KrwDepositApproveForm({
         name="receivedAmountAtomic"
       />
       <ReasonField label="확인 사유" />
-      <label className="operator-check">
+      <label className="operator-check" key={`confirm-${review.revision}`}>
         <input
           name="confirmation"
           required
@@ -234,6 +241,7 @@ export function KrwDepositApproveForm({
         <span>계좌 입금을 확인했고, 이 금액만 원화 잔액에 반영합니다.</span>
       </label>
       <StepUpTokenField
+        key={`step-up-${review.revision}`}
         commandFamily={ADMIN_COMMAND_FAMILIES.DEPOSIT_APPROVE}
         submissionPending={busy}
       />
@@ -257,7 +265,7 @@ export function KrwDepositApproveForm({
         </p>
       ) : null}
       {clientMessage || state.message ? (
-        <p
+        <FeedbackMessage
           className={
             state.phase === "confirmed"
               ? "queue-flash queue-flash--ok"
@@ -266,7 +274,7 @@ export function KrwDepositApproveForm({
           role="status"
         >
           {clientMessage || state.message}
-        </p>
+        </FeedbackMessage>
       ) : null}
     </form>
   );

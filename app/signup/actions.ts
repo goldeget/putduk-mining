@@ -108,13 +108,6 @@ export async function checkSignupPhoneAvailability(
       p_raw: rawPhone,
     });
     if (error) {
-      // RPC 준비 전: 형식만 통과한 경우 가입 단계의 최종 검사로 넘긴다.
-      if (
-        error.code === "PGRST202" ||
-        /does not exist|Could not find/i.test(error.message ?? "")
-      ) {
-        return "AVAILABLE";
-      }
       return "ERROR";
     }
     if (data === "AVAILABLE" || data === "UNAVAILABLE") {

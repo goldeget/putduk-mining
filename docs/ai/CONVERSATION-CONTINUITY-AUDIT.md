@@ -1,44 +1,35 @@
 # PUTDUK AI — Conversation Continuity Audit
 
-Status: **OPEN (honest gap)**
+Status: **OWNER-ACCOUNT IMPLEMENTATION / PRODUCT GATES OPEN**
 
-Lane: C — AI product
+Mode: `OWNER_ACCOUNT` (`domain/ai/continuity.ts`).
 
-Mode constant: `SESSION_MEMORY_ONLY` (`domain/ai/continuity.ts`)
-
-## Current truth
-
-| Capability | Evidence |
+| Capability | Current evidence |
 | --- | --- |
-| Browser in-memory messages | `components/product/putduk-ai-chat.tsx` keeps React state only |
-| Refresh / remount | Messages are cleared; UI copy states this openly |
-| Durable conversation tables | **Rows only** — `public.ai_conversations`, `public.ai_messages`, plus answer tool calls, sources, and feedback in `supabase/migrations/20261005054518_ai_tool_evidence_storage.sql`. Safe-summary schema is still absent. |
-| Restore / resume API | **Absent** — only `POST /api/v1/ai/chat` turn admission |
-| Cross-device continuity | **Absent** |
-| Simulated persistence (localStorage of raw turns) | **Forbidden** — would fake durability |
+| Owner conversation/body persistence | Existing `ai_conversations` / `ai_messages`, forced owner RLS and server writes; best-effort secret redaction |
+| Source/tool/feedback persistence | Existing `ai_answer_sources`, `ai_tool_calls`, `ai_feedback` |
+| Refresh/reopen | Browser reads owner conversations and messages, including available source/tool receipts |
+| History window | Latest 40 conversations and 120 message rows; omitted earlier rows disclosed; full-history pagination absent |
+| Historical financial truth | Save time is displayed separately; current state requires a new question; original lookup `asOf` is not stored |
+| Failure restoration | Failed tool receipts restore an error/retry state; missing or inconsistent evidence remains unverified |
+| Owner changes | Active answers are cancelled; delayed history/list results are ignored after owner invalidation or observer replacement |
+| Summary schema | Present in `20261005064600_ai_conversation_summary_storage.sql`; no generation/summary transmission enabled |
+| Provider memory | Only the current redacted question is sent; stored conversations are not appended to provider input |
+| Shared provider cache | Disabled for all free-form member turns until a public-only corpus/input selector is approved and verified |
 
-`docs/ai/PUTDUK-AI.md` and WS-04 already freeze this: durable conversation is a separate gate. Agent ownership of future tables is not this lane’s schema authority without an approved migration plan. Missing continuity must not be papered over.
+Conversation writes remain sequential. The existing recovery patch verifies
+stored bodies and repairs identical missing evidence; it does not supply atomic
+multichunk/turn persistence or recover every partial write through actual HTTP
+retries. Cancellation/provider failures do not have a durable full-turn state.
 
-## What this lane proves instead
+Retention, export/deletion, provider input/history/summary scope, learning
+publication scores/canary and learning-candidate storage remain policy or
+implementation gates. Do not invent those decisions or simulate provider memory.
 
-1. Authenticated ownership of the AI surface and chat API.
-2. Money-mutation denial before tools or providers.
-3. Unavailable account-tool data fails closed without fabricated amounts.
-4. Provider-unconfigured and provider-failure paths stay honest (no invented financial facts).
-5. Session-only continuity is disclosed in Korean UI and covered by browser/unit checks.
-6. Themes, viewports, keyboard/focus, reduced motion, and hydration on `/ai`.
+Deterministic component tests cover late reads after account switch, sign-out,
+fresh same-owner verification and new-conversation selection. Reader/presentation
+tests cover historical receipts, failure recovery and bounded recent history.
+These checks do not replace real PostgREST/RLS ownership tests, browser interaction,
+screenshots, visual acceptance or approved provider evaluation.
 
-## Gate before implementing durable continuity
-
-Approve and ship together (do not half-implement):
-
-- user-owned conversation, message, and versioned safe-summary tables;
-- RLS + `FORCE ROW LEVEL SECURITY` and server-only mutation commands;
-- retention, export, and deletion policy;
-- secret/credential redaction;
-- atomic turn start/completion/failure + per-user idempotency;
-- cross-user isolation, refresh restore, and cancellation recovery tests.
-
-Conversation, message, tool-call, answer-source, and feedback rows are stored. Safe-summary, retention, redaction, restore API, and browser continuity stay open. RAG, eval, provider router, and learning candidates stay **BLOCKED**.
-
-Until then: **OPEN**. Do not claim PRODUCT COMPLETE for PUTDUK AI conversation continuity.
+Do not claim PRODUCT COMPLETE or production activation from these foundations.

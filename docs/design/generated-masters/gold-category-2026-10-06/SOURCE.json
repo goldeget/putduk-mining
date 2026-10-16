@@ -1,0 +1,19 @@
+{
+  "category": "GOLD",
+  "scope": "neutral presentation artwork only; no actual holdings or operating catalog approval",
+  "sourceNativePath": "/workspace/generated_images/exec-979a5661-9895-476d-97fe-cc97a775c2d0.png",
+  "sourceMaster": "docs/design/generated-masters/gold-category-2026-10-06/gold-category-master-v1.png",
+  "sourceSha256": "b22dced3d82446e8a946f49f29bbd5d62fc57e2b465464d7c260755d0600cf7e",
+  "sourceDimensions": {
+    "width": 1536,
+    "height": 1024,
+    "mode": "RGB"
+  },
+  "baselineAssetCount": 128,
+  "baselineManifestSha256": "7488e9b3ad9a72c86870a80a9f4bcf76cf7a80f6a1ea17a8b4d5282e9fa5b4d5",
+  "baselineRecordDigest": "00b8caf188b9481d87204dea866dabd41ef2b0fbf86fb71d87b679898dff6d52",
+  "prospectiveManifestVersion": "2026.10.06-v8",
+  "prospectiveAssetCount": 136,
+  "widths": [320, 640, 960, 1536],
+  "formats": ["avif", "webp"]
+}

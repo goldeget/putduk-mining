@@ -96,9 +96,13 @@ outbox INSERT 뒤의 capture만으로는 원본 명령의 이벤트 키 충돌�
 서버만 계산하며 브라우저·AI·Scene·시각 타이머는 금액을 결정하지 않는다.
 운영값이 없거나 출처가 불명확하면 채굴 계산을 활성화하지 않는다.
 
-`D-ECONOMY-RATE`의 **원금 기준은 APPROVED**다. 남은 미결 사항은
-Tier 금액 구간·base rate·multiplier·상품 규칙 수치·정확한 cap·loyalty 및
-campaign 수치다. 기본값이나 테스트 숫자를 production 정책으로 게시하지 않는다.
+`D-ECONOMY-RATE`의 원금 기준과
+[V1 Tier·rate·multiplier 범위·cap](../product/ECONOMY-V1-USER-APPROVAL-2026-10-03.md)은
+사용자가 승인했다. [2026-10-06 후속 승인](../product/ECONOMY-V1-USER-APPROVAL-2026-10-06.md)은
+예약 portion retention clock 중지/미래 재개와 모든 BASE speed modifier의
+정확한 곱셈·최종 1.50x cap을 정했다. 승인 밖 효과를 기본값으로 만들지 않는다.
+발행된 원본을 소비하는 실채굴 producer·earned/used/cursor/carry·정산과
+상품 allocation 원본의 연결은 여전히 별도 구현이 필요하다.
 
 ## 관리자와 도우미
 
@@ -142,3 +146,30 @@ rollback, 소급 보상 변경 금지, 교차 회원/RLS/서비스 최소 권한
 운영자는 기존 안전 모드로 새 입금을 일시 중지하고 원본 영수증과 migration
 후보를 대조한다. 출처 실패를 무시하거나 원장·감사를 삭제해 입금을 통과시키는
 복구는 금지한다. 실제 환경의 설치·recovery는 후속 승인 단계에서 검증한다.
+
+## 2026-10-06 현재 로컬 구현·증거
+
+일반 `request_krw_withdrawal` / `request_usdt_withdrawal`은 검증된
+`MINING_REWARD`만 예약한다. 부족한 금액을 PRINCIPAL로 대신 내지 않는다.
+qualified START는 기존의 승인 conversion과 BONUS 원본, 무입금·최대5,000원·
+수수료0원 계약을 유지한다. 원금 회수는 별도 명시적 확인 계약이며 일반
+채굴 수익 출금으로 열지 않는다.
+
+`money_source_summaries` schema 2는 누적 KRW/USDT 원금 입금, 현재 available,
+held와 recovered를 따로 읽는다. available + held + recovered는 누적 검증 원금과
+같아야 한다. 채굴/START 출금은 이 원금 값을 바꾸지 않는다. 미분류 원본이
+있으면 available·held·recovered는 모두 NULL이며 0으로 숨기지 않는다.
+
+`20261006121500_non_principal_withdrawal_coverage.sql`은 기존 immutable
+채굴 reservation 또는 qualified START conversion/CREDIT와 실제 요청·balanced
+HOLD·이벤트·영수증을 검증한다. 확정/해제는 실제 terminal journal·이벤트·감사와
+송금 원본, 확정의 단일 wallet debit에 묶인다. 채굴 terminal은 기존 검증 source
+movement도 필요하다. START에 없는 RESERVE/terminal source를 만들거나 HOLD에
+wallet debit, 해제에 추가 CREDIT를 넣지 않는다. 출처 reader는 조회만 한다.
+미분류 wallet label, 출금, 별도 balanced journal은 계속 UNRESOLVED다.
+
+실제 canonical hold·송금·확정·cancel/reject·retry, 원금/lot/revision/funding
+불변, 조회 무효과와 미분류 거절을 검증한 36개 SQL assertion이 통과했다.
+현재 전체 로컬 pgTAP은 47개 파일·1,522개 assertion, DB lint도 통과했다.
+이것은 funded mining producer, worker/earned receipt 연결, 브라우저 제품 완료나
+배포의 증거가 아니다. [구체적 남은 runtime 설계](../development/design-reviews/DEFAULT-FUNDED-ENGINE-2026-10-06.md)를 따른다.

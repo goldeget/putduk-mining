@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-09",
+  "status": "OWNER_VISUAL_REVIEW_PENDING",
+  "sourceIntent": "Actual owner catalog a01-m00009 bottom-row BTC gold engraved coin / ETH sapphire faceted double-pyramid; canonical PUTDUK brand material/light benchmark. These references establish intent, not unavailable Cloud master pixel identity.",
+  "references": [
+    {
+      "path": "docs/design/visual-references/putduk-brand-master-reference.png",
+      "sha256": "c3b9363be5f5c0cb212e87ae5d7b49fcf5ba5105858367f40e91ef6999077512"
+    },
+    {
+      "qaPath": "D:\\PUTDUK-MINING-QA\\local-redevelopment-20261009-033553\\verified-original-52\\a01-m00009.png",
+      "sha256": "dcff2c4a5b55ae46671b47844a0a8e1dd7d8626883484a96294d6fcc3a6bccd6"
+    }
+  ],
+  "assets": [
+    {
+      "id": "btc-dark",
+      "path": "docs/design/generated-masters/crypto-recovery-review-2026-10-09/btc-dark-master-review-v1.png",
+      "sha256": "fff85f133cfa0fb3f7ee0734255df7b1d7d882a4b56225ef9644051056920eb5",
+      "bytes": 2174954,
+      "width": 1536,
+      "height": 1024,
+      "status": "REVIEW_DRAFT",
+      "runtimeAssigned": false,
+      "cloudExactRecovery": false,
+      "method": "built-in image_gen; file copied without pixel edits"
+    },
+    {
+      "id": "btc-light",
+      "path": "docs/design/generated-masters/crypto-recovery-review-2026-10-09/btc-light-master-review-v1.png",
+      "sha256": "3144a38b9dcfd1288dc1dcfe11e952db7f80c1f444826c0217803925c1ad924e",
+      "bytes": 2215795,
+      "width": 1536,
+      "height": 1024,
+      "status": "REVIEW_DRAFT",
+      "runtimeAssigned": false,
+      "cloudExactRecovery": false,
+      "method": "built-in image_gen; file copied without pixel edits"
+    },
+    {
+      "id": "eth-dark",
+      "path": "docs/design/generated-masters/crypto-recovery-review-2026-10-09/eth-dark-master-review-v1.png",
+      "sha256": "6b3cc45da084031f0371ee6dbee2e8bcbc1eedfb50b1a1a2091cb3792eebf052",
+      "bytes": 2106253,
+      "width": 1536,
+      "height": 1024,
+      "status": "REVIEW_DRAFT",
+      "runtimeAssigned": false,
+      "cloudExactRecovery": false,
+      "method": "built-in image_gen; file copied without pixel edits"
+    },
+    {
+      "id": "eth-light",
+      "path": "docs/design/generated-masters/crypto-recovery-review-2026-10-09/eth-light-master-review-v1.png",
+      "sha256": "e2e2c54fbbe1b846805a9bd222d07ec3db56bf14a75a53cde45ff9902d427798",
+      "bytes": 2055843,
+      "width": 1536,
+      "height": 1024,
+      "status": "REVIEW_DRAFT",
+      "runtimeAssigned": false,
+      "cloudExactRecovery": false,
+      "method": "built-in image_gen; file copied without pixel edits"
+    }
+  ],
+  "review": {
+    "textInPixels": "No production copy; BTC emblem is the only glyph. First BTC rim pseudo-inscriptions were rejected and replaced with geometric blocks through image_gen edit.",
+    "layout": "Complete centered-right subjects with upper-left HTML space, full scene, no crop/repaint of original source references.",
+    "theme": "Separate coherent dark and warm ivory light scenes.",
+    "activation": "No runtime manifest, catalog scene assignment or economic values changed. Responsive derivatives and motion anchors require approved masters first."
+  }
+}

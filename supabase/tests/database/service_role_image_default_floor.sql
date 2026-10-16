@@ -74,7 +74,10 @@ select ok(
     'ledger_transactions',
     'member_lifecycle_states',
     'member_timeline_events',
+    'mining_reward_credits',
     'mining_reward_withdrawal_reservations',
+    'mining_settlement_segments',
+    'mining_settlements',
     'money_source_movements',
     'notification_preferences',
     'outbox_events',
@@ -88,8 +91,6 @@ select ok(
     'system_jobs',
     'transaction_receipts',
     'trial_accounts',
-    'trial_completions',
-    'trial_ledger',
     'trial_programs',
     'trial_qualification_snapshots',
     'trial_reward_conversions',
@@ -189,8 +190,11 @@ select ok(
     'funding_principal_recovery_allocations',
     'funding_principal_recovery_releases',
     'funding_principal_revisions',
+    'kyc_active_member_sessions',
     'kyc_cases',
     'kyc_document_view_audit',
+    'kyc_evidence_delivery_receipts',
+    'kyc_operation_receipts',
     'kyc_status_history',
     'kyc_submissions',
     'ledger_accounts',
@@ -198,14 +202,20 @@ select ok(
     'ledger_transactions',
     'member_lifecycle_states',
     'member_timeline_events',
+    'mining_products',
     'mining_reward_credits',
     'mining_reward_withdrawal_reservations',
     'mining_sessions',
+    'mining_settlement_segments',
+    'mining_settlements',
     'money_source_movements',
     'money_source_summaries',
     'notification_preferences',
     'notifications',
     'outbox_events',
+    'product_availability',
+    'product_catalog_versions',
+    'product_rule_versions',
     'push_subscriptions',
     'reconciliation_mismatches',
     'reconciliation_runs',
@@ -263,10 +273,12 @@ select ok(
         'ai_cache',
         'ai_requests',
         'ai_usage',
+        'kyc_evidence_delivery_receipts',
+        'kyc_operation_receipts',
         'withdrawal_destination_step_ups'
       )
   ),
-  'column insert without table insert stays on the reviewed AI and step-up tables'
+  'column insert without table insert stays on the reviewed AI, KYC, and step-up tables'
 );
 
 select ok(
@@ -415,6 +427,28 @@ insert into public.outbox_events (
   'priv-floor-outbox-0001'
 );
 
+-- Contract setup only; retains the existing privilege-floor registration assertion.
+insert into auth.sessions(id,user_id,created_at,updated_at,aal,not_after)values(
+ 'a1100001-1030-4000-8000-000000000011','a1100001-1030-4000-8000-000000000001',clock_timestamp(),clock_timestamp(),'aal1',clock_timestamp()+interval '2 hours');
+
+select set_config('request.jwt.claims','{"role":"service_role"}',true);
+
+-- Test setup adapter only: production callers must present explicit click intent.
+create function pg_temp.register_bound_push_fixture(p_user uuid,p_session uuid,p_operation text,p_endpoint text,
+ p_key text,p_secret text,p_expiry timestamptz,p_agent text)returns jsonb
+ language plpgsql security invoker as $fixture$
+declare snapshot jsonb;permit jsonb;intent uuid:=gen_random_uuid();
+begin
+ if p_operation<>'REGISTER'then raise exception 'FIXTURE_REGISTER_ONLY';end if;
+ snapshot:=public.member_push_endpoint_command(p_user,p_session,'SNAPSHOT',p_endpoint,null,null,null,null,null,null,null);
+ permit:=public.member_push_endpoint_command(p_user,p_session,'ISSUE',p_endpoint,p_key,p_secret,p_expiry,p_agent,
+  (snapshot->>'endpointEpoch')::bigint,intent,null);
+ return public.member_push_endpoint_command(p_user,p_session,'REGISTER',p_endpoint,p_key,p_secret,p_expiry,p_agent,
+  (snapshot->>'endpointEpoch')::bigint,intent,(permit->>'permitId')::uuid);
+end;$fixture$;
+do $$begin execute format('grant usage on schema %I to service_role',(select nspname from pg_namespace where oid=pg_my_temp_schema()));end$$;
+grant execute on function pg_temp.register_bound_push_fixture(uuid,uuid,text,text,text,text,timestamptz,text)to service_role;
+
 set local role service_role;
 
 select throws_ok(
@@ -531,14 +565,16 @@ select lives_ok(
 );
 
 select isnt(
-  public.upsert_push_subscription(
+  (pg_temp.register_bound_push_fixture(
     'a1100001-1030-4000-8000-000000000001',
+    'a1100001-1030-4000-8000-000000000011',
+    'REGISTER',
     'https://push.example.test/priv-floor',
     repeat('a', 40),
     repeat('b', 16),
     null,
     'priv-floor'
-  ),
+  )->>'subscriptionId')::uuid,
   null,
   'service_role can save a push subscription'
 );

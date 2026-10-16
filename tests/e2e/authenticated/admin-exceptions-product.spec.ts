@@ -342,6 +342,11 @@ test.describe("admin exceptions product queue", () => {
     await form.getByRole("checkbox").check();
     await confirmOperatorStepUp(form, secret);
     await form.getByLabel("확인 결과").selectOption("INVESTIGATING");
+    // 결과를 바꾸면 이전 확인과 작업 토큰이 해제되어야 한다.
+    await expect(form.getByRole("checkbox")).not.toBeChecked();
+    await expect(form.locator('input[name="stepUpToken"]')).toHaveValue("");
+    await form.getByRole("checkbox").check();
+    await confirmOperatorStepUp(form, secret);
     await form.getByRole("button", { name: "예외 확인 저장" }).click();
     await expect(form.getByRole("status")).toContainText("조사 중", {
       timeout: 60_000,
@@ -421,6 +426,167 @@ test.describe("admin exceptions product queue", () => {
     await applyTheme(page, "light");
 
     expect(hydration).toEqual([]);
+  });
+
+  test("failed jobs explain Korean evidence and safe review without financial mutations", async ({
+    page,
+  }) => {
+    test.setTimeout(240_000);
+    const admin = await createConfirmedMember("exc-job-guidance");
+    await grantAdminRoleVerified(admin.userId);
+    await completeAdminLoginWithTotp(page, admin.email, admin.password);
+    const db = createLocalServiceRoleClient();
+    const runId = randomUUID();
+    const jobTypes = [
+      "FINANCIAL_RECONCILIATION",
+      "FUNDING_MINING_TICK_V1",
+      "LOCAL_UI_REVIEW_PROBE",
+    ];
+    const ids = jobTypes.map(() => randomUUID());
+    const rows = jobTypes.map((job_type, index) => ({
+      id: ids[index],
+      job_type,
+      status: index === 1 ? "DEAD_LETTER" : "FAILED",
+      attempts: index + 1,
+      dead_lettered_at: index === 1 ? new Date().toISOString() : null,
+      idempotency_key: `admin-job-guidance:${runId}:${ids[index]}`,
+      payload: { fixtureRunId: runId, scope: "LOCAL_BROWSER_TEST_ONLY" },
+    }));
+    const { error } = await db.from("system_jobs").insert(rows);
+    expect(error).toBeNull();
+    const { data: queue, error: queueError } = await db
+      .from("system_jobs")
+      .select("id")
+      .or("status.eq.FAILED,dead_lettered_at.not.is.null")
+      .order("updated_at", { ascending: true })
+      .order("id", { ascending: true })
+      .limit(20);
+    expect(queueError).toBeNull();
+    const reviewIndices = ids.map((id) =>
+      (queue ?? []).findIndex((job) => job.id === id),
+    );
+    expect(reviewIndices.every((index) => index >= 0)).toBe(true);
+    const before = await moneySnapshot();
+    const posts: string[] = [];
+    const failures: string[] = [];
+    page.on("request", (request) => {
+      if (request.method() === "POST")
+        posts.push(new URL(request.url()).pathname);
+    });
+    page.on("pageerror", (error) => failures.push(error.name));
+    page.on("console", (message) => {
+      if (message.type() === "error") failures.push("console:error");
+    });
+    try {
+      await openAdminQueue(page, "/exceptions");
+      const jobs = page.getByTestId("failed-jobs");
+      const reconciliationJob = jobs.getByTestId(
+        `failed-job-review-${reviewIndices[0]! + 1}`,
+      );
+      const miningJob = jobs.getByTestId(
+        `failed-job-review-${reviewIndices[1]! + 1}`,
+      );
+      const unknownJob = jobs.getByTestId(
+        `failed-job-review-${reviewIndices[2]! + 1}`,
+      );
+      await expect(jobs).toBeVisible();
+      await expect(
+        reconciliationJob.getByRole("heading", {
+          name: "금액 기록 비교",
+          exact: true,
+        }),
+      ).toBeVisible();
+      await expect(
+        miningJob.getByRole("heading", { name: "유료 채굴 갱신", exact: true }),
+      ).toBeVisible();
+      await expect(
+        unknownJob.getByRole("heading", {
+          name: "작업 종류 확인 필요",
+          exact: true,
+        }),
+      ).toBeVisible();
+      await expect(jobs).toContainText("자동 처리 중단");
+      await expect(
+        reconciliationJob.getByRole("link", { name: "금액 차이 보기" }),
+      ).toHaveAttribute("href", "/exceptions#reconciliation-exceptions");
+      await expect(
+        miningJob.getByRole("link", { name: "회원 채굴 확인" }),
+      ).toHaveAttribute("href", "/members");
+      await expect(jobs.getByRole("button")).toHaveCount(1);
+      await expect(jobs.locator("form")).toHaveCount(0);
+      for (const value of [...jobTypes, ...ids])
+        expect(await jobs.innerText()).not.toContain(value);
+
+      for (const width of [320, 390, 834, 1440]) {
+        await page.setViewportSize({
+          width,
+          height: width === 834 ? 1112 : 900,
+        });
+        for (const theme of ["dark", "light"] as const) {
+          await applyTheme(page, theme);
+          await openAdminQueue(page, "/exceptions");
+          await expectNoHorizontalOverflow(page);
+          const refresh = jobs.getByRole("button", {
+            name: "목록 다시 불러오기",
+          });
+          await refresh.focus();
+          await expect(refresh).toBeFocused();
+          expect((await refresh.boundingBox())!.height).toBeGreaterThanOrEqual(
+            44,
+          );
+          await shoot(page, `failed-jobs-${width}-${theme}.png`);
+          if (width === 390) {
+            await page.evaluate(() => {
+              document.documentElement.style.fontSize = "200%";
+            });
+            await expectNoHorizontalOverflow(page);
+            await shoot(page, `failed-jobs-${width}-${theme}-text-200.png`);
+            await page.evaluate(() => {
+              document.documentElement.style.fontSize = "";
+            });
+          }
+        }
+      }
+      await jobs.getByRole("button", { name: "목록 다시 불러오기" }).click();
+      await expect(
+        miningJob.getByRole("heading", { name: "유료 채굴 갱신", exact: true }),
+      ).toBeVisible();
+      await miningJob.getByRole("link", { name: "회원 채굴 확인" }).click();
+      await expect(page).toHaveURL(`${ADMIN_ORIGIN}/members`);
+      await expect(page.getByLabel("이름·아이디·전화번호")).toBeVisible();
+      const { data: retained, error: readError } = await db
+        .from("system_jobs")
+        .select("id,status,attempts,payload")
+        .in("id", ids);
+      expect(readError).toBeNull();
+      expect(retained).toHaveLength(3);
+      for (const row of rows) {
+        expect(retained!.find((record) => record.id === row.id)).toMatchObject({
+          status: row.status,
+          attempts: row.attempts,
+          payload: row.payload,
+        });
+      }
+      expect(await moneySnapshot()).toEqual(before);
+      expect(posts).toEqual([]);
+      expect(failures).toEqual([]);
+    } finally {
+      // Service deletion is forbidden. Keep marked, unexecuted probes until the
+      // disposable local database is reset through the repository's own path.
+      const { error: cleanupError } = await db
+        .from("system_jobs")
+        .delete()
+        .in("id", ids)
+        .eq("payload->>fixtureRunId", runId);
+      expect(cleanupError?.code).toBe("42501");
+      const { count, error: remainingError } = await db
+        .from("system_jobs")
+        .select("id", { count: "exact", head: true })
+        .in("id", ids)
+        .eq("payload->>fixtureRunId", runId);
+      expect(remainingError).toBeNull();
+      expect(count).toBe(3);
+    }
   });
 
   test("stale acknowledgement after concurrent close fails closed", async ({

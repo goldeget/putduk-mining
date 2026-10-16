@@ -1,4 +1,7 @@
-import { registerProtectedTypographyMatrix } from "./protected-matrix";
+import {
+  registerProtectedTypographyMatrix,
+  registerFocusedProtectedTypographyRoutes,
+} from "./protected-matrix";
 
 const ADMIN_ORIGIN = "http://127.0.0.1:3100";
 
@@ -56,5 +59,36 @@ registerProtectedTypographyMatrix([
     origin: ADMIN_ORIGIN,
     pathname: "/withdrawals/usdt",
     url: `${ADMIN_ORIGIN}/withdrawals/usdt`,
+  },
+]);
+
+registerFocusedProtectedTypographyRoutes([
+  {
+    name: "admin-catalog",
+    origin: ADMIN_ORIGIN,
+    pathname: "/catalog",
+    url: `http://127.0.0.1:3100/catalog`,
+    fixtureId: "existing-typography-admin-aal2",
+  },
+  {
+    name: "admin-content",
+    origin: ADMIN_ORIGIN,
+    pathname: "/content",
+    url: `http://127.0.0.1:3100/content`,
+    fixtureId: "existing-typography-admin-aal2",
+  },
+  {
+    name: "admin-deposits-krw",
+    origin: ADMIN_ORIGIN,
+    pathname: "/deposits/krw",
+    url: `http://127.0.0.1:3100/deposits/krw`,
+    fixtureId: "existing-typography-admin-aal2",
+  },
+  {
+    name: "admin-economy",
+    origin: ADMIN_ORIGIN,
+    pathname: "/economy",
+    url: `http://127.0.0.1:3100/economy`,
+    fixtureId: "existing-typography-admin-aal2",
   },
 ]);

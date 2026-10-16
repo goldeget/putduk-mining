@@ -147,3 +147,47 @@ test.describe("Korean-friendly line breaking", () => {
     });
   }
 });
+
+// Missing static public paths receive a bounded phone/theme pass, not a new Cartesian matrix.
+const ADDITIONAL_PUBLIC_ROUTES = [
+  "/support",
+  "/offline",
+  "/about",
+  "/how-it-works",
+  "/putduk-facts",
+  "/mining-rules",
+  "/economy",
+  "/deposit",
+  "/faq",
+  "/changelog",
+  "/ai/about",
+  "/ai/facts",
+  "/ai/faq",
+  "/ai/how-it-works",
+] as const;
+for (const pathname of ADDITIONAL_PUBLIC_ROUTES) {
+  for (const theme of TYPOGRAPHY_THEMES) {
+    test(`additional public ${pathname} 390px ${theme}`, async ({
+      page,
+    }, testInfo) => {
+      const viewport = TYPOGRAPHY_VIEWPORTS[0];
+      if (!viewport)
+        throw new Error("390 viewport is required for route coverage.");
+      await installTypographyTheme(page, theme);
+      await auditTypographyRoute({
+        page,
+        testInfo,
+        theme,
+        viewport,
+        routeName: `public-${pathname}`,
+        url: pathname,
+        pathname,
+        origin: "http://127.0.0.1:3000",
+        readySelector: "main h1",
+        ...(pathname === "/offline"
+          ? { requireRouteBody: true, expectedStates: ["offline"] as const }
+          : {}),
+      });
+    });
+  }
+}

@@ -93,6 +93,19 @@ jobs:
     steps:
       - name: Check out source
         uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Canonicalize the approved checkout origin
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = "goldeget/putduk-mining"
+          checkout_origin="$(git remote get-url origin)"
+          case "$checkout_origin" in
+            https://github.com/goldeget/putduk-mining|https://github.com/goldeget/putduk-mining.git) ;;
+            *) echo "BLOCKED_TARGET_SCOPE: checkout origin mismatch" >&2; exit 1 ;;
+          esac
+          git remote set-url origin https://github.com/goldeget/putduk-mining.git
 
       - name: Install pnpm
         uses: pnpm/action-setup@v6.1.0
@@ -104,6 +117,18 @@ jobs:
         with:
           node-version-file: .node-version
           cache: pnpm
+
+      # pnpm's content store does not contain registry metadata or policy verification.
+      # Restore only an exact trusted input key; frozen install still verifies policies.
+      - name: Resolve pnpm metadata cache
+        id: pnpm-metadata
+        run: echo "path=$(pnpm cache path)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache pnpm registry metadata
+        uses: actions/cache@v5
+        with:
+          path: ${{ steps.pnpm-metadata.outputs.path }}
+          key: pnpm-metadata-v1-${{ runner.os }}-${{ runner.arch }}-node24.21.0-pnpm12.6.0-${{ hashFiles('pnpm-lock.yaml', 'pnpm-workspace.yaml', '.node-version', '.npmrc', 'package.json', 'apps/*/package.json', '.pnpmfile.cjs', '.pnpmfile.mjs') }}
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -123,16 +148,32 @@ jobs:
       - name: Typecheck
         run: pnpm typecheck
 
+      - name: Stage exact original content fixtures
+        run: node scripts/stage-content-source-ci.mjs
+
       - name: Unit tests
         run: pnpm test
+
+      - name: Verify authenticated scheduling invariants
+        run: node --test scripts/ci-authenticated-shards.test.mjs scripts/assert-worker-report.test.mjs scripts/e2e-admin-server.test.mjs scripts/backend-successor-201-contract.test.mjs scripts/backend-successor-201-native-contract.test.mjs scripts/stage-content-source-ci.test.mjs tests/ci/historical-recovery-missing-file.test.mjs tests/ci/cloudflare-compatibility-date.test.mjs
+
+      - name: Verify every authenticated test is assigned exactly once
+        env:
+          CI_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          APP_ENV: test
+          PUTDUK_BACKEND_SOURCE_REVISION: "201"
+        run: node scripts/ci-authenticated-shards-201.mjs --verify-only
 
       - name: Production build
         run: pnpm build
 
   database:
+    needs: e2e-app-build
     name: Database security gates
     runs-on: ubuntu-24.04
     timeout-minutes: 20
+    env:
+      CI_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
     steps:
       - name: Check out source
         uses: actions/checkout@v7
@@ -159,6 +200,18 @@ jobs:
           node-version-file: .node-version
           cache: pnpm
 
+      # pnpm's content store does not contain registry metadata or policy verification.
+      # Restore only an exact trusted input key; frozen install still verifies policies.
+      - name: Resolve pnpm metadata cache
+        id: pnpm-metadata
+        run: echo "path=$(pnpm cache path)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache pnpm registry metadata
+        uses: actions/cache@v5
+        with:
+          path: ${{ steps.pnpm-metadata.outputs.path }}
+          key: pnpm-metadata-v1-${{ runner.os }}-${{ runner.arch }}-node24.21.0-pnpm12.6.0-${{ hashFiles('pnpm-lock.yaml', 'pnpm-workspace.yaml', '.node-version', '.npmrc', 'package.json', 'apps/*/package.json', '.pnpmfile.cjs', '.pnpmfile.mjs') }}
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
@@ -167,14 +220,35 @@ jobs:
         with:
           version: 2.113.0
 
-      - name: Start isolated PostgreSQL
-        run: pnpm db:start
+      - name: Verify successor201 canonical source before local infrastructure
+        run: node scripts/ci-backend-201.mjs --plan
+
+      - name: Start isolated PostgreSQL Auth and REST for successor201
+        run: pnpm exec supabase start -x studio,imgproxy,realtime,storage-api,edge-runtime,logflare,vector,postgres-meta,supavisor
 
       - name: Rebuild migrations from zero
         run: pnpm db:reset
 
-      - name: Run pgTAP tests
-        run: pnpm db:test
+      - name: Bind successor201 source and stage exact native adapters
+        id: successor197-stage
+        env:
+          APP_ENV: test
+        run: |
+          node scripts/ci-backend-201.mjs --plan
+          STAGED="$RUNNER_TEMP/putduk-mining-native201-$(node -e 'console.log(require("node:crypto").randomUUID())')"
+          node scripts/backend-successor-201-native-stage.mjs --prepare --output="$STAGED"
+          printf 'staged=%s\n' "$STAGED" >> "$GITHUB_OUTPUT"
+
+      - name: Prepare test-only pgTAP after exact fresh successor201 preflight
+        env:
+          APP_ENV: test
+        run: |
+          CONTAINER_ID="$(docker inspect --format '{{.Id}}' supabase_db_putduk-mining-ci-r2-20261009)"
+          node scripts/usdt-manual-201-runner.mjs --prepare-test-tool --fresh-container-id="$CONTAINER_ID"
+
+      - name: Run pgTAP tests through exact successor201 staging
+        # Keep database SQL and its relative snippets in the same mounted tree.
+        run: pnpm exec supabase test db "${{ steps.successor197-stage.outputs.staged }}/supabase/tests"
 
       # 두 세션 검사는 커밋이 남는다. 공유 suite 를 오염시키지 않도록
       # 러너의 일회용 DB 를 다시 만든 뒤 그 파일만 실행한다.
@@ -190,8 +264,76 @@ jobs:
       - name: Run two-session safe-mode command
         run: supabase test db supabase/tests-concurrent/safe_mode_concurrent_command.sql
 
+      - name: Run two-session withdrawal member lock order
+        run: supabase test db supabase/tests-concurrent/withdrawal_member_lock_order.sql
+
+      - name: Prepare canonical funded fixture for GLOBAL admission
+        run: supabase test db supabase/test-fixtures/funding_global_admission_canonical.sql
+
+      - name: Verify member allocation clock after GLOBAL admission
+        run: supabase test db supabase/tests-concurrent/global_allocation_admission_concurrent.sql
+
+      - name: Prepare principal HOLD clock admission fixture
+        run: supabase test db supabase/test-fixtures/hold_clock_admission_concurrency.sql
+
+      - name: Verify HOLD and CANCEL clock admission after real contention
+        run: supabase test db supabase/tests-concurrent/hold_cancel_admission_concurrent.sql
+
       - name: Verify published policy reader against concurrent publication
         run: node scripts/assert-economy-policy-reader-concurrency.mjs
+
+      - name: Verify successor201 native and full-id external-send concurrency
+        id: successor197-native
+        timeout-minutes: 18
+        env:
+          APP_ENV: test
+        run: |
+          pnpm db:reset
+          CONTAINER_ID="$(docker inspect --format '{{.Id}}' supabase_db_putduk-mining-ci-r2-20261009)"
+          OUTPUT="$RUNNER_TEMP/putduk-mining-usdt201-$(node -e 'console.log(require("node:crypto").randomUUID())')"
+          printf 'output=%s\n' "$OUTPUT" >> "$GITHUB_OUTPUT"
+          node scripts/usdt-manual-201-runner.mjs --execute --allow-synthetic-db-writes --confirmed-full-payout --fresh-container-id="$CONTAINER_ID" --output="$OUTPUT"
+          node scripts/ci-backend-201.mjs --verify-native="$OUTPUT" --fresh-id="$CONTAINER_ID"
+
+      - name: Restore shared production build for successor201 API
+        uses: actions/download-artifact@v7
+        with:
+          name: e2e-next-production
+          path: .
+
+      - name: Capture masked successor201 local Auth environment
+        env:
+          APP_ENV: test
+        run: node scripts/capture-local-supabase-env.mjs
+
+      - name: Prepare ephemeral successor201 encryption key
+        run: node scripts/write-ephemeral-withdrawal-key.mjs
+
+      - name: Verify successor201 API and exact current report
+        timeout-minutes: 18
+        env:
+          APP_ENV: test
+          E2E_WITH_ADMIN_SERVER: "1"
+          E2E_NEXT_START: "1"
+          E2E_PREBUILT_APPS: "1"
+          E2E_ADMIN_PORT: "3100"
+          PUTDUK_BACKEND_SOURCE_REVISION: "201"
+        run: |
+          node scripts/ci-backend-201.mjs --record-http-start
+          pnpm exec playwright test --config playwright.backend-http-201.config.ts --project backend-api --fail-on-flaky-tests
+          node scripts/ci-backend-201.mjs --verify-http
+
+      - name: Preserve successor201 current raw native and API evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: backend-successor201-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ steps.successor197-stage.outputs.staged }}/staging-manifest.json
+            ${{ steps.successor197-native.outputs.output }}
+            test-results/backend-http-201-api
+            playwright-report/backend201-http-evidence/**
+          if-no-files-found: error
 
       - name: Lint application schemas
         run: pnpm db:lint
@@ -217,6 +359,18 @@ jobs:
         with:
           node-version-file: .node-version
           cache: pnpm
+
+      # pnpm's content store does not contain registry metadata or policy verification.
+      # Restore only an exact trusted input key; frozen install still verifies policies.
+      - name: Resolve pnpm metadata cache
+        id: pnpm-metadata
+        run: echo "path=$(pnpm cache path)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache pnpm registry metadata
+        uses: actions/cache@v5
+        with:
+          path: ${{ steps.pnpm-metadata.outputs.path }}
+          key: pnpm-metadata-v1-${{ runner.os }}-${{ runner.arch }}-node24.21.0-pnpm12.6.0-${{ hashFiles('pnpm-lock.yaml', 'pnpm-workspace.yaml', '.node-version', '.npmrc', 'package.json', 'apps/*/package.json', '.pnpmfile.cjs', '.pnpmfile.mjs') }}
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -266,6 +420,18 @@ jobs:
           node-version-file: .node-version
           cache: pnpm
 
+      # pnpm's content store does not contain registry metadata or policy verification.
+      # Restore only an exact trusted input key; frozen install still verifies policies.
+      - name: Resolve pnpm metadata cache
+        id: pnpm-metadata
+        run: echo "path=$(pnpm cache path)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache pnpm registry metadata
+        uses: actions/cache@v5
+        with:
+          path: ${{ steps.pnpm-metadata.outputs.path }}
+          key: pnpm-metadata-v1-${{ runner.os }}-${{ runner.arch }}-node24.21.0-pnpm12.6.0-${{ hashFiles('pnpm-lock.yaml', 'pnpm-workspace.yaml', '.node-version', '.npmrc', 'package.json', 'apps/*/package.json', '.pnpmfile.cjs', '.pnpmfile.mjs') }}
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
@@ -276,6 +442,7 @@ jobs:
         env:
           APP_ENV: test
           NEXT_PUBLIC_APP_ENV: test
+          NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:63421
           NEXT_PUBLIC_CHANNEL_TALK_PLUGIN_KEY: putduk-e2e-plugin-key
           CHANNEL_TALK_MEMBER_HASH_SECRET: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 
@@ -291,17 +458,32 @@ jobs:
             apps/admin/.next
 
   authenticated:
-    name: Authenticated product gates (${{ matrix.shard }}/8)
+    name: Authenticated product gates (${{ matrix.shard }}/12)
     runs-on: ubuntu-24.04
     timeout-minutes: 19
-    needs: [webserver-lifecycle, e2e-app-build]
+    permissions:
+      contents: read
+      actions: read
+    # Bootstrap isolated services without waiting for another runner. The exact
+    # current build AND lifecycle success gate below still precedes download/tests.
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3, 4, 5, 6, 7, 8]
+        shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
     steps:
       - name: Check out source
         uses: actions/checkout@v7
+
+      - name: Canonicalize the approved checkout origin
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = "goldeget/putduk-mining"
+          checkout_origin="$(git remote get-url origin)"
+          case "$checkout_origin" in
+            https://github.com/goldeget/putduk-mining|https://github.com/goldeget/putduk-mining.git) ;;
+            *) echo "BLOCKED_TARGET_SCOPE: checkout origin mismatch" >&2; exit 1 ;;
+          esac
+          git remote set-url origin https://github.com/goldeget/putduk-mining.git
 
       - name: Install pnpm
         uses: pnpm/action-setup@v6.1.0
@@ -314,24 +496,48 @@ jobs:
           node-version-file: .node-version
           cache: pnpm
 
+      # pnpm's content store does not contain registry metadata or policy verification.
+      # Restore only an exact trusted input key; frozen install still verifies policies.
+      - name: Resolve pnpm metadata cache
+        id: pnpm-metadata
+        run: echo "path=$(pnpm cache path)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache pnpm registry metadata
+        uses: actions/cache@v5
+        with:
+          path: ${{ steps.pnpm-metadata.outputs.path }}
+          key: pnpm-metadata-v1-${{ runner.os }}-${{ runner.arch }}-node24.21.0-pnpm12.6.0-${{ hashFiles('pnpm-lock.yaml', 'pnpm-workspace.yaml', '.node-version', '.npmrc', 'package.json', 'apps/*/package.json', '.pnpmfile.cjs', '.pnpmfile.mjs') }}
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-
-      - name: Download E2E production build
-        uses: actions/download-artifact@v7
-        with:
-          name: e2e-next-production
 
       - name: Install Supabase CLI
         uses: supabase/setup-cli@v3
         with:
           version: 2.113.0
 
+      - name: Prove authenticated database starts from absent resources
+        run: node scripts/assert-ci-fresh-db.mjs before
+
       - name: Start local Supabase
+        env:
+          CI_SUPABASE_START_STAGGER_SECONDS: ${{ matrix.shard }}
         run: bash scripts/ci-supabase-start.sh
 
-      - name: Rebuild migrations from zero
-        run: pnpm db:reset
+      - name: Verify fresh first-start migrations and empty financial state
+        run: node scripts/assert-ci-fresh-db.mjs after
+
+      - name: Require current production build and lifecycle success
+        timeout-minutes: 4
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CI_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: node scripts/await-ci-e2e-build.mjs
+
+      - name: Download E2E production build
+        uses: actions/download-artifact@v7
+        with:
+          name: e2e-next-production
 
       - name: Export local Supabase env
         run: node scripts/capture-local-supabase-env.mjs
@@ -362,13 +568,17 @@ jobs:
 
       - name: Run authenticated browser tests
         # 실제 TOTP 창과 모든 assertion/retry는 유지한다. 중단은 실패이며 통과가 아니다.
-        # 186개(chromium + mobile-chrome)를 8-way --shard로 나누면 shard당 약 23건이다. wall time은 가장 느린 shard 기준.
+        # 파일/브라우저 조합은 통째로 배분한다. 전체 목록과 선택 목록의 exact coverage를 검사한다.
         # CI wall-clock: e2e-app-build 산출물 + E2E_NEXT_START=1 (next start). next dev 금지 — putduk-ci-wall-clock.mdc.
         timeout-minutes: 18
         env:
           E2E_NEXT_START: "1"
-        # pnpm run … -- --shard 는 CI에서 playwright 인자 앞에 `--` 가 한 번 더 붙어 shard가 무시된다.
-        run: pnpm exec playwright test --config playwright.authenticated.config.ts --shard=${{ matrix.shard }}/8 --fail-on-flaky-tests
+          E2E_WEB_PORT: "3000"
+          E2E_ADMIN_PORT: "3100"
+          CI_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          APP_ENV: test
+          PUTDUK_BACKEND_SOURCE_REVISION: "201"
+        run: node scripts/ci-authenticated-shards-201.mjs ${{ matrix.shard }}/12
 
       - name: Preserve authenticated browser evidence
         if: always()
@@ -388,6 +598,17 @@ jobs:
       - name: Check out source
         uses: actions/checkout@v7
 
+      - name: Canonicalize the approved checkout origin
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = "goldeget/putduk-mining"
+          checkout_origin="$(git remote get-url origin)"
+          case "$checkout_origin" in
+            https://github.com/goldeget/putduk-mining|https://github.com/goldeget/putduk-mining.git) ;;
+            *) echo "BLOCKED_TARGET_SCOPE: checkout origin mismatch" >&2; exit 1 ;;
+          esac
+          git remote set-url origin https://github.com/goldeget/putduk-mining.git
+
       - name: Install pnpm
         uses: pnpm/action-setup@v6.1.0
         with:
@@ -398,6 +619,18 @@ jobs:
         with:
           node-version-file: .node-version
           cache: pnpm
+
+      # pnpm's content store does not contain registry metadata or policy verification.
+      # Restore only an exact trusted input key; frozen install still verifies policies.
+      - name: Resolve pnpm metadata cache
+        id: pnpm-metadata
+        run: echo "path=$(pnpm cache path)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache pnpm registry metadata
+        uses: actions/cache@v5
+        with:
+          path: ${{ steps.pnpm-metadata.outputs.path }}
+          key: pnpm-metadata-v1-${{ runner.os }}-${{ runner.arch }}-node24.21.0-pnpm12.6.0-${{ hashFiles('pnpm-lock.yaml', 'pnpm-workspace.yaml', '.node-version', '.npmrc', 'package.json', 'apps/*/package.json', '.pnpmfile.cjs', '.pnpmfile.mjs') }}
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -416,16 +649,44 @@ jobs:
       - name: Export local Supabase env
         run: node scripts/capture-local-supabase-env.mjs
 
+      - name: Verify independent restore guard contracts
+        timeout-minutes: 1
+        run: node --max-old-space-size=48 --test tests/ci/ci-independent-restore.test.mjs
+
+      - name: Verify independent fresh-cluster recovery
+        timeout-minutes: 3
+        env:
+          APP_ENV: test
+          CI_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: node scripts/ci-independent-restore.mjs --ci
+
+      - name: Verify concurrent admin authentication admission
+        env:
+          APP_ENV: test
+        run: node scripts/assert-admin-auth-admission-concurrency.mjs
+
       - name: Run worker runtime tests
-        run: pnpm test:worker
+        run: |
+          rm -f test-results/worker/vitest.json test-results/worker/report.json
+          worker_started_after="$(node -e 'process.stdout.write(String(Date.now()))')"
+          echo "WORKER_REPORT_STARTED_AFTER=$worker_started_after" >> "$GITHUB_ENV"
+          pnpm test:worker
+
+      - name: Assert current worker runtime evidence
+        if: always()
+        env:
+          CI_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: node scripts/assert-worker-report.mjs test-results/worker/vitest.json --started-after "$WORKER_REPORT_STARTED_AFTER"
 
       - name: Preserve worker evidence
         if: always()
         uses: actions/upload-artifact@v7
         with:
           name: worker-runtime
-          path: test-results
-          if-no-files-found: ignore
+          path: |
+            test-results/worker/report.json
+            test-results/worker/independent-restore.json
+          if-no-files-found: error
 
   # 공개 화면 감사. 로컬 가짜 키만 쓰고 Supabase는 시작하지 않는다.
   typography-public:
@@ -447,11 +708,30 @@ jobs:
           node-version-file: .node-version
           cache: pnpm
 
+      # pnpm's content store does not contain registry metadata or policy verification.
+      # Restore only an exact trusted input key; frozen install still verifies policies.
+      - name: Resolve pnpm metadata cache
+        id: pnpm-metadata
+        run: echo "path=$(pnpm cache path)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache pnpm registry metadata
+        uses: actions/cache@v5
+        with:
+          path: ${{ steps.pnpm-metadata.outputs.path }}
+          key: pnpm-metadata-v1-${{ runner.os }}-${{ runner.arch }}-node24.21.0-pnpm12.6.0-${{ hashFiles('pnpm-lock.yaml', 'pnpm-workspace.yaml', '.node-version', '.npmrc', 'package.json', 'apps/*/package.json', '.pnpmfile.cjs', '.pnpmfile.mjs') }}
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
       - name: Install Chromium
         run: pnpm exec playwright install --with-deps chromium
+
+      - name: Verify typography harness against rendered regression fixtures
+        run: pnpm exec playwright test --config playwright.typography-harness.config.ts --fail-on-flaky-tests
+
+      - name: Assert typography harness regression evidence
+        if: always()
+        run: node scripts/assert-typography-report.mjs test-results/typography-harness/report.json --passed 3 --screenshots 0 --hydration 0 --redact
 
       - name: Run public Korean typography
         timeout-minutes: 15
@@ -459,7 +739,7 @@ jobs:
 
       - name: Assert public typography evidence
         if: always()
-        run: node scripts/assert-typography-report.mjs test-results/typography/report.json --passed 115 --screenshots 110 --redact
+        run: node scripts/assert-typography-report.mjs test-results/typography/report.json --passed 155 --screenshots 138 --redact
 
       - name: Preserve public typography evidence
         if: always()
@@ -467,6 +747,7 @@ jobs:
         with:
           name: typography-public
           path: |
+            test-results/typography-harness/report.json
             test-results/typography/report.json
             test-results/typography/**/*.png
           if-no-files-found: ignore
@@ -491,6 +772,18 @@ jobs:
         with:
           node-version-file: .node-version
           cache: pnpm
+
+      # pnpm's content store does not contain registry metadata or policy verification.
+      # Restore only an exact trusted input key; frozen install still verifies policies.
+      - name: Resolve pnpm metadata cache
+        id: pnpm-metadata
+        run: echo "path=$(pnpm cache path)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache pnpm registry metadata
+        uses: actions/cache@v5
+        with:
+          path: ${{ steps.pnpm-metadata.outputs.path }}
+          key: pnpm-metadata-v1-${{ runner.os }}-${{ runner.arch }}-node24.21.0-pnpm12.6.0-${{ hashFiles('pnpm-lock.yaml', 'pnpm-workspace.yaml', '.node-version', '.npmrc', 'package.json', 'apps/*/package.json', '.pnpmfile.cjs', '.pnpmfile.mjs') }}
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -543,7 +836,7 @@ jobs:
 
       - name: Assert protected typography evidence
         if: always()
-        run: node scripts/assert-typography-report.mjs test-results/typography-protected/report.json --passed 135 --screenshots 133 --hydration 0 --redact
+        run: node scripts/assert-typography-report.mjs test-results/typography-protected/report.json --passed 149 --screenshots 147 --hydration 0 --redact
 
       - name: Preserve protected typography evidence
         if: always()

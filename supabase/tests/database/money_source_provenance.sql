@@ -227,8 +227,23 @@ select throws_ok($test$
     set constraints deposit_requests_money_source_complete immediate;
   end;
   $body$;
+$test$, '55000', 'FUNDING_CREDIT_COMMAND_COMPLETION_MISSING',
+  'actual service rejects the missing financial/source original before credit completion');
+reset role;
+-- Trusted postgres fixture preserves the independent original deferred source
+-- invariant. The historical owner-only command path skips the private engine
+-- hook; it is not an application authority or a restored service privilege.
+select throws_ok($test$
+  do $body$
+  begin
+    perform public.approve_deposit_request(collision_deposit_id, admin_id, 888,
+      'source-collision-credit-v1', 'actual fixture bank transfer confirmed', gen_random_uuid()) from source_ctx;
+    set constraints deposit_requests_money_source_complete immediate;
+  end;
+  $body$;
 $test$, '55000', 'MONEY_SOURCE_CAPTURE_INCOMPLETE',
   'an ignored outbox-key collision rolls back the whole KRW approval at the deferred boundary');
+set local role service_role;
 reset role;
 select ok((select status = 'AWAITING_TRANSFER' and approved_amount_atomic is null
   and reviewed_by is null and ledger_transaction_id is null and wallet_ledger_id is null
@@ -242,7 +257,8 @@ select ok(not exists(select 1 from public.ledger_transactions
   and not exists(select 1 from app_private.idempotency_keys
     where scope = 'deposit.approve' and idempotency_key = 'source-collision-credit-v1')
   and not exists(select 1 from public.money_source_movements where source_event_id = (select collision_event_id from source_ctx))
-  and not exists(select 1 from public.outbox_events where aggregate_id = (select collision_deposit_id from source_ctx)),
+  and not exists(select 1 from public.outbox_events where aggregate_id = (select collision_deposit_id from source_ctx))
+  and not exists(select 1 from app_private.funding_credit_boundary_preparations where command_original_id=(select collision_deposit_id from source_ctx)),
   'deferred collision leaves no journal, wallet, audit, command key, source or approval event');
 select ok((select to_jsonb(event.*) = ctx.collision_event_before
   from source_ctx as ctx join public.outbox_events as event on event.id = ctx.collision_event_id)
@@ -410,23 +426,63 @@ select ok((select coverage = 'UNRESOLVED' and eligible_principal_atomic is null
   'a changed event key cannot substitute for the original approval business key');
 update public.outbox_events set idempotency_key = 'source-krw-credit-v1:deposit-event'
 where aggregate_id = (select deposit_id from source_ctx) and event_type = 'DEPOSIT_CONFIRMED.v1';
+
+-- Service-role commands cannot corrupt an account's posted journal identity.
+set local role service_role;
+select throws_ok($$update public.ledger_accounts set code = 'PUTDUK:SOURCE_FIXTURE_OTHER_CASH:KRW'
+  where code = 'PUTDUK:OPERATING_CASH:KRW'$$,
+  '55000', 'LEDGER_ACCOUNT_IDENTITY_IS_IMMUTABLE', 'the original command cash account cannot be renamed');
+select ok((select coverage = 'COMPLETE' and eligible_principal_atomic = '10000' and invalid_source_receipts = '0'
+  from public.money_source_summaries where user_id = (select member_id from source_ctx)),
+  'rejected account substitution leaves the original money receipts verified');
+select throws_ok($$update public.ledger_accounts set is_controlled_asset = false
+  where code = 'PUTDUK:OPERATING_CASH:KRW'$$,
+  '55000', 'LEDGER_ACCOUNT_IDENTITY_IS_IMMUTABLE', 'original controlled-asset semantics cannot be rewritten');
+select ok((select coverage = 'COMPLETE' and eligible_principal_atomic = '10000' and invalid_source_receipts = '0'
+  from public.money_source_summaries where user_id = (select member_id from source_ctx)),
+  'rejected asset rewrite leaves the original money receipts verified');
+select throws_ok($$update public.ledger_accounts set normal_side = 'CREDIT'
+  where code = 'PUTDUK:OPERATING_CASH:KRW'$$,
+  '55000', 'LEDGER_ACCOUNT_IDENTITY_IS_IMMUTABLE', 'the original asset normal side cannot be rewritten');
+select ok((select coverage = 'COMPLETE' and eligible_principal_atomic = '10000' and invalid_source_receipts = '0'
+  from public.money_source_summaries where user_id = (select member_id from source_ctx)),
+  'rejected normal-side rewrite leaves the original money receipts verified');
+reset role;
+
+-- Keep defensive readback coverage for historical corrupt originals. Only the
+-- table owner can prepare these rollback-only fixtures; restore the named
+-- trigger immediately after each fixture edit, before every service-role read.
+alter table public.ledger_accounts disable trigger ledger_accounts_identity_immutable;
 update public.ledger_accounts set code = 'PUTDUK:SOURCE_FIXTURE_OTHER_CASH:KRW'
 where code = 'PUTDUK:OPERATING_CASH:KRW';
+alter table public.ledger_accounts enable trigger ledger_accounts_identity_immutable;
+set local role service_role;
 select ok((select coverage = 'UNRESOLVED' and eligible_principal_atomic is null and invalid_source_receipts = '2'
   from public.money_source_summaries where user_id = (select member_id from source_ctx)),
   'the same asset class cannot substitute for the original command cash account');
+reset role;
+alter table public.ledger_accounts disable trigger ledger_accounts_identity_immutable;
 update public.ledger_accounts set code = 'PUTDUK:OPERATING_CASH:KRW'
 where code = 'PUTDUK:SOURCE_FIXTURE_OTHER_CASH:KRW';
 update public.ledger_accounts set is_controlled_asset = false where code = 'PUTDUK:OPERATING_CASH:KRW';
+alter table public.ledger_accounts enable trigger ledger_accounts_identity_immutable;
+set local role service_role;
 select ok((select coverage = 'UNRESOLVED' and eligible_principal_atomic is null
   from public.money_source_summaries where user_id = (select member_id from source_ctx)),
   'original controlled-asset semantics remain part of the money receipt');
+reset role;
+alter table public.ledger_accounts disable trigger ledger_accounts_identity_immutable;
 update public.ledger_accounts set is_controlled_asset = true where code = 'PUTDUK:OPERATING_CASH:KRW';
 update public.ledger_accounts set normal_side = 'CREDIT' where code = 'PUTDUK:OPERATING_CASH:KRW';
+alter table public.ledger_accounts enable trigger ledger_accounts_identity_immutable;
+set local role service_role;
 select ok((select coverage = 'UNRESOLVED' and eligible_principal_atomic is null
   from public.money_source_summaries where user_id = (select member_id from source_ctx)),
   'a changed normal side invalidates the original asset receipt');
+reset role;
+alter table public.ledger_accounts disable trigger ledger_accounts_identity_immutable;
 update public.ledger_accounts set normal_side = 'DEBIT' where code = 'PUTDUK:OPERATING_CASH:KRW';
+alter table public.ledger_accounts enable trigger ledger_accounts_identity_immutable;
 set local role service_role;
 select ok((select coverage = 'COMPLETE' and eligible_principal_atomic = '10000'
   from public.money_source_summaries where user_id = (select member_id from source_ctx)),
@@ -485,8 +541,23 @@ select throws_ok($test$
     set constraints deposit_requests_money_source_complete immediate;
   end;
   $body$;
+$test$, '55000', 'FUNDING_CREDIT_COMMAND_COMPLETION_MISSING',
+  'actual service rejects a suppressed approval audit before credit completion');
+reset role;
+-- Trusted postgres fixture preserves the independent original deferred source
+-- invariant. The historical owner-only command path skips the private engine
+-- hook; it is not an application authority or a restored service privilege.
+select throws_ok($test$
+  do $body$
+  begin
+    perform public.approve_deposit_request(audit_deposit_id, admin_id, 555,
+      'source-audit-credit-v1', 'source fixture suppressed approval audit', gen_random_uuid()) from source_ctx;
+    set constraints deposit_requests_money_source_complete immediate;
+  end;
+  $body$;
 $test$, '55000', 'MONEY_SOURCE_RECEIPT_UNVERIFIED',
   'terminal completeness rejects a captured credit without its original approval audit');
+set local role service_role;
 reset role;
 select ok((select status = 'AWAITING_TRANSFER' and ledger_transaction_id is null and wallet_ledger_id is null
     from public.deposit_requests where id = (select audit_deposit_id from source_ctx))
@@ -495,7 +566,8 @@ select ok((select status = 'AWAITING_TRANSFER' and ledger_transaction_id is null
   and not exists(select 1 from public.outbox_events where aggregate_id = (select audit_deposit_id from source_ctx))
   and not exists(select 1 from public.audit_logs where target_id = (select audit_deposit_id::text from source_ctx))
   and not exists(select 1 from app_private.idempotency_keys
-    where scope = 'deposit.approve' and idempotency_key = 'source-audit-credit-v1'),
+    where scope = 'deposit.approve' and idempotency_key = 'source-audit-credit-v1')
+  and not exists(select 1 from app_private.funding_credit_boundary_preparations where command_original_id=(select audit_deposit_id from source_ctx)),
   'missing audit rolls back the domain, journal, wallet, source event and completed key');
 select is((select count(*)::integer from public.money_source_movements
   where user_id = (select member_id from source_ctx)), 3, 'audit failure does not leave an orphan captured source');
@@ -569,5 +641,81 @@ select ok((select count(*) = 3 from public.money_source_movements where user_id 
   'balanced unknown journals do not manufacture wallet or source receipts');
 reset role;
 
+create temporary table local_domain_terminal_source as select source_event_id from public.money_source_movements where origin_code='WELCOME_REWARD'and user_id=(select member_id from source_ctx);
+create temporary table local_domain_terminal_balance as select count(*)::bigint as journals from public.ledger_transactions;
+grant select on local_domain_terminal_source,local_domain_terminal_balance to service_role;
+select is((select count(*)from local_domain_terminal_source),1::bigint,'canonical fixture produced exactly one TRIAL_REWARD_CONVERTED.v1 source');
+update public.outbox_events set available_at='infinity'where id not in(select * from local_domain_terminal_source);
+update public.outbox_events set available_at='-infinity'where id in(select * from local_domain_terminal_source);
+select set_config('request.jwt.claims','{"role":"service_role"}',true);
+set local role service_role;
+select is((select count(*)from public.claim_outbox_events('domain-terminal-native',1,300)),1::bigint,'actual canonical lease claims terminal original');
+select lives_ok($proof$select public.complete_outbox_event((select * from local_domain_terminal_source),'domain-terminal-native')$proof$,'terminal ordinary notice uses real receipt instead of claimed payload');
+select lives_ok('set constraints all immediate','terminal private source and ordinary notice seals pass');
+reset role;
+select is((select count(*)from app_private.domain_notification_originals where source_event_id in(select * from local_domain_terminal_source)and user_id=(select member_id from source_ctx)and source_type='TRIAL_REWARD_CONVERTED.v1'),1::bigint,'actual source derives original owner and type');
+select is((select count(*)from public.notifications where source_event_id in(select * from local_domain_terminal_source)and user_id=(select member_id from source_ctx)and category='wallet'),1::bigint,'one actual owner sees factual wallet transition');
+select is((select count(*)from public.ledger_transactions),(select journals from local_domain_terminal_balance),'notification cannot add new monetary journal');
+-- Synthetic pre-existing local reward gate verifies manual USDT cannot enter mission qualification.
+-- No policy or paid provider/API configuration is activated.
+insert into app_private.nonmoney_executor_configuration(singleton,local_qa_enabled,project_identity)
+ values(true,true,'putduk-mining-local-recovery-20261009-fi');
+create temporary table local_usdt_notice_source as select source_event_id as id from public.money_source_movements
+ where origin_code='USDT_KRW_DEPOSIT'and user_id=(select member_id from source_ctx);
+create temporary table local_usdt_notice_balance as select count(*)::bigint as journals from public.ledger_transactions;
+grant select on local_usdt_notice_source,local_usdt_notice_balance to service_role;
+select is((select count(*)from local_usdt_notice_source),1::bigint,'canonical confirmed manual USDT fixture produced one exact source');
+update public.outbox_events set available_at='infinity'where id not in(select id from local_usdt_notice_source);
+update public.outbox_events set available_at='-infinity'where id in(select id from local_usdt_notice_source);
+select set_config('request.jwt.claims','{"role":"service_role"}',true);
+set local role service_role;
+select is((select count(*)from public.claim_outbox_events('domain-usdt-native',1,300)),1::bigint,'actual existing lease claims manual USDT source');
+select throws_like($proof$select public.complete_outbox_event((select id from local_usdt_notice_source),'domain-usdt-foreign')$proof$,'OUTBOX_LEASE_NOT_OWNED','manual USDT source cannot be completed by a different worker');
+select lives_ok($proof$select public.complete_outbox_event((select id from local_usdt_notice_source),'domain-usdt-native')$proof$,'ordinary manual deposit notice validates canonical source without activating rewards');
+select lives_ok('set constraints all immediate','manual USDT private source and notice deferred seals complete');set constraints all deferred;
+reset role;
+select is((select count(*)from app_private.domain_notification_originals where source_event_id in(select id from local_usdt_notice_source)and user_id=(select member_id from source_ctx)and source_type='USDT_MANUAL_DEPOSIT_CONFIRMED.v1'),1::bigint,'actual manual USDT original derives exact owner and type');
+select is((select count(*)from public.notifications where source_event_id in(select id from local_usdt_notice_source)and user_id=(select member_id from source_ctx)and category='wallet'and title_ko='수동 입금이 확인됐어요'and route='/wallet'),1::bigint,'manual USDT source creates only generic own wallet fact');
+select is((select count(*)from public.ledger_transactions),(select journals from local_usdt_notice_balance),'notification adds no money journal');
+select is((select count(*)from public.member_event_awards),0::bigint,'manual USDT notice does not grant event rewards');
+select is((select count(*)from app_private.nonmoney_executor_configuration where local_qa_enabled),1::bigint,'manual USDT leaves the explicitly pre-existing synthetic local gate unchanged');
+create function pg_temp.replay_usdt_notice(p_source uuid)returns void language sql security definer set search_path=pg_catalog as $proof$select app_private.persist_domain_original_notification(p_source)$proof$;
+revoke all on function pg_temp.replay_usdt_notice(uuid)from public;grant execute on function pg_temp.replay_usdt_notice(uuid)to service_role;
+set local role service_role;
+select lives_ok($proof$select pg_temp.replay_usdt_notice(id)from local_usdt_notice_source$proof$,'response-loss internal retry revalidates source without duplication');
+reset role;
+select is((select count(*)from public.notifications where source_event_id in(select id from local_usdt_notice_source)),1::bigint,'manual USDT retry preserves one notice');
+select throws_like($proof$update public.money_source_movements set user_id=(select legacy_id from source_ctx)where source_event_id in(select id from local_usdt_notice_source)$proof$,'%append-only%','source owner cannot be rewritten');
+select throws_like($proof$update public.money_source_movements set effective_at=clock_timestamp()+interval '1 day'where source_event_id in(select id from local_usdt_notice_source)$proof$,'%append-only%','future business timestamp cannot be substituted');
+select throws_like($proof$update public.money_source_movements set amount_atomic=amount_atomic+1 where source_event_id in(select id from local_usdt_notice_source)$proof$,'%append-only%','amount provenance cannot be forged');
+select throws_like($proof$update app_private.domain_notification_originals set source_digest='forged'where source_event_id in(select id from local_usdt_notice_source)$proof$,'%append-only%','notification source digest cannot be replaced');
+select ok((select bool_and(body_ko not like '%10000%'and body_ko not like '%TRC20%'and body_ko not like '%local-source-fixture-address%')from public.notifications where source_event_id in(select id from local_usdt_notice_source)),'member fact omits amounts transfer address and network');
+set local role service_role;
+select lives_ok('set constraints all immediate','replay and rejected mutation preserve native seals');reset role;
+create function pg_temp.verify_usdt_mission_rejected(p_source uuid)returns integer language sql security definer set search_path=pg_catalog as $proof$
+ select app_private.evaluate_nonmoney_original(p_source)
+$proof$;
+revoke all on function pg_temp.verify_usdt_mission_rejected(uuid)from public;grant execute on function pg_temp.verify_usdt_mission_rejected(uuid)to service_role;
+create function pg_temp.forge_usdt_source_tuple()returns void language plpgsql security definer set search_path=pg_catalog as $proof$
+declare id uuid:=gen_random_uuid();claimed uuid;
+begin
+ set constraints all deferred;
+ insert into public.outbox_events(id,event_type,schema_version,aggregate_type,aggregate_id,actor_user_id,payload,correlation_id,request_id,idempotency_key,available_at)
+ select id,'USDT_MANUAL_DEPOSIT_CONFIRMED.v1',1,'usdt_manual_deposit',gen_random_uuid(),admin_id,
+  jsonb_build_object('user_id',legacy_id,'credited_krw','10000','ledger_transaction_id',gen_random_uuid()),
+  gen_random_uuid(),gen_random_uuid(),'qa-domain-usdt-forged:'||id::text,'-infinity' from pg_temp.source_ctx;
+ select c.id into claimed from public.claim_outbox_events('domain-usdt-invalid',1,300)c;
+ if claimed is distinct from id then raise exception 'QA_FORGED_SOURCE_NOT_CLAIMED';end if;
+ perform public.complete_outbox_event(id,'domain-usdt-invalid');
+end;$proof$;
+revoke all on function pg_temp.forge_usdt_source_tuple()from public;grant execute on function pg_temp.forge_usdt_source_tuple()to service_role;
+set local role service_role;
+select throws_like($proof$select pg_temp.verify_usdt_mission_rejected(id)from local_usdt_notice_source$proof$,'NONMONEY_CANONICAL_ORIGINAL_REQUIRED','manual USDT remains outside approved mission eligibility even with existing local gate enabled');
+select throws_like($proof$select pg_temp.forge_usdt_source_tuple()$proof$,'MONEY_SOURCE_RECEIPT_UNVERIFIED','existing source capture rejects malformed manual-USDT tuple before it can be delivered');
+reset role;
+select is((select count(*)from public.outbox_events where idempotency_key like 'qa-domain-usdt-forged:%'),0::bigint,'failed forged source claim/completion rolls back the entire fake event');
+select is((select count(*)from public.notifications where source_event_id in(select id from local_usdt_notice_source)),1::bigint,'malformed tuple failure cannot duplicate or replace genuine manual deposit notice');
+select is((select count(*)from public.ledger_transactions),(select journals from local_usdt_notice_balance),'malformed source and mission denial add no money');
+select is((select count(*)from public.member_event_awards),0::bigint,'enabled local gate does not turn manual USDT notice into award eligibility');
 select * from finish();
 rollback;

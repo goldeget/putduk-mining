@@ -101,15 +101,93 @@ select ok(
     where namespace.nspname in ('public', 'app_private')
       and procedure.prosecdef
       and procedure.oid not in (
-        'public.bootstrap_user(uuid)'::regprocedure,
-        'public.is_login_id_available(text)'::regprocedure,
-        'public.resolve_login_email(text)'::regprocedure,
+        'app_private.bind_push_delivery_epoch()'::regprocedure,
+        'app_private.apply_member_push_binding(uuid,uuid,text,text,text,text,timestamp with time zone,text)'::regprocedure,
+        'app_private.member_push_endpoint_command(uuid,uuid,text,text,text,text,timestamp with time zone,text,bigint,uuid,uuid)'::regprocedure,
+        'app_private.check_push_delivery_admission(uuid,text,uuid,integer)'::regprocedure,
+        'app_private.bind_notice_content_projection()'::regprocedure,
+        'app_private.guard_notice_content_projection()'::regprocedure,
+        'public.read_member_faq()'::regprocedure,
+        'app_private.seal_worker_pause_attempt()'::regprocedure,
+        'app_private.consume_local_cash_source(uuid,text)'::regprocedure,
+        'app_private.read_member_cash_event_terms()'::regprocedure,
+        'app_private.assert_local_cash_credit(public.money_source_movements)'::regprocedure,
+        'app_private.verify_local_cash_commit()'::regprocedure,
+        'app_private.participate_published_event(uuid,uuid,uuid,uuid,text)'::regprocedure,
+        'public.admin_read_ai_conversations(uuid,uuid,uuid,text,jsonb)'::regprocedure,
+        'public.admit_openrouter_free_request(uuid,uuid,integer,integer)'::regprocedure,
+        'app_private.approve_local_nonmoney_policy(uuid,uuid,uuid,integer,text,text,text,text,uuid,uuid,text,text,text,text,uuid)'::regprocedure,
+        'app_private.ack_nonmoney_award_outbox(uuid,text)'::regprocedure,
+        'app_private.ack_withdrawal_lifecycle_outbox(uuid,text)'::regprocedure,
+        'app_private.assert_event_join(uuid)'::regprocedure,
+        'app_private.assert_nonmoney_notification(uuid)'::regprocedure,
+        'app_private.begin_funding_credit_boundary(uuid,text)'::regprocedure,
+        'app_private.capture_funding_global_control_original()'::regprocedure,
+        'app_private.capture_funding_withdrawal_clock_admission(uuid,text,uuid)'::regprocedure,
         'app_private.capture_public_signup_identity()'::regprocedure,
+        'app_private.carry_forward_funding_capacity(uuid,uuid,uuid)'::regprocedure,
+        'app_private.claim_notification_push_deliveries(text,integer,integer)'::regprocedure,
+        'app_private.consume_event_join(uuid,text)'::regprocedure,
+        'app_private.consume_nonmoney_source(uuid,text)'::regprocedure,
+        'app_private.consume_member_profile_audit(uuid,text)'::regprocedure,
+        'app_private.consume_liveops_publication(uuid,text)'::regprocedure,
+        'app_private.process_liveops_fanout_job(uuid,text)'::regprocedure,
+        'app_private.verify_liveops_publication_notification()'::regprocedure,
+        'app_private.guard_liveops_notification_projection()'::regprocedure,
+        'app_private.emit_funded_mining_missions(uuid)'::regprocedure,
+        'app_private.execute_liveops_content(text,text,uuid,uuid,text,jsonb,uuid,uuid,text,text,text,text,uuid)'::regprocedure,
+        'app_private.execute_product_catalog_command(text,uuid,uuid,text,timestamp with time zone,uuid,uuid,text,text,text,text,text)'::regprocedure,
+        'app_private.execute_product_catalog_review_read(uuid,uuid,uuid,text,text)'::regprocedure,
+        'app_private.execute_trial_settlement(uuid,text)'::regprocedure,
+        'app_private.finish_funding_credit_boundary(uuid)'::regprocedure,
+        'app_private.finish_principal_runtime_boundary(uuid)'::regprocedure,
+        'app_private.guard_event_join_delivery()'::regprocedure,
+        'app_private.guard_event_join_envelope()'::regprocedure,
+        'app_private.guard_funded_mining_mission_outbox()'::regprocedure,
+        'app_private.guard_liveops_sealed_links()'::regprocedure,
+        'app_private.guard_nonmoney_envelope()'::regprocedure,
+        'app_private.guard_nonmoney_notification_projection()'::regprocedure,
+        'app_private.guard_push_delivery_original()'::regprocedure,
+        'app_private.guard_trial_completion_source()'::regprocedure,
+        'app_private.participate_published_event(uuid,uuid,uuid,uuid)'::regprocedure,
+        'app_private.prepare_principal_recovery_intent(uuid,uuid)'::regprocedure,
+        'app_private.read_funding_runtime_server_display(uuid)'::regprocedure,
+        'app_private.read_liveops_content(text,uuid,uuid,uuid,text,text)'::regprocedure,
+        'app_private.read_neutral_funding_job_inputs(uuid,uuid,timestamp with time zone)'::regprocedure,
+        'app_private.read_verified_credit_funding_inputs(uuid,uuid,timestamp with time zone)'::regprocedure,
+        'app_private.settle_notification_push_delivery(uuid,text,uuid,integer,text,integer,text)'::regprocedure,
+        'app_private.validate_event_member_projection()'::regprocedure,
+        'app_private.validate_product_catalog_publication_trigger()'::regprocedure,
+        'app_private.verify_balanced_ledger_at_commit()'::regprocedure,
+        'app_private.verify_credit_boundary_commit()'::regprocedure,
+        'app_private.verify_event_join()'::regprocedure,
+        'app_private.verify_event_participant_join()'::regprocedure,
+        'app_private.verify_funded_mining_mission_commit()'::regprocedure,
+        'app_private.verify_funding_global_control_commit()'::regprocedure,
+        'app_private.verify_funding_integrity_at_commit()'::regprocedure,
+        'app_private.verify_funding_portion_transition()'::regprocedure,
+        'app_private.verify_funding_withdrawal_clock_commit()'::regprocedure,
+        'app_private.verify_liveops_receipt_commit()'::regprocedure,
+        'app_private.verify_member_principal_confirmation_commit()'::regprocedure,
+        'app_private.verify_nonmoney_award_commit()'::regprocedure,
+        'app_private.verify_nonmoney_notification()'::regprocedure,
+        'app_private.verify_nonmoney_policy_commit()'::regprocedure,
+        'app_private.verify_principal_boundary_commit()'::regprocedure,
+        'app_private.verify_principal_recovery_intent_commit()'::regprocedure,
+        'app_private.verify_trial_completion_original_commit()'::regprocedure,
+        'public.bootstrap_user(uuid)'::regprocedure,
+        'public.confirm_funding_allocation(text,uuid,text,bigint,jsonb,text)'::regprocedure,
+        'public.is_login_id_available(text)'::regprocedure,
+        'public.prepare_withdrawal_logical_request(uuid,text,bigint,uuid,integer,text,uuid,jsonb)'::regprocedure,
+        'public.read_ai_provider_usage(uuid)'::regprocedure,
+        'public.reserve_ai_provider_attempt(uuid,uuid,text,text,text,bigint,boolean)'::regprocedure,
+        'public.resolve_login_email(text)'::regprocedure,
+        'public.settle_ai_provider_attempt(uuid,uuid,uuid,text,text,bigint,bigint,bigint,bigint,bigint,text)'::regprocedure,
         'public.signup_phone_availability(text)'::regprocedure
       )
   )
     and (
-      select count(*) = 5
+      select count(*) = 83
         and coalesce(
           bool_and(
             procedure.proconfig @> array['search_path=pg_catalog']::text[]
@@ -120,8 +198,100 @@ select ok(
       join pg_namespace as namespace on namespace.oid = procedure.pronamespace
       where namespace.nspname in ('public', 'app_private')
         and procedure.prosecdef
+    )
+    and (
+      -- The two Notice additions are private, fixed-context trigger functions.
+      -- Keep the original exact global roster check and audit each new identity.
+      select count(*) = 2 and coalesce(bool_and(
+        procedure.prosecdef
+        and procedure.prorettype = 'pg_catalog.trigger'::regtype
+        and procedure.proowner = 'postgres'::regrole
+        and procedure.proconfig = array['search_path=pg_catalog']::text[]
+        and encode(extensions.digest(procedure.prosrc, 'sha256'), 'hex') = expected.source_sha256
+        and not exists (
+          select 1 from aclexplode(coalesce(procedure.proacl,
+            acldefault('f', procedure.proowner))) as privilege
+          where privilege.privilege_type = 'EXECUTE'
+            and privilege.grantee <> procedure.proowner
+        )
+        and not has_function_privilege('anon', procedure.oid, 'EXECUTE')
+        and not has_function_privilege('authenticated', procedure.oid, 'EXECUTE')
+        and not has_function_privilege('service_role', procedure.oid, 'EXECUTE')
+      ), false)
+      from (values
+        ('app_private.bind_notice_content_projection()'::regprocedure,
+          '716796e00270b54026e50a6e6805b13793e045fbc1f9915a714223b9d3fff252'),
+        ('app_private.guard_notice_content_projection()'::regprocedure,
+          '8500d2dfbc5d022448d4ece02aab177e1391a8bca2d2026ac09dbd5ca07539ad')
+      ) as expected(function_oid, source_sha256)
+      join pg_proc as procedure on procedure.oid = expected.function_oid
+    )
+    and (
+      -- Reject a missing, disabled, redirected, conditional, or extra binding.
+      select count(*) = 2 and coalesce(bool_and(
+        trigger.tgrelid = 'public.notices'::regclass
+        and trigger.tgenabled = 'O'
+        and not trigger.tgisinternal
+        and trigger.tgconstraint = 0
+        and trigger.tgnargs = 0
+        and trigger.tgqual is null
+        and trigger.tgattr = ''::pg_catalog.int2vector
+        and ((trigger.tgfoid = 'app_private.bind_notice_content_projection()'::regprocedure
+          and trigger.tgname = 'notice_content_source_bind' and trigger.tgtype::integer = 7)
+          or (trigger.tgfoid = 'app_private.guard_notice_content_projection()'::regprocedure
+          and trigger.tgname = 'notice_content_source_guard' and trigger.tgtype::integer = 27))
+      ), false)
+      from pg_trigger as trigger
+      where trigger.tgfoid in (
+        'app_private.bind_notice_content_projection()'::regprocedure,
+        'app_private.guard_notice_content_projection()'::regprocedure
+      )
+    )
+    and (
+      -- Frozen Push adds one private trigger and three service-context transport functions.
+      select count(*) = 4 and coalesce(bool_and(
+        procedure.prosecdef
+        and procedure.proowner = 'postgres'::regrole
+        and procedure.prorettype = expected.return_type
+        and procedure.proconfig = array['search_path=pg_catalog']::text[]
+        -- Only line-ending CRLF pairs may normalize; every canonical body byte is pinned.
+        and position(chr(13) in replace(procedure.prosrc, chr(13)||chr(10), chr(10))) = 0
+        and encode(extensions.digest(replace(procedure.prosrc, chr(13)||chr(10), chr(10)), 'sha256'), 'hex') = expected.source_sha256
+        and not exists (
+          select 1 from aclexplode(coalesce(procedure.proacl,
+            acldefault('f', procedure.proowner))) as privilege
+          where privilege.privilege_type = 'EXECUTE'
+            and privilege.grantee <> procedure.proowner
+            and not (expected.service_transport and privilege.grantee = 'service_role'::regrole
+              and privilege.is_grantable = false)
+        )
+        and not has_function_privilege('anon', procedure.oid, 'EXECUTE')
+        and not has_function_privilege('authenticated', procedure.oid, 'EXECUTE')
+        and has_function_privilege('service_role', procedure.oid, 'EXECUTE') = expected.service_transport
+      ), false)
+      from (values
+        ('app_private.bind_push_delivery_epoch()'::regprocedure, 'fde05c05151e3d065729a06ccae6e8a31230113b40c8f7459fc8f4dc0d595553', 'pg_catalog.trigger'::regtype, false),
+        ('app_private.apply_member_push_binding(uuid,uuid,text,text,text,text,timestamp with time zone,text)'::regprocedure, 'fff205f83e8ae30cfdc7fdde37e7548bf5c0c5978ca1b1955a5b185d6b798e25', 'pg_catalog.jsonb'::regtype, true),
+        ('app_private.member_push_endpoint_command(uuid,uuid,text,text,text,text,timestamp with time zone,text,bigint,uuid,uuid)'::regprocedure, 'b553103c7bfa2c363e49ba8169cc90e00a436654393764903a3a47fa4719cbe2', 'pg_catalog.jsonb'::regtype, true),
+        ('app_private.check_push_delivery_admission(uuid,text,uuid,integer)'::regprocedure, '10379eb3851f86be2445d3b8d764bc8ac089612c3cc8ee181a4cc2873643b5dd', 'pg_catalog.jsonb'::regtype, true)
+      ) as expected(function_oid, source_sha256, return_type, service_transport)
+      join pg_proc as procedure on procedure.oid = expected.function_oid
+    )
+    and (
+      -- The trigger-only entry point has exactly its reviewed unconditional ROW binding.
+      select count(*) = 1 and coalesce(bool_and(
+        trigger.tgrelid = 'app_private.notification_device_deliveries'::regclass
+        and trigger.tgname = 'push_delivery_epoch_immutable'
+        and trigger.tgenabled = 'O' and not trigger.tgisinternal
+        and trigger.tgconstraint = 0 and trigger.tgnargs = 0
+        and trigger.tgqual is null
+        and trigger.tgattr = ''::pg_catalog.int2vector
+        and trigger.tgtype::integer = 23
+      ), false)
+      from pg_trigger as trigger
+      where trigger.tgfoid = 'app_private.bind_push_delivery_epoch()'::regprocedure
     ),
-  'tool evidence storage does not add a security definer function'
+  'application schemas contain only the reviewed fixed-search-path SECURITY DEFINER functions'
 );
 
 select ok(

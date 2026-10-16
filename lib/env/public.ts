@@ -1,4 +1,10 @@
 import { z } from "zod";
+import {
+  assertStagingServerEnvironment,
+  isReviewedStagingPublicKey,
+  isReviewedStagingUrl,
+  isStagingBuild,
+} from "./staging-target";
 
 const optionalPublicString = <T extends z.ZodType<string>>(schema: T) =>
   z.preprocess(
@@ -33,6 +39,7 @@ const approvedSupabaseHost = "osrmyjgmpdspdcwqjwuv.supabase.co";
 const loopbackHosts = new Set(["127.0.0.1", "localhost", "[::1]"]);
 
 function isApprovedSupabaseUrl(value: string): boolean {
+  if (isStagingBuild()) return isReviewedStagingUrl(value);
   try {
     const url = new URL(value);
     if (
@@ -56,7 +63,8 @@ function isApprovedSupabaseUrl(value: string): boolean {
   }
 }
 
-function isPublicSupabaseKey(value: string): boolean {
+export function isPublicSupabaseKey(value: string): boolean {
+  if (isStagingBuild()) return isReviewedStagingPublicKey(value);
   if (/^sb_publishable_[A-Za-z0-9_-]+$/.test(value)) return true;
   // Local Supabase also supports legacy anon JWT keys. Never serialize a
   // service_role JWT or an opaque sb_secret key as public runtime configuration.
@@ -94,7 +102,7 @@ export function getPublicEnv(): PublicEnv {
   // These callers run on the server. An env alias preserves runtime values
   // when one prebuilt app is used by independently configured E2E shards.
   const runtimeEnv = process.env;
-  return publicEnvSchema.parse({
+  const env = publicEnvSchema.parse({
     NEXT_PUBLIC_APP_URL: runtimeEnv.NEXT_PUBLIC_APP_URL,
     NEXT_PUBLIC_SUPABASE_URL: runtimeEnv.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:
@@ -103,4 +111,16 @@ export function getPublicEnv(): PublicEnv {
     NEXT_PUBLIC_CHANNEL_TALK_PLUGIN_KEY:
       runtimeEnv.NEXT_PUBLIC_CHANNEL_TALK_PLUGIN_KEY,
   });
+  assertStagingServerEnvironment({
+    appEnv: runtimeEnv.APP_ENV,
+    supabaseUrl: env.NEXT_PUBLIC_SUPABASE_URL,
+    appUrl: env.NEXT_PUBLIC_APP_URL,
+    surface: "member",
+  });
+  if (runtimeEnv.APP_ENV === "staging" || isStagingBuild())
+    parseSupabaseBrowserAuthConfig({
+      url: env.NEXT_PUBLIC_SUPABASE_URL,
+      publishableKey: env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
+    });
+  return env;
 }

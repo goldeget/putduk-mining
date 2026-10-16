@@ -2,6 +2,12 @@ import "server-only";
 
 import { z } from "zod";
 
+import { parseSupabaseBrowserAuthConfig } from "../../../lib/env/public";
+import {
+  assertStagingServerEnvironment,
+  isStagingBuild,
+} from "../../../lib/env/staging-target";
+
 const schema = z.object({
   APP_ENV: z.enum(["development", "test", "staging", "production"]),
   NEXT_PUBLIC_SUPABASE_URL: z.url(),
@@ -15,12 +21,34 @@ export type AdminEnv = z.infer<typeof schema>;
 export function getAdminEnv(): AdminEnv {
   // Read public values at server runtime when a build is promoted across targets.
   const runtimeEnv = process.env;
-  return schema.parse({
+  const env = schema.parse({
     APP_ENV: process.env.APP_ENV,
     NEXT_PUBLIC_SUPABASE_URL: runtimeEnv.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:
       runtimeEnv.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
     SUPABASE_SECRET_KEY: process.env.SUPABASE_SECRET_KEY,
     ADMIN_APP_URL: process.env.ADMIN_APP_URL,
+  });
+  assertStagingServerEnvironment({
+    appEnv: env.APP_ENV,
+    supabaseUrl: env.NEXT_PUBLIC_SUPABASE_URL,
+    appUrl: env.ADMIN_APP_URL,
+    surface: "admin",
+    secretKey: env.SUPABASE_SECRET_KEY,
+  });
+  if (env.APP_ENV === "staging" || isStagingBuild())
+    parseSupabaseBrowserAuthConfig({
+      url: env.NEXT_PUBLIC_SUPABASE_URL,
+      publishableKey: env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
+    });
+  return env;
+}
+
+/** Validate before RSC/HTML serialization; client checks alone are too late. */
+export function getAdminBrowserPublicConfig() {
+  const env = getAdminEnv();
+  return parseSupabaseBrowserAuthConfig({
+    url: env.NEXT_PUBLIC_SUPABASE_URL,
+    publishableKey: env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
   });
 }

@@ -79,6 +79,35 @@ const analyticsPropertyNames = new Set<string>(ANALYTICS_PROPERTY_NAMES);
 
 export type AnalyticsEventName = (typeof ANALYTICS_EVENT_NAMES)[number];
 
+/** Browser observations are not committed domain, payment or delivery facts. */
+export const BROWSER_ANALYTICS_EVENT_NAMES = [
+  "screen_view",
+  "trial_conversion_start",
+  "trial_conversion_blocked",
+  "mining_world_view",
+  "mining_settlement_view",
+  "deposit_start",
+  "withdrawal_start",
+  "welcome_withdrawal_start",
+  "referral_invite_shared",
+  "funding_promotion_view",
+  "event_view",
+  "notice_view",
+  "rank_up_view",
+  "ai_open",
+  "ai_question",
+  "push_open",
+  "notification_dismissed",
+  "landing_view",
+  "return_visit",
+  "web_vital",
+  "client_error",
+] as const satisfies readonly AnalyticsEventName[];
+
+const browserAnalyticsEventNames = new Set<string>(
+  BROWSER_ANALYTICS_EVENT_NAMES,
+);
+
 /** 화면 경로만 허용한다. 질의문자열과 퍼센트 인코딩은 넣지 않는다. */
 export const ANALYTICS_PATH_PATTERN = /^\/[A-Za-z0-9._~/-]{0,180}$/;
 
@@ -253,3 +282,12 @@ export const analyticsEventSchema = z
   });
 
 export type AnalyticsEvent = z.infer<typeof analyticsEventSchema>;
+
+/** Keep the complete vocabulary for trusted server/outbox producers. */
+export const browserAnalyticsEventSchema = analyticsEventSchema.refine(
+  (event) => browserAnalyticsEventNames.has(event.eventName),
+  {
+    message: "Analytics event is not a browser observation.",
+    path: ["eventName"],
+  },
+);

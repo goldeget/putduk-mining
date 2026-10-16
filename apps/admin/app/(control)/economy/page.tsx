@@ -6,7 +6,7 @@ import { HIGH_IMPACT_ROLES } from "../../../lib/auth/policy";
 import { requireAdminPage } from "../../../lib/auth/principal";
 import { policyVersionSchema } from "../../../lib/economy/input";
 import { loadEconomyConsole } from "../../../lib/economy/server";
-import { getAdminEnv } from "../../../lib/env";
+import { getAdminBrowserPublicConfig } from "../../../lib/env";
 import { EconomyConsole } from "./economy-console";
 import styles from "./economy.module.css";
 
@@ -24,7 +24,7 @@ export default async function EconomyPage({
   const principal = await requireAdminPage("/economy");
   if (!HIGH_IMPACT_ROLES.includes(principal.role))
     redirect("/unauthorized?code=ROLE_FORBIDDEN" as Route);
-  const env = getAdminEnv();
+  const publicConfig = getAdminBrowserPublicConfig();
   const query = await searchParams;
   const version =
     query.version === undefined
@@ -49,10 +49,7 @@ export default async function EconomyPage({
         <EconomyConsole
           key={`${loaded.view.selectedVersion.policyVersion}:${loaded.view.selectedVersion.latestRevision.revisionId}`}
           initial={loaded.view}
-          publicConfig={{
-            url: env.NEXT_PUBLIC_SUPABASE_URL,
-            publishableKey: env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
-          }}
+          publicConfig={publicConfig}
         />
       ) : (
         <section className={styles.notice} role="alert">
