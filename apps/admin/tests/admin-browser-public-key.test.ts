@@ -34,6 +34,32 @@ afterEach(() => {
 
 describe("admin browser public key role", () => {
   it.each([
+    "https://osrmyjgmpdspdcwqjwuv.supabase.co",
+    "https://aaaaaaaaaaaaaaaaaaaa.supabase.co",
+    "http://127.0.0.1:54321",
+  ])(
+    "rejects unapproved direct admin browser targets in a staging build: %s",
+    (target) => {
+      vi.stubEnv("NEXT_PUBLIC_APP_ENV", "staging");
+      expect(() =>
+        createAdminBrowserClient({ url: target, publishableKey }),
+      ).toThrow("SUPABASE_BROWSER_CONFIG_INVALID");
+      expect(createBrowserClient).not.toHaveBeenCalled();
+    },
+  );
+
+  it("uses only the reviewed branch in a staging admin browser build", () => {
+    vi.stubEnv("NEXT_PUBLIC_APP_ENV", "staging");
+    const branch = "https://mhchzipznxbwbocdihlg.supabase.co";
+    createAdminBrowserClient({ url: branch, publishableKey });
+    expect(createBrowserClient).toHaveBeenCalledExactlyOnceWith(
+      branch,
+      publishableKey,
+      expect.any(Object),
+    );
+  });
+
+  it.each([
     "sb_secret_must_never_reach_the_admin_browser",
     legacyKey("service_role"),
     legacyKey("authenticated"),

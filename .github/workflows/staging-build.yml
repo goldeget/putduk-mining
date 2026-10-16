@@ -1,0 +1,116 @@
+name: Protected staging build
+
+on:
+  pull_request:
+    types: [labeled]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: protected-staging-build-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build separate member and admin staging artifacts
+    # Requested after required CI passes, so this build does not occupy its runners.
+    if: >-
+      github.event.label.name == 'qa-protected-staging-build' &&
+      github.event.pull_request.number == 77 &&
+      github.event.pull_request.head.repo.full_name == 'goldeget/putduk-mining'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      APP_ENV: staging
+      NEXT_PUBLIC_APP_ENV: staging
+      APP_TIMEZONE: UTC
+      NEXT_PUBLIC_APP_URL: https://putduk-mining-member-staging-ab1de38.putduk-landing.workers.dev
+      ADMIN_APP_URL: https://putduk-mining-admin-staging-ab1de38.putduk-landing.workers.dev
+      NEXT_PUBLIC_SUPABASE_URL: https://mhchzipznxbwbocdihlg.supabase.co
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ vars.PUTDUK_STAGING_SUPABASE_PUBLISHABLE_KEY }}
+      # Inert build input only. This job has no server credential and cannot deploy.
+      SUPABASE_SECRET_KEY: sb_secret_inert_staging_build_only_no_remote_authority
+      WRANGLER_SEND_METRICS: "false"
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - name: Check out the exact reviewed candidate
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+
+      - name: Admit only the isolated staging target
+        env:
+          CI_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = "goldeget/putduk-mining"
+          test "$(git rev-parse HEAD)" = "$CI_HEAD_SHA"
+          case "$(git remote get-url origin)" in
+            https://github.com/goldeget/putduk-mining|https://github.com/goldeget/putduk-mining.git) ;;
+            *) echo "BLOCKED_TARGET_SCOPE" >&2; exit 1 ;;
+          esac
+          git remote set-url origin https://github.com/goldeget/putduk-mining.git
+          node --input-type=module -e '
+            if (process.env.APP_ENV !== "staging" || process.env.NEXT_PUBLIC_APP_ENV !== "staging" ||
+                process.env.NEXT_PUBLIC_SUPABASE_URL !== "https://mhchzipznxbwbocdihlg.supabase.co" ||
+                !/^sb_publishable_[A-Za-z0-9_-]+$/.test(process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? ""))
+              throw Error("STAGING_BUILD_INPUT_REJECTED");
+          '
+
+      - name: Install pinned pnpm
+        uses: pnpm/action-setup@v6.1.0
+        with:
+          version: 12.6.0
+
+      - name: Install pinned Node
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+
+      - name: Install exact frozen dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build member staging output
+        run: pnpm exec opennextjs-cloudflare build
+
+      - name: Build admin staging output separately
+        working-directory: apps/admin
+        run: pnpm exec opennextjs-cloudflare build
+
+      - name: Package immutable build output without deploying
+        env:
+          CI_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          test -f .open-next/worker.js
+          test -f apps/admin/.open-next/worker.js
+          mkdir -p test-results/protected-staging-build
+          tar -czf test-results/protected-staging-build/member.tar.gz .open-next
+          tar -czf test-results/protected-staging-build/admin.tar.gz -C apps/admin .open-next
+          sha256sum test-results/protected-staging-build/*.tar.gz > test-results/protected-staging-build/SHA256SUMS
+          node --input-type=module -e '
+            import { writeFileSync } from "node:fs";
+            writeFileSync("test-results/protected-staging-build/receipt.json", JSON.stringify({
+              repository: process.env.GITHUB_REPOSITORY,
+              candidateSha: process.env.CI_HEAD_SHA,
+              checkoutSha: process.env.CI_HEAD_SHA,
+              workflowEventSha: process.env.GITHUB_SHA,
+              runId: process.env.GITHUB_RUN_ID,
+              attempt: process.env.GITHUB_RUN_ATTEMPT,
+              target: "mhchzipznxbwbocdihlg",
+              appEnv: "staging",
+              deployed: false,
+              serverCredentialPresent: false
+            }, null, 2) + "\n");
+          '
+
+      - name: Preserve separate staging artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: protected-staging-build-${{ github.event.pull_request.head.sha }}
+          path: test-results/protected-staging-build/
+          if-no-files-found: error
+          retention-days: 7

@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "purpose": "protected-staging",
+  "parentProjectRef": "osrmyjgmpdspdcwqjwuv",
+  "projectRef": "mhchzipznxbwbocdihlg",
+  "branchId": "86e7d936-3a16-4b38-9410-a7c2bcb401c0",
+  "apiOrigin": "https://mhchzipznxbwbocdihlg.supabase.co",
+  "memberOrigin": "https://putduk-mining-member-staging-ab1de38.putduk-landing.workers.dev",
+  "adminOrigin": "https://putduk-mining-admin-staging-ab1de38.putduk-landing.workers.dev",
+  "expiresAt": "2026-10-23T09:51:53Z"
+}

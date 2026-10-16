@@ -3,6 +3,7 @@ import "server-only";
 import { z } from "zod";
 
 import { getPublicEnv } from "./public";
+import { assertStagingServerEnvironment } from "./staging-target";
 import {
   MEMBER_AI_MAX_REQUESTS_PER_DAY,
   MEMBER_AI_MAX_REQUESTS_PER_MINUTE,
@@ -180,5 +181,13 @@ export function getServerEnv(): ServerEnv {
     AI_CACHE_TTL_SECONDS: process.env.AI_CACHE_TTL_SECONDS,
   });
 
-  return { ...getPublicEnv(), ...server };
+  const env = { ...getPublicEnv(), ...server };
+  assertStagingServerEnvironment({
+    appEnv: env.APP_ENV,
+    supabaseUrl: env.NEXT_PUBLIC_SUPABASE_URL,
+    appUrl: env.NEXT_PUBLIC_APP_URL,
+    surface: "member",
+    secretKey: env.SUPABASE_SECRET_KEY,
+  });
+  return env;
 }

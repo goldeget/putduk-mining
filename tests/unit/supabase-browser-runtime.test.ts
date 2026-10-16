@@ -281,7 +281,9 @@ describe("admitted CI workerd browser configuration", () => {
       admit();
       vi.stubEnv("APP_ENV", appEnv);
       expect(() => getSupabaseBrowserAuthConfig()).toThrow(
-        "SUPABASE_BROWSER_CONFIG_INVALID",
+        appEnv === "staging"
+          ? "STAGING_TARGET_MODE_OR_URL_REJECTED"
+          : "SUPABASE_BROWSER_CONFIG_INVALID",
       );
     },
   );
@@ -309,7 +311,7 @@ describe("admitted CI workerd browser configuration", () => {
     );
   });
 
-  it.each(["staging", "production"])(
+  it.each(["production"])(
     "preserves exact approved HTTPS validation in %s",
     (appEnv) => {
       admit();
@@ -329,6 +331,15 @@ describe("admitted CI workerd browser configuration", () => {
       );
     },
   );
+
+  it("does not reuse the production HTTPS target for a staging runtime", () => {
+    admit();
+    vi.stubEnv("APP_ENV", "staging");
+    vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", remoteUrl);
+    expect(() => getSupabaseBrowserAuthConfig()).toThrow(
+      "STAGING_TARGET_MODE_OR_URL_REJECTED",
+    );
+  });
 
   it("cannot use admission to forward a privileged key", () => {
     admit();
