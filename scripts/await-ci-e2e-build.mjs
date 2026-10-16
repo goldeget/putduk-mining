@@ -2,7 +2,10 @@ import { execFileSync } from "node:child_process";
 import { pathToFileURL } from "node:url";
 
 const REPOSITORY = "goldeget/putduk-mining";
-const BUILD_JOB = "E2E production build artifact";
+const REQUIRED_JOBS = [
+  "E2E production build artifact",
+  "WebServer lifecycle probe",
+];
 
 export function inspectBuild(run, jobs, expected) {
   if (
@@ -13,16 +16,22 @@ export function inspectBuild(run, jobs, expected) {
   ) {
     throw new Error("Build run/candidate/attempt identity mismatch");
   }
-  const matches = jobs.filter(
-    (job) => job.name === BUILD_JOB && job.run_attempt === expected.attempt,
-  );
-  if (matches.length > 1) throw new Error("Ambiguous E2E build job");
-  const job = matches[0];
-  if (!job || job.status !== "completed") return false;
-  if (job.conclusion !== "success") {
-    throw new Error("Current E2E production build did not succeed");
+  let ready = true;
+  for (const name of REQUIRED_JOBS) {
+    const matches = jobs.filter(
+      (job) => job.name === name && job.run_attempt === expected.attempt,
+    );
+    if (matches.length > 1) throw new Error(`Ambiguous ${name} job`);
+    const job = matches[0];
+    if (!job || job.status !== "completed") {
+      ready = false;
+      continue;
+    }
+    if (job.conclusion !== "success") {
+      throw new Error(`Current ${name} did not succeed`);
+    }
   }
-  return true;
+  return ready;
 }
 
 async function main() {
@@ -72,13 +81,15 @@ async function main() {
     const jobs = get("/jobs?filter=latest&per_page=100");
     if (inspectBuild(run, jobs.jobs ?? [], expected)) {
       console.log(
-        "Current candidate E2E build succeeded; artifact download may proceed.",
+        "Current candidate E2E build and WebServer lifecycle probe succeeded; artifact download may proceed.",
       );
       return;
     }
     await new Promise((resolve) => setTimeout(resolve, 3_000));
   }
-  throw new Error("Timed out waiting for current candidate E2E build");
+  throw new Error(
+    "Timed out waiting for current candidate E2E build and WebServer lifecycle probe",
+  );
 }
 
 if (

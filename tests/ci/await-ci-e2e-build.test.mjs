@@ -16,17 +16,72 @@ const job = {
   conclusion: "success",
 };
 
-test("only the exact current successful build releases the artifact gate", () => {
-  assert.equal(inspectBuild(run, [job], expected), true);
+const lifecycle = {
+  name: "WebServer lifecycle probe",
+  run_attempt: 2,
+  status: "completed",
+  conclusion: "success",
+};
+
+test("only the exact current successful build and lifecycle release the artifact gate", () => {
+  assert.equal(inspectBuild(run, [job, lifecycle], expected), true);
   assert.equal(
-    inspectBuild(run, [{ ...job, status: "in_progress" }], expected),
+    inspectBuild(run, [{ ...job, status: "in_progress" }, lifecycle], expected),
     false,
   );
   assert.equal(
-    inspectBuild(run, [{ ...job, run_attempt: 1 }], expected),
+    inspectBuild(run, [{ ...job, run_attempt: 1 }, lifecycle], expected),
     false,
   );
 });
+test("missing, stale or unfinished lifecycle never releases a successful build", () => {
+  assert.equal(inspectBuild(run, [job], expected), false);
+  assert.equal(
+    inspectBuild(run, [job, { ...lifecycle, run_attempt: 1 }], expected),
+    false,
+  );
+  assert.equal(
+    inspectBuild(
+      run,
+      [job, { ...lifecycle, status: "in_progress", conclusion: null }],
+      expected,
+    ),
+    false,
+  );
+  assert.equal(inspectBuild(run, [lifecycle], expected), false);
+});
+
+test("bad lifecycle conclusions and duplicate current probes fail closed", () => {
+  for (const conclusion of [
+    "failure",
+    "cancelled",
+    "skipped",
+    "neutral",
+    "timed_out",
+  ]) {
+    assert.throws(
+      () => inspectBuild(run, [job, { ...lifecycle, conclusion }], expected),
+      /lifecycle.*did not succeed/i,
+    );
+    assert.throws(
+      () =>
+        inspectBuild(
+          run,
+          [
+            { ...job, status: "in_progress" },
+            { ...lifecycle, conclusion },
+          ],
+          expected,
+        ),
+      /lifecycle.*did not succeed/i,
+    );
+  }
+  assert.throws(
+    () => inspectBuild(run, [job, lifecycle, lifecycle], expected),
+    /Ambiguous.*lifecycle/i,
+  );
+});
+
 test("stale candidates, runs, attempts and repositories are rejected", () => {
   for (const delta of [
     { id: 41 },

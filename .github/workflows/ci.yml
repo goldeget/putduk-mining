@@ -464,9 +464,8 @@ jobs:
     permissions:
       contents: read
       actions: read
-    # Prepare fresh local services while the separate production build runs.
-    # The exact build/run/attempt success gate below still precedes download/tests.
-    needs: [webserver-lifecycle]
+    # Bootstrap isolated services without waiting for another runner. The exact
+    # current build AND lifecycle success gate below still precedes download/tests.
     strategy:
       fail-fast: false
       matrix:
@@ -528,7 +527,7 @@ jobs:
       - name: Verify fresh first-start migrations and empty financial state
         run: node scripts/assert-ci-fresh-db.mjs after
 
-      - name: Require current production build success
+      - name: Require current production build and lifecycle success
         timeout-minutes: 4
         env:
           GH_TOKEN: ${{ github.token }}
