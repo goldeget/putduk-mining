@@ -227,8 +227,8 @@ export default async function ProductHomePage() {
                 <br />더 큰 가치를 만듭니다.
               </span>
               <span className={styles.lightGreeting}>
-                AI와 반도체가 만드는
-                <br />더 나은 내일, PUTDUK MINING
+                기술이 만드는
+                <br />더 나은 내일
               </span>
             </p>
           </div>

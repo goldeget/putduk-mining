@@ -26,8 +26,8 @@ export function MenuHeader({ displayName }: { displayName: string }) {
           채굴
         </strong>
         <span>
-          TECHNOLOGY CREATES
-          <br />A MORE VALUABLE TOMORROW
+          더 빠른 오늘,
+          <br />더 큰 내일
         </span>
       </Link>
       <nav className={styles.topNavigation} aria-label="더보기 주요 메뉴">
@@ -81,18 +81,10 @@ export function MenuSidebar() {
       </nav>
       <div className={styles.sidebarStory}>
         <p>
-          HIGHER
-          <br />
-          BANDWIDTH
-          <br />A BRIGHTER
-          <br />
-          TOMORROW
+          더 빠른 오늘,
+          <br />더 큰 내일
         </p>
         <strong>퍼뜩 채굴</strong>
-        <small>
-          TECHNOLOGY CREATES
-          <br />A MORE VALUABLE TOMORROW
-        </small>
       </div>
     </>
   );

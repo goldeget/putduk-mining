@@ -79,8 +79,8 @@ export function SignupExperience({ children }: { children?: ReactNode }) {
             <br />더 큰 가치를 만듭니다.
           </p>
           <p className={styles.storyTagline}>
-            TECHNOLOGY CREATES
-            <br />A MORE VALUABLE TOMORROW
+            기술이 만드는
+            <br />더 나은 내일
           </p>
           <nav className={styles.guides} aria-label="가입 전 이용 안내">
             <Link href="/how-it-works">
@@ -127,7 +127,7 @@ export function SignupExperience({ children }: { children?: ReactNode }) {
       <footer className={styles.footer}>
         <span>
           PUTDUK MINING{" "}
-          <small>TECHNOLOGY CREATES A MORE VALUABLE TOMORROW</small>
+          <small>기술이 만드는 더 나은 내일</small>
         </span>
         <nav aria-label="가입 도움말">
           <a href="#signup-consents">가입 동의 보기</a>

@@ -92,8 +92,8 @@ export function RouteBrandHeader({
           퍼뜩 <span>채굴</span>
         </strong>
         <small>
-          TECHNOLOGY CREATES
-          <br />A MORE VALUABLE TOMORROW
+          기술이 만드는
+          <br />더 나은 내일
         </small>
       </Link>
       {view !== "ai" ? (
@@ -191,10 +191,6 @@ export function RouteBrandSidebar({
           <br />더 나은 내일
         </p>
         <strong>퍼뜩 채굴</strong>
-        <small>
-          TECHNOLOGY CREATES
-          <br />A MORE VALUABLE TOMORROW
-        </small>
       </div>
     </>
   );

@@ -4,6 +4,11 @@ import Link from "next/link";
 import { AdminAuthEntry } from "@/components/auth/admin-auth-entry";
 import { safeAdminReturnPath } from "@/lib/auth/return-path";
 
+export const metadata = {
+  title: "다시 확인 | 퍼뜩 운영",
+  robots: { index: false, follow: false },
+};
+
 export const dynamic = "force-dynamic";
 
 export default async function ReauthPage({

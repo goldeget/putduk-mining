@@ -117,8 +117,8 @@ export function MemberMenuView({ facts }: { facts: MemberScreenFacts }) {
         <div className={styles.heroCopy}>
           <h1>더보기</h1>
           <p className={styles.tagline}>
-            TECHNOLOGY CREATES
-            <br />A MORE VALUABLE TOMORROW
+            더 빠른 오늘,
+            <br />더 큰 내일
           </p>
           <p className={styles.introduction}>
             내 정보와 소식, 필요한 도움을 한곳에서.
@@ -271,7 +271,7 @@ export function MemberMenuView({ facts }: { facts: MemberScreenFacts }) {
         <span aria-hidden="true" />
         <strong>PUTDUK MINING</strong>
         <span aria-hidden="true" />
-        <p>TECHNOLOGY CREATES A MORE VALUABLE TOMORROW</p>
+        <p>더 빠른 오늘, 더 큰 내일</p>
       </footer>
     </div>
   );

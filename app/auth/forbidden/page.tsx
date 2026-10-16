@@ -13,10 +13,10 @@ export default function ForbiddenPage() {
       route="/auth/forbidden"
       titleId="auth-forbidden-title"
       eyebrow="접근 권한 안내"
-      title="운영 권한이 없습니다"
-      description="이 계정에는 관리자 접근 권한이 없습니다."
-      panelTitle="승인된 계정이 필요해요."
-      panelDescription="관리자 접근 권한은 운영 책임자가 승인합니다."
+      title="이 화면을 열 수 없어요"
+      description="이 계정으로는 이 화면을 열 수 없어요."
+      panelTitle="홈으로 돌아가 주세요."
+      panelDescription="필요한 화면은 홈에서 다시 열 수 있어요."
       state="error"
     >
       <div className="auth-form__actions">

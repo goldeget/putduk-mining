@@ -4,6 +4,16 @@ import { AdminRailMenu } from "./admin-rail-menu";
 import { AdminScreenGuide } from "./presentation/admin-screen-guide";
 import { ThemeControl } from "../../../components/system/theme-control";
 
+function configuredAdminHost(): string | null {
+  const raw = process.env.ADMIN_APP_URL;
+  if (!raw) return null;
+  try {
+    return new URL(raw).host || null;
+  } catch {
+    return null;
+  }
+}
+
 const operatorRoleLabel: Record<AdminPrincipal["role"], string> = {
   SUPER_ADMIN: "최고 운영자",
   ADMIN: "운영자",
@@ -19,6 +29,7 @@ export function AdminShell({
   children: React.ReactNode;
   principal: AdminPrincipal;
 }) {
+  const adminHost = configuredAdminHost();
   return (
     <div className="control-shell">
       <a className="admin-skip-link" href="#admin-main-content">
@@ -46,7 +57,7 @@ export function AdminShell({
           <div className="control-topbar__tools">
             <AdminScreenGuide />
             <ThemeControl />
-            <p>admin.mining.putduk.com</p>
+            {adminHost ? <p>{adminHost}</p> : null}
           </div>
         </header>
         <main className="control-main" id="admin-main-content" tabIndex={-1}>

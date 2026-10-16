@@ -2868,13 +2868,13 @@ select {
 .trust-document {
   width: min(100% - 2rem, 1180px);
   margin-inline: auto;
-  padding: clamp(3.5rem, 8vw, 7.5rem) 0;
+  padding: clamp(1.75rem, 4vw, 3rem) 0;
 }
 
 .trust-document__hero {
   display: grid;
-  gap: 3rem;
-  padding-bottom: clamp(3.5rem, 8vw, 6.5rem);
+  gap: 1.5rem;
+  padding-bottom: clamp(1.5rem, 3vw, 2.5rem);
   border-bottom: 1px solid var(--border-default);
 }
 
@@ -2934,7 +2934,7 @@ select {
 }
 
 .trust-facts {
-  padding-block: clamp(4rem, 9vw, 7rem);
+  padding-block: clamp(1.5rem, 3vw, 2.5rem);
   border-bottom: 1px solid var(--border-default);
 }
 
@@ -2951,6 +2951,7 @@ select {
 
 .trust-facts > div {
   display: grid;
+  align-items: start;
   gap: 1px;
   border: 1px solid var(--border-default);
   background: var(--border-default);
@@ -2958,9 +2959,9 @@ select {
 
 .trust-facts article {
   display: grid;
-  min-height: 190px;
+  min-height: 0;
   align-content: start;
-  padding: clamp(1.25rem, 4vw, 2rem);
+  padding: clamp(1rem, 2vw, 1.25rem);
   background: var(--surface-default);
 }
 
@@ -2972,7 +2973,7 @@ select {
 }
 
 .trust-facts article > strong {
-  margin-top: 1.8rem;
+  margin-top: 0.75rem;
   font-size: 1.05rem;
   font-weight: 620;
   line-height: 1.45;
@@ -2988,8 +2989,8 @@ select {
 
 .trust-document__body {
   display: grid;
-  gap: 3rem;
-  padding-block: clamp(4rem, 9vw, 7rem);
+  gap: 1.5rem;
+  padding-block: clamp(1.5rem, 3vw, 2.5rem);
 }
 
 .trust-document__body > div > section {
@@ -3398,7 +3399,7 @@ html[data-theme="light"] .trust-document__body aside > a {
 
   .trust-document__hero {
     grid-template-columns: minmax(0, 1fr) 340px;
-    align-items: end;
+    align-items: start;
   }
 
   .trust-document__hero dl {
@@ -3411,7 +3412,7 @@ html[data-theme="light"] .trust-document__body aside > a {
 
   .trust-document__body {
     grid-template-columns: minmax(0, 1fr) 310px;
-    gap: clamp(3rem, 7vw, 7rem);
+    gap: clamp(1.5rem, 3vw, 2.5rem);
   }
 
   .trust-document__body aside {

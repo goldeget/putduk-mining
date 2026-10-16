@@ -1,6 +1,11 @@
 import Link from "next/link";
 import { AdminAuthEntry } from "@/components/auth/admin-auth-entry";
 
+export const metadata = {
+  title: "세션 만료 | 퍼뜩 운영",
+  robots: { index: false, follow: false },
+};
+
 export const dynamic = "force-dynamic";
 
 export default function SessionExpiredPage() {

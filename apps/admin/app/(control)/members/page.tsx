@@ -43,6 +43,11 @@ import { kycRiskLabel, kycStatusLabel } from "../kyc/labels";
 
 const memberIdSchema = z.uuid();
 
+export const metadata = {
+  title: "회원 종합 정보 | 퍼뜩 운영",
+  robots: { index: false, follow: false },
+};
+
 export default async function MembersPage({
   searchParams,
 }: {
@@ -73,7 +78,7 @@ export default async function MembersPage({
           initialError={id ? "올바른 회원 식별자를 입력해 주세요." : ""}
         />
         <section className="member-empty">
-          <span aria-hidden="true">360°</span>
+          <span aria-hidden="true" />
           <h2>조회할 회원을 선택하세요.</h2>
           <p>
             검색 결과에서 회원을 선택해 주세요. 전화번호와 아이디는 일부만

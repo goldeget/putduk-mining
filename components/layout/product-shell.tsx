@@ -137,11 +137,8 @@ export function ProductShell({
             <div className={styles.miningSidebarFooter}>
               <PutdukHomeIcon name="cube" size={72} />
               <p>
-                TECHNOLOGY
-                <br />
-                CREATES A MORE
-                <br />
-                VALUABLE TOMORROW
+                기술이 만드는
+                <br />더 나은 내일
               </p>
               <span aria-hidden="true" />
             </div>

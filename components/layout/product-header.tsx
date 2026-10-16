@@ -106,8 +106,8 @@ export function ProductHeader({
             <span className={styles.homeWordmarkDark}>
               <strong>퍼뜩 채굴</strong>
               <small>
-                TECHNOLOGY CREATES
-                <br />A MORE VALUABLE TOMORROW
+                기술이 만드는
+                <br />더 나은 내일
               </small>
             </span>
             <span className={styles.homeWordmarkLight}>

@@ -57,8 +57,8 @@ export function LoginExperience({ children }: { children?: ReactNode }) {
               <span>더 큰 가치를 만듭니다.</span>
             </h2>
             <p className={styles.storyTagline}>
-              TECHNOLOGY CREATES
-              <br />A MORE VALUABLE TOMORROW
+              기술이 만드는
+              <br />더 나은 내일
             </p>
             <p className={styles.storyDescription}>
               채굴 상태와 지갑을 확인하고,
@@ -75,8 +75,8 @@ export function LoginExperience({ children }: { children?: ReactNode }) {
           </div>
           {children}
           <p className={styles.panelTagline}>
-            SEMICONDUCTOR DRIVES
-            <br />A BRIGHTER TOMORROW
+            더 빠른 오늘,
+            <br />더 큰 내일
           </p>
         </section>
       </div>
