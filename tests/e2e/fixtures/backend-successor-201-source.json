@@ -3190,7 +3190,7 @@
     "tests/e2e/authenticated/admin-withdrawal-step-up.spec.ts": "2a596f9c9a6fd20ab0444924c4238bbd0a56a2f8a22edcf099dddd6d96b5db43",
     "tests/e2e/authenticated/admin-withdrawals-product.spec.ts": "4a4324f128bf32e942fcc1ffda71ab7fbcc8b6593fe2f42a5c842f76fea878d0",
     "tests/e2e/authenticated/ai-context-help.spec.ts": "8e76c2ff91762273efc37b5e9fb52c94985ac4001226b4120f3e6ca30267e8ac",
-    "tests/e2e/authenticated/ai-product.spec.ts": "54a158051bf28cab14ce41dec06c9c276299b54b8e87e5c6fd46bb3716c079ef",
+    "tests/e2e/authenticated/ai-product.spec.ts": "bb28a15474c4a25d47373600257c3dbf9f5946affa114c28ded06d1c05de4748",
     "tests/e2e/authenticated/catalog-allocated-home-dark.spec.ts": "b8d2776fbef4a35dd263bd379512212f363a51e37aaa21a763e9e942040240a3",
     "tests/e2e/authenticated/catalog-allocated-home-light.spec.ts": "0b5c71e5b4c4e1824a3b041d00104644832c32db7764f57ce1afc4bf9912e639",
     "tests/e2e/authenticated/catalog-allocated-wallet-dark.spec.ts": "94e210fe7dec66410a42718375aeda9f8ea8fa30989dc994650285cccd7ed862",

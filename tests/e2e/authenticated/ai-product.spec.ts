@@ -19,6 +19,99 @@ type CapturedAckBody =
   { ok: true; text: string } | { ok: false; error: unknown };
 
 const ackBodies = new WeakMap<Response, Promise<CapturedAckBody>>();
+const ackSignalReaders = new WeakMap<Response, () => Promise<unknown>>();
+
+function installAckSignalObserver() {
+  const records: {
+    clientMessageId: string;
+    startedAt: number;
+    signalPresent: boolean;
+    abortedInitially: boolean;
+    abortAfterMs: number | null;
+  }[] = [];
+  Object.defineProperty(window, "__putdukAckSignal", {
+    value: (id: string) => {
+      const matches = records.filter((record) => record.clientMessageId === id);
+      const record = matches.length === 1 ? matches[0] : undefined;
+      return {
+        matched: Boolean(record),
+        signalPresent: record?.signalPresent ?? false,
+        abortedInitially: record?.abortedInitially ?? false,
+        abortAfterMs: record?.abortAfterMs ?? null,
+        recordCount: records.length,
+      };
+    },
+  });
+  const nativeFetch = window.fetch;
+  window.fetch = function (...args: Parameters<typeof fetch>) {
+    const returned = Reflect.apply(nativeFetch, this, args);
+    try {
+      const [input, init] = args;
+      const url = new URL(
+        input instanceof Request ? input.url : String(input),
+        location.href,
+      );
+      if (
+        url.origin !== location.origin ||
+        url.pathname !== "/api/v1/ai/chat" ||
+        (
+          init?.method ?? (input instanceof Request ? input.method : "GET")
+        ).toUpperCase() !== "POST" ||
+        typeof init?.body !== "string"
+      )
+        return returned;
+      const body = JSON.parse(init.body) as { clientMessageId?: unknown };
+      if (typeof body.clientMessageId !== "string") return returned;
+      const signal = init.signal;
+      const record = {
+        clientMessageId: body.clientMessageId,
+        startedAt: performance.now(),
+        signalPresent: Boolean(signal),
+        abortedInitially: signal?.aborted ?? false,
+        abortAfterMs: null as number | null,
+      };
+      records.push(record);
+      if (records.length > 16) records.shift();
+      signal?.addEventListener(
+        "abort",
+        () => {
+          record.abortAfterMs =
+            Math.round((performance.now() - record.startedAt) * 1000) / 1000;
+        },
+        { once: true },
+      );
+    } catch {
+      /* Passive diagnostics never change native fetch behavior. */
+    }
+    return returned;
+  };
+}
+
+async function recordAckSignalFailure(response: Response) {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    const reader = ackSignalReaders.get(response);
+    if (reader)
+      console.error(
+        "[ai-ack-signal-diagnostic]",
+        JSON.stringify(
+          await Promise.race([
+            reader(),
+            new Promise((resolve) => {
+              timer = setTimeout(
+                () => resolve({ observation: "unavailable" }),
+                1_000,
+              );
+            }),
+          ]),
+        ),
+      );
+  } catch {
+    /* Preserve the original genuine ACK failure. */
+  } finally {
+    if (timer !== undefined) clearTimeout(timer);
+  }
+}
 
 function captureAckBody(response: Response) {
   const existing = ackBodies.get(response);
@@ -100,6 +193,7 @@ async function durableAnswerAck(response: Response) {
   const captured = await captureAckBody(response);
   if (!captured.ok) {
     recordAckFailure(response, "body-read-failed", captured.error);
+    await recordAckSignalFailure(response);
     // Never substitute UI state or persisted history for the genuine raw ACK.
     throw new Error(
       `AI_ACK_BODY_READ_FAILED:${ackFailureCategory(captured.error)}`,
@@ -234,6 +328,16 @@ async function askAi(page: Page, question: string) {
       { timeout: 90_000 },
     )
     .then((response) => {
+      ackSignalReaders.set(response, async () => {
+        const id = response.request().postDataJSON()?.clientMessageId;
+        if (typeof id !== "string") return { matched: false };
+        return page.evaluate((clientMessageId) => {
+          const reader = (
+            window as unknown as { __putdukAckSignal?: (id: string) => unknown }
+          ).__putdukAckSignal;
+          return reader?.(clientMessageId) ?? { matched: false };
+        }, id);
+      });
       captureAckBody(response);
       return response;
     });
@@ -258,6 +362,7 @@ test("AI ownership, money denial, continuity, themes, and keyboard path", async 
   test.setTimeout(480_000);
   const hydration = trackHydration(page);
   const member = await createConfirmedMember("ai-product");
+  await page.addInitScript(installAckSignalObserver);
   await loginAsMember(page, member, "/ai");
   await openAi(page);
 
