@@ -14,6 +14,7 @@ import {
   bindAckSignalReader,
   captureAckBody,
   installAckSignalObserver,
+  readAckBody,
   recordAckFailure,
   recordAckSignalFailure,
 } from "./helpers/ai-ack";
@@ -32,7 +33,7 @@ async function durableAnswerAck(response: Response) {
     conversationIdPresent: false,
     assistantMessageIdPresent: false,
   };
-  const captured = await captureAckBody(response);
+  const captured = await readAckBody(response);
   if (!captured.ok) {
     recordAckFailure(response, "body-read-failed", captured.error);
     await recordAckSignalFailure(response);

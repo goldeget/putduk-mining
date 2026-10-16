@@ -6,7 +6,10 @@ type CapturedAckBody =
 
 const ackBodies = new WeakMap<Response, Promise<CapturedAckBody>>();
 const ackSignalReaders = new WeakMap<Response, () => Promise<unknown>>();
+const ackBrowserBodies = new WeakMap<Response, () => Promise<unknown>>();
+const finalAckBodies = new WeakMap<Response, Promise<CapturedAckBody>>();
 
+/** Test-only observation; at most 16 immutable 64KiB copies, never transcript logs. */
 export function installAckSignalObserver() {
   type Transport = {
     streamObserved: boolean;
@@ -29,9 +32,16 @@ export function installAckSignalObserver() {
     signalPresent: boolean;
     abortedInitially: boolean;
     abortAfterMs: number | null;
+    requestUrl: string;
+    requestBody: string;
+    responseEligible: boolean;
+    invalidBytes: boolean;
+    bytes: Uint8Array | null;
+    byteCount: number;
     transport: Transport;
   };
   const records: Record[] = [];
+  let captureOverflow = false;
   const safe = (observe: () => void) => {
     try {
       observe();
@@ -71,6 +81,48 @@ export function installAckSignalObserver() {
       };
     },
   });
+  Object.defineProperty(window, "__putdukAckBody", {
+    value: (request: {
+      clientMessageId: string;
+      requestUrl: string;
+      requestBody: string;
+      method: string;
+    }) => {
+      try {
+        const matches = records.filter(
+          (record) => record.clientMessageId === request.clientMessageId,
+        );
+        const record = matches.length === 1 ? matches[0] : undefined;
+        if (
+          !record ||
+          captureOverflow ||
+          request.method !== "POST" ||
+          request.requestUrl !== record.requestUrl ||
+          request.requestBody !== record.requestBody ||
+          !record.responseEligible ||
+          record.invalidBytes ||
+          !record.bytes ||
+          record.abortedInitially ||
+          record.abortAfterMs !== null ||
+          record.transport.readerCount !== 1 ||
+          record.transport.eofCount !== 1 ||
+          record.transport.pendingReads !== 0 ||
+          record.transport.readFailures !== 0 ||
+          record.transport.readerCancelCalls !== 0 ||
+          record.transport.streamCancelCalls !== 0
+        )
+          return { ok: false };
+        return {
+          ok: true,
+          text: new TextDecoder("utf-8", { fatal: true }).decode(
+            record.bytes.subarray(0, record.byteCount),
+          ),
+        };
+      } catch {
+        return { ok: false };
+      }
+    },
+  });
   const nativeFetch = window.fetch;
   window.fetch = function (...args: Parameters<typeof fetch>) {
     const returned = Reflect.apply(nativeFetch, this, args);
@@ -91,13 +143,20 @@ export function installAckSignalObserver() {
         return returned;
       const body = JSON.parse(init.body) as { clientMessageId?: unknown };
       if (typeof body.clientMessageId !== "string") return returned;
-      const signal = init.signal;
+      const signal =
+        init.signal ?? (input instanceof Request ? input.signal : undefined);
       const record: Record = {
         clientMessageId: body.clientMessageId,
         startedAt: performance.now(),
         signalPresent: Boolean(signal),
         abortedInitially: signal?.aborted ?? false,
         abortAfterMs: null,
+        requestUrl: url.href,
+        requestBody: init.body,
+        responseEligible: false,
+        invalidBytes: false,
+        bytes: null,
+        byteCount: 0,
         transport: {
           streamObserved: false,
           readerCount: 0,
@@ -115,7 +174,11 @@ export function installAckSignalObserver() {
         },
       };
       records.push(record);
-      if (records.length > 16) records.shift();
+      if (records.length > 16) {
+        captureOverflow = true;
+        for (const saved of records) saved.bytes = null;
+        records.shift();
+      }
       signal?.addEventListener(
         "abort",
         () =>
@@ -127,6 +190,16 @@ export function installAckSignalObserver() {
       observePromise(
         returned,
         (response) => {
+          const fetched = response as globalThis.Response;
+          safe(() => {
+            record.responseEligible =
+              fetched.status === 200 &&
+              fetched.url === record.requestUrl &&
+              fetched.redirected === false &&
+              /^text\/event-stream(?:;|$)/i.test(
+                fetched.headers.get("content-type") ?? "",
+              );
+          });
           const stream = (
             response as { body?: ReadableStream<Uint8Array> | null }
           ).body;
@@ -150,6 +223,7 @@ export function installAckSignalObserver() {
                 if (seenReaders.has(reader)) return;
                 seenReaders.add(reader);
                 record.transport.readerCount += 1;
+                if (readerArgs.length !== 0) record.invalidBytes = true;
                 const nativeRead = reader.read;
                 const readFailed = (error: unknown) => {
                   record.transport.pendingReads -= 1;
@@ -188,17 +262,46 @@ export function installAckSignalObserver() {
                       observePromise(
                         result,
                         (value) => {
-                          record.transport.pendingReads -= 1;
-                          const read = value as {
-                            done?: boolean;
-                            value?: { byteLength?: number };
-                          };
-                          if (read.done) {
-                            record.transport.eofCount += 1;
-                            record.transport.firstEofAfterMs ??=
-                              elapsed(record);
-                          } else if (typeof read.value?.byteLength === "number")
-                            record.transport.bytesRead += read.value.byteLength;
+                          try {
+                            record.transport.pendingReads -= 1;
+                            const read = value as {
+                              done?: boolean;
+                              value?: { byteLength?: number };
+                            };
+                            if (read.done) {
+                              record.transport.eofCount += 1;
+                              record.transport.firstEofAfterMs ??=
+                                elapsed(record);
+                            } else if (
+                              typeof read.value?.byteLength === "number"
+                            ) {
+                              record.transport.bytesRead +=
+                                read.value.byteLength;
+                              try {
+                                const chunk = read.value;
+                                if (
+                                  !(chunk instanceof Uint8Array) ||
+                                  record.transport.eofCount !== 0 ||
+                                  record.byteCount + chunk.byteLength > 65_536
+                                )
+                                  throw Error("INVALID_ACK_BYTES");
+                                if (!captureOverflow && !record.invalidBytes) {
+                                  record.bytes ??= new Uint8Array(65_536);
+                                  record.bytes.set(chunk, record.byteCount);
+                                  record.byteCount += chunk.byteLength;
+                                }
+                              } catch {
+                                record.invalidBytes = true;
+                                record.bytes = null;
+                              }
+                            } else {
+                              record.invalidBytes = true;
+                              record.bytes = null;
+                            }
+                          } catch {
+                            record.invalidBytes = true;
+                            record.bytes = null;
+                          }
                         },
                         readFailed,
                       );
@@ -294,6 +397,49 @@ export function captureAckBody(response: Response) {
   return captured;
 }
 
+/** One final same-reader snapshot, never a retry or a UI/history substitute. */
+export function readAckBody(response: Response) {
+  const prior = finalAckBodies.get(response);
+  if (prior) return prior;
+  const final = (async (): Promise<CapturedAckBody> => {
+    const captured = await captureAckBody(response);
+    if (
+      captured.ok ||
+      ![
+        "cdp-resource-unavailable",
+        "cdp-body-data-unavailable",
+        "playwright-response-body-unavailable",
+        "cdp-body-evicted",
+      ].includes(ackFailureCategory(captured.error))
+    )
+      return captured;
+    const browserReader = ackBrowserBodies.get(response);
+    if (!browserReader) return captured;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    try {
+      const value = (await Promise.race([
+        browserReader(),
+        new Promise((resolve) => {
+          timer = setTimeout(() => resolve(null), 1_000);
+        }),
+      ])) as { ok?: unknown; text?: unknown } | null;
+      if (
+        value?.ok === true &&
+        typeof value.text === "string" &&
+        new TextEncoder().encode(value.text).byteLength <= 65_536
+      )
+        return { ok: true, text: value.text };
+    } catch {
+      // Accessor failure preserves the original CDP error, including its identity.
+    } finally {
+      if (timer !== undefined) clearTimeout(timer);
+    }
+    return captured;
+  })();
+  finalAckBodies.set(response, final);
+  return final;
+}
+
 /** Categorize transport failures without logging messages, bodies, keys or IDs. */
 export function ackFailureCategory(error: unknown) {
   const message = error instanceof Error ? error.message : String(error);
@@ -359,6 +505,37 @@ export function recordAckFailure(
 }
 
 export function bindAckSignalReader(response: Response, page: Page) {
+  ackBrowserBodies.set(response, async () => {
+    const request = response.request();
+    const requestBody = request.postData();
+    const clientMessageId = request.postDataJSON()?.clientMessageId;
+    const requestUrl = request.url();
+    if (
+      typeof clientMessageId !== "string" ||
+      typeof requestBody !== "string" ||
+      request.method() !== "POST" ||
+      request.isNavigationRequest() ||
+      response.status() !== 200 ||
+      response.url() !== requestUrl ||
+      response.fromServiceWorker() ||
+      new URL(requestUrl).pathname !== "/api/v1/ai/chat" ||
+      !/^text\/event-stream(?:;|$)/i.test(
+        response.headers()["content-type"] ?? "",
+      )
+    )
+      return { ok: false };
+    return page.evaluate(
+      (expected) => {
+        const read = (
+          window as unknown as {
+            __putdukAckBody?: (value: typeof expected) => unknown;
+          }
+        ).__putdukAckBody;
+        return read?.(expected) ?? { ok: false };
+      },
+      { clientMessageId, requestUrl, requestBody, method: "POST" },
+    );
+  });
   ackSignalReaders.set(response, async () => {
     const id = response.request().postDataJSON()?.clientMessageId;
     if (typeof id !== "string") return { matched: false };

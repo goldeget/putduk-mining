@@ -6,6 +6,7 @@ import {
   bindAckSignalReader,
   captureAckBody,
   installAckSignalObserver,
+  readAckBody,
   recordAckFailure,
   recordAckSignalFailure,
 } from "../e2e/authenticated/helpers/ai-ack";
@@ -451,5 +452,371 @@ describe("diagnostic isolation", () => {
     assert.equal(ReadableStreamDefaultReader.prototype.read, originalRead);
     assert.equal(ReadableStreamDefaultReader.prototype.cancel, originalCancel);
     assert.equal(ReadableStream.prototype.getReader, originalGetReader);
+  });
+});
+
+async function withCapturedReader(
+  bytes: Uint8Array,
+  inspect: (context: {
+    reader: ReadableStreamDefaultReader<Uint8Array>;
+    controller: ReadableStreamDefaultController<Uint8Array>;
+    signal: AbortController;
+    read: (override?: Record<string, unknown>) => unknown;
+    fetchAgain: (id: string) => void;
+    cdpResponse: Parameters<typeof captureAckBody>[0];
+    stream: ReadableStream<Uint8Array>;
+  }) => Promise<void>,
+  responseOptions: {
+    redirected?: boolean;
+    url?: string;
+    status?: number;
+    type?: string;
+  } = {},
+) {
+  const globals = globalThis as unknown as Record<string, unknown>;
+  const priorWindow = globals.window,
+    priorLocation = globals.location;
+  let controller!: ReadableStreamDefaultController<Uint8Array>;
+  const response = new Response(
+    new ReadableStream<Uint8Array>({
+      start(value) {
+        controller = value;
+        value.enqueue(bytes);
+      },
+    }),
+    {
+      status: responseOptions.status ?? 200,
+      headers: { "content-type": responseOptions.type ?? "text/event-stream" },
+    },
+  );
+  Object.defineProperty(response, "url", {
+    value: responseOptions.url ?? "http://localhost/api/v1/ai/chat",
+  });
+  Object.defineProperty(response, "redirected", {
+    value: responseOptions.redirected ?? false,
+  });
+  const signal = new AbortController();
+  const fakeWindow = { fetch: () => Promise.resolve(response) };
+  globals.window = fakeWindow;
+  globals.location = {
+    origin: "http://localhost",
+    href: "http://localhost/ai",
+  };
+  const request = {
+    clientMessageId: "raw-private-id",
+    requestUrl: "http://localhost/api/v1/ai/chat",
+    method: "POST",
+    requestBody: JSON.stringify({
+      clientMessageId: "raw-private-id",
+      question: "private question",
+    }),
+  };
+  try {
+    installAckSignalObserver();
+    const fetchAgain = (id: string) => {
+      void Reflect.apply(fakeWindow.fetch, fakeWindow, [
+        "/api/v1/ai/chat",
+        {
+          method: "POST",
+          body:
+            id === request.clientMessageId
+              ? request.requestBody
+              : JSON.stringify({ clientMessageId: id }),
+          signal: signal.signal,
+        },
+      ]);
+    };
+    fetchAgain(request.clientMessageId);
+    await Promise.resolve();
+    await Promise.resolve();
+    const read = (override = {}) =>
+      (
+        fakeWindow as unknown as {
+          __putdukAckBody?: (value: unknown) => unknown;
+        }
+      ).__putdukAckBody?.({ ...request, ...override }) ?? { ok: false };
+    const cdpResponse = {
+      text: () =>
+        Promise.reject(
+          new Error(
+            "Protocol error (Network.getResponseBody): No data found for resource with given identifier",
+          ),
+        ),
+      status: () => response.status,
+      url: () => request.requestUrl,
+      headers: () => ({ "content-type": "text/event-stream" }),
+      fromServiceWorker: () => false,
+      request: () => ({
+        postData: () => request.requestBody,
+        postDataJSON: () => JSON.parse(request.requestBody),
+        url: () => request.requestUrl,
+        method: () => "POST",
+        isNavigationRequest: () => false,
+      }),
+    } as never;
+    bindAckSignalReader(cdpResponse, {
+      evaluate: async (fn: (value: unknown) => unknown, value: unknown) =>
+        fn(value),
+    } as never);
+    await inspect({
+      reader: response.body!.getReader(),
+      controller,
+      signal,
+      read,
+      fetchAgain,
+      cdpResponse,
+      stream: response.body!,
+    });
+  } finally {
+    if (priorWindow === undefined) delete globals.window;
+    else globals.window = priorWindow;
+    if (priorLocation === undefined) delete globals.location;
+    else globals.location = priorLocation;
+  }
+}
+
+describe("same application reader immutable ACK bytes", () => {
+  it("preserves offset views and split UTF8 chunks and accepts exactly the byte cap", async () => {
+    const backing = new Uint8Array([88, 0xea, 0xb0, 0x80, 89]);
+    await withCapturedReader(
+      backing.subarray(1, 2),
+      async ({ reader, controller, read }) => {
+        await reader.read();
+        controller.enqueue(backing.subarray(2, 4));
+        await reader.read();
+        controller.close();
+        await reader.read();
+        assert.deepEqual(read(), { ok: true, text: "가" });
+      },
+    );
+    await withCapturedReader(
+      new Uint8Array(65_536).fill(65),
+      async ({ reader, controller, read }) => {
+        await reader.read();
+        controller.close();
+        await reader.read();
+        const captured = read() as { ok: boolean; text: string };
+        assert.equal(captured.ok, true);
+        assert.equal(captured.text.length, 65_536);
+      },
+    );
+  });
+
+  it("rejects repeated EOF, a second reader and direct stream cancellation", async () => {
+    for (const boundary of [
+      "extra-eof",
+      "second-reader",
+      "stream-cancel",
+    ] as const) {
+      await withCapturedReader(
+        new Uint8Array([65]),
+        async ({ reader, controller, read, stream }) => {
+          await reader.read();
+          controller.close();
+          await reader.read();
+          assert.deepEqual(read(), { ok: true, text: "A" });
+          if (boundary === "extra-eof") await reader.read();
+          else {
+            reader.releaseLock();
+            if (boundary === "second-reader") stream.getReader();
+            else await stream.cancel();
+          }
+          assert.deepEqual(read(), { ok: false });
+        },
+      );
+    }
+  });
+  it("recovers known CDP unavailability only from the same native application's completed raw bytes at final ACK time", async () => {
+    const text =
+      'data: {"type":"done","saved":true,"conversationId":"actual-stream","assistantMessageId":"actual-message"}\n\n';
+    await withCapturedReader(
+      new TextEncoder().encode(text),
+      async ({ reader, controller, cdpResponse }) => {
+        const early = await captureAckBody(cdpResponse);
+        assert.equal(early.ok, false);
+        await reader.read();
+        controller.close();
+        await reader.read();
+        const final = readAckBody(cdpResponse);
+        assert.equal(readAckBody(cdpResponse), final);
+        assert.deepEqual(await final, { ok: true, text });
+      },
+    );
+  });
+
+  it("does not retry a failed final snapshot after the application's later EOF", async () => {
+    await withCapturedReader(
+      new Uint8Array([65]),
+      async ({ reader, controller, cdpResponse }) => {
+        await reader.read();
+        const first = readAckBody(cdpResponse);
+        assert.equal((await first).ok, false);
+        controller.close();
+        await reader.read();
+        assert.equal(readAckBody(cdpResponse), first);
+        assert.equal((await first).ok, false);
+      },
+    );
+  });
+  it("copies actual native chunks before application mutation and exposes them only after complete EOF", async () => {
+    const text = 'data: {"type":"done","saved":true}\n\n';
+    const bytes = new TextEncoder().encode(text);
+    await withCapturedReader(bytes, async ({ reader, controller, read }) => {
+      assert.deepEqual(read(), { ok: false });
+      const chunk = await reader.read();
+      assert.equal(chunk.value, bytes);
+      bytes.fill(88);
+      assert.deepEqual(read(), { ok: false });
+      controller.close();
+      assert.equal((await reader.read()).done, true);
+      assert.deepEqual(read(), { ok: true, text });
+      assert.deepEqual(read({ clientMessageId: "wrong-id" }), { ok: false });
+      assert.deepEqual(read({ requestBody: "different request" }), {
+        ok: false,
+      });
+      assert.deepEqual(
+        read({ requestUrl: "http://localhost/api/v1/ai/chat?different" }),
+        { ok: false },
+      );
+      assert.deepEqual(read({ method: "GET" }), { ok: false });
+    });
+  });
+
+  it("rejects oversized and invalid UTF8 bytes rather than substituting any decoded approximation", async () => {
+    for (const bytes of [
+      new Uint8Array(65_537),
+      new Uint8Array([0xc3, 0x28]),
+    ]) {
+      await withCapturedReader(bytes, async ({ reader, controller, read }) => {
+        await reader.read();
+        controller.close();
+        await reader.read();
+        assert.deepEqual(read(), { ok: false });
+      });
+    }
+  });
+
+  it("rejects cancelled, aborted and failed streams even if they already supplied genuine bytes", async () => {
+    for (const boundary of ["cancel", "abort", "read-failure"] as const) {
+      await withCapturedReader(
+        new Uint8Array([65]),
+        async ({ reader, controller, signal, read }) => {
+          await reader.read();
+          if (boundary === "cancel") await reader.cancel();
+          else if (boundary === "read-failure") {
+            controller.error(new Error("private"));
+            await assert.rejects(reader.read());
+          } else {
+            controller.close();
+            await reader.read();
+            signal.abort();
+          }
+          assert.deepEqual(read(), { ok: false });
+        },
+      );
+    }
+  });
+
+  it("rejects redirects, wrong response URL/status/type and duplicate IDs including record eviction", async () => {
+    for (const responseOptions of [
+      { redirected: true },
+      { url: "http://other.invalid/api/v1/ai/chat" },
+      { status: 201 },
+      { type: "application/json" },
+    ]) {
+      await withCapturedReader(
+        new Uint8Array([65]),
+        async ({ reader, controller, read }) => {
+          await reader.read();
+          controller.close();
+          await reader.read();
+          assert.deepEqual(read(), { ok: false });
+        },
+        responseOptions,
+      );
+    }
+    for (const overflow of [false, true]) {
+      await withCapturedReader(
+        new Uint8Array([65]),
+        async ({ reader, controller, read, fetchAgain }) => {
+          await reader.read();
+          controller.close();
+          await reader.read();
+          if (overflow)
+            for (let i = 0; i < 17; i += 1) fetchAgain(`other-${i}`);
+          fetchAgain("raw-private-id");
+          assert.deepEqual(read(), { ok: false });
+        },
+      );
+    }
+  });
+});
+
+describe("final raw ACK fallback isolation", () => {
+  it("never asks the browser for successful CDP bodies or unrelated CDP/transport errors", async () => {
+    for (const error of [
+      null,
+      new Error("Protocol error (Network.getResponseBody): unrelated"),
+      new Error("net::ERR_ABORTED"),
+      new Error("Target closed"),
+      new Error("timeout"),
+    ]) {
+      let calls = 0;
+      const response = {
+        text: () =>
+          error ? Promise.reject(error) : Promise.resolve("original CDP body"),
+        request: () => {
+          calls += 1;
+          throw Error("must not inspect fallback metadata");
+        },
+      } as never;
+      bindAckSignalReader(response, {
+        evaluate: () => {
+          calls += 1;
+        },
+      } as never);
+      const captured = await readAckBody(response);
+      assert.equal(calls, 0);
+      if (error) {
+        assert.equal(captured.ok, false);
+        if (!captured.ok) assert.equal(captured.error, error);
+      } else
+        assert.deepEqual(captured, { ok: true, text: "original CDP body" });
+    }
+  });
+
+  it("preserves the exact original CDP error when the browser accessor throws or times out", async () => {
+    for (const timeout of [false, true]) {
+      const failure = new Error(
+        "No data found for resource with given identifier",
+      );
+      let calls = 0;
+      const response = {
+        text: () => Promise.reject(failure),
+        status: () => 200,
+        url: () => "http://localhost/api/v1/ai/chat",
+        headers: () => ({ "content-type": "text/event-stream" }),
+        fromServiceWorker: () => false,
+        request: () => ({
+          postData: () => '{"clientMessageId":"private"}',
+          postDataJSON: () => ({ clientMessageId: "private" }),
+          url: () => "http://localhost/api/v1/ai/chat",
+          method: () => "POST",
+          isNavigationRequest: () => false,
+        }),
+      } as never;
+      bindAckSignalReader(response, {
+        evaluate: () => {
+          calls += 1;
+          return timeout
+            ? new Promise(() => {})
+            : Promise.reject(new Error("private accessor failure"));
+        },
+      } as never);
+      const captured = await readAckBody(response);
+      assert.equal(calls, 1);
+      assert.equal(captured.ok, false);
+      if (!captured.ok) assert.equal(captured.error, failure);
+    }
   });
 });
