@@ -10,6 +10,12 @@ import {
 } from "@playwright/test";
 import { createConfirmedMember } from "../fixtures/local-auth";
 import {
+  bindAckSignalReader,
+  installAckSignalObserver,
+  recordAckFailure,
+  recordAckSignalFailure,
+} from "./helpers/ai-ack";
+import {
   dismissGuidedQuestIfPresent,
   loginAsMember,
 } from "./helpers/member-session";
@@ -26,7 +32,10 @@ async function durableAnswerAck(response: Response) {
   };
   try {
     const text = await response.text();
-    if (text.length > 65_536) return summary;
+    if (text.length > 65_536) {
+      recordAckFailure(response, "body-limit-exceeded", undefined, text.length);
+      return summary;
+    }
     summary.bodyAvailable = true;
     for (const line of text.split("\n")) {
       if (!line.startsWith("data:")) continue;
@@ -45,7 +54,9 @@ async function durableAnswerAck(response: Response) {
       summary.assistantMessageIdPresent =
         typeof event.assistantMessageId === "string";
     }
-  } catch {
+  } catch (error) {
+    recordAckFailure(response, "body-read-failed", error);
+    await recordAckSignalFailure(response);
     // A closed navigation/connection must fail the boolean ACK assertion.
   }
   return summary;
@@ -217,6 +228,7 @@ test("context suggestions, wide view, persisted help and real destination work w
   page,
 }) => {
   test.setTimeout(120_000);
+  await page.addInitScript(installAckSignalObserver);
   // The approved dock offers wide view on desktop; its mobile panel is already full screen.
   await page.setViewportSize({ width: 1440, height: 900 });
   const member = await createConfirmedMember("ai-context-help");
@@ -261,6 +273,7 @@ test("context suggestions, wide view, persisted help and real destination work w
     await page
       .getByRole("button", { name: "질문 보내기", exact: true })
       .click();
+    bindAckSignalReader(await answered, page);
     expect((await answered).ok()).toBe(true);
     const answer = page
       .locator('.ai-message--assistant[data-message-state="complete"]')

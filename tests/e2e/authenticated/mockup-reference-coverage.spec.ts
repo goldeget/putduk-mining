@@ -459,6 +459,44 @@ async function captureRoutes(
     textScale: number;
     stage: "initial-layout-fit-poll";
   } | null = null;
+  // Passive bounded timing only; capture order, matrix and deadline stay intact.
+  type TimingPhase = "image-wait" | "scroll" | "screenshot" | "png-read-hash";
+  type TimingTotals = Record<TimingPhase, { count: number; elapsedMs: number }>;
+  const routeTimings: {
+    routeIndex: number;
+    startedAtMs: number;
+    elapsedMs: number;
+    totals: TimingTotals;
+  }[] = [];
+  type CaptureIndex = {
+    routeIndex: number;
+    width: number;
+    theme: "dark" | "light";
+    textScale: number;
+    tile: number;
+  };
+  let captureIndex: CaptureIndex | null = null;
+  let lastTiming: {
+    index: CaptureIndex | null;
+    phase: TimingPhase;
+    elapsedMs: number;
+    completed: boolean;
+  } | null = null;
+  async function timedCapture<T>(phase: TimingPhase, action: () => Promise<T>) {
+    const startedAt = performance.now();
+    let completed = false;
+    try {
+      const result = await action();
+      completed = true;
+      return result;
+    } finally {
+      const elapsedMs = Math.round(performance.now() - startedAt);
+      const totals = routeTimings.at(-1)!.totals[phase];
+      totals.count += 1;
+      totals.elapsedMs += elapsedMs;
+      lastTiming = { index: captureIndex, phase, elapsedMs, completed };
+    }
+  }
   type CapturePhase = "prepare-next-capture" | "rendering" | "checking";
   const diagnosticStartedAt = performance.now();
   const diagnosticElapsedMs = () =>
@@ -895,6 +933,20 @@ async function captureRoutes(
     }
     await page.goto(routes[0]!, { waitUntil: "networkidle" });
     for (const route of routes) {
+      const routeIndex = routes.indexOf(route);
+      const totals: TimingTotals = {
+        "image-wait": { count: 0, elapsedMs: 0 },
+        scroll: { count: 0, elapsedMs: 0 },
+        screenshot: { count: 0, elapsedMs: 0 },
+        "png-read-hash": { count: 0, elapsedMs: 0 },
+      };
+      const routeTiming = {
+        routeIndex,
+        startedAtMs: diagnosticElapsedMs(),
+        elapsedMs: 0,
+        totals,
+      };
+      routeTimings.push(routeTiming);
       console.info(
         "[mockup-route-progress] " +
           JSON.stringify({
@@ -967,6 +1019,7 @@ async function captureRoutes(
             (["/signup", "/products"].includes(route) && width === 320))
             ? [1, 2]
             : [1]) {
+            captureIndex = { routeIndex, width, theme, textScale, tile: 0 };
             mainGeometry = null;
             mainGeometryContext = null;
             await page.evaluate((scale) => {
@@ -1051,13 +1104,17 @@ async function captureRoutes(
             ).toBe(true);
             // Reuse the bounded painted-image loader, including closed-details
             // visibility and restoration of nested scroll positions.
-            await settleRenderedTypographyImages(page);
-            await main.evaluate((element) =>
-              element.scrollTo({ top: 0, behavior: "instant" }),
+            await timedCapture("image-wait", () =>
+              settleRenderedTypographyImages(page),
             );
-            await page.evaluate(() =>
-              window.scrollTo({ top: 0, behavior: "instant" }),
-            );
+            await timedCapture("scroll", async () => {
+              await main.evaluate((element) =>
+                element.scrollTo({ top: 0, behavior: "instant" }),
+              );
+              await page.evaluate(() =>
+                window.scrollTo({ top: 0, behavior: "instant" }),
+              );
+            });
             await expect
               .poll(() =>
                 page.evaluate(() =>
@@ -2110,7 +2167,9 @@ async function captureRoutes(
             const suffix = textScale === 2 ? "-text-200" : "";
             const filename = `${route.slice(1)}-${width}-${theme}${suffix}.png`;
             const output = testInfo.outputPath(filename);
-            const paintedImages = await awaitPaintedImages(page);
+            const paintedImages = await timedCapture("image-wait", () =>
+              awaitPaintedImages(page),
+            );
             if (route === "/products" && catalogHasProducts && width >= 720) {
               const imageSamples = await ready
                 .locator("[data-catalog-artwork] img")
@@ -2159,13 +2218,19 @@ async function captureRoutes(
                 );
               }
             }
-            await page.screenshot({
-              path: output,
-              fullPage: true,
-              animations: "disabled",
-              caret: "initial",
-            });
-            const contents = await readFile(output);
+            await timedCapture("screenshot", () =>
+              page.screenshot({
+                path: output,
+                fullPage: true,
+                animations: "disabled",
+                caret: "initial",
+              }),
+            );
+            const sha256 = await timedCapture("png-read-hash", async () =>
+              createHash("sha256")
+                .update(await readFile(output))
+                .digest("hex"),
+            );
             const matched = references.filter(
               (reference) =>
                 reference.route_mapping.includes(route) &&
@@ -2181,7 +2246,7 @@ async function captureRoutes(
               width,
               theme,
               screenshot: filename,
-              sha256: createHash("sha256").update(contents).digest("hex"),
+              sha256,
               state: await ready.getAttribute("data-ui-state"),
               scroll_position: "top",
               text_scale: textScale,
@@ -2205,20 +2270,25 @@ async function captureRoutes(
               ).toBe(true);
               const filledFilename = `signup-${width}-${theme}-text-200-date-filled.png`;
               const filledOutput = testInfo.outputPath(filledFilename);
-              await awaitPaintedImages(page);
-              await page.screenshot({
-                path: filledOutput,
-                fullPage: true,
-                animations: "disabled",
-              });
+              captureIndex = { routeIndex, width, theme, textScale, tile: -1 };
+              await timedCapture("image-wait", () => awaitPaintedImages(page));
+              await timedCapture("screenshot", () =>
+                page.screenshot({
+                  path: filledOutput,
+                  fullPage: true,
+                  animations: "disabled",
+                }),
+              );
               records.push({
                 route,
                 width,
                 theme,
                 screenshot: filledFilename,
-                sha256: createHash("sha256")
-                  .update(await readFile(filledOutput))
-                  .digest("hex"),
+                sha256: await timedCapture("png-read-hash", async () =>
+                  createHash("sha256")
+                    .update(await readFile(filledOutput))
+                    .digest("hex"),
+                ),
                 state: "native_date_filled",
                 scroll_position: "full_page",
                 text_scale: textScale,
@@ -2251,43 +2321,61 @@ async function captureRoutes(
               }
               positions.push(scrollRange);
               for (const [index, top] of positions.entries()) {
-                await main.evaluate(
-                  (element, top) =>
-                    element.scrollTo({
-                      top,
-                      behavior: "instant",
-                    }),
-                  top,
-                );
-                await expect
-                  .poll(() =>
-                    main.evaluate(
-                      (element, expected) =>
-                        Math.abs(element.scrollTop - expected),
-                      top,
-                    ),
-                  )
-                  .toBeLessThanOrEqual(1);
+                captureIndex = {
+                  routeIndex,
+                  width,
+                  theme,
+                  textScale,
+                  tile: index + 1,
+                };
+                await timedCapture("scroll", async () => {
+                  await main.evaluate(
+                    (element, top) =>
+                      element.scrollTo({
+                        top,
+                        behavior: "instant",
+                      }),
+                    top,
+                  );
+                  await expect
+                    .poll(() =>
+                      main.evaluate(
+                        (element, expected) =>
+                          Math.abs(element.scrollTop - expected),
+                        top,
+                      ),
+                    )
+                    .toBeLessThanOrEqual(1);
+                });
                 const position =
                   top === scrollRange ? "bottom" : `middle-${index + 1}`;
                 const bottomFilename = `${route.slice(1)}-${width}-${theme}${suffix}-${position}.png`;
                 const bottomOutput = testInfo.outputPath(bottomFilename);
-                const bottomPaintedImages = await awaitPaintedImages(page);
-                await page.screenshot({
-                  path: bottomOutput,
-                  fullPage: true,
-                  animations: "disabled",
-                  caret: "initial",
-                });
-                const bottomContents = await readFile(bottomOutput);
+                const bottomPaintedImages = await timedCapture(
+                  "image-wait",
+                  () => awaitPaintedImages(page),
+                );
+                await timedCapture("screenshot", () =>
+                  page.screenshot({
+                    path: bottomOutput,
+                    fullPage: true,
+                    animations: "disabled",
+                    caret: "initial",
+                  }),
+                );
+                const bottomSha256 = await timedCapture(
+                  "png-read-hash",
+                  async () =>
+                    createHash("sha256")
+                      .update(await readFile(bottomOutput))
+                      .digest("hex"),
+                );
                 records.push({
                   route,
                   width,
                   theme,
                   screenshot: bottomFilename,
-                  sha256: createHash("sha256")
-                    .update(bottomContents)
-                    .digest("hex"),
+                  sha256: bottomSha256,
                   state: await ready.getAttribute("data-ui-state"),
                   scroll_position: position,
                   scroll_top: top,
@@ -2307,6 +2395,8 @@ async function captureRoutes(
           // departing document can start another responsive image request.
         }
       }
+      routeTiming.elapsedMs = diagnosticElapsedMs() - routeTiming.startedAtMs;
+      console.info("[mockup-route-timing] " + JSON.stringify(routeTiming));
     }
     await writeFile(
       testInfo.outputPath("reference-render-index.json"),
@@ -2323,6 +2413,11 @@ async function captureRoutes(
     );
     expect(errors).toEqual([]);
   } finally {
+    const incompleteRoute = routeTimings.at(-1);
+    if (incompleteRoute && incompleteRoute.elapsedMs === 0) {
+      incompleteRoute.elapsedMs =
+        diagnosticElapsedMs() - incompleteRoute.startedAtMs;
+    }
     const walletCancellationObservation = await page
       .evaluate(
         () =>
@@ -2358,6 +2453,7 @@ async function captureRoutes(
           mainGeometry,
           mainGeometryContext,
           walletCancellationObservation,
+          captureTiming: { routeTimings, captureIndex, lastTiming },
         },
         null,
         2,
@@ -2373,6 +2469,7 @@ async function captureRoutes(
           diagnostics: diagnostics.slice(0, 6),
           cappedAt: 6,
           fatalErrorCount: errors.length,
+          captureTiming: { routeTimings, captureIndex, lastTiming },
         }),
     );
   }

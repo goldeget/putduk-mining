@@ -4,6 +4,7 @@ import path from "node:path";
 import { expect, test, type Page } from "@playwright/test";
 
 import { createConfirmedMember } from "../fixtures/local-auth";
+import { startDepositDomDiagnostics } from "./helpers/deposit-dom-diagnostics";
 import {
   confirmLocalUsdtDeposit,
   ensureLocalAdmin,
@@ -110,6 +111,9 @@ async function applyTheme(page: Page, theme: "dark" | "light") {
   // Keep global uniqueness checks: a retained hidden copy must disappear.
   await expectSettledRoute(page, "/wallet/deposit");
   await expect(page.locator("#deposit-amount")).toHaveCount(1);
+  await page.evaluate(() =>
+    window.__putdukDepositDiagnostics?.mark("reload-ready"),
+  );
 }
 
 async function selectDepositMethod(page: Page, method: "bank" | "usdt") {
@@ -529,6 +533,7 @@ test("covers deposit layout, theme, focus, and reduced motion", async ({
 }) => {
   test.setTimeout(240_000);
   const hydration = trackHydration(page);
+  await page.addInitScript(startDepositDomDiagnostics);
   const operator = await createConfirmedMember("deposit-layout-op");
   const member = await createConfirmedMember("deposit-layout");
   ensureLocalAdmin(operator.userId);
@@ -558,9 +563,35 @@ test("covers deposit layout, theme, focus, and reduced motion", async ({
             height: viewport.height,
             width: viewport.width,
           });
-          await applyTheme(page, theme);
-          await selectDepositMethod(page, "bank");
-          await expect(amount).toBeVisible();
+          try {
+            await applyTheme(page, theme);
+            await page.evaluate(() =>
+              window.__putdukDepositDiagnostics?.mark("method-before"),
+            );
+            await selectDepositMethod(page, "bank");
+            await page.evaluate(() =>
+              window.__putdukDepositDiagnostics?.mark("method-after"),
+            );
+            await page.evaluate(() =>
+              window.__putdukDepositDiagnostics?.mark("assert-before"),
+            );
+            await expect(amount).toBeVisible();
+          } catch (error) {
+            // Diagnostics must never replace the original strict assertion failure.
+            await page
+              .evaluate(() => {
+                window.__putdukDepositDiagnostics?.mark("failure");
+                return window.__putdukDepositDiagnostics?.read();
+              })
+              .then((report) =>
+                test.info().attach("deposit-dom-diagnostics", {
+                  body: JSON.stringify(report ?? { unavailable: true }),
+                  contentType: "application/json",
+                }),
+              )
+              .catch(() => {});
+            throw error;
+          }
           await selectDepositMethod(page, "usdt");
           await expect(
             page.getByRole("heading", { name: "입금하기", level: 1 }),
