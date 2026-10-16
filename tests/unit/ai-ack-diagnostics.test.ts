@@ -217,3 +217,239 @@ describe("passive AI ACK diagnostics", () => {
     }
   });
 });
+
+async function withObservedAiResponse(
+  response: unknown,
+  inspect: (snapshot: () => Record<string, unknown>) => Promise<void>,
+) {
+  const globals = globalThis as unknown as Record<string, unknown>;
+  const priorWindow = globals.window;
+  const priorLocation = globals.location;
+  const returned = Promise.resolve(response);
+  const fakeWindow = { fetch: () => returned };
+  globals.window = fakeWindow;
+  globals.location = {
+    origin: "http://localhost",
+    href: "http://localhost/ai",
+  };
+  try {
+    installAckSignalObserver();
+    assert.equal(
+      Reflect.apply(fakeWindow.fetch, fakeWindow, [
+        "/api/v1/ai/chat",
+        {
+          method: "POST",
+          body: JSON.stringify({ clientMessageId: "private-observed-id" }),
+        },
+      ]),
+      returned,
+    );
+    await returned;
+    await Promise.resolve();
+    const read = (
+      fakeWindow as unknown as {
+        __putdukAckSignal: (id: string) => Record<string, unknown>;
+      }
+    ).__putdukAckSignal;
+    await inspect(() => read("private-observed-id"));
+  } finally {
+    if (priorWindow === undefined) delete globals.window;
+    else globals.window = priorWindow;
+    if (priorLocation === undefined) delete globals.location;
+    else globals.location = priorLocation;
+  }
+}
+
+describe("same-response native stream boundary diagnostics", () => {
+  it("observes genuine reads and EOF without reading, cloning or cancelling the body itself", async () => {
+    let cancelled = 0;
+    const response = new Response(
+      new ReadableStream<Uint8Array>({
+        start(controller) {
+          controller.enqueue(new Uint8Array([1, 2, 3]));
+          controller.close();
+        },
+        cancel() {
+          cancelled += 1;
+        },
+      }),
+    );
+    await withObservedAiResponse(response, async (snapshot) => {
+      assert.equal(snapshot().readCalls, 0);
+      const reader = response.body!.getReader();
+      assert.equal((await reader.read()).value?.byteLength, 3);
+      assert.equal((await reader.read()).done, true);
+      await Promise.resolve();
+      const observed = snapshot();
+      assert.equal(observed.readCalls, 2);
+      assert.equal(observed.pendingReads, 0);
+      assert.equal(observed.eofCount, 1);
+      assert.equal(observed.bytesRead, 3);
+      assert.equal(observed.readerCancelCalls, 0);
+      assert.equal(observed.streamCancelCalls, 0);
+      assert.equal(typeof observed.snapshotAfterMs, "number");
+      assert.equal(JSON.stringify(observed).includes("private"), false);
+      reader.releaseLock();
+    });
+    assert.equal(cancelled, 0);
+  });
+
+  it("preserves read/cancel native receiver, args, promise and synchronous thrown error identity", async () => {
+    const readPromise = Promise.resolve({
+      done: false,
+      value: new Uint8Array([4]),
+    });
+    const cancelPromise = Promise.reject(new Error("private cancel rejection"));
+    void cancelPromise.catch(() => undefined);
+    const thrown = new Error("private synchronous reader error");
+    const calls: unknown[][] = [];
+    let shouldThrow = false;
+    const reader = {
+      read(this: unknown, ...args: unknown[]) {
+        calls.push(["read", this, ...args]);
+        if (shouldThrow) throw thrown;
+        return readPromise;
+      },
+      cancel(this: unknown, ...args: unknown[]) {
+        calls.push(["cancel", this, ...args]);
+        return cancelPromise;
+      },
+    };
+    const stream = {
+      getReader(this: unknown, ...args: unknown[]) {
+        calls.push(["getReader", this, ...args]);
+        return reader;
+      },
+    };
+    await withObservedAiResponse({ body: stream }, async (snapshot) => {
+      const options = { mode: "private-option" };
+      assert.equal(Reflect.apply(stream.getReader, stream, [options]), reader);
+      assert.equal(Reflect.apply(reader.read, reader, [options]), readPromise);
+      assert.equal(snapshot().pendingReads, 1);
+      await readPromise;
+      await Promise.resolve();
+      assert.equal(snapshot().pendingReads, 0);
+      assert.equal(
+        Reflect.apply(reader.cancel, reader, ["private-reason"]),
+        cancelPromise,
+      );
+      await assert.rejects(cancelPromise);
+      shouldThrow = true;
+      assert.throws(
+        () => reader.read(),
+        (error) => error === thrown,
+      );
+      assert.deepEqual(calls.slice(0, 3), [
+        ["getReader", stream, options],
+        ["read", reader, options],
+        ["cancel", reader, "private-reason"],
+      ]);
+      assert.equal(snapshot().readerCancelCalls, 1);
+      assert.equal(snapshot().readFailures, 1);
+      assert.equal(snapshot().readErrorName, "error");
+      assert.equal(JSON.stringify(snapshot()).includes("private"), false);
+    });
+  });
+
+  it("observes rejected reads and direct stream cancel without touching unrelated response methods", async () => {
+    const failure = new TypeError("private transport failure");
+    const rejected = Promise.reject(failure);
+    void rejected.catch(() => undefined);
+    const reader = { read: () => rejected, cancel: () => Promise.resolve() };
+    const stream = { getReader: () => reader, cancel: () => Promise.resolve() };
+    const unrelated = new Response("unrelated private response");
+    const unrelatedReader = unrelated.body!.getReader;
+    await withObservedAiResponse({ body: stream }, async (snapshot) => {
+      stream.getReader();
+      assert.equal(reader.read(), rejected);
+      await assert.rejects(rejected, (error) => error === failure);
+      await Promise.resolve();
+      assert.equal(snapshot().readFailures, 1);
+      assert.equal(snapshot().readErrorName, "type-error");
+      await stream.cancel();
+      assert.equal(snapshot().streamCancelCalls, 1);
+      assert.equal(typeof snapshot().firstStreamCancelAfterMs, "number");
+      assert.equal(unrelated.body!.getReader, unrelatedReader);
+      assert.equal(JSON.stringify(snapshot()).includes("private"), false);
+    });
+  });
+
+  it("classifies missing CDP data and detached Playwright response without raw exception text", () => {
+    assert.equal(
+      ackFailureCategory(
+        new Error(
+          "Protocol error (Network.getResponseBody): No data found for resource with given identifier private",
+        ),
+      ),
+      "cdp-body-data-unavailable",
+    );
+    assert.equal(
+      ackFailureCategory(
+        new Error("response.text: Response body is unavailable private"),
+      ),
+      "playwright-response-body-unavailable",
+    );
+    assert.equal(
+      ackFailureCategory(
+        new Error("Protocol error (Network.getResponseBody): private unknown"),
+      ),
+      "cdp-protocol-error",
+    );
+  });
+});
+
+describe("diagnostic isolation", () => {
+  it("contains observation exceptions without adding unhandled rejections or replacing native promise/error", async () => {
+    const unhandled: unknown[] = [];
+    const listen = (error: unknown) => unhandled.push(error);
+    process.on("unhandledRejection", listen);
+    const nativeResult = Promise.resolve({
+      get done(): boolean {
+        throw new Error("private diagnostic getter");
+      },
+    });
+    const nativeError = new Error("private original rejection");
+    const rejected = Promise.reject(nativeError);
+    void rejected.catch(() => undefined);
+    let fail = false;
+    const reader = {
+      read: () => (fail ? rejected : nativeResult),
+      cancel: () => Promise.resolve(),
+    };
+    try {
+      const stream = { getReader: () => reader };
+      await withObservedAiResponse({ body: stream }, async (snapshot) => {
+        stream.getReader();
+        assert.equal(reader.read(), nativeResult);
+        await nativeResult;
+        await Promise.resolve();
+        fail = true;
+        assert.equal(reader.read(), rejected);
+        await assert.rejects(rejected, (error) => error === nativeError);
+        await new Promise((resolve) => setTimeout(resolve, 0));
+        assert.equal(snapshot().readFailures, 1);
+        assert.equal(unhandled.length, 0);
+      });
+    } finally {
+      process.off("unhandledRejection", listen);
+    }
+  });
+
+  it("leaves uninstrumentable frozen bodies and all native stream prototypes untouched", async () => {
+    const originalRead = ReadableStreamDefaultReader.prototype.read;
+    const originalCancel = ReadableStreamDefaultReader.prototype.cancel;
+    const originalGetReader = ReadableStream.prototype.getReader;
+    const result = Promise.resolve({ done: true });
+    const reader = { read: () => result };
+    const stream = Object.freeze({ getReader: () => reader });
+    await withObservedAiResponse({ body: stream }, async (snapshot) => {
+      assert.equal(stream.getReader(), reader);
+      assert.equal(reader.read(), result);
+      assert.equal(snapshot().streamObserved, false);
+      assert.equal(snapshot().readCalls, 0);
+    });
+    assert.equal(ReadableStreamDefaultReader.prototype.read, originalRead);
+    assert.equal(ReadableStreamDefaultReader.prototype.cancel, originalCancel);
+    assert.equal(ReadableStream.prototype.getReader, originalGetReader);
+  });
+});
