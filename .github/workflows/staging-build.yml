@@ -164,28 +164,29 @@ jobs:
                 services: [{ binding: "WORKER_SELF_REFERENCE", service: name }]
               };
               const configPath = join(temporary, role + ".json");
+              const configBase = dirname(configPath);
               json(configPath, stageConfig);
               const destination = join(temporary, role);
               const worker = join(destination, "worker");
               mkdirSync(worker, { recursive: true });
               const metafile = join(destination, "bundle-meta.json");
               execFileSync("pnpm", ["exec", "wrangler", "deploy", "--config", configPath, "--name", name,
-                "--dry-run", "--outdir", worker, "--metafile", metafile], { cwd: app, stdio: "inherit" });
+                "--dry-run", "--minify", "--outdir", worker, "--metafile", metafile], { cwd: app, stdio: "inherit" });
               const metadata = JSON.parse(readFileSync(metafile, "utf8"));
               const entries = Object.entries(metadata.outputs).filter(([, value]) => value.entryPoint);
               if (entries.length !== 1) throw Error("PACKAGE_ENTRY_AMBIGUOUS");
-              const entry = resolve(app, entries[0][0]);
+              const entry = resolve(configBase, entries[0][0]);
               inside(worker, entry);
               if (!lstatSync(entry).isFile()) throw Error("PACKAGE_ENTRY_MISSING");
               for (const [path, value] of Object.entries(metadata.outputs)) {
-                const emitted = resolve(app, path);
+                const emitted = resolve(configBase, path);
                 inside(worker, emitted);
                 for (const imported of value.imports ?? []) {
                   if (/\.map(?:$|[?#])/.test(imported.path)) throw Error("PACKAGE_RUNTIME_MAP_REJECTED");
                   if (/^(node|cloudflare):/.test(imported.path)) continue;
                   const dependency = imported.external
                     ? resolve(dirname(emitted), imported.path)
-                    : resolve(app, imported.path);
+                    : resolve(configBase, imported.path);
                   inside(worker, dependency);
                   if (!lstatSync(dependency).isFile()) throw Error("PACKAGE_MODULE_MISSING");
                 }
