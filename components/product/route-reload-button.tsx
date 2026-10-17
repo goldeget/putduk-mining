@@ -1,4 +1,5 @@
 "use client";
+import { FeedbackMessage } from "@/components/ui/feedback-message";
 
 import { useRouter } from "next/navigation";
 import {
@@ -81,11 +82,16 @@ export function RouteReloadButton({
       </button>
       {showRecovery ? (
         <div className="route-reload-recovery">
-          <p id={statusId} className="muted" role="status" aria-live="polite">
+          <FeedbackMessage
+            id={statusId}
+            className="muted"
+            role="status"
+            aria-live="polite"
+          >
             {online
               ? "조회가 지연되고 있습니다. 페이지를 새로고침해 다시 확인해 주세요."
               : "오프라인 상태입니다. 연결을 확인한 뒤 페이지를 새로고침해 주세요."}
-          </p>
+          </FeedbackMessage>
           <button
             className="button button--secondary"
             type="button"

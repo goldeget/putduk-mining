@@ -24,6 +24,7 @@ const reviewSchema = z.object({
   ]),
   reason: z.string().trim().min(10).max(500),
   confirmation: z.literal("REVIEW_KYC"),
+  acknowledgedSubmissionId: z.uuid().optional(),
 });
 
 function mapKycReviewFailure(message: string | undefined): CommandActionResult {
@@ -69,12 +70,15 @@ export async function reviewKycCaseFromFields(input: {
   reason: string;
   confirmation: string;
   stepUpToken: string;
+  acknowledgedSubmissionId?: string;
 }): Promise<CommandActionResult> {
   const formData = new FormData();
   formData.set("caseId", input.caseId);
   formData.set("decision", input.decision);
   formData.set("reason", input.reason);
   formData.set("confirmation", input.confirmation);
+  if (input.acknowledgedSubmissionId !== undefined)
+    formData.set("acknowledgedSubmissionId", input.acknowledgedSubmissionId);
   const token = input.stepUpToken.trim();
   if (token.length >= 16) {
     formData.set("stepUpToken", token);
@@ -97,6 +101,8 @@ export async function reviewKycCaseAction(
     decision: formData.get("decision"),
     reason: formData.get("reason"),
     confirmation: formData.get("confirmation"),
+    acknowledgedSubmissionId:
+      formData.get("acknowledgedSubmissionId") ?? undefined,
   });
   if (!parsed.success) {
     const reasonIssue = parsed.error.issues.find(
@@ -145,6 +151,9 @@ export async function reviewKycCaseAction(
     reason: parsed.data.reason,
     actorUserId: access.principal.userId,
     requestId: access.requestId,
+    ...(parsed.data.acknowledgedSubmissionId === undefined
+      ? {}
+      : { acknowledgedSubmissionId: parsed.data.acknowledgedSubmissionId }),
   });
 
   const { error } = await db.rpc("review_kyc_case", rpcArgs);

@@ -5,6 +5,24 @@ Status: **P0 CATALOG FOUNDATION / OPERATOR APPROVAL REQUIRED**
 Mining products are PUTDUK virtual themes. They are not securities, investment
 products or live-market replicas, and no external market price drives rewards.
 
+## Owner product-access correction — 2026-10-07
+
+Apply [the Owner correction](OWNER-PRODUCT-TIER-POLICY-2026-10-07.md) before
+catalog, Product or Mining UI changes. Funding Tier does not unlock products:
+every eligible member, including L1, can select any actually published/available
+product within their approved concurrent slot count. Availability and account
+eligibility are separate from Tier economics. Never add product minimum-Tier
+requirements or funding-based product-lock copy.
+
+Tier scales principal-based mining, GLOBAL_CYCLE capacity/entitlement and slots;
+Product supplies identity/experience and explicitly approved speed modifiers.
+The current catalog proposal's 1.00x–1.10x range is PROPOSED_NOT_APPROVED, not
+published economic data. Keep neutral runtime rules until an actual rule version
+is approved. Current principal-proportional base accrual already represents
+mining scale; do not add a second Tier speed multiplier. Tier downgrade preserves
+product access and history. Deterministic excess-slot retention/pause remains a
+server implementation gate, not permission to call a product ineligible.
+
 ## Launch categories
 
 - Korean top-tier stock themes;

@@ -7,6 +7,7 @@ import {
 } from "./helpers/admin-totp";
 import {
   confirmOperatorStepUp,
+  expectEditedReviewInvalidated,
   formWithSubmit,
   openAdminQueue,
   readExternalSends,
@@ -82,8 +83,10 @@ test.describe("admin browser USDT withdrawal", () => {
     await sendForm.getByLabel("거래 해시").fill(txHash);
     await sendForm.getByLabel("실제 보낸 USDT").fill(OPERATOR_ENTERED_USDT);
     await sendForm
-      .locator('textarea[name="conversionEvidence"]')
-      .fill("수동 송금 증빙. 시세 API를 쓰지 않았다.");
+      .getByRole("checkbox", {
+        name: "요청한 원화 금액 전액을 수수료 없이 실제로 송금했습니다.",
+      })
+      .check();
     await sendForm
       .getByRole("checkbox", { name: /KRW 잔액 기준 출금/ })
       .check();
@@ -96,16 +99,40 @@ test.describe("admin browser USDT withdrawal", () => {
     expect(await countExternalSends(withdrawalId)).toBe(1);
 
     await sendForm.getByLabel("거래 해시").fill(`${txHash}b`);
-    await sendForm.getByRole("button", { name: "USDT 외부 송금 기록" }).click();
+    await expectEditedReviewInvalidated(sendForm);
+    await expect(
+      sendForm.locator('input[name="fullPayoutConfirmed"]'),
+    ).not.toBeChecked();
     await expect(sendForm.getByRole("status")).toContainText(
-      "인증 앱으로 다시 확인",
+      "입력이 바뀌었습니다. 내용을 다시 확인해 주세요.",
     );
+    await expect(
+      sendForm.getByText("USDT 외부 송금을 기록했습니다", { exact: true }),
+    ).toHaveCount(0);
+    await sendForm.getByRole("button", { name: "USDT 외부 송금 기록" }).click();
+    const confirmation = sendForm.getByRole("checkbox", {
+      name: /KRW 잔액 기준 출금/,
+    });
+    expect(
+      await confirmation.evaluate(
+        (field: HTMLInputElement) => field.validity.valueMissing,
+      ),
+    ).toBe(true);
+    expect(
+      await confirmation.evaluate(
+        (field: HTMLInputElement) => field.validationMessage,
+      ),
+    ).not.toBe("");
     expect(await countExternalSends(withdrawalId)).toBe(1);
 
+    await sendForm
+      .getByRole("checkbox", { name: /KRW 잔액 기준 출금/ })
+      .check();
+    await sendForm.locator('input[name="fullPayoutConfirmed"]').check();
     await confirmOperatorStepUp(sendForm, secret);
     await sendForm.getByRole("button", { name: "USDT 외부 송금 기록" }).click();
     await expect(sendForm.getByRole("status")).toContainText(
-      "외부 송금은 이미 기록되어 있습니다",
+      "기록된 송금과 입력 내용이 다릅니다. 다시 송금하지 말고 기존 기록을 확인해 주세요.",
     );
     const sends = await readExternalSends(withdrawalId);
     expect(sends).toHaveLength(1);
@@ -114,8 +141,15 @@ test.describe("admin browser USDT withdrawal", () => {
     expect(String(sends[0]?.actual_usdt_amount)).toContain(
       OPERATOR_ENTERED_USDT,
     );
-    expect(sends[0]?.conversion_evidence).toMatchObject({
-      note: "수동 송금 증빙. 시세 API를 쓰지 않았다.",
+    expect(sends[0]?.conversion_evidence).toEqual({
+      version: 1,
+      basis: "OPERATOR_MANUAL_FULL_PAYOUT",
+      withdrawalId,
+      requestedKrwAmount: String(held!.amount_atomic),
+      actualUsdtAmount: OPERATOR_ENTERED_USDT,
+      network: "TRC20",
+      feeKrw: "0",
+      fullPayoutConfirmed: true,
     });
 
     await adminPage.reload();

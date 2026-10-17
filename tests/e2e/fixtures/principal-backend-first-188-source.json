@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "repository": "goldeget/putduk-mining",
+  "project_id": "putduk-mining-ci-r2-20261009",
+  "configured_project_id": "putduk-mining-ci-r2-20261009",
+  "api_port": 63421,
+  "reviewedSourceHead": "e220356be85a56e21e3469023b19b0c2fd4aebba",
+  "baselineManifestPath": "tests/e2e/fixtures/principal-review-r2-ci-source.json",
+  "baselineManifestSha256": "338ea5ab29065a5962d40047e3c2e4fd76825fd8ce453ac299b9152d08396bc1",
+  "baselineMigrationCount": 183,
+  "baselineRuntimeCount": 29,
+  "previousManifestPath": "tests/e2e/fixtures/principal-backend-engine-187-source.json",
+  "previousManifestSha256": "1dc13d2b2c71524d37bc1c6bdde4bba4d4f988b707b1959d4597430b621eb9f3",
+  "previousMigrationCount": 187,
+  "migration_count": 188,
+  "additional_migration_count": 1,
+  "sources": [
+    {
+      "kind": "migration",
+      "path": "supabase/migrations/20261011021000_backend_catalog_etf_category.sql",
+      "sha256": "c3968ad60d6bbb66e00b3591fa65686206078c22bbd7dddaba3c77454eb37df5"
+    }
+  ]
+}

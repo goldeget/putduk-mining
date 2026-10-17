@@ -1,0 +1,10 @@
+import { readFileSync, writeFileSync } from "node:fs";
+import { jsonUnitCompleteness } from "./unit-completeness-reporter.mjs";
+const file = process.argv[2];
+if (!file) throw Error("UNIT_JSON_REPORT_REQUIRED");
+const receipt = JSON.parse(readFileSync(file + ".completeness.json", "utf8"));
+const report = JSON.parse(readFileSync(file, "utf8"));
+const result = jsonUnitCompleteness(receipt, report);
+writeFileSync(file + ".verified.json", JSON.stringify(result, null, 2));
+console.log(JSON.stringify(result));
+if (!result.complete) process.exitCode = 1;

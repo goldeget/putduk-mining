@@ -2,6 +2,7 @@
 
 import { ThemeControl } from "../../../components/system/theme-control";
 import { ThemeRuntime } from "../../../components/system/theme-runtime";
+import { putdukFont } from "../../../lib/design/fonts";
 import { themeBootstrap } from "../../../lib/design/theme";
 
 /** Root-layout failures must keep their own document and readable fallback styles. */
@@ -14,16 +15,16 @@ export default function AdminGlobalError({
   reset?: () => void;
 }) {
   return (
-    <html lang="ko" suppressHydrationWarning>
+    <html lang="ko" className={putdukFont.variable} suppressHydrationWarning>
       <head>
         <meta
           name="theme-color"
-          content="#070706"
+          content="#020a14"
           media="(prefers-color-scheme: dark)"
         />
         <meta
           name="theme-color"
-          content="#f8f4ea"
+          content="#f8f8f8"
           media="(prefers-color-scheme: light)"
         />
         <script dangerouslySetInnerHTML={{ __html: themeBootstrap }} />
@@ -31,15 +32,16 @@ export default function AdminGlobalError({
       <body className="admin-global-recovery">
         <ThemeRuntime />
         <style>{`
-      .admin-global-recovery{margin:0;background:#070706;color:#f8f2e4;font:16px/1.6 "Malgun Gothic",system-ui,sans-serif}
-      html[data-theme="light"] .admin-global-recovery{background:#f8f4ea;color:#17130d}
+      @font-face{font-family:"Pretendard Variable";src:url("/fonts/PretendardVariable.woff2") format("woff2");font-style:normal;font-weight:100 900;font-display:swap}
+      .admin-global-recovery{margin:0;background:#020a14;color:#f1f4f7;font:16px/1.6 var(--font-putduk),"Apple SD Gothic Neo","Noto Sans KR",system-ui,sans-serif}
+      html[data-theme="light"] .admin-global-recovery{background:#f8f8f8;color:#161b21}
       .admin-global-recovery main{max-width:38rem;margin:8vh auto;padding:1.5rem;overflow-wrap:anywhere;word-break:keep-all}
       .admin-global-recovery h1{font-size:clamp(1.5rem,5vw,2rem);line-height:1.3}
       .admin-global-recovery button,.admin-global-recovery a{display:inline-block;min-height:44px;box-sizing:border-box;margin:.5rem .75rem .5rem 0;padding:.65rem 1rem;border:1px solid currentColor;border-radius:12px;font:inherit;color:inherit;background:transparent}
       .admin-global-recovery :focus-visible{outline:3px solid currentColor;outline-offset:3px}
       .admin-global-recovery .theme-control{display:flex;justify-content:flex-end;align-items:center;gap:.75rem;flex-wrap:wrap}
       .admin-global-recovery select{min-height:44px;font:inherit;border:1px solid currentColor;border-radius:8px;color:inherit;background:inherit;padding:.5rem}
-      @media(prefers-color-scheme:light){html:not([data-theme]) .admin-global-recovery{background:#f8f4ea;color:#17130d}}
+      @media(prefers-color-scheme:light){html:not([data-theme]) .admin-global-recovery{background:#f8f8f8;color:#161b21}}
     `}</style>
         <main data-ui-state="error" role="alert">
           <ThemeControl />

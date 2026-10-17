@@ -7,8 +7,8 @@ Status: **CANONICAL FOUNDATION**
 PUTDUK supports three user preferences:
 
 - `system` — default; follows `prefers-color-scheme`;
-- `dark` — cinematic black/gold flagship mode;
-- `light` — warm ivory/ink operational mode.
+- `dark` — cinematic blue-black/gold flagship mode;
+- `light` — clean white/ink operational mode with the same restrained gold.
 
 Theme is presentation state only. It never changes mining, settlement, wallet, event or authorization behavior.
 
@@ -28,15 +28,19 @@ The preference may be stored locally before authentication and copied to an auth
 
 | Semantic role | Dark | Light |
 | --- | --- | --- |
-| canvas | carbon black `#070706` | warm ivory `#f8f4ea` |
-| subtle background | `#0e0c09` | `#f1eadb` |
-| elevated background | `#15120d` | `#fffdf8` |
-| primary text | `#f8f2e4` | `#17130d` |
-| secondary text | `#b8ad98` | `#605643` |
-| tertiary text | `#817765` | `#81745e` |
-| primary gold | `#f6c85b` | `#9b650d` |
-| strong gold | `#d99a2b` | `#7c4b06` |
-| quiet gold surface | `#3a2810` | `#f0ddb0` |
+| canvas | blue-black `#020a14` | cool white `#f8f8f8` |
+| subtle background | `#07111d` | `#eff1f3` |
+| elevated background | `#0d1a28` | `#ffffff` |
+| primary text | `#f1f4f7` | `#161b21` |
+| secondary text | `#b7c3d0` | `#58616b` |
+| tertiary text | `#97a5b5` | `#717b86` |
+| primary gold | `#f4c76c` | `#94600f` |
+| strong gold | `#c58b35` | `#744b0b` |
+| quiet gold surface | `#2b251c` | `#f6ead0` |
+
+Primary actions use a shared metallic gold gradient and dark readable label in
+both modes; decorative and inline gold text uses the mode-specific accessible
+brand tokens above.
 
 State colors remain semantic and are independently contrast-tested. Do not recolor danger, success or warning into decorative gold.
 

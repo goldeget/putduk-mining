@@ -6,8 +6,8 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import {
-  readAdminAuthFailureBudget,
-  recordAdminAuthFailure,
+  admitAdminAuthAttempt,
+  finishAdminAuthAttempt,
   writeAdminAuthServerProof,
 } from "@/lib/auth/failure-limit";
 import { pickHighestRole } from "@/lib/auth/policy";
@@ -44,13 +44,19 @@ export async function loginAction(
   const rawEmail = String(formData.get("email") ?? "")
     .trim()
     .toLowerCase();
-  if (rawEmail) {
-    const budget = await readAdminAuthFailureBudget("PASSWORD", rawEmail);
-    if (budget === "RATE_LIMITED") return { message: retryLoginError };
-    if (budget === "UNAVAILABLE") return { message: unavailableLoginError };
-  }
+  if (!rawEmail) return { message: genericLoginError };
+  const admission = await admitAdminAuthAttempt("PASSWORD", rawEmail);
+  if (!admission.allowed)
+    return {
+      message:
+        admission.code === "RATE_LIMITED"
+          ? retryLoginError
+          : unavailableLoginError,
+    };
+  const finish = (succeeded: boolean) =>
+    finishAdminAuthAttempt(admission.attemptId, succeeded);
   if (!parsed.success) {
-    if (rawEmail) await recordAdminAuthFailure("PASSWORD", rawEmail);
+    if (!(await finish(false))) return { message: unavailableLoginError };
     return { message: genericLoginError };
   }
 
@@ -70,11 +76,11 @@ export async function loginAction(
     data = signedIn.data;
     error = signedIn.error;
   } catch {
-    await recordAdminAuthFailure("PASSWORD", parsed.data.email);
+    if (!(await finish(false))) return { message: unavailableLoginError };
     return { message: genericLoginError };
   }
   if (error || !data.user) {
-    await recordAdminAuthFailure("PASSWORD", parsed.data.email);
+    if (!(await finish(false))) return { message: unavailableLoginError };
     await recordAdminSecurityEvent({
       eventType: "ADMIN_LOGIN_REJECTED",
       userId: null,
@@ -89,14 +95,20 @@ export async function loginAction(
     .eq("user_id", data.user.id)
     .is("revoked_at", null);
   if (roleError || !pickHighestRole((roleRows ?? []).map(({ role }) => role))) {
-    await recordAdminAuthFailure("PASSWORD", parsed.data.email);
+    const finished = await finish(false);
+    await supabase.auth.signOut({ scope: "local" });
+    if (!finished) return { message: unavailableLoginError };
     await recordAdminSecurityEvent({
       eventType: "ADMIN_LOGIN_REJECTED",
       userId: null,
       userAgent,
     });
-    await supabase.auth.signOut({ scope: "local" });
     return { message: genericLoginError };
+  }
+
+  if (!(await finish(true))) {
+    await supabase.auth.signOut({ scope: "local" });
+    return { message: unavailableLoginError };
   }
 
   const recorded = await recordAdminSecurityEvent({

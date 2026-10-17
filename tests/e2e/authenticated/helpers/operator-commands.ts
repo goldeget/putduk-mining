@@ -12,6 +12,7 @@ export async function recordKrwExternalSend(input: {
   bankReference: string;
   actualKrwAmount: number;
   idempotencyKey?: string;
+  sentAt?: string;
 }) {
   const client = createLocalServiceRoleClient();
   const { data, error } = await client.rpc("record_krw_external_send", {
@@ -19,7 +20,7 @@ export async function recordKrwExternalSend(input: {
     p_bank_reference: input.bankReference,
     p_actual_krw_amount: input.actualKrwAmount,
     p_actor: input.actorId,
-    p_sent_at: new Date().toISOString(),
+    p_sent_at: input.sentAt ?? new Date().toISOString(),
     p_idempotency_key: input.idempotencyKey ?? `ws05-krw-send-${randomUUID()}`,
   });
   if (error) {
@@ -36,6 +37,7 @@ export async function recordUsdtExternalSend(input: {
   actualUsdtAmount: string;
   conversionEvidence?: Record<string, unknown> | null;
   idempotencyKey?: string;
+  sentAt?: string;
 }) {
   const client = createLocalServiceRoleClient();
   const { data, error } = await client.rpc("record_usdt_external_send", {
@@ -45,7 +47,7 @@ export async function recordUsdtExternalSend(input: {
     p_actual_usdt_amount: input.actualUsdtAmount,
     p_conversion_evidence: input.conversionEvidence ?? null,
     p_actor: input.actorId,
-    p_sent_at: new Date().toISOString(),
+    p_sent_at: input.sentAt ?? new Date().toISOString(),
     p_idempotency_key: input.idempotencyKey ?? `ws05-usdt-send-${randomUUID()}`,
   });
   if (error) {

@@ -26,7 +26,7 @@ export function TrustShell({ children }: { children: ReactNode }) {
           <Link className="brand-lockup" href="/" aria-label="퍼뜩 채굴 홈">
             <BrandMark title="" />
             <span>
-              <strong>PUTDUK</strong>
+              <strong>퍼뜩 채굴</strong>
               <small>신뢰 안내</small>
             </span>
           </Link>
@@ -51,10 +51,10 @@ export function TrustShell({ children }: { children: ReactNode }) {
       <footer className="trust-footer">
         <div>
           <Link className="brand-lockup brand-lockup--footer" href="/">
-            <BrandMark title="퍼뜩 채굴" />
+            <BrandMark title="" />
             <span>
-              <strong>PUTDUK</strong>
-              <small>MINING</small>
+              <strong>퍼뜩 채굴</strong>
+              <small>PUTDUK MINING</small>
             </span>
           </Link>
           <p>

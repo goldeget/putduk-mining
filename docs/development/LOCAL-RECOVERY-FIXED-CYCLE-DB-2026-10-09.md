@@ -1,0 +1,19 @@
+# Local fixed-cycle financial extension — 2026-10-09
+
+Base repository: `goldeget/putduk-mining`, `0630b5a92817fac6e8d05cb2ddc3198317d76e5f`. New reviewed implementation, not exact-byte recovery of the incomplete/unpromoted Cloud SQL proposals. Historical rollback/pass claims are not reused as current acceptance.
+
+Authority: the owner's fixed 30-day cycle, portion HOLD as pause, preserved qualified age, no held-period backpay, terminal held-portion exclusion, integer balanced ledger and one canonical writer. Economic values come from `docs/product/economy-v1-approved-2026-10-03.json` and the current immutable published policy. No new reward rate, threshold or monetary command alias is introduced.
+
+Three migrations extend the existing source-bound writer: exact rational component proration; terminal qualification reconstructed from sealed conditions, portions, clocks and global-control originals; terminal payment plus following fixed window in one transaction. End-AVAILABLE portions qualify only for eligible microseconds within that window. End-HELD/RECOVERED portions contribute no qualified retention. The successor resets used capacities while carrying only the existing exact rounding remainder. Qualification, wallet credit, earned receipt, audit/outbox and rollover must all agree. Rollover audit/event payloads and source ancestry are guarded; queue leases remain operational metadata.
+
+Current scoped fresh local runtime: `putduk-mining-local-recovery-20261009-fi`, API 61421 / DB 61422. Remote Supabase remains frozen. No production, paid provider, external payment or remote Git action was performed.
+
+Native evidence on this current local database:
+
+- `funding_fixed_cycle_portion_retention.sql`: 16 exact rational/kernel assertions passed.
+- `funding_terminal_writer_controlled_history.sql`: 23 assertions passed. Canonical funded writer settles synthetic matured 100,000 KRW principal for 15,000 KRW retention; rollover failure rolls back the credit/earned receipt; retries create no second reward/window; following-cycle early tick produces zero catchup and passes deferred native integrity.
+- `funding_terminal_hold_controlled_history.sql`: 23 assertions passed. Genuine canonical 200,000 KRW deposit and 30,000 KRW HOLD precede the owner-only historical fixture. Terminal AVAILABLE 170,000 KRW qualifies for 25,500 KRW; terminal HELD 30,000 KRW is excluded and survives rollover; next-cycle tick produces no retention backpay.
+
+The controlled-history tests are owner-only, rollback-only synthetic local tests. They capture and temporarily disable the exact source guards to reposition test-member history, reconstruct linked snapshots/digests, then restore **all captured installed guards before canonical processing**. The HOLD case also places the identical approved seed policy's timestamps before the synthetic history inside this same rollback transaction; configuration, rates and tiers are unchanged. This is not evidence that production has run for thirty days. OS time, original workspace and remote data are unchanged. Logs live in ignored `test-results/local-recovery/terminal-writer-native.log` and `terminal-held-native.log`.
+
+Remaining acceptance: a genuine source-bound 10-day eligible / 7-day HOLD / cancellation / remainder-of-cycle fixture, later partial recovery, additional carry/fairness/fencing faults, current UI readback, event/notification consumers and final exact-source fresh reset of the complete migration chain. The current 46 writer assertions do **not** include that seven-day cancellation example. Kernel vectors do not substitute for it. These migrations have been incrementally applied to the fresh local runtime; final migration-history reproducibility and complete regression status must be established by the final clean reset after remaining schema work. PRODUCT COMPLETE / production release remain unproven.

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { memberAiHelpTopicSchema } from "./member-help";
 
 export const AI_QUESTION_MAX_CHARACTERS = 2_000;
 
@@ -78,6 +79,7 @@ export const aiClientStreamEventSchema = z.discriminatedUnion("type", [
       assistantMessageId: z.uuid().optional(),
       conversationId: z.uuid().optional(),
       knowledgeVersion: z.string().min(1).max(200),
+      helpTopic: memberAiHelpTopicSchema.optional(),
       grounding: aiAnswerGroundingSchema.optional(),
       requestId: z.uuid(),
       saved: z.boolean().optional(),

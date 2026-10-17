@@ -1,0 +1,62 @@
+{
+  "version": 1,
+  "repository": "goldeget/putduk-mining",
+  "project_id": "putduk-mining-ci-r2-20261009",
+  "configured_project_id": "putduk-mining-ci-r2-20261009",
+  "api_port": 63421,
+  "reviewedSourceHead": "e220356be85a56e21e3469023b19b0c2fd4aebba",
+  "baselineManifestPath": "tests/e2e/fixtures/principal-review-r2-ci-source.json",
+  "baselineManifestSha256": "338ea5ab29065a5962d40047e3c2e4fd76825fd8ce453ac299b9152d08396bc1",
+  "baselineMigrationCount": 183,
+  "baselineRuntimeCount": 29,
+  "previousManifestPath": "tests/e2e/fixtures/principal-backend-first-188-source.json",
+  "previousManifestSha256": "9c2ea55a0c06f07c3570f25ff80341e6ff67b37623ec497fde3062646882d616",
+  "previousMigrationCount": 188,
+  "migration_count": 191,
+  "additional_migration_count": 3,
+  "sources": [
+    {
+      "kind": "migration",
+      "path": "supabase/migrations/20261011031000_informational_event_participation_contract.sql",
+      "sha256": "2a3f4428c42fa6d9369d9caf9d7814f556d3c3dcd581bedb272b13d4add211d1"
+    },
+    {
+      "kind": "migration",
+      "path": "supabase/migrations/20261011033000_member_faq_sealed_content_lifecycle.sql",
+      "sha256": "72078542b96494703f80996c4ae8d637589fff67ba3f03ef8e5d91c877a6458b"
+    },
+    {
+      "kind": "migration",
+      "path": "supabase/migrations/20261011035000_member_faq_expiry_read_boundary.sql",
+      "sha256": "35553e1acc18e5f63b7d734d2eca131a6e807ae933fea23924387e7c4e5f09ff"
+    }
+  ],
+  "reviewedRuntimeOverrides": [
+    {
+      "kind": "runtime",
+      "path": "domain/events/participation.ts",
+      "previousSha256": "43a8a7d963c852c638650cc7c6d6c6416d5de34ab0a3bde5a731f7b1c2d2aa53",
+      "reviewedSha256": "d45012e842f1eac19884cb1d893974749ed830d85c88cbba60dd658d48be2179"
+    },
+    {
+      "kind": "runtime",
+      "path": "lib/events/participation-handler.server.ts",
+      "previousSha256": "d811c4e22f54a87a0a0145755ace68aaa511223539df6389151c5a64b6c971cd",
+      "reviewedSha256": "9596acaca6048b60303d79cdeea288185cf85bc5e3c5989d160e2ea38b2327aa"
+    }
+  ],
+  "reviewEvidence": [
+    {
+      "name": "AB_EVENT_CTA_CONTRACT_PATCH.json",
+      "sha256": "8873097c356136e9d74ed951afc009469a9ad87149955201ffba057e791fd561"
+    },
+    {
+      "name": "AF_GUIDE_API_RESULT_PATCH.json",
+      "sha256": "55d9e1d3664c9b6e136a6c31381cf5e7f2d4d208631bdadcc76f5647d1eadbcb"
+    },
+    {
+      "name": "AE_GUIDE_CONTRACT_INDEPENDENT_REVIEW.json",
+      "sha256": "7717ec8f23d40cd8bc7b35a636361336113548d53c11a0a545cc81b6bb935018"
+    }
+  ]
+}

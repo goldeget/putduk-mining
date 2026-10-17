@@ -61,7 +61,7 @@ describe("shared initial/resolved theme", () => {
         )) {
           expect(meta.hasAttribute("media")).toBe(false);
           expect(meta.getAttribute("content")).toBe(
-            expected === "dark" ? "#070706" : "#f8f4ea",
+            expected === "dark" ? "#020a14" : "#f8f8f8",
           );
         }
         expect(applyTheme(readThemePreference())).toBe(expected);
@@ -70,7 +70,7 @@ describe("shared initial/resolved theme", () => {
         )) {
           expect(meta.hasAttribute("media")).toBe(false);
           expect(meta.getAttribute("content")).toBe(
-            expected === "dark" ? "#070706" : "#f8f4ea",
+            expected === "dark" ? "#020a14" : "#f8f8f8",
           );
         }
         dom.window.close();

@@ -1,18 +1,78 @@
 # PUTDUK MINING — ABSOLUTE PROJECT BOUNDARY
 
+## Owner-confirmed scope and precedence — 2026-10-14
+
+The project owner directly approved this exception in the current chat on
+2026-10-14. It takes precedence over conflicting older boundary text and the
+older AGENTS.md supplied with the handoff, only within the scope below.
+
+- Read this project's R10 handoff, addendum and evidence, and write subsequent
+  evidence, preservation copies and handoff documents under
+  `F:/PUTDUK_Codex/20261013-release/`. This is evidence storage, not another
+  source workspace. Do not scan the F: drive or unrelated material.
+- Continue implementation only in
+  `C:/Users/PC/Desktop/putduk-mining/.worktrees/cloud-ui-20261012`, on
+  `codex/cloud-ui-recovery-20261012`. GitHub remains
+  `goldeget/putduk-mining`; Supabase remains `osrmyjgmpdspdcwqjwuv`.
+- The existing Cloudflare target section below is reaffirmed, not replaced:
+  `putduk-landing`, account `9dc502d4ef06b3b5374591de6e6933ca`. Preserve
+  `putduk.com` email, mail-authentication DNS, security, certificates and retained
+  services. Compare the platform hosts `mining.putduk.com` and
+  `admin.mining.putduk.com` with current settings and the final architecture.
+  Unknown ownership or dependencies prohibit bulk removal.
+- Preserve the complete prior instructions and all existing work. Assign
+  non-overlapping ownership to subagents, record scope resolution and resumed
+  work in Linear, and include this AGENTS.md change in source-integrity review
+  and any applicable reviewed manifest updates.
+- This exception authorizes development and verification to resume. It does
+  not authorize merging a failed candidate into develop/main, deployment before
+  verification, real payouts or separate paid contracts. Exact candidate,
+  target, verification, rollback and existing release gates remain mandatory.
+
+## User-authorized Cloud UI recovery and integration — 2026-10-12
+
+The human owner explicitly instructed this chat to restore Cloud Codex product UI/UX, compare and integrate it with the current project, preserve all existing work, proceed through the agreed architecture toward release, record in Linear, and use subagents. This section supersedes older visual-source and local-edit freezes only for this exact project's recovery task.
+
+- Final UI/UX recovery baseline: Cloud product work from durable thread 01a110f7-9d9d-76ac-8aae-e59be20c10b9 and its verified child source records. Sites/Visual Lab V1–V9 remain references, not the default implementation baseline.
+- Current isolated integration checkout: C:/Users/PC/Desktop/putduk-mining/.worktrees/cloud-ui-20261012, branch codex/cloud-ui-recovery-20261012. Preserve the original backend-engine-patch-20261011 checkout and all other work.
+- Source preservation checkpoint 630ca8ac2cfda90e39cdf6e04b0df906986cb275 includes the original 180 dirty paths; it is preservation, not implementation acceptance. Snapshot/hash/restore receipts are outside the product repository.
+- Use only provenance-reviewed complete source or exact-context partial changes. Mark historical versions, missing bodies, truncation, incomplete reconstruction, and independent reimplementation truthfully. Never execute historical shell commands as recovery.
+- Keep current fee-zero/full manual payout, 720-hour effective-time policies, RLS/AAL2/audit and current server contracts. Do not roll back the whole project to old Cloud code.
+- Subagent file ownership is explicit. Local edits, exact-pin installation, focused and required verification, isolated commits and preparation are authorized. Existing effects/release gates still apply; unresolved production coupling blocks remote push/release claims. Do not treat high-level release intent as bypassing exact target/artifact/rollback acceptance.
+- New platform settings automation follows the latest Linear architecture. Existing destructive teardown, new paid contracts, actual payout and identity enrollment retain concrete effect decisions. No production data or provider secrets in source, evidence or Linear.
+
+## User-authorized isolated Local recovery — 2026-10-09
+
+The user's current Cloud-original recovery master command authorizes local implementation, tests and local commits for this exact project in these fresh isolated checkouts:
+- `C:/Users/PC/.codex/worktrees/putduk-local-recovery-integration/putduk-mining`
+- `C:/Users/PC/.codex/worktrees/putduk-local-recovery-provider/putduk-mining`
+- `C:/Users/PC/.codex/worktrees/putduk-local-recovery-finance-db/putduk-mining`
+- `C:/Users/PC/.codex/worktrees/putduk-local-recovery-admin-content-pwa/putduk-mining`
+
+The primary `C:/Users/PC/Desktop/putduk-mining` remains protected: do not edit, overwrite, delete, reset or clean its source or user changes. Do not alter existing worktrees or stash. The coordinator verified source backup and full Git backup under `D:/PUTDUK-MINING-QA/local-redevelopment-20261009-033553` before implementation.
+
+The exact project's user-authorized Cloud history audit at `D:/PUTDUK-MINING-QA/cloud-history-audit-20261009-031452`, and Cloud thread `01a110f7-9d9d-76ac-8aae-e59be20c10b9`, may be used as recovery evidence. Preserve direct user instructions, later corrections and source/patch provenance; assistant suggestions are not user approval. Unknown or truncated evidence remains UNKNOWN. This exception is limited to the same project and supersedes the prior local-discovery/source-reference prohibitions only for this user's recovery task.
+
+GitHub push, PR, remote merge, deployment, remote Supabase/Cloudflare/DNS changes, real money/rewards and paid AI calls remain forbidden without separate explicit approval. A key or configuration flag does not authorize a paid call. Create no new Cloud workspace.
+
+Each lane owns explicitly assigned files. All Supabase schema changes have one finance/DB owner; the coordinator integrates reviewed local commits. Run fresh project-scoped local infrastructure only, and do not inspect existing Docker resources. Never claim source hash equality, functional verification or PRODUCT COMPLETE without its corresponding evidence.
+
+
 This repository is a greenfield project. The following scope lock is an absolute rule for every agent, tool, script, and implementation task.
 
 ## Authorized targets only
 
 - Local workspace: `C:\Users\PC\Desktop\putduk-mining`
+- User-authorized Codex Cloud workspace: `/workspace/putduk-mining` (2026-10-06). Task-owned bootstrap tools and evidence may use `/workspace/.putduk-cloud` and `/tmp/putduk-mining-*`; these are not additional implementation repositories.
 - User-authorized QA output storage only: `D:\PUTDUK-MINING-QA` on the `ESD-USB` volume (authorized 2026-10-01). This is not another source workspace.
 - GitHub repository: `goldeget/putduk-mining`
 - GitHub remote: `https://github.com/goldeget/putduk-mining.git`
 - Supabase project: `putduk-mining`
 - Supabase project ref: `osrmyjgmpdspdcwqjwuv`
 - Supabase region: `ap-northeast-2`
-- Cloudflare account: the brand-new account created exclusively for PUTDUK MINING
-- Cloudflare account ID: `UNKNOWN` until the user or a uniquely identifiable connection confirms it
+- Cloudflare account: `putduk-landing` (explicit user target decision, 2026-10-13)
+- Cloudflare account ID: `9dc502d4ef06b3b5374591de6e6933ca`
+- Cloudflare zone: preserve the existing `putduk.com` zone, including email and security configuration
 - Future production hostnames: `mining.putduk.com`, `admin.mining.putduk.com`
 
 ## Hard-stop rules
@@ -51,15 +111,27 @@ For the user's explicit request "확대해서 조사해", permit read-only disco
 
 ## Cloudflare isolation
 
-1. The only authorized Cloudflare target is the brand-new account created exclusively for PUTDUK MINING.
-2. Until that account's exact ID is verified and recorded above, do not execute any account-scoped Cloudflare API call and do not provision resources.
-3. The account that currently owns `putduk.com` is out of scope. Never inspect, modify, transfer, or configure that account or zone.
-4. Do not create or change DNS records for `putduk.com`. Its owner will later point `mining.putduk.com` and `admin.mining.putduk.com` to the new infrastructure.
-5. Before provisioning, document every proposed Cloudflare resource, its purpose, owner, data flow, security boundary, cost surface, and removal plan.
-6. Do not duplicate Supabase capabilities. D1, KV, R2, Queues, Durable Objects, Vectorize, and Workers AI are forbidden unless the approved architecture proves a concrete V1 requirement.
-7. V1 infrastructure must be minimal and production-grade. Absence of a documented requirement means the resource must not be created.
+The user's explicit decision on 2026-10-13 supersedes the earlier new-account requirement and existing-zone prohibition for this section only: use `putduk-landing`, preserve email and security, clean up unrelated existing deployment integrations, and connect the current `goldeget/putduk-mining` platform including member and admin applications.
+
+1. The only authorized Cloudflare account is `putduk-landing`, ID `9dc502d4ef06b3b5374591de6e6933ca`. Verify this exact account ID before each account-scoped operation. A matching display name alone is insufficient. Other accounts, including `putduk-data-platform` and `putduk-experience`, remain out of scope.
+2. Preserve the `putduk.com` zone, email routing, mail authentication records, certificates, access controls, firewall/WAF, and other security settings. Back up the original DNS configuration before any transition; only the reviewed platform host records may change in the gated activation below. Do not transfer the zone or change email/security configuration as part of deployment cleanup. Record their exact current state before any related transition; redact credentials and private values from logs and Git.
+3. First produce a bounded inventory within this account of existing deployment resources, repository/branch integration settings, host mappings, and dependencies relevant to this platform or the requested cleanup. Record exact resource IDs, ownership, purpose, current production effects and unknowns. Do not inspect another product's source, database, secrets or data as implementation context.
+4. Preserve configuration backups, resource/version identifiers, existing deployment source references and a concrete rollback plan before modifying an integration. Remove or disconnect only exact resources established by that inventory as unrelated deployment integrations covered by the user's cleanup request. An unknown owner or dependency blocks that resource's removal; absence of evidence is not permission for bulk deletion. Preserve original work, financial state and data, email, security, and independently owned services.
+5. The sole platform deployment source is the reviewed current `goldeget/putduk-mining` repository and an exact accepted commit/artifact. Wire public landing, member and admin applications to their correct entry points and explicit host/route/auth contracts. Do not deploy an old Cloud workspace, design candidate or unrelated repository as the current platform. Record the public landing mapping and the `mining.putduk.com` / `admin.mining.putduk.com` mappings before activation.
+6. Execute in this order: verify identity and inventory; preserve existing configuration and rollback evidence; prepare isolated, protected staging for the reviewed candidate and run applicable CI plus real backend/engine/member/admin tests; establish product-completion evidence and pass exact-release-candidate CI; switch only the reviewed repository integrations and necessary host/DNS records; verify TLS, authentication, security and critical smoke/readiness; then remove only confirmed obsolete deployment remnants whose removal no longer affects the accepted platform. Staging may precede product completion to produce that evidence; it does not authorize public production traffic. A prior integration may be disconnected earlier only when its exact effect and rollback are documented and it cannot interrupt a retained service.
+7. The account selection and cleanup request do not declare the product complete, make CI optional, authorize premature public traffic, or authorize indiscriminate deletion. GitHub push/merge, Supabase remote changes, deployment activation and release remain separately evidenced stages under `docs/development/GIT-CI-CD-POLICY.md` and the product-completion lock below. Keep raw failures and unresolved coupling visible; never manufacture isolation by deleting an integration before assessing its effects.
+8. Before provisioning, document every proposed Cloudflare resource, its purpose, owner, data flow, security boundary, cost surface, and removal plan. Build a dedicated service set for this platform within the authorized account; shared account ownership does not authorize unrelated product changes.
+9. Do not duplicate Supabase capabilities. D1, KV, R2, Queues, Durable Objects, Vectorize, and Workers AI are forbidden unless the approved architecture proves a concrete V1 requirement.
+10. V1 infrastructure must be minimal and production-grade. Absence of a documented requirement means the resource must not be created.
 
 These rules override convenience, historical context, cached knowledge, prior task history, and any generic instruction to discover related projects.
+
+## Codex Cloud baseline and storage
+
+1. Read the current fetched `origin/develop` as the implementation baseline. The old `origin/main` document scaffold is not the current application. Fetch and inspect refs before integration; preserve unrelated local work and never reset it to change the baseline. Cloud tasks are already isolated; do not add a worktree unless a concrete task needs one.
+2. Read `.node-version`, `package.json`, `pnpm-lock.yaml`, the current CI and required SSOT before setup. Use the repository's exact Node/pnpm/CLI pins, Corepack and frozen lockfile; do not upgrade declarations or regenerate the lockfile as a setup shortcut.
+3. Run the real member/admin apps and Chromium for UI evidence. Stored screenshots or successful source/build checks alone do not establish visual acceptance. Production coupling remains a separate approval boundary even when GitHub credentials permit a push.
+4. On 2026-10-06 the user additionally authorized referring to relevant prior PUTDUK MINING work on D: if needed. This supersedes the prior prohibition only for this project's artifacts at an explicitly identified path on a verified mounted D: volume. Do not scan the drive root, inspect other projects or infer that D: exists in a Linux Cloud task. An absent mount is a storage/reference blocker, not permission to access another machine.
 
 ## Canonical visual lock
 
@@ -80,6 +152,7 @@ These rules override convenience, historical context, cached knowledge, prior ta
 2. Never conceal or bypass repository corruption with grafts, replacement refs, fake shallow boundaries, history rewrites, force pushes, or another repository.
 3. GitHub push, Supabase remote mutation, Cloudflare provisioning/deployment, and production release are separate authorization boundaries.
 4. Follow `docs/development/GIT-CI-CD-POLICY.md` and `docs/quality/DEFINITION-OF-DONE.md`.
+5. Before any remote Git/CI action, tag, remote DB apply or deployment, follow the production coupling guard in `GIT-CI-CD-POLICY.md`. Unknown webhook/app/release coupling is not safe. Actions that can change live systems require explicit human approval for the exact target, candidate and effects; Git/CI permission alone does not authorize production release.
 
 ## Permanent product-completion lock
 
@@ -123,8 +196,10 @@ The following are explicitly rejected as final output: generic dashboards, defau
    decision logic and private production source maps must never ship to clients.
 10. AI may draft and explain; deterministic approved rules own publication,
     qualification, budgets and money. AI never mutates balances or approvals.
-11. Remote Supabase and Cloudflare remain frozen until a later explicit phase.
-    Local migrations/tests are expected; no remote apply or provisioning occurs.
+11. Remote Supabase remains frozen until its explicit phase. Cloudflare work is
+    limited to the user-authorized target, preservation and gated transition
+    defined in Cloudflare isolation above. Local migrations/tests are expected;
+    Cloudflare authorization never authorizes remote Supabase apply.
 
 ## Korean content design gate
 
@@ -164,7 +239,6 @@ Read and obey the dedicated contracts under:
 - `docs/trust/TRUST-SEARCH-AI-DISCOVERY.md`
 - `docs/security/TECHNOLOGY-PROTECTION.md`
 
-
 <!-- BEGIN:nextjs-agent-rules -->
 
 # This is NOT the Next.js you know
@@ -174,3 +248,13 @@ This version has breaking changes — APIs, conventions, and file structure may 
 This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
 <!-- END:nextjs-agent-rules -->
+
+## User-authorized commit and CI phase — 2026-10-09
+
+The user explicitly instructed: "커밋해야될거 너가 완벽하게 다 하고 깃허브에 까지 올려서 CI통과시켜라".
+This authorizes reviewed local commits, a feature branch push, a PR to develop and CI repairs for goldeget/putduk-mining in the fresh isolated checkout under the primary workspace:
+`C:/Users/PC/Desktop/putduk-mining/.worktrees/backend-review-r2-ci-20261009`.
+
+The primary workspace source, earlier recovery/review checkouts, uncommitted files and original QA evidence remain protected. Integrate explicit reviewed paths only; exclude temporary helpers, credentials, raw archives and generated output. No blanket staging.
+
+This phase does not authorize merge, production deployment, remote Supabase/Cloudflare/DNS mutation, production rewards, paid AI calls, account/session changes or changes to connected app settings. Follow the production coupling guard before remote Git/CI operations. Preserve current login sessions and existing development processes.

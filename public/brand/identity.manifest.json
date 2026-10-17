@@ -1,0 +1,321 @@
+{
+  "schemaVersion": 1,
+  "assetVersion": "2026.10.14-sprout-p-v2",
+  "brandIdentity": {
+    "version": "2026.10.14-sprout-p-v2",
+    "geometryMaster": "/brand/identity/20261014/logo/putduk-sprout-p-master.svg",
+    "geometryMasterSha256": "f07922dd7ff003c6873464df09eacc9558fe864c6aa12c01e9fa1f4118385f56",
+    "geometryPath": "M18 57V25C18 22 18 20 16 19C9 17 5 12 5 4C16 5 23 10 22 18L28 12Q30 10 33 10H44Q47 10 49 12L56 19Q59 22 59 26V35Q59 38 56 41L50 43Q47 45 43 45H30V57Q30 60 27 60H21Q18 60 18 57ZM30 24V36Q30 37 31 37H41Q42 37 43 36L48 31Q49 30 48 29L43 24Q42 23 41 23H31Q30 23 30 24Z",
+    "sourceType": "original-native-svg",
+    "authorization": "Owner selected the generated gold P/sprout logo and explicitly requested complete monochrome vector, favicon, all-menu and AI theme integration on 2026-10-14",
+    "designSource": {
+      "generatedMaster": "docs/design/generated-masters/sprout-p-v2-20261014/putduk-sprout-p-gold-concept-master.png",
+      "sha256": "516aca1df4dde6ff3cb5fa97df3cb009403cc4174ad93f899195bb9250b30e7c",
+      "relationship": "Native optical redraw preserving selected silhouette; bevel, grain and leaf vein removed for small-size legibility"
+    },
+    "historicalIdentity": {
+      "version": "2026.10.13-sprout-p-v1",
+      "manifest": "docs/design/generated-masters/sprout-p-v2-20261014/previous-identity.manifest.json",
+      "assetPolicy": "20261013 files and earlier manifests preserved byte-for-byte"
+    },
+    "wordmarkTypography": {
+      "fontSource": "assets/fonts/PretendardVariable.woff2",
+      "fontSha256": "9599f12fd42fc0bce1cd50b47a0c022e108d7aa64dd0d1bb0ed44f3282d900b4",
+      "family": "Pretendard Variable",
+      "sourceWeight": 750,
+      "fontUnitsPerEm": 2048,
+      "copy": "퍼뜩 채굴",
+      "delivery": "native Korean and Latin outline paths; no runtime font/image dependencies"
+    }
+  },
+  "assets": [
+    {
+      "path": "/brand/identity/20261014/favicon/favicon-16.png",
+      "bytes": 415,
+      "sha256": "fc2eef2d0f61cce4f540d7f2681b674d393a48b5e61e34f21bf8c336de8f0c4d",
+      "mimeType": "image/png",
+      "alt": "퍼뜩 채굴 브랜드 자산",
+      "width": 16,
+      "height": 16,
+      "theme": "system",
+      "brandIdentityVersion": "2026.10.14-sprout-p-v2"
+    },
+    {
+      "path": "/brand/identity/20261014/favicon/favicon-32.png",
+      "bytes": 689,
+      "sha256": "31a63c7a13741e5eeecbecbdacca0058b555917eda854ce2b893b15f4fb584e6",
+      "mimeType": "image/png",
+      "alt": "퍼뜩 채굴 브랜드 자산",
+      "width": 32,
+      "height": 32,
+      "theme": "system",
+      "brandIdentityVersion": "2026.10.14-sprout-p-v2"
+    },
+    {
+      "path": "/brand/identity/20261014/favicon/favicon-48.png",
+      "bytes": 981,
+      "sha256": "7cf3d583e5d751e205e5bd36108accfd24925f3316e418fe6f6c37e5589865e5",
+      "mimeType": "image/png",
+      "alt": "퍼뜩 채굴 브랜드 자산",
+      "width": 48,
+      "height": 48,
+      "theme": "system",
+      "brandIdentityVersion": "2026.10.14-sprout-p-v2"
+    },
+    {
+      "path": "/brand/identity/20261014/favicon/favicon-dark-512.png",
+      "bytes": 15144,
+      "sha256": "f6ca60761b734495a828b44d0ef7a2ba8df701c1f024a6316074bc0a355dcc0d",
+      "mimeType": "image/png",
+      "alt": "퍼뜩 채굴 브랜드 자산",
+      "width": 512,
+      "height": 512,
+      "theme": "dark",
+      "brandIdentityVersion": "2026.10.14-sprout-p-v2"
+    },
+    {
+      "path": "/brand/identity/20261014/favicon/favicon-light-512.png",
+      "bytes": 15149,
+      "sha256": "44cdab3e9638200f89511befcf99992f954596af25990c4a687c9eab90aaf5b0",
+      "mimeType": "image/png",
+      "alt": "퍼뜩 채굴 브랜드 자산",
+      "width": 512,
+      "height": 512,
+      "theme": "light",
+      "brandIdentityVersion": "2026.10.14-sprout-p-v2"
+    },
+    {
+      "path": "/brand/identity/20261014/favicon/favicon.ico",
+      "bytes": 2139,
+      "sha256": "4471fd823484cd1c6cf473c22d6e1553288bcb29ccc0a7ea4fdf1564576aab31",
+      "mimeType": "image/x-icon",
+      "alt": "퍼뜩 채굴 브랜드 자산",
+      "theme": "system",
+      "brandIdentityVersion": "2026.10.14-sprout-p-v2"
+    },
+    {
+      "path": "/brand/identity/20261014/favicon/favicon.svg",
+      "bytes": 646,
+      "sha256": "def4ff2c19995f763d5b4cc5121349d285619e36692300e8c1c59a2d28e3259e",
+      "mimeType": "image/svg+xml",
+      "alt": "퍼뜩 채굴 브랜드 자산",
+      "width": 64,
+      "height": 64,
+      "theme": "system",
+      "brandIdentityVersion": "2026.10.14-sprout-p-v2"
+    },
+    {
+      "path": "/brand/identity/20261014/logo/putduk-ai-symbol.svg",
+      "bytes": 638,
+      "sha256": "f070665746fe311503bf58e53d53f8d793454283734fab27319cb73aa889b4c7",
+      "mimeType": "image/svg+xml",
+      "alt": "퍼뜩 채굴 브랜드 자산",
+      "width": 64,
+      "height": 64,
+      "theme": "system",
+      "brandIdentityVersion": "2026.10.14-sprout-p-v2"
+    },
+    {
+      "path": "/brand/identity/20261014/logo/putduk-logo-lockup-dark.svg",
+      "bytes": 11927,
+      "sha256": "5c103337c7145aec5e8f449695aecf205ee7e1abb82fb4e57b68669a72b0137f",
+      "mimeType": "image/svg+xml",
+      "alt": "퍼뜩 채굴 브랜드 자산",
+      "width": 238,
+      "height": 76,
+      "theme": "dark",
+      "brandIdentityVersion": "2026.10.14-sprout-p-v2"
+    },
+    {
+      "path": "/brand/identity/20261014/logo/putduk-logo-lockup-light.svg",
+      "bytes": 11927,
+      "sha256": "049bfc1794bc40e03375559abaf73e6ba1a68252a81bfd77080d587228df27dc",
+      "mimeType": "image/svg+xml",
+      "alt": "퍼뜩 채굴 브랜드 자산",
+      "width": 238,
+      "height": 76,
+      "theme": "light",
+      "brandIdentityVersion": "2026.10.14-sprout-p-v2"
+    },
+    {
+      "path": "/brand/identity/20261014/logo/putduk-sprout-p-gold.png",
+      "bytes": 338970,
+      "sha256": "f47fe0e23a0e5e16757556d28a371fb960cb1ea8eef63c748cc0f0b75dedf3bf",
+      "mimeType": "image/png",
+      "alt": "퍼뜩 채굴 브랜드 자산",
+      "width": 640,
+      "height": 640,
+      "theme": "system",
+      "brandIdentityVersion": "2026.10.14-sprout-p-v2"
+    },
+    {
+      "path": "/brand/identity/20261014/logo/putduk-sprout-p-gold.webp",
+      "bytes": 152646,
+      "sha256": "34c372821cc0576a40d35ff97925e77b227d2ca88bcc08f7220b0ed41c4d2b06",
+      "mimeType": "image/webp",
+      "alt": "퍼뜩 채굴 브랜드 자산",
+      "width": 640,
+      "height": 640,
+      "theme": "system",
+      "brandIdentityVersion": "2026.10.14-sprout-p-v2"
+    },
+    {
+      "path": "/brand/identity/20261014/logo/putduk-sprout-p-master.svg",
+      "bytes": 551,
+      "sha256": "f07922dd7ff003c6873464df09eacc9558fe864c6aa12c01e9fa1f4118385f56",
+      "mimeType": "image/svg+xml",
+      "alt": "퍼뜩 채굴 브랜드 자산",
+      "width": 64,
+      "height": 64,
+      "theme": "system",
+      "brandIdentityVersion": "2026.10.14-sprout-p-v2"
+    },
+    {
+      "path": "/brand/identity/20261014/logo/putduk-sprout-p-monochrome.svg",
+      "bytes": 556,
+      "sha256": "ce5550b9100046848a74de32678a149452e3effe6921f2cfc41ded2a43e7b038",
+      "mimeType": "image/svg+xml",
+      "alt": "퍼뜩 채굴 브랜드 자산",
+      "width": 64,
+      "height": 64,
+      "theme": "system",
+      "brandIdentityVersion": "2026.10.14-sprout-p-v2"
+    },
+    {
+      "path": "/brand/identity/20261014/notification/putduk-notification-badge-96.png",
+      "bytes": 905,
+      "sha256": "54a811cbae1374cd7eb9db80557c558e81409a17b93b1c2b42193c5e78347427",
+      "mimeType": "image/png",
+      "alt": "퍼뜩 채굴 브랜드 자산",
+      "width": 96,
+      "height": 96,
+      "theme": "system",
+      "brandIdentityVersion": "2026.10.14-sprout-p-v2"
+    },
+    {
+      "path": "/brand/identity/20261014/pwa/putduk-pwa-dark-192.png",
+      "bytes": 4061,
+      "sha256": "807f0bde831513b0e1fc1cf87edc32e1bf7464009974b4c7a00326b1ff6e2de6",
+      "mimeType": "image/png",
+      "alt": "퍼뜩 채굴 브랜드 자산",
+      "width": 192,
+      "height": 192,
+      "theme": "dark",
+      "brandIdentityVersion": "2026.10.14-sprout-p-v2"
+    },
+    {
+      "path": "/brand/identity/20261014/pwa/putduk-pwa-dark-512.png",
+      "bytes": 15144,
+      "sha256": "f6ca60761b734495a828b44d0ef7a2ba8df701c1f024a6316074bc0a355dcc0d",
+      "mimeType": "image/png",
+      "alt": "퍼뜩 채굴 브랜드 자산",
+      "width": 512,
+      "height": 512,
+      "theme": "dark",
+      "brandIdentityVersion": "2026.10.14-sprout-p-v2"
+    },
+    {
+      "path": "/brand/identity/20261014/pwa/putduk-pwa-light-192.png",
+      "bytes": 4053,
+      "sha256": "95bf0e1f52c133cd98ffc4ace2961a3f726d70b9410bb8cf4071487a8c3f742b",
+      "mimeType": "image/png",
+      "alt": "퍼뜩 채굴 브랜드 자산",
+      "width": 192,
+      "height": 192,
+      "theme": "light",
+      "brandIdentityVersion": "2026.10.14-sprout-p-v2"
+    },
+    {
+      "path": "/brand/identity/20261014/pwa/putduk-pwa-light-512.png",
+      "bytes": 15149,
+      "sha256": "44cdab3e9638200f89511befcf99992f954596af25990c4a687c9eab90aaf5b0",
+      "mimeType": "image/png",
+      "alt": "퍼뜩 채굴 브랜드 자산",
+      "width": 512,
+      "height": 512,
+      "theme": "light",
+      "brandIdentityVersion": "2026.10.14-sprout-p-v2"
+    },
+    {
+      "path": "/brand/identity/20261014/pwa/putduk-pwa-maskable-512.png",
+      "bytes": 10616,
+      "sha256": "ee3dc22230154bdddc8fdf72f097240daba21d16c95b45f0cdb18461a802e271",
+      "mimeType": "image/png",
+      "alt": "퍼뜩 채굴 브랜드 자산",
+      "width": 512,
+      "height": 512,
+      "theme": "dark",
+      "brandIdentityVersion": "2026.10.14-sprout-p-v2"
+    },
+    {
+      "path": "/brand/identity/20261014/symbol/putduk-symbol-dark.svg",
+      "bytes": 551,
+      "sha256": "c7cc07ce8ee5a5cbb5eebb06f37f28348bb68b7da836cd4d71a1acc6db9ad69f",
+      "mimeType": "image/svg+xml",
+      "alt": "퍼뜩 채굴 브랜드 자산",
+      "width": 64,
+      "height": 64,
+      "theme": "dark",
+      "brandIdentityVersion": "2026.10.14-sprout-p-v2"
+    },
+    {
+      "path": "/brand/identity/20261014/symbol/putduk-symbol-light.svg",
+      "bytes": 551,
+      "sha256": "3bcbc2910889988a6d93045a07f1576e5b1adf86bc231e5a675044195dab82d7",
+      "mimeType": "image/svg+xml",
+      "alt": "퍼뜩 채굴 브랜드 자산",
+      "width": 64,
+      "height": 64,
+      "theme": "light",
+      "brandIdentityVersion": "2026.10.14-sprout-p-v2"
+    },
+    {
+      "path": "/brand/identity/20261014/wordmark/putduk-wordmark-dark.svg",
+      "bytes": 11927,
+      "sha256": "5c103337c7145aec5e8f449695aecf205ee7e1abb82fb4e57b68669a72b0137f",
+      "mimeType": "image/svg+xml",
+      "alt": "퍼뜩 채굴 브랜드 자산",
+      "width": 238,
+      "height": 76,
+      "theme": "dark",
+      "brandIdentityVersion": "2026.10.14-sprout-p-v2"
+    },
+    {
+      "path": "/brand/identity/20261014/wordmark/putduk-wordmark-light.svg",
+      "bytes": 11927,
+      "sha256": "049bfc1794bc40e03375559abaf73e6ba1a68252a81bfd77080d587228df27dc",
+      "mimeType": "image/svg+xml",
+      "alt": "퍼뜩 채굴 브랜드 자산",
+      "width": 238,
+      "height": 76,
+      "theme": "light",
+      "brandIdentityVersion": "2026.10.14-sprout-p-v2"
+    }
+  ],
+  "adminPublicCopies": [
+    {
+      "path": "apps/admin/public/brand/identity/20261014/favicon/favicon.svg",
+      "memberPath": "/brand/identity/20261014/favicon/favicon.svg",
+      "sha256": "def4ff2c19995f763d5b4cc5121349d285619e36692300e8c1c59a2d28e3259e",
+      "bytes": 646
+    },
+    {
+      "path": "apps/admin/public/brand/identity/20261014/favicon/favicon-32.png",
+      "memberPath": "/brand/identity/20261014/favicon/favicon-32.png",
+      "sha256": "31a63c7a13741e5eeecbecbdacca0058b555917eda854ce2b893b15f4fb584e6",
+      "bytes": 689
+    },
+    {
+      "path": "apps/admin/public/brand/identity/20261014/favicon/favicon.ico",
+      "memberPath": "/brand/identity/20261014/favicon/favicon.ico",
+      "sha256": "4471fd823484cd1c6cf473c22d6e1553288bcb29ccc0a7ea4fdf1564576aab31",
+      "bytes": 2139
+    },
+    {
+      "path": "apps/admin/public/brand/identity/20261014/pwa/putduk-pwa-dark-192.png",
+      "memberPath": "/brand/identity/20261014/pwa/putduk-pwa-dark-192.png",
+      "sha256": "807f0bde831513b0e1fc1cf87edc32e1bf7464009974b4c7a00326b1ff6e2de6",
+      "bytes": 4061
+    }
+  ]
+}

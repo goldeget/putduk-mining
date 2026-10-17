@@ -1,38 +1,60 @@
 :root {
   color-scheme: dark;
 
-  --background-canvas: #070706;
-  --background-subtle: #0e0c09;
-  --background-elevated: #15120d;
+  --background-canvas: #020a14;
+  --background-subtle: #07111d;
+  --background-elevated: #0d1a28;
 
-  --surface-default: #15120d;
-  --surface-raised: #1d1811;
-  --surface-sunken: #0a0907;
-  --surface-interactive: #241c11;
+  --surface-default: #0b1724;
+  --surface-raised: #101e2d;
+  --surface-sunken: #040a12;
+  --surface-interactive: #16263a;
 
-  --text-primary: #f8f2e4;
-  --text-secondary: #b8ad98;
-  --text-tertiary: #b0a38c;
+  --text-primary: #f1f4f7;
+  --text-secondary: #b7c3d0;
+  --text-tertiary: #97a5b5;
   --text-inverse: #17130d;
 
-  --border-subtle: rgba(246, 224, 174, 0.09);
-  --border-default: rgba(246, 224, 174, 0.32);
-  --border-strong: rgba(246, 200, 91, 0.36);
-  --border-control: rgba(246, 224, 174, 0.48);
+  --border-subtle: rgba(163, 187, 214, 0.1);
+  --border-default: rgba(145, 173, 205, 0.3);
+  --border-strong: rgba(246, 200, 91, 0.42);
+  --border-control: rgba(163, 187, 214, 0.52);
 
-  --brand-primary: #f6c85b;
-  --brand-strong: #d99a2b;
-  --brand-hover: #ffdb83;
-  --brand-active: #e6b340;
-  --brand-quiet: #3a2810;
-  --brand-mineral: #fff0a6;
+  --brand-primary: #f4c76c;
+  --brand-identity: #e8bd64;
+  --brand-strong: #c58b35;
+  --brand-hover: #ffdc91;
+  --brand-active: #dcaa50;
+  --brand-quiet: #2b251c;
+  --brand-mineral: #fff1bf;
+
+  --action-primary-background: linear-gradient(
+    180deg,
+    #ffe3a5 0%,
+    #f1bd60 48%,
+    #c98a30 100%
+  );
+  --action-primary-hover: linear-gradient(
+    180deg,
+    #fff0c7 0%,
+    #ffcf75 48%,
+    #dda342 100%
+  );
+  --action-primary-active: linear-gradient(180deg, #e6ad4f 0%, #c98a30 100%);
+  --action-primary-foreground: #24180b;
+  --action-primary-border: #f5d68d;
+  --action-primary-shadow: 0 6px 18px rgba(225, 168, 69, 0.24);
+  --scene-surface: #020a14;
+  --scene-copy: #fff4d8;
+  --scene-copy-muted: #d2dbe4;
+  --scene-gold: #f4c76c;
 
   --status-success: #65d8a8;
   --status-warning: #e5b76a;
   --status-danger: #f08177;
   --status-info: #79b8e8;
 
-  --world-korea: #f6c85b;
+  --world-korea: #f4c76c;
   --world-usa: #78aee8;
   --world-gold: #d9b873;
   --world-silver: #b9c4ca;
@@ -81,84 +103,135 @@
 html[data-theme="light"] {
   color-scheme: light;
   --background-canvas: #f8f4ea;
-  --background-subtle: #f1eadb;
-  --background-elevated: #fffdf8;
-  --surface-default: #fffdf8;
+  --background-subtle: #eff1f3;
+  --background-elevated: #ffffff;
+  --surface-default: #ffffff;
   --surface-raised: #ffffff;
-  --surface-sunken: #eee5d4;
-  --surface-interactive: #f5ead0;
-  --text-primary: #17130d;
-  --text-secondary: #605643;
-  --text-tertiary: #6f614b;
+  --surface-sunken: #f0f2f4;
+  --surface-interactive: #f7f0e2;
+  --text-primary: #161b21;
+  --text-secondary: #58616b;
+  --text-tertiary: #717b86;
   --text-inverse: #fffdf8;
-  --border-subtle: rgba(74, 52, 19, 0.09);
-  --border-default: rgba(74, 52, 19, 0.3);
-  --border-strong: rgba(124, 75, 6, 0.34);
-  --border-control: rgba(74, 52, 19, 0.6);
-  --brand-primary: #9b650d;
-  --brand-strong: #7c4b06;
-  --brand-hover: #7c4b06;
-  --brand-active: #633b03;
-  --brand-quiet: #f0ddb0;
-  --brand-mineral: #b77a17;
+  --border-subtle: rgba(37, 49, 62, 0.08);
+  --border-default: rgba(37, 49, 62, 0.2);
+  --border-strong: rgba(151, 103, 25, 0.38);
+  --border-control: rgba(37, 49, 62, 0.42);
+  --brand-primary: #94600f;
+  --brand-identity: #805b21;
+  --brand-strong: #744b0b;
+  --brand-hover: #825408;
+  --brand-active: #693f06;
+  --brand-quiet: #f6ead0;
+  --brand-mineral: #a8731c;
+  --action-primary-background: linear-gradient(
+    180deg,
+    #ffe9b7 0%,
+    #e9b75b 48%,
+    #ca8b30 100%
+  );
+  --action-primary-hover: linear-gradient(
+    180deg,
+    #fff2d4 0%,
+    #f5ca78 48%,
+    #d9a246 100%
+  );
+  --action-primary-active: linear-gradient(180deg, #dda84e 0%, #bd7d25 100%);
+  --action-primary-foreground: #24180b;
+  --action-primary-border: #d7a64f;
+  --action-primary-shadow: 0 5px 16px rgba(125, 83, 17, 0.18);
+  --scene-surface: #020a14;
+  --scene-copy: #fff4d8;
+  --scene-copy-muted: #d2dbe4;
+  --scene-gold: #f4c76c;
   --status-success: #176444;
   --status-warning: #76510b;
   --status-danger: #ac332b;
   --status-info: #1f5d88;
-  --world-korea: #9b650d;
+  --world-korea: #94600f;
   --world-usa: #225f98;
   --world-gold: #806018;
   --world-silver: #52616b;
   --world-crypto: #6650a5;
-  --shadow-lift: 0 18px 60px rgba(74, 52, 19, 0.14);
+  --shadow-lift: 0 18px 60px rgba(22, 31, 42, 0.12);
   --shadow-focus:
     0 0 0 2px var(--background-canvas), 0 0 0 5px var(--brand-primary);
 }
 
 html[data-theme="dark"] {
   color-scheme: dark;
+  --background-canvas: #070706;
 }
 
 @media (prefers-color-scheme: light) {
   :root:not([data-theme]) {
     color-scheme: light;
     --background-canvas: #f8f4ea;
-    --background-subtle: #f1eadb;
-    --background-elevated: #fffdf8;
-    --surface-default: #fffdf8;
+    --background-subtle: #eff1f3;
+    --background-elevated: #ffffff;
+    --surface-default: #ffffff;
     --surface-raised: #ffffff;
-    --surface-sunken: #eee5d4;
-    --surface-interactive: #f5ead0;
-    --text-primary: #17130d;
-    --text-secondary: #605643;
-    --text-tertiary: #6f614b;
+    --surface-sunken: #f0f2f4;
+    --surface-interactive: #f7f0e2;
+    --text-primary: #161b21;
+    --text-secondary: #58616b;
+    --text-tertiary: #717b86;
     --text-inverse: #fffdf8;
-    --border-subtle: rgba(74, 52, 19, 0.09);
-    --border-default: rgba(74, 52, 19, 0.3);
-    --border-strong: rgba(124, 75, 6, 0.34);
-    --border-control: rgba(74, 52, 19, 0.6);
-    --brand-primary: #9b650d;
-    --brand-strong: #7c4b06;
-    --brand-hover: #7c4b06;
-    --brand-active: #633b03;
-    --brand-quiet: #f0ddb0;
-    --brand-mineral: #b77a17;
+    --border-subtle: rgba(37, 49, 62, 0.08);
+    --border-default: rgba(37, 49, 62, 0.2);
+    --border-strong: rgba(151, 103, 25, 0.38);
+    --border-control: rgba(37, 49, 62, 0.42);
+    --brand-primary: #94600f;
+    --brand-identity: #805b21;
+    --brand-strong: #744b0b;
+    --brand-hover: #825408;
+    --brand-active: #693f06;
+    --brand-quiet: #f6ead0;
+    --brand-mineral: #a8731c;
+    --action-primary-background: linear-gradient(
+      180deg,
+      #ffe9b7 0%,
+      #e9b75b 48%,
+      #ca8b30 100%
+    );
+    --action-primary-hover: linear-gradient(
+      180deg,
+      #fff2d4 0%,
+      #f5ca78 48%,
+      #d9a246 100%
+    );
+    --action-primary-active: linear-gradient(180deg, #dda84e 0%, #bd7d25 100%);
+    --action-primary-foreground: #24180b;
+    --action-primary-border: #d7a64f;
+    --action-primary-shadow: 0 5px 16px rgba(125, 83, 17, 0.18);
+    --scene-surface: #020a14;
+    --scene-copy: #fff4d8;
+    --scene-copy-muted: #d2dbe4;
+    --scene-gold: #f4c76c;
     --status-success: #176444;
     --status-warning: #76510b;
     --status-danger: #ac332b;
     --status-info: #1f5d88;
-    --world-korea: #9b650d;
+    --world-korea: #94600f;
     --world-usa: #225f98;
     --world-gold: #806018;
     --world-silver: #52616b;
     --world-crypto: #6650a5;
-    --shadow-lift: 0 18px 60px rgba(74, 52, 19, 0.14);
+    --shadow-lift: 0 18px 60px rgba(22, 31, 42, 0.12);
     --shadow-focus:
       0 0 0 2px var(--background-canvas), 0 0 0 5px var(--brand-primary);
   }
 }
 
 /* Administrator aliases consume the same resolved theme as the member app. */
+@media (forced-colors: active) {
+  :root,
+  :root:not([data-theme]),
+  html[data-theme="light"] {
+    --brand-identity: CanvasText;
+  }
+}
+
 :root {
   --ink: var(--text-primary);
   --muted: var(--text-secondary);
@@ -180,4 +253,15 @@ html[data-theme="dark"] {
 /* Native <small> must not apply another 80% reduction to readable helpers. */
 small {
   font-size: var(--font-helper);
+}
+
+/* Gold text needs the stronger brand shade on the light paper surfaces. */
+html[data-theme="light"] :is(.eyebrow, .text-link, .brand-lockup small) {
+  color: var(--brand-strong);
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) :is(.eyebrow, .text-link, .brand-lockup small) {
+    color: var(--brand-strong);
+  }
 }

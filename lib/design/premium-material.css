@@ -1,0 +1,58 @@
+/* One material family, two deliberate palettes. Art never carries UI copy. */
+:root {
+  --premium-material-art: image-set(
+    url("/brand/premium/20261014/premium-material-dark-640-v1.avif")
+      type("image/avif"),
+    url("/brand/premium/20261014/premium-material-dark-640-v1.webp")
+      type("image/webp")
+  );
+}
+
+html[data-theme="light"] {
+  --premium-material-art: image-set(
+    url("/brand/premium/20261014/premium-material-light-640-v1.avif")
+      type("image/avif"),
+    url("/brand/premium/20261014/premium-material-light-640-v1.webp")
+      type("image/webp")
+  );
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) {
+    --premium-material-art: image-set(
+      url("/brand/premium/20261014/premium-material-light-640-v1.avif")
+        type("image/avif"),
+      url("/brand/premium/20261014/premium-material-light-640-v1.webp")
+        type("image/webp")
+    );
+  }
+}
+
+@media (min-width: 980px) {
+  :root {
+    --premium-material-art: image-set(
+      url("/brand/premium/20261014/premium-material-dark-1280-v1.avif")
+        type("image/avif"),
+      url("/brand/premium/20261014/premium-material-dark-1280-v1.webp")
+        type("image/webp")
+    );
+  }
+  html[data-theme="light"] {
+    --premium-material-art: image-set(
+      url("/brand/premium/20261014/premium-material-light-1280-v1.avif")
+        type("image/avif"),
+      url("/brand/premium/20261014/premium-material-light-1280-v1.webp")
+        type("image/webp")
+    );
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme]) {
+      --premium-material-art: image-set(
+        url("/brand/premium/20261014/premium-material-light-1280-v1.avif")
+          type("image/avif"),
+        url("/brand/premium/20261014/premium-material-light-1280-v1.webp")
+          type("image/webp")
+      );
+    }
+  }
+}

@@ -1,4 +1,5 @@
 "use client";
+import { FeedbackMessage } from "../../../../../../components/ui/feedback-message";
 
 import { useEffect, useState } from "react";
 
@@ -78,10 +79,10 @@ export function WithdrawalOfflineBanner() {
   if (online) return null;
 
   return (
-    <p className={styles.offlineBanner} role="status">
+    <FeedbackMessage className={styles.offlineBanner} role="status">
       연결이 끊겼습니다. 다시 연결된 뒤 화면을 새로고침하세요. 출금 처리는 연결
       중에만 할 수 있습니다.
-    </p>
+    </FeedbackMessage>
   );
 }
 

@@ -1,0 +1,1649 @@
+{
+  "phase": "MOBILE_HOME_CLASS_C_RECONSTRUCTION_BEFORE_V6_AFTER_V19_REVIEW",
+  "reference_id": "a02-m00005",
+  "reference": "/workspace/.putduk-cloud/mockup-forensics-all/images/a02-m00005.png",
+  "reference_review_png_sha256": "3d33b09405a4126284d559b523191ce0c8e6d401f5e0679b2513427e32e543b6",
+  "before": "/workspace/.putduk-cloud/browser-evidence/phase2-home-before-v6-117/mockup-reference-coverage--cffaf-icated-balances-or-activity-chromium/home-390-dark.png",
+  "before_sha256": "77b59640e22a6807228eb2a9344b4d89338a254b0accd9bc7be3e9c7c7ab9ade",
+  "before_runtime": "actual production Next build v6 / local117 / authenticated empty member / 390px Dark",
+  "after": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-390-dark.png",
+  "visual_acceptance": false,
+  "differences": [
+    {
+      "area": "hero",
+      "before": "city/globe scene inside rounded standalone card; generic task heading",
+      "reference": "tall gold-edged six-layer semiconductor tower right, robotic arm, navy factory; personalized greeting left; full bleed header",
+      "class": "C",
+      "after_source_bound_v18": {
+        "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v18-reconstructed-ui-pass/home-start-product/home-ready-390-dark.png",
+        "sha256": "b233520bf7acfe30de2cd2c5cc41facf323ee29ab090285cd28472d204ce1e4e",
+        "dimensions": [390, 844],
+        "route": "/home",
+        "state": "READY",
+        "width": 390,
+        "theme": "dark",
+        "text_percent": 100,
+        "full_image_viewed": true,
+        "scroll_position": "top",
+        "observations": [
+          "Native navy factory/tower hero, personalized greeting and metallic 2x2 facts at mobile/tablet; four facts row at desktop. Daily/rank UNKNOWN preserved, verified principal/capacity zero.",
+          "OPEN B: PUTDUK AI occupies two title lines; shared action row about112px at390, compared with source-normalized approximately89px. Gift event only begins near initial bottom navigation."
+        ]
+      },
+      "resolution": "CLASS_C_STRUCTURE_REBUILT_PRIMARY_NOT_FINAL_PIXEL_ACCEPTANCE",
+      "remaining": "Native source art/text differences and source-grounded real facts remain explicit.",
+      "historical_v18_disposition": {
+        "after_source_bound_v18": {
+          "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v18-reconstructed-ui-pass/home-start-product/home-ready-390-dark.png",
+          "sha256": "b233520bf7acfe30de2cd2c5cc41facf323ee29ab090285cd28472d204ce1e4e",
+          "dimensions": [390, 844],
+          "route": "/home",
+          "state": "READY",
+          "width": 390,
+          "theme": "dark",
+          "text_percent": 100,
+          "full_image_viewed": true,
+          "scroll_position": "top",
+          "observations": [
+            "Native navy factory/tower hero, personalized greeting and metallic 2x2 facts at mobile/tablet; four facts row at desktop. Daily/rank UNKNOWN preserved, verified principal/capacity zero.",
+            "OPEN B: PUTDUK AI occupies two title lines; shared action row about112px at390, compared with source-normalized approximately89px. Gift event only begins near initial bottom navigation."
+          ]
+        },
+        "resolution": "CLASS_C_STRUCTURE_REBUILT_PRIMARY_NOT_FINAL_PIXEL_ACCEPTANCE",
+        "remaining": "Native source art/text differences and source-grounded real facts remain explicit."
+      },
+      "after_source_bound_v19": {
+        "group": "ready",
+        "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-390-dark.png",
+        "sha256": "b18ab035953c7146b09803738b4aa5b67d332623d27e74b2c5c7da0b8cd2c601",
+        "dimensions": [390, 844],
+        "width": 390,
+        "theme": "dark",
+        "text_percent": 100,
+        "scroll_position": "top",
+        "full_image_viewed": true,
+        "view_id": 36
+      },
+      "v19_observation": "Full-bleed native tower/brand/metal2x2/five actions/compact notice/gift recreated; whole gift visible READY390, AI only whole-word break. Actual empty/UNKNOWN facts preserved."
+    },
+    {
+      "area": "header",
+      "before": "small friendly bee mark, member identity, native theme, bell on separated bar",
+      "reference": "geometric gold monogram and PUTDUK wordmark over hero, notification top right",
+      "class": "C",
+      "exception": "native usable theme control retained; authentic name rendered in home greeting",
+      "after_source_bound_v18": {
+        "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v18-reconstructed-ui-pass/home-start-product/home-ready-390-dark.png",
+        "sha256": "b233520bf7acfe30de2cd2c5cc41facf323ee29ab090285cd28472d204ce1e4e",
+        "dimensions": [390, 844],
+        "route": "/home",
+        "state": "READY",
+        "width": 390,
+        "theme": "dark",
+        "text_percent": 100,
+        "full_image_viewed": true,
+        "scroll_position": "top",
+        "observations": [
+          "Native navy factory/tower hero, personalized greeting and metallic 2x2 facts at mobile/tablet; four facts row at desktop. Daily/rank UNKNOWN preserved, verified principal/capacity zero.",
+          "OPEN B: PUTDUK AI occupies two title lines; shared action row about112px at390, compared with source-normalized approximately89px. Gift event only begins near initial bottom navigation."
+        ]
+      },
+      "resolution": "CLASS_C_STRUCTURE_REBUILT_PRIMARY_NOT_FINAL_PIXEL_ACCEPTANCE",
+      "remaining": "Native source art/text differences and source-grounded real facts remain explicit.",
+      "historical_v18_disposition": {
+        "exception": "native usable theme control retained; authentic name rendered in home greeting",
+        "after_source_bound_v18": {
+          "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v18-reconstructed-ui-pass/home-start-product/home-ready-390-dark.png",
+          "sha256": "b233520bf7acfe30de2cd2c5cc41facf323ee29ab090285cd28472d204ce1e4e",
+          "dimensions": [390, 844],
+          "route": "/home",
+          "state": "READY",
+          "width": 390,
+          "theme": "dark",
+          "text_percent": 100,
+          "full_image_viewed": true,
+          "scroll_position": "top",
+          "observations": [
+            "Native navy factory/tower hero, personalized greeting and metallic 2x2 facts at mobile/tablet; four facts row at desktop. Daily/rank UNKNOWN preserved, verified principal/capacity zero.",
+            "OPEN B: PUTDUK AI occupies two title lines; shared action row about112px at390, compared with source-normalized approximately89px. Gift event only begins near initial bottom navigation."
+          ]
+        },
+        "resolution": "CLASS_C_STRUCTURE_REBUILT_PRIMARY_NOT_FINAL_PIXEL_ACCEPTANCE",
+        "remaining": "Native source art/text differences and source-grounded real facts remain explicit."
+      },
+      "after_source_bound_v19": {
+        "group": "ready",
+        "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-390-dark.png",
+        "sha256": "b18ab035953c7146b09803738b4aa5b67d332623d27e74b2c5c7da0b8cd2c601",
+        "dimensions": [390, 844],
+        "width": 390,
+        "theme": "dark",
+        "text_percent": 100,
+        "scroll_position": "top",
+        "full_image_viewed": true,
+        "view_id": 36
+      },
+      "v19_observation": "Full-bleed native tower/brand/metal2x2/five actions/compact notice/gift recreated; whole gift visible READY390, AI only whole-word break. Actual empty/UNKNOWN facts preserved."
+    },
+    {
+      "area": "palette",
+      "before": "brown black cream bordered cards",
+      "reference": "deep navy black industrial surfaces, gold lighting, steel blue borders and cool secondary typography",
+      "class": "C",
+      "after_source_bound_v18": {
+        "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v18-reconstructed-ui-pass/home-start-product/home-ready-390-dark.png",
+        "sha256": "b233520bf7acfe30de2cd2c5cc41facf323ee29ab090285cd28472d204ce1e4e",
+        "dimensions": [390, 844],
+        "route": "/home",
+        "state": "READY",
+        "width": 390,
+        "theme": "dark",
+        "text_percent": 100,
+        "full_image_viewed": true,
+        "scroll_position": "top",
+        "observations": [
+          "Native navy factory/tower hero, personalized greeting and metallic 2x2 facts at mobile/tablet; four facts row at desktop. Daily/rank UNKNOWN preserved, verified principal/capacity zero.",
+          "OPEN B: PUTDUK AI occupies two title lines; shared action row about112px at390, compared with source-normalized approximately89px. Gift event only begins near initial bottom navigation."
+        ]
+      },
+      "resolution": "CLASS_C_STRUCTURE_REBUILT_PRIMARY_NOT_FINAL_PIXEL_ACCEPTANCE",
+      "remaining": "Native source art/text differences and source-grounded real facts remain explicit.",
+      "historical_v18_disposition": {
+        "after_source_bound_v18": {
+          "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v18-reconstructed-ui-pass/home-start-product/home-ready-390-dark.png",
+          "sha256": "b233520bf7acfe30de2cd2c5cc41facf323ee29ab090285cd28472d204ce1e4e",
+          "dimensions": [390, 844],
+          "route": "/home",
+          "state": "READY",
+          "width": 390,
+          "theme": "dark",
+          "text_percent": 100,
+          "full_image_viewed": true,
+          "scroll_position": "top",
+          "observations": [
+            "Native navy factory/tower hero, personalized greeting and metallic 2x2 facts at mobile/tablet; four facts row at desktop. Daily/rank UNKNOWN preserved, verified principal/capacity zero.",
+            "OPEN B: PUTDUK AI occupies two title lines; shared action row about112px at390, compared with source-normalized approximately89px. Gift event only begins near initial bottom navigation."
+          ]
+        },
+        "resolution": "CLASS_C_STRUCTURE_REBUILT_PRIMARY_NOT_FINAL_PIXEL_ACCEPTANCE",
+        "remaining": "Native source art/text differences and source-grounded real facts remain explicit."
+      },
+      "after_source_bound_v19": {
+        "group": "ready",
+        "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-390-dark.png",
+        "sha256": "b18ab035953c7146b09803738b4aa5b67d332623d27e74b2c5c7da0b8cd2c601",
+        "dimensions": [390, 844],
+        "width": 390,
+        "theme": "dark",
+        "text_percent": 100,
+        "scroll_position": "top",
+        "full_image_viewed": true,
+        "view_id": 36
+      },
+      "v19_observation": "Full-bleed native tower/brand/metal2x2/five actions/compact notice/gift recreated; whole gift visible READY390, AI only whole-word break. Actual empty/UNKNOWN facts preserved."
+    },
+    {
+      "area": "facts",
+      "before": "two large wallet/START cards plus repeated profile facts far below",
+      "reference": "one compact metalglass 2x2 facts panel directly below hero",
+      "class": "C",
+      "exception": "no mock KRW54,281, L5 PRO, KRW5,000,000, or54percent; actual server records/UNKNOWN only",
+      "after_source_bound_v18": {
+        "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v18-reconstructed-ui-pass/home-start-product/home-ready-390-dark.png",
+        "sha256": "b233520bf7acfe30de2cd2c5cc41facf323ee29ab090285cd28472d204ce1e4e",
+        "dimensions": [390, 844],
+        "route": "/home",
+        "state": "READY",
+        "width": 390,
+        "theme": "dark",
+        "text_percent": 100,
+        "full_image_viewed": true,
+        "scroll_position": "top",
+        "observations": [
+          "Native navy factory/tower hero, personalized greeting and metallic 2x2 facts at mobile/tablet; four facts row at desktop. Daily/rank UNKNOWN preserved, verified principal/capacity zero.",
+          "OPEN B: PUTDUK AI occupies two title lines; shared action row about112px at390, compared with source-normalized approximately89px. Gift event only begins near initial bottom navigation."
+        ]
+      },
+      "resolution": "CLASS_C_STRUCTURE_REBUILT_PRIMARY_NOT_FINAL_PIXEL_ACCEPTANCE",
+      "remaining": "Native source art/text differences and source-grounded real facts remain explicit.",
+      "historical_v18_disposition": {
+        "exception": "no mock KRW54,281, L5 PRO, KRW5,000,000, or54percent; actual server records/UNKNOWN only",
+        "after_source_bound_v18": {
+          "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v18-reconstructed-ui-pass/home-start-product/home-ready-390-dark.png",
+          "sha256": "b233520bf7acfe30de2cd2c5cc41facf323ee29ab090285cd28472d204ce1e4e",
+          "dimensions": [390, 844],
+          "route": "/home",
+          "state": "READY",
+          "width": 390,
+          "theme": "dark",
+          "text_percent": 100,
+          "full_image_viewed": true,
+          "scroll_position": "top",
+          "observations": [
+            "Native navy factory/tower hero, personalized greeting and metallic 2x2 facts at mobile/tablet; four facts row at desktop. Daily/rank UNKNOWN preserved, verified principal/capacity zero.",
+            "OPEN B: PUTDUK AI occupies two title lines; shared action row about112px at390, compared with source-normalized approximately89px. Gift event only begins near initial bottom navigation."
+          ]
+        },
+        "resolution": "CLASS_C_STRUCTURE_REBUILT_PRIMARY_NOT_FINAL_PIXEL_ACCEPTANCE",
+        "remaining": "Native source art/text differences and source-grounded real facts remain explicit."
+      },
+      "after_source_bound_v19": {
+        "group": "ready",
+        "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-390-dark.png",
+        "sha256": "b18ab035953c7146b09803738b4aa5b67d332623d27e74b2c5c7da0b8cd2c601",
+        "dimensions": [390, 844],
+        "width": 390,
+        "theme": "dark",
+        "text_percent": 100,
+        "scroll_position": "top",
+        "full_image_viewed": true,
+        "view_id": 36
+      },
+      "v19_observation": "Full-bleed native tower/brand/metal2x2/five actions/compact notice/gift recreated; whole gift visible READY390, AI only whole-word break. Actual empty/UNKNOWN facts preserved."
+    },
+    {
+      "area": "quick_actions",
+      "before": "four cards plus separate bottom AI footer",
+      "reference": "five real actions in one row including events/AI",
+      "class": "B",
+      "solution": "existing authorized AI modal launcher integrated as fifth real action, preserve session/focus/escape/no auto submission",
+      "after_source_bound_v18": {
+        "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v18-reconstructed-ui-pass/home-start-product/home-ready-390-dark.png",
+        "sha256": "b233520bf7acfe30de2cd2c5cc41facf323ee29ab090285cd28472d204ce1e4e",
+        "dimensions": [390, 844],
+        "route": "/home",
+        "state": "READY",
+        "width": 390,
+        "theme": "dark",
+        "text_percent": 100,
+        "full_image_viewed": true,
+        "scroll_position": "top",
+        "observations": [
+          "Native navy factory/tower hero, personalized greeting and metallic 2x2 facts at mobile/tablet; four facts row at desktop. Daily/rank UNKNOWN preserved, verified principal/capacity zero.",
+          "OPEN B: PUTDUK AI occupies two title lines; shared action row about112px at390, compared with source-normalized approximately89px. Gift event only begins near initial bottom navigation."
+        ]
+      },
+      "resolution": "PARTIAL_CLASS_B_DENSITY_OPEN",
+      "remaining": "Five genuine actions/modal are integrated, but English AI word fragmentation and elevated row/notice density keep full event outside initial390 phone frame.",
+      "historical_v18_disposition": {
+        "solution": "existing authorized AI modal launcher integrated as fifth real action, preserve session/focus/escape/no auto submission",
+        "after_source_bound_v18": {
+          "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v18-reconstructed-ui-pass/home-start-product/home-ready-390-dark.png",
+          "sha256": "b233520bf7acfe30de2cd2c5cc41facf323ee29ab090285cd28472d204ce1e4e",
+          "dimensions": [390, 844],
+          "route": "/home",
+          "state": "READY",
+          "width": 390,
+          "theme": "dark",
+          "text_percent": 100,
+          "full_image_viewed": true,
+          "scroll_position": "top",
+          "observations": [
+            "Native navy factory/tower hero, personalized greeting and metallic 2x2 facts at mobile/tablet; four facts row at desktop. Daily/rank UNKNOWN preserved, verified principal/capacity zero.",
+            "OPEN B: PUTDUK AI occupies two title lines; shared action row about112px at390, compared with source-normalized approximately89px. Gift event only begins near initial bottom navigation."
+          ]
+        },
+        "resolution": "PARTIAL_CLASS_B_DENSITY_OPEN",
+        "remaining": "Five genuine actions/modal are integrated, but English AI word fragmentation and elevated row/notice density keep full event outside initial390 phone frame."
+      },
+      "after_source_bound_v19": {
+        "group": "ready",
+        "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-390-dark.png",
+        "sha256": "b18ab035953c7146b09803738b4aa5b67d332623d27e74b2c5c7da0b8cd2c601",
+        "dimensions": [390, 844],
+        "width": 390,
+        "theme": "dark",
+        "text_percent": 100,
+        "scroll_position": "top",
+        "full_image_viewed": true,
+        "view_id": 36
+      },
+      "v19_observation": "Full-bleed native tower/brand/metal2x2/five actions/compact notice/gift recreated; whole gift visible READY390, AI only whole-word break. Actual empty/UNKNOWN facts preserved."
+    },
+    {
+      "area": "catalog",
+      "before": "empty server catalog only; old populated cards vertical mobile",
+      "reference": "three compact illustrated product cards, genuine approved names/status instead of example returns",
+      "class": "C",
+      "exception": "empty catalog stays honest; populated real local approved fixture needed for visual evidence",
+      "after_source_bound_v18": {
+        "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v18-reconstructed-ui-pass/home-start-product/home-ready-390-dark.png",
+        "sha256": "b233520bf7acfe30de2cd2c5cc41facf323ee29ab090285cd28472d204ce1e4e",
+        "dimensions": [390, 844],
+        "route": "/home",
+        "state": "READY",
+        "width": 390,
+        "theme": "dark",
+        "text_percent": 100,
+        "full_image_viewed": true,
+        "scroll_position": "top",
+        "observations": [
+          "Native navy factory/tower hero, personalized greeting and metallic 2x2 facts at mobile/tablet; four facts row at desktop. Daily/rank UNKNOWN preserved, verified principal/capacity zero.",
+          "OPEN B: PUTDUK AI occupies two title lines; shared action row about112px at390, compared with source-normalized approximately89px. Gift event only begins near initial bottom navigation."
+        ]
+      },
+      "resolution": "CLASS_C_STRUCTURE_REBUILT_PRIMARY_NOT_FINAL_PIXEL_ACCEPTANCE",
+      "remaining": "Real published catalog0 READY/1 funded; never insert illustrative three cards/rates. Actual GOLD normal Light contrast is now corrected.",
+      "historical_v18_disposition": {
+        "exception": "empty catalog stays honest; populated real local approved fixture needed for visual evidence",
+        "after_source_bound_v18": {
+          "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v18-reconstructed-ui-pass/home-start-product/home-ready-390-dark.png",
+          "sha256": "b233520bf7acfe30de2cd2c5cc41facf323ee29ab090285cd28472d204ce1e4e",
+          "dimensions": [390, 844],
+          "route": "/home",
+          "state": "READY",
+          "width": 390,
+          "theme": "dark",
+          "text_percent": 100,
+          "full_image_viewed": true,
+          "scroll_position": "top",
+          "observations": [
+            "Native navy factory/tower hero, personalized greeting and metallic 2x2 facts at mobile/tablet; four facts row at desktop. Daily/rank UNKNOWN preserved, verified principal/capacity zero.",
+            "OPEN B: PUTDUK AI occupies two title lines; shared action row about112px at390, compared with source-normalized approximately89px. Gift event only begins near initial bottom navigation."
+          ]
+        },
+        "resolution": "CLASS_C_STRUCTURE_REBUILT_PRIMARY_NOT_FINAL_PIXEL_ACCEPTANCE",
+        "remaining": "Real published catalog0 READY/1 funded; never insert illustrative three cards/rates. Actual GOLD normal Light contrast is now corrected."
+      },
+      "after_source_bound_v19": {
+        "group": "ready",
+        "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-390-dark.png",
+        "sha256": "b18ab035953c7146b09803738b4aa5b67d332623d27e74b2c5c7da0b8cd2c601",
+        "dimensions": [390, 844],
+        "width": 390,
+        "theme": "dark",
+        "text_percent": 100,
+        "scroll_position": "top",
+        "full_image_viewed": true,
+        "view_id": 36
+      },
+      "v19_observation": "Full-bleed native tower/brand/metal2x2/five actions/compact notice/gift recreated; whole gift visible READY390, AI only whole-word break. Actual empty/UNKNOWN facts preserved."
+    },
+    {
+      "area": "navigation",
+      "before": "flat rectangular gold highlighted band",
+      "reference": "floating rounded steelblue capsule five genuine routes",
+      "class": "B",
+      "after_source_bound_v18": {
+        "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v18-reconstructed-ui-pass/home-start-product/home-ready-390-dark.png",
+        "sha256": "b233520bf7acfe30de2cd2c5cc41facf323ee29ab090285cd28472d204ce1e4e",
+        "dimensions": [390, 844],
+        "route": "/home",
+        "state": "READY",
+        "width": 390,
+        "theme": "dark",
+        "text_percent": 100,
+        "full_image_viewed": true,
+        "scroll_position": "top",
+        "observations": [
+          "Native navy factory/tower hero, personalized greeting and metallic 2x2 facts at mobile/tablet; four facts row at desktop. Daily/rank UNKNOWN preserved, verified principal/capacity zero.",
+          "OPEN B: PUTDUK AI occupies two title lines; shared action row about112px at390, compared with source-normalized approximately89px. Gift event only begins near initial bottom navigation."
+        ]
+      },
+      "resolution": "CLASS_C_STRUCTURE_REBUILT_PRIMARY_NOT_FINAL_PIXEL_ACCEPTANCE",
+      "remaining": "Native source art/text differences and source-grounded real facts remain explicit.",
+      "historical_v18_disposition": {
+        "after_source_bound_v18": {
+          "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v18-reconstructed-ui-pass/home-start-product/home-ready-390-dark.png",
+          "sha256": "b233520bf7acfe30de2cd2c5cc41facf323ee29ab090285cd28472d204ce1e4e",
+          "dimensions": [390, 844],
+          "route": "/home",
+          "state": "READY",
+          "width": 390,
+          "theme": "dark",
+          "text_percent": 100,
+          "full_image_viewed": true,
+          "scroll_position": "top",
+          "observations": [
+            "Native navy factory/tower hero, personalized greeting and metallic 2x2 facts at mobile/tablet; four facts row at desktop. Daily/rank UNKNOWN preserved, verified principal/capacity zero.",
+            "OPEN B: PUTDUK AI occupies two title lines; shared action row about112px at390, compared with source-normalized approximately89px. Gift event only begins near initial bottom navigation."
+          ]
+        },
+        "resolution": "CLASS_C_STRUCTURE_REBUILT_PRIMARY_NOT_FINAL_PIXEL_ACCEPTANCE",
+        "remaining": "Native source art/text differences and source-grounded real facts remain explicit."
+      },
+      "after_source_bound_v19": {
+        "group": "ready",
+        "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-390-dark.png",
+        "sha256": "b18ab035953c7146b09803738b4aa5b67d332623d27e74b2c5c7da0b8cd2c601",
+        "dimensions": [390, 844],
+        "width": 390,
+        "theme": "dark",
+        "text_percent": 100,
+        "scroll_position": "top",
+        "full_image_viewed": true,
+        "view_id": 36
+      },
+      "v19_observation": "Full-bleed native tower/brand/metal2x2/five actions/compact notice/gift recreated; whole gift visible READY390, AI only whole-word break. Actual empty/UNKNOWN facts preserved."
+    },
+    {
+      "area": "notifications_events",
+      "before": "large long standalone blocks far below",
+      "reference": "compact notice strip and illustrated event banner",
+      "class": "B",
+      "exception": "actual no-event/no-notification states stay honest",
+      "after_source_bound_v18": {
+        "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v18-reconstructed-ui-pass/home-start-product/home-ready-390-dark.png",
+        "sha256": "b233520bf7acfe30de2cd2c5cc41facf323ee29ab090285cd28472d204ce1e4e",
+        "dimensions": [390, 844],
+        "route": "/home",
+        "state": "READY",
+        "width": 390,
+        "theme": "dark",
+        "text_percent": 100,
+        "full_image_viewed": true,
+        "scroll_position": "top",
+        "observations": [
+          "Native navy factory/tower hero, personalized greeting and metallic 2x2 facts at mobile/tablet; four facts row at desktop. Daily/rank UNKNOWN preserved, verified principal/capacity zero.",
+          "OPEN B: PUTDUK AI occupies two title lines; shared action row about112px at390, compared with source-normalized approximately89px. Gift event only begins near initial bottom navigation."
+        ]
+      },
+      "resolution": "CLASS_C_STRUCTURE_REBUILT_PRIMARY_NOT_FINAL_PIXEL_ACCEPTANCE",
+      "remaining": "Native source art/text differences and source-grounded real facts remain explicit.",
+      "historical_v18_disposition": {
+        "exception": "actual no-event/no-notification states stay honest",
+        "after_source_bound_v18": {
+          "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v18-reconstructed-ui-pass/home-start-product/home-ready-390-dark.png",
+          "sha256": "b233520bf7acfe30de2cd2c5cc41facf323ee29ab090285cd28472d204ce1e4e",
+          "dimensions": [390, 844],
+          "route": "/home",
+          "state": "READY",
+          "width": 390,
+          "theme": "dark",
+          "text_percent": 100,
+          "full_image_viewed": true,
+          "scroll_position": "top",
+          "observations": [
+            "Native navy factory/tower hero, personalized greeting and metallic 2x2 facts at mobile/tablet; four facts row at desktop. Daily/rank UNKNOWN preserved, verified principal/capacity zero.",
+            "OPEN B: PUTDUK AI occupies two title lines; shared action row about112px at390, compared with source-normalized approximately89px. Gift event only begins near initial bottom navigation."
+          ]
+        },
+        "resolution": "CLASS_C_STRUCTURE_REBUILT_PRIMARY_NOT_FINAL_PIXEL_ACCEPTANCE",
+        "remaining": "Native source art/text differences and source-grounded real facts remain explicit."
+      },
+      "after_source_bound_v19": {
+        "group": "ready",
+        "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-390-dark.png",
+        "sha256": "b18ab035953c7146b09803738b4aa5b67d332623d27e74b2c5c7da0b8cd2c601",
+        "dimensions": [390, 844],
+        "width": 390,
+        "theme": "dark",
+        "text_percent": 100,
+        "scroll_position": "top",
+        "full_image_viewed": true,
+        "view_id": 36
+      },
+      "v19_observation": "Full-bleed native tower/brand/metal2x2/five actions/compact notice/gift recreated; whole gift visible READY390, AI only whole-word break. Actual empty/UNKNOWN facts preserved."
+    }
+  ],
+  "next": "Root exact-number fact-card successor then fresh full rendered numeric/enlarged proof; alternate/art/type acceptance remains open.",
+  "after_sha256": "b18ab035953c7146b09803738b4aa5b67d332623d27e74b2c5c7da0b8cd2c601",
+  "after_source_fingerprint": "db5b4fb0f230475ad5046bf674283153540d79f656e9442700a63c36e5789e6b",
+  "remaining_findings": [
+    {
+      "id": "HOME-V19-01",
+      "severity": "P2 presentation",
+      "status": "OPEN",
+      "area": "funded Dark capacity number readability",
+      "observed_value": "29,999.881413원",
+      "actual_images": [
+        {
+          "group": "funded",
+          "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-paid-runtime-pass/catalog-allocation-actual--81d0d-ts-without-a-purchase-debit-chromium/funded-home-server-status-320-dark-top.png",
+          "sha256": "86e7b17bacc5716f96a71e8a6847fcb525bf444ace065208b5f8b334427b9c20",
+          "dimensions": [320, 900],
+          "width": 320,
+          "theme": "dark",
+          "text_percent": 100,
+          "scroll_position": "top",
+          "full_image_viewed": true,
+          "view_id": 58
+        },
+        {
+          "group": "funded",
+          "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-paid-runtime-pass/catalog-allocation-actual--81d0d-ts-without-a-purchase-debit-chromium/funded-home-server-status-390-dark-top.png",
+          "sha256": "fb418a5f2df3e47b11df7f6e12819c88f0fcfb233c2e6a8388aa5dd320d5c108",
+          "dimensions": [390, 900],
+          "width": 390,
+          "theme": "dark",
+          "text_percent": 100,
+          "scroll_position": "top",
+          "full_image_viewed": true,
+          "view_id": 65
+        }
+      ],
+      "evidence": "At320 fraction digits wrap as 29,999.881 / 413원; at390 digits fit but 원 separates. Value is present and truthful, yet card width fragments monetary reading.",
+      "source_location": "app/(product)/home/home.module.css:172 (.summaryValue overflow-wrap:anywhere) and flex summaryCard/2-column summaryGrid",
+      "proposed_fix": "Give exact amount the whole fact-card value row and use intrinsic font-relative reflow. Preserve server string, precision and currency; no rounding, truncation or fake capacity. Root owns successor and actual rendering."
+    },
+    {
+      "id": "HOME-V19-02",
+      "severity": "explicit structural limitation",
+      "status": "OPEN",
+      "area": "alternate originals",
+      "references": [
+        "a01-m00003",
+        "a01-m00007",
+        "a01-m00011",
+        "a01-m00018",
+        "a02-m00024"
+      ],
+      "evidence": "Four globe/dashboard variants and Dark wafer variant are individually accounted but their alternate hierarchy/art is not rendered by the selected primary Dark tower default."
+    },
+    {
+      "id": "HOME-V19-03",
+      "severity": "explicit fidelity limitation",
+      "status": "OPEN",
+      "area": "native artwork and typography",
+      "references": [
+        "a01-m00003",
+        "a01-m00007",
+        "a01-m00011",
+        "a01-m00018",
+        "a02-m00005",
+        "a02-m00012",
+        "a02-m00017",
+        "a02-m00024",
+        "a02-m00027"
+      ],
+      "evidence": "Regenerated native industrial art, HTML typography and exact spacing differ from raster references. Original font identity and pixel parity are not proven. No invented tier, market chart or earning values inserted."
+    }
+  ],
+  "root_before_map_unchanged_path": "/workspace/.putduk-cloud/phase2-mobile-home-reference-before-differences.json",
+  "all_before_images": [
+    {
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-home-before-v6-117/mockup-reference-coverage--cffaf-icated-balances-or-activity-chromium/home-390-dark.png",
+      "sha256": "77b59640e22a6807228eb2a9344b4d89338a254b0accd9bc7be3e9c7c7ab9ade",
+      "dimensions": [390, 900],
+      "route": "/home",
+      "state": "EMPTY_MEMBER_READY_BEFORE_V6",
+      "width": 390,
+      "theme": "dark",
+      "text_percent": 100,
+      "scroll_position": "top",
+      "full_image_viewed": true
+    },
+    {
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-home-before-v6-117/mockup-reference-coverage--cffaf-icated-balances-or-activity-chromium/home-390-dark-middle-1.png",
+      "sha256": "7fc63431cce4735ab38e87e8fe1a3df78a65cdf4ea5b9b16f95f741448a21587",
+      "dimensions": [390, 900],
+      "route": "/home",
+      "state": "EMPTY_MEMBER_READY_BEFORE_V6",
+      "width": 390,
+      "theme": "dark",
+      "text_percent": 100,
+      "scroll_position": "middle-1",
+      "full_image_viewed": true
+    },
+    {
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-home-before-v6-117/mockup-reference-coverage--cffaf-icated-balances-or-activity-chromium/home-390-dark-middle-2.png",
+      "sha256": "716178e064f484f8bb5289051d741417c27f87e238d4d6467b674a3458367cdb",
+      "dimensions": [390, 900],
+      "route": "/home",
+      "state": "EMPTY_MEMBER_READY_BEFORE_V6",
+      "width": 390,
+      "theme": "dark",
+      "text_percent": 100,
+      "scroll_position": "middle-2",
+      "full_image_viewed": true
+    },
+    {
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-home-before-v6-117/mockup-reference-coverage--cffaf-icated-balances-or-activity-chromium/home-390-dark-bottom.png",
+      "sha256": "a6ab963eb7a5ff59f0d363d4e045e4983afff868c7d6ba6fbd3a51da0707a3e2",
+      "dimensions": [390, 900],
+      "route": "/home",
+      "state": "EMPTY_MEMBER_READY_BEFORE_V6",
+      "width": 390,
+      "theme": "dark",
+      "text_percent": 100,
+      "scroll_position": "bottom",
+      "full_image_viewed": true
+    },
+    {
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-home-before-v6-117/mockup-reference-coverage--cffaf-icated-balances-or-activity-chromium/home-390-light.png",
+      "sha256": "8de82984d9f7ecb7c29c871c122d7091d62ea1e65d03141735f202a74ae618ae",
+      "dimensions": [390, 900],
+      "route": "/home",
+      "state": "EMPTY_MEMBER_READY_BEFORE_V6",
+      "width": 390,
+      "theme": "light",
+      "text_percent": 100,
+      "scroll_position": "top",
+      "full_image_viewed": true
+    },
+    {
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-home-before-v6-117/mockup-reference-coverage--cffaf-icated-balances-or-activity-chromium/home-390-light-middle-1.png",
+      "sha256": "19f0ac43f7d742047495a6913a0cac98a28e3d9680469825a2090c17c1ce7685",
+      "dimensions": [390, 900],
+      "route": "/home",
+      "state": "EMPTY_MEMBER_READY_BEFORE_V6",
+      "width": 390,
+      "theme": "light",
+      "text_percent": 100,
+      "scroll_position": "middle-1",
+      "full_image_viewed": true
+    },
+    {
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-home-before-v6-117/mockup-reference-coverage--cffaf-icated-balances-or-activity-chromium/home-390-light-middle-2.png",
+      "sha256": "bcbc225100aa03be56be53bbc83275b9ec413a1d84c80f18a1c93cebbdee199e",
+      "dimensions": [390, 900],
+      "route": "/home",
+      "state": "EMPTY_MEMBER_READY_BEFORE_V6",
+      "width": 390,
+      "theme": "light",
+      "text_percent": 100,
+      "scroll_position": "middle-2",
+      "full_image_viewed": true
+    },
+    {
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-home-before-v6-117/mockup-reference-coverage--cffaf-icated-balances-or-activity-chromium/home-390-light-bottom.png",
+      "sha256": "8028d720f6354c2e50013916c7ea2054def98f8dc919cf469e00eddc70d6c1d5",
+      "dimensions": [390, 900],
+      "route": "/home",
+      "state": "EMPTY_MEMBER_READY_BEFORE_V6",
+      "width": 390,
+      "theme": "light",
+      "text_percent": 100,
+      "scroll_position": "bottom",
+      "full_image_viewed": true
+    },
+    {
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-home-before-v6-117/mockup-reference-coverage--cffaf-icated-balances-or-activity-chromium/home-1440-dark.png",
+      "sha256": "b7532beb298bead5421f931e85fa4a6413da442114ba0257ba26186f9c4d45a9",
+      "dimensions": [1440, 900],
+      "route": "/home",
+      "state": "EMPTY_MEMBER_READY_BEFORE_V6",
+      "width": 1440,
+      "theme": "dark",
+      "text_percent": 100,
+      "scroll_position": "top",
+      "full_image_viewed": true
+    },
+    {
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-home-before-v6-117/mockup-reference-coverage--cffaf-icated-balances-or-activity-chromium/home-1440-dark-bottom.png",
+      "sha256": "f963150b8dbc25e599bdd61f91d4ad62edad0463ffe126ab8eddc37eb72cd0a0",
+      "dimensions": [1440, 900],
+      "route": "/home",
+      "state": "EMPTY_MEMBER_READY_BEFORE_V6",
+      "width": 1440,
+      "theme": "dark",
+      "text_percent": 100,
+      "scroll_position": "bottom",
+      "full_image_viewed": true
+    },
+    {
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-home-before-v6-117/mockup-reference-coverage--cffaf-icated-balances-or-activity-chromium/home-1440-light.png",
+      "sha256": "892d039b640bd9dba0839016e1ca580bdc0643cac312c3d4eba07b2aacbcec0a",
+      "dimensions": [1440, 900],
+      "route": "/home",
+      "state": "EMPTY_MEMBER_READY_BEFORE_V6",
+      "width": 1440,
+      "theme": "light",
+      "text_percent": 100,
+      "scroll_position": "top",
+      "full_image_viewed": true
+    },
+    {
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-home-before-v6-117/mockup-reference-coverage--cffaf-icated-balances-or-activity-chromium/home-1440-light-bottom.png",
+      "sha256": "5a18751f01823126e974581684771a6c6a44f57084947a44ba1c2478911d9554",
+      "dimensions": [1440, 900],
+      "route": "/home",
+      "state": "EMPTY_MEMBER_READY_BEFORE_V6",
+      "width": 1440,
+      "theme": "light",
+      "text_percent": 100,
+      "scroll_position": "bottom",
+      "full_image_viewed": true
+    }
+  ],
+  "all_after_images": [
+    {
+      "group": "ready",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-1440-dark-bottom.png",
+      "sha256": "b0c7b58f1006ed1db94e3b0e3c040e83667e25b69329a1ed5abcde07d51e35ed",
+      "dimensions": [1440, 900],
+      "width": 1440,
+      "theme": "dark",
+      "text_percent": 100,
+      "scroll_position": "bottom",
+      "full_image_viewed": true,
+      "view_id": 0
+    },
+    {
+      "group": "ready",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-1440-dark-text-200-bottom.png",
+      "sha256": "f1e371e51be5279167d2c7eaffd21a8d188ed6933c2e83886683817661ac6244",
+      "dimensions": [1440, 900],
+      "width": 1440,
+      "theme": "dark",
+      "text_percent": 200,
+      "scroll_position": "bottom",
+      "full_image_viewed": true,
+      "view_id": 1
+    },
+    {
+      "group": "ready",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-1440-dark-text-200-middle-1.png",
+      "sha256": "c38ff658aa0f51aab12e7a0d175e873c6b78cfe5fa1b8b4119f6e2d0403fc276",
+      "dimensions": [1440, 900],
+      "width": 1440,
+      "theme": "dark",
+      "text_percent": 200,
+      "scroll_position": "middle-1",
+      "full_image_viewed": true,
+      "view_id": 2
+    },
+    {
+      "group": "ready",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-1440-dark-text-200.png",
+      "sha256": "06b181b59dd09a80b11e5cf71869ae9f336f0a9431b950af351103f8eeb452ef",
+      "dimensions": [1440, 900],
+      "width": 1440,
+      "theme": "dark",
+      "text_percent": 200,
+      "scroll_position": "top",
+      "full_image_viewed": true,
+      "view_id": 3
+    },
+    {
+      "group": "ready",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-1440-dark.png",
+      "sha256": "9bc02c18659e4ede28382c3ebf524cc0754a185d6431b1252613f641a2007216",
+      "dimensions": [1440, 900],
+      "width": 1440,
+      "theme": "dark",
+      "text_percent": 100,
+      "scroll_position": "top",
+      "full_image_viewed": true,
+      "view_id": 4
+    },
+    {
+      "group": "ready",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-1440-light-bottom.png",
+      "sha256": "53b78c99455c58c9cac188d4247a526e6ea5a76c377ac68e8cf8148c6a3116bf",
+      "dimensions": [1440, 900],
+      "width": 1440,
+      "theme": "light",
+      "text_percent": 100,
+      "scroll_position": "bottom",
+      "full_image_viewed": true,
+      "view_id": 5
+    },
+    {
+      "group": "ready",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-1440-light-text-200-bottom.png",
+      "sha256": "67b5a5e49f998c567707ab5fd08b3eaea6bbce9a1faac65c3b1b1c0a03395102",
+      "dimensions": [1440, 900],
+      "width": 1440,
+      "theme": "light",
+      "text_percent": 200,
+      "scroll_position": "bottom",
+      "full_image_viewed": true,
+      "view_id": 6
+    },
+    {
+      "group": "ready",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-1440-light-text-200-middle-1.png",
+      "sha256": "dd5d9d67859b9a3fc10aa697501f564ee7032e1903040a99effa0fcca2782665",
+      "dimensions": [1440, 900],
+      "width": 1440,
+      "theme": "light",
+      "text_percent": 200,
+      "scroll_position": "middle-1",
+      "full_image_viewed": true,
+      "view_id": 7
+    },
+    {
+      "group": "ready",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-1440-light-text-200.png",
+      "sha256": "df231825564d4ac3ed3994ffbff3be261f0ed45a2965f63157a709745902fb34",
+      "dimensions": [1440, 900],
+      "width": 1440,
+      "theme": "light",
+      "text_percent": 200,
+      "scroll_position": "top",
+      "full_image_viewed": true,
+      "view_id": 8
+    },
+    {
+      "group": "ready",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-1440-light.png",
+      "sha256": "4709363f9ad62cbf6e934a5385a777cd3c7226c03304229cb09edefade417b04",
+      "dimensions": [1440, 900],
+      "width": 1440,
+      "theme": "light",
+      "text_percent": 100,
+      "scroll_position": "top",
+      "full_image_viewed": true,
+      "view_id": 9
+    },
+    {
+      "group": "ready",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-1920-dark-bottom.png",
+      "sha256": "7f32fb2ba64afd929f8ace37de6f99327ecd17f6e5cf303b3163fe125644a1a1",
+      "dimensions": [1920, 1080],
+      "width": 1920,
+      "theme": "dark",
+      "text_percent": 100,
+      "scroll_position": "bottom",
+      "full_image_viewed": true,
+      "view_id": 10
+    },
+    {
+      "group": "ready",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-1920-dark.png",
+      "sha256": "7abfbc29fedb8d4db9bd31597f47ef81f8e625c6cde73674df39f5019cdab4b1",
+      "dimensions": [1920, 1080],
+      "width": 1920,
+      "theme": "dark",
+      "text_percent": 100,
+      "scroll_position": "top",
+      "full_image_viewed": true,
+      "view_id": 11
+    },
+    {
+      "group": "ready",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-1920-light-bottom.png",
+      "sha256": "155e6f525748311fba6882b77f9803e6a3c514e309df23cd1af689d8d7f741d0",
+      "dimensions": [1920, 1080],
+      "width": 1920,
+      "theme": "light",
+      "text_percent": 100,
+      "scroll_position": "bottom",
+      "full_image_viewed": true,
+      "view_id": 12
+    },
+    {
+      "group": "ready",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-1920-light.png",
+      "sha256": "1de0e6807d6f685888d48d929a094a72b1bd8fe13271db78b3e6e03524a6612b",
+      "dimensions": [1920, 1080],
+      "width": 1920,
+      "theme": "light",
+      "text_percent": 100,
+      "scroll_position": "top",
+      "full_image_viewed": true,
+      "view_id": 13
+    },
+    {
+      "group": "ready",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-320-dark-bottom.png",
+      "sha256": "052edafa844326f1267f0b97c7d8df2b7a27e75f11b1abf54904ef01cbb2d6c3",
+      "dimensions": [320, 844],
+      "width": 320,
+      "theme": "dark",
+      "text_percent": 100,
+      "scroll_position": "bottom",
+      "full_image_viewed": true,
+      "view_id": 14
+    },
+    {
+      "group": "ready",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-320-dark.png",
+      "sha256": "6069371ecc0b366a6f32835f17df62eec479095eed9d3e7fa6d823c57b1e7ad1",
+      "dimensions": [320, 844],
+      "width": 320,
+      "theme": "dark",
+      "text_percent": 100,
+      "scroll_position": "top",
+      "full_image_viewed": true,
+      "view_id": 15
+    },
+    {
+      "group": "ready",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-320-light-bottom.png",
+      "sha256": "503209cb74e5fcfa094df8dc392b957217555dfcc87b570914efda475b8c660d",
+      "dimensions": [320, 844],
+      "width": 320,
+      "theme": "light",
+      "text_percent": 100,
+      "scroll_position": "bottom",
+      "full_image_viewed": true,
+      "view_id": 16
+    },
+    {
+      "group": "ready",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-320-light-middle-1.png",
+      "sha256": "440081fe5308efa5f256842b0ae16937ff02c26c363a2c8dffb4f0839eaab0c0",
+      "dimensions": [320, 844],
+      "width": 320,
+      "theme": "light",
+      "text_percent": 100,
+      "scroll_position": "middle-1",
+      "full_image_viewed": true,
+      "view_id": 17
+    },
+    {
+      "group": "ready",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-320-light.png",
+      "sha256": "5daef7f28b6a52573960b479865694491bf74caff850fa0f8d0523ed46477a33",
+      "dimensions": [320, 844],
+      "width": 320,
+      "theme": "light",
+      "text_percent": 100,
+      "scroll_position": "top",
+      "full_image_viewed": true,
+      "view_id": 18
+    },
+    {
+      "group": "ready",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-360-dark-bottom.png",
+      "sha256": "24a8bf24d4ee983feeb997bf16be7b6fe10e3e94491874818d758804bdd6b646",
+      "dimensions": [360, 844],
+      "width": 360,
+      "theme": "dark",
+      "text_percent": 100,
+      "scroll_position": "bottom",
+      "full_image_viewed": true,
+      "view_id": 19
+    },
+    {
+      "group": "ready",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-360-dark.png",
+      "sha256": "00dbccac6ae78d1b3f15f175a59cd59b4cdff793a43cc5cff6ebd2b1778304b3",
+      "dimensions": [360, 844],
+      "width": 360,
+      "theme": "dark",
+      "text_percent": 100,
+      "scroll_position": "top",
+      "full_image_viewed": true,
+      "view_id": 20
+    },
+    {
+      "group": "ready",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-360-light-bottom.png",
+      "sha256": "94068fdabfa7c2ffcf6824bfc629bc30d59a92d4dc225550bb78f2e17ea7359a",
+      "dimensions": [360, 844],
+      "width": 360,
+      "theme": "light",
+      "text_percent": 100,
+      "scroll_position": "bottom",
+      "full_image_viewed": true,
+      "view_id": 21
+    },
+    {
+      "group": "ready",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-360-light-middle-1.png",
+      "sha256": "3f0d427e72823744d0ce73d75332c80b159aa211014ac7f59229e2dbd06f04b0",
+      "dimensions": [360, 844],
+      "width": 360,
+      "theme": "light",
+      "text_percent": 100,
+      "scroll_position": "middle-1",
+      "full_image_viewed": true,
+      "view_id": 22
+    },
+    {
+      "group": "ready",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-360-light.png",
+      "sha256": "fe7fadfbed90744a050848cd8a11c1e658afdb2fe090821eed03b8d3da3c6cfa",
+      "dimensions": [360, 844],
+      "width": 360,
+      "theme": "light",
+      "text_percent": 100,
+      "scroll_position": "top",
+      "full_image_viewed": true,
+      "view_id": 23
+    },
+    {
+      "group": "ready",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-375-dark-bottom.png",
+      "sha256": "ae74d2e3aab45002c92fbb1a54730cce0bb9c2eeb60b8e5fd2ecf6f40e490b8d",
+      "dimensions": [375, 844],
+      "width": 375,
+      "theme": "dark",
+      "text_percent": 100,
+      "scroll_position": "bottom",
+      "full_image_viewed": true,
+      "view_id": 24
+    },
+    {
+      "group": "ready",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-375-dark.png",
+      "sha256": "79c8a94fad3a26c98bac85b131dda4736930de533c96dda04dd0e9e2e04563aa",
+      "dimensions": [375, 844],
+      "width": 375,
+      "theme": "dark",
+      "text_percent": 100,
+      "scroll_position": "top",
+      "full_image_viewed": true,
+      "view_id": 25
+    },
+    {
+      "group": "ready",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-375-light-bottom.png",
+      "sha256": "6e7cff09bd429964d7c43bd939312a14d554e1f49e90bdf92e0a8cc0aa29a616",
+      "dimensions": [375, 844],
+      "width": 375,
+      "theme": "light",
+      "text_percent": 100,
+      "scroll_position": "bottom",
+      "full_image_viewed": true,
+      "view_id": 26
+    },
+    {
+      "group": "ready",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-375-light-middle-1.png",
+      "sha256": "a18049b6a5f61541d7f8168bf7372e514c940f1eb861243254c87dfc18bf5a70",
+      "dimensions": [375, 844],
+      "width": 375,
+      "theme": "light",
+      "text_percent": 100,
+      "scroll_position": "middle-1",
+      "full_image_viewed": true,
+      "view_id": 27
+    },
+    {
+      "group": "ready",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-375-light.png",
+      "sha256": "c56daf217cadf2814b15798a32e7b55f2ea5ffd4318e6df59114b52b737c7031",
+      "dimensions": [375, 844],
+      "width": 375,
+      "theme": "light",
+      "text_percent": 100,
+      "scroll_position": "top",
+      "full_image_viewed": true,
+      "view_id": 28
+    },
+    {
+      "group": "ready",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-390-dark-bottom.png",
+      "sha256": "2b851781aad5ad48bdd943bd954ce4036360184e8d8caf50c566d4496b7fb7cb",
+      "dimensions": [390, 844],
+      "width": 390,
+      "theme": "dark",
+      "text_percent": 100,
+      "scroll_position": "bottom",
+      "full_image_viewed": true,
+      "view_id": 29
+    },
+    {
+      "group": "ready",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-390-dark-text-200-bottom.png",
+      "sha256": "81327582149b2381d269b533d77e016ba3d1860d72543621bb52f63886e76c40",
+      "dimensions": [390, 844],
+      "width": 390,
+      "theme": "dark",
+      "text_percent": 200,
+      "scroll_position": "bottom",
+      "full_image_viewed": true,
+      "view_id": 30
+    },
+    {
+      "group": "ready",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-390-dark-text-200-middle-1.png",
+      "sha256": "db1eeab3cc48c2144a73c468abf3c878d3c3fa97d0d470159078c75f04c7c014",
+      "dimensions": [390, 844],
+      "width": 390,
+      "theme": "dark",
+      "text_percent": 200,
+      "scroll_position": "middle-1",
+      "full_image_viewed": true,
+      "view_id": 31
+    },
+    {
+      "group": "ready",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-390-dark-text-200-middle-2.png",
+      "sha256": "bd616ca5b37925bd687c0bc27f1d30861d7bd11a2cf899ed5734c3562a1d9ce0",
+      "dimensions": [390, 844],
+      "width": 390,
+      "theme": "dark",
+      "text_percent": 200,
+      "scroll_position": "middle-2",
+      "full_image_viewed": true,
+      "view_id": 32
+    },
+    {
+      "group": "ready",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-390-dark-text-200-middle-3.png",
+      "sha256": "6786b4e263805dc286d150919c466cd38ddbd7a86db51d0362231b99dd6fd701",
+      "dimensions": [390, 844],
+      "width": 390,
+      "theme": "dark",
+      "text_percent": 200,
+      "scroll_position": "middle-3",
+      "full_image_viewed": true,
+      "view_id": 33
+    },
+    {
+      "group": "ready",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-390-dark-text-200-middle-4.png",
+      "sha256": "ad94eddfba441f5f063545d9bb290ad5a634d550bcbb27e925763c5fca0ee5fa",
+      "dimensions": [390, 844],
+      "width": 390,
+      "theme": "dark",
+      "text_percent": 200,
+      "scroll_position": "middle-4",
+      "full_image_viewed": true,
+      "view_id": 34
+    },
+    {
+      "group": "ready",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-390-dark-text-200.png",
+      "sha256": "ca6375ab72731a6c58da097d77194313c9780fb8ddd5b88ca3d9a62064f5cf6c",
+      "dimensions": [390, 844],
+      "width": 390,
+      "theme": "dark",
+      "text_percent": 200,
+      "scroll_position": "top",
+      "full_image_viewed": true,
+      "view_id": 35
+    },
+    {
+      "group": "ready",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-390-dark.png",
+      "sha256": "b18ab035953c7146b09803738b4aa5b67d332623d27e74b2c5c7da0b8cd2c601",
+      "dimensions": [390, 844],
+      "width": 390,
+      "theme": "dark",
+      "text_percent": 100,
+      "scroll_position": "top",
+      "full_image_viewed": true,
+      "view_id": 36
+    },
+    {
+      "group": "ready",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-390-light-bottom.png",
+      "sha256": "c00c38c23815e3e59fe9b8bc05392c61b64d93d661c3388737fca672f3bb495a",
+      "dimensions": [390, 844],
+      "width": 390,
+      "theme": "light",
+      "text_percent": 100,
+      "scroll_position": "bottom",
+      "full_image_viewed": true,
+      "view_id": 37
+    },
+    {
+      "group": "ready",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-390-light-middle-1.png",
+      "sha256": "df757cd3639d724e25a80e32b4fc9c625ca9af68792b15527d3da5a236d9f110",
+      "dimensions": [390, 844],
+      "width": 390,
+      "theme": "light",
+      "text_percent": 100,
+      "scroll_position": "middle-1",
+      "full_image_viewed": true,
+      "view_id": 38
+    },
+    {
+      "group": "ready",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-390-light-text-200-bottom.png",
+      "sha256": "b79df450bff38363e2fe219632aa68a1136c4afc97a1537ea6a4bdd1f14439b3",
+      "dimensions": [390, 844],
+      "width": 390,
+      "theme": "light",
+      "text_percent": 200,
+      "scroll_position": "bottom",
+      "full_image_viewed": true,
+      "view_id": 39
+    },
+    {
+      "group": "ready",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-390-light-text-200-middle-1.png",
+      "sha256": "44208e98467c88e97d5b233ab557252e4e94f8896e9e7aee48e02a7ccdf0d78f",
+      "dimensions": [390, 844],
+      "width": 390,
+      "theme": "light",
+      "text_percent": 200,
+      "scroll_position": "middle-1",
+      "full_image_viewed": true,
+      "view_id": 40
+    },
+    {
+      "group": "ready",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-390-light-text-200-middle-2.png",
+      "sha256": "cd331e6fc72a3908005e12d2ba0730c0d031a44a4d2516562ec35389a2ed7141",
+      "dimensions": [390, 844],
+      "width": 390,
+      "theme": "light",
+      "text_percent": 200,
+      "scroll_position": "middle-2",
+      "full_image_viewed": true,
+      "view_id": 41
+    },
+    {
+      "group": "ready",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-390-light-text-200-middle-3.png",
+      "sha256": "006dfea1d949e9af08188950df76fd6133bc2e7998660989849a7796562847b6",
+      "dimensions": [390, 844],
+      "width": 390,
+      "theme": "light",
+      "text_percent": 200,
+      "scroll_position": "middle-3",
+      "full_image_viewed": true,
+      "view_id": 42
+    },
+    {
+      "group": "ready",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-390-light-text-200-middle-4.png",
+      "sha256": "c7bea305b48e0eac5c0ab513215e695034df44ccadc1dba0c9eb7e9bf9cc7f42",
+      "dimensions": [390, 844],
+      "width": 390,
+      "theme": "light",
+      "text_percent": 200,
+      "scroll_position": "middle-4",
+      "full_image_viewed": true,
+      "view_id": 43
+    },
+    {
+      "group": "ready",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-390-light-text-200.png",
+      "sha256": "510f8f590f1963ba11c89f6ccfe6905f5275c3e9fc4ff1d199516cb620840261",
+      "dimensions": [390, 844],
+      "width": 390,
+      "theme": "light",
+      "text_percent": 200,
+      "scroll_position": "top",
+      "full_image_viewed": true,
+      "view_id": 44
+    },
+    {
+      "group": "ready",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-390-light.png",
+      "sha256": "75fae20bc3e4760e53bcb1ea94fd0549991c1de4933823d3457d319f42719c7f",
+      "dimensions": [390, 844],
+      "width": 390,
+      "theme": "light",
+      "text_percent": 100,
+      "scroll_position": "top",
+      "full_image_viewed": true,
+      "view_id": 45
+    },
+    {
+      "group": "ready",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-834-dark-bottom.png",
+      "sha256": "3ee91a0aced26e2ba2a63271bd779b4d8d64a2876b6b20ce32356fee7bd93559",
+      "dimensions": [834, 1112],
+      "width": 834,
+      "theme": "dark",
+      "text_percent": 100,
+      "scroll_position": "bottom",
+      "full_image_viewed": true,
+      "view_id": 46
+    },
+    {
+      "group": "ready",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-834-dark.png",
+      "sha256": "49753882eacb5bcbf6e5f53a2ad772d9aab7e3ab5b6968fa7c51d98e377d1c15",
+      "dimensions": [834, 1112],
+      "width": 834,
+      "theme": "dark",
+      "text_percent": 100,
+      "scroll_position": "top",
+      "full_image_viewed": true,
+      "view_id": 47
+    },
+    {
+      "group": "ready",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-834-light-bottom.png",
+      "sha256": "b7abfe7249838ce354c18319a966e524ef49c7df477567a75f30bd06aa97dbe7",
+      "dimensions": [834, 1112],
+      "width": 834,
+      "theme": "light",
+      "text_percent": 100,
+      "scroll_position": "bottom",
+      "full_image_viewed": true,
+      "view_id": 48
+    },
+    {
+      "group": "ready",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-reconstructed-ui-pass/home-start-product/home-ready-834-light.png",
+      "sha256": "f2cb16b835c8785422d12d377fa1e54a3b9d1b88b21a632b27b1de12df51c1ef",
+      "dimensions": [834, 1112],
+      "width": 834,
+      "theme": "light",
+      "text_percent": 100,
+      "scroll_position": "top",
+      "full_image_viewed": true,
+      "view_id": 49
+    },
+    {
+      "group": "funded",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-paid-runtime-pass/catalog-allocation-actual--81d0d-ts-without-a-purchase-debit-chromium/funded-home-server-status-1440-dark-bottom.png",
+      "sha256": "613f292a6f9828ab468a626809b8c7ddc14a4978c1576645dc80b1b11f17de8f",
+      "dimensions": [1440, 900],
+      "width": 1440,
+      "theme": "dark",
+      "text_percent": 100,
+      "scroll_position": "bottom",
+      "full_image_viewed": true,
+      "view_id": 50
+    },
+    {
+      "group": "funded",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-paid-runtime-pass/catalog-allocation-actual--81d0d-ts-without-a-purchase-debit-chromium/funded-home-server-status-1440-dark-middle-1.png",
+      "sha256": "89f1d6e0b771307caacdb1f7c7a6cd1ed8805ecaff06d5170e2aeee2c13938ae",
+      "dimensions": [1440, 900],
+      "width": 1440,
+      "theme": "dark",
+      "text_percent": 100,
+      "scroll_position": "middle-1",
+      "full_image_viewed": true,
+      "view_id": 51
+    },
+    {
+      "group": "funded",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-paid-runtime-pass/catalog-allocation-actual--81d0d-ts-without-a-purchase-debit-chromium/funded-home-server-status-1440-dark-top.png",
+      "sha256": "0f665c715a656bd108b5a00047e67251965e6cdc1febaca538a8e5db997285cf",
+      "dimensions": [1440, 900],
+      "width": 1440,
+      "theme": "dark",
+      "text_percent": 100,
+      "scroll_position": "top",
+      "full_image_viewed": true,
+      "view_id": 52
+    },
+    {
+      "group": "funded",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-paid-runtime-pass/catalog-allocation-actual--81d0d-ts-without-a-purchase-debit-chromium/funded-home-server-status-1440-light-bottom.png",
+      "sha256": "9eaae1bfd709dd000787ca68c397200e3acfe8f6b11b24707daa7995fd31e094",
+      "dimensions": [1440, 900],
+      "width": 1440,
+      "theme": "light",
+      "text_percent": 100,
+      "scroll_position": "bottom",
+      "full_image_viewed": true,
+      "view_id": 53
+    },
+    {
+      "group": "funded",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-paid-runtime-pass/catalog-allocation-actual--81d0d-ts-without-a-purchase-debit-chromium/funded-home-server-status-1440-light-middle-1.png",
+      "sha256": "2127e64a3f1a8f06703fc75e807f09a8620ebdd4add07a261ebb20c744f3034a",
+      "dimensions": [1440, 900],
+      "width": 1440,
+      "theme": "light",
+      "text_percent": 100,
+      "scroll_position": "middle-1",
+      "full_image_viewed": true,
+      "view_id": 54
+    },
+    {
+      "group": "funded",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-paid-runtime-pass/catalog-allocation-actual--81d0d-ts-without-a-purchase-debit-chromium/funded-home-server-status-1440-light-top.png",
+      "sha256": "07303603fbc5b40e059432f61e6063a01d54cd9d55a1ad7ac0aa1d04187549d0",
+      "dimensions": [1440, 900],
+      "width": 1440,
+      "theme": "light",
+      "text_percent": 100,
+      "scroll_position": "top",
+      "full_image_viewed": true,
+      "view_id": 55
+    },
+    {
+      "group": "funded",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-paid-runtime-pass/catalog-allocation-actual--81d0d-ts-without-a-purchase-debit-chromium/funded-home-server-status-320-dark-bottom.png",
+      "sha256": "356e7a96b546f3cc28a8c7dbbab8326ba3237567ec5323727c3e49879756721d",
+      "dimensions": [320, 900],
+      "width": 320,
+      "theme": "dark",
+      "text_percent": 100,
+      "scroll_position": "bottom",
+      "full_image_viewed": true,
+      "view_id": 56
+    },
+    {
+      "group": "funded",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-paid-runtime-pass/catalog-allocation-actual--81d0d-ts-without-a-purchase-debit-chromium/funded-home-server-status-320-dark-middle-1.png",
+      "sha256": "b1a47a68792635bf6c2dfa4cb8ebf897bc1309a387b45bec016485957ebfeb05",
+      "dimensions": [320, 900],
+      "width": 320,
+      "theme": "dark",
+      "text_percent": 100,
+      "scroll_position": "middle-1",
+      "full_image_viewed": true,
+      "view_id": 57
+    },
+    {
+      "group": "funded",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-paid-runtime-pass/catalog-allocation-actual--81d0d-ts-without-a-purchase-debit-chromium/funded-home-server-status-320-dark-top.png",
+      "sha256": "86e7b17bacc5716f96a71e8a6847fcb525bf444ace065208b5f8b334427b9c20",
+      "dimensions": [320, 900],
+      "width": 320,
+      "theme": "dark",
+      "text_percent": 100,
+      "scroll_position": "top",
+      "full_image_viewed": true,
+      "view_id": 58
+    },
+    {
+      "group": "funded",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-paid-runtime-pass/catalog-allocation-actual--81d0d-ts-without-a-purchase-debit-chromium/funded-home-server-status-320-light-bottom.png",
+      "sha256": "f00b9260e417d48890c25c78200144fcbbc7cce3c4a188bd801982efae08a35e",
+      "dimensions": [320, 900],
+      "width": 320,
+      "theme": "light",
+      "text_percent": 100,
+      "scroll_position": "bottom",
+      "full_image_viewed": true,
+      "view_id": 59
+    },
+    {
+      "group": "funded",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-paid-runtime-pass/catalog-allocation-actual--81d0d-ts-without-a-purchase-debit-chromium/funded-home-server-status-320-light-middle-1.png",
+      "sha256": "7e7256d8d24ed91145dd31d1478e7440c6ff71c9afdddf31eb4b1e947a888c1c",
+      "dimensions": [320, 900],
+      "width": 320,
+      "theme": "light",
+      "text_percent": 100,
+      "scroll_position": "middle-1",
+      "full_image_viewed": true,
+      "view_id": 60
+    },
+    {
+      "group": "funded",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-paid-runtime-pass/catalog-allocation-actual--81d0d-ts-without-a-purchase-debit-chromium/funded-home-server-status-320-light-middle-2.png",
+      "sha256": "1e199325594e286781d3e42b1df4587d834163c42c43fbd98512f1e4e72cb353",
+      "dimensions": [320, 900],
+      "width": 320,
+      "theme": "light",
+      "text_percent": 100,
+      "scroll_position": "middle-2",
+      "full_image_viewed": true,
+      "view_id": 61
+    },
+    {
+      "group": "funded",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-paid-runtime-pass/catalog-allocation-actual--81d0d-ts-without-a-purchase-debit-chromium/funded-home-server-status-320-light-top.png",
+      "sha256": "65fb2ba2fc3d071ef8d7513c09b5db2ef666ba405ce925e2244156ceeda06add",
+      "dimensions": [320, 900],
+      "width": 320,
+      "theme": "light",
+      "text_percent": 100,
+      "scroll_position": "top",
+      "full_image_viewed": true,
+      "view_id": 62
+    },
+    {
+      "group": "funded",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-paid-runtime-pass/catalog-allocation-actual--81d0d-ts-without-a-purchase-debit-chromium/funded-home-server-status-390-dark-bottom.png",
+      "sha256": "47f88c401f666c8e689efac42215309010df6a75dbea8f1978b0dc99efa489a3",
+      "dimensions": [390, 900],
+      "width": 390,
+      "theme": "dark",
+      "text_percent": 100,
+      "scroll_position": "bottom",
+      "full_image_viewed": true,
+      "view_id": 63
+    },
+    {
+      "group": "funded",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-paid-runtime-pass/catalog-allocation-actual--81d0d-ts-without-a-purchase-debit-chromium/funded-home-server-status-390-dark-middle-1.png",
+      "sha256": "6d3c63d56db7f16b2e1dc1adc66e778ecde2363db37534cb4773828db7737eae",
+      "dimensions": [390, 900],
+      "width": 390,
+      "theme": "dark",
+      "text_percent": 100,
+      "scroll_position": "middle-1",
+      "full_image_viewed": true,
+      "view_id": 64
+    },
+    {
+      "group": "funded",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-paid-runtime-pass/catalog-allocation-actual--81d0d-ts-without-a-purchase-debit-chromium/funded-home-server-status-390-dark-top.png",
+      "sha256": "fb418a5f2df3e47b11df7f6e12819c88f0fcfb233c2e6a8388aa5dd320d5c108",
+      "dimensions": [390, 900],
+      "width": 390,
+      "theme": "dark",
+      "text_percent": 100,
+      "scroll_position": "top",
+      "full_image_viewed": true,
+      "view_id": 65
+    },
+    {
+      "group": "funded",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-paid-runtime-pass/catalog-allocation-actual--81d0d-ts-without-a-purchase-debit-chromium/funded-home-server-status-390-light-bottom.png",
+      "sha256": "cc916a95c5eb0aad30f2306ad5cff19caac078b1da719f311320ca494bdb5d59",
+      "dimensions": [390, 900],
+      "width": 390,
+      "theme": "light",
+      "text_percent": 100,
+      "scroll_position": "bottom",
+      "full_image_viewed": true,
+      "view_id": 66
+    },
+    {
+      "group": "funded",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-paid-runtime-pass/catalog-allocation-actual--81d0d-ts-without-a-purchase-debit-chromium/funded-home-server-status-390-light-middle-1.png",
+      "sha256": "b9e2dda323dd35827888bb76794567aa6f019b379471a4cfc4de459f8b6036c9",
+      "dimensions": [390, 900],
+      "width": 390,
+      "theme": "light",
+      "text_percent": 100,
+      "scroll_position": "middle-1",
+      "full_image_viewed": true,
+      "view_id": 67
+    },
+    {
+      "group": "funded",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-paid-runtime-pass/catalog-allocation-actual--81d0d-ts-without-a-purchase-debit-chromium/funded-home-server-status-390-light-top.png",
+      "sha256": "dda772d02f5119cd0ed3a3f515aa85c5a80ee3fdaa62980f70de81f74ef036a8",
+      "dimensions": [390, 900],
+      "width": 390,
+      "theme": "light",
+      "text_percent": 100,
+      "scroll_position": "top",
+      "full_image_viewed": true,
+      "view_id": 68
+    },
+    {
+      "group": "funded",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-paid-runtime-pass/catalog-allocation-actual--81d0d-ts-without-a-purchase-debit-chromium/funded-home-server-status-834-dark-bottom.png",
+      "sha256": "aed727a63029fe93898e163dadda53ccd25cb5e23b5033988d62807f3719e7a0",
+      "dimensions": [834, 1112],
+      "width": 834,
+      "theme": "dark",
+      "text_percent": 100,
+      "scroll_position": "bottom",
+      "full_image_viewed": true,
+      "view_id": 69
+    },
+    {
+      "group": "funded",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-paid-runtime-pass/catalog-allocation-actual--81d0d-ts-without-a-purchase-debit-chromium/funded-home-server-status-834-dark-middle-1.png",
+      "sha256": "324330666ea0e2393385f8250e1a29d5e45026836f26b80366c80f2b086398e6",
+      "dimensions": [834, 1112],
+      "width": 834,
+      "theme": "dark",
+      "text_percent": 100,
+      "scroll_position": "middle-1",
+      "full_image_viewed": true,
+      "view_id": 70
+    },
+    {
+      "group": "funded",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-paid-runtime-pass/catalog-allocation-actual--81d0d-ts-without-a-purchase-debit-chromium/funded-home-server-status-834-dark-top.png",
+      "sha256": "9bc9749ac49eb4a87a7ed86725a186f3f16179ba917fd83113e82fad85fd029e",
+      "dimensions": [834, 1112],
+      "width": 834,
+      "theme": "dark",
+      "text_percent": 100,
+      "scroll_position": "top",
+      "full_image_viewed": true,
+      "view_id": 71
+    },
+    {
+      "group": "funded",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-paid-runtime-pass/catalog-allocation-actual--81d0d-ts-without-a-purchase-debit-chromium/funded-home-server-status-834-light-bottom.png",
+      "sha256": "4de83f2edf9a522b365b336470829bc819263058d80557f7ba07a94e3db74ad8",
+      "dimensions": [834, 1112],
+      "width": 834,
+      "theme": "light",
+      "text_percent": 100,
+      "scroll_position": "bottom",
+      "full_image_viewed": true,
+      "view_id": 72
+    },
+    {
+      "group": "funded",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-paid-runtime-pass/catalog-allocation-actual--81d0d-ts-without-a-purchase-debit-chromium/funded-home-server-status-834-light-middle-1.png",
+      "sha256": "32fb0e08c1746f47c56048464ab3f463361277c3c092bd72f377a3e728f071b0",
+      "dimensions": [834, 1112],
+      "width": 834,
+      "theme": "light",
+      "text_percent": 100,
+      "scroll_position": "middle-1",
+      "full_image_viewed": true,
+      "view_id": 73
+    },
+    {
+      "group": "funded",
+      "path": "/workspace/.putduk-cloud/browser-evidence/phase2-v19-paid-runtime-pass/catalog-allocation-actual--81d0d-ts-without-a-purchase-debit-chromium/funded-home-server-status-834-light-top.png",
+      "sha256": "39fd196f180aad514d95a72a527a6c512eac6b0fbd27647d3692251e4c913e70",
+      "dimensions": [834, 1112],
+      "width": 834,
+      "theme": "light",
+      "text_percent": 100,
+      "scroll_position": "top",
+      "full_image_viewed": true,
+      "view_id": 74
+    }
+  ],
+  "historical_v18_report": {
+    "manifest_path": "/workspace/.putduk-cloud/phase2-home-v18-paired-review/review-manifest.json",
+    "sha256": "67adb78cb1ad3b67ecbb5dfd88fc41e59f3e09f23ca5c4b8d48e7d72a54f94e8",
+    "artifacts": [
+      {
+        "path": "/workspace/.putduk-cloud/phase2-home-v18-paired-review/actual-inventory.json",
+        "sha256": "5488717a2be7b3c36cc2bccd6ffd70b2249ba84e15f07cd0b6021408c213a5eb"
+      },
+      {
+        "path": "/workspace/.putduk-cloud/phase2-home-v18-paired-review/funded-actual-inventory.json",
+        "sha256": "3e900d9f6d2461e1f8c30d4c9d9205a465840964b6639051939e8d79bc5dbbcf"
+      },
+      {
+        "path": "/workspace/.putduk-cloud/phase2-home-v18-paired-review/full-view-log.json",
+        "sha256": "b9532adc27114b3682f061cbfcbf0bccbd5dd1744bc9b26f7baac70e05547056"
+      },
+      {
+        "path": "/workspace/.putduk-cloud/phase2-home-v18-paired-review/funded-full-view-log.json",
+        "sha256": "6d54a95debe08f1983d14cc6b1f58421df835e8effc0a4a58c602d00ced8d9ba"
+      },
+      {
+        "path": "/workspace/.putduk-cloud/phase2-home-v18-paired-review/before-v6-inventory.json",
+        "sha256": "16da4efd8c4b22a6d9c1dbaf1f02fe93dc6a5ec7022ebdabde8d9a444d58f077"
+      },
+      {
+        "path": "/workspace/.putduk-cloud/phase2-home-v18-paired-review/source-binding.json",
+        "sha256": "a06920c28b13d848af97b20a7a9fe600f6179b5c448133b8691c00999a328bd1"
+      },
+      {
+        "path": "/workspace/.putduk-cloud/phase2-home-v18-paired-review/paired-review.json",
+        "sha256": "b7be938091f822fba0b0c64cdaa8e46188171cd0866f9fde2047410c98484fb8"
+      },
+      {
+        "path": "/workspace/.putduk-cloud/phase2-home-v18-paired-review/paired-review.md",
+        "sha256": "58209887267820d842111f8dfc8020f97c8dfecb5e366057bcf27e10e1d61539"
+      },
+      {
+        "path": "/workspace/.putduk-cloud/phase2-home-v18-paired-review/mobile-home-before-after-differences.json",
+        "sha256": "1dd6588bb5ac4736b699c8ceddf871cc649802863f3dbb42050ee07a8990ff54"
+      },
+      {
+        "path": "/workspace/.putduk-cloud/phase2-home-v18-paired-review/create-report.py",
+        "sha256": "f75a1ea4c11f991b22836929d32d44d5c61795dfc76507fbd444d95de5b664aa"
+      }
+    ],
+    "unchanged": true
+  },
+  "v19_change_scope": "Homepage JSX source byte-identical to v18; CSS adds compact Dark mobile actions and empty notice in-flow. Capture helper awaits actual responsive decode/two paints and resets top before new theme/width."
+}

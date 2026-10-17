@@ -56,7 +56,7 @@ function isApprovedSupabaseUrl(value: string): boolean {
   }
 }
 
-function isPublicSupabaseKey(value: string): boolean {
+export function isPublicSupabaseKey(value: string): boolean {
   if (/^sb_publishable_[A-Za-z0-9_-]+$/.test(value)) return true;
   // Local Supabase also supports legacy anon JWT keys. Never serialize a
   // service_role JWT or an opaque sb_secret key as public runtime configuration.

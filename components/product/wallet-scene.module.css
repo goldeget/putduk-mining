@@ -1,0 +1,81 @@
+.scene {
+  position: relative;
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  pointer-events: none;
+}
+
+.visual,
+.visual picture {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+.visual img {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: contain;
+  object-position: center top;
+}
+
+.recovery {
+  position: absolute;
+  z-index: 3;
+  inset-block-start: 0.75rem;
+  inset-inline-end: 0.75rem;
+  display: grid;
+  gap: 0.4rem;
+  max-inline-size: min(7rem, 35%);
+  padding: 0.55rem;
+  border: 1px solid var(--border-default);
+  border-radius: 0.65rem;
+  background: var(--wallet-panel, var(--surface-default));
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  line-height: 1.5;
+  word-break: keep-all;
+  pointer-events: auto;
+}
+
+.recovery p {
+  margin: 0;
+}
+
+.recovery button {
+  min-block-size: 2.75rem;
+  padding: 0.35rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 0.4rem;
+  background: var(--surface-interactive);
+  color: var(--text-primary);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.recovery button:focus-visible {
+  outline: 2px solid var(--brand-primary);
+  outline-offset: 2px;
+}
+
+@media (min-width: 640px) and (max-width: 1099px) {
+  .visual img {
+    object-fit: cover;
+    object-position: 70% top;
+  }
+}
+
+@media (min-width: 1100px) {
+  .recovery {
+    max-inline-size: 12rem;
+  }
+}
+
+@media (forced-colors: active) {
+  .scene {
+    display: none;
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "assetVersion": "2026.10.13-first-world-v1",
+  "sourceMaster": "docs/design/generated-masters/first-world-20261013/first-world-master-v1.png",
+  "sourceSha256": "9348e218d5d544fd53375342dbeb88ae1914403b7cad631730e1d63c1b652032",
+  "sourceWidth": 1536,
+  "sourceHeight": 1024,
+  "generation": "Built-in image_gen; no external paid API key used",
+  "reviewScope": "User-requested landing redesign implementation candidate; not a claim of final visual or production acceptance. No real infrastructure or money outcome depicted.",
+  "derivativePolicy": "Complete composition, resize and encode only; no crop or recolor; no baked production text.",
+  "assets": [
+    {
+      "path": "/brand/scenes/first-world/first-world-640-v1.avif",
+      "bytes": 17178,
+      "sha256": "1e104f96b2e8412ff5c972d53b92a587d81df81936ef8380461f2807385cc80f",
+      "mimeType": "image/avif",
+      "width": 640,
+      "height": 427,
+      "alt": "금빛 새싹과 광물 섬으로 표현한 퍼뜩의 첫 채굴 월드"
+    },
+    {
+      "path": "/brand/scenes/first-world/first-world-640-v1.webp",
+      "bytes": 45372,
+      "sha256": "afe5fcae0b457b285c6eb3bf98ea4d5a64bc8cc881a7ff0857f8636972ce4819",
+      "mimeType": "image/webp",
+      "width": 640,
+      "height": 427,
+      "alt": "금빛 새싹과 광물 섬으로 표현한 퍼뜩의 첫 채굴 월드"
+    },
+    {
+      "path": "/brand/scenes/first-world/first-world-960-v1.avif",
+      "bytes": 34941,
+      "sha256": "7088907715f51969be18e2521b9271a908d451d729c6e2f62ab0ab07f4da3953",
+      "mimeType": "image/avif",
+      "width": 960,
+      "height": 640,
+      "alt": "금빛 새싹과 광물 섬으로 표현한 퍼뜩의 첫 채굴 월드"
+    },
+    {
+      "path": "/brand/scenes/first-world/first-world-960-v1.webp",
+      "bytes": 92676,
+      "sha256": "be25a0d13f065c4ca1e817d7f50717a8ebbb085fe6623c717b43e8deed9dba48",
+      "mimeType": "image/webp",
+      "width": 960,
+      "height": 640,
+      "alt": "금빛 새싹과 광물 섬으로 표현한 퍼뜩의 첫 채굴 월드"
+    },
+    {
+      "path": "/brand/scenes/first-world/first-world-1536-v1.avif",
+      "bytes": 73297,
+      "sha256": "f32176318394fa161d89babb847b58f154becfb6ec21a28f254368a593426120",
+      "mimeType": "image/avif",
+      "width": 1536,
+      "height": 1024,
+      "alt": "금빛 새싹과 광물 섬으로 표현한 퍼뜩의 첫 채굴 월드"
+    },
+    {
+      "path": "/brand/scenes/first-world/first-world-1536-v1.webp",
+      "bytes": 198210,
+      "sha256": "b25b6116a4eb79990c12a1b81cb7bf9e1ae2fe403f1c810af0d29b46e15811b7",
+      "mimeType": "image/webp",
+      "width": 1536,
+      "height": 1024,
+      "alt": "금빛 새싹과 광물 섬으로 표현한 퍼뜩의 첫 채굴 월드"
+    }
+  ]
+}

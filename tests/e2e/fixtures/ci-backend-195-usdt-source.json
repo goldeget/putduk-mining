@@ -1,0 +1,96 @@
+{
+  "version": 1,
+  "repository": "goldeget/putduk-mining",
+  "runnerGuardSha256": "137086003991fc6f4059063886b187f3c4419e5eab57094322f97f3467712d19",
+  "runnerManifestSha256": "f24506246a0ce47f8b5eef53f0cdb79ddcecd6323c69538666afd4c085e1d482",
+  "sources": [
+    {
+      "path": "apps/admin/app/api/content/source/preview/route.ts",
+      "sha256": "ba54c66ccc12af00aafb772c3601671b17d048d357b051ee47e79f281ae629d6"
+    },
+    {
+      "path": "apps/admin/app/api/v1/admin/assistant/prepare/route.ts",
+      "sha256": "9c917ae3e58f5a3b87264dee2101ee76a6f90b881ac8d0bf22ad5fcd15d63ad7"
+    },
+    {
+      "path": "apps/admin/lib/assistant/content-source-preparation.ts",
+      "sha256": "e54d1b0386894c6bd0fb81115bdda2bda98c211060b1a44969507c93165960e4"
+    },
+    {
+      "path": "apps/admin/lib/assistant/operations.ts",
+      "sha256": "079fc4cf3e83b7a44bb92f56f54e3abf90b6cf292264c63cc9c773ef16efadfa"
+    },
+    {
+      "path": "apps/admin/lib/auth/policy.ts",
+      "sha256": "1965ed4b99537e805494e4dd9ec937e4cd851d0cf11b5a5ca63fe0d2893cc0c9"
+    },
+    {
+      "path": "apps/admin/lib/content/source-preview-handler.ts",
+      "sha256": "cb13e2a65a0cfcfaec764c601207d9a096f7d3286160978f798dd8a62819b3c0"
+    },
+    {
+      "path": "apps/admin/lib/withdrawals/hold-release-receipt.ts",
+      "sha256": "0ff86399a6c4b84119ebd4f69f4a7acf3eb138bc4e423139e0a2b89449fcc21b"
+    },
+    {
+      "path": "apps/admin/tests/assistant-content-source-preparation.test.ts",
+      "sha256": "af65ebad91c91037e0a0cedbaf4771af2886a13a1c05c9f9070aae9cb26fd29d"
+    },
+    {
+      "path": "docs/architecture/BACKEND-FOR-UI-CONTRACT-HANDOFF-20261012.md",
+      "sha256": "311cef47f1ee7ae286de2aa450f688c282c85d7c49fddca5e657a98d3d649775"
+    },
+    {
+      "path": "docs/quality/BACKEND-195-SOURCE-ONLY-INTEGRATION.md",
+      "sha256": "10d49a9b60c9c9df8445e17093dd8712795dfa0c1edbcc7819056c7ab9750705"
+    },
+    {
+      "path": "docs/quality/BACKEND-195-SOURCE-ONLY-VALIDATION-MATRIX.csv",
+      "sha256": "df23237a69a97d22778862e12e0eb49f59f20a0744436bf4f727bbeac3c5de29"
+    },
+    {
+      "path": "domain/content/contract.ts",
+      "sha256": "7608f75c07fef5f0d97f7d121bee54dfb6cf734c051ba6e6e56ffec54da12e36"
+    },
+    {
+      "path": "domain/content/faq.ts",
+      "sha256": "8a96ed2661899a0b91656ab02df28800e95f77202a19f1af1c1c42b4732ac512"
+    },
+    {
+      "path": "domain/content/source-preview.ts",
+      "sha256": "f4d90c809b2b19f30dec0a0164e83edcdb5bc4b02b557623b442129afef6fc29"
+    },
+    {
+      "path": "lib/api/request-body.ts",
+      "sha256": "d1d2ff2b0e156ddb58aafde8f7773b12ea5cf106b8853dbe9901c13c6dac516d"
+    },
+    {
+      "path": "scripts/ci-backend-195-usdt-artifacts.d.mts",
+      "sha256": "e7574dace8a855e811f90ed3b4eac655b99244c96eb21a2bcb5291d65fc83a3a"
+    },
+    {
+      "path": "scripts/ci-backend-195-usdt-artifacts.mjs",
+      "sha256": "8393468d36d9996a03cf1879a5d2aa69baa14dc4cdf82b9492f4368134ee902c"
+    },
+    {
+      "path": "scripts/ci-backend-195-usdt-source.d.mts",
+      "sha256": "d2567778d7a3484b724636d0196b316635ff07918f51f7e412b43fb41dab53aa"
+    },
+    {
+      "path": "scripts/ci-backend-195-usdt.d.mts",
+      "sha256": "c0b3839b3f8dde5b12509582ede29d803671c166fc6b3574bc649652e45ac88a"
+    },
+    {
+      "path": "scripts/ci-backend-195-usdt.mjs",
+      "sha256": "267e8125b606544926a115d7b1a10e683006491f97aa67b8ed3e38dd47127496"
+    },
+    {
+      "path": "tests/unit/ci-backend-195-usdt-artifacts.test.ts",
+      "sha256": "db228177609a1a18ddc24901ead5da382e599867b4a2171b252f2ca0a90d22fe"
+    },
+    {
+      "path": "tests/unit/withdrawal-release-hold-receipt.test.ts",
+      "sha256": "2076c672b739d58a8042c071f46dc06a7cb9799fa9122f163d64337e108f757f"
+    }
+  ]
+}

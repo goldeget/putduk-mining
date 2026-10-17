@@ -22,7 +22,7 @@ export async function GET() {
   const { data, error } = await identity.supabase
     .from("wallet_balance_snapshots")
     .select(
-      "wallet_account_id, currency, balance_atomic, available_balance_atomic, updated_at",
+      "wallet_account_id, currency, balance_atomic, available_balance_atomic",
     )
     .eq("user_id", identity.userId)
     .eq("currency", "KRW")
@@ -48,7 +48,9 @@ export async function GET() {
       balanceAtomic: projection.balanceAtomic,
       currency: "KRW" as const,
       heldBalanceAtomic: projection.heldAtomic,
-      updatedAt: row.updated_at,
+      // This live projection has no persisted last-update clock. Do not present
+      // the account creation time or the HTTP read time as a ledger update.
+      updatedAt: null,
       walletAccountId: projection.walletAccountId,
     };
   });

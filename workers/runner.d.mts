@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import type { FundingSchedulerSummary } from "./funding-scheduler.mjs";
 
 export type WorkerBatchSummary = {
   claimed: number;
@@ -11,31 +12,46 @@ export type WorkerBatchSummary = {
 export type WorkerCycleSummary = {
   workerId: string;
   at: string;
+  scheduler: FundingSchedulerSummary | { error: string };
   outbox: WorkerBatchSummary;
   jobs: WorkerBatchSummary;
 };
 
+export type WorkerOutboxEnvelope = {
+  id: string;
+  event_type: string;
+  attempt_count: number;
+  aggregate_id?: string;
+  aggregate_type?: string;
+  schema_version?: number;
+  payload?: Record<string, unknown>;
+};
+
 type OutboxHandler = (
   client: SupabaseClient,
-  event: {
-    id: string;
-    event_type: string;
-    attempt_count: number;
-  },
+  event: WorkerOutboxEnvelope,
 ) => unknown;
 
-type JobHandler = (
-  client: SupabaseClient,
-  job: {
-    id: string;
-    job_type: string;
-    attempts: number;
-  },
-) => unknown;
+export const SUPPORTED_OUTBOX_HANDLERS: Readonly<Record<string, OutboxHandler>>;
+
+export type WorkerJobEnvelope = {
+  id: string;
+  job_type: string;
+  attempts: number;
+  payload_version?: number;
+  idempotency_key?: string;
+  payload?: unknown;
+};
+
+type JobHandler = (client: SupabaseClient, job: WorkerJobEnvelope) => unknown;
+
+export const SUPPORTED_JOB_HANDLERS: Readonly<Record<string, JobHandler>>;
 
 type BatchOptions = {
   workerId?: string;
   batchSize?: number;
+  schedulerBatchSize?: number;
+  allowFundingJobs?: boolean;
   leaseSeconds?: number;
   retryDelaySeconds?: number;
   randomUnit?: number;
@@ -103,3 +119,13 @@ export function startPeriodicLeaseRenewal(options: {
 export function stopAllLeaseRenewals(): void;
 
 export function activeLeaseRenewalCount(): number;
+
+export function workerCycleFailed(summary: WorkerCycleSummary): boolean;
+
+export function runDurableLoop(options?: {
+  client?: SupabaseClient;
+  workerId?: string;
+  pollMs?: number;
+  heartbeatMs?: number;
+  once?: boolean;
+}): Promise<WorkerCycleSummary>;

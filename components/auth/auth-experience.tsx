@@ -4,7 +4,7 @@ import Link from "next/link";
 import { BrandMark } from "@/components/brand/brand-mark";
 import { PutdukIcon } from "@/components/icons/putduk-icon";
 import { ThemeControl } from "@/components/system/theme-control";
-import { resolveDefaultStageInput } from "@/lib/mining-scene/default-stage";
+import { GlobalPavilion } from "@/components/brand/global-pavilion";
 
 import styles from "./auth-experience.module.css";
 
@@ -24,42 +24,12 @@ type AuthExperienceProps = {
 
 /** Static approved artwork only. It does not select a product or run mining. */
 export function AuthArtwork() {
-  const scene = resolveDefaultStageInput();
-  if (!scene.productionAssetActive || !scene.master) return null;
-
   return (
-    <picture className={styles.artwork}>
-      {(["image/avif", "image/webp"] as const).flatMap((mimeType) => {
-        const media = [...new Set(scene.responsiveSources.map((s) => s.media))];
-        return media.flatMap((condition) => {
-          const sources = scene.responsiveSources.filter(
-            (source) =>
-              source.mimeType === mimeType && source.media === condition,
-          );
-          if (!sources.length) return [];
-          return [
-            <source
-              key={`${mimeType}-${condition}`}
-              type={mimeType}
-              media={condition || undefined}
-              srcSet={sources
-                .map((source) => `${source.assetPath} ${source.width}w`)
-                .join(", ")}
-              sizes="(min-width: 1100px) 54vw, (min-width: 768px) 75vw, 100vw"
-            />,
-          ];
-        });
-      })}
-      {/* The allowlisted local derivative preserves the approved master material. */}
-      <img
-        src={scene.master.assetPath}
-        width={scene.master.width}
-        height={scene.master.height}
-        alt=""
-        fetchPriority="high"
-        decoding="async"
-      />
-    </picture>
+    <GlobalPavilion
+      className={styles.artwork}
+      sizes="(min-width: 1100px) 54vw, (min-width: 768px) 75vw, 100vw"
+      priority
+    />
   );
 }
 

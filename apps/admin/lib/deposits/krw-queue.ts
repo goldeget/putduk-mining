@@ -2,7 +2,11 @@ import "server-only";
 
 import { createAdminServiceClient } from "@/lib/supabase/service";
 
-const PENDING = ["REQUESTED", "AWAITING_TRANSFER", "REVIEWING"] as const;
+export const PENDING_KRW_DEPOSIT_STATUSES = [
+  "REQUESTED",
+  "AWAITING_TRANSFER",
+  "REVIEWING",
+] as const;
 
 const FULL_COLUMNS =
   "id, user_id, currency, amount_atomic, status, requested_at, reviewed_by, reviewed_at, rejection_reason, approved_amount_atomic, ledger_transaction_id";
@@ -73,7 +77,7 @@ export async function loadKrwDepositQueue(): Promise<
     .from("deposit_requests")
     .select(FULL_COLUMNS)
     .eq("currency", "KRW")
-    .in("status", [...PENDING])
+    .in("status", [...PENDING_KRW_DEPOSIT_STATUSES])
     .order("requested_at", { ascending: true })
     .limit(40);
   const query = missingColumn(first.error?.message)
@@ -81,7 +85,7 @@ export async function loadKrwDepositQueue(): Promise<
         .from("deposit_requests")
         .select(BASE_COLUMNS)
         .eq("currency", "KRW")
-        .in("status", [...PENDING])
+        .in("status", [...PENDING_KRW_DEPOSIT_STATUSES])
         .order("requested_at", { ascending: true })
         .limit(40)
     : first;

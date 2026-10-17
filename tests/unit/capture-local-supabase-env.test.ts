@@ -1,4 +1,13 @@
-import { readFileSync } from "node:fs";
+import { randomUUID } from "node:crypto";
+import {
+  mkdirSync,
+  readFileSync,
+  realpathSync,
+  rmSync,
+  symlinkSync,
+  writeFileSync,
+} from "node:fs";
+import { isAbsolute, join, relative, resolve } from "node:path";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
@@ -11,6 +20,9 @@ import {
   formatGithubEnv,
   loadJobLocalAllowlist,
   parseShellEnv,
+  resolveJobLocalConfig,
+  assertCiTestTarget,
+  buildIsolatedTestEnv,
   redactSupabaseCliLine,
 } from "../../scripts/capture-local-supabase-env.mjs";
 
@@ -49,10 +61,11 @@ SECRET_KEY=${SECRET}
     expect(captured.publishableKey).toBe(PUBLISHABLE);
     expect(captured.secretKey).toBe(SECRET);
     expect(captured.dbUrl).toBe(LOCAL_DB);
-    const payload = formatGithubEnv(captured);
+    const payload = formatGithubEnv(captured, {});
     expect(payload).toContain(`LOCAL_SUPABASE_DB_URL=${LOCAL_DB}`);
     expect(payload).toContain(`NEXT_PUBLIC_SUPABASE_URL=${LOCAL_URL}`);
     expect(payload).toContain(`SUPABASE_SECRET_KEY=${SECRET}`);
+    expect(payload).toContain(`LOCAL_SUPABASE_PROJECT_ID=${allow.projectId}\n`);
   });
 
   it("maps dotted override names and reads env lines from stderr", () => {
@@ -251,11 +264,182 @@ SECRET_KEY=${SECRET}
   });
 });
 
+describe("checked GitHub local-project environment export", () => {
+  const local = {
+    apiUrl: LOCAL_URL,
+    publishableKey: PUBLISHABLE,
+    secretKey: SECRET,
+    dbUrl: LOCAL_DB,
+  };
+
+  it("exports only the configuration identity bound to the checked local endpoints", () => {
+    const values = parseShellEnv(formatGithubEnv(local, {}));
+    expect(values).toEqual({
+      NEXT_PUBLIC_SUPABASE_URL: LOCAL_URL,
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: PUBLISHABLE,
+      SUPABASE_SECRET_KEY: SECRET,
+      LOCAL_SUPABASE_DB_URL: LOCAL_DB,
+      LOCAL_SUPABASE_PROJECT_ID: allow.projectId,
+    });
+  });
+
+  it("accepts matching caller metadata without choosing a different project", () => {
+    const values = parseShellEnv(
+      formatGithubEnv(
+        { ...local, projectId: allow.projectId },
+        { APP_ENV: "test", LOCAL_SUPABASE_PROJECT_ID: allow.projectId },
+      ),
+    );
+    expect(values.LOCAL_SUPABASE_PROJECT_ID).toBe(allow.projectId);
+  });
+
+  it.each([
+    "putduk-mining-unrelated",
+    "osrmyjgmpdspdcwqjwuv",
+    "",
+    `${allow.projectId}\nINJECTED_PROJECT=value`,
+  ])("rejects caller-supplied project metadata %j", (projectId) => {
+    expect(() => formatGithubEnv({ ...local, projectId }, {})).toThrow(
+      "LOCAL_PROJECT_SCOPE_REJECTED",
+    );
+  });
+
+  it.each([
+    "LOCAL_SUPABASE_PROJECT_ID",
+    "SUPABASE_PROJECT_ID",
+    "SUPABASE_PROJECT_REF",
+  ])("cannot overwrite an existing unrelated local %s", (name) => {
+    expect(() =>
+      formatGithubEnv(local, {
+        [name]: "putduk-mining-unrelated",
+      }),
+    ).toThrow("LOCAL_PROJECT_SCOPE_REJECTED");
+  });
+
+  it.each([
+    "LOCAL_SUPABASE_PROJECT_ID",
+    "SUPABASE_PROJECT_ID",
+    "SUPABASE_PROJECT_REF",
+  ])("rejects remote or multiline existing %s", (name) => {
+    expect(() =>
+      formatGithubEnv(local, {
+        [name]: "osrmyjgmpdspdcwqjwuv",
+      }),
+    ).toThrow("REMOTE_SUPABASE_SECRET_REJECTED");
+    expect(() =>
+      formatGithubEnv(local, {
+        [name]: `${allow.projectId}\n`,
+      }),
+    ).toThrow("LOCAL_PROJECT_SCOPE_REJECTED");
+  });
+
+  it.each([
+    ["apiUrl", "https://osrmyjgmpdspdcwqjwuv.supabase.co"],
+    ["apiUrl", "http://127.0.0.1:1"],
+    ["apiUrl", `${LOCAL_URL}\nINJECTED_PROJECT=value`],
+    [
+      "dbUrl",
+      "postgresql://postgres:synthetic@db.osrmyjgmpdspdcwqjwuv.supabase.co:5432/postgres",
+    ],
+    ["dbUrl", "postgresql://postgres:synthetic@127.0.0.1:1/postgres"],
+    [
+      "dbUrl",
+      `postgresql://postgres.putduk-mining-unrelated:synthetic@127.0.0.1:${allow.dbPort}/postgres`,
+    ],
+    ["dbUrl", ""],
+  ])(
+    "revalidates %s before exporting the configuration identity",
+    (field, value) => {
+      expect(() => formatGithubEnv({ ...local, [field]: value }, {})).toThrow();
+    },
+  );
+
+  it.each(["publishableKey", "secretKey"])(
+    "rejects unsafe %s without returning an environment payload",
+    (field) => {
+      expect(() =>
+        formatGithubEnv(
+          { ...local, [field]: `synthetic\nINJECTED_KEY=value` },
+          {},
+        ),
+      ).toThrow(/newline/);
+      expect(() =>
+        formatGithubEnv({ ...local, [field]: "osrmyjgmpdspdcwqjwuv" }, {}),
+      ).toThrow("REMOTE_SUPABASE_SECRET_REJECTED");
+    },
+  );
+
+  it("refuses a production base environment even when local status is valid", () => {
+    expect(() => formatGithubEnv(local, { APP_ENV: "production" })).toThrow(
+      "PRODUCTION_ENV_REJECTED",
+    );
+  });
+});
+
 describe("supabase start log redaction", () => {
   const jwt = "eyJhbGciOiJub25lIn0.eyJyb2xlIjoidGVzdCJ9.c2ln";
   const storageSecret = "ab".repeat(32);
   const accessKey = "cd".repeat(16);
   const digest = `sha256:${"ef".repeat(32)}`;
+
+  const cliCredentialFields = [
+    "ANON_KEY",
+    "PUBLISHABLE_KEY",
+    "SERVICE_ROLE_KEY",
+    "SECRET_KEY",
+    "JWT_SECRET",
+    "S3_PROTOCOL_ACCESS_KEY_ID",
+    "S3_PROTOCOL_ACCESS_KEY_SECRET",
+    "auth.anon_key",
+    "auth.publishable_key",
+    "auth.service_role_key",
+    "auth.secret_key",
+    "auth.jwt_secret",
+    "storage.s3_access_key_id",
+    "storage.s3_secret_access_key",
+  ];
+
+  it.each(cliCredentialFields)(
+    "redacts CLI credential %s in JSON and env formats without relying on its value shape",
+    (field) => {
+      const credential =
+        'synthetic opaque value with spaces, punctuation and \\"quote';
+      const json = JSON.stringify({ API_URL: LOCAL_URL, [field]: credential });
+      const safeJson = redactSupabaseCliLine(json);
+      expect(safeJson).not.toContain("synthetic opaque");
+      expect(JSON.parse(safeJson)).toEqual({
+        API_URL: LOCAL_URL,
+        [field]: "<redacted>",
+      });
+      const env = `API_URL=${LOCAL_URL}\nexport ${field}=${JSON.stringify(credential)}`;
+      expect(redactSupabaseCliLine(env)).toBe(
+        `API_URL=${LOCAL_URL}\nexport ${field}=<redacted>`,
+      );
+    },
+  );
+
+  it("redacts multiple JSON fields across pretty lines while preserving nonsecret service URLs", () => {
+    const input = JSON.stringify(
+      {
+        API_URL: LOCAL_URL,
+        STUDIO_URL: "http://127.0.0.1:58423",
+        S3_PROTOCOL_URL: `${LOCAL_URL}/storage/v1/s3`,
+        JWT_SECRET: "synthetic signing material",
+        S3_PROTOCOL_ACCESS_KEY_ID: "synthetic access identifier",
+        S3_PROTOCOL_ACCESS_KEY_SECRET: "synthetic storage material",
+      },
+      null,
+      2,
+    );
+    expect(JSON.parse(redactSupabaseCliLine(input))).toEqual({
+      API_URL: LOCAL_URL,
+      STUDIO_URL: "http://127.0.0.1:58423",
+      S3_PROTOCOL_URL: `${LOCAL_URL}/storage/v1/s3`,
+      JWT_SECRET: "<redacted>",
+      S3_PROTOCOL_ACCESS_KEY_ID: "<redacted>",
+      S3_PROTOCOL_ACCESS_KEY_SECRET: "<redacted>",
+    });
+  });
 
   it("masks key-shaped strings and keeps the database password mask", () => {
     const input = [
@@ -307,6 +491,36 @@ describe("supabase start log redaction", () => {
     expect(result.stderr ?? "").not.toContain(SECRET);
   });
 
+  it("redacts opaque JSON and env credentials in the actual streaming consumer", () => {
+    const result = spawnSync(
+      process.execPath,
+      ["scripts/redact-supabase-cli-stream.mjs"],
+      {
+        input: [
+          JSON.stringify({
+            API_URL: LOCAL_URL,
+            JWT_SECRET: "synthetic signing material",
+            S3_PROTOCOL_ACCESS_KEY_ID: "synthetic access identifier",
+            S3_PROTOCOL_ACCESS_KEY_SECRET: "synthetic storage material",
+          }),
+          "S3_PROTOCOL_ACCESS_KEY_SECRET='synthetic env storage material'",
+        ].join("\n"),
+        encoding: "utf8",
+        cwd: fileURLToPath(new URL("../..", import.meta.url)),
+      },
+    );
+    expect(result.status).toBe(0);
+    expect(result.stdout).not.toContain("synthetic");
+    expect(result.stderr ?? "").not.toContain("synthetic");
+    expect(JSON.parse(result.stdout.split("\n")[0]!)).toEqual({
+      API_URL: LOCAL_URL,
+      JWT_SECRET: "<redacted>",
+      S3_PROTOCOL_ACCESS_KEY_ID: "<redacted>",
+      S3_PROTOCOL_ACCESS_KEY_SECRET: "<redacted>",
+    });
+    expect(result.stdout).toContain("S3_PROTOCOL_ACCESS_KEY_SECRET=<redacted>");
+  });
+
   it("pipes supabase start through redaction without shell tracing", () => {
     const script = readFileSync(
       fileURLToPath(
@@ -321,3 +535,172 @@ describe("supabase start log redaction", () => {
     );
   });
 });
+
+describe("contained local config selection", () => {
+  const root = fileURLToPath(new URL("../..", import.meta.url));
+  const owned = () => createOwnedTask(root, "config-test-");
+  const body = (project = "putduk-mining-config-unit", api = 65131) =>
+    `project_id = "${project}"\n[api]\nport = ${api}\n[db]\nport = 65132\n`;
+  function withConfig(run: (path: string, task: string) => void) {
+    const task = owned();
+    const path = join(task, "supabase/config.toml");
+    mkdirSync(join(task, "supabase"));
+    writeFileSync(path, body());
+    try {
+      run(path, task);
+    } finally {
+      removeOwnedTask(task, root);
+    }
+  }
+  const envFor = (path: string) => ({
+    APP_ENV: "test",
+    PUTDUK_LOCAL_SUPABASE_CONFIG_PATH: path,
+  });
+  it("selects a supplied environment without poisoning cached default or explicit text", () => {
+    const before = loadJobLocalAllowlist(undefined, {});
+    withConfig((path) => {
+      expect(loadJobLocalAllowlist(undefined, envFor(path))).toEqual({
+        projectId: "putduk-mining-config-unit",
+        apiPort: "65131",
+        dbPort: "65132",
+      });
+      expect(resolveJobLocalConfig(envFor(path)).workdir).toBe(
+        resolve(path, "../.."),
+      );
+      expect(
+        loadJobLocalAllowlist(body("putduk-mining-explicit", 65231), {
+          APP_ENV: "production",
+          PUTDUK_LOCAL_SUPABASE_CONFIG_PATH: "not-a-path",
+        }).apiPort,
+      ).toBe("65231");
+      writeFileSync(path, body("putduk-mining-changed", 65231));
+      expect(loadJobLocalAllowlist(undefined, envFor(path)).apiPort).toBe(
+        "65231",
+      );
+    });
+    expect(loadJobLocalAllowlist(undefined, {})).toBe(before);
+  });
+  it.each(["production", "staging", "", "unknown"])(
+    "rejects %s override environment",
+    (APP_ENV) => {
+      withConfig((path) =>
+        expect(() =>
+          loadJobLocalAllowlist(undefined, { ...envFor(path), APP_ENV }),
+        ).toThrow(),
+      );
+    },
+  );
+  it("rejects noncontained, malformed, missing, and nonfile paths", () => {
+    withConfig((path, task) => {
+      const bad = [
+        "supabase/config.toml",
+        join(root, "supabase/config.toml"),
+        join(task, "missing/config.toml"),
+        join(task, "supabase"),
+        path.replace("supabase", "supabase/../supabase"),
+        join(task, "supabase/config.toml/extra"),
+        join(task, "supabase/missing.toml"),
+      ];
+      for (const input of bad)
+        expect(() => resolveJobLocalConfig(envFor(input))).toThrow();
+      writeFileSync(path, body("osrmyjgmpdspdcwqjwuv"));
+      expect(() => loadJobLocalAllowlist(undefined, envFor(path))).toThrow(
+        "LOCAL_PROJECT_SCOPE_REJECTED",
+      );
+      writeFileSync(path, body("putduk-mining-config-unit", 65536));
+      expect(() => loadJobLocalAllowlist(undefined, envFor(path))).toThrow(
+        "LOCAL_PORT_SCOPE_REJECTED",
+      );
+    });
+  });
+  it("rejects a symlink or Windows junction component without following it", () => {
+    withConfig((_path, targetTask) => {
+      const task = owned();
+      try {
+        symlinkSync(
+          join(targetTask, "supabase"),
+          join(task, "supabase"),
+          process.platform === "win32" ? "junction" : "dir",
+        );
+        expect(() =>
+          resolveJobLocalConfig(envFor(join(task, "supabase/config.toml"))),
+        ).toThrow();
+      } finally {
+        removeOwnedTask(task, root);
+      }
+    });
+  });
+  it("keeps strict API/DB matching and rejects late target changes", () => {
+    withConfig((path) => {
+      const env = envFor(path);
+      expect(() =>
+        assertCiTestTarget({
+          ...env,
+          NEXT_PUBLIC_SUPABASE_URL: "http://127.0.0.1:63421",
+        }),
+      ).toThrow();
+      expect(() =>
+        assertCiTestTarget({
+          ...env,
+          LOCAL_SUPABASE_DB_URL:
+            "postgresql://postgres:dummy@127.0.0.1:63422/postgres",
+        }),
+      ).toThrow();
+      const credentials = {
+        apiUrl: "http://127.0.0.1:65131",
+        dbUrl: "postgresql://postgres:dummy@127.0.0.1:65132/postgres",
+        publishableKey: "sb_publishable_unit_only",
+        secretKey: "sb_secret_unit_only",
+      };
+      expect(
+        buildIsolatedTestEnv(env, credentials).NEXT_PUBLIC_SUPABASE_URL,
+      ).toBe(credentials.apiUrl);
+      expect(() =>
+        buildIsolatedTestEnv(env, credentials, {
+          PUTDUK_LOCAL_SUPABASE_CONFIG_PATH: "another",
+        }),
+      ).toThrow("LOCAL_CONFIG_OVERRIDE_REJECTED");
+      const lateOverrides: Record<string, string>[] = [
+        { SUPABASE_URL: "http://127.0.0.1:63421" },
+        {
+          DATABASE_URL: "postgresql://postgres:dummy@127.0.0.1:63422/postgres",
+        },
+        { SUPABASE_PROJECT_ID: "putduk-mining-other" },
+        { SUPABASE_PROJECT_REF: "osrmyjgmpdspdcwqjwuv" },
+      ];
+      for (const overrides of lateOverrides)
+        expect(() =>
+          buildIsolatedTestEnv(env, credentials, overrides),
+        ).toThrow();
+      const external = {
+        NVIDIA_API_KEY: "dummy-nvidia",
+        OPENROUTER_FREE_API_KEY: "dummy-openrouter-free",
+        OPENROUTER_API_KEY: "dummy-openrouter",
+      };
+      const isolated = buildIsolatedTestEnv(
+        { ...env, ...external },
+        credentials,
+        external,
+      );
+      for (const name of Object.keys(external))
+        expect(isolated[name]).toBeUndefined();
+    });
+  });
+});
+
+function createOwnedTask(root: string, prefix: string) {
+  const task = join(root, `.next-qa-${prefix}${randomUUID()}`);
+  mkdirSync(task); // Exclusive creation; never overwrite a pre-existing path.
+  return task;
+}
+function removeOwnedTask(task: string, root: string) {
+  const at = realpathSync(task);
+  const rel = relative(realpathSync(root), at);
+  if (
+    isAbsolute(rel) ||
+    !/^\.next-qa-[a-z0-9-]{1,64}$/.test(rel) ||
+    at !== resolve(task)
+  )
+    throw new Error("UNIT_TEMP_DELETE_SCOPE_REJECTED");
+  rmSync(at, { recursive: true });
+}

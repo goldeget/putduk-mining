@@ -1,13 +1,5 @@
+import { WithdrawalQueueLoading } from "./withdrawals/_components/queue-states";
+
 export default function AdminLoading() {
-  return (
-    <section
-      className="queue-empty"
-      data-ui-state="loading"
-      aria-busy="true"
-      role="status"
-    >
-      <h1>운영 화면을 불러오고 있습니다.</h1>
-      <p>권한과 최신 정보를 확인한 뒤 표시합니다.</p>
-    </section>
-  );
+  return <WithdrawalQueueLoading label="운영 화면 불러오는 중" />;
 }

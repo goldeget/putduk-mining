@@ -21,7 +21,7 @@ test.describe("지갑 제품 읽기 화면", () => {
     await page.goto("/wallet");
     await expect(
       page.getByRole("heading", {
-        name: "출금 가능 잔액",
+        name: "지갑",
         exact: true,
         level: 1,
       }),
@@ -30,7 +30,10 @@ test.describe("지갑 제품 읽기 화면", () => {
     });
     // hidden id="S:*"가 같은 지갑 라벨을 복제한다. 정착된 지갑 안에서만 하나이고 보여야 한다.
     const wallet = await expectSettledRoute(page, "/wallet");
-    const krwWallet = wallet.getByLabel("실제 KRW 지갑");
+    const krwWallet = wallet.getByRole("region", {
+      name: "원화 지갑 잔액",
+      exact: true,
+    });
     await expect(krwWallet).toHaveCount(1);
     await expect(krwWallet).toBeVisible();
 
@@ -46,7 +49,18 @@ test.describe("지갑 제품 읽기 화면", () => {
       }),
     ).toBeVisible();
 
-    // empty StatePanel h2 includes this substring — use exact + region, not UI change
+    const historyLink = wallet
+      .getByRole("navigation", { name: "지갑 내역 선택", exact: true })
+      .getByRole("link", { name: "거래내역", exact: true });
+    await expect(historyLink).toHaveAttribute("href", "/wallet?view=history");
+    await historyLink.click();
+    await expect(page).toHaveURL(/\/wallet\?view=history$/);
+    await expect(
+      page
+        .getByRole("navigation", { name: "지갑 내역 선택", exact: true })
+        .getByRole("link", { name: "거래내역", exact: true }),
+    ).toHaveAttribute("aria-current", "page");
+    await expect(ledgerHistory).toBeVisible();
     const receipts = page.getByRole("region", {
       name: "입출금 처리 내역",
       exact: true,
@@ -59,11 +73,7 @@ test.describe("지갑 제품 읽기 화면", () => {
       }),
     ).toBeVisible();
     await expect(
-      receipts.getByRole("heading", {
-        name: "아직 입출금 처리 내역이 없어요",
-        exact: true,
-        level: 2,
-      }),
+      receipts.getByText("아직 입출금 처리 내역이 없어요.", { exact: true }),
     ).toBeVisible();
 
     await expect(page.getByRole("link", { name: "출금하기" })).toHaveAttribute(
@@ -82,7 +92,7 @@ test.describe("지갑 제품 읽기 화면", () => {
       await page.setViewportSize({ width, height: 900 });
       await expect(
         page.getByRole("heading", {
-          name: "출금 가능 잔액",
+          name: "지갑",
           exact: true,
           level: 1,
         }),
@@ -93,7 +103,7 @@ test.describe("지갑 제품 읽기 화면", () => {
       await page.emulateMedia({ colorScheme: theme });
       await expect(
         page.getByRole("heading", {
-          name: "출금 가능 잔액",
+          name: "지갑",
           exact: true,
           level: 1,
         }),

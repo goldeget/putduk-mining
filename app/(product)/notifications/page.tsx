@@ -18,9 +18,10 @@ export default async function NotificationCenterPage() {
   const { data: rows, error } = await identity.supabase
     .from("notifications")
     .select(
-      "id, category, title_ko, body_ko, route, read_at, created_at, expires_at",
+      "id, category, title_ko, body_ko, route, read_at, created_at, expires_at, scheduled_at",
     )
     .eq("user_id", identity.userId)
+    .lte("scheduled_at", notificationNow.toISOString())
     .or(activeMemberNotificationExpiryOr(notificationNow))
     .order("created_at", { ascending: false })
     .limit(50);

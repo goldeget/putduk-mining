@@ -1,4 +1,5 @@
 "use client";
+import { FeedbackMessage } from "../../../../../components/ui/feedback-message";
 
 import { useActionState, useId, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -46,9 +47,9 @@ export function SafeModeForm({
 
   if (!canMutate) {
     return (
-      <p className="panel-note" role="status">
+      <FeedbackMessage className="panel-note" role="status">
         이 역할로는 제한을 바꿀 수 없습니다. 조회만 가능합니다.
-      </p>
+      </FeedbackMessage>
     );
   }
 

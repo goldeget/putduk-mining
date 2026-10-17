@@ -1134,7 +1134,7 @@
 
 .living-world__status h2 {
   margin: 0.8rem 0 0.4rem;
-  color: #fff8ea;
+  color: var(--scene-copy);
   font-size: clamp(2.4rem, 5vw, 5rem);
   letter-spacing: -0.07em;
 }
@@ -1357,11 +1357,11 @@
   }
 }
 
-/* 한국어 문장은 어절 경계에서만 줄바꿈한다. UUID, 주소, 해시, 멱등 키는 machine-token을 쓴다. */
+/* 한국어는 어절을 우선하고 긴 토큰만 나눈다. UUID, 주소, 해시, 멱등 키는 machine-token을 쓴다. */
 .ko-heading,
 .ko-copy {
   line-break: strict;
-  overflow-wrap: normal;
+  overflow-wrap: break-word;
   word-break: keep-all;
 }
 

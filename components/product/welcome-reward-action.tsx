@@ -1,4 +1,5 @@
 "use client";
+import { FeedbackMessage } from "@/components/ui/feedback-message";
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
@@ -160,9 +161,9 @@ export function WelcomeRewardAction({
           <PutdukIcon name="arrow-right" size={18} />
         </Link>
         {message ? (
-          <p className={styles.actionMessage} role="status">
+          <FeedbackMessage className={styles.actionMessage} role="status">
             {message}
-          </p>
+          </FeedbackMessage>
         ) : null}
       </div>
     );
@@ -180,9 +181,9 @@ export function WelcomeRewardAction({
           확인 결과가 갱신되면 이곳에 다음 행동이 표시돼요.
         </p>
         {message ? (
-          <p className={styles.actionMessage} role="status">
+          <FeedbackMessage className={styles.actionMessage} role="status">
             {message}
-          </p>
+          </FeedbackMessage>
         ) : null}
       </div>
     );
@@ -217,12 +218,12 @@ export function WelcomeRewardAction({
         </p>
       ) : null}
       {message ? (
-        <p
+        <FeedbackMessage
           className={`${styles.actionMessage} ${styles.actionMessageError}`}
           role="status"
         >
           {message}
-        </p>
+        </FeedbackMessage>
       ) : null}
     </div>
   );

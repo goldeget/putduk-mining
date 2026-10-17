@@ -57,15 +57,18 @@ export const metadata: Metadata = {
   applicationName: "PUTDUK MINING",
   icons: {
     icon: [
-      { url: "/brand/favicon/favicon.svg", type: "image/svg+xml" },
       {
-        url: "/brand/favicon/favicon-32.png",
+        url: "/brand/identity/20261014/favicon/favicon.svg",
+        type: "image/svg+xml",
+      },
+      {
+        url: "/brand/identity/20261014/favicon/favicon-32.png",
         sizes: "32x32",
         type: "image/png",
       },
     ],
-    shortcut: "/brand/favicon/favicon.ico",
-    apple: "/brand/pwa/putduk-pwa-dark-192.png",
+    shortcut: "/brand/identity/20261014/favicon/favicon.ico",
+    apple: "/brand/identity/20261014/pwa/putduk-pwa-dark-192.png",
   },
   alternates: { canonical: "/" },
   openGraph: {
@@ -99,12 +102,12 @@ export default function RootLayout({
       <head>
         <meta
           name="theme-color"
-          content="#070706"
+          content="#020a14"
           media="(prefers-color-scheme: dark)"
         />
         <meta
           name="theme-color"
-          content="#f8f4ea"
+          content="#f8f8f8"
           media="(prefers-color-scheme: light)"
         />
         <script

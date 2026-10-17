@@ -1,4 +1,5 @@
 "use client";
+import { FeedbackMessage } from "@/components/ui/feedback-message";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -146,7 +147,7 @@ export function WelcomeWithdrawalAction({
       </button>
       {!requested && disabledReason ? <p>{disabledReason}</p> : null}
       {feedback ? (
-        <p
+        <FeedbackMessage
           className={`${styles.feedback} ${
             feedback.tone === "success"
               ? styles.feedbackSuccess
@@ -155,7 +156,7 @@ export function WelcomeWithdrawalAction({
           role="status"
         >
           {feedback.message}
-        </p>
+        </FeedbackMessage>
       ) : null}
     </div>
   );

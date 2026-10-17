@@ -12,6 +12,46 @@ import {
 const now = new Date("2026-09-29T06:00:00.000Z");
 
 describe("member notification inbox", () => {
+  it("reveals a scheduled publication only when its UTC time is due", () => {
+    const due = {
+      id: "due",
+      expires_at: null,
+      scheduled_at: now.toISOString(),
+    };
+    const future = {
+      id: "future",
+      expires_at: null,
+      scheduled_at: "2026-09-29T06:00:00.001Z",
+    };
+    const invalid = {
+      id: "invalid",
+      expires_at: null,
+      scheduled_at: "not-a-date",
+    };
+    const expired = {
+      id: "expired",
+      expires_at: now.toISOString(),
+      scheduled_at: "2026-09-29T05:00:00.000Z",
+    };
+    expect(
+      filterActiveMemberNotifications([future, invalid, expired, due], now),
+    ).toEqual([due]);
+    expect(
+      countUnreadMemberNotifications(
+        filterActiveMemberNotifications(
+          [future, due].map((row) => ({ ...row, read_at: null })),
+          now,
+        ),
+      ),
+    ).toBe(1);
+    expect(
+      filterActiveMemberNotifications(
+        [future],
+        new Date("2026-09-29T06:00:00.001Z"),
+      ),
+    ).toEqual([future]);
+  });
+
   it("keeps non-expired notifications and drops expired ones", () => {
     const rows = [
       { expires_at: null },
@@ -78,6 +118,7 @@ describe("member notification inbox", () => {
   it("maps known categories to Korean labels", () => {
     expect(notificationCategoryLabelKo("mining")).toBe("채굴");
     expect(notificationCategoryLabelKo("wallet")).toBe("자산");
+    expect(notificationCategoryLabelKo("notices")).toBe("공지");
     expect(notificationCategoryLabelKo("unknown_bucket")).toBe("알림");
   });
 

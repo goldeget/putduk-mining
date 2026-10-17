@@ -12,10 +12,13 @@ export function PwaRegistrar() {
     }
 
     const register = () => {
-      void navigator.serviceWorker.register("/sw.js", { scope: "/" });
+      void navigator.serviceWorker
+        .register("/sw.js", { scope: "/" })
+        .catch(() => undefined);
     };
 
-    window.addEventListener("load", register, { once: true });
+    if (document.readyState === "complete") register();
+    else window.addEventListener("load", register, { once: true });
     return () => window.removeEventListener("load", register);
   }, []);
 

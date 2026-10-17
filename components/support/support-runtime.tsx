@@ -1,4 +1,5 @@
 "use client";
+import { FeedbackMessage } from "@/components/ui/feedback-message";
 
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useId, useSyncExternalStore } from "react";
@@ -164,7 +165,7 @@ export function SupportStartButton() {
             ? "상담 시작"
             : "안내 보기"}
       </button>
-      <p
+      <FeedbackMessage
         id={statusId}
         className={styles.status}
         data-support-state={uiState}
@@ -172,7 +173,7 @@ export function SupportStartButton() {
         aria-live="polite"
       >
         {statusCopy}
-      </p>
+      </FeedbackMessage>
     </div>
   );
 }

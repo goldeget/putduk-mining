@@ -1,8 +1,7 @@
 import "server-only";
 
 export const REFERRAL_REFERRER_REWARD_KRW = 5_000n;
-export const REFERRAL_REFERRED_REWARD_KRW = 5_000n;
-export const REFERRAL_PAIR_MAX_REWARD_KRW = 10_000n;
+export const REFERRAL_REFERRER_MAX_PER_REFERRAL_KRW = 10_000n;
 
 export type ReferralRiskSignal = {
   code: string;
@@ -10,18 +9,29 @@ export type ReferralRiskSignal = {
 };
 
 export type ReferralQualificationInput = {
-  hasCompletedFirstPaidCycle: boolean;
   hasVerifiedIdentity: boolean;
+  // Trusted server facts from canonical transaction originals, never client assertions.
+  // Missing evidence fails closed for older callers.
+  hasVerifiedFunding?: boolean;
+  hasStartedRealMining?: boolean;
+  hasFirstRealSettlement?: boolean;
+  // The configured distinct settlement after the actual stage-one payout and
+  // its current risk recheck must both pass. The native producer owns timing.
+  hasLaterQualifiedActivity?: boolean;
+  hasLaterRiskRecheckClear?: boolean;
   invitationAccepted: boolean;
   paidStages?: readonly ("STAGE_1" | "STAGE_2")[];
   riskSignals: readonly ReferralRiskSignal[];
 };
 
 export type ReferralQualification = {
+  // Decision candidates only. Database approval, unique claims, budget and a
+  // balanced ledger transaction are still mandatory before actual payment.
   automaticPayouts: readonly {
     amountKrw: bigint;
     beneficiary: "REFERRED" | "REFERRER";
-    stage: "IDENTITY_VERIFIED" | "FIRST_PAID_CYCLE";
+    // Same identifiers as the canonical per-referral database claim stages.
+    stage: "STAGE_1" | "STAGE_2";
   }[];
   decision: "AUTO_HOLD" | "PENDING" | "QUALIFIED";
   reason: string;
@@ -83,25 +93,41 @@ export function evaluateReferralQualification(
     };
   }
 
+  if (
+    input.hasVerifiedFunding !== true ||
+    input.hasStartedRealMining !== true ||
+    input.hasFirstRealSettlement !== true
+  ) {
+    return {
+      automaticPayouts: [],
+      decision: "PENDING",
+      reason: "REAL_TRANSACTION_QUALIFICATION_INCOMPLETE",
+    };
+  }
+
   const paidStages = new Set(input.paidStages ?? []);
   const automaticPayouts: Array<{
     amountKrw: bigint;
     beneficiary: "REFERRED" | "REFERRER";
-    stage: "IDENTITY_VERIFIED" | "FIRST_PAID_CYCLE";
+    stage: "STAGE_1" | "STAGE_2";
   }> = [];
 
   if (!paidStages.has("STAGE_1")) {
     automaticPayouts.push({
-      amountKrw: REFERRAL_REFERRED_REWARD_KRW,
-      beneficiary: "REFERRED",
-      stage: "IDENTITY_VERIFIED",
+      amountKrw: REFERRAL_REFERRER_REWARD_KRW,
+      beneficiary: "REFERRER",
+      stage: "STAGE_1",
     });
   }
-  if (input.hasCompletedFirstPaidCycle && !paidStages.has("STAGE_2")) {
+  const laterStageQualified =
+    paidStages.has("STAGE_1") &&
+    input.hasLaterQualifiedActivity === true &&
+    input.hasLaterRiskRecheckClear === true;
+  if (laterStageQualified && !paidStages.has("STAGE_2")) {
     automaticPayouts.push({
       amountKrw: REFERRAL_REFERRER_REWARD_KRW,
       beneficiary: "REFERRER",
-      stage: "FIRST_PAID_CYCLE",
+      stage: "STAGE_2",
     });
   }
 
@@ -109,8 +135,8 @@ export function evaluateReferralQualification(
     (sum, payout) => sum + payout.amountKrw,
     0n,
   );
-  if (total > REFERRAL_PAIR_MAX_REWARD_KRW) {
-    throw new Error("Referral payout exceeds the pair-level hard cap.");
+  if (total > REFERRAL_REFERRER_MAX_PER_REFERRAL_KRW) {
+    throw new Error("Referrer payout exceeds the per-referral hard cap.");
   }
 
   return {
@@ -118,12 +144,12 @@ export function evaluateReferralQualification(
     decision: automaticPayouts.length > 0 ? "QUALIFIED" : "PENDING",
     reason:
       automaticPayouts.length > 0
-        ? input.hasCompletedFirstPaidCycle
+        ? laterStageQualified
           ? "QUALIFIED_STAGES_AVAILABLE"
-          : "IDENTITY_STAGE_AVAILABLE"
-        : input.hasCompletedFirstPaidCycle
+          : "REAL_SETTLEMENT_STAGE_AVAILABLE"
+        : paidStages.has("STAGE_1") && paidStages.has("STAGE_2")
           ? "ALL_STAGES_ALREADY_PAID"
-          : "FIRST_PAID_CYCLE_NOT_COMPLETE",
+          : "LATER_ACTIVITY_OR_RISK_RECHECK_INCOMPLETE",
   };
 }
 

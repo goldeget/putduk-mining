@@ -29,8 +29,12 @@ const securityHeaders = [
   },
 ];
 
+const distDir = resolveNextDistDir();
+const isolatedQaDev =
+  process.env.APP_ENV === "test" && distDir.startsWith(".next-qa-");
+
 const nextConfig: NextConfig = {
-  distDir: resolveNextDistDir(),
+  distDir,
   allowedDevOrigins: ["127.0.0.1"],
   productionBrowserSourceMaps: false,
   reactStrictMode: true,
@@ -38,6 +42,7 @@ const nextConfig: NextConfig = {
   typedRoutes: true,
   experimental: {
     optimizePackageImports: ["motion"],
+    ...(isolatedQaDev ? { turbopackFileSystemCacheForDev: false } : {}),
   },
   async headers() {
     return [

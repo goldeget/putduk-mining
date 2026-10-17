@@ -148,7 +148,9 @@ test("빈 이력·검증·오류 복구와 KRW 기준 복사를 확인한다", a
   for (const phrase of FORBIDDEN_COPY) {
     expect(mainText).not.toContain(phrase);
   }
-  expect(mainText).toContain("정산된 KRW 잔액만 출금할 수 있어요.");
+  expect(mainText).toContain(
+    "원화 잔액을 은행 계좌 또는 USDT 주소로 받을 수 있어요.",
+  );
   expect(mainText).toContain("사용 가능한 원화에서만 출금할 수 있어요.");
   expect(mainText).toContain("USDT를 따로 보관하지 않습니다.");
 
@@ -329,7 +331,10 @@ test("레이아웃·테마·포커스·모션 감소를 확인한다", async ({ 
   }
 
   await page.setViewportSize({ height: 844, width: 390 });
-  await page.getByLabel("화면 테마").selectOption("system");
+  await page
+    .locator('[data-wallet-header="mobile"]:visible')
+    .getByLabel("화면 테마")
+    .selectOption("system");
   await expect(page.locator("html")).toHaveAttribute(
     "data-theme-preference",
     "system",

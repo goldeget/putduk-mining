@@ -1,0 +1,472 @@
+{
+  "scope": "TYPOGRAPHY_EXPLICIT_63_ROUTE_DECLARATION_NOT_RUNTIME_ACCEPTANCE",
+  "rows": [
+    {
+      "app": "member",
+      "path": "/ai",
+      "pagePath": "app/(product)/ai/page.tsx",
+      "classification": "LISTED_RUNTIME_UNVERIFIED",
+      "basis": "Existing typography route declaration; no browser execution in this review."
+    },
+    {
+      "app": "member",
+      "path": "/events/[slug]",
+      "pagePath": "app/(product)/events/[slug]/page.tsx",
+      "classification": "UNKNOWN_FIXTURE_REQUIRED",
+      "basis": "Existing seedMemberEventsReadModel returns liveSlug but setup needs 2 member IDs and lifecycle ownership. No typography seeding executed."
+    },
+    {
+      "app": "member",
+      "path": "/events/notices/[slug]",
+      "pagePath": "app/(product)/events/notices/[slug]/page.tsx",
+      "classification": "UNKNOWN_FIXTURE_REQUIRED",
+      "basis": "Existing seeder retains pinnedNoticeTitle, not public pinned slug in returned bundle; exact owned publish/readback seam required. No guessed slug."
+    },
+    {
+      "app": "member",
+      "path": "/events",
+      "pagePath": "app/(product)/events/page.tsx",
+      "classification": "LISTED_RUNTIME_UNVERIFIED",
+      "basis": "Existing typography route declaration; no browser execution in this review."
+    },
+    {
+      "app": "member",
+      "path": "/home",
+      "pagePath": "app/(product)/home/page.tsx",
+      "classification": "LISTED_RUNTIME_UNVERIFIED",
+      "basis": "Existing typography route declaration; no browser execution in this review."
+    },
+    {
+      "app": "member",
+      "path": "/menu/account",
+      "pagePath": "app/(product)/menu/account/page.tsx",
+      "classification": "PRODUCT_READY_MARKER_MISSING",
+      "basis": "Existing createConfirmedMember/loginAsMember supported, but no exact route-owned data-ui-ready/state marker in page. Keep requireRouteBody fail-closed; parent product seam required."
+    },
+    {
+      "app": "member",
+      "path": "/menu/ai",
+      "pagePath": "app/(product)/menu/ai/page.tsx",
+      "classification": "PRODUCT_READY_MARKER_MISSING",
+      "basis": "Existing createConfirmedMember/loginAsMember supported, but no exact route-owned data-ui-ready/state marker in page. Keep requireRouteBody fail-closed; parent product seam required."
+    },
+    {
+      "app": "member",
+      "path": "/menu/notifications",
+      "pagePath": "app/(product)/menu/notifications/page.tsx",
+      "classification": "ADDITIVE_CASE_DECLARED_RUNTIME_UNVERIFIED",
+      "basis": "Public static document/offline, or existing local confirmed member / ADMIN AAL2 session. Terminal loaded/empty still required except explicit offline route."
+    },
+    {
+      "app": "member",
+      "path": "/menu",
+      "pagePath": "app/(product)/menu/page.tsx",
+      "classification": "LISTED_RUNTIME_UNVERIFIED",
+      "basis": "Existing typography route declaration; no browser execution in this review."
+    },
+    {
+      "app": "member",
+      "path": "/mining",
+      "pagePath": "app/(product)/mining/page.tsx",
+      "classification": "LISTED_RUNTIME_UNVERIFIED",
+      "basis": "Existing typography route declaration; no browser execution in this review."
+    },
+    {
+      "app": "member",
+      "path": "/notifications",
+      "pagePath": "app/(product)/notifications/page.tsx",
+      "classification": "LISTED_RUNTIME_UNVERIFIED",
+      "basis": "Existing typography route declaration; no browser execution in this review."
+    },
+    {
+      "app": "member",
+      "path": "/products/allocation",
+      "pagePath": "app/(product)/products/allocation/page.tsx",
+      "classification": "ADDITIVE_CASE_DECLARED_RUNTIME_UNVERIFIED",
+      "basis": "Public static document/offline, or existing local confirmed member / ADMIN AAL2 session. Terminal loaded/empty still required except explicit offline route."
+    },
+    {
+      "app": "member",
+      "path": "/products",
+      "pagePath": "app/(product)/products/page.tsx",
+      "classification": "ADDITIVE_CASE_DECLARED_RUNTIME_UNVERIFIED",
+      "basis": "Public static document/offline, or existing local confirmed member / ADMIN AAL2 session. Terminal loaded/empty still required except explicit offline route."
+    },
+    {
+      "app": "member",
+      "path": "/start",
+      "pagePath": "app/(product)/start/page.tsx",
+      "classification": "LISTED_RUNTIME_UNVERIFIED",
+      "basis": "Existing typography route declaration; no browser execution in this review."
+    },
+    {
+      "app": "member",
+      "path": "/wallet/deposit",
+      "pagePath": "app/(product)/wallet/deposit/page.tsx",
+      "classification": "LISTED_RUNTIME_UNVERIFIED",
+      "basis": "Existing typography route declaration; no browser execution in this review."
+    },
+    {
+      "app": "member",
+      "path": "/wallet",
+      "pagePath": "app/(product)/wallet/page.tsx",
+      "classification": "LISTED_RUNTIME_UNVERIFIED",
+      "basis": "Existing typography route declaration; no browser execution in this review."
+    },
+    {
+      "app": "member",
+      "path": "/wallet/withdraw",
+      "pagePath": "app/(product)/wallet/withdraw/page.tsx",
+      "classification": "LISTED_RUNTIME_UNVERIFIED",
+      "basis": "Existing typography route declaration; no browser execution in this review."
+    },
+    {
+      "app": "member",
+      "path": "/about",
+      "pagePath": "app/(trust)/[...document]/page.tsx",
+      "classification": "ADDITIVE_CASE_DECLARED_RUNTIME_UNVERIFIED",
+      "basis": "Public static document/offline, or existing local confirmed member / ADMIN AAL2 session. Terminal loaded/empty still required except explicit offline route."
+    },
+    {
+      "app": "member",
+      "path": "/how-it-works",
+      "pagePath": "app/(trust)/[...document]/page.tsx",
+      "classification": "ADDITIVE_CASE_DECLARED_RUNTIME_UNVERIFIED",
+      "basis": "Public static document/offline, or existing local confirmed member / ADMIN AAL2 session. Terminal loaded/empty still required except explicit offline route."
+    },
+    {
+      "app": "member",
+      "path": "/putduk-facts",
+      "pagePath": "app/(trust)/[...document]/page.tsx",
+      "classification": "ADDITIVE_CASE_DECLARED_RUNTIME_UNVERIFIED",
+      "basis": "Public static document/offline, or existing local confirmed member / ADMIN AAL2 session. Terminal loaded/empty still required except explicit offline route."
+    },
+    {
+      "app": "member",
+      "path": "/verification",
+      "pagePath": "app/(trust)/[...document]/page.tsx",
+      "classification": "LISTED_RUNTIME_UNVERIFIED",
+      "basis": "Existing typography route declaration; no browser execution in this review."
+    },
+    {
+      "app": "member",
+      "path": "/mining-rules",
+      "pagePath": "app/(trust)/[...document]/page.tsx",
+      "classification": "ADDITIVE_CASE_DECLARED_RUNTIME_UNVERIFIED",
+      "basis": "Public static document/offline, or existing local confirmed member / ADMIN AAL2 session. Terminal loaded/empty still required except explicit offline route."
+    },
+    {
+      "app": "member",
+      "path": "/trial",
+      "pagePath": "app/(trust)/[...document]/page.tsx",
+      "classification": "LISTED_RUNTIME_UNVERIFIED",
+      "basis": "Existing typography route declaration; no browser execution in this review."
+    },
+    {
+      "app": "member",
+      "path": "/economy",
+      "pagePath": "app/(trust)/[...document]/page.tsx",
+      "classification": "ADDITIVE_CASE_DECLARED_RUNTIME_UNVERIFIED",
+      "basis": "Public static document/offline, or existing local confirmed member / ADMIN AAL2 session. Terminal loaded/empty still required except explicit offline route."
+    },
+    {
+      "app": "member",
+      "path": "/deposit",
+      "pagePath": "app/(trust)/[...document]/page.tsx",
+      "classification": "ADDITIVE_CASE_DECLARED_RUNTIME_UNVERIFIED",
+      "basis": "Public static document/offline, or existing local confirmed member / ADMIN AAL2 session. Terminal loaded/empty still required except explicit offline route."
+    },
+    {
+      "app": "member",
+      "path": "/withdrawal",
+      "pagePath": "app/(trust)/[...document]/page.tsx",
+      "classification": "LISTED_RUNTIME_UNVERIFIED",
+      "basis": "Existing typography route declaration; no browser execution in this review."
+    },
+    {
+      "app": "member",
+      "path": "/faq",
+      "pagePath": "app/(trust)/[...document]/page.tsx",
+      "classification": "ADDITIVE_CASE_DECLARED_RUNTIME_UNVERIFIED",
+      "basis": "Public static document/offline, or existing local confirmed member / ADMIN AAL2 session. Terminal loaded/empty still required except explicit offline route."
+    },
+    {
+      "app": "member",
+      "path": "/status",
+      "pagePath": "app/(trust)/[...document]/page.tsx",
+      "classification": "LISTED_RUNTIME_UNVERIFIED",
+      "basis": "Existing typography route declaration; no browser execution in this review."
+    },
+    {
+      "app": "member",
+      "path": "/changelog",
+      "pagePath": "app/(trust)/[...document]/page.tsx",
+      "classification": "ADDITIVE_CASE_DECLARED_RUNTIME_UNVERIFIED",
+      "basis": "Public static document/offline, or existing local confirmed member / ADMIN AAL2 session. Terminal loaded/empty still required except explicit offline route."
+    },
+    {
+      "app": "member",
+      "path": "/ai/about",
+      "pagePath": "app/(trust)/[...document]/page.tsx",
+      "classification": "ADDITIVE_CASE_DECLARED_RUNTIME_UNVERIFIED",
+      "basis": "Public static document/offline, or existing local confirmed member / ADMIN AAL2 session. Terminal loaded/empty still required except explicit offline route."
+    },
+    {
+      "app": "member",
+      "path": "/ai/facts",
+      "pagePath": "app/(trust)/[...document]/page.tsx",
+      "classification": "ADDITIVE_CASE_DECLARED_RUNTIME_UNVERIFIED",
+      "basis": "Public static document/offline, or existing local confirmed member / ADMIN AAL2 session. Terminal loaded/empty still required except explicit offline route."
+    },
+    {
+      "app": "member",
+      "path": "/ai/faq",
+      "pagePath": "app/(trust)/[...document]/page.tsx",
+      "classification": "ADDITIVE_CASE_DECLARED_RUNTIME_UNVERIFIED",
+      "basis": "Public static document/offline, or existing local confirmed member / ADMIN AAL2 session. Terminal loaded/empty still required except explicit offline route."
+    },
+    {
+      "app": "member",
+      "path": "/ai/how-it-works",
+      "pagePath": "app/(trust)/[...document]/page.tsx",
+      "classification": "ADDITIVE_CASE_DECLARED_RUNTIME_UNVERIFIED",
+      "basis": "Public static document/offline, or existing local confirmed member / ADMIN AAL2 session. Terminal loaded/empty still required except explicit offline route."
+    },
+    {
+      "app": "member",
+      "path": "/auth/error",
+      "pagePath": "app/auth/error/page.tsx",
+      "classification": "LISTED_RUNTIME_UNVERIFIED",
+      "basis": "Existing typography route declaration; no browser execution in this review."
+    },
+    {
+      "app": "member",
+      "path": "/auth/forbidden",
+      "pagePath": "app/auth/forbidden/page.tsx",
+      "classification": "LISTED_RUNTIME_UNVERIFIED",
+      "basis": "Existing typography route declaration; no browser execution in this review."
+    },
+    {
+      "app": "member",
+      "path": "/auth/update-password",
+      "pagePath": "app/auth/update-password/page.tsx",
+      "classification": "UNKNOWN_FIXTURE_REQUIRED",
+      "basis": "Verified recovery authorization and genuine recovery-session fixture not located in current narrow scan; direct request redirects to /recover."
+    },
+    {
+      "app": "member",
+      "path": "/find-id",
+      "pagePath": "app/find-id/page.tsx",
+      "classification": "LISTED_RUNTIME_UNVERIFIED",
+      "basis": "Existing typography route declaration; no browser execution in this review."
+    },
+    {
+      "app": "member",
+      "path": "/login",
+      "pagePath": "app/login/page.tsx",
+      "classification": "LISTED_RUNTIME_UNVERIFIED",
+      "basis": "Existing typography route declaration; no browser execution in this review."
+    },
+    {
+      "app": "member",
+      "path": "/offline",
+      "pagePath": "app/offline/page.tsx",
+      "classification": "ADDITIVE_CASE_DECLARED_RUNTIME_UNVERIFIED",
+      "basis": "Public static document/offline, or existing local confirmed member / ADMIN AAL2 session. Terminal loaded/empty still required except explicit offline route."
+    },
+    {
+      "app": "member",
+      "path": "/",
+      "pagePath": "app/page.tsx",
+      "classification": "LISTED_RUNTIME_UNVERIFIED",
+      "basis": "Existing typography route declaration; no browser execution in this review."
+    },
+    {
+      "app": "member",
+      "path": "/recover",
+      "pagePath": "app/recover/page.tsx",
+      "classification": "LISTED_RUNTIME_UNVERIFIED",
+      "basis": "Existing typography route declaration; no browser execution in this review."
+    },
+    {
+      "app": "member",
+      "path": "/signup",
+      "pagePath": "app/signup/page.tsx",
+      "classification": "LISTED_RUNTIME_UNVERIFIED",
+      "basis": "Existing typography route declaration; no browser execution in this review."
+    },
+    {
+      "app": "member",
+      "path": "/support",
+      "pagePath": "app/support/page.tsx",
+      "classification": "ADDITIVE_CASE_DECLARED_RUNTIME_UNVERIFIED",
+      "basis": "Public static document/offline, or existing local confirmed member / ADMIN AAL2 session. Terminal loaded/empty still required except explicit offline route."
+    },
+    {
+      "app": "admin",
+      "path": "/ai-conversations",
+      "pagePath": "apps/admin/app/(control)/ai-conversations/page.tsx",
+      "classification": "UNKNOWN_FIXTURE_REQUIRED",
+      "basis": "Requires SUPER_ADMIN; existing typography grantAdminRole creates ADMIN only."
+    },
+    {
+      "app": "admin",
+      "path": "/assistant",
+      "pagePath": "apps/admin/app/(control)/assistant/page.tsx",
+      "classification": "LISTED_RUNTIME_UNVERIFIED",
+      "basis": "Existing typography route declaration; no browser execution in this review."
+    },
+    {
+      "app": "admin",
+      "path": "/catalog",
+      "pagePath": "apps/admin/app/(control)/catalog/page.tsx",
+      "classification": "ADDITIVE_CASE_DECLARED_RUNTIME_UNVERIFIED",
+      "basis": "Public static document/offline, or existing local confirmed member / ADMIN AAL2 session. Terminal loaded/empty still required except explicit offline route."
+    },
+    {
+      "app": "admin",
+      "path": "/content",
+      "pagePath": "apps/admin/app/(control)/content/page.tsx",
+      "classification": "ADDITIVE_CASE_DECLARED_RUNTIME_UNVERIFIED",
+      "basis": "Public static document/offline, or existing local confirmed member / ADMIN AAL2 session. Terminal loaded/empty still required except explicit offline route."
+    },
+    {
+      "app": "admin",
+      "path": "/deposits/krw/[id]",
+      "pagePath": "apps/admin/app/(control)/deposits/krw/[id]/page.tsx",
+      "classification": "UNKNOWN_FIXTURE_REQUIRED",
+      "basis": "Needs owned KRW request fixture ID and readiness marker mapping /deposits/krw/detail; no fake/404 route acceptance."
+    },
+    {
+      "app": "admin",
+      "path": "/deposits/krw",
+      "pagePath": "apps/admin/app/(control)/deposits/krw/page.tsx",
+      "classification": "ADDITIVE_CASE_DECLARED_RUNTIME_UNVERIFIED",
+      "basis": "Public static document/offline, or existing local confirmed member / ADMIN AAL2 session. Terminal loaded/empty still required except explicit offline route."
+    },
+    {
+      "app": "admin",
+      "path": "/deposits/usdt",
+      "pagePath": "apps/admin/app/(control)/deposits/usdt/page.tsx",
+      "classification": "LISTED_RUNTIME_UNVERIFIED",
+      "basis": "Existing typography route declaration; no browser execution in this review."
+    },
+    {
+      "app": "admin",
+      "path": "/economy",
+      "pagePath": "apps/admin/app/(control)/economy/page.tsx",
+      "classification": "ADDITIVE_CASE_DECLARED_RUNTIME_UNVERIFIED",
+      "basis": "Public static document/offline, or existing local confirmed member / ADMIN AAL2 session. Terminal loaded/empty still required except explicit offline route."
+    },
+    {
+      "app": "admin",
+      "path": "/exceptions",
+      "pagePath": "apps/admin/app/(control)/exceptions/page.tsx",
+      "classification": "LISTED_RUNTIME_UNVERIFIED",
+      "basis": "Existing typography route declaration; no browser execution in this review."
+    },
+    {
+      "app": "admin",
+      "path": "/kyc",
+      "pagePath": "apps/admin/app/(control)/kyc/page.tsx",
+      "classification": "LISTED_RUNTIME_UNVERIFIED",
+      "basis": "Existing typography route declaration; no browser execution in this review."
+    },
+    {
+      "app": "admin",
+      "path": "/members",
+      "pagePath": "apps/admin/app/(control)/members/page.tsx",
+      "classification": "LISTED_RUNTIME_UNVERIFIED",
+      "basis": "Existing typography route declaration; no browser execution in this review."
+    },
+    {
+      "app": "admin",
+      "path": "/",
+      "pagePath": "apps/admin/app/(control)/page.tsx",
+      "classification": "LISTED_RUNTIME_UNVERIFIED",
+      "basis": "Existing typography route declaration; no browser execution in this review."
+    },
+    {
+      "app": "admin",
+      "path": "/restrictions",
+      "pagePath": "apps/admin/app/(control)/restrictions/page.tsx",
+      "classification": "LISTED_RUNTIME_UNVERIFIED",
+      "basis": "Existing typography route declaration; no browser execution in this review."
+    },
+    {
+      "app": "admin",
+      "path": "/withdrawals/krw-bank",
+      "pagePath": "apps/admin/app/(control)/withdrawals/krw-bank/page.tsx",
+      "classification": "LISTED_RUNTIME_UNVERIFIED",
+      "basis": "Existing typography route declaration; no browser execution in this review."
+    },
+    {
+      "app": "admin",
+      "path": "/withdrawals/usdt",
+      "pagePath": "apps/admin/app/(control)/withdrawals/usdt/page.tsx",
+      "classification": "LISTED_RUNTIME_UNVERIFIED",
+      "basis": "Existing typography route declaration; no browser execution in this review."
+    },
+    {
+      "app": "admin",
+      "path": "/login",
+      "pagePath": "apps/admin/app/login/page.tsx",
+      "classification": "LISTED_RUNTIME_UNVERIFIED",
+      "basis": "Existing typography route declaration; no browser execution in this review."
+    },
+    {
+      "app": "admin",
+      "path": "/mfa",
+      "pagePath": "apps/admin/app/mfa/page.tsx",
+      "classification": "UNKNOWN_FIXTURE_REQUIRED",
+      "basis": "Requires intermediate authenticated MFA setup/challenge state; current completeAdminLoginWithTotp ends in control area."
+    },
+    {
+      "app": "admin",
+      "path": "/reauth",
+      "pagePath": "apps/admin/app/reauth/page.tsx",
+      "classification": "LISTED_RUNTIME_UNVERIFIED",
+      "basis": "Existing typography route declaration; no browser execution in this review."
+    },
+    {
+      "app": "admin",
+      "path": "/session-expired",
+      "pagePath": "apps/admin/app/session-expired/page.tsx",
+      "classification": "LISTED_RUNTIME_UNVERIFIED",
+      "basis": "Existing typography route declaration; no browser execution in this review."
+    },
+    {
+      "app": "admin",
+      "path": "/unauthorized",
+      "pagePath": "apps/admin/app/unauthorized/page.tsx",
+      "classification": "LISTED_RUNTIME_UNVERIFIED",
+      "basis": "Existing typography route declaration; no browser execution in this review."
+    }
+  ],
+  "approvedAdditionalCases": 42,
+  "unknownFixtureRoutes": 6,
+  "pendingProductReadinessMarkers": ["/menu/account", "/menu/ai"],
+  "newRouteProfiles": ["390-light", "390-dark"],
+  "newRouteUnverifiedProfiles": [
+    "320",
+    "360",
+    "375",
+    "430",
+    "768",
+    "1024",
+    "1440",
+    "200%",
+    "system"
+  ],
+  "duration": "UNMEASURED",
+  "cases": {
+    "public": 155,
+    "publicScreenshots": 138,
+    "protected": 149,
+    "protectedScreenshots": 147
+  },
+  "noConfigsBudgetsRetriesChanged": true,
+  "policyFixtureWidths": [320, 360, 375, 390, 430, 768, 1024, 1440],
+  "policyFixtureCases": 8,
+  "policyFixtureIsNotProductRouteAcceptance": true
+}

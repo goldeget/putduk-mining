@@ -8,6 +8,8 @@ import "server-only";
  * 원격 인증 제공자의 호출 제한은 이 모듈에서 완료로 보지 않는다.
  */
 export {
+  admitAdminAuthAttempt,
+  finishAdminAuthAttempt,
   hasAdminAuthServerProof,
   readAdminAuthFailureBudget,
   recordAdminAuthFailure,
