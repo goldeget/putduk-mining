@@ -5,8 +5,8 @@
 ## 작업 폴더와 경계
 
 - Cursor에서 열 폴더: C:\Users\PC\Desktop\putduk-mining\.worktrees\cloud-ui-20261012
-- 브랜치 codex/cloud-ui-recovery-20261012, HEAD 9efa9bdab491a11c5d64a2bb66dacf22393d4dc9
-- origin https://github.com/goldeget/putduk-mining.git. 마지막 확인에서 origin branch보다 7 commits 앞섰다. Push/PR/merge/배포는 하지 않는다.
+- 브랜치 codex/cloud-ui-recovery-20261012, HEAD **74e4d5d** (`docs(quality): sync launch tracking to 411be7eb`; trust **`411be7eb`**)
+- origin https://github.com/goldeget/putduk-mining.git. **2026-10-18:** origin `codex/cloud-ui-recovery-20261012` 대비 **ahead 16** · PR #76 remote head `0a29487`과 불일치. Push/merge/배포는 **production coupling** 승인 전 금지 (`GIT-CI-CD-POLICY.md`, checklist §2.2 B7).
 - 현재 로컬 변경 3개: app/page.tsx, lib/trust/public-content.ts, tests/unit/trust-content.test.ts. 미추적 .sites/ 및 docs/design/generated-masters/*proposed-20261017.png 5개도 보존한다.
 - 루트 AGENTS.md, apps/admin/AGENTS.md, CI/DoD, 제품·금융 계약을 먼저 다시 읽는다. **출시까지 추적:** `docs/quality/LAUNCH-READINESS-CHECKLIST-20261018.md` (기존 `RELEASE-READINESS-MATRIX.md`·`PRODUCT-COMPLETE-MATRIX.md`와 함께). 주 checkout과 다른 worktree는 수정하지 않는다.
 - 원격 Supabase/Cloudflare/DNS, 운영 트래픽, 유료 provider, 실계정·실지급, GitHub 쓰기는 별도 경계다. 이 인계는 새 권한을 주지 않는다.

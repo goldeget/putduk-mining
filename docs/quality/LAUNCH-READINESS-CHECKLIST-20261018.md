@@ -45,7 +45,7 @@ Canonical gates: `docs/quality/DEFINITION-OF-DONE.md`, `docs/product/V1-SCOPE-PR
 
 ### 2.1 Git · CI · 아티팩트
 
-- [ ] **P0** `git fsck --full` PASS, origin `https://github.com/goldeget/putduk-mining.git` 일치 — Owner: **Eng** — Evidence: `{local SHA}` / `OPEN` (worktree HEAD `411be7eb…`, origin `codex/cloud-ui-recovery-20261012` 대비 **+15** 미 push)
+- [ ] **P0** `git fsck --full` PASS, origin `https://github.com/goldeget/putduk-mining.git` 일치 — Owner: **Eng** — Evidence: `{local SHA}` / `OPEN` (worktree HEAD **`74e4d5d`**, origin 대비 **+16** 미 push; PR #76 head `0a29487`)
 - [ ] **P0** Release candidate가 remote branch에 있고 CI가 **동일 SHA** 검사 — Owner: **Eng** — Evidence: `OPEN`
 - [ ] **P0** Whole workflow wall clock **≤ 20분**, 필수 quality job 전부 success (12-shard authenticated + `e2e-app-build` + `ci-budget` 등) — Owner: **Eng** — Evidence: baseline `36975512027` / `9cfc2ef` (~16m); **current candidate OPEN**
 - [ ] **P0** Application gates: format, lint, typecheck, unit, member+admin production build — Owner: **Eng** — Evidence: **PARTIAL** — 2026-10-18 worktree `lint` + both builds + vitest 96 tests PASS; full `typecheck`/CI candidate **OPEN**
@@ -291,7 +291,7 @@ Contract: `docs/quality/WS-05-EXECUTION-CONTRACT.md`, `docs/development/E2E-AGEN
 | B4 | **Admin 20 mockup** — ZIP 직접 대응 없음; PROPOSED 기준 필요 | Product | **OPEN** |
 | B5 | **Full CI** on release SHA | Eng | **OPEN** |
 | B6 | **Remote Supabase / Cloudflare / DNS** | Ops | **OPEN** (freeze) |
-| B7 | **Production coupling UNKNOWN** → remote Git/deploy unsafe until classified | Ops | **OPEN** (Linear **PUT-11** PROD_APPROVAL; repo hooks **0**, environments **0**; auxiliary workflows `cloudflare-compatibility` / `staging-build` YAML 본 run 미검증) |
+| B7 | **Production coupling UNKNOWN** → remote Git/deploy unsafe until classified | Ops | **OPEN** (Linear **PUT-11**; hooks **0**, env **0**; **이 branch 워크플로는 `ci.yml`만 존재** — `cloudflare-compatibility` / `staging-build`는 develop/main·GitHub UI 등록 여부 **별도 Ops 분류** 필요) |
 
 ---
 
