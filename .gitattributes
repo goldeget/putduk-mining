@@ -17,3 +17,6 @@ supabase/migrations/20261006133100_principal_preparation_and_exact_interval.sql 
 
 # Frozen backend197 test inputs retain the exact reviewed SQL source bytes.
 tests/unit/fixtures/backend197-native-originals/*.source.txt -text whitespace=cr-at-eol
+
+# Backend201 manifest digest binds exact committed JSON bytes on Windows and CI.
+tests/e2e/fixtures/backend-successor-201-source.json -text
