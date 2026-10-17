@@ -521,6 +521,7 @@ export function buildIsolatedTestEnv(baseEnv, credentials, overrides = {}) {
     ...omitLiveProviders(baseEnv),
     ...overrides,
     APP_ENV: "test",
+    APP_TIMEZONE: "UTC",
     NEXT_PUBLIC_SUPABASE_URL: apiUrl,
     NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: credentials.publishableKey,
     SUPABASE_SECRET_KEY: credentials.secretKey,
@@ -818,7 +819,7 @@ function main() {
   );
   appendFileSync(process.env.GITHUB_ENV, payload);
   process.stdout.write(
-    "captured local supabase env keys: NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY, SUPABASE_SECRET_KEY, LOCAL_SUPABASE_DB_URL, LOCAL_SUPABASE_PROJECT_ID\n",
+    "captured local supabase env keys: APP_ENV, APP_TIMEZONE, NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY, SUPABASE_SECRET_KEY, LOCAL_SUPABASE_DB_URL, LOCAL_SUPABASE_PROJECT_ID\n",
   );
 }
 

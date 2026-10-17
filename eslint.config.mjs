@@ -10,6 +10,7 @@ export default defineConfig([
     "**/.next-qa-*/**",
     "**/.vite/**",
     ".sites-work/**",
+    ".sites/**",
     "**/.worktrees/**",
     "**/dist/**",
     "coverage/**",

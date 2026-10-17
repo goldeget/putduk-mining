@@ -40,8 +40,9 @@ export const PUBLIC_FACTS: readonly PublicFact[] = [
   },
   {
     key: "SUPPORTED_WORLDS",
-    value: "KOREA, USA, GOLD, SILVER, CRYPTO",
-    description: "현재 이용 가능한 5개의 채굴 월드입니다.",
+    value: "운영자 승인·게시된 카탈로그 기준",
+    description:
+      "이용 가능한 상품은 운영자가 승인·게시한 카탈로그에서 확인할 수 있어요. 외부 시세는 채굴 계산에 사용하지 않습니다.",
   },
   {
     key: "TRIAL_DURATION",

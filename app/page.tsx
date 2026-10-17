@@ -273,11 +273,11 @@ export default function HomePage() {
         aria-labelledby="worlds-title"
       >
         <div className="section-heading">
-          <p className="eyebrow">다섯 개의 상품 테마</p>
-          <h2 id="worlds-title">상품마다 다른 채굴 테마를 만나보세요.</h2>
+          <p className="eyebrow">채굴 월드 미리보기</p>
+          <h2 id="worlds-title">퍼뜩 채굴의 장면을 만나보세요.</h2>
           <p className="ko-copy">
-            한국, 미국, 금, 은, 디지털 자산 테마를 둘러보세요. 상품의 제공
-            여부와 이용 조건은 상품 안내에서 확인하세요.
+            아래 이미지는 채굴 테마를 보여주는 장면이에요. 이용 가능한 상품과
+            조건은 승인된 카탈로그에서 확인할 수 있어요.
           </p>
         </div>
         <div className="world-list" tabIndex={0} aria-label="채굴 월드 목록">
