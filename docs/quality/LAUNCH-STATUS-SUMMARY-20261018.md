@@ -1,8 +1,11 @@
 # 출시 상태 요약 — 2026-10-18 (local)
 
 Worktree: `C:\Users\PC\Desktop\putduk-mining\.worktrees\cloud-ui-20261012`  
-HEAD: `9efa9bdab491a11c5d64a2bb66dacf22393d4dc9` · origin 대비 **+14** (push/PR 미반영)  
+HEAD: `411be7eb86409187fe03150e1a684a2821cd3479` — `fix(trust): align landing copy with published catalog facts` (2026-10-18 local automation commit)  
+Origin `codex/cloud-ui-recovery-20261012` 대비 **ahead 15** · **push/PR #76 미반영**  
 **LAUNCH READY:** **아니오**
+
+**Working tree (의도적 제외):** `next-env.d.ts` (modified), `.sites/`, `docs/design/generated-masters/*proposed-20261017.png`, `docs/quality/_login-hydration-rerun/`, `_tmp-login-shot.png`
 
 ---
 
@@ -11,7 +14,7 @@ HEAD: `9efa9bdab491a11c5d64a2bb66dacf22393d4dc9` · origin 대비 **+14** (push/
 | 영역 | PRODUCT COMPLETE | OPEN / BLOCKED |
 | --- | --- | --- |
 | **63 routes** (26+17+20) | **0** — matrix 전 행 `NOT_RUN` 또는 PARTIAL만 | PUT-9 전체 수용 0 (`VISUAL-ACCEPTANCE-ROUTE-MATRIX-20261018.md`) |
-| **공개 26** | 없음 | 26×1440 캡처 **PARTIAL**; `/` 랜딩 카피 수정 **로컬 미커밋** |
+| **공개 26** | 없음 | 26×1440 캡처 **PARTIAL**; `/` 랜딩 카피 **`411be7eb` 커밋됨** (mockup JSON은 선행 캡처) |
 | **`/login`** | 없음 | **PUT-9 GAP** — 디자인 결정 **BLOCKED** (`LOGIN-MOCKUP-GAP-DECISION-20261018.md`) |
 | **`/signup`** | 없음 | UI 렌더 OK; **`/terms`·`/privacy` BLOCKED** → consent PRODUCT 불완전 |
 | **회원 17** | 없음 | LOCAL_QA·승인 test user 없음 → **NOT_RUN** |
@@ -37,6 +40,7 @@ HEAD: `9efa9bdab491a11c5d64a2bb66dacf22393d4dc9` · origin 대비 **+14** (push/
 | `pnpm build:admin` | **PASS** | `launch-verify-build-admin-20261018.log` |
 | Prettier (3 files + `eslint.config.mjs`) | **PASS** | — |
 | Vitest domain smoke (9 files, 84 tests) | **PASS** | `launch-verify-vitest-domain-smoke-20261018.log` |
+| Vitest trust + WS-04 spot (3 files, 30 tests) | **PASS** | 2026-10-18 재실행 (체크리스트 동기화 run) |
 | Cursor browser `127.0.0.1:3000` `/`, `/login`, `/signup` | **PASS** (렌더·200) | dev PID 기존 (`pnpm dev`) |
 | `pnpm test:e2e` (public/browser foundation) | **PASS** **82/82** | `LAUNCH-VERIFICATION-LOG-20261018.md` §10 · `launch-verify-e2e-public-20261018-ws05-rerun.log` |
 | WS-05 Supabase + env capture | **PASS** | `launch-verify-supabase-start-ws05-20261018-attempt8.log`, capture/with-key logs |

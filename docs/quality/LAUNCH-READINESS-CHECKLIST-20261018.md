@@ -45,7 +45,7 @@ Canonical gates: `docs/quality/DEFINITION-OF-DONE.md`, `docs/product/V1-SCOPE-PR
 
 ### 2.1 Git · CI · 아티팩트
 
-- [ ] **P0** `git fsck --full` PASS, origin `https://github.com/goldeget/putduk-mining.git` 일치 — Owner: **Eng** — Evidence: `{local SHA}` / `OPEN` (worktree HEAD `9efa9bd…`, origin 대비 +7 commits 미 push)
+- [ ] **P0** `git fsck --full` PASS, origin `https://github.com/goldeget/putduk-mining.git` 일치 — Owner: **Eng** — Evidence: `{local SHA}` / `OPEN` (worktree HEAD `411be7eb…`, origin `codex/cloud-ui-recovery-20261012` 대비 **+15** 미 push)
 - [ ] **P0** Release candidate가 remote branch에 있고 CI가 **동일 SHA** 검사 — Owner: **Eng** — Evidence: `OPEN`
 - [ ] **P0** Whole workflow wall clock **≤ 20분**, 필수 quality job 전부 success (12-shard authenticated + `e2e-app-build` + `ci-budget` 등) — Owner: **Eng** — Evidence: baseline `36975512027` / `9cfc2ef` (~16m); **current candidate OPEN**
 - [ ] **P0** Application gates: format, lint, typecheck, unit, member+admin production build — Owner: **Eng** — Evidence: **PARTIAL** — 2026-10-18 worktree `lint` + both builds + vitest 96 tests PASS; full `typecheck`/CI candidate **OPEN**
@@ -237,7 +237,7 @@ Contract: `docs/quality/WS-05-EXECUTION-CONTRACT.md`, `docs/development/E2E-AGEN
 | --- | --- | --- |
 | Application gates | Eng | OPEN on current worktree SHA |
 | Database security gates (+ concurrent SQL probes) | Eng | OPEN |
-| Browser foundation (`pnpm test:e2e`) | Eng | **LOCAL PASS** 82/82 on `9efa9bd` (2026-10-18 WS-05 §9.4 rerun; CI still OPEN) |
+| Browser foundation (`pnpm test:e2e`) | Eng | **LOCAL PASS** 82/82 on `411be7eb` lineage (2026-10-18 WS-05 §9.4 rerun; CI still OPEN) |
 | Korean typography public + protected | Eng | PARTIAL (historical develop) |
 | Authenticated product gates (12 shard, `E2E_NEXT_START=1`) | Eng | OPEN |
 | Worker runtime gates | Eng | OPEN |
@@ -248,7 +248,7 @@ Contract: `docs/quality/WS-05-EXECUTION-CONTRACT.md`, `docs/development/E2E-AGEN
 
 - [x] **P0** **Docker Desktop** engine ready (`\\.\pipe\dockerDesktopLinuxEngine`) — Owner: **Eng/Ops** — **PASS** (2026-10-18 WS-05 §9.1; Desktop auto-launch + poll)
 - [x] **P0** `supabase start` → `node scripts/capture-local-supabase-env.mjs` (+ ephemeral `WITHDRAWAL_DATA_KEY`) — Owner: **Eng/Ops** — **PASS** (2026-10-18 WS-05 §11; `supabase start --ignore-health-check`; API **63421**; capture + key via temp `GITHUB_ENV`)
-- [x] **P0** `pnpm test:e2e:auth:smoke` on worktree `9efa9bd` + `E2E_NEXT_START=1` — Owner: **Eng** — **PASS** (4/4; attempt **1/2**; `APP_TIMEZONE=UTC` + manual `pnpm start`/`start:admin`; log `launch-verify-e2e-smoke-ws05-20261018-attempt1.log`)
+- [x] **P0** `pnpm test:e2e:auth:smoke` on worktree `411be7eb` + `E2E_NEXT_START=1` — Owner: **Eng** — **PASS** (4/4; attempt **1/2**; `APP_TIMEZONE=UTC` + manual `pnpm start`/`start:admin`; log `launch-verify-e2e-smoke-ws05-20261018-attempt1.log`)
 - [x] **P0** Local `pnpm test:e2e` (browser foundation, no Supabase) — Owner: **Eng** — **PASS** 82/82 after killing stale `:3000` (`LAUNCH-VERIFICATION-LOG-20261018.md` §9.4)
 
 ### 6.3 Local execution layers (개발 루프)
@@ -291,7 +291,7 @@ Contract: `docs/quality/WS-05-EXECUTION-CONTRACT.md`, `docs/development/E2E-AGEN
 | B4 | **Admin 20 mockup** — ZIP 직접 대응 없음; PROPOSED 기준 필요 | Product | **OPEN** |
 | B5 | **Full CI** on release SHA | Eng | **OPEN** |
 | B6 | **Remote Supabase / Cloudflare / DNS** | Ops | **OPEN** (freeze) |
-| B7 | **Production coupling UNKNOWN** → remote Git/deploy unsafe until classified | Ops | **OPEN** |
+| B7 | **Production coupling UNKNOWN** → remote Git/deploy unsafe until classified | Ops | **OPEN** (Linear **PUT-11** PROD_APPROVAL; repo hooks **0**, environments **0**; auxiliary workflows `cloudflare-compatibility` / `staging-build` YAML 본 run 미검증) |
 
 ---
 
@@ -337,7 +337,7 @@ Legal (B2) ∥ UI (A) → LOCAL_QA (C) → DOMAIN PRODUCT (E) → Full CI (F) �
 | `/offline` hydration triage (not product defect) | Terms/privacy **BLOCKED** |
 | Vitest trust 12 + domain smoke **84** tests PASS | Member 17 / admin 20 PRODUCT QA |
 | `pnpm lint` + `build:web` + `build:admin` PASS (worktree) | Auth member/admin PRODUCT (matrix) |
-| Prettier: landing 3 files + `eslint.config.mjs` PASS | Push/PR/remote/deploy (+14 commits) |
+| Trust landing copy commit `411be7eb` + WS-04/trust vitest spot 30/30 (2026-10-18) | Push/PR/remote/deploy (+15 commits; PR #76 head `0a29487`) |
 | Cursor browser `/`, `/login`, `/signup` 200 (dev :3000) | Supabase/Cloudflare/DNS |
 | Isolated context + `caret:initial` capture script (D:) | Docker → `auth:smoke` **BLOCKED** |
 | `/login` hydration 콘솔 CLOSED (측정 도구; verification log §8) | `LAUNCH-STATUS-SUMMARY-20261018.md` 갱신 주기 |
