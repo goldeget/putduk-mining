@@ -45,12 +45,10 @@ export async function loginAsMember(
     await expect(account).toHaveAttribute("href", "/menu/account");
     const navigation =
       (page.viewportSize()?.width ?? 1280) >= 980
-        ? page
-            .locator(".product-sidebar:visible")
-            .getByRole("navigation", {
-              name: "상품 전체 메뉴",
-              exact: true,
-            })
+        ? page.locator(".product-sidebar:visible").getByRole("navigation", {
+            name: "상품 전체 메뉴",
+            exact: true,
+          })
         : page.getByRole("navigation", { name: "주요 메뉴", exact: true });
     await expect(navigation).toHaveCount(1);
     await expect(navigation).toBeVisible();
@@ -73,12 +71,10 @@ export async function loginAsMember(
     ).toBeVisible();
     const navigation =
       (page.viewportSize()?.width ?? 1280) >= 980
-        ? page
-            .locator(".product-sidebar:visible")
-            .getByRole("navigation", {
-              name: "채굴 전체 메뉴",
-              exact: true,
-            })
+        ? page.locator(".product-sidebar:visible").getByRole("navigation", {
+            name: "채굴 전체 메뉴",
+            exact: true,
+          })
         : page.getByRole("navigation", { name: "주요 메뉴", exact: true });
     await expect(
       navigation.getByRole("link", { name: "채굴", exact: true }),
