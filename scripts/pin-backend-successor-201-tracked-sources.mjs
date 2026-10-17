@@ -26,15 +26,7 @@ function indexSha256(path) {
   return digest(result.stdout);
 }
 
-function pinManifest(manifest) {
-  const paths = Object.keys(manifest.sourceHashes);
-  for (let i = 0; i < paths.length; i += 1) {
-    const path = paths[i];
-    manifest.sourceHashes[path] = indexSha256(path);
-    if ((i + 1) % 250 === 0) {
-      process.stderr.write(`pinned ${i + 1}/${paths.length}\n`);
-    }
-  }
+function syncManifestDerivedFields(manifest) {
   for (const row of manifest.nativeFiles) {
     row.sourceSha256 = manifest.sourceHashes[row.path];
   }
@@ -47,19 +39,57 @@ function pinManifest(manifest) {
   }
 }
 
-const manifest = JSON.parse(readFileSync(`${ROOT}/${MAP}`, "utf8"));
-pinManifest(manifest);
-writeFileSync(`${ROOT}/${MAP}`, `${JSON.stringify(manifest, null, 2)}\n`);
-
-const manifestSha256 = digest(readFileSync(`${ROOT}/${MAP}`));
-const guardSource = readFileSync(`${ROOT}/${GUARD}`, "utf8");
-const nextGuard = guardSource.replace(
-  /const MANIFEST_SHA256 =\n  "[0-9a-f]{64}";/,
-  `const MANIFEST_SHA256 =\n  "${manifestSha256}";`,
-);
-if (nextGuard === guardSource) {
-  throw new Error("BACKEND201_MANIFEST_PIN_LITERAL_NOT_UPDATED");
+function pinManifestPaths(manifest, paths) {
+  for (const path of paths) {
+    if (!(path in manifest.sourceHashes)) {
+      throw new Error(`BACKEND201_PATH_NOT_IN_ROSTER:${path}`);
+    }
+    manifest.sourceHashes[path] = indexSha256(path);
+  }
+  syncManifestDerivedFields(manifest);
 }
-writeFileSync(`${ROOT}/${GUARD}`, nextGuard);
 
-console.log("BACKEND201_MANIFEST_PINNED", manifestSha256);
+function finalizeGuard(manifestSha256) {
+  const guardSource = readFileSync(`${ROOT}/${GUARD}`, "utf8");
+  const nextGuard = guardSource.replace(
+    /const MANIFEST_SHA256 =\r?\n  "[0-9a-f]{64}";/,
+    `const MANIFEST_SHA256 =\n  "${manifestSha256}";`,
+  );
+  if (nextGuard === guardSource) {
+    if (guardSource.includes(`"${manifestSha256}"`)) return;
+    throw new Error("BACKEND201_MANIFEST_PIN_LITERAL_NOT_UPDATED");
+  }
+  writeFileSync(`${ROOT}/${GUARD}`, nextGuard);
+}
+
+function writeManifest(manifest) {
+  writeFileSync(`${ROOT}/${MAP}`, `${JSON.stringify(manifest, null, 2)}\n`);
+  return digest(readFileSync(`${ROOT}/${MAP}`));
+}
+
+const args = process.argv.slice(2);
+const finalizeOnly = args.includes("--finalize-only");
+const pathArgs = args
+  .filter((arg) => arg.startsWith("--path="))
+  .map((arg) => arg.slice("--path=".length));
+
+if (finalizeOnly && pathArgs.length) {
+  throw new Error("BACKEND201_FINALIZE_ONLY_CONFLICTS_WITH_PATH");
+}
+
+const manifest = JSON.parse(readFileSync(`${ROOT}/${MAP}`, "utf8"));
+
+if (finalizeOnly) {
+  finalizeGuard(digest(readFileSync(`${ROOT}/${MAP}`)));
+  console.log("BACKEND201_MANIFEST_FINALIZED", digest(readFileSync(`${ROOT}/${MAP}`)));
+} else if (pathArgs.length) {
+  pinManifestPaths(manifest, pathArgs);
+  finalizeGuard(writeManifest(manifest));
+  console.log("BACKEND201_PATHS_PINNED", pathArgs.length);
+} else if (args.length === 0) {
+  pinManifestPaths(manifest, Object.keys(manifest.sourceHashes));
+  finalizeGuard(writeManifest(manifest));
+  console.log("BACKEND201_MANIFEST_PINNED");
+} else {
+  throw new Error("BACKEND201_PIN_ARGS_UNRECOGNIZED");
+}

@@ -7,7 +7,7 @@ import { execFileSync } from "node:child_process";
 const ROOT = fileURLToPath(new URL("../", import.meta.url));
 const MAP = "tests/e2e/fixtures/backend-successor-201-source.json";
 const MANIFEST_SHA256 =
-  "682f740b09c2347962a5e6a613c4be0242cf76ed6f965030555faba85bf6c72c";
+  "aa4d9e8945d151349f7ebe0c627fecde1ce79066f681233b309d2842276323bb";
 const digest = (x) => createHash("sha256").update(x).digest("hex");
 const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 const need = (v, r) => {
