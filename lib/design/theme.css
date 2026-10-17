@@ -102,7 +102,7 @@
 
 html[data-theme="light"] {
   color-scheme: light;
-  --background-canvas: #f8f8f8;
+  --background-canvas: #f8f4ea;
   --background-subtle: #eff1f3;
   --background-elevated: #ffffff;
   --surface-default: #ffffff;
@@ -160,12 +160,13 @@ html[data-theme="light"] {
 
 html[data-theme="dark"] {
   color-scheme: dark;
+  --background-canvas: #070706;
 }
 
 @media (prefers-color-scheme: light) {
   :root:not([data-theme]) {
     color-scheme: light;
-    --background-canvas: #f8f8f8;
+    --background-canvas: #f8f4ea;
     --background-subtle: #eff1f3;
     --background-elevated: #ffffff;
     --surface-default: #ffffff;

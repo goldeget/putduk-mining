@@ -1,4 +1,4 @@
-﻿# 출시 상태 요약 — 2026-10-18 (local)
+# 출시 상태 요약 — 2026-10-18 (local)
 
 Worktree: `C:\Users\PC\Desktop\putduk-mining\.worktrees\cloud-ui-20261012`
 HEAD: `411be7eb86409187fe03150e1a684a2821cd3479` — `fix(trust): align landing copy with published catalog facts` (2026-10-18 local automation commit)
@@ -90,4 +90,3 @@ Origin `codex/cloud-ui-recovery-20261012` 대비 **ahead 15** · **push/PR #76 �
 ## 한 줄 판정
 
 로컬 **앱 빌드·린트·도메인 unit smoke·공개 3URL·WS-05 auth smoke**는 green이나, **PRODUCT COMPLETE 0 · LAUNCH READY 아님** — `/login` 디자인 BLOCKED, legal BLOCKED, 37+ PRODUCT QA NOT_RUN, full CI/remote OPEN.
-

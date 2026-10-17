@@ -1,4 +1,4 @@
-﻿# /login PUT-9 시각 GAP — 디자인 결정 대기 (2026-10-18)
+# /login PUT-9 시각 GAP — 디자인 결정 대기 (2026-10-18)
 
 Status: **BLOCKED** (Product 디자인 결정 전 구현 변경 금지)
 
@@ -89,4 +89,3 @@ Linear: [PUT-9](https://linear.app/putduk-mining/issue/PUT-9/full-visual-accepta
 | Hydration 콘솔 | 제품 결함 아님 — Playwright caret 계측 (`LAUNCH-VERIFICATION-LOG-20261018.md` §8) |
 
 **구현 착수:** §5 채워질 때까지 **STOP**.
-

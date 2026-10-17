@@ -1,4 +1,4 @@
-﻿# Launch verification log — 2026-10-18 (local)
+# Launch verification log — 2026-10-18 (local)
 
 Worktree: `C:\Users\PC\Desktop\putduk-mining\.worktrees\cloud-ui-20261012`
 Branch: `codex/cloud-ui-recovery-20261012`
@@ -348,4 +348,3 @@ pnpm test:e2e:auth:smoke
 | E2E automation §12 (full A+B slice) | **PASS** | §12 |
 
 _End of log._
-

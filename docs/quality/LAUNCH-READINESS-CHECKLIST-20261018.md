@@ -1,4 +1,4 @@
-﻿# PUTDUK MINING — 출시 준비 체크리스트 (2026-10-18)
+# PUTDUK MINING — 출시 준비 체크리스트 (2026-10-18)
 
 Status: **LAUNCH READINESS TRACKING** (출시 승인 문서 아님)
 
@@ -345,4 +345,3 @@ Legal (B2) ∥ UI (A) → LOCAL_QA (C) → DOMAIN PRODUCT (E) → Full CI (F) �
 ---
 
 *다음 갱신: exact candidate SHA, CI run ID, §7 BLOCKED 해소 시 evidence link를 채워 넣는다.*
-
