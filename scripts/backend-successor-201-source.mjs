@@ -1,4 +1,4 @@
-/** Exact current201 source admission; import performs no infrastructure/provider operation. */
+﻿/** Exact current201 source admission; import performs no infrastructure/provider operation. */
 import { createHash } from "node:crypto";
 import { readFileSync, lstatSync, realpathSync, readdirSync } from "node:fs";
 import { resolve, isAbsolute, relative } from "node:path";

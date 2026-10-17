@@ -81,7 +81,10 @@ const manifest = JSON.parse(readFileSync(`${ROOT}/${MAP}`, "utf8"));
 
 if (finalizeOnly) {
   finalizeGuard(digest(readFileSync(`${ROOT}/${MAP}`)));
-  console.log("BACKEND201_MANIFEST_FINALIZED", digest(readFileSync(`${ROOT}/${MAP}`)));
+  console.log(
+    "BACKEND201_MANIFEST_FINALIZED",
+    digest(readFileSync(`${ROOT}/${MAP}`)),
+  );
 } else if (pathArgs.length) {
   pinManifestPaths(manifest, pathArgs);
   finalizeGuard(writeManifest(manifest));
