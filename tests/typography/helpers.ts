@@ -611,7 +611,7 @@ export async function auditTypographyRoute(input: {
     ).toBeGreaterThan(0);
     expect(
       runtimeHealth.brandMarkers.every(
-        (marker) => marker.version === "2026.10.13-sprout-p-v1",
+        (marker) => marker.version === "2026.10.14-sprout-p-v2",
       ),
       `${input.routeName}: canonical brand versions agree`,
     ).toBe(true);

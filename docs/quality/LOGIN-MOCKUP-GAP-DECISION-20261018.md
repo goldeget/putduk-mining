@@ -1,9 +1,9 @@
-# /login PUT-9 시각 GAP — 디자인 결정 대기 (2026-10-18)
+﻿# /login PUT-9 시각 GAP — 디자인 결정 대기 (2026-10-18)
 
 Status: **BLOCKED** (Product 디자인 결정 전 구현 변경 금지)
 
-Worktree: `C:\Users\PC\Desktop\putduk-mining\.worktrees\cloud-ui-20261012`  
-Linear: [PUT-9](https://linear.app/putduk-mining/issue/PUT-9/full-visual-acceptance-mockup-truth-vs-browser) · [PUT-22](https://linear.app/putduk-mining/issue/PUT-22/cloud-codex-제품-uiux를-최종-기준으로-복구통합전체-수용)  
+Worktree: `C:\Users\PC\Desktop\putduk-mining\.worktrees\cloud-ui-20261012`
+Linear: [PUT-9](https://linear.app/putduk-mining/issue/PUT-9/full-visual-acceptance-mockup-truth-vs-browser) · [PUT-22](https://linear.app/putduk-mining/issue/PUT-22/cloud-codex-제품-uiux를-최종-기준으로-복구통합전체-수용)
 관련 증거: `VISUAL-ACCEPTANCE-ROUTE-MATRIX-20261018.md` (`/login` 행), `CURSOR_HANDOFF_20261017.md`, 목업 `D:\PUTDUK-MINING-QA\mockup-ui-audit-20261017-run-03\source-desktop\ChatGPT 이미지 2026년 10월 4일 오전 11_08_08-6.png`
 
 ---
@@ -18,7 +18,7 @@ Linear: [PUT-9](https://linear.app/putduk-mining/issue/PUT-9/full-visual-accepta
 | **소셜 로그인** | 목업에 애플 등 (미구현) | **미지원** — 아키텍처·계약상 유지 |
 | **폼 계약** | — | **유지:** 로그인 ID 또는 복구 이메일, 비밀번호, `find-id` / `recover` 링크 |
 
-**기능(Fn):** 로그인 API·RLS·폼 필드는 FOUNDATION/FUNCTIONAL PASS로 분류 (`LAUNCH-READINESS-CHECKLIST-20261018.md`).  
+**기능(Fn):** 로그인 API·RLS·폼 필드는 FOUNDATION/FUNCTIONAL PASS로 분류 (`LAUNCH-READINESS-CHECKLIST-20261018.md`).
 **제품(P):** PUT-9 전체 매트릭스(320/390/834, 상태 화면, a11y) 미충족 → **PRODUCT OPEN**.
 
 ---
@@ -89,3 +89,4 @@ Linear: [PUT-9](https://linear.app/putduk-mining/issue/PUT-9/full-visual-accepta
 | Hydration 콘솔 | 제품 결함 아님 — Playwright caret 계측 (`LAUNCH-VERIFICATION-LOG-20261018.md` §8) |
 
 **구현 착수:** §5 채워질 때까지 **STOP**.
+

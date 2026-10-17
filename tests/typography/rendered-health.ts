@@ -152,7 +152,7 @@ export async function readRenderedPresentationHealth(page: Page) {
       .filter(
         (element) =>
           !element.querySelector(
-            '[data-putduk-brand="canonical"][data-putduk-brand-version="2026.10.13-sprout-p-v1"]',
+            '[data-putduk-brand="canonical"][data-putduk-brand-version="2026.10.14-sprout-p-v2"]',
           ),
       )
       .map((element) => element.className);

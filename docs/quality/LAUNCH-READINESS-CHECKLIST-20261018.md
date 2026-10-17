@@ -1,9 +1,9 @@
-# PUTDUK MINING — 출시 준비 체크리스트 (2026-10-18)
+﻿# PUTDUK MINING — 출시 준비 체크리스트 (2026-10-18)
 
 Status: **LAUNCH READINESS TRACKING** (출시 승인 문서 아님)
 
-Worktree baseline: `C:\Users\PC\Desktop\putduk-mining\.worktrees\cloud-ui-20261012`  
-Handoff: `CURSOR_HANDOFF_20261017.md` (2026-10-18 갱신 항목 반영)  
+Worktree baseline: `C:\Users\PC\Desktop\putduk-mining\.worktrees\cloud-ui-20261012`
+Handoff: `CURSOR_HANDOFF_20261017.md` (2026-10-18 갱신 항목 반영)
 Canonical gates: `docs/quality/DEFINITION-OF-DONE.md`, `docs/product/V1-SCOPE-PRIORITIES.md`, `docs/development/GIT-CI-CD-POLICY.md`
 
 **판정 규칙:** 출시 = V1 범위 전체가 **PRODUCT COMPLETE**. 라우트·API·컴포넌트·단독 스크린샷·로컬 unit green은 출시로 치환할 수 없다.
@@ -82,7 +82,7 @@ Canonical gates: `docs/quality/DEFINITION-OF-DONE.md`, `docs/product/V1-SCOPE-PR
 
 **경로별 상세 표:** `VISUAL-ACCEPTANCE-ROUTE-MATRIX-20261018.md` (공개 26 PARTIAL · 회원·관리자 37 NOT_RUN · 시각 PASS 0). 아래는 출시 체크용 요약.
 
-열: **F** = FOUNDATION · **Fn** = FUNCTIONAL · **P** = PRODUCT  
+열: **F** = FOUNDATION · **Fn** = FUNCTIONAL · **P** = PRODUCT
 2026-10-18 handoff/matrix 기준 — PRODUCT 열은 **전부 OPEN** unless noted.
 
 증거 shorthand: `[QA-D]` = D: mockup run-03, `[E2E]` = authenticated spec, `[MX]` = PRODUCT-COMPLETE-MATRIX
@@ -309,7 +309,7 @@ Contract: `docs/quality/WS-05-EXECUTION-CONTRACT.md`, `docs/development/E2E-AGEN
 | H. Cloudflare staging + smoke | G (DB backward compatible) | DNS cutover approval | Ops |
 | I. Release evidence + monitoring + rollback drill | H partial | Production traffic | Ops |
 
-**직렬 critical path (요약):**  
+**직렬 critical path (요약):**
 Legal (B2) ∥ UI (A) → LOCAL_QA (C) → DOMAIN PRODUCT (E) → Full CI (F) → Coupling approval → Supabase (G) → Cloudflare/DNS (H) → Release packet (I).
 
 ---
@@ -345,3 +345,4 @@ Legal (B2) ∥ UI (A) → LOCAL_QA (C) → DOMAIN PRODUCT (E) → Full CI (F) �
 ---
 
 *다음 갱신: exact candidate SHA, CI run ID, §7 BLOCKED 해소 시 evidence link를 채워 넣는다.*
+
