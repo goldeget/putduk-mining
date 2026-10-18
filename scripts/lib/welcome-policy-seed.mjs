@@ -35,7 +35,8 @@ export function planWelcomePolicySeed(existing, approverId, now) {
   for (const destination of WELCOME_POLICY_DESTINATIONS) {
     const same = existing.filter((row) => row.destination_type === destination);
     if (same.some((row) => row.allows_welcome_reward === true)) continue;
-    const nextVersion = same.reduce((max, row) => Math.max(max, row.version), 0) + 1;
+    const nextVersion =
+      same.reduce((max, row) => Math.max(max, row.version), 0) + 1;
     rows.push({
       currency: "KRW",
       destination_type: destination,

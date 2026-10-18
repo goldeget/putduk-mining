@@ -42,7 +42,13 @@ describe("safe mode decision (same predicate as app_private.assert_not_safe_mode
       ).toBe("PAUSED");
       expect(
         decideSafeMode(
-          [{ component: "GLOBAL", is_paused: true, starts_at: NOW.toISOString() }],
+          [
+            {
+              component: "GLOBAL",
+              is_paused: true,
+              starts_at: NOW.toISOString(),
+            },
+          ],
           component,
           NOW,
         ),

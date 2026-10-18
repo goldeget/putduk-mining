@@ -6,8 +6,7 @@ import { readSafeModeDecision } from "./app-guard";
 import type { AppGuardedSafeModeComponent } from "./app-guard";
 
 export type ComponentActiveResult =
-  | { ok: true }
-  | { ok: false; reason: "PAUSED" | "UNAVAILABLE" };
+  { ok: true } | { ok: false; reason: "PAUSED" | "UNAVAILABLE" };
 
 /**
  * DB의 app_private.assert_not_safe_mode와 같은 조건으로 서버에서 확인한다.
@@ -30,5 +29,8 @@ export async function assertComponentActive(
     options.now ?? new Date(),
   );
   if (decision === "ACTIVE") return { ok: true };
-  return { ok: false, reason: decision === "PAUSED" ? "PAUSED" : "UNAVAILABLE" };
+  return {
+    ok: false,
+    reason: decision === "PAUSED" ? "PAUSED" : "UNAVAILABLE",
+  };
 }

@@ -121,7 +121,11 @@ describe("explicit local push runtime gate (network zero)", () => {
       client: {
         rpc,
         from: safeModeTable([
-          { component: "AI", is_paused: true, starts_at: "2026-01-01T00:00:00Z" },
+          {
+            component: "AI",
+            is_paused: true,
+            starts_at: "2026-01-01T00:00:00Z",
+          },
           {
             component: "NOTIFICATION",
             is_paused: true,

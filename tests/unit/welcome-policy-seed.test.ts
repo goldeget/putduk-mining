@@ -43,13 +43,19 @@ describe("welcome withdrawal policy seed plan", () => {
       ),
       "utf8",
     );
-    expect(seed).toContain("'welcome_cap_atomic', 5000, 'funding_required', false");
+    expect(seed).toContain(
+      "'welcome_cap_atomic', 5000, 'funding_required', false",
+    );
   });
 
   it("is idempotent for a rail that already has a welcome policy", () => {
     const rows = planWelcomePolicySeed(
       [
-        { destination_type: "KRW_BANK", version: 1, allows_welcome_reward: true },
+        {
+          destination_type: "KRW_BANK",
+          version: 1,
+          allows_welcome_reward: true,
+        },
         {
           destination_type: "USDT_ADDRESS",
           version: 1,
@@ -65,8 +71,16 @@ describe("welcome withdrawal policy seed plan", () => {
   it("uses the next version when only a general policy exists", () => {
     const rows = planWelcomePolicySeed(
       [
-        { destination_type: "KRW_BANK", version: 3, allows_welcome_reward: false },
-        { destination_type: "KRW_BANK", version: 2, allows_welcome_reward: false },
+        {
+          destination_type: "KRW_BANK",
+          version: 3,
+          allows_welcome_reward: false,
+        },
+        {
+          destination_type: "KRW_BANK",
+          version: 2,
+          allows_welcome_reward: false,
+        },
       ],
       APPROVER,
       NOW,
@@ -83,7 +97,9 @@ describe("welcome withdrawal policy seed plan", () => {
     expect(() => planWelcomePolicySeed(null as never, APPROVER, NOW)).toThrow(
       "POLICY_READ_INVALID",
     );
-    expect(() => planWelcomePolicySeed([], "", NOW)).toThrow("APPROVER_REQUIRED");
+    expect(() => planWelcomePolicySeed([], "", NOW)).toThrow(
+      "APPROVER_REQUIRED",
+    );
     expect(() =>
       planWelcomePolicySeed([], APPROVER, new Date("invalid")),
     ).toThrow("CLOCK_INVALID");

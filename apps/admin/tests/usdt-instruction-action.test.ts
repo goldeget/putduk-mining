@@ -195,13 +195,18 @@ describe("USDT 입금 주소 설정", () => {
     ["다른 행", row(TRON, { id: actorId })],
     ["다른 운영자", row(TRON, { set_by: requestId })],
     ["행 없음", null],
-  ])("저장 뒤 확인이 맞지 않으면 결과 미확인으로 남긴다: %s", async (_n, after) => {
-    client({ reads: [null, after] });
-    expect(await setUsdtDepositInstructionAction(null, form())).toMatchObject({
-      ok: false,
-      code: "UNCONFIRMED",
-    });
-  });
+  ])(
+    "저장 뒤 확인이 맞지 않으면 결과 미확인으로 남긴다: %s",
+    async (_n, after) => {
+      client({ reads: [null, after] });
+      expect(await setUsdtDepositInstructionAction(null, form())).toMatchObject(
+        {
+          ok: false,
+          code: "UNCONFIRMED",
+        },
+      );
+    },
+  );
 
   it("안전 모드로 입금이 멈춰 있으면 이유를 알려 준다", async () => {
     client({ reads: [null], rpcError: "SAFE_MODE_ACTIVE" });

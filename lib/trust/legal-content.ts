@@ -90,7 +90,9 @@ export const LEGAL_DOCUMENTS: readonly LegalDocument[] = [
       },
       {
         heading: "출금",
-        body: ["출금은 원화 잔액에서 해요. USDT 출금도 원화 잔액을 기준으로 해요."],
+        body: [
+          "출금은 원화 잔액에서 해요. USDT 출금도 원화 잔액을 기준으로 해요.",
+        ],
         items: [
           "출금 전에 본인 확인이 필요해요.",
           "새 출금 계좌나 주소는 확인 절차를 거쳐요.",

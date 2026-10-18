@@ -111,7 +111,11 @@ async function main() {
     .from("withdrawal_policies")
     .insert(rows)
     .select("id,destination_type,version,allows_welcome_reward,fee_atomic");
-  if (inserted.error || !inserted.data || inserted.data.length !== rows.length) {
+  if (
+    inserted.error ||
+    !inserted.data ||
+    inserted.data.length !== rows.length
+  ) {
     throw new Error(
       "Policy insert did not return every row. Check withdrawal_policies before retrying.",
     );

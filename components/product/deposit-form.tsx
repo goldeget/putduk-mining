@@ -151,9 +151,7 @@ export function DepositForm({
           data-krw-instruction="missing"
         >
           <PutdukIcon name="shield" size={19} />
-          <p>
-            입금 계좌를 준비하고 있어요. 계좌가 보이면 그때 이체해 주세요.
-          </p>
+          <p>입금 계좌를 준비하고 있어요. 계좌가 보이면 그때 이체해 주세요.</p>
         </div>
       )}
 
