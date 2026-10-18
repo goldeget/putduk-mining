@@ -120,7 +120,9 @@ export function WalletSidebar({ displayName }: { displayName: string }) {
             <li key={item.href}>
               <Link
                 href={item.href}
-                {...(item.href === "/wallet" ? { prefetch: false as const } : {})}
+                {...(item.href === "/wallet"
+                  ? { prefetch: false as const }
+                  : {})}
                 aria-current={item.href === "/wallet" ? "page" : undefined}
               >
                 {item.icon === "account" ? (
