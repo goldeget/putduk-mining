@@ -62,7 +62,13 @@ const TIMING_HINTS = {
   "member-product-scene.spec.ts": 25,
   "menu-product.spec.ts": 47,
   "mining-product.spec.ts": 16,
-  "mockup-reference-coverage.spec.ts": 720,
+  "mockup-reference-ai.spec.ts": 160,
+  "mockup-reference-coverage.spec.ts": 400,
+  "mockup-reference-menu.spec.ts": 120,
+  "mockup-reference-mining.spec.ts": 150,
+  "mockup-reference-products.spec.ts": 80,
+  "mockup-reference-public.spec.ts": 120,
+  "mockup-reference-wallet.spec.ts": 150,
   "notifications-product.spec.ts": 24,
   "operator-fixture-isolation.spec.ts": 2,
   "principal-withdrawal-product.spec.ts": 446,
@@ -84,7 +90,7 @@ const TIMING_HINTS = {
   "withdrawal-product.spec.ts": 47,
 };
 const CONFIG = "playwright.backend-browser-201.config.ts";
-const TOTAL = 14;
+const TOTAL = 16;
 const compare = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
 
 export function inventoryFromReport(report, cwd = process.cwd()) {
@@ -274,9 +280,9 @@ export function testListFor(shard, rootDir, cwd = process.cwd()) {
 
 export function parseAuthenticatedShardChoice(choice) {
   if (choice === "--verify-only") return null;
-  if (typeof choice !== "string" || !/^(?:[1-9]|1[0-4])\/14$/.test(choice)) {
+  if (typeof choice !== "string" || !/^(?:[1-9]|1[0-6])\/16$/.test(choice)) {
     throw new Error(
-      "Usage: node scripts/ci-authenticated-shards-201.mjs --verify-only | 1/14 ... 14/14",
+      "Usage: node scripts/ci-authenticated-shards-201.mjs --verify-only | 1/16 ... 16/16",
     );
   }
   return Number(choice.split("/")[0]) - 1;
@@ -286,7 +292,7 @@ async function main() {
   const choice = process.argv[2];
   if (process.argv.length !== 3) {
     throw new Error(
-      "Usage: node scripts/ci-authenticated-shards-201.mjs --verify-only | 1/14 ... 14/14",
+      "Usage: node scripts/ci-authenticated-shards-201.mjs --verify-only | 1/16 ... 16/16",
     );
   }
   const selectedIndex = parseAuthenticatedShardChoice(choice);

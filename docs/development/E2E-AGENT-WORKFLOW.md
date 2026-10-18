@@ -44,7 +44,7 @@ Cursor 규칙: `.cursor/rules/putduk-e2e-agent-verification.mdc` (`alwaysApply: 
 
 **필수 기준:** 전체 CI 실행 **≤ 20분**. 최초 실행의 `created_at`부터 workflow 종료까지 대기·공유 빌드·후속 job·증거 저장을 모두 포함한다. 가장 느린 단일 job 시간으로 대신하지 않는다. Cursor rule: `.cursor/rules/putduk-ci-wall-clock.mdc`.
 
-`CI completeness and 20-minute budget`이 병렬로 시작해 현재 시도에서 필수 품질 job 23개를 확인한다. 18분 30초에도 남은 검사가 있으면 종료 여유를 확보하기 위해 취소하고 실패로 기록한다. 일반 취소가 응답하지 않으면 force cancel한다. 최종 workflow 종료 시간도 별도로 확인한다. 전체 재실행은 해당 시도의 시작부터 측정하고, 일부 실패 job만 재실행해 이전 시도의 성공을 합치는 방식은 완료 증거로 인정하지 않는다.
+`CI completeness and 20-minute budget`이 병렬로 시작해 현재 시도에서 필수 품질 job 25개를 확인한다. 18분 30초에도 남은 검사가 있으면 종료 여유를 확보하기 위해 취소하고 실패로 기록한다. 일반 취소가 응답하지 않으면 force cancel한다. 최종 workflow 종료 시간도 별도로 확인한다. 전체 재실행은 해당 시도의 시작부터 측정하고, 일부 실패 job만 재실행해 이전 시도의 성공을 합치는 방식은 완료 증거로 인정하지 않는다.
 
 네 Playwright CI 계층은 `--fail-on-flaky-tests`를 적용한다. retry는 원인 조사에 사용하지만 첫 실패 후 retry 성공은 CI 통과로 인정하지 않는다. 실제 TOTP·권한·DB 결과 검사는 유지한다.
 
@@ -52,18 +52,18 @@ Cursor 규칙: `.cursor/rules/putduk-e2e-agent-verification.mdc` (`alwaysApply: 
 
 1. `e2e-app-build`에서 **1회** `pnpm build` (회원 + `apps/admin`). `Application gates`의 일반 build 검증과 구분한다.
 2. artifact `e2e-next-production`: `.next`, `apps/admin/.next` (repo 상대 경로).
-3. 소비 job: **authenticated** 14-shard matrix, **typography-protected** (병렬 가능).
+3. 소비 job: **authenticated** 16-shard matrix, **typography-protected** (병렬 가능).
 
 ### authenticated shard
 
-- PR CI는 현재 후보의 전체 authenticated inventory를 **14개 matrix job**으로 병렬 실행한다 (`Authenticated product gates (1/14)` … `(14/14)`). `scripts/ci-authenticated-shards-201.mjs`가 각 파일·브라우저 조합을 통째로 배분하며 새 파일도 빠짐없이 수집한다. PR #71 head `402f186`의 검증 inventory는 196건이었다. 이 숫자는 이후 후보의 고정 합격 기준이 아니다.
+- PR CI는 현재 후보의 전체 authenticated inventory를 **16개 matrix job**으로 병렬 실행한다 (`Authenticated product gates (1/16)` … `(16/16)`). `scripts/ci-authenticated-shards-201.mjs`가 각 파일·브라우저 조합을 통째로 배분하며 새 파일도 빠짐없이 수집한다. PR #71 head `402f186`의 검증 inventory는 196건이었다. 이 숫자는 이후 후보의 고정 합격 기준이 아니다.
 - `needs: [webserver-lifecycle, e2e-app-build]` — shard마다 isolated `supabase start` + `db:reset`은 유지한다.
 - Playwright 전 **artifact download**; step env **`E2E_NEXT_START=1`** → `playwright.authenticated.config.ts`는 **next start only** (CI `next dev` 금지).
-- branch protection / required checks는 예전 단일 job 이름 `Authenticated product gates` 대신 **위 열네 job을 모두** 등록해야 한다.
-- shard 합집합은 로컬 `pnpm test:e2e:auth:full` 과 동일하다. Application job은 `node scripts/ci-authenticated-shards-201.mjs --verify-only`, 각 lane은 `node scripts/ci-authenticated-shards-201.mjs i/14`을 실행한다. 전체·선택 목록과 실제 실행의 test identity를 비교해 누락·중복·예상 밖 test를 거절한다. 시간 추정치는 배치에만 사용한다.
+- branch protection / required checks는 예전 단일 job 이름 `Authenticated product gates` 대신 **위 열여섯 job을 모두** 등록해야 한다.
+- shard 합집합은 로컬 `pnpm test:e2e:auth:full` 과 동일하다. Application job은 `node scripts/ci-authenticated-shards-201.mjs --verify-only`, 각 lane은 `node scripts/ci-authenticated-shards-201.mjs i/16`을 실행한다. 전체·선택 목록과 실제 실행의 test identity를 비교해 누락·중복·예상 밖 test를 거절한다. 시간 추정치는 배치에만 사용한다.
 - Playwright browser cache는 `actions/cache@v5`, key `~/.cache/ms-playwright` (workflow `ci.yml`).
 - authenticated config의 기본 CI reporter는 `line`이다. scheduler는 목록을 JSON으로 수집하고 실제 실행에 `line,json`을 사용한 뒤 `playwright-report/ci-shard-evidence/`에 민감한 원문을 제외한 plan·coverage·execution 증거를 저장한다. 실행 시작 시 비워지는 `test-results`와 경로를 분리한다. `github` reporter는 사용하지 않는다. slow 상한은 `reportSlowTests: { max: 5, threshold: 480_000 }` 이며 `exactOptionalPropertyTypes` 때문에 `undefined`를 넘기지 않고 CI일 때만 spread로 병합한다 (`9cfc2ef`).
-- shard job 한도는 **19분**, 실행 step 한도는 **18분**이며 전체 감시기는 대기·빌드 시간을 포함한 더 이른 마감도 적용한다. 실제 TOTP 대기, 개별 테스트 시간, assertion, retry는 유지한다. 시간 초과·취소는 실패이며 일부 검사를 통과로 바꿀 수 없다. 속도는 prebuilt + next start + 14-way 병렬 실행으로 확보한다.
+- shard job 한도는 **19분**, 실행 step 한도는 **18분**이며 전체 감시기는 대기·빌드 시간을 포함한 더 이른 마감도 적용한다. 실제 TOTP 대기, 개별 테스트 시간, assertion, retry는 유지한다. 시간 초과·취소는 실패이며 일부 검사를 통과로 바꿀 수 없다. 속도는 prebuilt + next start + 16-way 병렬 실행으로 확보한다.
 
 ### worker와 후보 출처 증거
 
@@ -80,7 +80,7 @@ Cursor 규칙: `.cursor/rules/putduk-e2e-agent-verification.mdc` (`alwaysApply: 
 ### job 의존 (요약)
 
 ```text
-e2e-app-build ─┬─► authenticated (×14, needs webserver-lifecycle)
+e2e-app-build ─┬─► authenticated (×16, needs webserver-lifecycle)
                └─► typography-protected
 (parallel) application, database, browser, worker, typography-public, …
 (parallel) ci-budget ─► 전체 job 완료·시간 판정 / 미완료 시 취소
@@ -157,7 +157,7 @@ R10 run38472778218의 모바일 상품 배정 단일 검사는 360초 한도로 
 분리한 네 spec은 각각 7너비×1테마×4글자배율의 28상태를 검사한다.
 48+112=기존 160상태이며, 모든 스크롤 캡처·최소 금액 글자 크기·기하·장면
 검증을 유지한다. 256은 이전 후보의 inventory이지 고정 합격 숫자가 아니다.
-새 독립 검사가 추가되면 새 inventory와 14개 lane의 합집합·중복 없음·실행 결과를
+새 독립 검사가 추가되면 새 inventory와 16개 lane의 합집합·중복 없음·실행 결과를
 다시 확인한다. 반복 준비 비용과 각 단위의 실제 시간은 새 후보에서 측정한다.
 아직 완료된 시간 관측이 없는 새 단위와 core는 배치용 추정치 360초를 사용한다.
 이는 기존 단일 검사 시간 한도를 변경하지 않으며 실제 실행 시간 증거가 아니다.

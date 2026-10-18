@@ -45,7 +45,7 @@ describe("whole-workflow CI acceptance", () => {
     const result = evaluateCiJobs(run, completed(), start + 960_000);
     expect(result.accepted).toBe(true);
     expect(result.elapsedMs).toBe(960_000);
-    expect(CI_REQUIRED_JOBS).toHaveLength(23);
+    expect(CI_REQUIRED_JOBS).toHaveLength(25);
   });
 
   it("rejects a green attempt that finishes over 20 minutes", () => {
@@ -144,7 +144,7 @@ describe("whole-workflow CI acceptance", () => {
 
   it("reserves cancellation time before the absolute deadline", () => {
     const jobs = completed().map((job) =>
-      job.name === "Authenticated product gates (14/14)"
+      job.name === "Authenticated product gates (16/16)"
         ? { ...job, status: "in_progress", conclusion: null }
         : job,
     );
@@ -227,7 +227,7 @@ describe("whole-workflow CI acceptance", () => {
         identity,
         report: () => {},
         request: async (path: string) =>
-          path.includes("/jobs?") ? { jobs: [], total_count: 24 } : run,
+          path.includes("/jobs?") ? { jobs: [], total_count: 26 } : run,
       }),
     ).rejects.toThrow(/incomplete/);
   });
@@ -272,7 +272,7 @@ describe("whole-workflow CI acceptance", () => {
           if (++reads === 1) throw new DOMException("fixture", "TimeoutError");
           return run;
         }
-        return { jobs: completed(), total_count: 24 };
+        return { jobs: completed(), total_count: 26 };
       },
     });
     expect(result.accepted).toBe(true);
@@ -369,7 +369,7 @@ describe("whole-workflow CI acceptance", () => {
             mutations.push(path);
             return null;
           }
-          if (path.includes("/jobs?")) return { jobs, total_count: 24 };
+          if (path.includes("/jobs?")) return { jobs, total_count: 26 };
           return ++runReads === 4 ? { ...run, run_attempt: 2 } : run;
         },
       }),
@@ -415,7 +415,7 @@ describe("whole-workflow CI acceptance", () => {
             mutations.push(path);
             return null;
           }
-          if (path.includes("/jobs?")) return { jobs, total_count: 24 };
+          if (path.includes("/jobs?")) return { jobs, total_count: 26 };
           return {
             ...run,
             status: ++runReads === 4 ? "completed" : "in_progress",
@@ -463,7 +463,7 @@ describe("whole-workflow CI acceptance", () => {
             cancelled = true;
             throw new DOMException("fixture", "TimeoutError");
           }
-          if (path.includes("/jobs?")) return { jobs, total_count: 24 };
+          if (path.includes("/jobs?")) return { jobs, total_count: 26 };
           return { ...run, status: cancelled ? "completed" : "in_progress" };
         },
       }),
@@ -490,7 +490,7 @@ describe("whole-workflow CI acceptance", () => {
   });
 });
 
-describe("fourteen isolated authenticated CI lanes", () => {
+describe("sixteen isolated authenticated CI lanes", () => {
   const inventory: AuthenticatedTestEvidence[] = Array.from(
     { length: 48 },
     (_, index) => ({
@@ -503,17 +503,17 @@ describe("fourteen isolated authenticated CI lanes", () => {
     }),
   );
 
-  it("requires all fourteen exact lane names and twenty-three quality jobs", () => {
+  it("requires all sixteen exact lane names and twenty-five quality jobs", () => {
     const auth = CI_REQUIRED_JOBS.filter((name) =>
       name.startsWith("Authenticated product gates"),
     );
     expect(auth).toEqual(
       Array.from(
-        { length: 14 },
-        (_, index) => `Authenticated product gates (${index + 1}/14)`,
+        { length: 16 },
+        (_, index) => `Authenticated product gates (${index + 1}/16)`,
       ),
     );
-    expect(CI_REQUIRED_JOBS).toHaveLength(23);
+    expect(CI_REQUIRED_JOBS).toHaveLength(25);
     for (const name of auth) {
       const result = evaluateCiJobs(
         run,
@@ -525,10 +525,10 @@ describe("fourteen isolated authenticated CI lanes", () => {
     }
   });
 
-  it("selects the whole lane index including ten through fourteen", () => {
+  it("selects the whole lane index including ten through sixteen", () => {
     expect(parseAuthenticatedShardChoice("--verify-only")).toBeNull();
-    for (let index = 1; index <= 14; index += 1) {
-      expect(parseAuthenticatedShardChoice(`${index}/14`)).toBe(index - 1);
+    for (let index = 1; index <= 16; index += 1) {
+      expect(parseAuthenticatedShardChoice(`${index}/16`)).toBe(index - 1);
     }
   });
 
@@ -538,32 +538,32 @@ describe("fourteen isolated authenticated CI lanes", () => {
       null,
       10,
       "",
-      "0/14",
-      "15/14",
-      "01/14",
-      "1/12",
-      "12/12",
+      "0/16",
+      "17/16",
+      "01/16",
+      "1/14",
+      "14/14",
       "10/8",
       "1/8",
-      "10/014",
-      "10/14x",
-      "10.0/14",
-      "-1/14",
+      "10/016",
+      "10/16x",
+      "10.0/16",
+      "-1/16",
       "--verify-only ",
     ]) {
       expect(() => parseAuthenticatedShardChoice(choice)).toThrow(/Usage:/);
     }
   });
 
-  it("keeps every test and project-file group in one of fourteen disjoint lanes", () => {
+  it("keeps every test and project-file group in one of sixteen disjoint lanes", () => {
     const shards = balanceInventory(inventory) as Array<{
       index: number;
       tests: AuthenticatedTestEvidence[];
       groups: Array<{ project: string; file: string }>;
     }>;
-    expect(shards).toHaveLength(14);
+    expect(shards).toHaveLength(16);
     expect(shards.map((shard) => shard.index)).toEqual(
-      Array.from({ length: 14 }, (_, index) => index + 1),
+      Array.from({ length: 16 }, (_, index) => index + 1),
     );
     expect(shards.every((shard) => shard.tests.length > 0)).toBe(true);
     const union = shards.flatMap((shard) => shard.tests);
@@ -596,7 +596,7 @@ describe("fourteen isolated authenticated CI lanes", () => {
     expect(() => balanceInventory([...inventory, inventory[0]!])).toThrow(
       /coverage mismatch/,
     );
-    for (const total of [0, 15, 1.5, Number.NaN]) {
+    for (const total of [0, 17, 1.5, Number.NaN]) {
       expect(() => balanceInventory(inventory, total)).toThrow(
         /Invalid authenticated shard plan/,
       );

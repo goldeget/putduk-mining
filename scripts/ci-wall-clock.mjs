@@ -19,8 +19,8 @@ export const CI_REQUIRED_JOBS = Object.freeze([
   "Korean typography public gates",
   "Korean typography protected gates",
   ...Array.from(
-    { length: 14 },
-    (_, index) => `Authenticated product gates (${index + 1}/14)`,
+    { length: 16 },
+    (_, index) => `Authenticated product gates (${index + 1}/16)`,
   ),
 ]);
 
