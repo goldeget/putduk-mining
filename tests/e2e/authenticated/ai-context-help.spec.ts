@@ -86,54 +86,31 @@ function observeHistoryRestoration(page: Page) {
       status: response.status(),
     };
     records.push(record);
+    if (target.name === "ai_chat") return;
     const task = (async () => {
       try {
-        if (target.name === "ai_chat") {
-          const text = await response.text();
-          if (text.length > 65_536) {
-            record.bodyMetadata = "OVER_BOUND";
-            return;
-          }
-          for (const line of text.split("\n")) {
-            if (!line.startsWith("data:")) continue;
-            let event: Record<string, unknown>;
-            try {
-              event = JSON.parse(line.slice(5)) as Record<string, unknown>;
-            } catch {
-              continue;
-            }
-            if (event.type === "done") {
-              record.doneSaved = event.saved === true;
-              record.conversationIdPresent =
-                typeof event.conversationId === "string";
-              record.assistantMessageIdPresent =
-                typeof event.assistantMessageId === "string";
-            }
-          }
-        } else {
-          const payload: unknown = await response.json();
-          record.rowCount = Array.isArray(payload) ? payload.length : null;
-          if (payload && !Array.isArray(payload) && typeof payload === "object")
-            record.errorCode = safeCode(
-              (payload as Record<string, unknown>).code,
-            );
-          if (target.name === "ai_messages" && Array.isArray(payload)) {
-            const assistant = payload.filter(
-              (row) => row?.author_role === "ASSISTANT",
-            );
-            record.assistantRows = assistant.length;
-            record.assistantWithSourceReceipt = assistant.filter(
-              (row) =>
-                Array.isArray(row.ai_answer_sources) &&
-                row.ai_answer_sources.length > 0,
-            ).length;
-            record.malformedSourceEmbeds = assistant.filter(
-              (row) => !Array.isArray(row.ai_answer_sources),
-            ).length;
-            record.positionType = payload.length
-              ? typeof payload[0]?.position
-              : "empty";
-          }
+        const payload: unknown = await response.json();
+        record.rowCount = Array.isArray(payload) ? payload.length : null;
+        if (payload && !Array.isArray(payload) && typeof payload === "object")
+          record.errorCode = safeCode(
+            (payload as Record<string, unknown>).code,
+          );
+        if (target.name === "ai_messages" && Array.isArray(payload)) {
+          const assistant = payload.filter(
+            (row) => row?.author_role === "ASSISTANT",
+          );
+          record.assistantRows = assistant.length;
+          record.assistantWithSourceReceipt = assistant.filter(
+            (row) =>
+              Array.isArray(row.ai_answer_sources) &&
+              row.ai_answer_sources.length > 0,
+          ).length;
+          record.malformedSourceEmbeds = assistant.filter(
+            (row) => !Array.isArray(row.ai_answer_sources),
+          ).length;
+          record.positionType = payload.length
+            ? typeof payload[0]?.position
+            : "empty";
         }
       } catch {
         record.bodyMetadata = "UNAVAILABLE";

@@ -3180,7 +3180,7 @@
     "tests/e2e/authenticated/admin-v7-operator-ux.spec.ts": "5323576362c4fe079d823b728fbcb3243c84fff45c8826019075bd6f3299ffc0",
     "tests/e2e/authenticated/admin-withdrawal-step-up.spec.ts": "2a596f9c9a6fd20ab0444924c4238bbd0a56a2f8a22edcf099dddd6d96b5db43",
     "tests/e2e/authenticated/admin-withdrawals-product.spec.ts": "4a4324f128bf32e942fcc1ffda71ab7fbcc8b6593fe2f42a5c842f76fea878d0",
-    "tests/e2e/authenticated/ai-context-help.spec.ts": "8e76c2ff91762273efc37b5e9fb52c94985ac4001226b4120f3e6ca30267e8ac",
+    "tests/e2e/authenticated/ai-context-help.spec.ts": "d61d9b748932061035ed5534b7bca3cc8e8abdf64a15858fc0585d9e686aeea9",
     "tests/e2e/authenticated/ai-product.spec.ts": "b96aa5823bbdf23342572bb8d3d2072bc1196eb8a5183b40d6c66af1cb528d19",
     "tests/e2e/authenticated/catalog-allocated-home-dark-wide.spec.ts": "8a7570e18db5abb26b5006fc1843c2f059bd34b5c78ff88b59406cb6df0ed91e",
     "tests/e2e/authenticated/catalog-allocated-home-dark.spec.ts": "5a021cc2fb844dd3cb65332b5e21ac3e4909c3a2a1146a68af46a6dd515eeb64",
