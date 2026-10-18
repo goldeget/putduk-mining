@@ -160,6 +160,7 @@
   .miningSidebar {
     height: 100dvh;
     min-height: 0;
+    container: mining-sidebar / inline-size;
     overflow: auto;
     padding: 1.15rem 1.05rem;
     border-color: var(--border-subtle);
@@ -168,9 +169,14 @@
   }
 
   .miningSidebar > :global(.brand-lockup) {
+    display: grid;
+    width: 100%;
+    max-width: 100%;
+    grid-template-columns: auto minmax(0, 1fr);
     gap: 0.6rem;
     min-height: 62px;
     padding: 0 0.2rem;
+    white-space: normal;
   }
 
   .miningSidebar > :global(.brand-lockup) > svg {
@@ -181,17 +187,23 @@
   }
 
   .miningSidebar > :global(.brand-lockup) > span {
+    display: grid;
     min-width: 0;
+    gap: 0.08em;
   }
 
   .miningSidebar > :global(.brand-lockup) strong,
   .miningSidebar > :global(.brand-lockup) small {
+    display: block;
+    min-width: 0;
+    max-width: 100%;
     color: var(--brand-primary);
-    font-size: 1rem;
+    font-size: min(1rem, 5.2cqi);
     font-weight: 700;
-    line-height: 1.15;
+    line-height: 1.2;
     letter-spacing: 0;
     overflow-wrap: anywhere;
+    word-break: keep-all;
   }
 
   .miningSideNavigation {

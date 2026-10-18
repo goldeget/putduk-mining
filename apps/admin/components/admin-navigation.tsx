@@ -27,6 +27,10 @@ function scrollNavToTop(nav: HTMLElement | null) {
 }
 
 function scrollNavLinkIntoView(nav: HTMLElement, link: HTMLElement) {
+  if (!nav.contains(link)) {
+    link.scrollIntoView?.({ block: "nearest", inline: "nearest" });
+    return;
+  }
   const navRect = nav.getBoundingClientRect();
   const linkRect = link.getBoundingClientRect();
   if (linkRect.top < navRect.top - 1) {
@@ -34,6 +38,8 @@ function scrollNavLinkIntoView(nav: HTMLElement, link: HTMLElement) {
   } else if (linkRect.bottom > navRect.bottom + 1) {
     nav.scrollTop += linkRect.bottom - navRect.bottom;
   }
+  const maxScroll = Math.max(0, nav.scrollHeight - nav.clientHeight);
+  nav.scrollTop = Math.min(maxScroll, Math.max(0, nav.scrollTop));
 }
 
 export function AdminNavigation({ onNavigate }: { onNavigate?: () => void }) {
@@ -48,6 +54,30 @@ export function AdminNavigation({ onNavigate }: { onNavigate?: () => void }) {
     const resetScroll = () => scrollNavToTop(navRef.current);
     window.addEventListener("resize", resetScroll);
     return () => window.removeEventListener("resize", resetScroll);
+  }, []);
+
+  useEffect(() => {
+    const nav = navRef.current;
+    const root = nav?.ownerDocument?.documentElement;
+    if (!nav || !root) return;
+    const syncScroll = () => scrollNavToTop(nav);
+    const observer = new ResizeObserver(syncScroll);
+    observer.observe(nav);
+    observer.observe(root);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const nav = navRef.current;
+    if (!nav) return;
+    const onFocusIn = (event: FocusEvent) => {
+      const target = event.target;
+      if (target instanceof HTMLElement && nav.contains(target)) {
+        scrollNavLinkIntoView(nav, target);
+      }
+    };
+    nav.addEventListener("focusin", onFocusIn);
+    return () => nav.removeEventListener("focusin", onFocusIn);
   }, []);
 
   return (
