@@ -78,9 +78,14 @@ function finalizeGuard(manifestSha256) {
   writeFileSync(`${ROOT}/${GUARD}`, nextGuard);
 }
 
+function manifestBytes(manifest) {
+  return Buffer.from(`${JSON.stringify(manifest, null, 2)}\n`, "utf8");
+}
+
 function writeManifest(manifest) {
-  writeFileSync(`${ROOT}/${MAP}`, `${JSON.stringify(manifest, null, 2)}\n`);
-  return digest(readFileSync(`${ROOT}/${MAP}`));
+  const bytes = manifestBytes(manifest);
+  writeFileSync(`${ROOT}/${MAP}`, bytes);
+  return digest(bytes);
 }
 
 const args = process.argv.slice(2);
@@ -101,11 +106,13 @@ if (finalizeOnly) {
   console.log("BACKEND201_MANIFEST_FINALIZED", manifestSha256);
 } else if (pathArgs.length) {
   pinManifestPaths(manifest, pathArgs);
-  finalizeGuard(writeManifest(manifest));
-  console.log("BACKEND201_PATHS_PINNED", pathArgs.length);
+  const manifestSha256 = writeManifest(manifest);
+  finalizeGuard(manifestSha256);
+  console.log("BACKEND201_PATHS_PINNED", pathArgs.length, manifestSha256);
 } else if (args.length === 0) {
   pinManifestPaths(manifest, Object.keys(manifest.sourceHashes));
-  finalizeGuard(writeManifest(manifest));
+  const manifestSha256 = writeManifest(manifest);
+  finalizeGuard(manifestSha256);
   console.log("BACKEND201_MANIFEST_PINNED");
 } else {
   throw new Error("BACKEND201_PIN_ARGS_UNRECOGNIZED");
