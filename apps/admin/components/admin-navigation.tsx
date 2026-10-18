@@ -26,6 +26,16 @@ function scrollNavToTop(nav: HTMLElement | null) {
   nav?.scrollTo?.(0, 0);
 }
 
+function scrollNavLinkIntoView(nav: HTMLElement, link: HTMLElement) {
+  const navRect = nav.getBoundingClientRect();
+  const linkRect = link.getBoundingClientRect();
+  if (linkRect.top < navRect.top - 1) {
+    nav.scrollTop -= navRect.top - linkRect.top;
+  } else if (linkRect.bottom > navRect.bottom + 1) {
+    nav.scrollTop += linkRect.bottom - navRect.bottom;
+  }
+}
+
 export function AdminNavigation({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
   const navRef = useRef<HTMLElement>(null);
@@ -52,7 +62,13 @@ export function AdminNavigation({ onNavigate }: { onNavigate?: () => void }) {
             key={item.href}
             aria-current={current ? "page" : undefined}
             onFocus={(event) => {
-              event.currentTarget.scrollIntoView?.({
+              const nav = navRef.current;
+              const link = event.currentTarget;
+              if (nav) {
+                scrollNavLinkIntoView(nav, link);
+                return;
+              }
+              link.scrollIntoView?.({
                 block: "nearest",
                 inline: "nearest",
               });

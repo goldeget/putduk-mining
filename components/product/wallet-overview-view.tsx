@@ -102,6 +102,7 @@ function BrandMark() {
 /** Presentation consumes the existing owner-bound, integer financial read model. */
 export function WalletOverviewView({
   initialView = "principal",
+  routeUiState = "loaded",
   balanceState,
   funding,
   krw,
@@ -146,6 +147,8 @@ export function WalletOverviewView({
   return (
     <div
       className={styles.page}
+      data-ui-ready="/wallet"
+      data-ui-state={routeUiState}
       data-wallet-presentation="wallet-overview-scene"
       data-wallet-active-view={activeView}
     >

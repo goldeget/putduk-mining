@@ -35,6 +35,7 @@ export function MenuHeader({ displayName }: { displayName: string }) {
           <Link
             key={item.href}
             href={item.href}
+            {...(item.href === "/wallet" ? { prefetch: false as const } : {})}
             aria-current={item.href === "/menu" ? "page" : undefined}
           >
             <PutdukHomeIcon name={item.icon} metallic={false} size={24} />
@@ -71,6 +72,7 @@ export function MenuSidebar() {
           <Link
             key={item.href}
             href={item.href}
+            {...(item.href === "/wallet" ? { prefetch: false as const } : {})}
             className={item.href === "/menu" ? "is-active" : undefined}
             aria-current={item.href === "/menu" ? "page" : undefined}
           >

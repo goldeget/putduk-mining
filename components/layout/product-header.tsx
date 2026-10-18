@@ -101,6 +101,7 @@ export function ProductHeader({
             <Link
               key={item.href}
               href={item.href}
+              {...(item.href === "/wallet" ? { prefetch: false as const } : {})}
               aria-current={item.href === "/home" ? "page" : undefined}
             >
               {item.icon === "ai" ? (

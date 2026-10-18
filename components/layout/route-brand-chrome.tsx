@@ -123,6 +123,7 @@ export function RouteBrandSidebar({
           <Link
             key={item.href}
             href={item.href}
+            {...(item.href === "/wallet" ? { prefetch: false as const } : {})}
             className={
               isActive(item, view, activeHref) ? "is-active" : undefined
             }

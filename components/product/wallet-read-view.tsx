@@ -109,8 +109,11 @@ function WalletIcon({
 
 export type WalletFundingPanel = { state: "error" } | WalletFundingView;
 
+export type WalletRouteUiState = "loaded" | "partial";
+
 export type WalletReadViewProps = {
   initialView?: "principal" | "profit" | "history";
+  routeUiState?: WalletRouteUiState;
   balanceState: WalletReadState;
   funding: WalletFundingPanel;
   krw: KrwWalletProjection | null;

@@ -581,10 +581,15 @@ export default async function MiningPage() {
       <Link className={styles.guideBanner} href="/how-it-works">
         <span className={styles.guideHeading}>
           <PutdukIcon name="shield" size={25} />
-          <strong>채굴과 지갑 안내</strong>
+          <strong className={styles.guideTitle}>
+            <span className={styles.guideTitleLine}>채굴과 지갑</span>
+            <span className={styles.guideTitleLine}>안내</span>
+          </strong>
           <PutdukIcon name="arrow-right" size={20} />
         </span>
-        <small>확정 금액과 확인 전 금액의 차이를 알아보세요.</small>
+        <small className={styles.guideDetail}>
+          확정 금액과 확인 전 금액의 차이를 알아보세요.
+        </small>
       </Link>
 
       <details className={styles.details} id="putduk-mining-details">
