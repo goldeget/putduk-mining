@@ -45,7 +45,7 @@ describe("whole-workflow CI acceptance", () => {
     const result = evaluateCiJobs(run, completed(), start + 960_000);
     expect(result.accepted).toBe(true);
     expect(result.elapsedMs).toBe(960_000);
-    expect(CI_REQUIRED_JOBS).toHaveLength(21);
+    expect(CI_REQUIRED_JOBS).toHaveLength(23);
   });
 
   it("rejects a green attempt that finishes over 20 minutes", () => {
@@ -144,7 +144,7 @@ describe("whole-workflow CI acceptance", () => {
 
   it("reserves cancellation time before the absolute deadline", () => {
     const jobs = completed().map((job) =>
-      job.name === "Authenticated product gates (12/12)"
+      job.name === "Authenticated product gates (14/14)"
         ? { ...job, status: "in_progress", conclusion: null }
         : job,
     );
@@ -227,7 +227,7 @@ describe("whole-workflow CI acceptance", () => {
         identity,
         report: () => {},
         request: async (path: string) =>
-          path.includes("/jobs?") ? { jobs: [], total_count: 22 } : run,
+          path.includes("/jobs?") ? { jobs: [], total_count: 24 } : run,
       }),
     ).rejects.toThrow(/incomplete/);
   });
@@ -272,7 +272,7 @@ describe("whole-workflow CI acceptance", () => {
           if (++reads === 1) throw new DOMException("fixture", "TimeoutError");
           return run;
         }
-        return { jobs: completed(), total_count: 22 };
+        return { jobs: completed(), total_count: 24 };
       },
     });
     expect(result.accepted).toBe(true);
@@ -369,7 +369,7 @@ describe("whole-workflow CI acceptance", () => {
             mutations.push(path);
             return null;
           }
-          if (path.includes("/jobs?")) return { jobs, total_count: 22 };
+          if (path.includes("/jobs?")) return { jobs, total_count: 24 };
           return ++runReads === 4 ? { ...run, run_attempt: 2 } : run;
         },
       }),
@@ -415,7 +415,7 @@ describe("whole-workflow CI acceptance", () => {
             mutations.push(path);
             return null;
           }
-          if (path.includes("/jobs?")) return { jobs, total_count: 22 };
+          if (path.includes("/jobs?")) return { jobs, total_count: 24 };
           return {
             ...run,
             status: ++runReads === 4 ? "completed" : "in_progress",
@@ -463,7 +463,7 @@ describe("whole-workflow CI acceptance", () => {
             cancelled = true;
             throw new DOMException("fixture", "TimeoutError");
           }
-          if (path.includes("/jobs?")) return { jobs, total_count: 22 };
+          if (path.includes("/jobs?")) return { jobs, total_count: 24 };
           return { ...run, status: cancelled ? "completed" : "in_progress" };
         },
       }),
@@ -490,7 +490,7 @@ describe("whole-workflow CI acceptance", () => {
   });
 });
 
-describe("twelve isolated authenticated CI lanes", () => {
+describe("fourteen isolated authenticated CI lanes", () => {
   const inventory: AuthenticatedTestEvidence[] = Array.from(
     { length: 48 },
     (_, index) => ({
@@ -503,17 +503,17 @@ describe("twelve isolated authenticated CI lanes", () => {
     }),
   );
 
-  it("requires all twelve exact lane names and twenty-one quality jobs", () => {
+  it("requires all fourteen exact lane names and twenty-three quality jobs", () => {
     const auth = CI_REQUIRED_JOBS.filter((name) =>
       name.startsWith("Authenticated product gates"),
     );
     expect(auth).toEqual(
       Array.from(
-        { length: 12 },
-        (_, index) => `Authenticated product gates (${index + 1}/12)`,
+        { length: 14 },
+        (_, index) => `Authenticated product gates (${index + 1}/14)`,
       ),
     );
-    expect(CI_REQUIRED_JOBS).toHaveLength(21);
+    expect(CI_REQUIRED_JOBS).toHaveLength(23);
     for (const name of auth) {
       const result = evaluateCiJobs(
         run,
@@ -525,10 +525,10 @@ describe("twelve isolated authenticated CI lanes", () => {
     }
   });
 
-  it("selects the whole lane index including ten, eleven and twelve", () => {
+  it("selects the whole lane index including ten through fourteen", () => {
     expect(parseAuthenticatedShardChoice("--verify-only")).toBeNull();
-    for (let index = 1; index <= 12; index += 1) {
-      expect(parseAuthenticatedShardChoice(`${index}/12`)).toBe(index - 1);
+    for (let index = 1; index <= 14; index += 1) {
+      expect(parseAuthenticatedShardChoice(`${index}/14`)).toBe(index - 1);
     }
   });
 
@@ -538,30 +538,32 @@ describe("twelve isolated authenticated CI lanes", () => {
       null,
       10,
       "",
-      "0/12",
-      "13/12",
-      "01/12",
+      "0/14",
+      "15/14",
+      "01/14",
+      "1/12",
+      "12/12",
       "10/8",
       "1/8",
-      "10/012",
-      "10/12x",
-      "10.0/12",
-      "-1/12",
+      "10/014",
+      "10/14x",
+      "10.0/14",
+      "-1/14",
       "--verify-only ",
     ]) {
       expect(() => parseAuthenticatedShardChoice(choice)).toThrow(/Usage:/);
     }
   });
 
-  it("keeps every test and project-file group in one of twelve disjoint lanes", () => {
+  it("keeps every test and project-file group in one of fourteen disjoint lanes", () => {
     const shards = balanceInventory(inventory) as Array<{
       index: number;
       tests: AuthenticatedTestEvidence[];
       groups: Array<{ project: string; file: string }>;
     }>;
-    expect(shards).toHaveLength(12);
+    expect(shards).toHaveLength(14);
     expect(shards.map((shard) => shard.index)).toEqual(
-      Array.from({ length: 12 }, (_, index) => index + 1),
+      Array.from({ length: 14 }, (_, index) => index + 1),
     );
     expect(shards.every((shard) => shard.tests.length > 0)).toBe(true);
     const union = shards.flatMap((shard) => shard.tests);
@@ -594,7 +596,7 @@ describe("twelve isolated authenticated CI lanes", () => {
     expect(() => balanceInventory([...inventory, inventory[0]!])).toThrow(
       /coverage mismatch/,
     );
-    for (const total of [0, 13, 1.5, Number.NaN]) {
+    for (const total of [0, 15, 1.5, Number.NaN]) {
       expect(() => balanceInventory(inventory, total)).toThrow(
         /Invalid authenticated shard plan/,
       );

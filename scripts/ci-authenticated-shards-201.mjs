@@ -22,6 +22,11 @@ import { assertBackend201BrowserCanonicalSources } from "./backend-successor-201
 // their unchanged 360-second test ceiling for placement only, including repeated
 // real AAL2/publication setup; stage telemetry must replace these estimates.
 // This does not change any deadline or establish the whole-run 20-minute gate.
+// Run 39127210925 measured about 9519s of browser time across 12 lanes.
+// Lanes that cleared the 18m30s cutoff finished near 743s. Fourteen lanes
+// place that work near 714s. The mockup file hint is a partial lower bound
+// from that run: the public family took 97s and the member family consumed
+// its full 360s ceiling while still on /ai, with sibling tests unstarted.
 const TIMING_HINTS = {
   "admin-assistant-context.spec.ts": 10,
   "admin-assistant-read-draft.spec.ts": 23,
@@ -57,7 +62,7 @@ const TIMING_HINTS = {
   "member-product-scene.spec.ts": 25,
   "menu-product.spec.ts": 47,
   "mining-product.spec.ts": 16,
-  "mockup-reference-coverage.spec.ts": 359,
+  "mockup-reference-coverage.spec.ts": 720,
   "notifications-product.spec.ts": 24,
   "operator-fixture-isolation.spec.ts": 2,
   "principal-withdrawal-product.spec.ts": 446,
@@ -79,7 +84,7 @@ const TIMING_HINTS = {
   "withdrawal-product.spec.ts": 47,
 };
 const CONFIG = "playwright.backend-browser-201.config.ts";
-const TOTAL = 12;
+const TOTAL = 14;
 const compare = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
 
 export function inventoryFromReport(report, cwd = process.cwd()) {
@@ -269,9 +274,9 @@ export function testListFor(shard, rootDir, cwd = process.cwd()) {
 
 export function parseAuthenticatedShardChoice(choice) {
   if (choice === "--verify-only") return null;
-  if (typeof choice !== "string" || !/^(?:[1-9]|1[0-2])\/12$/.test(choice)) {
+  if (typeof choice !== "string" || !/^(?:[1-9]|1[0-4])\/14$/.test(choice)) {
     throw new Error(
-      "Usage: node scripts/ci-authenticated-shards-201.mjs --verify-only | 1/12 ... 12/12",
+      "Usage: node scripts/ci-authenticated-shards-201.mjs --verify-only | 1/14 ... 14/14",
     );
   }
   return Number(choice.split("/")[0]) - 1;
@@ -281,7 +286,7 @@ async function main() {
   const choice = process.argv[2];
   if (process.argv.length !== 3) {
     throw new Error(
-      "Usage: node scripts/ci-authenticated-shards-201.mjs --verify-only | 1/12 ... 12/12",
+      "Usage: node scripts/ci-authenticated-shards-201.mjs --verify-only | 1/14 ... 14/14",
     );
   }
   const selectedIndex = parseAuthenticatedShardChoice(choice);
