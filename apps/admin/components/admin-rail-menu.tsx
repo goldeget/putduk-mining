@@ -21,7 +21,9 @@ export function AdminRailMenu({
     setOpen(false);
     if (open) toggle.current?.focus();
     document
-      .querySelector<HTMLElement>('.control-rail nav[aria-label="운영자 주 메뉴"]')
+      .querySelector<HTMLElement>(
+        '.control-rail nav[aria-label="운영자 주 메뉴"]',
+      )
       ?.scrollTo(0, 0);
   }
 
