@@ -50,14 +50,14 @@ const TIMING_HINTS = {
   "catalog-allocated-home-light.spec.ts": 360,
   "catalog-allocated-wallet-dark.spec.ts": 360,
   "catalog-allocated-wallet-light.spec.ts": 360,
-  "catalog-materials.spec.ts": 204,
+  "catalog-materials.spec.ts": 320,
   "deposit-product.spec.ts": 57,
   "events-product.spec.ts": 23,
   "first-krw-withdrawal.spec.ts": 14,
   "first-usdt-withdrawal.spec.ts": 13,
-  "funded-home-typography.spec.ts": 117,
-  "home-catalog-materials.spec.ts": 389,
-  "home-start-product.spec.ts": 190,
+  "funded-home-typography.spec.ts": 180,
+  "home-catalog-materials.spec.ts": 660,
+  "home-start-product.spec.ts": 250,
   "home-typography.spec.ts": 125,
   "member-product-scene.spec.ts": 25,
   "menu-product.spec.ts": 47,
@@ -71,7 +71,7 @@ const TIMING_HINTS = {
   "mockup-reference-wallet.spec.ts": 150,
   "notifications-product.spec.ts": 24,
   "operator-fixture-isolation.spec.ts": 2,
-  "principal-withdrawal-product.spec.ts": 446,
+  "principal-withdrawal-product.spec.ts": 620,
   "products-catalog.spec.ts": 9,
   "public-admin-boundary.spec.ts": 1,
   "signup-reconstruction.spec.ts": 4,
@@ -90,7 +90,7 @@ const TIMING_HINTS = {
   "withdrawal-product.spec.ts": 47,
 };
 const CONFIG = "playwright.backend-browser-201.config.ts";
-const TOTAL = 16;
+const TOTAL = 18;
 const compare = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
 
 export function inventoryFromReport(report, cwd = process.cwd()) {
@@ -280,9 +280,9 @@ export function testListFor(shard, rootDir, cwd = process.cwd()) {
 
 export function parseAuthenticatedShardChoice(choice) {
   if (choice === "--verify-only") return null;
-  if (typeof choice !== "string" || !/^(?:[1-9]|1[0-6])\/16$/.test(choice)) {
+  if (typeof choice !== "string" || !/^(?:[1-9]|1[0-8])\/18$/.test(choice)) {
     throw new Error(
-      "Usage: node scripts/ci-authenticated-shards-201.mjs --verify-only | 1/16 ... 16/16",
+      "Usage: node scripts/ci-authenticated-shards-201.mjs --verify-only | 1/18 ... 18/18",
     );
   }
   return Number(choice.split("/")[0]) - 1;
@@ -292,7 +292,7 @@ async function main() {
   const choice = process.argv[2];
   if (process.argv.length !== 3) {
     throw new Error(
-      "Usage: node scripts/ci-authenticated-shards-201.mjs --verify-only | 1/16 ... 16/16",
+      "Usage: node scripts/ci-authenticated-shards-201.mjs --verify-only | 1/18 ... 18/18",
     );
   }
   const selectedIndex = parseAuthenticatedShardChoice(choice);

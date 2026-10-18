@@ -458,14 +458,14 @@ jobs:
             apps/admin/.next
 
   authenticated:
-    name: Authenticated product gates (${{ matrix.shard }}/16)
+    name: Authenticated product gates (${{ matrix.shard }}/18)
     runs-on: ubuntu-24.04
     timeout-minutes: 19
     needs: [webserver-lifecycle, e2e-app-build]
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+        shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
     steps:
       - name: Check out source
         uses: actions/checkout@v7
@@ -564,7 +564,7 @@ jobs:
           CI_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
           APP_ENV: test
           PUTDUK_BACKEND_SOURCE_REVISION: "201"
-        run: node scripts/ci-authenticated-shards-201.mjs ${{ matrix.shard }}/16
+        run: node scripts/ci-authenticated-shards-201.mjs ${{ matrix.shard }}/18
 
       - name: Preserve authenticated browser evidence
         if: always()
