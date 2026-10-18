@@ -76,7 +76,7 @@ export function WalletDesktopHeader({ displayName }: { displayName: string }) {
           <Link
             key={item.href}
             href={item.href}
-            prefetch={item.href === "/wallet" ? false : undefined}
+            {...(item.href === "/wallet" ? { prefetch: false as const } : {})}
             aria-current={item.href === "/wallet" ? "page" : undefined}
           >
             {item.label}
@@ -120,7 +120,7 @@ export function WalletSidebar({ displayName }: { displayName: string }) {
             <li key={item.href}>
               <Link
                 href={item.href}
-                prefetch={item.href === "/wallet" ? false : undefined}
+                {...(item.href === "/wallet" ? { prefetch: false as const } : {})}
                 aria-current={item.href === "/wallet" ? "page" : undefined}
               >
                 {item.icon === "account" ? (

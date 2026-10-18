@@ -360,7 +360,11 @@ export default async function MiningPage() {
                 <PutdukIcon name="arrow-right" size={19} />
               </Link>
             ) : (
-              <Link className="button button--primary" href="/wallet" prefetch={false}>
+              <Link
+                className="button button--primary"
+                href="/wallet"
+                prefetch={false}
+              >
                 확정 금액 확인
                 <PutdukIcon name="arrow-right" size={19} />
               </Link>
