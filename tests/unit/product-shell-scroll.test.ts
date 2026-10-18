@@ -191,6 +191,74 @@ describe("product main scroll history", () => {
     });
   });
 
+  it("keeps the visible catalog hero when a hidden stream still has the server scene", async () => {
+    const streamed = document.createElement("div");
+    streamed.hidden = true;
+    streamed.id = "S:1";
+    streamed.innerHTML =
+      '<div class="page"><section aria-labelledby="catalog-hero-title"><div data-catalog-hero-theme="dark" data-catalog-hero-state="responsive"></div></section></div>';
+    document.body.append(streamed);
+    try {
+      navigation.pathname = "/products";
+      window.history.replaceState(null, "", "/products");
+      await act(async () =>
+        root.render(
+          createElement(
+            ProductShell,
+            { displayName: "회원" },
+            createElement(
+              "section",
+              { "aria-labelledby": "catalog-hero-title" },
+              createElement("div", {
+                "data-catalog-hero-theme": "light",
+                "data-catalog-hero-state": "unavailable",
+              }),
+            ),
+          ),
+        ),
+      );
+      const scenes = document.querySelectorAll("[data-catalog-hero-state]");
+      expect(scenes).toHaveLength(1);
+      expect(scenes[0]?.getAttribute("data-catalog-hero-state")).toBe(
+        "unavailable",
+      );
+      expect(scenes[0]?.getAttribute("data-catalog-hero-theme")).toBe("light");
+      expect(host.querySelector("main")?.contains(scenes[0] ?? null)).toBe(
+        true,
+      );
+      expect(
+        document.querySelectorAll(
+          "section[aria-labelledby='catalog-hero-title']",
+        ),
+      ).toHaveLength(1);
+      expect(streamed.querySelector("[data-catalog-hero-state]")).toBeNull();
+    } finally {
+      streamed.remove();
+    }
+  });
+
+  it("leaves a hidden stream hero untouched until the visible hero exists", async () => {
+    const streamed = document.createElement("div");
+    streamed.hidden = true;
+    streamed.id = "S:1";
+    streamed.innerHTML =
+      '<section aria-labelledby="catalog-hero-title"><div data-catalog-hero-theme="dark" data-catalog-hero-state="responsive"></div></section>';
+    document.body.append(streamed);
+    try {
+      await render("/products");
+      expect(
+        streamed.querySelector("section")?.getAttribute("aria-labelledby"),
+      ).toBe("catalog-hero-title");
+      expect(
+        streamed
+          .querySelector("[data-catalog-hero-state]")
+          ?.getAttribute("data-catalog-hero-state"),
+      ).toBe("responsive");
+    } finally {
+      streamed.remove();
+    }
+  });
+
   it("keeps the products ready marker that is inside main", async () => {
     const streamedCopy = document.createElement("div");
     streamedCopy.setAttribute("data-ui-ready", "/products");

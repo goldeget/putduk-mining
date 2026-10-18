@@ -61,7 +61,7 @@ export function ProductShell({
 
   useLayoutEffect(() => {
     if (pathname !== "/products") return;
-    const retainVisibleProductsMarker = () => {
+    const retainVisibleProductsSurface = () => {
       const main = mainRef.current;
       if (!main) return;
       const markers = document.querySelectorAll('[data-ui-ready="/products"]');
@@ -72,18 +72,48 @@ export function ProductShell({
           break;
         }
       }
-      if (!inMain) return;
-      for (const marker of markers) {
-        if (!main.contains(marker)) marker.removeAttribute("data-ui-ready");
+      if (inMain) {
+        for (const marker of markers) {
+          if (!main.contains(marker)) marker.removeAttribute("data-ui-ready");
+        }
+      }
+      // Next keeps the previous stream in a hidden id="S:*" segment. That copy
+      // is not the active theme, and page-wide hero locators must see one node.
+      const heroes = document.querySelectorAll(
+        "section[aria-labelledby='catalog-hero-title']",
+      );
+      const visible: Element[] = [];
+      for (const hero of heroes) {
+        if (main.contains(hero) && !hero.closest('div[hidden][id^="S:"]')) {
+          visible.push(hero);
+        }
+      }
+      if (visible.length !== 1) return;
+      const kept = visible[0];
+      if (!kept) return;
+      for (const hero of heroes) {
+        if (hero === kept) continue;
+        hero.removeAttribute("aria-labelledby");
+        for (const scene of hero.querySelectorAll(
+          "[data-catalog-hero-state]",
+        )) {
+          scene.removeAttribute("data-catalog-hero-state");
+        }
       }
     };
-    retainVisibleProductsMarker();
-    const observer = new MutationObserver(retainVisibleProductsMarker);
+    retainVisibleProductsSurface();
+    const observer = new MutationObserver(retainVisibleProductsSurface);
     observer.observe(document.documentElement, {
       subtree: true,
       childList: true,
       attributes: true,
-      attributeFilter: ["data-ui-ready"],
+      attributeFilter: [
+        "data-ui-ready",
+        "aria-labelledby",
+        "data-catalog-hero-state",
+        "hidden",
+        "id",
+      ],
     });
     return () => observer.disconnect();
   }, [pathname]);
