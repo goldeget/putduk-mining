@@ -22,16 +22,20 @@ const items = [
   { href: "/content", label: "이벤트·공지" },
 ] as const;
 
+function scrollNavToTop(nav: HTMLElement | null) {
+  nav?.scrollTo?.(0, 0);
+}
+
 export function AdminNavigation({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
   const navRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    navRef.current?.scrollTo(0, 0);
+    scrollNavToTop(navRef.current);
   }, [pathname]);
 
   useEffect(() => {
-    const resetScroll = () => navRef.current?.scrollTo(0, 0);
+    const resetScroll = () => scrollNavToTop(navRef.current);
     window.addEventListener("resize", resetScroll);
     return () => window.removeEventListener("resize", resetScroll);
   }, []);
@@ -48,7 +52,7 @@ export function AdminNavigation({ onNavigate }: { onNavigate?: () => void }) {
             key={item.href}
             aria-current={current ? "page" : undefined}
             onFocus={(event) => {
-              event.currentTarget.scrollIntoView({
+              event.currentTarget.scrollIntoView?.({
                 block: "nearest",
                 inline: "nearest",
               });

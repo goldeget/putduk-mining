@@ -24,7 +24,7 @@ export function AdminRailMenu({
       .querySelector<HTMLElement>(
         '.control-rail nav[aria-label="운영자 주 메뉴"]',
       )
-      ?.scrollTo(0, 0);
+      ?.scrollTo?.(0, 0);
   }
 
   return (
