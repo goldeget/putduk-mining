@@ -24,10 +24,7 @@ import {
   settleBrowserClassifications,
   type CancelledSuccessfulLoginRedirect,
 } from "./successful-login-cancellation";
-import {
-  dismissGuidedQuestIfPresent,
-  loginAsMember,
-} from "./member-session";
+import { dismissGuidedQuestIfPresent, loginAsMember } from "./member-session";
 import { expectSettledRoute } from "./settled-route";
 
 const categories = [
