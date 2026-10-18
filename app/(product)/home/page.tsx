@@ -8,6 +8,7 @@ import { SemiconductorTowerScene } from "@/components/brand/semiconductor-tower-
 import { PutdukIcon } from "@/components/icons/putduk-icon";
 import { PutdukHomeIcon } from "@/components/icons/putduk-home-icon";
 import { FundedRuntimeSummary } from "@/components/product/funded-runtime-summary";
+import { MiningWalletGuideBanner } from "@/components/product/mining-wallet-guide-banner";
 import { PutdukAiDock } from "@/components/product/putduk-ai-dock";
 import { RouteReloadButton } from "@/components/product/route-reload-button";
 import { StatePanel } from "@/components/ui/states";
@@ -679,6 +680,8 @@ export default async function ProductHomePage() {
             가입일 {formatJoinedOn(facts.joinedAt)}
           </p>
         </Surface>
+
+        <MiningWalletGuideBanner placement="home" />
 
         {fundedRuntime ? (
           <FundedRuntimeSummary runtime={fundedRuntime} placement="home" />

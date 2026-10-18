@@ -6,6 +6,7 @@ import { MiningLiveStage } from "@/components/mining-live/mining-live-stage";
 import { PutdukHomeIcon } from "@/components/icons/putduk-home-icon";
 import { PutdukIcon } from "@/components/icons/putduk-icon";
 import { FundedRuntimeSummary } from "@/components/product/funded-runtime-summary";
+import { MiningWalletGuideBanner } from "@/components/product/mining-wallet-guide-banner";
 import { MiningLiveSummary } from "@/components/product/mining-live-summary";
 import {
   WorldThemeArtwork,
@@ -578,19 +579,7 @@ export default async function MiningPage() {
       </div>
       {runtime ? <FundedRuntimeSummary runtime={runtime} /> : null}
 
-      <Link className={styles.guideBanner} href="/how-it-works">
-        <span className={styles.guideHeading}>
-          <PutdukIcon name="shield" size={25} />
-          <strong className={styles.guideTitle}>
-            <span className={styles.guideTitleLine}>채굴과 지갑</span>
-            <span className={styles.guideTitleLine}>안내</span>
-          </strong>
-          <PutdukIcon name="arrow-right" size={20} />
-        </span>
-        <small className={styles.guideDetail}>
-          확정 금액과 확인 전 금액의 차이를 알아보세요.
-        </small>
-      </Link>
+      <MiningWalletGuideBanner placement="mining" />
 
       <details className={styles.details} id="putduk-mining-details">
         <summary className={styles.summary}>채굴 상세</summary>
