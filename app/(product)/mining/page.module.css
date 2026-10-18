@@ -107,16 +107,17 @@
 }
 
 .heroCopy > p {
-  max-width: 22ch;
+  max-width: 100%;
   margin: 0.75rem 0 0;
   color: var(--text-secondary);
   font-size: 0.875rem;
-  line-height: 1.55;
+  line-height: 1.45;
   text-wrap: pretty;
 }
 
 :global(:root[data-theme="light"]) .heroCopy > p {
-  width: fit-content;
+  width: 100%;
+  max-width: 100%;
   border-radius: 0.15rem;
   background: var(--surface-default);
   box-shadow: 0 0 0 0.35rem var(--surface-default);

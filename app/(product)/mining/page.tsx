@@ -360,7 +360,7 @@ export default async function MiningPage() {
                 <PutdukIcon name="arrow-right" size={19} />
               </Link>
             ) : (
-              <Link className="button button--primary" href="/wallet">
+              <Link className="button button--primary" href="/wallet" prefetch={false}>
                 확정 금액 확인
                 <PutdukIcon name="arrow-right" size={19} />
               </Link>
@@ -446,7 +446,7 @@ export default async function MiningPage() {
               <PutdukHomeIcon name="coins" size={24} />
               확정된 채굴 내역
             </h2>
-            <Link href="/wallet?view=profit">
+            <Link href="/wallet?view=profit" prefetch={false}>
               전체 보기
               <PutdukIcon name="arrow-right" size={14} />
             </Link>
@@ -487,7 +487,7 @@ export default async function MiningPage() {
               <PutdukHomeIcon name="ledger" size={24} />
               최근 거래 내역
             </h2>
-            <Link href="/wallet?view=history">
+            <Link href="/wallet?view=history" prefetch={false}>
               전체 보기
               <PutdukIcon name="arrow-right" size={14} />
             </Link>

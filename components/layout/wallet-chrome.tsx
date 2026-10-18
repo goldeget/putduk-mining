@@ -76,6 +76,7 @@ export function WalletDesktopHeader({ displayName }: { displayName: string }) {
           <Link
             key={item.href}
             href={item.href}
+            prefetch={item.href === "/wallet" ? false : undefined}
             aria-current={item.href === "/wallet" ? "page" : undefined}
           >
             {item.label}
@@ -119,6 +120,7 @@ export function WalletSidebar({ displayName }: { displayName: string }) {
             <li key={item.href}>
               <Link
                 href={item.href}
+                prefetch={item.href === "/wallet" ? false : undefined}
                 aria-current={item.href === "/wallet" ? "page" : undefined}
               >
                 {item.icon === "account" ? (
@@ -135,7 +137,9 @@ export function WalletSidebar({ displayName }: { displayName: string }) {
                 >
                   {walletLinks.map((wallet) => (
                     <li key={wallet.href}>
-                      <Link href={wallet.href}>{wallet.label}</Link>
+                      <Link href={wallet.href} prefetch={false}>
+                        {wallet.label}
+                      </Link>
                     </li>
                   ))}
                 </ul>

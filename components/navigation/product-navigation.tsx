@@ -49,6 +49,7 @@ export function ProductNavigation({
           <Link
             key={item.href}
             href={item.href}
+            prefetch={item.href === "/wallet" ? false : undefined}
             aria-current={item.href === pathname ? "page" : undefined}
           >
             <PutdukHomeIcon name={item.icon} size={25} metallic={false} />
@@ -76,6 +77,7 @@ export function ProductNavigation({
           <Link
             className={active ? "is-active" : undefined}
             href={item.href}
+            prefetch={item.href === "/wallet" ? false : undefined}
             aria-current={active ? "page" : undefined}
             key={item.href}
           >
