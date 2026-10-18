@@ -2,7 +2,7 @@
 
 import { WalletBrandSymbol } from "@/components/product/wallet-brand-symbol";
 import Link from "next/link";
-import { useCallback, useEffect, useState, type CSSProperties } from "react";
+import { useCallback, useState, type CSSProperties } from "react";
 
 import { WalletReadRecovery } from "@/components/product/wallet-read-recovery";
 import type { WalletReadViewProps } from "@/components/product/wallet-read-view";
@@ -114,9 +114,6 @@ export function WalletOverviewView({
 }: WalletReadViewProps) {
   type WalletView = "principal" | "profit" | "history";
   const [activeView, setActiveView] = useState<WalletView>(initialView);
-  useEffect(() => {
-    setActiveView(initialView);
-  }, [initialView]);
 
   const selectView = useCallback((view: WalletView) => {
     setActiveView(view);

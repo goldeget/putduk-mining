@@ -62,8 +62,8 @@ export function AdminRailMenu({
       <div className="control-rail__menu" id={menuId}>
         <AdminNavigation onNavigate={closeMenu} />
         {children}
+        {footer}
       </div>
-      {footer}
     </aside>
   );
 }

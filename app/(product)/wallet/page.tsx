@@ -133,6 +133,7 @@ export default async function WalletPage({
       }
     >
       <WalletOverviewView
+        key={initialView}
         initialView={initialView}
         balanceState={balanceState}
         funding={funding}
