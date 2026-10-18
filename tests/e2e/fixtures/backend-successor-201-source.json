@@ -1591,7 +1591,7 @@
     "components/product/wallet-overview-view.module.css": "f801227721e995f38a082d2830bce4e8ac0b47d60c684b3d04e69e981be31e32",
     "components/product/wallet-overview-view.tsx": "4a1f9b985aac223d7e85b70b0cd87f4e8de5e31bba7e9bc575ea934dec7e7804",
     "components/product/wallet-read-recovery.tsx": "61d138de9e3b54a71d99696b7cfdda024a299d9bec6a21d20b56fda128ec22f7",
-    "components/product/wallet-read-view.module.css": "0483d535ed5d2c9b51792356c281f83ea9e8647c788357fe705328f7b5aadd14",
+    "components/product/wallet-read-view.module.css": "e85d7d555d90414b8d19d6d7d68e0551b7fe0e0a06ace1ba3256fc81a08bf6ae",
     "components/product/wallet-read-view.tsx": "256ffcfd459a2e7a3a6b0155ea986c0b8f64650a9b0fc4bee3206cde12131881",
     "components/product/wallet-scene.module.css": "9ccc748d0da242c4655f73c75bfb59c422dbf4cb917be63b5fd57d65c51b5460",
     "components/product/wallet-scene.tsx": "253fdf29d1eba2a18323fcc98c26816f7b8caaea04dc7a7b6d86f2335ff46da8",
@@ -2744,7 +2744,7 @@
     "scripts/capture-local-supabase-env.mjs": "4403777211d9619e709e641cacea0d37ff0cf15e2f72fc8add91d7b88a12ca76",
     "scripts/catalog-material-profiles.json": "cf305a321f8ebda27006e65d0efcb61388e448c88980b0e935d45875cda02560",
     "scripts/ci-authenticated-shards-201.d.mts": "9ca0a0d3413fb8b72cce27540aded1471edaf2b81b912dc612e57bfe3dfff949",
-    "scripts/ci-authenticated-shards-201.mjs": "757430a3fde4b66c1b1bccebbb3d814352d341a22bf5821f98e76538672a15da",
+    "scripts/ci-authenticated-shards-201.mjs": "7a0bb57d62686545dee7c905f3efaa0d4bdbee0588744a0656318c50cd2ebc23",
     "scripts/ci-authenticated-shards.d.mts": "e377f11a96a91d45c2cf3b3c62f18902684ec1816f9ae30c3fdaaf71d939695d",
     "scripts/ci-authenticated-shards.mjs": "c956696b96bc6b5670000917f512ac15dbd503018a85c39aeea5d8e36bc2b24c",
     "scripts/ci-authenticated-shards.test.mjs": "e511850e434a6b1fbc0f8a359a42e0fe81e7dec27b06185c36239707c1a09c65",
@@ -3199,7 +3199,7 @@
     "tests/e2e/authenticated/helpers/backend-http-195-auth.ts": "0f6eebbb10a030bca815b22a8bad8be2866968a9e73327d88740b2680ddd68a4",
     "tests/e2e/authenticated/helpers/backend-http-197-auth.ts": "72c2b67f0e3316991142a8f233446fb8fdfd7055f4cc6d282b36f6a8fa131928",
     "tests/e2e/authenticated/helpers/catalog-allocated-journey-r10.ts": "ec3cd272eff95c5242a88108fe96bf6af6b23615a8bf120ebc9678dd21972088",
-    "tests/e2e/authenticated/helpers/catalog-allocated-matrix-r10.ts": "53f2cfb20370eb944adfad5c9beb64074ac6db37fbdca0bbdef2acebc1b88145",
+    "tests/e2e/authenticated/helpers/catalog-allocated-matrix-r10.ts": "f78c4b16b85e51373083bf91176c71fda5eb1487095a69cda3afa83f5b89ada0",
     "tests/e2e/authenticated/helpers/deposit-fixtures.ts": "fdca4b56828a124b63139ade58279b204abfe20034ff5d52b5e35ce55a87d7df",
     "tests/e2e/authenticated/helpers/eligibility.ts": "04338a9454731369ec1e9b91e491319b288a8f03aeaa9ac8cc5ab0ebe7260f42",
     "tests/e2e/authenticated/helpers/events-fixtures.ts": "1c531d87c775384ec16384428233c23c48b0587cc7a861180f009550a9a34dac",
@@ -6113,7 +6113,7 @@
     "tests/e2e/authenticated/helpers/backend-http-197-auth.ts": "72c2b67f0e3316991142a8f233446fb8fdfd7055f4cc6d282b36f6a8fa131928",
     "tests/e2e/authenticated/usdt-manual-full-payout-197.spec.ts": "841bcd1995b980ca18e059f9082148dae3b42bcc17f3026d8b958b0fac79fae7",
     "playwright.backend-browser-201.config.ts": "055f7323c0dc2a112c17446477ae9535f7cb83c287b611d9779fe21cebe8fe62",
-    "scripts/ci-authenticated-shards-201.mjs": "757430a3fde4b66c1b1bccebbb3d814352d341a22bf5821f98e76538672a15da"
+    "scripts/ci-authenticated-shards-201.mjs": "7a0bb57d62686545dee7c905f3efaa0d4bdbee0588744a0656318c50cd2ebc23"
   },
   "provenanceOnlyExternalStageSha256": "0a6533af9542d46d91484ff82e0cb90921144aa4625df30af974f892c9726a65",
   "provenanceOnlyExternalNativeReceiptSha256": "717f143b6254a014274571cd61e2c3beed6aba63544865575a9fa1fe7d36d3f3"

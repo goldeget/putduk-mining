@@ -694,7 +694,7 @@
 }
 
 /* 좁은 읽기 폭에서는 날짜와 금액에 각각 전체 행을 제공한다. */
-@container wallet-history (max-width: 20rem) {
+@container wallet-history (max-width: 24rem) {
   .history .ledgerRow {
     grid-template-columns: auto minmax(0, 1fr);
     gap: 0.45rem 0.8rem;
@@ -810,7 +810,7 @@
 }
 
 /* 좁은 화면과 글자 확대에서는 정확한 금액과 단위를 읽을 너비로 쌓는다. */
-@container (max-width: 20rem) {
+@container (max-width: 24rem) {
   .metrics {
     grid-template-columns: minmax(0, 1fr);
   }

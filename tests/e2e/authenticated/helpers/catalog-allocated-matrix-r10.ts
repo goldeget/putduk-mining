@@ -181,6 +181,7 @@ export async function captureAllocatedMatrix(
         await page.evaluate((scale) => {
           document.documentElement.style.fontSize = `${16 * (scale / 100)}px`;
         }, textScale);
+        await page.evaluate(() => document.fonts.ready);
         await expect(
           page.getByRole("combobox", { name: "화면 테마" }).first(),
         ).toHaveValue(theme);
