@@ -355,8 +355,16 @@ export default async function MiningPage() {
                 <PutdukIcon name="arrow-right" size={19} />
               </Link>
             ) : presentation.action === "start" ? (
-              <Link className="button button--primary" href="/start">
-                PUTDUK START 확인
+              <Link
+                className={`button button--primary ${styles.startPrimaryAction}`}
+                href="/start"
+              >
+                <span className={styles.primaryActionCopy}>
+                  <span className={styles.primaryActionLine}>
+                    PUTDUK{"\u00a0"}START
+                  </span>
+                  <span className={styles.primaryActionLine}>{" 확인"}</span>
+                </span>
                 <PutdukIcon name="arrow-right" size={19} />
               </Link>
             ) : (

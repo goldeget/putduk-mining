@@ -468,6 +468,26 @@
   white-space: normal;
 }
 
+.startPrimaryAction :global(svg) {
+  flex-shrink: 0;
+}
+
+.primaryActionCopy {
+  display: flex;
+  min-width: 0;
+  flex: 1 1 auto;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.06em;
+}
+
+.primaryActionLine {
+  display: block;
+  max-width: 100%;
+  white-space: nowrap;
+}
+
 .actions :global(.button:hover:not(:disabled)) {
   border-color: var(--brand-hover);
   background: var(--action-primary-hover);
