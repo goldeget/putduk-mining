@@ -4,6 +4,7 @@
   container: product-guide / inline-size;
   gap: 0.5rem;
   padding: 0.8rem 1rem;
+  overflow: clip;
   border: 1px solid var(--border-default);
   border-radius: 0.8rem;
   background: linear-gradient(
@@ -29,13 +30,15 @@
 }
 
 .title {
-  display: grid;
+  display: flex;
   min-width: 0;
-  align-content: center;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
   gap: 0.06em;
   margin: 0;
   color: var(--text-primary);
-  font-size: 0.85rem;
+  font-size: min(0.85rem, 4.8cqi);
   line-height: 1.35;
 }
 
@@ -50,14 +53,14 @@
 .detail {
   min-width: 0;
   color: var(--text-secondary);
-  font-size: 0.72rem;
+  font-size: min(0.72rem, 4.1cqi);
   line-height: 1.45;
   overflow-wrap: anywhere;
   word-break: keep-all;
 }
 
-/* Physical container width — stable at 200% root text. */
-@container product-guide (max-width: 36rem) {
+/* Physical container width — thresholds stay in px at 200% root text. */
+@container product-guide (max-width: 360px) {
   .heading {
     grid-template-columns: minmax(0, 1fr) auto;
     gap: 0.45rem 0.5rem;
@@ -79,7 +82,7 @@
   }
 }
 
-@container product-guide (max-width: 20rem) {
+@container product-guide (max-width: 280px) {
   .banner {
     padding: 0.65rem 0.75rem;
   }

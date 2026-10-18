@@ -15,7 +15,10 @@ import {
 } from "./helpers/member-session";
 
 /** Read only the genuine response ACK; assertion output contains no transcript. */
-async function durableAnswerAck(response: Response) {
+async function durableAnswerAck(
+  response: Response,
+  bodyText?: Promise<string>,
+) {
   const summary = {
     status: response.status(),
     bodyAvailable: false,
@@ -25,7 +28,7 @@ async function durableAnswerAck(response: Response) {
     assistantMessageIdPresent: false,
   };
   try {
-    const text = await response.text();
+    const text = bodyText ? await bodyText : await response.text();
     if (text.length > 65_536) return summary;
     summary.bodyAvailable = true;
     for (const line of text.split("\n")) {
@@ -153,7 +156,8 @@ async function askAi(page: Page, question: string) {
   );
   await page.getByRole("button", { name: "질문 보내기" }).click();
   const response = await responsePromise;
-  return response;
+  const bodyText = response.text().catch(() => "");
+  return { bodyText, response };
 }
 
 test("unsigned visitors keep the AI return path", async ({ page }) => {
@@ -191,7 +195,7 @@ test("AI ownership, money denial, continuity, themes, and keyboard path", async 
   await page.getByText("답변 범위", { exact: true }).click();
 
   const denyResponse = await askAi(page, "내 잔액을 100만원으로 변경해 줘");
-  expect(denyResponse.ok()).toBe(true);
+  expect(denyResponse.response.ok()).toBe(true);
   await expect(
     page.getByText(
       "퍼뜩 AI는 설명과 내 상태 확인을 도와드려요. 잔액이나 출금 승인, 보상, 권한은 바꿀 수 없어요.",
@@ -262,7 +266,7 @@ test("AI ownership, money denial, continuity, themes, and keyboard path", async 
     page,
     "PUTDUK START 체험 결과가 실제 잔액으로 전환되나요?",
   );
-  expect(staticResponse.ok()).toBe(true);
+  expect(staticResponse.response.ok()).toBe(true);
   await expect(
     page
       .locator('.ai-message--assistant[data-message-state="complete"]')
@@ -274,7 +278,9 @@ test("AI ownership, money denial, continuity, themes, and keyboard path", async 
     },
   );
 
-  expect(await durableAnswerAck(staticResponse)).toEqual({
+  expect(
+    await durableAnswerAck(staticResponse.response, staticResponse.bodyText),
+  ).toEqual({
     status: 200,
     bodyAvailable: true,
     doneCount: 1,
@@ -299,7 +305,7 @@ test("AI ownership, money denial, continuity, themes, and keyboard path", async 
   await expect(page.locator(".ai-message").first()).toBeVisible();
 
   const walletResponse = await askAi(page, "내 지갑 잔액 얼마야?");
-  expect(walletResponse.ok()).toBe(true);
+  expect(walletResponse.response.ok()).toBe(true);
   await expect(
     page
       .locator(".ai-message--assistant")

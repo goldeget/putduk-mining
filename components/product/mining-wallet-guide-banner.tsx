@@ -37,7 +37,7 @@ export function MiningWalletGuideBanner({
         />
       </span>
       <small className={styles.detail}>
-        확정 금액과 확인 전 금액의 차이를 알아보세요.
+        확정·확인 전 금액 차이를 알아보세요.
       </small>
     </Link>
   );
