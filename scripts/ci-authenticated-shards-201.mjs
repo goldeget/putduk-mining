@@ -30,7 +30,7 @@ import { assertBackend201BrowserCanonicalSources } from "./backend-successor-201
 // Run 39153878066 kept four lanes under six minutes while catalog-materials
 // and withdrawal recovery shared the lanes that reached 13.5 minutes.
 // Hints below are those observed peaks so the long files spread onto the
-// lanes that finished early. Lane count stays 18.
+// lanes that finished early. Lane count is 24.
 const TIMING_HINTS = {
   "admin-assistant-context.spec.ts": 10,
   "admin-assistant-read-draft.spec.ts": 23,
@@ -96,7 +96,7 @@ const TIMING_HINTS = {
   "withdrawal-product.spec.ts": 47,
 };
 const CONFIG = "playwright.backend-browser-201.config.ts";
-const TOTAL = 18;
+const TOTAL = 24;
 const compare = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
 
 export function inventoryFromReport(report, cwd = process.cwd()) {
@@ -286,9 +286,12 @@ export function testListFor(shard, rootDir, cwd = process.cwd()) {
 
 export function parseAuthenticatedShardChoice(choice) {
   if (choice === "--verify-only") return null;
-  if (typeof choice !== "string" || !/^(?:[1-9]|1[0-8])\/18$/.test(choice)) {
+  if (
+    typeof choice !== "string" ||
+    !/^(?:[1-9]|1[0-9]|2[0-4])\/24$/.test(choice)
+  ) {
     throw new Error(
-      "Usage: node scripts/ci-authenticated-shards-201.mjs --verify-only | 1/18 ... 18/18",
+      "Usage: node scripts/ci-authenticated-shards-201.mjs --verify-only | 1/24 ... 24/24",
     );
   }
   return Number(choice.split("/")[0]) - 1;
@@ -298,7 +301,7 @@ async function main() {
   const choice = process.argv[2];
   if (process.argv.length !== 3) {
     throw new Error(
-      "Usage: node scripts/ci-authenticated-shards-201.mjs --verify-only | 1/18 ... 18/18",
+      "Usage: node scripts/ci-authenticated-shards-201.mjs --verify-only | 1/24 ... 24/24",
     );
   }
   const selectedIndex = parseAuthenticatedShardChoice(choice);

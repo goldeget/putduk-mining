@@ -45,7 +45,7 @@ describe("whole-workflow CI acceptance", () => {
     const result = evaluateCiJobs(run, completed(), start + 960_000);
     expect(result.accepted).toBe(true);
     expect(result.elapsedMs).toBe(960_000);
-    expect(CI_REQUIRED_JOBS).toHaveLength(27);
+    expect(CI_REQUIRED_JOBS).toHaveLength(33);
   });
 
   it("rejects a green attempt that finishes over 20 minutes", () => {
@@ -144,7 +144,7 @@ describe("whole-workflow CI acceptance", () => {
 
   it("reserves cancellation time before the absolute deadline", () => {
     const jobs = completed().map((job) =>
-      job.name === "Authenticated product gates (18/18)"
+      job.name === "Authenticated product gates (24/24)"
         ? { ...job, status: "in_progress", conclusion: null }
         : job,
     );
@@ -227,7 +227,7 @@ describe("whole-workflow CI acceptance", () => {
         identity,
         report: () => {},
         request: async (path: string) =>
-          path.includes("/jobs?") ? { jobs: [], total_count: 28 } : run,
+          path.includes("/jobs?") ? { jobs: [], total_count: 34 } : run,
       }),
     ).rejects.toThrow(/incomplete/);
   });
@@ -272,7 +272,7 @@ describe("whole-workflow CI acceptance", () => {
           if (++reads === 1) throw new DOMException("fixture", "TimeoutError");
           return run;
         }
-        return { jobs: completed(), total_count: 28 };
+        return { jobs: completed(), total_count: 34 };
       },
     });
     expect(result.accepted).toBe(true);
@@ -369,7 +369,7 @@ describe("whole-workflow CI acceptance", () => {
             mutations.push(path);
             return null;
           }
-          if (path.includes("/jobs?")) return { jobs, total_count: 28 };
+          if (path.includes("/jobs?")) return { jobs, total_count: 34 };
           return ++runReads === 4 ? { ...run, run_attempt: 2 } : run;
         },
       }),
@@ -415,7 +415,7 @@ describe("whole-workflow CI acceptance", () => {
             mutations.push(path);
             return null;
           }
-          if (path.includes("/jobs?")) return { jobs, total_count: 28 };
+          if (path.includes("/jobs?")) return { jobs, total_count: 34 };
           return {
             ...run,
             status: ++runReads === 4 ? "completed" : "in_progress",
@@ -463,7 +463,7 @@ describe("whole-workflow CI acceptance", () => {
             cancelled = true;
             throw new DOMException("fixture", "TimeoutError");
           }
-          if (path.includes("/jobs?")) return { jobs, total_count: 28 };
+          if (path.includes("/jobs?")) return { jobs, total_count: 34 };
           return { ...run, status: cancelled ? "completed" : "in_progress" };
         },
       }),
@@ -490,7 +490,7 @@ describe("whole-workflow CI acceptance", () => {
   });
 });
 
-describe("eighteen isolated authenticated CI lanes", () => {
+describe("twenty-four isolated authenticated CI lanes", () => {
   const inventory: AuthenticatedTestEvidence[] = Array.from(
     { length: 48 },
     (_, index) => ({
@@ -503,17 +503,17 @@ describe("eighteen isolated authenticated CI lanes", () => {
     }),
   );
 
-  it("requires all eighteen exact lane names and twenty-seven quality jobs", () => {
+  it("requires all twenty-four exact lane names and thirty-three quality jobs", () => {
     const auth = CI_REQUIRED_JOBS.filter((name) =>
       name.startsWith("Authenticated product gates"),
     );
     expect(auth).toEqual(
       Array.from(
-        { length: 18 },
-        (_, index) => `Authenticated product gates (${index + 1}/18)`,
+        { length: 24 },
+        (_, index) => `Authenticated product gates (${index + 1}/24)`,
       ),
     );
-    expect(CI_REQUIRED_JOBS).toHaveLength(27);
+    expect(CI_REQUIRED_JOBS).toHaveLength(33);
     for (const name of auth) {
       const result = evaluateCiJobs(
         run,
@@ -525,45 +525,48 @@ describe("eighteen isolated authenticated CI lanes", () => {
     }
   });
 
-  it("selects the whole lane index including ten through eighteen", () => {
+  it("selects the whole lane index including ten through twenty-four", () => {
     expect(parseAuthenticatedShardChoice("--verify-only")).toBeNull();
-    for (let index = 1; index <= 18; index += 1) {
-      expect(parseAuthenticatedShardChoice(`${index}/18`)).toBe(index - 1);
+    for (let index = 1; index <= 24; index += 1) {
+      expect(parseAuthenticatedShardChoice(`${index}/24`)).toBe(index - 1);
     }
   });
 
-  it("rejects invalid, ambiguous and former eight-lane CLI choices", () => {
+  it("rejects invalid, ambiguous and former eighteen-lane CLI choices", () => {
     for (const choice of [
       undefined,
       null,
       10,
       "",
-      "0/18",
+      "0/24",
+      "25/24",
+      "01/24",
+      "1/18",
+      "18/18",
       "19/18",
-      "01/18",
       "1/16",
       "16/16",
       "10/8",
       "1/8",
-      "10/018",
-      "10/18x",
-      "10.0/18",
-      "-1/18",
+      "10/024",
+      "10/24x",
+      "10.0/24",
+      "-1/24",
       "--verify-only ",
     ]) {
       expect(() => parseAuthenticatedShardChoice(choice)).toThrow(/Usage:/);
     }
   });
 
-  it("keeps every test and project-file group in one of eighteen disjoint lanes", () => {
+  it("keeps every test and project-file group in one of twenty-four disjoint lanes", () => {
     const shards = balanceInventory(inventory) as Array<{
       index: number;
       tests: AuthenticatedTestEvidence[];
       groups: Array<{ project: string; file: string }>;
     }>;
-    expect(shards).toHaveLength(18);
+    expect(shards).toHaveLength(24);
     expect(shards.map((shard) => shard.index)).toEqual(
-      Array.from({ length: 18 }, (_, index) => index + 1),
+      Array.from({ length: 24 }, (_, index) => index + 1),
     );
     expect(shards.every((shard) => shard.tests.length > 0)).toBe(true);
     const union = shards.flatMap((shard) => shard.tests);
@@ -596,7 +599,7 @@ describe("eighteen isolated authenticated CI lanes", () => {
     expect(() => balanceInventory([...inventory, inventory[0]!])).toThrow(
       /coverage mismatch/,
     );
-    for (const total of [0, 19, 1.5, Number.NaN]) {
+    for (const total of [0, 25, 1.5, Number.NaN]) {
       expect(() => balanceInventory(inventory, total)).toThrow(
         /Invalid authenticated shard plan/,
       );
