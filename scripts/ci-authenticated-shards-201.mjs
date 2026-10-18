@@ -23,14 +23,18 @@ import { assertBackend201BrowserCanonicalSources } from "./backend-successor-201
 // real AAL2/publication setup; stage telemetry must replace these estimates.
 // This does not change any deadline or establish the whole-run 20-minute gate.
 // Run 39127210925 measured about 9519s of browser time across 12 lanes.
-// Lanes that cleared the 18m30s cutoff finished near 743s. Fourteen lanes
-// place that work near 714s. The mockup file hint is a partial lower bound
-// from that run: the public family took 97s and the member family consumed
-// its full 360s ceiling while still on /ai, with sibling tests unstarted.
+// Lanes that cleared the 18m30s cutoff finished near 743s. Playwright on
+// those lanes was about 581–864s, and the shards started within a minute.
+// Run 39166030715 / head d2fcf69 used 24 lanes and was cancelled at 18m30s
+// with failures=0. The slowest lane waited about 8 minutes for a runner.
+// Playwright had run about 8 minutes and Supabase had already finished.
+// More lanes make that queue worse. Lane count stays 12. The 20-minute
+// budget is unchanged.
 // Run 39153878066 kept four lanes under six minutes while catalog-materials
 // and withdrawal recovery shared the lanes that reached 13.5 minutes.
-// Hints below are those observed peaks so the long files spread onto the
-// lanes that finished early. Lane count is 24.
+// Hints below are those observed peaks. Mockup captures, home catalog,
+// principal withdrawal and notifications are anchored on different lanes.
+// Further mockup files join a lane that already has a mockup capture.
 const TIMING_HINTS = {
   "admin-assistant-context.spec.ts": 10,
   "admin-assistant-read-draft.spec.ts": 23,
@@ -96,8 +100,25 @@ const TIMING_HINTS = {
   "withdrawal-product.spec.ts": 47,
 };
 const CONFIG = "playwright.backend-browser-201.config.ts";
-const TOTAL = 24;
+const TOTAL = 12;
+// One project/file group from each of these measured long specs is anchored
+// on its own lane. Both projects still run. Hints stay placement-only.
+const LONG_LANE_ANCHORS = new Set([
+  "home-catalog-materials-follow.spec.ts",
+  "home-catalog-materials.spec.ts",
+  "mockup-reference-ai.spec.ts",
+  "mockup-reference-coverage.spec.ts",
+  "notifications-product.spec.ts",
+  "principal-withdrawal-product.spec.ts",
+]);
 const compare = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
+
+function laneRank(file) {
+  const base = path.basename(file);
+  if (LONG_LANE_ANCHORS.has(base)) return 0;
+  if (base.startsWith("mockup-reference-")) return 1;
+  return 2;
+}
 
 export function inventoryFromReport(report, cwd = process.cwd()) {
   if (!report || !Array.isArray(report.suites) || report.errors?.length) {
@@ -237,7 +258,10 @@ export function balanceInventory(inventory, total = TOTAL) {
       TIMING_HINTS[path.basename(group.file)] ?? group.tests.length * 20,
   }));
   weighted.sort(
-    (a, b) => b.estimateSeconds - a.estimateSeconds || compare(a.key, b.key),
+    (a, b) =>
+      laneRank(a.file) - laneRank(b.file) ||
+      b.estimateSeconds - a.estimateSeconds ||
+      compare(a.key, b.key),
   );
   const shards = Array.from({ length: total }, (_, index) => ({
     index: index + 1,
@@ -246,9 +270,28 @@ export function balanceInventory(inventory, total = TOTAL) {
     tests: [],
   }));
   for (const group of weighted) {
-    const target = [...shards].sort(
-      (a, b) => a.estimateSeconds - b.estimateSeconds || a.index - b.index,
-    )[0];
+    const rank = laneRank(group.file);
+    const target = [...shards].sort((a, b) => {
+      if (rank < 2) {
+        const occupied = (shard) =>
+          shard.groups.some((existing) => laneRank(existing.file) < 2) ? 1 : 0;
+        const openLane = occupied(a) - occupied(b);
+        if (openLane) return openLane;
+      }
+      // Extra mockup captures join a mockup lane instead of principal,
+      // home catalog, or notifications.
+      if (rank === 1) {
+        const mockupLane = (shard) =>
+          shard.groups.some((existing) =>
+            path.basename(existing.file).startsWith("mockup-reference-"),
+          )
+            ? 0
+            : 1;
+        const mockupDelta = mockupLane(a) - mockupLane(b);
+        if (mockupDelta) return mockupDelta;
+      }
+      return a.estimateSeconds - b.estimateSeconds || a.index - b.index;
+    })[0];
     target.estimateSeconds += group.estimateSeconds;
     target.groups.push({ project: group.project, file: group.file });
     target.tests.push(...group.tests);
@@ -286,12 +329,9 @@ export function testListFor(shard, rootDir, cwd = process.cwd()) {
 
 export function parseAuthenticatedShardChoice(choice) {
   if (choice === "--verify-only") return null;
-  if (
-    typeof choice !== "string" ||
-    !/^(?:[1-9]|1[0-9]|2[0-4])\/24$/.test(choice)
-  ) {
+  if (typeof choice !== "string" || !/^(?:[1-9]|1[0-2])\/12$/.test(choice)) {
     throw new Error(
-      "Usage: node scripts/ci-authenticated-shards-201.mjs --verify-only | 1/24 ... 24/24",
+      "Usage: node scripts/ci-authenticated-shards-201.mjs --verify-only | 1/12 ... 12/12",
     );
   }
   return Number(choice.split("/")[0]) - 1;
@@ -301,7 +341,7 @@ async function main() {
   const choice = process.argv[2];
   if (process.argv.length !== 3) {
     throw new Error(
-      "Usage: node scripts/ci-authenticated-shards-201.mjs --verify-only | 1/24 ... 24/24",
+      "Usage: node scripts/ci-authenticated-shards-201.mjs --verify-only | 1/12 ... 12/12",
     );
   }
   const selectedIndex = parseAuthenticatedShardChoice(choice);
