@@ -1806,7 +1806,19 @@
   }
 
   .quickActions strong {
-    font-size: 0.75rem;
+    font-size: clamp(0.58rem, 4.1cqi, 0.72rem);
+    line-height: 1.12;
+  }
+
+  .quickActions small {
+    display: none;
+  }
+
+  .quickActionGrid > a {
+    min-height: 2.85rem;
+    align-content: center;
+    gap: 0.25rem;
+    padding-block: 0.4rem;
   }
 
   .page:has([data-scene-theme="dark"])

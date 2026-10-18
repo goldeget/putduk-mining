@@ -652,6 +652,12 @@
   }
 }
 
+@media (min-width: 1200px) {
+  .products {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+
 @media (min-width: 980px) {
   .browse > .hero {
     order: 0;

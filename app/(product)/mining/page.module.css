@@ -1038,4 +1038,8 @@
     position: relative;
     overflow: hidden;
   }
+
+  .hero[data-member-product-art="NVDA"] .artwork img {
+    object-position: 66% 50%;
+  }
 }

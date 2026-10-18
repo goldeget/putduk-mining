@@ -15,7 +15,8 @@ const homeTopLinks = [
   { href: "/mining", label: "채굴", icon: "coins" },
   { href: "/products", label: "상품", icon: "cube" },
   { href: "/wallet", label: "지갑", icon: "wallet" },
-  { href: "/menu", label: "더보기", icon: "more" },
+  { href: "/events", label: "이벤트", icon: "gift" },
+  { href: "/ai", label: "PUTDUK AI", icon: "ai" },
 ] as const;
 
 function MiningHeader({ displayName }: { displayName: string }) {
@@ -102,7 +103,15 @@ export function ProductHeader({
               href={item.href}
               aria-current={item.href === "/home" ? "page" : undefined}
             >
-              <PutdukHomeIcon name={item.icon} size={20} metallic={false} />
+              {item.icon === "ai" ? (
+                <PutdukIcon name="ai" size={20} />
+              ) : (
+                <PutdukHomeIcon
+                  name={item.icon}
+                  size={20}
+                  metallic={false}
+                />
+              )}
               <span>{item.label}</span>
             </Link>
           ))}
