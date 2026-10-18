@@ -9,6 +9,7 @@ import {
 } from "@/domain/ai/member-help";
 import { matchesAiPresentationOwner } from "@/domain/ai/presentation-owner";
 import { readAiCache, writeAiCache } from "@/lib/ai/cache";
+import { isAiProviderDispatchAdmitted } from "@/lib/ai/dispatch-admission";
 import {
   appendOwnMemberTurn,
   createSupabaseMemberConversationPort,
@@ -155,12 +156,17 @@ export async function POST(request: Request) {
   });
   const aiContext = aiPlan.context;
   const aiRoute = aiPlan.route;
-  const providerConfigured = Boolean(
-    env.AI_PROVIDER === "nvidia" &&
-    env.AI_API_KEY &&
-    env.AI_MODEL_LOW_COST === NVIDIA_MODELS[0] &&
-    env.APP_ENV !== "production",
-  );
+  // A key alone never admits a real provider call. The owner's explicit
+  // AI_PROVIDER_DISPATCH_ENABLED switch is OFF by default in every environment,
+  // and production stays blocked here regardless of the switch.
+  const providerConfigured = isAiProviderDispatchAdmitted({
+    apiKey: env.AI_API_KEY,
+    appEnv: env.APP_ENV,
+    expectedModel: NVIDIA_MODELS[0],
+    model: env.AI_MODEL_LOW_COST,
+    provider: env.AI_PROVIDER,
+    switchValue: env.AI_PROVIDER_DISPATCH_ENABLED,
+  });
   const selectedModel =
     aiRoute.kind === "static"
       ? STATIC_MODEL_KEY

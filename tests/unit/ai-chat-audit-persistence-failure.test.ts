@@ -22,6 +22,9 @@ const mocks = vi.hoisted(() => ({
     NEXT_PUBLIC_APP_URL: "https://mining.putduk.com",
     APP_ENV: "test",
     AI_PROVIDER: "nvidia",
+    // A key alone never dispatches; these provider-path cases opt in explicitly
+    // and still mock the provider chain (no network).
+    AI_PROVIDER_DISPATCH_ENABLED: "true",
     AI_API_KEY: "synthetic-never-transmitted-key",
     AI_MODEL_LOW_COST: "openai/gpt-oss-20b",
     AI_MAX_OUTPUT_TOKENS: 900,
