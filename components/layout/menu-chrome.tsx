@@ -18,7 +18,12 @@ export function MenuHeader({ displayName }: { displayName: string }) {
       className={`product-header ${styles.header}`}
       data-menu-header="true"
     >
-      <Link className={styles.brand} href="/home" aria-label="퍼뜩 채굴 홈">
+      <Link
+        className={styles.brand}
+        href="/home"
+        aria-label="퍼뜩 채굴 홈"
+        prefetch={false}
+      >
         <MenuBrandSymbol idPrefix="menu-header-brand" />
         <strong>
           퍼뜩
@@ -35,7 +40,7 @@ export function MenuHeader({ displayName }: { displayName: string }) {
           <Link
             key={item.href}
             href={item.href}
-            {...(item.href === "/wallet" ? { prefetch: false as const } : {})}
+            prefetch={false}
             aria-current={item.href === "/menu" ? "page" : undefined}
           >
             <PutdukHomeIcon name={item.icon} metallic={false} size={24} />
@@ -44,13 +49,14 @@ export function MenuHeader({ displayName }: { displayName: string }) {
         ))}
       </nav>
       <div className={styles.tools}>
-        <Link href="/notifications" aria-label="알림 센터">
+        <Link href="/notifications" aria-label="알림 센터" prefetch={false}>
           <PutdukIcon name="bell" size={23} />
         </Link>
         <Link
           className={styles.account}
           href="/menu/account"
           aria-label="내 계정 보기"
+          prefetch={false}
         >
           <PutdukIcon name="user" size={24} />
           <span>{displayName}</span>
@@ -72,7 +78,7 @@ export function MenuSidebar() {
           <Link
             key={item.href}
             href={item.href}
-            {...(item.href === "/wallet" ? { prefetch: false as const } : {})}
+            prefetch={false}
             className={item.href === "/menu" ? "is-active" : undefined}
             aria-current={item.href === "/menu" ? "page" : undefined}
           >

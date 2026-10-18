@@ -40,6 +40,7 @@ export default async function PutdukAiPage() {
               className={styles.close}
               href="/menu"
               aria-label="AI 화면 닫기"
+              prefetch={false}
             >
               닫기
             </Link>

@@ -23,7 +23,7 @@ function MiningHeader({ displayName }: { displayName: string }) {
   return (
     <header className={styles.miningHeader} data-mining-header>
       <div className={styles.miningHeaderTools}>
-        <Link href="/notifications" aria-label="알림 센터">
+        <Link href="/notifications" aria-label="알림 센터" prefetch={false}>
           <PutdukIcon name="bell" size={21} />
         </Link>
         <ThemeControl />
@@ -31,6 +31,7 @@ function MiningHeader({ displayName }: { displayName: string }) {
           className={styles.miningIdentity}
           href="/menu/account"
           aria-label="내 계정 보기"
+          prefetch={false}
         >
           <span className={styles.miningAvatar} aria-hidden="true">
             <PutdukIcon name="user" size={20} />
@@ -77,6 +78,7 @@ export function ProductHeader({
         className={`product-header__brand ${home ? styles.homeBrand : "brand-lockup"}`}
         href="/home"
         aria-label="퍼뜩 채굴 홈"
+        prefetch={false}
       >
         {home ? (
           <>
@@ -101,7 +103,7 @@ export function ProductHeader({
             <Link
               key={item.href}
               href={item.href}
-              {...(item.href === "/wallet" ? { prefetch: false as const } : {})}
+              prefetch={false}
               aria-current={item.href === "/home" ? "page" : undefined}
             >
               {item.icon === "ai" ? (
@@ -119,6 +121,7 @@ export function ProductHeader({
           className="product-header__notification"
           href="/notifications"
           aria-label="알림 센터"
+          prefetch={false}
         >
           <PutdukIcon name="bell" size={19} />
         </Link>
@@ -128,6 +131,7 @@ export function ProductHeader({
             className={`product-header__identity ${styles.homeIdentity}`}
             href="/menu/account"
             aria-label="내 계정 보기"
+            prefetch={false}
           >
             <span className="product-header__avatar" aria-hidden="true">
               <PutdukIcon name="user" size={18} />

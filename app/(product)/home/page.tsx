@@ -400,6 +400,7 @@ export default async function ProductHomePage() {
               <Link
                 href="/wallet?view=history"
                 className={styles.lightQuickAction}
+                prefetch={false}
               >
                 <PutdukHomeIcon name="ledger" size={28} />
                 <strong>거래 내역</strong>

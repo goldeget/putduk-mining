@@ -53,7 +53,12 @@ export function RouteBrandHeader({
       className={`product-header ${styles.header}`}
       data-route-brand-header={view}
     >
-      <Link className={styles.brand} href="/home" aria-label="퍼뜩 채굴 홈">
+      <Link
+        className={styles.brand}
+        href="/home"
+        aria-label="퍼뜩 채굴 홈"
+        prefetch={false}
+      >
         <MenuBrandSymbol idPrefix={`${view}-header-brand`} />
         <strong>
           퍼뜩 <span>채굴</span>
@@ -65,13 +70,14 @@ export function RouteBrandHeader({
       </Link>
       <div className={styles.tools}>
         <ThemeControl />
-        <Link href="/notifications" aria-label="알림 센터">
+        <Link href="/notifications" aria-label="알림 센터" prefetch={false}>
           <PutdukIcon name="bell" size={23} />
         </Link>
         <Link
           className={styles.account}
           href="/menu/account"
           aria-label="내 계정 보기"
+          prefetch={false}
         >
           <span className={styles.avatar} aria-hidden="true">
             <PutdukIcon name="user" size={24} />
@@ -123,7 +129,7 @@ export function RouteBrandSidebar({
           <Link
             key={item.href}
             href={item.href}
-            {...(item.href === "/wallet" ? { prefetch: false as const } : {})}
+            prefetch={false}
             className={
               isActive(item, view, activeHref) ? "is-active" : undefined
             }

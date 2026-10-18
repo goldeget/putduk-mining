@@ -154,7 +154,7 @@ export function WalletSidebar({ displayName }: { displayName: string }) {
         <BrandMark title="" />
         <strong>퍼뜩 AI</strong>
         <p>궁금한 내용을 물어보세요.</p>
-        <Link href="/ai">
+        <Link href="/ai" prefetch={false}>
           AI와 대화하기
           <PutdukIcon name="arrow-right" size={17} />
         </Link>
