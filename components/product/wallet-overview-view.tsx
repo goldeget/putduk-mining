@@ -217,12 +217,12 @@ export function WalletOverviewView({
             </dl>
           </section>
           <div className={styles.actions}>
-            <Link href="/wallet/deposit">
+            <Link href="/wallet/deposit" prefetch={false}>
               <Icon kind="deposit" />
               <span>입금하기</span>
               <span aria-hidden="true">›</span>
             </Link>
-            <Link href="/wallet/withdraw">
+            <Link href="/wallet/withdraw" prefetch={false}>
               <Icon kind="withdraw" />
               <span>출금하기</span>
               <span aria-hidden="true">›</span>
@@ -238,6 +238,7 @@ export function WalletOverviewView({
                 <Link
                   href={`/wallet?view=${view}`}
                   key={view}
+                  prefetch={false}
                   aria-current={initialView === view ? "page" : undefined}
                 >
                   <Icon
@@ -319,7 +320,7 @@ export function WalletOverviewView({
             <header>
               <h2 id="wallet-ledger-title">최근 거래 내역</h2>
               {initialView !== "history" ? (
-                <Link href="/wallet?view=history">
+                <Link href="/wallet?view=history" prefetch={false}>
                   전체보기 <span aria-hidden="true">›</span>
                 </Link>
               ) : (
@@ -429,7 +430,11 @@ export function WalletOverviewView({
           </span>
           <h2 id="wallet-guide-title">입출금 안내</h2>
           <p>USDT 입금은 수동 확인 후 원화 지갑에 반영돼요.</p>
-          <Link className={styles.guideAction} href="/wallet/deposit">
+          <Link
+            className={styles.guideAction}
+            href="/wallet/deposit"
+            prefetch={false}
+          >
             입금 방법 확인 <span aria-hidden="true">›</span>
           </Link>
           <ul>

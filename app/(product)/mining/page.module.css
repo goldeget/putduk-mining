@@ -107,11 +107,12 @@
 }
 
 .heroCopy > p {
-  max-width: 16ch;
+  max-width: 22ch;
   margin: 0.75rem 0 0;
   color: var(--text-secondary);
   font-size: 0.875rem;
-  line-height: 1.6;
+  line-height: 1.55;
+  text-wrap: pretty;
 }
 
 :global(:root[data-theme="light"]) .heroCopy > p {
@@ -1040,6 +1041,6 @@
   }
 
   .hero[data-member-product-art="NVDA"] .artwork img {
-    object-position: 66% 50%;
+    object-position: 73% 50%;
   }
 }
