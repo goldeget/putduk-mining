@@ -2744,7 +2744,7 @@
     "scripts/capture-local-supabase-env.mjs": "4403777211d9619e709e641cacea0d37ff0cf15e2f72fc8add91d7b88a12ca76",
     "scripts/catalog-material-profiles.json": "cf305a321f8ebda27006e65d0efcb61388e448c88980b0e935d45875cda02560",
     "scripts/ci-authenticated-shards-201.d.mts": "9ca0a0d3413fb8b72cce27540aded1471edaf2b81b912dc612e57bfe3dfff949",
-    "scripts/ci-authenticated-shards-201.mjs": "990346b29c2f2ff74d423288743e9243584c2488c52422c8a1f429adc41aa311",
+    "scripts/ci-authenticated-shards-201.mjs": "b28982457ac15228752d0f2f2ab7a6185337fde464909df0d1177112d1298525",
     "scripts/ci-authenticated-shards.d.mts": "e377f11a96a91d45c2cf3b3c62f18902684ec1816f9ae30c3fdaaf71d939695d",
     "scripts/ci-authenticated-shards.mjs": "c956696b96bc6b5670000917f512ac15dbd503018a85c39aeea5d8e36bc2b24c",
     "scripts/ci-authenticated-shards.test.mjs": "e511850e434a6b1fbc0f8a359a42e0fe81e7dec27b06185c36239707c1a09c65",
@@ -3229,7 +3229,7 @@
     "tests/e2e/authenticated/member-product-scene.spec.ts": "327f50fb0af334d9a0bb56f028880f04fb2e2f486d0ece78aa7a0afe0984e883",
     "tests/e2e/authenticated/menu-product.spec.ts": "152b733d6de97ec458c3e0b70f5c92056821f61c1d76cfca471ad7edbdeb4d3d",
     "tests/e2e/authenticated/mining-product.spec.ts": "1c5aebcc63ed576d0c0612e81336b0cb76a414b672190ec0a7a1a0d9e8e33aa8",
-    "tests/e2e/authenticated/mockup-reference-coverage.spec.ts": "5c8b81744fb67c18ecf26fa109a64611ba35390cb00a79a16244fb76a39289fe",
+    "tests/e2e/authenticated/mockup-reference-coverage.spec.ts": "2aeb359e7d5c9c600506e0ddb422d2b4811b6c3f7bd1860b3896bbd27254f171",
     "tests/e2e/authenticated/notifications-product.spec.ts": "c72f13016b1dc87191e8e3d73f69272dc35c9394ec8cb06076158a3664efe4c4",
     "tests/e2e/authenticated/operator-fixture-isolation.spec.ts": "17428b3599b63b66208e6a8dd7170aeb2b7dd3f608877500e4fa0b3df2a19d9b",
     "tests/e2e/authenticated/principal-withdrawal-product.spec.ts": "81bd5a1477aeebd1facf7f3528d5fd854501e858e3aad2a692f783c9761ab983",
@@ -6110,7 +6110,7 @@
     "tests/e2e/authenticated/helpers/backend-http-197-auth.ts": "72c2b67f0e3316991142a8f233446fb8fdfd7055f4cc6d282b36f6a8fa131928",
     "tests/e2e/authenticated/usdt-manual-full-payout-197.spec.ts": "841bcd1995b980ca18e059f9082148dae3b42bcc17f3026d8b958b0fac79fae7",
     "playwright.backend-browser-201.config.ts": "055f7323c0dc2a112c17446477ae9535f7cb83c287b611d9779fe21cebe8fe62",
-    "scripts/ci-authenticated-shards-201.mjs": "990346b29c2f2ff74d423288743e9243584c2488c52422c8a1f429adc41aa311"
+    "scripts/ci-authenticated-shards-201.mjs": "b28982457ac15228752d0f2f2ab7a6185337fde464909df0d1177112d1298525"
   },
   "provenanceOnlyExternalStageSha256": "0a6533af9542d46d91484ff82e0cb90921144aa4625df30af974f892c9726a65",
   "provenanceOnlyExternalNativeReceiptSha256": "717f143b6254a014274571cd61e2c3beed6aba63544865575a9fa1fe7d36d3f3"

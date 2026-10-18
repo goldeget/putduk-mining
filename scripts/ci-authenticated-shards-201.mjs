@@ -63,7 +63,7 @@ const TIMING_HINTS = {
   "menu-product.spec.ts": 47,
   "mining-product.spec.ts": 16,
   "mockup-reference-ai.spec.ts": 160,
-  "mockup-reference-coverage.spec.ts": 400,
+  "mockup-reference-coverage.spec.ts": 160,
   "mockup-reference-menu.spec.ts": 120,
   "mockup-reference-mining.spec.ts": 150,
   "mockup-reference-products.spec.ts": 80,

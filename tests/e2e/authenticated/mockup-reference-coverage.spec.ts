@@ -10,7 +10,7 @@ import {
   loginAsMember,
 } from "./helpers/member-session";
 
-test("captures every member reference family without fabricated balances or activity", async ({
+test("captures the home member reference without fabricated balances or activity", async ({
   page,
 }, testInfo) => {
   test.setTimeout(360_000);
@@ -18,10 +18,5 @@ test("captures every member reference family without fabricated balances or acti
   const member = await createConfirmedMember("mockup-reference-empty");
   await loginAsMember(page, member, "/home");
   await dismissGuidedQuestIfPresent(page);
-  await captureRoutes(
-    page,
-    testInfo,
-    ["/home", "/mining", "/products", "/wallet", "/menu", "/ai"],
-    references,
-  );
+  await captureRoutes(page, testInfo, ["/home"], references);
 });
