@@ -3192,7 +3192,7 @@
     "tests/e2e/authenticated/events-product.spec.ts": "c7f284af989a86363b7d69a2ca2c53ecd05415210964e1d1397e6213515ea405",
     "tests/e2e/authenticated/first-krw-withdrawal.spec.ts": "ccbaa01bd28dbeea87c1f75ef7530625cfea2fe94cddd90cc7b7f65bf9a767ea",
     "tests/e2e/authenticated/first-usdt-withdrawal.spec.ts": "8bb4ec661847fe2f0d0ed9e567a126238aa588994d488c9f78bd732c13a64ab3",
-    "tests/e2e/authenticated/funded-home-typography.spec.ts": "d0f3fb3f4d1e88c2bff1f6f4d36f78a0f3c0c699f49f662563924d2847086c91",
+    "tests/e2e/authenticated/funded-home-typography.spec.ts": "2f2b8463aa73394401c476c7c43b6cc2f03d976d0565376a1a49406131827137",
     "tests/e2e/authenticated/helpers/admin-kyc-ui.ts": "78dfb8339765c4429c2fa7241f56b79a302f290a673cf4d3d2bf8818c36a2bf3",
     "tests/e2e/authenticated/helpers/admin-money-ui.ts": "bf3764867387249228c888356a421d1da6eb485a8edd1a02b0c46a6f946ceb5b",
     "tests/e2e/authenticated/helpers/admin-totp.ts": "e1f23fa7acfc5ac834083f9312f303535ffd8ac6d6ba40bcae0d92fd1d0707b1",

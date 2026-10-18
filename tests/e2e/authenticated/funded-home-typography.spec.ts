@@ -108,9 +108,9 @@ test("approved deposit Home retains real principal and readable shortcuts across
   expect(String(depositBefore.data?.amount_atomic)).toBe(principal);
   await page.reload();
   await expectSettledRoute(page, "/home");
-  await expect(page.locator('[data-fact="principal"]')).toContainText(
-    principalLabel,
-  );
+  await expect(
+    page.locator('[data-fact="principal"]').filter({ visible: true }),
+  ).toContainText(principalLabel);
   const records = [];
   // Start with the newly exposed 430px breakpoint, then cover every requested width.
   for (const width of [430, 320, 360, 390, 834, 1024, 1440]) {
