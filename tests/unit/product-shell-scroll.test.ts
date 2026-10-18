@@ -191,6 +191,36 @@ describe("product main scroll history", () => {
     });
   });
 
+  it("keeps the products ready marker that is inside main", async () => {
+    const streamedCopy = document.createElement("div");
+    streamedCopy.setAttribute("data-ui-ready", "/products");
+    streamedCopy.setAttribute("data-ui-state", "empty");
+    document.body.append(streamedCopy);
+    try {
+      navigation.pathname = "/products";
+      window.history.replaceState(null, "", "/products");
+      await act(async () =>
+        root.render(
+          createElement(
+            ProductShell,
+            { displayName: "회원" },
+            createElement("section", {
+              "data-ui-ready": "/products",
+              "data-ui-state": "empty",
+            }),
+          ),
+        ),
+      );
+      const markers = document.querySelectorAll('[data-ui-ready="/products"]');
+      expect(markers).toHaveLength(1);
+      expect(host.querySelector("main")?.contains(markers[0] ?? null)).toBe(
+        true,
+      );
+    } finally {
+      streamedCopy.remove();
+    }
+  });
+
   it.each(["/home#details", "/home?selected=1"])(
     "does not treat the next normal route as back after same-path history %s",
     async (samePathHistory) => {

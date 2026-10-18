@@ -59,6 +59,35 @@ export function ProductShell({
   const renderedPath = useRef(pathname);
   const restoringHistory = useRef(false);
 
+  useLayoutEffect(() => {
+    if (pathname !== "/products") return;
+    const retainVisibleProductsMarker = () => {
+      const main = mainRef.current;
+      if (!main) return;
+      const markers = document.querySelectorAll('[data-ui-ready="/products"]');
+      let inMain = false;
+      for (const marker of markers) {
+        if (main.contains(marker)) {
+          inMain = true;
+          break;
+        }
+      }
+      if (!inMain) return;
+      for (const marker of markers) {
+        if (!main.contains(marker)) marker.removeAttribute("data-ui-ready");
+      }
+    };
+    retainVisibleProductsMarker();
+    const observer = new MutationObserver(retainVisibleProductsMarker);
+    observer.observe(document.documentElement, {
+      subtree: true,
+      childList: true,
+      attributes: true,
+      attributeFilter: ["data-ui-ready"],
+    });
+    return () => observer.disconnect();
+  }, [pathname]);
+
   useEffect(() => {
     const onPopState = () => {
       // Same-path hash/query history does not run the pathname effect below.
