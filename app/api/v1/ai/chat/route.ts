@@ -37,6 +37,8 @@ import { apiError } from "@/lib/api/http";
 import { readBoundedJsonBody } from "@/lib/api/request-body";
 import { getVerifiedIdentity } from "@/lib/auth/session";
 import { getServerEnv } from "@/lib/env/server";
+import { assertComponentActive } from "@/lib/safe-mode/assert-component-active.server";
+import { SAFE_MODE_MEMBER_COPY } from "@/lib/safe-mode/app-guard";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { TRUST_CONTENT_VERSION } from "@/lib/trust/public-content";
 
@@ -122,6 +124,20 @@ export async function POST(request: Request) {
       code: "ORIGIN_REJECTED",
       message: "허용되지 않은 요청 출처입니다.",
       status: 403,
+    });
+  }
+
+  // 안전 모드(GLOBAL, AI)는 서버에서 확인한다. 읽지 못하면 답변을 시작하지 않는다.
+  const aiGate = await assertComponentActive("AI");
+  if (!aiGate.ok) {
+    return apiError({
+      code:
+        aiGate.reason === "PAUSED" ? "AI_SAFE_MODE_ACTIVE" : "AI_STATE_UNKNOWN",
+      message:
+        aiGate.reason === "PAUSED"
+          ? SAFE_MODE_MEMBER_COPY.AI.paused
+          : SAFE_MODE_MEMBER_COPY.AI.unavailable,
+      status: 503,
     });
   }
 

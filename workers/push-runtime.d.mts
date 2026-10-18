@@ -23,6 +23,8 @@ export function runApprovedLocalPush(options?: {
       name: string,
       args: Record<string, unknown>,
     ) => PromiseLike<{ data?: unknown; error?: unknown }>;
+    /** safe_mode_controls 읽기용. 없으면 안전 모드를 확인할 수 없어 보내지 않는다. */
+    from?: (table: string) => unknown;
   };
 }): Promise<{
   claimed: number;
@@ -32,4 +34,6 @@ export function runApprovedLocalPush(options?: {
   cancelled: number;
   failed: number;
   unknown: number;
+  /** 안전 모드로 멈춰 있어 아무것도 claim하지 않았다. */
+  safeModePaused?: boolean;
 }>;

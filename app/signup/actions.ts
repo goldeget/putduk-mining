@@ -6,6 +6,8 @@ import { z } from "zod";
 
 import { recordProductionAnalyticsEvent } from "@/lib/analytics/record-event.server";
 import { getPublicEnv } from "@/lib/env/public";
+import { SAFE_MODE_MEMBER_COPY } from "@/lib/safe-mode/app-guard";
+import { assertComponentActive } from "@/lib/safe-mode/assert-component-active.server";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -151,6 +153,19 @@ export async function signupAction(
     return {
       fieldErrors: toFieldErrors(parsed.error),
       message: "입력한 정보를 다시 확인해 주세요.",
+      status: "error",
+    };
+  }
+
+  // 서버에서 안전 모드(GLOBAL, SIGNUP)를 먼저 확인한다. 읽지 못하면 가입을 열지 않는다.
+  const signupGate = await assertComponentActive("SIGNUP");
+  if (!signupGate.ok) {
+    return {
+      fieldErrors: {},
+      message:
+        signupGate.reason === "PAUSED"
+          ? SAFE_MODE_MEMBER_COPY.SIGNUP.paused
+          : SAFE_MODE_MEMBER_COPY.SIGNUP.unavailable,
       status: "error",
     };
   }

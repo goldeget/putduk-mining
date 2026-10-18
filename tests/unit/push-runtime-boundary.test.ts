@@ -79,8 +79,101 @@ describe("explicit local push runtime gate (network zero)", () => {
     const env = fixtureEnv();
     expect(approvedLocalPushConfig(env).url).toBe(env.NEXT_PUBLIC_SUPABASE_URL);
     expect(
-      (await runApprovedLocalPush({ env, client: { rpc }, send })).claimed,
+      (
+        await runApprovedLocalPush({
+          env,
+          client: { rpc, from: safeModeTable([]) },
+          send,
+        })
+      ).claimed,
     ).toBe(0);
     expect(send).not.toHaveBeenCalled();
   });
+
+  it("claims nothing and sends nothing while GLOBAL or NOTIFICATION safe mode is active", async () => {
+    for (const component of ["GLOBAL", "NOTIFICATION"]) {
+      const rpc = vi.fn();
+      const send = vi.fn();
+      const summary = await runApprovedLocalPush({
+        env: fixtureEnv(),
+        client: {
+          rpc,
+          from: safeModeTable([
+            {
+              component,
+              is_paused: true,
+              starts_at: "2026-01-01T00:00:00.000Z",
+            },
+          ]),
+        },
+        send,
+      });
+      expect(summary).toMatchObject({ claimed: 0, safeModePaused: true });
+      expect(rpc).not.toHaveBeenCalled();
+      expect(send).not.toHaveBeenCalled();
+    }
+  });
+
+  it("does not let an unrelated component or a future start pause push", async () => {
+    const rpc = vi.fn(async () => ({ data: [], error: null }));
+    const summary = await runApprovedLocalPush({
+      env: fixtureEnv(),
+      client: {
+        rpc,
+        from: safeModeTable([
+          { component: "AI", is_paused: true, starts_at: "2026-01-01T00:00:00Z" },
+          {
+            component: "NOTIFICATION",
+            is_paused: true,
+            starts_at: "2999-01-01T00:00:00Z",
+          },
+        ]),
+      },
+      send: vi.fn(),
+    });
+    expect(summary.claimed).toBe(0);
+    expect(summary.safeModePaused).toBeUndefined();
+    expect(rpc).toHaveBeenCalledTimes(1);
+  });
+
+  it("fails closed when safe mode cannot be read", async () => {
+    const rpc = vi.fn();
+    const send = vi.fn();
+    await expect(
+      runApprovedLocalPush({
+        env: fixtureEnv(),
+        client: { rpc },
+        send,
+      }),
+    ).rejects.toThrow("PUSH_SAFE_MODE_UNKNOWN");
+    await expect(
+      runApprovedLocalPush({
+        env: fixtureEnv(),
+        client: {
+          rpc,
+          from: () => ({
+            select: () => ({
+              in: async () => ({ data: null, error: { message: "boom" } }),
+            }),
+          }),
+        },
+        send,
+      }),
+    ).rejects.toThrow("PUSH_SAFE_MODE_UNKNOWN");
+    expect(rpc).not.toHaveBeenCalled();
+    expect(send).not.toHaveBeenCalled();
+  });
 });
+
+function safeModeTable(rows: unknown[]) {
+  return () => ({
+    select: () => ({
+      in: async (_column: string, values: readonly string[]) => ({
+        data: (rows as { component: string }[]).filter((row) =>
+          values.includes(row.component),
+        ),
+        error: null,
+      }),
+    }),
+  });
+}
