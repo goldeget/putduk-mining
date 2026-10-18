@@ -3,6 +3,7 @@
 import Link from "next/link";
 import type { Route } from "next";
 import { usePathname } from "next/navigation";
+import { useEffect, useRef } from "react";
 
 const items = [
   { href: "/", label: "오늘의 퍼뜩" },
@@ -23,8 +24,20 @@ const items = [
 
 export function AdminNavigation({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
+  const navRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    navRef.current?.scrollTo(0, 0);
+  }, [pathname]);
+
+  useEffect(() => {
+    const resetScroll = () => navRef.current?.scrollTo(0, 0);
+    window.addEventListener("resize", resetScroll);
+    return () => window.removeEventListener("resize", resetScroll);
+  }, []);
+
   return (
-    <nav aria-label="운영자 주 메뉴">
+    <nav aria-label="운영자 주 메뉴" ref={navRef}>
       {items.map((item, index) => {
         const current =
           pathname === item.href ||

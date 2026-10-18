@@ -275,6 +275,7 @@ input:focus-visible {
   margin-bottom: 16px;
 }
 .control-rail nav a {
+  scroll-margin-block: 6px;
   display: grid;
   grid-template-columns: max-content minmax(0, 1fr);
   align-items: center;

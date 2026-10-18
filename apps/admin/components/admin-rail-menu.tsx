@@ -6,7 +6,13 @@ import { useId, useRef, useState, type ReactNode } from "react";
 
 import { AdminNavigation } from "./admin-navigation";
 
-export function AdminRailMenu({ children }: { children: ReactNode }) {
+export function AdminRailMenu({
+  children,
+  footer,
+}: {
+  children?: ReactNode;
+  footer?: ReactNode;
+}) {
   const [open, setOpen] = useState(false);
   const menuId = useId();
   const toggle = useRef<HTMLButtonElement>(null);
@@ -14,6 +20,9 @@ export function AdminRailMenu({ children }: { children: ReactNode }) {
   function closeMenu() {
     setOpen(false);
     if (open) toggle.current?.focus();
+    document
+      .querySelector<HTMLElement>('.control-rail nav[aria-label="운영자 주 메뉴"]')
+      ?.scrollTo(0, 0);
   }
 
   return (
@@ -52,6 +61,7 @@ export function AdminRailMenu({ children }: { children: ReactNode }) {
         <AdminNavigation onNavigate={closeMenu} />
         {children}
       </div>
+      {footer}
     </aside>
   );
 }

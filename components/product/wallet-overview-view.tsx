@@ -259,6 +259,10 @@ export function WalletOverviewView({
                   key={view}
                   prefetch={false}
                   aria-current={activeView === view ? "page" : undefined}
+                  onNavigate={(event) => {
+                    event.preventDefault();
+                    selectView(view);
+                  }}
                   onClick={(event) => {
                     event.preventDefault();
                     selectView(view);

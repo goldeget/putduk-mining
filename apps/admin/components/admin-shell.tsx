@@ -24,19 +24,21 @@ export function AdminShell({
       <a className="admin-skip-link" href="#admin-main-content">
         본문 바로가기
       </a>
-      <AdminRailMenu>
-        <div className="operator-card">
-          <span>보안 세션</span>
-          <strong>{operatorRoleLabel[principal.role]}</strong>
-          <small>추가 본인 확인 완료</small>
-          <form action={logoutAction}>
-            <button type="submit">이 기기 로그아웃</button>
-          </form>
-          <form action={logoutAllAction}>
-            <button type="submit">모든 세션 종료</button>
-          </form>
-        </div>
-      </AdminRailMenu>
+      <AdminRailMenu
+        footer={
+          <div className="operator-card">
+            <span>보안 세션</span>
+            <strong>{operatorRoleLabel[principal.role]}</strong>
+            <small>추가 본인 확인 완료</small>
+            <form action={logoutAction}>
+              <button type="submit">이 기기 로그아웃</button>
+            </form>
+            <form action={logoutAllAction}>
+              <button type="submit">모든 세션 종료</button>
+            </form>
+          </div>
+        }
+      />
       <div className="control-workspace">
         <header className="control-topbar">
           <div>
