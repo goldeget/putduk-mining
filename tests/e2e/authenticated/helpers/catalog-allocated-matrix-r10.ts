@@ -148,15 +148,18 @@ export async function captureAllocatedMatrix(
   info: TestInfo,
   label: string,
   selectedTheme?: "dark" | "light",
+  widthsOverride?: readonly number[],
 ) {
   const records = [];
   const matrixStartedAt = Date.now();
   const expandedTypographyMatrix =
     label === "funded-wallet-real-principal" ||
     label === "funded-home-server-status";
-  const widths = expandedTypographyMatrix
-    ? [320, 360, 390, 430, 834, 1024, 1440]
-    : [320, 390, 834, 1440];
+  const widths = widthsOverride
+    ? [...widthsOverride]
+    : expandedTypographyMatrix
+      ? [320, 360, 390, 430, 834, 1024, 1440]
+      : [320, 390, 834, 1440];
   for (const width of widths) {
     await page.setViewportSize({ width, height: width === 834 ? 1112 : 900 });
     for (const theme of selectedTheme
