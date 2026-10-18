@@ -53,7 +53,8 @@ export function approvedLocalPushConfig(env = process.env) {
     )
       throw new Error();
     key.setPrivateKey(privateBytes);
-    if (!key.getPublicKey().equals(publicBytes)) throw new Error();
+    if (!key.getPublicKey(null, "uncompressed").equals(publicBytes))
+      throw new Error();
     const contact = new URL(subject);
     if (
       !["mailto:", "https:"].includes(contact.protocol) ||

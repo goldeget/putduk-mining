@@ -6,18 +6,26 @@ import {
   runApprovedLocalPush,
 } from "../../workers/push-runtime.mjs";
 function fixtureEnv() {
-  const key = createECDH("prime256v1");
-  key.generateKeys();
   const target = loadJobLocalAllowlist();
-  return {
-    APP_ENV: "test",
-    PUTDUK_PUSH_SEND_APPROVED: "true",
-    SUPABASE_SECRET_KEY: "test-only-secret",
-    NEXT_PUBLIC_SUPABASE_URL: `http://127.0.0.1:${target.apiPort}`,
-    NEXT_PUBLIC_VAPID_PUBLIC_KEY: key.getPublicKey().toString("base64url"),
-    VAPID_PRIVATE_KEY: key.getPrivateKey().toString("base64url"),
-    VAPID_SUBJECT: "mailto:local-qa@putduk.test",
-  };
+  for (let attempt = 0; attempt < 5; attempt += 1) {
+    const key = createECDH("prime256v1");
+    key.generateKeys();
+    const publicKey = key.getPublicKey(null, "uncompressed");
+    const privateKey = key.getPrivateKey();
+    const check = createECDH("prime256v1");
+    check.setPrivateKey(privateKey);
+    if (!check.getPublicKey(null, "uncompressed").equals(publicKey)) continue;
+    return {
+      APP_ENV: "test",
+      PUTDUK_PUSH_SEND_APPROVED: "true",
+      SUPABASE_SECRET_KEY: "test-only-secret",
+      NEXT_PUBLIC_SUPABASE_URL: `http://127.0.0.1:${target.apiPort}`,
+      NEXT_PUBLIC_VAPID_PUBLIC_KEY: publicKey.toString("base64url"),
+      VAPID_PRIVATE_KEY: privateKey.toString("base64url"),
+      VAPID_SUBJECT: "mailto:local-qa@putduk.test",
+    };
+  }
+  throw new Error("PUSH_TEST_KEY_UNAVAILABLE");
 }
 describe("explicit local push runtime gate (network zero)", () => {
   it.each(["", "false", undefined])(
