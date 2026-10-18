@@ -53,7 +53,7 @@ const TIMING_HINTS = {
   "catalog-allocated-home-dark.spec.ts": 210,
   "catalog-allocated-home-light.spec.ts": 250,
   "catalog-allocated-wallet-dark.spec.ts": 240,
-  "catalog-allocated-wallet-light.spec.ts": 250,
+  "catalog-allocated-wallet-light.spec.ts": 420,
   "catalog-materials.spec.ts": 260,
   "deposit-product.spec.ts": 57,
   "events-product.spec.ts": 23,
