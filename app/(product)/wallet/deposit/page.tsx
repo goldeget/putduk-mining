@@ -15,6 +15,7 @@ import {
 } from "@/domain/wallet/usdt-manual-deposit";
 import { formatProductDateTime } from "@/lib/i18n/date-time";
 import { requirePageUser } from "@/lib/auth/session";
+import { readKrwDepositInstruction } from "@/lib/wallet/read-krw-deposit-instruction.server";
 const krwStatusCopy: Record<
   string,
   { description: string; label: string; tone: ProductStatusTone }
@@ -237,6 +238,7 @@ export default async function DepositPage() {
       }
     >
       <WalletDepositView
+        krwInstruction={readKrwDepositInstruction()}
         instructions={instructions}
         instructionRead={instructionRead}
         krwHistoryRead={krwHistoryRead}

@@ -9,6 +9,7 @@ import {
   formatAtomicAmount,
   parseDisplayAmount,
 } from "@/domain/wallet/format-amount";
+import type { KrwDepositInstruction } from "@/domain/wallet/krw-deposit-instruction";
 import { trackAnalyticsEvent } from "@/lib/analytics/client";
 
 type Feedback = { message: string; tone: "error" | "success" } | null;
@@ -24,7 +25,12 @@ const DEPOSIT_REQUEST_ERRORS: Record<string, string> = {
   UNAUTHENTICATED: "로그인이 필요해요. 다시 로그인해 주세요.",
 };
 
-export function DepositForm() {
+export function DepositForm({
+  instruction = null,
+}: {
+  /** 운영자가 정한 입금 안내 계좌. 서버가 설정에서 읽어 넘긴다. 없으면 null이다. */
+  instruction?: KrwDepositInstruction | null;
+}) {
   const router = useRouter();
   const [amount, setAmount] = useState("");
   const [feedback, setFeedback] = useState<Feedback>(null);
@@ -112,6 +118,44 @@ export function DepositForm() {
           <p>본인 명의 계좌로 이체한 뒤 확인됩니다.</p>
         </span>
       </header>
+
+      {instruction ? (
+        <section
+          aria-labelledby="krw-instruction-title"
+          data-krw-instruction="ready"
+        >
+          <h3 id="krw-instruction-title">입금할 계좌</h3>
+          <dl className={styles.policySummary} aria-label="입금 계좌 안내">
+            <div>
+              <dt>은행</dt>
+              <dd>{instruction.bankName}</dd>
+            </div>
+            <div>
+              <dt>계좌번호</dt>
+              <dd>{instruction.accountNumber}</dd>
+            </div>
+            <div>
+              <dt>예금주</dt>
+              <dd>{instruction.accountHolder}</dd>
+            </div>
+          </dl>
+          <p>
+            이체한 뒤 아래에서 입금 요청을 눌러 주세요. 운영자가 확인하면 원화
+            지갑에 반영돼요.
+          </p>
+        </section>
+      ) : (
+        <div
+          className={styles.formNotice}
+          role="status"
+          data-krw-instruction="missing"
+        >
+          <PutdukIcon name="shield" size={19} />
+          <p>
+            입금 계좌를 준비하고 있어요. 계좌가 보이면 그때 이체해 주세요.
+          </p>
+        </div>
+      )}
 
       <label className={styles.fieldGroup} htmlFor="deposit-amount">
         <span>입금 요청 금액</span>

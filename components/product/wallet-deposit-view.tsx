@@ -7,6 +7,7 @@ import {
 } from "@/components/product/product-status-pill";
 import { UsdtManualDepositForm } from "@/components/product/usdt-manual-deposit-form";
 import { WalletScene } from "@/components/product/wallet-scene";
+import type { KrwDepositInstruction } from "@/domain/wallet/krw-deposit-instruction";
 import type { UsdtDepositInstruction } from "@/domain/wallet/usdt-manual-deposit";
 
 import styles from "./wallet-deposit-view.module.css";
@@ -23,6 +24,8 @@ export type DepositHistoryItem = {
 };
 
 export type WalletDepositViewProps = {
+  /** 운영자가 정한 원화 입금 안내 계좌. 없으면 null이다. */
+  krwInstruction?: KrwDepositInstruction | null;
   instructions: UsdtDepositInstruction[];
   instructionRead: "error" | "empty" | "ready";
   krwHistoryRead: "error" | "empty" | "ready";
@@ -155,6 +158,7 @@ function DepositHistory({
 
 /** New reference-based presentation; the existing request forms and commands remain authoritative. */
 export function WalletDepositView({
+  krwInstruction = null,
   instructions,
   instructionRead,
   krwHistoryRead,
@@ -238,7 +242,7 @@ export function WalletDepositView({
         <div className={styles.formLayout}>
           <div className={styles.formPanel}>
             <section className={styles.bank} aria-label="원화 입금 신청">
-              <DepositForm />
+              <DepositForm instruction={krwInstruction} />
             </section>
             <section className={styles.usdt} aria-label="USDT 수동 입금 신청">
               <UsdtManualDepositForm
