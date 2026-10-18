@@ -225,7 +225,7 @@ export default async function MiningPage() {
               <MetalBrand />
               <h1 aria-label="채굴 월드">퍼뜩 채굴</h1>
             </div>
-            <p>한 걸음이 가치를 만듭니다.</p>
+            <p>걸음이 가치예요.</p>
           </header>
         </div>
 

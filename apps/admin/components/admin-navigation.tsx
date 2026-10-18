@@ -34,6 +34,12 @@ export function AdminNavigation({ onNavigate }: { onNavigate?: () => void }) {
             href={item.href as Route}
             key={item.href}
             aria-current={current ? "page" : undefined}
+            onFocus={(event) => {
+              event.currentTarget.scrollIntoView({
+                block: "nearest",
+                inline: "nearest",
+              });
+            }}
             onNavigate={() => onNavigate?.()}
           >
             <span className="control-nav__index">

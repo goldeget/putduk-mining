@@ -1,6 +1,8 @@
+"use client";
+
 import { WalletBrandSymbol } from "@/components/product/wallet-brand-symbol";
 import Link from "next/link";
-import type { CSSProperties } from "react";
+import { useCallback, useEffect, useState, type CSSProperties } from "react";
 
 import { WalletReadRecovery } from "@/components/product/wallet-read-recovery";
 import type { WalletReadViewProps } from "@/components/product/wallet-read-view";
@@ -110,6 +112,23 @@ export function WalletOverviewView({
   trialRewardAtomic,
   trialState,
 }: WalletReadViewProps) {
+  type WalletView = "principal" | "profit" | "history";
+  const [activeView, setActiveView] = useState<WalletView>(initialView);
+  useEffect(() => {
+    setActiveView(initialView);
+  }, [initialView]);
+
+  const selectView = useCallback((view: WalletView) => {
+    setActiveView(view);
+    const url = new URL(window.location.href);
+    url.searchParams.set("view", view);
+    window.history.replaceState(
+      window.history.state,
+      "",
+      `${url.pathname}${url.search}`,
+    );
+  }, []);
+
   const balanceKnown = balanceState !== "error" && krw !== null;
   const principal =
     funding.state === "ready"
@@ -126,12 +145,12 @@ export function WalletOverviewView({
   const fundingMissing =
     funding.state === "empty" ? "아직 없음" : "확인할 수 없음";
   const displayEntries =
-    initialView === "history" ? ledgerEntries : ledgerEntries.slice(0, 4);
+    activeView === "history" ? ledgerEntries : ledgerEntries.slice(0, 4);
   return (
     <div
       className={styles.page}
       data-wallet-presentation="wallet-overview-scene"
-      data-wallet-active-view={initialView}
+      data-wallet-active-view={activeView}
     >
       <section
         className={styles.overview}
@@ -239,7 +258,11 @@ export function WalletOverviewView({
                   href={`/wallet?view=${view}`}
                   key={view}
                   prefetch={false}
-                  aria-current={initialView === view ? "page" : undefined}
+                  aria-current={activeView === view ? "page" : undefined}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    selectView(view);
+                  }}
                 >
                   <Icon
                     kind={
@@ -251,28 +274,28 @@ export function WalletOverviewView({
               ),
             )}
           </nav>
-          {initialView !== "history" ? (
+          {activeView !== "history" ? (
             <section
               className={styles.viewNote}
               aria-label={
-                initialView === "principal" ? "원금 현황" : "수익 현황"
+                activeView === "principal" ? "원금 현황" : "수익 현황"
               }
             >
               <div>
                 <span>
-                  {initialView === "principal"
+                  {activeView === "principal"
                     ? "인정 원금"
                     : "정산 전 대기 수익"}
                 </span>
                 <Amount
                   value={
-                    (initialView === "principal" ? principal : pending) ??
+                    (activeView === "principal" ? principal : pending) ??
                     fundingMissing
                   }
                 />
               </div>
               <p>
-                {initialView === "principal"
+                {activeView === "principal"
                   ? "인정 원금과 출금 가능한 원화는 서로 다른 값이에요."
                   : "대기 수익은 정산된 뒤 원화 지갑에 반영돼요."}
               </p>
@@ -286,7 +309,7 @@ export function WalletOverviewView({
               ) : null}
             </section>
           ) : null}
-          {initialView === "profit" ? (
+          {activeView === "profit" ? (
             <section
               className={styles.trial}
               aria-label="원화와 분리된 체험 보상"
@@ -319,8 +342,15 @@ export function WalletOverviewView({
           >
             <header>
               <h2 id="wallet-ledger-title">최근 거래 내역</h2>
-              {initialView !== "history" ? (
-                <Link href="/wallet?view=history" prefetch={false}>
+              {activeView !== "history" ? (
+                <Link
+                  href="/wallet?view=history"
+                  prefetch={false}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    selectView("history");
+                  }}
+                >
                   전체보기 <span aria-hidden="true">›</span>
                 </Link>
               ) : (
@@ -370,7 +400,7 @@ export function WalletOverviewView({
               </div>
             )}
           </section>
-          {initialView === "history" ? (
+          {activeView === "history" ? (
             <section
               className={styles.receipts}
               aria-labelledby="wallet-receipts-title"
