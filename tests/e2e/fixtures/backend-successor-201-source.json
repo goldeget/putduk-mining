@@ -3204,7 +3204,7 @@
     "tests/e2e/authenticated/helpers/eligibility.ts": "04338a9454731369ec1e9b91e491319b288a8f03aeaa9ac8cc5ab0ebe7260f42",
     "tests/e2e/authenticated/helpers/events-fixtures.ts": "1c531d87c775384ec16384428233c23c48b0587cc7a861180f009550a9a34dac",
     "tests/e2e/authenticated/helpers/historical-withdrawal-fixture.ts": "c05a4e11ad93b23b0a31df25f17936a4f21f88cfcec1a24b053a4e82aed9100a",
-    "tests/e2e/authenticated/helpers/home-catalog-materials-run.ts": "fd4ecebb363a77e05ce04934d0a0f13f1fe9534af4ede8ffa43c9230486e2d07",
+    "tests/e2e/authenticated/helpers/home-catalog-materials-run.ts": "1d36125002fc21507e0b16b6030573bb90e7586bda0bd72b4790f3eec5742589",
     "tests/e2e/authenticated/helpers/journey.ts": "7bac6c5fd8053f2f2231c7ad6df2e607b0e46e2b3f5797072cfe5e52242a7923",
     "tests/e2e/authenticated/helpers/kyc-runtime-binding.ts": "fa175cc2a166b8b9a606baa9bc45af9c8ec4491738566f49b46370e2942bf6fc",
     "tests/e2e/authenticated/helpers/local-db.ts": "c85a1437007d537ff2b98826fcc65db3344d1c2373263db45a0a7e3a5213ec93",

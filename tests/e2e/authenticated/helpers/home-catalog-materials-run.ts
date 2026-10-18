@@ -8,27 +8,27 @@ import {
   type TestInfo,
 } from "@playwright/test";
 
-import { catalogReceiptSchema } from "../../../domain/products/catalog-command";
-import { createConfirmedMember } from "../fixtures/local-auth";
+import { catalogReceiptSchema } from "../../../../domain/products/catalog-command";
+import { createConfirmedMember } from "../../fixtures/local-auth";
 import {
   ADMIN_ORIGIN,
   completeAdminLoginWithTotp,
   grantAdminRole,
-} from "./helpers/admin-totp";
-import { confirmOperatorStepUp } from "./helpers/admin-money-ui";
-import { execLocalAdminSql } from "./helpers/local-db";
-import { awaitPaintedImages } from "./helpers/painted-images";
-import { assertViewportFits } from "./helpers/viewport-geometry";
+} from "./admin-totp";
+import { confirmOperatorStepUp } from "./admin-money-ui";
+import { execLocalAdminSql } from "./local-db";
+import { awaitPaintedImages } from "./painted-images";
+import { assertViewportFits } from "./viewport-geometry";
 import {
   observeSuccessfulProductsLogin,
   settleBrowserClassifications,
   type CancelledSuccessfulLoginRedirect,
-} from "./helpers/successful-login-cancellation";
+} from "./successful-login-cancellation";
 import {
   dismissGuidedQuestIfPresent,
   loginAsMember,
-} from "./helpers/member-session";
-import { expectSettledRoute } from "./helpers/settled-route";
+} from "./member-session";
+import { expectSettledRoute } from "./settled-route";
 
 const categories = [
   "KR_STOCK",
