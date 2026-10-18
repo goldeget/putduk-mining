@@ -70,9 +70,12 @@ export function readWelcomeConversionSuccess(
   };
 }
 
+/** 계정 화면의 "본인 확인"과 같은 말을 쓴다. 이 문구일 때만 이동 링크를 보여 준다. */
+export const welcomeKycRequiredCopy =
+  "본인 확인을 완료하면 환영 보상을 전환할 수 있습니다.";
+
 const businessRejectionCopy: Readonly<Record<string, string>> = {
-  WELCOME_REWARD_KYC_REQUIRED:
-    "실명 확인을 완료하면 환영 보상을 전환할 수 있습니다.",
+  WELCOME_REWARD_KYC_REQUIRED: welcomeKycRequiredCopy,
   WELCOME_REWARD_RISK_REVIEW_REQUIRED:
     "안전 확인이 필요해 보상 전환을 검토하고 있습니다.",
   TRIAL_NOT_COMPLETED: "PUTDUK START를 완료한 뒤 다시 시도해 주세요.",

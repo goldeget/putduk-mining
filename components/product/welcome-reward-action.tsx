@@ -13,6 +13,7 @@ import {
   readWelcomeConversionSuccess,
   waitForWelcomeConversionResult,
   welcomeConversionWaitLimitMs,
+  welcomeKycRequiredCopy,
 } from "@/lib/product/welcome-conversion-response";
 
 import styles from "./start-actions.module.css";
@@ -177,6 +178,11 @@ export function WelcomeRewardAction({
           tone={presentation.tone}
         />
         <p className={styles.pendingStatus}>{presentation.description}</p>
+        {result.status === "PENDING_QUALIFICATION" ? (
+          <Link className="button button--secondary" href="/menu/account">
+            본인 확인하러 가기
+          </Link>
+        ) : null}
         <p className={styles.actionMessage}>
           확인 결과가 갱신되면 이곳에 다음 행동이 표시돼요.
         </p>
@@ -224,6 +230,11 @@ export function WelcomeRewardAction({
         >
           {message}
         </FeedbackMessage>
+      ) : null}
+      {message === welcomeKycRequiredCopy ? (
+        <Link className="button button--secondary" href="/menu/account">
+          본인 확인하러 가기
+        </Link>
       ) : null}
     </div>
   );
