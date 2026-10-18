@@ -1,4 +1,5 @@
 "use client";
+import { FeedbackMessage } from "@/components/ui/feedback-message";
 
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
@@ -757,7 +758,7 @@ export function WithdrawalForm({
       ) : null}
 
       {feedback ? (
-        <p
+        <FeedbackMessage
           id="withdrawal-request-feedback"
           className={`${styles.feedback} ${
             feedback.tone === "success"
@@ -767,7 +768,7 @@ export function WithdrawalForm({
           role="status"
         >
           {feedback.message}
-        </p>
+        </FeedbackMessage>
       ) : null}
     </form>
   );

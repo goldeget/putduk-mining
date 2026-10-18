@@ -14,6 +14,7 @@ import {
   stopDecorativeScroll,
   useMotionPreference,
 } from "@/lib/motion/motion-preference";
+import { isFirstTrialGuideStage } from "@/lib/product/first-trial-onboarding";
 
 import styles from "./guided-quest.module.css";
 
@@ -67,11 +68,14 @@ function persistDismissedStage(key: string | null, stage: string) {
 export function GuidedQuest({
   serverStage,
   ownerId,
+  eligible,
 }: {
   serverStage: string;
   ownerId?: string;
+  eligible: boolean;
 }) {
   const [active, setActive] = useState(false);
+  const [activeContext, setActiveContext] = useState<string | null>(null);
   const [unavailable, setUnavailable] = useState(false);
   const [stepIndex, setStepIndex] = useState(0);
   const [replaySequence, setReplaySequence] = useState(0);
@@ -91,6 +95,13 @@ export function GuidedQuest({
   const id = useId();
   const step = STEPS[stepIndex];
   const storageStage = `${QUEST_VERSION}:${serverStage}`;
+  const canShow =
+    eligible === true &&
+    Boolean(ownerId) &&
+    isFirstTrialGuideStage(serverStage);
+  const context = `${ownerId}:${storageStage}`;
+  // Hide an old account/stage synchronously, before the activation effect runs.
+  const visible = canShow && active && activeContext === context;
   // A local dismiss preference is not domain progress. Never share it across
   // accounts or persist it before an authenticated owner is supplied.
   const storageKey = ownerId
@@ -98,7 +109,7 @@ export function GuidedQuest({
     : null;
 
   const positionSpotlight = useCallback(() => {
-    if (!active || !step) return;
+    if (!visible || !step) return;
     const target = document.querySelector<HTMLElement>(step.target);
     if (!target) {
       if (coach.current?.contains(document.activeElement))
@@ -115,19 +126,22 @@ export function GuidedQuest({
     setSpotlight(visibleSpotlight(rect, viewport));
     const coachRect = coach.current.getBoundingClientRect();
     setCoachPosition(placeCoachMark(rect, coachRect, viewport));
-  }, [active, step]);
+  }, [visible, step]);
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
       setStepIndex(0);
       setUnavailable(false);
-      setActive(readDismissedStage(storageKey) !== storageStage);
+      setActiveContext(canShow ? context : null);
+      // Dismissal is an account-scoped preference across READY -> ACTIVE. A
+      // server completion gate still hides every control even with empty storage.
+      setActive(canShow && readDismissedStage(storageKey) === null);
     });
     return () => window.cancelAnimationFrame(frame);
-  }, [storageKey, storageStage]);
+  }, [canShow, context, storageKey]);
 
   useEffect(() => {
-    if (!active || !step) return;
+    if (!visible || !step) return;
     if (reducedMotion && scrollOwned.current) {
       stopDecorativeScroll();
       scrollOwned.current = false;
@@ -190,7 +204,7 @@ export function GuidedQuest({
         scrollOwned.current = false;
       }
     };
-  }, [active, positionSpotlight, reducedMotion, replaySequence, step]);
+  }, [visible, positionSpotlight, reducedMotion, replaySequence, step]);
 
   const finish = useCallback(() => {
     const focusWasInside = coach.current?.contains(document.activeElement);
@@ -207,7 +221,7 @@ export function GuidedQuest({
   }, [storageKey, storageStage]);
 
   useEffect(() => {
-    if (!active) return;
+    if (!visible) return;
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape" && !event.defaultPrevented) {
         event.preventDefault();
@@ -216,9 +230,10 @@ export function GuidedQuest({
     };
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
-  }, [active, finish]);
+  }, [visible, finish]);
 
   function replay() {
+    if (!canShow) return;
     priorFocus.current =
       document.activeElement instanceof HTMLElement
         ? document.activeElement
@@ -228,8 +243,11 @@ export function GuidedQuest({
     setUnavailable(false);
     setReplaySequence((value) => value + 1);
     setStepIndex(0);
+    setActiveContext(context);
     setActive(true);
   }
+
+  if (!canShow) return null;
 
   return (
     <>
@@ -238,7 +256,7 @@ export function GuidedQuest({
         className={styles.replay}
         type="button"
         onClick={replay}
-        aria-expanded={active}
+        aria-expanded={visible}
         aria-controls={`${id}-coach`}
       >
         <PutdukIcon name="spark" size={17} />
@@ -249,7 +267,7 @@ export function GuidedQuest({
           안내할 항목을 확인할 수 없어요. 화면을 다시 연 뒤 안내를 켜 주세요.
         </p>
       ) : null}
-      {active && step ? (
+      {visible && step ? (
         <div className={styles.overlay} data-guided-quest>
           {spotlight ? (
             <div

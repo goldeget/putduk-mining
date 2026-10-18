@@ -1,0 +1,101 @@
+.banner {
+  display: grid;
+  min-width: 0;
+  container: product-guide / inline-size;
+  gap: 0.5rem;
+  padding: 0.8rem 1rem;
+  overflow: clip;
+  border: 1px solid var(--border-default);
+  border-radius: 0.8rem;
+  background: linear-gradient(
+    100deg,
+    var(--surface-raised),
+    var(--surface-sunken)
+  );
+  color: var(--brand-primary);
+  text-decoration: none;
+}
+
+.heading {
+  display: grid;
+  min-width: 0;
+  align-items: center;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 0.65rem;
+}
+
+.leadIcon,
+.trailIcon {
+  flex-shrink: 0;
+}
+
+.title {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0.06em;
+  margin: 0;
+  color: var(--text-primary);
+  font-size: min(0.85rem, 4.8cqi);
+  line-height: 1.35;
+}
+
+.titleLine {
+  display: block;
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: keep-all;
+}
+
+.detail {
+  min-width: 0;
+  color: var(--text-secondary);
+  font-size: min(0.72rem, 4.1cqi);
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+  word-break: keep-all;
+}
+
+/* Physical container width — thresholds stay in px at 200% root text. */
+@container product-guide (max-width: 360px) {
+  .heading {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.45rem 0.5rem;
+  }
+
+  .leadIcon {
+    display: none;
+  }
+
+  .title {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .trailIcon {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: center;
+  }
+}
+
+@container product-guide (max-width: 280px) {
+  .banner {
+    padding: 0.65rem 0.75rem;
+  }
+
+  .trailIcon {
+    display: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .banner {
+    color: CanvasText;
+    border-color: ButtonText;
+    background: Canvas;
+  }
+}

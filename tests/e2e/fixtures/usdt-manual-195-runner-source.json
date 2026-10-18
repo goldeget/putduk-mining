@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "repository": "goldeget/putduk-mining",
+  "candidate195ManifestSha256": "0d078c0787b5619edfebd800f3f6a5f00848540d97373fac369c87872313b3df",
+  "sources": [
+    {
+      "path": "scripts/usdt-manual-195-runner.mjs",
+      "sha256": "67a9e410db1dfe7d50e90c81bcb30c301a7060fde1aec296570dc4e91d4873c3"
+    },
+    {
+      "path": "scripts/usdt-manual-195-results.mjs",
+      "sha256": "1f5dc7195e5491d9cb9afc70150786a69177f26fdc7075f099f69a1dc1234564"
+    },
+    {
+      "path": "scripts/usdt-manual-195-results.d.mts",
+      "sha256": "e2c3fe47c8a093852f31bcd36c7a084b916589bd8e2b383947f3e39c5377b357"
+    },
+    {
+      "path": "scripts/usdt-manual-195-runner-source.d.mts",
+      "sha256": "9103121f0ef18407b636f0bd8dfc9a948a3c77884bcd7a7bf802997dd95c51d4"
+    },
+    {
+      "path": "scripts/usdt-manual-195-concurrency-bootstrap.py",
+      "sha256": "a5b117db0bfb9cf484a6a548fec2d0e701b3fa6c84e90ef002b274d76997ce41"
+    },
+    {
+      "path": "tests/e2e/fixtures/usdt-manual-195-concurrency-contract.json",
+      "sha256": "598c75828a9d1ff7973f30abf7e8ce1661cd2d409010e321b01e635e1534f4a5"
+    },
+    {
+      "path": "tests/unit/usdt-manual-195-runner.test.ts",
+      "sha256": "1b84b0dcffcfdb3e5bca4860171ef51dcb1ef022fc37eff491189dc274dcfbbe"
+    },
+    {
+      "path": "docs/quality/USDT-MANUAL-195-RUNNER.md",
+      "sha256": "6124ba3b932506335e486de5862957bf656d5cee2a31e683923ed66d8b3618fd"
+    },
+    {
+      "path": "scripts/ci-source-evidence.mjs",
+      "sha256": "287633b4548cb026a6323ac6bfea69b097d8a3e1c412d495b3eed7dff0fbeef1"
+    }
+  ]
+}

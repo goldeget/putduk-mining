@@ -14,13 +14,13 @@ begin
 end;
 $$;
 
--- 이 세션의 서버 주소만 쓴다. 과거 컨테이너 이름 목록은 쓰지 않는다.
+-- Connect only to this server. Never probe a historical project's Docker name.
 create temporary table recon_ack_db_host (host text);
 
 \ir ../snippets/resolve_disposable_dblink_host.inc
 
-insert into recon_ack_db_host (host)
-select pg_temp.putduk_disposable_dblink_host('LOCAL_DB_HOST_UNRESOLVED');
+insert into recon_ack_db_host(host)
+select pg_temp.putduk_disposable_dblink_connection();
 
 select lives_ok(
   $concurrent$
@@ -40,8 +40,8 @@ select lives_ok(
         raise exception 'DBLINK_EXTENSION_MISSING';
       end if;
 
-      -- 위에서 고른 이 서버 주소로 두 번째 세션을 연다.
-      select 'host=' || host || ' dbname=postgres user=postgres password=postgres'
+      -- 현재 TCP 서버 또는 격리 실행기가 검증한 이 프로젝트 호스트만 사용한다.
+      select host
         into v_conn
       from recon_ack_db_host;
       execute format(
@@ -229,7 +229,7 @@ begin
   join pg_namespace as namespace on namespace.oid = extension.extnamespace
   where extension.extname = 'dblink';
 
-  select 'host=' || host || ' dbname=postgres user=postgres password=postgres'
+  select host
     into v_conn
   from recon_ack_db_host;
 

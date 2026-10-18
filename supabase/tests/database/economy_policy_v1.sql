@@ -356,7 +356,7 @@ reset role;
 select lives_ok($$select app_private.assert_economy_policy_receipt(id)
   from app_private.economy_policy_receipts$$, 'every transition reconciles immutable config, proof, audit and event');
 
--- Numeric values are not permanently frozen at the initial owner's defaults.
+-- Other economic values remain editable; platform fees are permanently zero.
 -- These are test-only proposed values, never another production policy seed.
 create temporary table policy_future_ctx(configuration jsonb, draft jsonb, preview jsonb, approval jsonb, publication jsonb);
 insert into policy_future_ctx(configuration)
@@ -371,12 +371,25 @@ update policy_future_ctx set configuration = configuration || '{
     "maximumSingleSpeedMultiplierBps":14000,"maximumCombinedSpeedMultiplierBps":18000},
   "userOverride":{"defaultMultiplierBps":13000,"minimumMultiplierBps":6000,
     "maximumMultiplierBps":16000,"requiresAuditReasonStepUp":true},
-  "platformFeesKrw":{"krwDeposit":"7","usdtDepositConversion":"9","mining":"5",
-    "krwMiningRewardWithdrawal":"123","principalRecovery":"456"}}'::jsonb;
+  "platformFeesKrw":{"krwDeposit":"0","usdtDepositConversion":"0","mining":"0",
+    "krwMiningRewardWithdrawal":"0","principalRecovery":"0"}}'::jsonb;
 update policy_future_ctx set configuration = jsonb_set(jsonb_set(jsonb_set(configuration,
   '{tiers,0,minimumPrincipalKrw}', '"200000"'), '{tiers,13,retentionBonusBps}', '3500'), '{tiers,13,slots}', '7');
 grant select, update on policy_future_ctx to service_role;
 set local role service_role;
+-- Each otherwise valid future proposal goes through the real authenticated
+-- command and step-up boundary. It cannot enable even a one-KRW platform fee.
+select throws_ok(format($probe$
+  select pg_temp.policy_command('CREATE', %L, p_version => %L,
+    p_config => (select jsonb_set(jsonb_set(configuration,
+      '{policyVersion}', to_jsonb(%L::text)),
+      array['platformFeesKrw', %L], '"1"'::jsonb) from policy_future_ctx))
+$probe$, 'policy-fee-rejected-' || fee_name, 'PUTDUK-FEE-REJECTED-' || upper(fee_name),
+  'PUTDUK-FEE-REJECTED-' || upper(fee_name), fee_name),
+  '22023', 'PLATFORM_FEES_PERMANENTLY_DISABLED',
+  'future economic policy cannot introduce fee: ' || fee_name)
+from (values ('krwDeposit'), ('usdtDepositConversion'), ('mining'),
+  ('krwMiningRewardWithdrawal'), ('principalRecovery')) as fees(fee_name);
 update policy_future_ctx set draft = pg_temp.policy_command('CREATE', 'policy-edited-create',
   p_version => 'PUTDUK-POLICY-EDITED-NUMBERS', p_config => configuration);
 update policy_future_ctx set preview = pg_temp.policy_command('PREVIEW', 'policy-edited-preview',
@@ -397,7 +410,10 @@ set constraints all immediate;
 set constraints all deferred;
 select is((select config->'platformFeesKrw'->>'krwMiningRewardWithdrawal'
   from app_private.economy_policy_versions where policy_version = 'PUTDUK-POLICY-EDITED-NUMBERS'),
-  '123', 'zero initial fee is not a permanent future policy lock');
+  '0', 'the future policy preserves the permanent zero platform fee');
+select is((select count(*)::integer from app_private.economy_policy_versions
+  where policy_version like 'PUTDUK-FEE-REJECTED-%'), 0,
+  'rejected positive-fee commands persist no draft version');
 select is((select config->'tiers'->13->>'slots' from app_private.economy_policy_versions
   where policy_version = 'PUTDUK-POLICY-EDITED-NUMBERS'), '7', 'slot budget is versioned rather than fixed to initial five');
 select is((select manifest_digest from app_private.economy_policy_versions where is_reference),

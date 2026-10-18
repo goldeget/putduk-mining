@@ -33,9 +33,10 @@ export async function POST(
   const now = new Date();
   const { data: existing, error: loadError } = await identity.supabase
     .from("notifications")
-    .select("id, read_at, expires_at")
+    .select("id, read_at, expires_at, scheduled_at")
     .eq("id", parsed.data.notificationId)
     .eq("user_id", identity.userId)
+    .lte("scheduled_at", now.toISOString())
     .maybeSingle();
 
   if (loadError) {
@@ -75,6 +76,7 @@ export async function POST(
     .update({ read_at: now.toISOString() })
     .eq("id", existing.id)
     .eq("user_id", identity.userId)
+    .lte("scheduled_at", now.toISOString())
     .is("read_at", null)
     .select("id")
     .maybeSingle();

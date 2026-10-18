@@ -1,0 +1,18 @@
+{
+  "scope": "reviewed exact desktop HOME a02-m00017 reconstruction only; no financial meaning",
+  "sourceNativePath": "/workspace/generated_images/exec-f1285ec4-778c-41e8-a2a3-d3da01593b99.png",
+  "sourceMaster": "docs/design/generated-masters/semiconductor-tower-desktop-2026-10-06/semiconductor-tower-desktop-master-v1.png",
+  "sourceSha256": "77fa85077eef2f0534d16a4900e4ada9ccc1fdcbb28c959775ca0ebcaf4b82f4",
+  "sourceDimensions": {
+    "width": 1983,
+    "height": 793,
+    "mode": "RGB"
+  },
+  "baselineAssetCount": 136,
+  "baselineManifestSha256": "803b993ae1a521ea142a9efae534d50ebb315ad1f58432b094ae7b4d03fb0fc6",
+  "baselineRecordDigest": "79f0a6cdd82e6ea098c087c5f489faf6d937f078c6fd8bcac844cc8ed461665c",
+  "prospectiveManifestVersion": "2026.10.06-v9",
+  "prospectiveAssetCount": 144,
+  "widths": [960, 1280, 1536, 1920],
+  "formats": ["avif", "webp"]
+}

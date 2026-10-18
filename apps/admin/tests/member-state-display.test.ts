@@ -24,7 +24,7 @@ const readyMiningDisplay = {
 const reads = vi.hoisted(() => ({
   tables: {} as Record<
     string,
-    { data: unknown; error: unknown; count?: number }
+    { data: unknown; error: unknown; count?: number | null }
   >,
   miningDisplay: {
     data: null as unknown,
@@ -87,13 +87,15 @@ beforeEach(() => {
     money_source_summaries: {
       data: {
         user_id: "00000000-0000-4000-8000-000000000001",
-        schema_version: 1,
+        schema_version: 2,
         coverage: "COMPLETE",
         unclassified_wallet_entries: "0",
         unconnected_withdrawals: "0",
         unclassified_journals: "0",
         invalid_source_receipts: "0",
         eligible_principal_atomic: "0",
+        held_principal_atomic: "0",
+        recovered_principal_atomic: "0",
         recorded_krw_principal_deposits_atomic: "0",
         recorded_usdt_principal_credits_atomic: "0",
         recorded_bonus_atomic: "0",
@@ -107,6 +109,57 @@ beforeEach(() => {
 });
 
 describe("member lifecycle and profile read truth", () => {
+  it("shows canonical USDT-only deposit history and includes it in the deposit count", async () => {
+    reads.tables.usdt_manual_deposits = {
+      count: 2,
+      error: null,
+      data: [
+        {
+          id: "manual-submitted",
+          status: "SUBMITTED",
+          sent_usdt_amount: "35.5",
+          credited_krw: null,
+          created_at: "2026-10-03T02:00:00Z",
+        },
+        {
+          id: "manual-confirmed",
+          status: "CONFIRMED",
+          sent_usdt_amount: "30",
+          credited_krw: "50000",
+          created_at: "2026-10-03T01:00:00Z",
+        },
+      ],
+    };
+    const markup = renderToStaticMarkup(
+      await MembersPage({
+        searchParams: Promise.resolve({
+          id: "00000000-0000-4000-8000-000000000001",
+        }),
+      }),
+    );
+    expect(markup).toContain("최근 USDT 입금");
+    expect(markup).toContain("35.5 USDT");
+    expect(markup).toContain("50,000원");
+    expect(markup).toMatch(/<span>입금<\/span><strong>2<\/strong>/);
+    expect(markup).not.toContain("USDT 입금 기록 없음");
+  });
+  it("does not turn an unreadable canonical USDT history or count into no deposits", async () => {
+    reads.tables.usdt_manual_deposits = {
+      count: null,
+      data: [],
+      error: { message: "read failed" },
+    };
+    const markup = renderToStaticMarkup(
+      await MembersPage({
+        searchParams: Promise.resolve({
+          id: "00000000-0000-4000-8000-000000000001",
+        }),
+      }),
+    );
+    expect(markup).toContain("USDT 입금 기록을 확인할 수 없습니다.");
+    expect(markup).toMatch(/<span>입금<\/span><strong>확인 필요<\/strong>/);
+    expect(markup).not.toContain("USDT 입금 기록 없음");
+  });
   it.each([null, undefined])(
     "a missing lifecycle row is unknown, not signup or an absent event (%s)",
     (data) => {

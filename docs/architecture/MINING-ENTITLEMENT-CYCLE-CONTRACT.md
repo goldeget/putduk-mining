@@ -1,8 +1,17 @@
 # 채굴 권리·용량·주기 계약
 
-상태: **APPROVED STRUCTURE / NUMERIC POLICY NOT APPROVED / RUNTIME NOT CONNECTED**
+상태: **APPROVED STRUCTURE / OWNER-APPROVED V1 POLICY / RUNTIME NOT CONNECTED**
 
 계약 버전: `2026.10.03-entitlement-cycle-v1`.
+
+2026-10-07 [Owner 상품 접근권·Tier 교정](../product/OWNER-PRODUCT-TIER-POLICY-2026-10-07.md)을
+현재 Product/Mining 계약에 우선 적용한다. Funding Tier는 상품 접근권을
+제한하지 않으며 승인된 slot 수와 원금 기반 경제를 정한다. 현재 공통 base
+bps에 대한 적격 원금 비례 accrual이 mining scale을 이미 표현하므로 별도
+Tier speed multiplier를 추가하지 않는다. GLOBAL_CYCLE capacity와 기존
+age/cycle/used/carry/Verified 이력을 보존한다. 상품 배수 제안은 개별 승인
+rule이 아니다. Tier 하락 시 초과 slot의 결정적 유지/pause 전이는 아직
+`TIER_DOWNGRADE_SLOT_POLICY_REQUIRED`이며 상품 Tier 잠금으로 대체하지 않는다.
 
 이 문서는 2026-10-03 사용자가 승인한 잔여 원금, 사용자별 30일 주기,
 용량과 속도의 분리, 변경 시점 이후 구간 계산 구조를 구체화한다. 경제
@@ -17,8 +26,12 @@
 **2026-10-03 사용자 후속 답변**은 같은 주기의 capacity 증가로
 `new effective capacity > used`가 되면 자동 재개하는 구조를 직접 승인했다.
 이 결정은 원문과 Master의 “소진 뒤 reset까지 항상 정지” 해석을 그
-capacity 증가 조건에서 대체한다(superseded). 원문 자체를 수정하지
-않으며 수치 정책·DB/runtime 연결·활성화 승인은 계속 별도다.
+capacity 증가 조건에서 대체한다(superseded). 원문 자체를 수정하지 않는다.
+후속 [V1 사용자 승인 정책](../product/ECONOMY-V1-USER-APPROVAL-2026-10-03.md)이
+Tier 경계·기본/유지 bps·기간·상품/사용자 범위·campaign ceiling·정수 산술을
+승인했다. [2026-10-06 후속 승인](../product/ECONOMY-V1-USER-APPROVAL-2026-10-06.md)은
+원본 승인 digest를 보존하는 별도 문서에 기록한다. DB/runtime 연결과
+실채굴 활성화·원격 적용·배포의 승인은 별도다.
 다음 계약을 함께 적용한다.
 
 - [Master Architecture](PUTDUK-MINING-MASTER-ARCHITECTURE.md): 단일 서버 계산,
@@ -31,14 +44,19 @@ capacity 증가 조건에서 대체한다(superseded). 원문 자체를 수정�
 - [Domain Events / Outbox](DOMAIN-EVENTS-OUTBOX.md): 원자적 이벤트, lease,
   retry와 consumer 중복 방지.
 
-현재 문서에 기록된 실행 gap은 `calculateSettlement`의 application/worker
-caller 부재와 legacy `record_mining_settlement`의 실행 권한 문제다. 이
-계약은 그 helper를 승인된 Funding Engine으로 간주하거나 legacy 명령을
-다시 허용하지 않는다. 이 작업에서는 실제 source·DB·worker를 조사하거나
-연결하지 않았으므로, 기존 구현의 최신 실행 상태를 추가로 보증하지 않는다.
+2026-10-06 로컬 검증에서 자금 출처 보정은 47개 SQL 파일·1,522개 pgTAP과
+DB lint를 통과했다. `20261006121500`의 채굴 수익/qualified START 출금 coverage는
+실제 hold·확정·해제 명령을 쓰는 36개 검증을 통과했다. 원금·lot·revision·
+funding 자격은 유지되며 미분류 원본은 `UNRESOLVED`다. 이 증거는 실채굴
+producer의 완료나 활성화 증거가 아니다. 신규 `20261006123000`~`20261006123200`은
+원본 검증·정확 earned/used/cursor/carry·원자적 private posting의 연결되지 않은
+소스 후보이며 실제 새 SQL 검증은 아직 필요하다. 공개 완료 명령·worker·credit hook·
+스케줄러와 실제 catalog/allocation producer는 연결하지 않는다. legacy
+`record_mining_settlement`는 다시 허용하지 않는다.
+구체적인 후속 구현은 [default funded engine 설계](../development/design-reviews/DEFAULT-FUNDED-ENGINE-2026-10-06.md)를 따른다.
 
-원문에 든 등급 이름, 등급 개수, 금액, 일일 수익, 용량, 효과 강도는 예시다.
-그 예시를 production seed, 기본 운영값, 승인된 등급 목록으로 만들지 않는다.
+원문에 든 예시를 production seed나 승인된 등급 목록으로 만들지 않는다.
+실제 V1 수치의 권위는 위 사용자 승인 정책과 그 승인된 버전 데이터다.
 Funding Tier는 승인된 버전 데이터이며 중립 시각 자산 `rank-01`~`rank-06`,
 AI 사용량 quota와 각각 별개다.
 
@@ -101,8 +119,10 @@ revision을 다시 적용하지 않는다.
 주기 anchor는 회원의 **첫 Principal activation**에서 한 번만 생성한다.
 신청, 미승인 입금, USDT 전송 제출, 가입, START, 보너스 또는 화면 방문은
 Principal activation이 아니다. 실제 출처가 확인된 원금과 승인된 activation
-조건이 있어야 한다. 정확한 최초 활성화 조건과 과거 회원의 anchor 처리에는
-아래 미결 gate가 적용된다.
+조건이 있어야 한다. 승인된 policy와 실제 원본이 있는 새로운 입금에서
+잔여 인정 원금이 승인 최소치 이상이 되는 순간의 서버 effective instant로
+첫 anchor를 증명할 수 있다. 그 activation 원본의 저장·직렬화 연결은 미구현이다.
+기존 미설정 정책/미분류 과거 회원의 anchor는 아래 호환성 gate를 따른다.
 
 `cycle_started_at`은 첫 자격 anchor다. 창 저장은
 `app_private.funding_cycle_windows`의 `cycle_started_at`과 `cycle_end`만
@@ -112,8 +132,9 @@ Principal activation이 아니다. 실제 출처가 확인된 원금과 승인�
 주기는 anchor에서 30일 간격으로 이어지는 반개방 구간 `[start, end)`이다.
 server UTC-aware instant로 저장하고 V1 화면은 `Asia/Seoul`로 표시한다.
 일반 입금일, 달력월, 로그인일 또는 worker 실행일로 시작점을 옮기지 않는다.
-창 길이의 시각 연산은 11B가 정한다. 오늘 채굴의 날짜 경계와 eligible
-elapsed는 계속 미결이다.
+창 길이의 시각 연산은 11B가 정한다. 예약 portion의 적격 시간 중지/미래
+재개는 후속 사용자 승인으로 정해졌다. 오늘 표시의 날짜 경계와 실제
+receipt-bound elapsed의 runtime 연결은 별도 구현 검증이 필요하다.
 
 - 추가입금은 현재 주기의 남은 기간만 바꾼다. 새 30일을 지급하지 않는다.
 - 원금 hold·회수·전액 회수·release·재입금도 anchor를 보존한다.
@@ -145,8 +166,9 @@ Capacity는 해당 주기에 허용된 총 monetary accrual 한도이고, speed�
   관행을 정책 대신 쓰지 않는다.
 
 earned accrual은 적용 speed의 eligible elapsed 결과와 해당 주기의
-remaining capacity를 모두 넘지 않아야 한다. 정확한 단위·분모·반올림·
-cap 적용 순서는 아직 승인되지 않았다. remaining은
+remaining capacity를 모두 넘지 않아야 한다. 단위는 승인된 bigint micro-KRW와
+integer bps이며 BASE speed는 정확한 곱셈 뒤 최종 global cap을 적용한다.
+정산 whole KRW와 carry 보존, portion별 한도/구간 산술을 검증한다. remaining은
 `max(effective capacity - used, 0)`이며, downgrade 후 used가 capacity보다
 큰 사실은 원본 값으로 보존한다. used를 capacity에 맞춰 줄이지 않는다.
 
@@ -253,7 +275,8 @@ Capacity Boost는 실제 이벤트 적용 기간에도 같은 proration을 사�
 넘지 않는다. 시작·종료·정책 변경은 segment boundary로 남긴다. 이미
 지나간 이벤트 기간이나 소진 구간에 bonus capacity/reward를 소급
 부여하지 않는다. 기간 구조는 승인되었지만 정확한 산술·단위·반올림·
-cap 수치는 아직 승인되지 않았다.
+cap은 후속 V1 사용자 승인 정책의 수치를 따른다. DB/runtime 연결과
+해당 기간의 실제 receipt 검증은 별도 구현 증거가 필요하다.
 
 순차 변경은 직전 확정 revision을 기준으로 각각 처리한다. 추가입금,
 hold, release 또는 반복 preview마다 full-cycle capacity를 다시 더하지
@@ -377,8 +400,9 @@ audit를 사용한다. 일반 UI와 도우미를 위한 두 번째 money writer�
 slot count와 scene profile은 engine output에 연결된 승인된 presentation
 버전이다. Scene family, 상품 mapping, anchor, 효과 profile은 기존
 registry와 공통 `MiningLiveStage`를 사용한다. Funding Tier별 Stage나
-경제 공식을 복제하지 않는다. slot이 단순 시각 요소인지 실제 채굴
-동시성 권리인지, 상품 간 capacity 배분은 수치·의미 승인 전 미결이다.
+경제 공식을 복제하지 않는다. 승인된 Tier별 slot 수와 global allocation 합
+최대100%를 적용하고 상품/slot마다 전체 Capacity를 복제하지 않는다.
+실제 slot assignment·상품 mapping·Scene 연결의 구현 증거는 별도다.
 
 profile은 version ID와 적용 revision을 전달한다. client가 받는 값은
 허용된 표시·효과 지시와 공개 사실뿐이다. private 공식·risk/KYC logic,
@@ -539,9 +563,11 @@ capacity는 저장된 base 합이다. 소진 뒤 speed로 재개하지 않는 �
 capacity가 0인 계산에 있다. `POLICY_CONSUMER_NOT_ENABLED`를 풀지 않는다.
 이 조회는 `PRODUCT COMPLETE`가 아니다.
 
-미명세로 남기고 구현하지 않는다: multiplier 결합 순서, retention vesting,
-1원 미만 carry, whole KRW credit, snapshot 필드, worker, 원금 감소 시점의
-segment 분할.
+위 11B~11D는 당시 구현 범위를 기록한 것이다. 후속 V1 승인으로
+1원 미만 carry 보존·whole KRW credit이 정해졌고, 2026-10-06 승인으로
+base speed modifier의 곱셈·최종1.50x cap 및 예약 portion의 retention clock
+중지/재개가 정해졌다. 이 승인은 snapshot·portion clock·worker·원금 변경
+segment의 실제 연결 증거를 대신하지 않는다.
 
 ## 12. 호환성과 활성화 미결 Gate
 
@@ -550,17 +576,17 @@ segment 분할.
 
 | Finding | 필요한 결정 또는 증거 | 현재 제한 |
 | --- | --- | --- |
-| `ENT-ACTIVATION` | 첫 activation의 적격 조건·기준 영수증, 미설정 정책 중 받은 원금의 시작 처리, unresolved 과거 회원 anchor | 입금일·가입일로 anchor 추정 금지 |
-| `ENT-TIME` | 오늘 채굴의 날짜 경계와 eligible elapsed 정의. 창 길이만 11B에서 policy `cycleDays` × 24시간, 서버 timestamptz로 정했다 | client 시각·요청 시각 사용 금지 |
-| `ENT-NUMERIC` | Tier band 경계, base rate와 기간 단위, capacity 정의, product·loyalty·campaign·override/global 우선순위와 수치 | 채굴 활성화·production seed 금지 |
-| `ENT-ARITHMETIC` | 정확한 정밀도·분모·rounding·잔여값·cap 순서, downgrade 차감/음수 capacity 처리, 기존 bigint와 journal 범위 정합성 | helper 산술을 승인 정책으로 채택 금지 |
-| `ENT-STATE` | 전액 회수·비활성·pause 상태별 accrual/settlement의 상세 전이, 미사용 capacity 이월 여부 | 승인된 동일 주기 capacity 재개 구조 유지; 권한·운영 중지 우회와 자동 이월 금지 |
+| `ENT-ACTIVATION` | 승인 policy 아래 fresh 실제 credit의 최소 원금 도달 조건은 승인됨. activation 원본/서버 경계 연결은 미구현; 미설정 정책·unresolved 과거 회원은 별도 호환성 처리 | 과거 입금일·가입일로 anchor 추정 금지 |
+| `ENT-TIME` | 30일 cycle·서버 적용 시각은 승인됨. 오늘 표시의 날짜 경계와 receipt-bound eligible elapsed의 실제 구현 증거 | client 시각·요청 시각 사용 금지 |
+| `ENT-NUMERIC` | V1 Tier·bps·30일·multiplier 범위·campaign ceiling은 승인됨. 승인된 version 데이터와 소비 경로 검증 | 승인 범위 밖 기본값·예시 seed와 검증 없는 채굴 활성화 금지 |
+| `ENT-ARITHMETIC` | bigint micro-KRW·integer bps·whole KRW/carry 보존과 speed 곱셈 후 최종 cap은 승인됨. runtime segment·journal 범위·downgrade 정합성 증거 | 중간 float/rounding·carry 삭제·과거 reward clawback 금지 |
+| `ENT-STATE` | 예약 portion retention clock 중지·release 후 미래 재개/원래 age 보존은 승인됨. 부분 lot·상태 전이와 cycle-end qualification의 실제 receipt 증거 | hold 기간 소급 benefit·whole-lot age reset·권한/운영 중지 우회·자동 capacity 이월 금지 |
 | `ENT-CONCURRENCY` | 같은 instant의 다중 변경 순서/통합, 회원 잠금 순서와 revision conflict, late effective event 처리 | read order로 경제 결과 결정 금지 |
-| `ENT-SOURCE-COVERAGE` | 기존 generic 출금·hold·release·finalize·credit/debit/correction/reversal 원본 coverage와 source reconciliation | 누락 provenance 추정·자동 backfill 금지 |
+| `ENT-SOURCE-COVERAGE` | 검증된 일반 MINING_REWARD/qualified START hold·finalize·release는 121500 및 36개 실제 SQL 검증으로 연결됨. 미분류 과거·correction/reversal 및 새 earned producer 연결은 별도 미구현 | 누락 provenance 추정·자동 backfill·HOLD 이중 debit 금지 |
 | `ENT-PENDING-RECEIPT` | 기존 pending과 earned receipt의 연결, used 원자적 수락, 미처리 interval snapshot 의미 | pending을 두 번째 reward로 수락 금지 |
 | `ENT-SETTLEMENT-COMMAND` | 기존 command/권한에 맞는 transactional 실행 확장, balanced posting·cursor·outbox 연결 | legacy settlement 권한 복원·새 RPC 별칭 금지 |
 | `ENT-REWARD-CORRECTION` | 승인된 reward 정정/reversal에서 used와 cycle attribution을 어떻게 보존하는지 | downgrade를 clawback·used 반환으로 해석 금지 |
-| `ENT-SLOT-ALLOCATION` | slot의 의미·한도, 복수 상품 간 speed/capacity 분배와 상품 변경 효과 | 각 상품에 full capacity 중복 지급 금지 |
+| `ENT-SLOT-ALLOCATION` | Tier slot 수·global allocation 최대100%와 BASE speed 상품 weight는 승인됨. 실제 assignment·mapping·변경 receipt 증거 | 각 상품에 full capacity 중복 지급 금지 |
 | `ENT-WORKER-RECOVERY` | batch·lease·fencing·timeout·retry/catch-up 경계, 장애/reconciliation 복구 경로 | lease만 믿은 중복 posting 금지 |
 | `ENT-SCENE-PROFILE` | 버전 mapping·asset coverage·device budget·실제 screenshots/performance | 예시 Tier를 production profile seed로 사용 금지 |
 
@@ -570,7 +596,7 @@ segment 분할.
 구 앱과 새 후보의 rollback 호환성, cursor·revision·event version의 혼용
 안전성, 기존 trial/START와 무입금 첫 출금 불변을 검증해야 한다.
 
-수치 없는 계약 검증과 draft/preview 설계는 가능하다. 실채굴 활성화에는
+승인된 V1 수치와 후속 portion/modifier 계약의 로컬 검증은 가능하다. 실채굴 활성화에는
 모든 관련 finding의 결정, 승인 버전 데이터, source-aware 명령 전체 연결,
 정산/worker/원장/outbox 증거와 제품 gate가 필요하다. 원격 Supabase,
 Cloudflare, DNS, 배포와 실송금은 별도 승인 경계로 계속 잠겨 있다.

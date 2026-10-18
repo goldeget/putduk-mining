@@ -1,5 +1,8 @@
 const SAFE_ADMIN_PATHS = [
   "/",
+  "/assistant",
+  "/ai-conversations",
+  "/content",
   "/members",
   "/deposits/usdt",
   "/deposits/krw",
@@ -28,7 +31,9 @@ export function safeAdminReturnPath(value: unknown): string {
     return SAFE_ADMIN_PATHS.some(
       (path) =>
         url.pathname === path ||
-        (path !== "/" && url.pathname.startsWith(`${path}/`)),
+        (path !== "/" &&
+          path !== "/assistant" &&
+          url.pathname.startsWith(`${path}/`)),
     )
       ? `${url.pathname}${url.search}`
       : "/";

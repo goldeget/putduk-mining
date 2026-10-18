@@ -4,8 +4,8 @@ import { z } from "zod";
 
 import {
   hasAdminAuthServerProof,
-  readAdminAuthFailureBudget,
-  recordAdminAuthFailure,
+  admitAdminAuthAttempt,
+  finishAdminAuthAttempt,
   writeAdminAuthServerProof,
 } from "@/lib/auth/failure-limit";
 import { HIGH_IMPACT_ROLES } from "@/lib/auth/policy";
@@ -87,17 +87,17 @@ async function verifyCode(input: {
   code: string;
   factorId?: string | undefined;
 }) {
-  const budget = await readAdminAuthFailureBudget("TOTP", input.userId);
-  if (budget === "UNAVAILABLE") {
+  const admission = await admitAdminAuthAttempt("TOTP", input.userId);
+  if (!admission.allowed)
     return json(
-      "AUTH_UNAVAILABLE",
-      "지금은 인증을 확인할 수 없습니다. 잠시 후 다시 시도해 주세요.",
-      503,
+      admission.code === "RATE_LIMITED" ? "RATE_LIMITED" : "AUTH_UNAVAILABLE",
+      admission.code === "RATE_LIMITED"
+        ? "잠시 후 다시 시도해 주세요."
+        : "지금은 인증을 확인할 수 없습니다. 잠시 후 다시 시도해 주세요.",
+      admission.code === "RATE_LIMITED" ? 429 : 503,
     );
-  }
-  if (budget === "RATE_LIMITED") {
-    return json("RATE_LIMITED", "잠시 후 다시 시도해 주세요.", 429);
-  }
+  const finish = (succeeded: boolean) =>
+    finishAdminAuthAttempt(admission.attemptId, succeeded);
 
   const listed = await input.supabase.auth.mfa.listFactors();
   const factorId = selectTotpFactor(
@@ -105,6 +105,8 @@ async function verifyCode(input: {
     input.factorId,
   );
   if (listed.error || !factorId) {
+    if (!(await finish(false)))
+      return json("AUTH_UNAVAILABLE", "지금은 인증을 확인할 수 없습니다.", 503);
     return json(
       "TOTP_UNAVAILABLE",
       "인증 코드를 확인하지 못했습니다. 다시 시도해 주세요.",
@@ -117,17 +119,17 @@ async function verifyCode(input: {
     code: input.code,
   });
   if (verified.error) {
-    await recordAdminAuthFailure("TOTP", input.userId);
-    const again = await readAdminAuthFailureBudget("TOTP", input.userId);
-    if (again === "RATE_LIMITED") {
-      return json("RATE_LIMITED", "잠시 후 다시 시도해 주세요.", 429);
-    }
+    if (!(await finish(false)))
+      return json("AUTH_UNAVAILABLE", "지금은 인증을 확인할 수 없습니다.", 503);
     return json(
       "TOTP_REJECTED",
       "인증 코드가 올바르지 않거나 만료되었습니다.",
       401,
     );
   }
+
+  if (!(await finish(true)))
+    return json("AUTH_UNAVAILABLE", "인증 결과를 저장하지 못했습니다.", 503);
 
   const sessionTarget = await postVerifySessionId(
     input.supabase,

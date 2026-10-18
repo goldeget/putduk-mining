@@ -1,0 +1,816 @@
+{
+  "version": 1,
+  "repository": "goldeget/putduk-mining",
+  "previousManifestSha256": "0d078c0787b5619edfebd800f3f6a5f00848540d97373fac369c87872313b3df",
+  "previousEffectiveSha256": "6b595cd24db35e47a4f9ddcf0a90538a7d49017a3238d78823894f2b2b026176",
+  "migration_count": 197,
+  "replacements": [
+    {
+      "path": "app/api/v1/ai/chat/route.ts",
+      "previousSha256": "5930e4ae8be9360c41af509e2111b7ddad0bc34a53a8dea7b37055e373a1ee7a",
+      "sha256": "f529c3f42adcaf9b8ec3939d7d8e59ea45810de819605f659282a4939efe9547"
+    },
+    {
+      "path": "playwright.backend-http-195.config.ts",
+      "previousSha256": "d83d50edbbb8237b97c794d708d67f01b2e761bc7f8d3f8d6599163d6c33e2cd",
+      "sha256": "011fffd359fc2c6328cda419847b9f24cab54daa67899e35d4172f13f9b19e4c"
+    },
+    {
+      "path": "scripts/usdt-manual-195-native-fixture.mjs",
+      "previousSha256": "e01df318a08eba8aef8e90060f1c976a4b495b8dee413bc7922e908a2715ed49",
+      "sha256": "38a348adea4891c05a94c6472094d13aa059de0f0bc3a13dd0e6a3fc9fd14030"
+    },
+    {
+      "path": "tests/unit/ai-chat-audit-persistence-failure.test.ts",
+      "previousSha256": "74d990b2c6c41368eaf41d1252f8a30d6f08a1b296a57ed9321f819aff116b08",
+      "sha256": "21fb231b53b82e6314407c3a961cb461a226b9f3fedabb0e486e63b001b1fc64"
+    },
+    {
+      "path": "tests/unit/withdrawal-lifecycle-worker.test.ts",
+      "previousSha256": "b4b79662cd4577ab0b24067893203b54b2b0e77de4d3ca9bf2a3d9e675b61b22",
+      "sha256": "b8ecc803456dec86577575c4ef5aacb675437058a136d4372a45e5f0fa24a041"
+    }
+  ],
+  "additionalSources": [
+    {
+      "kind": "evidence",
+      "path": ".github/workflows/ci.yml",
+      "sha256": "f0329530356a6afb25390e49302564032331942a75b82ccd68917f802a5c1b9b"
+    },
+    {
+      "kind": "evidence",
+      "path": "apps/admin/lib/withdrawals/hold-release-receipt.ts",
+      "sha256": "0ff86399a6c4b84119ebd4f69f4a7acf3eb138bc4e423139e0a2b89449fcc21b"
+    },
+    {
+      "kind": "evidence",
+      "path": "docs/quality/BACKEND-SUCCESSOR-197-BOUNDARY.md",
+      "sha256": "b4f895a3fff1f67f3c7d05d014e2425bd49409f0e4f9360a24a526b84051c769"
+    },
+    {
+      "kind": "evidence",
+      "path": "playwright.backend-http-197.config.ts",
+      "sha256": "10ff08880f1165e07940fb7c7299cf3ecffca08dc80ec077d97f3868867eec17"
+    },
+    {
+      "kind": "evidence",
+      "path": "scripts/backend-successor-197-concurrency.d.mts",
+      "sha256": "f9096c35c7617c25b699c7fefb81cf0f11506be384c36a71aab7bd2934aa73ab"
+    },
+    {
+      "kind": "evidence",
+      "path": "scripts/backend-successor-197-concurrency.mjs",
+      "sha256": "bad74e033d5e76d67267269f77ca5b81f03129738dbc2b9c9abc0489ebadfd14"
+    },
+    {
+      "kind": "evidence",
+      "path": "scripts/backend-successor-197-local-profile.mjs",
+      "sha256": "c8d1429293553c2bc9c39185ba98169669927fe489f610920a66134a53eda114"
+    },
+    {
+      "kind": "evidence",
+      "path": "scripts/backend-successor-197-native-stage.d.mts",
+      "sha256": "f81886660ae359f71802afa008dfb355bfbbf748a1eac2c72df2e59e1abd012f"
+    },
+    {
+      "kind": "evidence",
+      "path": "scripts/backend-successor-197-native-stage.mjs",
+      "sha256": "a1520f9301c8214e82641d2e0dc58210edf94d77191b57892100a4fd46232660"
+    },
+    {
+      "kind": "evidence",
+      "path": "scripts/backend-successor-197-source.d.mts",
+      "sha256": "8fd439446a4f58dfcd0fb75e9a9082c9db8fd6d1e79029f21ebfff5f66d0f2a1"
+    },
+    {
+      "kind": "evidence",
+      "path": "scripts/ci-backend-197.d.mts",
+      "sha256": "13a0e558778c41d10167cacdab4011633e027107b366271a97f37586a347b506"
+    },
+    {
+      "kind": "evidence",
+      "path": "scripts/ci-backend-197.mjs",
+      "sha256": "ef3f65da9058913bcc9c96473c6ee2046ba0308a59522af17ade1e893f41370e"
+    },
+    {
+      "kind": "evidence",
+      "path": "scripts/ci-wall-clock.mjs",
+      "sha256": "901d5b1c3475977cf97078d25bb2410ef69e1d2d4634bcc654858848bf48af8b"
+    },
+    {
+      "kind": "evidence",
+      "path": "scripts/usdt-manual-195-native-fixture-v2.d.mts",
+      "sha256": "d3b6b3cc927c759b1aabd414fa279a376a0e1dbcd4aba29087c350dab995a138"
+    },
+    {
+      "kind": "evidence",
+      "path": "scripts/usdt-manual-195-native-fixture-v2.mjs",
+      "sha256": "7a50c15227c9dffe55d21530f0a0c7f4e12d760f6e35af8dec70cc0867dc4a97"
+    },
+    {
+      "kind": "evidence",
+      "path": "scripts/usdt-manual-195-native-fixture-v3.d.mts",
+      "sha256": "d3b6b3cc927c759b1aabd414fa279a376a0e1dbcd4aba29087c350dab995a138"
+    },
+    {
+      "kind": "evidence",
+      "path": "scripts/usdt-manual-195-native-fixture-v3.mjs",
+      "sha256": "38a348adea4891c05a94c6472094d13aa059de0f0bc3a13dd0e6a3fc9fd14030"
+    },
+    {
+      "kind": "evidence",
+      "path": "scripts/usdt-manual-197-concurrency-bootstrap.py",
+      "sha256": "0401c1cc018cc3ebc0a21c5bded85d7b4c37c6e173b0627818012bbcc5ecd9a2"
+    },
+    {
+      "kind": "evidence",
+      "path": "scripts/usdt-manual-197-runner.mjs",
+      "sha256": "c8df48d570e3709bed40679f9e3739c2a188dba3141a7ae233e0db232abe597a"
+    },
+    {
+      "kind": "evidence",
+      "path": "scripts/write-ephemeral-withdrawal-key.mjs",
+      "sha256": "8170716d3b93e14fc7886cb91b72c42b3869c52b486c30a22f1ec949a50bdbcd"
+    },
+    {
+      "kind": "migration",
+      "path": "supabase/migrations/20261011173627_withdrawal_completion_notification_original.sql",
+      "sha256": "a219a174e028ff30ef620395435ea96ca12653c3fb0464a53b5d4f195e72fd25"
+    },
+    {
+      "kind": "migration",
+      "path": "supabase/migrations/20261011173637_safe_mode_closed_outbox_ack.sql",
+      "sha256": "24de2d4de05f42c31800cfea722732d7119a71f6f8c1721e8a35c63f512c4351"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/test-fixtures/default-funding-allocation-original.sql",
+      "sha256": "4e18eb90824aa7ced3ac6fab2b5de44cbdd2c00f734db2ed0568ba869cdfc8bd"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/test-fixtures/funding_global_admission_canonical.sql",
+      "sha256": "ad6203e6eda194a245e386b45f83bcb367b931b69473da14cf0a3be1479bfbdd"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/test-fixtures/historical-held-withdrawal.sql",
+      "sha256": "4de90b385f94f9583b272738ffecb9a301127a543283acabe07e7c40d3b9db1f"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/test-fixtures/hold_clock_admission_concurrency.sql",
+      "sha256": "b5179848e113bbf87534ceb9afeaf3825a3f742c029a8da358c65d810088106b"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/test-fixtures/reserved-test-held-withdrawal.sql",
+      "sha256": "24303199f85ea5d66813dde438ef40e6dc684f890e34b9fed233869772f530e8"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/test-fixtures/verified-mining-reward.sql",
+      "sha256": "2e4e2b8bc7fe6e0fb330180d70b93b04dd38f347345f7e086187b0f5336f5043"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/acknowledge_reconciliation_mismatch.sql",
+      "sha256": "f89b1ca6a60d63277f276fac7b492ea77785b8781c2b33ab8ea1f1711d96b1d3"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/admin_ai_conversation_reads.sql",
+      "sha256": "8ce64f2d8a9778848473fb94a8b869e5d2ccdb1ba4d98e44ad8f7bc8267a9f82"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/admin_bootstrap.sql",
+      "sha256": "915d04ee27294ae8c4516b4c3601a7c2bd3c5dfb5e8ca8f9a1ac59cd91d703a2"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/admin_member_mining_count_read.sql",
+      "sha256": "c97b5045943f9946142bac98cbfa76f6e075b959e00069324ed396c8912243fb"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/admin_security_auth_replay.sql",
+      "sha256": "5c560e00edc702c8eb5f770104f8a11f745b5a13ec03177289368fd0e32a0ed9"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/ai_member_admission_hard_caps.sql",
+      "sha256": "d947e2e893a8f31ecd043467f320be00cc8844b02e30eeef4c6b721d2dfae8e7"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/ai_member_turn_atomic_storage.sql",
+      "sha256": "cbd6181561acd12545f454da83ed2c24679fd74b30878b4c49899162429b4010"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/ai_orchestration.sql",
+      "sha256": "e06fa97fb4d5a25f8472470898f73cddaec5b9fd39b369da289febda594eb7ad"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/ai_own_state_tool_audit_names.sql",
+      "sha256": "8214904eac543ec996c13a1996efc2b4250d1566c3b5c33adb058d17264c6d86"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/ai_provider_budget.sql",
+      "sha256": "f0966d1d11c9a9c7dd8cc1823449df4034018ccf8e5d44c79c564df6a8da2472"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/ai_tool_boundaries.sql",
+      "sha256": "a00bca22379be5fa97bb6f88b63e0d7b33cc367368121ce7013179334ca7467e"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/backend_referral_nonmoney_bridge.sql",
+      "sha256": "cfad9d009045b3b4000b1295ac218f7a62dd1fb1d150a3ac8133bb535a79504a"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/default_funding_engine_exact_math.sql",
+      "sha256": "72e74afc29c1d8dc31531a12588927660ebc63cc1306125abfd37a7bd0024ac1"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/default_funding_engine_private_posting.sql",
+      "sha256": "789499275f58ddf45bcc099223748119ac45b0094882447bbb8c6662bcd8f8d9"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/domain_original_notifications.sql",
+      "sha256": "69144204158eb97d199f2c27a1047e78445667bd55bc0ad1a1314440fe5c4465"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/economy_policy_v1.sql",
+      "sha256": "e2347cc7501b9d4c07c3c324bd0a4603b9570fc04a8ad4bfbcfbfa414ae33548"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/effective_economy_policy_reader.sql",
+      "sha256": "66d8a17bfbf12f7da040b9b91e0b9906461694b7e00422403ba0b3351a941e9c"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/funded_mining_mission_originals.sql",
+      "sha256": "9b53fa1647e64f736ab55ac9addd4b8e36fe1fc6ec1c480a4fc2002432aebb65"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/funding_capacity_speed.sql",
+      "sha256": "fc57d21c963890460419272871d3b478a92fb558a1f4642defd17f2cf37d1672"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/funding_cycle_foundation.sql",
+      "sha256": "a900665cfd511d8f3554ee4448a92d347118c83daab38fad6517786cecf48f27"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/funding_deposit_to_reward_withdrawal.sql",
+      "sha256": "a640b370a6c47562e014a00a1bac626fb5040c7480315e4df8eaed5296ce33b4"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/funding_entitlement_foundation.sql",
+      "sha256": "1158ecc3245b5b26fc0d61d5c5a751b0adc723bc20fae0df360f8d2cf762b16e"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/funding_exact_forward_boundary_math.sql",
+      "sha256": "a5efcc06632500048fb7be9ffef9851b34a277baab87b8b7d1cd854b33a5c977"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/funding_fixed_cycle_portion_retention.sql",
+      "sha256": "c84b89177150967d4b55785839a98f7cda61e81ff01dcde5ddf2b326921c531f"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/funding_global_control_integration.sql",
+      "sha256": "86eb98d006acb5ede0d1f211a247273d9f101ba3bc9a91506caf91358798a130"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/funding_hold_cancel_clock_connections.sql",
+      "sha256": "f60c3baa48771e1accb5ffa76e0be4570c0e4d52c0a9e6429991ccc70a6c2f9e"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/funding_job_completion_dispatch.sql",
+      "sha256": "3cbf3d88441dc66b5255d243541b925bcebd6c1cf40eac936840c5f69be57eef"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/funding_principal_newest_first.sql",
+      "sha256": "9cf4963ccc6d13e4194bce25e0ca5c3af8fd94e94c794d01835ba4591b3b2402"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/funding_principal_portion_clocks.sql",
+      "sha256": "58a671824a7a5606cb80c5f954b820b0a85a5d3d56ff1e8b4ef563d56e5d5305"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/funding_principal_revision.sql",
+      "sha256": "41382be447adff5df081781fbb95fe17f361d5a63ba2158b3b4636579c92c1cc"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/funding_prospective_allocation_boundary.sql",
+      "sha256": "3e4c5179c5a5958fa33bb6fd9e8495ed3f1a1784f3529d921f2ea20b742e5da4"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/funding_reward_pending.sql",
+      "sha256": "1d3a10d44f4f61292812cb9afe528aa9668393d052af02ff5c5d24d2d9645747"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/funding_rollover_fixed_duration.sql",
+      "sha256": "b0351eaa9540ef9959cd552aae77c839573dc2f7bac1abaccf99b561e4228d75"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/funding_runtime_condition_completion.sql",
+      "sha256": "d66500dabdd2baeb630652cf1326cfcf45ccc43bdd659b9b6a51dd87102367e7"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/funding_runtime_status_display.sql",
+      "sha256": "361b85a292506a92b4b70d2179c399da3afd7bda75bd5b17e19ff2f0ddacd5ff"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/funding_scheduler_originals.sql",
+      "sha256": "2e3b35c064d179c50cbea7d7d051186a287e1fdd0838edf24631a93709d28238"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/funding_segment_proration.sql",
+      "sha256": "53b34382b8c5635efa7f05c62e35ef4ad1c5a1a08bac03957f1e912c5a3aa8e0"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/funding_slot_downgrade_native.sql",
+      "sha256": "56827c004d69ee76f2aadf0cca65d4091e03fe0907eea3aa23e18bfdf68a01a3"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/funding_terminal_hold_controlled_history.sql",
+      "sha256": "97500fdf940138e162b12c17911224e90ca14ee86c293fd79e4dbb160ac6ea67"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/funding_terminal_seven_day_cancel_controlled_history.sql",
+      "sha256": "15476d0ee832fad8c3fd0dd0bc8cc7a62f2b308e7688c42adf46c2b8ee49dff6"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/funding_terminal_seven_day_partial_recovery_controlled_history.sql",
+      "sha256": "52865f29eb869b5b01acedc7c38b6c1855b34c71e0b99471d4e70c0d49d86730"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/funding_terminal_writer_controlled_history.sql",
+      "sha256": "3e5d373aa7ac902c2328812a726789f8210cd5e691124d38d5cec8a42059046e"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/funding_withdrawal.sql",
+      "sha256": "8d618c20cba37de99d0c45a6e53e63ca2c968953accfba872a676e1ae2a836d0"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/identity_consent_auth.sql",
+      "sha256": "b7445051dbb6067dc95ffefa6b8bf2c014d6d96be56215afecd19993128ed51c"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/input3_credit_allocation_after_principal_cancel.sql",
+      "sha256": "97dd02c1e85a489f4197f0c33e92faf538592d67a9cdd1138b4e0c065e6de979"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/ledger_account_worker_replay_integrity.sql",
+      "sha256": "02f9cf70e878a59f18a241ad03a84ac55a9605fa5a2e2a4e77896391c7171fbe"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/legacy_withdrawal_entrypoint_closure.sql",
+      "sha256": "311b70ab9a3c13b6aee43a125996208d4cbe201ebabbff1a3a495676cb6b8bc1"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/liveops_content_recovery.sql",
+      "sha256": "2b90a41a852c7dd050e8da52a2badce9d78fd7cb9dd8b595d67892ad199bcd5d"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/liveops_publication_bounded_notifications.sql",
+      "sha256": "a075cf7b1b8d3e45279f2bcb0bc2690e8f7164cc8af7b85cc252c38b7f466f3b"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/local_cash_event_explicit_consent.sql",
+      "sha256": "9442ff4084598e19cac0e282a0550a58d3deb3274f4da384019927024a526a81"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/local_cash_event_terms_boundary.sql",
+      "sha256": "5cb16ccd9c8ed251da682e3996cbf63486c7095b250e55139bad4687e51909f4"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/local_cash_referral_stage1.sql",
+      "sha256": "ccb6039c55325012f634377e903d55c97581ff721c63819ac3e43ce89c658de8"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/local_cash_referral_stage2_controlled_history.sql",
+      "sha256": "e4c604014cf874dd4162ea129991e33dbbc279fddaa29d138fa5d7aa12022230"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/member_event_source_bound_participation.sql",
+      "sha256": "7b3138a308002b365938ca66eae5f57facd41c63daf4aab56f8743536686eed3"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/member_faq_sealed_content_lifecycle.sql",
+      "sha256": "da4570f030f94558492ec42b30dfd13ec0b45fc375a6c34fa4cbbea67337bbee"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/member_funding_allocation_authority.sql",
+      "sha256": "9524e845f5ab577e0f5bd9c82a130cafbb170b6587ac043fe46c0f92779b8aea"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/member_mining_server_display.sql",
+      "sha256": "4f7733aae635e67424595f051584e6cc5a992d0caf695c8d65bc8f2b305ebe5c"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/member_principal_confirmation_commands.sql",
+      "sha256": "a902db066937a2f25d5ffe6410e281502b5e4efae04b4adbdec3a15bad90d52c"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/member_profile_source_verified_audit_ack.sql",
+      "sha256": "9c7256f8ba2d483148648bc9f28a34a47413906cf8ff7d02da566dee2902dba3"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/mining_read_model_least_privilege.sql",
+      "sha256": "6ee0c843876488ec873baa9d2af84e40284eae651373d7b55ce83fe67890a47a"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/money_source_provenance.sql",
+      "sha256": "4c7c71b6e3a3027f01958eedd9e4e7ca81fa0a5fdf7616ef42ffa01f769c2be0"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/non_principal_withdrawal_coverage.sql",
+      "sha256": "8cf87fb8425669e7fb662f31e51f05f22cff43e29d9e5ab1dffdb13f19bc43d3"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/nonmoney_award_outbox_ack.sql",
+      "sha256": "0ad1989a3a66b81067ad3eb6f72fb4387e853ecb23f35d2bd67147f5f3ffb348"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/nonmoney_source_bound_local_qa_rewards.sql",
+      "sha256": "5c9c9f431e4fe161cf62782064e0cca34d1a33dc3135e2e642fa8b0ebfb2840f"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/principal_credit_revision_net_eligibility.sql",
+      "sha256": "ffc6a3529c34ee7f323aec22cabe0aaceac688cd178c3cf1095d8e8a49ff90cb"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/principal_portion_source_inputs.sql",
+      "sha256": "9ea9afda69c04dec4d8dc90f48ee1a4c217cfd2b7e54044b3edd5e8b717f9527"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/principal_recovery_forward_reference.sql",
+      "sha256": "48f5b5f2088fffcf8e9222bfe6db4aba265a738256734fc89b9b6795dc1af2da"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/principal_recovery_typed_intent_authority.sql",
+      "sha256": "f54283bcdeb964ab4d2910d0fc18e575b4e2cdf32c29b6409a4d2e99bd96a0d3"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/principal_runtime_forward_reference.sql",
+      "sha256": "10c6185129b04df1df0ca13d58f43c2c079642f2f6089f91125169403bd87b54"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/principal_runtime_hold_cancel_cutover.sql",
+      "sha256": "9336d80c7c371a27f6eb30437e6dc86486d2789b91be4e0be94dbebbf95d57eb"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/product_catalog_review_command.sql",
+      "sha256": "5ef294ac6d87557170ca6831148b0b37f984edcd4a0776f4d6b1093c5b2aa88a"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/pwa_source_bound_device_delivery.sql",
+      "sha256": "d669ce1af3352e7ea74ac46f7979e8f64973bf9f5c3cfd44d78d8a1dedf32f5a"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/repeated_input3_member_principal_commands.sql",
+      "sha256": "dc28dc899dc991571c6197c2d95e35e76c129a2407858c9fb4e093c82e237989"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/safe_mode_atomic_audit_command.sql",
+      "sha256": "32c285df1555bc7fb5279ce3083f76d8a1c6e378451c7dec2d330eaf36ed374e"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/safe_mode_closed_outbox_ack.sql",
+      "sha256": "f5c0bffc10fff60594f86218d3b8d8e5dffd19b0d71635fa12c400a9217683b1"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/service_role_image_default_floor.sql",
+      "sha256": "131f331b44dfe0c39c10da449f8ce7f6ec646ebda7c1e2ecfa307483e8eb1420"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/trial_completion_canonical_original.sql",
+      "sha256": "6d779c3e3386f94c5515e8a7db2bc01822d1b211ce3c75ab9da30d16f5ebd67c"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/trial_settlement.sql",
+      "sha256": "ead17a6ba9d1c5e40e599cfd234687cc36d310ca070347d3b2a2859da16f7152"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/usdt_approval_receipt_integrity.sql",
+      "sha256": "9dbeed34e31b90b410440fcc2ca0eba0daa165207f70533f459bb94d8763ea7e"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/verified_credit_funding_cutover.sql",
+      "sha256": "bab91411f84f26eb2fc1fe31b2bd532c8acc342e5d34badc63bcca3a78fdccaa"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/verified_credit_funding_input_reader.sql",
+      "sha256": "464eab12ff869af5d36c21c4351eadcb29f69cda3b1664b06e3029e9e0b33d56"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/welcome_risk_policy_parity.sql",
+      "sha256": "fcba39ab3e7c430dac866ed0568da97721d44c8ba4906516f870975872491ec2"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/withdrawal_completion_notification_original.sql",
+      "sha256": "24a0b12e7432af7b3f719e22959a1ab035710b493d348babb10200a04c925415"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/withdrawal_destination_reauthentication.sql",
+      "sha256": "1d6ef51067a9203489ca90a496d3d55359ec32b3e12fa66b5193a5b07a7e6690"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/withdrawal_destination_safe_read.sql",
+      "sha256": "895dc9596d0edefa71301365041a511b3a2f8e65e0d30ce727350533ad508f89"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/withdrawal_external_send_key_registry.sql",
+      "sha256": "6fba06cc78ab983fcd91cbffd5df6f556fe886cfd7937c246d2237657c1abd9a"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/withdrawal_idempotency_key_reuse.sql",
+      "sha256": "b3bba72ca71081f008e63de66f5957c94c9706f227963972aeb4a7f9e23a2da4"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/withdrawal_logical_lifecycle.sql",
+      "sha256": "ace6a8942b3e3348ed2e350a55bc037e5eb1b32f4c8f289ba3d05c07457d60c5"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/withdrawal_mining_reward_hold.sql",
+      "sha256": "f88b1bda90d8b1381af921e641eddeb121a13ec2c35cafb0ff6216709488e7e7"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/withdrawal_reserved_source_disposition.sql",
+      "sha256": "b585d509a69e8b5a849b184c452b699a2ad615cfbc94de5afefd8b1a8c17e105"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/withdrawal_source_hold.sql",
+      "sha256": "667d747d372d49cabf2784d69eefe0897a2c783fa29f4d211059d214addcc359"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/withdrawal_verified_source_guard.sql",
+      "sha256": "96bba4d7af6c19b21339edb4f329dfca730a89899fdc8febf70c8d3b215c4db5"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/withdrawal_zero_fee_policy.sql",
+      "sha256": "91ba97a465c1d0d670b4752a5f1d863e586fe9f95d9d120cbc563dc7eda50966"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/worker_component_stop_scope.sql",
+      "sha256": "ed55c85fe6770d5c3aa647f6f009453adc38a46309047a2d6af91cd0c145fa74"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/worker_stop_retry_budget_negatives.sql",
+      "sha256": "e256bc45e7c9a9533abfb9f7ca2cb5893a285a3c566474274bcaf816cbedd196"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/worker_stopped_source_backed_cms.sql",
+      "sha256": "a5d1f5a3ed72ab8ca6e76b035b554db0a833d5697c022e97e6cb0704312e2374"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/ws02_foundations.sql",
+      "sha256": "0c84718d6fa8262cf34ec07045c8fed9bca1f323cbaef520bf9c2799a49b57c8"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/ws05_admin_session_step_up.sql",
+      "sha256": "53ba5759ed02bd3f05a1618b270850f5128844fdaf68355209cf168afca0e598"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/ws05_worker_lease_replay.sql",
+      "sha256": "d7883a2cf96def020dd8ff1a3a83d4a2d778547b44416f2accd70133f7670d48"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/database/ws06_step_up_session_binding.sql",
+      "sha256": "25217088d59b64538f0b995137df031fe510f31408b5c09936ca57f744d3b5e6"
+    },
+    {
+      "kind": "evidence",
+      "path": "supabase/tests/snippets/resolve_disposable_dblink_host.inc",
+      "sha256": "461f1df73a459da387d7f704500db39801f57b954511183eea2f123d9200d99e"
+    },
+    {
+      "kind": "evidence",
+      "path": "tests/e2e/authenticated/helpers/backend-http-197-auth.ts",
+      "sha256": "6d5c349cb3024843b100b9ab6a84b7f429718e7e78b01b1147d14d7631155ce0"
+    },
+    {
+      "kind": "evidence",
+      "path": "tests/e2e/authenticated/usdt-manual-full-payout-197.spec.ts",
+      "sha256": "841bcd1995b980ca18e059f9082148dae3b42bcc17f3026d8b958b0fac79fae7"
+    },
+    {
+      "kind": "evidence",
+      "path": "tests/e2e/fixtures/backend-predecessor-195/4c5153a182955f7a22f1363e410353f4a948b939bb92cbe0269dd3096f6c5f2b.source.txt",
+      "sha256": "4c5153a182955f7a22f1363e410353f4a948b939bb92cbe0269dd3096f6c5f2b"
+    },
+    {
+      "kind": "evidence",
+      "path": "tests/e2e/fixtures/backend-predecessor-195/5930e4ae8be9360c41af509e2111b7ddad0bc34a53a8dea7b37055e373a1ee7a.source.txt",
+      "sha256": "5930e4ae8be9360c41af509e2111b7ddad0bc34a53a8dea7b37055e373a1ee7a"
+    },
+    {
+      "kind": "evidence",
+      "path": "tests/e2e/fixtures/backend-predecessor-195/74d990b2c6c41368eaf41d1252f8a30d6f08a1b296a57ed9321f819aff116b08.source.txt",
+      "sha256": "74d990b2c6c41368eaf41d1252f8a30d6f08a1b296a57ed9321f819aff116b08"
+    },
+    {
+      "kind": "evidence",
+      "path": "tests/e2e/fixtures/backend-predecessor-195/99b4ee8bb2a88c76bef8e46bf6f2af8fd3b4556f3e782a6f94cea898453f017a.source.txt",
+      "sha256": "99b4ee8bb2a88c76bef8e46bf6f2af8fd3b4556f3e782a6f94cea898453f017a"
+    },
+    {
+      "kind": "evidence",
+      "path": "tests/e2e/fixtures/backend-predecessor-195/b4b79662cd4577ab0b24067893203b54b2b0e77de4d3ca9bf2a3d9e675b61b22.source.txt",
+      "sha256": "b4b79662cd4577ab0b24067893203b54b2b0e77de4d3ca9bf2a3d9e675b61b22"
+    },
+    {
+      "kind": "evidence",
+      "path": "tests/e2e/fixtures/backend-predecessor-195/d83d50edbbb8237b97c794d708d67f01b2e761bc7f8d3f8d6599163d6c33e2cd.source.txt",
+      "sha256": "d83d50edbbb8237b97c794d708d67f01b2e761bc7f8d3f8d6599163d6c33e2cd"
+    },
+    {
+      "kind": "evidence",
+      "path": "tests/e2e/fixtures/backend-predecessor-195/e01df318a08eba8aef8e90060f1c976a4b495b8dee413bc7922e908a2715ed49.source.txt",
+      "sha256": "e01df318a08eba8aef8e90060f1c976a4b495b8dee413bc7922e908a2715ed49"
+    },
+    {
+      "kind": "evidence",
+      "path": "tests/e2e/fixtures/backend-predecessor-195/fb1b67c8bc8db45161d0709e84d81e09a58659142b33fc0785a806d8c2165408.source.txt",
+      "sha256": "fb1b67c8bc8db45161d0709e84d81e09a58659142b33fc0785a806d8c2165408"
+    },
+    {
+      "kind": "evidence",
+      "path": "tests/e2e/fixtures/backend-predecessor-195/manifest.json",
+      "sha256": "2f95b19842c95caba295ed2e11197e65c34273e16b8a1ea3514d83c23699f7a1"
+    },
+    {
+      "kind": "evidence",
+      "path": "tests/helpers/backend-predecessor-195.d.mts",
+      "sha256": "d5f07d955ac7f3d8908a882c25aa9b8ec09b34b48598585e505ec8cc139c95aa"
+    },
+    {
+      "kind": "evidence",
+      "path": "tests/helpers/backend-predecessor-195.mjs",
+      "sha256": "2c7559710cdc3fd06d7e1cd6f2d3309f9950beef5a249222e4de6622b3334cb0"
+    },
+    {
+      "kind": "evidence",
+      "path": "tests/unit/backend-http-195-source.test.ts",
+      "sha256": "da7c4e3909b781679a55616597b220b80ed57e3b84c05a3a318a4dd9f277c730"
+    },
+    {
+      "kind": "evidence",
+      "path": "tests/unit/backend-http-canonical-source.test.ts",
+      "sha256": "10b0db21e1ae0a245ef323a342f2c2e831f27cd7c87f2885ba0c31de0b47086b"
+    },
+    {
+      "kind": "evidence",
+      "path": "tests/unit/backend-http-local-source.test.ts",
+      "sha256": "25bdac389dc94fdc41a7218c88491dadb818c344bf9396400aeee5aece3a20ad"
+    },
+    {
+      "kind": "evidence",
+      "path": "tests/unit/backend-successor-197-consumer.test.ts",
+      "sha256": "9a6f6e1f6bd16c7624e4287246805ade9ebede6e9f991cf1534b5c7806f55f2a"
+    },
+    {
+      "kind": "evidence",
+      "path": "tests/unit/backend-successor-197-native-stage.test.ts",
+      "sha256": "f24e8ed0b9bf1111c3ad9aaa5256e2f0fb21ef34a82b38f20ecd1df6dbaedb45"
+    },
+    {
+      "kind": "evidence",
+      "path": "tests/unit/backend-successor-197-source.test.ts",
+      "sha256": "75fc0372de6c4c9c1500614e12502daf8ac7cf6ea6672b46d92dbe00352517dc"
+    },
+    {
+      "kind": "evidence",
+      "path": "tests/unit/ci-backend-195-usdt-artifacts-v2.test.ts",
+      "sha256": "97614a8c2926f0a104c4f2cf31bc92e1b46eafd5e6f2c121726e10732ab0b9f7"
+    },
+    {
+      "kind": "evidence",
+      "path": "tests/unit/ci-backend-195-usdt-artifacts.test.ts",
+      "sha256": "03938730f51de2d0472effd854fbe755a69b97c14939935535ce28e2948b67b0"
+    },
+    {
+      "kind": "evidence",
+      "path": "tests/unit/nonmoney-award-worker.test.ts",
+      "sha256": "62c3795981089f08984720180120972fa046359bd769b8b9020555a239406e0b"
+    },
+    {
+      "kind": "evidence",
+      "path": "tests/unit/usdt-manual-195-native-fixture-v2.test.ts",
+      "sha256": "2b32c3f47a0bd6d4b8bcd44b55ef5bd0802965c9aed4abf2c2fbd9b70c1bba4a"
+    },
+    {
+      "kind": "evidence",
+      "path": "tests/unit/usdt-manual-195-native-fixture-v3.test.ts",
+      "sha256": "338c0d8f1e837e1ae00f215816a22f2e522a3852677c535c554b2d74996ebf6c"
+    },
+    {
+      "kind": "evidence",
+      "path": "tests/unit/usdt-manual-195-runner.test.ts",
+      "sha256": "1b84b0dcffcfdb3e5bca4860171ef51dcb1ef022fc37eff491189dc274dcfbbe"
+    },
+    {
+      "kind": "evidence",
+      "path": "tests/unit/withdrawal-lifecycle-worker-v2.test.ts",
+      "sha256": "b8ecc803456dec86577575c4ef5aacb675437058a136d4372a45e5f0fa24a041"
+    },
+    {
+      "kind": "evidence",
+      "path": "tests/unit/withdrawal-release-hold-receipt.test.ts",
+      "sha256": "2076c672b739d58a8042c071f46dc06a7cb9799fa9122f163d64337e108f757f"
+    }
+  ]
+}

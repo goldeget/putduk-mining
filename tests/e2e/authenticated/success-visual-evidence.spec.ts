@@ -111,7 +111,17 @@ async function captureSuccess(
     document.documentElement.style.colorScheme = theme;
   }, input.theme);
   await page.reload({ waitUntil: "domcontentloaded" });
-  await expect(page.getByText(input.ready).first()).toBeVisible({
+  const ready =
+    input.audience === "admin"
+      ? page.getByRole("heading", {
+          name: input.ready,
+          level: 1,
+          exact: true,
+        })
+      : input.route === "home"
+        ? page.getByRole("region", { name: "오늘의 채굴 상태", exact: true })
+        : page.getByText(input.ready).first();
+  await expect(ready).toBeVisible({
     timeout: 60_000,
   });
   await waitForHydratedControls(page);
@@ -160,7 +170,7 @@ test.describe("authenticated success visual evidence", () => {
       {
         route: "home",
         url: "/home",
-        ready: "오늘의 채굴 상태를 확인해요.",
+        ready: "오늘의 채굴 상태",
       },
       {
         route: "start",
@@ -175,7 +185,7 @@ test.describe("authenticated success visual evidence", () => {
       {
         route: "wallet-withdraw",
         url: "/wallet/withdraw",
-        ready: "입금 없이도 가능한 첫 출금",
+        ready: "입금 없이 첫 출금",
       },
     ] as const;
 
@@ -204,9 +214,13 @@ test.describe("authenticated success visual evidence", () => {
         operator.email,
         operator.password,
       );
-      await expect(adminPage.getByText("오늘의 퍼뜩").first()).toBeVisible({
-        timeout: 60_000,
-      });
+      await expect(
+        adminPage.getByRole("heading", {
+          name: "오늘의 퍼뜩",
+          level: 1,
+          exact: true,
+        }),
+      ).toBeVisible({ timeout: 60_000 });
 
       for (const viewport of VIEWPORTS) {
         for (const theme of THEMES) {

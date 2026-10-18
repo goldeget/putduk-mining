@@ -1,4 +1,4 @@
-import { WalletReadView } from "@/components/product/wallet-read-view";
+import { WalletOverviewView } from "@/components/product/wallet-overview-view";
 import {
   buildKrwWalletProjection,
   classifyLedgerHistoryRead,
@@ -12,8 +12,15 @@ import { parseMiningServerDisplay } from "@/lib/product/mining-server-display";
 import { readOwnMiningServerDisplay } from "@/lib/product/read-mining-server-display";
 import { presentWalletServerDisplay } from "@/lib/product/wallet-server-display";
 
-export default async function WalletPage() {
+export default async function WalletPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ view?: string | string[] }>;
+}) {
   const identity = await requirePageUser();
+  const view = (await searchParams).view;
+  const initialView =
+    view === "history" || view === "profit" ? view : "principal";
   const [
     { data: krwAccount, error: accountsError },
     { data: trial, error: trialError },
@@ -112,38 +119,37 @@ export default async function WalletPage() {
 
   const trialState = trialError ? "error" : trial ? "ready" : "empty";
 
+  const routeUiState =
+    accountsError ||
+    trialError ||
+    ledgerError ||
+    receiptError ||
+    parsedDisplay === null
+      ? "partial"
+      : "loaded";
+
   return (
-    <div
-      data-ui-ready="/wallet"
-      data-ui-state={
-        accountsError ||
-        trialError ||
-        ledgerError ||
-        receiptError ||
-        parsedDisplay === null
-          ? "partial"
-          : "loaded"
+    <WalletOverviewView
+      key={initialView}
+      initialView={initialView}
+      routeUiState={routeUiState}
+      balanceState={balanceState}
+      funding={funding}
+      krw={krw}
+      ledgerEntries={ledgerEntries}
+      ledgerState={classifyLedgerHistoryRead({
+        count: ledgerEntries.length,
+        error: Boolean(ledgerError),
+      })}
+      receiptState={classifyReceiptHistoryRead({
+        count: receipts.length,
+        error: Boolean(receiptError),
+      })}
+      receipts={receipts}
+      trialRewardAtomic={
+        trial?.reward_atomic == null ? null : String(trial.reward_atomic)
       }
-    >
-      <WalletReadView
-        balanceState={balanceState}
-        funding={funding}
-        krw={krw}
-        ledgerEntries={ledgerEntries}
-        ledgerState={classifyLedgerHistoryRead({
-          count: ledgerEntries.length,
-          error: Boolean(ledgerError),
-        })}
-        receiptState={classifyReceiptHistoryRead({
-          count: receipts.length,
-          error: Boolean(receiptError),
-        })}
-        receipts={receipts}
-        trialRewardAtomic={
-          trial?.reward_atomic == null ? null : String(trial.reward_atomic)
-        }
-        trialState={trialState}
-      />
-    </div>
+      trialState={trialState}
+    />
   );
 }

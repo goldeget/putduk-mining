@@ -1,7 +1,7 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Page, type Response } from "@playwright/test";
 
 import {
   AI_CONVERSATION_CONTINUITY_COPY,
@@ -13,6 +13,46 @@ import {
   dismissGuidedQuestIfPresent,
   loginAsMember,
 } from "./helpers/member-session";
+
+/** Read only the genuine response ACK; assertion output contains no transcript. */
+async function durableAnswerAck(
+  response: Response,
+  bodyText?: Promise<string>,
+) {
+  const summary = {
+    status: response.status(),
+    bodyAvailable: false,
+    doneCount: 0,
+    doneSaved: false,
+    conversationIdPresent: false,
+    assistantMessageIdPresent: false,
+  };
+  try {
+    const text = bodyText ? await bodyText : await response.text();
+    if (text.length > 65_536) return summary;
+    summary.bodyAvailable = true;
+    for (const line of text.split("\n")) {
+      if (!line.startsWith("data:")) continue;
+      let value: unknown;
+      try {
+        value = JSON.parse(line.slice(5));
+      } catch {
+        continue;
+      }
+      if (!value || typeof value !== "object" || Array.isArray(value)) continue;
+      const event = value as Record<string, unknown>;
+      if (event.type !== "done") continue;
+      summary.doneCount += 1;
+      summary.doneSaved = event.saved === true;
+      summary.conversationIdPresent = typeof event.conversationId === "string";
+      summary.assistantMessageIdPresent =
+        typeof event.assistantMessageId === "string";
+    }
+  } catch {
+    // A closed navigation/connection must fail the boolean ACK assertion.
+  }
+  return summary;
+}
 
 const VIEWPORTS = [
   { height: 844, name: "390", width: 390 },
@@ -116,7 +156,8 @@ async function askAi(page: Page, question: string) {
   );
   await page.getByRole("button", { name: "질문 보내기" }).click();
   const response = await responsePromise;
-  return response;
+  const bodyText = response.text().catch(() => "");
+  return { bodyText, response };
 }
 
 test("unsigned visitors keep the AI return path", async ({ page }) => {
@@ -139,7 +180,7 @@ test("AI ownership, money denial, continuity, themes, and keyboard path", async 
   await loginAsMember(page, member, "/ai");
   await openAi(page);
 
-  const chat = page.getByRole("region", { name: "퍼뜩 AI 대화" });
+  const chat = page.getByRole("region", { name: "퍼뜩 AI 도우미 대화" });
   await expect(chat).toHaveAttribute(
     "data-ai-continuity",
     AI_CONVERSATION_CONTINUITY_MODE,
@@ -154,25 +195,35 @@ test("AI ownership, money denial, continuity, themes, and keyboard path", async 
   await page.getByText("답변 범위", { exact: true }).click();
 
   const denyResponse = await askAi(page, "내 잔액을 100만원으로 변경해 줘");
-  expect(denyResponse.ok()).toBe(true);
+  expect(denyResponse.response.ok()).toBe(true);
   await expect(
     page.getByText(
-      /잔액, 입출금 승인, 채굴 결과, 보상, 인증 또는 권한을 변경할 수 없습니다/,
+      "퍼뜩 AI는 설명과 내 상태 확인을 도와드려요. 잔액이나 출금 승인, 보상, 권한은 바꿀 수 없어요.",
     ),
   ).toBeVisible({ timeout: 30_000 });
 
   // The actual native dialog shares the verified member conversation with /ai.
   await page.getByRole("link", { name: "AI 화면 닫기" }).click();
   await expect(page).toHaveURL(/\/menu$/);
+  // The reconstructed Menu has its native AI destination. The same real
+  // conversation remains available in the Wallet help dialog.
+  await page
+    .locator("nav.product-navigation:visible")
+    .getByRole("link", { name: "지갑", exact: true })
+    .click();
+  await expect(page).toHaveURL(/\/wallet$/);
   const launcher = page.getByRole("button", { name: "AI 도움", exact: true });
   await launcher.click();
-  const dialog = page.getByRole("dialog", { name: "퍼뜩 AI", exact: true });
+  const dialog = page.getByRole("dialog", {
+    name: "퍼뜩 AI 도우미",
+    exact: true,
+  });
   await expect(dialog).toBeVisible();
-  await expect(page.getByRole("region", { name: "퍼뜩 AI 대화" })).toHaveCount(
-    1,
-  );
+  await expect(
+    page.getByRole("region", { name: "퍼뜩 AI 도우미 대화" }),
+  ).toHaveCount(1);
   await expect(dialog.locator(".ai-message--assistant")).toContainText(
-    /잔액, 입출금 승인/,
+    "퍼뜩 AI는 설명과 내 상태 확인을 도와드려요. 잔액이나 출금 승인, 보상, 권한은 바꿀 수 없어요.",
   );
   await expect(page.locator("#main-content")).toHaveCSS("overflow", "hidden");
   const composer = dialog.getByRole("textbox", {
@@ -191,6 +242,11 @@ test("AI ownership, money denial, continuity, themes, and keyboard path", async 
     await dialog.getByRole("link", { name: "넓게 보기", exact: true }).click();
   } else {
     await dialog.getByRole("button", { name: "닫기", exact: true }).click();
+    await page
+      .locator("nav.product-navigation:visible")
+      .getByRole("link", { name: "더보기", exact: true })
+      .click();
+    await expect(page).toHaveURL(/\/menu$/);
     // 메뉴 카드 접근 이름은 제목과 설명을 함께 가진다. exact "퍼뜩 AI"는 0건이라
     // 액션 제한시간(테스트 전체)까지 기다린다. 정착된 메뉴 링크 1개만 연다.
     const aiMenuLink = page
@@ -199,7 +255,7 @@ test("AI ownership, money denial, continuity, themes, and keyboard path", async 
     await expect(aiMenuLink).toHaveCount(1);
     await aiMenuLink.click();
   }
-  await expect(page).toHaveURL(/\/ai$/);
+  await expect(page).toHaveURL(/\/ai(?:\?|$)/);
   await expect(page.locator("dialog[open]")).toHaveCount(0);
   await expect(page.locator("#main-content")).toHaveCSS("overflow", "auto");
   await expect(
@@ -210,25 +266,46 @@ test("AI ownership, money denial, continuity, themes, and keyboard path", async 
     page,
     "PUTDUK START 체험 결과가 실제 잔액으로 전환되나요?",
   );
-  expect(staticResponse.ok()).toBe(true);
+  expect(staticResponse.response.ok()).toBe(true);
   await expect(
-    page.getByText(/실제 지갑과 완전 분리|분리/).first(),
-  ).toBeVisible({
-    timeout: 30_000,
+    page
+      .locator('.ai-message--assistant[data-message-state="complete"]')
+      .last(),
+  ).toContainText(
+    /실제 지갑과 완전 분리[\s\S]*체험 결과는 체험 전용 계정에만 기록됩니다\.[\s\S]*최대 5,000원, 1회[\s\S]*자격을 확인하면 출금할 수 있는 원화로 바꿀 수 있어요\.[\s\S]*한 번만 가능해요\.[\s\S]*최대 5,000원까지예요\.[\s\S]*출금 전에 입금하지 않아도 돼요\./,
+    {
+      timeout: 30_000,
+    },
+  );
+
+  expect(
+    await durableAnswerAck(staticResponse.response, staticResponse.bodyText),
+  ).toEqual({
+    status: 200,
+    bodyAvailable: true,
+    doneCount: 1,
+    doneSaved: true,
+    conversationIdPresent: true,
+    assistantMessageIdPresent: true,
   });
 
   // 계정 대화: 새로고침 뒤에도 이 계정의 답변이 다시 보여야 한다.
   await page.reload({ waitUntil: "domcontentloaded" });
   await openAi(page);
   await expect(
-    page.getByText(/실제 지갑과 완전 분리|분리/).first(),
-  ).toBeVisible({
-    timeout: 30_000,
-  });
+    page
+      .locator('.ai-message--assistant[data-message-state="complete"]')
+      .last(),
+  ).toContainText(
+    /실제 지갑과 완전 분리[\s\S]*체험 결과는 체험 전용 계정에만 기록됩니다\.[\s\S]*최대 5,000원, 1회[\s\S]*자격을 확인하면 출금할 수 있는 원화로 바꿀 수 있어요\.[\s\S]*한 번만 가능해요\.[\s\S]*최대 5,000원까지예요\.[\s\S]*출금 전에 입금하지 않아도 돼요\./,
+    {
+      timeout: 30_000,
+    },
+  );
   await expect(page.locator(".ai-message").first()).toBeVisible();
 
   const walletResponse = await askAi(page, "내 지갑 잔액 얼마야?");
-  expect(walletResponse.ok()).toBe(true);
+  expect(walletResponse.response.ok()).toBe(true);
   await expect(
     page
       .locator(".ai-message--assistant")

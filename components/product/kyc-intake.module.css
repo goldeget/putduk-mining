@@ -1,0 +1,72 @@
+.panel {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+  padding: clamp(1rem, 3vw, 1.5rem);
+  border: 1px solid var(--border-subtle);
+  border-radius: 1.25rem;
+  background: var(--surface-raised);
+  color: var(--text-primary);
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+.panel h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.1rem;
+  line-height: 1.5;
+}
+.panel p {
+  max-width: 38rem;
+  margin: 0;
+  color: var(--text-secondary);
+  line-height: 1.65;
+}
+.form {
+  display: grid;
+  gap: 0.8rem;
+  min-width: 0;
+}
+.form label {
+  font-weight: 700;
+}
+.form input {
+  max-width: 100%;
+  min-width: 0;
+  padding: 0.75rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: 0.75rem;
+  background: var(--surface-raised);
+  color: var(--text-primary);
+}
+.form button {
+  justify-self: start;
+  max-width: 100%;
+  white-space: normal;
+}
+.panel .status {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+.panel .message {
+  color: var(--text-primary);
+}
+.refresh {
+  justify-self: start;
+  border: 0;
+  background: transparent;
+  padding: 0.35rem 0;
+  font: inherit;
+  color: var(--text-primary);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+.refresh:focus-visible,
+.form input:focus-visible {
+  outline: 2px solid var(--text-primary);
+  outline-offset: 4px;
+}
+@media (max-width: 430px) {
+  .form button {
+    justify-self: stretch;
+  }
+}

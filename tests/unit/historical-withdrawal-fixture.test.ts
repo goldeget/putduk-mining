@@ -50,6 +50,38 @@ describe("historical owner fixture boundary", () => {
       key,
     });
   });
+  it("binds and reads back only the exact existing owner/key/method/destination/amount in the same transaction", () => {
+    seedHistoricalHeldWithdrawal(input);
+    const sql = mocks.sql.mock.calls[0]![0] as string;
+    expect(sql).toContain(
+      "create function pg_temp.seed_bound_historical_held_withdrawal",
+    );
+    expect(sql.indexOf("putduk-funding-recovery:")).toBeLessThan(
+      sql.indexOf("withdrawal-logical:"),
+    );
+    expect(sql).toContain(
+      "where user_id = p_owner and idempotency_key = p_key for update",
+    );
+    expect(sql).toContain(
+      "v_logical.destination_id is distinct from p_destination",
+    );
+    expect(sql).toContain("v_logical.amount_krw is distinct from p_amount");
+    expect(sql).toContain(
+      "v_request.destination_type is distinct from v_logical.method",
+    );
+    expect(sql).toContain(
+      "v_request.withdrawal_destination_id is distinct from p_destination",
+    );
+    expect(sql).toContain("v_logical.withdrawal_id is not null");
+    expect(sql).toContain("HISTORICAL_FIXTURE_LOGICAL_BINDING_REQUIRED");
+    expect(sql).toContain(
+      "and l.amount_krw = p_amount and l.withdrawal_id = v_id",
+    );
+    expect(sql).toContain("HISTORICAL_FIXTURE_LOGICAL_READBACK_REQUIRED");
+    expect(sql).not.toContain("insert into public.withdrawal_logical_requests");
+    expect(sql.match(/begin;/g)).toHaveLength(1);
+    expect(sql.match(/commit;/g)).toHaveLength(1);
+  });
   it.each([
     { ownerId: "not-owner" },
     { destinationId: "not-destination" },

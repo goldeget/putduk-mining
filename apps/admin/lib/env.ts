@@ -2,6 +2,8 @@ import "server-only";
 
 import { z } from "zod";
 
+import { parseSupabaseBrowserAuthConfig } from "../../../lib/env/public";
+
 const schema = z.object({
   APP_ENV: z.enum(["development", "test", "staging", "production"]),
   NEXT_PUBLIC_SUPABASE_URL: z.url(),
@@ -22,5 +24,14 @@ export function getAdminEnv(): AdminEnv {
       runtimeEnv.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
     SUPABASE_SECRET_KEY: process.env.SUPABASE_SECRET_KEY,
     ADMIN_APP_URL: process.env.ADMIN_APP_URL,
+  });
+}
+
+/** Validate before RSC/HTML serialization; client checks alone are too late. */
+export function getAdminBrowserPublicConfig() {
+  const env = getAdminEnv();
+  return parseSupabaseBrowserAuthConfig({
+    url: env.NEXT_PUBLIC_SUPABASE_URL,
+    publishableKey: env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
   });
 }

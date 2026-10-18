@@ -155,7 +155,7 @@ with inserted as (
     1,
     true,
     10000,
-    1000,
+    0,
     '{"country":"KR"}'::jsonb,
     statement_timestamp() - interval '1 hour',
     operator_id
@@ -186,14 +186,14 @@ select isnt(
 select ok(
   (
     select request.status = 'REQUESTED'
-      and request.fee_atomic = 1000
+      and request.fee_atomic = 0
       and request.amount_atomic = 20000
       and request.withdrawal_policy_id = context.policy_id
     from funding_test_context as context
     join public.withdrawal_requests as request
       on request.id = context.withdrawal_id
   ),
-  'the request snapshots the approved policy fee and remains pending review'
+  'the request preserves the permanently zero platform fee and remains pending review'
 );
 
 select is(
@@ -217,7 +217,7 @@ select throws_ok(
         %L::uuid,
         %L::uuid,
         %L::uuid,
-        80000,
+        80001,
         'BANK_ACCOUNT',
         '{"display":"***-**-5678","encrypted":{"alg":"A256GCM","v":1}}'::jsonb,
         'funding-withdrawal-0002'
@@ -229,7 +229,7 @@ select throws_ok(
   ),
   '22003',
   'INSUFFICIENT_AVAILABLE_BALANCE',
-  'pending withdrawals reserve amount plus policy fee from availability'
+  'a zero-fee pending 20000 withdrawal leaves 80000 available and rejects 80001'
 );
 
 select is(

@@ -127,6 +127,18 @@ export async function readEconomyState(
   return state;
 }
 function commandFailure(message: string) {
+  if (
+    /PLATFORM_FEES_PERMANENTLY_DISABLED|ECONOMY_POLICY_PLATFORM_FEES_FORBIDDEN/.test(
+      message,
+    )
+  )
+    return failure(
+      message.includes("PLATFORM_FEES_PERMANENTLY_DISABLED")
+        ? "PLATFORM_FEES_PERMANENTLY_DISABLED"
+        : "ECONOMY_POLICY_PLATFORM_FEES_FORBIDDEN",
+      "플랫폼 수수료는 영구적으로 0원입니다. 수수료 없는 새 정책을 사용해 주세요.",
+      400,
+    );
   if (/STEP_UP_REQUIRED|MFA_REQUIRED/.test(message))
     return failure(
       "STEP_UP_REQUIRED",
@@ -273,6 +285,8 @@ export function createEconomyCommandHandler(dependencies: EconomyDependencies) {
           input.settings,
         );
       } else {
+        // The DB checks completed same-key receipts before the new-write fee guard.
+        // Do not reject an immutable historical replay based on current fee values.
         expectedRevision = input.expectedRevision;
         expectedDigest = input.expectedDigest;
         effectiveFrom = input.effectiveFrom;

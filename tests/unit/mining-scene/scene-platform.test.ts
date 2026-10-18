@@ -1,3 +1,7 @@
+import {
+  PRODUCT_PROCESS_PACKS,
+  PRODUCT_PROCESS_MASTER_HASHES,
+} from "@/lib/mining-scene/product-scene-assets";
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -77,7 +81,7 @@ describe("catalog scene resolution", () => {
     );
   });
 
-  test("keeps catalog identity and assigns a family only to 000660", () => {
+  test("keeps catalog identity and assigns only independently reviewed product variants", () => {
     for (const product of CATALOG_V1_PRODUCTS) {
       const resolved = resolveCatalogProduct(product);
       expect(resolved.identity).toEqual({
@@ -94,19 +98,29 @@ describe("catalog scene resolution", () => {
         expect(resolved.scene?.familyKey).toBe(ASSIGNED_FAMILY);
         expect(resolved.visualStatus).toBe("MASTER_READY");
         expect(resolved.scene?.packStatus).toBe("APPROVED");
+      } else if (product.code === "NVDA") {
+        expect(resolved.productionAssetActive).toBe(true);
+        expect(resolved.presentation?.sceneFamilyKey).toBe("AI_GPU_COMPUTE");
+        expect(resolved.presentation?.profile.masterVariant).toBe(
+          "product-nvda-gpu-v1",
+        );
+        expect(resolved.scene?.packStatus).toBe("APPROVED");
+        expect(resolved.visualStatus).toBe("MASTER_READY");
       } else {
-        expect(resolved.productionAssetActive).toBe(false);
+        const pack = PRODUCT_PROCESS_PACKS[product.code];
+        expect(resolved.productionAssetActive).toBe(true);
         expect(resolved.userCopyKo).toBe(SAFE_SCENE_COPY);
-        expect(resolved.presentation?.sceneFamilyKey).toBeNull();
-        expect(resolved.scene).toBeNull();
-        expect(resolved.visualStatus).toBe("FAMILY_UNASSIGNED");
+        expect(resolved.presentation?.sceneFamilyKey).toBe(pack.familyKey);
+        expect(resolved.scene?.master).toEqual(pack.master);
+        expect(resolved.visualStatus).toBe("MASTER_READY");
       }
     }
   });
 
   test("does not classify a product by category or display name", () => {
     const resolved = resolveCatalogProduct(identity("XAU", "CRYPTO"));
-    expect(resolved.presentation?.sceneFamilyKey).toBeNull();
+    expect(resolved.presentation).toBeNull();
+    expect(resolved.visualStatus).toBe("MASTER_VARIANT_UNAVAILABLE");
     expect(resolved.scene).toBeNull();
     expect(resolved.identity.category).toBe("CRYPTO");
     expect(resolved.scene).not.toBe(SCENE_REGISTRY.PRECIOUS_GOLD.definition);
@@ -120,7 +134,7 @@ describe("catalog scene resolution", () => {
     expect(disguised.scene?.familyKey).toBe("PRECIOUS_GOLD");
     expect(disguised.presentation?.profile.displayNameKo).toBe("엔비디아 테마");
     expect(
-      resolveCatalogProduct(identity("NVDA", "US_STOCK")).scene,
+      resolveCatalogProduct(identity("NVDA", "KR_STOCK")).scene,
     ).toBeNull();
   });
 
@@ -129,8 +143,8 @@ describe("catalog scene resolution", () => {
     const bitcoin = resolveCatalogProduct(identity("BTC", "CRYPTO"));
     expect(gold.userCopyKo).toBe(SAFE_SCENE_COPY);
     expect(bitcoin.userCopyKo).toBe(SAFE_SCENE_COPY);
-    expect(gold.presentation?.sceneFamilyKey).toBeNull();
-    expect(bitcoin.presentation?.sceneFamilyKey).toBeNull();
+    expect(gold.presentation?.sceneFamilyKey).toBe("PRECIOUS_GOLD");
+    expect(bitcoin.presentation?.sceneFamilyKey).toBe("BLOCKCHAIN_HASH");
     expect(`${gold.userCopyKo} ${bitcoin.userCopyKo}`).not.toMatch(
       /보유|수익|연동|잔액/,
     );
@@ -162,8 +176,10 @@ describe("scene selection without a renderer branch", () => {
 
     expect(fixture.scene).toBe(SCENE_REGISTRY.SEMICONDUCTOR_MEMORY.definition);
     expect(fixture.scene).toBe(assigned.scene);
-    expect(catalog.scene).toBeNull();
-    expect(catalog.presentation?.sceneFamilyKey).toBeNull();
+    expect(catalog.scene?.master).toEqual(
+      PRODUCT_PROCESS_PACKS["005930"].master,
+    );
+    expect(catalog.presentation?.sceneFamilyKey).toBe("SEMICONDUCTOR_FOUNDRY");
     expect(stageSource).not.toContain("FIXMEM01");
     expect(stageSource).not.toContain("SEMICONDUCTOR_MEMORY");
   });
@@ -187,25 +203,23 @@ describe("scene selection without a renderer branch", () => {
     expect(first.scene).toBe(second.scene);
     expect(first.scene).toBe(SCENE_REGISTRY.SEMICONDUCTOR_MEMORY.definition);
     expect(hynix.scene).toBe(SCENE_REGISTRY.SEMICONDUCTOR_MEMORY.definition);
-    expect(samsung.scene).toBeNull();
+    expect(samsung.scene?.master).toEqual(
+      PRODUCT_PROCESS_PACKS["005930"].master,
+    );
     expect(samsung.scene).not.toBe(hynix.scene);
     expect(first.presentation?.profile.particleEmphasis).toBe("none");
     expect(second.presentation?.profile.particleEmphasis).toBe("steady");
 
-    for (const code of [
-      "ETH",
-      "BNB",
-      "XRP",
-      "BTC",
-      "NVDA",
-      "XAU",
-      "XAG",
-    ] as const) {
+    for (const code of ["ETH", "BNB", "XRP", "BTC", "XAU", "XAG"] as const) {
       const resolved = resolveCatalogProduct(
         CATALOG_V1_PRODUCTS.find((item) => item.code === code)!,
       );
-      expect(resolved.presentation?.sceneFamilyKey).toBeNull();
-      expect(resolved.scene).toBeNull();
+      expect(resolved.presentation?.sceneFamilyKey).toBe(
+        PRODUCT_PROCESS_PACKS[code].familyKey,
+      );
+      expect(resolved.scene?.master).toEqual(
+        PRODUCT_PROCESS_PACKS[code].master,
+      );
     }
   });
 
@@ -274,8 +288,10 @@ describe("presentation boundary", () => {
     expect(resolved.identity).not.toHaveProperty("displayNameKo");
     expect(resolved.presentation).not.toHaveProperty("category");
     expect(resolved.presentation?.productCode).toBe(resolved.identity.code);
-    expect(resolved.presentation?.sceneFamilyKey).toBeNull();
-    expect(resolved.scene).toBeNull();
+    expect(resolved.presentation?.sceneFamilyKey).toBe("SEMICONDUCTOR_FOUNDRY");
+    expect(resolved.scene?.master).toEqual(
+      PRODUCT_PROCESS_PACKS["005930"].master,
+    );
 
     const mismatch = resolveScene(identity("005930", "KR_STOCK"), {
       productCode: "000660",
@@ -375,6 +391,12 @@ describe("registry contract", () => {
   test("does not activate an unapproved family or the SK hynix reference as a production asset", () => {
     expect(APPROVED_SCENE_MASTER_SHA256).toEqual([
       "5d398a3155635d46a6d0b1f639c25d349ddf21607a16a4e6f948655744b8a6dd",
+      "113fdbc5c41772145f98f3357f27754fa1bd20602a5261c133becc0fa1126d52",
+      "0cf2635fdd6637757c5a56d90c27cb2b9e7b6c925a66da332f36e268f4fd300d",
+      "b20cc60947fdddf7d8f02733658d9f0fabdce786ea5f9614ce1694e44d1fe3f1",
+      "56638dce5ebe61b38c21da4249e3474e5a62a7d17f32cb885d945c8ee41a1115",
+      "abfc46f87a1822c5e705b527432da85d638bd500379f7a6fccf282e66392c736",
+      ...PRODUCT_PROCESS_MASTER_HASHES,
     ]);
     expect(SK_HYNIX_V3_REFERENCE.activatesProductionScene).toBe(false);
     expect(SK_HYNIX_V3_REFERENCE.productionAssetApproval).toBe("NOT_APPROVED");
@@ -404,12 +426,14 @@ describe("registry contract", () => {
     const assigned = Object.values(APPROVED_PRODUCT_PRESENTATIONS).filter(
       (item) => item.sceneFamilyKey !== null,
     );
-    expect(assigned.map((item) => item.productCode)).toEqual([
-      ASSIGNED_PRODUCT_CODE,
-    ]);
-    expect(assigned.map((item) => item.sceneFamilyKey)).toEqual([
-      ASSIGNED_FAMILY,
-    ]);
+    expect(assigned.map((item) => item.productCode)).toEqual(
+      CATALOG_V1_PRODUCTS.map((item) => item.code),
+    );
+    expect(assigned.map((item) => item.sceneFamilyKey)).toEqual(
+      CATALOG_V1_PRODUCTS.map(
+        (item) => APPROVED_PRODUCT_PRESENTATIONS[item.code].sceneFamilyKey,
+      ),
+    );
   });
 
   test("keeps the SK hynix V3 hash contract stable and out of the family registry", () => {

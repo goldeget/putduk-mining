@@ -3,6 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 
 import { analyticsEventSchema } from "@/domain/analytics/events";
 import { allowedAnalyticsOrigins } from "@/domain/analytics/observability";
+import { readBoundedJsonBody } from "@/lib/api/request-body";
 import { getVerifiedIdentity } from "@/lib/auth/session";
 import { getServerEnv } from "@/lib/env/server";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
@@ -42,24 +43,18 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const declaredLength = Number(request.headers.get("content-length") ?? 0);
-  if (declaredLength > MAX_BODY_BYTES) {
-    return errorResponse("PAYLOAD_TOO_LARGE", "요청 크기가 너무 큽니다.", 413);
+  const body = await readBoundedJsonBody(request, MAX_BODY_BYTES);
+  if (!body.ok) {
+    return errorResponse(
+      body.code,
+      body.code === "PAYLOAD_TOO_LARGE"
+        ? "요청 크기가 너무 큽니다."
+        : "요청 형식이 올바르지 않습니다.",
+      body.code === "PAYLOAD_TOO_LARGE" ? 413 : 400,
+    );
   }
 
-  const rawBody = await request.text();
-  if (new TextEncoder().encode(rawBody).byteLength > MAX_BODY_BYTES) {
-    return errorResponse("PAYLOAD_TOO_LARGE", "요청 크기가 너무 큽니다.", 413);
-  }
-
-  let decoded: unknown;
-  try {
-    decoded = JSON.parse(rawBody);
-  } catch {
-    return errorResponse("INVALID_JSON", "요청 형식이 올바르지 않습니다.", 400);
-  }
-
-  const parsed = analyticsEventSchema.safeParse(decoded);
+  const parsed = analyticsEventSchema.safeParse(body.value);
   if (!parsed.success) {
     return errorResponse(
       "INVALID_EVENT",

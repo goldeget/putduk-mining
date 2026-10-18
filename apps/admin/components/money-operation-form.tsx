@@ -1,4 +1,5 @@
 "use client";
+import { FeedbackMessage } from "../../../components/ui/feedback-message";
 
 import { useState } from "react";
 
@@ -42,8 +43,8 @@ export function MoneyOperationFields({
 export function MoneyOfflineNote({ message }: { message: string | null }) {
   if (!message) return null;
   return (
-    <p className="queue-flash" role="status">
+    <FeedbackMessage className="queue-flash" role="status">
       {message}
-    </p>
+    </FeedbackMessage>
   );
 }

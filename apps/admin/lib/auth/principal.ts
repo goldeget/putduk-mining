@@ -102,7 +102,16 @@ export async function getAdminIdentityForLoginPage(): Promise<AdminIdentity | nu
   if (isPutdukTestRuntime()) {
     return null;
   }
-  return getAdminIdentity();
+  const identity = await getAdminIdentity();
+  if (identity?.role && identity.aal === "aal2") {
+    const session = await assertAndTouchAdminAppSession({
+      userId: identity.userId,
+      authSessionId: identity.sessionId,
+      userAgent: await requestUserAgent(),
+    });
+    if (!session.ok) return null;
+  }
+  return identity;
 }
 
 export async function requireAdminIdentity(

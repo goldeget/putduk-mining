@@ -1,5 +1,10 @@
 import { expect, type Page, type TestInfo } from "@playwright/test";
 import { waitForRouteBody, type UiTerminalState } from "./route-readiness";
+import {
+  assertUniqueDocumentIds,
+  assertVisibleControlsNamed,
+  readRenderedPresentationHealth,
+} from "./rendered-health";
 
 export type TypographyTheme = "dark" | "light";
 
@@ -38,7 +43,14 @@ type OverflowIssue = {
 };
 
 type TypographyAudit = {
+  copySpacing: { selector: string; text: string; issue: string }[];
   koreanBreaks: KoreanBreakIssue[];
+  permittedLongTokenWraps: Array<{
+    selector: string;
+    token: string;
+    unbrokenWidth: number;
+    availableWidth: number;
+  }>;
   overflow: OverflowIssue;
 };
 
@@ -74,6 +86,16 @@ async function readTypographyAudit(page: Page): Promise<TypographyAudit> {
       if (
         element.closest("[hidden], [aria-hidden='true']") ||
         ignoredTags.has(element.tagName)
+      ) {
+        return false;
+      }
+      // Closed details use a UA content-visibility boundary. A nonzero rect
+      // alone does not prove that their descendants are actually painted.
+      if (
+        !element.checkVisibility({
+          opacityProperty: true,
+          visibilityProperty: true,
+        })
       ) {
         return false;
       }
@@ -113,6 +135,8 @@ async function readTypographyAudit(page: Page): Promise<TypographyAudit> {
     }
 
     const koreanBreaks: KoreanBreakIssue[] = [];
+    const permittedLongTokenWraps: TypographyAudit["permittedLongTokenWraps"] =
+      [];
     const walker = document.createTreeWalker(
       document.body,
       NodeFilter.SHOW_TEXT,
@@ -135,18 +159,50 @@ async function readTypographyAudit(page: Page): Promise<TypographyAudit> {
         const token = match[0];
         const start = match.index ?? 0;
         const tops: number[] = [];
+        let unbrokenWidth = 0;
         for (let index = 0; index < token.length; index += 1) {
           const range = document.createRange();
           range.setStart(node, start + index);
           range.setEnd(node, start + index + 1);
           const rect = range.getBoundingClientRect();
           if (rect.width <= 0 || rect.height <= 0) continue;
+          unbrokenWidth += rect.width;
           const roundedTop = Math.round(rect.top * 2) / 2;
           if (!tops.some((top) => Math.abs(top - roundedTop) <= 1)) {
             tops.push(roundedTop);
           }
         }
         if (tops.length > 1 && node.parentElement) {
+          // Only a token wider than an empty containing line may use the
+          // owner's required emergency-wrap policy. Never use character count.
+          let container: Element | null = node.parentElement;
+          while (
+            container &&
+            ["inline", "contents"].includes(getComputedStyle(container).display)
+          )
+            container = container.parentElement;
+          const style = getComputedStyle(node.parentElement);
+          const containerStyle = container ? getComputedStyle(container) : null;
+          const availableWidth =
+            container && containerStyle
+              ? container.clientWidth -
+                parseFloat(containerStyle.paddingLeft || "0") -
+                parseFloat(containerStyle.paddingRight || "0")
+              : 0;
+          if (
+            style.wordBreak === "keep-all" &&
+            ["break-word", "anywhere"].includes(style.overflowWrap) &&
+            availableWidth > 0 &&
+            unbrokenWidth > availableWidth + 1
+          ) {
+            permittedLongTokenWraps.push({
+              selector: selectorFor(node.parentElement),
+              token,
+              unbrokenWidth,
+              availableWidth,
+            });
+            continue;
+          }
           koreanBreaks.push({
             selector: selectorFor(node.parentElement),
             token,
@@ -177,11 +233,181 @@ async function readTypographyAudit(page: Page): Promise<TypographyAudit> {
             .slice(0, 20)
         : [];
 
+    const copySpacing: TypographyAudit["copySpacing"] = [];
+    for (const element of document.querySelectorAll<HTMLElement>(
+      "p, h1, h2, h3, h4, h5, h6, button, a, label, dt, dd, [role='alert'], [role='status'], [aria-label]",
+    )) {
+      if (!isVisible(element)) continue;
+      // innerText preserves semantic br/block boundaries and includes joined
+      // inline JSX. Soft viewport wrapping does not excuse missing copy spacing.
+      const copies = [element.innerText, element.getAttribute("aria-label")];
+      for (const text of copies) {
+        if (!text || !/[가-힣]/u.test(text)) continue;
+        const issue = /[가-힣][.!?][가-힣A-Za-z]/u.test(text)
+          ? "missing-sentence-space"
+          : /(?:운영자|회원|상태) 입니다/u.test(text)
+            ? "obvious-copula-space"
+            : null;
+        if (issue) {
+          copySpacing.push({ selector: selectorFor(element), text, issue });
+        }
+      }
+    }
+
     return {
+      copySpacing,
       koreanBreaks,
+      permittedLongTokenWraps,
       overflow: { clientWidth, offenders, scrollWidth },
     };
   });
+}
+
+/** Exercise rendered lazy images without waiting forever on hidden content. */
+export async function settleRenderedTypographyImages(page: Page) {
+  const scrollState = await page.evaluateHandle(() => ({
+    windowX: window.scrollX,
+    windowY: window.scrollY,
+    elements: Array.from(document.querySelectorAll<HTMLElement>("*"))
+      .filter(
+        (element) =>
+          element.scrollHeight > element.clientHeight ||
+          element.scrollWidth > element.clientWidth,
+      )
+      .map((element) => ({
+        element,
+        top: element.scrollTop,
+        left: element.scrollLeft,
+      })),
+  }));
+  try {
+    for (const image of await page.locator("img").all()) {
+      const painted = await image.evaluate(
+        (element) =>
+          element.checkVisibility({
+            opacityProperty: true,
+            visibilityProperty: true,
+          }) &&
+          element.getBoundingClientRect().width > 0 &&
+          element.getBoundingClientRect().height > 0,
+      );
+      if (!painted) continue;
+      await image.scrollIntoViewIfNeeded();
+      await expect
+        .poll(
+          () =>
+            image.evaluate(
+              (element) =>
+                element instanceof HTMLImageElement &&
+                element.complete &&
+                element.naturalWidth > 0,
+            ),
+          {
+            message: "rendered image must load before typography capture",
+            timeout: 5_000,
+          },
+        )
+        .toBe(true);
+      await image.evaluate(async (element) => {
+        if (!(element instanceof HTMLImageElement))
+          throw new Error("TYPOGRAPHY_IMAGE_ELEMENT_REQUIRED");
+        let timer: ReturnType<typeof setTimeout> | undefined;
+        try {
+          await Promise.race([
+            element.decode(),
+            new Promise<never>((_, reject) => {
+              timer = setTimeout(
+                () => reject(new Error("TYPOGRAPHY_IMAGE_DECODE_DEADLINE")),
+                5_000,
+              );
+            }),
+          ]);
+        } finally {
+          if (timer !== undefined) clearTimeout(timer);
+        }
+      });
+    }
+  } finally {
+    await scrollState.evaluate((state) => {
+      for (const saved of state.elements) {
+        saved.element.scrollTo({
+          top: saved.top,
+          left: saved.left,
+          behavior: "instant",
+        });
+      }
+      window.scrollTo({
+        top: state.windowY,
+        left: state.windowX,
+        behavior: "instant",
+      });
+    });
+    await scrollState.dispose();
+  }
+  await page.evaluate(
+    () =>
+      new Promise<void>((resolve) =>
+        requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+      ),
+  );
+}
+
+/** The closed subtree is not a visual pass: inspect the real opened help too. */
+export async function assertOpenedAiHelpTypography(
+  page: Page,
+  testInfo?: TestInfo,
+) {
+  const details = page.locator('details[aria-label="현재 화면 도움"]');
+  await expect(details).toHaveCount(1);
+  const wasOpen = await details.evaluate(
+    (element) => element instanceof HTMLDetailsElement && element.open,
+  );
+  const summary = details.locator(":scope > summary");
+  if (!wasOpen) await summary.click();
+  try {
+    await expect(details).toHaveAttribute("open", "");
+    const actions = details.getByRole("navigation", {
+      name: "이 화면 안내",
+      exact: true,
+    });
+    await expect(actions).toBeVisible();
+    const links = actions.getByRole("link");
+    expect(await links.count()).toBeGreaterThan(0);
+    const metrics = [];
+    for (const link of await links.all()) {
+      await expect(link).toBeVisible();
+      await expect(link).toHaveAccessibleName(/\S/);
+      const metric = await link.evaluate((element) => {
+        const css = getComputedStyle(element),
+          box = element.getBoundingClientRect();
+        return {
+          text: element.textContent,
+          width: box.width,
+          height: box.height,
+          wordBreak: css.wordBreak,
+          overflowWrap: css.overflowWrap,
+        };
+      });
+      metrics.push(metric);
+      expect(
+        metric.height,
+        "AI help destination retains a 44px touch target",
+      ).toBeGreaterThanOrEqual(44);
+    }
+    if (testInfo)
+      await testInfo.attach("ai-open-help-computed-layout", {
+        body: JSON.stringify(metrics),
+        contentType: "application/json",
+      });
+    await assertTypographyClean(page, "ai-open-help", testInfo);
+    await assertVisibleControlsNamed(page);
+    await assertUniqueDocumentIds(page);
+  } finally {
+    if (!wasOpen) {
+      await summary.click();
+      await expect(details).not.toHaveAttribute("open", "");
+    }
+  }
 }
 
 export async function installTypographyTheme(
@@ -221,9 +447,17 @@ export async function auditTypographyRoute(input: {
     width: input.viewport.width,
     height: input.viewport.height,
   });
-  await input.page.goto(input.url, {
+  const response = await input.page.goto(input.url, {
     waitUntil: input.waitUntil ?? "networkidle",
   });
+  expect(
+    response,
+    `${input.routeName}: navigation must return a response`,
+  ).not.toBeNull();
+  expect(
+    response!.status(),
+    `${input.routeName}: navigation cannot be a missing/error page`,
+  ).toBeLessThan(400);
   if (input.origin) {
     await expect
       .poll(() => new URL(input.page.url()).origin, { timeout: 60_000 })
@@ -252,16 +486,7 @@ export async function auditTypographyRoute(input: {
       document.documentElement.style.fontSize = `${scale * 100}%`;
     }
   }, textScale);
-  await input.page.evaluate(async () => {
-    await Promise.all(
-      Array.from(document.images).map((image) =>
-        image.decode().catch(() => undefined),
-      ),
-    );
-    await new Promise<void>((resolve) =>
-      requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
-    );
-  });
+  await settleRenderedTypographyImages(input.page);
 
   const name = evidenceName({
     routeName: input.routeName,
@@ -324,6 +549,7 @@ export async function auditTypographyRoute(input: {
         })),
     };
   });
+  const runtimeHealth = await readRenderedPresentationHealth(input.page);
   await input.testInfo.attach(`${name}-state`, {
     body: JSON.stringify({
       route: new URL(input.page.url()).pathname,
@@ -336,6 +562,11 @@ export async function auditTypographyRoute(input: {
       fixtureId: input.fixtureId ?? "unspecified-existing-route-fixture",
       browser: input.page.context().browser()?.version() ?? "unavailable",
       presentation,
+      runtimeHealth,
+      brandException:
+        input.pathname === "/offline"
+          ? "PUBLIC_OFFLINE_DOCUMENT_HAS_NO_HEADER_OR_BRAND_SVG"
+          : null,
     }),
     contentType: "application/json",
   });
@@ -346,11 +577,64 @@ export async function auditTypographyRoute(input: {
     ).toContain(state);
 
   expect(
+    runtimeHealth.projectFont,
+    `${input.routeName}: bundled font variable is required`,
+  ).not.toBe("");
+  expect(
+    runtimeHealth.loadedProjectFaces.length,
+    `${input.routeName}: declared Korean font face must be loaded`,
+  ).toBeGreaterThan(0);
+  expect(
+    runtimeHealth.bodyFont,
+    `${input.routeName}: body uses the project font`,
+  ).toContain(runtimeHealth.projectFont);
+  expect(
+    runtimeHealth.projectFontUrls.length,
+    `${input.routeName}: project face must have a bundled source`,
+  ).toBeGreaterThan(0);
+  expect(
+    runtimeHealth.nonLocalProjectFontUrls,
+    `${input.routeName}: project font is local to this app`,
+  ).toEqual([]);
+  expect(
+    runtimeHealth.failedViewportImages,
+    `${input.routeName}: viewport images must decode`,
+  ).toEqual([]);
+  await assertUniqueDocumentIds(input.page);
+  await assertVisibleControlsNamed(input.page);
+  if (input.pathname !== "/offline") {
+    // Mobile mining/wallet may place a symbol outside the header. Require the
+    // canonical geometry in the document, not a new logo placement or count=1.
+    expect(
+      runtimeHealth.brandMarkers.length,
+      `${input.routeName}: canonical brand must exist`,
+    ).toBeGreaterThan(0);
+    expect(
+      runtimeHealth.brandMarkers.every(
+        (marker) => marker.version === "2026.10.14-sprout-p-v2",
+      ),
+      `${input.routeName}: canonical brand versions agree`,
+    ).toBe(true);
+    expect(
+      runtimeHealth.visibleBrandPlacementsMissingCanonical,
+      `${input.routeName}: visible chrome brands are canonical`,
+    ).toEqual([]);
+  }
+
+  expect(
     presentation.monoKoreanWithoutProjectFont,
     `${input.routeName}: Korean mono labels require the bundled Korean font, rather than unverified runner fonts`,
   ).toEqual([]);
 
   const result = await readTypographyAudit(input.page);
+  await input.testInfo.attach(`${name}-audit`, {
+    body: JSON.stringify(result),
+    contentType: "application/json",
+  });
+  expect(
+    result.copySpacing,
+    `${input.routeName}: Korean rendered copy spacing`,
+  ).toEqual([]);
   expect(
     result.overflow.scrollWidth,
     `${input.routeName} ${input.viewport.label}px ${input.theme}: horizontal overflow\n${JSON.stringify(result.overflow.offenders, null, 2)}`,
@@ -359,14 +643,50 @@ export async function auditTypographyRoute(input: {
     result.koreanBreaks,
     `${input.routeName} ${input.viewport.label}px ${input.theme}: Korean token split across lines`,
   ).toEqual([]);
+  if (input.pathname === "/ai") {
+    await assertOpenedAiHelpTypography(input.page, input.testInfo);
+  }
 }
 
 /** 현재 페이지 타이포 청결도만 검사한다(전역 매트릭스 카운트에 포함되지 않음). */
-export async function assertTypographyClean(page: Page, label: string) {
+export async function assertTypographyClean(
+  page: Page,
+  label: string,
+  testInfo?: TestInfo,
+) {
   await page.evaluate(async () => {
     await document.fonts.ready;
   });
   const result = await readTypographyAudit(page);
+  if (testInfo && result.permittedLongTokenWraps.length) {
+    await testInfo.attach(`${label}-long-token-wraps`, {
+      body: JSON.stringify(result.permittedLongTokenWraps),
+      contentType: "application/json",
+    });
+  }
+  if (
+    testInfo &&
+    (result.copySpacing.length ||
+      result.koreanBreaks.length ||
+      result.overflow.scrollWidth > result.overflow.clientWidth + 1)
+  ) {
+    const selector =
+      result.copySpacing[0]?.selector ??
+      result.koreanBreaks[0]?.selector ??
+      result.overflow.offenders[0]?.selector;
+    if (selector) await page.locator(selector).first().scrollIntoViewIfNeeded();
+    await testInfo.attach(`${label}-typography-failure`, {
+      body: await page.screenshot({ animations: "disabled" }),
+      contentType: "image/png",
+    });
+    await testInfo.attach(`${label}-typography-audit`, {
+      body: JSON.stringify(result),
+      contentType: "application/json",
+    });
+  }
+  expect(result.copySpacing, `${label}: Korean rendered copy spacing`).toEqual(
+    [],
+  );
   expect(
     result.overflow.scrollWidth,
     `${label}: horizontal overflow\n${JSON.stringify(result.overflow.offenders, null, 2)}`,

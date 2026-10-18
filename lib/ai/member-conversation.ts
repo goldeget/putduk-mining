@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { z } from "zod";
 
 import {
   conversationTitle,
@@ -64,10 +65,28 @@ type FeedbackInsert = {
 };
 
 export type MemberConversationPort = {
+  appendAtomicTurn?: (input: {
+    userId: string;
+    clientMessageId: string;
+    conversationId: string | null;
+    title: string;
+    questionParts: readonly string[];
+    answerParts: readonly string[];
+    sourceKey: string;
+    knowledgeVersion: string | null;
+    toolName: string | null;
+    toolOutcome: "FAILED" | "SUCCEEDED" | null;
+    toolLatencyMs: number | null;
+  }) => Promise<{ conversationId: string; assistantMessageId: string }>;
   findAssistantAfter: (
     userId: string,
     conversationId: string,
     afterPosition: number,
+    expected?: {
+      answerParts: readonly string[];
+      clientMessageId: string;
+      questionParts: readonly string[];
+    },
   ) => Promise<string | null>;
   findMemberMessage: (
     userId: string,
@@ -175,6 +194,29 @@ export async function appendOwnMemberTurn(
   const questionParts = splitStoredBody(question);
   const answerParts = splitStoredBody(answer);
 
+  if (port.appendAtomicTurn) {
+    if (input.toolCall && !TOOL_NAME_PATTERN.test(input.toolCall.toolName))
+      return { code: "CONVERSATION_NOT_SAVED", ok: false };
+    try {
+      const saved = await port.appendAtomicTurn({
+        userId: input.userId,
+        clientMessageId: input.clientMessageId,
+        conversationId: input.conversationId ?? null,
+        title: conversationTitle(question),
+        questionParts,
+        answerParts,
+        sourceKey: sanitizeSourceKey(input.sourceKey),
+        knowledgeVersion: sanitizeKnowledgeVersion(input.knowledgeVersion),
+        toolName: input.toolCall?.toolName ?? null,
+        toolOutcome: input.toolCall?.outcome ?? null,
+        toolLatencyMs: latencyOrNull(input.toolCall?.latencyMs ?? null),
+      });
+      return { ...saved, ok: true };
+    } catch (error) {
+      return { code: failureCode(error), ok: false };
+    }
+  }
+
   try {
     const existing = await port.findMemberMessage(
       input.userId,
@@ -231,58 +273,73 @@ export async function appendOwnMemberTurn(
       input.userId,
       conversationId,
       memberPosition,
+      { answerParts, clientMessageId: input.clientMessageId, questionParts },
     );
     if (assistant) {
-      return {
-        assistantMessageId: assistant,
-        conversationId,
-        ok: true,
-      };
+      // A stored answer is not a completed turn until its evidence is present.
+      // The production port also verifies the persisted message body/owner.
+      await saveTurnEvidence(port, input, conversationId, assistant);
+      return { assistantMessageId: assistant, conversationId, ok: true };
     }
 
     const firstAnswer = answerParts[0] ?? "내용이 가려졌어요.";
-    const assistantRow = await insertAtNextPosition(port, {
+    // Do not move this answer behind a concurrently inserted member question.
+    // A position conflict fails closed rather than attributing it to that turn.
+    const assistantId = await port.insertMessage({
       authorRole: "ASSISTANT",
       bodyText: firstAnswer,
       conversationId,
+      position: memberPosition + questionParts.length,
       userId: input.userId,
     });
-    for (const part of answerParts.slice(1)) {
-      await insertAtNextPosition(port, {
+    for (const [index, part] of answerParts.slice(1).entries()) {
+      await port.insertMessage({
         authorRole: "ASSISTANT",
         bodyText: part,
         conversationId,
+        position: memberPosition + questionParts.length + index + 1,
         userId: input.userId,
       });
     }
 
-    if (input.toolCall && TOOL_NAME_PATTERN.test(input.toolCall.toolName)) {
-      await port.insertToolCall({
-        conversationId,
-        latencyMs: latencyOrNull(input.toolCall.latencyMs),
-        messageId: assistantRow.id,
-        outcome: input.toolCall.outcome,
-        toolName: input.toolCall.toolName,
-        userId: input.userId,
-      });
-    }
-
-    await port.insertSource({
-      conversationId,
-      knowledgeVersion: sanitizeKnowledgeVersion(input.knowledgeVersion),
-      messageId: assistantRow.id,
-      sourceKey: sanitizeSourceKey(input.sourceKey),
-      userId: input.userId,
-    });
-    await port.touchConversation(input.userId, conversationId);
+    await saveTurnEvidence(port, input, conversationId, assistantId);
     return {
-      assistantMessageId: assistantRow.id,
+      assistantMessageId: assistantId,
       conversationId,
       ok: true,
     };
   } catch (error) {
     return { code: failureCode(error), ok: false };
   }
+}
+
+async function saveTurnEvidence(
+  port: MemberConversationPort,
+  input: MemberTurnDraft,
+  conversationId: string,
+  messageId: string,
+) {
+  if (input.toolCall) {
+    if (!TOOL_NAME_PATTERN.test(input.toolCall.toolName)) {
+      throw new MemberConversationWriteError("FAILED");
+    }
+    await port.insertToolCall({
+      conversationId,
+      latencyMs: latencyOrNull(input.toolCall.latencyMs),
+      messageId,
+      outcome: input.toolCall.outcome,
+      toolName: input.toolCall.toolName,
+      userId: input.userId,
+    });
+  }
+  await port.insertSource({
+    conversationId,
+    knowledgeVersion: sanitizeKnowledgeVersion(input.knowledgeVersion),
+    messageId,
+    sourceKey: sanitizeSourceKey(input.sourceKey),
+    userId: input.userId,
+  });
+  await port.touchConversation(input.userId, conversationId);
 }
 
 export async function recordOwnMemberFeedback(
@@ -317,11 +374,122 @@ function writeError(error: { code?: string } | null) {
   return new MemberConversationWriteError("FAILED");
 }
 
+async function insertEvidenceOnce(
+  supabase: SupabaseClient,
+  table: "ai_answer_sources" | "ai_tool_calls",
+  row: Record<string, string | number | null>,
+) {
+  const { error } = await supabase.from(table).insert(row);
+  if (!error) return;
+  if (error.code !== "23505") throw writeError(error);
+  const { data: existing, error: readError } = await supabase
+    .from(table)
+    .select(Object.keys(row).join(","))
+    .eq("user_id", row.user_id)
+    .eq("conversation_id", row.conversation_id)
+    .eq("message_id", row.message_id)
+    .eq("position", row.position)
+    .maybeSingle();
+  // Conflict is only idempotent success for this owner's identical evidence.
+  // A different source, version or tool receipt is never overwritten.
+  if (
+    readError ||
+    !existing ||
+    Object.entries(row).some(
+      ([key, value]) =>
+        (existing as unknown as Record<string, unknown>)[key] !== value,
+    )
+  ) {
+    throw new MemberConversationWriteError("CONFLICT");
+  }
+}
+
 export function createSupabaseMemberConversationPort(
   supabase: SupabaseClient,
 ): MemberConversationPort {
   return {
-    async findAssistantAfter(userId, conversationId, afterPosition) {
+    async appendAtomicTurn(input) {
+      const { data, error } = await supabase.rpc("append_ai_member_turn", {
+        p_user_id: input.userId,
+        p_client_message_id: input.clientMessageId,
+        p_conversation_id: input.conversationId,
+        p_title_text: input.title,
+        p_question_parts: input.questionParts,
+        p_answer_parts: input.answerParts,
+        p_source_key: input.sourceKey,
+        p_knowledge_version: input.knowledgeVersion,
+        p_tool_name: input.toolName,
+        p_tool_outcome: input.toolOutcome,
+        p_tool_latency_ms: input.toolLatencyMs,
+      });
+      if (error) throw writeError(error);
+      const receipt = z
+        .object({
+          conversationId: z.uuid(),
+          assistantMessageId: z.uuid(),
+          replay: z.boolean(),
+        })
+        .safeParse(data);
+      if (!receipt.success) throw new MemberConversationWriteError("FAILED");
+      return {
+        conversationId: receipt.data.conversationId,
+        assistantMessageId: receipt.data.assistantMessageId,
+      };
+    },
+    async findAssistantAfter(userId, conversationId, afterPosition, expected) {
+      if (expected) {
+        const expectedBodies = [
+          ...expected.questionParts,
+          ...expected.answerParts,
+        ];
+        const { data: rows, error: readError } = await supabase
+          .from("ai_messages")
+          .select(
+            "id, user_id, conversation_id, author_role, body_text, position, client_message_id",
+          )
+          .eq("user_id", userId)
+          .eq("conversation_id", conversationId)
+          .gte("position", afterPosition)
+          .order("position", { ascending: true })
+          .limit(expectedBodies.length + 1);
+        if (readError || !Array.isArray(rows)) {
+          throw new MemberConversationWriteError("FAILED");
+        }
+        for (const [index, row] of rows.entries()) {
+          if (index === expectedBodies.length) {
+            if (row.author_role !== "MEMBER") {
+              throw new MemberConversationWriteError("CONFLICT");
+            }
+            break;
+          }
+          const role =
+            index < expected.questionParts.length ? "MEMBER" : "ASSISTANT";
+          if (
+            row.user_id !== userId ||
+            row.conversation_id !== conversationId ||
+            typeof row.id !== "string" ||
+            row.position !== afterPosition + index ||
+            row.author_role !== role ||
+            row.body_text !== expectedBodies[index] ||
+            (index === 0
+              ? row.client_message_id !== expected.clientMessageId
+              : row.client_message_id !== null)
+          ) {
+            throw new MemberConversationWriteError("CONFLICT");
+          }
+        }
+        if (rows.length === expected.questionParts.length) return null;
+        // Partial multi-chunk answers must not become saved:true. A later
+        // atomic turn-storage change is needed for arbitrary chunk recovery.
+        if (rows.length < expectedBodies.length) {
+          throw new MemberConversationWriteError("FAILED");
+        }
+        const assistant = rows[expected.questionParts.length];
+        if (!assistant || typeof assistant.id !== "string") {
+          throw new MemberConversationWriteError("FAILED");
+        }
+        return assistant.id;
+      }
       const { data, error } = await supabase
         .from("ai_messages")
         .select("id, author_role")
@@ -418,7 +586,7 @@ export function createSupabaseMemberConversationPort(
       return data.id;
     },
     async insertSource(row) {
-      const { error } = await supabase.from("ai_answer_sources").insert({
+      await insertEvidenceOnce(supabase, "ai_answer_sources", {
         author_role: "ASSISTANT",
         conversation_id: row.conversationId,
         knowledge_version: row.knowledgeVersion,
@@ -427,10 +595,9 @@ export function createSupabaseMemberConversationPort(
         source_key: row.sourceKey,
         user_id: row.userId,
       });
-      if (error) throw writeError(error);
     },
     async insertToolCall(row) {
-      const { error } = await supabase.from("ai_tool_calls").insert({
+      await insertEvidenceOnce(supabase, "ai_tool_calls", {
         author_role: "ASSISTANT",
         conversation_id: row.conversationId,
         latency_ms: row.latencyMs,
@@ -440,7 +607,6 @@ export function createSupabaseMemberConversationPort(
         tool_name: row.toolName,
         user_id: row.userId,
       });
-      if (error) throw writeError(error);
     },
     async maxPosition(userId, conversationId) {
       const { data, error } = await supabase

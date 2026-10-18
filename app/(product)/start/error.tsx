@@ -14,7 +14,7 @@ export default function StartError({
       error={error}
       reset={reset}
       title="PUTDUK START를 열지 못했어요"
-      description="인터넷 연결을 확인한 뒤 다시 시도해 주세요. 체험 값은 서버에서 계속 이어져요."
+      description="인터넷 연결을 확인한 뒤 다시 시도해 주세요. 체험 진행은 계속 유지돼요."
     />
   );
 }

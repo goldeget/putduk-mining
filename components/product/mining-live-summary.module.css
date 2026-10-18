@@ -1,0 +1,119 @@
+.summary {
+  display: grid;
+  gap: 0.8rem;
+  min-width: 0;
+  margin-top: 0.75rem;
+}
+.summary dl.amounts {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.7rem;
+  margin: 0;
+}
+.summary .amounts > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  min-width: 0;
+}
+.summary .amounts dt,
+.note,
+.checked {
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  line-height: 1.6;
+}
+.summary .amounts dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.95rem;
+  font-weight: 650;
+  text-align: right;
+  word-break: keep-all;
+  overflow-wrap: normal;
+  line-break: strict;
+}
+.summary .remaining dd {
+  font-size: 1.2rem;
+}
+.progress {
+  display: grid;
+  gap: 0.35rem;
+}
+.progress progress {
+  width: 100%;
+  height: 0.55rem;
+  accent-color: var(--brand-primary);
+}
+.progress small {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.note,
+.checked {
+  margin: 0;
+}
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+@media (max-width: 360px) {
+  .summary .amounts > div {
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+  .summary .amounts dd {
+    margin-left: auto;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .summary * {
+    transition: none;
+    animation: none;
+  }
+}
+
+.summary {
+  padding: clamp(1rem, 2vw, 1.35rem);
+  border: 1px solid var(--border-default);
+  border-radius: 1.15rem;
+  background: linear-gradient(
+    145deg,
+    var(--surface-raised),
+    var(--surface-default)
+  );
+  box-shadow: 0 1rem 2.5rem
+    color-mix(in srgb, var(--text-primary) 7%, transparent);
+}
+
+.progress progress {
+  height: 0.65rem;
+  border-radius: var(--radius-full);
+}
+
+.progress progress::-webkit-progress-bar {
+  overflow: hidden;
+  border-radius: var(--radius-full);
+  background: var(--surface-sunken);
+}
+
+.progress progress::-webkit-progress-value {
+  border-radius: var(--radius-full);
+}
+
+@media (forced-colors: active) {
+  .summary {
+    border: 1px solid CanvasText;
+    color: CanvasText;
+    background: Canvas;
+    box-shadow: none;
+  }
+}

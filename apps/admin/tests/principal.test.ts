@@ -126,6 +126,27 @@ describe("admin server principal boundary", () => {
     vi.unstubAllEnvs();
   });
 
+  it.each([
+    "ADMIN_SESSION_REVOKED",
+    "ADMIN_SESSION_IDLE_EXPIRED",
+    "ADMIN_SESSION_ABSOLUTE_EXPIRED",
+  ])(
+    "shows login instead of redirecting an expired AAL2 session: %s",
+    async (code) => {
+      vi.stubEnv("APP_ENV", "production");
+      vi.stubEnv("NEXT_PUBLIC_APP_ENV", "production");
+      mocks.createAdminServerClient.mockResolvedValue(
+        createAuthenticatedClient({ roles: ["ADMIN"] }).client,
+      );
+      mocks.assertAndTouchAdminAppSession.mockResolvedValue({
+        ok: false,
+        code,
+      });
+      await expect(getAdminIdentityForLoginPage()).resolves.toBeNull();
+      vi.unstubAllEnvs();
+    },
+  );
+
   it("rejects a normal authenticated user from loading the admin control plane", async () => {
     const { client, signOut } = createAuthenticatedClient();
     mocks.createAdminServerClient.mockResolvedValue(client);

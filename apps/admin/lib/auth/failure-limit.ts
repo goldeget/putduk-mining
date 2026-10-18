@@ -39,6 +39,13 @@ type Filter = {
 };
 
 type EventClient = {
+  rpc: (
+    name: string,
+    args: Record<string, string | boolean>,
+  ) => PromiseLike<{
+    data: unknown;
+    error: { message: string } | null;
+  }>;
   from: (table: string) => {
     select: (
       columns: string,
@@ -50,7 +57,19 @@ type EventClient = {
   };
 };
 
+export type AdminAuthAdmission =
+  | { allowed: true; attemptId: string }
+  | { allowed: false; code: "RATE_LIMITED" | "UNAVAILABLE" };
+
 export type FailureLimitStore = {
+  admitAttempt(input: {
+    scope: AuthFailureScope;
+    bucket: string;
+  }): Promise<AdminAuthAdmission>;
+  finishAttempt(input: {
+    attemptId: string;
+    succeeded: boolean;
+  }): Promise<boolean>;
   countFailures(input: {
     scope: AuthFailureScope;
     bucket: string;
@@ -75,14 +94,43 @@ export type FailureLimitStore = {
 
 /**
  * 공유 Postgres 행이다. 프로세스 메모리가 아니다.
- * app_private.touch_command_rate_limit 은 Data API에 노출되지 않아
- * 새 RPC 없이 호출할 수 없다. 실패 행은 창이 지나면 집계에서 빠진다.
+ * 시도 예약과 결과는 RPC 트랜잭션으로 기록한다. 진행 중인 시도도 한도를 차지한다.
+ * 실패 행과 끝나지 않은 예약은 기존 15분 창이 지나면 집계에서 빠진다.
  * IP는 키로 쓰지 않는다. 비밀번호·토큰·세션 원문은 넣지 않는다.
  */
 export function createSecurityEventFailureStore(
   db: EventClient,
 ): FailureLimitStore {
   return {
+    async admitAttempt(input) {
+      const { data, error } = await db.rpc("admit_admin_auth_attempt", {
+        p_scope: input.scope,
+        p_bucket: input.bucket,
+      });
+      if (error)
+        return {
+          allowed: false,
+          code: error.message.includes("ADMIN_AUTH_RATE_LIMITED")
+            ? "RATE_LIMITED"
+            : "UNAVAILABLE",
+        };
+      if (
+        typeof data !== "string" ||
+        !/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(
+          data,
+        )
+      ) {
+        return { allowed: false, code: "UNAVAILABLE" };
+      }
+      return { allowed: true, attemptId: data };
+    },
+    async finishAttempt(input) {
+      const { error } = await db.rpc("finish_admin_auth_attempt", {
+        p_attempt_id: input.attemptId,
+        p_succeeded: input.succeeded,
+      });
+      return !error;
+    },
     async countFailures(input) {
       const { count, error } = await db
         .from("security_events")
@@ -160,6 +208,35 @@ function since(maxAgeMs: number): string {
   return new Date(Date.now() - maxAgeMs).toISOString();
 }
 
+/** Live password/TOTP callers reserve budget before contacting Auth. */
+export async function admitAdminAuthAttempt(
+  scope: AuthFailureScope,
+  subject: string,
+  events: FailureLimitStore = store(),
+): Promise<AdminAuthAdmission> {
+  try {
+    return await events.admitAttempt({
+      scope,
+      bucket: adminAuthFailureBucket(scope, subject),
+    });
+  } catch {
+    return { allowed: false, code: "UNAVAILABLE" };
+  }
+}
+
+export async function finishAdminAuthAttempt(
+  attemptId: string,
+  succeeded: boolean,
+  events: FailureLimitStore = store(),
+): Promise<boolean> {
+  try {
+    return await events.finishAttempt({ attemptId, succeeded });
+  } catch {
+    return false;
+  }
+}
+
+/** Read-only diagnostic; never an admission decision for a live auth request. */
 export async function readAdminAuthFailureBudget(
   scope: AuthFailureScope,
   subject: string,

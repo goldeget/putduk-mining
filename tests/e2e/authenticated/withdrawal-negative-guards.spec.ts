@@ -16,6 +16,7 @@ import {
   requireWithdrawalDataKey,
 } from "./helpers/journey";
 import {
+  expectWelcomeWithdrawalComplete,
   loginAsMember,
   requestWelcomeWithdrawalFromUi,
 } from "./helpers/member-session";
@@ -48,9 +49,7 @@ test.describe("welcome withdrawal negative guards", () => {
       el.click();
     });
     // 이중 클릭 후 refresh되면 성공 문구 대신 '이미 접수된…'이 올 수 있어 완료 버튼으로 확인한다.
-    await page
-      .getByRole("button", { name: "첫 출금 접수 완료" })
-      .waitFor({ timeout: 60_000 });
+    await expectWelcomeWithdrawalComplete(page);
 
     const client = createLocalServiceRoleClient();
     const { count } = await client

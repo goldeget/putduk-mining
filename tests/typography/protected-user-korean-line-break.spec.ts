@@ -1,4 +1,7 @@
-import { registerProtectedTypographyMatrix } from "./protected-matrix";
+import {
+  registerProtectedTypographyMatrix,
+  registerFocusedProtectedTypographyRoutes,
+} from "./protected-matrix";
 
 const USER_ORIGIN = "http://127.0.0.1:3000";
 
@@ -48,4 +51,28 @@ registerProtectedTypographyMatrix([
   },
   { name: "user-ai", origin: USER_ORIGIN, pathname: "/ai", url: "/ai" },
   { name: "user-menu", origin: USER_ORIGIN, pathname: "/menu", url: "/menu" },
+]);
+
+registerFocusedProtectedTypographyRoutes([
+  {
+    name: "user-menu-notifications",
+    origin: USER_ORIGIN,
+    pathname: "/menu/notifications",
+    url: "/menu/notifications",
+    fixtureId: "existing-typography-confirmed-member",
+  },
+  {
+    name: "user-products",
+    origin: USER_ORIGIN,
+    pathname: "/products",
+    url: "/products",
+    fixtureId: "existing-typography-confirmed-member",
+  },
+  {
+    name: "user-products-allocation",
+    origin: USER_ORIGIN,
+    pathname: "/products/allocation",
+    url: "/products/allocation",
+    fixtureId: "existing-typography-confirmed-member",
+  },
 ]);

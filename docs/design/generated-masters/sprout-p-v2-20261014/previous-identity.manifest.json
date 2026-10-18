@@ -1,0 +1,264 @@
+{
+  "schemaVersion": 1,
+  "assetVersion": "2026.10.13-sprout-p-v1",
+  "sourcePolicy": "Current original native PUTDUK identity; prior v18 collection remains unchanged historical preservation. No robot or helmet in current identity.",
+  "brandIdentity": {
+    "version": "2026.10.13-sprout-p-v1",
+    "geometryMaster": "/brand/identity/20261013/logo/putduk-sprout-p-master.svg",
+    "geometryMasterSha256": "d8be2d060824a7fac7f45a8d01d9e5a5acf071cd65ec99c2d49bfc4e4d12c8c3",
+    "geometryPath": "M18 60V22L30 10H46L58 22V34L46 46H30V60H18ZM30 22V34H40L46 28L40 22H30ZM6 6C14 6 20 12 20 20C12 20 6 14 6 6Z",
+    "sourceType": "original-native-svg",
+    "authorization": "Owner explicitly rejected robot/helmet identity and requested coherent new logo, favicon, app icons and AI entry on 2026-10-13",
+    "historicalRobotAssets": "retained with original provenance, not current identity",
+    "wordmarkTypography": {
+      "fontSource": "assets/fonts/PretendardVariable.woff2",
+      "fontSha256": "9599f12fd42fc0bce1cd50b47a0c022e108d7aa64dd0d1bb0ed44f3282d900b4",
+      "family": "Pretendard Variable",
+      "sourceWeight": 400,
+      "opticalOutlineStroke": 14,
+      "fontUnitsPerEm": 2048,
+      "delivery": "native outline paths; no runtime font dependency in SVG"
+    }
+  },
+  "assets": [
+    {
+      "path": "/brand/identity/20261013/favicon/favicon-16.png",
+      "bytes": 371,
+      "sha256": "a893b63bca6f1a9356d17fdadd282cee9e079181dfc3b97dce645dcaa0141c30",
+      "mimeType": "image/png",
+      "alt": "퍼뜩 브랜드 자산",
+      "width": 16,
+      "height": 16,
+      "theme": "system",
+      "brandIdentityVersion": "2026.10.13-sprout-p-v1"
+    },
+    {
+      "path": "/brand/identity/20261013/favicon/favicon-32.png",
+      "bytes": 551,
+      "sha256": "ad9fd4cb2a267e7fb1fca9f746830703db2e9da23d3236f26268cfeb370a9e67",
+      "mimeType": "image/png",
+      "alt": "퍼뜩 브랜드 자산",
+      "width": 32,
+      "height": 32,
+      "theme": "system",
+      "brandIdentityVersion": "2026.10.13-sprout-p-v1"
+    },
+    {
+      "path": "/brand/identity/20261013/favicon/favicon-48.png",
+      "bytes": 775,
+      "sha256": "18593f6eb7be115fd8d714fc80f3e535d0de6cdd056c822634b5263cc85a5487",
+      "mimeType": "image/png",
+      "alt": "퍼뜩 브랜드 자산",
+      "width": 48,
+      "height": 48,
+      "theme": "system",
+      "brandIdentityVersion": "2026.10.13-sprout-p-v1"
+    },
+    {
+      "path": "/brand/identity/20261013/favicon/favicon-dark-512.png",
+      "bytes": 7969,
+      "sha256": "a757a8347c9c86b6e80e5efb6b7a8a60249228a1275857ac59814ec75f170801",
+      "mimeType": "image/png",
+      "alt": "퍼뜩 브랜드 자산",
+      "width": 512,
+      "height": 512,
+      "theme": "dark",
+      "brandIdentityVersion": "2026.10.13-sprout-p-v1"
+    },
+    {
+      "path": "/brand/identity/20261013/favicon/favicon-light-512.png",
+      "bytes": 7982,
+      "sha256": "f8b2ae7cb0da479cb2e12f2c3c17477910dd88f1dd9dfef68dee59955ac2854b",
+      "mimeType": "image/png",
+      "alt": "퍼뜩 브랜드 자산",
+      "width": 512,
+      "height": 512,
+      "theme": "light",
+      "brandIdentityVersion": "2026.10.13-sprout-p-v1"
+    },
+    {
+      "path": "/brand/identity/20261013/favicon/favicon.ico",
+      "bytes": 1751,
+      "sha256": "8e8cafb5eff99be416ba2cfa55c4487ce95a03a11950f8acd98d830eee7d9779",
+      "mimeType": "image/x-icon",
+      "alt": "퍼뜩 브랜드 자산",
+      "width": 48,
+      "height": 48,
+      "theme": "system",
+      "brandIdentityVersion": "2026.10.13-sprout-p-v1"
+    },
+    {
+      "path": "/brand/identity/20261013/favicon/favicon.svg",
+      "bytes": 522,
+      "sha256": "5c24d423e386b0bd802f5d3f1e8c7bed695715b6791498732cd11d9210b749e1",
+      "mimeType": "image/svg+xml",
+      "alt": "퍼뜩 브랜드 자산",
+      "theme": "system",
+      "brandIdentityVersion": "2026.10.13-sprout-p-v1"
+    },
+    {
+      "path": "/brand/identity/20261013/logo/putduk-logo-lockup-dark.svg",
+      "bytes": 4485,
+      "sha256": "f801375f282dc17b9fdcba211f6fda740b32205316d8a5624c5867390c190641",
+      "mimeType": "image/svg+xml",
+      "alt": "퍼뜩 브랜드 자산",
+      "theme": "dark",
+      "brandIdentityVersion": "2026.10.13-sprout-p-v1"
+    },
+    {
+      "path": "/brand/identity/20261013/logo/putduk-logo-lockup-light.svg",
+      "bytes": 4485,
+      "sha256": "ebe834de6249516374700eb9cdd75e3e090f7b39f437be814d05d04993e94d13",
+      "mimeType": "image/svg+xml",
+      "alt": "퍼뜩 브랜드 자산",
+      "theme": "light",
+      "brandIdentityVersion": "2026.10.13-sprout-p-v1"
+    },
+    {
+      "path": "/brand/identity/20261013/pwa/putduk-pwa-dark-192.png",
+      "bytes": 2739,
+      "sha256": "1902512e0e2776d1ec09d015c910dd9e01c80aba5d238223f5f21eab5a35a29b",
+      "mimeType": "image/png",
+      "alt": "PUTDUK MINING 새싹 P 심벌 앱 아이콘",
+      "width": 192,
+      "height": 192,
+      "theme": "dark",
+      "brandIdentityVersion": "2026.10.13-sprout-p-v1"
+    },
+    {
+      "path": "/brand/identity/20261013/pwa/putduk-pwa-dark-512.png",
+      "bytes": 7969,
+      "sha256": "a757a8347c9c86b6e80e5efb6b7a8a60249228a1275857ac59814ec75f170801",
+      "mimeType": "image/png",
+      "alt": "PUTDUK MINING 새싹 P 심벌 앱 아이콘",
+      "width": 512,
+      "height": 512,
+      "theme": "dark",
+      "brandIdentityVersion": "2026.10.13-sprout-p-v1"
+    },
+    {
+      "path": "/brand/identity/20261013/pwa/putduk-pwa-light-192.png",
+      "bytes": 2762,
+      "sha256": "be659ee9f40d4c5e16a006af8ca9afec40d910297b763581494109bb74549296",
+      "mimeType": "image/png",
+      "alt": "PUTDUK MINING 새싹 P 심벌 앱 아이콘",
+      "width": 192,
+      "height": 192,
+      "theme": "light",
+      "brandIdentityVersion": "2026.10.13-sprout-p-v1"
+    },
+    {
+      "path": "/brand/identity/20261013/pwa/putduk-pwa-light-512.png",
+      "bytes": 7982,
+      "sha256": "f8b2ae7cb0da479cb2e12f2c3c17477910dd88f1dd9dfef68dee59955ac2854b",
+      "mimeType": "image/png",
+      "alt": "PUTDUK MINING 새싹 P 심벌 앱 아이콘",
+      "width": 512,
+      "height": 512,
+      "theme": "light",
+      "brandIdentityVersion": "2026.10.13-sprout-p-v1"
+    },
+    {
+      "path": "/brand/identity/20261013/pwa/putduk-pwa-maskable-512.png",
+      "bytes": 4070,
+      "sha256": "724cc7a4ced0badf7e2d5c4115fb7111d747411d1690e2569dcc2690f1916734",
+      "mimeType": "image/png",
+      "alt": "PUTDUK MINING 새싹 P 심벌 앱 아이콘",
+      "width": 512,
+      "height": 512,
+      "purpose": "maskable",
+      "brandIdentityVersion": "2026.10.13-sprout-p-v1"
+    },
+    {
+      "path": "/brand/identity/20261013/symbol/putduk-symbol-dark.svg",
+      "bytes": 427,
+      "sha256": "414b38f0632823498bbc8fb34c85ea2142b650ba65d8aa00010a8a31d45a6747",
+      "mimeType": "image/svg+xml",
+      "alt": "퍼뜩 브랜드 자산",
+      "theme": "dark",
+      "brandIdentityVersion": "2026.10.13-sprout-p-v1"
+    },
+    {
+      "path": "/brand/identity/20261013/symbol/putduk-symbol-light.svg",
+      "bytes": 427,
+      "sha256": "c5a42f84af3480fb538b95f87f7eb1d7fb97f498124052286d031d81b66c2b9b",
+      "mimeType": "image/svg+xml",
+      "alt": "퍼뜩 브랜드 자산",
+      "theme": "light",
+      "brandIdentityVersion": "2026.10.13-sprout-p-v1"
+    },
+    {
+      "path": "/brand/identity/20261013/wordmark/putduk-wordmark-dark.svg",
+      "bytes": 4485,
+      "sha256": "f801375f282dc17b9fdcba211f6fda740b32205316d8a5624c5867390c190641",
+      "mimeType": "image/svg+xml",
+      "alt": "퍼뜩 브랜드 자산",
+      "theme": "dark",
+      "brandIdentityVersion": "2026.10.13-sprout-p-v1"
+    },
+    {
+      "path": "/brand/identity/20261013/wordmark/putduk-wordmark-light.svg",
+      "bytes": 4485,
+      "sha256": "ebe834de6249516374700eb9cdd75e3e090f7b39f437be814d05d04993e94d13",
+      "mimeType": "image/svg+xml",
+      "alt": "퍼뜩 브랜드 자산",
+      "theme": "light",
+      "brandIdentityVersion": "2026.10.13-sprout-p-v1"
+    },
+    {
+      "path": "/brand/identity/20261013/logo/putduk-sprout-p-master.svg",
+      "mimeType": "image/svg+xml",
+      "alt": "PUTDUK MINING 새싹 P 심벌",
+      "theme": "system",
+      "bytes": 427,
+      "sha256": "d8be2d060824a7fac7f45a8d01d9e5a5acf071cd65ec99c2d49bfc4e4d12c8c3",
+      "brandIdentityVersion": "2026.10.13-sprout-p-v1"
+    },
+    {
+      "path": "/brand/identity/20261013/logo/putduk-ai-symbol.svg",
+      "mimeType": "image/svg+xml",
+      "alt": "PUTDUK MINING 새싹 P 심벌",
+      "theme": "system",
+      "bytes": 387,
+      "sha256": "e1c762867e2633bf3807ad37aceb5e21243650da65d9d19adca5c460071f99f1",
+      "brandIdentityVersion": "2026.10.13-sprout-p-v1"
+    },
+    {
+      "path": "/brand/identity/20261013/notification/putduk-notification-badge-96.png",
+      "bytes": 636,
+      "sha256": "4f980da420e14e21568f499ed6e537cb85d73fbbb8684ac12e75688b2e75b103",
+      "mimeType": "image/png",
+      "alt": "PUTDUK 알림 배지",
+      "theme": "system",
+      "width": 96,
+      "height": 96,
+      "brandIdentityVersion": "2026.10.13-sprout-p-v1"
+    }
+  ],
+  "adminPublicCopies": [
+    {
+      "path": "apps/admin/public/brand/identity/20261013/favicon/favicon.svg",
+      "memberPath": "/brand/identity/20261013/favicon/favicon.svg",
+      "sha256": "5c24d423e386b0bd802f5d3f1e8c7bed695715b6791498732cd11d9210b749e1",
+      "bytes": 522
+    },
+    {
+      "path": "apps/admin/public/brand/identity/20261013/favicon/favicon-32.png",
+      "memberPath": "/brand/identity/20261013/favicon/favicon-32.png",
+      "sha256": "ad9fd4cb2a267e7fb1fca9f746830703db2e9da23d3236f26268cfeb370a9e67",
+      "bytes": 551
+    },
+    {
+      "path": "apps/admin/public/brand/identity/20261013/favicon/favicon.ico",
+      "memberPath": "/brand/identity/20261013/favicon/favicon.ico",
+      "sha256": "8e8cafb5eff99be416ba2cfa55c4487ce95a03a11950f8acd98d830eee7d9779",
+      "bytes": 1751
+    },
+    {
+      "path": "apps/admin/public/brand/identity/20261013/pwa/putduk-pwa-dark-192.png",
+      "memberPath": "/brand/identity/20261013/pwa/putduk-pwa-dark-192.png",
+      "sha256": "1902512e0e2776d1ec09d015c910dd9e01c80aba5d238223f5f21eab5a35a29b",
+      "bytes": 2739
+    }
+  ]
+}

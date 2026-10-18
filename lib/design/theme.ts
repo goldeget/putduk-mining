@@ -3,7 +3,7 @@ export type ResolvedTheme = "light" | "dark";
 
 export const themeStorageKey = "putduk-theme";
 export const themeChangeEvent = "putduk-theme-change";
-export const themeColors = { dark: "#070706", light: "#f8f4ea" } as const;
+export const themeColors = { dark: "#020a14", light: "#f8f8f8" } as const;
 
 export function normalizeTheme(value: unknown): ThemePreference {
   return value === "light" || value === "dark" ? value : "system";

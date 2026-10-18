@@ -45,6 +45,7 @@ test.describe("admin today operational snapshot", () => {
     }
 
     for (const code of [
+      "KRW_DEPOSIT",
       "USDT_DEPOSIT",
       "KRW_BANK",
       "USDT_WD",

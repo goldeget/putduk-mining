@@ -156,7 +156,11 @@ test("menu hub, account, and settings cover states and navigation", async ({
   await expect(eventsLink).toBeVisible();
   await expect(eventsLink).toHaveAttribute("href", "/events");
   const headerNotificationLink = page
-    .locator("header.product-header")
+    .locator(
+      (page.viewportSize()?.width ?? 1280) >= 980
+        ? "[data-menu-header]:visible"
+        : '[data-ui-ready="/menu"] > header [data-menu-mobile-tools="true"]:visible',
+    )
     .getByRole("link", { name: "알림 센터", exact: true });
   const menuNotificationLink = menuNav.locator('a[href="/notifications"]');
   await expect(menuNav.getByRole("link", { name: /내 정보/ })).toBeVisible();
@@ -200,8 +204,18 @@ test("menu hub, account, and settings cover states and navigation", async ({
   await expect(page.getByRole("button", { name: "설정 저장" })).toBeVisible();
   await expectKoreanSafe(page);
 
-  // 헤더와 메뉴 카드가 같은 이름을 쓰므로 설정 화면에서는 헤더 href로 이동한다.
-  await headerNotificationLink.click();
+  // Settings uses the ordinary ProductHeader, not the menu-only hero/header.
+  // Re-resolve its real notification control after navigating to this screen.
+  const settingsNotificationLink = page
+    .locator("header.product-header:visible")
+    .getByRole("link", { name: "알림 센터", exact: true });
+  await expect(settingsNotificationLink).toHaveCount(1);
+  await expect(settingsNotificationLink).toBeVisible();
+  await expect(settingsNotificationLink).toHaveAttribute(
+    "href",
+    "/notifications",
+  );
+  await settingsNotificationLink.click();
   await expect(page).toHaveURL(/\/notifications$/);
 
   expect(hydration).toEqual([]);
@@ -288,6 +302,11 @@ test("logout failure query shows recovery without ending the session", async ({
   await expect(
     page.getByRole("button", { name: "이 기기에서 로그아웃" }),
   ).toBeVisible();
-  await expect(page.getByText("회원", { exact: true }).first()).toBeVisible();
+  await expect(
+    page.getByRole("region", { name: "계정 정보", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "이 기기에서 로그아웃", exact: true }),
+  ).toBeEnabled();
   expect(hydration).toEqual([]);
 });

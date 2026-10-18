@@ -1,4 +1,8 @@
 import type { AiScreenContext } from "@/domain/ai/chat";
+import {
+  findMemberAiHelpTopic,
+  getMemberAiHelp,
+} from "@/domain/ai/member-help";
 
 import { guardAiQuestion, type AiDeniedClassification } from "./guard";
 import { formatFactAnswer } from "./knowledge";
@@ -49,7 +53,19 @@ type ToolRule = {
 const TOOL_RULES: readonly ToolRule[] = [
   {
     pattern:
-      /((오늘|금일).*(채굴|마이닝).*(얼마|보상|수익)|(오늘|금일).*(얼마|보상|수익).*(채굴|마이닝)|(채굴|마이닝).*(오늘|금일).*(얼마|보상|수익)|오늘\s*얼마\s*캐)/i,
+      /(?:내|나의|제\s).*(?:AI|인공지능).*(?:취소|중단).*(?:답변|기록|내역)|(?:내|나의|제\s).*(?:AI|인공지능).*(?:대화|답변).*(?:취소|중단)/i,
+    routeKey: "account_ai_cancelled_history",
+    tool: "ai.cancelled_history",
+  },
+  {
+    pattern:
+      /(?:내|나의|제\s).*(?:AI|인공지능).*(?:이용|사용|횟수|한도|가능\s*시간)/i,
+    routeKey: "account_ai_usage",
+    tool: "ai.usage",
+  },
+  {
+    pattern:
+      /((오늘|금일).*(채굴|마이닝).*(얼마|보상|수익|결과)|(오늘|금일).*(얼마|보상|수익|받은).*(채굴|마이닝)|(채굴|마이닝).*(오늘|금일).*(얼마|보상|수익|결과)|오늘\s*얼마\s*캐)/i,
     routeKey: "account_today_mining_reward",
     tool: "mining.today_reward",
   },
@@ -67,7 +83,7 @@ const TOOL_RULES: readonly ToolRule[] = [
   },
   {
     pattern:
-      /((친구\s*초대|추천|레퍼럴).*(보상|리워드).*(왜|안|상태|언제|왔|됐|얼마|금액|내역)|(친구\s*초대|추천)\s*보상\s*(왜|어디|상태|얼마))/i,
+      /((친구\s*초대|추천|레퍼럴).*(보상|리워드).*(왜|안|상태|언제|왔|됐|되었|처리|얼마|금액|내역)|(친구\s*초대|추천)\s*보상\s*(왜|어디|상태|얼마))/i,
     routeKey: "account_referral_status",
     tool: "referral.status",
   },
@@ -79,13 +95,13 @@ const TOOL_RULES: readonly ToolRule[] = [
   },
   {
     pattern:
-      /((내\s*)?(잔액|지갑|보유액).*(얼마|보여|확인|상태|알려)|(잔액|지갑)\s*(얼마|보여줘|확인해)|내\s*(돈|금액|보유\s*금액).*(얼마|보여|확인|알려))/i,
+      /((내\s*)?(잔액|지갑|보유액).*(얼마|보여|확인|상태|알려)|(잔액|지갑)\s*(얼마|보여줘|확인해)|내\s*(돈|금액|보유\s*금액).*(얼마|보여|확인|알려)|(?:내|나의|제\s).*(?:원금|회수\s*신청).*(?:보류|취소|기록|상태|얼마|확인|알려))/i,
     routeKey: "account_wallet_summary",
     tool: "wallet.summary",
   },
   {
     pattern:
-      /((내\s*)?(채굴|마이닝).*(중|상태|돌아|작동|진행)|(채굴|마이닝)\s*(중이야|되고\s*있어))/i,
+      /((내\s*)?(채굴|마이닝).*(중|상태|돌아|작동|진행)|(채굴|마이닝)\s*(중이야|되고\s*있어)|(?:내|나의|제\s).*(?:채굴\s*상품|상품\s*이용\s*자격|등급).*(?:목록|확인|알려|자격))/i,
     routeKey: "account_mining_status",
     tool: "mining.status",
   },
@@ -97,7 +113,7 @@ const TOOL_RULES: readonly ToolRule[] = [
   },
   {
     pattern:
-      /((내\s*)?(kyc|본인\s*인증|신원\s*인증).*(상태|진행|완료|통과|언제|왜\s*안)|(kyc|본인\s*인증)\s*(됐어|됐나요))/i,
+      /((내\s*)?(kyc|본인\s*인증|본인\s*확인|신원\s*인증).*(상태|진행|완료|통과|언제|왜\s*안|승인)|(kyc|본인\s*인증|본인\s*확인)\s*(됐어|됐나요))/i,
     routeKey: "account_kyc_status",
     tool: "kyc.status",
   },
@@ -161,7 +177,7 @@ const UI_HELP_PATTERN =
 const AMBIGUOUS_FOLLOW_UP_PATTERN =
   /^(그거|그건|그게|그럼|그러면|아까\s*그거).*(언제|왜|어떻게|됐|돼|뭐)/i;
 const AMBIGUOUS_ACCOUNT_REWARD_PATTERN =
-  /((내|나의|본인).*(보상|리워드).*(얼마|금액|상태|왜|안\s*왔)|(보상|리워드).*(내|나의|본인).*(얼마|금액|상태))/i;
+  /((내|나의|본인).*(보상|리워드).*(얼마|금액|상태|왜|안\s*왔|지급되지|미지급)|(보상|리워드).*(내|나의|본인).*(얼마|금액|상태))/i;
 
 export function routeAiQuestion(
   question: string,
@@ -188,16 +204,6 @@ export function routeAiQuestion(
     };
   }
 
-  const staticRule = STATIC_RULES.find((rule) => rule.pattern.test(normalized));
-  if (staticRule) {
-    return {
-      answer: formatFactAnswer(staticRule.factKeys),
-      classification: "STATIC_FACT",
-      kind: "static",
-      routeKey: staticRule.routeKey,
-    };
-  }
-
   if (AMBIGUOUS_ACCOUNT_REWARD_PATTERN.test(normalized)) {
     return {
       answer:
@@ -208,6 +214,33 @@ export function routeAiQuestion(
     };
   }
 
+  // An unsupported first-person state query never becomes a model-owned fact.
+  // Keep canonical read tool names; do not invent a new alias or authority.
+  if (
+    !/(?:없을\s*때|실패했을\s*때|확인하는\s*방법)/.test(normalized) &&
+    /(?:내|나의|제\s).{0,50}(?:계정|상품|보상|결과|자격|등급|원금|회수|대화|이용\s*횟수).{0,60}(?:확인해|알려\s*주세요|조회|상태|기록|목록|필요한|남은|있나요)/.test(
+      normalized,
+    )
+  ) {
+    return {
+      answer:
+        "지금은 이 대화에서 해당 정보를 조회할 수 없어요. 해당 화면에서 다시 확인해 주세요.",
+      classification: "CLARIFICATION",
+      kind: "static",
+      routeKey: "own_state_requires_verified_reader",
+    };
+  }
+
+  const staticRule = STATIC_RULES.find((rule) => rule.pattern.test(normalized));
+  if (staticRule) {
+    return {
+      answer: formatFactAnswer(staticRule.factKeys),
+      classification: "STATIC_FACT",
+      kind: "static",
+      routeKey: staticRule.routeKey,
+    };
+  }
+
   if (AMBIGUOUS_FOLLOW_UP_PATTERN.test(normalized)) {
     return {
       answer:
@@ -215,6 +248,19 @@ export function routeAiQuestion(
       classification: "CLARIFICATION",
       kind: "static",
       routeKey: "clarify_ambiguous_follow_up",
+    };
+  }
+
+  const helpTopic = findMemberAiHelpTopic(
+    normalized,
+    screenContext?.currentRoute,
+  );
+  if (helpTopic) {
+    return {
+      answer: getMemberAiHelp(helpTopic).answer,
+      classification: "STATIC_FACT",
+      kind: "static",
+      routeKey: `member_help_${helpTopic}`,
     };
   }
 
@@ -249,6 +295,9 @@ export function routeAiQuestion(
   };
 }
 
-export function isAiResponseCacheable(route: AiRoute) {
-  return route.kind === "low_cost" || route.kind === "high_capability";
+export function isAiResponseCacheable() {
+  // A topic or a best-effort redactor cannot prove that free-form input/output
+  // is public. Keep member turns out of the shared cache until an approved
+  // public-only corpus and deterministic input selector exist.
+  return false;
 }

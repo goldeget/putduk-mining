@@ -12,7 +12,13 @@ export type CountStatus =
   { kind: "ready"; count: number } | { kind: "unavailable" };
 
 export type AttentionCode =
-  "USDT_DEPOSIT" | "KRW_BANK" | "USDT_WD" | "KYC" | "EXCEPTION" | "SAFE";
+  | "KRW_DEPOSIT"
+  | "USDT_DEPOSIT"
+  | "KRW_BANK"
+  | "USDT_WD"
+  | "KYC"
+  | "EXCEPTION"
+  | "SAFE";
 
 export type AttentionItem = {
   code: AttentionCode;
@@ -95,6 +101,7 @@ export function areAllQueuesEmpty(items: AttentionItem[]): boolean {
 }
 
 export function buildAttentionItems(input: {
+  krwDeposits: CountSource;
   usdtDeposits: CountSource;
   krwWithdrawals: CountSource;
   usdtWithdrawals: CountSource;
@@ -104,6 +111,14 @@ export function buildAttentionItems(input: {
   safePaused: CountSource;
 }): AttentionItem[] {
   return [
+    {
+      code: "KRW_DEPOSIT",
+      label: "원화 입금 확인",
+      href: "/deposits/krw",
+      description: "계좌 입금을 확인하고 원화 잔액에 반영해요.",
+      emptyHint: "확인할 원화 입금이 없어요.",
+      status: toCountStatus(input.krwDeposits),
+    },
     {
       code: "USDT_DEPOSIT",
       label: "USDT 입금 확인",
@@ -156,6 +171,7 @@ export function buildAttentionItems(input: {
 }
 
 export function buildTodaySnapshot(input: {
+  krwDeposits: CountSource;
   usdtDeposits: CountSource;
   krwWithdrawals: CountSource;
   usdtWithdrawals: CountSource;

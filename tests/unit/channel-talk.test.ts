@@ -3,6 +3,8 @@ import { join, relative, resolve } from "node:path";
 
 import { describe, expect, it } from "vitest";
 
+import { loadJobLocalAllowlist } from "../../scripts/capture-local-supabase-env.mjs";
+
 import { buildAdminContentSecurityPolicy } from "@/apps/admin/lib/content-security-policy";
 import {
   buildPublicContentSecurityPolicy,
@@ -432,4 +434,57 @@ describe("Channel Talk boundaries", () => {
       expect(source).toMatch(/^(?:https|wss):\/\/\*\.supabase\.co$/);
     }
   });
+});
+
+it("binds the shared E2E build CSP to the exact job-local Supabase API origin", () => {
+  const config = readFileSync(resolve(root, "supabase/config.toml"), "utf8");
+  const { apiPort } = loadJobLocalAllowlist(config);
+  const expectedUrl = `http://127.0.0.1:${apiPort}`;
+  const workflow = readFileSync(
+    resolve(root, ".github/workflows/ci.yml"),
+    "utf8",
+  );
+  const buildSteps = [
+    ...workflow.matchAll(
+      /^      - name: Build member and admin apps for E2E\r?$/gm,
+    ),
+  ];
+  expect(buildSteps).toHaveLength(1);
+  const buildStep = workflow
+    .slice(buildSteps[0]!.index)
+    .split(/\r?\n      - name:/)[0]!;
+  const buildUrls = [
+    ...buildStep.matchAll(
+      /^          NEXT_PUBLIC_SUPABASE_URL: *["']?([^"'\s]+)["']? *\r?$/gm,
+    ),
+  ];
+  expect(buildUrls).toHaveLength(1);
+  const buildUrl = buildUrls[0]![1]!;
+  expect(buildUrl).toBe(expectedUrl);
+
+  for (const builder of [
+    buildPublicContentSecurityPolicy,
+    buildAdminContentSecurityPolicy,
+  ]) {
+    const policy = builder({
+      appEnv: "test",
+      nodeEnv: "production",
+      supabaseUrl: buildUrl,
+    });
+    const connect = parseContentSecurityPolicy(policy).get("connect-src") ?? [];
+    expect(
+      connect.filter((source) => /(?:127\.0\.0\.1|localhost)/.test(source)),
+    ).toEqual([
+      expectedUrl,
+      `http://localhost:${apiPort}`,
+      `ws://127.0.0.1:${apiPort}`,
+      `ws://localhost:${apiPort}`,
+    ]);
+    expect(connect.some((source) => source.includes(":58421"))).toBe(false);
+    expect(
+      findUnsupportedCspWildcard(
+        [...parseContentSecurityPolicy(policy).values()].flat(),
+      ),
+    ).toBeNull();
+  }
 });

@@ -1,4 +1,5 @@
 "use client";
+import { FeedbackMessage } from "@/components/ui/feedback-message";
 
 import { useRef, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
@@ -238,13 +239,13 @@ export function UsdtManualDepositForm({
         />
       </label>
       {txInvalid ? (
-        <p
+        <FeedbackMessage
           id="usdt-deposit-tx-error"
           className={`${styles.feedback} ${styles.feedbackError}`}
           role="alert"
         >
           거래 해시는 8자 이상 입력해 주세요.
-        </p>
+        </FeedbackMessage>
       ) : null}
 
       <label className={styles.field} htmlFor="usdt-deposit-amount">
@@ -269,7 +270,7 @@ export function UsdtManualDepositForm({
         />
       </label>
       {amountInvalid ? (
-        <p
+        <FeedbackMessage
           id="usdt-deposit-amount-error"
           className={`${styles.feedback} ${styles.feedbackError}`}
           role="alert"
@@ -281,7 +282,7 @@ export function UsdtManualDepositForm({
                 (sentAmount.split(".")[1]?.length ?? 0) > 6
               ? "소수 여섯 자리까지 입력해 주세요."
               : "0보다 큰 수량을 입력해 주세요."}
-        </p>
+        </FeedbackMessage>
       ) : null}
 
       <button

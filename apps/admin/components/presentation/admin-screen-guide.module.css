@@ -1,0 +1,69 @@
+.root {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.root summary {
+  min-height: 44px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 720;
+  line-height: 1.5;
+  word-break: keep-all;
+}
+
+.root summary:focus-visible {
+  outline: 3px solid var(--gold-soft);
+  outline-offset: 3px;
+}
+
+.panel {
+  margin-top: 12px;
+  max-width: 36rem;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: clamp(16px, 3vw, 24px);
+  background: var(--surface);
+  color: var(--ink);
+}
+
+.panel header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.panel header strong {
+  min-width: 0;
+  line-height: 1.5;
+  word-break: keep-all;
+}
+
+.panel h2 {
+  margin: 24px 0 8px;
+  font-size: 1rem;
+  font-weight: 750;
+  line-height: 1.5;
+}
+
+.panel p {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.65;
+  color: var(--muted);
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+.panel .boundary {
+  margin-top: 20px;
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}

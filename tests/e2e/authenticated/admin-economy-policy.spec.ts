@@ -48,10 +48,8 @@ async function postEconomyFromBrowser(
 test("real admin policy lifecycle preserves exact values, source boundaries and same-key replay", async ({
   page,
 }, testInfo) => {
-  test.skip(
-    testInfo.project.name !== "chromium",
-    "The same spec explicitly covers phone, tablet and desktop widths.",
-  );
+  // Execute the real policy lifecycle in every configured browser project.
+  // Width coverage does not replace the mobile browser execution contract.
   test.setTimeout(240_000);
   const account = await createConfirmedMember("admin-economy-policy");
   await grantAdminRole(account.userId);

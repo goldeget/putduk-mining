@@ -43,6 +43,12 @@ describe("public trust registry", () => {
     }
   });
 
+  it("does not claim catalog products are available before operator publication", () => {
+    const worlds = PUBLIC_FACTS.find((fact) => fact.key === "SUPPORTED_WORLDS");
+    expect(worlds?.value).toContain("승인·게시된 카탈로그");
+    expect(worlds?.description).not.toContain("현재 이용 가능한 5개");
+  });
+
   it("does not resolve an undocumented public path", () => {
     expect(getTrustDocument("/not-a-putduk-route")).toBeUndefined();
   });

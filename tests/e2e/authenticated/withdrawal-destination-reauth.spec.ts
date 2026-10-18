@@ -46,8 +46,9 @@ const REPLACEMENT: typeof MATERIAL = {
   },
   USDT_ADDRESS: {
     method: "USDT_ADDRESS",
-    network: "ERC20",
-    address: "0x" + "b".repeat(40),
+    // The live form lists the current policy networks. That list is TRC20.
+    network: "TRC20",
+    address: "T" + "b".repeat(33),
   },
 };
 

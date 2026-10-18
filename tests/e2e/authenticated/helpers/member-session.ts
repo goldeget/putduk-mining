@@ -28,10 +28,174 @@ export async function loginAsMember(
       `MEMBER_LOGIN_FAILED: alert=${alert ?? "none"}; cause=${error instanceof Error ? error.message : String(error)}`,
     );
   }
+  const routePath = nextPath.split(/[?#]/, 1)[0]!;
   // Dedicated AI intentionally hides the account header. Check the current
   // authenticated presentation rather than hidden text from a prior route.
   if (nextPath === "/ai" || nextPath === "/menu/ai") {
     await expect(page.locator("[data-ai-page]:visible")).toHaveCount(1);
+  } else if (routePath === "/products" || routePath.startsWith("/products/")) {
+    await expectSettledRoute(page, routePath);
+    const header = page.locator('[data-route-brand-header="products"]:visible');
+    await expect(header).toHaveCount(1);
+    const account = header.getByRole("link", {
+      name: "내 계정 보기",
+      exact: true,
+    });
+    await expect(account).toBeVisible();
+    await expect(account).toHaveAttribute("href", "/menu/account");
+    const navigation =
+      (page.viewportSize()?.width ?? 1280) >= 980
+        ? page.locator(".product-sidebar:visible").getByRole("navigation", {
+            name: "상품 전체 메뉴",
+            exact: true,
+          })
+        : page.getByRole("navigation", { name: "주요 메뉴", exact: true });
+    await expect(navigation).toHaveCount(1);
+    await expect(navigation).toBeVisible();
+    const products = navigation.getByRole("link", {
+      name: "상품",
+      exact: true,
+    });
+    await expect(products).toHaveCount(1);
+    await expect(products).toBeVisible();
+    await expect(products).toHaveAttribute("aria-current", "page");
+  } else if (nextPath.split(/[?#]/, 1)[0] === "/mining") {
+    await expectSettledRoute(page, "/mining");
+    const header = page.locator("[data-mining-header]:visible");
+    await expect(header).toHaveCount(1);
+    await expect(
+      header.getByRole("link", { name: "내 계정 보기", exact: true }),
+    ).toHaveAttribute("href", "/menu/account");
+    await expect(
+      header.getByRole("link", { name: "내 계정 보기", exact: true }),
+    ).toBeVisible();
+    const navigation =
+      (page.viewportSize()?.width ?? 1280) >= 980
+        ? page.locator(".product-sidebar:visible").getByRole("navigation", {
+            name: "채굴 전체 메뉴",
+            exact: true,
+          })
+        : page.getByRole("navigation", { name: "주요 메뉴", exact: true });
+    await expect(
+      navigation.getByRole("link", { name: "채굴", exact: true }),
+    ).toBeVisible();
+    await expect(
+      navigation.getByRole("link", { name: "채굴", exact: true }),
+    ).toHaveAttribute("aria-current", "page");
+  } else if (nextPath.split(/[?#]/, 1)[0] === "/menu") {
+    await expectSettledRoute(page, "/menu");
+    const desktop = (page.viewportSize()?.width ?? 1280) >= 980;
+    const header = page.locator(
+      desktop
+        ? "[data-menu-header]:visible"
+        : '[data-ui-ready="/menu"] > header [data-menu-mobile-tools="true"]:visible',
+    );
+    await expect(header).toHaveCount(1);
+    const account = header.getByRole("link", {
+      name: "내 계정 보기",
+      exact: true,
+    });
+    await expect(account).toBeVisible();
+    await expect(account).toHaveAttribute("href", "/menu/account");
+    const navigation = desktop
+      ? header.getByRole("navigation", {
+          name: "더보기 주요 메뉴",
+          exact: true,
+        })
+      : page.getByRole("navigation", { name: "주요 메뉴", exact: true });
+    const more = navigation.getByRole("link", { name: "더보기", exact: true });
+    await expect(more).toBeVisible();
+    await expect(more).toHaveAttribute("aria-current", "page");
+  } else if (
+    nextPath.split(/[?#]/, 1)[0] === "/wallet" ||
+    nextPath.startsWith("/wallet/")
+  ) {
+    await expectSettledRoute(page, nextPath.split(/[?#]/, 1)[0]!);
+    const header = page.locator("[data-wallet-header]:visible");
+    await expect(header).toHaveCount(1);
+    const account = header.getByRole("link", {
+      name: "내 계정 보기",
+      exact: true,
+    });
+    await expect(account).toBeVisible();
+    await expect(account).toHaveAttribute("href", "/menu/account");
+    const navigation =
+      (page.viewportSize()?.width ?? 1280) >= 980
+        ? header.getByRole("navigation", {
+            name: "지갑 주요 메뉴",
+            exact: true,
+          })
+        : page.getByRole("navigation", { name: "주요 메뉴", exact: true });
+    const wallet = navigation.getByRole("link", { name: "지갑", exact: true });
+    await expect(wallet).toBeVisible();
+    await expect(wallet).toHaveAttribute("aria-current", "page");
+  } else if (nextPath.split(/[?#]/, 1)[0] === "/home") {
+    await expectSettledRoute(page, "/home");
+    if ((page.viewportSize()?.width ?? 1280) >= 980) {
+      const account = page.getByRole("link", {
+        name: "내 계정 보기",
+        exact: true,
+      });
+      await expect(account).toBeVisible();
+      await expect(account).toHaveAttribute("href", "/menu/account");
+    } else {
+      await expect(
+        page
+          .getByRole("navigation", { name: "주요 메뉴", exact: true })
+          .getByRole("link", { name: "홈", exact: true }),
+      ).toHaveAttribute("aria-current", "page");
+    }
+  } else if (
+    [
+      "/start",
+      "/events",
+      "/notifications",
+      "/menu/notifications",
+      "/menu/account",
+    ].includes(routePath)
+  ) {
+    await expect(page).toHaveURL((url) => url.pathname === routePath);
+    if (routePath === "/menu/account") {
+      // Account has no data-ui-ready marker. Check its actual route heading
+      // inside the single visible main instead of inventing a ready state.
+      const main = page.locator("#main-content");
+      await expect(main).toHaveCount(1);
+      await expect(main).toBeVisible();
+      const title = main.getByRole("heading", {
+        level: 1,
+        name: "내 정보",
+        exact: true,
+      });
+      await expect(title).toHaveCount(1);
+      await expect(title).toBeVisible();
+    } else {
+      await expectSettledRoute(page, routePath);
+    }
+    const header = page.locator('[data-route-brand-header="member"]:visible');
+    await expect(header).toHaveCount(1);
+    await expect(header).toBeVisible();
+    const account = header.getByRole("link", {
+      name: "내 계정 보기",
+      exact: true,
+    });
+    await expect(account).toHaveCount(1);
+    await expect(account).toBeVisible();
+    await expect(account).toHaveAttribute("href", "/menu/account");
+    const navigation =
+      (page.viewportSize()?.width ?? 1280) >= 980
+        ? page
+            .locator(".product-sidebar:visible")
+            .getByRole("navigation", { name: "주요 메뉴", exact: true })
+        : page.getByRole("navigation", { name: "주요 메뉴", exact: true });
+    await expect(navigation).toHaveCount(1);
+    await expect(navigation).toBeVisible();
+    const active = navigation.getByRole("link", {
+      name: routePath === "/start" ? "홈" : "더보기",
+      exact: true,
+    });
+    await expect(active).toHaveCount(1);
+    await expect(active).toBeVisible();
+    await expect(active).toHaveAttribute("aria-current", "page");
   } else {
     await expect(
       page.locator(".product-header__identity:visible small"),
@@ -70,7 +234,7 @@ export async function startTrialFromUi(page: Page) {
   const payload = (await response.json().catch(() => null)) as {
     error?: { code?: string; message?: string };
   } | null;
-  if (!response.ok) {
+  if (!response.ok()) {
     throw new Error(
       `TRIAL_START_FAILED:${payload?.error?.code ?? "HTTP_" + response.status()}:${payload?.error?.message ?? "no-body"}`,
     );
@@ -151,7 +315,7 @@ export async function convertWelcomeFromUi(page: Page) {
     error?: { code?: string; message?: string };
   } | null;
   const shape = redactConvertPayload(payload);
-  if (!response.ok) {
+  if (!response.ok()) {
     throw new Error(
       `WELCOME_CONVERT_FAILED:status=${response.status()};authed=${memberVisible};${shape}`,
     );
@@ -193,7 +357,7 @@ export async function registerDestinationViaProductionApi(
     data?: { destinationId?: string };
     error?: { message?: string };
   } | null;
-  if (!response.ok || !payload?.data?.destinationId) {
+  if (!response.ok() || !payload?.data?.destinationId) {
     throw new Error(
       payload?.error?.message ??
         `DESTINATION_REGISTER_FAILED:${response.status()}`,
@@ -202,37 +366,62 @@ export async function registerDestinationViaProductionApi(
   return payload.data.destinationId;
 }
 
+export async function expectWelcomeWithdrawalPanel(page: Page) {
+  const route = await expectSettledRoute(page, "/wallet/withdraw");
+  const panel = route.locator("details").filter({
+    has: page.locator("summary").filter({ hasText: "입금 없이 첫 출금" }),
+  });
+  await expect(panel).toHaveCount(1);
+  const summary = panel.locator(":scope > summary");
+  await expect(summary).toHaveCount(1);
+  await expect(summary).toBeVisible();
+  if (!(await panel.evaluate((element: HTMLDetailsElement) => element.open))) {
+    await summary.click();
+  }
+  await expect(panel).toHaveAttribute("open", "");
+  return panel;
+}
+
+export async function expectWelcomeWithdrawalComplete(page: Page) {
+  const route = await expectSettledRoute(page, "/wallet/withdraw");
+  // Successful refresh closes the real details panel. Wait for the completed
+  // control to exist, then open the panel and verify its visible disabled state.
+  const completed = route.getByRole("button", {
+    name: "첫 출금 접수 완료",
+    exact: true,
+    includeHidden: true,
+  });
+  await expect(completed).toHaveCount(1, { timeout: 60_000 });
+  const panel = await expectWelcomeWithdrawalPanel(page);
+  const button = panel.getByRole("button", {
+    name: "첫 출금 접수 완료",
+    exact: true,
+  });
+  await expect(button).toBeVisible();
+  await expect(button).toBeDisabled();
+}
+
 export async function requestWelcomeWithdrawalFromUi(
   page: Page,
   method: "KRW_BANK" | "USDT_ADDRESS",
 ) {
   await page.goto("/wallet/withdraw");
-  // 제목은 이미 하나여도 hidden S: 슬롯의 라디오는 남아 strict check가 바로 실패한다.
-  const route = await expectSettledRoute(page, "/wallet/withdraw");
-  const welcomeHeading = route.getByRole("heading", {
-    level: 2,
-    name: "입금 없이도 가능한 첫 출금",
-  });
-  await expect(welcomeHeading).toHaveCount(1);
-  await expect(welcomeHeading).toBeVisible();
+  const panel = await expectWelcomeWithdrawalPanel(page);
 
   const value = method === "KRW_BANK" ? "KRW_BANK" : "USDT_ADDRESS";
-  const radio = page.locator(`input[name="welcomeMethod"][value="${value}"]`);
+  const radio = panel.locator(`input[name="welcomeMethod"][value="${value}"]`);
   await expect.poll(async () => radio.count()).toBeLessThanOrEqual(1);
   if ((await radio.count()) === 1) {
     await expect(radio).toHaveCount(1);
     await radio.check();
   }
 
-  const requestButton = page.getByRole("button", {
+  const requestButton = panel.getByRole("button", {
     name: "입금 없이 첫 출금 요청",
     exact: true,
   });
   await requestButton.waitFor({ state: "visible" });
   await expect(requestButton).toBeEnabled({ timeout: 30_000 });
   await requestButton.click();
-  // refresh 이후에도 안정적인 완료 신호는 disabled 완료 버튼이다.
-  await page
-    .getByRole("button", { name: "첫 출금 접수 완료" })
-    .waitFor({ timeout: 60_000 });
+  await expectWelcomeWithdrawalComplete(page);
 }

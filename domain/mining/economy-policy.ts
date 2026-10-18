@@ -132,6 +132,29 @@ export class EconomyPolicyError extends Error {
   }
 }
 
+const PLATFORM_FEE_KEYS = [
+  "krwDeposit",
+  "usdtDepositConversion",
+  "mining",
+  "krwMiningRewardWithdrawal",
+  "principalRecovery",
+] as const;
+
+/** Permanent owner policy for new commands; historical manifests stay readable. */
+export function assertZeroPlatformFeesForNewPolicy(
+  configuration: Pick<EconomyPolicyDocument, "platformFeesKrw">,
+): void {
+  const fees = configuration.platformFeesKrw;
+  if (
+    fees === null ||
+    typeof fees !== "object" ||
+    Array.isArray(fees) ||
+    Object.keys(fees).length !== PLATFORM_FEE_KEYS.length ||
+    PLATFORM_FEE_KEYS.some((key) => fees[key] !== "0")
+  )
+    throw new EconomyPolicyError("ECONOMY_POLICY_PLATFORM_FEES_FORBIDDEN");
+}
+
 export type ValidatedEconomyPolicy = {
   readonly document: EconomyPolicyDocument;
   readonly publication: PolicyPublicationIdentity;

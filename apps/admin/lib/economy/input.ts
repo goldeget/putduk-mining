@@ -2,7 +2,10 @@ import "server-only";
 
 import { z } from "zod";
 
-import type { EconomyPolicyDocument } from "../../../../domain/mining/economy-policy";
+import {
+  assertZeroPlatformFeesForNewPolicy,
+  type EconomyPolicyDocument,
+} from "../../../../domain/mining/economy-policy";
 import type { EconomySettings } from "./types";
 
 const integer = z.number().refine(Number.isSafeInteger).nonnegative();
@@ -40,7 +43,7 @@ const tier = z
   })
   .strict();
 
-export const economySettingsSchema = z
+const historicalEconomySettingsSchema = z
   .object({
     minimumPrincipalKrw: positiveMoney,
     cycleDays: positive,
@@ -148,6 +151,20 @@ export const economySettingsSchema = z
       reject("CAMPAIGN_LIMIT_INVALID");
   });
 
+// Keep immutable policy history readable; only new command inputs require zero.
+export const economySettingsSchema =
+  historicalEconomySettingsSchema.superRefine((settings, context) => {
+    try {
+      assertZeroPlatformFeesForNewPolicy(settings);
+    } catch {
+      context.addIssue({
+        code: "custom",
+        path: ["platformFeesKrw"],
+        message: "ECONOMY_POLICY_PLATFORM_FEES_FORBIDDEN",
+      });
+    }
+  });
+
 const proof = {
   reason: z.string().trim().min(10).max(500),
   stepUpToken: z.string().min(16).max(512),
@@ -204,7 +221,7 @@ export function buildEconomyManifest(
 export function settingsFromConfiguration(
   configuration: EconomyPolicyDocument,
 ): EconomySettings {
-  return economySettingsSchema.parse({
+  return historicalEconomySettingsSchema.parse({
     minimumPrincipalKrw: configuration.minimumPrincipalKrw,
     cycleDays: configuration.cycleDays,
     baseCycleRateBps: configuration.baseCycleRateBps,

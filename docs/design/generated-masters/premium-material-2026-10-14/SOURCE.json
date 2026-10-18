@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "assetVersion": "2026.10.14-premium-material-v1",
+  "tool": "image_gen built-in",
+  "generationIntent": "Owner-directed consistent premium platform UI/UX; shared heading and empty AI decorative material only",
+  "sourcePixelsPreserved": true,
+  "productionCopyInPixels": false,
+  "scope": "Decorative material, no identity replacement, financial claim, state or backend authority",
+  "renderedProductAcceptance": "PENDING",
+  "masters": [
+    {
+      "theme": "dark",
+      "sourceMaster": "docs/design/generated-masters/premium-material-2026-10-14/premium-material-dark-master-v1.png",
+      "sourceSha256": "52dda29af044c5eee58fc6b0afa869374c55668da1488bc4407115c6ff657529",
+      "width": 2164,
+      "height": 727,
+      "nativeOutputFile": "exec-c7eaf609-3b4b-4194-a0af-0263bd18f8bd.png"
+    },
+    {
+      "theme": "light",
+      "sourceMaster": "docs/design/generated-masters/premium-material-2026-10-14/premium-material-light-master-v1.png",
+      "sourceSha256": "f9e5097be7748e50142cc6d4e2363a4d4f075ac2572175a87b56428b6b525e08",
+      "width": 2164,
+      "height": 727,
+      "nativeOutputFile": "exec-236479b8-f7e7-4a57-afb5-8af60c1e583a.png"
+    }
+  ],
+  "previousHistoricManifestSha256": "96ef1731f792d3e7bbf306cf44f0042e2809a8851185affda61160179d14e624",
+  "previousIdentityManifestSha256": "8df270c14d28f2515b81468de58d9cd7459c4f22fae1628da2876034ce08d787"
+}

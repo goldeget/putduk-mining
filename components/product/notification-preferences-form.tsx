@@ -1,4 +1,5 @@
 "use client";
+import { FeedbackMessage } from "@/components/ui/feedback-message";
 
 import {
   useEffect,
@@ -266,11 +267,11 @@ export function NotificationPreferencesForm({
           </button>
         ) : null}
         {!online ? (
-          <p role="status">
+          <FeedbackMessage role="status">
             {unconfirmedSave
               ? "인터넷 연결을 확인한 뒤 설정을 다시 불러와 주세요."
               : "인터넷 연결을 확인해 주세요. 연결되면 설정을 저장할 수 있어요."}
-          </p>
+          </FeedbackMessage>
         ) : null}
         {sessionExpired ? (
           <button
@@ -282,9 +283,9 @@ export function NotificationPreferencesForm({
           </button>
         ) : null}
         {message ? (
-          <p role="status" aria-live="polite">
+          <FeedbackMessage role="status" aria-live="polite">
             {message}
-          </p>
+          </FeedbackMessage>
         ) : null}
       </footer>
     </form>

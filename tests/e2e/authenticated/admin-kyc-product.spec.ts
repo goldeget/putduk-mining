@@ -1,6 +1,9 @@
 import { expect, test, type Page } from "@playwright/test";
 
-import { createConfirmedMember } from "../fixtures/local-auth";
+import {
+  createConfirmedMember,
+  createLocalServiceRoleClient,
+} from "../fixtures/local-auth";
 import { completeAdminLoginWithTotp } from "./helpers/admin-totp";
 import {
   confirmOperatorStepUp,
@@ -9,6 +12,7 @@ import {
 } from "./helpers/admin-money-ui";
 import {
   assertKycPageMasksSecrets,
+  ADMIN_ORIGIN,
   closeOpenKycQueueForEmptyProof,
   grantNamedAdminRole,
   kycCard,
@@ -23,7 +27,7 @@ async function fillKycReview(
   decision: "APPROVED" | "REJECTED",
   reason: string,
 ) {
-  await form.getByLabel("결과").selectOption(decision);
+  await form.getByRole("combobox", { name: /^결과/ }).selectOption(decision);
   await form.getByLabel("결정 사유").fill(reason);
   await form.getByRole("checkbox").check();
 }
@@ -75,6 +79,7 @@ test.describe("admin KYC product queue", () => {
     const member = await createConfirmedMember("lane-f-kyc-member");
     const seeded = await seedOpenKycCase({
       userId: member.userId,
+      member: member,
       riskLevel: "MEDIUM",
       withDocument: true,
     });
@@ -121,10 +126,12 @@ test.describe("admin KYC product queue", () => {
     const rejectMember = await createConfirmedMember("lane-f-kyc-no");
     const approve = await seedOpenKycCase({
       userId: approveMember.userId,
+      member: approveMember,
       withDocument: true,
     });
     const reject = await seedOpenKycCase({
       userId: rejectMember.userId,
+      member: rejectMember,
       withDocument: true,
     });
 
@@ -193,6 +200,7 @@ test.describe("admin KYC product queue", () => {
     const member = await createConfirmedMember("lane-f-kyc-family-m");
     const seeded = await seedOpenKycCase({
       userId: member.userId,
+      member: member,
       withDocument: true,
     });
 
@@ -214,15 +222,17 @@ test.describe("admin KYC product queue", () => {
     expect((await readKycCase(seeded.caseId)).status).not.toBe("APPROVED");
   });
 
-  test("denies SUPPORT_ADMIN review while keeping page readable", async ({
+  test("denies SUPPORT_ADMIN all KYC evidence and allows audited ADMIN reads", async ({
     browser,
   }) => {
     test.setTimeout(300_000);
     const member = await createConfirmedMember("lane-f-kyc-support-m");
     const seeded = await seedOpenKycCase({
       userId: member.userId,
+      member: member,
       withDocument: true,
     });
+    const before = await readKycCase(seeded.caseId);
 
     const support = await createConfirmedMember("lane-f-kyc-support");
     await grantNamedAdminRole(support.userId, "SUPPORT_ADMIN");
@@ -230,23 +240,65 @@ test.describe("admin KYC product queue", () => {
     const page = await context.newPage();
     try {
       await completeAdminLoginWithTotp(page, support.email, support.password);
-      await openKycQueue(page);
-      const card = kycCard(page, seeded.caseId);
-      await expect(card).toBeVisible();
-      const form = kycReviewForm(card);
-      await fillKycReview(
-        form,
-        "APPROVED",
-        "지원 역할로는 승인할 수 없어야 합니다.",
+      await page.goto(`${ADMIN_ORIGIN}/kyc`);
+      await expect(page).toHaveURL(
+        `${ADMIN_ORIGIN}/unauthorized?code=ROLE_FORBIDDEN`,
       );
-      // HIGH_IMPACT 역할 거절은 step-up보다 먼저 닫힌다.
-      await form.getByRole("button", { name: "검토 결과 저장" }).click();
-      await expect(form.getByRole("status")).toContainText(
-        "현재 역할로는 이 작업을 할 수 없습니다",
-      );
-      expect((await readKycCase(seeded.caseId)).status).not.toBe("APPROVED");
+      await expect(
+        page.getByRole("heading", { name: "권한이 없습니다" }),
+      ).toBeVisible();
+      await expect(
+        page.getByText("현재 역할로는 이 작업을 할 수 없습니다."),
+      ).toBeVisible();
+      await expect(
+        page.getByRole("heading", { level: 1, name: "본인 확인 검토" }),
+      ).toHaveCount(0);
+      await expect(
+        page.getByRole("region", { name: "본인 확인 대기" }),
+      ).toHaveCount(0);
+      await expect(
+        page.getByRole("form", { name: "본인 확인 검토" }),
+      ).toHaveCount(0);
+      await expect(kycCard(page, seeded.caseId)).toHaveCount(0);
+      await assertKycPageMasksSecrets(page, [
+        seeded.caseId,
+        seeded.caseId.slice(0, 8),
+        member.userId,
+        member.userId.slice(0, 8),
+        seeded.documentPath ?? "",
+        seeded.contentHash ?? "",
+      ]);
+      expect(await readKycCase(seeded.caseId)).toEqual(before);
     } finally {
       await context.close();
+    }
+
+    const operator = await createConfirmedMember("lane-f-kyc-read-admin");
+    await grantNamedAdminRole(operator.userId, "ADMIN");
+    const adminContext = await browser.newContext();
+    const adminPage = await adminContext.newPage();
+    try {
+      await completeAdminLoginWithTotp(
+        adminPage,
+        operator.email,
+        operator.password,
+      );
+      await openKycQueue(adminPage);
+      await expect(kycCard(adminPage, seeded.caseId)).toBeVisible();
+      await assertKycPageMasksSecrets(adminPage, [
+        seeded.documentPath ?? "",
+        seeded.contentHash ?? "",
+      ]);
+      const audit = await createLocalServiceRoleClient()
+        .from("audit_logs")
+        .select("id", { count: "exact", head: true })
+        .eq("actor_user_id", operator.userId)
+        .eq("action", "ADMIN_KYC_QUEUE_VIEW");
+      expect(audit.error).toBeNull();
+      expect(audit.count).toBeGreaterThanOrEqual(1);
+      expect(await readKycCase(seeded.caseId)).toEqual(before);
+    } finally {
+      await adminContext.close();
     }
   });
 
@@ -261,14 +313,15 @@ test.describe("admin KYC product queue", () => {
     const member = await createConfirmedMember("lane-f-kyc-a11y-m");
     const seeded = await seedOpenKycCase({
       userId: member.userId,
+      member: member,
       withDocument: true,
     });
 
     await openKycQueue(page);
     const form = kycReviewForm(kycCard(page, seeded.caseId));
 
-    await form.getByLabel("결과").focus();
-    await expect(form.getByLabel("결과")).toBeFocused();
+    await form.getByRole("combobox", { name: /^결과/ }).focus();
+    await expect(form.getByRole("combobox", { name: /^결과/ })).toBeFocused();
     await page.keyboard.press("Tab");
     await expect(form.getByLabel("결정 사유")).toBeFocused();
 

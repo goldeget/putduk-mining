@@ -1,4 +1,5 @@
 "use client";
+import { FeedbackMessage } from "@/components/ui/feedback-message";
 
 import { useState } from "react";
 import type { Route } from "next";
@@ -74,6 +75,7 @@ export function NotificationItem({
             {new Intl.DateTimeFormat("ko-KR", {
               dateStyle: "medium",
               timeStyle: "short",
+              timeZone: "Asia/Seoul",
             }).format(new Date(notification.createdAt))}
           </time>
         </div>
@@ -101,13 +103,13 @@ export function NotificationItem({
           )}
         </div>
         {message ? (
-          <p
+          <FeedbackMessage
             className="notification-center__error"
             role="status"
             aria-live="polite"
           >
             {message}
-          </p>
+          </FeedbackMessage>
         ) : null}
       </div>
     </article>

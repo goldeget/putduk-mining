@@ -1,4 +1,5 @@
 "use client";
+import { FeedbackMessage } from "../../../../../components/ui/feedback-message";
 
 import { useRef, useState, useTransition } from "react";
 
@@ -6,10 +7,15 @@ import type { CommandActionResult } from "@/app/(control)/_lib/command-gate";
 import { ConfirmCheckbox, ReasonField } from "@/components/operator-fields";
 import { QueueFlash } from "@/components/queue-shell";
 import { StepUpTokenField } from "@/components/step-up-token-field";
+import { useReviewConfirmation } from "@/components/review-confirmation";
 import { ADMIN_COMMAND_FAMILIES } from "@/lib/auth/command-families";
 
 import { reviewKycCaseFromFields } from "./actions";
 import { useKycReviewFeedback } from "./review-feedback";
+import {
+  acknowledgedSubmissionForCase,
+  useKycAcknowledgedEvidence,
+} from "./acknowledged-evidence";
 
 const DECISIONS = [
   { value: "IN_REVIEW", label: "검토 중으로 유지" },
@@ -31,7 +37,9 @@ export function KycReviewForm({
   caseId: string;
   evidenceAvailable?: boolean;
 }) {
+  const evidence = useKycAcknowledgedEvidence();
   const stepUpTokenRef = useRef("");
+  const review = useReviewConfirmation(["decision", "reason"]);
   const [decision, setDecision] = useState<string>("IN_REVIEW");
   const [result, setResult] = useState<CommandActionResult | null>(null);
   const [pending, startTransition] = useTransition();
@@ -44,6 +52,10 @@ export function KycReviewForm({
     const fromRef = stepUpTokenRef.current.trim();
     const fromDom = String(formData.get("stepUpToken") ?? "").trim();
     const stepUpToken = fromRef.length >= 16 ? fromRef : fromDom;
+    const acknowledgedSubmissionId = acknowledgedSubmissionForCase(
+      evidence,
+      caseId,
+    );
     publishFeedback?.(null);
     startTransition(async () => {
       const next = await reviewKycCaseFromFields({
@@ -52,6 +64,9 @@ export function KycReviewForm({
         reason: String(formData.get("reason") ?? ""),
         confirmation: String(formData.get("confirmation") ?? ""),
         stepUpToken,
+        ...(acknowledgedSubmissionId === undefined
+          ? {}
+          : { acknowledgedSubmissionId }),
       });
       if (next.ok) publishFeedback?.(next);
       setResult(next);
@@ -65,12 +80,13 @@ export function KycReviewForm({
       noValidate
       onReset={(event) => event.preventDefault()}
       onSubmit={onSubmit}
+      onChange={review.onChange}
     >
       <input name="caseId" type="hidden" value={caseId} />
       {!evidenceAvailable ? (
-        <p role="alert" className="panel-note">
+        <FeedbackMessage role="alert" className="panel-note">
           제출 서류를 확인한 뒤 검토 결과를 저장할 수 있습니다.
-        </p>
+        </FeedbackMessage>
       ) : null}
       <fieldset
         disabled={!evidenceAvailable || pending}
@@ -103,11 +119,13 @@ export function KycReviewForm({
           placeholder="왜 이 결정을 했는지 10자 이상 적어 주세요."
         />
         <ConfirmCheckbox
-          label="문서 원문·비밀번호·식별 번호는 이 화면에 표시되지 않습니다."
+          key={`confirm-${review.revision}`}
+          label={`이 회원의 본인 확인 결과를 ‘${DECISIONS.find((item) => item.value === decision)?.label ?? "선택한 결과"}’로 저장합니다.`}
           name="confirmation"
           value="REVIEW_KYC"
         />
         <StepUpTokenField
+          key={`step-up-${review.revision}`}
           commandFamily={ADMIN_COMMAND_FAMILIES.KYC_REVIEW}
           submissionPending={pending}
           onTokenIssued={(token) => {

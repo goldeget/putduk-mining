@@ -107,12 +107,37 @@ async function applyTheme(page: Page, theme: "dark" | "light") {
   await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
 }
 
-async function openDeposit(page: Page) {
+async function selectDepositMethod(page: Page, method: "bank" | "usdt") {
+  const methods = page.getByRole("radiogroup", { name: "입금 방법 선택" });
+  await methods
+    .getByText(method === "bank" ? "원화 계좌이체" : "USDT 수동 입금", {
+      exact: true,
+    })
+    .click();
+  await expect(
+    methods.locator(`input[name="wallet-deposit-method"][value="${method}"]`),
+  ).toBeChecked();
+  await expect(
+    page.getByRole("region", {
+      name: method === "bank" ? "원화 입금 신청" : "USDT 수동 입금 신청",
+      exact: true,
+    }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("region", {
+      name: method === "bank" ? "USDT 수동 입금 신청" : "원화 입금 신청",
+      exact: true,
+    }),
+  ).toBeHidden();
+}
+
+async function openDeposit(page: Page, method: "bank" | "usdt" = "bank") {
   await page.goto("/wallet/deposit");
   await dismissGuidedQuestIfPresent(page);
   await expect(
     page.getByRole("heading", { name: "입금하기", level: 1 }),
   ).toBeVisible();
+  await selectDepositMethod(page, method);
 }
 
 test("unsigned visitors keep the deposit return path", async ({ page }) => {
@@ -136,8 +161,12 @@ test("rejects invalid KRW input and keeps one idempotent request", async ({
   await openDeposit(page);
 
   const krwHistory = page.getByRole("region", { name: "최근 원화 입금" });
+  await expect(krwHistory).toHaveAttribute(
+    "data-deposit-history-state",
+    "empty",
+  );
   await expect(
-    krwHistory.getByRole("heading", { name: "아직 원화 입금 요청이 없어요" }),
+    krwHistory.getByText("아직 원화 입금 요청이 없어요.", { exact: true }),
   ).toBeVisible();
   const submit = page.getByRole("button", { name: "입금 요청하기" });
   await expect(submit).toBeDisabled();
@@ -199,7 +228,7 @@ test("rejects invalid KRW input and keeps one idempotent request", async ({
     timeout: 60_000,
   });
   await page.unroute(/\/api\/v1\/deposits$/);
-  await expect(krwHistory.getByText("30,000 KRW")).toBeVisible();
+  await expect(krwHistory.getByText("30,000원", { exact: true })).toBeVisible();
   await expect(krwHistory.getByText("이체 대기")).toBeVisible();
 
   const idempotent = await page.evaluate(async () => {
@@ -229,12 +258,14 @@ test("rejects invalid KRW input and keeps one idempotent request", async ({
     idempotent.second.body.data?.requestId,
   );
   await page.reload({ waitUntil: "domcontentloaded" });
-  await expect(krwHistory.getByText("22,000 KRW")).toHaveCount(1);
+  await expect(krwHistory.getByText("22,000원", { exact: true })).toHaveCount(
+    1,
+  );
 
   await amount.fill("");
   await amount.pressSequentially("25000");
   await page.keyboard.press("Enter");
-  await expect(krwHistory.getByText("25,000 KRW")).toBeVisible();
+  await expect(krwHistory.getByText("25,000원", { exact: true })).toBeVisible();
   expect(hydration).toEqual([]);
 });
 
@@ -263,8 +294,8 @@ test("shows the KRW request status matrix from canonical approval", async ({
   ]) {
     await expect(krwHistory.getByText(label, { exact: true })).toBeVisible();
   }
-  await expect(krwHistory.getByText("14,000 KRW")).toBeVisible();
-  await expect(krwHistory.getByText("11,000 KRW")).toBeVisible();
+  await expect(krwHistory.getByText("14,000원", { exact: true })).toBeVisible();
+  await expect(krwHistory.getByText("11,000원", { exact: true })).toBeVisible();
   expect(hydration).toEqual([]);
 });
 
@@ -278,7 +309,7 @@ test("keeps USDT submission closed when no instruction is active", async ({
   ensureLocalAdmin(operator.userId);
   await withActiveUsdtInstructions(operator.userId, [], async () => {
     await loginAsMember(page, member, "/wallet/deposit");
-    await openDeposit(page);
+    await openDeposit(page, "usdt");
     await expect(page.getByText("입금 안내를 준비하고 있어요.")).toBeVisible();
     await expect(page.getByLabel("네트워크")).toBeDisabled();
     await expect(page.locator("#usdt-deposit-tx")).toBeDisabled();
@@ -307,7 +338,7 @@ test("binds each active network to its own deposit address", async ({
     ],
     async () => {
       await loginAsMember(page, member, "/wallet/deposit");
-      await openDeposit(page);
+      await openDeposit(page, "usdt");
       const network = page.getByLabel("네트워크");
       await expect(network).toHaveValue("ERC20");
       await expect(page.getByText(FIXTURE_ERC20_ADDRESS)).toBeVisible();
@@ -353,7 +384,7 @@ test("submits manual USDT through the server and hides other members", async ({
     [{ address: FIXTURE_TRC20_ADDRESS, network: "TRC20" }],
     async () => {
       await loginAsMember(page, member, "/wallet/deposit");
-      await openDeposit(page);
+      await openDeposit(page, "usdt");
       const mainText = await page.locator("main").innerText();
       for (const phrase of FORBIDDEN_USDT_COPY) {
         expect(mainText).not.toContain(phrase);
@@ -451,7 +482,9 @@ test("submits manual USDT through the server and hides other members", async ({
         depositId,
       });
       await page.reload({ waitUntil: "domcontentloaded" });
-      await expect(usdtHistory.getByText("KRW 반영 완료")).toBeVisible();
+      await expect(
+        usdtHistory.getByText("원화 반영 완료", { exact: true }),
+      ).toBeVisible();
       await expect(usdtHistory.getByText("7.654321 USDT 송금")).toHaveCount(1);
       await expect(usdtHistory.getByText("8.1 USDT 송금")).toHaveCount(0);
 
@@ -466,9 +499,16 @@ test("submits manual USDT through the server and hides other members", async ({
         await openDeposit(otherPage);
         await expect(otherPage.getByText("7.654321")).toHaveCount(0);
         await expect(otherPage.getByText(txHash)).toHaveCount(0);
+        const otherUsdtHistory = otherPage.getByRole("region", {
+          name: "최근 USDT 입금",
+        });
+        await expect(otherUsdtHistory).toHaveAttribute(
+          "data-deposit-history-state",
+          "empty",
+        );
         await expect(
-          otherPage.getByRole("heading", {
-            name: "아직 USDT 입금 내역이 없어요",
+          otherUsdtHistory.getByText("아직 USDT 입금 내역이 없어요.", {
+            exact: true,
           }),
         ).toBeVisible();
       } finally {
@@ -492,13 +532,14 @@ test("covers deposit layout, theme, focus, and reduced motion", async ({
     [{ address: FIXTURE_LONG_TRC20_ADDRESS, network: "TRC20" }],
     async () => {
       await loginAsMember(page, member, "/wallet/deposit");
-      await openDeposit(page);
+      await openDeposit(page, "usdt");
       const destinationAddress = page.locator("code:visible").filter({
         hasText: FIXTURE_LONG_TRC20_ADDRESS,
       });
       await expect(destinationAddress).toHaveCount(1);
       await expect(destinationAddress).toHaveText(FIXTURE_LONG_TRC20_ADDRESS);
 
+      await selectDepositMethod(page, "bank");
       const amount = page.locator("#deposit-amount");
       await amount.focus();
       const focusShadow = await amount.evaluate(
@@ -513,6 +554,9 @@ test("covers deposit layout, theme, focus, and reduced motion", async ({
             width: viewport.width,
           });
           await applyTheme(page, theme);
+          await selectDepositMethod(page, "bank");
+          await expect(amount).toBeVisible();
+          await selectDepositMethod(page, "usdt");
           await expect(
             page.getByRole("heading", { name: "입금하기", level: 1 }),
           ).toBeVisible();
@@ -556,7 +600,14 @@ test("covers deposit layout, theme, focus, and reduced motion", async ({
       }
 
       await page.setViewportSize({ height: 844, width: 390 });
-      await page.getByLabel("화면 테마").selectOption("system");
+      await selectDepositMethod(page, "bank");
+      const themeControl = page.getByRole("combobox", {
+        name: "화면 테마",
+        exact: true,
+      });
+      await expect(themeControl).toHaveCount(1);
+      await expect(themeControl).toBeVisible();
+      await themeControl.selectOption("system");
       await expect(page.locator("html")).toHaveAttribute(
         "data-theme-preference",
         "system",

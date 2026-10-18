@@ -25,6 +25,10 @@ const env = {
   APP_ENV: "test",
 };
 const origin = "https://github.com/goldeget/putduk-mining.git";
+const configuredProjectId = configText.match(
+  /^project_id\s*=\s*"([^"]+)"/m,
+)![1]!;
+const configuredContainer = `supabase_db_${configuredProjectId}`;
 const id = "00000000-0000-4000-8000-000000000001";
 type ProbeCase = {
   case: string;
@@ -116,7 +120,7 @@ describe("disposable policy reader concurrency gate", () => {
         env,
         origin,
         configText: configText.replace(
-          'project_id = "putduk-mining"',
+          /^project_id\s*=\s*"[^"]+"/m,
           'project_id = "outside"',
         ),
       }),
@@ -208,7 +212,7 @@ describe("disposable policy reader concurrency gate", () => {
     const execute = vi.fn((command: string) =>
       command === "git"
         ? origin
-        : JSON.stringify({ name: "/supabase_db_putduk-mining", project: null }),
+        : JSON.stringify({ name: `/${configuredContainer}`, project: null }),
     );
     expect(() => runConcurrencyProbe({ env, execute })).toThrow(
       "BLOCKED_TARGET_SCOPE",
@@ -236,8 +240,8 @@ describe("disposable policy reader concurrency gate", () => {
         if (command === "git") return origin;
         if (_args[0] === "inspect")
           return JSON.stringify({
-            name: "/supabase_db_putduk-mining",
-            project: "putduk-mining",
+            name: `/${configuredContainer}`,
+            project: configuredProjectId,
           });
         if (String(options.input).includes("pg_terminate_backend")) return "";
         throw new Error("psql timeout containing a private connection string");
@@ -250,7 +254,7 @@ describe("disposable policy reader concurrency gate", () => {
       (call) => call[0] === "docker" && call[1][0] === "exec",
     );
     expect(calls).toHaveLength(2);
-    expect(calls[0]![1][2]).toBe("supabase_db_putduk-mining");
+    expect(calls[0]![1][2]).toBe(configuredContainer);
     expect(calls[0]![2].timeout).toBe(85000);
     expect(calls[0]![2].killSignal).toBe("SIGTERM");
     expect(calls[0]![2].stdio).toEqual(["pipe", "pipe", "pipe"]);
@@ -271,8 +275,8 @@ describe("disposable policy reader concurrency gate", () => {
         if (command === "git") return origin;
         if (_args[0] === "inspect")
           return JSON.stringify({
-            name: "/supabase_db_putduk-mining",
-            project: "putduk-mining",
+            name: `/${configuredContainer}`,
+            project: configuredProjectId,
           });
         return String(options.input).includes("pg_terminate_backend")
           ? ""
@@ -284,8 +288,8 @@ describe("disposable policy reader concurrency gate", () => {
       if (command === "git") return origin;
       if (_args[0] === "inspect")
         return JSON.stringify({
-          name: "/supabase_db_putduk-mining",
-          project: "putduk-mining",
+          name: `/${configuredContainer}`,
+          project: configuredProjectId,
         });
       if (String(options.input).includes("pg_terminate_backend"))
         throw new Error("cleanup failure");

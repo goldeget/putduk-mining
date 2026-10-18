@@ -1,4 +1,5 @@
 "use client";
+import { FeedbackMessage } from "../../../../components/ui/feedback-message";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -12,6 +13,7 @@ import {
 } from "@/lib/assistant/draft";
 
 import styles from "./assistant.module.css";
+import { OperationsContext } from "./operations-context";
 
 export type AssistantTargetOption = { depositId: string; label: string };
 
@@ -133,7 +135,7 @@ export function OperationsAssistant({
           <p className={styles.eyebrow}>퍼뜩 운영</p>
           <h1 id="assistant-title">운영 도우미</h1>
           <p className={styles.lead}>
-            입금 현황을 확인하고 처리 초안을 준비해요.
+            운영 기록을 설명하고 다음 확인 순서를 안내해요.
           </p>
         </div>
         <svg
@@ -157,6 +159,7 @@ export function OperationsAssistant({
           />
         </svg>
       </section>
+      <OperationsContext />
       <div className={styles.workspace}>
         <section
           className={styles.panel}
@@ -218,6 +221,9 @@ export function OperationsAssistant({
           <h2 id="assistant-draft-title">USDT 입금 확인 초안</h2>
           <p className={styles.note}>
             입금 내역에서 이체 증빙을 확인한 뒤 승인해요.
+          </p>
+          <p className={styles.note}>
+            초안을 준비해도 승인되거나 잔액이 바뀌지 않습니다.
           </p>
           {unavailable ? (
             <div role="alert" className={styles.notice}>
@@ -313,18 +319,18 @@ export function OperationsAssistant({
         </section>
       </div>
       {drafts.clearedReason === "EXPIRED" ? (
-        <p className={styles.notice} role="status">
+        <FeedbackMessage className={styles.notice} role="status">
           초안이 만료됐습니다. 다시 준비해 주세요.
-        </p>
+        </FeedbackMessage>
       ) : drafts.clearedReason === "SESSION" ? (
-        <p className={styles.notice} role="status">
+        <FeedbackMessage className={styles.notice} role="status">
           운영 세션이 바뀌었습니다. 운영 화면을 다시 열어 주세요.
-        </p>
+        </FeedbackMessage>
       ) : message &&
         (message !== "입금 초안을 준비했습니다." || drafts.draft) ? (
-        <p className={styles.notice} role="status">
+        <FeedbackMessage className={styles.notice} role="status">
           {message}
-        </p>
+        </FeedbackMessage>
       ) : null}
       {drafts.draft ? (
         <section

@@ -12,6 +12,7 @@ import {
 import { EmptyQueue, QueueCard, QueueShell } from "@/components/queue-shell";
 import { requireAdminPage } from "@/lib/auth/principal";
 import { createAdminServiceClient } from "@/lib/supabase/service";
+import { ACTIONABLE_WITHDRAWAL_STATUSES } from "@/lib/withdrawals/queue-statuses";
 
 import {
   EmptyQueueNextStep,
@@ -41,15 +42,7 @@ export default async function KrwBankWithdrawalQueuePage() {
       "id, user_id, amount_atomic, status, destination_type, destination_snapshot, requested_at, rejection_reason",
     )
     .eq("destination_type", "KRW_BANK")
-    .in("status", [
-      "REQUESTED",
-      "REVIEWING",
-      "APPROVED",
-      "PROCESSING",
-      "EXTERNAL_SENT_RECORDED",
-      "HELD",
-      "ADMIN_PROCESSING",
-    ])
+    .in("status", [...ACTIONABLE_WITHDRAWAL_STATUSES])
     .order("requested_at", { ascending: true })
     .limit(40);
 

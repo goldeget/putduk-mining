@@ -9,6 +9,21 @@ export const metadata: Metadata = {
   title: { default: "오늘의 퍼뜩 | 운영자", template: "%s | PUTDUK ADMIN" },
   description: "PUTDUK MINING 전용 운영 컨트롤 플레인",
   robots: { index: false, follow: false, nocache: true },
+  icons: {
+    icon: [
+      {
+        url: "/brand/identity/20261014/favicon/favicon.svg",
+        type: "image/svg+xml",
+      },
+      {
+        url: "/brand/identity/20261014/favicon/favicon-32.png",
+        sizes: "32x32",
+        type: "image/png",
+      },
+    ],
+    shortcut: "/brand/identity/20261014/favicon/favicon.ico",
+    apple: "/brand/identity/20261014/pwa/putduk-pwa-dark-192.png",
+  },
 };
 export const viewport: Viewport = {
   colorScheme: "light dark",
@@ -27,12 +42,12 @@ export default function RootLayout({
       <head>
         <meta
           name="theme-color"
-          content="#070706"
+          content="#020a14"
           media="(prefers-color-scheme: dark)"
         />
         <meta
           name="theme-color"
-          content="#f8f4ea"
+          content="#f8f8f8"
           media="(prefers-color-scheme: light)"
         />
         <script

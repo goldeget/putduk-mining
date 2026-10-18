@@ -17,6 +17,10 @@ import {
 } from "@/components/operator-fields";
 import { QueueFlash } from "@/components/queue-shell";
 import { StepUpTokenField } from "@/components/step-up-token-field";
+import {
+  useReviewConfirmation,
+  useReviewedAction,
+} from "@/components/review-confirmation";
 import { ADMIN_COMMAND_FAMILIES } from "@/lib/auth/command-families";
 import { formatKstDateTimeInput } from "@/lib/time/kst-input";
 
@@ -33,20 +37,27 @@ export function KrwBankSendForm({
   withdrawalId: string;
   amountKrw: string;
 }) {
+  const review = useReviewConfirmation([
+    "bankReference",
+    "actualKrw",
+    "sentAt",
+  ]);
   const operationKey = useLogicalOperationKey("krw_send");
   const [offlineNote, setOfflineNote] = useState<string | null>(null);
-  const [result, action] = useActionState<CommandActionResult | null, FormData>(
+  const response = useReviewedAction(
     recordKrwExternalSendAction,
-    null,
+    review.revision,
   );
   return (
     <form
-      action={action}
+      action={response.action}
       className="operator-form"
       onReset={(event) => event.preventDefault()}
       onSubmit={(event) => bindMoneyFormSubmit(event, setOfflineNote)}
+      onChange={review.onChange}
     >
       <input name="withdrawalId" type="hidden" value={withdrawalId} />
+      <input {...response.revisionField} />
       <MoneyOperationFields operationKey={operationKey} />
       <TextField
         label="은행 이체 참조(증빙)"
@@ -66,16 +77,18 @@ export function KrwBankSendForm({
         type="datetime-local"
       />
       <ConfirmCheckbox
+        key={`confirm-${review.revision}`}
         label="계좌로 실제 송금했고, 네트워크·거래해시는 해당 없습니다."
         name="confirmation"
         value="RECORD_KRW_SEND"
       />
       <StepUpTokenField
+        key={`step-up-${review.revision}`}
         commandFamily={ADMIN_COMMAND_FAMILIES.WITHDRAWAL_OPERATOR}
       />
       <SubmitButton>계좌 송금 기록</SubmitButton>
       <MoneyOfflineNote message={offlineNote} />
-      <QueueFlash result={result} />
+      <QueueFlash result={response.result} stale={response.stale} />
     </form>
   );
 }
@@ -115,57 +128,67 @@ export function FinalizeLedgerForm({ withdrawalId }: { withdrawalId: string }) {
 }
 
 export function ReleaseHoldForm({ withdrawalId }: { withdrawalId: string }) {
+  const rejectReview = useReviewConfirmation(["reason"]);
+  const cancelReview = useReviewConfirmation(["reason"]);
   const rejectKey = useLogicalOperationKey("krw_reject");
   const cancelKey = useLogicalOperationKey("krw_cancel");
   const [rejectOffline, setRejectOffline] = useState<string | null>(null);
   const [cancelOffline, setCancelOffline] = useState<string | null>(null);
-  const [result, action] = useActionState<CommandActionResult | null, FormData>(
+  const response = useReviewedAction(
     releaseWithdrawalHoldAction,
-    null,
+    `${rejectReview.revision}:${cancelReview.revision}`,
   );
   return (
     <div className="operator-form-stack">
       <form
-        action={action}
+        action={response.action}
         className="operator-form operator-form--danger"
         onReset={(event) => event.preventDefault()}
         onSubmit={(event) => bindMoneyFormSubmit(event, setRejectOffline)}
+        onChange={rejectReview.onChange}
       >
         <input name="withdrawalId" type="hidden" value={withdrawalId} />
+        <input {...response.revisionField} />
         <MoneyOperationFields operationKey={rejectKey} />
         <ReasonField label="거절 사유" />
         <ConfirmCheckbox
+          key={`confirm-${rejectReview.revision}`}
           label="운영 거절입니다. 외부 송금 전에만 가능합니다."
           name="confirmation"
           value="REJECT_HOLD"
         />
         <StepUpTokenField
+          key={`step-up-${rejectReview.revision}`}
           commandFamily={ADMIN_COMMAND_FAMILIES.WITHDRAWAL_OPERATOR}
         />
         <SubmitButton variant="danger">거절 · 보류 해제</SubmitButton>
         <MoneyOfflineNote message={rejectOffline} />
       </form>
       <form
-        action={action}
+        action={response.action}
         className="operator-form operator-form--danger"
         onReset={(event) => event.preventDefault()}
         onSubmit={(event) => bindMoneyFormSubmit(event, setCancelOffline)}
+        onChange={cancelReview.onChange}
       >
         <input name="withdrawalId" type="hidden" value={withdrawalId} />
+        <input {...response.revisionField} />
         <MoneyOperationFields operationKey={cancelKey} />
         <ReasonField label="취소 사유" />
         <ConfirmCheckbox
+          key={`confirm-${cancelReview.revision}`}
           label="운영 취소입니다. 외부 송금 전에만 가능합니다."
           name="confirmation"
           value="CANCEL_HOLD"
         />
         <StepUpTokenField
+          key={`step-up-${cancelReview.revision}`}
           commandFamily={ADMIN_COMMAND_FAMILIES.WITHDRAWAL_OPERATOR}
         />
         <SubmitButton variant="danger">취소 · 보류 해제</SubmitButton>
         <MoneyOfflineNote message={cancelOffline} />
       </form>
-      <QueueFlash result={result} />
+      <QueueFlash result={response.result} stale={response.stale} />
     </div>
   );
 }
