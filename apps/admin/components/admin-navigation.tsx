@@ -59,7 +59,7 @@ export function AdminNavigation({ onNavigate }: { onNavigate?: () => void }) {
   useEffect(() => {
     const nav = navRef.current;
     const root = nav?.ownerDocument?.documentElement;
-    if (!nav || !root) return;
+    if (!nav || !root || typeof ResizeObserver === "undefined") return;
     const syncScroll = () => scrollNavToTop(nav);
     const observer = new ResizeObserver(syncScroll);
     observer.observe(nav);
