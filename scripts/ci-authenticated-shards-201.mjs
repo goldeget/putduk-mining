@@ -27,6 +27,10 @@ import { assertBackend201BrowserCanonicalSources } from "./backend-successor-201
 // place that work near 714s. The mockup file hint is a partial lower bound
 // from that run: the public family took 97s and the member family consumed
 // its full 360s ceiling while still on /ai, with sibling tests unstarted.
+// Run 39153878066 kept four lanes under six minutes while catalog-materials
+// and withdrawal recovery shared the lanes that reached 13.5 minutes.
+// Hints below are those observed peaks so the long files spread onto the
+// lanes that finished early. Lane count stays 18.
 const TIMING_HINTS = {
   "admin-assistant-context.spec.ts": 10,
   "admin-assistant-read-draft.spec.ts": 23,
@@ -45,20 +49,20 @@ const TIMING_HINTS = {
   "admin-withdrawals-product.spec.ts": 24,
   "ai-context-help.spec.ts": 16,
   "ai-product.spec.ts": 26,
-  "catalog-allocation.spec.ts": 360,
-  "catalog-allocated-home-dark.spec.ts": 360,
-  "catalog-allocated-home-light.spec.ts": 360,
-  "catalog-allocated-wallet-dark.spec.ts": 360,
-  "catalog-allocated-wallet-light.spec.ts": 360,
-  "catalog-materials.spec.ts": 320,
+  "catalog-allocation.spec.ts": 270,
+  "catalog-allocated-home-dark.spec.ts": 210,
+  "catalog-allocated-home-light.spec.ts": 250,
+  "catalog-allocated-wallet-dark.spec.ts": 240,
+  "catalog-allocated-wallet-light.spec.ts": 250,
+  "catalog-materials.spec.ts": 260,
   "deposit-product.spec.ts": 57,
   "events-product.spec.ts": 23,
   "first-krw-withdrawal.spec.ts": 14,
   "first-usdt-withdrawal.spec.ts": 13,
   "funded-home-typography.spec.ts": 180,
-  "home-catalog-materials.spec.ts": 3000,
-  "home-catalog-materials-follow.spec.ts": 3000,
-  "home-start-product.spec.ts": 250,
+  "home-catalog-materials.spec.ts": 310,
+  "home-catalog-materials-follow.spec.ts": 340,
+  "home-start-product.spec.ts": 220,
   "home-typography.spec.ts": 125,
   "member-product-scene.spec.ts": 25,
   "menu-product.spec.ts": 47,
@@ -72,7 +76,7 @@ const TIMING_HINTS = {
   "mockup-reference-wallet.spec.ts": 150,
   "notifications-product.spec.ts": 24,
   "operator-fixture-isolation.spec.ts": 2,
-  "principal-withdrawal-product.spec.ts": 3000,
+  "principal-withdrawal-product.spec.ts": 450,
   "products-catalog.spec.ts": 9,
   "public-admin-boundary.spec.ts": 1,
   "signup-reconstruction.spec.ts": 4,
@@ -87,7 +91,7 @@ const TIMING_HINTS = {
   "withdrawal-hydration.spec.ts": 14,
   "withdrawal-logical-idempotency.spec.ts": 25,
   "withdrawal-negative-guards.spec.ts": 92,
-  "withdrawal-p1-recovery.spec.ts": 272,
+  "withdrawal-p1-recovery.spec.ts": 280,
   "withdrawal-product.spec.ts": 47,
 };
 const CONFIG = "playwright.backend-browser-201.config.ts";

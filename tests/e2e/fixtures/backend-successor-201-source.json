@@ -2744,7 +2744,7 @@
     "scripts/capture-local-supabase-env.mjs": "4403777211d9619e709e641cacea0d37ff0cf15e2f72fc8add91d7b88a12ca76",
     "scripts/catalog-material-profiles.json": "cf305a321f8ebda27006e65d0efcb61388e448c88980b0e935d45875cda02560",
     "scripts/ci-authenticated-shards-201.d.mts": "9ca0a0d3413fb8b72cce27540aded1471edaf2b81b912dc612e57bfe3dfff949",
-    "scripts/ci-authenticated-shards-201.mjs": "7a0bb57d62686545dee7c905f3efaa0d4bdbee0588744a0656318c50cd2ebc23",
+    "scripts/ci-authenticated-shards-201.mjs": "97c05fc68c1122d2a6389e9dc7f83ff9964f716ca468571ae39f5f685e42fdb9",
     "scripts/ci-authenticated-shards.d.mts": "e377f11a96a91d45c2cf3b3c62f18902684ec1816f9ae30c3fdaaf71d939695d",
     "scripts/ci-authenticated-shards.mjs": "c956696b96bc6b5670000917f512ac15dbd503018a85c39aeea5d8e36bc2b24c",
     "scripts/ci-authenticated-shards.test.mjs": "e511850e434a6b1fbc0f8a359a42e0fe81e7dec27b06185c36239707c1a09c65",
@@ -6113,7 +6113,7 @@
     "tests/e2e/authenticated/helpers/backend-http-197-auth.ts": "72c2b67f0e3316991142a8f233446fb8fdfd7055f4cc6d282b36f6a8fa131928",
     "tests/e2e/authenticated/usdt-manual-full-payout-197.spec.ts": "841bcd1995b980ca18e059f9082148dae3b42bcc17f3026d8b958b0fac79fae7",
     "playwright.backend-browser-201.config.ts": "055f7323c0dc2a112c17446477ae9535f7cb83c287b611d9779fe21cebe8fe62",
-    "scripts/ci-authenticated-shards-201.mjs": "7a0bb57d62686545dee7c905f3efaa0d4bdbee0588744a0656318c50cd2ebc23"
+    "scripts/ci-authenticated-shards-201.mjs": "97c05fc68c1122d2a6389e9dc7f83ff9964f716ca468571ae39f5f685e42fdb9"
   },
   "provenanceOnlyExternalStageSha256": "0a6533af9542d46d91484ff82e0cb90921144aa4625df30af974f892c9726a65",
   "provenanceOnlyExternalNativeReceiptSha256": "717f143b6254a014274571cd61e2c3beed6aba63544865575a9fa1fe7d36d3f3"
