@@ -652,12 +652,6 @@
   }
 }
 
-@media (min-width: 1200px) {
-  .products {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-  }
-}
-
 @media (min-width: 980px) {
   .browse > .hero {
     order: 0;
@@ -696,6 +690,12 @@
   }
   .evidenceDates {
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+  }
+}
+
+@media (min-width: 1200px) {
+  .products {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
   }
 }
 

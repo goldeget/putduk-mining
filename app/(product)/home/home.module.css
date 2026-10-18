@@ -1,5 +1,7 @@
 .page {
   min-width: 0;
+  max-width: 100%;
+  overflow-x: clip;
   padding-bottom: max(1rem, env(safe-area-inset-bottom));
   color: var(--text-primary);
   background: var(--background-canvas);
@@ -1565,6 +1567,14 @@
   }
 }
 
+@container home-summary (max-width: 26rem) {
+  .summaryCard:is([data-fact="capacity"], [data-fact="principal"])
+    .summaryValue {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+}
+
 /* 확대 글자에서도 금액과 단위, 안내 문장을 함께 읽을 너비를 확보한다. */
 @container home-summary (max-width: 14rem) {
   .page:has([data-scene-theme="dark"]) .summaryGrid {
@@ -1806,8 +1816,9 @@
   }
 
   .quickActions strong {
-    font-size: clamp(0.58rem, 4.1cqi, 0.72rem);
-    line-height: 1.12;
+    font-size: clamp(0.5rem, 3.4cqi, 0.68rem);
+    line-height: 1.1;
+    letter-spacing: -0.03em;
   }
 
   .quickActions small {
@@ -1817,8 +1828,9 @@
   .quickActionGrid > a {
     min-height: 2.85rem;
     align-content: center;
-    gap: 0.25rem;
-    padding-block: 0.4rem;
+    gap: 0.2rem;
+    padding-block: 0.35rem;
+    padding-inline: 0.05rem;
   }
 
   .page:has([data-scene-theme="dark"])
