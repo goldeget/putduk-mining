@@ -1079,6 +1079,7 @@
     ".github/ISSUE_TEMPLATE/bug_report.md": "6af9674872ec76ebdf4ce4760c9c9c16f81a01074d5fa28ce5abe23e3eeba8b2",
     ".github/ISSUE_TEMPLATE/feature_request.md": "b68b6c0bf7598d9e35e327ff145301a62d3c0a6a7e168862ab741ad4c03b01ac",
     ".github/pull_request_template.md": "6c69a5cbef7878872f0123bb5dda591196ac9644ad11687986a32507a6ea3f2b",
+    ".github/workflows/ci-full-e2e.yml": "166d34024e5baee8c2116b9c58e57f203bc45d93c0638ec5fdd2ca650fc08485",
     ".github/workflows/ci.yml": "05dc751e27dd07e6840ddc097209b6625434c8951ffdfe2a0cc441157858173a",
     ".gitignore": "2cdb390975a6f1358ff42dd8460b16733e194a2556c36903ace5071665e15846",
     ".node-version": "73fb1b615e2043a933be1c0895cde4358036acc28d785692509b822aa53c761f",
