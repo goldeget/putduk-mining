@@ -1789,13 +1789,24 @@
     text-align: left;
   }
 
+  /* Keep four primary shortcuts on one row; AI stays its own full-width help row. */
   .page:has([data-scene-theme="dark"]) .quickActionsLayout {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1fr);
     gap: 0.35rem;
   }
 
   .page:has([data-scene-theme="dark"]) .quickActionGrid {
-    display: contents;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .quickActionGrid > a {
+    min-height: 5.35rem;
+    padding-inline: 0.08rem;
+  }
+
+  .quickActions strong {
+    font-size: 0.75rem;
   }
 
   .page:has([data-scene-theme="dark"])
@@ -1803,12 +1814,12 @@
     > footer[data-ai-dock]
     button[aria-haspopup="dialog"] {
     min-height: 5.35rem;
-    grid-template-columns: minmax(0, 1fr);
-    justify-items: center;
-    gap: 0.3rem;
-    padding: 0.5rem 0.12rem;
-    border-radius: 0.8rem;
-    text-align: center;
+    grid-template-columns: 38px minmax(0, 1fr);
+    justify-items: start;
+    gap: 0.45rem;
+    padding: 0.65rem 0.85rem;
+    border-radius: 0.95rem;
+    text-align: left;
   }
 
   .page:has([data-scene-theme="dark"])
@@ -1816,7 +1827,7 @@
     > footer[data-ai-dock]
     button
     > span:has(> strong) {
-    text-align: center;
+    text-align: left;
   }
 }
 

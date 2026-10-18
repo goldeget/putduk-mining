@@ -5,6 +5,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import { aiChatRequestSchema } from "@/domain/ai/chat";
 import { aiMemberFeedbackSchema } from "@/domain/ai/member-feedback";
+import { getMemberAiHelp } from "@/domain/ai/member-help";
 import {
   AI_MEMBER_BLOCKED_POLICY,
   decideMemberLearningPublication,
@@ -252,6 +253,20 @@ describe("회원 본인 대화 저장", () => {
     expect(
       memory.messages.filter((row) => row.authorRole === "MEMBER"),
     ).toHaveLength(memberCount);
+  });
+
+  it("wallet guide copy still persists as an owned turn", async () => {
+    const memory = createMemoryPort();
+    const question = "사용 가능 금액과 보류 금액은 무슨 뜻인가요?";
+    const saved = await appendOwnMemberTurn(memory.port, {
+      answer: getMemberAiHelp("wallet").answer,
+      clientMessageId: CLIENT_MESSAGE,
+      knowledgeVersion: "2026.09",
+      question,
+      sourceKey: "guide:member_help_wallet",
+      userId: ACTOR,
+    });
+    expect(saved.ok).toBe(true);
   });
 
   it("고위험 질문도 대화 본문은 남기지만 학습 행은 만들지 않는다", async () => {

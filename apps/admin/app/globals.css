@@ -5,6 +5,17 @@
 :root {
   font-family: var(--font-sans);
   font-synthesis: none;
+  --premium-heading-ink: #f8f2e4;
+}
+
+html[data-theme="light"] {
+  --premium-heading-ink: #17130d;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) {
+    --premium-heading-ink: #17130d;
+  }
 }
 
 * {
@@ -411,9 +422,15 @@ input:focus-visible {
 .page-intro h1 {
   max-width: 12ch;
   margin: 0;
+  color: var(--premium-heading-ink);
   font-size: clamp(2rem, 4.4vw, 3.6rem);
   letter-spacing: -0.06em;
   word-break: keep-all;
+}
+
+section[aria-labelledby="assistant-title"] h1,
+#draft-review-title {
+  color: var(--premium-heading-ink);
 }
 .hero-console p:not(.eyebrow),
 .page-intro p:not(.eyebrow) {

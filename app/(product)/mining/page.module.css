@@ -11,6 +11,7 @@
 .controlRoom {
   display: grid;
   min-width: 0;
+  overflow-x: clip;
   gap: 0.75rem;
   padding: 0.65rem;
   border: 1px solid var(--border-subtle);
@@ -407,6 +408,7 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 0.65rem;
+  min-width: 0;
   padding: 0.9rem;
 }
 
@@ -417,7 +419,7 @@
 
 .speedCard dl {
   min-width: 0;
-  flex: 1 1 10rem;
+  flex: 1 1 min(10rem, 100%);
   margin: 0;
 }
 
@@ -433,6 +435,8 @@
 }
 
 .speedCard > p {
+  min-width: 0;
+  flex: 1 1 100%;
   margin: 0;
   padding-left: 0.6rem;
   border-left: 1px solid var(--border-default);
@@ -1002,12 +1006,17 @@
 }
 
 :global(.product-main):has(> .page) {
-  width: min(100%, 1440px);
+  width: 100%;
+  max-width: 100%;
   padding-block: 0 1.5rem;
+  box-sizing: border-box;
 }
 
 .page {
+  min-width: 0;
+  max-width: 100%;
   padding: 0 0.75rem 1rem;
+  overflow-x: clip;
 }
 
 @media (min-width: 1100px) {

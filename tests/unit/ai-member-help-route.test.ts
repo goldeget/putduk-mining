@@ -177,6 +177,29 @@ describe("actual member AI route with deterministic help and isolated persistenc
     },
   );
 
+  it("persists the wallet guide question with a saved done receipt", async () => {
+    const response = await POST(
+      request("사용 가능 금액과 보류 금액은 무슨 뜻인가요?", "/wallet"),
+    );
+    expect(response.status).toBe(200);
+    expect(await events(response)).toContainEqual(
+      expect.objectContaining({
+        type: "done",
+        helpTopic: "wallet",
+        saved: true,
+        conversationId: CONVERSATION,
+        assistantMessageId: ANSWER,
+      }),
+    );
+    expect(mocks.append).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        sourceKey: "guide:member_help_wallet",
+        userId: OWNER,
+      }),
+    );
+  });
+
   it("does not charge a configured provider for deterministic navigation help", async () => {
     mocks.env.AI_PROVIDER = "openai";
     mocks.env.AI_API_KEY = "isolated-test-fixture-never-sent";
