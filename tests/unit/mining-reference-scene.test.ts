@@ -61,9 +61,21 @@ describe("decorative mining art, theme and image recovery", () => {
         .querySelector("[data-mining-running]")
         ?.getAttribute("data-mining-running"),
     ).toBe("true");
+    // Server-confirmed running mounts the decorative light layer; the still
+    // master stays complete and the layer decides whether it may play.
     expect(
-      host.querySelector("[data-motion]")?.getAttribute("data-motion"),
+      host.querySelector("[data-scene-art]")?.getAttribute("data-motion"),
+    ).toBe("ambient");
+    const layer = host.querySelector("[data-mining-energy]");
+    expect(layer?.getAttribute("aria-hidden")).toBe("true");
+    // jsdom has no matchMedia, so the layer must fall back to the calm state.
+    expect(layer?.getAttribute("data-mining-energy")).toBe("calm");
+    expect(layer?.textContent).toBe("");
+    await render(false);
+    expect(
+      host.querySelector("[data-scene-art]")?.getAttribute("data-motion"),
     ).toBe("static");
+    expect(host.querySelector("[data-mining-energy]")).toBeNull();
   });
   it("drops failed responsive sources before reporting a failure and supports a real retry", async () => {
     await render();

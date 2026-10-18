@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef } from "react";
 
 import { projectProcessProfile } from "@/lib/mining-scene/process-profile";
+import { isConstrainedMotionDevice } from "@/lib/motion/ambient-runtime";
 import { drawProcessDecoration } from "./process-decoration";
 import type { ScenePoint, SceneProcessProfile } from "@/lib/mining-scene/types";
 
@@ -150,17 +151,9 @@ export function SceneDecoration({
     const fpsCeiling = bounded(maxFps, 1, SCENE_MOTION_LIMITS.maxFps);
     const dprCeiling = bounded(maxDpr, 1, SCENE_MOTION_LIMITS.maxDpr);
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const capability = navigator as Navigator & {
-      connection?: { saveData?: boolean };
-      deviceMemory?: number;
-    };
-    const constrained =
-      capability.connection?.saveData === true ||
-      (capability.hardwareConcurrency > 0 &&
-        capability.hardwareConcurrency <= 2) ||
-      (typeof capability.deviceMemory === "number" &&
-        capability.deviceMemory <= 2);
-    let degraded = constrained;
+    let degraded = isConstrainedMotionDevice(
+      navigator as Parameters<typeof isConstrainedMotionDevice>[0],
+    );
     let visible = false;
     let disposed = false;
     let failed = false;
