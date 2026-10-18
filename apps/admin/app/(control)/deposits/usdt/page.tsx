@@ -13,6 +13,7 @@ import { requireAdminPage } from "@/lib/auth/principal";
 import { createAdminServiceClient } from "@/lib/supabase/service";
 
 import { ConfirmUsdtDepositForm } from "./confirm-form";
+import { UsdtInstructionPanel } from "./instruction-panel";
 
 /** 캐노니컬 회원 USDT 수동 입금. crypto_deposits / deposit_requests가 아님. */
 type UsdtManualDepositRow = {
@@ -64,6 +65,8 @@ export default async function UsdtDepositQueuePage() {
         lead="회원이 보낸 USDT를 확인하고, 원화 입금만 반영합니다. 회원 USDT 잔액은 없습니다."
         title="USDT 입금 확인"
       />
+
+      <UsdtInstructionPanel />
 
       {error ? (
         <FeedbackMessage className="queue-flash" role="alert">
