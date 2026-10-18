@@ -130,6 +130,14 @@ export async function authenticateAction(
         status: "error",
       };
     }
+    // Auth는 비밀번호가 맞은 뒤에만 이메일 미확인을 알린다. 계정 존재 여부는 새지 않는다.
+    if (code === "email_not_confirmed" && resolution.email) {
+      return {
+        message:
+          "이메일 확인이 아직 끝나지 않았어요. 가입할 때 입력한 이메일에서 확인 안내를 열어 주세요.",
+        status: "error",
+      };
+    }
     return { message: "로그인 정보를 확인해 주세요.", status: "error" };
   }
 
