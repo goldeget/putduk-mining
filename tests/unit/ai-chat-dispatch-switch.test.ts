@@ -21,6 +21,7 @@ const mocks = vi.hoisted(() => ({
   fail: vi.fn(),
   append: vi.fn(),
   provider: vi.fn(),
+  safeMode: vi.fn(),
   env: {
     NEXT_PUBLIC_APP_URL: "https://mining.putduk.com",
     APP_ENV: "staging" as string,
@@ -37,6 +38,9 @@ const mocks = vi.hoisted(() => ({
 }));
 vi.mock("@/lib/auth/session", () => ({ getVerifiedIdentity: mocks.identity }));
 vi.mock("@/lib/env/server", () => ({ getServerEnv: () => mocks.env }));
+vi.mock("@/lib/safe-mode/assert-component-active.server", () => ({
+  assertComponentActive: mocks.safeMode,
+}));
 vi.mock("@/lib/supabase/admin", () => ({
   createSupabaseAdminClient: () => ({}),
 }));
@@ -78,6 +82,7 @@ beforeEach(() => {
   mocks.env.AI_API_KEY = "synthetic-never-transmitted-key";
   mocks.env.AI_MODEL_LOW_COST = "openai/gpt-oss-20b";
   mocks.env.AI_PROVIDER_DISPATCH_ENABLED = undefined;
+  mocks.safeMode.mockResolvedValue({ ok: true });
   mocks.identity.mockResolvedValue({ userId: OWNER, supabase: {} });
   mocks.begin.mockResolvedValue({
     data: [{ request_id: REQUEST, is_new: true }],
@@ -209,5 +214,33 @@ describe("a provider key alone never dispatches a real AI call", () => {
     );
     // The chain itself is mocked; the route performed no direct network call.
     expect(fetchMock).not.toHaveBeenCalled();
+  });
+});
+
+describe("safe mode is checked on the server before the dispatch decision", () => {
+  it.each([
+    ["PAUSED", "AI_SAFE_MODE_ACTIVE"],
+    ["UNAVAILABLE", "AI_STATE_UNKNOWN"],
+  ])(
+    "%s stops the turn with 503 before any audit, switch decision or provider call",
+    async (reason, code) => {
+      mocks.env.AI_PROVIDER_DISPATCH_ENABLED = "true";
+      mocks.safeMode.mockResolvedValue({ ok: false, reason });
+      const response = await POST(request());
+      expect(response.status).toBe(503);
+      expect(await response.json()).toMatchObject({ error: { code } });
+      expect(mocks.safeMode).toHaveBeenCalledWith("AI");
+      expect(mocks.begin).not.toHaveBeenCalled();
+      expect(mocks.provider).not.toHaveBeenCalled();
+      expect(fetchMock).not.toHaveBeenCalled();
+    },
+  );
+
+  it("an unreadable state never lets the owner switch through", async () => {
+    mocks.env.AI_PROVIDER_DISPATCH_ENABLED = "true";
+    mocks.safeMode.mockResolvedValue({ ok: false, reason: "UNAVAILABLE" });
+    const response = await POST(request());
+    expect(response.status).toBe(503);
+    expect(mocks.provider).toHaveBeenCalledTimes(0);
   });
 });
