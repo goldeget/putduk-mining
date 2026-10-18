@@ -145,6 +145,12 @@ export default async function TrustDocumentPage({ params }: PageProps) {
               <dt>안내 주제</dt>
               <dd>{getTrustNavigationLabel(document.path)}</dd>
             </div>
+            {document.consentVersion ? (
+              <div>
+                <dt>동의 기록 버전</dt>
+                <dd>{document.consentVersion}</dd>
+              </div>
+            ) : null}
           </dl>
         </header>
 
