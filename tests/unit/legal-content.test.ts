@@ -17,6 +17,10 @@ import { getTrustNavigationLabel } from "@/lib/trust/public-presentation";
 const root = resolve(__dirname, "../..");
 const read = (path: string) => readFileSync(resolve(root, path), "utf8");
 
+const AI_OPERATOR_ACCESS_FIRST_SENTENCE =
+  "퍼뜩 AI에 입력한 질문과 답변은 내 계정에 저장되며, 문의 확인이나 안전 점검이 필요할 때 권한이 있는 운영자가 열람할 수 있어요.";
+const AI_OPERATOR_ACCESS_PARAGRAPH = `${AI_OPERATOR_ACCESS_FIRST_SENTENCE} 열람할 때마다 기록이 남고, 비밀번호나 인증키 같은 값은 가려서 보여 드려요.`;
+
 function sentences(document: (typeof LEGAL_DOCUMENTS)[number]) {
   const texts: string[] = [document.summary];
   for (const section of document.sections) {
@@ -80,7 +84,9 @@ describe("terms and privacy documents", () => {
       for (const text of sentences(document)) {
         // 한 문장은 짧게. 문장 부호 기준으로 나눠 확인한다.
         for (const sentence of text.split(/(?<=[.!?])\s+/)) {
-          expect(sentence.length, sentence).toBeLessThanOrEqual(60);
+          // 소유자가 문구를 정한 한 문장만 더 길게 허용한다. 나머지는 60자 이하다.
+          const limit = sentence === AI_OPERATOR_ACCESS_FIRST_SENTENCE ? 80 : 60;
+          expect(sentence.length, sentence).toBeLessThanOrEqual(limit);
         }
         // 휴대전화 인증처럼 읽히는 표현과 개발자 용어는 쓰지 않는다.
         expect(text).not.toMatch(/휴대폰 인증|SMS|인증번호|DB|API|ledger|RLS/);
@@ -89,6 +95,25 @@ describe("terms and privacy documents", () => {
         // 문단은 한 가지 생각만 담는다.
         expect(text.split(/(?<=[.!?])\s+/).length).toBeLessThanOrEqual(2);
       }
+    }
+  });
+
+  it("tell members that authorized operators can read AI conversations", async () => {
+    const privacy = LEGAL_DOCUMENTS[1]!;
+    expect(privacy.path).toBe("/privacy");
+    const aiSection = privacy.sections.find((s) => s.heading === "AI 질문과 답변");
+    expect(aiSection?.body).toEqual([AI_OPERATOR_ACCESS_PARAGRAPH]);
+    const html = renderToStaticMarkup(
+      await TrustDocumentPage({
+        params: Promise.resolve({ document: ["privacy"] }),
+      }),
+    );
+    expect(html).toContain("권한이 있는 운영자가 열람할 수 있어요");
+    // 구성원에게 검토 상태나 내부 절차를 보이지 않는다.
+    for (const document of LEGAL_DOCUMENTS) {
+      expect(sentences(document).join(" ")).not.toMatch(
+        /변호사|법률 검토|검토 중|검토 전|초안|리뷰/,
+      );
     }
   });
 
