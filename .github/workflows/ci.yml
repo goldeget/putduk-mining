@@ -400,7 +400,8 @@ jobs:
         run: node scripts/run-with-watchdog.mjs 120 -- node scripts/e2e-web-server-lifecycle-harness.mjs
 
   # 회원·운영자 production build를 workflow당 1회만 수행한다.
-  # authenticated shard와 typography-protected가 동일 산출물을 재사용해 shard당 next dev/중복 build를 막는다.
+  # PR smoke와 typography-protected가 동일 산출물을 재사용해 job마다 next dev/중복 build를 막는다.
+  # 전체 authenticated suite는 .github/workflows/ci-full-e2e.yml 이다.
   e2e-app-build:
     name: E2E production build artifact
     runs-on: ubuntu-24.04
@@ -457,15 +458,11 @@ jobs:
             .next
             apps/admin/.next
 
-  authenticated:
-    name: Authenticated product gates (${{ matrix.shard }}/12)
+  authenticated-smoke:
+    name: Authenticated smoke gates
     runs-on: ubuntu-24.04
     timeout-minutes: 19
     needs: [webserver-lifecycle, e2e-app-build]
-    strategy:
-      fail-fast: false
-      matrix:
-        shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
     steps:
       - name: Check out source
         uses: actions/checkout@v7
@@ -518,8 +515,6 @@ jobs:
           version: 2.113.0
 
       - name: Start local Supabase
-        env:
-          CI_SUPABASE_START_STAGGER_SECONDS: ${{ matrix.shard }}
         run: bash scripts/ci-supabase-start.sh
 
       - name: Rebuild migrations from zero
@@ -552,25 +547,39 @@ jobs:
             pnpm exec playwright install --with-deps chromium
           fi
 
-      - name: Run authenticated browser tests
-        # 실제 TOTP 창과 모든 assertion/retry는 유지한다. 중단은 실패이며 통과가 아니다.
-        # 파일/브라우저 조합은 통째로 배분한다. 전체 목록과 선택 목록의 exact coverage를 검사한다.
-        # CI wall-clock: e2e-app-build 산출물 + E2E_NEXT_START=1 (next start). next dev 금지 — putduk-ci-wall-clock.mdc.
+      - name: Run authenticated smoke tests
+        # WS-05 focused set only. Assertions, TOTP waits and retries stay intact.
+        # The full inventory runs in ci-full-e2e.yml, one assignment per test.
+        # CI wall-clock: e2e-app-build artifact + E2E_NEXT_START=1 (next start).
         timeout-minutes: 18
         env:
           E2E_NEXT_START: "1"
+          E2E_WITH_ADMIN_SERVER: "1"
           E2E_WEB_PORT: "3000"
           E2E_ADMIN_PORT: "3100"
           CI_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
           APP_ENV: test
           PUTDUK_BACKEND_SOURCE_REVISION: "201"
-        run: node scripts/ci-authenticated-shards-201.mjs ${{ matrix.shard }}/12
+        run: |
+          set -euo pipefail
+          pnpm exec playwright test \
+            --config playwright.backend-browser-201.config.ts \
+            --fail-on-flaky-tests \
+            --reporter=line \
+            --project=chromium \
+            --project=visual-evidence \
+            tests/e2e/authenticated/public-admin-boundary.spec.ts \
+            tests/e2e/authenticated/admin-session-totp.spec.ts \
+            tests/e2e/authenticated/first-krw-withdrawal.spec.ts \
+            tests/e2e/authenticated/first-usdt-withdrawal.spec.ts \
+            tests/e2e/authenticated/withdrawal-negative-guards.spec.ts \
+            tests/e2e/authenticated/success-visual-evidence.spec.ts
 
       - name: Preserve authenticated browser evidence
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: authenticated-playwright-shard-${{ matrix.shard }}
+          name: authenticated-playwright-smoke
           path: |
             playwright-report
             test-results

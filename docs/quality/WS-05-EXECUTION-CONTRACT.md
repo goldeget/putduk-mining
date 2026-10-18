@@ -82,15 +82,18 @@ money/auth spec은 공유 DB race를 막기 위해 workers를 올리지 않는�
 - **feature batch** → 관련 domain 스크립트를 순차로 묶는다. assertion은 그대로 두고, visual은 UI/CSS 또는 Product Closure checkpoint일 때만 `test:e2e:auth:visual`을 돌린다.
 - focused 스크립트는 visual-evidence 파일을 넘기지 않는다. visual은 전용 스크립트와 FULL에만 남긴다.
 
-### FULL (PR merge candidate)
+### FULL (release gate)
 
 | 스크립트 | 의미 |
 | --- | --- |
-| `pnpm test:e2e:authenticated` | CI Authenticated product gates가 쓰는 full regression |
+| `pnpm test:e2e:authenticated` | 로컬 full regression. CI release workflow와 같은 수집 |
 | `pnpm test:e2e:auth:full` | 위와 동일 설정·동일 수집(편의 alias) |
 
 FULL은 chromium + mobile-chrome + visual-evidence, `workers: 1`을 유지한다.
-CI는 full을 제거하거나 focused로 대체하지 않는다. merge 전 Application / Database / Browser / Authenticated full / Worker **5/5 green**이 필수다.
+PR workflow는 위 FOCUSED set만 `Authenticated smoke gates`로 실행한다.
+전체 suite는 `.github/workflows/ci-full-e2e.yml`의 12 lane이 `develop`/`main`/`release/**` push에서 각각 한 번 실행한다.
+테스트 삭제·skip·assertion 완화로 PR을 빠르게 만들지 않는다.
+production deployment 전에는 그 release SHA의 full workflow가 green이어야 한다.
 이 계층만으로 `PRODUCT COMPLETE` 또는 `LAUNCH READY`를 주장하지 않는다.
 
 `capture-local-supabase-env.mjs` reads `supabase status -o env` from stdout and stderr, maps the Supabase CLI 2.113.0 status names (`API_URL` / `api.url`, `PUBLISHABLE_KEY` / `auth.publishable_key`, `SECRET_KEY` / `auth.secret_key`, plus the deprecated anon and service-role tags from that CLI), and writes `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, and `SUPABASE_SECRET_KEY` to `GITHUB_ENV`. It refuses `osrmyjgmpdspdcwqjwuv`, non-local hosts, and https. Secret values are not printed.

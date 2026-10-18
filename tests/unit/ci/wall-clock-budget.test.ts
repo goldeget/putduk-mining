@@ -45,7 +45,7 @@ describe("whole-workflow CI acceptance", () => {
     const result = evaluateCiJobs(run, completed(), start + 960_000);
     expect(result.accepted).toBe(true);
     expect(result.elapsedMs).toBe(960_000);
-    expect(CI_REQUIRED_JOBS).toHaveLength(21);
+    expect(CI_REQUIRED_JOBS).toHaveLength(10);
   });
 
   it("rejects a green attempt that finishes over 20 minutes", () => {
@@ -144,7 +144,7 @@ describe("whole-workflow CI acceptance", () => {
 
   it("reserves cancellation time before the absolute deadline", () => {
     const jobs = completed().map((job) =>
-      job.name === "Authenticated product gates (12/12)"
+      job.name === "Authenticated smoke gates"
         ? { ...job, status: "in_progress", conclusion: null }
         : job,
     );
@@ -227,7 +227,7 @@ describe("whole-workflow CI acceptance", () => {
         identity,
         report: () => {},
         request: async (path: string) =>
-          path.includes("/jobs?") ? { jobs: [], total_count: 22 } : run,
+          path.includes("/jobs?") ? { jobs: [], total_count: 11 } : run,
       }),
     ).rejects.toThrow(/incomplete/);
   });
@@ -506,26 +506,31 @@ describe("twelve isolated authenticated CI lanes", () => {
     }),
   );
 
-  it("requires all twelve exact lane names and twenty-one quality jobs", () => {
-    const auth = CI_REQUIRED_JOBS.filter((name) =>
-      name.startsWith("Authenticated product gates"),
+  it("requires the PR smoke gate and leaves the twelve full lanes off the budget", () => {
+    expect(CI_REQUIRED_JOBS).toEqual([
+      "Exact diff integrity",
+      "Application gates",
+      "Database security gates",
+      "Browser foundation",
+      "WebServer lifecycle probe",
+      "E2E production build artifact",
+      "Worker runtime gates",
+      "Korean typography public gates",
+      "Korean typography protected gates",
+      "Authenticated smoke gates",
+    ]);
+    const result = evaluateCiJobs(
+      run,
+      completed().filter((job) => job.name !== "Authenticated smoke gates"),
+      start + 960_000,
     );
-    expect(auth).toEqual(
-      Array.from(
-        { length: 12 },
-        (_, index) => `Authenticated product gates (${index + 1}/12)`,
+    expect(result.accepted).toBe(false);
+    expect(result.pending).toContain("Authenticated smoke gates");
+    expect(
+      CI_REQUIRED_JOBS.some((name) =>
+        name.includes("Authenticated product gates"),
       ),
-    );
-    expect(CI_REQUIRED_JOBS).toHaveLength(21);
-    for (const name of auth) {
-      const result = evaluateCiJobs(
-        run,
-        completed().filter((job) => job.name !== name),
-        start + 960_000,
-      );
-      expect(result.accepted).toBe(false);
-      expect(result.pending).toContain(name);
-    }
+    ).toBe(false);
   });
 
   it("selects the whole lane index including ten through twelve", () => {

@@ -18,10 +18,7 @@ export const CI_REQUIRED_JOBS = Object.freeze([
   "Worker runtime gates",
   "Korean typography public gates",
   "Korean typography protected gates",
-  ...Array.from(
-    { length: 12 },
-    (_, index) => `Authenticated product gates (${index + 1}/12)`,
-  ),
+  "Authenticated smoke gates",
 ]);
 
 function timestamp(value, name) {

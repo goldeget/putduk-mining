@@ -9,7 +9,7 @@ alwaysApply: true
 
 ## 목표
 
-- `ubuntu-24.04` PR/push(`main`/`develop`) CI **전체 workflow wall clock ≤ 20분**.
+- `ubuntu-24.04` PR workflow **전체 wall clock ≤ 20분**. 목표는 약 10분이다. 전체 authenticated suite는 이 예산 밖이다.
 - 최초 run `created_at`부터 **workflow 최종 종료**까지 대기·공유 빌드·후속 job·증거 저장을 포함한다. 단일 job 최대 시간으로 대체하지 않는다.
 - 전체 재실행은 해당 attempt의 `run_started_at`부터 측정한다. 이전 attempt의 성공 job을 합쳐 필수 검사를 채우지 않는다.
 - 검증 baseline: PR #39 green run `36975512027` / `9cfc2ef` — 8-shard authenticated, wall **~16m**.
@@ -17,17 +17,17 @@ alwaysApply: true
 ## 필수 hybrid 패턴 (`.github/workflows/ci.yml`)
 
 1. **`e2e-app-build`** — E2E 소비 job용 `pnpm build` 1회 (회원+운영자). `Application gates`의 일반 build 검증과 구분한다. artifact `e2e-next-production`: `.next`, `apps/admin/.next` (repo 상대 경로 유지).
-2. **`authenticated`** — `needs: [webserver-lifecycle, e2e-app-build]`, matrix **12-shard** (아래의 기록된 24→12 복귀), shard마다 isolated `supabase start` + `db:reset`, artifact download 후 Playwright step에 **`E2E_NEXT_START=1`** (next start only).
+2. **`authenticated-smoke`** — `needs: [webserver-lifecycle, e2e-app-build]`, job **Authenticated smoke gates** 하나. WS-05 focused set(smoke, admin session, KRW, USDT, guards, visual)만 실행한다. isolated `supabase start` + `db:reset`, artifact download 후 **`E2E_NEXT_START=1`** (next start only). `--fail-on-flaky-tests`를 유지한다. 4 lane 이하이며 현재는 1 lane이다.
 3. **`typography-protected`** — `needs: [e2e-app-build]`, 동일 artifact download, **`E2E_PREBUILT_APPS=1`** 로 `typography-protected-servers.mjs` 빌드 생략·next start only.
-4. **`ci-budget`** — 다른 job과 함께 시작해 정확한 repo/run/attempt/head와 필수 품질 job 21개를 확인한다. 18m30s에 미완료면 취소하고, 응답하지 않으면 force cancel한다. 종료 여유를 포함한 전체 20분 초과는 병합 불가다.
-5. authenticated step 18m / job 19m는 실패 실행의 상한이다. 개별 테스트 시간·실제 TOTP 대기·assertion·retry는 유지한다. 취소/timeout을 통과로 기록하지 않는다. 속도 개선은 서버 모드·공유 빌드·병렬화·캐시로 한다.
-6. authenticated scheduler는 현재 후보의 전체 목록을 12개 lane에 정확히 한 번씩 배분하며, `playwright-report/ci-shard-evidence/`의 목록·실행 증거로 확인한다. source/head/base와 run/attempt를 구분하고 dirty local tree를 exact commit 검증으로 확대하지 않는다. 측정된 긴 spec(mockup capture, home catalog, principal withdrawal, notifications)은 서로 다른 lane에 둔다.
+4. **`ci-budget`** — 다른 job과 함께 시작해 정확한 repo/run/attempt/head와 필수 품질 job 10개를 확인한다. 18m30s에 미완료면 취소하고, 응답하지 않으면 force cancel한다. 종료 여유를 포함한 전체 20분 초과는 PR 병합 불가다. 전체 authenticated suite는 이 예산의 필수 job이 아니다.
+5. smoke step 18m / job 19m는 실패 실행의 상한이다. 개별 테스트 시간·실제 TOTP 대기·assertion·retry는 유지한다. 취소/timeout을 통과로 기록하지 않는다.
+6. 전체 authenticated inventory는 `.github/workflows/ci-full-e2e.yml`의 12 lane이 `TIMING_HINTS`로 배분한다. 각 lane은 빠짐·중복·예상 밖 test를 거절한다. `develop`, `main`, `release/**` push와 `workflow_dispatch`에서만 실행하며 pull_request에서는 실행하지 않는다. lane job timeout은 60분이다. 이 workflow가 그 release SHA에서 green이기 전에는 production deployment를 하지 않는다.
 7. worker는 실제 Vitest JSON 실행을 검사한 sanitized `test-results/worker/report.json`을 `worker-runtime`으로 반드시 업로드한다. missing/empty/stale/failed/skipped/todo 결과는 전체 worker gate 통과가 아니다.
 
 ## 금지 회귀 (에이전트·리뷰어 공통)
 
 - CI authenticated shard에서 **`next dev`** (`playwright.authenticated.config.ts` webServer, `E2E_NEXT_START` 미설정).
-- 현재 12-shard matrix **제거·축소** without documented 대체 (단일 serial full-suite job 추가 포함). 24 lane 이상은 runner 대기만 늘리므로 추가하지 않는다.
+- PR workflow에 전체 authenticated suite를 다시 넣기. 12 lane을 넘는 shard 추가. smoke에서 spec 삭제·skip·assertion 완화.
 - shard/job마다 **전체 production build 중복** (공유 artifact 없이).
 - assertion 약화, `test.skip`/`test.only`, spec 삭제, **timeout만 줄여** green 만들기.
 - CI workflow 변경 전 **`E2E-AGENT-WORKFLOW.md` CI 섹션 + 본 rule** 미독.
@@ -69,4 +69,8 @@ Run 39137817663 / head 63461e2는 14 lane으로 18분 30초에 취소됐다. fai
 
 ## 2026-10-19 기록된 24→12 복귀
 
-Run 39166030715에서 가장 느린 lane은 GitHub runner를 약 8분 기다렸다. Playwright는 약 8분만 실행했고 Supabase는 이미 끝나 있었다. 24를 넘는 lane은 그 대기만 늘린다. 12 lane run 39127210925는 약 1분 안에 shard가 시작됐고, 예산은 runner 대기가 아니라 Playwright 약 581–864초에 쓰였다. 그 모양이 통과할 수 있는 형태다. 예산 1200초와 18분 30초 취소는 유지한다. 측정된 긴 spec(mockup capture, home catalog, principal withdrawal, notifications)은 서로 다른 lane에 둔다. 필수21quality+budget=22jobs, authenticated12+build/worker/public/protected/database=17artifacts. 모든 현재 authenticated test는 정확히 한 번 실행한다. timeout·assertion·테스트 삭제는 없다.
+Run 39166030715에서 가장 느린 lane은 GitHub runner를 약 8분 기다렸다. Playwright는 약 8분만 실행했고 Supabase는 이미 끝나 있었다. 24를 넘는 lane은 그 대기만 늘린다. 12 lane run 39127210925는 약 1분 안에 shard가 시작됐고, 예산은 runner 대기가 아니라 Playwright 약 581–864초에 쓰였다. 브라우저 시간 합은 약 9519초였다. 12·14·16·18·24 lane 모두 20분 PR 예산 안에 전체 suite를 끝내지 못했다.
+
+## 2026-10-19 PR smoke와 release full 분리
+
+소유자 결정: PR 필수 CI는 약 10분을 목표로 하고 기존 20분 상한은 유지한다. 전체 authenticated suite는 PR 예산 밖의 release gate다. `.github/workflows/ci.yml`의 필수 품질 job은 10개다. Authenticated smoke gates는 WS-05 focused set 한 lane이다. `.github/workflows/ci-full-e2e.yml`은 `develop`/`main`/`release/**` push와 workflow_dispatch에서 12 lane으로 현재 inventory를 각각 한 번 실행한다. job timeout은 60분이다. pull_request에서는 돌리지 않는다. 그 workflow가 release SHA에서 green이기 전에는 production deployment를 하지 않는다. timeout·assertion·테스트 삭제는 없다. shard는 12를 넘기지 않는다.

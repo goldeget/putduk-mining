@@ -1,0 +1,191 @@
+name: Full authenticated E2E
+
+# Release gate. Not part of the 20-minute PR budget in ci.yml.
+# Run 39127210925 measured about 9519s of authenticated browser time.
+# Twelve through twenty-four lanes all missed that 20-minute budget.
+# This workflow keeps 12 lanes, runs every current authenticated test once,
+# and allows a 60-minute job. Do not add lanes or skip tests.
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - "release/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-full-e2e-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  e2e-app-build:
+    name: E2E production build artifact
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6.1.0
+        with:
+          version: 12.6.0
+
+      - name: Install Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+
+      - name: Resolve pnpm metadata cache
+        id: pnpm-metadata
+        run: echo "path=$(pnpm cache path)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache pnpm registry metadata
+        uses: actions/cache@v5
+        with:
+          path: ${{ steps.pnpm-metadata.outputs.path }}
+          key: pnpm-metadata-v1-${{ runner.os }}-${{ runner.arch }}-node24.21.0-pnpm12.6.0-${{ hashFiles('pnpm-lock.yaml', 'pnpm-workspace.yaml', '.node-version', '.npmrc', 'package.json', 'apps/*/package.json', '.pnpmfile.cjs', '.pnpmfile.mjs') }}
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build member and admin apps for E2E
+        run: pnpm build
+        env:
+          APP_ENV: test
+          NEXT_PUBLIC_APP_ENV: test
+          NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:63421
+          NEXT_PUBLIC_CHANNEL_TALK_PLUGIN_KEY: putduk-e2e-plugin-key
+          CHANNEL_TALK_MEMBER_HASH_SECRET: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+
+      - name: Upload E2E production build
+        uses: actions/upload-artifact@v7
+        with:
+          name: e2e-next-production
+          retention-days: 1
+          include-hidden-files: true
+          if-no-files-found: error
+          path: |
+            .next
+            apps/admin/.next
+
+  authenticated:
+    name: Authenticated product gates (${{ matrix.shard }}/12)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    needs: [e2e-app-build]
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+
+      - name: Canonicalize the approved checkout origin
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = "goldeget/putduk-mining"
+          checkout_origin="$(git remote get-url origin)"
+          case "$checkout_origin" in
+            https://github.com/goldeget/putduk-mining|https://github.com/goldeget/putduk-mining.git) ;;
+            *) echo "BLOCKED_TARGET_SCOPE: checkout origin mismatch" >&2; exit 1 ;;
+          esac
+          git remote set-url origin https://github.com/goldeget/putduk-mining.git
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6.1.0
+        with:
+          version: 12.6.0
+
+      - name: Install Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+
+      - name: Resolve pnpm metadata cache
+        id: pnpm-metadata
+        run: echo "path=$(pnpm cache path)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache pnpm registry metadata
+        uses: actions/cache@v5
+        with:
+          path: ${{ steps.pnpm-metadata.outputs.path }}
+          key: pnpm-metadata-v1-${{ runner.os }}-${{ runner.arch }}-node24.21.0-pnpm12.6.0-${{ hashFiles('pnpm-lock.yaml', 'pnpm-workspace.yaml', '.node-version', '.npmrc', 'package.json', 'apps/*/package.json', '.pnpmfile.cjs', '.pnpmfile.mjs') }}
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Download E2E production build
+        uses: actions/download-artifact@v7
+        with:
+          name: e2e-next-production
+
+      - name: Install Supabase CLI
+        uses: supabase/setup-cli@v3
+        with:
+          version: 2.113.0
+
+      - name: Start local Supabase
+        env:
+          CI_SUPABASE_START_STAGGER_SECONDS: ${{ matrix.shard }}
+        run: bash scripts/ci-supabase-start.sh
+
+      - name: Rebuild migrations from zero
+        run: pnpm db:reset
+
+      - name: Export local Supabase env
+        run: node scripts/capture-local-supabase-env.mjs
+
+      - name: Create ephemeral withdrawal data key
+        run: node scripts/write-ephemeral-withdrawal-key.mjs
+
+      - name: Resolve Playwright version
+        id: playwright-version
+        run: echo "version=$(pnpm exec playwright --version | awk '{print $2}')" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/ms-playwright
+          key: ms-playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ms-playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}-
+            ms-playwright-${{ runner.os }}-
+
+      - name: Install Chromium
+        run: |
+          if [ -d "$HOME/.cache/ms-playwright" ] && [ -n "$(ls -A "$HOME/.cache/ms-playwright" 2>/dev/null)" ]; then
+            pnpm exec playwright install chromium
+          else
+            pnpm exec playwright install --with-deps chromium
+          fi
+
+      - name: Run authenticated browser tests
+        # TIMING_HINTS places the full inventory across these 12 lanes.
+        # The scheduler rejects a missing, duplicate, or unexpected test.
+        # Assertions, real TOTP waits, and --fail-on-flaky-tests stay intact.
+        timeout-minutes: 50
+        env:
+          E2E_NEXT_START: "1"
+          E2E_WEB_PORT: "3000"
+          E2E_ADMIN_PORT: "3100"
+          CI_HEAD_SHA: ${{ github.sha }}
+          APP_ENV: test
+          PUTDUK_BACKEND_SOURCE_REVISION: "201"
+        run: node scripts/ci-authenticated-shards-201.mjs ${{ matrix.shard }}/12
+
+      - name: Preserve authenticated browser evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: authenticated-playwright-shard-${{ matrix.shard }}
+          path: |
+            playwright-report
+            test-results
+          if-no-files-found: ignore

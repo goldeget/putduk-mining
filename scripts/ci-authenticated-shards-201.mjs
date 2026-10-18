@@ -28,8 +28,9 @@ import { assertBackend201BrowserCanonicalSources } from "./backend-successor-201
 // Run 39166030715 / head d2fcf69 used 24 lanes and was cancelled at 18m30s
 // with failures=0. The slowest lane waited about 8 minutes for a runner.
 // Playwright had run about 8 minutes and Supabase had already finished.
-// More lanes make that queue worse. Lane count stays 12. The 20-minute
-// budget is unchanged.
+// More lanes make that queue worse. The full suite stays on 12 lanes in
+// .github/workflows/ci-full-e2e.yml, which is not part of the 20-minute PR
+// budget. The PR workflow runs only the WS-05 focused smoke set.
 // Run 39153878066 kept four lanes under six minutes while catalog-materials
 // and withdrawal recovery shared the lanes that reached 13.5 minutes.
 // Hints below are those observed peaks. Mockup captures, home catalog,
