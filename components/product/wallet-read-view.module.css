@@ -810,7 +810,7 @@
 }
 
 /* 좁은 화면과 글자 확대에서는 정확한 금액과 단위를 읽을 너비로 쌓는다. */
-@container (max-width: 24rem) {
+@container (max-width: 20rem) {
   .metrics {
     grid-template-columns: minmax(0, 1fr);
   }

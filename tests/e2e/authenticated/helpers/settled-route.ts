@@ -6,7 +6,11 @@ import { expect, type Page } from "@playwright/test";
  * 마커가 문서 전체에서 하나일 때만 이전 라우트가 사라진 것이다.
  */
 export async function expectSettledRoute(page: Page, pathname: string) {
-  const route = page.locator(`[data-ui-ready=${JSON.stringify(pathname)}]`);
+  // The hidden Next restore tree can keep a second marker after the visible
+  // route has settled. Count only the marker the member can see.
+  const route = page
+    .locator(`[data-ui-ready=${JSON.stringify(pathname)}]`)
+    .filter({ visible: true });
   await expect(route).toHaveCount(1);
   return route;
 }
