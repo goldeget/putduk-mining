@@ -11,19 +11,35 @@ const MAX_BUFFER = 128 * 1024 * 1024;
 
 const digest = (bytes) => createHash("sha256").update(bytes).digest("hex");
 
-function indexSha256(path) {
-  const result = spawnSync("git", ["show", `:${path}`], {
+function indexBytes(path) {
+  const oidResult = spawnSync("git", ["rev-parse", `:${path}`], {
+    cwd: ROOT,
+    encoding: "utf8",
+    maxBuffer: MAX_BUFFER,
+  });
+  if (oidResult.error) throw oidResult.error;
+  if (oidResult.status !== 0) {
+    throw new Error(
+      `git rev-parse :${path} failed (${oidResult.status}): ${oidResult.stderr?.toString("utf8") ?? ""}`,
+    );
+  }
+  const oid = oidResult.stdout.trim();
+  const blobResult = spawnSync("git", ["cat-file", "blob", oid], {
     cwd: ROOT,
     encoding: "buffer",
     maxBuffer: MAX_BUFFER,
   });
-  if (result.error) throw result.error;
-  if (result.status !== 0) {
+  if (blobResult.error) throw blobResult.error;
+  if (blobResult.status !== 0) {
     throw new Error(
-      `git show :${path} failed (${result.status}): ${result.stderr?.toString("utf8") ?? ""}`,
+      `git cat-file blob ${oid} failed (${blobResult.status}): ${blobResult.stderr?.toString("utf8") ?? ""}`,
     );
   }
-  return digest(result.stdout);
+  return blobResult.stdout;
+}
+
+function indexSha256(path) {
+  return digest(indexBytes(path));
 }
 
 function syncManifestDerivedFields(manifest) {
@@ -80,11 +96,9 @@ if (finalizeOnly && pathArgs.length) {
 const manifest = JSON.parse(readFileSync(`${ROOT}/${MAP}`, "utf8"));
 
 if (finalizeOnly) {
-  finalizeGuard(digest(readFileSync(`${ROOT}/${MAP}`)));
-  console.log(
-    "BACKEND201_MANIFEST_FINALIZED",
-    digest(readFileSync(`${ROOT}/${MAP}`)),
-  );
+  const manifestSha256 = indexSha256(MAP);
+  finalizeGuard(manifestSha256);
+  console.log("BACKEND201_MANIFEST_FINALIZED", manifestSha256);
 } else if (pathArgs.length) {
   pinManifestPaths(manifest, pathArgs);
   finalizeGuard(writeManifest(manifest));
