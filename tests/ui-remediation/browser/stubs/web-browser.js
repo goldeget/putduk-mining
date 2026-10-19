@@ -16,7 +16,10 @@ export function createSupabaseBrowserClient() {
           30,
         );
         const stopListening = listenToMockAuth((event) =>
-          callback(event, event === "SIGNED_OUT" ? null : { user: { id: owner } }),
+          callback(
+            event,
+            event === "SIGNED_OUT" ? null : { user: { id: owner } },
+          ),
         );
         return {
           data: {

@@ -45,11 +45,16 @@ async function open(options, query = "") {
   }
   page.on("response", (response) => {
     if (response.status() >= 400)
-      results.http.push(`${options.name}: ${response.status()} ${response.url()}`);
+      results.http.push(
+        `${options.name}: ${response.status()} ${response.url()}`,
+      );
   });
   page.on("console", (message) => {
     // Failed resource loads are recorded with their URL in `results.http`.
-    if (message.type() === "error" && !message.text().startsWith("Failed to load resource"))
+    if (
+      message.type() === "error" &&
+      !message.text().startsWith("Failed to load resource")
+    )
       results.consoleErrors.push(`${options.name}: ${message.text()}`);
   });
   page.on("pageerror", (error) =>
@@ -80,9 +85,7 @@ async function metrics(page) {
       readState: summary?.getAttribute("data-read-state"),
       pending: pending?.textContent ?? null,
       energy: layer?.getAttribute("data-mining-energy") ?? null,
-      animations: layer
-        ? layer.getAnimations({ subtree: true }).length
-        : null,
+      animations: layer ? layer.getAnimations({ subtree: true }).length : null,
       overflowX: root.scrollWidth - root.clientWidth,
       scrollWidth: root.scrollWidth,
       innerWidth: window.innerWidth,
@@ -126,7 +129,11 @@ for (const scheme of ["light", "dark"]) {
     fullPage: true,
   });
   results.cases.push({ name, ...state });
-  assert.equal(state.live, "false", "reduced motion must not extend the estimate");
+  assert.equal(
+    state.live,
+    "false",
+    "reduced motion must not extend the estimate",
+  );
   assert.equal(state.energy, "calm");
   await context.close();
 }

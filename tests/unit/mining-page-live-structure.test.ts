@@ -45,9 +45,9 @@ describe("mining page composition after the live upgrade", () => {
     expect(existsSync("components/product/mining-amount-board.tsx")).toBe(
       false,
     );
-    expect(existsSync("components/product/mining-amount-board.module.css")).toBe(
-      false,
-    );
+    expect(
+      existsSync("components/product/mining-amount-board.module.css"),
+    ).toBe(false);
     expect(summaryCss.match(/^\.summary\s*\{/gm)).toHaveLength(1);
   });
   it("keeps the hero layout contract", () => {

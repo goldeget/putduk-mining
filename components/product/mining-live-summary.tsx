@@ -162,8 +162,7 @@ function OwnedMiningSummary({ ownerId, initialSnapshot, authConfig }: Props) {
         autoAllowed = canAutomaticallyReadMiningSnapshot(current);
         setClock(createServerClock(current.evaluatedAt, arrivedAt));
         setSnapshot(current);
-        if (increase)
-          setSettled({ key: current.evaluatedAt, krw: increase });
+        if (increase) setSettled({ key: current.evaluatedAt, krw: increase });
         setReadState("fresh");
       } catch {
         if (!disposed && !blocked && verified) {

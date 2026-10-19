@@ -172,20 +172,12 @@
 
 .progress progress::-webkit-progress-value {
   border-radius: var(--radius-full);
-  background: linear-gradient(
-    90deg,
-    var(--brand-strong),
-    var(--brand-primary)
-  );
+  background: linear-gradient(90deg, var(--brand-strong), var(--brand-primary));
 }
 
 .progress progress::-moz-progress-bar {
   border-radius: var(--radius-full);
-  background: linear-gradient(
-    90deg,
-    var(--brand-strong),
-    var(--brand-primary)
-  );
+  background: linear-gradient(90deg, var(--brand-strong), var(--brand-primary));
 }
 
 .progress small {

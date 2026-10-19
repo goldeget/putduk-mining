@@ -51,11 +51,11 @@ describe("server-side projection profile", () => {
     ["stopped", { status: "STOPPED" as const }],
     ["accrual too small to extrapolate", { pendingMicroKrw: "5000" }],
     ["no remaining capacity", { remainingMicroKrw: "0" }],
+    ["empty window", { acceptedCursorAt: "2026-10-13T00:01:40.000000Z" }],
     [
-      "empty window",
-      { acceptedCursorAt: "2026-10-13T00:01:40.000000Z" },
+      "cursor after evaluation",
+      { acceptedCursorAt: "2026-10-13T00:02:00.000000Z" },
     ],
-    ["cursor after evaluation", { acceptedCursorAt: "2026-10-13T00:02:00.000000Z" }],
     ["cycle already ended", { cycleEnd: "2026-10-13T00:01:40.000000Z" }],
     ["bad carry denominator", { carry: { numerator: "0", denominator: "0" } }],
     ["non-integer pending", { pendingMicroKrw: "1e3" }],
@@ -74,9 +74,9 @@ describe("server-side projection profile", () => {
   it("validates a wire projection strictly", () => {
     expect(isMiningLiveProjection(projection)).toBe(true);
     expect(isMiningLiveProjection({ ...projection, rate: "1" })).toBe(false);
-    expect(isMiningLiveProjection({ ...projection, accruedMicroKrw: "0" })).toBe(
-      false,
-    );
+    expect(
+      isMiningLiveProjection({ ...projection, accruedMicroKrw: "0" }),
+    ).toBe(false);
     expect(isMiningLiveProjection({ ...projection, windowMicros: "1.5" })).toBe(
       false,
     );
@@ -152,7 +152,9 @@ describe("server clock anchoring", () => {
   });
   it("rejects an unparseable server instant or monotonic anchor", () => {
     expect(createServerClock("2026-10-13T00:01:40Z", 1)).toBeNull();
-    expect(createServerClock("2026-10-13T00:01:40.000000Z", Number.NaN)).toBeNull();
+    expect(
+      createServerClock("2026-10-13T00:01:40.000000Z", Number.NaN),
+    ).toBeNull();
   });
   it("is independent of the device date, timezone and manual clock changes", () => {
     const wrongDevice = vi.spyOn(Date, "now").mockImplementation(() => {
@@ -212,9 +214,9 @@ describe("fixed truncated amount text", () => {
 describe("truthful settlement cue", () => {
   const before = { stateRevision: "10", committedKrw: "12" };
   it("fires only for a newer accepted receipt with more committed KRW", () => {
-    expect(settlementCueKrw(before, { stateRevision: "11", committedKrw: "15" })).toBe(
-      "3",
-    );
+    expect(
+      settlementCueKrw(before, { stateRevision: "11", committedKrw: "15" }),
+    ).toBe("3");
   });
   it.each([
     ["initial mount", null, { stateRevision: "11", committedKrw: "15" }],

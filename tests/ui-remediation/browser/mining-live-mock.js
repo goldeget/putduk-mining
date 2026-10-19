@@ -15,9 +15,7 @@ const cycleStartMs = loadedAt - 18 * 86_400_000;
 const cycleEndMs = cycleStartMs + 30 * 86_400_000;
 
 function instant(milliseconds) {
-  return new Date(milliseconds)
-    .toISOString()
-    .replace(/\.(\d{3})Z$/, ".$1000Z");
+  return new Date(milliseconds).toISOString().replace(/\.(\d{3})Z$/, ".$1000Z");
 }
 
 export const fixtureOwner = parameters.get("owner") ?? "fixture-owner";
@@ -26,8 +24,7 @@ export const fixtureOwner = parameters.get("owner") ?? "fixture-owner";
 export function buildFixtureSnapshot(now = Date.now()) {
   const settled = parameters.has("settle") && now - loadedAt > 25_000;
   const cursorMs = settled ? loadedAt + 25_000 : loadedAt - 100_000;
-  const pending =
-    (RATE_MICRO_KRW_PER_SECOND * BigInt(now - cursorMs)) / 1000n;
+  const pending = (RATE_MICRO_KRW_PER_SECOND * BigInt(now - cursorMs)) / 1000n;
   const used = USED_BEFORE_PENDING_MICRO_KRW + pending;
   const remaining = CAPACITY_MICRO_KRW - used;
   const base = {

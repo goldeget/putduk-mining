@@ -403,9 +403,7 @@ describe("server-derived live estimate", () => {
   const stable = () =>
     host.querySelector("dl dd > span:not([aria-hidden])")!.textContent!;
   const live = () =>
-    host
-      .querySelector("[data-mining-live-summary]")
-      ?.getAttribute("data-live");
+    host.querySelector("[data-mining-live-summary]")?.getAttribute("data-live");
   const micro = (text: string) =>
     BigInt(text.replace("원", "").replace(".", "").replaceAll(",", "")) * 100n;
 
