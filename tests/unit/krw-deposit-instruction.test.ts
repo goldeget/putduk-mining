@@ -114,10 +114,13 @@ describe("KRW deposit instruction (operator configuration)", () => {
     ).toBe("deposit-amount");
   });
 
-  it("says plainly that no account is shown yet when it is not configured", () => {
+  it("asks the member to contact the operator when no account is configured", () => {
     const html = renderToStaticMarkup(createElement(DepositForm, {}));
     expect(html).toContain('data-krw-instruction="missing"');
-    expect(html).toContain("입금 계좌를 준비하고 있어요");
+    expect(html).toContain("담당자에게 문의해 주세요.");
+    expect(html).not.toContain("입금 계좌를 준비하고 있어요");
+    expect(html).not.toContain("계좌가 보이면");
+    expect(html).not.toMatch(/\d{3,}-\d{2,}-\d{4,}/);
     expect(html).not.toContain('data-krw-instruction="ready"');
   });
 

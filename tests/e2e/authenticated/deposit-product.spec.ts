@@ -310,7 +310,21 @@ test("keeps USDT submission closed when no instruction is active", async ({
   await withActiveUsdtInstructions(operator.userId, [], async () => {
     await loginAsMember(page, member, "/wallet/deposit");
     await openDeposit(page, "usdt");
-    await expect(page.getByText("입금 안내를 준비하고 있어요.")).toBeVisible();
+    const usdtRequest = page.getByRole("region", {
+      name: "USDT 수동 입금 신청",
+    });
+    await expect(
+      usdtRequest
+        .getByText("담당자에게 문의해 주세요.", { exact: true })
+        .first(),
+    ).toBeVisible();
+    await expect(page.getByText("입금 안내를 준비하고 있어요")).toHaveCount(0);
+    await expect(page.getByText("안내 준비 중", { exact: true })).toHaveCount(
+      0,
+    );
+    await expect(
+      page.getByText("입금 안내 준비 중", { exact: true }),
+    ).toHaveCount(0);
     await expect(page.getByLabel("네트워크")).toBeDisabled();
     await expect(page.locator("#usdt-deposit-tx")).toBeDisabled();
     await expect(page.locator("#usdt-deposit-amount")).toBeDisabled();
