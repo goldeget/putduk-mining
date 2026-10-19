@@ -1,6 +1,5 @@
 .amount {
-  display: inline-flex;
-  align-items: baseline;
+  display: inline-block;
   white-space: nowrap;
   font-variant-numeric: tabular-nums lining-nums;
   font-feature-settings: "tnum" 1;

@@ -39,7 +39,7 @@
     100deg,
     transparent 0%,
     rgb(255 236 190 / 0%) 18%,
-    rgb(255 236 190 / 20%) 50%,
+    rgb(255 236 190 / 30%) 50%,
     rgb(152 206 239 / 0%) 82%,
     transparent 100%
   );
@@ -50,11 +50,11 @@
 
 .mote {
   bottom: 12%;
-  width: 3px;
-  height: 3px;
+  width: 4px;
+  height: 4px;
   border-radius: 50%;
   background: #f2d9a8;
-  box-shadow: 0 0 6px 1px rgb(239 201 135 / 55%);
+  box-shadow: 0 0 8px 2px rgb(239 201 135 / 60%);
   opacity: 0;
   animation: energy-rise var(--mote-duration, 7s) linear infinite;
   animation-delay: var(--mote-delay, 0s);

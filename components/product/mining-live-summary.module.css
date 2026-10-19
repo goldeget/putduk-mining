@@ -24,10 +24,18 @@
 
 .summary .amounts > div {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: baseline;
-  gap: 1rem;
+  gap: 0.25rem 1rem;
   min-width: 0;
+}
+
+/* Long exact amounts drop under their label at large text sizes, never clip. */
+.summary .amounts > div:not(.pending) dd {
+  max-width: 100%;
+  margin-left: auto;
+  overflow-wrap: anywhere;
 }
 
 .summary .amounts dt,
@@ -164,6 +172,20 @@
 
 .progress progress::-webkit-progress-value {
   border-radius: var(--radius-full);
+  background: linear-gradient(
+    90deg,
+    var(--brand-strong),
+    var(--brand-primary)
+  );
+}
+
+.progress progress::-moz-progress-bar {
+  border-radius: var(--radius-full);
+  background: linear-gradient(
+    90deg,
+    var(--brand-strong),
+    var(--brand-primary)
+  );
 }
 
 .progress small {
@@ -186,17 +208,6 @@
   clip-path: inset(50%);
   white-space: nowrap;
   border: 0;
-}
-
-@media (max-width: 360px) {
-  .summary .amounts > div:not(.pending) {
-    flex-wrap: wrap;
-    gap: 0.25rem;
-  }
-
-  .summary .amounts > div:not(.pending) dd {
-    margin-left: auto;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
