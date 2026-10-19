@@ -150,6 +150,8 @@ describe("approved shared mining stage", () => {
     const image = host.querySelector("img")!;
     expect(section.dataset.sceneFamily).toBe("");
     expect(section.dataset.sceneArt).toBe("ready");
+    expect(section.dataset.miningRunning).toBe("true");
+    expect(section.dataset.motion).toBe("ambient");
     expect(section.getAttribute("aria-label")).toBe(approved.a11yLabelKo);
     expect(image.getAttribute("alt")).toBe("");
     expect(image.getAttribute("src")).toBe(approved.master!.assetPath);
@@ -189,6 +191,22 @@ describe("approved shared mining stage", () => {
     await render({ reducedMotion: true });
     expect(host.querySelector("canvas")).toBeNull();
     expect(host.querySelector("img")).toBe(image);
+    expect(host.querySelector("section")!.dataset.motion).toBe("static");
+    expect(host.querySelector("section")!.dataset.miningRunning).toBe("true");
+  });
+
+  it("stays static for a running session when the browser reduces motion", async () => {
+    vi.stubGlobal("matchMedia", (query: string) => ({
+      matches: query.includes("prefers-reduced-motion"),
+      media: query,
+      addEventListener: () => undefined,
+      removeEventListener: () => undefined,
+    }));
+    await render();
+    const section = host.querySelector("section")!;
+    expect(section.dataset.miningRunning).toBe("true");
+    expect(section.dataset.motion).toBe("static");
+    expect(host.querySelector("canvas")).toBeNull();
   });
 
   it("keeps real HTML controls independent from the decorative image", async () => {

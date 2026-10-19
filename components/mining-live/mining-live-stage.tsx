@@ -6,6 +6,7 @@ import {
   useEffect,
   useRef,
   useState,
+  useSyncExternalStore,
   type CSSProperties,
   type ReactNode,
 } from "react";
@@ -250,6 +251,31 @@ function ApprovedArt({
   );
 }
 
+const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
+
+function subscribeToReducedMotion(onStoreChange: () => void) {
+  if (typeof window.matchMedia !== "function") return () => undefined;
+  const query = window.matchMedia(REDUCED_MOTION_QUERY);
+  query.addEventListener("change", onStoreChange);
+  return () => query.removeEventListener("change", onStoreChange);
+}
+
+/** Missing matchMedia stays decorative so jsdom tests keep the explicit prop. */
+function browserPrefersReducedMotion() {
+  return (
+    typeof window.matchMedia === "function" &&
+    window.matchMedia(REDUCED_MOTION_QUERY).matches
+  );
+}
+
+function useBrowserReducedMotion() {
+  return useSyncExternalStore(
+    subscribeToReducedMotion,
+    browserPrefersReducedMotion,
+    () => false,
+  );
+}
+
 function accentStyle(token: AccentToken | null): CSSProperties | undefined {
   if (!token || !ACCENT_TOKEN_SET.has(token)) {
     return undefined;
@@ -273,6 +299,8 @@ export function MiningLiveStage({
   children,
 }: MiningLiveStageProps) {
   const theme = useResolvedTheme();
+  const browserReducedMotion = useBrowserReducedMotion();
+  const keepStill = reducedMotion || browserReducedMotion;
   const variant = scene.master?.lightVariant;
   const lightScene = variant
     ? {
@@ -296,7 +324,7 @@ export function MiningLiveStage({
     scene.performance?.renderer === "canvas-2d" &&
     scene.performance?.webgl === false &&
     scene.performance.timerAdvancesValue === false &&
-    reducedMotion === false;
+    keepStill === false;
   const copy = scene.userCopyKo.trim() || SAFE_SCENE_COPY;
 
   return (
