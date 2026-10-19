@@ -3652,7 +3652,7 @@
     "tests/e2e/authenticated/mockup-reference-menu.spec.ts": "e015ece80549125bc308f429b56d9c62cd9eaf9de395a1eaa25e0308ca2d6439",
     "tests/e2e/authenticated/mockup-reference-ai.spec.ts": "6451c9d2a82569d06893673a1a818f4690d2355450b0074c4214217fe847d276",
     "vite.config.ts": "8c247377b94d52dade2f2e12bbb88e3993b6fa5483ce3862fd3060020f4827c1",
-    "cloudflare.config.ts": "6acb42afd984d80fd38023b82552d9b93751ffaaa39c65c91b9fb16c25e3d792",
+    "cloudflare.config.ts": "dc9d089d37ed63c83729870883b51f89312b94ea9280afaea95f96e4968cc796",
     "apps/admin/vite.config.ts": "8c247377b94d52dade2f2e12bbb88e3993b6fa5483ce3862fd3060020f4827c1",
     "apps/admin/cloudflare.config.ts": "161616c0d3ab6edc72a6cb8d2b31f3f028f29f49d1b41873f9bee369f453b7e5"
   },

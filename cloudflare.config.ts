@@ -11,7 +11,20 @@ export default defineConfig({
     assets: {
       htmlHandling: "none",
       notFoundHandling: "none",
-      runWorkerFirst: ["/*", "!/_next/static/*", "!/*/_next/static/*"],
+      // Public files are already in the asset bundle. Worker-first routing
+      // returns vinext's empty static-file signal for them, so the browser
+      // receives HTTP 200 with no image bytes. Serve those files from the
+      // asset binding, the same way hashed /_next/static files are served.
+      runWorkerFirst: [
+        "/*",
+        "!/_next/static/*",
+        "!/*/_next/static/*",
+        "!/brand/*",
+        "!/ranks/*",
+        "!/sw.js",
+        "!/putduk-mining-indexnow-v1.txt",
+        "!/README.md",
+      ],
     },
   }),
 });
