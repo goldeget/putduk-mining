@@ -54,10 +54,15 @@ export async function UsdtInstructionPanel() {
             return (
               <div key={network}>
                 <dt>{network}</dt>
-                <dd className="mono">
-                  {row
-                    ? `${row.deposit_address} (버전 ${row.version}, ${formatKst(row.created_at)})`
-                    : "설정 안 됨"}
+                <dd>
+                  {row ? (
+                    <>
+                      <span className="mono">{row.deposit_address}</span>
+                      {` (버전 ${row.version}, ${formatKst(row.created_at)})`}
+                    </>
+                  ) : (
+                    "설정 안 됨"
+                  )}
                 </dd>
               </div>
             );
