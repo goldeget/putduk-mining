@@ -160,9 +160,9 @@ test("L1 selected GPU art is responsive without fabricating session rewards", as
     // Reduced motion, later in this test, and a stopped session stay static.
     await expect(stage).toHaveAttribute("data-mining-running", "true");
     await expect(stage).toHaveAttribute("data-motion", "ambient");
-    await expect(
-      stage.locator("canvas:not([aria-hidden='true'])"),
-    ).toHaveCount(0);
+    await expect(stage.locator("canvas:not([aria-hidden='true'])")).toHaveCount(
+      0,
+    );
     const records = [];
     for (const width of [320, 390, 834, 1440]) {
       await memberPage.setViewportSize({
