@@ -3470,7 +3470,7 @@
     "tests/unit/home-world-state.test.ts": "b30d85a3d8edf6fa9094a83d3665a33247bd8a4234178c676f702be110a30a2d",
     "tests/unit/korean-copy-audit.test.ts": "1d03304b4986dbf6bb47aeef61fdac910d074573d1b7fa2d2d58f30aad18816e",
     "tests/unit/korean-feedback-message.test.ts": "a78557175d1a660944ac30d9599b3c146697af47493c91f57bfc0c95f773909b",
-    "tests/unit/krw-deposit-instruction.test.ts": "eb18a44f8c75d61b8ff19dfcf9c3a9a4061d9e67fdfc00f2b085e1fbc8887fe8",
+    "tests/unit/krw-deposit-instruction.test.ts": "329ee1bea8a343a58193ea11ee45cf8348559fa0a3f614981177c383fce3ddde",
     "tests/unit/kyc-claim-contract.test.ts": "255c1febecaf02e8848585b1df4dca7c1097e80f9d2dd6058a96bf95b05c70a9",
     "tests/unit/kyc-client-deadline.test.ts": "920b889961ffb1e1f7a44583d55d4a1b0d03e492200239de6681f6566dbc7a8e",
     "tests/unit/kyc-evidence-contract.test.ts": "02349eafe6ba48027a5790d17756764e802a3a9546d7a763a3eae5f34a1deb47",
