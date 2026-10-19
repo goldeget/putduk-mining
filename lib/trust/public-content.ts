@@ -1,3 +1,5 @@
+import { LEGAL_DOCUMENTS } from "./legal-content";
+
 export const TRUST_CONTENT_VERSION = "2026.09";
 export const TRUST_LAST_UPDATED = "2026-09-26";
 
@@ -86,6 +88,8 @@ export type TrustSection = {
 };
 
 export type TrustDocument = {
+  /** 가입 화면이 기록하는 동의 버전. 법적 문서에만 있다. */
+  consentVersion?: string;
   eyebrow: string;
   factKeys?: readonly string[];
   path: string;
@@ -511,6 +515,8 @@ export const TRUST_DOCUMENTS: readonly TrustDocument[] = [
       },
     ],
   },
+  // 이용약관과 개인정보 처리방침은 legal-content.ts가 단일 원천이다.
+  ...LEGAL_DOCUMENTS,
 ] as const;
 
 const DOCUMENT_BY_PATH = new Map(

@@ -11,6 +11,7 @@ describe("AI display configuration boundary", () => {
     vi.stubEnv("AI_PROVIDER", "nvidia");
     vi.stubEnv("AI_API_KEY", "test-only-key-never-sent-to-a-provider");
     vi.stubEnv("AI_MODEL_LOW_COST", "openai/gpt-oss-20b");
+    vi.stubEnv("AI_PROVIDER_DISPATCH_ENABLED", "true");
     expect(getAiAvailability()).toMatchObject({ providerConfigured: true });
     expect(Object.keys(getAiAvailability()).sort()).toEqual([
       "knowledgeVersion",
@@ -23,10 +24,34 @@ describe("AI display configuration boundary", () => {
     vi.stubEnv("AI_API_KEY", "");
     vi.stubEnv("NVIDIA_API_KEY", "test-only-key-never-sent-to-a-provider");
     vi.stubEnv("AI_MODEL_LOW_COST", "openai/gpt-oss-20b");
+    vi.stubEnv("AI_PROVIDER_DISPATCH_ENABLED", "true");
     vi.stubEnv("APP_ENV", "development");
     expect(getAiAvailability().providerConfigured).toBe(true);
     vi.stubEnv("APP_ENV", "production");
     expect(getAiAvailability().providerConfigured).toBe(false);
+  });
+
+  it.each([undefined, "", "false", "TRUE", "1", "yes", " true"])(
+    "a complete key tuple without the exact owner switch (%j) is not configured, even in staging",
+    (value) => {
+      vi.stubEnv("AI_PROVIDER", "nvidia");
+      vi.stubEnv("AI_API_KEY", "test-only-key-never-sent-to-a-provider");
+      vi.stubEnv("AI_MODEL_LOW_COST", "openai/gpt-oss-20b");
+      vi.stubEnv("APP_ENV", "staging");
+      vi.stubEnv("AI_PROVIDER_DISPATCH_ENABLED", value);
+      expect(getAiAvailability().providerConfigured).toBe(false);
+    },
+  );
+
+  it("the owner switch cannot admit production", () => {
+    vi.stubEnv("AI_PROVIDER", "nvidia");
+    vi.stubEnv("AI_API_KEY", "test-only-key-never-sent-to-a-provider");
+    vi.stubEnv("AI_MODEL_LOW_COST", "openai/gpt-oss-20b");
+    vi.stubEnv("AI_PROVIDER_DISPATCH_ENABLED", "true");
+    vi.stubEnv("APP_ENV", "production");
+    expect(getAiAvailability().providerConfigured).toBe(false);
+    vi.stubEnv("APP_ENV", "staging");
+    expect(getAiAvailability().providerConfigured).toBe(true);
   });
 
   it("rejects conflicting NVIDIA aliases and unapproved primary models", () => {

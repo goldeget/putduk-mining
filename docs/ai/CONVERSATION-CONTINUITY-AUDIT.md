@@ -9,12 +9,12 @@ Mode: `OWNER_ACCOUNT` (`domain/ai/continuity.ts`).
 | Owner conversation/body persistence | Existing `ai_conversations` / `ai_messages`, forced owner RLS and server writes; best-effort secret redaction |
 | Source/tool/feedback persistence | Existing `ai_answer_sources`, `ai_tool_calls`, `ai_feedback` |
 | Refresh/reopen | Browser reads owner conversations and messages, including available source/tool receipts |
-| History window | Latest 40 conversations and 120 message rows; omitted earlier rows disclosed; full-history pagination absent |
+| History window | Initial page: latest 40 conversations and 120 message rows. Stable conversation/message cursors load earlier pages (`lib/ai/member-conversation-read.ts`; unit evidence `tests/unit/ai-history-pagination.test.ts`, `tests/unit/ai-shared-session.test.ts`). Browser-level pagination acceptance remains open |
 | Historical financial truth | Save time is displayed separately; current state requires a new question; original lookup `asOf` is not stored |
 | Failure restoration | Failed tool receipts restore an error/retry state; missing or inconsistent evidence remains unverified |
 | Owner changes | Active answers are cancelled; delayed history/list results are ignored after owner invalidation or observer replacement |
 | Summary schema | Present in `20261005064600_ai_conversation_summary_storage.sql`; no generation/summary transmission enabled |
-| Provider memory | Only the current redacted question is sent; stored conversations are not appended to provider input |
+| Provider memory | Bounded owner history is sent on provider turns that belong to an existing own conversation: `app/api/v1/ai/chat/route.ts` reads it under the member's RLS client and `lib/ai/provider-history.ts` selects at most 20 recent safe pairs within 48,000 UTF-8 bytes (static and tool turns send no history). Redaction is best effort. Real-provider transmission/retention acceptance is UNVERIFIED |
 | Shared provider cache | Disabled for all free-form member turns until a public-only corpus/input selector is approved and verified |
 
 Conversation writes remain sequential. The existing recovery patch verifies

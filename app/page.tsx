@@ -461,6 +461,11 @@ export default function HomePage() {
           </span>
         </div>
         <p className="ko-copy">작은 행동이 더 나은 내일을 만듭니다.</p>
+        <nav aria-label="약관과 방침">
+          <Link href="/terms">이용약관</Link>
+          {" · "}
+          <Link href="/privacy">개인정보 처리방침</Link>
+        </nav>
         <span>© 2026 PUTDUK</span>
       </footer>
     </main>

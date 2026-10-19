@@ -9,6 +9,7 @@ import {
 } from "@/domain/ai/member-help";
 import { matchesAiPresentationOwner } from "@/domain/ai/presentation-owner";
 import { readAiCache, writeAiCache } from "@/lib/ai/cache";
+import { isAiProviderDispatchAdmitted } from "@/lib/ai/dispatch-admission";
 import {
   appendOwnMemberTurn,
   createSupabaseMemberConversationPort,
@@ -36,6 +37,8 @@ import { apiError } from "@/lib/api/http";
 import { readBoundedJsonBody } from "@/lib/api/request-body";
 import { getVerifiedIdentity } from "@/lib/auth/session";
 import { getServerEnv } from "@/lib/env/server";
+import { assertComponentActive } from "@/lib/safe-mode/assert-component-active.server";
+import { SAFE_MODE_MEMBER_COPY } from "@/lib/safe-mode/app-guard";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { TRUST_CONTENT_VERSION } from "@/lib/trust/public-content";
 
@@ -124,6 +127,20 @@ export async function POST(request: Request) {
     });
   }
 
+  // 안전 모드(GLOBAL, AI)는 서버에서 확인한다. 읽지 못하면 답변을 시작하지 않는다.
+  const aiGate = await assertComponentActive("AI");
+  if (!aiGate.ok) {
+    return apiError({
+      code:
+        aiGate.reason === "PAUSED" ? "AI_SAFE_MODE_ACTIVE" : "AI_STATE_UNKNOWN",
+      message:
+        aiGate.reason === "PAUSED"
+          ? SAFE_MODE_MEMBER_COPY.AI.paused
+          : SAFE_MODE_MEMBER_COPY.AI.unavailable,
+      status: 503,
+    });
+  }
+
   const body = await readBoundedJsonBody(request, MAX_BODY_BYTES);
   if (!body.ok) {
     return apiError({
@@ -155,12 +172,17 @@ export async function POST(request: Request) {
   });
   const aiContext = aiPlan.context;
   const aiRoute = aiPlan.route;
-  const providerConfigured = Boolean(
-    env.AI_PROVIDER === "nvidia" &&
-    env.AI_API_KEY &&
-    env.AI_MODEL_LOW_COST === NVIDIA_MODELS[0] &&
-    env.APP_ENV !== "production",
-  );
+  // A key alone never admits a real provider call. The owner's explicit
+  // AI_PROVIDER_DISPATCH_ENABLED switch is OFF by default in every environment,
+  // and production stays blocked here regardless of the switch.
+  const providerConfigured = isAiProviderDispatchAdmitted({
+    apiKey: env.AI_API_KEY,
+    appEnv: env.APP_ENV,
+    expectedModel: NVIDIA_MODELS[0],
+    model: env.AI_MODEL_LOW_COST,
+    provider: env.AI_PROVIDER,
+    switchValue: env.AI_PROVIDER_DISPATCH_ENABLED,
+  });
   const selectedModel =
     aiRoute.kind === "static"
       ? STATIC_MODEL_KEY

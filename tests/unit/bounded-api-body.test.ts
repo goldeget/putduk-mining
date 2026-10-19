@@ -12,6 +12,9 @@ import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 vi.mock("@/lib/auth/session", () => ({ getVerifiedIdentity: vi.fn() }));
 vi.mock("@/lib/env/server", () => ({ getServerEnv: vi.fn() }));
+vi.mock("@/lib/safe-mode/assert-component-active.server", () => ({
+  assertComponentActive: async () => ({ ok: true }),
+}));
 vi.mock("@/lib/supabase/admin", () => ({ createSupabaseAdminClient: vi.fn() }));
 
 const ORIGIN = "https://mining.putduk.com";

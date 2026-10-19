@@ -6,11 +6,15 @@ import { z } from "zod";
 
 import { recordProductionAnalyticsEvent } from "@/lib/analytics/record-event.server";
 import { getPublicEnv } from "@/lib/env/public";
+import { SAFE_MODE_MEMBER_COPY } from "@/lib/safe-mode/app-guard";
+import { assertComponentActive } from "@/lib/safe-mode/assert-component-active.server";
+import { LEGAL_CONSENT_VERSIONS } from "@/lib/trust/legal-content";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
-const SERVICE_TERMS_VERSION = "TERMS-KO-2026-09-27";
-const PRIVACY_VERSION = "PRIVACY-KO-2026-09-27";
+// 약관·방침 본문(/terms, /privacy)과 같은 원천에서 버전을 가져온다.
+const SERVICE_TERMS_VERSION = LEGAL_CONSENT_VERSIONS.serviceTerms;
+const PRIVACY_VERSION = LEGAL_CONSENT_VERSIONS.privacy;
 const MARKETING_VERSION = "MARKETING-KO-2026-09-27";
 
 const signupSchema = z
@@ -151,6 +155,19 @@ export async function signupAction(
     return {
       fieldErrors: toFieldErrors(parsed.error),
       message: "입력한 정보를 다시 확인해 주세요.",
+      status: "error",
+    };
+  }
+
+  // 서버에서 안전 모드(GLOBAL, SIGNUP)를 먼저 확인한다. 읽지 못하면 가입을 열지 않는다.
+  const signupGate = await assertComponentActive("SIGNUP");
+  if (!signupGate.ok) {
+    return {
+      fieldErrors: {},
+      message:
+        signupGate.reason === "PAUSED"
+          ? SAFE_MODE_MEMBER_COPY.SIGNUP.paused
+          : SAFE_MODE_MEMBER_COPY.SIGNUP.unavailable,
       status: "error",
     };
   }

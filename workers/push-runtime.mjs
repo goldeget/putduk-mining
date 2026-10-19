@@ -6,6 +6,7 @@ import {
   assertLocalApiUrl,
   loadJobLocalAllowlist,
 } from "../scripts/capture-local-supabase-env.mjs";
+import { readSafeModeDecision } from "../lib/safe-mode/component-pause.mjs";
 import { processPushDeliveryBatch } from "./push-delivery.mjs";
 
 export function approvedLocalPushConfig(env = process.env) {
@@ -89,6 +90,22 @@ export async function runApprovedLocalPush({
     createClient(config.url, config.secret, {
       auth: { autoRefreshToken: false, persistSession: false },
     });
+  // 안전 모드(GLOBAL, NOTIFICATION)는 claim 전에 서버 쪽에서 확인한다.
+  // 멈춤이면 아무것도 claim하지 않는다. 읽지 못하면 보내지 않고 실패한다.
+  const safeMode = await readSafeModeDecision(db, "NOTIFICATION");
+  if (safeMode === "PAUSED") {
+    return {
+      claimed: 0,
+      accepted: 0,
+      expired: 0,
+      retried: 0,
+      cancelled: 0,
+      failed: 0,
+      unknown: 0,
+      safeModePaused: true,
+    };
+  }
+  if (safeMode !== "ACTIVE") throw new Error("PUSH_SAFE_MODE_UNKNOWN");
   const workerId = env.PUTDUK_WORKER_ID?.trim() || `putduk-push-${process.pid}`;
   return processPushDeliveryBatch(db, {
     workerId,

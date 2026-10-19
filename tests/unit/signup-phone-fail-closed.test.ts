@@ -8,6 +8,9 @@ import {
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
+vi.mock("@/lib/safe-mode/assert-component-active.server", () => ({
+  assertComponentActive: async () => ({ ok: true }),
+}));
 vi.mock("@/lib/supabase/admin", () => ({
   createSupabaseAdminClient: vi.fn(),
 }));

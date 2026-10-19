@@ -3,6 +3,7 @@ import "server-only";
 import { z } from "zod";
 
 import { getPublicEnv } from "./public";
+import { isAiProviderDispatchSwitchOn } from "../ai/dispatch-admission";
 import {
   MEMBER_AI_MAX_REQUESTS_PER_DAY,
   MEMBER_AI_MAX_REQUESTS_PER_MINUTE,
@@ -35,6 +36,8 @@ const serverEnvSchema = z
     VAPID_PRIVATE_KEY: optionalServerString(z.string().min(20)),
     VAPID_SUBJECT: optionalServerString(z.string().startsWith("mailto:")),
     AI_PROVIDER: optionalServerString(z.enum(["openai", "nvidia"])),
+    // 명시 스위치. 어떤 값이든 읽기만 하고 "true"일 때만 켜짐으로 본다(검증 오류 없음).
+    AI_PROVIDER_DISPATCH_ENABLED: optionalServerString(z.string()),
     AI_API_KEY: optionalServerString(z.string().min(20)),
     NVIDIA_API_KEY: optionalServerString(z.string().min(20)),
     OPENROUTER_FREE_API_KEY: optionalServerString(z.string().min(20)),
@@ -133,7 +136,11 @@ const serverEnvSchema = z
 export type ServerEnv = z.infer<typeof serverEnvSchema> &
   ReturnType<typeof getPublicEnv>;
 
-/** Configuration presence only; neither provider health nor authorization. */
+/**
+ * Display gate for "a provider may answer". Needs the explicit owner switch
+ * (`AI_PROVIDER_DISPATCH_ENABLED=true`); a key alone never admits dispatch.
+ * Neither provider health nor payment authorization.
+ */
 export function hasConfiguredAiProvider(): boolean {
   const provider = serverEnvSchema.shape.AI_PROVIDER.safeParse(
     process.env.AI_PROVIDER,
@@ -154,6 +161,7 @@ export function hasConfiguredAiProvider(): boolean {
     (!process.env.AI_API_KEY ||
       !process.env.NVIDIA_API_KEY ||
       process.env.AI_API_KEY === process.env.NVIDIA_API_KEY) &&
+    isAiProviderDispatchSwitchOn(process.env.AI_PROVIDER_DISPATCH_ENABLED) &&
     process.env.APP_ENV !== "production",
   );
 }
@@ -167,6 +175,7 @@ export function getServerEnv(): ServerEnv {
     VAPID_PRIVATE_KEY: process.env.VAPID_PRIVATE_KEY,
     VAPID_SUBJECT: process.env.VAPID_SUBJECT,
     AI_PROVIDER: process.env.AI_PROVIDER,
+    AI_PROVIDER_DISPATCH_ENABLED: process.env.AI_PROVIDER_DISPATCH_ENABLED,
     AI_API_KEY: process.env.AI_API_KEY || process.env.NVIDIA_API_KEY,
     NVIDIA_API_KEY: process.env.NVIDIA_API_KEY,
     OPENROUTER_FREE_API_KEY: process.env.OPENROUTER_FREE_API_KEY,

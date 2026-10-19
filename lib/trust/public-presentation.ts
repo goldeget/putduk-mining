@@ -27,6 +27,8 @@ const DOCUMENT_LABELS: Readonly<Record<string, string>> = {
   "/faq": "자주 묻는 질문",
   "/status": "서비스 상태",
   "/changelog": "변경 안내",
+  "/terms": "이용약관",
+  "/privacy": "개인정보 처리방침",
   "/ai/about": "PUTDUK AI 소개",
   "/ai/facts": "AI의 공식 정보",
   "/ai/faq": "AI 자주 묻는 질문",
