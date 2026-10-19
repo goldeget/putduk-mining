@@ -8,18 +8,25 @@ type DeviceHints = Pick<Navigator, "hardwareConcurrency"> & {
   deviceMemory?: number;
 };
 
+/** Device hints that call for a lighter decorative motion tier. One shared rule. */
+export function isConstrainedMotionDevice(
+  device: Partial<DeviceHints>,
+): boolean {
+  return (
+    device.connection?.saveData === true ||
+    (typeof device.hardwareConcurrency === "number" &&
+      device.hardwareConcurrency > 0 &&
+      device.hardwareConcurrency <= 2) ||
+    (typeof device.deviceMemory === "number" && device.deviceMemory <= 2)
+  );
+}
+
 export function hasConstrainedMotionCapability(
   device: DeviceHints,
   reducedData: boolean,
   supportsAnimation: boolean,
 ) {
-  return (
-    reducedData ||
-    device.connection?.saveData === true ||
-    (device.hardwareConcurrency > 0 && device.hardwareConcurrency <= 2) ||
-    (typeof device.deviceMemory === "number" && device.deviceMemory <= 2) ||
-    !supportsAnimation
-  );
+  return reducedData || isConstrainedMotionDevice(device) || !supportsAnimation;
 }
 
 type AmbientSnapshot = Readonly<{ available: boolean; visible: boolean }>;

@@ -4,6 +4,8 @@ import { useState } from "react";
 
 import { useResolvedTheme } from "@/lib/design/use-resolved-theme";
 
+import { MiningEnergyLayer } from "./mining-energy-layer";
+
 /** Decorative source families require the independent producer's manifest gate before activation. */
 export const MINING_REFERENCE_ART = {
   mobileDark: {
@@ -54,7 +56,11 @@ function Artwork({
       data-scene-art={unavailable ? "unavailable" : "ready"}
       data-scene-theme={theme}
       data-mining-running={running ? "true" : "false"}
-      data-motion="static"
+      // The still master is always complete. "ambient" only means the server
+      // reported active mining and the decorative light layer is mounted; the
+      // layer itself decides whether it actually plays (visible, in view, not
+      // reduced-motion, not low-power).
+      data-motion={running && !unavailable ? "ambient" : "static"}
     >
       {!unavailable ? (
         <picture key={attempt}>
@@ -119,6 +125,7 @@ function Artwork({
           </button>
         </div>
       )}
+      {running && !unavailable ? <MiningEnergyLayer /> : null}
     </div>
   );
 }

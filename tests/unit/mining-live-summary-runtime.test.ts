@@ -121,7 +121,7 @@ describe("foreground owned mining facts", () => {
           authConfig,
         }),
       ),
-    ).not.toContain("1.234567원");
+    ).not.toContain("1.2345원");
     await mount();
     expect(amounts()).toBeNull();
     expect(mocks.fetch).not.toHaveBeenCalled();
@@ -129,7 +129,7 @@ describe("foreground owned mining facts", () => {
     expect(amounts()).toBeNull();
     expect(mocks.fetch).not.toHaveBeenCalled();
     await auth();
-    expect(amounts()?.textContent).toContain("1.234567원");
+    expect(amounts()?.textContent).toContain("1.2345원");
     expect(mocks.fetch).toHaveBeenCalledOnce();
     expect(mocks.fetch.mock.calls[0]![1]).toMatchObject({
       method: "GET",
@@ -173,7 +173,7 @@ describe("foreground owned mining facts", () => {
     expect(amounts()).not.toBeNull();
     await mount("other", { ...receipt, pendingMicroKrw: "222000000" });
     expect(amounts()).toBeNull();
-    expect(host.textContent).not.toContain("1.234567원");
+    expect(host.textContent).not.toContain("1.2345원");
     mocks.fetch.mockImplementation(async () => response(receipt, "other"));
     await auth("INITIAL_SESSION", "other");
     expect(amounts()).not.toBeNull();
@@ -212,17 +212,25 @@ describe("foreground owned mining facts", () => {
     expect(
       host.querySelector("[data-read-state]")?.getAttribute("data-read-state"),
     ).toBe("stale");
-    expect(amounts()?.textContent).toContain("1.234567원");
-    await advance(10_000);
+    expect(amounts()?.textContent).toContain("1.2345원");
+    // First bounded retry after 5s receives a reverse receipt and rejects it.
+    await advance(4_999);
     expect(mocks.fetch).toHaveBeenCalledOnce();
-    await act(async () =>
-      host.querySelector<HTMLButtonElement>("button")!.click(),
-    );
+    await advance(1);
+    expect(mocks.fetch).toHaveBeenCalledTimes(2);
     expect(amounts()?.textContent).not.toContain("999원");
-    expect(amounts()?.textContent).toContain("1.234567원");
+    expect(amounts()?.textContent).toContain("1.2345원");
     expect(
       host.querySelector("[data-read-state]")?.getAttribute("data-read-state"),
     ).toBe("stale");
+    // The second retry waits 15s, then a valid receipt restores fresh reads.
+    await advance(14_999);
+    expect(mocks.fetch).toHaveBeenCalledTimes(2);
+    await advance(1);
+    expect(mocks.fetch).toHaveBeenCalledTimes(3);
+    expect(
+      host.querySelector("[data-read-state]")?.getAttribute("data-read-state"),
+    ).toBe("fresh");
   });
   it("aborts hidden requests and performs no hidden/offline polling", async () => {
     let finish!: (response: Response) => void;
@@ -276,7 +284,7 @@ describe("foreground owned mining facts", () => {
     mocks.fetch.mockResolvedValue(response(stopped));
     await mount();
     await auth();
-    expect(amounts()?.textContent).toContain("2원");
+    expect(amounts()?.textContent).toContain("2.0000원");
     expect(host.textContent).toContain("이번 한도를 모두 사용");
     await advance(30_000);
     expect(mocks.fetch).toHaveBeenCalledOnce();
@@ -291,27 +299,37 @@ describe("foreground owned mining facts", () => {
     );
     await mount();
     await auth();
-    expect(amounts()?.textContent).toContain("2.345678원");
+    expect(amounts()?.textContent).toContain("2.3456원");
     expect(vi.getTimerCount()).toBe(1); // Only the next read, no animation frames.
   });
-  it("recovers automatic reads only after a valid manual read", async () => {
-    mocks.fetch
-      .mockResolvedValueOnce(new Response("{}", { status: 503 }))
-      .mockImplementation(async () =>
-        response({ ...receipt, evaluatedAt: "2026-10-13T00:00:01.000000Z" }),
-      );
+  it("retries a failed read three times with 5s, 15s and 30s backoff, then stops until a manual read", async () => {
+    mocks.fetch.mockImplementation(
+      async () => new Response("{}", { status: 503 }),
+    );
     await mount();
     await auth();
-    await advance(20_000);
-    expect(mocks.fetch).toHaveBeenCalledOnce();
+    expect(mocks.fetch).toHaveBeenCalledTimes(1);
+    await advance(5_000);
+    expect(mocks.fetch).toHaveBeenCalledTimes(2);
+    await advance(15_000);
+    expect(mocks.fetch).toHaveBeenCalledTimes(3);
+    await advance(30_000);
+    expect(mocks.fetch).toHaveBeenCalledTimes(4);
+    // The fourth consecutive failure ends automatic reads.
+    await advance(120_000);
+    expect(mocks.fetch).toHaveBeenCalledTimes(4);
+    mocks.fetch.mockImplementation(async () =>
+      response({ ...receipt, evaluatedAt: "2026-10-13T00:00:01.000000Z" }),
+    );
     await act(async () =>
       host.querySelector<HTMLButtonElement>("button")!.click(),
     );
+    expect(mocks.fetch).toHaveBeenCalledTimes(5);
     expect(
       host.querySelector("[data-read-state]")?.getAttribute("data-read-state"),
     ).toBe("fresh");
     await advance(10_000);
-    expect(mocks.fetch).toHaveBeenCalledTimes(3);
+    expect(mocks.fetch).toHaveBeenCalledTimes(6);
   });
   it("stops malformed same-owner reads without falsely claiming an account change", async () => {
     mocks.fetch.mockResolvedValue(
@@ -327,10 +345,13 @@ describe("foreground owned mining facts", () => {
     );
     await mount();
     await auth();
-    expect(amounts()?.textContent).toContain("1.234567원");
+    expect(amounts()?.textContent).toContain("1.2345원");
     expect(host.textContent).not.toContain("로그인 상태가 바뀌었어요");
+    // Bounded retries (5s, 15s, 30s) and then no more automatic reads.
     await advance(30_000);
-    expect(mocks.fetch).toHaveBeenCalledOnce();
+    expect(mocks.fetch).toHaveBeenCalledTimes(3);
+    await advance(120_000);
+    expect(mocks.fetch).toHaveBeenCalledTimes(4);
   });
   it("requires reopening for a new cycle and never combines cycles", async () => {
     mocks.fetch.mockResolvedValue(
@@ -361,24 +382,122 @@ describe("foreground owned mining facts", () => {
     await advance(30_000);
     expect(mocks.fetch).not.toHaveBeenCalled();
   });
-  it("animates only between confirmed targets and settles within the short transition", async () => {
+});
+
+describe("server-derived live estimate", () => {
+  const liveReceipt: MiningLiveSnapshot = {
+    ...receipt,
+    evaluatedAt: "2026-10-13T00:01:40.000000Z",
+    pendingMicroKrw: "38600",
+    usedMicroKrw: "1038600",
+    remainingMicroKrw: "8961400",
+    projection: {
+      accruedMicroKrw: "38599",
+      windowMicros: "100000000",
+      ceilingMicroKrw: "9000000",
+      horizonMicros: "120000000",
+    },
+  };
+  const visual = () =>
+    host.querySelector("dl dd [aria-hidden=true]")!.textContent!;
+  const stable = () =>
+    host.querySelector("dl dd > span:not([aria-hidden])")!.textContent!;
+  const live = () =>
+    host.querySelector("[data-mining-live-summary]")?.getAttribute("data-live");
+  const micro = (text: string) =>
+    BigInt(text.replace("원", "").replace(".", "").replaceAll(",", "")) * 100n;
+
+  it("keeps the first fetched receipt as-is, then rises from server elapsed time", async () => {
     mocks.reduced = false;
-    mocks.fetch.mockResolvedValue(
-      response({
-        ...receipt,
-        evaluatedAt: "2026-10-13T00:00:01.000000Z",
-        pendingMicroKrw: "2345678",
-      }),
-    );
+    mocks.fetch.mockImplementation(async () => response(liveReceipt));
+    await mount();
+    expect(live()).toBeUndefined();
+    await auth();
+    expect(live()).toBe("true");
+    expect(visual()).toBe("0.0386원");
+    await advance(4_000);
+    // 38,599 * 4s / 100s = 1,543 micro-KRW (truncated) on top of 38,600.
+    const risen = visual();
+    expect(micro(risen) > micro("0.0386원")).toBe(true);
+    expect(micro(risen) <= 40_143n).toBe(true);
+    // Assistive technology and the stored receipt keep the server value.
+    expect(stable()).toBe("0.0386원");
+    expect(host.textContent).toContain("이어서 보는 중");
+    expect(host.textContent).toContain("정산 전 금액은 사용 가능 잔액과");
+  });
+  it("never shows more than the horizon allows and stops repainting there", async () => {
+    mocks.reduced = false;
+    mocks.fetch
+      .mockImplementationOnce(async () => response(liveReceipt))
+      .mockImplementation(() => new Promise<Response>(() => {}));
     await mount();
     await auth();
-    await advance(176);
-    const visual = host.querySelector("dl dd [aria-hidden=true]")!.textContent!;
-    expect(visual).not.toBe("1.234567원");
-    expect(visual).not.toBe("2.345678원");
-    await advance(200);
-    expect(host.querySelector("dl dd [aria-hidden=true]")!.textContent).toBe(
-      "2.345678원",
+    await advance(130_000);
+    // 38,600 + floor(38,599 * 120 / 100) = 84,918 micro-KRW.
+    expect(visual()).toBe("0.0849원");
+    const frames = vi.getTimerCount();
+    await advance(20_000);
+    expect(visual()).toBe("0.0849원");
+    expect(vi.getTimerCount()).toBeLessThanOrEqual(frames);
+  });
+  it("does not extend a receipt when motion is reduced and shows each server value exactly", async () => {
+    mocks.reduced = true;
+    mocks.fetch.mockImplementation(async () => response(liveReceipt));
+    await mount();
+    await auth();
+    expect(live()).toBe("false");
+    await advance(5_000);
+    expect(visual()).toBe("0.0386원");
+  });
+  it("does not extend a stale receipt", async () => {
+    mocks.reduced = false;
+    mocks.fetch
+      .mockImplementationOnce(async () => response(liveReceipt))
+      .mockImplementation(async () => new Response("{}", { status: 503 }));
+    await mount();
+    await auth();
+    await advance(10_000);
+    expect(
+      host.querySelector("[data-read-state]")?.getAttribute("data-read-state"),
+    ).toBe("stale");
+    expect(live()).toBe("false");
+    expect(visual()).toBe("0.0386원");
+  });
+  it("resyncs on focus, but not for a receipt that arrived moments ago", async () => {
+    mocks.reduced = false;
+    mocks.fetch.mockImplementation(async () => response(liveReceipt));
+    await mount();
+    await auth();
+    await act(async () => window.dispatchEvent(new Event("focus")));
+    expect(mocks.fetch).toHaveBeenCalledOnce();
+    await advance(3_100);
+    await act(async () => window.dispatchEvent(new Event("focus")));
+    expect(mocks.fetch).toHaveBeenCalledTimes(2);
+    await act(async () => window.dispatchEvent(new Event("pageshow")));
+    expect(mocks.fetch).toHaveBeenCalledTimes(2);
+  });
+  it("shows a settlement indicator only for a newer receipt with more committed KRW", async () => {
+    mocks.reduced = false;
+    mocks.fetch.mockImplementation(async () => response(receipt));
+    await mount();
+    await auth();
+    expect(host.querySelector("p[data-settlement-cue]")).toBeNull();
+    mocks.fetch.mockImplementation(async () =>
+      response({
+        ...receipt,
+        stateRevision: "11",
+        evaluatedAt: "2026-10-13T00:00:05.000000Z",
+        committedKrw: "15",
+      }),
     );
+    await act(async () =>
+      host.querySelector<HTMLButtonElement>("button")!.click(),
+    );
+    expect(host.querySelector("p[data-settlement-cue]")?.textContent).toContain(
+      "3원이 확정 채굴에 반영됐어요",
+    );
+    // The indicator is transient and not tied to the poll timer.
+    await advance(8_000);
+    expect(host.querySelector("p[data-settlement-cue]")).toBeNull();
   });
 });

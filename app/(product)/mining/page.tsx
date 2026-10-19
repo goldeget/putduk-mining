@@ -212,7 +212,7 @@ export default async function MiningPage() {
               scene={projectStageInput(selectedArt.scene)}
               presentation="backdrop"
               className={styles.artwork}
-              running={false}
+              running={presentation.running}
             />
           ) : (
             <MiningReferenceScene
@@ -224,7 +224,7 @@ export default async function MiningPage() {
           <header className={styles.heroCopy}>
             <div className={styles.brand}>
               <MetalBrand />
-              <h1 aria-label="채굴 월드">퍼뜩 채굴</h1>
+              <h1>퍼뜩 채굴</h1>
             </div>
             <p>걸음이 가치예요.</p>
           </header>
@@ -236,7 +236,7 @@ export default async function MiningPage() {
               label={presentation.label}
               tone={presentation.tone}
             />
-            <h2 id="world-hero-title">{presentation.title}</h2>
+            <h2>{presentation.title}</h2>
             <p>{presentation.lead}</p>
             {selectedArt ? (
               <p data-member-scene-binding="confirmed-allocation">
