@@ -10,51 +10,25 @@ import {
 } from "@playwright/test";
 import { createConfirmedMember } from "../fixtures/local-auth";
 import {
+  classifyAiTransportFailure,
+  readAiAnswerAck,
+} from "./helpers/ai-ack-diagnostics";
+import {
   dismissGuidedQuestIfPresent,
   loginAsMember,
 } from "./helpers/member-session";
 
-/** Read only the genuine response ACK; assertion output contains no transcript. */
-async function durableAnswerAck(response: Response) {
-  const summary = {
-    status: response.status(),
-    bodyAvailable: false,
-    doneCount: 0,
-    doneSaved: false,
-    conversationIdPresent: false,
-    assistantMessageIdPresent: false,
-  };
-  try {
-    const text = await response.text();
-    if (text.length > 65_536) return summary;
-    summary.bodyAvailable = true;
-    for (const line of text.split("\n")) {
-      if (!line.startsWith("data:")) continue;
-      let value: unknown;
-      try {
-        value = JSON.parse(line.slice(5));
-      } catch {
-        continue;
-      }
-      if (!value || typeof value !== "object" || Array.isArray(value)) continue;
-      const event = value as Record<string, unknown>;
-      if (event.type !== "done") continue;
-      summary.doneCount += 1;
-      summary.doneSaved = event.saved === true;
-      summary.conversationIdPresent = typeof event.conversationId === "string";
-      summary.assistantMessageIdPresent =
-        typeof event.assistantMessageId === "string";
-    }
-  } catch {
-    // A closed navigation/connection must fail the boolean ACK assertion.
-  }
-  return summary;
-}
-
 /** Bounded metadata only: no answer body, identifier, credential or URL query. */
 function observeHistoryRestoration(page: Page) {
+  const startedAt = performance.now();
+  const elapsedMs = () =>
+    Math.max(0, Math.round(performance.now() - startedAt));
   const records: Record<string, unknown>[] = [];
   const pending = new Set<Promise<void>>();
+  function track(task: Promise<void>) {
+    pending.add(task);
+    void task.finally(() => pending.delete(task));
+  }
   function endpoint(urlText: string) {
     const url = new URL(urlText);
     if (!["127.0.0.1", "localhost"].includes(url.hostname)) return null;
@@ -84,9 +58,34 @@ function observeHistoryRestoration(page: Page) {
       port: target.port,
       method: response.request().method(),
       status: response.status(),
+      phase: "HEADERS",
+      elapsedMs: elapsedMs(),
     };
     records.push(record);
-    if (target.name === "ai_chat") return;
+    if (target.name === "ai_chat") {
+      // Completion metadata only: this does not consume or clone the body.
+      track(
+        (async () => {
+          try {
+            const failure = await response.finished();
+            record.responseFinished = {
+              outcome: failure ? "FINISH_ERROR" : "FINISHED",
+              failureCategory: failure
+                ? classifyAiTransportFailure(failure)
+                : null,
+              elapsedMs: elapsedMs(),
+            };
+          } catch (failure) {
+            record.responseFinished = {
+              outcome: "FINISH_REJECTED",
+              failureCategory: classifyAiTransportFailure(failure),
+              elapsedMs: elapsedMs(),
+            };
+          }
+        })(),
+      );
+      return;
+    }
     const task = (async () => {
       try {
         const payload: unknown = await response.json();
@@ -116,8 +115,7 @@ function observeHistoryRestoration(page: Page) {
         record.bodyMetadata = "UNAVAILABLE";
       }
     })();
-    pending.add(task);
-    void task.finally(() => pending.delete(task));
+    track(task);
   }
   function observeFailure(request: Request) {
     const target = endpoint(request.url());
@@ -127,14 +125,29 @@ function observeHistoryRestoration(page: Page) {
       port: target.port,
       method: request.method(),
       status: null,
-      errorCode: safeCode(request.failure()?.errorText) ?? "NETWORK_FAILURE",
+      phase: "REQUEST_FAILED",
+      elapsedMs: elapsedMs(),
+      failureCategory: classifyAiTransportFailure(request.failure()?.errorText),
+    });
+  }
+  function observeFinished(request: Request) {
+    const target = endpoint(request.url());
+    if (!target || records.length >= 24) return;
+    records.push({
+      endpoint: target.name,
+      port: target.port,
+      method: request.method(),
+      phase: "REQUEST_FINISHED",
+      elapsedMs: elapsedMs(),
     });
   }
   page.on("response", observeResponse);
   page.on("requestfailed", observeFailure);
-  return async (info: TestInfo) => {
+  page.on("requestfinished", observeFinished);
+  async function finish(info: TestInfo) {
     page.off("response", observeResponse);
     page.off("requestfailed", observeFailure);
+    page.off("requestfinished", observeFinished);
     let timer: ReturnType<typeof setTimeout> | undefined;
     try {
       await Promise.race([
@@ -174,6 +187,7 @@ function observeHistoryRestoration(page: Page) {
           {
             records,
             ui,
+            elapsedMs: elapsedMs(),
             pendingMetadata: pending.size,
             bodyOrSecretsStored: false,
           },
@@ -187,6 +201,30 @@ function observeHistoryRestoration(page: Page) {
     } catch {
       console.info("AI_HISTORY_DIAGNOSTIC_WRITE_UNAVAILABLE");
     }
+  }
+  return {
+    async durableAnswerAck(response: Response) {
+      const readStartedMs = elapsedMs();
+      // The ACK's original single body read; no browser stream consumer is added.
+      const result = await readAiAnswerAck(response.status(), () =>
+        response.text(),
+      );
+      if (records.length < 24)
+        records.push({
+          endpoint: "ai_chat",
+          phase: "BODY_READ",
+          readStartedMs,
+          elapsedMs: elapsedMs(),
+          ...result.body,
+          ack: result.ack,
+        });
+      return result.ack;
+    },
+    markUiComplete() {
+      if (records.length < 24)
+        records.push({ phase: "UI_COMPLETE_OBSERVED", elapsedMs: elapsedMs() });
+    },
+    finish,
   };
 }
 
@@ -228,7 +266,7 @@ test("context suggestions, wide view, persisted help and real destination work w
   await expect(input).toHaveValue(
     "사용 가능 금액과 보류 금액은 무슨 뜻인가요?",
   );
-  const finishDiagnostics = observeHistoryRestoration(page);
+  const diagnostics = observeHistoryRestoration(page);
   try {
     const answered = page.waitForResponse(
       (response) =>
@@ -243,13 +281,14 @@ test("context suggestions, wide view, persisted help and real destination work w
       .locator('.ai-message--assistant[data-message-state="complete"]')
       .last();
     await expect(answer).toHaveAttribute("data-answer-source", "static");
+    diagnostics.markUiComplete();
     await expect(
       answer
         .getByRole("navigation", { name: "관련 화면" })
         .getByRole("link", { name: "출금 안내", exact: true }),
     ).toHaveAttribute("href", "/wallet/withdraw");
     expect(submitted).toBe(1);
-    expect(await durableAnswerAck(await answered)).toEqual({
+    expect(await diagnostics.durableAnswerAck(await answered)).toEqual({
       status: 200,
       bodyAvailable: true,
       doneCount: 1,
@@ -274,7 +313,7 @@ test("context suggestions, wide view, persisted help and real destination work w
       page.getByRole("heading", { name: "출금하기", exact: true }),
     ).toBeVisible();
   } finally {
-    await finishDiagnostics(test.info());
+    await diagnostics.finish(test.info());
   }
 });
 

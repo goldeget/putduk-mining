@@ -3201,7 +3201,7 @@
     "tests/e2e/authenticated/admin-v7-operator-ux.spec.ts": "5323576362c4fe079d823b728fbcb3243c84fff45c8826019075bd6f3299ffc0",
     "tests/e2e/authenticated/admin-withdrawal-step-up.spec.ts": "2a596f9c9a6fd20ab0444924c4238bbd0a56a2f8a22edcf099dddd6d96b5db43",
     "tests/e2e/authenticated/admin-withdrawals-product.spec.ts": "4a4324f128bf32e942fcc1ffda71ab7fbcc8b6593fe2f42a5c842f76fea878d0",
-    "tests/e2e/authenticated/ai-context-help.spec.ts": "d61d9b748932061035ed5534b7bca3cc8e8abdf64a15858fc0585d9e686aeea9",
+    "tests/e2e/authenticated/ai-context-help.spec.ts": "7d087c4710c4dfaee21f17e289b7d19fe8eff3367b7f3c09171bfca067026ee4",
     "tests/e2e/authenticated/ai-product.spec.ts": "b96aa5823bbdf23342572bb8d3d2072bc1196eb8a5183b40d6c66af1cb528d19",
     "tests/e2e/authenticated/catalog-allocated-home-dark-wide.spec.ts": "8a7570e18db5abb26b5006fc1843c2f059bd34b5c78ff88b59406cb6df0ed91e",
     "tests/e2e/authenticated/catalog-allocated-home-dark.spec.ts": "5a021cc2fb844dd3cb65332b5e21ac3e4909c3a2a1146a68af46a6dd515eeb64",
@@ -3654,7 +3654,9 @@
     "vite.config.ts": "8c247377b94d52dade2f2e12bbb88e3993b6fa5483ce3862fd3060020f4827c1",
     "cloudflare.config.ts": "dc9d089d37ed63c83729870883b51f89312b94ea9280afaea95f96e4968cc796",
     "apps/admin/vite.config.ts": "8c247377b94d52dade2f2e12bbb88e3993b6fa5483ce3862fd3060020f4827c1",
-    "apps/admin/cloudflare.config.ts": "161616c0d3ab6edc72a6cb8d2b31f3f028f29f49d1b41873f9bee369f453b7e5"
+    "apps/admin/cloudflare.config.ts": "161616c0d3ab6edc72a6cb8d2b31f3f028f29f49d1b41873f9bee369f453b7e5",
+    "tests/e2e/authenticated/helpers/ai-ack-diagnostics.ts": "6cf004a4f69a14d382dbf5c62b1a362eb7d4aded898b1f8adf013b8b36426edd",
+    "tests/unit/ai-ack-diagnostics.test.ts": "302c2f613c6a699eaa1877cbf1fa1af2995359cdd3c8c3e8f303eaa63d1b8f50"
   },
   "selfExcludedPaths": [
     "tests/e2e/fixtures/backend-successor-201-source.json",
