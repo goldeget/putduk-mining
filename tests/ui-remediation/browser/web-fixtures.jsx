@@ -6,6 +6,7 @@ import { MiningCore } from "../../../components/foundation/mining-core";
 import { GuidedQuest } from "../../../components/product/guided-quest";
 import { WithdrawalForm } from "../../../components/product/withdrawal-form";
 import { RouteMotionFixture } from "./route-motion-fixtures";
+import { MiningLiveFixture } from "./mining-live-fixture";
 import { NotificationPreferencesForm } from "../../../components/product/notification-preferences-form";
 import "../../../app/globals.css";
 import "../../../app/productization.css";
@@ -133,6 +134,7 @@ export function Fixture({ kind }) {
   if (kind === "notification-preferences")
     return <NotificationPreferencesFixture />;
   if (kind === "motion") return <MotionFixture />;
+  if (kind === "mining-live") return <MiningLiveFixture />;
   if (kind === "home-motion" || kind === "start-motion")
     return <RouteMotionFixture kind={kind} />;
   return (
