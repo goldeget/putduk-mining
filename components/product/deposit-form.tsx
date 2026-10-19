@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useLayoutEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 
 import { PutdukIcon } from "@/components/icons/putduk-icon";
@@ -16,6 +16,34 @@ type Feedback = { message: string; tone: "error" | "success" } | null;
 
 /** 화면에서 고르기 쉬운 예시 금액이다. 운영 최소·최대 한도가 아니다. */
 const quickAmounts = ["10000", "30000", "50000", "100000"] as const;
+
+const DEPOSIT_AMOUNT_ID = "deposit-amount";
+
+/**
+ * Next가 직전 스트림을 hidden id="S:*"에 남겨 두면 금액 칸 id가 둘로 남는다.
+ * 보이는 칸만 id를 유지한다.
+ */
+export function releaseDuplicateDepositAmount(root: ParentNode) {
+  const nodes = [...root.querySelectorAll(`#${DEPOSIT_AMOUNT_ID}`)];
+  const keeper = nodes.find((node) => !node.closest("[hidden]"));
+  if (!keeper || nodes.length < 2) return;
+
+  for (const node of nodes) {
+    if (node === keeper) continue;
+    const label = node.closest("label");
+    node.removeAttribute("id");
+    if (label?.getAttribute("for") === DEPOSIT_AMOUNT_ID) {
+      label.removeAttribute("for");
+    }
+  }
+
+  for (const label of root.querySelectorAll(
+    `label[for="${DEPOSIT_AMOUNT_ID}"]`,
+  )) {
+    if (label.contains(keeper) || !label.closest("[hidden]")) continue;
+    label.removeAttribute("for");
+  }
+}
 
 const DEPOSIT_REQUEST_ERRORS: Record<string, string> = {
   DEPOSIT_REQUEST_FAILED:
@@ -35,6 +63,20 @@ export function DepositForm({
   const [amount, setAmount] = useState("");
   const [feedback, setFeedback] = useState<Feedback>(null);
   const [pending, setPending] = useState(false);
+
+  useLayoutEffect(() => {
+    releaseDuplicateDepositAmount(document);
+    const observer = new MutationObserver(() => {
+      releaseDuplicateDepositAmount(document);
+    });
+    observer.observe(document.documentElement, {
+      attributeFilter: ["hidden", "id"],
+      attributes: true,
+      childList: true,
+      subtree: true,
+    });
+    return () => observer.disconnect();
+  }, []);
 
   let amountAtomic: string | null = null;
   if (amount) {
@@ -155,11 +197,11 @@ export function DepositForm({
         </div>
       )}
 
-      <label className={styles.fieldGroup} htmlFor="deposit-amount">
+      <label className={styles.fieldGroup} htmlFor={DEPOSIT_AMOUNT_ID}>
         <span>입금 요청 금액</span>
         <span className={styles.amountField}>
           <input
-            id="deposit-amount"
+            id={DEPOSIT_AMOUNT_ID}
             name="amount"
             type="text"
             inputMode="numeric"
