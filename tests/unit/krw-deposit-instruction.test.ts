@@ -8,7 +8,14 @@ vi.mock("next/navigation", () => ({
   useRouter: () => ({ refresh: vi.fn() }),
 }));
 
-import { DepositForm } from "@/components/product/deposit-form";
+// jsdom is installed for the test runtime and does not ship declarations.
+// @ts-expect-error TS7016
+import { JSDOM } from "jsdom";
+
+import {
+  DepositForm,
+  releaseDuplicateDepositAmount,
+} from "@/components/product/deposit-form";
 import {
   KRW_DEPOSIT_INSTRUCTION_ENV,
   parseKrwDepositInstruction,
@@ -67,6 +74,44 @@ describe("KRW deposit instruction (operator configuration)", () => {
     expect(html).toContain("운영자가 확인하면 원화");
     expect(html).not.toContain('data-krw-instruction="missing"');
     expect(html).not.toMatch(/USDT 잔액|내 USDT/);
+  });
+
+  it("renders a single deposit amount control", () => {
+    const html = renderToStaticMarkup(createElement(DepositForm, {}));
+    expect(html.match(/id="deposit-amount"/g)).toEqual(['id="deposit-amount"']);
+    expect(html.match(/name="amount"/g)).toEqual(['name="amount"']);
+  });
+
+  it("drops the amount id from the hidden stream copy", () => {
+    const dom = new JSDOM(`<!doctype html><body>
+      <div hidden id="S:0">
+        <label for="deposit-amount">
+          <span>입금 요청 금액</span>
+          <input id="deposit-amount" name="amount" />
+        </label>
+      </div>
+      <form>
+        <label for="deposit-amount">
+          <span>입금 요청 금액</span>
+          <input id="deposit-amount" name="amount" />
+        </label>
+      </form>
+    </body>`);
+    releaseDuplicateDepositAmount(dom.window.document);
+    const remaining = [
+      ...dom.window.document.querySelectorAll("#deposit-amount"),
+    ];
+    expect(remaining).toHaveLength(1);
+    expect(remaining[0]?.closest("form")).not.toBeNull();
+    expect(remaining[0]?.closest("[hidden]")).toBeNull();
+    expect(
+      dom.window.document
+        .querySelector("div[hidden] label")
+        ?.getAttribute("for"),
+    ).toBeNull();
+    expect(
+      dom.window.document.querySelector("form label")?.getAttribute("for"),
+    ).toBe("deposit-amount");
   });
 
   it("says plainly that no account is shown yet when it is not configured", () => {
