@@ -72,6 +72,11 @@ describe("wallet deposit presentation keeps manual request boundaries", () => {
     ).toBe(true);
     expect(node.textContent).toContain("아직 원화 입금 요청이 없어요");
     expect(node.textContent).toContain("아직 USDT 입금 내역이 없어요");
+    expect(node.textContent).toContain("담당자에게 문의해 주세요.");
+    expect(node.textContent).not.toContain("입금 계좌를 준비하고 있어요");
+    expect(node.textContent).not.toContain("입금 안내를 준비하고 있어요");
+    expect(node.textContent).not.toContain("입금 안내 준비 중");
+    expect(node.textContent).not.toContain("안내 준비 중");
   });
   it("does not accept stale instructions after an instruction read error", () => {
     const node = render({

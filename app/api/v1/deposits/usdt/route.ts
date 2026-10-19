@@ -87,7 +87,7 @@ function usdtSubmitError(message: string | undefined) {
   if (text.includes("USDT_DEPOSIT_INSTRUCTIONS_UNAVAILABLE")) {
     return apiError({
       code: "USDT_DEPOSIT_UNAVAILABLE",
-      message: "입금 안내를 준비하고 있어요. 잠시 후 다시 시도해 주세요.",
+      message: "담당자에게 문의해 주세요.",
       status: 409,
     });
   }

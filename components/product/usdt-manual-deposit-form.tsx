@@ -23,8 +23,7 @@ const USDT_SUBMIT_ERRORS: Record<string, string> = {
   UNAUTHENTICATED: "로그인이 필요해요. 다시 로그인해 주세요.",
   USDT_DEPOSIT_SUBMIT_FAILED:
     "입금 내역을 접수하지 못했어요. 잠시 후 다시 시도해 주세요.",
-  USDT_DEPOSIT_UNAVAILABLE:
-    "입금 안내를 준비하고 있어요. 잠시 후 다시 시도해 주세요.",
+  USDT_DEPOSIT_UNAVAILABLE: "담당자에게 문의해 주세요.",
 };
 
 /**
@@ -147,7 +146,7 @@ export function UsdtManualDepositForm({
           <dt>네트워크</dt>
           <dd>
             {selected?.network ??
-              (loadFailed ? "불러오지 못함" : "안내 준비 중")}
+              (loadFailed ? "불러오지 못함" : "담당자에게 문의해 주세요.")}
           </dd>
         </div>
         <div>
@@ -195,7 +194,7 @@ export function UsdtManualDepositForm({
       ) : (
         <div className={styles.formNotice}>
           <PutdukIcon name="clock" size={19} />
-          <p>입금 안내를 준비하고 있어요. 준비되면 이 화면에 표시됩니다.</p>
+          <p>담당자에게 문의해 주세요.</p>
         </div>
       )}
 
@@ -209,7 +208,7 @@ export function UsdtManualDepositForm({
           disabled={inputsDisabled || available.length <= 1}
         >
           {available.length === 0 ? (
-            <option value="">안내 준비 중</option>
+            <option value="">담당자에게 문의해 주세요.</option>
           ) : (
             available.map((option) => (
               <option key={option.network} value={option.network}>
