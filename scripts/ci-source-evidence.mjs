@@ -39,7 +39,9 @@ export function collectCiSourceEvidence(env = process.env, readGit) {
       (env.CI_HEAD_SHA !== checkoutSha && !parents.includes(env.CI_HEAD_SHA)) ||
       !/^[0-9]+$/.test(env.GITHUB_RUN_ID ?? "") ||
       !/^[1-9][0-9]*$/.test(env.GITHUB_RUN_ATTEMPT ?? "") ||
-      !["push", "pull_request"].includes(env.GITHUB_EVENT_NAME))
+      !["push", "pull_request", "workflow_dispatch"].includes(
+        env.GITHUB_EVENT_NAME,
+      ))
   )
     throw new Error(
       "Execution evidence requires a clean exact CI checkout and candidate/run metadata",

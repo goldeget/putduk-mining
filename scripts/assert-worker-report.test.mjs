@@ -177,3 +177,57 @@ test("accepts an exact push checkout without claiming a merge checkout", () => {
   assert.equal(source.sourceSha, source.candidateSha);
   assert.deepEqual(source.parents, []);
 });
+
+test("accepts exact workflow_dispatch execution evidence for full E2E", () => {
+  const source = collectCiSourceEvidence(
+    { ...ci, GITHUB_EVENT_NAME: "workflow_dispatch", CI_HEAD_SHA: checkoutSha },
+    gitFixture({ parents: [] }),
+  );
+  assert.equal(source.scope, "CI");
+  assert.equal(source.event, "workflow_dispatch");
+  assert.equal(source.sourceSha, checkoutSha);
+  assert.equal(source.candidateSha, checkoutSha);
+  assert.equal(source.runId, "123");
+  assert.equal(source.attempt, 1);
+  assert.equal(source.worktreeClean, true);
+  assert.deepEqual(source.parents, []);
+});
+
+test("rejects execution evidence from unsupported CI events", () => {
+  for (const event of [
+    "",
+    "schedule",
+    "repository_dispatch",
+    "pull_request_target",
+  ])
+    assert.throws(() =>
+      collectCiSourceEvidence(
+        { ...ci, GITHUB_EVENT_NAME: event },
+        gitFixture(),
+      ),
+    );
+});
+
+test("workflow_dispatch retains clean checkout and exact run identity guards", () => {
+  const dispatch = {
+    ...ci,
+    GITHUB_EVENT_NAME: "workflow_dispatch",
+    CI_HEAD_SHA: checkoutSha,
+  };
+  assert.throws(() =>
+    collectCiSourceEvidence(dispatch, gitFixture({ dirty: true })),
+  );
+  for (const invalid of [
+    { GITHUB_SHA: candidateSha },
+    { CI_HEAD_SHA: candidateSha },
+    { GITHUB_RUN_ID: "" },
+    { GITHUB_RUN_ATTEMPT: "0" },
+    { GITHUB_REPOSITORY: "out-of-scope/repo" },
+  ])
+    assert.throws(() =>
+      collectCiSourceEvidence(
+        { ...dispatch, ...invalid },
+        gitFixture({ parents: [] }),
+      ),
+    );
+});
