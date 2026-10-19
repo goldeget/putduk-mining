@@ -493,11 +493,14 @@ export function SignupForm() {
               체험 값은 실제 자산이 아닙니다. 자격 확인 후 전환된 금액만 실제
               KRW 지갑에 반영됩니다.
             </p>
-            <p>
-              <Link href="/terms" target="_blank" rel="noopener">
-                이용약관 전문 보기
-              </Link>
-            </p>
+            <Link
+              className={styles.policyDocumentLink}
+              href="/terms"
+              target="_blank"
+              rel="noopener"
+            >
+              이용약관 전문 보기
+            </Link>
           </details>
         </div>
         <div className={styles.consentRow}>
@@ -531,11 +534,14 @@ export function SignupForm() {
               이름, 생년월일, 휴대전화, 로그인 아이디, 복구 이메일과 동의 이력을
               계정 운영·복구 목적으로 기록합니다.
             </p>
-            <p>
-              <Link href="/privacy" target="_blank" rel="noopener">
-                개인정보 처리방침 전문 보기
-              </Link>
-            </p>
+            <Link
+              className={styles.policyDocumentLink}
+              href="/privacy"
+              target="_blank"
+              rel="noopener"
+            >
+              개인정보 처리방침 전문 보기
+            </Link>
           </details>
         </div>
         <label className={styles.consentOptional}>
