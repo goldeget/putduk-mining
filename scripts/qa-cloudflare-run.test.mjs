@@ -24,6 +24,7 @@ const versions = {
   },
 };
 const secret = "sb_secret_FIXTURE_ONLY_NEVER_A_REAL_KEY";
+const withdrawalKey = Buffer.alloc(32, 113).toString("base64");
 const secretDir = join("/qa-fixture-owned", "putduk-qa-secrets-001");
 const secretFile = join(secretDir, "runtime.json");
 const clone = (value) => JSON.parse(JSON.stringify(value));
@@ -50,6 +51,7 @@ function fixture() {
     QA_ADMIN_ACCESS_CLIENT_ID: "fixture-admin-id",
     QA_ADMIN_ACCESS_CLIENT_SECRET: "fixture-admin-secret",
     PUTDUK_QA_SUPABASE_SECRET_KEY: secret,
+    PUTDUK_QA_WITHDRAWAL_DATA_KEY: withdrawalKey,
   };
   const prior = Object.fromEntries(
     ["member", "admin"].map((role) => [
@@ -107,6 +109,7 @@ function fixture() {
     saves: [],
     commands: [],
     files: new Map(),
+    secretWrites: [],
     directories: new Set(),
     cliOutcomes: {},
     cliError: new Error("fixture CLI failure: PRIVATE_ERROR_SENTINEL"),
@@ -186,6 +189,12 @@ function fixture() {
               ? "77777777-7777-4777-8777-777777777777"
               : "88888888-8888-4888-8888-888888888888",
           versionId: versions[role].current,
+          secretNames: [
+            ...new Set([
+              ...prior[role].secretNames,
+              ...Object.keys(JSON.parse(f.files.get(secretFile))),
+            ]),
+          ].sort(),
         };
       if (f.cliOutcomes[role] === "lost") throw f.cliError;
     },
@@ -212,7 +221,19 @@ function fixture() {
       writeFileSync(path, content, options) {
         assert.equal(path, secretFile);
         assert.deepEqual(options, { mode: 0o600 });
-        assert.deepEqual(JSON.parse(content), { SUPABASE_SECRET_KEY: secret });
+        const supplied = JSON.parse(content);
+        assert.equal(supplied.SUPABASE_SECRET_KEY, secret);
+        assert.ok(
+          Object.keys(supplied).every((name) =>
+            ["SUPABASE_SECRET_KEY", "WITHDRAWAL_DATA_KEY"].includes(name),
+          ),
+        );
+        if (Object.hasOwn(supplied, "WITHDRAWAL_DATA_KEY"))
+          assert.equal(
+            supplied.WITHDRAWAL_DATA_KEY,
+            env.PUTDUK_QA_WITHDRAWAL_DATA_KEY,
+          );
+        f.secretWrites.push(supplied);
         f.events.push({ type: "secret-write" });
         f.files.set(path, content);
       },
@@ -253,6 +274,7 @@ function assertSanitized(f) {
   const serialized = JSON.stringify(f.saves);
   for (const value of [
     secret,
+    f.env.PUTDUK_QA_WITHDRAWAL_DATA_KEY,
     "fixture-cf-token",
     "fixture-member-secret",
     "fixture-admin-secret",
@@ -351,6 +373,147 @@ test("actual deploy preserves ordered two-role receipts, exact CLI contract and 
     ["unlink", "rmdir", "save"],
   );
   assert.equal(JSON.stringify(f.saves).includes(secret), false);
+});
+
+test("initial absent pair receives the same runtime-only withdrawal key through both real-loop CLI files", async () => {
+  const f = fixture();
+  await runner.deploy(f.io);
+  assert.equal(f.secretWrites.length, 2);
+  for (const value of f.secretWrites)
+    assert.deepEqual(value, {
+      SUPABASE_SECRET_KEY: secret,
+      WITHDRAWAL_DATA_KEY: withdrawalKey,
+    });
+  for (const role of ["member", "admin"]) {
+    assert.equal(f.last().workers[role].withdrawalKeyAction, "INITIALIZE");
+    assert.deepEqual(f.last().workers[role].current.secretNames, [
+      "SUPABASE_SECRET_KEY",
+      "WITHDRAWAL_DATA_KEY",
+    ]);
+  }
+  assertSanitized(f);
+});
+
+test("an existing key pair inherits both keys without overwriting either with the new GitHub value", async () => {
+  const f = fixture();
+  f.env.PUTDUK_QA_WITHDRAWAL_DATA_KEY = Buffer.alloc(32, 114).toString(
+    "base64",
+  );
+  for (const role of ["member", "admin"]) {
+    f.prior[role].secretNames.push("WITHDRAWAL_DATA_KEY");
+    f.remote[role] = clone(f.prior[role]);
+  }
+  await runner.deploy(f.io);
+  assert.equal(f.secretWrites.length, 2);
+  for (const value of f.secretWrites)
+    assert.deepEqual(value, { SUPABASE_SECRET_KEY: secret });
+  for (const role of ["member", "admin"])
+    assert.equal(f.last().workers[role].withdrawalKeyAction, "INHERIT");
+  assertSanitized(f);
+});
+
+for (const role of ["member", "admin"]) {
+  test(`mixed pair with only ${role} key present fails before temporary files or CLI`, async () => {
+    const f = fixture();
+    f.prior[role].secretNames.push("WITHDRAWAL_DATA_KEY");
+    f.remote[role] = clone(f.prior[role]);
+    assert.match((await rejected(f)).message, /mixed withdrawal key presence/);
+    assertFailureReceipt(f);
+    assert.deepEqual(f.last().workers.member.prior, f.prior.member);
+    assert.deepEqual(f.last().workers.admin.prior, f.prior.admin);
+    assert.equal(f.commands.length, 0);
+    assert.equal(f.directories.size, 0);
+    assert.equal(f.secretWrites.length, 0);
+  });
+
+  for (const names of [
+    ["SUPABASE_SECRET_KEY"],
+    ["WITHDRAWAL_DATA_KEY"],
+    ["SUPABASE_SECRET_KEY", "WITHDRAWAL_DATA_KEY", "WITHDRAWAL_DATA_KEY"],
+  ]) {
+    test(`${role} missing or duplicate post-deploy secret names cannot pass`, async () => {
+      const f = fixture();
+      const inspect = f.io.inspectRemote;
+      f.io.inspectRemote = async (at, phase) => {
+        const value = await inspect(at, phase);
+        if (at === role && phase === "after") value.secretNames = names;
+        return value;
+      };
+      assert.match(
+        (await rejected(f)).message,
+        /Access\/secret bindings changed/,
+      );
+      assertFailureReceipt(f);
+      assert.equal(f.commands.length, role === "member" ? 1 : 2);
+    });
+  }
+
+  test(`${role} post-deploy route drift cannot be hidden by successful key initialization`, async () => {
+    const f = fixture();
+    const inspect = f.io.inspectRemote;
+    f.io.inspectRemote = async (at, phase) => {
+      const value = await inspect(at, phase);
+      if (at === role && phase === "after")
+        value.routes.sha256 = "f".repeat(64);
+      return value;
+    };
+    assert.match((await rejected(f)).message, /routes changed/);
+    assertFailureReceipt(f);
+    assert.equal(f.commands.length, role === "member" ? 1 : 2);
+  });
+}
+
+for (const invalid of [
+  undefined,
+  "",
+  "not-base64",
+  Buffer.alloc(31).toString("base64"),
+  `${withdrawalKey}\n`,
+]) {
+  test("invalid or missing withdrawal key blocks the actual runner before receipts and any I/O", async () => {
+    const f = fixture();
+    f.env.PUTDUK_QA_WITHDRAWAL_DATA_KEY = invalid;
+    assert.match((await rejected(f)).message, /QA_BLOCKED/);
+    assert.equal(f.commands.length, 0);
+    assert.equal(f.saves.length, 0);
+    assert.equal(f.secretWrites.length, 0);
+  });
+}
+
+test("the second runtime file write failure preserves first deployment and removes the exact owned file", async () => {
+  const f = fixture();
+  const write = f.io.fs.writeFileSync;
+  const denied = failure("fixture second file write denied", "EACCES");
+  let count = 0;
+  f.io.fs.writeFileSync = (...args) => {
+    if (++count === 2) throw denied;
+    return write(...args);
+  };
+  assert.equal(await rejected(f), denied);
+  assertFailureReceipt(f);
+  assert.equal(f.last().workers.member.state, "QA_SMOKE_PASSED");
+  assert.equal(f.last().workers.admin.state, "NOT_DEPLOYED");
+  assert.equal(f.commands.length, 1);
+  assert.equal(f.files.size, 0);
+  assert.equal(f.directories.size, 0);
+});
+
+test("real child environment drops both private GitHub keys while retaining the build public key", () => {
+  assert.equal(typeof runner.qaChildEnvironment, "function");
+  const value = runner.qaChildEnvironment(
+    {
+      PUTDUK_QA_WITHDRAWAL_DATA_KEY: withdrawalKey,
+      PUTDUK_QA_SUPABASE_SECRET_KEY: secret,
+      PUTDUK_QA_SUPABASE_PUBLISHABLE_KEY: "public-fixture",
+      QA_CF_API_TOKEN: "fixture-cf-token",
+      GH_TOKEN: "fixture-gh-token",
+    },
+    { CLOUDFLARE_API_TOKEN: "fixture-cli-token" },
+  );
+  assert.deepEqual(value, {
+    PUTDUK_QA_SUPABASE_PUBLISHABLE_KEY: "public-fixture",
+    CLOUDFLARE_API_TOKEN: "fixture-cli-token",
+  });
 });
 
 for (const role of ["member", "admin"]) {
@@ -540,6 +703,10 @@ test("lost CLI response after remote change keeps DEPLOYING without retry or fal
 
 test("unobserved new version retains current evidence but cannot pass smoke or deploy admin", async () => {
   const f = fixture();
+  for (const role of ["member", "admin"]) {
+    f.prior[role].secretNames.push("WITHDRAWAL_DATA_KEY");
+    f.remote[role] = clone(f.prior[role]);
+  }
   f.cliOutcomes.member = "unchanged";
   assert.match((await rejected(f)).message, /new version not observed/);
   assertFailureReceipt(f);

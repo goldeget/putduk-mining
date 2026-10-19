@@ -157,14 +157,21 @@ async function ciEvidence(wait) {
     await new Promise((done) => setTimeout(done, 15_000));
   } while (true);
 }
-function run(command, args, directory, extra = {}, quiet = false) {
-  const childEnv = { ...env, ...extra };
+export function qaChildEnvironment(environment, extra = {}) {
+  const childEnv = { ...environment, ...extra };
   for (const name of Object.keys(childEnv))
-    if (/^(GH_TOKEN|QA_|PUTDUK_QA_SUPABASE_SECRET_KEY)/.test(name))
+    if (
+      /^(GH_TOKEN|QA_|PUTDUK_QA_(?:SUPABASE_SECRET_KEY|WITHDRAWAL_DATA_KEY))/.test(
+        name,
+      )
+    )
       delete childEnv[name];
+  return childEnv;
+}
+function run(command, args, directory, extra = {}, quiet = false) {
   const result = spawnSync(command, args, {
     cwd: resolve(root, directory),
-    env: childEnv,
+    env: qaChildEnvironment(env, extra),
     stdio: quiet ? "pipe" : "inherit",
     timeout: 15 * 60_000,
     maxBuffer: 16 * 1024 * 1024,
@@ -435,6 +442,26 @@ export async function deploy(io = productionDeployIo()) {
         return receipt.workers[role];
       },
       async () => {
+        const roles = Object.keys(TARGETS);
+        const requiredSecrets = ["SUPABASE_SECRET_KEY", "WITHDRAWAL_DATA_KEY"];
+        const keyPresent = roles.map((role) => {
+          const names = receipt.workers[role].prior.secretNames;
+          requireQa(
+            JSON.stringify(names) === JSON.stringify(["SUPABASE_SECRET_KEY"]) ||
+              JSON.stringify(names) === JSON.stringify(requiredSecrets),
+            "unapproved prior secret names",
+          );
+          return names.includes("WITHDRAWAL_DATA_KEY");
+        });
+        requireQa(
+          keyPresent.every((present) => present === keyPresent[0]),
+          "mixed withdrawal key presence requires reviewed recovery",
+        );
+        const initializeKey = !keyPresent[0];
+        for (const role of roles)
+          receipt.workers[role].withdrawalKeyAction = initializeKey
+            ? "INITIALIZE"
+            : "INHERIT";
         io.save("deployment", receipt);
         const secretDir = io.fs.mkdtempSync(
           join(env.RUNNER_TEMP, "putduk-qa-secrets-"),
@@ -442,13 +469,6 @@ export async function deploy(io = productionDeployIo()) {
         let executionFailed = false;
         try {
           const secretFile = join(secretDir, "runtime.json");
-          io.fs.writeFileSync(
-            secretFile,
-            JSON.stringify({
-              SUPABASE_SECRET_KEY: env.PUTDUK_QA_SUPABASE_SECRET_KEY,
-            }),
-            { mode: 0o600 },
-          );
           for (const [role, target] of Object.entries(TARGETS)) {
             receipt.ci = await io.ciEvidence(false);
             requireQa(
@@ -460,6 +480,18 @@ export async function deploy(io = productionDeployIo()) {
               JSON.stringify(await io.inspectBuild(role)) ===
                 JSON.stringify(built.workers[role]),
               "prebuilt bytes changed",
+            );
+            // Supply a new key only for the observed absent pair. Omission on
+            // later deployments uses the pinned CLI's required-secret inheritance.
+            io.fs.writeFileSync(
+              secretFile,
+              JSON.stringify({
+                SUPABASE_SECRET_KEY: env.PUTDUK_QA_SUPABASE_SECRET_KEY,
+                ...(initializeKey
+                  ? { WITHDRAWAL_DATA_KEY: env.PUTDUK_QA_WITHDRAWAL_DATA_KEY }
+                  : {}),
+              }),
+              { mode: 0o600 },
             );
             receipt.workers[role].state = "DEPLOYING";
             io.save("deployment", receipt);
@@ -494,8 +526,13 @@ export async function deploy(io = productionDeployIo()) {
               current.accessDigest ===
                 receipt.workers[role].prior.accessDigest &&
                 JSON.stringify(current.secretNames) ===
-                  JSON.stringify(receipt.workers[role].prior.secretNames),
+                  JSON.stringify(requiredSecrets),
               "Access/secret bindings changed",
+            );
+            requireQa(
+              JSON.stringify(current.routes) ===
+                JSON.stringify(receipt.workers[role].prior.routes),
+              "zone routes changed during deploy",
             );
             requireQa(
               current.versionId !== receipt.workers[role].prior.versionId,

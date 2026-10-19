@@ -22,7 +22,7 @@
 3. Frozen lockfile로 설치하고 각 앱을 `vite build --mode qa`로 한 번씩 빌드한다. 계정·Worker·preview DB·app URL·binding·trigger·mode와 파일 hash를 검사한 뒤 `cf deploy --prebuilt --mode qa --dry-run --no-provision`으로 검증한다. 이 단계에는 배포/Access/server 자격 증명을 전달하지 않는다.
 4. 같은 output을 immutable GitHub artifact로 보존한다. 배포 단계는 artifact ID/digest와 로컬 파일 hash를 연결한다. 배포 시 재빌드하지 않는다.
 5. 배포 자격 증명이 모두 있어야 원격 검증을 시작한다. 정확한 Worker ID/이름, 기존 secret binding, preview 공개 설정, Access의 machine-only service-token 정책, 공개 override 부재, preview URL 비활성, 연결 리소스·cron과 직전 deployment/version을 읽는다. 지정 `putduk.com` zone `c9e6c93451c3c2e107a1eca511bedaba`의 소유 계정 확인 후 `/zones/ZONE_ID/workers/routes`를 읽어 QA Worker를 가리키는 공개 route가 없어야 한다. 이 API는 현재 비페이지 endpoint이며, 응답에 pagination 정보가 추가되면 완결된 첫 페이지임을 모두 확인한다. 불완전 목록·권한 거절은 중단한다. zone 검색·route 변경은 하지 않는다. route hash/count는 최초, 매 배포 직전, 배포 직후 receipt에 포함한다.
-6. preview 공개 키는 해당 preview의 `/auth/v1/settings`, 전용 서버 키는 `/rest/v1/`의 읽기 응답으로 확인한다. 응답 본문, 서버 키, 쿠키를 기록하지 않는다. 서버 키는 빌드 환경에 들어가지 않고 임시 파일의 `--secrets-file`로 기존 `SUPABASE_SECRET_KEY` binding에 전달된다. 설치된 cf의 `keepSecrets: true` 동작으로 기존 다른 secret을 보존하며, 전후 secret 이름 목록이 같아야 한다. 허용된 기존 secret은 `SUPABASE_SECRET_KEY`, 선택적 `WITHDRAWAL_DATA_KEY`뿐이다.
+6. preview 공개 키는 해당 preview의 `/auth/v1/settings`, 전용 서버 키는 `/rest/v1/`의 읽기 응답으로 확인한다. 응답 본문, 서버 키, 쿠키를 기록하지 않는다. 비밀값은 최종 배포 step에만 연결하고 빌드·dry run·브라우저 회귀·build artifact에는 전달하지 않는다. QA config에는 값 없는 `SUPABASE_SECRET_KEY`, `WITHDRAWAL_DATA_KEY` reference만 선언한다. 런타임 공급은 아래의 최초 초기화/기존 상속 계약에 따라 임시 파일의 `--secrets-file`을 사용한다. 허용 secret은 이 두 개뿐이며 배포 후에는 둘 다 있어야 한다.
 7. 두 Worker를 한 concurrency group에서 차례로 배포한다. 취소로 중간 상태를 만들지 않도록 `cancel-in-progress: false`다. 매 배포 직전 branch SHA, CI, build hash, 원격 상태를 다시 확인한다. 외부 수동 배포까지 GitHub concurrency로 잠글 수는 없으므로 상태가 바뀌면 중단한다.
 8. **어느 Worker도 변경하기 전에 두 역할 모두** 익명 로그인·asset 접근 거절과 기존 Access credential로 최대 64 KiB의 32×32 PNG를 읽는 검증을 통과해야 한다. 기존 이미지가 후보와 동일하다는 가정은 하지 않으며 PNG content 검증만 수행한다. 유효하지 않은 비어 있지 않은 token도 403이면 배포 callback에 도달하지 않는다. 배포 후에는 새 version의 SHA tag, Access 유지, 실제 로그인 화면, 후보 PNG byte hash와 브라우저 decode, 앱 세션이 없을 때의 로그인 이동을 검사한다. 이 smoke는 사용자 인증·지급·AI·DB 쓰기 테스트가 아니다.
 
@@ -42,6 +42,19 @@ Repository variable `PUTDUK_QA_SUPABASE_PUBLISHABLE_KEY`는 정확한 preview �
 - `PUTDUK_QA_MEMBER_ACCESS_CLIENT_ID`, `PUTDUK_QA_MEMBER_ACCESS_CLIENT_SECRET`: 기존 회원 QA Access 서비스 토큰.
 - `PUTDUK_QA_ADMIN_ACCESS_CLIENT_ID`, `PUTDUK_QA_ADMIN_ACCESS_CLIENT_SECRET`: 기존 관리자 QA Access 서비스 토큰.
 - `PUTDUK_QA_SUPABASE_SECRET_KEY`: 정확한 preview의 전용 `sb_secret_` 서버 키. 운영 키 또는 임의 placeholder는 사용할 수 없다.
+- `PUTDUK_QA_WITHDRAWAL_DATA_KEY`: 정확한 QA의 암호학적 랜덤 32 bytes를 canonical standard base64로 인코딩한 키. 배포 admission에서 길이·형식·decode/re-encode 동일성을 검사한다. 값이 없거나 잘못되면 원격 요청·임시 파일 생성 전에 중단한다. 출금 목적지 암호화는 보안 저장 기능이며 잔액·KYC·지급 권한을 부여하지 않는다.
+
+### 출금 암호화키 최초 공급과 기존 값 보존
+
+두 Worker의 Access/이미지/원격 상태 preflight를 모두 끝낸 뒤 `WITHDRAWAL_DATA_KEY`의 기존 이름 존재를 비교한다. 두 Worker 모두 없으면 `INITIALIZE`로 기록하고 두 역할에 **같은 GitHub 입력값**을 공식 cf 배포의 임시 secrets file로 공급한다. 두 Worker 모두 있으면 `INHERIT`로 기록하고 파일에서 이 키를 제외한다. 이때 GitHub 입력값이 바뀌었더라도 기존 원격 값을 덮어쓰지 않는다. 키가 이미 있을 때도 GitHub secret의 존재·형식 검사는 유지하며, 이름 목록으로 기존 원격 값과 GitHub 값이 같다고 주장하지 않는다.
+
+한 Worker에만 키가 있으면 mixed presence로 배포·임시 파일 생성 전에 중단한다. 초기화 도중 첫 Worker만 성공한 경우도 자동 재실행으로 다음 Worker에 임의 키를 넣지 않는다. 원본 GitHub 키 생성 기록과 첫 배포의 `INITIALIZE` receipt, 실제 대상 상태를 결합한 별도 검토 복구가 필요하다. 복구용 강제 flag나 secret API 우회는 제공하지 않는다.
+
+각 역할 직전 branch/CI/build/원격 상태를 다시 검증하고 mode `0600`의 정확한 owned `runtime.json`을 작성한다. `SUPABASE_SECRET_KEY`는 기존대로 공급한다. `INITIALIZE`에서만 `WITHDRAWAL_DATA_KEY` 값을 추가한다. pinned cf의 `keepSecrets: true`와 required-secret inherit 동작을 사용하며, 후속 `INHERIT` 배포는 키를 회전하지 않는다. 암호화키를 cf/wrangler secret API로 별도 설정하면 API-origin 보호에 다시 걸릴 수 있으므로 이 파이프라인 대신 사용하지 않는다.
+
+배포 후 secret 이름은 정확히 `SUPABASE_SECRET_KEY`, `WITHDRAWAL_DATA_KEY`여야 한다. 처음에는 허용된 키 하나의 추가만 수용하며, 기존 secret 소실·추가 이름·중복·Access 또는 zone route drift는 거절한다. Supabase·출금 암호화·Access·GitHub 자격 증명은 child 환경에서 제거한다. 공식 배포 CLI에는 필요한 `CLOUDFLARE_API_TOKEN`만 환경으로 전달하며, 비밀값은 argv·receipt·로그에 기록하지 않는다. 성공·실패·부분 실패에서 정확한 owned file과 directory 제거를 모두 시도한다. OS가 삭제를 거절하면 전체 성공으로 표시하지 않고 원래 실행 실패도 보존한다. 실제 삭제를 확인하지 않고 삭제 완료라고 보고하지 않는다.
+
+현재 암호 envelope의 keyVersion은 1이며 자동 키 회전 기능이 아니다. 원격 키와 원본 암호문을 보존해야 한다. 이 연결 후 실제 QA의 등록·비밀번호 proof·마스킹 readback·복구는 별도 제품 수용으로 실행하고, 실송금이나 금융 원장 쓰기를 자동 배포 smoke에 추가하지 않는다.
 
 2026-10-20 연결 receipt에서 기존 서비스 토큰의 secret만 교체했고 token ID·Access 정책·전체 만료는 유지했다. 회원 만료는 `2026-10-23T09:57:08Z`, 관리자 만료는 `2026-10-23T09:57:47Z`다. 이전 secret의 유예 종료 요청도 각 token 만료와 같으며, 이전 secret의 실제 동작은 값 부재로 검증하지 않았다. QA 배포 API token 만료는 `2026-11-19T14:59:59Z`로 확인했다. 이 값들은 관측 시점 receipt이며 실행 전 현재 상태를 다시 확인해야 한다. 만료되거나 자격 증명이 연결되지 않았으면 pipeline은 실패한다. 이 workflow는 키 발급·token 갱신·Access 완화를 자동으로 하지 않는다. 자격 증명 없는 빌드/산출물 검증과 실제 hosted 배포 성공은 별도로 기록한다.
 
@@ -50,6 +63,8 @@ Repository variable `PUTDUK_QA_SUPABASE_PUBLISHABLE_KEY`는 정확한 preview �
 `qa-deployment-receipts-RUN-ATTEMPT` artifact의 `deployment.json`에는 exact SHA, CI와 build artifact, 각 Worker의 prior/current deployment/version, Access digest, secret 이름, smoke 상태가 기록된다. 상태가 `FAILED_OR_PARTIAL_REQUIRES_REVIEW`이면 한 Worker만 반영됐을 수 있다. `DEPLOYING` 후 응답을 잃었을 때에도 실패를 성공으로 바꾸지 않는다. 실제 Worker API를 재조회해 상태를 확정한다.
 
 복구는 기록된 **같은 계정·Worker**에 대해 `POST /accounts/9dc502d4ef06b3b5374591de6e6933ca/workers/scripts/WORKER/deployments`로 `{"strategy":"percentage","versions":[{"version_id":"PRIOR_VERSION_ID","percentage":100}]}`를 적용하는 별도 검토 작업이다. `PRIOR_VERSION_ID`는 해당 역할의 receipt에서 가져와 기존 version 조회로 재확인한다. 두 Worker의 직전 버전과 Access/preview 설정을 함께 확인하고 다시 smoke한다. DB rollback, DNS 변경 또는 다른 Worker 변경으로 확대하지 않는다. 이 workflow는 자동 rollback을 실행하지 않는다.
+
+암호화키 최초 추가 이후 암호문이 생겼다면 이전 version에 그 키가 없을 수 있다. 코드 rollback 전에 키/암호문 보존과 양쪽 Worker의 일치 여부를 별도로 검토한다. 기록 삭제나 키 교체로 rollback을 단순화하지 않는다.
 
 ## 로컬 검증
 

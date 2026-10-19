@@ -64,11 +64,19 @@ export function assertDeployCredentials(values) {
     "QA_ADMIN_ACCESS_CLIENT_ID",
     "QA_ADMIN_ACCESS_CLIENT_SECRET",
     "PUTDUK_QA_SUPABASE_SECRET_KEY",
+    "PUTDUK_QA_WITHDRAWAL_DATA_KEY",
   ])
     requireQa(
       typeof values[name] === "string" && values[name].trim().length > 0,
       `missing ${name}`,
     );
+  const withdrawalKey = values.PUTDUK_QA_WITHDRAWAL_DATA_KEY;
+  requireQa(
+    /^[A-Za-z0-9+/]{43}=$/.test(withdrawalKey) &&
+      Buffer.from(withdrawalKey, "base64").byteLength === 32 &&
+      Buffer.from(withdrawalKey, "base64").toString("base64") === withdrawalKey,
+    "QA withdrawal key must be canonical base64 for exactly 32 bytes",
+  );
 }
 export function assertBuildOutput(output, role, key) {
   requireQa(Object.hasOwn(TARGETS, role), "role");
@@ -105,7 +113,7 @@ export function assertBuildOutput(output, role, key) {
   const expected = qaValues(key, role);
   const env = worker.env ?? {};
   requireQa(
-    Object.keys(env).length === Object.keys(expected).length + 1,
+    Object.keys(env).length === Object.keys(expected).length + 2,
     "unexpected or missing binding",
   );
   for (const [name, value] of Object.entries(expected))
@@ -116,6 +124,10 @@ export function assertBuildOutput(output, role, key) {
   requireQa(
     JSON.stringify(env.SUPABASE_SECRET_KEY) === '{"type":"secret"}',
     "server secret must remain a value-free reference",
+  );
+  requireQa(
+    JSON.stringify(env.WITHDRAWAL_DATA_KEY) === '{"type":"secret"}',
+    "withdrawal secret must remain a value-free reference",
   );
   requireQa(
     worker.assets?.runWorkerFirst?.includes("!/brand/*"),
@@ -347,6 +359,13 @@ export function assertExistingWorker(state, key, role, phase) {
       (b) => b.name === "SUPABASE_SECRET_KEY" && b.type === "secret_text",
     ),
     "existing server secret absent",
+  );
+  requireQa(
+    phase === "before" ||
+      bindings.some(
+        (b) => b.name === "WITHDRAWAL_DATA_KEY" && b.type === "secret_text",
+      ),
+    "deployed withdrawal secret absent",
   );
   for (const [name, text] of Object.entries(expected)) {
     // Only the observed member ADMIN addition and disabled-AI default transition

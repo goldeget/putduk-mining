@@ -196,9 +196,13 @@ test("deployment requires all dedicated credentials without staging fallback", (
     "QA_ADMIN_ACCESS_CLIENT_ID",
     "QA_ADMIN_ACCESS_CLIENT_SECRET",
     "PUTDUK_QA_SUPABASE_SECRET_KEY",
+    "PUTDUK_QA_WITHDRAWAL_DATA_KEY",
   ];
   const credentials = Object.fromEntries(
     names.map((name) => [name, "test-placeholder"]),
+  );
+  credentials.PUTDUK_QA_WITHDRAWAL_DATA_KEY = Buffer.alloc(32, 113).toString(
+    "base64",
   );
   assertDeployCredentials(credentials);
   for (const name of names)
@@ -269,6 +273,7 @@ const output = () => ({
             ]),
           ),
           SUPABASE_SECRET_KEY: { type: "secret" },
+          WITHDRAWAL_DATA_KEY: { type: "secret" },
         },
         assets: { runWorkerFirst: ["/*", "!/brand/*", "!/_next/static/*"] },
       },
@@ -329,6 +334,13 @@ test("admit isolated emitted output and reject dangerous target changes", () => 
       o.workers.default.config.env.SUPABASE_SECRET_KEY.value = "secret";
     },
     (o) => {
+      o.workers.default.config.env.WITHDRAWAL_DATA_KEY.value =
+        Buffer.alloc(32).toString("base64");
+    },
+    (o) => {
+      delete o.workers.default.config.env.WITHDRAWAL_DATA_KEY;
+    },
+    (o) => {
       o.workers.default.config.exports.Durable = { type: "durable-object" };
     },
     (o) => {
@@ -345,6 +357,44 @@ test("admit isolated emitted output and reject dangerous target changes", () => 
     const o = output();
     mutate(o);
     assert.throws(() => assertBuildOutput(o, "member", key), /QA_BLOCKED/);
+  }
+});
+
+test("both actual QA configs declare value-free runtime secrets while other modes retain their existing targets", async () => {
+  const previous = process.env.PUTDUK_QA_SUPABASE_PUBLISHABLE_KEY;
+  process.env.PUTDUK_QA_SUPABASE_PUBLISHABLE_KEY = key;
+  try {
+    for (const [configPath, role, ordinaryName] of [
+      ["../cloudflare.config.ts", "member", "putduk-mining-web-staging"],
+      [
+        "../apps/admin/cloudflare.config.ts",
+        "admin",
+        "putduk-mining-admin-staging",
+      ],
+    ]) {
+      const { default: config } = await import(configPath);
+      const qa = await config({ mode: "qa" });
+      assertBuildOutput(
+        {
+          rootConfig: { ...qa, buildContext: { mode: "qa", isPreview: false } },
+          workers: { default: { config: qa.worker } },
+          containers: [],
+        },
+        role,
+        key,
+      );
+      for (const name of ["SUPABASE_SECRET_KEY", "WITHDRAWAL_DATA_KEY"])
+        assert.deepEqual(qa.worker.env[name], { type: "secret" });
+      for (const mode of ["development", "production"]) {
+        const ordinary = await config({ mode });
+        assert.equal(ordinary.worker.name, ordinaryName);
+        assert.equal(ordinary.worker.env, undefined);
+      }
+    }
+  } finally {
+    if (previous === undefined)
+      delete process.env.PUTDUK_QA_SUPABASE_PUBLISHABLE_KEY;
+    else process.env.PUTDUK_QA_SUPABASE_PUBLISHABLE_KEY = previous;
   }
 });
 
@@ -387,6 +437,34 @@ function ci() {
   }));
   return { run, jobs, artifacts };
 }
+
+test("deployment key requires canonical base64 that decodes to exactly 32 bytes", () => {
+  const valid = {
+    QA_CF_API_TOKEN: "fixture",
+    QA_MEMBER_ACCESS_CLIENT_ID: "fixture",
+    QA_MEMBER_ACCESS_CLIENT_SECRET: "fixture",
+    QA_ADMIN_ACCESS_CLIENT_ID: "fixture",
+    QA_ADMIN_ACCESS_CLIENT_SECRET: "fixture",
+    PUTDUK_QA_SUPABASE_SECRET_KEY: "fixture",
+    PUTDUK_QA_WITHDRAWAL_DATA_KEY: Buffer.alloc(32, 113).toString("base64"),
+  };
+  assertDeployCredentials(valid);
+  for (const value of [
+    Buffer.alloc(31).toString("base64"),
+    Buffer.alloc(33).toString("base64"),
+    valid.PUTDUK_QA_WITHDRAWAL_DATA_KEY.slice(0, -1),
+    `${valid.PUTDUK_QA_WITHDRAWAL_DATA_KEY}\n`,
+    "!".repeat(44),
+  ])
+    assert.throws(
+      () =>
+        assertDeployCredentials({
+          ...valid,
+          PUTDUK_QA_WITHDRAWAL_DATA_KEY: value,
+        }),
+      /QA_BLOCKED/,
+    );
+});
 
 test("accept complete exact attempt only, never stale artifacts, failed budgets or partial jobs", () => {
   const evidence = ci();
@@ -489,6 +567,7 @@ test("existing worker requires preview runtime, existing secret and a full rollb
           text,
         })),
         { name: "SUPABASE_SECRET_KEY", type: "secret_text" },
+        { name: "WITHDRAWAL_DATA_KEY", type: "secret_text" },
       ],
     },
     subdomain: { enabled: true, previews_enabled: false },
@@ -620,6 +699,7 @@ test("reviewed old role settings transition to strict desired settings", () => {
         text,
       })),
       { name: "SUPABASE_SECRET_KEY", type: "secret_text" },
+      { name: "WITHDRAWAL_DATA_KEY", type: "secret_text" },
     ];
     assertExistingWorker(desired, key, role, "after");
     assertExistingWorker(desired, key, role, "before");

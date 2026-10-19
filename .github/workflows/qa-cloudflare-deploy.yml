@@ -78,6 +78,7 @@ jobs:
           QA_ADMIN_ACCESS_CLIENT_ID: ${{ secrets.PUTDUK_QA_ADMIN_ACCESS_CLIENT_ID }}
           QA_ADMIN_ACCESS_CLIENT_SECRET: ${{ secrets.PUTDUK_QA_ADMIN_ACCESS_CLIENT_SECRET }}
           PUTDUK_QA_SUPABASE_SECRET_KEY: ${{ secrets.PUTDUK_QA_SUPABASE_SECRET_KEY }}
+          PUTDUK_QA_WITHDRAWAL_DATA_KEY: ${{ secrets.PUTDUK_QA_WITHDRAWAL_DATA_KEY }}
           QA_BUILD_ARTIFACT_ID: ${{ steps.build-artifact.outputs.artifact-id }}
           QA_BUILD_ARTIFACT_DIGEST: ${{ steps.build-artifact.outputs.artifact-digest }}
         run: node scripts/qa-cloudflare-run.mjs deploy

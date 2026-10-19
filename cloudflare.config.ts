@@ -22,6 +22,7 @@ export default defineConfig(({ mode }) => ({
               ).map(([name, value]) => [name, bindings.text(value)]),
             ),
             SUPABASE_SECRET_KEY: bindings.secret(),
+            WITHDRAWAL_DATA_KEY: bindings.secret(),
           },
         }
       : {}),
