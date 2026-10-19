@@ -156,9 +156,13 @@ test("L1 selected GPU art is responsive without fabricating session rewards", as
     await expect(binding).toHaveText("선택 상품 테마 · NVIDIA");
     const stage = controlRoom.locator('[data-scene-family="AI_GPU_COMPUTE"]');
     await expect(stage).toHaveAttribute("data-scene-art", "ready");
-    await expect(stage).toHaveAttribute("data-motion", "static");
-    await expect(stage).toHaveAttribute("data-mining-running", "false");
-    await expect(stage.locator("canvas")).toHaveCount(0);
+    // This funded allocation is running. Ambient is that motion state.
+    // Reduced motion, later in this test, and a stopped session stay static.
+    await expect(stage).toHaveAttribute("data-mining-running", "true");
+    await expect(stage).toHaveAttribute("data-motion", "ambient");
+    await expect(
+      stage.locator("canvas:not([aria-hidden='true'])"),
+    ).toHaveCount(0);
     const records = [];
     for (const width of [320, 390, 834, 1440]) {
       await memberPage.setViewportSize({
@@ -171,6 +175,9 @@ test("L1 selected GPU art is responsive without fabricating session rewards", as
           reducedMotion: "reduce",
         });
         await memberPage.getByLabel("화면 테마").first().selectOption(theme);
+        await expect(stage).toHaveAttribute("data-motion", "static");
+        await expect(stage).toHaveAttribute("data-mining-running", "true");
+        await expect(stage.locator("canvas")).toHaveCount(0);
         await awaitPaintedImages(memberPage);
         const label = `nvda-selected-${width}-${theme}`;
         await assertViewportFits(memberPage, info, label);
