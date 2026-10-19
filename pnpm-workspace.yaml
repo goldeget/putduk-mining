@@ -4,6 +4,7 @@ packages:
 
 allowBuilds:
   unrs-resolver: true
+  workerd: true
 minimumReleaseAgeStrict: true
 minimumReleaseAgeExclude:
   - "@supabase/auth-js@2.117.2"
@@ -20,3 +21,11 @@ minimumReleaseAgeExclude:
   - motion-dom@13.4.4
   - motion@13.4.4
   - vitest@5.0.2
+  - "@cloudflare/vite-plugin@2.0.0-beta.v.1"
+  - "@vinext/cloudflare@1.1.1"
+  - "@vitejs/plugin-react@6.1.2"
+  - "@vitejs/plugin-rsc@0.5.38"
+  - cf@1.0.0-beta.18
+  - react-server-dom-webpack@19.3.0
+  - vinext@1.2.0
+  - vite-css-modules@1.16.0
