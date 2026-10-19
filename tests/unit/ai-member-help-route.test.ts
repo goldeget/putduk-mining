@@ -25,6 +25,9 @@ const mocks = vi.hoisted(() => ({
 }));
 vi.mock("@/lib/auth/session", () => ({ getVerifiedIdentity: mocks.identity }));
 vi.mock("@/lib/env/server", () => ({ getServerEnv: () => mocks.env }));
+vi.mock("@/lib/safe-mode/assert-component-active.server", () => ({
+  assertComponentActive: async () => ({ ok: true }),
+}));
 vi.mock("@/lib/supabase/admin", () => ({
   createSupabaseAdminClient: () => ({
     from: () => {

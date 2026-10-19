@@ -13,6 +13,9 @@ import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 vi.mock("server-only", () => ({}));
 vi.mock("@/lib/auth/session", () => ({ getVerifiedIdentity: vi.fn() }));
 vi.mock("@/lib/env/server", () => ({ getServerEnv: vi.fn() }));
+vi.mock("@/lib/safe-mode/assert-component-active.server", () => ({
+  assertComponentActive: async () => ({ ok: true }),
+}));
 vi.mock("@/lib/supabase/admin", () => ({ createSupabaseAdminClient: vi.fn() }));
 
 const OWNER_A = "abcdefab-1111-4111-8111-111111111111";
