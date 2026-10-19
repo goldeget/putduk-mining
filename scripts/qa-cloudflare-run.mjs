@@ -26,6 +26,7 @@ import {
   assertCiEvidence,
   readCiAttemptEvidence,
   assertAccess,
+  assertCompleteAccessPolicies,
   assertExistingWorker,
   assertWorkerReferences,
 } from "./qa-cloudflare-policy.mjs";
@@ -304,6 +305,12 @@ async function cloudflare(path) {
   );
   const data = await response.json();
   requireQa(data.success === true, "Cloudflare read rejected");
+  if (
+    Object.values(TARGETS).some(
+      (target) => path === `/access/apps/${target.accessId}/policies`,
+    )
+  )
+    return assertCompleteAccessPolicies(data);
   requireQa(
     !data.result_info?.total_pages || data.result_info.total_pages === 1,
     "Cloudflare pagination incomplete",

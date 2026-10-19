@@ -38,12 +38,12 @@ Repository variable `PUTDUK_QA_SUPABASE_PUBLISHABLE_KEY`는 정확한 preview �
 
 다음 repository secrets가 있어야 배포가 진행된다.
 
-- `PUTDUK_QA_CLOUDFLARE_API_TOKEN`: 지정 계정의 기존 Workers 배포·조회, 지정 Access 앱/정책 조회, 정확한 `putduk.com` zone과 Worker routes 조회 권한. 별도 계정·zone 검색이나 DNS·Access·route 수정 권한은 사용하지 않는다. Cloudflare 토큰이 Workers 단위 제한을 지원하지 않는 범위는 코드 allowlist와 조직의 토큰 관리로 보완해야 한다.
+- `PUTDUK_QA_CLOUDFLARE_API_TOKEN`: 지정 계정의 기존 회원·관리자 QA Worker 두 개에만 `Individual Workers Editor`를 부여한 account-owned API token. Worker 리소스는 account 아래 `com.cloudflare.edge.worker.script.<WORKER_ID>` 두 개로 제한한다. 같은 계정의 `Access: Apps and Policies Read`와 정확한 `putduk.com` zone의 `Workers Routes Read`를 별도 정책으로 부여한다. Access 읽기 권한은 계정 범위이며 실제 요청은 코드 allowlist의 QA app 두 개로 제한한다. 별도 계정·zone 검색, 다른 Worker 배포, DNS·Access·route 수정이나 token 발급 권한을 추가하지 않는다. 전체 계정 Workers 편집 권한으로 대체하지 않는다.
 - `PUTDUK_QA_MEMBER_ACCESS_CLIENT_ID`, `PUTDUK_QA_MEMBER_ACCESS_CLIENT_SECRET`: 기존 회원 QA Access 서비스 토큰.
 - `PUTDUK_QA_ADMIN_ACCESS_CLIENT_ID`, `PUTDUK_QA_ADMIN_ACCESS_CLIENT_SECRET`: 기존 관리자 QA Access 서비스 토큰.
 - `PUTDUK_QA_SUPABASE_SECRET_KEY`: 정확한 preview의 전용 `sb_secret_` 서버 키. 운영 키 또는 임의 placeholder는 사용할 수 없다.
 
-기존 서비스 토큰 만료는 회원 `2026-10-23T09:57:08Z`, 관리자 `2026-10-23T09:57:47Z`로 관찰됐다. 만료되거나 자격 증명이 연결되지 않았으면 pipeline은 실패한다. 이 구현은 키 발급, token 갱신 또는 Access 완화를 자동으로 하지 않는다. 배포 자격 증명 누락은 빌드/산출물 검증 이후 배포 단계에서 드러나므로 자격 증명 없는 검증 결과도 보존된다.
+2026-10-20 연결 receipt에서 기존 서비스 토큰의 secret만 교체했고 token ID·Access 정책·전체 만료는 유지했다. 회원 만료는 `2026-10-23T09:57:08Z`, 관리자 만료는 `2026-10-23T09:57:47Z`다. 이전 secret의 유예 종료 요청도 각 token 만료와 같으며, 이전 secret의 실제 동작은 값 부재로 검증하지 않았다. QA 배포 API token 만료는 `2026-11-19T14:59:59Z`로 확인했다. 이 값들은 관측 시점 receipt이며 실행 전 현재 상태를 다시 확인해야 한다. 만료되거나 자격 증명이 연결되지 않았으면 pipeline은 실패한다. 이 workflow는 키 발급·token 갱신·Access 완화를 자동으로 하지 않는다. 자격 증명 없는 빌드/산출물 검증과 실제 hosted 배포 성공은 별도로 기록한다.
 
 ## 실패와 복구
 

@@ -218,6 +218,28 @@ export async function readCiAttemptEvidence(request, run) {
   );
   return { run, jobs: jobs.jobs, artifacts: artifacts.artifacts };
 }
+export function assertCompleteAccessPolicies(data) {
+  const info = data?.result_info;
+  requireQa(
+    data?.success === true &&
+      Array.isArray(data.result) &&
+      info?.page === 1 &&
+      info.total_pages === 1 &&
+      Number.isSafeInteger(info.per_page) &&
+      info.per_page > 0 &&
+      info.per_page >= data.result.length &&
+      info.count === data.result.length &&
+      info.total_count === data.result.length &&
+      !info.cursor &&
+      !info.cursors &&
+      !info.next_page &&
+      !data.cursor &&
+      !data.cursors &&
+      !data.next_page,
+    "Access policies pagination incomplete",
+  );
+  return data.result;
+}
 export function assertAccess(app, policies, role, workerId) {
   const target = TARGETS[role];
   requireQa(app.id === target.accessId, "Access application identity");

@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import * as qaPolicy from "./qa-cloudflare-policy.mjs";
 import {
   ACCOUNT,
   REPOSITORY,
@@ -26,6 +27,166 @@ const candidate = {
 };
 const key = "sb_publishable_qa_example_only_1234567890";
 const values = qaValues(key, "member");
+
+function accessPolicyListFixture() {
+  return {
+    success: true,
+    result: [
+      {
+        decision: "non_identity",
+        include: [{ service_token: { token_id: "fixture" } }],
+      },
+    ],
+    result_info: {
+      page: 1,
+      per_page: 200,
+      count: 1,
+      total_count: 1,
+      total_pages: 1,
+    },
+  };
+}
+
+test("complete Access policy response retains every policy for authorization review", () => {
+  assert.equal(typeof qaPolicy.assertCompleteAccessPolicies, "function");
+  const response = accessPolicyListFixture();
+  assert.equal(
+    qaPolicy.assertCompleteAccessPolicies(response),
+    response.result,
+  );
+});
+
+for (const [name, change] of [
+  ["missing metadata", (data) => delete data.result_info],
+  [
+    "missing total_pages with a hidden second policy",
+    (data) => {
+      delete data.result_info.total_pages;
+      data.result_info.total_count = 2;
+    },
+  ],
+  [
+    "missing total_pages even when counts match",
+    (data) => delete data.result_info.total_pages,
+  ],
+  [
+    "counted truncation",
+    (data) => {
+      data.result_info.total_count = 2;
+    },
+  ],
+  [
+    "inconsistent count",
+    (data) => {
+      data.result_info.count = 2;
+    },
+  ],
+  [
+    "wrong page",
+    (data) => {
+      data.result_info.page = 2;
+    },
+  ],
+  [
+    "multiple pages",
+    (data) => {
+      data.result_info.total_pages = 2;
+    },
+  ],
+  ["missing per_page", (data) => delete data.result_info.per_page],
+  [
+    "invalid per_page",
+    (data) => {
+      data.result_info.per_page = 0;
+    },
+  ],
+  [
+    "string count",
+    (data) => {
+      data.result_info.count = "1";
+    },
+  ],
+  [
+    "top-level cursor",
+    (data) => {
+      data.cursor = "more";
+    },
+  ],
+  [
+    "metadata cursor",
+    (data) => {
+      data.result_info.cursor = "more";
+    },
+  ],
+  [
+    "top-level cursors",
+    (data) => {
+      data.cursors = { after: "more" };
+    },
+  ],
+  [
+    "metadata cursors",
+    (data) => {
+      data.result_info.cursors = { after: "more" };
+    },
+  ],
+  [
+    "top-level next page",
+    (data) => {
+      data.next_page = 2;
+    },
+  ],
+  [
+    "metadata next page",
+    (data) => {
+      data.result_info.next_page = 2;
+    },
+  ],
+  [
+    "failed API response",
+    (data) => {
+      data.success = false;
+    },
+  ],
+  [
+    "non-array result",
+    (data) => {
+      data.result = {};
+    },
+  ],
+]) {
+  test(`Access policies reject ${name} before authorization review`, () => {
+    const response = accessPolicyListFixture();
+    change(response);
+    assert.throws(
+      () => qaPolicy.assertCompleteAccessPolicies(response),
+      /QA_BLOCKED: Access policies pagination incomplete/,
+    );
+  });
+}
+
+test("a bypass policy cannot be hidden by completing the Access list", () => {
+  const response = accessPolicyListFixture();
+  response.result.push({ decision: "bypass", include: [{ everyone: {} }] });
+  response.result_info.count = response.result_info.total_count = 2;
+  const policies = qaPolicy.assertCompleteAccessPolicies(response);
+  assert.equal(policies.length, 2);
+  assert.throws(
+    () =>
+      assertAccess(
+        {
+          id: TARGETS.member.accessId,
+          destinations: [
+            { type: "worker", worker_id: TARGETS.member.workerId },
+          ],
+        },
+        policies,
+        "member",
+        TARGETS.member.workerId,
+      ),
+    /Access machine-only policy/,
+  );
+});
 
 test("deployment requires all dedicated credentials without staging fallback", () => {
   const names = [
