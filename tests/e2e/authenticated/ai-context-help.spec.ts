@@ -11,7 +11,7 @@ import {
 import { createConfirmedMember } from "../fixtures/local-auth";
 import {
   classifyAiTransportFailure,
-  readAiAnswerAck,
+  observeAiWireAck,
 } from "./helpers/ai-ack-diagnostics";
 import {
   dismissGuidedQuestIfPresent,
@@ -19,7 +19,10 @@ import {
 } from "./helpers/member-session";
 
 /** Bounded metadata only: no answer body, identifier, credential or URL query. */
-function observeHistoryRestoration(page: Page) {
+function observeHistoryRestoration(
+  page: Page,
+  wire: Awaited<ReturnType<typeof observeAiWireAck>>,
+) {
   const startedAt = performance.now();
   const elapsedMs = () =>
     Math.max(0, Math.round(performance.now() - startedAt));
@@ -205,10 +208,8 @@ function observeHistoryRestoration(page: Page) {
   return {
     async durableAnswerAck(response: Response) {
       const readStartedMs = elapsedMs();
-      // The ACK's original single body read; no browser stream consumer is added.
-      const result = await readAiAnswerAck(response.status(), () =>
-        response.text(),
-      );
+      // Metadata from this exact request's actual browser Response clone.
+      const result = await wire.read(response);
       if (records.length < 24)
         records.push({
           endpoint: "ai_chat",
@@ -266,7 +267,8 @@ test("context suggestions, wide view, persisted help and real destination work w
   await expect(input).toHaveValue(
     "사용 가능 금액과 보류 금액은 무슨 뜻인가요?",
   );
-  const diagnostics = observeHistoryRestoration(page);
+  const wire = await observeAiWireAck(page);
+  const diagnostics = observeHistoryRestoration(page, wire);
   try {
     const answered = page.waitForResponse(
       (response) =>
@@ -313,7 +315,11 @@ test("context suggestions, wide view, persisted help and real destination work w
       page.getByRole("heading", { name: "출금하기", exact: true }),
     ).toBeVisible();
   } finally {
-    await diagnostics.finish(test.info());
+    try {
+      await diagnostics.finish(test.info());
+    } finally {
+      await wire.dispose();
+    }
   }
 });
 

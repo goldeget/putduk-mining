@@ -58,6 +58,7 @@ node --test scripts/qa-cloudflare-policy.test.mjs
 node --test scripts/qa-cloudflare-run.test.mjs
 node --test scripts/framework-generated-types.test.mjs
 node --test scripts/qa-cloudflare-network.test.mjs
+node --test scripts/ai-wire-ack.browser.test.mjs
 pnpm exec vitest run tests/unit/supabase-browser-runtime.test.ts
 pnpm --dir apps/admin exec vitest run tests/admin-browser-public-key.test.ts
 ```
@@ -67,6 +68,8 @@ pnpm --dir apps/admin exec vitest run tests/admin-browser-public-key.test.ts
 Next와 Vinext는 각 앱의 `next-env.d.ts`를 서로 다른 형식으로 재생성한다. [Next 공식 지침](https://nextjs.org/docs/app/api-reference/config/typescript#next-envdts)에 따라 정확히 두 앱의 생성 파일만 Git 추적에서 제외하고 실제 로컬 파일은 유지한다. 독립 타입 검사는 `next typegen && tsc --noEmit`으로 생성과 검사를 모두 수행한다. QA workflow는 의존성 설치 후와 build/dry-run 후에 tracked source가 HEAD와 같은지 검사하며 변경 경로만 출력한다. 실제 앱 소스·설정·타입 검사에 대한 예외나 자동 복원은 없다. 생성기 회귀는 격리 Git 저장소의 빈 status와 HEAD diff를 확인하고, 실제 페이지 소스 변경을 계속 검출한다.
 
 Network 테스트는 설치된 Chromium과 ephemeral loopback HTTP fixture 두 개를 사용한다. 원격 Worker, 실제 credential, DB를 호출하지 않는다. Workflow에서는 browser 설치 후 deployment secret 주입 전에 실행한다.
+
+AI wire 회귀도 loopback fixture만 호출한다. 테스트의 추가 소비자가 실제 browser `Response`를 clone하여 exact request의 정상 EOF와 원래 ACK 필드를 검증한다. CDP 본문 읽기 실패, UI 완료 표시나 DB 행 수를 성공 ACK로 대체하지 않는다. 추가 소비자는 timing/native tee buffering을 바꾸며 원래 앱 reader만 취소한 뒤에도 계속 읽을 수 있다. 따라서 이 관측을 앱 자체의 EOF·취소 증거로 사용하지 않는다. 원래 fetch Promise/Response/error, 비공개 no-store 정책과 제품 AI 코드는 유지한다. Byte/text/event/request/time 제한은 관측기의 작업·누적 한도이며 native queue의 절대 메모리 한도를 보장하지 않는다. 두 browser fixture 파일은 동시에 실행하지 않는다.
 
 정책 테스트는 외부 repository/branch, stale SHA, 운영 Worker/DB, wrong mode/account, 신규 binding/trigger, 잘못된 CI attempt/artifact, Access bypass, rollback 정보 부재를 거절하는 실행 가능한 검증이다. 런타임 테스트는 exact preview tuple을 허용하되 서버에서 `APP_ENV=staging`과 정확한 QA app origin을 함께 요구한다. 기존 parent DB 및 로컬 loopback 규칙과 브라우저에 secret을 전달하지 않는 규칙을 유지한다.
 

@@ -67,8 +67,8 @@ jobs:
           retention-days: 7
       - name: Install smoke browser before credentials are exposed
         run: pnpm exec playwright install --with-deps chromium
-      - name: Verify redirect isolation and both-role Access admission with local fixtures
-        run: node --test scripts/qa-cloudflare-network.test.mjs
+      - name: Verify local browser network boundaries and actual-wire ACK observation
+        run: node --test --test-concurrency=1 scripts/qa-cloudflare-network.test.mjs scripts/ai-wire-ack.browser.test.mjs
       - name: Deploy existing isolated QA Workers and verify boundaries
         env:
           GH_TOKEN: ${{ github.token }}

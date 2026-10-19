@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   classifyAiTransportFailure,
+  observeAiWireAck,
   readAiAnswerAck,
 } from "../e2e/authenticated/helpers/ai-ack-diagnostics";
 
@@ -113,6 +114,33 @@ describe("AI ACK metadata", () => {
       assistantMessageIdPresent: false,
     });
   });
+});
+
+describe("wire ACK observer admission", () => {
+  it.each([
+    "https://remote.invalid/ai",
+    "http://remote.invalid/ai",
+    "https://localhost/ai",
+  ])(
+    "rejects non-local HTTP targets before installing a fetch wrapper %#",
+    async (url) => {
+      const page = { url: () => url };
+      await expect(
+        observeAiWireAck(page as Parameters<typeof observeAiWireAck>[0]),
+      ).rejects.toThrow("AI_ACK_LOCAL_TARGET_REQUIRED");
+    },
+  );
+
+  it.each([0, -1, 5_001, 1.5, Number.NaN, Number.POSITIVE_INFINITY])(
+    "rejects an invalid or expanded timeout bound %# before browser work",
+    async (timeoutMs) => {
+      await expect(
+        observeAiWireAck({} as Parameters<typeof observeAiWireAck>[0], {
+          timeoutMs,
+        }),
+      ).rejects.toThrow("AI_ACK_INVALID_BOUND");
+    },
+  );
 });
 
 describe("safe transport failure categories", () => {
