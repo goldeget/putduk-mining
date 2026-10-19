@@ -113,7 +113,7 @@ export default async function EventsDetailPage({
   const { data: contentData, error: contentError } = await identity.supabase
     .from("event_member_content")
     .select(
-      "event_id,revision_id,body_ko,participation_ko,exclusion_ko,cta_label,cta_route,reward_mode",
+      "event_id,revision_id,body_ko,participation_ko,exclusion_ko,cta_label,cta_route,reward_mode,participation_mode",
     )
     .eq("event_id", event.id)
     .maybeSingle();
@@ -230,7 +230,7 @@ export default async function EventsDetailPage({
               title="참여 상태를 확인하지 못했어요"
               description="다시 불러온 뒤 참여해 주세요."
             />
-          ) : (
+          ) : content.participation_mode === "GUIDE" ? null : (
             <EventParticipation
               eventId={event.id}
               revisionId={content.revision_id}
