@@ -6,14 +6,22 @@ import type { SupabaseBrowserAuthConfig } from "@/lib/env/public";
 import { useMotionPreference } from "@/lib/motion/motion-preference";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 import {
+  createServerClock,
+  elapsedServerMicros,
+  formatLiveAmountFixed,
+  projectPendingMicroKrw,
+  settlementCueKrw,
+  type ServerClock,
+} from "@/lib/product/mining-live-projection";
+import {
   acceptMiningLiveSnapshot,
   canAutomaticallyReadMiningSnapshot,
   formatLiveMicroKrw,
-  interpolateServerTarget,
   liveCapacityProgress,
   readMiningLiveEnvelope,
   type MiningLiveSnapshot,
 } from "@/lib/product/mining-live-snapshot";
+import { LiveAmountText } from "./live-amount-text";
 import styles from "./mining-live-summary.module.css";
 
 type Props = {
@@ -32,6 +40,16 @@ const stopLabels: Record<
   FUNDING_BELOW_MINIMUM: "채굴 원금 조건을 확인해 주세요.",
 };
 
+/** Normal foreground refresh. Each receipt replaces the on-screen estimate. */
+const READ_INTERVAL_MS = 10_000;
+/** Bounded retries after a failed read; a fourth consecutive failure stops automatic reads. */
+const RETRY_BACKOFF_MS = [5_000, 15_000, 30_000] as const;
+/** Focus and page-show events do not re-read a receipt that is this fresh. */
+const FOCUS_REREAD_GUARD_MS = 3_000;
+/** The on-screen estimate repaints at most this often (10 Hz). */
+const PAINT_INTERVAL_MS = 100;
+const SETTLEMENT_CUE_MS = 8_000;
+
 export function MiningLiveSummary(props: Props) {
   // A different account or replacement server receipt gets no previous state.
   return (
@@ -47,10 +65,13 @@ function OwnedMiningSummary({ ownerId, initialSnapshot, authConfig }: Props) {
   const [ownerVerified, setOwnerVerified] = useState(false);
   const [readState, setReadState] = useState<ReadState>("checking");
   const [reopenRequired, setReopenRequired] = useState(false);
-  const [pending, setPending] = useState(initialSnapshot.pendingMicroKrw);
+  // Only a receipt fetched in this page session has a known arrival time.
+  const [clock, setClock] = useState<ServerClock | null>(null);
+  const [tick, setTick] = useState<{ key: string; value: string } | null>(null);
+  const [settled, setSettled] = useState<{ key: string; krw: string } | null>(
+    null,
+  );
   const reducedMotion = useMotionPreference();
-  const pendingRef = useRef(pending);
-  const animationContext = useRef(initialSnapshot);
   const refreshRef = useRef<(() => void) | null>(null);
 
   useEffect(() => {
@@ -60,6 +81,9 @@ function OwnedMiningSummary({ ownerId, initialSnapshot, authConfig }: Props) {
       initialObserved = false;
     let current = initialSnapshot;
     let autoAllowed = canAutomaticallyReadMiningSnapshot(current);
+    let failures = 0;
+    let reopen = false;
+    let lastReceiptAt = Number.NEGATIVE_INFINITY;
     let timer: ReturnType<typeof setTimeout> | undefined;
     let controller: AbortController | null = null;
     let unsubscribe: (() => void) | undefined;
@@ -76,6 +100,10 @@ function OwnedMiningSummary({ ownerId, initialSnapshot, authConfig }: Props) {
       setOwnerVerified(false);
       setReadState("blocked");
     };
+    const nextDelay = () =>
+      failures > 0
+        ? RETRY_BACKOFF_MS[Math.min(failures, RETRY_BACKOFF_MS.length) - 1]!
+        : READ_INTERVAL_MS;
     const read = async () => {
       if (disposed || blocked || !verified || controller || !foreground())
         return;
@@ -113,41 +141,72 @@ function OwnedMiningSummary({ ownerId, initialSnapshot, authConfig }: Props) {
           envelope.snapshot &&
           (envelope.snapshot.cycleStartedAt !== current.cycleStartedAt ||
             envelope.snapshot.cycleEnd !== current.cycleEnd)
-        )
+        ) {
+          // A new cycle needs a fresh page; retrying cannot help.
+          reopen = true;
+          autoAllowed = false;
           setReopenRequired(true);
+        }
         if (
           !envelope.snapshot ||
           !acceptMiningLiveSnapshot(current, envelope.snapshot)
         )
           throw new Error("RECEIPT_UNCONFIRMED");
+        const increase = settlementCueKrw(current, envelope.snapshot);
+        // Arrival time is taken after the body is accepted, so elapsed time
+        // since the server evaluation can only be under-stated.
+        const arrivedAt = performance.now();
         current = envelope.snapshot;
+        lastReceiptAt = arrivedAt;
+        failures = 0;
         autoAllowed = canAutomaticallyReadMiningSnapshot(current);
+        setClock(createServerClock(current.evaluatedAt, arrivedAt));
         setSnapshot(current);
+        if (increase)
+          setSettled({ key: current.evaluatedAt, krw: increase });
         setReadState("fresh");
       } catch {
         if (!disposed && !blocked && verified) {
-          if (foreground()) autoAllowed = false;
+          if (foreground()) {
+            failures += 1;
+            if (failures > RETRY_BACKOFF_MS.length) autoAllowed = false;
+          }
           setReadState(foreground() ? "stale" : "paused");
         }
       } finally {
         clearTimeout(deadline);
         if (controller === activeController) controller = null;
         if (!disposed && !blocked && verified && foreground() && autoAllowed)
-          timer = setTimeout(() => void read(), 10_000);
+          timer = setTimeout(() => void read(), nextDelay());
       }
     };
-    const visibility = () => {
+    const resync = (guard: boolean) => {
       stop();
-      if (disposed || blocked || !verified) return;
-      if (!foreground()) setReadState("paused");
-      else if (!controller && autoAllowed) void read();
-      else if (!autoAllowed)
+      if (disposed || blocked || !verified || reopen) return;
+      if (!foreground()) {
+        setReadState("paused");
+        return;
+      }
+      if (guard && performance.now() - lastReceiptAt < FOCUS_REREAD_GUARD_MS) {
+        if (autoAllowed) timer = setTimeout(() => void read(), nextDelay());
+        return;
+      }
+      if (!controller && (autoAllowed || failures > 0)) {
+        // A recovery attempt after earlier failures re-opens automatic reads
+        // only when the server snapshot itself permits them.
+        autoAllowed = canAutomaticallyReadMiningSnapshot(current);
+        if (autoAllowed || failures > 0) void read();
+      } else if (!autoAllowed)
         setReadState(current.status === "STOPPED" ? "fresh" : "stale");
     };
+    const visibility = () => resync(false);
+    const returned = () => resync(true);
     refreshRef.current = () => void read();
     document.addEventListener("visibilitychange", visibility);
     window.addEventListener("online", visibility);
     window.addEventListener("offline", visibility);
+    window.addEventListener("focus", returned);
+    window.addEventListener("pageshow", returned);
     try {
       const browser = createSupabaseBrowserClient(authConfig);
       const { data } = browser.auth.onAuthStateChange((event, session) => {
@@ -179,55 +238,68 @@ function OwnedMiningSummary({ ownerId, initialSnapshot, authConfig }: Props) {
       document.removeEventListener("visibilitychange", visibility);
       window.removeEventListener("online", visibility);
       window.removeEventListener("offline", visibility);
+      window.removeEventListener("focus", returned);
+      window.removeEventListener("pageshow", returned);
     };
   }, [ownerId, initialSnapshot, authConfig]);
 
+  const projection = snapshot.projection ?? null;
+  // The estimate only continues from a fetched, fresh, running receipt. Any
+  // other state shows the last server value and never advances it.
+  const live =
+    ownerVerified &&
+    !reducedMotion &&
+    readState === "fresh" &&
+    clock !== null &&
+    projection !== null &&
+    canAutomaticallyReadMiningSnapshot(snapshot);
+
   useEffect(() => {
+    if (!live || !clock || !projection) return;
+    const key = snapshot.evaluatedAt;
+    const horizon = BigInt(projection.horizonMicros);
     let frame: number | undefined;
     let cancelled = false;
-    const target = snapshot.pendingMicroKrw;
-    const from = pendingRef.current;
-    const exact = () => {
-      if (!cancelled) {
-        pendingRef.current = target;
-        setPending(target);
-      }
-    };
-    // Changes of state or conditions are corrections, not visual accrual.
-    const previous = animationContext.current;
-    animationContext.current = snapshot;
-    if (
-      !ownerVerified ||
-      reducedMotion ||
-      readState !== "fresh" ||
-      !canAutomaticallyReadMiningSnapshot(snapshot) ||
-      previous.conditionRevision !== snapshot.conditionRevision ||
-      previous.stateRevision !== snapshot.stateRevision ||
-      BigInt(target) <= BigInt(from)
-    ) {
-      queueMicrotask(exact);
-      return () => {
-        cancelled = true;
-      };
-    }
-    const started = performance.now();
-    const tick = (now: number) => {
+    let lastPaint = Number.NEGATIVE_INFINITY;
+    const loop = () => {
       if (cancelled) return;
-      const progress = Math.min(
-        10_000,
-        Math.max(0, Math.floor(((now - started) / 350) * 10_000)),
-      );
-      const next = interpolateServerTarget(from, target, progress);
-      pendingRef.current = next;
-      setPending(next);
-      if (progress < 10_000) frame = requestAnimationFrame(tick);
+      const now = performance.now();
+      if (now - lastPaint >= PAINT_INTERVAL_MS) {
+        lastPaint = now;
+        const elapsed = elapsedServerMicros(clock, now);
+        const value = projectPendingMicroKrw(
+          snapshot.pendingMicroKrw,
+          projection,
+          elapsed,
+        );
+        setTick((previous) =>
+          previous?.key === key && previous.value === value
+            ? previous
+            : { key, value },
+        );
+        // Past the horizon the value is flat; stop spending frames until the
+        // next receipt replaces it.
+        if (elapsed >= horizon) return;
+      }
+      frame = requestAnimationFrame(loop);
     };
-    frame = requestAnimationFrame(tick);
+    frame = requestAnimationFrame(loop);
     return () => {
       cancelled = true;
       if (frame !== undefined) cancelAnimationFrame(frame);
     };
-  }, [snapshot, ownerVerified, readState, reducedMotion]);
+  }, [live, clock, projection, snapshot.evaluatedAt, snapshot.pendingMicroKrw]);
+
+  useEffect(() => {
+    if (!settled) return;
+    const timer = setTimeout(() => setSettled(null), SETTLEMENT_CUE_MS);
+    return () => clearTimeout(timer);
+  }, [settled]);
+
+  const shownPending =
+    live && tick?.key === snapshot.evaluatedAt
+      ? tick.value
+      : snapshot.pendingMicroKrw;
   const progress = liveCapacityProgress(snapshot);
   const message =
     readState === "blocked"
@@ -242,7 +314,9 @@ function OwnedMiningSummary({ ownerId, initialSnapshot, authConfig }: Props) {
               ? stopLabels[snapshot.stopReason]
               : !canAutomaticallyReadMiningSnapshot(snapshot)
                 ? "이번 한도의 남은 금액이 없어 자동 확인을 멈췄어요."
-                : "서버에서 확인한 기록만 표시해요.";
+                : live
+                  ? "서버가 확인한 속도로 이어서 보여 드려요."
+                  : "서버에서 확인한 기록만 표시해요.";
   if (!ownerVerified)
     return (
       <FeedbackMessage tone={readState === "blocked" ? "warning" : "info"}>
@@ -254,14 +328,28 @@ function OwnedMiningSummary({ ownerId, initialSnapshot, authConfig }: Props) {
       className={styles.summary}
       data-mining-live-summary
       data-read-state={readState}
+      data-live={live ? "true" : "false"}
     >
       <dl className={styles.amounts} aria-live="off">
-        <div>
-          <dt>정산 전</dt>
+        <div className={styles.pending}>
+          <dt>
+            정산 전
+            {live ? (
+              <small className={styles.livePill}>
+                <span className={styles.liveDot} aria-hidden="true" />
+                이어서 보는 중
+              </small>
+            ) : null}
+          </dt>
           <dd>
-            <span aria-hidden="true">{formatLiveMicroKrw(pending)}</span>
+            <span aria-hidden="true">
+              <LiveAmountText
+                text={formatLiveAmountFixed(shownPending)}
+                animate={live}
+              />
+            </span>
             <span className={styles.srOnly}>
-              {formatLiveMicroKrw(snapshot.pendingMicroKrw)}
+              {formatLiveAmountFixed(snapshot.pendingMicroKrw)}
             </span>
           </dd>
         </div>
@@ -286,6 +374,17 @@ function OwnedMiningSummary({ ownerId, initialSnapshot, authConfig }: Props) {
           <dd>{formatLiveMicroKrw(snapshot.remainingMicroKrw)}</dd>
         </div>
       </dl>
+      {settled ? (
+        <p
+          className={styles.settled}
+          role="status"
+          data-settlement-cue
+          key={settled.key}
+        >
+          {BigInt(settled.krw).toLocaleString("ko-KR")}원이 확정 채굴에
+          반영됐어요.
+        </p>
+      ) : null}
       {progress ? (
         <div className={styles.progress}>
           <progress
