@@ -232,7 +232,7 @@ export function WalletDepositView({
                 {instructionRead === "error"
                   ? "입금 안내를 다시 확인해 주세요"
                   : instructionRead === "empty"
-                    ? "입금 안내 준비 중"
+                    ? "담당자에게 문의해 주세요."
                     : "안내 주소로 송금 후 접수"}
               </small>
             </span>
