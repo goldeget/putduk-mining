@@ -31,23 +31,33 @@ function scrollNavLinkIntoView(nav: HTMLElement, link: HTMLElement) {
     link.scrollIntoView?.({ block: "nearest", inline: "nearest" });
     return;
   }
-  const navRect = nav.getBoundingClientRect();
-  const linkRect = link.getBoundingClientRect();
-  const linkFits = linkRect.height <= navRect.height + 1;
-  // A destination taller than the menu used to align its bottom, which
-  // pushed the top above the nav. Keep the top inside the menu instead.
-  if (!linkFits || linkRect.top < navRect.top - 1) {
-    nav.scrollTop += linkRect.top - navRect.top;
-  } else if (linkRect.bottom > navRect.bottom + 1) {
-    nav.scrollTop += linkRect.bottom - navRect.bottom;
-  }
+  const place = () => {
+    const navRect = nav.getBoundingClientRect();
+    const linkRect = link.getBoundingClientRect();
+    const linkFits = linkRect.height <= navRect.height + 1;
+    // A destination taller than the menu used to align its bottom, which
+    // pushed the top above the nav. Keep the top inside the menu instead.
+    let next = nav.scrollTop;
+    if (!linkFits || linkRect.top < navRect.top - 1) {
+      next += linkRect.top - navRect.top;
+    } else if (linkRect.bottom > navRect.bottom + 1) {
+      next += linkRect.bottom - navRect.bottom;
+      const projectedTop = linkRect.top - (linkRect.bottom - navRect.bottom);
+      if (projectedTop < navRect.top - 1) next += projectedTop - navRect.top;
+    }
+    const maxScroll = Math.max(0, nav.scrollHeight - nav.clientHeight);
+    nav.scrollTop = Math.min(maxScroll, Math.max(0, next));
+  };
+  place();
   const settled = link.getBoundingClientRect();
   const settledNav = nav.getBoundingClientRect();
-  if (settled.top < settledNav.top - 1) {
-    nav.scrollTop += settled.top - settledNav.top;
+  if (
+    settled.top < settledNav.top - 1 ||
+    (settled.height <= settledNav.height + 1 &&
+      settled.bottom > settledNav.bottom + 1)
+  ) {
+    place();
   }
-  const maxScroll = Math.max(0, nav.scrollHeight - nav.clientHeight);
-  nav.scrollTop = Math.min(maxScroll, Math.max(0, nav.scrollTop));
 }
 
 function focusedNavLink(nav: HTMLElement) {
@@ -107,7 +117,11 @@ export function AdminNavigation({ onNavigate }: { onNavigate?: () => void }) {
       const link = target.closest("a");
       if (!(link instanceof HTMLElement)) return;
       frameLink(link);
-      nav.ownerDocument.defaultView?.requestAnimationFrame(() => {
+      const view = nav.ownerDocument.defaultView;
+      view?.queueMicrotask(() => {
+        if (nav.contains(link)) frameLink(link);
+      });
+      view?.requestAnimationFrame(() => {
         if (nav.contains(link)) frameLink(link);
       });
     };
@@ -139,7 +153,11 @@ export function AdminNavigation({ onNavigate }: { onNavigate?: () => void }) {
               const link = event.currentTarget;
               if (nav) {
                 scrollNavLinkIntoView(nav, link);
-                nav.ownerDocument.defaultView?.requestAnimationFrame(() => {
+                const view = nav.ownerDocument.defaultView;
+                view?.queueMicrotask(() => {
+                  if (nav.contains(link)) scrollNavLinkIntoView(nav, link);
+                });
+                view?.requestAnimationFrame(() => {
                   if (nav.contains(link)) scrollNavLinkIntoView(nav, link);
                 });
                 return;
