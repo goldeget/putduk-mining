@@ -45,8 +45,8 @@ jobs:
           version: 12.6.0
       - name: Install pinned dependencies
         run: pnpm install --frozen-lockfile
-      - name: Verify QA admission policy
-        run: node --test scripts/qa-cloudflare-policy.test.mjs
+      - name: Verify QA admission policy and partial-deployment receipts
+        run: node --test scripts/qa-cloudflare-policy.test.mjs scripts/qa-cloudflare-run.test.mjs
       - name: Build once per app and dry-run the identical output without credentials
         run: node scripts/qa-cloudflare-run.mjs build
       - name: Preserve immutable QA build

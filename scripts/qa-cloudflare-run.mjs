@@ -366,7 +366,24 @@ async function verifyPreviewKeys() {
     await response.body?.cancel();
   }
 }
-async function deploy() {
+function productionDeployIo() {
+  return {
+    env,
+    read,
+    save,
+    ciEvidence,
+    verifyPreviewKeys,
+    inspectBuild,
+    inspectRemote,
+    cloudflare,
+    loadSmoke: () => import("./qa-cloudflare-smoke.mjs"),
+    run,
+    fs: { mkdtempSync, writeFileSync, unlinkSync, rmdirSync },
+  };
+}
+export async function deploy(io = productionDeployIo()) {
+  const env = io.env;
+  const sha = env.GITHUB_SHA;
   requireQa(
     env.RUNNER_OS === "Linux" && env.RUNNER_TEMP?.startsWith("/"),
     "hosted Linux runner required",
@@ -377,14 +394,14 @@ async function deploy() {
       /^[a-f0-9]{64}$/.test(env.QA_BUILD_ARTIFACT_DIGEST ?? ""),
     "immutable build artifact receipt missing",
   );
-  const built = read("build");
+  const built = io.read("build");
   requireQa(
     built.sha === sha &&
       built.runId === env.GITHUB_RUN_ID &&
       built.attempt === env.GITHUB_RUN_ATTEMPT,
     "build provenance",
   );
-  const { smoke } = await import("./qa-cloudflare-smoke.mjs");
+  const { smoke } = await io.loadSmoke();
   const receipt = {
     sha,
     runId: env.GITHUB_RUN_ID,
@@ -398,19 +415,19 @@ async function deploy() {
     },
     workers: {},
   };
-  save("deployment", receipt);
+  io.save("deployment", receipt);
   try {
-    receipt.ci = await ciEvidence(false);
-    await verifyPreviewKeys();
+    receipt.ci = await io.ciEvidence(false);
+    await io.verifyPreviewKeys();
     await withQaPairPreflight(
       async (role) => {
         requireQa(
-          JSON.stringify(await inspectBuild(role)) ===
+          JSON.stringify(await io.inspectBuild(role)) ===
             JSON.stringify(built.workers[role]),
           "artifact changed after dry run",
         );
         receipt.workers[role] = {
-          prior: await inspectRemote(role, "before"),
+          prior: await io.inspectRemote(role, "before"),
           state: "NOT_DEPLOYED",
         };
         // Both credentials must retrieve a valid existing asset before either mutation.
@@ -418,13 +435,14 @@ async function deploy() {
         return receipt.workers[role];
       },
       async () => {
-        save("deployment", receipt);
-        const secretDir = mkdtempSync(
+        io.save("deployment", receipt);
+        const secretDir = io.fs.mkdtempSync(
           join(env.RUNNER_TEMP, "putduk-qa-secrets-"),
         );
+        let executionFailed = false;
         try {
           const secretFile = join(secretDir, "runtime.json");
-          writeFileSync(
+          io.fs.writeFileSync(
             secretFile,
             JSON.stringify({
               SUPABASE_SECRET_KEY: env.PUTDUK_QA_SUPABASE_SECRET_KEY,
@@ -432,20 +450,20 @@ async function deploy() {
             { mode: 0o600 },
           );
           for (const [role, target] of Object.entries(TARGETS)) {
-            receipt.ci = await ciEvidence(false);
+            receipt.ci = await io.ciEvidence(false);
             requireQa(
-              JSON.stringify(await inspectRemote(role, "before")) ===
+              JSON.stringify(await io.inspectRemote(role, "before")) ===
                 JSON.stringify(receipt.workers[role].prior),
               "remote changed before deploy",
             );
             requireQa(
-              JSON.stringify(await inspectBuild(role)) ===
+              JSON.stringify(await io.inspectBuild(role)) ===
                 JSON.stringify(built.workers[role]),
               "prebuilt bytes changed",
             );
             receipt.workers[role].state = "DEPLOYING";
-            save("deployment", receipt);
-            run(
+            io.save("deployment", receipt);
+            io.run(
               "pnpm",
               [
                 "exec",
@@ -469,9 +487,9 @@ async function deploy() {
               },
               true,
             );
-            const current = await inspectRemote(role, "after");
+            const current = await io.inspectRemote(role, "after");
             receipt.workers[role].current = current;
-            save("deployment", receipt);
+            io.save("deployment", receipt);
             requireQa(
               current.accessDigest ===
                 receipt.workers[role].prior.accessDigest &&
@@ -483,7 +501,7 @@ async function deploy() {
               current.versionId !== receipt.workers[role].prior.versionId,
               "new version not observed",
             );
-            const version = await cloudflare(
+            const version = await io.cloudflare(
               `/workers/scripts/${target.name}/versions/${current.versionId}`,
             );
             requireQa(
@@ -493,12 +511,32 @@ async function deploy() {
             );
             receipt.workers[role].smoke = await smoke(role, false);
             receipt.workers[role].state = "QA_SMOKE_PASSED";
-            save("deployment", receipt);
+            io.save("deployment", receipt);
           }
+        } catch (error) {
+          executionFailed = true;
+          throw error;
         } finally {
           // Remove only our two known temporary paths; never recursively clean a runner directory.
-          unlinkSync(join(secretDir, "runtime.json"));
-          rmdirSync(secretDir);
+          let cleanupFailed = false;
+          let cleanupError;
+          try {
+            io.fs.unlinkSync(join(secretDir, "runtime.json"));
+          } catch (error) {
+            // A failed write may never have created this exact owned file.
+            if (error?.code !== "ENOENT") {
+              cleanupFailed = true;
+              cleanupError = error;
+            }
+          }
+          try {
+            io.fs.rmdirSync(secretDir);
+          } catch (error) {
+            if (!cleanupFailed) cleanupError = error;
+            cleanupFailed = true;
+          }
+          // Keep the primary execution error; cleanup cannot make success out of failure.
+          if (cleanupFailed && !executionFailed) throw cleanupError;
         }
       },
     );
@@ -508,7 +546,7 @@ async function deploy() {
     // Do not serialize API bodies, error causes, tokens or command output.
     throw error;
   } finally {
-    save("deployment", receipt);
+    io.save("deployment", receipt);
   }
 }
 async function main() {

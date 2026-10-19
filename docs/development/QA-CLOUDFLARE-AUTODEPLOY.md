@@ -55,10 +55,13 @@ Repository variable `PUTDUK_QA_SUPABASE_PUBLISHABLE_KEY`는 정확한 preview �
 
 ```sh
 node --test scripts/qa-cloudflare-policy.test.mjs
+node --test scripts/qa-cloudflare-run.test.mjs
 node --test scripts/qa-cloudflare-network.test.mjs
 pnpm exec vitest run tests/unit/supabase-browser-runtime.test.ts
 pnpm --dir apps/admin exec vitest run tests/admin-browser-public-key.test.ts
 ```
+
+순차 배포 회귀는 CLI가 호출하는 같은 `deploy` 함수를 사용하고, 외부 I/O 경계 전체를 합성 fixture로 교체한다. 첫 Worker 이후 실패·응답 유실·smoke 실패·원격 경합·임시 secret 파일 처리 실패에서 실제 루프가 남긴 prior/current와 부분 실패 receipt를 확인한다. 테스트용 I/O 일부가 빠져도 실서비스 I/O로 보완하지 않는다. 이 로컬 검사는 원격 배포 성공 증거가 아니다. Workflow는 자격 증명 주입 전에 이 검사를 실행한다.
 
 Network 테스트는 설치된 Chromium과 ephemeral loopback HTTP fixture 두 개를 사용한다. 원격 Worker, 실제 credential, DB를 호출하지 않는다. Workflow에서는 browser 설치 후 deployment secret 주입 전에 실행한다.
 

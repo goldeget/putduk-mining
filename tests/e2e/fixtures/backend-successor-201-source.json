@@ -3657,15 +3657,16 @@
     "apps/admin/cloudflare.config.ts": "3673f8f4a77f5dca6e17dfafe45664a7680d3564c1cb7116ff67af3ebadaec69",
     "tests/e2e/authenticated/helpers/ai-ack-diagnostics.ts": "6cf004a4f69a14d382dbf5c62b1a362eb7d4aded898b1f8adf013b8b36426edd",
     "tests/unit/ai-ack-diagnostics.test.ts": "302c2f613c6a699eaa1877cbf1fa1af2995359cdd3c8c3e8f303eaa63d1b8f50",
-    ".github/workflows/qa-cloudflare-deploy.yml": "ba2aed3334d267674f0ae8a97f98b81145c5999f4622b4faa487bcc61e6d12cd",
-    "docs/development/QA-CLOUDFLARE-AUTODEPLOY.md": "f9d05a65842dd8e4c71c6fe89cef1154487b78a5c0bbdb2d50b765e24220a469",
+    ".github/workflows/qa-cloudflare-deploy.yml": "d8a4d0c7825e8b6428b8ea9a4f0c3f624dd8ce436c52f0f60ae8e77e0001d292",
+    "docs/development/QA-CLOUDFLARE-AUTODEPLOY.md": "4dc9642ce7aa4338298aa42fdc30e1b88f7c370e90b189cd3d51d496de69765e",
     "scripts/qa-cloudflare-network.mjs": "9b5cf1757801eed0cf0fa3d4d9a7546aa7278f677cd57a4706a269f6660f297c",
     "scripts/qa-cloudflare-network.test.mjs": "9df1c07e85b2bc1c79004dc5c8551c7f4d2c05d9b1d55ffe9d6b655f3ebfc7ee",
     "scripts/qa-cloudflare-policy.d.mts": "5849426533f0d7247db3141d00844847ef9db19b1ed4ea4ba5051ace674af60b",
     "scripts/qa-cloudflare-policy.mjs": "70725add7e93edc8f047b862c99c5d0f017c694ef11ad4aa3304930ae080e9a8",
     "scripts/qa-cloudflare-policy.test.mjs": "b7a3a96889145788e9acb5c6c1fc441e7145edfc2d3c9157a0aa90e23d960133",
-    "scripts/qa-cloudflare-run.mjs": "7bae6a075cd83c24e7e70c72f4d28fa6688f2b428f1fd46f5075c06a9f7ca6f8",
-    "scripts/qa-cloudflare-smoke.mjs": "64224dd6215329f9272c6049863486aafc13290f66f2cfa35e959f48b91d645e"
+    "scripts/qa-cloudflare-run.mjs": "f387b1264128c14e63e02e3321015a52a95df395bcbab310ac855c4c9b4c3e6d",
+    "scripts/qa-cloudflare-smoke.mjs": "64224dd6215329f9272c6049863486aafc13290f66f2cfa35e959f48b91d645e",
+    "scripts/qa-cloudflare-run.test.mjs": "4ee1635c6f88d4701ce2a986cb8f24215deb333cc3eaa42fda05560f9fb22b61"
   },
   "selfExcludedPaths": [
     "tests/e2e/fixtures/backend-successor-201-source.json",
