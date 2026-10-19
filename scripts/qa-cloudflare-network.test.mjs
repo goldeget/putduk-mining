@@ -3,6 +3,7 @@ import { createServer } from "node:http";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 import { chromium } from "@playwright/test";
+import { validateCsrfOrigin } from "vinext/server/request-pipeline";
 import { ACCOUNT, TARGETS } from "./qa-cloudflare-policy.mjs";
 import {
   QA_ZONE,
@@ -29,6 +30,107 @@ const headers = {
   "CF-Access-Client-Id": "fixture-client",
   "CF-Access-Client-Secret": "fixture-secret-not-real",
 };
+
+test("admin native forms keep their origin without disclosing cross-origin referrers", async () => {
+  const config = readFileSync(
+    new URL("../apps/admin/next.config.ts", import.meta.url),
+    "utf8",
+  );
+  const policies = [
+    ...config.matchAll(/key:\s*"Referrer-Policy",\s*value:\s*"([^"]+)"/g),
+  ];
+  assert.equal(policies.length, 1);
+  const policy = policies[0][1];
+  const observed = [];
+  let app;
+  const receiver = (req, res) => {
+    const request = new Request(`http://${req.headers.host}/submit`, {
+      method: "POST",
+      headers: req.headers,
+    });
+    const status = validateCsrfOrigin(request)?.status ?? 200;
+    observed.push({
+      origin: req.headers.origin,
+      referer: req.headers.referer,
+      mode: req.headers["sec-fetch-mode"],
+      status,
+    });
+    req.resume();
+    res.writeHead(status, { "Content-Type": "text/html" });
+    res.end("<!doctype html><title>Fixture result</title>");
+  };
+  const other = await fixture(receiver);
+  app = await fixture((req, res) => {
+    if (req.method === "POST") return receiver(req, res);
+    const query = new URL(req.url, app.origin).searchParams;
+    const action =
+      query.get("cross") === "1" ? `${other.origin}/submit` : "/submit";
+    const encoding =
+      query.get("multipart") === "1"
+        ? "multipart/form-data"
+        : "application/x-www-form-urlencoded";
+    res.writeHead(200, {
+      "Content-Type": "text/html",
+      "Referrer-Policy": policy,
+    });
+    res.end(
+      `<!doctype html><link rel="icon" href="data:,"><form action="${action}" method="POST" enctype="${encoding}"><input name="fixture" value="LOCAL_ONLY"><button type="submit">Submit</button></form>`,
+    );
+  });
+  let browser;
+  try {
+    browser = await chromium.launch();
+    for (const multipart of [false, true]) {
+      const context = await browser.newContext({
+        javaScriptEnabled: false,
+        serviceWorkers: "block",
+        acceptDownloads: false,
+      });
+      try {
+        const page = await context.newPage();
+        page.setDefaultTimeout(10000);
+        await page.goto(
+          `${app.origin}/form?multipart=${multipart ? "1" : "0"}`,
+        );
+        const response = page.waitForResponse(
+          (value) => value.request().method() === "POST",
+        );
+        await page.getByRole("button", { name: "Submit", exact: true }).click();
+        assert.equal((await response).status(), 200);
+        assert.equal(observed.at(-1).origin, app.origin);
+        assert.equal(observed.at(-1).mode, "navigate");
+      } finally {
+        await context.close();
+      }
+    }
+    const context = await browser.newContext({
+      javaScriptEnabled: false,
+      serviceWorkers: "block",
+      acceptDownloads: false,
+    });
+    try {
+      const page = await context.newPage();
+      page.setDefaultTimeout(10000);
+      await page.goto(`${app.origin}/form?cross=1`);
+      const response = page.waitForResponse(
+        (value) => value.request().method() === "POST",
+      );
+      await page.getByRole("button", { name: "Submit", exact: true }).click();
+      assert.equal((await response).status(), 403);
+      assert.equal(observed.at(-1).origin, "null");
+      assert.equal(observed.at(-1).referer, undefined);
+    } finally {
+      await context.close();
+    }
+    assert.equal(observed.length, 3);
+  } finally {
+    try {
+      await browser?.close();
+    } finally {
+      await Promise.all([app.close(), other.close()]);
+    }
+  }
+});
 
 test("real browser redirect chain never sends Access credentials to an off-origin fixture", async () => {
   const external = [];
