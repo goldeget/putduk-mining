@@ -1251,7 +1251,7 @@
     "apps/admin/app/(control)/deposits/usdt/confirm-form.tsx": "298f21c6d19740aa3cfd8d4931faa94460e20c60492b7f463cf727d501215af2",
     "apps/admin/app/(control)/deposits/usdt/instruction-actions.ts": "a8dcc70bba68d1bb23e3a853f7f730df221ab2f84d3fe7da9e5f0d8ab4a13824",
     "apps/admin/app/(control)/deposits/usdt/instruction-form.tsx": "0e564fbb232ab17f73118f21d40bbcdec0a81739aa438270569be4d7012e65dd",
-    "apps/admin/app/(control)/deposits/usdt/instruction-panel.tsx": "a32a0c07482451aca11da9db7dfc3cd4840c0eff981e64ab6bd34586bb7bad2b",
+    "apps/admin/app/(control)/deposits/usdt/instruction-panel.tsx": "ee25c3ba07238c44d944ad5ab203ed8ee12bd2937878ddcb990078486310b090",
     "apps/admin/app/(control)/deposits/usdt/page.tsx": "841b8102204bd5a81f488e1f04b437f1f9089c2cc57976c697b7b9039cfe75e7",
     "apps/admin/app/(control)/economy/economy-console.tsx": "c38b482a41b49d30b60cf5f8ed4bd97522c0a64f23843a254c48e0dacb129348",
     "apps/admin/app/(control)/economy/economy.module.css": "b614e8c457b0572455262dc6518dadb45ed661f63224b3be157ef8df482ccf46",
