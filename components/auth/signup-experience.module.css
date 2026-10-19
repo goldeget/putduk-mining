@@ -524,6 +524,17 @@
   line-height: 1.65;
 }
 
+.policyDocumentLink {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  margin: 0 0 0.35rem;
+  color: var(--brand-primary);
+  font-size: 0.875rem;
+  font-weight: 650;
+  line-height: 1.5;
+}
+
 .form > :global(.button--primary) {
   width: 100%;
   min-height: 58px;
