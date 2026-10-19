@@ -8,6 +8,8 @@ vi.mock("next/navigation", () => ({
   useRouter: () => ({ refresh: vi.fn() }),
 }));
 
+// jsdom is installed for the test runtime and does not ship declarations.
+// @ts-expect-error TS7016
 import { JSDOM } from "jsdom";
 
 import {
