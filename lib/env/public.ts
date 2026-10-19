@@ -30,6 +30,11 @@ export type SupabaseBrowserAuthConfig = {
 };
 
 const approvedSupabaseHost = "osrmyjgmpdspdcwqjwuv.supabase.co";
+const isolatedQaSupabaseHost = "mhchzipznxbwbocdihlg.supabase.co";
+const isolatedQaAppOrigins = new Set([
+  "https://putduk-mining-member-staging-ab1de38.putduk-landing.workers.dev",
+  "https://putduk-mining-admin-staging-ab1de38.putduk-landing.workers.dev",
+]);
 const loopbackHosts = new Set(["127.0.0.1", "localhost", "[::1]"]);
 
 function isApprovedSupabaseUrl(value: string): boolean {
@@ -45,7 +50,7 @@ function isApprovedSupabaseUrl(value: string): boolean {
       return false;
     return (
       (url.protocol === "https:" &&
-        url.hostname === approvedSupabaseHost &&
+        [approvedSupabaseHost, isolatedQaSupabaseHost].includes(url.hostname) &&
         !url.port) ||
       (url.protocol === "http:" &&
         loopbackHosts.has(url.hostname) &&
@@ -54,6 +59,19 @@ function isApprovedSupabaseUrl(value: string): boolean {
   } catch {
     return false;
   }
+}
+
+/** Server callers must bind the preview tuple to the isolated QA deployment. */
+export function assertSupabasePreviewContext(
+  url: string,
+  appEnv: string | undefined,
+  appUrl: string | undefined,
+): void {
+  if (
+    new URL(url).hostname === isolatedQaSupabaseHost &&
+    (appEnv !== "staging" || !isolatedQaAppOrigins.has(appUrl ?? ""))
+  )
+    throw new Error("SUPABASE_BROWSER_CONFIG_INVALID");
 }
 
 export function isPublicSupabaseKey(value: string): boolean {

@@ -7,7 +7,7 @@ vi.mock("@supabase/ssr", () => ({
   createBrowserClient,
 }));
 
-import { getAdminEnv } from "@/lib/env";
+import { getAdminBrowserPublicConfig, getAdminEnv } from "@/lib/env";
 import { createAdminBrowserClient } from "@/lib/supabase/browser";
 
 function legacyKey(role: string) {
@@ -33,6 +33,46 @@ afterEach(() => {
 });
 
 describe("admin browser public key role", () => {
+  it("binds preview serialization to both isolated QA app origins", () => {
+    stubAdminEnv(publishableKey);
+    vi.stubEnv("APP_ENV", "staging");
+    vi.stubEnv(
+      "NEXT_PUBLIC_SUPABASE_URL",
+      "https://mhchzipznxbwbocdihlg.supabase.co",
+    );
+    vi.stubEnv(
+      "NEXT_PUBLIC_APP_URL",
+      "https://putduk-mining-member-staging-ab1de38.putduk-landing.workers.dev",
+    );
+    vi.stubEnv(
+      "ADMIN_APP_URL",
+      "https://putduk-mining-admin-staging-ab1de38.putduk-landing.workers.dev",
+    );
+    expect(getAdminBrowserPublicConfig()).toEqual({
+      url: "https://mhchzipznxbwbocdihlg.supabase.co",
+      publishableKey,
+    });
+    for (const env of ["production", "development", "test"]) {
+      vi.stubEnv("APP_ENV", env);
+      expect(() => getAdminBrowserPublicConfig()).toThrow(
+        "SUPABASE_BROWSER_CONFIG_INVALID",
+      );
+    }
+    vi.stubEnv("APP_ENV", "staging");
+    vi.stubEnv("ADMIN_APP_URL", "https://admin.mining.putduk.com");
+    expect(() => getAdminBrowserPublicConfig()).toThrow(
+      "SUPABASE_BROWSER_CONFIG_INVALID",
+    );
+    vi.stubEnv(
+      "ADMIN_APP_URL",
+      "https://putduk-mining-admin-staging-ab1de38.putduk-landing.workers.dev",
+    );
+    vi.stubEnv("NEXT_PUBLIC_APP_URL", "https://mining.putduk.com");
+    expect(() => getAdminBrowserPublicConfig()).toThrow(
+      "SUPABASE_BROWSER_CONFIG_INVALID",
+    );
+  });
+
   it.each([
     "sb_secret_must_never_reach_the_admin_browser",
     legacyKey("service_role"),

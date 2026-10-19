@@ -6,6 +6,7 @@ import {
 } from "../../scripts/capture-local-supabase-env.mjs";
 
 import {
+  assertSupabasePreviewContext,
   getPublicEnv,
   parseSupabaseBrowserAuthConfig,
   type SupabaseBrowserAuthConfig,
@@ -19,6 +20,11 @@ export function getSupabaseBrowserAuthConfig(): SupabaseBrowserAuthConfig {
     publishableKey: env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
   });
   const url = new URL(config.url);
+  assertSupabasePreviewContext(
+    config.url,
+    process.env.APP_ENV,
+    env.NEXT_PUBLIC_APP_URL,
+  );
   if (url.protocol === "http:") {
     const runtimeEnv = process.env;
     if (!["development", "test"].includes(runtimeEnv.APP_ENV ?? ""))

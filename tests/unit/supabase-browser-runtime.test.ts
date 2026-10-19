@@ -15,6 +15,11 @@ vi.mock("@supabase/ssr", () => ({ createBrowserClient: vi.fn() }));
 const remoteUrl = "https://osrmyjgmpdspdcwqjwuv.supabase.co";
 const localUrl = `http://127.0.0.1:${loadJobLocalAllowlist().apiPort}`;
 const publishableKey = "sb_publishable_runtime_public_fixture";
+const qaUrl = "https://mhchzipznxbwbocdihlg.supabase.co";
+const qaOrigins = [
+  "https://putduk-mining-member-staging-ab1de38.putduk-landing.workers.dev",
+  "https://putduk-mining-admin-staging-ab1de38.putduk-landing.workers.dev",
+];
 
 function legacyKey(role: string) {
   const encode = (value: object) =>
@@ -38,6 +43,59 @@ beforeEach(() => {
 afterEach(() => vi.unstubAllEnvs());
 
 describe("public Supabase runtime configuration", () => {
+  it.each(qaOrigins)(
+    "serializes the exact preview only in isolated staging: %s",
+    (appUrl) => {
+      vi.stubEnv("APP_ENV", "staging");
+      vi.stubEnv("NEXT_PUBLIC_APP_URL", appUrl);
+      vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", qaUrl);
+      expect(getSupabaseBrowserAuthConfig()).toEqual({
+        url: qaUrl,
+        publishableKey,
+      });
+      expect(
+        parseSupabaseBrowserAuthConfig({ url: qaUrl, publishableKey }),
+      ).toEqual({ url: qaUrl, publishableKey });
+    },
+  );
+
+  it.each(["production", "development", "test", undefined])(
+    "rejects preview outside staging: %s",
+    (appEnv) => {
+      vi.stubEnv("APP_ENV", appEnv);
+      vi.stubEnv("NEXT_PUBLIC_APP_URL", qaOrigins[0]);
+      vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", qaUrl);
+      expect(() => getSupabaseBrowserAuthConfig()).toThrow(
+        "SUPABASE_BROWSER_CONFIG_INVALID",
+      );
+    },
+  );
+
+  it.each([
+    "https://mining.putduk.com",
+    "https://admin.mining.putduk.com",
+    `${qaOrigins[0]}/path`,
+    `${qaOrigins[0]}?qa=1`,
+    `${qaOrigins[0]}#fragment`,
+    `${qaOrigins[0]}.evil.invalid`,
+    qaOrigins[0]!.replace("https://", "https://user:pass@"),
+    undefined,
+  ])("rejects preview paired with an unapproved app origin: %s", (appUrl) => {
+    vi.stubEnv("APP_ENV", "staging");
+    vi.stubEnv("NEXT_PUBLIC_APP_URL", appUrl);
+    vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", qaUrl);
+    expect(() => getSupabaseBrowserAuthConfig()).toThrow();
+  });
+
+  it.each([`${qaUrl}.evil.invalid`, `${qaUrl}/path`, `${qaUrl}?project=other`])(
+    "rejects ambiguous preview tuple: %s",
+    (url) => {
+      expect(() =>
+        parseSupabaseBrowserAuthConfig({ url, publishableKey }),
+      ).toThrow("SUPABASE_BROWSER_CONFIG_INVALID");
+    },
+  );
+
   it("reads each runtime's public tuple and serializes only URL and publishable key", () => {
     const localConfig = getSupabaseBrowserAuthConfig();
     expect(localConfig).toEqual({ url: localUrl, publishableKey });
