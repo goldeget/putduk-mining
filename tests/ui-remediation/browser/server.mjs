@@ -67,6 +67,14 @@ const server = await createServer({
           path.join(projectRoot, "apps/admin/lib/supabase/browser")
         )
           return stubs("admin-browser.js");
+        // Only the live mining summary gets the local signed-in stand-in.
+        if (
+          normalized === path.join(projectRoot, "lib/supabase/browser") &&
+          importer
+            ?.replaceAll("\\", "/")
+            .endsWith("components/product/mining-live-summary.tsx")
+        )
+          return stubs("web-browser.js");
         if (normalized === path.join(projectRoot, "lib/analytics/client"))
           return stubs("analytics.js");
         if (specifier.startsWith("@/"))

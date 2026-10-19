@@ -1,3 +1,5 @@
+import { miningDisplayResponse } from "./mining-live-mock";
+
 const parameters = new URLSearchParams(window.location.search);
 const listeners = new Set();
 export const fixtureState = {
@@ -29,6 +31,14 @@ export function installFixtureBoundary() {
       typeof input === "string" ? input : (input.url ?? String(input));
     const parsed = new URL(url, window.location.origin);
     recordMockCall(`fetch:${init?.method ?? "GET"}:${parsed.pathname}`);
+    // Read-only synthetic display server for the mining-live fixture only.
+    if (
+      parameters.get("fixture") === "mining-live" &&
+      parsed.pathname === "/api/v1/mining/display" &&
+      (init?.method ?? "GET") === "GET"
+    ) {
+      return miningDisplayResponse();
+    }
     if (fixtureState.networkMode === "stall") {
       return new Promise((_resolve, reject) => {
         const abort = () =>

@@ -1,5 +1,10 @@
 import { z } from "zod";
 import { presentHomeCapacityProgress } from "./home-capacity-progress";
+import {
+  deriveLiveProjection,
+  formatMicroKrwText,
+  parseServerInstantMicros as instantMicros,
+} from "./mining-live-projection";
 import type { MiningServerDisplay } from "./mining-server-display";
 
 const integerText = z
@@ -7,6 +12,19 @@ const integerText = z
   .regex(/^(0|[1-9][0-9]*)$/)
   .max(80);
 const instant = z.string().datetime({ offset: true, precision: 6 });
+const positiveIntegerText = z
+  .string()
+  .regex(/^[1-9][0-9]*$/)
+  .max(80);
+/** Opaque server-derived extrapolation bounds; never a rate, policy or formula. */
+const miningLiveProjectionSchema = z
+  .object({
+    accruedMicroKrw: positiveIntegerText,
+    windowMicros: positiveIntegerText,
+    ceilingMicroKrw: integerText,
+    horizonMicros: positiveIntegerText,
+  })
+  .strict();
 export const miningLiveSnapshotSchema = z
   .object({
     scope: z.literal("GLOBAL_CYCLE"),
@@ -30,6 +48,7 @@ export const miningLiveSnapshotSchema = z
     capacityMicroKrw: integerText,
     usedMicroKrw: integerText,
     remainingMicroKrw: integerText,
+    projection: miningLiveProjectionSchema.nullable().optional(),
   })
   .strict()
   .refine((value) => {
@@ -81,15 +100,6 @@ export function canAutomaticallyReadMiningSnapshot(
   );
 }
 
-function instantMicros(value: string): bigint | null {
-  const match = /\.([0-9]{6})(Z|[+-][0-9]{2}:[0-9]{2})$/.exec(value);
-  if (!match) return null;
-  const milliseconds = Date.parse(value.slice(0, match.index) + match[2]);
-  return Number.isFinite(milliseconds)
-    ? BigInt(milliseconds) * 1000n + BigInt(match[1]!)
-    : null;
-}
-
 /** Select existing server facts only; never send the private calculation inputs. */
 export function toMiningLiveSnapshot(
   display: MiningServerDisplay | null,
@@ -111,6 +121,19 @@ export function toMiningLiveSnapshot(
     capacityMicroKrw: display.effective_capacity_micro_krw,
     usedMicroKrw: display.used_capacity_micro_krw,
     remainingMicroKrw: display.remaining_capacity_micro_krw,
+    projection:
+      deriveLiveProjection({
+        status: runtime.status,
+        pendingMicroKrw: display.pending_micro_krw ?? "",
+        remainingMicroKrw: display.remaining_capacity_micro_krw ?? "",
+        carry: {
+          numerator: runtime.reward_carry.numerator,
+          denominator: runtime.reward_carry.denominator,
+        },
+        acceptedCursorAt: runtime.accepted_cursor_at,
+        evaluatedAt: runtime.evaluated_at,
+        cycleEnd: display.cycle_end ?? "",
+      }) ?? null,
   });
   return parsed.success ? parsed.data : null;
 }
@@ -166,29 +189,7 @@ export function acceptMiningLiveSnapshot(
 
 /** Unit formatting only; wallet formatting and withdrawal units remain unchanged. */
 export function formatLiveMicroKrw(value: string): string {
-  if (!/^(0|[1-9][0-9]*)$/.test(value)) return "확인할 수 없어요";
-  const micro = BigInt(value),
-    whole = micro / 1_000_000n;
-  const fraction = (micro % 1_000_000n)
-    .toString()
-    .padStart(6, "0")
-    .replace(/0+$/, "");
-  return `${whole.toLocaleString("ko-KR")}${fraction ? `.${fraction}` : ""}원`;
-}
-
-/** Bounded visual transition between two server targets, never rate * time. */
-export function interpolateServerTarget(
-  from: string,
-  target: string,
-  progressBps: number,
-): string {
-  const a = BigInt(from),
-    b = BigInt(target);
-  if (b <= a) return target;
-  const progress = Number.isFinite(progressBps)
-    ? Math.min(10_000, Math.max(0, Math.floor(progressBps)))
-    : 10_000;
-  return (a + ((b - a) * BigInt(progress)) / 10_000n).toString();
+  return formatMicroKrwText(value);
 }
 
 export function liveCapacityProgress(snapshot: MiningLiveSnapshot) {

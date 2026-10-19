@@ -1201,7 +1201,7 @@ export async function captureRoutes(
               }
               const title = ready.getByRole("heading", {
                 level: 1,
-                name: "채굴 월드",
+                name: "퍼뜩 채굴",
               });
               await expect(title).toHaveCount(1);
               const titleBox = await title.boundingBox();

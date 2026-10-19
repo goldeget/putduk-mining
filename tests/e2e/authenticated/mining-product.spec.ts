@@ -133,7 +133,7 @@ test("unsigned visitors keep the mining return path", async ({ page }) => {
   await page.goto("/mining");
   await expect(page).toHaveURL(/\/login\?next=%2Fmining$/);
   await expect(page.locator('input[name="next"]')).toHaveValue("/mining");
-  await expect(page.getByRole("heading", { name: "채굴 월드" })).toHaveCount(0);
+  await expect(page.getByRole("heading", { name: "퍼뜩 채굴" })).toHaveCount(0);
   expect(hydration).toEqual([]);
 });
 
@@ -145,7 +145,7 @@ test("shows the empty session, world directory, themes, and keyboard path", asyn
   const member = await createConfirmedMember("mining-empty");
   await loginAsMember(page, member, "/mining");
   await expect(
-    page.getByRole("heading", { name: "채굴 월드", level: 1 }),
+    page.getByRole("heading", { name: "퍼뜩 채굴", level: 1 }),
   ).toBeVisible();
   await expect(miningNotStarted(page)).toBeVisible();
   await expect(

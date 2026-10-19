@@ -28,6 +28,7 @@ function MountedFixture() {
         <nav aria-label="테스트 화면">
           {[
             ["motion", "모션"],
+            ["mining-live", "채굴 라이브"],
             ["login", "로그인"],
             ["signup", "회원가입"],
             ["update-password", "비밀번호 변경"],
