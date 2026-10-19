@@ -56,12 +56,15 @@ Repository variable `PUTDUK_QA_SUPABASE_PUBLISHABLE_KEY`는 정확한 preview �
 ```sh
 node --test scripts/qa-cloudflare-policy.test.mjs
 node --test scripts/qa-cloudflare-run.test.mjs
+node --test scripts/framework-generated-types.test.mjs
 node --test scripts/qa-cloudflare-network.test.mjs
 pnpm exec vitest run tests/unit/supabase-browser-runtime.test.ts
 pnpm --dir apps/admin exec vitest run tests/admin-browser-public-key.test.ts
 ```
 
 순차 배포 회귀는 CLI가 호출하는 같은 `deploy` 함수를 사용하고, 외부 I/O 경계 전체를 합성 fixture로 교체한다. 첫 Worker 이후 실패·응답 유실·smoke 실패·원격 경합·임시 secret 파일 처리 실패에서 실제 루프가 남긴 prior/current와 부분 실패 receipt를 확인한다. 테스트용 I/O 일부가 빠져도 실서비스 I/O로 보완하지 않는다. 이 로컬 검사는 원격 배포 성공 증거가 아니다. Workflow는 자격 증명 주입 전에 이 검사를 실행한다.
+
+Next와 Vinext는 각 앱의 `next-env.d.ts`를 서로 다른 형식으로 재생성한다. [Next 공식 지침](https://nextjs.org/docs/app/api-reference/config/typescript#next-envdts)에 따라 정확히 두 앱의 생성 파일만 Git 추적에서 제외하고 실제 로컬 파일은 유지한다. 독립 타입 검사는 `next typegen && tsc --noEmit`으로 생성과 검사를 모두 수행한다. QA workflow는 의존성 설치 후와 build/dry-run 후에 tracked source가 HEAD와 같은지 검사하며 변경 경로만 출력한다. 실제 앱 소스·설정·타입 검사에 대한 예외나 자동 복원은 없다. 생성기 회귀는 격리 Git 저장소의 빈 status와 HEAD diff를 확인하고, 실제 페이지 소스 변경을 계속 검출한다.
 
 Network 테스트는 설치된 Chromium과 ephemeral loopback HTTP fixture 두 개를 사용한다. 원격 Worker, 실제 credential, DB를 호출하지 않는다. Workflow에서는 browser 설치 후 deployment secret 주입 전에 실행한다.
 

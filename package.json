@@ -23,7 +23,7 @@
     "deploy:vinext": "vinext-cloudflare deploy",
     "lint": "eslint . --max-warnings=0",
     "typecheck": "pnpm typecheck:web && pnpm typecheck:admin",
-    "typecheck:web": "tsc --noEmit",
+    "typecheck:web": "next typegen && tsc --noEmit",
     "typecheck:admin": "pnpm --dir apps/admin typecheck",
     "test": "pnpm test:web && pnpm test:admin",
     "test:web": "vitest run",
