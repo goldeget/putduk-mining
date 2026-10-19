@@ -3662,9 +3662,9 @@
     "scripts/qa-cloudflare-policy.d.mts": "5849426533f0d7247db3141d00844847ef9db19b1ed4ea4ba5051ace674af60b",
     "scripts/qa-cloudflare-policy.mjs": "2c0519d11a6492fcf4a3f358caa7d1ba9f190f6b23f6f7178584d23d908b89c8",
     "scripts/qa-cloudflare-policy.test.mjs": "0ed8f19729a3f712544e0942d17d491124ef7461004ed08212f1fd4dc85b16a1",
-    "scripts/qa-cloudflare-run.mjs": "2b36d6a041b5b6e40e3279fe9571e82e5f65ee1cc284c35dfe8d3c19d5b47e17",
+    "scripts/qa-cloudflare-run.mjs": "85155e16483bbd317ce9b2c6316fe449020f81488e7c83ac83f4363ad0375d82",
     "scripts/qa-cloudflare-smoke.mjs": "64224dd6215329f9272c6049863486aafc13290f66f2cfa35e959f48b91d645e",
-    "scripts/qa-cloudflare-run.test.mjs": "04ec3ed5e69e15d61aac77246636462c73b6adf4ac873ece51d96d66e4d6c60f",
+    "scripts/qa-cloudflare-run.test.mjs": "9ff44fe7419b0ff0a7bd6c74d58dda1009a7e1e5ff012ea309533a297955ddd1",
     "scripts/framework-generated-types.test.mjs": "1808c29af9d5d39fd438b4c7488b69db4c13f4ffd4d4b938c2872cc79eeb4cbc",
     "scripts/ai-wire-ack.browser.test.mjs": "137f296d88788a34990aede817e6db6e58e2eb49ca8c3b6d9c9d6bcc9ec552d2",
     "tests/unit/event-detail-participation-mode.test.ts": "362a861e1fb9707ee2c2aeb7872326dd90ce3bb750248e451791c52ee3222232"

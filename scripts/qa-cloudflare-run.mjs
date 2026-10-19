@@ -284,7 +284,7 @@ async function build() {
   }
   save("build", receipt);
 }
-async function cloudflare(path) {
+export async function cloudflare(path) {
   const allowed = Object.values(TARGETS).some(
     (t) =>
       path === `/workers/workers/${t.workerId}` ||
@@ -298,8 +298,12 @@ async function cloudflare(path) {
       ),
   );
   requireQa(allowed, "Cloudflare read path");
+  const currentDeployment = Object.values(TARGETS).some(
+    (target) => path === `/workers/scripts/${target.name}/deployments`,
+  );
+  const query = currentDeployment ? "?page=1&per_page=1" : "";
   const response = await fetch(
-    `https://api.cloudflare.com/client/v4/accounts/${ACCOUNT}${path}`,
+    `https://api.cloudflare.com/client/v4/accounts/${ACCOUNT}${path}${query}`,
     {
       headers: { Authorization: `Bearer ${env.QA_CF_API_TOKEN}` },
       redirect: "error",
@@ -318,6 +322,27 @@ async function cloudflare(path) {
     )
   )
     return assertCompleteAccessPolicies(data);
+  if (currentDeployment) {
+    // Cloudflare documents the first deployment as the one actively serving traffic.
+    // This proves the current head, not completeness of deployment history.
+    const info = data.result_info;
+    requireQa(
+      Array.isArray(data.result?.deployments) &&
+        data.result.deployments.length === 1 &&
+        info?.page === 1 &&
+        info.per_page === 1 &&
+        info.count === 1 &&
+        Number.isSafeInteger(info.total_count) &&
+        info.total_count >= 1 &&
+        Number.isSafeInteger(info.total_pages) &&
+        info.total_pages === info.total_count &&
+        ["cursor", "cursors", "next_page"].every(
+          (key) => !data[key] && !info[key],
+        ),
+      "Cloudflare current deployment page inconsistent",
+    );
+    return data.result;
+  }
   requireQa(
     !data.result_info?.total_pages || data.result_info.total_pages === 1,
     "Cloudflare pagination incomplete",

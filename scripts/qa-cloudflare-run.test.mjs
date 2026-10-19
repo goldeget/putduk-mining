@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { beforeEach, test } from "node:test";
 import { join } from "node:path";
 import * as runner from "./qa-cloudflare-run.mjs";
+import { TARGETS } from "./qa-cloudflare-policy.mjs";
 
 const sha = "a".repeat(40);
 const account = "9dc502d4ef06b3b5374591de6e6933ca";
@@ -1040,4 +1041,199 @@ test("final receipt failure rejects without fabricating a persisted overall succ
   assert.equal(f.last().workers.member.state, "QA_SMOKE_PASSED");
   assert.equal(f.last().workers.admin.state, "QA_SMOKE_PASSED");
   assertSanitized(f);
+});
+
+function currentDeploymentEnvelope(total = 11) {
+  return {
+    success: true,
+    result: {
+      deployments: [
+        {
+          id: "55555555-5555-4555-8555-555555555555",
+          created_on: "2026-10-20T00:00:00.000Z",
+          source: "api",
+          strategy: "percentage",
+          versions: [{ version_id: versions.admin.current, percentage: 100 }],
+        },
+      ],
+    },
+    result_info: {
+      page: 1,
+      per_page: 1,
+      count: 1,
+      total_count: total,
+      total_pages: total,
+    },
+  };
+}
+
+test("current deployment head supports eleven history records without demanding complete history", async (t) => {
+  const path = `/workers/scripts/${targets.admin.name}/deployments`;
+  const base = `https://api.cloudflare.com/client/v4/accounts/${account}${path}`;
+  const observed = [];
+  t.mock.method(globalThis, "fetch", async (url, options) => {
+    observed.push(url);
+    assert.equal(options.method ?? "GET", "GET");
+    assert.equal(options.redirect, "error");
+    assert.ok(options.signal instanceof AbortSignal);
+    if (url === `${base}?page=1&per_page=1`)
+      return Response.json(currentDeploymentEnvelope());
+    // Actual incident shape: the API default returned ten of eleven deployments.
+    assert.equal(url, base);
+    const data = currentDeploymentEnvelope();
+    data.result.deployments = Array.from({ length: 10 }, (_, index) => ({
+      ...data.result.deployments[0],
+      id: `55555555-5555-4555-8555-${String(index).padStart(12, "0")}`,
+    }));
+    data.result_info = {
+      page: 1,
+      per_page: 10,
+      count: 10,
+      total_count: 11,
+      total_pages: 2,
+    };
+    return Response.json(data);
+  });
+  assert.deepEqual(await runner.cloudflare(path), {
+    deployments: [
+      {
+        id: "55555555-5555-4555-8555-555555555555",
+        created_on: "2026-10-20T00:00:00.000Z",
+        source: "api",
+        strategy: "percentage",
+        versions: [{ version_id: versions.admin.current, percentage: 100 }],
+      },
+    ],
+  });
+  assert.deepEqual(observed, [`${base}?page=1&per_page=1`]);
+});
+
+for (const role of ["member", "admin"]) {
+  for (const total of [1, 10, 10001]) {
+    test(`current deployment head reads only one item for ${role} history ${total}`, async (t) => {
+      const path = `/workers/scripts/${targets[role].name}/deployments`;
+      const envelope = currentDeploymentEnvelope(total);
+      envelope.result.deployments[0].versions[0].version_id =
+        versions[role].current;
+      let calls = 0;
+      t.mock.method(globalThis, "fetch", async (url) => {
+        calls++;
+        assert.equal(
+          url,
+          `https://api.cloudflare.com/client/v4/accounts/${account}${path}?page=1&per_page=1`,
+        );
+        return Response.json(envelope);
+      });
+      assert.deepEqual(await runner.cloudflare(path), envelope.result);
+      assert.equal(calls, 1);
+    });
+  }
+}
+
+const malformedDeploymentPages = {
+  "missing metadata": (data) => delete data.result_info,
+  "null metadata": (data) => (data.result_info = null),
+  "wrong page": (data) => (data.result_info.page = 2),
+  "ignored page size": (data) => (data.result_info.per_page = 10),
+  "wrong count": (data) => (data.result_info.count = 0),
+  "string count": (data) => (data.result_info.count = "1"),
+  "missing total count": (data) => delete data.result_info.total_count,
+  "zero total count": (data) => (data.result_info.total_count = 0),
+  "fractional total count": (data) => (data.result_info.total_count = 1.5),
+  "string total count": (data) => (data.result_info.total_count = "11"),
+  "unsafe total count": (data) => {
+    data.result_info.total_count = Number.MAX_SAFE_INTEGER + 1;
+    data.result_info.total_pages = data.result_info.total_count;
+  },
+  "missing total pages": (data) => delete data.result_info.total_pages,
+  "inconsistent total pages": (data) => (data.result_info.total_pages = 2),
+  "string total pages": (data) => (data.result_info.total_pages = "11"),
+  "missing result": (data) => delete data.result,
+  "non-array deployments": (data) => (data.result.deployments = {}),
+  "empty deployments": (data) => (data.result.deployments = []),
+  "extra deployment": (data) =>
+    data.result.deployments.push(data.result.deployments[0]),
+};
+for (const key of ["cursor", "cursors", "next_page"]) {
+  malformedDeploymentPages[`top-level ${key} contradiction`] = (data) =>
+    (data[key] = "unexpected-pagination-mode");
+  malformedDeploymentPages[`metadata ${key} contradiction`] = (data) =>
+    (data.result_info[key] = "unexpected-pagination-mode");
+}
+for (const [name, mutate] of Object.entries(malformedDeploymentPages)) {
+  test(`current deployment head rejects ${name}`, async (t) => {
+    const envelope = currentDeploymentEnvelope();
+    mutate(envelope);
+    t.mock.method(globalThis, "fetch", async () => Response.json(envelope));
+    await assert.rejects(
+      runner.cloudflare(`/workers/scripts/${targets.admin.name}/deployments`),
+      /QA_BLOCKED: Cloudflare current deployment page inconsistent/,
+    );
+  });
+}
+
+test("deployment head queries cannot broaden the Cloudflare read allowlist", async () => {
+  for (const path of [
+    `/workers/scripts/${targets.admin.name}/deployments?page=2`,
+    `/workers/scripts/${targets.admin.name}/deployments?per_page=100`,
+    "/workers/scripts/unapproved-worker/deployments",
+    `https://api.cloudflare.com/client/v4/accounts/${account}/workers/scripts/${targets.admin.name}/deployments`,
+    `/access/apps/${TARGETS.admin.accessId}/policies?page=1`,
+  ]) {
+    await assert.rejects(
+      runner.cloudflare(path),
+      /QA_BLOCKED: Cloudflare read path/,
+    );
+  }
+});
+
+test("non-deployment inventories still reject incomplete pages without adding queries", async (t) => {
+  for (const part of ["settings", "subdomain", "schedules"]) {
+    const path = `/workers/scripts/${targets.admin.name}/${part}`;
+    t.mock.method(globalThis, "fetch", async (url) => {
+      assert.equal(
+        url,
+        `https://api.cloudflare.com/client/v4/accounts/${account}${path}`,
+      );
+      return Response.json({
+        success: true,
+        result: [],
+        result_info: { total_pages: 2 },
+      });
+    });
+    await assert.rejects(
+      runner.cloudflare(path),
+      /QA_BLOCKED: Cloudflare pagination incomplete/,
+    );
+  }
+});
+
+test("Access policies retain their positive completeness check", async (t) => {
+  const path = `/access/apps/${TARGETS.admin.accessId}/policies`;
+  t.mock.method(globalThis, "fetch", async (url) => {
+    assert.equal(
+      url,
+      `https://api.cloudflare.com/client/v4/accounts/${account}${path}`,
+    );
+    return Response.json({ success: true, result: [] });
+  });
+  await assert.rejects(runner.cloudflare(path), /QA_BLOCKED:/);
+});
+
+test("Cloudflare API failures are rejected before accepting a deployment head", async (t) => {
+  const path = `/workers/scripts/${targets.admin.name}/deployments`;
+  t.mock.method(globalThis, "fetch", async () =>
+    Response.json(currentDeploymentEnvelope(), { status: 403 }),
+  );
+  await assert.rejects(
+    runner.cloudflare(path),
+    /QA_BLOCKED: Cloudflare read failed \(403\)/,
+  );
+  t.mock.method(globalThis, "fetch", async () =>
+    Response.json({ ...currentDeploymentEnvelope(), success: false }),
+  );
+  await assert.rejects(
+    runner.cloudflare(path),
+    /QA_BLOCKED: Cloudflare read rejected/,
+  );
 });
