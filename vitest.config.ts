@@ -20,6 +20,11 @@ export default defineConfig({
     },
   },
   test: {
+    // Fresh historical fixtures contend for Windows filesystem I/O across workers.
+    fileParallelism: process.platform !== "win32",
+    // Keep file isolation while avoiding one OS process per Windows file.
+    pool: process.platform === "win32" ? "threads" : "forks",
+    isolate: true,
     reporters: ["default", new UnitCompletenessReporter()],
     environment: "node",
     include: ["tests/unit/**/*.test.ts"],

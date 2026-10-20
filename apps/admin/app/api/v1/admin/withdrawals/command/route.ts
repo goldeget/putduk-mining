@@ -6,6 +6,7 @@ import { requireAdminCommand } from "@/lib/auth/principal";
 import { consumeAdminStepUpGrant } from "@/lib/auth/step-up";
 import { requestDeclaredOffline } from "@/lib/money/logical-operation";
 import { createAdminServiceClient } from "@/lib/supabase/service";
+import { confirmWithdrawalHoldRelease } from "@/lib/withdrawals/hold-release-receipt";
 import { manualUsdtPayoutFailure } from "@/lib/withdrawals/usdt-manual-payout-contract";
 
 const bodySchema = z.discriminatedUnion("action", [
@@ -260,25 +261,80 @@ export async function POST(request: Request) {
     );
   }
 
-  const { data, error } = await db.rpc("release_withdrawal_hold", {
-    p_withdrawal_id: body.withdrawalId,
-    p_actor: access.principal.userId,
-    p_reason: body.reason,
-    p_idempotency_key: body.idempotencyKey,
-    p_disposition: body.disposition,
-  });
-  if (error) {
+  const withdrawalId = body.withdrawalId.toLowerCase();
+  try {
+    const { data, error } = await db.rpc("release_withdrawal_hold", {
+      p_withdrawal_id: withdrawalId,
+      p_actor: access.principal.userId,
+      p_reason: body.reason,
+      p_idempotency_key: body.idempotencyKey,
+      p_disposition: body.disposition,
+    });
+    if (error) {
+      return Response.json(
+        { ok: false, code: "COMMAND_FAILED" },
+        { status: 503 },
+      );
+    }
+    const releaseId = z.uuid().safeParse(data);
+    if (!releaseId.success) {
+      return Response.json({ ok: false, code: "UNCONFIRMED" }, { status: 503 });
+    }
+    const releaseLedgerId = releaseId.data.toLowerCase();
+    // A replay can return an earlier release with a different disposition.
+    // Confirm its original reversal; never relabel it using the new input.
+    const [withdrawal, ledger, entries] = await Promise.all([
+      db
+        .from("withdrawal_requests")
+        .select(
+          "id,user_id,hold_ledger_transaction_id,release_ledger_transaction_id,status,currency,amount_atomic,fee_atomic,rejection_reason,hold_released_at",
+        )
+        .eq("id", withdrawalId)
+        .maybeSingle(),
+      db
+        .from("ledger_transactions")
+        .select(
+          "id,category,currency,reference_type,reference_id,member_user_id,reversal_of_transaction_id,metadata,posted_at",
+        )
+        .eq("id", releaseLedgerId)
+        .maybeSingle(),
+      db
+        .from("ledger_entries")
+        .select("transaction_id,account_id,sequence,side,amount_atomic")
+        .eq("transaction_id", releaseLedgerId)
+        .limit(3),
+    ]);
+    const confirmation = confirmWithdrawalHoldRelease({
+      withdrawalId,
+      returnedLedgerId: releaseLedgerId,
+      requestedDisposition: body.disposition,
+      withdrawal: withdrawal.data,
+      ledger: ledger.data,
+      entries: entries.data,
+    });
+    if (withdrawal.error || ledger.error || entries.error || !confirmation.ok) {
+      return Response.json({ ok: false, code: "UNCONFIRMED" }, { status: 503 });
+    }
+    if (!confirmation.matchesRequestedDisposition) {
+      return Response.json(
+        {
+          ok: false,
+          code: "HOLD_RELEASE_DISPOSITION_MISMATCH",
+          actualDisposition: confirmation.disposition,
+          releaseLedgerTransactionId: confirmation.releaseLedgerTransactionId,
+        },
+        { status: 409 },
+      );
+    }
     return Response.json(
-      { ok: false, code: "COMMAND_FAILED" },
-      { status: 503 },
+      {
+        ok: true,
+        releaseLedgerTransactionId: confirmation.releaseLedgerTransactionId,
+        disposition: confirmation.disposition,
+      },
+      { status: 200 },
     );
+  } catch {
+    return Response.json({ ok: false, code: "UNCONFIRMED" }, { status: 503 });
   }
-  return Response.json(
-    {
-      ok: true,
-      releaseLedgerTransactionId: data,
-      disposition: body.disposition,
-    },
-    { status: 200 },
-  );
 }

@@ -205,6 +205,144 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
+describe("bounded conversation persistence", () => {
+  it.each(["static", "provider"] as const)(
+    "finishes %s output when turn storage never responds and does not trust a late receipt",
+    async (kind) => {
+      vi.useFakeTimers();
+      setRoute(kind === "static" ? "static" : "low_cost");
+      mocks.provider.mockImplementation(async (input) => {
+        input.onDelta("저장 대기 중인 합성 답변입니다.");
+        return {
+          model: "openai/gpt-oss-20b",
+          providerRequestId: "synthetic-response",
+          inputTokens: 1,
+          outputTokens: 1,
+          cachedInputTokens: 0,
+        };
+      });
+      let release: (value: unknown) => void = () => {};
+      mocks.append.mockImplementationOnce(
+        () =>
+          new Promise((resolve) => {
+            release = resolve;
+          }),
+      );
+      let settled = false;
+      const text = POST(request())
+        .then((response) => response.text())
+        .then((value) => {
+          settled = true;
+          return value;
+        });
+      try {
+        await vi.advanceTimersByTimeAsync(5_001);
+        expect(settled).toBe(true);
+        const events = parseEvents(await text);
+        expect(events).toContainEqual(
+          expect.objectContaining(
+            kind === "static"
+              ? { type: "done", saved: false }
+              : {
+                  type: "error",
+                  code: "AI_CONVERSATION_SAVE_FAILED",
+                  saved: false,
+                },
+          ),
+        );
+        expect(mocks.append).toHaveBeenCalledTimes(1);
+        if (kind === "provider") {
+          expect(events.some((event) => event.type === "done")).toBe(false);
+          expect(mocks.complete).not.toHaveBeenCalled();
+        }
+      } finally {
+        release({
+          ok: true,
+          conversationId: "33333333-3333-4333-8333-333333333333",
+          assistantMessageId: "44444444-4444-4444-8444-444444444444",
+        });
+        await text;
+      }
+    },
+  );
+
+  it("never appends a different failure turn after an unconfirmed primary turn", async () => {
+    setRoute("low_cost");
+    mocks.provider.mockImplementation(async (input) => {
+      input.onDelta("응답 유실 전 저장될 수 있는 답변입니다.");
+      return {
+        model: "openai/gpt-oss-20b",
+        providerRequestId: "synthetic-response",
+        inputTokens: 1,
+        outputTokens: 1,
+        cachedInputTokens: 0,
+      };
+    });
+    mocks.append.mockResolvedValue({
+      ok: false,
+      code: "CONVERSATION_NOT_SAVED",
+    });
+    const events = parseEvents(await (await POST(request())).text());
+    expect(events).toContainEqual(
+      expect.objectContaining({ type: "error", saved: false }),
+    );
+    expect(mocks.append).toHaveBeenCalledTimes(1);
+    expect(mocks.complete).not.toHaveBeenCalled();
+  });
+
+  it("finishes cancellation while primary turn storage is unresponsive", async () => {
+    vi.useFakeTimers();
+    setRoute("low_cost");
+    mocks.provider.mockImplementation(async (input) => {
+      input.onDelta("중단 전 합성 답변입니다.");
+      return {
+        model: "openai/gpt-oss-20b",
+        providerRequestId: "synthetic-response",
+        inputTokens: 1,
+        outputTokens: 1,
+        cachedInputTokens: 0,
+      };
+    });
+    let release: (value: unknown) => void = () => {};
+    let started: () => void = () => {};
+    const storing = new Promise<void>((resolve) => {
+      started = resolve;
+    });
+    mocks.append.mockImplementationOnce(() => {
+      started();
+      return new Promise((resolve) => {
+        release = resolve;
+      });
+    });
+    const member = new AbortController();
+    const response = await POST(request(member.signal));
+    let settled = false;
+    const text = response.text().then((value) => {
+      settled = true;
+      return value;
+    });
+    await storing;
+    try {
+      member.abort();
+      await vi.advanceTimersByTimeAsync(0);
+      expect(settled).toBe(true);
+      expect(parseEvents(await text)).toContainEqual(
+        expect.objectContaining({
+          type: "error",
+          code: "CLIENT_CANCELLED",
+          saved: false,
+        }),
+      );
+      expect(mocks.fail.mock.calls.at(-1)?.[1]?.status).toBe("CANCELLED");
+      expect(mocks.append).toHaveBeenCalledTimes(1);
+      expect(mocks.complete).not.toHaveBeenCalled();
+    } finally {
+      release({ ok: false, code: "CONVERSATION_NOT_SAVED" });
+      await text;
+    }
+  });
+});
+
 describe("AI audit persistence failures remain explicit without exposing RPC details", () => {
   it.each([
     ["returned", "returned"],

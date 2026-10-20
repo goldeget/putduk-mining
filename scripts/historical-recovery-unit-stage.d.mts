@@ -8,6 +8,11 @@ export function readHistoricalRecoveryFixtureSource(
   path: string,
   generation: number,
 ): Buffer;
+export function primeHistoricalRecoveryFixtureSources(
+  root: string,
+  paths: Iterable<string>,
+  generation: number,
+): void;
 export function verifyHistoricalRecoveryBytes(
   path: string,
   bytes: Buffer,
@@ -32,7 +37,8 @@ export function prepareBackend197UnitFixtures(
   prefix: string,
   roots: string[],
 ): {
-  prepare(): void;
+  prepare(): Promise<void>;
+  settle(): Promise<void>;
   root(mode: "canonical" | "local"): string;
 };
 export function prepareHistorical195UnitFixtures(
@@ -41,7 +47,8 @@ export function prepareHistorical195UnitFixtures(
   prefix: string,
   roots: string[],
 ): {
-  prepare(name: string): void;
+  prepare(name: string): Promise<void>;
+  settle(): Promise<void>;
   root(mode: "canonical" | "local"): string;
 };
 
@@ -57,3 +64,12 @@ export function verifyPreparedHistoricalFixture(
   entries: Iterable<readonly [string, Uint8Array | string]>,
   prefix: string,
 ): void;
+export function verifyPreparedHistoricalFixtureConcurrently(
+  root: string,
+  entries: Iterable<readonly [string, Uint8Array | string]>,
+  prefix: string,
+): Promise<void>;
+export function createHistoricalFixturePreparation(): {
+  run<T>(build: () => Promise<T>, publish: (value: T) => void): Promise<void>;
+  settle(): Promise<void>;
+};

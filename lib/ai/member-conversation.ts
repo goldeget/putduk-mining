@@ -406,10 +406,11 @@ async function insertEvidenceOnce(
 
 export function createSupabaseMemberConversationPort(
   supabase: SupabaseClient,
+  options: { signal?: AbortSignal } = {},
 ): MemberConversationPort {
   return {
     async appendAtomicTurn(input) {
-      const { data, error } = await supabase.rpc("append_ai_member_turn", {
+      const request = supabase.rpc("append_ai_member_turn", {
         p_user_id: input.userId,
         p_client_message_id: input.clientMessageId,
         p_conversation_id: input.conversationId,
@@ -422,6 +423,9 @@ export function createSupabaseMemberConversationPort(
         p_tool_outcome: input.toolOutcome,
         p_tool_latency_ms: input.toolLatencyMs,
       });
+      const { data, error } = await (options.signal
+        ? request.abortSignal(options.signal)
+        : request);
       if (error) throw writeError(error);
       const receipt = z
         .object({
