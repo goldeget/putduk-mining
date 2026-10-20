@@ -147,10 +147,32 @@ test.describe("admin Member 360 product states", () => {
     );
     for (const theme of ["dark", "light"]) {
       await page.getByLabel("화면 테마").selectOption(theme);
-      await page.evaluate(() => {
-        document.documentElement.style.fontSize = "200%";
-      });
+      await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
       try {
+        const textScale = await page.evaluate(async () => {
+          const root = document.documentElement;
+          root.style.fontSize = "200%";
+          await document.fonts.ready;
+          await new Promise<void>((resolve) =>
+            requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+          );
+          return {
+            inlineFontSize: root.style.fontSize,
+            fontSize: Number.parseFloat(getComputedStyle(root).fontSize),
+            url: window.location.href,
+            resolvedTheme: root.dataset.theme,
+          };
+        });
+        try {
+          expect(textScale.inlineFontSize).toBe("200%");
+          expect(textScale.fontSize).toBe(normalFontSize * 2);
+        } catch (error) {
+          await testInfo.attach("admin-navigation-text-scale", {
+            body: JSON.stringify({ theme, normalFontSize, ...textScale }),
+            contentType: "application/json",
+          });
+          throw error;
+        }
         const destinations = await navigation.getByRole("link").all();
         await destinations[0]!.focus();
         for (const destination of destinations) {
@@ -216,7 +238,12 @@ test.describe("admin Member 360 product states", () => {
             expect(geometry.hit).toBe(true);
           } catch (error) {
             await testInfo.attach("admin-navigation-geometry", {
-              body: JSON.stringify({ theme, normalFontSize, ...geometry }),
+              body: JSON.stringify({
+                theme,
+                normalFontSize,
+                textScale,
+                ...geometry,
+              }),
               contentType: "application/json",
             });
             throw error;

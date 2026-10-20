@@ -122,7 +122,16 @@ test("shows empty state, preferences, themes, and keyboard path", async ({
       level: 1,
     }),
   ).toBeVisible();
-  await expect(page.getByText("아직 도착한 알림이 없어요")).toBeVisible();
+  await expect(
+    page
+      .getByRole("main")
+      .getByRole("region", { name: "알림 목록", exact: true })
+      .getByRole("heading", {
+        name: "아직 도착한 알림이 없어요",
+        level: 2,
+        exact: true,
+      }),
+  ).toBeVisible();
   await expect(page.getByText("NOTIFICATION CENTER")).toHaveCount(0);
   await expect(page.getByText("PWA PUSH")).toHaveCount(0);
 
@@ -160,7 +169,16 @@ test("shows empty state, preferences, themes, and keyboard path", async ({
   for (const viewport of VIEWPORTS) {
     await page.setViewportSize(viewport);
     await applyTheme(page, "dark");
-    await expect(page.getByText("아직 도착한 알림이 없어요")).toBeVisible();
+    await expect(
+      page
+        .getByRole("main")
+        .getByRole("region", { name: "알림 목록", exact: true })
+        .getByRole("heading", {
+          name: "아직 도착한 알림이 없어요",
+          level: 2,
+          exact: true,
+        }),
+    ).toBeVisible();
     await expectNoHorizontalOverflow(page);
     await shoot(page, `empty-${viewport.name}-dark.webp`);
   }
