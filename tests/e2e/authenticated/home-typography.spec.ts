@@ -11,7 +11,7 @@ import { assertViewportFits } from "./helpers/viewport-geometry";
 
 type PhaseTiming = {
   phase: string;
-  cellLabel?: string;
+  cellLabel?: string | undefined;
   startedMs: number;
   durationMs?: number;
   state: "running" | "completed" | "interrupted";
@@ -21,7 +21,7 @@ type PhaseTiming = {
 type TimingProfile = {
   startedAt: number;
   currentPhase: string;
-  currentCellLabel?: string;
+  currentCellLabel?: string | undefined;
   lastMark: { phase: string; elapsedMs: number; state: PhaseTiming["state"] };
   authStartupMs: number;
   pngBytes: number;
@@ -162,7 +162,15 @@ test("unfunded home retains Korean layout across viewport and text scales", asyn
   await measure(profile, "auth.wallet-assertion", () =>
     expect(page.locator('[data-home-amount="wallet"]')).toHaveText("0원"),
   );
-  const records = [];
+  const records: {
+    width: number;
+    theme: "dark" | "light";
+    preference: "dark" | "light" | "system";
+    textScale: number;
+    route: "/home";
+    fixture: "real confirmed member, no funding";
+    wallet: "0원";
+  }[] = [];
   // Start with the newly exposed 430px breakpoint, then cover every requested width.
   for (const width of [430, 320, 360, 390, 834, 1024, 1440]) {
     await measure(profile, "viewport.resize", () =>
@@ -392,7 +400,7 @@ test("unfunded home retains Korean layout across viewport and text scales", asyn
           )
         ).length;
         profile.pngBytes += shortcutsBytes;
-        profile.phases[profile.phases.length - 1].pngBytes = shortcutsBytes;
+        profile.phases[profile.phases.length - 1]!.pngBytes = shortcutsBytes;
         await measure(profile, "shortcuts.attach-copy-ipc", () =>
           info.attach(`${label}-shortcuts`, {
             path: shortcutsPng,
@@ -412,7 +420,7 @@ test("unfunded home retains Korean layout across viewport and text scales", asyn
           )
         ).length;
         profile.pngBytes += pageBytes;
-        profile.phases[profile.phases.length - 1].pngBytes = pageBytes;
+        profile.phases[profile.phases.length - 1]!.pngBytes = pageBytes;
         await measure(profile, "page.attach-copy-ipc", () =>
           info.attach(label, {
             path: pagePng,
