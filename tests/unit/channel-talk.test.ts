@@ -303,6 +303,149 @@ describe("Channel Talk controller", () => {
   });
 });
 
+describe("Cloudflare beacon CSP", () => {
+  const observedBeaconUrl =
+    "https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092";
+
+  describe("admin", () => {
+    describe.each(["production", "development"])("%s", (nodeEnv) => {
+      function directives() {
+        return parseContentSecurityPolicy(
+          buildAdminContentSecurityPolicy({
+            appEnv: "production",
+            nodeEnv,
+            supabaseUrl: "https://project.supabase.co",
+          }),
+        );
+      }
+
+      it("permits only the observed beacon script alongside existing admin script permissions", () => {
+        const script = directives().get("script-src") ?? [];
+
+        expect(script).toContain(observedBeaconUrl);
+        expect(script).toEqual([
+          "'self'",
+          "'unsafe-inline'",
+          ...(nodeEnv === "development" ? ["'unsafe-eval'"] : []),
+          observedBeaconUrl,
+        ]);
+      });
+
+      it("keeps same-origin RUM and the admin isolation permissions", () => {
+        const nonScript = new Map(directives());
+        nonScript.delete("script-src");
+
+        expect(Object.fromEntries(nonScript)).toEqual({
+          "default-src": ["'self'"],
+          "base-uri": ["'self'"],
+          "connect-src": [
+            "'self'",
+            ...(nodeEnv === "development"
+              ? [
+                  "http://127.0.0.1:58421",
+                  "http://localhost:58421",
+                  "ws://127.0.0.1:58421",
+                  "ws://localhost:58421",
+                ]
+              : []),
+            "https://*.supabase.co",
+            "wss://*.supabase.co",
+          ],
+          "font-src": ["'self'", "data:"],
+          "form-action": ["'self'"],
+          "frame-ancestors": ["'none'"],
+          "img-src": ["'self'", "data:", "blob:"],
+          "object-src": ["'none'"],
+          "style-src": ["'self'", "'unsafe-inline'"],
+          ...(nodeEnv === "production"
+            ? { "upgrade-insecure-requests": [] }
+            : {}),
+        });
+      });
+    });
+  });
+
+  describe.each(["production", "development"])("%s", (nodeEnv) => {
+    function directives() {
+      return parseContentSecurityPolicy(
+        buildPublicContentSecurityPolicy({
+          appEnv: "production",
+          nodeEnv,
+          supabaseUrl: "https://project.supabase.co",
+        }),
+      );
+    }
+
+    it("permits the observed beacon script without allowing other provider paths", () => {
+      const script = directives().get("script-src") ?? [];
+
+      expect(script).toContain(observedBeaconUrl);
+      expect(script).toEqual([
+        "'self'",
+        "'unsafe-inline'",
+        ...(nodeEnv === "development"
+          ? ["'unsafe-eval'", "'wasm-unsafe-eval'"]
+          : []),
+        "https://*.channel.io",
+        "https://*.sentry-cdn.com",
+        observedBeaconUrl,
+      ]);
+    });
+
+    it("retains same-origin RUM and the existing non-script permissions", () => {
+      const policy = directives();
+      const nonScript = new Map(policy);
+      nonScript.delete("script-src");
+
+      expect(Object.fromEntries(nonScript)).toEqual({
+        "default-src": ["'self'"],
+        "base-uri": ["'self'"],
+        "connect-src": [
+          "'self'",
+          ...(nodeEnv === "development"
+            ? [
+                "http://127.0.0.1:58421",
+                "http://localhost:58421",
+                "ws://127.0.0.1:58421",
+                "ws://localhost:58421",
+              ]
+            : []),
+          "https://*.supabase.co",
+          "wss://*.supabase.co",
+          "https://*.channel.io",
+          "https://*.channel.app",
+          "https://*.sentry.io",
+          "wss://*.channel.io",
+          "wss://*.desk-ws.channel.io",
+          "wss://*.front-ws.channel.io",
+        ],
+        "font-src": ["'self'", "data:"],
+        "form-action": ["'self'"],
+        "frame-ancestors": ["'none'"],
+        "img-src": [
+          "'self'",
+          "data:",
+          "blob:",
+          "https://*.supabase.co",
+          "https://*.channel.io",
+          "https://*.cdninstagram.com",
+        ],
+        "media-src": ["'self'", "https://*.channel.io"],
+        "manifest-src": ["'self'"],
+        "object-src": ["'none'"],
+        "style-src": ["'self'", "'unsafe-inline'"],
+        "worker-src": ["'self'", "blob:"],
+        ...(nodeEnv === "production"
+          ? { "upgrade-insecure-requests": [] }
+          : {}),
+      });
+      expect(
+        findUnsupportedCspWildcard([...policy.values()].flat()),
+      ).toBeNull();
+    });
+  });
+});
+
 describe("Channel Talk boundaries", () => {
   it("does not accept an arbitrary user id on the session route", () => {
     const route = readFileSync(
@@ -396,6 +539,7 @@ describe("Channel Talk boundaries", () => {
       "'self'",
       "'unsafe-inline'",
       ...channelTalkScriptSources,
+      "https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092",
     ]);
     expect(script).not.toContain("'unsafe-eval'");
     expect(directives.get("font-src")).toEqual(["'self'", "data:"]);

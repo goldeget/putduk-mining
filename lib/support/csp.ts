@@ -87,6 +87,10 @@ type PublicCspInput = {
   supabaseUrl: string | undefined;
 };
 
+// Cloudflare가 현재 주입하는 beacon의 정확한 경로만 허용한다.
+const cloudflareBeaconScriptSource =
+  "https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092";
+
 function localConnectOrigins(supabaseUrl: string | undefined) {
   let origins =
     "http://127.0.0.1:58421 http://localhost:58421 ws://127.0.0.1:58421 ws://localhost:58421";
@@ -117,8 +121,8 @@ export function buildPublicContentSecurityPolicy(input: PublicCspInput) {
 
   const scriptSource =
     input.nodeEnv === "development"
-      ? `script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' ${channelTalkScriptSources.join(" ")}`
-      : `script-src 'self' 'unsafe-inline' ${channelTalkScriptSources.join(" ")}`;
+      ? `script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' ${channelTalkScriptSources.join(" ")} ${cloudflareBeaconScriptSource}`
+      : `script-src 'self' 'unsafe-inline' ${channelTalkScriptSources.join(" ")} ${cloudflareBeaconScriptSource}`;
 
   return [
     "default-src 'self'",
