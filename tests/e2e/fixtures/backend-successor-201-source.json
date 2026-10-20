@@ -1240,7 +1240,7 @@
     "apps/admin/app/(control)/catalog/catalog-console.tsx": "b956f1c5ae7a8c8face1d1a844073dbbbff57aa73abe95042bbcfa2178af47e9",
     "apps/admin/app/(control)/catalog/catalog.module.css": "aec5229053f81bd5f39ee75e4cf0d5fd69f736f9581cd17d6f7967c11988c2e6",
     "apps/admin/app/(control)/catalog/page.tsx": "0d4a2a6d8c625f9a8e058f38805741a6820659e5f1adce639ac09de883630b98",
-    "apps/admin/app/(control)/content/content-console.tsx": "3fa12a5e0c206dc1ae6f4cad0a9e338178503235d54f213ac24f9f977d8b1852",
+    "apps/admin/app/(control)/content/content-console.tsx": "7fb797f3c648c83056a3d07d8b16205688cffb98df91c652e9477ef9ba6bc1d9",
     "apps/admin/app/(control)/content/content.module.css": "7e4ab2053f6bfff39ea89f5ffd34350976593c3434312a2b79ec378649568bad",
     "apps/admin/app/(control)/content/page.tsx": "abb6c495e828da3f21cbfa2a076b924500589fe3daa3d25427693c60446e1db9",
     "apps/admin/app/(control)/deposits/krw/[id]/approve-form.tsx": "8d6dd84fe5c4240432db1aff8aae23adcb4640077cd5d405f99503a9970a6de5",
@@ -3668,7 +3668,8 @@
     "scripts/framework-generated-types.test.mjs": "1808c29af9d5d39fd438b4c7488b69db4c13f4ffd4d4b938c2872cc79eeb4cbc",
     "scripts/ai-wire-ack.browser.test.mjs": "137f296d88788a34990aede817e6db6e58e2eb49ca8c3b6d9c9d6bcc9ec552d2",
     "tests/unit/event-detail-participation-mode.test.ts": "362a861e1fb9707ee2c2aeb7872326dd90ce3bb750248e451791c52ee3222232",
-    "tests/unit/event-participation-client-recovery.test.ts": "91b47b939d66001cd4748a137bad77431a16562644bf1a0c5963aabbab40740f"
+    "tests/unit/event-participation-client-recovery.test.ts": "91b47b939d66001cd4748a137bad77431a16562644bf1a0c5963aabbab40740f",
+    "apps/admin/tests/content-guide-edit.test.ts": "acaf859dc460a0fb10f1e332f0e146faa4be32e95954f48f4b0172aadbe860ca"
   },
   "selfExcludedPaths": [
     "tests/e2e/fixtures/backend-successor-201-source.json",
