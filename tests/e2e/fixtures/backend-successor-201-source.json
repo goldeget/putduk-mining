@@ -2834,7 +2834,7 @@
     "scripts/usdt-manual-197-runner.mjs": "c8df48d570e3709bed40679f9e3739c2a188dba3141a7ae233e0db232abe597a",
     "scripts/usdt-manual-201-runner.mjs": "eb9c7f51a5a4449cc8b08752bb0bf6fec19a8eb0b90b99dddf128d839ca35ad1",
     "scripts/verify-brand-assets.mjs": "d3375d7c16d7c67ed729d2f96152f143998aa3a58c14f2d292a5c6493d37707d",
-    "scripts/verify-canonical-brand-identity.mjs": "e26a412f5b9ace181b27986a0c8d1cea615a25144f5bf83b3415809489ca6d6b",
+    "scripts/verify-canonical-brand-identity.mjs": "c4acc4a9b88c495683878baea7b6f959e1d9b7c9e03acb3ce2e0e456fc6c32ae",
     "scripts/verify-catalog-material-assets.mjs": "fa711c09f802ad65f6289de297290a7e050da9ec72e153536fa9942914cdd6e9",
     "scripts/verify-mining-responsive-assets.mjs": "cc61fed432ef7ddb0678f5bb9dbda89dd3919e6cd4177b381eae06cdadc87e9e",
     "scripts/verify-premium-material-assets.mjs": "0446d443c7a79023a3cabb3e41ff0d7fa9d9f82900fe076cb5d6bee3f018a320",
@@ -3301,7 +3301,7 @@
     "tests/e2e/fixtures/principal-review-r2-source.json": "c67be88e77c998e56e0df793fc0705c9e4dff2966ee17db415953aa707adc289",
     "tests/e2e/fixtures/usdt-manual-195-concurrency-contract.json": "598c75828a9d1ff7973f30abf7e8ce1661cd2d409010e321b01e635e1534f4a5",
     "tests/e2e/fixtures/usdt-manual-195-runner-source.json": "f24506246a0ce47f8b5eef53f0cdb79ddcecd6323c69538666afd4c085e1d482",
-    "tests/e2e/foundation.spec.ts": "ddacfd1d6bcbef6892bd7311546a585258297183527793000436d6b88c5cdab7",
+    "tests/e2e/foundation.spec.ts": "573d1efb5f8e0dc03ca1ad481ca1d4134bd3427fae46df456520cf48fb96a024",
     "tests/e2e/support-typography.spec.ts": "d4b207085b2e10eae843b5817e99e31388595906c35833f08349e193ed705090",
     "tests/e2e/support.spec.ts": "dc515edfde5bba2d0a6c7330bc7f1f92ad14de3230edf1052c9711ce9a16b540",
     "tests/e2e/withdrawal-evidence-redaction.spec.ts": "250c9fe4a205997fb9ffd8663baacfece118462b04a1a01133a58778f4f59afa",
@@ -3461,7 +3461,7 @@
     "tests/unit/funding-slot-server-contract.test.ts": "ae5465ce85c44d6ec9acf6cfdd6782fdb07c715e913d9e47628f63cf1c7c8fc2",
     "tests/unit/funding-worker-dispatch.test.ts": "c55d9f661d1f1e8a2158139aa88dba2b5a2a15b961335cbbc9ece75a7721d4f2",
     "tests/unit/historical-recovery-unit-stage-cache.test.ts": "6cd7e1892f9040fd435c229c86eeadfe27781f17d37de358c8e4d0f1adbaf360",
-    "tests/unit/historical-recovery-unit-stage.test.ts": "8b07c5daad954df5084c7a26b0e2dc7f0c42b3a2b486c0f16c09228df4b236c4",
+    "tests/unit/historical-recovery-unit-stage.test.ts": "a547ff2105882bfd618e805a7cc3e33bbff9c6d69b080ca2ddd0ef046a5636d6",
     "tests/unit/historical-withdrawal-fixture.test.ts": "acc619a05f19aaa75ca6daa0a5eb1437e4ca21093844f832fe4d9962b7cb22a4",
     "tests/unit/home-capacity-progress.test.ts": "2b755454c3b738104c83be63adcf1d2687d03162d401c56bf8cc19b1a7771516",
     "tests/unit/home-start-display.test.ts": "8e61fa2fd4b58a1ced0e79b348b236c935bb6bd17a7cce323babb6f4ab5e3de7",
@@ -3687,7 +3687,8 @@
     "tests/unit/production-cloudflare-config.test.ts": "6e785ef4d84360670ec8647301b3c1d5781ea9cb87a236e3dd7fdc5cad1f7a35",
     "tests/unit/pwa-icon-manifest.test.ts": "b328c5c9d0df89f377acc84668eebadf3fee25b026b13d01e24b7d3ec17a998b",
     "components/layout/member-entry-link.tsx": "5eb98603a3fd0350d31540ad81b0d41117c7691ceef7dd3e9421ca8af5d2cacf",
-    "tests/unit/member-entry-link.test.ts": "542d3ca4f94f30d26f536817554a7ffc19a72c74bec04a8f538332279c02f049"
+    "tests/unit/member-entry-link.test.ts": "542d3ca4f94f30d26f536817554a7ffc19a72c74bec04a8f538332279c02f049",
+    "tests/unit/canonical-brand-identity-delivery.test.ts": "a162e3af6e2c6a941f22f81c4ae072e011884eac37f663d17890b5e280190538"
   },
   "selfExcludedPaths": [
     "tests/e2e/fixtures/backend-successor-201-source.json",

@@ -20,7 +20,16 @@ import {
 import { stripTypeScriptTypes } from "node:module";
 import { runInNewContext } from "node:vm";
 import { createHash } from "node:crypto";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from "vitest";
 vi.mock("node:child_process", async (importOriginal) => {
   const actual = await importOriginal<typeof import("node:child_process")>();
   return { ...actual, execFileSync: vi.fn(actual.execFileSync) };
@@ -126,137 +135,169 @@ describe("cold historical browser fixture reads", () => {
   );
 });
 describe("historical recovery test-only staging", () => {
-  it.each(["valid", "changed", "cleanup"])(
-    "awaits exact canonical fixture readiness during setup: %s bytes",
-    async (copy) => {
-      const original = preserved(
-        "tests/unit/backend-http-canonical-source.test.ts",
-      ).toString("utf8");
-      const staged = stageHistoricalRecoveryTestSource(
-        original,
-        "backend-http-canonical-source.test.ts",
-      );
-      const start = staged.indexOf("let preparedCanonicalRoot:");
-      const end = staged.indexOf("\nfunction append(", start);
-      const originalStart = original.indexOf("function fixture(local = false)");
-      const originalEnd = original.indexOf("\nfunction append(", originalStart);
-      const cleanupStart = staged.indexOf("afterEach(");
-      const cleanupEnd = staged.indexOf("\n// Git bytes", cleanupStart);
-      const originalCleanupStart = original.indexOf("afterEach(");
-      const originalCleanupEnd = original.indexOf(
-        "\n// Git bytes",
-        originalCleanupStart,
-      );
-      expect(
-        staged
-          .slice(staged.indexOf("\n") + 1)
-          .replace(
-            staged.slice(start, end),
-            original.slice(originalStart, originalEnd),
-          )
-          .replace(
-            staged.slice(cleanupStart, cleanupEnd),
-            original.slice(originalCleanupStart, originalCleanupEnd),
-          )
-          .replace("afterEach, beforeEach, describe", "afterEach, describe"),
-      ).toBe(original);
-      const scratch = realpathSync(tmpdir());
+  describe.each(["valid", "changed", "cleanup"])(
+    "exact canonical fixture readiness: %s bytes",
+    (copy) => {
+      let original: string;
+      let restored: string;
+      let scratch: string;
       const prefix = "putduk-backend-canonical-source-";
       const roots: string[] = [];
+      const owned: string[] = [];
       let setup: () => unknown = () => undefined;
       let cleanup: () => unknown = () => undefined;
-      let release!: () => void;
-      const gate = new Promise<void>((done) => {
-        release = done;
-      });
+      let release: () => void = () => undefined;
+      let fixture: () => string;
+      let pending: unknown;
+      let cleaning: Promise<unknown> | undefined;
       let inspected = 0;
       let verified = false,
         deletes = 0;
-      const isolated =
-        await import("../../scripts/historical-recovery-unit-stage.mjs");
-      const fixture = runInNewContext(
-        stripTypeScriptTypes(
-          staged.slice(cleanupStart, cleanupEnd) +
-            "\n" +
-            staged.slice(start, end) +
-            "\nfixture;",
-        ),
-        {
-          beforeEach: (callback: () => unknown) => {
-            setup = callback;
-          },
-          afterEach: (callback: () => unknown) => {
-            cleanup = callback;
-          },
-          createHistoricalFixturePreparation:
-            isolated.createHistoricalFixturePreparation,
-          ownedRoots: roots,
-          tempParent: scratch,
-          realpathSync,
-          relative,
-          isAbsolute,
-          rmSync: (path: string) => {
-            deletes++;
-            if (!verified) throw Error("READS_ACTIVE_DURING_DELETE");
-            rmSync(path, { recursive: true, force: true });
-          },
-          checkout: root,
-          baselinePath: "baseline.json",
-          layers: [],
-          predecessors: [],
-          manifestPath: "manifest.json",
-          profilePath: "profile.json",
-          tempPrefix: prefix,
-          join,
-          dirname,
-          mkdirSync,
-          writeFileSync,
-          readFileSync: () =>
-            JSON.stringify({
-              sources: [
-                { path: "runtime.ts" },
-                { path: "supabase/config.toml" },
-              ],
-            }),
-          frozenConfig: () => Buffer.from("canonical config"),
-          localTestConfig: () => Buffer.from("local config"),
-          newOwnedRoot: () => {
-            const fixtureRoot = mkdtempSync(join(scratch, prefix));
-            roots.push(fixtureRoot);
-            return fixtureRoot;
-          },
-          primeHistoricalRecoveryFixtureSources: () => undefined,
-          readHistoricalRecoveryFixtureSource: (_: string, path: string) =>
-            Buffer.from("frozen " + path),
-          verifyPreparedHistoricalFixtureConcurrently: async (
-            ...args: Parameters<
-              typeof isolated.verifyPreparedHistoricalFixtureConcurrently
-            >
-          ) => {
-            inspected++;
-            await gate;
-            if (copy === "changed")
-              writeFileSync(join(roots[0]!, "runtime.ts"), "changed");
-            try {
-              return await isolated.verifyPreparedHistoricalFixtureConcurrently(
-                ...args,
-              );
-            } finally {
-              verified = true;
-            }
-          },
+      // Frozen Git reads, module/VM initialization and temp writes are setup.
+      // Keep the controlled readiness assertions on the default five-second body.
+      beforeAll(
+        async () => {
+          original = preserved(
+            "tests/unit/backend-http-canonical-source.test.ts",
+          ).toString("utf8");
+          const staged = stageHistoricalRecoveryTestSource(
+            original,
+            "backend-http-canonical-source.test.ts",
+          );
+          const start = staged.indexOf("let preparedCanonicalRoot:");
+          const end = staged.indexOf("\nfunction append(", start);
+          const originalStart = original.indexOf(
+            "function fixture(local = false)",
+          );
+          const originalEnd = original.indexOf(
+            "\nfunction append(",
+            originalStart,
+          );
+          const cleanupStart = staged.indexOf("afterEach(");
+          const cleanupEnd = staged.indexOf("\n// Git bytes", cleanupStart);
+          const originalCleanupStart = original.indexOf("afterEach(");
+          const originalCleanupEnd = original.indexOf(
+            "\n// Git bytes",
+            originalCleanupStart,
+          );
+          restored = staged
+            .slice(staged.indexOf("\n") + 1)
+            .replace(
+              staged.slice(start, end),
+              original.slice(originalStart, originalEnd),
+            )
+            .replace(
+              staged.slice(cleanupStart, cleanupEnd),
+              original.slice(originalCleanupStart, originalCleanupEnd),
+            )
+            .replace("afterEach, beforeEach, describe", "afterEach, describe");
+          scratch = realpathSync(tmpdir());
+          const gate = new Promise<void>((done) => {
+            release = done;
+          });
+          const isolated =
+            await import("../../scripts/historical-recovery-unit-stage.mjs");
+          fixture = runInNewContext(
+            stripTypeScriptTypes(
+              staged.slice(cleanupStart, cleanupEnd) +
+                "\n" +
+                staged.slice(start, end) +
+                "\nfixture;",
+            ),
+            {
+              beforeEach: (callback: () => unknown) => {
+                setup = callback;
+              },
+              afterEach: (callback: () => unknown) => {
+                cleanup = callback;
+              },
+              createHistoricalFixturePreparation:
+                isolated.createHistoricalFixturePreparation,
+              ownedRoots: roots,
+              tempParent: scratch,
+              realpathSync,
+              relative,
+              isAbsolute,
+              rmSync: (path: string) => {
+                deletes++;
+                if (!verified) throw Error("READS_ACTIVE_DURING_DELETE");
+                rmSync(path, { recursive: true, force: true });
+              },
+              checkout: root,
+              baselinePath: "baseline.json",
+              layers: [],
+              predecessors: [],
+              manifestPath: "manifest.json",
+              profilePath: "profile.json",
+              tempPrefix: prefix,
+              join,
+              dirname,
+              mkdirSync,
+              writeFileSync,
+              readFileSync: () =>
+                JSON.stringify({
+                  sources: [
+                    { path: "runtime.ts" },
+                    { path: "supabase/config.toml" },
+                  ],
+                }),
+              frozenConfig: () => Buffer.from("canonical config"),
+              localTestConfig: () => Buffer.from("local config"),
+              newOwnedRoot: () => {
+                const fixtureRoot = mkdtempSync(join(scratch, prefix));
+                roots.push(fixtureRoot);
+                return fixtureRoot;
+              },
+              primeHistoricalRecoveryFixtureSources: () => undefined,
+              readHistoricalRecoveryFixtureSource: (_: string, path: string) =>
+                Buffer.from("frozen " + path),
+              verifyPreparedHistoricalFixtureConcurrently: async (
+                ...args: Parameters<
+                  typeof isolated.verifyPreparedHistoricalFixtureConcurrently
+                >
+              ) => {
+                inspected++;
+                await gate;
+                if (copy === "changed")
+                  writeFileSync(join(roots[0]!, "runtime.ts"), "changed");
+                try {
+                  return await isolated.verifyPreparedHistoricalFixtureConcurrently(
+                    ...args,
+                  );
+                } finally {
+                  verified = true;
+                }
+              },
+            },
+          ) as () => string;
+          pending = setup();
+          owned.push(...roots);
         },
-      ) as () => string;
-      let pending: unknown;
-      const owned: string[] = [];
-      try {
-        pending = setup();
-        owned.push(...roots);
+        process.platform === "win32" ? 30_000 : 10_000,
+      );
+      afterAll(
+        async () => {
+          release();
+          await Promise.allSettled([Promise.resolve(pending), cleaning]);
+          for (const fixtureRoot of new Set([...owned, ...roots])) {
+            const target = resolve(fixtureRoot);
+            if (
+              dirname(target) !== scratch ||
+              !basename(target).startsWith(prefix)
+            )
+              throw Error("FIXTURE_CLEANUP_SCOPE");
+            rmSync(target, { recursive: true, force: true });
+          }
+        },
+        process.platform === "win32" ? 30_000 : 10_000,
+      );
+      it("awaits exact canonical fixture readiness during setup", async () => {
+        expect(restored).toBe(original);
         expect(pending).toHaveProperty("then", expect.any(Function));
         expect(inspected).toBe(1);
         expect(() => fixture()).toThrow("FIXTURE_REQUIRED");
         if (copy === "cleanup") {
-          const cleaning = Promise.resolve(cleanup());
+          cleaning = Promise.resolve(cleanup());
           expect(deletes).toBe(0);
           expect(() => fixture()).toThrow("FIXTURE_REQUIRED");
           release();
@@ -276,19 +317,7 @@ describe("historical recovery test-only staging", () => {
           );
           expect(() => fixture()).toThrow("FIXTURE_REQUIRED");
         }
-      } finally {
-        release();
-        await Promise.resolve(pending).catch(() => undefined);
-        for (const fixtureRoot of owned) {
-          const target = resolve(fixtureRoot);
-          if (
-            dirname(target) !== scratch ||
-            !basename(target).startsWith(prefix)
-          )
-            throw Error("FIXTURE_CLEANUP_SCOPE");
-          rmSync(target, { recursive: true, force: true });
-        }
-      }
+      });
     },
   );
   it("rejects a fixture scratch/prefix outside the frozen test scope before writing", () => {

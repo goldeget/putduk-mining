@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { createHash } from "node:crypto";
 
 test("landing world artwork and reward disclosures work through real controls", async ({
   page,
@@ -100,16 +101,92 @@ test("renders the productized PUTDUK landing with accessible primary navigation"
 
 test("exposes install and discovery metadata", async ({ page }) => {
   const manifestResponse = await page.request.get("/manifest.webmanifest");
-  expect(manifestResponse.ok()).toBe(true);
-  await expect(manifestResponse.json()).resolves.toMatchObject({
-    icons: expect.arrayContaining([
-      expect.objectContaining({
-        purpose: "maskable",
-        src: "/brand/identity/20261014/pwa/putduk-pwa-maskable-512.png",
-      }),
-    ]),
+  expect(manifestResponse.status()).toBe(200);
+  expect(manifestResponse.headers()["content-type"]).toContain(
+    "application/manifest+json",
+  );
+  const manifest = await manifestResponse.json();
+  expect(manifest).toMatchObject({
+    id: "/",
     name: "퍼뜩 채굴",
+    short_name: "퍼뜩 채굴",
+    start_url: "/",
+    scope: "/",
+    display: "standalone",
+    orientation: "any",
   });
+  const icons = [
+    {
+      src: "/brand/identity/20261014/pwa/putduk-pwa-dark-192.png?v=20261020-icon1",
+      sizes: "192x192",
+      type: "image/png",
+      purpose: "any",
+      width: 192,
+      sha256:
+        "807f0bde831513b0e1fc1cf87edc32e1bf7464009974b4c7a00326b1ff6e2de6",
+    },
+    {
+      src: "/brand/identity/20261014/pwa/putduk-pwa-dark-512.png?v=20261020-icon1",
+      sizes: "512x512",
+      type: "image/png",
+      purpose: "any",
+      width: 512,
+      sha256:
+        "f6ca60761b734495a828b44d0ef7a2ba8df701c1f024a6316074bc0a355dcc0d",
+    },
+    {
+      src: "/brand/identity/20261014/pwa/putduk-pwa-maskable-512.png?v=20261020-icon1",
+      sizes: "512x512",
+      type: "image/png",
+      purpose: "maskable",
+      width: 512,
+      sha256:
+        "ee3dc22230154bdddc8fdf72f097240daba21d16c95b45f0cdb18461a802e271",
+    },
+  ];
+  expect(manifest.icons).toEqual(
+    icons.map(({ src, sizes, type, purpose }) => ({
+      src,
+      sizes,
+      type,
+      purpose,
+    })),
+  );
+  for (const icon of icons) {
+    const response = await page.request.get(icon.src);
+    expect(response.status()).toBe(200);
+    expect(response.headers()["content-type"]).toContain("image/png");
+    const bytes = await response.body();
+    expect(bytes.subarray(0, 8)).toEqual(
+      Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]),
+    );
+    expect([bytes.readUInt32BE(16), bytes.readUInt32BE(20)]).toEqual([
+      icon.width,
+      icon.width,
+    ]);
+    expect(createHash("sha256").update(bytes).digest("hex")).toBe(icon.sha256);
+  }
+  await page.goto("/");
+  const decoded = await page.evaluate(
+    async (icons) => {
+      const results = [];
+      for (const icon of icons) {
+        const image = new Image();
+        image.src = icon.src;
+        await image.decode();
+        results.push({
+          src: icon.src,
+          width: image.naturalWidth,
+          height: image.naturalHeight,
+        });
+      }
+      return results;
+    },
+    icons.map(({ src }) => ({ src })),
+  );
+  expect(decoded).toEqual(
+    icons.map(({ src, width }) => ({ src, width, height: width })),
+  );
 
   const robotsResponse = await page.request.get("/robots.txt");
   expect(robotsResponse.ok()).toBe(true);

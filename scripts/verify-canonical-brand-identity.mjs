@@ -23,6 +23,18 @@ const required = [
   "/brand/pwa/putduk-pwa-maskable-512.png",
   "/brand/notification/putduk-notification-badge-96.png",
 ].map((name) => name.replace("/brand/", "/brand/identity/20261014/"));
+const adminDeliveries = new Map(
+  [
+    "/favicon/favicon.svg",
+    "/favicon/favicon-32.png",
+    "/favicon/favicon.ico",
+    "/pwa/putduk-pwa-dark-192.png",
+    "/pwa/putduk-pwa-maskable-512.png",
+  ].map((suffix) => {
+    const memberPath = `/brand/identity/20261014${suffix}`;
+    return [`apps/admin/public${memberPath}`, memberPath];
+  }),
+);
 
 /** Validate shared identity, not the approval status of unrelated historical art. */
 export async function verifyCanonicalBrandIdentity(root) {
@@ -88,13 +100,27 @@ export async function verifyCanonicalBrandIdentity(root) {
     );
     if (digest(master) !== identity.geometryMasterSha256)
       failures.push("canonical geometry master changed");
-    if (manifest.adminPublicCopies?.length !== 4)
-      failures.push("four current admin favicon delivery copies required");
-    for (const row of manifest.adminPublicCopies ?? []) {
+    const copies = Array.isArray(manifest.adminPublicCopies)
+      ? manifest.adminPublicCopies
+      : [];
+    if (
+      copies.length !== adminDeliveries.size ||
+      new Set(copies.map((row) => row?.path)).size !== adminDeliveries.size ||
+      copies.some(
+        (row) =>
+          !adminDeliveries.has(row?.path) ||
+          adminDeliveries.get(row.path) !== row.memberPath,
+      )
+    )
+      failures.push("five exact current admin icon delivery copies required");
+    for (const row of copies) {
       if (
+        typeof row?.path !== "string" ||
+        typeof row.memberPath !== "string" ||
         !row.path.startsWith("apps/admin/public/brand/identity/20261014/") ||
         row.path.includes("..") ||
-        row.path.includes("\\")
+        row.path.includes("\\") ||
+        adminDeliveries.get(row.path) !== row.memberPath
       ) {
         failures.push("admin identity copy path rejected");
         continue;
@@ -103,10 +129,16 @@ export async function verifyCanonicalBrandIdentity(root) {
       const member = manifest.assets.find(
         (asset) => asset.path === row.memberPath,
       );
+      const memberBytes = member
+        ? await readFile(path.join(root, "public", row.memberPath.slice(1)))
+        : null;
       if (
         !member ||
+        !memberBytes ||
+        !bytes.equals(memberBytes) ||
         digest(bytes) !== member.sha256 ||
         digest(bytes) !== row.sha256 ||
+        bytes.length !== member.bytes ||
         bytes.length !== row.bytes
       )
         failures.push(`admin/member identity copy mismatch: ${row.path}`);
