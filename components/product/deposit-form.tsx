@@ -228,7 +228,7 @@ export function DepositForm({
             onClick={() => setAmount(value)}
             disabled={pending}
           >
-            +{Number(value).toLocaleString("ko-KR")}
+            {Number(value).toLocaleString("ko-KR")}
           </button>
         ))}
       </div>

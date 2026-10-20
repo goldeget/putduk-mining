@@ -204,6 +204,174 @@ test("owner202 refuses schema dump database escapes and COPY row payloads", () =
   ])
     assert.throws(() => assertOwner202Dump(s));
 });
+const schemaDump = (sql) =>
+  "-- synthetic schema-only fixture\n" + " ".repeat(100) + "\n" + sql;
+test("owner202 ignores COPY and psql-like text inside matching dollar-quoted routine bodies", () => {
+  assert.doesNotThrow(() =>
+    assertOwner202Dump(
+      schemaDump(String.raw`
+CREATE FUNCTION public.synthetic() RETURNS void LANGUAGE plpgsql AS $routine$
+COPY synthetic prose inside a routine body;
+CREATE DATABASE synthetic_prose;
+\! synthetic body text
+$other$ does not close this body
+$routine$;
+CREATE TABLE public.safe(id uuid);`),
+    ),
+  );
+});
+test("owner202 masks nested comments, doubled quotes and quoted identifiers without losing boundaries", () => {
+  assert.doesNotThrow(() =>
+    assertOwner202Dump(
+      schemaDump(String.raw`
+/* outer /* COPY synthetic FROM stdin; */
+\connect synthetic
+DROP DATABASE synthetic;
+*/
+-- \! synthetic comment
+SELECT 'doubled '' quote
+COPY synthetic prose', "identifier""with
+\! quoted identifier";
+CREATE TABLE public."copy"(id uuid);`),
+    ),
+  );
+});
+test("owner202 supports E-string escapes while ordinary backslashes cannot hide active commands", () => {
+  assert.doesNotThrow(() =>
+    assertOwner202Dump(
+      schemaDump(String.raw`
+SELECT E'escaped \' quote
+COPY synthetic prose
+\! quoted text';`),
+    ),
+  );
+  for (const sql of [
+    String.raw`SELECT '\'; \! synthetic`,
+    String.raw`SELECT nameE'\'; \connect synthetic`,
+    String.raw`SELECT 'safe';COPY synthetic FROM stdin;`,
+    String.raw`SELECT $a$safe$a$;DROP DATABASE synthetic;`,
+  ])
+    assert.throws(() => assertOwner202Dump(schemaDump(sql)));
+});
+test("owner202 rejects active COPY and database commands across statement and comment boundaries", () => {
+  for (const sql of [
+    "SELECT 1;COPY synthetic FROM stdin;",
+    "SELECT 1; /* harmless */ copy synthetic TO stdout;",
+    "SELECT 1;CREATE/* harmless */DATABASE synthetic;",
+    "SELECT 1;ALTER\nDATABASE synthetic SET search_path=public;",
+    "/* harmless */DROP DATABASE synthetic;",
+  ])
+    assert.throws(() => assertOwner202Dump(schemaDump(sql)));
+});
+test("owner202 allows only one exact matching restrict/unrestrict token pair", () => {
+  assert.doesNotThrow(() =>
+    assertOwner202Dump(
+      schemaDump(String.raw`\restrict SafeToken123
+CREATE TABLE public.safe(id uuid);
+\unrestrict SafeToken123`),
+    ),
+  );
+  for (const sql of [
+    String.raw`\connect synthetic`,
+    String.raw`SELECT 1;\! synthetic`,
+    String.raw`\restrict SafeToken123 \! synthetic`,
+    String.raw`\restrict SafeToken123;`,
+    String.raw`\restrict bad-token`,
+    String.raw`\restrict SafeToken123
+\unrestrict SafeToken123 \! synthetic`,
+    String.raw`\unrestrict SafeToken123`,
+    String.raw`\restrict SafeToken123`,
+    String.raw`\restrict SafeToken123
+\unrestrict OtherToken123`,
+    String.raw`\restrict SafeToken123
+\restrict SafeToken123
+\unrestrict SafeToken123`,
+  ])
+    assert.throws(() => assertOwner202Dump(schemaDump(sql)));
+});
+test("owner202 preserves pg_dump ordinary-string semantics and rejects changes away from on", () => {
+  assert.doesNotThrow(() =>
+    assertOwner202Dump(
+      schemaDump("SET standard_conforming_strings = on; SELECT '\\';"),
+    ),
+  );
+  for (const sql of [
+    "SET standard_conforming_strings = off;",
+    "SET SESSION standard_conforming_strings TO off;",
+    "SET LOCAL standard_conforming_strings = 'off';",
+    "RESET standard_conforming_strings;",
+    "RESET ALL;",
+  ])
+    assert.throws(() => assertOwner202Dump(schemaDump(sql)));
+});
+test("owner202 rejects quoted SET and RESET names that hide lexical mode changes", () => {
+  for (const sql of [
+    'SET "standard_conforming_strings" = off;',
+    'SET"standard_conforming_strings"=off;',
+    'SET SESSION /* synthetic */ "standard_conforming_strings" TO off;',
+    'SET LOCAL U&"standard_conforming_strings" = off;',
+    String.raw`SET U&"standard\005fconforming_strings" = off;`,
+    'RESET "standard_conforming_strings";',
+  ])
+    assert.throws(() => assertOwner202Dump(schemaDump(sql)));
+});
+test("owner202 permits only the exact active pg_dump search_path set_config call", () => {
+  assert.doesNotThrow(() =>
+    assertOwner202Dump(
+      schemaDump(
+        "-- pg_dump prologue\nSELECT pg_catalog.set_config('search_path', '', false);",
+      ),
+    ),
+  );
+  assert.doesNotThrow(() =>
+    assertOwner202Dump(
+      schemaDump(
+        "\\restrict SafeToken123\r\nSELECT pg_catalog.set_config('search_path', '', false);\r\n\\unrestrict SafeToken123",
+      ),
+    ),
+  );
+  for (const sql of [
+    "SELECT pg_catalog.set_config('standard_conforming_strings', 'off', false);",
+    "SELECT set_config('standard_conforming_strings', 'off', false);",
+    `SELECT pg_catalog."set_config"('standard_conforming_strings', 'off', false);`,
+    `SELECT "pg_catalog"."set_config"('standard_conforming_strings', 'off', false);`,
+    String.raw`SELECT pg_catalog.U&"set\005fconfig"('standard_conforming_strings', 'off', false);`,
+    "SELECT pg_catalog.set_config('search_path', 'synthetic', false);",
+    "SELECT pg_catalog.set_config('search_path', '', true);",
+    "SELECT pg_catalog.set_config('search_path', '', false), set_config('standard_conforming_strings', 'off', false);",
+  ])
+    assert.throws(() => assertOwner202Dump(schemaDump(sql)));
+});
+test("owner202 rejects active anonymous DO while quoted routine and comment prose stays inert", () => {
+  for (const sql of [
+    "DO $$ BEGIN COPY synthetic FROM stdin; END $$;",
+    "SELECT 1; /* synthetic */ DO LANGUAGE plpgsql $$ BEGIN NULL; END $$;",
+    "DO 'BEGIN NULL; END';",
+  ])
+    assert.throws(() => assertOwner202Dump(schemaDump(sql)));
+  assert.doesNotThrow(() =>
+    assertOwner202Dump(
+      schemaDump(String.raw`
+-- SELECT set_config('standard_conforming_strings', 'off', false);
+CREATE FUNCTION public.synthetic_prose() RETURNS void LANGUAGE plpgsql AS $body$
+DO synthetic prose
+SELECT pg_catalog.set_config('standard_conforming_strings', 'off', false);
+$body$;
+SELECT 'set_config(';
+`),
+    ),
+  );
+});
+test("owner202 fails closed on unterminated strings, identifiers, dollar quotes and nested comments", () => {
+  for (const sql of [
+    "SELECT 'unterminated",
+    String.raw`SELECT E'escaped \'`,
+    'SELECT "unterminated',
+    "SELECT $tag$unterminated $other$;",
+    "/* outer /* inner */ still open",
+  ])
+    assert.throws(() => assertOwner202Dump(schemaDump(sql)));
+});
 test("owner202 SQL contains only synthetic auth insertion in a bounded transaction, correct user metadata", () => {
   const sql = owner202SessionSql(
     "11111111-1111-4111-8111-111111111111",

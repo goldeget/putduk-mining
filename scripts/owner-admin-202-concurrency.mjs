@@ -51,13 +51,183 @@ export function assertOwner202Dump(sql) {
       sql.length < 32 * 1024 * 1024,
     "BOUNDED_SCHEMA_DUMP_REQUIRED",
   );
+  const active = maskOwner202Dump(sql);
   need(
-    !/^\s*\\(?!(?:restrict|unrestrict)\b)/im.test(sql) &&
-      !/^\s*(?:CREATE|ALTER|DROP)\s+DATABASE\b/im.test(sql) &&
-      !/^\s*COPY\b/im.test(sql),
+    !/(?:^|;)\s*(?:COPY\b|(?:CREATE|ALTER|DROP)\s+DATABASE\b)/i.test(active),
     "SCHEMA_DUMP_ESCAPE_REJECTED",
   );
   return { sha256: hash(sql), bytes: Buffer.byteLength(sql) };
+}
+// pg_dump emits standard_conforming_strings=on. Preserve offsets/newlines while
+// masking SQL content so routine prose is not treated as a restore command.
+function maskOwner202Dump(sql) {
+  const parts = [],
+    literalParts = [],
+    quotedCalls = [];
+  let plainStart = 0,
+    restrictToken = null,
+    restrictPairs = 0;
+  const mask = (start, end, comment = false) => {
+    const plain = sql.slice(plainStart, start),
+      value = sql.slice(start, end),
+      blank = value.replace(/[^\r\n]/g, " ");
+    parts.push(plain, blank);
+    literalParts.push(plain, comment ? blank : value);
+    plainStart = end;
+  };
+  const identifier = (c) => /[A-Za-z0-9_$\u0080-\uffff]/.test(c ?? "");
+  for (let i = 0; i < sql.length;) {
+    const ch = sql[i],
+      next = sql[i + 1];
+    if (ch === "-" && next === "-") {
+      const end = sql.indexOf("\n", i + 2);
+      const stop = end < 0 ? sql.length : end;
+      mask(i, stop, true);
+      i = stop;
+      continue;
+    }
+    if (ch === "/" && next === "*") {
+      let end = i + 2,
+        depth = 1;
+      while (end < sql.length && depth > 0) {
+        if (sql[end] === "/" && sql[end + 1] === "*") {
+          depth++;
+          end += 2;
+        } else if (sql[end] === "*" && sql[end + 1] === "/") {
+          depth--;
+          end += 2;
+        } else end++;
+      }
+      need(depth === 0, "SCHEMA_DUMP_LEXICAL_REJECTED");
+      mask(i, end, true);
+      i = end;
+      continue;
+    }
+    if (ch === "'" || ch === '"') {
+      const escaped =
+        ch === "'" && /[Ee]/.test(sql[i - 1] ?? "") && !identifier(sql[i - 2]);
+      let end = i + 1,
+        closed = false;
+      while (end < sql.length) {
+        if (escaped && sql[end] === "\\") end += 2;
+        else if (sql[end] === ch && sql[end + 1] === ch) end += 2;
+        else if (sql[end] === ch) {
+          end++;
+          closed = true;
+          break;
+        } else end++;
+      }
+      need(closed, "SCHEMA_DUMP_LEXICAL_REJECTED");
+      if (ch === '"') {
+        const unicode =
+          sql.slice(Math.max(0, i - 2), i).toUpperCase() === "U&" &&
+          !identifier(sql[i - 3]);
+        if (
+          unicode ||
+          sql
+            .slice(i + 1, end - 1)
+            .replace(/""/g, '"')
+            .toLowerCase() === "set_config"
+        )
+          quotedCalls.push({ start: unicode ? i - 2 : i, end, unicode });
+      }
+      mask(i, end);
+      i = end;
+      continue;
+    }
+    if (ch === "$" && !identifier(sql[i - 1])) {
+      const tag = sql
+        .slice(i)
+        .match(
+          /^\$(?:[A-Za-z_\u0080-\uffff][A-Za-z0-9_\u0080-\uffff]*)?\$/,
+        )?.[0];
+      if (tag) {
+        const end = sql.indexOf(tag, i + tag.length);
+        need(end >= 0, "SCHEMA_DUMP_LEXICAL_REJECTED");
+        const stop = end + tag.length;
+        mask(i, stop);
+        i = stop;
+        continue;
+      }
+    }
+    if (ch === "\\") {
+      const start = sql.lastIndexOf("\n", i - 1) + 1;
+      const lineEnd = sql.indexOf("\n", i);
+      const stop = lineEnd < 0 ? sql.length : lineEnd;
+      const command = sql
+        .slice(start, stop)
+        .match(
+          /^[\t ]*\\(restrict|unrestrict)[\t ]+([A-Za-z0-9]{1,128})[\t ]*\r?$/,
+        );
+      need(
+        command && /^[\t ]*$/.test(sql.slice(start, i)),
+        "SCHEMA_DUMP_ESCAPE_REJECTED",
+      );
+      if (command[1] === "restrict") {
+        need(
+          restrictToken === null && restrictPairs === 0,
+          "SCHEMA_DUMP_ESCAPE_REJECTED",
+        );
+        restrictToken = command[2];
+      } else {
+        need(restrictToken === command[2], "SCHEMA_DUMP_ESCAPE_REJECTED");
+        restrictToken = null;
+        restrictPairs++;
+      }
+      mask(i, stop, true);
+      i = stop;
+      continue;
+    }
+    i++;
+  }
+  need(restrictToken === null, "SCHEMA_DUMP_ESCAPE_REJECTED");
+  parts.push(sql.slice(plainStart));
+  literalParts.push(sql.slice(plainStart));
+  const active = parts.join("");
+  const literals = literalParts.join("");
+  const calls = [
+    ...active.matchAll(/(?<![A-Za-z0-9_$\u0080-\uffff])set_config\s*\(/gi),
+  ].map((m) => m.index);
+  for (const call of quotedCalls) {
+    if (!/^\s*\(/.test(active.slice(call.end))) continue;
+    // pg_dump uses ordinary identifiers for its one allowed catalog call.
+    need(!call.unicode, "SCHEMA_DUMP_LEXICAL_REJECTED");
+    calls.push(call.start);
+  }
+  let statementStart = 0;
+  const ends = [...active.matchAll(/;/g)].map((m) => m.index);
+  ends.push(active.length);
+  for (const end of ends) {
+    const statement = active.slice(statementStart, end);
+    const literalStatement = literals.slice(statementStart, end).trim();
+    need(
+      !/^\s*DO\b/i.test(statement) &&
+        !/^(?:SET\b(?:\s+(?:SESSION|LOCAL)\b)?|RESET\b)\s*(?:U&)?"/i.test(
+          literalStatement,
+        ),
+      "SCHEMA_DUMP_LEXICAL_REJECTED",
+    );
+    if (calls.some((position) => position >= statementStart && position < end))
+      need(
+        literalStatement ===
+          "SELECT pg_catalog.set_config('search_path', '', false)",
+        "SCHEMA_DUMP_LEXICAL_REJECTED",
+      );
+    statementStart = end + 1;
+  }
+  // An off/reset setting would invalidate ordinary-string backslash semantics.
+  need(
+    !/(?:^|;)\s*RESET\s+(?:standard_conforming_strings|ALL)\b/i.test(active),
+    "SCHEMA_DUMP_LEXICAL_REJECTED",
+  );
+  for (const setting of active.matchAll(
+    /(?:^|;)\s*SET\s+(?:(?:SESSION|LOCAL)\s+)?standard_conforming_strings\s*(?:=|\bTO\b)\s*([^;]*)/gi,
+  ))
+    need(
+      setting[1].trim().toLowerCase() === "on",
+      "SCHEMA_DUMP_LEXICAL_REJECTED",
+    );
+  return active;
 }
 export function owner202SessionSql(userId, requestId, email) {
   need(

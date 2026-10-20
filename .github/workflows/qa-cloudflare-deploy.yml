@@ -6,6 +6,36 @@ on:
       - codex/qa-handoff-diagnostics-20261019
       - develop
   workflow_dispatch:
+    inputs:
+      purpose:
+        type: choice
+        description: Existing QA deployment or build-only production artifacts
+        default: qa
+        options: [qa, production-artifacts]
+      candidateSha:
+        type: string
+        description: Exact dispatch SHA (production artifacts only)
+      publishableKey:
+        type: string
+        description: Public original-project sb_publishable key (not a secret)
+      ciRunId:
+        type: string
+        description: Accepted ordinary CI run ID
+      ciAttempt:
+        type: string
+        description: Accepted ordinary CI attempt
+      fullRunId:
+        type: string
+        description: Accepted Full authenticated E2E run ID
+      fullAttempt:
+        type: string
+        description: Accepted Full authenticated E2E attempt
+      qaRunId:
+        type: string
+        description: Accepted normal QA deployment run ID
+      qaAttempt:
+        type: string
+        description: Accepted normal QA deployment attempt
 
 permissions:
   contents: read
@@ -19,6 +49,7 @@ concurrency:
 
 jobs:
   qa:
+    name: ${{ github.event_name == 'workflow_dispatch' && inputs.purpose == 'production-artifacts' && 'Production artifact build only' || 'qa' }}
     if: github.repository == 'goldeget/putduk-mining' && (github.ref == 'refs/heads/codex/qa-handoff-diagnostics-20261019' || github.ref == 'refs/heads/develop')
     runs-on: ubuntu-24.04
     timeout-minutes: 60
@@ -26,7 +57,7 @@ jobs:
       CI: "true"
       CF_SEND_TELEMETRY: "false"
       NEXT_TELEMETRY_DISABLED: "1"
-      PUTDUK_QA_SUPABASE_PUBLISHABLE_KEY: ${{ vars.PUTDUK_QA_SUPABASE_PUBLISHABLE_KEY }}
+      PUTDUK_QA_SUPABASE_PUBLISHABLE_KEY: ${{ (github.event_name != 'workflow_dispatch' || inputs.purpose != 'production-artifacts') && vars.PUTDUK_QA_SUPABASE_PUBLISHABLE_KEY || '' }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -37,9 +68,24 @@ jobs:
         with:
           node-version: 24.21.0
       - name: Wait for complete existing CI on the exact source candidate
+        if: github.event_name != 'workflow_dispatch' || inputs.purpose != 'production-artifacts'
         env:
           GH_TOKEN: ${{ github.token }}
         run: node scripts/qa-cloudflare-run.mjs gate
+      - name: Admit exact accepted source for build-only production artifacts
+        if: github.event_name == 'workflow_dispatch' && inputs.purpose == 'production-artifacts'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PRODUCTION_PURPOSE: ${{ inputs.purpose }}
+          PRODUCTION_CANDIDATE_SHA: ${{ inputs.candidateSha }}
+          PUTDUK_PRODUCTION_SUPABASE_PUBLISHABLE_KEY: ${{ inputs.publishableKey }}
+          PRODUCTION_CI_RUN_ID: ${{ inputs.ciRunId }}
+          PRODUCTION_CI_ATTEMPT: ${{ inputs.ciAttempt }}
+          PRODUCTION_FULL_RUN_ID: ${{ inputs.fullRunId }}
+          PRODUCTION_FULL_ATTEMPT: ${{ inputs.fullAttempt }}
+          PRODUCTION_QA_RUN_ID: ${{ inputs.qaRunId }}
+          PRODUCTION_QA_ATTEMPT: ${{ inputs.qaAttempt }}
+        run: node scripts/build-production-artifacts.mjs admit
       - uses: pnpm/action-setup@v6.1.0
         with:
           version: 12.6.0
@@ -48,12 +94,16 @@ jobs:
       - name: Verify tracked source after dependency installation
         run: git diff --quiet HEAD || { git diff --name-status HEAD; exit 1; }
       - name: Verify QA admission policy and partial-deployment receipts
+        if: github.event_name != 'workflow_dispatch' || inputs.purpose != 'production-artifacts'
         run: node --test scripts/qa-cloudflare-policy.test.mjs scripts/qa-cloudflare-run.test.mjs scripts/framework-generated-types.test.mjs
       - name: Build once per app and dry-run the identical output without credentials
+        if: github.event_name != 'workflow_dispatch' || inputs.purpose != 'production-artifacts'
         run: node scripts/qa-cloudflare-run.mjs build
       - name: Verify tracked source after QA build and dry run
+        if: github.event_name != 'workflow_dispatch' || inputs.purpose != 'production-artifacts'
         run: git diff --quiet HEAD || { git diff --name-status HEAD; exit 1; }
       - name: Preserve immutable QA build
+        if: github.event_name != 'workflow_dispatch' || inputs.purpose != 'production-artifacts'
         id: build-artifact
         uses: actions/upload-artifact@v7
         with:
@@ -66,10 +116,13 @@ jobs:
           if-no-files-found: error
           retention-days: 7
       - name: Install smoke browser before credentials are exposed
+        if: github.event_name != 'workflow_dispatch' || inputs.purpose != 'production-artifacts'
         run: pnpm exec playwright install --with-deps chromium
       - name: Verify local browser network boundaries and actual-wire ACK observation
+        if: github.event_name != 'workflow_dispatch' || inputs.purpose != 'production-artifacts'
         run: node --test --test-concurrency=1 scripts/qa-cloudflare-network.test.mjs scripts/ai-wire-ack.browser.test.mjs
       - name: Deploy existing isolated QA Workers and verify boundaries
+        if: github.event_name != 'workflow_dispatch' || inputs.purpose != 'production-artifacts'
         env:
           GH_TOKEN: ${{ github.token }}
           QA_CF_API_TOKEN: ${{ secrets.PUTDUK_QA_CLOUDFLARE_API_TOKEN }}
@@ -83,10 +136,59 @@ jobs:
           QA_BUILD_ARTIFACT_DIGEST: ${{ steps.build-artifact.outputs.artifact-digest }}
         run: node scripts/qa-cloudflare-run.mjs deploy
       - name: Preserve sanitized QA receipts even after partial failure
-        if: always()
+        if: always() && (github.event_name != 'workflow_dispatch' || inputs.purpose != 'production-artifacts')
         uses: actions/upload-artifact@v7
         with:
           name: qa-deployment-receipts-${{ github.run_id }}-${{ github.run_attempt }}
           path: test-results/qa-cloudflare/*.json
           if-no-files-found: warn
           retention-days: 30
+      - name: Build member admin and apex production artifacts without deployment
+        if: github.event_name == 'workflow_dispatch' && inputs.purpose == 'production-artifacts'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PRODUCTION_PURPOSE: ${{ inputs.purpose }}
+          PRODUCTION_CANDIDATE_SHA: ${{ inputs.candidateSha }}
+          PUTDUK_PRODUCTION_SUPABASE_PUBLISHABLE_KEY: ${{ inputs.publishableKey }}
+          PRODUCTION_CI_RUN_ID: ${{ inputs.ciRunId }}
+          PRODUCTION_CI_ATTEMPT: ${{ inputs.ciAttempt }}
+          PRODUCTION_FULL_RUN_ID: ${{ inputs.fullRunId }}
+          PRODUCTION_FULL_ATTEMPT: ${{ inputs.fullAttempt }}
+          PRODUCTION_QA_RUN_ID: ${{ inputs.qaRunId }}
+          PRODUCTION_QA_ATTEMPT: ${{ inputs.qaAttempt }}
+        run: |
+          node --test scripts/build-production-artifacts.test.mjs
+          node scripts/build-production-artifacts.mjs build
+      - name: Preserve immutable member production artifact
+        if: github.event_name == 'workflow_dispatch' && inputs.purpose == 'production-artifacts'
+        uses: actions/upload-artifact@v7
+        with:
+          name: production-member-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/putduk-production-artifacts-${{ github.run_id }}-${{ github.run_attempt }}/member/*.tar
+            ${{ runner.temp }}/putduk-production-artifacts-${{ github.run_id }}-${{ github.run_attempt }}/member/*.manifest.json
+          if-no-files-found: error
+          overwrite: false
+          retention-days: 7
+      - name: Preserve immutable admin production artifact
+        if: github.event_name == 'workflow_dispatch' && inputs.purpose == 'production-artifacts'
+        uses: actions/upload-artifact@v7
+        with:
+          name: production-admin-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/putduk-production-artifacts-${{ github.run_id }}-${{ github.run_attempt }}/admin/*.tar
+            ${{ runner.temp }}/putduk-production-artifacts-${{ github.run_id }}-${{ github.run_attempt }}/admin/*.manifest.json
+          if-no-files-found: error
+          overwrite: false
+          retention-days: 7
+      - name: Preserve immutable apex production artifact
+        if: github.event_name == 'workflow_dispatch' && inputs.purpose == 'production-artifacts'
+        uses: actions/upload-artifact@v7
+        with:
+          name: production-apex-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/putduk-production-artifacts-${{ github.run_id }}-${{ github.run_attempt }}/apex/*.tar
+            ${{ runner.temp }}/putduk-production-artifacts-${{ github.run_id }}-${{ github.run_attempt }}/apex/*.manifest.json
+          if-no-files-found: error
+          overwrite: false
+          retention-days: 7

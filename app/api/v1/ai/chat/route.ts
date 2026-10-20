@@ -645,7 +645,7 @@ export async function POST(request: Request) {
 
   if (!providerConfigured || !env.AI_API_KEY || !env.AI_MODEL_LOW_COST) {
     return returnAuditedImmediateAnswer(
-      `이 질문에 답할 수 있는 근거를 확인하지 못했어요. 확인할 수 없는 내용은 추측하지 않아요.\n\n${getMemberAiHelp("ai").answer}`,
+      `이 질문에 답할 수 있는 근거를 확인하지 못했어요.\n\n${getMemberAiHelp("ai").answer}`,
       "static",
       STATIC_MODEL_KEY,
       "static:member_help_ai",
