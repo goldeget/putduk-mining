@@ -4,6 +4,7 @@ import Link from "next/link";
 import { BrandMark } from "@/components/brand/brand-mark";
 import { PutdukIcon } from "@/components/icons/putduk-icon";
 import { PublicNavigation } from "@/components/layout/public-navigation";
+import { MemberEntryLink } from "@/components/layout/member-entry-link";
 import { ThemeControl } from "@/components/system/theme-control";
 import {
   TRUST_CONTENT_VERSION,
@@ -36,14 +37,14 @@ export function TrustShell({ children }: { children: ReactNode }) {
           />
           <div className="trust-header__tools">
             <ThemeControl />
-            <Link
+            <MemberEntryLink
               className="button button--secondary"
               href="/login"
               aria-label="로그인으로 이동"
             >
               <span>로그인</span>
               <PutdukIcon name="arrow-right" size={17} />
-            </Link>
+            </MemberEntryLink>
           </div>
         </div>
       </header>

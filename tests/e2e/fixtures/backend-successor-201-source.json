@@ -1211,7 +1211,7 @@
     "app/offline/offline-shell-styles.ts": "84289422aad84a1d691e4a595fb82da04aacdd84ec719b0b97171d6bb35aa930",
     "app/offline/page.tsx": "1ae0199c99596d79864e29101eef137ce15d76dca704122b9c2a6374601bcb1b",
     "app/opengraph-image.tsx": "db87010325a799ed364721aedf174126860ea85d4c3a1b6c5ac983c9238da51f",
-    "app/page.tsx": "a353e4e2c79b0ba6497507ea282014f097312c066d2dce3498d57fa354feb440",
+    "app/page.tsx": "4b3acae00b22dcf5c6c241e83094376d4daea5eae70ad659e98288cbd3ccc1b1",
     "app/productization.css": "010845bdbf28b1bd8d5fe88871bb1747c491bf48fa2d489c57a0247bbbb3dc57",
     "app/public-home.module.css": "6ea07d21560a546be523c7ce1ba3dfdf882408dd5dc0f40852634786c7e56b8f",
     "app/recover/actions.ts": "c1a0b2e3a6dc6183dc9818806640dbbd5432e65f61c332d77ddc3af714520ac0",
@@ -1222,7 +1222,7 @@
     "app/signup/page.tsx": "2aec9753b71baa680d79954c7bd6bd468e1b5b62bb5afbe0ed2d869bbe53563d",
     "app/signup/signup-form.tsx": "d57a60a1f0ce6d7a3cd0eda8d19bd72b9c33762064da042bd5847dce821454a7",
     "app/sitemap.ts": "b135a5d4d1bc11452102633c2f51077dbb47895e21dce15d06e25243316f1863",
-    "app/support/page.tsx": "c09f8db8c9707ed1e84f5cb0fc18105a56889290bbd5e2a4b1259014ed5165c8",
+    "app/support/page.tsx": "8087e245d86196ff3b3a06556aef94b564137863c538bbfd034e92a4e5b59fcc",
     "app/support/support-page.module.css": "9cb6bb3f8b52ab6d8a8c499171a0b354945622ca48cf6129b9c2759d8aa5eba7",
     "apps/admin/.env.example": "8953a4fd5b7ffca303d39293e9f9041f5fdae5f57211a82a7bf0e3ec31c45a93",
     "apps/admin/AGENTS.md": "63e068db30abb2e929391ef4c2115b5c1bc6a8d9593bc1ccdf5df342b33331cb",
@@ -1520,7 +1520,7 @@
     "components/layout/public-navigation.tsx": "6145a6b002769c4c6feee5dec86ff8299bc4f832d45f7553c551804672c3a246",
     "components/layout/route-brand-chrome.module.css": "de7dce11d052f13bbf3428387b0216d59e6c0df45fbda5f065171f7e28d0ccaf",
     "components/layout/route-brand-chrome.tsx": "2e9433d5d28db4fb00056509de62b78ee73faea008e050324cf575a9ac0f9953",
-    "components/layout/trust-shell.tsx": "c780ff4a297e454d8eabf9095d378d8084ae0c3563dc7aa099062dcf7fea884a",
+    "components/layout/trust-shell.tsx": "4348fe3c3970b545bd31665c6792788d105201d97cf1a973eb9accad079adcd2",
     "components/layout/wallet-chrome.module.css": "5924b89a9620253ea39642841382dcc35387bd49b800071ded6aec10b3cc5d08",
     "components/layout/wallet-chrome.tsx": "2c5561593082d38dd2f73e742b31127fd02b03100c8725459caba8b1e03e059b",
     "components/mining-live/mining-energy-layer.module.css": "8e0f727c6609865ec3d7d44f562fdd73db8f61a7f5cc659d9b7ae2b93572722d",
@@ -3685,7 +3685,9 @@
     "tests/unit/landing-instrumentation.test.ts": "bdedeb0dff273699b1b93c682e02d24a75c3fc1ae48939565bf5fe61857f7f84",
     "tests/unit/landing-layout-runtime.test.ts": "79b5b4cb35944a599db93502727c9306559538e6f7aa5a293140a94960e1e30c",
     "tests/unit/production-cloudflare-config.test.ts": "6e785ef4d84360670ec8647301b3c1d5781ea9cb87a236e3dd7fdc5cad1f7a35",
-    "tests/unit/pwa-icon-manifest.test.ts": "b328c5c9d0df89f377acc84668eebadf3fee25b026b13d01e24b7d3ec17a998b"
+    "tests/unit/pwa-icon-manifest.test.ts": "b328c5c9d0df89f377acc84668eebadf3fee25b026b13d01e24b7d3ec17a998b",
+    "components/layout/member-entry-link.tsx": "5eb98603a3fd0350d31540ad81b0d41117c7691ceef7dd3e9421ca8af5d2cacf",
+    "tests/unit/member-entry-link.test.ts": "542d3ca4f94f30d26f536817554a7ffc19a72c74bec04a8f538332279c02f049"
   },
   "selfExcludedPaths": [
     "tests/e2e/fixtures/backend-successor-201-source.json",

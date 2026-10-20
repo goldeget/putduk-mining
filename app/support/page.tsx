@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { BrandMark } from "@/components/brand/brand-mark";
+import { MemberEntryLink } from "@/components/layout/member-entry-link";
 import { START_WELCOME_STATEMENTS } from "@/lib/trust/public-content";
 import {
   buildBreadcrumbStructuredData,
@@ -121,9 +122,9 @@ export default function SupportPage() {
         </nav>
         <div className="site-header__tools">
           <ThemeControl />
-          <Link className="support-center__login" href="/login">
+          <MemberEntryLink className="support-center__login" href="/login">
             로그인
-          </Link>
+          </MemberEntryLink>
         </div>
       </header>
 
