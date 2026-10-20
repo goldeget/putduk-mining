@@ -5,16 +5,34 @@ import { cloudflare } from "@cloudflare/vite-plugin";
 import { defineConfig, loadEnv } from "vite";
 import { patchCssModules } from "vite-css-modules";
 import vinext from "vinext";
+import {
+  productionTarget,
+  productionValues,
+} from "./scripts/production-cloudflare-policy.mjs";
 
 export default defineConfig(async ({ mode }) => {
-  const loaded = loadEnv(mode, import.meta.dirname, "");
-  for (const [key, value] of Object.entries(loaded)) {
-    if (process.env[key] === undefined) {
-      process.env[key] = value;
+  const production = productionTarget(mode, "member");
+  if (production) {
+    // The release runner uses Vite's programmatic API so Vinext's early CLI
+    // dotenv loader cannot import local credentials before this config runs.
+    Object.assign(
+      process.env,
+      productionValues(
+        process.env.PUTDUK_PRODUCTION_SUPABASE_PUBLISHABLE_KEY,
+        production.role,
+      ),
+    );
+  } else {
+    const loaded = loadEnv(mode, import.meta.dirname, "");
+    for (const [key, value] of Object.entries(loaded)) {
+      if (process.env[key] === undefined) {
+        process.env[key] = value;
+      }
     }
   }
   const { default: nextConfig } = await import("./next.config");
   return {
+    ...(production ? { envDir: false as const } : {}),
     build: {
       sourcemap: false,
     },

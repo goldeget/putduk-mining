@@ -7,12 +7,14 @@ import { WebVitalsBeacon } from "@/components/system/web-vitals-beacon";
 import { PwaRegistrar } from "@/components/system/pwa-registrar";
 import { ThemeRuntime } from "@/components/system/theme-runtime";
 import { putdukFont } from "@/lib/design/fonts";
+import { APP_ICONS } from "@/lib/design/app-icons";
 import { themeBootstrap } from "@/lib/design/theme";
+import { PUBLIC_SITE_ORIGIN } from "@/lib/trust/public-discovery";
 
 import "./globals.css";
 import "./productization.css";
 
-const siteUrl = "https://mining.putduk.com";
+const siteUrl = PUBLIC_SITE_ORIGIN;
 
 const platformStructuredData = {
   "@context": "https://schema.org",
@@ -33,7 +35,7 @@ const platformStructuredData = {
     },
     {
       "@type": "SoftwareApplication",
-      "@id": `${siteUrl}/#application`,
+      "@id": "https://mining.putduk.com/#application",
       alternateName: "퍼뜩 채굴",
       applicationCategory: "FinanceApplication",
       description:
@@ -41,7 +43,7 @@ const platformStructuredData = {
       inLanguage: "ko-KR",
       name: "PUTDUK MINING",
       operatingSystem: "Web, PWA",
-      url: siteUrl,
+      url: "https://mining.putduk.com",
     },
   ],
 };
@@ -55,21 +57,7 @@ export const metadata: Metadata = {
   description:
     "KOREA에서 시작해 앱을 닫아도 이어지는 채굴 상태와 결과를 확인하는 PUTDUK의 채굴 서비스입니다.",
   applicationName: "PUTDUK MINING",
-  icons: {
-    icon: [
-      {
-        url: "/brand/identity/20261014/favicon/favicon.svg",
-        type: "image/svg+xml",
-      },
-      {
-        url: "/brand/identity/20261014/favicon/favicon-32.png",
-        sizes: "32x32",
-        type: "image/png",
-      },
-    ],
-    shortcut: "/brand/identity/20261014/favicon/favicon.ico",
-    apple: "/brand/identity/20261014/pwa/putduk-pwa-dark-192.png",
-  },
+  icons: APP_ICONS,
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
@@ -126,9 +114,13 @@ export default function RootLayout({
             ),
           }}
         />
-        <PwaRegistrar />
-        <AnalyticsBeacon />
-        <WebVitalsBeacon />
+        {siteUrl !== "https://putduk.com" && (
+          <>
+            <PwaRegistrar />
+            <AnalyticsBeacon />
+            <WebVitalsBeacon />
+          </>
+        )}
         <ThemeRuntime />
         {children}
         <SupportRuntime memberLauncher={false} />

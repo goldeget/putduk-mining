@@ -3,7 +3,16 @@ import {
   TRUST_LAST_UPDATED,
 } from "@/lib/trust/public-content";
 
-export const PUBLIC_SITE_ORIGIN = "https://mining.putduk.com";
+/** Only the reviewed official landing deployment changes the public origin. */
+export function resolvePublicSiteOrigin(appUrl: string | undefined): string {
+  return appUrl === "https://putduk.com"
+    ? "https://putduk.com"
+    : "https://mining.putduk.com";
+}
+
+export const PUBLIC_SITE_ORIGIN = resolvePublicSiteOrigin(
+  process.env.NEXT_PUBLIC_APP_URL,
+);
 
 /** 공개 도움·안내 경로. 회원 화면과 관리자 화면은 넣지 않는다. */
 export const PUBLIC_DISCOVERY_PATHS: readonly string[] = [

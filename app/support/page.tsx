@@ -62,6 +62,21 @@ const topics: readonly {
   },
 ];
 
+const installSteps = [
+  {
+    title: "iPhone · iPad",
+    body: "Safari에서 회원 앱 안내를 열고, 공유 메뉴에서 ‘홈 화면에 추가’를 선택해 주세요.",
+  },
+  {
+    title: "Android 휴대폰 · 태블릿 · Galaxy Tab",
+    body: "Chrome 또는 Samsung Internet에서 회원 앱 안내를 열고, 브라우저 메뉴의 ‘앱 설치’ 또는 ‘홈 화면에 추가’를 선택해 주세요.",
+  },
+  {
+    title: "PC",
+    body: "Chrome 또는 Edge에서 회원 앱 안내를 열고, 주소창의 설치 아이콘이나 브라우저 메뉴의 앱 설치를 이용해 주세요.",
+  },
+] as const;
+
 export const metadata: Metadata = {
   title: "상담",
   description: "가입, 채굴, 입금과 출금 문의를 확인하는 상담 안내입니다.",
@@ -148,6 +163,37 @@ export default function SupportPage() {
               </article>
             ))}
           </div>
+          <section
+            id="app-install"
+            aria-labelledby="app-install-title"
+            tabIndex={-1}
+          >
+            <h2 id="app-install-title">앱 설치 안내</h2>
+            <p className="ko-copy">
+              먼저{" "}
+              <a href="https://mining.putduk.com/support#app-install">
+                회원 앱에서 설치 안내 열기
+              </a>
+              를 눌러 주세요.
+            </p>
+            <div className="support-center__topics">
+              {installSteps.map((step) => (
+                <article key={step.title}>
+                  <span className={styles.icon} aria-hidden="true">
+                    <PutdukIcon name="home" size={20} />
+                  </span>
+                  <div className={styles.copy}>
+                    <h3>{step.title}</h3>
+                    <p className="ko-copy">{step.body}</p>
+                  </div>
+                </article>
+              ))}
+            </div>
+            <p className="ko-copy">
+              브라우저와 버전에 따라 메뉴 이름이나 설치 지원 여부가 달라요. 설치
+              메뉴가 없으면 브라우저에서 계속 이용할 수 있어요.
+            </p>
+          </section>
         </section>
 
         <section

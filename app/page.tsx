@@ -461,10 +461,14 @@ export default function HomePage() {
           </span>
         </div>
         <p className="ko-copy">작은 행동이 더 나은 내일을 만듭니다.</p>
-        <nav aria-label="약관과 방침">
+        <nav aria-label="약관과 설치 안내">
           <Link href="/terms">이용약관</Link>
           {" · "}
           <Link href="/privacy">개인정보 처리방침</Link>
+          {" · "}
+          <a href="https://mining.putduk.com/support#app-install">
+            앱 설치 안내
+          </a>
         </nav>
         <span>© 2026 PUTDUK</span>
       </footer>
