@@ -1,3 +1,5 @@
+import { unlink } from "node:fs/promises";
+
 import { expect, test } from "@playwright/test";
 
 import { createConfirmedMember } from "../fixtures/local-auth";
@@ -177,17 +179,28 @@ test("unfunded home retains Korean layout across viewport and text scales", asyn
           body: JSON.stringify(actionGeometry),
           contentType: "application/json",
         });
+        // Persist the original PNG without retaining and IPC-encoding every
+        // screenshot body for the entire 112-cell test.
+        const shortcutsPng = info.outputPath(`${label}-shortcuts.png`);
+        await shortcuts.screenshot({
+          animations: "disabled",
+          path: shortcutsPng,
+        });
         await info.attach(`${label}-shortcuts`, {
-          body: await shortcuts.screenshot({ animations: "disabled" }),
+          path: shortcutsPng,
           contentType: "image/png",
         });
+        await unlink(shortcutsPng);
         await page
           .getByRole("main")
           .evaluate((el) => el.scrollTo({ top: 0, behavior: "instant" }));
+        const pagePng = info.outputPath(`${label}.png`);
+        await page.screenshot({ animations: "disabled", path: pagePng });
         await info.attach(label, {
-          body: await page.screenshot({ animations: "disabled" }),
+          path: pagePng,
           contentType: "image/png",
         });
+        await unlink(pagePng);
         records.push({
           width,
           theme,
