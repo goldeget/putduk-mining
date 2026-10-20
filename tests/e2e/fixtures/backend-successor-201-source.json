@@ -3249,7 +3249,7 @@
     "tests/e2e/authenticated/home-catalog-materials-follow.spec.ts": "990e21d69af9e6e408dbdc33e50bdb5e58ab6fe32985b395a7bf0619e3ae9a4b",
     "tests/e2e/authenticated/home-catalog-materials.spec.ts": "a182bd46ca17f1dde25cd1ad8d4fccaf3b100ff1ba2ee8789419315ecf0d6eda",
     "tests/e2e/authenticated/home-start-product.spec.ts": "7c72f2b0d587e3457c896f295fbb59429346f9238694624661964a51033f14cb",
-    "tests/e2e/authenticated/home-typography.spec.ts": "083fb88f91937a7758d051ee2be56fd3a4cad176366286b9a0d438b84db16eb7",
+    "tests/e2e/authenticated/home-typography.spec.ts": "2af80db4a10353c0fc6522ac40fc98f903591e11e2ac9de8e1c221c0c03ee364",
     "tests/e2e/authenticated/member-product-scene.spec.ts": "933b7e0977939d642b908a36d9bc794f142f61608c5008d31982e6011a0f3979",
     "tests/e2e/authenticated/menu-product.spec.ts": "152b733d6de97ec458c3e0b70f5c92056821f61c1d76cfca471ad7edbdeb4d3d",
     "tests/e2e/authenticated/mining-product.spec.ts": "15c38dc48313056cd86e77fc1d3d286485a6398a796ea438393a14a193846ce3",
