@@ -1544,7 +1544,7 @@
     "components/product/catalog-product-card.tsx": "c9046e6f55141b2f004d6d69684df1a6968ed9f51f9f7679d118b9a910439669",
     "components/product/deposit-form.tsx": "457e1f7d4c7eda8f43efbfc505290e2ffad6b7d65e51c77ffe0feddca2f941b9",
     "components/product/destination-type.ts": "368bb031e48da1f1c826e86327505a8cd82e428aabcefef7edbf22c2aa6cf50a",
-    "components/product/event-participation.tsx": "390a67b664d9bb343f54d910f6bef70609e3bebc13a9f70c82126911d2ae9961",
+    "components/product/event-participation.tsx": "4c9aa18dab332f62613fd7c39338429b0c12d2c72def29c6d641b3224284e3aa",
     "components/product/funded-runtime-summary.module.css": "3ff1949fa5c15e212457d8d8bb692aca8204d33436eff3bd522c8ab5feff4b19",
     "components/product/funded-runtime-summary.tsx": "0c2a65d56d939d376edc0d0877ac10bf19820cb06be55a1e81b4db54348f3f8a",
     "components/product/guided-quest.module.css": "be2cab602cbde9b0077fc5d560db02638ec63f13e4369007d7984d4400146899",
@@ -3667,7 +3667,8 @@
     "scripts/qa-cloudflare-run.test.mjs": "9ff44fe7419b0ff0a7bd6c74d58dda1009a7e1e5ff012ea309533a297955ddd1",
     "scripts/framework-generated-types.test.mjs": "1808c29af9d5d39fd438b4c7488b69db4c13f4ffd4d4b938c2872cc79eeb4cbc",
     "scripts/ai-wire-ack.browser.test.mjs": "137f296d88788a34990aede817e6db6e58e2eb49ca8c3b6d9c9d6bcc9ec552d2",
-    "tests/unit/event-detail-participation-mode.test.ts": "362a861e1fb9707ee2c2aeb7872326dd90ce3bb750248e451791c52ee3222232"
+    "tests/unit/event-detail-participation-mode.test.ts": "362a861e1fb9707ee2c2aeb7872326dd90ce3bb750248e451791c52ee3222232",
+    "tests/unit/event-participation-client-recovery.test.ts": "91b47b939d66001cd4748a137bad77431a16562644bf1a0c5963aabbab40740f"
   },
   "selfExcludedPaths": [
     "tests/e2e/fixtures/backend-successor-201-source.json",

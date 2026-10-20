@@ -23,8 +23,12 @@ export function EventParticipation({
   const [uncertain, setUncertain] = useState(false);
   const [done, setDone] = useState(joined);
   const [message, setMessage] = useState("");
+  const hasJoined = done || joined;
+  // The server can replay an existing join after its participation window ends.
+  // Recovery retains the original intent; only a new join requires canJoin.
+  const canSubmit = canJoin || uncertain;
   async function join() {
-    if (running.current || done || !canJoin) return;
+    if (running.current || hasJoined || !canSubmit) return;
     if (!navigator.onLine) {
       setMessage("인터넷에 연결한 뒤 참여해 주세요.");
       return;
@@ -88,17 +92,17 @@ export function EventParticipation({
     <div>
       <button
         className="button button--primary"
-        disabled={pending || done || !canJoin}
+        disabled={pending || hasJoined || !canSubmit}
         onClick={() => void join()}
       >
         {pending
           ? "확인 중…"
-          : done
+          : hasJoined
             ? "참여 중"
-            : !canJoin
-              ? "참여 기간이 아니에요"
-              : uncertain
-                ? "참여 결과 다시 확인"
+            : uncertain
+              ? "참여 결과 다시 확인"
+              : !canJoin
+                ? "참여 기간이 아니에요"
                 : "이벤트 참여"}
       </button>
       {message ? (
