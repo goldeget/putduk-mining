@@ -467,9 +467,7 @@ export default function HomePage() {
           {" · "}
           <Link href="/privacy">개인정보 처리방침</Link>
           {" · "}
-          <a href="https://mining.putduk.com/support#app-install">
-            앱 설치 안내
-          </a>
+          <Link href="/support#app-install">앱 설치 안내</Link>
         </nav>
         <span>© 2026 PUTDUK</span>
       </footer>
