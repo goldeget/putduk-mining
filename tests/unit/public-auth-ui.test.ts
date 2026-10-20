@@ -119,4 +119,19 @@ describe("public password controls", () => {
     expect(input("password-confirmation").type).toBe("text");
     expect(button.getAttribute("aria-pressed")).toBe("true");
   });
+
+  it("explains signup password length and uppercase requirements before submission", async () => {
+    await render(createElement(SignupForm));
+    const password = input("signup-password");
+    const help = host.querySelector("#signup-password-help")?.textContent;
+    expect(password.minLength).toBe(10);
+    expect(password.maxLength).toBe(128);
+    expect(password.pattern).toBe("");
+    expect(help).toContain("10");
+    expect(help).toContain("대문자");
+    expect(help).toContain("필수가 아니에요");
+    expect(password.getAttribute("aria-describedby")).toBe(
+      "signup-password-help",
+    );
+  });
 });

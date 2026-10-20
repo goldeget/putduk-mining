@@ -248,6 +248,104 @@ afterEach(async () => {
 });
 
 describe("one PUTDUK AI request and session owner", () => {
+  it("bounds a stalled connection without claiming completion or automatically resending", async () => {
+    vi.useFakeTimers();
+    try {
+      fetchMock.mockImplementation(
+        (_url, init: RequestInit) =>
+          new Promise((_resolve, reject) => {
+            init.signal?.addEventListener(
+              "abort",
+              () => reject(new DOMException("Aborted", "AbortError")),
+              { once: true },
+            );
+          }),
+      );
+      await render();
+      const { turn } = await begin("내 채굴 상태를 확인해 주세요");
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(119_999);
+      });
+      expect(session.pending).toBe(true);
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(1);
+      });
+      expect(session.pending).toBe(false);
+      expect(session.messages.at(-1)).toMatchObject({
+        state: "unverified",
+        failure: { code: "AI_TIMEOUT" },
+      });
+      await turn;
+      await act(async () => {
+        session.restoreQuestion(session.messages.at(-1)!.id);
+      });
+      expect(session.draft).toBe("내 채굴 상태를 확인해 주세요");
+      expect(fetchMock).toHaveBeenCalledOnce();
+      expect(vi.getTimerCount()).toBe(0);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("preserves partial text when a response stream stalls and releases the reader", async () => {
+    vi.useFakeTimers();
+    try {
+      const stream = responseStream();
+      fetchMock.mockResolvedValue(stream.response);
+      await render();
+      const { turn } = await begin("내 기록의 최신 상태를 알려 주세요");
+      await act(async () => {
+        stream.send({ type: "ready", requestId, source: "tool" });
+        stream.send({ type: "delta", text: "확인하던 내용" });
+        await Promise.resolve();
+      });
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(120_000);
+      });
+      expect(session.pending).toBe(false);
+      expect(session.messages.at(-1)).toMatchObject({
+        text: "확인하던 내용",
+        state: "unverified",
+        failure: { code: "AI_TIMEOUT" },
+      });
+      await turn;
+      expect(stream.cancelled).toHaveBeenCalledOnce();
+      expect(stream.response.body?.locked).toBe(false);
+      expect(fetchMock).toHaveBeenCalledOnce();
+      expect(vi.getTimerCount()).toBe(0);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("shows response activity only while waiting and pauses motion in a hidden tab", async () => {
+    const visibility = vi
+      .spyOn(document, "visibilityState", "get")
+      .mockReturnValue("visible");
+    const stream = responseStream();
+    fetchMock.mockResolvedValue(stream.response);
+    await render();
+    const { turn } = await begin("내 상태를 확인해 주세요");
+    expect(host.querySelectorAll('[data-ai-activity="waiting"]')).toHaveLength(
+      1,
+    );
+    expect(host.querySelector('[data-ai-motion="active"]')).not.toBeNull();
+    await act(async () => {
+      visibility.mockReturnValue("hidden");
+      document.dispatchEvent(new Event("visibilitychange"));
+    });
+    expect(host.querySelector('[data-ai-motion="paused"]')).not.toBeNull();
+    await act(async () => {
+      stream.send({ type: "ready", requestId, source: "static" });
+      stream.send({ type: "delta", text: "확인한 안내예요." });
+      stream.send({ type: "done", requestId, knowledgeVersion: "v1" });
+      stream.close();
+      await turn;
+    });
+    expect(host.querySelector('[data-ai-activity="waiting"]')).toBeNull();
+    expect(session.messages.at(-1)?.state).toBe("complete");
+  });
+
   it("leaves a verified done response open for genuine EOF without transport cancellation", async () => {
     const stream = responseStream();
     const conversationId = "22222222-2222-4222-8222-222222222222";

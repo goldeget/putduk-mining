@@ -2,6 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import { FeedbackMessage } from "@/components/ui/feedback-message";
+import {
+  useMiningLiveStatusPublisher,
+  type MiningLiveReadState,
+} from "@/components/mining-live/mining-live-state";
 import type { SupabaseBrowserAuthConfig } from "@/lib/env/public";
 import { useMotionPreference } from "@/lib/motion/motion-preference";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
@@ -29,7 +33,7 @@ type Props = {
   initialSnapshot: MiningLiveSnapshot;
   authConfig: SupabaseBrowserAuthConfig;
 };
-type ReadState = "checking" | "fresh" | "stale" | "paused" | "blocked";
+type ReadState = MiningLiveReadState;
 const stopLabels: Record<
   NonNullable<MiningLiveSnapshot["stopReason"]>,
   string
@@ -73,6 +77,24 @@ function OwnedMiningSummary({ ownerId, initialSnapshot, authConfig }: Props) {
   );
   const reducedMotion = useMotionPreference();
   const refreshRef = useRef<(() => void) | null>(null);
+  const publishStatus = useMiningLiveStatusPublisher();
+
+  useEffect(() => {
+    publishStatus?.({
+      status: snapshot.status,
+      stopReason: snapshot.stopReason,
+      ownerVerified,
+      readState,
+      reopenRequired,
+    });
+  }, [
+    publishStatus,
+    snapshot.status,
+    snapshot.stopReason,
+    ownerVerified,
+    readState,
+    reopenRequired,
+  ]);
 
   useEffect(() => {
     let disposed = false,

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { BrandMark } from "@/components/brand/brand-mark";
 import { MemberEntryLink } from "@/components/layout/member-entry-link";
 import { START_WELCOME_STATEMENTS } from "@/lib/trust/public-content";
+import { PUBLIC_SUPPORT_CONTACT } from "@/lib/trust/public-contact";
 import {
   buildBreadcrumbStructuredData,
   publicLanguageAlternates,
@@ -138,6 +139,19 @@ export default function SupportPage() {
             상담 창에서 비밀번호나 인증 코드는 보내지 마세요.
           </p>
           <SupportStartButton />
+          <section
+            id="support-contact"
+            className={styles.contact}
+            aria-labelledby="support-contact-title"
+          >
+            <h2 id="support-contact-title">
+              {PUBLIC_SUPPORT_CONTACT.serviceName}
+            </h2>
+            <p>서비스·개인정보 문의</p>
+            <a href={`mailto:${PUBLIC_SUPPORT_CONTACT.email}`}>
+              {PUBLIC_SUPPORT_CONTACT.email}
+            </a>
+          </section>
         </section>
 
         <section

@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useResolvedTheme } from "@/lib/design/use-resolved-theme";
 
 import { MiningEnergyLayer } from "./mining-energy-layer";
+import { useMiningLivePresentation } from "./mining-live-state";
 
 /** Decorative source families require the independent producer's manifest gate before activation. */
 export const MINING_REFERENCE_ART = {
@@ -139,11 +140,12 @@ export function MiningReferenceScene({
   className?: string | undefined;
 }) {
   const theme = useResolvedTheme();
+  const livePresentation = useMiningLivePresentation();
   return (
     <Artwork
       key={theme}
       theme={theme}
-      running={running}
+      running={livePresentation?.running ?? running}
       className={className}
     />
   );

@@ -131,6 +131,41 @@ describe("terms and privacy documents", () => {
     expect(terms).toContain("USDT는 따로 보관하지 않아요");
     expect(terms).toContain("원화 잔액");
     // 휴대전화는 가입 가능 여부만 확인한다.
-    expect(terms).toContain("소유를 확인하는 인증은 아니에요");
+    expect(terms).toContain("휴대전화 소유 인증을 의미하지 않습니다");
+  });
+
+  it("explains account recovery using existing entry points without promising delivery", () => {
+    const terms = LEGAL_DOCUMENTS[0]!;
+    const account = terms.sections.find(
+      (section) => section.heading === "가입과 계정",
+    );
+    const text = [...(account?.body ?? []), ...(account?.items ?? [])].join(
+      " ",
+    );
+    expect(text).toContain("아이디 확인과 비밀번호 재설정");
+    expect(text).toContain("비밀번호와 인증 정보");
+    const login = read("app/login/auth-form.tsx");
+    expect(login).toContain('href="/find-id"');
+    expect(login).toContain('href="/recover"');
+    expect(text).not.toMatch(/반드시.*(발송|복구)|복구를 보장|즉시 복구/);
+  });
+
+  it("names privacy request categories at the confirmed contact without inventing a processing promise", () => {
+    const privacy = LEGAL_DOCUMENTS[1]!;
+    const contact = privacy.sections.find(
+      (section) => section.heading === "문의",
+    );
+    const text = contact?.body.join(" ") ?? "";
+    expect(text).toContain("help@putduk.com");
+    expect(text).toContain("열람·정정·삭제·처리정지");
+    expect(text).toContain("문의");
+    expect(text).not.toMatch(/자동 처리|즉시 삭제|\d+일|영업일|처리 완료/);
+    const unresolved = privacy.sections.find(
+      (section) => section.heading === "아직 정해지지 않은 내용",
+    );
+    expect(unresolved?.body).toEqual([
+      "보관 기간은 정해지는 대로 이 방침에 적어요.",
+      "정보를 맡아 처리하는 곳과 보관 위치도 정해지는 대로 적어요.",
+    ]);
   });
 });

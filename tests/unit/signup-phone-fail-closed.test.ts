@@ -192,4 +192,26 @@ describe("signup phone checks before account creation", () => {
       p_raw: "+821012345678",
     });
   });
+
+  it("passes lowercase passwords to Auth without inventing composition requirements", async () => {
+    const form = signupForm();
+    form.set("password", "lowercaseonly");
+    form.set("passwordConfirmation", "lowercaseonly");
+    expect((await signupAction(previous, form)).status).toBe("confirmation");
+    expect(signUp).toHaveBeenCalledWith(
+      expect.objectContaining({ password: "lowercaseonly" }),
+    );
+  });
+
+  it("associates an Auth weak-password rejection with the password field without exposing provider details", async () => {
+    signUp.mockResolvedValueOnce({
+      data: { user: null, session: null },
+      error: { code: "weak_password", message: "private-provider-detail" },
+    });
+    const result = await signupAction(previous, signupForm());
+    expect(result.status).toBe("error");
+    expect(result.fieldErrors.password).toContain("다른 비밀번호");
+    expect(JSON.stringify(result)).not.toContain("private-provider-detail");
+    expect(signUp).toHaveBeenCalledOnce();
+  });
 });

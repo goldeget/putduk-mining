@@ -3,6 +3,11 @@ import Link from "next/link";
 
 import { MiningReferenceScene } from "@/components/mining-live/mining-reference-scene";
 import { MiningLiveStage } from "@/components/mining-live/mining-live-stage";
+import {
+  MiningLiveStateProvider,
+  MiningLiveCopy,
+  MiningLiveStatusPill,
+} from "@/components/mining-live/mining-live-state";
 import { PutdukHomeIcon } from "@/components/icons/putduk-home-icon";
 import { PutdukIcon } from "@/components/icons/putduk-icon";
 import { FundedRuntimeSummary } from "@/components/product/funded-runtime-summary";
@@ -186,7 +191,7 @@ export default async function MiningPage() {
     );
   const legacySessions = sessionsError ? [] : (sessions ?? []);
 
-  return (
+  const content = (
     <div
       className={styles.page}
       data-ui-ready="/mining"
@@ -232,12 +237,16 @@ export default async function MiningPage() {
 
         <section className={styles.rail} aria-label="채굴 현황">
           <div className={styles.sceneCaption}>
-            <ProductStatusPill
+            <MiningLiveStatusPill
               label={presentation.label}
               tone={presentation.tone}
             />
-            <h2>{presentation.title}</h2>
-            <p>{presentation.lead}</p>
+            <h2>
+              <MiningLiveCopy field="title" fallback={presentation.title} />
+            </h2>
+            <p>
+              <MiningLiveCopy field="lead" fallback={presentation.lead} />
+            </p>
             {selectedArt ? (
               <p data-member-scene-binding="confirmed-allocation">
                 선택 상품 테마 · {selectedArt.nameKo}
@@ -329,18 +338,28 @@ export default async function MiningPage() {
             <PutdukHomeIcon name="bolt" size={34} />
             <dl aria-label="채굴 속도" data-amount-weight="speed">
               <dt>
-                {presentation.source === "funded" && !presentation.running
-                  ? "설정된 속도"
-                  : "현재 속도"}
+                <MiningLiveCopy
+                  field="speedLabel"
+                  fallback={
+                    presentation.source === "funded" && !presentation.running
+                      ? "설정된 속도"
+                      : "현재 속도"
+                  }
+                />
               </dt>
               <dd>
                 <FactValue value={facts.speed} />
               </dd>
             </dl>
             <p>
-              {presentation.source === "funded" && !presentation.running
-                ? "현재 채굴은 멈췄어요."
-                : "채굴 속도에 적용하는 배수예요."}
+              <MiningLiveCopy
+                field="speedLead"
+                fallback={
+                  presentation.source === "funded" && !presentation.running
+                    ? "현재 채굴은 멈췄어요."
+                    : "채굴 속도에 적용하는 배수예요."
+                }
+              />
             </p>
           </div>
           <div className={styles.actions}>
@@ -569,7 +588,9 @@ export default async function MiningPage() {
             ) : null}
             <div>
               <dt>현재 상태</dt>
-              <dd>{presentation.label}</dd>
+              <dd>
+                <MiningLiveCopy field="label" fallback={presentation.label} />
+              </dd>
             </div>
           </dl>
           <p className={styles.detailNote}>
@@ -681,5 +702,13 @@ export default async function MiningPage() {
         </div>
       </details>
     </div>
+  );
+  return (
+    <MiningLiveStateProvider
+      key={`${identity.userId}:${liveSnapshot?.evaluatedAt ?? "static"}`}
+      initialPresentation={presentation}
+    >
+      {content}
+    </MiningLiveStateProvider>
   );
 }

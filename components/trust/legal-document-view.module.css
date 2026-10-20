@@ -1,0 +1,256 @@
+.document {
+  width: min(100%, 86rem);
+  min-width: 0;
+  margin-inline: auto;
+  padding-block: clamp(1.5rem, 4vw, 3.5rem);
+  padding-inline: clamp(1rem, 3vw, 2.5rem);
+  color: var(--text-primary);
+  overflow-wrap: anywhere;
+  word-break: keep-all;
+}
+
+.hero {
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-default);
+}
+
+.eyebrow,
+.sectionNumber {
+  color: var(--brand-primary);
+  font-size: 0.8125rem;
+  font-weight: 650;
+}
+
+.hero h1 {
+  margin: 0.5rem 0 1rem;
+  font-size: clamp(1.85rem, 4vw, 3rem);
+  line-height: 1.3;
+  letter-spacing: -0.04em;
+}
+
+.hero > p:last-of-type {
+  max-width: 66ch;
+  color: var(--text-secondary);
+  line-height: 1.8;
+}
+
+.documentLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  margin-top: 1rem;
+}
+
+.documentLinks a {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  color: var(--text-primary);
+  text-underline-offset: 0.25em;
+}
+
+.summary {
+  margin-block: 2rem;
+}
+
+.summary h2,
+.contents h2 {
+  margin: 0;
+  font-size: 1.125rem;
+  line-height: 1.6;
+}
+
+.summaryNote {
+  margin-block: 0.4rem 1rem;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.7;
+}
+
+.summaryGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+  gap: 0.75rem;
+}
+
+.summaryGrid article {
+  min-width: 0;
+  padding: 1.1rem;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--surface-raised);
+}
+
+.summaryGrid h3 {
+  margin: 0 0 0.65rem;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.summaryGrid p {
+  margin: 0.4rem 0 0;
+  color: var(--text-secondary);
+  font-size: 0.9375rem;
+  line-height: 1.8;
+}
+
+.readingLayout {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.75rem;
+  align-items: start;
+}
+
+.contents {
+  min-width: 0;
+  padding: 1.1rem;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--surface-default);
+}
+
+.contents ol {
+  margin: 0.75rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.contents a {
+  display: grid;
+  min-height: 44px;
+  grid-template-columns: max-content minmax(0, 1fr);
+  align-items: start;
+  gap: 0.65rem;
+  padding-block: 0.65rem;
+  color: var(--text-secondary);
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  text-decoration: none;
+}
+
+.contents a > span {
+  color: var(--brand-primary);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.contents a:hover {
+  color: var(--text-primary);
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+}
+
+.document a:focus-visible {
+  border-radius: 0.2rem;
+  outline: 2px solid var(--brand-strong);
+  outline-offset: 4px;
+}
+
+.fullText {
+  width: min(100%, 66ch);
+  min-width: 0;
+}
+
+.fullText > section {
+  margin-bottom: 1.5rem;
+  padding-block: 0.75rem 1.5rem;
+  border-bottom: 1px solid var(--border-subtle);
+  scroll-margin-top: 7rem;
+}
+
+.sectionNumber {
+  margin: 0 0 0.5rem;
+}
+
+.fullText h2 {
+  margin: 0 0 1rem;
+  font-size: clamp(1.125rem, 1.75vw, 1.35rem);
+  line-height: 1.6;
+  letter-spacing: -0.02em;
+}
+
+.fullText p,
+.fullText li {
+  font-size: 1rem;
+  line-height: 1.9;
+}
+
+.fullText ul {
+  padding-left: 1.3rem;
+}
+
+.fullText li + li {
+  margin-top: 0.65rem;
+}
+
+.documentDetails {
+  color: var(--text-secondary);
+}
+
+.documentDetails dl {
+  margin: 0;
+}
+
+.documentDetails dl > div {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.documentDetails dt,
+.documentDetails dd,
+.documentDetails p {
+  margin: 0.4rem 0;
+  font-size: 0.8125rem;
+  line-height: 1.75;
+}
+
+@media (min-width: 1100px) {
+  .readingLayout {
+    grid-template-columns: minmax(15rem, 0.7fr) minmax(0, 2fr);
+    gap: clamp(1.5rem, 4vw, 4rem);
+  }
+
+  .contents {
+    position: sticky;
+    top: 6rem;
+  }
+}
+
+@media print {
+  .document {
+    width: 100%;
+    padding: 0;
+    color: black;
+    background: white;
+  }
+
+  .contents,
+  .documentLinks {
+    display: none;
+  }
+
+  .readingLayout {
+    display: block;
+  }
+
+  .fullText {
+    width: 100%;
+  }
+
+  .fullText > section {
+    break-inside: avoid;
+  }
+}
+
+@media (forced-colors: active) {
+  .summaryGrid article,
+  .contents {
+    border-color: CanvasText;
+    background: Canvas;
+  }
+
+  .document a:focus-visible {
+    outline-color: Highlight;
+  }
+}

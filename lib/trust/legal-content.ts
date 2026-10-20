@@ -8,6 +8,8 @@
  * - 한 문단에는 한 가지 생각만 담고, 문장은 짧게 쓴다.
  */
 
+import { PUBLIC_SUPPORT_CONTACT } from "./public-contact";
+
 /** worker가 요구하는 값(workers/runner.mjs)과 같아야 한다. 테스트가 확인한다. */
 export const LEGAL_CONSENT_VERSIONS = {
   privacy: "PRIVACY-KO-2026-09-27",
@@ -35,23 +37,24 @@ export const LEGAL_DOCUMENTS: readonly LegalDocument[] = [
     eyebrow: "TERMS",
     consentVersion: LEGAL_CONSENT_VERSIONS.serviceTerms,
     title: "서비스 이용약관",
-    summary: "퍼뜩 채굴을 이용하는 방법과 지켜야 할 내용을 짧게 정리했어요.",
+    summary: "퍼뜩 채굴의 계정 이용, 서비스 기능 및 문의 방법을 안내합니다.",
     sections: [
       {
         heading: "이 약관은 무엇인가요",
         body: [
-          "퍼뜩 채굴(PUTDUK MINING)을 이용하는 방법을 정리한 글이에요.",
-          "가입할 때 동의하면 동의한 기록이 남아요.",
+          "이 약관은 퍼뜩 채굴(PUTDUK MINING)의 이용 방법과 계정 관리 기준을 안내합니다.",
+          "가입 시 동의한 약관의 버전과 동의 시각을 기록합니다.",
         ],
       },
       {
         heading: "가입과 계정",
         body: [],
         items: [
-          "이름, 생년월일, 휴대전화, 로그인 아이디, 복구 이메일을 입력해요.",
-          "휴대전화는 가입에 쓸 수 있는지, 이미 쓰인 번호인지만 확인해요.",
-          "휴대전화 소유를 확인하는 인증은 아니에요.",
-          "비밀번호는 본인이 직접 관리해 주세요.",
+          "가입 화면에서 이름, 생년월일, 휴대전화 번호, 로그인 아이디와 복구 이메일을 입력합니다.",
+          "휴대전화 번호는 가입 가능 여부와 중복 여부를 확인하는 데 사용합니다.",
+          "이 확인은 휴대전화 소유 인증을 의미하지 않습니다.",
+          "비밀번호와 인증 정보는 다른 사람에게 공유하지 마세요.",
+          "아이디 확인과 비밀번호 재설정은 로그인 화면의 안내를 이용해 주세요.",
         ],
       },
       {
@@ -102,8 +105,9 @@ export const LEGAL_DOCUMENTS: readonly LegalDocument[] = [
       {
         heading: "AI 안내",
         body: [
-          "PUTDUK AI는 설명과 분석만 해요.",
-          "잔액을 바꾸거나 입금과 출금을 승인하지 않아요.",
+          "퍼뜩 AI는 서비스 이용과 계정 상태에 관한 설명·분석을 제공합니다.",
+          "AI 답변은 잔액을 변경하거나 입금·출금을 승인하지 않습니다.",
+          "질문과 답변의 처리에 관한 내용은 개인정보 처리방침에서 확인할 수 있습니다.",
         ],
       },
       {
@@ -120,7 +124,11 @@ export const LEGAL_DOCUMENTS: readonly LegalDocument[] = [
       },
       {
         heading: "문의",
-        body: ["궁금한 점은 고객지원에서 확인해 주세요."],
+        body: [
+          `${PUBLIC_SUPPORT_CONTACT.serviceName} 서비스 문의: ${PUBLIC_SUPPORT_CONTACT.email}`,
+          "계정 이용이나 서비스 화면에서 확인이 필요한 내용을 문의할 수 있습니다.",
+          "비밀번호와 인증 정보는 보내지 마세요.",
+        ],
       },
     ],
   },
@@ -129,11 +137,14 @@ export const LEGAL_DOCUMENTS: readonly LegalDocument[] = [
     eyebrow: "PRIVACY",
     consentVersion: LEGAL_CONSENT_VERSIONS.privacy,
     title: "개인정보 처리방침",
-    summary: "어떤 정보를 왜 쓰는지 짧게 알려드려요.",
+    summary:
+      "퍼뜩 채굴의 개인정보 처리 항목, 이용 목적 및 문의 방법을 안내합니다.",
     sections: [
       {
         heading: "이 방침은 무엇인가요",
-        body: ["퍼뜩 채굴이 어떤 개인정보를 쓰는지 알려드리는 글이에요."],
+        body: [
+          "이 방침은 퍼뜩 채굴의 개인정보 처리 항목과 이용 목적을 안내합니다.",
+        ],
       },
       {
         heading: "가입할 때 받는 정보",
@@ -147,7 +158,9 @@ export const LEGAL_DOCUMENTS: readonly LegalDocument[] = [
       },
       {
         heading: "쓰는 목적",
-        body: ["계정을 운영하고 복구하는 데 써요."],
+        body: [
+          "계정 운영과 복구를 위해 가입 화면에서 입력한 정보를 사용합니다.",
+        ],
       },
       {
         heading: "본인 확인 서류",
@@ -179,8 +192,8 @@ export const LEGAL_DOCUMENTS: readonly LegalDocument[] = [
       {
         heading: "마케팅 소식",
         body: [
-          "혜택과 이벤트 소식은 선택 동의예요.",
-          "동의하지 않아도 서비스를 이용할 수 있어요.",
+          "혜택·이벤트 소식 수신은 선택 사항입니다.",
+          "선택 항목에 동의하지 않아도 서비스를 이용할 수 있습니다.",
         ],
       },
       {
@@ -192,7 +205,11 @@ export const LEGAL_DOCUMENTS: readonly LegalDocument[] = [
       },
       {
         heading: "문의",
-        body: ["개인정보 문의는 고객지원에서 받아요."],
+        body: [
+          `${PUBLIC_SUPPORT_CONTACT.serviceName} 개인정보 문의: ${PUBLIC_SUPPORT_CONTACT.email}`,
+          "개인정보의 열람·정정·삭제·처리정지에 관한 문의는 위 연락처로 보내 주세요.",
+          "문의에 비밀번호나 인증 정보를 포함하지 마세요.",
+        ],
       },
     ],
   },

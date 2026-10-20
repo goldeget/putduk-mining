@@ -126,7 +126,7 @@ function fixture() {
         "typography-public",
         "typography-protected",
         "worker-runtime",
-        "backend-successor201-123-2",
+        "backend-successor202-123-2",
       ].map((name, index) => ({
         id: index + 1,
         name,

@@ -104,7 +104,12 @@ type ActiveRequest = {
   controller: AbortController;
   message: PutdukAiMessage;
   reader?: ReadableStreamDefaultReader<Uint8Array>;
+  deadlineTimer?: ReturnType<typeof setTimeout>;
 };
+
+// Allow the server's 90-second provider budget and receipt cleanup to finish,
+// while bounding a connection that never delivers a response or terminal event.
+const AI_RESPONSE_DEADLINE_MS = 120_000;
 
 const SessionContext = createContext<PutdukAiSession | null>(null);
 
@@ -193,16 +198,17 @@ function OwnedAiSession({
   }, []);
 
   const abortActiveRequest = useCallback(
-    (code: "CLIENT_CANCELLED" | "AI_STREAM_INTERRUPTED") => {
+    (code: "CLIENT_CANCELLED" | "AI_STREAM_INTERRUPTED" | "AI_TIMEOUT") => {
       const active = activeRef.current;
       if (!active) return;
       activeRef.current = null;
+      clearTimeout(active.deadlineTimer);
       active.controller.abort();
       void active.reader?.cancel().catch(() => undefined);
       if (active.message.state === "streaming")
         writeMessage({
           ...active.message,
-          state: "cancelled",
+          state: code === "AI_TIMEOUT" ? "unverified" : "cancelled",
           failure: aiFailure(code),
         });
       setPending(false);
@@ -234,6 +240,7 @@ function OwnedAiSession({
     historyListTokenRef.current += 1;
     const active = activeRef.current;
     activeRef.current = null;
+    clearTimeout(active?.deadlineTimer);
     active?.controller.abort();
     void active?.reader?.cancel().catch(() => undefined);
     draftRef.current = "";
@@ -722,6 +729,11 @@ function OwnedAiSession({
         !request.controller.signal.aborted;
       const context = aiScreenContextSchema.safeParse(options.screenContext);
       let receiving = false;
+      request.deadlineTimer = setTimeout(() => {
+        if (isCurrent() && request.message.state === "streaming") {
+          abortActiveRequest("AI_TIMEOUT");
+        }
+      }, AI_RESPONSE_DEADLINE_MS);
       try {
         const response = await fetch("/api/v1/ai/chat", {
           method: "POST",
@@ -824,6 +836,7 @@ function OwnedAiSession({
         request.controller.abort();
         void request.reader?.cancel().catch(() => undefined);
       } finally {
+        clearTimeout(request.deadlineTimer);
         request.reader?.releaseLock();
         if (liveRef.current && activeRef.current === request) {
           activeRef.current = null;
@@ -841,6 +854,7 @@ function OwnedAiSession({
       }
     },
     [
+      abortActiveRequest,
       invalidateOwner,
       knowledgeVersion,
       loadHistoryList,

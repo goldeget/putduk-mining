@@ -210,6 +210,12 @@ describe("the actual published-catalog screen", () => {
       if (category === "GOLD") {
         expect(html).toContain("gold-category-320-v1.webp");
         expect(html).toContain('data-category="GOLD"');
+      } else if (category === "ETF") {
+        expect(artwork).toContain('data-material-artwork="ETF"');
+        expect(artwork).toContain('data-putduk-brand="canonical"');
+        expect(artwork).not.toMatch(
+          /<img|<source|undefined|semiconductor|digital-asset/,
+        );
       } else {
         expect(artwork).toContain(`data-catalog-artwork="${category}"`);
         const family =
@@ -222,7 +228,7 @@ describe("the actual published-catalog screen", () => {
           `/brand/catalog-materials/${family}/${family}-320-v1.webp`,
         );
       }
-      if (category !== "GOLD") {
+      if (category !== "GOLD" && category !== "ETF") {
         expect(artwork).toContain('aria-hidden="true"');
         expect(artwork).toContain('alt=""');
       }

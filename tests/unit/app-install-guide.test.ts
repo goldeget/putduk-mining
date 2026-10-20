@@ -54,6 +54,21 @@ afterEach(() => {
 });
 
 describe("member app installation guidance", () => {
+  it("shows the confirmed service and privacy contact without promising delivery", () => {
+    const host = render(SupportPage);
+    const contact = host.querySelector("section#support-contact");
+    expect(contact?.textContent).toContain("퍼뜩 채굴");
+    expect(contact?.textContent).toContain("서비스·개인정보 문의");
+    const link = contact?.querySelector<HTMLAnchorElement>(
+      'a[href="mailto:help@putduk.com"]',
+    );
+    expect(link?.textContent).toBe("help@putduk.com");
+    expect(contact?.textContent).not.toMatch(
+      /사업자등록번호|해외 법인|해외 사업자|24시간|수신 확인|답변 보장/,
+    );
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
   it("offers a secondary homepage footer link to the local installation guide", () => {
     const footer = render(HomePage).querySelector("footer");
     const link = [...(footer?.querySelectorAll("a") ?? [])].find(

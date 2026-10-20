@@ -179,7 +179,7 @@ export function assertCiEvidence({ run, jobs, artifacts }, sha) {
     "typography-public",
     "typography-protected",
     "worker-runtime",
-    `backend-successor201-${run.id}-${run.run_attempt}`,
+    `backend-successor202-${run.id}-${run.run_attempt}`,
   ];
   const receipt = [];
   for (const name of required) {

@@ -425,7 +425,7 @@ function ci() {
     "typography-public",
     "typography-protected",
     "worker-runtime",
-    "backend-successor201-12-2",
+    "backend-successor202-12-2",
   ].map((name, i) => ({
     id: i + 1,
     name,
@@ -500,6 +500,39 @@ test("accept complete exact attempt only, never stale artifacts, failed budgets 
   ]) {
     const e = ci();
     mutate(e);
+    assert.throws(() => assertCiEvidence(e, sha));
+  }
+});
+
+test("202 admission rejects historical201 artifact, missing, duplicate and wrong run/attempt evidence", () => {
+  for (const change of [
+    (e) => {
+      e.artifacts.find((a) => a.name.startsWith("backend-successor202-")).name =
+        "backend-successor201-12-2";
+    },
+    (e) => {
+      e.artifacts = e.artifacts.filter(
+        (a) => !a.name.startsWith("backend-successor202-"),
+      );
+    },
+    (e) => {
+      e.artifacts.push({
+        ...e.artifacts.find((a) => a.name.startsWith("backend-successor202-")),
+        id: 999,
+      });
+    },
+    (e) => {
+      e.artifacts.find((a) => a.name.startsWith("backend-successor202-")).name =
+        "backend-successor202-12-1";
+    },
+    (e) => {
+      e.artifacts.find((a) =>
+        a.name.startsWith("backend-successor202-"),
+      ).workflow_run.head_sha = "b".repeat(40);
+    },
+  ]) {
+    const e = ci();
+    change(e);
     assert.throws(() => assertCiEvidence(e, sha));
   }
 });

@@ -155,14 +155,14 @@ jobs:
         run: pnpm test
 
       - name: Verify authenticated scheduling invariants
-        run: node --test scripts/ci-authenticated-shards.test.mjs scripts/assert-worker-report.test.mjs scripts/e2e-admin-server.test.mjs scripts/backend-successor-201-contract.test.mjs scripts/backend-successor-201-native-contract.test.mjs scripts/stage-content-source-ci.test.mjs
+        run: node --test scripts/ci-authenticated-shards.test.mjs scripts/assert-worker-report.test.mjs scripts/e2e-admin-server.test.mjs scripts/backend-successor-202-contract.test.mjs scripts/backend-successor-202-native-contract.test.mjs scripts/ci-authenticated-shards-202.test.mjs scripts/owner-admin-202-concurrency.test.mjs scripts/stage-content-source-ci.test.mjs
 
       - name: Verify every authenticated test is assigned exactly once
         env:
           CI_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
           APP_ENV: test
-          PUTDUK_BACKEND_SOURCE_REVISION: "201"
-        run: node scripts/ci-authenticated-shards-201.mjs --verify-only
+          PUTDUK_BACKEND_SOURCE_REVISION: "202"
+        run: node scripts/ci-authenticated-shards-202.mjs --verify-only
 
       - name: Production build
         run: pnpm build
@@ -220,33 +220,44 @@ jobs:
         with:
           version: 2.113.0
 
-      - name: Verify successor201 canonical source before local infrastructure
-        run: node scripts/ci-backend-201.mjs --plan
+      - name: Verify successor202 canonical source before local infrastructure
+        run: node scripts/ci-backend-202.mjs --plan
 
-      - name: Start isolated PostgreSQL Auth and REST for successor201
+      - name: Start isolated PostgreSQL Auth and REST for successor202
         run: pnpm exec supabase start -x studio,imgproxy,realtime,storage-api,edge-runtime,logflare,vector,postgres-meta,supavisor
 
       - name: Rebuild migrations from zero
         run: pnpm db:reset
 
-      - name: Bind successor201 source and stage exact native adapters
+      - name: Bind successor202 source and stage exact native adapters
         id: successor197-stage
         env:
           APP_ENV: test
         run: |
-          node scripts/ci-backend-201.mjs --plan
-          STAGED="$RUNNER_TEMP/putduk-mining-native201-$(node -e 'console.log(require("node:crypto").randomUUID())')"
-          node scripts/backend-successor-201-native-stage.mjs --prepare --output="$STAGED"
+          node scripts/ci-backend-202.mjs --plan
+          STAGED="$RUNNER_TEMP/putduk-mining-native202-$(node -e 'console.log(require("node:crypto").randomUUID())')"
+          node scripts/backend-successor-202-native-stage.mjs --prepare --output="$STAGED"
           printf 'staged=%s\n' "$STAGED" >> "$GITHUB_OUTPUT"
 
-      - name: Prepare test-only pgTAP after exact fresh successor201 preflight
+      - name: Prove owner-admin atomic concurrency in a new owned database
+        timeout-minutes: 3
         env:
           APP_ENV: test
         run: |
           CONTAINER_ID="$(docker inspect --format '{{.Id}}' supabase_db_putduk-mining-ci-r2-20261009)"
-          node scripts/usdt-manual-201-runner.mjs --prepare-test-tool --fresh-container-id="$CONTAINER_ID"
+          OWNED_DATABASE="putduk_owner202_$(node -e 'console.log(require("node:crypto").randomUUID().replaceAll("-", ""))')"
+          OUTPUT="$RUNNER_TEMP/putduk-owner202-$(node -e 'console.log(require("node:crypto").randomUUID())')"
+          printf 'OWNER202_OUTPUT=%s\n' "$OUTPUT" >> "$GITHUB_ENV"
+          node scripts/owner-admin-202-concurrency.mjs --execute --allow-synthetic-db-writes --allow-create-owned-database --fresh-container-id="$CONTAINER_ID" --database="$OWNED_DATABASE" --output="$OUTPUT"
 
-      - name: Run pgTAP tests through exact successor201 staging
+      - name: Prepare test-only pgTAP after exact fresh successor202 preflight
+        env:
+          APP_ENV: test
+        run: |
+          CONTAINER_ID="$(docker inspect --format '{{.Id}}' supabase_db_putduk-mining-ci-r2-20261009)"
+          node scripts/usdt-manual-202-runner.mjs --prepare-test-tool --fresh-container-id="$CONTAINER_ID"
+
+      - name: Run pgTAP tests through exact successor202 staging
         # Keep database SQL and its relative snippets in the same mounted tree.
         run: pnpm exec supabase test db "${{ steps.successor197-stage.outputs.staged }}/supabase/tests"
 
@@ -282,7 +293,7 @@ jobs:
       - name: Verify published policy reader against concurrent publication
         run: node scripts/assert-economy-policy-reader-concurrency.mjs
 
-      - name: Verify successor201 native and full-id external-send concurrency
+      - name: Verify successor202 native and full-id external-send concurrency
         id: successor197-native
         timeout-minutes: 18
         env:
@@ -290,26 +301,26 @@ jobs:
         run: |
           pnpm db:reset
           CONTAINER_ID="$(docker inspect --format '{{.Id}}' supabase_db_putduk-mining-ci-r2-20261009)"
-          OUTPUT="$RUNNER_TEMP/putduk-mining-usdt201-$(node -e 'console.log(require("node:crypto").randomUUID())')"
+          OUTPUT="$RUNNER_TEMP/putduk-mining-usdt202-$(node -e 'console.log(require("node:crypto").randomUUID())')"
           printf 'output=%s\n' "$OUTPUT" >> "$GITHUB_OUTPUT"
-          node scripts/usdt-manual-201-runner.mjs --execute --allow-synthetic-db-writes --confirmed-full-payout --fresh-container-id="$CONTAINER_ID" --output="$OUTPUT"
-          node scripts/ci-backend-201.mjs --verify-native="$OUTPUT" --fresh-id="$CONTAINER_ID"
+          node scripts/usdt-manual-202-runner.mjs --execute --allow-synthetic-db-writes --confirmed-full-payout --fresh-container-id="$CONTAINER_ID" --output="$OUTPUT"
+          node scripts/ci-backend-202.mjs --verify-native="$OUTPUT" --fresh-id="$CONTAINER_ID"
 
-      - name: Restore shared production build for successor201 API
+      - name: Restore shared production build for successor202 API
         uses: actions/download-artifact@v7
         with:
           name: e2e-next-production
           path: .
 
-      - name: Capture masked successor201 local Auth environment
+      - name: Capture masked successor202 local Auth environment
         env:
           APP_ENV: test
         run: node scripts/capture-local-supabase-env.mjs
 
-      - name: Prepare ephemeral successor201 encryption key
+      - name: Prepare ephemeral successor202 encryption key
         run: node scripts/write-ephemeral-withdrawal-key.mjs
 
-      - name: Verify successor201 API and exact current report
+      - name: Verify successor202 API and exact current report
         timeout-minutes: 18
         env:
           APP_ENV: test
@@ -317,22 +328,23 @@ jobs:
           E2E_NEXT_START: "1"
           E2E_PREBUILT_APPS: "1"
           E2E_ADMIN_PORT: "3100"
-          PUTDUK_BACKEND_SOURCE_REVISION: "201"
+          PUTDUK_BACKEND_SOURCE_REVISION: "202"
         run: |
-          node scripts/ci-backend-201.mjs --record-http-start
-          pnpm exec playwright test --config playwright.backend-http-201.config.ts --project backend-api --fail-on-flaky-tests
-          node scripts/ci-backend-201.mjs --verify-http
+          node scripts/ci-backend-202.mjs --record-http-start
+          pnpm exec playwright test --config playwright.backend-http-202.config.ts --project backend-api --fail-on-flaky-tests
+          node scripts/ci-backend-202.mjs --verify-http
 
-      - name: Preserve successor201 current raw native and API evidence
+      - name: Preserve successor202 current raw native and API evidence
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: backend-successor201-${{ github.run_id }}-${{ github.run_attempt }}
+          name: backend-successor202-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
             ${{ steps.successor197-stage.outputs.staged }}/staging-manifest.json
+            ${{ env.OWNER202_OUTPUT }}/*.json
             ${{ steps.successor197-native.outputs.output }}
-            test-results/backend-http-201-api
-            playwright-report/backend201-http-evidence/**
+            test-results/backend-http-202-api
+            playwright-report/backend202-http-evidence/**
           if-no-files-found: error
 
       - name: Lint application schemas
@@ -559,11 +571,11 @@ jobs:
           E2E_ADMIN_PORT: "3100"
           CI_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
           APP_ENV: test
-          PUTDUK_BACKEND_SOURCE_REVISION: "201"
+          PUTDUK_BACKEND_SOURCE_REVISION: "202"
         run: |
           set -euo pipefail
           pnpm exec playwright test \
-            --config playwright.backend-browser-201.config.ts \
+            --config playwright.backend-browser-202.config.ts \
             --fail-on-flaky-tests \
             --reporter=line \
             --project=chromium \

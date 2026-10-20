@@ -104,7 +104,7 @@ function review(category: unknown) {
   };
 }
 
-describe("canonical six-category catalog and legacy boundary", () => {
+describe("canonical six-category catalog and member browse compatibility", () => {
   it.each(serverProductCategories)(
     "admits only native category %s",
     (category) => {
@@ -117,8 +117,8 @@ describe("canonical six-category catalog and legacy boundary", () => {
         state: "loaded",
         products: [{ id: productId, category }],
         legacyUi: {
-          state: category === "ETF" ? "UI_PENDING" : "READY",
-          pendingProductIds: category === "ETF" ? [productId] : [],
+          state: "READY",
+          pendingProductIds: [],
         },
       });
       expect(catalogReviewSchema.safeParse(review(category)).success).toBe(
@@ -152,7 +152,7 @@ describe("canonical six-category catalog and legacy boundary", () => {
   });
 
   it.each(productCategories)(
-    "preserves the legacy five-category %s payload",
+    "preserves the native category %s payload in both readers",
     (category) => {
       const data = catalog({ mining_products: [product({ category })] });
       const legacy = presentPublishedCatalogRead(data, null, now);
@@ -165,7 +165,7 @@ describe("canonical six-category catalog and legacy boundary", () => {
     },
   );
 
-  it("keeps every mixed-snapshot product and digest, while leaving legacy decoding unchanged", () => {
+  it("keeps every mixed-snapshot product and digest in member and server reads", () => {
     const otherId = "00000000-0000-4000-8000-000000000005";
     const data = catalog({
       mining_products: [
@@ -187,16 +187,20 @@ describe("canonical six-category catalog and legacy boundary", () => {
         { id: productId, category: "ETF" },
         { id: otherId, category: "GOLD" },
       ],
-      legacyUi: { state: "UI_PENDING", pendingProductIds: [productId] },
+      legacyUi: { state: "READY", pendingProductIds: [] },
     });
     expect(presentPublishedCatalogRead(data, null, now)).toMatchObject({
-      state: "error",
-      reason: "invalid_products",
-      products: [],
+      state: "loaded",
+      catalog: { id: catalogId, contentDigest: "a".repeat(64) },
+      products: [
+        { id: productId, category: "ETF" },
+        { id: otherId, category: "GOLD" },
+      ],
     });
     expect(productCategories).toEqual([
       "KR_STOCK",
       "US_STOCK",
+      "ETF",
       "GOLD",
       "SILVER",
       "CRYPTO",
@@ -342,7 +346,7 @@ describe("authenticated canonical catalog GET", () => {
       data: {
         state: "loaded",
         products: [{ category: "ETF" }],
-        legacyUi: { state: "UI_PENDING", pendingProductIds: [productId] },
+        legacyUi: { state: "READY", pendingProductIds: [] },
       },
     });
     expect(mocks.identity).toHaveBeenCalledOnce();
