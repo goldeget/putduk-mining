@@ -61,7 +61,7 @@ export default async function ProductHomePage() {
     !fundedUnavailable && fundedDisplay?.available
       ? fundedDisplay.funded_runtime
       : null;
-  const miningFacts = presentHomeMiningFacts(fundedRuntime);
+  const miningFacts = presentHomeMiningFacts(fundedRuntime, fundedUnavailable);
   const fundingFacts = presentHomeFundingFacts(
     fundedDisplay,
     fundedUnavailable,
@@ -170,8 +170,10 @@ export default async function ProductHomePage() {
               <strong>채굴 상세</strong>
               <small>
                 {fundingFacts.remainingCapacity === "확인할 수 없어요"
-                  ? world.liveLabel
-                  : `남은 한도 ${fundingFacts.remainingCapacity}`}
+                  ? "상태 다시 확인"
+                  : fundingFacts.remainingCapacity === "아직 없어요"
+                    ? world.liveLabel
+                    : `남은 한도 ${fundingFacts.remainingCapacity}`}
               </small>
             </span>
             <PutdukIcon name="arrow-right" size={16} />
@@ -180,7 +182,11 @@ export default async function ProductHomePage() {
             <span>
               <strong>지갑</strong>
               <small>
-                확정 누계 {miningFacts.committedTotal.replace(/ KRW$/, "원")}
+                {miningFacts.committedTotal === "확인할 수 없어요"
+                  ? "잔액 다시 확인"
+                  : miningFacts.committedTotal === "아직 없어요"
+                    ? "확정 누계 아직 없어요"
+                    : `확정 누계 ${miningFacts.committedTotal}`}
               </small>
             </span>
             <PutdukIcon name="arrow-right" size={16} />
@@ -191,7 +197,7 @@ export default async function ProductHomePage() {
           >
             <span>
               <strong>입금</strong>
-              <small>원화·USDT 수동 입금</small>
+              <small>필요할 때만 입금해요</small>
             </span>
             <PutdukIcon name="arrow-right" size={16} />
           </Link>

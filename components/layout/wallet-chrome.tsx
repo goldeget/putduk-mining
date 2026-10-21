@@ -66,8 +66,8 @@ export function WalletDesktopHeader({ displayName }: { displayName: string }) {
         <WalletBrandSymbol />
         <span className={styles.wordmark}>퍼뜩 채굴</span>
         <span className={styles.tagline}>
-          TECHNOLOGY CREATES
-          <br />A MORE VALUABLE TOMORROW
+          기술이 만드는
+          <br />더 가치 있는 내일
         </span>
       </Link>
       <nav className={styles.topNavigation} aria-label="지갑 주요 메뉴">

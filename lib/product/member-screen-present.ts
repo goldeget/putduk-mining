@@ -50,10 +50,10 @@ export function readRankName(value: unknown) {
 /** 지갑 스냅샷의 원화만 보여 준다. 없는 값은 0원으로 채우지 않는다. */
 export function formatScreenKrw(atomic: string | null, unavailable: boolean) {
   if (unavailable) {
-    return "확인할 수 없음";
+    return "확인할 수 없어요";
   }
   if (atomic == null || !/^-?\d+$/.test(atomic)) {
     return "아직 없어요";
   }
-  return formatAtomicAmount(atomic, "KRW");
+  return formatAtomicAmount(atomic, "KRW").replace(/ KRW$/, "원");
 }

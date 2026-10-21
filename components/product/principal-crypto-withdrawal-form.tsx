@@ -367,7 +367,9 @@ export function PrincipalCryptoWithdrawalForm({
       ) : (
         <FeedbackMessage className={styles.notice} role="status">
           {read === null && !feedback
-            ? "원금 정보를 확인하고 있어요…"
+            ? !ready
+              ? "원금 정보를 확인하고 있어요…"
+              : "회수할 원금이 아직 없어요. 이전 요청 확인은 계속 이용할 수 있어요."
             : "현재 원금 회수 조건을 확인하지 못했어요. 이전 요청 확인은 계속 이용할 수 있어요."}
         </FeedbackMessage>
       )}

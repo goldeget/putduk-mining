@@ -158,16 +158,16 @@ export const TRUST_DOCUMENTS: readonly TrustDocument[] = [
   },
   {
     path: "/putduk-facts",
-    eyebrow: "CANONICAL FACTS",
-    title: "공식 사실은 한곳에서 관리합니다.",
+    eyebrow: "공식 사실",
+    title: "퍼뜩이 공개하는 기본 사실이에요.",
     summary:
-      "제품 페이지, FAQ, 검색 데이터와 PUTDUK AI가 서로 다른 설명을 만들지 않도록 공개 사실의 기준을 통합합니다.",
+      "채굴·잔액·출금에 대해 같은 설명을 지켜요. 화면마다 다른 말을 만들지 않아요.",
     factKeys: PUBLIC_FACTS.map((fact) => fact.key),
     sections: [
       {
         heading: "공개 기준",
         body: [
-          "이 페이지의 사실 항목은 현재 공개 콘텐츠의 기준입니다. 운영자가 새로운 버전을 승인하기 전에는 이전에 게시된 설명을 조용히 덮어쓰지 않습니다.",
+          "여기에 적힌 내용이 현재 공개 안내의 기준이에요. 새 안내가 승인되기 전에는 이전 설명을 조용히 바꾸지 않아요.",
         ],
       },
     ],

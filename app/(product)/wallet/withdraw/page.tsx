@@ -298,23 +298,31 @@ export default async function WithdrawalPage() {
           <span aria-hidden="true">←</span> 내 자산
         </Link>
         <h1>출금하기</h1>
-        <p>원화 잔액을 은행 계좌 또는 USDT 주소로 받을 수 있어요.</p>
+        <p>확인된 원화 잔액만 출금할 수 있어요.</p>
       </header>
 
-      <section className={withdrawalStyles.hero} aria-label="출금 잔액">
+      <section
+        className={withdrawalStyles.hero}
+        data-withdraw-hero="compact"
+        aria-label="출금 잔액"
+      >
         <WalletScene className={withdrawalStyles.scene} priority />
         <div className={withdrawalStyles.balance}>
           <span>출금 가능 금액</span>
           <strong>
             {availableAtomic === null
-              ? "확인할 수 없음"
+              ? accountsError
+                ? "확인할 수 없어요"
+                : "아직 없어요"
               : `${new Intl.NumberFormat("ko-KR").format(BigInt(availableAtomic))}원`}
           </strong>
           <p>
             출금 보류{" "}
             <b>
               {heldAtomic === null
-                ? "확인할 수 없음"
+                ? accountsError
+                  ? "확인할 수 없어요"
+                  : "아직 없어요"
                 : `${new Intl.NumberFormat("ko-KR").format(BigInt(heldAtomic))}원`}
             </b>
           </p>
@@ -459,7 +467,7 @@ export default async function WithdrawalPage() {
                 </>
               ) : (
                 <Link className={styles.textLink} href="/start">
-                  PUTDUK START 보상 상태 확인
+                  체험 보상 상태 확인
                   <PutdukIcon name="arrow-right" size={17} />
                 </Link>
               )}
@@ -481,7 +489,12 @@ export default async function WithdrawalPage() {
         </aside>
       </div>
 
-      <div className={principalStyles.workspace}>
+      <details className={principalStyles.workspace}>
+        <summary>원금 회수가 필요하면</summary>
+        <p className={withdrawalStyles.principalLead}>
+          입금한 원금을 돌려받을 때만 아래에서 신청해요. 일반 수익 출금과는
+          달라요.
+        </p>
         <PrincipalWithdrawalForm
           key={`principal:${identity.userId}`}
           ownerId={identity.userId}
@@ -492,7 +505,7 @@ export default async function WithdrawalPage() {
           ownerId={identity.userId}
           refreshRevision={nowIso}
         />
-      </div>
+      </details>
 
       <section
         className={styles.historyPanel}

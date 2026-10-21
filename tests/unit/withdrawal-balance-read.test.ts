@@ -79,8 +79,8 @@ describe("withdrawal balance read truth", () => {
   it("shows unknown instead of zero when the wallet snapshot fails", async () => {
     wallet.error = { message: "snapshot unavailable" };
     const rendered = await html();
-    expect(balanceText(rendered)).toContain("출금 가능 금액확인할 수 없음");
-    expect(balanceText(rendered)).toContain("출금 보류 확인할 수 없음");
+    expect(balanceText(rendered)).toContain("출금 가능 금액확인할 수 없어요");
+    expect(balanceText(rendered)).toContain("출금 보류 확인할 수 없어요");
     expect(rendered).toContain("출금 정보를 불러오지 못했어요");
     expect(rendered).not.toContain("WITHDRAWAL_FORM");
   });
@@ -111,7 +111,9 @@ describe("withdrawal balance read truth", () => {
   });
   it("does not turn an absent wallet into an asserted zero balance", async () => {
     const rendered = await html();
-    expect(balanceText(rendered)).toContain("출금 가능 금액확인할 수 없음");
+    expect(balanceText(rendered)).toContain("출금 가능 금액아직 없어요");
+    expect(balanceText(rendered)).toContain("출금 보류 아직 없어요");
+    expect(rendered).not.toContain("출금 가능 금액0원");
     expect(rendered).not.toContain("WITHDRAWAL_FORM");
   });
 });

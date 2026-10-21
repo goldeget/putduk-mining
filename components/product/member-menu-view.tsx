@@ -20,8 +20,8 @@ import styles from "./member-menu-view.module.css";
 const primaryDestinations = [
   "/menu/account",
   "/notifications",
-  "/support",
-  "/putduk-facts",
+  "/menu/support",
+  "/menu/trust",
 ] as const;
 
 function MenuLanguageIcon() {
@@ -76,7 +76,7 @@ function MenuRow({ item }: { item: MenuItem }) {
         <span className={styles.icon} aria-hidden="true">
           {item.href === "/events" ? (
             <PutdukHomeIcon name="gift" size={29} />
-          ) : item.href === "/support" ? (
+          ) : item.href === "/menu/support" ? (
             <MenuSupportIcon />
           ) : (
             <PutdukIcon name={item.icon} size={27} />
@@ -119,8 +119,8 @@ export function MemberMenuView({ facts }: { facts: MemberScreenFacts }) {
         <div className={styles.heroCopy}>
           <h1>더보기</h1>
           <p className={styles.tagline}>
-            TECHNOLOGY CREATES
-            <br />A MORE VALUABLE TOMORROW
+            기술이 만드는
+            <br />더 가치 있는 내일
           </p>
           <p className={styles.introduction}>계정과 도움말만 모았어요.</p>
         </div>
@@ -202,7 +202,7 @@ export function MemberMenuView({ facts }: { facts: MemberScreenFacts }) {
               <br />
               함께 나아갑니다.
             </p>
-            <Link href="/putduk-facts">
+            <Link href="/menu/trust">
               퍼뜩 알아보기
               <PutdukIcon name="arrow-right" size={18} />
             </Link>
@@ -271,7 +271,7 @@ export function MemberMenuView({ facts }: { facts: MemberScreenFacts }) {
         <span aria-hidden="true" />
         <strong>PUTDUK MINING</strong>
         <span aria-hidden="true" />
-        <p>TECHNOLOGY CREATES A MORE VALUABLE TOMORROW</p>
+        <p>기술이 만드는 더 가치 있는 내일</p>
       </footer>
     </div>
   );

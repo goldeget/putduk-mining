@@ -106,7 +106,7 @@ describe("mining page owned source reads", () => {
     expect(html).toContain('data-mining-running="false"');
     expect(html).toContain("채굴 상태를 다시 확인해 주세요");
     expect(html).toContain("채굴 상태 다시 확인");
-    expect(html).toContain("PUTDUK START 확인");
+    expect(html).toContain("체험 채굴 확인");
     expect(html).toContain("체험과 실제 채굴은 따로 표시해요.");
     expect(html).toContain("12원");
     expect(html).not.toContain("실제 채굴 · 채굴 중");
@@ -160,10 +160,10 @@ describe("mining page owned source reads", () => {
     );
     expect(html).toContain("채굴 내역을 불러오지 못했어요.");
     expect(html).toContain("거래 내역을 불러오지 못했어요.");
-    expect(html).toContain("START 상태 다시 확인");
+    expect(html).toContain("체험 상태 다시 확인");
     expect(html).not.toContain("999원");
     expect(html).not.toContain("retained-active-world");
-    expect(html).not.toContain("START 계속하기");
+    expect(html).not.toContain("체험 계속하기");
     expect(html).toContain('data-mining-running="false"');
   });
 });

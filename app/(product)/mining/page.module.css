@@ -23,7 +23,7 @@
   position: relative;
   display: flex;
   min-width: 0;
-  min-height: clamp(370px, 108vw, 620px);
+  min-height: clamp(220px, 48vw, 360px);
   flex-direction: column;
   justify-content: space-between;
   overflow: hidden;

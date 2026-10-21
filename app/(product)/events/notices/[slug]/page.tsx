@@ -43,7 +43,7 @@ export default async function NoticeDetailPage({
     return (
       <div className={productStyles.eventPage} data-ui-state="error">
         <PageHeading
-          eyebrow="NOTICE"
+          eyebrow="공지"
           title="공지"
           lead="퍼뜩 채굴의 이용 안내를 확인하세요."
         />
@@ -65,7 +65,7 @@ export default async function NoticeDetailPage({
     return (
       <div className={productStyles.eventPage} data-ui-state="error">
         <PageHeading
-          eyebrow="NOTICE"
+          eyebrow="공지"
           title="공지"
           lead="퍼뜩 채굴의 이용 안내를 확인하세요."
         />
@@ -93,7 +93,7 @@ export default async function NoticeDetailPage({
       data-ui-state="loaded"
     >
       <PageHeading
-        eyebrow="NOTICE"
+        eyebrow="공지"
         title={notice.title_ko}
         lead={notice.summary_ko}
       />

@@ -98,7 +98,7 @@ export default async function EventsPage() {
       }
     >
       <PageHeading
-        eyebrow="EVENTS"
+        eyebrow="이벤트"
         title="참여할 수 있는 여정"
         lead="기간과 내 참여 상태를 확인한 뒤 선택하세요."
       />
@@ -242,8 +242,8 @@ export default async function EventsPage() {
 
       <header className={styles.sectionHeader}>
         <span>
-          <p className="eyebrow">NOTICE</p>
-          <h2>공지</h2>
+          <p className="eyebrow">공지</p>
+          <h2>안내</h2>
         </span>
         <p>퍼뜩 채굴의 중요한 변경과 이용 안내예요.</p>
       </header>

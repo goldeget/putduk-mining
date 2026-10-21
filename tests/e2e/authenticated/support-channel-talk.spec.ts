@@ -203,8 +203,8 @@ test("member support identity does not leak across login", async ({ page }) => {
     .getByRole("navigation", { name: "주요 메뉴" })
     .getByRole("link", { name: "더보기", exact: true })
     .click();
-  await page.locator('a[href="/support"]').click();
-  await expect(page).toHaveURL(/\/support$/);
+  await page.locator('a[href="/menu/support"]').click();
+  await expect(page).toHaveURL(/\/menu\/support$/);
   await waitForBoot(page, memberB.userId);
   await expect(page.locator("#putduk-support-launcher")).toBeVisible();
 });

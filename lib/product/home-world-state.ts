@@ -181,32 +181,61 @@ export function resolveHomeWorldState(input: {
   };
 }
 
-/** This accepted sum is per activation. The DTO does not provide a daily aggregate. */
+const unreadHomeFact = "확인할 수 없어요";
+const emptyHomeFact = "아직 없어요";
+/** Server DTO has no daily reward aggregate; never imply a failed money read. */
+const noDailyHomeAggregate = "일별 합계 없음";
+
+/**
+ * This accepted sum is per activation. The DTO does not provide a daily aggregate.
+ * Failed reads stay unread; missing runtime after a successful empty read is empty.
+ */
 export function presentHomeMiningFacts(
   runtime: FundedRuntimeDisplay | null | undefined,
+  unavailable = false,
 ) {
+  if (unavailable) {
+    return {
+      today: unreadHomeFact,
+      committedTotal: unreadHomeFact,
+    };
+  }
   return {
-    today: "확인할 수 없어요",
+    today: noDailyHomeAggregate,
     committedTotal: runtime
-      ? formatAtomicAmount(runtime.committed_reward_total_atomic, "KRW")
-      : "확인할 수 없어요",
+      ? formatAtomicAmount(
+          runtime.committed_reward_total_atomic,
+          "KRW",
+        ).replace(/ KRW$/, "원")
+      : emptyHomeFact,
   };
 }
 
-/** These two amounts are already computed by the server; neither is a wallet total. */
+/**
+ * These two amounts are already computed by the server; neither is a wallet total.
+ * Failed reads stay unread; empty successful reads use honest empty labels.
+ */
 export function presentHomeFundingFacts(
   display: MiningServerDisplay | null | undefined,
   unavailable = false,
 ) {
-  const confirmed = !unavailable && display?.available ? display : null;
+  if (unavailable) {
+    return {
+      principal: unreadHomeFact,
+      remainingCapacity: unreadHomeFact,
+    };
+  }
+  const confirmed = display?.available ? display : null;
+  if (!confirmed) {
+    return {
+      principal: emptyHomeFact,
+      remainingCapacity: emptyHomeFact,
+    };
+  }
   return {
-    principal:
-      confirmed?.eligible_principal_micro_krw == null
-        ? "확인할 수 없어요"
-        : formatMiningMicroKrw(confirmed.eligible_principal_micro_krw),
-    remainingCapacity:
-      confirmed?.remaining_capacity_micro_krw == null
-        ? "확인할 수 없어요"
-        : formatMiningMicroKrw(confirmed.remaining_capacity_micro_krw),
+    principal: formatMiningMicroKrw(confirmed.eligible_principal_micro_krw),
+    remainingCapacity: formatMiningMicroKrw(
+      confirmed.remaining_capacity_micro_krw,
+    ),
   };
 }
