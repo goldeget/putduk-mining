@@ -176,7 +176,7 @@ AI_MAX_REQUESTS_PER_DAY=100
 AI_CACHE_TTL_SECONDS=3600
 ```
 
-`AI_PROVIDER_DISPATCH_ENABLED` must be the exact string `true`. Omit it or leave it empty for static + owned-tool answers only. `APP_ENV=production` is rejected in `lib/ai/dispatch-admission.ts` even when the switch is on. Member IA may hide `/ai` from primary nav (SIMPLIFIED_TRACK); the deep route remains available when dispatch is admitted in non-production.
+`AI_PROVIDER_DISPATCH_ENABLED` must be the exact string `true`. Omit it or leave it empty for static + owned-tool answers only. When the switch is `true` with the approved NVIDIA key/model tuple, `APP_ENV=production` is admitted the same as staging (`lib/ai/dispatch-admission.ts`). Paid Haiku still requires `AI_PAID_CALL_AUTHORIZED=true` plus `OPENROUTER_API_KEY` (default false). Set these on Cloudflare Worker `putduk-mining-web-staging` (host `mining.putduk.com`), never in git. Member IA may hide `/ai` from primary nav (SIMPLIFIED_TRACK); the deep route remains available when dispatch is admitted.
 
 `NVIDIA_API_KEY` is an alias for `AI_API_KEY`; if both are set they must match. `AI_MODEL_HIGH_CAPABILITY` remains a legacy schema field and does not override the fixed current chain. Output tokens and first-token bounds are validated in `lib/env/server.ts`; member requests are atomically capped at five per minute and 100 per rolling 24 hours across providers. The OpenRouter free admission has separate durable per-user counting within the same ceilings. These are application ceilings, not external-provider quota or cost guarantees.
 
