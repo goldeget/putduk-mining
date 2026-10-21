@@ -1878,3 +1878,109 @@
     box-shadow: none;
   }
 }
+
+/* SIMPLIFIED_TRACK — one-button first viewport */
+.simplifiedHero {
+  display: grid;
+  gap: 0.85rem;
+  width: min(100%, 28rem);
+  max-width: 28rem;
+  padding-bottom: 1.5rem;
+}
+
+.brandMark {
+  margin: 0;
+  color: var(--brand-primary);
+  font-size: clamp(1.05rem, 2.2vw, 1.35rem);
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  text-transform: none;
+}
+
+.simplifiedHero .welcomeTitle {
+  margin: 0;
+  font-size: clamp(1.55rem, 4.2vw, 2.35rem);
+  line-height: 1.2;
+}
+
+.simplifiedHero .welcomeLead {
+  margin: 0;
+  max-width: 22rem;
+  font-size: clamp(0.95rem, 1.4vw, 1.05rem);
+  line-height: 1.45;
+}
+
+.heroBalance {
+  display: grid;
+  gap: 0.2rem;
+  margin: 0.15rem 0 0;
+  color: var(--text-primary);
+}
+
+.heroBalanceLabel {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+.heroBalance strong {
+  font-size: clamp(1.45rem, 3.2vw, 1.9rem);
+  font-weight: 750;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.heroPrimary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  min-height: 3.25rem;
+  min-width: min(100%, 16rem);
+  padding-inline: 1.35rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.heroStatus {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.simplifiedSecondary {
+  display: grid;
+  gap: 0.65rem;
+  padding: 0.25rem 0 1rem;
+}
+
+.simplifiedSecondaryLink {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-height: 3.5rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: 0.85rem;
+  color: var(--text-primary);
+  background: color-mix(in srgb, var(--surface-raised) 88%, transparent);
+  text-decoration: none;
+}
+
+.simplifiedSecondaryLink strong {
+  display: block;
+  font-size: 1rem;
+}
+
+.simplifiedSecondaryLink small {
+  display: block;
+  margin-top: 0.2rem;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+.simplifiedSecondaryLink:focus-visible {
+  outline: 2px solid var(--brand-primary);
+  outline-offset: 2px;
+}

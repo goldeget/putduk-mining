@@ -74,7 +74,7 @@ export function StartTrialButton() {
         disabled={pending}
         aria-busy={pending}
       >
-        {pending ? "체험 준비 중" : "첫 채굴 시작"}
+        {pending ? "채굴 준비 중" : "채굴 시작"}
         <PutdukIcon name="arrow-right" size={18} />
       </button>
       {message ? (

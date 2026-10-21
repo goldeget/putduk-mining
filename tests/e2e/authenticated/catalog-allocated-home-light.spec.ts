@@ -28,38 +28,32 @@ test("fresh allocated home light retains all seven widths and four text scales w
       expect(ownerFinancialEvidence(owner.userId)).toEqual(after);
       await memberPage.goto("/home", { waitUntil: "networkidle" });
       const homeStatus = await expectSettledRoute(memberPage, "/home");
+      await expect(homeStatus).toHaveAttribute(
+        "data-launch-surface",
+        "simplified-track",
+      );
       await expect(
-        homeStatus.getByRole("link", { name: "실제 채굴 보기", exact: true }),
+        homeStatus.getByRole("link", { name: "채굴 중", exact: true }),
       ).toHaveAttribute("href", "/mining");
       await expect(
-        memberPage.getByRole("region", { name: "확인된 실제 채굴 기록" }),
-      ).toHaveAttribute("data-funded-runtime-state", "confirmed");
+        homeStatus.getByLabel("사용 가능 원화", { exact: true }),
+      ).toBeVisible();
+      await expect(
+        memberPage.getByRole("region", { name: "추천 상품" }),
+      ).toHaveCount(0);
       await expect(
         memberPage
-          .getByRole("region", { name: "지갑과 체험 정보", exact: true })
-          .getByText("현재 채굴 확정 누계", { exact: true }),
-      ).toBeVisible();
+          .getByRole("navigation", { name: "주요 메뉴", exact: true })
+          .getByRole("link", { name: "상품", exact: true }),
+      ).toHaveCount(0);
       await memberPage
         .getByRole("combobox", { name: "화면 테마" })
         .first()
-        .selectOption("dark");
+        .selectOption("light");
       await expect(memberPage.locator("html")).toHaveAttribute(
         "data-theme",
-        "dark",
+        "light",
       );
-      const capacityProgress = memberPage.getByRole("progressbar", {
-        name: "채굴 한도 사용률",
-      });
-      await expect(capacityProgress).toBeVisible();
-      await expect(capacityProgress).toHaveAttribute("max", "10000");
-      await expect(capacityProgress).toHaveAttribute("aria-valuetext", /사용$/);
-      const homeProducts = memberPage.locator('ul[data-product-count="1"]');
-      await expect(homeProducts.locator("li")).toHaveCount(1);
-      const listBounds = await homeProducts.boundingBox();
-      const cardBounds = await homeProducts.locator("li").boundingBox();
-      expect(
-        Math.abs(listBounds!.width - cardBounds!.width),
-      ).toBeLessThanOrEqual(1);
       await captureAllocatedMatrix(
         memberPage,
         info,

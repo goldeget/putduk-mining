@@ -178,7 +178,7 @@ describe("Home world source truth", () => {
       trial: { status: "ACTIVE" },
     });
     expect(state.running).toBe(true);
-    expect(state.primary).toEqual({ href: "/start", label: "START 계속하기" });
+    expect(state.primary).toEqual({ href: "/start", label: "채굴 중" });
     expect(state.worldTitle).toBe("한국");
     const incomplete = resolveHomeWorldState({
       ...emptyReads,
@@ -195,7 +195,7 @@ describe("Home world source truth", () => {
       const state = resolveHomeWorldState({ ...emptyReads, trial: { status } });
       expect(state.running).toBe(false);
       expect(state.notStarted).toBe(false);
-      expect(state.primary.label).toBe("START 결과 보기");
+      expect(state.primary.label).toBe("결과 보기");
     },
   );
 
@@ -204,7 +204,7 @@ describe("Home world source truth", () => {
     expect(state.notStarted).toBe(true);
     expect(state.needsRequery).toBe(false);
     expect(state.running).toBe(false);
-    expect(state.primary.label).toBe("첫 채굴 시작");
+    expect(state.primary.label).toBe("채굴 시작");
   });
 });
 
@@ -227,7 +227,7 @@ describe("Home paid runtime priority", () => {
     expect(state.running).toBe(false);
     expect(state.needsRequery).toBe(false);
     expect(state.liveLabel).toBe("안전 모드로 잠시 멈춤");
-    expect(state.worldLead).toContain("확인된 채굴 기록은 유지돼요");
+    expect(state.worldLead).toContain("확인된 기록은 유지돼요");
     expect(state.primary).toEqual({
       href: "/mining",
       label: "채굴 상태 확인",
@@ -251,7 +251,7 @@ describe("Home paid runtime priority", () => {
       fundedDisplay: paidDisplay(activeReceipt),
     });
     expect(state.running).toBe(true);
-    expect(state.primary).toEqual({ href: "/mining", label: "실제 채굴 보기" });
+    expect(state.primary).toEqual({ href: "/mining", label: "채굴 중" });
     expect(state.liveLabel).toBe("채굴 중");
     expect(state.notStarted).toBe(false);
     expect(state.needsRequery).toBe(false);
@@ -298,9 +298,9 @@ describe("Home paid runtime priority", () => {
       });
       expect(state.running).toBe(false);
       expect(state.needsRequery).toBe(false);
-      expect(state.primary.href).toBe("/products/allocation");
+      expect(state.primary.href).toBe("/mining");
       expect(state.liveLabel).toBe(
-        reason === "CAPACITY_USED" ? "이번 한도 완료" : "배분 대기",
+        reason === "CAPACITY_USED" ? "이번 한도 완료" : "채굴 준비",
       );
       expect(state.notStarted).toBe(false);
     },
@@ -501,7 +501,7 @@ describe("Home strict inactive-zero server display compatibility", () => {
         running: false,
         notStarted: true,
       });
-      expect(state.primary).toEqual({ href: "/start", label: "첫 채굴 시작" });
+      expect(state.primary).toEqual({ href: "/start", label: "채굴 시작" });
       expect(display).toEqual(before);
     },
   );

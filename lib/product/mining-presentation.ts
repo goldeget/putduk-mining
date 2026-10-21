@@ -63,10 +63,10 @@ export function resolveMiningPresentation(input: {
         source: "funded",
         running: true,
         label: "채굴 중",
-        title: "실제 채굴 · 채굴 중",
-        lead: "확인된 배분으로 채굴하고 있어요. 확정 금액은 지갑에서 확인해 주세요.",
+        title: "채굴 중",
+        lead: "앱을 닫아도 채굴은 계속돼요. 확정 금액은 지갑에서 확인해요.",
         tone: "success",
-        action: "allocation",
+        action: "none",
       };
     }
     const reason = runtime?.schema_version === 2 ? runtime.stop_reason : null;
@@ -75,20 +75,20 @@ export function resolveMiningPresentation(input: {
         ? "안전 모드로 잠시 멈춤"
         : reason === "CAPACITY_USED"
           ? "이번 한도 완료"
-          : "배분 대기";
+          : "채굴 준비";
     return {
       source: "funded",
       running: false,
       label,
-      title: `실제 채굴 · ${label}`,
+      title: label,
       lead:
         reason === "SAFE_MODE"
-          ? "안전 모드로 잠시 멈췄어요. 지금까지 확인된 채굴 기록은 유지돼요."
+          ? "잠시 멈췄어요. 확인된 채굴 기록은 유지돼요."
           : reason === "CAPACITY_USED"
             ? "이번 채굴 한도를 사용했어요. 확정된 기록은 유지돼요."
-            : "채굴할 상품과 배분을 확인해 주세요.",
+            : "채굴 버튼을 누르면 수익이 쌓여요.",
       tone: "neutral",
-      action: reason === "SAFE_MODE" ? "reload" : "allocation",
+      action: reason === "SAFE_MODE" ? "reload" : "none",
     };
   }
   if (input.sessionError) return unknown;
@@ -109,8 +109,8 @@ export function resolveMiningPresentation(input: {
     source: "empty",
     running: false,
     label: "시작 전",
-    title: "첫 월드에서 채굴을 시작해 보세요",
-    lead: "PUTDUK START로 첫 채굴을 시작해 보세요.",
+    title: "채굴을 시작해 보세요",
+    lead: "버튼을 누르면 첫 채굴이 시작돼요.",
     tone: "neutral",
     action: "start",
   };

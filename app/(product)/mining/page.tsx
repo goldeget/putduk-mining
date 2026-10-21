@@ -251,7 +251,7 @@ export default async function MiningPage() {
               <strong>{facts.tier}</strong>
               <small>확인된 채굴 원금 기준</small>
             </div>
-            <Link href="/products" aria-label="채굴 상품 보기">
+            <Link href="/wallet" aria-label="지갑에서 확정 금액 보기" prefetch={false}>
               <PutdukIcon name="arrow-right" size={18} />
             </Link>
           </div>
@@ -352,7 +352,7 @@ export default async function MiningPage() {
                 href="/products/allocation"
               >
                 <PutdukHomeIcon name="bolt" size={22} metallic={false} />
-                채굴 배분 확인
+                채굴 준비 확인
                 <PutdukIcon name="arrow-right" size={19} />
               </Link>
             ) : presentation.action === "start" ? (
@@ -361,11 +361,19 @@ export default async function MiningPage() {
                 href="/start"
               >
                 <span className={styles.primaryActionCopy}>
-                  <span className={styles.primaryActionLine}>
-                    PUTDUK{"\u00a0"}START
-                  </span>
-                  <span className={styles.primaryActionLine}>{" 확인"}</span>
+                  <span className={styles.primaryActionLine}>채굴 시작</span>
                 </span>
+                <PutdukIcon name="arrow-right" size={19} />
+              </Link>
+            ) : presentation.running ? (
+              <Link
+                className={`button button--primary ${styles.startPrimaryAction}`}
+                href="/wallet"
+                prefetch={false}
+                aria-current="true"
+              >
+                <PutdukHomeIcon name="bolt" size={22} metallic={false} />
+                채굴 중 · 잔액 보기
                 <PutdukIcon name="arrow-right" size={19} />
               </Link>
             ) : (
@@ -374,7 +382,7 @@ export default async function MiningPage() {
                 href="/wallet"
                 prefetch={false}
               >
-                확정 금액 확인
+                잔액 확인
                 <PutdukIcon name="arrow-right" size={19} />
               </Link>
             )}

@@ -12,7 +12,6 @@ import { ProductNavigation } from "@/components/navigation/product-navigation";
 import { ProductHeader } from "@/components/layout/product-header";
 import { WalletSidebar } from "@/components/layout/wallet-chrome";
 import { ConnectivityStatus } from "@/components/system/connectivity-status";
-import { PutdukAiDock } from "@/components/product/putduk-ai-dock";
 
 import { MenuHeader, MenuSidebar } from "./menu-chrome";
 import { RouteBrandHeader, RouteBrandSidebar } from "./route-brand-chrome";
@@ -245,7 +244,7 @@ export function ProductShell({
           ) : null}
           {children}
         </main>
-        {isHome || isMenu ? null : <PutdukAiDock />}
+        {/* SIMPLIFIED_TRACK: AI is deep-link only (/ai via 더보기), not a peer dock CTA. */}
         <ProductNavigation />
       </div>
     </div>

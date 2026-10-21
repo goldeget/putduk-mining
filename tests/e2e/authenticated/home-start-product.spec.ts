@@ -196,36 +196,30 @@ test("홈과 START READY 상태를 도메인 스냅샷으로 보여 준다", asy
   const member = await createConfirmedMember("home-start-ready");
   await loginAsMember(page, member, "/home");
 
+  const home = await expectSettledRoute(page, "/home");
+  await expect(home).toHaveAttribute(
+    "data-launch-surface",
+    "simplified-track",
+  );
   await expect(
     page.getByRole("heading", {
       level: 1,
-      name: /안녕하세요,.*님|더 큰 가치를 만드는 여정이 계속됩니다\./,
+      name: /채굴 버튼만 누르면/,
     }),
   ).toBeVisible();
   await expect(
-    page
-      .getByRole("group", { name: "PUTDUK START 체험", exact: true })
-      .getByRole("link", { name: /첫 채굴 시작/ }),
+    home.getByRole("link", { name: /채굴 시작/, exact: true }),
   ).toBeVisible();
-  await expect(page.getByText("사용 가능 원화")).toBeVisible();
-  await expect(page.getByText("체험 값은 포함되지 않습니다.")).toBeVisible();
-  await expect(
-    page.getByText("새 알림이 없어요", { exact: false }),
-  ).toBeVisible();
+  await expect(home.getByLabel("사용 가능 원화", { exact: true })).toBeVisible();
 
-  await page
-    .getByRole("group", { name: "PUTDUK START 체험", exact: true })
-    .getByRole("link", { name: /첫 채굴 시작/ })
-    .click();
+  await home.getByRole("link", { name: /채굴 시작/, exact: true }).click();
   await expect(page).toHaveURL(/\/start$/);
   await dismissGuidedQuestIfPresent(page);
   await expect(
-    page.getByRole("heading", { name: "첫 채굴, 분명한 시작." }),
+    page.getByRole("heading", { name: "채굴을 시작해 보세요." }),
   ).toBeVisible();
   await expect(page.getByText("체험과 실제 잔액")).toBeVisible();
-  await expect(
-    page.getByRole("button", { name: "첫 채굴 시작" }),
-  ).toBeVisible();
+  await expect(page.getByRole("button", { name: "채굴 시작" })).toBeVisible();
   await expect(
     page.getByText("환영 보상 첫 출금에 입금은 필요 없어요"),
   ).toBeVisible();
@@ -246,7 +240,7 @@ test("START ACTIVE 상태는 서버 동기화 안내와 진행 문구를 유지�
   await expect(
     page.getByRole("heading", {
       level: 2,
-      name: "채굴이 진행 중이에요",
+      name: "채굴 중",
       exact: true,
     }),
   ).toBeVisible();
@@ -258,23 +252,20 @@ test("START ACTIVE 상태는 서버 동기화 안내와 진행 문구를 유지�
   await expect(page.getByText("진행 중").first()).toBeVisible();
 
   await page.goto("/home");
-  // hidden id="S:*"가 같은 진행 문구를 복제한다. 정착된 홈 안에서만 하나여야 한다.
   const home = await expectSettledRoute(page, "/home");
-  const startCard = home.getByRole("group", {
-    name: "PUTDUK START 체험",
-    exact: true,
-  });
-  const activeStatus = startCard.getByText(/^진행 중/);
-  await expect(activeStatus).toHaveCount(1);
-  await expect(activeStatus).toBeVisible();
-  await expect(
-    startCard.getByRole("link", { name: /START 계속하기/ }),
-  ).toBeVisible();
-  await startCard.getByRole("link", { name: /START 계속하기/ }).click();
+  await expect(home).toHaveAttribute(
+    "data-launch-surface",
+    "simplified-track",
+  );
+  const activeCta = home.getByRole("link", { name: "채굴 중", exact: true });
+  await expect(activeCta).toHaveCount(1);
+  await expect(activeCta).toBeVisible();
+  await activeCta.click();
+  await expect(page).toHaveURL(/\/start$/);
   await expect(
     page.getByRole("heading", {
       level: 2,
-      name: "채굴이 진행 중이에요",
+      name: "채굴 중",
       exact: true,
     }),
   ).toBeVisible();
@@ -306,15 +297,11 @@ test("홈·START 오류 복구와 키보드·축소 모션을 확인한다", asy
   await expect(
     page.getByRole("button", { name: /다시 확인/ }).first(),
   ).toBeVisible();
-  const failedStart = page.getByRole("group", {
-    name: "PUTDUK START 체험",
-    exact: true,
-  });
   await expect(
-    failedStart.getByRole("link", { name: /START 상태 확인/ }),
+    page.getByRole("button", { name: /다시 확인|상태 다시 확인/ }).first(),
   ).toBeVisible();
   await expect(
-    failedStart.getByRole("link", { name: /첫 채굴 시작|START 계속하기/ }),
+    page.getByRole("link", { name: /채굴 시작/, exact: true }),
   ).toHaveCount(0);
 
   // 인증 세션은 유지하고 SSR 고장 쿠키만 제거한 뒤 복구 버튼을 검증한다.
@@ -325,16 +312,15 @@ test("홈·START 오류 복구와 키보드·축소 모션을 확인한다", asy
     .getByRole("button", { name: /다시 확인/ })
     .first()
     .click();
+  const recovered = await expectSettledRoute(page, "/home");
   await expect(
-    page.getByRole("heading", {
+    recovered.getByRole("heading", {
       level: 1,
-      name: /안녕하세요,.*님|더 큰 가치를 만드는 여정이 계속됩니다\./,
+      name: /채굴 버튼만 누르면/,
     }),
   ).toBeVisible({ timeout: 30_000 });
   await expect(
-    page
-      .getByRole("group", { name: "PUTDUK START 체험", exact: true })
-      .getByRole("link", { name: /첫 채굴 시작/ }),
+    recovered.getByRole("link", { name: /채굴 시작/, exact: true }),
   ).toBeVisible();
 
   await applyTheme(page, "dark");
@@ -561,7 +547,7 @@ test("홈·START 반응형·테마 스크린샷을 남긴다", async ({ page }) 
   expect(runtimeFailures).toEqual([]);
 });
 
-test("홈은 더 새로운 만료 알림을 limit 전에 빼고 본인 유효 알림만 보여 준다", async ({
+test("알림 센터는 더 새로운 만료 알림을 빼고 본인 유효 알림만 보여 준다", async ({
   page,
 }) => {
   test.setTimeout(420_000);
@@ -596,7 +582,7 @@ test("홈은 더 새로운 만료 알림을 limit 전에 빼고 본인 유효 �
   ];
   expiredTitles.forEach((title, index) => {
     seedMemberNotification({
-      body: "만료되어 홈 최근 알림에 있으면 안 돼요.",
+      body: "만료되어 알림 센터에 있으면 안 돼요.",
       category: "service",
       createdAt: at(-(40 - index * 10) * 60 * 1000),
       expiresAt: at(-2 * 60 * 1000),
@@ -606,7 +592,7 @@ test("홈은 더 새로운 만료 알림을 limit 전에 빼고 본인 유효 �
   });
 
   const expiredEvent = seedMemberNotification({
-    body: "만료된 이벤트 링크는 홈에 나오면 안 돼요.",
+    body: "만료된 이벤트 링크는 알림 센터에 나오면 안 돼요.",
     category: "events",
     createdAt: at(-15 * 60 * 1000),
     expiresAt: at(-60 * 1000),
@@ -615,28 +601,34 @@ test("홈은 더 새로운 만료 알림을 limit 전에 빼고 본인 유효 �
     userId: owner.userId,
   });
   const foreign = seedMemberNotification({
-    body: "다른 회원의 알림은 홈에 나오면 안 돼요.",
+    body: "다른 회원의 알림은 알림 센터에 나오면 안 돼요.",
     category: "service",
     createdAt: at(-30 * 1000),
     title: "다른 회원의 홈 알림",
     userId: other.userId,
   });
 
+  // SIMPLIFIED_TRACK: home drops the notification card wall; inbox lives on /notifications.
   await loginAsMember(page, owner, "/home");
-
-  await expect(
-    page.getByRole("heading", {
-      level: 1,
-      name: /안녕하세요,.*님|더 큰 가치를 만드는 여정이 계속됩니다\./,
-    }),
-  ).toBeVisible();
-  await expect(page.getByRole("heading", { name: "최근 알림" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "전체 보기" })).toHaveAttribute(
-    "href",
-    "/notifications",
+  const home = await expectSettledRoute(page, "/home");
+  await expect(home).toHaveAttribute(
+    "data-launch-surface",
+    "simplified-track",
   );
-  await expect(page.getByText(olderActive.title)).toBeVisible();
-  await expect(page.getByText(olderRead.title)).toBeVisible();
+  for (const title of [
+    olderActive.title,
+    olderRead.title,
+    ...expiredTitles,
+    expiredEvent.title,
+    foreign.title,
+  ]) {
+    await expect(home.getByText(title)).toHaveCount(0);
+  }
+
+  await page.goto("/notifications");
+  const inbox = await expectSettledRoute(page, "/notifications");
+  await expect(inbox.getByText(olderActive.title)).toBeVisible();
+  await expect(inbox.getByText(olderRead.title)).toBeVisible();
   await expect(
     page.getByRole("link", { name: new RegExp(olderActive.title) }),
   ).toHaveAttribute("href", "/wallet/deposit");
@@ -647,9 +639,6 @@ test("홈은 더 새로운 만료 알림을 limit 전에 빼고 본인 유효 �
   for (const title of [...expiredTitles, expiredEvent.title, foreign.title]) {
     await expect(page.getByText(title)).toHaveCount(0);
   }
-  await expect(
-    page.getByText("새 알림이 없어요", { exact: false }),
-  ).toHaveCount(0);
   await expect(page.getByRole("link", { name: /^로그인$/ })).toHaveCount(0);
   expect(hydration).toEqual([]);
 });

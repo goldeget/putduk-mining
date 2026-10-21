@@ -165,26 +165,27 @@ export function WalletOverviewView({
             <BrandMark />
             <h1 id="wallet-overview-title">지갑</h1>
           </div>
-          <p>내 자산과 거래 내역을 한눈에 확인하세요.</p>
+          <p>확인된 원화 잔액만 보여 드려요.</p>
         </header>
         <div className={styles.console}>
           <section
             className={styles.balance}
-            aria-label="원화 지갑 잔액"
+            aria-label="사용 가능 원화"
             data-wallet-balance-state={balanceState}
+            data-wallet-primary-balance="true"
           >
             <div className={styles.balanceArt} aria-hidden="true">
               <WalletScene sizes="(min-width: 1100px) 300px, 180px" />
             </div>
             <div className={styles.balanceTop}>
-              <span>총 원화 잔액</span>
-              <span className={styles.currency}>원화 지갑</span>
+              <span>사용 가능</span>
+              <span className={styles.currency}>원화</span>
             </div>
             <Amount
               hero
               value={
                 balanceKnown
-                  ? formatKrw(krw.balanceAtomic)
+                  ? formatKrw(krw.availableAtomic)
                   : balanceState === "error"
                     ? "확인할 수 없음"
                     : "아직 지갑 내역이 없어요"
@@ -193,13 +194,13 @@ export function WalletOverviewView({
             <p>
               {balanceKnown ? (
                 <>
-                  출금 보류 <b>{formatKrw(krw.heldAtomic)}</b> · 보류 금액은
-                  출금할 수 없어요.
+                  보류 {formatKrw(krw.heldAtomic)} · 보류 금액은 출금할 수
+                  없어요.
                 </>
               ) : balanceState === "error" ? (
                 "연결을 확인한 뒤 다시 시도해 주세요."
               ) : (
-                "입출금이나 확정된 보상이 생기면 이곳에 표시돼요."
+                "입금·출금·확정 보상이 생기면 이곳에 표시돼요."
               )}
             </p>
             {balanceState === "error" ? (
@@ -247,11 +248,14 @@ export function WalletOverviewView({
               <span aria-hidden="true">›</span>
             </Link>
           </div>
+          <p className={styles.depositHint}>
+            USDT는 수동 입금이에요. USDT 잔액이 생기지 않아요.
+          </p>
         </div>
       </section>
       <div className={styles.content}>
         <div className={styles.main}>
-          <nav className={styles.tabs} aria-label="지갑 내역 선택">
+          <nav className={styles.tabs} aria-label="추가 확인" data-wallet-secondary-nav>
             {(["principal", "profit", "history"] as const).map(
               (view, index) => (
                 <Link
@@ -273,7 +277,7 @@ export function WalletOverviewView({
                       index === 0 ? "coins" : index === 1 ? "profit" : "history"
                     }
                   />
-                  {["원금", "수익", "거래내역"][index]}
+                  {["원금", "수익", "내역"][index]}
                 </Link>
               ),
             )}
@@ -340,70 +344,62 @@ export function WalletOverviewView({
               )}
             </section>
           ) : null}
-          <section
-            className={styles.history}
-            aria-labelledby="wallet-ledger-title"
-          >
-            <header>
-              <h2 id="wallet-ledger-title">최근 거래 내역</h2>
-              {activeView !== "history" ? (
-                <Link
-                  href="/wallet?view=history"
-                  prefetch={false}
-                  onClick={(event) => {
-                    event.preventDefault();
-                    selectView("history");
-                  }}
-                >
-                  전체보기 <span aria-hidden="true">›</span>
-                </Link>
-              ) : (
+          {activeView === "history" ? (
+            <section
+              className={styles.history}
+              aria-labelledby="wallet-ledger-title"
+              data-wallet-ledger-primary="false"
+            >
+              <header>
+                <h2 id="wallet-ledger-title">거래 내역</h2>
                 <small>최근 12건</small>
+              </header>
+              <div className={styles.tableHead} aria-hidden="true">
+                <span>거래</span>
+                <span>일시</span>
+                <span>금액</span>
+              </div>
+              {ledgerState === "error" ? (
+                <div className={styles.empty}>
+                  <p>거래 내역을 불러오지 못했어요.</p>
+                  <WalletReadRecovery label="거래 내역 다시 확인" />
+                </div>
+              ) : ledgerState === "ready" ? (
+                <ul className={styles.ledgerList}>
+                  {displayEntries.map((entry) => (
+                    <li
+                      key={entry.id}
+                      data-wallet-entry-direction={entry.direction}
+                    >
+                      <span className={styles.entryIcon}>
+                        <Icon
+                          kind={
+                            entry.direction === "CREDIT"
+                              ? "deposit"
+                              : "withdraw"
+                          }
+                        />
+                      </span>
+                      <strong>{labelWalletEntryType(entry.entryType)}</strong>
+                      <time dateTime={entry.createdAt}>
+                        {formatWalletEvidenceTime(entry.createdAt)}
+                      </time>
+                      <span className={styles.entryAmount}>
+                        {entry.direction === "CREDIT" ? "+" : "−"}
+                        {formatKrw(entry.amountAtomic)}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <div className={styles.empty}>
+                  <Icon kind="history" />
+                  <p>아직 거래 내역이 없어요.</p>
+                  <small>채굴 보상이나 입출금이 생기면 이곳에 표시돼요.</small>
+                </div>
               )}
-            </header>
-            <div className={styles.tableHead} aria-hidden="true">
-              <span>거래</span>
-              <span>일시</span>
-              <span>금액</span>
-            </div>
-            {ledgerState === "error" ? (
-              <div className={styles.empty}>
-                <p>거래 내역을 불러오지 못했어요.</p>
-                <WalletReadRecovery label="거래 내역 다시 확인" />
-              </div>
-            ) : ledgerState === "ready" ? (
-              <ul className={styles.ledgerList}>
-                {displayEntries.map((entry) => (
-                  <li
-                    key={entry.id}
-                    data-wallet-entry-direction={entry.direction}
-                  >
-                    <span className={styles.entryIcon}>
-                      <Icon
-                        kind={
-                          entry.direction === "CREDIT" ? "deposit" : "withdraw"
-                        }
-                      />
-                    </span>
-                    <strong>{labelWalletEntryType(entry.entryType)}</strong>
-                    <time dateTime={entry.createdAt}>
-                      {formatWalletEvidenceTime(entry.createdAt)}
-                    </time>
-                    <span className={styles.entryAmount}>
-                      {entry.direction === "CREDIT" ? "+" : "−"}
-                      {formatKrw(entry.amountAtomic)}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <div className={styles.empty}>
-                <Icon kind="history" />
-                <p>아직 거래 내역이 없어요.</p>
-                <small>채굴 보상이나 입출금이 생기면 이곳에 표시돼요.</small>
-              </div>
-            )}
-          </section>
+            </section>
+          ) : null}
           {activeView === "history" ? (
             <section
               className={styles.receipts}

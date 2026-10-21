@@ -16,12 +16,12 @@ import {
 
 import styles from "./member-menu-view.module.css";
 
+/** SIMPLIFIED_TRACK thin hub — events/AI demoted to settings lane. */
 const primaryDestinations = [
   "/menu/account",
   "/notifications",
-  "/events",
-  "/putduk-facts",
   "/support",
+  "/putduk-facts",
 ] as const;
 
 function MenuLanguageIcon() {
@@ -69,7 +69,9 @@ function MenuRow({ item }: { item: MenuItem }) {
         className={styles.row}
         href={item.href as Route}
         aria-label={`${item.label} ${item.description}`}
-        data-emphasis={item.href === "/ai" ? "help" : undefined}
+        data-emphasis={
+          item.demoted ? "demoted" : item.href === "/ai" ? "help" : undefined
+        }
       >
         <span className={styles.icon} aria-hidden="true">
           {item.href === "/events" ? (
@@ -121,7 +123,7 @@ export function MemberMenuView({ facts }: { facts: MemberScreenFacts }) {
             <br />A MORE VALUABLE TOMORROW
           </p>
           <p className={styles.introduction}>
-            내 정보와 소식, 필요한 도움을 한곳에서.
+            계정과 도움말만 모았어요.
           </p>
         </div>
         <div className={styles.heroBrand} aria-hidden="true">
