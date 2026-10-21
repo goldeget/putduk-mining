@@ -17,14 +17,10 @@ export default async function PutdukAiPage() {
           ownerUserId: identity.userId,
           displayName: facts.displayName,
           rankName: facts.rankName,
-          availableKrwLabel:
-            facts.availableKrwAtomic === null ||
-            !/^-?\d+$/.test(facts.availableKrwAtomic)
-              ? "확인할 수 없음"
-              : formatScreenKrw(
-                  facts.availableKrwAtomic,
-                  facts.walletUnavailable,
-                ).replace(/ KRW$/, "원"),
+          availableKrwLabel: formatScreenKrw(
+            facts.availableKrwAtomic,
+            facts.walletUnavailable,
+          ),
         }}
         pageTools={
           <>

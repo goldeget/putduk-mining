@@ -70,14 +70,14 @@ describe("owner-bound AI page facts", () => {
       rankName: null,
     });
     renderToStaticMarkup(await PutdukAiPage());
-    expect(capture.props?.pageFacts?.availableKrwLabel).toBe("확인할 수 없음");
+    expect(capture.props?.pageFacts?.availableKrwLabel).toBe("아직 없어요");
     expect(capture.props?.pageFacts?.rankName).toBeNull();
     vi.mocked(readMemberScreenFacts).mockResolvedValue({
       ...base,
       availableKrwAtomic: "not-an-atomic-amount",
     });
     renderToStaticMarkup(await PutdukAiPage());
-    expect(capture.props?.pageFacts?.availableKrwLabel).toBe("확인할 수 없음");
+    expect(capture.props?.pageFacts?.availableKrwLabel).toBe("아직 없어요");
   });
   it("retains failed-wallet unknown and never reads data before auth succeeds", async () => {
     vi.mocked(readMemberScreenFacts).mockResolvedValue({
@@ -89,7 +89,9 @@ describe("owner-bound AI page facts", () => {
       walletUnavailable: true,
     });
     renderToStaticMarkup(await PutdukAiPage());
-    expect(capture.props?.pageFacts?.availableKrwLabel).toBe("확인할 수 없음");
+    expect(capture.props?.pageFacts?.availableKrwLabel).toBe(
+      "확인할 수 없어요",
+    );
     vi.mocked(readMemberScreenFacts).mockClear();
     vi.mocked(requirePageUser).mockRejectedValue(new Error("AUTH_REDIRECT"));
     await expect(PutdukAiPage()).rejects.toThrow("AUTH_REDIRECT");
