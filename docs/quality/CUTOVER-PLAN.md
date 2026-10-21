@@ -1,40 +1,32 @@
-# Cutover plan — prep only (DO NOT EXECUTE)
+# Cutover plan — staging-named Workers on public hosts
 
 Date: `2026-10-21`
 Track: SIMPLIFIED_TRACK
 Account: Cloudflare `putduk-landing` `9dc502d4ef06b3b5374591de6e6933ca`
 Hosts: `mining.putduk.com`, `admin.mining.putduk.com`
 
-## Purpose
+## Current topology (as of 2026-10-21 owner-authorized deploy)
 
-Document the **future** staging → accepted production SHA switch.
-**This document does not authorize DNS changes, Worker activate-as-prod, or remote Supabase apply.**
+Public hosts already point at **staging-named** Workers:
 
-## Preconditions (all required before any cutover command)
+| Host | Worker |
+| --- | --- |
+| `mining.putduk.com` | `putduk-mining-web-staging` |
+| `admin.mining.putduk.com` | `putduk-mining-admin-staging` |
 
-1. Exact release candidate SHA reviewed and accepted by owner
-2. PR smoke (`ci.yml`) green ≤20m wall clock
-3. `.github/workflows/ci-full-e2e.yml` green on that exact SHA
-4. Kept-surface PRODUCT COMPLETE evidence for SIMPLIFIED_TRACK journeys
-5. Production coupling classified (not UNKNOWN) for the exact deploy target
-6. Rollback artifact/version IDs recorded
-7. Separate owner written approval naming: SHA, hosts, Worker IDs, rollback
+Owner authorized publishing an accepted develop SHA onto those Workers. That is the current meaning of “올리다” — not a separate `*-prod` Worker rename.
 
-## Planned steps (execution blocked until approval)
+Evidence pack: `docs/quality/CUTOVER-EVIDENCE-20261021.md`
+SHA served: `34650eeeb51897e09c57401ede1c014f9d3a8d07`
 
-1. Inventory current staging Worker/version bindings for both hosts
-2. Preserve DNS/email/security configuration (no zone transfer)
-3. Deploy accepted artifact to isolated staging verification if needed
-4. Switch host bindings only for the two platform hostnames
-5. Verify TLS, auth, critical smoke
-6. Hold remote Supabase apply as its own approval packet
+## Still separate (not done by that deploy)
 
-## Rollback (prep)
+1. Full authenticated E2E green on the exact SHA (`ci-full-e2e.yml`)
+2. Counsel wet-ink / attorney signature package (operational checklist only so far)
+3. Remote Supabase production apply
+4. Real payouts
+5. Renaming Workers to non-staging names (optional; not required for hosts to serve traffic)
 
-- Re-bind previous known-good Worker version IDs
-- Do not delete retained email/security DNS
-- Record exact timestamps and actors in the cutover evidence pack under authorized QA storage when approved
+## Rollback
 
-## Explicit stop
-
-Until the owner names the exact SHA and says to execute cutover, agents **stop here**.
+Re-bind previous known-good Worker version IDs recorded in the evidence pack. Do not delete retained email/security DNS.
