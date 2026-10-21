@@ -12,20 +12,20 @@ import { createLocalServiceRoleClient } from "./helpers/eligibility";
 import { grantNamedAdminRole } from "./helpers/admin-kyc-ui";
 
 const EXPECTED_OPERATOR_DESTINATIONS = [
-  ["/", "오늘의 퍼뜩"],
-  ["/assistant", "운영 도우미"],
-  ["/deposits/usdt", "USDT 입금 확인"],
-  ["/deposits/krw", "원화 입금 확인"],
+  ["/deposits/krw", "원화 입금"],
+  ["/deposits/usdt", "USDT 입금"],
   ["/withdrawals/krw-bank", "계좌 출금"],
   ["/withdrawals/usdt", "USDT 출금"],
-  ["/kyc", "본인 확인 검토"],
-  ["/exceptions", "정산·대사 예외"],
-  ["/restrictions", "제한·안전 모드"],
+  ["/exceptions", "예외 처리"],
+  ["/members", "회원 조회"],
+  ["/kyc", "본인 확인"],
+  ["/", "오늘의 퍼뜩"],
+  ["/restrictions", "제한·안전"],
   ["/economy", "채굴 정책"],
   ["/catalog", "상품 검토"],
-  ["/members", "회원 종합 정보"],
-  ["/ai-conversations", "회원 AI 대화"],
   ["/content", "이벤트·공지"],
+  ["/ai-conversations", "회원 AI 기록"],
+  ["/assistant", "운영 도우미"],
 ] as const;
 
 test.describe("admin Member 360 product states", () => {
@@ -125,7 +125,7 @@ test.describe("admin Member 360 product states", () => {
         await expect(menu).toHaveAttribute("aria-expanded", "false");
         await expect(navigation).toBeHidden();
         await menu.click();
-        await navigation.getByRole("link", { name: /회원 종합 정보/ }).click();
+        await navigation.getByRole("link", { name: /회원 조회/ }).click();
         await expect(page).toHaveURL(`${ADMIN_ORIGIN}/members`);
         await expect(menu).toHaveAttribute("aria-expanded", "false");
         await expect(heading).toBeInViewport();
