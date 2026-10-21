@@ -343,7 +343,9 @@ describe("facts are formatted server facts, not economics", () => {
       expect(facts.today).toBe("일별 합계 없음");
       expect(facts.committed).toBe("아직 없어요");
     }
-    for (const value of Object.values(presentMiningReferenceFacts(funded(), true)))
+    for (const value of Object.values(
+      presentMiningReferenceFacts(funded(), true),
+    ))
       expect(value).toBe("확인할 수 없어요");
     const current = funded();
     expect(

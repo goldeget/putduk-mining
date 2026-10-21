@@ -61,10 +61,7 @@ export default async function ProductHomePage() {
     !fundedUnavailable && fundedDisplay?.available
       ? fundedDisplay.funded_runtime
       : null;
-  const miningFacts = presentHomeMiningFacts(
-    fundedRuntime,
-    fundedUnavailable,
-  );
+  const miningFacts = presentHomeMiningFacts(fundedRuntime, fundedUnavailable);
   const fundingFacts = presentHomeFundingFacts(
     fundedDisplay,
     fundedUnavailable,

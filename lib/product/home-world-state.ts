@@ -203,10 +203,10 @@ export function presentHomeMiningFacts(
   return {
     today: noDailyHomeAggregate,
     committedTotal: runtime
-      ? formatAtomicAmount(runtime.committed_reward_total_atomic, "KRW").replace(
-          / KRW$/,
-          "원",
-        )
+      ? formatAtomicAmount(
+          runtime.committed_reward_total_atomic,
+          "KRW",
+        ).replace(/ KRW$/, "원")
       : emptyHomeFact,
   };
 }

@@ -126,8 +126,7 @@ export function SignupExperience({ children }: { children?: ReactNode }) {
       </div>
       <footer className={styles.footer}>
         <span>
-          PUTDUK MINING{" "}
-          <small>기술이 만드는 더 가치 있는 내일</small>
+          PUTDUK MINING <small>기술이 만드는 더 가치 있는 내일</small>
         </span>
         <nav aria-label="가입 도움말">
           <a href="#signup-consents">가입 동의 보기</a>

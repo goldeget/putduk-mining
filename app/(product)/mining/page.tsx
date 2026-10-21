@@ -465,118 +465,118 @@ export default async function MiningPage() {
                 <PutdukIcon name="arrow-right" size={14} />
               </Link>
             </header>
-          {accountError || rewardError ? (
-            <div className={styles.recordState} role="status">
-              <p>채굴 내역을 불러오지 못했어요.</p>
-              <RouteReloadButton label="채굴 내역 다시 확인" />
-            </div>
-          ) : !krwAccount ? (
-            <p className={styles.recordState}>
-              표시할 채굴 지갑이 아직 없어요.
-            </p>
-          ) : rewardEntries?.length ? (
-            <ul className={styles.history}>
-              {rewardEntries.map((entry) => (
-                <li key={entry.id}>
-                  <time dateTime={entry.created_at}>
-                    {formatWalletEvidenceTime(entry.created_at)}
-                  </time>
-                  <span>채굴 보상</span>
-                  <strong>{historyAmount(entry.amount_atomic, "KRW")}</strong>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className={styles.recordState}>
-              확정된 채굴 내역이 아직 없어요.
-            </p>
-          )}
-        </section>
-        <section
-          className={styles.recordCard}
-          aria-labelledby="mining-transactions-title"
-        >
-          <header>
-            <h2 id="mining-transactions-title">
-              <PutdukHomeIcon name="ledger" size={24} />
-              최근 거래 내역
-            </h2>
-            <Link href="/wallet?view=history" prefetch={false}>
-              전체 보기
-              <PutdukIcon name="arrow-right" size={14} />
-            </Link>
-          </header>
-          {receiptsError ? (
-            <div className={styles.recordState} role="status">
-              <p>거래 내역을 불러오지 못했어요.</p>
-              <RouteReloadButton label="거래 내역 다시 확인" />
-            </div>
-          ) : receipts?.length ? (
-            <ul className={styles.history}>
-              {receipts.map((receipt) => (
-                <li key={receipt.id}>
-                  <time dateTime={receipt.requested_at}>
-                    {formatWalletEvidenceTime(receipt.requested_at)}
-                  </time>
-                  <span>
-                    {labelWalletReceiptType(receipt.transaction_type)}
-                    <small>
-                      {walletReceiptStatusLabels[receipt.status] ??
-                        "상태 확인 중"}
-                    </small>
-                  </span>
-                  <strong>
-                    {historyAmount(receipt.amount_atomic, receipt.currency)}
-                  </strong>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className={styles.recordState}>
-              접수된 거래 내역이 아직 없어요.
-            </p>
-          )}
-        </section>
-        <section
-          className={styles.recordCard}
-          aria-labelledby="mining-information-title"
-        >
-          <header>
-            <h2 id="mining-information-title">
-              <PutdukHomeIcon name="cube" size={24} />
-              채굴 상세 정보
-            </h2>
-            <Link href="/products/allocation">
-              배분 보기
-              <PutdukIcon name="arrow-right" size={14} />
-            </Link>
-          </header>
-          <dl className={styles.detailFacts} aria-label="채굴 기간">
-            <div>
-              <dt>기간</dt>
-              <dd>{facts.period}</dd>
-            </div>
-            {!liveSnapshot ? (
-              <div>
-                <dt>확정 채굴 합계</dt>
-                <dd>{facts.committed}</dd>
+            {accountError || rewardError ? (
+              <div className={styles.recordState} role="status">
+                <p>채굴 내역을 불러오지 못했어요.</p>
+                <RouteReloadButton label="채굴 내역 다시 확인" />
               </div>
-            ) : null}
-            {!liveSnapshot ? (
-              <div>
-                <dt>정산 전</dt>
-                <dd>{facts.pending}</dd>
+            ) : !krwAccount ? (
+              <p className={styles.recordState}>
+                표시할 채굴 지갑이 아직 없어요.
+              </p>
+            ) : rewardEntries?.length ? (
+              <ul className={styles.history}>
+                {rewardEntries.map((entry) => (
+                  <li key={entry.id}>
+                    <time dateTime={entry.created_at}>
+                      {formatWalletEvidenceTime(entry.created_at)}
+                    </time>
+                    <span>채굴 보상</span>
+                    <strong>{historyAmount(entry.amount_atomic, "KRW")}</strong>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className={styles.recordState}>
+                확정된 채굴 내역이 아직 없어요.
+              </p>
+            )}
+          </section>
+          <section
+            className={styles.recordCard}
+            aria-labelledby="mining-transactions-title"
+          >
+            <header>
+              <h2 id="mining-transactions-title">
+                <PutdukHomeIcon name="ledger" size={24} />
+                최근 거래 내역
+              </h2>
+              <Link href="/wallet?view=history" prefetch={false}>
+                전체 보기
+                <PutdukIcon name="arrow-right" size={14} />
+              </Link>
+            </header>
+            {receiptsError ? (
+              <div className={styles.recordState} role="status">
+                <p>거래 내역을 불러오지 못했어요.</p>
+                <RouteReloadButton label="거래 내역 다시 확인" />
               </div>
-            ) : null}
-            <div>
-              <dt>현재 상태</dt>
-              <dd>{presentation.label}</dd>
-            </div>
-          </dl>
-          <p className={styles.detailNote}>
-            정산 전 금액은 사용 가능 잔액과 달라요.
-          </p>
-        </section>
+            ) : receipts?.length ? (
+              <ul className={styles.history}>
+                {receipts.map((receipt) => (
+                  <li key={receipt.id}>
+                    <time dateTime={receipt.requested_at}>
+                      {formatWalletEvidenceTime(receipt.requested_at)}
+                    </time>
+                    <span>
+                      {labelWalletReceiptType(receipt.transaction_type)}
+                      <small>
+                        {walletReceiptStatusLabels[receipt.status] ??
+                          "상태 확인 중"}
+                      </small>
+                    </span>
+                    <strong>
+                      {historyAmount(receipt.amount_atomic, receipt.currency)}
+                    </strong>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className={styles.recordState}>
+                접수된 거래 내역이 아직 없어요.
+              </p>
+            )}
+          </section>
+          <section
+            className={styles.recordCard}
+            aria-labelledby="mining-information-title"
+          >
+            <header>
+              <h2 id="mining-information-title">
+                <PutdukHomeIcon name="cube" size={24} />
+                채굴 상세 정보
+              </h2>
+              <Link href="/products/allocation">
+                배분 보기
+                <PutdukIcon name="arrow-right" size={14} />
+              </Link>
+            </header>
+            <dl className={styles.detailFacts} aria-label="채굴 기간">
+              <div>
+                <dt>기간</dt>
+                <dd>{facts.period}</dd>
+              </div>
+              {!liveSnapshot ? (
+                <div>
+                  <dt>확정 채굴 합계</dt>
+                  <dd>{facts.committed}</dd>
+                </div>
+              ) : null}
+              {!liveSnapshot ? (
+                <div>
+                  <dt>정산 전</dt>
+                  <dd>{facts.pending}</dd>
+                </div>
+              ) : null}
+              <div>
+                <dt>현재 상태</dt>
+                <dd>{presentation.label}</dd>
+              </div>
+            </dl>
+            <p className={styles.detailNote}>
+              정산 전 금액은 사용 가능 잔액과 달라요.
+            </p>
+          </section>
 
           {runtime ? <FundedRuntimeSummary runtime={runtime} /> : null}
 

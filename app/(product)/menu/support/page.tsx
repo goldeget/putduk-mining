@@ -1,6 +1,9 @@
 import Link from "next/link";
 
-import { PutdukIcon, type PutdukIconName } from "@/components/icons/putduk-icon";
+import {
+  PutdukIcon,
+  type PutdukIconName,
+} from "@/components/icons/putduk-icon";
 import { SupportStartButton } from "@/components/support/support-runtime";
 import { START_WELCOME_STATEMENTS } from "@/lib/trust/public-content";
 
@@ -79,7 +82,10 @@ export default function MemberSupportPage() {
         </ul>
       </section>
 
-      <section className={styles.notice} aria-labelledby="member-support-security">
+      <section
+        className={styles.notice}
+        aria-labelledby="member-support-security"
+      >
         <PutdukIcon name="shield" size={20} />
         <div>
           <h2 id="member-support-security">보안 안내</h2>
