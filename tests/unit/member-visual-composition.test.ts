@@ -46,13 +46,15 @@ describe("회원 화면 구도", () => {
     expect(walletCss).toMatch(/border-style:\s*dashed/);
   });
 
-  it("홈은 회원 표시값과 공개 상품만 두고 목업 금액을 넣지 않는다", () => {
+  it("홈은 브랜드·한 줄·채굴 CTA·확인된 잔액만 두고 목업·상품 peer CTA를 넣지 않는다", () => {
     expect(homePage).toContain("readMemberScreenFacts");
-    expect(homePage).toContain("getPublishedCatalog");
+    expect(homePage).toContain('data-launch-surface="simplified-track"');
     expect(homePage).toContain("사용 가능 원화");
-    expect(homePage).toContain("오늘 채굴");
-    expect(homePage).toContain("아직 없어요");
-    expect(homePage).toContain("공개된 상품이 아직 없어요");
+    expect(homePage).toContain("채굴 버튼만 누르면");
+    expect(homePage).toContain("data-home-primary-cta");
+    expect(homePage).not.toContain("getPublishedCatalog");
+    expect(homePage).not.toContain("공개된 상품이 아직 없어요");
+    expect(homePage).not.toContain('<PutdukAiDock presentation="inline" />');
     expect(homePage).not.toMatch(/54[,.]?281|5,000,000|12\.8%|\+11\.4%|L5 PRO/);
     expect(homePage).not.toMatch(
       /대기 수익|원금\s*\+|정산 전\s*\+|확인 전\s*\+/,
@@ -60,16 +62,10 @@ describe("회원 화면 구도", () => {
     expect(homePage).toMatch(
       /presentHomeFundingFacts\(\s*fundedDisplay,\s*fundedUnavailable,?\s*\)/s,
     );
-    expect(homePage).toContain("fundingFacts.principal");
     expect(homePage).toContain("fundingFacts.remainingCapacity");
-    expect(homePage).toContain("className={styles.featureBand}");
-    expect(homePage).toContain('<PutdukAiDock presentation="inline" />');
     expect(homePage).toContain("<SemiconductorTowerScene");
     expect(homePage).not.toContain("<MiningCore");
-    expect(homePage).toContain('<Link href="/notifications">전체 보기</Link>');
-    expect(homePage).toMatch(/<Link href="\/products">/);
-    expect(homePage).toContain("상품 보기");
-    expect(homePage.match(/>전체 보기</g)).toHaveLength(1);
+    expect(homePage).not.toMatch(/<Link href="\/products">/);
     expect(homeCss).toMatch(
       /\.hero\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1fr\)/s,
     );
@@ -77,43 +73,10 @@ describe("회원 화면 구도", () => {
       homePage.indexOf("<div className={styles.livingWorld}>"),
     );
     expect(homeCss).not.toMatch(/\.livingWorld\s*\{[^}]*\n\s*height:\s*\d+px/s);
-    expect(homeCss).toMatch(
-      /\.summaryGrid\s*\{[^}]*grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\)/s,
-    );
-
-    const quickActions = homePage.slice(
-      homePage.indexOf("<nav className={styles.quickActions}"),
-      homePage.indexOf(
-        "</nav>",
-        homePage.indexOf("<nav className={styles.quickActions}"),
-      ),
-    );
-    const primaryActions = quickActions.slice(
-      quickActions.indexOf("data-home-primary-actions"),
-      quickActions.indexOf("</div>"),
-    );
-    // The theme substitutes the fourth action; all three money/mining links
-    // stay navigable, and the dialog launcher is outside the four-action group.
-    const hrefs = [...primaryActions.matchAll(/href="([^"]+)"/g)].map(
-      (match) => match[1],
-    );
-    expect(hrefs).toEqual([
-      "/mining",
-      "/wallet/deposit",
-      "/wallet/withdraw",
-      "/events",
-      "/wallet?view=history",
-    ]);
-    expect(primaryActions).not.toContain("PutdukAiDock");
-    expect(quickActions.indexOf("<PutdukAiDock")).toBeGreaterThan(
-      quickActions.indexOf("</div>"),
-    );
-    expect(homeCss).not.toMatch(/\.quickActions\s*\{[^}]*auto-fit/s);
-    expect(homeCss).toMatch(/\.profileStats\s*\{/);
-    expect(homeCss).toMatch(/\.featureBand\s*\{/);
-    expect(homeCss).toMatch(
-      /\.welcomeTitle span\s*\{[^}]*overflow-wrap:\s*anywhere/s,
-    );
+    expect(homePage).toContain('href="/mining"');
+    expect(homePage).toContain('href="/wallet"');
+    expect(homePage).toContain('href="/wallet/deposit"');
+    expect(homePage).toContain("className={styles.simplifiedSecondary}");
   });
 
   it("더보기는 실제 회원 정보와 데스크톱 두 열 메뉴를 같이 둔다", () => {

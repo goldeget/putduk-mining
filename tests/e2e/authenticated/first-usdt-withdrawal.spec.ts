@@ -130,7 +130,7 @@ test.describe("first USDT_ADDRESS welcome withdrawal", () => {
     });
     expect(await countExternalSends(held!.id)).toBe(1);
 
-    await page.goto("/wallet");
+    await page.goto("/wallet?view=history");
     await expect(page.getByText("PUTDUK START 전환").first()).toBeVisible();
     await expect(page.getByText(/USDT 잔액/)).toHaveCount(0);
   });
