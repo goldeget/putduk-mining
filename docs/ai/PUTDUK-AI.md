@@ -162,6 +162,8 @@ Fallback is permitted only before accepted answer text for network, first-token 
 Example configuration names for a separately admitted non-production runtime; never commit actual values:
 
 ```dotenv
+APP_ENV=staging
+AI_PROVIDER_DISPATCH_ENABLED=true
 AI_PROVIDER=nvidia
 AI_API_KEY=<server-only-approved-NVIDIA-key>
 AI_MODEL_LOW_COST=openai/gpt-oss-20b
@@ -173,6 +175,8 @@ AI_MAX_REQUESTS_PER_MINUTE=5
 AI_MAX_REQUESTS_PER_DAY=100
 AI_CACHE_TTL_SECONDS=3600
 ```
+
+`AI_PROVIDER_DISPATCH_ENABLED` must be the exact string `true`. Omit it or leave it empty for static + owned-tool answers only. `APP_ENV=production` is rejected in `lib/ai/dispatch-admission.ts` even when the switch is on. Member IA may hide `/ai` from primary nav (SIMPLIFIED_TRACK); the deep route remains available when dispatch is admitted in non-production.
 
 `NVIDIA_API_KEY` is an alias for `AI_API_KEY`; if both are set they must match. `AI_MODEL_HIGH_CAPABILITY` remains a legacy schema field and does not override the fixed current chain. Output tokens and first-token bounds are validated in `lib/env/server.ts`; member requests are atomically capped at five per minute and 100 per rolling 24 hours across providers. The OpenRouter free admission has separate durable per-user counting within the same ceilings. These are application ceilings, not external-provider quota or cost guarantees.
 
