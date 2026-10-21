@@ -316,12 +316,12 @@ describe("mining reference presentation source boundary", () => {
 });
 
 describe("facts are formatted server facts, not economics", () => {
-  it("keeps unknown daily total, exact large accepted sum and server 0.5 multiplier", () => {
+  it("keeps no daily aggregate, exact large accepted sum and server 0.5 multiplier", () => {
     const facts = presentMiningReferenceFacts(funded());
     expect(facts).toMatchObject({
       principal: "5,000,000원",
       tier: "L5",
-      today: "확인할 수 없어요",
+      today: "일별 합계 없음",
       speed: "0.5배",
       pending: "250원",
       committed: "9,876,543,210,987,654,321원",
@@ -332,17 +332,19 @@ describe("facts are formatted server facts, not economics", () => {
   it("never presents the legacy policy multiplier as the missing paid current speed", () => {
     const current = { ...funded() };
     delete current.funded_runtime;
-    expect(presentMiningReferenceFacts(current).speed).toBe("확인할 수 없어요");
+    expect(presentMiningReferenceFacts(current).speed).toBe("아직 없어요");
   });
-  it("does not show absent, failed or nullable financial facts as zero", () => {
+  it("uses empty labels for absent data and unread only on failed reads", () => {
     for (const facts of [
       presentMiningReferenceFacts(null),
       presentMiningReferenceFacts(emptyMiningServerDisplay),
-      presentMiningReferenceFacts(funded(), true),
     ]) {
-      for (const value of Object.values(facts))
-        expect(value).toBe("확인할 수 없어요");
+      expect(facts.principal).toBe("아직 없어요");
+      expect(facts.today).toBe("일별 합계 없음");
+      expect(facts.committed).toBe("아직 없어요");
     }
+    for (const value of Object.values(presentMiningReferenceFacts(funded(), true)))
+      expect(value).toBe("확인할 수 없어요");
     const current = funded();
     expect(
       presentMiningReferenceFacts({
@@ -352,9 +354,9 @@ describe("facts are formatted server facts, not economics", () => {
         pending_micro_krw: null,
       }),
     ).toMatchObject({
-      principal: "확인할 수 없어요",
-      remaining: "확인할 수 없어요",
-      pending: "확인할 수 없어요",
+      principal: "아직 없어요",
+      remaining: "아직 없어요",
+      pending: "아직 없어요",
       committed: "9,876,543,210,987,654,321원",
     });
   });
@@ -362,10 +364,10 @@ describe("facts are formatted server facts, not economics", () => {
 
 describe("independent START proof", () => {
   it.each([
-    ["READY", "PUTDUK START 확인"],
-    ["ACTIVE", "START 계속하기"],
-    ["COMPLETED", "START 결과 보기"],
-    ["EXPIRED", "START 결과 보기"],
+    ["READY", "체험 채굴 확인"],
+    ["ACTIVE", "체험 계속하기"],
+    ["COMPLETED", "체험 결과 보기"],
+    ["EXPIRED", "체험 결과 보기"],
   ])(
     "uses verified %s without changing paid permission",
     (status, actionLabel) => {
@@ -386,7 +388,7 @@ describe("independent START proof", () => {
     for (const status of [null, undefined, "FUTURE_STATE", "UNAVAILABLE"])
       expect(presentMiningTrial(status)).toMatchObject({
         known: false,
-        actionLabel: "START 상태 다시 확인",
+        actionLabel: "체험 상태 다시 확인",
       });
     expect(presentMiningTrial("ACTIVE", true)).toMatchObject({ known: false });
   });

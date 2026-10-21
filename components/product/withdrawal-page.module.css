@@ -46,6 +46,22 @@
   margin-block-end: 2rem;
 }
 
+.hero[data-withdraw-hero="compact"] {
+  min-block-size: 11rem;
+}
+
+.hero[data-withdraw-hero="compact"] .scene {
+  inline-size: 42%;
+  opacity: 0.45;
+}
+
+.principalLead {
+  margin: 0.75rem 0 1rem;
+  max-inline-size: 36rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
 .scene {
   position: absolute;
   z-index: -1;

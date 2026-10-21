@@ -35,7 +35,7 @@ const topics: readonly {
   },
   {
     icon: "spark",
-    title: "PUTDUK START",
+    title: "체험 채굴",
     body: [
       "앱을 닫아도 채굴은 계속돼요.",
       "다시 접속하면 결과를 확인할 수 있어요.",

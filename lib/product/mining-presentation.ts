@@ -116,37 +116,77 @@ export function resolveMiningPresentation(input: {
   };
 }
 
-/** Select existing server display strings. No daily aggregate, rate, or capacity ratio is derived. */
+const unreadFact = "확인할 수 없어요";
+const emptyFact = "아직 없어요";
+/** Server DTO has no daily reward aggregate; never imply a failed money read. */
+const noDailyAggregate = "일별 합계 없음";
+
+function unreadMiningFacts() {
+  return {
+    principal: unreadFact,
+    tier: unreadFact,
+    today: unreadFact,
+    capacity: unreadFact,
+    used: unreadFact,
+    remaining: unreadFact,
+    speed: unreadFact,
+    period: unreadFact,
+    pending: unreadFact,
+    committed: unreadFact,
+  };
+}
+
+function emptyMiningFacts() {
+  return {
+    principal: emptyFact,
+    tier: emptyFact,
+    today: noDailyAggregate,
+    capacity: emptyFact,
+    used: emptyFact,
+    remaining: emptyFact,
+    speed: emptyFact,
+    period: emptyFact,
+    pending: emptyFact,
+    committed: emptyFact,
+  };
+}
+
+/**
+ * Select existing server display strings.
+ * Empty successful reads use honest empty labels; only failed reads use unread.
+ * No daily aggregate, rate, or capacity ratio is derived.
+ */
 export function presentMiningReferenceFacts(
   display: MiningServerDisplay | null,
   error = false,
 ) {
-  const ready = !error && display?.available ? display : null;
-  const view = ready ? presentMiningServerDisplay(ready) : null;
-  const value = (label: string, proof: unknown) =>
-    proof == null || view?.state !== "ready"
-      ? "확인할 수 없어요"
-      : (view.rows.find((row) => row.label === label)?.value ??
-        "확인할 수 없어요");
+  if (error) return unreadMiningFacts();
+  if (!display?.available) return emptyMiningFacts();
+  const view = presentMiningServerDisplay(display);
+  if (view.state !== "ready") return emptyMiningFacts();
+  const value = (label: string, proof: unknown) => {
+    if (proof == null) return emptyFact;
+    return view.rows.find((row) => row.label === label)?.value ?? emptyFact;
+  };
   return {
-    principal: value("인정 원금", ready?.eligible_principal_micro_krw),
-    tier: ready
-      ? value("등급", ready.tier_activated ? ready.tier_code : false)
-      : "확인할 수 없어요",
-    today: "확인할 수 없어요",
-    capacity: value("이번 한도", ready?.effective_capacity_micro_krw),
-    used: value("사용한 한도", ready?.used_capacity_micro_krw),
-    remaining: value("남은 한도", ready?.remaining_capacity_micro_krw),
+    principal: value("인정 원금", display.eligible_principal_micro_krw),
+    tier: value("등급", display.tier_activated ? display.tier_code : false),
+    today: noDailyAggregate,
+    capacity: value("이번 한도", display.effective_capacity_micro_krw),
+    used: value("사용한 한도", display.used_capacity_micro_krw),
+    remaining: value("남은 한도", display.remaining_capacity_micro_krw),
     speed: value(
       "속도",
-      ready?.funded_runtime?.schema_version === 2 ? ready.funded_runtime : null,
+      display.funded_runtime?.schema_version === 2
+        ? display.funded_runtime
+        : null,
     ),
     period: value(
       "기간",
-      (ready?.cycle_started_at && ready?.cycle_end) || null,
+      (display.cycle_started_at && display.cycle_end) || null,
     ),
-    pending: value("정산 전", ready?.pending_micro_krw),
-    committed: value("채굴 확정 누계", ready?.funded_runtime),
+    pending: value("정산 전", display.pending_micro_krw),
+    committed: value("채굴 확정 누계", display.funded_runtime),
   };
 }
 
@@ -162,11 +202,11 @@ export function presentMiningTrial(
     known,
     presentation: presentTrialStatus(known ? status : undefined),
     actionLabel: !known
-      ? "START 상태 다시 확인"
+      ? "체험 상태 다시 확인"
       : status === "ACTIVE"
-        ? "START 계속하기"
+        ? "체험 계속하기"
         : status === "READY"
-          ? "PUTDUK START 확인"
-          : "START 결과 보기",
+          ? "체험 채굴 확인"
+          : "체험 결과 보기",
   };
 }

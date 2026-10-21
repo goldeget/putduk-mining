@@ -64,8 +64,8 @@ export function RouteBrandHeader({
           퍼뜩 <span>채굴</span>
         </strong>
         <small>
-          TECHNOLOGY CREATES
-          <br />A MORE VALUABLE TOMORROW
+          기술이 만드는
+          <br />더 가치 있는 내일
         </small>
       </Link>
       <div className={styles.tools}>
@@ -147,8 +147,8 @@ export function RouteBrandSidebar({
         </p>
         <strong>퍼뜩 채굴</strong>
         <small>
-          TECHNOLOGY CREATES
-          <br />A MORE VALUABLE TOMORROW
+          기술이 만드는
+          <br />더 가치 있는 내일
         </small>
       </div>
     </>

@@ -238,114 +238,6 @@ export default async function MiningPage() {
             />
             <h2>{presentation.title}</h2>
             <p>{presentation.lead}</p>
-            {selectedArt ? (
-              <p data-member-scene-binding="confirmed-allocation">
-                선택 상품 테마 · {selectedArt.nameKo}
-              </p>
-            ) : null}
-          </div>
-          <div className={styles.tierCard}>
-            <PutdukHomeIcon name="crown" size={38} />
-            <div>
-              <span>현재 등급</span>
-              <strong>{facts.tier}</strong>
-              <small>확인된 채굴 원금 기준</small>
-            </div>
-            <Link
-              href="/wallet"
-              aria-label="지갑에서 확정 금액 보기"
-              prefetch={false}
-            >
-              <PutdukIcon name="arrow-right" size={18} />
-            </Link>
-          </div>
-          <dl className={styles.mainFacts}>
-            <div>
-              <dt>
-                <PutdukHomeIcon name="coins" size={35} />
-                <span>채굴 원금</span>
-              </dt>
-              <dd>
-                <FactValue value={facts.principal} />
-              </dd>
-            </div>
-            <div>
-              <dt>
-                <PutdukHomeIcon name="chart" size={35} />
-                <span>오늘 채굴</span>
-              </dt>
-              <dd>
-                <FactValue value={facts.today} />
-              </dd>
-            </div>
-          </dl>
-          <section
-            className={styles.capacity}
-            aria-labelledby="mining-capacity-title"
-          >
-            <h2 id="mining-capacity-title">
-              <PutdukHomeIcon name="capacity" size={25} />
-              채굴 용량
-            </h2>
-            {liveSnapshot && publicEnv ? (
-              <MiningLiveSummary
-                ownerId={identity.userId}
-                initialSnapshot={liveSnapshot}
-                authConfig={{
-                  url: publicEnv.NEXT_PUBLIC_SUPABASE_URL,
-                  publishableKey:
-                    publicEnv.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
-                }}
-              />
-            ) : (
-              <>
-                <dl>
-                  <div className={styles.capacityLead}>
-                    <dt>남은 한도</dt>
-                    <dd>
-                      <FactValue value={facts.remaining} />
-                    </dd>
-                  </div>
-                  <div>
-                    <dt>사용한 한도</dt>
-                    <dd>{facts.used}</dd>
-                  </div>
-                  <div>
-                    <dt>이번 한도</dt>
-                    <dd>{facts.capacity}</dd>
-                  </div>
-                </dl>
-                {capacityProgress ? (
-                  <div className={styles.capacityProgress}>
-                    <progress
-                      aria-label="채굴 한도 사용률"
-                      aria-valuetext={capacityProgress.usedLabel}
-                      max={10_000}
-                      value={capacityProgress.usedBps}
-                    />
-                    <small>{capacityProgress.usedLabel}</small>
-                  </div>
-                ) : null}
-              </>
-            )}
-          </section>
-          <div className={styles.speedCard}>
-            <PutdukHomeIcon name="bolt" size={34} />
-            <dl aria-label="채굴 속도" data-amount-weight="speed">
-              <dt>
-                {presentation.source === "funded" && !presentation.running
-                  ? "설정된 속도"
-                  : "현재 속도"}
-              </dt>
-              <dd>
-                <FactValue value={facts.speed} />
-              </dd>
-            </dl>
-            <p>
-              {presentation.source === "funded" && !presentation.running
-                ? "현재 채굴은 멈췄어요."
-                : "채굴 속도에 적용하는 배수예요."}
-            </p>
           </div>
           <div className={styles.actions}>
             {presentation.action === "reload" ? (
@@ -391,21 +283,10 @@ export default async function MiningPage() {
               </Link>
             )}
           </div>
-          {presentation.source === "legacy" && currentSession ? (
-            <dl className={styles.legacyFacts}>
-              <div>
-                <dt>정산 전 경과</dt>
-                <dd>{formatMiningElapsed(currentSession.unsettled_seconds)}</dd>
-              </div>
-              <div>
-                <dt>활성 장비</dt>
-                <dd>{currentSession.active_equipment_count}개</dd>
-              </div>
-              <div>
-                <dt>최근 정산</dt>
-                <dd>{formatMiningClock(currentSession.last_settled_at)}</dd>
-              </div>
-            </dl>
+          {!displayError && facts.principal !== "아직 없어요" ? (
+            <p className={styles.detailNote}>
+              확인된 원금 <FactValue value={facts.principal} />
+            </p>
           ) : null}
         </section>
       </section>
@@ -426,56 +307,164 @@ export default async function MiningPage() {
         />
       ) : null}
 
-      {presentation.source === "unknown" || presentation.source === "funded" ? (
-        <section
-          className={styles.trialCard}
-          aria-labelledby="mining-start-title"
-        >
-          <div>
-            <h2 id="mining-start-title">
-              PUTDUK START{" "}
-              <ProductStatusPill
-                label={trialView.presentation.label}
-                tone={trialView.presentation.tone}
-              />
-            </h2>
-            <p>체험과 실제 채굴은 따로 표시해요.</p>
-          </div>
-          {trialView.known ? (
-            <Link href="/start">
-              {trialView.actionLabel}
-              <PutdukIcon name="arrow-right" size={16} />
-            </Link>
-          ) : (
-            <div
-              className={styles.trialRecovery}
-              role="group"
-              aria-label={trialView.actionLabel}
+      <details className={styles.details} id="putduk-mining-more">
+        <summary className={styles.summary}>한도·등급·내역 더 보기</summary>
+        <div className={styles.detailContent}>
+          {presentation.source === "unknown" ||
+          presentation.source === "funded" ? (
+            <section
+              className={styles.trialCard}
+              aria-labelledby="mining-start-title"
             >
-              <RouteReloadButton
-                label="다시 확인"
-                className="button button--secondary"
-              />
-            </div>
-          )}
-        </section>
-      ) : null}
+              <div>
+                <h2 id="mining-start-title">
+                  체험 채굴{" "}
+                  <ProductStatusPill
+                    label={trialView.presentation.label}
+                    tone={trialView.presentation.tone}
+                  />
+                </h2>
+                <p>체험과 실제 채굴은 따로 표시해요.</p>
+              </div>
+              {trialView.known ? (
+                <Link href="/start">
+                  {trialView.actionLabel}
+                  <PutdukIcon name="arrow-right" size={16} />
+                </Link>
+              ) : (
+                <div
+                  className={styles.trialRecovery}
+                  role="group"
+                  aria-label={trialView.actionLabel}
+                >
+                  <RouteReloadButton
+                    label="다시 확인"
+                    className="button button--secondary"
+                  />
+                </div>
+              )}
+            </section>
+          ) : null}
 
-      <div className={styles.records}>
-        <section
-          className={styles.recordCard}
-          aria-labelledby="mining-rewards-title"
-        >
-          <header>
-            <h2 id="mining-rewards-title">
-              <PutdukHomeIcon name="coins" size={24} />
-              확정된 채굴 내역
+          <div className={styles.tierCard}>
+            <PutdukHomeIcon name="crown" size={38} />
+            <div>
+              <span>현재 등급</span>
+              <strong>{facts.tier}</strong>
+              <small>확인된 채굴 원금 기준</small>
+            </div>
+          </div>
+
+          <section
+            className={styles.capacity}
+            aria-labelledby="mining-capacity-title"
+          >
+            <h2 id="mining-capacity-title">
+              <PutdukHomeIcon name="capacity" size={25} />
+              채굴 한도
             </h2>
-            <Link href="/wallet?view=profit" prefetch={false}>
-              전체 보기
-              <PutdukIcon name="arrow-right" size={14} />
-            </Link>
-          </header>
+            {liveSnapshot && publicEnv ? (
+              <MiningLiveSummary
+                ownerId={identity.userId}
+                initialSnapshot={liveSnapshot}
+                authConfig={{
+                  url: publicEnv.NEXT_PUBLIC_SUPABASE_URL,
+                  publishableKey:
+                    publicEnv.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
+                }}
+              />
+            ) : (
+              <>
+                <dl>
+                  <div className={styles.capacityLead}>
+                    <dt>남은 한도</dt>
+                    <dd>
+                      <FactValue value={facts.remaining} />
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>사용한 한도</dt>
+                    <dd>{facts.used}</dd>
+                  </div>
+                  <div>
+                    <dt>이번 한도</dt>
+                    <dd>{facts.capacity}</dd>
+                  </div>
+                </dl>
+                {capacityProgress ? (
+                  <div className={styles.capacityProgress}>
+                    <progress
+                      aria-label="채굴 한도 사용률"
+                      aria-valuetext={capacityProgress.usedLabel}
+                      max={10_000}
+                      value={capacityProgress.usedBps}
+                    />
+                    <small>{capacityProgress.usedLabel}</small>
+                  </div>
+                ) : null}
+              </>
+            )}
+          </section>
+
+          {facts.speed !== "아직 없어요" &&
+          facts.speed !== "확인할 수 없어요" ? (
+            <div className={styles.speedCard}>
+              <PutdukHomeIcon name="bolt" size={34} />
+              <dl aria-label="채굴 속도" data-amount-weight="speed">
+                <dt>
+                  {presentation.source === "funded" && !presentation.running
+                    ? "설정된 속도"
+                    : "현재 속도"}
+                </dt>
+                <dd>
+                  <FactValue value={facts.speed} />
+                </dd>
+              </dl>
+              <p>
+                {presentation.source === "funded" && !presentation.running
+                  ? "현재 채굴은 멈췄어요."
+                  : "서버가 확인한 현재 속도예요."}
+              </p>
+            </div>
+          ) : null}
+
+          {presentation.source === "legacy" && currentSession ? (
+            <dl className={styles.legacyFacts}>
+              <div>
+                <dt>정산 전 경과</dt>
+                <dd>{formatMiningElapsed(currentSession.unsettled_seconds)}</dd>
+              </div>
+              <div>
+                <dt>활성 장비</dt>
+                <dd>{currentSession.active_equipment_count}개</dd>
+              </div>
+              <div>
+                <dt>최근 정산</dt>
+                <dd>{formatMiningClock(currentSession.last_settled_at)}</dd>
+              </div>
+            </dl>
+          ) : null}
+
+          {selectedArt ? (
+            <p data-member-scene-binding="confirmed-allocation">
+              선택 상품 테마 · {selectedArt.nameKo}
+            </p>
+          ) : null}
+
+          <section
+            className={styles.recordCard}
+            aria-labelledby="mining-rewards-title"
+          >
+            <header>
+              <h2 id="mining-rewards-title">
+                <PutdukHomeIcon name="coins" size={24} />
+                확정된 채굴 내역
+              </h2>
+              <Link href="/wallet?view=profit" prefetch={false}>
+                전체 보기
+                <PutdukIcon name="arrow-right" size={14} />
+              </Link>
+            </header>
           {accountError || rewardError ? (
             <div className={styles.recordState} role="status">
               <p>채굴 내역을 불러오지 못했어요.</p>
@@ -588,14 +577,11 @@ export default async function MiningPage() {
             정산 전 금액은 사용 가능 잔액과 달라요.
           </p>
         </section>
-      </div>
-      {runtime ? <FundedRuntimeSummary runtime={runtime} /> : null}
 
-      <MiningWalletGuideBanner placement="mining" />
+          {runtime ? <FundedRuntimeSummary runtime={runtime} /> : null}
 
-      <details className={styles.details} id="putduk-mining-details">
-        <summary className={styles.summary}>채굴 상세</summary>
-        <div className={styles.detailContent}>
+          <MiningWalletGuideBanner placement="mining" />
+
           {legacySessions.length ? (
             <section aria-label="현재 채굴 세션">
               <header className={styles.sectionHeader}>
@@ -639,10 +625,10 @@ export default async function MiningPage() {
               </div>
             </section>
           ) : null}
+
           <header className={styles.sectionHeader}>
             <h2>월드 목록</h2>
-            <p>월드별 이용 조건과 적용 중인 채굴 규칙을 확인해 주세요.</p>
-            <p>월드는 채굴 테마예요. 시세나 투자 수익을 따르지 않습니다.</p>
+            <p>월드는 채굴 테마예요. 시세나 투자 수익을 따르지 않아요.</p>
           </header>
           {worldsError ? (
             <StatePanel
