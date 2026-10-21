@@ -1,5 +1,8 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import { mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import {
   parseOwner202Arguments,
   assertOwner202SessionProof,
@@ -9,11 +12,171 @@ import {
   readOwner202DockerTarget,
   owner202PsqlArguments,
   owner202DumpArguments,
+  owner202ChildFailure,
+  recordOwner202ChildFailure,
+  assertOwner202RestoreRoleAdmission,
+  owner202RestorePsqlArguments,
+  OWNER202_RESTORE_ROLE_SQL,
+  OWNER202_OWNED_PUBLIC_SQL,
+  assertOwner202OwnedPublicAdmission,
 } from "./owner-admin-202-concurrency.mjs";
 const id = "a".repeat(64),
   db = "putduk_owner202_" + "b".repeat(32);
 const project = "putduk-mining-ci-r2-20261009",
   now = Date.parse("2026-10-21T00:10:00Z");
+test("owner202 preserves only an empty initdb public schema in the exact new owned database", () => {
+  const proof = {
+    database: db,
+    user: "postgres",
+    schema: "public",
+    owner: "pg_database_owner",
+    relations: 0,
+    functions: 0,
+  };
+  assert.deepEqual(assertOwner202OwnedPublicAdmission(proof, db), proof);
+  for (const change of [
+    { database: "postgres" },
+    { user: "supabase_admin" },
+    { schema: "auth" },
+    { owner: null },
+    { owner: "postgres" },
+    { relations: 1 },
+    { functions: 1 },
+    { relations: "0" },
+    { functions: -1 },
+    { secret: "must-not-copy" },
+  ])
+    assert.throws(() =>
+      assertOwner202OwnedPublicAdmission({ ...proof, ...change }, db),
+    );
+  for (const value of [null, [], {}])
+    assert.throws(() => assertOwner202OwnedPublicAdmission(value, db));
+  for (const target of ["postgres", "template0", "foreign", [db]])
+    assert.throws(() => assertOwner202OwnedPublicAdmission(proof, target));
+});
+test("owner202 public precondition reads owner, relation and function metadata without recreating or dropping schema", () => {
+  assert.match(OWNER202_OWNED_PUBLIC_SQL, /^begin read only;/);
+  assert.match(OWNER202_OWNED_PUBLIC_SQL, /nspname='public'/);
+  assert.match(OWNER202_OWNED_PUBLIC_SQL, /pg_class/);
+  assert.match(OWNER202_OWNED_PUBLIC_SQL, /pg_proc/);
+  assert.match(OWNER202_OWNED_PUBLIC_SQL, /rollback;$/);
+  assert.doesNotMatch(
+    OWNER202_OWNED_PUBLIC_SQL,
+    /\b(?:grant|revoke|insert|update|delete|create|alter|drop)\b/i,
+  );
+});
+test("owner202 admits only the existing login superuser and original auth owner before fencing", () => {
+  const proof = {
+    database: "postgres",
+    user: "postgres",
+    restoreRole: "supabase_admin",
+    canLogin: true,
+    superuser: true,
+    authSchemaOwner: "supabase_admin",
+  };
+  assert.deepEqual(assertOwner202RestoreRoleAdmission(proof), proof);
+  assert.match(OWNER202_RESTORE_ROLE_SQL, /^begin read only;/);
+  assert.match(OWNER202_RESTORE_ROLE_SQL, /rolname='supabase_admin'/);
+  assert.doesNotMatch(
+    OWNER202_RESTORE_ROLE_SQL,
+    /\b(?:grant|revoke|insert|update|delete|create|alter|drop)\b/i,
+  );
+  for (const change of [
+    { database: db },
+    { user: "supabase_admin" },
+    { restoreRole: "postgres" },
+    { canLogin: false },
+    { superuser: false },
+    { superuser: "true" },
+    { authSchemaOwner: "postgres" },
+    { secret: "must-not-copy" },
+  ])
+    assert.throws(() =>
+      assertOwner202RestoreRoleAdmission({ ...proof, ...change }),
+    );
+  for (const value of [null, [], {}, { ...proof, canLogin: undefined }])
+    assert.throws(() => assertOwner202RestoreRoleAdmission(value));
+});
+test("owner202 restore alone uses the fixed system role in the exact owned database and local socket", () => {
+  const original = owner202PsqlArguments(id, db),
+    restore = owner202RestorePsqlArguments(id, db),
+    expected = [...original];
+  expected[expected.indexOf("-U") + 1] = "supabase_admin";
+  assert.deepEqual(restore, expected);
+  assert.equal(original[original.indexOf("-U") + 1], "postgres");
+  assert.equal(
+    owner202PsqlArguments(id, "postgres")[original.indexOf("-U") + 1],
+    "postgres",
+  );
+  for (const database of [
+    "postgres",
+    "template0",
+    "foreign",
+    db + ";SELECT 1",
+    "putduk_owner202_" + "a".repeat(31),
+  ])
+    assert.throws(() => owner202RestorePsqlArguments(id, database));
+  for (const container of ["foreign", "a".repeat(63), id + " --user root"])
+    assert.throws(() => owner202RestorePsqlArguments(container, db));
+  assert.throws(() => owner202RestorePsqlArguments([id], db));
+  assert.throws(() => owner202RestorePsqlArguments(id, [db]));
+  assert.throws(() => owner202RestorePsqlArguments(id, db, "postgres"));
+});
+test("owner202 child failure diagnostics retain only stage and bounded process/SQLSTATE fields", () => {
+  const result = {
+    status: 3,
+    signal: "SIGTERM",
+    error: { code: "ETIMEDOUT", message: "private-key-must-not-leak" },
+    stdout: "private SQL and row contents",
+    stderr:
+      "psql:<stdin>:17: ERROR:  42501\nDETAIL: private@example.invalid\nSQL: private SQL",
+  };
+  assert.deepEqual(owner202ChildFailure("RESTORE_OWNED_SCHEMA", result), {
+    version: 1,
+    state: "FAILED_NOT_ACCEPTED_NO_RETRY",
+    stage: "RESTORE_OWNED_SCHEMA",
+    status: 3,
+    signal: "SIGTERM",
+    errorCode: "ETIMEDOUT",
+    sqlStates: ["42501"],
+  });
+  const dirty = owner202ChildFailure("CREATE_OWNED_DATABASE", {
+    status: "private-status",
+    signal: "PRIVATE_SIGNAL",
+    error: { code: "PRIVATE_CODE" },
+    stderr:
+      "ERROR:  42501 secret suffix\nDETAIL: ERROR: 42P01\nERROR: abcde\nERROR: 123456\nFATAL:  28P01\nERROR:  28P01",
+  });
+  assert.equal(dirty.status, null);
+  assert.equal(dirty.signal, null);
+  assert.equal(dirty.errorCode, null);
+  assert.deepEqual(dirty.sqlStates, ["28P01"]);
+  assert.throws(() => owner202ChildFailure("private arbitrary stage", result));
+  assert.doesNotMatch(
+    JSON.stringify([dirty, owner202ChildFailure("OWNED_COUNTS", result)]),
+    /private|DETAIL|SQL:|stdout|stderr/,
+  );
+});
+test("owner202 diagnostic receipt is create-only and cannot replace original failure evidence", () => {
+  const output = mkdtempSync(join(tmpdir(), "putduk-owner202-diagnostic-"));
+  try {
+    recordOwner202ChildFailure(output, "OWNED_PUBLIC_PREFLIGHT", {
+      status: 1,
+      stderr: "ERROR:  42501\nsecret SQL",
+    });
+    const file = join(output, "child-failure.json"),
+      original = readFileSync(file, "utf8");
+    assert.equal(JSON.parse(original).stage, "OWNED_PUBLIC_PREFLIGHT");
+    assert.doesNotMatch(original, /secret SQL/);
+    assert.throws(
+      () => recordOwner202ChildFailure(output, "OWNED_COUNTS", { status: 9 }),
+      { code: "EEXIST" },
+    );
+    assert.equal(readFileSync(file, "utf8"), original);
+  } finally {
+    rmSync(output, { recursive: true });
+  }
+});
 function dockerFixture() {
   return {
     context: [

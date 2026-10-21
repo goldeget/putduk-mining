@@ -387,7 +387,97 @@ export function readOwner202DockerTarget(
     volumeCreatedAt: volumes[0].CreatedAt,
   };
 }
-function command(args, env, input, timeout = 30000) {
+const CHILD_STAGES = Object.freeze([
+  "DOCKER_METADATA",
+  "ORIGINAL_CATALOG_BEFORE",
+  "RESTORE_ROLE_PREFLIGHT",
+  "SCHEMA_DUMP",
+  "DATABASE_ABSENCE",
+  "CREATE_OWNED_DATABASE",
+  "OWNED_PUBLIC_PREFLIGHT",
+  "RESTORE_OWNED_SCHEMA",
+  "INSERT_OWNED_INTENT",
+  "OWNED_COUNTS",
+  "ORIGINAL_CATALOG_AFTER",
+]);
+export function owner202ChildFailure(stage, result) {
+  need(CHILD_STAGES.includes(stage), "EXACT_CHILD_STAGE_REQUIRED");
+  const signals = [
+      "SIGABRT",
+      "SIGALRM",
+      "SIGBUS",
+      "SIGFPE",
+      "SIGHUP",
+      "SIGILL",
+      "SIGINT",
+      "SIGKILL",
+      "SIGPIPE",
+      "SIGQUIT",
+      "SIGSEGV",
+      "SIGTERM",
+      "SIGTRAP",
+      "SIGUSR1",
+      "SIGUSR2",
+      "SIGXCPU",
+      "SIGXFSZ",
+    ],
+    errorCodes = [
+      "E2BIG",
+      "EACCES",
+      "EAGAIN",
+      "EFAULT",
+      "EINTR",
+      "EINVAL",
+      "EIO",
+      "EMFILE",
+      "ENFILE",
+      "ENOBUFS",
+      "ENOENT",
+      "ENOMEM",
+      "ENOSPC",
+      "ENOSYS",
+      "ENOTDIR",
+      "EPERM",
+      "EPIPE",
+      "ESRCH",
+      "ETIMEDOUT",
+    ],
+    sqlStates = [
+      ...new Set(
+        [
+          ...String(result.stderr ?? "").matchAll(
+            /^(?:psql:<stdin>:\d+: )?(?:ERROR|FATAL):[ \t]+([0-9A-Z]{5})[ \t]*\r?$/gm,
+          ),
+        ].map((m) => m[1]),
+      ),
+    ]
+      .sort()
+      .slice(0, 8);
+  return {
+    version: 1,
+    state: "FAILED_NOT_ACCEPTED_NO_RETRY",
+    stage,
+    status:
+      Number.isInteger(result.status) &&
+      result.status >= 0 &&
+      result.status <= 255
+        ? result.status
+        : null,
+    signal: signals.includes(result.signal) ? result.signal : null,
+    errorCode: errorCodes.includes(result.error?.code)
+      ? result.error.code
+      : null,
+    sqlStates,
+  };
+}
+export function recordOwner202ChildFailure(output, stage, result) {
+  writeFileSync(
+    resolve(output, "child-failure.json"),
+    JSON.stringify(owner202ChildFailure(stage, result), null, 2) + "\n",
+    { flag: "wx" },
+  );
+}
+function command(args, env, input, timeout, stage, output) {
   const r = spawnSync("docker", ["--context", "default", ...args], {
     cwd: ROOT,
     env,
@@ -398,6 +488,10 @@ function command(args, env, input, timeout = 30000) {
     maxBuffer: 32 * 1024 * 1024,
     windowsHide: true,
   });
+  // The fenced output is created at the original point below. Do not create it
+  // for an earlier preflight failure, retry a child, or retain stderr/SQL bodies.
+  if ((r.error || r.signal || r.status !== 0) && existsSync(output))
+    recordOwner202ChildFailure(output, stage, r);
   need(!r.error && !r.signal && r.status === 0, "BOUNDED_CHILD_FAILED");
   return r;
 }
@@ -422,6 +516,80 @@ export const owner202PsqlArguments = (cid, db) => [
   "-v",
   "VERBOSITY=sqlstate",
 ];
+export function owner202RestorePsqlArguments(cid, db, ...extra) {
+  need(
+    extra.length === 0 &&
+      typeof cid === "string" &&
+      typeof db === "string" &&
+      /^[a-f0-9]{64}$/.test(cid) &&
+      /^putduk_owner202_[a-f0-9]{32}$/.test(db),
+    "EXACT_OWNED_RESTORE_TARGET_REQUIRED",
+  );
+  const args = owner202PsqlArguments(cid, db);
+  args[args.indexOf("-U") + 1] = "supabase_admin";
+  return args;
+}
+export const OWNER202_RESTORE_ROLE_SQL = `begin read only;set local statement_timeout='10000ms';
+select jsonb_build_object(
+ 'database',current_database(),'user',current_user,
+ 'restoreRole',(select rolname from pg_roles where rolname='supabase_admin'),
+ 'canLogin',(select rolcanlogin from pg_roles where rolname='supabase_admin'),
+ 'superuser',(select rolsuper from pg_roles where rolname='supabase_admin'),
+ 'authSchemaOwner',(select r.rolname from pg_namespace n join pg_roles r on r.oid=n.nspowner where n.nspname='auth'))::text;
+rollback;`;
+export function assertOwner202RestoreRoleAdmission(proof) {
+  need(
+    proof &&
+      Object.keys(proof).sort().join(",") ===
+        "authSchemaOwner,canLogin,database,restoreRole,superuser,user" &&
+      proof.database === "postgres" &&
+      proof.user === "postgres" &&
+      proof.restoreRole === "supabase_admin" &&
+      proof.canLogin === true &&
+      proof.superuser === true &&
+      proof.authSchemaOwner === "supabase_admin",
+    "EXISTING_SYSTEM_RESTORE_ROLE_REQUIRED",
+  );
+  return Object.freeze({
+    database: proof.database,
+    user: proof.user,
+    restoreRole: proof.restoreRole,
+    canLogin: proof.canLogin,
+    superuser: proof.superuser,
+    authSchemaOwner: proof.authSchemaOwner,
+  });
+}
+export const OWNER202_OWNED_PUBLIC_SQL = `begin read only;set local statement_timeout='10000ms';
+select jsonb_build_object(
+ 'database',current_database(),'user',current_user,'schema','public',
+ 'owner',(select r.rolname from pg_namespace n join pg_roles r on r.oid=n.nspowner where n.nspname='public'),
+ 'relations',(select count(*) from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname='public'),
+ 'functions',(select count(*) from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='public'))::text;
+rollback;`;
+export function assertOwner202OwnedPublicAdmission(proof, database) {
+  need(
+    typeof database === "string" &&
+      /^putduk_owner202_[a-f0-9]{32}$/.test(database) &&
+      proof &&
+      Object.keys(proof).sort().join(",") ===
+        "database,functions,owner,relations,schema,user" &&
+      proof.database === database &&
+      proof.user === "postgres" &&
+      proof.schema === "public" &&
+      proof.owner === "pg_database_owner" &&
+      proof.relations === 0 &&
+      proof.functions === 0,
+    "EMPTY_DEFAULT_OWNED_PUBLIC_REQUIRED",
+  );
+  return Object.freeze({
+    database: proof.database,
+    user: proof.user,
+    schema: proof.schema,
+    owner: proof.owner,
+    relations: proof.relations,
+    functions: proof.functions,
+  });
+}
 export const owner202DumpArguments = (cid) => [
   "exec",
   cid,
@@ -503,20 +671,28 @@ export async function executeOwner202Concurrency(args, env = process.env) {
       !existsSync(out),
     "NEW_EXTERNAL_OUTPUT_REQUIRED",
   );
+  const run = (args, stage, input, timeout = 30000) =>
+    command(args, childEnv, input, timeout, stage, out);
   const target = readOwner202DockerTarget(
-    (args) => JSON.parse(command(args, childEnv).stdout),
+    (args) => JSON.parse(run(args, "DOCKER_METADATA").stdout),
     c.containerId,
   );
-  const query = (db, sql) =>
-    command(owner202PsqlArguments(target.containerId, db), childEnv, sql);
+  const query = (db, sql, stage) =>
+    run(owner202PsqlArguments(target.containerId, db), stage, sql);
   const before = readBackend202FreshCatalog(
-    (sql) => query("postgres", sql),
+    (sql) => query("postgres", sql, "ORIGINAL_CATALOG_BEFORE"),
     boundary.migrationVersions,
     c.containerId,
   );
-  const dump = command(
+  const restoreRole = assertOwner202RestoreRoleAdmission(
+    JSON.parse(
+      query("postgres", OWNER202_RESTORE_ROLE_SQL, "RESTORE_ROLE_PREFLIGHT")
+        .stdout,
+    ),
+  );
+  const dump = run(
     owner202DumpArguments(target.containerId),
-    childEnv,
+    "SCHEMA_DUMP",
     undefined,
     60000,
   ).stdout;
@@ -524,6 +700,7 @@ export async function executeOwner202Concurrency(args, env = process.env) {
   const absent = query(
     "postgres",
     `begin read only;set local statement_timeout='10000ms';select count(*) from pg_database where datname='${c.database}';rollback;`,
+    "DATABASE_ABSENCE",
   ).stdout.trim();
   need(absent === "0", "DATABASE_ALREADY_EXISTS");
   // A fresh container gets one attempt. An unknown outcome cannot silently use a new database.
@@ -553,6 +730,7 @@ export async function executeOwner202Concurrency(args, env = process.env) {
         database: c.database,
         sourceManifestSha256: boundary.manifestSha256,
         schemaDump: dumpProof,
+        restoreRole,
         originalDatabaseApplicationWrites: 0,
       },
       null,
@@ -561,9 +739,32 @@ export async function executeOwner202Concurrency(args, env = process.env) {
     { flag: "wx" },
   );
   // Sole original-database write is CREATE DATABASE: no app/auth/table writes there.
-  query("postgres", `CREATE DATABASE ${c.database} TEMPLATE template0;`);
-  query(c.database, "drop schema public cascade;");
-  query(c.database, dump);
+  query(
+    "postgres",
+    `CREATE DATABASE ${c.database} TEMPLATE template0;`,
+    "CREATE_OWNED_DATABASE",
+  );
+  // pg_dump omits initdb's public schema creation. Preserve its admitted empty
+  // default namespace instead of deleting a restore prerequisite.
+  const ownedPublic = assertOwner202OwnedPublicAdmission(
+    JSON.parse(
+      query(c.database, OWNER202_OWNED_PUBLIC_SQL, "OWNED_PUBLIC_PREFLIGHT")
+        .stdout,
+    ),
+    c.database,
+  );
+  writeFileSync(
+    resolve(out, "owned-public-precondition.json"),
+    JSON.stringify(ownedPublic, null, 2) + "\n",
+    { flag: "wx" },
+  );
+  // Preserve the unmodified managed-schema owners/ACLs using the existing
+  // admitted system role, only for this fresh owned database's schema restore.
+  run(
+    owner202RestorePsqlArguments(target.containerId, c.database),
+    "RESTORE_OWNED_SCHEMA",
+    dump,
+  );
   const userId = randomUUID(),
     requestId = randomUUID(),
     email =
@@ -571,6 +772,7 @@ export async function executeOwner202Concurrency(args, env = process.env) {
   query(
     c.database,
     `begin;set local statement_timeout='10000ms';insert into app_private.owner_admin_provision_intents(request_id,planned_auth_user_id,email_sha256,expires_at,reason,authorization_reference) values('${requestId}','${userId}','${hash(email)}',statement_timestamp()+interval '10 minutes','CI owned synthetic concurrency proof','CI:${source.runId}/${source.attempt}');commit;`,
+    "INSERT_OWNED_INTENT",
   );
   const sql = owner202SessionSql(userId, requestId, email),
     sessions = await Promise.all([
@@ -592,6 +794,7 @@ export async function executeOwner202Concurrency(args, env = process.env) {
       `begin read only;set local statement_timeout='10000ms';select jsonb_build_object(
  'auth',(select count(*) from auth.users),'profiles',(select count(*) from public.user_profiles),'roles',(select count(*) from public.user_roles),'audit',(select count(*) from public.audit_logs),'receipts',(select count(*) from app_private.owner_admin_provision_receipts),'intents',(select count(*) from app_private.owner_admin_provision_intents),'consent',(select count(*) from public.user_consent_records),'wallet',(select count(*) from public.wallet_accounts),
  'binding',(select count(*) from app_private.owner_admin_provision_receipts r join public.user_profiles p on p.user_id=r.auth_user_id join public.user_roles u on u.id=r.role_id and u.user_id=r.auth_user_id join public.audit_logs a on a.id=r.audit_id and a.request_id=r.request_id and a.target_id=r.role_id::text where r.request_id='${requestId}' and r.auth_user_id='${userId}' and u.role='SUPER_ADMIN' and u.granted_by is null and u.revoked_at is null and a.action='role.owner_authorized_new_super_admin' and a.actor_user_id is null and a.actor_role is null and a.target_type='user_role' and r.receipt_digest ~ '^[0-9a-f]{64}$'))::text;rollback;`,
+      "OWNED_COUNTS",
     ).stdout.trim(),
   );
   need(
@@ -609,7 +812,7 @@ export async function executeOwner202Concurrency(args, env = process.env) {
     "EXACT_ATOMIC_SINGLETON_REQUIRED",
   );
   const after = readBackend202FreshCatalog(
-    (sql) => query("postgres", sql),
+    (sql) => query("postgres", sql, "ORIGINAL_CATALOG_AFTER"),
     boundary.migrationVersions,
     c.containerId,
   );
@@ -636,6 +839,8 @@ export async function executeOwner202Concurrency(args, env = process.env) {
         ],
     },
     schemaDump: dumpProof,
+    restoreRole,
+    ownedPublic,
     sessions: sessionProof,
     counts,
     originalCatalog: { before, after },
