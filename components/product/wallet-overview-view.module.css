@@ -215,6 +215,14 @@
 .metrics .amount small {
   font-size: 0.8125rem;
 }
+.depositHint {
+  margin: 0.65rem 0 0;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  line-height: 1.4;
+  word-break: keep-all;
+}
+
 .actions {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 8rem), 1fr));

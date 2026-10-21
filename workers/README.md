@@ -46,18 +46,33 @@ at least the base delay, and never exceeds 3600 seconds.
 request returns the existing succeeded run and does not record a second run.
 The checker still does not repair money.
 
-Still missing:
+Funding mining tick (Eligible Funding Principal):
 
-- member notification/Web Push fanout and financial domain consumers, including
-  referral, promotion and event reward processing;
-- production job enqueueing and an approved recurring reconciliation schedule;
-- the approved mining settlement command and unattended settlement runner.
+- Each cycle calls `schedule_due_funding_jobs` before claims
+  (`workers/funding-scheduler.mjs` via `runWorkerCycle`).
+- Sealed `FUNDING_MINING_TICK_V1` jobs start dormant
+  (`available_at=infinity`, marker `FUNDING_ENGINE_RUNTIME_NOT_CONNECTED`)
+  until the scheduler releases the exact original.
+- JS only validates the envelope (`prepareFundingMiningTick`); money posts
+  inside fenced `complete_system_job` → `app_private.process_default_funding_job`.
+- Scheduler failure or funding pause claims with `p_allow_funding: false` so
+  non-funding work can continue without inventing a second money writer.
+- Inventory: `docs/quality/PHASE-C-SETTLEMENT-CONNECTION.md`.
 
-These remain launch blockers. The worker does not invent handlers, payout rules
-or schedules. Unsupported financial events retain their original payloads in
-dead letter until an approved consumer and reviewed replay exist. See
-`docs/architecture/DOMAIN-EVENTS-OUTBOX.md` and the current mining runtime gap in
-`docs/architecture/PUTDUK-MINING-MASTER-ARCHITECTURE.md`.
+Still missing / separate gates:
+
+- member notification/Web Push fanout and remaining financial domain consumers
+  (referral, promotion, event reward processing where not already wired);
+- production job enqueueing schedule and reviewed reconciliation cadence;
+- product proof of app-closed accrual on the kept launch surface
+  (PRODUCT COMPLETE + release `ci-full-e2e`);
+- remote Supabase apply and production Worker activation (human gates).
+
+The worker does not invent handlers, payout rules or schedules. Unsupported
+financial events retain their original payloads in dead letter until an approved
+consumer and reviewed replay exist. See
+`docs/architecture/DOMAIN-EVENTS-OUTBOX.md` and
+`docs/architecture/FINAL-OWNER-DESIRED-LAUNCH-ARCHITECTURE.md` §4.
 
 Periodic lease renewal exists in the runner and has its own runtime evidence
 tests. No new infrastructure is provisioned by these adapters.

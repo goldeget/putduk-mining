@@ -9,7 +9,10 @@ import {
 } from "@/domain/ai/member-help";
 import { matchesAiPresentationOwner } from "@/domain/ai/presentation-owner";
 import { readAiCache, writeAiCache } from "@/lib/ai/cache";
-import { isAiProviderDispatchAdmitted } from "@/lib/ai/dispatch-admission";
+import {
+  isAiPaidCallAuthorized,
+  isAiProviderDispatchAdmitted,
+} from "@/lib/ai/dispatch-admission";
 import {
   appendOwnMemberTurn,
   createSupabaseMemberConversationPort,
@@ -681,9 +684,11 @@ export async function POST(request: Request) {
           ...(env.OPENROUTER_API_KEY
             ? { openRouterPaidApiKey: env.OPENROUTER_API_KEY }
             : {}),
-          // This task has no approval for paid calls. A key or .env flag cannot
-          // enable them. A future authorized phase must change this boundary.
-          paidCallAuthorized: false,
+          // Paid Haiku only when owner sets AI_PAID_CALL_AUTHORIZED=true and
+          // OPENROUTER_API_KEY is present. A key alone never authorizes paid.
+          paidCallAuthorized:
+            isAiPaidCallAuthorized(env.AI_PAID_CALL_AUTHORIZED) &&
+            Boolean(env.OPENROUTER_API_KEY),
           instructions,
           question: providerQuestion,
           history: providerHistory,

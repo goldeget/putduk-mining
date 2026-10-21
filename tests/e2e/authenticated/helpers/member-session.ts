@@ -34,6 +34,7 @@ export async function loginAsMember(
   if (nextPath === "/ai" || nextPath === "/menu/ai") {
     await expect(page.locator("[data-ai-page]:visible")).toHaveCount(1);
   } else if (routePath === "/products" || routePath.startsWith("/products/")) {
+    // SIMPLIFIED_TRACK: /products remains deep-link only; bottom nav has no 상품.
     await expectSettledRoute(page, routePath);
     const header = page.locator('[data-route-brand-header="products"]:visible');
     await expect(header).toHaveCount(1);
@@ -43,22 +44,18 @@ export async function loginAsMember(
     });
     await expect(account).toBeVisible();
     await expect(account).toHaveAttribute("href", "/menu/account");
-    const navigation =
-      (page.viewportSize()?.width ?? 1280) >= 980
-        ? page.locator(".product-sidebar:visible").getByRole("navigation", {
-            name: "상품 전체 메뉴",
-            exact: true,
-          })
-        : page.getByRole("navigation", { name: "주요 메뉴", exact: true });
-    await expect(navigation).toHaveCount(1);
-    await expect(navigation).toBeVisible();
-    const products = navigation.getByRole("link", {
-      name: "상품",
+    const navigation = page.getByRole("navigation", {
+      name: "주요 메뉴",
       exact: true,
     });
-    await expect(products).toHaveCount(1);
-    await expect(products).toBeVisible();
-    await expect(products).toHaveAttribute("aria-current", "page");
+    await expect(navigation).toHaveCount(1);
+    await expect(navigation).toBeVisible();
+    await expect(
+      navigation.getByRole("link", { name: "상품", exact: true }),
+    ).toHaveCount(0);
+    await expect(
+      navigation.getByRole("link", { name: "더보기", exact: true }),
+    ).toBeVisible();
   } else if (nextPath.split(/[?#]/, 1)[0] === "/mining") {
     await expectSettledRoute(page, "/mining");
     const header = page.locator("[data-mining-header]:visible");
@@ -229,7 +226,7 @@ export async function startTrialFromUi(page: Page) {
       response.request().method() === "POST",
     { timeout: 60_000 },
   );
-  await page.getByRole("button", { name: /첫 채굴 시작/ }).click();
+  await page.getByRole("button", { name: /채굴 시작/ }).click();
   const response = await startResponse;
   const payload = (await response.json().catch(() => null)) as {
     error?: { code?: string; message?: string };
@@ -240,12 +237,12 @@ export async function startTrialFromUi(page: Page) {
     );
   }
   // UI 스냅샷이 지연돼도 API 성공이면 통과. ACTIVE 문구는 가능하면 확인한다.
-  // h1「첫 채굴이 진행 중이에요.」와 부분 일치하지 않도록 h2 exact name을 쓴다.
+  // h1「채굴 중이에요.」와 부분 일치하지 않도록 h2 exact name을 쓴다.
   await page.goto("/start");
   await dismissGuidedQuestIfPresent(page);
   const activeCopy = page.getByRole("heading", {
     level: 2,
-    name: "채굴이 진행 중이에요",
+    name: "채굴 중",
     exact: true,
   });
   try {

@@ -154,6 +154,7 @@ async function expectAuditJson(response: Response) {
 beforeEach(() => {
   vi.resetAllMocks();
   mocks.env.APP_ENV = "test";
+  mocks.env.AI_PROVIDER_DISPATCH_ENABLED = "true";
   mocks.identity.mockResolvedValue({ userId: OWNER, supabase: {} });
   mocks.begin.mockResolvedValue({
     data: [{ request_id: REQUEST, is_new: true }],
@@ -434,9 +435,10 @@ describe("AI audit persistence failures remain explicit without exposing RPC det
     expect(mocks.provider).not.toHaveBeenCalled();
   });
 
-  it("retains the production provider gate despite configured synthetic keys", async () => {
+  it("keeps provider calls off when the dispatch switch is off, even in production with keys", async () => {
     setRoute("low_cost");
     mocks.env.APP_ENV = "production";
+    mocks.env.AI_PROVIDER_DISPATCH_ENABLED = "false";
     const response = await POST(request());
     expect(parseEvents(await response.text())).toContainEqual(
       expect.objectContaining({ type: "done" }),

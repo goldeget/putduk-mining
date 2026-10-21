@@ -44,19 +44,22 @@ test("actual operator catalog approval and owner allocation retain receipts with
       ).toHaveAttribute("data-ui-state", "loaded");
       await expect(
         memberPage.getByRole("heading", {
-          name: "실제 채굴 · 채굴 중",
+          name: "채굴 중",
           exact: true,
         }),
       ).toBeVisible();
       await expect(
         memberPage.getByRole("heading", {
-          name: "첫 월드에서 채굴을 시작해 보세요",
+          name: "채굴을 시작해 보세요",
           exact: true,
         }),
       ).toHaveCount(0);
       await expect(
-        memberPage.getByRole("link", { name: "채굴 배분 확인", exact: true }),
-      ).toHaveAttribute("href", "/products/allocation");
+        memberPage.getByRole("link", {
+          name: "채굴 중 · 잔액 보기",
+          exact: true,
+        }),
+      ).toHaveAttribute("href", "/wallet");
       const funded = memberPage.getByRole("region", {
         name: "확인된 실제 채굴 기록",
       });

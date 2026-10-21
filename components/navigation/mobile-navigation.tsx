@@ -3,12 +3,12 @@ import {
   type PutdukIconName,
 } from "@/components/icons/putduk-icon";
 
+/** Design example aligned with SIMPLIFIED_TRACK bottom nav (no 상품/이벤트/AI). */
 const items: ReadonlyArray<{ icon: PutdukIconName; label: string }> = [
   { icon: "home", label: "홈" },
   { icon: "mining", label: "채굴" },
-  { icon: "wallet", label: "자산" },
-  { icon: "event", label: "이벤트" },
-  { icon: "menu", label: "메뉴" },
+  { icon: "wallet", label: "지갑" },
+  { icon: "menu", label: "더보기" },
 ];
 
 export function MobileNavigation() {

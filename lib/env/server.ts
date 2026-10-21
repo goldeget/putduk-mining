@@ -38,6 +38,8 @@ const serverEnvSchema = z
     AI_PROVIDER: optionalServerString(z.enum(["openai", "nvidia"])),
     // 명시 스위치. 어떤 값이든 읽기만 하고 "true"일 때만 켜짐으로 본다(검증 오류 없음).
     AI_PROVIDER_DISPATCH_ENABLED: optionalServerString(z.string()),
+    // Exact "true" only. Default off. Never authorize Haiku from a key alone.
+    AI_PAID_CALL_AUTHORIZED: optionalServerString(z.string()),
     AI_API_KEY: optionalServerString(z.string().min(20)),
     NVIDIA_API_KEY: optionalServerString(z.string().min(20)),
     OPENROUTER_FREE_API_KEY: optionalServerString(z.string().min(20)),
@@ -161,8 +163,7 @@ export function hasConfiguredAiProvider(): boolean {
     (!process.env.AI_API_KEY ||
       !process.env.NVIDIA_API_KEY ||
       process.env.AI_API_KEY === process.env.NVIDIA_API_KEY) &&
-    isAiProviderDispatchSwitchOn(process.env.AI_PROVIDER_DISPATCH_ENABLED) &&
-    process.env.APP_ENV !== "production",
+    isAiProviderDispatchSwitchOn(process.env.AI_PROVIDER_DISPATCH_ENABLED),
   );
 }
 
@@ -176,6 +177,7 @@ export function getServerEnv(): ServerEnv {
     VAPID_SUBJECT: process.env.VAPID_SUBJECT,
     AI_PROVIDER: process.env.AI_PROVIDER,
     AI_PROVIDER_DISPATCH_ENABLED: process.env.AI_PROVIDER_DISPATCH_ENABLED,
+    AI_PAID_CALL_AUTHORIZED: process.env.AI_PAID_CALL_AUTHORIZED,
     AI_API_KEY: process.env.AI_API_KEY || process.env.NVIDIA_API_KEY,
     NVIDIA_API_KEY: process.env.NVIDIA_API_KEY,
     OPENROUTER_FREE_API_KEY: process.env.OPENROUTER_FREE_API_KEY,

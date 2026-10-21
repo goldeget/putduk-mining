@@ -119,7 +119,7 @@ async function captureSuccess(
           exact: true,
         })
       : input.route === "home"
-        ? page.getByRole("region", { name: "오늘의 채굴 상태", exact: true })
+        ? page.getByRole("region", { name: "오늘의 채굴", exact: true })
         : page.getByText(input.ready).first();
   await expect(ready).toBeVisible({
     timeout: 60_000,
@@ -170,7 +170,7 @@ test.describe("authenticated success visual evidence", () => {
       {
         route: "home",
         url: "/home",
-        ready: "오늘의 채굴 상태",
+        ready: "오늘의 채굴",
       },
       {
         route: "start",

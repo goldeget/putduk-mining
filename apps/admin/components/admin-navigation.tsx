@@ -5,21 +5,22 @@ import type { Route } from "next";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
 
+/** Launch ops first: 입금·출금·예외·회원. Secondary tools stay reachable. */
 const items = [
-  { href: "/", label: "오늘의 퍼뜩" },
-  { href: "/assistant", label: "운영 도우미" },
-  { href: "/deposits/usdt", label: "USDT 입금 확인" },
-  { href: "/deposits/krw", label: "원화 입금 확인" },
+  { href: "/deposits/krw", label: "원화 입금" },
+  { href: "/deposits/usdt", label: "USDT 입금" },
   { href: "/withdrawals/krw-bank", label: "계좌 출금" },
   { href: "/withdrawals/usdt", label: "USDT 출금" },
-  { href: "/kyc", label: "본인 확인 검토" },
-  { href: "/exceptions", label: "정산·대사 예외" },
-  { href: "/restrictions", label: "제한·안전 모드" },
+  { href: "/exceptions", label: "예외 처리" },
+  { href: "/members", label: "회원 조회" },
+  { href: "/kyc", label: "본인 확인" },
+  { href: "/", label: "오늘의 퍼뜩" },
+  { href: "/restrictions", label: "제한·안전" },
   { href: "/economy", label: "채굴 정책" },
   { href: "/catalog", label: "상품 검토" },
-  { href: "/members", label: "회원 종합 정보" },
-  { href: "/ai-conversations", label: "회원 AI 대화" },
   { href: "/content", label: "이벤트·공지" },
+  { href: "/ai-conversations", label: "회원 AI 기록" },
+  { href: "/assistant", label: "운영 도우미" },
 ] as const;
 
 function scrollNavToTop(nav: HTMLElement | null) {

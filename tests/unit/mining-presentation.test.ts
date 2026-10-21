@@ -107,8 +107,8 @@ describe("mining reference presentation source boundary", () => {
         source: "empty",
         running: false,
         label: "시작 전",
-        title: "첫 월드에서 채굴을 시작해 보세요",
-        lead: "PUTDUK START로 첫 채굴을 시작해 보세요.",
+        title: "채굴을 시작해 보세요",
+        lead: "버튼을 누르면 첫 채굴이 시작돼요.",
         tone: "neutral",
         action: "start",
       });
@@ -196,7 +196,7 @@ describe("mining reference presentation source boundary", () => {
         session: null,
         sessionError: false,
       }),
-    ).toMatchObject({ source: "funded", running: true, action: "allocation" });
+    ).toMatchObject({ source: "funded", running: true, action: "none" });
     const receipt = Object.fromEntries(
       Object.entries(current.funded_runtime!).filter(
         ([key]) => !["status", "stop_reason", "speed"].includes(key),
@@ -227,13 +227,13 @@ describe("mining reference presentation source boundary", () => {
       source: "funded",
       running: true,
       label: "채굴 중",
-      action: "allocation",
+      action: "none",
     });
   });
   for (const [reason, label, action] of [
     ["SAFE_MODE", "안전 모드로 잠시 멈춤", "reload"],
-    ["CAPACITY_USED", "이번 한도 완료", "allocation"],
-    ["NO_ACTIVE_ALLOCATION", "배분 대기", "allocation"],
+    ["CAPACITY_USED", "이번 한도 완료", "none"],
+    ["NO_ACTIVE_ALLOCATION", "채굴 준비", "none"],
   ] as const) {
     it(`preserves ${reason} and all prior accepted receipt facts`, () => {
       const display = funded(reason);

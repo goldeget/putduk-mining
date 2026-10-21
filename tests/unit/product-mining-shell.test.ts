@@ -65,7 +65,7 @@ async function render(pathname = "/mining", displayName = "퍼뜩 회원") {
 }
 
 describe("route-scoped Mining chrome with real navigation", () => {
-  it("places exactly one Mining header inside the actual main and preserves AI/connectivity", async () => {
+  it("places exactly one Mining header inside the actual main and preserves connectivity without a peer AI dock", async () => {
     await render();
     const main = host.querySelector("main");
     expect(main?.id).toBe("main-content");
@@ -73,25 +73,25 @@ describe("route-scoped Mining chrome with real navigation", () => {
     expect(main?.querySelectorAll("[data-mining-header]")).toHaveLength(1);
     expect(host.querySelectorAll("header")).toHaveLength(1);
     expect(host.querySelector("h1")).toBeNull();
-    expect(host.querySelector("[data-ai-dock]")).not.toBeNull();
+    expect(host.querySelector("[data-ai-dock]")).toBeNull();
     expect(host.querySelector("[data-connectivity]")).not.toBeNull();
   });
 
-  it("keeps the desktop rail and bottom tabs on the five approved destinations", async () => {
+  it("keeps the desktop rail and bottom tabs on the four approved destinations", async () => {
     await render();
     const sidebar = host.querySelector('nav[aria-label="채굴 전체 메뉴"]');
     expect(
       Array.from(sidebar!.querySelectorAll("a"), (link) =>
         link.getAttribute("href"),
       ),
-    ).toEqual(["/home", "/mining", "/products", "/wallet", "/menu"]);
+    ).toEqual(["/home", "/mining", "/wallet", "/menu"]);
 
     const bottomTabs = host.querySelector('nav[aria-label="주요 메뉴"]');
     expect(
       Array.from(bottomTabs!.querySelectorAll("a"), (link) =>
         link.getAttribute("href"),
       ),
-    ).toEqual(["/home", "/mining", "/products", "/wallet", "/menu"]);
+    ).toEqual(["/home", "/mining", "/wallet", "/menu"]);
     expect(
       sidebar?.querySelector('[aria-current="page"]')?.getAttribute("href"),
     ).toBe("/mining");
@@ -102,6 +102,7 @@ describe("route-scoped Mining chrome with real navigation", () => {
     expect(host.textContent).not.toContain("L5");
     expect(host.textContent).not.toContain("PRO");
     expect(host.querySelector('a[href="/security"]')).toBeNull();
+    expect(host.querySelector('a[href="/products"]')).toBeNull();
   });
 
   it("renders the supplied identity as escaped text on the genuine account link and retains notifications", async () => {
@@ -152,7 +153,7 @@ describe("route-scoped Mining chrome with real navigation", () => {
         host.querySelector('[data-wallet-header="desktop"]'),
       ).not.toBeNull();
       expect(host.querySelector(".product-sidebar")).not.toBeNull();
-      expect(host.querySelector("[data-ai-dock]")).not.toBeNull();
+      expect(host.querySelector("[data-ai-dock]")).toBeNull();
       await render("/home");
       expect(host.querySelector("[data-mining-header]")).toBeNull();
       expect(host.querySelector(".product-sidebar")).toBeNull();
@@ -168,13 +169,12 @@ describe("route-scoped Mining chrome with real navigation", () => {
     },
   );
 
-  it("preserves five native bottom destinations and marks only Mining active", async () => {
+  it("preserves four native bottom destinations and marks only Mining active", async () => {
     await act(async () => root.render(createElement(ProductNavigation)));
     const links = host.querySelectorAll("a");
     expect(Array.from(links, (link) => link.getAttribute("href"))).toEqual([
       "/home",
       "/mining",
-      "/products",
       "/wallet",
       "/menu",
     ]);

@@ -4,11 +4,11 @@
 
 The authenticated member route, deterministic guard/router, owned read-only tools, durable conversation/audit paths and provider streaming/cancellation code exist. Their existence and local mock/native tests do not establish real-provider quality, production activation or PRODUCT COMPLETE. Static public facts and RLS-owned account answers do not require an external model.
 
-The current member route selects the NVIDIA → verified OpenRouter chain in `lib/ai/provider-chain.ts`; it does not dispatch the legacy OpenAI Responses envelope. External routing requires the exact NVIDIA configuration and `APP_ENV !== "production"`. The current production guard therefore keeps provider dispatch off. Configuration presence in a non-production runtime is not permission to call a provider, and staging is not automatically approved.
+The current member route selects the NVIDIA → verified OpenRouter chain in `lib/ai/provider-chain.ts`; it does not dispatch the legacy OpenAI Responses envelope. External routing requires the exact NVIDIA configuration plus the owner switch. Configuration presence alone is not permission to call a provider.
 
-Real-provider dispatch needs an explicit owner switch, `AI_PROVIDER_DISPATCH_ENABLED=true` (`lib/ai/dispatch-admission.ts`). It is OFF by default in every environment, including staging. A complete key/model tuple without the exact value `true` answers through the deterministic static and owned-tool paths with zero provider calls, and the display gate (`hasConfiguredAiProvider`) reports not configured. Production stays blocked in code even when the switch is on; enabling production needs a separate reviewed code and approval phase. Unit evidence: `tests/unit/ai-chat-dispatch-switch.test.ts`, `tests/unit/ai-display-availability.test.ts`.
+Real-provider dispatch needs an explicit owner switch, `AI_PROVIDER_DISPATCH_ENABLED=true` (`lib/ai/dispatch-admission.ts`). It is OFF by default in every environment, including production. A complete key/model tuple without the exact value `true` answers through the deterministic static and owned-tool paths with zero provider calls, and the display gate (`hasConfiguredAiProvider`) reports not configured. When the switch is `true`, production is admitted the same as staging. Set the switch and keys as Cloudflare Worker secrets on `putduk-mining-web-staging` (host `mining.putduk.com`), never in git. Unit evidence: `tests/unit/ai-chat-dispatch-switch.test.ts`, `tests/unit/ai-display-availability.test.ts`.
 
-The route passes `paidCallAuthorized: false`. Keys, an environment flag, a free-tier label or a budget row cannot authorize a paid fallback. This task's provider opt-in tests remain disabled unless separately admitted; no real-provider completion or cost claim is inferred from member-page HTTP 200.
+Paid Haiku requires both `AI_PAID_CALL_AUTHORIZED=true` and `OPENROUTER_API_KEY`. Either missing keeps `paidCallAuthorized: false`. A key, free-tier label or budget row cannot authorize a paid fallback alone. No real-provider completion or cost claim is inferred from member-page HTTP 200.
 
 Owner-account conversation bodies, source/tool receipts and feedback can be stored/reopened. Stored answers are historical, not fresh account lookups. Free-form member turns stay out of the shared response cache. Bounded owner history can be supplied to provider turns under the source boundary described below; safe summary generation and production transmission/retention acceptance remain separate gates.
 
@@ -162,6 +162,8 @@ Fallback is permitted only before accepted answer text for network, first-token 
 Example configuration names for a separately admitted non-production runtime; never commit actual values:
 
 ```dotenv
+APP_ENV=staging
+AI_PROVIDER_DISPATCH_ENABLED=true
 AI_PROVIDER=nvidia
 AI_API_KEY=<server-only-approved-NVIDIA-key>
 AI_MODEL_LOW_COST=openai/gpt-oss-20b
@@ -173,6 +175,8 @@ AI_MAX_REQUESTS_PER_MINUTE=5
 AI_MAX_REQUESTS_PER_DAY=100
 AI_CACHE_TTL_SECONDS=3600
 ```
+
+`AI_PROVIDER_DISPATCH_ENABLED` must be the exact string `true`. Omit it or leave it empty for static + owned-tool answers only. `APP_ENV=production` is rejected in `lib/ai/dispatch-admission.ts` even when the switch is on. Member IA may hide `/ai` from primary nav (SIMPLIFIED_TRACK); the deep route remains available when dispatch is admitted in non-production.
 
 `NVIDIA_API_KEY` is an alias for `AI_API_KEY`; if both are set they must match. `AI_MODEL_HIGH_CAPABILITY` remains a legacy schema field and does not override the fixed current chain. Output tokens and first-token bounds are validated in `lib/env/server.ts`; member requests are atomically capped at five per minute and 100 per rolling 24 hours across providers. The OpenRouter free admission has separate durable per-user counting within the same ceilings. These are application ceilings, not external-provider quota or cost guarantees.
 

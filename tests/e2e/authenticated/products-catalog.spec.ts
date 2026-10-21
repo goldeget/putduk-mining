@@ -92,11 +92,15 @@ test("the actual draft-only catalog stays unpublished with accessible responsive
   await expect(
     view.getByRole("button", { name: /선택|시작|승인/ }),
   ).toHaveCount(0);
+  // SIMPLIFIED_TRACK: 상품 is not a bottom-nav peer; deep-link page still settles.
   const primaryNavigation = page.locator("nav.product-navigation:visible");
   await expect(primaryNavigation).toHaveCount(1);
   await expect(
     primaryNavigation.getByRole("link", { name: "상품", exact: true }),
-  ).toHaveAttribute("aria-current", "page");
+  ).toHaveCount(0);
+  await expect(
+    primaryNavigation.getByRole("link", { name: "더보기", exact: true }),
+  ).toBeVisible();
   const miningLink = view.getByRole("link", { name: "채굴 보기", exact: true });
   await expect(miningLink).toHaveAttribute("href", "/mining");
   await miningLink.focus();

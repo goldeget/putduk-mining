@@ -53,13 +53,14 @@ function dom(overrides: Partial<WalletReadViewProps> = {}) {
 
 describe("wallet overview verified financial presentation", () => {
   it("shows an observed zero separately from an absent source and empty records", () => {
-    const node = dom();
+    const node = dom({ initialView: "history" });
     expect(
       node.querySelector('[data-wallet-balance-state="zero"]')?.textContent,
     ).toContain("0원");
     expect(node.textContent).toContain("아직 없음");
     expect(node.textContent).toContain("아직 거래 내역이 없어요");
-    expect(node.textContent).not.toMatch(/USDT\s*(잔액|잔고)|\+12.8%|L5 PRO/);
+    expect(node.textContent).toContain("USDT 잔액이 생기지 않아요");
+    expect(node.textContent).not.toMatch(/\+12.8%|L5 PRO/);
   });
   it("does not manufacture a zero when balance or source reads fail", () => {
     const node = dom({
@@ -67,14 +68,22 @@ describe("wallet overview verified financial presentation", () => {
       krw: null,
       funding: { state: "error" },
       ledgerState: "error",
+      initialView: "history",
     });
     expect(
       node.querySelector('[data-wallet-balance-state="error"]')?.textContent,
     ).not.toContain("0원");
     expect(node.textContent).toContain("확인할 수 없음");
     expect(node.textContent).toContain("잔액 다시 확인");
-    expect(node.textContent).toContain("원금과 수익 다시 확인");
     expect(node.textContent).toContain("거래 내역 다시 확인");
+    const principal = dom({
+      balanceState: "error",
+      krw: null,
+      funding: { state: "error" },
+      ledgerState: "error",
+      initialView: "principal",
+    });
+    expect(principal.textContent).toContain("원금과 수익 다시 확인");
   });
   it("preserves integers beyond Number precision and never adds principal to wallet", () => {
     const node = dom({
@@ -94,12 +103,11 @@ describe("wallet overview verified financial presentation", () => {
         ],
       },
     });
-    expect(
-      node.querySelector('[data-wallet-value="9,007,199,254,740,995원"]'),
-    ).not.toBeNull();
+    // Primary trusted balance is available KRW only — never ledger total+principal.
     expect(
       node.querySelector('[data-wallet-value="9,007,199,254,740,993원"]'),
     ).not.toBeNull();
+    expect(node.textContent).toContain("100,000원");
     expect(node.textContent).toContain("0.125원");
     expect(node.textContent).toContain("잔액에 합치지 않아요");
     expect(node.textContent).not.toContain("9,007,199,254,840,995");

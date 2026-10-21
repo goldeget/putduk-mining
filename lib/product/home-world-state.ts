@@ -85,10 +85,10 @@ export function resolveHomeWorldState(input: {
     const primary: HomePrimaryAction = fundedUnknown
       ? { href: "/home", label: "상태 다시 확인" }
       : fundedStatus === "ACTIVE"
-        ? { href: "/mining", label: "실제 채굴 보기" }
+        ? { href: "/mining", label: "채굴 중" }
         : safeMode
           ? { href: "/mining", label: "채굴 상태 확인" }
-          : { href: "/products/allocation", label: "채굴 배분 확인" };
+          : { href: "/mining", label: "채굴 보기" };
     const capacityUsed =
       funded?.funded_runtime?.schema_version === 2 &&
       funded.funded_runtime.stop_reason === "CAPACITY_USED";
@@ -106,17 +106,17 @@ export function resolveHomeWorldState(input: {
             ? "안전 모드로 잠시 멈춤"
             : capacityUsed
               ? "이번 한도 완료"
-              : "배분 대기",
-      worldTitle: fundedUnknown ? "다시 확인해 주세요" : "실제 채굴",
+              : "채굴 준비",
+      worldTitle: fundedUnknown ? "다시 확인해 주세요" : "퍼뜩 채굴",
       worldLead: fundedUnknown
-        ? "실제 채굴 상태를 다시 확인하면 다음 안내를 보여 드려요."
+        ? "채굴 상태를 다시 확인하면 안내를 보여 드려요."
         : fundedStatus === "ACTIVE"
-          ? "선택한 상품과 비율로 채굴 중이에요."
+          ? "앱을 닫아도 채굴은 계속돼요."
           : safeMode
-            ? "안전 모드로 잠시 멈췄어요. 지금까지 확인된 채굴 기록은 유지돼요."
+            ? "잠시 멈췄어요. 확인된 기록은 유지돼요."
             : capacityUsed
-              ? "이번 채굴 한도를 사용했어요. 상품과 배분을 확인해 주세요."
-              : "채굴할 상품과 배분을 확인해 주세요.",
+              ? "이번 채굴 한도를 사용했어요."
+              : "채굴 버튼을 누르면 수익이 쌓여요.",
       primary,
       trialStatusKnown,
       notStarted: false,
@@ -136,14 +136,14 @@ export function resolveHomeWorldState(input: {
   let liveLabel = "시작 준비 완료";
   let worldTitle = worldName(trial);
   let worldLead = "안내에 따라 첫 채굴 결과를 만나보세요.";
-  let primary: HomePrimaryAction = { href: "/start", label: "첫 채굴 시작" };
+  let primary: HomePrimaryAction = { href: "/start", label: "채굴 시작" };
 
   if (needsRequery) {
     liveLabel = readFailed
       ? "상태를 불러오지 못했어요"
       : "상태 확인이 필요해요";
     worldTitle = "다시 확인해 주세요";
-    worldLead = "채굴 정보를 다시 확인하면 다음 안내를 보여 드려요.";
+    worldLead = "채굴 정보를 다시 확인하면 안내를 보여 드려요.";
     primary = { href: "/home", label: "상태 다시 확인" };
   } else if (mining) {
     running = isConfirmedMiningRunning(mining.status);
@@ -151,19 +151,21 @@ export function resolveHomeWorldState(input: {
     worldTitle = worldName(mining);
     worldLead = running
       ? "앱을 닫아도 채굴은 계속돼요."
-      : "현재 확인된 채굴 상태예요. 상태가 바뀌면 다시 확인해 주세요.";
-    primary = { href: "/mining", label: "채굴 월드 보기" };
+      : "현재 확인된 채굴 상태예요.";
+    primary = {
+      href: "/mining",
+      label: running ? "채굴 중" : "채굴 보기",
+    };
   } else if (trial?.status === "ACTIVE") {
     running = true;
-    liveLabel = "PUTDUK START 진행 중";
+    liveLabel = "채굴 중";
     worldLead =
       "앱을 닫아도 채굴은 계속돼요. 다시 접속하면 결과를 확인할 수 있어요.";
-    primary = { href: "/start", label: "START 계속하기" };
+    primary = { href: "/start", label: "채굴 중" };
   } else if (trial?.status === "COMPLETED" || trial?.status === "EXPIRED") {
-    liveLabel =
-      trial.status === "COMPLETED" ? "PUTDUK START 완료" : "PUTDUK START 종료";
-    worldLead = "체험은 끝났어요. 환영 보상은 START에서 이어가요.";
-    primary = { href: "/start", label: "START 결과 보기" };
+    liveLabel = trial.status === "COMPLETED" ? "체험 완료" : "체험 종료";
+    worldLead = "체험은 끝났어요. 결과는 START에서 이어가요.";
+    primary = { href: "/start", label: "결과 보기" };
   }
 
   return {

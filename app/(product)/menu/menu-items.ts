@@ -9,9 +9,11 @@ export type MenuItem = {
   label: string;
   /** 더보기 본문 왼쪽 목록과 오른쪽 설정 목록. */
   lane: "links" | "settings";
+  /** SIMPLIFIED_TRACK: demoted hubs stay deep-link only. */
+  demoted?: boolean;
 };
 
-/** 더보기 허브. 알림과 알림 설정은 서로 다른 화면이다. */
+/** 더보기 허브 — thin: account, support, legal/trust; AI/events demoted. */
 export const MENU_ITEMS: readonly MenuItem[] = [
   {
     href: "/menu/account" as Route,
@@ -24,14 +26,7 @@ export const MENU_ITEMS: readonly MenuItem[] = [
     href: "/notifications",
     icon: "bell",
     label: "알림",
-    description: "채굴·자산·이벤트 소식을 확인해요.",
-    lane: "links",
-  },
-  {
-    href: "/events",
-    icon: "event",
-    label: "이벤트",
-    description: "진행 중인 이벤트와 참여 조건을 확인해요.",
+    description: "채굴과 자산 소식을 확인해요.",
     lane: "links",
   },
   {
@@ -42,6 +37,13 @@ export const MENU_ITEMS: readonly MenuItem[] = [
     lane: "links",
   },
   {
+    href: "/putduk-facts" as Route,
+    icon: "shield",
+    label: "신뢰 센터",
+    description: "공식 정보와 채굴의 기본 원칙을 확인해요.",
+    lane: "links",
+  },
+  {
     href: "/menu/notifications" as Route,
     icon: "pulse",
     label: "알림 설정",
@@ -49,17 +51,19 @@ export const MENU_ITEMS: readonly MenuItem[] = [
     lane: "settings",
   },
   {
-    href: "/putduk-facts" as Route,
-    icon: "shield",
-    label: "신뢰 센터",
-    description: "공식 정보와 채굴의 기본 원칙을 확인해요.",
+    href: "/events",
+    icon: "event",
+    label: "이벤트",
+    description: "진행 중인 소식을 확인해요.",
     lane: "settings",
+    demoted: true,
   },
   {
     href: "/ai",
     icon: "ai",
     label: "퍼뜩 AI",
-    description: "내 상태와 이용 방법을 물어보세요.",
+    description: "궁금한 점을 물어볼 수 있어요.",
     lane: "settings",
+    demoted: true,
   },
 ] as const;

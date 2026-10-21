@@ -82,7 +82,7 @@ test.describe("first KRW_BANK welcome withdrawal", () => {
     const finalized = await readLatestWithdrawal(member.userId);
     expect(["LEDGER_FINALIZED", "COMPLETED"]).toContain(finalized?.status);
 
-    await page.goto("/wallet");
+    await page.goto("/wallet?view=history");
     await expect(page.getByText("PUTDUK START 전환").first()).toBeVisible();
     await expect(
       page.getByText(/환영 보상 첫 출금|출금/).first(),

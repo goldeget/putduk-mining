@@ -77,7 +77,7 @@ describe("real member action error presentation", () => {
     async (status, code, copy) => {
       fetchMock.mockResolvedValue(errorResponse(Number(status), code));
       await mount(createElement(StartTrialButton));
-      await click("첫 채굴 시작");
+      await click("채굴 시작");
       expect(host.textContent).toContain(copy);
       expect(host.textContent).not.toContain(technicalMessage);
       expect(navigation.refresh).not.toHaveBeenCalled();
@@ -97,7 +97,7 @@ describe("real member action error presentation", () => {
       json: async () => payload,
     });
     await mount(createElement(StartTrialButton));
-    await click("첫 채굴 시작");
+    await click("채굴 시작");
     expect(host.textContent).toContain("체험 시작 결과를 확인하지 못했어요");
     expect(navigation.refresh).not.toHaveBeenCalled();
   });
@@ -105,7 +105,7 @@ describe("real member action error presentation", () => {
   it("reports a lost START response as unknown and retains the existing command request", async () => {
     fetchMock.mockRejectedValue(new Error(technicalMessage));
     await mount(createElement(StartTrialButton));
-    await click("첫 채굴 시작");
+    await click("채굴 시작");
     expect(host.textContent).toContain("체험 시작 결과를 받지 못했어요");
     expect(host.textContent).not.toContain(technicalMessage);
     expect(fetchMock).toHaveBeenCalledWith("/api/v1/trial/start", {
@@ -121,7 +121,7 @@ describe("real member action error presentation", () => {
       json: async () => ({ data: { sessionId: uuid(7) } }),
     });
     await mount(createElement(StartTrialButton));
-    await click("첫 채굴 시작");
+    await click("채굴 시작");
     expect(navigation.refresh).toHaveBeenCalledTimes(1);
     expect(host.querySelector('[role="status"]')).toBeNull();
   });

@@ -93,7 +93,7 @@ export default async function StartPage() {
         />
       ) : null}
       <PageHeading
-        eyebrow="PUTDUK START"
+        eyebrow="퍼뜩 채굴"
         title={state.headingTitle}
         lead={state.headingLead}
       />

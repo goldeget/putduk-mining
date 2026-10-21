@@ -176,7 +176,7 @@ test("shows the empty session, world directory, themes, and keyboard path", asyn
     page.getByText("퍼뜩의 첫 여정이 시작되는 기본 채굴 월드"),
   ).toBeVisible();
 
-  const startLink = page.getByRole("link", { name: "PUTDUK START 확인" });
+  const startLink = page.getByRole("link", { name: "채굴 시작" });
   await expect(startLink).toHaveAttribute("href", "/start");
   for (let step = 0; step < 40; step += 1) {
     if (await startLink.evaluate((node) => node === document.activeElement)) {
@@ -193,7 +193,7 @@ test("shows the empty session, world directory, themes, and keyboard path", asyn
   await page.waitForURL(/\/start$/);
   await dismissGuidedQuestIfPresent(page);
   const startHeading = page.getByRole("heading", {
-    name: "첫 채굴, 분명한 시작.",
+    name: "채굴을 시작해 보세요.",
   });
   if (!(await startHeading.isVisible())) {
     await page.reload({ waitUntil: "domcontentloaded" });
@@ -390,9 +390,7 @@ test("renders recorded sessions while unverified funded mining stays unknown", a
   await expect(
     page.getByText("현재 활성 세션이 이어지고 있어요.").first(),
   ).toBeVisible();
-  await expect(
-    page.getByRole("link", { name: "PUTDUK START 확인" }),
-  ).toHaveCount(0);
+  await expect(page.getByRole("link", { name: "채굴 시작" })).toHaveCount(0);
   await expect(page.getByText("가상 채굴")).toHaveCount(0);
 
   const seoulClock = new Intl.DateTimeFormat("ko-KR", {

@@ -10,13 +10,12 @@ import { WalletDesktopHeader, WalletMobileTools } from "./wallet-chrome";
 
 import styles from "./product-shell.module.css";
 
+/** SIMPLIFIED_TRACK: 홈 · 채굴 · 지갑 · 더보기 — 상품/이벤트/AI는 peer CTA 아님. */
 const homeTopLinks = [
   { href: "/home", label: "홈", icon: "home" },
   { href: "/mining", label: "채굴", icon: "coins" },
-  { href: "/products", label: "상품", icon: "cube" },
   { href: "/wallet", label: "지갑", icon: "wallet" },
-  { href: "/events", label: "이벤트", icon: "gift" },
-  { href: "/ai", label: "PUTDUK AI", icon: "ai" },
+  { href: "/menu", label: "더보기", icon: "more" },
 ] as const;
 
 function MiningHeader({ displayName }: { displayName: string }) {
@@ -106,11 +105,7 @@ export function ProductHeader({
               prefetch={false}
               aria-current={item.href === "/home" ? "page" : undefined}
             >
-              {item.icon === "ai" ? (
-                <PutdukIcon name="ai" size={20} />
-              ) : (
-                <PutdukHomeIcon name={item.icon} size={20} metallic={false} />
-              )}
+              <PutdukHomeIcon name={item.icon} size={20} metallic={false} />
               <span>{item.label}</span>
             </Link>
           ))}

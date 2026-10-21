@@ -171,14 +171,17 @@ describe("a provider key alone never dispatches a real AI call", () => {
     },
   );
 
-  it("production stays blocked even when the owner switch is on", async () => {
+  it("production reaches the provider chain when the owner switch is on, still unpaid", async () => {
     mocks.env.APP_ENV = "production";
     mocks.env.AI_PROVIDER_DISPATCH_ENABLED = "true";
     const response = await POST(request());
     expect(await events(response)).toContainEqual(
-      expect.objectContaining({ type: "done" }),
+      expect.objectContaining({ type: "done", saved: true }),
     );
-    expect(mocks.provider).toHaveBeenCalledTimes(0);
+    expect(mocks.provider).toHaveBeenCalledTimes(1);
+    expect(mocks.provider).toHaveBeenCalledWith(
+      expect.objectContaining({ paidCallAuthorized: false }),
+    );
     expect(fetchMock).not.toHaveBeenCalled();
   });
 

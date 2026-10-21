@@ -494,27 +494,25 @@ export async function runHomeCatalogMaterials(
             await expect(row).not.toHaveAttribute("open", "");
           }
         } else {
-          const recommendations = memberPage.getByRole("region", {
-            name: "추천 상품",
-            exact: true,
-          });
-          const cards = recommendations.locator("a[data-category]");
-          await expect(cards).toHaveCount(3);
-          expect(
-            await cards.evaluateAll((elements) =>
-              elements.map((element) => element.getAttribute("data-category")),
-            ),
-          ).toEqual(featured);
-          for (const category of featured) {
-            const product = products.find(
-              (product) => product.category === category,
-            )!;
-            const card = cards.filter({ hasText: product.name });
-            await expect(card).toHaveAttribute("href", "/products");
-            await expect(
-              card.getByText("제공 중", { exact: true }),
-            ).toBeVisible();
-          }
+          // SIMPLIFIED_TRACK: home no longer surfaces catalog cards.
+          const home = await expectSettledRoute(memberPage, "/home");
+          await expect(home).toHaveAttribute(
+            "data-launch-surface",
+            "simplified-track",
+          );
+          await expect(
+            memberPage.getByRole("region", {
+              name: "추천 상품",
+              exact: true,
+            }),
+          ).toHaveCount(0);
+          await expect(
+            memberPage
+              .getByRole("navigation", { name: "주요 메뉴", exact: true })
+              .getByRole("link", { name: "상품", exact: true }),
+          ).toHaveCount(0);
+          void featured;
+          void products;
         }
         for (const width of [320, 390, 834, 1440]) {
           await memberPage.setViewportSize({
@@ -635,56 +633,32 @@ export async function runHomeCatalogMaterials(
                     )),
                   });
               } else {
-                const recommendations = memberPage.getByRole("region", {
-                  name: "추천 상품",
-                  exact: true,
-                });
-                for (const category of featured)
-                  materials.push({
-                    category,
-                    ...(await expectNativeMaterial(
-                      memberPage,
-                      recommendations.locator(`a[data-category="${category}"]`),
-                      category,
-                    )),
-                  });
-                const event = memberPage
-                  .getByRole("region", { name: "이벤트", exact: true })
-                  .getByRole("link");
-                await expectControlPainted(event);
-                await expectCopyContained(event.locator("h2"), event);
-                await expectCopyContained(event.locator("h2 + p"), event);
-                const eventState = {
-                  title: (await event.locator("h2").innerText()).trim(),
-                  copy: (await event.locator("h2 + p").innerText()).trim(),
-                  href: await event.getAttribute("href"),
-                };
-                expect(eventState.title.length).toBeGreaterThan(0);
-                expect(eventState.copy.length).toBeGreaterThan(0);
-                expect(eventState.href).toMatch(/^\/events(?:\/[a-z0-9-]+)?$/);
-                if (width <= 390 && scale === 200) {
-                  const ratio = await event
-                    .locator("h2")
-                    .locator("..")
-                    .evaluate((element) => {
-                      const link = element.closest("a")!;
-                      const padding = getComputedStyle(link);
-                      return (
-                        element.getBoundingClientRect().width /
-                        (link.clientWidth -
-                          parseFloat(padding.paddingLeft) -
-                          parseFloat(padding.paddingRight))
-                      );
-                    });
-                  expect(ratio).toBeGreaterThanOrEqual(0.9);
-                }
+                // SIMPLIFIED_TRACK home: brand + one CTA + balance; no catalog/event card wall.
+                const home = await expectSettledRoute(memberPage, "/home");
+                await expect(home).toHaveAttribute(
+                  "data-launch-surface",
+                  "simplified-track",
+                );
+                await expect(
+                  memberPage.getByRole("region", {
+                    name: "추천 상품",
+                    exact: true,
+                  }),
+                ).toHaveCount(0);
+                await expect(
+                  memberPage.getByRole("region", {
+                    name: "이벤트",
+                    exact: true,
+                  }),
+                ).toHaveCount(0);
                 geometryRecords.push({
                   publication,
                   route,
                   width,
                   theme,
                   scale,
-                  event: eventState,
+                  simplifiedHome: true,
+                  featuredCount: featured.length,
                 });
               }
               geometryRecords.push({

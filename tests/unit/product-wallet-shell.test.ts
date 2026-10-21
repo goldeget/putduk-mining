@@ -88,24 +88,17 @@ describe("root Wallet chrome preserves real destinations and native controls", (
     expect(workspace.querySelector(".product-header")).toBeNull();
     expect(shell.getAttribute("data-wallet-page-active")).toBe("true");
     expect(host.querySelector("[data-connectivity]")).not.toBeNull();
-    expect(host.querySelectorAll("[data-ai-dock]")).toHaveLength(1);
+    expect(host.querySelectorAll("[data-ai-dock]")).toHaveLength(0);
   });
 
-  it("uses the genuine five top routes and the reference sidebar with real Wallet subroutes", async () => {
+  it("uses the four top routes and the reference sidebar with real Wallet subroutes", async () => {
     await render();
     const top = host.querySelector('nav[aria-label="지갑 주요 메뉴"]')!;
-    expect(hrefs(top)).toEqual([
-      "/home",
-      "/mining",
-      "/products",
-      "/wallet",
-      "/menu",
-    ]);
+    expect(hrefs(top)).toEqual(["/home", "/mining", "/wallet", "/menu"]);
     const sidebar = host.querySelector('nav[aria-label="지갑 전체 메뉴"]')!;
     expect(hrefs(sidebar)).toEqual([
       "/home",
       "/mining",
-      "/products",
       "/wallet",
       "/wallet",
       "/wallet/deposit",
@@ -117,6 +110,7 @@ describe("root Wallet chrome preserves real destinations and native controls", (
       sidebar.querySelector('[aria-current="page"]')?.getAttribute("href"),
     ).toBe("/wallet");
     expect(host.querySelector('.product-sidebar a[href="/ai"]')).not.toBeNull();
+    expect(host.querySelector('a[href="/products"]')).toBeNull();
     for (const unsupported of [
       "L5",
       "PRO",
@@ -190,7 +184,7 @@ describe("root Wallet chrome preserves real destinations and native controls", (
         host.querySelector(".product-workspace > .product-header"),
       ).toBeNull();
       expect(host.querySelector(".product-sidebar > .brand-lockup")).toBeNull();
-      expect(host.querySelector("[data-ai-dock]")).not.toBeNull();
+      expect(host.querySelector("[data-ai-dock]")).toBeNull();
       expect(
         host
           .querySelector(".product-shell")
@@ -207,16 +201,10 @@ describe("root Wallet chrome preserves real destinations and native controls", (
     ).not.toBeNull();
   });
 
-  it("marks only Wallet active among the five native bottom destinations", async () => {
+  it("marks only Wallet active among the four native bottom destinations", async () => {
     await act(async () => root.render(createElement(ProductNavigation)));
     const nav = host.querySelector('nav[aria-label="주요 메뉴"]')!;
-    expect(hrefs(nav)).toEqual([
-      "/home",
-      "/mining",
-      "/products",
-      "/wallet",
-      "/menu",
-    ]);
+    expect(hrefs(nav)).toEqual(["/home", "/mining", "/wallet", "/menu"]);
     expect(nav.querySelectorAll('[aria-current="page"]')).toHaveLength(1);
     const active = nav.querySelector('[aria-current="page"]')!;
     expect(active.getAttribute("href")).toBe("/wallet");
@@ -240,6 +228,6 @@ describe("root Wallet chrome preserves real destinations and native controls", (
       host.querySelector('nav[aria-label="채굴 전체 메뉴"]'),
     ).not.toBeNull();
     expect(host.querySelector("[data-wallet-header]")).toBeNull();
-    expect(host.querySelector("[data-ai-dock]")).not.toBeNull();
+    expect(host.querySelector("[data-ai-dock]")).toBeNull();
   });
 });

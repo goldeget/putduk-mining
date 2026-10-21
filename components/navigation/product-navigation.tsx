@@ -10,19 +10,18 @@ import styles from "@/components/layout/product-shell.module.css";
 const homeNavigationIcons = {
   "/home": "home",
   "/mining": "coins",
-  "/products": "cube",
   "/wallet": "wallet",
   "/menu": "more",
 } as const;
 
+/** SIMPLIFIED_TRACK: 홈 · 채굴 · 지갑 · 더보기 — 상품/이벤트/AI는 peer CTA 아님. */
 const items = [
   { href: "/home", icon: "home", label: "홈" },
   { href: "/mining", icon: "mining", label: "채굴" },
-  { href: "/products", icon: "products", label: "상품" },
   { href: "/wallet", icon: "wallet", label: "지갑" },
   { href: "/menu", icon: "menu", label: "더보기" },
 ] as const satisfies ReadonlyArray<{
-  href: "/products" | "/home" | "/menu" | "/mining" | "/wallet";
+  href: "/home" | "/menu" | "/mining" | "/wallet";
   icon: PutdukIconName;
   label: string;
 }>;
@@ -30,7 +29,6 @@ const items = [
 const miningSidebarItems = [
   { href: "/home", label: "홈", icon: "home" },
   { href: "/mining", label: "채굴", icon: "coins" },
-  { href: "/products", label: "상품", icon: "cube" },
   { href: "/wallet", label: "지갑", icon: "wallet" },
   { href: "/menu", label: "더보기", icon: "more" },
 ] as const;
@@ -50,7 +48,11 @@ export function ProductNavigation({
             key={item.href}
             href={item.href}
             prefetch={false}
-            aria-current={item.href === pathname ? "page" : undefined}
+            aria-current={
+              pathname === item.href || pathname.startsWith(`${item.href}/`)
+                ? "page"
+                : undefined
+            }
           >
             <PutdukHomeIcon name={item.icon} size={25} metallic={false} />
             <span>{item.label}</span>
@@ -72,7 +74,9 @@ export function ProductNavigation({
               pathname === "/notifications" ||
               pathname === "/events" ||
               pathname.startsWith("/events/") ||
-              pathname === "/support"));
+              pathname === "/support" ||
+              pathname === "/products" ||
+              pathname.startsWith("/products/")));
         return (
           <Link
             className={active ? "is-active" : undefined}
