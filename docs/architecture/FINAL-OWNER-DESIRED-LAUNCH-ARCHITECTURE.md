@@ -1,8 +1,8 @@
 # PUTDUK MINING — FINAL Owner-Desired Launch Architecture
 
-Status: **CANONICAL FOR “원하는 대로 작동 + 완전 단순화 출시”**  
-Date: `2026-10-21`  
-Workspace: `C:\Dev\putduk-mining`  
+Status: **CANONICAL FOR “원하는 대로 작동 + 완전 단순화 출시”**
+Date: `2026-10-21`
+Workspace: `C:\Dev\putduk-mining`
 Baseline tip: `2d7e903c712726f4540cdbe860d9410935023f4e` · Platform: **NOT_LAUNCH_READY** · PRODUCT COMPLETE routes = **0** · develop tip full E2E FAIL (run `39253488361`) · public hosts still **STAGING**
 
 Authorized targets only: GitHub `goldeget/putduk-mining` · Supabase `osrmyjgmpdspdcwqjwuv` · Cloudflare `putduk-landing` `9dc502d4ef06b3b5374591de6e6933ca`.
@@ -277,9 +277,9 @@ Reuse `LAUNCH-SIMPLIFICATION-PATCH-ARCHITECTURE.md` §§2–5. Brief:
 | One CTA: 채굴 시작 / 채굴 중 | Dashboard card walls, ledger tables in member UI |
 | One balance number | USDT-as-balance language |
 
-**Primary paths to edit:**  
-`components/navigation/product-navigation.tsx`, `mobile-navigation.tsx`,  
-`app/(product)/home/page.tsx`, `mining/page.tsx`, `start/page.tsx`, `wallet/page.tsx`,  
+**Primary paths to edit:**
+`components/navigation/product-navigation.tsx`, `mobile-navigation.tsx`,
+`app/(product)/home/page.tsx`, `mining/page.tsx`, `start/page.tsx`, `wallet/page.tsx`,
 `components/product/*`, `components/mining-live/*`.
 
 Korean content gate unchanged (one screen / one idea / short CTAs).
@@ -420,7 +420,7 @@ Current binary: **NO-GO** (NOT_LAUNCH_READY).
 | **D11** | Auto local commit after focused green? | Agent loop speed |
 | **REMOTE-DB** | Approve remote Supabase apply when local C proven? | Production data path |
 
-Until **D5 = YES**, label evidence **SIMPLIFIED_TRACK**, not “full V1 complete”.  
+Until **D5 = YES**, label evidence **SIMPLIFIED_TRACK**, not “full V1 complete”.
 Until **AI-PROD / AI-PAID**, do not enable production or paid calls.
 
 ---

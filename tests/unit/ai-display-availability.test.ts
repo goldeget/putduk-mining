@@ -19,7 +19,7 @@ describe("AI display configuration boundary", () => {
     ]);
   });
 
-  it("accepts the server-only NVIDIA alias but blocks trial inference in production", () => {
+  it("accepts the server-only NVIDIA alias in development and production when the owner switch is on", () => {
     vi.stubEnv("AI_PROVIDER", "nvidia");
     vi.stubEnv("AI_API_KEY", "");
     vi.stubEnv("NVIDIA_API_KEY", "test-only-key-never-sent-to-a-provider");
@@ -28,7 +28,7 @@ describe("AI display configuration boundary", () => {
     vi.stubEnv("APP_ENV", "development");
     expect(getAiAvailability().providerConfigured).toBe(true);
     vi.stubEnv("APP_ENV", "production");
-    expect(getAiAvailability().providerConfigured).toBe(false);
+    expect(getAiAvailability().providerConfigured).toBe(true);
   });
 
   it.each([undefined, "", "false", "TRUE", "1", "yes", " true"])(
@@ -43,13 +43,13 @@ describe("AI display configuration boundary", () => {
     },
   );
 
-  it("the owner switch cannot admit production", () => {
+  it("the owner switch admits production the same as staging", () => {
     vi.stubEnv("AI_PROVIDER", "nvidia");
     vi.stubEnv("AI_API_KEY", "test-only-key-never-sent-to-a-provider");
     vi.stubEnv("AI_MODEL_LOW_COST", "openai/gpt-oss-20b");
     vi.stubEnv("AI_PROVIDER_DISPATCH_ENABLED", "true");
     vi.stubEnv("APP_ENV", "production");
-    expect(getAiAvailability().providerConfigured).toBe(false);
+    expect(getAiAvailability().providerConfigured).toBe(true);
     vi.stubEnv("APP_ENV", "staging");
     expect(getAiAvailability().providerConfigured).toBe(true);
   });

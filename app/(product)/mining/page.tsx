@@ -251,7 +251,11 @@ export default async function MiningPage() {
               <strong>{facts.tier}</strong>
               <small>확인된 채굴 원금 기준</small>
             </div>
-            <Link href="/wallet" aria-label="지갑에서 확정 금액 보기" prefetch={false}>
+            <Link
+              href="/wallet"
+              aria-label="지갑에서 확정 금액 보기"
+              prefetch={false}
+            >
               <PutdukIcon name="arrow-right" size={18} />
             </Link>
           </div>

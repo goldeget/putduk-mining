@@ -122,9 +122,7 @@ export function MemberMenuView({ facts }: { facts: MemberScreenFacts }) {
             TECHNOLOGY CREATES
             <br />A MORE VALUABLE TOMORROW
           </p>
-          <p className={styles.introduction}>
-            계정과 도움말만 모았어요.
-          </p>
+          <p className={styles.introduction}>계정과 도움말만 모았어요.</p>
         </div>
         <div className={styles.heroBrand} aria-hidden="true">
           <MenuBrandSymbol />

@@ -1,10 +1,10 @@
 # LAUNCH SIMPLIFIED — Phase B evidence (SIMPLIFIED_TRACK)
 
-Date: `2026-10-21`  
-Workspace: `c:\Dev\putduk-mining`  
-Baseline / HEAD at start: `2d7e903c712726f4540cdbe860d9410935023f4e`  
-Remote verified: `https://github.com/goldeget/putduk-mining.git` (`TARGETS_OK`)  
-Owner D5: **ACCEPTED** · Label: **SIMPLIFIED_TRACK**  
+Date: `2026-10-21`
+Workspace: `c:\Dev\putduk-mining`
+Baseline / HEAD at start: `2d7e903c712726f4540cdbe860d9410935023f4e`
+Remote verified: `https://github.com/goldeget/putduk-mining.git` (`TARGETS_OK`)
+Owner D5: **ACCEPTED** · Label: **SIMPLIFIED_TRACK**
 Commit: **not created** (implement + leave working tree; await owner 「커밋해」)
 
 ---

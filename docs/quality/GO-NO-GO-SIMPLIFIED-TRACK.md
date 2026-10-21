@@ -1,7 +1,7 @@
 # Go / No-Go — SIMPLIFIED_TRACK (binary checklist)
 
-Date: `2026-10-21`  
-SSOT: `docs/architecture/FINAL-OWNER-DESIRED-LAUNCH-ARCHITECTURE.md` §9  
+Date: `2026-10-21`
+SSOT: `docs/architecture/FINAL-OWNER-DESIRED-LAUNCH-ARCHITECTURE.md` §9
 Platform verdict: **NOT_LAUNCH_READY** / **NO-GO**
 
 | # | Must-pass | Status | Evidence / blocker |

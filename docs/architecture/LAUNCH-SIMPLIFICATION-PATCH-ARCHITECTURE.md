@@ -2,9 +2,9 @@
 
 > **2026-10-21 최종.** 출시 단순화의 결정본은 [`NATIONWIDE-SIMPLE-LAUNCH-ARCHITECTURE.md`](NATIONWIDE-SIMPLE-LAUNCH-ARCHITECTURE.md)다. 판정은 최종 아키텍처 결정됨, 출시 준비는 아니다. 이 파일 본문이 스스로를 출시 SSOT라고 부르거나, §14를 열린 제품 질문으로 두거나, 「버튼만 누르면 수익이 쌓인다」로 입금을 1차 여정에서 빼거나, 하이쿠를 예산 문서 전까지 빼 두는 읽기는 그 결정과 충돌한다. 충돌하면 전국 문서를 따른다. AI는 첫 화면에 없고, 화면을 켤 때의 무료 체인과 하이쿠 한 번은 전국 문서만 따른다. 아래 본문은 자동화 메모로만 남긴다.
 
-Status: **SUPERSEDED FOR LAUNCH SCOPE** by `docs/architecture/NATIONWIDE-SIMPLE-LAUNCH-ARCHITECTURE.md`  
-Date: `2026-10-21`  
-Workspace: `C:\Dev\putduk-mining`  
+Status: **SUPERSEDED FOR LAUNCH SCOPE** by `docs/architecture/NATIONWIDE-SIMPLE-LAUNCH-ARCHITECTURE.md`
+Date: `2026-10-21`
+Workspace: `C:\Dev\putduk-mining`
 Audit baseline: **NOT_LAUNCH_READY** · develop tip `2d7e903c712726f4540cdbe860d9410935023f4e` · PRODUCT COMPLETE routes = **0** · full E2E tip FAIL (run `39253488361`, Authenticated product gates 10/12)
 
 Authorized targets only: GitHub `goldeget/putduk-mining` · Supabase `osrmyjgmpdspdcwqjwuv` · Cloudflare `putduk-landing` `9dc502d4ef06b3b5374591de6e6933ca`.
@@ -82,8 +82,8 @@ Authorized targets only: GitHub `goldeget/putduk-mining` · Supabase `osrmyjgmpd
 
 - One screen, one primary message. One paragraph, one idea. One button, one action.
 - Short CTAs: `채굴 시작` · `채굴 중` · `잔액 보기` · `출금 신청`.
-- Tone examples (AGENTS.md):  
-  - 「앱을 닫아도 채굴은 계속돼요. 다시 접속하면 결과를 확인할 수 있어요.」  
+- Tone examples (AGENTS.md):
+  - 「앱을 닫아도 채굴은 계속돼요. 다시 접속하면 결과를 확인할 수 있어요.」
   - 「최대 5,000원까지 출금할 수 있어요. 출금 전 본인 확인이 필요해요.」
 - Phone copy = signup availability / already used. **Never** `휴대폰 인증` / SMS verified.
 - USDT deposit = **manual deposit**. Withdrawal = against **KRW balance**. Never “USDT 잔액”.
@@ -283,9 +283,9 @@ flowchart TB
 
 ### Full E2E tip fix strategy
 
-1. **Triage only** failing product gates from run `39253488361` artifacts / local reproduce.  
-2. **Narrow** `pnpm test:e2e:auth:file -- <spec>` / `auth:last-failed`.  
-3. Fix product/domain — never green by deleting coverage.  
+1. **Triage only** failing product gates from run `39253488361` artifacts / local reproduce.
+2. **Narrow** `pnpm test:e2e:auth:file -- <spec>` / `auth:last-failed`.
+3. Fix product/domain — never green by deleting coverage.
 4. Focused green → owner-approved push → PR CI ≤20m smoke → develop → **`ci-full-e2e` green on exact release SHA** before deploy.
 
 ---
@@ -345,14 +345,14 @@ flowchart TB
 
 **HARD STOP — explicit human approval required (GIT-CI-CD-POLICY + project boundary):**
 
-1. `git push` / PR create-update that can hit remote CI with unknown coupling  
-2. Merge to `develop` / `main` / `release/**`  
-3. Production or staging **deploy** / Worker version activate  
-4. **DNS** changes for `mining.putduk.com` / `admin.mining.putduk.com`  
-5. **Remote Supabase** apply/migration/data mutation on `osrmyjgmpdspdcwqjwuv`  
-6. Real money / real payouts / paid provider calls  
-7. Repo visibility / branch protection setting changes on GitHub  
-8. Any action classified **production-coupled** or **UNKNOWN** coupling  
+1. `git push` / PR create-update that can hit remote CI with unknown coupling
+2. Merge to `develop` / `main` / `release/**`
+3. Production or staging **deploy** / Worker version activate
+4. **DNS** changes for `mining.putduk.com` / `admin.mining.putduk.com`
+5. **Remote Supabase** apply/migration/data mutation on `osrmyjgmpdspdcwqjwuv`
+6. Real money / real payouts / paid provider calls
+7. Repo visibility / branch protection setting changes on GitHub
+8. Any action classified **production-coupled** or **UNKNOWN** coupling
 
 **UNKNOWN ≠ safe.** Stop and request owner evidence.
 
@@ -431,9 +431,9 @@ GATE_HUMAN_*  (push, merge, deploy, dns, remote db, real money)
 
 ### 9.7 Failure / retry / hung
 
-- Fail → triage → narrow re-run → fix → re-verify.  
-- Hung: 10분 no growth + idle CPU → kill; record last spec, PID, log tail.  
-- Same candidate SHA: authenticated **full ≤ 2** (initial + post-fix); more needs approval.  
+- Fail → triage → narrow re-run → fix → re-verify.
+- Hung: 10분 no growth + idle CPU → kill; record last spec, PID, log tail.
+- Same candidate SHA: authenticated **full ≤ 2** (initial + post-fix); more needs approval.
 - Never `db:reset` then immediately full suite.
 
 ---

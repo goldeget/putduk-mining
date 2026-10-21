@@ -197,10 +197,7 @@ test("홈과 START READY 상태를 도메인 스냅샷으로 보여 준다", asy
   await loginAsMember(page, member, "/home");
 
   const home = await expectSettledRoute(page, "/home");
-  await expect(home).toHaveAttribute(
-    "data-launch-surface",
-    "simplified-track",
-  );
+  await expect(home).toHaveAttribute("data-launch-surface", "simplified-track");
   await expect(
     page.getByRole("heading", {
       level: 1,
@@ -210,7 +207,9 @@ test("홈과 START READY 상태를 도메인 스냅샷으로 보여 준다", asy
   await expect(
     home.getByRole("link", { name: /채굴 시작/, exact: true }),
   ).toBeVisible();
-  await expect(home.getByLabel("사용 가능 원화", { exact: true })).toBeVisible();
+  await expect(
+    home.getByLabel("사용 가능 원화", { exact: true }),
+  ).toBeVisible();
 
   await home.getByRole("link", { name: /채굴 시작/, exact: true }).click();
   await expect(page).toHaveURL(/\/start$/);
@@ -253,10 +252,7 @@ test("START ACTIVE 상태는 서버 동기화 안내와 진행 문구를 유지�
 
   await page.goto("/home");
   const home = await expectSettledRoute(page, "/home");
-  await expect(home).toHaveAttribute(
-    "data-launch-surface",
-    "simplified-track",
-  );
+  await expect(home).toHaveAttribute("data-launch-surface", "simplified-track");
   const activeCta = home.getByRole("link", { name: "채굴 중", exact: true });
   await expect(activeCta).toHaveCount(1);
   await expect(activeCta).toBeVisible();
@@ -611,10 +607,7 @@ test("알림 센터는 더 새로운 만료 알림을 빼고 본인 유효 알�
   // SIMPLIFIED_TRACK: home drops the notification card wall; inbox lives on /notifications.
   await loginAsMember(page, owner, "/home");
   const home = await expectSettledRoute(page, "/home");
-  await expect(home).toHaveAttribute(
-    "data-launch-surface",
-    "simplified-track",
-  );
+  await expect(home).toHaveAttribute("data-launch-surface", "simplified-track");
   for (const title of [
     olderActive.title,
     olderRead.title,

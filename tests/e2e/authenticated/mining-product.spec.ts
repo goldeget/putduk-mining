@@ -390,9 +390,7 @@ test("renders recorded sessions while unverified funded mining stays unknown", a
   await expect(
     page.getByText("현재 활성 세션이 이어지고 있어요.").first(),
   ).toBeVisible();
-  await expect(
-    page.getByRole("link", { name: "채굴 시작" }),
-  ).toHaveCount(0);
+  await expect(page.getByRole("link", { name: "채굴 시작" })).toHaveCount(0);
   await expect(page.getByText("가상 채굴")).toHaveCount(0);
 
   const seoulClock = new Intl.DateTimeFormat("ko-KR", {

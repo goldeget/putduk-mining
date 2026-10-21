@@ -255,7 +255,11 @@ export function WalletOverviewView({
       </section>
       <div className={styles.content}>
         <div className={styles.main}>
-          <nav className={styles.tabs} aria-label="추가 확인" data-wallet-secondary-nav>
+          <nav
+            className={styles.tabs}
+            aria-label="추가 확인"
+            data-wallet-secondary-nav
+          >
             {(["principal", "profit", "history"] as const).map(
               (view, index) => (
                 <Link

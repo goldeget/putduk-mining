@@ -161,7 +161,10 @@ export default async function ProductHomePage() {
           />
         ) : null}
 
-        <section className={styles.simplifiedSecondary} aria-label="이어서 확인">
+        <section
+          className={styles.simplifiedSecondary}
+          aria-label="이어서 확인"
+        >
           <Link className={styles.simplifiedSecondaryLink} href="/mining">
             <span>
               <strong>채굴 상세</strong>
@@ -182,7 +185,10 @@ export default async function ProductHomePage() {
             </span>
             <PutdukIcon name="arrow-right" size={16} />
           </Link>
-          <Link className={styles.simplifiedSecondaryLink} href="/wallet/deposit">
+          <Link
+            className={styles.simplifiedSecondaryLink}
+            href="/wallet/deposit"
+          >
             <span>
               <strong>입금</strong>
               <small>원화·USDT 수동 입금</small>

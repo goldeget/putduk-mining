@@ -2,10 +2,10 @@
 
 판정: **최종 아키텍처 결정됨. 출시 준비는 아니다.**
 
-날짜: `2026-10-21`  
-작업 공간: `C:\Dev\putduk-mining`  
-원격: `https://github.com/goldeget/putduk-mining.git`  
-기준: `develop` = `origin/develop` = `2d7e903c712726f4540cdbe860d9410935023f4e`  
+날짜: `2026-10-21`
+작업 공간: `C:\Dev\putduk-mining`
+원격: `https://github.com/goldeget/putduk-mining.git`
+기준: `develop` = `origin/develop` = `2d7e903c712726f4540cdbe860d9410935023f4e`
 상태: **NOT_LAUNCH_READY.** PRODUCT COMPLETE 경로 = **0.**
 
 이 파일이 출시 단순화의 결정본이다. `docs/architecture/LAUNCH-SIMPLIFICATION-PATCH-ARCHITECTURE.md`는 자동화 메모다. 범위, 여정, 채굴, AI가 다르면 이 파일을 따른다.

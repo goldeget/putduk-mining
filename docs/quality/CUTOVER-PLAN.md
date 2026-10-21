@@ -1,13 +1,13 @@
 # Cutover plan — prep only (DO NOT EXECUTE)
 
-Date: `2026-10-21`  
-Track: SIMPLIFIED_TRACK  
-Account: Cloudflare `putduk-landing` `9dc502d4ef06b3b5374591de6e6933ca`  
+Date: `2026-10-21`
+Track: SIMPLIFIED_TRACK
+Account: Cloudflare `putduk-landing` `9dc502d4ef06b3b5374591de6e6933ca`
 Hosts: `mining.putduk.com`, `admin.mining.putduk.com`
 
 ## Purpose
 
-Document the **future** staging → accepted production SHA switch.  
+Document the **future** staging → accepted production SHA switch.
 **This document does not authorize DNS changes, Worker activate-as-prod, or remote Supabase apply.**
 
 ## Preconditions (all required before any cutover command)

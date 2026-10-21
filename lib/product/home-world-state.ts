@@ -163,8 +163,7 @@ export function resolveHomeWorldState(input: {
       "앱을 닫아도 채굴은 계속돼요. 다시 접속하면 결과를 확인할 수 있어요.";
     primary = { href: "/start", label: "채굴 중" };
   } else if (trial?.status === "COMPLETED" || trial?.status === "EXPIRED") {
-    liveLabel =
-      trial.status === "COMPLETED" ? "체험 완료" : "체험 종료";
+    liveLabel = trial.status === "COMPLETED" ? "체험 완료" : "체험 종료";
     worldLead = "체험은 끝났어요. 결과는 START에서 이어가요.";
     primary = { href: "/start", label: "결과 보기" };
   }

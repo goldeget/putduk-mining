@@ -1,9 +1,9 @@
 # LAUNCH SIMPLIFIED SURFACE — SIMPLIFIED_TRACK
 
-Status: **ACCEPTED working launch bar** (owner D5 YES · 「실행해」 2026-10-21)  
-Label: **SIMPLIFIED_TRACK** (not full V1 PRODUCT COMPLETE)  
-Baseline tip SHA: `2d7e903c712726f4540cdbe860d9410935023f4e`  
-Workspace: `c:\Dev\putduk-mining` · Remote: `https://github.com/goldeget/putduk-mining.git`  
+Status: **ACCEPTED working launch bar** (owner D5 YES · 「실행해」 2026-10-21)
+Label: **SIMPLIFIED_TRACK** (not full V1 PRODUCT COMPLETE)
+Baseline tip SHA: `2d7e903c712726f4540cdbe860d9410935023f4e`
+Workspace: `c:\Dev\putduk-mining` · Remote: `https://github.com/goldeget/putduk-mining.git`
 SSOT: `docs/architecture/FINAL-OWNER-DESIRED-LAUNCH-ARCHITECTURE.md` · runbook `LAUNCH-SIMPLIFICATION-PATCH-ARCHITECTURE.md` §12
 
 ---
@@ -74,6 +74,6 @@ Korean content gate: one screen / one idea; no `휴대폰 인증`; no USDT-as-ba
 
 ## Out of this surface file
 
-- Phase C mining settlement runner connection  
-- Phase D AI cascade owner gates  
-- Phase E push / PR / merge / CF cutover / remote Supabase  
+- Phase C mining settlement runner connection
+- Phase D AI cascade owner gates
+- Phase E push / PR / merge / CF cutover / remote Supabase

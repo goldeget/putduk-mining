@@ -1,8 +1,8 @@
 # Phase C — Settlement connection inventory (SIMPLIFIED_TRACK)
 
-Date: `2026-10-21`  
-Branch track: `codex/simplified-launch-track-20261021`  
-Authority: `docs/architecture/FINAL-OWNER-DESIRED-LAUNCH-ARCHITECTURE.md` §4  
+Date: `2026-10-21`
+Branch track: `codex/simplified-launch-track-20261021`
+Authority: `docs/architecture/FINAL-OWNER-DESIRED-LAUNCH-ARCHITECTURE.md` §4
 Money lock: Eligible Funding Principal × Tier × eligible server time; capacity/used ≠ app/AI usage.
 
 ## Honest verdict
