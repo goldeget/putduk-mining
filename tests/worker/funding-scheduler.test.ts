@@ -38,6 +38,12 @@ describe("original-backed scheduler orchestration", () => {
       p_batch_size: 25,
       p_after_user_id: null,
     });
+    // Healthy schedule admits funding via the 3-arg claim (DB defaults allow).
+    // Do not send p_allow_funding:false — that would starve principal accrual.
+    expect(rpc).toHaveBeenCalledWith(
+      "claim_system_jobs",
+      expect.not.objectContaining({ p_allow_funding: false }),
+    );
     expect(summary.scheduler).toEqual({
       contract_version: 1,
       scanned: 1,

@@ -177,15 +177,15 @@ schedule_due_funding_jobs
   → MINING_SETTLEMENT_COMPLETED.v1 consumers (notify only; no second money write)
 ```
 
-**Current gap (honest)**
+**Current gap (honest — refreshed 2026-10-21 SIMPLIFIED_TRACK)**
 
 | Layer | Real paths | State |
 | --- | --- | --- |
-| Policy / TS entitlement | `domain/mining/funding-entitlement.ts`, `economy-policy.ts`, `published-policy-reader.ts`, `calculate-settlement.ts` | PARTIAL — calculation authority exists; not proof of live posting |
-| SQL foundation | `supabase/migrations/20261004121000`…`20261004140000`…`20261004221500` (principal/cycle/segment/pending); `20261006123000`–`20261006123300` (default funding engine private foundation + legacy `record_mining_settlement` **closed**) | Local foundation; **RUNTIME NOT CONNECTED** |
-| Scheduler | `workers/funding-scheduler.mjs` → `public.schedule_due_funding_jobs` | Operational prep exists |
-| Runner | `workers/runner.mjs` — `prepareFundingMiningTick` validates envelope only; money commit is DB-fenced | **Settlement runner incomplete** for continuous accrual product proof |
-| Design SSOT | `docs/development/design-reviews/DEFAULT-FUNDED-ENGINE-2026-10-06.md` | Explicit: no public command / worker registration / due scheduling / allocation producer **fully connected** for product |
+| Policy / TS entitlement | `domain/mining/funding-entitlement.ts`, `economy-policy.ts`, `published-policy-reader.ts`, `calculate-settlement.ts` | PARTIAL — calculation authority exists; not product proof alone |
+| SQL foundation + producer | `20261006123000`… + later funding cutover/scheduler migrations; legacy `record_mining_settlement` **closed** | Local private producer + `complete_system_job` branch **connected**; see `docs/quality/PHASE-C-SETTLEMENT-CONNECTION.md` |
+| Scheduler | `workers/funding-scheduler.mjs` → `public.schedule_due_funding_jobs` | Releases dormant sealed jobs; marker `FUNDING_ENGINE_RUNTIME_NOT_CONNECTED` = not-yet-due, not missing writer |
+| Runner | `workers/runner.mjs` — envelope validate then DB-fenced complete | Orchestration **wired**; kept-surface PRODUCT COMPLETE / app-closed E2E still open |
+| Design SSOT | `docs/development/design-reviews/DEFAULT-FUNDED-ENGINE-2026-10-06.md` | Historical “disconnected foundation” note; later migrations + worker scheduler superseded the narrow disconnect claim — product/remote gates remain |
 
 **Forbidden:** reopen legacy `record_mining_settlement`; invent public RPC aliases; client-side reward math; second ledger.
 
