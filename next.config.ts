@@ -44,6 +44,35 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ["motion"],
     ...(isolatedQaDev ? { turbopackFileSystemCacheForDev: false } : {}),
   },
+  async redirects() {
+    return [
+      {
+        source: "/referral",
+        destination: "/menu",
+        permanent: false,
+      },
+      {
+        source: "/account",
+        destination: "/menu/account",
+        permanent: false,
+      },
+      {
+        source: "/legal/terms",
+        destination: "/terms",
+        permanent: true,
+      },
+      {
+        source: "/legal/privacy",
+        destination: "/privacy",
+        permanent: true,
+      },
+      {
+        source: "/trust",
+        destination: "/menu/trust",
+        permanent: false,
+      },
+    ];
+  },
   async headers() {
     return [
       { source: "/:path*", headers: securityHeaders },

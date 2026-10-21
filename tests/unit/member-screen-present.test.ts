@@ -21,8 +21,8 @@ describe("회원 화면 표시값", () => {
     expect(readRankName({ is_active: false, name_ko: "L5 PRO" })).toBeNull();
     expect(readRankName(null)).toBeNull();
     expect(formatScreenKrw(null, false)).toBe("아직 없어요");
-    expect(formatScreenKrw("0", false)).toBe("0 KRW");
-    expect(formatScreenKrw("5000", true)).toBe("확인할 수 없음");
-    expect(formatScreenKrw("5000", false)).toBe("5,000 KRW");
+    expect(formatScreenKrw("0", false)).toBe("0원");
+    expect(formatScreenKrw("5000", true)).toBe("확인할 수 없어요");
+    expect(formatScreenKrw("5000", false)).toBe("5,000원");
   });
 });

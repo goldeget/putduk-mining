@@ -30,14 +30,14 @@ export const MENU_ITEMS: readonly MenuItem[] = [
     lane: "links",
   },
   {
-    href: "/support" as Route,
+    href: "/menu/support" as Route,
     icon: "spark",
     label: "고객지원",
     description: "가입, 채굴, 입금과 출금 안내를 확인해요.",
     lane: "links",
   },
   {
-    href: "/putduk-facts" as Route,
+    href: "/menu/trust" as Route,
     icon: "shield",
     label: "신뢰 센터",
     description: "공식 정보와 채굴의 기본 원칙을 확인해요.",

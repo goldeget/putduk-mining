@@ -382,8 +382,8 @@ describe("Home proven receipt totals", () => {
     "keeps per-activation committed total separate from conditional money and daily amount",
     (runtime) => {
       expect(presentHomeMiningFacts(runtime)).toEqual({
-        today: "확인할 수 없어요",
-        committedTotal: "7 KRW",
+        today: "일별 합계 없음",
+        committedTotal: "7원",
       });
     },
   );
@@ -393,7 +393,7 @@ describe("Home proven receipt totals", () => {
         ...activeReceipt,
         committed_reward_total_atomic: "0",
       }),
-    ).toEqual({ today: "확인할 수 없어요", committedTotal: "0 KRW" });
+    ).toEqual({ today: "일별 합계 없음", committedTotal: "0원" });
   });
   it("formats accepted whole units beyond Number precision exactly", () => {
     expect(
@@ -401,17 +401,23 @@ describe("Home proven receipt totals", () => {
         ...activeReceipt,
         committed_reward_total_atomic: "9007199254740993",
       }).committedTotal,
-    ).toBe("9,007,199,254,740,993 KRW");
+    ).toBe("9,007,199,254,740,993원");
   });
   it.each([null, undefined])(
-    "missing proof %s never becomes zero or no rewards",
+    "missing proof %s uses honest empty labels, never invented money",
     (runtime) => {
       expect(presentHomeMiningFacts(runtime)).toEqual({
-        today: "확인할 수 없어요",
-        committedTotal: "확인할 수 없어요",
+        today: "일별 합계 없음",
+        committedTotal: "아직 없어요",
       });
     },
   );
+  it("failed reads stay unread and never invent zero totals", () => {
+    expect(presentHomeMiningFacts(activeReceipt, true)).toEqual({
+      today: "확인할 수 없어요",
+      committedTotal: "확인할 수 없어요",
+    });
+  });
 });
 
 describe("Home server funding facts", () => {
@@ -431,11 +437,11 @@ describe("Home server funding facts", () => {
   });
 
   it.each([null, undefined, emptyMiningServerDisplay])(
-    "missing funding proof never supplies mock capital or a zero limit: %s",
+    "missing funding proof uses empty labels, never mock capital: %s",
     (display) => {
       expect(presentHomeFundingFacts(display)).toEqual({
-        principal: "확인할 수 없어요",
-        remainingCapacity: "확인할 수 없어요",
+        principal: "아직 없어요",
+        remainingCapacity: "아직 없어요",
       });
     },
   );
@@ -447,7 +453,7 @@ describe("Home server funding facts", () => {
     });
   });
 
-  it("keeps an individually missing field unknown while retaining the other server fact", () => {
+  it("keeps an individually missing field empty while retaining the other server fact", () => {
     expect(
       presentHomeFundingFacts({
         ...confirmed,
@@ -455,7 +461,7 @@ describe("Home server funding facts", () => {
       }),
     ).toEqual({
       principal: "9,007,199,254,740,993원",
-      remainingCapacity: "확인할 수 없어요",
+      remainingCapacity: "아직 없어요",
     });
   });
 
@@ -467,9 +473,7 @@ describe("Home server funding facts", () => {
         remaining_capacity_micro_krw: "0",
       }),
     ).toEqual({ principal: "0원", remainingCapacity: "0원" });
-    expect(presentHomeMiningFacts(activeReceipt).today).toBe(
-      "확인할 수 없어요",
-    );
+    expect(presentHomeMiningFacts(activeReceipt).today).toBe("일별 합계 없음");
   });
 });
 

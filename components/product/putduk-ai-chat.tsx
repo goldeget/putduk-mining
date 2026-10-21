@@ -204,17 +204,19 @@ export function PutdukAiChat({
     lastMessage?.state,
   ]);
   const status =
-    session.ownerStatus !== "ready"
-      ? "로그인 상태를 다시 확인하고 있어요."
-      : session.pending
-        ? "답변을 기다리고 있어요."
-        : lastMessage?.role !== "assistant"
-          ? ""
-          : lastMessage.state === "complete"
-            ? lastMessage.historical
-              ? "저장된 대화를 보고 있어요."
-              : "답변이 도착했어요."
-            : (lastMessage.failure?.label ?? "");
+    session.ownerStatus === "checking"
+      ? ""
+      : session.ownerStatus === "refreshing"
+        ? "로그인 상태를 다시 확인하고 있어요."
+        : session.pending
+          ? "답변을 기다리고 있어요."
+          : lastMessage?.role !== "assistant"
+            ? ""
+            : lastMessage.state === "complete"
+              ? lastMessage.historical
+                ? "저장된 대화를 보고 있어요."
+                : "답변이 도착했어요."
+              : (lastMessage.failure?.label ?? "");
 
   useEffect(() => {
     void trackAnalyticsEvent("ai_open", {
@@ -725,11 +727,9 @@ export function PutdukAiChat({
             >
               {AI_CONVERSATION_CONTINUITY_COPY}
             </p>
-            {session.ownerStatus !== "ready" ? (
+            {session.ownerStatus === "refreshing" ? (
               <p className={styles.providerNotice}>
-                {session.ownerStatus === "checking"
-                  ? "로그인 상태를 확인하고 있어요."
-                  : "로그인 상태를 다시 확인하고 있어요."}
+                로그인 상태를 다시 확인하고 있어요.
               </p>
             ) : null}
             {!session.providerConfigured ? (

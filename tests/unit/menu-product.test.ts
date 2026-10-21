@@ -61,7 +61,7 @@ describe("rendered menu hub", () => {
     expect(page?.children[2]?.getAttribute("aria-label")).toBe("내 프로필");
     const profile = document.querySelector('[aria-label="내 프로필"]');
     expect(profile?.textContent).toContain("원본 회원");
-    expect(profile?.textContent).toContain("50,000 KRW");
+    expect(profile?.textContent).toContain("50,000원");
     expect(profile?.textContent).toContain("2026년 10월 1일");
     expect(profile?.textContent).toContain("아직 표시할 수 없어요");
     expect(requirePageUser).toHaveBeenCalledWith("/menu");
@@ -95,8 +95,9 @@ describe("rendered menu hub", () => {
     );
     const profile = document.querySelector('[aria-label="내 프로필"]');
     expect(profile?.textContent).toContain("등급은 아직 없어요");
-    expect(profile?.textContent).toContain("확인할 수 없음");
+    expect(profile?.textContent).toContain("확인할 수 없어요");
     expect(profile?.textContent).not.toContain("0 KRW");
+    expect(profile?.textContent).not.toContain("0원");
     expect(document.body.textContent).not.toMatch(
       /L5 PRO|생체 인증|2단계 인증|54,281|보유 자산/,
     );
@@ -119,7 +120,8 @@ describe("menu hub navigation", () => {
     expect(hrefs).toContain("/notifications");
     expect(hrefs).toContain("/menu/notifications");
     expect(hrefs).toContain("/ai");
-    expect(hrefs).toContain("/support");
+    expect(hrefs).toContain("/menu/support");
+    expect(hrefs).toContain("/menu/trust");
     expect(hrefs).toContain("/events");
     expect(
       MENU_ITEMS.filter((item) => item.lane === "settings").map(

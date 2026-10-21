@@ -55,7 +55,7 @@ export default async function EventsDetailPage({
     return (
       <div className={styles.eventPage}>
         <PageHeading
-          eyebrow="EVENTS"
+          eyebrow="이벤트"
           title="이벤트 상세"
           lead="선택한 이벤트의 기간과 내 참여 상태를 확인합니다."
         />
@@ -81,7 +81,7 @@ export default async function EventsDetailPage({
     return (
       <div className={styles.eventPage}>
         <PageHeading
-          eyebrow="EVENTS"
+          eyebrow="이벤트"
           title="이벤트 상세"
           lead="선택한 이벤트의 기간과 내 참여 상태를 확인합니다."
         />
@@ -148,7 +148,7 @@ export default async function EventsDetailPage({
   return (
     <div className={styles.eventPage}>
       <PageHeading
-        eyebrow="EVENTS"
+        eyebrow="이벤트"
         title={event.title_ko}
         lead="참여 조건과 기간을 확인하세요."
       />

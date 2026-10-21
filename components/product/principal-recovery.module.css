@@ -7,6 +7,24 @@
   margin-block: 2rem;
 }
 
+details.workspace {
+  display: grid;
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-xl);
+  background: var(--surface-default);
+}
+
+details.workspace > summary {
+  cursor: pointer;
+  font-weight: 700;
+  list-style: none;
+}
+
+details.workspace > summary::-webkit-details-marker {
+  display: none;
+}
+
 .panel {
   min-width: 0;
   padding: clamp(1.15rem, 2.5vw, 2rem);
