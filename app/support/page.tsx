@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { BrandMark } from "@/components/brand/brand-mark";
+import { MemberEntryLink } from "@/components/layout/member-entry-link";
 import { START_WELCOME_STATEMENTS } from "@/lib/trust/public-content";
+import { PUBLIC_SUPPORT_CONTACT } from "@/lib/trust/public-contact";
 import {
   buildBreadcrumbStructuredData,
   publicLanguageAlternates,
@@ -62,6 +64,21 @@ const topics: readonly {
   },
 ];
 
+const installSteps = [
+  {
+    title: "iPhone · iPad",
+    body: "Safari에서 회원 앱을 열고, 공유 메뉴에서 ‘홈 화면에 추가’를 선택해 주세요.",
+  },
+  {
+    title: "Android 휴대폰 · 태블릿 · Galaxy Tab",
+    body: "Chrome 또는 Samsung Internet에서 회원 앱을 열고, 브라우저 메뉴의 ‘앱 설치’ 또는 ‘홈 화면에 추가’를 선택해 주세요.",
+  },
+  {
+    title: "PC",
+    body: "Chrome 또는 Edge에서 회원 앱을 열고, 주소창의 설치 아이콘이나 브라우저 메뉴의 앱 설치를 이용해 주세요.",
+  },
+] as const;
+
 export const metadata: Metadata = {
   title: "상담",
   description: "가입, 채굴, 입금과 출금 문의를 확인하는 상담 안내입니다.",
@@ -106,9 +123,9 @@ export default function SupportPage() {
         </nav>
         <div className="site-header__tools">
           <ThemeControl />
-          <Link className="support-center__login" href="/login">
+          <MemberEntryLink className="support-center__login" href="/login">
             로그인
-          </Link>
+          </MemberEntryLink>
         </div>
       </header>
 
@@ -122,6 +139,19 @@ export default function SupportPage() {
             상담 창에서 비밀번호나 인증 코드는 보내지 마세요.
           </p>
           <SupportStartButton />
+          <section
+            id="support-contact"
+            className={styles.contact}
+            aria-labelledby="support-contact-title"
+          >
+            <h2 id="support-contact-title">
+              {PUBLIC_SUPPORT_CONTACT.serviceName}
+            </h2>
+            <p>서비스·개인정보 문의</p>
+            <a href={`mailto:${PUBLIC_SUPPORT_CONTACT.email}`}>
+              {PUBLIC_SUPPORT_CONTACT.email}
+            </a>
+          </section>
         </section>
 
         <section
@@ -148,6 +178,46 @@ export default function SupportPage() {
               </article>
             ))}
           </div>
+          <section
+            id="app-install"
+            aria-labelledby="app-install-title"
+            tabIndex={-1}
+          >
+            <h2 id="app-install-title">앱 설치 안내</h2>
+            <p className="ko-copy">
+              이 안내를 확인한 뒤 회원 앱을 열어 주세요. 회원 앱 화면에서
+              브라우저 설치 메뉴를 사용해 주세요.
+            </p>
+            <p className="ko-copy">
+              앱 설치는 mining.putduk.com의 회원 앱 화면에서 진행해 주세요.
+            </p>
+            <p className="ko-copy">
+              <a
+                href="https://mining.putduk.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                회원 앱 열기
+              </a>
+            </p>
+            <div className="support-center__topics">
+              {installSteps.map((step) => (
+                <article key={step.title}>
+                  <span className={styles.icon} aria-hidden="true">
+                    <PutdukIcon name="home" size={20} />
+                  </span>
+                  <div className={styles.copy}>
+                    <h3>{step.title}</h3>
+                    <p className="ko-copy">{step.body}</p>
+                  </div>
+                </article>
+              ))}
+            </div>
+            <p className="ko-copy">
+              브라우저와 버전에 따라 메뉴 이름이나 설치 지원 여부가 달라요. 설치
+              메뉴가 없으면 브라우저에서 계속 이용할 수 있어요.
+            </p>
+          </section>
         </section>
 
         <section

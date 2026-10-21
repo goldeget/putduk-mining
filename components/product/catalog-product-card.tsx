@@ -10,6 +10,7 @@ import styles from "./published-catalog-view.module.css";
 export const categoryLabels: Record<ProductCategory, string> = {
   KR_STOCK: "한국 주식 테마",
   US_STOCK: "미국 주식 테마",
+  ETF: "ETF 테마",
   GOLD: "금",
   SILVER: "은",
   CRYPTO: "디지털 자산 테마",

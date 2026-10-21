@@ -439,6 +439,27 @@
   border: 0;
 }
 
+.consentHeading {
+  padding: 0;
+  font-size: 1rem;
+  font-weight: 650;
+  line-height: 1.6;
+}
+
+.consentIntroduction,
+.consentChoiceHelp {
+  margin: 0.35rem 0;
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  line-height: 1.75;
+  overflow-wrap: anywhere;
+}
+
+.consentChoiceHelp {
+  margin: -0.2rem 0 0.5rem;
+  padding-left: calc(22px + 0.75rem);
+}
+
 .consents label {
   display: flex;
   min-width: 0;
@@ -472,6 +493,19 @@
   padding-bottom: 0.35rem;
   border-bottom: 1px solid var(--border-subtle);
   font-weight: 650;
+}
+
+.consentAll > span {
+  display: grid;
+  gap: 0.2rem;
+  padding-block: 0.35rem;
+}
+
+.consentAll small {
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  font-weight: 400;
+  line-height: 1.65;
 }
 
 .consentRow {
@@ -526,6 +560,7 @@
 
 .policyDocumentLink {
   display: inline-flex;
+  flex-wrap: wrap;
   min-height: 44px;
   align-items: center;
   margin: 0 0 0.35rem;
@@ -533,6 +568,19 @@
   font-size: 0.875rem;
   font-weight: 650;
   line-height: 1.5;
+  gap: 0.3rem;
+  overflow-wrap: anywhere;
+}
+
+.policyDocumentLink > span {
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+.consents summary:focus-visible,
+.policyDocumentLink:focus-visible {
+  outline: 2px solid var(--brand-strong);
+  outline-offset: 3px;
 }
 
 .form > :global(.button--primary) {

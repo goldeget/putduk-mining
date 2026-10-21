@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { BrandMark } from "@/components/brand/brand-mark";
+import { MemberEntryLink } from "@/components/layout/member-entry-link";
 import { publicLanguageAlternates } from "@/lib/trust/public-discovery";
 import { PutdukIcon } from "@/components/icons/putduk-icon";
 import { ThemeControl } from "@/components/system/theme-control";
@@ -120,15 +121,15 @@ export default function HomePage() {
         </nav>
         <div className="site-header__tools">
           <ThemeControl />
-          <Link className="landing-header__login" href="/login">
+          <MemberEntryLink className="landing-header__login" href="/login">
             로그인
-          </Link>
-          <Link
+          </MemberEntryLink>
+          <MemberEntryLink
             className="button button--primary landing-header__signup"
             href="/signup"
           >
             무료 체험하기
-          </Link>
+          </MemberEntryLink>
         </div>
       </header>
 
@@ -182,12 +183,12 @@ export default function HomePage() {
 
         <aside className={styles.action} aria-label="시작 안내">
           <div className={styles.heroActions}>
-            <Link
+            <MemberEntryLink
               className={`button button--primary ${styles.start}`}
               href="/signup"
             >
               무료로 채굴 체험하기 <PutdukIcon name="arrow-right" size={20} />
-            </Link>
+            </MemberEntryLink>
             <Link className={styles.learnLink} href="/how-it-works">
               이용 방법 보기 <PutdukIcon name="arrow-right" size={18} />
             </Link>
@@ -198,9 +199,9 @@ export default function HomePage() {
           <p className="ko-copy">
             보상 전환·출금에는 본인 확인 등의 조건이 적용됩니다.
           </p>
-          <Link className={styles.returnLink} href="/login">
+          <MemberEntryLink className={styles.returnLink} href="/login">
             내 채굴로 돌아가기 <PutdukIcon name="arrow-right" size={16} />
-          </Link>
+          </MemberEntryLink>
         </aside>
         <div className={styles.heroFooter}>
           <span>나의 시간에, 새로운 가능성을.</span>
@@ -244,10 +245,10 @@ export default function HomePage() {
             됩니다.
           </p>
           <div className="landing-journey__action">
-            <Link className="button button--primary" href="/signup">
+            <MemberEntryLink className="button button--primary" href="/signup">
               내 첫 채굴 시작하기
               <PutdukIcon name="arrow-right" size={19} />
-            </Link>
+            </MemberEntryLink>
             <p className="ko-copy">가입 후 무료 체험 안내에 따라 시작합니다.</p>
           </div>
         </div>
@@ -443,12 +444,12 @@ export default function HomePage() {
           <br />
           무료 체험으로 시작하세요.
         </h2>
-        <Link
+        <MemberEntryLink
           className={`button button--primary ${styles.start}`}
           href="/signup"
         >
           무료로 채굴 체험하기 <PutdukIcon name="arrow-right" size={20} />
-        </Link>
+        </MemberEntryLink>
         <p>보상 전환과 출금에는 본인 확인 등의 조건이 적용됩니다.</p>
       </section>
 
@@ -461,10 +462,12 @@ export default function HomePage() {
           </span>
         </div>
         <p className="ko-copy">작은 행동이 더 나은 내일을 만듭니다.</p>
-        <nav aria-label="약관과 방침">
+        <nav aria-label="약관과 설치 안내">
           <Link href="/terms">이용약관</Link>
           {" · "}
           <Link href="/privacy">개인정보 처리방침</Link>
+          {" · "}
+          <Link href="/support#app-install">앱 설치 안내</Link>
         </nav>
         <span>© 2026 PUTDUK</span>
       </footer>

@@ -177,8 +177,8 @@ jobs:
           E2E_ADMIN_PORT: "3100"
           CI_HEAD_SHA: ${{ github.sha }}
           APP_ENV: test
-          PUTDUK_BACKEND_SOURCE_REVISION: "201"
-        run: node scripts/ci-authenticated-shards-201.mjs ${{ matrix.shard }}/12
+          PUTDUK_BACKEND_SOURCE_REVISION: "202"
+        run: node scripts/ci-authenticated-shards-202.mjs ${{ matrix.shard }}/12
 
       - name: Preserve authenticated browser evidence
         if: always()

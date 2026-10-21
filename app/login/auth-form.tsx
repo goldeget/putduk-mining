@@ -108,15 +108,20 @@ export function AuthForm({ nextPath }: { nextPath: string }) {
         className={`auth-form__recovery ${styles.recovery}`}
         aria-label="계정 찾기"
       >
-        <Link href="/find-id">아이디 찾기</Link>
+        <Link href="/find-id" prefetch={false}>
+          아이디 찾기
+        </Link>
         <span aria-hidden="true" />
-        <Link href="/recover">비밀번호 재설정</Link>
+        <Link href="/recover" prefetch={false}>
+          비밀번호 재설정
+        </Link>
       </nav>
       <div className={`auth-form__actions ${styles.submitActions}`}>
         <AuthSubmitButton label="로그인" pendingLabel="로그인하고 있어요" />
         <Link
           className={`button button--secondary ${styles.signup}`}
           href="/signup"
+          prefetch={false}
         >
           회원가입
         </Link>
@@ -133,7 +138,7 @@ export function AuthForm({ nextPath }: { nextPath: string }) {
             아이디를 잊었다면 아이디 찾기, 비밀번호를 잊었다면 비밀번호 재설정을
             이용해 주세요.
           </p>
-          <Link href="/support">
+          <Link href="/support" prefetch={false}>
             고객지원 보기 <PutdukIcon name="arrow-right" size={14} />
           </Link>
         </div>

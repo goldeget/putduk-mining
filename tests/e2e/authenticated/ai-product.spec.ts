@@ -1,7 +1,7 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
-import { expect, test, type Page, type Response } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 
 import {
   AI_CONVERSATION_CONTINUITY_COPY,
@@ -9,50 +9,11 @@ import {
 } from "@/domain/ai/continuity";
 
 import { createConfirmedMember } from "../fixtures/local-auth";
+import { observeAiWireAck } from "./helpers/ai-ack-diagnostics";
 import {
   dismissGuidedQuestIfPresent,
   loginAsMember,
 } from "./helpers/member-session";
-
-/** Read only the genuine response ACK; assertion output contains no transcript. */
-async function durableAnswerAck(
-  response: Response,
-  bodyText?: Promise<string>,
-) {
-  const summary = {
-    status: response.status(),
-    bodyAvailable: false,
-    doneCount: 0,
-    doneSaved: false,
-    conversationIdPresent: false,
-    assistantMessageIdPresent: false,
-  };
-  try {
-    const text = bodyText ? await bodyText : await response.text();
-    if (text.length > 65_536) return summary;
-    summary.bodyAvailable = true;
-    for (const line of text.split("\n")) {
-      if (!line.startsWith("data:")) continue;
-      let value: unknown;
-      try {
-        value = JSON.parse(line.slice(5));
-      } catch {
-        continue;
-      }
-      if (!value || typeof value !== "object" || Array.isArray(value)) continue;
-      const event = value as Record<string, unknown>;
-      if (event.type !== "done") continue;
-      summary.doneCount += 1;
-      summary.doneSaved = event.saved === true;
-      summary.conversationIdPresent = typeof event.conversationId === "string";
-      summary.assistantMessageIdPresent =
-        typeof event.assistantMessageId === "string";
-    }
-  } catch {
-    // A closed navigation/connection must fail the boolean ACK assertion.
-  }
-  return summary;
-}
 
 const VIEWPORTS = [
   { height: 844, name: "390", width: 390 },
@@ -148,16 +109,21 @@ async function openAi(page: Page) {
 async function askAi(page: Page, question: string) {
   const input = page.getByRole("textbox", { name: "질문 입력", exact: true });
   await input.fill(question);
-  const responsePromise = page.waitForResponse(
-    (response) =>
-      response.url().includes("/api/v1/ai/chat") &&
-      response.request().method() === "POST",
-    { timeout: 90_000 },
-  );
-  await page.getByRole("button", { name: "질문 보내기" }).click();
-  const response = await responsePromise;
-  const bodyText = response.text().catch(() => "");
-  return { bodyText, response };
+  const observer = await observeAiWireAck(page);
+  try {
+    const responsePromise = page.waitForResponse(
+      (response) =>
+        new URL(response.url()).pathname === "/api/v1/ai/chat" &&
+        response.request().method() === "POST",
+      { timeout: 90_000 },
+    );
+    await page.getByRole("button", { name: "질문 보내기" }).click();
+    const response = await responsePromise;
+    const { ack } = await observer.read(response);
+    return { ack, response };
+  } finally {
+    await observer.dispose();
+  }
 }
 
 test("unsigned visitors keep the AI return path", async ({ page }) => {
@@ -278,9 +244,7 @@ test("AI ownership, money denial, continuity, themes, and keyboard path", async 
     },
   );
 
-  expect(
-    await durableAnswerAck(staticResponse.response, staticResponse.bodyText),
-  ).toEqual({
+  expect(staticResponse.ack).toEqual({
     status: 200,
     bodyAvailable: true,
     doneCount: 1,

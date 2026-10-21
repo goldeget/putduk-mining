@@ -11,6 +11,7 @@ import {
   useId,
   useRef,
   useState,
+  useSyncExternalStore,
   type FormEvent,
   type ReactNode,
 } from "react";
@@ -79,6 +80,13 @@ function conversationTime(value: string) {
   }).format(date);
 }
 
+function subscribeVisibility(observe: () => void) {
+  document.addEventListener("visibilitychange", observe);
+  return () => document.removeEventListener("visibilitychange", observe);
+}
+const visibleDocument = () => document.visibilityState === "visible";
+const serverVisibleDocument = () => true;
+
 export function PutdukAiChat({
   initialScreenContext,
   pageFacts,
@@ -89,6 +97,11 @@ export function PutdukAiChat({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const session = usePutdukAiSession();
+  const motionVisible = useSyncExternalStore(
+    subscribeVisibility,
+    visibleDocument,
+    serverVisibleDocument,
+  );
   const chatRef = useRef<HTMLElement | null>(null);
   const [copyStatus, setCopyStatus] = useState<Record<string, string>>({});
   const composerId = useId();
@@ -471,6 +484,7 @@ export function PutdukAiChat({
       data-ai-continuity={AI_CONVERSATION_CONTINUITY_MODE}
       data-ai-presentation={presentation}
       data-ai-surface={surface}
+      data-ai-motion={motionVisible ? "active" : "paused"}
       data-provider-configured={session.providerConfigured ? "true" : "false"}
     >
       {surface === "page" ? (
@@ -873,7 +887,12 @@ export function PutdukAiChat({
                       </div>
                     ) : null}
                     {message.state === "streaming" && !message.text ? (
-                      <p className={styles.waiting}>
+                      <p className={styles.waiting} data-ai-activity="waiting">
+                        <span className={styles.waitingDots} aria-hidden="true">
+                          <i />
+                          <i />
+                          <i />
+                        </span>
                         {message.source === "tool"
                           ? "내 기록을 확인하고 있어요."
                           : "답변을 기다리고 있어요."}

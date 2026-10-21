@@ -31,6 +31,7 @@ import {
 
 import styles from "./mining-live-stage.module.css";
 import { SceneDecoration } from "./scene-decoration";
+import { useMiningLivePresentation } from "./mining-live-state";
 
 const ACCENT_TOKEN_SET: ReadonlySet<string> = new Set(ACCENT_TOKENS);
 // Mobile cover projects the landscape image across the 34rem-tall portrait stage.
@@ -299,6 +300,8 @@ export function MiningLiveStage({
   children,
 }: MiningLiveStageProps) {
   const theme = useResolvedTheme();
+  const livePresentation = useMiningLivePresentation();
+  running = livePresentation?.running ?? running;
   const browserReducedMotion = useBrowserReducedMotion();
   const keepStill = reducedMotion || browserReducedMotion;
   const variant = scene.master?.lightVariant;

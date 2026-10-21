@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import robots from "@/app/robots";
 import sitemap from "@/app/sitemap";
@@ -17,7 +17,62 @@ import {
   buildBreadcrumbStructuredData,
   isRobotsDisallowed,
   publicLanguageAlternates,
+  resolvePublicSiteOrigin,
 } from "@/lib/trust/public-discovery";
+
+describe("official landing origin", () => {
+  it("selects only the explicit official apex and retains the existing member default", () => {
+    expect(resolvePublicSiteOrigin("https://putduk.com")).toBe(
+      "https://putduk.com",
+    );
+    for (const value of [
+      undefined,
+      "http://localhost:3000",
+      "https://mining.putduk.com",
+      "https://putduk.com.evil.example",
+      "https://putduk.com@evil.example",
+      "http://putduk.com",
+      "https://putduk.com/evil",
+    ]) {
+      expect(resolvePublicSiteOrigin(value)).toBe("https://mining.putduk.com");
+    }
+  });
+
+  it("binds apex breadcrumbs, sitemap, robots and IndexNow to the same deployment origin", async () => {
+    vi.stubEnv("NEXT_PUBLIC_APP_URL", "https://putduk.com");
+    vi.resetModules();
+    try {
+      const discovery = await import("@/lib/trust/public-discovery");
+      const { default: apexSitemap } = await import("@/app/sitemap");
+      const { default: apexRobots } = await import("@/app/robots");
+      const { buildIndexNowSubmission: apexIndexNow } =
+        await import("@/lib/trust/indexnow");
+      expect(discovery.PUBLIC_SITE_ORIGIN).toBe("https://putduk.com");
+      expect(apexRobots()).toMatchObject({
+        host: "https://putduk.com",
+        sitemap: "https://putduk.com/sitemap.xml",
+      });
+      expect(
+        apexSitemap().every((entry) =>
+          entry.url.startsWith("https://putduk.com"),
+        ),
+      ).toBe(true);
+      expect(apexIndexNow().host).toBe("putduk.com");
+      expect(apexIndexNow().urlList).toEqual(
+        apexSitemap().map((entry) => entry.url),
+      );
+      expect(
+        discovery.buildBreadcrumbStructuredData({
+          name: "자주 묻는 질문",
+          path: "/faq",
+        }).itemListElement[1]?.item,
+      ).toBe("https://putduk.com/faq");
+    } finally {
+      vi.unstubAllEnvs();
+      vi.resetModules();
+    }
+  });
+});
 
 const PRIVATE_PATHS = [
   "/home",

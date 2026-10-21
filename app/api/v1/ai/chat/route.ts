@@ -425,27 +425,55 @@ export async function POST(request: Request) {
     }
   }
 
-  async function saveMemberTurn(turn: {
-    answer: string;
-    sourceKey: string;
-    toolCall?: {
-      latencyMs: number | null;
-      outcome: "FAILED" | "SUCCEEDED";
-      toolName: string;
-    };
-  }) {
-    return appendOwnMemberTurn(memberPort, {
-      answer: turn.answer,
-      clientMessageId: chatRequest.clientMessageId,
-      knowledgeVersion: TRUST_CONTENT_VERSION,
-      question: chatRequest.question,
-      sourceKey: turn.sourceKey,
-      userId,
-      ...(chatRequest.conversationId
-        ? { conversationId: chatRequest.conversationId }
-        : {}),
-      ...(turn.toolCall ? { toolCall: turn.toolCall } : {}),
+  async function saveMemberTurn(
+    turn: {
+      answer: string;
+      sourceKey: string;
+      toolCall?: {
+        latencyMs: number | null;
+        outcome: "FAILED" | "SUCCEEDED";
+        toolName: string;
+      };
+    },
+    clientSignal: AbortSignal = request.signal,
+  ) {
+    const unsaved = { code: "CONVERSATION_NOT_SAVED", ok: false } as const;
+    if (clientSignal.aborted) return unsaved;
+    const abort = new AbortController();
+    let cancel: () => void = () => {};
+    const cancelled = new Promise<typeof unsaved>((resolve) => {
+      cancel = () => resolve(unsaved);
     });
+    const abortClient = () => {
+      abort.abort();
+      cancel();
+    };
+    clientSignal.addEventListener("abort", abortClient, { once: true });
+    try {
+      const work = appendOwnMemberTurn(
+        createSupabaseMemberConversationPort(admin, { signal: abort.signal }),
+        {
+          answer: turn.answer,
+          clientMessageId: chatRequest.clientMessageId,
+          knowledgeVersion: TRUST_CONTENT_VERSION,
+          question: chatRequest.question,
+          sourceKey: turn.sourceKey,
+          userId,
+          ...(chatRequest.conversationId
+            ? { conversationId: chatRequest.conversationId }
+            : {}),
+          ...(turn.toolCall ? { toolCall: turn.toolCall } : {}),
+        },
+      ).catch(() => unsaved);
+      return await withinDeadline(
+        Promise.race([work, cancelled]),
+        Date.now() + AUDIT_FAILURE_DEADLINE_MS,
+        unsaved,
+      );
+    } finally {
+      abort.abort();
+      clientSignal.removeEventListener("abort", abortClient);
+    }
   }
 
   function savedFields(
@@ -617,7 +645,7 @@ export async function POST(request: Request) {
 
   if (!providerConfigured || !env.AI_API_KEY || !env.AI_MODEL_LOW_COST) {
     return returnAuditedImmediateAnswer(
-      `이 질문에 답할 수 있는 근거를 확인하지 못했어요. 확인할 수 없는 내용은 추측하지 않아요.\n\n${getMemberAiHelp("ai").answer}`,
+      `이 질문에 답할 수 있는 근거를 확인하지 못했어요.\n\n${getMemberAiHelp("ai").answer}`,
       "static",
       STATIC_MODEL_KEY,
       "static:member_help_ai",
@@ -635,6 +663,7 @@ export async function POST(request: Request) {
       let durableTurn:
         | Extract<Awaited<ReturnType<typeof saveMemberTurn>>, { ok: true }>
         | undefined;
+      let primaryTurnAttempted = false;
       let answer = "";
       let sent = 0;
       let emittedPrefix = "";
@@ -713,13 +742,16 @@ export async function POST(request: Request) {
         if (providerAbort.signal.aborted)
           throw new ProviderChainError("CLIENT_CANCELLED", true);
         const safeAnswer = redactMemberTranscript(answer);
-        const saved = await saveMemberTurn({
-          answer: safeAnswer,
-          sourceKey: "guide:provider",
-        });
+        primaryTurnAttempted = true;
+        const saved = await saveMemberTurn(
+          { answer: safeAnswer, sourceKey: "guide:provider" },
+          providerAbort.signal,
+        );
+        if (saved.ok) durableTurn = saved;
+        if (providerAbort.signal.aborted)
+          throw new ProviderChainError("CLIENT_CANCELLED", true);
         if (!saved.ok)
           throw new ProviderChainError("AI_CONVERSATION_SAVE_FAILED");
-        durableTurn = saved;
         const auditCompleted = await recordCompletion(
           {
             requestId: aiRequestId,
@@ -787,7 +819,11 @@ export async function POST(request: Request) {
         const unsaved = { code: "CONVERSATION_NOT_SAVED", ok: false } as const;
         let saved: Awaited<ReturnType<typeof saveMemberTurn>> =
           durableTurn ?? unsaved;
-        if (!durableTurn && auditRecorded && Date.now() < failureDeadline) {
+        if (
+          !primaryTurnAttempted &&
+          auditRecorded &&
+          Date.now() < failureDeadline
+        ) {
           // Never append a different turn for an already-persisted client ID.
           // Secondary storage shares the failure deadline so cleanup is bounded.
           saved = await withinDeadline(

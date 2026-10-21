@@ -2,21 +2,15 @@
 import { FeedbackMessage } from "@/components/ui/feedback-message";
 
 import { useId, useMemo, useState, type ReactNode } from "react";
-import type {
-  ProductCategory,
-  PublishedCatalogProduct,
-} from "@/domain/products/published-catalog";
+import type { PublishedCatalogProduct } from "@/domain/products/published-catalog";
+import {
+  productCategories,
+  type ProductCategory,
+} from "@/domain/products/product-category";
 import { CatalogProduct, categoryLabels } from "./catalog-product-card";
 import styles from "./published-catalog-view.module.css";
 
-const filters = [
-  "ALL",
-  "KR_STOCK",
-  "US_STOCK",
-  "GOLD",
-  "SILVER",
-  "CRYPTO",
-] as const;
+const filters = ["ALL", ...productCategories] as const;
 type CatalogFilter = ProductCategory | "ALL";
 
 /** This browse state filters public rows only; it never requests or selects an allocation. */

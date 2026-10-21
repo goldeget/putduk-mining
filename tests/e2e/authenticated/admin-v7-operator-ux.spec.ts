@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { unlink } from "node:fs/promises";
 
 import { expect, test } from "@playwright/test";
 
@@ -108,10 +109,13 @@ test("operator guide and Today search preserve readable, audited operation", asy
         });
         expect(geometry.left).toBeGreaterThanOrEqual(0);
         expect(geometry.right).toBeLessThanOrEqual(geometry.width + 1);
+        const screenshotPng = info.outputPath(`${label}.png`);
+        await page.screenshot({ fullPage: true, path: screenshotPng });
         await info.attach(label, {
-          body: await page.screenshot({ fullPage: true }),
+          path: screenshotPng,
           contentType: "image/png",
         });
+        await unlink(screenshotPng);
         await page.keyboard.press("Escape");
         await expect(panel).toBeHidden();
         await expect(guide).toBeFocused();
@@ -167,7 +171,9 @@ test("operator guide and Today search preserve readable, audited operation", asy
   await page.evaluate(() => {
     document.documentElement.style.fontSize = "";
   });
+  await expect(panel).toBeHidden();
   await guide.click();
+  await expect(panel).toBeVisible();
   await panel.getByRole("button", { name: "닫기" }).click();
   await expect(guide).toBeFocused();
   await guide.click();

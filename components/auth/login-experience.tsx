@@ -27,13 +27,24 @@ export function LoginExperience({ children }: { children?: ReactNode }) {
   return (
     <main className={styles.root} data-ui-ready="/login" data-ui-state="loaded">
       <header className={styles.header}>
-        <Link className={styles.headerBrand} href="/" aria-label="퍼뜩 채굴 홈">
+        <Link
+          className={styles.headerBrand}
+          href="/"
+          aria-label="퍼뜩 채굴 홈"
+          prefetch={false}
+        >
           <LoginBrand />
         </Link>
         <nav className={styles.publicNavigation} aria-label="서비스 안내">
-          <Link href="/about">서비스 소개</Link>
-          <Link href="/how-it-works">이용 방법</Link>
-          <Link href="/support">고객지원</Link>
+          <Link href="/about" prefetch={false}>
+            서비스 소개
+          </Link>
+          <Link href="/how-it-works" prefetch={false}>
+            이용 방법
+          </Link>
+          <Link href="/support" prefetch={false}>
+            고객지원
+          </Link>
         </nav>
         <ThemeControl />
       </header>
@@ -48,6 +59,7 @@ export function LoginExperience({ children }: { children?: ReactNode }) {
               className={styles.storyBrand}
               href="/"
               aria-label="퍼뜩 채굴 홈"
+              prefetch={false}
             >
               <LoginBrand />
             </Link>
@@ -81,15 +93,15 @@ export function LoginExperience({ children }: { children?: ReactNode }) {
         </section>
       </div>
       <footer className={styles.footer}>
-        <Link href="/how-it-works">
+        <Link href="/how-it-works" prefetch={false}>
           <PutdukIcon name="shield" size={22} />
           <span>보호된 계정 로그인</span>
         </Link>
-        <Link href="/recover">
+        <Link href="/recover" prefetch={false}>
           <PutdukIcon name="user" size={22} />
           <span>아이디 찾기와 계정 복구</span>
         </Link>
-        <Link href="/verification">
+        <Link href="/verification" prefetch={false}>
           <PutdukIcon name="wallet" size={22} />
           <span>확인된 채굴과 지갑</span>
         </Link>

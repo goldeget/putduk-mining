@@ -9,6 +9,10 @@ import { ProductStatusPill } from "@/components/product/product-status-pill";
 import { StatePanel } from "@/components/ui/states";
 import { EventParticipation } from "@/components/product/event-participation";
 import {
+  readBoundMemberCashTerms,
+  type MemberCashEventTerms,
+} from "@/domain/events/cash-terms";
+import {
   canJoinMemberEvent,
   memberEventAwardSchema,
   memberEventContentSchema,
@@ -113,7 +117,7 @@ export default async function EventsDetailPage({
   const { data: contentData, error: contentError } = await identity.supabase
     .from("event_member_content")
     .select(
-      "event_id,revision_id,body_ko,participation_ko,exclusion_ko,cta_label,cta_route,reward_mode",
+      "event_id,revision_id,body_ko,participation_ko,exclusion_ko,cta_label,cta_route,reward_mode,participation_mode",
     )
     .eq("event_id", event.id)
     .maybeSingle();
@@ -124,6 +128,29 @@ export default async function EventsDetailPage({
     parsedContent.data.event_id === event.id
       ? parsedContent.data
       : null;
+  let cashTerms: MemberCashEventTerms | null = null;
+  let cashTermsUnavailable = false;
+  if (content && content.participation_mode !== "GUIDE") {
+    const { data, error } = await identity.supabase
+      .from("member_cash_event_terms")
+      .select(
+        "event_id,content_revision_id,terms_version,terms_ko,cash_terms_digest,reward_krw,starts_at,ends_at",
+      )
+      .eq("event_id", event.id)
+      .maybeSingle();
+    // Empty is the existing disabled/NONE contract. An error or invalid row
+    // must not silently become a join without explicit cash consent.
+    if (error) cashTermsUnavailable = true;
+    else if (data !== null) {
+      cashTerms = readBoundMemberCashTerms(
+        data,
+        event.id,
+        content.revision_id,
+        nowIso,
+      );
+      cashTermsUnavailable = cashTerms === null;
+    }
+  }
   const status = eventStatusPresentation(event.status);
   const ownLabel = participantStatusLabel(participant?.status);
   // Own-row RLS plus column grants keep original, policy, and qualification private.
@@ -223,15 +250,25 @@ export default async function EventsDetailPage({
           <p>{content.participation_ko}</p>
           <h3>유의 사항</h3>
           <p>{content.exclusion_ko}</p>
-          <p>현금 보상이 없는 이벤트예요.</p>
+          {!cashTerms && !cashTermsUnavailable ? (
+            <p>현금 보상이 없는 이벤트예요.</p>
+          ) : null}
           {participantsError ? (
             <StatePanel
               tone="error"
               title="참여 상태를 확인하지 못했어요"
               description="다시 불러온 뒤 참여해 주세요."
             />
+          ) : content.participation_mode ===
+            "GUIDE" ? null : cashTermsUnavailable ? (
+            <StatePanel
+              tone="error"
+              title="참여 약관을 확인하지 못했어요"
+              description="다시 불러온 뒤 약관을 확인하고 참여해 주세요."
+            />
           ) : (
             <EventParticipation
+              key={`${identity.userId}:${event.id}`}
               eventId={event.id}
               revisionId={content.revision_id}
               canJoin={canJoinMemberEvent(
@@ -241,6 +278,7 @@ export default async function EventsDetailPage({
                 nowIso,
               )}
               joined={Boolean(participant)}
+              cashTerms={cashTerms ?? undefined}
             />
           )}
           <Link

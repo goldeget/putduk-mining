@@ -30,7 +30,11 @@ vi.mock("next/link", () => ({
   }: {
     children: ReactNode;
     href: string;
-  }) => createElement("a", { href, ...props }, children),
+    prefetch?: boolean;
+  }) => {
+    delete props.prefetch;
+    return createElement("a", { href, ...props }, children);
+  },
 }));
 
 describe("approved auth composition", () => {

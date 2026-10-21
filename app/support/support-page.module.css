@@ -16,6 +16,39 @@
   white-space: nowrap;
 }
 
+.contact {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border-default);
+}
+
+.contact h2 {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.contact p {
+  margin: 0.25rem 0;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.7;
+}
+
+.contact a {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  color: var(--text-primary);
+  overflow-wrap: anywhere;
+  text-underline-offset: 0.25em;
+}
+
+.contact a:focus-visible {
+  outline: 2px solid var(--brand-strong);
+  outline-offset: 4px;
+}
+
 .page :global(.site-header) {
   flex-wrap: wrap;
   gap: 0.35rem 1rem;

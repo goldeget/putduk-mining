@@ -1,6 +1,7 @@
 import type { Route } from "next";
 import Link from "next/link";
 
+import { logoutAction } from "@/app/actions";
 import { AdminAuthEntry } from "@/components/auth/admin-auth-entry";
 
 export const dynamic = "force-dynamic";
@@ -32,6 +33,11 @@ export default async function UnauthorizedPage({
         <Link className="ghost-button" href={"/reauth?reason=step-up" as Route}>
           다시 확인
         </Link>
+        <form action={logoutAction}>
+          <button className="ghost-button" type="submit">
+            이 기기 로그아웃
+          </button>
+        </form>
       </div>
     </AdminAuthEntry>
   );

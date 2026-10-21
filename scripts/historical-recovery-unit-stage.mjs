@@ -1,4 +1,5 @@
 import { execFileSync } from "node:child_process";
+import { readFile as readFileAsync } from "node:fs/promises";
 import { createHash } from "node:crypto";
 import {
   readFileSync,
@@ -34,6 +35,7 @@ const maps = [
   [197, "backend-successor-197-source.json"],
 ];
 const gitCache = new Map();
+const missingGitBlobs = new Set();
 const sourceCache = new Map();
 const pinCache = new Map();
 const manifestStats = new Map();
@@ -43,6 +45,7 @@ function safePath(path) {
     !path ||
     path.includes("\\") ||
     path.includes(":") ||
+    /[\r\n\0]/.test(path) ||
     path.startsWith("/") ||
     path.split("/").some((part) => !part || part === "." || part === "..")
   )
@@ -68,6 +71,8 @@ function owned(root, path) {
 function gitBytes(head, path) {
   safePath(path);
   const key = head + ":" + path;
+  if (missingGitBlobs.has(key))
+    throw Error("HISTORICAL_RECOVERY_EXACT_BLOB_UNAVAILABLE");
   if (!gitCache.has(key))
     gitCache.set(
       key,
@@ -79,9 +84,63 @@ function gitBytes(head, path) {
     );
   return gitCache.get(key);
 }
+// One bounded Git process for reviewed immutable objects. Each consumer still
+// verifies the returned bytes against its independent frozen SHA-256 pin.
+function primeGitBlobs(objects) {
+  const keys = [
+    ...new Set(
+      objects.map(([head, path]) => {
+        if (![PRESERVED, BASELINE].includes(head))
+          throw Error("HISTORICAL_RECOVERY_ROOT_REJECTED");
+        return head + ":" + safePath(path);
+      }),
+    ),
+  ].filter((key) => !gitCache.has(key) && !missingGitBlobs.has(key));
+  if (!keys.length) return;
+  const output = execFileSync("git", ["cat-file", "--batch"], {
+    cwd: repository,
+    input: keys.join("\n") + "\n",
+    maxBuffer: 64 * 1024 * 1024,
+    stdio: ["pipe", "pipe", "pipe"],
+  });
+  let offset = 0;
+  const found = [],
+    missing = [];
+  for (const key of keys) {
+    const end = output.indexOf(10, offset);
+    if (end < 0) throw Error("HISTORICAL_RECOVERY_GIT_BATCH_INVALID");
+    const header = output.subarray(offset, end).toString("utf8");
+    offset = end + 1;
+    if (header === key + " missing") {
+      missing.push(key);
+      continue;
+    }
+    const match = header.match(/^[a-f0-9]{40} blob ([0-9]+)$/);
+    const size = match ? Number(match[1]) : -1;
+    if (
+      !Number.isSafeInteger(size) ||
+      size < 0 ||
+      size > 8 * 1024 * 1024 ||
+      offset + size >= output.length ||
+      output[offset + size] !== 10
+    )
+      throw Error("HISTORICAL_RECOVERY_GIT_BATCH_INVALID");
+    found.push([key, Buffer.from(output.subarray(offset, offset + size))]);
+    offset += size + 1;
+  }
+  if (offset !== output.length)
+    throw Error("HISTORICAL_RECOVERY_GIT_BATCH_INVALID");
+  for (const [key, bytes] of found) gitCache.set(key, bytes);
+  for (const key of missing) missingGitBlobs.add(key);
+}
 function effectivePins(generation, verifyCurrentManifests = true) {
   if (![191, 193, 195, 197].includes(generation))
     throw Error("HISTORICAL_RECOVERY_GENERATION_REJECTED");
+  primeGitBlobs(
+    maps
+      .filter(([version]) => version <= generation)
+      .map(([, name]) => [PRESERVED, "tests/e2e/fixtures/" + name]),
+  );
   // Cached JSON parsing never suppresses a later frozen-manifest change.
   if (verifyCurrentManifests || !pinCache.has(generation))
     for (const [version, name] of maps) {
@@ -146,6 +205,42 @@ export function readHistoricalRecoverySource(root, path, generation) {
 export function readHistoricalRecoveryFixtureSource(root, path, generation) {
   return readHistoricalBytes(root, path, generation, true);
 }
+export function primeHistoricalRecoveryFixtureSources(root, paths, generation) {
+  if (realpathSync(root) !== repository)
+    throw Error("HISTORICAL_RECOVERY_ROOT_REJECTED");
+  const pins = effectivePins(generation);
+  const names = [...paths].map(safePath);
+  primeGitBlobs(
+    names
+      .filter((path) => !pins.has(path))
+      .map((path) => {
+        if (!/^tests\/e2e\/fixtures\/[^/]+\.json$/.test(path))
+          throw Error("HISTORICAL_RECOVERY_UNMAPPED_SOURCE");
+        return [PRESERVED, path];
+      }),
+  );
+  const fallback = [];
+  for (const path of names) {
+    if (path === "supabase/config.toml") continue;
+    const expected = pins.get(path) ?? digest(gitBytes(PRESERVED, path));
+    const key = generation + ":" + path + ":" + expected;
+    if (sourceCache.has(key)) continue;
+    const current = readFileSync(owned(root, path));
+    if (digest(current) === expected) sourceCache.set(key, current);
+    else
+      fallback.push(
+        [PRESERVED, path],
+        [BASELINE, path],
+        [
+          PRESERVED,
+          "tests/e2e/fixtures/backend-predecessor-195/" +
+            expected +
+            ".source.txt",
+        ],
+      );
+  }
+  primeGitBlobs(fallback);
+}
 function readHistoricalBytes(root, path, generation, fixtureCopy) {
   safePath(path);
   if (root !== repository && realpathSync(root) !== repository)
@@ -203,12 +298,13 @@ function readHistoricalBytes(root, path, generation, fixtureCopy) {
 }
 // Construction readiness only: no guard result or source-read cache is retained.
 // The test body independently reads and hashes every source after this check.
-export function verifyPreparedHistoricalFixture(root, entries, prefix) {
+function* checkedHistoricalFixtureEntries(root, entries, prefix) {
   if (
     ![
       "putduk-backend197-unit-",
       "putduk-backend-195-source-",
       "putduk-backend-http-source-",
+      "putduk-backend-canonical-source-",
     ].includes(prefix)
   )
     throw Error("HISTORICAL_RECOVERY_FIXTURE_SCOPE_REJECTED");
@@ -230,9 +326,40 @@ export function verifyPreparedHistoricalFixture(root, entries, prefix) {
       rel.startsWith("..\\")
     )
       throw Error("HISTORICAL_RECOVERY_FIXTURE_SCOPE_REJECTED");
+    yield [actual, expected];
+  }
+}
+export function verifyPreparedHistoricalFixture(root, entries, prefix) {
+  for (const [actual, expected] of checkedHistoricalFixtureEntries(
+    root,
+    entries,
+    prefix,
+  ))
     if (!Buffer.from(readFileSync(actual)).equals(Buffer.from(expected)))
       throw Error("HISTORICAL_RECOVERY_FIXTURE_COPY_CHANGED");
-  }
+}
+export async function verifyPreparedHistoricalFixtureConcurrently(
+  root,
+  entries,
+  prefix,
+) {
+  const checked = [...checkedHistoricalFixtureEntries(root, entries, prefix)];
+  let next = 0;
+  const results = await Promise.allSettled(
+    Array.from({ length: Math.min(4, checked.length) }, async () => {
+      while (next < checked.length) {
+        const [actual, expected] = checked[next++];
+        if (
+          !Buffer.from(await readFileAsync(actual)).equals(
+            Buffer.from(expected),
+          )
+        )
+          throw Error("HISTORICAL_RECOVERY_FIXTURE_COPY_CHANGED");
+      }
+    }),
+  );
+  const failure = results.find((result) => result.status === "rejected");
+  if (failure) throw failure.reason;
 }
 export function prepareBackend197UnitFixtures(root, scratch, prefix, roots) {
   if (
@@ -252,32 +379,84 @@ export function prepareBackend197UnitFixtures(root, scratch, prefix, roots) {
   const configs = backend197UnitConfigPair(
     bytes.get("supabase/config.toml").toString("utf8"),
   );
+  const preparation = createHistoricalFixturePreparation();
   let active;
   return {
     prepare() {
-      active = realpathSync(mkdtempSync(resolve(scratch, prefix)));
-      if (
-        dirname(active) !== realpathSync(scratch) ||
-        !basename(active).startsWith(prefix)
-      )
-        throw Error("HISTORICAL_RECOVERY_FIXTURE_SCOPE_REJECTED");
-      roots.push(active);
-      for (const [path, data] of bytes) {
-        mkdirSync(dirname(resolve(active, path)), { recursive: true });
-        writeFileSync(resolve(active, path), data);
-      }
-      writeFileSync(resolve(active, "supabase/config.toml"), configs.canonical);
-      verifyPreparedHistoricalFixture(
-        active,
-        new Map([...bytes, ["supabase/config.toml", configs.canonical]]),
-        prefix,
+      active = undefined;
+      return preparation.run(
+        async () => {
+          const constructing = realpathSync(
+            mkdtempSync(resolve(scratch, prefix)),
+          );
+          if (
+            dirname(constructing) !== realpathSync(scratch) ||
+            !basename(constructing).startsWith(prefix)
+          )
+            throw Error("HISTORICAL_RECOVERY_FIXTURE_SCOPE_REJECTED");
+          roots.push(constructing);
+          const directories = new Set();
+          for (const [path, data] of bytes) {
+            const target = resolve(constructing, path),
+              parent = dirname(target);
+            if (!directories.has(parent)) {
+              mkdirSync(parent, { recursive: true });
+              directories.add(parent);
+            }
+            writeFileSync(target, data);
+          }
+          writeFileSync(
+            resolve(constructing, "supabase/config.toml"),
+            configs.canonical,
+          );
+          await verifyPreparedHistoricalFixtureConcurrently(
+            constructing,
+            new Map([...bytes, ["supabase/config.toml", configs.canonical]]),
+            prefix,
+          );
+          return constructing;
+        },
+        (value) => {
+          active = value;
+        },
       );
+    },
+    async settle() {
+      active = undefined;
+      await preparation.settle();
     },
     root(mode) {
       if (!active || !["canonical", "local"].includes(mode))
         throw Error("HISTORICAL_RECOVERY_FIXTURE_REQUIRED");
       writeFileSync(resolve(active, "supabase/config.toml"), configs[mode]);
       return active;
+    },
+  };
+}
+// A hook timeout does not cancel its Promise. Cleanup must invalidate publication
+// and drain the same attempt before deleting the roots captured by that hook.
+export function createHistoricalFixturePreparation() {
+  let generation = 0,
+    active = false,
+    pending = Promise.resolve();
+  return {
+    run(build, publish) {
+      if (active) throw Error("HISTORICAL_RECOVERY_FIXTURE_PREPARATION_BUSY");
+      const attempt = ++generation;
+      active = true;
+      pending = (async () => {
+        try {
+          const value = await build();
+          if (attempt === generation) publish(value);
+        } finally {
+          active = false;
+        }
+      })();
+      return pending;
+    },
+    async settle() {
+      generation++;
+      await pending.catch(() => undefined);
     },
   };
 }
@@ -299,6 +478,7 @@ export function prepareHistorical195UnitFixtures(root, scratch, prefix, roots) {
     "backend-http-local-execution-profile.json",
   ])
     paths.add("tests/e2e/fixtures/" + name);
+  primeHistoricalRecoveryFixtureSources(root, paths, 195);
   const bytes = new Map(
     [...paths].map((path) => [
       path,
@@ -309,30 +489,55 @@ export function prepareHistorical195UnitFixtures(root, scratch, prefix, roots) {
     bytes.get("supabase/config.toml").toString("utf8"),
   );
   let prepared = [];
+  const preparation = createHistoricalFixturePreparation();
   return {
     prepare(name) {
-      const count = [
-        "rejects local config through canonical and canonical through local",
-        "rejects changed consumer and typed fixtures",
-      ].includes(name)
-        ? 2
-        : 1;
+      return preparation.run(
+        async () => {
+          const count = [
+            "rejects local config through canonical and canonical through local",
+            "rejects changed consumer and typed fixtures",
+          ].includes(name)
+            ? 2
+            : 1;
+          prepared = [];
+          const constructing = [];
+          for (let index = 0; index < count; index++) {
+            const active = realpathSync(mkdtempSync(resolve(scratch, prefix)));
+            if (
+              dirname(active) !== realpathSync(scratch) ||
+              !basename(active).startsWith(prefix)
+            )
+              throw Error("HISTORICAL_RECOVERY_FIXTURE_SCOPE_REJECTED");
+            roots.push(active);
+            const directories = new Set();
+            for (const [path, data] of bytes) {
+              const target = resolve(active, path);
+              const parent = dirname(target);
+              if (!directories.has(parent)) {
+                mkdirSync(parent, { recursive: true });
+                directories.add(parent);
+              }
+              writeFileSync(target, data);
+            }
+            constructing.push(active);
+          }
+          for (const active of constructing)
+            await verifyPreparedHistoricalFixtureConcurrently(
+              active,
+              bytes,
+              prefix,
+            );
+          return constructing;
+        },
+        (value) => {
+          prepared = value;
+        },
+      );
+    },
+    async settle() {
       prepared = [];
-      for (let index = 0; index < count; index++) {
-        const active = realpathSync(mkdtempSync(resolve(scratch, prefix)));
-        if (
-          dirname(active) !== realpathSync(scratch) ||
-          !basename(active).startsWith(prefix)
-        )
-          throw Error("HISTORICAL_RECOVERY_FIXTURE_SCOPE_REJECTED");
-        roots.push(active);
-        for (const [path, data] of bytes) {
-          mkdirSync(dirname(resolve(active, path)), { recursive: true });
-          writeFileSync(resolve(active, path), data);
-        }
-        verifyPreparedHistoricalFixture(active, bytes, prefix);
-        prepared.push(active);
-      }
+      await preparation.settle();
     },
     root(mode) {
       const active = prepared.shift();
@@ -444,6 +649,7 @@ export function readHistoricalBrowserTransportSource(root, path) {
   );
   if (pins.size !== 12 || !pins.has(path))
     throw Error("HISTORICAL_RECOVERY_UNMAPPED_SOURCE");
+  primeGitBlobs([...pins.keys()].map((name) => [PRESERVED, name]));
   const bytes = gitBytes(PRESERVED, path);
   if (digest(bytes) !== pins.get(path))
     throw Error("HISTORICAL_RECOVERY_BLOB_CHANGED");
@@ -517,25 +723,46 @@ export function stageHistoricalRecoveryTestSource(source, name) {
     const after =
       'import { afterEach, beforeEach, describe, expect, it } from "vitest";';
     const replacement =
-      'let preparedCanonicalRoot: string | undefined;\nbeforeEach(() => { preparedCanonicalRoot = constructHistoricalCanonicalFixture(); });\nfunction fixture(local = false) {\n  const root = preparedCanonicalRoot;\n  if (!root) throw new Error("HISTORICAL_RECOVERY_FIXTURE_REQUIRED");\n  preparedCanonicalRoot = undefined;\n  writeFileSync(join(root, "supabase/config.toml"), local ? localTestConfig() : frozenConfig());\n  if (local) writeFileSync(join(root, profilePath), readHistoricalRecoveryFixtureSource(checkout, profilePath, 193));\n  return root;\n}\n' +
+      'let preparedCanonicalRoot: string | undefined;\nconst canonicalPreparation = createHistoricalFixturePreparation();\nbeforeEach(() => { preparedCanonicalRoot = undefined; return canonicalPreparation.run(constructHistoricalCanonicalFixture, (value: string) => { preparedCanonicalRoot = value; }); });\nfunction fixture(local = false) {\n  const root = preparedCanonicalRoot;\n  if (!root) throw new Error("HISTORICAL_RECOVERY_FIXTURE_REQUIRED");\n  preparedCanonicalRoot = undefined;\n  writeFileSync(join(root, "supabase/config.toml"), local ? localTestConfig() : frozenConfig());\n  if (local) writeFileSync(join(root, profilePath), readHistoricalRecoveryFixtureSource(checkout, profilePath, 193));\n  return root;\n}\n' +
       span
         .replace(
           "function fixture(local = false)",
-          "function constructHistoricalCanonicalFixture(local = false)",
+          "async function constructHistoricalCanonicalFixture(local = false)",
         )
-        .replace(change[0], change[1]);
+        .replace(change[0], change[1])
+        .replace(
+          "  for (const name of names) {",
+          "  primeHistoricalRecoveryFixtureSources(checkout, names, 193);\n  for (const name of names) {",
+        )
+        .replace(
+          "  return root;",
+          '  await verifyPreparedHistoricalFixtureConcurrently(root, [...names].map((name) => [name, name === "supabase/config.toml" ? (local ? localTestConfig() : frozenConfig()) : readHistoricalRecoveryFixtureSource(checkout, name, 193)]), tempPrefix);\n  return root;',
+        );
     const imported =
-      'import { readHistoricalRecoveryFixtureSource } from "../../scripts/historical-recovery-unit-stage.mjs";\n';
-    if (source.split(span).length !== 2 || source.split(before).length !== 2)
+      'import { readHistoricalRecoveryFixtureSource, primeHistoricalRecoveryFixtureSources, verifyPreparedHistoricalFixtureConcurrently, createHistoricalFixturePreparation } from "../../scripts/historical-recovery-unit-stage.mjs";\n';
+    const cleanupBefore =
+      "afterEach(() => {\n  for (const root of ownedRoots.splice(0)) {";
+    const cleanupAfter =
+      "afterEach(async () => {\n  const cleaningRoots = ownedRoots.splice(0);\n  preparedCanonicalRoot = undefined;\n  await canonicalPreparation.settle();\n  for (const root of cleaningRoots) {";
+    if (
+      source.split(span).length !== 2 ||
+      source.split(before).length !== 2 ||
+      source.split(cleanupBefore).length !== 2
+    )
       throw Error("HISTORICAL_RECOVERY_TEST_SOURCE_CHANGED");
     const staged =
-      imported + source.replace(span, replacement).replace(before, after);
+      imported +
+      source
+        .replace(span, replacement)
+        .replace(before, after)
+        .replace(cleanupBefore, cleanupAfter);
     if (
       digest(
         staged
           .slice(imported.length)
           .replace(replacement, span)
-          .replace(after, before),
+          .replace(after, before)
+          .replace(cleanupAfter, cleanupBefore),
       ) !== digest(frozen)
     )
       throw Error("HISTORICAL_RECOVERY_STAGE_INVERSE_FAILED");
@@ -553,10 +780,18 @@ export function stageHistoricalRecoveryTestSource(source, name) {
     const after =
       'import { afterEach, beforeEach, describe, expect, it } from "vitest";';
     const replacement =
-      'const historical195 = prepareHistorical195UnitFixtures(ROOT, scratch, PREFIX, roots);\nbeforeEach((context) => historical195.prepare(context.task.name));\nfunction fixture(mode: "canonical" | "local" = "canonical") {\n  return historical195.root(mode);\n}';
+      'const historical195 = prepareHistorical195UnitFixtures(ROOT, scratch, PREFIX, roots);\nbeforeEach((context) => historical195.prepare(context.task.name), process.platform === "win32" ? 30_000 : 10_000);\nfunction fixture(mode: "canonical" | "local" = "canonical") {\n  return historical195.root(mode);\n}';
     const imported =
       'import { prepareHistorical195UnitFixtures } from "../../scripts/historical-recovery-unit-stage.mjs";\n';
-    if (source.split(span).length !== 2 || source.split(before).length !== 2)
+    const cleanupBefore =
+      "afterEach(() => {\n  while (roots.length) {\n    const root = roots.pop()!;";
+    const cleanupAfter =
+      "afterEach(async () => {\n  const cleaningRoots = roots.splice(0);\n  await historical195.settle();\n  while (cleaningRoots.length) {\n    const root = cleaningRoots.pop()!;";
+    if (
+      source.split(span).length !== 2 ||
+      source.split(before).length !== 2 ||
+      source.split(cleanupBefore).length !== 2
+    )
       throw Error("HISTORICAL_RECOVERY_TEST_SOURCE_CHANGED");
     const loadingStart = frozen.indexOf(
         "const { assertBackendHttp195CanonicalCandidateSources: canonical,",
@@ -574,6 +809,7 @@ export function stageHistoricalRecoveryTestSource(source, name) {
       source
         .replace(span, replacement)
         .replace(before, after)
+        .replace(cleanupBefore, cleanupAfter)
         .replace(loadingBefore, loadingAfter);
     if (
       digest(
@@ -581,7 +817,35 @@ export function stageHistoricalRecoveryTestSource(source, name) {
           .slice(imported.length)
           .replace(replacement, span)
           .replace(after, before)
+          .replace(cleanupAfter, cleanupBefore)
           .replace(loadingAfter, loadingBefore),
+      ) !== digest(frozen)
+    )
+      throw Error("HISTORICAL_RECOVERY_STAGE_INVERSE_FAILED");
+    return staged;
+  }
+  if (name === "backend-successor-197-source.test.ts") {
+    const cleanupBefore =
+      "afterEach(() => {\n  for (const root of roots.splice(0)) {";
+    const cleanupAfter =
+      "afterEach(async () => {\n  const cleaningRoots = roots.splice(0);\n  await stagedFixture.settle();\n  for (const root of cleaningRoots) {";
+    if (source.split(cleanupBefore).length !== 2)
+      throw Error("HISTORICAL_RECOVERY_TEST_SOURCE_CHANGED");
+    const setupBefore = "beforeEach(() => stagedFixture.prepare());";
+    const setupAfter =
+      'beforeEach(() => stagedFixture.prepare(), process.platform === "win32" ? 30_000 : 10_000);';
+    if (source.split(setupBefore).length !== 2)
+      throw Error("HISTORICAL_RECOVERY_TEST_SOURCE_CHANGED");
+    const staged = source
+      .replace(change[0], change[1])
+      .replace(cleanupBefore, cleanupAfter)
+      .replace(setupBefore, setupAfter);
+    if (
+      digest(
+        staged
+          .replace(change[1], change[0])
+          .replace(cleanupAfter, cleanupBefore)
+          .replace(setupAfter, setupBefore),
       ) !== digest(frozen)
     )
       throw Error("HISTORICAL_RECOVERY_STAGE_INVERSE_FAILED");

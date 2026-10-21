@@ -294,6 +294,12 @@
   ],
   "adminPublicCopies": [
     {
+      "path": "apps/admin/public/brand/identity/20261014/pwa/putduk-pwa-maskable-512.png",
+      "memberPath": "/brand/identity/20261014/pwa/putduk-pwa-maskable-512.png",
+      "sha256": "ee3dc22230154bdddc8fdf72f097240daba21d16c95b45f0cdb18461a802e271",
+      "bytes": 10616
+    },
+    {
       "path": "apps/admin/public/brand/identity/20261014/favicon/favicon.svg",
       "memberPath": "/brand/identity/20261014/favicon/favicon.svg",
       "sha256": "def4ff2c19995f763d5b4cc5121349d285619e36692300e8c1c59a2d28e3259e",

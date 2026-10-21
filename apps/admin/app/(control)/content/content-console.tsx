@@ -222,6 +222,7 @@ export function ContentConsole() {
                 ...base,
                 cardTitle: get("cardTitle"),
                 rewardMode: "NONE",
+                participationMode: snapshot?.participationMode,
                 participation: get("participation"),
                 exclusion: get("exclusion"),
                 startsAt: utc(data.get("startsAt")),

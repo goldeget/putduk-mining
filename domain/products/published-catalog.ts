@@ -1,14 +1,8 @@
 import { z } from "zod";
 
-export const productCategories = [
-  "KR_STOCK",
-  "US_STOCK",
-  "GOLD",
-  "SILVER",
-  "CRYPTO",
-] as const;
+import { productCategories, type ProductCategory } from "./product-category";
 
-export type ProductCategory = (typeof productCategories)[number];
+export { productCategories, type ProductCategory } from "./product-category";
 
 export type PublishedCatalogSource = {
   name: string;

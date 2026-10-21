@@ -1,6 +1,9 @@
 import type { MetadataRoute } from "next";
 
-import { PRIVATE_ROBOTS_DISALLOW } from "@/lib/trust/public-discovery";
+import {
+  PRIVATE_ROBOTS_DISALLOW,
+  PUBLIC_SITE_ORIGIN,
+} from "@/lib/trust/public-discovery";
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -9,7 +12,7 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       disallow: [...PRIVATE_ROBOTS_DISALLOW],
     },
-    sitemap: "https://mining.putduk.com/sitemap.xml",
-    host: "https://mining.putduk.com",
+    sitemap: `${PUBLIC_SITE_ORIGIN}/sitemap.xml`,
+    host: PUBLIC_SITE_ORIGIN,
   };
 }

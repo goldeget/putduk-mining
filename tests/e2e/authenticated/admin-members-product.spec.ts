@@ -142,29 +142,70 @@ test.describe("admin Member 360 product states", () => {
     // A cropped rail screenshot cannot prove that the lower destinations are
     // covered. Verify keyboard scrolling and hit testing in the actual shell.
     await page.setViewportSize({ width: 1440, height: 900 });
+    const normalFontSize = await page.evaluate(() =>
+      Number.parseFloat(getComputedStyle(document.documentElement).fontSize),
+    );
     for (const theme of ["dark", "light"]) {
       await page.getByLabel("화면 테마").selectOption(theme);
-      await page.evaluate(() => {
-        document.documentElement.style.fontSize = "200%";
-      });
+      await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
       try {
+        const textScale = await page.evaluate(async () => {
+          const root = document.documentElement;
+          root.style.fontSize = "200%";
+          await document.fonts.ready;
+          await new Promise<void>((resolve) =>
+            requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+          );
+          return {
+            inlineFontSize: root.style.fontSize,
+            fontSize: Number.parseFloat(getComputedStyle(root).fontSize),
+            url: window.location.href,
+            resolvedTheme: root.dataset.theme,
+          };
+        });
+        try {
+          expect(textScale.inlineFontSize).toBe("200%");
+          expect(textScale.fontSize).toBe(normalFontSize * 2);
+        } catch (error) {
+          await testInfo.attach("admin-navigation-text-scale", {
+            body: JSON.stringify({ theme, normalFontSize, ...textScale }),
+            contentType: "application/json",
+          });
+          throw error;
+        }
         const destinations = await navigation.getByRole("link").all();
         await destinations[0]!.focus();
         for (const destination of destinations) {
           await expect(destination).toBeFocused();
           await expect(destination).toBeInViewport();
-          const linkBox = await destination.boundingBox();
-          const navBox = await navigation.boundingBox();
-          const cardBox = await page.locator(".operator-card").boundingBox();
-          expect(linkBox!.y).toBeGreaterThanOrEqual(navBox!.y - 1);
-          expect(linkBox!.y + linkBox!.height).toBeLessThanOrEqual(
-            navBox!.y + navBox!.height + 1,
-          );
-          expect(linkBox!.y + linkBox!.height).toBeLessThanOrEqual(cardBox!.y);
-          expect(
-            await destination.evaluate((link) => {
-              const bounds = link.getBoundingClientRect();
-              return [...link.querySelectorAll("span")].every((copy) => {
+          // CDP boundingBox calls can sample opposite sides of the text-scale
+          // layout update. Compare every bound and hit test in one DOM snapshot.
+          const geometry = await destination.evaluate((link) => {
+            const nav = link.closest("nav");
+            const card = document.querySelector(".operator-card");
+            if (!nav || !card)
+              throw new Error("admin navigation shell missing");
+            const rect = (element: Element) => {
+              const box = element.getBoundingClientRect();
+              return {
+                x: box.x,
+                y: box.y,
+                width: box.width,
+                height: box.height,
+              };
+            };
+            const bounds = link.getBoundingClientRect();
+            return {
+              link: rect(link),
+              nav: rect(nav),
+              card: rect(card),
+              fontSize: Number.parseFloat(
+                getComputedStyle(document.documentElement).fontSize,
+              ),
+              focused: document.activeElement === link,
+              href: link.getAttribute("href"),
+              navScrollTop: nav.scrollTop,
+              textFits: [...link.querySelectorAll("span")].every((copy) => {
                 const range = document.createRange();
                 range.selectNodeContents(copy);
                 return [...range.getClientRects()].every(
@@ -174,20 +215,39 @@ test.describe("admin Member 360 product states", () => {
                     fragment.top >= bounds.top - 1 &&
                     fragment.bottom <= bounds.bottom + 1,
                 );
-              });
-            }),
-          ).toBe(true);
-          expect(
-            await destination.evaluate((link) => {
-              const box = link.getBoundingClientRect();
-              return link.contains(
+              }),
+              hit: link.contains(
                 document.elementFromPoint(
-                  box.x + box.width / 2,
-                  box.y + box.height / 2,
+                  bounds.x + bounds.width / 2,
+                  bounds.y + bounds.height / 2,
                 ),
-              );
-            }),
-          ).toBe(true);
+              ),
+            };
+          });
+          try {
+            expect(geometry.fontSize).toBe(normalFontSize * 2);
+            expect(geometry.focused).toBe(true);
+            expect(geometry.link.y).toBeGreaterThanOrEqual(geometry.nav.y - 1);
+            expect(geometry.link.y + geometry.link.height).toBeLessThanOrEqual(
+              geometry.nav.y + geometry.nav.height + 1,
+            );
+            expect(geometry.link.y + geometry.link.height).toBeLessThanOrEqual(
+              geometry.card.y,
+            );
+            expect(geometry.textFits).toBe(true);
+            expect(geometry.hit).toBe(true);
+          } catch (error) {
+            await testInfo.attach("admin-navigation-geometry", {
+              body: JSON.stringify({
+                theme,
+                normalFontSize,
+                textScale,
+                ...geometry,
+              }),
+              contentType: "application/json",
+            });
+            throw error;
+          }
           await destination.press("Tab");
         }
         await expect(logout).toBeFocused();

@@ -1,4 +1,6 @@
-import { afterEach, describe, expect, test } from "vitest";
+import { spawnSync, type SpawnSyncReturns } from "node:child_process";
+
+import { beforeAll, describe, expect, test } from "vitest";
 
 import {
   formatMiningClock,
@@ -6,16 +8,6 @@ import {
   miningRouteLoadingLabel,
   presentMiningStatus,
 } from "@/lib/product/mining-display";
-
-const originalTz = process.env.TZ;
-
-afterEach(() => {
-  if (originalTz === undefined) {
-    delete process.env.TZ;
-  } else {
-    process.env.TZ = originalTz;
-  }
-});
 
 test("mining route loading status is a short Korean announcement", () => {
   expect(miningRouteLoadingLabel).toBe("채굴 월드 불러오는 중");
@@ -71,12 +63,53 @@ describe("formatMiningClock", () => {
     expect(formatMiningClock("")).toBe("확인 중");
     expect(formatMiningClock("not-a-time")).toBe("확인 중");
   });
+});
+
+describe("formatMiningClock in a UTC process", () => {
+  let utcProcess: SpawnSyncReturns<string>;
+
+  beforeAll(
+    () => {
+      const moduleUrl = new URL(
+        "../../lib/product/mining-display.ts",
+        import.meta.url,
+      ).href;
+      const script = `
+        const timestamp = "2026-09-28T15:30:00.000Z";
+        const defaultZone = new Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const ordinaryUtc = new Intl.DateTimeFormat("ko-KR", {
+          hour: "2-digit", minute: "2-digit",
+        }).format(new Date(timestamp));
+        const { formatMiningClock } = await import(${JSON.stringify(moduleUrl)});
+        process.stdout.write(JSON.stringify({
+          defaultZone, ordinaryUtc, actualSeoul: formatMiningClock(timestamp),
+        }));
+      `;
+      utcProcess = spawnSync(
+        process.execPath,
+        ["--input-type=module", "-e", script],
+        {
+          encoding: "utf8",
+          env: { ...process.env, TZ: "UTC" },
+          maxBuffer: 64 * 1024,
+          timeout: process.platform === "win32" ? 25_000 : 8_000,
+          windowsHide: true,
+        },
+      );
+    },
+    process.platform === "win32" ? 30_000 : 10_000,
+  );
 
   test("keeps Asia/Seoul when the process timezone is UTC", () => {
-    process.env.TZ = "UTC";
-    expect(formatMiningClock("2026-09-28T15:30:00.000Z")).toBe("오전 12:30");
-    expect(formatMiningClock("2026-09-28T15:30:00.000Z")).not.toBe(
-      "오후 03:30",
-    );
+    expect(utcProcess.error).toBeUndefined();
+    expect(utcProcess.signal).toBeNull();
+    expect(utcProcess.status, utcProcess.stderr).toBe(0);
+    const evidence = JSON.parse(utcProcess.stdout) as Record<string, unknown>;
+    expect(evidence).toEqual({
+      defaultZone: "UTC",
+      ordinaryUtc: "오후 03:30",
+      actualSeoul: "오전 12:30",
+    });
+    expect(evidence.actualSeoul).not.toBe("오후 03:30");
   });
 });

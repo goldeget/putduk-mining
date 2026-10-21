@@ -427,6 +427,9 @@
 .productArt[data-category="US_STOCK"] {
   --art-accent: var(--world-usa);
 }
+.productArt[data-category="ETF"] {
+  --art-accent: var(--brand-primary);
+}
 .productArt[data-category="GOLD"] {
   --art-accent: var(--world-gold);
 }

@@ -40,7 +40,7 @@ describe("canonical native PUTDUK identity", () => {
         asset.path.startsWith("/brand/identity/"),
       ),
     ).toBe(false);
-    expect(current.adminPublicCopies).toHaveLength(4);
+    expect(current.adminPublicCopies).toHaveLength(5);
   });
 
   it("keeps accessible names and decorative instances without duplicate SVG IDs", () => {

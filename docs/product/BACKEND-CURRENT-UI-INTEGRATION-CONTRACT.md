@@ -205,12 +205,24 @@ alone does not prove that connection.
 
 ## 7. Catalog, CMS, FAQ and source approval
 
+The following paragraph records the original backend-first browser boundary:
+
 The six-category server catalog keeps all products. legacyUi READY/UI_PENDING is
 a capability diagnostic, not an economic decision or automatic publication gate.
 Existing UI still has five-category compatibility. ETF publication needs separate
 UI compatibility validation and explicit operator approval. Preserve the original
 eleven neutral DRAFT products; no new ETF identities or economics are approved by
 this document. See [catalog contract](C:/Users/PC/Desktop/putduk-mining/.worktrees/backend-engine-patch-20261011/docs/product/CATALOG-SERVER-CONTRACT.md:16).
+
+The 2026-10-21 local candidate adds six-category member browse compatibility:
+the published parser, filters, labels and neutral ETF decoration retain mixed
+snapshots without reclassification or omission. `legacyUi.READY` describes browse
+decoding/display only. Selected ETF mining scenes still require their independent
+reviewed identity/visual binding; `ETF_BASKET` remains `DECISION_REQUIRED`. This
+change adds no seed, ETF publication, world mapping, economics or financial
+writer. The original boundary above is preserved as historical evidence; current
+compatibility and remaining gates are detailed in
+[the current catalog contract](CATALOG-SERVER-CONTRACT.md).
 
 EVENT/NOTICE/FAQ reuse the reviewed CMS command/state path, operator AAL2/session,
 step-up, exact revision/digest, idempotency, audit, outbox and uncertain-result

@@ -1,4 +1,5 @@
 import type { ProductCategory } from "@/domain/products/published-catalog";
+import { BrandMark } from "./brand-mark";
 
 const materialFamilies = {
   KR_STOCK: "semiconductor",
@@ -16,6 +17,22 @@ export function CatalogMaterialArtwork({
   category: Exclude<ProductCategory, "GOLD">;
   sizes?: string;
 }) {
+  if (category === "ETF") {
+    return (
+      <span
+        data-material-artwork="ETF"
+        aria-hidden="true"
+        style={{
+          display: "grid",
+          placeItems: "center",
+          width: "100%",
+          height: "100%",
+        }}
+      >
+        <BrandMark title="" width="42%" height="42%" />
+      </span>
+    );
+  }
   const family = materialFamilies[category];
   const prefix = `/brand/catalog-materials/${family}/${family}-`;
   return (

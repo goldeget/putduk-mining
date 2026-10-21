@@ -20,6 +20,34 @@ const draft = {
 };
 
 describe("atomic durable member turns", () => {
+  it("binds the caller cancellation signal to the canonical atomic storage command", async () => {
+    const member = new AbortController();
+    let storageSignal: AbortSignal | undefined;
+    const receipt = {
+      error: null,
+      data: {
+        conversationId: conversation,
+        assistantMessageId: assistant,
+        replay: false,
+      },
+    };
+    const rpc = vi.fn(() => ({
+      abortSignal(signal: AbortSignal) {
+        storageSignal = signal;
+        return Promise.resolve(receipt);
+      },
+    }));
+    const port = createSupabaseMemberConversationPort(
+      { rpc } as unknown as SupabaseClient,
+      { signal: member.signal },
+    );
+    expect(await appendOwnMemberTurn(port, draft)).toMatchObject({
+      ok: true,
+      conversationId: conversation,
+    });
+    member.abort();
+    expect(storageSignal?.aborted).toBe(true);
+  });
   it("preserves whitespace and Unicode at the original 8000-character fragment boundary", () => {
     const body = "가".repeat(7999) + " \n😀" + "나".repeat(8000);
     const parts = splitStoredBody(body);

@@ -11,6 +11,10 @@ import { assertComponentActive } from "@/lib/safe-mode/assert-component-active.s
 import { LEGAL_CONSENT_VERSIONS } from "@/lib/trust/legal-content";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import {
+  SIGNUP_PASSWORD_HELP,
+  SIGNUP_PASSWORD_REJECTED,
+} from "@/lib/auth/password-guidance";
 
 // 약관·방침 본문(/terms, /privacy)과 같은 원천에서 버전을 가져온다.
 const SERVICE_TERMS_VERSION = LEGAL_CONSENT_VERSIONS.serviceTerms;
@@ -38,7 +42,7 @@ const signupSchema = z
     marketingConsent: z.boolean(),
     password: z
       .string()
-      .min(10, "비밀번호는 10자 이상 입력해 주세요.")
+      .min(10, SIGNUP_PASSWORD_HELP)
       .max(128, "비밀번호는 128자 이하로 입력해 주세요."),
     passwordConfirmation: z.string(),
     phoneE164: z
@@ -269,6 +273,14 @@ export async function signupAction(
   }
 
   const { data, error } = signupResult;
+
+  if (error?.code === "weak_password") {
+    return {
+      fieldErrors: { password: SIGNUP_PASSWORD_REJECTED },
+      message: "비밀번호를 다시 확인해 주세요.",
+      status: "error",
+    };
+  }
 
   if (error || !data.user) {
     return {

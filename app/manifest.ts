@@ -1,37 +1,24 @@
 import type { MetadataRoute } from "next";
+import { APP_MANIFEST_ICONS } from "@/lib/design/app-icons";
+import { PUBLIC_SITE_ORIGIN } from "@/lib/trust/public-discovery";
 
 export default function manifest(): MetadataRoute.Manifest {
+  const officialWebsite = PUBLIC_SITE_ORIGIN === "https://putduk.com";
   return {
     id: "/",
-    name: "퍼뜩 채굴",
-    short_name: "퍼뜩 채굴",
-    description: "앱을 닫아도 이어지고, 돌아오면 결과를 확인하는 채굴 경험",
+    name: officialWebsite ? "퍼뜩 공식 홈페이지" : "퍼뜩 채굴",
+    short_name: officialWebsite ? "퍼뜩" : "퍼뜩 채굴",
+    description: officialWebsite
+      ? "퍼뜩 서비스 소개와 이용 안내를 확인하는 공식 홈페이지"
+      : "앱을 닫아도 이어지고, 돌아오면 결과를 확인하는 채굴 경험",
     start_url: "/",
-    display: "standalone",
+    scope: "/",
+    display: officialWebsite ? "browser" : "standalone",
     background_color: "#020a14",
     theme_color: "#020a14",
     lang: "ko-KR",
-    orientation: "portrait-primary",
+    orientation: "any",
     categories: ["finance", "business", "utilities"],
-    icons: [
-      {
-        src: "/brand/identity/20261014/pwa/putduk-pwa-dark-192.png",
-        sizes: "192x192",
-        type: "image/png",
-        purpose: "any",
-      },
-      {
-        src: "/brand/identity/20261014/pwa/putduk-pwa-dark-512.png",
-        sizes: "512x512",
-        type: "image/png",
-        purpose: "any",
-      },
-      {
-        src: "/brand/identity/20261014/pwa/putduk-pwa-maskable-512.png",
-        sizes: "512x512",
-        type: "image/png",
-        purpose: "maskable",
-      },
-    ],
+    icons: APP_MANIFEST_ICONS,
   };
 }

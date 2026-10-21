@@ -86,6 +86,9 @@ __pycache__/
 # Next.js build output
 .next
 out
+# Framework-generated declarations; each app typecheck runs next typegen first.
+/next-env.d.ts
+/apps/admin/next-env.d.ts
 
 # Nuxt.js build / generate output
 .nuxt

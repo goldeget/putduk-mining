@@ -1,5 +1,11 @@
 /** @vitest-environment jsdom */
-import { act, createElement, type ReactNode } from "react";
+import {
+  act,
+  Children,
+  createElement,
+  isValidElement,
+  type ReactNode,
+} from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { renderToStaticMarkup } from "react-dom/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -16,6 +22,8 @@ const mocks = vi.hoisted(() => ({
   requireIdentity: vi.fn(),
   prepare: vi.fn(),
   redirect: vi.fn(),
+  logout: vi.fn(),
+  logoutAll: vi.fn(),
 }));
 vi.mock("@/lib/auth/principal", () => ({
   getAdminIdentityForLoginPage: mocks.getIdentity,
@@ -24,7 +32,11 @@ vi.mock("@/lib/auth/principal", () => ({
 vi.mock("@/lib/auth/mfa-prepare", () => ({
   prepareAdminMfaOnServer: mocks.prepare,
 }));
-vi.mock("@/app/actions", () => ({ loginAction: vi.fn() }));
+vi.mock("@/app/actions", () => ({
+  loginAction: vi.fn(),
+  logoutAction: mocks.logout,
+  logoutAllAction: mocks.logoutAll,
+}));
 vi.mock("@/app/mfa/actions", () => ({ prepareAdminMfaAction: vi.fn() }));
 vi.mock("next/navigation", () => ({
   redirect: mocks.redirect,
@@ -201,9 +213,10 @@ describe("admin auth page composition preserves live authority boundaries", () =
   ])(
     "keeps the $code denial generic and does not claim permission was granted",
     async ({ code, expected }) => {
-      const host = rendered(
-        await UnauthorizedPage({ searchParams: Promise.resolve({ code }) }),
-      );
+      const page = await UnauthorizedPage({
+        searchParams: Promise.resolve({ code }),
+      });
+      const host = rendered(page);
       expect(host.querySelector("h1")?.textContent).toBe("권한이 없습니다");
       expect(host.textContent).toContain(expected);
       expect(host.textContent).not.toContain(code);
@@ -211,6 +224,17 @@ describe("admin auth page composition preserves live authority boundaries", () =
         "/",
       );
       expect(host.querySelector('main[data-ui-state="error"]')).not.toBeNull();
+      expect(
+        host.querySelector('form button[type="submit"]')?.textContent,
+      ).toBe("이 기기 로그아웃");
+      const logoutForm = Children.toArray(
+        page.props.children.props.children,
+      ).find((child) => isValidElement(child) && child.type === "form");
+      expect(isValidElement<{ action: unknown }>(logoutForm)).toBe(true);
+      if (isValidElement<{ action: unknown }>(logoutForm)) {
+        expect(logoutForm.props.action).toBe(mocks.logout);
+        expect(logoutForm.props.action).not.toBe(mocks.logoutAll);
+      }
     },
   );
 

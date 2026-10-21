@@ -3,6 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { PutdukIcon } from "@/components/icons/putduk-icon";
+import { LegalDocumentView } from "@/components/trust/legal-document-view";
+import { LEGAL_DOCUMENTS } from "@/lib/trust/legal-content";
 import {
   getPublicFacts,
   getTrustDocument,
@@ -98,6 +100,16 @@ export default async function TrustDocumentPage({ params }: PageProps) {
       path: document.path,
     }),
   ];
+
+  const legalDocument = LEGAL_DOCUMENTS.find((item) => item.path === path);
+  if (legalDocument) {
+    return (
+      <LegalDocumentView
+        document={legalDocument}
+        structuredData={structuredData}
+      />
+    );
+  }
 
   if (path === "/about" || path === "/faq" || path === "/how-it-works") {
     return (

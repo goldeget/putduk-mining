@@ -92,16 +92,42 @@ async function category(value: string) {
 }
 
 describe("public catalog browsing without financial commands", () => {
-  it("retains the approved order, names and availability without inventing rates or ETF categories", async () => {
+  it("retains the approved order, names and availability across the closed native categories", async () => {
     await render();
     expect(names()).toEqual(products.map((product) => product.nameKo));
     expect(host.textContent).toContain("제공 중단");
     expect(host.textContent).toContain("제공 종료");
-    expect(host.querySelector('input[value="ETF"]')).toBeNull();
+    expect(host.querySelector('input[value="ETF"]')).not.toBeNull();
     expect(host.querySelector('[role="status"]')?.textContent).toBe("3개 상품");
     expect(host.textContent).not.toMatch(
       /수익률|12\.8%|선택 완료|투자 추천|금액|L5/,
     );
+  });
+  it("keeps native ETF rows and filters them without borrowing another category artwork", async () => {
+    await render([
+      ...products,
+      fixture("4", "ETF", "승인된 ETF 테마", "Approved ETF"),
+    ]);
+    expect(host.querySelector('input[value="ETF"]')).not.toBeNull();
+    expect(names()).toContain("승인된 ETF 테마");
+    await category("ETF");
+    expect(names()).toEqual(["승인된 ETF 테마"]);
+    expect(host.querySelector('[role="status"]')?.textContent).toBe("1개 상품");
+    const artwork = host.querySelector('[data-catalog-artwork="ETF"]');
+    expect(
+      artwork?.querySelector('[data-material-artwork="ETF"]'),
+    ).not.toBeNull();
+    expect(
+      artwork?.querySelector('[data-putduk-brand="canonical"]'),
+    ).not.toBeNull();
+    expect(artwork?.querySelector("img,source")).toBeNull();
+    expect(artwork?.innerHTML).not.toMatch(
+      /undefined|semiconductor|digital-asset|silver/,
+    );
+    await category("ALL");
+    await search("Approved ETF");
+    expect(names()).toEqual(["승인된 ETF 테마"]);
+    expect(fetch).not.toHaveBeenCalled();
   });
   it("combines real search and native category changes, and recovers by clearing the search", async () => {
     await render();

@@ -19,6 +19,7 @@ import {
   waitForSignupRead,
   withSignupReadDeadline,
 } from "@/lib/auth/signup-read-deadline";
+import { SIGNUP_PASSWORD_HELP } from "@/lib/auth/password-guidance";
 
 import styles from "@/components/auth/signup-experience.module.css";
 
@@ -337,7 +338,7 @@ export function SignupForm() {
               </button>
             </div>
             <small id="signup-password-help">
-              {state.fieldErrors.password ?? "10자 이상 입력해 주세요."}
+              {state.fieldErrors.password ?? SIGNUP_PASSWORD_HELP}
             </small>
           </div>
           <div className={styles.field}>
@@ -451,7 +452,11 @@ export function SignupForm() {
       </fieldset>
 
       <fieldset id="signup-consents" className={styles.consents}>
-        <legend className={styles.srOnly}>약관 동의</legend>
+        <legend className={styles.consentHeading}>약관 동의</legend>
+        <p className={styles.consentIntroduction}>
+          필수 항목에 동의해야 가입할 수 있어요. 전문은 새 탭에서 확인할 수
+          있어요.
+        </p>
         <label className={styles.consentAll}>
           <input
             id="consent-all"
@@ -459,8 +464,12 @@ export function SignupForm() {
             checked={allConsented}
             onChange={(event) => toggleAll(event.target.checked)}
             aria-controls="consent-service consent-privacy consent-marketing"
+            aria-describedby="signup-consent-all-help"
           />
-          <span>전체 동의</span>
+          <span>
+            전체 동의
+            <small id="signup-consent-all-help">선택 항목이 포함돼요.</small>
+          </span>
         </label>
         <div className={styles.consentRow}>
           <label>
@@ -497,9 +506,9 @@ export function SignupForm() {
               className={styles.policyDocumentLink}
               href="/terms"
               target="_blank"
-              rel="noopener"
+              rel="noopener noreferrer"
             >
-              이용약관 전문 보기
+              이용약관 전문 보기 <span>(새 탭)</span>
             </Link>
           </details>
         </div>
@@ -538,9 +547,9 @@ export function SignupForm() {
               className={styles.policyDocumentLink}
               href="/privacy"
               target="_blank"
-              rel="noopener"
+              rel="noopener noreferrer"
             >
-              개인정보 처리방침 전문 보기
+              개인정보 처리방침 전문 보기 <span>(새 탭)</span>
             </Link>
           </details>
         </div>
@@ -556,11 +565,18 @@ export function SignupForm() {
                 marketing: event.target.checked,
               }))
             }
+            aria-describedby="signup-marketing-choice-help"
           />
           <span>
             혜택·이벤트 소식 받기 <strong>(선택)</strong>
           </span>
         </label>
+        <p
+          id="signup-marketing-choice-help"
+          className={styles.consentChoiceHelp}
+        >
+          동의하지 않아도 서비스를 이용할 수 있어요.
+        </p>
         {state.fieldErrors.serviceTermsConsent ||
         state.fieldErrors.privacyConsent ? (
           <FeedbackMessage

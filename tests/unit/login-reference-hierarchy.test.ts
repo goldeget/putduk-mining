@@ -12,8 +12,23 @@ vi.mock("@/lib/design/use-resolved-theme", () => ({
 }));
 vi.mock("@/app/login/actions", () => ({ authenticateAction: vi.fn() }));
 vi.mock("next/link", () => ({
-  default: ({ children, ...props }: { children: ReactNode; href: string }) =>
-    createElement("a", props, children),
+  default: ({
+    children,
+    prefetch,
+    ...props
+  }: {
+    children: ReactNode;
+    href: string;
+    prefetch?: boolean;
+  }) =>
+    createElement(
+      "a",
+      {
+        ...props,
+        "data-prefetch": prefetch === false ? "disabled" : "automatic",
+      },
+      children,
+    ),
 }));
 
 let host: HTMLDivElement;
@@ -32,6 +47,36 @@ afterEach(async () => {
 });
 
 describe("Login story reconstruction preserves the real account journey", () => {
+  it("requests linked routes on demand while preserving every login destination", async () => {
+    await act(async () =>
+      root.render(
+        createElement(
+          LoginExperience,
+          null,
+          createElement(AuthForm, { nextPath: "/wallet" }),
+        ),
+      ),
+    );
+    const links = [...host.querySelectorAll("a[href]")];
+    expect(links.map((link) => link.getAttribute("href"))).toEqual([
+      "/",
+      "/about",
+      "/how-it-works",
+      "/support",
+      "/",
+      "/find-id",
+      "/recover",
+      "/signup",
+      "/support",
+      "/how-it-works",
+      "/recover",
+      "/verification",
+    ]);
+    expect(links.map((link) => link.getAttribute("data-prefetch"))).toEqual(
+      links.map(() => "disabled"),
+    );
+  });
+
   it.each(["dark", "light"] as const)(
     "%s keeps a unique named login region, accessible fields and real recovery routes outside decoration",
     async (resolvedTheme) => {

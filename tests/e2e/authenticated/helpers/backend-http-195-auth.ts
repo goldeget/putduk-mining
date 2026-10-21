@@ -5,9 +5,9 @@ import {
   assertBackendHttp195LocalCandidateSources,
 } from "../../../../scripts/backend-http-195-source.mjs";
 import {
-  readBackend201HttpContext,
-  resolveBackend201Context,
-} from "../../../../scripts/backend-successor-201-http-context.mjs";
+  readBackend202HttpContext,
+  resolveBackend202Context,
+} from "../../../../scripts/backend-successor-202-http-context.mjs";
 
 type SafeResult = {
   status: number;
@@ -28,19 +28,20 @@ const required = (name: string) => {
 };
 export function requireBackend195Target() {
   const revision = process.env.PUTDUK_BACKEND_SOURCE_REVISION;
-  const reviewed = resolveBackend201Context(
+  const reviewed = resolveBackend202Context(
     revision,
     () =>
       process.platform === "win32"
         ? assertBackendHttp195LocalCandidateSources()
         : assertBackendHttp195CanonicalCandidateSources(),
-    readBackend201HttpContext,
+    readBackend202HttpContext,
   );
   const url = new URL(required("NEXT_PUBLIC_SUPABASE_URL"));
   if (
     process.env.APP_ENV !== "test" ||
     (reviewed.migrationSources !== 195 &&
-      !(revision === "201" && reviewed.migrationSources === 201)) ||
+      !(revision === "201" && reviewed.migrationSources === 201) &&
+      !(revision === "202" && reviewed.migrationSources === 202)) ||
     url.protocol !== "http:" ||
     !["127.0.0.1", "localhost"].includes(url.hostname) ||
     url.port !== String(reviewed.apiPort) ||

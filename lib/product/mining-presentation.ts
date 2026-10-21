@@ -25,6 +25,7 @@ type Presentation = {
   tone: MiningStatusTone;
   action: "reload" | "allocation" | "start" | "none";
 };
+export type MiningPresentation = Presentation;
 
 const unknown: Presentation = {
   source: "unknown",
@@ -35,6 +36,44 @@ const unknown: Presentation = {
   tone: "neutral",
   action: "reload",
 };
+
+/** Format an already accepted runtime status; this never derives mining activity. */
+export function presentFundedMiningRuntime(
+  status: "ACTIVE" | "STOPPED",
+  reason: string | null,
+): Presentation {
+  if (status === "ACTIVE") {
+    return {
+      source: "funded",
+      running: true,
+      label: "채굴 중",
+      title: "실제 채굴 · 채굴 중",
+      lead: "확인된 배분으로 채굴하고 있어요. 확정 금액은 지갑에서 확인해 주세요.",
+      tone: "success",
+      action: "allocation",
+    };
+  }
+  const label =
+    reason === "SAFE_MODE"
+      ? "안전 모드로 잠시 멈춤"
+      : reason === "CAPACITY_USED"
+        ? "이번 한도 완료"
+        : "배분 대기";
+  return {
+    source: "funded",
+    running: false,
+    label,
+    title: `실제 채굴 · ${label}`,
+    lead:
+      reason === "SAFE_MODE"
+        ? "안전 모드로 잠시 멈췄어요. 지금까지 확인된 채굴 기록은 유지돼요."
+        : reason === "CAPACITY_USED"
+          ? "이번 채굴 한도를 사용했어요. 확정된 기록은 유지돼요."
+          : "채굴할 상품과 배분을 확인해 주세요.",
+    tone: "neutral",
+    action: reason === "SAFE_MODE" ? "reload" : "allocation",
+  };
+}
 
 /** A paid source takes priority; only verified absence permits the old session path. */
 export function resolveMiningPresentation(input: {
@@ -58,38 +97,8 @@ export function resolveMiningPresentation(input: {
     const runtime = display.funded_runtime;
     const status = resolveFundedRuntimeStatus(runtime);
     if (status === "UNKNOWN") return unknown;
-    if (status === "ACTIVE") {
-      return {
-        source: "funded",
-        running: true,
-        label: "채굴 중",
-        title: "실제 채굴 · 채굴 중",
-        lead: "확인된 배분으로 채굴하고 있어요. 확정 금액은 지갑에서 확인해 주세요.",
-        tone: "success",
-        action: "allocation",
-      };
-    }
     const reason = runtime?.schema_version === 2 ? runtime.stop_reason : null;
-    const label =
-      reason === "SAFE_MODE"
-        ? "안전 모드로 잠시 멈춤"
-        : reason === "CAPACITY_USED"
-          ? "이번 한도 완료"
-          : "배분 대기";
-    return {
-      source: "funded",
-      running: false,
-      label,
-      title: `실제 채굴 · ${label}`,
-      lead:
-        reason === "SAFE_MODE"
-          ? "안전 모드로 잠시 멈췄어요. 지금까지 확인된 채굴 기록은 유지돼요."
-          : reason === "CAPACITY_USED"
-            ? "이번 채굴 한도를 사용했어요. 확정된 기록은 유지돼요."
-            : "채굴할 상품과 배분을 확인해 주세요.",
-      tone: "neutral",
-      action: reason === "SAFE_MODE" ? "reload" : "allocation",
-    };
+    return presentFundedMiningRuntime(status, reason);
   }
   if (input.sessionError) return unknown;
   if (input.session) {

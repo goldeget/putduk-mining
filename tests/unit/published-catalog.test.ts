@@ -75,6 +75,29 @@ function firstAvailability(row: unknown) {
 }
 
 describe("published catalog read projection", () => {
+  it("retains a valid ETF alongside other approved products without dropping the snapshot", () => {
+    const result = presentPublishedCatalogRead(
+      catalog({
+        mining_products: [
+          product(),
+          product({
+            id: "00000000-0000-4000-8000-000000000005",
+            code: "TEST_ETF",
+            slug: "test-etf",
+            category: "ETF",
+            display_order: 2,
+          }),
+        ],
+      }),
+      null,
+      now,
+    );
+    expect(result).toMatchObject({
+      state: "loaded",
+      catalog: { id: catalogId, contentDigest: "a".repeat(64) },
+      products: [{ category: "GOLD" }, { category: "ETF" }],
+    });
+  });
   it("keeps empty and a failed query distinct", () => {
     expect(presentPublishedCatalogRead(null, null, now).state).toBe("empty");
     expect(
