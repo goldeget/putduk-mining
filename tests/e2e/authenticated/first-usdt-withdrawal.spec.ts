@@ -132,6 +132,10 @@ test.describe("first USDT_ADDRESS welcome withdrawal", () => {
 
     await page.goto("/wallet?view=history");
     await expect(page.getByText("PUTDUK START 전환").first()).toBeVisible();
-    await expect(page.getByText(/USDT 잔액/)).toHaveCount(0);
+    // Manual-deposit disclaimer contains "USDT 잔액이 생기지 않아요" — that is allowed.
+    await expect(page.getByText(/내 USDT|사용자 USDT 잔액|회원 USDT 잔액/)).toHaveCount(
+      0,
+    );
+    await expect(page.getByText("USDT 잔액이 생기지 않아요")).toBeVisible();
   });
 });
