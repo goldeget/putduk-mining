@@ -1513,7 +1513,7 @@
     "components/icons/putduk-icon.tsx": "2fe69b623ea0c7e358b947c46c076fdc5e2efcfc4fd2023a44abddcf1f4e8bea",
     "components/layout/menu-chrome.module.css": "fffbc2bd0155f838b7139199213f2b2d570cd5b35ea9df9eb80f685f8fe2b5e7",
     "components/layout/menu-chrome.tsx": "93d0ad335da72249be65c091a7ddfe4e80b82bbb2c44f3c1bdb1efc7c1546780",
-    "components/layout/product-header.tsx": "f03ab49a87616019e23a784cb8967dc22782013c613b53c0ab76eb2b029ae848",
+    "components/layout/product-header.tsx": "f20f7b0c349d815db6bd6fa6a1a009bcba93e2dcfdbb8fb9be638d15a81f036a",
     "components/layout/product-shell.module.css": "6725b9a10f9ab02b7fc6ce5b8ae26ab289be0bb071d5c7d319811764ad0434a2",
     "components/layout/product-shell.tsx": "6bf5350439570cb12d3a8539f9dcfbd22cf53cc71d8d74d288684dd3c2f6062e",
     "components/layout/public-navigation.tsx": "6145a6b002769c4c6feee5dec86ff8299bc4f832d45f7553c551804672c3a246",

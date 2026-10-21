@@ -105,11 +105,7 @@ export function ProductHeader({
               prefetch={false}
               aria-current={item.href === "/home" ? "page" : undefined}
             >
-              {item.icon === "ai" ? (
-                <PutdukIcon name="ai" size={20} />
-              ) : (
-                <PutdukHomeIcon name={item.icon} size={20} metallic={false} />
-              )}
+              <PutdukHomeIcon name={item.icon} size={20} metallic={false} />
               <span>{item.label}</span>
             </Link>
           ))}
