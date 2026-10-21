@@ -16,7 +16,7 @@ Public hosts already point at **staging-named** Workers:
 
 Owner authorized publishing an accepted develop SHA onto those Workers. That is the current meaning of “올리다” — not a separate `*-prod` Worker rename.
 
-Evidence pack: `docs/quality/CUTOVER-EVIDENCE-20261021.md`  
+Evidence pack: `docs/quality/CUTOVER-EVIDENCE-20261021.md`
 SHA served: `34650eeeb51897e09c57401ede1c014f9d3a8d07`
 
 ## Still separate (not done by that deploy)
