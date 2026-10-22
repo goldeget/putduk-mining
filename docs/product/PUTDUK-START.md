@@ -13,7 +13,7 @@ Start mining → see the first result → close the app → return → see accum
 - Trial ledger and real wallet ledger are separate
 - Server time is authoritative
 - Trial continues while the app/browser/device is closed
-- Operator-configurable virtual trial presentation target
+- Operator-configurable trial presentation target
 - Eligible real KRW conversion: maximum KRW 5,000 exactly once
 - Funding is never required before withdrawing the eligible welcome reward
 - First trial world: KOREA
