@@ -285,7 +285,7 @@ export function runWorkroomNativePhase(phase, stage, principal = null) {
         .map((x) => "'" + x + "'")
         .join(
           ",",
-        )}]::text[] then raise exception 'BASELINE201_REQUIRED';end if;end$$;`,
+        )}]::text[] then raise exception 'BASELINE201_REQUIRED';end if;end$$; create extension if not exists pgtap with schema extensions;`,
       false,
     );
     const tests = manifest.files.filter(

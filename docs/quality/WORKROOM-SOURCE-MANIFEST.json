@@ -2072,7 +2072,7 @@
     "scripts/workroom-native-external-send.py": "c4c1f11ab92283217c41f42898b55be560186644e9a467e518595dd45bb476ad",
     "scripts/workroom-native-roster.json": "1cfd4da080b98e10bd709a79c9ffc515d393c827e1a3a77b5c869375fd31fbd2",
     "scripts/workroom-native-runner.d.mts": "579ba04870e05ccf25ec0138ded11320caf9fcd9d79e3e4ad1903bd6ff510255",
-    "scripts/workroom-native-runner.mjs": "f8e63317f4fb463e4f1b64e1f4ec14d6bb7aa7660c313b21061e7a933e4d0f51",
+    "scripts/workroom-native-runner.mjs": "3601f05842b254c2360bd1f92bee476c20499e2b4af1e5721adc056b8784e6a6",
     "scripts/workroom-native-stage.d.mts": "14e948c53cb3e971c852bb50410562184108ebdf1b90b72e7757abfc1169a2da",
     "scripts/workroom-native-stage.mjs": "72726915fffead7d5aa1880d67e835bfde80d6bab328d7c5a574fc8eceb7035f",
     "scripts/workroom-native-stage.test.mjs": "e6561856b39777b9e31d4420c5c366515f9093d7a3cc821d66a4c28c4bb42034",
