@@ -2907,7 +2907,7 @@
     "tests/unit/ws04-security-money.test.ts": "08174a165599236171ca82fc092c8b58867d7972742484e1c522eead36eadf32",
     "tests/worker/cash-outbox-dispatch.test.ts": "afa46bc584cd3a408df595114706fecb40da105f414a7d50c5be60cb8bd7cd7b",
     "tests/worker/funding-scheduler.test.ts": "8b39df32eaaf2378c27ac05c24a114597dd82fd03fcc38dc09c185f1bd7aebfa",
-    "tests/worker/runtime-evidence.test.ts": "2a49cf295dd4ab8e406cc98d515c16482f00c5abe64956a7e67c0297e35d3e80",
+    "tests/worker/runtime-evidence.test.ts": "4329b9c278817916f36d6fa525141dcabd99077888d391485b8cdac4b9acdf5a",
     "tsconfig.json": "7252b6d3830fdfdc45ad8d7de2a7b95da9b5749245183a098175794b415753d4",
     "vite.config.ts": "8c247377b94d52dade2f2e12bbb88e3993b6fa5483ce3862fd3060020f4827c1",
     "vitest.config.ts": "1e9f81c2ed2c7641a474dfda641c08aa2a9f328af1fb6b3162208967813b43c0",

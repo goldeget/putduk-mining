@@ -728,15 +728,29 @@ insert into auth.users (
     expect(auditCount).toBe(1);
     expect((await readOutbox(db, event.id)).status).toBe("PENDING");
 
-    const replay = await processOutboxBatch(db, {
-      workerId: `${workerId}-replay`,
-      outboxHandlers: {
-        ...SUPPORTED_OUTBOX_HANDLERS,
-        "SAFE_MODE_CHANGED.v1": async () => undefined,
-      },
-    });
-    expect(replay.completed).toBeGreaterThanOrEqual(1);
+    // Replay becomes available now, behind any older preserved financial
+    // events. Exercise the real ordered queue instead of assuming one batch
+    // reaches this particular target in a cumulative201→202 database.
+    let replayCompleted = 0;
+    let targetDeliveries = 0;
+    for (let batch = 0; batch < 16; batch++) {
+      const replay = await processOutboxBatch(db, {
+        workerId: `${workerId}-replay-${batch}`,
+        outboxHandlers: {
+          ...SUPPORTED_OUTBOX_HANDLERS,
+          "SAFE_MODE_CHANGED.v1": async (_client, item) => {
+            if (item.id === event.id) targetDeliveries++;
+          },
+        },
+      });
+      expect(replay.claimError).toBeUndefined();
+      replayCompleted += replay.completed;
+      if ((await readOutbox(db, event.id)).status !== "PENDING") break;
+      if (replay.claimed === 0) break;
+    }
+    expect(replayCompleted).toBeGreaterThanOrEqual(1);
     expect((await readOutbox(db, event.id)).status).toBe("PROCESSED");
+    expect(targetDeliveries).toBe(1);
   });
 
   it("runs FINANCIAL_RECONCILIATION, records mismatches, and never auto-repairs", async () => {
