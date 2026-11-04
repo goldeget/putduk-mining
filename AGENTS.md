@@ -1,3 +1,16 @@
+## Owner-authorized WORKROOM replacement — 2026-11-04
+
+Current chat explicitly approves replacing the mining member product with the existing transparent, free WORKROOM simulation while preserving all existing users/data. This supersedes obsolete path, prior-project reference, UI baseline and no-implementation restrictions solely for this task.
+
+- Original C:/Dev/putduk-mining remains protected; no source edits/reset/clean/stash there.
+- Implementation: C:/Dev/putduk-workroom-20261104, branch codex/workroom-replacement-implementation, base 9ccc287c5c05b998a9ad345392e9ff07a03a5836.
+- Reference: approved WORKROOM source at C:/Users/PC/.codex/visualizations/2026/11/04/01a1a42a-58ba-7d40-8e3a-da9809b74c09/workroom-site.
+- Preservation and evidence: F:/가상대리점/preservation/putduk-before-workroom-20261104 and F:/가상대리점/workroom-* task files. Native app worktree tool rejected this selected repository; Git fallback used. F volume cannot host dependency junctions, so implementation moved to C.
+- Preserve auth.users/profile IDs, all historical money records, old applied SQL and existing original work. Practice points never mutate KRW/withdrawable funds.
+- Use non-overlapping database/domain, member UI, admin UI/API and coordinator lanes per approved plan.
+- Local implementation, exact dependency reuse, isolated tests and task-owned local DB validation authorized. No live schema apply/deploy/push/shared merge, real money or paid infrastructure authorized by this local step.
+- Existing financial/security invariants still apply. Historical source manifests are preserved; new successor admission needs separate reviewed evidence.
+
 # PUTDUK MINING — ABSOLUTE PROJECT BOUNDARY
 
 ## Owner-confirmed scope and precedence — 2026-10-14

@@ -8,6 +8,7 @@ export const PROTECTED_PAGE_PATHS = [
 
 /** 인증이 필요한 하위 화면도 같은 출처의 로그인 반환 경로로 보존한다. */
 export const PROTECTED_PAGE_PREFIXES = [
+  "/workroom",
   "/wallet",
   "/menu",
   "/events",
@@ -47,7 +48,7 @@ export function isSafeProtectedReturnPath(value: string): boolean {
 
 export function safeProtectedReturnPath(
   value: string | null | undefined,
-  fallback = "/home",
+  fallback = "/workroom",
 ): string {
   return value && isSafeProtectedReturnPath(value) ? value : fallback;
 }

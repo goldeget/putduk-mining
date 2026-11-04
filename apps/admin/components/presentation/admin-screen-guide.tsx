@@ -6,6 +6,13 @@ import { useEffect, useRef } from "react";
 import styles from "./admin-screen-guide.module.css";
 
 const guides = {
+  "/workroom": {
+    title: "워크룸 운영",
+    check:
+      "모의 조건과 적용 버전, 추천인 코드 사용량과 연습 포인트 지급 내역을 확인하세요.",
+    caution:
+      "연습 포인트는 현금으로 전환되지 않습니다. 설정 변경은 다음 회차부터 적용됩니다.",
+  },
   "/": {
     title: "오늘의 퍼뜩",
     check:

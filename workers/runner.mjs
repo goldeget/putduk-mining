@@ -18,7 +18,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
-import { scheduleFundingJobs } from "./funding-scheduler.mjs";
 
 const WORKER_ID =
   process.env.PUTDUK_WORKER_ID?.trim() || `putduk-worker-${process.pid}`;
@@ -1002,7 +1001,6 @@ export async function processJobBatch(
     batchSize = 10,
     leaseSeconds = 120,
     jobHandlers = SUPPORTED_JOB_HANDLERS,
-    allowFundingJobs = true,
     leaseRenewIntervalMs,
     randomUnit,
   } = {},
@@ -1025,7 +1023,9 @@ export async function processJobBatch(
       p_worker_id: workerId,
       p_batch_size: 1,
       p_lease_seconds: leaseSeconds,
-      ...(allowFundingJobs ? {} : { p_allow_funding: false }),
+      // WORKROOM replacement never admits new monetary mining work, even if an
+      // older caller passes allowFundingJobs=true. Historical ops still drain.
+      p_allow_funding: false,
     });
     if (error) {
       console.error("claim_system_jobs failed", error.message);
@@ -1122,21 +1122,15 @@ export async function processJobBatch(
 /** One bounded preparation followed by canonical outbox/job claims. */
 export async function runWorkerCycle(client, options = {}) {
   const workerId = options.workerId ?? WORKER_ID;
-  let scheduler;
-  try {
-    scheduler = await scheduleFundingJobs(client, {
-      batchSize: options.schedulerBatchSize ?? 25,
-    });
-  } catch (cause) {
-    // Retain the preparation failure while independent operational work runs.
-    // The scoped database claim excludes funding when this boundary is unknown.
-    scheduler = { error: errorCode(cause, "FUNDING_SCHEDULER_FAILED") };
-  }
+  const scheduler = {
+    paused: true,
+    reason: "WORKROOM_REPLACEMENT",
+    scheduled: 0,
+  };
   const outbox = await processOutboxBatch(client, { ...options, workerId });
   const jobs = await processJobBatch(client, {
     ...options,
     workerId,
-    allowFundingJobs: !scheduler.error && !scheduler.paused,
   });
   return {
     workerId,

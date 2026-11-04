@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 
-import { BrandMark } from "@/components/brand/brand-mark";
+import { WorkroomMark } from "@/components/workroom/identity";
 import { PutdukIcon } from "@/components/icons/putduk-icon";
 import { PublicNavigation } from "@/components/layout/public-navigation";
 import { ThemeControl } from "@/components/system/theme-control";
@@ -23,10 +23,10 @@ export function TrustShell({ children }: { children: ReactNode }) {
     <div className="trust-shell">
       <header className="trust-header">
         <div className="trust-header__inner">
-          <Link className="brand-lockup" href="/" aria-label="퍼뜩 채굴 홈">
-            <BrandMark title="" />
+          <Link className="brand-lockup" href="/" aria-label="WORKROOM 홈">
+            <WorkroomMark />
             <span>
-              <strong>퍼뜩 채굴</strong>
+              <strong>WORKROOM</strong>
               <small>신뢰 안내</small>
             </span>
           </Link>
@@ -51,10 +51,10 @@ export function TrustShell({ children }: { children: ReactNode }) {
       <footer className="trust-footer">
         <div>
           <Link className="brand-lockup brand-lockup--footer" href="/">
-            <BrandMark title="" />
+            <WorkroomMark />
             <span>
-              <strong>퍼뜩 채굴</strong>
-              <small>PUTDUK MINING</small>
+              <strong>WORKROOM</strong>
+              <small>WORKROOM</small>
             </span>
           </Link>
           <p>

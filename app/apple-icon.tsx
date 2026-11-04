@@ -1,27 +1,28 @@
 import { ImageResponse } from "next/og";
-import {
-  PUTDUK_SYMBOL_PATH,
-  PUTDUK_SYMBOL_VIEW_BOX,
-} from "@/components/brand/putduk-symbol";
-
-export const size = { height: 180, width: 180 };
+export const size = { width: 180, height: 180 };
 export const contentType = "image/png";
-
 export default function AppleIcon() {
   return new ImageResponse(
     <div
       style={{
-        alignItems: "center",
-        background: "#101a2b",
-        borderRadius: 36,
         display: "flex",
-        height: "100%",
+        alignItems: "center",
         justifyContent: "center",
         width: "100%",
+        height: "100%",
+        background: "#0c1727",
+        borderRadius: 36,
       }}
     >
-      <svg viewBox={PUTDUK_SYMBOL_VIEW_BOX} width="132" height="132">
-        <path fill="#e8c983" fillRule="evenodd" d={PUTDUK_SYMBOL_PATH} />
+      <svg width="140" height="140" viewBox="0 0 44 44">
+        <path
+          d="m9 15 6 15 7-12 7 12 6-15"
+          fill="none"
+          stroke="#73efc3"
+          strokeWidth="3.2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
       </svg>
     </div>,
     size,

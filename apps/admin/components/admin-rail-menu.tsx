@@ -46,7 +46,7 @@ export function AdminRailMenu({
         <span className="brand-symbol">
           <BrandMark title="" width="100%" height="100%" />
         </span>
-        <strong>퍼뜩 채굴</strong>
+        <strong>WORKROOM</strong>
         <small>운영</small>
       </Link>
       <button

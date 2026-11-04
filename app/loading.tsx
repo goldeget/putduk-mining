@@ -1,4 +1,4 @@
-import { BrandMark } from "@/components/brand/brand-mark";
+import { WorkroomMark } from "@/components/workroom/identity";
 import { Skeleton } from "@/components/ui/states";
 
 export default function Loading() {
@@ -6,10 +6,10 @@ export default function Loading() {
     <main className="shell" aria-busy="true">
       <header className="site-header">
         <span className="brand-lockup">
-          <BrandMark title="" />
+          <WorkroomMark />
           <span>
-            <strong>PUTDUK</strong>
-            <small>MINING</small>
+            <strong>WORKROOM</strong>
+            <small>나만의 워크룸</small>
           </span>
         </span>
       </header>

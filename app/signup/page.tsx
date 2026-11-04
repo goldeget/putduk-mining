@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { SignupForm } from "@/app/signup/signup-form";
-import { SignupExperience } from "@/components/auth/signup-experience";
+import { WorkroomAuth } from "@/components/workroom/identity";
 
 export const metadata: Metadata = {
   title: "회원가입",
@@ -9,8 +9,8 @@ export const metadata: Metadata = {
 
 export default function SignupPage() {
   return (
-    <SignupExperience>
+    <WorkroomAuth signup>
       <SignupForm />
-    </SignupExperience>
+    </WorkroomAuth>
   );
 }

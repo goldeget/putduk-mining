@@ -2,27 +2,26 @@
 
 import Link from "next/link";
 import type { Route } from "next";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useRef } from "react";
 
-/** Launch ops first: 입금·출금·예외·회원. Secondary tools stay reachable. */
+/** WORKROOM operations first; historical records remain secondary. */
 const items = [
-  { href: "/deposits/krw", label: "원화 입금" },
-  { href: "/deposits/usdt", label: "USDT 입금" },
-  { href: "/withdrawals/krw-bank", label: "계좌 출금" },
-  { href: "/withdrawals/usdt", label: "USDT 출금" },
-  { href: "/exceptions", label: "예외 처리" },
-  { href: "/members", label: "회원 조회" },
-  { href: "/kyc", label: "본인 확인" },
-  { href: "/", label: "오늘의 퍼뜩" },
+  { href: "/workroom?tab=config", label: "워크룸 · 모의 조건" },
+  { href: "/workroom?tab=invites", label: "추천인 코드" },
+  { href: "/workroom?tab=users", label: "회원·체험 포인트" },
+  { href: "/workroom?tab=audit", label: "워크룸 변경 기록" },
+  { href: "/members", label: "보관함 · 기존 회원·기록" },
+  { href: "/deposits/krw", label: "보관함 · 원화 입금" },
+  { href: "/deposits/usdt", label: "보관함 · USDT 입금" },
+  { href: "/withdrawals/krw-bank", label: "보관함 · 계좌 출금" },
+  { href: "/withdrawals/usdt", label: "보관함 · USDT 출금" },
+  { href: "/exceptions", label: "보관함 · 예외 처리" },
+  { href: "/kyc", label: "보관함 · 본인 확인" },
   { href: "/restrictions", label: "제한·안전" },
-  { href: "/economy", label: "채굴 정책" },
-  { href: "/catalog", label: "상품 검토" },
   { href: "/content", label: "이벤트·공지" },
   { href: "/ai-conversations", label: "회원 AI 기록" },
-  { href: "/assistant", label: "운영 도우미" },
 ] as const;
-
 function scrollNavToTop(nav: HTMLElement | null) {
   nav?.scrollTo?.(0, 0);
 }
@@ -79,6 +78,7 @@ function syncNavScroll(nav: HTMLElement | null) {
 
 export function AdminNavigation({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const navRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -142,8 +142,11 @@ export function AdminNavigation({ onNavigate }: { onNavigate?: () => void }) {
     <nav aria-label="운영자 주 메뉴" ref={navRef}>
       {items.map((item, index) => {
         const current =
-          pathname === item.href ||
-          (item.href !== "/" && pathname.startsWith(`${item.href}/`));
+          (item.href.startsWith("/workroom?")
+            ? pathname === "/workroom" &&
+              (searchParams.get("tab") || "config") ===
+                item.href.split("tab=")[1]
+            : pathname === item.href) || pathname.startsWith(`${item.href}/`);
         return (
           <Link
             href={item.href as Route}

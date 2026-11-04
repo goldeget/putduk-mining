@@ -1,23 +1,6 @@
-import { TodayView } from "@/components/today/today-view";
+import { redirect } from "next/navigation";
 import { requireAdminPage } from "@/lib/auth/principal";
-
-import { loadTodaySnapshot } from "./_lib/load-today-snapshot";
-
-export default async function TodayPage() {
+export default async function AdminHomePage() {
   await requireAdminPage("/");
-  const snapshot = await loadTodaySnapshot();
-  return (
-    <div
-      data-ui-ready="/"
-      data-ui-state={
-        snapshot.hasUnavailable
-          ? "partial"
-          : snapshot.allQueuesEmpty
-            ? "empty"
-            : "loaded"
-      }
-    >
-      <TodayView snapshot={snapshot} />
-    </div>
-  );
+  redirect("/workroom");
 }

@@ -1,36 +1,25 @@
 import type { MetadataRoute } from "next";
+import { WORKROOM_ICON } from "@/components/workroom/brand";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
     id: "/",
-    name: "퍼뜩 채굴",
-    short_name: "퍼뜩 채굴",
-    description: "앱을 닫아도 이어지고, 돌아오면 결과를 확인하는 채굴 경험",
-    start_url: "/",
+    name: "WORKROOM",
+    short_name: "WORKROOM",
+    description: "무료 시뮬레이션 · 체험 포인트 현금 전환 불가",
+    start_url: "/workroom",
     display: "standalone",
-    background_color: "#020a14",
-    theme_color: "#020a14",
+    background_color: "#0b1220",
+    theme_color: "#0b1220",
     lang: "ko-KR",
     orientation: "portrait-primary",
-    categories: ["finance", "business", "utilities"],
+    categories: ["education", "utilities"],
     icons: [
       {
-        src: "/brand/identity/20261014/pwa/putduk-pwa-dark-192.png",
-        sizes: "192x192",
-        type: "image/png",
+        src: WORKROOM_ICON,
+        sizes: "any",
+        type: "image/svg+xml",
         purpose: "any",
-      },
-      {
-        src: "/brand/identity/20261014/pwa/putduk-pwa-dark-512.png",
-        sizes: "512x512",
-        type: "image/png",
-        purpose: "any",
-      },
-      {
-        src: "/brand/identity/20261014/pwa/putduk-pwa-maskable-512.png",
-        sizes: "512x512",
-        type: "image/png",
-        purpose: "maskable",
       },
     ],
   };

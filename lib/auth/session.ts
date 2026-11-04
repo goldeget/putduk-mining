@@ -34,7 +34,7 @@ export async function getVerifiedIdentity(): Promise<VerifiedIdentity | null> {
 }
 
 export async function requirePageUser(
-  returnPath = "/start",
+  returnPath = "/workroom",
 ): Promise<VerifiedIdentity> {
   const identity = await getVerifiedIdentity();
   if (!identity) {
