@@ -12,6 +12,7 @@ import { join } from "node:path";
 import {
   inventory,
   adaptPreviewCsp,
+  safeWorkerdError,
   localConfig,
   productionConfig,
 } from "./ci-workroom-cloudflare-output.mjs";
@@ -122,4 +123,21 @@ test("local CSP adapter requires exact real production CSP and preserves every o
     ])
       assert.throws(() => adaptPreviewCsp(value, production), /PRODUCTION_CSP/);
   }
+});
+
+test("workerd failure diagnostics expose only fixed classes and compiled stack locations", () => {
+  const secret = "sb_secret_private_password_and_token";
+  const error = new TypeError("Cannot read properties of undefined " + secret);
+  error.stack =
+    "TypeError: " +
+    secret +
+    "\n at fetch (/bundle/index-Ab123.js:25:7)\n at secret " +
+    secret;
+  const result = safeWorkerdError(error);
+  assert.equal(result.kind, "undefined-property");
+  assert.deepEqual(result.frames, [
+    { file: "index-Ab123.js", line: 25, column: 7 },
+  ]);
+  assert.ok(!JSON.stringify(result).includes(secret));
+  assert.equal(safeWorkerdError({ message: secret }).kind, "unclassified");
 });

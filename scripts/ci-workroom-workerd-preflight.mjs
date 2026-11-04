@@ -20,6 +20,9 @@ for (const port of [3000, 3100]) {
   if (
     !response.ok ||
     config.APP_ENV !== "test" ||
+    config.processAppEnv !== "test" ||
+    config.processSupabaseUrl !== "http://127.0.0.1:63421" ||
+    config.processPublicKeySha256 !== keyHash ||
     config.NEXT_PUBLIC_SUPABASE_URL !== "http://127.0.0.1:63421" ||
     config.publicKeySha256 !== keyHash ||
     config.NEXT_PUBLIC_APP_URL !== base ||

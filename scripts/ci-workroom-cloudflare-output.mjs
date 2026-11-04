@@ -112,3 +112,46 @@ export function adaptPreviewCsp(value, expected) {
   if (inverse.join("; ") !== value) throw Error("WORKROOM_CSP_INVERSE_CHANGED");
   return local.join("; ");
 }
+
+export function safeWorkerdError(error) {
+  const message = String(error?.message ?? error ?? "");
+  const allowed = [
+    ["fetch-export-shape", /original\.fetch.*not a function/i],
+    ["missing-module", /cannot find module|module.*not found|no such module/i],
+    ["dynamic-require", /dynamic require|require is not defined/i],
+    ["missing-process", /process is not defined/i],
+    ["missing-assets-binding", /ASSETS.*(?:undefined|missing|not configured)/i],
+    ["invalid-url", /invalid url/i],
+    ["undefined-property", /cannot read propert/i],
+    ["nonfunction", /is not a function/i],
+    [
+      "environment-validation",
+      /invalid environment|ZodError|SUPABASE.*required/i,
+    ],
+  ];
+  const code = /\bWORKROOM_[A-Z_]+\b/.exec(message)?.[0];
+  const kind =
+    code ??
+    allowed.find(([, pattern]) => pattern.test(message))?.[0] ??
+    "unclassified";
+  const frames = [
+    ...String(error?.stack ?? "").matchAll(
+      /(?:^|[/\\])([A-Za-z0-9_.-]+\.(?:m?js)):(\d+):(\d+)/g,
+    ),
+  ]
+    .slice(0, 4)
+    .map((m) => ({ file: m[1], line: Number(m[2]), column: Number(m[3]) }));
+  return {
+    name: [
+      "Error",
+      "TypeError",
+      "ReferenceError",
+      "SyntaxError",
+      "ZodError",
+    ].includes(error?.name)
+      ? error.name
+      : "unknown",
+    kind,
+    frames,
+  };
+}
