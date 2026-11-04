@@ -217,7 +217,7 @@ export async function adminRequest(
           ...(data === undefined ? {} : { "Content-Type": "application/json" }),
           ...headers,
         },
-        body: data === undefined ? undefined : JSON.stringify(data),
+        ...(data === undefined ? {} : { body: JSON.stringify(data) }),
       });
       return { status: result.status, body: await result.text() };
     },
