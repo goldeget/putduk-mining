@@ -444,23 +444,32 @@ it("binds the shared E2E build CSP to the exact job-local Supabase API origin", 
     resolve(root, ".github/workflows/ci.yml"),
     "utf8",
   );
-  const buildSteps = [
-    ...workflow.matchAll(
-      /^      - name: Build member and admin apps for E2E\r?$/gm,
-    ),
-  ];
-  expect(buildSteps).toHaveLength(1);
-  const buildStep = workflow
-    .slice(buildSteps[0]!.index)
-    .split(/\r?\n      - name:/)[0]!;
   const buildUrls = [
-    ...buildStep.matchAll(
-      /^          NEXT_PUBLIC_SUPABASE_URL: *["']?([^"'\s]+)["']? *\r?$/gm,
+    ...workflow.matchAll(
+      /^  NEXT_PUBLIC_SUPABASE_URL: *["']?([^"'\s]+)["']? *\r?$/gm,
     ),
   ];
   expect(buildUrls).toHaveLength(1);
   const buildUrl = buildUrls[0]![1]!;
   expect(buildUrl).toBe(expectedUrl);
+  expect(workflow).toContain("node scripts/ci-workroom-application.mjs");
+  const fullWorkflow = readFileSync(
+    resolve(root, ".github/workflows/ci-full-e2e.yml"),
+    "utf8",
+  );
+  const fullBuildUrls = [
+    ...fullWorkflow.matchAll(
+      /^  NEXT_PUBLIC_SUPABASE_URL: *["']?([^"'\s]+)["']? *\r?$/gm,
+    ),
+  ];
+  expect(fullBuildUrls).toHaveLength(1);
+  expect(fullBuildUrls[0]![1]).toBe(expectedUrl);
+  expect(fullWorkflow).toContain("node scripts/ci-workroom-application.mjs");
+  const application = readFileSync(
+    resolve(root, "scripts/ci-workroom-application.mjs"),
+    "utf8",
+  );
+  expect(application).toContain('["pnpm", ["build"]]');
 
   for (const builder of [
     buildPublicContentSecurityPolicy,

@@ -52,6 +52,8 @@ describe("standalone recovery page heading hierarchy", () => {
     const markup = renderToStaticMarkup(createElement(OfflinePage));
     expect(markup).toContain('data-ui-state="offline"');
     expect(markup).not.toContain('data-ui-state="loaded"');
-    expect(markup).toContain("연결 다시 확인");
+    expect(markup).toContain('href="/workroom"');
+    expect(markup).toContain("내 워크룸 다시 열기");
+    expect(markup).toContain("최신 상태가 아닐 수 있습니다");
   });
 });

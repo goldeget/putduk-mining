@@ -12,8 +12,8 @@ import {
   getTrustDocument,
   PUBLIC_FACTS,
   TRUST_DOCUMENTS,
-} from "@/lib/trust/public-content";
-import { getPublicFactLabel } from "@/lib/trust/public-presentation";
+} from "@/lib/workroom/public-content";
+import { getPublicFactLabel } from "@/lib/workroom/public-presentation";
 
 const privateHostname = "admin.mining.putduk.com";
 
@@ -63,7 +63,7 @@ describe("final owner public admin-address and internal-version boundary", () =>
     ]);
   });
 
-  it("renders the official facts card as member support without the hostname", () => {
+  it("renders the current WORKROOM facts card without the private hostname", () => {
     const document = getTrustDocument("/putduk-facts")!;
     const html = renderToStaticMarkup(
       createElement(PublicHelpDocument, {
@@ -75,8 +75,8 @@ describe("final owner public admin-address and internal-version boundary", () =>
     );
     expect(html).not.toContain(privateHostname);
     expect(html).not.toContain("운영자 서비스 주소");
-    expect(html).toContain("고객지원");
-    expect(html).toContain("/support");
+    expect(html).toContain("WORKROOM");
+    expect(html).toContain("무료 시뮬레이션");
   });
 
   it("removes internal V1 release names from all rendered public help documents", () => {
@@ -104,8 +104,8 @@ describe("final owner public admin-address and internal-version boundary", () =>
       expect(html, document.path).not.toContain(privateHostname);
       expect(html, document.path).not.toMatch(/\bV1\b/);
       if (document.path === "/putduk-facts") {
-        expect(html).toContain("고객지원");
-        expect(html).toContain("/support");
+        expect(html).toContain("WORKROOM");
+        expect(html).toContain("무료 시뮬레이션");
         expect(html).not.toContain("운영자 서비스 주소");
       }
     }
