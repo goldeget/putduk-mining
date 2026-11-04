@@ -19,7 +19,7 @@ import {
   getPublicFactLabel,
   getTrustNavigationLabel,
   localizePublicWorldNames,
-} from "@/lib/trust/public-presentation";
+} from "@/lib/workroom/public-presentation";
 
 import { PublicHelpDocument } from "./public-help-document";
 import styles from "./trust-document.module.css";

@@ -12,7 +12,7 @@ import {
   getPublicFactLabel,
   getTrustNavigationLabel,
   localizePublicWorldNames,
-} from "@/lib/trust/public-presentation";
+} from "@/lib/workroom/public-presentation";
 
 import styles from "./public-help.module.css";
 
