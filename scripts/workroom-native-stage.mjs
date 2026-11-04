@@ -16,6 +16,7 @@ import {
   adaptWorkroomSignupFixtures,
   adaptWorkroomPractice,
   adaptWorkroomRetiredTrialAcl,
+  adaptWorkroomWithdrawalPolicyVersions,
 } from "./workroom-native-adapters.mjs";
 import {
   adaptBackend201NativeInput3,
@@ -95,6 +96,11 @@ export function buildWorkroomNativeFiles(root = ROOT) {
         successor = adaptWorkroomDefinerRoster(successor).sql;
       if (row.path === "supabase/tests/database/rls.sql")
         successor = adaptWorkroomRetiredTrialAcl(successor).sql;
+      if (row.path.startsWith("supabase/tests/database/"))
+        successor = adaptWorkroomWithdrawalPolicyVersions(
+          row.path.split("/").at(-1),
+          successor,
+        ).sql;
       try {
         successor = adaptWorkroomSignupFixtures(successor).sql;
       } catch (e) {

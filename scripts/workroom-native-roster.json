@@ -1869,7 +1869,7 @@
     "path": "supabase/tests/database/withdrawal_completion_notification_original.sql",
     "sourceSha256": "24a0b12e7432af7b3f719e22959a1ab035710b493d348babb10200a04c925415",
     "baselineSha256": "24a0b12e7432af7b3f719e22959a1ab035710b493d348babb10200a04c925415",
-    "successorSha256": "6c04d714c153c1b743a6a73c10626bfd1a939317dedd7fec5a47acef4e407235"
+    "successorSha256": "f12e80465e3c6f657c63566eec120d8471e7979c210a0abf6a692ef3d3deab09"
   },
   {
     "path": "supabase/tests/database/withdrawal_destination_reauthentication.sql",
@@ -1905,37 +1905,37 @@
     "path": "supabase/tests/database/withdrawal_logical_lifecycle.sql",
     "sourceSha256": "ace6a8942b3e3348ed2e350a55bc037e5eb1b32f4c8f289ba3d05c07457d60c5",
     "baselineSha256": "ace6a8942b3e3348ed2e350a55bc037e5eb1b32f4c8f289ba3d05c07457d60c5",
-    "successorSha256": "a3060c7e9b24e546c9e07846ecaa63ed1eba3aa2b4649ecfd1bc58b4cad67737"
+    "successorSha256": "4f8d39e2b94589ed5f479cbc498cfc26caa7b5dff8440755a3f026a63d49f51e"
   },
   {
     "path": "supabase/tests/database/withdrawal_mining_reward_hold.sql",
     "sourceSha256": "f88b1bda90d8b1381af921e641eddeb121a13ec2c35cafb0ff6216709488e7e7",
     "baselineSha256": "f88b1bda90d8b1381af921e641eddeb121a13ec2c35cafb0ff6216709488e7e7",
-    "successorSha256": "a7571804a4343b427c1b62593593f8033da6deed89efced3b1c09275d4838fd1"
+    "successorSha256": "6991447c3fdc99b247fcdb37936b14e3d84643065e80e5a2584320a61c9e207e"
   },
   {
     "path": "supabase/tests/database/withdrawal_reserved_source_disposition.sql",
     "sourceSha256": "b585d509a69e8b5a849b184c452b699a2ad615cfbc94de5afefd8b1a8c17e105",
     "baselineSha256": "b585d509a69e8b5a849b184c452b699a2ad615cfbc94de5afefd8b1a8c17e105",
-    "successorSha256": "3cd1d7696cdba004a14e8c9994ffdcc3e0e2b0f92be4ecbacccfd33041282d59"
+    "successorSha256": "d8e76917f5f9e8147a3e766c31c778df98a615c58574093ff3cae47e81de506b"
   },
   {
     "path": "supabase/tests/database/withdrawal_source_hold.sql",
     "sourceSha256": "667d747d372d49cabf2784d69eefe0897a2c783fa29f4d211059d214addcc359",
     "baselineSha256": "667d747d372d49cabf2784d69eefe0897a2c783fa29f4d211059d214addcc359",
-    "successorSha256": "2a3ac6af3e2e5b6f3d7902d6f8c3d4afc086cb21bd3860da29f8eb7316970066"
+    "successorSha256": "1d4aa9ccc9880ec47941e995a195a37a86e22217230fadc9324713d209217f69"
   },
   {
     "path": "supabase/tests/database/withdrawal_verified_source_guard.sql",
     "sourceSha256": "96bba4d7af6c19b21339edb4f329dfca730a89899fdc8febf70c8d3b215c4db5",
     "baselineSha256": "96bba4d7af6c19b21339edb4f329dfca730a89899fdc8febf70c8d3b215c4db5",
-    "successorSha256": "53614a41c9c9152b0def89abb9ab9bae768e701106aed2a0314a09abda303d74"
+    "successorSha256": "8740b666f609c3a7a56417ef1c52c77e01316a2b6afdfdef6727a8c229fc525e"
   },
   {
     "path": "supabase/tests/database/withdrawal_zero_fee_policy.sql",
     "sourceSha256": "91ba97a465c1d0d670b4752a5f1d863e586fe9f95d9d120cbc563dc7eda50966",
     "baselineSha256": "91ba97a465c1d0d670b4752a5f1d863e586fe9f95d9d120cbc563dc7eda50966",
-    "successorSha256": "81c36706bf122e4800a69681e08d8cefed2956e5df10526e37579e77dc300f23"
+    "successorSha256": "bf275ba7c31e7965e9fc42381b9e3e6171c951d908e7866c7ea1f6caf8afad6e"
   },
   {
     "path": "supabase/tests/database/worker_component_stop_scope.sql",

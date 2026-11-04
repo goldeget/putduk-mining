@@ -123,6 +123,65 @@ export function adaptWorkroomSignupFixtures(input) {
 }
 /** Migration202 retires enrollment; retain the old RLS suite with its one
  * service enrollment permission inverted. Baseline201 remains byte-identical. */
+export function adaptWorkroomWithdrawalPolicyVersions(name, input) {
+  const reviewed = {
+    "withdrawal_logical_lifecycle.sql": { 189001: 9 },
+    "withdrawal_mining_reward_hold.sql": { 1062101: 1, 1062102: 1 },
+    "withdrawal_source_hold.sql": { 1061001: 1 },
+    "withdrawal_reserved_source_disposition.sql": { 1063101: 1, 1063102: 1 },
+    "withdrawal_verified_source_guard.sql": { 1041001: 3, 1041002: 2 },
+    "withdrawal_completion_notification_original.sql": {
+      1041001: 2,
+      1041002: 2,
+    },
+    "withdrawal_zero_fee_policy.sql": { 1065101: 1, 1065102: 2 },
+  };
+  const sql = String(input),
+    versions = reviewed[name];
+  if (!versions)
+    return {
+      sql,
+      matches: 0,
+      originalSha256: sha256(sql),
+      sha256: sha256(sql),
+      reverseExact: true,
+    };
+  const transaction = sql.match(/^begin;\r?\n/gm);
+  if (transaction?.length !== 1)
+    fail("POLICY_VERSION_TRANSACTION_REQUIRED:" + name);
+  // A single captured base survives role changes and cannot drift when this
+  // suite inserts its own policies. Only local fixture version literals move;
+  // relative ordering, amounts, policy contents and assertions stay exact.
+  const capture =
+    "select set_config('putduk.workroom_policy_base', (select coalesce(max(version),0)::text from public.withdrawal_policies), true);\n";
+  let next = sql,
+    matches = 0;
+  const edits = [];
+  for (const [version, count] of Object.entries(versions)) {
+    const pattern = new RegExp("\\b" + version + "\\b", "g");
+    if ((sql.match(pattern) ?? []).length !== count)
+      fail("POLICY_VERSION_EXACT_COUNT_REQUIRED");
+    const after =
+      "(current_setting('putduk.workroom_policy_base')::integer + " +
+      version +
+      ")";
+    next = next.replace(pattern, after);
+    edits.push([version, after]);
+    matches += count;
+  }
+  next = next.replace(transaction[0], transaction[0] + capture);
+  let reversed = next.replace(capture, "");
+  for (const [version, after] of edits)
+    reversed = reversed.replaceAll(after, version);
+  if (reversed !== sql) fail("POLICY_VERSION_REVERSE_FAILED");
+  return {
+    sql: next,
+    matches,
+    originalSha256: sha256(sql),
+    sha256: sha256(next),
+    reverseExact: true,
+  };
+}
 export function adaptWorkroomRetiredTrialAcl(input) {
   const sql = String(input);
   const before =

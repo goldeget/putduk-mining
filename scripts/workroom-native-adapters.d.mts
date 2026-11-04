@@ -1,4 +1,14 @@
 export function sha256(x: string | Uint8Array): string;
+export function adaptWorkroomWithdrawalPolicyVersions(
+  name: string,
+  input: string,
+): {
+  sql: string;
+  matches: number;
+  originalSha256: string;
+  sha256: string;
+  reverseExact: true;
+};
 export function adaptWorkroomRetiredTrialAcl(input: string): {
   sql: string;
   originalSha256: string;
