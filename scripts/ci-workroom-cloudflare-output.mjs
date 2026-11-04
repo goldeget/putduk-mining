@@ -59,8 +59,22 @@ export function localConfig(config, env, port) {
   )
     throw Error("WORKROOM_LOCAL_BINDINGS_REQUIRED");
   const clone = structuredClone(config);
+  // Local provider dispatch is disabled with no partial production group or fabricated key.
+  for (const name of [
+    "AI_PROVIDER",
+    "AI_MODEL_LOW_COST",
+    "AI_MODEL_HIGH_CAPABILITY",
+    "AI_API_KEY",
+    "NVIDIA_API_KEY",
+    "OPENAI_API_KEY",
+    "OPENROUTER_FREE_API_KEY",
+    "OPENROUTER_API_KEY",
+    "AI_PAID_CALL_AUTHORIZED",
+  ])
+    delete clone.env[name];
   const overrides = {
     APP_ENV: "test",
+    APP_TIMEZONE: "UTC",
     NEXT_PUBLIC_APP_ENV: "test",
     NEXT_PUBLIC_APP_URL: "http://127.0.0.1:" + port,
     ADMIN_APP_URL: "http://127.0.0.1:3100",
@@ -141,6 +155,61 @@ export function safeWorkerdError(error) {
   ]
     .slice(0, 4)
     .map((m) => ({ file: m[1], line: Number(m[2]), column: Number(m[3]) }));
+  const allowedEnv = new Set([
+    "APP_ENV",
+    "APP_TIMEZONE",
+    "SUPABASE_SECRET_KEY",
+    "WITHDRAWAL_DATA_KEY",
+    "VAPID_PRIVATE_KEY",
+    "VAPID_SUBJECT",
+    "AI_PROVIDER",
+    "AI_PROVIDER_DISPATCH_ENABLED",
+    "AI_PAID_CALL_AUTHORIZED",
+    "AI_API_KEY",
+    "NVIDIA_API_KEY",
+    "OPENROUTER_FREE_API_KEY",
+    "OPENROUTER_API_KEY",
+    "AI_FIRST_TOKEN_TIMEOUT_MS",
+    "AI_MODEL_LOW_COST",
+    "AI_MODEL_HIGH_CAPABILITY",
+    "AI_MAX_OUTPUT_TOKENS",
+    "AI_MAX_REQUESTS_PER_MINUTE",
+    "AI_MAX_REQUESTS_PER_DAY",
+    "AI_CACHE_TTL_SECONDS",
+    "NEXT_PUBLIC_APP_URL",
+    "NEXT_PUBLIC_SUPABASE_URL",
+    "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+    "NEXT_PUBLIC_VAPID_PUBLIC_KEY",
+    "NEXT_PUBLIC_CHANNEL_TALK_PLUGIN_KEY",
+    "ADMIN_APP_URL",
+    "CHANNEL_TALK_MEMBER_HASH_SECRET",
+  ]);
+  const standardCodes = new Set([
+    "invalid_type",
+    "invalid_value",
+    "too_small",
+    "too_big",
+    "invalid_format",
+    "unrecognized_keys",
+    "custom",
+    "not_multiple_of",
+    "invalid_union",
+    "invalid_key",
+    "invalid_element",
+  ]);
+  const issues =
+    error?.name === "ZodError" && Array.isArray(error.issues)
+      ? error.issues
+          .slice(0, 16)
+          .map((issue) => ({
+            path: allowedEnv.has(issue?.path?.[0])
+              ? issue.path[0]
+              : "unrecognized-env-path",
+            code: standardCodes.has(issue?.code)
+              ? issue.code
+              : "unrecognized-code",
+          }))
+      : [];
   return {
     name: [
       "Error",
@@ -153,5 +222,6 @@ export function safeWorkerdError(error) {
       : "unknown",
     kind,
     frames,
+    issues,
   };
 }

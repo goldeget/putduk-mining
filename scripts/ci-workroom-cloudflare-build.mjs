@@ -40,6 +40,11 @@ for (const [dir, name] of [
       "sb_publishable_Pc0iVt3ubpnsRTNxbJ1KCg_kK76qtv-",
     AI_PROVIDER_DISPATCH_ENABLED: "false",
   };
+  // Exact existing Worker settings have no support plugin/HMAC binding; do not bake CI fixtures into a release.
+  delete env.NEXT_PUBLIC_CHANNEL_TALK_PLUGIN_KEY;
+  delete env.CHANNEL_TALK_MEMBER_HASH_SECRET;
+  delete env.GH_TOKEN;
+  delete env.GITHUB_TOKEN;
   for (const key of Object.keys(env))
     if (
       /SUPABASE_SECRET|SERVICE_ROLE|CLOUDFLARE_API|CF_API|AUTH_TOKEN/.test(key)
@@ -89,11 +94,21 @@ for (const [dir, name] of [
     publicBuildEnvironment: {
       APP_ENV: env.APP_ENV,
       NODE_ENV: env.NODE_ENV,
+      NEXT_PUBLIC_CHANNEL_TALK_PLUGIN_KEY: null,
       NEXT_PUBLIC_APP_ENV: env.NEXT_PUBLIC_APP_ENV,
       NEXT_PUBLIC_APP_URL: env.NEXT_PUBLIC_APP_URL,
       NEXT_PUBLIC_SUPABASE_URL: env.NEXT_PUBLIC_SUPABASE_URL,
       NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:
         env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
+    },
+    supportConfiguration: {
+      pluginKey: "INTENTIONALLY_UNSET",
+      reason:
+        "Exact existing member/admin Workers have no plugin or HMAC binding; unavailable support fallback is intentional",
+      ciDefaultsRemoved: [
+        "NEXT_PUBLIC_CHANNEL_TALK_PLUGIN_KEY",
+        "CHANNEL_TALK_MEMBER_HASH_SECRET",
+      ],
     },
     secrets: "Inherited at eventual deploy; none supplied to build",
     runtime:

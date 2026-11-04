@@ -141,3 +141,33 @@ test("workerd failure diagnostics expose only fixed classes and compiled stack l
   assert.ok(!JSON.stringify(result).includes(secret));
   assert.equal(safeWorkerdError({ message: secret }).kind, "unclassified");
 });
+
+test("local clone removes the complete inherited production AI provider group without fake keys", () => {
+  const original = production();
+  original.env.AI_PROVIDER = text("nvidia");
+  original.env.AI_MODEL_LOW_COST = text("openai/gpt-oss-20b");
+  original.env.AI_API_KEY = { type: "secret" };
+  const before = JSON.stringify(original),
+    local = localConfig(original, env, 3000);
+  for (const name of ["AI_PROVIDER", "AI_MODEL_LOW_COST", "AI_API_KEY"])
+    assert.equal(local.env[name], undefined);
+  assert.equal(local.env.AI_PROVIDER_DISPATCH_ENABLED.value, "false");
+  assert.equal(local.env.APP_TIMEZONE.value, "UTC");
+  assert.equal(JSON.stringify(original), before);
+});
+test("Zod diagnostic records only reviewed environment paths and standard codes", () => {
+  const secret = "sb_secret_do_not_log";
+  const result = safeWorkerdError({
+    name: "ZodError",
+    message: secret,
+    issues: [
+      { path: ["AI_API_KEY"], code: "custom", message: secret, input: secret },
+      { path: [secret], code: secret, message: secret },
+    ],
+  });
+  assert.deepEqual(result.issues, [
+    { path: "AI_API_KEY", code: "custom" },
+    { path: "unrecognized-env-path", code: "unrecognized-code" },
+  ]);
+  assert.ok(!JSON.stringify(result).includes(secret));
+});
