@@ -17,7 +17,7 @@ env:
   CHANNEL_TALK_MEMBER_HASH_SECRET: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 jobs:
   application:
-    name: WORKROOM application gates
+    name: WORKROOM full application gates
     permissions:
       contents: read
       actions: read
@@ -59,7 +59,7 @@ jobs:
             apps/admin/.next
             test-results/workroom-application
   acceptance:
-    name: WORKROOM native and authenticated acceptance
+    name: WORKROOM full native and authenticated acceptance
     needs: application
     permissions:
       contents: read
@@ -111,7 +111,7 @@ jobs:
             test-results/workroom-worker-201
           if-no-files-found: error
   cloudflare-build:
-    name: WORKROOM Cloudflare deploy artifact build
+    name: WORKROOM full Cloudflare deploy artifact build
     permissions:
       contents: read
       actions: read
@@ -169,7 +169,7 @@ jobs:
             !apps/admin/.cloudflare/output/v0/workers/default/assets/brand/**
             !apps/admin/.cloudflare/output/v0/workers/default/assets/ranks/**
   cloudflare-acceptance:
-    name: WORKROOM workerd native and authenticated acceptance
+    name: WORKROOM full workerd native and authenticated acceptance
     needs: cloudflare-build
     permissions:
       contents: read
