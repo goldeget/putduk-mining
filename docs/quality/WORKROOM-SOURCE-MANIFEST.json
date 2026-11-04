@@ -658,7 +658,7 @@
     "assets/fonts/OFL.txt": "85fce85e25260b03777bf10373d3bd9363b9da96d9e0ca86a280dd37ed7667a0",
     "assets/fonts/PretendardVariable.woff2": "9599f12fd42fc0bce1cd50b47a0c022e108d7aa64dd0d1bb0ed44f3282d900b4",
     "assets/fonts/manifest.json": "f250299f96467f2031013c0be17ea151d4c0284001e4023d31fa04d7cf611e24",
-    "cloudflare.config.ts": "9402825e21e48e95f366c0173505f18dac1e0622511279190aa4dcab15b0b0a1",
+    "cloudflare.config.ts": "3ff9b781d144d8471e55a87c894beb7cfabe9db19d4c313c4a50679c22cd6573",
     "components/README.md": "8282ef51247645d2c93e6d0d507cdf418a226c69e79a9718ae13f8540decf9b3",
     "components/auth/auth-experience.module.css": "f061ce0e15b62727b417b0bf3afe8a6e33fd3f7957efbf06bdf25a535184087b",
     "components/auth/auth-experience.tsx": "d5b775db70d963f29a9e43a7a436df2f7fd55655cc45dfbf91c6926459cbc335",

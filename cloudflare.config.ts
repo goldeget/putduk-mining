@@ -21,6 +21,7 @@ export default defineConfig({
         "!/*/_next/static/*",
         "!/brand/*",
         "!/ranks/*",
+        "!/workroom-icon.svg",
         "!/sw.js",
         "!/putduk-mining-indexnow-v1.txt",
         "!/README.md",
