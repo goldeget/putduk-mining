@@ -76,9 +76,8 @@ export function localConfig(config, env, port) {
     APP_ENV: "test",
     APP_TIMEZONE: "UTC",
     NEXT_PUBLIC_APP_ENV: "test",
-    NEXT_PUBLIC_APP_URL:
-      port === 3100 ? "http://localhost:3100" : "http://127.0.0.1:" + port,
-    ADMIN_APP_URL: "http://localhost:3100",
+    NEXT_PUBLIC_APP_URL: "http://127.0.0.1:" + port,
+    ADMIN_APP_URL: "http://127.0.0.1:3100",
     NEXT_PUBLIC_SUPABASE_URL: env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:
       env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
