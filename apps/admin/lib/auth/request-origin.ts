@@ -13,7 +13,6 @@ export function hasAdminCommandOrigin(
 
   // The isolated workerd preview has one exact loopback origin; production never enables this.
   return (
-    adminEnv.APP_ENV === "test" &&
-    requestOrigin === "http://127.0.0.1:3100"
+    adminEnv.APP_ENV === "test" && requestOrigin === "http://127.0.0.1:3100"
   );
 }
