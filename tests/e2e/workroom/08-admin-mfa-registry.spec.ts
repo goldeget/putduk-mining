@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { required, sql, adminLogin, adminOrigin, service } from "./helpers";
+import { required, sql, adminLogin, adminRequest, service } from "./helpers";
 test("real TOTP admin session is registered and live revocation immediately denies access", async ({
   page,
 }) => {
@@ -30,8 +30,6 @@ test("real TOTP admin session is registered and live revocation immediately deni
   });
   expect(revoked.error).toBeNull();
   expect(
-    (
-      await page.request.get(`${adminOrigin}/api/v1/admin/workroom/state`)
-    ).status(),
+    (await adminRequest(page, "GET", "/api/v1/admin/workroom/state")).status(),
   ).toBe(403);
 });

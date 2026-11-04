@@ -23,7 +23,9 @@ test("real public signup consumes valid invite and confirms through the disposab
   await page.locator('[name="workroomAcknowledged"]').check();
   await page.getByRole("button", { name: "가입하고 시작하기" }).click();
   await expect(
-    page.getByText(/확인 안내|이메일.*확인|확인.*이메일/).last(),
+    page
+      .getByRole("status")
+      .filter({ hasText: "입력한 이메일로 확인 안내를 보냈습니다." }),
   ).toBeVisible();
   expect(
     sql(

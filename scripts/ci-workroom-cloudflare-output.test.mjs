@@ -46,6 +46,11 @@ test("private local text override leaves deploy config exact and keeps secret ou
   assert.equal(local.env.WORKROOM_LOCAL_PREVIEW_ONLY.value, "true");
   assert.match(local.name, /local-preview-only/);
 });
+test("private admin preview uses a browser-secure localhost origin", () => {
+  const admin = localConfig(production(), env, 3100);
+  assert.equal(admin.env.NEXT_PUBLIC_APP_URL.value, "http://localhost:3100");
+  assert.equal(admin.env.ADMIN_APP_URL.value, "http://localhost:3100");
+});
 test("production URL or non-test runtime fails before preview", () => {
   for (const bad of [
     { ...env, APP_ENV: "production" },

@@ -64,8 +64,8 @@ export default defineConfig({
       timeout: 180_000,
       env: {
         ...env,
-        NEXT_PUBLIC_APP_URL: `http://127.0.0.1:${adminPort}`,
-        ADMIN_APP_URL: `http://127.0.0.1:${adminPort}`,
+        NEXT_PUBLIC_APP_URL: `http://localhost:${adminPort}`,
+        ADMIN_APP_URL: `http://localhost:${adminPort}`,
       },
     },
   ],

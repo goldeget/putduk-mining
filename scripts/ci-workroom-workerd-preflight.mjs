@@ -17,6 +17,7 @@ for (const port of [3000, 3100]) {
   const keyHash = createHash("sha256")
     .update(process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? "")
     .digest("hex");
+  const expectedAppUrl = port === 3100 ? "http://localhost:3100" : base;
   if (
     !response.ok ||
     config.APP_ENV !== "test" ||
@@ -25,7 +26,7 @@ for (const port of [3000, 3100]) {
     config.processPublicKeySha256 !== keyHash ||
     config.NEXT_PUBLIC_SUPABASE_URL !== "http://127.0.0.1:63421" ||
     config.publicKeySha256 !== keyHash ||
-    config.NEXT_PUBLIC_APP_URL !== base ||
+    config.NEXT_PUBLIC_APP_URL !== expectedAppUrl ||
     config.localOnly !== true
   )
     throw Error("WORKROOM_RUNTIME_ISOLATION_FAILED");

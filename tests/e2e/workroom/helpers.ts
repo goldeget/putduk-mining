@@ -5,7 +5,7 @@ import { createClient } from "@supabase/supabase-js";
 import type { WorkroomState } from "../../../domain/workroom/contracts";
 import { nextTotpCode } from "../authenticated/helpers/admin-totp";
 
-export const adminOrigin = `http://127.0.0.1:${process.env.E2E_ADMIN_PORT ?? "3100"}`;
+export const adminOrigin = `http://localhost:${process.env.E2E_ADMIN_PORT ?? "3100"}`;
 export function required(name: string) {
   const value = process.env[name];
   if (!value) throw new Error(`WORKROOM_ENV_REQUIRED:${name}`);
@@ -130,7 +130,9 @@ export async function login(
   await page.getByRole("button", { name: "로그인", exact: true }).click();
   await page.waitForURL(/\/workroom/);
   await expect(
-    page.getByRole("heading", { name: /모니터링 시작하기|이번 모의 참여/ }),
+    page.getByRole("heading", {
+      name: /나만의 워크룸을 개설하세요|모니터링 시작하기|이번 모의 참여/,
+    }),
   ).toBeVisible();
 }
 export async function state(page: Page): Promise<WorkroomState> {
@@ -182,17 +184,49 @@ export async function adminCommand(
   input: unknown,
   key: string = randomUUID(),
 ) {
-  return page.request.post(`${adminOrigin}/api/v1/admin/workroom/command`, {
-    headers: { Origin: adminOrigin, "Idempotency-Key": key },
+  return adminRequest(page, "POST", "/api/v1/admin/workroom/command", {
+    headers: { "Idempotency-Key": key },
     data: { operation, input },
   });
 }
 export async function adminState(page: Page) {
-  const response = await page.request.get(
-    `${adminOrigin}/api/v1/admin/workroom/state`,
+  const response = await adminRequest(
+    page,
+    "GET",
+    "/api/v1/admin/workroom/state",
   );
   expect(response.status()).toBe(200);
   return (await response.json()).data;
+}
+export async function adminRequest(
+  page: Page,
+  method: "GET" | "POST",
+  path: string,
+  options: { headers?: Record<string, string>; data?: unknown } = {},
+) {
+  if (new URL(page.url()).origin !== adminOrigin)
+    throw new Error("WORKROOM_ADMIN_BROWSER_ORIGIN_REQUIRED");
+  const url = new URL(path, adminOrigin).toString();
+  const response = await page.evaluate(
+    async ({ url, method, headers, data }) => {
+      const result = await fetch(url, {
+        method,
+        credentials: "same-origin",
+        cache: "no-store",
+        headers: {
+          ...(data === undefined ? {} : { "Content-Type": "application/json" }),
+          ...headers,
+        },
+        body: data === undefined ? undefined : JSON.stringify(data),
+      });
+      return { status: result.status, body: await result.text() };
+    },
+    { url, method, headers: options.headers ?? {}, data: options.data },
+  );
+  return {
+    status: () => response.status,
+    json: async () => JSON.parse(response.body),
+  };
 }
 export async function adminLogin(
   page: Page,
@@ -205,9 +239,7 @@ export async function adminLogin(
   await page.waitForURL(/\/mfa/);
   // Before real TOTP verification the app must reject the very API being accepted.
   expect(
-    (
-      await page.request.get(`${adminOrigin}/api/v1/admin/workroom/state`)
-    ).status(),
+    (await adminRequest(page, "GET", "/api/v1/admin/workroom/state")).status(),
   ).toBe(403);
   const secretNode = page.locator(".mfa-enrolment code");
   await expect(secretNode).toBeVisible({ timeout: 60_000 });

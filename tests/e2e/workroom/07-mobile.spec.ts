@@ -13,8 +13,14 @@ test("390px browser displays real member simulation and navigates history withou
       () => document.documentElement.scrollWidth <= innerWidth,
     ),
   ).toBe(true);
-  await page.goto("/workroom/history");
-  await expect(page.getByText(/참여 내역|참여 기록/).first()).toBeVisible();
+  await page
+    .getByRole("navigation", { name: "워크룸 빠른 메뉴" })
+    .getByRole("link", { name: "참여 내역" })
+    .click();
+  await expect(page).toHaveURL(/\/workroom\/history$/);
+  await expect(
+    page.getByRole("heading", { name: "참여 내역", exact: true }),
+  ).toBeVisible();
   await page.screenshot({
     path: test.info().outputPath("member-mobile.png"),
     fullPage: true,
