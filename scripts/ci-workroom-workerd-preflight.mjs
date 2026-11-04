@@ -17,7 +17,7 @@ for (const port of [3000, 3100]) {
   const keyHash = createHash("sha256")
     .update(process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? "")
     .digest("hex");
-  const expectedAppUrl = port === 3100 ? "http://localhost:3100" : base;
+  const expectedAppUrl = base;
   if (
     !response.ok ||
     config.APP_ENV !== "test" ||
