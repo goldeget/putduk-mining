@@ -51,19 +51,29 @@ describe("workroom admin command boundary", () => {
     expect(res.status).toBe(403);
     expect(calls).toHaveLength(0);
   });
-  it("binds grant authority from verified principal and keeps the retry UUID", async () => {
+  it("binds signed point adjustments to verified principal and keeps the retry UUID", async () => {
     const { deps, calls } = fixture();
     const res = await createWorkroomCommandHandler(deps)(
       request({
-        operation: "GRANT",
-        input: { userId: actor, amount: 120, reason: "추가 무료 체험" },
+        operation: "POINT_ADJUST",
+        input: {
+          userId: actor,
+          direction: "DEBIT",
+          amount: 120,
+          reason: "체험 포인트 정정",
+        },
       }),
     );
     expect(res.status).toBe(200);
     expect(calls[0]).toEqual({
-      p_operation: "GRANT",
+      p_operation: "POINT_ADJUST",
       p_request_key: key,
-      p_input: { userId: actor, amount: 120, reason: "추가 무료 체험" },
+      p_input: {
+        userId: actor,
+        direction: "DEBIT",
+        amount: 120,
+        reason: "체험 포인트 정정",
+      },
       p_actor: actor,
       p_admin_session_id: key,
       p_auth_session_id: "33333333-3333-4333-8333-333333333333",
@@ -71,18 +81,28 @@ describe("workroom admin command boundary", () => {
     });
   });
   it.each([
-    { userId: actor, amount: 0, reason: "test" },
-    { userId: actor, amount: 1000001, reason: "test" },
-    { userId: actor, amount: 1, reason: " " },
-    { userId: actor, amount: 1, reason: "test", p_actor: actor },
-  ])("rejects invalid or authority-injecting grant %j", async (input) => {
-    const { deps, calls } = fixture();
-    const res = await createWorkroomCommandHandler(deps)(
-      request({ operation: "GRANT", input }),
-    );
-    expect(res.status).toBe(400);
-    expect(calls).toHaveLength(0);
-  });
+    { userId: actor, direction: "CREDIT", amount: 0, reason: "test" },
+    { userId: actor, direction: "CREDIT", amount: 1000001, reason: "test" },
+    { userId: actor, direction: "TRANSFER", amount: 1, reason: "test" },
+    { userId: actor, direction: "DEBIT", amount: 1, reason: " " },
+    {
+      userId: actor,
+      direction: "CREDIT",
+      amount: 1,
+      reason: "test",
+      p_actor: actor,
+    },
+  ])(
+    "rejects invalid or authority-injecting point adjustment %j",
+    async (input) => {
+      const { deps, calls } = fixture();
+      const res = await createWorkroomCommandHandler(deps)(
+        request({ operation: "POINT_ADJUST", input }),
+      );
+      expect(res.status).toBe(400);
+      expect(calls).toHaveLength(0);
+    },
+  );
   it("requires optimistic config version and rejects fractional duration", async () => {
     const { deps, calls } = fixture();
     for (const input of [
@@ -113,6 +133,25 @@ describe("workroom admin command boundary", () => {
       ).toBe(400);
     expect(calls).toHaveLength(0);
   });
+  it("accepts an exactly configured 24-hour simulation duration", async () => {
+    const { deps, calls } = fixture();
+    const res = await createWorkroomCommandHandler(deps)(
+      request({
+        operation: "CONFIG_SAVE",
+        input: {
+          instrument: "nvda",
+          pattern: "slow",
+          roi: -12.5,
+          duration: 86400,
+          amplitude: 2.5,
+          expectedVersion: 4,
+          reason: "최대 시간 조건 확인",
+        },
+      }),
+    );
+    expect(res.status).toBe(200);
+    expect(calls[0]?.p_input).toMatchObject({ duration: 86400, roi: -12.5 });
+  });
   it("rejects missing UUID and oversized bodies", async () => {
     const { deps, calls } = fixture();
     expect(
@@ -135,8 +174,13 @@ describe("workroom admin command boundary", () => {
     });
     const res = await createWorkroomCommandHandler(deps)(
       request({
-        operation: "GRANT",
-        input: { userId: actor, amount: 1, reason: "체험" },
+        operation: "POINT_ADJUST",
+        input: {
+          userId: actor,
+          direction: "CREDIT",
+          amount: 1,
+          reason: "체험",
+        },
       }),
     );
     expect(res.status).toBe(409);
@@ -158,8 +202,13 @@ describe("workroom admin command boundary", () => {
       (
         await createWorkroomCommandHandler(deps)(
           request({
-            operation: "GRANT",
-            input: { userId: actor, amount: 1, reason: "체험" },
+            operation: "POINT_ADJUST",
+            input: {
+              userId: actor,
+              direction: "CREDIT",
+              amount: 1,
+              reason: "체험",
+            },
           }),
         )
       ).status,
@@ -206,12 +255,27 @@ describe("workroom admin reads and review retry", () => {
     expect(res.headers.get("cache-control")).toContain("no-store");
   });
   it("reuses a reviewed UUID on failed retry and blocks changed payload until resolved", () => {
-    const first = reviewedSubmission(null, "GRANT", { amount: 10 }, () => key);
+    const first = reviewedSubmission(
+      null,
+      "POINT_ADJUST",
+      { amount: 10, direction: "CREDIT" },
+      () => key,
+    );
     expect(
-      reviewedSubmission(first, "GRANT", { amount: 10 }, () => actor),
+      reviewedSubmission(
+        first,
+        "POINT_ADJUST",
+        { amount: 10, direction: "CREDIT" },
+        () => actor,
+      ),
     ).toEqual(first);
     expect(() =>
-      reviewedSubmission(first, "GRANT", { amount: 11 }, () => actor),
+      reviewedSubmission(
+        first,
+        "POINT_ADJUST",
+        { amount: 11, direction: "CREDIT" },
+        () => actor,
+      ),
     ).toThrow("UNRESOLVED_SUBMISSION");
   });
 });

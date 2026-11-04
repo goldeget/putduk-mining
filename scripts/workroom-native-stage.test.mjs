@@ -76,6 +76,7 @@ test("WORKROOM native practice preserves invalid/replay signup assertions and us
   const r = adaptWorkroomPractice(original);
   assert.doesNotMatch(r.sql, /session_replication_role/);
   assert.match(r.sql, /pg_sleep\(31\)/);
+  assert.equal((r.sql.match(/pg_sleep\(31\);/g) || []).length, 2);
   assert.match(r.sql, /perform pg_sleep\(11.1\)/);
   assert.match(r.sql, /'WORKROOM_INVITATION_REQUIRED'/);
   assert.match(r.sql, /'WORKROOM_INVITATION_INVALID'/);

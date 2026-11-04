@@ -249,6 +249,9 @@ try {
     JSON.parse(readFileSync(browserPath, "utf8")),
     browserFiles,
   );
+  // The first Playwright run leaves its local Next servers available to later
+  // suites. Reuse those already-validated servers instead of colliding on 3000.
+  env = { ...env, WORKROOM_REUSE_SERVER: "1" };
   run(process.execPath, [
     "node_modules/@playwright/test/cli.js",
     "test",

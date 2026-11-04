@@ -312,6 +312,12 @@ export function adaptWorkroomPractice(input) {
     "perform pg_sleep(11.1);",
   );
   replace(
+    "update app_private.workroom_rounds set started_at=clock_timestamp()-interval '31 seconds' where id=(select (value#>>'{active,id}')::uuid from negative_start);",
+    "select pg_sleep(31);",
+  );
+  replace("select set_config('session_replication_role','replica',true);", "");
+  replace("select set_config('session_replication_role','origin',true);", "");
+  replace(
     "elapsed:=extract(epoch from(r.closed_at-r.started_at))/120;",
     "elapsed:=extract(epoch from(r.closed_at-r.started_at))/30;",
   );

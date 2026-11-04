@@ -8,14 +8,14 @@
 **Spec:** Chat-approved replacement design and WORKROOM-PUTDUK-INTEGRATION-AUDIT.ko.md from 2026-11-04.
 
 ## Global constraints
-- Initial 100000 practice points once, no deposits/withdrawals/conversion of practice balances.
+- Initial 100000 practice points once. Practice balances are not withdrawable and never connect to the separate KRW wallet. Existing real deposit/withdrawal flows remain available through the existing wallet and manual admin queues.
 - Instruments usd,cny,jpy,nvda,tsla,msft,ndx,skh,samsung,lg. FX units include 100 JPY, index unit POINT.
-- Patterns wave/slow/balanced; roi -50..50 percent; duration integer 30..3600 seconds; amplitude 0..15. Config snapshots freeze on round start.
+- Patterns wave/slow/balanced; signed roi -50..50 percent; duration integer 30..86400 seconds; amplitude 0..15. Config snapshots freeze on round start; both positive and negative outcomes follow the configured final rate.
 - Existing user UUIDs, passwords, profiles and all historical tables/migrations remain untouched.
 - New registrations require a valid invitation at the authoritative DB boundary; do not trust editable metadata for privileges or code bypass.
 - Existing users can open a workroom without a new signup or referral requirement; eligibility must derive from a DB-captured pre-cutover cohort.
 - Verified server identity only. Admin requires existing role/AAL2/live session/origin and DB authority checks.
-- No deployments, live schema applies, real money actions, paid infrastructure or invented production verification.
+- No real-money test transactions or paid infrastructure. Deployment and live schema apply require completed native/authenticated acceptance and a verified recoverable backup.
 - Original working tree is protected. Implementation worktree C:/Dev/putduk-workroom-20261104. Original C:/Dev/putduk-mining read-only. Scope supersedes old AGENTS paths and prior no-reference rule only for this user-authorized replacement.
 
 ## Review focus
@@ -29,7 +29,7 @@
 Own domain/workroom/**, supabase/migrations/<new CLI-generated timestamp>_workroom*.sql, supabase/tests/database/workroom*.sql, tests/unit/workroom-domain.test.ts.
 Create CLI migration then additive workroom schema. Preserve old source/migrations. Capture existing member cohort, enforce new signup code consumption atomically; create practice account + welcome journal once. Provide read and mutation RPCs, row locks/unique active round, server-time settlement, integer point results, snapshot configs, request payload digest and original result replay, RLS, no generic grants. All practice effects isolated from actual wallets.
 Member RPCs: workroom_read_state() -> State; workroom_member_command(p_operation text,p_request_key text,p_input jsonb) -> State; operations OPEN,START,FINISH,SYNC. START input {instrument,stake,acknowledged:true,expectedVersion:integer}; FINISH {id}; OPEN {} for preserved members; SYNC {} settles due own round, never in GET.
-Admin RPC: workroom_admin_command(p_operation,p_request_key,p_input,p_actor,p_admin_session_id,p_auth_session_id,p_verified_aal) -> JSON; operations READ,INVITE_CREATE,INVITE_STATUS,CONFIG_SAVE,GRANT. Bind DB authority to current auth user and actual admin session. READ returns users,invites,configs,audit with bounded pagination parameters. Grant requires userId,amount (1..1000000),reason and rejects changed payload replay. Config optimistic version and audit.
+Admin RPC: workroom_admin_command(p_operation,p_request_key,p_input,p_actor,p_admin_session_id,p_auth_session_id,p_verified_aal) -> JSON; operations READ,INVITE_CREATE,INVITE_STATUS,CONFIG_SAVE,POINT_ADJUST. Bind DB authority to current auth user and actual admin session. READ returns users,invites,configs,audit with bounded pagination parameters. Point adjustment requires userId,direction (CREDIT or DEBIT),amount (1..1000000),reason; it writes a signed practice-only ledger entry, rejects overdraft and changed payload replay. Config optimistic version and audit.
 Shared contracts in domain/workroom/contracts.ts: WorkroomConfig {instrument:string,pattern:'wave'|'slow'|'balanced',roi:number,duration:number,amplitude:number,version:number}; WorkroomSession {id,instrument,stake,pattern,roi,duration,amplitude,configVersion,started:number,status:'active'|'completed',returned:number|null,profit:number|null,closedAt:number|null}; WorkroomState {member:{id,name,balance,room,createdAt:number}|null,active:WorkroomSession|null,history:WorkroomSession[],ledger:{id,amount,balanceAfter,kind,note,createdAt:number}[],configs:WorkroomConfig[],serverNow:number}. Export WORKROOM_INSTRUMENTS, types and display-only simulationValue/sessionValue helpers. Authority calculation stays in SQL/server. Public practice curve is transparent, no real reward engine imported.
 - [ ] Write and run meaningful failing domain/SQL tests.
 - [ ] Implement and verify SQL on task-owned local Postgres and two-user/no-anon boundary.

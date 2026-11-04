@@ -597,10 +597,10 @@ export function WorkroomClient({
                     <strong className={styles.timer}>{remaining}</strong>
                   </div>
                   <div>
-                    <span>종료 변동률</span>
+                    <span>설정 수익률</span>
                     <strong>
                       {config.roi >= 0 ? "+" : ""}
-                      {config.roi}%
+                      {config.roi.toFixed(2)}%
                     </strong>
                   </div>
                 </div>
@@ -658,7 +658,9 @@ export function WorkroomClient({
                     <p>
                       {instrument.name} · {patterns[config.pattern]}
                       <br />
-                      {config.duration}초 · 종료 {config.roi}%<br />
+                      {config.duration}초 · 설정 수익률{" "}
+                      {config.roi >= 0 ? "+" : ""}
+                      {config.roi.toFixed(2)}%<br />
                       {money(Number(amount))} P 참여
                     </p>
                     <label>

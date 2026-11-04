@@ -926,7 +926,7 @@
     left: 0;
     right: 0;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     z-index: 40;
     background: #0c1727f5;
     border-top: 1px solid #314158;

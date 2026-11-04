@@ -25,6 +25,12 @@ const names: Record<string, string> = {
   lg: "LG전자",
 };
 const patterns = { wave: "웨이브", slow: "슬로우", balanced: "밸런스" };
+const operationLabels: Record<string, string> = {
+  CONFIG_SAVE: "모의 조건 변경",
+  INVITE_CREATE: "추천인 코드 발급",
+  INVITE_STATUS: "추천인 코드 상태 변경",
+  POINT_ADJUST: "체험 포인트 조정",
+};
 const tabs = [
   ["config", "종목별 설정"],
   ["invites", "추천인 코드"],
@@ -47,6 +53,16 @@ const draftDefault: WorkroomAdminConfig = {
   version: 1,
 };
 function Preview({ config }: { config: WorkroomAdminConfig }) {
+  const hours = Math.floor(config.duration / 3600);
+  const minutes = Math.floor((config.duration % 3600) / 60);
+  const seconds = config.duration % 60;
+  const durationLabel = [
+    hours ? `${hours}시간` : "",
+    minutes ? `${minutes}분` : "",
+    seconds || (!hours && !minutes) ? `${seconds}초` : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
   const values = Array.from({ length: 121 }, (_, i) =>
     simulationValue(config, i / 120),
   );
@@ -61,8 +77,11 @@ function Preview({ config }: { config: WorkroomAdminConfig }) {
   return (
     <div className={styles.preview}>
       <div className={styles.endpoint}>
-        <span>시작 100.00</span>
-        <strong>종료 {(100 + config.roi).toFixed(2)}</strong>
+        <span>시작 지수 100.00</span>
+        <strong>
+          최종 수익률 {config.roi >= 0 ? "+" : ""}
+          {config.roi.toFixed(2)}%
+        </strong>
       </div>
       <svg
         viewBox="0 0 600 230"
@@ -91,7 +110,7 @@ function Preview({ config }: { config: WorkroomAdminConfig }) {
           00:00
         </text>
         <text x="540" y="222" fill="#a6b7ca" fontSize="12">
-          {config.duration}초
+          {durationLabel}
         </text>
       </svg>
       <p>
@@ -169,7 +188,8 @@ export function WorkroomConsole({ actorId }: { actorId: string }) {
     [inviteReason, setInviteReason] = useState("");
   const [userId, setUserId] = useState(""),
     [amount, setAmount] = useState(10000),
-    [grantReason, setGrantReason] = useState("");
+    [direction, setDirection] = useState<"CREDIT" | "DEBIT">("CREDIT"),
+    [pointReason, setPointReason] = useState("");
   const [pending, setPending] = useState<ReviewedSubmission | null>(null),
     [review, setReview] = useState<ReviewedSubmission | null>(null);
   const pendingRef = useRef<ReviewedSubmission | null>(null);
@@ -349,7 +369,7 @@ export function WorkroomConsole({ actorId }: { actorId: string }) {
         <div>
           <span className={styles.eyebrow}>ADMIN WORKSPACE</span>
           <h1>워크룸 운영</h1>
-          <p>무료 모의 체험의 조건과 초대, 회원 포인트를 관리하세요.</p>
+          <p>모의 조건과 회원별 체험 포인트를 관리하세요.</p>
         </div>
         <button
           type="button"
@@ -360,8 +380,9 @@ export function WorkroomConsole({ actorId }: { actorId: string }) {
         </button>
       </header>
       <div className={styles.disclosure}>
-        <span>SIMULATION ONLY</span> 모든 포인트는 체험 전용입니다.
-        입금·출금·현금 전환 기능을 제공하지 않습니다.
+        <span>SIMULATION ONLY</span> 체험 포인트는 출금할 수 없으며 실제
+        입출금과 별도 원장으로 관리됩니다. 실제 입금 승인·출금 처리는 금융
+        메뉴에서 기존 절차로 진행합니다.
       </div>
       <nav className={styles.tabs} aria-label="워크룸 운영 메뉴">
         {tabs.map(([key, label]) => (
@@ -475,28 +496,48 @@ export function WorkroomConsole({ actorId }: { actorId: string }) {
                         ))}
                       </select>
                     </label>
-                    <div className={styles.two}>
+                    <div className={styles.three}>
                       <label>
-                        최종 변동률 (%)
+                        수익 방향
+                        <select
+                          value={draft.roi < 0 ? "NEGATIVE" : "POSITIVE"}
+                          onChange={(e) => {
+                            const sign = e.target.value === "NEGATIVE" ? -1 : 1;
+                            setDraft({
+                              ...draft,
+                              roi: sign * Math.abs(draft.roi),
+                            });
+                          }}
+                        >
+                          <option value="POSITIVE">플러스 수익률</option>
+                          <option value="NEGATIVE">마이너스 수익률</option>
+                        </select>
+                      </label>
+                      <label>
+                        수익률 크기 (%)
                         <input
                           type="number"
                           required
-                          min={-50}
+                          min={0}
                           max={50}
                           step="0.1"
-                          value={draft.roi}
-                          onChange={(e) =>
-                            setDraft({ ...draft, roi: Number(e.target.value) })
-                          }
+                          value={Math.abs(draft.roi)}
+                          onChange={(e) => {
+                            const sign = draft.roi < 0 ? -1 : 1;
+                            setDraft({
+                              ...draft,
+                              roi: sign * Number(e.target.value),
+                            });
+                          }}
                         />
                       </label>
                       <label>
-                        진행 시간 (초)
+                        진행 시간 (초 · 최대 24시간)
                         <input
                           type="number"
                           required
                           min={30}
-                          max={3600}
+                          max={86400}
                           step={1}
                           value={draft.duration}
                           onChange={(e) =>
@@ -695,19 +736,24 @@ export function WorkroomConsole({ actorId }: { actorId: string }) {
             <>
               <section className={styles.panel}>
                 <span className={styles.eyebrow}>PRACTICE POINTS</span>
-                <h2>체험 포인트 수동 지급</h2>
+                <h2>체험 포인트 지급·차감</h2>
                 <p className={styles.muted}>
-                  회원 계정에 출금 불가 체험 포인트만 추가합니다. 현금 잔액과는
-                  연결되지 않습니다.
+                  모의거래 포인트만 조정합니다. 실제 입금·출금 원장에는 영향을
+                  주지 않습니다.
                 </p>
                 <form
                   onSubmit={(e) => {
                     e.preventDefault();
-                    prepare("GRANT", { userId, amount, reason: grantReason });
+                    prepare("POINT_ADJUST", {
+                      userId,
+                      direction,
+                      amount,
+                      reason: pointReason,
+                    });
                   }}
                 >
                   <fieldset disabled={locked}>
-                    <div className={styles.two}>
+                    <div className={styles.three}>
                       <label>
                         대상 회원
                         <select
@@ -724,12 +770,30 @@ export function WorkroomConsole({ actorId }: { actorId: string }) {
                         </select>
                       </label>
                       <label>
-                        지급 포인트 (P)
+                        조정 구분
+                        <select
+                          required
+                          value={direction}
+                          onChange={(e) =>
+                            setDirection(e.target.value as "CREDIT" | "DEBIT")
+                          }
+                        >
+                          <option value="CREDIT">지급</option>
+                          <option value="DEBIT">차감</option>
+                        </select>
+                      </label>
+                      <label>
+                        포인트 (P)
                         <input
                           type="number"
                           required
                           min={1}
-                          max={1000000}
+                          max={
+                            direction === "DEBIT"
+                              ? (data.users.find((user) => user.id === userId)
+                                  ?.balance ?? 0)
+                              : 1000000
+                          }
                           step={1}
                           value={amount}
                           onChange={(e) => setAmount(Number(e.target.value))}
@@ -737,18 +801,22 @@ export function WorkroomConsole({ actorId }: { actorId: string }) {
                       </label>
                     </div>
                     <label>
-                      지급 사유
+                      {direction === "DEBIT" ? "차감 사유" : "지급 사유"}
                       <input
                         required
                         minLength={2}
                         maxLength={160}
-                        value={grantReason}
-                        onChange={(e) => setGrantReason(e.target.value)}
-                        placeholder="예: 추가 무료 체험"
+                        value={pointReason}
+                        onChange={(e) => setPointReason(e.target.value)}
+                        placeholder={
+                          direction === "DEBIT"
+                            ? "예: 중복 지급 정정"
+                            : "예: 추가 체험 포인트"
+                        }
                       />
                     </label>
                     <button className={styles.primary} type="submit">
-                      지급 내용 검토
+                      변경 내용 검토
                     </button>
                   </fieldset>
                 </form>
@@ -839,7 +907,11 @@ export function WorkroomConsole({ actorId }: { actorId: string }) {
                       <tr key={row.id}>
                         <td>{date(row.createdAt)}</td>
                         <td>
-                          {row.operation}
+                          {row.operation === "POINT_ADJUST"
+                            ? row.input.direction === "DEBIT"
+                              ? "체험 포인트 차감"
+                              : "체험 포인트 지급"
+                            : operationLabels[row.operation] || row.operation}
                           <small>{names[row.target] || row.target}</small>
                         </td>
                         <td>{row.actor}</td>
@@ -886,7 +958,11 @@ export function WorkroomConsole({ actorId }: { actorId: string }) {
             <p>이 작업은 체험 전용이며 변경 사유와 함께 기록됩니다.</p>
             <dl>
               <dt>작업</dt>
-              <dd>{review.operation}</dd>
+              <dd>
+                {review.operation === "POINT_ADJUST"
+                  ? "체험 포인트 지급·차감"
+                  : review.operation}
+              </dd>
               {Object.entries(review.input).map(([key, value]) => (
                 <div key={key}>
                   <dt>
@@ -894,13 +970,14 @@ export function WorkroomConsole({ actorId }: { actorId: string }) {
                       {
                         instrument: "상품",
                         pattern: "패턴",
-                        roi: "최종 변동률",
-                        duration: "진행 시간",
+                        roi: "최종 수익률",
+                        duration: "진행 시간 (초)",
                         amplitude: "변동 폭",
                         expectedVersion: "현재 버전",
                         reason: "사유",
                         userId: "대상 회원",
-                        amount: "지급 포인트",
+                        direction: "조정 구분",
+                        amount: "포인트",
                         label: "구분명",
                         maxUses: "가입 가능 인원",
                         expiresAt: "만료 일시",
@@ -910,11 +987,17 @@ export function WorkroomConsole({ actorId }: { actorId: string }) {
                     )[key] || key}
                   </dt>
                   <dd>
-                    {typeof value === "boolean"
-                      ? value
-                        ? "허용"
-                        : "중지"
-                      : String(value)}
+                    {key === "roi"
+                      ? `${Number(value) >= 0 ? "+" : ""}${Number(value).toFixed(2)}%`
+                      : key === "direction"
+                        ? value === "CREDIT"
+                          ? "지급"
+                          : "차감"
+                        : typeof value === "boolean"
+                          ? value
+                            ? "허용"
+                            : "중지"
+                          : String(value)}
                   </dd>
                 </div>
               ))}

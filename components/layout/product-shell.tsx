@@ -21,7 +21,9 @@ export function ProductShell({
         ? "이용 안내"
         : pathname.startsWith("/workroom")
           ? "내 워크룸"
-          : "내 계정";
+          : pathname.startsWith("/wallet")
+            ? "실제 자산 · 입출금"
+            : "내 계정";
   return (
     <div className={styles.theme}>
       <a className={styles.skip} href="#main-content">
@@ -31,13 +33,14 @@ export function ProductShell({
         <WorkroomBrand />
         <ProductNavigation presentation="mining-sidebar" />
         <div className={styles.sideBottom}>
+          <Link href="/wallet">실제 자산 · 입금·출금</Link>
           <Link href="/menu/account">내 계정 관리</Link>
           <Link href="/support">고객지원</Link>
           <Link href="/workroom/records">이전 서비스 이용 기록</Link>
           <small>
             무료 시뮬레이션
             <br />
-            체험 포인트 현금 전환·출금 불가
+            체험 포인트는 출금할 수 없으며 실제 자산과 분리됩니다.
           </small>
         </div>
       </aside>

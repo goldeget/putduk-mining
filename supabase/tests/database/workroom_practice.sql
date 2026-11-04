@@ -104,10 +104,14 @@ select pg_temp.must_fail($q$insert into auth.users(id,email,email_confirmed_at,r
 insert into auth.users(id,email,email_confirmed_at,raw_user_meta_data) select '66666666-6666-4666-8666-666666666666','new@example.test',now(),jsonb_build_object('referralCode',value->>'code','workroomAcknowledged',true) from invite;
 select pg_temp.must_fail(format('insert into auth.users(id,email,email_confirmed_at,raw_user_meta_data) values(''77777777-7777-4777-8777-777777777777'',''over@example.test'',now(),%L::jsonb)',(select jsonb_build_object('referralCode',value->>'code','workroomAcknowledged',true) from invite)),'WORKROOM_INVITATION_INVALID');
 do $$begin if (select used from app_private.workroom_invites where code=(select value->>'code' from invite))<>1 then raise exception 'bad consumption';end if;if (select balance from app_private.workroom_accounts where user_id='66666666-6666-4666-8666-666666666666')<>100000 then raise exception 'signup not initialized';end if;end$$;
-select public.workroom_admin_command('GRANT','grant-key-0001','{"userId":"11111111-1111-4111-8111-111111111111","amount":10,"reason":"추가 체험"}',auth.uid(),'33333333-3333-4333-8333-333333333333','44444444-4444-4444-8444-444444444444','aal2');
-select public.workroom_admin_command('GRANT','grant-key-0001','{"userId":"11111111-1111-4111-8111-111111111111","amount":10,"reason":"추가 체험"}',auth.uid(),'33333333-3333-4333-8333-333333333333','44444444-4444-4444-8444-444444444444','aal2');
-select pg_temp.must_fail($q$select public.workroom_admin_command('GRANT','grant-key-0001','{"userId":"11111111-1111-4111-8111-111111111111","amount":11,"reason":"추가 체험"}',auth.uid(),'33333333-3333-4333-8333-333333333333','44444444-4444-4444-8444-444444444444','aal2')$q$,'WORKROOM_REQUEST_CONFLICT');
-do $$begin if (select balance from app_private.workroom_accounts where user_id='11111111-1111-4111-8111-111111111111')<>101210 then raise exception 'grant replay double credit';end if;end$$;
+select public.workroom_admin_command('POINT_ADJUST','point-credit-01','{"userId":"11111111-1111-4111-8111-111111111111","direction":"CREDIT","amount":10,"reason":"추가 체험"}',auth.uid(),'33333333-3333-4333-8333-333333333333','44444444-4444-4444-8444-444444444444','aal2');
+select public.workroom_admin_command('POINT_ADJUST','point-credit-01','{"userId":"11111111-1111-4111-8111-111111111111","direction":"CREDIT","amount":10,"reason":"추가 체험"}',auth.uid(),'33333333-3333-4333-8333-333333333333','44444444-4444-4444-8444-444444444444','aal2');
+select pg_temp.must_fail($q$select public.workroom_admin_command('POINT_ADJUST','point-credit-01','{"userId":"11111111-1111-4111-8111-111111111111","direction":"CREDIT","amount":11,"reason":"추가 체험"}',auth.uid(),'33333333-3333-4333-8333-333333333333','44444444-4444-4444-8444-444444444444','aal2')$q$,'WORKROOM_REQUEST_CONFLICT');
+select public.workroom_admin_command('POINT_ADJUST','point-debit-001','{"userId":"11111111-1111-4111-8111-111111111111","direction":"DEBIT","amount":20,"reason":"중복 포인트 정정"}',auth.uid(),'33333333-3333-4333-8333-333333333333','44444444-4444-4444-8444-444444444444','aal2');
+select public.workroom_admin_command('POINT_ADJUST','point-debit-001','{"userId":"11111111-1111-4111-8111-111111111111","direction":"DEBIT","amount":20,"reason":"중복 포인트 정정"}',auth.uid(),'33333333-3333-4333-8333-333333333333','44444444-4444-4444-8444-444444444444','aal2');
+select pg_temp.must_fail($q$select public.workroom_admin_command('POINT_ADJUST','point-debit-001','{"userId":"11111111-1111-4111-8111-111111111111","direction":"DEBIT","amount":21,"reason":"중복 포인트 정정"}',auth.uid(),'33333333-3333-4333-8333-333333333333','44444444-4444-4444-8444-444444444444','aal2')$q$,'WORKROOM_REQUEST_CONFLICT');
+select pg_temp.must_fail($q$select public.workroom_admin_command('POINT_ADJUST','point-debit-low1','{"userId":"11111111-1111-4111-8111-111111111111","direction":"DEBIT","amount":1000000,"reason":"잔액 부족 검증"}',auth.uid(),'33333333-3333-4333-8333-333333333333','44444444-4444-4444-8444-444444444444','aal2')$q$,'WORKROOM_INSUFFICIENT_POINTS');
+do $$begin if (select balance from app_private.workroom_accounts where user_id='11111111-1111-4111-8111-111111111111')<>101190 then raise exception 'point adjustment replay or debit failed';end if;if not exists(select 1 from app_private.workroom_ledger where user_id='11111111-1111-4111-8111-111111111111' and kind='ADJUSTMENT' and amount=-20 and balance_after=101190 and note='운영자 차감 · 중복 포인트 정정') then raise exception 'debit ledger entry missing';end if;end$$;
 select pg_temp.must_fail($q$select public.workroom_admin_command('CONFIG_SAVE','config-key-01','{"instrument":"nvda","pattern":"wave","roi":1,"duration":30,"amplitude":0,"expectedVersion":1,"reason":"조건 수정"}',auth.uid(),'33333333-3333-4333-8333-333333333333','44444444-4444-4444-8444-444444444444','aal2')$q$,'WORKROOM_VERSION_CONFLICT');
 -- Early close uses the frozen curve at server time for every supported pattern.
 select set_config('request.jwt.claim.sub','11111111-1111-4111-8111-111111111111',true);
@@ -141,15 +145,30 @@ select jsonb_agg(value) as workroom_early_results from early_results;
 select set_config('request.jwt.claim.sub','22222222-2222-4222-8222-222222222222',true);
 select set_config('request.jwt.claims','{"session_id":"44444444-4444-4444-8444-444444444444","aal":"aal2"}',true);
 -- Input validation and optimistic config success are independently DB enforced.
-select public.workroom_admin_command('CONFIG_SAVE','config-good-01','{"instrument":"nvda","pattern":"slow","roi":-50,"duration":30,"amplitude":15,"expectedVersion":2,"reason":"범위 경계 검증"}',auth.uid(),'33333333-3333-4333-8333-333333333333','44444444-4444-4444-8444-444444444444','aal2');
-select pg_temp.must_fail($q$select public.workroom_admin_command('GRANT','grant-range01','{"userId":"11111111-1111-4111-8111-111111111111","amount":1000001,"reason":"범위 검증"}',auth.uid(),'33333333-3333-4333-8333-333333333333','44444444-4444-4444-8444-444444444444','aal2')$q$,'WORKROOM_INVALID_INPUT');
+select public.workroom_admin_command('CONFIG_SAVE','config-good-01','{"instrument":"nvda","pattern":"slow","roi":-50,"duration":86400,"amplitude":15,"expectedVersion":2,"reason":"수익률·시간 상한 검증"}',auth.uid(),'33333333-3333-4333-8333-333333333333','44444444-4444-4444-8444-444444444444','aal2');
+do $$begin if not exists(select 1 from app_private.workroom_config where instrument='nvda' and roi=-50 and duration=86400 and version=3) then raise exception 'negative return or 24h duration not persisted';end if;end$$;
+select public.workroom_admin_command('CONFIG_SAVE','config-negative-01','{"instrument":"usd","pattern":"balanced","roi":-10,"duration":30,"amplitude":0,"expectedVersion":4,"reason":"음수 수익률 경로 검증"}',auth.uid(),'33333333-3333-4333-8333-333333333333','44444444-4444-4444-8444-444444444444','aal2');
+select set_config('request.jwt.claim.sub','11111111-1111-4111-8111-111111111111',true);
+select set_config('request.jwt.claims','{"session_id":"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa","aal":"aal1"}',true);
+create temporary table negative_start(value jsonb);
+create temporary table negative_balance_before(value bigint);
+insert into negative_balance_before select balance from app_private.workroom_accounts where user_id='11111111-1111-4111-8111-111111111111';
+insert into negative_start select public.workroom_member_command('START','negative-start-01','{"instrument":"usd","stake":1000,"acknowledged":true,"expectedVersion":5}');
+select set_config('session_replication_role','replica',true);
+update app_private.workroom_rounds set started_at=clock_timestamp()-interval '31 seconds' where id=(select (value#>>'{active,id}')::uuid from negative_start);
+select set_config('session_replication_role','origin',true);
+select public.workroom_member_command('SYNC','negative-sync-001','{}');
+do $$declare s jsonb;begin s:=public.workroom_read_state();if s#>>'{history,0,returned}'<>'900' or s#>>'{history,0,profit}'<>'-100' or (s#>>'{member,balance}')::bigint<>(select value-100 from negative_balance_before) or s#>>'{history,0,duration}'<>'30' or s#>>'{history,0,roi}'<>'-10' then raise exception 'negative configured return or duration not applied %',s;end if;end$$;
+select set_config('request.jwt.claim.sub','22222222-2222-4222-8222-222222222222',true);
+select set_config('request.jwt.claims','{"session_id":"44444444-4444-4444-8444-444444444444","aal":"aal2"}',true);
+select pg_temp.must_fail($q$select public.workroom_admin_command('POINT_ADJUST','point-range01','{"userId":"11111111-1111-4111-8111-111111111111","direction":"CREDIT","amount":1000001,"reason":"범위 검증"}',auth.uid(),'33333333-3333-4333-8333-333333333333','44444444-4444-4444-8444-444444444444','aal2')$q$,'WORKROOM_INVALID_INPUT');
 do $$declare s jsonb;begin
  s:=public.workroom_admin_command('READ','read-page-001','{"search":"old@example.test","pageSize":1}',auth.uid(),'33333333-3333-4333-8333-333333333333','44444444-4444-4444-8444-444444444444','aal2');
  if s#>>'{pagination,users,total}'<>'1' or jsonb_array_length(s->'users')<>1 or s#>>'{users,0,id}'<>'11111111-1111-4111-8111-111111111111' then raise exception 'search or pagination failed';end if;
 end$$;
 -- Live authority is rechecked before returning a stored privileged replay.
 update public.admin_sessions set revoked_at=clock_timestamp(),revoke_reason='rollback test' where id='33333333-3333-4333-8333-333333333333';
-select pg_temp.must_fail($q$select public.workroom_admin_command('GRANT','grant-key-0001','{"userId":"11111111-1111-4111-8111-111111111111","amount":10,"reason":"추가 체험"}',auth.uid(),'33333333-3333-4333-8333-333333333333','44444444-4444-4444-8444-444444444444','aal2')$q$,'ADMIN_SESSION_EXPIRED');
+select pg_temp.must_fail($q$select public.workroom_admin_command('POINT_ADJUST','point-credit-01','{"userId":"11111111-1111-4111-8111-111111111111","direction":"CREDIT","amount":10,"reason":"추가 체험"}',auth.uid(),'33333333-3333-4333-8333-333333333333','44444444-4444-4444-8444-444444444444','aal2')$q$,'ADMIN_SESSION_EXPIRED');
 update public.admin_sessions set revoked_at=null,revoke_reason=null where id='33333333-3333-4333-8333-333333333333';
 -- Failure after invite consumption must roll back the entire signup transaction.
 insert into app_private.workroom_invites(code,max_uses,expires_at) values('WR-ROLLBACK-TEST',1,now()+interval '1 day');

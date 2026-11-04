@@ -146,7 +146,7 @@ export function validateWorkroomConfig(raw: unknown): WorkroomConfig {
     throw new Error("INVALID_CONFIG");
   for (const [value, min, max] of [
     [c.roi, -50, 50],
-    [c.duration, 30, 3600],
+    [c.duration, 30, 86400],
     [c.amplitude, 0, 15],
   ] as const)
     if (

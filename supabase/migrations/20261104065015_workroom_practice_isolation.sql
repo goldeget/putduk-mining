@@ -6,12 +6,12 @@ create table app_private.workroom_cohort(user_id uuid primary key references aut
 insert into app_private.workroom_cohort(user_id) select id from auth.users;
 create table app_private.workroom_invites(id uuid primary key default gen_random_uuid(),code text not null unique,label text not null default '',max_uses integer not null check(max_uses between 1 and 1000),used integer not null default 0 check(used>=0 and used<=max_uses),enabled boolean not null default true,expires_at timestamptz not null,created_at timestamptz not null default clock_timestamp());
 create table app_private.workroom_accounts(user_id uuid primary key references auth.users(id),name text not null check(length(name) between 1 and 40),balance bigint not null check(balance between 0 and 9000000000000),room text not null,referral text,created_at timestamptz not null default clock_timestamp());
-create table app_private.workroom_config(instrument text primary key check(instrument in('usd','cny','jpy','nvda','tsla','msft','ndx','skh','samsung','lg')),pattern text not null check(pattern in('wave','slow','balanced')),roi numeric not null check(roi between -50 and 50),duration integer not null check(duration between 30 and 3600),amplitude numeric not null check(amplitude between 0 and 15),version integer not null check(version>0));
+create table app_private.workroom_config(instrument text primary key check(instrument in('usd','cny','jpy','nvda','tsla','msft','ndx','skh','samsung','lg')),pattern text not null check(pattern in('wave','slow','balanced')),roi numeric not null check(roi between -50 and 50),duration integer not null check(duration between 30 and 86400),amplitude numeric not null check(amplitude between 0 and 15),version integer not null check(version>0));
 insert into app_private.workroom_config select i,'wave',2.4,120,1.2,1 from unnest(array['usd','cny','jpy','nvda','tsla','msft','ndx','skh','samsung','lg'])i;
 create table app_private.workroom_rounds(id uuid primary key default gen_random_uuid(),user_id uuid not null references app_private.workroom_accounts(user_id),instrument text not null references app_private.workroom_config(instrument),stake bigint not null check(stake>0),snapshot jsonb not null,started_at timestamptz not null default clock_timestamp(),closed_at timestamptz,returned bigint check(returned>=0),check((closed_at is null and returned is null) or (closed_at is not null and returned is not null)));
 create unique index workroom_one_active_round on app_private.workroom_rounds(user_id) where closed_at is null;
 create index workroom_round_history on app_private.workroom_rounds(user_id,started_at desc,id);
-create table app_private.workroom_ledger(id uuid primary key default gen_random_uuid(),user_id uuid not null references app_private.workroom_accounts(user_id),amount bigint not null,balance_after bigint not null check(balance_after>=0),kind text not null check(kind in('WELCOME','STAKE','SETTLEMENT','GRANT')),note text not null,round_id uuid references app_private.workroom_rounds(id),created_at timestamptz not null default clock_timestamp());
+create table app_private.workroom_ledger(id uuid primary key default gen_random_uuid(),user_id uuid not null references app_private.workroom_accounts(user_id),amount bigint not null check(amount<>0),balance_after bigint not null check(balance_after between 0 and 9000000000000),kind text not null check(kind in('WELCOME','STAKE','SETTLEMENT','ADJUSTMENT')),note text not null,round_id uuid references app_private.workroom_rounds(id),created_at timestamptz not null default clock_timestamp());
 create unique index workroom_welcome_once on app_private.workroom_ledger(user_id) where kind='WELCOME';
 create unique index workroom_round_effect_once on app_private.workroom_ledger(round_id,kind) where round_id is not null;
 create index workroom_ledger_history on app_private.workroom_ledger(user_id,created_at desc,id);
@@ -140,9 +140,9 @@ declare users_page integer:=coalesce((p_input->>'usersPage')::integer,1);invites
  return jsonb_build_object('users',users_json,'invites',invites_json,'configs',(select jsonb_agg(to_jsonb(c) order by instrument) from app_private.workroom_config c),'audit',audit_json,'pagination',jsonb_build_object('users',jsonb_build_object('page',users_page,'total',users_total),'invites',jsonb_build_object('page',invites_page,'total',invites_total),'audit',jsonb_build_object('page',audit_page,'total',audit_total)));
 end$$;
 create function public.workroom_admin_command(p_operation text,p_request_key text,p_input jsonb,p_actor uuid,p_admin_session_id uuid,p_auth_session_id text,p_verified_aal text) returns jsonb language plpgsql security definer set search_path=pg_catalog as $$
-declare hash text;receipt app_private.workroom_receipts%rowtype;result jsonb;target text;reason text;invitation app_private.workroom_invites%rowtype;c app_private.workroom_config%rowtype;target_user uuid;points bigint;new_balance bigint;expiry timestamptz;begin
+declare hash text;receipt app_private.workroom_receipts%rowtype;result jsonb;target text;reason text;direction text;invitation app_private.workroom_invites%rowtype;c app_private.workroom_config%rowtype;target_user uuid;points bigint;new_balance bigint;expiry timestamptz;begin
  perform app_private.workroom_assert_admin(p_actor,p_admin_session_id,p_auth_session_id,p_verified_aal);
- if p_operation is null or p_operation not in('READ','INVITE_CREATE','INVITE_STATUS','CONFIG_SAVE','GRANT') or p_input is null or jsonb_typeof(p_input)<>'object' or octet_length(p_input::text)>8192 then raise exception 'WORKROOM_INVALID_INPUT';end if;
+ if p_operation is null or p_operation not in('READ','INVITE_CREATE','INVITE_STATUS','CONFIG_SAVE','POINT_ADJUST') or p_input is null or jsonb_typeof(p_input)<>'object' or octet_length(p_input::text)>8192 then raise exception 'WORKROOM_INVALID_INPUT';end if;
  if p_operation='READ' then return app_private.workroom_admin_read(p_input);end if;
  if p_request_key is null or p_request_key!~'^[A-Za-z0-9_-]{8,200}$' then raise exception 'WORKROOM_INVALID_INPUT';end if;
  hash:=encode(sha256(convert_to(jsonb_build_object('operation',p_operation,'input',p_input)::text,'UTF8')),'hex');
@@ -166,21 +166,28 @@ declare hash text;receipt app_private.workroom_receipts%rowtype;result jsonb;tar
  elsif p_operation='CONFIG_SAVE' then
   if (select array_agg(k order by k) from jsonb_object_keys(p_input)k) is distinct from array['amplitude','duration','expectedVersion','instrument','pattern','reason','roi']::text[] or
    jsonb_typeof(p_input->'roi') is distinct from 'number' or jsonb_typeof(p_input->'amplitude') is distinct from 'number' or jsonb_typeof(p_input->'duration') is distinct from 'number' or jsonb_typeof(p_input->'expectedVersion') is distinct from 'number' or
-   coalesce(p_input->>'duration','')!~'^[0-9]{1,4}$' or coalesce(p_input->>'expectedVersion','')!~'^[0-9]{1,9}$' or
-   (p_input->>'roi')::numeric not between -50 and 50 or (p_input->>'amplitude')::numeric not between 0 and 15 or (p_input->>'duration')::integer not between 30 and 3600 or coalesce(p_input->>'pattern','') not in('wave','slow','balanced') then raise exception 'WORKROOM_INVALID_INPUT';end if;
+   coalesce(p_input->>'duration','')!~'^[0-9]{1,5}$' or coalesce(p_input->>'expectedVersion','')!~'^[0-9]{1,9}$' or
+   (p_input->>'roi')::numeric not between -50 and 50 or (p_input->>'amplitude')::numeric not between 0 and 15 or (p_input->>'duration')::integer not between 30 and 86400 or coalesce(p_input->>'pattern','') not in('wave','slow','balanced') then raise exception 'WORKROOM_INVALID_INPUT';end if;
   select * into c from app_private.workroom_config where instrument=p_input->>'instrument' for update;
   if c.instrument is null then raise exception 'WORKROOM_INVALID_INPUT';end if;
   if c.version<>(p_input->>'expectedVersion')::integer then raise exception 'WORKROOM_VERSION_CONFLICT';end if;
   update app_private.workroom_config set pattern=p_input->>'pattern',roi=(p_input->>'roi')::numeric,duration=(p_input->>'duration')::integer,amplitude=(p_input->>'amplitude')::numeric,version=version+1 where instrument=c.instrument returning * into c;
   target:=c.instrument;result:=to_jsonb(c);
- else
-  if (select array_agg(k order by k) from jsonb_object_keys(p_input)k) is distinct from array['amount','reason','userId']::text[] or jsonb_typeof(p_input->'amount') is distinct from 'number' or coalesce(p_input->>'amount','')!~'^[0-9]{1,7}$' then raise exception 'WORKROOM_INVALID_INPUT';end if;
-  points:=(p_input->>'amount')::bigint;target_user:=(p_input->>'userId')::uuid;
+ elsif p_operation='POINT_ADJUST' then
+  if (select array_agg(k order by k) from jsonb_object_keys(p_input)k) is distinct from array['amount','direction','reason','userId']::text[] or jsonb_typeof(p_input->'amount') is distinct from 'number' or coalesce(p_input->>'amount','')!~'^[0-9]{1,7}$' or coalesce(p_input->>'direction','') not in('CREDIT','DEBIT') then raise exception 'WORKROOM_INVALID_INPUT';end if;
+  points:=(p_input->>'amount')::bigint;target_user:=(p_input->>'userId')::uuid;direction:=p_input->>'direction';
   if points not between 1 and 1000000 then raise exception 'WORKROOM_INVALID_INPUT';end if;
-  update app_private.workroom_accounts set balance=balance+points where user_id=target_user returning balance into new_balance;
-  if not found then raise exception 'WORKROOM_MEMBER_NOT_FOUND';end if;
-  insert into app_private.workroom_ledger(user_id,amount,balance_after,kind,note) values(target_user,points,new_balance,'GRANT',reason);
-  target:=target_user::text;result:=jsonb_build_object('userId',target_user,'amount',points,'balance',new_balance);
+  if direction='DEBIT' then points:=-points;end if;
+  update app_private.workroom_accounts set balance=balance+points where user_id=target_user and balance+points between 0 and 9000000000000 returning balance into new_balance;
+  if not found then
+   if not exists(select 1 from app_private.workroom_accounts where user_id=target_user) then raise exception 'WORKROOM_MEMBER_NOT_FOUND';end if;
+   if direction='DEBIT' then raise exception 'WORKROOM_INSUFFICIENT_POINTS';end if;
+   raise exception 'WORKROOM_BALANCE_LIMIT';
+  end if;
+  insert into app_private.workroom_ledger(user_id,amount,balance_after,kind,note) values(target_user,points,new_balance,'ADJUSTMENT',case when direction='CREDIT' then '운영자 지급 · ' else '운영자 차감 · ' end||reason);
+  target:=target_user::text;result:=jsonb_build_object('userId',target_user,'direction',direction,'amount',points,'balance',new_balance);
+ else
+  raise exception 'WORKROOM_INVALID_INPUT';
  end if;
  insert into app_private.workroom_audit(actor,operation,target,input) values(p_actor,p_operation,target,p_input);
  insert into app_private.workroom_receipts(actor,scope,request_key,digest,result) values(p_actor,'ADMIN',p_request_key,hash,result);

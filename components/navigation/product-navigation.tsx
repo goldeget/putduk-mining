@@ -7,6 +7,7 @@ const items = [
   { href: "/workroom/history", label: "참여 내역", icon: "history" },
   { href: "/workroom/points", label: "체험 포인트", icon: "points" },
   { href: "/workroom/guide", label: "이용 안내", icon: "guide" },
+  { href: "/wallet", label: "입출금", icon: "wallet" },
 ] as const;
 export function ProductNavigation({
   presentation = "default",
@@ -24,7 +25,12 @@ export function ProductNavigation({
           key={item.href}
           href={item.href}
           prefetch={false}
-          aria-current={pathname === item.href ? "page" : undefined}
+          aria-current={
+            pathname === item.href ||
+            (item.href === "/wallet" && pathname.startsWith("/wallet/"))
+              ? "page"
+              : undefined
+          }
         >
           <span className={styles.navIcon} aria-hidden="true">
             <svg
@@ -49,6 +55,11 @@ export function ProductNavigation({
                 <>
                   <ellipse cx="12" cy="6" rx="8" ry="3" />
                   <path d="M4 6v6c0 4 16 4 16 0V6M4 12v6c0 4 16 4 16 0v-6" />
+                </>
+              ) : item.icon === "wallet" ? (
+                <>
+                  <rect x="3" y="5" width="18" height="15" rx="2" />
+                  <path d="M3 9h18m-5 5h.01" />
                 </>
               ) : (
                 <>

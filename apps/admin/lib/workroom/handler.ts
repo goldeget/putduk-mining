@@ -43,7 +43,7 @@ const command = z.discriminatedUnion("operation", [
           instrument,
           pattern: z.enum(["wave", "slow", "balanced"]),
           roi: z.number().min(-50).max(50),
-          duration: z.number().int().min(30).max(3600),
+          duration: z.number().int().min(30).max(86400),
           amplitude: z.number().min(0).max(15),
           expectedVersion: z.number().int().min(1),
           reason,
@@ -53,10 +53,11 @@ const command = z.discriminatedUnion("operation", [
     .strict(),
   z
     .object({
-      operation: z.literal("GRANT"),
+      operation: z.literal("POINT_ADJUST"),
       input: z
         .object({
           userId: z.uuid(),
+          direction: z.enum(["CREDIT", "DEBIT"]),
           amount: z.number().int().min(1).max(1000000),
           reason,
         })
@@ -144,7 +145,7 @@ function rpcFailure(message: string) {
       "운영 권한과 보안 세션을 다시 확인해주세요.",
       403,
     );
-  if (/INVALID|NOT_FOUND|EXPIRED|LIMIT/.test(message))
+  if (/INVALID|NOT_FOUND|EXPIRED|LIMIT|INSUFFICIENT/.test(message))
     return fail(
       "INVALID_WORKROOM_COMMAND",
       "입력값과 대상 상태를 확인해주세요.",
