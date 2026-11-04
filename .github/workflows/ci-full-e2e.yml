@@ -208,6 +208,8 @@ jobs:
         run: node scripts/ci-workroom-acceptance.mjs
         env:
           GH_TOKEN: ${{ github.token }}
+          E2E_WEB_PORT: "3000"
+          E2E_ADMIN_PORT: "3100"
       - uses: actions/upload-artifact@v7
         if: always()
         with:
