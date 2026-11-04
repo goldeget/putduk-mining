@@ -11,10 +11,10 @@ begin
  or exists(select user_id from app_private.workroom_cohort except select id from auth.users) then raise exception 'WORKROOM_COHORT_EXACT_IDENTITY_REQUIRED';end if;
  for f in select * from workroom_native_evidence.definers loop
  oid_now:=to_regprocedure(f.signature);
- if oid_now is null or pg_get_functiondef(oid_now)<>f.definition or pg_get_function_result(oid_now)<>f.result_type
+ if oid_now is null or oid_now is distinct from f.object_oid or pg_get_functiondef(oid_now)<>f.definition or pg_get_function_result(oid_now)<>f.result_type
  or not exists(select 1 from pg_proc p where p.oid=oid_now and pg_get_userbyid(p.proowner)=f.owner_name and p.proconfig is not distinct from f.proconfig and p.prosecdef) then raise exception 'WORKROOM_HISTORICAL_SECDEF_CHANGED %',f.signature;end if;
- if f.signature<>all(retired) and not exists(select 1 from pg_proc p where p.oid=oid_now and coalesce(p.proacl,acldefault('f',p.proowner))::text=f.acl) then raise exception 'WORKROOM_HISTORICAL_ACL_CHANGED %',f.signature;end if;
- if f.signature=any(retired) and
+ if oid_now<>all(array(select to_regprocedure(s)::oid from unnest(retired)s where to_regprocedure(s) is not null)) and not exists(select 1 from pg_proc p where p.oid=oid_now and coalesce(p.proacl,acldefault('f',p.proowner))::text=f.acl) then raise exception 'WORKROOM_HISTORICAL_ACL_CHANGED %',f.signature;end if;
+ if oid_now=any(array(select to_regprocedure(s)::oid from unnest(retired)s where to_regprocedure(s) is not null)) and
  (select coalesce(jsonb_agg(to_jsonb(a) order by a.grantor,a.grantee,a.privilege_type,a.is_grantable),'[]'::jsonb) from aclexplode(f.acl::aclitem[])a where a.grantee<>all(array[0::oid,'anon'::regrole::oid,'authenticated'::regrole::oid,'service_role'::regrole::oid]))
  is distinct from
  (select coalesce(jsonb_agg(to_jsonb(a) order by a.grantor,a.grantee,a.privilege_type,a.is_grantable),'[]'::jsonb) from pg_proc p,aclexplode(coalesce(p.proacl,acldefault('f',p.proowner)))a where p.oid=oid_now)
