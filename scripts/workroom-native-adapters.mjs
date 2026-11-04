@@ -123,6 +123,45 @@ export function adaptWorkroomSignupFixtures(input) {
 }
 /** Migration202 retires enrollment; retain the old RLS suite with its one
  * service enrollment permission inverted. Baseline201 remains byte-identical. */
+/** Retained race runs after real admin/worker fixtures, so AI can already exist.
+ * Reuse its actual ID/predecessor receipt; retain the original two-session race. */
+export function adaptWorkroomSafeModeConcurrency(input) {
+  const sql = String(input),
+    edits = [
+      [
+        "'0d460000-0000-4000-8000-00000000f002');\n  $setup$);",
+        "'0d460000-0000-4000-8000-00000000f002') on conflict (component) do nothing;\n  $setup$);",
+      ],
+      [
+        "where id = '0d460000-0000-4000-8000-00000000f001' for update",
+        "where component = 'AI' for update",
+      ],
+      [
+        "if v_result is distinct from '0d460000-0000-4000-8000-00000000f001' then",
+        "if v_result is null or v_result is distinct from (select id::text from public.safe_mode_controls where component = 'AI') then",
+      ],
+      [
+        "'expected_request_id', '0d460000-0000-4000-8000-00000000f002'",
+        "'expected_request_id', (select request_id from public.safe_mode_controls where component = 'AI')",
+      ],
+    ];
+  let next = sql;
+  for (const [before, after] of edits) {
+    if (next.split(before).length !== 2)
+      fail("SAFE_CONCURRENCY_EXACT_SPAN_REQUIRED");
+    next = next.replace(before, after);
+  }
+  let reversed = next;
+  for (const [before, after] of [...edits].reverse())
+    reversed = reversed.replace(after, before);
+  if (reversed !== sql) fail("SAFE_CONCURRENCY_REVERSE_FAILED");
+  return {
+    sql: next,
+    originalSha256: sha256(sql),
+    sha256: sha256(next),
+    reverseExact: true,
+  };
+}
 export function adaptWorkroomWithdrawalPolicyVersions(name, input) {
   const reviewed = {
     "withdrawal_logical_lifecycle.sql": { 189001: 9 },

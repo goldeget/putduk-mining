@@ -1287,7 +1287,7 @@
     "path": "supabase/tests-concurrent/safe_mode_concurrent_command.sql",
     "sourceSha256": "115a2d942302ce09017f6f7840133ba2a7551f60e91559371a130c34532bce0a",
     "baselineSha256": "115a2d942302ce09017f6f7840133ba2a7551f60e91559371a130c34532bce0a",
-    "successorSha256": "518b9189b7491e5d27c6a5ecb48911dc725344728ad5b82209c8b9a527b49a58"
+    "successorSha256": "5cc8cef7c0a968a57ab293350bc08328126570e6b9a1a28aba80fd48d343f1d2"
   },
   {
     "path": "supabase/tests-concurrent/usdt_deposit_concurrent_approval.sql",
