@@ -10,6 +10,7 @@ const targets = {
   "putduk-mining-workroom-local-20261104": "http://127.0.0.1:64531",
 };
 const project = process.env.LOCAL_SUPABASE_PROJECT_ID;
+console.log("PRE202_SEED_STAGE: target guard");
 if (
   process.env.APP_ENV !== "test" ||
   process.env.NEXT_PUBLIC_SUPABASE_URL !== targets[project]
@@ -34,16 +35,27 @@ const applied = execFileSync(
     input: "select to_regclass('app_private.workroom_accounts') is null;",
     encoding: "utf8",
     stdio: ["pipe", "pipe", "pipe"],
+    timeout: 30_000,
+    windowsHide: true,
   },
 ).trim();
 if (applied !== "t") throw new Error("PRE202_DATABASE_REQUIRED");
+console.log(
+  "PRE202_SEED_STAGE: historical database confirmed; requesting real GoTrue identity",
+);
 const suffix = randomUUID().replaceAll("-", "").slice(0, 13);
 const email = `existing.${suffix}@putduk.test`;
 const password = `Existing-${suffix}-Aa1!`;
 const client = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
   process.env.SUPABASE_SECRET_KEY,
-  { auth: { persistSession: false, autoRefreshToken: false } },
+  {
+    auth: { persistSession: false, autoRefreshToken: false },
+    global: {
+      fetch: (input, options) =>
+        fetch(input, { ...options, signal: AbortSignal.timeout(30_000) }),
+    },
+  },
 );
 const result = await client.auth.admin.createUser({
   email,

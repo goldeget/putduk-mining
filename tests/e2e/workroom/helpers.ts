@@ -40,7 +40,13 @@ export function sql(statement: string): string {
       "--set",
       "ON_ERROR_STOP=1",
     ],
-    { input: statement, encoding: "utf8", stdio: ["pipe", "pipe", "pipe"] },
+    {
+      input: statement,
+      encoding: "utf8",
+      stdio: ["pipe", "pipe", "pipe"],
+      timeout: 30_000,
+      windowsHide: true,
+    },
   ).trim();
 }
 export function service() {
@@ -48,7 +54,13 @@ export function service() {
   return createClient(
     required("NEXT_PUBLIC_SUPABASE_URL"),
     required("SUPABASE_SECRET_KEY"),
-    { auth: { persistSession: false, autoRefreshToken: false } },
+    {
+      auth: { persistSession: false, autoRefreshToken: false },
+      global: {
+        fetch: (input, options) =>
+          fetch(input, { ...options, signal: AbortSignal.timeout(30_000) }),
+      },
+    },
   );
 }
 export function auth() {
@@ -56,7 +68,13 @@ export function auth() {
   return createClient(
     required("NEXT_PUBLIC_SUPABASE_URL"),
     required("NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY"),
-    { auth: { persistSession: false, autoRefreshToken: false } },
+    {
+      auth: { persistSession: false, autoRefreshToken: false },
+      global: {
+        fetch: (input, options) =>
+          fetch(input, { ...options, signal: AbortSignal.timeout(30_000) }),
+      },
+    },
   );
 }
 export function invite() {

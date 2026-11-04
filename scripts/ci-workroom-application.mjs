@@ -26,6 +26,7 @@ const commands = [
       "--test",
       "scripts/ci-workroom-evidence.test.mjs",
       "scripts/ci-workroom-wall-clock.test.mjs",
+      "scripts/ci-workroom-git-blobs.test.mjs",
       "scripts/workroom-native-adapters.test.mjs",
     ],
   ],

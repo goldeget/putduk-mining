@@ -37,6 +37,17 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
   typedRoutes: true,
+  ...(process.env.APP_ENV === "test" &&
+  process.env.PUTDUK_LOW_RESOURCE_BUILD === "1"
+    ? {
+        experimental: {
+          cpus: 1,
+          webpackBuildWorker: true,
+          webpackMemoryOptimizations: true,
+        },
+        webpack: (config) => ({ ...config, cache: false }),
+      }
+    : {}),
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },

@@ -31,7 +31,7 @@ export default defineConfig({
       ADMIN_APP_URL: bindings.text("https://admin.mining.putduk.com"),
       AI_MODEL_LOW_COST: bindings.text("openai/gpt-oss-20b"),
       AI_PROVIDER: bindings.text("nvidia"),
-      AI_PROVIDER_DISPATCH_ENABLED: bindings.text("true"),
+      AI_PROVIDER_DISPATCH_ENABLED: bindings.text("false"),
       APP_ENV: bindings.text("production"),
       APP_TIMEZONE: bindings.text("UTC"),
       NEXT_PUBLIC_APP_URL: bindings.text("https://mining.putduk.com"),

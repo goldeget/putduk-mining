@@ -4,6 +4,7 @@ import { execFileSync } from "node:child_process";
 import { readFileSync, writeFileSync, lstatSync } from "node:fs";
 import { resolve, extname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { readGitBlobs } from "./ci-workroom-git-blobs.mjs";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const baseline = "9ccc287c5c05b998a9ad345392e9ff07a03a5836";
@@ -84,20 +85,23 @@ const baselineMigrations = git(
   .split("\n")
   .filter(Boolean);
 requireCondition(baselineMigrations.length === 201, "BASELINE_MIGRATION_COUNT");
+const historicalAdmissions = [
+  "scripts/backend-successor-201-source.mjs",
+  "tests/e2e/fixtures/backend-successor-201-source.json",
+];
+const historicalBlobs = readGitBlobs(root, baseline, [
+  ...baselineMigrations,
+  ...historicalAdmissions,
+]);
 for (const name of baselineMigrations) {
   requireCondition(
-    hash(readFileSync(resolve(root, name))) ===
-      hash(git("show", `${baseline}:${name}`)),
+    hash(readFileSync(resolve(root, name))) === hash(historicalBlobs.get(name)),
     "HISTORICAL_MIGRATION_CHANGED",
   );
 }
-for (const name of [
-  "scripts/backend-successor-201-source.mjs",
-  "tests/e2e/fixtures/backend-successor-201-source.json",
-]) {
+for (const name of historicalAdmissions) {
   requireCondition(
-    hash(readFileSync(resolve(root, name))) ===
-      hash(git("show", `${baseline}:${name}`)),
+    hash(readFileSync(resolve(root, name))) === hash(historicalBlobs.get(name)),
     "HISTORICAL_ADMISSION_CHANGED",
   );
 }
