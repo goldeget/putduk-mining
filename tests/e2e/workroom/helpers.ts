@@ -5,7 +5,10 @@ import { createClient } from "@supabase/supabase-js";
 import type { WorkroomState } from "../../../domain/workroom/contracts";
 import { nextTotpCode } from "../authenticated/helpers/admin-totp";
 
-export const adminOrigin = `http://${process.env.E2E_ADMIN_HOST ?? "localhost"}:${process.env.E2E_ADMIN_PORT ?? "3100"}`;
+const adminHost =
+  process.env.E2E_ADMIN_HOST ??
+  (process.env.WORKROOM_CI_RUNTIME === "workerd" ? "127.0.0.1" : "localhost");
+export const adminOrigin = `http://${adminHost}:${process.env.E2E_ADMIN_PORT ?? "3100"}`;
 export function required(name: string) {
   const value = process.env[name];
   if (!value) throw new Error(`WORKROOM_ENV_REQUIRED:${name}`);
