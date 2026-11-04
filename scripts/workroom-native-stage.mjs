@@ -17,6 +17,7 @@ import {
   adaptWorkroomPractice,
   adaptWorkroomRetiredTrialAcl,
   adaptWorkroomWithdrawalPolicyVersions,
+  adaptWorkroomSafeModeConcurrency,
 } from "./workroom-native-adapters.mjs";
 import {
   adaptBackend201NativeInput3,
@@ -101,6 +102,11 @@ export function buildWorkroomNativeFiles(root = ROOT) {
           row.path.split("/").at(-1),
           successor,
         ).sql;
+      if (
+        row.path ===
+        "supabase/tests-concurrent/safe_mode_concurrent_command.sql"
+      )
+        successor = adaptWorkroomSafeModeConcurrency(successor).sql;
       try {
         successor = adaptWorkroomSignupFixtures(successor).sql;
       } catch (e) {
