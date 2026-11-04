@@ -6,7 +6,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: full-workroom-${{ github.ref }}
+  group: full-workroom-${{ github.ref }}-${{ github.sha }}
   cancel-in-progress: true
 env:
   APP_ENV: test

@@ -199,16 +199,14 @@ export function safeWorkerdError(error) {
   ]);
   const issues =
     error?.name === "ZodError" && Array.isArray(error.issues)
-      ? error.issues
-          .slice(0, 16)
-          .map((issue) => ({
-            path: allowedEnv.has(issue?.path?.[0])
-              ? issue.path[0]
-              : "unrecognized-env-path",
-            code: standardCodes.has(issue?.code)
-              ? issue.code
-              : "unrecognized-code",
-          }))
+      ? error.issues.slice(0, 16).map((issue) => ({
+          path: allowedEnv.has(issue?.path?.[0])
+            ? issue.path[0]
+            : "unrecognized-env-path",
+          code: standardCodes.has(issue?.code)
+            ? issue.code
+            : "unrecognized-code",
+        }))
       : [];
   return {
     name: [
