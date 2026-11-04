@@ -2009,7 +2009,7 @@
     "scripts/ci-workroom-wall-clock.mjs": "b57f239bc989bcdf62d2637afa93e69c2d7b16cc21083bdfc35e325b3e5ed596",
     "scripts/ci-workroom-wall-clock.test.mjs": "aaf7da54f3f8b730ae648ed9b189afe18f1e3f3c0afc31885c161e2f2c2eb4a8",
     "scripts/ci-workroom-worker-report.mjs": "2b0410b305a46819c8b8bd85de44de9b519caceba3a8411a8100f489f131f7c9",
-    "scripts/ci-workroom-workerd-preflight.mjs": "52ef2f0625c9dde1bfec1d24ac3b4c035f5673aa31d0148107799cf5934ed317",
+    "scripts/ci-workroom-workerd-preflight.mjs": "5bfbd300034269c8e0766f3a22925292e29cf9bfba700b9f04bc3f96f3661b0d",
     "scripts/ci-workroom-workerd-server.mjs": "a261e9ce630bcf3f9b7f47ff9ef5a239b5fb39b2a9937da0254fe95efa34f778",
     "scripts/e2e-admin-server.d.mts": "fabd4ba553548981c3b8a5521b87444b55bc999a484c028b6f204a4e7cff57b4",
     "scripts/e2e-admin-server.mjs": "3d299a24f89c83f85dd6937d5b9fbe2855965547ed2b9f34731e38577dd850dd",
