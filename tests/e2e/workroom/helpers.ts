@@ -257,7 +257,12 @@ export async function adminLogin(
   if (!verification.ok()) {
     let code = "UNKNOWN";
     try {
-      code = (await verification.json()).code ?? code;
+      const payload = (await verification.json()) as {
+        error?: { code?: unknown };
+        code?: unknown;
+      };
+      const responseCode = payload?.error?.code ?? payload?.code;
+      if (typeof responseCode === "string") code = responseCode;
     } catch {}
     throw new Error(
       `WORKROOM_TOTP_VERIFY_REJECTED_${verification.status()}_${code}`,
