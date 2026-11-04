@@ -1,5 +1,5 @@
 /** Disposable CI acceptance. This entry point never contacts the operational project. */
-import { execFileSync, spawnSync } from "node:child_process";
+import { execFileSync, spawnSync, spawn } from "node:child_process";
 import {
   mkdtempSync,
   mkdirSync,
@@ -31,11 +31,20 @@ if (
   process.env.APP_ENV !== "test"
 )
   throw Error("WORKROOM_DISPOSABLE_CI_REQUIRED");
-verifyReceipt(
-  JSON.parse(
-    readFileSync("test-results/workroom-application/receipt.json", "utf8"),
+const workerd = process.env.WORKROOM_CI_RUNTIME === "workerd";
+if (process.env.WORKROOM_CI_RUNTIME && !workerd)
+  throw Error("WORKROOM_UNKNOWN_RUNTIME");
+const buildReceipt = JSON.parse(
+  readFileSync(
+    workerd
+      ? "test-results/workroom-cloudflare-build/receipt.json"
+      : "test-results/workroom-application/receipt.json",
+    "utf8",
   ),
 );
+verifyReceipt(buildReceipt);
+if (workerd && buildReceipt.gate !== "cloudflare-build")
+  throw Error("WORKROOM_CLOUDFLARE_RECEIPT_REQUIRED");
 let env = omitLiveProviders({
   ...process.env,
   APP_ENV: "test",
@@ -63,6 +72,7 @@ run(process.execPath, [
   stage,
 ]);
 let started = false;
+const previewServers = [];
 try {
   const startup = spawnSync(
     "supabase",
@@ -103,6 +113,51 @@ try {
     LOCAL_SUPABASE_DB_URL: credentials.dbUrl,
     LOCAL_SUPABASE_PROJECT_ID: "putduk-mining-ci-r2-20261009",
   };
+  if (workerd) {
+    const { inventory } = await import("./ci-workroom-cloudflare-output.mjs");
+    const review = JSON.parse(
+      readFileSync(
+        "test-results/workroom-cloudflare-build/output-review.json",
+        "utf8",
+      ),
+    );
+    for (const output of review)
+      if (
+        JSON.stringify(inventory(output.root)) !==
+        JSON.stringify(output.inventory)
+      )
+        throw Error("WORKROOM_OUTPUT_INVENTORY_CHANGED");
+    for (const app of ["member", "admin"])
+      previewServers.push(
+        spawn(
+          process.execPath,
+          ["scripts/ci-workroom-workerd-server.mjs", app],
+          { env, stdio: "inherit" },
+        ),
+      );
+    for (const port of [3000, 3100]) {
+      const deadline = Date.now() + 180000;
+      let ready = false;
+      while (Date.now() < deadline) {
+        if (previewServers.some((child) => child.exitCode !== null))
+          throw Error("WORKROOM_PREVIEW_EXITED");
+        try {
+          const r = await fetch(
+            "http://127.0.0.1:" + port + "/__workroom_ci_runtime",
+            { signal: AbortSignal.timeout(2000) },
+          );
+          if (r.ok) {
+            ready = true;
+            break;
+          }
+        } catch {}
+        await new Promise((resolve) => setTimeout(resolve, 500));
+      }
+      if (!ready) throw Error("WORKROOM_PREVIEW_START_TIMEOUT");
+    }
+    run(process.execPath, ["scripts/ci-workroom-workerd-preflight.mjs"]);
+    env.WORKROOM_REUSE_SERVER = "1";
+  }
   // Historical first-administrator assertions run before maintenance identities.
   run(process.execPath, [
     "scripts/workroom-native-runner.mjs",
@@ -267,10 +322,17 @@ try {
     `${evidence}/receipt.json`,
     JSON.stringify(
       makeReceipt({
-        gate: "native-worker-auth",
+        gate: workerd ? "workerd-native-worker-auth" : "native-worker-auth",
         startedAt,
         files: [
           ...native,
+          ...(workerd
+            ? [
+                "test-results/workroom-cloudflare-runtime/preflight.json",
+                "test-results/workroom-cloudflare-runtime/member-clone.json",
+                "test-results/workroom-cloudflare-runtime/admin-clone.json",
+              ]
+            : []),
           browserPath,
           retainedPath,
           financialPath,
@@ -285,6 +347,7 @@ try {
     ) + "\n",
   );
 } finally {
+  for (const server of previewServers) server.kill("SIGTERM");
   // Copy native diagnostics even when a phase fails. Credentials and Auth DOM are excluded by upload paths.
   try {
     cpSync(resolve(stage, "evidence"), "test-results/workroom-native", {

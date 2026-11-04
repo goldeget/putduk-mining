@@ -105,3 +105,89 @@ jobs:
             test-results/worker
             test-results/workroom-worker-201
           if-no-files-found: error
+  cloudflare-build:
+    name: WORKROOM Cloudflare deploy artifact build
+    permissions:
+      contents: read
+      actions: read
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: pnpm/action-setup@v6.1.0
+        with:
+          version: 12.6.0
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - run: |
+          node scripts/ci-workroom-checkout.mjs
+          pnpm install --frozen-lockfile
+          node scripts/ci-workroom-cloudflare-build.mjs
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - uses: actions/upload-artifact@v7
+        with:
+          name: workroom-cloudflare-build-${{ github.run_id }}-${{ github.run_attempt }}-${{ env.CI_HEAD_SHA }}
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 3
+          path: |
+            .cloudflare/output/v0
+            apps/admin/.cloudflare/output/v0
+            test-results/workroom-cloudflare-build
+  cloudflare-acceptance:
+    name: WORKROOM workerd native and authenticated acceptance
+    needs: cloudflare-build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      WORKROOM_CI_RUNTIME: workerd
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: pnpm/action-setup@v6.1.0
+        with:
+          version: 12.6.0
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - uses: supabase/setup-cli@v3
+        with:
+          version: 2.113.0
+      - run: |
+          node scripts/ci-workroom-checkout.mjs
+          pnpm install --frozen-lockfile
+          pnpm exec playwright install --with-deps chromium
+      - uses: actions/download-artifact@v7
+        with:
+          name: workroom-cloudflare-build-${{ github.run_id }}-${{ github.run_attempt }}-${{ env.CI_HEAD_SHA }}
+          path: .
+      - name: Disposable native security, worker and real Auth acceptance
+        run: node scripts/ci-workroom-acceptance.mjs
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: workroom-workerd-acceptance-${{ github.run_id }}-${{ github.run_attempt }}-${{ env.CI_HEAD_SHA }}
+          path: |
+            test-results/workroom-native
+            test-results/workroom-auth/results.json
+            test-results/workroom-auth/retained-results.json
+            test-results/workroom-auth/financial-results.json
+            test-results/workroom-auth/public-successor-results.json
+            test-results/workroom-auth/retained-source/provenance.json
+            test-results/workroom-auth/*member-mobile.png
+            test-results/workroom-cloudflare-runtime
+            test-results/workroom-acceptance
+            test-results/worker
+            test-results/workroom-worker-201
+          if-no-files-found: error

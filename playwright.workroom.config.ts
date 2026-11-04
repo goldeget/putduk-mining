@@ -1,5 +1,6 @@
 import { defineConfig, devices } from "@playwright/test";
 
+const workerd = process.env.WORKROOM_CI_RUNTIME === "workerd";
 const listing = process.argv.includes("--list");
 const env = { ...process.env, APP_ENV: "test", E2E_NEXT_START: "1" };
 if (!listing) {
@@ -46,14 +47,18 @@ export default defineConfig({
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
   webServer: [
     {
-      command: `node scripts/e2e-web-server.mjs pnpm exec next start --hostname 127.0.0.1 --port ${memberPort}`,
+      command: workerd
+        ? "node scripts/ci-workroom-workerd-server.mjs member"
+        : `node scripts/e2e-web-server.mjs pnpm exec next start --hostname 127.0.0.1 --port ${memberPort}`,
       url: `http://127.0.0.1:${memberPort}/login`,
       reuseExistingServer: process.env.WORKROOM_REUSE_SERVER === "1",
       timeout: 180_000,
       env: { ...env, NEXT_PUBLIC_APP_URL: `http://127.0.0.1:${memberPort}` },
     },
     {
-      command: `node scripts/e2e-web-server.mjs pnpm --dir apps/admin exec next start --hostname 127.0.0.1 --port ${adminPort}`,
+      command: workerd
+        ? "node scripts/ci-workroom-workerd-server.mjs admin"
+        : `node scripts/e2e-web-server.mjs pnpm --dir apps/admin exec next start --hostname 127.0.0.1 --port ${adminPort}`,
       url: `http://127.0.0.1:${adminPort}/login`,
       reuseExistingServer: process.env.WORKROOM_REUSE_SERVER === "1",
       timeout: 180_000,

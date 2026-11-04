@@ -25,32 +25,29 @@ function client(result: unknown = receipt(), error: unknown = null) {
   return { rpc, db: { rpc } as unknown as SupabaseClient };
 }
 
-describe("original-backed scheduler orchestration", () => {
-  it("prepares before any claim and sends only bounded operational pagination", async () => {
+describe("WORKROOM scheduler retirement and retained protocol validation", () => {
+  it("never schedules funding and keeps bounded operational claims even for an old enabling caller", async () => {
     const { db, rpc } = client(receipt({ scanned: 1, scheduled: 1 }));
-    const summary = await runWorkerCycle(db, { workerId: "scheduler-test" });
+    const summary = await runWorkerCycle(db, {
+      workerId: "scheduler-test",
+      allowFundingJobs: true,
+    });
     expect(rpc.mock.calls.map(([name]) => name)).toEqual([
-      "schedule_due_funding_jobs",
       "claim_outbox_events",
       "claim_system_jobs",
     ]);
-    expect(rpc).toHaveBeenNthCalledWith(1, "schedule_due_funding_jobs", {
-      p_batch_size: 25,
-      p_after_user_id: null,
+    // The historical scheduler helper remains testable, but the replacement
+    // runner never invokes it or accepts a caller's attempt to reenable mining.
+    expect(rpc).toHaveBeenCalledWith("claim_system_jobs", {
+      p_worker_id: "scheduler-test",
+      p_batch_size: 1,
+      p_lease_seconds: 120,
+      p_allow_funding: false,
     });
-    // Healthy schedule admits funding via the 3-arg claim (DB defaults allow).
-    // Do not send p_allow_funding:false — that would starve principal accrual.
-    expect(rpc).toHaveBeenCalledWith(
-      "claim_system_jobs",
-      expect.not.objectContaining({ p_allow_funding: false }),
-    );
     expect(summary.scheduler).toEqual({
-      contract_version: 1,
-      scanned: 1,
-      scheduled: 1,
-      blocked: 0,
-      busy: 0,
-      paused: false,
+      paused: true,
+      reason: "WORKROOM_REPLACEMENT",
+      scheduled: 0,
     });
     expect(workerCycleFailed(summary)).toBe(false);
   });
@@ -74,21 +71,29 @@ describe("original-backed scheduler orchestration", () => {
     });
   });
 
-  it("preserves operational claims while blocking funding on an unavailable scheduler", async () => {
+  it("retains the helper RPC error without treating an uncalled retired scheduler as an operational outage", async () => {
     const { db, rpc } = client(null, { message: "RPC_NOT_INSTALLED" });
+    await expect(scheduleFundingJobs(db)).rejects.toThrow("RPC_NOT_INSTALLED");
+    rpc.mockClear();
     const summary = await runWorkerCycle(db);
-    expect(rpc).toHaveBeenCalledTimes(3);
+    expect(rpc.mock.calls.map(([name]) => name)).toEqual([
+      "claim_outbox_events",
+      "claim_system_jobs",
+    ]);
     expect(summary.jobs.claimed).toBe(0);
     expect(summary.outbox.claimed).toBe(0);
-    expect(workerCycleFailed(summary)).toBe(true);
-    expect(summary.scheduler).toEqual({ error: "RPC_NOT_INSTALLED" });
+    expect(workerCycleFailed(summary)).toBe(false);
+    expect(summary.scheduler).toEqual({
+      paused: true,
+      reason: "WORKROOM_REPLACEMENT",
+      scheduled: 0,
+    });
   });
 
-  it("keeps operational jobs and outbox available while funding is stopped", async () => {
+  it("keeps operational jobs and outbox available without consulting an old scheduler pause receipt", async () => {
     const { db, rpc } = client(receipt({ paused: true }));
     const summary = await runWorkerCycle(db);
     expect(rpc.mock.calls.map(([name]) => name)).toEqual([
-      "schedule_due_funding_jobs",
       "claim_outbox_events",
       "claim_system_jobs",
     ]);
@@ -100,28 +105,31 @@ describe("original-backed scheduler orchestration", () => {
     expect(workerCycleFailed(summary)).toBe(false);
   });
 
-  it.each([
-    null,
-    [],
-    receipt({ contract_version: 2 }),
-    receipt({ scanned: -1 }),
-    receipt({ scanned: 26 }),
-    receipt({ scheduled: 1 }),
-    receipt({ busy: 0.5 }),
-    receipt({ next_cursor: "bad" }),
-    receipt({ scanned: 1, next_cursor: cursor }),
-    receipt({ paused: true, scanned: 1 }),
-    receipt({ amount_atomic: "1000000" }),
-  ])(
-    "blocks funding but preserves operational work on malformed scheduler response (%j)",
+  it.each(
+    [
+      null,
+      [],
+      receipt({ contract_version: 2 }),
+      receipt({ scanned: -1 }),
+      receipt({ scanned: 26 }),
+      receipt({ scheduled: 1 }),
+      receipt({ busy: 0.5 }),
+      receipt({ next_cursor: "bad" }),
+      receipt({ scanned: 1, next_cursor: cursor }),
+      receipt({ paused: true, scanned: 1 }),
+      receipt({ amount_atomic: "1000000" }),
+    ].map((response) => [response]),
+  )(
+    "the exported scheduler helper rejects a malformed receipt (%j)",
     async (response) => {
       const { db, rpc } = client(response);
-      const summary = await runWorkerCycle(db);
-      expect(rpc).toHaveBeenCalledTimes(3);
-      expect(summary.scheduler).toEqual({
-        error: "FUNDING_SCHEDULER_RESPONSE_INVALID",
+      await expect(scheduleFundingJobs(db)).rejects.toThrow(
+        "FUNDING_SCHEDULER_RESPONSE_INVALID",
+      );
+      expect(rpc).toHaveBeenCalledExactlyOnceWith("schedule_due_funding_jobs", {
+        p_batch_size: 25,
+        p_after_user_id: null,
       });
-      expect(workerCycleFailed(summary)).toBe(true);
     },
   );
 
@@ -135,14 +143,45 @@ describe("original-backed scheduler orchestration", () => {
       expect(rpc).not.toHaveBeenCalled();
     },
   );
+
+  it.each(["claim_outbox_events", "claim_system_jobs"])(
+    "still reports a real operational %s outage as a failed cycle",
+    async (failedClaim) => {
+      const errorLog = vi.spyOn(console, "error").mockImplementation(() => {});
+      try {
+        const rpc = vi.fn(async (name: string) => ({
+          data: [],
+          error:
+            name === failedClaim
+              ? { message: "OPERATIONAL_CLAIM_UNAVAILABLE" }
+              : null,
+        }));
+        const summary = await runWorkerCycle({
+          rpc,
+        } as unknown as SupabaseClient);
+        expect(rpc.mock.calls.map(([name]) => name)).toEqual([
+          "claim_outbox_events",
+          "claim_system_jobs",
+        ]);
+        expect(
+          failedClaim === "claim_outbox_events"
+            ? summary.outbox.claimError
+            : summary.jobs.claimError,
+        ).toBe("OPERATIONAL_CLAIM_UNAVAILABLE");
+        expect(workerCycleFailed(summary)).toBe(true);
+      } finally {
+        errorLog.mockRestore();
+      }
+    },
+  );
 });
 
-describe("independent operational work during a funding stop", () => {
+describe("independent operational work while funding is retired", () => {
   const jobId = "10624000-0000-4000-8000-000000000010";
   const revision = "10624000-0000-4000-8000-000000000011";
   const sourceEvent = "10624000-0000-4000-8000-000000000012";
   it.each(["pause", "rpc-error", "malformed"])(
-    "executes reconciliation despite scheduler %s",
+    "executes reconciliation without consulting retired scheduler state %s",
     async (mode) => {
       let claimed = false;
       const rpc = vi.fn(async (name: string) => {
@@ -190,6 +229,9 @@ describe("independent operational work during a funding stop", () => {
         p_job_id: jobId,
         p_worker_id: "operational-recon",
       });
+      expect(rpc.mock.calls.map(([name]) => name)).not.toContain(
+        "schedule_due_funding_jobs",
+      );
     },
   );
   it("executes approved CMS fanout through its existing completion command during pause", async () => {
@@ -235,7 +277,7 @@ describe("independent operational work during a funding stop", () => {
       "run_financial_reconciliation",
     );
   });
-  it("consumes the canonical safe-mode audit outbox despite scheduler outage", async () => {
+  it("consumes the canonical safe-mode audit outbox without calling the retired scheduler", async () => {
     const rpc = vi.fn(async (name: string) => {
       if (name === "schedule_due_funding_jobs")
         return { data: null, error: { message: "SCHEDULER_OUTAGE" } };
@@ -269,6 +311,9 @@ describe("independent operational work during a funding stop", () => {
       p_event_id: jobId,
       p_worker_id: "operational-audit",
     });
-    expect(workerCycleFailed(summary)).toBe(true);
+    expect(rpc.mock.calls.map(([name]) => name)).not.toContain(
+      "schedule_due_funding_jobs",
+    );
+    expect(workerCycleFailed(summary)).toBe(false);
   });
 });
