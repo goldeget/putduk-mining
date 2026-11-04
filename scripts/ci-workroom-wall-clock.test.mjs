@@ -76,3 +76,51 @@ test("queue time and still-running quality gates trigger bounded cancellation", 
     false,
   );
 });
+test("all-finished GitHub steps resolve a stale in-progress job without hiding failed steps", () => {
+  const finish = start + 5_000;
+  const stale = jobs().map((job) =>
+    job.name === CI_REQUIRED_JOBS[2]
+      ? {
+          ...job,
+          status: "in_progress",
+          conclusion: null,
+          completed_at: null,
+          steps: [
+            {
+              name: "Native and authenticated acceptance",
+              status: "completed",
+              conclusion: "success",
+              completed_at: new Date(finish - 1_000).toISOString(),
+            },
+            {
+              name: "Upload evidence",
+              status: "completed",
+              conclusion: "success",
+              completed_at: new Date(finish - 500).toISOString(),
+            },
+            {
+              name: "Complete job",
+              status: "completed",
+              conclusion: "success",
+              completed_at: new Date(finish).toISOString(),
+            },
+          ],
+        }
+      : job,
+  );
+  assert.equal(evaluateCiJobs(run, stale, finish + 1).accepted, true);
+
+  const failed = stale.map((job) =>
+    job.name === CI_REQUIRED_JOBS[2]
+      ? {
+          ...job,
+          steps: job.steps.map((step, index) =>
+            index === 0 ? { ...step, conclusion: "failure" } : step,
+          ),
+        }
+      : job,
+  );
+  const result = evaluateCiJobs(run, failed, finish + 1);
+  assert.equal(result.accepted, false);
+  assert.ok(result.problems.includes(`${CI_REQUIRED_JOBS[2]}: failure`));
+});

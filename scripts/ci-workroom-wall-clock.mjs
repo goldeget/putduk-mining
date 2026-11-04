@@ -38,6 +38,39 @@ export function assertCiRunIdentity(run, { runId, attempt, headSha }) {
   }
 }
 
+function resolvedJob(job) {
+  if (job.status === "completed") return job;
+  const steps = job.steps;
+  if (
+    job.status !== "in_progress" ||
+    !Array.isArray(steps) ||
+    steps.length === 0 ||
+    steps.at(-1)?.name !== "Complete job" ||
+    steps.some((step) => step.status !== "completed") ||
+    steps.at(-1)?.conclusion !== "success"
+  )
+    return job;
+
+  const failures = steps.filter(
+    (step) => !["success", "skipped"].includes(step.conclusion),
+  );
+  const conclusion = failures.length
+    ? failures.some((step) => step.conclusion === "failure")
+      ? "failure"
+      : failures[0].conclusion
+    : "success";
+  const completed = steps
+    .map((step) => Date.parse(step.completed_at ?? ""))
+    .filter(Number.isFinite);
+  if (completed.length !== steps.length) return job;
+  return {
+    ...job,
+    status: "completed",
+    conclusion,
+    completed_at: new Date(Math.max(...completed)).toISOString(),
+  };
+}
+
 export function evaluateCiJobs(run, jobs, nowMs) {
   // Initial runs include queue time. Full reruns get their own attempt clock.
   const startMs = timestamp(
@@ -52,7 +85,8 @@ export function evaluateCiJobs(run, jobs, nowMs) {
   const seen = new Set();
   const problems = [];
   const pending = [];
-  for (const job of jobs) {
+  for (const rawJob of jobs) {
+    const job = resolvedJob(rawJob);
     if (!expected.has(job.name) || seen.has(job.name)) {
       problems.push(`Unexpected or duplicate job: ${job.name}`);
       if (job.status !== "completed") pending.push(job.name);
