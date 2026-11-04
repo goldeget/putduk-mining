@@ -154,6 +154,20 @@ jobs:
           path: |
             test-results/workroom-cloudflare-build/output-review.json
             test-results/workroom-cloudflare-build/receipt.json
+      - uses: actions/upload-artifact@v7
+        with:
+          name: workroom-cloudflare-compact-${{ github.run_id }}-${{ github.run_attempt }}-${{ env.CI_HEAD_SHA }}
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 3
+          path: |
+            .cloudflare/output/v0
+            apps/admin/.cloudflare/output/v0
+            test-results/workroom-cloudflare-build
+            !.cloudflare/output/v0/workers/default/assets/brand/**
+            !.cloudflare/output/v0/workers/default/assets/ranks/**
+            !apps/admin/.cloudflare/output/v0/workers/default/assets/brand/**
+            !apps/admin/.cloudflare/output/v0/workers/default/assets/ranks/**
   cloudflare-acceptance:
     name: WORKROOM workerd native and authenticated acceptance
     needs: cloudflare-build
