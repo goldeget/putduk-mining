@@ -82,7 +82,11 @@ describe("admin auth page composition preserves live authority boundaries", () =
     ).toBe("/");
     expect(
       host.querySelector('input[name="email"]')?.getAttribute("type"),
-    ).toBe("email");
+    ).toBe("text");
+    expect(
+      host.querySelector('input[name="email"]')?.getAttribute("autocomplete"),
+    ).toBe("username");
+    expect(host.textContent).toContain("운영자 아이디 또는 이메일");
     expect(
       host
         .querySelector('input[name="password"]')

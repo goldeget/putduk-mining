@@ -3,7 +3,10 @@ import { act, createElement, type ReactNode } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { MfaGate } from "@/components/mfa-gate";
+import {
+  ADMIN_MFA_INTERNAL_PREPARE_ATTEMPTS,
+  MfaGate,
+} from "@/components/mfa-gate";
 
 const mocks = vi.hoisted(() => ({
   factorId: undefined as unknown,
@@ -40,6 +43,7 @@ function trustedFactorId(value: unknown) {
 let host: HTMLDivElement;
 let root: Root;
 beforeEach(() => {
+  vi.useFakeTimers();
   vi.clearAllMocks();
   Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
   mocks.prepareAdminMfaAction.mockImplementation(async () => {
@@ -67,6 +71,8 @@ afterEach(async () => {
   await act(async () => root.unmount());
   host.remove();
   vi.restoreAllMocks();
+  if (vi.isFakeTimers()) vi.clearAllTimers();
+  vi.useRealTimers();
 });
 
 describe("malformed verified factor display recovery, without auth command changes", () => {
@@ -76,6 +82,10 @@ describe("malformed verified factor display recovery, without auth command chang
       mocks.factorId = factorId;
       await act(async () =>
         root.render(createElement(MfaGate, { returnTo: "/today" })),
+      );
+      await act(async () => vi.runAllTimersAsync());
+      expect(mocks.prepareAdminMfaAction).toHaveBeenCalledTimes(
+        ADMIN_MFA_INTERNAL_PREPARE_ATTEMPTS,
       );
       expect(host.textContent).toContain("인증 정보를 확인하지 못했습니다");
       expect(host.textContent).not.toContain(
@@ -100,6 +110,7 @@ describe("malformed verified factor display recovery, without auth command chang
     await act(async () =>
       root.render(createElement(MfaGate, { returnTo: "/today" })),
     );
+    await act(async () => vi.runAllTimersAsync());
     mocks.factorId = "bca8ad9d-bfd6-4ccb-a5fb-bbba875a77fc";
     await act(async () =>
       host.querySelector<HTMLButtonElement>(".ghost-button")!.click(),
@@ -110,7 +121,9 @@ describe("malformed verified factor display recovery, without auth command chang
     ).toBe(false);
     expect(host.querySelector(".ghost-button")).toBeNull();
     expect(host.textContent).toContain("인증 앱에 표시된 6자리 코드를 입력");
-    expect(mocks.prepareAdminMfaAction).toHaveBeenCalledTimes(2);
+    expect(mocks.prepareAdminMfaAction).toHaveBeenCalledTimes(
+      ADMIN_MFA_INTERNAL_PREPARE_ATTEMPTS + 1,
+    );
     expect(mocks.replace).not.toHaveBeenCalled();
   });
 });

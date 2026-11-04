@@ -5,7 +5,7 @@ create schema workroom_native_evidence;
 revoke all on schema workroom_native_evidence from public,anon,authenticated,service_role;
 create table workroom_native_evidence.rows(schema_name text,table_name text,row_count bigint,digest text,primary key(schema_name,table_name));
 create table workroom_native_evidence.definers as
-select p.oid::regprocedure::text signature,pg_get_functiondef(p.oid) definition,
+select p.oid object_oid,p.oid::regprocedure::text signature,pg_get_functiondef(p.oid) definition,
  pg_get_userbyid(p.proowner) owner_name,pg_get_function_result(p.oid) result_type,p.proconfig,
  coalesce(p.proacl,acldefault('f',p.proowner))::text acl
 from pg_proc p join pg_namespace n on n.oid=p.pronamespace
