@@ -4,11 +4,14 @@ import { readFileSync } from "node:fs";
 import {
   assertWorkroomContentIdentity,
   buildWorkroomContentStage,
+  contentMergeDiagnostic,
 } from "./ci-workroom-content-stage.mjs";
 
 const repo = "goldeget/putduk-mining",
   head = "a".repeat(40),
   merge = "b".repeat(40);
+const base = "c".repeat(40);
+const mergeCommit = { sha: merge, parents: [{ sha: base }, { sha: head }] };
 const env = {
   GITHUB_ACTIONS: "true",
   GITHUB_REPOSITORY: repo,
@@ -35,7 +38,7 @@ const payload = {
   repository: { full_name: repo },
   pull_request: {
     head: { sha: head, repo: { full_name: repo } },
-    base: { repo: { full_name: repo } },
+    base: { sha: base, repo: { full_name: repo } },
     merge_commit_sha: merge,
   },
 };
@@ -46,6 +49,7 @@ test("actual PR head/merge identity works without rewriting GITHUB_SHA", () => {
     run,
     workflow,
     payload,
+    mergeCommit,
   );
   assert.equal(identity.githubSha, merge);
   assert.equal(env.GITHUB_SHA, merge);
@@ -68,6 +72,57 @@ test("actual PR head/merge identity works without rewriting GITHUB_SHA", () => {
       payload,
     ),
   );
+});
+test("null or stale payload merge SHA is accepted only with the exact actual merge parents", () => {
+  for (const payloadMerge of [null, "d".repeat(40)]) {
+    const stale = {
+      ...payload,
+      pull_request: { ...payload.pull_request, merge_commit_sha: payloadMerge },
+    };
+    assert.doesNotThrow(() =>
+      assertWorkroomContentIdentity(
+        env,
+        head,
+        run,
+        workflow,
+        stale,
+        mergeCommit,
+      ),
+    );
+  }
+  for (const invalid of [
+    null,
+    { ...mergeCommit, sha: head },
+    { sha: merge, parents: [{ sha: head }, { sha: base }] },
+    { sha: merge, parents: [{ sha: base }, { sha: "d".repeat(40) }] },
+    { sha: merge, parents: [...mergeCommit.parents, { sha: "e".repeat(40) }] },
+  ])
+    assert.throws(() =>
+      assertWorkroomContentIdentity(env, head, run, workflow, payload, invalid),
+    );
+  // Supported pull_request events document a synthetic merge SHA. Direct head
+  // execution is admitted only by the existing push/workflow_dispatch branches.
+  assert.throws(() =>
+    assertWorkroomContentIdentity(
+      { ...env, GITHUB_SHA: head },
+      head,
+      run,
+      workflow,
+      payload,
+      { sha: head, parents: [{ sha: base }] },
+    ),
+  );
+});
+test("merge diagnostics contain only fixed keys and validated SHAs, never credentials", () => {
+  const diagnostic = contentMergeDiagnostic(
+    { ...env, GH_TOKEN: "must-not-appear" },
+    head,
+    { ...payload, secret: "must-not-appear" },
+    mergeCommit,
+  );
+  assert.equal(diagnostic.githubSha, merge);
+  assert.deepEqual(diagnostic.verifiedParents, [base, head]);
+  assert.equal(JSON.stringify(diagnostic).includes("must-not-appear"), false);
 });
 test("manual dispatch belongs only to exact full workflow ID/path/name and direct head", () => {
   const directEnv = {
@@ -120,6 +175,7 @@ test("adapter reverses exactly to the frozen original and retains all blob/tree 
     run,
     workflow,
     payload,
+    mergeCommit,
   );
   const options = {
     rootPath: "/approved/checkout",

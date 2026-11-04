@@ -42,12 +42,35 @@ const need = (value, reason) => {
 };
 const hash = (value) => createHash("sha256").update(value).digest("hex");
 
+export function contentMergeDiagnostic(
+  env,
+  checkoutSha,
+  payload,
+  mergeCommit = null,
+) {
+  const sha = (value) =>
+    typeof value === "string" && /^[a-f0-9]{40}$/.test(value) ? value : null;
+  return {
+    state: "WORKROOM_CONTENT_MERGE_IDENTITY",
+    checkoutSha: sha(checkoutSha),
+    githubSha: sha(env.GITHUB_SHA),
+    payloadHeadSha: sha(payload?.pull_request?.head?.sha),
+    payloadBaseSha: sha(payload?.pull_request?.base?.sha),
+    payloadMergeSha: sha(payload?.pull_request?.merge_commit_sha),
+    verifiedCommitSha: sha(mergeCommit?.sha),
+    verifiedParents: (mergeCommit?.parents ?? []).map((parent) =>
+      sha(parent.sha),
+    ),
+  };
+}
+
 export function assertWorkroomContentIdentity(
   env,
   checkoutSha,
   run,
   workflow,
   payload,
+  mergeCommit = null,
 ) {
   const allowed = workflows.get(run?.path);
   need(
@@ -84,11 +107,17 @@ export function assertWorkroomContentIdentity(
     need(
       pr?.head?.sha === checkoutSha &&
         pr.head.repo?.full_name === repository &&
-        pr.base?.repo?.full_name === repository &&
-        /^[a-f0-9]{40}$/.test(env.GITHUB_SHA ?? "") &&
-        (env.GITHUB_SHA === pr.merge_commit_sha ||
-          env.GITHUB_SHA === checkoutSha),
-      "PR_HEAD_AND_MERGE_IDENTITY",
+        pr.base?.repo?.full_name === repository,
+      "PR_HEAD_REPOSITORY_IDENTITY",
+    );
+    need(
+      /^[a-f0-9]{40}$/.test(env.GITHUB_SHA ?? "") &&
+        /^[a-f0-9]{40}$/.test(pr.base.sha ?? "") &&
+        mergeCommit?.sha === env.GITHUB_SHA &&
+        mergeCommit.parents?.length === 2 &&
+        mergeCommit.parents[0].sha === pr.base.sha &&
+        mergeCommit.parents[1].sha === checkoutSha,
+      "PR_MERGE_PARENT_IDENTITY",
     );
   } else need(env.GITHUB_SHA === checkoutSha, "DIRECT_EVENT_HEAD");
   return {
@@ -102,6 +131,13 @@ export function assertWorkroomContentIdentity(
     workflowPath: workflow.path,
     workflowName: run.name,
     metadataWorkflowName: workflow.name,
+    mergeProof:
+      run.event === "pull_request"
+        ? {
+            sha: mergeCommit.sha,
+            parents: mergeCommit.parents.map((parent) => parent.sha),
+          }
+        : null,
   };
 }
 
@@ -158,7 +194,7 @@ async function main() {
   need(/^[0-9]+$/.test(env.GITHUB_RUN_ID ?? ""), "RUN_ID");
   const request = async (path) => {
     need(
-      /^\/actions\/(?:runs\/[0-9]+|workflows\/ci(?:-full-e2e)?\.yml)$/.test(
+      /^(?:\/actions\/(?:runs\/[0-9]+|workflows\/ci(?:-full-e2e)?\.yml)|\/git\/commits\/[a-f0-9]{40})$/.test(
         path,
       ),
       "API_SCOPE",
@@ -183,12 +219,27 @@ async function main() {
   const workflow = await request(
     `/actions/workflows/${run.path.split("/").at(-1)}`,
   );
+  const payload = JSON.parse(readFileSync(env.GITHUB_EVENT_PATH, "utf8"));
+  console.error(
+    JSON.stringify(contentMergeDiagnostic(env, checkoutSha, payload)),
+  );
+  let mergeCommit = null;
+  if (run.event === "pull_request") {
+    need(/^[a-f0-9]{40}$/.test(env.GITHUB_SHA ?? ""), "PR_MERGE_SHA_REQUIRED");
+    mergeCommit = await request(`/git/commits/${env.GITHUB_SHA}`);
+    console.error(
+      JSON.stringify(
+        contentMergeDiagnostic(env, checkoutSha, payload, mergeCommit),
+      ),
+    );
+  }
   const identity = assertWorkroomContentIdentity(
     env,
     checkoutSha,
     run,
     workflow,
-    JSON.parse(readFileSync(env.GITHUB_EVENT_PATH, "utf8")),
+    payload,
+    mergeCommit,
   );
   const source = readFileSync(resolve(root, originalPath), "utf8").replaceAll(
     "\r\n",
