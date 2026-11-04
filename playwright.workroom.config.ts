@@ -14,6 +14,8 @@ if (!listing) {
 }
 const memberPort = process.env.E2E_WEB_PORT ?? "3000";
 const adminPort = process.env.E2E_ADMIN_PORT ?? "3100";
+const adminHost =
+  process.env.E2E_ADMIN_HOST ?? (workerd ? "127.0.0.1" : "localhost");
 for (const port of [memberPort, adminPort])
   if (!/^\d{4,5}$/.test(port) || Number(port) > 65535)
     throw new Error("INVALID_LOCAL_PORT");
@@ -64,8 +66,8 @@ export default defineConfig({
       timeout: 180_000,
       env: {
         ...env,
-        NEXT_PUBLIC_APP_URL: `http://localhost:${adminPort}`,
-        ADMIN_APP_URL: `http://localhost:${adminPort}`,
+        NEXT_PUBLIC_APP_URL: `http://${adminHost}:${adminPort}`,
+        ADMIN_APP_URL: `http://${adminHost}:${adminPort}`,
       },
     },
   ],

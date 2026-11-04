@@ -247,7 +247,22 @@ export async function adminLogin(
   await page
     .locator('input[inputmode="numeric"]')
     .fill(await nextTotpCode(secret));
+  const totpResponse = page.waitForResponse(
+    (response) =>
+      response.url() ===
+      new URL("/api/v1/admin/session/totp-verify", adminOrigin).toString(),
+  );
   await page.getByRole("button", { name: "인증 완료" }).click();
+  const verification = await totpResponse;
+  if (!verification.ok()) {
+    let code = "UNKNOWN";
+    try {
+      code = (await verification.json()).code ?? code;
+    } catch {}
+    throw new Error(
+      `WORKROOM_TOTP_VERIFY_REJECTED_${verification.status()}_${code}`,
+    );
+  }
   await page.waitForURL((url) => !url.pathname.includes("/mfa"));
   await adminState(page);
   // Never persist the TOTP secret, Auth JWT, cookies or password in evidence.
