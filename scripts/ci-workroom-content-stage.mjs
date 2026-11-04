@@ -71,12 +71,21 @@ export function assertWorkroomContentIdentity(
   workflow,
   payload,
   mergeCommit = null,
+  expectedJob = "application",
 ) {
   const allowed = workflows.get(run?.path);
   need(
     env.GITHUB_ACTIONS === "true" &&
       env.GITHUB_REPOSITORY === repository &&
-      env.GITHUB_JOB === "application" &&
+      [
+        "application",
+        "acceptance",
+        "cloudflare-build",
+        "cloudflare-acceptance",
+      ].includes(expectedJob) &&
+      env.GITHUB_JOB === expectedJob &&
+      (!expectedJob.startsWith("cloudflare-") ||
+        run?.path === ".github/workflows/ci-full-e2e.yml") &&
       env.CI_HEAD_SHA === checkoutSha &&
       /^[a-f0-9]{40}$/.test(checkoutSha) &&
       /^[0-9]+$/.test(env.GITHUB_RUN_ID ?? "") &&
@@ -122,6 +131,7 @@ export function assertWorkroomContentIdentity(
   } else need(env.GITHUB_SHA === checkoutSha, "DIRECT_EVENT_HEAD");
   return {
     repository,
+    job: expectedJob,
     checkoutSha,
     githubSha: env.GITHUB_SHA,
     runId: env.GITHUB_RUN_ID,
@@ -181,10 +191,10 @@ export function buildWorkroomContentStage(
   return staged;
 }
 
-async function main() {
+export async function readWorkroomRunIdentity(expectedJob = "application") {
   const env = process.env;
   need(
-    process.argv.length === 2 && env.GH_TOKEN && env.GITHUB_EVENT_PATH,
+    env.GH_TOKEN && env.GITHUB_EVENT_PATH,
     "ACTUAL_TOKEN_AND_EVENT_REQUIRED",
   );
   const git = (...args) =>
@@ -240,7 +250,15 @@ async function main() {
     workflow,
     payload,
     mergeCommit,
+    expectedJob,
   );
+  return identity;
+}
+
+async function main() {
+  need(process.argv.length === 2, "NO_ARGUMENTS_REQUIRED");
+  const env = process.env;
+  const identity = await readWorkroomRunIdentity();
   const source = readFileSync(resolve(root, originalPath), "utf8").replaceAll(
     "\r\n",
     "\n",

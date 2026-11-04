@@ -178,7 +178,7 @@ try {
   const legacyWorkerStartedAt = Date.now();
   run("pnpm", ["test:worker"]);
   run(process.execPath, [
-    "scripts/assert-worker-report.mjs",
+    "scripts/ci-workroom-worker-report.mjs",
     "test-results/worker/vitest.json",
     "--started-after",
     String(legacyWorkerStartedAt),
@@ -201,7 +201,7 @@ try {
   const workerStartedAt = Date.now();
   run("pnpm", ["test:worker"]);
   run(process.execPath, [
-    "scripts/assert-worker-report.mjs",
+    "scripts/ci-workroom-worker-report.mjs",
     "test-results/worker/vitest.json",
     "--started-after",
     String(workerStartedAt),

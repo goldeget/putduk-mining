@@ -77,3 +77,38 @@ export function localConfig(config, env, port) {
   clone.name = "workroom-local-preview-only-" + port;
   return clone;
 }
+
+export function adaptPreviewCsp(value, expected) {
+  if (
+    !value ||
+    value !== expected ||
+    !value.includes("default-src 'self'") ||
+    !value.includes("object-src 'none'") ||
+    !value.includes("frame-ancestors 'none'") ||
+    value.includes("unsafe-eval") ||
+    value.includes("127.0.0.1") ||
+    value.includes("localhost")
+  )
+    throw Error("WORKROOM_EXACT_PRODUCTION_CSP_REQUIRED");
+  const directives = value.split("; "),
+    connect = directives.findIndex((d) => d.startsWith("connect-src ")),
+    upgrade = directives.indexOf("upgrade-insecure-requests");
+  if (
+    connect < 0 ||
+    upgrade < 0 ||
+    directives.filter((d) => d.startsWith("connect-src ")).length !== 1
+  )
+    throw Error("WORKROOM_CSP_DIRECTIVE_ROSTER");
+  const local = [...directives];
+  local[connect] += " http://127.0.0.1:63421 ws://127.0.0.1:63421";
+  local.splice(upgrade, 1);
+  const inverse = [...local];
+  const target = inverse.findIndex((d) => d.startsWith("connect-src "));
+  inverse[target] = inverse[target].replace(
+    " http://127.0.0.1:63421 ws://127.0.0.1:63421",
+    "",
+  );
+  inverse.splice(upgrade, 0, "upgrade-insecure-requests");
+  if (inverse.join("; ") !== value) throw Error("WORKROOM_CSP_INVERSE_CHANGED");
+  return local.join("; ");
+}

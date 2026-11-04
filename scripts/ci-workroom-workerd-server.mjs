@@ -13,6 +13,7 @@ import { cloudflare } from "@cloudflare/vite-plugin";
 import {
   inventory,
   localConfig,
+  adaptPreviewCsp,
   sha256,
 } from "./ci-workroom-cloudflare-output.mjs";
 const app = process.argv[2];
@@ -44,9 +45,23 @@ const entry = original.manifest.mainModule;
 if (!/^[A-Za-z0-9_./-]+\.js$/.test(entry) || entry.split("/").includes(".."))
   throw Error("WORKROOM_ENTRY_PATH");
 const wrapper = "__workroom_local_preview_only.js";
-const wrapperSource = `import original from './${entry}';
+const review = JSON.parse(
+  readFileSync(
+    "test-results/workroom-cloudflare-build/output-review.json",
+    "utf8",
+  ),
+).find((row) => resolve(row.root) === source);
+if (
+  !review?.expectedProductionCsp ||
+  sha256(review.expectedProductionCsp) !== review.productionCspSha256
+)
+  throw Error("WORKROOM_REVIEWED_CSP_DIGEST");
+const wrapperSource = `const adaptPreviewCsp=${adaptPreviewCsp.toString()};
+const expectedCsp=${JSON.stringify(review.expectedProductionCsp)};
+const expectedCspHash=${JSON.stringify(review.productionCspSha256)};
+import original from './${entry}';
 const assertLocal=env=>{if(env.WORKROOM_LOCAL_PREVIEW_ONLY!=='true'||env.APP_ENV!=='test'||env.NEXT_PUBLIC_SUPABASE_URL!=='http://127.0.0.1:63421')throw Error('WORKROOM_NONLOCAL_PREVIEW_BLOCKED');};
-export default {...original,async fetch(request,env,ctx){if(!['127.0.0.1','localhost'].includes(new URL(request.url).hostname))return new Response('LOCAL_PREVIEW_ONLY',{status:503});assertLocal(env);if(new URL(request.url).pathname==='/__workroom_ci_runtime'){const key=new TextEncoder().encode(env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY);const hash=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',key)),b=>b.toString(16).padStart(2,'0')).join('');return Response.json({APP_ENV:env.APP_ENV,NEXT_PUBLIC_SUPABASE_URL:env.NEXT_PUBLIC_SUPABASE_URL,publicKeySha256:hash,NEXT_PUBLIC_APP_URL:env.NEXT_PUBLIC_APP_URL,localOnly:true});}return original.fetch(request,env,ctx);}};
+export default {...original,async fetch(request,env,ctx){if(!['127.0.0.1','localhost'].includes(new URL(request.url).hostname))return new Response('LOCAL_PREVIEW_ONLY',{status:503});assertLocal(env);if(new URL(request.url).pathname==='/__workroom_ci_runtime'){const key=new TextEncoder().encode(env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY);const hash=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',key)),b=>b.toString(16).padStart(2,'0')).join('');return Response.json({APP_ENV:env.APP_ENV,NEXT_PUBLIC_SUPABASE_URL:env.NEXT_PUBLIC_SUPABASE_URL,publicKeySha256:hash,NEXT_PUBLIC_APP_URL:env.NEXT_PUBLIC_APP_URL,localOnly:true});}const response=await original.fetch(request,env,ctx);const csp=response.headers.get("content-security-policy");if(!csp)return response;const result=new Response(response.body,response);result.headers.set("content-security-policy",adaptPreviewCsp(csp,expectedCsp));result.headers.set("x-workroom-local-original-csp-sha256",expectedCspHash);result.headers.set("x-workroom-local-csp-inverse-exact","true");return result;}};
 `;
 config.manifest.mainModule = wrapper;
 writeFileSync(
@@ -73,6 +88,9 @@ writeFileSync(
       localOnly: true,
       originalInventorySha256: sha256(JSON.stringify(before)),
       inverseExact: true,
+      productionCspSha256: review.productionCspSha256,
+      cspLocalAdapter:
+        "exact original required; only loopback connect additions and upgrade-insecure-requests removal",
       changed: ["worker.config.json"],
       added: [wrapper],
       originalEntrypoint: entry,

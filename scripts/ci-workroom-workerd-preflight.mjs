@@ -1,10 +1,17 @@
 import { createHash } from "node:crypto";
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, writeFileSync, readFileSync } from "node:fs";
 const rows = [];
+const review = JSON.parse(
+  readFileSync(
+    "test-results/workroom-cloudflare-build/output-review.json",
+    "utf8",
+  ),
+);
 for (const port of [3000, 3100]) {
   const base = "http://127.0.0.1:" + port;
   const response = await fetch(base + "/__workroom_ci_runtime", {
       signal: AbortSignal.timeout(15000),
+      redirect: "manual",
     }),
     config = await response.json();
   const keyHash = createHash("sha256")
@@ -21,9 +28,36 @@ for (const port of [3000, 3100]) {
     throw Error("WORKROOM_RUNTIME_ISOLATION_FAILED");
   const page = await fetch(base + "/login", {
       signal: AbortSignal.timeout(15000),
+      redirect: "manual",
     }),
     html = await page.text(),
     csp = page.headers.get("content-security-policy");
+  const diagnostic = {
+    port,
+    status: page.status,
+    htmlBytes: Buffer.byteLength(html),
+    hasCsp: !!csp,
+    hasObjectNone: !!csp?.includes("object-src 'none'"),
+    hasLocalConnect: !!csp?.includes("127.0.0.1:63421"),
+    hasProductionBackend: html.includes("osrmyjgmpdspdcwqjwuv.supabase.co"),
+    hasSecretPrefix: html.includes("sb_secret_"),
+    redirected: page.status >= 300 && page.status < 400,
+  };
+  mkdirSync("test-results/workroom-cloudflare-runtime", { recursive: true });
+  writeFileSync(
+    "test-results/workroom-cloudflare-runtime/" +
+      port +
+      "-http-diagnostic.json",
+    JSON.stringify(diagnostic, null, 2) + "\n",
+  );
+  console.log("WORKROOM_WORKERD_HTTP_DIAGNOSTIC " + JSON.stringify(diagnostic));
+  const expectedCspHash = review[port === 3000 ? 0 : 1].productionCspSha256;
+  if (
+    page.headers.get("x-workroom-local-original-csp-sha256") !==
+      expectedCspHash ||
+    page.headers.get("x-workroom-local-csp-inverse-exact") !== "true"
+  )
+    throw Error("WORKROOM_ORIGINAL_CSP_PROOF_REQUIRED");
   if (
     !page.ok ||
     html.length < 500 ||

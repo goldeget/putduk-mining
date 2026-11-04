@@ -4,6 +4,9 @@ import {
   inventory,
   productionConfig,
 } from "./ci-workroom-cloudflare-output.mjs";
+import { buildPublicContentSecurityPolicy } from "../lib/support/csp.ts";
+import { buildAdminContentSecurityPolicy } from "../apps/admin/lib/content-security-policy.ts";
+import { sha256 } from "./ci-workroom-cloudflare-output.mjs";
 import { makeReceipt } from "./ci-workroom-evidence.mjs";
 if (
   process.env.GITHUB_ACTIONS !== "true" ||
@@ -25,6 +28,7 @@ for (const [dir, name] of [
   const env = {
     ...process.env,
     APP_ENV: "production",
+    NODE_ENV: "production",
     NEXT_PUBLIC_APP_ENV: "production",
     NEXT_PUBLIC_APP_URL:
       dir === "."
@@ -61,13 +65,30 @@ for (const [dir, name] of [
   )
     throw Error("WORKROOM_DEPLOY_OUTPUT_INCOMPLETE");
   for (const row of rows) files.push(root + "/" + row.path);
+  const expectedProductionCsp = (
+    dir === "."
+      ? buildPublicContentSecurityPolicy
+      : buildAdminContentSecurityPolicy
+  )({
+    appEnv: env.APP_ENV,
+    nodeEnv: env.NODE_ENV,
+    supabaseUrl: env.NEXT_PUBLIC_SUPABASE_URL,
+  });
+  if (
+    expectedProductionCsp.includes("127.0.0.1") ||
+    !expectedProductionCsp.includes("upgrade-insecure-requests")
+  )
+    throw Error("WORKROOM_PRODUCTION_CSP_BUILD_INPUT");
   review.push({
+    expectedProductionCsp,
+    productionCspSha256: sha256(expectedProductionCsp),
     root,
     name,
     bindings,
     inventory: rows,
     publicBuildEnvironment: {
       APP_ENV: env.APP_ENV,
+      NODE_ENV: env.NODE_ENV,
       NEXT_PUBLIC_APP_ENV: env.NEXT_PUBLIC_APP_ENV,
       NEXT_PUBLIC_APP_URL: env.NEXT_PUBLIC_APP_URL,
       NEXT_PUBLIC_SUPABASE_URL: env.NEXT_PUBLIC_SUPABASE_URL,

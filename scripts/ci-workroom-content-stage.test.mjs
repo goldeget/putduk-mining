@@ -199,3 +199,93 @@ test("adapter reverses exactly to the frozen original and retains all blob/tree 
     /EXACT_ADAPTER_SPAN/,
   );
 });
+
+test("worker acceptance proves its actual PR job without rewriting identity env", () => {
+  const acceptance = { ...env, GITHUB_JOB: "acceptance" };
+  const identity = assertWorkroomContentIdentity(
+    acceptance,
+    head,
+    run,
+    workflow,
+    payload,
+    mergeCommit,
+    "acceptance",
+  );
+  assert.equal(identity.job, "acceptance");
+  assert.equal(acceptance.GITHUB_SHA, merge);
+  assert.throws(() =>
+    assertWorkroomContentIdentity(
+      acceptance,
+      head,
+      run,
+      workflow,
+      payload,
+      mergeCommit,
+    ),
+  );
+  assert.throws(() =>
+    assertWorkroomContentIdentity(
+      { ...env, GITHUB_JOB: "cloudflare-acceptance" },
+      head,
+      run,
+      workflow,
+      payload,
+      mergeCommit,
+      "cloudflare-acceptance",
+    ),
+  );
+});
+test("workerd dispatch proves full workflow and exact separate job; arbitrary lanes fail", () => {
+  const fullEnv = {
+    ...env,
+    GITHUB_JOB: "cloudflare-acceptance",
+    GITHUB_EVENT_NAME: "workflow_dispatch",
+    GITHUB_SHA: head,
+  };
+  const fullRun = {
+    ...run,
+    event: "workflow_dispatch",
+    workflow_id: 388834791,
+    name: "Full WORKROOM acceptance",
+    path: ".github/workflows/ci-full-e2e.yml",
+  };
+  const fullWorkflow = {
+    id: 388834791,
+    name: "Full authenticated E2E",
+    path: fullRun.path,
+  };
+  assert.equal(
+    assertWorkroomContentIdentity(
+      fullEnv,
+      head,
+      fullRun,
+      fullWorkflow,
+      payload,
+      null,
+      "cloudflare-acceptance",
+    ).job,
+    "cloudflare-acceptance",
+  );
+  assert.throws(() =>
+    assertWorkroomContentIdentity(
+      { ...fullEnv, GITHUB_JOB: "unrelated" },
+      head,
+      fullRun,
+      fullWorkflow,
+      payload,
+      null,
+      "unrelated",
+    ),
+  );
+  assert.throws(() =>
+    assertWorkroomContentIdentity(
+      fullEnv,
+      head,
+      { ...fullRun, head_sha: merge },
+      fullWorkflow,
+      payload,
+      null,
+      "cloudflare-acceptance",
+    ),
+  );
+});
