@@ -191,9 +191,12 @@ export function runWorkroomNativePhase(phase, stage, principal = null) {
       [
         "exec",
         "-i",
+        "-e",
+        "PGPASSWORD=postgres",
         container.Id,
         "psql",
         "-X",
+        "-w",
         "-h",
         ip,
         "-U",
