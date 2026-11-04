@@ -3,7 +3,39 @@ import assert from "node:assert/strict";
 import {
   adaptWorkroomSignupFixtures,
   adaptWorkroomDefinerRoster,
+  adaptWorkroomRetiredTrialAcl,
 } from "./workroom-native-adapters.mjs";
+test("successor trial ACL denies the retired service entrypoint without changing other SQL", () => {
+  const assertion =
+    "select ok(\n  has_function_privilege('service_role', 'public.start_trial(uuid,text)', 'EXECUTE'),\n  'service role can execute start_trial'\n);";
+  const original =
+    "-- unchanged prefix\n" + assertion + "\n-- unchanged suffix";
+  const result = adaptWorkroomRetiredTrialAcl(original);
+  assert.equal(result.reverseExact, true);
+  assert.equal(
+    result.sql,
+    original.replace(
+      assertion,
+      assertion
+        .replace("  has_function_privilege", "  not has_function_privilege")
+        .replace(
+          "service role can execute start_trial",
+          "service role cannot execute retired start_trial",
+        ),
+    ),
+  );
+  assert.throws(
+    () =>
+      adaptWorkroomRetiredTrialAcl(
+        original.replace("can execute", "may execute"),
+      ),
+    /TRIAL_ACL_EXACT_SPAN_REQUIRED/,
+  );
+  assert.throws(
+    () => adaptWorkroomRetiredTrialAcl(original + assertion),
+    /TRIAL_ACL_EXACT_SPAN_REQUIRED/,
+  );
+});
 test("invitation metadata wraps only exact metadata positions in VALUES and SELECT", () => {
   const a =
     "insert into auth.users(id, raw_user_meta_data, email) values (gen_random_uuid(),jsonb_build_object('name','x,y'),'a'),(gen_random_uuid(),'{}','b');";

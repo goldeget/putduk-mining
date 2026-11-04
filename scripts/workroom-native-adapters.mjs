@@ -121,6 +121,28 @@ export function adaptWorkroomSignupFixtures(input) {
     reverseExact: true,
   };
 }
+/** Migration202 retires enrollment; retain the old RLS suite with its one
+ * service enrollment permission inverted. Baseline201 remains byte-identical. */
+export function adaptWorkroomRetiredTrialAcl(input) {
+  const sql = String(input);
+  const before =
+    "select ok(\n  has_function_privilege('service_role', 'public.start_trial(uuid,text)', 'EXECUTE'),\n  'service role can execute start_trial'\n);";
+  if (sql.split(before).length !== 2) fail("TRIAL_ACL_EXACT_SPAN_REQUIRED");
+  const after = before
+    .replace("  has_function_privilege", "  not has_function_privilege")
+    .replace(
+      "service role can execute start_trial",
+      "service role cannot execute retired start_trial",
+    );
+  const next = sql.replace(before, after);
+  if (next.replace(after, before) !== sql) fail("TRIAL_ACL_REVERSE_FAILED");
+  return {
+    sql: next,
+    originalSha256: sha256(sql),
+    sha256: sha256(next),
+    reverseExact: true,
+  };
+}
 export function adaptWorkroomDefinerRoster(input) {
   const sql = String(input),
     before =

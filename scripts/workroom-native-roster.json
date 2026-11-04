@@ -1803,7 +1803,7 @@
     "path": "supabase/tests/database/rls.sql",
     "sourceSha256": "8bbb3ac60738691c68f7fa7a12f39991ca4c242a68ee4c8a55551131bf2a67dc",
     "baselineSha256": "3a7b334823c2f8bd3c0007667c87b8381d4c54f99bab094d37454be8e2ddedba",
-    "successorSha256": "36fb095179ed802dc855d9a5a7b302de7e406348854d1de020efd59300fe3a4c"
+    "successorSha256": "28da403145f546ecea096cba44793bfb1d31712b258927745a8dd9deed7b7f0e"
   },
   {
     "path": "supabase/tests/database/safe_mode_atomic_audit_command.sql",
