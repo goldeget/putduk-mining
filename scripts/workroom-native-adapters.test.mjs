@@ -4,7 +4,29 @@ import {
   adaptWorkroomSignupFixtures,
   adaptWorkroomDefinerRoster,
   adaptWorkroomRetiredTrialAcl,
+  adaptWorkroomWithdrawalPolicyVersions,
 } from "./workroom-native-adapters.mjs";
+test("retained withdrawal policies capture one transaction-local base and preserve every other byte", () => {
+  const original =
+    "begin;\nselect " + Array(9).fill("189001").join(",") + ";\nrollback;";
+  const r = adaptWorkroomWithdrawalPolicyVersions(
+    "withdrawal_logical_lifecycle.sql",
+    original,
+  );
+  assert.equal(r.reverseExact, true);
+  assert.equal(r.matches, 9);
+  assert.equal((r.sql.match(/max\(version\)/g) ?? []).length, 1);
+  assert.equal((r.sql.match(/current_setting/g) ?? []).length, 9);
+  assert.match(r.sql, /set_config\('putduk.workroom_policy_base'.*, true\)/);
+  assert.throws(
+    () =>
+      adaptWorkroomWithdrawalPolicyVersions(
+        "withdrawal_logical_lifecycle.sql",
+        original.replace("189001", "189002"),
+      ),
+    /POLICY_VERSION_EXACT_COUNT_REQUIRED/,
+  );
+});
 test("successor trial ACL denies the retired service entrypoint without changing other SQL", () => {
   const assertion =
     "select ok(\n  has_function_privilege('service_role', 'public.start_trial(uuid,text)', 'EXECUTE'),\n  'service role can execute start_trial'\n);";
