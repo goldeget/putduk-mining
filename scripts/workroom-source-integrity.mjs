@@ -86,8 +86,8 @@ const baselineMigrations = git(
 requireCondition(baselineMigrations.length === 201, "BASELINE_MIGRATION_COUNT");
 for (const name of baselineMigrations) {
   requireCondition(
-    hash(canonical(name, readFileSync(resolve(root, name)))) ===
-      hash(canonical(name, git("show", `${baseline}:${name}`))),
+    hash(readFileSync(resolve(root, name))) ===
+      hash(git("show", `${baseline}:${name}`)),
     "HISTORICAL_MIGRATION_CHANGED",
   );
 }
@@ -96,12 +96,25 @@ for (const name of [
   "tests/e2e/fixtures/backend-successor-201-source.json",
 ]) {
   requireCondition(
-    hash(canonical(name, readFileSync(resolve(root, name)))) ===
-      hash(canonical(name, git("show", `${baseline}:${name}`))),
+    hash(readFileSync(resolve(root, name))) ===
+      hash(git("show", `${baseline}:${name}`)),
     "HISTORICAL_ADMISSION_CHANGED",
   );
 }
 const names = paths();
+const migrationNames = names.filter(
+  (name) => name.startsWith("supabase/migrations/") && name.endsWith(".sql"),
+);
+requireCondition(
+  migrationNames.length === 202 &&
+    JSON.stringify(
+      migrationNames.filter((name) => !baselineMigrations.includes(name)),
+    ) ===
+      JSON.stringify([
+        "supabase/migrations/20261104065015_workroom_practice_isolation.sql",
+      ]),
+  "EXACT_202_ADDITIVE_MIGRATION_REQUIRED",
+);
 if (process.argv.includes("--record")) {
   const manifest = {
     version: 1,

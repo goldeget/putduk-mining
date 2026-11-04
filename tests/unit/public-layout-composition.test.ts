@@ -6,10 +6,6 @@ const home = readFileSync(
   new URL("../../app/page.tsx", import.meta.url),
   "utf8",
 );
-const homeCss = readFileSync(
-  new URL("../../app/public-home.module.css", import.meta.url),
-  "utf8",
-);
 const help = readFileSync(
   new URL(
     "../../app/(trust)/[...document]/public-help-document.tsx",
@@ -34,30 +30,14 @@ const forbiddenAmounts = ["5,054,281", "50,000,000", "₩5,000,000"];
 
 describe("공개 화면 구도", () => {
   it("첫 화면은 읽을 수 있는 문구와 월드, 시작 안내를 제공한다", () => {
-    const copyAt = home.indexOf('className="hero__copy"');
-    const visualAt = home.indexOf(
-      'className="hero__visual landing-hero__visual"',
-    );
-    const actionAt = home.indexOf("styles.action");
-
-    expect(copyAt).toBeGreaterThan(-1);
-    expect(visualAt).toBeGreaterThan(copyAt);
-    expect(actionAt).toBeGreaterThan(visualAt);
-    expect(home).toContain('href="/about"');
-    expect(home).toContain('href="/how-it-works"');
-    expect(home).toContain('href="/faq"');
-    expect(home).toContain('href="/support"');
-    expect(home).toContain("최대 5,000원 환영 보상");
-    expect(home).not.toContain("components/auth");
-    expect(home).not.toContain("휴대폰 인증");
-    expect(home).not.toContain("반도체");
-    for (const amount of forbiddenAmounts) {
-      expect(home).not.toContain(amount);
-    }
-    expect(home).toContain("조건 자세히 보기");
-    expect(home).toContain("체험 값과 실제 원화 지갑은 별개");
-    expect(homeCss).toContain("prefers-reduced-motion: reduce");
-    expect(home).not.toContain("putduk-miner-384-v1");
+    expect(home).toContain("WorkroomAuth");
+    expect(home).toContain("100,000 P");
+    expect(home).toContain("현금 전환·출금 불가");
+    expect(home).toContain('href="/signup"');
+    expect(home).toContain('href="/workroom"');
+    expect(home).toContain("기존 회원은 새로 가입할 필요 없이");
+    expect(home).not.toContain("환영 보상");
+    for (const amount of forbiddenAmounts) expect(home).not.toContain(amount);
   });
 
   it("소개와 질문, 이용 방법만 목록 구도를 쓴다", () => {

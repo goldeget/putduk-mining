@@ -1,0 +1,957 @@
+{
+  "version": 1,
+  "baseline": "9ccc287c5c05b998a9ad345392e9ff07a03a5836",
+  "rows": [
+    {
+      "path": "tests/e2e/admin-isolation.spec.ts",
+      "sha256": "4cc7bd158a2bc5ce533d66ad7f746681694dba676e4d86e19d22ef3f83396c04",
+      "disposition": "RETAINED_UNCHANGED",
+      "reason": "Still-reachable public isolation, evidence privacy or support typography guard remains in successor browser execution.",
+      "replacements": ["playwright.workroom-retained.config.ts"],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/admin-assistant-context.spec.ts",
+      "sha256": "b12abe15f81a30496fc223c18bea218a50a8f9a8c16e79457071a3a24e49864d",
+      "disposition": "REPLACED_WORKROOM_PRODUCT_ASSERTIONS",
+      "reason": "Owner-approved WORKROOM replaces the old mining/catalog/onboarding/AI/admin visual product. Historical screen/route/screenshot totals and shard assignment are archived, not reported passed. Successor real Auth/member/admin/navigation and responsive coverage is required.",
+      "replacements": [
+        "playwright.workroom.config.ts",
+        "tests/e2e/workroom",
+        "playwright.workroom-retained.config.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/admin-assistant-read-draft.spec.ts",
+      "sha256": "ef0ec9a5d3c8ee588f21ce565869c726e339a2bc9f606db73c6d2189879cd31d",
+      "disposition": "REPLACED_WORKROOM_PRODUCT_ASSERTIONS",
+      "reason": "Owner-approved WORKROOM replaces the old mining/catalog/onboarding/AI/admin visual product. Historical screen/route/screenshot totals and shard assignment are archived, not reported passed. Successor real Auth/member/admin/navigation and responsive coverage is required.",
+      "replacements": [
+        "playwright.workroom.config.ts",
+        "tests/e2e/workroom",
+        "playwright.workroom-retained.config.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/admin-economy-policy.spec.ts",
+      "sha256": "277a33fdf67b7604fff3a1243db57fdf7a7064c21de892b13a8a4d7614af9410",
+      "disposition": "RETIRED_PRODUCT_SCREEN_RETAINED_BACKEND_GUARDS",
+      "reason": "Owner-approved WORKROOM removes the financial/mining administrative screen. Screen appearance and old navigation are archived; ledger, auth, ACL, idempotency, external-send and finalization behavior remain mandatory independently.",
+      "replacements": [
+        "scripts/workroom-native-runner.mjs",
+        "playwright.workroom-financial.config.ts",
+        "tests/unit",
+        "tests/worker",
+        "tests/e2e/workroom/12-security-retirement.spec.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/admin-exceptions-product.spec.ts",
+      "sha256": "b04381acb45ca4d15cf2db65e8f07b0fa5360c8b38ce55d5c15b97af56f52c5f",
+      "disposition": "RETIRED_PRODUCT_SCREEN_RETAINED_BACKEND_GUARDS",
+      "reason": "Owner-approved WORKROOM removes the financial/mining administrative screen. Screen appearance and old navigation are archived; ledger, auth, ACL, idempotency, external-send and finalization behavior remain mandatory independently.",
+      "replacements": [
+        "scripts/workroom-native-runner.mjs",
+        "playwright.workroom-financial.config.ts",
+        "tests/unit",
+        "tests/worker",
+        "tests/e2e/workroom/12-security-retirement.spec.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/admin-exceptions-recon-ack.spec.ts",
+      "sha256": "f73ea09d368952bd45ec03eff11ad722e8d98282a0baf7a2a0636896eab54747",
+      "disposition": "RETIRED_PRODUCT_SCREEN_RETAINED_BACKEND_GUARDS",
+      "reason": "Owner-approved WORKROOM removes the financial/mining administrative screen. Screen appearance and old navigation are archived; ledger, auth, ACL, idempotency, external-send and finalization behavior remain mandatory independently.",
+      "replacements": [
+        "scripts/workroom-native-runner.mjs",
+        "playwright.workroom-financial.config.ts",
+        "tests/unit",
+        "tests/worker",
+        "tests/e2e/workroom/12-security-retirement.spec.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/admin-krw-browser-money.spec.ts",
+      "sha256": "e432d6cecfb6f308f11b0351e13f96c3921c49c2d7f97e89ff913af5b9d11956",
+      "disposition": "REPLACED_WORKROOM_PRODUCT_ASSERTIONS",
+      "reason": "Owner-approved WORKROOM replaces the old mining/catalog/onboarding/AI/admin visual product. Historical screen/route/screenshot totals and shard assignment are archived, not reported passed. Successor real Auth/member/admin/navigation and responsive coverage is required.",
+      "replacements": [
+        "playwright.workroom.config.ts",
+        "tests/e2e/workroom",
+        "playwright.workroom-retained.config.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/admin-kyc-product.spec.ts",
+      "sha256": "a2fd1864ec9d9807c586e09bf7ab8b988274333e8466805551236aa7af997fb4",
+      "disposition": "RETIRED_PRODUCT_SCREEN_RETAINED_BACKEND_GUARDS",
+      "reason": "Owner-approved WORKROOM removes the financial/mining administrative screen. Screen appearance and old navigation are archived; ledger, auth, ACL, idempotency, external-send and finalization behavior remain mandatory independently.",
+      "replacements": [
+        "scripts/workroom-native-runner.mjs",
+        "playwright.workroom-financial.config.ts",
+        "tests/unit",
+        "tests/worker",
+        "tests/e2e/workroom/12-security-retirement.spec.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/admin-members-product.spec.ts",
+      "sha256": "5d69804d16d658af480145e2637fbf8e26a8920c84cecaf4c648fdd58748e946",
+      "disposition": "REPLACED_WORKROOM_PRODUCT_ASSERTIONS",
+      "reason": "Owner-approved WORKROOM replaces the old mining/catalog/onboarding/AI/admin visual product. Historical screen/route/screenshot totals and shard assignment are archived, not reported passed. Successor real Auth/member/admin/navigation and responsive coverage is required.",
+      "replacements": [
+        "playwright.workroom.config.ts",
+        "tests/e2e/workroom",
+        "playwright.workroom-retained.config.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/admin-restrictions-safe-mode.spec.ts",
+      "sha256": "ff316eccb73c8dfc18681fe7eb5e2da8740eac7fc6727173e83b28cc0425a64a",
+      "disposition": "RETIRED_PRODUCT_SCREEN_RETAINED_BACKEND_GUARDS",
+      "reason": "Owner-approved WORKROOM removes the financial/mining administrative screen. Screen appearance and old navigation are archived; ledger, auth, ACL, idempotency, external-send and finalization behavior remain mandatory independently.",
+      "replacements": [
+        "scripts/workroom-native-runner.mjs",
+        "playwright.workroom-financial.config.ts",
+        "tests/unit",
+        "tests/worker",
+        "tests/e2e/workroom/12-security-retirement.spec.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/admin-session-totp.spec.ts",
+      "sha256": "dd45745a7d726685d7a2d114c963e5e3d6531e2a00779e4a45f0215bfa109058",
+      "disposition": "REPLACED_WORKROOM_PRODUCT_ASSERTIONS",
+      "reason": "Owner-approved WORKROOM replaces the old mining/catalog/onboarding/AI/admin visual product. Historical screen/route/screenshot totals and shard assignment are archived, not reported passed. Successor real Auth/member/admin/navigation and responsive coverage is required.",
+      "replacements": [
+        "playwright.workroom.config.ts",
+        "tests/e2e/workroom",
+        "playwright.workroom-retained.config.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/admin-today.spec.ts",
+      "sha256": "e1ff8e454c9864c616496f7e9bc8200bfa4dad4b652aa7778abca0262291104a",
+      "disposition": "REPLACED_WORKROOM_PRODUCT_ASSERTIONS",
+      "reason": "Owner-approved WORKROOM replaces the old mining/catalog/onboarding/AI/admin visual product. Historical screen/route/screenshot totals and shard assignment are archived, not reported passed. Successor real Auth/member/admin/navigation and responsive coverage is required.",
+      "replacements": [
+        "playwright.workroom.config.ts",
+        "tests/e2e/workroom",
+        "playwright.workroom-retained.config.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/admin-usdt-browser-money.spec.ts",
+      "sha256": "6da159a9a36a6720a576466f02898a2ffb7e6f3d494fbda5412cf4b42da510a7",
+      "disposition": "RETIRED_PRODUCT_SCREEN_RETAINED_BACKEND_GUARDS",
+      "reason": "Owner-approved WORKROOM removes the financial/mining administrative screen. Screen appearance and old navigation are archived; ledger, auth, ACL, idempotency, external-send and finalization behavior remain mandatory independently.",
+      "replacements": [
+        "scripts/workroom-native-runner.mjs",
+        "playwright.workroom-financial.config.ts",
+        "tests/unit",
+        "tests/worker",
+        "tests/e2e/workroom/12-security-retirement.spec.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/admin-v7-operator-ux.spec.ts",
+      "sha256": "69ce34f78253107cd5caec76a8d071519223bf685ff4a60206ee46b1241f5b7a",
+      "disposition": "REPLACED_WORKROOM_PRODUCT_ASSERTIONS",
+      "reason": "Owner-approved WORKROOM replaces the old mining/catalog/onboarding/AI/admin visual product. Historical screen/route/screenshot totals and shard assignment are archived, not reported passed. Successor real Auth/member/admin/navigation and responsive coverage is required.",
+      "replacements": [
+        "playwright.workroom.config.ts",
+        "tests/e2e/workroom",
+        "playwright.workroom-retained.config.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/admin-withdrawal-step-up.spec.ts",
+      "sha256": "2a596f9c9a6fd20ab0444924c4238bbd0a56a2f8a22edcf099dddd6d96b5db43",
+      "disposition": "RETIRED_PRODUCT_SCREEN_RETAINED_BACKEND_GUARDS",
+      "reason": "Owner-approved WORKROOM removes the financial/mining administrative screen. Screen appearance and old navigation are archived; ledger, auth, ACL, idempotency, external-send and finalization behavior remain mandatory independently.",
+      "replacements": [
+        "scripts/workroom-native-runner.mjs",
+        "playwright.workroom-financial.config.ts",
+        "tests/unit",
+        "tests/worker",
+        "tests/e2e/workroom/12-security-retirement.spec.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/admin-withdrawals-product.spec.ts",
+      "sha256": "4a4324f128bf32e942fcc1ffda71ab7fbcc8b6593fe2f42a5c842f76fea878d0",
+      "disposition": "RETIRED_PRODUCT_SCREEN_RETAINED_BACKEND_GUARDS",
+      "reason": "Owner-approved WORKROOM removes the financial/mining administrative screen. Screen appearance and old navigation are archived; ledger, auth, ACL, idempotency, external-send and finalization behavior remain mandatory independently.",
+      "replacements": [
+        "scripts/workroom-native-runner.mjs",
+        "playwright.workroom-financial.config.ts",
+        "tests/unit",
+        "tests/worker",
+        "tests/e2e/workroom/12-security-retirement.spec.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/ai-context-help.spec.ts",
+      "sha256": "d61d9b748932061035ed5534b7bca3cc8e8abdf64a15858fc0585d9e686aeea9",
+      "disposition": "REPLACED_WORKROOM_PRODUCT_ASSERTIONS",
+      "reason": "Owner-approved WORKROOM replaces the old mining/catalog/onboarding/AI/admin visual product. Historical screen/route/screenshot totals and shard assignment are archived, not reported passed. Successor real Auth/member/admin/navigation and responsive coverage is required.",
+      "replacements": [
+        "playwright.workroom.config.ts",
+        "tests/e2e/workroom",
+        "playwright.workroom-retained.config.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/ai-product.spec.ts",
+      "sha256": "b96aa5823bbdf23342572bb8d3d2072bc1196eb8a5183b40d6c66af1cb528d19",
+      "disposition": "REPLACED_WORKROOM_PRODUCT_ASSERTIONS",
+      "reason": "Owner-approved WORKROOM replaces the old mining/catalog/onboarding/AI/admin visual product. Historical screen/route/screenshot totals and shard assignment are archived, not reported passed. Successor real Auth/member/admin/navigation and responsive coverage is required.",
+      "replacements": [
+        "playwright.workroom.config.ts",
+        "tests/e2e/workroom",
+        "playwright.workroom-retained.config.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/catalog-allocated-home-dark-wide.spec.ts",
+      "sha256": "8a7570e18db5abb26b5006fc1843c2f059bd34b5c78ff88b59406cb6df0ed91e",
+      "disposition": "REPLACED_WORKROOM_PRODUCT_ASSERTIONS",
+      "reason": "Owner-approved WORKROOM replaces the old mining/catalog/onboarding/AI/admin visual product. Historical screen/route/screenshot totals and shard assignment are archived, not reported passed. Successor real Auth/member/admin/navigation and responsive coverage is required.",
+      "replacements": [
+        "playwright.workroom.config.ts",
+        "tests/e2e/workroom",
+        "playwright.workroom-retained.config.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/catalog-allocated-home-dark.spec.ts",
+      "sha256": "5a021cc2fb844dd3cb65332b5e21ac3e4909c3a2a1146a68af46a6dd515eeb64",
+      "disposition": "REPLACED_WORKROOM_PRODUCT_ASSERTIONS",
+      "reason": "Owner-approved WORKROOM replaces the old mining/catalog/onboarding/AI/admin visual product. Historical screen/route/screenshot totals and shard assignment are archived, not reported passed. Successor real Auth/member/admin/navigation and responsive coverage is required.",
+      "replacements": [
+        "playwright.workroom.config.ts",
+        "tests/e2e/workroom",
+        "playwright.workroom-retained.config.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/catalog-allocated-home-light.spec.ts",
+      "sha256": "febbd0bef2225fd5d2e5ad35c4b5a3dc9dfad7f4710ee2aa57b4711acb2d7d10",
+      "disposition": "REPLACED_WORKROOM_PRODUCT_ASSERTIONS",
+      "reason": "Owner-approved WORKROOM replaces the old mining/catalog/onboarding/AI/admin visual product. Historical screen/route/screenshot totals and shard assignment are archived, not reported passed. Successor real Auth/member/admin/navigation and responsive coverage is required.",
+      "replacements": [
+        "playwright.workroom.config.ts",
+        "tests/e2e/workroom",
+        "playwright.workroom-retained.config.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/catalog-allocated-wallet-dark.spec.ts",
+      "sha256": "94e210fe7dec66410a42718375aeda9f8ea8fa30989dc994650285cccd7ed862",
+      "disposition": "RETIRED_PRODUCT_SCREEN_RETAINED_BACKEND_GUARDS",
+      "reason": "Owner-approved WORKROOM removes the financial/mining administrative screen. Screen appearance and old navigation are archived; ledger, auth, ACL, idempotency, external-send and finalization behavior remain mandatory independently.",
+      "replacements": [
+        "scripts/workroom-native-runner.mjs",
+        "playwright.workroom-financial.config.ts",
+        "tests/unit",
+        "tests/worker",
+        "tests/e2e/workroom/12-security-retirement.spec.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/catalog-allocated-wallet-light.spec.ts",
+      "sha256": "05c126c760d21f4af02a5fa1dacd2ea3b9cd22791b632ebd2c2d21b19fcf9841",
+      "disposition": "RETIRED_PRODUCT_SCREEN_RETAINED_BACKEND_GUARDS",
+      "reason": "Owner-approved WORKROOM removes the financial/mining administrative screen. Screen appearance and old navigation are archived; ledger, auth, ACL, idempotency, external-send and finalization behavior remain mandatory independently.",
+      "replacements": [
+        "scripts/workroom-native-runner.mjs",
+        "playwright.workroom-financial.config.ts",
+        "tests/unit",
+        "tests/worker",
+        "tests/e2e/workroom/12-security-retirement.spec.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/catalog-allocation.spec.ts",
+      "sha256": "b66d1ff3e31704bf8572974ef853242ea7e32aa4245fde0c3ba563657573a72b",
+      "disposition": "REPLACED_WORKROOM_PRODUCT_ASSERTIONS",
+      "reason": "Owner-approved WORKROOM replaces the old mining/catalog/onboarding/AI/admin visual product. Historical screen/route/screenshot totals and shard assignment are archived, not reported passed. Successor real Auth/member/admin/navigation and responsive coverage is required.",
+      "replacements": [
+        "playwright.workroom.config.ts",
+        "tests/e2e/workroom",
+        "playwright.workroom-retained.config.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/catalog-materials.spec.ts",
+      "sha256": "05294e66fa967fa9b9f3474e14cf5368bed8fd4550e516a5a35b464dcdcc2328",
+      "disposition": "REPLACED_WORKROOM_PRODUCT_ASSERTIONS",
+      "reason": "Owner-approved WORKROOM replaces the old mining/catalog/onboarding/AI/admin visual product. Historical screen/route/screenshot totals and shard assignment are archived, not reported passed. Successor real Auth/member/admin/navigation and responsive coverage is required.",
+      "replacements": [
+        "playwright.workroom.config.ts",
+        "tests/e2e/workroom",
+        "playwright.workroom-retained.config.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/deposit-product.spec.ts",
+      "sha256": "528bf61e9b8b669870de34e1401fae8956b15fe4586a3df52b2e1f1bcb5319cd",
+      "disposition": "RETIRED_PRODUCT_SCREEN_RETAINED_BACKEND_GUARDS",
+      "reason": "Owner-approved WORKROOM removes the financial/mining administrative screen. Screen appearance and old navigation are archived; ledger, auth, ACL, idempotency, external-send and finalization behavior remain mandatory independently.",
+      "replacements": [
+        "scripts/workroom-native-runner.mjs",
+        "playwright.workroom-financial.config.ts",
+        "tests/unit",
+        "tests/worker",
+        "tests/e2e/workroom/12-security-retirement.spec.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/events-product.spec.ts",
+      "sha256": "c7f284af989a86363b7d69a2ca2c53ecd05415210964e1d1397e6213515ea405",
+      "disposition": "REPLACED_WORKROOM_PRODUCT_ASSERTIONS",
+      "reason": "Owner-approved WORKROOM replaces the old mining/catalog/onboarding/AI/admin visual product. Historical screen/route/screenshot totals and shard assignment are archived, not reported passed. Successor real Auth/member/admin/navigation and responsive coverage is required.",
+      "replacements": [
+        "playwright.workroom.config.ts",
+        "tests/e2e/workroom",
+        "playwright.workroom-retained.config.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/first-krw-withdrawal.spec.ts",
+      "sha256": "fa082bafac0788c198c0431589e5fa62e506eef533db058845e4c8eeded2bf3c",
+      "disposition": "RETIRED_PRODUCT_SCREEN_RETAINED_BACKEND_GUARDS",
+      "reason": "Owner-approved WORKROOM removes the financial/mining administrative screen. Screen appearance and old navigation are archived; ledger, auth, ACL, idempotency, external-send and finalization behavior remain mandatory independently.",
+      "replacements": [
+        "scripts/workroom-native-runner.mjs",
+        "playwright.workroom-financial.config.ts",
+        "tests/unit",
+        "tests/worker",
+        "tests/e2e/workroom/12-security-retirement.spec.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/first-usdt-withdrawal.spec.ts",
+      "sha256": "4639f70cc19dcf879bd60fc21eab72672d740a12364a401f5e9c3860fbc59f15",
+      "disposition": "RETIRED_PRODUCT_SCREEN_RETAINED_BACKEND_GUARDS",
+      "reason": "Owner-approved WORKROOM removes the financial/mining administrative screen. Screen appearance and old navigation are archived; ledger, auth, ACL, idempotency, external-send and finalization behavior remain mandatory independently.",
+      "replacements": [
+        "scripts/workroom-native-runner.mjs",
+        "playwright.workroom-financial.config.ts",
+        "tests/unit",
+        "tests/worker",
+        "tests/e2e/workroom/12-security-retirement.spec.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/funded-home-typography.spec.ts",
+      "sha256": "fbfaf85028f787eb36bce669c0977b9bfcf25e85692c61b81152bf4906cfd3c4",
+      "disposition": "REPLACED_WORKROOM_PRODUCT_ASSERTIONS",
+      "reason": "Owner-approved WORKROOM replaces the old mining/catalog/onboarding/AI/admin visual product. Historical screen/route/screenshot totals and shard assignment are archived, not reported passed. Successor real Auth/member/admin/navigation and responsive coverage is required.",
+      "replacements": [
+        "playwright.workroom.config.ts",
+        "tests/e2e/workroom",
+        "playwright.workroom-retained.config.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/home-catalog-materials-follow.spec.ts",
+      "sha256": "990e21d69af9e6e408dbdc33e50bdb5e58ab6fe32985b395a7bf0619e3ae9a4b",
+      "disposition": "REPLACED_WORKROOM_PRODUCT_ASSERTIONS",
+      "reason": "Owner-approved WORKROOM replaces the old mining/catalog/onboarding/AI/admin visual product. Historical screen/route/screenshot totals and shard assignment are archived, not reported passed. Successor real Auth/member/admin/navigation and responsive coverage is required.",
+      "replacements": [
+        "playwright.workroom.config.ts",
+        "tests/e2e/workroom",
+        "playwright.workroom-retained.config.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/home-catalog-materials.spec.ts",
+      "sha256": "a182bd46ca17f1dde25cd1ad8d4fccaf3b100ff1ba2ee8789419315ecf0d6eda",
+      "disposition": "REPLACED_WORKROOM_PRODUCT_ASSERTIONS",
+      "reason": "Owner-approved WORKROOM replaces the old mining/catalog/onboarding/AI/admin visual product. Historical screen/route/screenshot totals and shard assignment are archived, not reported passed. Successor real Auth/member/admin/navigation and responsive coverage is required.",
+      "replacements": [
+        "playwright.workroom.config.ts",
+        "tests/e2e/workroom",
+        "playwright.workroom-retained.config.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/home-start-product.spec.ts",
+      "sha256": "09f1bba2ed2c51b78978735352bcba01a3c4e26b3ffdb5b38db9cd00c46bd0a4",
+      "disposition": "REPLACED_WORKROOM_PRODUCT_ASSERTIONS",
+      "reason": "Owner-approved WORKROOM replaces the old mining/catalog/onboarding/AI/admin visual product. Historical screen/route/screenshot totals and shard assignment are archived, not reported passed. Successor real Auth/member/admin/navigation and responsive coverage is required.",
+      "replacements": [
+        "playwright.workroom.config.ts",
+        "tests/e2e/workroom",
+        "playwright.workroom-retained.config.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/home-typography.spec.ts",
+      "sha256": "1a1d6f60db67a135aa5c6f8b1778feb402f29424457b76a70484e37832972d12",
+      "disposition": "REPLACED_WORKROOM_PRODUCT_ASSERTIONS",
+      "reason": "Owner-approved WORKROOM replaces the old mining/catalog/onboarding/AI/admin visual product. Historical screen/route/screenshot totals and shard assignment are archived, not reported passed. Successor real Auth/member/admin/navigation and responsive coverage is required.",
+      "replacements": [
+        "playwright.workroom.config.ts",
+        "tests/e2e/workroom",
+        "playwright.workroom-retained.config.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/member-product-scene.spec.ts",
+      "sha256": "933b7e0977939d642b908a36d9bc794f142f61608c5008d31982e6011a0f3979",
+      "disposition": "REPLACED_WORKROOM_PRODUCT_ASSERTIONS",
+      "reason": "Owner-approved WORKROOM replaces the old mining/catalog/onboarding/AI/admin visual product. Historical screen/route/screenshot totals and shard assignment are archived, not reported passed. Successor real Auth/member/admin/navigation and responsive coverage is required.",
+      "replacements": [
+        "playwright.workroom.config.ts",
+        "tests/e2e/workroom",
+        "playwright.workroom-retained.config.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/menu-product.spec.ts",
+      "sha256": "152b733d6de97ec458c3e0b70f5c92056821f61c1d76cfca471ad7edbdeb4d3d",
+      "disposition": "REPLACED_WORKROOM_PRODUCT_ASSERTIONS",
+      "reason": "Owner-approved WORKROOM replaces the old mining/catalog/onboarding/AI/admin visual product. Historical screen/route/screenshot totals and shard assignment are archived, not reported passed. Successor real Auth/member/admin/navigation and responsive coverage is required.",
+      "replacements": [
+        "playwright.workroom.config.ts",
+        "tests/e2e/workroom",
+        "playwright.workroom-retained.config.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/mining-product.spec.ts",
+      "sha256": "9b9135ccd1c3afb06232cafb4e58c2ad6e4c4dc60f20ab839ccff7a3ee9dca7e",
+      "disposition": "REPLACED_WORKROOM_PRODUCT_ASSERTIONS",
+      "reason": "Owner-approved WORKROOM replaces the old mining/catalog/onboarding/AI/admin visual product. Historical screen/route/screenshot totals and shard assignment are archived, not reported passed. Successor real Auth/member/admin/navigation and responsive coverage is required.",
+      "replacements": [
+        "playwright.workroom.config.ts",
+        "tests/e2e/workroom",
+        "playwright.workroom-retained.config.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/mockup-reference-ai.spec.ts",
+      "sha256": "6451c9d2a82569d06893673a1a818f4690d2355450b0074c4214217fe847d276",
+      "disposition": "REPLACED_WORKROOM_PRODUCT_ASSERTIONS",
+      "reason": "Owner-approved WORKROOM replaces the old mining/catalog/onboarding/AI/admin visual product. Historical screen/route/screenshot totals and shard assignment are archived, not reported passed. Successor real Auth/member/admin/navigation and responsive coverage is required.",
+      "replacements": [
+        "playwright.workroom.config.ts",
+        "tests/e2e/workroom",
+        "playwright.workroom-retained.config.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/mockup-reference-coverage.spec.ts",
+      "sha256": "2aeb359e7d5c9c600506e0ddb422d2b4811b6c3f7bd1860b3896bbd27254f171",
+      "disposition": "REPLACED_WORKROOM_PRODUCT_ASSERTIONS",
+      "reason": "Owner-approved WORKROOM replaces the old mining/catalog/onboarding/AI/admin visual product. Historical screen/route/screenshot totals and shard assignment are archived, not reported passed. Successor real Auth/member/admin/navigation and responsive coverage is required.",
+      "replacements": [
+        "playwright.workroom.config.ts",
+        "tests/e2e/workroom",
+        "playwright.workroom-retained.config.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/mockup-reference-menu.spec.ts",
+      "sha256": "e015ece80549125bc308f429b56d9c62cd9eaf9de395a1eaa25e0308ca2d6439",
+      "disposition": "REPLACED_WORKROOM_PRODUCT_ASSERTIONS",
+      "reason": "Owner-approved WORKROOM replaces the old mining/catalog/onboarding/AI/admin visual product. Historical screen/route/screenshot totals and shard assignment are archived, not reported passed. Successor real Auth/member/admin/navigation and responsive coverage is required.",
+      "replacements": [
+        "playwright.workroom.config.ts",
+        "tests/e2e/workroom",
+        "playwright.workroom-retained.config.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/mockup-reference-mining.spec.ts",
+      "sha256": "a3ab104c9668ecf49e1927b7bd61b058bac8b7d5434f57a8f8e875a08ea66003",
+      "disposition": "REPLACED_WORKROOM_PRODUCT_ASSERTIONS",
+      "reason": "Owner-approved WORKROOM replaces the old mining/catalog/onboarding/AI/admin visual product. Historical screen/route/screenshot totals and shard assignment are archived, not reported passed. Successor real Auth/member/admin/navigation and responsive coverage is required.",
+      "replacements": [
+        "playwright.workroom.config.ts",
+        "tests/e2e/workroom",
+        "playwright.workroom-retained.config.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/mockup-reference-products.spec.ts",
+      "sha256": "8f95a6c88188e289ba64786776db0b55333c2acc5e095f6c856579d0e1f4c66c",
+      "disposition": "REPLACED_WORKROOM_PRODUCT_ASSERTIONS",
+      "reason": "Owner-approved WORKROOM replaces the old mining/catalog/onboarding/AI/admin visual product. Historical screen/route/screenshot totals and shard assignment are archived, not reported passed. Successor real Auth/member/admin/navigation and responsive coverage is required.",
+      "replacements": [
+        "playwright.workroom.config.ts",
+        "tests/e2e/workroom",
+        "playwright.workroom-retained.config.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/mockup-reference-public.spec.ts",
+      "sha256": "52a9fbf3835bd2b82fec7196b236d309044ec1b611f639a1a1c44e86b31e68f0",
+      "disposition": "REPLACED_WORKROOM_PRODUCT_ASSERTIONS",
+      "reason": "Owner-approved WORKROOM replaces the old mining/catalog/onboarding/AI/admin visual product. Historical screen/route/screenshot totals and shard assignment are archived, not reported passed. Successor real Auth/member/admin/navigation and responsive coverage is required.",
+      "replacements": [
+        "playwright.workroom.config.ts",
+        "tests/e2e/workroom",
+        "playwright.workroom-retained.config.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/mockup-reference-wallet.spec.ts",
+      "sha256": "68e1d2fa25d81540cd8d023b77033e15b4fc4c5a4d79300b2dc2a47c2f7a07e2",
+      "disposition": "RETIRED_PRODUCT_SCREEN_RETAINED_BACKEND_GUARDS",
+      "reason": "Owner-approved WORKROOM removes the financial/mining administrative screen. Screen appearance and old navigation are archived; ledger, auth, ACL, idempotency, external-send and finalization behavior remain mandatory independently.",
+      "replacements": [
+        "scripts/workroom-native-runner.mjs",
+        "playwright.workroom-financial.config.ts",
+        "tests/unit",
+        "tests/worker",
+        "tests/e2e/workroom/12-security-retirement.spec.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/notifications-product.spec.ts",
+      "sha256": "c72f13016b1dc87191e8e3d73f69272dc35c9394ec8cb06076158a3664efe4c4",
+      "disposition": "REPLACED_WORKROOM_PRODUCT_ASSERTIONS",
+      "reason": "Owner-approved WORKROOM replaces the old mining/catalog/onboarding/AI/admin visual product. Historical screen/route/screenshot totals and shard assignment are archived, not reported passed. Successor real Auth/member/admin/navigation and responsive coverage is required.",
+      "replacements": [
+        "playwright.workroom.config.ts",
+        "tests/e2e/workroom",
+        "playwright.workroom-retained.config.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/operator-fixture-isolation.spec.ts",
+      "sha256": "17428b3599b63b66208e6a8dd7170aeb2b7dd3f608877500e4fa0b3df2a19d9b",
+      "disposition": "REPLACED_WORKROOM_PRODUCT_ASSERTIONS",
+      "reason": "Owner-approved WORKROOM replaces the old mining/catalog/onboarding/AI/admin visual product. Historical screen/route/screenshot totals and shard assignment are archived, not reported passed. Successor real Auth/member/admin/navigation and responsive coverage is required.",
+      "replacements": [
+        "playwright.workroom.config.ts",
+        "tests/e2e/workroom",
+        "playwright.workroom-retained.config.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/principal-withdrawal-product.spec.ts",
+      "sha256": "81bd5a1477aeebd1facf7f3528d5fd854501e858e3aad2a692f783c9761ab983",
+      "disposition": "RETIRED_PRODUCT_SCREEN_RETAINED_BACKEND_GUARDS",
+      "reason": "Owner-approved WORKROOM removes the financial/mining administrative screen. Screen appearance and old navigation are archived; ledger, auth, ACL, idempotency, external-send and finalization behavior remain mandatory independently.",
+      "replacements": [
+        "scripts/workroom-native-runner.mjs",
+        "playwright.workroom-financial.config.ts",
+        "tests/unit",
+        "tests/worker",
+        "tests/e2e/workroom/12-security-retirement.spec.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/products-catalog.spec.ts",
+      "sha256": "10278411965acb3eda28a384cab7607de3a7f10aa94023537e1cd52fb72e7c98",
+      "disposition": "REPLACED_WORKROOM_PRODUCT_ASSERTIONS",
+      "reason": "Owner-approved WORKROOM replaces the old mining/catalog/onboarding/AI/admin visual product. Historical screen/route/screenshot totals and shard assignment are archived, not reported passed. Successor real Auth/member/admin/navigation and responsive coverage is required.",
+      "replacements": [
+        "playwright.workroom.config.ts",
+        "tests/e2e/workroom",
+        "playwright.workroom-retained.config.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/public-admin-boundary.spec.ts",
+      "sha256": "888946e9579ed34418df3637d30f514597d6324a1c17f4cf6b6be7a040b2304a",
+      "disposition": "REPLACED_WORKROOM_PRODUCT_ASSERTIONS",
+      "reason": "Owner-approved WORKROOM replaces the old mining/catalog/onboarding/AI/admin visual product. Historical screen/route/screenshot totals and shard assignment are archived, not reported passed. Successor real Auth/member/admin/navigation and responsive coverage is required.",
+      "replacements": [
+        "playwright.workroom.config.ts",
+        "tests/e2e/workroom",
+        "playwright.workroom-retained.config.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/signup-reconstruction.spec.ts",
+      "sha256": "d0b4447fee01cf4f20746de7d7f1d3d090ef2b48a91664c09579f00818ebeb8d",
+      "disposition": "REPLACED_WORKROOM_PRODUCT_ASSERTIONS",
+      "reason": "Owner-approved WORKROOM replaces the old mining/catalog/onboarding/AI/admin visual product. Historical screen/route/screenshot totals and shard assignment are archived, not reported passed. Successor real Auth/member/admin/navigation and responsive coverage is required.",
+      "replacements": [
+        "playwright.workroom.config.ts",
+        "tests/e2e/workroom",
+        "playwright.workroom-retained.config.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/start-onboarding-eligibility.spec.ts",
+      "sha256": "fe59591739d8dc90e30be3bcdfe57f1d0850da5c21e6fa74599f8788741f5853",
+      "disposition": "REPLACED_WORKROOM_PRODUCT_ASSERTIONS",
+      "reason": "Owner-approved WORKROOM replaces the old mining/catalog/onboarding/AI/admin visual product. Historical screen/route/screenshot totals and shard assignment are archived, not reported passed. Successor real Auth/member/admin/navigation and responsive coverage is required.",
+      "replacements": [
+        "playwright.workroom.config.ts",
+        "tests/e2e/workroom",
+        "playwright.workroom-retained.config.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/success-visual-evidence.spec.ts",
+      "sha256": "590ef28a2d3daabff118e904a5edc05589692a2924d33e3c9c67ee005c111e7f",
+      "disposition": "REPLACED_WORKROOM_PRODUCT_ASSERTIONS",
+      "reason": "Owner-approved WORKROOM replaces the old mining/catalog/onboarding/AI/admin visual product. Historical screen/route/screenshot totals and shard assignment are archived, not reported passed. Successor real Auth/member/admin/navigation and responsive coverage is required.",
+      "replacements": [
+        "playwright.workroom.config.ts",
+        "tests/e2e/workroom",
+        "playwright.workroom-retained.config.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/support-channel-talk.spec.ts",
+      "sha256": "ea8e188c05a019bad1d57b7462bf31c651b8af524da8cd0ff227593a5c824e85",
+      "disposition": "REPLACED_WORKROOM_PRODUCT_ASSERTIONS",
+      "reason": "Owner-approved WORKROOM replaces the old mining/catalog/onboarding/AI/admin visual product. Historical screen/route/screenshot totals and shard assignment are archived, not reported passed. Successor real Auth/member/admin/navigation and responsive coverage is required.",
+      "replacements": [
+        "playwright.workroom.config.ts",
+        "tests/e2e/workroom",
+        "playwright.workroom-retained.config.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/usdt-manual-full-payout-195.spec.ts",
+      "sha256": "799ca740baa9dfe4f8949044fdcd5bead49b623c039539f15055368a0f769dbb",
+      "disposition": "RETIRED_PRODUCT_SCREEN_RETAINED_BACKEND_GUARDS",
+      "reason": "Owner-approved WORKROOM removes the financial/mining administrative screen. Screen appearance and old navigation are archived; ledger, auth, ACL, idempotency, external-send and finalization behavior remain mandatory independently.",
+      "replacements": [
+        "scripts/workroom-native-runner.mjs",
+        "playwright.workroom-financial.config.ts",
+        "tests/unit",
+        "tests/worker",
+        "tests/e2e/workroom/12-security-retirement.spec.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/usdt-manual-full-payout-197.spec.ts",
+      "sha256": "841bcd1995b980ca18e059f9082148dae3b42bcc17f3026d8b958b0fac79fae7",
+      "disposition": "RETAINED_ASSERTIONS_WITH_REVIEWED_FIXTURE_ADAPTER",
+      "reason": "Real Auth/AAL2/manual USDT ledger and replay assertions retained; only 202 source context, valid invitation fixtures and relative imports change in a generated copy.",
+      "replacements": [
+        "scripts/workroom-auth-retained-stage.mjs",
+        "playwright.workroom-financial.config.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/wallet-product.spec.ts",
+      "sha256": "55954772b08561c7d07318cc1c74d2c94cc2958e3c6b4469970011a5079594df",
+      "disposition": "RETIRED_PRODUCT_SCREEN_RETAINED_BACKEND_GUARDS",
+      "reason": "Owner-approved WORKROOM removes the financial/mining administrative screen. Screen appearance and old navigation are archived; ledger, auth, ACL, idempotency, external-send and finalization behavior remain mandatory independently.",
+      "replacements": [
+        "scripts/workroom-native-runner.mjs",
+        "playwright.workroom-financial.config.ts",
+        "tests/unit",
+        "tests/worker",
+        "tests/e2e/workroom/12-security-retirement.spec.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/welcome-withdrawal-error-copy.spec.ts",
+      "sha256": "109fb0f5ab73b7606a61c29b2a82845d55f916c28556ccc742dea16b475d70a3",
+      "disposition": "RETIRED_PRODUCT_SCREEN_RETAINED_BACKEND_GUARDS",
+      "reason": "Owner-approved WORKROOM removes the financial/mining administrative screen. Screen appearance and old navigation are archived; ledger, auth, ACL, idempotency, external-send and finalization behavior remain mandatory independently.",
+      "replacements": [
+        "scripts/workroom-native-runner.mjs",
+        "playwright.workroom-financial.config.ts",
+        "tests/unit",
+        "tests/worker",
+        "tests/e2e/workroom/12-security-retirement.spec.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/withdrawal-destination-reauth.spec.ts",
+      "sha256": "5ad370c2cd296dd515447e8e37d0d94f4f219d9817c6c55eaa4727142b1116e4",
+      "disposition": "RETIRED_PRODUCT_SCREEN_RETAINED_BACKEND_GUARDS",
+      "reason": "Owner-approved WORKROOM removes the financial/mining administrative screen. Screen appearance and old navigation are archived; ledger, auth, ACL, idempotency, external-send and finalization behavior remain mandatory independently.",
+      "replacements": [
+        "scripts/workroom-native-runner.mjs",
+        "playwright.workroom-financial.config.ts",
+        "tests/unit",
+        "tests/worker",
+        "tests/e2e/workroom/12-security-retirement.spec.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/withdrawal-hydration.spec.ts",
+      "sha256": "d9ec9c6ef62d24d6622daa124eef14e4493b2ab72beba6ef7e32c44a2340b947",
+      "disposition": "RETIRED_PRODUCT_SCREEN_RETAINED_BACKEND_GUARDS",
+      "reason": "Owner-approved WORKROOM removes the financial/mining administrative screen. Screen appearance and old navigation are archived; ledger, auth, ACL, idempotency, external-send and finalization behavior remain mandatory independently.",
+      "replacements": [
+        "scripts/workroom-native-runner.mjs",
+        "playwright.workroom-financial.config.ts",
+        "tests/unit",
+        "tests/worker",
+        "tests/e2e/workroom/12-security-retirement.spec.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/withdrawal-logical-idempotency.spec.ts",
+      "sha256": "c340af68178ba619b1fe3ce35968e5e94485dde4c45248f1166e3e95b2b06e62",
+      "disposition": "RETIRED_PRODUCT_SCREEN_RETAINED_BACKEND_GUARDS",
+      "reason": "Owner-approved WORKROOM removes the financial/mining administrative screen. Screen appearance and old navigation are archived; ledger, auth, ACL, idempotency, external-send and finalization behavior remain mandatory independently.",
+      "replacements": [
+        "scripts/workroom-native-runner.mjs",
+        "playwright.workroom-financial.config.ts",
+        "tests/unit",
+        "tests/worker",
+        "tests/e2e/workroom/12-security-retirement.spec.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/withdrawal-negative-guards.spec.ts",
+      "sha256": "421eb5273da99f45ba680cc9f7232249cdd85c6a22467fd034c8dd6875e60c9c",
+      "disposition": "RETIRED_PRODUCT_SCREEN_RETAINED_BACKEND_GUARDS",
+      "reason": "Owner-approved WORKROOM removes the financial/mining administrative screen. Screen appearance and old navigation are archived; ledger, auth, ACL, idempotency, external-send and finalization behavior remain mandatory independently.",
+      "replacements": [
+        "scripts/workroom-native-runner.mjs",
+        "playwright.workroom-financial.config.ts",
+        "tests/unit",
+        "tests/worker",
+        "tests/e2e/workroom/12-security-retirement.spec.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/withdrawal-p1-recovery.spec.ts",
+      "sha256": "8c71c7b39d34c4b989540a48e37c6aabd6ac19eb758545e63e1a8852210cbbc4",
+      "disposition": "RETIRED_PRODUCT_SCREEN_RETAINED_BACKEND_GUARDS",
+      "reason": "Owner-approved WORKROOM removes the financial/mining administrative screen. Screen appearance and old navigation are archived; ledger, auth, ACL, idempotency, external-send and finalization behavior remain mandatory independently.",
+      "replacements": [
+        "scripts/workroom-native-runner.mjs",
+        "playwright.workroom-financial.config.ts",
+        "tests/unit",
+        "tests/worker",
+        "tests/e2e/workroom/12-security-retirement.spec.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/authenticated/withdrawal-product.spec.ts",
+      "sha256": "e06591e120963ebcae13ff7e50bb79ddf9a5a694277a35d5830d92a7d8178033",
+      "disposition": "RETIRED_PRODUCT_SCREEN_RETAINED_BACKEND_GUARDS",
+      "reason": "Owner-approved WORKROOM removes the financial/mining administrative screen. Screen appearance and old navigation are archived; ledger, auth, ACL, idempotency, external-send and finalization behavior remain mandatory independently.",
+      "replacements": [
+        "scripts/workroom-native-runner.mjs",
+        "playwright.workroom-financial.config.ts",
+        "tests/unit",
+        "tests/worker",
+        "tests/e2e/workroom/12-security-retirement.spec.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/foundation.spec.ts",
+      "sha256": "ddacfd1d6bcbef6892bd7311546a585258297183527793000436d6b88c5cdab7",
+      "disposition": "REPLACED_WORKROOM_PRODUCT_ASSERTIONS",
+      "reason": "Owner-approved WORKROOM replaces the old mining/catalog/onboarding/AI/admin visual product. Historical screen/route/screenshot totals and shard assignment are archived, not reported passed. Successor real Auth/member/admin/navigation and responsive coverage is required.",
+      "replacements": [
+        "playwright.workroom.config.ts",
+        "tests/e2e/workroom",
+        "playwright.workroom-retained.config.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/support-typography.spec.ts",
+      "sha256": "d4b207085b2e10eae843b5817e99e31388595906c35833f08349e193ed705090",
+      "disposition": "RETAINED_UNCHANGED",
+      "reason": "Still-reachable public isolation, evidence privacy or support typography guard remains in successor browser execution.",
+      "replacements": ["playwright.workroom-retained.config.ts"],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/support.spec.ts",
+      "sha256": "dc515edfde5bba2d0a6c7330bc7f1f92ad14de3230edf1052c9711ce9a16b540",
+      "disposition": "PARTIAL_PRODUCT_ASSERTIONS_REPLACED_GUARDS_RETAINED",
+      "reason": "Mining-specific support copy and obsolete Wallet return destinations are retired; public contact/phone-availability/admin isolation and unauthenticated command guards require successor assertions.",
+      "replacements": [
+        "scripts/workroom-auth-retained-stage.mjs",
+        "playwright.workroom-public-successor.config.ts",
+        "playwright.workroom-retained.config.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/withdrawal-evidence-redaction.spec.ts",
+      "sha256": "250c9fe4a205997fb9ffd8663baacfece118462b04a1a01133a58778f4f59afa",
+      "disposition": "RETAINED_UNCHANGED",
+      "reason": "Still-reachable public isolation, evidence privacy or support typography guard remains in successor browser execution.",
+      "replacements": ["playwright.workroom-retained.config.ts"],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/e2e/ws04-transfer-contract.spec.ts",
+      "sha256": "87d41d0f9abf5670de577c86cf5198c689d43911fdf88545e0c3476bb311a50e",
+      "disposition": "PARTIAL_PRODUCT_ASSERTIONS_REPLACED_GUARDS_RETAINED",
+      "reason": "Mining-specific support copy and obsolete Wallet return destinations are retired; public contact/phone-availability/admin isolation and unauthenticated command guards require successor assertions.",
+      "replacements": [
+        "scripts/workroom-auth-retained-stage.mjs",
+        "playwright.workroom-public-successor.config.ts",
+        "playwright.workroom-retained.config.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/runtime-acceptance/kyc/kyc-admin-runtime.spec.ts",
+      "sha256": "d84a3bf9ad04a59ef19fa98ae7469858272e7002234bf72f72bb82528b9e9384",
+      "disposition": "RETIRED_PRODUCT_SCREEN_RETAINED_BACKEND_GUARDS",
+      "reason": "Owner-approved WORKROOM removes the financial/mining administrative screen. Screen appearance and old navigation are archived; ledger, auth, ACL, idempotency, external-send and finalization behavior remain mandatory independently.",
+      "replacements": [
+        "scripts/workroom-native-runner.mjs",
+        "playwright.workroom-financial.config.ts",
+        "tests/unit",
+        "tests/worker",
+        "tests/e2e/workroom/12-security-retirement.spec.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/runtime-acceptance/kyc/kyc-member-runtime.spec.ts",
+      "sha256": "f89b4571696007aaf010928e5f8a45ef5808e40c6ab3277acfe6b0a935b0a76a",
+      "disposition": "RETIRED_PRODUCT_SCREEN_RETAINED_BACKEND_GUARDS",
+      "reason": "Owner-approved WORKROOM removes the financial/mining administrative screen. Screen appearance and old navigation are archived; ledger, auth, ACL, idempotency, external-send and finalization behavior remain mandatory independently.",
+      "replacements": [
+        "scripts/workroom-native-runner.mjs",
+        "playwright.workroom-financial.config.ts",
+        "tests/unit",
+        "tests/worker",
+        "tests/e2e/workroom/12-security-retirement.spec.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/typography/copy-spacing.spec.ts",
+      "sha256": "1899f251bcb71e962fdfb0551a2d5d2563ea498e85b7dcf99a0dd2d8de48618d",
+      "disposition": "REPLACED_WORKROOM_PRODUCT_ASSERTIONS",
+      "reason": "Owner-approved WORKROOM replaces the old mining/catalog/onboarding/AI/admin visual product. Historical screen/route/screenshot totals and shard assignment are archived, not reported passed. Successor real Auth/member/admin/navigation and responsive coverage is required.",
+      "replacements": [
+        "playwright.workroom.config.ts",
+        "tests/e2e/workroom",
+        "playwright.workroom-retained.config.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/typography/korean-line-break.spec.ts",
+      "sha256": "8aaca91736ad4f298c44659ecfbdc8d1369bfa3ff237081d5d5d0abab05a9497",
+      "disposition": "REPLACED_WORKROOM_PRODUCT_ASSERTIONS",
+      "reason": "Owner-approved WORKROOM replaces the old mining/catalog/onboarding/AI/admin visual product. Historical screen/route/screenshot totals and shard assignment are archived, not reported passed. Successor real Auth/member/admin/navigation and responsive coverage is required.",
+      "replacements": [
+        "playwright.workroom.config.ts",
+        "tests/e2e/workroom",
+        "playwright.workroom-retained.config.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/typography/korean-policy.spec.ts",
+      "sha256": "9309cc23a7928718822f76354864c3e15331b524346d6723195cd780af3cc190",
+      "disposition": "REPLACED_WORKROOM_PRODUCT_ASSERTIONS",
+      "reason": "Owner-approved WORKROOM replaces the old mining/catalog/onboarding/AI/admin visual product. Historical screen/route/screenshot totals and shard assignment are archived, not reported passed. Successor real Auth/member/admin/navigation and responsive coverage is required.",
+      "replacements": [
+        "playwright.workroom.config.ts",
+        "tests/e2e/workroom",
+        "playwright.workroom-retained.config.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/typography/protected-admin-korean-line-break.spec.ts",
+      "sha256": "9bedf702537bf4689aeae1abc558e8ed97fbf213a57a80a15c38eec6b358bbc5",
+      "disposition": "REPLACED_WORKROOM_PRODUCT_ASSERTIONS",
+      "reason": "Owner-approved WORKROOM replaces the old mining/catalog/onboarding/AI/admin visual product. Historical screen/route/screenshot totals and shard assignment are archived, not reported passed. Successor real Auth/member/admin/navigation and responsive coverage is required.",
+      "replacements": [
+        "playwright.workroom.config.ts",
+        "tests/e2e/workroom",
+        "playwright.workroom-retained.config.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/typography/protected-user-korean-line-break.spec.ts",
+      "sha256": "98a73f457b1b3db665524d0901fe1a87a982b4fb008e8a9164322010134059ac",
+      "disposition": "REPLACED_WORKROOM_PRODUCT_ASSERTIONS",
+      "reason": "Owner-approved WORKROOM replaces the old mining/catalog/onboarding/AI/admin visual product. Historical screen/route/screenshot totals and shard assignment are archived, not reported passed. Successor real Auth/member/admin/navigation and responsive coverage is required.",
+      "replacements": [
+        "playwright.workroom.config.ts",
+        "tests/e2e/workroom",
+        "playwright.workroom-retained.config.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    },
+    {
+      "path": "tests/typography/route-readiness.spec.ts",
+      "sha256": "50a534c0b996201af307bd68f63ff019c54168ed4b514e2ba305da341ba8342c",
+      "disposition": "REPLACED_WORKROOM_PRODUCT_ASSERTIONS",
+      "reason": "Owner-approved WORKROOM replaces the old mining/catalog/onboarding/AI/admin visual product. Historical screen/route/screenshot totals and shard assignment are archived, not reported passed. Successor real Auth/member/admin/navigation and responsive coverage is required.",
+      "replacements": [
+        "playwright.workroom.config.ts",
+        "tests/e2e/workroom",
+        "playwright.workroom-retained.config.ts"
+      ],
+      "executionStatus": "REQUIRES_FRESH_SUCCESSOR_ACCEPTANCE_NOT_A_PASS"
+    }
+  ]
+}

@@ -32,6 +32,7 @@ function worker() {
       "putduk-shell-v5",
       "putduk-shell-v6",
       "putduk-shell-v7",
+      "putduk-shell-workroom-v8",
     ]),
     delete: vi.fn(async () => true),
     match: vi.fn(async () => new Response("offline")),
@@ -80,36 +81,31 @@ describe("actual service worker privacy and offline recovery", () => {
       ["putduk-shell-v3"],
       ["putduk-shell-v5"],
       ["putduk-shell-v6"],
+      ["putduk-shell-v7"],
     ]);
   });
   it("caches exact public offline artwork, never application/API or auth chunks", async () => {
     const w = worker();
     await w.emit("install", {});
     const paths = w.cache.addAll.mock.calls[0]![0] as unknown as string[];
-    expect(w.caches.open).toHaveBeenCalledWith("putduk-shell-v7");
-    expect(paths).toEqual([
-      "/offline",
-      "/brand/identity/20261014/favicon/favicon.svg",
-      "/brand/identity/20261014/pwa/putduk-pwa-dark-192.png",
-      "/brand/identity/20261014/logo/putduk-sprout-p-master.svg",
-      "/brand/identity/20261014/notification/putduk-notification-badge-96.png",
-    ]);
+    expect(w.caches.open).toHaveBeenCalledWith("putduk-shell-workroom-v8");
+    expect(paths).toEqual(["/offline", "/workroom-icon.svg"]);
     expect(paths).toContain("/offline");
     expect(paths).not.toContain("/home");
     expect(
-      paths.every((x) => x === "/offline" || x.startsWith("/brand/")),
+      paths.every((x) => x === "/offline" || x === "/workroom-icon.svg"),
     ).toBe(true);
   });
-  it("serves the new public notification badge from the current shell cache offline", async () => {
+  it("serves the approved public WORKROOM icon from the current shell cache offline", async () => {
     const w = worker();
-    w.cache.match.mockResolvedValue(new Response("cached badge"));
+    w.cache.match.mockResolvedValue(new Response("cached icon"));
     const request = {
       method: "GET",
-      url: "https://mining.putduk.com/brand/identity/20261014/notification/putduk-notification-badge-96.png",
+      url: "https://mining.putduk.com/workroom-icon.svg",
       mode: "cors",
     };
     expect(await w.emit("fetch", { request })).toHaveBeenCalledOnce();
-    expect(w.caches.open).toHaveBeenCalledWith("putduk-shell-v7");
+    expect(w.caches.open).toHaveBeenCalledWith("putduk-shell-workroom-v8");
     expect(w.cache.match).toHaveBeenCalledWith(request);
     expect(w.fetch).not.toHaveBeenCalled();
   });
@@ -219,9 +215,8 @@ describe("actual service worker privacy and offline recovery", () => {
     expect(w.showNotification).toHaveBeenCalledWith(
       "퍼뜩 채굴",
       expect.objectContaining({
-        icon: "/brand/identity/20261014/pwa/putduk-pwa-dark-192.png",
-        badge:
-          "/brand/identity/20261014/notification/putduk-notification-badge-96.png",
+        icon: "/workroom-icon.svg",
+        badge: "/workroom-icon.svg",
         tag: "putduk:10000000-0000-4000-8000-000000000001",
         data: { url: "/notifications" },
       }),

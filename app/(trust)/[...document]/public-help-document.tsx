@@ -6,7 +6,7 @@ import {
   TRUST_LAST_UPDATED,
   type PublicFact,
   type TrustDocument,
-} from "@/lib/trust/public-content";
+} from "@/lib/workroom/public-content";
 import {
   getPublicFactDisplayValue,
   getPublicFactLabel,

@@ -61,6 +61,19 @@ function uuidLiteral(value: string) {
   return `${sqlLiteral(value)}::uuid`;
 }
 
+/** Owner-created, one-use invitation on the guarded disposable database. */
+function workroomSignupMetadata(userId: string) {
+  const code = `WR-WORKER-${userId.replaceAll("-", "").toUpperCase()}`;
+  if (
+    sql("select to_regclass('app_private.workroom_invites') is not null") !==
+    "t"
+  )
+    return "'{}'::jsonb";
+  sql(`insert into app_private.workroom_invites(code,label,max_uses,expires_at)
+    values (${sqlLiteral(code)},'Worker acceptance fixture',1,clock_timestamp()+interval '1 hour')`);
+  return `${sqlLiteral(JSON.stringify({ referralCode: code, workroomAcknowledged: true }))}::jsonb`;
+}
+
 function fixturePayload(value: unknown, defaults: Record<string, unknown>) {
   if (
     value !== undefined &&
@@ -305,7 +318,7 @@ async function insertCanonicalSafeModeEvent(
       raw_app_meta_data,raw_user_meta_data,created_at,updated_at,
       confirmation_token,recovery_token,email_change,email_change_token_new)
     values ('${actorId}','authenticated','authenticated','safe-worker-${actorId}@putduk.test','',
-      statement_timestamp(),'{}','{}',statement_timestamp(),statement_timestamp(),'','','','');
+      statement_timestamp(),'{}',${workroomSignupMetadata(actorId)},statement_timestamp(),statement_timestamp(),'','','','');
     insert into public.user_roles(user_id,role,granted_by) values ('${actorId}','ADMIN','${actorId}');
   `);
   const prior = await client
@@ -659,7 +672,7 @@ insert into auth.users (
   '',
   statement_timestamp(),
   '{}'::jsonb,
-  '{}'::jsonb,
+  ${workroomSignupMetadata(actorId)},
   statement_timestamp(), statement_timestamp(), '', '', '', ''
 );
 `);
@@ -828,7 +841,7 @@ insert into auth.users (
   '',
   statement_timestamp(),
   '{}'::jsonb,
-  '{}'::jsonb,
+  ${workroomSignupMetadata(userId)},
   statement_timestamp(), statement_timestamp(), '', '', '', ''
 );
 `);
@@ -1292,7 +1305,7 @@ describe("safe-mode actual command and registered worker delivery", () => {
         raw_app_meta_data, raw_user_meta_data, created_at, updated_at,
         confirmation_token, recovery_token, email_change, email_change_token_new)
       values ('${actorId}', 'authenticated', 'authenticated', 'safe-worker-${actorId}@putduk.test', '',
-        statement_timestamp(), '{}'::jsonb, '{}'::jsonb, statement_timestamp(), statement_timestamp(), '', '', '', '');
+        statement_timestamp(), '{}'::jsonb, ${workroomSignupMetadata(actorId)}, statement_timestamp(), statement_timestamp(), '', '', '', '');
       insert into public.user_roles (user_id, role, granted_by) values ('${actorId}', 'ADMIN', '${actorId}');
     `);
     async function command(

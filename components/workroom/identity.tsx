@@ -89,7 +89,12 @@ export function WorkroomAuth({
         </section>
       </div>
       <footer className={styles.footer}>
-        © 2026 WORKROOM · 무료 시뮬레이션
+        <span>© 2026 WORKROOM · 무료 시뮬레이션</span>
+        <nav aria-label="이용 안내">
+          <Link href="/terms">이용약관</Link>
+          {" · "}
+          <Link href="/privacy">개인정보처리방침</Link>
+        </nav>
       </footer>
     </main>
   );

@@ -20,3 +20,6 @@ tests/unit/fixtures/backend197-native-originals/*.source.txt -text whitespace=cr
 
 # Backend201 manifest digest binds exact committed JSON bytes on Windows and CI.
 tests/e2e/fixtures/backend-successor-201-source.json -text
+
+# Frozen financial concurrency source is hashed as the exact Git LF blob.
+tests/integration/external-send-concurrency.py text eol=lf

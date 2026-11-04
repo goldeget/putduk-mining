@@ -2,6 +2,8 @@ import Link from "next/link";
 export default function OfflinePage() {
   return (
     <main
+      data-ui-state="offline"
+      data-ui-ready="/offline"
       style={{
         maxWidth: 560,
         margin: "12vh auto",

@@ -9,7 +9,7 @@ import {
   TRUST_CONTENT_VERSION,
   TRUST_DOCUMENTS,
   TRUST_LAST_UPDATED,
-} from "@/lib/trust/public-content";
+} from "@/lib/workroom/public-content";
 import {
   buildBreadcrumbStructuredData,
   publicLanguageAlternates,
@@ -88,7 +88,7 @@ export default async function TrustDocumentPage({ params }: PageProps) {
       dateModified: TRUST_LAST_UPDATED,
       isPartOf: {
         "@type": "WebSite",
-        name: "PUTDUK MINING",
+        name: "WORKROOM",
         url: "https://mining.putduk.com",
       },
       mainEntityOfPage: `https://mining.putduk.com${document.path}`,
