@@ -32,6 +32,12 @@ if (
 )
   throw Error("WORKROOM_DISPOSABLE_CI_REQUIRED");
 const workerd = process.env.WORKROOM_CI_RUNTIME === "workerd";
+const profile = process.env.WORKROOM_CI_PROFILE ?? "full";
+const smoke = profile === "pr-smoke";
+if (!new Set(["full", "pr-smoke"]).has(profile))
+  throw Error("WORKROOM_UNKNOWN_PROFILE");
+if (smoke && workerd)
+  throw Error("WORKROOM_WORKER_RUNTIME_REQUIRES_FULL_ACCEPTANCE");
 if (process.env.WORKROOM_CI_RUNTIME && !workerd)
   throw Error("WORKROOM_UNKNOWN_RUNTIME");
 const buildReceipt = JSON.parse(
@@ -249,69 +255,79 @@ try {
     JSON.parse(readFileSync(browserPath, "utf8")),
     browserFiles,
   );
-  // The first Playwright run leaves its local Next servers available to later
-  // suites. Reuse those already-validated servers instead of colliding on 3000.
-  env = { ...env, WORKROOM_REUSE_SERVER: "1" };
-  run(process.execPath, [
-    "node_modules/@playwright/test/cli.js",
-    "test",
-    "--config",
-    "playwright.workroom-retained.config.ts",
-    "--fail-on-flaky-tests",
-  ]);
-  const retainedPath = "test-results/workroom-auth/retained-results.json";
-  assertPlaywrightReport(JSON.parse(readFileSync(retainedPath, "utf8")));
-  run(process.execPath, ["scripts/workroom-auth-retained-stage.mjs"]);
-  run(process.execPath, [
-    "node_modules/@playwright/test/cli.js",
-    "test",
-    "--config",
-    "playwright.workroom-financial.config.ts",
-    "--fail-on-flaky-tests",
-  ]);
-  const financialPath = "test-results/workroom-auth/financial-results.json";
-  assertPlaywrightReport(JSON.parse(readFileSync(financialPath, "utf8")));
-  run(process.execPath, [
-    "node_modules/@playwright/test/cli.js",
-    "test",
-    "--config",
-    "playwright.workroom-public-successor.config.ts",
-    "--fail-on-flaky-tests",
-  ]);
-  const publicSuccessorPath =
-    "test-results/workroom-auth/public-successor-results.json";
-  assertPlaywrightReport(JSON.parse(readFileSync(publicSuccessorPath, "utf8")));
-  // Each financial contention case gets a new task-owned 201 database, followed
-  // by the exact same 202 cutover and preserved finalization assertions.
-  for (const caseId of ["A", "B", "D", "E"]) {
-    run("supabase", ["db", "reset", "--local", "--workdir", baseline]);
-    for (const phase of ["baseline", "cutover"])
-      run(process.execPath, [
-        "scripts/workroom-native-runner.mjs",
-        `--${phase}`,
-        "--stage",
-        stage,
-        `--principal=${caseId}`,
-      ]);
+  // The PR profile ends after this complete member/admin suite. The full
+  // acceptance workflow keeps the retained-data, financial and contention runs.
+  if (!smoke) {
+    // The first Playwright run leaves its local Next servers available to later
+    // suites. Reuse those already-validated servers instead of colliding on 3000.
+    env = { ...env, WORKROOM_REUSE_SERVER: "1" };
+    run(process.execPath, [
+      "node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "playwright.workroom-retained.config.ts",
+      "--fail-on-flaky-tests",
+    ]);
+    const retainedPath = "test-results/workroom-auth/retained-results.json";
+    assertPlaywrightReport(JSON.parse(readFileSync(retainedPath, "utf8")));
+    run(process.execPath, ["scripts/workroom-auth-retained-stage.mjs"]);
+    run(process.execPath, [
+      "node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "playwright.workroom-financial.config.ts",
+      "--fail-on-flaky-tests",
+    ]);
+    const financialPath = "test-results/workroom-auth/financial-results.json";
+    assertPlaywrightReport(JSON.parse(readFileSync(financialPath, "utf8")));
+    run(process.execPath, [
+      "node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "playwright.workroom-public-successor.config.ts",
+      "--fail-on-flaky-tests",
+    ]);
+    const publicSuccessorPath =
+      "test-results/workroom-auth/public-successor-results.json";
+    assertPlaywrightReport(
+      JSON.parse(readFileSync(publicSuccessorPath, "utf8")),
+    );
+    // Each financial contention case gets a new task-owned 201 database, followed
+    // by the exact same 202 cutover and preserved finalization assertions.
+    for (const caseId of ["A", "B", "D", "E"]) {
+      run("supabase", ["db", "reset", "--local", "--workdir", baseline]);
+      for (const phase of ["baseline", "cutover"])
+        run(process.execPath, [
+          "scripts/workroom-native-runner.mjs",
+          `--${phase}`,
+          "--stage",
+          stage,
+          `--principal=${caseId}`,
+        ]);
+    }
+    run(process.execPath, [
+      "scripts/workroom-native-runner.mjs",
+      "--verify-complete",
+      "--stage",
+      stage,
+    ]);
   }
-  run(process.execPath, [
-    "scripts/workroom-native-runner.mjs",
-    "--verify-complete",
-    "--stage",
-    stage,
-  ]);
   cpSync(resolve(stage, "evidence"), "test-results/workroom-native", {
     recursive: true,
   });
-  const native = [
-    "legacy",
-    "baseline",
-    "cutover",
-    ...["A", "B", "D", "E"].flatMap((id) => [
-      `principal${id}-baseline`,
-      `principal${id}-cutover`,
-    ]),
-  ].map((phase) => `test-results/workroom-native/${phase}.json`);
+  const native = (
+    smoke
+      ? ["legacy", "baseline", "cutover"]
+      : [
+          "legacy",
+          "baseline",
+          "cutover",
+          ...["A", "B", "D", "E"].flatMap((id) => [
+            `principal${id}-baseline`,
+            `principal${id}-cutover`,
+          ]),
+        ]
+  ).map((phase) => `test-results/workroom-native/${phase}.json`);
   for (const path of native) {
     const report = JSON.parse(readFileSync(path, "utf8"));
     if (
@@ -325,7 +341,11 @@ try {
     `${evidence}/receipt.json`,
     JSON.stringify(
       makeReceipt({
-        gate: workerd ? "workerd-native-worker-auth" : "native-worker-auth",
+        gate: workerd
+          ? "workerd-native-worker-auth"
+          : smoke
+            ? "native-worker-auth-pr-smoke"
+            : "native-worker-auth",
         startedAt,
         files: [
           ...native,
@@ -337,10 +357,14 @@ try {
               ]
             : []),
           browserPath,
-          retainedPath,
-          financialPath,
-          publicSuccessorPath,
-          "test-results/workroom-auth/retained-source/provenance.json",
+          ...(smoke
+            ? []
+            : [
+                "test-results/workroom-auth/retained-results.json",
+                "test-results/workroom-auth/financial-results.json",
+                "test-results/workroom-auth/public-successor-results.json",
+                "test-results/workroom-auth/retained-source/provenance.json",
+              ]),
           "test-results/worker/report.json",
           "test-results/workroom-worker-201/report.json",
         ],

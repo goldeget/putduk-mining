@@ -126,10 +126,11 @@ jobs:
         with:
           name: workroom-build-${{ github.run_id }}-${{ github.run_attempt }}-${{ env.CI_HEAD_SHA }}
           path: .
-      - name: Disposable native security, worker and real Auth acceptance
+      - name: Disposable native, Auth and member/admin smoke acceptance
         run: node scripts/ci-workroom-acceptance.mjs
         env:
           GH_TOKEN: ${{ github.token }}
+          WORKROOM_CI_PROFILE: pr-smoke
       - uses: actions/upload-artifact@v7
         if: always()
         with:
@@ -137,10 +138,6 @@ jobs:
           path: |
             test-results/workroom-native
             test-results/workroom-auth/results.json
-            test-results/workroom-auth/retained-results.json
-            test-results/workroom-auth/financial-results.json
-            test-results/workroom-auth/public-successor-results.json
-            test-results/workroom-auth/retained-source/provenance.json
             test-results/workroom-auth/*member-mobile.png
             test-results/workroom-acceptance
             test-results/worker
