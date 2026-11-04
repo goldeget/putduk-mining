@@ -401,12 +401,25 @@ export function verifyWorkroomNativeComplete(stage) {
       readFileSync(resolve(stage, "evidence", name + ".json"), "utf8"),
     ),
   );
-  for (const [index,receipt] of receipts.entries()) {
-    const name=expected[index],caseId=name.startsWith('principal')?name.slice(9,10):null;
-    const phase=name.endsWith('baseline')?'baseline':'cutover';
-    if(receipt.phase!==phase||receipt.principal!==caseId) fail('EXACT_PHASE_RECEIPT_INVENTORY_REQUIRED');
-    if(caseId&&phase==='cutover'&&!receipt.records.some(x=>x.label==='principal-contention-'+caseId&&x.assertions>0)) fail('EACH_PRINCIPAL_CONTENTION_PROOF_REQUIRED');
-    if(phase==='cutover'&&receipts[index-1].containerId!==receipt.containerId) fail('PRESERVED_SAME_GENERATION_REQUIRED');
+  for (const [index, receipt] of receipts.entries()) {
+    const name = expected[index],
+      caseId = name.startsWith("principal") ? name.slice(9, 10) : null;
+    const phase = name.endsWith("baseline") ? "baseline" : "cutover";
+    if (receipt.phase !== phase || receipt.principal !== caseId)
+      fail("EXACT_PHASE_RECEIPT_INVENTORY_REQUIRED");
+    if (
+      caseId &&
+      phase === "cutover" &&
+      !receipt.records.some(
+        (x) => x.label === "principal-contention-" + caseId && x.assertions > 0,
+      )
+    )
+      fail("EACH_PRINCIPAL_CONTENTION_PROOF_REQUIRED");
+    if (
+      phase === "cutover" &&
+      receipts[index - 1].containerId !== receipt.containerId
+    )
+      fail("PRESERVED_SAME_GENERATION_REQUIRED");
     if (
       receipt.kind !== "WORKROOM_NATIVE_PHASE" ||
       receipt.state !== "PASSED" ||
