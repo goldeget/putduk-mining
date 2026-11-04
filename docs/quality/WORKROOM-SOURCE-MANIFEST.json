@@ -1996,7 +1996,7 @@
     "scripts/ci-workroom-checkout.mjs": "34acf4007905381533514bbeccb955557bff8da0d81e9c57798e2b5943a70866",
     "scripts/ci-workroom-cloudflare-build.mjs": "bc04d8d79f4b93a9073e72f23ae909a763b153553c69df024b4490eb49d02b25",
     "scripts/ci-workroom-cloudflare-output.mjs": "29ad4c458871ef015ffc7bfc42a1c341d7ba444f35dc45571b8d96d5369f4fec",
-    "scripts/ci-workroom-cloudflare-output.test.mjs": "d02713f1de95bb338d3bbc011aabd8527ce8cbd37d613938ce31d337b5ab7621",
+    "scripts/ci-workroom-cloudflare-output.test.mjs": "ca89dc5a3b4b4703073d0146d23e3c562c3646dadf5a7c62f76a2fbfccc04c3c",
     "scripts/ci-workroom-content-stage.mjs": "c13e05c8350602af43e9a52b0db53de3a905cb6154c71aa5933bc76bca804dc2",
     "scripts/ci-workroom-content-stage.test.mjs": "fa4313b8c58020d388465279a90c04197a9ec0a919c3030e13c2b349ba56da20",
     "scripts/ci-workroom-evidence.mjs": "12983e835bd98c3da1224bffe6276134985356d33785d8846499659eacf93464",
