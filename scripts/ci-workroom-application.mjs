@@ -1,5 +1,5 @@
 import { execFileSync } from "node:child_process";
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, writeFileSync, copyFileSync } from "node:fs";
 import { makeReceipt, assertVitestReport } from "./ci-workroom-evidence.mjs";
 import { readFileSync } from "node:fs";
 import { jsonUnitCompleteness } from "./unit-completeness-reporter.mjs";
@@ -17,7 +17,7 @@ const commands = [
   ["pnpm", ["format:check"]],
   ["pnpm", ["lint"]],
   ["pnpm", ["typecheck"]],
-  ["node", ["scripts/stage-content-source-ci.mjs"]],
+  ["node", ["scripts/ci-workroom-content-stage.mjs"]],
   ["node", ["scripts/ci-workroom-unit-disposition.mjs"]],
   ["node", ["scripts/ci-workroom-browser-disposition.mjs"]],
   [
@@ -28,6 +28,8 @@ const commands = [
       "scripts/ci-workroom-wall-clock.test.mjs",
       "scripts/ci-workroom-git-blobs.test.mjs",
       "scripts/ci-workroom-source-bytes.test.mjs",
+      "scripts/ci-workroom-content-stage.test.mjs",
+      "scripts/stage-content-source-ci.test.mjs",
       "scripts/workroom-native-adapters.test.mjs",
     ],
   ],
@@ -36,7 +38,7 @@ const commands = [
 ];
 const completed = [];
 for (const [command, args] of commands) {
-  if (args[0] === "scripts/stage-content-source-ci.mjs") {
+  if (args[0] === "scripts/ci-workroom-content-stage.mjs") {
     const stdout = execFileSync(command, args, {
       stdio: ["ignore", "pipe", "inherit"],
       env: process.env,
@@ -50,6 +52,13 @@ for (const [command, args] of commands) {
     )
       throw Error("WORKROOM_CONTENT_FIXTURE_STAGE");
     process.env.PUTDUK_CONTENT_SOURCE_FIXTURE_DIR = staged.fixtureDirectory;
+    if (!staged.adapterProvenance || !staged.receipt)
+      throw Error("WORKROOM_CONTENT_PROVENANCE_REQUIRED");
+    copyFileSync(
+      staged.adapterProvenance,
+      `${directory}/content-adapter-provenance.json`,
+    );
+    copyFileSync(staged.receipt, `${directory}/content-source-receipt.json`);
     console.log(stdout.trim());
   } else execFileSync(command, args, { stdio: "inherit", env: process.env });
   completed.push({ command, args, completedAt: Date.now() });
@@ -80,6 +89,8 @@ writeFileSync(
         `${directory}/admin-vitest.json`,
         `${directory}/web-vitest.json.completeness.json`,
         `${directory}/admin-vitest.json.completeness.json`,
+        `${directory}/content-adapter-provenance.json`,
+        `${directory}/content-source-receipt.json`,
         ".next/BUILD_ID",
         "apps/admin/.next/BUILD_ID",
       ],

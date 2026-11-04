@@ -18,6 +18,9 @@ env:
 jobs:
   application:
     name: WORKROOM application gates
+    permissions:
+      contents: read
+      actions: read
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     steps:
@@ -37,6 +40,8 @@ jobs:
           node scripts/ci-workroom-checkout.mjs
           pnpm install --frozen-lockfile
           node scripts/ci-workroom-application.mjs
+        env:
+          GH_TOKEN: ${{ github.token }}
       - uses: actions/upload-artifact@v7
         if: always()
         with:
@@ -98,4 +103,5 @@ jobs:
             test-results/workroom-auth/*member-mobile.png
             test-results/workroom-acceptance
             test-results/worker
+            test-results/workroom-worker-201
           if-no-files-found: error

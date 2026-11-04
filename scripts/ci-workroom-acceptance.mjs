@@ -103,6 +103,13 @@ try {
     LOCAL_SUPABASE_DB_URL: credentials.dbUrl,
     LOCAL_SUPABASE_PROJECT_ID: "putduk-mining-ci-r2-20261009",
   };
+  // Historical first-administrator assertions run before maintenance identities.
+  run(process.execPath, [
+    "scripts/workroom-native-runner.mjs",
+    "--legacy",
+    "--stage",
+    stage,
+  ]);
   run(process.execPath, ["scripts/workroom-auth-seed-existing.mjs"]);
   Object.assign(
     env,
@@ -113,6 +120,17 @@ try {
   run(process.execPath, [
     "scripts/assert-admin-auth-admission-concurrency.mjs",
   ]);
+  const legacyWorkerStartedAt = Date.now();
+  run("pnpm", ["test:worker"]);
+  run(process.execPath, [
+    "scripts/assert-worker-report.mjs",
+    "test-results/worker/vitest.json",
+    "--started-after",
+    String(legacyWorkerStartedAt),
+  ]);
+  cpSync("test-results/worker", "test-results/workroom-worker-201", {
+    recursive: true,
+  });
   run(process.execPath, [
     "scripts/workroom-native-runner.mjs",
     "--baseline",
@@ -228,6 +246,7 @@ try {
     recursive: true,
   });
   const native = [
+    "legacy",
     "baseline",
     "cutover",
     ...["A", "B", "D", "E"].flatMap((id) => [
@@ -258,6 +277,7 @@ try {
           publicSuccessorPath,
           "test-results/workroom-auth/retained-source/provenance.json",
           "test-results/worker/report.json",
+          "test-results/workroom-worker-201/report.json",
         ],
       }),
       null,

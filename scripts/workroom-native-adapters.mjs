@@ -130,6 +130,7 @@ export function adaptWorkroomDefinerRoster(input) {
     "public.workroom_read_state()",
     "public.workroom_member_command(text,text,jsonb)",
     "public.workroom_admin_command(text,text,jsonb,uuid,uuid,text,text)",
+    "app_private.resolve_operator_login_email(text)",
   ];
   const after =
     before +
@@ -139,11 +140,11 @@ export function adaptWorkroomDefinerRoster(input) {
     fail("SECDEF_201_ROSTER_REQUIRED");
   const next = sql
     .replaceAll(before, after)
-    .replace("select count(*) = 84", "select count(*) = 88");
+    .replace("select count(*) = 84", "select count(*) = 89");
   if (
     next
       .replaceAll(after, before)
-      .replace("select count(*) = 88", "select count(*) = 84") !== sql
+      .replace("select count(*) = 89", "select count(*) = 84") !== sql
   )
     fail("SECDEF_REVERSE_FAILED");
   return {

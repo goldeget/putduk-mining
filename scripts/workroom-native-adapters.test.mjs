@@ -30,11 +30,12 @@ test("unsupported auth insertion fails closed", () => {
     /AUTH_COLUMN_VALUE_ARITY/,
   );
 });
-test("SECDEF adapter appends exact four names and preserves historical roster", () => {
+test("SECDEF adapter appends exact five names and preserves historical roster", () => {
   const original =
     "        'app_private.ack_safe_mode_outbox(uuid,text)'::regprocedure,\nselect count(*) = 84";
   const r = adaptWorkroomDefinerRoster(original);
-  assert.match(r.sql, /count\(\*\) = 88/);
+  assert.match(r.sql, /count\(\*\) = 89/);
+  assert.match(r.sql, /app_private.resolve_operator_login_email/);
   assert.match(r.sql, /workroom_signup/);
   assert.equal(r.reverseExact, true);
   assert.throws(

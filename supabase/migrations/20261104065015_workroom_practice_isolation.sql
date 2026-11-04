@@ -220,4 +220,30 @@ grant execute on function public.workroom_read_state() to authenticated;
 grant execute on function public.workroom_member_command(text,text,jsonb) to authenticated;
 grant execute on function public.workroom_admin_command(text,text,jsonb,uuid,uuid,text,text) to authenticated;
 comment on function public.workroom_member_command(text,text,jsonb) is 'Free noncash simulation only. Serialized per member, immutable configuration snapshots, stored original idempotency results. No wallet or monetary reward effects.';
+-- Operator aliases identify an existing privileged Auth principal. Metadata
+-- never grants a role, and this lookup is unavailable to public/member clients.
+create function app_private.resolve_operator_login_email(p_login_id text) returns text
+language plpgsql security definer set search_path=pg_catalog as $$
+declare normalized text:=lower(btrim(p_login_id));matches bigint;resolved text;begin
+ if normalized is null or normalized!~'^[a-z][a-z0-9_-]{2,31}$' then
+  raise exception using errcode='22023',message='OPERATOR_LOGIN_ID_INVALID';
+ end if;
+ select count(*),min(u.email) into matches,resolved from auth.users u
+ where jsonb_typeof(u.raw_user_meta_data->'operator_login_id')='string'
+ and lower(btrim(u.raw_user_meta_data->>'operator_login_id'))=normalized
+ and u.deleted_at is null and (u.banned_until is null or u.banned_until<=clock_timestamp())
+ and u.email_confirmed_at is not null and nullif(btrim(u.email),'') is not null
+ and not coalesce(u.is_anonymous,false)
+ and exists(select 1 from public.user_roles r where r.user_id=u.id and r.revoked_at is null and r.role::text in('ADMIN','SUPER_ADMIN'));
+ if matches>1 then raise exception using errcode='23505',message='OPERATOR_LOGIN_ID_AMBIGUOUS';end if;
+ return resolved;
+end$$;
+create function public.resolve_operator_login_email(p_login_id text) returns text
+language sql security invoker set search_path=pg_catalog as $$
+ select app_private.resolve_operator_login_email(p_login_id);
+$$;
+revoke all on function app_private.resolve_operator_login_email(text) from public,anon,authenticated,service_role;
+revoke all on function public.resolve_operator_login_email(text) from public,anon,authenticated,service_role;
+grant execute on function app_private.resolve_operator_login_email(text) to service_role;
+grant execute on function public.resolve_operator_login_email(text) to service_role;
 commit;

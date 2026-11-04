@@ -2,7 +2,10 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { buildWorkroomNativeFiles } from "./workroom-native-stage.mjs";
-import { assertNativeTap } from "./workroom-native-runner.mjs";
+import {
+  assertNativeTap,
+  assertWorkroomLegacyReceipt,
+} from "./workroom-native-runner.mjs";
 import { adaptWorkroomPractice } from "./workroom-native-adapters.mjs";
 import {
   buildConcurrency195Fixture,
@@ -78,4 +81,31 @@ test("WORKROOM native practice preserves invalid/replay signup assertions and us
   assert.match(r.sql, /'WORKROOM_INVITATION_INVALID'/);
   assert.doesNotMatch(r.sql, /insert into app_private.workroom_cohort/);
   assert.match(r.sql, /id,email,email_confirmed_at,raw_user_meta_data/);
+});
+test("split legacy proof rejects omitted suites, duplicate suites, wrong HEAD and changed DB container", () => {
+  const labels = Array.from({ length: 114 }, (_, i) => "suite-" + i);
+  const proof = {
+    kind: "WORKROOM_NATIVE_PHASE",
+    phase: "legacy",
+    principal: null,
+    state: "PASSED",
+    head: "candidate",
+    containerId: "owned-db",
+    records: [{ label: "preflight" }, ...labels.map((label) => ({ label }))],
+  };
+  const ctx = { head: "candidate", containerId: "owned-db" };
+  assert.doesNotThrow(() => assertWorkroomLegacyReceipt(proof, labels, ctx));
+  for (const changed of [
+    { ...proof, head: "older" },
+    { ...proof, containerId: "other-db" },
+    { ...proof, records: proof.records.slice(1) },
+    {
+      ...proof,
+      records: [...proof.records.slice(0, -1), { label: labels[0] }],
+    },
+  ])
+    assert.throws(
+      () => assertWorkroomLegacyReceipt(changed, labels, ctx),
+      /LEGACY_114_REQUIRED/,
+    );
 });

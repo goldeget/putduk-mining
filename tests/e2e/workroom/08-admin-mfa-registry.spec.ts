@@ -1,9 +1,19 @@
 import { test, expect } from "@playwright/test";
-import { operator, adminLogin, adminOrigin, service } from "./helpers";
+import { required, sql, adminLogin, adminOrigin, service } from "./helpers";
 test("real TOTP admin session is registered and live revocation immediately denies access", async ({
   page,
 }) => {
-  const user = await operator();
+  const user = {
+    userId: required("WORKROOM_OPERATOR_ID"),
+    email: required("WORKROOM_OPERATOR_LOGIN_ID"),
+    password: required("WORKROOM_OPERATOR_PASSWORD"),
+  };
+  expect(user.userId).toMatch(/^[0-9a-f-]{36}$/);
+  expect(
+    sql(
+      `select count(*) from public.user_identity_profiles where user_id='${user.userId}';`,
+    ),
+  ).toBe("0");
   await adminLogin(page, user);
   const client = service();
   const registered = await client

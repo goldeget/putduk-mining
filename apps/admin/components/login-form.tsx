@@ -14,13 +14,14 @@ export function LoginForm({ returnTo }: { returnTo: string }) {
     <form action={action} className="auth-form">
       <input name="returnTo" type="hidden" value={returnTo} />
       <label>
-        <span>운영자 이메일</span>
+        <span>운영자 아이디 또는 이메일</span>
         <input
           autoComplete="username"
-          inputMode="email"
           name="email"
           required
-          type="email"
+          type="text"
+          autoCapitalize="none"
+          spellCheck={false}
         />
       </label>
       <label>

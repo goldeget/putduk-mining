@@ -10,6 +10,9 @@ select p.oid::regprocedure::text signature,pg_get_functiondef(p.oid) definition,
  coalesce(p.proacl,acldefault('f',p.proowner))::text acl
 from pg_proc p join pg_namespace n on n.oid=p.pronamespace
 where n.nspname in('public','app_private') and p.prosecdef;
+create table workroom_native_evidence.member_login as
+select pg_get_functiondef(p.oid) definition,coalesce(p.proacl,acldefault('f',p.proowner))::text acl
+from pg_proc p where p.oid='public.resolve_login_email(text)'::regprocedure;
 do $$declare t record;c bigint;d text;begin
  if(select count(*) from workroom_native_evidence.definers)<>84 then raise exception 'WORKROOM_BASELINE_EXACT_84_REQUIRED';end if;
  for t in select n.nspname,c.relname from pg_class c join pg_namespace n on n.oid=c.relnamespace

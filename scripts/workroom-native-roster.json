@@ -1335,13 +1335,13 @@
     "path": "supabase/tests/database/ai_conversation_storage.sql",
     "sourceSha256": "a01acbd4e2d780f85c023c8a6ba37bd34ad52b0c05de9af4f62cdd1622dd8d6b",
     "baselineSha256": "a98a11607e0e2bf16ea862c737c9db8d9c6af9ef0e5b9bf5b0ab0db3bef90914",
-    "successorSha256": "8e4f51678a323a7532b6915430bc49f26bc056735e77b79ddd3aef1fdd587754"
+    "successorSha256": "3f5dadfb4768954e327927706ce2f5f1c1d1e8f35f2dc795ebf27160f27c54f6"
   },
   {
     "path": "supabase/tests/database/ai_conversation_summaries.sql",
     "sourceSha256": "304c8f1d4e30fb80b0b643bf5e16305b65556ecf265c5f60d6896c2d6cb15904",
     "baselineSha256": "07e72c8fcf5c8ddfc89fc402c8e607e6dc3da12e3427f13b8b7ffddf3e21ff0f",
-    "successorSha256": "92a389556c3a0bb95f1e37b07aad45e7f3778f4052a175d3ba1be2d3de8ba9bc"
+    "successorSha256": "b4eb141c8fe756e918cbe393ed029d1c87de65d6bb4d9d308ca88d7c4289814c"
   },
   {
     "path": "supabase/tests/database/ai_member_admission_hard_caps.sql",
@@ -1383,7 +1383,7 @@
     "path": "supabase/tests/database/ai_tool_evidence.sql",
     "sourceSha256": "4cd31ada54d15f490c6927d02de9683e7db69867c2bb8e641239803ef9082567",
     "baselineSha256": "5c77e2b902358d0931905e6fd829891481db120fbaef0740edb225939ce721df",
-    "successorSha256": "2045664f1239d206b9b3bfdf4adf023ad7ea165e461b53d14dc8edaa1db8f774"
+    "successorSha256": "efb0ac655b16c45de30135ed3bc6451e572352350d816eebfd83f89aa414bb91"
   },
   {
     "path": "supabase/tests/database/backend_referral_nonmoney_bridge.sql",
@@ -1803,7 +1803,7 @@
     "path": "supabase/tests/database/rls.sql",
     "sourceSha256": "8bbb3ac60738691c68f7fa7a12f39991ca4c242a68ee4c8a55551131bf2a67dc",
     "baselineSha256": "3a7b334823c2f8bd3c0007667c87b8381d4c54f99bab094d37454be8e2ddedba",
-    "successorSha256": "910572ddc5913f92b875d2dc806f40087717640361b52f6f70d216f18cd8384b"
+    "successorSha256": "36fb095179ed802dc855d9a5a7b302de7e406348854d1de020efd59300fe3a4c"
   },
   {
     "path": "supabase/tests/database/safe_mode_atomic_audit_command.sql",
@@ -1965,7 +1965,7 @@
     "path": "supabase/tests/database/ws04_security_money_workers.sql",
     "sourceSha256": "4cdc308ef0c2e023caed2e136620648450968428149f4e5d7eaaba71baa9a685",
     "baselineSha256": "987032a95ec5b3a571b86538cc50d4e9968582e71dbc91edd5953ec2d2b4161e",
-    "successorSha256": "3fcc88c7c8df4ea71c0582b949c213e8111dda58af743ab721218e528f942515"
+    "successorSha256": "69075de94f064a3a84bd815c44ed75e674cde438c5ab149b1157c46fb629b5f8"
   },
   {
     "path": "supabase/tests/database/ws05_admin_session_step_up.sql",

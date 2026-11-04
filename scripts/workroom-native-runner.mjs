@@ -22,14 +22,34 @@ export function assertNativeTap(text) {
     fail("COMPLETE_TAP_REQUIRED");
   return checks.length;
 }
+export function assertWorkroomLegacyReceipt(legacy, expectedLabels, context) {
+  if (
+    expectedLabels.length !== 114 ||
+    legacy.kind !== "WORKROOM_NATIVE_PHASE" ||
+    legacy.phase !== "legacy" ||
+    legacy.principal !== null ||
+    legacy.state !== "PASSED" ||
+    legacy.head !== context.head ||
+    legacy.containerId !== context.containerId ||
+    legacy.records.length !== 115 ||
+    JSON.stringify(
+      legacy.records
+        .filter((x) => x.label !== "preflight")
+        .map((x) => x.label)
+        .sort(),
+    ) !== JSON.stringify([...expectedLabels].sort())
+  )
+    fail("EXACT_SAME_HEAD_CONTAINER_LEGACY_114_REQUIRED");
+}
 export function runWorkroomNativePhase(phase, stage, principal = null) {
   if (principal !== null && !["A", "B", "D", "E"].includes(principal))
     fail("REVIEWED_PRINCIPAL_CASE_REQUIRED");
   if (
-    !["baseline", "cutover"].includes(phase) ||
+    !["legacy", "baseline", "cutover"].includes(phase) ||
     process.env.APP_ENV !== "test"
   )
     fail("EXPLICIT_TEST_PHASE_REQUIRED");
+  if (phase === "legacy" && principal) fail("LEGACY_MAIN_SCOPE_REQUIRED");
   for (const k of [
     "DOCKER_HOST",
     "DOCKER_CONTEXT",
@@ -116,11 +136,11 @@ export function runWorkroomNativePhase(phase, stage, principal = null) {
   const prefix = principal ? "principal" + principal + "-" : "";
   const receiptPath = resolve(output, prefix + phase + ".json");
   if (existsSync(receiptPath)) fail("FRESH_PHASE_EVIDENCE_REQUIRED");
-  const tree = phase === "baseline" ? "baseline" : "successor";
+  const tree = phase === "cutover" ? "successor" : "baseline";
   for (const f of manifest.files)
     if (
       sha256(readFileSync(resolve(stage, tree, f.path))) !==
-      f[phase === "baseline" ? "baselineSha256" : "successorSha256"]
+      f[phase === "cutover" ? "successorSha256" : "baselineSha256"]
     )
       fail("STAGED_BYTES_CHANGED");
   if (
@@ -138,8 +158,8 @@ export function runWorkroomNativePhase(phase, stage, principal = null) {
     )
       fail("STAGE_FIXTURE_CHANGED");
   }
-  if (Object.keys(manifest.fixtureHashes ?? {}).length !== 5)
-    fail("EXACT_FIVE_SUCCESSOR_FIXTURES_REQUIRED");
+  if (Object.keys(manifest.fixtureHashes ?? {}).length !== 6)
+    fail("EXACT_SIX_SUCCESSOR_FIXTURES_REQUIRED");
   if (
     phase === "cutover" &&
     sha256(
@@ -248,7 +268,7 @@ export function runWorkroomNativePhase(phase, stage, principal = null) {
       assertions: proof.assertions.length,
     });
   };
-  if (phase === "baseline") {
+  if (phase !== "cutover") {
     const versions = manifest.files
       .filter((x) => x.path.startsWith("supabase/migrations/"))
       .map((x) => x.path.split("/").at(-1).slice(0, 14));
@@ -271,16 +291,35 @@ export function runWorkroomNativePhase(phase, stage, principal = null) {
         x.path.endsWith(".sql"),
     );
     if (tests.length !== 114) fail("EXACT_114_BASELINE_TESTS_REQUIRED");
-    if (principal)
+    if (phase === "legacy") {
+      for (const f of tests) sql(f.path);
+    } else if (principal)
       sql("supabase/test-fixtures/principal_finalize_current_basis.sql");
     else {
-      for (const f of tests) sql(f.path);
+      const legacy = JSON.parse(
+        readFileSync(resolve(output, "legacy.json"), "utf8"),
+      );
+      const expectedLabels = tests
+        .map((f) => f.path.split("/").at(-1).replaceAll(".", "-"))
+        .sort();
+      assertWorkroomLegacyReceipt(legacy, expectedLabels, {
+        head: manifest.head,
+        containerId: container.Id,
+      });
+      for (const row of legacy.records) {
+        if (
+          !row.logFile ||
+          /[\\/]/.test(row.logFile) ||
+          sha256(readFileSync(resolve(output, row.logFile))) !== row.sha256
+        )
+          fail("LEGACY_114_RAW_EVIDENCE_CHANGED");
+      }
       sql("supabase/test-fixtures/funding_global_admission_canonical.sql");
       sql("supabase/test-fixtures/hold_clock_admission_concurrency.sql");
       external("seed");
       sql("workroom-fixtures/practice_existing.sql", false);
     }
-    sql("workroom-fixtures/before_cutover.sql", false);
+    if (phase !== "legacy") sql("workroom-fixtures/before_cutover.sql", false);
   } else {
     const previous = JSON.parse(
       readFileSync(resolve(output, prefix + "baseline.json"), "utf8"),
@@ -314,6 +353,7 @@ export function runWorkroomNativePhase(phase, stage, principal = null) {
       false,
     );
     sql("workroom-fixtures/signup_metadata.sql", false);
+    sql("workroom-fixtures/operator_login.sql");
     // Explicit retained scope: legacy enrollment success assertions have their
     // complete114 baseline proof above, while financial/ACL regressions run202.
     const retained = manifest.files.filter(
@@ -361,15 +401,19 @@ export function runWorkroomNativePhase(phase, stage, principal = null) {
     containerId: container.Id,
     project,
     records,
-    externalSendContextSha256: principal
-      ? null
-      : sha256(readFileSync(resolve(output, "external-send-context.json"))),
-    scope: principal
-      ? "pre202 genuine388 principal fixture; post202 original native contention case" +
-        principal
-      : phase === "baseline"
-        ? "114 historical native tests + committed canonical and pending-HOLD/external-send fixtures"
-        : "exact cutover identity/all historical row/84+4 SECDEF proof; retained withdrawal/deposit/ledger/ACL, preserved original external-send concurrency and true concurrent pending HOLD/CANCEL; WORKROOM practice",
+    externalSendContextSha256:
+      principal || phase === "legacy"
+        ? null
+        : sha256(readFileSync(resolve(output, "external-send-context.json"))),
+    scope:
+      phase === "legacy"
+        ? "114 historical native SQL suites before operator/worker/admin fixtures"
+        : principal
+          ? "pre202 genuine388 principal fixture; post202 original native contention case" +
+            principal
+          : phase === "baseline"
+            ? "verified prior114 same-HEAD/container legacy proof + committed canonical and pending-HOLD/external-send fixtures"
+            : "exact cutover identity/all historical row/84+5 SECDEF proof; retained withdrawal/deposit/ledger/ACL, preserved original external-send concurrency and true concurrent pending HOLD/CANCEL; WORKROOM practice",
   };
   writeFileSync(receiptPath, JSON.stringify(receipt, null, 2) + "\n", {
     flag: "wx",
@@ -389,6 +433,7 @@ export function verifyWorkroomNativeComplete(stage) {
     readFileSync(resolve(stage, "staging-manifest.json"), "utf8"),
   );
   const expected = [
+    "legacy",
     "baseline",
     "cutover",
     ...["A", "B", "D", "E"].flatMap((c) => [
@@ -401,10 +446,26 @@ export function verifyWorkroomNativeComplete(stage) {
       readFileSync(resolve(stage, "evidence", name + ".json"), "utf8"),
     ),
   );
+  const legacyLabels = manifest.files
+    .filter(
+      (f) =>
+        f.path.startsWith("supabase/tests/database/") &&
+        f.path.endsWith(".sql"),
+    )
+    .map((f) => f.path.split("/").at(-1).replaceAll(".", "-"));
+  assertWorkroomLegacyReceipt(receipts[0], legacyLabels, {
+    head: manifest.head,
+    containerId: receipts[1].containerId,
+  });
   for (const [index, receipt] of receipts.entries()) {
     const name = expected[index],
       caseId = name.startsWith("principal") ? name.slice(9, 10) : null;
-    const phase = name.endsWith("baseline") ? "baseline" : "cutover";
+    const phase =
+      name === "legacy"
+        ? "legacy"
+        : name.endsWith("baseline")
+          ? "baseline"
+          : "cutover";
     if (receipt.phase !== phase || receipt.principal !== caseId)
       fail("EXACT_PHASE_RECEIPT_INVENTORY_REQUIRED");
     if (
@@ -471,7 +532,7 @@ if (
   } else {
     if (
       ![5, 6].includes(process.argv.length) ||
-      !["--baseline", "--cutover"].includes(process.argv[2]) ||
+      !["--legacy", "--baseline", "--cutover"].includes(process.argv[2]) ||
       process.argv[3] !== "--stage" ||
       (process.argv[5] && !/^--principal=[ABDE]$/.test(process.argv[5]))
     )
