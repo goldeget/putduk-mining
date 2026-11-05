@@ -3,7 +3,10 @@ import { execFileSync, spawnSync } from "node:child_process";
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { resolve, relative, isAbsolute } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { sha256 } from "./workroom-native-adapters.mjs";
+import {
+  adaptPrincipalFinalizeContentionTimeout,
+  sha256,
+} from "./workroom-native-adapters.mjs";
 import { WORKROOM_MIGRATION } from "./workroom-native-stage.mjs";
 const ROOT = fileURLToPath(new URL("../", import.meta.url));
 const fail = (r) => {
@@ -137,6 +140,7 @@ export function runWorkroomNativePhase(phase, stage, principal = null) {
   const receiptPath = resolve(output, prefix + phase + ".json");
   if (existsSync(receiptPath)) fail("FRESH_PHASE_EVIDENCE_REQUIRED");
   const tree = phase === "cutover" ? "successor" : "baseline";
+  let principalContentionAdaptation = null;
   for (const f of manifest.files)
     if (
       sha256(readFileSync(resolve(stage, tree, f.path))) !==
@@ -366,20 +370,72 @@ export function runWorkroomNativePhase(phase, stage, principal = null) {
           x.path,
         ),
     );
-    if (principal)
+    if (principal) {
+      const contentionPath =
+        "supabase/tests-concurrent/principal_finalize_native_contention.sql";
+      if (principal === "B" && phase === "cutover") {
+        const sourceRecord = manifest.files.find(
+          (x) => x.path === contentionPath,
+        );
+        const sourceSql = readFileSync(
+          resolve(stage, tree, contentionPath),
+          "utf8",
+        );
+        if (!sourceRecord || sha256(sourceSql) !== sourceRecord.successorSha256)
+          fail("PRINCIPAL_CONTENTION_SOURCE_PIN_REQUIRED");
+        const adapted = adaptPrincipalFinalizeContentionTimeout(sourceSql);
+        if (
+          adapted.sourceSha256 !== sourceRecord.successorSha256 ||
+          !adapted.reverseExact ||
+          adapted.matches !== 1 ||
+          adapted.waitBudgetMs !== 30000
+        )
+          fail("PRINCIPAL_CONTENTION_ADAPTER_PROOF_REQUIRED");
+        const adaptedSqlFile =
+          "principalB-cutover-principal_finalize_native_contention-adapted.sql";
+        const adaptedSqlPath = resolve(output, adaptedSqlFile);
+        writeFileSync(adaptedSqlPath, adapted.sql, { flag: "wx" });
+        if (sha256(readFileSync(adaptedSqlPath)) !== adapted.derivativeSha256)
+          fail("PRINCIPAL_CONTENTION_DERIVATIVE_HASH_MISMATCH");
+        execFileSync("docker", [
+          "cp",
+          adaptedSqlPath,
+          container.Id + ":" + remote + "/" + contentionPath,
+        ]);
+        principalContentionAdaptation = {
+          state: "DISPOSABLE_TEST_INPUT_ONLY",
+          sourcePath: contentionPath,
+          sourceSha256: adapted.sourceSha256,
+          derivativeSha256: adapted.derivativeSha256,
+          adaptedSqlFile,
+          waitBudgetMs: adapted.waitBudgetMs,
+          matches: adapted.matches,
+          reverseExact: adapted.reverseExact,
+          assertions: null,
+          executionDurationMs: null,
+        };
+      }
+      const contentionStartedAt = Date.now();
       execute(
         "principal-contention-" + principal,
         [
           "-c",
           `set putduk.test139_case='${principal}';`,
           "-f",
-          remote +
-            "/supabase/tests-concurrent/principal_finalize_native_contention.sql",
+          remote + "/" + contentionPath,
         ],
         undefined,
         true,
       );
-    else {
+      if (principalContentionAdaptation) {
+        const resultRecord = records.at(-1);
+        principalContentionAdaptation.assertions = resultRecord.assertions;
+        principalContentionAdaptation.executionDurationMs =
+          Date.now() - contentionStartedAt;
+        if (resultRecord.assertions <= 0)
+          fail("PRINCIPAL_CONTENTION_TAP_ASSERTIONS_REQUIRED");
+      }
+    } else {
       for (const f of retained) sql(f.path);
       sql("supabase/tests/database/workroom_practice.sql");
       sql("workroom-fixtures/invitation_race.sql");
@@ -404,6 +460,7 @@ export function runWorkroomNativePhase(phase, stage, principal = null) {
     containerId: container.Id,
     project,
     records,
+    testInputAdaptation: principalContentionAdaptation,
     externalSendContextSha256:
       principal || phase === "legacy"
         ? null
@@ -412,8 +469,11 @@ export function runWorkroomNativePhase(phase, stage, principal = null) {
       phase === "legacy"
         ? "114 historical native SQL suites before operator/worker/admin fixtures"
         : principal
-          ? "pre202 genuine388 principal fixture; post202 original native contention case" +
-            principal
+          ? "pre202 genuine388 principal fixture; post202 original native contention case " +
+            principal +
+            (principalContentionAdaptation
+              ? " with a hash-pinned disposable 30s receive-budget derivative; all original assertions retained"
+              : "")
           : phase === "baseline"
             ? "verified prior114 same-HEAD/container legacy proof + committed canonical and pending-HOLD/external-send fixtures"
             : "exact cutover identity/all historical row/84+5 SECDEF proof; retained withdrawal/deposit/ledger/ACL, preserved original external-send concurrency and true concurrent pending HOLD/CANCEL; WORKROOM practice",
@@ -501,6 +561,41 @@ export function verifyWorkroomNativeComplete(stage) {
         fail("RAW_PHASE_EVIDENCE_CHANGED");
     }
   }
+  const principalB = receipts.find(
+    (x) => x.phase === "cutover" && x.principal === "B",
+  );
+  const adaptation = principalB?.testInputAdaptation;
+  const contentionPath =
+    "supabase/tests-concurrent/principal_finalize_native_contention.sql";
+  const contentionSource = readFileSync(
+    resolve(stage, "successor", contentionPath),
+    "utf8",
+  );
+  const expectedAdaptation =
+    adaptPrincipalFinalizeContentionTimeout(contentionSource);
+  const principalBRecord = principalB?.records.find(
+    (x) => x.label === "principal-contention-B",
+  );
+  if (
+    !adaptation ||
+    adaptation.state !== "DISPOSABLE_TEST_INPUT_ONLY" ||
+    adaptation.sourcePath !== contentionPath ||
+    adaptation.sourceSha256 !== expectedAdaptation.sourceSha256 ||
+    adaptation.derivativeSha256 !== expectedAdaptation.derivativeSha256 ||
+    adaptation.waitBudgetMs !== 30000 ||
+    adaptation.matches !== 1 ||
+    adaptation.reverseExact !== true ||
+    adaptation.adaptedSqlFile !==
+      "principalB-cutover-principal_finalize_native_contention-adapted.sql" ||
+    sha256(
+      readFileSync(resolve(stage, "evidence", adaptation.adaptedSqlFile)),
+    ) !== expectedAdaptation.derivativeSha256 ||
+    adaptation.assertions !== principalBRecord?.assertions ||
+    adaptation.assertions <= 0 ||
+    !Number.isInteger(adaptation.executionDurationMs) ||
+    adaptation.executionDurationMs < 0
+  )
+    fail("PRINCIPAL_B_ADAPTED_TEST_EVIDENCE_REQUIRED");
   const main = receipts.find((x) => x.phase === "cutover" && !x.principal);
   if (
     !main.records.some(

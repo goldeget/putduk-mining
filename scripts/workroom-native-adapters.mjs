@@ -4,6 +4,50 @@ export const sha256 = (x) => createHash("sha256").update(x).digest("hex");
 const fail = (reason) => {
   throw Error("WORKROOM_NATIVE_" + reason);
 };
+const PRINCIPAL_CONTENTION_RECEIVE_DECLARATION =
+  "declare schema_name text;busy integer;deadline timestamptz:=clock_timestamp()+interval '8 seconds';result text;drain text;";
+const PRINCIPAL_CONTENTION_RECEIVE_DECLARATION_SUCCESSOR =
+  "declare schema_name text;busy integer;deadline timestamptz:=clock_timestamp()+interval '30 seconds';result text;drain text;";
+const PRINCIPAL_CONTENTION_SAMPLES =
+  "-- At most three samples scheduled at6s/7s/7.75s, before unchanged8s timeout.";
+const PRINCIPAL_CONTENTION_SAMPLES_SUCCESSOR =
+  "-- At most three samples scheduled at28s/29s/29.75s, before unchanged30s timeout.";
+export function adaptPrincipalFinalizeContentionTimeout(input) {
+  const source = String(input);
+  if (
+    source.split(PRINCIPAL_CONTENTION_RECEIVE_DECLARATION).length !== 2 ||
+    source.split(PRINCIPAL_CONTENTION_SAMPLES).length !== 2
+  )
+    fail("PRINCIPAL_CONTENTION_TIMEOUT_EXACT_SPAN_REQUIRED");
+  const sql = source
+    .replace(
+      PRINCIPAL_CONTENTION_RECEIVE_DECLARATION,
+      PRINCIPAL_CONTENTION_RECEIVE_DECLARATION_SUCCESSOR,
+    )
+    .replace(
+      PRINCIPAL_CONTENTION_SAMPLES,
+      PRINCIPAL_CONTENTION_SAMPLES_SUCCESSOR,
+    );
+  const reversed = sql
+    .replace(
+      PRINCIPAL_CONTENTION_RECEIVE_DECLARATION_SUCCESSOR,
+      PRINCIPAL_CONTENTION_RECEIVE_DECLARATION,
+    )
+    .replace(
+      PRINCIPAL_CONTENTION_SAMPLES_SUCCESSOR,
+      PRINCIPAL_CONTENTION_SAMPLES,
+    );
+  if (reversed !== source)
+    fail("PRINCIPAL_CONTENTION_TIMEOUT_REVERSE_MISMATCH");
+  return {
+    sql,
+    matches: 1,
+    sourceSha256: sha256(source),
+    derivativeSha256: sha256(sql),
+    waitBudgetMs: 30000,
+    reverseExact: true,
+  };
+}
 // A small expression scanner, not a SQL reformatter. Only INSERT auth.users
 // column/value positions are changed, including INSERTs inside dblink strings.
 function expressions(sql, start, stop) {

@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
+  adaptPrincipalFinalizeContentionTimeout,
   adaptWorkroomSignupFixtures,
   adaptWorkroomDefinerRoster,
   adaptWorkroomRetiredTrialAcl,
@@ -8,6 +9,48 @@ import {
   adaptWorkroomSafeModeConcurrency,
 } from "./workroom-native-adapters.mjs";
 import { readFileSync } from "node:fs";
+test("principal B timeout derivative preserves all historical contention assertions", () => {
+  const source = readFileSync(
+    new URL(
+      "../supabase/tests-concurrent/principal_finalize_native_contention.sql",
+      import.meta.url,
+    ),
+    "utf8",
+  ).replaceAll("\r\n", "\n");
+  const result = adaptPrincipalFinalizeContentionTimeout(source);
+  assert.equal(result.matches, 1);
+  assert.equal(result.reverseExact, true);
+  assert.equal(result.waitBudgetMs, 30000);
+  assert.equal((result.sql.match(/interval '8 seconds'/g) ?? []).length, 1);
+  assert.equal((result.sql.match(/interval '30 seconds'/g) ?? []).length, 1);
+  assert.equal(
+    result.sql
+      .replace(
+        "deadline timestamptz:=clock_timestamp()+interval '30 seconds';",
+        "deadline timestamptz:=clock_timestamp()+interval '8 seconds';",
+      )
+      .replace(
+        "-- At most three samples scheduled at28s/29s/29.75s, before unchanged30s timeout.",
+        "-- At most three samples scheduled at6s/7s/7.75s, before unchanged8s timeout.",
+      ),
+    source,
+  );
+  assert.match(result.sql, /at28s\/29s\/29\.75s, before unchanged30s timeout/);
+  assert.throws(
+    () =>
+      adaptPrincipalFinalizeContentionTimeout(
+        source.replace(
+          "declare schema_name text;busy integer;deadline timestamptz:=clock_timestamp()+interval '8 seconds';result text;drain text;",
+          "declare schema_name text;busy integer;deadline timestamptz:=clock_timestamp()+interval '9 seconds';result text;drain text;",
+        ),
+      ),
+    /PRINCIPAL_CONTENTION_TIMEOUT_EXACT_SPAN_REQUIRED/,
+  );
+  assert.throws(
+    () => adaptPrincipalFinalizeContentionTimeout(source + "\n" + source),
+    /PRINCIPAL_CONTENTION_TIMEOUT_EXACT_SPAN_REQUIRED/,
+  );
+});
 test("safe-mode race preserves existing control and all real concurrency assertions", () => {
   const sql = readFileSync(
     new URL(
