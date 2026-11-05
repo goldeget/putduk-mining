@@ -2563,7 +2563,7 @@
     "tests/e2e/fixtures/usdt-manual-195-runner-source.json": "f24506246a0ce47f8b5eef53f0cdb79ddcecd6323c69538666afd4c085e1d482",
     "tests/e2e/foundation.spec.ts": "ddacfd1d6bcbef6892bd7311546a585258297183527793000436d6b88c5cdab7",
     "tests/e2e/support-typography.spec.ts": "d4b207085b2e10eae843b5817e99e31388595906c35833f08349e193ed705090",
-    "tests/e2e/support.spec.ts": "dc515edfde5bba2d0a6c7330bc7f1f92ad14de3230edf1052c9711ce9a16b540",
+    "tests/e2e/support.spec.ts": "70e709c31450a235a8592caa57fe3b581873dbf50490964b290e5571a2887125",
     "tests/e2e/withdrawal-evidence-redaction.spec.ts": "250c9fe4a205997fb9ffd8663baacfece118462b04a1a01133a58778f4f59afa",
     "tests/e2e/workroom/01-signup-confirmation.spec.ts": "4b9aaad4a54396920479c2296d1644629e9d21306b35de17de2b7be2265825df",
     "tests/e2e/workroom/02-invalid-invite.spec.ts": "996329eab9bb5a2e0f9a5036205a5a500bd68197411eb2108cb5f72fc82ded7e",
