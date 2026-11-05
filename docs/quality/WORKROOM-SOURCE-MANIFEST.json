@@ -1990,7 +1990,7 @@
     "scripts/ci-supabase-start.sh": "fb333344985716bb818717cbe17b243b2109185a8d8cc562db22fe5743aa756e",
     "scripts/ci-wall-clock.d.mts": "4358bf575bb33fc64eea5e5827947af0eb56e1d5f2a04fb38a7799d658255072",
     "scripts/ci-wall-clock.mjs": "16123d12432a549fa9e7ea9dfa0c17e64ad95f4a6a5f68263db4a450f452bdf9",
-    "scripts/ci-workroom-acceptance.mjs": "132ecdb73e216c4da72f59e40c94f3c0ed1a641df1f7761d06f404441c7e8168",
+    "scripts/ci-workroom-acceptance.mjs": "a62ad41feda4a15b23a63501ae17067f91888204ac3aeadb805eb0618f2bd504",
     "scripts/ci-workroom-application.mjs": "6f1696af6a500d97b212be73d42bd71f46282bace2e5b85af9d7d0cc94c2dd14",
     "scripts/ci-workroom-browser-disposition.mjs": "c0b8d07539028fe7478dbc5c19dc02c20eace36131f00892aaa61f2ab08e7cc7",
     "scripts/ci-workroom-checkout.mjs": "34acf4007905381533514bbeccb955557bff8da0d81e9c57798e2b5943a70866",
