@@ -107,19 +107,6 @@ async function applyTheme(page: Page, theme: "dark" | "light" | "system") {
   }
 }
 
-async function expectSupportUnavailable(page: Page) {
-  await expect(page.locator("#putduk-support-launcher")).toHaveAttribute(
-    "data-support-state",
-    "unavailable",
-    { timeout: 20_000 },
-  );
-  await expect(
-    page.getByText(
-      /^(지금은 아래 안내를 먼저 확인해 주세요\.|상담 창 준비가 지연되고 있어요\. 아래 안내를 먼저 확인해 주세요\.)$/,
-    ),
-  ).toBeVisible();
-}
-
 test("anonymous support center stays usable without Channel Talk", async ({
   page,
 }) => {
@@ -146,10 +133,13 @@ test("anonymous support center stays usable without Channel Talk", async ({
   await expect(
     page.getByText("잔액과 출금은 상담 창에서 바뀌지 않아요."),
   ).toBeVisible();
-  const launcher = page.locator("#putduk-support-launcher");
-  await expectSupportUnavailable(page);
+  await expect(
+    page.getByText("지금은 아래 안내를 먼저 확인해 주세요."),
+  ).toBeVisible();
   await expect(page.getByRole("link", { name: "로그인" })).toBeVisible();
+  const launcher = page.locator("#putduk-support-launcher");
   await expect(launcher).toBeVisible();
+  await expect(launcher).toHaveAttribute("data-support-state", "unavailable");
   await expect(page.getByRole("button", { name: "안내 보기" })).toBeVisible();
   await waitForHydratedControls(page);
 
@@ -198,8 +188,12 @@ test("support route covers viewports, themes, keyboard, and recovery", async ({
     await expect(
       page.getByRole("heading", { name: "필요한 도움을 바로 확인해요." }),
     ).toBeVisible();
+    await expect(
+      page.getByText("지금은 아래 안내를 먼저 확인해 주세요."),
+    ).toBeVisible();
+
     const launcher = page.locator("#putduk-support-launcher");
-    await expectSupportUnavailable(page);
+    await expect(launcher).toHaveAttribute("data-support-state", "unavailable");
     await launcher.focus();
     await expect(launcher).toBeFocused();
     await page.keyboard.press("Enter");

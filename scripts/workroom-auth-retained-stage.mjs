@@ -91,18 +91,69 @@ writeFileSync(
   'import { member, service } from "../../../tests/e2e/workroom/helpers";\nexport const createLocalServiceRoleClient = service;\nexport async function createConfirmedMember(_label: string) { return member(); }\n',
 );
 let support = read("tests/e2e/support.spec.ts");
+const originalSupport = support;
+const supportChangeStart = changes.length;
+const supportTestMarker = `test("anonymous support center stays usable without Channel Talk", async ({
+  page,
+}) => {`;
+const supportHelper = `async function expectSupportUnavailable(page: Page) {
+  await expect(page.locator("#putduk-support-launcher")).toHaveAttribute(
+    "data-support-state",
+    "unavailable",
+    { timeout: 20_000 },
+  );
+  await expect(
+    page.getByText(
+      /^(지금은 아래 안내를 먼저 확인해 주세요\\.|상담 창 준비가 지연되고 있어요\\. 아래 안내를 먼저 확인해 주세요\\.)$/,
+    ),
+  ).toBeVisible();
+}
+
+`;
+support = replaceOnce(
+  support,
+  supportTestMarker,
+  supportHelper + supportTestMarker,
+);
+support = replaceOnce(
+  support,
+  `  await expect(
+    page.getByText("지금은 아래 안내를 먼저 확인해 주세요."),
+  ).toBeVisible();
+  await expect(page.getByRole("link", { name: "로그인" })).toBeVisible();
+  const launcher = page.locator("#putduk-support-launcher");
+  await expect(launcher).toBeVisible();
+  await expect(launcher).toHaveAttribute("data-support-state", "unavailable");`,
+  `  const launcher = page.locator("#putduk-support-launcher");
+  await expectSupportUnavailable(page);
+  await expect(page.getByRole("link", { name: "로그인" })).toBeVisible();
+  await expect(launcher).toBeVisible();`,
+);
+support = replaceOnce(
+  support,
+  `    await expect(
+      page.getByText("지금은 아래 안내를 먼저 확인해 주세요."),
+    ).toBeVisible();
+
+    const launcher = page.locator("#putduk-support-launcher");
+    await expect(launcher).toHaveAttribute("data-support-state", "unavailable");`,
+  `    const launcher = page.locator("#putduk-support-launcher");
+    await expectSupportUnavailable(page);`,
+);
 const obsolete =
   'await expect(page.getByText("앱을 닫아도 채굴은 계속돼요.")).toBeVisible();';
 if (!support.includes(obsolete)) throw Error("SUPPORT_SUCCESSOR_COPY_CONTEXT");
-support = support
-  .replace(
-    obsolete,
-    "await expect(page.getByText(/체험 포인트.*현금|현금.*체험 포인트/).first()).toBeVisible();",
-  )
-  .replace(
-    'from "../typography/helpers";',
-    'from "../../../tests/typography/helpers";',
-  );
+support = replaceOnce(
+  support,
+  obsolete,
+  "await expect(page.getByText(/체험 포인트.*현금|현금.*체험 포인트/).first()).toBeVisible();",
+);
+support = replaceOnce(
+  support,
+  'from "../typography/helpers";',
+  'from "../../../tests/typography/helpers";',
+);
+verifyInverse(support, originalSupport, supportChangeStart);
 writeFileSync(resolve(output, "support-successor.spec.ts"), support);
 let transfer = read("tests/e2e/ws04-transfer-contract.spec.ts");
 transfer = transfer
@@ -123,6 +174,7 @@ writeFileSync(
         "local psql target",
         "relative import locations",
         "support free simulation copy",
+        "support delayed unavailable fallback",
         "wallet protected return destinations",
       ],
       generatedFiles: readdirSync(output)
