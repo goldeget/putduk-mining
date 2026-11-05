@@ -59,6 +59,31 @@ let env = omitLiveProviders({
 });
 const run = (command, args) =>
   execFileSync(command, args, { stdio: "inherit", env });
+const runBrowserSuite = (config, portBase) => {
+  const previous = env;
+  if (!workerd) {
+    env = { ...env };
+    if (portBase === undefined) {
+      delete env.E2E_WEB_PORT;
+      delete env.E2E_ADMIN_PORT;
+    } else {
+      env.E2E_WEB_PORT = String(portBase);
+      env.E2E_ADMIN_PORT = String(portBase + 1);
+    }
+    delete env.WORKROOM_REUSE_SERVER;
+  }
+  try {
+    run(process.execPath, [
+      "node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      config,
+      "--fail-on-flaky-tests",
+    ]);
+  } finally {
+    env = previous;
+  }
+};
 run(process.execPath, [
   "scripts/workroom-source-integrity.mjs",
   "--verify",
@@ -238,13 +263,7 @@ try {
     "--fail-on",
     "warn",
   ]);
-  run(process.execPath, [
-    "node_modules/@playwright/test/cli.js",
-    "test",
-    "--config",
-    "playwright.workroom.config.ts",
-    "--fail-on-flaky-tests",
-  ]);
+  runBrowserSuite("playwright.workroom.config.ts");
   const browserPath = "test-results/workroom-auth/results.json";
   const browserFiles = readdirSync("tests/e2e/workroom").filter((name) =>
     name.endsWith(".spec.ts"),
@@ -258,35 +277,16 @@ try {
   // The PR profile ends after this complete member/admin suite. The full
   // acceptance workflow keeps the retained-data, financial and contention runs.
   if (!smoke) {
-    // The first Playwright run leaves its local Next servers available to later
-    // suites. Reuse those already-validated servers instead of colliding on 3000.
-    env = { ...env, WORKROOM_REUSE_SERVER: "1" };
-    run(process.execPath, [
-      "node_modules/@playwright/test/cli.js",
-      "test",
-      "--config",
-      "playwright.workroom-retained.config.ts",
-      "--fail-on-flaky-tests",
-    ]);
+    // Isolate browser phases from one another. Regular Next runs get a fresh
+    // app process on a dedicated port pair; workerd keeps its preflighted clones.
+    runBrowserSuite("playwright.workroom-retained.config.ts", 3200);
     const retainedPath = "test-results/workroom-auth/retained-results.json";
     assertPlaywrightReport(JSON.parse(readFileSync(retainedPath, "utf8")));
     run(process.execPath, ["scripts/workroom-auth-retained-stage.mjs"]);
-    run(process.execPath, [
-      "node_modules/@playwright/test/cli.js",
-      "test",
-      "--config",
-      "playwright.workroom-financial.config.ts",
-      "--fail-on-flaky-tests",
-    ]);
+    runBrowserSuite("playwright.workroom-financial.config.ts", 3300);
     const financialPath = "test-results/workroom-auth/financial-results.json";
     assertPlaywrightReport(JSON.parse(readFileSync(financialPath, "utf8")));
-    run(process.execPath, [
-      "node_modules/@playwright/test/cli.js",
-      "test",
-      "--config",
-      "playwright.workroom-public-successor.config.ts",
-      "--fail-on-flaky-tests",
-    ]);
+    runBrowserSuite("playwright.workroom-public-successor.config.ts", 3400);
     const publicSuccessorPath =
       "test-results/workroom-auth/public-successor-results.json";
     assertPlaywrightReport(
