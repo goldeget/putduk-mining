@@ -7,7 +7,7 @@ vi.mock("@supabase/ssr", () => ({
   createBrowserClient,
 }));
 
-import { getAdminEnv } from "@/lib/env";
+import { getAdminEnv, getAdminBrowserPublicConfig } from "@/lib/env";
 import { createAdminBrowserClient } from "@/lib/supabase/browser";
 
 function legacyKey(role: string) {
@@ -33,6 +33,36 @@ afterEach(() => {
 });
 
 describe("admin browser public key role", () => {
+  it("promotes one build with validated runtime public configuration instead of stale browser env", () => {
+    stubAdminEnv(publishableKey);
+    const first = getAdminBrowserPublicConfig();
+    vi.stubEnv(
+      "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+      `${publishableKey}_second_runtime`,
+    );
+    const second = getAdminBrowserPublicConfig();
+    expect(second).toEqual({
+      url,
+      publishableKey: `${publishableKey}_second_runtime`,
+    });
+    vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", undefined);
+    vi.stubEnv("NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY", undefined);
+    createAdminBrowserClient(first);
+    createAdminBrowserClient(second);
+    expect(createBrowserClient).toHaveBeenNthCalledWith(
+      1,
+      first.url,
+      first.publishableKey,
+      expect.any(Object),
+    );
+    expect(createBrowserClient).toHaveBeenNthCalledWith(
+      2,
+      second.url,
+      second.publishableKey,
+      expect.any(Object),
+    );
+    expect(Object.keys(second)).toEqual(["url", "publishableKey"]);
+  });
   it.each([
     "sb_secret_must_never_reach_the_admin_browser",
     legacyKey("service_role"),

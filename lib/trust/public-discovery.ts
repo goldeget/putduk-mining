@@ -18,6 +18,7 @@ export const PUBLIC_DISCOVERY_PATHS: readonly string[] = [
  */
 export const PRIVATE_ROBOTS_DISALLOW = [
   "/api/",
+  "/workroom",
   "/auth/",
   "/login",
   "/signup",
@@ -56,7 +57,7 @@ export function buildBreadcrumbStructuredData(input: {
       {
         "@type": "ListItem",
         position: 1,
-        name: "퍼뜩 채굴",
+        name: "WORKROOM",
         item: `${PUBLIC_SITE_ORIGIN}/`,
       },
       {

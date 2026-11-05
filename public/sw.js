@@ -1,13 +1,11 @@
 /* global self, clients, caches */
-const CACHE_NAME = "putduk-shell-v7";
-const APP_SHELL = [
-  "/offline",
-  "/brand/identity/20261014/favicon/favicon.svg",
-  "/brand/identity/20261014/pwa/putduk-pwa-dark-192.png",
-  "/brand/identity/20261014/logo/putduk-sprout-p-master.svg",
-  "/brand/identity/20261014/notification/putduk-notification-badge-96.png",
-];
+const CACHE_NAME = "putduk-shell-workroom-v8";
+const APP_SHELL = ["/offline", "/workroom-icon.svg"];
 const exactRoutes = new Set([
+  "/workroom",
+  "/workroom/history",
+  "/workroom/points",
+  "/workroom/guide",
   "/",
   "/home",
   "/start",
@@ -110,9 +108,8 @@ self.addEventListener("push", (event) => {
   event.waitUntil(
     self.registration.showNotification("퍼뜩 채굴", {
       body: "새로운 알림이 도착했습니다. 앱에서 확인해 주세요.",
-      icon: "/brand/identity/20261014/pwa/putduk-pwa-dark-192.png",
-      badge:
-        "/brand/identity/20261014/notification/putduk-notification-badge-96.png",
+      icon: "/workroom-icon.svg",
+      badge: "/workroom-icon.svg",
       ...(id ? { tag: "putduk:" + id } : {}),
       data: { url },
     }),

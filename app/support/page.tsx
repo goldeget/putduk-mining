@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { BrandMark } from "@/components/brand/brand-mark";
-import { START_WELCOME_STATEMENTS } from "@/lib/trust/public-content";
+import { WorkroomMark } from "@/components/workroom/identity";
 import {
   buildBreadcrumbStructuredData,
   publicLanguageAlternates,
@@ -35,24 +34,24 @@ const topics: readonly {
   },
   {
     icon: "spark",
-    title: "체험 채굴",
+    title: "워크룸 체험",
     body: [
-      "앱을 닫아도 채굴은 계속돼요.",
+      "진행 중인 회차는 서버 시간을 기준으로 이어져요.",
       "다시 접속하면 결과를 확인할 수 있어요.",
-      ...START_WELCOME_STATEMENTS,
+      "무료 체험 포인트는 현금으로 전환하거나 출금할 수 없어요.",
     ],
   },
   {
-    icon: "mining",
-    title: "채굴",
-    body: ["채굴 화면의 상태를 먼저 확인해 주세요."],
+    icon: "spark",
+    title: "회차와 기록",
+    body: ["내 워크룸의 진행 상태와 참여 기록을 먼저 확인해 주세요."],
   },
   {
     icon: "wallet",
-    title: "입금과 출금",
+    title: "기존 잔액과 기록",
     body: [
-      "입금은 직접 보내는 수동 입금이에요.",
-      "출금은 원화 잔액을 기준으로 해요.",
+      "기존 잔액과 거래 내역은 기존 기록 메뉴에서 확인할 수 있어요.",
+      "기존 원화 잔액의 출금은 체험 포인트와 별도로 처리돼요.",
     ],
   },
   {
@@ -64,7 +63,8 @@ const topics: readonly {
 
 export const metadata: Metadata = {
   title: "상담",
-  description: "가입, 채굴, 입금과 출금 문의를 확인하는 상담 안내입니다.",
+  description:
+    "워크룸 가입, 무료 체험, 참여 기록과 기존 잔액 문의를 확인하는 상담 안내입니다.",
   alternates: {
     canonical: "/support",
     languages: publicLanguageAlternates("/support"),
@@ -86,11 +86,11 @@ export default function SupportPage() {
         }}
       />
       <header className="site-header shell">
-        <Link className="brand-lockup" href="/" aria-label="퍼뜩 채굴 홈">
-          <BrandMark title="" />
+        <Link className="brand-lockup" href="/" aria-label="워크룸 홈">
+          <WorkroomMark />
           <span>
-            <strong>PUTDUK</strong>
-            <small>MINING</small>
+            <strong>WORKROOM</strong>
+            <small>나만의 워크룸</small>
           </span>
         </Link>
         <nav className={styles.nav} aria-label="도움말">

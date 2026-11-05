@@ -6,13 +6,13 @@ import {
   TRUST_LAST_UPDATED,
   type PublicFact,
   type TrustDocument,
-} from "@/lib/trust/public-content";
+} from "@/lib/workroom/public-content";
 import {
   getPublicFactDisplayValue,
   getPublicFactLabel,
   getTrustNavigationLabel,
   localizePublicWorldNames,
-} from "@/lib/trust/public-presentation";
+} from "@/lib/workroom/public-presentation";
 
 import styles from "./public-help.module.css";
 

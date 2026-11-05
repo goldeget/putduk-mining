@@ -17,6 +17,10 @@ describe("protected return paths", () => {
   });
 
   it.each([
+    "/workroom",
+    "/workroom/history",
+    "/workroom/points",
+    "/workroom/guide",
     "/home",
     "/notifications",
     "/ai?question=wallet",
@@ -47,6 +51,6 @@ describe("protected return paths", () => {
     "/products/../public",
   ])("rejects an unsafe or public destination: %s", (path) => {
     expect(isSafeProtectedReturnPath(path)).toBe(false);
-    expect(safeProtectedReturnPath(path)).toBe("/home");
+    expect(safeProtectedReturnPath(path)).toBe("/workroom");
   });
 });

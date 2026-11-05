@@ -399,7 +399,7 @@ export function WalletOverviewView({
                 <div className={styles.empty}>
                   <Icon kind="history" />
                   <p>아직 거래 내역이 없어요.</p>
-                  <small>채굴 보상이나 입출금이 생기면 이곳에 표시돼요.</small>
+                  <small>확정 보상이나 입출금이 생기면 이곳에 표시돼요.</small>
                 </div>
               )}
             </section>

@@ -8,6 +8,7 @@ import { AdminRailMenu } from "@/components/admin-rail-menu";
 const route = vi.hoisted(() => ({ pathname: "/members/member-id" }));
 vi.mock("next/navigation", () => ({
   usePathname: () => route.pathname,
+  useSearchParams: () => new URLSearchParams(),
 }));
 vi.mock("next/link", () => ({
   default: ({
@@ -76,9 +77,9 @@ describe("admin labelled navigation disclosure", () => {
     expect(region.querySelectorAll("nav a")).toHaveLength(14);
     expect(region.querySelector('a[href="/ai-conversations"]')).not.toBeNull();
     expect(region.querySelector('a[href="/content"]')).not.toBeNull();
-    expect(region.querySelector('a[href="/catalog"]')?.textContent).toContain(
-      "상품 검토",
-    );
+    expect(
+      region.querySelector('a[href="/workroom?tab=config"]')?.textContent,
+    ).toContain("모의 조건");
     expect(region.textContent).toContain("이 기기 로그아웃");
     expect(
       region.querySelector('[aria-current="page"]')?.getAttribute("href"),
@@ -97,8 +98,9 @@ describe("admin labelled navigation disclosure", () => {
 
   it("Escape from a destination closes the menu and restores toggle focus", async () => {
     await click(toggle());
-    const destination =
-      host.querySelector<HTMLAnchorElement>('nav a[href="/"]')!;
+    const destination = host.querySelector<HTMLAnchorElement>(
+      'nav a[href="/workroom?tab=config"]',
+    )!;
     destination.focus();
     await act(async () => {
       destination.dispatchEvent(
@@ -116,7 +118,7 @@ describe("admin labelled navigation disclosure", () => {
   it("closes on same-tab navigation but preserves the menu when opening a new tab", async () => {
     await click(toggle());
     const destination = host.querySelector<HTMLAnchorElement>(
-      'nav a[href="/assistant"]',
+      'nav a[href="/workroom?tab=users"]',
     )!;
     await click(destination, { ctrlKey: true });
     expect(toggle().getAttribute("aria-expanded")).toBe("true");

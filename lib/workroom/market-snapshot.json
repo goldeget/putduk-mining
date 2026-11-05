@@ -1,0 +1,95 @@
+{
+  "nvda": {
+    "price": 206.69,
+    "currency": "USD",
+    "asOf": "2026-11-04T00:59:51Z",
+    "fetchedAt": "2026-11-04T04:11:48.218Z",
+    "source": "시장 조회 스냅샷",
+    "url": "https://finance.yahoo.com/quote/NVDA/",
+    "snapshot": true
+  },
+  "tsla": {
+    "price": 398.5,
+    "currency": "USD",
+    "asOf": "2026-11-04T00:59:42Z",
+    "fetchedAt": "2026-11-04T04:11:48.218Z",
+    "source": "시장 조회 스냅샷",
+    "url": "https://finance.yahoo.com/quote/TSLA/",
+    "snapshot": true
+  },
+  "msft": {
+    "price": 520.99,
+    "currency": "USD",
+    "asOf": "2026-11-04T00:59:08Z",
+    "fetchedAt": "2026-11-04T04:11:48.218Z",
+    "source": "시장 조회 스냅샷",
+    "url": "https://finance.yahoo.com/quote/MSFT/",
+    "snapshot": true
+  },
+  "ndx": {
+    "price": 28180.26,
+    "currency": "POINT",
+    "asOf": "2026-11-03T22:15:59Z",
+    "fetchedAt": "2026-11-04T04:11:48.218Z",
+    "source": "시장 조회 스냅샷",
+    "url": "https://finance.yahoo.com/quote/%5ENDX/",
+    "snapshot": true
+  },
+  "samsung": {
+    "price": 210500,
+    "currency": "KRW",
+    "asOf": "2026-11-04T13:11:49.250573+09:00",
+    "fetchedAt": "2026-11-04T04:11:48.218Z",
+    "source": "네이버 증권",
+    "url": "https://finance.naver.com/item/main.naver?code=005930",
+    "snapshot": true
+  },
+  "skh": {
+    "price": 1318500,
+    "currency": "KRW",
+    "asOf": "2026-11-04T13:11:49.250581+09:00",
+    "fetchedAt": "2026-11-04T04:11:48.218Z",
+    "source": "네이버 증권",
+    "url": "https://finance.naver.com/item/main.naver?code=000660",
+    "snapshot": true
+  },
+  "lg": {
+    "price": 141500,
+    "currency": "KRW",
+    "asOf": "2026-11-04T13:11:49.250587+09:00",
+    "fetchedAt": "2026-11-04T04:11:48.218Z",
+    "source": "네이버 증권",
+    "url": "https://finance.naver.com/item/main.naver?code=066570",
+    "snapshot": true
+  },
+  "usd": {
+    "price": 1344.59,
+    "currency": "KRW",
+    "unit": "1 USD",
+    "asOf": "2026-11-03",
+    "fetchedAt": "2026-11-04T04:11:48.218Z",
+    "source": "ECB 기준환율 교차 계산",
+    "url": "https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html",
+    "snapshot": true
+  },
+  "cny": {
+    "price": 201.52,
+    "currency": "KRW",
+    "unit": "1 CNY",
+    "asOf": "2026-11-03",
+    "fetchedAt": "2026-11-04T04:11:48.218Z",
+    "source": "ECB 기준환율 교차 계산",
+    "url": "https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html",
+    "snapshot": true
+  },
+  "jpy": {
+    "price": 849.46,
+    "currency": "KRW",
+    "unit": "100 JPY",
+    "asOf": "2026-11-03",
+    "fetchedAt": "2026-11-04T04:11:48.218Z",
+    "source": "ECB 기준환율 교차 계산",
+    "url": "https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html",
+    "snapshot": true
+  }
+}

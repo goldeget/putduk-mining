@@ -1,0 +1,74 @@
+{
+  "version": 1,
+  "baseline": "9ccc287c5c05b998a9ad345392e9ff07a03a5836",
+  "retired": [
+    {
+      "path": "tests/unit/product-mining-shell.test.ts",
+      "sha256": "bfd0f24c096edc4557e5680fa467e28c0879f4e8cea2616dde85b62afc3f0906",
+      "disposition": "RETIRED_PRODUCT_CHROME",
+      "reason": "Owner-approved WORKROOM replacement retires Mining/Wallet navigation, duplicated toolbar and route scroll restoration. This file asserts the removed component composition only. Backend financial/auth/security tests remain in the default unit/native/worker suites.",
+      "assertions": [
+        "route-scoped Mining chrome with real navigation places exactly one Mining header inside the actual main and preserves connectivity without a peer AI dock",
+        "route-scoped Mining chrome with real navigation keeps the desktop rail and bottom tabs on the four approved destinations",
+        "route-scoped Mining chrome with real navigation renders the supplied identity as escaped text on the genuine account link and retains notifications",
+        "route-scoped Mining chrome with real navigation keeps the actual native System/Light/Dark control functional",
+        "route-scoped Mining chrome with real navigation retains Wallet chrome at /wallet/deposit and Home structure when navigating out of Mining",
+        "route-scoped Mining chrome with real navigation retains Wallet chrome at /wallet/withdraw and Home structure when navigating out of Mining",
+        "route-scoped Mining chrome with real navigation preserves four native bottom destinations and marks only Mining active",
+        "route-scoped Mining chrome with real navigation does not replace the Home header or generic default header contracts"
+      ],
+      "replacements": [
+        "tests/unit/workroom-member-client.test.ts",
+        "tests/unit/workroom-retirement.test.ts",
+        "tests/e2e/workroom/"
+      ]
+    },
+    {
+      "path": "tests/unit/product-wallet-shell.test.ts",
+      "sha256": "98277593f2b5cf6589c11e9038db73f53db0d1de4610603ff196867e37945217",
+      "disposition": "RETIRED_PRODUCT_CHROME",
+      "reason": "Owner-approved WORKROOM replacement retires Mining/Wallet navigation, duplicated toolbar and route scroll restoration. This file asserts the removed component composition only. Backend financial/auth/security tests remain in the default unit/native/worker suites.",
+      "assertions": [
+        "root Wallet chrome preserves real destinations and native controls places the desktop bar above both columns, keeps mobile tools in the actual main and preserves the page heading",
+        "root Wallet chrome preserves real destinations and native controls uses the four top routes and the reference sidebar with real Wallet subroutes",
+        "root Wallet chrome preserves real destinations and native controls escapes the supplied identity and keeps real notification and account links in each responsive toolbar",
+        "root Wallet chrome preserves real destinations and native controls shares the actual native System/Light/Dark preference across responsive toolbars",
+        "root Wallet chrome preserves real destinations and native controls keeps the wallet tools, navigation and dock throughout the wallet family for /wallet/deposit",
+        "root Wallet chrome preserves real destinations and native controls keeps the wallet tools, navigation and dock throughout the wallet family for /wallet/withdraw",
+        "root Wallet chrome preserves real destinations and native controls keeps the wallet tools, navigation and dock throughout the wallet family for /wallet/deposit/receipt",
+        "root Wallet chrome preserves real destinations and native controls does not apply financial chrome to a similarly prefixed non-wallet route",
+        "root Wallet chrome preserves real destinations and native controls marks only Wallet active among the four native bottom destinations",
+        "root Wallet chrome preserves real destinations and native controls removes all Wallet chrome on Home and restores the existing Mining chrome through navigation"
+      ],
+      "replacements": [
+        "tests/unit/workroom-member-client.test.ts",
+        "tests/unit/workroom-retirement.test.ts",
+        "tests/e2e/workroom/"
+      ]
+    },
+    {
+      "path": "tests/unit/product-shell-scroll.test.ts",
+      "sha256": "45033560803937a4e157772fa71bf0b7e476e6458865908bbe6c3168da70c008",
+      "disposition": "RETIRED_PRODUCT_CHROME",
+      "reason": "Owner-approved WORKROOM replacement retires Mining/Wallet navigation, duplicated toolbar and route scroll restoration. This file asserts the removed component composition only. Backend financial/auth/security tests remain in the default unit/native/worker suites.",
+      "assertions": [
+        "product main scroll history preserves the same actual main and Mining position across other-route history",
+        "product main scroll history keeps Wallet's actual main and restores its position through Mining and Wallet subroutes",
+        "product main scroll history does not turn a Wallet history-view query into restoration for the next normal route",
+        "product main scroll history uses the current route when a hidden previous AI page remains in the DOM",
+        "product main scroll history scrolls the actual main rather than the window on a normal route change",
+        "product main scroll history restores the previous route's own main position on back navigation",
+        "product main scroll history keeps the visible catalog hero when a hidden stream still has the server scene",
+        "product main scroll history leaves a hidden stream hero untouched until the visible hero exists",
+        "product main scroll history keeps the products ready marker that is inside main",
+        "product main scroll history does not treat the next normal route as back after same-path history /home#details",
+        "product main scroll history does not treat the next normal route as back after same-path history /home?selected=1"
+      ],
+      "replacements": [
+        "tests/unit/workroom-member-client.test.ts",
+        "tests/unit/workroom-retirement.test.ts",
+        "tests/e2e/workroom/"
+      ]
+    }
+  ]
+}

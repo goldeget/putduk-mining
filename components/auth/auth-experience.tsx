@@ -1,10 +1,9 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 
-import { BrandMark } from "@/components/brand/brand-mark";
+import { WorkroomMark } from "@/components/workroom/identity";
 import { PutdukIcon } from "@/components/icons/putduk-icon";
 import { ThemeControl } from "@/components/system/theme-control";
-import { GlobalPavilion } from "@/components/brand/global-pavilion";
 
 import styles from "./auth-experience.module.css";
 
@@ -25,11 +24,9 @@ type AuthExperienceProps = {
 /** Static approved artwork only. It does not select a product or run mining. */
 export function AuthArtwork() {
   return (
-    <GlobalPavilion
-      className={styles.artwork}
-      sizes="(min-width: 1100px) 54vw, (min-width: 768px) 75vw, 100vw"
-      priority
-    />
+    <div className={styles.artwork}>
+      <WorkroomMark />
+    </div>
   );
 }
 
@@ -54,11 +51,11 @@ export function AuthExperience({
     >
       <div className={styles.stage}>
         <header className={styles.header}>
-          <Link className={styles.brand} href="/" aria-label="퍼뜩 채굴 홈">
-            <BrandMark title="" />
+          <Link className={styles.brand} href="/" aria-label="WORKROOM 홈">
+            <WorkroomMark />
             <span>
-              <strong>퍼뜩</strong>
-              <small>채굴</small>
+              <strong>WORKROOM</strong>
+              <small>나만의 워크룸</small>
             </span>
           </Link>
           <ThemeControl />
@@ -91,7 +88,7 @@ export function AuthExperience({
           </section>
         </div>
         <footer className={styles.pageFooter}>
-          <Link href="/">퍼뜩 채굴 홈</Link>
+          <Link href="/">WORKROOM 홈</Link>
           <span aria-hidden="true">·</span>
           <Link href="/recover">계정 복구</Link>
         </footer>

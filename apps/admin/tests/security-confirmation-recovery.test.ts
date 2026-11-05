@@ -2,7 +2,11 @@
 import { act, createElement } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { ADMIN_MFA_PREPARE_TIMEOUT_MS, MfaGate } from "@/components/mfa-gate";
+import {
+  ADMIN_MFA_PREPARE_TIMEOUT_MS,
+  ADMIN_MFA_INTERNAL_PREPARE_ATTEMPTS,
+  MfaGate,
+} from "@/components/mfa-gate";
 import { StepUpTokenField } from "@/components/step-up-token-field";
 import { KycReviewForm } from "@/app/(control)/kyc/review-form";
 
@@ -60,6 +64,7 @@ afterEach(async () => {
   await act(async () => root.unmount());
   container.remove();
   vi.unstubAllGlobals();
+  if (vi.isFakeTimers()) vi.clearAllTimers();
   vi.useRealTimers();
 });
 async function fillCode(code = "123456") {
@@ -124,12 +129,18 @@ function mockVerifiedThen(body: unknown, status = 200) {
 describe("security confirmation recovery", () => {
   it("MFA preparation timeout recovers without a fake verified factor", async () => {
     vi.useFakeTimers();
-    mocks.prepareAdminMfaAction.mockImplementationOnce(
+    mocks.prepareAdminMfaAction.mockImplementation(
       () => new Promise(() => undefined),
     );
     await mountMfa();
     await act(async () =>
-      vi.advanceTimersByTimeAsync(ADMIN_MFA_PREPARE_TIMEOUT_MS + 1),
+      vi.advanceTimersByTimeAsync(ADMIN_MFA_PREPARE_TIMEOUT_MS - 1),
+    );
+    expect(container.querySelector(".ghost-button")).toBeNull();
+    expect(mocks.prepareAdminMfaAction).toHaveBeenCalledTimes(1);
+    await act(async () => vi.runAllTimersAsync());
+    expect(mocks.prepareAdminMfaAction).toHaveBeenCalledTimes(
+      ADMIN_MFA_INTERNAL_PREPARE_ATTEMPTS,
     );
     expect(container.textContent).toContain("다시 확인");
     expect(
@@ -139,12 +150,24 @@ describe("security confirmation recovery", () => {
     expect(mocks.replace).not.toHaveBeenCalled();
   });
   it("MFA preparation throw exposes a retry instead of permanent busy", async () => {
-    mocks.prepareAdminMfaAction.mockRejectedValueOnce(new TypeError("network"));
+    vi.useFakeTimers();
+    mocks.prepareAdminMfaAction.mockRejectedValue(new TypeError("network"));
     await mountMfa();
+    await act(async () => vi.runAllTimersAsync());
+    expect(mocks.prepareAdminMfaAction).toHaveBeenCalledTimes(
+      ADMIN_MFA_INTERNAL_PREPARE_ATTEMPTS,
+    );
     expect(container.textContent).toContain("다시 확인");
     expect(container.querySelector<HTMLButtonElement>("button")!.disabled).toBe(
       false,
     );
+    mocks.prepareAdminMfaAction.mockResolvedValue({
+      status: "ready",
+      mode: "verify",
+      factorId: "factor-qa",
+      enrolment: null,
+      message: "인증 앱에 표시된 6자리 코드를 입력해 주세요.",
+    });
     await act(async () =>
       container.querySelector<HTMLButtonElement>("button")!.click(),
     );

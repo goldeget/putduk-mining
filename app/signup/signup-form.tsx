@@ -168,6 +168,25 @@ export function SignupForm() {
         <legend className={styles.srOnly}>가입 정보</legend>
         <div className={styles.field}>
           <div className={styles.inputRow}>
+            <label htmlFor="signup-referral-code">추천인 코드</label>
+            <input
+              id="signup-referral-code"
+              name="referralCode"
+              type="text"
+              required
+              maxLength={64}
+              autoComplete="off"
+              autoCapitalize="characters"
+              placeholder="담당자에게 받은 코드"
+              aria-describedby="referral-code-help"
+            />
+          </div>
+          <small id="referral-code-help">
+            신규 가입에 필요한 유효한 추천인 코드를 입력해 주세요.
+          </small>
+        </div>
+        <div className={styles.field}>
+          <div className={styles.inputRow}>
             <label htmlFor="signup-legal-name">
               <FieldIcon name="user" />
               <span>이름</span>
@@ -490,8 +509,8 @@ export function SignupForm() {
           <details id="signup-service-terms">
             <summary>자세히 보기</summary>
             <p>
-              체험 값은 실제 자산이 아닙니다. 자격 확인 후 전환된 금액만 실제
-              KRW 지갑에 반영됩니다.
+              무료 시뮬레이션 체험 포인트는 실제 자산이 아니며, 현금으로
+              전환하거나 출금할 수 없습니다.
             </p>
             <Link
               className={styles.policyDocumentLink}
@@ -572,6 +591,13 @@ export function SignupForm() {
           </FeedbackMessage>
         ) : null}
       </fieldset>
+      <label className={styles.consentOptional}>
+        <input name="workroomAcknowledged" type="checkbox" required />
+        <span>
+          사전 설정된 모의 차트이며 체험 포인트는 현금 전환·출금이 불가능함을
+          확인했습니다. (필수)
+        </span>
+      </label>
       {state.status !== "idle" ? (
         <p
           className={`auth-form__message auth-form__message--${state.status}`}

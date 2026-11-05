@@ -12,6 +12,7 @@ import {
 } from "@/lib/trust/legal-content";
 import { getTrustDocument, TRUST_DOCUMENTS } from "@/lib/trust/public-content";
 import { getTrustNavigationLabel } from "@/lib/trust/public-presentation";
+import { WorkroomAuth } from "@/components/workroom/identity";
 
 const root = resolve(__dirname, "../..");
 const read = (path: string) => readFileSync(resolve(root, path), "utf8");
@@ -72,12 +73,16 @@ describe("terms and privacy documents", () => {
   });
 
   it("are linked from signup and the landing footer", () => {
-    const form = read("app/signup/signup-form.tsx");
-    expect(form).toContain('href="/terms"');
-    expect(form).toContain('href="/privacy"');
-    const landing = read("app/page.tsx");
-    expect(landing).toContain('href="/terms"');
-    expect(landing).toContain('href="/privacy"');
+    for (const page of ["app/signup/page.tsx", "app/page.tsx"])
+      expect(read(page)).toContain("WorkroomAuth");
+    for (const signup of [false, true]) {
+      const html = renderToStaticMarkup(
+        WorkroomAuth({ signup, children: "form" }),
+      );
+      expect(html).toContain('aria-label="이용 안내"');
+      expect(html).toContain('href="/terms"');
+      expect(html).toContain('href="/privacy"');
+    }
   });
 
   it("follow the Korean content gate", () => {

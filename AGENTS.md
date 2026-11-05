@@ -1,3 +1,27 @@
+## Owner-authorized verification and conditional release — 2026-11-04
+
+The latest user message explicitly authorizes completing WORKROOM CI/native/real signup/admin verification, then GitHub upload and actual-site rollout ONLY if verification succeeds, preserving existing users and data. This supersedes the prior local-only push/deploy restriction for this exact task.
+
+- Continue in C:/Dev/putduk-workroom-20261104 from f7f1c21027ebe4b512e5c711cb061c783f66973a. Original C:/Dev/putduk-mining stays protected.
+- GitHub exact goldeget/putduk-mining; Supabase exact osrmyjgmpdspdcwqjwuv; Cloudflare exact account9dc502d4ef06b3b5374591de6e6933ca, existing mining.putduk.com/admin.mining.putduk.com Workers only. No unrelated targets, DNS/email/security teardown, paid infrastructure or payouts.
+- Local/disposable Auth/Postgres/REST/browser infrastructure and project-specific generated artifacts may be prepared for real verification. Never reset the operational Supabase ref.
+- Use separate CI/workflow, native-DB, authenticated-browser and coordinator file ownership. Preserve historical201 migrations/manifests; use explicit successor admissions and test-disposition evidence. No arbitrary test skipping, mock-auth completion claims, failed-candidate merge or premature rollout.
+- Before operational apply verify recoverable DB backup/restore point, previous Worker versions/configuration, pre/post identity and historical ledger preservation, old-worker retirement and first existing administrator access. No newly fabricated production identity or actual-money test.
+- New paid Supabase projects/branches still require their actual cost approval; do not silently provision them. Existing authorized accounts and free disposable local/CI infrastructure are the default.
+
+## Owner-authorized WORKROOM replacement — 2026-11-04
+
+Current chat explicitly approves replacing the mining member product with the existing transparent, free WORKROOM simulation while preserving all existing users/data. This supersedes obsolete path, prior-project reference, UI baseline and no-implementation restrictions solely for this task.
+
+- Original C:/Dev/putduk-mining remains protected; no source edits/reset/clean/stash there.
+- Implementation: C:/Dev/putduk-workroom-20261104, branch codex/workroom-replacement-implementation, base 9ccc287c5c05b998a9ad345392e9ff07a03a5836.
+- Reference: approved WORKROOM source at C:/Users/PC/.codex/visualizations/2026/11/04/01a1a42a-58ba-7d40-8e3a-da9809b74c09/workroom-site.
+- Preservation and evidence: F:/가상대리점/preservation/putduk-before-workroom-20261104 and F:/가상대리점/workroom-* task files. Native app worktree tool rejected this selected repository; Git fallback used. F volume cannot host dependency junctions, so implementation moved to C.
+- Preserve auth.users/profile IDs, all historical money records, old applied SQL and existing original work. Practice points never mutate KRW/withdrawable funds.
+- Use non-overlapping database/domain, member UI, admin UI/API and coordinator lanes per approved plan.
+- Local implementation, exact dependency reuse, isolated tests and task-owned local DB validation authorized. No live schema apply/deploy/push/shared merge, real money or paid infrastructure authorized by this local step.
+- Existing financial/security invariants still apply. Historical source manifests are preserved; new successor admission needs separate reviewed evidence.
+
 # PUTDUK MINING — ABSOLUTE PROJECT BOUNDARY
 
 ## Owner-confirmed scope and precedence — 2026-10-14

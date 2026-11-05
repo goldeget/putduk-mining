@@ -90,6 +90,32 @@ function reservedLastSlot() {
 }
 
 describe("live admin auth uses atomic reservations", () => {
+  it("operator alias and email share the same password admission bucket", async () => {
+    mocks.rpc.mockImplementation(async (name: string) => {
+      if (name === "resolve_operator_login_email")
+        return { data: "operator@example.com", error: null };
+      if (name === "admit_admin_auth_attempt")
+        return { data: ATTEMPT, error: null };
+      return { data: null, error: null };
+    });
+    for (const identifier of ["putdukadmin", "operator@example.com"]) {
+      const form = new FormData();
+      form.set("email", identifier);
+      form.set("password", "fixture-password");
+      await loginAction(null, form);
+    }
+    const admissions = mocks.rpc.mock.calls.filter(
+      ([name]) => name === "admit_admin_auth_attempt",
+    );
+    expect(admissions).toHaveLength(2);
+    expect(admissions[0]![1].p_bucket).toBe(admissions[1]![1].p_bucket);
+    expect(mocks.signIn).toHaveBeenCalledTimes(2);
+    expect(mocks.signIn).toHaveBeenNthCalledWith(1, {
+      email: "operator@example.com",
+      password: "fixture-password",
+    });
+  });
+
   it("concurrent password failures contact Auth only for the remaining slot", async () => {
     const state = reservedLastSlot();
     await Promise.all(

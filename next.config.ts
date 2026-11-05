@@ -32,6 +32,9 @@ const securityHeaders = [
 const distDir = resolveNextDistDir();
 const isolatedQaDev =
   process.env.APP_ENV === "test" && distDir.startsWith(".next-qa-");
+const lowResourceBuild =
+  process.env.APP_ENV === "test" &&
+  process.env.PUTDUK_LOW_RESOURCE_BUILD === "1";
 
 const nextConfig: NextConfig = {
   distDir,
@@ -43,7 +46,13 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ["motion"],
     ...(isolatedQaDev ? { turbopackFileSystemCacheForDev: false } : {}),
+    ...(lowResourceBuild
+      ? { cpus: 1, webpackBuildWorker: true, webpackMemoryOptimizations: true }
+      : {}),
   },
+  ...(lowResourceBuild
+    ? { webpack: (config) => ({ ...config, cache: false }) }
+    : {}),
   async redirects() {
     return [
       {

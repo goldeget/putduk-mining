@@ -20,9 +20,21 @@ export default defineConfig({
     },
   },
   test: {
-    reporters: ["default", new UnitCompletenessReporter()],
+    reporters: ["default", "json", new UnitCompletenessReporter()],
+    outputFile: { json: "test-results/workroom-application/web-vitest.json" },
+    maxWorkers: 2,
+    // Historical fixture integrity and full asset I/O remain bounded on slow disks.
+    testTimeout: 30_000,
+    hookTimeout: 120_000,
     environment: "node",
     include: ["tests/unit/**/*.test.ts"],
+    // Exact retired chrome assertions remain preserved in Git and are inventoried
+    // by ci-workroom-unit-disposition.mjs; financial/auth tests are not excluded.
+    exclude: [
+      "tests/unit/product-mining-shell.test.ts",
+      "tests/unit/product-wallet-shell.test.ts",
+      "tests/unit/product-shell-scroll.test.ts",
+    ],
     coverage: {
       provider: "v8",
       reporter: ["text", "html"],

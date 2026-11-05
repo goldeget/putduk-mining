@@ -4,10 +4,11 @@ import { putdukFont } from "../../../lib/design/fonts";
 import { themeBootstrap } from "../../../lib/design/theme";
 
 import "./globals.css";
+import "./(control)/workroom/shell.css";
 
 export const metadata: Metadata = {
-  title: { default: "오늘의 퍼뜩 | 운영자", template: "%s | PUTDUK ADMIN" },
-  description: "PUTDUK MINING 전용 운영 컨트롤 플레인",
+  title: { default: "WORKROOM | 운영자", template: "%s | PUTDUK ADMIN" },
+  description: "WORKROOM 무료 모의 체험 운영 콘솔",
   robots: { index: false, follow: false, nocache: true },
   icons: {
     icon: [

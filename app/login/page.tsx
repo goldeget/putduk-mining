@@ -2,7 +2,7 @@ import { FeedbackMessage } from "@/components/ui/feedback-message";
 import type { Metadata } from "next";
 
 import { AuthForm } from "@/app/login/auth-form";
-import { LoginExperience } from "@/components/auth/login-experience";
+import { WorkroomAuth } from "@/components/workroom/identity";
 import { safeProtectedReturnPath } from "@/lib/auth/return-path";
 
 export const metadata: Metadata = {
@@ -38,7 +38,7 @@ export default async function LoginPage({
       : authStatusMessage;
 
   return (
-    <LoginExperience>
+    <WorkroomAuth>
       {statusMessage ? (
         <FeedbackMessage
           className="auth-form__message auth-form__message--success"
@@ -48,6 +48,6 @@ export default async function LoginPage({
         </FeedbackMessage>
       ) : null}
       <AuthForm nextPath={nextPath} />
-    </LoginExperience>
+    </WorkroomAuth>
   );
 }

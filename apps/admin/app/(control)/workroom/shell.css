@@ -1,0 +1,37 @@
+/* WORKROOM successor shell; historical finance screens retain their own contents. */
+.control-shell {
+  background: #111e30;
+}
+.control-rail {
+  background: #0c1929 !important;
+  border-color: #263b50 !important;
+}
+.control-workspace {
+  background: #111e30;
+}
+.control-topbar {
+  background: #111e30 !important;
+  color: #bdd0df;
+  border-color: #2d4057 !important;
+}
+.control-nav__label {
+  color: #b8c9da;
+}
+.control-rail nav a[aria-current="page"] {
+  background: #1c3b35 !important;
+  border-color: #356451 !important;
+}
+.control-rail nav a[aria-current="page"] .control-nav__label {
+  color: #8df5ce;
+}
+.control-rail .operator-card {
+  background: #14263a;
+  color: #b4c8da;
+  border-color: #2c4055;
+}
+.brand-lockup--rail strong {
+  color: #edf9ff;
+}
+.brand-lockup--rail small {
+  color: #73efc3;
+}

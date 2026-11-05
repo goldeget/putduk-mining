@@ -1,0 +1,1994 @@
+[
+  {
+    "path": "supabase/migrations/20260926090727_foundation_extensions_and_types.sql",
+    "sourceSha256": "e0af5c5a5fecec7f4a7ec67e3e26f5157512785fc4d1cfdae3ae95570c8ab465",
+    "baselineSha256": "e0af5c5a5fecec7f4a7ec67e3e26f5157512785fc4d1cfdae3ae95570c8ab465",
+    "successorSha256": "e0af5c5a5fecec7f4a7ec67e3e26f5157512785fc4d1cfdae3ae95570c8ab465"
+  },
+  {
+    "path": "supabase/migrations/20260926090729_identity_and_user.sql",
+    "sourceSha256": "747174740b287513107f178882822b6ba86f87feb8c06b6e972c37eadb0d8c4f",
+    "baselineSha256": "747174740b287513107f178882822b6ba86f87feb8c06b6e972c37eadb0d8c4f",
+    "successorSha256": "747174740b287513107f178882822b6ba86f87feb8c06b6e972c37eadb0d8c4f"
+  },
+  {
+    "path": "supabase/migrations/20260926090730_trial_world_and_economy.sql",
+    "sourceSha256": "43b88a30a5cdcda38d619ac762d5d84062631b8e7f65ada2758375284ad351c0",
+    "baselineSha256": "43b88a30a5cdcda38d619ac762d5d84062631b8e7f65ada2758375284ad351c0",
+    "successorSha256": "43b88a30a5cdcda38d619ac762d5d84062631b8e7f65ada2758375284ad351c0"
+  },
+  {
+    "path": "supabase/migrations/20260926090732_mining_and_settlement.sql",
+    "sourceSha256": "0e619714004264313af0072886db140f578264feea8a1de72ad3a14262270179",
+    "baselineSha256": "0e619714004264313af0072886db140f578264feea8a1de72ad3a14262270179",
+    "successorSha256": "0e619714004264313af0072886db140f578264feea8a1de72ad3a14262270179"
+  },
+  {
+    "path": "supabase/migrations/20260926090733_wallet_funding_and_withdrawal.sql",
+    "sourceSha256": "fb709e4fac2f5d6fbb8f63da3a082b1b8f1979d82e6a64fc2360e3f75207211d",
+    "baselineSha256": "fb709e4fac2f5d6fbb8f63da3a082b1b8f1979d82e6a64fc2360e3f75207211d",
+    "successorSha256": "fb709e4fac2f5d6fbb8f63da3a082b1b8f1979d82e6a64fc2360e3f75207211d"
+  },
+  {
+    "path": "supabase/migrations/20260926090813_audit_and_system.sql",
+    "sourceSha256": "80169dd2f0ccce4bfca5a064c410fc9fef03ce7dbf9952c117704effce829f43",
+    "baselineSha256": "80169dd2f0ccce4bfca5a064c410fc9fef03ce7dbf9952c117704effce829f43",
+    "successorSha256": "80169dd2f0ccce4bfca5a064c410fc9fef03ce7dbf9952c117704effce829f43"
+  },
+  {
+    "path": "supabase/migrations/20260926094147_liveops_notifications_and_ranks.sql",
+    "sourceSha256": "2ca5e3d1be6d6f2ed66c8ec8cd7d3551dae5f35ab51f5bfc11534cfd5e9edbc4",
+    "baselineSha256": "2ca5e3d1be6d6f2ed66c8ec8cd7d3551dae5f35ab51f5bfc11534cfd5e9edbc4",
+    "successorSha256": "2ca5e3d1be6d6f2ed66c8ec8cd7d3551dae5f35ab51f5bfc11534cfd5e9edbc4"
+  },
+  {
+    "path": "supabase/migrations/20260926094152_ai_trust_and_analytics.sql",
+    "sourceSha256": "286cd5fdf62e16d526094fa7d26ef86639fb41a66ed9114d6ad90508d767c176",
+    "baselineSha256": "286cd5fdf62e16d526094fa7d26ef86639fb41a66ed9114d6ad90508d767c176",
+    "successorSha256": "286cd5fdf62e16d526094fa7d26ef86639fb41a66ed9114d6ad90508d767c176"
+  },
+  {
+    "path": "supabase/migrations/20260926094853_server_command_functions.sql",
+    "sourceSha256": "1f857092ebb2fb50c20c7e87808fae2b6c567dbff67ba1b9aac8b6168131ec5a",
+    "baselineSha256": "1f857092ebb2fb50c20c7e87808fae2b6c567dbff67ba1b9aac8b6168131ec5a",
+    "successorSha256": "1f857092ebb2fb50c20c7e87808fae2b6c567dbff67ba1b9aac8b6168131ec5a"
+  },
+  {
+    "path": "supabase/migrations/20260926095627_secure_read_models.sql",
+    "sourceSha256": "1a42e7320f5edcb7b7a718f4068ebf71b002beb925824759484cef5af5d75555",
+    "baselineSha256": "1a42e7320f5edcb7b7a718f4068ebf71b002beb925824759484cef5af5d75555",
+    "successorSha256": "1a42e7320f5edcb7b7a718f4068ebf71b002beb925824759484cef5af5d75555"
+  },
+  {
+    "path": "supabase/migrations/20260926103000_analytics_event_deduplication.sql",
+    "sourceSha256": "a0ee040b0f5cd97f65676c0b698fde9e5f80ddf8c6d2c1339d6ce0d51794dc33",
+    "baselineSha256": "a0ee040b0f5cd97f65676c0b698fde9e5f80ddf8c6d2c1339d6ce0d51794dc33",
+    "successorSha256": "a0ee040b0f5cd97f65676c0b698fde9e5f80ddf8c6d2c1339d6ce0d51794dc33"
+  },
+  {
+    "path": "supabase/migrations/20260926104500_trial_settlement_command.sql",
+    "sourceSha256": "d993213ee2459c0b9ea3b47607f48034a79b3403143acda71c04c3295931253b",
+    "baselineSha256": "d993213ee2459c0b9ea3b47607f48034a79b3403143acda71c04c3295931253b",
+    "successorSha256": "d993213ee2459c0b9ea3b47607f48034a79b3403143acda71c04c3295931253b"
+  },
+  {
+    "path": "supabase/migrations/20260926105500_economy_version_hardening.sql",
+    "sourceSha256": "bbb1e96380b3546a6030ee97467aba934cf0ff2de090840eb14e507220237063",
+    "baselineSha256": "bbb1e96380b3546a6030ee97467aba934cf0ff2de090840eb14e507220237063",
+    "successorSha256": "bbb1e96380b3546a6030ee97467aba934cf0ff2de090840eb14e507220237063"
+  },
+  {
+    "path": "supabase/migrations/20260926110500_push_subscription_commands.sql",
+    "sourceSha256": "3d89ae14597635ab56069541b223a498a3638edfc361a0fba36dba246f39dbb6",
+    "baselineSha256": "3d89ae14597635ab56069541b223a498a3638edfc361a0fba36dba246f39dbb6",
+    "successorSha256": "3d89ae14597635ab56069541b223a498a3638edfc361a0fba36dba246f39dbb6"
+  },
+  {
+    "path": "supabase/migrations/20260926112000_withdrawal_policy_and_secure_command.sql",
+    "sourceSha256": "34876b870e3de234f0d4286b1033b47533934814fd2885676f02a8f0ba704c98",
+    "baselineSha256": "34876b870e3de234f0d4286b1033b47533934814fd2885676f02a8f0ba704c98",
+    "successorSha256": "34876b870e3de234f0d4286b1033b47533934814fd2885676f02a8f0ba704c98"
+  },
+  {
+    "path": "supabase/migrations/20260926113500_ai_orchestration_and_admin_bootstrap.sql",
+    "sourceSha256": "6ad9295412d61849d4652a972cfe1927f90eaeaeed1ea3046aa788219d389615",
+    "baselineSha256": "6ad9295412d61849d4652a972cfe1927f90eaeaeed1ea3046aa788219d389615",
+    "successorSha256": "6ad9295412d61849d4652a972cfe1927f90eaeaeed1ea3046aa788219d389615"
+  },
+  {
+    "path": "supabase/migrations/20260926192203_ws02_foundation_schema.sql",
+    "sourceSha256": "9ed8926c80f55352976f78e0f7b6f12a43c69e6e8715ecdac32f07a9cb9a80c3",
+    "baselineSha256": "9ed8926c80f55352976f78e0f7b6f12a43c69e6e8715ecdac32f07a9cb9a80c3",
+    "successorSha256": "9ed8926c80f55352976f78e0f7b6f12a43c69e6e8715ecdac32f07a9cb9a80c3"
+  },
+  {
+    "path": "supabase/migrations/20260926192208_ws02_commands_and_catalog_seed.sql",
+    "sourceSha256": "9df1118fc49fb91d1fbbe28154238afd8ff2bb56c877ff48333a4ddeca615369",
+    "baselineSha256": "9df1118fc49fb91d1fbbe28154238afd8ff2bb56c877ff48333a4ddeca615369",
+    "successorSha256": "9df1118fc49fb91d1fbbe28154238afd8ff2bb56c877ff48333a4ddeca615369"
+  },
+  {
+    "path": "supabase/migrations/20260926233338_universal_putduk_ai_audit_routes.sql",
+    "sourceSha256": "8bd266ef5919b36af902b4b785c3135dad2a31725e9d84c6aa534a6bf7869628",
+    "baselineSha256": "8bd266ef5919b36af902b4b785c3135dad2a31725e9d84c6aa534a6bf7869628",
+    "successorSha256": "8bd266ef5919b36af902b4b785c3135dad2a31725e9d84c6aa534a6bf7869628"
+  },
+  {
+    "path": "supabase/migrations/20260927003000_identity_consent_productization.sql",
+    "sourceSha256": "43409568620c9fc5b91f8ec3cf57eb9844e7b58821207592152c95912d483e08",
+    "baselineSha256": "43409568620c9fc5b91f8ec3cf57eb9844e7b58821207592152c95912d483e08",
+    "successorSha256": "43409568620c9fc5b91f8ec3cf57eb9844e7b58821207592152c95912d483e08"
+  },
+  {
+    "path": "supabase/migrations/20260927004500_withdrawal_destination_safe_read.sql",
+    "sourceSha256": "f3abcb6f3605f5016cdf3a05a6f3ee60ff7107d66129c0656a05be2ede0d0bec",
+    "baselineSha256": "f3abcb6f3605f5016cdf3a05a6f3ee60ff7107d66129c0656a05be2ede0d0bec",
+    "successorSha256": "f3abcb6f3605f5016cdf3a05a6f3ee60ff7107d66129c0656a05be2ede0d0bec"
+  },
+  {
+    "path": "supabase/migrations/20260927005000_ai_service_role_execution.sql",
+    "sourceSha256": "16c360788a26d8f7a11c0a8822c836ab6129652d6aa494c9a974853f8e7dd629",
+    "baselineSha256": "16c360788a26d8f7a11c0a8822c836ab6129652d6aa494c9a974853f8e7dd629",
+    "successorSha256": "16c360788a26d8f7a11c0a8822c836ab6129652d6aa494c9a974853f8e7dd629"
+  },
+  {
+    "path": "supabase/migrations/20260927120000_ws04_enum_extensions.sql",
+    "sourceSha256": "41fee684d202265089c06e0dede85031d296078773d19b16b064b7842a90f17d",
+    "baselineSha256": "41fee684d202265089c06e0dede85031d296078773d19b16b064b7842a90f17d",
+    "successorSha256": "41fee684d202265089c06e0dede85031d296078773d19b16b064b7842a90f17d"
+  },
+  {
+    "path": "supabase/migrations/20260927120100_ws04_security_money_schema.sql",
+    "sourceSha256": "484e60798e33edc02587156a909fa30669ec5fe9c173ef9be6730ee80185e1f6",
+    "baselineSha256": "484e60798e33edc02587156a909fa30669ec5fe9c173ef9be6730ee80185e1f6",
+    "successorSha256": "484e60798e33edc02587156a909fa30669ec5fe9c173ef9be6730ee80185e1f6"
+  },
+  {
+    "path": "supabase/migrations/20260927120200_ws04_phone_and_usdt_deposit_commands.sql",
+    "sourceSha256": "89607019c523c8daba529d59035e8f70009144c5c240accda613c5617eb7f534",
+    "baselineSha256": "89607019c523c8daba529d59035e8f70009144c5c240accda613c5617eb7f534",
+    "successorSha256": "89607019c523c8daba529d59035e8f70009144c5c240accda613c5617eb7f534"
+  },
+  {
+    "path": "supabase/migrations/20260927120300_ws04_destination_and_request_commands.sql",
+    "sourceSha256": "ec8acc08773597787feed7ca80b062590a8c673e94bce74f4076916d5b0bfb0c",
+    "baselineSha256": "ec8acc08773597787feed7ca80b062590a8c673e94bce74f4076916d5b0bfb0c",
+    "successorSha256": "ec8acc08773597787feed7ca80b062590a8c673e94bce74f4076916d5b0bfb0c"
+  },
+  {
+    "path": "supabase/migrations/20260927120400_ws04_withdrawal_lifecycle_commands.sql",
+    "sourceSha256": "446853ec5c1bedc063f8f9d3d31695a6e084868f856ff972b0844d7992bd5a75",
+    "baselineSha256": "446853ec5c1bedc063f8f9d3d31695a6e084868f856ff972b0844d7992bd5a75",
+    "successorSha256": "446853ec5c1bedc063f8f9d3d31695a6e084868f856ff972b0844d7992bd5a75"
+  },
+  {
+    "path": "supabase/migrations/20260927120500_ws04_kyc_admin_session_welcome_seed.sql",
+    "sourceSha256": "84bfb1b11871a529f011b8fc855c6e7e291a865fcb70646ac3e273e70efb4ceb",
+    "baselineSha256": "84bfb1b11871a529f011b8fc855c6e7e291a865fcb70646ac3e273e70efb4ceb",
+    "successorSha256": "84bfb1b11871a529f011b8fc855c6e7e291a865fcb70646ac3e273e70efb4ceb"
+  },
+  {
+    "path": "supabase/migrations/20260927120600_ws04_signup_phone_history_trigger.sql",
+    "sourceSha256": "5f7e9e10a0d09c5579122202e8854dd93882032abbebabbd3761587735ba007f",
+    "baselineSha256": "5f7e9e10a0d09c5579122202e8854dd93882032abbebabbd3761587735ba007f",
+    "successorSha256": "5f7e9e10a0d09c5579122202e8854dd93882032abbebabbd3761587735ba007f"
+  },
+  {
+    "path": "supabase/migrations/20260927120700_ws04_release_disposition_and_first_destination.sql",
+    "sourceSha256": "c9f6549cf289e55770c0a84fa9f0f0b507e13c1b47a3ff5bfa0b3544c6fee941",
+    "baselineSha256": "c9f6549cf289e55770c0a84fa9f0f0b507e13c1b47a3ff5bfa0b3544c6fee941",
+    "successorSha256": "c9f6549cf289e55770c0a84fa9f0f0b507e13c1b47a3ff5bfa0b3544c6fee941"
+  },
+  {
+    "path": "supabase/migrations/20260927120800_ws05_admin_session_assert_touch.sql",
+    "sourceSha256": "86dfd17f5f4b073d8cde6065ebf3f6e0e5c2420f88eb61aee2bbcc9c42f041f9",
+    "baselineSha256": "86dfd17f5f4b073d8cde6065ebf3f6e0e5c2420f88eb61aee2bbcc9c42f041f9",
+    "successorSha256": "86dfd17f5f4b073d8cde6065ebf3f6e0e5c2420f88eb61aee2bbcc9c42f041f9"
+  },
+  {
+    "path": "supabase/migrations/20260927120900_ws05_worker_service_role_grants.sql",
+    "sourceSha256": "ab7e6c9f4564ed35430636ec65eab01ac121922901634accea9b6840c6d21cfd",
+    "baselineSha256": "ab7e6c9f4564ed35430636ec65eab01ac121922901634accea9b6840c6d21cfd",
+    "successorSha256": "ab7e6c9f4564ed35430636ec65eab01ac121922901634accea9b6840c6d21cfd"
+  },
+  {
+    "path": "supabase/migrations/20260927123000_ws05_worker_lease_replay.sql",
+    "sourceSha256": "306e36aeea13cf048458f0d05d1e51b0bccc68eeef375055e5eb8b9d3b3a6aa1",
+    "baselineSha256": "306e36aeea13cf048458f0d05d1e51b0bccc68eeef375055e5eb8b9d3b3a6aa1",
+    "successorSha256": "306e36aeea13cf048458f0d05d1e51b0bccc68eeef375055e5eb8b9d3b3a6aa1"
+  },
+  {
+    "path": "supabase/migrations/20260927124500_ws05_e2e_service_role_read_grants.sql",
+    "sourceSha256": "a98696bc34ecd028bf65676fe467ff4d26a9b896c79b84402b02bc6b2b6d261f",
+    "baselineSha256": "a98696bc34ecd028bf65676fe467ff4d26a9b896c79b84402b02bc6b2b6d261f",
+    "successorSha256": "a98696bc34ecd028bf65676fe467ff4d26a9b896c79b84402b02bc6b2b6d261f"
+  },
+  {
+    "path": "supabase/migrations/20260927131000_ws05_convert_service_role_grants.sql",
+    "sourceSha256": "a62b97e19df57fdc4dbfa0b1a8b4fb970acd88254b2b7e3a6cce1e9ed4dc9af1",
+    "baselineSha256": "a62b97e19df57fdc4dbfa0b1a8b4fb970acd88254b2b7e3a6cce1e9ed4dc9af1",
+    "successorSha256": "a62b97e19df57fdc4dbfa0b1a8b4fb970acd88254b2b7e3a6cce1e9ed4dc9af1"
+  },
+  {
+    "path": "supabase/migrations/20260927132000_ws05_bootstrap_krw_wallet_only.sql",
+    "sourceSha256": "7e26df9a8695446ee0f2b16587d50207767b0c316c589bcea713b1a805c6c73b",
+    "baselineSha256": "7e26df9a8695446ee0f2b16587d50207767b0c316c589bcea713b1a805c6c73b",
+    "successorSha256": "7e26df9a8695446ee0f2b16587d50207767b0c316c589bcea713b1a805c6c73b"
+  },
+  {
+    "path": "supabase/migrations/20260927132500_ws05_bootstrap_service_role_grants.sql",
+    "sourceSha256": "55acd28283bc4e1f1457875ad056a3d7b4aa4bd98cfe77fe21dee9e9447dbeee",
+    "baselineSha256": "55acd28283bc4e1f1457875ad056a3d7b4aa4bd98cfe77fe21dee9e9447dbeee",
+    "successorSha256": "55acd28283bc4e1f1457875ad056a3d7b4aa4bd98cfe77fe21dee9e9447dbeee"
+  },
+  {
+    "path": "supabase/migrations/20260927133000_ws05_consume_step_up_security_definer.sql",
+    "sourceSha256": "a9fbf88c10424d12a6b2e721b8da8b13028c2c0c0ad3551e827d27701392a7d0",
+    "baselineSha256": "a9fbf88c10424d12a6b2e721b8da8b13028c2c0c0ad3551e827d27701392a7d0",
+    "successorSha256": "a9fbf88c10424d12a6b2e721b8da8b13028c2c0c0ad3551e827d27701392a7d0"
+  },
+  {
+    "path": "supabase/migrations/20260927140000_ws05_restore_definer_allowlist.sql",
+    "sourceSha256": "26fc81b6a8519c8b033618c0e01329376fd23a063e8da01ce8efcfc631aa9a4c",
+    "baselineSha256": "26fc81b6a8519c8b033618c0e01329376fd23a063e8da01ce8efcfc631aa9a4c",
+    "successorSha256": "26fc81b6a8519c8b033618c0e01329376fd23a063e8da01ce8efcfc631aa9a4c"
+  },
+  {
+    "path": "supabase/migrations/20260928035854_analytics_service_role_ingest.sql",
+    "sourceSha256": "f8e89ce92517c4971dcd2c924d8cf71794bb51b60541ba79eeccd86e3bafdbc5",
+    "baselineSha256": "f8e89ce92517c4971dcd2c924d8cf71794bb51b60541ba79eeccd86e3bafdbc5",
+    "successorSha256": "f8e89ce92517c4971dcd2c924d8cf71794bb51b60541ba79eeccd86e3bafdbc5"
+  },
+  {
+    "path": "supabase/migrations/20260928051514_ws06_bind_step_up_admin_session.sql",
+    "sourceSha256": "2a95b814ba45097a78d07b3848808acac577c467bcc5841bbc61c59322f88bb7",
+    "baselineSha256": "2a95b814ba45097a78d07b3848808acac577c467bcc5841bbc61c59322f88bb7",
+    "successorSha256": "2a95b814ba45097a78d07b3848808acac577c467bcc5841bbc61c59322f88bb7"
+  },
+  {
+    "path": "supabase/migrations/20260929143000_deposit_request_service_role_insert.sql",
+    "sourceSha256": "662cf2223fa4812ade6c705454891e7b8200237fadaf76895ab5f13776ebd0a6",
+    "baselineSha256": "662cf2223fa4812ade6c705454891e7b8200237fadaf76895ab5f13776ebd0a6",
+    "successorSha256": "662cf2223fa4812ade6c705454891e7b8200237fadaf76895ab5f13776ebd0a6"
+  },
+  {
+    "path": "supabase/migrations/20260929151000_admin_member_mining_sessions_select.sql",
+    "sourceSha256": "f267ec704f46999be1bbab2f4894bc4ad6c2addd6d20c2ad22da9443eae807b1",
+    "baselineSha256": "f267ec704f46999be1bbab2f4894bc4ad6c2addd6d20c2ad22da9443eae807b1",
+    "successorSha256": "f267ec704f46999be1bbab2f4894bc4ad6c2addd6d20c2ad22da9443eae807b1"
+  },
+  {
+    "path": "supabase/migrations/20260930052429_withdrawal_logical_lifecycle.sql",
+    "sourceSha256": "6313876ec0e630c7368a4fd0383f47d73fcd865557e70ec52628677336b8bffa",
+    "baselineSha256": "6313876ec0e630c7368a4fd0383f47d73fcd865557e70ec52628677336b8bffa",
+    "successorSha256": "6313876ec0e630c7368a4fd0383f47d73fcd865557e70ec52628677336b8bffa"
+  },
+  {
+    "path": "supabase/migrations/20260930114500_acknowledge_reconciliation_mismatch.sql",
+    "sourceSha256": "5ba871163711e3a83a9d78bb3e6a6565d153782f75bae7d6eadd22607912f06d",
+    "baselineSha256": "5ba871163711e3a83a9d78bb3e6a6565d153782f75bae7d6eadd22607912f06d",
+    "successorSha256": "5ba871163711e3a83a9d78bb3e6a6565d153782f75bae7d6eadd22607912f06d"
+  },
+  {
+    "path": "supabase/migrations/20261001040951_withdrawal_destination_reauthentication.sql",
+    "sourceSha256": "0ca376fdeff9122cf70715cedda939d1bad9edd28349f463ab50735587dd687d",
+    "baselineSha256": "0ca376fdeff9122cf70715cedda939d1bad9edd28349f463ab50735587dd687d",
+    "successorSha256": "0ca376fdeff9122cf70715cedda939d1bad9edd28349f463ab50735587dd687d"
+  },
+  {
+    "path": "supabase/migrations/20261001045129_withdrawal_reauth_consumption_clock.sql",
+    "sourceSha256": "1209033608951da012071756f7d57884bbed3f3e2e8a80642deabbb76297751f",
+    "baselineSha256": "1209033608951da012071756f7d57884bbed3f3e2e8a80642deabbb76297751f",
+    "successorSha256": "1209033608951da012071756f7d57884bbed3f3e2e8a80642deabbb76297751f"
+  },
+  {
+    "path": "supabase/migrations/20261001135427_admin_crypto_withdrawal_service_read.sql",
+    "sourceSha256": "5901bccd3819b8e75ba32990982ae1182be75c7d249ea7d6bcdb1476fc467bc4",
+    "baselineSha256": "5901bccd3819b8e75ba32990982ae1182be75c7d249ea7d6bcdb1476fc467bc4",
+    "successorSha256": "5901bccd3819b8e75ba32990982ae1182be75c7d249ea7d6bcdb1476fc467bc4"
+  },
+  {
+    "path": "supabase/migrations/20261001152950_service_role_default_privilege_lock.sql",
+    "sourceSha256": "c2acd070c8c8b3f9b7e1b39922b086ac15b4608011ab17b29c5b197ab925b59c",
+    "baselineSha256": "c2acd070c8c8b3f9b7e1b39922b086ac15b4608011ab17b29c5b197ab925b59c",
+    "successorSha256": "c2acd070c8c8b3f9b7e1b39922b086ac15b4608011ab17b29c5b197ab925b59c"
+  },
+  {
+    "path": "supabase/migrations/20261002103000_service_role_revoke_image_default_writes.sql",
+    "sourceSha256": "0cbdaa43dc227bed6f6006273a2f20ceda51a37c0a850ca7db9a1dea2fdf8ef2",
+    "baselineSha256": "0cbdaa43dc227bed6f6006273a2f20ceda51a37c0a850ca7db9a1dea2fdf8ef2",
+    "successorSha256": "0cbdaa43dc227bed6f6006273a2f20ceda51a37c0a850ca7db9a1dea2fdf8ef2"
+  },
+  {
+    "path": "supabase/migrations/20261002230000_krw_deposit_journal_integrity.sql",
+    "sourceSha256": "c23e54fe80d9789db7746ff4082e0446c30a9c450e516aff312f53b4f2da89f4",
+    "baselineSha256": "c23e54fe80d9789db7746ff4082e0446c30a9c450e516aff312f53b4f2da89f4",
+    "successorSha256": "c23e54fe80d9789db7746ff4082e0446c30a9c450e516aff312f53b4f2da89f4"
+  },
+  {
+    "path": "supabase/migrations/20261003051211_usdt_approval_receipt_integrity.sql",
+    "sourceSha256": "7336770bf29a8693452b49b864ba9e19728890223077ea79d9dc8e3aa40250d8",
+    "baselineSha256": "7336770bf29a8693452b49b864ba9e19728890223077ea79d9dc8e3aa40250d8",
+    "successorSha256": "7336770bf29a8693452b49b864ba9e19728890223077ea79d9dc8e3aa40250d8"
+  },
+  {
+    "path": "supabase/migrations/20261003065443_safe_mode_atomic_audit_command.sql",
+    "sourceSha256": "12b7ea60c01363a669d540de45614e430b9646b3bc149399322278382cbd463e",
+    "baselineSha256": "12b7ea60c01363a669d540de45614e430b9646b3bc149399322278382cbd463e",
+    "successorSha256": "12b7ea60c01363a669d540de45614e430b9646b3bc149399322278382cbd463e"
+  },
+  {
+    "path": "supabase/migrations/20261003072238_safe_mode_audit_consumer.sql",
+    "sourceSha256": "6bfd0232f59711b57364900a72a684e0b33e7dac0dec4906bcfd9ff1c48b4bd4",
+    "baselineSha256": "6bfd0232f59711b57364900a72a684e0b33e7dac0dec4906bcfd9ff1c48b4bd4",
+    "successorSha256": "6bfd0232f59711b57364900a72a684e0b33e7dac0dec4906bcfd9ff1c48b4bd4"
+  },
+  {
+    "path": "supabase/migrations/20261003081200_money_source_credit_provenance.sql",
+    "sourceSha256": "c9574a3997e3717d05c606af3d672ee998ef3c3a7b328180580820445fa2203e",
+    "baselineSha256": "c9574a3997e3717d05c606af3d672ee998ef3c3a7b328180580820445fa2203e",
+    "successorSha256": "c9574a3997e3717d05c606af3d672ee998ef3c3a7b328180580820445fa2203e"
+  },
+  {
+    "path": "supabase/migrations/20261003140000_economy_policy_v1.sql",
+    "sourceSha256": "74de44b21580944c98f7e1768afeac77783d5a1aa053962495aa1c225ae4976c",
+    "baselineSha256": "74de44b21580944c98f7e1768afeac77783d5a1aa053962495aa1c225ae4976c",
+    "successorSha256": "74de44b21580944c98f7e1768afeac77783d5a1aa053962495aa1c225ae4976c"
+  },
+  {
+    "path": "supabase/migrations/20261003150000_legacy_withdrawal_entrypoint_closure.sql",
+    "sourceSha256": "a0b6454c72cb89bc663d837018cef9b2601d3c47bfec45f0a1deb577ed5c8435",
+    "baselineSha256": "a0b6454c72cb89bc663d837018cef9b2601d3c47bfec45f0a1deb577ed5c8435",
+    "successorSha256": "a0b6454c72cb89bc663d837018cef9b2601d3c47bfec45f0a1deb577ed5c8435"
+  },
+  {
+    "path": "supabase/migrations/20261003160000_effective_economy_policy_reader.sql",
+    "sourceSha256": "26a09302cfe112ac10ac2630e24b5937a86551594513567d2ea000a7a3dbba43",
+    "baselineSha256": "26a09302cfe112ac10ac2630e24b5937a86551594513567d2ea000a7a3dbba43",
+    "successorSha256": "26a09302cfe112ac10ac2630e24b5937a86551594513567d2ea000a7a3dbba43"
+  },
+  {
+    "path": "supabase/migrations/20261004100000_withdrawal_verified_source_guard.sql",
+    "sourceSha256": "ca664ebb391179bc30938e5e450ca6e23c65e51c9bd3d527d6a0fed53a44e14a",
+    "baselineSha256": "ca664ebb391179bc30938e5e450ca6e23c65e51c9bd3d527d6a0fed53a44e14a",
+    "successorSha256": "ca664ebb391179bc30938e5e450ca6e23c65e51c9bd3d527d6a0fed53a44e14a"
+  },
+  {
+    "path": "supabase/migrations/20261004121000_funding_principal_revision_foundation.sql",
+    "sourceSha256": "3fbd799d8f704ac9a55b77af4e5da38b2c520481960ffeaabbe64137e52dde3a",
+    "baselineSha256": "3fbd799d8f704ac9a55b77af4e5da38b2c520481960ffeaabbe64137e52dde3a",
+    "successorSha256": "3fbd799d8f704ac9a55b77af4e5da38b2c520481960ffeaabbe64137e52dde3a"
+  },
+  {
+    "path": "supabase/migrations/20261004123000_funding_entitlement_foundation.sql",
+    "sourceSha256": "404b585420d0a9f4a6875d6da395fa4bd3783cc3866de7d198fb01866dbd7706",
+    "baselineSha256": "404b585420d0a9f4a6875d6da395fa4bd3783cc3866de7d198fb01866dbd7706",
+    "successorSha256": "404b585420d0a9f4a6875d6da395fa4bd3783cc3866de7d198fb01866dbd7706"
+  },
+  {
+    "path": "supabase/migrations/20261004140000_funding_cycle_foundation.sql",
+    "sourceSha256": "2acb575413250de8fcef554185c3587b5978220f796f99d42d68ec15349b4aa4",
+    "baselineSha256": "2acb575413250de8fcef554185c3587b5978220f796f99d42d68ec15349b4aa4",
+    "successorSha256": "2acb575413250de8fcef554185c3587b5978220f796f99d42d68ec15349b4aa4"
+  },
+  {
+    "path": "supabase/migrations/20261004170000_funding_capacity_speed.sql",
+    "sourceSha256": "57e78e5d45ee8e0d558ea9955f15bc601efd4c9ea765a5237e526ce7c596d13c",
+    "baselineSha256": "57e78e5d45ee8e0d558ea9955f15bc601efd4c9ea765a5237e526ce7c596d13c",
+    "successorSha256": "57e78e5d45ee8e0d558ea9955f15bc601efd4c9ea765a5237e526ce7c596d13c"
+  },
+  {
+    "path": "supabase/migrations/20261004183000_funding_segment_proration.sql",
+    "sourceSha256": "cf9fbc44afc05eaf94bc1301a89c6b534565ac35201181557ee0134993106e88",
+    "baselineSha256": "cf9fbc44afc05eaf94bc1301a89c6b534565ac35201181557ee0134993106e88",
+    "successorSha256": "cf9fbc44afc05eaf94bc1301a89c6b534565ac35201181557ee0134993106e88"
+  },
+  {
+    "path": "supabase/migrations/20261004203000_principal_recovery_newest_first.sql",
+    "sourceSha256": "4171fe66726e1566868015dd33de09258e130dae6f3104700c29a07b9780cd2b",
+    "baselineSha256": "4171fe66726e1566868015dd33de09258e130dae6f3104700c29a07b9780cd2b",
+    "successorSha256": "4171fe66726e1566868015dd33de09258e130dae6f3104700c29a07b9780cd2b"
+  },
+  {
+    "path": "supabase/migrations/20261004203100_remove_unread_principal_lot_variable.sql",
+    "sourceSha256": "1c8e12476d1801e324b4790a866795881d4acf1697392145f6c02432d40e2bc6",
+    "baselineSha256": "1c8e12476d1801e324b4790a866795881d4acf1697392145f6c02432d40e2bc6",
+    "successorSha256": "1c8e12476d1801e324b4790a866795881d4acf1697392145f6c02432d40e2bc6"
+  },
+  {
+    "path": "supabase/migrations/20261004221500_funding_reward_pending.sql",
+    "sourceSha256": "437ea737c4038698fb274f6a683ebcf91bec6acdafe88100d712e140b7427ba2",
+    "baselineSha256": "437ea737c4038698fb274f6a683ebcf91bec6acdafe88100d712e140b7427ba2",
+    "successorSha256": "437ea737c4038698fb274f6a683ebcf91bec6acdafe88100d712e140b7427ba2"
+  },
+  {
+    "path": "supabase/migrations/20261004223000_mark_pending_reward_function_stable.sql",
+    "sourceSha256": "d3f7fa554357dbda9df5d2e80d519ea4a3e754be468fbe669053b388e596307e",
+    "baselineSha256": "d3f7fa554357dbda9df5d2e80d519ea4a3e754be468fbe669053b388e596307e",
+    "successorSha256": "d3f7fa554357dbda9df5d2e80d519ea4a3e754be468fbe669053b388e596307e"
+  },
+  {
+    "path": "supabase/migrations/20261004235000_member_mining_server_display.sql",
+    "sourceSha256": "283d5861dcb4849dea6f19c89fd0850764f63b8355a669c4fa4f7801a7f1018e",
+    "baselineSha256": "283d5861dcb4849dea6f19c89fd0850764f63b8355a669c4fa4f7801a7f1018e",
+    "successorSha256": "283d5861dcb4849dea6f19c89fd0850764f63b8355a669c4fa4f7801a7f1018e"
+  },
+  {
+    "path": "supabase/migrations/20261005003000_mining_server_display_service_role.sql",
+    "sourceSha256": "635416164a80d4160a5f5497b9b1b737d4a95e2fe0fcec1ca9bc438d71135d8d",
+    "baselineSha256": "635416164a80d4160a5f5497b9b1b737d4a95e2fe0fcec1ca9bc438d71135d8d",
+    "successorSha256": "635416164a80d4160a5f5497b9b1b737d4a95e2fe0fcec1ca9bc438d71135d8d"
+  },
+  {
+    "path": "supabase/migrations/20261005040000_ai_conversation_storage.sql",
+    "sourceSha256": "c31206e6c51797f5e77db801b1883afe9ca1b5849380e18949627880780ebdf7",
+    "baselineSha256": "c31206e6c51797f5e77db801b1883afe9ca1b5849380e18949627880780ebdf7",
+    "successorSha256": "c31206e6c51797f5e77db801b1883afe9ca1b5849380e18949627880780ebdf7"
+  },
+  {
+    "path": "supabase/migrations/20261005054518_ai_tool_evidence_storage.sql",
+    "sourceSha256": "e785ba22f9c009009ffeaeb388b3f91cd7aae462e92befecbbd235711dd6b0c5",
+    "baselineSha256": "e785ba22f9c009009ffeaeb388b3f91cd7aae462e92befecbbd235711dd6b0c5",
+    "successorSha256": "e785ba22f9c009009ffeaeb388b3f91cd7aae462e92befecbbd235711dd6b0c5"
+  },
+  {
+    "path": "supabase/migrations/20261005064600_ai_conversation_summary_storage.sql",
+    "sourceSha256": "9747c8d6454e4c66f89a14c8bdb33f8ce48ddba598cedb2ea5b5e48204871ff3",
+    "baselineSha256": "9747c8d6454e4c66f89a14c8bdb33f8ce48ddba598cedb2ea5b5e48204871ff3",
+    "successorSha256": "9747c8d6454e4c66f89a14c8bdb33f8ce48ddba598cedb2ea5b5e48204871ff3"
+  },
+  {
+    "path": "supabase/migrations/20261005143000_withdrawal_idempotency_key_reuse.sql",
+    "sourceSha256": "cb4a45f20990819df71feff39abc6553765ffcc51b5f91a0e6178d0b590892e1",
+    "baselineSha256": "cb4a45f20990819df71feff39abc6553765ffcc51b5f91a0e6178d0b590892e1",
+    "successorSha256": "cb4a45f20990819df71feff39abc6553765ffcc51b5f91a0e6178d0b590892e1"
+  },
+  {
+    "path": "supabase/migrations/20261005160000_worker_permanent_failure_and_reconciliation_idempotency.sql",
+    "sourceSha256": "50be37cc455623624d0a1c7deaf2dff1424f02f0a0b21c03bfbdd05dafd246fe",
+    "baselineSha256": "50be37cc455623624d0a1c7deaf2dff1424f02f0a0b21c03bfbdd05dafd246fe",
+    "successorSha256": "50be37cc455623624d0a1c7deaf2dff1424f02f0a0b21c03bfbdd05dafd246fe"
+  },
+  {
+    "path": "supabase/migrations/20261006032821_withdrawal_verified_source_hold.sql",
+    "sourceSha256": "69be9bb9f2c41f92cc80171037f5c35cbdf23e9a433501e09a88160145ad9eef",
+    "baselineSha256": "69be9bb9f2c41f92cc80171037f5c35cbdf23e9a433501e09a88160145ad9eef",
+    "successorSha256": "69be9bb9f2c41f92cc80171037f5c35cbdf23e9a433501e09a88160145ad9eef"
+  },
+  {
+    "path": "supabase/migrations/20261006043058_mining_reward_withdrawal_reservation.sql",
+    "sourceSha256": "94d180cfacbe7cbccbe515eb88a41d58b1621ae4bd72ea0013dd234330b932fa",
+    "baselineSha256": "94d180cfacbe7cbccbe515eb88a41d58b1621ae4bd72ea0013dd234330b932fa",
+    "successorSha256": "94d180cfacbe7cbccbe515eb88a41d58b1621ae4bd72ea0013dd234330b932fa"
+  },
+  {
+    "path": "supabase/migrations/20261006050208_withdrawal_reserved_source_disposition.sql",
+    "sourceSha256": "2d8a85f408bd6d746e66c8f88bb1e01af212bcfeb8eb8f50b6f929efc63b0ce6",
+    "baselineSha256": "2d8a85f408bd6d746e66c8f88bb1e01af212bcfeb8eb8f50b6f929efc63b0ce6",
+    "successorSha256": "2d8a85f408bd6d746e66c8f88bb1e01af212bcfeb8eb8f50b6f929efc63b0ce6"
+  },
+  {
+    "path": "supabase/migrations/20261006120000_admin_session_registration_replay_guard.sql",
+    "sourceSha256": "7d2ced3538fb810ecaa352876fea4083984e8f3548feca532a3642aa56d1a0b6",
+    "baselineSha256": "7d2ced3538fb810ecaa352876fea4083984e8f3548feca532a3642aa56d1a0b6",
+    "successorSha256": "7d2ced3538fb810ecaa352876fea4083984e8f3548feca532a3642aa56d1a0b6"
+  },
+  {
+    "path": "supabase/migrations/20261006120100_atomic_admin_auth_attempt_admission.sql",
+    "sourceSha256": "043e464a975b7da5e73fc1dccb8debe98c0ef9818f8a8d6abb61584026843eb5",
+    "baselineSha256": "043e464a975b7da5e73fc1dccb8debe98c0ef9818f8a8d6abb61584026843eb5",
+    "successorSha256": "043e464a975b7da5e73fc1dccb8debe98c0ef9818f8a8d6abb61584026843eb5"
+  },
+  {
+    "path": "supabase/migrations/20261006121000_withdrawal_explicit_source_safety.sql",
+    "sourceSha256": "cd0c77617b1f3311a3ba976185dc0b69b628ca220b49da59176631509ce375c5",
+    "baselineSha256": "cd0c77617b1f3311a3ba976185dc0b69b628ca220b49da59176631509ce375c5",
+    "successorSha256": "cd0c77617b1f3311a3ba976185dc0b69b628ca220b49da59176631509ce375c5"
+  },
+  {
+    "path": "supabase/migrations/20261006121100_withdrawal_member_lock_order.sql",
+    "sourceSha256": "2a3cd1558f74fdc28dac25f6e1ac3e742e92b5d7f63225edcb814c0d5798ed67",
+    "baselineSha256": "2a3cd1558f74fdc28dac25f6e1ac3e742e92b5d7f63225edcb814c0d5798ed67",
+    "successorSha256": "2a3cd1558f74fdc28dac25f6e1ac3e742e92b5d7f63225edcb814c0d5798ed67"
+  },
+  {
+    "path": "supabase/migrations/20261006121200_welcome_risk_policy_parity.sql",
+    "sourceSha256": "8b8c47b848d07a72a124a4ad037de95114251ba79bacd9f16425f5962dc39f20",
+    "baselineSha256": "8b8c47b848d07a72a124a4ad037de95114251ba79bacd9f16425f5962dc39f20",
+    "successorSha256": "8b8c47b848d07a72a124a4ad037de95114251ba79bacd9f16425f5962dc39f20"
+  },
+  {
+    "path": "supabase/migrations/20261006121300_principal_source_projection_parity.sql",
+    "sourceSha256": "48f27022894ca2d21dce18f3cf6d234c17dabda63cc1e4f487e7f892a34c1748",
+    "baselineSha256": "48f27022894ca2d21dce18f3cf6d234c17dabda63cc1e4f487e7f892a34c1748",
+    "successorSha256": "48f27022894ca2d21dce18f3cf6d234c17dabda63cc1e4f487e7f892a34c1748"
+  },
+  {
+    "path": "supabase/migrations/20261006121400_principal_credit_revision_net_eligibility.sql",
+    "sourceSha256": "6c41618ea0c16a3a9a0d940757f8c54f3b45f90493c97ad4f162c778f56f8b56",
+    "baselineSha256": "6c41618ea0c16a3a9a0d940757f8c54f3b45f90493c97ad4f162c778f56f8b56",
+    "successorSha256": "6c41618ea0c16a3a9a0d940757f8c54f3b45f90493c97ad4f162c778f56f8b56"
+  },
+  {
+    "path": "supabase/migrations/20261006121500_non_principal_withdrawal_coverage.sql",
+    "sourceSha256": "1bf5bc29e329a92c90302eda5c7e68eaac02e2a505e14bef93368976339faf1b",
+    "baselineSha256": "1bf5bc29e329a92c90302eda5c7e68eaac02e2a505e14bef93368976339faf1b",
+    "successorSha256": "1bf5bc29e329a92c90302eda5c7e68eaac02e2a505e14bef93368976339faf1b"
+  },
+  {
+    "path": "supabase/migrations/20261006122000_ledger_account_identity_and_worker_replay_integrity.sql",
+    "sourceSha256": "23c89ecdce5d0ba64606f587fd000db38cf3d2ec9d3f5ab307a27e17de74a0cb",
+    "baselineSha256": "23c89ecdce5d0ba64606f587fd000db38cf3d2ec9d3f5ab307a27e17de74a0cb",
+    "successorSha256": "23c89ecdce5d0ba64606f587fd000db38cf3d2ec9d3f5ab307a27e17de74a0cb"
+  },
+  {
+    "path": "supabase/migrations/20261006123000_default_funding_engine_receipt_foundation.sql",
+    "sourceSha256": "4820a5480f096abbe43ae9625ca67ba9be3d6accf5df4eed77614b817a625383",
+    "baselineSha256": "4820a5480f096abbe43ae9625ca67ba9be3d6accf5df4eed77614b817a625383",
+    "successorSha256": "4820a5480f096abbe43ae9625ca67ba9be3d6accf5df4eed77614b817a625383"
+  },
+  {
+    "path": "supabase/migrations/20261006123100_default_funding_engine_original_validation.sql",
+    "sourceSha256": "74aca47928dfa00bc6d4ada3756f74dab7c078288d52a313cb73184f26c59874",
+    "baselineSha256": "74aca47928dfa00bc6d4ada3756f74dab7c078288d52a313cb73184f26c59874",
+    "successorSha256": "74aca47928dfa00bc6d4ada3756f74dab7c078288d52a313cb73184f26c59874"
+  },
+  {
+    "path": "supabase/migrations/20261006123200_default_funding_engine_private_producer.sql",
+    "sourceSha256": "f74de4e9bc503a61de5082afc69d07386caad04f38e3300985e4c417deb921cc",
+    "baselineSha256": "f74de4e9bc503a61de5082afc69d07386caad04f38e3300985e4c417deb921cc",
+    "successorSha256": "f74de4e9bc503a61de5082afc69d07386caad04f38e3300985e4c417deb921cc"
+  },
+  {
+    "path": "supabase/migrations/20261006123300_legacy_mining_settlement_entrypoint_closure.sql",
+    "sourceSha256": "4f7acf4d5361ec3a6b6899fb6c29952882ca659023d27c9e14d0269189a26219",
+    "baselineSha256": "4f7acf4d5361ec3a6b6899fb6c29952882ca659023d27c9e14d0269189a26219",
+    "successorSha256": "4f7acf4d5361ec3a6b6899fb6c29952882ca659023d27c9e14d0269189a26219"
+  },
+  {
+    "path": "supabase/migrations/20261006124000_funding_job_completion_dispatch.sql",
+    "sourceSha256": "d89e38889518e500fdaf0959b57243ff85f4f48c81689ad0b08a97ea5687fa1e",
+    "baselineSha256": "d89e38889518e500fdaf0959b57243ff85f4f48c81689ad0b08a97ea5687fa1e",
+    "successorSha256": "d89e38889518e500fdaf0959b57243ff85f4f48c81689ad0b08a97ea5687fa1e"
+  },
+  {
+    "path": "supabase/migrations/20261006125000_product_catalog_review_command.sql",
+    "sourceSha256": "441c68018faab17918de86d2ead6c8a444f77c442037059593e31066db972d23",
+    "baselineSha256": "441c68018faab17918de86d2ead6c8a444f77c442037059593e31066db972d23",
+    "successorSha256": "441c68018faab17918de86d2ead6c8a444f77c442037059593e31066db972d23"
+  },
+  {
+    "path": "supabase/migrations/20261006125100_member_funding_allocation_command.sql",
+    "sourceSha256": "4b34f42f7062c4a5a045d13375df28b2b482ba7ed34af5d8ece132e7ebf9fb59",
+    "baselineSha256": "4b34f42f7062c4a5a045d13375df28b2b482ba7ed34af5d8ece132e7ebf9fb59",
+    "successorSha256": "4b34f42f7062c4a5a045d13375df28b2b482ba7ed34af5d8ece132e7ebf9fb59"
+  },
+  {
+    "path": "supabase/migrations/20261006125200_product_catalog_review_read_executor.sql",
+    "sourceSha256": "b62cc9af1255217186a69e6bafaaefb2c09f7c5307473ec5a0507b69ec0de44d",
+    "baselineSha256": "b62cc9af1255217186a69e6bafaaefb2c09f7c5307473ec5a0507b69ec0de44d",
+    "successorSha256": "b62cc9af1255217186a69e6bafaaefb2c09f7c5307473ec5a0507b69ec0de44d"
+  },
+  {
+    "path": "supabase/migrations/20261006125300_member_allocation_variable_scope.sql",
+    "sourceSha256": "e4533a17386ad1782406eb3c2ebc143fc42b99ab16cfbecfeb88e27096d0666d",
+    "baselineSha256": "e4533a17386ad1782406eb3c2ebc143fc42b99ab16cfbecfeb88e27096d0666d",
+    "successorSha256": "e4533a17386ad1782406eb3c2ebc143fc42b99ab16cfbecfeb88e27096d0666d"
+  },
+  {
+    "path": "supabase/migrations/20261006125400_product_catalog_deferred_publication_validator.sql",
+    "sourceSha256": "32d5adc74e4df8a723aa4d55dfd3da1b599a6710676e291c7d649e9446b3c14f",
+    "baselineSha256": "32d5adc74e4df8a723aa4d55dfd3da1b599a6710676e291c7d649e9446b3c14f",
+    "successorSha256": "32d5adc74e4df8a723aa4d55dfd3da1b599a6710676e291c7d649e9446b3c14f"
+  },
+  {
+    "path": "supabase/migrations/20261006125500_member_allocation_declaration_lint.sql",
+    "sourceSha256": "0975734b4429629a334768e0eeacada969ebe98e5f1a89edc62a59b8ef9f08cc",
+    "baselineSha256": "0975734b4429629a334768e0eeacada969ebe98e5f1a89edc62a59b8ef9f08cc",
+    "successorSha256": "0975734b4429629a334768e0eeacada969ebe98e5f1a89edc62a59b8ef9f08cc"
+  },
+  {
+    "path": "supabase/migrations/20261006126000_funding_prospective_condition_receipts.sql",
+    "sourceSha256": "cfc34323e34b789bb2e2a8465fae5ca576c2e051ea3f844efb1e2c252e9e4228",
+    "baselineSha256": "cfc34323e34b789bb2e2a8465fae5ca576c2e051ea3f844efb1e2c252e9e4228",
+    "successorSha256": "cfc34323e34b789bb2e2a8465fae5ca576c2e051ea3f844efb1e2c252e9e4228"
+  },
+  {
+    "path": "supabase/migrations/20261006126100_funding_allocation_boundary_command.sql",
+    "sourceSha256": "fed8f331afd8bbd809de6d0adac5ec08df9bed6bc7615ca716b663609c017a6e",
+    "baselineSha256": "fed8f331afd8bbd809de6d0adac5ec08df9bed6bc7615ca716b663609c017a6e",
+    "successorSha256": "fed8f331afd8bbd809de6d0adac5ec08df9bed6bc7615ca716b663609c017a6e"
+  },
+  {
+    "path": "supabase/migrations/20261006126200_funding_deferred_integrity_executor.sql",
+    "sourceSha256": "c3d4e3cebbc87ebb46ac029a59e849f91211d168567f6e176219cba98d6b130b",
+    "baselineSha256": "c3d4e3cebbc87ebb46ac029a59e849f91211d168567f6e176219cba98d6b130b",
+    "successorSha256": "c3d4e3cebbc87ebb46ac029a59e849f91211d168567f6e176219cba98d6b130b"
+  },
+  {
+    "path": "supabase/migrations/20261006126300_funding_member_ledger_commit_integrity.sql",
+    "sourceSha256": "e7f07bbf6f39ecf4074503f51ced2f30166551e68b480fd9611ee24b4fc051fd",
+    "baselineSha256": "e7f07bbf6f39ecf4074503f51ced2f30166551e68b480fd9611ee24b4fc051fd",
+    "successorSha256": "e7f07bbf6f39ecf4074503f51ced2f30166551e68b480fd9611ee24b4fc051fd"
+  },
+  {
+    "path": "supabase/migrations/20261006127000_funding_principal_portion_clocks.sql",
+    "sourceSha256": "35342abcb4514b97b375b8b8a21dd718161ba4c84fd69543eae817e2a910a92a",
+    "baselineSha256": "35342abcb4514b97b375b8b8a21dd718161ba4c84fd69543eae817e2a910a92a",
+    "successorSha256": "35342abcb4514b97b375b8b8a21dd718161ba4c84fd69543eae817e2a910a92a"
+  },
+  {
+    "path": "supabase/migrations/20261006127100_funding_runtime_server_display.sql",
+    "sourceSha256": "cdff312989d6b868ca46beb8801d3b83cd56baae708f210102f408b038a07e39",
+    "baselineSha256": "cdff312989d6b868ca46beb8801d3b83cd56baae708f210102f408b038a07e39",
+    "successorSha256": "cdff312989d6b868ca46beb8801d3b83cd56baae708f210102f408b038a07e39"
+  },
+  {
+    "path": "supabase/migrations/20261006127200_funding_neutral_condition_job_adapter.sql",
+    "sourceSha256": "5bf508a05569c2528e4f5b76f9cb398b8862cc663a10ec7e1072fd641b0105c1",
+    "baselineSha256": "5bf508a05569c2528e4f5b76f9cb398b8862cc663a10ec7e1072fd641b0105c1",
+    "successorSha256": "5bf508a05569c2528e4f5b76f9cb398b8862cc663a10ec7e1072fd641b0105c1"
+  },
+  {
+    "path": "supabase/migrations/20261006127300_funding_portion_declaration_lint.sql",
+    "sourceSha256": "81ec8ff357ebd7c7f2084dce942fa6807b66ac5ec510ed6e4739eef23a10b55b",
+    "baselineSha256": "81ec8ff357ebd7c7f2084dce942fa6807b66ac5ec510ed6e4739eef23a10b55b",
+    "successorSha256": "81ec8ff357ebd7c7f2084dce942fa6807b66ac5ec510ed6e4739eef23a10b55b"
+  },
+  {
+    "path": "supabase/migrations/20261006128000_funding_exact_forward_boundary_math.sql",
+    "sourceSha256": "da67a479fab2acacba3e9280160368cc0ac4a46317995fd73c3cd4bc4f22e467",
+    "baselineSha256": "da67a479fab2acacba3e9280160368cc0ac4a46317995fd73c3cd4bc4f22e467",
+    "successorSha256": "da67a479fab2acacba3e9280160368cc0ac4a46317995fd73c3cd4bc4f22e467"
+  },
+  {
+    "path": "supabase/migrations/20261006128050_funding_runtime_status_display.sql",
+    "sourceSha256": "be6be0c792128b491585afab7c58802b050846d5b0f3403aee113ed3206543fa",
+    "baselineSha256": "be6be0c792128b491585afab7c58802b050846d5b0f3403aee113ed3206543fa",
+    "successorSha256": "be6be0c792128b491585afab7c58802b050846d5b0f3403aee113ed3206543fa"
+  },
+  {
+    "path": "supabase/migrations/20261006128100_verified_credit_funding_input_reader.sql",
+    "sourceSha256": "20a4f8cb86e4138e07f05e15236039dfe17f5a1ec3e387560be347452771ae67",
+    "baselineSha256": "20a4f8cb86e4138e07f05e15236039dfe17f5a1ec3e387560be347452771ae67",
+    "successorSha256": "20a4f8cb86e4138e07f05e15236039dfe17f5a1ec3e387560be347452771ae67"
+  },
+  {
+    "path": "supabase/migrations/20261006128150_funding_credit_cutover_originals.sql",
+    "sourceSha256": "7a8db7066a3401a6ae1b379310aa109cdd620478d9eb80cf916827231e4ad8ce",
+    "baselineSha256": "7a8db7066a3401a6ae1b379310aa109cdd620478d9eb80cf916827231e4ad8ce",
+    "successorSha256": "7a8db7066a3401a6ae1b379310aa109cdd620478d9eb80cf916827231e4ad8ce"
+  },
+  {
+    "path": "supabase/migrations/20261006128200_verified_credit_funding_cutover.sql",
+    "sourceSha256": "57778e215a8171d7d9db0755b53bf2de0a3dc8b45e0fb9eadc8f015b5f7e4898",
+    "baselineSha256": "57778e215a8171d7d9db0755b53bf2de0a3dc8b45e0fb9eadc8f015b5f7e4898",
+    "successorSha256": "57778e215a8171d7d9db0755b53bf2de0a3dc8b45e0fb9eadc8f015b5f7e4898"
+  },
+  {
+    "path": "supabase/migrations/20261006128250_canonical_credit_member_first_cutover.sql",
+    "sourceSha256": "6c78f08608ac649b94809f8cada739725089fdbdd6f9b362ffbefe08c48ff3b2",
+    "baselineSha256": "6c78f08608ac649b94809f8cada739725089fdbdd6f9b362ffbefe08c48ff3b2",
+    "successorSha256": "6c78f08608ac649b94809f8cada739725089fdbdd6f9b362ffbefe08c48ff3b2"
+  },
+  {
+    "path": "supabase/migrations/20261006129000_funding_global_control_originals.sql",
+    "sourceSha256": "aef012afd82d2015f284ffec3c40c5ef693fdca07ceeb3b988c3323378722d31",
+    "baselineSha256": "aef012afd82d2015f284ffec3c40c5ef693fdca07ceeb3b988c3323378722d31",
+    "successorSha256": "aef012afd82d2015f284ffec3c40c5ef693fdca07ceeb3b988c3323378722d31"
+  },
+  {
+    "path": "supabase/migrations/20261006129100_canonical_global_control_clock.sql",
+    "sourceSha256": "f9822c66bea5ebea70924cc1823beeaccb73ec032c3d6314497d526568443850",
+    "baselineSha256": "f9822c66bea5ebea70924cc1823beeaccb73ec032c3d6314497d526568443850",
+    "successorSha256": "f9822c66bea5ebea70924cc1823beeaccb73ec032c3d6314497d526568443850"
+  },
+  {
+    "path": "supabase/migrations/20261006129150_funding_global_eligible_interval.sql",
+    "sourceSha256": "d35a8d817a794158378cf7d260c115a55226859656d56536effa606269ce79a8",
+    "baselineSha256": "d35a8d817a794158378cf7d260c115a55226859656d56536effa606269ce79a8",
+    "successorSha256": "d35a8d817a794158378cf7d260c115a55226859656d56536effa606269ce79a8"
+  },
+  {
+    "path": "supabase/migrations/20261006129200_funding_global_lazy_interval_adapter.sql",
+    "sourceSha256": "ac9931cfc41d9715f864b10e6deed2b7527636af3c3133822331a3b262bbc4d8",
+    "baselineSha256": "ac9931cfc41d9715f864b10e6deed2b7527636af3c3133822331a3b262bbc4d8",
+    "successorSha256": "ac9931cfc41d9715f864b10e6deed2b7527636af3c3133822331a3b262bbc4d8"
+  },
+  {
+    "path": "supabase/migrations/20261006129210_allocation_global_admission_clock.sql",
+    "sourceSha256": "6f205bbe41737cdf29717ea7869919566dfc690db7baeb493f01686be70cb6d6",
+    "baselineSha256": "6f205bbe41737cdf29717ea7869919566dfc690db7baeb493f01686be70cb6d6",
+    "successorSha256": "6f205bbe41737cdf29717ea7869919566dfc690db7baeb493f01686be70cb6d6"
+  },
+  {
+    "path": "supabase/migrations/20261006130000_withdrawal_clock_admission_originals.sql",
+    "sourceSha256": "4e96625a96d0cc3217e15d06b6d57c9aed68d30d7d340a8a5b575100a02e5554",
+    "baselineSha256": "4e96625a96d0cc3217e15d06b6d57c9aed68d30d7d340a8a5b575100a02e5554",
+    "successorSha256": "4e96625a96d0cc3217e15d06b6d57c9aed68d30d7d340a8a5b575100a02e5554"
+  },
+  {
+    "path": "supabase/migrations/20261006130050_withdrawal_admitted_hold_clock.sql",
+    "sourceSha256": "ee5a20304b111e343c54c0bfd2709467aabf1301ab3b35f39f0b3e43e3531838",
+    "baselineSha256": "ee5a20304b111e343c54c0bfd2709467aabf1301ab3b35f39f0b3e43e3531838",
+    "successorSha256": "ee5a20304b111e343c54c0bfd2709467aabf1301ab3b35f39f0b3e43e3531838"
+  },
+  {
+    "path": "supabase/migrations/20261006130100_principal_hold_cancel_clock_connections.sql",
+    "sourceSha256": "0bc00dfbb92aa7e0f5c5e58ff0ef521ea0dfe7c87f6f756a378b722fc55e4d63",
+    "baselineSha256": "0bc00dfbb92aa7e0f5c5e58ff0ef521ea0dfe7c87f6f756a378b722fc55e4d63",
+    "successorSha256": "0bc00dfbb92aa7e0f5c5e58ff0ef521ea0dfe7c87f6f756a378b722fc55e4d63"
+  },
+  {
+    "path": "supabase/migrations/20261006131000_private_principal_recovery_intent_originals.sql",
+    "sourceSha256": "12553d013296528ba0a95296dfb2a22719fd0ab7007ab177dc7e975ec4fe66a1",
+    "baselineSha256": "12553d013296528ba0a95296dfb2a22719fd0ab7007ab177dc7e975ec4fe66a1",
+    "successorSha256": "12553d013296528ba0a95296dfb2a22719fd0ab7007ab177dc7e975ec4fe66a1"
+  },
+  {
+    "path": "supabase/migrations/20261006132000_verified_principal_portion_inputs.sql",
+    "sourceSha256": "449d2895ef55aa01aacaf66f4ee057a606f2ab579e504a4d30de04a3f14d50b0",
+    "baselineSha256": "449d2895ef55aa01aacaf66f4ee057a606f2ab579e504a4d30de04a3f14d50b0",
+    "successorSha256": "449d2895ef55aa01aacaf66f4ee057a606f2ab579e504a4d30de04a3f14d50b0"
+  },
+  {
+    "path": "supabase/migrations/20261006132050_first_principal_hold_capacity_reference.sql",
+    "sourceSha256": "e442b5a9904b12492352acff5369f542e7175171748bde6e2bd64fa0f07bcec1",
+    "baselineSha256": "e442b5a9904b12492352acff5369f542e7175171748bde6e2bd64fa0f07bcec1",
+    "successorSha256": "e442b5a9904b12492352acff5369f542e7175171748bde6e2bd64fa0f07bcec1"
+  },
+  {
+    "path": "supabase/migrations/20261006133000_principal_runtime_boundary_originals.sql",
+    "sourceSha256": "a592f43a6d3060b0643e2d327569b962488d725fdbce16dd7ca72c485120f03e",
+    "baselineSha256": "a592f43a6d3060b0643e2d327569b962488d725fdbce16dd7ca72c485120f03e",
+    "successorSha256": "a592f43a6d3060b0643e2d327569b962488d725fdbce16dd7ca72c485120f03e"
+  },
+  {
+    "path": "supabase/migrations/20261006133050_principal_sealed_prefinance_inputs.sql",
+    "sourceSha256": "8d6ab7a8ec9cc49f4ad37f2b51f304a0b238d0058449b6c5d9072a342f31997b",
+    "baselineSha256": "8d6ab7a8ec9cc49f4ad37f2b51f304a0b238d0058449b6c5d9072a342f31997b",
+    "successorSha256": "8d6ab7a8ec9cc49f4ad37f2b51f304a0b238d0058449b6c5d9072a342f31997b"
+  },
+  {
+    "path": "supabase/migrations/20261006133100_principal_preparation_and_exact_interval.sql",
+    "sourceSha256": "772aaf1532eeebc7630da8250ebdacd8397bb8c3f22a055df10b6d0959044abd",
+    "baselineSha256": "772aaf1532eeebc7630da8250ebdacd8397bb8c3f22a055df10b6d0959044abd",
+    "successorSha256": "772aaf1532eeebc7630da8250ebdacd8397bb8c3f22a055df10b6d0959044abd"
+  },
+  {
+    "path": "supabase/migrations/20261006133150_principal_boundary_producers.sql",
+    "sourceSha256": "e859df8d65836deddef653439536752c70117a76934caf3e91ed13016a21f2ca",
+    "baselineSha256": "e859df8d65836deddef653439536752c70117a76934caf3e91ed13016a21f2ca",
+    "successorSha256": "e859df8d65836deddef653439536752c70117a76934caf3e91ed13016a21f2ca"
+  },
+  {
+    "path": "supabase/migrations/20261006133200_principal_immutable_input_replay.sql",
+    "sourceSha256": "d7d95abf2bbb81ed6515b1677d88be5fe830685172cac1cda98c141904ca5f6b",
+    "baselineSha256": "d7d95abf2bbb81ed6515b1677d88be5fe830685172cac1cda98c141904ca5f6b",
+    "successorSha256": "d7d95abf2bbb81ed6515b1677d88be5fe830685172cac1cda98c141904ca5f6b"
+  },
+  {
+    "path": "supabase/migrations/20261006133250_principal_boundary_completion_integrity.sql",
+    "sourceSha256": "a357939a326c69ace599ab718abe84b08aa8e9a9f5197ba12f06f27d1e9f6beb",
+    "baselineSha256": "a357939a326c69ace599ab718abe84b08aa8e9a9f5197ba12f06f27d1e9f6beb",
+    "successorSha256": "a357939a326c69ace599ab718abe84b08aa8e9a9f5197ba12f06f27d1e9f6beb"
+  },
+  {
+    "path": "supabase/migrations/20261006133300_principal_existing_guard_dispatch.sql",
+    "sourceSha256": "346c27a838b2dbac2bff3cdd8ec0705e647e229c2d7a19b69f2a6c3f88af740a",
+    "baselineSha256": "346c27a838b2dbac2bff3cdd8ec0705e647e229c2d7a19b69f2a6c3f88af740a",
+    "successorSha256": "346c27a838b2dbac2bff3cdd8ec0705e647e229c2d7a19b69f2a6c3f88af740a"
+  },
+  {
+    "path": "supabase/migrations/20261006133350_principal_canonical_admission_callback.sql",
+    "sourceSha256": "962e3801d43fd35ec4cf78c8a6864a3e7a69f0bf0917ed93fec396a1ea98a243",
+    "baselineSha256": "962e3801d43fd35ec4cf78c8a6864a3e7a69f0bf0917ed93fec396a1ea98a243",
+    "successorSha256": "962e3801d43fd35ec4cf78c8a6864a3e7a69f0bf0917ed93fec396a1ea98a243"
+  },
+  {
+    "path": "supabase/migrations/20261006133400_principal_current_worker_and_display_dispatch.sql",
+    "sourceSha256": "723e52a208ba74a6caf2c8dd4aa8219cf1d75a510e42fa3347f2301777e22ae2",
+    "baselineSha256": "723e52a208ba74a6caf2c8dd4aa8219cf1d75a510e42fa3347f2301777e22ae2",
+    "successorSha256": "723e52a208ba74a6caf2c8dd4aa8219cf1d75a510e42fa3347f2301777e22ae2"
+  },
+  {
+    "path": "supabase/migrations/20261006134000_member_principal_confirmation_originals.sql",
+    "sourceSha256": "543de4ba5ab66add213c7a26c2e63360fd6e6dcf080f7dc80f534b8db6f09215",
+    "baselineSha256": "543de4ba5ab66add213c7a26c2e63360fd6e6dcf080f7dc80f534b8db6f09215",
+    "successorSha256": "543de4ba5ab66add213c7a26c2e63360fd6e6dcf080f7dc80f534b8db6f09215"
+  },
+  {
+    "path": "supabase/migrations/20261006134050_member_principal_hold_and_commit.sql",
+    "sourceSha256": "4d660acfb9830c208b2b042edbbe80d1838627cd2f5fbc0f191137e327f181ab",
+    "baselineSha256": "4d660acfb9830c208b2b042edbbe80d1838627cd2f5fbc0f191137e327f181ab",
+    "successorSha256": "4d660acfb9830c208b2b042edbbe80d1838627cd2f5fbc0f191137e327f181ab"
+  },
+  {
+    "path": "supabase/migrations/20261006134100_existing_logical_principal_source_dispatch.sql",
+    "sourceSha256": "ad87836d252b4f4f9eaae96d676adbf308ee214324a16e510cabb4f9ac1346ba",
+    "baselineSha256": "ad87836d252b4f4f9eaae96d676adbf308ee214324a16e510cabb4f9ac1346ba",
+    "successorSha256": "ad87836d252b4f4f9eaae96d676adbf308ee214324a16e510cabb4f9ac1346ba"
+  },
+  {
+    "path": "supabase/migrations/20261006134150_existing_principal_replay_closed_executor_dispatch.sql",
+    "sourceSha256": "10c8cd5ef9d34689120d8a798488a89933a029d2dc1647f785110a2642e1ec8b",
+    "baselineSha256": "10c8cd5ef9d34689120d8a798488a89933a029d2dc1647f785110a2642e1ec8b",
+    "successorSha256": "10c8cd5ef9d34689120d8a798488a89933a029d2dc1647f785110a2642e1ec8b"
+  },
+  {
+    "path": "supabase/migrations/20261006135000_closed_input3_principal_prefinance_reader.sql",
+    "sourceSha256": "a2a7059e9147180af10b56061cf48defdcdc3da951c9733c3b9032a7e1177a7f",
+    "baselineSha256": "a2a7059e9147180af10b56061cf48defdcdc3da951c9733c3b9032a7e1177a7f",
+    "successorSha256": "a2a7059e9147180af10b56061cf48defdcdc3da951c9733c3b9032a7e1177a7f"
+  },
+  {
+    "path": "supabase/migrations/20261006135050_existing_principal_intent_input3_dispatch.sql",
+    "sourceSha256": "86651518424d9659665f10cf4e87adbfc54f21108f93daaaf79543278e167a80",
+    "baselineSha256": "86651518424d9659665f10cf4e87adbfc54f21108f93daaaf79543278e167a80",
+    "successorSha256": "86651518424d9659665f10cf4e87adbfc54f21108f93daaaf79543278e167a80"
+  },
+  {
+    "path": "supabase/migrations/20261006135100_existing_principal_prefinance_input3_dispatch.sql",
+    "sourceSha256": "91f4110008de040ffbb82375fece3b9b5b31484e9984ff6bd38f8a0e2c3867b0",
+    "baselineSha256": "91f4110008de040ffbb82375fece3b9b5b31484e9984ff6bd38f8a0e2c3867b0",
+    "successorSha256": "91f4110008de040ffbb82375fece3b9b5b31484e9984ff6bd38f8a0e2c3867b0"
+  },
+  {
+    "path": "supabase/migrations/20261006135150_existing_principal_completion_input3_original_proof.sql",
+    "sourceSha256": "d12884dd51fd594175d060a232e44878854df4189cb01eecc28402c78e633111",
+    "baselineSha256": "d12884dd51fd594175d060a232e44878854df4189cb01eecc28402c78e633111",
+    "successorSha256": "d12884dd51fd594175d060a232e44878854df4189cb01eecc28402c78e633111"
+  },
+  {
+    "path": "supabase/migrations/20261006136000_closed_input3_member_current_read_context.sql",
+    "sourceSha256": "680ccb819c2d7248c3a0a9087ab981f850703517c6a6a8100223ec27a279bf03",
+    "baselineSha256": "680ccb819c2d7248c3a0a9087ab981f850703517c6a6a8100223ec27a279bf03",
+    "successorSha256": "680ccb819c2d7248c3a0a9087ab981f850703517c6a6a8100223ec27a279bf03"
+  },
+  {
+    "path": "supabase/migrations/20261006136050_input3_condition_cause_archived_originals.sql",
+    "sourceSha256": "d90e1e93a2518fb3c0c83563dba82a913863b29b9de5491e9782bdfe97679451",
+    "baselineSha256": "d90e1e93a2518fb3c0c83563dba82a913863b29b9de5491e9782bdfe97679451",
+    "successorSha256": "d90e1e93a2518fb3c0c83563dba82a913863b29b9de5491e9782bdfe97679451"
+  },
+  {
+    "path": "supabase/migrations/20261006136100_existing_credit_allocation_input3_producer_dispatch.sql",
+    "sourceSha256": "2515656d66ea84d845fb295282571f53a8e6f8b621c37378265698648ce4cd3a",
+    "baselineSha256": "2515656d66ea84d845fb295282571f53a8e6f8b621c37378265698648ce4cd3a",
+    "successorSha256": "2515656d66ea84d845fb295282571f53a8e6f8b621c37378265698648ce4cd3a"
+  },
+  {
+    "path": "supabase/migrations/20261006136150_existing_input3_principal_worker_cause_dispatch.sql",
+    "sourceSha256": "985633d25cf8e8dc8ed3120993f5f2cdc9d4f7e3eb6f4a588435c30be8d62339",
+    "baselineSha256": "985633d25cf8e8dc8ed3120993f5f2cdc9d4f7e3eb6f4a588435c30be8d62339",
+    "successorSha256": "985633d25cf8e8dc8ed3120993f5f2cdc9d4f7e3eb6f4a588435c30be8d62339"
+  },
+  {
+    "path": "supabase/migrations/20261006139000_native_principal_finalize_clock_originals.sql",
+    "sourceSha256": "85de44cf3be650e543a524e61287d253b861765a11027c606450cd31bbc932c9",
+    "baselineSha256": "85de44cf3be650e543a524e61287d253b861765a11027c606450cd31bbc932c9",
+    "successorSha256": "85de44cf3be650e543a524e61287d253b861765a11027c606450cd31bbc932c9"
+  },
+  {
+    "path": "supabase/migrations/20261006139050_native_principal_finalize_canonical_clock.sql",
+    "sourceSha256": "5324024709c69e2b714a033aac6aa2f5d1f8c6adaa86e631c22ea4c0c480eaf2",
+    "baselineSha256": "5324024709c69e2b714a033aac6aa2f5d1f8c6adaa86e631c22ea4c0c480eaf2",
+    "successorSha256": "5324024709c69e2b714a033aac6aa2f5d1f8c6adaa86e631c22ea4c0c480eaf2"
+  },
+  {
+    "path": "supabase/migrations/20261006139100_native_finalize_source_event_clock.sql",
+    "sourceSha256": "b280180ada292310f3ed2129db0f76d5560085861f7c15134123fc340f83ea54",
+    "baselineSha256": "b280180ada292310f3ed2129db0f76d5560085861f7c15134123fc340f83ea54",
+    "successorSha256": "b280180ada292310f3ed2129db0f76d5560085861f7c15134123fc340f83ea54"
+  },
+  {
+    "path": "supabase/migrations/20261006139150_principal_finalize_boundary_completion.sql",
+    "sourceSha256": "6212411f7a3bddaac5554caec496562dcfdcaca14af245b6f88ef63eef163c5e",
+    "baselineSha256": "6212411f7a3bddaac5554caec496562dcfdcaca14af245b6f88ef63eef163c5e",
+    "successorSha256": "6212411f7a3bddaac5554caec496562dcfdcaca14af245b6f88ef63eef163c5e"
+  },
+  {
+    "path": "supabase/migrations/20261006139200_principal_finalize_portion_originals.sql",
+    "sourceSha256": "26b0db064aaf2880ed628851c73ce6b2fdbd8e89b382efba47aaea62bec802e6",
+    "baselineSha256": "26b0db064aaf2880ed628851c73ce6b2fdbd8e89b382efba47aaea62bec802e6",
+    "successorSha256": "26b0db064aaf2880ed628851c73ce6b2fdbd8e89b382efba47aaea62bec802e6"
+  },
+  {
+    "path": "supabase/migrations/20261006139250_verified_finalized_principal_current_inputs.sql",
+    "sourceSha256": "51479013c4f954bcf773aaae4037756e2098c80bc0b7f6879cd0473f00f96cb9",
+    "baselineSha256": "51479013c4f954bcf773aaae4037756e2098c80bc0b7f6879cd0473f00f96cb9",
+    "successorSha256": "51479013c4f954bcf773aaae4037756e2098c80bc0b7f6879cd0473f00f96cb9"
+  },
+  {
+    "path": "supabase/migrations/20261006139300_finalized_principal_immutable_input_replay.sql",
+    "sourceSha256": "da838ca531087ea96d12dbaead2b4397d7d3869d0ce83dbe72f97b837831fc60",
+    "baselineSha256": "da838ca531087ea96d12dbaead2b4397d7d3869d0ce83dbe72f97b837831fc60",
+    "successorSha256": "da838ca531087ea96d12dbaead2b4397d7d3869d0ce83dbe72f97b837831fc60"
+  },
+  {
+    "path": "supabase/migrations/20261006139350_closed_native_finalize_request_links.sql",
+    "sourceSha256": "7d6187ffaa405863d680e91c3f6406e42bea64e7b15a4489ec5cc3310d9b6e04",
+    "baselineSha256": "7d6187ffaa405863d680e91c3f6406e42bea64e7b15a4489ec5cc3310d9b6e04",
+    "successorSha256": "7d6187ffaa405863d680e91c3f6406e42bea64e7b15a4489ec5cc3310d9b6e04"
+  },
+  {
+    "path": "supabase/migrations/20261008185226_ai_provider_attempt_budget.sql",
+    "sourceSha256": "1ec791f02463cd41e5e264b8bee0825cb244e65357a299f9d925a0b2e671f72f",
+    "baselineSha256": "1ec791f02463cd41e5e264b8bee0825cb244e65357a299f9d925a0b2e671f72f",
+    "successorSha256": "1ec791f02463cd41e5e264b8bee0825cb244e65357a299f9d925a0b2e671f72f"
+  },
+  {
+    "path": "supabase/migrations/20261008185908_ai_provider_attempt_evidence_integrity.sql",
+    "sourceSha256": "f69b0b0198a0623f4fcd4990d2a3cb2960f6c79eb90eab9485f07e870088798d",
+    "baselineSha256": "f69b0b0198a0623f4fcd4990d2a3cb2960f6c79eb90eab9485f07e870088798d",
+    "successorSha256": "f69b0b0198a0623f4fcd4990d2a3cb2960f6c79eb90eab9485f07e870088798d"
+  },
+  {
+    "path": "supabase/migrations/20261008190949_ai_media_route_audit.sql",
+    "sourceSha256": "656fe8259cd824f608f013c6c4dc40c309144d7f9d16ac67b46bb8f24839739d",
+    "baselineSha256": "656fe8259cd824f608f013c6c4dc40c309144d7f9d16ac67b46bb8f24839739d",
+    "successorSha256": "656fe8259cd824f608f013c6c4dc40c309144d7f9d16ac67b46bb8f24839739d"
+  },
+  {
+    "path": "supabase/migrations/20261008191253_ai_provider_exact_usage_evidence.sql",
+    "sourceSha256": "159463d2cb1f72ed333392fe65fc2df1b5e1ad07af109620ea51441ea76f27ff",
+    "baselineSha256": "159463d2cb1f72ed333392fe65fc2df1b5e1ad07af109620ea51441ea76f27ff",
+    "successorSha256": "159463d2cb1f72ed333392fe65fc2df1b5e1ad07af109620ea51441ea76f27ff"
+  },
+  {
+    "path": "supabase/migrations/20261008191515_admin_ai_conversation_audited_reads.sql",
+    "sourceSha256": "c48a985bd174a05255ad521ef3aaa1db76bd067a2f77b2051cfbe0a006c866ea",
+    "baselineSha256": "c48a985bd174a05255ad521ef3aaa1db76bd067a2f77b2051cfbe0a006c866ea",
+    "successorSha256": "c48a985bd174a05255ad521ef3aaa1db76bd067a2f77b2051cfbe0a006c866ea"
+  },
+  {
+    "path": "supabase/migrations/20261008202145_funding_fixed_cycle_portion_retention.sql",
+    "sourceSha256": "ff009d69a1a3d78507185fc4bb1296af0521433781e84aa624c2e8ab968b7bde",
+    "baselineSha256": "ff009d69a1a3d78507185fc4bb1296af0521433781e84aa624c2e8ab968b7bde",
+    "successorSha256": "ff009d69a1a3d78507185fc4bb1296af0521433781e84aa624c2e8ab968b7bde"
+  },
+  {
+    "path": "supabase/migrations/20261008202248_liveops_content_recovery.sql",
+    "sourceSha256": "28b99b2990898b58e7c6f64094e9ef3552a229adf29b3330a2447f598bf1e1e8",
+    "baselineSha256": "28b99b2990898b58e7c6f64094e9ef3552a229adf29b3330a2447f598bf1e1e8",
+    "successorSha256": "28b99b2990898b58e7c6f64094e9ef3552a229adf29b3330a2447f598bf1e1e8"
+  },
+  {
+    "path": "supabase/migrations/20261008202635_ai_member_turn_atomic_storage.sql",
+    "sourceSha256": "a0bdbdfa3f28964c03ebcfae03afdfe28315a234d6765125f1d7f8a4d9aeedee",
+    "baselineSha256": "a0bdbdfa3f28964c03ebcfae03afdfe28315a234d6765125f1d7f8a4d9aeedee",
+    "successorSha256": "a0bdbdfa3f28964c03ebcfae03afdfe28315a234d6765125f1d7f8a4d9aeedee"
+  },
+  {
+    "path": "supabase/migrations/20261008203206_funding_source_bound_terminal_qualification.sql",
+    "sourceSha256": "bf6a059752271916ba0acfc0a4c936b0a596361cce74d99ddfe98100f1c58e7a",
+    "baselineSha256": "bf6a059752271916ba0acfc0a4c936b0a596361cce74d99ddfe98100f1c58e7a",
+    "successorSha256": "bf6a059752271916ba0acfc0a4c936b0a596361cce74d99ddfe98100f1c58e7a"
+  },
+  {
+    "path": "supabase/migrations/20261008204927_funding_atomic_cycle_rollover.sql",
+    "sourceSha256": "324e20198e28246dd5fa5e2fbf991e87bf0a14c9bf9e17ba192a042996c906c1",
+    "baselineSha256": "324e20198e28246dd5fa5e2fbf991e87bf0a14c9bf9e17ba192a042996c906c1",
+    "successorSha256": "324e20198e28246dd5fa5e2fbf991e87bf0a14c9bf9e17ba192a042996c906c1"
+  },
+  {
+    "path": "supabase/migrations/20261008210734_ai_own_state_tool_audit_names.sql",
+    "sourceSha256": "412915ace09b6c8012c69bc0b317f87e7ba57653b64d566efd5c7374a96c1033",
+    "baselineSha256": "412915ace09b6c8012c69bc0b317f87e7ba57653b64d566efd5c7374a96c1033",
+    "successorSha256": "412915ace09b6c8012c69bc0b317f87e7ba57653b64d566efd5c7374a96c1033"
+  },
+  {
+    "path": "supabase/migrations/20261008210940_member_event_source_bound_participation.sql",
+    "sourceSha256": "9eba325efaf4afb4ce267cc688887fe45d291c7b719c20f121237a2e83457d0f",
+    "baselineSha256": "9eba325efaf4afb4ce267cc688887fe45d291c7b719c20f121237a2e83457d0f",
+    "successorSha256": "9eba325efaf4afb4ce267cc688887fe45d291c7b719c20f121237a2e83457d0f"
+  },
+  {
+    "path": "supabase/migrations/20261008211818_event_join_native_consumer.sql",
+    "sourceSha256": "83080a732d455eff30b65dea4b162ca723ed4d702de82eb080a6c3ec8b23dac1",
+    "baselineSha256": "83080a732d455eff30b65dea4b162ca723ed4d702de82eb080a6c3ec8b23dac1",
+    "successorSha256": "83080a732d455eff30b65dea4b162ca723ed4d702de82eb080a6c3ec8b23dac1"
+  },
+  {
+    "path": "supabase/migrations/20261008212124_nonmoney_source_bound_local_qa_rewards.sql",
+    "sourceSha256": "010fd4be06e51febb43a523f9e1e1a190502c59a031a194e91665443a330dfb1",
+    "baselineSha256": "010fd4be06e51febb43a523f9e1e1a190502c59a031a194e91665443a330dfb1",
+    "successorSha256": "010fd4be06e51febb43a523f9e1e1a190502c59a031a194e91665443a330dfb1"
+  },
+  {
+    "path": "supabase/migrations/20261008212457_nonmoney_reward_notification_originals.sql",
+    "sourceSha256": "506c8b3375ac3f757836501e47381ed7f96b4087daa575bed3221fd06a05cc91",
+    "baselineSha256": "506c8b3375ac3f757836501e47381ed7f96b4087daa575bed3221fd06a05cc91",
+    "successorSha256": "506c8b3375ac3f757836501e47381ed7f96b4087daa575bed3221fd06a05cc91"
+  },
+  {
+    "path": "supabase/migrations/20261008213107_pwa_source_bound_device_delivery.sql",
+    "sourceSha256": "9ad53e3f5c1ef950973f81b090e52b1f92f53294771fca5d8b1c83ee8af797d2",
+    "baselineSha256": "9ad53e3f5c1ef950973f81b090e52b1f92f53294771fca5d8b1c83ee8af797d2",
+    "successorSha256": "9ad53e3f5c1ef950973f81b090e52b1f92f53294771fca5d8b1c83ee8af797d2"
+  },
+  {
+    "path": "supabase/migrations/20261008215513_recovery_function_lint_consistency.sql",
+    "sourceSha256": "71a478ed9ff683b98410c80ae84e5fddc63efb8a1da27c6be03771877d9c2e9c",
+    "baselineSha256": "71a478ed9ff683b98410c80ae84e5fddc63efb8a1da27c6be03771877d9c2e9c",
+    "successorSha256": "71a478ed9ff683b98410c80ae84e5fddc63efb8a1da27c6be03771877d9c2e9c"
+  },
+  {
+    "path": "supabase/migrations/20261008220220_funded_mining_mission_originals.sql",
+    "sourceSha256": "3215cddedd2a6959c00ec68b6a1fcd5eb4f1405f75b9dc27684eed2dd55688a3",
+    "baselineSha256": "3215cddedd2a6959c00ec68b6a1fcd5eb4f1405f75b9dc27684eed2dd55688a3",
+    "successorSha256": "3215cddedd2a6959c00ec68b6a1fcd5eb4f1405f75b9dc27684eed2dd55688a3"
+  },
+  {
+    "path": "supabase/migrations/20261008221528_trial_completion_canonical_original.sql",
+    "sourceSha256": "9d408aa528502ee51d826630c6022ad91518420252a32b2f14b3ad04bdb343bb",
+    "baselineSha256": "9d408aa528502ee51d826630c6022ad91518420252a32b2f14b3ad04bdb343bb",
+    "successorSha256": "9d408aa528502ee51d826630c6022ad91518420252a32b2f14b3ad04bdb343bb"
+  },
+  {
+    "path": "supabase/migrations/20261009000420_nonmoney_original_delivery_without_local_reward_activation.sql",
+    "sourceSha256": "59cd1658d16002398b480010e5262832a440e42e868728c4677bb373b944d86e",
+    "baselineSha256": "59cd1658d16002398b480010e5262832a440e42e868728c4677bb373b944d86e",
+    "successorSha256": "59cd1658d16002398b480010e5262832a440e42e868728c4677bb373b944d86e"
+  },
+  {
+    "path": "supabase/migrations/20261009001540_liveops_publication_bounded_notification_delivery.sql",
+    "sourceSha256": "e7724998b768c052e356f9dae0e5eeef9e97842c9421e336890f1c0d1020619b",
+    "baselineSha256": "e7724998b768c052e356f9dae0e5eeef9e97842c9421e336890f1c0d1020619b",
+    "successorSha256": "e7724998b768c052e356f9dae0e5eeef9e97842c9421e336890f1c0d1020619b"
+  },
+  {
+    "path": "supabase/migrations/20261009003656_domain_original_owner_notification_delivery.sql",
+    "sourceSha256": "173a37a1afc1b2a1235a1d374ae622b7b6ccf24635edc2cd50b7ce854b914d0c",
+    "baselineSha256": "173a37a1afc1b2a1235a1d374ae622b7b6ccf24635edc2cd50b7ce854b914d0c",
+    "successorSha256": "173a37a1afc1b2a1235a1d374ae622b7b6ccf24635edc2cd50b7ce854b914d0c"
+  },
+  {
+    "path": "supabase/migrations/20261009021440_member_profile_captured_source_verified_audit_ack.sql",
+    "sourceSha256": "23fbe760a154c838900e494836c2bea4ae7245657159f45b54386dd043576efa",
+    "baselineSha256": "23fbe760a154c838900e494836c2bea4ae7245657159f45b54386dd043576efa",
+    "successorSha256": "23fbe760a154c838900e494836c2bea4ae7245657159f45b54386dd043576efa"
+  },
+  {
+    "path": "supabase/migrations/20261009091231_ai_member_common_admission_hard_caps.sql",
+    "sourceSha256": "34b16e6df000986e565a16fd2d3aca0ef2c2a03423ac10d67b97b3282c9d54a6",
+    "baselineSha256": "34b16e6df000986e565a16fd2d3aca0ef2c2a03423ac10d67b97b3282c9d54a6",
+    "successorSha256": "34b16e6df000986e565a16fd2d3aca0ef2c2a03423ac10d67b97b3282c9d54a6"
+  },
+  {
+    "path": "supabase/migrations/20261009092114_funding_worker_bounded_scheduler.sql",
+    "sourceSha256": "93183ddc480f7599f5b210cfc0d06d72aa8556c95264d2f66fe75f0d2d9eddbd",
+    "baselineSha256": "93183ddc480f7599f5b210cfc0d06d72aa8556c95264d2f66fe75f0d2d9eddbd",
+    "successorSha256": "93183ddc480f7599f5b210cfc0d06d72aa8556c95264d2f66fe75f0d2d9eddbd"
+  },
+  {
+    "path": "supabase/migrations/20261009093624_funding_persisted_slot_downgrade_receipts.sql",
+    "sourceSha256": "2931d72bfa8608572dece1b4cab70b68d09084221d1abbbe22b5b16be0064144",
+    "baselineSha256": "2931d72bfa8608572dece1b4cab70b68d09084221d1abbbe22b5b16be0064144",
+    "successorSha256": "2931d72bfa8608572dece1b4cab70b68d09084221d1abbbe22b5b16be0064144"
+  },
+  {
+    "path": "supabase/migrations/20261009094817_funding_slot_commit_guard_dispatch.sql",
+    "sourceSha256": "84635a251ad252b7ae801e0a603932ff2f1946bb93cce4023f165de16be2fd7b",
+    "baselineSha256": "84635a251ad252b7ae801e0a603932ff2f1946bb93cce4023f165de16be2fd7b",
+    "successorSha256": "84635a251ad252b7ae801e0a603932ff2f1946bb93cce4023f165de16be2fd7b"
+  },
+  {
+    "path": "supabase/migrations/20261009111447_worker_component_stop_scope.sql",
+    "sourceSha256": "18c81d0b92d290cb04ae34752f44fb04efb3a3b72a6465bf25df3772bceab00a",
+    "baselineSha256": "18c81d0b92d290cb04ae34752f44fb04efb3a3b72a6465bf25df3772bceab00a",
+    "successorSha256": "18c81d0b92d290cb04ae34752f44fb04efb3a3b72a6465bf25df3772bceab00a"
+  },
+  {
+    "path": "supabase/migrations/20261009122506_local_source_bound_cash_rewards.sql",
+    "sourceSha256": "00f1a0dafdc94102ddfe8599f83b7d6e221bf702a47d9e1b8f0ce7d8118ee54a",
+    "baselineSha256": "00f1a0dafdc94102ddfe8599f83b7d6e221bf702a47d9e1b8f0ce7d8118ee54a",
+    "successorSha256": "00f1a0dafdc94102ddfe8599f83b7d6e221bf702a47d9e1b8f0ce7d8118ee54a"
+  },
+  {
+    "path": "supabase/migrations/20261009123031_withdrawal_coverage_single_scan.sql",
+    "sourceSha256": "d245ea0a84b8c49698e6064af33997ee71c471bc2b4d3d769123012f0e62465f",
+    "baselineSha256": "d245ea0a84b8c49698e6064af33997ee71c471bc2b4d3d769123012f0e62465f",
+    "successorSha256": "d245ea0a84b8c49698e6064af33997ee71c471bc2b4d3d769123012f0e62465f"
+  },
+  {
+    "path": "supabase/migrations/20261009145624_ci_review_r2_lint_consistency.sql",
+    "sourceSha256": "a940cbdfb8d222b09c137bda6f9efa7d9c041d7396bba8694a83383e4ac78927",
+    "baselineSha256": "a940cbdfb8d222b09c137bda6f9efa7d9c041d7396bba8694a83383e4ac78927",
+    "successorSha256": "a940cbdfb8d222b09c137bda6f9efa7d9c041d7396bba8694a83383e4ac78927"
+  },
+  {
+    "path": "supabase/migrations/20261010233034_external_send_payload_binding_and_fixed_cycle_duration.sql",
+    "sourceSha256": "571edd2e56a00fe5c9d6e4de0d360a12ddf763e1dc97443967d777ab64cea3d7",
+    "baselineSha256": "571edd2e56a00fe5c9d6e4de0d360a12ddf763e1dc97443967d777ab64cea3d7",
+    "successorSha256": "571edd2e56a00fe5c9d6e4de0d360a12ddf763e1dc97443967d777ab64cea3d7"
+  },
+  {
+    "path": "supabase/migrations/20261011001426_explicit_member_cash_terms_read_boundary.sql",
+    "sourceSha256": "0f3a02fbbebf87bbe2cfc7fa404debee2f5cab1219ed6ed77e24329471ddb874",
+    "baselineSha256": "0f3a02fbbebf87bbe2cfc7fa404debee2f5cab1219ed6ed77e24329471ddb874",
+    "successorSha256": "0f3a02fbbebf87bbe2cfc7fa404debee2f5cab1219ed6ed77e24329471ddb874"
+  },
+  {
+    "path": "supabase/migrations/20261011001444_permanent_zero_fee_policy.sql",
+    "sourceSha256": "a3ab3737cffdf20c82e9816734d7e939dbb2ef52f34bac3defd4ad35b181bb4e",
+    "baselineSha256": "a3ab3737cffdf20c82e9816734d7e939dbb2ef52f34bac3defd4ad35b181bb4e",
+    "successorSha256": "a3ab3737cffdf20c82e9816734d7e939dbb2ef52f34bac3defd4ad35b181bb4e"
+  },
+  {
+    "path": "supabase/migrations/20261011003244_krw_manual_full_payout_completion.sql",
+    "sourceSha256": "d20f18a4938816d625a71d5fd8d1823145ba7600578c7d5d5288730ca22b93f2",
+    "baselineSha256": "d20f18a4938816d625a71d5fd8d1823145ba7600578c7d5d5288730ca22b93f2",
+    "successorSha256": "d20f18a4938816d625a71d5fd8d1823145ba7600578c7d5d5288730ca22b93f2"
+  },
+  {
+    "path": "supabase/migrations/20261011021000_backend_catalog_etf_category.sql",
+    "sourceSha256": "c3968ad60d6bbb66e00b3591fa65686206078c22bbd7dddaba3c77454eb37df5",
+    "baselineSha256": "c3968ad60d6bbb66e00b3591fa65686206078c22bbd7dddaba3c77454eb37df5",
+    "successorSha256": "c3968ad60d6bbb66e00b3591fa65686206078c22bbd7dddaba3c77454eb37df5"
+  },
+  {
+    "path": "supabase/migrations/20261011031000_informational_event_participation_contract.sql",
+    "sourceSha256": "2a3f4428c42fa6d9369d9caf9d7814f556d3c3dcd581bedb272b13d4add211d1",
+    "baselineSha256": "2a3f4428c42fa6d9369d9caf9d7814f556d3c3dcd581bedb272b13d4add211d1",
+    "successorSha256": "2a3f4428c42fa6d9369d9caf9d7814f556d3c3dcd581bedb272b13d4add211d1"
+  },
+  {
+    "path": "supabase/migrations/20261011033000_member_faq_sealed_content_lifecycle.sql",
+    "sourceSha256": "72078542b96494703f80996c4ae8d637589fff67ba3f03ef8e5d91c877a6458b",
+    "baselineSha256": "72078542b96494703f80996c4ae8d637589fff67ba3f03ef8e5d91c877a6458b",
+    "successorSha256": "72078542b96494703f80996c4ae8d637589fff67ba3f03ef8e5d91c877a6458b"
+  },
+  {
+    "path": "supabase/migrations/20261011035000_member_faq_expiry_read_boundary.sql",
+    "sourceSha256": "35553e1acc18e5f63b7d734d2eca131a6e807ae933fea23924387e7c4e5f09ff",
+    "baselineSha256": "35553e1acc18e5f63b7d734d2eca131a6e807ae933fea23924387e7c4e5f09ff",
+    "successorSha256": "35553e1acc18e5f63b7d734d2eca131a6e807ae933fea23924387e7c4e5f09ff"
+  },
+  {
+    "path": "supabase/migrations/20261011110300_backend_referral_nonmoney_bridge.sql",
+    "sourceSha256": "3389a828e745afd23c13fbb4f80e449c2f4f0d976bd4ed5208f5827ffb5a4cd6",
+    "baselineSha256": "3389a828e745afd23c13fbb4f80e449c2f4f0d976bd4ed5208f5827ffb5a4cd6",
+    "successorSha256": "3389a828e745afd23c13fbb4f80e449c2f4f0d976bd4ed5208f5827ffb5a4cd6"
+  },
+  {
+    "path": "supabase/migrations/20261011112058_nonmoney_award_outbox_ack.sql",
+    "sourceSha256": "96d977e238c2f40fcc244ab4c0e615cc878e348b01393e55f5d2a66069db647c",
+    "baselineSha256": "96d977e238c2f40fcc244ab4c0e615cc878e348b01393e55f5d2a66069db647c",
+    "successorSha256": "96d977e238c2f40fcc244ab4c0e615cc878e348b01393e55f5d2a66069db647c"
+  },
+  {
+    "path": "supabase/migrations/20261011132851_usdt_manual_full_payout_contract.sql",
+    "sourceSha256": "80b41061e98e0a132b75aa92d8eebdc1dbf22915a391bab380e30b8e6cc9f56c",
+    "baselineSha256": "80b41061e98e0a132b75aa92d8eebdc1dbf22915a391bab380e30b8e6cc9f56c",
+    "successorSha256": "80b41061e98e0a132b75aa92d8eebdc1dbf22915a391bab380e30b8e6cc9f56c"
+  },
+  {
+    "path": "supabase/migrations/20261011132924_withdrawal_lifecycle_outbox_ack.sql",
+    "sourceSha256": "d2d0f549e059bf4fc08ed700630564e2359ef89c421ba8a235b6845452700954",
+    "baselineSha256": "d2d0f549e059bf4fc08ed700630564e2359ef89c421ba8a235b6845452700954",
+    "successorSha256": "d2d0f549e059bf4fc08ed700630564e2359ef89c421ba8a235b6845452700954"
+  },
+  {
+    "path": "supabase/migrations/20261011173627_withdrawal_completion_notification_original.sql",
+    "sourceSha256": "a219a174e028ff30ef620395435ea96ca12653c3fb0464a53b5d4f195e72fd25",
+    "baselineSha256": "a219a174e028ff30ef620395435ea96ca12653c3fb0464a53b5d4f195e72fd25",
+    "successorSha256": "a219a174e028ff30ef620395435ea96ca12653c3fb0464a53b5d4f195e72fd25"
+  },
+  {
+    "path": "supabase/migrations/20261011173637_safe_mode_closed_outbox_ack.sql",
+    "sourceSha256": "24de2d4de05f42c31800cfea722732d7119a71f6f8c1721e8a35c63f512c4351",
+    "baselineSha256": "24de2d4de05f42c31800cfea722732d7119a71f6f8c1721e8a35c63f512c4351",
+    "successorSha256": "24de2d4de05f42c31800cfea722732d7119a71f6f8c1721e8a35c63f512c4351"
+  },
+  {
+    "path": "supabase/migrations/20261012140511_kyc_durable_receipts_evidence_attestation.sql",
+    "sourceSha256": "074bcab73e2b386364f73f5e4cee7091cc91b089f9c6ae1aec16950dcecfd94c",
+    "baselineSha256": "074bcab73e2b386364f73f5e4cee7091cc91b089f9c6ae1aec16950dcecfd94c",
+    "successorSha256": "074bcab73e2b386364f73f5e4cee7091cc91b089f9c6ae1aec16950dcecfd94c"
+  },
+  {
+    "path": "supabase/migrations/20261012171020_member_notice_cta_projection.sql",
+    "sourceSha256": "1531033d1b591e3edb5164f9f4678bbc7ccfa31ad7b01ba94a8d414f78e86297",
+    "baselineSha256": "1531033d1b591e3edb5164f9f4678bbc7ccfa31ad7b01ba94a8d414f78e86297",
+    "successorSha256": "1531033d1b591e3edb5164f9f4678bbc7ccfa31ad7b01ba94a8d414f78e86297"
+  },
+  {
+    "path": "supabase/migrations/20261012182820_member_push_endpoint_epoch_binding.sql",
+    "sourceSha256": "792dd07cc7bbe5e657c12fcb3f26f99afabaa24d459e02718a0d904d7b9925c7",
+    "baselineSha256": "792dd07cc7bbe5e657c12fcb3f26f99afabaa24d459e02718a0d904d7b9925c7",
+    "successorSha256": "792dd07cc7bbe5e657c12fcb3f26f99afabaa24d459e02718a0d904d7b9925c7"
+  },
+  {
+    "path": "supabase/migrations/20261013080342_member_push_logout_binding_variable_fix.sql",
+    "sourceSha256": "32b4077e77e39c209fd4977d63fc78fcdebb118ef20703b2dba20f5ffc2fcc94",
+    "baselineSha256": "32b4077e77e39c209fd4977d63fc78fcdebb118ef20703b2dba20f5ffc2fcc94",
+    "successorSha256": "32b4077e77e39c209fd4977d63fc78fcdebb118ef20703b2dba20f5ffc2fcc94"
+  },
+  {
+    "path": "supabase/test-fixtures/default-funding-allocation-original.sql",
+    "sourceSha256": "4e18eb90824aa7ced3ac6fab2b5de44cbdd2c00f734db2ed0568ba869cdfc8bd",
+    "baselineSha256": "4e18eb90824aa7ced3ac6fab2b5de44cbdd2c00f734db2ed0568ba869cdfc8bd",
+    "successorSha256": "4e18eb90824aa7ced3ac6fab2b5de44cbdd2c00f734db2ed0568ba869cdfc8bd"
+  },
+  {
+    "path": "supabase/test-fixtures/funding_global_admission_canonical.sql",
+    "sourceSha256": "ad6203e6eda194a245e386b45f83bcb367b931b69473da14cf0a3be1479bfbdd",
+    "baselineSha256": "ad6203e6eda194a245e386b45f83bcb367b931b69473da14cf0a3be1479bfbdd",
+    "successorSha256": "5ed09c309778e8fe030384f412ab51d73016bef9264a442121ca9bc4fa8bc427"
+  },
+  {
+    "path": "supabase/test-fixtures/historical-held-withdrawal.sql",
+    "sourceSha256": "4de90b385f94f9583b272738ffecb9a301127a543283acabe07e7c40d3b9db1f",
+    "baselineSha256": "4de90b385f94f9583b272738ffecb9a301127a543283acabe07e7c40d3b9db1f",
+    "successorSha256": "4de90b385f94f9583b272738ffecb9a301127a543283acabe07e7c40d3b9db1f"
+  },
+  {
+    "path": "supabase/test-fixtures/hold_clock_admission_concurrency.sql",
+    "sourceSha256": "b5179848e113bbf87534ceb9afeaf3825a3f742c029a8da358c65d810088106b",
+    "baselineSha256": "b5179848e113bbf87534ceb9afeaf3825a3f742c029a8da358c65d810088106b",
+    "successorSha256": "b5179848e113bbf87534ceb9afeaf3825a3f742c029a8da358c65d810088106b"
+  },
+  {
+    "path": "supabase/test-fixtures/principal_finalize_current_basis.sql",
+    "sourceSha256": "a9869874465283af88759d86f7fc608c96e70abb296774b32f3e40002a96b8d2",
+    "baselineSha256": "0ce92094bbe848bbbcea1fe3bf422ffe1c41560869ad0ce2e0c14610aab432b7",
+    "successorSha256": "6389ef47dfda869cb80074ad226083ce001fd0c2325d8c6af4370265a4e45ee7"
+  },
+  {
+    "path": "supabase/test-fixtures/reserved-test-held-withdrawal.sql",
+    "sourceSha256": "24303199f85ea5d66813dde438ef40e6dc684f890e34b9fed233869772f530e8",
+    "baselineSha256": "24303199f85ea5d66813dde438ef40e6dc684f890e34b9fed233869772f530e8",
+    "successorSha256": "24303199f85ea5d66813dde438ef40e6dc684f890e34b9fed233869772f530e8"
+  },
+  {
+    "path": "supabase/test-fixtures/verified-mining-reward.sql",
+    "sourceSha256": "2e4e2b8bc7fe6e0fb330180d70b93b04dd38f347345f7e086187b0f5336f5043",
+    "baselineSha256": "2e4e2b8bc7fe6e0fb330180d70b93b04dd38f347345f7e086187b0f5336f5043",
+    "successorSha256": "2e4e2b8bc7fe6e0fb330180d70b93b04dd38f347345f7e086187b0f5336f5043"
+  },
+  {
+    "path": "supabase/tests-concurrent/disposable_dblink_identity.sql",
+    "sourceSha256": "57b9a1e42394befe472ecb60d115979a13ee15c0b91a5aad7ea4fc0fb479bfa8",
+    "baselineSha256": "57b9a1e42394befe472ecb60d115979a13ee15c0b91a5aad7ea4fc0fb479bfa8",
+    "successorSha256": "57b9a1e42394befe472ecb60d115979a13ee15c0b91a5aad7ea4fc0fb479bfa8"
+  },
+  {
+    "path": "supabase/tests-concurrent/global_allocation_admission_concurrent.sql",
+    "sourceSha256": "b7beb8cacc195374c9f95abd7cc70d9c9969abbdff9cab20fe40c0ea6e5c94c1",
+    "baselineSha256": "b7beb8cacc195374c9f95abd7cc70d9c9969abbdff9cab20fe40c0ea6e5c94c1",
+    "successorSha256": "b7beb8cacc195374c9f95abd7cc70d9c9969abbdff9cab20fe40c0ea6e5c94c1"
+  },
+  {
+    "path": "supabase/tests-concurrent/hold_cancel_admission_concurrent.sql",
+    "sourceSha256": "8d93e1321987d012122a15b8297235a14a60d543c335d2357d9fd7f9a435905c",
+    "baselineSha256": "8d93e1321987d012122a15b8297235a14a60d543c335d2357d9fd7f9a435905c",
+    "successorSha256": "8d93e1321987d012122a15b8297235a14a60d543c335d2357d9fd7f9a435905c"
+  },
+  {
+    "path": "supabase/tests-concurrent/krw_deposit_concurrent_approval.sql",
+    "sourceSha256": "c023b6c4b6df6a038eb9a728e487040050d5ec7be055f3b06e81846ad078ad91",
+    "baselineSha256": "c023b6c4b6df6a038eb9a728e487040050d5ec7be055f3b06e81846ad078ad91",
+    "successorSha256": "bf18c37c85640023b4d203d50fb02f6c4bf6ca77b702e7120de83e39df0fed96"
+  },
+  {
+    "path": "supabase/tests-concurrent/principal_finalize_native_contention.sql",
+    "sourceSha256": "20c69717181e0b72f14e55c7a7f3a3a6eddfa11b98ecc55ca41ff4e9b8686e46",
+    "baselineSha256": "20c69717181e0b72f14e55c7a7f3a3a6eddfa11b98ecc55ca41ff4e9b8686e46",
+    "successorSha256": "20c69717181e0b72f14e55c7a7f3a3a6eddfa11b98ecc55ca41ff4e9b8686e46"
+  },
+  {
+    "path": "supabase/tests-concurrent/resolve_disposable_dblink_host.inc",
+    "sourceSha256": "461f1df73a459da387d7f704500db39801f57b954511183eea2f123d9200d99e",
+    "baselineSha256": "461f1df73a459da387d7f704500db39801f57b954511183eea2f123d9200d99e",
+    "successorSha256": "461f1df73a459da387d7f704500db39801f57b954511183eea2f123d9200d99e"
+  },
+  {
+    "path": "supabase/tests-concurrent/safe_mode_concurrent_command.sql",
+    "sourceSha256": "115a2d942302ce09017f6f7840133ba2a7551f60e91559371a130c34532bce0a",
+    "baselineSha256": "115a2d942302ce09017f6f7840133ba2a7551f60e91559371a130c34532bce0a",
+    "successorSha256": "5cc8cef7c0a968a57ab293350bc08328126570e6b9a1a28aba80fd48d343f1d2"
+  },
+  {
+    "path": "supabase/tests-concurrent/usdt_deposit_concurrent_approval.sql",
+    "sourceSha256": "0d004c876c96a9b81a2591bb7ee36f7c18d9f3b5d8e4a3c9c0e5a68d2c11a03f",
+    "baselineSha256": "0d004c876c96a9b81a2591bb7ee36f7c18d9f3b5d8e4a3c9c0e5a68d2c11a03f",
+    "successorSha256": "20267515b77f70d204dd19b02285f53f17cbb64e7c9dd09e5297ee1576d0376e"
+  },
+  {
+    "path": "supabase/tests-concurrent/withdrawal_member_lock_order.sql",
+    "sourceSha256": "10f23e3d20feff7a4d38a3e472b340f9d41148866b19ae1d382de15a17493bf4",
+    "baselineSha256": "10f23e3d20feff7a4d38a3e472b340f9d41148866b19ae1d382de15a17493bf4",
+    "successorSha256": "447e7dc48c10e708f4037e4b3fd97e06eca98ec3a88ee176a9048fd97a8f31d4"
+  },
+  {
+    "path": "supabase/tests/database/acknowledge_reconciliation_mismatch.sql",
+    "sourceSha256": "f89b1ca6a60d63277f276fac7b492ea77785b8781c2b33ab8ea1f1711d96b1d3",
+    "baselineSha256": "f89b1ca6a60d63277f276fac7b492ea77785b8781c2b33ab8ea1f1711d96b1d3",
+    "successorSha256": "34685946ec26c6ce006dbd4d6e68a4e10e6c032ace514500c697b67ccc5d1764"
+  },
+  {
+    "path": "supabase/tests/database/admin_ai_conversation_reads.sql",
+    "sourceSha256": "8ce64f2d8a9778848473fb94a8b869e5d2ccdb1ba4d98e44ad8f7bc8267a9f82",
+    "baselineSha256": "8ce64f2d8a9778848473fb94a8b869e5d2ccdb1ba4d98e44ad8f7bc8267a9f82",
+    "successorSha256": "78e30ba0aaaa1d8b05379b0c1a3a4db4d1212dbfc6c179193b06779ac0ff45bc"
+  },
+  {
+    "path": "supabase/tests/database/admin_bootstrap.sql",
+    "sourceSha256": "915d04ee27294ae8c4516b4c3601a7c2bd3c5dfb5e8ca8f9a1ac59cd91d703a2",
+    "baselineSha256": "915d04ee27294ae8c4516b4c3601a7c2bd3c5dfb5e8ca8f9a1ac59cd91d703a2",
+    "successorSha256": "a1f19afddb6f210aab0a18df173cea76b28cf591c42dba3d6da4e4d765ebccbf"
+  },
+  {
+    "path": "supabase/tests/database/admin_member_mining_count_read.sql",
+    "sourceSha256": "c97b5045943f9946142bac98cbfa76f6e075b959e00069324ed396c8912243fb",
+    "baselineSha256": "c97b5045943f9946142bac98cbfa76f6e075b959e00069324ed396c8912243fb",
+    "successorSha256": "c97b5045943f9946142bac98cbfa76f6e075b959e00069324ed396c8912243fb"
+  },
+  {
+    "path": "supabase/tests/database/admin_security_auth_replay.sql",
+    "sourceSha256": "5c560e00edc702c8eb5f770104f8a11f745b5a13ec03177289368fd0e32a0ed9",
+    "baselineSha256": "5c560e00edc702c8eb5f770104f8a11f745b5a13ec03177289368fd0e32a0ed9",
+    "successorSha256": "0158667fc52fb14bd268827ec01cf8f9b9b5c6015d5f815417c78e672ebda1e8"
+  },
+  {
+    "path": "supabase/tests/database/ai_conversation_storage.sql",
+    "sourceSha256": "a01acbd4e2d780f85c023c8a6ba37bd34ad52b0c05de9af4f62cdd1622dd8d6b",
+    "baselineSha256": "a98a11607e0e2bf16ea862c737c9db8d9c6af9ef0e5b9bf5b0ab0db3bef90914",
+    "successorSha256": "3f5dadfb4768954e327927706ce2f5f1c1d1e8f35f2dc795ebf27160f27c54f6"
+  },
+  {
+    "path": "supabase/tests/database/ai_conversation_summaries.sql",
+    "sourceSha256": "304c8f1d4e30fb80b0b643bf5e16305b65556ecf265c5f60d6896c2d6cb15904",
+    "baselineSha256": "07e72c8fcf5c8ddfc89fc402c8e607e6dc3da12e3427f13b8b7ffddf3e21ff0f",
+    "successorSha256": "b4eb141c8fe756e918cbe393ed029d1c87de65d6bb4d9d308ca88d7c4289814c"
+  },
+  {
+    "path": "supabase/tests/database/ai_member_admission_hard_caps.sql",
+    "sourceSha256": "d947e2e893a8f31ecd043467f320be00cc8844b02e30eeef4c6b721d2dfae8e7",
+    "baselineSha256": "d947e2e893a8f31ecd043467f320be00cc8844b02e30eeef4c6b721d2dfae8e7",
+    "successorSha256": "63355c28b13b8f6389ef5e356d532b4c2a55fa627fcc734365f0eabc55421950"
+  },
+  {
+    "path": "supabase/tests/database/ai_member_turn_atomic_storage.sql",
+    "sourceSha256": "cbd6181561acd12545f454da83ed2c24679fd74b30878b4c49899162429b4010",
+    "baselineSha256": "cbd6181561acd12545f454da83ed2c24679fd74b30878b4c49899162429b4010",
+    "successorSha256": "5fc5f44363d5fbdd2282d80b69c7b295dd2e75afe6ba8edfa35eb141504cae41"
+  },
+  {
+    "path": "supabase/tests/database/ai_orchestration.sql",
+    "sourceSha256": "e06fa97fb4d5a25f8472470898f73cddaec5b9fd39b369da289febda594eb7ad",
+    "baselineSha256": "e06fa97fb4d5a25f8472470898f73cddaec5b9fd39b369da289febda594eb7ad",
+    "successorSha256": "eb0133a9ac2a0f07120dc5ee1916229ce0eb63280505a77ec52d396548cc98bf"
+  },
+  {
+    "path": "supabase/tests/database/ai_own_state_tool_audit_names.sql",
+    "sourceSha256": "8214904eac543ec996c13a1996efc2b4250d1566c3b5c33adb058d17264c6d86",
+    "baselineSha256": "8214904eac543ec996c13a1996efc2b4250d1566c3b5c33adb058d17264c6d86",
+    "successorSha256": "97b08662e8962a5885494f6925d53fbd06e1b7400e0692293929519304d104ff"
+  },
+  {
+    "path": "supabase/tests/database/ai_provider_budget.sql",
+    "sourceSha256": "f0966d1d11c9a9c7dd8cc1823449df4034018ccf8e5d44c79c564df6a8da2472",
+    "baselineSha256": "f0966d1d11c9a9c7dd8cc1823449df4034018ccf8e5d44c79c564df6a8da2472",
+    "successorSha256": "de0485f55470b2b011927d960e077952a52c87e5748b4129b6f8e53bccd35149"
+  },
+  {
+    "path": "supabase/tests/database/ai_tool_boundaries.sql",
+    "sourceSha256": "a00bca22379be5fa97bb6f88b63e0d7b33cc367368121ce7013179334ca7467e",
+    "baselineSha256": "a00bca22379be5fa97bb6f88b63e0d7b33cc367368121ce7013179334ca7467e",
+    "successorSha256": "40c256c41474a74c6d89544e51a930e91d78c3d8b9688eaec148a45979905820"
+  },
+  {
+    "path": "supabase/tests/database/ai_tool_evidence.sql",
+    "sourceSha256": "4cd31ada54d15f490c6927d02de9683e7db69867c2bb8e641239803ef9082567",
+    "baselineSha256": "5c77e2b902358d0931905e6fd829891481db120fbaef0740edb225939ce721df",
+    "successorSha256": "efb0ac655b16c45de30135ed3bc6451e572352350d816eebfd83f89aa414bb91"
+  },
+  {
+    "path": "supabase/tests/database/backend_referral_nonmoney_bridge.sql",
+    "sourceSha256": "cfad9d009045b3b4000b1295ac218f7a62dd1fb1d150a3ac8133bb535a79504a",
+    "baselineSha256": "cfad9d009045b3b4000b1295ac218f7a62dd1fb1d150a3ac8133bb535a79504a",
+    "successorSha256": "667c3b0fda935ffb5d8f14a581eb518fbe87013ae842bfab9b53ff47d562095d"
+  },
+  {
+    "path": "supabase/tests/database/default_funding_engine_exact_math.sql",
+    "sourceSha256": "72e74afc29c1d8dc31531a12588927660ebc63cc1306125abfd37a7bd0024ac1",
+    "baselineSha256": "72e74afc29c1d8dc31531a12588927660ebc63cc1306125abfd37a7bd0024ac1",
+    "successorSha256": "72e74afc29c1d8dc31531a12588927660ebc63cc1306125abfd37a7bd0024ac1"
+  },
+  {
+    "path": "supabase/tests/database/default_funding_engine_private_posting.sql",
+    "sourceSha256": "789499275f58ddf45bcc099223748119ac45b0094882447bbb8c6662bcd8f8d9",
+    "baselineSha256": "789499275f58ddf45bcc099223748119ac45b0094882447bbb8c6662bcd8f8d9",
+    "successorSha256": "e836433b72bc2c0fdce5ee7100e5b44e05ea40e108c97c42aa09a4598588148a"
+  },
+  {
+    "path": "supabase/tests/database/domain_original_notifications.sql",
+    "sourceSha256": "e392e2e98e4dcc8d633125303e10251c4b86e43730fd3cc68379c7fdbdb90c0c",
+    "baselineSha256": "e392e2e98e4dcc8d633125303e10251c4b86e43730fd3cc68379c7fdbdb90c0c",
+    "successorSha256": "ffbc9f4a16794462acf7f44d98f7c10ab7faa10b19f2f1ae65dd483662777049"
+  },
+  {
+    "path": "supabase/tests/database/economy_policy_v1.sql",
+    "sourceSha256": "e2347cc7501b9d4c07c3c324bd0a4603b9570fc04a8ad4bfbcfbfa414ae33548",
+    "baselineSha256": "e2347cc7501b9d4c07c3c324bd0a4603b9570fc04a8ad4bfbcfbfa414ae33548",
+    "successorSha256": "ff920674a7d573ca31ae72ad7d3230cab0bd1272128529f61bb861957fbe0ca8"
+  },
+  {
+    "path": "supabase/tests/database/effective_economy_policy_reader.sql",
+    "sourceSha256": "66d8a17bfbf12f7da040b9b91e0b9906461694b7e00422403ba0b3351a941e9c",
+    "baselineSha256": "66d8a17bfbf12f7da040b9b91e0b9906461694b7e00422403ba0b3351a941e9c",
+    "successorSha256": "3d2c5fdd52148134fde42d5cf02b5fe43de134352687cc2496d65d0f57e7d3ac"
+  },
+  {
+    "path": "supabase/tests/database/funded_mining_mission_originals.sql",
+    "sourceSha256": "9b53fa1647e64f736ab55ac9addd4b8e36fe1fc6ec1c480a4fc2002432aebb65",
+    "baselineSha256": "9b53fa1647e64f736ab55ac9addd4b8e36fe1fc6ec1c480a4fc2002432aebb65",
+    "successorSha256": "8b4394f763623b6e7824448560863297e010869d92b4d743cd7891ad507b26c5"
+  },
+  {
+    "path": "supabase/tests/database/funding_capacity_speed.sql",
+    "sourceSha256": "fc57d21c963890460419272871d3b478a92fb558a1f4642defd17f2cf37d1672",
+    "baselineSha256": "fc57d21c963890460419272871d3b478a92fb558a1f4642defd17f2cf37d1672",
+    "successorSha256": "8d23cc9d37eee991d2da5b01ee5ea681c9e675f120b8e9f2820ea75d7fd9e3c0"
+  },
+  {
+    "path": "supabase/tests/database/funding_cycle_foundation.sql",
+    "sourceSha256": "a900665cfd511d8f3554ee4448a92d347118c83daab38fad6517786cecf48f27",
+    "baselineSha256": "a900665cfd511d8f3554ee4448a92d347118c83daab38fad6517786cecf48f27",
+    "successorSha256": "f5d8752da9a91d01b63ae3b165315ad57d08eac1ed0c439921af46e9ec0d85e7"
+  },
+  {
+    "path": "supabase/tests/database/funding_deposit_to_reward_withdrawal.sql",
+    "sourceSha256": "a640b370a6c47562e014a00a1bac626fb5040c7480315e4df8eaed5296ce33b4",
+    "baselineSha256": "a640b370a6c47562e014a00a1bac626fb5040c7480315e4df8eaed5296ce33b4",
+    "successorSha256": "b594b559ebfe7c1e3c3e106faf5ae6447a534dd042bf5f699ea072580fa3770c"
+  },
+  {
+    "path": "supabase/tests/database/funding_entitlement_foundation.sql",
+    "sourceSha256": "1158ecc3245b5b26fc0d61d5c5a751b0adc723bc20fae0df360f8d2cf762b16e",
+    "baselineSha256": "1158ecc3245b5b26fc0d61d5c5a751b0adc723bc20fae0df360f8d2cf762b16e",
+    "successorSha256": "c6b898026a07124fb74b4f9fd6a5679934aa889a9750631c860e37fe96ac50dd"
+  },
+  {
+    "path": "supabase/tests/database/funding_exact_forward_boundary_math.sql",
+    "sourceSha256": "a5efcc06632500048fb7be9ffef9851b34a277baab87b8b7d1cd854b33a5c977",
+    "baselineSha256": "a5efcc06632500048fb7be9ffef9851b34a277baab87b8b7d1cd854b33a5c977",
+    "successorSha256": "a5efcc06632500048fb7be9ffef9851b34a277baab87b8b7d1cd854b33a5c977"
+  },
+  {
+    "path": "supabase/tests/database/funding_fixed_cycle_portion_retention.sql",
+    "sourceSha256": "c84b89177150967d4b55785839a98f7cda61e81ff01dcde5ddf2b326921c531f",
+    "baselineSha256": "c84b89177150967d4b55785839a98f7cda61e81ff01dcde5ddf2b326921c531f",
+    "successorSha256": "c84b89177150967d4b55785839a98f7cda61e81ff01dcde5ddf2b326921c531f"
+  },
+  {
+    "path": "supabase/tests/database/funding_global_control_integration.sql",
+    "sourceSha256": "86eb98d006acb5ede0d1f211a247273d9f101ba3bc9a91506caf91358798a130",
+    "baselineSha256": "86eb98d006acb5ede0d1f211a247273d9f101ba3bc9a91506caf91358798a130",
+    "successorSha256": "23f5175ccecb1ec01b13b9653bdf9605b8824c6e2d9c1dabc37406b3de85c84b"
+  },
+  {
+    "path": "supabase/tests/database/funding_hold_cancel_clock_connections.sql",
+    "sourceSha256": "f60c3baa48771e1accb5ffa76e0be4570c0e4d52c0a9e6429991ccc70a6c2f9e",
+    "baselineSha256": "f60c3baa48771e1accb5ffa76e0be4570c0e4d52c0a9e6429991ccc70a6c2f9e",
+    "successorSha256": "b8641062df5bdf743512bea20cb4079eda4af45d664a63dd0945e1620c7e8541"
+  },
+  {
+    "path": "supabase/tests/database/funding_job_completion_dispatch.sql",
+    "sourceSha256": "3cbf3d88441dc66b5255d243541b925bcebd6c1cf40eac936840c5f69be57eef",
+    "baselineSha256": "3cbf3d88441dc66b5255d243541b925bcebd6c1cf40eac936840c5f69be57eef",
+    "successorSha256": "9deff6bd53156445dfeb333d0dbae83466ce414d110d7133a29575e771a19e5f"
+  },
+  {
+    "path": "supabase/tests/database/funding_principal_newest_first.sql",
+    "sourceSha256": "9cf4963ccc6d13e4194bce25e0ca5c3af8fd94e94c794d01835ba4591b3b2402",
+    "baselineSha256": "9cf4963ccc6d13e4194bce25e0ca5c3af8fd94e94c794d01835ba4591b3b2402",
+    "successorSha256": "95561d2b12692779d686938bd3091e3bf490228e97e56f9dd6bdffff298a2bb9"
+  },
+  {
+    "path": "supabase/tests/database/funding_principal_portion_clocks.sql",
+    "sourceSha256": "58a671824a7a5606cb80c5f954b820b0a85a5d3d56ff1e8b4ef563d56e5d5305",
+    "baselineSha256": "58a671824a7a5606cb80c5f954b820b0a85a5d3d56ff1e8b4ef563d56e5d5305",
+    "successorSha256": "bf16e710b9b5d8cb40ddf401987dd4ad5ee6f18fb47adf36c2ede47951dc24f6"
+  },
+  {
+    "path": "supabase/tests/database/funding_principal_revision.sql",
+    "sourceSha256": "41382be447adff5df081781fbb95fe17f361d5a63ba2158b3b4636579c92c1cc",
+    "baselineSha256": "41382be447adff5df081781fbb95fe17f361d5a63ba2158b3b4636579c92c1cc",
+    "successorSha256": "a4a879f754091999b211e1152a9fef7a127974530e348549a8b0145dc57e8b1d"
+  },
+  {
+    "path": "supabase/tests/database/funding_prospective_allocation_boundary.sql",
+    "sourceSha256": "3e4c5179c5a5958fa33bb6fd9e8495ed3f1a1784f3529d921f2ea20b742e5da4",
+    "baselineSha256": "3e4c5179c5a5958fa33bb6fd9e8495ed3f1a1784f3529d921f2ea20b742e5da4",
+    "successorSha256": "fa4c67074b41be0e9193fa4ee04cdaa82e483a49631c1b2eb873637866e9b834"
+  },
+  {
+    "path": "supabase/tests/database/funding_reward_pending.sql",
+    "sourceSha256": "1d3a10d44f4f61292812cb9afe528aa9668393d052af02ff5c5d24d2d9645747",
+    "baselineSha256": "1d3a10d44f4f61292812cb9afe528aa9668393d052af02ff5c5d24d2d9645747",
+    "successorSha256": "5e7255de09d4110f53a31bec4f2d5f957eb08afcad8fd080e9e61b1a5251b415"
+  },
+  {
+    "path": "supabase/tests/database/funding_rollover_fixed_duration.sql",
+    "sourceSha256": "b0351eaa9540ef9959cd552aae77c839573dc2f7bac1abaccf99b561e4228d75",
+    "baselineSha256": "b0351eaa9540ef9959cd552aae77c839573dc2f7bac1abaccf99b561e4228d75",
+    "successorSha256": "8d492d40f923d65a79bddf99d7bcfa981675568eb46d4a2cd7778b8a58065bea"
+  },
+  {
+    "path": "supabase/tests/database/funding_runtime_condition_completion.sql",
+    "sourceSha256": "d66500dabdd2baeb630652cf1326cfcf45ccc43bdd659b9b6a51dd87102367e7",
+    "baselineSha256": "d66500dabdd2baeb630652cf1326cfcf45ccc43bdd659b9b6a51dd87102367e7",
+    "successorSha256": "f5fd2807bb98b62f879b30a61d35851e19e40bdc565768998d28f3bb98b96f15"
+  },
+  {
+    "path": "supabase/tests/database/funding_runtime_status_display.sql",
+    "sourceSha256": "361b85a292506a92b4b70d2179c399da3afd7bda75bd5b17e19ff2f0ddacd5ff",
+    "baselineSha256": "361b85a292506a92b4b70d2179c399da3afd7bda75bd5b17e19ff2f0ddacd5ff",
+    "successorSha256": "84d95644345a209f2539faae48007f56690058ff9170d74e93f7d04380ea0299"
+  },
+  {
+    "path": "supabase/tests/database/funding_scheduler_originals.sql",
+    "sourceSha256": "2e3b35c064d179c50cbea7d7d051186a287e1fdd0838edf24631a93709d28238",
+    "baselineSha256": "2e3b35c064d179c50cbea7d7d051186a287e1fdd0838edf24631a93709d28238",
+    "successorSha256": "00f828d194c663e0d2293ce52e4a6fe73cecd867eda6945d8b2f634a8bdaf3db"
+  },
+  {
+    "path": "supabase/tests/database/funding_segment_proration.sql",
+    "sourceSha256": "53b34382b8c5635efa7f05c62e35ef4ad1c5a1a08bac03957f1e912c5a3aa8e0",
+    "baselineSha256": "53b34382b8c5635efa7f05c62e35ef4ad1c5a1a08bac03957f1e912c5a3aa8e0",
+    "successorSha256": "58ec3bb1736e3600093bc088b7f0499cf79369381e44583fb3692dc68112a457"
+  },
+  {
+    "path": "supabase/tests/database/funding_slot_downgrade_native.sql",
+    "sourceSha256": "56827c004d69ee76f2aadf0cca65d4091e03fe0907eea3aa23e18bfdf68a01a3",
+    "baselineSha256": "56827c004d69ee76f2aadf0cca65d4091e03fe0907eea3aa23e18bfdf68a01a3",
+    "successorSha256": "6fe37c8c2c4d0e8dceab0c4e747dc10dcdc93f5c9f17ef608364433992272211"
+  },
+  {
+    "path": "supabase/tests/database/funding_terminal_hold_controlled_history.sql",
+    "sourceSha256": "97500fdf940138e162b12c17911224e90ca14ee86c293fd79e4dbb160ac6ea67",
+    "baselineSha256": "97500fdf940138e162b12c17911224e90ca14ee86c293fd79e4dbb160ac6ea67",
+    "successorSha256": "66e9a343006242e175da14c327c21596ee079feaa117bd78c427803d1cc981b2"
+  },
+  {
+    "path": "supabase/tests/database/funding_terminal_seven_day_cancel_controlled_history.sql",
+    "sourceSha256": "15476d0ee832fad8c3fd0dd0bc8cc7a62f2b308e7688c42adf46c2b8ee49dff6",
+    "baselineSha256": "15476d0ee832fad8c3fd0dd0bc8cc7a62f2b308e7688c42adf46c2b8ee49dff6",
+    "successorSha256": "18df4ae2b20c615ccbd85e5d6c79404b65b0961e2e550f6ece861a4576109a1b"
+  },
+  {
+    "path": "supabase/tests/database/funding_terminal_seven_day_partial_recovery_controlled_history.sql",
+    "sourceSha256": "52865f29eb869b5b01acedc7c38b6c1855b34c71e0b99471d4e70c0d49d86730",
+    "baselineSha256": "52865f29eb869b5b01acedc7c38b6c1855b34c71e0b99471d4e70c0d49d86730",
+    "successorSha256": "af834beea0f7b3a234598839426c8bcf4453f0d98ab8ae11edc4d3e88505090c"
+  },
+  {
+    "path": "supabase/tests/database/funding_terminal_writer_controlled_history.sql",
+    "sourceSha256": "3e5d373aa7ac902c2328812a726789f8210cd5e691124d38d5cec8a42059046e",
+    "baselineSha256": "3e5d373aa7ac902c2328812a726789f8210cd5e691124d38d5cec8a42059046e",
+    "successorSha256": "c66801128fc8f2940c0ad65f8222a49cfb4ed2cf82721238163606eb6c99568c"
+  },
+  {
+    "path": "supabase/tests/database/funding_withdrawal.sql",
+    "sourceSha256": "8d618c20cba37de99d0c45a6e53e63ca2c968953accfba872a676e1ae2a836d0",
+    "baselineSha256": "8d618c20cba37de99d0c45a6e53e63ca2c968953accfba872a676e1ae2a836d0",
+    "successorSha256": "57d995d231c9aa7c55b01eeaf74c14d197819edf862127ec9c859f14314e8208"
+  },
+  {
+    "path": "supabase/tests/database/identity_consent_auth.sql",
+    "sourceSha256": "b7445051dbb6067dc95ffefa6b8bf2c014d6d96be56215afecd19993128ed51c",
+    "baselineSha256": "b7445051dbb6067dc95ffefa6b8bf2c014d6d96be56215afecd19993128ed51c",
+    "successorSha256": "961c6bea687cb530175570c12ad6cef5a596c6e9e4b59583b1ba7df924f00b4a"
+  },
+  {
+    "path": "supabase/tests/database/input3_credit_allocation_after_principal_cancel.sql",
+    "sourceSha256": "97dd02c1e85a489f4197f0c33e92faf538592d67a9cdd1138b4e0c065e6de979",
+    "baselineSha256": "97dd02c1e85a489f4197f0c33e92faf538592d67a9cdd1138b4e0c065e6de979",
+    "successorSha256": "0376a20d8051bfb5965e8915c628028ffda8d5c58d2f2b614abeff57e239d1a3"
+  },
+  {
+    "path": "supabase/tests/database/krw_deposit_journal_integrity.sql",
+    "sourceSha256": "97e1dc22ac782ad341a16d6b1ab5401a5210c667e5cb698275d9725dd6305d93",
+    "baselineSha256": "db9a8802340b2f6b9d9416cad58425bdda18cabea15a127641ec6ccbb9ff960b",
+    "successorSha256": "e3559fd5fe4b58748ae58ce9211f2056f2bd539ad7ceae13dc47551e7d4009d3"
+  },
+  {
+    "path": "supabase/tests/database/kyc_durable_receipts.sql",
+    "sourceSha256": "db291295e62473754ef29c8ceb6c9de90faf96ee67126df4053746f28f094262",
+    "baselineSha256": "db291295e62473754ef29c8ceb6c9de90faf96ee67126df4053746f28f094262",
+    "successorSha256": "ff683f9a5f6935dab1e230a423faac6d6dd9f8433d5e98217d347c81ab6d991d"
+  },
+  {
+    "path": "supabase/tests/database/kyc_evidence_attestation.sql",
+    "sourceSha256": "1f83492bc136839dd12c4a633afe69a060219e19ec6b86ca98459f263179aa70",
+    "baselineSha256": "1f83492bc136839dd12c4a633afe69a060219e19ec6b86ca98459f263179aa70",
+    "successorSha256": "a6ab6bdad8fed8b515f37f9a02fc17852fdc3178441d601a6210b8ae23c14987"
+  },
+  {
+    "path": "supabase/tests/database/kyc_legacy_submission_recovery.sql",
+    "sourceSha256": "6f0e4be2e9af1e8ecf93cbffad4eec3dd0f1fda2adb347f5d8eea28573d6c09e",
+    "baselineSha256": "6f0e4be2e9af1e8ecf93cbffad4eec3dd0f1fda2adb347f5d8eea28573d6c09e",
+    "successorSha256": "9ff5a02be292b1d12db3ce7322a97585526a69722280b2230689210c05ec8a25"
+  },
+  {
+    "path": "supabase/tests/database/ledger_account_worker_replay_integrity.sql",
+    "sourceSha256": "02f9cf70e878a59f18a241ad03a84ac55a9605fa5a2e2a4e77896391c7171fbe",
+    "baselineSha256": "02f9cf70e878a59f18a241ad03a84ac55a9605fa5a2e2a4e77896391c7171fbe",
+    "successorSha256": "268c89764148747bd4835a6d112517b1289d1fd176631a584d3b0c3b0cbcaebf"
+  },
+  {
+    "path": "supabase/tests/database/legacy_withdrawal_entrypoint_closure.sql",
+    "sourceSha256": "311b70ab9a3c13b6aee43a125996208d4cbe201ebabbff1a3a495676cb6b8bc1",
+    "baselineSha256": "311b70ab9a3c13b6aee43a125996208d4cbe201ebabbff1a3a495676cb6b8bc1",
+    "successorSha256": "25ec825279c22eb974f3a89792490ef233f58c005d2771d8e9f6894b19098f94"
+  },
+  {
+    "path": "supabase/tests/database/liveops_content_recovery.sql",
+    "sourceSha256": "2b90a41a852c7dd050e8da52a2badce9d78fd7cb9dd8b595d67892ad199bcd5d",
+    "baselineSha256": "2b90a41a852c7dd050e8da52a2badce9d78fd7cb9dd8b595d67892ad199bcd5d",
+    "successorSha256": "2799bd7a1c51020ff44f45cb735f1b1a74ab94c121ba921f1e57c62d54dc44a8"
+  },
+  {
+    "path": "supabase/tests/database/liveops_publication_bounded_notifications.sql",
+    "sourceSha256": "54723c89185f0672150ca3bfb31a499915ffb4c4c4b40671e285c1d781953133",
+    "baselineSha256": "54723c89185f0672150ca3bfb31a499915ffb4c4c4b40671e285c1d781953133",
+    "successorSha256": "e1cbfaa4f0c85d7a75e6d7a000435605428a7323b784608b012f444ff898d943"
+  },
+  {
+    "path": "supabase/tests/database/local_cash_event_explicit_consent.sql",
+    "sourceSha256": "9442ff4084598e19cac0e282a0550a58d3deb3274f4da384019927024a526a81",
+    "baselineSha256": "9442ff4084598e19cac0e282a0550a58d3deb3274f4da384019927024a526a81",
+    "successorSha256": "bbf6aeed708438c282fc593ee80124bc132d998313c459e64dfa34ce713e0682"
+  },
+  {
+    "path": "supabase/tests/database/local_cash_event_terms_boundary.sql",
+    "sourceSha256": "5cb16ccd9c8ed251da682e3996cbf63486c7095b250e55139bad4687e51909f4",
+    "baselineSha256": "5cb16ccd9c8ed251da682e3996cbf63486c7095b250e55139bad4687e51909f4",
+    "successorSha256": "5d61f3f1e57de09cdcfb5cd037676f3861764159a89ca3267dd84e31d9487983"
+  },
+  {
+    "path": "supabase/tests/database/local_cash_referral_stage1.sql",
+    "sourceSha256": "ccb6039c55325012f634377e903d55c97581ff721c63819ac3e43ce89c658de8",
+    "baselineSha256": "ccb6039c55325012f634377e903d55c97581ff721c63819ac3e43ce89c658de8",
+    "successorSha256": "2a149e22b759c995bd579b4118bf40f8e32ab02e60a792ee9446f213f974f2fd"
+  },
+  {
+    "path": "supabase/tests/database/local_cash_referral_stage2_controlled_history.sql",
+    "sourceSha256": "e4c604014cf874dd4162ea129991e33dbbc279fddaa29d138fa5d7aa12022230",
+    "baselineSha256": "e4c604014cf874dd4162ea129991e33dbbc279fddaa29d138fa5d7aa12022230",
+    "successorSha256": "05c77453847f9d5b76ef68298925d18ad7301ca91e77fed953403fd53de50d0e"
+  },
+  {
+    "path": "supabase/tests/database/member_event_source_bound_participation.sql",
+    "sourceSha256": "7b3138a308002b365938ca66eae5f57facd41c63daf4aab56f8743536686eed3",
+    "baselineSha256": "7b3138a308002b365938ca66eae5f57facd41c63daf4aab56f8743536686eed3",
+    "successorSha256": "bc4b06949fbc467e66e987e5baee4b5b82c6250df8231de0bf18fa5cb12f1e43"
+  },
+  {
+    "path": "supabase/tests/database/member_faq_sealed_content_lifecycle.sql",
+    "sourceSha256": "da4570f030f94558492ec42b30dfd13ec0b45fc375a6c34fa4cbbea67337bbee",
+    "baselineSha256": "da4570f030f94558492ec42b30dfd13ec0b45fc375a6c34fa4cbbea67337bbee",
+    "successorSha256": "36baee39ef4bd186dfc15a44d42b0e47c59f9a3a10df26a0fe74d8a07c8ae139"
+  },
+  {
+    "path": "supabase/tests/database/member_funding_allocation_authority.sql",
+    "sourceSha256": "9524e845f5ab577e0f5bd9c82a130cafbb170b6587ac043fe46c0f92779b8aea",
+    "baselineSha256": "9524e845f5ab577e0f5bd9c82a130cafbb170b6587ac043fe46c0f92779b8aea",
+    "successorSha256": "c73bf0f26802d45ba6e31d16a29bb84ea0901f609873b2ad49faa16b6f66bff8"
+  },
+  {
+    "path": "supabase/tests/database/member_mining_server_display.sql",
+    "sourceSha256": "4f7733aae635e67424595f051584e6cc5a992d0caf695c8d65bc8f2b305ebe5c",
+    "baselineSha256": "4f7733aae635e67424595f051584e6cc5a992d0caf695c8d65bc8f2b305ebe5c",
+    "successorSha256": "cd74001bdf2f4bcc00ae2f646692e2e33480ebd49aa7796b680873a1fdc0543c"
+  },
+  {
+    "path": "supabase/tests/database/member_notice_cta_projection.sql",
+    "sourceSha256": "7b2e679842f092f0097923a0bfbe16476e5e0a4e4a1e329eb6772b062881ba1e",
+    "baselineSha256": "7b2e679842f092f0097923a0bfbe16476e5e0a4e4a1e329eb6772b062881ba1e",
+    "successorSha256": "6f78c249efdd56cd5ad42a1f60aa3daa2428f8946e7265b7163691589ec6a73f"
+  },
+  {
+    "path": "supabase/tests/database/member_principal_confirmation_commands.sql",
+    "sourceSha256": "a902db066937a2f25d5ffe6410e281502b5e4efae04b4adbdec3a15bad90d52c",
+    "baselineSha256": "a902db066937a2f25d5ffe6410e281502b5e4efae04b4adbdec3a15bad90d52c",
+    "successorSha256": "ec5b240c0064d5776eb923eb98f239b6d4a145ec181584d5ffcb0ec53f6d3e2e"
+  },
+  {
+    "path": "supabase/tests/database/member_profile_source_verified_audit_ack.sql",
+    "sourceSha256": "9c7256f8ba2d483148648bc9f28a34a47413906cf8ff7d02da566dee2902dba3",
+    "baselineSha256": "9c7256f8ba2d483148648bc9f28a34a47413906cf8ff7d02da566dee2902dba3",
+    "successorSha256": "7a61ce686cb7a4d6b78319378d144f3d3b938e6ba77744317d8ed314e80722d6"
+  },
+  {
+    "path": "supabase/tests/database/member_push_binding_fences.sql",
+    "sourceSha256": "a198f93baa2b9fd5a1cd1b2cb2240d90f21620a6189d103d7d9f34728560cd39",
+    "baselineSha256": "a198f93baa2b9fd5a1cd1b2cb2240d90f21620a6189d103d7d9f34728560cd39",
+    "successorSha256": "77d812513138be7e3b296ff869c8e499c80f9ce132c8a015a543d1ce99e2df0d"
+  },
+  {
+    "path": "supabase/tests/database/mining_read_model_least_privilege.sql",
+    "sourceSha256": "6ee0c843876488ec873baa9d2af84e40284eae651373d7b55ce83fe67890a47a",
+    "baselineSha256": "6ee0c843876488ec873baa9d2af84e40284eae651373d7b55ce83fe67890a47a",
+    "successorSha256": "6ee0c843876488ec873baa9d2af84e40284eae651373d7b55ce83fe67890a47a"
+  },
+  {
+    "path": "supabase/tests/database/money_source_provenance.sql",
+    "sourceSha256": "4c7c71b6e3a3027f01958eedd9e4e7ca81fa0a5fdf7616ef42ffa01f769c2be0",
+    "baselineSha256": "4c7c71b6e3a3027f01958eedd9e4e7ca81fa0a5fdf7616ef42ffa01f769c2be0",
+    "successorSha256": "1317189b32799dbb6c00574e5dfe685e74c67790d82f8175e82aa64c6b65c7e1"
+  },
+  {
+    "path": "supabase/tests/database/native_principal_finalize_input3_continuity.sql",
+    "sourceSha256": "3127c394e860c3a8c99f801b83270670d034f2d85fed3f8cdfdaafb90b6e8ecf",
+    "baselineSha256": "51f92f9aa9500b484398c534f27af86410b01172bf074285b1cc23f132f3088f",
+    "successorSha256": "610d8ce07bad529b9bfd42c8ea507bf60ce30144319a6246103a8a59a2fee8e2"
+  },
+  {
+    "path": "supabase/tests/database/non_principal_withdrawal_coverage.sql",
+    "sourceSha256": "8cf87fb8425669e7fb662f31e51f05f22cff43e29d9e5ab1dffdb13f19bc43d3",
+    "baselineSha256": "8cf87fb8425669e7fb662f31e51f05f22cff43e29d9e5ab1dffdb13f19bc43d3",
+    "successorSha256": "c8a86abc188f8de4a80e4acb4e0dcbce0082e2c50d49e9f40356a15ff7652723"
+  },
+  {
+    "path": "supabase/tests/database/nonmoney_award_outbox_ack.sql",
+    "sourceSha256": "0ad1989a3a66b81067ad3eb6f72fb4387e853ecb23f35d2bd67147f5f3ffb348",
+    "baselineSha256": "0ad1989a3a66b81067ad3eb6f72fb4387e853ecb23f35d2bd67147f5f3ffb348",
+    "successorSha256": "ad32f4db7ce2ea9ca16e207234e3912b4b9af7577f770f4fec1c3415b0bffb4b"
+  },
+  {
+    "path": "supabase/tests/database/nonmoney_source_bound_local_qa_rewards.sql",
+    "sourceSha256": "5c9c9f431e4fe161cf62782064e0cca34d1a33dc3135e2e642fa8b0ebfb2840f",
+    "baselineSha256": "5c9c9f431e4fe161cf62782064e0cca34d1a33dc3135e2e642fa8b0ebfb2840f",
+    "successorSha256": "c5797c0d8e70645dd2f0874e17231893cf37eb57a60ac043e6dd1530e27db1bc"
+  },
+  {
+    "path": "supabase/tests/database/principal_credit_revision_net_eligibility.sql",
+    "sourceSha256": "ffc6a3529c34ee7f323aec22cabe0aaceac688cd178c3cf1095d8e8a49ff90cb",
+    "baselineSha256": "ffc6a3529c34ee7f323aec22cabe0aaceac688cd178c3cf1095d8e8a49ff90cb",
+    "successorSha256": "054a2924adaf27e9d4b6f15f20fcc86e50ed69bae511269cd61ee425c79d6960"
+  },
+  {
+    "path": "supabase/tests/database/principal_portion_source_inputs.sql",
+    "sourceSha256": "9ea9afda69c04dec4d8dc90f48ee1a4c217cfd2b7e54044b3edd5e8b717f9527",
+    "baselineSha256": "9ea9afda69c04dec4d8dc90f48ee1a4c217cfd2b7e54044b3edd5e8b717f9527",
+    "successorSha256": "970a4a38c8c520ed474ccce6c5802a4e2e823052f122fe8ba360e1a97f2e1fa3"
+  },
+  {
+    "path": "supabase/tests/database/principal_recovery_forward_reference.sql",
+    "sourceSha256": "48f5b5f2088fffcf8e9222bfe6db4aba265a738256734fc89b9b6795dc1af2da",
+    "baselineSha256": "48f5b5f2088fffcf8e9222bfe6db4aba265a738256734fc89b9b6795dc1af2da",
+    "successorSha256": "48f5b5f2088fffcf8e9222bfe6db4aba265a738256734fc89b9b6795dc1af2da"
+  },
+  {
+    "path": "supabase/tests/database/principal_recovery_typed_intent_authority.sql",
+    "sourceSha256": "f54283bcdeb964ab4d2910d0fc18e575b4e2cdf32c29b6409a4d2e99bd96a0d3",
+    "baselineSha256": "f54283bcdeb964ab4d2910d0fc18e575b4e2cdf32c29b6409a4d2e99bd96a0d3",
+    "successorSha256": "4568c29a27c1e71d22a5b06cf4b5d0d15a98c65b55f32fb846c172bb22cec47d"
+  },
+  {
+    "path": "supabase/tests/database/principal_runtime_forward_reference.sql",
+    "sourceSha256": "10c6185129b04df1df0ca13d58f43c2c079642f2f6089f91125169403bd87b54",
+    "baselineSha256": "10c6185129b04df1df0ca13d58f43c2c079642f2f6089f91125169403bd87b54",
+    "successorSha256": "10c6185129b04df1df0ca13d58f43c2c079642f2f6089f91125169403bd87b54"
+  },
+  {
+    "path": "supabase/tests/database/principal_runtime_hold_cancel_cutover.sql",
+    "sourceSha256": "9336d80c7c371a27f6eb30437e6dc86486d2789b91be4e0be94dbebbf95d57eb",
+    "baselineSha256": "9336d80c7c371a27f6eb30437e6dc86486d2789b91be4e0be94dbebbf95d57eb",
+    "successorSha256": "9317286c3b23e259a52e3623c97baf66cbb8933f54d082690777ae4440468223"
+  },
+  {
+    "path": "supabase/tests/database/product_catalog_review_command.sql",
+    "sourceSha256": "5ef294ac6d87557170ca6831148b0b37f984edcd4a0776f4d6b1093c5b2aa88a",
+    "baselineSha256": "5ef294ac6d87557170ca6831148b0b37f984edcd4a0776f4d6b1093c5b2aa88a",
+    "successorSha256": "138f4f941364da71e532cf9a3d91597229c7dda387772593fe3b3cc2dee7c43e"
+  },
+  {
+    "path": "supabase/tests/database/pwa_source_bound_device_delivery.sql",
+    "sourceSha256": "1a55f24d10a8bec4fcef4ccc8d1b555f05dcfd8b7730023b8d64da641e4e7d18",
+    "baselineSha256": "1a55f24d10a8bec4fcef4ccc8d1b555f05dcfd8b7730023b8d64da641e4e7d18",
+    "successorSha256": "4387f3083a0fc18fc3a170d25c612eac4c981968002bc3b6405879d3b27a93fd"
+  },
+  {
+    "path": "supabase/tests/database/repeated_input3_member_principal_commands.sql",
+    "sourceSha256": "dc28dc899dc991571c6197c2d95e35e76c129a2407858c9fb4e093c82e237989",
+    "baselineSha256": "dc28dc899dc991571c6197c2d95e35e76c129a2407858c9fb4e093c82e237989",
+    "successorSha256": "33ae16d5b17b5874cd049220b62b66320337208507555c7c66341d81480a0f3b"
+  },
+  {
+    "path": "supabase/tests/database/rls.sql",
+    "sourceSha256": "8bbb3ac60738691c68f7fa7a12f39991ca4c242a68ee4c8a55551131bf2a67dc",
+    "baselineSha256": "3a7b334823c2f8bd3c0007667c87b8381d4c54f99bab094d37454be8e2ddedba",
+    "successorSha256": "28da403145f546ecea096cba44793bfb1d31712b258927745a8dd9deed7b7f0e"
+  },
+  {
+    "path": "supabase/tests/database/safe_mode_atomic_audit_command.sql",
+    "sourceSha256": "32c285df1555bc7fb5279ce3083f76d8a1c6e378451c7dec2d330eaf36ed374e",
+    "baselineSha256": "32c285df1555bc7fb5279ce3083f76d8a1c6e378451c7dec2d330eaf36ed374e",
+    "successorSha256": "e56dd16be151c44fdabf740b7b1449dce3d71575aa54b86b685da15894c882ad"
+  },
+  {
+    "path": "supabase/tests/database/safe_mode_closed_outbox_ack.sql",
+    "sourceSha256": "f5c0bffc10fff60594f86218d3b8d8e5dffd19b0d71635fa12c400a9217683b1",
+    "baselineSha256": "f5c0bffc10fff60594f86218d3b8d8e5dffd19b0d71635fa12c400a9217683b1",
+    "successorSha256": "d4dd5b109678adc987eeef54a8da5bcf5e0de88a776b93289e1cd6768489380c"
+  },
+  {
+    "path": "supabase/tests/database/service_role_image_default_floor.sql",
+    "sourceSha256": "5f7304e8c9f145e2ed4596a38f4b3bfbbb4fe7ecfb048929b00f574dea2d4686",
+    "baselineSha256": "086f99b7c33d95962c2ec2dd685bf560cd9939281ae467387ea0881e5b507a4b",
+    "successorSha256": "0922d4e2be1bf0d1040b1e1b37e66f37e3688ab6e298742276ddbef6c996715e"
+  },
+  {
+    "path": "supabase/tests/database/trial_completion_canonical_original.sql",
+    "sourceSha256": "6d779c3e3386f94c5515e8a7db2bc01822d1b211ce3c75ab9da30d16f5ebd67c",
+    "baselineSha256": "6d779c3e3386f94c5515e8a7db2bc01822d1b211ce3c75ab9da30d16f5ebd67c",
+    "successorSha256": "40cc9ee55d85441d09a37e2c1aa557433d107134501735dcf62707ce5795cac5"
+  },
+  {
+    "path": "supabase/tests/database/trial_settlement.sql",
+    "sourceSha256": "ead17a6ba9d1c5e40e599cfd234687cc36d310ca070347d3b2a2859da16f7152",
+    "baselineSha256": "ead17a6ba9d1c5e40e599cfd234687cc36d310ca070347d3b2a2859da16f7152",
+    "successorSha256": "ced58e5c5524135153cd9d48fd79ec87c2a7ab10e2edfa45c1bf5711a64a5a89"
+  },
+  {
+    "path": "supabase/tests/database/usdt_approval_receipt_integrity.sql",
+    "sourceSha256": "9dbeed34e31b90b410440fcc2ca0eba0daa165207f70533f459bb94d8763ea7e",
+    "baselineSha256": "9dbeed34e31b90b410440fcc2ca0eba0daa165207f70533f459bb94d8763ea7e",
+    "successorSha256": "6350db96aa3abe7b430376e903138c525c3d98256626600556bcd4f3248c25b4"
+  },
+  {
+    "path": "supabase/tests/database/usdt_manual_full_payout_contract.sql",
+    "sourceSha256": "2b23a8a8e63eff36641b2254e241648754b20baa1d8c2fbd31f473ba9dbc9bf2",
+    "baselineSha256": "2b23a8a8e63eff36641b2254e241648754b20baa1d8c2fbd31f473ba9dbc9bf2",
+    "successorSha256": "2b23a8a8e63eff36641b2254e241648754b20baa1d8c2fbd31f473ba9dbc9bf2"
+  },
+  {
+    "path": "supabase/tests/database/verified_credit_funding_cutover.sql",
+    "sourceSha256": "bab91411f84f26eb2fc1fe31b2bd532c8acc342e5d34badc63bcca3a78fdccaa",
+    "baselineSha256": "bab91411f84f26eb2fc1fe31b2bd532c8acc342e5d34badc63bcca3a78fdccaa",
+    "successorSha256": "ae825357c78b51d8dd58512bdedec9f5b253d7f7b25474b22923100fae106d2f"
+  },
+  {
+    "path": "supabase/tests/database/verified_credit_funding_input_reader.sql",
+    "sourceSha256": "464eab12ff869af5d36c21c4351eadcb29f69cda3b1664b06e3029e9e0b33d56",
+    "baselineSha256": "464eab12ff869af5d36c21c4351eadcb29f69cda3b1664b06e3029e9e0b33d56",
+    "successorSha256": "93dac32800063f823759886f19cc53aaa4ed9ad06a751953f2573372d203d04b"
+  },
+  {
+    "path": "supabase/tests/database/welcome_risk_policy_parity.sql",
+    "sourceSha256": "fcba39ab3e7c430dac866ed0568da97721d44c8ba4906516f870975872491ec2",
+    "baselineSha256": "fcba39ab3e7c430dac866ed0568da97721d44c8ba4906516f870975872491ec2",
+    "successorSha256": "6d43d87fe0a08fb7cdf8f8e1a7a8bb22b3166bbedbbd327aea7c2f13b6f186e7"
+  },
+  {
+    "path": "supabase/tests/database/withdrawal_completion_notification_original.sql",
+    "sourceSha256": "24a0b12e7432af7b3f719e22959a1ab035710b493d348babb10200a04c925415",
+    "baselineSha256": "24a0b12e7432af7b3f719e22959a1ab035710b493d348babb10200a04c925415",
+    "successorSha256": "f12e80465e3c6f657c63566eec120d8471e7979c210a0abf6a692ef3d3deab09"
+  },
+  {
+    "path": "supabase/tests/database/withdrawal_destination_reauthentication.sql",
+    "sourceSha256": "1d6ef51067a9203489ca90a496d3d55359ec32b3e12fa66b5193a5b07a7e6690",
+    "baselineSha256": "1d6ef51067a9203489ca90a496d3d55359ec32b3e12fa66b5193a5b07a7e6690",
+    "successorSha256": "a040e8b536b80ef20e3978f796be335791ec81bbb2dbb6ef1c394da938ca3d27"
+  },
+  {
+    "path": "supabase/tests/database/withdrawal_destination_safe_read.sql",
+    "sourceSha256": "895dc9596d0edefa71301365041a511b3a2f8e65e0d30ce727350533ad508f89",
+    "baselineSha256": "895dc9596d0edefa71301365041a511b3a2f8e65e0d30ce727350533ad508f89",
+    "successorSha256": "a57b3e5af0a44ad5793040fa7be12459fca761933321d1e9d592c3b70a50c238"
+  },
+  {
+    "path": "supabase/tests/database/withdrawal_external_send_key_registry.sql",
+    "sourceSha256": "6fba06cc78ab983fcd91cbffd5df6f556fe886cfd7937c246d2237657c1abd9a",
+    "baselineSha256": "6fba06cc78ab983fcd91cbffd5df6f556fe886cfd7937c246d2237657c1abd9a",
+    "successorSha256": "6fba06cc78ab983fcd91cbffd5df6f556fe886cfd7937c246d2237657c1abd9a"
+  },
+  {
+    "path": "supabase/tests/database/withdrawal_idempotency_key_reuse.sql",
+    "sourceSha256": "b3bba72ca71081f008e63de66f5957c94c9706f227963972aeb4a7f9e23a2da4",
+    "baselineSha256": "b3bba72ca71081f008e63de66f5957c94c9706f227963972aeb4a7f9e23a2da4",
+    "successorSha256": "81195b91c9d6564b2e010f4c7ebb22ff3b7f4f5750ee73eb0f6eeceb35361a8c"
+  },
+  {
+    "path": "supabase/tests/database/withdrawal_lifecycle_outbox_ack.sql",
+    "sourceSha256": "4d6e26e1d43ef0d74fc1c0cec039fa1e38033a57c8ac45289e8afb1ac3bab159",
+    "baselineSha256": "4d6e26e1d43ef0d74fc1c0cec039fa1e38033a57c8ac45289e8afb1ac3bab159",
+    "successorSha256": "4d6e26e1d43ef0d74fc1c0cec039fa1e38033a57c8ac45289e8afb1ac3bab159"
+  },
+  {
+    "path": "supabase/tests/database/withdrawal_logical_lifecycle.sql",
+    "sourceSha256": "ace6a8942b3e3348ed2e350a55bc037e5eb1b32f4c8f289ba3d05c07457d60c5",
+    "baselineSha256": "ace6a8942b3e3348ed2e350a55bc037e5eb1b32f4c8f289ba3d05c07457d60c5",
+    "successorSha256": "4f8d39e2b94589ed5f479cbc498cfc26caa7b5dff8440755a3f026a63d49f51e"
+  },
+  {
+    "path": "supabase/tests/database/withdrawal_mining_reward_hold.sql",
+    "sourceSha256": "f88b1bda90d8b1381af921e641eddeb121a13ec2c35cafb0ff6216709488e7e7",
+    "baselineSha256": "f88b1bda90d8b1381af921e641eddeb121a13ec2c35cafb0ff6216709488e7e7",
+    "successorSha256": "6991447c3fdc99b247fcdb37936b14e3d84643065e80e5a2584320a61c9e207e"
+  },
+  {
+    "path": "supabase/tests/database/withdrawal_reserved_source_disposition.sql",
+    "sourceSha256": "b585d509a69e8b5a849b184c452b699a2ad615cfbc94de5afefd8b1a8c17e105",
+    "baselineSha256": "b585d509a69e8b5a849b184c452b699a2ad615cfbc94de5afefd8b1a8c17e105",
+    "successorSha256": "d8e76917f5f9e8147a3e766c31c778df98a615c58574093ff3cae47e81de506b"
+  },
+  {
+    "path": "supabase/tests/database/withdrawal_source_hold.sql",
+    "sourceSha256": "667d747d372d49cabf2784d69eefe0897a2c783fa29f4d211059d214addcc359",
+    "baselineSha256": "667d747d372d49cabf2784d69eefe0897a2c783fa29f4d211059d214addcc359",
+    "successorSha256": "1d4aa9ccc9880ec47941e995a195a37a86e22217230fadc9324713d209217f69"
+  },
+  {
+    "path": "supabase/tests/database/withdrawal_verified_source_guard.sql",
+    "sourceSha256": "96bba4d7af6c19b21339edb4f329dfca730a89899fdc8febf70c8d3b215c4db5",
+    "baselineSha256": "96bba4d7af6c19b21339edb4f329dfca730a89899fdc8febf70c8d3b215c4db5",
+    "successorSha256": "8740b666f609c3a7a56417ef1c52c77e01316a2b6afdfdef6727a8c229fc525e"
+  },
+  {
+    "path": "supabase/tests/database/withdrawal_zero_fee_policy.sql",
+    "sourceSha256": "91ba97a465c1d0d670b4752a5f1d863e586fe9f95d9d120cbc563dc7eda50966",
+    "baselineSha256": "91ba97a465c1d0d670b4752a5f1d863e586fe9f95d9d120cbc563dc7eda50966",
+    "successorSha256": "bf275ba7c31e7965e9fc42381b9e3e6171c951d908e7866c7ea1f6caf8afad6e"
+  },
+  {
+    "path": "supabase/tests/database/worker_component_stop_scope.sql",
+    "sourceSha256": "ed55c85fe6770d5c3aa647f6f009453adc38a46309047a2d6af91cd0c145fa74",
+    "baselineSha256": "ed55c85fe6770d5c3aa647f6f009453adc38a46309047a2d6af91cd0c145fa74",
+    "successorSha256": "1606bbb9f6bca7b5456ff061bd22d7731495de70ab2865b25c69a2dcf98d7f23"
+  },
+  {
+    "path": "supabase/tests/database/worker_stop_retry_budget_negatives.sql",
+    "sourceSha256": "e256bc45e7c9a9533abfb9f7ca2cb5893a285a3c566474274bcaf816cbedd196",
+    "baselineSha256": "e256bc45e7c9a9533abfb9f7ca2cb5893a285a3c566474274bcaf816cbedd196",
+    "successorSha256": "d01bc6bb07214305544210e89835127db7400e8846fceb3b367d6f2d57f2c79b"
+  },
+  {
+    "path": "supabase/tests/database/worker_stopped_source_backed_cms.sql",
+    "sourceSha256": "43c04d073a7d2790cebdef994aa69bd7c78780a01c2c284e21a0948808d6512b",
+    "baselineSha256": "43c04d073a7d2790cebdef994aa69bd7c78780a01c2c284e21a0948808d6512b",
+    "successorSha256": "46772da1b02a4fbf1e80bc92b0dd714fec5316d368bfaec190fc049a59ae7362"
+  },
+  {
+    "path": "supabase/tests/database/ws02_foundations.sql",
+    "sourceSha256": "0c84718d6fa8262cf34ec07045c8fed9bca1f323cbaef520bf9c2799a49b57c8",
+    "baselineSha256": "0c84718d6fa8262cf34ec07045c8fed9bca1f323cbaef520bf9c2799a49b57c8",
+    "successorSha256": "2e1436ebfab6555f98024f777bbae71cc2d6ad86684163efeb82d5f53fa1d8f8"
+  },
+  {
+    "path": "supabase/tests/database/ws04_security_money_workers.sql",
+    "sourceSha256": "4cdc308ef0c2e023caed2e136620648450968428149f4e5d7eaaba71baa9a685",
+    "baselineSha256": "987032a95ec5b3a571b86538cc50d4e9968582e71dbc91edd5953ec2d2b4161e",
+    "successorSha256": "69075de94f064a3a84bd815c44ed75e674cde438c5ab149b1157c46fb629b5f8"
+  },
+  {
+    "path": "supabase/tests/database/ws05_admin_session_step_up.sql",
+    "sourceSha256": "53ba5759ed02bd3f05a1618b270850f5128844fdaf68355209cf168afca0e598",
+    "baselineSha256": "53ba5759ed02bd3f05a1618b270850f5128844fdaf68355209cf168afca0e598",
+    "successorSha256": "8fa7d6360db12c7647e13b86f1548d8a0adb4d409dde82caafe258ad810388f0"
+  },
+  {
+    "path": "supabase/tests/database/ws05_worker_lease_replay.sql",
+    "sourceSha256": "d7883a2cf96def020dd8ff1a3a83d4a2d778547b44416f2accd70133f7670d48",
+    "baselineSha256": "d7883a2cf96def020dd8ff1a3a83d4a2d778547b44416f2accd70133f7670d48",
+    "successorSha256": "9cd162aea9ca7f3947f98fd80de76ab58cba320d367c6227e72615f3edab874e"
+  },
+  {
+    "path": "supabase/tests/database/ws06_step_up_session_binding.sql",
+    "sourceSha256": "25217088d59b64538f0b995137df031fe510f31408b5c09936ca57f744d3b5e6",
+    "baselineSha256": "25217088d59b64538f0b995137df031fe510f31408b5c09936ca57f744d3b5e6",
+    "successorSha256": "543a5d4bbbecf7c5271d9bfdf92bf74e4b2f72a7b42ebf6411b2c5fe1a59a422"
+  },
+  {
+    "path": "supabase/tests/snippets/resolve_disposable_dblink_host.inc",
+    "sourceSha256": "461f1df73a459da387d7f704500db39801f57b954511183eea2f123d9200d99e",
+    "baselineSha256": "461f1df73a459da387d7f704500db39801f57b954511183eea2f123d9200d99e",
+    "successorSha256": "461f1df73a459da387d7f704500db39801f57b954511183eea2f123d9200d99e"
+  }
+]

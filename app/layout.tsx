@@ -8,6 +8,7 @@ import { PwaRegistrar } from "@/components/system/pwa-registrar";
 import { ThemeRuntime } from "@/components/system/theme-runtime";
 import { putdukFont } from "@/lib/design/fonts";
 import { themeBootstrap } from "@/lib/design/theme";
+import { WORKROOM_ICON } from "@/components/workroom/brand";
 
 import "./globals.css";
 import "./productization.css";
@@ -20,26 +21,26 @@ const platformStructuredData = {
     {
       "@type": "Organization",
       "@id": `${siteUrl}/#organization`,
-      name: "PUTDUK",
+      name: "WORKROOM",
       url: siteUrl,
     },
     {
       "@type": "WebSite",
       "@id": `${siteUrl}/#website`,
       inLanguage: "ko-KR",
-      name: "PUTDUK MINING",
+      name: "WORKROOM",
       publisher: { "@id": `${siteUrl}/#organization` },
       url: siteUrl,
     },
     {
       "@type": "SoftwareApplication",
       "@id": `${siteUrl}/#application`,
-      alternateName: "퍼뜩 채굴",
-      applicationCategory: "FinanceApplication",
+      alternateName: "워크룸",
+      applicationCategory: "EducationalApplication",
       description:
-        "KOREA에서 시작해 앱을 닫아도 이어지는 채굴 상태와 결과를 확인하는 채굴 서비스입니다.",
+        "실제 거래와 분리된 무료 시뮬레이션입니다. 체험 포인트는 현금 전환이나 출금이 불가능합니다.",
       inLanguage: "ko-KR",
-      name: "PUTDUK MINING",
+      name: "WORKROOM",
       operatingSystem: "Web, PWA",
       url: siteUrl,
     },
@@ -49,41 +50,30 @@ const platformStructuredData = {
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "퍼뜩 채굴 | PUTDUK MINING",
-    template: "%s | 퍼뜩 채굴",
+    default: "워크룸 | WORKROOM",
+    template: "%s | 워크룸",
   },
   description:
-    "KOREA에서 시작해 앱을 닫아도 이어지는 채굴 상태와 결과를 확인하는 PUTDUK의 채굴 서비스입니다.",
-  applicationName: "PUTDUK MINING",
+    "환율과 주식의 흐름을 체험하는 무료 WORKROOM 시뮬레이션. 체험 포인트는 현금으로 전환되지 않습니다.",
+  applicationName: "WORKROOM",
   icons: {
-    icon: [
-      {
-        url: "/brand/identity/20261014/favicon/favicon.svg",
-        type: "image/svg+xml",
-      },
-      {
-        url: "/brand/identity/20261014/favicon/favicon-32.png",
-        sizes: "32x32",
-        type: "image/png",
-      },
-    ],
-    shortcut: "/brand/identity/20261014/favicon/favicon.ico",
-    apple: "/brand/identity/20261014/pwa/putduk-pwa-dark-192.png",
+    icon: { url: WORKROOM_ICON, type: "image/svg+xml" },
+    shortcut: WORKROOM_ICON,
   },
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     locale: "ko_KR",
     url: siteUrl,
-    siteName: "PUTDUK MINING",
-    title: "퍼뜩 채굴 | PUTDUK MINING",
-    description: "채굴의 시간을, 신뢰 가능한 기록으로.",
+    siteName: "WORKROOM",
+    title: "워크룸 | WORKROOM",
+    description: "나만의 공간에서 시장의 흐름을 경험하세요.",
   },
   robots: { index: true, follow: true },
 };
 
 export const viewport: Viewport = {
-  colorScheme: "light dark",
+  colorScheme: "dark",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
@@ -102,12 +92,12 @@ export default function RootLayout({
       <head>
         <meta
           name="theme-color"
-          content="#020a14"
+          content="#0b1220"
           media="(prefers-color-scheme: dark)"
         />
         <meta
           name="theme-color"
-          content="#f8f8f8"
+          content="#0b1220"
           media="(prefers-color-scheme: light)"
         />
         <script

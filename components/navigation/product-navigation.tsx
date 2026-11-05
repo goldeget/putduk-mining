@@ -1,99 +1,77 @@
 "use client";
-
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-
-import type { PutdukIconName } from "@/components/icons/putduk-icon";
-import { PutdukHomeIcon } from "@/components/icons/putduk-home-icon";
-import styles from "@/components/layout/product-shell.module.css";
-
-const homeNavigationIcons = {
-  "/home": "home",
-  "/mining": "coins",
-  "/wallet": "wallet",
-  "/menu": "more",
-} as const;
-
-/** SIMPLIFIED_TRACK: 홈 · 채굴 · 지갑 · 더보기 — 상품/이벤트/AI는 peer CTA 아님. */
+import styles from "@/components/workroom/workroom.module.css";
 const items = [
-  { href: "/home", icon: "home", label: "홈" },
-  { href: "/mining", icon: "mining", label: "채굴" },
-  { href: "/wallet", icon: "wallet", label: "지갑" },
-  { href: "/menu", icon: "menu", label: "더보기" },
-] as const satisfies ReadonlyArray<{
-  href: "/home" | "/menu" | "/mining" | "/wallet";
-  icon: PutdukIconName;
-  label: string;
-}>;
-
-const miningSidebarItems = [
-  { href: "/home", label: "홈", icon: "home" },
-  { href: "/mining", label: "채굴", icon: "coins" },
-  { href: "/wallet", label: "지갑", icon: "wallet" },
-  { href: "/menu", label: "더보기", icon: "more" },
+  { href: "/workroom", label: "내 워크룸", icon: "home" },
+  { href: "/workroom/history", label: "참여 내역", icon: "history" },
+  { href: "/workroom/points", label: "체험 포인트", icon: "points" },
+  { href: "/workroom/guide", label: "이용 안내", icon: "guide" },
+  { href: "/wallet", label: "입출금", icon: "wallet" },
 ] as const;
-
 export function ProductNavigation({
   presentation = "default",
-}: {
-  presentation?: "default" | "mining-sidebar";
-} = {}) {
+}: { presentation?: "default" | "mining-sidebar" } = {}) {
   const pathname = usePathname();
-
-  if (presentation === "mining-sidebar") {
-    return (
-      <nav className={styles.miningSideNavigation} aria-label="채굴 전체 메뉴">
-        {miningSidebarItems.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            prefetch={false}
-            aria-current={
-              pathname === item.href || pathname.startsWith(`${item.href}/`)
-                ? "page"
-                : undefined
-            }
-          >
-            <PutdukHomeIcon name={item.icon} size={25} metallic={false} />
-            <span>{item.label}</span>
-          </Link>
-        ))}
-      </nav>
-    );
-  }
-
   return (
-    <nav className="product-navigation" aria-label="주요 메뉴">
-      {items.map((item) => {
-        const active =
-          pathname === item.href ||
-          pathname.startsWith(`${item.href}/`) ||
-          (item.href === "/home" && pathname === "/start") ||
-          (item.href === "/menu" &&
-            (pathname === "/ai" ||
-              pathname === "/notifications" ||
-              pathname === "/events" ||
-              pathname.startsWith("/events/") ||
-              pathname === "/support" ||
-              pathname === "/products" ||
-              pathname.startsWith("/products/")));
-        return (
-          <Link
-            className={active ? "is-active" : undefined}
-            href={item.href}
-            prefetch={false}
-            aria-current={active ? "page" : undefined}
-            key={item.href}
-          >
-            <PutdukHomeIcon
-              name={homeNavigationIcons[item.href]}
-              size={24}
-              metallic={false}
-            />
-            <span>{item.label}</span>
-          </Link>
-        );
-      })}
+    <nav
+      className={presentation === "default" ? styles.bottomNav : styles.sideNav}
+      aria-label={
+        presentation === "default" ? "워크룸 빠른 메뉴" : "워크룸 전체 메뉴"
+      }
+    >
+      {items.map((item) => (
+        <Link
+          key={item.href}
+          href={item.href}
+          prefetch={false}
+          aria-current={
+            pathname === item.href ||
+            (item.href === "/wallet" && pathname.startsWith("/wallet/"))
+              ? "page"
+              : undefined
+          }
+        >
+          <span className={styles.navIcon} aria-hidden="true">
+            <svg
+              width="23"
+              height="23"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.6"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              focusable="false"
+            >
+              {item.icon === "home" ? (
+                <path d="m3 10 9-7 9 7v10H15v-7H9v7H3Z" />
+              ) : item.icon === "history" ? (
+                <>
+                  <path d="m3 7 9-4 9 4-9 4Z" />
+                  <path d="m3 12 9 4 9-4M3 17l9 4 9-4" />
+                </>
+              ) : item.icon === "points" ? (
+                <>
+                  <ellipse cx="12" cy="6" rx="8" ry="3" />
+                  <path d="M4 6v6c0 4 16 4 16 0V6M4 12v6c0 4 16 4 16 0v-6" />
+                </>
+              ) : item.icon === "wallet" ? (
+                <>
+                  <rect x="3" y="5" width="18" height="15" rx="2" />
+                  <path d="M3 9h18m-5 5h.01" />
+                </>
+              ) : (
+                <>
+                  <circle cx="12" cy="12" r="9" />
+                  <path d="M12 11v6m0-10v.1" />
+                </>
+              )}
+            </svg>
+          </span>
+          <span>{item.label}</span>
+        </Link>
+      ))}
     </nav>
   );
 }

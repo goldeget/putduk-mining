@@ -1,191 +1,230 @@
-name: Full authenticated E2E
-
-# Release gate. Not part of the 20-minute PR budget in ci.yml.
-# Run 39127210925 measured about 9519s of authenticated browser time.
-# Twelve through twenty-four lanes all missed that 20-minute budget.
-# This workflow keeps 12 lanes, runs every current authenticated test once,
-# and allows a 60-minute job. Do not add lanes or skip tests.
+name: Full WORKROOM acceptance
 on:
-  push:
-    branches:
-      - main
-      - develop
-      - "release/**"
   workflow_dispatch:
-
+  push:
+    branches: [main, develop, "release/**"]
 permissions:
   contents: read
-
 concurrency:
-  group: ci-full-e2e-${{ github.ref }}
+  group: full-workroom-${{ github.ref }}-${{ github.sha }}
   cancel-in-progress: true
-
+env:
+  APP_ENV: test
+  NEXT_PUBLIC_APP_ENV: test
+  CI_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+  NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:63421
+  NEXT_PUBLIC_CHANNEL_TALK_PLUGIN_KEY: putduk-e2e-plugin-key
+  CHANNEL_TALK_MEMBER_HASH_SECRET: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 jobs:
-  e2e-app-build:
-    name: E2E production build artifact
+  application:
+    name: WORKROOM full application gates
+    permissions:
+      contents: read
+      actions: read
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 60
     steps:
-      - name: Check out source
-        uses: actions/checkout@v7
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v6.1.0
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: pnpm/action-setup@v6.1.0
         with:
           version: 12.6.0
-
-      - name: Install Node.js
-        uses: actions/setup-node@v7
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .node-version
           cache: pnpm
-
-      - name: Resolve pnpm metadata cache
-        id: pnpm-metadata
-        run: echo "path=$(pnpm cache path)" >> "$GITHUB_OUTPUT"
-
-      - name: Cache pnpm registry metadata
-        uses: actions/cache@v5
-        with:
-          path: ${{ steps.pnpm-metadata.outputs.path }}
-          key: pnpm-metadata-v1-${{ runner.os }}-${{ runner.arch }}-node24.21.0-pnpm12.6.0-${{ hashFiles('pnpm-lock.yaml', 'pnpm-workspace.yaml', '.node-version', '.npmrc', 'package.json', 'apps/*/package.json', '.pnpmfile.cjs', '.pnpmfile.mjs') }}
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Build member and admin apps for E2E
-        run: pnpm build
+      - run: |
+          node scripts/ci-workroom-checkout.mjs
+          pnpm install --frozen-lockfile
+          node scripts/ci-workroom-application.mjs
         env:
-          APP_ENV: test
-          NEXT_PUBLIC_APP_ENV: test
-          NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:63421
-          NEXT_PUBLIC_CHANNEL_TALK_PLUGIN_KEY: putduk-e2e-plugin-key
-          CHANNEL_TALK_MEMBER_HASH_SECRET: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-
-      - name: Upload E2E production build
-        uses: actions/upload-artifact@v7
+          GH_TOKEN: ${{ github.token }}
+      - uses: actions/upload-artifact@v7
+        if: always()
         with:
-          name: e2e-next-production
-          retention-days: 1
+          name: workroom-application-${{ github.run_id }}-${{ github.run_attempt }}-${{ env.CI_HEAD_SHA }}
+          path: test-results/workroom-application
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v7
+        with:
+          name: workroom-build-${{ github.run_id }}-${{ github.run_attempt }}-${{ env.CI_HEAD_SHA }}
           include-hidden-files: true
           if-no-files-found: error
+          retention-days: 1
           path: |
             .next
             apps/admin/.next
-
-  authenticated:
-    name: Authenticated product gates (${{ matrix.shard }}/12)
+            test-results/workroom-application
+  acceptance:
+    name: WORKROOM full native and authenticated acceptance
+    needs: application
+    permissions:
+      contents: read
+      actions: read
     runs-on: ubuntu-24.04
     timeout-minutes: 60
-    needs: [e2e-app-build]
-    strategy:
-      fail-fast: false
-      matrix:
-        shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
     steps:
-      - name: Check out source
-        uses: actions/checkout@v7
-
-      - name: Canonicalize the approved checkout origin
-        run: |
-          set -euo pipefail
-          test "$GITHUB_REPOSITORY" = "goldeget/putduk-mining"
-          checkout_origin="$(git remote get-url origin)"
-          case "$checkout_origin" in
-            https://github.com/goldeget/putduk-mining|https://github.com/goldeget/putduk-mining.git) ;;
-            *) echo "BLOCKED_TARGET_SCOPE: checkout origin mismatch" >&2; exit 1 ;;
-          esac
-          git remote set-url origin https://github.com/goldeget/putduk-mining.git
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v6.1.0
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: pnpm/action-setup@v6.1.0
         with:
           version: 12.6.0
-
-      - name: Install Node.js
-        uses: actions/setup-node@v7
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .node-version
           cache: pnpm
-
-      - name: Resolve pnpm metadata cache
-        id: pnpm-metadata
-        run: echo "path=$(pnpm cache path)" >> "$GITHUB_OUTPUT"
-
-      - name: Cache pnpm registry metadata
-        uses: actions/cache@v5
-        with:
-          path: ${{ steps.pnpm-metadata.outputs.path }}
-          key: pnpm-metadata-v1-${{ runner.os }}-${{ runner.arch }}-node24.21.0-pnpm12.6.0-${{ hashFiles('pnpm-lock.yaml', 'pnpm-workspace.yaml', '.node-version', '.npmrc', 'package.json', 'apps/*/package.json', '.pnpmfile.cjs', '.pnpmfile.mjs') }}
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Download E2E production build
-        uses: actions/download-artifact@v7
-        with:
-          name: e2e-next-production
-
-      - name: Install Supabase CLI
-        uses: supabase/setup-cli@v3
+      - uses: supabase/setup-cli@v3
         with:
           version: 2.113.0
-
-      - name: Start local Supabase
-        env:
-          CI_SUPABASE_START_STAGGER_SECONDS: ${{ matrix.shard }}
-        run: bash scripts/ci-supabase-start.sh
-
-      - name: Rebuild migrations from zero
-        run: pnpm db:reset
-
-      - name: Export local Supabase env
-        run: node scripts/capture-local-supabase-env.mjs
-
-      - name: Create ephemeral withdrawal data key
-        run: node scripts/write-ephemeral-withdrawal-key.mjs
-
-      - name: Resolve Playwright version
-        id: playwright-version
-        run: echo "version=$(pnpm exec playwright --version | awk '{print $2}')" >> "$GITHUB_OUTPUT"
-
-      - name: Cache Playwright browsers
-        uses: actions/cache@v5
+      - run: |
+          node scripts/ci-workroom-checkout.mjs
+          pnpm install --frozen-lockfile
+          pnpm exec playwright install --with-deps chromium
+      - uses: actions/download-artifact@v7
         with:
-          path: ~/.cache/ms-playwright
-          key: ms-playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: |
-            ms-playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}-
-            ms-playwright-${{ runner.os }}-
-
-      - name: Install Chromium
-        run: |
-          if [ -d "$HOME/.cache/ms-playwright" ] && [ -n "$(ls -A "$HOME/.cache/ms-playwright" 2>/dev/null)" ]; then
-            pnpm exec playwright install chromium
-          else
-            pnpm exec playwright install --with-deps chromium
-          fi
-
-      - name: Run authenticated browser tests
-        # TIMING_HINTS places the full inventory across these 12 lanes.
-        # The scheduler rejects a missing, duplicate, or unexpected test.
-        # Assertions, real TOTP waits, and --fail-on-flaky-tests stay intact.
-        timeout-minutes: 50
+          name: workroom-build-${{ github.run_id }}-${{ github.run_attempt }}-${{ env.CI_HEAD_SHA }}
+          path: .
+      - name: Disposable native security, worker and real Auth acceptance
+        run: node scripts/ci-workroom-acceptance.mjs
         env:
-          E2E_NEXT_START: "1"
+          GH_TOKEN: ${{ github.token }}
+          E2E_WEB_PORT: "3000"
+          E2E_ADMIN_HOST: "127.0.0.1"
+          E2E_ADMIN_PORT: "3100"
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: workroom-acceptance-${{ github.run_id }}-${{ github.run_attempt }}-${{ env.CI_HEAD_SHA }}
+          path: |
+            test-results/workroom-native
+            test-results/workroom-auth/results.json
+            test-results/workroom-auth/retained-results.json
+            test-results/workroom-auth/financial-results.json
+            test-results/workroom-auth/public-successor-results.json
+            test-results/workroom-auth/retained-source/provenance.json
+            test-results/workroom-auth/*member-mobile.png
+            test-results/workroom-acceptance
+            test-results/worker
+            test-results/workroom-worker-201
+          if-no-files-found: error
+  cloudflare-build:
+    name: WORKROOM full Cloudflare deploy artifact build
+    permissions:
+      contents: read
+      actions: read
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: pnpm/action-setup@v6.1.0
+        with:
+          version: 12.6.0
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - run: |
+          node scripts/ci-workroom-checkout.mjs
+          pnpm install --frozen-lockfile
+          node scripts/ci-workroom-cloudflare-build.mjs
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - uses: actions/upload-artifact@v7
+        with:
+          name: workroom-cloudflare-build-${{ github.run_id }}-${{ github.run_attempt }}-${{ env.CI_HEAD_SHA }}
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 3
+          path: |
+            .cloudflare/output/v0
+            apps/admin/.cloudflare/output/v0
+            test-results/workroom-cloudflare-build
+      - uses: actions/upload-artifact@v7
+        with:
+          name: workroom-cloudflare-metadata-${{ github.run_id }}-${{ github.run_attempt }}-${{ env.CI_HEAD_SHA }}
+          if-no-files-found: error
+          retention-days: 3
+          path: |
+            test-results/workroom-cloudflare-build/output-review.json
+            test-results/workroom-cloudflare-build/receipt.json
+      - uses: actions/upload-artifact@v7
+        with:
+          name: workroom-cloudflare-compact-${{ github.run_id }}-${{ github.run_attempt }}-${{ env.CI_HEAD_SHA }}
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 3
+          path: |
+            .cloudflare/output/v0
+            apps/admin/.cloudflare/output/v0
+            test-results/workroom-cloudflare-build
+            !.cloudflare/output/v0/workers/default/assets/brand/**
+            !.cloudflare/output/v0/workers/default/assets/ranks/**
+            !apps/admin/.cloudflare/output/v0/workers/default/assets/brand/**
+            !apps/admin/.cloudflare/output/v0/workers/default/assets/ranks/**
+  cloudflare-acceptance:
+    name: WORKROOM full workerd native and authenticated acceptance
+    needs: cloudflare-build
+    permissions:
+      contents: read
+      actions: read
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      WORKROOM_CI_RUNTIME: workerd
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: pnpm/action-setup@v6.1.0
+        with:
+          version: 12.6.0
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - uses: supabase/setup-cli@v3
+        with:
+          version: 2.113.0
+      - run: |
+          node scripts/ci-workroom-checkout.mjs
+          pnpm install --frozen-lockfile
+          pnpm exec playwright install --with-deps chromium
+      - uses: actions/download-artifact@v7
+        with:
+          name: workroom-cloudflare-build-${{ github.run_id }}-${{ github.run_attempt }}-${{ env.CI_HEAD_SHA }}
+          path: .
+      - name: Disposable native security, worker and real Auth acceptance
+        run: node scripts/ci-workroom-acceptance.mjs
+        env:
+          GH_TOKEN: ${{ github.token }}
           E2E_WEB_PORT: "3000"
           E2E_ADMIN_PORT: "3100"
-          CI_HEAD_SHA: ${{ github.sha }}
-          APP_ENV: test
-          PUTDUK_BACKEND_SOURCE_REVISION: "201"
-        run: node scripts/ci-authenticated-shards-201.mjs ${{ matrix.shard }}/12
-
-      - name: Preserve authenticated browser evidence
+      - uses: actions/upload-artifact@v7
         if: always()
-        uses: actions/upload-artifact@v7
         with:
-          name: authenticated-playwright-shard-${{ matrix.shard }}
+          name: workroom-workerd-acceptance-${{ github.run_id }}-${{ github.run_attempt }}-${{ env.CI_HEAD_SHA }}
           path: |
-            playwright-report
-            test-results
-          if-no-files-found: ignore
+            test-results/workroom-native
+            test-results/workroom-auth/results.json
+            test-results/workroom-auth/retained-results.json
+            test-results/workroom-auth/financial-results.json
+            test-results/workroom-auth/public-successor-results.json
+            test-results/workroom-auth/retained-source/provenance.json
+            test-results/workroom-auth/*member-mobile.png
+            test-results/workroom-cloudflare-runtime
+            test-results/workroom-acceptance
+            test-results/worker
+            test-results/workroom-worker-201
+          if-no-files-found: error

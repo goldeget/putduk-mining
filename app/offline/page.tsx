@@ -1,49 +1,26 @@
-import { offlineShellStyles } from "./offline-shell-styles";
-
-export const metadata = { title: "오프라인" };
-
+import Link from "next/link";
 export default function OfflinePage() {
   return (
     <main
-      className="putduk-offline"
-      data-ui-ready="/offline"
       data-ui-state="offline"
+      data-ui-ready="/offline"
+      style={{
+        maxWidth: 560,
+        margin: "12vh auto",
+        padding: 32,
+        color: "#e9f1fc",
+        background: "#0c1727",
+        borderRadius: 24,
+      }}
     >
-      <style>{offlineShellStyles}</style>
-      <section className="putduk-offline__card" aria-labelledby="offline-title">
-        <span className="putduk-offline__brand">퍼뜩 채굴</span>
-        {/* A cached public image and native link work without JavaScript or external styles. */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/brand/identity/20261014/logo/putduk-sprout-p-master.svg"
-          width="160"
-          height="160"
-          alt="PUTDUK MINING 새싹 P 심벌"
-          data-putduk-brand="canonical"
-          data-putduk-brand-version="2026.10.14-sprout-p-v2"
-        />
-        <h1 id="offline-title">잠시 연결이 끊겼어요.</h1>
-        <p>
-          앱을 닫아도 채굴은 계속돼요. 연결되면 최신 결과를 다시 확인할 수
-          있어요.
-        </p>
-        <p>지금은 입금·출금과 계정 변경을 진행할 수 없어요.</p>
-        {/* Native navigation intentionally works when no Next.js chunks or hydration are available. */}
-        {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
-        <a href="/home">
-          연결 다시 확인
-          <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
-            <path
-              d="M5 12h14m-6-6 6 6-6 6"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </a>
-      </section>
+      <p style={{ color: "#73efc3", letterSpacing: 4 }}>WORKROOM</p>
+      <h1>연결을 잠시 기다리고 있어요.</h1>
+      <p>
+        진행 중인 회차는 서버 시간을 기준으로 이어집니다. 인터넷이 연결되면 최신
+        상태와 결과를 확인해 주세요.
+      </p>
+      <p>연결이 없는 동안 화면에 표시된 값은 최신 상태가 아닐 수 있습니다.</p>
+      <Link href="/workroom">내 워크룸 다시 열기</Link>
     </main>
   );
 }

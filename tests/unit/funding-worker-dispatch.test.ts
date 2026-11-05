@@ -48,7 +48,7 @@ afterEach(() => {
 });
 
 describe("sealed funding worker dispatch", () => {
-  it("delegates valid envelope through the existing completion command without economic arguments", async () => {
+  it("disables new funding admission while preserving a legacy claimed envelope's completion fence", async () => {
     const { rpc, db } = client(job());
     expect(
       await processJobBatch(db, { batchSize: 1, workerId: "funding-worker" }),
@@ -60,6 +60,7 @@ describe("sealed funding worker dispatch", () => {
           p_worker_id: "funding-worker",
           p_batch_size: 1,
           p_lease_seconds: 120,
+          p_allow_funding: false,
         },
       ],
       [

@@ -36,6 +36,17 @@ const signupSchema = z
         "아이디는 영문자로 시작하는 4~20자의 영문 소문자, 숫자, 밑줄만 사용할 수 있어요.",
       ),
     marketingConsent: z.boolean(),
+    referralCode: z
+      .string()
+      .trim()
+      .toUpperCase()
+      .regex(
+        /^WR-[A-Z0-9]{12,64}$/,
+        "담당자에게 받은 추천인 코드를 확인해 주세요.",
+      ),
+    workroomAcknowledged: z.literal(true, {
+      error: "무료 시뮬레이션과 연습 포인트 안내를 확인해 주세요.",
+    }),
     password: z
       .string()
       .min(10, "비밀번호는 10자 이상 입력해 주세요.")
@@ -143,6 +154,8 @@ export async function signupAction(
     legalName: formData.get("legalName"),
     loginId: formData.get("loginId"),
     marketingConsent: checked(formData, "marketingConsent"),
+    referralCode: formData.get("referralCode"),
+    workroomAcknowledged: checked(formData, "workroomAcknowledged"),
     password: formData.get("password"),
     passwordConfirmation: formData.get("passwordConfirmation"),
     phoneE164: normalizePhone(formData.get("phone")),
@@ -255,8 +268,10 @@ export async function signupAction(
           service_terms_granted: true,
           service_terms_version: SERVICE_TERMS_VERSION,
           signup_source: "PUBLIC_V1",
+          referralCode: parsed.data.referralCode,
+          workroomAcknowledged: parsed.data.workroomAcknowledged,
         },
-        emailRedirectTo: `${env.NEXT_PUBLIC_APP_URL}/auth/callback?next=${encodeURIComponent("/start")}`,
+        emailRedirectTo: `${env.NEXT_PUBLIC_APP_URL}/auth/callback?next=${encodeURIComponent("/workroom")}`,
       },
     });
   } catch {
@@ -301,13 +316,13 @@ export async function signupAction(
   }
 
   if (data.session) {
-    redirect("/start");
+    redirect("/workroom");
   }
 
   return {
     fieldErrors: {},
     message:
-      "입력한 이메일로 확인 안내를 보냈습니다. 확인을 마치면 PUTDUK START로 이어집니다.",
+      "입력한 이메일로 확인 안내를 보냈습니다. 확인을 마치면 내 워크룸으로 이어집니다.",
     status: "confirmation",
   };
 }

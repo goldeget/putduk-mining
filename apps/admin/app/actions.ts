@@ -11,6 +11,10 @@ import {
   writeAdminAuthServerProof,
 } from "@/lib/auth/failure-limit";
 import { pickHighestRole } from "@/lib/auth/policy";
+import {
+  ADMIN_LOGIN_ID,
+  resolveAdminLoginEmail,
+} from "@/lib/auth/login-identifier";
 import { safeAdminReturnPath } from "@/lib/auth/return-path";
 import {
   findActiveAdminSessionId,
@@ -23,7 +27,15 @@ import { recordAdminSecurityEvent } from "@/lib/security/events";
 
 export type LoginState = { message: string } | null;
 const credentialsSchema = z.object({
-  email: z.email().trim().toLowerCase(),
+  email: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .max(254)
+    .refine(
+      (value) =>
+        z.email().safeParse(value).success || ADMIN_LOGIN_ID.test(value),
+    ),
   password: z.string().min(1).max(256),
   returnTo: z.string().optional(),
 });
@@ -45,7 +57,14 @@ export async function loginAction(
     .trim()
     .toLowerCase();
   if (!rawEmail) return { message: genericLoginError };
-  const admission = await admitAdminAuthAttempt("PASSWORD", rawEmail);
+  const resolved = parsed.success
+    ? await resolveAdminLoginEmail(parsed.data.email)
+    : { email: null, serviceAvailable: true };
+  // Alias and email use the same canonical failure bucket before any password call.
+  const admission = await admitAdminAuthAttempt(
+    "PASSWORD",
+    resolved.email ?? rawEmail,
+  );
   if (!admission.allowed)
     return {
       message:
@@ -59,6 +78,14 @@ export async function loginAction(
     if (!(await finish(false))) return { message: unavailableLoginError };
     return { message: genericLoginError };
   }
+  if (!resolved.email) {
+    if (!(await finish(false))) return { message: unavailableLoginError };
+    return {
+      message: resolved.serviceAvailable
+        ? genericLoginError
+        : unavailableLoginError,
+    };
+  }
 
   const supabase = await createAdminServerClient();
   const userAgent = (await headers()).get("user-agent");
@@ -70,7 +97,7 @@ export async function loginAction(
   >["error"];
   try {
     const signedIn = await supabase.auth.signInWithPassword({
-      email: parsed.data.email,
+      email: resolved.email,
       password: parsed.data.password,
     });
     data = signedIn.data;

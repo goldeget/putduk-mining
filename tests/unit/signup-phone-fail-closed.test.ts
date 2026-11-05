@@ -86,6 +86,8 @@ function signupForm(phone = "010-1234-5678") {
     recoveryEmail: "signup-fixture@putduk.test",
     serviceTermsConsent: "on",
     privacyConsent: "on",
+    referralCode: "WR-TESTSIGNUPCODE123456",
+    workroomAcknowledged: "on",
   };
   for (const [name, value] of Object.entries(fields)) form.set(name, value);
   return form;
