@@ -1,3 +1,32 @@
+## Owner-authorized fresh WORKROOM project — 2026-11-11
+
+The user created and authorized the new Free Supabase project
+`awrubjiqkggaxcvtckbr` (`putduk-workroom`, organization `umgtzojgggmgtosetrky`)
+and instructed: "그럼 진행할꺼 완벽하게 진행하라". The user also explicitly
+confirmed that existing accounts do not need restoration. This section
+supersedes older project-target and existing-identity-restoration requirements
+only for this WORKROOM rollout.
+
+- Source implementation and verification checkout: `C:/Dev/putduk-workroom-fresh-20261111`.
+- Apply the reviewed complete migration chain to the new project, verify
+  signup/referral/admin and noncash WORKROOM behavior, then deploy the existing
+  member/admin Workers only after relevant acceptance succeeds.
+- New remote target: `https://awrubjiqkggaxcvtckbr.supabase.co`. Preserve the old
+  project `osrmyjgmpdspdcwqjwuv`, all prior originals and encrypted backups.
+  Do not import old identities, sessions, balances or permissions into the new DB.
+- Existing deployment targets remain Cloudflare account
+  `9dc502d4ef06b3b5374591de6e6933ca`, `mining.putduk.com` and
+  `admin.mining.putduk.com`, using their current named Workers. Preserve unrelated
+  domains, email, DNS, security and retained services.
+- New signup receives 100000 noncash practice points once. Practice results
+  never credit withdrawable funds. Preserve manual real-money deposit/withdrawal
+  contracts in their separate ledgers. No actual-money tests or payouts.
+- Free infrastructure only; no paid contracts, upgrades, invoice payments or
+  additional projects without explicit authority. Never expose server secrets.
+- Preserve historical migrations and historical admission manifests. Update the
+  additive WORKROOM source manifest for reviewed source changes and obtain fresh
+  candidate acceptance before release claims.
+
 ## Owner-authorized verification and conditional release — 2026-11-04
 
 The latest user message explicitly authorizes completing WORKROOM CI/native/real signup/admin verification, then GitHub upload and actual-site rollout ONLY if verification succeeds, preserving existing users and data. This supersedes the prior local-only push/deploy restriction for this exact task.

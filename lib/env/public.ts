@@ -29,7 +29,7 @@ export type SupabaseBrowserAuthConfig = {
   publishableKey: string;
 };
 
-const approvedSupabaseHost = "osrmyjgmpdspdcwqjwuv.supabase.co";
+const approvedSupabaseHost = "awrubjiqkggaxcvtckbr.supabase.co";
 const loopbackHosts = new Set(["127.0.0.1", "localhost", "[::1]"]);
 
 function isApprovedSupabaseUrl(value: string): boolean {

@@ -22,7 +22,10 @@ const production = () => ({
   manifest: { type: "partial", mainModule: "index.js", modules: {} },
   env: {
     APP_ENV: text("production"),
-    NEXT_PUBLIC_SUPABASE_URL: text("https://osrmyjgmpdspdcwqjwuv.supabase.co"),
+    NEXT_PUBLIC_SUPABASE_URL: text("https://awrubjiqkggaxcvtckbr.supabase.co"),
+    NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: text(
+      "sb_publishable_GLyun5wTHeFb0vEjug52Mw_l4G9JqZx",
+    ),
     AI_PROVIDER_DISPATCH_ENABLED: text("false"),
   },
 });
@@ -56,7 +59,7 @@ test("production URL or non-test runtime fails before preview", () => {
     { ...env, APP_ENV: "production" },
     {
       ...env,
-      NEXT_PUBLIC_SUPABASE_URL: "https://osrmyjgmpdspdcwqjwuv.supabase.co",
+      NEXT_PUBLIC_SUPABASE_URL: "https://awrubjiqkggaxcvtckbr.supabase.co",
     },
     { ...env, SUPABASE_SECRET_KEY: "" },
   ])
@@ -72,6 +75,25 @@ test("deploy artifact rejects local binding and embedded secret", () => {
   const secret = production();
   secret.env.SUPABASE_SECRET_KEY = text("sb_secret_forbidden");
   assert.throws(() => productionConfig(secret, secret.name), /BUILD_SECRET/);
+});
+
+test("deploy artifact rejects the retired backend and a mismatched public key", () => {
+  const retired = production();
+  retired.env.NEXT_PUBLIC_SUPABASE_URL = text(
+    "https://osrmyjgmpdspdcwqjwuv.supabase.co",
+  );
+  assert.throws(
+    () => productionConfig(retired, retired.name),
+    /PRODUCTION_OUTPUT/,
+  );
+  const mismatched = production();
+  mismatched.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY = text(
+    "sb_publishable_Pc0iVt3ubpnsRTNxbJ1KCg_kK76qtv-",
+  );
+  assert.throws(
+    () => productionConfig(mismatched, mismatched.name),
+    /PRODUCTION_OUTPUT/,
+  );
 });
 test("inventory hashes exact bytes and rejects empty or symlink output", () => {
   const root = mkdtempSync(join(tmpdir(), "workroom-output-test-"));
@@ -109,7 +131,7 @@ test("local CSP adapter requires exact real production CSP and preserves every o
     const production = build({
       appEnv: "production",
       nodeEnv: "production",
-      supabaseUrl: "https://osrmyjgmpdspdcwqjwuv.supabase.co",
+      supabaseUrl: "https://awrubjiqkggaxcvtckbr.supabase.co",
     });
     const local = adaptPreviewCsp(production, production);
     assert.equal(

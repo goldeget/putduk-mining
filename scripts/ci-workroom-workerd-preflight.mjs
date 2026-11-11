@@ -1,6 +1,10 @@
 import { createHash } from "node:crypto";
 import { mkdirSync, writeFileSync, readFileSync } from "node:fs";
 const rows = [];
+const productionBackendHosts = [
+  "awrubjiqkggaxcvtckbr.supabase.co",
+  "osrmyjgmpdspdcwqjwuv.supabase.co",
+];
 const review = JSON.parse(
   readFileSync(
     "test-results/workroom-cloudflare-build/output-review.json",
@@ -43,7 +47,9 @@ for (const port of [3000, 3100]) {
     hasCsp: !!csp,
     hasObjectNone: !!csp?.includes("object-src 'none'"),
     hasLocalConnect: !!csp?.includes("127.0.0.1:63421"),
-    hasProductionBackend: html.includes("osrmyjgmpdspdcwqjwuv.supabase.co"),
+    hasProductionBackend: productionBackendHosts.some((host) =>
+      html.includes(host),
+    ),
     hasSecretPrefix: html.includes("sb_secret_"),
     redirected: page.status >= 300 && page.status < 400,
   };
@@ -68,7 +74,7 @@ for (const port of [3000, 3100]) {
     !csp ||
     !csp.includes("object-src 'none'") ||
     !csp.includes("127.0.0.1:63421") ||
-    html.includes("osrmyjgmpdspdcwqjwuv.supabase.co") ||
+    diagnostic.hasProductionBackend ||
     html.includes("sb_secret_")
   )
     throw Error("WORKROOM_HTML_CSP_OR_PRODUCTION_REFERENCE");

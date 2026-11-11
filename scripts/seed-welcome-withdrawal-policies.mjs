@@ -14,7 +14,7 @@ import { planWelcomePolicySeed } from "./lib/welcome-policy-seed.mjs";
  * 이미 환영 정책이 있는 출금 방식은 건드리지 않는다. 같은 명령을 다시 실행해도 안전하다.
  */
 
-const EXPECTED_PROJECT_REF = "osrmyjgmpdspdcwqjwuv";
+const EXPECTED_PROJECT_REF = "awrubjiqkggaxcvtckbr";
 const REQUIRED_CONFIRMATION = "SEED_WELCOME_WITHDRAWAL_POLICIES";
 
 function parseArguments(values) {

@@ -21,10 +21,10 @@ export default defineConfig({
       APP_TIMEZONE: bindings.text("UTC"),
       NEXT_PUBLIC_APP_URL: bindings.text("https://admin.mining.putduk.com"),
       NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: bindings.text(
-        "sb_publishable_Pc0iVt3ubpnsRTNxbJ1KCg_kK76qtv-",
+        "sb_publishable_GLyun5wTHeFb0vEjug52Mw_l4G9JqZx",
       ),
       NEXT_PUBLIC_SUPABASE_URL: bindings.text(
-        "https://osrmyjgmpdspdcwqjwuv.supabase.co",
+        "https://awrubjiqkggaxcvtckbr.supabase.co",
       ),
     },
   }),

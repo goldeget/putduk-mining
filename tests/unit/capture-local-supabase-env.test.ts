@@ -24,6 +24,7 @@ import {
   assertCiTestTarget,
   buildIsolatedTestEnv,
   redactSupabaseCliLine,
+  hasRemoteProjectRef,
 } from "../../scripts/capture-local-supabase-env.mjs";
 
 const allow = loadJobLocalAllowlist();
@@ -31,6 +32,25 @@ const LOCAL_URL = `http://127.0.0.1:${allow.apiPort}`;
 const PUBLISHABLE = "sb_publishable_local_fixture";
 const SECRET = "sb_secret_local_fixture";
 const LOCAL_DB = `postgresql://postgres:unit-test-password@127.0.0.1:${allow.dbPort}/postgres`;
+
+describe("active and retired production target isolation", () => {
+  it.each(["osrmyjgmpdspdcwqjwuv", "awrubjiqkggaxcvtckbr"])(
+    "rejects production ref %s in local environment and connection strings",
+    (projectRef) => {
+      expect(
+        hasRemoteProjectRef(
+          `postgresql://postgres.${projectRef}:fixture@127.0.0.1:${allow.dbPort}/postgres`,
+        ),
+      ).toBe(true);
+      expect(() =>
+        assertCiTestTarget({ SUPABASE_PROJECT_REF: projectRef }),
+      ).toThrow("REMOTE_SUPABASE_SECRET_REJECTED");
+      expect(() =>
+        assertLocalApiUrl(`https://${projectRef}.supabase.co`, allow),
+      ).toThrow();
+    },
+  );
+});
 
 describe("supabase status env parser", () => {
   it("parses KEY=value, quoted values, and export prefixes", () => {

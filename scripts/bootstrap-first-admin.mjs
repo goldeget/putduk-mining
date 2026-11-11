@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 
 import { createClient } from "@supabase/supabase-js";
 
-const EXPECTED_PROJECT_REF = "osrmyjgmpdspdcwqjwuv";
+const EXPECTED_PROJECT_REF = "awrubjiqkggaxcvtckbr";
 const REQUIRED_CONFIRMATION = "BOOTSTRAP_FIRST_SUPER_ADMIN";
 const UUID_PATTERN =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;

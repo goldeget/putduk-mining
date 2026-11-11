@@ -10,7 +10,10 @@ import {
 } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
-const REMOTE_PROJECT_REF = "osrmyjgmpdspdcwqjwuv";
+const REMOTE_PROJECT_REFS = new Set([
+  "osrmyjgmpdspdcwqjwuv",
+  "awrubjiqkggaxcvtckbr",
+]);
 const LOCAL_PROJECT_PATTERN = /^putduk-mining(?:-[a-z0-9-]+)?$/;
 const LOOPBACK_HOSTS = new Set(["127.0.0.1", "localhost", "[::1]", "::1"]);
 const PRODUCTION_APP_ENVS = new Set(["production", "staging"]);
@@ -215,7 +218,7 @@ export function loadJobLocalAllowlist(configText, env = process.env) {
     configText ?? readFileSync(resolveJobLocalConfig(env).configPath, "utf8");
   const projectId = text.match(/^project_id\s*=\s*"([^"]+)"/m)?.[1] ?? "";
   if (
-    projectId === REMOTE_PROJECT_REF ||
+    REMOTE_PROJECT_REFS.has(projectId) ||
     !LOCAL_PROJECT_PATTERN.test(projectId)
   ) {
     throw new Error("LOCAL_PROJECT_SCOPE_REJECTED");
@@ -234,7 +237,7 @@ export function loadJobLocalAllowlist(configText, env = process.env) {
 export function hasRemoteProjectRef(value) {
   return String(value ?? "")
     .split(/[^A-Za-z0-9]/)
-    .includes(REMOTE_PROJECT_REF);
+    .some((part) => REMOTE_PROJECT_REFS.has(part));
 }
 
 function isHostedSupabase(hostname) {
@@ -378,7 +381,7 @@ export function assertCiTestTarget(env = process.env) {
     if (!value) {
       continue;
     }
-    if (value === REMOTE_PROJECT_REF || !LOCAL_PROJECT_PATTERN.test(value)) {
+    if (REMOTE_PROJECT_REFS.has(value) || !LOCAL_PROJECT_PATTERN.test(value)) {
       throw new Error("REMOTE_SUPABASE_SECRET_REJECTED");
     }
   }

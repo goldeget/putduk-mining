@@ -12,7 +12,7 @@ import { loadJobLocalAllowlist } from "../../scripts/capture-local-supabase-env.
 
 vi.mock("@supabase/ssr", () => ({ createBrowserClient: vi.fn() }));
 
-const remoteUrl = "https://osrmyjgmpdspdcwqjwuv.supabase.co";
+const remoteUrl = "https://awrubjiqkggaxcvtckbr.supabase.co";
 const localUrl = `http://127.0.0.1:${loadJobLocalAllowlist().apiPort}`;
 const publishableKey = "sb_publishable_runtime_public_fixture";
 
@@ -80,8 +80,9 @@ describe("public Supabase runtime configuration", () => {
 
   it.each([
     "https://different-project.supabase.co",
-    "https://osrmyjgmpdspdcwqjwuv.supabase.co.evil.invalid",
-    "https://user:password@osrmyjgmpdspdcwqjwuv.supabase.co",
+    "https://osrmyjgmpdspdcwqjwuv.supabase.co",
+    "https://awrubjiqkggaxcvtckbr.supabase.co.evil.invalid",
+    "https://user:password@awrubjiqkggaxcvtckbr.supabase.co",
     `${remoteUrl}/unapproved-path`,
     `${remoteUrl}?target=another`,
     `${remoteUrl}#fragment`,

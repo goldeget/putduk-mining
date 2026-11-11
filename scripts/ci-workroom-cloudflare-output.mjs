@@ -33,7 +33,9 @@ export function productionConfig(config, name) {
     config.name !== name ||
     values.APP_ENV?.value !== "production" ||
     values.NEXT_PUBLIC_SUPABASE_URL?.value !==
-      "https://osrmyjgmpdspdcwqjwuv.supabase.co" ||
+      "https://awrubjiqkggaxcvtckbr.supabase.co" ||
+    values.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY?.value !==
+      "sb_publishable_GLyun5wTHeFb0vEjug52Mw_l4G9JqZx" ||
     values.AI_PROVIDER_DISPATCH_ENABLED?.value !== "false" ||
     !config.manifest?.mainModule
   )
