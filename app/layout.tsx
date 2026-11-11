@@ -118,7 +118,7 @@ export default function RootLayout({
         <WebVitalsBeacon />
         <ThemeRuntime />
         {children}
-        <SupportRuntime memberLauncher={false} />
+        <SupportRuntime memberLauncher={false} floatingLauncher={false} />
       </body>
     </html>
   );

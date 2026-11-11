@@ -59,7 +59,7 @@ export default function MemberSupportPage() {
         <p className={styles.eyebrow}>고객지원</p>
         <h1>필요한 도움을 바로 확인해요</h1>
         <p>상담 창에서 비밀번호나 인증 코드는 보내지 마세요.</p>
-        <SupportStartButton />
+        <SupportStartButton guideId="member-support-guide" />
       </header>
 
       <section className={styles.topics} aria-labelledby="member-support-guide">

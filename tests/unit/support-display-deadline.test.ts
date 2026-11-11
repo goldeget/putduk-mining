@@ -8,6 +8,7 @@ import {
   SupportStartButton,
 } from "@/components/support/support-runtime";
 import { useSupportDisplayState } from "@/components/support/use-support-display-state";
+import { MENU_ITEMS } from "@/app/(product)/menu/menu-items";
 
 const mocks = vi.hoisted(() => ({
   booted: false,
@@ -70,6 +71,143 @@ function state() {
 }
 
 describe("support preparation display deadline", () => {
+  it.each([
+    "/",
+    "/login",
+    "/signup",
+    "/find-id",
+    "/recover",
+    "/recover/reset",
+    "/auth/callback",
+    "/offline",
+    "/support",
+    "/terms",
+    "/privacy",
+    "/trust",
+    "/home",
+    "/workroom",
+    "/workroom/points",
+    "/workroom/history",
+    "/workroom/guide",
+    "/workroom/records",
+    "/workroom/records/withdraw",
+    "/workroom/records/legacy",
+    "/workroom/cash",
+    "/workroom/cash/deposit",
+    "/workroom/cash/withdraw",
+    "/menu",
+    "/menu/ai",
+    "/start",
+    "/products",
+    "/products/allocation",
+    "/mining",
+    "/wallet",
+    "/wallet/deposit",
+    "/wallet/withdraw",
+    "/events",
+    "/events/example",
+    "/events/notices/example",
+    ...MENU_ITEMS.map((item) => item.href),
+  ])(
+    "disabled global launcher leaves no dock on %s and retains route sync",
+    async (pathname) => {
+      mocks.pathname = pathname;
+      await act(async () =>
+        root.render(
+          createElement<{
+            memberLauncher?: boolean;
+            floatingLauncher?: boolean;
+          }>(SupportRuntime, {
+            memberLauncher: false,
+            floatingLauncher: false,
+          }),
+        ),
+      );
+      expect(host.childElementCount).toBe(0);
+      expect(mocks.request).toHaveBeenCalledWith(
+        expect.objectContaining({ pathname }),
+      );
+      await tick(15_000);
+      expect(host.childElementCount).toBe(0);
+      await publishBooted(true);
+      expect(host.childElementCount).toBe(0);
+      expect(mocks.request).toHaveBeenCalledOnce();
+    },
+  );
+
+  it("a hidden global launcher keeps one inline support action and guide recovery across routes", async () => {
+    const scroll = vi.fn();
+    const renderSupport = async (pathname: string) => {
+      mocks.pathname = pathname;
+      await act(async () =>
+        root.render(
+          createElement(
+            "main",
+            null,
+            createElement<{ floatingLauncher?: boolean }>(SupportRuntime, {
+              floatingLauncher: false,
+            }),
+            createElement(SupportStartButton),
+            createElement("section", {
+              id: "support-guide",
+              ref: (node: HTMLElement | null) => {
+                if (node) node.scrollIntoView = scroll;
+              },
+            }),
+          ),
+        ),
+      );
+    };
+    await renderSupport("/support");
+    await tick(15_000);
+    expect(host.querySelectorAll(".putduk-support-launcher")).toHaveLength(1);
+    expect(host.querySelector(".support-dock")).toBeNull();
+    await act(async () =>
+      host.querySelector<HTMLButtonElement>("button")!.click(),
+    );
+    expect(scroll).toHaveBeenCalledWith({
+      behavior: "instant",
+      block: "start",
+    });
+    await publishBooted(true);
+    expect(host.querySelector("button")?.textContent).toBe("상담 시작");
+    await act(async () =>
+      host.querySelector<HTMLButtonElement>("button")!.click(),
+    );
+    expect(scroll).toHaveBeenCalledOnce();
+    await renderSupport("/menu/support");
+    expect(mocks.request).toHaveBeenLastCalledWith(
+      expect.objectContaining({ pathname: "/menu/support" }),
+    );
+    expect(host.querySelectorAll(".putduk-support-launcher")).toHaveLength(1);
+    expect(host.querySelector(".support-dock")).toBeNull();
+    expect(mocks.push).not.toHaveBeenCalled();
+  });
+
+  it("member support fallback scrolls to its own guide with the user's motion preference", async () => {
+    vi.stubGlobal("matchMedia", vi.fn().mockReturnValue({ matches: false }));
+    await act(async () =>
+      root.render(
+        createElement<{ guideId?: string }>(SupportStartButton, {
+          guideId: "member-support-guide",
+        }),
+      ),
+    );
+    const guide = document.createElement("section");
+    guide.id = "member-support-guide";
+    guide.scrollIntoView = vi.fn();
+    host.append(guide);
+    await tick(15_000);
+    await act(async () =>
+      host.querySelector<HTMLButtonElement>("button")!.click(),
+    );
+    expect(guide.scrollIntoView).toHaveBeenCalledWith({
+      behavior: "smooth",
+      block: "start",
+    });
+    expect(mocks.push).not.toHaveBeenCalled();
+  });
+
   it("a stalled preparation exposes readable guide recovery at 15s without requesting or cancelling SDK work", async () => {
     await mountStart();
     expect(state()).toBe("loading");
