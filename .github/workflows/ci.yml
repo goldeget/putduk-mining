@@ -121,7 +121,7 @@ jobs:
       - run: |
           node scripts/ci-workroom-checkout.mjs
           pnpm install --frozen-lockfile
-          pnpm exec playwright install --with-deps chromium
+          node scripts/ci-workroom-browser-server.mjs --start
       - uses: actions/download-artifact@v7
         with:
           name: workroom-build-${{ github.run_id }}-${{ github.run_attempt }}-${{ env.CI_HEAD_SHA }}
@@ -133,12 +133,16 @@ jobs:
           WORKROOM_CI_PROFILE: pr-smoke
           E2E_WEB_PORT: "3000"
           E2E_ADMIN_PORT: "3100"
+      - name: Stop job-owned browser runtime
+        if: always()
+        run: node scripts/ci-workroom-browser-server.mjs --stop
       - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: workroom-acceptance-${{ github.run_id }}-${{ github.run_attempt }}-${{ env.CI_HEAD_SHA }}
           path: |
             test-results/workroom-native
+            test-results/workroom-browser-runtime
             test-results/workroom-auth/results.json
             test-results/workroom-auth/*member-mobile.png
             test-results/workroom-acceptance

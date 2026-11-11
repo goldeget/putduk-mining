@@ -2,6 +2,7 @@ import { test, expect, type Page } from "@playwright/test";
 import { login, member } from "./helpers";
 
 async function fits(page: Page) {
+  await expect(page.locator(".support-dock")).toHaveCount(0);
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= innerWidth,
@@ -11,7 +12,7 @@ async function fits(page: Page) {
 
 async function publicSurface(page: Page) {
   return page
-    .locator("main")
+    .locator("main:visible")
     .first()
     .evaluate((node) => {
       for (
@@ -102,6 +103,14 @@ test("real member account, support, notifications and AI menus fit mobile withou
   await login(page, await member());
   await page.setViewportSize({ width: 390, height: 844 });
   for (const path of [
+    "/workroom",
+    "/workroom/history",
+    "/workroom/points",
+    "/workroom/guide",
+    "/workroom/records",
+    "/workroom/cash",
+    "/workroom/cash/deposit",
+    "/workroom/cash/withdraw",
     "/menu",
     "/menu/account",
     "/menu/support",

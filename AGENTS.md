@@ -1,3 +1,19 @@
+## Owner-authorized onboarding and support polish — 2026-11-11
+
+The owner requested usable referral issuance, recovery-mail delivery, direct
+signup-to-admin acceptance in the connected browser, and removal of the detached
+floating consultation control from every active page and menu.
+
+- Remove the global floating launcher while preserving the support runtime,
+  inline customer-support actions, identity synchronization and accessibility.
+- Preserve real identities, MFA, authorization, independent cash ledgers and
+  existing mail routing. Do not fabricate production users or financial proof.
+- Verify recovery delivery and referral issuance through authorized services.
+  Browser access and human credential entry must be reported separately from
+  automated checks; no simulated evidence may stand in for a live acceptance.
+- New paid services require explicit cost approval. Keep task artifacts under
+  `F:/가상대리점/workroom-onboarding-polish-20261111` and preserve release gates.
+
 ## Owner-authorized complete WORKROOM presentation — 2026-11-11
 
 The owner additionally requested consistent WORKROOM design for ID recovery,

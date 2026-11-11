@@ -46,8 +46,10 @@ function supportStatusCopy(state: SupportDisplayState) {
 
 export function SupportRuntime({
   memberLauncher = true,
+  floatingLauncher = true,
 }: {
   memberLauncher?: boolean;
+  floatingLauncher?: boolean;
 } = {}) {
   const pathname = usePathname();
   const router = useRouter();
@@ -75,7 +77,9 @@ export function SupportRuntime({
     });
   }, [appearance, pathname]);
 
-  if (pathname === "/support") {
+  // Launcher visibility never disables identity, route or theme synchronization.
+  // Dedicated support pages keep their own inline SupportStartButton.
+  if (!floatingLauncher || pathname === "/support") {
     return null;
   }
 
@@ -128,7 +132,11 @@ export function SupportRuntime({
   );
 }
 
-export function SupportStartButton() {
+export function SupportStartButton({
+  guideId = "support-guide",
+}: {
+  guideId?: string;
+} = {}) {
   const statusId = useId();
   const booted = useSyncExternalStore(
     controller.subscribe,
@@ -150,7 +158,7 @@ export function SupportStartButton() {
           if (booted) {
             return;
           }
-          document.getElementById("support-guide")?.scrollIntoView({
+          document.getElementById(guideId)?.scrollIntoView({
             behavior: window.matchMedia("(prefers-reduced-motion: reduce)")
               .matches
               ? "instant"

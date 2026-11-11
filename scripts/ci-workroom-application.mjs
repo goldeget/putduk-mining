@@ -25,6 +25,7 @@ const commands = [
     [
       "--test",
       "scripts/ci-workroom-evidence.test.mjs",
+      "scripts/ci-workroom-browser-server.test.mjs",
       "scripts/verify-canonical-brand-identity.test.mjs",
       "scripts/assert-worker-report.test.mjs",
       "scripts/ci-workroom-cloudflare-output.test.mjs",
