@@ -119,12 +119,7 @@ jobs:
       - run: |
           node scripts/ci-workroom-checkout.mjs
           pnpm install --frozen-lockfile
-          # Keep full browser dependencies; use Ubuntu directly if the
-          # hosted runner's Azure package mirror cannot resolve.
-          if [ -f /etc/apt/apt-mirrors.txt ]; then
-            sudo sed -E -i 's#https?://azure[.]archive[.]ubuntu[.]com/ubuntu#https://archive.ubuntu.com/ubuntu#g' /etc/apt/apt-mirrors.txt
-          fi
-          pnpm exec playwright install --with-deps chromium
+          node scripts/ci-workroom-browser-server.mjs --start
       - uses: actions/download-artifact@v7
         with:
           name: workroom-build-${{ github.run_id }}-${{ github.run_attempt }}-${{ env.CI_HEAD_SHA }}
@@ -136,12 +131,16 @@ jobs:
           E2E_WEB_PORT: "3000"
           E2E_ADMIN_HOST: "127.0.0.1"
           E2E_ADMIN_PORT: "3100"
+      - name: Stop job-owned browser runtime
+        if: always()
+        run: node scripts/ci-workroom-browser-server.mjs --stop
       - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: workroom-acceptance-${{ github.run_id }}-${{ github.run_attempt }}-${{ env.CI_HEAD_SHA }}
           path: |
             test-results/workroom-native
+            test-results/workroom-browser-runtime
             test-results/workroom-auth/results.json
             test-results/workroom-auth/retained-results.json
             test-results/workroom-auth/financial-results.json
@@ -239,11 +238,7 @@ jobs:
       - run: |
           node scripts/ci-workroom-checkout.mjs
           pnpm install --frozen-lockfile
-          # Keep the same signed packages and browser validation in workerd.
-          if [ -f /etc/apt/apt-mirrors.txt ]; then
-            sudo sed -E -i 's#https?://azure[.]archive[.]ubuntu[.]com/ubuntu#https://archive.ubuntu.com/ubuntu#g' /etc/apt/apt-mirrors.txt
-          fi
-          pnpm exec playwright install --with-deps chromium
+          node scripts/ci-workroom-browser-server.mjs --start
       - uses: actions/download-artifact@v7
         with:
           name: workroom-cloudflare-build-${{ github.run_id }}-${{ github.run_attempt }}-${{ env.CI_HEAD_SHA }}
@@ -254,12 +249,16 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           E2E_WEB_PORT: "3000"
           E2E_ADMIN_PORT: "3100"
+      - name: Stop job-owned browser runtime
+        if: always()
+        run: node scripts/ci-workroom-browser-server.mjs --stop
       - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: workroom-workerd-acceptance-${{ github.run_id }}-${{ github.run_attempt }}-${{ env.CI_HEAD_SHA }}
           path: |
             test-results/workroom-native
+            test-results/workroom-browser-runtime
             test-results/workroom-auth/results.json
             test-results/workroom-auth/retained-results.json
             test-results/workroom-auth/financial-results.json
