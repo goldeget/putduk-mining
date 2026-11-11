@@ -4,6 +4,25 @@ import path from "node:path";
 
 const version = "2026.10.14-sprout-p-v2";
 const digest = (bytes) => createHash("sha256").update(bytes).digest("hex");
+
+/** Active WORKROOM chat uses W; the retained mascot keeps its archived identity. */
+export function hasApprovedAiIdentity(source, name) {
+  if (
+    source.includes("/brand/mascot/putduk-ai-help-face-") ||
+    source.includes("/brand/identity/20261013/")
+  )
+    return false;
+  if (name === "putduk-ai-chat.tsx") {
+    return (
+      /import\s*\{\s*WorkroomMark\s*\}\s*from\s*["']@\/components\/workroom\/workroom-mark["']/.test(
+        source,
+      ) &&
+      /<WorkroomMark\b/.test(source) &&
+      !/<BrandMark\b/.test(source)
+    );
+  }
+  return name === "putduk-ai-mascot.tsx" && /<BrandMark\b/.test(source);
+}
 const required = [
   "/brand/logo/putduk-sprout-p-master.svg",
   "/brand/logo/putduk-ai-symbol.svg",
@@ -116,11 +135,7 @@ export async function verifyCanonicalBrandIdentity(root) {
         path.join(root, "components/product", name),
         "utf8",
       );
-      if (
-        source.includes("/brand/mascot/putduk-ai-help-face-") ||
-        source.includes("/brand/identity/20261013/") ||
-        !source.includes("BrandMark")
-      )
+      if (!hasApprovedAiIdentity(source, name))
         failures.push(`current AI entry must use canonical identity: ${name}`);
     }
     const previousPath = identity.historicalIdentity?.manifest;
