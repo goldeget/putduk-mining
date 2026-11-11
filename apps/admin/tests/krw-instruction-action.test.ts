@@ -46,12 +46,10 @@ function client(
 ) {
   const rpc = options.lost
     ? vi.fn().mockRejectedValue(new Error("LOST"))
-    : vi
-        .fn()
-        .mockResolvedValue({
-          data: 2,
-          error: options.error ? { message: options.error } : null,
-        });
+    : vi.fn().mockResolvedValue({
+        data: 2,
+        error: options.error ? { message: options.error } : null,
+      });
   const query = {
     select: () => query,
     eq: () => query,
