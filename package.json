@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "PUTDUK MINING production web and PWA foundation",
+  "description": "WORKROOM simulation workspace and separate manual cash operations",
   "packageManager": "pnpm@12.6.0",
   "engines": {
     "node": ">=24.19.0 <25",

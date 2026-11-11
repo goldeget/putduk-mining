@@ -1,4 +1,21 @@
-# PUTDUK MINING
+# WORKROOM
+
+WORKROOM is a Korean simulation workspace for currency and stock scenarios.
+Members join using an invitation code and receive 100,000 noncash practice
+points once. Simulation results never credit withdrawable funds. Administrators
+configure each instrument's pattern, duration and signed target return.
+
+Real KRW deposits and withdrawals use separate ledgers and manual operator
+approval. Deposit instructions are available from the assigned operator.
+The current member and administrator sites retain their existing addresses:
+[Member workspace](https://mining.putduk.com/workroom) and
+[Administrator console](https://admin.mining.putduk.com/workroom).
+
+The repository name and existing hostnames are retained for deployment
+compatibility. The sections below document the preserved predecessor
+implementation and are not a description of the current simulation product.
+
+## Preserved implementation history
 
 Premium virtual mining platform built around a simple user experience, server-authoritative mining, ledger-based assets, operator-controlled economics, PWA notifications, PUTDUK AI, and public trust/discovery.
 
