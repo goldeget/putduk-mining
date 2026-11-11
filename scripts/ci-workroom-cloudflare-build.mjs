@@ -35,9 +35,9 @@ for (const [dir, name] of [
         ? "https://mining.putduk.com"
         : "https://admin.mining.putduk.com",
     ADMIN_APP_URL: "https://admin.mining.putduk.com",
-    NEXT_PUBLIC_SUPABASE_URL: "https://osrmyjgmpdspdcwqjwuv.supabase.co",
+    NEXT_PUBLIC_SUPABASE_URL: "https://awrubjiqkggaxcvtckbr.supabase.co",
     NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:
-      "sb_publishable_Pc0iVt3ubpnsRTNxbJ1KCg_kK76qtv-",
+      "sb_publishable_GLyun5wTHeFb0vEjug52Mw_l4G9JqZx",
     AI_PROVIDER_DISPATCH_ENABLED: "false",
   };
   // Exact existing Worker settings have no support plugin/HMAC binding; do not bake CI fixtures into a release.

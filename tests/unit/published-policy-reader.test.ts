@@ -37,7 +37,7 @@ const localApiPort = localConfig
   .split(/^\[api\][ \t]*\r?$/m)[1]
   ?.split(/^\[/m)[0]
   ?.match(/^port\s*=\s*([0-9]+)\s*$/m)?.[1];
-const remote = "https://osrmyjgmpdspdcwqjwuv.supabase.co";
+const remote = "https://awrubjiqkggaxcvtckbr.supabase.co";
 const secret = "sb_secret_reader_unit_fixture_only";
 const id = (value: number) =>
   `00000000-0000-4000-8000-${value.toString(16).padStart(12, "0")}`;
@@ -160,8 +160,8 @@ describe("unattended effective economy policy reader", () => {
 
   it.each([
     "https://example.invalid",
-    "https://osrmyjgmpdspdcwqjwuv.supabase.co/other",
-    "https://osrmyjgmpdspdcwqjwuv.supabase.co?project=other",
+    "https://awrubjiqkggaxcvtckbr.supabase.co/other",
+    "https://awrubjiqkggaxcvtckbr.supabase.co?project=other",
     `http://127.0.0.1:${Number(localApiPort) + 1}`,
   ])(
     "rejects an unauthorized target %s without a network client",

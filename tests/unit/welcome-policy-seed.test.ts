@@ -110,7 +110,7 @@ describe("welcome withdrawal policy seed plan", () => {
       resolve(root, "scripts/seed-welcome-withdrawal-policies.mjs"),
       "utf8",
     );
-    expect(script).toContain('EXPECTED_PROJECT_REF = "osrmyjgmpdspdcwqjwuv"');
+    expect(script).toContain('EXPECTED_PROJECT_REF = "awrubjiqkggaxcvtckbr"');
     expect(script).toContain("SEED_WELCOME_WITHDRAWAL_POLICIES");
     expect(script).toContain('role", "SUPER_ADMIN"');
   });
