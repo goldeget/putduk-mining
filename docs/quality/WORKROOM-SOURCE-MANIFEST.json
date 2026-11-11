@@ -2635,7 +2635,7 @@
     "tests/e2e/workroom/11-grant-preservation.spec.ts": "f5ba1a173772a5741e7a6b3bf36bfdff82f9e4493cc2b7daf7ef8d574bc9801f",
     "tests/e2e/workroom/12-security-retirement.spec.ts": "55110b413c56129561b76c9ac2c8ee3bf1f3363ef0bbdee69419c0e7124fe5c3",
     "tests/e2e/workroom/13-theme-admin-navigation.spec.ts": "bdd272c82778bb97f611397938a0b9703c5da8856891157facb0c24ecc860e4f",
-    "tests/e2e/workroom/14-public-member-presentation.spec.ts": "85b2c2d129b3bc20db6c7bfb03f63555a8da9d8741049babc5e7246f6d28e1ec",
+    "tests/e2e/workroom/14-public-member-presentation.spec.ts": "d1cf8093f2bf34f5247f1dbfe6f2de2958751106e1b2fa6722302eb530dcd50e",
     "tests/e2e/workroom/helpers.ts": "70fe5f14514d4dba716fc616d5b83eab915afc73cf803cd4985261c9c76e8a18",
     "tests/e2e/ws04-transfer-contract.spec.ts": "87d41d0f9abf5670de577c86cf5198c689d43911fdf88545e0c3476bb311a50e",
     "tests/fixtures/ai-owner-qa-corpus.ts": "7e6c035bc7741cda733a8f7ce4dd96bf5829e8e2dd0bd7d0135ca085e0187251",

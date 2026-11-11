@@ -180,7 +180,9 @@ test("actual pending state animates, respects reduced motion and clears after th
       .toBe(true);
   } finally {
     release();
-    await page.unroute("**/api/v1/workroom/state");
+    // Let the held handler continue the genuine response before removing it.
+    // Default unroute does not wait and can race route.continue().
+    await page.unrouteAll({ behavior: "wait" });
   }
   await expect(
     page.locator('[data-workroom-loading="page"]:visible'),
