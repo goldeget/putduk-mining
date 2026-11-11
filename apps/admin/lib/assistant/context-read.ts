@@ -624,7 +624,7 @@ async function mining(db: SupabaseClient, builder: Builder, userId: string) {
     "UNKNOWN",
     "정산 전·확인 전 금액은 확정된 지갑 잔액이 아닙니다. 화면 조회만으로 향후 수익을 보장할 수 없습니다.",
     href,
-    "이전 서비스과 확정 잔액 구분",
+    "이전 서비스와 확정 잔액 구분",
   );
   builder.add(
     "UNKNOWN",
