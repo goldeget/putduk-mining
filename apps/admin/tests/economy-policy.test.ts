@@ -314,7 +314,7 @@ describe("admin economic policy authority and exact input", () => {
       createElement(EconomyConsole, {
         initial: view,
         publicConfig: {
-          url: "https://osrmyjgmpdspdcwqjwuv.supabase.co",
+          url: "https://awrubjiqkggaxcvtckbr.supabase.co",
           publishableKey: "sb_publishable_unit_test_public_config",
         },
       }),

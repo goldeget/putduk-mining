@@ -38,7 +38,7 @@ vi.mock("@supabase/ssr", () => ({
 }));
 
 const publicConfig = {
-  url: "https://osrmyjgmpdspdcwqjwuv.supabase.co",
+  url: "https://awrubjiqkggaxcvtckbr.supabase.co",
   publishableKey: "sb_publishable_test_runtime_configuration",
 };
 const source = approvedFixture as EconomySettings & {
