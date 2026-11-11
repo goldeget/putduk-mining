@@ -1,5 +1,6 @@
 "use client";
 import { FeedbackMessage } from "../../../../../components/ui/feedback-message";
+import { WorkroomLoading } from "../../../../../components/ui/workroom-loading";
 
 import { useEffect, useRef, useState } from "react";
 import { useKycAcknowledgedEvidence } from "./acknowledged-evidence";
@@ -264,8 +265,16 @@ export function KycEvidenceDownload({
             }}
             submissionPending={pending}
           />
-          <button type="submit" className="button button--secondary">
-            {pending ? "서류 확인 중" : "서류 받기"}
+          <button
+            type="submit"
+            className="button button--secondary"
+            aria-busy={pending}
+          >
+            {pending ? (
+              <WorkroomLoading label="서류 확인 중" variant="inline" />
+            ) : (
+              "서류 받기"
+            )}
           </button>
         </fieldset>
       </form>
@@ -300,8 +309,20 @@ export function KycEvidenceDownload({
               }}
               submissionPending={pending}
             />
-            <button type="submit" className="button button--secondary">
-              {pending ? "확인 기록 저장 중" : "내용 확인 기록"}
+            <button
+              type="submit"
+              className="button button--secondary"
+              aria-busy={pending}
+            >
+              {pending ? (
+                <WorkroomLoading
+                  label="확인 기록 저장 중"
+                  variant="inline"
+                  announce={false}
+                />
+              ) : (
+                "내용 확인 기록"
+              )}
             </button>
           </fieldset>
         </form>

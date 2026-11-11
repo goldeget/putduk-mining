@@ -2,6 +2,7 @@ import "server-only";
 
 import { createHash } from "node:crypto";
 import { z } from "zod";
+import { isWithdrawalBankCode } from "./withdrawal-banks";
 
 /** Shared by prepare and registration; never a competing client-side hash. */
 export const withdrawalDestinationSchema = z.discriminatedUnion("method", [
@@ -19,7 +20,11 @@ export const withdrawalDestinationSchema = z.discriminatedUnion("method", [
         .string()
         .trim()
         .toUpperCase()
-        .regex(/^[A-Z0-9_]{2,20}$/),
+        .regex(/^[A-Z0-9_]{2,20}$/)
+        .refine(
+          (code): boolean => isWithdrawalBankCode(code),
+          "출금할 은행을 선택해 주세요.",
+        ),
     })
     .strict(),
   z

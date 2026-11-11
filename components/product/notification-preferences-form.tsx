@@ -30,8 +30,8 @@ const options: readonly {
 }[] = [
   {
     key: "mining_enabled",
-    label: "채굴과 정산",
-    description: "채굴 상태와 정산 결과의 중요한 변화를 알립니다.",
+    label: "워크룸 활동",
+    description: "참여 활동과 기록에 관한 중요한 안내를 확인합니다.",
   },
   {
     key: "wallet_enabled",

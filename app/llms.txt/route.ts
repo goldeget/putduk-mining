@@ -12,7 +12,7 @@ export function GET() {
     "Official public information for WORKROOM.",
     `Content version: ${TRUST_CONTENT_VERSION}`,
     `Last updated: ${TRUST_LAST_UPDATED}`,
-    "Canonical origin: https://mining.putduk.com",
+    "Canonical origin: https://workroom.putduk.com",
     "",
     "## Official facts",
     ...PUBLIC_FACTS.map(
@@ -22,11 +22,11 @@ export function GET() {
     "## Public documents",
     ...TRUST_DOCUMENTS.map(
       (document) =>
-        `- https://mining.putduk.com${document.path} — ${document.summary}`,
+        `- https://workroom.putduk.com${document.path} — ${document.summary}`,
     ),
     "",
     "## Machine-readable facts",
-    "- https://mining.putduk.com/api/v1/public/facts",
+    "- https://workroom.putduk.com/api/v1/public/facts",
     "",
     "Private user data, admin routes, internal APIs, secrets, and database internals are not public discovery content.",
   ];

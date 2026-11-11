@@ -84,10 +84,12 @@ describe("회원 화면 구도", () => {
     expect(menuPage).toContain("<MemberMenuView facts={facts}");
     expect(menuView).toContain("가입일");
     expect(menuView).toContain("formatJoinedOn(facts.joinedAt)");
-    expect(menuView).toContain("facts.availableKrwAtomic");
-    expect(menuView).toContain("facts.walletUnavailable");
-    expect(menuView).toContain("누적 채굴");
-    expect(menuView).toContain("아직 표시할 수 없어요");
+    expect(menuView).not.toContain("facts.availableKrwAtomic");
+    expect(menuView).toContain('href="/workroom/cash"');
+    expect(menuView).toContain("체험과 실제 자산");
+    expect(menuView).toContain("별도로 관리돼요");
+    expect(menuView).not.toContain("SemiconductorTowerScene");
+    expect(menuCss).not.toContain("/brand/scenes/");
     expect(menuView).not.toMatch(/L5 PRO|54,281|보유 자산/);
     expect(menuView).toContain("<h1>더보기</h1>");
     expect(menuView.match(/aria-label="더보기 메뉴"/g)).toHaveLength(1);

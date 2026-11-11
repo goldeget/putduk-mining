@@ -3,6 +3,7 @@ import type { AdminPrincipal } from "@/lib/auth/principal";
 import { AdminRailMenu } from "./admin-rail-menu";
 import { AdminScreenGuide } from "./presentation/admin-screen-guide";
 import { ThemeControl } from "../../../components/system/theme-control";
+import { AdminLocation } from "./admin-location";
 
 const operatorRoleLabel: Record<AdminPrincipal["role"], string> = {
   SUPER_ADMIN: "최고 운영자",
@@ -41,14 +42,13 @@ export function AdminShell({
       />
       <div className="control-workspace">
         <header className="control-topbar">
-          <div>
-            <span className="status-dot" />
-            운영자 본인 확인 완료
-          </div>
+          <AdminLocation />
           <div className="control-topbar__tools">
             <AdminScreenGuide />
             <ThemeControl />
-            <p>admin.mining.putduk.com</p>
+            <span className="admin-auth-status">
+              <span className="status-dot" /> 본인 확인 완료
+            </span>
           </div>
         </header>
         <main className="control-main" id="admin-main-content" tabIndex={-1}>

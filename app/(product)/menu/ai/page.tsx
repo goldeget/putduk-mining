@@ -2,7 +2,6 @@ import Link from "next/link";
 import { PutdukAiChat } from "@/components/product/putduk-ai-chat";
 import { requirePageUser } from "@/lib/auth/session";
 import { readMemberScreenFacts } from "@/lib/product/member-screen-facts";
-import { formatScreenKrw } from "@/lib/product/member-screen-present";
 import styles from "./page.module.css";
 
 export default async function PutdukAiPage() {
@@ -17,10 +16,7 @@ export default async function PutdukAiPage() {
           ownerUserId: identity.userId,
           displayName: facts.displayName,
           rankName: facts.rankName,
-          availableKrwLabel: formatScreenKrw(
-            facts.availableKrwAtomic,
-            facts.walletUnavailable,
-          ),
+          availableKrwLabel: "입출금 화면에서 확인",
         }}
         pageTools={
           <>

@@ -4,6 +4,7 @@ import { FeedbackMessage } from "@/components/ui/feedback-message";
 import { useSyncExternalStore, type FormEvent } from "react";
 import { useFormStatus } from "react-dom";
 import { PutdukIcon } from "@/components/icons/putduk-icon";
+import { WorkroomLoading } from "../ui/workroom-loading";
 
 function subscribeConnection(onChange: () => void) {
   window.addEventListener("online", onChange);
@@ -60,11 +61,24 @@ export function AuthSubmitButton({
         disabled={pending || !online || disabled}
         aria-busy={pending}
       >
-        {pending ? pendingLabel : label}
+        {pending ? (
+          <WorkroomLoading
+            label={pendingLabel}
+            variant="inline"
+            announce={false}
+          />
+        ) : (
+          label
+        )}
         <PutdukIcon name="arrow-right" size={18} />
       </button>
       {pending ? (
-        <span className="auth-form__pending" role="status">
+        <span
+          className="auth-form__pending"
+          role="status"
+          aria-live="polite"
+          aria-atomic="true"
+        >
           {pendingLabel}
         </span>
       ) : null}

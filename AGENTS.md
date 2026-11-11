@@ -1,3 +1,48 @@
+## Owner-authorized complete WORKROOM presentation — 2026-11-11
+
+The owner additionally requested consistent WORKROOM design for ID recovery,
+password reset, terms, privacy and every active menu, removing legacy mining UI,
+plus premium animated loading states inspired by the feel of a large platform.
+
+- Use the approved navy/mint and light WORKROOM system, canonical W identity,
+  system/light/dark controls and responsive layouts across active surfaces.
+- Replace active legacy scenes and obsolete feature summaries. Preserve archived
+  assets/documents, recorded consent versions and financial/security contracts.
+- Keep public recovery forms, verification proofs, callbacks, business handlers,
+  review/MFA, retries and disabled conditions intact. Never fake a balance or
+  display a legacy ledger amount as current direct-cash availability.
+- Loading is tied to actual pending work with reduced-motion support. No fake
+  percentage, artificial minimum wait or premature financial-success display.
+- Use separate public/auth/trust, retained member-menu and shared-loading lanes;
+  root owns integration, recovery fallbacks, browser acceptance, CI and release.
+- Preserve all existing release gates. Review every case in multi-case browser
+  files explicitly; required passes, no retries/skips and wall-clock limits stay.
+
+## Owner-authorized WORKROOM domain and identity alignment — 2026-11-11
+
+The owner explicitly requested replacing the mining domain with WORKROOM and
+making member/admin logos, favicon and PWA icons match. The new member hostname
+is `workroom.putduk.com`; the new administrator hostname is
+`admin.workroom.putduk.com`, both within the existing `putduk.com` zone and
+Cloudflare account `9dc502d4ef06b3b5374591de6e6933ca`.
+
+- Retain the exact existing named member/admin Workers and backend project.
+- Back up current domain/DNS configuration, add only these two custom domains,
+  align application origins and authentication redirect configuration, then
+  verify TLS, login and protected routes before declaring the cutover complete.
+- Existing mining hostnames may remain during verification and as transition
+  aliases; preserve other DNS, email, certificates and security settings.
+- Use the existing WORKROOM W identity for all active logos and installation
+  icons. Historical brand assets, migrations and archived manifests stay intact.
+- Separate domain/source and logo/asset lanes; root retains provider changes,
+  source admission, CI, normal merge, deployment and production verification.
+- The owner explicitly requested using the F drive after C filled. Keep the
+  verified source checkout on C for Windows dependency compatibility; keep
+  release artifacts, snapshots, receipts and large task test runtimes under
+  `F:/가상대리점/workroom-admin-theme-bank-20261111`. Preserve old runtime paths
+  when relocating cached executables. Partial duplicate F source clones are
+  not accepted implementation checkouts.
+
 ## Owner-authorized fresh WORKROOM project — 2026-11-11
 
 The user created and authorized the new Free Supabase project

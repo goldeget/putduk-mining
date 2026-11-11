@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
+import { WorkroomMark } from "../../../../components/workroom/workroom-mark";
 
-import { BrandMark } from "../../../../components/brand/brand-mark";
 import { PutdukIcon } from "../../../../components/icons/putduk-icon";
 import { ThemeControl } from "../../../../components/system/theme-control";
 import { AdminAuthConnectionBoundary } from "./admin-auth-connection-boundary";
@@ -40,7 +40,7 @@ export function AdminAuthEntry({
     >
       <header className={styles.top}>
         <div className={styles.identity}>
-          <BrandMark title="" />
+          <WorkroomMark />
           <div>
             <strong>WORKROOM</strong>
             <span>운영자 보안 접속</span>

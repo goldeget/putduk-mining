@@ -2,16 +2,14 @@ import type { Route } from "next";
 import Link from "next/link";
 
 import { MENU_ITEMS, type MenuItem } from "@/app/(product)/menu/menu-items";
-import { SemiconductorTowerScene } from "@/components/brand/semiconductor-tower-scene";
 import { PutdukIcon } from "@/components/icons/putduk-icon";
-import { PutdukHomeIcon } from "@/components/icons/putduk-home-icon";
+import { WorkroomMark } from "@/components/workroom/workroom-mark";
 import { MenuBrandSymbol } from "@/components/product/menu-brand-symbol";
 import { ThemeControl } from "@/components/system/theme-control";
 import type { MemberScreenFacts } from "@/lib/product/member-screen-facts";
 import {
   formatJoinedOn,
   formatLocaleLabel,
-  formatScreenKrw,
 } from "@/lib/product/member-screen-present";
 
 import styles from "./member-menu-view.module.css";
@@ -74,8 +72,8 @@ function MenuRow({ item }: { item: MenuItem }) {
         }
       >
         <span className={styles.icon} aria-hidden="true">
-          {item.href === "/events" ? (
-            <PutdukHomeIcon name="gift" size={29} />
+          {item.href === "/ai" ? (
+            <WorkroomMark size={32} />
           ) : item.href === "/menu/support" ? (
             <MenuSupportIcon />
           ) : (
@@ -101,12 +99,7 @@ export function MemberMenuView({ facts }: { facts: MemberScreenFacts }) {
 
   return (
     <div className={styles.page} data-ui-ready="/menu" data-ui-state="loaded">
-      <div className={styles.backdrop} aria-hidden="true">
-        <SemiconductorTowerScene
-          priority
-          sizes="(min-width: 980px) calc(100vw - 188px), 100vw"
-        />
-      </div>
+      <div className={styles.backdrop} aria-hidden="true" />
       <header className={styles.hero}>
         <div className={styles.mobileTools} data-menu-mobile-tools="true">
           <Link href="/notifications" aria-label="알림 센터">
@@ -119,8 +112,9 @@ export function MemberMenuView({ facts }: { facts: MemberScreenFacts }) {
         <div className={styles.heroCopy}>
           <h1>더보기</h1>
           <p className={styles.tagline}>
-            기술이 만드는
-            <br />더 가치 있는 내일
+            내 계정과 설정,
+            <br />
+            한곳에서 편리하게
           </p>
           <p className={styles.introduction}>계정과 도움말만 모았어요.</p>
         </div>
@@ -130,7 +124,7 @@ export function MemberMenuView({ facts }: { facts: MemberScreenFacts }) {
             <strong>
               WORKROOM
               <br />
-              채굴
+              나만의 워크룸
             </strong>
             <span>
               더 빠른 오늘,
@@ -169,22 +163,16 @@ export function MemberMenuView({ facts }: { facts: MemberScreenFacts }) {
             <dd>{formatJoinedOn(facts.joinedAt)}</dd>
           </div>
           <div>
-            <dt>사용 가능</dt>
+            <dt>실제 잔액 · 입출금</dt>
             <dd>
-              {formatScreenKrw(
-                facts.availableKrwAtomic,
-                facts.walletUnavailable,
-              )}
+              <Link href="/workroom/cash">입출금 화면에서 확인</Link>
             </dd>
           </div>
           <div>
-            <dt>누적 채굴</dt>
-            <dd className={styles.unavailable}>아직 표시할 수 없어요</dd>
+            <dt>체험과 실제 자산</dt>
+            <dd className={styles.unavailable}>별도로 관리돼요</dd>
           </div>
         </dl>
-        <div className={styles.profileArt} aria-hidden="true">
-          <SemiconductorTowerScene sizes="(min-width: 1100px) 22vw, 1px" />
-        </div>
       </section>
 
       <nav className={styles.board} aria-label="더보기 메뉴">

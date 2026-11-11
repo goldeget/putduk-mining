@@ -33,7 +33,7 @@ vi.mock("next/link", () => ({
 }));
 
 describe("approved auth composition", () => {
-  it("serves the approved responsive image as decoration with live, unique headings", () => {
+  it("uses the WORKROOM account frame with live unique headings and actual forms", () => {
     const host = document.createElement("div");
     host.innerHTML = renderToStaticMarkup(
       createElement(
@@ -42,8 +42,8 @@ describe("approved auth composition", () => {
           route: "/login",
           titleId: "auth-title",
           eyebrow: "안전한 로그인",
-          title: "나의 채굴로 돌아가기",
-          description: "로그인하면 채굴 상태를 확인할 수 있어요.",
+          title: "내 워크룸으로 돌아가기",
+          description: "로그인하면 워크룸 상태를 확인할 수 있어요.",
           panelTitle: "다시 만나 반가워요.",
           panelDescription: "계정 정보를 입력해 주세요.",
         },
@@ -54,14 +54,16 @@ describe("approved auth composition", () => {
     expect(host.querySelector('a[aria-label="WORKROOM 홈"]')).not.toBeNull();
     expect(host.querySelector('[aria-hidden="true"] svg')).not.toBeNull();
     expect(host.querySelectorAll("h1")).toHaveLength(1);
-    expect(host.querySelector("h1")?.textContent).toBe("나의 채굴로 돌아가기");
-    const stage = host.querySelector('[data-auth-layout="stage"]');
+    expect(host.querySelector("h1")?.textContent).toBe(
+      "내 워크룸으로 돌아가기",
+    );
+    const stage = host.querySelector('[data-auth-layout="workroom"]');
     const story = host.querySelector('section[aria-labelledby="auth-title"]');
     const panel = host.querySelector(
       'section[aria-labelledby="auth-title-panel"]',
     );
     expect(stage).not.toBeNull();
-    expect(story?.querySelector("[data-auth-scrim]")).not.toBeNull();
+    expect(story?.querySelector("[data-auth-scrim]")).toBeNull();
     expect(story?.querySelector("h1")).not.toBeNull();
     expect(panel?.querySelector("h2")?.textContent).toBe("다시 만나 반가워요.");
     expect(

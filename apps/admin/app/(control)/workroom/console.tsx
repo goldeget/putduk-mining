@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { WorkroomLoading } from "../../../../../components/ui/workroom-loading";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import {
@@ -95,21 +96,21 @@ function Preview({ config }: { config: WorkroomAdminConfig }) {
             x2="576"
             y1={y}
             y2={y}
-            stroke="#2c4055"
+            stroke="var(--admin-line)"
             strokeDasharray="3 5"
           />
         ))}
         <polyline
           points={points}
           fill="none"
-          stroke="#73efc3"
+          stroke="var(--admin-accent)"
           strokeWidth="3"
           strokeLinejoin="round"
         />
-        <text x="24" y="222" fill="#a6b7ca" fontSize="12">
+        <text x="24" y="222" fill="var(--admin-muted)" fontSize="12">
           00:00
         </text>
-        <text x="540" y="222" fill="#a6b7ca" fontSize="12">
+        <text x="540" y="222" fill="var(--admin-muted)" fontSize="12">
           {durationLabel}
         </text>
       </svg>
@@ -375,8 +376,13 @@ export function WorkroomConsole({ actorId }: { actorId: string }) {
           type="button"
           onClick={() => void load()}
           disabled={loading || busy}
+          aria-busy={loading}
         >
-          {loading ? "불러오는 중…" : "정보 새로고침"}
+          {loading ? (
+            <WorkroomLoading label="불러오는 중…" variant="inline" />
+          ) : (
+            "정보 새로고침"
+          )}
         </button>
       </header>
       <div className={styles.disclosure}>
@@ -420,17 +426,24 @@ export function WorkroomConsole({ actorId }: { actorId: string }) {
             disabled={busy}
             onClick={() => void execute(pending)}
           >
-            {busy ? "확인 중…" : "동일한 요청으로 결과 재확인"}
+            {busy ? (
+              <WorkroomLoading label="확인 중…" variant="inline" />
+            ) : (
+              "동일한 요청으로 결과 재확인"
+            )}
           </button>
         </section>
       )}
       {!data ? (
         <section className={styles.panel}>
-          <h2>
-            {loading
-              ? "운영 정보를 확인하고 있어요."
-              : "운영 정보를 불러오지 못했어요."}
-          </h2>
+          {loading ? (
+            <WorkroomLoading
+              label="운영 정보를 불러오고 있어요"
+              announce={false}
+            />
+          ) : (
+            <h2>운영 정보를 불러오지 못했어요.</h2>
+          )}
           <p>서버에서 확인된 정보만 표시합니다.</p>
           <button type="button" disabled={loading} onClick={() => void load()}>
             다시 조회
@@ -596,69 +609,101 @@ export function WorkroomConsole({ actorId }: { actorId: string }) {
           )}
           {tab === "invites" && (
             <>
-              <section className={styles.panel}>
-                <span className={styles.eyebrow}>INVITATION</span>
-                <h2>추천인 코드 발급</h2>
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    prepare("INVITE_CREATE", {
-                      label: inviteLabel,
-                      maxUses,
-                      expiresAt: new Date(expiry).toISOString(),
-                      reason: inviteReason,
-                    });
-                  }}
-                >
-                  <fieldset disabled={locked}>
-                    <div className={styles.three}>
+              <div className={styles.createGrid}>
+                <section className={styles.panel}>
+                  <span className={styles.eyebrow}>INVITATION</span>
+                  <h2>추천인 코드 발급</h2>
+                  <form
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      prepare("INVITE_CREATE", {
+                        label: inviteLabel,
+                        maxUses,
+                        expiresAt: new Date(expiry).toISOString(),
+                        reason: inviteReason,
+                      });
+                    }}
+                  >
+                    <fieldset disabled={locked}>
+                      <div className={styles.three}>
+                        <label>
+                          담당자·구분명
+                          <input
+                            maxLength={60}
+                            value={inviteLabel}
+                            onChange={(e) => setInviteLabel(e.target.value)}
+                            placeholder="예: 11월 체험 초대"
+                          />
+                        </label>
+                        <label>
+                          가입 가능 인원
+                          <input
+                            type="number"
+                            required
+                            min={1}
+                            max={1000}
+                            step={1}
+                            value={maxUses}
+                            onChange={(e) => setMaxUses(Number(e.target.value))}
+                          />
+                        </label>
+                        <label>
+                          만료일시 (기기 현지 시간)
+                          <input
+                            type="datetime-local"
+                            required
+                            value={expiry}
+                            onChange={(e) => setExpiry(e.target.value)}
+                          />
+                        </label>
+                      </div>
                       <label>
-                        담당자·구분명
+                        발급 사유
                         <input
-                          maxLength={60}
-                          value={inviteLabel}
-                          onChange={(e) => setInviteLabel(e.target.value)}
-                          placeholder="예: 11월 체험 초대"
-                        />
-                      </label>
-                      <label>
-                        가입 가능 인원
-                        <input
-                          type="number"
                           required
-                          min={1}
-                          max={1000}
-                          step={1}
-                          value={maxUses}
-                          onChange={(e) => setMaxUses(Number(e.target.value))}
+                          minLength={2}
+                          maxLength={160}
+                          value={inviteReason}
+                          onChange={(e) => setInviteReason(e.target.value)}
                         />
                       </label>
-                      <label>
-                        만료일시 (기기 현지 시간)
-                        <input
-                          type="datetime-local"
-                          required
-                          value={expiry}
-                          onChange={(e) => setExpiry(e.target.value)}
-                        />
-                      </label>
-                    </div>
-                    <label>
-                      발급 사유
-                      <input
-                        required
-                        minLength={2}
-                        maxLength={160}
-                        value={inviteReason}
-                        onChange={(e) => setInviteReason(e.target.value)}
-                      />
-                    </label>
-                    <button className={styles.primary} type="submit">
-                      코드 발급 검토
-                    </button>
-                  </fieldset>
-                </form>
-              </section>
+                      <button className={styles.primary} type="submit">
+                        코드 발급 검토
+                      </button>
+                    </fieldset>
+                  </form>
+                </section>
+                <aside className={styles.createGuide}>
+                  <span className={styles.eyebrow}>INVITATION GUIDE</span>
+                  <h2>발급 전 확인하세요</h2>
+                  <ol>
+                    <li>
+                      <div>
+                        <strong>담당자와 사용 범위</strong>
+                        <p>
+                          구분명을 기록하면 발급한 코드를 나중에 구별하기
+                          쉽습니다.
+                        </p>
+                      </div>
+                    </li>
+                    <li>
+                      <div>
+                        <strong>인원과 만료일시</strong>
+                        <p>가입 가능 인원과 코드의 유효 기간을 확인하세요.</p>
+                      </div>
+                    </li>
+                    <li>
+                      <div>
+                        <strong>검토 후 최종 발급</strong>
+                        <p>
+                          발급 사유를 입력하고 검토 화면에서 확인한 뒤
+                          실행합니다.
+                        </p>
+                      </div>
+                    </li>
+                  </ol>
+                </aside>
+              </div>
               <section className={styles.panel}>
                 <h2>발급한 추천인 코드</h2>
                 <div className={styles.table}>

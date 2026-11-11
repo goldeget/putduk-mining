@@ -15,7 +15,7 @@ import {
 } from "@/lib/workroom/public-content";
 import { getPublicFactLabel } from "@/lib/workroom/public-presentation";
 
-const privateHostname = "admin.mining.putduk.com";
+const privateHostname = "admin.workroom.putduk.com";
 
 describe("final owner public admin-address and internal-version boundary", () => {
   it("replaces the internal address with member support in the public fact registry", () => {
@@ -50,7 +50,7 @@ describe("final owner public admin-address and internal-version boundary", () =>
     const body = await response.text();
     expect(body).not.toContain(privateHostname);
     expect(body).not.toContain("ADMIN_DOMAIN");
-    expect(body).toContain("mining.putduk.com/api/v1/public/facts");
+    expect(body).toContain("workroom.putduk.com/api/v1/public/facts");
   });
 
   it("excludes the internal address from both default and requested AI knowledge", () => {

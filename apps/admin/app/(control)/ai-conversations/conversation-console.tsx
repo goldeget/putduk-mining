@@ -1,5 +1,6 @@
 "use client";
 import { FeedbackMessage } from "../../../../../components/ui/feedback-message";
+import { WorkroomLoading } from "../../../../../components/ui/workroom-loading";
 
 import { useEffect, useRef, useState } from "react";
 import {
@@ -304,7 +305,11 @@ export function AiConversationConsole() {
       )}
       {busy && (
         <FeedbackMessage role="status">
-          기록을 불러오는 중입니다.
+          <WorkroomLoading
+            label="기록을 불러오는 중입니다."
+            variant="inline"
+            announce={false}
+          />
         </FeedbackMessage>
       )}
       {members && (

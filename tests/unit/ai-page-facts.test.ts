@@ -35,7 +35,7 @@ beforeEach(() => {
   });
 });
 describe("owner-bound AI page facts", () => {
-  it("reads only one verified identity and labels the existing wallet amount accurately", async () => {
+  it("reads only one verified identity and directs current cash to the authoritative screen", async () => {
     const html = renderToStaticMarkup(await PutdukAiPage());
     expect(requirePageUser).toHaveBeenCalledExactlyOnceWith("/menu/ai");
     expect(readMemberScreenFacts).toHaveBeenCalledExactlyOnceWith(identity);
@@ -46,13 +46,13 @@ describe("owner-bound AI page facts", () => {
         ownerUserId: "verified-owner",
         displayName: "실제 회원",
         rankName: "실제 등급",
-        availableKrwLabel: "1,234,567원",
+        availableKrwLabel: "입출금 화면에서 확인",
       },
     });
     expect(html).toContain('href="/menu"');
     expect(html).not.toMatch(/ONLINE|L5|principal|원금|54%/);
   });
-  it("retains confirmed zero and never substitutes zero for missing data", async () => {
+  it("does not present legacy zero, missing or malformed amounts as current cash", async () => {
     const base = await vi
       .mocked(readMemberScreenFacts)
       .getMockImplementation()!(
@@ -63,23 +63,29 @@ describe("owner-bound AI page facts", () => {
       availableKrwAtomic: "0",
     });
     renderToStaticMarkup(await PutdukAiPage());
-    expect(capture.props?.pageFacts?.availableKrwLabel).toBe("0원");
+    expect(capture.props?.pageFacts?.availableKrwLabel).toBe(
+      "입출금 화면에서 확인",
+    );
     vi.mocked(readMemberScreenFacts).mockResolvedValue({
       ...base,
       availableKrwAtomic: null,
       rankName: null,
     });
     renderToStaticMarkup(await PutdukAiPage());
-    expect(capture.props?.pageFacts?.availableKrwLabel).toBe("아직 없어요");
+    expect(capture.props?.pageFacts?.availableKrwLabel).toBe(
+      "입출금 화면에서 확인",
+    );
     expect(capture.props?.pageFacts?.rankName).toBeNull();
     vi.mocked(readMemberScreenFacts).mockResolvedValue({
       ...base,
       availableKrwAtomic: "not-an-atomic-amount",
     });
     renderToStaticMarkup(await PutdukAiPage());
-    expect(capture.props?.pageFacts?.availableKrwLabel).toBe("아직 없어요");
+    expect(capture.props?.pageFacts?.availableKrwLabel).toBe(
+      "입출금 화면에서 확인",
+    );
   });
-  it("retains failed-wallet unknown and never reads data before auth succeeds", async () => {
+  it("does not present a failed legacy read as current cash and authenticates before reading", async () => {
     vi.mocked(readMemberScreenFacts).mockResolvedValue({
       availableKrwAtomic: "1234567",
       displayName: "실제 회원",
@@ -90,7 +96,7 @@ describe("owner-bound AI page facts", () => {
     });
     renderToStaticMarkup(await PutdukAiPage());
     expect(capture.props?.pageFacts?.availableKrwLabel).toBe(
-      "확인할 수 없어요",
+      "입출금 화면에서 확인",
     );
     vi.mocked(readMemberScreenFacts).mockClear();
     vi.mocked(requirePageUser).mockRejectedValue(new Error("AUTH_REDIRECT"));

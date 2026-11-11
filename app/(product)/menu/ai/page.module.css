@@ -75,3 +75,16 @@
 .close {
   font-size: 0.85rem;
 }
+
+.page {
+  max-width: 1120px;
+}
+.page :global(.ai-chat) {
+  border-radius: 22px;
+  border-color: var(--border-default);
+  background: var(--surface-default);
+  box-shadow: none;
+}
+.page :global(.ai-chat__welcome) {
+  padding: clamp(24px, 5vw, 56px);
+}

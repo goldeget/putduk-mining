@@ -1,6 +1,5 @@
-import { BrandMark } from "@/components/brand/brand-mark";
+import { WorkroomMark } from "@/components/workroom/workroom-mark";
 
-/** Compatible presentation wrapper; the canonical silhouette has no SVG paint IDs. */
 export function MenuBrandSymbol({
   className,
   idPrefix = "menu-hero-brand",
@@ -9,6 +8,8 @@ export function MenuBrandSymbol({
   idPrefix?: string;
 }) {
   return (
-    <BrandMark title="" className={className} data-brand-placement={idPrefix} />
+    <span className={className} data-brand-placement={idPrefix}>
+      <WorkroomMark size={52} />
+    </span>
   );
 }

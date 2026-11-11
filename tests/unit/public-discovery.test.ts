@@ -72,17 +72,17 @@ describe("public discovery paths", () => {
     const submission = buildIndexNowSubmission();
     const sitemapUrls = sitemap().map((entry) => entry.url);
 
-    expect(submission.host).toBe("mining.putduk.com");
+    expect(submission.host).toBe("workroom.putduk.com");
     expect(submission.key).toBe(INDEXNOW_KEY);
     expect(submission.keyLocation).toBe(
-      `https://mining.putduk.com${INDEXNOW_KEY_PATH}`,
+      `https://workroom.putduk.com${INDEXNOW_KEY_PATH}`,
     );
     expect(submission.urlList).toEqual(sitemapUrls);
-    expect(submission.urlList).toContain("https://mining.putduk.com/support");
-    expect(submission.urlList).toContain("https://mining.putduk.com/faq");
+    expect(submission.urlList).toContain("https://workroom.putduk.com/support");
+    expect(submission.urlList).toContain("https://workroom.putduk.com/faq");
     for (const path of PRIVATE_PATHS) {
       expect(submission.urlList).not.toContain(
-        `https://mining.putduk.com${path}`,
+        `https://workroom.putduk.com${path}`,
       );
     }
   });
@@ -93,7 +93,7 @@ describe("public discovery paths", () => {
       userAgent: "*",
       allow: "/",
     });
-    expect(policy.sitemap).toBe("https://mining.putduk.com/sitemap.xml");
+    expect(policy.sitemap).toBe("https://workroom.putduk.com/sitemap.xml");
 
     const disallow = Array.isArray(policy.rules)
       ? policy.rules.flatMap((rule) => rule.disallow ?? [])
@@ -141,11 +141,11 @@ describe("public discovery freshness", () => {
     ).toMatchObject({
       "@type": "BreadcrumbList",
       itemListElement: [
-        { position: 1, item: "https://mining.putduk.com/" },
+        { position: 1, item: "https://workroom.putduk.com/" },
         {
           position: 2,
           name: "자주 묻는 질문",
-          item: "https://mining.putduk.com/faq",
+          item: "https://workroom.putduk.com/faq",
         },
       ],
     });

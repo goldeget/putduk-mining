@@ -1,6 +1,6 @@
 .page {
   --menu-glass: color-mix(in srgb, var(--surface-raised) 97%, transparent);
-  --menu-gold: var(--brand-primary);
+  --menu-accent: var(--brand-primary);
   --menu-edge: color-mix(
     in srgb,
     var(--border-default) 80%,
@@ -68,7 +68,7 @@
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  color: var(--menu-gold);
+  color: var(--menu-accent);
   background: var(--menu-glass);
   text-decoration: none;
 }
@@ -138,11 +138,11 @@
   width: clamp(46px, 12vw, 90px);
   height: auto;
   flex: none;
-  filter: drop-shadow(0 0 16px rgb(249 191 64 / 50%));
+  filter: none;
 }
 .heroBrand strong {
   display: block;
-  color: var(--menu-gold);
+  color: var(--menu-accent);
   font-size: 0.78rem;
   line-height: 1.15;
   letter-spacing: 0.07em;
@@ -170,7 +170,7 @@
   container-type: inline-size;
   overflow: hidden;
   padding: min(1.15rem, 20px);
-  border-color: color-mix(in srgb, var(--menu-gold) 32%, var(--menu-edge));
+  border-color: color-mix(in srgb, var(--menu-accent) 32%, var(--menu-edge));
 }
 .identity {
   display: flex;
@@ -184,13 +184,11 @@
   width: 58px;
   height: 58px;
   place-items: center;
-  color: var(--menu-gold);
-  border: 1px solid var(--menu-gold);
+  color: var(--menu-accent);
+  border: 1px solid var(--menu-accent);
   border-radius: 50%;
-  background: linear-gradient(135deg, rgb(217 175 70 / 20%), rgb(2 8 15 / 80%));
-  box-shadow:
-    0 0 11px rgb(247 201 91 / 17%),
-    inset 0 0 0 2px rgb(249 220 138 / 14%);
+  background: var(--brand-quiet);
+  box-shadow: none;
 }
 :global(:root[data-theme="light"]) .avatar {
   background: var(--brand-quiet);
@@ -214,12 +212,12 @@
   display: inline-block;
   max-width: 100%;
   padding: 0.25rem 0.45rem;
-  border: 1px solid color-mix(in srgb, var(--menu-gold) 55%, transparent);
+  border: 1px solid color-mix(in srgb, var(--menu-accent) 55%, transparent);
   border-radius: 6px;
-  color: var(--menu-gold);
+  color: var(--menu-accent);
   font-size: 0.8125rem;
   line-height: 1.25;
-  background: color-mix(in srgb, var(--menu-gold) 7%, transparent);
+  background: color-mix(in srgb, var(--menu-accent) 7%, transparent);
   overflow-wrap: anywhere;
 }
 .name p {
@@ -355,14 +353,14 @@
   display: grid;
   place-items: center;
   flex: none;
-  color: var(--menu-gold);
-  filter: drop-shadow(0 1px 4px rgb(227 181 72 / 18%));
+  color: var(--menu-accent);
+  filter: none;
 }
 .chevron {
   color: var(--menu-secondary);
 }
 .row[data-emphasis="help"] strong {
-  color: var(--menu-gold);
+  color: var(--menu-accent);
 }
 .security {
   display: grid;
@@ -445,13 +443,13 @@
   background:
     linear-gradient(
       100deg,
-      color-mix(in srgb, var(--menu-gold) 15%, transparent),
+      color-mix(in srgb, var(--menu-accent) 15%, transparent),
       transparent 70%
     ),
     var(--menu-glass);
 }
 .membership strong {
-  color: var(--menu-gold);
+  color: var(--menu-accent);
   font-size: 0.95rem;
 }
 .membership p {
@@ -473,10 +471,10 @@
 }
 .footer > span {
   height: 1px;
-  background: var(--menu-gold);
+  background: var(--menu-accent);
 }
 .footer > strong {
-  color: var(--menu-gold);
+  color: var(--menu-accent);
   font-size: 0.8125rem;
   letter-spacing: 0.1em;
   font-weight: 500;
@@ -495,16 +493,16 @@
 .security:hover,
 .profileLink:hover,
 .story a:hover {
-  color: var(--menu-gold);
-  background: color-mix(in srgb, var(--menu-gold) 7%, transparent);
+  color: var(--menu-accent);
+  background: color-mix(in srgb, var(--menu-accent) 7%, transparent);
 }
 .row:active,
 .security:active {
-  background: color-mix(in srgb, var(--menu-gold) 12%, transparent);
+  background: color-mix(in srgb, var(--menu-accent) 12%, transparent);
 }
 .page a:focus-visible,
 .theme select:focus-visible {
-  outline: 2px solid var(--menu-gold);
+  outline: 2px solid var(--menu-accent);
   outline-offset: 3px;
   border-radius: 7px;
 }
@@ -605,7 +603,7 @@
     padding: 0.5rem;
     border: 1px solid var(--menu-edge);
     border-radius: 8px;
-    color: var(--menu-gold);
+    color: var(--menu-accent);
     font-size: 0.875rem;
   }
   .profileLink > span {
@@ -669,13 +667,13 @@
     padding-block: 0.8rem;
     background:
       linear-gradient(90deg, var(--menu-glass), transparent),
-      url("/brand/scenes/semiconductor-tower-desktop/semiconductor-tower-desktop-960-v1.webp")
-        center / cover;
+      linear-gradient(var(--surface-default), var(--surface-default)) center /
+        cover;
   }
   :global(:root[data-theme="light"]) .story {
     background-image:
       linear-gradient(90deg, var(--menu-glass), transparent),
-      url("/brand/scenes/semiconductor-wafer-light-desktop/semiconductor-wafer-light-desktop-960-v1.webp");
+      linear-gradient(var(--surface-default), var(--surface-default));
   }
   .story p {
     flex: 1 1 12rem;
@@ -693,7 +691,7 @@
     padding: 0.4rem 0.6rem;
     border: 1px solid var(--menu-edge);
     border-radius: 7px;
-    color: var(--menu-gold);
+    color: var(--menu-accent);
     text-decoration: none;
     font-size: 0.875rem;
     background: var(--menu-glass);
@@ -806,5 +804,108 @@
   .page a:focus-visible,
   .theme select:focus-visible {
     outline-color: Highlight;
+  }
+}
+
+/* WORKROOM member hub shares the cash dashboard rhythm. */
+.page {
+  max-width: 1120px;
+  width: 100%;
+  margin-inline: auto;
+  padding: clamp(18px, 3vw, 32px);
+  border-radius: 24px;
+}
+.backdrop {
+  display: none;
+}
+.hero {
+  min-height: 0;
+  align-items: center;
+  padding: 0 0 28px;
+  gap: 20px;
+}
+.heroBrand {
+  gap: 12px;
+}
+.heroBrand > span {
+  display: inline-flex;
+}
+.heroBrand strong {
+  color: var(--text-primary);
+  line-height: 1.6;
+  letter-spacing: 0.04em;
+}
+.heroBrand span {
+  margin-top: 0;
+}
+.profile {
+  padding: 24px;
+  border-radius: 22px;
+  background: linear-gradient(
+    125deg,
+    var(--brand-quiet),
+    var(--surface-default) 65%
+  );
+}
+.avatar {
+  border-radius: 18px;
+  width: 60px;
+  height: 60px;
+}
+.profileArt {
+  display: none;
+}
+.panel {
+  border-radius: 20px;
+  padding-inline: 22px;
+}
+.row {
+  min-height: 88px;
+}
+.icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--brand-quiet);
+}
+.stats {
+  margin-left: 0;
+  margin-top: 22px;
+  padding-top: 20px;
+}
+.story {
+  background: var(--surface-default);
+  padding: 22px;
+  min-height: 0;
+}
+@media (max-width: 599px) {
+  .page {
+    padding: 4px 0 20px;
+  }
+  .heroBrand {
+    display: none;
+  }
+  .hero {
+    padding: 0 0 20px;
+  }
+  .profile,
+  .panel {
+    padding-inline: 18px;
+  }
+  .profile {
+    padding-block: 22px;
+  }
+  .stats {
+    grid-template-columns: 1fr;
+  }
+  .stats > div {
+    padding: 10px 0;
+  }
+  .stats > div + div {
+    border-left: 0;
+    border-top: 1px solid var(--border-default);
+  }
+  .row {
+    min-height: 88px;
   }
 }

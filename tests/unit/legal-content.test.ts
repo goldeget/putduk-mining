@@ -13,6 +13,7 @@ import {
 import { getTrustDocument, TRUST_DOCUMENTS } from "@/lib/trust/public-content";
 import { getTrustNavigationLabel } from "@/lib/trust/public-presentation";
 import { WorkroomAuth } from "@/components/workroom/identity";
+import { getTrustDocument as getCurrentWorkroomDocument } from "@/lib/workroom/public-content";
 
 const root = resolve(__dirname, "../..");
 const read = (path: string) => readFileSync(resolve(root, path), "utf8");
@@ -57,7 +58,8 @@ describe("terms and privacy documents", () => {
       );
       expect(html).toContain(document.title);
       expect(html).toContain(document.consentVersion);
-      for (const section of document.sections) {
+      for (const section of getCurrentWorkroomDocument(document.path)!
+        .sections) {
         expect(html).toContain(section.heading);
       }
     }

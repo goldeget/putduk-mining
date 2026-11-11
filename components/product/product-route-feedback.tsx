@@ -4,18 +4,10 @@ import { useEffect } from "react";
 
 import { PutdukIcon } from "@/components/icons/putduk-icon";
 import styles from "@/components/product/product-experience.module.css";
+import { WorkroomLoading } from "../ui/workroom-loading";
 
 export function ProductRouteLoading({ label }: { label: string }) {
-  return (
-    <div className={styles.routeState} role="status" aria-label={label}>
-      <div className={styles.skeleton} aria-hidden="true">
-        <span />
-        <span />
-        <span />
-        <span />
-      </div>
-    </div>
-  );
+  return <WorkroomLoading label={label} />;
 }
 
 export function ProductRouteError({

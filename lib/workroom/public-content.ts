@@ -20,13 +20,13 @@ export const PUBLIC_FACTS: readonly PublicFact[] = [
   },
   {
     key: "OFFICIAL_DOMAIN",
-    value: "mining.putduk.com",
-    description: "기존 서비스 주소에서 워크룸을 이용합니다.",
+    value: "workroom.putduk.com",
+    description: "워크룸의 공식 서비스 주소입니다.",
   },
   {
     key: "MEMBER_SUPPORT_PATH",
     value: "/support",
-    description: "계정, 체험, 기존 기록에 관한 문의를 확인합니다.",
+    description: "계정, 체험과 입출금 기록에 관한 문의를 확인합니다.",
   },
   {
     key: "TRIAL_LEDGER",
@@ -43,6 +43,16 @@ const titles: Record<string, string> = {
   "/rules": "회차와 체험 포인트 안내",
   "/trial": "무료 체험 포인트 안내",
   "/status": "이용 상태 확인 안내",
+  "/putduk-facts": "WORKROOM 서비스 정보",
+  "/mining-rules": "모의 회차의 진행과 결과 확인",
+  "/economy": "체험 포인트와 실제 잔액은 따로 관리해요",
+  "/deposit": "실제 입금은 별도 잔액으로 확인해요",
+  "/withdrawal": "실제 잔액의 출금 신청과 확인",
+  "/changelog": "WORKROOM 안내 변경",
+  "/ai/about": "이전 AI 서비스 안내",
+  "/ai/facts": "이전 AI 정보 안내",
+  "/ai/faq": "이전 AI 도움말",
+  "/ai/how-it-works": "이전 AI 이용 방법 안내",
 };
 const sections: TrustDocument["sections"] = [
   {
@@ -73,11 +83,64 @@ const sections: TrustDocument["sections"] = [
   },
 ];
 
-// Preserve the original consent text and consent versions; replace active product guidance.
+// The archived consent registry and recorded versions remain unchanged. These
+// owner-approved display corrections describe current WORKROOM features only;
+// they do not create or record a new consent version.
+function currentConsentDisplay(document: TrustDocument): TrustDocument {
+  return {
+    ...document,
+    sections: document.sections.map((section) => {
+      if (document.path === "/terms" && section.heading === "WORKROOM 체험")
+        return {
+          ...section,
+          body: [
+            "가입 시 체험 포인트 100,000 P를 한 번 지급해요.",
+            "체험 기록은 실제 지갑과 따로 보관돼요. 그대로 실제 자산이 되지 않아요.",
+          ],
+          items: [
+            "체험 포인트와 모의 손익은 현금으로 전환하거나 출금할 수 없어요.",
+            "회차별 패턴과 진행 시간, 종료 변동률은 참여 전에 확인해요.",
+            "무료 체험을 위해 입금하지 않아도 돼요.",
+          ],
+        };
+      if (document.path === "/terms" && section.heading === "채굴과 결과")
+        return {
+          ...section,
+          heading: "모의 회차와 결과",
+          body: [
+            "앱을 닫아도 회차는 서버 시간을 기준으로 진행돼요. 다시 접속하면 결과를 확인할 수 있어요.",
+          ],
+          items: [
+            "회차는 참여 전에 확인한 패턴과 진행 시간, 종료 변동률을 따라요.",
+            "참고 시세와 모의 회차의 결과는 따로 표시해요.",
+            "이용할 수 있는 항목은 운영자가 공개한 목록에서 확인해요.",
+          ],
+        };
+      return {
+        ...section,
+        body: section.body.map((paragraph) =>
+          paragraph
+            .replace(
+              "가입, 입금, 출금, 채굴 같은 기능",
+              "가입, 입금, 출금, 모의 회차 같은 기능",
+            )
+            .replace(
+              "출금이나 체험 전환 전에 본인 확인이 필요할 수 있어요.",
+              "출금 전에 본인 확인이 필요할 수 있어요.",
+            )
+            .replace(
+              "입금, 출금, 채굴의 금액은 거래 기록으로 남아요.",
+              "실제 입금·출금과 모의 회차는 서로 다른 기록으로 보관해요.",
+            ),
+        ),
+      };
+    }),
+  };
+}
 export const TRUST_DOCUMENTS: readonly TrustDocument[] = archivedDocuments.map(
   (document) =>
     document.consentVersion
-      ? document
+      ? currentConsentDisplay(document)
       : {
           path: document.path,
           eyebrow: "WORKROOM GUIDE",

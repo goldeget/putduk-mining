@@ -1,37 +1,35 @@
-/* WORKROOM successor shell; historical finance screens retain their own contents. */
-.control-shell {
-  background: #111e30;
+/* All console routes share the active theme, including light mode. */
+.control-shell,
+.control-workspace {
+  background: var(--admin-canvas);
 }
 .control-rail {
-  background: #0c1929 !important;
-  border-color: #263b50 !important;
-}
-.control-workspace {
-  background: #111e30;
+  background: var(--admin-rail);
+  border-color: var(--admin-line);
 }
 .control-topbar {
-  background: #111e30 !important;
-  color: #bdd0df;
-  border-color: #2d4057 !important;
+  background: var(--admin-canvas);
+  color: var(--admin-muted);
+  border-color: var(--admin-line);
 }
 .control-nav__label {
-  color: #b8c9da;
+  color: var(--admin-muted);
 }
 .control-rail nav a[aria-current="page"] {
-  background: #1c3b35 !important;
-  border-color: #356451 !important;
+  background: var(--admin-accent-soft);
+  border-color: var(--admin-accent-border);
 }
 .control-rail nav a[aria-current="page"] .control-nav__label {
-  color: #8df5ce;
+  color: var(--admin-accent);
 }
 .control-rail .operator-card {
-  background: #14263a;
-  color: #b4c8da;
-  border-color: #2c4055;
+  background: var(--admin-sunken);
+  color: var(--admin-muted);
+  border-color: var(--admin-line);
 }
 .brand-lockup--rail strong {
-  color: #edf9ff;
+  color: var(--admin-text);
 }
 .brand-lockup--rail small {
-  color: #73efc3;
+  color: var(--admin-accent);
 }

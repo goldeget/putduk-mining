@@ -60,6 +60,7 @@ export function assertVitestReport(report) {
     throw Error("WORKROOM_UNIT_ASSERTION_COUNTS");
 }
 
+// One reviewed filename per expected case; a multi-case file repeats in this inventory.
 export function assertPlaywrightReport(report, expectedFiles = []) {
   if (
     report.errors?.length ||

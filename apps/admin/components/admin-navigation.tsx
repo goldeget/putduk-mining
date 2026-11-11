@@ -3,25 +3,10 @@
 import Link from "next/link";
 import type { Route } from "next";
 import { usePathname, useSearchParams } from "next/navigation";
-import { useEffect, useRef } from "react";
+import { Fragment, useEffect, useRef } from "react";
+import { ADMIN_MENU_ITEMS as items, isCurrentAdminItem } from "./admin-menu";
 
 /** WORKROOM and the independent manual cash operations share this console. */
-const items = [
-  { href: "/workroom?tab=config", label: "워크룸 · 모의 조건" },
-  { href: "/workroom?tab=invites", label: "추천인 코드" },
-  { href: "/workroom?tab=users", label: "회원·체험 포인트" },
-  { href: "/workroom?tab=audit", label: "워크룸 변경 기록" },
-  { href: "/members", label: "회원·거래 기록" },
-  { href: "/deposits/krw", label: "원화 입금 관리" },
-  { href: "/deposits/usdt", label: "USDT 입금 관리" },
-  { href: "/withdrawals/krw-bank", label: "계좌 출금 관리" },
-  { href: "/withdrawals/usdt", label: "USDT 출금 관리" },
-  { href: "/exceptions", label: "예외 처리" },
-  { href: "/kyc", label: "본인 확인" },
-  { href: "/restrictions", label: "제한·안전" },
-  { href: "/content", label: "이벤트·공지" },
-  { href: "/ai-conversations", label: "회원 AI 기록" },
-] as const;
 function scrollNavToTop(nav: HTMLElement | null) {
   nav?.scrollTo?.(0, 0);
 }
@@ -141,43 +126,47 @@ export function AdminNavigation({ onNavigate }: { onNavigate?: () => void }) {
   return (
     <nav aria-label="운영자 주 메뉴" ref={navRef}>
       {items.map((item, index) => {
-        const current =
-          (item.href.startsWith("/workroom?")
-            ? pathname === "/workroom" &&
-              (searchParams.get("tab") || "config") ===
-                item.href.split("tab=")[1]
-            : pathname === item.href) || pathname.startsWith(`${item.href}/`);
+        const current = isCurrentAdminItem(
+          item.href,
+          pathname,
+          searchParams.get("tab"),
+        );
         return (
-          <Link
-            href={item.href as Route}
-            key={item.href}
-            aria-current={current ? "page" : undefined}
-            onFocus={(event) => {
-              const nav = navRef.current;
-              const link = event.currentTarget;
-              if (nav) {
-                scrollNavLinkIntoView(nav, link);
-                const view = nav.ownerDocument.defaultView;
-                view?.queueMicrotask(() => {
-                  if (nav.contains(link)) scrollNavLinkIntoView(nav, link);
+          <Fragment key={item.href}>
+            {items[index - 1]?.group !== item.group && (
+              <p className="control-nav__group">{item.group}</p>
+            )}
+            <Link
+              href={item.href as Route}
+              key={item.href}
+              aria-current={current ? "page" : undefined}
+              onFocus={(event) => {
+                const nav = navRef.current;
+                const link = event.currentTarget;
+                if (nav) {
+                  scrollNavLinkIntoView(nav, link);
+                  const view = nav.ownerDocument.defaultView;
+                  view?.queueMicrotask(() => {
+                    if (nav.contains(link)) scrollNavLinkIntoView(nav, link);
+                  });
+                  view?.requestAnimationFrame(() => {
+                    if (nav.contains(link)) scrollNavLinkIntoView(nav, link);
+                  });
+                  return;
+                }
+                link.scrollIntoView?.({
+                  block: "nearest",
+                  inline: "nearest",
                 });
-                view?.requestAnimationFrame(() => {
-                  if (nav.contains(link)) scrollNavLinkIntoView(nav, link);
-                });
-                return;
-              }
-              link.scrollIntoView?.({
-                block: "nearest",
-                inline: "nearest",
-              });
-            }}
-            onNavigate={() => onNavigate?.()}
-          >
-            <span className="control-nav__index">
-              {String(index + 1).padStart(2, "0")}
-            </span>
-            <span className="control-nav__label">{item.label}</span>
-          </Link>
+              }}
+              onNavigate={() => onNavigate?.()}
+            >
+              <span className="control-nav__index" aria-hidden="true">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+              <span className="control-nav__label">{item.label}</span>
+            </Link>
+          </Fragment>
         );
       })}
     </nav>

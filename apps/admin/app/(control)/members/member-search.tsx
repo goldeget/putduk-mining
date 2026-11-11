@@ -1,5 +1,6 @@
 "use client";
 import { FeedbackMessage } from "../../../../../components/ui/feedback-message";
+import { WorkroomLoading } from "../../../../../components/ui/workroom-loading";
 
 import Link from "next/link";
 import type { Route } from "next";
@@ -113,8 +114,21 @@ export function MemberSearch({
               setMessage("");
             }}
           />
-          <button className="gold-button" disabled={pending} type="submit">
-            {pending ? "찾는 중…" : "안전 조회"}
+          <button
+            className="gold-button"
+            disabled={pending}
+            type="submit"
+            aria-busy={pending}
+          >
+            {pending ? (
+              <WorkroomLoading
+                label="찾는 중…"
+                variant="inline"
+                announce={false}
+              />
+            ) : (
+              "안전 조회"
+            )}
           </button>
         </div>
         <p className="panel-note" id="member-search-help">
@@ -128,7 +142,11 @@ export function MemberSearch({
         ) : null}
         {pending ? (
           <FeedbackMessage className="panel-note" role="status">
-            회원을 찾는 중입니다.
+            <WorkroomLoading
+              label="회원을 찾는 중입니다."
+              variant="inline"
+              announce={false}
+            />
           </FeedbackMessage>
         ) : null}
       </form>

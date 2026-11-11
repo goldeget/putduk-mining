@@ -4,6 +4,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 
 import { WithdrawalForm } from "@/components/product/withdrawal-form";
+import { WITHDRAWAL_BANKS } from "@/lib/wallet/withdrawal-banks";
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ refresh: () => undefined }),
@@ -43,6 +44,38 @@ function markup(
 }
 
 describe("출금 폼 서버 마크업", () => {
+  it("허용된 19개 은행을 키보드로 선택할 수 있는 네 그룹으로 표시한다", () => {
+    const html = renderToStaticMarkup(
+      createElement(WithdrawalForm, {
+        account,
+        destinations: [],
+        policies: [
+          {
+            ...policy,
+            allowedDestinations: [
+              ...WITHDRAWAL_BANKS.map((bank) => bank.code),
+              "UNKNOWN",
+            ],
+          },
+        ],
+        ownerId: "11111111-1111-4111-8111-111111111111",
+      }),
+    );
+    const select = html.match(/<select name="bankCode"[\s\S]*?<\/select>/)?.[0];
+    expect(select).toBeDefined();
+    expect(select).toContain("required");
+    for (const label of ["시중은행", "지방은행", "인터넷은행", "특수은행"]) {
+      expect(select).toContain(`<optgroup label="${label}">`);
+    }
+    for (const bank of WITHDRAWAL_BANKS) {
+      expect(select).toContain(
+        `<option value="${bank.code}">${bank.name}</option>`,
+      );
+    }
+    expect(select).not.toContain("UNKNOWN");
+    expect(select?.match(/<option value="[^\"]+"/g)).toHaveLength(19);
+  });
+
   it("제목과 버튼을 잘못된 부모 안에 넣지 않는다", () => {
     const html = markup([
       {

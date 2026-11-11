@@ -60,9 +60,26 @@ export function QueueFlash({
 export function EmptyQueue({ title, body }: { title: string; body: string }) {
   return (
     <section className="queue-empty" aria-live="polite">
-      <span>0</span>
+      <span aria-hidden="true">
+        <svg
+          width="28"
+          height="28"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="m4 7 3-3h10l3 3v13H4Z" />
+          <path d="M4 12h5l1 3h4l1-3h5M8 8h8" />
+        </svg>
+      </span>
       <h2>{title}</h2>
       <p>{body}</p>
+      <Link href="/" className="text-link">
+        운영 대시보드로 →
+      </Link>
     </section>
   );
 }

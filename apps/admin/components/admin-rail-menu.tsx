@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { BrandMark } from "../../../components/brand/brand-mark";
+import { WorkroomMark } from "../../../components/workroom/workroom-mark";
 import { useId, useRef, useState, type ReactNode } from "react";
 
 import { AdminNavigation } from "./admin-navigation";
@@ -44,10 +44,10 @@ export function AdminRailMenu({
         onNavigate={closeMenu}
       >
         <span className="brand-symbol">
-          <BrandMark title="" width="100%" height="100%" />
+          <WorkroomMark />
         </span>
         <strong>WORKROOM</strong>
-        <small>운영</small>
+        <small>ADMIN CONSOLE</small>
       </Link>
       <button
         className="control-menu-toggle"

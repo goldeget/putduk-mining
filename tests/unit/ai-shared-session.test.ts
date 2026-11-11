@@ -536,13 +536,17 @@ describe("one PUTDUK AI request and session owner", () => {
     document.documentElement.dataset.theme = "light";
     try {
       await render("member-a", 1, false, "member-a:server-render-1", "page");
-      expect(
-        host
-          .querySelector(
-            'svg[data-putduk-brand="canonical"][data-putduk-brand-version="2026.10.14-sprout-p-v2"]',
-          )
-          ?.getAttribute("aria-hidden"),
-      ).toBe("true");
+      const mark = host.querySelector(
+        '.ai-chat__welcome svg[viewBox="0 0 44 44"]',
+      );
+      expect(mark?.getAttribute("aria-hidden")).toBe("true");
+      expect(mark?.querySelector("path")?.getAttribute("d")).toBe(
+        "m9 15 6 15 7-12 7 12 6-15",
+      );
+      expect(mark?.querySelector("path")?.getAttribute("stroke")).toBe(
+        "#73efc3",
+      );
+      expect(mark?.querySelector("rect")?.getAttribute("fill")).toBe("#0c1727");
       expect(host.querySelector("[data-ai-partner-hero]")).toBeNull();
       expect(host.querySelector("textarea")?.disabled).toBe(false);
       expect(fetchMock).not.toHaveBeenCalled();
@@ -553,13 +557,15 @@ describe("one PUTDUK AI request and session owner", () => {
 
   it("keeps the shared decorative identity in the dock", async () => {
     await render();
-    expect(
-      host
-        .querySelector(
-          'svg[data-putduk-brand="canonical"][data-putduk-brand-version="2026.10.14-sprout-p-v2"]',
-        )
-        ?.getAttribute("aria-hidden"),
-    ).toBe("true");
+    const mark = host.querySelector(
+      '.ai-chat__welcome svg[viewBox="0 0 44 44"]',
+    );
+    expect(mark?.getAttribute("aria-hidden")).toBe("true");
+    expect(mark?.querySelector("path")?.getAttribute("d")).toBe(
+      "m9 15 6 15 7-12 7 12 6-15",
+    );
+    expect(mark?.querySelector("path")?.getAttribute("stroke")).toBe("#73efc3");
+    expect(mark?.querySelector("rect")?.getAttribute("fill")).toBe("#0c1727");
     expect(host.querySelector("[data-ai-partner-hero]")).toBeNull();
     expect(host.querySelector('[aria-label="빠른 질문"]')).toBeNull();
   });

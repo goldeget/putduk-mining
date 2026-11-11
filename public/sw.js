@@ -1,5 +1,5 @@
 /* global self, clients, caches */
-const CACHE_NAME = "putduk-shell-workroom-v8";
+const CACHE_NAME = "putduk-shell-workroom-icons-v9";
 const APP_SHELL = ["/offline", "/workroom-icon.svg"];
 const exactRoutes = new Set([
   "/workroom",

@@ -14,6 +14,7 @@ import {
   type WorkroomOperation,
 } from "./command-client";
 import styles from "./workroom.module.css";
+import { WorkroomLoading } from "../ui/workroom-loading";
 const instruments = [
   { id: "usd", name: "달러환율", category: "fx" },
   { id: "cny", name: "위안화환율", category: "fx" },
@@ -85,7 +86,7 @@ function Chart({
               x2="780"
               y1={y(v)}
               y2={y(v)}
-              stroke="#2b3a4e"
+              stroke="var(--wr-chart-grid)"
               strokeDasharray="3 5"
             />
             <text x="0" y={y(v) + 4}>
@@ -96,7 +97,7 @@ function Chart({
               x2={x(i / 4)}
               y1="16"
               y2="224"
-              stroke="#253447"
+              stroke="var(--wr-chart-grid)"
             />
             <text textAnchor="middle" x={x(i / 4)} y="248">
               {Math.round((config.duration * i) / 4)}초
@@ -106,12 +107,12 @@ function Chart({
       })}
       <polygon
         points={`48,224 ${points.join(" ")} ${x(progress)},224`}
-        fill="#73efc311"
+        fill="var(--wr-chart-fill)"
       />
       <polyline
         points={points.join(" ")}
         fill="none"
-        stroke="#73efc3"
+        stroke="var(--wr-accent)"
         strokeWidth="2.8"
         strokeLinejoin="round"
       />
@@ -119,7 +120,7 @@ function Chart({
         cx={x(progress)}
         cy={y(simulationValue(config, progress))}
         r="4"
-        fill="#c7ffe8"
+        fill="var(--wr-chart-dot)"
       />
     </svg>
   );
@@ -393,11 +394,14 @@ export function WorkroomClient({
   if (!state)
     return (
       <div className={styles.loading}>
-        <h1>워크룸을 준비하고 있어요.</h1>
+        {error ? <h1>워크룸을 준비하고 있어요.</h1> : null}
         {error ? (
           recovery
         ) : (
-          <p role="status">계정과 최근 기록을 확인하고 있습니다.</p>
+          <WorkroomLoading
+            label="계정과 최근 기록을 불러오고 있어요"
+            variant="page"
+          />
         )}
       </div>
     );
@@ -417,7 +421,11 @@ export function WorkroomClient({
           disabled={busy || hasPending}
           onClick={() => void command("OPEN", {})}
         >
-          {busy ? "개설 확인 중…" : "내 워크룸 개설"}
+          {busy ? (
+            <WorkroomLoading label="개설 확인 중…" variant="inline" />
+          ) : (
+            "내 워크룸 개설"
+          )}
         </button>
       </div>
     );
@@ -536,7 +544,11 @@ export function WorkroomClient({
                 quoteError || "가격을 조회하고 있습니다."
               )}
               <button disabled={quoteBusy} onClick={() => void loadQuotes()}>
-                {quoteBusy ? "조회 중…" : "가격 새로고침"}
+                {quoteBusy ? (
+                  <WorkroomLoading label="조회 중…" variant="inline" />
+                ) : (
+                  "가격 새로고침"
+                )}
               </button>
             </div>
             <p>
@@ -634,11 +646,13 @@ export function WorkroomClient({
                       )
                     }
                   >
-                    {busy
-                      ? "결과 확인 중…"
-                      : overdue
-                        ? "종료 결과 확인"
-                        : "지금 모의 참여 종료"}
+                    {busy ? (
+                      <WorkroomLoading label="결과 확인 중…" variant="inline" />
+                    ) : overdue ? (
+                      "종료 결과 확인"
+                    ) : (
+                      "지금 모의 참여 종료"
+                    )}
                   </button>
                 ) : !confirm ? (
                   <button
@@ -684,7 +698,14 @@ export function WorkroomClient({
                         })
                       }
                     >
-                      {busy ? "참여 확인 중…" : "확인하고 모의 체험 시작"}
+                      {busy ? (
+                        <WorkroomLoading
+                          label="참여 확인 중…"
+                          variant="inline"
+                        />
+                      ) : (
+                        "확인하고 모의 체험 시작"
+                      )}
                     </button>
                     <button
                       className={styles.secondary}

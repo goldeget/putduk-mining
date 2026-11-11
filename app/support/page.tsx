@@ -14,6 +14,7 @@ import { SupportStartButton } from "@/components/support/support-runtime";
 import { ThemeControl } from "@/components/system/theme-control";
 
 import styles from "./support-page.module.css";
+import workroomStyles from "@/components/workroom/workroom.module.css";
 
 const helpLinks = [
   ["/about", "소개"],
@@ -48,10 +49,10 @@ const topics: readonly {
   },
   {
     icon: "wallet",
-    title: "기존 잔액과 기록",
+    title: "실제 잔액과 입출금",
     body: [
-      "기존 잔액과 거래 내역은 기존 기록 메뉴에서 확인할 수 있어요.",
-      "기존 원화 잔액의 출금은 체험 포인트와 별도로 처리돼요.",
+      "입금 방법은 담당자에게 문의하고, 실제 잔액 메뉴에서 신청해 주세요.",
+      "입금은 운영자 확인 후 반영되며 실제 원화 출금은 체험 포인트와 별도로 처리돼요.",
     ],
   },
   {
@@ -64,7 +65,7 @@ const topics: readonly {
 export const metadata: Metadata = {
   title: "상담",
   description:
-    "워크룸 가입, 무료 체험, 참여 기록과 기존 잔액 문의를 확인하는 상담 안내입니다.",
+    "워크룸 가입, 무료 체험, 참여 기록과 실제 입출금 문의를 확인하는 상담 안내입니다.",
   alternates: {
     canonical: "/support",
     languages: publicLanguageAlternates("/support"),
@@ -78,7 +79,7 @@ const supportBreadcrumb = buildBreadcrumbStructuredData({
 
 export default function SupportPage() {
   return (
-    <main className={`support-center ${styles.page}`}>
+    <main className={`${workroomStyles.theme} support-center ${styles.page}`}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

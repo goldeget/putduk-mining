@@ -1,5 +1,6 @@
 "use client";
 import { FeedbackMessage } from "@/components/ui/feedback-message";
+import { WorkroomLoading } from "../ui/workroom-loading";
 
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
@@ -21,6 +22,7 @@ import {
 } from "@/domain/wallet/format-amount";
 import { trackAnalyticsEvent } from "@/lib/analytics/client";
 import { workroomCashFetch } from "@/lib/wallet/workroom-cash-client";
+import { withdrawalBankOptions } from "@/lib/wallet/withdrawal-banks";
 import {
   browserWithdrawalLogicalRequestStore,
   LEGACY_WITHDRAWAL_LOGICAL_REQUEST_STORAGE_KEY,
@@ -58,18 +60,6 @@ export type RegisteredWithdrawalDestination = {
 };
 
 type Feedback = { message: string; tone: "error" | "success" } | null;
-
-const bankNames: Record<string, string> = {
-  IBK: "IBK기업은행",
-  KB: "KB국민은행",
-  KAKAO: "카카오뱅크",
-  KEB_HANA: "하나은행",
-  NH: "NH농협은행",
-  SC: "SC제일은행",
-  SHINHAN: "신한은행",
-  TOSS: "토스뱅크",
-  WOORI: "우리은행",
-};
 
 /** Normal withdrawals must use the hold command path — never the legacy money route. */
 export const WITHDRAWAL_HOLD_SUBMIT_URL = "/api/v1/withdrawals/hold";
@@ -629,11 +619,17 @@ export function WithdrawalForm({
                 <option value="" disabled>
                   은행 선택
                 </option>
-                {policy?.allowedDestinations.map((bankCode) => (
-                  <option value={bankCode} key={bankCode}>
-                    {bankNames[bankCode] ?? bankCode}
-                  </option>
-                ))}
+                {withdrawalBankOptions(policy?.allowedDestinations ?? []).map(
+                  (group) => (
+                    <optgroup label={group.label} key={group.label}>
+                      {group.banks.map((bank) => (
+                        <option value={bank.code} key={bank.code}>
+                          {bank.name}
+                        </option>
+                      ))}
+                    </optgroup>
+                  ),
+                )}
               </select>
             </label>
             <label className={styles.field}>
@@ -736,14 +732,19 @@ export function WithdrawalForm({
         className={`button button--primary ${styles.submitButton}`}
         type="submit"
         disabled={pending || !canSubmit}
+        aria-busy={pending}
       >
-        {needsReauth
-          ? pending
-            ? "변경 확인 중"
-            : "변경 확인"
-          : pending
-            ? "출금 요청 접수 중"
-            : "출금 요청하기"}
+        {needsReauth ? (
+          pending ? (
+            <WorkroomLoading label="변경 확인 중" variant="inline" />
+          ) : (
+            "변경 확인"
+          )
+        ) : pending ? (
+          <WorkroomLoading label="출금 요청 접수 중" variant="inline" />
+        ) : (
+          "출금 요청하기"
+        )}
         <PutdukIcon name="arrow-right" size={18} />
       </button>
 
