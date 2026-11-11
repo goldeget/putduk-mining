@@ -496,7 +496,7 @@
     "apps/admin/app/robots.ts": "8f8d03dfd153e9391d99595f58ead90b38f47e261fe0b597614898b4d607b2b5",
     "apps/admin/app/session-expired/page.tsx": "b149d3e1087367646aa06c5384c84a7884477416c2eca8a0ed58e95dd2a3fb4a",
     "apps/admin/app/unauthorized/page.tsx": "320ed82ddab7c21b5ab57225319962566dec8d4e8b699c881d79bef2586167d1",
-    "apps/admin/cloudflare.config.ts": "4edba9cdcc75d19db7a90b3e4671e3278032458503d65db2a1bdb68e5e1ce3fb",
+    "apps/admin/cloudflare.config.ts": "e7dd3fdf1e038b901937179cfc493e451585dabc69fd35c7786820eba9e5eb3a",
     "apps/admin/components/admin-navigation.tsx": "48e7136171416f98371018a04017e38280b8bd73ed1e445af9fd6f2490f62c2e",
     "apps/admin/components/admin-rail-menu.tsx": "6ac8f365d828c8649b2a8897ea276815830529e8fc699a5d27a3aa39860c4488",
     "apps/admin/components/admin-route-error.tsx": "55c8bf847bd43a6b25fbe1686fa528f135fc158071e32cbb7e623b5cafab70c7",
