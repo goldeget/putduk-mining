@@ -90,7 +90,10 @@ describe("money source operator evidence", () => {
     (data) => {
       const result = present(data);
       expect(result.available).toBe(false);
-      expect(result.rows).toContainEqual(["이전 서비스 인정 원금", "확인 필요"]);
+      expect(result.rows).toContainEqual([
+        "이전 서비스 인정 원금",
+        "확인 필요",
+      ]);
       expect(result.recordedKrwDeposits).toBe("확인 필요");
     },
   );
