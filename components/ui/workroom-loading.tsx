@@ -66,7 +66,7 @@ export function WorkroomLoading({
           <i />
         </span>
       </div>
-      <div className={styles.skeleton} aria-hidden="true">
+      <div className={styles.skeleton} aria-hidden="true" aria-busy="true">
         <div className={styles.summary}>
           <span className={styles.shortLine} />
           <span className={styles.headingLine} />

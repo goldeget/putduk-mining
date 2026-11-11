@@ -1,3 +1,5 @@
+// @vitest-environment jsdom
+
 import { createElement, type ComponentProps } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { readFileSync, readdirSync } from "node:fs";
@@ -93,6 +95,13 @@ describe("공통 워크룸 로딩 표현", () => {
       if (variant !== "inline") {
         expect(html).toContain('data-ui-state="loading"');
         expect(html).toContain('aria-hidden="true"');
+        const dom = new DOMParser().parseFromString(html, "text/html");
+        const status = dom.querySelector('[role="status"]')!;
+        const placeholder = dom.querySelector('[aria-busy="true"]')!;
+        expect(placeholder).not.toBeNull();
+        expect(placeholder.getAttribute("aria-hidden")).toBe("true");
+        expect(status.closest('[aria-busy="true"]')).toBeNull();
+        expect(status.parentElement).toBe(placeholder.parentElement);
       }
     },
   );

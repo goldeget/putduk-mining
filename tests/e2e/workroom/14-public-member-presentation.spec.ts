@@ -147,7 +147,12 @@ test("actual pending state animates, respects reduced motion and clears after th
   });
   try {
     await page.reload({ waitUntil: "domcontentloaded" });
-    const loader = page.locator('[data-workroom-loading="page"]');
+    // Streamed route fallbacks can remain hidden in React's DOM. Exercise the
+    // actual client state request that this test holds, not those fallbacks.
+    const loader = page
+      .locator('[data-workroom-loading="page"]')
+      .filter({ hasText: "계정과 최근 기록을 불러오고 있어요" });
+    await expect(loader).toHaveCount(1);
     await expect(loader).toBeVisible();
     const mark = loader.locator("[data-workroom-loading-mark]");
     await expect
@@ -177,7 +182,9 @@ test("actual pending state animates, respects reduced motion and clears after th
     release();
     await page.unroute("**/api/v1/workroom/state");
   }
-  await expect(page.locator('[data-workroom-loading="page"]')).toHaveCount(0);
+  await expect(
+    page.locator('[data-workroom-loading="page"]:visible'),
+  ).toHaveCount(0);
   await expect(
     page.getByRole("heading", {
       name: /나만의 워크룸을 개설하세요|모니터링 시작하기|이번 모의 참여/,
