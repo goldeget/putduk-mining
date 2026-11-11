@@ -22,6 +22,8 @@ const production = () => ({
   manifest: { type: "partial", mainModule: "index.js", modules: {} },
   env: {
     APP_ENV: text("production"),
+    NEXT_PUBLIC_APP_URL: text("https://workroom.putduk.com"),
+    ADMIN_APP_URL: text("https://admin.workroom.putduk.com"),
     NEXT_PUBLIC_SUPABASE_URL: text("https://awrubjiqkggaxcvtckbr.supabase.co"),
     NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: text(
       "sb_publishable_GLyun5wTHeFb0vEjug52Mw_l4G9JqZx",
@@ -92,6 +94,48 @@ test("deploy artifact rejects the retired backend and a mismatched public key", 
   );
   assert.throws(
     () => productionConfig(mismatched, mismatched.name),
+    /PRODUCTION_OUTPUT/,
+  );
+});
+test("deploy artifact admits only exact WORKROOM origins for the two existing Workers", () => {
+  for (const [name, origin] of [
+    ["putduk-mining-web-staging", "https://workroom.putduk.com"],
+    ["putduk-mining-admin-staging", "https://admin.workroom.putduk.com"],
+  ]) {
+    const config = production();
+    config.name = name;
+    config.env.NEXT_PUBLIC_APP_URL = text(origin);
+    assert.doesNotThrow(() => productionConfig(config, name));
+    for (const bad of [
+      undefined,
+      "https://mining.putduk.com",
+      "https://admin.mining.putduk.com",
+      `${origin}:444`,
+      "https://evil.example",
+    ]) {
+      const stale = structuredClone(config);
+      if (bad === undefined) delete stale.env.NEXT_PUBLIC_APP_URL;
+      else stale.env.NEXT_PUBLIC_APP_URL = text(bad);
+      assert.throws(() => productionConfig(stale, name), /PRODUCTION_OUTPUT/);
+    }
+    const swapped = structuredClone(config);
+    swapped.env.NEXT_PUBLIC_APP_URL = text(
+      origin === "https://workroom.putduk.com"
+        ? "https://admin.workroom.putduk.com"
+        : "https://workroom.putduk.com",
+    );
+    assert.throws(() => productionConfig(swapped, name), /PRODUCTION_OUTPUT/);
+    const wrongAdmin = structuredClone(config);
+    wrongAdmin.env.ADMIN_APP_URL = text("https://admin.mining.putduk.com");
+    assert.throws(
+      () => productionConfig(wrongAdmin, name),
+      /PRODUCTION_OUTPUT/,
+    );
+  }
+  const otherWorker = production();
+  otherWorker.name = "unrelated-worker";
+  assert.throws(
+    () => productionConfig(otherWorker, otherWorker.name),
     /PRODUCTION_OUTPUT/,
   );
 });

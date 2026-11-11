@@ -33,6 +33,7 @@ function worker() {
       "putduk-shell-v6",
       "putduk-shell-v7",
       "putduk-shell-workroom-v8",
+      "putduk-shell-workroom-icons-v9",
     ]),
     delete: vi.fn(async () => true),
     match: vi.fn(async () => new Response("offline")),
@@ -82,13 +83,16 @@ describe("actual service worker privacy and offline recovery", () => {
       ["putduk-shell-v5"],
       ["putduk-shell-v6"],
       ["putduk-shell-v7"],
+      ["putduk-shell-workroom-v8"],
     ]);
   });
   it("caches exact public offline artwork, never application/API or auth chunks", async () => {
     const w = worker();
     await w.emit("install", {});
     const paths = w.cache.addAll.mock.calls[0]![0] as unknown as string[];
-    expect(w.caches.open).toHaveBeenCalledWith("putduk-shell-workroom-v8");
+    expect(w.caches.open).toHaveBeenCalledWith(
+      "putduk-shell-workroom-icons-v9",
+    );
     expect(paths).toEqual(["/offline", "/workroom-icon.svg"]);
     expect(paths).toContain("/offline");
     expect(paths).not.toContain("/home");
@@ -105,7 +109,9 @@ describe("actual service worker privacy and offline recovery", () => {
       mode: "cors",
     };
     expect(await w.emit("fetch", { request })).toHaveBeenCalledOnce();
-    expect(w.caches.open).toHaveBeenCalledWith("putduk-shell-workroom-v8");
+    expect(w.caches.open).toHaveBeenCalledWith(
+      "putduk-shell-workroom-icons-v9",
+    );
     expect(w.cache.match).toHaveBeenCalledWith(request);
     expect(w.fetch).not.toHaveBeenCalled();
   });

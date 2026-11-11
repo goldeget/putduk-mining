@@ -8,8 +8,8 @@ configure each instrument's pattern, duration and signed target return.
 Real KRW deposits and withdrawals use separate ledgers and manual operator
 approval. Deposit instructions are available from the assigned operator.
 The current member and administrator sites retain their existing addresses:
-[Member workspace](https://mining.putduk.com/workroom) and
-[Administrator console](https://admin.mining.putduk.com/workroom).
+[Member workspace](https://workroom.putduk.com/workroom) and
+[Administrator console](https://admin.workroom.putduk.com/workroom).
 
 The repository name and existing hostnames are retained for deployment
 compatibility. The sections below document the preserved predecessor
@@ -73,8 +73,8 @@ separate, explicit operational approvals.
 ## Product
 - Korean brand: **퍼뜩 채굴**
 - English brand: **PUTDUK MINING**
-- User domain: `mining.putduk.com`
-- Admin domain: `admin.mining.putduk.com`
+- User domain: `workroom.putduk.com`
+- Admin domain: `admin.workroom.putduk.com`
 - Primary display currency: **KRW**
 - Secondary funding/withdrawal method: **USDT**
 - Trial: **PUTDUK START — max 24 hours / quota-based / separate trial ledger**

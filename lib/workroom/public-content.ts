@@ -20,7 +20,7 @@ export const PUBLIC_FACTS: readonly PublicFact[] = [
   },
   {
     key: "OFFICIAL_DOMAIN",
-    value: "mining.putduk.com",
+    value: "workroom.putduk.com",
     description: "기존 서비스 주소에서 워크룸을 이용합니다.",
   },
   {

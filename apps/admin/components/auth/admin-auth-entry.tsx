@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { WorkroomMark } from "../../../../components/workroom/workroom-mark";
 
 import { PutdukIcon } from "../../../../components/icons/putduk-icon";
 import { ThemeControl } from "../../../../components/system/theme-control";
@@ -39,8 +40,7 @@ export function AdminAuthEntry({
     >
       <header className={styles.top}>
         <div className={styles.identity}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/workroom-icon.svg" width={44} height={44} alt="" />
+          <WorkroomMark />
           <div>
             <strong>WORKROOM</strong>
             <span>운영자 보안 접속</span>

@@ -161,7 +161,7 @@ export function AdminNavigation({ onNavigate }: { onNavigate?: () => void }) {
               }}
               onNavigate={() => onNavigate?.()}
             >
-              <span className="control-nav__index">
+              <span className="control-nav__index" aria-hidden="true">
                 {String(index + 1).padStart(2, "0")}
               </span>
               <span className="control-nav__label">{item.label}</span>

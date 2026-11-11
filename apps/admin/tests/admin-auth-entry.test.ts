@@ -102,10 +102,10 @@ describe("admin auth page composition preserves live authority boundaries", () =
     expect(host.querySelector('select[aria-label="화면 테마"]')).not.toBeNull();
     expect(host.querySelector('main[data-ui-ready="/login"]')).not.toBeNull();
     expect(host.querySelector("canvas")).toBeNull();
-    const images = host.querySelectorAll("img");
-    expect(images).toHaveLength(1);
-    expect(images[0]?.getAttribute("src")).toBe("/workroom-icon.svg");
-    expect(images[0]?.getAttribute("alt")).toBe("");
+    expect(host.querySelector("img")).toBeNull();
+    expect(
+      host.querySelector('svg path[d="m9 15 6 15 7-12 7 12 6-15"]'),
+    ).not.toBeNull();
   });
 
   it.each([

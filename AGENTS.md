@@ -1,3 +1,28 @@
+## Owner-authorized WORKROOM domain and identity alignment — 2026-11-11
+
+The owner explicitly requested replacing the mining domain with WORKROOM and
+making member/admin logos, favicon and PWA icons match. The new member hostname
+is `workroom.putduk.com`; the new administrator hostname is
+`admin.workroom.putduk.com`, both within the existing `putduk.com` zone and
+Cloudflare account `9dc502d4ef06b3b5374591de6e6933ca`.
+
+- Retain the exact existing named member/admin Workers and backend project.
+- Back up current domain/DNS configuration, add only these two custom domains,
+  align application origins and authentication redirect configuration, then
+  verify TLS, login and protected routes before declaring the cutover complete.
+- Existing mining hostnames may remain during verification and as transition
+  aliases; preserve other DNS, email, certificates and security settings.
+- Use the existing WORKROOM W identity for all active logos and installation
+  icons. Historical brand assets, migrations and archived manifests stay intact.
+- Separate domain/source and logo/asset lanes; root retains provider changes,
+  source admission, CI, normal merge, deployment and production verification.
+- The owner explicitly requested using the F drive after C filled. Keep the
+  verified source checkout on C for Windows dependency compatibility; keep
+  release artifacts, snapshots, receipts and large task test runtimes under
+  `F:/가상대리점/workroom-admin-theme-bank-20261111`. Preserve old runtime paths
+  when relocating cached executables. Partial duplicate F source clones are
+  not accepted implementation checkouts.
+
 ## Owner-authorized fresh WORKROOM project — 2026-11-11
 
 The user created and authorized the new Free Supabase project

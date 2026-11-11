@@ -9,7 +9,7 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       disallow: [...PRIVATE_ROBOTS_DISALLOW],
     },
-    sitemap: "https://mining.putduk.com/sitemap.xml",
-    host: "https://mining.putduk.com",
+    sitemap: "https://workroom.putduk.com/sitemap.xml",
+    host: "https://workroom.putduk.com",
   };
 }

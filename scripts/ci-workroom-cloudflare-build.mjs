@@ -32,9 +32,9 @@ for (const [dir, name] of [
     NEXT_PUBLIC_APP_ENV: "production",
     NEXT_PUBLIC_APP_URL:
       dir === "."
-        ? "https://mining.putduk.com"
-        : "https://admin.mining.putduk.com",
-    ADMIN_APP_URL: "https://admin.mining.putduk.com",
+        ? "https://workroom.putduk.com"
+        : "https://admin.workroom.putduk.com",
+    ADMIN_APP_URL: "https://admin.workroom.putduk.com",
     NEXT_PUBLIC_SUPABASE_URL: "https://awrubjiqkggaxcvtckbr.supabase.co",
     NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:
       "sb_publishable_GLyun5wTHeFb0vEjug52Mw_l4G9JqZx",

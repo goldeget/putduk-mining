@@ -1,0 +1,74 @@
+{
+  "version": "workroom-w1",
+  "sourceSvgSha256": "24588bbcab21a7eca5894bc68019d980da0ccda1cb99ad8bd34a435e8db5f5fe",
+  "geometry": {
+    "viewBox": "0 0 44 44",
+    "path": "m9 15 6 15 7-12 7 12 6-15",
+    "background": "#0c1727",
+    "stroke": "#73efc3",
+    "strokeWidth": 3.2,
+    "radius": 11
+  },
+  "files": [
+    {
+      "name": "workroom-icon.svg",
+      "bytes": 277,
+      "sha256": "24588bbcab21a7eca5894bc68019d980da0ccda1cb99ad8bd34a435e8db5f5fe",
+      "type": "image/svg+xml",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "workroom-favicon-32.png",
+      "bytes": 783,
+      "sha256": "2c87b3401f7f0c0a7089ac024c1f43014c7170814cdf6dfb63b83d7d34545e0f",
+      "type": "image/png",
+      "width": 32,
+      "height": 32,
+      "opaque": false
+    },
+    {
+      "name": "workroom-apple-180.png",
+      "bytes": 2718,
+      "sha256": "f0c21a94dc0aa0f03a67a973034b13a99e9d94d82db6a44751daf6c10fd7962f",
+      "type": "image/png",
+      "width": 180,
+      "height": 180,
+      "opaque": true
+    },
+    {
+      "name": "workroom-icon-192.png",
+      "bytes": 3703,
+      "sha256": "167399d095de3f66fa93e593b65382f592cc5c2fdec687bc60c7ecdb0e06be1d",
+      "type": "image/png",
+      "width": 192,
+      "height": 192,
+      "opaque": false
+    },
+    {
+      "name": "workroom-icon-512.png",
+      "bytes": 10106,
+      "sha256": "c7941503f28e753197364bfaf2067e029073a103aa65f0ab4633477e1bb23303",
+      "type": "image/png",
+      "width": 512,
+      "height": 512,
+      "opaque": false
+    },
+    {
+      "name": "workroom-maskable-512.png",
+      "bytes": 7116,
+      "sha256": "7543c73b7f3ff89ac4833ba3971e87746a877c325d1e2c0aa8bc2033c83e914f",
+      "type": "image/png",
+      "width": 512,
+      "height": 512,
+      "opaque": true
+    },
+    {
+      "name": "workroom-favicon.ico",
+      "bytes": 2320,
+      "sha256": "285f4a096bf9624075aaded2fdec1144f3dfebda2447d3ebfcf00c5ff825fddb",
+      "type": "image/x-icon",
+      "sizes": [16, 32, 48]
+    }
+  ]
+}

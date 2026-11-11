@@ -8,12 +8,12 @@ import { PwaRegistrar } from "@/components/system/pwa-registrar";
 import { ThemeRuntime } from "@/components/system/theme-runtime";
 import { putdukFont } from "@/lib/design/fonts";
 import { themeBootstrap } from "@/lib/design/theme";
-import { WORKROOM_ICON } from "@/components/workroom/brand";
+import { WORKROOM_METADATA_ICONS } from "@/components/workroom/brand";
 
 import "./globals.css";
 import "./productization.css";
 
-const siteUrl = "https://mining.putduk.com";
+const siteUrl = "https://workroom.putduk.com";
 
 const platformStructuredData = {
   "@context": "https://schema.org",
@@ -56,10 +56,7 @@ export const metadata: Metadata = {
   description:
     "환율과 주식의 흐름을 체험하는 무료 WORKROOM 시뮬레이션. 체험 포인트는 현금으로 전환되지 않습니다.",
   applicationName: "WORKROOM",
-  icons: {
-    icon: { url: WORKROOM_ICON, type: "image/svg+xml" },
-    shortcut: WORKROOM_ICON,
-  },
+  icons: WORKROOM_METADATA_ICONS,
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",

@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { ThemeRuntime } from "../../../components/system/theme-runtime";
 import { putdukFont } from "../../../lib/design/fonts";
 import { themeBootstrap } from "../../../lib/design/theme";
+import { WORKROOM_METADATA_ICONS } from "../../../components/workroom/brand";
 
 import "./globals.css";
 import "./(control)/workroom/shell.css";
@@ -11,10 +12,7 @@ export const metadata: Metadata = {
   title: { default: "WORKROOM | 운영자", template: "%s | WORKROOM ADMIN" },
   description: "WORKROOM 무료 모의 체험 운영 콘솔",
   robots: { index: false, follow: false, nocache: true },
-  icons: {
-    icon: { url: "/workroom-icon.svg", type: "image/svg+xml" },
-    shortcut: "/workroom-icon.svg",
-  },
+  icons: WORKROOM_METADATA_ICONS,
 };
 export const viewport: Viewport = {
   colorScheme: "light dark",

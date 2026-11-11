@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { WorkroomMark } from "../../../components/workroom/workroom-mark";
 import { useId, useRef, useState, type ReactNode } from "react";
 
 import { AdminNavigation } from "./admin-navigation";
@@ -43,9 +44,7 @@ export function AdminRailMenu({
         onNavigate={closeMenu}
       >
         <span className="brand-symbol">
-          {/* Existing local SVG avoids importing member-only runtime dependencies. */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/workroom-icon.svg" width={44} height={44} alt="" />
+          <WorkroomMark />
         </span>
         <strong>WORKROOM</strong>
         <small>ADMIN CONSOLE</small>

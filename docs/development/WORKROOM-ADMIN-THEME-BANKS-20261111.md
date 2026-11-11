@@ -49,7 +49,35 @@ are outside this domestic deposit-bank list. Names/codes are checked against
 [iM Bank's official transfer-code list](https://imbank.co.kr/cms/fsv/sdb_2/sdb_22/sdb_222/1187032_1468.html)
 and [Bank of Korea's institution classification](https://www.bok.or.kr/portal/main/contents.do?menuNo=200319).
 
-## Verification and release
+## Canonical domains and matching identity
+
+The owner subsequently requested WORKROOM hostnames and consistent logos.
+Member origin is `https://workroom.putduk.com`; administrator origin is
+`https://admin.workroom.putduk.com`. Keep the current named Workers and backend.
+The previous mining hosts redirect only GET/HEAD to fixed destinations with
+the same path/query. Never forward mutations or broaden trusted write origins.
+The public member matcher preserves its original authenticated-route predicate,
+so canonical public pages do not gain session refresh or protected redirects.
+
+Application defaults, public discovery/canonical metadata, build inputs and
+production artifact admission must agree on these two origins. Supabase Auth
+uses the new member site URL and its two exact callback URLs while preserving
+the two transitional old callbacks. Existing identities remain; browser sessions
+and installations are host-specific and require fresh sign-in on the new host.
+
+The existing navy/mint W is one canonical geometry, used by header/admin/Apple
+marks and the matching SVG, PNG and ICO assets. Generate 32/180/192/512 icons and
+an opaque maskable 512 icon from that source. Verify both applications' asset
+bytes, dimensions and maskable safe area. Bump only the WORKROOM shell cache and
+serve these active assets directly from each Worker's static-asset binding.
+
+The owner requested using F after C filled. Release artifacts, backup, evidence
+and the relocated test-browser runtime live under the F task folder; the
+verified source checkout remains on C for dependency compatibility. The test
+browser's original C path is retained by a junction and its binary digest is
+verified. Incomplete duplicate F clones are not implementation candidates.
+
+## Verification and release procedure
 
 Use real disposable Auth/database/browser fixtures for commands and permissions.
 Check every active administrator destination, mobile menu behavior and both

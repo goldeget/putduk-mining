@@ -1,12 +1,23 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 import { updateAdminSession } from "@/lib/supabase/proxy";
+import { canonicalWorkroomRedirect } from "../../lib/workroom/domains";
 import {
   isRetiredAdminWorkroomCommand,
   retiredAdminWorkroomDestination,
 } from "@/lib/workroom/retirement";
 
 export function proxy(request: NextRequest) {
+  const canonical = canonicalWorkroomRedirect(
+    request.url,
+    request.method,
+    "admin",
+  );
+  if (canonical)
+    return NextResponse.redirect(canonical, {
+      status: 308,
+      headers: { "Cache-Control": "no-store" },
+    });
   if (isRetiredAdminWorkroomCommand(request.nextUrl.pathname, request.method)) {
     return NextResponse.json(
       {

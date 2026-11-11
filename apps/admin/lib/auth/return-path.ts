@@ -26,8 +26,8 @@ export function safeAdminReturnPath(value: unknown): string {
     return "/";
   }
   try {
-    const url = new URL(value, "https://admin.mining.putduk.com");
-    if (url.origin !== "https://admin.mining.putduk.com") return "/";
+    const url = new URL(value, "https://admin.workroom.putduk.com");
+    if (url.origin !== "https://admin.workroom.putduk.com") return "/";
     return SAFE_ADMIN_PATHS.some(
       (path) =>
         url.pathname === path ||

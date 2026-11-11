@@ -148,8 +148,8 @@ body {
 }
 .brand-lockup--rail .brand-symbol svg,
 .brand-lockup--rail .brand-symbol img {
-  width: 34px;
-  height: 34px;
+  width: 44px;
+  height: 44px;
 }
 .control-rail nav {
   gap: 4px;
@@ -622,4 +622,10 @@ body {
   .page-intro {
     border-color: CanvasText;
   }
+}
+
+/* The canonical W occupies the same44px tile as the member header. */
+.brand-lockup--rail .brand-symbol {
+  background: transparent;
+  border: 0;
 }

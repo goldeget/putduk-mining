@@ -89,9 +89,9 @@ export default async function TrustDocumentPage({ params }: PageProps) {
       isPartOf: {
         "@type": "WebSite",
         name: "WORKROOM",
-        url: "https://mining.putduk.com",
+        url: "https://workroom.putduk.com",
       },
-      mainEntityOfPage: `https://mining.putduk.com${document.path}`,
+      mainEntityOfPage: `https://workroom.putduk.com${document.path}`,
     },
     buildBreadcrumbStructuredData({
       name: getTrustNavigationLabel(document.path),

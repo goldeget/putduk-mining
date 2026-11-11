@@ -31,7 +31,7 @@ export const PUBLIC_FACTS: readonly PublicFact[] = [
   },
   {
     key: "OFFICIAL_DOMAIN",
-    value: "mining.putduk.com",
+    value: "workroom.putduk.com",
     description:
       "사용자용 공식 서비스 도메인입니다. 정식 서비스 연결 전에는 준비 상태로 표시됩니다.",
   },

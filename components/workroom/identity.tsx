@@ -2,35 +2,8 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import styles from "./workroom.module.css";
 import { ThemeControl } from "@/components/system/theme-control";
-
-export function WorkroomMark() {
-  return (
-    <svg
-      viewBox="0 0 44 44"
-      width="44"
-      height="44"
-      fill="none"
-      aria-hidden="true"
-    >
-      <rect
-        x="1"
-        y="1"
-        width="42"
-        height="42"
-        rx="12"
-        fill="var(--wr-success-bg)"
-        stroke="var(--wr-success-border)"
-      />
-      <path
-        d="m9 15 6 15 7-12 7 12 6-15"
-        stroke="var(--wr-accent)"
-        strokeWidth="3.2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
+import { WorkroomMark } from "./workroom-mark";
+export { WorkroomMark } from "./workroom-mark";
 
 export function WorkroomBrand() {
   return (

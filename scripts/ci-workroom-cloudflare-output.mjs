@@ -29,8 +29,15 @@ export function inventory(root) {
 }
 export function productionConfig(config, name) {
   const values = config.env ?? {};
+  const expectedOrigin = {
+    "putduk-mining-web-staging": "https://workroom.putduk.com",
+    "putduk-mining-admin-staging": "https://admin.workroom.putduk.com",
+  }[name];
   if (
     config.name !== name ||
+    !expectedOrigin ||
+    values.NEXT_PUBLIC_APP_URL?.value !== expectedOrigin ||
+    values.ADMIN_APP_URL?.value !== "https://admin.workroom.putduk.com" ||
     values.APP_ENV?.value !== "production" ||
     values.NEXT_PUBLIC_SUPABASE_URL?.value !==
       "https://awrubjiqkggaxcvtckbr.supabase.co" ||
