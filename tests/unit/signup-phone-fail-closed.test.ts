@@ -77,7 +77,8 @@ const previous: SignupActionState = {
 function signupForm(phone = "010-1234-5678") {
   const form = new FormData();
   const fields = {
-    dateOfBirth: "1990-01-01",
+    dateOfBirth: "900101",
+    birthSexDigit: "1",
     legalName: "테스트회원",
     loginId: "fixture_user",
     password: "Synthetic-only-password-123!",
@@ -186,7 +187,11 @@ describe("signup phone checks before account creation", () => {
       expect.objectContaining({
         email: "signup-fixture@putduk.test",
         options: expect.objectContaining({
-          data: expect.objectContaining({ phone_e164: "+821012345678" }),
+          data: expect.objectContaining({
+            phone_e164: "+821012345678",
+            date_of_birth: "1990-01-01",
+            birth_sex_digit: "1",
+          }),
         }),
       }),
     );

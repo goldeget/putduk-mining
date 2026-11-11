@@ -12,6 +12,7 @@ import { LEGAL_CONSENT_VERSIONS } from "@/lib/trust/legal-content";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { recordSignupContext } from "@/lib/security/signup-context.server";
+import { signupBirthDate } from "@/domain/identity/signup-birth";
 
 // 약관·방침 본문(/terms, /privacy)과 같은 원천에서 버전을 가져온다.
 const SERVICE_TERMS_VERSION = LEGAL_CONSENT_VERSIONS.serviceTerms;
@@ -20,6 +21,9 @@ const MARKETING_VERSION = "MARKETING-KO-2026-09-27";
 
 const signupSchema = z
   .object({
+    birthSexDigit: z
+      .string()
+      .regex(/^[1-8]$/, "뒷자리 첫 숫자 1자리를 확인해 주세요."),
     dateOfBirth: z
       .string()
       .regex(/^\d{4}-\d{2}-\d{2}$/, "생년월일을 확인해 주세요."),
@@ -151,7 +155,12 @@ export async function signupAction(
   formData: FormData,
 ): Promise<SignupActionState> {
   const parsed = signupSchema.safeParse({
-    dateOfBirth: formData.get("dateOfBirth"),
+    dateOfBirth:
+      signupBirthDate(
+        formData.get("dateOfBirth"),
+        formData.get("birthSexDigit"),
+      ) ?? "",
+    birthSexDigit: formData.get("birthSexDigit"),
     legalName: formData.get("legalName"),
     loginId: formData.get("loginId"),
     marketingConsent: checked(formData, "marketingConsent"),
@@ -258,6 +267,7 @@ export async function signupAction(
       options: {
         data: {
           date_of_birth: parsed.data.dateOfBirth,
+          birth_sex_digit: parsed.data.birthSexDigit,
           legal_name: parsed.data.legalName,
           login_id: parsed.data.loginId,
           marketing_granted: parsed.data.marketingConsent,

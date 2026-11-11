@@ -96,7 +96,6 @@ jobs:
             test-results/workroom-application
   acceptance:
     name: WORKROOM native and authenticated acceptance
-    needs: application
     permissions:
       contents: read
       actions: read
@@ -122,15 +121,12 @@ jobs:
           node scripts/ci-workroom-checkout.mjs
           pnpm install --frozen-lockfile
           node scripts/ci-workroom-browser-server.mjs --start
-      - uses: actions/download-artifact@v7
-        with:
-          name: workroom-build-${{ github.run_id }}-${{ github.run_attempt }}-${{ env.CI_HEAD_SHA }}
-          path: .
       - name: Disposable native, Auth and member/admin smoke acceptance
         run: node scripts/ci-workroom-acceptance.mjs
         env:
           GH_TOKEN: ${{ github.token }}
           WORKROOM_CI_PROFILE: pr-smoke
+          WORKROOM_EARLY_NATIVE: "1"
           E2E_WEB_PORT: "3000"
           E2E_ADMIN_PORT: "3100"
       - name: Stop job-owned browser runtime

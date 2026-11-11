@@ -6,6 +6,7 @@ import { HIGH_IMPACT_ROLES } from "@/lib/auth/policy";
 import { createAdminServiceClient } from "@/lib/supabase/service";
 import { formatKst } from "@/app/(control)/_lib/format";
 import styles from "./members.module.css";
+import { signupSexLabel } from "../../../../../domain/identity/signup-birth";
 
 const SIZE = 25;
 export function memberDirectoryPage(value: string | undefined) {
@@ -35,6 +36,7 @@ async function auditRead(
           "login_id",
           "legal_name",
           "date_of_birth",
+          "birth_sex_digit",
           "phone_e164",
           "recovery_email",
           "created_at",
@@ -69,7 +71,7 @@ export async function MemberDirectory({
   const result = await db
     .from("user_identity_profiles")
     .select(
-      "user_id,login_id,legal_name,date_of_birth,phone_e164,recovery_email,created_at",
+      "user_id,login_id,legal_name,date_of_birth,birth_sex_digit,phone_e164,recovery_email,created_at",
       { count: "exact" },
     )
     .order("created_at", { ascending: false })
@@ -123,6 +125,7 @@ export async function MemberDirectory({
                 {[
                   "아이디 / 이름",
                   "생년월일",
+                  "성별 / 구분 숫자",
                   "연락처",
                   "복구 이메일",
                   "가입 일시",
@@ -145,6 +148,10 @@ export async function MemberDirectory({
                     <small>{row.legal_name}</small>
                   </th>
                   <td>{row.date_of_birth}</td>
+                  <td>
+                    {signupSexLabel(row.birth_sex_digit)}
+                    {row.birth_sex_digit ? ` · ${row.birth_sex_digit}` : ""}
+                  </td>
                   <td>{row.phone_e164}</td>
                   <td>{row.recovery_email}</td>
                   <td>{formatKst(row.created_at)}</td>
@@ -215,7 +222,7 @@ export async function MemberRegistrationDetails({
     db
       .from("user_identity_profiles")
       .select(
-        "login_id,legal_name,date_of_birth,phone_e164,recovery_email,created_at",
+        "login_id,legal_name,date_of_birth,birth_sex_digit,phone_e164,recovery_email,created_at",
       )
       .eq("user_id", userId)
       .maybeSingle(),
@@ -236,6 +243,8 @@ export async function MemberRegistrationDetails({
     ["가입 아이디", person?.login_id],
     ["이름", person?.legal_name],
     ["생년월일", person?.date_of_birth],
+    ["뒷자리 첫 숫자", person?.birth_sex_digit],
+    ["성별", signupSexLabel(person?.birth_sex_digit)],
     ["연락처", person?.phone_e164],
     ["복구 이메일", person?.recovery_email],
     ["가입 일시", person?.created_at ? formatKst(person.created_at) : null],

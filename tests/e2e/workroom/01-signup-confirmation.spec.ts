@@ -10,12 +10,13 @@ test("real public signup consumes valid invite and confirms through the disposab
   for (const [name, value] of Object.entries({
     referralCode: code,
     legalName: "워크룸검증",
-    dateOfBirth: "1990-01-15",
+    dateOfBirth: "900115",
+    birthSexDigit: "1",
     loginId: user.loginId,
     recoveryEmail: user.email,
     password: user.password,
     passwordConfirmation: user.password,
-    phone: user.metadata.phone_e164,
+    phone: user.metadata.phone_e164.replace(/^\+82/, "0"),
   }))
     await page.locator(`[name="${name}"]`).fill(value);
   await page.locator('[name="serviceTermsConsent"]').check();
@@ -30,6 +31,11 @@ test("real public signup consumes valid invite and confirms through the disposab
   expect(
     sql(
       `select count(*) from auth.users where email='${user.email}' and email_confirmed_at is null;`,
+    ),
+  ).toBe("1");
+  expect(
+    sql(
+      `select count(*) from public.user_identity_profiles p join auth.users u on u.id=p.user_id where u.email='${user.email}' and p.date_of_birth='1990-01-15' and p.birth_sex_digit='1';`,
     ),
   ).toBe("1");
   expect(

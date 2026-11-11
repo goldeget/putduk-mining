@@ -21,6 +21,7 @@ test("administrator publishes receiving account or consultation message and brow
   const detail = page.getByRole("region", { name: "가입 정보", exact: true });
   await expect(detail).toContainText(user.metadata.phone_e164);
   await expect(detail).toContainText(user.metadata.date_of_birth);
+  await expect(detail).toContainText("남성");
   await expect(detail).toContainText(user.email);
   await expect(detail).toContainText("기록 없음");
   const memberContext = await browser.newContext({ baseURL: baseURL! });

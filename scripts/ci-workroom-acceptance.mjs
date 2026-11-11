@@ -40,17 +40,24 @@ if (smoke && workerd)
   throw Error("WORKROOM_WORKER_RUNTIME_REQUIRES_FULL_ACCEPTANCE");
 if (process.env.WORKROOM_CI_RUNTIME && !workerd)
   throw Error("WORKROOM_UNKNOWN_RUNTIME");
-const buildReceipt = JSON.parse(
-  readFileSync(
-    workerd
-      ? "test-results/workroom-cloudflare-build/receipt.json"
-      : "test-results/workroom-application/receipt.json",
-    "utf8",
-  ),
-);
-verifyReceipt(buildReceipt);
-if (workerd && buildReceipt.gate !== "cloudflare-build")
-  throw Error("WORKROOM_CLOUDFLARE_RECEIPT_REQUIRED");
+const earlyNative = process.env.WORKROOM_EARLY_NATIVE === "1";
+if (earlyNative && workerd)
+  throw Error("WORKROOM_EARLY_NATIVE_PROFILE_REQUIRED");
+let buildReceipt;
+function loadBuildReceipt() {
+  buildReceipt = JSON.parse(
+    readFileSync(
+      workerd
+        ? "test-results/workroom-cloudflare-build/receipt.json"
+        : "test-results/workroom-application/receipt.json",
+      "utf8",
+    ),
+  );
+  verifyReceipt(buildReceipt);
+  if (workerd && buildReceipt.gate !== "cloudflare-build")
+    throw Error("WORKROOM_CLOUDFLARE_RECEIPT_REQUIRED");
+}
+if (!earlyNative) loadBuildReceipt();
 let env = omitLiveProviders({
   ...process.env,
   APP_ENV: "test",
@@ -263,6 +270,10 @@ try {
     "--fail-on",
     "warn",
   ]);
+  if (earlyNative) {
+    run(process.execPath, ["scripts/ci-workroom-await-build.mjs"]);
+    loadBuildReceipt();
+  }
   runBrowserSuite("playwright.workroom.config.ts");
   const browserPath = "test-results/workroom-auth/results.json";
   const browserFiles = readdirSync("tests/e2e/workroom").filter((name) =>
@@ -370,6 +381,9 @@ try {
             : "native-worker-auth",
         startedAt,
         files: [
+          ...(earlyNative
+            ? ["test-results/workroom-acceptance/parallel-build.json"]
+            : []),
           ...native,
           ...(workerd
             ? [

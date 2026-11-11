@@ -11,7 +11,11 @@ do $$declare signature text:='public.set_krw_deposit_settings(uuid,uuid,text,tex
  if has_table_privilege('authenticated','public.member_registration_context','SELECT') or has_table_privilege('anon','public.krw_deposit_settings','SELECT') or has_table_privilege('authenticated','public.krw_deposit_settings','UPDATE') then raise exception 'Sensitive signup or instruction ACL exposed';end if;
 end$$;
 insert into auth.users(id,aud,role,email,encrypted_password,email_confirmed_at,raw_app_meta_data,raw_user_meta_data,created_at,updated_at,confirmation_token,recovery_token,email_change,email_change_token_new)
-values('11660000-0000-4000-8000-000000000001','authenticated','authenticated','bank-admin@putduk.test','',now(),'{}',app_private.workroom_native_signup_metadata('{}'),now(),now(),'','','','');
+values('11660000-0000-4000-8000-000000000001','authenticated','authenticated','bank-admin@putduk.test','',now(),'{}',app_private.workroom_native_signup_metadata('{"signup_source":"PUBLIC_V1","legal_name":"검증관리자","login_id":"bank_native_admin","date_of_birth":"1990-01-01","birth_sex_digit":"1","phone_e164":"+821099001166","recovery_email":"bank-admin@putduk.test","service_terms_version":"TERMS-KO-2026-09-27","privacy_version":"PRIVACY-KO-2026-09-27","marketing_version":"MARKETING-KO-2026-09-27","service_terms_granted":true,"privacy_granted":true,"marketing_granted":false}'),now(),now(),'','','','');
+do $$begin
+ if not exists(select 1 from public.user_identity_profiles where user_id='11660000-0000-4000-8000-000000000001' and date_of_birth='1990-01-01' and birth_sex_digit='1') then raise exception 'Signup classification not captured atomically';end if;
+ perform pg_temp.bank_must_fail($q$update public.user_identity_profiles set birth_sex_digit='3' where user_id='11660000-0000-4000-8000-000000000001'$q$,'user_identity_profiles_birth_sex_digit');
+end$$;
 insert into public.user_roles(user_id,role,granted_by)values('11660000-0000-4000-8000-000000000001','ADMIN','11660000-0000-4000-8000-000000000001');
 insert into public.admin_sessions(id,user_id,auth_session_id,session_fingerprint,idle_expires_at,absolute_expires_at)
 values('11660000-0000-4000-8000-000000000002','11660000-0000-4000-8000-000000000001','bank-auth-native','bank-native',now()+interval '30 minutes',now()+interval '1 hour');

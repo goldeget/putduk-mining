@@ -1,5 +1,19 @@
 begin;
 
+alter table public.user_identity_profiles add column birth_sex_digit text;
+alter table public.user_identity_profiles add constraint user_identity_profiles_birth_sex_digit
+ check(birth_sex_digit is null or (birth_sex_digit ~ '^[1-8]$' and
+  ((birth_sex_digit in('1','2','5','6') and extract(year from date_of_birth) between 1900 and 1999) or
+   (birth_sex_digit in('3','4','7','8') and extract(year from date_of_birth) between 2000 and 2099))));
+create function app_private.capture_signup_birth_digit() returns trigger language plpgsql security invoker set search_path=pg_catalog as $$
+begin
+ select u.raw_user_meta_data->>'birth_sex_digit' into new.birth_sex_digit from auth.users u where u.id=new.user_id;
+ return new;
+end$$;
+revoke all on function app_private.capture_signup_birth_digit() from public,anon,authenticated,service_role;
+create trigger user_identity_profiles_capture_birth_digit before insert on public.user_identity_profiles
+ for each row execute function app_private.capture_signup_birth_digit();
+
 create table public.krw_deposit_settings (
  id boolean primary key default true check(id),
  mode text not null check(mode in ('ACCOUNT','CONTACT')),
