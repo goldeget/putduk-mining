@@ -2491,7 +2491,7 @@
     "supabase/tests/database/worker_component_stop_scope.sql": "ed55c85fe6770d5c3aa647f6f009453adc38a46309047a2d6af91cd0c145fa74",
     "supabase/tests/database/worker_stop_retry_budget_negatives.sql": "e256bc45e7c9a9533abfb9f7ca2cb5893a285a3c566474274bcaf816cbedd196",
     "supabase/tests/database/worker_stopped_source_backed_cms.sql": "9bae57f315d1a49950808af837a30a84ca0507a7e37620782c06133ab17c692a",
-    "supabase/tests/database/workroom_bank_members.sql": "a2db6cdcd3a800b456610c971509c626412c7b55a76212fecd073184afafe56d",
+    "supabase/tests/database/workroom_bank_members.sql": "9737559f2ffaf099a531f1f5f753ff0b95bf422f3627f679895cd6595759dffe",
     "supabase/tests/database/workroom_direct_cash.sql": "07b9671c1e7bd891a2c622fa84c11b78eefd69de2da1454778c07f3d6cde9fcc",
     "supabase/tests/database/workroom_practice.sql": "c608e95dcf0aa3edf4456766482ce7ec2644487c50e903c23e1b819cb93c39b7",
     "supabase/tests/database/ws02_foundations.sql": "0c84718d6fa8262cf34ec07045c8fed9bca1f323cbaef520bf9c2799a49b57c8",
