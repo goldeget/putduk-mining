@@ -3,6 +3,114 @@
   gap: 0;
 }
 
+.directory {
+  margin-block: 24px;
+  padding: clamp(16px, 2.5vw, 28px);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: var(--surface);
+  min-width: 0;
+}
+.directoryHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+.directoryHead h2 {
+  margin: 4px 0 8px;
+}
+.directoryHead p {
+  color: var(--muted);
+}
+.directoryScroll {
+  overflow-x: auto;
+  max-width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  margin-bottom: 20px;
+}
+.directoryTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+  text-align: left;
+}
+.directoryTable th,
+.directoryTable td {
+  padding: 16px;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+.directoryTable thead th {
+  background: var(--surface-raised, var(--surface));
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.directoryTable tbody tr:last-child > * {
+  border-bottom: 0;
+}
+.directoryTable tbody th a {
+  color: var(--gold);
+}
+.directoryTable small {
+  display: block;
+  color: var(--muted);
+  margin-top: 5px;
+  font-weight: 400;
+}
+.registrationGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0 24px;
+}
+.registrationGrid > div {
+  padding: 18px 0;
+  border-bottom: 1px solid var(--line);
+  min-width: 0;
+}
+.registrationGrid dt {
+  color: var(--muted);
+  font-size: 0.8rem;
+  margin-bottom: 8px;
+}
+.registrationGrid dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  line-height: 1.6;
+}
+.consentList {
+  display: grid;
+  gap: 12px;
+  padding: 0;
+  list-style: none;
+}
+.consentList li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+.consentList span {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+@media (max-width: 720px) {
+  .registrationGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 400px) {
+  .registrationGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 .partialAlert {
   margin-top: 18px;
   border: 1px solid color-mix(in srgb, var(--gold) 35%, var(--line));

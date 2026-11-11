@@ -27,6 +27,8 @@ export type WalletDepositViewProps = {
   /** 운영자가 정한 원화 입금 안내 계좌. 없으면 null이다. */
   krwInstruction?: KrwDepositInstruction | null;
   contactOperator?: boolean;
+  contactMessage?: string;
+  instructionLoadFailed?: boolean;
   instructions: UsdtDepositInstruction[];
   instructionRead: "error" | "empty" | "ready";
   krwHistoryRead: "error" | "empty" | "ready";
@@ -161,6 +163,8 @@ function DepositHistory({
 export function WalletDepositView({
   krwInstruction = null,
   contactOperator = false,
+  contactMessage = "담당자에게 문의",
+  instructionLoadFailed = false,
   instructions,
   instructionRead,
   krwHistoryRead,
@@ -247,6 +251,8 @@ export function WalletDepositView({
               <DepositForm
                 instruction={contactOperator ? null : krwInstruction}
                 contactOperator={contactOperator}
+                contactMessage={contactMessage}
+                instructionLoadFailed={instructionLoadFailed}
               />
             </section>
             <section className={styles.usdt} aria-label="USDT 수동 입금 신청">

@@ -274,4 +274,5 @@ export async function adminLogin(
   await page.waitForURL((url) => !url.pathname.includes("/mfa"));
   await adminState(page);
   // Never persist the TOTP secret, Auth JWT, cookies or password in evidence.
+  return { secret };
 }

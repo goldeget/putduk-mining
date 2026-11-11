@@ -15,7 +15,7 @@ export const ADMIN_MENU_ITEMS = [
     label: "워크룸 변경 기록",
     group: "워크룸 운영",
   },
-  { href: "/members", label: "회원·거래 기록", group: "워크룸 운영" },
+  { href: "/members", label: "회원 목록", group: "워크룸 운영" },
   { href: "/deposits/krw", label: "원화 입금 관리", group: "입출금 관리" },
   { href: "/deposits/usdt", label: "USDT 입금 관리", group: "입출금 관리" },
   {

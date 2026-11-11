@@ -2,12 +2,16 @@ import { createHash } from "node:crypto";
 
 export const WORKROOM_CASH_MIGRATION =
   "supabase/migrations/20261111065929_workroom_direct_deposit_cash.sql";
+export const WORKROOM_BANK_MIGRATION =
+  "supabase/migrations/20261111165640_workroom_bank_instructions_member_directory.sql";
 export const WORKROOM_CASH_TESTS = [
   "supabase/tests/database/workroom_direct_cash.sql",
   "supabase/tests-concurrent/workroom_direct_cash_concurrency.sql",
+  "supabase/tests/database/workroom_bank_members.sql",
 ];
 export const WORKROOM_CASH_FILES = [
   WORKROOM_CASH_MIGRATION,
+  WORKROOM_BANK_MIGRATION,
   ...WORKROOM_CASH_TESTS,
 ];
 export const WORKROOM_CASH_ACL_TESTS = [

@@ -35,6 +35,11 @@ test("real public signup consumes valid invite and confirms through the disposab
   expect(
     sql(`select used from app_private.workroom_invites where code='${code}';`),
   ).toBe("1");
+  expect(
+    sql(
+      `select count(*) from public.member_registration_context c join auth.users u on u.id=c.user_id where u.email='${user.email}' and c.referral_code='${code}' and c.workroom_acknowledged and c.signup_ip is null and c.ip_source='NONE';`,
+    ),
+  ).toBe("1");
   const mailbox = user.email.split("@")[0]!;
   const mailboxOrigin =
     required("LOCAL_SUPABASE_PROJECT_ID") ===

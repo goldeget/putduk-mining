@@ -11,6 +11,7 @@ import { assertComponentActive } from "@/lib/safe-mode/assert-component-active.s
 import { LEGAL_CONSENT_VERSIONS } from "@/lib/trust/legal-content";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { recordSignupContext } from "@/lib/security/signup-context.server";
 
 // 약관·방침 본문(/terms, /privacy)과 같은 원천에서 버전을 가져온다.
 const SERVICE_TERMS_VERSION = LEGAL_CONSENT_VERSIONS.serviceTerms;
@@ -304,6 +305,11 @@ export async function signupAction(
   }
 
   const signupUserId = data.user.id;
+  await recordSignupContext(
+    signupUserId,
+    parsed.data.referralCode,
+    parsed.data.workroomAcknowledged,
+  );
   try {
     after(() =>
       recordProductionAnalyticsEvent({

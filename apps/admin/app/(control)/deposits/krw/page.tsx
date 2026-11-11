@@ -11,6 +11,7 @@ import { EmptyQueue, QueueCard, QueueShell } from "@/components/queue-shell";
 import { loadKrwDepositQueue } from "@/lib/deposits/krw-queue";
 import { HIGH_IMPACT_ROLES } from "@/lib/auth/policy";
 import { requireAdminPage } from "@/lib/auth/principal";
+import { KrwInstructionPanel } from "./instruction-panel";
 
 export default async function KrwDepositQueuePage() {
   const principal = await requireAdminPage("/deposits/krw");
@@ -38,6 +39,8 @@ export default async function KrwDepositQueuePage() {
           title="대기열을 불러오지 못함"
         />
       ) : null}
+
+      <KrwInstructionPanel />
 
       {loaded.ok && loaded.rows.length === 0 ? (
         <>
