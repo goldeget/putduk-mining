@@ -74,9 +74,14 @@ describe("admin labelled navigation disclosure", () => {
     const region = document.getElementById(
       toggle().getAttribute("aria-controls")!,
     )!;
-    expect(region.querySelectorAll("nav a")).toHaveLength(14);
+    expect(region.querySelectorAll("nav a")).toHaveLength(13);
     expect(region.querySelector('a[href="/ai-conversations"]')).not.toBeNull();
-    expect(region.querySelector('a[href="/content"]')).not.toBeNull();
+    expect(region.querySelector('a[href="/content"]')).toBeNull();
+    expect(
+      [...region.querySelectorAll(".control-nav__group")].map(
+        (node) => node.textContent,
+      ),
+    ).toEqual(["워크룸 운영", "입출금 관리", "운영 지원"]);
     expect(
       region.querySelector('a[href="/workroom?tab=config"]')?.textContent,
     ).toContain("모의 조건");

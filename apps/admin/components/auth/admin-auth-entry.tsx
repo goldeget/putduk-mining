@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
 
-import { BrandMark } from "../../../../components/brand/brand-mark";
 import { PutdukIcon } from "../../../../components/icons/putduk-icon";
 import { ThemeControl } from "../../../../components/system/theme-control";
 import { AdminAuthConnectionBoundary } from "./admin-auth-connection-boundary";
@@ -40,7 +39,8 @@ export function AdminAuthEntry({
     >
       <header className={styles.top}>
         <div className={styles.identity}>
-          <BrandMark title="" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/workroom-icon.svg" width={44} height={44} alt="" />
           <div>
             <strong>WORKROOM</strong>
             <span>운영자 보안 접속</span>

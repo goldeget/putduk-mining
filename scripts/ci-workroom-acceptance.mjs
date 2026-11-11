@@ -268,7 +268,7 @@ try {
   const browserFiles = readdirSync("tests/e2e/workroom").filter((name) =>
     name.endsWith(".spec.ts"),
   );
-  if (browserFiles.length !== 12)
+  if (browserFiles.length !== 13)
     throw Error("WORKROOM_REVIEWED_BROWSER_ROSTER_CHANGED");
   assertPlaywrightReport(
     JSON.parse(readFileSync(browserPath, "utf8")),

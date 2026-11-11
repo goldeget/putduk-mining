@@ -5,6 +5,7 @@ import { themeBootstrap } from "../../../lib/design/theme";
 
 import "./globals.css";
 import "./(control)/workroom/shell.css";
+import "./admin-workspace.css";
 
 export const metadata: Metadata = {
   title: { default: "WORKROOM | 운영자", template: "%s | WORKROOM ADMIN" },

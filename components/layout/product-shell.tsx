@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import { ProductNavigation } from "@/components/navigation/product-navigation";
 import { WorkroomBrand } from "@/components/workroom/identity";
+import { ThemeControl } from "@/components/system/theme-control";
 import styles from "@/components/workroom/workroom.module.css";
 export function ProductShell({
   children,
@@ -51,6 +52,9 @@ export function ProductShell({
         <header className={styles.topbar}>
           <strong>{title}</strong>
           <div className={styles.topRight}>
+            <div className={styles.themeControl}>
+              <ThemeControl />
+            </div>
             <span className={styles.badge}>
               {pathname.startsWith("/workroom/cash") ||
               pathname.startsWith("/workroom/records")

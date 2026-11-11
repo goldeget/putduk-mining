@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import styles from "./workroom.module.css";
+import { ThemeControl } from "@/components/system/theme-control";
 
 export function WorkroomMark() {
   return (
@@ -17,12 +18,12 @@ export function WorkroomMark() {
         width="42"
         height="42"
         rx="12"
-        fill="#173c33"
-        stroke="#3c7562"
+        fill="var(--wr-success-bg)"
+        stroke="var(--wr-success-border)"
       />
       <path
         d="m9 15 6 15 7-12 7 12 6-15"
-        stroke="#73efc3"
+        stroke="var(--wr-accent)"
         strokeWidth="3.2"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -51,7 +52,12 @@ export function WorkroomAuth({
 }) {
   return (
     <main className={`${styles.theme} ${styles.auth}`}>
-      <WorkroomBrand />
+      <header className={styles.authHeader}>
+        <WorkroomBrand />
+        <div className={styles.themeControl}>
+          <ThemeControl />
+        </div>
+      </header>
       <div className={styles.authGrid}>
         <section className={styles.intro}>
           <span className={styles.eyebrow}>A NEW WAY TO EXPERIENCE</span>

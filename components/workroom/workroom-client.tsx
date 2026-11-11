@@ -85,7 +85,7 @@ function Chart({
               x2="780"
               y1={y(v)}
               y2={y(v)}
-              stroke="#2b3a4e"
+              stroke="var(--wr-chart-grid)"
               strokeDasharray="3 5"
             />
             <text x="0" y={y(v) + 4}>
@@ -96,7 +96,7 @@ function Chart({
               x2={x(i / 4)}
               y1="16"
               y2="224"
-              stroke="#253447"
+              stroke="var(--wr-chart-grid)"
             />
             <text textAnchor="middle" x={x(i / 4)} y="248">
               {Math.round((config.duration * i) / 4)}초
@@ -106,12 +106,12 @@ function Chart({
       })}
       <polygon
         points={`48,224 ${points.join(" ")} ${x(progress)},224`}
-        fill="#73efc311"
+        fill="var(--wr-chart-fill)"
       />
       <polyline
         points={points.join(" ")}
         fill="none"
-        stroke="#73efc3"
+        stroke="var(--wr-accent)"
         strokeWidth="2.8"
         strokeLinejoin="round"
       />
@@ -119,7 +119,7 @@ function Chart({
         cx={x(progress)}
         cy={y(simulationValue(config, progress))}
         r="4"
-        fill="#c7ffe8"
+        fill="var(--wr-chart-dot)"
       />
     </svg>
   );
