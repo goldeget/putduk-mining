@@ -84,6 +84,8 @@ const nextConfig: NextConfig = {
   },
   async headers() {
     return [
+      // Vinext treats the wildcard as one or more segments, so bind root explicitly.
+      { source: "/", headers: securityHeaders },
       { source: "/:path*", headers: securityHeaders },
       {
         source: "/api/:path*",

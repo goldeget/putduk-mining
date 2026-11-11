@@ -14,14 +14,15 @@ export default function HomePage() {
           추천인 코드로 회원가입 →
         </Link>
         <Link className={styles.secondary} href="/login?next=%2Fworkroom">
-          기존 회원 로그인
+          회원 로그인
         </Link>
         <Link className={styles.secondary} href="/workroom">
           내 워크룸으로 이동
         </Link>
       </div>
       <p className={styles.muted}>
-        기존 회원은 새로 가입할 필요 없이 원래 계정으로 이용할 수 있습니다.
+        담당자에게 받은 추천인 코드로 새로 가입해 주세요. 체험 포인트는 가입할
+        때 한 번 지급됩니다.
       </p>
     </WorkroomAuth>
   );

@@ -37,6 +37,25 @@ const base: WalletDepositViewProps = {
   usdtHistory: [],
   usdtHistoryRead: "empty",
 };
+
+it("operator-contact mode offers a real deposit request without rendering bank fields", () => {
+  const html = renderToStaticMarkup(
+    createElement(WalletDepositView, {
+      ...base,
+      contactOperator: true,
+      krwInstruction: {
+        bankName: "DO_NOT_RENDER_BANK",
+        accountNumber: "123456789012",
+        accountHolder: "DO_NOT_RENDER_HOLDER",
+      },
+    }),
+  );
+  expect(html).toContain("담당자에게 문의");
+  expect(html).toContain("입금 요청하기");
+  expect(html).not.toContain("DO_NOT_RENDER_BANK");
+  expect(html).not.toContain("123456789012");
+  expect(html).not.toContain("DO_NOT_RENDER_HOLDER");
+});
 function render(overrides: Partial<WalletDepositViewProps> = {}) {
   const node = document.createElement("div");
   node.innerHTML = renderToStaticMarkup(

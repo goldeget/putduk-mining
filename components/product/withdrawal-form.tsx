@@ -20,6 +20,7 @@ import {
   parseDisplayAmount,
 } from "@/domain/wallet/format-amount";
 import { trackAnalyticsEvent } from "@/lib/analytics/client";
+import { workroomCashFetch } from "@/lib/wallet/workroom-cash-client";
 import {
   browserWithdrawalLogicalRequestStore,
   LEGACY_WITHDRAWAL_LOGICAL_REQUEST_STORAGE_KEY,
@@ -85,12 +86,15 @@ export function WithdrawalForm({
   destinations = [],
   policies,
   ownerId,
+  directDepositOnly = false,
 }: {
   account: WithdrawalAccount | null;
   destinations?: readonly RegisteredWithdrawalDestination[];
   policies: readonly WithdrawalPolicy[];
   ownerId: string;
+  directDepositOnly?: boolean;
 }) {
+  const fetcher = directDepositOnly ? workroomCashFetch : fetch;
   const router = useRouter();
   const submittingRef = useRef(false);
   const initialMethod =
@@ -133,7 +137,7 @@ export function WithdrawalForm({
         const record = await recoverWithdrawalLogicalRequest(
           ownerId,
           browserWithdrawalLogicalRequestStore(),
-          fetch,
+          fetcher,
           legacyPresent(),
         );
         if (!live) return;
@@ -176,7 +180,7 @@ export function WithdrawalForm({
     return () => {
       live = false;
     };
-  }, [ownerId]);
+  }, [ownerId, fetcher]);
 
   const policy = useMemo(
     () => policies.find((candidate) => candidate.method === method),
@@ -250,6 +254,8 @@ export function WithdrawalForm({
         browserWithdrawalLogicalRequestStore(),
         recovery,
         "CANCEL",
+        null,
+        fetcher,
       );
       if (resolved.state !== "CANCELLED") {
         setRecovery(resolved);
@@ -360,6 +366,7 @@ export function WithdrawalForm({
         knownKey: recovery?.key ?? null,
         onRecord: setRecovery,
         destinationReauth,
+        fetcher,
       });
       if (resolved.state !== "CONFIRMED" && resolved.state !== "CANCELLED")
         throw new WithdrawalLogicalSafetyError("RECONCILIATION_REQUIRED");

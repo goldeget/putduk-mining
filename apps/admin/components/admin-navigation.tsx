@@ -5,19 +5,19 @@ import type { Route } from "next";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useRef } from "react";
 
-/** WORKROOM operations first; historical records remain secondary. */
+/** WORKROOM and the independent manual cash operations share this console. */
 const items = [
   { href: "/workroom?tab=config", label: "워크룸 · 모의 조건" },
   { href: "/workroom?tab=invites", label: "추천인 코드" },
   { href: "/workroom?tab=users", label: "회원·체험 포인트" },
   { href: "/workroom?tab=audit", label: "워크룸 변경 기록" },
-  { href: "/members", label: "보관함 · 기존 회원·기록" },
-  { href: "/deposits/krw", label: "보관함 · 원화 입금" },
-  { href: "/deposits/usdt", label: "보관함 · USDT 입금" },
-  { href: "/withdrawals/krw-bank", label: "보관함 · 계좌 출금" },
-  { href: "/withdrawals/usdt", label: "보관함 · USDT 출금" },
-  { href: "/exceptions", label: "보관함 · 예외 처리" },
-  { href: "/kyc", label: "보관함 · 본인 확인" },
+  { href: "/members", label: "회원·거래 기록" },
+  { href: "/deposits/krw", label: "원화 입금 관리" },
+  { href: "/deposits/usdt", label: "USDT 입금 관리" },
+  { href: "/withdrawals/krw-bank", label: "계좌 출금 관리" },
+  { href: "/withdrawals/usdt", label: "USDT 출금 관리" },
+  { href: "/exceptions", label: "예외 처리" },
+  { href: "/kyc", label: "본인 확인" },
   { href: "/restrictions", label: "제한·안전" },
   { href: "/content", label: "이벤트·공지" },
   { href: "/ai-conversations", label: "회원 AI 기록" },

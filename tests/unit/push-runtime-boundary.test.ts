@@ -5,13 +5,18 @@ import {
   approvedLocalPushConfig,
   runApprovedLocalPush,
 } from "../../workers/push-runtime.mjs";
-function fixtureEnv() {
+function fixtureEnv(privateScalar?: Buffer) {
   const target = loadJobLocalAllowlist();
   for (let attempt = 0; attempt < 5; attempt += 1) {
     const key = createECDH("prime256v1");
-    key.generateKeys();
+    if (privateScalar) key.setPrivateKey(privateScalar);
+    else key.generateKeys();
     const publicKey = key.getPublicKey(null, "uncompressed");
-    const privateKey = key.getPrivateKey();
+    // ECDH emits a minimal unsigned scalar; VAPID requires all 32 bytes.
+    const privateKey = Buffer.from(
+      key.getPrivateKey().toString("hex").padStart(64, "0"),
+      "hex",
+    );
     const check = createECDH("prime256v1");
     check.setPrivateKey(privateKey);
     if (!check.getPublicKey(null, "uncompressed").equals(publicKey)) continue;
@@ -28,6 +33,11 @@ function fixtureEnv() {
   throw new Error("PUSH_TEST_KEY_UNAVAILABLE");
 }
 describe("explicit local push runtime gate (network zero)", () => {
+  it("uses fixed-width valid VAPID fixtures even for a leading-zero private scalar", () => {
+    const env = fixtureEnv(Buffer.from([1]));
+    expect(Buffer.from(env.VAPID_PRIVATE_KEY, "base64url")).toHaveLength(32);
+    expect(approvedLocalPushConfig(env).url).toBe(env.NEXT_PUBLIC_SUPABASE_URL);
+  });
   it.each(["", "false", undefined])(
     "requires separate affirmative sending approval %s before claim or transport",
     async (flag) => {

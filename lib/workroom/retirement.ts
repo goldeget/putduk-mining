@@ -1,7 +1,8 @@
 /** Product replacement routing. Historical storage and financial read APIs stay intact. */
 export function legacyWorkroomDestination(pathname: string): string | null {
-  if (pathname === "/wallet/withdraw") return "/workroom/records/withdraw";
-  if (pathname === "/wallet") return "/workroom/records";
+  if (pathname === "/wallet/withdraw") return "/workroom/cash/withdraw";
+  if (pathname === "/wallet/deposit") return "/workroom/cash/deposit";
+  if (pathname === "/wallet") return "/workroom/cash";
   if (
     [
       "/home",
@@ -30,7 +31,6 @@ export function isRetiredWorkroomMutation(
       "/api/v1/trial/",
       "/api/v1/mining/",
       "/api/v1/products/allocation",
-      "/api/v1/deposits",
       "/api/v1/events/participation",
       "/api/v1/ai/",
     ].some((p) => pathname.startsWith(p))

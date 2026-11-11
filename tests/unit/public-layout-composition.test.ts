@@ -29,13 +29,14 @@ const supportCss = readFileSync(
 const forbiddenAmounts = ["5,054,281", "50,000,000", "₩5,000,000"];
 
 describe("공개 화면 구도", () => {
-  it("첫 화면은 읽을 수 있는 문구와 월드, 시작 안내를 제공한다", () => {
+  it("첫 화면은 추천인 가입과 무료 체험 시작 안내를 제공한다", () => {
     expect(home).toContain("WorkroomAuth");
     expect(home).toContain("100,000 P");
     expect(home).toContain("현금 전환·출금 불가");
     expect(home).toContain('href="/signup"');
     expect(home).toContain('href="/workroom"');
-    expect(home).toContain("기존 회원은 새로 가입할 필요 없이");
+    expect(home).toContain("담당자에게 받은 추천인 코드로 새로 가입해 주세요.");
+    expect(home).not.toContain("기존 회원은 새로 가입할 필요 없이");
     expect(home).not.toContain("환영 보상");
     for (const amount of forbiddenAmounts) expect(home).not.toContain(amount);
   });

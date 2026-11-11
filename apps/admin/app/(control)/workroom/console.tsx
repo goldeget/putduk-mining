@@ -942,7 +942,7 @@ export function WorkroomConsole({ actorId }: { actorId: string }) {
       )}
       <footer className={styles.footer}>
         <span>WORKROOM · 무료 모의 체험 운영</span>
-        <Link href="/members">기존 회원·금융 기록 보관함 ↗</Link>
+        <Link href="/members">회원·입출금 관리 ↗</Link>
       </footer>
       {review && (
         <section

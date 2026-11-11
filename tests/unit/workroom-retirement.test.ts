@@ -13,9 +13,9 @@ import {
 } from "@/lib/auth/return-path";
 describe("WORKROOM replacement boundaries", () => {
   it("preserves old wallet and withdrawal bookmarks including failed-read retries", () => {
-    expect(legacyWorkroomDestination("/wallet")).toBe("/workroom/records");
+    expect(legacyWorkroomDestination("/wallet")).toBe("/workroom/cash");
     expect(legacyWorkroomDestination("/wallet/withdraw")).toBe(
-      "/workroom/records/withdraw",
+      "/workroom/cash/withdraw",
     );
   });
   it("closes legacy operator publishing while preserving pending financial processing", () => {
@@ -47,7 +47,7 @@ describe("WORKROOM replacement boundaries", () => {
     ])
       expect(legacyWorkroomDestination(p)).toBe("/workroom");
     expect(legacyWorkroomDestination("/wallet/deposit")).toBe(
-      "/workroom/points",
+      "/workroom/cash/deposit",
     );
     expect(legacyWorkroomDestination("/api/v1/workroom/state")).toBeNull();
   });
@@ -66,13 +66,10 @@ describe("WORKROOM replacement boundaries", () => {
       true,
     );
   });
-  it("retires new deposits and cash event enrollment but keeps history reads", () => {
-    for (const path of [
-      "/api/v1/deposits",
-      "/api/v1/deposits/usdt",
-      "/api/v1/events/participation",
-      "/api/v1/ai/chat",
-    ]) {
+  it("allows separate cash deposits but retires old cash event enrollment", () => {
+    for (const path of ["/api/v1/deposits", "/api/v1/deposits/usdt"])
+      expect(isRetiredWorkroomMutation(path, "POST")).toBe(false);
+    for (const path of ["/api/v1/events/participation", "/api/v1/ai/chat"]) {
       expect(isRetiredWorkroomMutation(path, "POST")).toBe(true);
       expect(isRetiredWorkroomMutation(path, "GET")).toBe(false);
     }

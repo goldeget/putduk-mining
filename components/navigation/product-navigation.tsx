@@ -7,7 +7,7 @@ const items = [
   { href: "/workroom/history", label: "참여 내역", icon: "history" },
   { href: "/workroom/points", label: "체험 포인트", icon: "points" },
   { href: "/workroom/guide", label: "이용 안내", icon: "guide" },
-  { href: "/wallet", label: "입출금", icon: "wallet" },
+  { href: "/workroom/cash", label: "입출금", icon: "wallet" },
 ] as const;
 export function ProductNavigation({
   presentation = "default",
@@ -27,7 +27,9 @@ export function ProductNavigation({
           prefetch={false}
           aria-current={
             pathname === item.href ||
-            (item.href === "/wallet" && pathname.startsWith("/wallet/"))
+            (item.href === "/workroom/cash" &&
+              (pathname.startsWith("/workroom/cash/") ||
+                pathname.startsWith("/workroom/records")))
               ? "page"
               : undefined
           }
