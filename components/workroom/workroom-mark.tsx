@@ -1,7 +1,7 @@
 import { WORKROOM_MARK } from "./brand";
 
 /** Pure mark: fixed brand colours and geometry, independent of the surrounding theme. */
-export function WorkroomMark({ size = 44 }: { size?: number } = {}) {
+export function WorkroomMark({ size = 44 }: { size?: number }) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

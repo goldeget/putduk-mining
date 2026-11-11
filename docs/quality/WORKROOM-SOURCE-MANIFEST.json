@@ -821,7 +821,7 @@
     "components/workroom/command-client.ts": "77963328ebcdbcb9de2c3a83defddf842bb7cac1171102c5bb3f64e7dadae83f",
     "components/workroom/identity.tsx": "addfb5e98d2f811440b336489c6de9a7d2c231f9ce80b148a9729cadd3be7798",
     "components/workroom/workroom-client.tsx": "683cf2ca0babe2b2e19600f2dd5662367cb07a0e70f65f15145e209d04b034a5",
-    "components/workroom/workroom-mark.tsx": "d65d14a8d334fea1e9980cafbb390da2c722bc719106f7c1d299896b54a3867b",
+    "components/workroom/workroom-mark.tsx": "41e494ccf8112035a76a8987c1e35589b550f25eb04a0d00dfdfb8a6f011780f",
     "components/workroom/workroom-page.tsx": "f2942ddff70ceba7e4ba4565750729b873ceabc65e950c548e85ff01e96b077b",
     "components/workroom/workroom.module.css": "3fe9b13e3d0a8a433687c88ce7196f2ad1f21aa90e0303fcc04f2271ad3d8060",
     "docs/ai/CONVERSATION-CONTINUITY-AUDIT.md": "14992c2f4b6300f3354f97c5c37c86b75da0ea4c635082d2e2baefc45fe33c88",
