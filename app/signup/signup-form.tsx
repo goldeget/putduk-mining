@@ -264,7 +264,11 @@ export function SignupForm() {
                   )
                 }
                 aria-invalid={Boolean(state.fieldErrors.birthSexDigit)}
-                aria-describedby="date-of-birth-help birth-digit-help"
+                aria-describedby={
+                  state.fieldErrors.birthSexDigit
+                    ? "date-of-birth-help birth-digit-help birth-sex-digit-error"
+                    : "date-of-birth-help birth-digit-help"
+                }
               />
               <span className={styles.birthMask} aria-hidden="true">
                 ••••••
@@ -278,7 +282,9 @@ export function SignupForm() {
             예: 1990년 1월 1일은 900101 · 뒷자리 전체는 입력하지 않습니다.
           </small>
           {state.fieldErrors.birthSexDigit ? (
-            <small role="alert">{state.fieldErrors.birthSexDigit}</small>
+            <small id="birth-sex-digit-error" role="alert">
+              {state.fieldErrors.birthSexDigit}
+            </small>
           ) : null}
           {state.fieldErrors.dateOfBirth ? (
             <small id="date-of-birth-error">
@@ -475,14 +481,19 @@ export function SignupForm() {
               autoComplete="tel"
               placeholder="01012345678"
               minLength={11}
-              maxLength={11}
+              maxLength={16}
               pattern="010[0-9]{8}"
               required
               value={phone}
               onChange={(event) => {
                 phoneRequest.current += 1;
                 phoneRead.current?.abort();
-                setPhone(event.target.value.replace(/\D/g, "").slice(0, 11));
+                setPhone(
+                  event.target.value
+                    .replace(/\D/g, "")
+                    .replace(/^82/, "0")
+                    .slice(0, 11),
+                );
                 setPhoneAvailability("idle");
               }}
               aria-invalid={

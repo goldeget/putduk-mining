@@ -16,9 +16,14 @@ test("real public signup consumes valid invite and confirms through the disposab
     recoveryEmail: user.email,
     password: user.password,
     passwordConfirmation: user.password,
-    phone: user.metadata.phone_e164.replace(/^\+82/, "0"),
+    phone: user.metadata.phone_e164
+      .replace(/^\+82/, "0")
+      .replace(/^(\d{3})(\d{4})(\d{4})$/, "$1-$2-$3"),
   }))
     await page.locator(`[name="${name}"]`).fill(value);
+  await expect(page.locator('[name="phone"]')).toHaveValue(
+    user.metadata.phone_e164.replace(/^\+82/, "0"),
+  );
   await page.locator('[name="serviceTermsConsent"]').check();
   await page.locator('[name="privacyConsent"]').check();
   await page.locator('[name="workroomAcknowledged"]').check();

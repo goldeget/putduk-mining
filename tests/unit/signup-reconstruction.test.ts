@@ -82,6 +82,8 @@ describe("WORKROOM signup hierarchy and protected form behavior", () => {
     expect(input("signup-birth-sex-digit").maxLength).toBe(1);
     expect(input("signup-phone").value).toBe("01012345678");
     expect(input("signup-phone").inputMode).toBe("numeric");
+    await enter("signup-phone", "+82 10-1234-5678");
+    expect(input("signup-phone").value).toBe("01012345678");
   });
   it("renders one semantic signup surface with real policy links and transparent practice disclosure", async () => {
     await render(createElement(SignupPage));
