@@ -65,13 +65,11 @@ test("verified administrator reaches every active menu and uses responsive theme
   page,
 }) => {
   const user = await member();
-  const granted = await service()
-    .from("user_roles")
-    .insert({
-      user_id: user.userId,
-      role: "SUPER_ADMIN",
-      granted_by: user.userId,
-    });
+  const granted = await service().from("user_roles").insert({
+    user_id: user.userId,
+    role: "SUPER_ADMIN",
+    granted_by: user.userId,
+  });
   expect(granted.error).toBeNull();
   await adminLogin(page, user);
   await page.setViewportSize({ width: 1440, height: 1000 });
