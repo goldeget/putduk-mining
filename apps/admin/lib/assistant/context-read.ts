@@ -552,7 +552,7 @@ async function wallet(db: SupabaseClient, builder: Builder, userId: string) {
         "누적 USDT 환산 원금",
         "누적 원금 회수",
         "출금 대기 원금",
-        "채굴 인정 원금",
+        "이전 서비스 인정 원금",
       ].includes(label),
     ))
       builder.add("FACT", `${label}: ${value}.`, href, "원금 출처 기록");
@@ -565,7 +565,7 @@ async function wallet(db: SupabaseClient, builder: Builder, userId: string) {
     );
   builder.add(
     "UNKNOWN",
-    "전체 원장의 정상 여부·누적 채굴 수익·누적 총 출금은 이 조회만으로 확정할 수 없습니다.",
+    "전체 원장의 정상 여부·누적 이전 서비스 수익·누적 총 출금은 이 조회만으로 확정할 수 없습니다.",
     href,
     "원금 출처와 수익 구분",
   );
@@ -608,23 +608,23 @@ async function mining(db: SupabaseClient, builder: Builder, userId: string) {
         unknown ? "UNKNOWN" : "FACT",
         `${row.label}: ${unknown ? "확인하지 못했습니다" : value}.`,
         href,
-        "회원 채굴 조회",
+        "회원 이전 서비스 조회",
       );
     }
   } else
     builder.add(
       display.state === "empty" ? "FACT" : "UNKNOWN",
       display.state === "empty"
-        ? "현재 채굴 조회에 표시할 원금 정보가 없습니다."
-        : "현재 채굴 상태를 확인하지 못했습니다.",
+        ? "현재 이전 서비스 조회에 표시할 원금 정보가 없습니다."
+        : "현재 이전 서비스 상태를 확인하지 못했습니다.",
       href,
-      "회원 채굴 조회",
+      "회원 이전 서비스 조회",
     );
   builder.add(
     "UNKNOWN",
     "정산 전·확인 전 금액은 확정된 지갑 잔액이 아닙니다. 화면 조회만으로 향후 수익을 보장할 수 없습니다.",
     href,
-    "채굴과 확정 잔액 구분",
+    "이전 서비스과 확정 잔액 구분",
   );
   builder.add(
     "UNKNOWN",
@@ -634,7 +634,7 @@ async function mining(db: SupabaseClient, builder: Builder, userId: string) {
   );
   builder.add(
     "RECOMMENDATION",
-    "회원 상세의 채굴 상태와 정산 예외를 확인하세요. 화면의 진행 표시를 보고 금액이나 속도를 임의로 바꾸지 마세요.",
+    "회원 상세의 이전 서비스 상태와 정산 예외를 확인하세요. 화면의 진행 표시를 보고 금액이나 속도를 임의로 바꾸지 마세요.",
     href,
     "회원 상세 열기",
   );
@@ -723,7 +723,7 @@ async function member(db: SupabaseClient, builder: Builder, userId: string) {
   );
   builder.add(
     "RECOMMENDATION",
-    "지갑·원금 기록 또는 채굴 상태를 따로 확인하고, 개인정보 확인은 기존 회원 상세 권한을 따르세요.",
+    "지갑·원금 기록 또는 이전 서비스 상태를 따로 확인하고, 개인정보 확인은 기존 회원 상세 권한을 따르세요.",
     href,
     "회원 상세 열기",
   );
@@ -923,7 +923,7 @@ export async function readAssistantContext(
     deposits: "입금 확인 안내",
     withdrawals: "출금 확인 안내",
     "wallet-ledger": "지갑과 원금 기록",
-    mining: "회원 채굴 상태",
+    mining: "회원 이전 서비스 상태",
     jobs: "실패한 자동 작업",
     security: "제한과 위험 신호",
     audit: "최근 운영 기록",

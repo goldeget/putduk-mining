@@ -524,7 +524,7 @@
     "apps/admin/instrumentation.ts": "9bd2b373add8a0e320c37eb4282749130f0a2baebc6fed0ee0105e5ff5370fc0",
     "apps/admin/lib/ai/conversation-handler.ts": "f38f9b5123530255e462ae6d45e4e21732e42ea565bc773b857a5b177c7b4eff",
     "apps/admin/lib/assistant/content-source-preparation.ts": "e31344c482a72925a3396ae613d755d8f5b7e4b962f2cdf2e9862bb5bc78ee9f",
-    "apps/admin/lib/assistant/context-read.ts": "fdfeb14f0f0fc075695aee88e118b8d3407418ee9f87388464bf4f66c9a34994",
+    "apps/admin/lib/assistant/context-read.ts": "d54b4710bd2c98b8c3f3d6e33151998e49d32d33b2a560d55b9f860b56594c44",
     "apps/admin/lib/assistant/context.ts": "e733b130bcd01a29f1c9ddd4c26f8706023d5a3c1b01d4cee660e0f7031ed792",
     "apps/admin/lib/assistant/draft.ts": "a40a656ee3c0a85e20e4daa1542f77f348dd632c0ac39206cbf7ed2832e75b5b",
     "apps/admin/lib/assistant/operations.ts": "079fc4cf3e83b7a44bb92f56f54e3abf90b6cf292264c63cc9c773ef16efadfa",
