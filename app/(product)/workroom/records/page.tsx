@@ -31,13 +31,13 @@ export default async function HistoricalRecordsPage() {
     : { data: [], error: null };
   return (
     <div className={styles.page}>
-      <h1>이전 서비스 이용 기록</h1>
+      <h1>실제 잔액·거래 기록</h1>
       <p>
-        기존 계정의 실제 잔액과 거래 기록입니다. 워크룸 연습 포인트와 별도로
+        입금·출금의 실제 잔액과 거래 기록입니다. 워크룸 연습 포인트와 별도로
         보관됩니다.
       </p>
       <section className={styles.panel}>
-        <h2>기존 원화 잔액</h2>
+        <h2>원화 잔액</h2>
         {accounts.error ? (
           <p role="alert">
             기록을 읽지 못했습니다. 표시되지 않은 잔액을 0원으로 판단하지
@@ -51,14 +51,12 @@ export default async function HistoricalRecordsPage() {
             </div>
           ))
         ) : (
-          <p>이전 원화 계정이 없습니다.</p>
+          <p>아직 원화 계정 내역이 없습니다.</p>
         )}
-        <Link href="/workroom/records/withdraw">
-          기존 잔액 출금·처리 내역 확인 →
-        </Link>
+        <Link href="/workroom/cash/withdraw">출금 신청 →</Link>
       </section>
       <section className={styles.panel}>
-        <h2>최근 기존 거래 100건</h2>
+        <h2>최근 거래 100건</h2>
         {ledger.error ? (
           <p role="alert">거래 내역을 읽지 못했습니다.</p>
         ) : ledger.data?.length ? (
@@ -93,7 +91,7 @@ export default async function HistoricalRecordsPage() {
             </table>
           </div>
         ) : (
-          <p>표시할 이전 거래가 없습니다.</p>
+          <p>표시할 거래가 없습니다.</p>
         )}
       </section>
       <Link href="/workroom">내 워크룸으로 돌아가기 →</Link>

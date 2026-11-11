@@ -33,6 +33,8 @@ const commands = [
       "scripts/ci-workroom-content-stage.test.mjs",
       "scripts/stage-content-source-ci.test.mjs",
       "scripts/workroom-native-adapters.test.mjs",
+      "scripts/workroom-native-stage.test.mjs",
+      "scripts/workroom-cash-admission.test.mjs",
     ],
   ],
   ["pnpm", ["test"]],

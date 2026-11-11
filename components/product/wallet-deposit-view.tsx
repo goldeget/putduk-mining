@@ -26,6 +26,7 @@ export type DepositHistoryItem = {
 export type WalletDepositViewProps = {
   /** 운영자가 정한 원화 입금 안내 계좌. 없으면 null이다. */
   krwInstruction?: KrwDepositInstruction | null;
+  contactOperator?: boolean;
   instructions: UsdtDepositInstruction[];
   instructionRead: "error" | "empty" | "ready";
   krwHistoryRead: "error" | "empty" | "ready";
@@ -159,6 +160,7 @@ function DepositHistory({
 /** New reference-based presentation; the existing request forms and commands remain authoritative. */
 export function WalletDepositView({
   krwInstruction = null,
+  contactOperator = false,
   instructions,
   instructionRead,
   krwHistoryRead,
@@ -195,7 +197,7 @@ export function WalletDepositView({
           <p>
             입금은 선택 사항이에요.
             <br />
-            체험 전환과 첫 출금의 조건이 아니에요.
+            연습 포인트와 별도로 관리돼요.
           </p>
         </div>
       </header>
@@ -242,7 +244,10 @@ export function WalletDepositView({
         <div className={styles.formLayout}>
           <div className={styles.formPanel}>
             <section className={styles.bank} aria-label="원화 입금 신청">
-              <DepositForm instruction={krwInstruction} />
+              <DepositForm
+                instruction={contactOperator ? null : krwInstruction}
+                contactOperator={contactOperator}
+              />
             </section>
             <section className={styles.usdt} aria-label="USDT 수동 입금 신청">
               <UsdtManualDepositForm

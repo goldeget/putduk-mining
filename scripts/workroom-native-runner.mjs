@@ -8,6 +8,13 @@ import {
   sha256,
 } from "./workroom-native-adapters.mjs";
 import { WORKROOM_MIGRATION } from "./workroom-native-stage.mjs";
+import {
+  WORKROOM_CASH_MIGRATION,
+  WORKROOM_CASH_TESTS,
+  WORKROOM_CASH_ACL_TESTS,
+  adaptWorkroomCashDefinerRoster,
+  assertWorkroomCashAdmission,
+} from "./workroom-cash-admission.mjs";
 const ROOT = fileURLToPath(new URL("../", import.meta.url));
 const fail = (r) => {
   throw Error("WORKROOM_NATIVE_" + r);
@@ -140,6 +147,39 @@ export function runWorkroomNativePhase(phase, stage, principal = null) {
   const receiptPath = resolve(output, prefix + phase + ".json");
   if (existsSync(receiptPath)) fail("FRESH_PHASE_EVIDENCE_REQUIRED");
   const tree = phase === "cutover" ? "successor" : "baseline";
+  if (phase === "cutover") {
+    assertWorkroomCashAdmission(
+      manifest.cashFiles,
+      (path) => readFileSync(resolve(ROOT, path)),
+      (path) => readFileSync(resolve(stage, tree, path)),
+    );
+    if (
+      JSON.stringify(manifest.cashAclFiles?.map((r) => r.path)) !==
+      JSON.stringify(WORKROOM_CASH_ACL_TESTS)
+    )
+      fail("CASH_ACL_EXACT_ADMISSION_REQUIRED");
+    for (const record of manifest.cashAclFiles) {
+      const original = manifest.files.find((r) => r.path === record.path);
+      const expectedPath =
+        "supabase/cash-regressions/" + record.path.split("/").at(-1);
+      const adapted = adaptWorkroomCashDefinerRoster(
+        readFileSync(resolve(stage, tree, record.path), "utf8"),
+        {
+          occurrences: record.path.endsWith("/ws04_security_money_workers.sql")
+            ? 2
+            : 1,
+        },
+      );
+      if (
+        record.stagedPath !== expectedPath ||
+        record.originalSha256 !== original?.successorSha256 ||
+        adapted.sha256 !== record.sha256 ||
+        sha256(readFileSync(resolve(stage, tree, expectedPath))) !==
+          record.sha256
+      )
+        fail("CASH_ACL_ADMISSION_CHANGED");
+    }
+  }
   let principalContentionAdaptation = null;
   for (const f of manifest.files)
     if (
@@ -361,6 +401,48 @@ export function runWorkroomNativePhase(phase, stage, principal = null) {
     );
     sql("workroom-fixtures/signup_metadata.sql", false);
     sql("workroom-fixtures/operator_login.sql");
+    // The original 89-function safety proof still executes before the addition.
+    for (const path of WORKROOM_CASH_ACL_TESTS)
+      execute(
+        "before-direct-cash-" + path.split("/").at(-1).replaceAll(".", "-"),
+        ["-f", remote + "/" + path],
+        undefined,
+        true,
+      );
+    // The second additive cutover preserves every existing application/Auth row.
+    // Record metadata only; no table contents are printed to evidence logs.
+    execute(
+      "cash-existing-rows-before",
+      [],
+      `create table workroom_native_evidence.before_direct_cash(relation text primary key, row_count bigint not null, digest text not null);
+       do $cash$ declare r record; begin
+         for r in select n.nspname,c.relname from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname in('auth','public','app_private','storage') and c.relkind='r' loop
+           execute format('insert into workroom_native_evidence.before_direct_cash select %L,count(*),md5(coalesce(string_agg(row_text,E''\\n'' order by row_text),'''')) from(select to_jsonb(t)::text row_text from %I.%I t)s',r.nspname||'.'||r.relname,r.nspname,r.relname);
+         end loop;
+       end $cash$;`,
+      false,
+    );
+    sql(WORKROOM_CASH_MIGRATION, false);
+    execute(
+      "cash-existing-rows-after",
+      [],
+      `do $cash$ declare r record; actual_count bigint; actual_digest text; begin
+         for r in select * from workroom_native_evidence.before_direct_cash loop
+           execute format('select count(*),md5(coalesce(string_agg(row_text,E''\\n'' order by row_text),'''')) from(select to_jsonb(t)::text row_text from %s t)s',r.relation::regclass) into actual_count,actual_digest;
+           if actual_count<>r.row_count or actual_digest<>r.digest then raise exception 'DIRECT_CASH_CHANGED_EXISTING_ROWS %',r.relation;end if;
+         end loop;
+       end $cash$;`,
+      false,
+    );
+    const cashMigrationBytes = readFileSync(
+      resolve(stage, "successor", WORKROOM_CASH_MIGRATION),
+    );
+    execute(
+      "cash-migration-history",
+      [],
+      `insert into supabase_migrations.schema_migrations(version,name,statements) values('20261111065929','workroom_direct_deposit_cash',array[convert_from(decode('${cashMigrationBytes.toString("base64")}','base64'),'UTF8')]);`,
+      false,
+    );
     // Explicit retained scope: legacy enrollment success assertions have their
     // complete114 baseline proof above, while financial/ACL regressions run202.
     const retained = manifest.files.filter(
@@ -436,7 +518,10 @@ export function runWorkroomNativePhase(phase, stage, principal = null) {
           fail("PRINCIPAL_CONTENTION_TAP_ASSERTIONS_REQUIRED");
       }
     } else {
-      for (const f of retained) sql(f.path);
+      for (const f of retained) {
+        const cashAcl = manifest.cashAclFiles.find((r) => r.path === f.path);
+        sql(cashAcl?.stagedPath ?? f.path);
+      }
       sql("supabase/tests/database/workroom_practice.sql");
       sql("workroom-fixtures/invitation_race.sql");
       external("verify");
@@ -449,6 +534,7 @@ export function runWorkroomNativePhase(phase, stage, principal = null) {
         "hold_cancel_admission_concurrent",
       ])
         sql("supabase/tests-concurrent/" + name + ".sql");
+      for (const path of WORKROOM_CASH_TESTS) sql(path);
     }
   }
   const receipt = {

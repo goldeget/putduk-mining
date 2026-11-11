@@ -406,12 +406,9 @@ export function WorkroomClient({
       <div className={styles.loading}>
         <span className={styles.eyebrow}>WELCOME TO WORKROOM</span>
         <h1>나만의 워크룸을 개설하세요.</h1>
-        <p>
-          기존 계정을 그대로 사용합니다. 무료 체험 포인트 100,000 P는 계정당 한
-          번 지급됩니다.
-        </p>
+        <p>무료 체험 포인트 100,000 P는 계정당 한 번 지급됩니다.</p>
         <p className={styles.disclosure}>
-          실제 거래·입금·출금이 없는 무료 시뮬레이션입니다. 포인트는 현금으로
+          실제 거래와 분리된 무료 시뮬레이션입니다. 연습 포인트는 현금으로
           전환되지 않습니다.
         </p>
         {error || hasPending ? recovery : null}
@@ -779,8 +776,8 @@ export function WorkroomClient({
             <Summary label="가입 지급 · 계정당 1회" value="100,000 P" />
           </div>
           <p className={styles.disclosure}>
-            실제 입금·출금·현금 전환 기능을 제공하지 않습니다. 기존 금융 기록과
-            체험 포인트는 별도로 보관합니다.
+            연습 포인트는 현금으로 전환하거나 출금할 수 없습니다. 실제
+            입금·출금은 별도 잔액 메뉴에서 확인하세요.
           </p>
           <section className={`${styles.panel} ${styles.tablePanel}`}>
             <h2>최근 포인트 내역</h2>
@@ -821,9 +818,7 @@ export function WorkroomClient({
       )}
       {page === "guide" && (
         <>
-          <Link href="/workroom/records">
-            이전 서비스 잔액·거래 내역 확인 →
-          </Link>
+          <Link href="/workroom/cash">실제 잔액·입금·출금 확인 →</Link>
           <Heading
             eyebrow="WORKROOM GUIDE"
             title="알고 시작하면, 더 간단하게."

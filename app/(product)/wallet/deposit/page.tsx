@@ -238,6 +238,7 @@ export default async function DepositPage() {
       }
     >
       <WalletDepositView
+        contactOperator
         krwInstruction={readKrwDepositInstruction()}
         instructions={instructions}
         instructionRead={instructionRead}

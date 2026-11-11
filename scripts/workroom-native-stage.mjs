@@ -9,6 +9,11 @@ import {
 } from "node:fs";
 import { resolve, dirname, relative, isAbsolute } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import {
+  WORKROOM_CASH_FILES,
+  WORKROOM_CASH_ACL_TESTS,
+  adaptWorkroomCashDefinerRoster,
+} from "./workroom-cash-admission.mjs";
 import { execFileSync } from "node:child_process";
 import {
   sha256,
@@ -192,6 +197,26 @@ export function prepareWorkroomNativeStage(output, profile = "ci") {
     resolve(target, "successor", WORKROOM_MIGRATION),
     readFileSync(resolve(ROOT, WORKROOM_MIGRATION)),
   );
+  const cashFiles = WORKROOM_CASH_FILES.map((path) => {
+    const bytes = readFileSync(resolve(ROOT, path));
+    write(resolve(target, "successor", path), bytes);
+    return { path, sha256: sha256(bytes) };
+  });
+  const cashAclFiles = WORKROOM_CASH_ACL_TESTS.map((path) => {
+    const original = files.find((file) => file.path === path);
+    if (!original) throw Error("WORKROOM_CASH_ACL_SOURCE_MISSING");
+    const adapted = adaptWorkroomCashDefinerRoster(original.successor, {
+      occurrences: path.endsWith("/ws04_security_money_workers.sql") ? 2 : 1,
+    });
+    const stagedPath = "supabase/cash-regressions/" + path.split("/").at(-1);
+    write(resolve(target, "successor", stagedPath), adapted.sql);
+    return {
+      path,
+      stagedPath,
+      originalSha256: adapted.originalSha256,
+      sha256: adapted.sha256,
+    };
+  });
   const practice = adaptWorkroomPractice(
     readFileSync(
       resolve(ROOT, "supabase/tests/database/workroom_practice.sql"),
@@ -237,6 +262,8 @@ export function prepareWorkroomNativeStage(output, profile = "ci") {
     practiceSha256: sha256(practice),
     configSha256: sha256(config),
     migrationSha256: sha256(readFileSync(resolve(ROOT, WORKROOM_MIGRATION))),
+    cashFiles,
+    cashAclFiles,
   };
   write(
     resolve(target, "staging-manifest.json"),

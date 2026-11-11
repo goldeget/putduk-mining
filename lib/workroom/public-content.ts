@@ -6,7 +6,7 @@ import {
 export type { PublicFact, TrustDocument } from "@/lib/trust/public-content";
 
 export const TRUST_CONTENT_VERSION = "2026.11-workroom";
-export const TRUST_LAST_UPDATED = "2026-11-04";
+export const TRUST_LAST_UPDATED = "2026-11-11";
 export const PUBLIC_FACTS: readonly PublicFact[] = [
   {
     key: "PRODUCT_NAME",
@@ -48,7 +48,7 @@ const sections: TrustDocument["sections"] = [
   {
     heading: "추천인 코드로 가입하고 무료로 시작해요",
     body: [
-      "담당자가 전달한 유효한 추천인 코드로 가입합니다. 가입 시 계정에 체험 포인트 100,000 P를 한 번 지급합니다. 기존 회원은 사용하던 계정으로 로그인할 수 있습니다.",
+      "담당자가 전달한 유효한 추천인 코드로 새로 가입합니다. 가입 시 계정에 체험 포인트 100,000 P를 한 번 지급합니다.",
     ],
   },
   {
@@ -62,7 +62,7 @@ const sections: TrustDocument["sections"] = [
     heading: "체험 포인트는 현금으로 바꿀 수 없어요",
     body: [
       "체험 포인트와 모의 손익은 실제 현금 잔액에 반영되지 않으며 입금·출금·환전 대상이 아닙니다. 워크룸은 무료로 이용합니다.",
-      "기존 회원의 원화 잔액과 과거 거래 내역은 기존 기록 메뉴에 별도로 보존됩니다. 기존 잔액의 출금은 체험 포인트와 구분해 처리합니다.",
+      "실제 입금·출금은 별도 잔액 메뉴에서 신청합니다. 원화 입금 방법은 담당자에게 문의하고 운영자가 실제 수령한 금액을 확인하면 잔액에 반영됩니다. 출금도 운영자가 수동으로 처리합니다. 모의거래 결과는 실제 잔액에 반영되지 않습니다.",
     ],
   },
   {
