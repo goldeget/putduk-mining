@@ -35,6 +35,7 @@ const commands = [
       "scripts/workroom-native-adapters.test.mjs",
       "scripts/workroom-native-stage.test.mjs",
       "scripts/workroom-cash-admission.test.mjs",
+      "scripts/workroom-auth-retained-stage.test.mjs",
     ],
   ],
   ["pnpm", ["test"]],

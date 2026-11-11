@@ -60,7 +60,7 @@ helper = replaceOnce(
   `export function requireBackend195Target() {
   localGuard();
   const migrationVersions = readdirSync("supabase/migrations").filter(name=>name.endsWith(".sql")).map(name=>name.split("_")[0]).sort();
-  if(migrationVersions.length!==202 || migrationVersions.at(-1)!=="20261104065015") throw Error("WORKROOM_202_MIGRATION_CONTEXT_REQUIRED");
+  if(migrationVersions.length!==203 || migrationVersions.at(-1)!=="20261111065929") throw Error("WORKROOM_203_MIGRATION_CONTEXT_REQUIRED");
   return { migrationVersions };
 }\n`,
 );
@@ -157,8 +157,8 @@ verifyInverse(support, originalSupport, supportChangeStart);
 writeFileSync(resolve(output, "support-successor.spec.ts"), support);
 let transfer = read("tests/e2e/ws04-transfer-contract.spec.ts");
 transfer = transfer
-  .replace(/%2Fwallet%2Fwithdraw/g, "%2Fworkroom%2Frecords%2Fwithdraw")
-  .replace(/%2Fwallet/g, "%2Fworkroom%2Frecords");
+  .replace(/%2Fwallet%2Fwithdraw/g, "%2Fworkroom%2Fcash%2Fwithdraw")
+  .replace(/%2Fwallet/g, "%2Fworkroom%2Fcash");
 writeFileSync(resolve(output, "transfer-successor.spec.ts"), transfer);
 writeFileSync(
   resolve(output, "provenance.json"),
@@ -169,13 +169,13 @@ writeFileSync(
       sourceHashes: sources,
       financialAssertionsReverseExact: true,
       adapters: [
-        "202 exact migration roster and disposable guard",
+        "203 exact migration roster and disposable guard",
         "valid-invite real Auth setup",
         "local psql target",
         "relative import locations",
         "support free simulation copy",
         "support delayed unavailable fallback",
-        "wallet protected return destinations",
+        "direct cash protected return destinations",
       ],
       generatedFiles: readdirSync(output)
         .filter((name) => name.endsWith(".ts"))
