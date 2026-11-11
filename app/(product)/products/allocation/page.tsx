@@ -4,7 +4,7 @@ import { AllocationConsole } from "@/components/product/allocation-console";
 import { requirePageUser } from "@/lib/auth/session";
 import { readAllocation } from "@/lib/product/allocation-handler";
 export const dynamic = "force-dynamic";
-export const metadata = { title: "원금 배분 | 퍼뜩" };
+export const metadata = { title: "원금 배분 | WORKROOM" };
 export default async function AllocationPage() {
   const identity = await requirePageUser("/products/allocation");
   let state;

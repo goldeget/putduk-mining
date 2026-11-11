@@ -78,7 +78,7 @@ const businessRejectionCopy: Readonly<Record<string, string>> = {
   WELCOME_REWARD_KYC_REQUIRED: welcomeKycRequiredCopy,
   WELCOME_REWARD_RISK_REVIEW_REQUIRED:
     "안전 확인이 필요해 보상 전환을 검토하고 있습니다.",
-  TRIAL_NOT_COMPLETED: "PUTDUK START를 완료한 뒤 다시 시도해 주세요.",
+  TRIAL_NOT_COMPLETED: "WORKROOM 체험을 완료한 뒤 다시 시도해 주세요.",
   WELCOME_REWARD_AMOUNT_UNAVAILABLE: "환영 보상을 전환하지 못했습니다.",
 };
 

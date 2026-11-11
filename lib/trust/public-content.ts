@@ -20,7 +20,7 @@ export type PublicFact = {
 export const PUBLIC_FACTS: readonly PublicFact[] = [
   {
     key: "PRODUCT_NAME",
-    value: "퍼뜩 채굴 / PUTDUK MINING",
+    value: "WORKROOM",
     description: "PUTDUK의 채굴 서비스입니다.",
   },
   {
@@ -77,7 +77,8 @@ export const PUBLIC_FACTS: readonly PublicFact[] = [
   {
     key: "AI_BOUNDARY",
     value: "Explain and analyze only",
-    description: "PUTDUK AI는 잔액, 승인, 채굴 결과를 직접 변경하지 않습니다.",
+    description:
+      "WORKROOM AI는 잔액, 승인, 채굴 결과를 직접 변경하지 않습니다.",
   },
 ] as const;
 
@@ -104,7 +105,7 @@ export const TRUST_DOCUMENTS: readonly TrustDocument[] = [
     eyebrow: "ABOUT PUTDUK",
     title: "채굴의 시간을, 검증 가능한 기록으로.",
     summary:
-      "퍼뜩 채굴은 복잡한 경제 시스템을 사용자에게는 명확한 경험으로, 운영에는 추적 가능한 기록으로 제공하도록 설계된 채굴 서비스입니다.",
+      "WORKROOM은 복잡한 경제 시스템을 사용자에게는 명확한 경험으로, 운영에는 추적 가능한 기록으로 제공하도록 설계된 채굴 서비스입니다.",
     factKeys: ["PRODUCT_NAME", "PRODUCT_TYPE", "SUPPORTED_WORLDS"],
     sections: [
       {
@@ -137,11 +138,11 @@ export const TRUST_DOCUMENTS: readonly TrustDocument[] = [
       {
         heading: "핵심 흐름",
         body: [
-          "가입 후 PUTDUK START에서 첫 채굴 결과를 확인하고, 체험을 마친 뒤 사용자가 원할 때 입금과 채굴로 이어집니다.",
+          "가입 후 WORKROOM 체험에서 첫 채굴 결과를 확인하고, 체험을 마친 뒤 사용자가 원할 때 입금과 채굴로 이어집니다.",
         ],
         items: [
           "가입 및 계정 검증",
-          "PUTDUK START 체험 시작",
+          "WORKROOM 체험 시작",
           "체험 정산",
           "입금 요청과 운영 확인",
           "채굴과 자동 정산",
@@ -159,7 +160,7 @@ export const TRUST_DOCUMENTS: readonly TrustDocument[] = [
   {
     path: "/putduk-facts",
     eyebrow: "공식 사실",
-    title: "퍼뜩이 공개하는 기본 사실이에요.",
+    title: "워크룸이 공개하는 기본 사실이에요.",
     summary:
       "채굴·잔액·출금에 대해 같은 설명을 지켜요. 화면마다 다른 말을 만들지 않아요.",
     factKeys: PUBLIC_FACTS.map((fact) => fact.key),
@@ -229,7 +230,7 @@ export const TRUST_DOCUMENTS: readonly TrustDocument[] = [
   },
   {
     path: "/trial",
-    eyebrow: "PUTDUK START",
+    eyebrow: "WORKROOM 체험",
     title: "최대 24시간, 실제 자산과 분리된 첫 경험.",
     summary:
       "처음 가입한 사용자가 KOREA 월드에서 핵심 채굴 흐름을 이해하도록 설계한 사용량 기반 체험입니다.",
@@ -347,7 +348,7 @@ export const TRUST_DOCUMENTS: readonly TrustDocument[] = [
       {
         heading: "실제 컴퓨터로 코인을 채굴하나요?",
         body: [
-          "아닙니다. 퍼뜩의 채굴은 앱에서 진행돼요. 기기로 암호화폐를 채굴하지 않아요.",
+          "아닙니다. 워크룸의 채굴은 앱에서 진행돼요. 기기로 암호화폐를 채굴하지 않아요.",
         ],
       },
       {
@@ -366,7 +367,7 @@ export const TRUST_DOCUMENTS: readonly TrustDocument[] = [
       {
         heading: "AI가 자산을 대신 움직일 수 있나요?",
         body: [
-          "아닙니다. PUTDUK AI는 설명과 분석만 제공하며 잔액, 승인 또는 채굴 결과를 직접 변경할 권한이 없습니다.",
+          "아닙니다. WORKROOM AI는 설명과 분석만 제공하며 잔액, 승인 또는 채굴 결과를 직접 변경할 권한이 없습니다.",
         ],
       },
     ],
@@ -402,7 +403,7 @@ export const TRUST_DOCUMENTS: readonly TrustDocument[] = [
       {
         heading: "2026.09 — 서비스 준비",
         body: [
-          "PUTDUK MINING의 가입, 채굴, 지갑, 운영 안전 절차와 사용자 경험을 준비하고 있습니다. 아직 정식 서비스 오픈을 의미하지 않습니다.",
+          "WORKROOM의 가입, 채굴, 지갑, 운영 안전 절차와 사용자 경험을 준비하고 있습니다. 아직 정식 서비스 오픈을 의미하지 않습니다.",
         ],
       },
       {
@@ -415,10 +416,10 @@ export const TRUST_DOCUMENTS: readonly TrustDocument[] = [
   },
   {
     path: "/ai/about",
-    eyebrow: "PUTDUK AI",
+    eyebrow: "WORKROOM AI",
     title: "설명은 깊게, 권한은 좁게.",
     summary:
-      "PUTDUK AI는 승인된 제품 지식과 허용된 사용자 맥락을 바탕으로 설명·요약·분석을 제공하도록 설계됩니다.",
+      "WORKROOM AI는 승인된 제품 지식과 허용된 사용자 맥락을 바탕으로 설명·요약·분석을 제공하도록 설계됩니다.",
     factKeys: ["AI_BOUNDARY"],
     sections: [
       {
@@ -462,7 +463,7 @@ export const TRUST_DOCUMENTS: readonly TrustDocument[] = [
   {
     path: "/ai/faq",
     eyebrow: "AI FAQ",
-    title: "PUTDUK AI의 답변 경계를 먼저 공개합니다.",
+    title: "WORKROOM AI의 답변 경계를 먼저 공개합니다.",
     summary:
       "AI 기능을 활성화하기 전에 지식 출처, 데이터 범위와 실패 동작을 명확히 합니다.",
     factKeys: ["AI_BOUNDARY"],
@@ -489,7 +490,7 @@ export const TRUST_DOCUMENTS: readonly TrustDocument[] = [
   },
   {
     path: "/ai/how-it-works",
-    eyebrow: "HOW PUTDUK AI WORKS",
+    eyebrow: "HOW WORKROOM AI WORKS",
     title: "질문, 근거, 응답과 사용량을 서로 분리해 기록합니다.",
     summary:
       "AI 요청은 인증, 정책, 지식 버전, 제공자 호출과 감사 가능한 사용량 기록의 경계를 통과합니다.",

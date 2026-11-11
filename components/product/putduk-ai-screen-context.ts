@@ -61,7 +61,7 @@ function readContextValue<Key extends QueryContextField>(
 }
 
 /**
- * Builds the smallest server-approved screen hint for PUTDUK AI.
+ * Builds the smallest server-approved screen hint for WORKROOM AI.
  *
  * Only the current path and four explicitly allowlisted query/prop values are
  * considered. The full URL, arbitrary query values, and caller identity are

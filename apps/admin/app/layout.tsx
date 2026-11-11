@@ -7,23 +7,12 @@ import "./globals.css";
 import "./(control)/workroom/shell.css";
 
 export const metadata: Metadata = {
-  title: { default: "WORKROOM | 운영자", template: "%s | PUTDUK ADMIN" },
+  title: { default: "WORKROOM | 운영자", template: "%s | WORKROOM ADMIN" },
   description: "WORKROOM 무료 모의 체험 운영 콘솔",
   robots: { index: false, follow: false, nocache: true },
   icons: {
-    icon: [
-      {
-        url: "/brand/identity/20261014/favicon/favicon.svg",
-        type: "image/svg+xml",
-      },
-      {
-        url: "/brand/identity/20261014/favicon/favicon-32.png",
-        sizes: "32x32",
-        type: "image/png",
-      },
-    ],
-    shortcut: "/brand/identity/20261014/favicon/favicon.ico",
-    apple: "/brand/identity/20261014/pwa/putduk-pwa-dark-192.png",
+    icon: { url: "/workroom-icon.svg", type: "image/svg+xml" },
+    shortcut: "/workroom-icon.svg",
   },
 };
 export const viewport: Viewport = {

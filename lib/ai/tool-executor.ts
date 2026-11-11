@@ -292,7 +292,7 @@ async function trialStatus(supabase: SupabaseClient, now: Date) {
   if (!data) {
     return success(
       "trial.status",
-      "아직 본인 계정에서 시작된 PUTDUK START 기록이 없습니다.",
+      "아직 본인 계정에서 시작된 WORKROOM 체험 기록이 없습니다.",
       now,
       ["status"],
     );
@@ -303,7 +303,7 @@ async function trialStatus(supabase: SupabaseClient, now: Date) {
     : "";
   return success(
     "trial.status",
-    `PUTDUK START는 ${row.world_name_ko} 월드에서 ${statusLabel(row.status)} 상태이며 진행률은 ${(row.quota_consumed_bps / 100).toFixed(0)}%입니다. 체험 결과는 ${formatTrialValue(row.reward_atomic)}이며 실제 지갑과 분리되어 있습니다.${completed}`,
+    `WORKROOM 체험는 ${row.world_name_ko} 월드에서 ${statusLabel(row.status)} 상태이며 진행률은 ${(row.quota_consumed_bps / 100).toFixed(0)}%입니다. 체험 결과는 ${formatTrialValue(row.reward_atomic)}이며 실제 지갑과 분리되어 있습니다.${completed}`,
     now,
     ["completed_at", "quota", "reward", "status", "world"],
   );

@@ -128,7 +128,7 @@ export function MemberMenuView({ facts }: { facts: MemberScreenFacts }) {
           <MenuBrandSymbol />
           <div>
             <strong>
-              퍼뜩
+              WORKROOM
               <br />
               채굴
             </strong>
@@ -203,7 +203,7 @@ export function MemberMenuView({ facts }: { facts: MemberScreenFacts }) {
               함께 나아갑니다.
             </p>
             <Link href="/menu/trust">
-              퍼뜩 알아보기
+              워크룸 알아보기
               <PutdukIcon name="arrow-right" size={18} />
             </Link>
           </aside>
@@ -269,7 +269,7 @@ export function MemberMenuView({ facts }: { facts: MemberScreenFacts }) {
       </nav>
       <footer className={styles.footer}>
         <span aria-hidden="true" />
-        <strong>PUTDUK MINING</strong>
+        <strong>WORKROOM</strong>
         <span aria-hidden="true" />
         <p>기술이 만드는 더 가치 있는 내일</p>
       </footer>

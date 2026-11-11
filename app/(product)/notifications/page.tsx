@@ -42,7 +42,7 @@ export default async function NotificationCenterPage() {
       <PageHeading
         eyebrow="알림"
         title={unread ? `새 소식 ${unread}개` : "중요한 변화를 놓치지 않도록."}
-        lead="채굴·지갑·이벤트 안내를 한곳에서 확인하세요."
+        lead="워크룸·입출금·이벤트 안내를 한곳에서 확인하세요."
         action={
           <Link className="button button--secondary" href="/menu/notifications">
             알림 설정
@@ -83,7 +83,7 @@ export default async function NotificationCenterPage() {
           ) : (
             <StatePanel
               title="아직 도착한 알림이 없어요"
-              description="채굴 결과나 지갑 변화가 생기면 이곳에서 알려드릴게요."
+              description="워크룸 기록이나 실제 잔액 변화가 생기면 이곳에서 알려드릴게요."
             />
           )}
         </section>

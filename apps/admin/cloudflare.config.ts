@@ -11,7 +11,12 @@ export default defineConfig({
     assets: {
       htmlHandling: "none",
       notFoundHandling: "none",
-      runWorkerFirst: ["/*", "!/_next/static/*", "!/*/_next/static/*"],
+      runWorkerFirst: [
+        "/*",
+        "!/_next/static/*",
+        "!/*/_next/static/*",
+        "!/workroom-icon.svg",
+      ],
     },
     // Preserve live staging host env on every cf deploy (secrets stay on CF; not listed here).
     env: {

@@ -130,7 +130,7 @@ describe("admin partial read recovery", () => {
     expect(blockScopeLabel("ACCOUNT")).toBe("확인할 수 없어요");
     expect(blockScopeLabel("IP_CIDR")).toBe("확인할 수 없어요");
     expect(blockScopeLabel("SIGNUP")).toBe("가입");
-    expect(blockScopeLabel("TRIAL")).toBe("퍼뜩 시작");
+    expect(blockScopeLabel("TRIAL")).toBe("이전 서비스 체험");
     expect(blockSourceLabel("MANUAL")).toBe("확인할 수 없어요");
     expect(blockSourceLabel("0")).toBe("확인할 수 없어요");
     expect(blockSourceLabel("현장 확인")).toBe("현장 확인");

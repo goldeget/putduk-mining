@@ -53,7 +53,7 @@ const unknownRows: AdminMiningFundingRow[] = [
 
 const unknownMiningRows: AdminMiningFundingRow[] = [
   { label: "등급", value: unreadLabel, tone: "separate" },
-  { label: "채굴 용량", value: unreadLabel, tone: "separate" },
+  { label: "이전 서비스 용량", value: unreadLabel, tone: "separate" },
   { label: "남은 용량", value: unreadLabel, tone: "separate" },
   { label: "사용한 용량", value: unreadLabel, tone: "separate" },
   { label: "속도", value: unreadLabel, tone: "separate" },
@@ -178,7 +178,7 @@ function presentMiningPace(data: {
       value: formatAdminTier(data.tier_activated, data.tier_code),
     },
     {
-      label: "채굴 용량",
+      label: "이전 서비스 용량",
       tone: "separate",
       value: formatAdminKnownMicro(data.effective_capacity_micro_krw),
     },

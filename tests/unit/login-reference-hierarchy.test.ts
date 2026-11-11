@@ -77,7 +77,7 @@ describe("Login story reconstruction preserves the real account journey", () => 
       ).toEqual(["/find-id", "/recover"]);
       expect(form.querySelector('a[href="/signup"]')).not.toBeNull();
       expect(
-        host.querySelector('[aria-label="퍼뜩 채굴 소개"] h2')?.textContent,
+        host.querySelector('[aria-label="WORKROOM 소개"] h2')?.textContent,
       ).toBe("작은 한 걸음이더 큰 가치를 만듭니다.");
       expect(host.textContent).not.toMatch(/Google|Apple|자동 로그인|₩|수익률/);
     },

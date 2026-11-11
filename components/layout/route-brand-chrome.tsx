@@ -56,13 +56,11 @@ export function RouteBrandHeader({
       <Link
         className={styles.brand}
         href="/home"
-        aria-label="퍼뜩 채굴 홈"
+        aria-label="WORKROOM 홈"
         prefetch={false}
       >
         <MenuBrandSymbol idPrefix={`${view}-header-brand`} />
-        <strong>
-          퍼뜩 <span>채굴</span>
-        </strong>
+        <strong>WORKROOM</strong>
         <small>
           기술이 만드는
           <br />더 가치 있는 내일
@@ -145,7 +143,7 @@ export function RouteBrandSidebar({
           기술이 만드는
           <br />더 나은 내일
         </p>
-        <strong>퍼뜩 채굴</strong>
+        <strong>WORKROOM</strong>
         <small>
           기술이 만드는
           <br />더 가치 있는 내일

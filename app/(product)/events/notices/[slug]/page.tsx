@@ -45,7 +45,7 @@ export default async function NoticeDetailPage({
         <PageHeading
           eyebrow="공지"
           title="공지"
-          lead="퍼뜩 채굴의 이용 안내를 확인하세요."
+          lead="WORKROOM의 이용 안내를 확인하세요."
         />
         <StatePanel
           tone="error"
@@ -67,7 +67,7 @@ export default async function NoticeDetailPage({
         <PageHeading
           eyebrow="공지"
           title="공지"
-          lead="퍼뜩 채굴의 이용 안내를 확인하세요."
+          lead="WORKROOM의 이용 안내를 확인하세요."
         />
         <StatePanel
           tone="error"

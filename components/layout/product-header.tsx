@@ -70,20 +70,20 @@ export function ProductHeader({
   return (
     <header
       className={`product-header ${home ? styles.homeHeader : ""}`}
-      aria-label={home ? "퍼뜩 채굴 홈" : "회원 메뉴"}
+      aria-label={home ? "WORKROOM 홈" : "회원 메뉴"}
       data-header-mode={home ? "home" : "member"}
     >
       <Link
         className={`product-header__brand ${home ? styles.homeBrand : "brand-lockup"}`}
         href="/home"
-        aria-label="퍼뜩 채굴 홈"
+        aria-label="WORKROOM 홈"
         prefetch={false}
       >
         {home ? (
           <>
             <MiningBrandSymbol />
             <span className={styles.homeWordmark}>
-              <strong>퍼뜩 채굴</strong>
+              <strong>WORKROOM</strong>
               <small>프리미엄 채굴 플랫폼</small>
             </span>
           </>
@@ -91,7 +91,7 @@ export function ProductHeader({
           <>
             <BrandMark title="" />
             <span>
-              <strong>퍼뜩 채굴</strong>
+              <strong>WORKROOM</strong>
             </span>
           </>
         )}

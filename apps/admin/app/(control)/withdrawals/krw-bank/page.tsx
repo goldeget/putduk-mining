@@ -92,7 +92,7 @@ export default async function KrwBankWithdrawalQueuePage() {
 
       {!queryError && rows.length === 0 ? (
         <EmptyQueueNextStep>
-          새 요청이 접수되면 여기에 나타납니다. 오늘의 퍼뜩에서 다른 업무를
+          새 요청이 접수되면 여기에 나타납니다. 운영 대시보드에서 다른 업무를
           확인하세요.
         </EmptyQueueNextStep>
       ) : null}

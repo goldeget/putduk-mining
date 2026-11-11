@@ -27,8 +27,8 @@ export default async function PutdukAiPage() {
             <details className={styles.principles}>
               <summary>답변 범위</summary>
               <div>
-                <p>내 기록과 퍼뜩 이용 안내를 확인해요.</p>
-                <p>송금·승인·잔액 변경은 퍼뜩 AI가 직접 실행하지 않아요.</p>
+                <p>내 기록과 워크룸 이용 안내를 확인해요.</p>
+                <p>송금·승인·잔액 변경은 WORKROOM AI가 직접 실행하지 않아요.</p>
                 <p>확인할 수 없는 내용은 추측하지 않아요.</p>
               </div>
             </details>

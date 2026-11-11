@@ -8,8 +8,8 @@ import { ThemeControl } from "@/components/system/theme-control";
 import {
   TRUST_CONTENT_VERSION,
   TRUST_DOCUMENTS,
-} from "@/lib/trust/public-content";
-import { getTrustNavigationLabel } from "@/lib/trust/public-presentation";
+} from "@/lib/workroom/public-content";
+import { getTrustNavigationLabel } from "@/lib/workroom/public-presentation";
 
 const primaryLinks = [
   ["/about", "소개"],

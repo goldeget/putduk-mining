@@ -45,7 +45,7 @@ export default function AdminGlobalError({
     `}</style>
         <main data-ui-state="error" role="alert">
           <ThemeControl />
-          <p>퍼뜩 운영</p>
+          <p>WORKROOM 운영</p>
           <h1>운영 화면을 열지 못했습니다.</h1>
           <p>
             연결과 로그인 상태를 확인한 뒤 다시 시도해 주세요. 확인되지 않은

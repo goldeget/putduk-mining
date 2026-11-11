@@ -13,8 +13,8 @@ function LoginBrand({ panel = false }: { panel?: boolean }) {
       <BrandMark title="" />
       <span>
         <strong>
-          <span className={styles.brandKorean}>퍼뜩 채굴</span>
-          <span className={styles.brandEnglish}>PUTDUK MINING</span>
+          <span className={styles.brandKorean}>WORKROOM</span>
+          <span className={styles.brandEnglish}>WORKROOM</span>
         </strong>
         <small>프리미엄 채굴 플랫폼</small>
       </span>
@@ -27,7 +27,7 @@ export function LoginExperience({ children }: { children?: ReactNode }) {
   return (
     <main className={styles.root} data-ui-ready="/login" data-ui-state="loaded">
       <header className={styles.header}>
-        <Link className={styles.headerBrand} href="/" aria-label="퍼뜩 채굴 홈">
+        <Link className={styles.headerBrand} href="/" aria-label="WORKROOM 홈">
           <LoginBrand />
         </Link>
         <nav className={styles.publicNavigation} aria-label="서비스 안내">
@@ -42,12 +42,12 @@ export function LoginExperience({ children }: { children?: ReactNode }) {
           <LoginArtwork className={styles.artwork} />
           <div className={styles.sceneScrim} />
         </div>
-        <section className={styles.story} aria-label="퍼뜩 채굴 소개">
+        <section className={styles.story} aria-label="WORKROOM 소개">
           <div className={styles.storyCopy}>
             <Link
               className={styles.storyBrand}
               href="/"
-              aria-label="퍼뜩 채굴 홈"
+              aria-label="WORKROOM 홈"
             >
               <LoginBrand />
             </Link>

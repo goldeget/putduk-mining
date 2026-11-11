@@ -354,7 +354,7 @@ export function WalletReadView({
               <span>체험 보상</span>
               <small>분리 보관</small>
             </div>
-            <small className={styles.heroLabel}>PUTDUK START</small>
+            <small className={styles.heroLabel}>WORKROOM 체험</small>
             <strong>
               <WalletAmountText
                 value={

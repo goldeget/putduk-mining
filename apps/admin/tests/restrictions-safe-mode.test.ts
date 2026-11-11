@@ -173,10 +173,10 @@ describe("admin restrictions · safe mode policy", () => {
     expect(safeModeAuditAction(true)).toBe("SAFE_MODE_ENABLED");
     expect(safeModeAuditAction(false)).toBe("SAFE_MODE_DISABLED");
     expect(safeModeSuccessMessage("TRIAL", true)).toBe(
-      "퍼뜩 시작 기능을 잠시 멈췄습니다.",
+      "이전 서비스 체험 기능을 잠시 멈췄습니다.",
     );
     expect(safeModeSuccessMessage("TRIAL", false)).toBe(
-      "퍼뜩 시작 기능 제한을 해제했습니다.",
+      "이전 서비스 체험 기능 제한을 해제했습니다.",
     );
     expect(safeModeSuccessMessage("NOTIFICATION", true)).toBe(
       "알림 기능을 잠시 멈췄습니다.",

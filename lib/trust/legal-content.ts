@@ -35,12 +35,12 @@ export const LEGAL_DOCUMENTS: readonly LegalDocument[] = [
     eyebrow: "TERMS",
     consentVersion: LEGAL_CONSENT_VERSIONS.serviceTerms,
     title: "서비스 이용약관",
-    summary: "퍼뜩 채굴을 이용하는 방법과 지켜야 할 내용을 짧게 정리했어요.",
+    summary: "WORKROOM을 이용하는 방법과 지켜야 할 내용을 짧게 정리했어요.",
     sections: [
       {
         heading: "이 약관은 무엇인가요",
         body: [
-          "퍼뜩 채굴(PUTDUK MINING)을 이용하는 방법을 정리한 글이에요.",
+          "WORKROOM을 이용하는 방법을 정리한 글이에요.",
           "가입할 때 동의하면 동의한 기록이 남아요.",
         ],
       },
@@ -55,7 +55,7 @@ export const LEGAL_DOCUMENTS: readonly LegalDocument[] = [
         ],
       },
       {
-        heading: "PUTDUK START 체험",
+        heading: "WORKROOM 체험",
         body: [
           "체험은 최대 24시간이에요. 사용량 100%에 먼저 닿으면 그때 끝나요.",
           "체험 기록은 실제 지갑과 따로 보관돼요. 그대로 실제 자산이 되지 않아요.",
@@ -102,7 +102,7 @@ export const LEGAL_DOCUMENTS: readonly LegalDocument[] = [
       {
         heading: "AI 안내",
         body: [
-          "PUTDUK AI는 설명과 분석만 해요.",
+          "WORKROOM AI는 설명과 분석만 해요.",
           "잔액을 바꾸거나 입금과 출금을 승인하지 않아요.",
         ],
       },
@@ -133,7 +133,7 @@ export const LEGAL_DOCUMENTS: readonly LegalDocument[] = [
     sections: [
       {
         heading: "이 방침은 무엇인가요",
-        body: ["퍼뜩 채굴이 어떤 개인정보를 쓰는지 알려드리는 글이에요."],
+        body: ["WORKROOM이 어떤 개인정보를 쓰는지 알려드리는 글이에요."],
       },
       {
         heading: "가입할 때 받는 정보",
@@ -173,7 +173,7 @@ export const LEGAL_DOCUMENTS: readonly LegalDocument[] = [
       {
         heading: "AI 질문과 답변",
         body: [
-          "퍼뜩 AI에 입력한 질문과 답변은 내 계정에 저장되며, 문의 확인이나 안전 점검이 필요할 때 권한이 있는 운영자가 열람할 수 있어요. 열람할 때마다 기록이 남고, 비밀번호나 인증키 같은 값은 가려서 보여 드려요.",
+          "WORKROOM AI에 입력한 질문과 답변은 내 계정에 저장되며, 문의 확인이나 안전 점검이 필요할 때 권한이 있는 운영자가 열람할 수 있어요. 열람할 때마다 기록이 남고, 비밀번호나 인증키 같은 값은 가려서 보여 드려요.",
         ],
       },
       {

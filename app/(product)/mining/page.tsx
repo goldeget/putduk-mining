@@ -46,7 +46,7 @@ import styles from "./page.module.css";
 const worldDescriptions: Record<string, string> = {
   CRYPTO: "디지털 자산 테마를 담은 채굴 월드",
   GOLD: "금빛 광맥과 깊은 채굴감을 담은 월드",
-  KOREA: "퍼뜩의 첫 여정이 시작되는 기본 채굴 월드",
+  KOREA: "워크룸의 첫 여정이 시작되는 기본 채굴 월드",
   SILVER: "차분한 금속성과 정밀한 흐름을 담은 월드",
   USA: "넓은 스케일과 역동성을 담은 채굴 월드",
 };
@@ -224,7 +224,7 @@ export default async function MiningPage() {
           <header className={styles.heroCopy}>
             <div className={styles.brand}>
               <MetalBrand />
-              <h1>퍼뜩 채굴</h1>
+              <h1>WORKROOM</h1>
             </div>
             <p>걸음이 가치예요.</p>
           </header>
@@ -664,7 +664,7 @@ export default async function MiningPage() {
                       )
                         ? "현재 활성 세션이 이어지고 있어요."
                         : (worldDescriptions[world.code] ??
-                          "퍼뜩의 채굴 테마 월드")}
+                          "워크룸의 채굴 테마 월드")}
                     </p>
                   </div>
                 </article>

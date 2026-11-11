@@ -132,7 +132,7 @@ export function OperationsAssistant({
     <div className={styles.root}>
       <section className={styles.hero} aria-labelledby="assistant-title">
         <div>
-          <p className={styles.eyebrow}>퍼뜩 운영</p>
+          <p className={styles.eyebrow}>WORKROOM 운영</p>
           <h1 id="assistant-title">운영 도우미</h1>
           <p className={styles.lead}>
             운영 기록을 설명하고 다음 확인 순서를 안내해요.

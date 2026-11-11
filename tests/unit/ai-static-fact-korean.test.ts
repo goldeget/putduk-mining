@@ -11,6 +11,7 @@ const ALLOWED_LATIN = new Set([
   "PUTDUK",
   "START",
   "USDT",
+  "WORKROOM",
 ]);
 
 function foreignWords(text: string) {

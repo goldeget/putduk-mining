@@ -2015,7 +2015,7 @@ describe("one PUTDUK AI request and session owner", () => {
       await session.submit();
     });
     expect(host.textContent).toContain("일반 질문은 답변이 제한돼요");
-    expect(host.textContent).toContain("퍼뜩 안내");
+    expect(host.textContent).toContain("워크룸 안내");
     expect(host.textContent).not.toContain("AI 도움말");
     expect(host.querySelector("time")).toBeNull();
     expect(session.messages.at(-1)?.source).toBe("static");

@@ -3,13 +3,13 @@ import {
   TRUST_CONTENT_VERSION,
   TRUST_DOCUMENTS,
   TRUST_LAST_UPDATED,
-} from "@/lib/trust/public-content";
+} from "@/lib/workroom/public-content";
 
 export function GET() {
   const lines = [
-    "# PUTDUK MINING",
+    "# WORKROOM",
     "",
-    "Official public information for 퍼뜩 채굴 / PUTDUK MINING.",
+    "Official public information for WORKROOM.",
     `Content version: ${TRUST_CONTENT_VERSION}`,
     `Last updated: ${TRUST_LAST_UPDATED}`,
     "Canonical origin: https://mining.putduk.com",

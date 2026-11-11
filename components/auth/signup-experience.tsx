@@ -13,8 +13,8 @@ function SignupBrand() {
     <span className={styles.brand}>
       <BrandMark title="" />
       <span>
-        <strong>퍼뜩 채굴</strong>
-        <small>PUTDUK MINING</small>
+        <strong>WORKROOM</strong>
+        <small>WORKROOM</small>
       </span>
     </span>
   );
@@ -29,7 +29,7 @@ export function SignupExperience({ children }: { children?: ReactNode }) {
       data-ui-state="loaded"
     >
       <header className={styles.header}>
-        <Link className={styles.headerBrand} href="/" aria-label="퍼뜩 채굴 홈">
+        <Link className={styles.headerBrand} href="/" aria-label="WORKROOM 홈">
           <SignupBrand />
         </Link>
         <nav className={styles.publicNavigation} aria-label="서비스 메뉴">
@@ -59,12 +59,8 @@ export function SignupExperience({ children }: { children?: ReactNode }) {
           <SignupArtwork className={styles.artwork} />
           <div className={styles.sceneScrim} aria-hidden="true" />
         </div>
-        <section className={styles.story} aria-label="퍼뜩 채굴 시작 안내">
-          <Link
-            className={styles.storyBrand}
-            href="/"
-            aria-label="퍼뜩 채굴 홈"
-          >
+        <section className={styles.story} aria-label="WORKROOM 시작 안내">
+          <Link className={styles.storyBrand} href="/" aria-label="WORKROOM 홈">
             <SignupBrand />
           </Link>
           <h2>
@@ -126,7 +122,7 @@ export function SignupExperience({ children }: { children?: ReactNode }) {
       </div>
       <footer className={styles.footer}>
         <span>
-          PUTDUK MINING <small>기술이 만드는 더 가치 있는 내일</small>
+          WORKROOM <small>기술이 만드는 더 가치 있는 내일</small>
         </span>
         <nav aria-label="가입 도움말">
           <a href="#signup-consents">가입 동의 보기</a>

@@ -93,7 +93,7 @@ export const AI_TOOL_REGISTRY: readonly AiToolDefinition[] = [
     ],
   },
   {
-    description: "본인의 PUTDUK START 진행 상태를 확인합니다.",
+    description: "본인의 WORKROOM 체험 진행 상태를 확인합니다.",
     name: "trial.status",
     readOnly: true,
     returns: ["completed_at", "quota", "reward", "status", "world"],

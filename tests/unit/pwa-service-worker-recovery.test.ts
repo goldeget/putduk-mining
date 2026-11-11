@@ -213,7 +213,7 @@ describe("actual service worker privacy and offline recovery", () => {
       },
     });
     expect(w.showNotification).toHaveBeenCalledWith(
-      "퍼뜩 채굴",
+      "WORKROOM",
       expect.objectContaining({
         icon: "/workroom-icon.svg",
         badge: "/workroom-icon.svg",

@@ -170,7 +170,7 @@ export function guardAiQuestion(question: string): AiGuardResult {
     return {
       allowed: false,
       answer:
-        "퍼뜩 AI는 설명과 내 상태 확인을 도와드려요. 잔액이나 출금 승인, 보상, 권한은 바꿀 수 없어요.",
+        "WORKROOM AI는 설명과 내 상태 확인을 도와드려요. 잔액이나 출금 승인, 보상, 권한은 바꿀 수 없어요.",
       classification: "ACTION_BOUNDARY",
     };
   }

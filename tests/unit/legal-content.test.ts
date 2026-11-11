@@ -18,7 +18,7 @@ const root = resolve(__dirname, "../..");
 const read = (path: string) => readFileSync(resolve(root, path), "utf8");
 
 const AI_OPERATOR_ACCESS_FIRST_SENTENCE =
-  "퍼뜩 AI에 입력한 질문과 답변은 내 계정에 저장되며, 문의 확인이나 안전 점검이 필요할 때 권한이 있는 운영자가 열람할 수 있어요.";
+  "WORKROOM AI에 입력한 질문과 답변은 내 계정에 저장되며, 문의 확인이나 안전 점검이 필요할 때 권한이 있는 운영자가 열람할 수 있어요.";
 const AI_OPERATOR_ACCESS_PARAGRAPH = `${AI_OPERATOR_ACCESS_FIRST_SENTENCE} 열람할 때마다 기록이 남고, 비밀번호나 인증키 같은 값은 가려서 보여 드려요.`;
 
 function sentences(document: (typeof LEGAL_DOCUMENTS)[number]) {

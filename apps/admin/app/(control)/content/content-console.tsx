@@ -47,7 +47,7 @@ const ctaNames: Record<string, string> = {
   "/menu/notifications": "알림 설정",
   "/support": "고객 지원",
   "/login": "로그인",
-  "/about": "퍼뜩 소개",
+  "/about": "워크룸 소개",
   "/faq": "자주 묻는 질문",
   "/status": "서비스 안내",
   "/changelog": "변경 안내",

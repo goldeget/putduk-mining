@@ -255,7 +255,7 @@ export function AiConversationConsole() {
     >
       <header>
         <p className={styles.eyebrow}>회원 상담 관리</p>
-        <h1>퍼뜩 AI 대화 기록</h1>
+        <h1>WORKROOM AI 대화 기록</h1>
         <p>
           회원이 문의한 내용과 실제 답변을 확인합니다. 열람은 기록되며, 문의
           처리 목적에 한해 사용해 주세요.
@@ -417,7 +417,7 @@ export function AiConversationConsole() {
                 >
                   <header>
                     <strong>
-                      {row.role === "MEMBER" ? "회원 질문" : "퍼뜩 AI 답변"}
+                      {row.role === "MEMBER" ? "회원 질문" : "WORKROOM AI 답변"}
                     </strong>
                     <time dateTime={row.createdAt}>{time(row.createdAt)}</time>
                   </header>

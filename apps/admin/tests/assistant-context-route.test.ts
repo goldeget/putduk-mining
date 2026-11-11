@@ -353,7 +353,7 @@ describe("audited, read-only admin operational context", () => {
     database();
     const { payload } = await result({ topic: "mining", userId });
     expect(text(payload.data, "UNKNOWN")).toContain(
-      "채굴 상태를 확인하지 못했습니다",
+      "이전 서비스 상태를 확인하지 못했습니다",
     );
     expect(text(payload.data, "FACT")).not.toContain("원금 정보가 없습니다");
   });

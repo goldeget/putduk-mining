@@ -275,18 +275,18 @@ describe("member lifecycle and profile read truth", () => {
     expect(markup).toMatch(/아직 확정 전<\/dt><dd>25,000원/);
     expect(markup).toContain("확정된 수익이 아니에요");
     expect(markup).toMatch(/등급<\/dt><dd>적용 전/);
-    expect(markup).toMatch(/채굴 용량<\/dt><dd>확인할 수 없어요/);
+    expect(markup).toMatch(/이전 서비스 용량<\/dt><dd>확인할 수 없어요/);
     expect(markup).toMatch(/남은 용량<\/dt><dd>확인할 수 없어요/);
     expect(markup).toMatch(/사용한 용량<\/dt><dd>확인할 수 없어요/);
     expect(markup).toMatch(/속도<\/dt><dd>확인할 수 없어요/);
-    expect(markup).not.toMatch(/채굴 용량<\/dt><dd>0원/);
+    expect(markup).not.toMatch(/이전 서비스 용량<\/dt><dd>0원/);
     expect(markup).not.toMatch(/속도<\/dt><dd>0배/);
     expect(markup).not.toContain("설정 전");
     expect(markup).not.toContain("140,000원");
     expect(markup).not.toContain("115,000원");
     expect(markup).not.toContain("40,000원");
-    expect(markup).toMatch(/확정 채굴 수익<\/dt><dd>확인 필요/);
-    expect(markup).toMatch(/채굴 인정 원금<\/dt><dd>0원/);
+    expect(markup).toMatch(/이전 서비스 확정 수익<\/dt><dd>확인 필요/);
+    expect(markup).toMatch(/이전 서비스 인정 원금<\/dt><dd>0원/);
     expect(markup).not.toMatch(/보너스<\/dt><dd>100,000원/);
   });
   it("the actual member page keeps missing provenance partial even when profile reads succeed", async () => {
@@ -300,7 +300,7 @@ describe("member lifecycle and profile read truth", () => {
     );
     expect(markup).toContain('data-ui-state="partial"');
     expect(markup).toContain("자금 구분을 확인하지 못했습니다.");
-    expect(markup).toMatch(/채굴 인정 원금<\/dt><dd>확인 필요/);
+    expect(markup).toMatch(/이전 서비스 인정 원금<\/dt><dd>확인 필요/);
   });
   it("a missing mining display is not shown as zero principal or pending earnings", async () => {
     reads.tables.funding_principal_lots = {
@@ -320,12 +320,12 @@ describe("member lifecycle and profile read truth", () => {
     expect(markup).toMatch(/정산 전 대기 수익<\/dt><dd>확인 필요/);
     expect(markup).toMatch(/아직 확정 전<\/dt><dd>확인 필요/);
     expect(markup).toMatch(/등급<\/dt><dd>확인할 수 없어요/);
-    expect(markup).toMatch(/채굴 용량<\/dt><dd>확인할 수 없어요/);
+    expect(markup).toMatch(/이전 서비스 용량<\/dt><dd>확인할 수 없어요/);
     expect(markup).toMatch(/속도<\/dt><dd>확인할 수 없어요/);
     expect(markup).not.toMatch(/등급<\/dt><dd>적용 전/);
     expect(markup).not.toMatch(/정산 전 대기 수익<\/dt><dd>0원/);
     expect(markup).not.toMatch(/아직 확정 전<\/dt><dd>0원/);
-    expect(markup).not.toMatch(/채굴 용량<\/dt><dd>0원/);
+    expect(markup).not.toMatch(/이전 서비스 용량<\/dt><dd>0원/);
     expect(markup).not.toMatch(/속도<\/dt><dd>0배/);
   });
   it("a failed display with no principal row is empty, not an error or zero", async () => {
@@ -344,7 +344,7 @@ describe("member lifecycle and profile read truth", () => {
         }),
       }),
     );
-    expect(markup).toMatch(/채굴 인정 원금<\/dt><dd>0원/);
+    expect(markup).toMatch(/이전 서비스 인정 원금<\/dt><dd>0원/);
     expect(markup).toContain("원금과 대기 수익은 아직 없어요.");
     expect(markup).toContain("등급과 용량, 속도는 아직 없어요.");
     const funding = markup.slice(
@@ -379,7 +379,7 @@ describe("member lifecycle and profile read truth", () => {
     expect(markup).not.toMatch(/정산 전 대기 수익<\/dt>/);
     expect(markup).not.toMatch(/아직 확정 전<\/dt>/);
     expect(markup).not.toMatch(/등급<\/dt>/);
-    expect(markup).not.toMatch(/채굴 용량<\/dt>/);
+    expect(markup).not.toMatch(/이전 서비스 용량<\/dt>/);
     expect(markup).not.toMatch(/속도<\/dt>/);
     expect(markup).not.toMatch(/정산 전 대기 수익<\/dt><dd>0원/);
   });
@@ -404,7 +404,7 @@ describe("member lifecycle and profile read truth", () => {
       }),
     );
     expect(markup).toMatch(/등급<\/dt><dd>L1/);
-    expect(markup).toMatch(/채굴 용량<\/dt><dd>15,000원/);
+    expect(markup).toMatch(/이전 서비스 용량<\/dt><dd>15,000원/);
     expect(markup).toMatch(/남은 용량<\/dt><dd>15,000원/);
     expect(markup).toMatch(/사용한 용량<\/dt><dd>0원/);
     expect(markup).toMatch(/속도<\/dt><dd>1배/);

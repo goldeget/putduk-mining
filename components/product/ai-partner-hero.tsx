@@ -64,12 +64,12 @@ export function AiPartnerHero({ tools }: { tools?: ReactNode }) {
       <div className={styles.copy}>
         <div className={styles.identity}>
           <AiPartnerMark />
-          <h1 aria-label="퍼뜩 AI">퍼뜩 AI</h1>
+          <h1 aria-label="WORKROOM AI">WORKROOM AI</h1>
         </div>
         <p className={styles.lead}>
           당신의 기록을 함께 살펴보는
           <br />
-          퍼뜩 AI 파트너
+          WORKROOM AI 파트너
         </p>
         <p className={styles.description}>
           채굴부터 출금 준비까지,
