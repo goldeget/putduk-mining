@@ -77,11 +77,13 @@ do $$declare u uuid:='11650000-0000-4000-8000-000000000001';o uuid:='11650000-00
   raise exception 'Cash reservations did not consume newest approved credit first';end if;
  perform pg_temp.cash_must_fail(format('insert into app_private.workroom_cash_reservations(withdrawal_id,user_id,credit_movement_id,hold_ledger_transaction_id,amount_atomic,ordinal,effective_at) select %L,%L,gen_random_uuid(),hold_ledger_transaction_id,1,99,hold_posted_at from public.withdrawal_requests where id=%L',r,u,r),'WORKROOM_CASH_CREDIT_RESERVATION_INVALID');
  perform pg_temp.cash_must_fail(format('insert into app_private.workroom_cash_reservations(withdrawal_id,user_id,credit_movement_id,hold_ledger_transaction_id,amount_atomic,ordinal,effective_at) select %L,%L,x.credit_movement_id,x.hold_ledger_transaction_id,50000,99,x.effective_at from app_private.workroom_cash_reservations x join public.money_source_movements m on m.id=x.credit_movement_id where x.withdrawal_id=%L and m.amount_atomic=70000',r,u,r),'WORKROOM_CASH_CREDIT_RESERVATION_INVALID');
- if(select count(*)from public.wallet_ledger where reference_type='withdrawal_request'and reference_id=r)<>0then raise exception 'HOLD posted a wallet debit';end if;
+ if(select count(*)from public.wallet_ledger where reference_type='withdrawal_request'and reference_id=r)<>0 then raise exception 'HOLD posted a wallet debit';end if;
  s:=public.read_workroom_cash(u);
  if s->>'availableKrw'<>'40000'or s->>'heldKrw'<>'60000'or s->>'withdrawnKrw'<>'0'then raise exception 'Cash HOLD fold incorrect %',s;end if;
  if(select coverage from public.money_source_summaries where user_id=u)<>'COMPLETE'then raise exception 'Cash hold not covered';end if;
- perform pg_temp.cash_must_fail(format('update app_private.workroom_cash_reservations set amount_atomic=1 where withdrawal_id=%L',r),'WORKROOM_APPEND_ONLY');
+ -- The browser/server role has no UPDATE grant; ACL rejects before the
+ -- append-only trigger. Keep that stronger boundary rather than granting UPDATE.
+ perform pg_temp.cash_must_fail(format('update app_private.workroom_cash_reservations set amount_atomic=1 where withdrawal_id=%L',r),'permission denied');
  perform pg_temp.cash_must_fail(format('select public.finalize_withdrawal_ledger(%L,%L,''cash-native-premature-finalize'')',r,a),'EXTERNAL_SEND_REQUIRED');
  tx:=public.release_withdrawal_hold(r,a,'native cancellation before external send','cash-native-release-one','CANCELLED');
  if public.release_withdrawal_hold(r,a,'native cancellation before external send','cash-native-release-one','CANCELLED')<>tx then raise exception 'Release duplicated journal';end if;
@@ -98,13 +100,13 @@ do $$declare u uuid:='11650000-0000-4000-8000-000000000001';o uuid:='11650000-00
  if public.finalize_withdrawal_ledger(r,a,'cash-native-finalize-one')<>tx then raise exception 'Finalize duplicated journal';end if;
  s:=public.read_workroom_cash(u);
  if s->>'availableKrw'<>'60000'or s->>'heldKrw'<>'0'or s->>'withdrawnKrw'<>'40000'then raise exception 'Finalize cash fold incorrect %',s;end if;
- if(select count(*)from public.wallet_ledger where reference_type='withdrawal_request'and reference_id=r)<>1then raise exception 'Finalization wallet debit is not once';end if;
+ if(select count(*)from public.wallet_ledger where reference_type='withdrawal_request'and reference_id=r)<>1 then raise exception 'Finalization wallet debit is not once';end if;
  if(select coverage from public.money_source_summaries where user_id=u)<>'COMPLETE'then raise exception 'Finalized cash source became unresolved';end if;
  if(select recovered_principal_atomic from public.money_source_summaries where user_id=u)<>'40000'then raise exception 'Final cash source recovery total mismatch';end if;
  -- A separate practice-funded account must not borrow another member's deposit.
  j:=public.prepare_workroom_cash_withdrawal(o,'KRW_BANK',1,p,11650001,null,other_d);
  perform pg_temp.cash_must_fail(format('select public.hold_workroom_cash_withdrawal(%L,%L,''KRW_BANK'',%L,1)',o,j->>'key',other_d),'WORKROOM_CASH_INSUFFICIENT');
- if(select count(*)from app_private.workroom_cash_withdrawals where user_id=o)<>0then raise exception 'Failed cash hold left rows';end if;
+ if(select count(*)from app_private.workroom_cash_withdrawals where user_id=o)<>0 then raise exception 'Failed cash hold left rows';end if;
 end$$;
 set constraints all immediate;
 set constraints all deferred;
