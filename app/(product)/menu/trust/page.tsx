@@ -23,7 +23,7 @@ const facts = [
   },
   {
     title: "AI는 잔액을 바꾸지 않아요",
-    body: "퍼뜩 AI는 안내만 해요. 승인·출금·잔액 변경은 하지 않아요.",
+    body: "WORKROOM AI는 안내만 해요. 승인·출금·잔액 변경은 하지 않아요.",
   },
 ] as const;
 
@@ -37,7 +37,7 @@ export default function MemberTrustPage() {
     >
       <header className={styles.hero}>
         <p className={styles.eyebrow}>신뢰 센터</p>
-        <h1>퍼뜩이 지키는 기본 원칙</h1>
+        <h1>워크룸이 지키는 기본 원칙</h1>
         <p>짧게 확인할 수 있는 공식 안내예요.</p>
       </header>
 

@@ -265,7 +265,7 @@ export function MfaGate({
           {/* Supabase returns a data URI generated for this one-time enrolment. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            alt="PUTDUK 운영자 인증 앱 등록 QR"
+            alt="WORKROOM 운영자 인증 앱 등록 QR"
             height="188"
             src={enrolment.qrCode}
             width="188"

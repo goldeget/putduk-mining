@@ -7,7 +7,7 @@ export function QueueShell({
   title,
   lead,
   backHref = "/" as Route,
-  backLabel = "오늘의 퍼뜩",
+  backLabel = "운영 대시보드",
   children,
 }: {
   eyebrow: string;

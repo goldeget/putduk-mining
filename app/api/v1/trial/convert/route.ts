@@ -75,7 +75,7 @@ export async function POST(request: Request) {
         : riskReview
           ? "안전 확인이 필요해 보상 전환을 검토하고 있습니다."
           : trialIncomplete
-            ? "PUTDUK START를 완료한 뒤 다시 시도해 주세요."
+            ? "WORKROOM 체험을 완료한 뒤 다시 시도해 주세요."
             : paused
               ? "현재 안전 점검으로 환영 보상 전환이 잠시 중단되었습니다."
               : "환영 보상을 전환하지 못했습니다.",

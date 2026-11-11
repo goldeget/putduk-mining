@@ -65,8 +65,8 @@ async function prepareWithClient(
 
   const { data, error: enrollError } = await supabase.auth.mfa.enroll({
     factorType: "totp",
-    friendlyName: `PUTDUK Admin ${Date.now().toString(36)}`,
-    issuer: "PUTDUK MINING",
+    friendlyName: `WORKROOM Admin ${Date.now().toString(36)}`,
+    issuer: "WORKROOM",
   });
   if (enrollError || !data || data.type !== "totp") {
     return {

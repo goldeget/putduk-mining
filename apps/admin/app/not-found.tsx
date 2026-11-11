@@ -10,7 +10,7 @@ export default function NotFound() {
         <h1>이 운영 화면은 존재하지 않습니다.</h1>
         <p>주소를 확인하거나 오늘의 운영 화면으로 돌아가세요.</p>
         <Link className="gold-button" href="/">
-          오늘의 퍼뜩
+          운영 대시보드
         </Link>
       </section>
     </main>

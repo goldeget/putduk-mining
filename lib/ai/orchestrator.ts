@@ -56,7 +56,7 @@ const TOOL_FAILURE_COPY: Record<AiToolName, string> = {
   "referral.status":
     "추천 보상 상태를 안전하게 확인하지 못했습니다. 확인되지 않은 보상은 안내하지 않습니다.",
   "trial.status":
-    "PUTDUK START 상태를 안전하게 확인하지 못했습니다. 잠시 후 START 화면에서 다시 확인해 주세요.",
+    "WORKROOM 체험 상태를 안전하게 확인하지 못했습니다. 잠시 후 START 화면에서 다시 확인해 주세요.",
   "wallet.summary":
     "지갑 상태를 안전하게 확인하지 못했습니다. 확인되지 않은 잔액은 안내하지 않습니다.",
   "withdrawal.latest_status":

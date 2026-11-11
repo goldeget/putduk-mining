@@ -13,7 +13,7 @@ export default function StartError({
     <ProductRouteError
       error={error}
       reset={reset}
-      title="PUTDUK START를 열지 못했어요"
+      title="WORKROOM 체험을 열지 못했어요"
       description="인터넷 연결을 확인한 뒤 다시 시도해 주세요. 체험 진행은 계속 유지돼요."
     />
   );

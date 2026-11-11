@@ -469,7 +469,7 @@ export function PutdukAiChat({
       className={`ai-chat ${styles.chat} ${presentation === "panel" ? styles.panel : styles.page} ${
         surface === "page" ? styles.surfacePage : ""
       }`}
-      aria-label="퍼뜩 AI 도우미 대화"
+      aria-label="WORKROOM AI 도우미 대화"
       data-ai-continuity={AI_CONVERSATION_CONTINUITY_MODE}
       data-ai-presentation={presentation}
       data-ai-surface={surface}
@@ -480,7 +480,7 @@ export function PutdukAiChat({
           <div className={styles.identity}>
             <PutdukAiMascot />
             <div>
-              <h1>퍼뜩 AI 도우미</h1>
+              <h1>WORKROOM AI 도우미</h1>
               <p>텍스트 대화</p>
             </div>
           </div>
@@ -707,7 +707,7 @@ export function PutdukAiChat({
         <div ref={threadRef} className={styles.thread}>
           {presentation === "page" && surface !== "page" ? (
             <header className={styles.pageStatus}>
-              <strong>내 기록과 퍼뜩 이용 안내</strong>
+              <strong>내 기록과 워크룸 이용 안내</strong>
               <span>확인하지 못한 내용은 추측하지 않아요.</span>
             </header>
           ) : null}
@@ -736,7 +736,7 @@ export function PutdukAiChat({
               <p className={styles.providerNotice}>
                 {surface === "page"
                   ? "내 기록과 이용 안내만 답변해요."
-                  : "내 기록과 퍼뜩 안내를 확인해요. 일반 질문은 답변이 제한돼요."}
+                  : "내 기록과 워크룸 안내를 확인해요. 일반 질문은 답변이 제한돼요."}
               </p>
             ) : null}
             {!session.online ? (
@@ -807,12 +807,12 @@ export function PutdukAiChat({
                       style={{ color: "var(--brand-identity)" }}
                     />
                   </span>
-                  <span className={styles.welcomeEyebrow}>퍼뜩 채굴</span>
+                  <span className={styles.welcomeEyebrow}>WORKROOM</span>
                   <h2>무엇이 궁금하세요?</h2>
                   <p>
                     {session.providerConfigured
-                      ? "퍼뜩 이용 안내부터 일상의 궁금한 것까지."
-                      : "내 기록과 퍼뜩 이용 방법을 함께 확인해요."}
+                      ? "워크룸 이용 안내부터 일상의 궁금한 것까지."
+                      : "내 기록과 워크룸 이용 방법을 함께 확인해요."}
                   </p>
                   {suggestionCards()}
                   <p className={styles.welcomeHint}>
@@ -831,7 +831,7 @@ export function PutdukAiChat({
                     <span className={styles.messageIdentity}>
                       {message.role === "assistant" ? (
                         <>
-                          <PutdukAiMascot /> 퍼뜩 AI 도우미
+                          <PutdukAiMascot /> WORKROOM AI 도우미
                         </>
                       ) : (
                         "나"

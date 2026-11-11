@@ -107,7 +107,7 @@ export function resolveHomeWorldState(input: {
             : capacityUsed
               ? "이번 한도 완료"
               : "채굴 준비",
-      worldTitle: fundedUnknown ? "다시 확인해 주세요" : "퍼뜩 채굴",
+      worldTitle: fundedUnknown ? "다시 확인해 주세요" : "WORKROOM",
       worldLead: fundedUnknown
         ? "채굴 상태를 다시 확인하면 안내를 보여 드려요."
         : fundedStatus === "ACTIVE"

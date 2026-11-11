@@ -106,7 +106,7 @@ self.addEventListener("push", (event) => {
       : null;
   const url = safeDeepLink(input?.url) ?? "/notifications";
   event.waitUntil(
-    self.registration.showNotification("퍼뜩 채굴", {
+    self.registration.showNotification("WORKROOM", {
       body: "새로운 알림이 도착했습니다. 앱에서 확인해 주세요.",
       icon: "/workroom-icon.svg",
       badge: "/workroom-icon.svg",

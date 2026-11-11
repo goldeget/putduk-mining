@@ -127,7 +127,7 @@ describe("menu hub navigation", () => {
       MENU_ITEMS.filter((item) => item.lane === "settings").map(
         (item) => item.label,
       ),
-    ).toEqual(expect.arrayContaining(["알림 설정", "퍼뜩 AI"]));
+    ).toEqual(expect.arrayContaining(["알림 설정", "WORKROOM AI"]));
   });
 
   it("keeps Korean labels free of developer jargon", () => {

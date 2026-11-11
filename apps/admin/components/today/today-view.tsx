@@ -44,7 +44,7 @@ export function TodayView({ snapshot }: { snapshot: TodaySnapshot }) {
       <section className={styles.hero} aria-labelledby="today-title">
         <div>
           <p className={styles.eyebrow}>오늘 운영</p>
-          <h1 id="today-title">오늘의 퍼뜩</h1>
+          <h1 id="today-title">운영 대시보드</h1>
           <p className={styles.lead}>
             지금 확인할 일과 서비스 상태를 한 화면에 모았어요.
           </p>

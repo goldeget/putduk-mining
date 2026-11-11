@@ -245,7 +245,7 @@ export default async function EventsPage() {
           <p className="eyebrow">공지</p>
           <h2>안내</h2>
         </span>
-        <p>퍼뜩 채굴의 중요한 변경과 이용 안내예요.</p>
+        <p>WORKROOM의 중요한 변경과 이용 안내예요.</p>
       </header>
 
       {noticesError ? (

@@ -207,7 +207,7 @@ export function routeAiQuestion(
   if (AMBIGUOUS_ACCOUNT_REWARD_PATTERN.test(normalized)) {
     return {
       answer:
-        "어떤 보상을 확인할지 선택해 주세요. 오늘의 채굴 보상, PUTDUK START, 친구 초대 또는 이벤트 보상 중 하나를 함께 적어 주세요.",
+        "어떤 보상을 확인할지 선택해 주세요. 오늘의 채굴 보상, WORKROOM 체험, 친구 초대 또는 이벤트 보상 중 하나를 함께 적어 주세요.",
       classification: "CLARIFICATION",
       kind: "static",
       routeKey: "clarify_account_reward_source",

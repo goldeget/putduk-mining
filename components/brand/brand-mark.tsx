@@ -9,7 +9,7 @@ type BrandMarkProps = SVGProps<SVGSVGElement> & { title?: string };
 
 /** One small monochrome silhouette; inherited color follows every resolved theme. */
 export function BrandMark({
-  title = "퍼뜩 채굴",
+  title = "WORKROOM",
   style,
   ...props
 }: BrandMarkProps) {

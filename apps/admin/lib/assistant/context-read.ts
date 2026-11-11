@@ -227,13 +227,13 @@ async function dashboard(db: SupabaseClient, builder: Builder, now: Date) {
     "RECOMMENDATION",
     "입출금은 해당 대기열에서 증빙·현재 상태·반영 금액을 확인한 뒤 기존 승인 절차를 따르세요.",
     "/",
-    "오늘의 퍼뜩",
+    "운영 대시보드",
   );
   builder.add(
     "UNKNOWN",
     "대기열 건수만으로 전체 시스템 정상 여부나 실제 송금 완료를 판단할 수 없습니다.",
     "/",
-    "오늘의 퍼뜩",
+    "운영 대시보드",
   );
   builder.add(
     "UNKNOWN",
@@ -905,9 +905,9 @@ async function audits(db: SupabaseClient, builder: Builder) {
   );
   builder.add(
     "RECOMMENDATION",
-    "오늘의 퍼뜩에서 최근 기록을 확인하고, 관련 입출금·예외 화면의 실제 결과와 함께 비교하세요.",
+    "운영 대시보드에서 최근 기록을 확인하고, 관련 입출금·예외 화면의 실제 결과와 함께 비교하세요.",
     "/",
-    "오늘의 퍼뜩 열기",
+    "운영 대시보드 열기",
   );
 }
 

@@ -37,7 +37,7 @@ describe("mining page composition after the live upgrade", () => {
     expect(page).not.toContain("MiningAmountBoard");
   });
   it("names the page heading by its visible text", () => {
-    expect(page).toContain("<h1>퍼뜩 채굴</h1>");
+    expect(page).toContain("<h1>WORKROOM</h1>");
     expect(page).not.toMatch(/<h1[^>]*aria-label/);
     expect(page).not.toContain('id="world-hero-title"');
   });

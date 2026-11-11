@@ -9,7 +9,7 @@ import { CatalogConsole } from "./catalog-console";
 import styles from "./catalog.module.css";
 export const dynamic = "force-dynamic";
 export const metadata = {
-  title: "상품 검토 | 퍼뜩 운영",
+  title: "상품 검토 | WORKROOM 운영",
   robots: { index: false, follow: false },
 };
 export default async function CatalogPage({
@@ -34,7 +34,7 @@ export default async function CatalogPage({
       data-ui-state={loaded.ok ? "loaded" : "error"}
     >
       <header className={styles.heading}>
-        <p className="eyebrow">퍼뜩 운영</p>
+        <p className="eyebrow">WORKROOM 운영</p>
         <h1>상품 검토</h1>
         <p>출처와 상품을 확인한 뒤 승인하고, 공개 시간을 정합니다.</p>
       </header>

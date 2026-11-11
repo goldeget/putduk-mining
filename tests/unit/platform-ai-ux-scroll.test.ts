@@ -436,7 +436,7 @@ describe("Member AI preserves reading position during long answers", () => {
 
   it("shows the official helper name and offers only text conversation controls", async () => {
     await render([]);
-    expect(host.querySelector("h1")?.textContent).toBe("퍼뜩 AI 도우미");
+    expect(host.querySelector("h1")?.textContent).toBe("WORKROOM AI 도우미");
     expect(host.querySelector('input[type="file"]')).toBeNull();
     expect(host.querySelector("select")).toBeNull();
     expect(host.textContent).not.toContain("사진 생성");

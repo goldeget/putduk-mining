@@ -24,7 +24,7 @@ function asCountSource(result: HeadCountResult): CountSource {
 }
 
 /**
- * 오늘의 퍼뜩 읽기 모형 조회.
+ * 운영 대시보드 읽기 모형 조회.
  * service_role은 서버에서만 사용하며, 실패 시 숫자를 꾸며내지 않는다.
  */
 export async function loadTodaySnapshot(

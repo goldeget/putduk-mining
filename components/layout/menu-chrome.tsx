@@ -21,12 +21,12 @@ export function MenuHeader({ displayName }: { displayName: string }) {
       <Link
         className={styles.brand}
         href="/home"
-        aria-label="퍼뜩 채굴 홈"
+        aria-label="WORKROOM 홈"
         prefetch={false}
       >
         <MenuBrandSymbol idPrefix="menu-header-brand" />
         <strong>
-          퍼뜩
+          WORKROOM
           <br />
           채굴
         </strong>
@@ -92,7 +92,7 @@ export function MenuSidebar() {
           더 빠른 오늘,
           <br />더 큰 내일
         </p>
-        <strong>퍼뜩 채굴</strong>
+        <strong>WORKROOM</strong>
         <small>
           기술이 만드는
           <br />더 가치 있는 내일

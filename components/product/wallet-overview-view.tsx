@@ -327,7 +327,7 @@ export function WalletOverviewView({
               aria-label="원화와 분리된 체험 보상"
             >
               <div>
-                <span>PUTDUK START 체험 보상</span>
+                <span>WORKROOM 체험 보상</span>
                 <Amount
                   value={
                     trialState === "error"

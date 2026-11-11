@@ -279,7 +279,7 @@ function RouteAiDock({
             <PutdukAiMascot />
             {presentation === "inline" ? (
               <span className={styles.inlineCopy}>
-                <strong>퍼뜩 AI</strong>
+                <strong>WORKROOM AI</strong>
                 <small>질문하기</small>
               </span>
             ) : (
@@ -321,7 +321,7 @@ function RouteAiDock({
               <PutdukAiMascot />
             </button>
             <div>
-              <h2 id={titleId}>퍼뜩 AI 도우미</h2>
+              <h2 id={titleId}>WORKROOM AI 도우미</h2>
               <p className={styles.subtitle}>텍스트 대화</p>
             </div>
           </div>

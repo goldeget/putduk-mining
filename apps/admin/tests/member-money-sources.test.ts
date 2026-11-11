@@ -29,7 +29,7 @@ describe("money source operator evidence", () => {
     const result = present();
     expect(result.available).toBe(true);
     expect(result.complete).toBe(true);
-    expect(result.rows).toContainEqual(["채굴 인정 원금", "15,000원"]);
+    expect(result.rows).toContainEqual(["이전 서비스 인정 원금", "15,000원"]);
     expect(result.rows).toContainEqual(["현재 보너스", "3,000원"]);
     expect(result.rows).toContainEqual(["누적 보너스", "3,000원"]);
     expect(result.rows.map((row) => row[0])).not.toContain("현재 채굴 등급");
@@ -54,7 +54,7 @@ describe("money source operator evidence", () => {
     });
     expect(result.available).toBe(true);
     expect(result.complete).toBe(false);
-    expect(result.rows).toContainEqual(["채굴 인정 원금", "확인 필요"]);
+    expect(result.rows).toContainEqual(["이전 서비스 인정 원금", "확인 필요"]);
     expect(result.rows).toContainEqual(["누적 원화 원금 입금", "확인 필요"]);
     expect(result.recordedKrwDeposits).toBe("10,000원");
   });
@@ -66,7 +66,7 @@ describe("money source operator evidence", () => {
       recovered_principal_atomic: "6000",
     });
     expect(result.complete).toBe(true);
-    expect(result.rows).toContainEqual(["채굴 인정 원금", "5,000원"]);
+    expect(result.rows).toContainEqual(["이전 서비스 인정 원금", "5,000원"]);
     expect(result.rows).toContainEqual(["출금 대기 원금", "4,000원"]);
     expect(result.rows).toContainEqual(["누적 원금 회수", "6,000원"]);
     expect(result.rows).toContainEqual(["누적 원화 원금 입금", "10,000원"]);
@@ -90,13 +90,13 @@ describe("money source operator evidence", () => {
     (data) => {
       const result = present(data);
       expect(result.available).toBe(false);
-      expect(result.rows).toContainEqual(["채굴 인정 원금", "확인 필요"]);
+      expect(result.rows).toContainEqual(["이전 서비스 인정 원금", "확인 필요"]);
       expect(result.recordedKrwDeposits).toBe("확인 필요");
     },
   );
   it("a DB error cannot become a zero principal", () => {
     expect(present(snapshot, { code: "42501" }).rows).toContainEqual([
-      "채굴 인정 원금",
+      "이전 서비스 인정 원금",
       "확인 필요",
     ]);
   });

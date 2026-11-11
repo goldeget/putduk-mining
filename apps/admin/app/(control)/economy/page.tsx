@@ -12,7 +12,7 @@ import styles from "./economy.module.css";
 
 export const dynamic = "force-dynamic";
 export const metadata = {
-  title: "채굴 정책 | 퍼뜩 운영",
+  title: "채굴 정책 | WORKROOM 운영",
   robots: { index: false, follow: false },
 };
 
@@ -41,7 +41,7 @@ export default async function EconomyPage({
       data-ui-state={loaded.ok ? "loaded" : "error"}
     >
       <header className={styles.heading}>
-        <p className="eyebrow">퍼뜩 운영</p>
+        <p className="eyebrow">WORKROOM 운영</p>
         <h1>채굴 정책</h1>
         <p>정책을 새 버전으로 작성하고, 검토·승인 후 적용 시간을 예약합니다.</p>
       </header>

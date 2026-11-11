@@ -27,7 +27,7 @@ export default async function UnauthorizedPage({
     >
       <div className="auth-actions">
         <Link className="gold-button" href={"/" as Route}>
-          오늘의 퍼뜩
+          운영 대시보드
         </Link>
         <Link className="ghost-button" href={"/reauth?reason=step-up" as Route}>
           다시 확인

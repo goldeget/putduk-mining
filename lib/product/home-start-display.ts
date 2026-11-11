@@ -1,7 +1,7 @@
 import type { ProductStatusTone } from "@/components/product/product-status-pill";
 
 export const homeRouteLoadingLabel = "홈 불러오는 중";
-export const startRouteLoadingLabel = "PUTDUK START 불러오는 중";
+export const startRouteLoadingLabel = "WORKROOM 체험 불러오는 중";
 
 /** 서버가 내려준 체험 상태만 한국어로 보여 준다. 보상·자격·시간을 계산하지 않는다. */
 const trialStatusCopy: Record<

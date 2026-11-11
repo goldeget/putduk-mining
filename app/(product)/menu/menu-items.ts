@@ -61,7 +61,7 @@ export const MENU_ITEMS: readonly MenuItem[] = [
   {
     href: "/ai",
     icon: "ai",
-    label: "퍼뜩 AI",
+    label: "WORKROOM AI",
     description: "궁금한 점을 물어볼 수 있어요.",
     lane: "settings",
     demoted: true,

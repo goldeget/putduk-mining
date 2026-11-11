@@ -47,7 +47,7 @@ export async function readMemberScreenFacts(
       wallet.error || !wallet.data
         ? null
         : String(wallet.data.available_balance_atomic),
-    displayName: displayName ? displayName : "퍼뜩 회원",
+    displayName: displayName ? displayName : "워크룸 회원",
     joinedAt: profile.error ? null : (profile.data?.created_at ?? null),
     locale: settings.error ? null : (settings.data?.locale ?? null),
     rankName: rank.error ? null : readRankName(rank.data?.rank_definitions),

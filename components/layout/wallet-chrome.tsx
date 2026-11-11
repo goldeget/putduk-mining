@@ -62,9 +62,9 @@ function WalletTools({ displayName }: { displayName: string }) {
 export function WalletDesktopHeader({ displayName }: { displayName: string }) {
   return (
     <header className={styles.desktopHeader} data-wallet-header="desktop">
-      <Link className={styles.brand} href="/home" aria-label="퍼뜩 채굴 홈">
+      <Link className={styles.brand} href="/home" aria-label="WORKROOM 홈">
         <WalletBrandSymbol />
-        <span className={styles.wordmark}>퍼뜩 채굴</span>
+        <span className={styles.wordmark}>WORKROOM</span>
         <span className={styles.tagline}>
           기술이 만드는
           <br />더 가치 있는 내일
@@ -151,7 +151,7 @@ export function WalletSidebar({ displayName }: { displayName: string }) {
       </nav>
       <div className={styles.aiCard}>
         <BrandMark title="" />
-        <strong>퍼뜩 AI</strong>
+        <strong>WORKROOM AI</strong>
         <p>궁금한 내용을 물어보세요.</p>
         <Link href="/ai" prefetch={false}>
           AI와 대화하기

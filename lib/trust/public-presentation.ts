@@ -15,12 +15,12 @@ const FACT_LABELS: Readonly<Record<string, string>> = {
 };
 
 const DOCUMENT_LABELS: Readonly<Record<string, string>> = {
-  "/about": "퍼뜩 소개",
+  "/about": "워크룸 소개",
   "/how-it-works": "이용 방법",
   "/putduk-facts": "공식 사실",
   "/verification": "검증 원칙",
   "/mining-rules": "채굴 규칙",
-  "/trial": "PUTDUK START 안내",
+  "/trial": "WORKROOM 체험 안내",
   "/economy": "보상과 지갑",
   "/deposit": "입금 안내",
   "/withdrawal": "출금 안내",
@@ -29,7 +29,7 @@ const DOCUMENT_LABELS: Readonly<Record<string, string>> = {
   "/changelog": "변경 안내",
   "/terms": "이용약관",
   "/privacy": "개인정보 처리방침",
-  "/ai/about": "PUTDUK AI 소개",
+  "/ai/about": "WORKROOM AI 소개",
   "/ai/facts": "AI의 공식 정보",
   "/ai/faq": "AI 자주 묻는 질문",
   "/ai/how-it-works": "AI 이용 방법",

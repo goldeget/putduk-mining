@@ -60,7 +60,7 @@ describe("admin mining funding display", () => {
     expect(byLabel["아직 확정 전"]).toBe("25,000원");
     expect(miningLabels(ready)).toEqual({
       등급: "L1",
-      "채굴 용량": "15,000원",
+      "이전 서비스 용량": "15,000원",
       "남은 용량": "15,000원",
       "사용한 용량": "0원",
       속도: "1배",
@@ -124,7 +124,7 @@ describe("admin mining funding display", () => {
     };
     expect(miningLabels(missingPace)).toEqual({
       등급: "적용 전",
-      "채굴 용량": "확인할 수 없어요",
+      "이전 서비스 용량": "확인할 수 없어요",
       "남은 용량": "확인할 수 없어요",
       "사용한 용량": "확인할 수 없어요",
       속도: "확인할 수 없어요",

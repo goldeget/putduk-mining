@@ -8,7 +8,7 @@ export const AI_PAGE_PROMPTS: readonly (MemberAiSuggestion & {
   { label: "내 채굴 상태", question: "내 채굴 상태 알려줘", icon: "mining" },
   {
     label: "START 확인",
-    question: "내 PUTDUK START 체험 상태 알려줘",
+    question: "내 WORKROOM 체험 상태 알려줘",
     icon: "pulse",
   },
   {

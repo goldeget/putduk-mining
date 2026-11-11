@@ -30,8 +30,8 @@ export const SAFE_MODE_MUTATION_ROLES: readonly AdminRole[] = HIGH_IMPACT_ROLES;
 export const COMPONENT_LABEL: Record<SafeModeComponent, string> = {
   GLOBAL: "전체",
   SIGNUP: "가입",
-  TRIAL: "퍼뜩 시작",
-  NEW_MINING: "새 채굴",
+  TRIAL: "이전 서비스 체험",
+  NEW_MINING: "이전 서비스 신규 이용",
   SETTLEMENT: "정산",
   DEPOSIT: "입금",
   WITHDRAWAL: "출금",
@@ -141,7 +141,7 @@ export function safeModeStateLabel(isPaused: boolean): "정지 중" | "정상" {
 
 /**
  * 제한 범위·출처의 승인된 한국어 표가 없다.
- * 같은 화면의 안전 모드에 있는 가입·퍼뜩 시작만 재사용하고,
+ * 같은 화면의 안전 모드에 있는 가입·워크룸 체험만 재사용하고,
  * 나머지 영문 코드와 0은 보여 주지 않는다.
  */
 const unreadRestrictionLabel = "확인할 수 없어요";

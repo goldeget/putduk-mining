@@ -109,7 +109,7 @@ export default async function ProductHomePage() {
         <ProductHeader home displayName={facts.displayName} />
         <div className={styles.livingWorld}>
           <div className={`${styles.livingOverlay} ${styles.simplifiedHero}`}>
-            <p className={styles.brandMark}>퍼뜩</p>
+            <p className={styles.brandMark}>WORKROOM</p>
             <h1 className={styles.welcomeTitle}>
               채굴 버튼만 누르면
               <br />

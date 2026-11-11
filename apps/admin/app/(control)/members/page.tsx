@@ -279,7 +279,7 @@ export default async function MembersPage({
 
   const modules = [
     ["체험 시작", trial],
-    ["채굴 · 정산", mining],
+    ["이전 서비스 · 정산", mining],
     ["지갑 · 거래", wallet],
     ["입금", combineMemberCounts(deposits, usdtDeposits)],
     ["출금", withdrawals],
@@ -402,7 +402,7 @@ export default async function MembersPage({
           id="evidence-money-sources"
         >
           <header>
-            <p className="eyebrow">원금 · 채굴 수익 · 보너스</p>
+            <p className="eyebrow">원금 · 이전 서비스 수익 · 보너스</p>
             <h2>자금 구분</h2>
           </header>
           {!moneyDisplay.available ? (
@@ -411,8 +411,8 @@ export default async function MembersPage({
             </FeedbackMessage>
           ) : !moneyDisplay.complete ? (
             <FeedbackMessage className={styles.partialAlert} role="status">
-              거래의 자금 출처를 확인해야 합니다. 채굴 인정 원금은 아직 확정하지
-              않았어요.
+              거래의 자금 출처를 확인해야 합니다. 이전 서비스 인정 원금은 아직
+              확정하지 않았어요.
             </FeedbackMessage>
           ) : null}
           <dl className={styles.sourceStats}>
@@ -463,9 +463,9 @@ export default async function MembersPage({
             </dl>
           )}
           <p className="panel-note">용량과 속도는 원금이 아니에요.</p>
-          <h3>채굴 주기</h3>
+          <h3>이전 서비스 주기</h3>
           {fundingDisplay.cycleRows.length === 0 ? (
-            <p className="panel-note">채굴 주기는 아직 없어요.</p>
+            <p className="panel-note">이전 서비스 주기는 아직 없어요.</p>
           ) : (
             <dl className={styles.sourceStats}>
               {fundingDisplay.cycleRows.map((row) => (
@@ -478,7 +478,7 @@ export default async function MembersPage({
           )}
           <p className="panel-note">주기는 원금이 아니에요.</p>
           <p className="panel-note">
-            채굴 수익과 보너스는 원금에 포함하지 않아요.
+            이전 서비스 수익과 보너스는 원금에 포함하지 않아요.
           </p>
           {moneyDisplay.available && !moneyDisplay.complete ? (
             <div className={styles.recordedSources}>
