@@ -229,7 +229,7 @@ describe("admin mining funding display", () => {
     expect(page).not.toContain("app_private");
     expect(page).not.toMatch(/security definer/i);
     expect(page).not.toContain("grant execute");
-    expect(page).toContain("채굴 주기");
+    expect(page).toContain("이전 서비스 주기");
     expect(page).toContain("fundingDisplay.cycleRows");
   });
 });

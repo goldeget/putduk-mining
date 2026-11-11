@@ -101,11 +101,13 @@ describe("beginner failed-job evidence and safe next steps", () => {
       const html = render([
         { ...job, ...state, job_type: "FUNDING_MINING_TICK_V1" },
       ]);
-      expect(html).toContain("유료 채굴 갱신");
+      expect(html).toContain("이전 서비스 상태 갱신");
       expect(html).toContain("자동 처리 중단");
       expect(html).toContain('href="/members"');
       expect(html).toContain("문의를 받은 회원이 있다면");
-      expect(html).toContain("원금·보류 금액과 채굴 결과를 따로 확인하세요");
+      expect(html).toContain(
+        "원금·보류 금액과 이전 서비스 결과를 따로 확인하세요",
+      );
       expect(html).toContain(
         "관련 회원과 복구 결과는 이 목록에서 확인할 수 없어요",
       );
@@ -137,7 +139,7 @@ describe("beginner failed-job evidence and safe next steps", () => {
     expect(html).not.toContain("PRIVATE_PROVIDER_TOKEN");
     expect(html).not.toContain("secret");
     expect(html).not.toContain("금액 기록 비교");
-    expect(html).not.toContain("유료 채굴 갱신");
+    expect(html).not.toContain("이전 서비스 상태 갱신");
   });
 
   it("a failed read hides residual rows and cannot look like an empty or recovered queue", () => {

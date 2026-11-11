@@ -285,8 +285,8 @@ describe("member lifecycle and profile read truth", () => {
     expect(markup).not.toContain("140,000원");
     expect(markup).not.toContain("115,000원");
     expect(markup).not.toContain("40,000원");
-    expect(markup).toMatch(/확정 채굴 수익<\/dt><dd>확인 필요/);
-    expect(markup).toMatch(/채굴 인정 원금<\/dt><dd>0원/);
+    expect(markup).toMatch(/이전 서비스 확정 수익<\/dt><dd>확인 필요/);
+    expect(markup).toMatch(/이전 서비스 인정 원금<\/dt><dd>0원/);
     expect(markup).not.toMatch(/보너스<\/dt><dd>100,000원/);
   });
   it("the actual member page keeps missing provenance partial even when profile reads succeed", async () => {
@@ -300,7 +300,7 @@ describe("member lifecycle and profile read truth", () => {
     );
     expect(markup).toContain('data-ui-state="partial"');
     expect(markup).toContain("자금 구분을 확인하지 못했습니다.");
-    expect(markup).toMatch(/채굴 인정 원금<\/dt><dd>확인 필요/);
+    expect(markup).toMatch(/이전 서비스 인정 원금<\/dt><dd>확인 필요/);
   });
   it("a missing mining display is not shown as zero principal or pending earnings", async () => {
     reads.tables.funding_principal_lots = {
@@ -344,7 +344,7 @@ describe("member lifecycle and profile read truth", () => {
         }),
       }),
     );
-    expect(markup).toMatch(/채굴 인정 원금<\/dt><dd>0원/);
+    expect(markup).toMatch(/이전 서비스 인정 원금<\/dt><dd>0원/);
     expect(markup).toContain("원금과 대기 수익은 아직 없어요.");
     expect(markup).toContain("등급과 용량, 속도는 아직 없어요.");
     const funding = markup.slice(
