@@ -53,6 +53,7 @@ begin
     return jsonb_build_object('ok',true,'value',answer);
    exception when others then return jsonb_build_object('ok',false,'state',sqlstate,'message',sqlerrm);end
    $attempt$;
+   grant execute on function pg_temp.wc_attempt(text) to service_role;
    set statement_timeout='30000ms';set lock_timeout='15000ms';set role service_role;
    set request.jwt.claims='{"role":"service_role"}';
   $remote$);
@@ -168,6 +169,7 @@ begin
    create function pg_temp.wc_attempt(p_sql text) returns jsonb language plpgsql volatile security invoker set search_path=pg_catalog as $attempt$
    declare answer text;begin execute p_sql into answer;set constraints all immediate;return jsonb_build_object('ok',true,'value',answer);
    exception when others then return jsonb_build_object('ok',false,'state',sqlstate,'message',sqlerrm);end$attempt$;
+   grant execute on function pg_temp.wc_attempt(text) to service_role;
    set role service_role;set request.jwt.claims='{"role":"service_role"}';
   $helper$);
   value:=pg_temp.wc_read('wc_checks',format('select pg_temp.wc_attempt(%L)::text',format('select public.hold_workroom_cash_withdrawal(%L::uuid,%L,''KRW_BANK'',%L::uuid,6000)::text',member,key,dest)))::jsonb;

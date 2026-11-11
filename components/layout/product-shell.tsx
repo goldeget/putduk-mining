@@ -19,7 +19,8 @@ export function ProductShell({
       ? "체험 포인트"
       : pathname.includes("/guide")
         ? "이용 안내"
-        : pathname.startsWith("/workroom/cash")
+        : pathname.startsWith("/workroom/cash") ||
+            pathname.startsWith("/workroom/records")
           ? "실제 잔액 · 입출금"
           : pathname.startsWith("/workroom")
             ? "내 워크룸"
@@ -50,7 +51,12 @@ export function ProductShell({
         <header className={styles.topbar}>
           <strong>{title}</strong>
           <div className={styles.topRight}>
-            <span className={styles.badge}>SIMULATION</span>
+            <span className={styles.badge}>
+              {pathname.startsWith("/workroom/cash") ||
+              pathname.startsWith("/workroom/records")
+                ? "KRW WALLET"
+                : "SIMULATION"}
+            </span>
             <Link href="/menu/account" aria-label="내 계정 관리">
               {displayName}
             </Link>

@@ -1,4 +1,9 @@
-import Link from "next/link";
+import {
+  CashFormPanel,
+  CashHeader,
+  CashSeparation,
+  CashSteps,
+} from "@/components/workroom/cash-ui";
 import { requirePageUser } from "@/lib/auth/session";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { readWorkroomCash } from "@/lib/wallet/read-workroom-cash.server";
@@ -8,7 +13,7 @@ import {
   type RegisteredWithdrawalDestination,
 } from "@/components/product/withdrawal-form";
 import { normalizeDestinationMethod } from "@/components/product/destination-type";
-import styles from "@/components/workroom/workroom.module.css";
+import styles from "@/components/workroom/cash.module.css";
 
 export const dynamic = "force-dynamic";
 export default async function CashWithdrawalPage() {
@@ -103,40 +108,48 @@ export default async function CashWithdrawalPage() {
     process.env.WITHDRAWAL_DATA_KEY;
   return (
     <div className={styles.page}>
-      <h1>실제 잔액 출금</h1>
-      <p>
-        입금 확인된 잔액을 본인 명의 계좌 또는 등록한 USDT 주소로 요청하세요.
-        운영자가 수동으로 송금하고 처리합니다.
-      </p>
-      <p>연습 포인트와 모의거래 결과는 출금 금액에 포함되지 않습니다.</p>
-      <section className={styles.panel}>
-        {ready && cash && wallet.data ? (
-          <>
-            <p>
-              출금 가능 {BigInt(cash.availableKrw).toLocaleString("ko-KR")}원 ·
-              처리 중 {BigInt(cash.heldKrw).toLocaleString("ko-KR")}원
+      <CashHeader
+        active="withdraw"
+        title="출금 신청"
+        description="확인된 원화 잔액으로 출금을 요청하세요. 운영자가 송금 후 완료 처리합니다."
+      />
+      <div className={styles.formGrid}>
+        <CashFormPanel>
+          {ready && cash && wallet.data ? (
+            <>
+              <div className={styles.compactBalance}>
+                <div>
+                  <span>출금 가능한 잔액</span>
+                  <strong>
+                    {BigInt(cash.availableKrw).toLocaleString("ko-KR")}원
+                  </strong>
+                </div>
+                <small>
+                  처리 중 {BigInt(cash.heldKrw).toLocaleString("ko-KR")}원
+                </small>
+              </div>
+              <WithdrawalForm
+                directDepositOnly
+                ownerId={identity.userId}
+                policies={policies}
+                destinations={destinations}
+                account={{
+                  id: wallet.data.wallet_account_id,
+                  availableBalanceAtomic: cash.availableKrw,
+                  heldBalanceAtomic: cash.heldKrw,
+                }}
+              />
+            </>
+          ) : (
+            <p role="status" className={styles.warning}>
+              출금 정보를 확인하지 못했습니다. 잠시 후 다시 열어 주세요. 계속
+              표시되면 담당자에게 문의해 주세요.
             </p>
-            <WithdrawalForm
-              directDepositOnly
-              ownerId={identity.userId}
-              policies={policies}
-              destinations={destinations}
-              account={{
-                id: wallet.data.wallet_account_id,
-                availableBalanceAtomic: cash.availableKrw,
-                heldBalanceAtomic: cash.heldKrw,
-              }}
-            />
-          </>
-        ) : (
-          <p role="status">
-            출금 정보를 확인하지 못했습니다. 잠시 후 다시 열어 주세요.
-          </p>
-        )}
-      </section>
-      <Link href="/workroom/cash">실제 잔액으로 →</Link>
-      {" · "}
-      <Link href="/workroom/records">출금·거래 내역 →</Link>
+          )}
+        </CashFormPanel>
+        <CashSteps withdrawal />
+      </div>
+      <CashSeparation />
     </div>
   );
 }

@@ -12,6 +12,9 @@ create function pg_temp.cash_must_fail(statement text,expected text) returns voi
  begin execute statement;exception when others then if position(expected in sqlerrm)>0 then return;end if;raise exception 'Expected %, got %',expected,sqlerrm;end;
  raise exception 'Expected failure: %',expected;
 end$$;
+-- The native harness revokes default function execution. This disposable test
+-- helper runs after SET ROLE; application RPC permissions stay unchanged.
+grant execute on function pg_temp.cash_must_fail(text,text) to service_role;
 do $$declare signature text;begin
  foreach signature in array array['public.read_workroom_cash(uuid)',
   'public.prepare_workroom_cash_withdrawal(uuid,text,bigint,uuid,integer,text,uuid)',

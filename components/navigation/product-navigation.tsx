@@ -28,7 +28,8 @@ export function ProductNavigation({
           aria-current={
             pathname === item.href ||
             (item.href === "/workroom/cash" &&
-              pathname.startsWith("/workroom/cash/"))
+              (pathname.startsWith("/workroom/cash/") ||
+                pathname.startsWith("/workroom/records")))
               ? "page"
               : undefined
           }
