@@ -137,23 +137,31 @@ try {
     [...psql, "-f", remote + "/workroom-fixtures/signup_metadata.sql"],
     "signup-fixture",
   );
-  for (const path of WORKROOM_CASH_TESTS)
-    command(
-      "docker",
-      [...psql, "-f", remote + "/" + path],
-      path.split("/").at(-1),
-      { tap: true },
-    );
+  const failedTests = [];
+  // Each psql process owns its transaction. A failed sequential fixture rolls
+  // back on disconnect, so the independent race fixture can still report its
+  // result. Both suites remain mandatory for a passing receipt.
+  for (const path of WORKROOM_CASH_TESTS) {
+    const label = path.split("/").at(-1);
+    try {
+      command("docker", [...psql, "-f", remote + "/" + path], label, {
+        tap: true,
+      });
+    } catch {
+      failedTests.push(label);
+    }
+  }
   writeFileSync(
     `${output}/receipt.json`,
     JSON.stringify(
       {
-        state: "PASSED",
+        state: failedTests.length ? "FAILED" : "PASSED",
         head: manifest.head,
         project,
         containerId: info.id,
         migrationCount: 203,
         records,
+        failedTests,
         scope:
           "Early native SQL compile and direct-cash lifecycle/races; full historical and authenticated gates remain mandatory",
       },
@@ -161,6 +169,7 @@ try {
       2,
     ) + "\n",
   );
+  if (failedTests.length) throw Error("CASH_NATIVE_REQUIRED_SUITES_FAILED");
 } finally {
   if (started)
     command(

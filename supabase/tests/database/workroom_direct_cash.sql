@@ -99,6 +99,17 @@ do $$declare u uuid:='11650000-0000-4000-8000-000000000001';o uuid:='11650000-00
  perform pg_temp.cash_must_fail(format('select public.record_krw_external_send(%L,''CASH-NATIVE-SHORT'',39999,%L,clock_timestamp(),''cash-native-short-send'')',r,a),'KRW_SEND_AMOUNT_MUST_EQUAL_REQUEST');
  perform public.record_krw_external_send(r,'CASH-NATIVE-40000',40000,a,clock_timestamp(),'cash-native-send-one');
  perform pg_temp.cash_must_fail(format('select public.release_withdrawal_hold(%L,%L,''native invalid post-send release'',''cash-native-forbidden-release'',''CANCELLED'')',r,a),'EXTERNAL_SEND');
+end$$;
+-- Operator completion is a later command than the member HOLD. The retained
+-- finalizer uses statement_timestamp(); a single synthetic DO would make its
+-- completion time precede the HOLD receipt created with clock_timestamp().
+do $$declare u uuid:='11650000-0000-4000-8000-000000000001';o uuid:='11650000-0000-4000-8000-000000000002';
+ a uuid:='11650000-0000-4000-8000-000000000003';other_d uuid;p uuid;j jsonb;r uuid;tx uuid;s jsonb;begin
+ select request.id into strict r from public.withdrawal_requests request
+ join app_private.workroom_cash_withdrawals cash on cash.withdrawal_id=request.id and cash.user_id=request.user_id
+ where request.user_id=u and request.amount_atomic=40000;
+ select id into strict other_d from public.withdrawal_destinations where user_id=o;
+ select id into strict p from public.withdrawal_policies where version=11650001;
  tx:=public.finalize_withdrawal_ledger(r,a,'cash-native-finalize-one');
  if public.finalize_withdrawal_ledger(r,a,'cash-native-finalize-one')<>tx then raise exception 'Finalize duplicated journal';end if;
  s:=public.read_workroom_cash(u);
