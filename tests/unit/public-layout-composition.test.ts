@@ -45,7 +45,7 @@ describe("공개 화면 구도", () => {
     expect(trustPage).toContain('path === "/about"');
     expect(trustPage).toContain('path === "/faq"');
     expect(trustPage).toContain('path === "/how-it-works"');
-    expect(trustPage).toContain('className="trust-document"');
+    expect(trustPage).toContain("className={styles.document}");
     expect(help).toContain("styles.rows");
     expect(help).toContain("공식 사실");
     expect(help).not.toContain("trust-document__hero");

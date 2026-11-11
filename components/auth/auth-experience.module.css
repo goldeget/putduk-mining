@@ -1,702 +1,257 @@
 .root {
-  min-height: 100svh;
-  background: var(--background-canvas);
-  color: var(--text-primary);
-  line-break: strict;
-  word-break: keep-all;
+  min-height: 100dvh;
 }
-
 .stage {
-  position: relative;
+  width: min(100% - 64px, 1120px);
+  min-height: 100dvh;
+  margin-inline: auto;
   display: flex;
   flex-direction: column;
-  min-height: 100svh;
-  padding: 0 max(0.75rem, env(safe-area-inset-right))
-    max(0.75rem, env(safe-area-inset-bottom))
-    max(0.75rem, env(safe-area-inset-left));
 }
-
 .header {
-  position: absolute;
-  z-index: 3;
-  top: max(0.75rem, env(safe-area-inset-top));
-  left: max(0.75rem, env(safe-area-inset-left));
-  right: max(0.75rem, env(safe-area-inset-right));
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.75rem;
-  margin: 0;
+  gap: 16px;
+  padding-block: 28px;
+  border-bottom: 1px solid var(--wr-border);
 }
-
-.brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.625rem;
-  min-height: 44px;
-  color: var(--scene-copy);
-  text-decoration: none;
-}
-
-.brand svg {
-  flex: none;
-  width: 40px;
-  height: 40px;
-  color: var(--scene-gold);
-}
-
-.brand span {
-  display: grid;
-  gap: 0.125rem;
-}
-.brand strong {
-  color: var(--scene-copy);
-  font-size: 1.125rem;
-  letter-spacing: -0.05em;
-  line-height: 1.1;
-}
-.brand small {
-  color: var(--scene-copy-muted);
-  font-size: 0.6875rem;
-  font-weight: 750;
-  letter-spacing: 0.12em;
-}
-
-.header :global(.theme-control) {
-  min-width: 0;
-  gap: 0.5rem;
-  padding: 0.2rem 0.45rem 0.2rem 0.7rem;
-  border: 1px solid var(--border-default);
-  border-radius: var(--radius-full);
-  background: color-mix(in srgb, var(--surface-raised) 92%, transparent);
-}
-.header :global(.theme-control > span) {
-  font-size: 0.75rem;
-}
-.header :global(.theme-control select) {
-  min-height: 44px;
-  max-width: 100%;
-}
-
 .composition {
-  position: relative;
-  display: grid;
   flex: 1;
-  align-content: start;
-  width: min(100%, 40rem);
-  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 460px);
+  align-items: center;
+  gap: 72px;
+  padding-block: 64px;
 }
-
 .story {
-  position: relative;
-  height: calc(20.5rem + env(safe-area-inset-top));
   min-width: 0;
-  overflow: hidden;
-  border-radius: var(--radius-xl);
-  background: var(--scene-surface);
-}
-
-.scene {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
+  display: grid;
+  gap: 28px;
 }
 .artwork {
-  position: absolute;
-  inset: 0;
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-.artwork img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: 50% 28%;
-}
-.scrim {
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(
-      180deg,
-      rgba(7, 7, 6, 0.82) 0%,
-      rgba(7, 7, 6, 0.28) 42%,
-      rgba(7, 7, 6, 0.62) 100%
-    ),
-    linear-gradient(90deg, rgba(7, 7, 6, 0.5) 0%, rgba(7, 7, 6, 0.08) 72%);
-  pointer-events: none;
-}
-
-.storyCopy {
-  position: relative;
-  z-index: 1;
-  max-width: 22rem;
-  padding: calc(4.6rem + env(safe-area-inset-top)) 1.15rem 3.6rem;
+  width: 68px;
+  height: 68px;
+  display: grid;
+  place-items: center;
+  background: var(--wr-success-bg);
+  border: 1px solid var(--wr-success-border);
+  border-radius: 22px;
 }
 .eyebrow {
-  margin: 0 0 0.5rem;
-  color: var(--scene-gold);
-  font-size: 0.8125rem;
-  font-weight: 750;
-  letter-spacing: 0.02em;
+  color: var(--wr-accent);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.6px;
+  margin-bottom: 14px !important;
 }
-.storyCopy h1 {
-  max-width: 11em;
-  margin: 0;
-  color: var(--scene-copy);
-  font-size: clamp(1.7rem, 5.4vw, 2.2rem);
-  font-weight: 650;
-  letter-spacing: -0.055em;
-  line-height: 1.24;
+.story h1 {
+  max-width: 12em;
+  font-size: clamp(30px, 3.4vw, 44px);
+  line-height: 1.3;
+  letter-spacing: -1.4px;
   text-wrap: balance;
 }
 .description {
-  max-width: 22em;
-  margin: 0.65rem 0 0;
-  color: var(--scene-copy-muted);
-  font-size: 0.9375rem;
-  line-height: 1.6;
+  color: var(--wr-secondary);
+  font-size: 15px;
+  line-height: 1.9;
+  margin-top: 18px !important;
+  max-width: 40ch;
 }
-
-.panel {
-  position: relative;
-  z-index: 2;
-  min-width: 0;
-  margin: -2.6rem 0.15rem 0;
-  padding: 1.2rem 1.05rem 1.05rem;
-  border: 1px solid var(--border-strong);
-  border-radius: var(--radius-xl);
-  background: color-mix(in srgb, var(--surface-raised) 94%, transparent);
-  box-shadow:
-    inset 0 1px 0 var(--border-subtle),
-    var(--shadow-lift);
-  backdrop-filter: blur(18px);
-}
-
-.panelHeader {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  column-gap: 0.75rem;
-  row-gap: 0.2rem;
+.security {
+  display: flex;
   align-items: start;
-  max-width: 36em;
+  gap: 9px;
+  color: var(--wr-muted);
+  font-size: 12px;
+  line-height: 1.8;
+  max-width: 38ch;
+}
+.security svg {
+  color: var(--wr-accent);
+  flex: none;
+  margin-top: 2px;
+}
+.panel {
+  min-width: 0;
+  padding: 32px;
+  border: 1px solid var(--wr-border);
+  border-radius: 18px;
+  background: var(--wr-panel);
+}
+.panelHeader {
+  margin-bottom: 26px;
 }
 .seal {
-  display: inline-grid;
-  grid-row: 1 / span 2;
-  width: 40px;
-  height: 40px;
-  place-items: center;
-  margin: 0.1rem 0 0;
-  border: 1px solid var(--border-strong);
-  border-radius: var(--radius-md);
-  background: var(--brand-quiet);
-  color: var(--brand-primary);
+  display: inline-flex;
+  padding: 10px;
+  margin-bottom: 18px;
+  border-radius: 12px;
+  background: var(--wr-success-bg);
+  color: var(--wr-accent);
+}
+.root[data-ui-state="error"] .seal {
+  color: var(--wr-danger);
+  background: var(--wr-danger-bg);
 }
 .panelHeader h2 {
-  margin: 0;
-  font-size: 1.35rem;
-  letter-spacing: -0.04em;
-  font-weight: 650;
-  line-height: 1.3;
-  text-wrap: balance;
+  font-size: 25px;
+  letter-spacing: -0.6px;
 }
 .panelHeader p {
-  margin: 0;
-  color: var(--text-secondary);
-  font-size: 0.875rem;
-  line-height: 1.55;
-}
-.footer {
-  margin-top: 1.5rem;
-  padding-top: 1.25rem;
-  border-top: 1px solid var(--border-default);
-  color: var(--text-secondary);
-  font-size: 0.875rem;
+  color: var(--wr-secondary);
+  margin-top: 10px !important;
+  font-size: 13px;
   line-height: 1.8;
 }
-.footer p {
+.panel :global(.auth-form) {
+  display: grid;
+  gap: 22px;
   margin: 0;
 }
-.footer a {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  font-weight: 750;
-  color: var(--text-primary);
-  text-underline-offset: 0.25em;
-}
-.pageFooter {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.75rem;
-  margin: 0.35rem auto 0;
-  color: var(--text-secondary);
-  font-size: 0.8125rem;
-}
-.pageFooter a {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  color: inherit;
-  text-decoration: none;
-}
-
-.root :global(.auth-form),
-.root :global(.signup-form) {
-  margin-top: 1.1rem;
-  gap: 0.9rem;
-}
-.root :global(.auth-form input),
-.root :global(.signup-form input:not([type="checkbox"])) {
-  min-height: 54px;
-  height: auto;
-  font-size: 1rem;
-  border-color: var(--border-control);
-  border-radius: var(--radius-md);
-  background: var(--surface-sunken);
-}
-.root :global(.auth-form input[aria-invalid="true"]),
-.root :global(.signup-form input[aria-invalid="true"]) {
-  border-color: var(--status-danger);
-}
-.root :global(.auth-form input:focus),
-.root :global(.signup-form input:focus) {
-  background: var(--surface-default);
-  border-color: var(--brand-primary);
-  box-shadow: var(--shadow-focus);
-}
-.root :global(.auth-form__password),
-.root :global(.signup-form__password) {
-  min-width: 0;
-}
-.root :global(.auth-form__password input),
-.root
-  :global(.signup-form .signup-form__password input:not([type="checkbox"])) {
-  padding-right: 4.25rem;
-}
-.root :global(.auth-form__password button),
-.root :global(.signup-form__password button) {
-  min-width: 44px;
-  min-height: 44px;
-}
-.root :global(.auth-form__recovery) {
-  flex-wrap: wrap;
-  justify-content: center;
-  column-gap: 1rem;
-  row-gap: 0;
-  margin-block: 0;
-}
-.root :global(.auth-form__recovery a) {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  color: var(--text-secondary);
-  text-underline-offset: 0.2em;
-}
-.root :global(.auth-form__actions) {
+.panel :global(.auth-form label),
+.panel :global(.auth-form__field) {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-}
-.root :global(.button) {
+  gap: 8px;
   min-width: 0;
-  min-height: 52px;
+  color: var(--wr-secondary);
+  font-size: 13px;
+}
+.panel :global(.auth-form input) {
   width: 100%;
-  gap: 0.75rem;
-  padding: 0.875rem 1rem;
-  white-space: normal;
-  font-size: 0.9375rem;
-  line-height: 1.5;
-  text-align: center;
-  border-radius: var(--radius-full);
+  min-height: 48px;
+  font-size: 16px;
+  color: var(--wr-text);
+  background: var(--wr-sunken);
+  border-color: var(--wr-border-strong);
 }
-.root :global(.button--primary) {
-  border: 1px solid var(--action-primary-border);
-  background: var(--action-primary-background);
-  color: var(--action-primary-foreground);
-  box-shadow: var(--action-primary-shadow);
+.panel :global(.auth-form input[aria-invalid="true"]) {
+  border-color: var(--wr-danger);
 }
-.root :global(.button--primary:hover:not(:disabled)) {
-  border-color: var(--brand-hover);
-  background: var(--action-primary-hover);
+.panel :global(.auth-form__password) {
+  position: relative;
 }
-.root :global(.button--primary:active:not(:disabled)) {
-  background: var(--action-primary-active);
+.panel :global(.auth-form__password input) {
+  padding-right: 68px;
 }
-.root :global(.button--secondary) {
-  border-color: var(--border-control);
-  background: var(--surface-default);
-  color: var(--text-primary);
+.panel :global(.auth-form__password button) {
+  position: absolute;
+  inset: 4px 4px 4px auto;
+  min-width: 52px;
+  border: 0;
+  background: transparent;
+  color: var(--wr-accent);
+  font-size: 12px;
 }
-.root :global(.button:disabled) {
-  cursor: not-allowed;
-  opacity: 0.55;
-  transform: none;
+.panel :global(.auth-form__actions) {
+  display: grid;
+  gap: 10px;
 }
-.root :global(.auth-form__message) {
-  margin-top: 1rem;
-  border: 1px solid var(--border-default);
-  border-left: 3px solid var(--status-info);
-  border-radius: var(--radius-md);
-  background: var(--surface-default);
-  color: var(--text-primary);
-  line-height: 1.75;
+.panel :global(.auth-form__actions .button) {
+  width: 100%;
+  min-height: 48px;
+  border-radius: 9px;
 }
-.root :global(.auth-form__message--error) {
-  border-left-color: var(--status-danger);
+.panel :global(.auth-form small) {
+  color: var(--wr-muted);
+  font-size: 12px;
 }
-.root :global(.auth-form__message--success) {
-  border-left-color: var(--status-success);
+.panel :global(.auth-form__message--error) {
+  color: var(--wr-danger);
+  background: var(--wr-danger-bg);
+  border-color: var(--wr-danger-border);
 }
-.root :global(.auth-form__message--offline) {
-  border-left-color: var(--status-warning);
+.panel :global(.auth-form__message--confirmation) {
+  color: var(--wr-accent);
+  background: var(--wr-success-bg);
+  border-color: var(--wr-success-border);
 }
-.root :global(.auth-form__pending) {
+.panel :global(.auth-form__pending) {
   position: absolute;
   width: 1px;
   height: 1px;
-  padding: 0;
   overflow: hidden;
   clip-path: inset(50%);
   white-space: nowrap;
 }
-.root :global(.signup-form fieldset) {
-  gap: 0.85rem;
-  padding: 0.9rem 0 0;
-  border: 0;
-  border-top: 1px solid var(--border-default);
-  border-radius: 0;
-  background: transparent;
+.footer {
+  padding-top: 22px;
+  margin-top: 24px;
+  border-top: 1px solid var(--wr-border);
+  color: var(--wr-secondary);
+  font-size: 12px;
+  line-height: 1.9;
 }
-.root :global(.signup-form legend) {
-  padding: 0 0.75rem 0 0;
-  color: var(--text-primary);
-  font-size: 1rem;
-  letter-spacing: -0.025em;
+.footer a:hover,
+.pageFooter a:hover {
+  color: var(--wr-accent);
+  text-decoration: underline;
 }
-.root :global(.signup-form label),
-.root :global(.auth-form label),
-.root :global(.auth-form__field > label) {
-  min-width: 0;
-  font-size: 0.875rem;
-  color: var(--text-primary);
+.pageFooter {
+  display: flex;
+  justify-content: center;
+  gap: 12px 20px;
+  flex-wrap: wrap;
+  padding: 24px 0 30px;
+  border-top: 1px solid var(--wr-border);
+  color: var(--wr-muted);
+  font-size: 11px;
 }
-.root :global(.signup-form small),
-.root :global(.auth-form small) {
-  font-size: 0.8125rem;
-  font-weight: 450;
-  line-height: 1.7;
-  color: var(--text-secondary);
+.spacious .panel {
+  padding-block: 38px;
 }
-.root :global(.signup-form__inline) {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-}
-.root :global(.signup-form__inline input) {
-  width: 100%;
-}
-.root :global(.signup-form__inline > button) {
-  width: auto;
-  padding-inline: 0.875rem;
-  font-size: 0.8125rem;
-  line-height: 1.5;
-  border-color: var(--border-control);
-}
-.root :global(.signup-form__check) {
-  min-height: 44px;
-}
-.root :global(.signup-form details) {
-  margin: 0 0 0.5rem;
-  padding: 0.5rem 0.875rem;
-  border: 1px solid var(--border-default);
-  border-radius: var(--radius-md);
-  background: var(--surface-default);
-}
-.root :global(.signup-form summary) {
-  min-height: 44px;
-  align-content: center;
-  color: var(--text-secondary);
-  font-size: 0.875rem;
-}
-.root :global(.signup-form details p) {
-  max-width: 36em;
-  margin: 0.5rem 0 0;
-  padding: 0;
-  background: transparent;
-  color: var(--text-secondary);
-  line-height: 1.8;
-}
-.root :global(a:focus-visible),
-.root :global(button:focus-visible),
-.root :global(select:focus-visible),
-.root :global(summary:focus-visible) {
-  outline: 2px solid var(--brand-primary);
-  outline-offset: 4px;
-  box-shadow: var(--shadow-focus);
-}
-
-.spacious .story {
-  height: calc(17.75rem + env(safe-area-inset-top));
-}
-.spacious .storyCopy h1 {
-  font-size: clamp(1.5rem, 4.6vw, 1.9rem);
-}
-
-/* Login/signup headers also sit outside the artwork on tablet widths. */
-.root:is([data-ui-ready="/login"], [data-ui-ready="/signup"]) .brand {
-  padding: 0.5rem 0.75rem;
-  border: 1px solid var(--border-default);
-  border-radius: var(--radius-full);
-  background: color-mix(in srgb, var(--surface-default) 96%, transparent);
-  color: var(--text-primary);
-}
-.root:is([data-ui-ready="/login"], [data-ui-ready="/signup"]) .brand strong,
-.root:is([data-ui-ready="/login"], [data-ui-ready="/signup"]) .storyCopy h1 {
-  color: var(--text-primary);
-}
-.root:is([data-ui-ready="/login"], [data-ui-ready="/signup"]) .brand small,
-.root:is([data-ui-ready="/login"], [data-ui-ready="/signup"]) .description {
-  color: var(--text-secondary);
-}
-.root:is([data-ui-ready="/login"], [data-ui-ready="/signup"]) .brand svg,
-.root:is([data-ui-ready="/login"], [data-ui-ready="/signup"]) .eyebrow {
-  color: var(--brand-primary);
-}
-.root:is([data-ui-ready="/login"], [data-ui-ready="/signup"]) .story {
-  background: var(--surface-sunken);
-}
-.root:is([data-ui-ready="/login"], [data-ui-ready="/signup"]) .scrim {
-  background:
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--surface-sunken) 96%, transparent) 0%,
-      color-mix(in srgb, var(--surface-sunken) 68%, transparent) 38%,
-      color-mix(in srgb, var(--surface-sunken) 8%, transparent) 68%,
-      color-mix(in srgb, var(--surface-sunken) 62%, transparent) 100%
-    ),
-    linear-gradient(
-      90deg,
-      color-mix(in srgb, var(--surface-sunken) 86%, transparent) 0%,
-      color-mix(in srgb, var(--surface-sunken) 72%, transparent) 32%,
-      transparent 76%
-    );
-}
-
-@media (max-width: 1099px) {
-  .root:is([data-ui-ready="/login"], [data-ui-ready="/signup"]) .storyCopy {
-    padding-top: calc(5.5rem + env(safe-area-inset-top));
-  }
-  .root[data-ui-ready="/signup"] .story {
-    height: calc(20rem + env(safe-area-inset-top));
-  }
-}
-
-@media (min-width: 768px) {
+@media (max-width: 800px) {
   .stage {
-    padding-inline: max(1.25rem, env(safe-area-inset-right))
-      max(1.25rem, env(safe-area-inset-left));
-  }
-  .composition {
-    width: min(100%, 44rem);
-  }
-  .story {
-    height: calc(24rem + env(safe-area-inset-top));
-  }
-  .panel {
-    margin-inline: 1.25rem;
-    padding: 1.6rem 1.5rem 1.35rem;
-  }
-  .spacious .story {
-    height: calc(18rem + env(safe-area-inset-top));
-  }
-}
-
-@media (min-width: 1100px) {
-  .stage {
-    padding: 0 0 max(0.5rem, env(safe-area-inset-bottom));
+    width: min(100% - 40px, 600px);
   }
   .header {
-    left: max(1.75rem, calc((100% - 1440px) / 2 + 1.75rem));
-    right: max(1.75rem, calc((100% - 1440px) / 2 + 1.75rem));
+    padding-block: 22px;
   }
   .composition {
-    width: 100%;
-    min-height: calc(100svh - 3.5rem);
-    align-content: stretch;
-    grid-template-columns:
-      minmax(1.25rem, 1fr) minmax(0, 46rem) minmax(22.5rem, 27.5rem)
-      minmax(1.25rem, 1fr);
-    grid-template-rows: minmax(36rem, 1fr);
+    grid-template-columns: 1fr;
+    gap: 28px;
+    padding-block: 36px;
   }
   .story {
-    grid-column: 1 / -1;
-    grid-row: 1;
-    height: auto;
-    min-height: 100%;
-    border-radius: 0;
+    gap: 18px;
   }
-  .storyCopy {
-    position: absolute;
-    top: 14%;
-    left: max(1.75rem, calc((100% - 1440px) / 2 + 1.75rem));
-    width: min(32rem, 42vw);
+  .artwork {
+    display: none;
+  }
+  .story h1 {
+    font-size: 30px;
     max-width: none;
-    padding: 0;
-  }
-  .storyCopy h1 {
-    max-width: 10em;
-    font-size: clamp(2.15rem, 3.1vw, 3.15rem);
   }
   .description {
-    max-width: 24em;
-    font-size: 1rem;
+    margin-top: 12px !important;
+    font-size: 13px;
+    max-width: none;
+  }
+  .security {
+    max-width: none;
+    font-size: 11px;
   }
   .panel {
-    grid-column: 3;
-    grid-row: 1;
-    align-self: center;
-    width: auto;
-    margin: 1.25rem 0;
-    padding: clamp(1.5rem, 2vw, 2rem);
+    padding: 26px 22px;
+  }
+  .header > a svg {
+    width: 34px;
+    height: 34px;
+  }
+  .header > a > span {
+    font-size: 16px;
+  }
+  .header > a small {
+    font-size: 9px;
   }
   .pageFooter {
-    position: absolute;
-    left: max(1.75rem, calc((100% - 1440px) / 2 + 1.75rem));
-    bottom: max(0.75rem, env(safe-area-inset-bottom));
-    justify-content: flex-start;
-    width: min(28rem, 40vw);
-    margin: 0;
-  }
-  .spacious .composition {
-    grid-template-columns:
-      minmax(1rem, 1fr) minmax(0, 24rem) minmax(26rem, 42rem)
-      minmax(1rem, 1fr);
-    align-items: start;
-  }
-  .spacious .story {
-    position: absolute;
-    inset: 0;
-    height: auto;
-    min-height: 100%;
-  }
-  .spacious .storyCopy {
-    top: 5.75rem;
-    width: min(22rem, 30vw);
-  }
-  .spacious .panel {
-    align-self: start;
-    margin-top: 5.25rem;
-    margin-bottom: 1.5rem;
-  }
-  .spacious .pageFooter {
-    position: static;
-    width: min(100%, 42rem);
-    margin: 0.5rem auto 0;
-    justify-content: center;
-  }
-  .root[data-ui-ready="/login"] .scene {
-    right: 30%;
-  }
-  .root[data-ui-ready="/login"] .artwork img {
-    object-position: right center;
-  }
-  .root[data-ui-ready="/signup"] .story {
-    bottom: auto;
-    height: min(56rem, 100svh);
-    min-height: 36rem;
-  }
-  .root[data-ui-ready="/signup"] .scene {
-    right: 36%;
-  }
-  .root[data-ui-ready="/signup"] .artwork img {
-    object-position: right center;
+    gap: 12px 16px;
   }
 }
-
-@media (max-width: 599px) {
-  .root :global(.signup-form__grid) {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .root :global(.signup-form__inline) {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 0.5rem;
-  }
-  .root :global(.signup-form__inline > button) {
-    width: 100%;
-    min-height: 44px;
-  }
-  .header :global(.theme-control > span) {
-    display: none;
-  }
-  .seal {
-    width: 36px;
-    height: 36px;
-  }
-}
-
-@media (prefers-reduced-transparency: reduce) {
-  .root:is([data-ui-ready="/login"], [data-ui-ready="/signup"]) .brand {
-    background: var(--surface-default);
-  }
-  .panel {
-    backdrop-filter: none;
-    background: var(--surface-raised);
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .root :global(*),
-  .root :global(*::before),
-  .root :global(*::after) {
+  .root * {
+    scroll-behavior: auto;
     transition: none;
-    animation: none;
-  }
-}
-
-@media (forced-colors: active) {
-  .root:is([data-ui-ready="/login"], [data-ui-ready="/signup"]) .scene {
-    display: none;
-  }
-  .scrim {
-    display: none;
-  }
-  .story {
-    background: Canvas;
-  }
-  .brand,
-  .brand strong,
-  .brand small,
-  .storyCopy,
-  .storyCopy h1,
-  .eyebrow,
-  .description {
-    color: CanvasText;
-  }
-  .root:is([data-ui-ready="/login"], [data-ui-ready="/signup"]) .brand,
-  .root:is([data-ui-ready="/login"], [data-ui-ready="/signup"]) .brand strong,
-  .root:is([data-ui-ready="/login"], [data-ui-ready="/signup"]) .brand small,
-  .root:is([data-ui-ready="/login"], [data-ui-ready="/signup"]) .brand svg,
-  .root:is([data-ui-ready="/login"], [data-ui-ready="/signup"]) .storyCopy h1,
-  .root:is([data-ui-ready="/login"], [data-ui-ready="/signup"]) .eyebrow,
-  .root:is([data-ui-ready="/login"], [data-ui-ready="/signup"]) .description {
-    color: CanvasText;
-  }
-  .root:is([data-ui-ready="/login"], [data-ui-ready="/signup"]) .brand,
-  .root:is([data-ui-ready="/login"], [data-ui-ready="/signup"]) .story {
-    background: Canvas;
-  }
-  .story,
-  .panel,
-  .seal,
-  .root :global(.button),
-  .root :global(input),
-  .root :global(.signup-form details) {
-    border: 1px solid CanvasText;
   }
 }

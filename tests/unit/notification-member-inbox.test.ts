@@ -116,7 +116,7 @@ describe("member notification inbox", () => {
   });
 
   it("maps known categories to Korean labels", () => {
-    expect(notificationCategoryLabelKo("mining")).toBe("채굴");
+    expect(notificationCategoryLabelKo("mining")).toBe("이전 서비스");
     expect(notificationCategoryLabelKo("wallet")).toBe("자산");
     expect(notificationCategoryLabelKo("notices")).toBe("공지");
     expect(notificationCategoryLabelKo("unknown_bucket")).toBe("알림");

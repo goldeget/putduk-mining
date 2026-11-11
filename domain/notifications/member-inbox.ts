@@ -17,7 +17,7 @@ const CATEGORY_LABELS_KO: Readonly<Record<string, string>> = {
   events: "이벤트",
   notices: "공지",
   marketing: "혜택과 소식",
-  mining: "채굴",
+  mining: "이전 서비스",
   service: "중요 안내",
   wallet: "자산",
 };

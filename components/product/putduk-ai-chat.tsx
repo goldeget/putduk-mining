@@ -16,7 +16,8 @@ import {
 } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { BrandMark } from "@/components/brand/brand-mark";
+import { WorkroomLoading } from "@/components/ui/workroom-loading";
+import { WorkroomMark } from "@/components/workroom/workroom-mark";
 import { PutdukIcon } from "@/components/icons/putduk-icon";
 import {
   FeedbackMessage,
@@ -578,11 +579,17 @@ export function PutdukAiChat({
                     }
                     onClick={() => void session.loadMoreHistory()}
                   >
-                    {session.historyListPageStatus === "loading"
-                      ? "불러오는 중…"
-                      : session.historyListPageStatus === "error"
-                        ? "이전 대화 다시 불러오기"
-                        : "이전 대화 더 보기"}
+                    {session.historyListPageStatus === "loading" ? (
+                      <WorkroomLoading
+                        label="불러오는 중…"
+                        variant="inline"
+                        announce={false}
+                      />
+                    ) : session.historyListPageStatus === "error" ? (
+                      "이전 대화 다시 불러오기"
+                    ) : (
+                      "이전 대화 더 보기"
+                    )}
                   </button>
                 </div>
               ) : null}
@@ -686,8 +693,8 @@ export function PutdukAiChat({
               <div>
                 <strong>{pageFacts.displayName}님</strong>
                 <p>현재 등급: {pageFacts.rankName ?? "확인할 수 없음"}</p>
-                <p>지갑 사용 가능 금액: {pageFacts.availableKrwLabel}</p>
-                <Link href="/wallet" prefetch={false}>
+                <p>실제 잔액 · 입출금: {pageFacts.availableKrwLabel}</p>
+                <Link href="/workroom/cash" prefetch={false}>
                   내 지갑 보기 →
                 </Link>
               </div>
@@ -789,23 +796,24 @@ export function PutdukAiChat({
                     }
                     onClick={() => void loadEarlier()}
                   >
-                    {session.earlierMessagesStatus === "loading"
-                      ? "이전 내용 불러오는 중…"
-                      : session.earlierMessagesStatus === "error"
-                        ? "이전 내용 다시 불러오기"
-                        : "이전 내용 더 보기"}
+                    {session.earlierMessagesStatus === "loading" ? (
+                      <WorkroomLoading
+                        label="이전 내용 불러오는 중…"
+                        variant="inline"
+                        announce={false}
+                      />
+                    ) : session.earlierMessagesStatus === "error" ? (
+                      "이전 내용 다시 불러오기"
+                    ) : (
+                      "이전 내용 더 보기"
+                    )}
                   </button>
                 </div>
               ) : null}
               {session.messages.length === 0 ? (
                 <div className={`ai-chat__welcome ${styles.welcome}`}>
                   <span className={styles.welcomeMascot} aria-hidden="true">
-                    <BrandMark
-                      title=""
-                      width="100%"
-                      height="100%"
-                      style={{ color: "var(--brand-identity)" }}
-                    />
+                    <WorkroomMark size={64} />
                   </span>
                   <span className={styles.welcomeEyebrow}>WORKROOM</span>
                   <h2>무엇이 궁금하세요?</h2>

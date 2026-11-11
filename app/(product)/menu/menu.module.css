@@ -614,3 +614,103 @@
     box-shadow: none;
   }
 }
+
+/* Shared retained settings surfaces use the active WORKROOM palette. */
+.accountPage,
+.settingsPage,
+.notificationPage {
+  width: 100%;
+  max-width: 1120px;
+  margin-inline: auto;
+  display: grid;
+  gap: 24px;
+  min-width: 0;
+}
+.accountPage :global(.surface),
+.settingsPage :global(.settings-panel),
+.notificationPage :global(.surface) {
+  padding: clamp(20px, 3vw, 30px);
+  border: 1px solid var(--border-default);
+  border-radius: 22px;
+  background: var(--surface-default);
+  box-shadow: none;
+}
+.accountPage :global(.page-heading),
+.settingsPage :global(.page-heading),
+.notificationPage :global(.page-heading) {
+  padding: 8px 0 4px;
+}
+.settingsPage :global(.settings-panel__heading) {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+.settingsPage :global(.preference-form) {
+  display: grid;
+  gap: 16px;
+}
+.settingsPage :global(.preference-form label) {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 18px;
+  border: 1px solid var(--border-default);
+  border-radius: 14px;
+  background: var(--surface-sunken);
+}
+.settingsPage :global(.preference-form input[type="checkbox"]) {
+  accent-color: var(--brand-primary);
+  width: 20px;
+  height: 20px;
+  flex: none;
+  margin-top: 3px;
+}
+.settingsPage :global(.preference-form label small) {
+  display: block;
+  margin-top: 5px;
+  color: var(--text-secondary);
+}
+.notificationPage :global(.notification-center) {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 0.45fr);
+  gap: 24px;
+  align-items: start;
+}
+.notificationPage :global(.notification-center > section) {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+.notificationPage :global(.notification-center__item) {
+  padding: 22px;
+  border: 1px solid var(--border-default);
+  border-radius: 18px;
+  background: var(--surface-default);
+}
+.notificationPage :global(.notification-center__item.is-unread) {
+  border-color: var(--brand-primary);
+  background: color-mix(
+    in srgb,
+    var(--brand-quiet) 35%,
+    var(--surface-default)
+  );
+}
+.notificationPage :global(.notification-center__push) {
+  display: grid;
+  gap: 14px;
+}
+.accountPage :global(button),
+.settingsPage :global(button),
+.notificationPage :global(button) {
+  min-height: 44px;
+}
+@media (max-width: 760px) {
+  .notificationPage :global(.notification-center) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .accountPage,
+  .settingsPage,
+  .notificationPage {
+    gap: 20px;
+  }
+}

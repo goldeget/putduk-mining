@@ -7,7 +7,7 @@ export { WorkroomMark } from "./workroom-mark";
 
 export function WorkroomBrand() {
   return (
-    <Link href="/" className={styles.brand}>
+    <Link href="/" className={styles.brand} aria-label="WORKROOM 홈">
       <WorkroomMark />
       <span>
         WORKROOM<small>나만의 워크룸</small>

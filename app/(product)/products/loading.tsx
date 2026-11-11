@@ -1,5 +1,5 @@
-import { PublishedCatalogLoading } from "@/components/product/published-catalog-view";
+import { WorkroomLoading } from "@/components/ui/workroom-loading";
 
 export default function ProductsLoading() {
-  return <PublishedCatalogLoading />;
+  return <WorkroomLoading label="항목을 불러오고 있어요" />;
 }

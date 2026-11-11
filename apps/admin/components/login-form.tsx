@@ -1,5 +1,6 @@
 "use client";
 import { FeedbackMessage } from "../../../components/ui/feedback-message";
+import { WorkroomLoading } from "../../../components/ui/workroom-loading";
 
 import { useActionState } from "react";
 
@@ -38,8 +39,17 @@ export function LoginForm({ returnTo }: { returnTo: string }) {
           {state.message}
         </FeedbackMessage>
       ) : null}
-      <button className="gold-button" disabled={pending} type="submit">
-        {pending ? "확인 중…" : "보안 로그인"}
+      <button
+        className="gold-button"
+        disabled={pending}
+        type="submit"
+        aria-busy={pending}
+      >
+        {pending ? (
+          <WorkroomLoading label="확인 중…" variant="inline" />
+        ) : (
+          "보안 로그인"
+        )}
       </button>
     </form>
   );

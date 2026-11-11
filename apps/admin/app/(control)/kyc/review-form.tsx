@@ -1,4 +1,5 @@
 "use client";
+import { WorkroomLoading } from "../../../../../components/ui/workroom-loading";
 import { FeedbackMessage } from "../../../../../components/ui/feedback-message";
 
 import { useRef, useState, useTransition } from "react";
@@ -136,8 +137,13 @@ export function KycReviewForm({
           className="gold-button"
           disabled={pending || !evidenceAvailable}
           type="submit"
+          aria-busy={pending}
         >
-          {pending ? "저장 중…" : "검토 결과 저장"}
+          {pending ? (
+            <WorkroomLoading label="저장 중…" variant="inline" />
+          ) : (
+            "검토 결과 저장"
+          )}
         </button>
       </fieldset>
       <QueueFlash result={result?.ok && publishFeedback ? null : result} />

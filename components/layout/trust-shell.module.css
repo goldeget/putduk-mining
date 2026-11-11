@@ -1,0 +1,152 @@
+.shell {
+  min-height: 100dvh;
+}
+.header {
+  border-bottom: 1px solid var(--wr-border);
+  background: var(--wr-canvas);
+}
+.headerInner {
+  width: min(100% - 64px, 1180px);
+  margin-inline: auto;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  min-height: 92px;
+  padding-block: 14px;
+}
+.navArea {
+  margin-inline: auto;
+  min-width: 0;
+}
+.navArea nav {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+.navArea a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  white-space: nowrap;
+  font-size: 13px;
+  color: var(--wr-secondary);
+}
+.navArea a:hover,
+.navArea a[aria-current="page"] {
+  color: var(--wr-accent);
+}
+.tools {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.mobileLogin {
+  display: none !important;
+}
+.content {
+  min-width: 0;
+  min-height: 60dvh;
+}
+.footer {
+  width: min(100% - 64px, 1180px);
+  margin-inline: auto;
+  display: grid;
+  grid-template-columns: 230px minmax(0, 1fr);
+  gap: 56px;
+  padding-block: 34px 42px;
+  border-top: 1px solid var(--wr-border);
+}
+.footer p {
+  color: var(--wr-muted);
+  margin-top: 18px !important;
+  font-size: 11px;
+}
+.footerLinks nav {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 4px 20px;
+}
+.footerLinks a {
+  display: flex;
+  align-items: center;
+  min-height: 40px;
+  color: var(--wr-secondary);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.footerLinks a:hover,
+.footerLinks a[aria-current="page"] {
+  color: var(--wr-accent);
+}
+@media (max-width: 1000px) {
+  .headerInner {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .tools {
+    margin-left: auto;
+  }
+  .navArea {
+    order: 3;
+    flex: 0 0 100%;
+    margin: 0;
+  }
+  .navArea nav {
+    justify-content: flex-start;
+    gap: 24px;
+  }
+  .footer {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}
+@media (max-width: 600px) {
+  .headerInner,
+  .footer {
+    width: calc(100% - 40px);
+  }
+  .headerInner {
+    padding-block: 20px 8px;
+  }
+  .headerInner > a svg {
+    width: 34px;
+    height: 34px;
+  }
+  .headerInner > a > span {
+    font-size: 16px;
+  }
+  .headerInner > a small {
+    font-size: 9px;
+  }
+  .login {
+    display: none !important;
+  }
+  .mobileLogin {
+    display: inline-flex !important;
+  }
+  .navArea {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    overflow-x: auto;
+  }
+  .navArea nav {
+    gap: 18px;
+    flex: none;
+  }
+  .navArea a {
+    font-size: 12px;
+    min-height: 44px;
+  }
+  .footer {
+    padding-block: 28px;
+  }
+  .footerLinks nav {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2px 16px;
+  }
+  .footerLinks a {
+    min-height: 44px;
+    font-size: 11px;
+  }
+}

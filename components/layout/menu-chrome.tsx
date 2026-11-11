@@ -5,10 +5,10 @@ import { MenuBrandSymbol } from "@/components/product/menu-brand-symbol";
 import styles from "./menu-chrome.module.css";
 
 const destinations = [
-  { href: "/home", label: "홈", icon: "home" },
-  { href: "/mining", label: "채굴", icon: "coins" },
-  { href: "/products", label: "상품", icon: "cube" },
-  { href: "/wallet", label: "지갑", icon: "wallet" },
+  { href: "/workroom", label: "홈", icon: "home" },
+  { href: "/workroom/history", label: "참여 내역", icon: "coins" },
+  { href: "/workroom/guide", label: "이용 안내", icon: "cube" },
+  { href: "/workroom/cash", label: "실제 잔액", icon: "wallet" },
   { href: "/menu", label: "더보기", icon: "more" },
 ] as const;
 
@@ -20,7 +20,7 @@ export function MenuHeader({ displayName }: { displayName: string }) {
     >
       <Link
         className={styles.brand}
-        href="/home"
+        href="/workroom"
         aria-label="WORKROOM 홈"
         prefetch={false}
       >
@@ -28,11 +28,12 @@ export function MenuHeader({ displayName }: { displayName: string }) {
         <strong>
           WORKROOM
           <br />
-          채굴
+          나만의 워크룸
         </strong>
         <span>
-          기술이 만드는
-          <br />더 가치 있는 내일
+          나만의 공간에서
+          <br />
+          편리하게 관리해요
         </span>
       </Link>
       <nav className={styles.topNavigation} aria-label="더보기 주요 메뉴">
@@ -94,8 +95,9 @@ export function MenuSidebar() {
         </p>
         <strong>WORKROOM</strong>
         <small>
-          기술이 만드는
-          <br />더 가치 있는 내일
+          나만의 공간에서
+          <br />
+          편리하게 관리해요
         </small>
       </div>
     </>

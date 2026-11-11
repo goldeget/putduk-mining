@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { WorkroomLoading } from "../../../../../components/ui/workroom-loading";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import {
@@ -375,8 +376,13 @@ export function WorkroomConsole({ actorId }: { actorId: string }) {
           type="button"
           onClick={() => void load()}
           disabled={loading || busy}
+          aria-busy={loading}
         >
-          {loading ? "불러오는 중…" : "정보 새로고침"}
+          {loading ? (
+            <WorkroomLoading label="불러오는 중…" variant="inline" />
+          ) : (
+            "정보 새로고침"
+          )}
         </button>
       </header>
       <div className={styles.disclosure}>
@@ -420,17 +426,24 @@ export function WorkroomConsole({ actorId }: { actorId: string }) {
             disabled={busy}
             onClick={() => void execute(pending)}
           >
-            {busy ? "확인 중…" : "동일한 요청으로 결과 재확인"}
+            {busy ? (
+              <WorkroomLoading label="확인 중…" variant="inline" />
+            ) : (
+              "동일한 요청으로 결과 재확인"
+            )}
           </button>
         </section>
       )}
       {!data ? (
         <section className={styles.panel}>
-          <h2>
-            {loading
-              ? "운영 정보를 확인하고 있어요."
-              : "운영 정보를 불러오지 못했어요."}
-          </h2>
+          {loading ? (
+            <WorkroomLoading
+              label="운영 정보를 불러오고 있어요"
+              announce={false}
+            />
+          ) : (
+            <h2>운영 정보를 불러오지 못했어요.</h2>
+          )}
           <p>서버에서 확인된 정보만 표시합니다.</p>
           <button type="button" disabled={loading} onClick={() => void load()}>
             다시 조회

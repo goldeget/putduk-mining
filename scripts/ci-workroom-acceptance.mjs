@@ -268,11 +268,32 @@ try {
   const browserFiles = readdirSync("tests/e2e/workroom").filter((name) =>
     name.endsWith(".spec.ts"),
   );
-  if (browserFiles.length !== 13)
+  const browserCases = {
+    "01-signup-confirmation.spec.ts": 1,
+    "02-invalid-invite.spec.ts": 1,
+    "03-existing-login.spec.ts": 1,
+    "04-member-round.spec.ts": 1,
+    "05-replay.spec.ts": 1,
+    "06-two-user-isolation.spec.ts": 1,
+    "07-mobile.spec.ts": 1,
+    "08-admin-mfa-registry.spec.ts": 1,
+    "09-admin-invite-audit.spec.ts": 1,
+    "10-config-snapshot.spec.ts": 1,
+    "11-grant-preservation.spec.ts": 1,
+    "12-security-retirement.spec.ts": 1,
+    "13-theme-admin-navigation.spec.ts": 2,
+    "14-public-member-presentation.spec.ts": 3,
+  };
+  if (
+    JSON.stringify(browserFiles.sort()) !==
+    JSON.stringify(Object.keys(browserCases).sort())
+  )
     throw Error("WORKROOM_REVIEWED_BROWSER_ROSTER_CHANGED");
   assertPlaywrightReport(
     JSON.parse(readFileSync(browserPath, "utf8")),
-    browserFiles,
+    Object.entries(browserCases).flatMap(([file, cases]) =>
+      Array(cases).fill(file),
+    ),
   );
   // The PR profile ends after this complete member/admin suite. The full
   // acceptance workflow keeps the retained-data, financial and contention runs.

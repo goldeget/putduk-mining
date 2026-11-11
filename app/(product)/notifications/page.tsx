@@ -1,4 +1,5 @@
 import Link from "next/link";
+import menuStyles from "@/app/(product)/menu/menu.module.css";
 
 import { NotificationItem } from "@/components/product/notification-item";
 import { PageHeading } from "@/components/product/page-heading";
@@ -34,6 +35,7 @@ export default async function NotificationCenterPage() {
 
   return (
     <div
+      className={menuStyles.notificationPage}
       data-ui-ready="/notifications"
       data-ui-state={
         error ? "error" : notifications.length ? "loaded" : "empty"
@@ -42,7 +44,7 @@ export default async function NotificationCenterPage() {
       <PageHeading
         eyebrow="알림"
         title={unread ? `새 소식 ${unread}개` : "중요한 변화를 놓치지 않도록."}
-        lead="워크룸·입출금·이벤트 안내를 한곳에서 확인하세요."
+        lead="워크룸·입출금·중요 안내를 한곳에서 확인하세요."
         action={
           <Link className="button button--secondary" href="/menu/notifications">
             알림 설정

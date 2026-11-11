@@ -60,9 +60,8 @@ describe("canonical native PUTDUK identity", () => {
     expect(html).not.toContain("url(#");
   });
 
-  it("uses the same original silhouette in menu, mining and wallet placements", () => {
+  it("preserves the original silhouette in historical mining and wallet placements", () => {
     for (const html of [
-      renderToStaticMarkup(createElement(MenuBrandSymbol, {})),
       renderToStaticMarkup(createElement(MiningBrandSymbol, {})),
       renderToStaticMarkup(createElement(WalletBrandSymbol, {})),
     ]) {
@@ -114,7 +113,7 @@ describe("canonical native PUTDUK identity", () => {
   });
 
   it("uses the shared decorative AI identity while preserving the old reviewed face originals", async () => {
-    for (const file of ["putduk-ai-mascot.tsx", "putduk-ai-chat.tsx"]) {
+    for (const file of ["putduk-ai-mascot.tsx"]) {
       const source = await readFile(
         path.join(process.cwd(), "components/product", file),
         "utf8",
@@ -125,6 +124,15 @@ describe("canonical native PUTDUK identity", () => {
       expect(source).toContain("<BrandMark");
       expect(source).not.toContain("/brand/mascot/putduk-ai-help-face-");
     }
+    const menu = renderToStaticMarkup(createElement(MenuBrandSymbol, {}));
+    expect(menu).toContain('d="m9 15 6 15 7-12 7 12 6-15"');
+    expect(menu).not.toContain("data-putduk-brand");
+    const activeAiSource = await readFile(
+      path.join(process.cwd(), "components/product/putduk-ai-chat.tsx"),
+      "utf8",
+    );
+    expect(activeAiSource).toContain("<WorkroomMark size={64}");
+    expect(activeAiSource).not.toContain("<BrandMark");
     const html = renderToStaticMarkup(createElement(PutdukAiMascot, {}));
     expect(html).toContain('data-putduk-brand="canonical"');
     expect(html).toContain(

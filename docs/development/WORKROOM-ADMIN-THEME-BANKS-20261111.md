@@ -79,6 +79,29 @@ verified. Incomplete duplicate F clones are not implementation candidates.
 
 ## Verification and release procedure
 
+The owner extended the final release to all active public and member surfaces.
+Cover eighteen public document paths, five auxiliary authentication pages and
+nine retained menu/help/AI/notification routes. Replace old mining scenes,
+gold chrome and obsolete feature descriptions; keep archived legal text and
+recorded consent versions intact. Current explanations describe noncash
+100000 P practice and independent manual cash operations. Hub/AI link to the
+authoritative cash screen instead of presenting a legacy wallet value as cash.
+
+Shared page/panel/inline loading uses the same W identity, motion and skeletons
+only while genuine work is pending. Respect reduced-motion and existing live
+announcements; preserve every handler, request condition, review, disabled
+state, security confirmation and retry. Add no artificial delays or percentages.
+The reference site was blocked by its browser security challenge, so no exact
+animation was observed or copied. The WORKROOM treatment is original.
+
+Standalone not-found, offline and retry screens use the same palette and retain
+one primary heading and their real recovery actions. Browser acceptance includes
+public/member responsive themes and pauses then continues a real authenticated
+state response to verify animation, reduced-motion and completion behavior.
+Review fourteen browser files with seventeen cases explicitly. Existing raw
+Playwright result/skip/retry checks stay strict; the expected assignment repeats
+a filename once per reviewed case rather than assuming one case per file.
+
 Use real disposable Auth/database/browser fixtures for commands and permissions.
 Check every active administrator destination, mobile menu behavior and both
 palettes. Check member system/light/dark selection, actual surface changes,

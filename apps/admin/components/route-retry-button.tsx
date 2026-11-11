@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
+import { WorkroomLoading } from "../../../components/ui/workroom-loading";
 
 export function RouteRetryButton() {
   const router = useRouter();
@@ -11,9 +12,14 @@ export function RouteRetryButton() {
       className="ghost-button"
       type="button"
       disabled={pending}
+      aria-busy={pending}
       onClick={() => startTransition(() => router.refresh())}
     >
-      {pending ? "다시 불러오는 중…" : "다시 불러오기"}
+      {pending ? (
+        <WorkroomLoading label="다시 불러오는 중…" variant="inline" />
+      ) : (
+        "다시 불러오기"
+      )}
     </button>
   );
 }

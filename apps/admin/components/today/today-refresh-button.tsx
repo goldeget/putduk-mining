@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
+import { WorkroomLoading } from "../../../../components/ui/workroom-loading";
 
 import styles from "./today.module.css";
 
@@ -19,13 +20,18 @@ export function TodayRefreshButton({
       type="button"
       className={styles.refreshButton}
       disabled={pending}
+      aria-busy={pending}
       onClick={() => {
         startTransition(() => {
           router.refresh();
         });
       }}
     >
-      {pending ? "불러오는 중…" : label}
+      {pending ? (
+        <WorkroomLoading label="불러오는 중…" variant="inline" />
+      ) : (
+        label
+      )}
     </button>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 import { FeedbackMessage } from "../../../../../../components/ui/feedback-message";
+import { WorkroomLoading } from "../../../../../../components/ui/workroom-loading";
 
 import { useEffect, useState } from "react";
 
@@ -7,26 +8,7 @@ import styles from "./queue-states.module.css";
 
 /** 가짜 금액 없이 대기열 카드 형태만 보여 주는 로딩 */
 export function WithdrawalQueueLoading({ label }: { label: string }) {
-  return (
-    <section
-      aria-busy="true"
-      data-ui-state="loading"
-      aria-label={label}
-      className={styles.loading}
-      role="status"
-    >
-      <article className={styles.loadingCard} aria-hidden="true">
-        <span className={`${styles.loadingLine} ${styles.loadingLineShort}`} />
-        <span className={`${styles.loadingLine} ${styles.loadingLineMid}`} />
-        <span className={`${styles.loadingLine} ${styles.loadingLineWide}`} />
-      </article>
-      <article className={styles.loadingCard} aria-hidden="true">
-        <span className={`${styles.loadingLine} ${styles.loadingLineShort}`} />
-        <span className={`${styles.loadingLine} ${styles.loadingLineMid}`} />
-        <span className={`${styles.loadingLine} ${styles.loadingLineWide}`} />
-      </article>
-    </section>
-  );
+  return <WorkroomLoading label={label} />;
 }
 
 export function WithdrawalQueueError({

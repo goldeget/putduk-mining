@@ -1,0 +1,149 @@
+.page {
+  min-height: 100dvh;
+  padding: 24px 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.header {
+  width: min(1120px, 100%);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: var(--wr-text);
+}
+.brand span {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 1.4px;
+}
+.brand small {
+  display: block;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  color: var(--wr-muted);
+}
+.header :global(.theme-control) {
+  color: var(--wr-secondary);
+  font-size: 12px;
+}
+.header :global(.theme-control select) {
+  background: var(--wr-panel);
+  color: var(--wr-text);
+  border: 1px solid var(--wr-border-strong);
+  border-radius: 10px;
+  min-height: 44px;
+  padding: 8px 12px;
+}
+.card {
+  width: min(660px, 100%);
+  margin: clamp(56px, 12vh, 140px) auto 48px;
+  padding: clamp(26px, 5vw, 48px);
+  border: 1px solid var(--wr-border);
+  border-radius: 20px;
+  background: var(--wr-panel);
+}
+.eyebrow {
+  display: block;
+  margin-bottom: 20px;
+  color: var(--wr-accent);
+  font-size: 11px;
+  font-weight: 750;
+  letter-spacing: 2px;
+}
+.card h1 {
+  margin: 0 0 18px;
+  font-size: clamp(24px, 4vw, 34px);
+  line-height: 1.35;
+  letter-spacing: -0.8px;
+}
+.description {
+  color: var(--wr-secondary);
+  font-size: 14px;
+  line-height: 1.85;
+}
+.description p + p {
+  margin-top: 12px;
+}
+.actions {
+  margin-top: 30px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.actions :is(button, a) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 46px;
+  padding: 11px 20px;
+  border: 1px solid var(--wr-action);
+  border-radius: 10px;
+  background: var(--wr-action);
+  color: var(--wr-action-text);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 750;
+  text-decoration: none;
+  cursor: pointer;
+}
+.actions :is(button, a):hover {
+  background: var(--wr-action-hover);
+}
+.actions button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.actions :is(button, a):focus-visible,
+.brand:focus-visible {
+  outline: 3px solid var(--wr-accent);
+  outline-offset: 4px;
+}
+.footer {
+  margin-top: auto;
+  padding-top: 32px;
+  color: var(--wr-muted);
+  font-size: 11px;
+  letter-spacing: 1px;
+}
+@media (max-width: 600px) {
+  .page {
+    padding: 20px 16px;
+  }
+  .header {
+    gap: 12px;
+  }
+  .brand {
+    gap: 9px;
+  }
+  .brand span {
+    font-size: 12px;
+  }
+  .brand small {
+    font-size: 9px;
+  }
+  .header :global(.theme-control > span) {
+    position: absolute;
+    clip-path: inset(50%);
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+  .card {
+    margin-top: 44px;
+  }
+}
+@media (max-width: 360px) {
+  .actions > * {
+    width: 100%;
+  }
+}

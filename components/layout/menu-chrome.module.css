@@ -225,18 +225,17 @@
         transparent 35%,
         var(--background-subtle)
       ),
-      url("/brand/scenes/semiconductor-tower/semiconductor-tower-640-v1.webp")
-        65% 50% / auto 100%;
+      var(--surface-raised);
   }
   :global(:root[data-theme="light"]) .sidebarStory {
-    background-image:
+    background:
       linear-gradient(
         180deg,
         var(--background-subtle),
         transparent 35%,
         var(--background-subtle)
       ),
-      url("/brand/scenes/semiconductor-wafer-light/semiconductor-wafer-light-640-v1.webp");
+      var(--surface-raised);
   }
   .sidebarStory p {
     margin: 0 0 auto;

@@ -1,3 +1,23 @@
+## Owner-authorized complete WORKROOM presentation — 2026-11-11
+
+The owner additionally requested consistent WORKROOM design for ID recovery,
+password reset, terms, privacy and every active menu, removing legacy mining UI,
+plus premium animated loading states inspired by the feel of a large platform.
+
+- Use the approved navy/mint and light WORKROOM system, canonical W identity,
+  system/light/dark controls and responsive layouts across active surfaces.
+- Replace active legacy scenes and obsolete feature summaries. Preserve archived
+  assets/documents, recorded consent versions and financial/security contracts.
+- Keep public recovery forms, verification proofs, callbacks, business handlers,
+  review/MFA, retries and disabled conditions intact. Never fake a balance or
+  display a legacy ledger amount as current direct-cash availability.
+- Loading is tied to actual pending work with reduced-motion support. No fake
+  percentage, artificial minimum wait or premature financial-success display.
+- Use separate public/auth/trust, retained member-menu and shared-loading lanes;
+  root owns integration, recovery fallbacks, browser acceptance, CI and release.
+- Preserve all existing release gates. Review every case in multi-case browser
+  files explicitly; required passes, no retries/skips and wall-clock limits stay.
+
 ## Owner-authorized WORKROOM domain and identity alignment — 2026-11-11
 
 The owner explicitly requested replacing the mining domain with WORKROOM and

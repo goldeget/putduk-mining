@@ -61,9 +61,12 @@ describe("rendered menu hub", () => {
     expect(page?.children[2]?.getAttribute("aria-label")).toBe("내 프로필");
     const profile = document.querySelector('[aria-label="내 프로필"]');
     expect(profile?.textContent).toContain("원본 회원");
-    expect(profile?.textContent).toContain("50,000원");
+    expect(profile?.textContent).not.toContain("50,000원");
+    expect(
+      profile?.querySelector('a[href="/workroom/cash"]')?.textContent,
+    ).toContain("입출금 화면에서 확인");
     expect(profile?.textContent).toContain("2026년 10월 1일");
-    expect(profile?.textContent).toContain("아직 표시할 수 없어요");
+    expect(profile?.textContent).toContain("별도로 관리돼요");
     expect(requirePageUser).toHaveBeenCalledWith("/menu");
     expect(readMemberScreenFacts).toHaveBeenCalledWith(
       expect.objectContaining({ userId: "menu-member" }),
@@ -75,8 +78,12 @@ describe("rendered menu hub", () => {
       ).toContain(item.label);
     }
     const image = page?.firstElementChild?.querySelector("img");
-    expect(image?.getAttribute("alt")).toBe("");
-    expect(image?.closest('[aria-hidden="true"]')).not.toBeNull();
+    expect(image).toBeNull();
+    expect(page?.querySelector('img[src*="/brand/scenes/"]')).toBeNull();
+    expect(page?.textContent).not.toContain("채굴");
+    expect(
+      page?.querySelector('svg path[d="m9 15 6 15 7-12 7 12 6-15"]'),
+    ).not.toBeNull();
     expect(hub?.querySelector('select[aria-label="화면 테마"]')).not.toBeNull();
   });
 
@@ -95,7 +102,7 @@ describe("rendered menu hub", () => {
     );
     const profile = document.querySelector('[aria-label="내 프로필"]');
     expect(profile?.textContent).toContain("등급은 아직 없어요");
-    expect(profile?.textContent).toContain("확인할 수 없어요");
+    expect(profile?.textContent).toContain("입출금 화면에서 확인");
     expect(profile?.textContent).not.toContain("0 KRW");
     expect(profile?.textContent).not.toContain("0원");
     expect(document.body.textContent).not.toMatch(
@@ -122,7 +129,7 @@ describe("menu hub navigation", () => {
     expect(hrefs).toContain("/ai");
     expect(hrefs).toContain("/menu/support");
     expect(hrefs).toContain("/menu/trust");
-    expect(hrefs).toContain("/events");
+    expect(hrefs).not.toContain("/events");
     expect(
       MENU_ITEMS.filter((item) => item.lane === "settings").map(
         (item) => item.label,

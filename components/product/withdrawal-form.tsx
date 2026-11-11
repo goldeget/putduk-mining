@@ -1,5 +1,6 @@
 "use client";
 import { FeedbackMessage } from "@/components/ui/feedback-message";
+import { WorkroomLoading } from "../ui/workroom-loading";
 
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
@@ -731,14 +732,19 @@ export function WithdrawalForm({
         className={`button button--primary ${styles.submitButton}`}
         type="submit"
         disabled={pending || !canSubmit}
+        aria-busy={pending}
       >
-        {needsReauth
-          ? pending
-            ? "변경 확인 중"
-            : "변경 확인"
-          : pending
-            ? "출금 요청 접수 중"
-            : "출금 요청하기"}
+        {needsReauth ? (
+          pending ? (
+            <WorkroomLoading label="변경 확인 중" variant="inline" />
+          ) : (
+            "변경 확인"
+          )
+        ) : pending ? (
+          <WorkroomLoading label="출금 요청 접수 중" variant="inline" />
+        ) : (
+          "출금 요청하기"
+        )}
         <PutdukIcon name="arrow-right" size={18} />
       </button>
 

@@ -28,6 +28,6 @@
 }
 
 .startWrap :global(.putduk-support-launcher:focus-visible) {
-  outline: 2px solid var(--accent-primary, #c9a227);
+  outline: 2px solid var(--brand-primary, #73efc3);
   outline-offset: 3px;
 }

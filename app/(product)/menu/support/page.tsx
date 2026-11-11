@@ -5,7 +5,6 @@ import {
   type PutdukIconName,
 } from "@/components/icons/putduk-icon";
 import { SupportStartButton } from "@/components/support/support-runtime";
-import { START_WELCOME_STATEMENTS } from "@/lib/trust/public-content";
 
 import styles from "./member-help.module.css";
 
@@ -21,24 +20,24 @@ const topics: readonly {
   },
   {
     icon: "spark",
-    title: "체험 채굴",
+    title: "워크룸 체험",
     body: [
-      "앱을 닫아도 채굴은 계속돼요.",
+      "진행 중인 회차는 서버 시간을 기준으로 이어져요.",
       "다시 접속하면 결과를 확인할 수 있어요.",
-      ...START_WELCOME_STATEMENTS,
+      "체험 포인트는 실제 잔액과 분리되며 출금할 수 없어요.",
     ],
   },
   {
-    icon: "mining",
-    title: "채굴",
-    body: ["채굴 화면의 상태를 먼저 확인해 주세요."],
+    icon: "spark",
+    title: "회차와 기록",
+    body: ["내 워크룸의 진행 상태와 참여 기록을 확인해 주세요."],
   },
   {
     icon: "wallet",
     title: "입금과 출금",
     body: [
-      "입금은 직접 보내는 수동 입금이에요.",
-      "출금은 원화 잔액을 기준으로 해요.",
+      "입금 방법은 담당자에게 문의해 주세요.",
+      "입금은 운영자 확인 후 반영되며 출금은 실제 원화 잔액 기준이에요.",
     ],
   },
   {

@@ -1,5 +1,6 @@
 "use client";
 import { FeedbackMessage } from "../../../../../../../components/ui/feedback-message";
+import { WorkroomLoading } from "../../../../../../../components/ui/workroom-loading";
 
 import { useReducer, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -246,8 +247,17 @@ export function KrwDepositApproveForm({
         submissionPending={busy}
       />
       <div className="auth-actions">
-        <button className="gold-button" disabled={busy || locked} type="submit">
-          {busy ? "확인 중…" : submitLabel}
+        <button
+          className="gold-button"
+          disabled={busy || locked}
+          type="submit"
+          aria-busy={busy}
+        >
+          {busy ? (
+            <WorkroomLoading label="확인 중…" variant="inline" />
+          ) : (
+            submitLabel
+          )}
         </button>
         {busy ? (
           <button

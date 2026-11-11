@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useFormStatus } from "react-dom";
+import { WorkroomLoading } from "../../../components/ui/workroom-loading";
 
 export function SubmitButton({
   children,
@@ -20,8 +21,17 @@ export function SubmitButton({
         ? "danger-button"
         : "ghost-button";
   return (
-    <button className={className} disabled={pending} type="submit">
-      {pending ? (pendingLabel ?? "처리 중…") : children}
+    <button
+      className={className}
+      disabled={pending}
+      type="submit"
+      aria-busy={pending}
+    >
+      {pending ? (
+        <WorkroomLoading label={pendingLabel ?? "처리 중…"} variant="inline" />
+      ) : (
+        children
+      )}
     </button>
   );
 }
