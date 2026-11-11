@@ -10,14 +10,20 @@ test("real public signup consumes valid invite and confirms through the disposab
   for (const [name, value] of Object.entries({
     referralCode: code,
     legalName: "워크룸검증",
-    dateOfBirth: "1990-01-15",
+    dateOfBirth: "900115",
+    birthSexDigit: "1",
     loginId: user.loginId,
     recoveryEmail: user.email,
     password: user.password,
     passwordConfirmation: user.password,
-    phone: user.metadata.phone_e164,
+    phone: user.metadata.phone_e164
+      .replace(/^\+82/, "0")
+      .replace(/^(\d{3})(\d{4})(\d{4})$/, "$1-$2-$3"),
   }))
     await page.locator(`[name="${name}"]`).fill(value);
+  await expect(page.locator('[name="phone"]')).toHaveValue(
+    user.metadata.phone_e164.replace(/^\+82/, "0"),
+  );
   await page.locator('[name="serviceTermsConsent"]').check();
   await page.locator('[name="privacyConsent"]').check();
   await page.locator('[name="workroomAcknowledged"]').check();
@@ -33,7 +39,17 @@ test("real public signup consumes valid invite and confirms through the disposab
     ),
   ).toBe("1");
   expect(
+    sql(
+      `select count(*) from public.user_identity_profiles p join auth.users u on u.id=p.user_id where u.email='${user.email}' and p.date_of_birth='1990-01-15' and p.birth_sex_digit='1';`,
+    ),
+  ).toBe("1");
+  expect(
     sql(`select used from app_private.workroom_invites where code='${code}';`),
+  ).toBe("1");
+  expect(
+    sql(
+      `select count(*) from public.member_registration_context c join auth.users u on u.id=c.user_id where u.email='${user.email}' and c.referral_code='${code}' and c.workroom_acknowledged and c.signup_ip is null and c.ip_source='NONE';`,
+    ),
   ).toBe("1");
   const mailbox = user.email.split("@")[0]!;
   const mailboxOrigin =

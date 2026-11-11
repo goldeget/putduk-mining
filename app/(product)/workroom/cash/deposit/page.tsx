@@ -9,6 +9,7 @@ import {
 } from "@/components/workroom/cash-ui";
 import styles from "@/components/workroom/cash.module.css";
 import { requirePageUser } from "@/lib/auth/session";
+import { readKrwDepositSettings } from "@/lib/wallet/read-krw-deposit-settings.server";
 import {
   isUsdtDepositNetwork,
   type UsdtDepositInstruction,
@@ -17,6 +18,7 @@ import {
 export const dynamic = "force-dynamic";
 export default async function CashDepositPage() {
   const identity = await requirePageUser("/workroom/cash/deposit");
+  const krw = await readKrwDepositSettings(identity.supabase);
   const [history, instructionRead] = await Promise.all([
     identity.supabase
       .from("deposit_requests")
@@ -45,11 +47,16 @@ export default async function CashDepositPage() {
       <CashHeader
         active="deposit"
         title="입금 신청"
-        description="담당자에게 입금 방법을 안내받은 뒤 실제 입금한 금액을 신청하세요."
+        description="아래 입금 안내를 확인한 뒤 실제 입금한 금액을 신청하세요."
       />
       <div className={styles.formGrid}>
         <CashFormPanel>
-          <DepositForm contactOperator />
+          <DepositForm
+            instruction={krw.instruction}
+            contactOperator={krw.contactOperator}
+            contactMessage={krw.contactMessage}
+            instructionLoadFailed={krw.loadFailed}
+          />
         </CashFormPanel>
         <CashSteps />
       </div>

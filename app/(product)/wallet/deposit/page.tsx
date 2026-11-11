@@ -15,7 +15,7 @@ import {
 } from "@/domain/wallet/usdt-manual-deposit";
 import { formatProductDateTime } from "@/lib/i18n/date-time";
 import { requirePageUser } from "@/lib/auth/session";
-import { readKrwDepositInstruction } from "@/lib/wallet/read-krw-deposit-instruction.server";
+import { readKrwDepositSettings } from "@/lib/wallet/read-krw-deposit-settings.server";
 const krwStatusCopy: Record<
   string,
   { description: string; label: string; tone: ProductStatusTone }
@@ -143,6 +143,7 @@ function maskTx(value: string) {
 
 export default async function DepositPage() {
   const identity = await requirePageUser("/wallet/deposit");
+  const krw = await readKrwDepositSettings(identity.supabase);
 
   const { data: requests, error } = await identity.supabase
     .from("deposit_requests")
@@ -238,8 +239,10 @@ export default async function DepositPage() {
       }
     >
       <WalletDepositView
-        contactOperator
-        krwInstruction={readKrwDepositInstruction()}
+        contactOperator={krw.contactOperator}
+        contactMessage={krw.contactMessage}
+        instructionLoadFailed={krw.loadFailed}
+        krwInstruction={krw.instruction}
         instructions={instructions}
         instructionRead={instructionRead}
         krwHistoryRead={krwHistoryRead}

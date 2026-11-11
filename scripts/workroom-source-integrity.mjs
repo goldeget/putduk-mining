@@ -89,15 +89,16 @@ const migrationNames = names.filter(
   (name) => name.startsWith("supabase/migrations/") && name.endsWith(".sql"),
 );
 requireCondition(
-  migrationNames.length === 203 &&
+  migrationNames.length === 204 &&
     JSON.stringify(
       migrationNames.filter((name) => !baselineMigrations.includes(name)),
     ) ===
       JSON.stringify([
         "supabase/migrations/20261104065015_workroom_practice_isolation.sql",
         "supabase/migrations/20261111065929_workroom_direct_deposit_cash.sql",
+        "supabase/migrations/20261111165640_workroom_bank_instructions_member_directory.sql",
       ]),
-  "EXACT_203_ADDITIVE_MIGRATION_REQUIRED",
+  "EXACT_204_ADDITIVE_MIGRATION_REQUIRED",
 );
 if (process.argv.includes("--record")) {
   const manifest = {

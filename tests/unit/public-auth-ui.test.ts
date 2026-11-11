@@ -102,9 +102,11 @@ describe("public password controls", () => {
     expect(input("signup-login-id").labels?.[0]?.textContent).toBe(
       "로그인 아이디",
     );
-    expect(input("signup-date-of-birth").type).toBe("date");
+    expect(input("signup-date-of-birth").type).toBe("text");
     assertAssociatedHelp(input("signup-date-of-birth"));
-    expect(host.textContent).toContain("태어난 연도, 월, 일을 선택해 주세요.");
+    expect(host.textContent).toContain(
+      "생년월일 앞 6자리와 뒷자리 첫 숫자 1자리를 입력해 주세요.",
+    );
     expect(host.textContent).not.toContain("휴대폰 인증");
   });
 

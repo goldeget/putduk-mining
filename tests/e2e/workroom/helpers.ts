@@ -99,6 +99,7 @@ export function identity() {
       legal_name: "워크룸검증",
       login_id: `w${suffix}`,
       date_of_birth: "1990-01-15",
+      birth_sex_digit: "1",
       phone_e164: `+8210${BigInt(`0x${suffix}`).toString().slice(-8)}`,
       recovery_email: email,
       service_terms_version: "TERMS-KO-2026-09-27",
@@ -274,4 +275,5 @@ export async function adminLogin(
   await page.waitForURL((url) => !url.pathname.includes("/mfa"));
   await adminState(page);
   // Never persist the TOTP secret, Auth JWT, cookies or password in evidence.
+  return { secret };
 }

@@ -25,6 +25,11 @@ import {
 import styles from "./members.module.css";
 import { MemberSearch } from "./member-search";
 import {
+  MemberDirectory,
+  MemberRegistrationDetails,
+  memberDirectoryPage,
+} from "./member-directory";
+import {
   presentMemberLifecycle,
   presentMemberProfile,
 } from "./_lib/member-state-display";
@@ -46,10 +51,10 @@ const memberIdSchema = z.uuid();
 export default async function MembersPage({
   searchParams,
 }: {
-  searchParams: Promise<{ id?: string }>;
+  searchParams: Promise<{ id?: string; page?: string }>;
 }) {
   const principal = await requireAdminPage("/members");
-  const { id } = await searchParams;
+  const { id, page } = await searchParams;
   const parsedId = memberIdSchema.safeParse(id);
   const db = createAdminServiceClient();
   if (!parsedId.success) {
@@ -57,14 +62,14 @@ export default async function MembersPage({
       <div
         className={styles.membersPage}
         data-ui-ready="/members"
-        data-ui-state={id ? "error" : "empty"}
+        data-ui-state={id ? "error" : "loaded"}
       >
         <section className="page-intro">
           <p className="eyebrow">회원 한눈에</p>
-          <h1>회원 한 사람의 맥락</h1>
+          <h1>회원 목록</h1>
           <p>
-            이름·아이디·전화번호로 회원을 찾습니다. 비밀번호·본인 확인 문서와
-            출금 목적지는 보이지 않습니다.
+            가입 회원과 가입 정보를 최근 가입순으로 확인합니다. 검색으로 특정
+            회원을 빠르게 찾을 수도 있습니다.
           </p>
         </section>
         <MemberSearch
@@ -72,14 +77,7 @@ export default async function MembersPage({
           initialQuery={(id ?? "").slice(0, 80)}
           initialError={id ? "올바른 회원 식별자를 입력해 주세요." : ""}
         />
-        <section className="member-empty">
-          <span aria-hidden="true">360°</span>
-          <h2>조회할 회원을 선택하세요.</h2>
-          <p>
-            검색 결과에서 회원을 선택해 주세요. 전화번호와 아이디는 일부만
-            표시합니다.
-          </p>
-        </section>
+        {await MemberDirectory({ principal, page: memberDirectoryPage(page) })}
       </div>
     );
   }
@@ -366,6 +364,8 @@ export default async function MembersPage({
         <summary>다른 회원 찾기</summary>
         <MemberSearch key={userId} />
       </details>
+
+      {await MemberRegistrationDetails({ principal, userId })}
 
       {countFailed ||
       evidenceFailed ||

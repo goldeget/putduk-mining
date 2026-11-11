@@ -137,7 +137,7 @@ describe("KRW deposit instruction (operator configuration)", () => {
       resolve(root, "app/(product)/wallet/deposit/page.tsx"),
       "utf8",
     );
-    expect(page).toContain("readKrwDepositInstruction()");
+    expect(page).toContain("readKrwDepositSettings(identity.supabase)");
     const example = readFileSync(resolve(root, ".env.example"), "utf8");
     for (const key of Object.values(KRW_DEPOSIT_INSTRUCTION_ENV)) {
       expect(example).toMatch(new RegExp(`^${key}=$`, "m"));

@@ -56,10 +56,14 @@ const DEPOSIT_REQUEST_ERRORS: Record<string, string> = {
 export function DepositForm({
   instruction = null,
   contactOperator = false,
+  contactMessage = "담당자에게 문의",
+  instructionLoadFailed = false,
 }: {
   /** 운영자가 정한 입금 안내 계좌. 서버가 설정에서 읽어 넘긴다. 없으면 null이다. */
   instruction?: KrwDepositInstruction | null;
   contactOperator?: boolean;
+  contactMessage?: string;
+  instructionLoadFailed?: boolean;
 }) {
   const router = useRouter();
   const [amount, setAmount] = useState("");
@@ -168,7 +172,11 @@ export function DepositForm({
           aria-labelledby="krw-instruction-title"
           data-krw-instruction="operator-contact"
         >
-          <h3 id="krw-instruction-title">담당자에게 문의</h3>
+          <h3 id="krw-instruction-title">
+            {instructionLoadFailed
+              ? "입금 안내를 확인할 수 없습니다"
+              : contactMessage}
+          </h3>
           <p>
             담당자에게 입금 방법을 안내받은 뒤 금액을 입력해 신청해 주세요.
             운영자가 실제 입금을 확인하면 잔액에 반영됩니다.

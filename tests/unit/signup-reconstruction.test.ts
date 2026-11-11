@@ -58,7 +58,8 @@ async function enter(id: string, value: string) {
 }
 async function fillAccount() {
   await enter("signup-legal-name", "테스트 회원");
-  await enter("signup-date-of-birth", "1990-01-01");
+  await enter("signup-date-of-birth", "900101");
+  await enter("signup-birth-sex-digit", "1");
   await enter("signup-login-id", "stage_user");
   await enter("signup-recovery-email", "stage@example.invalid");
   await enter("signup-password", "stage-password-safe");
@@ -71,6 +72,19 @@ async function fillAccount() {
 }
 
 describe("WORKROOM signup hierarchy and protected form behavior", () => {
+  it("앞 6자리·뒷자리 첫 숫자만 받고 휴대전화의 하이픈을 자동 제거한다", async () => {
+    await render(createElement(SignupForm));
+    await enter("signup-date-of-birth", "90-01-01");
+    await enter("signup-birth-sex-digit", "1234567");
+    await enter("signup-phone", "010-1234-5678");
+    expect(input("signup-date-of-birth").value).toBe("900101");
+    expect(input("signup-birth-sex-digit").value).toBe("1");
+    expect(input("signup-birth-sex-digit").maxLength).toBe(1);
+    expect(input("signup-phone").value).toBe("01012345678");
+    expect(input("signup-phone").inputMode).toBe("numeric");
+    await enter("signup-phone", "+82 10-1234-5678");
+    expect(input("signup-phone").value).toBe("01012345678");
+  });
   it("renders one semantic signup surface with real policy links and transparent practice disclosure", async () => {
     await render(createElement(SignupPage));
     expect(host.querySelectorAll("main")).toHaveLength(1);
@@ -101,7 +115,7 @@ describe("WORKROOM signup hierarchy and protected form behavior", () => {
     const requirements = {
       "signup-referral-code": ["referralCode", "text"],
       "signup-legal-name": ["legalName", "text"],
-      "signup-date-of-birth": ["dateOfBirth", "date"],
+      "signup-date-of-birth": ["dateOfBirth", "text"],
       "signup-login-id": ["loginId", "text"],
       "signup-recovery-email": ["recoveryEmail", "email"],
       "signup-password": ["password", "password"],
@@ -200,7 +214,8 @@ describe("WORKROOM signup hierarchy and protected form behavior", () => {
     const payload = vi.mocked(signupAction).mock.calls[0]?.[1];
     for (const [name, value] of Object.entries({
       legalName: "테스트 회원",
-      dateOfBirth: "1990-01-01",
+      dateOfBirth: "900101",
+      birthSexDigit: "1",
       loginId: "stage_user",
       recoveryEmail: "stage@example.invalid",
       password: "stage-password-safe",

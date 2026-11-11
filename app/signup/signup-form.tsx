@@ -36,6 +36,8 @@ export function SignupForm() {
   const [state, action] = useActionState(signupAction, INITIAL_STATE);
   const [loginId, setLoginId] = useState("");
   const [phone, setPhone] = useState("");
+  const [birthFront, setBirthFront] = useState("");
+  const [birthDigit, setBirthDigit] = useState("");
   const [availability, setAvailability] = useState<AvailabilityState>("idle");
   const [phoneAvailability, setPhoneAvailability] =
     useState<AvailabilityState>("idle");
@@ -215,24 +217,75 @@ export function SignupForm() {
               <FieldIcon name="calendar" />
               <span>생년월일</span>
             </label>
-            <input
-              id="signup-date-of-birth"
-              name="dateOfBirth"
-              type="date"
-              autoComplete="bday"
-              min="1900-01-01"
-              required
-              aria-invalid={Boolean(state.fieldErrors.dateOfBirth)}
-              aria-describedby={
-                state.fieldErrors.dateOfBirth
-                  ? "date-of-birth-help date-of-birth-error"
-                  : "date-of-birth-help"
-              }
-            />
+            <div className={styles.birthInputs}>
+              <input
+                id="signup-date-of-birth"
+                name="dateOfBirth"
+                type="text"
+                inputMode="numeric"
+                autoComplete="off"
+                placeholder="예: 900101"
+                value={birthFront}
+                onChange={(event) =>
+                  setBirthFront(
+                    event.target.value.replace(/\D/g, "").slice(0, 6),
+                  )
+                }
+                minLength={6}
+                maxLength={6}
+                pattern="[0-9]{6}"
+                required
+                aria-invalid={Boolean(state.fieldErrors.dateOfBirth)}
+                aria-describedby={
+                  state.fieldErrors.dateOfBirth
+                    ? "date-of-birth-help date-of-birth-error"
+                    : "date-of-birth-help"
+                }
+              />
+              <span aria-hidden="true">−</span>
+              <label className={styles.srOnly} htmlFor="signup-birth-sex-digit">
+                뒷자리 첫 숫자
+              </label>
+              <input
+                id="signup-birth-sex-digit"
+                name="birthSexDigit"
+                type="text"
+                inputMode="numeric"
+                autoComplete="off"
+                placeholder="1"
+                minLength={1}
+                maxLength={1}
+                pattern="[1-8]"
+                required
+                value={birthDigit}
+                onChange={(event) =>
+                  setBirthDigit(
+                    event.target.value.replace(/\D/g, "").slice(0, 1),
+                  )
+                }
+                aria-invalid={Boolean(state.fieldErrors.birthSexDigit)}
+                aria-describedby={
+                  state.fieldErrors.birthSexDigit
+                    ? "date-of-birth-help birth-digit-help birth-sex-digit-error"
+                    : "date-of-birth-help birth-digit-help"
+                }
+              />
+              <span className={styles.birthMask} aria-hidden="true">
+                ••••••
+              </span>
+            </div>
           </div>
           <small id="date-of-birth-help">
-            태어난 연도, 월, 일을 선택해 주세요.
+            생년월일 앞 6자리와 뒷자리 첫 숫자 1자리를 입력해 주세요.
           </small>
+          <small id="birth-digit-help">
+            예: 1990년 1월 1일은 900101 · 뒷자리 전체는 입력하지 않습니다.
+          </small>
+          {state.fieldErrors.birthSexDigit ? (
+            <small id="birth-sex-digit-error" role="alert">
+              {state.fieldErrors.birthSexDigit}
+            </small>
+          ) : null}
           {state.fieldErrors.dateOfBirth ? (
             <small id="date-of-birth-error">
               {state.fieldErrors.dateOfBirth}
@@ -424,15 +477,23 @@ export function SignupForm() {
               id="signup-phone"
               name="phone"
               type="tel"
-              inputMode="tel"
+              inputMode="numeric"
               autoComplete="tel"
-              placeholder="010-1234-5678"
+              placeholder="01012345678"
+              minLength={11}
+              maxLength={16}
+              pattern="010[0-9]{8}"
               required
               value={phone}
               onChange={(event) => {
                 phoneRequest.current += 1;
                 phoneRead.current?.abort();
-                setPhone(event.target.value);
+                setPhone(
+                  event.target.value
+                    .replace(/\D/g, "")
+                    .replace(/^82/, "0")
+                    .slice(0, 11),
+                );
                 setPhoneAvailability("idle");
               }}
               aria-invalid={
@@ -550,8 +611,8 @@ export function SignupForm() {
           <details id="signup-privacy-terms">
             <summary>자세히 보기</summary>
             <p>
-              이름, 생년월일, 휴대전화, 로그인 아이디, 복구 이메일과 동의 이력을
-              계정 운영·복구 목적으로 기록합니다.
+              이름, 생년월일, 성별 구분 숫자, 휴대전화, 로그인 아이디, 복구
+              이메일과 동의 이력을 계정 운영·복구 목적으로 기록합니다.
             </p>
             <Link
               className={styles.policyDocumentLink}

@@ -60,7 +60,7 @@ helper = replaceOnce(
   `export function requireBackend195Target() {
   localGuard();
   const migrationVersions = readdirSync("supabase/migrations").filter(name=>name.endsWith(".sql")).map(name=>name.split("_")[0]).sort();
-  if(migrationVersions.length!==203 || migrationVersions.at(-1)!=="20261111065929") throw Error("WORKROOM_203_MIGRATION_CONTEXT_REQUIRED");
+  if(migrationVersions.length!==204 || !migrationVersions.includes("20261111065929") || migrationVersions.at(-1)!=="20261111165640") throw Error("WORKROOM_204_MIGRATION_CONTEXT_REQUIRED");
   return { migrationVersions };
 }\n`,
 );
@@ -169,7 +169,7 @@ writeFileSync(
       sourceHashes: sources,
       financialAssertionsReverseExact: true,
       adapters: [
-        "203 exact migration roster and disposable guard",
+        "204 exact migration roster and disposable guard",
         "valid-invite real Auth setup",
         "local psql target",
         "relative import locations",

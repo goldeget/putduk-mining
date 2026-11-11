@@ -10,6 +10,7 @@ import {
 import { WORKROOM_MIGRATION } from "./workroom-native-stage.mjs";
 import {
   WORKROOM_CASH_MIGRATION,
+  WORKROOM_BANK_MIGRATION,
   WORKROOM_CASH_TESTS,
   WORKROOM_CASH_ACL_TESTS,
   adaptWorkroomCashDefinerRoster,
@@ -423,19 +424,32 @@ export function runWorkroomNativePhase(phase, stage, principal = null) {
       false,
     );
     sql(WORKROOM_CASH_MIGRATION, false);
+    sql(WORKROOM_BANK_MIGRATION, false);
     execute(
       "cash-existing-rows-after",
       [],
       `do $cash$ declare r record; actual_count bigint; actual_digest text; begin
          for r in select * from workroom_native_evidence.before_direct_cash loop
-           execute format('select count(*),md5(coalesce(string_agg(row_text,E''\\n'' order by row_text),'''')) from(select to_jsonb(t)::text row_text from %s t)s',r.relation::regclass) into actual_count,actual_digest;
+           -- The sole existing-table addition is a nullable classification digit.
+           -- Compare every original field byte-for-byte and require no backfill.
+           execute format('select count(*),md5(coalesce(string_agg(row_text,E''\\n'' order by row_text),'''')) from(select %s::text row_text from %s t)s',case when r.relation='public.user_identity_profiles' then '(to_jsonb(t)-''birth_sex_digit'')' else 'to_jsonb(t)' end,r.relation::regclass) into actual_count,actual_digest;
            if actual_count<>r.row_count or actual_digest<>r.digest then raise exception 'DIRECT_CASH_CHANGED_EXISTING_ROWS %',r.relation;end if;
          end loop;
+         if exists(select 1 from public.user_identity_profiles where birth_sex_digit is not null) then raise exception 'BANK_MIGRATION_BACKFILLED_CLASSIFICATION';end if;
        end $cash$;`,
       false,
     );
     const cashMigrationBytes = readFileSync(
       resolve(stage, "successor", WORKROOM_CASH_MIGRATION),
+    );
+    const bankMigrationBytes = readFileSync(
+      resolve(stage, "successor", WORKROOM_BANK_MIGRATION),
+    );
+    execute(
+      "bank-migration-history",
+      [],
+      `insert into supabase_migrations.schema_migrations(version,name,statements) values('20261111165640','workroom_bank_instructions_member_directory',array[convert_from(decode('${bankMigrationBytes.toString("base64")}','base64'),'UTF8')]);`,
+      false,
     );
     execute(
       "cash-migration-history",
