@@ -43,7 +43,6 @@ export default async function CashWithdrawalPage() {
       .select(
         "id,destination_type,display_hint,verification_status,protection_until",
       )
-      .eq("user_id", identity.userId)
       .in("destination_type", ["KRW_BANK", "USDT_ADDRESS"])
       .is("replaced_at", null)
       .order("created_at", { ascending: false }),
