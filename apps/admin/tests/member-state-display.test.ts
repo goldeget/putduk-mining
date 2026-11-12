@@ -109,6 +109,86 @@ beforeEach(() => {
 });
 
 describe("member lifecycle and profile read truth", () => {
+  it.each(["failed", "mismatched", "not-acknowledged"])(
+    "does not classify an unconfirmed registration as WORKROOM (%s)",
+    async (kind) => {
+      vi.mocked(requireAdminPage).mockResolvedValueOnce({
+        role: "ADMIN",
+      } as never);
+      reads.tables.member_registration_context = {
+        data: {
+          user_id:
+            kind === "mismatched"
+              ? "00000000-0000-4000-8000-000000000009"
+              : "00000000-0000-4000-8000-000000000001",
+          workroom_acknowledged: kind !== "not-acknowledged",
+        },
+        error: kind === "failed" ? { message: "unavailable" } : null,
+      };
+      reads.tables.member_lifecycle_states = { data: null, error: null };
+      const markup = renderToStaticMarkup(
+        await MembersPage({
+          searchParams: Promise.resolve({
+            id: "00000000-0000-4000-8000-000000000001",
+          }),
+        }),
+      );
+      expect(markup).not.toContain('id="evidence-workroom"');
+      expect(markup).toContain("일부 운영 증거를 불러오지 못했습니다");
+    },
+  );
+  it("does not show retired lifecycle failures for a confirmed WORKROOM signup", async () => {
+    vi.mocked(requireAdminPage).mockResolvedValueOnce({
+      role: "ADMIN",
+      userId: "00000000-0000-4000-8000-000000000002",
+    } as never);
+    reads.tables.member_registration_context = {
+      data: {
+        user_id: "00000000-0000-4000-8000-000000000001",
+        workroom_acknowledged: true,
+      },
+      error: null,
+    };
+    reads.tables.member_lifecycle_states = { data: null, error: null };
+    const markup = renderToStaticMarkup(
+      await MembersPage({
+        searchParams: Promise.resolve({
+          id: "00000000-0000-4000-8000-000000000001",
+        }),
+      }),
+    );
+    expect(markup).toContain("워크룸 이용");
+    expect(markup).not.toContain("일부 운영 증거를 불러오지 못했습니다");
+    expect(markup).not.toContain("이전 서비스 주기");
+    expect(markup).not.toContain("환영 출금");
+  });
+  it("keeps actual financial read failures visible for WORKROOM members", async () => {
+    vi.mocked(requireAdminPage).mockResolvedValueOnce({
+      role: "ADMIN",
+      userId: "00000000-0000-4000-8000-000000000002",
+    } as never);
+    reads.tables.member_registration_context = {
+      data: {
+        user_id: "00000000-0000-4000-8000-000000000001",
+        workroom_acknowledged: true,
+      },
+      error: null,
+    };
+    reads.tables.deposit_requests = {
+      data: [],
+      count: null,
+      error: { message: "read failed" },
+    };
+    const markup = renderToStaticMarkup(
+      await MembersPage({
+        searchParams: Promise.resolve({
+          id: "00000000-0000-4000-8000-000000000001",
+        }),
+      }),
+    );
+    expect(markup).toContain("일부 운영 증거를 불러오지 못했습니다");
+    expect(markup).toContain("입금 기록을 확인할 수 없습니다");
+  });
   it("shows canonical USDT-only deposit history and includes it in the deposit count", async () => {
     reads.tables.usdt_manual_deposits = {
       count: 2,

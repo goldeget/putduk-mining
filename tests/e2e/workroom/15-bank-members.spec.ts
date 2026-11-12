@@ -1,5 +1,12 @@
 import { test, expect } from "@playwright/test";
-import { operator, adminLogin, adminOrigin, member, login } from "./helpers";
+import {
+  operator,
+  adminLogin,
+  adminOrigin,
+  member,
+  login,
+  sql,
+} from "./helpers";
 import { nextTotpCode } from "../authenticated/helpers/admin-totp";
 
 test("administrator publishes receiving account or consultation message and browses signup details without search", async ({
@@ -9,6 +16,9 @@ test("administrator publishes receiving account or consultation message and brow
 }) => {
   test.setTimeout(180000);
   const user = await member();
+  sql(
+    `insert into public.member_registration_context(user_id,signup_ip,ip_source,referral_code,workroom_acknowledged) values('${user.userId}',null,'NONE','DISPOSABLE-ACCEPTANCE',true);`,
+  );
   const { secret } = await adminLogin(page, await operator());
   await page.goto(`${adminOrigin}/members`);
   await expect(
@@ -24,6 +34,12 @@ test("administrator publishes receiving account or consultation message and brow
   await expect(detail).toContainText("남성");
   await expect(detail).toContainText(user.email);
   await expect(detail).toContainText("기록 없음");
+  await expect(
+    page.getByRole("heading", { name: "워크룸 이용", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByText("일부 운영 증거를 불러오지 못했습니다.", { exact: false }),
+  ).toHaveCount(0);
   const memberContext = await browser.newContext({ baseURL: baseURL! });
   try {
     const memberPage = await memberContext.newPage();
