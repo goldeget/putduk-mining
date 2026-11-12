@@ -24,18 +24,16 @@ export async function loadCashRequestMembers(
     return { allowed: true, failed: true, members };
   try {
     const db = createAdminServiceClient();
-    const audit = await db
-      .from("audit_logs")
-      .insert({
-        actor_user_id: principal.userId,
-        actor_role: principal.role,
-        action: "CASH_REQUEST_MEMBER_VIEW",
-        target_type: "USER",
-        target_id: "cash-request-owners",
-        reason: "입출금 신청 회원 이름과 가입 아이디 확인",
-        request_id: randomUUID(),
-        metadata: { fields: ["legal_name", "login_id"], members: ids.length },
-      });
+    const audit = await db.from("audit_logs").insert({
+      actor_user_id: principal.userId,
+      actor_role: principal.role,
+      action: "CASH_REQUEST_MEMBER_VIEW",
+      target_type: "USER",
+      target_id: "cash-request-owners",
+      reason: "입출금 신청 회원 이름과 가입 아이디 확인",
+      request_id: randomUUID(),
+      metadata: { fields: ["legal_name", "login_id"], members: ids.length },
+    });
     if (audit.error) return { allowed: true, failed: true, members };
     const result = await db
       .from("user_identity_profiles")
