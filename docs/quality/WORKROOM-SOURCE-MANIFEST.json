@@ -2510,7 +2510,7 @@
     "supabase/tests/database/worker_stopped_source_backed_cms.sql": "9bae57f315d1a49950808af837a30a84ca0507a7e37620782c06133ab17c692a",
     "supabase/tests/database/workroom_bank_members.sql": "9737559f2ffaf099a531f1f5f753ff0b95bf422f3627f679895cd6595759dffe",
     "supabase/tests/database/workroom_direct_cash.sql": "07b9671c1e7bd891a2c622fa84c11b78eefd69de2da1454778c07f3d6cde9fcc",
-    "supabase/tests/database/workroom_member_session_completion.sql": "88f1d9b9f1f58b72484caf5eb1d942c1f60e4e993fd0f05c02abbf3aad1aca7d",
+    "supabase/tests/database/workroom_member_session_completion.sql": "2829c51a93e3dfcfee8ca2b48dda06233569ac3ab032dea8e307152bacd88015",
     "supabase/tests/database/workroom_practice.sql": "c608e95dcf0aa3edf4456766482ce7ec2644487c50e903c23e1b819cb93c39b7",
     "supabase/tests/database/ws02_foundations.sql": "0c84718d6fa8262cf34ec07045c8fed9bca1f323cbaef520bf9c2799a49b57c8",
     "supabase/tests/database/ws04_security_money_workers.sql": "4cdc308ef0c2e023caed2e136620648450968428149f4e5d7eaaba71baa9a685",

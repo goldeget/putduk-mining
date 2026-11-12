@@ -1,4 +1,5 @@
 begin;
+create extension if not exists pgtap with schema extensions;
 select extensions.plan(5);
 create function pg_temp.completion_must_fail(statement text, expected text) returns void language plpgsql as $$
 begin
