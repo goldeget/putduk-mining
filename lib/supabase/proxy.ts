@@ -40,20 +40,27 @@ export async function updateSupabaseSession(request: NextRequest) {
   );
 
   let subject: string | null = null;
-  let claimsFailed = false;
   try {
     const { data, error } = await supabase.auth.getClaims();
     subject =
       !error && typeof data?.claims?.sub === "string" ? data.claims.sub : null;
-    claimsFailed = Boolean(error);
   } catch {
-    claimsFailed = true;
+    // A transient JWKS lookup failure is not proof that the user signed out.
   }
   const returnPath = `${request.nextUrl.pathname}${request.nextUrl.search}`;
   const isProtectedPage =
     request.method === "GET" && isSafeProtectedReturnPath(returnPath);
 
-  if (isProtectedPage && (claimsFailed || !subject)) {
+  if (isProtectedPage && !subject) {
+    try {
+      const { data, error } = await supabase.auth.getUser();
+      subject = !error && data.user?.id ? data.user.id : null;
+    } catch {
+      subject = null;
+    }
+  }
+
+  if (isProtectedPage && !subject) {
     const loginUrl = request.nextUrl.clone();
     loginUrl.pathname = "/login";
     loginUrl.search = new URL(

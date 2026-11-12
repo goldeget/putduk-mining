@@ -868,6 +868,9 @@ export function WorkroomConsole({ actorId }: { actorId: string }) {
               </section>
               <section className={styles.panel}>
                 <h2>회원 조회</h2>
+                <p>
+                  <Link href="/members">전체 회원 가입 정보 보기 →</Link>
+                </p>
                 <form
                   className={styles.search}
                   onSubmit={(e) => {
@@ -904,7 +907,9 @@ export function WorkroomConsole({ actorId }: { actorId: string }) {
                       {data.users.map((user) => (
                         <tr key={user.id}>
                           <td>
-                            {user.name}
+                            <Link href={`/members?id=${user.id}`}>
+                              {user.name}
+                            </Link>
                             <small>{user.email}</small>
                             <small>{user.id}</small>
                           </td>

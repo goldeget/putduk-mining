@@ -7,6 +7,10 @@ import { createAdminServiceClient } from "@/lib/supabase/service";
 import { formatKst } from "@/app/(control)/_lib/format";
 import styles from "./members.module.css";
 import { signupSexLabel } from "../../../../../domain/identity/signup-birth";
+import {
+  signupBirthInput,
+  signupPhoneDisplay,
+} from "@/lib/members/registration-display";
 
 const SIZE = 25;
 export function memberDirectoryPage(value: string | undefined) {
@@ -117,15 +121,17 @@ export async function MemberDirectory({
         <div className={styles.directoryScroll}>
           <table className={styles.directoryTable}>
             <caption className="sr-only">
-              가입 회원의 아이디, 이름, 생년월일, 연락처, 복구 이메일, 가입
-              일시, 가입 IP
+              가입 회원의 아이디, 이름, 생년월일 6자리, 뒷자리 첫 숫자, 성별,
+              연락처, 복구 이메일, 가입 일시, 가입 IP
             </caption>
             <thead>
               <tr>
                 {[
-                  "아이디 / 이름",
+                  "이름",
+                  "가입 아이디",
                   "생년월일",
-                  "성별 / 구분 숫자",
+                  "뒷자리 첫 숫자",
+                  "성별",
                   "연락처",
                   "복구 이메일",
                   "가입 일시",
@@ -141,26 +147,37 @@ export async function MemberDirectory({
             <tbody>
               {rows.map((row) => (
                 <tr key={row.user_id}>
-                  <th scope="row">
+                  <th scope="row" data-label="이름">
+                    <Link href={`/members?id=${row.user_id}` as Route}>
+                      {row.legal_name}
+                    </Link>
+                  </th>
+                  <td data-label="가입 아이디">
                     <Link href={`/members?id=${row.user_id}` as Route}>
                       {row.login_id}
                     </Link>
-                    <small>{row.legal_name}</small>
-                  </th>
-                  <td>{row.date_of_birth}</td>
-                  <td>
-                    {signupSexLabel(row.birth_sex_digit)}
-                    {row.birth_sex_digit ? ` · ${row.birth_sex_digit}` : ""}
                   </td>
-                  <td>{row.phone_e164}</td>
-                  <td>{row.recovery_email}</td>
-                  <td>{formatKst(row.created_at)}</td>
-                  <td>
+                  <td data-label="생년월일">
+                    <strong>{signupBirthInput(row.date_of_birth)}</strong>
+                    <small>{row.date_of_birth}</small>
+                  </td>
+                  <td data-label="뒷자리 첫 숫자">
+                    {row.birth_sex_digit ?? "본인 입력 필요"}
+                  </td>
+                  <td data-label="성별">
+                    {signupSexLabel(row.birth_sex_digit)}
+                  </td>
+                  <td data-label="연락처">
+                    {signupPhoneDisplay(row.phone_e164)}
+                  </td>
+                  <td data-label="복구 이메일">{row.recovery_email}</td>
+                  <td data-label="가입 일시">{formatKst(row.created_at)}</td>
+                  <td data-label="가입 IP">
                     {context.error
                       ? "조회 실패"
                       : (addresses.get(row.user_id) ?? "기록 없음")}
                   </td>
-                  <td>
+                  <td data-label="상세">
                     <Link
                       className="text-link"
                       href={`/members?id=${row.user_id}` as Route}
@@ -243,9 +260,13 @@ export async function MemberRegistrationDetails({
     ["가입 아이디", person?.login_id],
     ["이름", person?.legal_name],
     ["생년월일", person?.date_of_birth],
-    ["뒷자리 첫 숫자", person?.birth_sex_digit],
+    ["생년월일 6자리", person ? signupBirthInput(person.date_of_birth) : null],
+    [
+      "뒷자리 첫 숫자",
+      person ? (person.birth_sex_digit ?? "본인 입력 필요") : null,
+    ],
     ["성별", signupSexLabel(person?.birth_sex_digit)],
-    ["연락처", person?.phone_e164],
+    ["연락처", person ? signupPhoneDisplay(person.phone_e164) : null],
     ["복구 이메일", person?.recovery_email],
     ["가입 일시", person?.created_at ? formatKst(person.created_at) : null],
     ["가입 IP", context.data?.signup_ip],
@@ -264,7 +285,7 @@ export async function MemberRegistrationDetails({
     >
       <header className={styles.directoryHead}>
         <div>
-          <p className="eyebrow">회원가입 원본 정보</p>
+          <p className="eyebrow">가입 정보 · 회원 보완 내용</p>
           <h2 id="registration-details-title">가입 정보</h2>
         </div>
         <Link className="text-link" href={"/members" as Route}>
@@ -316,8 +337,10 @@ export async function MemberRegistrationDetails({
         <p className="panel-note">가입 동의 기록이 없습니다.</p>
       )}
       <p className="panel-note">
-        과거에 수집하지 않은 가입 IP는 기록 없음으로 표시합니다. 비밀번호와
-        인증코드는 조회할 수 없습니다.
+        뒷자리 첫 숫자가 없는 회원은 내 정보에서 직접 등록할 수 있습니다. 등록된
+        숫자는 가입 시 입력하거나 본인이 보완한 값입니다. 과거에 수집하지 않은
+        가입 IP는 기록 없음으로 표시합니다. 비밀번호와 인증코드는 조회할 수
+        없습니다.
       </p>
     </section>
   );

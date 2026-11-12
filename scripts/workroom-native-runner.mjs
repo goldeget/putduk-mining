@@ -11,6 +11,7 @@ import { WORKROOM_MIGRATION } from "./workroom-native-stage.mjs";
 import {
   WORKROOM_CASH_MIGRATION,
   WORKROOM_BANK_MIGRATION,
+  WORKROOM_MEMBER_SESSION_MIGRATION,
   WORKROOM_CASH_TESTS,
   WORKROOM_CASH_ACL_TESTS,
   adaptWorkroomCashDefinerRoster,
@@ -425,6 +426,7 @@ export function runWorkroomNativePhase(phase, stage, principal = null) {
     );
     sql(WORKROOM_CASH_MIGRATION, false);
     sql(WORKROOM_BANK_MIGRATION, false);
+    sql(WORKROOM_MEMBER_SESSION_MIGRATION, false);
     execute(
       "cash-existing-rows-after",
       [],
@@ -444,6 +446,15 @@ export function runWorkroomNativePhase(phase, stage, principal = null) {
     );
     const bankMigrationBytes = readFileSync(
       resolve(stage, "successor", WORKROOM_BANK_MIGRATION),
+    );
+    const memberSessionMigrationBytes = readFileSync(
+      resolve(stage, "successor", WORKROOM_MEMBER_SESSION_MIGRATION),
+    );
+    execute(
+      "member-session-migration-history",
+      [],
+      `insert into supabase_migrations.schema_migrations(version,name,statements) values('20261112080627','workroom_member_birth_completion_session_continuity',array[convert_from(decode('${memberSessionMigrationBytes.toString("base64")}','base64'),'UTF8')]);`,
+      false,
     );
     execute(
       "bank-migration-history",
