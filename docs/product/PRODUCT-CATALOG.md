@@ -2,7 +2,7 @@
 
 Status: **P0 CATALOG FOUNDATION / OPERATOR APPROVAL REQUIRED**
 
-Mining products are PUTDUK virtual themes. They are not securities, investment
+Mining products are PUTDUK-defined digital themes. They are not securities, investment
 products or live-market replicas, and no external market price drives rewards.
 
 ## Owner product-access correction — 2026-10-07
