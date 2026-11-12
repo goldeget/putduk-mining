@@ -496,7 +496,7 @@
     "apps/admin/app/api/v1/admin/workroom/state/route.ts": "43d8f25afb16e43a57a664413dc457b844f23ded2d166165f62db78eb4921c32",
     "apps/admin/app/error.tsx": "e7f55c17045b49af9b804eedc96b55cbc1a83982655b330af283133512b3acc7",
     "apps/admin/app/global-error.tsx": "1da1a5f04a43f84bd7c8d6491a852cf8f33e35a6f1a467f10133b1b329e3fe88",
-    "apps/admin/app/globals.css": "64a58efb990d32d53515a16c1867cc84a33a9c9b747ac33c5aa1191c32cb1d9b",
+    "apps/admin/app/globals.css": "26125360cccdec263123a13987d636e5beb7d65256cac9ddca7f06ad1d53f5f5",
     "apps/admin/app/layout.tsx": "b4ddbab756717f5ef7c8db7e0ca9af84d939a237a4419b2d7ebbf649cbcdd99b",
     "apps/admin/app/loading.tsx": "af668993a74ab54f0dad656165518900906b2e4269571e4b890c99058c2721d8",
     "apps/admin/app/login/page.tsx": "a7e86323fdc080d877dd6b063efa11089aa3c47795ead53b7c174408264e9dfa",
