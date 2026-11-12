@@ -11,6 +11,7 @@ import UsdtQueuePage from "@/app/(control)/withdrawals/usdt/page";
 const reads = vi.hoisted(() => ({
   tables: {} as Record<string, { data: unknown[]; error: unknown }>,
 }));
+vi.mock("server-only", () => ({}));
 vi.mock("@/lib/auth/principal", () => ({
   requireAdminPage: vi.fn().mockResolvedValue({ role: "SUPER_ADMIN" }),
 }));

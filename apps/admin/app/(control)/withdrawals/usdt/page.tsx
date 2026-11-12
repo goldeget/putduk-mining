@@ -1,6 +1,4 @@
 import { FeedbackMessage } from "../../../../../../components/ui/feedback-message";
-import Link from "next/link";
-import type { Route } from "next";
 
 import {
   canReleaseHold,
@@ -21,6 +19,8 @@ import {
   WithdrawalQueueError,
 } from "../_components/queue-states";
 import { UsdtFinalizeForm, UsdtReleaseForm, UsdtSendForm } from "./forms";
+import { loadCashRequestMembers } from "@/lib/members/cash-request-members";
+import { CashRequestMember } from "@/components/cash-request-member";
 
 type WithdrawalRow = {
   id: string;
@@ -41,7 +41,7 @@ type CryptoWithdrawal = {
 };
 
 export default async function UsdtWithdrawalQueuePage() {
-  await requireAdminPage("/withdrawals/usdt");
+  const principal = await requireAdminPage("/withdrawals/usdt");
   const db = createAdminServiceClient();
 
   let { data, error } = await db
@@ -69,6 +69,10 @@ export default async function UsdtWithdrawalQueuePage() {
   }
 
   const rows = (data ?? []) as WithdrawalRow[];
+  const requestMembers = await loadCashRequestMembers(
+    principal,
+    error ? [] : rows.map((row) => row.user_id),
+  );
   const ids = rows.map((r) => r.id);
   const cryptoMap = new Map<string, CryptoWithdrawal>();
   let cryptoReadFailed = false;
@@ -176,14 +180,12 @@ export default async function UsdtWithdrawalQueuePage() {
                   <dd className="mono">{addressMask}</dd>
                 </div>
                 <div>
-                  <dt>회원</dt>
+                  <dt>신청 회원</dt>
                   <dd>
-                    <Link
-                      className="text-link"
-                      href={`/members?id=${row.user_id}` as Route}
-                    >
-                      {shortId(row.user_id)}
-                    </Link>
+                    <CashRequestMember
+                      userId={row.user_id}
+                      directory={requestMembers}
+                    />
                   </dd>
                 </div>
                 {crypto?.transaction_hash ? (

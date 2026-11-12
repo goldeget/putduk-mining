@@ -1,6 +1,3 @@
-﻿import Link from "next/link";
-import type { Route } from "next";
-
 import {
   canReleaseHold,
   formatKst,
@@ -20,6 +17,8 @@ import {
   WithdrawalQueueError,
 } from "../_components/queue-states";
 import { FinalizeLedgerForm, KrwBankSendForm, ReleaseHoldForm } from "./forms";
+import { loadCashRequestMembers } from "@/lib/members/cash-request-members";
+import { CashRequestMember } from "@/components/cash-request-member";
 
 type WithdrawalRow = {
   id: string;
@@ -33,7 +32,7 @@ type WithdrawalRow = {
 };
 
 export default async function KrwBankWithdrawalQueuePage() {
-  await requireAdminPage("/withdrawals/krw-bank");
+  const principal = await requireAdminPage("/withdrawals/krw-bank");
   const db = createAdminServiceClient();
 
   const { data, error } = await db
@@ -63,6 +62,10 @@ export default async function KrwBankWithdrawalQueuePage() {
     queryError = retry.error;
   }
 
+  const requestMembers = await loadCashRequestMembers(
+    principal,
+    queryError ? [] : rows.map((row) => row.user_id),
+  );
   return (
     <div
       data-ui-ready="/withdrawals/krw-bank"
@@ -139,14 +142,12 @@ export default async function KrwBankWithdrawalQueuePage() {
                   <dd>{mask}</dd>
                 </div>
                 <div>
-                  <dt>회원</dt>
+                  <dt>신청 회원</dt>
                   <dd>
-                    <Link
-                      className="text-link"
-                      href={`/members?id=${row.user_id}` as Route}
-                    >
-                      {shortId(row.user_id)}
-                    </Link>
+                    <CashRequestMember
+                      userId={row.user_id}
+                      directory={requestMembers}
+                    />
                   </dd>
                 </div>
                 {bankRef ? (

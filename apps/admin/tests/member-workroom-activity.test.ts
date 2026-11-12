@@ -13,42 +13,40 @@ const principal = {
   supabase: { rpc },
 } as unknown as AdminPrincipal;
 beforeEach(() => {
-  rpc
-    .mockReset()
-    .mockResolvedValue({
-      error: null,
-      data: {
-        userId,
-        account: { balance: 100050, held: 0 },
-        roundCount: 27,
-        ledgerCount: 55,
-        rounds: [
-          {
-            id: "round-1",
-            instrument: "nvda",
-            stake: 1000,
-            roi: 5,
-            pattern: "slow",
-            duration: 300,
-            startedAt: 1794441600000,
-            closedAt: 1794441900000,
-            returned: 1050,
-            profit: 50,
-          },
-        ],
-        ledger: [
-          {
-            id: "ledger-1",
-            kind: "SETTLEMENT",
-            amount: 1050,
-            balanceAfter: 100050,
-            note: "모의 회차 반환",
-            roundId: "round-1",
-            createdAt: 1794441900000,
-          },
-        ],
-      },
-    });
+  rpc.mockReset().mockResolvedValue({
+    error: null,
+    data: {
+      userId,
+      account: { balance: 100050, held: 0 },
+      roundCount: 27,
+      ledgerCount: 55,
+      rounds: [
+        {
+          id: "round-1",
+          instrument: "nvda",
+          stake: 1000,
+          roi: 5,
+          pattern: "slow",
+          duration: 300,
+          startedAt: 1794441600000,
+          closedAt: 1794441900000,
+          returned: 1050,
+          profit: 50,
+        },
+      ],
+      ledger: [
+        {
+          id: "ledger-1",
+          kind: "SETTLEMENT",
+          amount: 1050,
+          balanceAfter: 100050,
+          note: "모의 회차 반환",
+          roundId: "round-1",
+          createdAt: 1794441900000,
+        },
+      ],
+    },
+  });
 });
 describe("complete per-member practice transaction history", () => {
   it("shows authoritative stake, returned amount, profit and ledger balance with independent pagination", async () => {

@@ -108,6 +108,22 @@ test("administrator publishes receiving account or consultation message and brow
         await expect(memberPage.getByText("123-45678901")).toHaveCount(0);
       }
     }
+    await memberPage
+      .getByLabel("입금 요청 금액", { exact: false })
+      .fill("1000");
+    const submitted = memberPage.waitForResponse(
+      (response) =>
+        response.url().endsWith("/api/v1/deposits") &&
+        response.request().method() === "POST",
+    );
+    await memberPage
+      .getByRole("button", { name: "입금 요청하기", exact: true })
+      .click();
+    expect((await submitted).status()).toBe(201);
+    await page.goto(`${adminOrigin}/deposits/krw`);
+    const owner = page.locator(`[data-request-member-id="${user.userId}"]`);
+    await expect(owner).toContainText(user.metadata.legal_name);
+    await expect(owner).toContainText(user.loginId);
   } finally {
     await memberContext.close();
   }
