@@ -83,6 +83,18 @@ export default async function MembersPage({
   }
 
   const userId = parsedId.data;
+  const registration =
+    principal.role === "ADMIN" || principal.role === "SUPER_ADMIN"
+      ? await db
+          .from("member_registration_context")
+          .select("user_id,workroom_acknowledged")
+          .eq("user_id", userId)
+          .maybeSingle()
+      : { data: null, error: null };
+  const workroomMember =
+    !registration.error &&
+    registration.data?.user_id === userId &&
+    registration.data?.workroom_acknowledged === true;
   const [
     authUser,
     profile,
@@ -276,8 +288,12 @@ export default async function MembersPage({
   }
 
   const modules = [
-    ["체험 시작", trial],
-    ["이전 서비스 · 정산", mining],
+    ...(workroomMember
+      ? []
+      : ([
+          ["체험 시작", trial],
+          ["이전 서비스 · 정산", mining],
+        ] as const)),
     ["지갑 · 거래", wallet],
     ["입금", combineMemberCounts(deposits, usdtDeposits)],
     ["출금", withdrawals],
@@ -290,8 +306,7 @@ export default async function MembersPage({
   // event_participants·notifications는 service_role SELECT가 아직 없다.
   // 항상 배너를 띄우지 않고, 권한 있는 모듈 실패만 복구 안내한다.
   const countFailed = anyMemberCountFailed([
-    trial,
-    mining,
+    ...(workroomMember ? [] : [trial, mining]),
     wallet,
     deposits,
     usdtDeposits,
@@ -306,7 +321,8 @@ export default async function MembersPage({
     withdrawalRows.error ||
     riskFlags.error ||
     profile.error ||
-    lifecycle.error,
+    (!workroomMember && lifecycle.error) ||
+    registration.error,
   );
   const lifecycleDisplay = presentMemberLifecycle(lifecycle);
   const profileDisplay = presentMemberProfile(profile);
@@ -331,11 +347,12 @@ export default async function MembersPage({
         countFailed ||
         evidenceFailed ||
         kycAccessFailed ||
-        !lifecycleDisplay.available ||
+        (!workroomMember && !lifecycleDisplay.available) ||
         !profileDisplay.available ||
-        !moneyDisplay.available ||
-        !moneyDisplay.complete ||
-        fundingDisplay.state === "unavailable"
+        (!workroomMember &&
+          (!moneyDisplay.available ||
+            !moneyDisplay.complete ||
+            fundingDisplay.state === "unavailable"))
           ? "partial"
           : "loaded"
       }
@@ -348,8 +365,8 @@ export default async function MembersPage({
           <code>{userId}</code>
         </div>
         <div className="member-state">
-          <span>현재 여정</span>
-          <strong>{lifecycleDisplay.stage}</strong>
+          <span>{workroomMember ? "가입 서비스" : "현재 여정"}</span>
+          <strong>{workroomMember ? "워크룸" : lifecycleDisplay.stage}</strong>
           <small>
             가입{" "}
             {new Intl.DateTimeFormat("ko-KR", {
@@ -369,7 +386,7 @@ export default async function MembersPage({
 
       {countFailed ||
       evidenceFailed ||
-      !lifecycleDisplay.available ||
+      (!workroomMember && !lifecycleDisplay.available) ||
       !profileDisplay.available ? (
         <FeedbackMessage className={styles.partialAlert} role="alert">
           일부 운영 증거를 불러오지 못했습니다. 숫자는 0으로 바꾸지 않습니다.{" "}
@@ -381,7 +398,11 @@ export default async function MembersPage({
         <a href="#evidence-account">계정</a>
         <a href="#evidence-kyc">본인 확인</a>
         <a href="#evidence-money">입출금</a>
-        <a href="#evidence-money-sources">원금 · 수익</a>
+        {workroomMember ? (
+          <a href="#evidence-workroom">워크룸 이용</a>
+        ) : (
+          <a href="#evidence-money-sources">원금 · 수익</a>
+        )}
         <a href="#evidence-risk">위험</a>
         <a href="#evidence-timeline">활동</a>
       </nav>
@@ -397,116 +418,137 @@ export default async function MembersPage({
       </section>
 
       <section className="member-detail-grid">
-        <article
-          className="detail-panel detail-panel--wide"
-          id="evidence-money-sources"
-        >
-          <header>
-            <p className="eyebrow">원금 · 이전 서비스 수익 · 보너스</p>
-            <h2>자금 구분</h2>
-          </header>
-          {!moneyDisplay.available ? (
-            <FeedbackMessage className={styles.partialAlert} role="status">
-              자금 구분을 확인하지 못했습니다. 다시 불러와 주세요.
-            </FeedbackMessage>
-          ) : !moneyDisplay.complete ? (
-            <FeedbackMessage className={styles.partialAlert} role="status">
-              거래의 자금 출처를 확인해야 합니다. 이전 서비스 인정 원금은 아직
-              확정하지 않았어요.
-            </FeedbackMessage>
-          ) : null}
-          <dl className={styles.sourceStats}>
-            {moneyDisplay.rows.map(([label, value]) => (
-              <div key={label}>
-                <dt>{label}</dt>
-                <dd>{value}</dd>
-              </div>
-            ))}
-          </dl>
-          <h3>원금과 대기 수익</h3>
-          {fundingDisplay.state === "empty" ? (
-            <p className="panel-note">원금과 대기 수익은 아직 없어요.</p>
-          ) : (
-            <>
-              {fundingDisplay.state === "unavailable" ? (
-                <FeedbackMessage className={styles.partialAlert} role="status">
-                  원금과 대기 수익을 확인하지 못했습니다. 다시 불러와 주세요.
-                </FeedbackMessage>
-              ) : null}
+        {workroomMember ? (
+          <article
+            className="detail-panel detail-panel--wide"
+            id="evidence-workroom"
+          >
+            <header>
+              <p className="eyebrow">무료 모의 체험</p>
+              <h2>워크룸 이용</h2>
+            </header>
+            <p className="panel-note">
+              체험 포인트와 모의 손익은 실제 원화 잔액과 별도로 관리합니다.
+            </p>
+            <Link className="text-link" href={"/workroom?tab=users" as Route}>
+              회원·체험 포인트 관리 →
+            </Link>
+          </article>
+        ) : (
+          <article
+            className="detail-panel detail-panel--wide"
+            id="evidence-money-sources"
+          >
+            <header>
+              <p className="eyebrow">원금 · 이전 서비스 수익 · 보너스</p>
+              <h2>자금 구분</h2>
+            </header>
+            {!moneyDisplay.available ? (
+              <FeedbackMessage className={styles.partialAlert} role="status">
+                자금 구분을 확인하지 못했습니다. 다시 불러와 주세요.
+              </FeedbackMessage>
+            ) : !moneyDisplay.complete ? (
+              <FeedbackMessage className={styles.partialAlert} role="status">
+                거래의 자금 출처를 확인해야 합니다. 이전 서비스 인정 원금은 아직
+                확정하지 않았어요.
+              </FeedbackMessage>
+            ) : null}
+            <dl className={styles.sourceStats}>
+              {moneyDisplay.rows.map(([label, value]) => (
+                <div key={label}>
+                  <dt>{label}</dt>
+                  <dd>{value}</dd>
+                </div>
+              ))}
+            </dl>
+            <h3>원금과 대기 수익</h3>
+            {fundingDisplay.state === "empty" ? (
+              <p className="panel-note">원금과 대기 수익은 아직 없어요.</p>
+            ) : (
+              <>
+                {fundingDisplay.state === "unavailable" ? (
+                  <FeedbackMessage
+                    className={styles.partialAlert}
+                    role="status"
+                  >
+                    원금과 대기 수익을 확인하지 못했습니다. 다시 불러와 주세요.
+                  </FeedbackMessage>
+                ) : null}
+                <dl className={styles.sourceStats}>
+                  {fundingDisplay.rows.map((row) => (
+                    <div key={row.label}>
+                      <dt>{row.label}</dt>
+                      <dd>{row.value}</dd>
+                      {row.tone === "unconfirmed" ? (
+                        <p className="panel-note">확정된 수익이 아니에요.</p>
+                      ) : null}
+                    </div>
+                  ))}
+                </dl>
+              </>
+            )}
+            <p className="panel-note">
+              대기 수익과 아직 확정 전 금액은 원금에 포함하지 않아요.
+            </p>
+            <h3>등급 · 용량 · 속도</h3>
+            {fundingDisplay.miningRows.length === 0 ? (
+              <p className="panel-note">등급과 용량, 속도는 아직 없어요.</p>
+            ) : (
               <dl className={styles.sourceStats}>
-                {fundingDisplay.rows.map((row) => (
+                {fundingDisplay.miningRows.map((row) => (
                   <div key={row.label}>
                     <dt>{row.label}</dt>
                     <dd>{row.value}</dd>
-                    {row.tone === "unconfirmed" ? (
-                      <p className="panel-note">확정된 수익이 아니에요.</p>
-                    ) : null}
                   </div>
                 ))}
               </dl>
-            </>
-          )}
-          <p className="panel-note">
-            대기 수익과 아직 확정 전 금액은 원금에 포함하지 않아요.
-          </p>
-          <h3>등급 · 용량 · 속도</h3>
-          {fundingDisplay.miningRows.length === 0 ? (
-            <p className="panel-note">등급과 용량, 속도는 아직 없어요.</p>
-          ) : (
-            <dl className={styles.sourceStats}>
-              {fundingDisplay.miningRows.map((row) => (
-                <div key={row.label}>
-                  <dt>{row.label}</dt>
-                  <dd>{row.value}</dd>
-                </div>
-              ))}
-            </dl>
-          )}
-          <p className="panel-note">용량과 속도는 원금이 아니에요.</p>
-          <h3>이전 서비스 주기</h3>
-          {fundingDisplay.cycleRows.length === 0 ? (
-            <p className="panel-note">이전 서비스 주기는 아직 없어요.</p>
-          ) : (
-            <dl className={styles.sourceStats}>
-              {fundingDisplay.cycleRows.map((row) => (
-                <div key={row.label}>
-                  <dt>{row.label}</dt>
-                  <dd>{row.value}</dd>
-                </div>
-              ))}
-            </dl>
-          )}
-          <p className="panel-note">주기는 원금이 아니에요.</p>
-          <p className="panel-note">
-            이전 서비스 수익과 보너스는 원금에 포함하지 않아요.
-          </p>
-          {moneyDisplay.available && !moneyDisplay.complete ? (
-            <div className={styles.recordedSources}>
-              <h3>기록 시작 이후 확인된 입금</h3>
-              <dl>
-                <div>
-                  <dt>원화 원금 입금</dt>
-                  <dd>{moneyDisplay.recordedKrwDeposits}</dd>
-                </div>
-                <div>
-                  <dt>USDT 환산 원금</dt>
-                  <dd>{moneyDisplay.recordedUsdtCredits}</dd>
-                </div>
+            )}
+            <p className="panel-note">용량과 속도는 원금이 아니에요.</p>
+            <h3>이전 서비스 주기</h3>
+            {fundingDisplay.cycleRows.length === 0 ? (
+              <p className="panel-note">이전 서비스 주기는 아직 없어요.</p>
+            ) : (
+              <dl className={styles.sourceStats}>
+                {fundingDisplay.cycleRows.map((row) => (
+                  <div key={row.label}>
+                    <dt>{row.label}</dt>
+                    <dd>{row.value}</dd>
+                  </div>
+                ))}
               </dl>
-              <p className="panel-note">
-                이 금액은 전체 누적 입금과 다를 수 있어요.
-              </p>
-            </div>
-          ) : null}
-          {moneyDisplay.observedAt ? (
+            )}
+            <p className="panel-note">주기는 원금이 아니에요.</p>
             <p className="panel-note">
-              조회 시각 · {formatKst(moneyDisplay.observedAt)}
+              이전 서비스 수익과 보너스는 원금에 포함하지 않아요.
             </p>
-          ) : null}
-          <Link className="text-link" href={`/members?id=${userId}` as Route}>
-            다시 불러오기
-          </Link>
-        </article>
+            {moneyDisplay.available && !moneyDisplay.complete ? (
+              <div className={styles.recordedSources}>
+                <h3>기록 시작 이후 확인된 입금</h3>
+                <dl>
+                  <div>
+                    <dt>원화 원금 입금</dt>
+                    <dd>{moneyDisplay.recordedKrwDeposits}</dd>
+                  </div>
+                  <div>
+                    <dt>USDT 환산 원금</dt>
+                    <dd>{moneyDisplay.recordedUsdtCredits}</dd>
+                  </div>
+                </dl>
+                <p className="panel-note">
+                  이 금액은 전체 누적 입금과 다를 수 있어요.
+                </p>
+              </div>
+            ) : null}
+            {moneyDisplay.observedAt ? (
+              <p className="panel-note">
+                조회 시각 · {formatKst(moneyDisplay.observedAt)}
+              </p>
+            ) : null}
+            <Link className="text-link" href={`/members?id=${userId}` as Route}>
+              다시 불러오기
+            </Link>
+          </article>
+        )}
         <article className="detail-panel" id="evidence-account">
           <header>
             <p className="eyebrow">계정</p>
@@ -514,7 +556,7 @@ export default async function MembersPage({
           </header>
           <dl>
             <div>
-              <dt>이메일 확인</dt>
+              <dt>{workroomMember ? "가입 접속 승인" : "이메일 확인"}</dt>
               <dd>
                 {authUser.data.user.email_confirmed_at ? "완료" : "미완료"}
               </dd>
@@ -531,14 +573,18 @@ export default async function MembersPage({
               <dt>계정 정지</dt>
               <dd>{authUser.data.user.banned_until ? "적용 중" : "없음"}</dd>
             </div>
-            <div>
-              <dt>첫 입금</dt>
-              <dd>{lifecycleDisplay.firstFunding}</dd>
-            </div>
-            <div>
-              <dt>환영 출금</dt>
-              <dd>{lifecycleDisplay.welcomeWithdrawal}</dd>
-            </div>
+            {!workroomMember && (
+              <div>
+                <dt>첫 입금</dt>
+                <dd>{lifecycleDisplay.firstFunding}</dd>
+              </div>
+            )}
+            {!workroomMember && (
+              <div>
+                <dt>환영 출금</dt>
+                <dd>{lifecycleDisplay.welcomeWithdrawal}</dd>
+              </div>
+            )}
           </dl>
           <p className="locked-state">
             비밀번호·세션 토큰·가장하기 제어는 제공하지 않습니다.

@@ -19,7 +19,10 @@ export async function recordSignupContext(
       process.env.APP_ENV !== "test" &&
       process.env.APP_ENV !== "development" &&
       ["workroom.putduk.com", "mining.putduk.com"].includes(host) &&
-      /^[a-f0-9]{16,32}-[A-Z]{3}$/i.test(requestHeaders.get("cf-ray") ?? "");
+      // Incoming Worker requests can contain the Ray ID without a colo suffix.
+      /^[a-f0-9]{16,32}(?:-[A-Z]{3})?$/i.test(
+        requestHeaders.get("cf-ray") ?? "",
+      );
     const ip = resolveTrustedClientIp({
       headers: requestHeaders,
       mode: "CLOUDFLARE",
