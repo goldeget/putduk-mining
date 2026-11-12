@@ -1,6 +1,4 @@
 import { FeedbackMessage } from "../../../../../../components/ui/feedback-message";
-import Link from "next/link";
-import type { Route } from "next";
 
 import {
   depositStatusLabel,
@@ -14,6 +12,8 @@ import { createAdminServiceClient } from "@/lib/supabase/service";
 
 import { ConfirmUsdtDepositForm } from "./confirm-form";
 import { UsdtInstructionPanel } from "./instruction-panel";
+import { loadCashRequestMembers } from "@/lib/members/cash-request-members";
+import { CashRequestMember } from "@/components/cash-request-member";
 
 /** 캐노니컬 회원 USDT 수동 입금. crypto_deposits / deposit_requests가 아님. */
 type UsdtManualDepositRow = {
@@ -29,7 +29,7 @@ type UsdtManualDepositRow = {
 };
 
 export default async function UsdtDepositQueuePage() {
-  await requireAdminPage("/deposits/usdt");
+  const principal = await requireAdminPage("/deposits/usdt");
   const db = createAdminServiceClient();
 
   // 회원 USDT 입금 진리원: usdt_manual_deposits (SUBMITTED만 확인 대기).
@@ -54,6 +54,10 @@ export default async function UsdtDepositQueuePage() {
     .limit(40);
 
   const rows = (data ?? []) as UsdtManualDepositRow[];
+  const requestMembers = await loadCashRequestMembers(
+    principal,
+    error ? [] : rows.map((row) => row.user_id),
+  );
 
   return (
     <div
@@ -110,14 +114,12 @@ export default async function UsdtDepositQueuePage() {
                 <dd>{formatUsdt(row.sent_usdt_amount)}</dd>
               </div>
               <div>
-                <dt>회원</dt>
+                <dt>신청 회원</dt>
                 <dd>
-                  <Link
-                    className="text-link"
-                    href={`/members?id=${row.user_id}` as Route}
-                  >
-                    {shortId(row.user_id)}
-                  </Link>
+                  <CashRequestMember
+                    userId={row.user_id}
+                    directory={requestMembers}
+                  />
                 </dd>
               </div>
             </dl>

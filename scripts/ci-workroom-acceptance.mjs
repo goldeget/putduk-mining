@@ -294,7 +294,7 @@ try {
     "12-security-retirement.spec.ts": 1,
     "13-theme-admin-navigation.spec.ts": 2,
     "14-public-member-presentation.spec.ts": 3,
-    "15-bank-members.spec.ts": 1,
+    "15-bank-members.spec.ts": 2,
   };
   if (
     JSON.stringify(browserFiles.sort()) !==

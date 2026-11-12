@@ -12,6 +12,8 @@ import { loadKrwDepositQueue } from "@/lib/deposits/krw-queue";
 import { HIGH_IMPACT_ROLES } from "@/lib/auth/policy";
 import { requireAdminPage } from "@/lib/auth/principal";
 import { KrwInstructionPanel } from "./instruction-panel";
+import { loadCashRequestMembers } from "@/lib/members/cash-request-members";
+import { CashRequestMember } from "@/components/cash-request-member";
 
 export default async function KrwDepositQueuePage() {
   const principal = await requireAdminPage("/deposits/krw");
@@ -19,6 +21,10 @@ export default async function KrwDepositQueuePage() {
     redirect("/unauthorized?code=ROLE_FORBIDDEN" as Route);
   }
   const loaded = await loadKrwDepositQueue();
+  const requestMembers = await loadCashRequestMembers(
+    principal,
+    loaded.ok ? loaded.rows.map((row) => row.user_id) : [],
+  );
 
   return (
     <div
@@ -69,14 +75,12 @@ export default async function KrwDepositQueuePage() {
                 </header>
                 <dl className="evidence-grid">
                   <div>
-                    <dt>회원</dt>
+                    <dt>신청 회원</dt>
                     <dd>
-                      <Link
-                        className="text-link"
-                        href={`/members?id=${row.user_id}` as Route}
-                      >
-                        {shortId(row.user_id)}
-                      </Link>
+                      <CashRequestMember
+                        userId={row.user_id}
+                        directory={requestMembers}
+                      />
                     </dd>
                   </div>
                 </dl>

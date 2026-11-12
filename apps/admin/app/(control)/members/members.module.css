@@ -101,6 +101,63 @@
   font-size: 0.85rem;
 }
 @media (max-width: 720px) {
+  .directoryScroll {
+    overflow: visible;
+    border: 0;
+  }
+  .directoryTable,
+  .directoryTable tbody {
+    display: block;
+  }
+  .directoryTable thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+  .directoryTable tbody tr {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 16px;
+    margin-bottom: 16px;
+    padding: 12px 16px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: var(--surface-raised, var(--surface));
+  }
+  .directoryTable tbody th,
+  .directoryTable tbody td {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+    padding: 12px 0;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    border: 0;
+  }
+  .directoryTable tbody [data-label]::before {
+    content: attr(data-label);
+    color: var(--muted);
+    font-size: 0.75rem;
+    font-weight: 400;
+  }
+  .directoryTable tbody td[data-label="복구 이메일"],
+  .directoryTable tbody td[data-label="가입 일시"],
+  .directoryTable tbody td[data-label="가입 IP"],
+  .directoryTable tbody td[data-label="상세"] {
+    grid-column: 1 / -1;
+  }
+  .directoryTable tbody td[data-label="내용·사유"],
+  .directoryTable tbody td[data-label="거래 일시"],
+  .directoryTable tbody td[data-label="연결 회차"],
+  .directoryTable tbody td[data-label="거래 번호"],
+  .directoryTable tbody td[data-label="시작 일시"],
+  .directoryTable tbody td[data-label="종료 일시"],
+  .directoryTable tbody td[data-label="회차 번호"] {
+    grid-column: 1 / -1;
+  }
   .registrationGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }

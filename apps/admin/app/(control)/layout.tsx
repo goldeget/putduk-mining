@@ -2,6 +2,7 @@ import { AdminShell } from "@/components/admin-shell";
 import { OperatorDraftProvider } from "@/components/assistant/operator-draft-provider";
 import { requireAdminPage } from "@/lib/auth/principal";
 import { getAdminBrowserPublicConfig } from "@/lib/env";
+import { AdminSessionRuntime } from "@/components/admin-session-runtime";
 
 export const dynamic = "force-dynamic";
 
@@ -19,6 +20,7 @@ export default async function ControlLayout({
         userId={principal.userId}
         publicConfig={publicConfig}
       >
+        <AdminSessionRuntime />
         {children}
       </OperatorDraftProvider>
     </AdminShell>

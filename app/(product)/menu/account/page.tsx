@@ -12,6 +12,7 @@ import { PageHeading } from "@/components/product/page-heading";
 import { StatePanel } from "@/components/ui/states";
 import { Surface } from "@/components/ui/surface";
 import { requirePageUser } from "@/lib/auth/session";
+import { BirthDigitCompletion } from "@/components/auth/birth-digit-completion";
 
 export default async function AccountPage({
   searchParams,
@@ -22,7 +23,9 @@ export default async function AccountPage({
   const identity = await requirePageUser("/menu/account");
   const { data: account, error } = await identity.supabase
     .from("user_identity_profiles")
-    .select("login_id, legal_name, phone_e164, recovery_email, created_at")
+    .select(
+      "login_id, legal_name, phone_e164, recovery_email, created_at, date_of_birth, birth_sex_digit",
+    )
     .eq("user_id", identity.userId)
     .maybeSingle();
 
@@ -93,6 +96,9 @@ export default async function AccountPage({
         </section>
       )}
 
+      {account?.birth_sex_digit === null ? (
+        <BirthDigitCompletion dateOfBirth={account.date_of_birth} />
+      ) : null}
       <KycIntake />
 
       <Surface

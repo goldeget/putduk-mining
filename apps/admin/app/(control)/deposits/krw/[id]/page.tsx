@@ -1,6 +1,5 @@
 import { FeedbackMessage } from "../../../../../../../components/ui/feedback-message";
 import type { Route } from "next";
-import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import {
@@ -18,6 +17,8 @@ import { HIGH_IMPACT_ROLES } from "@/lib/auth/policy";
 import { requireAdminPage } from "@/lib/auth/principal";
 
 import { KrwDepositApproveForm } from "./approve-form";
+import { loadCashRequestMembers } from "@/lib/members/cash-request-members";
+import { CashRequestMember } from "@/components/cash-request-member";
 
 const PENDING = new Set(["REQUESTED", "AWAITING_TRANSFER", "REVIEWING"]);
 
@@ -50,6 +51,7 @@ export default async function KrwDepositDetailPage({
   }
   if (!loaded.row) notFound();
   const row = loaded.row;
+  const requestMembers = await loadCashRequestMembers(principal, [row.user_id]);
   const receipt =
     row.status === "APPROVED" ? await loadKrwDepositReceipt(id) : null;
   const pending = PENDING.has(row.status);
@@ -73,14 +75,12 @@ export default async function KrwDepositDetailPage({
         </header>
         <dl className="evidence-grid">
           <div>
-            <dt>회원</dt>
+            <dt>신청 회원</dt>
             <dd>
-              <Link
-                className="text-link"
-                href={`/members?id=${row.user_id}` as Route}
-              >
-                {shortId(row.user_id)}
-              </Link>
+              <CashRequestMember
+                userId={row.user_id}
+                directory={requestMembers}
+              />
             </dd>
           </div>
           {row.approved_amount_atomic !== null ? (

@@ -24,6 +24,7 @@ import {
 } from "./_lib/member-evidence";
 import styles from "./members.module.css";
 import { MemberSearch } from "./member-search";
+import { MemberWorkroomActivity } from "./member-workroom-activity";
 import {
   MemberDirectory,
   MemberRegistrationDetails,
@@ -51,10 +52,15 @@ const memberIdSchema = z.uuid();
 export default async function MembersPage({
   searchParams,
 }: {
-  searchParams: Promise<{ id?: string; page?: string }>;
+  searchParams: Promise<{
+    id?: string;
+    page?: string;
+    roundPage?: string;
+    pointPage?: string;
+  }>;
 }) {
   const principal = await requireAdminPage("/members");
-  const { id, page } = await searchParams;
+  const { id, page, roundPage, pointPage } = await searchParams;
   const parsedId = memberIdSchema.safeParse(id);
   const db = createAdminServiceClient();
   if (!parsedId.success) {
@@ -383,6 +389,12 @@ export default async function MembersPage({
       </details>
 
       {await MemberRegistrationDetails({ principal, userId })}
+      {await MemberWorkroomActivity({
+        principal,
+        userId,
+        roundPage: memberDirectoryPage(roundPage),
+        pointPage: memberDirectoryPage(pointPage),
+      })}
 
       {countFailed ||
       evidenceFailed ||

@@ -24,6 +24,7 @@ function legacyKey(role: string) {
 
 beforeEach(() => {
   vi.stubEnv("APP_ENV", "test");
+  vi.stubEnv("WORKROOM_LOCAL_PREVIEW_ONLY", undefined);
   vi.stubEnv("PUTDUK_LOCAL_SUPABASE_CONFIG_PATH", undefined);
   vi.stubEnv("NEXT_PUBLIC_APP_URL", "http://127.0.0.1:3000");
   vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", localUrl);
@@ -147,6 +148,49 @@ describe("public Supabase runtime configuration", () => {
 });
 
 describe("browser config task runtime selection", () => {
+  it.each([
+    ["APP_ENV", "production"],
+    ["NEXT_PUBLIC_APP_URL", "http://127.0.0.1:3100"],
+    ["NEXT_PUBLIC_SUPABASE_URL", "http://127.0.0.1:63422"],
+    ["NEXT_PUBLIC_SUPABASE_URL", remoteUrl],
+    [
+      "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+      "sb_secret_never_serialized_fixture",
+    ],
+    ["WORKROOM_LOCAL_PREVIEW_ONLY", "false"],
+  ])("rejects an altered workerd fixture binding: %s", (name, value) => {
+    vi.stubEnv("WORKROOM_LOCAL_PREVIEW_ONLY", "true");
+    vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "http://127.0.0.1:63421");
+    vi.stubEnv(name, value);
+    expect(() => getSupabaseBrowserAuthConfig()).toThrow(
+      "SUPABASE_BROWSER_CONFIG_INVALID",
+    );
+  });
+
+  it("uses only the prevalidated workerd fixture without a checkout filesystem", () => {
+    vi.stubEnv("WORKROOM_LOCAL_PREVIEW_ONLY", "true");
+    vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "http://127.0.0.1:63421");
+    vi.stubEnv(
+      "PUTDUK_LOCAL_SUPABASE_CONFIG_PATH",
+      "/no-checkout/supabase/config.toml",
+    );
+    expect(getSupabaseBrowserAuthConfig()).toEqual({
+      url: "http://127.0.0.1:63421",
+      publishableKey,
+    });
+    for (const url of ["http://127.0.0.1:1", remoteUrl]) {
+      vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", url);
+      expect(() => getSupabaseBrowserAuthConfig()).toThrow(
+        "SUPABASE_BROWSER_CONFIG_INVALID",
+      );
+    }
+    vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "http://127.0.0.1:63421");
+    vi.stubEnv("APP_ENV", "production");
+    expect(() => getSupabaseBrowserAuthConfig()).toThrow(
+      "SUPABASE_BROWSER_CONFIG_INVALID",
+    );
+  });
+
   it("uses source-root config from admin cwd and preserves public-only tuple", () => {
     const root = fileURLToPath(new URL("../..", import.meta.url));
     const task = createOwnedTask(root, "browser-config-");

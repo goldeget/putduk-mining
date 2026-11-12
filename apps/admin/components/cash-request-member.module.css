@@ -1,0 +1,28 @@
+.member {
+  min-width: 0;
+}
+.member a {
+  display: grid;
+  gap: 6px;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+.member strong {
+  color: var(--ink);
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+.member span {
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+.member code {
+  font-size: 0.75rem;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+.unavailable {
+  display: block;
+  margin-top: 8px;
+  line-height: 1.5;
+}

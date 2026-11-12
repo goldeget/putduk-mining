@@ -6,6 +6,8 @@ import {
   member,
   login,
   sql,
+  started,
+  command,
 } from "./helpers";
 import { nextTotpCode } from "../authenticated/helpers/admin-totp";
 
@@ -27,9 +29,25 @@ test("administrator publishes receiving account or consultation message and brow
   await expect(
     page.getByRole("link", { name: user.loginId, exact: true }),
   ).toBeVisible();
+  const directory = page.getByRole("region", {
+    name: "가입 회원 목록",
+    exact: true,
+  });
+  await expect(directory).toContainText(
+    user.metadata.phone_e164.replace(/^\+82/, "0"),
+  );
+  await expect(directory).toContainText("900115");
+  await expect(
+    directory.getByRole("columnheader", {
+      name: "뒷자리 첫 숫자",
+      exact: true,
+    }),
+  ).toBeVisible();
   await page.getByRole("link", { name: user.loginId, exact: true }).click();
   const detail = page.getByRole("region", { name: "가입 정보", exact: true });
-  await expect(detail).toContainText(user.metadata.phone_e164);
+  await expect(detail).toContainText(
+    user.metadata.phone_e164.replace(/^\+82/, "0"),
+  );
   await expect(detail).toContainText(user.metadata.date_of_birth);
   await expect(detail).toContainText("남성");
   await expect(detail).toContainText(user.email);
@@ -90,7 +108,94 @@ test("administrator publishes receiving account or consultation message and brow
         await expect(memberPage.getByText("123-45678901")).toHaveCount(0);
       }
     }
+    await memberPage
+      .getByLabel("입금 요청 금액", { exact: false })
+      .fill("1000");
+    const submitted = memberPage.waitForResponse(
+      (response) =>
+        response.url().endsWith("/api/v1/deposits") &&
+        response.request().method() === "POST",
+    );
+    await memberPage
+      .getByRole("button", { name: "입금 요청하기", exact: true })
+      .click();
+    expect((await submitted).status()).toBe(201);
+    await page.goto(`${adminOrigin}/deposits/krw`);
+    const owner = page.locator(`[data-request-member-id="${user.userId}"]`);
+    await expect(owner).toContainText(user.metadata.legal_name);
+    await expect(owner).toContainText(user.loginId);
   } finally {
     await memberContext.close();
+  }
+});
+
+test("member completes an unrecorded birth digit once and administrator sees the supplied value", async ({
+  page,
+  browser,
+  baseURL,
+}) => {
+  test.setTimeout(180000);
+  const user = await member();
+  sql(
+    `update public.user_identity_profiles set birth_sex_digit=null where user_id='${user.userId}';`,
+  );
+  await login(page, user);
+  const round = await started(page);
+  if (!round.state.active) throw new Error("ROUND_NOT_STARTED");
+  expect(
+    (await command(page, "FINISH", { id: round.state.active.id })).status(),
+  ).toBe(200);
+  await expect(
+    page.getByRole("link", {
+      name: "내 정보에서 한 자리 등록하기 →",
+      exact: true,
+    }),
+  ).toBeVisible();
+  await page.goto("/menu/account");
+  const form = page.locator("#birth-digit-completion");
+  await form.getByLabel("뒷자리 첫 숫자", { exact: true }).fill("2");
+  await form.getByRole("button", { name: "숫자 등록", exact: true }).click();
+  await expect(form).toHaveCount(0);
+  expect(
+    sql(
+      `select birth_sex_digit from public.user_identity_profiles where user_id='${user.userId}';`,
+    ),
+  ).toBe("2");
+  expect(
+    sql(
+      `select count(*) from public.audit_logs where target_id='${user.userId}' and action='MEMBER_BIRTH_DIGIT_COMPLETED';`,
+    ),
+  ).toBe("1");
+  const context = await browser.newContext({ baseURL: baseURL! });
+  try {
+    const admin = await context.newPage();
+    await adminLogin(admin, await operator());
+    await admin.goto(`${adminOrigin}/members`);
+    const row = admin.getByRole("row").filter({
+      has: admin.getByRole("link", { name: user.loginId, exact: true }),
+    });
+    await expect(row.locator('[data-label="뒷자리 첫 숫자"]')).toHaveText("2");
+    await expect(row.locator('[data-label="성별"]')).toHaveText("여성");
+    await expect(row.locator('[data-label="연락처"]')).toHaveText(
+      user.metadata.phone_e164.replace(/^\+82/, "0"),
+    );
+    await admin.getByRole("link", { name: user.loginId, exact: true }).click();
+    await expect(
+      admin.getByRole("region", { name: "가입 정보", exact: true }),
+    ).toContainText("여성");
+    const activity = admin.getByRole("region", {
+      name: "모의 참여·포인트 거래 내역",
+      exact: true,
+    });
+    for (const text of [
+      "달러환율",
+      "1,000",
+      "참여 차감",
+      "종료 반환",
+      "가입 포인트",
+    ])
+      await expect(activity).toContainText(text);
+  } finally {
+    await context.close();
   }
 });
