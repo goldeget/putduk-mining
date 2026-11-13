@@ -249,7 +249,7 @@ export function SupportInbox({
   }
   if (list.authorizationLost || detail.authorizationLost)
     return (
-      <section className={styles.app} role="alert">
+      <section className={`${styles.app} ${styles.authNotice}`} role="alert">
         <h1>로그인 상태를 확인해 주세요</h1>
         <p>보안을 위해 문의 내용을 닫았어요. 다시 로그인한 뒤 확인해 주세요.</p>
         <a
@@ -289,7 +289,10 @@ export function SupportInbox({
         ) : null}
       </header>
       <div className={styles.supportGrid}>
-        <aside className={styles.panel} aria-label="문의 목록">
+        <aside
+          className={`${styles.panel} ${styles.listPanel}`}
+          aria-label="문의 목록"
+        >
           <div className={styles.panelHead}>
             <h2>{admin ? "회원 문의" : "내 문의"}</h2>
             <button className={styles.quiet} onClick={list.refresh}>
@@ -346,18 +349,20 @@ export function SupportInbox({
                         ? `${item.memberName} · ${item.memberLoginId ?? "아이디 미등록"}`
                         : `문의 ${item.id.slice(0, 8)}`}
                     </strong>
-                    <span className={styles.status}>
+                    <span className={styles.status} data-status={item.status}>
                       {statusLabels[item.status]}
                     </span>
                   </span>
-                  <time dateTime={item.updatedAt}>
-                    {dateLabel(item.updatedAt)}
-                  </time>
-                  {item.unreadCount > 0 ? (
-                    <span className={styles.unread}>
-                      {item.unreadCount}개 미확인
-                    </span>
-                  ) : null}
+                  <span className={styles.threadMeta}>
+                    <time dateTime={item.updatedAt}>
+                      {dateLabel(item.updatedAt)}
+                    </time>
+                    {item.unreadCount > 0 ? (
+                      <span className={styles.unread}>
+                        {item.unreadCount}개 미확인
+                      </span>
+                    ) : null}
+                  </span>
                 </button>
               </li>
             ))}
@@ -374,7 +379,10 @@ export function SupportInbox({
             </button>
           ) : null}
         </aside>
-        <div className={styles.panel} aria-label="문의 대화">
+        <div
+          className={`${styles.panel} ${styles.conversationPanel}`}
+          aria-label="문의 대화"
+        >
           <div className={styles.panelHead}>
             <div>
               <h2>
@@ -477,11 +485,26 @@ export function SupportInbox({
               </article>
             ))}
             {!selected ? (
-              <p className={styles.empty}>
-                {admin
-                  ? "목록에서 문의를 선택하면 대화가 표시돼요."
-                  : "문의 내용을 적어 주세요. 계좌번호나 비밀번호는 보내지 마세요."}
-              </p>
+              <div className={styles.conversationIntro}>
+                <span className={styles.introIcon} aria-hidden="true">
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="25"
+                    height="25"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                  >
+                    <path d="M5.5 5.5h13v10h-8l-5 3v-13Z" />
+                    <path d="M8.5 9h7M8.5 12h4.5" />
+                  </svg>
+                </span>
+                <p>
+                  {admin
+                    ? "목록에서 문의를 선택하면 대화가 표시돼요."
+                    : "문의 내용을 적어 주세요. 계좌번호나 비밀번호는 보내지 마세요."}
+                </p>
+              </div>
             ) : null}
           </div>
           {pageError ? (

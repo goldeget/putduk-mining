@@ -1,0 +1,32 @@
+.title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tools {
+  min-width: 0;
+  flex: 0 1 auto;
+  gap: clamp(8px, 1.4vw, 18px);
+}
+
+.account {
+  min-width: 0;
+  max-width: clamp(72px, 14vw, 176px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+  text-underline-offset: 4px;
+}
+
+.account:hover {
+  color: var(--wr-accent);
+}
+
+.account:focus-visible {
+  border-radius: 5px;
+  outline: 2px solid var(--wr-accent);
+  outline-offset: 5px;
+}

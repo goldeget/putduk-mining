@@ -7,6 +7,8 @@ import { WorkroomBrand } from "@/components/workroom/identity";
 import { ThemeControl } from "@/components/system/theme-control";
 import { NotificationBell } from "@/components/workroom-app/notification-bell";
 import { MemberSecondaryNavigation } from "@/components/workroom-app/member-secondary-navigation";
+import { workroomPageTitle } from "./workroom-navigation";
+import chrome from "./workroom-chrome.module.css";
 import styles from "@/components/workroom/workroom.module.css";
 export function ProductShell({
   children,
@@ -16,24 +18,7 @@ export function ProductShell({
   displayName: string;
 }) {
   const pathname = usePathname();
-  const title = pathname.startsWith("/workroom/support")
-    ? "1:1 문의"
-    : pathname.startsWith("/notifications")
-      ? "알림함"
-      : pathname.includes("/history")
-        ? "참여 내역"
-        : pathname.includes("/points")
-          ? "체험 포인트"
-          : pathname.includes("/guide")
-            ? "이용 안내"
-            : pathname.startsWith("/workroom/cash") ||
-                pathname.startsWith("/workroom/records")
-              ? "실제 잔액 · 입출금"
-              : pathname.startsWith("/workroom")
-                ? "내 워크룸"
-                : pathname.startsWith("/wallet")
-                  ? "실제 자산 · 입출금"
-                  : "내 계정";
+  const title = workroomPageTitle(pathname);
   return (
     <div className={styles.theme}>
       <a className={styles.skip} href="#main-content">
@@ -59,8 +44,10 @@ export function ProductShell({
       </aside>
       <div className={styles.workspace}>
         <header className={styles.topbar}>
-          <strong>{title}</strong>
-          <div className={styles.topRight}>
+          <strong className={chrome.title} title={title}>
+            {title}
+          </strong>
+          <div className={`${styles.topRight} ${chrome.tools}`}>
             <NotificationBell />
             <div className={styles.themeControl}>
               <ThemeControl />
@@ -71,7 +58,12 @@ export function ProductShell({
                 ? "KRW WALLET"
                 : "SIMULATION"}
             </span>
-            <Link href="/menu/account" aria-label="내 계정 관리">
+            <Link
+              href="/menu/account"
+              aria-label="내 계정 관리"
+              title={displayName}
+              className={chrome.account}
+            >
               {displayName}
             </Link>
           </div>

@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { workroomPrimaryHref } from "../layout/workroom-navigation";
 import styles from "@/components/workroom/workroom.module.css";
 const items = [
   { href: "/workroom", label: "워크룸", icon: "home" },
@@ -13,6 +14,7 @@ export function ProductNavigation({
   presentation = "default",
 }: { presentation?: "default" | "mining-sidebar" } = {}) {
   const pathname = usePathname();
+  const activeHref = workroomPrimaryHref(pathname);
   return (
     <nav
       className={presentation === "default" ? styles.bottomNav : styles.sideNav}
@@ -25,16 +27,7 @@ export function ProductNavigation({
           key={item.href}
           href={item.href}
           prefetch={false}
-          aria-current={
-            pathname === item.href ||
-            (item.href !== "/workroom" &&
-              pathname.startsWith(`${item.href}/`)) ||
-            (item.href === "/workroom/records" &&
-              (pathname.startsWith("/workroom/history") ||
-                pathname.startsWith("/workroom/points")))
-              ? "page"
-              : undefined
-          }
+          aria-current={activeHref === item.href ? "page" : undefined}
         >
           <span className={styles.navIcon} aria-hidden="true">
             <svg

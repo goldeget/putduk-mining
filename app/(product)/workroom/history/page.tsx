@@ -1,10 +1,11 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { z } from "zod";
 import { WorkroomPage } from "@/components/workroom/workroom-page";
 import { requirePageUser } from "@/lib/auth/session";
-import { WORKROOM_INSTRUMENTS } from "@/domain/workroom/contracts";
-import styles from "@/components/workroom/workroom.module.css";
+import {
+  ParticipationResult,
+  ParticipationResultError,
+} from "@/components/workroom/participation-history";
 
 export const dynamic = "force-dynamic";
 const completed = z.object({
@@ -36,41 +37,9 @@ export default async function Page({
   const parsed = completed.safeParse(response.data);
   if (response.error || !parsed.success)
     return (
-      <section className={styles.panel}>
-        <h1>참여 결과</h1>
-        <p role="alert">
-          결과를 불러오지 못했어요. 잠시 후 다시 확인해 주세요.
-        </p>
-        <Link href="/workroom/history">참여 내역으로</Link>
-      </section>
+      <ParticipationResultError
+        retryHref={`/workroom/history?round=${round}`}
+      />
     );
-  const result = parsed.data.round;
-  const amount = (n: number) => n.toLocaleString("ko-KR") + " P";
-  return (
-    <section className={styles.panel} aria-labelledby="round-result-title">
-      <h1 id="round-result-title">참여 결과</h1>
-      <h2>
-        {WORKROOM_INSTRUMENTS.find((i) => i.id === result.instrument)?.name ??
-          result.instrument}
-      </h2>
-      <p>
-        {new Date(result.closedAt).toLocaleString("ko-KR", {
-          timeZone: "Asia/Seoul",
-        })}{" "}
-        종료
-      </p>
-      <dl>
-        <dt>참여 포인트</dt>
-        <dd>{amount(result.stake)}</dd>
-        <dt>종료 포인트</dt>
-        <dd>{amount(result.returned)}</dd>
-        <dt>포인트 변동</dt>
-        <dd className={result.profit >= 0 ? styles.positive : styles.negative}>
-          {result.profit >= 0 ? "+" : ""}
-          {amount(result.profit)}
-        </dd>
-      </dl>
-      <Link href="/workroom/history">전체 참여 내역 보기 →</Link>
-    </section>
-  );
+  return <ParticipationResult result={parsed.data.round} />;
 }

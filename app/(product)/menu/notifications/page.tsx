@@ -8,6 +8,7 @@ import { PushControl } from "@/components/product/push-control";
 import { Surface } from "@/components/ui/surface";
 import { requirePageUser } from "@/lib/auth/session";
 import { presentNotificationPreferencesRead } from "@/lib/product/notification-preferences-read";
+import deviceStyles from "@/components/workroom-app/device-settings.module.css";
 
 /**
  * 알림 설정 제품 의미(카피·패널·기본 선호)는 PR #24(notifications-product)가 소유한다.
@@ -41,7 +42,9 @@ export default async function NotificationSettingsPage() {
         lead="첫 화면에서 권한을 요구하지 않습니다. 직접 선택한 기기에만 푸시를 저장합니다."
       />
       <Surface as="section" className="settings-panel" tone="raised">
-        <PushControl />
+        <div className={deviceStyles.control}>
+          <PushControl />
+        </div>
       </Surface>
       <Surface
         as="section"
