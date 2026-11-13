@@ -2,9 +2,8 @@
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
-  simulationValue,
   sessionValue,
-  type WorkroomConfig,
+  simulationValue,
   type WorkroomSession,
   type WorkroomState,
 } from "@/domain/workroom/contracts";
@@ -14,6 +13,8 @@ import {
   type WorkroomOperation,
 } from "./command-client";
 import styles from "./workroom.module.css";
+import experience from "./workroom-experience.module.css";
+import { WorkroomChart } from "./workroom-chart";
 import { WorkroomLoading } from "../ui/workroom-loading";
 const instruments = [
   { id: "usd", name: "달러환율", category: "fx" },
@@ -51,80 +52,6 @@ type Quote = {
   isFallback: boolean;
 };
 type Page = "room" | "history" | "points" | "guide";
-function Chart({
-  config,
-  progress,
-}: {
-  config: WorkroomConfig | WorkroomSession;
-  progress: number;
-}) {
-  const values = Array.from({ length: 121 }, (_, i) =>
-    simulationValue(config, i / 120),
-  );
-  const min = Math.min(...values) - 0.6,
-    max = Math.max(...values) + 0.6;
-  const x = (t: number) => 48 + t * 732,
-    y = (v: number) => 16 + ((max - v) / (max - min)) * 208;
-  const points = Array.from(
-    { length: Math.floor(120 * progress) + 1 },
-    (_, i) => `${x(i / 120)},${y(values[i] ?? 100)}`,
-  );
-  points.push(`${x(progress)},${y(simulationValue(config, progress))}`);
-  return (
-    <svg
-      className={styles.chart}
-      viewBox="0 0 800 260"
-      role="img"
-      aria-label={`사전 설정된 ${patterns[config.pattern]} 모의 지수 차트. 시작 100, 종료 ${100 + config.roi}. 실제 시세와 다릅니다.`}
-    >
-      {[0, 1, 2, 3, 4].map((i) => {
-        const v = min + ((max - min) * i) / 4;
-        return (
-          <g key={i}>
-            <line
-              x1="48"
-              x2="780"
-              y1={y(v)}
-              y2={y(v)}
-              stroke="var(--wr-chart-grid)"
-              strokeDasharray="3 5"
-            />
-            <text x="0" y={y(v) + 4}>
-              {v.toFixed(1)}
-            </text>
-            <line
-              x1={x(i / 4)}
-              x2={x(i / 4)}
-              y1="16"
-              y2="224"
-              stroke="var(--wr-chart-grid)"
-            />
-            <text textAnchor="middle" x={x(i / 4)} y="248">
-              {Math.round((config.duration * i) / 4)}초
-            </text>
-          </g>
-        );
-      })}
-      <polygon
-        points={`48,224 ${points.join(" ")} ${x(progress)},224`}
-        fill="var(--wr-chart-fill)"
-      />
-      <polyline
-        points={points.join(" ")}
-        fill="none"
-        stroke="var(--wr-accent)"
-        strokeWidth="2.8"
-        strokeLinejoin="round"
-      />
-      <circle
-        cx={x(progress)}
-        cy={y(simulationValue(config, progress))}
-        r="4"
-        fill="var(--wr-chart-dot)"
-      />
-    </svg>
-  );
-}
 function History({ rows }: { rows: WorkroomSession[] }) {
   if (!rows.length)
     return (
@@ -181,9 +108,7 @@ export function WorkroomClient({
   const [selected, setSelected] = useState("nvda"),
     [amount, setAmount] = useState("50000"),
     [now, setNow] = useState(0);
-  const [confirm, setConfirm] = useState<WorkroomConfig | null>(null),
-    [ack, setAck] = useState(false),
-    [hasPending, setHasPending] = useState(false);
+  const [hasPending, setHasPending] = useState(false);
   const [quotes, setQuotes] = useState<Record<string, Quote>>({}),
     [quoteError, setQuoteError] = useState(""),
     [quoteBusy, setQuoteBusy] = useState(false);
@@ -250,8 +175,6 @@ export function WorkroomClient({
         const next = await queue.current.send();
         revision.current += 1;
         accept(next);
-        setConfirm(null);
-        setAck(false);
         if (submittedOperation === "START")
           setNotice(
             "모의 참여를 시작했습니다. 진행 중인 회차 조건은 고정됩니다.",
@@ -272,10 +195,6 @@ export function WorkroomClient({
           /* Successful mutation is already confirmed. */
         }
       } catch (e) {
-        if (!queue.current.current()) {
-          setConfirm(null);
-          setAck(false);
-        }
         if (alive.current)
           setError(
             e instanceof Error ? e.message : "요청 결과를 확인하지 못했습니다.",
@@ -430,13 +349,26 @@ export function WorkroomClient({
       </div>
     );
   const member = state.member,
-    active = state.active;
+    active = state.active,
+    latestResult = state.history[0];
   const instrument =
     instruments.find((i) => i.id === (active?.instrument ?? selected)) ??
     instruments[3]!;
   const selectedConfig = state.configs.find((c) => c.instrument === selected);
-  const config = active ?? confirm ?? selectedConfig,
+  const config = active ?? selectedConfig,
     quote = quotes[instrument.id];
+  const patternValues = Array.from({ length: 25 }, (_, index) =>
+    config ? simulationValue(config, index / 24) : 100,
+  );
+  const patternLow = Math.min(...patternValues),
+    patternHigh = Math.max(...patternValues),
+    patternPadding = Math.max((patternHigh - patternLow) * 0.12, 0.1);
+  const patternPoints = patternValues
+    .map(
+      (value, index) =>
+        `${2 + (index / 24) * 28},${2 + ((patternHigh + patternPadding - value) / (patternHigh - patternLow + patternPadding * 2)) * 20}`,
+    )
+    .join(" ");
   const view = active
     ? sessionValue(active, now)
     : {
@@ -454,7 +386,10 @@ export function WorkroomClient({
       .padStart(2, "0")}:${(view.remaining % 60).toString().padStart(2, "0")}`,
     overdue = Boolean(active && now >= active.started + active.duration * 1000);
   return (
-    <div data-ui-ready={`/workroom${page === "room" ? "" : `/${page}`}`}>
+    <div
+      className={page === "room" ? experience.room : undefined}
+      data-ui-ready={`/workroom${page === "room" ? "" : `/${page}`}`}
+    >
       {notice ? (
         <p className={styles.disclosure} role="status">
           {notice} <Link href="/workroom/history">참여 내역 보기 →</Link>
@@ -463,18 +398,15 @@ export function WorkroomClient({
       {error || hasPending ? recovery : null}
       {page === "room" && (
         <>
-          <section className={styles.title}>
+          <section className={`${styles.title} ${experience.title}`}>
             <div>
+              <span className={styles.eyebrow}>MY WORKROOM</span>
               <h1>흐름을 보고, 순간을 선택하세요.</h1>
               <span className={styles.roomId}>{member.room}</span>
             </div>
             <span className={styles.badge}>무료 시뮬레이션</span>
           </section>
-          <div className={styles.notice}>
-            <span>실제 거래와 분리된 무료 시뮬레이션입니다.</span>
-            <span>체험 포인트는 현금으로 출금할 수 없습니다.</span>
-          </div>
-          <div className={styles.selectors}>
+          <div className={`${styles.selectors} ${experience.selectors}`}>
             <label>
               카테고리
               <select
@@ -486,8 +418,6 @@ export function WorkroomClient({
                     instruments.find((i) => i.category === e.target.value)
                       ?.id ?? "nvda",
                   );
-                  setConfirm(null);
-                  setAck(false);
                 }}
               >
                 <option value="fx">환율</option>
@@ -502,8 +432,6 @@ export function WorkroomClient({
                 disabled={Boolean(active) || busy || hasPending}
                 onChange={(e) => {
                   setSelected(e.target.value);
-                  setConfirm(null);
-                  setAck(false);
                 }}
               >
                 {instruments
@@ -517,8 +445,254 @@ export function WorkroomClient({
             </label>
             <span>모의 지수 · 실제 시세와 분리</span>
           </div>
+          {config ? (
+            <div className={`${styles.monitor} ${experience.monitor}`}>
+              <section
+                className={`${styles.panel} ${styles.chartPanel} ${experience.chartPanel}`}
+              >
+                <div className={styles.chartHeading}>
+                  <span className={styles.running}>
+                    {active
+                      ? "모의 모니터링 진행 중"
+                      : "모의 모니터링 준비 완료"}
+                  </span>
+                  <span className={styles.instrumentTag}>
+                    {instrument.name}
+                  </span>
+                </div>
+                <div
+                  className={`${styles.evaluation} ${experience.evaluation}`}
+                >
+                  <span>
+                    {active
+                      ? "현재 모의 평가 포인트 · 예상값"
+                      : "종료 시점 미리보기"}
+                  </span>
+                  <div className={styles.evaluationRow}>
+                    <strong>
+                      {money(view.returned)} <small>P</small>
+                    </strong>
+                    <span
+                      className={
+                        profit >= 0 ? styles.positive : styles.negative
+                      }
+                    >
+                      {signed(profit)} P ({(view.value - 100).toFixed(2)}%)
+                    </span>
+                  </div>
+                </div>
+                <div
+                  className={experience.pattern}
+                  aria-label="이번 회차에 설정된 모의 경로"
+                >
+                  <span className={experience.patternIcon} aria-hidden="true">
+                    <svg
+                      viewBox="0 0 32 24"
+                      width="32"
+                      height="24"
+                      focusable="false"
+                    >
+                      <polyline
+                        points={patternPoints}
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.8"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </span>
+                  <div>
+                    <span>사전 설정된 경로</span>
+                    <strong>{patterns[config.pattern]} 패턴</strong>
+                  </div>
+                  <div className={experience.patternEnd}>
+                    <span>모의 지수</span>
+                    <strong>100 → {(100 + config.roi).toFixed(2)}</strong>
+                  </div>
+                </div>
+                <WorkroomChart
+                  config={config}
+                  progress={view.progress}
+                  active={Boolean(active)}
+                />
+                <div className={experience.timeline}>
+                  <div>
+                    <span>
+                      {active ? "이번 회차 진행" : "전체 경로 미리보기"}
+                    </span>
+                    <strong>
+                      {active
+                        ? `${Math.floor(view.progress * 100)}%`
+                        : `${config.duration}초`}
+                    </strong>
+                  </div>
+                  <progress
+                    aria-label={
+                      active ? "이번 회차 진행률" : "미리보기 전체 경로"
+                    }
+                    max={100}
+                    value={active ? view.progress * 100 : 100}
+                  />
+                  <div>
+                    <span>시작 · 0초</span>
+                    <span>
+                      {active
+                        ? `남은 시간 ${remaining}`
+                        : `종료 · ${config.duration}초`}
+                    </span>
+                  </div>
+                </div>
+              </section>
+              <section
+                className={`${styles.panel} ${styles.session} ${experience.session}`}
+              >
+                <span className={experience.sessionEyebrow}>
+                  {active ? "참여 진행 중" : "무료 모의 체험"}
+                </span>
+                <h2>{active ? "이번 모의 참여" : "모니터링 시작하기"}</h2>
+                <p className={experience.sessionIntro}>
+                  {active
+                    ? "시작할 때 확인한 조건으로 진행됩니다."
+                    : "공개된 경로를 확인하고 참여하세요."}
+                </p>
+                <div className={styles.sessionLines}>
+                  <div>
+                    <span>참여 포인트</span>
+                    <strong>{money(active?.stake ?? Number(amount))} P</strong>
+                  </div>
+                  <div>
+                    <span>{active ? "남은 시간" : "진행 시간"}</span>
+                    <strong className={styles.timer}>{remaining}</strong>
+                  </div>
+                  <div>
+                    <span>설정 수익률</span>
+                    <strong>
+                      {config.roi >= 0 ? "+" : ""}
+                      {config.roi.toFixed(2)}%
+                    </strong>
+                  </div>
+                </div>
+                {!active && (
+                  <label className={styles.stake}>
+                    참여할 체험 포인트
+                    <input
+                      aria-label="참여할 체험 포인트"
+                      type="number"
+                      min="1000"
+                      step="1"
+                      max={Math.min(member.balance, 1_000_000_000)}
+                      value={amount}
+                      disabled={busy || hasPending}
+                      onChange={(e) => {
+                        setAmount(e.target.value);
+                      }}
+                    />
+                    <small>
+                      사용 가능 {money(member.balance)} P · 정수 입력
+                    </small>
+                  </label>
+                )}
+                {active ? (
+                  <button
+                    className={styles.primary}
+                    disabled={busy || hasPending}
+                    onClick={() =>
+                      void command(
+                        overdue ? "SYNC" : "FINISH",
+                        overdue ? {} : { id: active.id },
+                      )
+                    }
+                  >
+                    {busy ? (
+                      <WorkroomLoading label="결과 확인 중…" variant="inline" />
+                    ) : overdue ? (
+                      "종료 결과 확인"
+                    ) : (
+                      "지금 모의 참여 종료"
+                    )}
+                  </button>
+                ) : (
+                  <button
+                    className={styles.primary}
+                    disabled={
+                      busy || hasPending || !validStake || !selectedConfig
+                    }
+                    onClick={() => {
+                      if (!selectedConfig) return;
+                      void command("START", {
+                        instrument: selected,
+                        stake: Number(amount),
+                        acknowledged: true,
+                        expectedVersion: selectedConfig.version,
+                      });
+                    }}
+                  >
+                    {busy ? (
+                      <WorkroomLoading label="참여 확인 중…" variant="inline" />
+                    ) : (
+                      "모니터링 시작"
+                    )}
+                  </button>
+                )}
+                <p className={`${styles.helper} ${styles.risk}`}>
+                  체험 포인트 · 현금 전환 불가
+                </p>
+              </section>
+            </div>
+          ) : (
+            <div className={styles.error}>
+              참여 조건을 불러오지 못했습니다. 새로고침 후 다시 확인해 주세요.
+            </div>
+          )}
+          {!active && latestResult?.status === "completed" && (
+            <section
+              className={experience.result}
+              aria-label="최근 서버 확정 결과"
+            >
+              <div className={experience.resultHeading}>
+                <span className={experience.resultIcon} aria-hidden="true">
+                  ✓
+                </span>
+                <div>
+                  <span className={experience.sessionEyebrow}>
+                    서버 확정 결과
+                  </span>
+                  <h2>최근 모의 참여를 마쳤어요.</h2>
+                  <p>
+                    {instruments.find(
+                      (item) => item.id === latestResult.instrument,
+                    )?.name ?? latestResult.instrument}{" "}
+                    · {date(latestResult.closedAt)}
+                  </p>
+                </div>
+              </div>
+              <dl>
+                <div>
+                  <dt>참여 포인트</dt>
+                  <dd>{money(latestResult.stake)} P</dd>
+                </div>
+                <div>
+                  <dt>종료 포인트</dt>
+                  <dd>{money(latestResult.returned)} P</dd>
+                </div>
+                <div>
+                  <dt>확정 변동</dt>
+                  <dd
+                    className={
+                      (latestResult.profit ?? 0) >= 0
+                        ? styles.positive
+                        : styles.negative
+                    }
+                  >
+                    {signed(latestResult.profit)} P
+                  </dd>
+                </div>
+              </dl>
+            </section>
+          )}
           <section
-            className={styles.reference}
+            className={`${styles.reference} ${experience.reference}`}
             aria-label="실제 시장 참고 가격"
           >
             <div>
@@ -557,181 +731,6 @@ export function WorkroomClient({
               {quote && quoteError ? ` ${quoteError}` : ""}
             </p>
           </section>
-          {config ? (
-            <div className={styles.monitor}>
-              <section className={`${styles.panel} ${styles.chartPanel}`}>
-                <div className={styles.chartHeading}>
-                  <span className={styles.running}>
-                    {active
-                      ? "모의 모니터링 진행 중"
-                      : "모의 모니터링 준비 완료"}
-                  </span>
-                  <span className={styles.instrumentTag}>
-                    {instrument.name}
-                  </span>
-                </div>
-                <div className={styles.evaluation}>
-                  <span>
-                    {active
-                      ? "현재 모의 평가 포인트 · 예상값"
-                      : "종료 시점 미리보기"}
-                  </span>
-                  <div className={styles.evaluationRow}>
-                    <strong>
-                      {money(view.returned)} <small>P</small>
-                    </strong>
-                    <span
-                      className={
-                        profit >= 0 ? styles.positive : styles.negative
-                      }
-                    >
-                      {signed(profit)} P ({(view.value - 100).toFixed(2)}%)
-                    </span>
-                  </div>
-                </div>
-                <Chart config={config} progress={view.progress} />
-                <p className={styles.caption}>
-                  사전 설정된 모의 지수입니다. 실제 시장 가격 차트가 아닙니다.
-                </p>
-              </section>
-              <section className={`${styles.panel} ${styles.session}`}>
-                <h2>{active ? "이번 모의 참여" : "모니터링 시작하기"}</h2>
-                <div className={styles.sessionLines}>
-                  <div>
-                    <span>참여 포인트</span>
-                    <strong>{money(active?.stake ?? Number(amount))} P</strong>
-                  </div>
-                  <div>
-                    <span>{active ? "남은 시간" : "진행 시간"}</span>
-                    <strong className={styles.timer}>{remaining}</strong>
-                  </div>
-                  <div>
-                    <span>설정 수익률</span>
-                    <strong>
-                      {config.roi >= 0 ? "+" : ""}
-                      {config.roi.toFixed(2)}%
-                    </strong>
-                  </div>
-                </div>
-                {!active && (
-                  <label className={styles.stake}>
-                    참여할 체험 포인트
-                    <input
-                      aria-label="참여할 체험 포인트"
-                      type="number"
-                      min="1000"
-                      step="1"
-                      max={Math.min(member.balance, 1_000_000_000)}
-                      value={amount}
-                      disabled={busy || hasPending}
-                      onChange={(e) => {
-                        setAmount(e.target.value);
-                        setConfirm(null);
-                        setAck(false);
-                      }}
-                    />
-                    <small>
-                      사용 가능 {money(member.balance)} P · 정수 입력
-                    </small>
-                  </label>
-                )}
-                {active ? (
-                  <button
-                    className={styles.primary}
-                    disabled={busy || hasPending}
-                    onClick={() =>
-                      void command(
-                        overdue ? "SYNC" : "FINISH",
-                        overdue ? {} : { id: active.id },
-                      )
-                    }
-                  >
-                    {busy ? (
-                      <WorkroomLoading label="결과 확인 중…" variant="inline" />
-                    ) : overdue ? (
-                      "종료 결과 확인"
-                    ) : (
-                      "지금 모의 참여 종료"
-                    )}
-                  </button>
-                ) : !confirm ? (
-                  <button
-                    className={styles.primary}
-                    disabled={busy || hasPending || !validStake}
-                    onClick={() => {
-                      if (selectedConfig) setConfirm({ ...selectedConfig });
-                    }}
-                  >
-                    모니터링 시작
-                  </button>
-                ) : (
-                  <div className={styles.confirm}>
-                    <p>
-                      {instrument.name} · {patterns[config.pattern]}
-                      <br />
-                      {config.duration}초 · 설정 수익률{" "}
-                      {config.roi >= 0 ? "+" : ""}
-                      {config.roi.toFixed(2)}%<br />
-                      {money(Number(amount))} P 참여
-                    </p>
-                    <label>
-                      <input
-                        type="checkbox"
-                        checked={ack}
-                        onChange={(e) => setAck(e.target.checked)}
-                        disabled={busy}
-                      />
-                      <span>
-                        사전 설정된 경로와 종료 변동률을 확인했습니다. 포인트는
-                        감소할 수 있고 현금으로 출금되지 않습니다.
-                      </span>
-                    </label>
-                    <button
-                      className={styles.primary}
-                      disabled={!ack || busy || hasPending || !validStake}
-                      onClick={() =>
-                        void command("START", {
-                          instrument: selected,
-                          stake: Number(amount),
-                          acknowledged: true,
-                          expectedVersion: confirm.version,
-                        })
-                      }
-                    >
-                      {busy ? (
-                        <WorkroomLoading
-                          label="참여 확인 중…"
-                          variant="inline"
-                        />
-                      ) : (
-                        "확인하고 모의 체험 시작"
-                      )}
-                    </button>
-                    <button
-                      className={styles.secondary}
-                      disabled={busy}
-                      onClick={() => {
-                        setConfirm(null);
-                        setAck(false);
-                      }}
-                    >
-                      취소
-                    </button>
-                  </div>
-                )}
-                <p className={styles.helper}>
-                  {patterns[config.pattern]} 패턴 · 사전 설정된 종료 변동률
-                </p>
-                <p className={`${styles.helper} ${styles.risk}`}>
-                  체험 포인트는 증감할 수 있으며 현금 전환은 불가합니다.
-                </p>
-              </section>
-            </div>
-          ) : (
-            <div className={styles.error}>
-              참여 조건을 불러오지 못했습니다. 새로고침 후 다시 확인해 주세요.
-            </div>
-          )}
           <section className={styles.balance}>
             <div>
               <span>사용 가능 체험 포인트</span>
