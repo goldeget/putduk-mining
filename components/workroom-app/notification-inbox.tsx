@@ -1,4 +1,5 @@
 "use client";
+import type { Route } from "next";
 import Link from "next/link";
 import { useState } from "react";
 import {
@@ -157,7 +158,10 @@ export function NotificationInbox({ admin = false }: { admin?: boolean }) {
             새로고침
           </button>
           {!admin ? (
-            <Link className={styles.secondary} href="/menu/notifications">
+            <Link
+              className={styles.secondary}
+              href={"/menu/notifications" as Route}
+            >
               알림 설정
             </Link>
           ) : null}

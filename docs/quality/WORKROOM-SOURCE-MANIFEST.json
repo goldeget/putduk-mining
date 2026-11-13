@@ -865,7 +865,7 @@
     "components/workroom-app/client.ts": "c7ed6378630b69b7f0425b2731a3107f791526c9a22f850ed47d04c249d7eda3",
     "components/workroom-app/member-secondary-navigation.tsx": "a049df3b0d88e1ce29a75024534cef52948480ceacb473f0bf0d4883093558c4",
     "components/workroom-app/notification-bell.tsx": "e268a4443b8fcb7dd5b9b3302abf2e97dc1527187c149e203147eb1f84d5b250",
-    "components/workroom-app/notification-inbox.tsx": "05d5981340624fd25ee450d6969ea74a6f22f2127843e9be24291a45d32a2cb3",
+    "components/workroom-app/notification-inbox.tsx": "30da7a741c6e27b75d60a15f09d15136b471e2cc0fe8ef14891211d198638585",
     "components/workroom-app/pagination.ts": "48df398c08086a803fe8443286395ecd9fb7bd3f57efb0db99314843944ad14d",
     "components/workroom-app/support-inbox.tsx": "f9272de7a4a5221f51a107db8c28b758a72f46b42429fa349c4678eb34d2e2e8",
     "components/workroom-app/support-photo.tsx": "5d236c53fb95b7055b332f86a2bb91854b808bf41ff869dc36e9e975df370a86",
