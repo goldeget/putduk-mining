@@ -12,7 +12,7 @@ import type {
   WorkroomAdminState,
 } from "@/lib/workroom/types";
 import styles from "./workroom.module.css";
-import { simulationValue } from "../../../../../domain/workroom/contracts";
+import { WorkroomConfigPreview } from "./config-preview";
 const names: Record<string, string> = {
   usd: "미국 달러",
   cny: "중국 위안",
@@ -53,74 +53,6 @@ const draftDefault: WorkroomAdminConfig = {
   amplitude: 2,
   version: 1,
 };
-function Preview({ config }: { config: WorkroomAdminConfig }) {
-  const hours = Math.floor(config.duration / 3600);
-  const minutes = Math.floor((config.duration % 3600) / 60);
-  const seconds = config.duration % 60;
-  const durationLabel = [
-    hours ? `${hours}시간` : "",
-    minutes ? `${minutes}분` : "",
-    seconds || (!hours && !minutes) ? `${seconds}초` : "",
-  ]
-    .filter(Boolean)
-    .join(" ");
-  const values = Array.from({ length: 121 }, (_, i) =>
-    simulationValue(config, i / 120),
-  );
-  const min = Math.min(...values) - 2,
-    max = Math.max(...values) + 2;
-  const points = values
-    .map(
-      (v, i) =>
-        `${24 + (i / 120) * 552},${190 - ((v - min) / (max - min)) * 160}`,
-    )
-    .join(" ");
-  return (
-    <div className={styles.preview}>
-      <div className={styles.endpoint}>
-        <span>시작 지수 100.00</span>
-        <strong>
-          최종 수익률 {config.roi >= 0 ? "+" : ""}
-          {config.roi.toFixed(2)}%
-        </strong>
-      </div>
-      <svg
-        viewBox="0 0 600 230"
-        role="img"
-        aria-label={`${patterns[config.pattern]} 모의 경로의 표시용 미리보기. 최종 변동률 ${config.roi}퍼센트.`}
-      >
-        {[30, 70, 110, 150, 190].map((y) => (
-          <line
-            key={y}
-            x1="24"
-            x2="576"
-            y1={y}
-            y2={y}
-            stroke="var(--admin-line)"
-            strokeDasharray="3 5"
-          />
-        ))}
-        <polyline
-          points={points}
-          fill="none"
-          stroke="var(--admin-accent)"
-          strokeWidth="3"
-          strokeLinejoin="round"
-        />
-        <text x="24" y="222" fill="var(--admin-muted)" fontSize="12">
-          00:00
-        </text>
-        <text x="540" y="222" fill="var(--admin-muted)" fontSize="12">
-          {durationLabel}
-        </text>
-      </svg>
-      <p>
-        표시용 예상 경로입니다. 실제 체험 계산은 서버가 저장된 조건으로
-        처리합니다. 진행 중 회차는 시작 당시 조건을 유지합니다.
-      </p>
-    </div>
-  );
-}
 function Pager({
   page,
   total,
@@ -183,6 +115,10 @@ export function WorkroomConsole({ actorId }: { actorId: string }) {
     [query, setQuery] = useState("");
   const [draft, setDraft] = useState(draftDefault),
     [configReason, setConfigReason] = useState("");
+  const [roiDirection, setRoiDirection] = useState<"POSITIVE" | "NEGATIVE">(
+    "POSITIVE",
+  );
+  const configInstrument = useRef(draftDefault.instrument);
   const [inviteLabel, setInviteLabel] = useState(""),
     [maxUses, setMaxUses] = useState(20),
     [expiry, setExpiry] = useState(""),
@@ -222,14 +158,15 @@ export function WorkroomConsole({ actorId }: { actorId: string }) {
       setReadAt(Date.now());
       if (!initializedDraft.current) {
         const state = value as WorkroomAdminState;
-        setDraft(
-          (previous) =>
-            state.configs.find(
-              (config) => config.instrument === previous.instrument,
-            ) ||
-            state.configs[0] ||
-            previous,
-        );
+        const selectedConfig =
+          state.configs.find(
+            (config) => config.instrument === configInstrument.current,
+          ) || state.configs[0];
+        if (selectedConfig) {
+          configInstrument.current = selectedConfig.instrument;
+          setDraft(selectedConfig);
+          setRoiDirection(selectedConfig.roi < 0 ? "NEGATIVE" : "POSITIVE");
+        }
         initializedDraft.current = true;
       }
       setError("");
@@ -452,7 +389,7 @@ export function WorkroomConsole({ actorId }: { actorId: string }) {
       ) : (
         <>
           {tab === "config" && (
-            <div className={styles.grid}>
+            <div className={`${styles.grid} ${styles.configGrid}`}>
               <section className={styles.panel}>
                 <span className={styles.eyebrow}>SIMULATION SETTINGS</span>
                 <h2>다음 회차의 모의 조건</h2>
@@ -470,80 +407,174 @@ export function WorkroomConsole({ actorId }: { actorId: string }) {
                     });
                   }}
                 >
-                  <fieldset disabled={locked}>
-                    <label>
-                      카테고리 상품
-                      <select
-                        value={draft.instrument}
-                        onChange={(e) =>
-                          setDraft(
-                            data.configs.find(
-                              (c) => c.instrument === e.target.value,
-                            ) || draft,
-                          )
-                        }
-                      >
-                        {data.configs.map((c) => (
-                          <option key={c.instrument} value={c.instrument}>
-                            {names[c.instrument] || c.instrument}
-                          </option>
-                        ))}
-                      </select>
-                    </label>
-                    <label>
-                      움직임 패턴
-                      <select
-                        value={draft.pattern}
-                        onChange={(e) =>
-                          setDraft({
-                            ...draft,
-                            pattern: e.target
-                              .value as WorkroomAdminConfig["pattern"],
-                          })
-                        }
-                      >
-                        {Object.entries(patterns).map(([key, label]) => (
-                          <option key={key} value={key}>
-                            {label}
-                          </option>
-                        ))}
-                      </select>
-                    </label>
-                    <div className={styles.three}>
+                  <fieldset disabled={locked} className={styles.configFields}>
+                    <div className={styles.settingsGroup}>
+                      <h3>
+                        <span>01</span> 적용할 종목과 경로
+                      </h3>
                       <label>
-                        수익 방향
+                        카테고리 상품
                         <select
-                          value={draft.roi < 0 ? "NEGATIVE" : "POSITIVE"}
+                          value={draft.instrument}
                           onChange={(e) => {
-                            const sign = e.target.value === "NEGATIVE" ? -1 : 1;
-                            setDraft({
-                              ...draft,
-                              roi: sign * Math.abs(draft.roi),
-                            });
+                            const next = data.configs.find(
+                              (c) => c.instrument === e.target.value,
+                            );
+                            if (!next) return;
+                            configInstrument.current = next.instrument;
+                            setDraft(next);
+                            setRoiDirection(
+                              next.roi < 0 ? "NEGATIVE" : "POSITIVE",
+                            );
                           }}
                         >
-                          <option value="POSITIVE">플러스 수익률</option>
-                          <option value="NEGATIVE">마이너스 수익률</option>
+                          {data.configs.map((c) => (
+                            <option key={c.instrument} value={c.instrument}>
+                              {names[c.instrument] || c.instrument}
+                            </option>
+                          ))}
                         </select>
                       </label>
                       <label>
-                        수익률 크기 (%)
-                        <input
-                          type="number"
-                          required
-                          min={0}
-                          max={50}
-                          step="0.1"
-                          value={Math.abs(draft.roi)}
-                          onChange={(e) => {
-                            const sign = draft.roi < 0 ? -1 : 1;
+                        움직임 패턴
+                        <select
+                          value={draft.pattern}
+                          onChange={(e) =>
                             setDraft({
                               ...draft,
-                              roi: sign * Number(e.target.value),
-                            });
-                          }}
-                        />
+                              pattern: e.target
+                                .value as WorkroomAdminConfig["pattern"],
+                            })
+                          }
+                        >
+                          {Object.entries(patterns).map(([key, label]) => (
+                            <option key={key} value={key}>
+                              {label}
+                            </option>
+                          ))}
+                        </select>
                       </label>
+                      <div
+                        className={styles.patternCards}
+                        role="group"
+                        aria-label="모의 경로 패턴 선택"
+                      >
+                        {(
+                          [
+                            [
+                              "wave",
+                              "웨이브",
+                              "반복되는 굴곡",
+                              "M2 20 Q8 2 14 15 T26 14 T38 10 T50 5",
+                            ],
+                            [
+                              "slow",
+                              "슬로우",
+                              "완만하게 이어지는 흐름",
+                              "M2 22 C10 22 18 20 26 15 S40 6 50 4",
+                            ],
+                            [
+                              "balanced",
+                              "밸런스",
+                              "고르게 이어지는 흐름",
+                              "M2 22 Q10 18 18 17 T34 10 T50 4",
+                            ],
+                          ] as const
+                        ).map(([key, label, description, path]) => (
+                          <button
+                            type="button"
+                            key={key}
+                            className={styles.patternCard}
+                            aria-pressed={draft.pattern === key}
+                            onClick={() => setDraft({ ...draft, pattern: key })}
+                          >
+                            <svg
+                              viewBox="0 0 52 28"
+                              aria-hidden="true"
+                              focusable="false"
+                            >
+                              <path
+                                d={path}
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                              />
+                            </svg>
+                            <strong>{label}</strong>
+                            <small>{description}</small>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <div className={styles.settingsGroup}>
+                      <h3>
+                        <span>02</span> 종료 방향과 변동률
+                      </h3>
+                      <div className={styles.two}>
+                        <label>
+                          수익 방향
+                          <select
+                            className={
+                              roiDirection === "NEGATIVE"
+                                ? styles.directionNegative
+                                : styles.directionPositive
+                            }
+                            value={roiDirection}
+                            onChange={(e) => {
+                              const next = e.target.value as
+                                "POSITIVE" | "NEGATIVE";
+                              setRoiDirection(next);
+                              setDraft({
+                                ...draft,
+                                roi:
+                                  (next === "NEGATIVE" ? -1 : 1) *
+                                  Math.abs(draft.roi),
+                              });
+                            }}
+                          >
+                            <option value="POSITIVE">＋ 플러스 수익률</option>
+                            <option value="NEGATIVE">− 마이너스 수익률</option>
+                          </select>
+                        </label>
+                        <label>
+                          수익률 크기 (%)
+                          <input
+                            type="number"
+                            required
+                            min={0}
+                            max={50}
+                            step="0.1"
+                            value={Math.abs(draft.roi)}
+                            onChange={(e) =>
+                              setDraft({
+                                ...draft,
+                                roi:
+                                  (roiDirection === "NEGATIVE" ? -1 : 1) *
+                                  Number(e.target.value),
+                              })
+                            }
+                          />
+                        </label>
+                      </div>
+                      <p className={styles.fieldHint}>
+                        크기는 0~50%로 입력하세요. 선택한 방향은 0%에서도
+                        유지됩니다.
+                      </p>
+                      <div
+                        className={`${styles.roiSummary} ${roiDirection === "NEGATIVE" ? styles.directionNegative : styles.directionPositive}`}
+                      >
+                        <span>설정할 종료 변동률</span>
+                        <strong>
+                          {roiDirection === "NEGATIVE" ? "−" : "+"}
+                          {Math.abs(draft.roi).toFixed(2)}%
+                        </strong>
+                      </div>
+                    </div>
+                    <div className={styles.settingsGroup}>
+                      <h3>
+                        <span>03</span> 진행 시간과 중간 움직임
+                      </h3>
                       <label>
                         진행 시간 (초 · 최대 24시간)
                         <input
@@ -561,49 +592,89 @@ export function WorkroomConsole({ actorId }: { actorId: string }) {
                           }
                         />
                       </label>
+                      <div
+                        className={styles.timePresets}
+                        role="group"
+                        aria-label="진행 시간 빠른 선택"
+                      >
+                        {(
+                          [
+                            [30, "30초"],
+                            [60, "1분"],
+                            [120, "2분"],
+                            [300, "5분"],
+                          ] as const
+                        ).map(([seconds, label]) => (
+                          <button
+                            type="button"
+                            key={seconds}
+                            aria-pressed={draft.duration === seconds}
+                            onClick={() =>
+                              setDraft({ ...draft, duration: seconds })
+                            }
+                          >
+                            {label}
+                          </button>
+                        ))}
+                      </div>
+                      <p className={styles.fieldHint}>
+                        30~86,400초 사이에서 1초 단위로 설정합니다.
+                      </p>
+                      <label>
+                        중간 변동 폭 (0~15)
+                        <input
+                          type="number"
+                          required
+                          min={0}
+                          max={15}
+                          step="0.1"
+                          value={draft.amplitude}
+                          onChange={(e) =>
+                            setDraft({
+                              ...draft,
+                              amplitude: Number(e.target.value),
+                            })
+                          }
+                        />
+                      </label>
+                      <p className={styles.fieldHint}>
+                        경로 중간의 움직임 크기입니다. 종료 변동률과 별도로
+                        설정합니다.
+                      </p>
                     </div>
-                    <label>
-                      중간 변동 폭 (0~15)
-                      <input
-                        type="number"
-                        required
-                        min={0}
-                        max={15}
-                        step="0.1"
-                        value={draft.amplitude}
-                        onChange={(e) =>
-                          setDraft({
-                            ...draft,
-                            amplitude: Number(e.target.value),
-                          })
-                        }
-                      />
-                    </label>
-                    <label>
-                      변경 사유
-                      <input
-                        required
-                        minLength={2}
-                        maxLength={160}
-                        value={configReason}
-                        onChange={(e) => setConfigReason(e.target.value)}
-                        placeholder="변경 목적을 기록해주세요"
-                      />
-                    </label>
-                    <p className={styles.muted}>
-                      현재 버전 v{draft.version} · 다른 운영자가 먼저 저장하면
-                      최신 조건을 다시 확인합니다.
-                    </p>
-                    <button className={styles.primary} type="submit">
-                      변경 내용 검토
-                    </button>
+                    <div className={styles.settingsGroup}>
+                      <h3>
+                        <span>04</span> 변경 내용 기록
+                      </h3>
+                      <label>
+                        변경 사유
+                        <input
+                          required
+                          minLength={2}
+                          maxLength={160}
+                          value={configReason}
+                          onChange={(e) => setConfigReason(e.target.value)}
+                          placeholder="변경 목적을 기록해주세요"
+                        />
+                      </label>
+                      <p className={styles.fieldHint}>
+                        현재 버전 v{draft.version} · 저장한 조건은 다음 회차부터
+                        적용됩니다. 진행 중인 회차의 조건은 유지됩니다.
+                      </p>
+                      <button className={styles.primary} type="submit">
+                        변경 내용 검토
+                      </button>
+                    </div>
                   </fieldset>
                 </form>
               </section>
               <section className={styles.panel}>
                 <span className={styles.eyebrow}>PATH PREVIEW</span>
                 <h2>{names[draft.instrument] || draft.instrument}</h2>
-                <Preview config={draft} />
+                <WorkroomConfigPreview
+                  key={`${draft.instrument}:${draft.version}:${draft.pattern}:${draft.roi}:${draft.duration}:${draft.amplitude}`}
+                  config={draft}
+                />
               </section>
             </div>
           )}

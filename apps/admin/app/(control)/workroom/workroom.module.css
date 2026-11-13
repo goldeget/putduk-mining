@@ -535,3 +535,153 @@
     gap: 18px;
   }
 }
+/* Chart condition editor: controls and preview share one clear workflow. */
+.configGrid {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  gap: 24px;
+}
+.console .configFields {
+  gap: 24px;
+}
+.settingsGroup {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+  padding-top: 22px;
+  border-top: 1px solid var(--wr-line);
+}
+.settingsGroup:first-child {
+  padding-top: 2px;
+  border-top: 0;
+}
+.settingsGroup h3 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 3px;
+  color: var(--admin-text);
+  font-size: 14px;
+  font-weight: 650;
+}
+.settingsGroup h3 > span {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  color: var(--wr-mint);
+  background: var(--admin-accent-soft);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+}
+.patternCards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+.console .patternCard {
+  display: grid;
+  justify-items: start;
+  align-content: start;
+  gap: 5px;
+  padding: 12px 10px;
+  text-align: left;
+  min-width: 0;
+  white-space: normal;
+  background: var(--admin-sunken);
+  transition:
+    border-color 150ms ease,
+    background-color 150ms ease;
+}
+.console .patternCard[aria-pressed="true"] {
+  border-color: var(--wr-mint);
+  background: var(--admin-accent-soft);
+  box-shadow: inset 0 0 0 1px var(--wr-mint);
+}
+.patternCard svg {
+  width: 52px;
+  max-width: 100%;
+  height: 28px;
+  color: var(--wr-mint);
+}
+.patternCard strong {
+  color: var(--admin-text);
+  font-size: 12px;
+}
+.patternCard small {
+  color: var(--admin-muted);
+  font-size: 10px;
+  line-height: 1.6;
+  word-break: keep-all;
+}
+.fieldHint {
+  color: var(--admin-muted);
+  font-size: 11px;
+  line-height: 1.8;
+  margin: -3px 0 0;
+}
+.roiSummary {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  padding: 13px 15px;
+  border: 1px solid var(--wr-line);
+  border-radius: 10px;
+  background: var(--admin-sunken);
+}
+.roiSummary span {
+  color: var(--admin-muted);
+  font-size: 11px;
+}
+.roiSummary strong {
+  font-size: 25px;
+  letter-spacing: -0.6px;
+  font-variant-numeric: tabular-nums;
+}
+.console .directionPositive {
+  color: var(--admin-success);
+}
+.console .directionNegative {
+  color: var(--admin-danger);
+}
+.timePresets {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+.console .timePresets button {
+  min-height: 40px;
+  padding: 8px;
+  font-size: 12px;
+}
+.console .timePresets button[aria-pressed="true"] {
+  border-color: var(--wr-mint);
+  color: var(--wr-mint);
+  background: var(--admin-accent-soft);
+}
+@media (max-width: 1050px) {
+  .configGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 600px) {
+  .settingsGroup {
+    gap: 12px;
+    padding-top: 18px;
+  }
+  .console .patternCard {
+    padding: 10px 8px;
+  }
+  .patternCards {
+    gap: 6px;
+  }
+  .patternCard small {
+    font-size: 9px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .console .patternCard {
+    transition: none;
+  }
+}
