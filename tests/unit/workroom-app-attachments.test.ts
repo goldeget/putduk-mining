@@ -15,12 +15,10 @@ function dependencies(): AttachmentDependencies {
     authorize: vi
       .fn()
       .mockResolvedValue({ ok: true, identity: { userId: owner } }),
-    invoke: vi
-      .fn()
-      .mockImplementation(async (_identity, operation) => ({
-        data: operation === "ATTACHMENT_PREPARE" ? { id, path } : { id },
-        error: null,
-      })),
+    invoke: vi.fn().mockImplementation(async (_identity, operation) => ({
+      data: operation === "ATTACHMENT_PREPARE" ? { id, path } : { id },
+      error: null,
+    })),
     storage: {
       upload: vi.fn().mockResolvedValue(true),
       download: vi.fn().mockResolvedValue(bytes),
@@ -136,23 +134,19 @@ describe("private inquiry photos", () => {
   });
   it("requires an owner/MFA-approved linked attachment before issuing a private URL", async () => {
     const deps = dependencies();
-    deps.invoke = vi
-      .fn()
-      .mockResolvedValue({
-        data: null,
-        error: { message: "SUPPORT_FORBIDDEN" },
-      });
+    deps.invoke = vi.fn().mockResolvedValue({
+      data: null,
+      error: { message: "SUPPORT_FORBIDDEN" },
+    });
     const request = new Request(
       `https://workroom.test/api/v1/workroom-app/attachments?id=${id}`,
     );
     expect((await handleAttachmentRead(request, deps)).status).toBe(403);
     expect(deps.storage.sign).not.toHaveBeenCalled();
-    deps.invoke = vi
-      .fn()
-      .mockResolvedValue({
-        data: { id, path, mediaType: "image/jpeg", sizeBytes: 4 },
-        error: null,
-      });
+    deps.invoke = vi.fn().mockResolvedValue({
+      data: { id, path, mediaType: "image/jpeg", sizeBytes: 4 },
+      error: null,
+    });
     const response = await handleAttachmentRead(request, deps);
     expect(response.status).toBe(200);
     expect(response.headers.get("cache-control")).toContain("no-store");

@@ -13,12 +13,10 @@ function dependencies(): AppDependencies {
     authorize: vi
       .fn()
       .mockResolvedValue({ ok: true, identity: { userId: key } }),
-    invoke: vi
-      .fn()
-      .mockResolvedValue({
-        data: { items: [], unreadCount: 96, nextCursor: null },
-        error: null,
-      }),
+    invoke: vi.fn().mockResolvedValue({
+      data: { items: [], unreadCount: 96, nextCursor: null },
+      error: null,
+    }),
   };
 }
 function post(
@@ -188,12 +186,10 @@ describe("WORKROOM app authenticated commands", () => {
         )
       ).status,
     ).toBe(413);
-    deps.invoke = vi
-      .fn()
-      .mockResolvedValue({
-        data: null,
-        error: { message: "SUPPORT_FORBIDDEN secret" },
-      });
+    deps.invoke = vi.fn().mockResolvedValue({
+      data: null,
+      error: { message: "SUPPORT_FORBIDDEN secret" },
+    });
     const denied = await handleAppWrite(
       post({
         operation: "SUPPORT_SEND",
