@@ -310,7 +310,7 @@ create function app_private.workroom_app_command(p_reader uuid,p_audience text,p
 declare t app_private.workroom_app_threads%rowtype;m app_private.workroom_app_messages%rowtype;
  f app_private.workroom_app_attachments%rowtype;b app_private.push_subscription_bindings%rowtype;
  saved app_private.workroom_receipts%rowtype;hash text;scope_name text:='APP_'||p_audience;result jsonb;
- tid uuid;mid uuid;n integer;attachments uuid[];oid_value uuid;path_value text;begin
+ tid uuid;n integer;attachments uuid[];oid_value uuid;path_value text;begin
  if p_op is null or p_op not in('SUPPORT_READ','SUPPORT_SEEN','SUPPORT_SEND','SUPPORT_REPLY','SUPPORT_ASSIGN','SUPPORT_RESOLVE',
   'NOTIFICATIONS_READ','NOTIFICATION_READ','PUSH_BIND_MEMBER','PUSH_BIND_ADMIN','ATTACHMENT_PREPARE','ATTACHMENT_COMMIT','ATTACHMENT_READ')
   or(p_audience='ADMIN' and p_op in('SUPPORT_SEND','PUSH_BIND_MEMBER')) or(p_audience='MEMBER' and p_op in('SUPPORT_REPLY','SUPPORT_ASSIGN','SUPPORT_RESOLVE','PUSH_BIND_ADMIN'))

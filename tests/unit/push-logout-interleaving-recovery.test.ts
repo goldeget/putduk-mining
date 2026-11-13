@@ -16,6 +16,7 @@ import { PushControl } from "@/components/product/push-control";
 let root: Root;
 let host: HTMLDivElement;
 let subscription: {
+  options: { applicationServerKey: ArrayBuffer };
   toJSON: () => object;
   endpoint: string;
   unsubscribe: ReturnType<typeof vi.fn>;
@@ -36,6 +37,10 @@ let fetcher: ReturnType<
     (_url: string, init: RequestInit & { body: string }) => Promise<unknown>
   >
 >;
+const vapidPublicKey = Buffer.concat([
+  Buffer.from([4]),
+  Buffer.alloc(64, 1),
+]).toString("base64url");
 const settle = () =>
   act(async () => {
     await Promise.resolve();
@@ -71,8 +76,12 @@ beforeEach(() => {
   actions.logoutAction.mockReset();
   actions.logoutAllAction.mockReset();
   vi.stubGlobal("FormData", window.FormData);
-  vi.stubEnv("NEXT_PUBLIC_VAPID_PUBLIC_KEY", "AQID");
   subscription = {
+    options: {
+      applicationServerKey: Uint8Array.from(
+        Buffer.from(vapidPublicKey, "base64url"),
+      ).buffer,
+    },
     endpoint: "https://push.example.test/subscription",
     toJSON: () => ({
       endpoint: "https://push.example.test/subscription",
@@ -113,7 +122,19 @@ beforeEach(() => {
       }),
     };
   });
-  vi.stubGlobal("fetch", fetcher);
+  // Deployment configuration is a separate authenticated read. Keep the
+  // existing recorder exclusively on binding commands so all logout epoch,
+  // delayed-subscribe and next-account assertions below remain exact.
+  vi.stubGlobal("fetch", (url: string, init: RequestInit) => {
+    if (url === "/api/v1/notifications/config" && !init.method)
+      return Promise.resolve({
+        ok: true,
+        json: async () => ({
+          data: { publicKey: vapidPublicKey, configured: true },
+        }),
+      });
+    return fetcher(url, init as RequestInit & { body: string });
+  });
   host = document.createElement("div");
   document.body.append(host);
   root = createRoot(host);
