@@ -59,8 +59,9 @@ helper = replaceOnce(
   helper.slice(guardStart, guardEnd),
   `export function requireBackend195Target() {
   localGuard();
-  const migrationVersions = readdirSync("supabase/migrations").filter(name=>name.endsWith(".sql")).map(name=>name.split("_")[0]).sort();
-  if(migrationVersions.length!==205 || !migrationVersions.includes("20261111065929") || !migrationVersions.includes("20261111165640") || migrationVersions.at(-1)!=="20261112080627") throw Error("WORKROOM_205_MIGRATION_CONTEXT_REQUIRED");
+  const migrationNames = readdirSync("supabase/migrations").filter(name=>name.endsWith(".sql"));
+  const migrationVersions = migrationNames.map(name=>name.split("_")[0]).sort();
+  if(!migrationNames.includes("20261113061155_workroom_direct_cash_mode_isolation.sql") || migrationVersions.length!==206 || !migrationVersions.includes("20261111065929") || !migrationVersions.includes("20261111165640") || !migrationVersions.includes("20261112080627") || migrationVersions.at(-1)!=="20261113061155") throw Error("WORKROOM_206_MIGRATION_CONTEXT_REQUIRED");
   return { migrationVersions };
 }\n`,
 );
@@ -169,7 +170,7 @@ writeFileSync(
       sourceHashes: sources,
       financialAssertionsReverseExact: true,
       adapters: [
-        "205 exact migration roster and disposable guard",
+        "206 exact migration roster and disposable guard",
         "valid-invite real Auth setup",
         "local psql target",
         "relative import locations",

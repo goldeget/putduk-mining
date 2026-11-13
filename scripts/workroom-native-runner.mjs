@@ -12,10 +12,14 @@ import {
   WORKROOM_CASH_MIGRATION,
   WORKROOM_BANK_MIGRATION,
   WORKROOM_MEMBER_SESSION_MIGRATION,
+  WORKROOM_CASH_ISOLATION_MIGRATION,
+  WORKROOM_CASH_BEFORE_ISOLATION,
+  WORKROOM_CASH_ADOPTION,
   WORKROOM_CASH_TESTS,
   WORKROOM_CASH_ACL_TESTS,
   adaptWorkroomCashDefinerRoster,
   assertWorkroomCashAdmission,
+  assertWorkroomCashCompletion,
 } from "./workroom-cash-admission.mjs";
 const ROOT = fileURLToPath(new URL("../", import.meta.url));
 const fail = (r) => {
@@ -559,8 +563,44 @@ export function runWorkroomNativePhase(phase, stage, principal = null) {
         "hold_cancel_admission_concurrent",
       ])
         sql("supabase/tests-concurrent/" + name + ".sql");
-      for (const path of WORKROOM_CASH_TESTS) sql(path);
     }
+    // Preserve205 first; then prove every original pre206 row survives isolation.
+    sql(WORKROOM_CASH_BEFORE_ISOLATION, false);
+    execute(
+      "cash-isolation-existing-rows-before",
+      [],
+      `create table workroom_native_evidence.before_cash_isolation(relation text primary key, row_count bigint not null, digest text not null);
+       do $cash$ declare r record; begin
+         for r in select n.nspname,c.relname from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname in('auth','public','app_private','storage') and c.relkind='r' loop
+           execute format('insert into workroom_native_evidence.before_cash_isolation select %L,count(*),md5(coalesce(string_agg(row_text,E''\\n'' order by row_text),'''')) from(select to_jsonb(t)::text row_text from %I.%I t)s',r.nspname||'.'||r.relname,r.nspname,r.relname);
+         end loop;
+       end $cash$;`,
+      false,
+    );
+    sql(WORKROOM_CASH_ISOLATION_MIGRATION, false);
+    execute(
+      "cash-isolation-existing-rows-after",
+      [],
+      `do $cash$ declare r record; actual_count bigint; actual_digest text; begin
+         for r in select * from workroom_native_evidence.before_cash_isolation loop
+           execute format('select count(*),md5(coalesce(string_agg(row_text,E''\\n'' order by row_text),'''')) from(select %s::text row_text from %s t)s','to_jsonb(t)',r.relation::regclass) into actual_count,actual_digest;
+           if actual_count<>r.row_count or actual_digest<>r.digest then raise exception 'CASH_ISOLATION_CHANGED_EXISTING_ROWS %',r.relation;end if;
+         end loop;
+       end $cash$;`,
+      false,
+    );
+    const isolationBytes = readFileSync(
+      resolve(stage, "successor", WORKROOM_CASH_ISOLATION_MIGRATION),
+    );
+    execute(
+      "cash-isolation-migration-history",
+      [],
+      `insert into supabase_migrations.schema_migrations(version,name,statements) values('20261113061155','workroom_direct_cash_mode_isolation',array[convert_from(decode('${isolationBytes.toString("base64")}','base64'),'UTF8')]);`,
+      false,
+    );
+    sql(WORKROOM_CASH_ADOPTION);
+    for (const path of WORKROOM_CASH_TESTS) sql(path);
+    assertWorkroomCashCompletion(records);
   }
   const receipt = {
     kind: "WORKROOM_NATIVE_PHASE",
@@ -587,7 +627,7 @@ export function runWorkroomNativePhase(phase, stage, principal = null) {
               : "")
           : phase === "baseline"
             ? "verified prior114 same-HEAD/container legacy proof + committed canonical and pending-HOLD/external-send fixtures"
-            : "exact cutover identity/all historical row/84+5 SECDEF proof; retained withdrawal/deposit/ledger/ACL, preserved original external-send concurrency and true concurrent pending HOLD/CANCEL; WORKROOM practice",
+            : "exact cutover identity/all historical row/84+5 SECDEF proof; retained withdrawal/deposit/ledger/ACL and original concurrency on205; genuine205 cash seed, exact all-table206 preservation and mandatory adoption/isolation regressions",
   };
   writeFileSync(receiptPath, JSON.stringify(receipt, null, 2) + "\n", {
     flag: "wx",
@@ -708,6 +748,8 @@ export function verifyWorkroomNativeComplete(stage) {
   )
     fail("PRINCIPAL_B_ADAPTED_TEST_EVIDENCE_REQUIRED");
   const main = receipts.find((x) => x.phase === "cutover" && !x.principal);
+  for (const receipt of receipts.filter((x) => x.phase === "cutover"))
+    assertWorkroomCashCompletion(receipt.records);
   if (
     !main.records.some(
       (x) => x.label === "preserved-external-send-verify" && x.assertions > 0,
