@@ -56,10 +56,11 @@ describe("Cloudflare encrypted Web Push adapter", () => {
     dns.resolve4.mockResolvedValue(["142.250.1.1"]);
     dns.resolve6.mockResolvedValue([]);
     const { input, config } = fixture();
-    const send = vi.fn(
-      async (_url: string, _init: RequestInit) =>
-        new Response(null, { status: 201 }),
-    );
+    const send = vi.fn(async (url: string, init: RequestInit) => {
+      void url;
+      void init;
+      return new Response(null, { status: 201 });
+    });
     vi.stubGlobal("fetch", send);
     expect((await sendCloudflareWebPush(input, config)).status).toBe(
       "ACCEPTED",

@@ -77,10 +77,14 @@ describe("per-member durable scheduling", () => {
     };
     const results = [{ jobs: [job] }, { settled: 1 }, { jobs: [] }];
     const db = {
-      rpc: vi.fn(async (_name: string, _args: Record<string, unknown>) => ({
-        data: results.shift(),
-        error: null,
-      })),
+      rpc: vi.fn(async (name: string, args: Record<string, unknown>) => {
+        void name;
+        void args;
+        return {
+          data: results.shift(),
+          error: null,
+        };
+      }),
     };
     await new MemberAlarmCoordinator(store, db).alarm();
     expect(db.rpc.mock.calls[1]?.[1]).toEqual({

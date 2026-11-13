@@ -9,10 +9,14 @@ const memberId = "10000000-0000-4000-8000-000000000001";
 const roundId = "10000000-0000-4000-8000-000000000002";
 function client(results: unknown[]) {
   return {
-    rpc: vi.fn(async (_name: string, _args: Record<string, unknown>) => ({
-      data: results.shift(),
-      error: null,
-    })),
+    rpc: vi.fn(async (name: string, args: Record<string, unknown>) => {
+      void name;
+      void args;
+      return {
+        data: results.shift(),
+        error: null,
+      };
+    }),
     from: vi.fn(() => ({
       select: () => ({ in: async () => ({ data: [], error: null }) }),
     })),

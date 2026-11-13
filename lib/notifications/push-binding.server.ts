@@ -58,11 +58,6 @@ export function validatePushBindingReceipt(
   return receipt;
 }
 
-type SubscriptionInput = {
-  endpoint: string;
-  expirationTime: number | null;
-  keys: { p256dh: string; auth: string };
-};
 export async function applyPushBinding(
   identity: PushIdentity,
   input: { operation: "LOGOUT_LOCAL" | "LOGOUT_GLOBAL" },
