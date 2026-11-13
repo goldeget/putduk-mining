@@ -24,6 +24,7 @@ import {
 } from "@/lib/auth/session-registry";
 import { createAdminServerClient } from "@/lib/supabase/server";
 import { recordAdminSecurityEvent } from "@/lib/security/events";
+import { revokeAdminPushForLogout } from "@/lib/notifications/runtime";
 
 export type LoginState = { message: string } | null;
 const credentialsSchema = z.object({
@@ -198,6 +199,11 @@ export async function logoutAction() {
       ? claimsData.claims.session_id
       : "";
   if (userId && authSessionId) {
+    if (!(await revokeAdminPushForLogout(userId, authSessionId))) {
+      throw new Error(
+        "알림 연결을 해제하지 못했습니다. 다시 로그아웃해 주세요.",
+      );
+    }
     const adminSessionId = await findActiveAdminSessionId({
       userId,
       authSessionId,
@@ -216,9 +222,24 @@ export async function logoutAction() {
 
 export async function logoutAllAction() {
   const supabase = await createAdminServerClient();
-  const [{ data: userData }] = await Promise.all([supabase.auth.getUser()]);
+  const [{ data: userData }, { data: claimsData }] = await Promise.all([
+    supabase.auth.getUser(),
+    supabase.auth.getClaims(),
+  ]);
   const userId = userData.user?.id;
   if (userId) {
+    const authSessionId =
+      typeof claimsData?.claims?.session_id === "string"
+        ? claimsData.claims.session_id
+        : "";
+    if (
+      !authSessionId ||
+      !(await revokeAdminPushForLogout(userId, authSessionId, true))
+    ) {
+      throw new Error(
+        "알림 연결을 해제하지 못했습니다. 다시 로그아웃해 주세요.",
+      );
+    }
     await revokeAllAdminAppSessions({
       userId,
       actorUserId: userId,

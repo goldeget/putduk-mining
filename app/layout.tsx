@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { SupportRuntime } from "@/components/support/support-runtime";
 import { AnalyticsBeacon } from "@/components/system/analytics-beacon";
 import { WebVitalsBeacon } from "@/components/system/web-vitals-beacon";
-import { PwaRegistrar } from "@/components/system/pwa-registrar";
+import { AppExperienceRuntime } from "@/components/system/app-experience-runtime";
 import { ThemeRuntime } from "@/components/system/theme-runtime";
 import { putdukFont } from "@/lib/design/fonts";
 import { themeBootstrap } from "@/lib/design/theme";
@@ -113,7 +113,7 @@ export default function RootLayout({
             ),
           }}
         />
-        <PwaRegistrar />
+        <AppExperienceRuntime />
         <AnalyticsBeacon />
         <WebVitalsBeacon />
         <ThemeRuntime />

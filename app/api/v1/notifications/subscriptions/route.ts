@@ -100,6 +100,28 @@ export async function POST(request: Request) {
             : 503,
     });
 
+  if (value.operation === "REGISTER") {
+    const bound = await identity.supabase.rpc("workroom_app_member", {
+      p_operation: "PUSH_BIND_MEMBER",
+      p_request_key: value.intentId,
+      p_input: {
+        subscriptionId:
+          "subscriptionId" in result.receipt
+            ? result.receipt.subscriptionId
+            : null,
+      },
+    });
+    if (
+      bound.error ||
+      !z.strictObject({ bound: z.literal(true) }).safeParse(bound.data).success
+    )
+      return apiError({
+        code: "PUSH_SCOPE_UNCONFIRMED",
+        message: "알림 연결을 확인하지 못했습니다. 다시 확인해 주세요.",
+        status: 503,
+      });
+  }
+
   return apiSuccess(result.receipt, value.operation === "REGISTER" ? 201 : 200);
 }
 

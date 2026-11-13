@@ -1,5 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-const mocks = vi.hoisted(() => ({ identity: vi.fn(), apply: vi.fn() }));
+const mocks = vi.hoisted(() => ({
+  identity: vi.fn(),
+  apply: vi.fn(),
+  bind: vi.fn(),
+}));
 vi.mock("@/lib/notifications/push-binding.server", () => ({
   getVerifiedPushIdentity: mocks.identity,
   applyPushEndpoint: mocks.apply,
@@ -44,11 +48,30 @@ beforeEach(() => {
   mocks.identity.mockResolvedValue({
     userId: "11111111-1111-4111-8111-111111111111",
     authSessionId: "22222222-2222-4222-8222-222222222222",
-    supabase: {},
+    supabase: { rpc: mocks.bind },
   });
-  mocks.apply.mockResolvedValue({ ok: true, receipt: { subscribed: true } });
+  mocks.apply.mockResolvedValue({
+    ok: true,
+    receipt: {
+      subscribed: true,
+      subscriptionId: "11111111-1111-4111-8111-111111111119",
+    },
+  });
+  mocks.bind.mockResolvedValue({ data: { bound: true }, error: null });
 });
 describe("epoch Push API binds only server-verified sessions", () => {
+  it("keeps origin marking unconfirmed when canonical registration committed but scope RPC failed", async () => {
+    mocks.bind.mockResolvedValue({
+      error: { message: "scope unavailable" },
+      data: null,
+    });
+    expect((await POST(request("POST", registration))).status).toBe(503);
+    expect(mocks.bind).toHaveBeenCalledWith("workroom_app_member", {
+      p_operation: "PUSH_BIND_MEMBER",
+      p_request_key: intentId,
+      p_input: { subscriptionId: "11111111-1111-4111-8111-111111111119" },
+    });
+  });
   it("rejects cross-origin before identity and mutation", async () => {
     expect(
       (await POST(request("POST", registration, "https://evil.invalid")))

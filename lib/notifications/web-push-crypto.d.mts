@@ -10,6 +10,8 @@ export type WebPushInput = {
   notificationId: string;
   deepLink: string;
 };
+export function assertWebPushVapidConfig(config: VapidConfig): void;
+export function createWebPushPayload(input: WebPushInput): Buffer;
 export function encryptWebPush(
   subscription: { p256dh: string; authSecret: string },
   payload: Buffer,

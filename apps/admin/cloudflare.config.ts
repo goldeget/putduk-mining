@@ -18,6 +18,8 @@ export default defineConfig({
         "!/workroom-icon.svg",
         "!/workroom-*.png",
         "!/workroom-favicon.ico",
+        "!/sw.js",
+        "!/offline.html",
       ],
     },
     // Preserve live staging host env on every cf deploy (secrets stay on CF; not listed here).

@@ -16,6 +16,10 @@ import {
 } from "./workroom-cash-admission.mjs";
 import { execFileSync } from "node:child_process";
 import {
+  WORKROOM_APP_FILES,
+  adaptWorkroomAppDefinerRoster,
+} from "./workroom-app-admission.mjs";
+import {
   sha256,
   adaptWorkroomDefinerRoster,
   adaptWorkroomSignupFixtures,
@@ -217,6 +221,30 @@ export function prepareWorkroomNativeStage(output, profile = "ci") {
       sha256: adapted.sha256,
     };
   });
+  const appFiles = WORKROOM_APP_FILES.map((path) => {
+    const bytes = readFileSync(resolve(ROOT, path));
+    write(resolve(target, "successor", path), bytes);
+    return { path, sha256: sha256(bytes) };
+  });
+  const appAclFiles = cashAclFiles.map((record) => {
+    const adapted = adaptWorkroomAppDefinerRoster(
+      readFileSync(resolve(target, "successor", record.stagedPath), "utf8"),
+      {
+        occurrences: record.path.endsWith("/ws04_security_money_workers.sql")
+          ? 2
+          : 1,
+      },
+    );
+    const stagedPath =
+      "supabase/app-regressions/" + record.path.split("/").at(-1);
+    write(resolve(target, "successor", stagedPath), adapted.sql);
+    return {
+      path: record.path,
+      stagedPath,
+      originalSha256: adapted.originalSha256,
+      sha256: adapted.sha256,
+    };
+  });
   const practice = adaptWorkroomPractice(
     readFileSync(
       resolve(ROOT, "supabase/tests/database/workroom_practice.sql"),
@@ -264,6 +292,8 @@ export function prepareWorkroomNativeStage(output, profile = "ci") {
     migrationSha256: sha256(readFileSync(resolve(ROOT, WORKROOM_MIGRATION))),
     cashFiles,
     cashAclFiles,
+    appFiles,
+    appAclFiles,
   };
   write(
     resolve(target, "staging-manifest.json"),

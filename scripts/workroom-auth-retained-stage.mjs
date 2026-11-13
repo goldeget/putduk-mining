@@ -61,7 +61,7 @@ helper = replaceOnce(
   localGuard();
   const migrationNames = readdirSync("supabase/migrations").filter(name=>name.endsWith(".sql"));
   const migrationVersions = migrationNames.map(name=>name.split("_")[0]).sort();
-  if(!migrationNames.includes("20261113061155_workroom_direct_cash_mode_isolation.sql") || migrationVersions.length!==206 || !migrationVersions.includes("20261111065929") || !migrationVersions.includes("20261111165640") || !migrationVersions.includes("20261112080627") || migrationVersions.at(-1)!=="20261113061155") throw Error("WORKROOM_206_MIGRATION_CONTEXT_REQUIRED");
+  if(!migrationNames.includes("20261113061155_workroom_direct_cash_mode_isolation.sql") || !migrationNames.includes("20261113080126_workroom_support_notifications_scheduler.sql") || migrationVersions.length!==207 || !migrationVersions.includes("20261111065929") || !migrationVersions.includes("20261111165640") || !migrationVersions.includes("20261112080627") || !migrationVersions.includes("20261113061155") || migrationVersions.at(-1)!=="20261113080126") throw Error("WORKROOM_207_MIGRATION_CONTEXT_REQUIRED");
   return { migrationVersions };
 }\n`,
 );
@@ -170,7 +170,7 @@ writeFileSync(
       sourceHashes: sources,
       financialAssertionsReverseExact: true,
       adapters: [
-        "206 exact migration roster and disposable guard",
+        "207 exact migration roster and disposable guard",
         "valid-invite real Auth setup",
         "local psql target",
         "relative import locations",

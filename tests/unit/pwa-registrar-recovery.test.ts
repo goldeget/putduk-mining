@@ -28,7 +28,10 @@ function mount(readyState: string) {
 describe("production service worker load race", () => {
   it("registers immediately when hydration happens after the window load", () => {
     const { register, windowTarget, cleanup } = mount("complete");
-    expect(register).toHaveBeenCalledExactlyOnceWith("/sw.js", { scope: "/" });
+    expect(register).toHaveBeenCalledExactlyOnceWith("/sw.js", {
+      scope: "/",
+      updateViaCache: "none",
+    });
     windowTarget.dispatchEvent(new Event("load"));
     expect(register).toHaveBeenCalledTimes(1);
     cleanup?.();
@@ -38,7 +41,10 @@ describe("production service worker load race", () => {
     expect(register).not.toHaveBeenCalled();
     windowTarget.dispatchEvent(new Event("load"));
     windowTarget.dispatchEvent(new Event("load"));
-    expect(register).toHaveBeenCalledExactlyOnceWith("/sw.js", { scope: "/" });
+    expect(register).toHaveBeenCalledExactlyOnceWith("/sw.js", {
+      scope: "/",
+      updateViaCache: "none",
+    });
     cleanup?.();
   });
   it("removes the pending listener when the registrar unmounts before load", () => {

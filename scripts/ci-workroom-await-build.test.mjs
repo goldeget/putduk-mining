@@ -1,9 +1,73 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
+import { mkdtempSync, readFileSync, readdirSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { resolve } from "node:path";
 import {
   successfulApplication,
   selectBuildArtifact,
+  BUILD_ARTIFACT_EXTRACTOR,
 } from "./ci-workroom-await-build.mjs";
+
+test("exact build extraction carries the runtime proof and rejects unsafe or unreviewed roots before writing", () => {
+  const python = process.platform === "win32" ? "python" : "python3";
+  const create =
+    "import sys,json,zipfile,stat\nwith zipfile.ZipFile(sys.argv[1],'w') as z:\n for item in json.loads(sys.argv[2]):\n  e=zipfile.ZipInfo(item['name'])\n  if item.get('symlink'): e.create_system=3; e.external_attr=(stat.S_IFLNK|0o777)<<16\n  z.writestr(e,'probe')\n";
+  const build = (entries) => {
+    const directory = mkdtempSync(resolve(tmpdir(), "workroom-build-roots-"));
+    const archive = resolve(directory, "build.zip");
+    const output = resolve(directory, "output");
+    const made = spawnSync(
+      python,
+      ["-c", create, archive, JSON.stringify(entries)],
+      { encoding: "utf8" },
+    );
+    assert.equal(made.status, 0, made.stderr);
+    // The extraction cwd is separate from the ZIP and never points at source.
+    const prepare = spawnSync(python, [
+      "-c",
+      "import pathlib,sys;pathlib.Path(sys.argv[1]).mkdir()",
+      output,
+    ]);
+    assert.equal(prepare.status, 0);
+    return {
+      output,
+      result: spawnSync(python, ["-c", BUILD_ARTIFACT_EXTRACTOR, archive], {
+        cwd: output,
+        encoding: "utf8",
+      }),
+    };
+  };
+  const permitted = [
+    ".next/BUILD_ID",
+    "apps/admin/.next/BUILD_ID",
+    "test-results/workroom-application/receipt.json",
+    "test-results/workroom-runtime/runtime-workerd-check.json",
+  ];
+  const good = build(permitted.map((name) => ({ name })));
+  assert.equal(good.result.status, 0, good.result.stderr);
+  for (const name of permitted)
+    assert.equal(readFileSync(resolve(good.output, name), "utf8"), "probe");
+  for (const bad of [
+    { name: "test-results/unreviewed/proof.json" },
+    { name: "test-results/workroom-runtime-evil/proof.json" },
+    { name: "../outside.txt" },
+    { name: "C:/outside.txt" },
+    { name: "evil\\file" },
+    { name: ".next/symlink", symlink: true },
+  ]) {
+    const denied = build([{ name: ".next/BUILD_ID" }, bad]);
+    assert.notEqual(denied.result.status, 0, bad.name);
+    assert.deepEqual(readdirSync(denied.output), []);
+  }
+  const duplicate = build([
+    { name: ".next/BUILD_ID" },
+    { name: ".next/BUILD_ID" },
+  ]);
+  assert.notEqual(duplicate.result.status, 0);
+  assert.deepEqual(readdirSync(duplicate.output), []);
+});
 const identity = { id: 123, attempt: 1, head: "a".repeat(40) };
 const run = {
   id: 123,

@@ -9,6 +9,7 @@ import { rememberPushDisableIntent } from "@/lib/notifications/push-client-coord
 let root: Root;
 let host: HTMLDivElement;
 let subscription: {
+  options: { applicationServerKey: ArrayBuffer };
   toJSON: () => object;
   endpoint: string;
   unsubscribe: ReturnType<typeof vi.fn>;
@@ -114,6 +115,12 @@ beforeEach(() => {
   rememberPushDisableIntent(false);
   vi.stubEnv("NEXT_PUBLIC_VAPID_PUBLIC_KEY", "AQID");
   subscription = {
+    options: {
+      applicationServerKey: Uint8Array.from(
+        atob("B".repeat(87) + "="),
+        (value) => value.charCodeAt(0),
+      ).buffer,
+    },
     endpoint: "https://push.example.test/subscription",
     toJSON: () => ({
       endpoint: "https://push.example.test/subscription",
@@ -136,7 +143,14 @@ beforeEach(() => {
   vi.stubGlobal("PushManager", function PushManager() {});
   vi.stubGlobal("Notification", { permission: "granted", requestPermission });
   fetcher = vi.fn(async (_url: string, init: RequestInit) => responseFor(init));
-  vi.stubGlobal("fetch", fetcher);
+  vi.stubGlobal("fetch", (url: string, init: RequestInit) =>
+    url.endsWith("/notifications/config")
+      ? Promise.resolve(reply({ publicKey: "B".repeat(87), configured: true }))
+      : (fetcher as (url: string, init: RequestInit) => Promise<unknown>)(
+          url,
+          init,
+        ),
+  );
   host = document.createElement("div");
   document.body.append(host);
   root = createRoot(host);
@@ -150,6 +164,71 @@ afterEach(async () => {
 });
 
 describe("push registration reflects server confirmation", () => {
+  it("keeps the old native endpoint when VAPID rotation revoke is unconfirmed", async () => {
+    subscription.options.applicationServerKey = new Uint8Array([
+      1, 2, 3,
+    ]).buffer;
+    registration.pushManager.getSubscription.mockResolvedValue(subscription);
+    fetcher.mockImplementation(async (_url: string, init: RequestInit) =>
+      init.method === "DELETE" ? reply({}, 503) : responseFor(init),
+    );
+    await mount();
+    await click("알림 연결 확인");
+    expect(subscription.unsubscribe).not.toHaveBeenCalled();
+    expect(registration.pushManager.subscribe).not.toHaveBeenCalled();
+    expect(host.textContent).toContain("알림 해제 다시 확인");
+    expect(localStorage.getItem("putduk-push-disable-pending")).toBe("true");
+  });
+  it("retires and unsubscribes an old VAPID binding before a replacement subscription", async () => {
+    subscription.options.applicationServerKey = new Uint8Array([
+      1, 2, 3,
+    ]).buffer;
+    registration.pushManager.getSubscription.mockResolvedValue(subscription);
+    const fresh = {
+      ...subscription,
+      endpoint: "https://push.example.test/new-key",
+      options: {
+        applicationServerKey: Uint8Array.from(
+          atob("B".repeat(87) + "="),
+          (value) => value.charCodeAt(0),
+        ).buffer,
+      },
+      unsubscribe: vi.fn().mockResolvedValue(true),
+      toJSON: () => ({
+        endpoint: "https://push.example.test/new-key",
+        keys: { auth: "test", p256dh: "test" },
+      }),
+    };
+    registration.pushManager.subscribe.mockResolvedValue(fresh);
+    await mount();
+    await click("알림 연결 확인");
+    expect(subscription.unsubscribe).toHaveBeenCalledOnce();
+    expect(operations()).toEqual(["SNAPSHOT", "REVOKE", "ISSUE", "REGISTER"]);
+    expect(host.textContent).toContain("알림 끄기");
+  });
+  it("never requests permission on mount and leaves denial optional", async () => {
+    requestPermission.mockResolvedValue("denied");
+    await mount();
+    expect(requestPermission).not.toHaveBeenCalled();
+    await click("알림 켜기");
+    expect(requestPermission).toHaveBeenCalledOnce();
+    expect(registration.pushManager.subscribe).not.toHaveBeenCalled();
+    expect(mutationOperations()).toEqual([]);
+    expect(host.textContent).toContain("권한이 허용되지");
+  });
+  it("admin origin uses its protected endpoint while preserving canonical client fencing", async () => {
+    await act(async () =>
+      root.render(createElement(PushControl, { admin: true })),
+    );
+    await settle();
+    await click("알림 켜기");
+    expect(
+      fetcher.mock.calls.every(
+        ([url]) => url === "/api/v1/admin/notifications/subscriptions",
+      ),
+    ).toBe(true);
+    expect(mutationOperations()).toEqual(["ISSUE", "REGISTER"]);
+  });
   it("waits for failed-attempt cleanup before a retry can reuse its endpoint", async () => {
     let cleaned!: (value: boolean) => void;
     subscription.unsubscribe.mockImplementation(

@@ -5,7 +5,7 @@ const source = readFileSync(
   new URL("../../public/sw.js", import.meta.url),
   "utf8",
 );
-function worker() {
+function worker(script = source) {
   const callbacks: Record<string, (event: Record<string, unknown>) => void> =
     {};
   const showNotification = vi.fn(async () => undefined),
@@ -60,7 +60,7 @@ function worker() {
       registration: { showNotification },
     },
   };
-  runInNewContext(source, context);
+  runInNewContext(script, context);
   async function emit(name: string, data: Record<string, unknown>) {
     const pending: Promise<unknown>[] = [];
     const respondWith = vi.fn((value: Promise<unknown>) => pending.push(value));
@@ -257,5 +257,59 @@ describe("actual service worker privacy and offline recovery", () => {
       "https://mining.putduk.com/events/notices/member-day",
     );
     expect(w.clients.openWindow).not.toHaveBeenCalled();
+  });
+  it("permits only one UUID inquiry selector and keeps private/foreign selectors rejected", async () => {
+    for (const path of [
+      "/workroom/support?thread=10000000-0000-4000-8000-000000000001",
+      "/support?thread=10000000-0000-4000-8000-000000000001",
+    ]) {
+      const w = worker();
+      await w.emit("notificationclick", {
+        notification: { close: vi.fn(), data: { url: path } },
+      });
+      expect(w.navigate).toHaveBeenCalledWith(
+        `https://mining.putduk.com${path}`,
+      );
+    }
+    for (const path of [
+      "/support?thread=bad",
+      "/support?thread=10000000-0000-4000-8000-000000000001&returnTo=https://evil.test",
+      "/support?thread=10000000-0000-4000-8000-000000000001#secret",
+      "/workroom?thread=10000000-0000-4000-8000-000000000001",
+    ]) {
+      const w = worker();
+      await w.emit("notificationclick", {
+        notification: { close: vi.fn(), data: { url: path } },
+      });
+      expect(w.navigate).toHaveBeenCalledWith(
+        "https://mining.putduk.com/notifications",
+      );
+    }
+  });
+  it("admin worker caches only its public fallback and disallows member/private targets", async () => {
+    const script = readFileSync(
+      new URL("../../apps/admin/public/sw.js", import.meta.url),
+      "utf8",
+    );
+    const w = worker(script);
+    await w.emit("install", {});
+    expect(w.cache.addAll).toHaveBeenCalledWith([
+      "/offline.html",
+      "/workroom-icon.svg",
+    ]);
+    await w.emit("notificationclick", {
+      notification: { close: vi.fn(), data: { url: "/workroom" } },
+    });
+    expect(w.navigate).toHaveBeenCalledWith(
+      "https://mining.putduk.com/notifications",
+    );
+    const navigation = await w.emit("fetch", {
+      request: {
+        method: "GET",
+        url: "https://mining.putduk.com/api/v1/admin/workroom-app",
+        mode: "cors",
+      },
+    });
+    expect(navigation).not.toHaveBeenCalled();
   });
 });

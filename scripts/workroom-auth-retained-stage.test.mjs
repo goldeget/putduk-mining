@@ -28,14 +28,29 @@ test("retained HTTP admission rejects stale, extra and incorrect successor migra
       guard + "\nreturn requireBackend195Target();",
     )(() => names, localGuard);
   const names = readdirSync(new URL("../supabase/migrations", import.meta.url));
-  assert.equal(evaluate(names).migrationVersions.length, 206);
+  assert.equal(evaluate(names).migrationVersions.length, 207);
+  assert.throws(
+    () => evaluate(names.filter((name) => !name.startsWith("20261113080126_"))),
+    /WORKROOM_207_MIGRATION_CONTEXT_REQUIRED/,
+  );
+  assert.throws(
+    () =>
+      evaluate(
+        names.map((name) =>
+          name.startsWith("20261113080126_")
+            ? "20261113080126_wrong.sql"
+            : name,
+        ),
+      ),
+    /WORKROOM_207_MIGRATION_CONTEXT_REQUIRED/,
+  );
   assert.throws(
     () => evaluate(names.filter((name) => !name.startsWith("20261111065929_"))),
-    /WORKROOM_206_MIGRATION_CONTEXT_REQUIRED/,
+    /WORKROOM_207_MIGRATION_CONTEXT_REQUIRED/,
   );
   assert.throws(
     () => evaluate(names.filter((name) => !name.startsWith("20261113061155_"))),
-    /WORKROOM_206_MIGRATION_CONTEXT_REQUIRED/,
+    /WORKROOM_207_MIGRATION_CONTEXT_REQUIRED/,
   );
   assert.throws(
     () =>
@@ -46,7 +61,7 @@ test("retained HTTP admission rejects stale, extra and incorrect successor migra
             : name,
         ),
       ),
-    /WORKROOM_206_MIGRATION_CONTEXT_REQUIRED/,
+    /WORKROOM_207_MIGRATION_CONTEXT_REQUIRED/,
   );
   assert.throws(
     () =>
@@ -57,11 +72,11 @@ test("retained HTTP admission rejects stale, extra and incorrect successor migra
             : name,
         ),
       ),
-    /WORKROOM_206_MIGRATION_CONTEXT_REQUIRED/,
+    /WORKROOM_207_MIGRATION_CONTEXT_REQUIRED/,
   );
   assert.throws(
     () => evaluate([...names, "20991231000000_unreviewed.sql"]),
-    /WORKROOM_206_MIGRATION_CONTEXT_REQUIRED/,
+    /WORKROOM_207_MIGRATION_CONTEXT_REQUIRED/,
   );
   assert.throws(
     () =>
@@ -72,7 +87,7 @@ test("retained HTTP admission rejects stale, extra and incorrect successor migra
             : name,
         ),
       ),
-    /WORKROOM_206_MIGRATION_CONTEXT_REQUIRED/,
+    /WORKROOM_207_MIGRATION_CONTEXT_REQUIRED/,
   );
   assert.throws(
     () =>
@@ -104,7 +119,7 @@ test("retained HTTP admission rejects stale, extra and incorrect successor migra
   assert.equal(provenance.financialAssertionsReverseExact, true);
   assert.ok(
     provenance.adapters.includes(
-      "206 exact migration roster and disposable guard",
+      "207 exact migration roster and disposable guard",
     ),
   );
 });

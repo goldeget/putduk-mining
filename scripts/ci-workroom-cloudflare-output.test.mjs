@@ -19,8 +19,18 @@ import {
 const text = (value) => ({ type: "text", value });
 const production = () => ({
   name: "putduk-mining-web-staging",
+  exports: {
+    WorkroomMemberAlarm: { type: "durable-object", storage: "sqlite" },
+  },
+  triggers: [{ type: "scheduled", schedule: "* * * * *" }],
   manifest: { type: "partial", mainModule: "index.js", modules: {} },
   env: {
+    WORKROOM_APP_RUNTIME_ENABLED: text("false"),
+    WORKROOM_MEMBER_ALARMS: {
+      type: "durable-object",
+      worker: "putduk-mining-web-staging",
+      exportName: "WorkroomMemberAlarm",
+    },
     APP_ENV: text("production"),
     NEXT_PUBLIC_APP_URL: text("https://workroom.putduk.com"),
     ADMIN_APP_URL: text("https://admin.workroom.putduk.com"),
@@ -50,6 +60,8 @@ test("private local text override leaves deploy config exact and keeps secret ou
   assert.equal(local.env.SUPABASE_SECRET_KEY.value, env.SUPABASE_SECRET_KEY);
   assert.equal(local.env.WORKROOM_LOCAL_PREVIEW_ONLY.value, "true");
   assert.match(local.name, /local-preview-only/);
+  assert.equal(local.env.WORKROOM_MEMBER_ALARMS.worker, local.name);
+  assert.equal(local.env.WORKROOM_APP_RUNTIME_ENABLED.value, "false");
 });
 test("private admin preview matches the exact loopback request origin", () => {
   const admin = localConfig(production(), env, 3100);
@@ -104,6 +116,12 @@ test("deploy artifact admits only exact WORKROOM origins for the two existing Wo
   ]) {
     const config = production();
     config.name = name;
+    if (name === "putduk-mining-admin-staging") {
+      delete config.env.WORKROOM_MEMBER_ALARMS;
+      delete config.env.WORKROOM_APP_RUNTIME_ENABLED;
+      delete config.exports;
+      delete config.triggers;
+    }
     config.env.NEXT_PUBLIC_APP_URL = text(origin);
     assert.doesNotThrow(() => productionConfig(config, name));
     for (const bad of [
@@ -137,6 +155,55 @@ test("deploy artifact admits only exact WORKROOM origins for the two existing Wo
   assert.throws(
     () => productionConfig(otherWorker, otherWorker.name),
     /PRODUCTION_OUTPUT/,
+  );
+});
+
+test("scheduler admission allows exactly the existing member SQLite class and minute recovery", () => {
+  for (const alter of [
+    (config) => {
+      config.env.WORKROOM_MEMBER_ALARMS.worker = "unrelated-worker";
+    },
+    (config) => {
+      config.env.WORKROOM_MEMBER_ALARMS.exportName = "OtherClass";
+    },
+    (config) => {
+      config.exports.WorkroomMemberAlarm.storage = "legacy-kv";
+    },
+    (config) => {
+      config.exports.OtherClass = { type: "durable-object", storage: "sqlite" };
+    },
+    (config) => {
+      config.triggers[0].schedule = "*/2 * * * *";
+    },
+    (config) => {
+      config.env.WORKROOM_APP_RUNTIME_ENABLED.value = "true";
+    },
+    (config) => {
+      delete config.env.WORKROOM_MEMBER_ALARMS;
+    },
+  ]) {
+    const config = production();
+    alter(config);
+    assert.throws(
+      () => productionConfig(config, config.name),
+      /SCHEDULER_CONFIG/,
+    );
+  }
+  const extra = production();
+  extra.env.OTHER_DO = {
+    type: "durable-object",
+    worker: extra.name,
+    exportName: "WorkroomMemberAlarm",
+  };
+  assert.throws(
+    () => productionConfig(extra, extra.name),
+    /UNREVIEWED_BINDING/,
+  );
+  const external = production();
+  external.env.WORKROOM_MEMBER_ALARMS.worker = "unrelated-worker";
+  assert.throws(
+    () => localConfig(external, env, 3000),
+    /LOCAL_ALARM_BINDING_INVALID/,
   );
 });
 test("inventory hashes exact bytes and rejects empty or symlink output", () => {

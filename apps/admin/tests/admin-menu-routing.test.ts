@@ -8,7 +8,20 @@ import { retiredAdminWorkroomDestination } from "@/lib/workroom/retirement";
 
 describe("active administrator menu routing", () => {
   it("exposes real destinations without the retired content editor", () => {
-    expect(new Set(ADMIN_MENU_ITEMS.map((item) => item.href)).size).toBe(13);
+    const destinations = ADMIN_MENU_ITEMS.map((item) => item.href);
+    expect(destinations).toHaveLength(15);
+    expect(new Set(destinations).size).toBe(ADMIN_MENU_ITEMS.length);
+    expect(destinations).toEqual(
+      expect.arrayContaining(["/support", "/notifications"]),
+    );
+    expect(adminLocation("/support", null)).toEqual({
+      group: "운영 지원",
+      label: "1:1 문의함",
+    });
+    expect(adminLocation("/notifications", null)).toEqual({
+      group: "운영 지원",
+      label: "알림함",
+    });
     for (const item of ADMIN_MENU_ITEMS) {
       expect(
         retiredAdminWorkroomDestination(item.href.split("?")[0]!),

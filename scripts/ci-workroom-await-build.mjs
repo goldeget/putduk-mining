@@ -13,6 +13,21 @@ import { tmpdir } from "node:os";
 import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 
+export const BUILD_ARTIFACT_EXTRACTOR = `import sys,zipfile,pathlib,stat
+root=pathlib.Path.cwd().resolve()
+with zipfile.ZipFile(sys.argv[1]) as z:
+ names=set()
+ for entry in z.infolist():
+  name=entry.filename.rstrip('/')
+  if not name: continue
+  parts=pathlib.PurePosixPath(name).parts
+  if name in names or name.startswith('/') or any(p in ('..','.') for p in parts) or '\\\\' in name or ':' in name or stat.S_ISLNK(entry.external_attr>>16): raise ValueError('unsafe build entry')
+  names.add(name)
+  if not any(name==p or name.startswith(p+'/') for p in ('.next','apps/admin/.next','test-results/workroom-application','test-results/workroom-runtime')): raise ValueError('unexpected build root')
+  if not (root/name).resolve().is_relative_to(root): raise ValueError('build outside checkout')
+ z.extractall(root)
+`;
+
 export function successfulApplication(run, jobs, identity) {
   const full = identity.profile === "full";
   const workflow = full
@@ -121,28 +136,10 @@ async function main() {
       artifact.digest
   )
     throw Error("BUILD_ARTIFACT_DIGEST_MISMATCH");
-  execFileSync(
-    "python3",
-    [
-      "-c",
-      `import sys,zipfile,pathlib,stat
-root=pathlib.Path.cwd().resolve()
-with zipfile.ZipFile(sys.argv[1]) as z:
- names=set()
- for entry in z.infolist():
-  name=entry.filename.rstrip('/')
-  if not name: continue
-  parts=pathlib.PurePosixPath(name).parts
-  if name in names or name.startswith('/') or any(p in ('..','.') for p in parts) or '\\\\' in name or ':' in name or stat.S_ISLNK(entry.external_attr>>16): raise ValueError('unsafe build entry')
-  names.add(name)
-  if not any(name==p or name.startswith(p+'/') for p in ('.next','apps/admin/.next','test-results/workroom-application')): raise ValueError('unexpected build root')
-  if not (root/name).resolve().is_relative_to(root): raise ValueError('build outside checkout')
- z.extractall(root)
-`,
-      archive,
-    ],
-    { stdio: "inherit", timeout: 180000 },
-  );
+  execFileSync("python3", ["-c", BUILD_ARTIFACT_EXTRACTOR, archive], {
+    stdio: "inherit",
+    timeout: 180000,
+  });
   mkdirSync("test-results/workroom-acceptance", { recursive: true });
   writeFileSync(
     "test-results/workroom-acceptance/parallel-build.json",

@@ -6,6 +6,8 @@ const exactRoutes = new Set([
   "/workroom/history",
   "/workroom/points",
   "/workroom/guide",
+  "/workroom/support",
+  "/workroom/cash",
   "/",
   "/home",
   "/start",
@@ -24,6 +26,13 @@ const exactRoutes = new Set([
   "/ai",
 ]);
 function safeDeepLink(value) {
+  if (
+    typeof value === "string" &&
+    /^\/(?:(?:workroom\/support|support)\?thread=|workroom\/history\?round=)[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[1-8][a-fA-F0-9]{3}-[89abAB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$/.test(
+      value,
+    )
+  )
+    return value;
   if (
     typeof value !== "string" ||
     value.length > 256 ||
@@ -99,20 +108,25 @@ self.addEventListener("push", (event) => {
   }
   const id =
     typeof input?.notificationId === "string" &&
-    /^[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i.test(
+    /^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[1-8][a-fA-F0-9]{3}-[89abAB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$/.test(
       input.notificationId,
     )
       ? input.notificationId.toLowerCase()
       : null;
   const url = safeDeepLink(input?.url) ?? "/notifications";
   event.waitUntil(
-    self.registration.showNotification("WORKROOM", {
-      body: "새로운 알림이 도착했습니다. 앱에서 확인해 주세요.",
-      icon: "/workroom-icon.svg",
-      badge: "/workroom-icon.svg",
-      ...(id ? { tag: "putduk:" + id } : {}),
-      data: { url },
-    }),
+    self.registration
+      .showNotification("WORKROOM", {
+        body: "새로운 알림이 도착했습니다. 앱에서 확인해 주세요.",
+        icon: "/workroom-icon.svg",
+        badge: "/workroom-icon.svg",
+        ...(id ? { tag: "putduk:" + id } : {}),
+        data: { url },
+      })
+      .then(() => {
+        // A best-effort dot means an incoming event, never an invented unread count.
+        return self.navigator?.setAppBadge?.().catch(() => undefined);
+      }),
   );
 });
 self.addEventListener("notificationclick", (event) => {

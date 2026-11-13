@@ -1,11 +1,21 @@
-import { bindings, defineConfig, defineWorker } from "cf/config";
+import {
+  bindings,
+  defineConfig,
+  defineWorker,
+  exports as workerExports,
+  triggers,
+} from "cf/config";
 
 /** Existing named Worker; canonical member host is workroom.putduk.com. */
 export default defineConfig({
   accountId: "9dc502d4ef06b3b5374591de6e6933ca",
   worker: defineWorker({
     name: "putduk-mining-web-staging",
-    entrypoint: "vinext/server/fetch-handler",
+    entrypoint: "./worker/index.ts",
+    exports: {
+      WorkroomMemberAlarm: workerExports.durableObject({ storage: "sqlite" }),
+    },
+    triggers: [triggers.scheduled({ schedule: "* * * * *" })],
     compatibilityDate: "2026-10-19",
     compatibilityFlags: ["nodejs_compat"],
     assets: {
@@ -31,6 +41,11 @@ export default defineConfig({
     },
     // Preserve live staging host env on every cf deploy (secrets stay on CF; not listed here).
     env: {
+      WORKROOM_APP_RUNTIME_ENABLED: bindings.text("false"),
+      WORKROOM_MEMBER_ALARMS: bindings.durableObject({
+        worker: "putduk-mining-web-staging",
+        exportName: "WorkroomMemberAlarm",
+      }),
       ADMIN_APP_URL: bindings.text("https://admin.workroom.putduk.com"),
       AI_MODEL_LOW_COST: bindings.text("openai/gpt-oss-20b"),
       AI_PROVIDER: bindings.text("nvidia"),
