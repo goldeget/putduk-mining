@@ -2525,7 +2525,7 @@
     "supabase/tests/database/ws05_admin_session_step_up.sql": "53ba5759ed02bd3f05a1618b270850f5128844fdaf68355209cf168afca0e598",
     "supabase/tests/database/ws05_worker_lease_replay.sql": "d7883a2cf96def020dd8ff1a3a83d4a2d778547b44416f2accd70133f7670d48",
     "supabase/tests/database/ws06_step_up_session_binding.sql": "25217088d59b64538f0b995137df031fe510f31408b5c09936ca57f744d3b5e6",
-    "supabase/tests/fixtures/workroom_cash_mode_before_isolation.sql": "98b28522ab9a7ff6680f364dc745fd04c5e9bfbab07e1552e1ea6a8cdbe04de4",
+    "supabase/tests/fixtures/workroom_cash_mode_before_isolation.sql": "3bc4b384275675627ee363b9032271a9bb3f101c8b06c460f54315d4aa3039ff",
     "supabase/tests/snippets/resolve_disposable_dblink_host.inc": "461f1df73a459da387d7f704500db39801f57b954511183eea2f123d9200d99e",
     "supabase/workroom-test-fixtures/after_cutover.sql": "a8e4581b8d0cdbb35c77834a98d22050c21f91d2ecd4c665de04497aec36ea25",
     "supabase/workroom-test-fixtures/before_cutover.sql": "f399532c6abdcab5e0f355578289675ef011f279904f2389f880f48f76fe416d",

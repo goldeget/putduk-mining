@@ -66,6 +66,8 @@ do $$declare c record;a app_private.funding_engine_activations%rowtype;j jsonb;b
  'cycles',(select jsonb_agg(to_jsonb(x)order by id)from app_private.funding_cycle_windows x where user_id=c.user_id));
  update workroom_native_evidence.cash_mode_context set activation_id=a.id,originals=j;
 end$$;
+-- The next canonical approval writes its original before the audit seal.
+set constraints all deferred;
 -- A genuine WORKROOM signup that already acquired earned/state history must
 -- remain outside adoption, even though its deposit path otherwise looks similar.
 create table workroom_native_evidence.cash_mode_legacy_control(user_id uuid primary key,states bigint,earned bigint);
