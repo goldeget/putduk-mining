@@ -30,15 +30,16 @@ export function WorkroomChart({
   active = false,
 }: WorkroomChartProps) {
   const id = useId().replace(/:/g, "");
-  const elapsed = Number.isFinite(progress)
-    ? Math.max(0, Math.min(1, progress))
-    : 0;
+  const elapsed =
+    active && Number.isFinite(progress)
+      ? Math.max(0, Math.min(1, progress))
+      : 0;
   const current = simulationValue(config, elapsed);
   const direction =
     current > 100 ? "positive" : current < 100 ? "negative" : "neutral";
   // Keep the scale stable throughout a session. Only the elapsed curve is drawn.
   const values = Array.from({ length: 241 }, (_, i) =>
-    simulationValue(config, i / 240),
+    active ? simulationValue(config, i / 240) : 100,
   );
   const low = Math.min(100, ...values);
   const high = Math.max(100, ...values);
@@ -89,7 +90,7 @@ export function WorkroomChart({
             ? elapsed < 1
               ? "연습 진행 중"
               : "결과 확인 중"
-            : "경로 미리보기"}
+            : "시작 대기"}
         </span>
       </div>
       <div className={styles.graph}>
@@ -117,8 +118,7 @@ export function WorkroomChart({
             <desc id={`${id}-description`}>
               사전 설정된 비현금 연습입니다. 실제 시세와 다릅니다. 시작 지수
               100, 현재 {formatIndex(current)}, 진행률{" "}
-              {Math.round(elapsed * 100)}%, 종료 지수{" "}
-              {formatIndex(100 + config.roi)}. 연습 결과는 출금할 수 없습니다.
+              {Math.round(elapsed * 100)}%. 연습 결과는 출금할 수 없습니다.
             </desc>
             <defs>
               <linearGradient id={`${id}-fill`} x1="0" x2="0" y1="0" y2="1">

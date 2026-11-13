@@ -9,6 +9,14 @@ test("390px browser displays real member simulation and navigates history withou
     page.getByRole("button", { name: "모니터링 시작", exact: true }),
   ).toBeVisible();
   const chart = page.getByTestId("workroom-chart");
+  await expect(chart).toHaveAttribute("data-progress", "0");
+  await expect(chart).toHaveAttribute("data-current-value", "100");
+  await expect(page.getByText(/종료 시점 미리보기|경로 미리보기/)).toHaveCount(
+    0,
+  );
+  await expect(
+    page.getByText("현재 모의 평가 포인트 · 예상값", { exact: true }),
+  ).toHaveCount(0);
   const theme = page
     .locator("header")
     .getByRole("combobox", { name: "화면 테마" });
@@ -65,7 +73,7 @@ test("390px browser displays real member simulation and navigates history withou
   ).toBeVisible();
   await page.setViewportSize({ width: 390, height: 844 });
   await page.screenshot({
-    path: test.info().outputPath("chart-dark-member-mobile.png"),
+    path: "test-results/workroom-auth/chart-dark-member-mobile.png",
     fullPage: true,
   });
   await page

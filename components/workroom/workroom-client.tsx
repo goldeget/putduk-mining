@@ -3,7 +3,6 @@ import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   sessionValue,
-  simulationValue,
   type WorkroomSession,
   type WorkroomState,
 } from "@/domain/workroom/contracts";
@@ -357,26 +356,12 @@ export function WorkroomClient({
   const selectedConfig = state.configs.find((c) => c.instrument === selected);
   const config = active ?? selectedConfig,
     quote = quotes[instrument.id];
-  const patternValues = Array.from({ length: 25 }, (_, index) =>
-    config ? simulationValue(config, index / 24) : 100,
-  );
-  const patternLow = Math.min(...patternValues),
-    patternHigh = Math.max(...patternValues),
-    patternPadding = Math.max((patternHigh - patternLow) * 0.12, 0.1);
-  const patternPoints = patternValues
-    .map(
-      (value, index) =>
-        `${2 + (index / 24) * 28},${2 + ((patternHigh + patternPadding - value) / (patternHigh - patternLow + patternPadding * 2)) * 20}`,
-    )
-    .join(" ");
   const view = active
     ? sessionValue(active, now)
     : {
-        progress: 1,
-        value: 100 + (config?.roi ?? 0),
-        returned: Math.round(
-          (Number(amount) * (100 + (config?.roi ?? 0))) / 100,
-        ),
+        progress: 0,
+        value: 100,
+        returned: Number(amount),
         remaining: config?.duration ?? 0,
       };
   const profit = view.returned - (active?.stake ?? Number(amount)),
@@ -460,55 +445,36 @@ export function WorkroomClient({
                     {instrument.name}
                   </span>
                 </div>
-                <div
-                  className={`${styles.evaluation} ${experience.evaluation}`}
-                >
-                  <span>
-                    {active
-                      ? "현재 모의 평가 포인트 · 예상값"
-                      : "종료 시점 미리보기"}
-                  </span>
-                  <div className={styles.evaluationRow}>
-                    <strong>
-                      {money(view.returned)} <small>P</small>
-                    </strong>
-                    <span
-                      className={
-                        profit >= 0 ? styles.positive : styles.negative
-                      }
-                    >
-                      {signed(profit)} P ({(view.value - 100).toFixed(2)}%)
-                    </span>
+                {active && (
+                  <div
+                    className={`${styles.evaluation} ${experience.evaluation}`}
+                  >
+                    <span>현재 모의 평가 포인트 · 예상값</span>
+                    <div className={styles.evaluationRow}>
+                      <strong>
+                        {money(view.returned)} <small>P</small>
+                      </strong>
+                      <span
+                        className={
+                          profit >= 0 ? styles.positive : styles.negative
+                        }
+                      >
+                        {signed(profit)} P ({(view.value - 100).toFixed(2)}%)
+                      </span>
+                    </div>
                   </div>
-                </div>
+                )}
                 <div
                   className={experience.pattern}
                   aria-label="이번 회차에 설정된 모의 경로"
                 >
-                  <span className={experience.patternIcon} aria-hidden="true">
-                    <svg
-                      viewBox="0 0 32 24"
-                      width="32"
-                      height="24"
-                      focusable="false"
-                    >
-                      <polyline
-                        points={patternPoints}
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1.8"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </span>
                   <div>
-                    <span>사전 설정된 경로</span>
+                    <span>설정된 패턴</span>
                     <strong>{patterns[config.pattern]} 패턴</strong>
                   </div>
                   <div className={experience.patternEnd}>
-                    <span>모의 지수</span>
-                    <strong>100 → {(100 + config.roi).toFixed(2)}</strong>
+                    <span>진행 시간</span>
+                    <strong>{config.duration}초</strong>
                   </div>
                 </div>
                 <WorkroomChart
@@ -518,9 +484,7 @@ export function WorkroomClient({
                 />
                 <div className={experience.timeline}>
                   <div>
-                    <span>
-                      {active ? "이번 회차 진행" : "전체 경로 미리보기"}
-                    </span>
+                    <span>{active ? "이번 회차 진행" : "모니터링 대기"}</span>
                     <strong>
                       {active
                         ? `${Math.floor(view.progress * 100)}%`
@@ -528,18 +492,16 @@ export function WorkroomClient({
                     </strong>
                   </div>
                   <progress
-                    aria-label={
-                      active ? "이번 회차 진행률" : "미리보기 전체 경로"
-                    }
+                    aria-label={active ? "이번 회차 진행률" : "시작 대기"}
                     max={100}
-                    value={active ? view.progress * 100 : 100}
+                    value={view.progress * 100}
                   />
                   <div>
                     <span>시작 · 0초</span>
                     <span>
                       {active
                         ? `남은 시간 ${remaining}`
-                        : `종료 · ${config.duration}초`}
+                        : `진행 시간 ${config.duration}초`}
                     </span>
                   </div>
                 </div>
@@ -554,7 +516,7 @@ export function WorkroomClient({
                 <p className={experience.sessionIntro}>
                   {active
                     ? "시작할 때 확인한 조건으로 진행됩니다."
-                    : "공개된 경로를 확인하고 참여하세요."}
+                    : "참여 포인트를 정하고 시작하세요."}
                 </p>
                 <div className={styles.sessionLines}>
                   <div>
@@ -594,24 +556,26 @@ export function WorkroomClient({
                   </label>
                 )}
                 {active ? (
-                  <button
-                    className={styles.primary}
-                    disabled={busy || hasPending}
-                    onClick={() =>
-                      void command(
-                        overdue ? "SYNC" : "FINISH",
-                        overdue ? {} : { id: active.id },
-                      )
-                    }
-                  >
-                    {busy ? (
-                      <WorkroomLoading label="결과 확인 중…" variant="inline" />
-                    ) : overdue ? (
-                      "종료 결과 확인"
-                    ) : (
-                      "지금 모의 참여 종료"
-                    )}
-                  </button>
+                  overdue ? (
+                    <button
+                      className={styles.primary}
+                      disabled={busy || hasPending}
+                      onClick={() => void command("SYNC", {})}
+                    >
+                      {busy ? (
+                        <WorkroomLoading
+                          label="결과 확인 중…"
+                          variant="inline"
+                        />
+                      ) : (
+                        "종료 결과 확인"
+                      )}
+                    </button>
+                  ) : (
+                    <p className={styles.helper} role="status">
+                      진행 중입니다. 시간이 끝나면 자동으로 완료됩니다.
+                    </p>
+                  )
                 ) : (
                   <button
                     className={styles.primary}

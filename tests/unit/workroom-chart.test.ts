@@ -24,11 +24,32 @@ function parseMarkup(markup: string) {
 }
 function documentFor(config: WorkroomConfig, progress: number) {
   return parseMarkup(
-    renderToStaticMarkup(createElement(WorkroomChart, { config, progress })),
+    renderToStaticMarkup(
+      createElement(WorkroomChart, { config, progress, active: true }),
+    ),
   );
 }
 
 describe("workroom chart presentation", () => {
+  it.each([50, -50])(
+    "keeps an unstarted chart at 100 without a future outcome for ROI %s",
+    (roi) => {
+      const doc = parseMarkup(
+        renderToStaticMarkup(
+          createElement(WorkroomChart, {
+            config: { ...base, roi },
+            progress: 1,
+            active: false,
+          }),
+        ),
+      );
+      const svg = doc.querySelector("svg")!;
+      expect(svg.getAttribute("data-current-value")).toBe("100");
+      expect(svg.getAttribute("data-progress")).toBe("0");
+      expect(doc.body.textContent).toContain("시작 대기");
+      expect(doc.body.textContent).not.toMatch(/미리보기|종료 지수/);
+    },
+  );
   it.each([5, -5, 0])(
     "displays the exact configured endpoint for ROI %s",
     (roi) => {
