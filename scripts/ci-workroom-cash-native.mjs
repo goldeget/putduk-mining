@@ -128,7 +128,7 @@ try {
     [
       ...psql,
       "-c",
-      "do $$begin if (select count(*) from supabase_migrations.schema_migrations)<>205 or to_regprocedure('public.complete_workroom_birth_digit(uuid,text,uuid)') is null or to_regprocedure('public.read_workroom_cash(uuid)') is null then raise exception 'EXACT_205_REQUIRED';end if;end$$;",
+      "do $$begin if (select count(*) from supabase_migrations.schema_migrations)<>206 or to_regprocedure('public.complete_workroom_birth_digit(uuid,text,uuid)') is null or to_regprocedure('public.read_workroom_cash(uuid)') is null or to_regclass('app_private.workroom_cash_enrollments') is null or not exists(select 1 from supabase_migrations.schema_migrations where version='20261113061155') then raise exception 'EXACT_206_REQUIRED';end if;end$$;",
     ],
     "schema",
   );
@@ -159,7 +159,7 @@ try {
         head: manifest.head,
         project,
         containerId: info.id,
-        migrationCount: 205,
+        migrationCount: 206,
         records,
         failedTests,
         scope:

@@ -6,16 +6,26 @@ export const WORKROOM_BANK_MIGRATION =
   "supabase/migrations/20261111165640_workroom_bank_instructions_member_directory.sql";
 export const WORKROOM_MEMBER_SESSION_MIGRATION =
   "supabase/migrations/20261112080627_workroom_member_birth_completion_session_continuity.sql";
+export const WORKROOM_CASH_ISOLATION_MIGRATION =
+  "supabase/migrations/20261113061155_workroom_direct_cash_mode_isolation.sql";
+export const WORKROOM_CASH_BEFORE_ISOLATION =
+  "supabase/tests/fixtures/workroom_cash_mode_before_isolation.sql";
+export const WORKROOM_CASH_ADOPTION =
+  "supabase/tests/database/workroom_cash_mode_adoption.sql";
 export const WORKROOM_CASH_TESTS = [
   "supabase/tests/database/workroom_direct_cash.sql",
   "supabase/tests-concurrent/workroom_direct_cash_concurrency.sql",
   "supabase/tests/database/workroom_bank_members.sql",
   "supabase/tests/database/workroom_member_session_completion.sql",
+  "supabase/tests/database/workroom_cash_mode_isolation.sql",
 ];
 export const WORKROOM_CASH_FILES = [
   WORKROOM_CASH_MIGRATION,
   WORKROOM_BANK_MIGRATION,
   WORKROOM_MEMBER_SESSION_MIGRATION,
+  WORKROOM_CASH_ISOLATION_MIGRATION,
+  WORKROOM_CASH_BEFORE_ISOLATION,
+  WORKROOM_CASH_ADOPTION,
   ...WORKROOM_CASH_TESTS,
 ];
 export const WORKROOM_CASH_ACL_TESTS = [
@@ -76,5 +86,36 @@ export function assertWorkroomCashAdmission(records, readSource, readStage) {
       digest(readStage(record.path)) !== record.sha256
     )
       throw Error("WORKROOM_CASH_STAGED_BYTES_CHANGED");
+  }
+}
+
+/** Completion requires the ordered real205 seed, preservation and206 regressions. */
+export function assertWorkroomCashCompletion(records) {
+  const label = (path) => path.split("/").at(-1).replaceAll(".", "-");
+  const required = [
+    [label(WORKROOM_CASH_BEFORE_ISOLATION), false],
+    ["cash-isolation-existing-rows-before", false],
+    [label(WORKROOM_CASH_ISOLATION_MIGRATION), false],
+    ["cash-isolation-existing-rows-after", false],
+    ["cash-isolation-migration-history", false],
+    [label(WORKROOM_CASH_ADOPTION), true],
+    ...WORKROOM_CASH_TESTS.map((path) => [label(path), true]),
+  ];
+  let previous = -1;
+  for (const [name, tap] of required) {
+    const matches = records
+      .map((record, index) => ({ record, index }))
+      .filter((x) => x.record.label === name);
+    if (
+      matches.length !== 1 ||
+      matches[0].index <= previous ||
+      (tap &&
+        !(
+          Number.isInteger(matches[0].record.assertions) &&
+          matches[0].record.assertions > 0
+        ))
+    )
+      throw Error("WORKROOM_CASH_COMPLETION_PROOF_REQUIRED_" + name);
+    previous = matches[0].index;
   }
 }
