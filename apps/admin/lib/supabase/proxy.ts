@@ -6,6 +6,14 @@ import { getAdminEnv } from "@/lib/env";
 import { adminCookieOptions } from "@/lib/supabase/cookie";
 
 export async function updateAdminSession(request: NextRequest) {
+  const pathname = request.nextUrl.pathname;
+  if (
+    ["GET", "HEAD"].includes(request.method) &&
+    (pathname === "/manifest.webmanifest" ||
+      pathname === "/sw.js" ||
+      pathname === "/offline.html")
+  )
+    return NextResponse.next({ request });
   const env = getAdminEnv();
   let response = NextResponse.next({ request });
   const supabase = createServerClient(
@@ -32,7 +40,6 @@ export async function updateAdminSession(request: NextRequest) {
   );
 
   const path = `${request.nextUrl.pathname}${request.nextUrl.search}`;
-  const pathname = request.nextUrl.pathname;
   const publicPath =
     pathname === "/login" ||
     pathname.startsWith("/mfa") ||
