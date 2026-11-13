@@ -15,6 +15,10 @@ import styles from "./workroom.module.css";
 import experience from "./workroom-experience.module.css";
 import { WorkroomChart } from "./workroom-chart";
 import { WorkroomLoading } from "../ui/workroom-loading";
+import {
+  ParticipationHistory,
+  ParticipationPointsLedger,
+} from "./participation-history";
 const instruments = [
   { id: "usd", name: "달러환율", category: "fx" },
   { id: "cny", name: "위안화환율", category: "fx" },
@@ -718,34 +722,7 @@ export function WorkroomClient({
         </>
       )}
       {page === "history" && (
-        <>
-          <Heading
-            eyebrow="YOUR ACTIVITY"
-            title="참여 내역"
-            description="완료된 모의 참여와 서버에서 확정한 결과입니다."
-          />
-          <div className={styles.summary}>
-            <Summary
-              label="표시된 완료 참여"
-              value={`${state.history.length}회`}
-            />
-            <Summary
-              label="표시된 기록 포인트 변동"
-              value={`${signed(state.history.reduce((s, r) => s + (r.profit ?? 0), 0))} P`}
-            />
-            <Summary label="진행 중인 참여" value={active ? "1회" : "0회"} />
-          </div>
-          {active && (
-            <p className={styles.disclosure}>
-              진행 중인 참여가 있습니다.{" "}
-              <Link href="/workroom">내 워크룸에서 확인하기 →</Link>
-            </p>
-          )}
-          <section className={`${styles.panel} ${styles.tablePanel}`}>
-            <h2>최근 참여 기록</h2>
-            <History rows={state.history} />
-          </section>
-        </>
+        <ParticipationHistory rows={state.history} active={active} />
       )}
       {page === "points" && (
         <>
@@ -763,41 +740,7 @@ export function WorkroomClient({
             연습 포인트는 현금으로 전환하거나 출금할 수 없습니다. 실제
             입금·출금은 별도 잔액 메뉴에서 확인하세요.
           </p>
-          <section className={`${styles.panel} ${styles.tablePanel}`}>
-            <h2>최근 포인트 내역</h2>
-            {state.ledger.length ? (
-              <div className={styles.tableScroll}>
-                <table className={styles.table}>
-                  <thead>
-                    <tr>
-                      <th scope="col">일시 (한국)</th>
-                      <th scope="col">내용</th>
-                      <th scope="col">변동</th>
-                      <th scope="col">반영 후 잔액</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {state.ledger.map((r) => (
-                      <tr key={r.id}>
-                        <td>{date(r.createdAt)}</td>
-                        <td>{r.note}</td>
-                        <td
-                          className={
-                            r.amount >= 0 ? styles.positive : styles.negative
-                          }
-                        >
-                          {signed(r.amount)} P
-                        </td>
-                        <td>{money(r.balanceAfter)} P</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            ) : (
-              <div className={styles.empty}>포인트 내역이 없습니다.</div>
-            )}
-          </section>
+          <ParticipationPointsLedger rows={state.ledger} />
         </>
       )}
       {page === "guide" && (
@@ -828,7 +771,7 @@ export function WorkroomClient({
               [
                 "04",
                 "포인트와 기록",
-                "원하는 순간 종료하거나 시간이 끝나면 서버가 결과를 확정합니다. 연결이 끊겨도 계정의 회차는 유지됩니다. 다시 접속해 같은 요청 결과를 확인할 수 있습니다.",
+                "정해진 시간이 끝나면 서버가 결과를 확정합니다. 연결이 끊겨도 계정의 회차는 유지됩니다. 다시 접속하면 확정된 결과를 확인할 수 있습니다.",
               ],
             ].map(([n, t, d]) => (
               <section className={styles.panel} key={n}>

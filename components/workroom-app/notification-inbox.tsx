@@ -18,6 +18,7 @@ import {
 import styles from "./workroom-app.module.css";
 import { mergeInboxPage } from "./pagination";
 import { safeNotificationDeepLink } from "../../domain/notifications/safe-deep-link.mjs";
+import { PutdukIcon } from "../icons/putduk-icon";
 
 export function notificationRoute(route: string, admin: boolean) {
   if (route === "/notifications") return route;
@@ -125,7 +126,7 @@ export function NotificationInbox({ admin = false }: { admin?: boolean }) {
   }
   if (resource.authorizationLost)
     return (
-      <section className={styles.app} role="alert">
+      <section className={`${styles.app} ${styles.authNotice}`} role="alert">
         <h1>로그인 상태를 확인해 주세요</h1>
         <p>보안을 위해 알림 내용을 닫았어요. 다시 로그인한 뒤 확인해 주세요.</p>
         <a
@@ -179,6 +180,9 @@ export function NotificationInbox({ admin = false }: { admin?: boolean }) {
       ) : null}
       {!resource.loading && !resource.error && items.length === 0 ? (
         <div className={`${styles.panel} ${styles.empty}`}>
+          <span className={styles.introIcon} aria-hidden="true">
+            <PutdukIcon name="bell" size={25} />
+          </span>
           <h2>아직 도착한 알림이 없어요</h2>
           <p>참여 종료와 문의 답변 등 필요한 소식이 이곳에 쌓여요.</p>
           <a href={admin ? "/support" : "/workroom/support"}>
@@ -197,15 +201,30 @@ export function NotificationInbox({ admin = false }: { admin?: boolean }) {
               data-read={Boolean(item.readAt)}
             >
               <div className={styles.notificationIcon} aria-hidden="true">
-                {item.readAt ? "✓" : "●"}
+                {item.readAt ? (
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="21"
+                    height="21"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                  >
+                    <path d="m5.5 12 4.5 4.5 8.5-9" />
+                  </svg>
+                ) : (
+                  <PutdukIcon name="bell" size={21} />
+                )}
               </div>
-              <div>
+              <div className={styles.notificationBody}>
                 <time dateTime={item.createdAt}>
                   {dateLabel(item.createdAt)}
                 </time>
                 <h2>{item.title}</h2>
                 <p>{item.body}</p>
-                <div className={styles.actions}>
+                <div
+                  className={`${styles.actions} ${styles.notificationActions}`}
+                >
                   {route ? <a href={route}>내용 확인 →</a> : null}
                   {item.readAt ? (
                     <span>읽음</span>

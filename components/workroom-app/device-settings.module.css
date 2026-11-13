@@ -1,0 +1,225 @@
+.settings,
+.control {
+  --device-panel: var(--wr-panel, var(--admin-surface, var(--surface-default)));
+  --device-soft: var(--wr-sunken, var(--admin-sunken, var(--surface-sunken)));
+  --device-text: var(--wr-text, var(--admin-text, var(--text-primary)));
+  --device-muted: var(
+    --wr-secondary,
+    var(--admin-muted, var(--text-secondary))
+  );
+  --device-line: var(--wr-border, var(--admin-line, var(--border-default)));
+  --device-accent: var(--wr-accent, var(--admin-accent, #14785e));
+  color: var(--device-text);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.settings {
+  max-width: 1220px;
+  width: 100%;
+  margin: 36px auto 0;
+  padding-top: 28px;
+  border-top: 1px solid var(--device-line);
+}
+.heading {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+.heading > div {
+  min-width: 0;
+  flex: 1;
+}
+.headingIcon,
+.cardIcon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border: 1px solid
+    color-mix(in srgb, var(--device-accent) 25%, var(--device-line));
+  border-radius: 13px;
+  color: var(--device-accent);
+  background: color-mix(in srgb, var(--device-accent) 8%, var(--device-panel));
+}
+.eyebrow {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--device-accent);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+.heading h2 {
+  margin: 0;
+  font-size: clamp(18px, 2vw, 22px);
+  font-weight: 750;
+  line-height: 1.45;
+  letter-spacing: -0.045em;
+  word-break: keep-all;
+}
+.heading p {
+  max-width: 60ch;
+  margin: 8px 0 0;
+  color: var(--device-muted);
+  font-size: 13px;
+  line-height: 1.8;
+  word-break: keep-all;
+}
+.optional {
+  flex: none;
+  padding: 5px 9px;
+  border: 1px solid var(--device-line);
+  border-radius: 7px;
+  color: var(--device-muted);
+  font-size: 11px;
+  line-height: 1.6;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 16px;
+}
+.card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: clamp(20px, 2.8vw, 28px);
+  border: 1px solid var(--device-line);
+  border-radius: 20px;
+  background: var(--device-panel);
+  box-shadow: 0 8px 24px #020a1405;
+}
+.cardIcon {
+  width: 40px;
+  height: 40px;
+  margin-bottom: 18px;
+  border-radius: 12px;
+}
+.cardIcon img {
+  display: block;
+  border-radius: 6px;
+}
+.control :global(.push-control) {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+  min-width: 0;
+  height: 100%;
+}
+.card :global(.push-control) {
+  flex: 1;
+  height: auto;
+}
+.control :global(.push-control) > div {
+  flex: 1;
+  min-width: 0;
+}
+.control :global(.push-control) strong {
+  display: block;
+  color: var(--device-text);
+  font-size: 16px;
+  font-weight: 750;
+  line-height: 1.5;
+  letter-spacing: -0.035em;
+}
+.control :global(.push-control) p {
+  margin: 9px 0 0;
+  color: var(--device-muted);
+  font-size: 13px;
+  line-height: 1.85;
+  word-break: keep-all;
+}
+.control :global(.push-control) > button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-start;
+  min-width: 148px;
+  min-height: 46px;
+  max-width: 100%;
+  margin-top: 6px;
+  padding: 11px 20px;
+  border: 1px solid var(--device-line);
+  border-radius: 11px;
+  background: var(--device-soft);
+  color: var(--device-text);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.6;
+  white-space: normal;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.control :global(.push-control) > button:hover:not(:disabled) {
+  border-color: var(--device-accent);
+  background: color-mix(in srgb, var(--device-accent) 8%, var(--device-panel));
+}
+.control :global(.push-control) > button:focus-visible {
+  outline: 3px solid var(--device-accent);
+  outline-offset: 3px;
+}
+.control :global(.push-control) > button:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+.control :global(.push-control) > button + button {
+  min-width: 88px;
+  margin-top: 0;
+  background: transparent;
+}
+.control :global(.push-control) > [role="status"] {
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid var(--device-line);
+  border-radius: 10px;
+  background: var(--device-soft);
+  color: var(--device-text);
+  font-size: 12px;
+  line-height: 1.8;
+}
+@media (max-width: 640px) {
+  .settings {
+    margin-top: 28px;
+    padding-top: 24px;
+  }
+  .heading {
+    gap: 11px;
+  }
+  .headingIcon {
+    width: 38px;
+    height: 38px;
+    border-radius: 11px;
+  }
+  .heading p {
+    font-size: 12px;
+  }
+  .optional {
+    display: none;
+  }
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+  .card {
+    border-radius: 16px;
+    padding: 20px;
+  }
+  .cardIcon {
+    margin-bottom: 14px;
+  }
+  .control :global(.push-control) > button {
+    align-self: stretch;
+    width: 100%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .control * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

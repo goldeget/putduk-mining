@@ -1,0 +1,73 @@
+.page {
+  display: grid;
+  min-height: min(65dvh, 520px);
+  place-items: center;
+  padding: clamp(20px, 4vw, 48px) 0;
+}
+
+.card {
+  display: grid;
+  width: min(100%, 480px);
+  gap: 18px;
+  padding: clamp(24px, 5vw, 40px);
+  border: 1px solid var(--wr-border, var(--border-subtle));
+  border-radius: 24px;
+  background: var(--wr-panel, var(--surface-primary));
+  color: var(--wr-text, var(--text-primary));
+}
+
+.mark {
+  display: grid;
+  width: 52px;
+  height: 52px;
+  place-items: center;
+  border: 1px solid var(--wr-border, var(--border-subtle));
+  border-radius: 16px;
+  background: var(--wr-raised, var(--surface-secondary));
+  color: var(--wr-accent, var(--brand-primary));
+}
+
+.card h1 {
+  margin: 0;
+  font-size: clamp(23px, 3vw, 30px);
+  font-weight: 720;
+  line-height: 1.35;
+  letter-spacing: -0.04em;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+.card p {
+  margin: 0;
+  color: var(--wr-secondary, var(--text-secondary));
+  font-size: 14px;
+  line-height: 1.8;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+.action {
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 4px;
+  padding: 12px 20px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: var(--wr-action, var(--brand-primary));
+  color: var(--wr-action-text, var(--text-on-brand));
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.action:hover {
+  background: var(--wr-action-hover, var(--brand-hover));
+}
+
+.action:focus-visible {
+  outline: 2px solid var(--wr-accent, var(--brand-primary));
+  outline-offset: 4px;
+}

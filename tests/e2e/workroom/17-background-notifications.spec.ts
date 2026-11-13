@@ -125,6 +125,79 @@ test("service scheduler settles a genuine 30-second round with owner browser clo
   await expect(
     returned.getByRole("heading", { name: "달러환율", exact: true }),
   ).toBeVisible();
+  const theme = returned.locator("header").getByRole("combobox", {
+    name: "화면 테마",
+  });
+  for (const mode of ["light", "dark"]) {
+    await theme.selectOption(mode);
+    await expect(returned.locator("html")).toHaveAttribute("data-theme", mode);
+    for (const width of [320, 390, 768, 1280]) {
+      await returned.setViewportSize({ width, height: 900 });
+      await expect(
+        returned.getByRole("heading", { name: "참여 결과", exact: true }),
+      ).toBeVisible();
+      await expect
+        .poll(() =>
+          returned.evaluate(
+            () => document.documentElement.scrollWidth <= innerWidth,
+          ),
+        )
+        .toBe(true);
+      await returned.screenshot({
+        path: test
+          .info()
+          .outputPath(`participation-result-${width}-${mode}.png`),
+        fullPage: true,
+      });
+    }
+  }
+  for (const destination of [
+    {
+      path: "/workroom/history",
+      title: "참여 내역",
+      columns: 5,
+      file: "participation-history",
+    },
+    {
+      path: "/workroom/points",
+      title: "체험 포인트",
+      columns: 4,
+      file: "participation-points",
+    },
+  ]) {
+    await returned.goto(destination.path);
+    await expect(
+      returned.getByRole("heading", { name: destination.title, exact: true }),
+    ).toBeVisible();
+    const table = returned.getByRole("table");
+    await expect(table).toBeVisible();
+    for (const mode of ["light", "dark"]) {
+      await theme.selectOption(mode);
+      await expect(returned.locator("html")).toHaveAttribute(
+        "data-theme",
+        mode,
+      );
+      for (const width of [390, 1280]) {
+        await returned.setViewportSize({ width, height: 900 });
+        await expect(table.getByRole("columnheader")).toHaveCount(
+          destination.columns,
+        );
+        await expect
+          .poll(() =>
+            returned.evaluate(
+              () => document.documentElement.scrollWidth <= innerWidth,
+            ),
+          )
+          .toBe(true);
+        await returned.screenshot({
+          path: test
+            .info()
+            .outputPath(`${destination.file}-${width}-${mode}.png`),
+          fullPage: true,
+        });
+      }
+    }
+  }
 });
 
 test("another real member cannot run scheduler or read/mark the owner's background completion", async ({

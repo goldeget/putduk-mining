@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { requirePageUser } from "@/lib/auth/session";
-import styles from "@/components/workroom/workroom.module.css";
+import styles from "./legacy-records.module.css";
 
 export const dynamic = "force-dynamic";
 function krw(value: unknown) {
@@ -31,70 +31,93 @@ export default async function HistoricalRecordsPage() {
     : { data: [], error: null };
   return (
     <div className={styles.page}>
-      <h1>잔액 변동 상세</h1>
-      <p>
-        입금·출금의 실제 잔액과 거래 기록입니다. 워크룸 연습 포인트와 별도로
-        보관됩니다.
-      </p>
+      <header className={styles.heading}>
+        <span className={styles.eyebrow}>보관된 거래 기록</span>
+        <h1>잔액 변동 상세</h1>
+        <p>
+          이전 원화 계정에 보관된 기록입니다. 현재 이용 가능한 잔액은 입출금
+          화면에서 확인하세요. 워크룸 연습 포인트와는 별도입니다.
+        </p>
+      </header>
       <section className={styles.panel}>
-        <h2>원화 잔액</h2>
+        <h2>기록된 원화 잔액</h2>
         {accounts.error ? (
-          <p role="alert">
+          <p role="alert" className={styles.error}>
             기록을 읽지 못했습니다. 표시되지 않은 잔액을 0원으로 판단하지
             마세요.
           </p>
         ) : accounts.data?.length ? (
           accounts.data.map((account) => (
-            <div key={String(account.wallet_account_id)}>
-              <p>전체 {krw(account.balance_atomic)}</p>
-              <p>사용 가능 {krw(account.available_balance_atomic)}</p>
+            <div
+              className={styles.balances}
+              key={String(account.wallet_account_id)}
+            >
+              <div className={styles.balance}>
+                <span>이전 계정 전체 금액</span>
+                <strong>{krw(account.balance_atomic)}</strong>
+              </div>
+              <div className={styles.balance}>
+                <span>이전 계정 사용 가능 금액</span>
+                <strong>{krw(account.available_balance_atomic)}</strong>
+              </div>
             </div>
           ))
         ) : (
-          <p>아직 원화 계정 내역이 없습니다.</p>
+          <p className={styles.empty}>아직 원화 계정 내역이 없습니다.</p>
         )}
-        <Link href="/workroom/cash/withdraw">출금 신청 →</Link>
+        <Link className={styles.action} href="/workroom/cash">
+          현재 잔액 확인
+        </Link>
       </section>
       <section className={styles.panel}>
         <h2>최근 거래 100건</h2>
         {ledger.error ? (
-          <p role="alert">거래 내역을 읽지 못했습니다.</p>
+          <p role="alert" className={styles.error}>
+            거래 내역을 읽지 못했습니다.
+          </p>
         ) : ledger.data?.length ? (
-          <div style={{ overflowX: "auto" }}>
-            <table>
-              <thead>
-                <tr>
-                  <th>시각</th>
-                  <th>구분</th>
-                  <th>금액</th>
-                  <th>기록</th>
+          <div className={styles.tableWrap}>
+            <table className={styles.table} role="table">
+              <caption>기존 원화 계정의 거래 변동 내역</caption>
+              <thead role="rowgroup">
+                <tr role="row">
+                  <th scope="col">시각</th>
+                  <th scope="col">구분</th>
+                  <th scope="col">금액</th>
+                  <th scope="col">기록</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody role="rowgroup">
                 {ledger.data.map((entry) => (
-                  <tr key={String(entry.id)}>
-                    <td>
+                  <tr key={String(entry.id)} role="row">
+                    <td data-label="시각" role="cell">
                       {new Date(String(entry.created_at)).toLocaleString(
                         "ko-KR",
                         { timeZone: "Asia/Seoul" },
                       )}
                     </td>
-                    <td>{String(entry.entry_type)}</td>
-                    <td>
+                    <td data-label="구분" role="cell">
+                      {String(entry.entry_type)}
+                    </td>
+                    <td data-label="금액" className={styles.amount} role="cell">
                       {entry.direction === "DEBIT" ? "−" : "+"}
                       {krw(entry.amount_atomic)}
                     </td>
-                    <td>{String(entry.reason ?? "거래 기록")}</td>
+                    <td data-label="기록" role="cell">
+                      {String(entry.reason ?? "거래 기록")}
+                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
         ) : (
-          <p>표시할 거래가 없습니다.</p>
+          <p className={styles.empty}>표시할 거래가 없습니다.</p>
         )}
       </section>
-      <Link href="/workroom/records">입출금 거래 내역으로 돌아가기 →</Link>
+      <Link className={styles.action} href="/workroom/records">
+        입출금 거래 내역으로
+      </Link>
     </div>
   );
 }
