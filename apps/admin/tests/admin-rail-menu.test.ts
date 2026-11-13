@@ -4,6 +4,7 @@ import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { AdminRailMenu } from "@/components/admin-rail-menu";
+import { ADMIN_MENU_ITEMS } from "@/components/admin-menu";
 
 const route = vi.hoisted(() => ({ pathname: "/members/member-id" }));
 vi.mock("next/navigation", () => ({
@@ -74,7 +75,17 @@ describe("admin labelled navigation disclosure", () => {
     const region = document.getElementById(
       toggle().getAttribute("aria-controls")!,
     )!;
-    expect(region.querySelectorAll("nav a")).toHaveLength(13);
+    expect(
+      [...region.querySelectorAll("nav a")].map((link) =>
+        link.getAttribute("href"),
+      ),
+    ).toEqual(ADMIN_MENU_ITEMS.map((item) => item.href));
+    expect(region.querySelector('a[href="/support"]')?.textContent).toContain(
+      "1:1 문의함",
+    );
+    expect(
+      region.querySelector('a[href="/notifications"]')?.textContent,
+    ).toContain("알림함");
     expect(region.querySelector('a[href="/ai-conversations"]')).not.toBeNull();
     expect(region.querySelector('a[href="/content"]')).toBeNull();
     expect(
