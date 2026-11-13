@@ -8,7 +8,8 @@ test("persisted inquiry, original retry, own-thread isolation, operator reply an
 }) => {
   const owner = await member();
   await login(page, owner);
-  await page.goto("/workroom/support");
+  await page.goto("/menu/support");
+  await page.getByRole("link", { name: "1:1 문의하기", exact: true }).click();
   await page
     .getByLabel("문의 내용", { exact: true })
     .fill("참여 내역 확인 방법을 알려 주세요.");

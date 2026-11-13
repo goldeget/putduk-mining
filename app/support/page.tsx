@@ -122,6 +122,9 @@ export default function SupportPage() {
           <p className="ko-copy">
             상담 창에서 비밀번호나 인증 코드는 보내지 마세요.
           </p>
+          <Link href="/workroom/support" className="button button--primary">
+            1:1 문의하기
+          </Link>
           <SupportStartButton />
         </section>
 
