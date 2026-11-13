@@ -1,0 +1,226 @@
+.chart {
+  --chart-color: var(--wr-muted);
+  margin: 0;
+  min-width: 0;
+  color: var(--wr-text);
+}
+.chart[data-direction="positive"] {
+  --chart-color: var(--wr-positive);
+}
+.chart[data-direction="negative"] {
+  --chart-color: var(--wr-negative);
+}
+.heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 4px 0 20px;
+}
+.readout {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  column-gap: 10px;
+  row-gap: 3px;
+  font-variant-numeric: tabular-nums;
+}
+.eyebrow {
+  flex-basis: 100%;
+  color: var(--wr-muted);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.readout strong {
+  font-size: clamp(28px, 4vw, 38px);
+  font-weight: 650;
+  letter-spacing: -0.045em;
+  line-height: 1.2;
+}
+.change {
+  color: var(--chart-color);
+  font-size: 13px;
+  font-weight: 650;
+}
+.state {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  flex-shrink: 0;
+  padding: 7px 10px;
+  border: 1px solid var(--wr-border);
+  border-radius: 20px;
+  font-size: 11px;
+  color: var(--wr-secondary);
+}
+.state i,
+.caption i {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--chart-color);
+}
+.graph {
+  display: grid;
+  grid-template-columns: 43px minmax(0, 1fr);
+  padding-bottom: 25px;
+}
+.yAxis {
+  position: relative;
+  color: var(--wr-muted);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+}
+.yAxis span {
+  position: absolute;
+  left: 0;
+  transform: translateY(-50%);
+}
+.plot {
+  position: relative;
+  height: clamp(230px, 26vw, 330px);
+  color: var(--chart-color);
+}
+.plot svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.grid {
+  stroke: var(--wr-chart-grid);
+  stroke-width: 1;
+  stroke-dasharray: 2 5;
+  opacity: 0.65;
+}
+.baseline {
+  stroke: var(--wr-muted);
+  stroke-width: 1;
+  stroke-dasharray: 5 5;
+  opacity: 0.5;
+}
+.cursor {
+  stroke: currentColor;
+  stroke-width: 1;
+  stroke-dasharray: 2 5;
+  opacity: 0.3;
+}
+.line,
+.lineGlow {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.line {
+  stroke-width: 2.5;
+}
+.lineGlow {
+  stroke-width: 8;
+  opacity: 0.06;
+}
+.endpoint {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  border: 2px solid var(--wr-panel);
+  border-radius: 50%;
+  background: var(--chart-color);
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--chart-color) 14%, transparent);
+  pointer-events: none;
+}
+.chart[data-active="true"] .endpoint::after {
+  position: absolute;
+  inset: -6px;
+  border: 1px solid var(--chart-color);
+  border-radius: 50%;
+  content: "";
+  animation: breathe 2.8s ease-out infinite;
+}
+.baselineLabel {
+  position: absolute;
+  right: 3px;
+  transform: translateY(-100%);
+  padding: 3px 5px;
+  border-radius: 3px;
+  background: var(--wr-panel);
+  color: var(--wr-muted);
+  font-size: 10px;
+  pointer-events: none;
+}
+.xAxis {
+  position: absolute;
+  top: calc(100% + 9px);
+  right: 1%;
+  left: 1%;
+  display: flex;
+  justify-content: space-between;
+  gap: 4px;
+  color: var(--wr-muted);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+}
+.caption {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 7px 14px;
+  margin-top: 15px;
+  padding-top: 13px;
+  border-top: 1px solid var(--wr-chart-grid);
+  color: var(--wr-muted);
+  font-size: 10px;
+  line-height: 1.6;
+}
+.caption span:first-child {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.caption i {
+  background: var(--wr-muted);
+  flex-shrink: 0;
+}
+@keyframes breathe {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+}
+@media (max-width: 480px) {
+  .heading {
+    padding-bottom: 16px;
+  }
+  .state {
+    padding: 6px 8px;
+    font-size: 10px;
+  }
+  .graph {
+    grid-template-columns: 36px minmax(0, 1fr);
+  }
+  .plot {
+    height: 235px;
+  }
+  .readout strong {
+    font-size: 30px;
+  }
+  .change {
+    font-size: 12px;
+  }
+  .caption {
+    font-size: 10px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .chart[data-active="true"] .endpoint::after {
+    animation: none;
+    opacity: 0;
+  }
+}
