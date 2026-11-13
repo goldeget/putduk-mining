@@ -181,4 +181,90 @@ end;
 $$;
 
 
+-- Preserved initial engine clocks still require the complete canonical command
+-- and source proof. Direct cash uses its own verified reservations/dispositions,
+-- never fabricated legacy principal-recovery movements.
+create or replace function app_private.assert_funding_withdrawal_clock_completion(p_original uuid) returns void
+language plpgsql volatile security invoker set search_path=pg_catalog as $$
+declare original app_private.funding_withdrawal_clock_admissions%rowtype;
+ request public.withdrawal_requests%rowtype;journal public.ledger_transactions%rowtype;movement public.money_source_movements%rowtype;
+ principal_count bigint;v_key text;
+begin
+ perform app_private.assert_funding_withdrawal_clock_admission(p_original);
+ select a.* into original from app_private.funding_withdrawal_clock_admissions a where a.id=p_original;
+ select r.* into request from public.withdrawal_requests r where r.id=original.withdrawal_id;
+ select t.* into journal from public.ledger_transactions t
+  where t.id=case when original.phase='HOLD' then request.hold_ledger_transaction_id when original.phase='RELEASE' then request.release_ledger_transaction_id else request.finalize_ledger_transaction_id end;
+ if not exists(select 1 from public.transaction_receipts r where r.source_type='withdrawal_request' and r.source_id=request.id
+   and r.user_id=original.user_id and r.currency='KRW' and r.amount_atomic=request.amount_atomic)
+  or not exists(select 1 from public.outbox_events e join public.ledger_transactions h on h.id=request.hold_ledger_transaction_id
+   where e.event_type='WITHDRAWAL_REQUESTED.v1' and e.schema_version=1 and e.aggregate_type='withdrawal_request'
+    and e.aggregate_id=request.id and e.actor_user_id=original.user_id and e.request_id=h.request_id
+    and e.idempotency_key=request.idempotency_key||':event'
+    and e.payload->>'hold_ledger_transaction_id'=h.id::text and e.payload->>'amount_atomic'=request.amount_atomic::text
+    and e.payload->>'fee_atomic'='0') then
+  raise exception using errcode='55000',message='FUNDING_WITHDRAWAL_COMMAND_ORIGINAL_MISSING'; end if;
+ if original.phase='RELEASE' then
+  v_key:=left(journal.idempotency_key,length(journal.idempotency_key)-8);
+  if right(journal.idempotency_key,8) is distinct from ':release'
+   or (select count(*) from public.audit_logs a where a.action='release_withdrawal_hold'
+     and a.target_type='withdrawal_request' and a.target_id=request.id::text and a.actor_user_id=journal.created_by
+     and a.metadata->>'operation'='release_withdrawal_hold' and a.metadata->>'result_id'=journal.id::text
+     and a.metadata->>'actor_user_id'=journal.created_by::text and a.metadata->>'amount_atomic'=request.amount_atomic::text
+     and a.metadata->>'destination_id'=request.withdrawal_destination_id::text and a.metadata->>'currency'='KRW'
+     and a.metadata->>'idempotency_key'=v_key)<>1
+   or not exists(select 1 from public.outbox_events e where e.event_type='WITHDRAWAL_HOLD_RELEASED.v1'
+     and e.schema_version=1 and e.aggregate_type='withdrawal_request' and e.aggregate_id=request.id
+     and e.actor_user_id=journal.created_by and e.request_id=journal.request_id and e.idempotency_key=v_key||':event'
+     and e.payload->>'release_ledger_transaction_id'=journal.id::text
+     and e.payload->>'reason'=journal.metadata->>'reason' and e.payload->>'disposition'=request.status::text) then
+   raise exception using errcode='55000',message='FUNDING_RELEASE_COMMAND_COMPLETION_MISSING'; end if;
+ end if;
+ if original.phase='FINALIZE' then
+  v_key:=left(journal.idempotency_key,length(journal.idempotency_key)-9);
+  if right(journal.idempotency_key,9) is distinct from ':finalize'
+   or (select count(*) from public.audit_logs a where a.action='finalize_withdrawal_ledger' and a.target_type='withdrawal_request'
+    and a.target_id=request.id::text and a.actor_user_id=journal.created_by and a.metadata->>'operation'='finalize_withdrawal_ledger'
+    and a.metadata->>'result_id'=journal.id::text and a.metadata->>'actor_user_id'=journal.created_by::text
+    and a.metadata->>'amount_atomic'=request.amount_atomic::text and a.metadata->>'destination_id'=request.withdrawal_destination_id::text
+    and a.metadata->>'currency'='KRW' and a.metadata->>'idempotency_key'=v_key)<>1
+   or not exists(select 1 from public.outbox_events e where e.event_type='WITHDRAWAL_COMPLETED.v1' and e.schema_version=1
+    and e.aggregate_type='withdrawal_request' and e.aggregate_id=request.id and e.actor_user_id=journal.created_by
+    and e.request_id=journal.request_id and e.idempotency_key=v_key||':event'
+    and e.payload->>'finalize_ledger_transaction_id'=journal.id::text and e.payload->>'amount_atomic'=request.amount_atomic::text
+    and e.occurred_at=original.effective_at and e.created_at=original.effective_at)
+   or not exists(select 1 from public.transaction_receipts r where r.source_type='withdrawal_request' and r.source_id=request.id
+    and r.user_id=original.user_id and r.status='COMPLETED' and r.ledger_transaction_id=journal.id and r.completed_at=original.effective_at) then
+   raise exception using errcode='55000',message='FUNDING_FINALIZE_COMMAND_COMPLETION_MISSING';end if;
+ end if;
+ select count(*) into principal_count from public.money_source_movements m where m.ledger_transaction_id=journal.id
+  and m.user_id=original.user_id and m.origin_code=case when original.phase='HOLD' then 'PRINCIPAL_RECOVERY_HOLD' when original.phase='RELEASE' then 'PRINCIPAL_RECOVERY_RELEASE' else 'PRINCIPAL_RECOVERY_FINALIZE' end;
+ if principal_count=1 then
+  select m.* into movement from public.money_source_movements m where m.ledger_transaction_id=journal.id
+   and m.user_id=original.user_id and m.origin_code=case when original.phase='HOLD' then 'PRINCIPAL_RECOVERY_HOLD' when original.phase='RELEASE' then 'PRINCIPAL_RECOVERY_RELEASE' else 'PRINCIPAL_RECOVERY_FINALIZE' end;
+  perform app_private.assert_principal_recovery_movement(movement);
+  if original.phase='FINALIZE' and not exists(select 1 from public.outbox_events e where e.id=movement.source_event_id
+   and e.event_type='PRINCIPAL_RECOVERY_FINALIZED.v1' and e.aggregate_id=journal.id and e.actor_user_id=original.user_id
+   and e.request_id=original.journal_request_id and e.correlation_id=journal.correlation_id
+   and e.occurred_at=original.effective_at and e.created_at=original.effective_at) then
+   raise exception using errcode='55000',message='FUNDING_FINALIZE_SOURCE_CLOCK_MISMATCH';end if;
+  if movement.amount_atomic is distinct from original.amount_atomic then
+   raise exception using errcode='55000',message='FUNDING_WITHDRAWAL_SOURCE_ORIGINAL_MISSING'; end if;
+ elsif principal_count<>0 or (
+  app_private.non_principal_withdrawal_coverage_verified(request) is not true
+  and not (
+   exists(select 1 from app_private.workroom_cash_enrollments e
+    join app_private.workroom_cash_withdrawals c on c.user_id=e.user_id
+    join app_private.funding_engine_activations a on a.id=e.preserved_activation_id and a.user_id=e.user_id
+    where e.user_id=original.user_id and e.reason='INERT_ACTIVATION_PRESERVED'
+     and e.enrolled_at<=request.hold_posted_at and c.withdrawal_id=request.id)
+   and app_private.workroom_cash_coverage_verified(request) is true
+  )
+ ) then
+  raise exception using errcode='55000',message='FUNDING_WITHDRAWAL_SOURCE_ORIGINAL_MISSING';
+ end if;
+end;
+$$;
+
+
 commit;
