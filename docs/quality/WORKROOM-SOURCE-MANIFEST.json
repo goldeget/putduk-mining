@@ -2710,7 +2710,7 @@
     "tests/e2e/workroom/04-member-round.spec.ts": "97486659886fdd917272abe71df220eeebb91b576f5848b5d6734c32d62d7d6a",
     "tests/e2e/workroom/05-replay.spec.ts": "6bc90612b56713f3ea982e3600e0283766462f6f4c5645b90e62d87562f41469",
     "tests/e2e/workroom/06-two-user-isolation.spec.ts": "4d8ef3b502056db46740f797be76059066ba796a7db0c990e89eab4c83997034",
-    "tests/e2e/workroom/07-mobile.spec.ts": "e1070b25db3282afe2c396f43468eb6351b4774733caaaef9f49cb51ccb5e30c",
+    "tests/e2e/workroom/07-mobile.spec.ts": "7ec856804315d80c1ae80ecc2bff344b5b2b4388c560251a2c79319623ccfb82",
     "tests/e2e/workroom/08-admin-mfa-registry.spec.ts": "5c934e7e8f313ada97a2705094e63f38b612bb2632ce4a041ad45331c4bb8955",
     "tests/e2e/workroom/09-admin-invite-audit.spec.ts": "01783a654990aacd7a968a519a9c56a38f7cf8adf1d7c9f0f584e4676db43246",
     "tests/e2e/workroom/10-config-snapshot.spec.ts": "47753791837881c52e9fde6caed361b10728f1544e1f4511ad1bd6a6e6b9a96d",

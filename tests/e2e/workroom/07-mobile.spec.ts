@@ -78,6 +78,11 @@ test("390px browser displays real member simulation and navigates history withou
   });
   await page
     .getByRole("navigation", { name: "워크룸 빠른 메뉴" })
+    .getByRole("link", { name: "내역", exact: true })
+    .click();
+  await expect(page).toHaveURL(/\/workroom\/records$/);
+  await page
+    .getByRole("navigation", { name: "내역 종류" })
     .getByRole("link", { name: "참여 내역" })
     .click();
   await expect(page).toHaveURL(/\/workroom\/history$/);
