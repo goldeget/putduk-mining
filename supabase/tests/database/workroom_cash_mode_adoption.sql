@@ -20,7 +20,7 @@ do $$declare c record;j jsonb;s jsonb;t uuid;d uuid;p uuid;prepared jsonb;r uuid
  insert into public.withdrawal_destinations(user_id,destination_type,encrypted_value,value_fingerprint,display_hint,
   verification_status,verified_at,protection_until)
  values(c.user_id,'KRW_BANK',decode(repeat('ab',32),'hex'),encode(extensions.digest(c.user_id::text||'cash-mode','sha256'),'hex'),
-  'Disposable KB destination','VERIFIED',clock_timestamp()-interval '2 days',clock_timestamp()-interval '1 day') returning id into d;
+  'KB ••••1234','VERIFIED',clock_timestamp()-interval '2 days',clock_timestamp()-interval '1 day') returning id into d;
  perform set_config('request.jwt.claims','{"role":"service_role"}',true);
  perform set_config('role','service_role',true);
  s:=public.read_workroom_cash(c.user_id);

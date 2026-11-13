@@ -2515,7 +2515,7 @@
     "supabase/tests/database/worker_stop_retry_budget_negatives.sql": "e256bc45e7c9a9533abfb9f7ca2cb5893a285a3c566474274bcaf816cbedd196",
     "supabase/tests/database/worker_stopped_source_backed_cms.sql": "9bae57f315d1a49950808af837a30a84ca0507a7e37620782c06133ab17c692a",
     "supabase/tests/database/workroom_bank_members.sql": "9737559f2ffaf099a531f1f5f753ff0b95bf422f3627f679895cd6595759dffe",
-    "supabase/tests/database/workroom_cash_mode_adoption.sql": "da3745bf4ed671aa97e5de229f36577262fd6c0379bdff2cb8634e9aee301b96",
+    "supabase/tests/database/workroom_cash_mode_adoption.sql": "2a5358ca9873c3dfcee96dc94e4d18b91da4ec2fcf2867feb70ac4c72de7c41d",
     "supabase/tests/database/workroom_cash_mode_isolation.sql": "844b2b8bdbe96c53f6a39256485cfbec3f755b8a5b13b349b8e85ba2246c6e0c",
     "supabase/tests/database/workroom_direct_cash.sql": "07b9671c1e7bd891a2c622fa84c11b78eefd69de2da1454778c07f3d6cde9fcc",
     "supabase/tests/database/workroom_member_session_completion.sql": "2829c51a93e3dfcfee8ca2b48dda06233569ac3ab032dea8e307152bacd88015",
