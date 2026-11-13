@@ -556,24 +556,26 @@ export function WorkroomClient({
                   </label>
                 )}
                 {active ? (
-                  <button
-                    className={styles.primary}
-                    disabled={busy || hasPending}
-                    onClick={() =>
-                      void command(
-                        overdue ? "SYNC" : "FINISH",
-                        overdue ? {} : { id: active.id },
-                      )
-                    }
-                  >
-                    {busy ? (
-                      <WorkroomLoading label="결과 확인 중…" variant="inline" />
-                    ) : overdue ? (
-                      "종료 결과 확인"
-                    ) : (
-                      "지금 모의 참여 종료"
-                    )}
-                  </button>
+                  overdue ? (
+                    <button
+                      className={styles.primary}
+                      disabled={busy || hasPending}
+                      onClick={() => void command("SYNC", {})}
+                    >
+                      {busy ? (
+                        <WorkroomLoading
+                          label="결과 확인 중…"
+                          variant="inline"
+                        />
+                      ) : (
+                        "종료 결과 확인"
+                      )}
+                    </button>
+                  ) : (
+                    <p className={styles.helper} role="status">
+                      진행 중입니다. 시간이 끝나면 자동으로 완료됩니다.
+                    </p>
+                  )
                 ) : (
                   <button
                     className={styles.primary}

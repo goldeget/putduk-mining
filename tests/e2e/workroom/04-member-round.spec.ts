@@ -30,6 +30,14 @@ test("real member starts and closes early using authoritative persisted points",
   await expect(
     page.getByRole("heading", { name: "이번 모의 참여", exact: true }),
   ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "지금 모의 참여 종료", exact: true }),
+  ).toHaveCount(0);
+  await expect(
+    page.getByText("진행 중입니다. 시간이 끝나면 자동으로 완료됩니다.", {
+      exact: true,
+    }),
+  ).toBeVisible();
   expect(round.member?.balance).toBe(99000);
   expect(round.active?.configVersion).toBeGreaterThan(0);
   const response = await command(page, "FINISH", {
