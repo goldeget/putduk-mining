@@ -25,6 +25,8 @@ export const ADMIN_MENU_ITEMS = [
   },
   { href: "/withdrawals/usdt", label: "USDT 출금 관리", group: "입출금 관리" },
   { href: "/exceptions", label: "예외 처리", group: "운영 지원" },
+  { href: "/support", label: "1:1 문의함", group: "운영 지원" },
+  { href: "/notifications", label: "알림함", group: "운영 지원" },
   { href: "/kyc", label: "본인 확인", group: "운영 지원" },
   { href: "/restrictions", label: "제한·안전", group: "운영 지원" },
   { href: "/ai-conversations", label: "회원 AI 기록", group: "운영 지원" },

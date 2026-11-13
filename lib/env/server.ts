@@ -34,7 +34,21 @@ const serverEnvSchema = z
         }),
     ),
     VAPID_PRIVATE_KEY: optionalServerString(z.string().min(20)),
-    VAPID_SUBJECT: optionalServerString(z.string().startsWith("mailto:")),
+    VAPID_SUBJECT: optionalServerString(
+      z.string().refine((value) => {
+        try {
+          const url = new URL(value);
+          return (
+            ["mailto:", "https:"].includes(url.protocol) &&
+            !url.username &&
+            !url.password &&
+            !url.hash
+          );
+        } catch {
+          return false;
+        }
+      }),
+    ),
     AI_PROVIDER: optionalServerString(z.enum(["openai", "nvidia"])),
     // 명시 스위치. 어떤 값이든 읽기만 하고 "true"일 때만 켜짐으로 본다(검증 오류 없음).
     AI_PROVIDER_DISPATCH_ENABLED: optionalServerString(z.string()),

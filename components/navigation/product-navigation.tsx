@@ -3,11 +3,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import styles from "@/components/workroom/workroom.module.css";
 const items = [
-  { href: "/workroom", label: "내 워크룸", icon: "home" },
-  { href: "/workroom/history", label: "참여 내역", icon: "history" },
-  { href: "/workroom/points", label: "체험 포인트", icon: "points" },
-  { href: "/workroom/guide", label: "이용 안내", icon: "guide" },
+  { href: "/workroom", label: "워크룸", icon: "home" },
   { href: "/workroom/cash", label: "입출금", icon: "wallet" },
+  { href: "/workroom/records", label: "내역", icon: "history" },
+  { href: "/workroom/support", label: "1:1 문의", icon: "support" },
+  { href: "/menu/account", label: "내 정보", icon: "account" },
 ] as const;
 export function ProductNavigation({
   presentation = "default",
@@ -27,9 +27,11 @@ export function ProductNavigation({
           prefetch={false}
           aria-current={
             pathname === item.href ||
-            (item.href === "/workroom/cash" &&
-              (pathname.startsWith("/workroom/cash/") ||
-                pathname.startsWith("/workroom/records")))
+            (item.href !== "/workroom" &&
+              pathname.startsWith(`${item.href}/`)) ||
+            (item.href === "/workroom/records" &&
+              (pathname.startsWith("/workroom/history") ||
+                pathname.startsWith("/workroom/points")))
               ? "page"
               : undefined
           }
@@ -53,10 +55,10 @@ export function ProductNavigation({
                   <path d="m3 7 9-4 9 4-9 4Z" />
                   <path d="m3 12 9 4 9-4M3 17l9 4 9-4" />
                 </>
-              ) : item.icon === "points" ? (
+              ) : item.icon === "support" ? (
                 <>
-                  <ellipse cx="12" cy="6" rx="8" ry="3" />
-                  <path d="M4 6v6c0 4 16 4 16 0V6M4 12v6c0 4 16 4 16 0v-6" />
+                  <path d="M21 11a8 8 0 0 1-8 8H7l-4 3V11a9 9 0 0 1 18 0Z" />
+                  <path d="M8 10h8m-8 4h5" />
                 </>
               ) : item.icon === "wallet" ? (
                 <>
@@ -65,8 +67,8 @@ export function ProductNavigation({
                 </>
               ) : (
                 <>
-                  <circle cx="12" cy="12" r="9" />
-                  <path d="M12 11v6m0-10v.1" />
+                  <circle cx="12" cy="8" r="4" />
+                  <path d="M4 22v-3a8 8 0 0 1 16 0v3" />
                 </>
               )}
             </svg>

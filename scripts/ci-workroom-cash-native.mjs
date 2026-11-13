@@ -6,6 +6,7 @@ import { resolve } from "node:path";
 import { prepareWorkroomNativeStage } from "./workroom-native-stage.mjs";
 import { WORKROOM_CASH_TESTS } from "./workroom-cash-admission.mjs";
 import { assertNativeTap } from "./workroom-native-runner.mjs";
+import { WORKROOM_APP_TESTS } from "./workroom-app-admission.mjs";
 
 if (
   process.env.GITHUB_ACTIONS !== "true" ||
@@ -128,7 +129,7 @@ try {
     [
       ...psql,
       "-c",
-      "do $$begin if (select count(*) from supabase_migrations.schema_migrations)<>206 or to_regprocedure('public.complete_workroom_birth_digit(uuid,text,uuid)') is null or to_regprocedure('public.read_workroom_cash(uuid)') is null or to_regclass('app_private.workroom_cash_enrollments') is null or not exists(select 1 from supabase_migrations.schema_migrations where version='20261113061155') then raise exception 'EXACT_206_REQUIRED';end if;end$$;",
+      "do $$begin if (select count(*) from supabase_migrations.schema_migrations)<>207 or to_regprocedure('public.complete_workroom_birth_digit(uuid,text,uuid)') is null or to_regprocedure('public.read_workroom_cash(uuid)') is null or to_regclass('app_private.workroom_cash_enrollments') is null or to_regclass('app_private.workroom_app_threads') is null or not exists(select 1 from supabase_migrations.schema_migrations where version='20261113061155') or not exists(select 1 from supabase_migrations.schema_migrations where version='20261113080126') then raise exception 'EXACT_207_REQUIRED';end if;end$$;",
     ],
     "schema",
   );
@@ -141,7 +142,7 @@ try {
   // Each psql process owns its transaction. A failed sequential fixture rolls
   // back on disconnect, so the independent race fixture can still report its
   // result. Both suites remain mandatory for a passing receipt.
-  for (const path of WORKROOM_CASH_TESTS) {
+  for (const path of [...WORKROOM_CASH_TESTS, ...WORKROOM_APP_TESTS]) {
     const label = path.split("/").at(-1);
     try {
       command("docker", [...psql, "-f", remote + "/" + path], label, {
@@ -159,7 +160,7 @@ try {
         head: manifest.head,
         project,
         containerId: info.id,
-        migrationCount: 206,
+        migrationCount: 207,
         records,
         failedTests,
         scope:

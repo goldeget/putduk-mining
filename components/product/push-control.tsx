@@ -1,5 +1,5 @@
 "use client";
-import { FeedbackMessage } from "@/components/ui/feedback-message";
+import { FeedbackMessage } from "../ui/feedback-message";
 
 import { useEffect, useRef, useState } from "react";
 
@@ -15,13 +15,14 @@ import {
   waitForPushBrowserWork,
   trackPushBrowserWork as trackBrowserWork,
   trackPushTransportWork,
-} from "@/lib/notifications/push-client-coordinator";
+} from "../../lib/notifications/push-client-coordinator";
 
 import {
   readPushEndpointSnapshot,
   enablePushEndpoint,
+  revokePushEndpointForRotation,
   type PushEndpointSnapshot,
-} from "@/lib/notifications/push-enable-protocol";
+} from "../../lib/notifications/push-enable-protocol";
 
 function decodeVapidKey(value: string) {
   const padding = "=".repeat((4 - (value.length % 4)) % 4);
@@ -30,10 +31,12 @@ function decodeVapidKey(value: string) {
   return Uint8Array.from(bytes, (character) => character.charCodeAt(0));
 }
 
-export function PushControl() {
+export function PushControl({ admin = false }: { admin?: boolean }) {
+  const base = admin ? "/api/v1/admin/notifications" : "/api/v1/notifications";
   const [supported, setSupported] = useState(false);
   const [message, setMessage] = useState("");
   const [pending, setPending] = useState(false);
+  const [publicKey, setPublicKey] = useState<string | null>(null);
   const [subscriptionState, setSubscriptionState] = useState<
     "off" | "unconfirmed" | "on" | "revoke-unconfirmed"
   >("off");
@@ -48,6 +51,22 @@ export function PushControl() {
       "Notification" in window;
     mounted.current = true;
     const controller = new AbortController();
+    // Runtime key refresh is read-only. Permission remains an explicit click.
+    void fetch(`${base}/config`, {
+      cache: "no-store",
+      signal: controller.signal,
+    })
+      .then(async (response) => (response.ok ? response.json() : null))
+      .then((value) => {
+        const key: unknown = value?.data?.publicKey;
+        if (
+          !controller.signal.aborted &&
+          typeof key === "string" &&
+          /^[A-Za-z0-9_-]{87}$/.test(key)
+        )
+          setPublicKey(key);
+      })
+      .catch(() => undefined);
     const snapshotFence = currentPushIntentFence();
     const externalIntent = (event: StorageEvent) => {
       if (event.key !== pushIntentFenceKey) return;
@@ -86,6 +105,7 @@ export function PushControl() {
               const snapshot = await readPushEndpointSnapshot(
                 subscription.endpoint,
                 controller.signal,
+                `${base}/subscriptions`,
               );
               if (
                 !controller.signal.aborted &&
@@ -125,7 +145,7 @@ export function PushControl() {
       clearTimeout(timer);
       active.current?.abort();
     };
-  }, []);
+  }, [base]);
 
   function start() {
     if (active.current) return null;
@@ -146,7 +166,7 @@ export function PushControl() {
   }
 
   async function enablePush() {
-    const vapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
+    const vapidKey = publicKey;
     if (!vapidKey) {
       setMessage(
         "지금은 이 기기 알림을 켤 수 없어요. 앱 안의 알림 센터에서 소식을 확인해 주세요.",
@@ -163,6 +183,7 @@ export function PushControl() {
     const intentId = crypto.randomUUID();
     let registrationAttempted = false;
     let knownEndpoint: string | null = null;
+    let rotatedSnapshot: PushEndpointSnapshot | null = null;
 
     try {
       await waitForPushBrowserWork(signal);
@@ -200,6 +221,41 @@ export function PushControl() {
         registration.pushManager.getSubscription(),
         signal,
       );
+      if (subscription) {
+        const installedKey = subscription.options.applicationServerKey;
+        const expectedKey = decodeVapidKey(vapidKey);
+        const bytes = installedKey ? new Uint8Array(installedKey) : null;
+        const matches =
+          bytes !== null &&
+          bytes.length === expectedKey.length &&
+          bytes.every((value, index) => value === expectedKey[index]);
+        if (!matches) {
+          knownEndpoint = subscription.endpoint;
+          if (baseline?.endpoint !== knownEndpoint)
+            throw new Error("BASELINE_REQUIRED");
+          registrationAttempted = true;
+          rememberPushDisableIntent(true);
+          rotatedSnapshot = await revokePushEndpointForRotation({
+            endpoint: knownEndpoint,
+            intentId: crypto.randomUUID(),
+            signal,
+            api: `${base}/subscriptions`,
+          });
+          assertPushOperationCurrent(controller);
+          endpointSnapshot.current = rotatedSnapshot;
+          if (
+            !(await waitFor(
+              trackBrowserWork(subscription.unsubscribe()),
+              signal,
+            ))
+          )
+            throw new Error("CLEANUP_REQUIRED");
+          assertPushOperationCurrent(controller);
+          rememberPushDisableIntent(false);
+          registrationAttempted = false;
+          subscription = null;
+        }
+      }
       if (!subscription) {
         const subscribing = trackBrowserWork(
           registration.pushManager
@@ -217,9 +273,10 @@ export function PushControl() {
         subscription = await waitFor(subscribing, signal);
       }
       knownEndpoint = subscription.endpoint;
+      const currentBaseline = rotatedSnapshot ?? baseline;
       const expectedEpoch =
-        baseline?.endpoint === subscription.endpoint
-          ? baseline.epoch
+        currentBaseline?.endpoint === subscription.endpoint
+          ? currentBaseline.epoch
           : created
             ? 0
             : null;
@@ -233,6 +290,7 @@ export function PushControl() {
           registrationAttempted = true;
           rememberPushDisableIntent(true);
         },
+        api: `${base}/subscriptions`,
       });
       if (signal.aborted) throw new DOMException("Stopped", "AbortError");
       assertPushOperationCurrent(controller);
@@ -259,6 +317,7 @@ export function PushControl() {
           endpointSnapshot.current = await readPushEndpointSnapshot(
             knownEndpoint,
             signal,
+            `${base}/subscriptions`,
           );
         } catch {
           /* Another explicit click is still required. */
@@ -310,7 +369,7 @@ export function PushControl() {
       if (signal.aborted) throw new DOMException("Stopped", "AbortError");
       const response = await waitFor(
         trackPushTransportWork(
-          fetch("/api/v1/notifications/subscriptions", {
+          fetch(`${base}/subscriptions`, {
             method: "DELETE",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ endpoint: subscription.endpoint, intentId }),

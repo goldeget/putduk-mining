@@ -1,17 +1,61 @@
 import {
   trackPushTransportWork,
   waitForPushWork,
-} from "@/lib/notifications/push-client-coordinator";
+} from "./push-client-coordinator";
 
 export type PushEndpointSnapshot = { endpoint: string; epoch: number };
+/** Explicit-click key rotation retires the old account/device binding first. */
+export async function revokePushEndpointForRotation(input: {
+  endpoint: string;
+  intentId: string;
+  signal: AbortSignal;
+  api?: string;
+}): Promise<PushEndpointSnapshot> {
+  stopped(input.signal);
+  const response = await waitForPushWork(
+    trackPushTransportWork(
+      fetch(input.api ?? "/api/v1/notifications/subscriptions", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          endpoint: input.endpoint,
+          intentId: input.intentId,
+        }),
+        signal: input.signal,
+      }),
+    ),
+    input.signal,
+  );
+  const value = await waitForPushWork(response.json(), input.signal);
+  stopped(input.signal);
+  const receipt = value?.data;
+  if (
+    !response.ok ||
+    !receipt ||
+    receipt.operation !== "REVOKE" ||
+    receipt.scope !== "CURRENT_ENDPOINT" ||
+    receipt.subscribed !== false ||
+    receipt.subscriptionId !== null ||
+    receipt.permitId !== null ||
+    receipt.intentId !== input.intentId ||
+    !Number.isSafeInteger(receipt.endpointEpoch) ||
+    receipt.endpointEpoch < 0
+  )
+    throw new Error("CLEANUP_REQUIRED");
+  return { endpoint: input.endpoint, epoch: receipt.endpointEpoch };
+}
 function stopped(signal: AbortSignal) {
   if (signal.aborted) throw new DOMException("Stopped", "AbortError");
 }
-async function command(body: unknown, signal: AbortSignal) {
+async function command(
+  body: unknown,
+  signal: AbortSignal,
+  api = "/api/v1/notifications/subscriptions",
+) {
   stopped(signal);
   const response = await waitForPushWork(
     trackPushTransportWork(
-      fetch("/api/v1/notifications/subscriptions", {
+      fetch(api, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
@@ -41,8 +85,9 @@ async function command(body: unknown, signal: AbortSignal) {
 export async function readPushEndpointSnapshot(
   endpoint: string,
   signal: AbortSignal,
+  api?: string,
 ): Promise<PushEndpointSnapshot> {
-  const data = await command({ operation: "SNAPSHOT", endpoint }, signal);
+  const data = await command({ operation: "SNAPSHOT", endpoint }, signal, api);
   if (
     !("operation" in data) ||
     data.operation !== "SNAPSHOT" ||
@@ -63,13 +108,18 @@ export async function enablePushEndpoint(input: {
   intentId: string;
   signal: AbortSignal;
   onRegister: () => void;
+  api?: string;
 }) {
   const body = {
     subscription: input.subscription,
     expectedEpoch: input.expectedEpoch,
     intentId: input.intentId,
   };
-  const permit = await command({ ...body, operation: "ISSUE" }, input.signal);
+  const permit = await command(
+    { ...body, operation: "ISSUE" },
+    input.signal,
+    input.api,
+  );
   if (
     !("operation" in permit) ||
     permit.operation !== "ISSUE" ||
@@ -86,6 +136,7 @@ export async function enablePushEndpoint(input: {
   const receipt = await command(
     { ...body, operation: "REGISTER", permitId: permit.permitId },
     input.signal,
+    input.api,
   );
   if (
     !("subscribed" in receipt) ||

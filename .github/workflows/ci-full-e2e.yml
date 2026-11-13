@@ -80,7 +80,9 @@ jobs:
         if: always()
         with:
           name: workroom-application-${{ github.run_id }}-${{ github.run_attempt }}-${{ env.CI_HEAD_SHA }}
-          path: test-results/workroom-application
+          path: |
+            test-results/workroom-application
+            test-results/workroom-runtime
           if-no-files-found: error
       - uses: actions/upload-artifact@v7
         with:
@@ -92,6 +94,7 @@ jobs:
             .next
             apps/admin/.next
             test-results/workroom-application
+            test-results/workroom-runtime
   acceptance:
     name: WORKROOM full native and authenticated acceptance
     permissions:
@@ -144,6 +147,7 @@ jobs:
             test-results/workroom-auth/public-successor-results.json
             test-results/workroom-auth/retained-source/provenance.json
             test-results/workroom-auth/*member-mobile.png
+            test-results/workroom-auth/artifacts/**/*.png
             test-results/workroom-acceptance
             test-results/worker
             test-results/workroom-worker-201
@@ -262,6 +266,7 @@ jobs:
             test-results/workroom-auth/public-successor-results.json
             test-results/workroom-auth/retained-source/provenance.json
             test-results/workroom-auth/*member-mobile.png
+            test-results/workroom-auth/artifacts/**/*.png
             test-results/workroom-cloudflare-runtime
             test-results/workroom-acceptance
             test-results/worker

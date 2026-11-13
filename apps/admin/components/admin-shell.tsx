@@ -4,6 +4,7 @@ import { AdminRailMenu } from "./admin-rail-menu";
 import { AdminScreenGuide } from "./presentation/admin-screen-guide";
 import { ThemeControl } from "../../../components/system/theme-control";
 import { AdminLocation } from "./admin-location";
+import { NotificationBell } from "../../../components/workroom-app/notification-bell";
 
 const operatorRoleLabel: Record<AdminPrincipal["role"], string> = {
   SUPER_ADMIN: "최고 운영자",
@@ -44,6 +45,7 @@ export function AdminShell({
         <header className="control-topbar">
           <AdminLocation />
           <div className="control-topbar__tools">
+            <NotificationBell admin />
             <AdminScreenGuide />
             <ThemeControl />
             <span className="admin-auth-status">

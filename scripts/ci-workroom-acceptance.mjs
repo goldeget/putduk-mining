@@ -295,6 +295,8 @@ try {
     "13-theme-admin-navigation.spec.ts": 2,
     "14-public-member-presentation.spec.ts": 3,
     "15-bank-members.spec.ts": 2,
+    "16-support-inbox.spec.ts": 3,
+    "17-background-notifications.spec.ts": 2,
   };
   if (
     JSON.stringify(browserFiles.sort()) !==

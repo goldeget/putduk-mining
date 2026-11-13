@@ -3,6 +3,36 @@ import { createHash } from "node:crypto";
 import { readdirSync, readFileSync, lstatSync } from "node:fs";
 import { resolve, relative } from "node:path";
 export const sha256 = (b) => createHash("sha256").update(b).digest("hex");
+function exactMemberAlarmBinding(value, worker = "putduk-mining-web-staging") {
+  return (
+    value?.type === "durable-object" &&
+    value.worker === worker &&
+    value.exportName === "WorkroomMemberAlarm" &&
+    Object.keys(value).sort().join(",") === "exportName,type,worker"
+  );
+}
+function assertMemberScheduler(config) {
+  const definition = config.exports?.WorkroomMemberAlarm;
+  const triggers = config.triggers;
+  if (
+    !exactMemberAlarmBinding(config.env?.WORKROOM_MEMBER_ALARMS) ||
+    config.env?.WORKROOM_APP_RUNTIME_ENABLED?.type !== "text" ||
+    config.env.WORKROOM_APP_RUNTIME_ENABLED.value !== "false" ||
+    Object.keys(config.exports ?? {}).join(",") !== "WorkroomMemberAlarm" ||
+    definition?.type !== "durable-object" ||
+    definition.storage !== "sqlite" ||
+    Object.keys(definition).some(
+      (key) => !["type", "storage", "state"].includes(key),
+    ) ||
+    (definition.state !== undefined && definition.state !== "created") ||
+    !Array.isArray(triggers) ||
+    triggers.length !== 1 ||
+    triggers[0]?.type !== "scheduled" ||
+    triggers[0].schedule !== "* * * * *" ||
+    Object.keys(triggers[0]).sort().join(",") !== "schedule,type"
+  )
+    throw Error("WORKROOM_PRODUCTION_SCHEDULER_CONFIG");
+}
 export function inventory(root) {
   const rows = [];
   function walk(dir) {
@@ -47,7 +77,21 @@ export function productionConfig(config, name) {
     !config.manifest?.mainModule
   )
     throw Error("WORKROOM_PRODUCTION_OUTPUT_CONFIG");
+  if (name === "putduk-mining-web-staging") assertMemberScheduler(config);
+  else if (
+    values.WORKROOM_MEMBER_ALARMS ||
+    values.WORKROOM_APP_RUNTIME_ENABLED ||
+    Object.keys(config.exports ?? {}).length ||
+    (config.triggers?.length ?? 0)
+  )
+    throw Error("WORKROOM_ADMIN_SCHEDULER_FORBIDDEN");
   for (const [key, value] of Object.entries(values)) {
+    if (
+      name === "putduk-mining-web-staging" &&
+      key === "WORKROOM_MEMBER_ALARMS" &&
+      exactMemberAlarmBinding(value)
+    )
+      continue;
     if (value.type !== "text" && value.type !== "secret")
       throw Error("WORKROOM_UNREVIEWED_BINDING:" + key);
     if (
@@ -98,6 +142,12 @@ export function localConfig(config, env, port) {
   for (const [name, value] of Object.entries(overrides))
     if (value !== undefined) clone.env[name] = { type: "text", value };
   clone.name = "workroom-local-preview-only-" + port;
+  if (clone.env.WORKROOM_MEMBER_ALARMS) {
+    if (!exactMemberAlarmBinding(clone.env.WORKROOM_MEMBER_ALARMS))
+      throw Error("WORKROOM_LOCAL_ALARM_BINDING_INVALID");
+    clone.env.WORKROOM_MEMBER_ALARMS.worker = clone.name;
+    clone.env.WORKROOM_APP_RUNTIME_ENABLED = { type: "text", value: "false" };
+  }
   return clone;
 }
 

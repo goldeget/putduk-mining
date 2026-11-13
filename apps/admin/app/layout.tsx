@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { ThemeRuntime } from "../../../components/system/theme-runtime";
+import { AppExperienceRuntime } from "../../../components/system/app-experience-runtime";
 import { putdukFont } from "../../../lib/design/fonts";
 import { themeBootstrap } from "../../../lib/design/theme";
 import { WORKROOM_METADATA_ICONS } from "../../../components/workroom/brand";
@@ -13,6 +14,7 @@ export const metadata: Metadata = {
   description: "WORKROOM 무료 모의 체험 운영 콘솔",
   robots: { index: false, follow: false, nocache: true },
   icons: WORKROOM_METADATA_ICONS,
+  manifest: "/manifest.webmanifest",
 };
 export const viewport: Viewport = {
   colorScheme: "light dark",
@@ -47,6 +49,7 @@ export default function RootLayout({
       </head>
       <body>
         <ThemeRuntime />
+        <AppExperienceRuntime />
         {children}
       </body>
     </html>

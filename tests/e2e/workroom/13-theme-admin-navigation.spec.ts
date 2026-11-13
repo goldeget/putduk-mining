@@ -74,7 +74,9 @@ test("verified administrator reaches every active menu and uses responsive theme
   await adminLogin(page, user);
   await page.setViewportSize({ width: 1440, height: 1000 });
   const navigation = page.getByRole("navigation", { name: "운영자 주 메뉴" });
-  await expect(navigation.getByRole("link")).toHaveCount(13);
+  await expect(navigation.getByRole("link")).toHaveCount(
+    ADMIN_MENU_ITEMS.length,
+  );
   for (const item of ADMIN_MENU_ITEMS) {
     const response = await page.goto(`${adminOrigin}${item.href}`);
     expect(response?.status(), item.href).toBe(200);

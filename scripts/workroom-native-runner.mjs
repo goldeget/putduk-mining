@@ -22,6 +22,13 @@ import {
   assertWorkroomCashCompletion,
 } from "./workroom-cash-admission.mjs";
 const ROOT = fileURLToPath(new URL("../", import.meta.url));
+import {
+  WORKROOM_APP_MIGRATION,
+  WORKROOM_APP_TESTS,
+  assertWorkroomAppAdmission,
+  assertWorkroomAppCompletion,
+  adaptWorkroomAppDefinerRoster,
+} from "./workroom-app-admission.mjs";
 const fail = (r) => {
   throw Error("WORKROOM_NATIVE_" + r);
 };
@@ -154,6 +161,37 @@ export function runWorkroomNativePhase(phase, stage, principal = null) {
   if (existsSync(receiptPath)) fail("FRESH_PHASE_EVIDENCE_REQUIRED");
   const tree = phase === "cutover" ? "successor" : "baseline";
   if (phase === "cutover") {
+    assertWorkroomAppAdmission(
+      manifest.appFiles,
+      (path) => readFileSync(resolve(ROOT, path)),
+      (path) => readFileSync(resolve(stage, tree, path)),
+    );
+    if (
+      JSON.stringify(manifest.appAclFiles?.map((r) => r.path)) !==
+      JSON.stringify(WORKROOM_CASH_ACL_TESTS)
+    )
+      fail("APP_ACL_EXACT_ADMISSION_REQUIRED");
+    for (const record of manifest.appAclFiles) {
+      const cash = manifest.cashAclFiles.find((r) => r.path === record.path);
+      const expectedPath =
+        "supabase/app-regressions/" + record.path.split("/").at(-1);
+      const adapted = adaptWorkroomAppDefinerRoster(
+        readFileSync(resolve(stage, tree, cash.stagedPath), "utf8"),
+        {
+          occurrences: record.path.endsWith("/ws04_security_money_workers.sql")
+            ? 2
+            : 1,
+        },
+      );
+      if (
+        record.stagedPath !== expectedPath ||
+        record.originalSha256 !== cash.sha256 ||
+        record.sha256 !== adapted.sha256 ||
+        sha256(readFileSync(resolve(stage, tree, expectedPath))) !==
+          record.sha256
+      )
+        fail("APP_ACL_ADMISSION_CHANGED");
+    }
     assertWorkroomCashAdmission(
       manifest.cashFiles,
       (path) => readFileSync(resolve(ROOT, path)),
@@ -601,6 +639,45 @@ export function runWorkroomNativePhase(phase, stage, principal = null) {
     sql(WORKROOM_CASH_ADOPTION);
     for (const path of WORKROOM_CASH_TESTS) sql(path);
     assertWorkroomCashCompletion(records);
+    execute(
+      "app-existing-rows-before",
+      [],
+      `create table workroom_native_evidence.before_app(relation text primary key,row_count bigint not null,digest text not null);
+      do $app$ declare r record; begin
+      for r in select n.nspname,c.relname from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname in('auth','public','app_private','storage') and c.relkind='r' loop
+      execute format('insert into workroom_native_evidence.before_app select %L,count(*),md5(coalesce(string_agg(row_text,E''\\n'' order by row_text),'''')) from(select to_jsonb(t)::text row_text from %I.%I t)s',r.nspname||'.'||r.relname,r.nspname,r.relname);
+      end loop;end $app$;`,
+      false,
+    );
+    sql(WORKROOM_APP_MIGRATION, false);
+    execute(
+      "app-existing-rows-after",
+      [],
+      `do $app$ declare r record;actual_count bigint;actual_digest text; begin
+      if not exists(select 1 from storage.buckets where id='workroom-support-attachments' and name=id and public=false and file_size_limit=5242880 and allowed_mime_types=array['image/jpeg','image/png','image/webp']::text[]) then raise exception 'APP_PRIVATE_BUCKET_REQUIRED';end if;
+      for r in select * from workroom_native_evidence.before_app loop
+      execute format('select count(*),md5(coalesce(string_agg(row_text,E''\\n'' order by row_text),'''')) from(select to_jsonb(t)::text row_text from %s t %s)s',r.relation::regclass,case when r.relation='storage.buckets' then 'where id<>''workroom-support-attachments''' else '' end) into actual_count,actual_digest;
+      if actual_count<>r.row_count or actual_digest<>r.digest then raise exception 'APP_CHANGED_EXISTING_ROWS %',r.relation;end if;end loop;end $app$;`,
+      false,
+    );
+    const appBytes = readFileSync(
+      resolve(stage, "successor", WORKROOM_APP_MIGRATION),
+    );
+    execute(
+      "app-migration-history",
+      [],
+      `insert into supabase_migrations.schema_migrations(version,name,statements) values('20261113080126','workroom_support_notifications_scheduler',array[convert_from(decode('${appBytes.toString("base64")}','base64'),'UTF8')]);`,
+      false,
+    );
+    for (const record of manifest.appAclFiles)
+      execute(
+        "app-acl-" + record.path.split("/").at(-1).replaceAll(".", "-"),
+        ["-f", remote + "/" + record.stagedPath],
+        undefined,
+        true,
+      );
+    for (const path of WORKROOM_APP_TESTS) sql(path);
+    assertWorkroomAppCompletion(records);
   }
   const receipt = {
     kind: "WORKROOM_NATIVE_PHASE",
@@ -748,8 +825,10 @@ export function verifyWorkroomNativeComplete(stage) {
   )
     fail("PRINCIPAL_B_ADAPTED_TEST_EVIDENCE_REQUIRED");
   const main = receipts.find((x) => x.phase === "cutover" && !x.principal);
-  for (const receipt of receipts.filter((x) => x.phase === "cutover"))
+  for (const receipt of receipts.filter((x) => x.phase === "cutover")) {
     assertWorkroomCashCompletion(receipt.records);
+    assertWorkroomAppCompletion(receipt.records);
+  }
   if (
     !main.records.some(
       (x) => x.label === "preserved-external-send-verify" && x.assertions > 0,
