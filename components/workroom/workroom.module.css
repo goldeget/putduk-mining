@@ -249,6 +249,13 @@
   color: var(--wr-secondary);
   font-size: 12px;
 }
+.sideBottomLabel {
+  color: var(--wr-muted);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
 .sideBottom small {
   color: var(--wr-muted);
   font-size: 10px;

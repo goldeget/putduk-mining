@@ -28,13 +28,10 @@ export function ProductShell({
         <WorkroomBrand />
         <ProductNavigation presentation="mining-sidebar" />
         <div className={styles.sideBottom}>
-          <Link href="/workroom/cash">실제 잔액 · 입금·출금</Link>
-          <Link href="/menu/account">내 계정 관리</Link>
-          <Link href="/workroom/support">1:1 문의</Link>
+          <span className={styles.sideBottomLabel}>바로가기</span>
           <Link href="/workroom/history">참여 내역</Link>
           <Link href="/workroom/points">체험 포인트</Link>
           <Link href="/workroom/guide">이용 안내</Link>
-          <Link href="/workroom/records">실제 거래 기록</Link>
           <small>
             무료 시뮬레이션
             <br />
