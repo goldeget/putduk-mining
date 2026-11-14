@@ -29,9 +29,15 @@ export function ProductShell({
         <ProductNavigation presentation="mining-sidebar" />
         <div className={styles.sideBottom}>
           <span className={styles.sideBottomLabel}>바로가기</span>
-          <Link href="/workroom/history">참여 내역</Link>
-          <Link href="/workroom/points">체험 포인트</Link>
-          <Link href="/workroom/guide">이용 안내</Link>
+          {pathname !== "/workroom/history" && (
+            <Link href="/workroom/history">참여 내역</Link>
+          )}
+          {pathname !== "/workroom/points" && (
+            <Link href="/workroom/points">체험 포인트</Link>
+          )}
+          {pathname !== "/workroom/guide" && (
+            <Link href="/workroom/guide">이용 안내</Link>
+          )}
           <small>
             무료 시뮬레이션
             <br />
