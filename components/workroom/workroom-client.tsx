@@ -790,7 +790,7 @@ export function WorkroomClient({
       <footer className={styles.footer}>
         <span>© 2026 WORKROOM</span>
         <span>무료 시뮬레이션 · 체험 포인트 현금 전환 불가</span>
-        <Link href="/workroom/guide">이용 안내 →</Link>
+        {page !== "guide" && <Link href="/workroom/guide">이용 안내 →</Link>}
       </footer>
     </div>
   );
