@@ -30,7 +30,8 @@ export function ProductShell({
     { href: "/workroom/history", label: "참여 내역" },
     { href: "/workroom/points", label: "체험 포인트" },
     { href: "/workroom/guide", label: "이용 안내" },
-  ].filter(
+  ] as const;
+  const visibleQuickLinks = quickLinks.filter(
     ({ href }) =>
       !secondaryHrefs.has(href) &&
       !(href === "/workroom/points" && pathname.startsWith("/workroom/cash")),
@@ -45,7 +46,7 @@ export function ProductShell({
         <ProductNavigation presentation="mining-sidebar" />
         <div className={styles.sideBottom}>
           <span className={styles.sideBottomLabel}>바로가기</span>
-          {quickLinks.map((item) => (
+          {visibleQuickLinks.map((item) => (
             <Link key={item.href} href={item.href}>
               {item.label}
             </Link>
