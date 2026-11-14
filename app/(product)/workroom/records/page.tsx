@@ -26,7 +26,7 @@ export default async function CashRecordsPage() {
       />
       <CashBalance cash={cash} />
       <CashActivity full failed={history.failed} items={history.items} />
-      <CashSeparation />
+      <CashSeparation showPointsLink={false} />
       <div className={styles.legacy}>
         <span>상세한 잔액 변동 기록이 필요하신가요?</span>
         <Link href="/workroom/records/legacy">잔액 변동 상세 보기 →</Link>

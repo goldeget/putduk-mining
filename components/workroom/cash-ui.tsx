@@ -111,7 +111,11 @@ export function CashBalance({ cash }: { cash: WorkroomCashRead | null }) {
   );
 }
 
-export function CashSeparation() {
+export function CashSeparation({
+  showPointsLink = true,
+}: {
+  showPointsLink?: boolean;
+}) {
   return (
     <aside className={styles.separation}>
       <PutdukIcon name="shield" size={20} />
@@ -121,9 +125,11 @@ export function CashSeparation() {
           모의거래 결과와 체험 포인트는 입출금 잔액에 포함되지 않습니다.
         </span>
       </p>
-      <Link href="/workroom/points">
-        체험 포인트 <span aria-hidden="true">↗</span>
-      </Link>
+      {showPointsLink && (
+        <Link href="/workroom/points">
+          체험 포인트 <span aria-hidden="true">↗</span>
+        </Link>
+      )}
     </aside>
   );
 }
