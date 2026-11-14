@@ -751,7 +751,7 @@
     "components/layout/menu-chrome.tsx": "f2acb0c9957298d0147063c9853c9a19ddcb0e43ac18d5c0c1d3e0a9b28ef622",
     "components/layout/product-header.tsx": "91c13d0c59ad531adbfe1e67e6bdf2c933b7e3dfc9ec7e6114aa779bdd066501",
     "components/layout/product-shell.module.css": "6725b9a10f9ab02b7fc6ce5b8ae26ab289be0bb071d5c7d319811764ad0434a2",
-    "components/layout/product-shell.tsx": "cd9e32e84e8754bef13d7069dc7b4e9faad71f829ccba6472ed5242b81fd0b44",
+    "components/layout/product-shell.tsx": "414ef4aa7fe1371036debba90fe9c637d1616383fdfca84d54b6747c046b8e1e",
     "components/layout/public-navigation.tsx": "6145a6b002769c4c6feee5dec86ff8299bc4f832d45f7553c551804672c3a246",
     "components/layout/route-brand-chrome.module.css": "de7dce11d052f13bbf3428387b0216d59e6c0df45fbda5f065171f7e28d0ccaf",
     "components/layout/route-brand-chrome.tsx": "57e9c5fcf04e07108328d80dbbc31fa4735e876b44e2e79c4772db708a15dbb1",

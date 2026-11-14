@@ -7,7 +7,10 @@ import { WorkroomBrand } from "@/components/workroom/identity";
 import { ThemeControl } from "@/components/system/theme-control";
 import { NotificationBell } from "@/components/workroom-app/notification-bell";
 import { MemberSecondaryNavigation } from "@/components/workroom-app/member-secondary-navigation";
-import { workroomPageTitle } from "./workroom-navigation";
+import {
+  workroomPageTitle,
+  workroomSecondaryNavigation,
+} from "./workroom-navigation";
 import chrome from "./workroom-chrome.module.css";
 import styles from "@/components/workroom/workroom.module.css";
 export function ProductShell({
@@ -19,6 +22,20 @@ export function ProductShell({
 }) {
   const pathname = usePathname();
   const title = workroomPageTitle(pathname);
+  const secondaryNavigation = workroomSecondaryNavigation(pathname);
+  const secondaryHrefs = new Set(
+    secondaryNavigation?.items.map((item) => item.href),
+  );
+  const quickLinks = [
+    { href: "/workroom/history", label: "참여 내역" },
+    { href: "/workroom/points", label: "체험 포인트" },
+    { href: "/workroom/guide", label: "이용 안내" },
+  ] as const;
+  const visibleQuickLinks = quickLinks.filter(
+    ({ href }) =>
+      !secondaryHrefs.has(href) &&
+      !(href === "/workroom/points" && pathname.startsWith("/workroom/cash")),
+  );
   return (
     <div className={styles.theme}>
       <a className={styles.skip} href="#main-content">
@@ -29,15 +46,11 @@ export function ProductShell({
         <ProductNavigation presentation="mining-sidebar" />
         <div className={styles.sideBottom}>
           <span className={styles.sideBottomLabel}>바로가기</span>
-          {pathname !== "/workroom/history" && (
-            <Link href="/workroom/history">참여 내역</Link>
-          )}
-          {pathname !== "/workroom/points" && (
-            <Link href="/workroom/points">체험 포인트</Link>
-          )}
-          {pathname !== "/workroom/guide" && (
-            <Link href="/workroom/guide">이용 안내</Link>
-          )}
+          {visibleQuickLinks.map((item) => (
+            <Link key={item.href} href={item.href}>
+              {item.label}
+            </Link>
+          ))}
           <small>
             무료 시뮬레이션
             <br />
