@@ -142,7 +142,7 @@
   margin-top: 14px;
 }
 .controls button {
-  min-height: 42px;
+  min-height: 44px;
   padding: 8px 12px;
   border: 1px solid var(--admin-line-strong);
   border-radius: 8px;
@@ -181,7 +181,7 @@
 .scrub input {
   min-width: 0;
   width: 100%;
-  min-height: 28px;
+  min-height: 44px;
   accent-color: var(--admin-accent);
   margin: 0;
 }

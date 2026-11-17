@@ -2871,7 +2871,7 @@ select {
 }
 
 .trust-header .button {
-  min-height: 42px;
+  min-height: 44px;
   padding-block: 0.65rem;
   font-size: 0.875rem;
 }

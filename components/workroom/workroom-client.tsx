@@ -395,6 +395,19 @@ export function WorkroomClient({
             </div>
             <span className={styles.badge}>무료 시뮬레이션</span>
           </section>
+          <section className={`${styles.balance} ${experience.balanceHero}`}>
+            <div className={styles.balanceAvailable}>
+              <span>사용 가능 체험 포인트</span>
+              <strong>{money(member.balance)} <small>P</small></strong>
+            </div>
+            <div className={styles.balanceActive}>
+              <span>참여 중</span>
+              <strong>{money(active?.stake ?? 0)} <small>P</small></strong>
+            </div>
+            <Link className={styles.balanceLink} href="/workroom/points">
+              포인트 내역 →
+            </Link>
+          </section>
           <div className={`${styles.selectors} ${experience.selectors}`}>
             <label>
               카테고리
@@ -698,19 +711,6 @@ export function WorkroomClient({
               지연·휴장으로 현재가와 다를 수 있습니다.
               {quote && quoteError ? ` ${quoteError}` : ""}
             </p>
-          </section>
-          <section className={styles.balance}>
-            <div>
-              <span>사용 가능 체험 포인트</span>
-              <strong>{money(member.balance)} P</strong>
-            </div>
-            <div>
-              <span>참여 중</span>
-              <strong>{money(active?.stake ?? 0)} P</strong>
-            </div>
-            <Link className={styles.secondary} href="/workroom/points">
-              포인트 내역 →
-            </Link>
           </section>
           <section className={styles.section}>
             <div className={styles.sectionHeading}>
