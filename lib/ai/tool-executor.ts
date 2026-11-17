@@ -84,22 +84,6 @@ function asAtomicDisplay(value: unknown, currency: DisplayCurrency) {
   return formatAtomicAmount(atomicSchema.parse(value), currency);
 }
 
-function kstDayWindow(now: Date) {
-  if (!Number.isFinite(now.getTime())) {
-    throw new RangeError("INVALID_TOOL_CLOCK");
-  }
-  const kstOffsetMs = 9 * 60 * 60 * 1_000;
-  const kstTime = now.getTime() + kstOffsetMs;
-  const dayStartKst = Math.floor(kstTime / 86_400_000) * 86_400_000;
-  const start = new Date(dayStartKst - kstOffsetMs);
-  const end = new Date(dayStartKst + 86_400_000 - kstOffsetMs);
-  return {
-    date: start.toLocaleDateString("sv-SE", { timeZone: "Asia/Seoul" }),
-    end: end.toISOString(),
-    start: start.toISOString(),
-  };
-}
-
 async function walletSummary(
   supabase: SupabaseClient,
   now: Date,

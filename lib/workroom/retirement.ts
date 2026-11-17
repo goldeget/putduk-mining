@@ -6,9 +6,7 @@ export function legacyWorkroomDestination(pathname: string): string | null {
   if (
     [
       "/home",
-      "/start",
-      "/mining",
-      "/products",
+      "/workroom",
       "/ai",
       "/menu/ai",
       "/events",

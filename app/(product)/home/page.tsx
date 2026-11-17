@@ -74,7 +74,7 @@ export default async function HomePage() {
             </p>
             <Link
               className={`button button--primary ${styles.heroPrimary}`}
-              href={hasActiveSession ? "/workroom" : "/workroom/start"}
+              href={hasActiveSession ? "/workroom" : "/workroom/guide"}
               data-home-primary-cta
             >
               {hasActiveSession ? "모니터링 계속하기" : "모니터링 시작하기"}

@@ -333,16 +333,8 @@ export default async function MembersPage({
   const lifecycleDisplay = presentMemberLifecycle(lifecycle);
   const profileDisplay = presentMemberProfile(profile);
   const moneyDisplay = presentMemberMoneySources(moneySources, userId);
-  const principalLots =
-    miningFunding.error || miningFunding.data == null
-      ? await db
-          .from("funding_principal_lots")
-          .select("id")
-          .eq("user_id", userId)
-          .limit(1)
-      : null;
   const fundingDisplay = presentAdminMiningFunding(
-    resolveMiningServerDisplayRead(miningFunding, principalLots),
+    resolveMiningServerDisplayRead(miningFunding),
   );
 
   return (

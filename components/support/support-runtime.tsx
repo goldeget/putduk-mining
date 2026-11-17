@@ -90,8 +90,6 @@ export function SupportRuntime({
       "/menu",
       "/workroom",
       "/notifications",
-      "/products",
-      "/start",
       "/wallet",
     ].some((path) => pathname === path || pathname.startsWith(`${path}/`)) ||
     pathname === "/ai";

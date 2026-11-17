@@ -3,11 +3,7 @@ import { z } from "zod";
 import type { VerifiedIdentity } from "@/lib/auth/session";
 import { getServerEnv } from "@/lib/env/server";
 import { formatProductDateTime } from "@/lib/i18n/date-time";
-import { formatAtomicAmount } from "@/domain/wallet/format-amount";
 import { readOwnAiQuota } from "./member-usage";
-import { createSupabaseAdminClient } from "@/lib/supabase/admin";
-const won = (value: string) =>
-  formatAtomicAmount(value, "KRW").replace(/\sKRW$/, "원");
 
 export async function assertOwnedToolIdentity(identity: VerifiedIdentity) {
   if (!z.uuid().safeParse(identity.userId).success)

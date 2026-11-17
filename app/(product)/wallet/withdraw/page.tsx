@@ -1,4 +1,3 @@
-import { FeedbackMessage } from "@/components/ui/feedback-message";
 import Link from "next/link";
 
 import { PutdukIcon } from "@/components/icons/putduk-icon";

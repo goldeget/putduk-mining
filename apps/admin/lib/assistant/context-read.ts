@@ -621,10 +621,7 @@ async function mining(db: SupabaseClient, builder: Builder, userId: string) {
       };
 
   const display = presentAdminMiningFunding(
-    resolveMiningServerDisplayRead(
-      { data: summary, error: roundError },
-      null,
-    ),
+    resolveMiningServerDisplayRead({ data: summary, error: roundError }),
   );
   if (display.state === "ready") {
     for (const row of [

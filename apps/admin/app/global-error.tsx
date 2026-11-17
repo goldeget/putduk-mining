@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import { ThemeControl } from "../../../components/system/theme-control";
 import { ThemeRuntime } from "../../../components/system/theme-runtime";
 import { putdukFont } from "../../../lib/design/fonts";
@@ -58,8 +60,7 @@ export default function AdminGlobalError({
             다시 불러오기
           </button>
           {/* A root layout failure needs a fresh document without the failed router tree. */}
-          {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
-          <a href="/login">로그인 상태 확인</a>
+          <Link href="/login">로그인 상태 확인</Link>
         </main>
       </body>
     </html>

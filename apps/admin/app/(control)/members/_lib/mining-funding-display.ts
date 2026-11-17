@@ -1,6 +1,5 @@
 import "server-only";
 
-import type { SupabaseClient } from "@supabase/supabase-js";
 
 type Read = { data?: unknown; error?: unknown };
 
@@ -34,7 +33,6 @@ const UNAVAILABLE_DISPLAY: AdminFundingDisplay = {
 /** Reads monitoring round + settlement data for a member (replaces mining server display). */
 export function resolveMiningServerDisplayRead(
   roundRead: Read,
-  _legacyPrincipalLots: Read | null,
 ): { data: unknown; error: unknown } {
   return { data: roundRead.data, error: roundRead.error };
 }

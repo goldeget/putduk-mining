@@ -123,9 +123,6 @@ export async function GET(request: Request) {
       Date.parse(destination.data.protection_until) > Date.now();
   }
   // Presentation metadata only; the DB command still owns monetary eligibility.
-  const principalRead = new URL(request.url).searchParams.get("principal");
-  const wantsPrincipal = principalRead === "1";
-  const wantsCryptoPrincipal = principalRead === "usdt";
   return apiSuccess({
   record,
   protectionActive,
