@@ -41,7 +41,7 @@ describe("current WORKROOM public guidance", () => {
             "무료 체험을 위해 입금하지 않아도 돼요.",
           ],
         },
-        "/terms:채굴과 결과": {
+        "/terms:모니터링과 결과": {
           heading: "모의 회차와 결과",
           body: [
             "앱을 닫아도 회차는 서버 시간을 기준으로 진행돼요. 다시 접속하면 결과를 확인할 수 있어요.",
@@ -88,7 +88,7 @@ describe("current WORKROOM public guidance", () => {
     const active = JSON.stringify(
       TRUST_DOCUMENTS.filter((document) => document.consentVersion),
     );
-    expect(active).not.toMatch(/5,000원|24시간|사용량 100%|채굴|체험 전환/);
+    expect(active).not.toMatch(/5,000원|24시간|사용량 100%|모니터링|체험 전환/);
     expect(active).toContain("현금으로 전환하거나 출금할 수 없어요");
     expect(active).toContain("실제 입금·출금과 모의 회차는 서로 다른 기록");
   });
@@ -97,7 +97,7 @@ describe("current WORKROOM public guidance", () => {
       (document) => !document.consentVersion,
     );
     const copy = JSON.stringify(guidance);
-    expect(copy).not.toMatch(/채굴|5,000원|PUTDUK MINING/);
+    expect(copy).not.toMatch(/모니터링|5,000원|PUTDUK MINING/);
     expect(copy).toContain("현금으로 바꿀 수 없어요");
     expect(copy).toContain("사전 설정된 패턴");
     expect(

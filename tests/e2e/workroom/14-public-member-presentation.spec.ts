@@ -74,7 +74,7 @@ test("public account recovery, documents and terminal pages share responsive WOR
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto("/privacy");
   expect(await page.locator("body").innerText()).not.toContain(
-    "입금, 출금, 채굴",
+    "입금, 출금, 모니터링",
   );
   await page.screenshot({
     path: test.info().outputPath("privacy-workroom-light-desktop.png"),

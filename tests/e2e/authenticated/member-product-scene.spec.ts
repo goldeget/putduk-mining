@@ -144,7 +144,7 @@ test("L1 selected GPU art is responsive without fabricating session rewards", as
     });
     await memberPage.goto("/mining");
     const controlRoom = memberPage.getByRole("region", {
-      name: "현재 채굴 현황",
+      name: "현재 모니터링 현황",
       exact: true,
     });
     await expect(controlRoom).toHaveCount(1);
@@ -235,7 +235,7 @@ test("L1 selected GPU art is responsive without fabricating session rewards", as
         for (const [name, panel] of [
           [
             "capacity",
-            memberPage.getByRole("region", { name: "채굴 용량", exact: true }),
+            memberPage.getByRole("region", { name: "모니터링 용량", exact: true }),
           ],
           [
             "speed",

@@ -7,7 +7,7 @@ import { useCallback, useState, type CSSProperties } from "react";
 import { WalletReadRecovery } from "@/components/product/wallet-read-recovery";
 import type { WalletReadViewProps } from "@/components/product/wallet-read-view";
 import { WalletScene } from "@/components/product/wallet-scene";
-import { formatTrialValue } from "@/domain/trial/format-trial-value";
+// trial import removed — monitoring platform uses real KRW
 import { formatAtomicAmount } from "@/domain/wallet/format-amount";
 import {
   formatWalletEvidenceTime,
@@ -110,8 +110,7 @@ export function WalletOverviewView({
   ledgerState,
   receiptState,
   receipts,
-  trialRewardAtomic,
-  trialState,
+
 }: WalletReadViewProps) {
   type WalletView = "principal" | "profit" | "history";
   const [activeView, setActiveView] = useState<WalletView>(initialView);
@@ -322,30 +321,8 @@ export function WalletOverviewView({
             </section>
           ) : null}
           {activeView === "profit" ? (
-            <section
-              className={styles.trial}
-              aria-label="원화와 분리된 체험 보상"
-            >
-              <div>
-                <span>WORKROOM 체험 보상</span>
-                <Amount
-                  value={
-                    trialState === "error"
-                      ? "확인할 수 없음"
-                      : trialRewardAtomic === null
-                        ? "아직 없음"
-                        : formatTrialValue(trialRewardAtomic)
-                  }
-                />
-              </div>
-              <p>체험 값은 원화가 아니에요. 전환된 금액만 지갑에 반영돼요.</p>
-              {trialState === "error" ? (
-                <WalletReadRecovery label="체험 값 다시 확인" />
-              ) : (
-                <Link href="/start">
-                  전환 자격 안내 <span aria-hidden="true">›</span>
-                </Link>
-              )}
+            <section aria-label="모니터링 수익">
+              <p>모니터링 업무로 얻은 수익은 출금 가능 잔액에 바로 반영돼요.</p>
             </section>
           ) : null}
           {activeView === "history" ? (

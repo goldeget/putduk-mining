@@ -86,7 +86,7 @@ describe("wallet-read 상태 분류", () => {
 
 describe("wallet-read 표시", () => {
   it("거래·상태 라벨을 한국어로 제공한다", () => {
-    expect(labelWalletEntryType("MINING_REWARD")).toBe("채굴 보상");
+    expect(labelWalletEntryType("MINING_REWARD")).toBe("모니터링 보상");
     expect(labelWalletEntryType("UNKNOWN")).toBe("지갑 변동");
     expect(labelWalletReceiptStatus("COMPLETED")).toBe("완료");
   });

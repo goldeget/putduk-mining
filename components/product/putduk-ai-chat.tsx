@@ -132,7 +132,7 @@ export function PutdukAiChat({
     (!screenContext?.currentRoute ||
       ["/ai", "/menu/ai"].includes(screenContext.currentRoute))
       ? [
-          { label: "내 채굴 상태", question: "내 채굴 상태 알려줘" },
+          { label: "내 모니터링 상태", question: "내 모니터링 상태 알려줘" },
           { label: "출금 준비", question: "첫 출금은 어떻게 준비하나요?" },
           { label: "이벤트 안내", question: "이벤트 참여 방법 알려줘" },
           session.providerConfigured

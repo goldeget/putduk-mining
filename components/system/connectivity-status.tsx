@@ -65,7 +65,7 @@ export function ConnectivityStatus() {
         </strong>
         {state === "offline"
           ? "표시된 금액과 상태는 연결 전 마지막 화면입니다. 새 요청은 보내지 않습니다."
-          : "최신 채굴·지갑 상태를 다시 확인하고 있습니다."}
+          : "최신 모니터링·지갑 상태를 다시 확인하고 있습니다."}
       </span>
     </div>
   );

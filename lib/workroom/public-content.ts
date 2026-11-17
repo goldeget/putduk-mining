@@ -103,7 +103,7 @@ function currentConsentDisplay(document: TrustDocument): TrustDocument {
             "무료 체험을 위해 입금하지 않아도 돼요.",
           ],
         };
-      if (document.path === "/terms" && section.heading === "채굴과 결과")
+      if (document.path === "/terms" && section.heading === "모니터링과 결과")
         return {
           ...section,
           heading: "모의 회차와 결과",
@@ -121,7 +121,7 @@ function currentConsentDisplay(document: TrustDocument): TrustDocument {
         body: section.body.map((paragraph) =>
           paragraph
             .replace(
-              "가입, 입금, 출금, 채굴 같은 기능",
+              "가입, 입금, 출금, 모니터링 같은 기능",
               "가입, 입금, 출금, 모의 회차 같은 기능",
             )
             .replace(
@@ -129,7 +129,7 @@ function currentConsentDisplay(document: TrustDocument): TrustDocument {
               "출금 전에 본인 확인이 필요할 수 있어요.",
             )
             .replace(
-              "입금, 출금, 채굴의 금액은 거래 기록으로 남아요.",
+              "입금, 출금, 모니터링의 금액은 거래 기록으로 남아요.",
               "실제 입금·출금과 모의 회차는 서로 다른 기록으로 보관해요.",
             ),
         ),

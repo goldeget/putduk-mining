@@ -5,12 +5,12 @@ const FACT_LABELS: Readonly<Record<string, string>> = {
   PRODUCT_TYPE: "서비스 종류",
   OFFICIAL_DOMAIN: "공식 서비스 주소",
   MEMBER_SUPPORT_PATH: "고객지원",
-  SUPPORTED_WORLDS: "채굴 월드",
+  SUPPORTED_WORLDS: "모니터링 월드",
   TRIAL_DURATION: "체험 기간",
   TRIAL_LEDGER: "체험 값과 실제 지갑",
   START_WELCOME_CAP: "환영 보상",
   SUPPORTED_FUNDING_METHODS: "입금 방식",
-  SETTLEMENT_AUTHORITY: "채굴·정산 기준",
+  SETTLEMENT_AUTHORITY: "모니터링·정산 기준",
   AI_BOUNDARY: "AI의 역할",
 };
 
@@ -19,7 +19,7 @@ const DOCUMENT_LABELS: Readonly<Record<string, string>> = {
   "/how-it-works": "이용 방법",
   "/putduk-facts": "공식 사실",
   "/verification": "검증 원칙",
-  "/mining-rules": "채굴 규칙",
+  "/mining-rules": "모니터링 규칙",
   "/trial": "WORKROOM 체험 안내",
   "/economy": "보상과 지갑",
   "/deposit": "입금 안내",
@@ -61,7 +61,7 @@ export function getTrustNavigationLabel(path: string): string {
 
 export function getPublicFactDisplayValue(fact: PublicFact): string {
   const translatedValues: Readonly<Record<string, string>> = {
-    PRODUCT_TYPE: "채굴 서비스",
+    PRODUCT_TYPE: "모니터링 서비스",
     SETTLEMENT_AUTHORITY: "확인된 시간과 적용 기준",
     AI_BOUNDARY: "설명과 분석",
   };

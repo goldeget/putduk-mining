@@ -620,7 +620,7 @@ describe("one PUTDUK AI request and session owner", () => {
     const buttons = Array.from(group.querySelectorAll("button"));
     expect(buttons).toHaveLength(4);
     const questions = [
-      "내 채굴 상태 알려줘",
+      "내 모니터링 상태 알려줘",
       "첫 출금은 어떻게 준비하나요?",
       "이벤트 참여 방법 알려줘",
       "일상에서 스트레스를 줄이는 방법을 알려 주세요.",
@@ -1784,7 +1784,7 @@ describe("one PUTDUK AI request and session owner", () => {
     expect(host.querySelector("textarea")?.disabled).toBe(false);
     await act(async () => session.setDraft("다음에 묻고 싶은 내용"));
     expect(host.querySelector("textarea")?.value).toBe("다음에 묻고 싶은 내용");
-    navigation.pathname = "/mining";
+    navigation.pathname = "/workroom";
     await render("member-a", 0);
     expect(session.pending).toBe(true);
     expect(session.draft).toBe("다음에 묻고 싶은 내용");
@@ -1854,7 +1854,7 @@ describe("one PUTDUK AI request and session owner", () => {
     const stream = responseStream();
     fetchMock.mockResolvedValue(stream.response);
     await render();
-    const { turn } = await begin("채굴 상태를 알려줘");
+    const { turn } = await begin("모니터링 상태를 알려줘");
     const signal = (fetchMock.mock.calls[0]![1] as RequestInit).signal!;
     await act(async () => {
       root.render(null);
@@ -2040,7 +2040,7 @@ describe("one PUTDUK AI request and session owner", () => {
     fetchMock.mockResolvedValue(stream.response);
     await render();
     await act(async () => {
-      session.setDraft("오늘 채굴 보상 얼마야?");
+      session.setDraft("오늘 모니터링 보상 얼마야?");
       await session.submit();
     });
     expect(host.textContent).toContain("상태 확인 실패");
@@ -2050,7 +2050,7 @@ describe("one PUTDUK AI request and session owner", () => {
     )!;
     await act(async () => recovery.click());
     expect(host.querySelector("textarea")?.value).toBe(
-      "오늘 채굴 보상 얼마야?",
+      "오늘 모니터링 보상 얼마야?",
     );
     expect(document.activeElement).toBe(host.querySelector("textarea"));
     expect(fetchMock).toHaveBeenCalledOnce();

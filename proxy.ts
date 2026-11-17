@@ -27,7 +27,7 @@ export async function proxy(request: NextRequest) {
         error: {
           code: "LEGACY_PRODUCT_RETIRED",
           message:
-            "이전 서비스의 신규 체험과 채굴은 종료되었습니다. 워크룸을 이용해 주세요.",
+            "이전 서비스의 신규 체험과 모니터링은 종료되었습니다. 워크룸을 이용해 주세요.",
         },
       },
       { status: 410, headers: { "Cache-Control": "no-store" } },

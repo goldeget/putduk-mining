@@ -46,11 +46,11 @@ describe("회원 화면 구도", () => {
     expect(walletCss).toMatch(/border-style:\s*dashed/);
   });
 
-  it("홈은 브랜드·한 줄·채굴 CTA·확인된 잔액만 두고 목업·상품 peer CTA를 넣지 않는다", () => {
+  it("홈은 브랜드·한 줄·모니터링 CTA·확인된 잔액만 두고 목업·상품 peer CTA를 넣지 않는다", () => {
     expect(homePage).toContain("readMemberScreenFacts");
     expect(homePage).toContain('data-launch-surface="simplified-track"');
     expect(homePage).toContain("사용 가능 원화");
-    expect(homePage).toContain("채굴 버튼만 누르면");
+    expect(homePage).toContain("모니터링 버튼만 누르면");
     expect(homePage).toContain("data-home-primary-cta");
     expect(homePage).not.toContain("getPublishedCatalog");
     expect(homePage).not.toContain("공개된 상품이 아직 없어요");
@@ -73,7 +73,7 @@ describe("회원 화면 구도", () => {
       homePage.indexOf("<div className={styles.livingWorld}>"),
     );
     expect(homeCss).not.toMatch(/\.livingWorld\s*\{[^}]*\n\s*height:\s*\d+px/s);
-    expect(homePage).toContain('href="/mining"');
+    expect(homePage).toContain('href="/workroom"');
     expect(homePage).toContain('href="/wallet"');
     expect(homePage).toContain('href="/wallet/deposit"');
     expect(homePage).toContain("className={styles.simplifiedSecondary}");
@@ -105,9 +105,9 @@ describe("회원 화면 구도", () => {
     );
   });
 
-  it("채굴 장면과 금액 기록을 분리하고 원금과 정산 전을 한 칸으로 합치지 않는다", () => {
+  it("모니터링 장면과 금액 기록을 분리하고 원금과 정산 전을 한 칸으로 합치지 않는다", () => {
     const stageStart = miningPage.indexOf("<MiningReferenceScene");
-    const stageEnd = miningPage.indexOf('aria-label="채굴 현황"');
+    const stageEnd = miningPage.indexOf('aria-label="모니터링 현황"');
     expect(stageStart).toBeGreaterThan(-1);
     expect(stageEnd).toBeGreaterThan(stageStart);
     expect(miningPage.slice(stageStart, stageEnd)).not.toContain(

@@ -32,8 +32,8 @@ describe("money source operator evidence", () => {
     expect(result.rows).toContainEqual(["이전 서비스 인정 원금", "15,000원"]);
     expect(result.rows).toContainEqual(["현재 보너스", "3,000원"]);
     expect(result.rows).toContainEqual(["누적 보너스", "3,000원"]);
-    expect(result.rows.map((row) => row[0])).not.toContain("현재 채굴 등급");
-    expect(result.rows.map((row) => row[0])).not.toContain("현재 채굴 파워");
+    expect(result.rows.map((row) => row[0])).not.toContain("현재 모니터링 등급");
+    expect(result.rows.map((row) => row[0])).not.toContain("현재 모니터링 파워");
     expect(result.rows.map((row) => row[1])).not.toContain("설정 전");
     expect(result.rows).toContainEqual(["이전 서비스 누적 수익", "확인 필요"]);
     expect(result.rows).toContainEqual(["이전 서비스 확정 수익", "확인 필요"]);

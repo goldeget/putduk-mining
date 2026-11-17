@@ -1,71 +1,24 @@
 import Link from "next/link";
 
 import { ProductHeader } from "@/components/layout/product-header";
-import { SemiconductorTowerScene } from "@/components/brand/semiconductor-tower-scene";
 import { PutdukIcon } from "@/components/icons/putduk-icon";
-import { RouteReloadButton } from "@/components/product/route-reload-button";
 import { StatePanel } from "@/components/ui/states";
 import { formatAtomicAmount } from "@/domain/wallet/format-amount";
 import { requirePageUser } from "@/lib/auth/session";
-import {
-  presentHomeFundingFacts,
-  presentHomeMiningFacts,
-  resolveHomeWorldState,
-} from "@/lib/product/home-world-state";
-import { parseMiningServerDisplay } from "@/lib/product/mining-server-display";
-import { readOwnMiningServerDisplay } from "@/lib/product/read-mining-server-display";
 import { readMemberScreenFacts } from "@/lib/product/member-screen-facts";
 
 import styles from "./home.module.css";
 
-/**
- * SIMPLIFIED_TRACK first viewport:
- * brand + one Korean line + one mining CTA (or 채굴 중) + one balance.
- * Products / events / AI are not peer CTAs here.
- */
-export default async function ProductHomePage() {
-  const identity = await requirePageUser("/home");
-  const [
-    { data: trial, error: trialError },
-    { data: accounts, error: walletError },
-    { data: sessions, error: miningError },
-    facts,
-    fundedResponse,
-  ] = await Promise.all([
-    identity.supabase
-      .from("trial_account_snapshots")
-      .select(
-        "status, world_name_ko, reward_atomic, quota_consumed_bps, remaining_seconds",
-      )
-      .eq("user_id", identity.userId)
-      .maybeSingle(),
-    identity.supabase
-      .from("wallet_balance_snapshots")
-      .select("currency, balance_atomic, available_balance_atomic")
-      .eq("user_id", identity.userId)
-      .order("currency"),
-    identity.supabase
-      .from("mining_active_session_snapshots")
-      .select("mining_session_id, world_name_ko, status, unsettled_seconds")
-      .eq("user_id", identity.userId)
-      .limit(1),
-    readMemberScreenFacts(identity),
-    readOwnMiningServerDisplay(identity),
-  ]);
+export default async function HomePage() {
+  const identity = await requirePageUser();
+  const facts = await readMemberScreenFacts(identity);
 
-  const fundedDisplay = fundedResponse.error
-    ? null
-    : parseMiningServerDisplay(fundedResponse.data);
-  const fundedUnavailable = Boolean(fundedResponse.error) || !fundedDisplay;
-  const fundedRuntime =
-    !fundedUnavailable && fundedDisplay?.available
-      ? fundedDisplay.funded_runtime
-      : null;
-  const miningFacts = presentHomeMiningFacts(fundedRuntime, fundedUnavailable);
-  const fundingFacts = presentHomeFundingFacts(
-    fundedDisplay,
-    fundedUnavailable,
-  );
+  const { data: accounts, error: walletError } = await identity.supabase
+    .from("wallet_balance_snapshots")
+    .select("currency, balance_atomic, available_balance_atomic")
+    .eq("user_id", identity.userId)
+    .order("currency");
+
   const krw = walletError
     ? undefined
     : accounts?.find((account) => account.currency === "KRW");
@@ -75,76 +28,61 @@ export default async function ProductHomePage() {
         String(krw?.available_balance_atomic ?? "0"),
         "KRW",
       ).replace(/ KRW$/, "원");
-  const world = resolveHomeWorldState({
-    trial,
-    mining: sessions?.[0],
-    trialUnavailable: Boolean(trialError),
-    miningUnavailable: Boolean(miningError),
-    fundedDisplay,
-    fundedUnavailable,
-  });
-  const partialFailure = Boolean(
-    trialError || walletError || miningError || fundedUnavailable,
-  );
-  const primaryHref = world.needsRequery ? "/home" : world.primary.href;
-  const primaryLabel = world.running
-    ? "채굴 중"
-    : world.needsRequery
-      ? "상태 다시 확인"
-      : world.primary.label;
+
+  // Check for active monitoring session
+  const { data: activeSession, error: sessionError } = await identity.supabase
+    .from("workroom_rounds")
+    .select("id, instrument, stake, started_at, closed_at, snapshot")
+    .eq("user_id", identity.userId)
+    .is("closed_at", null)
+    .limit(1)
+    .maybeSingle();
+
+  const hasActiveSession = !sessionError && activeSession != null;
+  const partialFailure = Boolean(walletError || sessionError);
 
   return (
     <div
       className={styles.page}
       data-ui-ready="/home"
-      data-ui-state={partialFailure ? "partial" : world.sourceState}
-      data-launch-surface="simplified-track"
+      data-ui-state={partialFailure ? "partial" : "ready"}
     >
-      <section className={styles.hero} aria-label="오늘의 채굴">
-        <SemiconductorTowerScene
-          className={styles.livingVisual}
-          sizes="100vw"
-          priority
-        />
+      <section className={styles.hero} aria-label="모니터링 업무">
         <ProductHeader home displayName={facts.displayName} />
         <div className={styles.livingWorld}>
           <div className={`${styles.livingOverlay} ${styles.simplifiedHero}`}>
             <p className={styles.brandMark}>WORKROOM</p>
             <h1 className={styles.welcomeTitle}>
-              채굴 버튼만 누르면
+              모니터링 업무로
               <br />
-              수익이 쌓여요.
+              수익을 창출하세요.
             </h1>
-            <p className={styles.welcomeLead}>{world.worldLead}</p>
+            <p className={styles.welcomeLead}>
+              가입 충전금으로 바로 시작할 수 있어요.
+            </p>
             <p
               className={styles.heroBalance}
               data-home-amount="wallet"
-              aria-label="사용 가능 원화"
+              aria-label="사용 가능 잔액"
             >
-              <span className={styles.heroBalanceLabel}>사용 가능</span>
+              <span className={styles.heroBalanceLabel}>잔액</span>
               <strong
                 data-home-long-amount={walletAmount.length > 14 || undefined}
               >
                 {walletAmount}
               </strong>
             </p>
-            {world.needsRequery ? (
-              <RouteReloadButton
-                className={`button button--primary ${styles.heroPrimary}`}
-              />
-            ) : (
-              <Link
-                className={`button button--primary ${styles.heroPrimary}`}
-                href={primaryHref}
-                data-home-primary-cta
-              >
-                {primaryLabel}
-                <PutdukIcon name="arrow-right" size={18} />
-              </Link>
-            )}
-            {world.running ? (
+            <Link
+              className={`button button--primary ${styles.heroPrimary}`}
+              href={hasActiveSession ? "/workroom" : "/workroom/start"}
+              data-home-primary-cta
+            >
+              {hasActiveSession ? "모니터링 계속하기" : "모니터링 시작하기"}
+              <PutdukIcon name="arrow-right" size={18} />
+            </Link>
+            {hasActiveSession ? (
               <p className={styles.heroStatus} data-running="true">
-                {world.liveLabel}
+                모니터링 진행 중
               </p>
             ) : null}
           </div>
@@ -157,47 +95,34 @@ export default async function ProductHomePage() {
             tone="error"
             title="일부 정보를 불러오지 못했어요"
             description="확인된 정보만 표시했어요. 잠시 후 다시 시도해 주세요."
-            action={<RouteReloadButton className="button button--secondary" />}
           />
         ) : null}
 
         <section
           className={styles.simplifiedSecondary}
-          aria-label="이어서 확인"
+          aria-label="바로가기"
         >
-          <Link className={styles.simplifiedSecondaryLink} href="/mining">
+          <Link className={styles.simplifiedSecondaryLink} href="/workroom">
             <span>
-              <strong>채굴 상세</strong>
-              <small>
-                {fundingFacts.remainingCapacity === "확인할 수 없어요"
-                  ? "상태 다시 확인"
-                  : fundingFacts.remainingCapacity === "아직 없어요"
-                    ? world.liveLabel
-                    : `남은 한도 ${fundingFacts.remainingCapacity}`}
-              </small>
+              <strong>모니터링</strong>
+              <small>진행 중인 업무 확인</small>
             </span>
             <PutdukIcon name="arrow-right" size={16} />
           </Link>
           <Link className={styles.simplifiedSecondaryLink} href="/wallet">
             <span>
               <strong>지갑</strong>
-              <small>
-                {miningFacts.committedTotal === "확인할 수 없어요"
-                  ? "잔액 다시 확인"
-                  : miningFacts.committedTotal === "아직 없어요"
-                    ? "확정 누계 아직 없어요"
-                    : `확정 누계 ${miningFacts.committedTotal}`}
-              </small>
+              <small>잔액 및 내역</small>
             </span>
             <PutdukIcon name="arrow-right" size={16} />
           </Link>
           <Link
             className={styles.simplifiedSecondaryLink}
-            href="/wallet/deposit"
+            href="/workroom/cash/deposit"
           >
             <span>
               <strong>입금</strong>
-              <small>필요할 때만 입금해요</small>
+              <small>더 큰 금액으로 모니터링</small>
             </span>
             <PutdukIcon name="arrow-right" size={16} />
           </Link>

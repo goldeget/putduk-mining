@@ -67,7 +67,7 @@ export async function prepareMemberThroughStart(
   await page.goto("/start");
   await page
     .getByRole("heading", {
-      name: "첫 채굴을 마쳤어요.",
+      name: "첫 모니터링을 마쳤어요.",
       exact: true,
       level: 1,
     })

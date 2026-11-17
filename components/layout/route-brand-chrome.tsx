@@ -19,7 +19,7 @@ type Destination = {
 
 const primaryDestinations = [
   { href: "/home", label: "홈", icon: "home" },
-  { href: "/mining", label: "채굴", icon: "coins" },
+  { href: "/workroom", label: "모니터링", icon: "chart" },
   { href: "/products", label: "상품", icon: "cube" },
   { href: "/wallet", label: "지갑", icon: "wallet" },
   { href: "/menu", label: "더보기", icon: "more" },

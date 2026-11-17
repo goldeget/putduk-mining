@@ -47,16 +47,10 @@ const TOOL_FAILURE_COPY: Record<AiToolName, string> = {
     "이벤트 진행 상태를 안전하게 확인하지 못했습니다. 잠시 후 이벤트 화면에서 다시 확인해 주세요.",
   "kyc.status":
     "본인 인증 상태를 안전하게 확인하지 못했습니다. 잠시 후 다시 확인해 주세요.",
-  "mining.status":
-    "채굴 상태를 안전하게 확인하지 못했습니다. 잠시 후 채굴 화면에서 다시 확인해 주세요.",
-  "mining.today_reward":
-    "오늘의 확정 채굴 보상을 안전하게 확인하지 못했습니다. 확인되지 않은 금액은 안내하지 않습니다.",
   "notification.recent":
     "최근 알림을 안전하게 확인하지 못했습니다. 잠시 후 알림 화면에서 다시 확인해 주세요.",
   "referral.status":
     "추천 보상 상태를 안전하게 확인하지 못했습니다. 확인되지 않은 보상은 안내하지 않습니다.",
-  "trial.status":
-    "WORKROOM 체험 상태를 안전하게 확인하지 못했습니다. 잠시 후 START 화면에서 다시 확인해 주세요.",
   "wallet.summary":
     "지갑 상태를 안전하게 확인하지 못했습니다. 확인되지 않은 잔액은 안내하지 않습니다.",
   "withdrawal.latest_status":

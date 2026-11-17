@@ -5,11 +5,11 @@ import type { PutdukIconName } from "@/components/icons/putduk-icon";
 export const AI_PAGE_PROMPTS: readonly (MemberAiSuggestion & {
   icon: PutdukIconName;
 })[] = [
-  { label: "내 채굴 상태", question: "내 채굴 상태 알려줘", icon: "mining" },
+  { label: "내 모니터링 상태", question: "내 모니터링 상태 알려줘", icon: "event" },
   {
     label: "START 확인",
     question: "내 WORKROOM 체험 상태 알려줘",
-    icon: "pulse",
+    icon: "bell",
   },
   {
     label: "출금 준비",

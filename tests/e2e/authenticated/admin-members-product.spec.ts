@@ -21,7 +21,7 @@ const EXPECTED_OPERATOR_DESTINATIONS = [
   ["/kyc", "본인 확인"],
   ["/", "오늘의 퍼뜩"],
   ["/restrictions", "제한·안전"],
-  ["/economy", "채굴 정책"],
+  ["/economy", "모니터링 정책"],
   ["/catalog", "상품 검토"],
   ["/content", "이벤트·공지"],
   ["/ai-conversations", "회원 AI 기록"],
@@ -266,10 +266,10 @@ test.describe("admin Member 360 product states", () => {
       timeout: 60_000,
     });
     await expect(selectedIdentity).toBeVisible();
-    await expect(page.getByText("채굴 · 정산")).toBeVisible();
-    // 채굴 건수는 실패를 0으로 위장하지 않는다. SELECT 권한이 있으면 숫자다.
+    await expect(page.getByText("모니터링 · 정산")).toBeVisible();
+    // 모니터링 건수는 실패를 0으로 위장하지 않는다. SELECT 권한이 있으면 숫자다.
     const miningCard = page.locator(".member-module-grid article").filter({
-      hasText: "채굴 · 정산",
+      hasText: "모니터링 · 정산",
     });
     await expect(miningCard.locator("strong")).toHaveText(
       /^(확인 필요|\d[\d,]*)$/,
@@ -293,9 +293,9 @@ test.describe("admin Member 360 product states", () => {
           has: page.locator("dt").filter({ hasText: new RegExp(`^${label}$`) }),
         })
         .locator("dd");
-    await expect(sourceValue("채굴 인정 원금")).toHaveText("0원");
-    await expect(sourceValue("누적 채굴 수익")).toHaveText("확인 필요");
-    await expect(sourceValue("확정 채굴 수익")).toHaveText("확인 필요");
+    await expect(sourceValue("모니터링 인정 원금")).toHaveText("0원");
+    await expect(sourceValue("누적 모니터링 수익")).toHaveText("확인 필요");
+    await expect(sourceValue("확정 모니터링 수익")).toHaveText("확인 필요");
     await expect(sourceValue("정산 전 대기 수익")).toBeVisible();
     await expect(sourceValue("아직 확정 전")).toBeVisible();
     await expect(sources.getByText("확정된 수익이 아니에요")).toBeVisible();
@@ -337,7 +337,7 @@ test.describe("admin Member 360 product states", () => {
     });
     expect(confirmed.error).toBeNull();
     await page.reload();
-    await expect(sourceValue("채굴 인정 원금")).toHaveText("10,000원");
+    await expect(sourceValue("모니터링 인정 원금")).toHaveText("10,000원");
     await expect(sourceValue("누적 원화 원금 입금")).toHaveText("3,000원");
     await expect(sourceValue("누적 USDT 환산 원금")).toHaveText("7,000원");
     const capture = await db
@@ -400,7 +400,7 @@ test.describe("admin Member 360 product states", () => {
     });
     expect(ambiguous.error).toBeNull();
     await page.reload();
-    await expect(sourceValue("채굴 인정 원금")).toHaveText("확인 필요");
+    await expect(sourceValue("모니터링 인정 원금")).toHaveText("확인 필요");
     await expect(sourceValue("누적 원화 원금 입금")).toHaveText("확인 필요");
     await expect(sources.getByRole("status")).toContainText("자금 출처를 확인");
     await expect(

@@ -141,7 +141,7 @@ export function formatTrialQuotaPercent(
 }
 
 export type HomePrimaryAction = {
-  href: "/home" | "/mining" | "/start" | "/products/allocation";
+  href: "/home" | "/workroom";
   label: string;
 };
 
@@ -155,10 +155,10 @@ export function resolveHomePrimaryAction(input: {
     return { href: "/home", label: "상태 다시 확인" };
   }
   if (input.trialStatus === "ACTIVE") {
-    return { href: "/start", label: "START 계속하기" };
+    return { href: "/workroom", label: "모니터링 계속하기" };
   }
   if (input.hasMiningSession) {
-    return { href: "/mining", label: "채굴 월드 보기" };
+    return { href: "/workroom", label: "모니터링 계속하기" };
   }
-  return { href: "/start", label: "첫 채굴 시작" };
+  return { href: "/workroom", label: "모니터링 시작하기" };
 }

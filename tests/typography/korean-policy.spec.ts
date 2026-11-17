@@ -21,7 +21,7 @@ for (const width of REQUIRED_WIDTHS) {
     await page.setContent(`<!doctype html><html lang="ko"><body>
       <main><article>
         <h1>자연스러운 한국어 안내</h1>
-        <p id="ordinary">안녕하세요. 퍼뜩 채굴에 오신 것을 환영합니다. 내 기록을 확인해 주세요.</p>
+        <p id="ordinary">안녕하세요. 퍼뜩 모니터링에 오신 것을 환영합니다. 내 기록을 확인해 주세요.</p>
         <p id="long">공백없이이어지는매우긴한국어문자열에서도레이아웃이넘치지않으며정보전체를읽을수있어야합니다공백없이이어지는매우긴한국어문자열입니다</p>
         <p lang="en" id="english">A long identifier may wrap only when its whole token cannot fit.</p>
         <p lang="ja" id="japanese">日本語の文章は標準の改行規則を維持します。</p>

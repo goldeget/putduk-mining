@@ -32,7 +32,7 @@ test("체험 완료자는 새 기기·저장소 삭제·조회 실패에도 최�
   await advanceTrialToCompleted(member.userId);
   await page.reload();
   await expect(
-    page.getByRole("heading", { name: "첫 채굴을 마쳤어요.", exact: true }),
+    page.getByRole("heading", { name: "첫 모니터링을 마쳤어요.", exact: true }),
   ).toBeVisible();
   await expectNoInitialGuidance(page);
   await page.evaluate(() => window.localStorage.clear());

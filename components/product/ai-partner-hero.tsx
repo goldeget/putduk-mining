@@ -72,7 +72,7 @@ export function AiPartnerHero({ tools }: { tools?: ReactNode }) {
           WORKROOM AI 파트너
         </p>
         <p className={styles.description}>
-          채굴부터 출금 준비까지,
+          모니터링부터 출금 준비까지,
           <br />
           궁금한 내용을 편하게 물어보세요.
         </p>

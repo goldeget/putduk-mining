@@ -314,7 +314,7 @@ for (const method of METHODS) {
     await page.locator("#withdrawal-amount").fill("1000");
     await submit(page);
     await expect(page.locator("#withdrawal-request-feedback")).toContainText(
-      "확인된 채굴 수익만 출금할 수 있어요.",
+      "확인된 모니터링 수익만 출금할 수 있어요.",
     );
     expect(seen).toHaveLength(3);
     expect(seen[2]!.key).not.toBe(original.key);

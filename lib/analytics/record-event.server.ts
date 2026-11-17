@@ -15,7 +15,7 @@ import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 /**
  * 프로덕션에서만 서버 사실을 남긴다.
- * 저장 실패는 삼키며 가입·채굴·지갑·정산을 막지 않는다.
+ * 저장 실패는 삼키며 가입·모니터링·지갑·정산을 막지 않는다.
  */
 export async function recordProductionAnalyticsEvent(input: {
   eventName: AnalyticsEventName;

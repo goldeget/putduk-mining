@@ -37,8 +37,6 @@ const base: WalletReadViewProps = {
   ledgerState: "empty",
   receipts: [],
   receiptState: "empty",
-  trialRewardAtomic: null,
-  trialState: "empty",
 };
 function render(overrides: Partial<WalletReadViewProps> = {}) {
   return renderToStaticMarkup(
@@ -157,12 +155,6 @@ describe("wallet overview verified financial presentation", () => {
     expect(node.textContent).toContain("확인 중");
     expect(node.textContent).toContain("PD-OWN-123");
     expect(node.textContent).not.toContain("출금 완료");
-  });
-  it("keeps unknown trial values apart from KRW", () => {
-    const node = dom({ initialView: "profit", trialState: "error" });
-    expect(node.textContent).toContain("체험 값은 원화가 아니에요");
-    expect(node.textContent).toContain("체험 값 다시 확인");
-    expect(node.textContent).toContain("확인할 수 없음");
   });
 
   it("does not relabel a receipt of another currency as a KRW amount", () => {

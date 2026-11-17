@@ -40,7 +40,7 @@ test.describe("first USDT_ADDRESS welcome withdrawal", () => {
 
     await expect(page.getByText("보류").first()).toBeVisible();
     await expect(page.getByText(/USDT 잔액|내 USDT/)).toHaveCount(0);
-    await expect(page.getByText(/가상 채굴/)).toHaveCount(0);
+    await expect(page.getByText(/가상 모니터링/)).toHaveCount(0);
 
     const held = await readLatestWithdrawal(member.userId);
     expect(held?.status).toBe("HELD");

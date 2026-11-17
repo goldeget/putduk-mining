@@ -225,7 +225,7 @@ describe("root Wallet chrome preserves real destinations and native controls", (
     expect(host.querySelector("main")).toBe(main);
     expect(main.querySelector("[data-mining-header]")).not.toBeNull();
     expect(
-      host.querySelector('nav[aria-label="채굴 전체 메뉴"]'),
+      host.querySelector('nav[aria-label="모니터링 전체 메뉴"]'),
     ).not.toBeNull();
     expect(host.querySelector("[data-wallet-header]")).toBeNull();
     expect(host.querySelector("[data-ai-dock]")).toBeNull();

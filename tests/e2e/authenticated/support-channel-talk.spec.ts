@@ -229,7 +229,7 @@ test("signed-in support route keeps Korean guidance and ready state", async ({
   await loginAsMember(page, member, "/home");
   await expect(await expectSettledRoute(page, "/home")).toBeVisible();
   await expect(
-    page.getByRole("region", { name: "오늘의 채굴 상태", exact: true }),
+    page.getByRole("region", { name: "오늘의 모니터링 상태", exact: true }),
   ).toBeVisible();
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/support");
@@ -239,7 +239,7 @@ test("signed-in support route keeps Korean guidance and ready state", async ({
     page.getByRole("heading", { name: "필요한 도움을 바로 확인해요." }),
   ).toBeVisible();
   await expect(page.getByText("상담 창을 열 준비가 되었어요.")).toBeVisible();
-  await expect(page.getByText("앱을 닫아도 채굴은 계속돼요.")).toBeVisible();
+  await expect(page.getByText("앱을 닫아도 모니터링은 계속돼요.")).toBeVisible();
   await expect(
     page.getByText("잔액과 출금은 상담 창에서 바뀌지 않아요."),
   ).toBeVisible();

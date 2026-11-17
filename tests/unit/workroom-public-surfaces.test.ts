@@ -46,7 +46,7 @@ describe("WORKROOM public surfaces", () => {
       expect(html).toContain('href="/terms"');
       expect(html).toContain('href="/privacy"');
       expect(html).not.toContain("data-auth-scrim");
-      expect(html).not.toContain("채굴");
+      expect(html).not.toContain("모니터링");
     },
   );
   it("uses the same public frame, complete descriptive navigation, and one main landmark", () => {
@@ -75,9 +75,9 @@ describe("WORKROOM public surfaces", () => {
       );
     expect(JSON.stringify(terms)).toContain("100,000 P");
     expect(JSON.stringify(terms)).not.toMatch(
-      /5,000원|24시간|사용량 100%|채굴/,
+      /5,000원|24시간|사용량 100%|모니터링/,
     );
-    expect(JSON.stringify(privacy)).not.toMatch(/체험 전환|채굴/);
+    expect(JSON.stringify(privacy)).not.toMatch(/체험 전환|모니터링/);
     expect(JSON.stringify(privacy)).toContain(
       "제출한 서류는 확인할 때만 운영자가 열어 봐요. 열어 본 기록이 남아요.",
     );
@@ -92,7 +92,7 @@ describe("WORKROOM public surfaces", () => {
       expect(current.title).toBe(original.title);
       const approved =
         original.path === "/terms"
-          ? ["WORKROOM 체험", "채굴과 결과", "점검과 이용 제한"]
+          ? ["WORKROOM 체험", "모니터링과 결과", "점검과 이용 제한"]
           : ["본인 확인 서류", "이용 기록"];
       for (const section of original.sections.filter(
         (section) => !approved.includes(section.heading),

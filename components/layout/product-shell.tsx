@@ -28,7 +28,7 @@ export function ProductShell({
   );
   const quickLinks = [
     { href: "/workroom/history", label: "참여 내역" },
-    { href: "/workroom/points", label: "체험 포인트" },
+    { href: "/workroom/points", label: "포인트" },
     { href: "/workroom/guide", label: "이용 안내" },
   ] as const;
   const visibleQuickLinks = quickLinks.filter(
@@ -54,7 +54,7 @@ export function ProductShell({
           <small>
             무료 시뮬레이션
             <br />
-            체험 포인트는 출금할 수 없으며 실제 자산과 분리됩니다.
+            포인트는 출금할 수 없으며 실제 자산과 분리됩니다.
           </small>
         </div>
       </aside>

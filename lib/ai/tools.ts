@@ -11,11 +11,8 @@ export const AI_TOOL_NAMES = [
   "deposit.latest_status",
   "event.progress",
   "kyc.status",
-  "mining.status",
-  "mining.today_reward",
   "notification.recent",
   "referral.status",
-  "trial.status",
   "wallet.summary",
   "withdrawal.latest_status",
 ] as const;
@@ -57,24 +54,6 @@ export const AI_TOOL_REGISTRY: readonly AiToolDefinition[] = [
     returns: ["opened_at", "status", "updated_at"],
   },
   {
-    description:
-      "본인의 서버 확정 채굴 상태·원금·등급과 상품 배분 선택을 확인합니다. 선택 기록은 이용 자격의 증거가 아닙니다.",
-    name: "mining.status",
-    readOnly: true,
-    returns: [
-      "eligible_principal",
-      "tier",
-      "committed_reward",
-      "confirmed_allocation_selection",
-    ],
-  },
-  {
-    description: "본인 지갑에 오늘 확정 기록된 채굴 보상을 합산합니다.",
-    name: "mining.today_reward",
-    readOnly: true,
-    returns: ["amount", "currency", "kst_date"],
-  },
-  {
     description: "본인의 최근 알림과 읽지 않은 개수를 확인합니다.",
     name: "notification.recent",
     readOnly: true,
@@ -93,22 +72,10 @@ export const AI_TOOL_REGISTRY: readonly AiToolDefinition[] = [
     ],
   },
   {
-    description: "본인의 WORKROOM 체험 진행 상태를 확인합니다.",
-    name: "trial.status",
-    readOnly: true,
-    returns: ["completed_at", "quota", "reward", "status", "world"],
-  },
-  {
-    description: "본인의 확정된 원화 지갑과 원금 기록을 확인합니다.",
+    description: "본인의 확정된 원화 지갑 잔액을 확인합니다.",
     name: "wallet.summary",
     readOnly: true,
-    returns: [
-      "available",
-      "balance",
-      "currency",
-      "held",
-      "principal_source_coverage",
-    ],
+    returns: ["available", "balance", "currency", "held"],
   },
   {
     description: "본인의 최신 출금 요청 상태를 확인합니다.",

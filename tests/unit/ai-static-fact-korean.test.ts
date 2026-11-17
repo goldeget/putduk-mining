@@ -44,7 +44,7 @@ describe("PUTDUK AI static fact answers are plain Korean", () => {
 
   it.each([
     ["AI가 할 수 있는 일이 뭐야", "ai_boundary"],
-    ["채굴 정산 기준이 뭐야", "settlement_authority"],
+    ["모니터링 정산 기준이 뭐야", "settlement_authority"],
     ["퍼뜩 서비스가 뭐야", "product_identity"],
     ["체험 환영 보상 최대 5,000원이 맞아?", "start_welcome_cap"],
   ])("routes %s to a Korean-only answer", (question, routeKey) => {

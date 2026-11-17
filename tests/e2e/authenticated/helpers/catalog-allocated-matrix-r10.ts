@@ -427,7 +427,7 @@ export async function captureAllocatedMatrix(
           .toBe(true);
         if (label === "funded-home-server-status") {
           const summaryRows = await page
-            .getByRole("region", { name: "내 채굴 정보", exact: true })
+            .getByRole("region", { name: "내 모니터링 정보", exact: true })
             .evaluate((section) => {
               const grid = section.querySelector(":scope > div")!;
               const rows = new Map<number, number>();
@@ -488,7 +488,7 @@ export async function captureAllocatedMatrix(
             expect(geometry.fits, context).toBe(true);
           }
           const hero = page
-            .getByRole("region", { name: "오늘의 채굴 상태", exact: true })
+            .getByRole("region", { name: "오늘의 모니터링 상태", exact: true })
             .locator("picture[data-scene-theme] img");
           await expect(hero).toHaveCount(1);
           const family =

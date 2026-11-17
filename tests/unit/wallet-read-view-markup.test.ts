@@ -45,8 +45,6 @@ describe("WalletReadView 마크업", () => {
         ledgerState: "empty",
         receiptState: "empty",
         receipts: [],
-        trialRewardAtomic: "0",
-        trialState: "empty",
       }),
     );
 
@@ -104,8 +102,6 @@ describe("WalletReadView 마크업", () => {
             transactionType: "WELCOME_WITHDRAWAL",
           },
         ],
-        trialRewardAtomic: null,
-        trialState: "empty",
       }),
     );
 
@@ -152,8 +148,6 @@ describe("WalletReadView 마크업", () => {
         ledgerState: "error",
         receiptState: "error",
         receipts: [],
-        trialRewardAtomic: null,
-        trialState: "error",
       }),
     );
 
@@ -193,8 +187,6 @@ describe("WalletReadView 마크업", () => {
         ledgerState: "ready",
         receiptState: "empty",
         receipts: [],
-        trialRewardAtomic: "0",
-        trialState: "empty",
       }),
     );
     const historyStart = html.indexOf('aria-labelledby="ledger-history-title"');
@@ -220,8 +212,6 @@ describe("WalletReadView 마크업", () => {
         ledgerState: "empty",
         receiptState: "empty",
         receipts: [],
-        trialRewardAtomic: "1200",
-        trialState: "ready",
       }),
     );
 
@@ -321,8 +311,6 @@ describe("WalletReadView 마크업", () => {
         ledgerState: "empty",
         receiptState: "empty",
         receipts: [],
-        trialRewardAtomic: "0",
-        trialState: "empty",
       }),
     );
 
@@ -374,8 +362,6 @@ describe("WalletReadView 마크업", () => {
         ledgerState: "empty",
         receiptState: "empty",
         receipts: [],
-        trialRewardAtomic: "1200",
-        trialState: "ready",
       }),
     );
 
@@ -431,8 +417,6 @@ const reconstructionFixture: WalletReadViewProps = {
   ledgerState: "ready",
   receiptState: "empty",
   receipts: [],
-  trialRewardAtomic: "1200",
-  trialState: "ready",
 };
 
 function reconstructionDocument(overrides: Partial<WalletReadViewProps> = {}) {
@@ -591,7 +575,6 @@ describe("Wallet reference reconstruction preserves real contracts", () => {
       funding: { state: "error" },
       ledgerState: "error",
       receiptState: "error",
-      trialState: "error",
     });
     expect(
       document.querySelector('[aria-label="실제 KRW 지갑"]')?.textContent,

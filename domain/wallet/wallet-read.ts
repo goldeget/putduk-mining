@@ -42,7 +42,7 @@ const seoulDateTime = new Intl.DateTimeFormat("ko-KR", {
 export const walletEntryLabels: Record<string, string> = {
   DEPOSIT: "입금",
   WITHDRAWAL: "출금",
-  MINING_REWARD: "채굴 보상",
+  MINING_REWARD: "모니터링 수익",
   WELCOME_REWARD: "환영 보상",
   TRIAL_REWARD_CONVERSION: "PUTDUK START 전환",
   EVENT_REWARD: "이벤트 보상",

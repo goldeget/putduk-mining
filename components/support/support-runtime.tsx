@@ -88,7 +88,7 @@ export function SupportRuntime({
       "/events",
       "/home",
       "/menu",
-      "/mining",
+      "/workroom",
       "/notifications",
       "/products",
       "/start",

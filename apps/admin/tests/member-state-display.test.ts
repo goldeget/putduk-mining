@@ -496,7 +496,7 @@ describe("member lifecycle and profile read truth", () => {
     expect(markup).not.toContain("130,000원");
     expect(markup).not.toContain("40,000원");
     expect(markup).not.toContain("설정 전");
-    expect(markup).not.toContain("채굴 등급과 파워");
+    expect(markup).not.toContain("모니터링 등급과 파워");
     expect(markup).not.toMatch(/tier_code|speed_multiplier|micro_krw|bps/i);
   });
   it("shows Korean identity status and hides an unknown withdrawal destination code", async () => {

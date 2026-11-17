@@ -503,11 +503,11 @@ export default async function MembersPage({
               대기 수익과 아직 확정 전 금액은 원금에 포함하지 않아요.
             </p>
             <h3>등급 · 용량 · 속도</h3>
-            {fundingDisplay.miningRows.length === 0 ? (
+            {fundingDisplay.monitoringRows.length === 0 ? (
               <p className="panel-note">등급과 용량, 속도는 아직 없어요.</p>
             ) : (
               <dl className={styles.sourceStats}>
-                {fundingDisplay.miningRows.map((row) => (
+                {fundingDisplay.monitoringRows.map((row) => (
                   <div key={row.label}>
                     <dt>{row.label}</dt>
                     <dd>{row.value}</dd>

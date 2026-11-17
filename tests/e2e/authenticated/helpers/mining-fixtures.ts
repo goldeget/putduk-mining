@@ -14,14 +14,14 @@ const FIXTURE_RULE_NAME = "E2E_MINING_READ_FIXTURE";
 /**
  * world_rule_versions.base_mining_rate_atomic 는 0보다 커야 한다.
  * 이 1은 세션 외래 키를 위한 로컬 앵커다.
- * 화면은 이 값을 읽지 않고, 운영 채굴 단가로 쓰지 않는다.
+ * 화면은 이 값을 읽지 않고, 운영 모니터링 단가로 쓰지 않는다.
  */
 const FIXTURE_RULE_ANCHOR_ATOMIC = 1;
 
 const WORLD_LIST = WORLD_CODES.map((code) => `'${code}'`).join(", ");
 
 /**
- * 브라우저 채굴 증거용 행은 로컬 데이터베이스 관리 연결로만 넣는다.
+ * 브라우저 모니터링 증거용 행은 로컬 데이터베이스 관리 연결로만 넣는다.
  * 운영 마이그레이션, seed, service_role GRANT, test RPC 로는 만들지 않는다.
  *
  * world_rule_versions 와 mining_equipment 는 삭제 트리거가 있다.

@@ -8,9 +8,6 @@ import {
   type WalletReceiptEvidence,
 } from "@/domain/wallet/wallet-read";
 import { requirePageUser } from "@/lib/auth/session";
-import { parseMiningServerDisplay } from "@/lib/product/mining-server-display";
-import { readOwnMiningServerDisplay } from "@/lib/product/read-mining-server-display";
-import { presentWalletServerDisplay } from "@/lib/product/wallet-server-display";
 
 export default async function WalletPage({
   searchParams,
@@ -18,35 +15,19 @@ export default async function WalletPage({
   searchParams: Promise<{ view?: string | string[] }>;
 }) {
   const identity = await requirePageUser();
-  const view = (await searchParams).view;
+  const { view } = await searchParams;
+
   const initialView =
-    view === "history" || view === "profit" ? view : "principal";
-  const [
-    { data: krwAccount, error: accountsError },
-    { data: trial, error: trialError },
-    displayResponse,
-  ] = await Promise.all([
-    identity.supabase
-      .from("wallet_balance_snapshots")
-      .select(
-        "wallet_account_id, balance_atomic, available_balance_atomic, currency",
-      )
-      .eq("user_id", identity.userId)
-      .eq("currency", "KRW")
-      .maybeSingle(),
-    identity.supabase
-      .from("trial_account_snapshots")
-      .select("status, reward_atomic")
-      .eq("user_id", identity.userId)
-      .maybeSingle(),
-    readOwnMiningServerDisplay(identity),
-  ]);
-  const parsedDisplay = displayResponse.error
-    ? null
-    : parseMiningServerDisplay(displayResponse.data);
-  const funding = parsedDisplay
-    ? presentWalletServerDisplay(parsedDisplay)
-    : { state: "error" as const };
+    view === "history" || view === "profit" ? view : "profit";
+
+  const { data: krwAccount, error: accountsError } = await identity.supabase
+    .from("wallet_balance_snapshots")
+    .select(
+      "wallet_account_id, balance_atomic, available_balance_atomic, currency",
+    )
+    .eq("user_id", identity.userId)
+    .eq("currency", "KRW")
+    .maybeSingle();
 
   const krw =
     krwAccount && !accountsError
@@ -117,16 +98,12 @@ export default async function WalletPage({
       : {}),
   });
 
-  const trialState = trialError ? "error" : trial ? "ready" : "empty";
-
   const routeUiState =
-    accountsError ||
-    trialError ||
-    ledgerError ||
-    receiptError ||
-    parsedDisplay === null
+    accountsError || ledgerError || receiptError
       ? "partial"
       : "loaded";
+
+  const funding = { state: "empty" as const };
 
   return (
     <WalletOverviewView
@@ -146,10 +123,6 @@ export default async function WalletPage({
         error: Boolean(receiptError),
       })}
       receipts={receipts}
-      trialRewardAtomic={
-        trial?.reward_atomic == null ? null : String(trial.reward_atomic)
-      }
-      trialState={trialState}
     />
   );
 }

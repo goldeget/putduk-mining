@@ -138,7 +138,7 @@ test("shows empty state, preferences, themes, and keyboard path", async ({
       level: 1,
     }),
   ).toBeVisible();
-  await expect(page.getByLabel("채굴과 정산")).toBeVisible();
+  await expect(page.getByLabel("모니터링과 정산")).toBeVisible();
   await expect(page.getByLabel("혜택과 소식")).toBeVisible();
 
   await page.getByLabel("혜택과 소식").check();
@@ -195,7 +195,7 @@ test("lists own notifications, marks read, hides expired and unsafe links", asyn
     createdAt: readCreatedAt,
     readAt: readCreatedAt,
     route: "/mining",
-    title: "채굴 안내",
+    title: "모니터링 안내",
     userId: owner.userId,
   });
   const foreign = seedMemberNotification({

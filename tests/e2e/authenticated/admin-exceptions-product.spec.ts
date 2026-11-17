@@ -497,7 +497,7 @@ test.describe("admin exceptions product queue", () => {
         }),
       ).toBeVisible();
       await expect(
-        miningJob.getByRole("heading", { name: "유료 채굴 갱신", exact: true }),
+        miningJob.getByRole("heading", { name: "유료 모니터링 갱신", exact: true }),
       ).toBeVisible();
       await expect(
         unknownJob.getByRole("heading", {
@@ -510,7 +510,7 @@ test.describe("admin exceptions product queue", () => {
         reconciliationJob.getByRole("link", { name: "금액 차이 보기" }),
       ).toHaveAttribute("href", "/exceptions#reconciliation-exceptions");
       await expect(
-        miningJob.getByRole("link", { name: "회원 채굴 확인" }),
+        miningJob.getByRole("link", { name: "회원 모니터링 확인" }),
       ).toHaveAttribute("href", "/members");
       await expect(jobs.getByRole("button")).toHaveCount(1);
       await expect(jobs.locator("form")).toHaveCount(0);
@@ -549,9 +549,9 @@ test.describe("admin exceptions product queue", () => {
       }
       await jobs.getByRole("button", { name: "목록 다시 불러오기" }).click();
       await expect(
-        miningJob.getByRole("heading", { name: "유료 채굴 갱신", exact: true }),
+        miningJob.getByRole("heading", { name: "유료 모니터링 갱신", exact: true }),
       ).toBeVisible();
-      await miningJob.getByRole("link", { name: "회원 채굴 확인" }).click();
+      await miningJob.getByRole("link", { name: "회원 모니터링 확인" }).click();
       await expect(page).toHaveURL(`${ADMIN_ORIGIN}/members`);
       await expect(page.getByLabel("이름·아이디·전화번호")).toBeVisible();
       const { data: retained, error: readError } = await db

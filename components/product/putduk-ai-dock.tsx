@@ -15,9 +15,7 @@ import styles from "./putduk-ai-dock.module.css";
 
 const coreRoutes = [
   "/home",
-  "/start",
-  "/mining",
-  "/products",
+  "/workroom",
   "/wallet",
   "/menu",
   "/events",
@@ -243,14 +241,14 @@ function RouteAiDock({
         aria-label="화면 도움"
       >
         <div className={styles.actions}>
-          {pathname === "/mining" ? (
+          {pathname === "/workroom" ? (
             <a
               className={styles.detailsLink}
-              href="#putduk-mining-details"
+              href="#putduk-workroom-details"
               onClick={(event) => {
                 const details = Array.from(
                   document.querySelectorAll<HTMLDetailsElement>(
-                    'details[id="putduk-mining-details"]',
+                    'details[id="putduk-workroom-details"]',
                   ),
                 ).find((node) => node.getClientRects().length > 0);
                 if (!details) return;

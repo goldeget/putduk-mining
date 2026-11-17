@@ -1,4 +1,4 @@
-/** Transparent display-only practice simulation. SQL is the balance/settlement authority. */
+/** Display-only monitoring curve. SQL is the balance/settlement authority. */
 export type WorkroomPattern = "wave" | "slow" | "balanced";
 export interface WorkroomConfig {
   instrument: string;

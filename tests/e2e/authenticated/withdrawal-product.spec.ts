@@ -36,7 +36,7 @@ const FORBIDDEN_COPY = [
   "사용자 USDT 잔액",
   "휴대폰 인증",
   "SMS 인증",
-  "가상 채굴",
+  "가상 모니터링",
 ];
 
 function trackHydration(page: Page) {

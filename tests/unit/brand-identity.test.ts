@@ -5,7 +5,6 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import { BrandMark } from "@/components/brand/brand-mark";
 import { MenuBrandSymbol } from "@/components/product/menu-brand-symbol";
-import { MiningBrandSymbol } from "@/components/product/mining-brand-symbol";
 import { WalletBrandSymbol } from "@/components/product/wallet-brand-symbol";
 import { PutdukAiMascot } from "@/components/product/putduk-ai-mascot";
 import { PutdukIcon } from "@/components/icons/putduk-icon";
@@ -48,21 +47,20 @@ describe("canonical native PUTDUK identity", () => {
       createElement(
         "div",
         null,
-        createElement(BrandMark, { title: "퍼뜩 채굴" }),
+        createElement(BrandMark, { title: "퍼뜩 모니터링" }),
         createElement(BrandMark, { title: "PUTDUK AI" }),
         createElement(BrandMark, { title: "" }),
       ),
     );
-    expect(html).toContain('aria-label="퍼뜩 채굴"');
+    expect(html).toContain('aria-label="퍼뜩 모니터링"');
     expect(html).toContain('aria-label="PUTDUK AI"');
     expect(html).toContain('aria-hidden="true"');
     expect(html).not.toMatch(/\sid=/);
     expect(html).not.toContain("url(#");
   });
 
-  it("preserves the original silhouette in historical mining and wallet placements", () => {
+  it("preserves the original silhouette in wallet placements", () => {
     for (const html of [
-      renderToStaticMarkup(createElement(MiningBrandSymbol, {})),
       renderToStaticMarkup(createElement(WalletBrandSymbol, {})),
     ]) {
       expect(html).toContain(`d="${PUTDUK_SYMBOL_PATH}"`);

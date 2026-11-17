@@ -8,7 +8,7 @@ import { ProductShell } from "@/components/layout/product-shell";
 import { ProductHeader } from "@/components/layout/product-header";
 import { ProductNavigation } from "@/components/navigation/product-navigation";
 
-const navigation = vi.hoisted(() => ({ pathname: "/mining" }));
+const navigation = vi.hoisted(() => ({ pathname: "/workroom" }));
 vi.mock("next/navigation", () => ({ usePathname: () => navigation.pathname }));
 vi.mock("next/link", () => ({
   default: ({ children, ...props }: { children: ReactNode; href: string }) =>
@@ -29,7 +29,7 @@ beforeEach(() => {
     "matchMedia",
     vi.fn(() => ({ matches: false })),
   );
-  navigation.pathname = "/mining";
+  navigation.pathname = "/workroom";
   window.localStorage.clear();
   document.documentElement.dataset.themePreference = "system";
   document.documentElement.dataset.theme = "light";
@@ -47,7 +47,7 @@ afterEach(async () => {
   vi.restoreAllMocks();
 });
 
-async function render(pathname = "/mining", displayName = "퍼뜩 회원") {
+async function render(pathname = "/workroom", displayName = "퍼뜩 회원") {
   navigation.pathname = pathname;
   await act(async () =>
     root.render(
@@ -79,7 +79,7 @@ describe("route-scoped Mining chrome with real navigation", () => {
 
   it("keeps the desktop rail and bottom tabs on the four approved destinations", async () => {
     await render();
-    const sidebar = host.querySelector('nav[aria-label="채굴 전체 메뉴"]');
+    const sidebar = host.querySelector('nav[aria-label="모니터링 전체 메뉴"]');
     expect(
       Array.from(sidebar!.querySelectorAll("a"), (link) =>
         link.getAttribute("href"),
@@ -98,7 +98,7 @@ describe("route-scoped Mining chrome with real navigation", () => {
     expect(
       bottomTabs?.querySelector('[aria-current="page"]')?.getAttribute("href"),
     ).toBe("/mining");
-    expect(host.querySelector('nav[aria-label="채굴 주요 메뉴"]')).toBeNull();
+    expect(host.querySelector('nav[aria-label="모니터링 주요 메뉴"]')).toBeNull();
     expect(host.textContent).not.toContain("L5");
     expect(host.textContent).not.toContain("PRO");
     expect(host.querySelector('a[href="/security"]')).toBeNull();
@@ -142,7 +142,7 @@ describe("route-scoped Mining chrome with real navigation", () => {
       host.querySelector("main")!.scrollTo = vi.fn();
       await render(walletPath);
       expect(host.querySelector("[data-mining-header]")).toBeNull();
-      expect(host.querySelector('nav[aria-label="채굴 전체 메뉴"]')).toBeNull();
+      expect(host.querySelector('nav[aria-label="모니터링 전체 메뉴"]')).toBeNull();
       expect(
         host.querySelector(".product-workspace > .product-header"),
       ).toBeNull();
@@ -180,7 +180,7 @@ describe("route-scoped Mining chrome with real navigation", () => {
     ]);
     expect(host.querySelectorAll('[aria-current="page"]')).toHaveLength(1);
     expect(host.querySelector('[aria-current="page"]')?.textContent).toBe(
-      "채굴",
+      "모니터링",
     );
     expect(host.querySelector('[aria-current="page"] svg')).not.toBeNull();
   });

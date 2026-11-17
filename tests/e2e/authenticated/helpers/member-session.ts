@@ -69,15 +69,15 @@ export async function loginAsMember(
     const navigation =
       (page.viewportSize()?.width ?? 1280) >= 980
         ? page.locator(".product-sidebar:visible").getByRole("navigation", {
-            name: "채굴 전체 메뉴",
+            name: "모니터링 전체 메뉴",
             exact: true,
           })
         : page.getByRole("navigation", { name: "주요 메뉴", exact: true });
     await expect(
-      navigation.getByRole("link", { name: "채굴", exact: true }),
+      navigation.getByRole("link", { name: "모니터링", exact: true }),
     ).toBeVisible();
     await expect(
-      navigation.getByRole("link", { name: "채굴", exact: true }),
+      navigation.getByRole("link", { name: "모니터링", exact: true }),
     ).toHaveAttribute("aria-current", "page");
   } else if (nextPath.split(/[?#]/, 1)[0] === "/menu") {
     await expectSettledRoute(page, "/menu");
@@ -226,7 +226,7 @@ export async function startTrialFromUi(page: Page) {
       response.request().method() === "POST",
     { timeout: 60_000 },
   );
-  await page.getByRole("button", { name: /채굴 시작/ }).click();
+  await page.getByRole("button", { name: /모니터링 시작/ }).click();
   const response = await startResponse;
   const payload = (await response.json().catch(() => null)) as {
     error?: { code?: string; message?: string };
@@ -237,12 +237,12 @@ export async function startTrialFromUi(page: Page) {
     );
   }
   // UI 스냅샷이 지연돼도 API 성공이면 통과. ACTIVE 문구는 가능하면 확인한다.
-  // h1「채굴 중이에요.」와 부분 일치하지 않도록 h2 exact name을 쓴다.
+  // h1「모니터링 중이에요.」와 부분 일치하지 않도록 h2 exact name을 쓴다.
   await page.goto("/start");
   await dismissGuidedQuestIfPresent(page);
   const activeCopy = page.getByRole("heading", {
     level: 2,
-    name: "채굴 중",
+    name: "모니터링 중",
     exact: true,
   });
   try {

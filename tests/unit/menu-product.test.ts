@@ -80,7 +80,7 @@ describe("rendered menu hub", () => {
     const image = page?.firstElementChild?.querySelector("img");
     expect(image).toBeNull();
     expect(page?.querySelector('img[src*="/brand/scenes/"]')).toBeNull();
-    expect(page?.textContent).not.toContain("채굴");
+    expect(page?.textContent).not.toContain("모니터링");
     expect(
       page?.querySelector('svg path[d="m9 15 6 15 7-12 7 12 6-15"]'),
     ).not.toBeNull();

@@ -14,7 +14,7 @@ export const PUBLIC_DISCOVERY_PATHS: readonly string[] = [
 
 /**
  * 회원·계정·API 경로. `$`로 끝나면 그 경로만 막고, 아니면 앞부분 일치를 쓴다.
- * `/mining$`는 회원 채굴 화면만 막고 공개 `/mining-rules`는 남긴다.
+ * `/workroom$`는 회원 모니터링 화면만 막고 공개 `/mining-rules`는 남긴다.
  */
 export const PRIVATE_ROBOTS_DISALLOW = [
   "/api/",

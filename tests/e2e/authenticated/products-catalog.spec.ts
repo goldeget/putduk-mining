@@ -101,7 +101,7 @@ test("the actual draft-only catalog stays unpublished with accessible responsive
   await expect(
     primaryNavigation.getByRole("link", { name: "더보기", exact: true }),
   ).toBeVisible();
-  const miningLink = view.getByRole("link", { name: "채굴 보기", exact: true });
+  const miningLink = view.getByRole("link", { name: "모니터링 보기", exact: true });
   await expect(miningLink).toHaveAttribute("href", "/mining");
   await miningLink.focus();
   await expect(miningLink).toBeFocused();

@@ -1,22 +1,15 @@
-import { readFileSync } from "node:fs";
-
 import { describe, expect, it } from "vitest";
 
 import { presentAdminMiningFunding } from "@/app/(control)/members/_lib/mining-funding-display";
 
 const ready = {
-  available: true,
-  eligible_principal_micro_krw: "100000000000",
-  tier_code: "L1",
-  tier_activated: true,
+  active_rounds: 2,
+  completed_rounds: 5,
+  total_stake: "100000000000",
+  total_settlement: "30000000000",
+  pending_settlement: "15000000000",
   cycle_started_at: "2026-10-04T01:00:00.000Z",
   cycle_end: "2026-11-03T01:00:00.000Z",
-  effective_capacity_micro_krw: "15000000000",
-  remaining_capacity_micro_krw: "15000000000",
-  used_capacity_micro_krw: "0",
-  speed_multiplier_bps: "10000",
-  pending_micro_krw: "15000000000",
-  retention_unconfirmed_micro_krw: "25000000000",
 };
 
 function viewOf(data: unknown, error: unknown = null) {
@@ -28,10 +21,10 @@ function labels(data: unknown, error: unknown = null) {
   return Object.fromEntries(view.rows.map((row) => [row.label, row.value]));
 }
 
-function miningLabels(data: unknown, error: unknown = null) {
+function monitoringLabels(data: unknown, error: unknown = null) {
   const view = viewOf(data, error);
   return Object.fromEntries(
-    view.miningRows.map((row) => [row.label, row.value]),
+    view.monitoringRows.map((row) => [row.label, row.value]),
   );
 }
 
@@ -42,194 +35,70 @@ function cycleLabels(data: unknown, error: unknown = null) {
   );
 }
 
-function kst(iso: string) {
-  return new Intl.DateTimeFormat("ko-KR", {
-    dateStyle: "medium",
-    timeStyle: "short",
-    timeZone: "Asia/Seoul",
-  }).format(new Date(iso));
-}
-
-describe("admin mining funding display", () => {
-  it("shows principal, pending earnings, and unconfirmed amounts apart", () => {
+describe("admin monitoring funding display", () => {
+  it("shows stake, pending earnings, and confirmed earnings apart", () => {
     const view = presentAdminMiningFunding({ data: ready, error: null });
     expect(view.state).toBe("ready");
     const byLabel = labels(ready);
-    expect(byLabel["인정 원금"]).toBe("100,000원");
-    expect(byLabel["정산 전 대기 수익"]).toBe("15,000원");
-    expect(byLabel["아직 확정 전"]).toBe("25,000원");
-    expect(miningLabels(ready)).toEqual({
-      등급: "L1",
-      "이전 서비스 용량": "15,000원",
-      "남은 용량": "15,000원",
-      "사용한 용량": "0원",
-      속도: "1배",
-    });
-    expect(view.miningRows.map((row) => row.tone)).not.toContain("unconfirmed");
-    expect(view.rows.find((row) => row.label === "아직 확정 전")?.tone).toBe(
+    expect(byLabel["모니터링 투자금"]).toBe("10,000,000원");
+    expect(byLabel["정산 전 대기 수익"]).toBe("1,500,000원");
+    expect(byLabel["확정 수익"]).toBe("3,000,000원");
+    expect(view.rows.find((row) => row.label === "정산 전 대기 수익")?.tone).toBe(
       "unconfirmed",
     );
-    expect(Object.values(byLabel)).not.toContain("115,000원");
-    expect(Object.values(byLabel)).not.toContain("125,000원");
-    expect(Object.values(byLabel)).not.toContain("40,000원");
-    expect(Object.values(byLabel)).not.toContain("140,000원");
-    expect(cycleLabels(ready)).toEqual({
-      "주기 시작": kst(ready.cycle_started_at),
-      "주기 끝": kst(ready.cycle_end),
-    });
-    expect(Object.values(cycleLabels(ready)).join(" ")).not.toMatch(/원|0원/);
-    expect(
-      [...view.rows, ...view.miningRows, ...view.cycleRows]
-        .map((row) => row.label)
-        .join(" "),
-    ).not.toMatch(/micro|pending|retention|bonus|capacity|tier|bps/i);
-    expect(view.rows.filter((row) => row.label.includes("원금"))).toEqual([
-      { label: "인정 원금", value: "100,000원", tone: "separate" },
-    ]);
-  });
-
-  it("keeps a server zero and does not turn a missing amount into zero", () => {
-    expect(
-      labels({
-        ...ready,
-        eligible_principal_micro_krw: "0",
-        pending_micro_krw: "0",
-        retention_unconfirmed_micro_krw: "0",
-      }),
-    ).toEqual({
-      "인정 원금": "0원",
-      "정산 전 대기 수익": "0원",
-      "아직 확정 전": "0원",
-    });
-    expect(
-      labels({
-        ...ready,
-        eligible_principal_micro_krw: null,
-        pending_micro_krw: null,
-        retention_unconfirmed_micro_krw: null,
-      }),
-    ).toEqual({
-      "인정 원금": "아직 없어요",
-      "정산 전 대기 수익": "아직 없어요",
-      "아직 확정 전": "아직 없어요",
-    });
-    const missingPace = {
-      ...ready,
-      tier_code: null,
-      tier_activated: false,
-      effective_capacity_micro_krw: null,
-      remaining_capacity_micro_krw: null,
-      used_capacity_micro_krw: null,
-      speed_multiplier_bps: null,
-    };
-    expect(miningLabels(missingPace)).toEqual({
-      등급: "적용 전",
-      "이전 서비스 용량": "확인할 수 없어요",
-      "남은 용량": "확인할 수 없어요",
-      "사용한 용량": "확인할 수 없어요",
-      속도: "확인할 수 없어요",
-    });
-    expect(Object.values(miningLabels(missingPace))).not.toContain("0원");
-    expect(Object.values(miningLabels(missingPace))).not.toContain("0배");
-    expect(
-      cycleLabels({
-        ...ready,
-        cycle_started_at: null,
-        cycle_end: "not-a-date",
-      }),
-    ).toEqual({
-      "주기 시작": "확인할 수 없어요",
-      "주기 끝": "확인할 수 없어요",
-    });
-  });
-
-  it("keeps an inactive rank from looking active and shows a fractional speed", () => {
-    expect(
-      miningLabels({
-        ...ready,
-        tier_activated: false,
-        tier_code: "L1",
-        speed_multiplier_bps: "15000",
-      }),
-    ).toMatchObject({ 등급: "적용 전", 속도: "1.5배" });
-    expect(
-      miningLabels({
-        ...ready,
-        tier_activated: true,
-        tier_code: null,
-      })["등급"],
-    ).toBe("확인할 수 없어요");
-  });
-
-  it("does not show an empty funding subject as zero", () => {
-    expect(
-      presentAdminMiningFunding({
-        data: {
-          ...ready,
-          available: false,
-          eligible_principal_micro_krw: null,
-          pending_micro_krw: null,
-          retention_unconfirmed_micro_krw: null,
-        },
-        error: null,
-      }),
-    ).toEqual({ state: "empty", rows: [], miningRows: [], cycleRows: [] });
-  });
-
-  it("a read error or a bonus field cannot become principal", () => {
-    const failed = presentAdminMiningFunding({
-      data: ready,
-      error: { code: "42501" },
-    });
-    expect(failed.state).toBe("unavailable");
-    expect(failed.rows.map((row) => row.value)).toEqual([
-      "확인 필요",
-      "확인 필요",
-      "확인 필요",
-    ]);
-    expect(failed.miningRows.map((row) => row.value)).toEqual([
-      "확인할 수 없어요",
-      "확인할 수 없어요",
-      "확인할 수 없어요",
-      "확인할 수 없어요",
-      "확인할 수 없어요",
-    ]);
-    expect(failed.rows.map((row) => row.value)).not.toContain("0원");
-    expect(failed.miningRows.map((row) => row.value)).not.toContain("0원");
-    expect(failed.miningRows.map((row) => row.value)).not.toContain("적용 전");
-    expect(failed.cycleRows.map((row) => row.value)).toEqual([
-      "확인할 수 없어요",
-      "확인할 수 없어요",
-    ]);
-    expect(failed.cycleRows.map((row) => row.value)).not.toContain("0원");
-
-    const bonus = presentAdminMiningFunding({
-      data: { ...ready, recorded_bonus_atomic: "3000" },
-      error: null,
-    });
-    expect(bonus.state).toBe("unavailable");
-    expect(bonus.rows.map((row) => row.value)).not.toContain("3,000원");
-    expect(bonus.rows.map((row) => row.label).join(" ")).not.toMatch(/보너스/);
-    expect(bonus.cycleRows.map((row) => row.value).join(" ")).not.toContain(
-      "3,000",
+    expect(view.rows.find((row) => row.label === "확정 수익")?.tone).toBe(
+      "highlight",
     );
+    expect(Object.values(byLabel)).not.toContain("11,500,000원");
+    expect(Object.values(byLabel)).not.toContain("13,000,000원");
   });
 
-  it("reads the member through the admin service role only", () => {
-    const page = readFileSync(
-      new URL("../app/(control)/members/page.tsx", import.meta.url),
-      "utf8",
-    );
-    expect(page).toContain(
-      'db.rpc("read_own_mining_server_display", { p_user_id: userId })',
-    );
-    expect(page).toContain('from("funding_principal_lots")');
-    expect(page).toContain("resolveMiningServerDisplayRead");
-    expect(page).toContain("createAdminServiceClient()");
-    expect(page).not.toContain("app_private");
-    expect(page).not.toMatch(/security definer/i);
-    expect(page).not.toContain("grant execute");
-    expect(page).toContain("이전 서비스 주기");
-    expect(page).toContain("fundingDisplay.cycleRows");
+  it("shows active and completed monitoring counts", () => {
+    expect(monitoringLabels(ready)).toEqual({
+      "활성 모니터링": "2건",
+      "완료 모니터링": "5건",
+    });
+  });
+
+  it("shows cycle dates when available", () => {
+    const cycles = cycleLabels(ready);
+    expect(cycles["시작"]).toBe(ready.cycle_started_at);
+    expect(cycles["종료"]).toBe(ready.cycle_end);
+  });
+
+  it("returns empty when no data", () => {
+    const view = viewOf(null);
+    expect(view.state).toBe("empty");
+    expect(view.rows).toEqual([]);
+    expect(view.monitoringRows).toEqual([]);
+  });
+
+  it("returns unavailable on error", () => {
+    const view = viewOf(null, new Error("fail"));
+    expect(view.state).toBe("unavailable");
+    expect(view.rows).toEqual([]);
+  });
+
+  it("returns empty when all amounts are zero", () => {
+    const view = viewOf({
+      active_rounds: 0,
+      completed_rounds: 0,
+      total_stake: "0",
+      total_settlement: "0",
+      pending_settlement: "0",
+    });
+    expect(view.state).toBe("empty");
+  });
+
+  it("does not expose raw field names in labels", () => {
+    const view = viewOf(ready);
+    const allLabels = [
+      ...view.rows,
+      ...view.monitoringRows,
+      ...view.cycleRows,
+    ]
+      .map((row) => row.label)
+      .join(" ");
+    expect(allLabels).not.toMatch(/micro|stake|settlement|atomic/i);
   });
 });
