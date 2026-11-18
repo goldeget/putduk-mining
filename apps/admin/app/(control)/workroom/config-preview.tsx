@@ -88,7 +88,7 @@ export function WorkroomConfigPreview({
     <section
       className={styles.preview}
       data-direction={direction}
-      aria-label="모의 경로 미리보기"
+      aria-label="모니터링 경로 미리보기"
     >
       <div className={styles.header}>
         <div>
@@ -99,7 +99,7 @@ export function WorkroomConfigPreview({
       </div>
       <div className={styles.metrics}>
         <div>
-          <span>현재 모의 지수</span>
+          <span>현재 모니터링 지수</span>
           <strong>{valid ? current.toFixed(2) : "—"}</strong>
           <small className={styles.change}>
             {valid ? signed(current - 100) : "입력값 확인"}
@@ -147,8 +147,8 @@ export function WorkroomConfigPreview({
             role="img"
             aria-label={
               valid
-                ? `사전 설정된 ${names[config.pattern]} 모의 지수 차트. 현재 ${current.toFixed(2)}, 설정 종료 변동률 ${signed(config.roi)}. 실제 시세와 다릅니다.`
-                : "입력값 확인이 필요한 모의 지수 미리보기. 실제 시세와 다릅니다."
+                ? `사전 설정된 ${names[config.pattern]} 모니터링 지수 차트. 현재 ${current.toFixed(2)}, 설정 종료 변동률 ${signed(config.roi)}. 실제 시세와 다릅니다.`
+                : "입력값 확인이 필요한 모니터링 지수 미리보기. 실제 시세와 다릅니다."
             }
           >
             <defs>
@@ -256,7 +256,7 @@ export function WorkroomConfigPreview({
           step="1"
           value={Math.round(progress * 1000)}
           disabled={!valid}
-          aria-label="모의 경로 진행 위치"
+          aria-label="모니터링 경로 진행 위치"
           aria-valuetext={`${Math.round(progress * 100)}%`}
           onChange={(event) => {
             setPlaying(false);

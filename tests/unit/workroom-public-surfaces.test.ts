@@ -77,7 +77,7 @@ describe("WORKROOM public surfaces", () => {
     expect(JSON.stringify(terms)).not.toMatch(
       /5,000원|24시간|사용량 100%|무료 체험|무료 시뮬레이션|체험 포인트/,
     );
-    expect(JSON.stringify(privacy)).not.toMatch(/체험 전환|모니터링/);
+    expect(JSON.stringify(privacy)).not.toMatch(/체험 전환|모의 회차|모의 거래/);
     expect(JSON.stringify(privacy)).toContain(
       "제출한 서류는 확인할 때만 운영자가 열어 봐요. 열어 본 기록이 남아요.",
     );

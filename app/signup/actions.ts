@@ -50,7 +50,7 @@ const signupSchema = z
         "담당자에게 받은 추천인 코드를 확인해 주세요.",
       ),
     workroomAcknowledged: z.literal(true, {
-      error: "무료 시뮬레이션과 연습 포인트 안내를 확인해 주세요.",
+      error: "워크룸 모니터링 이용 안내를 확인해 주세요.",
     }),
     password: z
       .string()

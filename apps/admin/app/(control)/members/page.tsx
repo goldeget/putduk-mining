@@ -428,14 +428,14 @@ export default async function MembersPage({
             id="evidence-workroom"
           >
             <header>
-              <p className="eyebrow">무료 모의 체험</p>
+              <p className="eyebrow">모니터링 업무</p>
               <h2>워크룸 이용</h2>
             </header>
             <p className="panel-note">
-              체험 포인트와 모의 손익은 실제 원화 잔액과 별도로 관리합니다.
+              모니터링 잔액과 실제 원화 잔액은 별도로 관리합니다.
             </p>
             <Link className="text-link" href={"/workroom?tab=users" as Route}>
-              회원·체험 포인트 관리 →
+              회원·모니터링 잔액 관리 →
             </Link>
           </article>
         ) : (

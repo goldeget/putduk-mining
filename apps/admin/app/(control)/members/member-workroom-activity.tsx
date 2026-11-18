@@ -81,7 +81,7 @@ export async function MemberWorkroomActivity({
         id="member-workroom-activity"
         aria-labelledby="workroom-activity-title"
       >
-        <h2 id="workroom-activity-title">모의 참여·포인트 거래 내역</h2>
+        <h2 id="workroom-activity-title">모니터링 업무·잔액 거래 내역</h2>
         <p role="alert">내역을 불러오지 못했습니다. 새로고침해 주세요.</p>
       </section>
     );
@@ -96,8 +96,8 @@ export async function MemberWorkroomActivity({
     >
       <header className={styles.directoryHead}>
         <div>
-          <p className="eyebrow">체험 포인트 전체 기록</p>
-          <h2 id="workroom-activity-title">모의 참여·포인트 거래 내역</h2>
+          <p className="eyebrow">모니터링 잔액 전체 기록</p>
+          <h2 id="workroom-activity-title">모니터링 업무·잔액 거래 내역</h2>
           <p>
             실제 원화 입출금과 분리된 기록입니다. 최근 내역부터 25건씩
             확인합니다.
@@ -106,17 +106,17 @@ export async function MemberWorkroomActivity({
       </header>
       <dl className={styles.registrationGrid}>
         <div>
-          <dt>사용 가능 체험 포인트</dt>
+          <dt>사용 가능 모니터링 잔액</dt>
           <dd>
             {data.account
-              ? `${number(data.account.balance)} P`
+              ? `${number(data.account.balance)}원`
               : "워크룸 미개설"}
           </dd>
         </div>
         <div>
-          <dt>참여 중인 포인트</dt>
+          <dt>참여 중인 금액</dt>
           <dd>
-            {data.account ? `${number(data.account.held)} P` : "워크룸 미개설"}
+            {data.account ? `${number(data.account.held)}원` : "워크룸 미개설"}
           </dd>
         </div>
         <div>
@@ -126,19 +126,19 @@ export async function MemberWorkroomActivity({
           </dd>
         </div>
       </dl>
-      <h3>모의 참여 내역</h3>
+      <h3>모니터링 업무 내역</h3>
       {data.rounds.length ? (
         <div className={styles.directoryScroll}>
           <table className={styles.directoryTable}>
-            <caption className="sr-only">회원의 전체 모의 참여 기록</caption>
+            <caption className="sr-only">회원의 전체 모니터링 업무 기록</caption>
             <thead>
               <tr>
                 {[
                   "상품",
                   "상태",
-                  "참여 포인트",
+                  "참여 금액",
                   "설정 수익률",
-                  "반환 포인트",
+                  "반환 금액",
                   "확정 손익",
                   "시작 일시",
                   "종료 일시",
@@ -159,15 +159,15 @@ export async function MemberWorkroomActivity({
                   <td data-label="상태">
                     {row.closedAt === null ? "진행 중 · 결과 미확정" : "종료"}
                   </td>
-                  <td data-label="참여 포인트">{number(row.stake)} P</td>
+                  <td data-label="참여 금액">{number(row.stake)}원</td>
                   <td data-label="설정 수익률">{signed(row.roi)}%</td>
                   <td data-label="반환 포인트">
                     {row.returned === null
                       ? "미확정"
-                      : `${number(row.returned)} P`}
+                      : `${number(row.returned)}원`}
                   </td>
                   <td data-label="확정 손익">
-                    {row.profit === null ? "미확정" : `${signed(row.profit)} P`}
+                    {row.profit === null ? "미확정" : `${signed(row.profit)}원`}
                   </td>
                   <td data-label="시작 일시">{date(row.startedAt)}</td>
                   <td data-label="종료 일시">
@@ -185,10 +185,10 @@ export async function MemberWorkroomActivity({
         <p className="empty-state">
           {data.roundCount
             ? "이 페이지에 참여 내역이 없습니다."
-            : "아직 모의 참여 내역이 없습니다."}
+            : "아직 모니터링 업무 내역이 없습니다."}
         </p>
       )}
-      <nav className={styles.directoryHead} aria-label="모의 참여 내역 페이지">
+      <nav className={styles.directoryHead} aria-label="모니터링 업무 내역 페이지">
         <span>
           {roundPage} / {Math.max(1, Math.ceil(data.roundCount / 25))} 페이지
         </span>
@@ -211,10 +211,10 @@ export async function MemberWorkroomActivity({
           ) : null}
         </div>
       </nav>
-      <h3>체험 포인트 거래 내역</h3>
+      <h3>모니터링 잔액 거래 내역</h3>
       <p className="panel-note">
         참여 시 차감과 종료 시 반환을 각각 표시합니다. 종료 반환에는 참여
-        포인트와 확정된 모의 손익이 포함됩니다.
+        금액과 확정된 모니터링 변동이 포함됩니다.
       </p>
       {data.ledger.length ? (
         <div className={styles.directoryScroll}>
@@ -253,9 +253,9 @@ export async function MemberWorkroomActivity({
                             ? "운영자 지급"
                             : "운영자 차감"}
                   </th>
-                  <td data-label="증감 포인트">{signed(row.amount)} P</td>
+                  <td data-label="증감 금액">{signed(row.amount)}원</td>
                   <td data-label="거래 후 잔액">
-                    {number(row.balanceAfter)} P
+                    {number(row.balanceAfter)}원
                   </td>
                   <td data-label="내용·사유">{row.note}</td>
                   <td data-label="거래 일시">{date(row.createdAt)}</td>
@@ -272,12 +272,12 @@ export async function MemberWorkroomActivity({
         <p className="empty-state">
           {data.ledgerCount
             ? "이 페이지에 거래 내역이 없습니다."
-            : "아직 체험 포인트 거래 내역이 없습니다."}
+            : "아직 모니터링 잔액 거래 내역이 없습니다."}
         </p>
       )}
       <nav
         className={styles.directoryHead}
-        aria-label="체험 포인트 거래 페이지"
+        aria-label="모니터링 잔액 거래 페이지"
       >
         <span>
           {pointPage} / {Math.max(1, Math.ceil(data.ledgerCount / 25))} 페이지

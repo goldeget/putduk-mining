@@ -15,6 +15,7 @@ import styles from "./workroom.module.css";
 import experience from "./workroom-experience.module.css";
 import { WorkroomChart } from "./workroom-chart";
 import { WorkroomLoading } from "../ui/workroom-loading";
+import { StatusToast } from "../ui/toast";
 import {
   ParticipationHistory,
   ParticipationPointsLedger,
@@ -68,8 +69,8 @@ function History({ rows }: { rows: WorkroomSession[] }) {
           <tr>
             <th scope="col">종료 일시 (한국)</th>
             <th scope="col">항목</th>
-            <th scope="col">참여 포인트</th>
-            <th scope="col">종료 포인트</th>
+            <th scope="col">참여 금액</th>
+            <th scope="col">종료 금액</th>
             <th scope="col">변동</th>
           </tr>
         </thead>
@@ -121,7 +122,8 @@ export function WorkroomClient({
     revision = useRef(0),
     offset = useRef(0),
     alive = useRef(true),
-    syncAttempt = useRef("");
+    syncAttempt = useRef(""),
+    depositLedgerId = useRef("");
   const accept = useCallback(
     (next: WorkroomState) => {
       if (!alive.current) return;
@@ -138,6 +140,15 @@ export function WorkroomClient({
         queue.current = new WorkroomCommandQueue(nextOwner, storage);
       }
       setHasPending(Boolean(queue.current?.current()));
+      const deposit = next.ledger.find((ledger) => ledger.kind === "DEPOSIT");
+      if (deposit) {
+        if (depositLedgerId.current && depositLedgerId.current !== deposit.id) {
+          setNotice(
+            `입금 ${money(deposit.amount)}원이 모니터링 잔액에 반영됐습니다.`,
+          );
+        }
+        depositLedgerId.current = deposit.id;
+      }
       setState(next);
       setNow(Date.now() + offset.current);
     },
@@ -161,6 +172,15 @@ export function WorkroomClient({
       );
     if (requestRevision === revision.current) accept(payload.data);
   }, [accept]);
+
+  useEffect(() => {
+    if (page !== "room") return;
+    const interval = window.setInterval(() => {
+      void refresh().catch(() => {});
+    }, 15000);
+    return () => window.clearInterval(interval);
+  }, [page, refresh]);
+
   const command = useCallback(
     async (
       operation?: WorkroomOperation,
@@ -180,7 +200,7 @@ export function WorkroomClient({
         accept(next);
         if (submittedOperation === "START")
           setNotice(
-            "모의 참여를 시작했습니다. 진행 중인 회차 조건은 고정됩니다.",
+            "모니터링 업무를 시작했습니다. 진행 중인 회차 조건은 고정됩니다.",
           );
         else if (
           submittedOperation === "FINISH" ||
@@ -189,7 +209,7 @@ export function WorkroomClient({
           const result = next.history[0];
           if (result && !next.active)
             setNotice(
-              `모의 참여를 마쳤습니다. 종료 ${money(result.returned)} P · 변동 ${signed(result.profit)} P`,
+              `모니터링 업무를 마쳤습니다. 종료 ${money(result.returned)}원 · 변동 ${signed(result.profit)}원`,
             );
         } else setNotice("워크룸이 준비되었습니다.");
         try {
@@ -235,7 +255,7 @@ export function WorkroomClient({
     } catch {
       if (alive.current)
         setQuoteError(
-          "참고 가격을 불러오지 못했습니다. 모의 참여는 계속 이용할 수 있습니다.",
+          "참고 가격을 불러오지 못했습니다. 모니터링 업무는 계속 이용할 수 있습니다.",
         );
     } finally {
       if (alive.current) setQuoteBusy(false);
@@ -379,9 +399,12 @@ export function WorkroomClient({
       data-ui-ready={`/workroom${page === "room" ? "" : `/${page}`}`}
     >
       {notice ? (
-        <p className={styles.disclosure} role="status">
-          {notice} <Link href="/workroom/history">참여 내역 보기 →</Link>
-        </p>
+        <StatusToast
+          tone="success"
+          title="워크룸 상태가 갱신됐어요"
+          description={notice}
+          action={<Link href="/workroom/history">참여 내역 보기</Link>}
+        />
       ) : null}
       {error || hasPending ? recovery : null}
       {page === "room" && (
@@ -397,14 +420,14 @@ export function WorkroomClient({
           <section className={`${styles.balance} ${experience.balanceHero}`}>
             <div className={styles.balanceAvailable}>
               <span>사용 가능 모니터링 잔액</span>
-              <strong>{money(member.balance)} <small>P</small></strong>
+              <strong>{money(member.balance)} <small>원</small></strong>
             </div>
             <div className={styles.balanceActive}>
               <span>참여 중</span>
-              <strong>{money(active?.stake ?? 0)} <small>P</small></strong>
+              <strong>{money(active?.stake ?? 0)} <small>원</small></strong>
             </div>
             <Link className={styles.balanceLink} href="/workroom/points">
-              포인트 내역 →
+              잔액 내역 →
             </Link>
           </section>
           <div className={`${styles.selectors} ${experience.selectors}`}>
@@ -444,7 +467,7 @@ export function WorkroomClient({
                   ))}
               </select>
             </label>
-            <span>모의 지수 · 실제 시세와 분리</span>
+            <span>모니터링 지수 · 실제 시세와 분리</span>
           </div>
           {config ? (
             <div className={`${styles.monitor} ${experience.monitor}`}>
@@ -454,8 +477,8 @@ export function WorkroomClient({
                 <div className={styles.chartHeading}>
                   <span className={styles.running}>
                     {active
-                      ? "모의 모니터링 진행 중"
-                      : "모의 모니터링 준비 완료"}
+                      ? "모니터링 진행 중"
+                      : "모니터링 준비 완료"}
                   </span>
                   <span className={styles.instrumentTag}>
                     {instrument.name}
@@ -465,24 +488,24 @@ export function WorkroomClient({
                   <div
                     className={`${styles.evaluation} ${experience.evaluation}`}
                   >
-                    <span>현재 모의 평가 포인트 · 예상값</span>
+                    <span>현재 모니터링 평가 금액 · 예상값</span>
                     <div className={styles.evaluationRow}>
                       <strong>
-                        {money(view.returned)} <small>P</small>
+                        {money(view.returned)} <small>원</small>
                       </strong>
                       <span
                         className={
                           profit >= 0 ? styles.positive : styles.negative
                         }
                       >
-                        {signed(profit)} P ({(view.value - 100).toFixed(2)}%)
+                        {signed(profit)}원 ({(view.value - 100).toFixed(2)}%)
                       </span>
                     </div>
                   </div>
                 )}
                 <div
                   className={experience.pattern}
-                  aria-label="이번 회차에 설정된 모의 경로"
+                  aria-label="이번 회차에 설정된 모니터링 경로"
                 >
                   <div>
                     <span>설정된 패턴</span>
@@ -528,16 +551,16 @@ export function WorkroomClient({
                 <span className={experience.sessionEyebrow}>
                   {active ? "참여 진행 중" : "모니터링 업무"}
                 </span>
-                <h2>{active ? "이번 모의 참여" : "모니터링 시작하기"}</h2>
+                <h2>{active ? "이번 모니터링 업무" : "모니터링 시작하기"}</h2>
                 <p className={experience.sessionIntro}>
                   {active
                     ? "시작할 때 확인한 조건으로 진행됩니다."
-                    : "참여 포인트를 정하고 시작하세요."}
+                    : "참여 금액을 정하고 시작하세요."}
                 </p>
                 <div className={styles.sessionLines}>
                   <div>
-                    <span>참여 포인트</span>
-                    <strong>{money(active?.stake ?? Number(amount))} P</strong>
+                    <span>참여 금액</span>
+                    <strong>{money(active?.stake ?? Number(amount))}원</strong>
                   </div>
                   <div>
                     <span>{active ? "남은 시간" : "진행 시간"}</span>
@@ -567,7 +590,7 @@ export function WorkroomClient({
                       }}
                     />
                     <small>
-                      사용 가능 {money(member.balance)} P · 정수 입력
+                      사용 가능 {money(member.balance)}원 · 정수 입력
                     </small>
                   </label>
                 )}
@@ -638,7 +661,7 @@ export function WorkroomClient({
                   <span className={experience.sessionEyebrow}>
                     서버 확정 결과
                   </span>
-                  <h2>최근 모의 참여를 마쳤어요.</h2>
+                  <h2>최근 모니터링 업무를 마쳤어요.</h2>
                   <p>
                     {instruments.find(
                       (item) => item.id === latestResult.instrument,
@@ -649,12 +672,12 @@ export function WorkroomClient({
               </div>
               <dl>
                 <div>
-                  <dt>참여 포인트</dt>
-                  <dd>{money(latestResult.stake)} P</dd>
+                  <dt>참여 금액</dt>
+                  <dd>{money(latestResult.stake)}원</dd>
                 </div>
                 <div>
-                  <dt>종료 포인트</dt>
-                  <dd>{money(latestResult.returned)} P</dd>
+                  <dt>종료 금액</dt>
+                  <dd>{money(latestResult.returned)}원</dd>
                 </div>
                 <div>
                   <dt>확정 변동</dt>
@@ -665,7 +688,7 @@ export function WorkroomClient({
                         : styles.negative
                     }
                   >
-                    {signed(latestResult.profit)} P
+                    {signed(latestResult.profit)}원
                   </dd>
                 </div>
               </dl>
@@ -706,7 +729,7 @@ export function WorkroomClient({
               </button>
             </div>
             <p>
-              참고 가격은 모의 차트와 포인트 계산에 적용되지 않습니다. 제공처
+              참고 가격은 모니터링 차트와 금액 계산에 적용되지 않습니다. 제공처
               지연·휴장으로 현재가와 다를 수 있습니다.
               {quote && quoteError ? ` ${quoteError}` : ""}
             </p>
@@ -731,8 +754,8 @@ export function WorkroomClient({
             description="모니터링 참여와 계정 잔액 변동을 확인합니다."
           />
           <div className={styles.summary}>
-            <Summary label="사용 가능" value={`${money(member.balance)} P`} />
-            <Summary label="참여 중" value={`${money(active?.stake ?? 0)} P`} />
+            <Summary label="사용 가능" value={`${money(member.balance)}원`} />
+            <Summary label="참여 중" value={`${money(active?.stake ?? 0)}원`} />
             <Summary label="기록 기준" value="계정 단위" />
           </div>
           <p className={styles.disclosure}>
@@ -759,16 +782,16 @@ export function WorkroomClient({
               [
                 "02",
                 "실제 시장 참고 가격",
-                "환율·주가는 출처와 기준 시각을 함께 표시합니다. 지연·휴장·조회 실패로 현재가와 다를 수 있으며 모의 차트와는 별개입니다.",
+                "환율·주가는 출처와 기준 시각을 함께 표시합니다. 지연·휴장·조회 실패로 현재가와 다를 수 있으며 모니터링 차트와는 별개입니다.",
               ],
               [
                 "03",
-                "사전에 공개된 모의 조건",
-                "참여 전에 패턴·진행 시간·종료 변동률을 확인하세요. 모의 차트는 설정된 경로를 따르며 실제 시장 수익률을 예측하지 않습니다. 시작한 회차의 조건은 고정됩니다.",
+                "사전에 공개된 모니터링 조건",
+                "참여 전에 패턴·진행 시간·종료 변동률을 확인하세요. 모니터링 차트는 설정된 경로를 따르며 실제 시장 수익률을 예측하지 않습니다. 시작한 회차의 조건은 고정됩니다.",
               ],
               [
                 "04",
-                "포인트와 기록",
+                "금액과 기록",
                 "정해진 시간이 끝나면 서버가 결과를 확정합니다. 연결이 끊겨도 계정의 회차는 유지됩니다. 다시 접속하면 확정된 결과를 확인할 수 있습니다.",
               ],
             ].map(([n, t, d]) => (
@@ -781,7 +804,7 @@ export function WorkroomClient({
           </div>
           <p className={styles.disclosure}>
             실제 증권·외환 계좌와 연결하지 않으며 주문을 전송하지 않습니다.
-            포인트는 늘거나 줄 수 있고 현금으로 전환되지 않습니다.
+            모니터링 잔액은 실제 입출금 잔액과 분리해 관리됩니다.
           </p>
         </>
       )}

@@ -55,7 +55,7 @@ describe("current WORKROOM public guidance", () => {
         },
         "/terms:점검과 이용 제한": {
           body: [
-            "안전을 위해 가입, 입금, 출금, 모의 회차 같은 기능을 잠시 멈출 수 있어요.",
+            "안전을 위해 가입, 입금, 출금, 모니터링 업무 같은 기능을 잠시 멈출 수 있어요.",
             "멈춘 동안에도 기록은 남아요.",
             "위험 신호가 확인되면 이용이 제한될 수 있어요.",
           ],
@@ -69,7 +69,7 @@ describe("current WORKROOM public guidance", () => {
         "/privacy:이용 기록": {
           body: [
             "서비스를 쓰는 동안 일부 행동이 기록돼요. 예를 들면 가입 완료와 입금 요청이에요.",
-            "실제 입금·출금과 모의 회차는 서로 다른 기록으로 보관해요.",
+            "실제 입금·출금과 모니터링 업무는 서로 다른 기록으로 보관해요.",
           ],
         },
       };
@@ -91,7 +91,7 @@ describe("current WORKROOM public guidance", () => {
     );
     expect(active).not.toMatch(/5,000원|24시간|사용량 100%|체험 전환|무료 체험|무료 시뮬레이션/);
     expect(active).toContain("모니터링 업무 기록은 실제 지갑과 따로 보관돼요");
-    expect(active).toContain("실제 입금·출금과 모의 회차는 서로 다른 기록");
+    expect(active).toContain("실제 입금·출금과 모니터링 업무는 서로 다른 기록");
   });
   it("replaces historical mining and cash reward promises in active guidance", () => {
     const guidance = TRUST_DOCUMENTS.filter(

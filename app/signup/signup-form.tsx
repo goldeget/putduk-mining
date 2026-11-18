@@ -742,7 +742,7 @@ export function SignupForm() {
       <label className={styles.consentOptional}>
         <input name="workroomAcknowledged" type="checkbox" required />
         <span>
-          사전 설정된 모의 차트이며 체험 포인트는 현금 전환·출금이 불가능함을
+          사전 설정된 모니터링 차트와 실제 입출금 잔액이 분리된다는 점을
           확인했습니다. (필수)
         </span>
       </label>

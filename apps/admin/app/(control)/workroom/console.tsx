@@ -27,15 +27,15 @@ const names: Record<string, string> = {
 };
 const patterns = { wave: "웨이브", slow: "슬로우", balanced: "밸런스" };
 const operationLabels: Record<string, string> = {
-  CONFIG_SAVE: "모의 조건 변경",
+  CONFIG_SAVE: "모니터링 조건 변경",
   INVITE_CREATE: "추천인 코드 발급",
   INVITE_STATUS: "추천인 코드 상태 변경",
-  POINT_ADJUST: "체험 포인트 조정",
+  POINT_ADJUST: "모니터링 잔액 조정",
 };
 const tabs = [
   ["config", "종목별 설정"],
   ["invites", "추천인 코드"],
-  ["users", "회원·포인트"],
+  ["users", "회원·잔액"],
   ["audit", "변경 기록"],
 ] as const;
 type Tab = (typeof tabs)[number][0];
@@ -307,7 +307,7 @@ export function WorkroomConsole({ actorId }: { actorId: string }) {
         <div>
           <span className={styles.eyebrow}>ADMIN WORKSPACE</span>
           <h1>워크룸 운영</h1>
-          <p>모의 조건과 회원별 체험 포인트를 관리하세요.</p>
+          <p>모니터링 조건과 회원별 잔액을 관리하세요.</p>
         </div>
         <button
           type="button"
@@ -323,8 +323,8 @@ export function WorkroomConsole({ actorId }: { actorId: string }) {
         </button>
       </header>
       <div className={styles.disclosure}>
-        <span>SIMULATION ONLY</span> 체험 포인트는 출금할 수 없으며 실제
-        입출금과 별도 원장으로 관리됩니다. 실제 입금 승인·출금 처리는 금융
+        <span>MONITORING</span> 모니터링 잔액과 실제 입출금 잔액은 별도 원장으로
+        관리됩니다. 입금 승인·출금 처리는 금융
         메뉴에서 기존 절차로 진행합니다.
       </div>
       <nav className={styles.tabs} aria-label="워크룸 운영 메뉴">
@@ -391,8 +391,8 @@ export function WorkroomConsole({ actorId }: { actorId: string }) {
           {tab === "config" && (
             <div className={`${styles.grid} ${styles.configGrid}`}>
               <section className={styles.panel}>
-                <span className={styles.eyebrow}>SIMULATION SETTINGS</span>
-                <h2>다음 회차의 모의 조건</h2>
+                <span className={styles.eyebrow}>MONITORING SETTINGS</span>
+                <h2>다음 회차의 모니터링 조건</h2>
                 <form
                   onSubmit={(e) => {
                     e.preventDefault();
@@ -457,7 +457,7 @@ export function WorkroomConsole({ actorId }: { actorId: string }) {
                       <div
                         className={styles.patternCards}
                         role="group"
-                        aria-label="모의 경로 패턴 선택"
+                        aria-label="모니터링 경로 패턴 선택"
                       >
                         {(
                           [
@@ -703,7 +703,7 @@ export function WorkroomConsole({ actorId }: { actorId: string }) {
                             maxLength={60}
                             value={inviteLabel}
                             onChange={(e) => setInviteLabel(e.target.value)}
-                            placeholder="예: 11월 체험 초대"
+                            placeholder="예: 11월 회원 초대"
                           />
                         </label>
                         <label>
@@ -851,10 +851,10 @@ export function WorkroomConsole({ actorId }: { actorId: string }) {
           {tab === "users" && (
             <>
               <section className={styles.panel}>
-                <span className={styles.eyebrow}>PRACTICE POINTS</span>
-                <h2>체험 포인트 지급·차감</h2>
+                <span className={styles.eyebrow}>MONITORING BALANCE</span>
+                <h2>모니터링 잔액 지급·차감</h2>
                 <p className={styles.muted}>
-                  모의거래 포인트만 조정합니다. 실제 입금·출금 원장에는 영향을
+                  모니터링 잔액만 조정합니다. 실제 입금·출금 원장에는 영향을
                   주지 않습니다.
                 </p>
                 <form
@@ -927,7 +927,7 @@ export function WorkroomConsole({ actorId }: { actorId: string }) {
                         placeholder={
                           direction === "DEBIT"
                             ? "예: 중복 지급 정정"
-                            : "예: 추가 체험 포인트"
+                            : "예: 추가 모니터링 잔액"
                         }
                       />
                     </label>
@@ -968,7 +968,7 @@ export function WorkroomConsole({ actorId }: { actorId: string }) {
                     <thead>
                       <tr>
                         <th>회원 / 이메일</th>
-                        <th>체험 포인트</th>
+                        <th>모니터링 잔액</th>
                         <th>워크룸</th>
                         <th>가입 코드</th>
                         <th>시작 일시 (한국)</th>
@@ -984,7 +984,7 @@ export function WorkroomConsole({ actorId }: { actorId: string }) {
                             <small>{user.email}</small>
                             <small>{user.id}</small>
                           </td>
-                          <td>{format(user.balance)} P</td>
+                          <td>{format(user.balance)}원</td>
                           <td>{user.room}</td>
                           <td>{user.referral || "기존 회원"}</td>
                           <td>{date(user.createdAt)}</td>
@@ -1030,8 +1030,8 @@ export function WorkroomConsole({ actorId }: { actorId: string }) {
                         <td>
                           {row.operation === "POINT_ADJUST"
                             ? row.input.direction === "DEBIT"
-                              ? "체험 포인트 차감"
-                              : "체험 포인트 지급"
+                              ? "모니터링 잔액 차감"
+                              : "모니터링 잔액 지급"
                             : operationLabels[row.operation] || row.operation}
                           <small>{names[row.target] || row.target}</small>
                         </td>
@@ -1062,7 +1062,7 @@ export function WorkroomConsole({ actorId }: { actorId: string }) {
         </>
       )}
       <footer className={styles.footer}>
-        <span>WORKROOM · 무료 모의 체험 운영</span>
+        <span>WORKROOM · 모니터링 운영</span>
         <Link href="/members">회원·입출금 관리 ↗</Link>
       </footer>
       {review && (
@@ -1076,12 +1076,12 @@ export function WorkroomConsole({ actorId }: { actorId: string }) {
           <div>
             <span className={styles.eyebrow}>REVIEW BEFORE SAVE</span>
             <h2>변경 내용을 확인해주세요.</h2>
-            <p>이 작업은 체험 전용이며 변경 사유와 함께 기록됩니다.</p>
+            <p>이 작업은 모니터링 잔액 조정이며 변경 사유와 함께 기록됩니다.</p>
             <dl>
               <dt>작업</dt>
               <dd>
                 {review.operation === "POINT_ADJUST"
-                  ? "체험 포인트 지급·차감"
+                  ? "모니터링 잔액 지급·차감"
                   : review.operation}
               </dd>
               {Object.entries(review.input).map(([key, value]) => (
