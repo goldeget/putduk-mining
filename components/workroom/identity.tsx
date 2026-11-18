@@ -42,14 +42,14 @@ export function WorkroomAuth({
             <em>경험하세요.</em>
           </h1>
           <p>
-            환율과 주식, 10개 항목을 무료로 체험하세요.
+            환율과 주식의 흐름을 확인하고 모니터링하세요.
             <br />
-            실제 거래와 분리된 나만의 모의 워크룸입니다.
+            업무 기록과 실제 자산 기록을 한곳에서 관리합니다.
           </p>
           <ul>
-            <li>계정에 저장되는 포인트와 참여 기록</li>
-            <li>참여 전 확인하는 패턴과 종료 변동률</li>
-            <li>입금·출금 없이 무료로 이용</li>
+            <li>계정에 저장되는 모니터링 업무 기록</li>
+            <li>참여 전 확인하는 패턴과 진행 조건</li>
+            <li>실제 입출금 기록과 분리된 워크룸 화면</li>
           </ul>
         </section>
         <section className={`${styles.panel} ${styles.authCard}`}>
@@ -57,18 +57,17 @@ export function WorkroomAuth({
           <h2>{signup ? "추천인 코드로 가입하세요" : "내 워크룸에 로그인"}</h2>
           <p className={styles.muted}>
             {signup
-              ? "가입 시 체험 포인트 100,000 P를 한 번 지급합니다."
+              ? "추천인 코드를 확인하고 워크룸 계정을 개설합니다."
               : "기존 아이디와 비밀번호를 그대로 사용하세요."}
           </p>
           {children}
           <p className={styles.disclosure}>
-            사전 설정된 패턴을 따르는 무료 시뮬레이션입니다. 체험 포인트는
-            현금으로 전환하거나 출금할 수 없습니다.
+            시장 흐름과 모니터링 기록은 실제 입출금 기록과 분리해 확인합니다.
           </p>
         </section>
       </div>
       <footer className={styles.footer}>
-        <span>© 2026 WORKROOM · 무료 시뮬레이션</span>
+        <span>© 2026 WORKROOM · 모니터링 플랫폼</span>
         <nav aria-label="이용 안내">
           <Link href="/terms">이용약관</Link>
           {" · "}

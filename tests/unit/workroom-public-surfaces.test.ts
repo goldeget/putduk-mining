@@ -66,16 +66,16 @@ describe("WORKROOM public surfaces", () => {
     expect(labels).not.toContain("워크룸 안내");
     expect(new Set(labels).size).toBe(labels.length);
   });
-  it("shows current noncash practice facts while retaining original consent metadata and privacy duties", () => {
+  it("shows current monitoring facts while retaining original consent metadata and privacy duties", () => {
     const terms = getTrustDocument("/terms")!;
     const privacy = getTrustDocument("/privacy")!;
     for (const original of LEGAL_DOCUMENTS)
       expect(getTrustDocument(original.path)?.consentVersion).toBe(
         original.consentVersion,
       );
-    expect(JSON.stringify(terms)).toContain("100,000 P");
+    expect(JSON.stringify(terms)).toContain("WORKROOM 모니터링");
     expect(JSON.stringify(terms)).not.toMatch(
-      /5,000원|24시간|사용량 100%|모니터링/,
+      /5,000원|24시간|사용량 100%|무료 체험|무료 시뮬레이션|체험 포인트/,
     );
     expect(JSON.stringify(privacy)).not.toMatch(/체험 전환|모니터링/);
     expect(JSON.stringify(privacy)).toContain(

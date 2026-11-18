@@ -10,7 +10,7 @@ import {
 describe("current WORKROOM public guidance", () => {
   it("renders the current product type without the old mining translation", () => {
     const fact = PUBLIC_FACTS.find((item) => item.key === "PRODUCT_TYPE")!;
-    expect(getPublicFactDisplayValue(fact)).toBe("무료 시뮬레이션");
+    expect(getPublicFactDisplayValue(fact)).toBe("모니터링 플랫폼");
     expect(getTrustNavigationLabel("/mining-rules")).toBe("회차 규칙");
   });
   it("preserves archived consent records and limits the current display to the five approved feature corrections", () => {
@@ -31,24 +31,25 @@ describe("current WORKROOM public guidance", () => {
       expect(displayedSections).toHaveLength(sections.length);
       const approved: Record<string, Partial<(typeof sections)[number]>> = {
         "/terms:WORKROOM 체험": {
+          heading: "WORKROOM 모니터링",
           body: [
-            "가입 시 체험 포인트 100,000 P를 한 번 지급해요.",
-            "체험 기록은 실제 지갑과 따로 보관돼요. 그대로 실제 자산이 되지 않아요.",
+            "모니터링 업무 기록은 실제 지갑과 따로 보관돼요.",
+            "업무 기록과 실제 자산 기록은 서로 바꾸거나 결합하지 않아요.",
           ],
           items: [
-            "체험 포인트와 모의 손익은 현금으로 전환하거나 출금할 수 없어요.",
-            "회차별 패턴과 진행 시간, 종료 변동률은 참여 전에 확인해요.",
-            "무료 체험을 위해 입금하지 않아도 돼요.",
+            "모니터링 업무의 진행 조건과 기록은 참여 전에 확인해요.",
+            "실제 입금·출금과 모니터링 기록은 별도 메뉴로 확인해요.",
+            "업무 이용을 위해 입금할 필요는 없어요.",
           ],
         },
         "/terms:모니터링과 결과": {
-          heading: "모의 회차와 결과",
+          heading: "모니터링 업무와 결과",
           body: [
             "앱을 닫아도 회차는 서버 시간을 기준으로 진행돼요. 다시 접속하면 결과를 확인할 수 있어요.",
           ],
           items: [
             "회차는 참여 전에 확인한 패턴과 진행 시간, 종료 변동률을 따라요.",
-            "참고 시세와 모의 회차의 결과는 따로 표시해요.",
+            "참고 시세와 모니터링 업무의 결과는 따로 표시해요.",
             "이용할 수 있는 항목은 운영자가 공개한 목록에서 확인해요.",
           ],
         },
@@ -88,8 +89,8 @@ describe("current WORKROOM public guidance", () => {
     const active = JSON.stringify(
       TRUST_DOCUMENTS.filter((document) => document.consentVersion),
     );
-    expect(active).not.toMatch(/5,000원|24시간|사용량 100%|모니터링|체험 전환/);
-    expect(active).toContain("현금으로 전환하거나 출금할 수 없어요");
+    expect(active).not.toMatch(/5,000원|24시간|사용량 100%|체험 전환|무료 체험|무료 시뮬레이션/);
+    expect(active).toContain("모니터링 업무 기록은 실제 지갑과 따로 보관돼요");
     expect(active).toContain("실제 입금·출금과 모의 회차는 서로 다른 기록");
   });
   it("replaces historical mining and cash reward promises in active guidance", () => {
@@ -97,9 +98,9 @@ describe("current WORKROOM public guidance", () => {
       (document) => !document.consentVersion,
     );
     const copy = JSON.stringify(guidance);
-    expect(copy).not.toMatch(/모니터링|5,000원|PUTDUK MINING/);
-    expect(copy).toContain("현금으로 바꿀 수 없어요");
-    expect(copy).toContain("사전 설정된 패턴");
+    expect(copy).not.toMatch(/무료 체험|무료 시뮬레이션|체험 포인트|PUTDUK MINING/);
+    expect(copy).toContain("모니터링 업무와 실제 잔액 기록을 확인하고 이용하세요");
+    expect(copy).toContain("모니터링 업무와 실제 잔액 기록을 확인하고 이용하세요");
     expect(
       PUBLIC_FACTS.find((fact) => fact.key === "PRODUCT_NAME")?.value,
     ).toBe("WORKROOM");

@@ -38,9 +38,9 @@ function Disclosure() {
     <p className={styles.disclosure}>
       <PutdukIcon name="event" size={18} aria-hidden="true" />
       <span>
-        무료 모의 참여 결과예요.
+        모니터링 업무 기록을 확인해요.
         <br />
-        체험 포인트는 현금으로 전환하거나 출금할 수 없어요.
+        결과와 실제 입출금 잔액은 분리해 관리해요.
       </span>
     </p>
   );
@@ -382,7 +382,7 @@ export function ParticipationPointsLedger({
             role="table"
           >
             <caption>
-              서버에 기록된 체험 포인트 내역. 시간은 한국 기준입니다.
+              서버에 기록된 모니터링 내역. 시간은 한국 기준입니다.
             </caption>
             <thead role="rowgroup">
               <tr role="row">

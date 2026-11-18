@@ -11,12 +11,12 @@ export const PUBLIC_FACTS: readonly PublicFact[] = [
   {
     key: "PRODUCT_NAME",
     value: "WORKROOM",
-    description: "환율과 주식의 흐름을 경험하는 무료 모의 워크룸입니다.",
+    description: "환율과 주식의 흐름을 확인하는 WORKROOM 모니터링 플랫폼입니다.",
   },
   {
     key: "PRODUCT_TYPE",
-    value: "무료 시뮬레이션",
-    description: "실제 주문이나 거래를 실행하지 않습니다.",
+    value: "모니터링 플랫폼",
+    description: "모니터링 기록과 실제 자산 기록을 분리해 확인합니다.",
   },
   {
     key: "OFFICIAL_DOMAIN",
@@ -30,9 +30,9 @@ export const PUBLIC_FACTS: readonly PublicFact[] = [
   },
   {
     key: "TRIAL_LEDGER",
-    value: "현금과 분리된 체험 포인트",
+    value: "모니터링과 자산 기록",
     description:
-      "가입 시 100,000 P를 한 번 지급합니다. 현금 전환과 출금은 불가능합니다.",
+      "모니터링 업무 기록과 실제 입출금 잔액을 분리해 관리합니다.",
   },
 ];
 const titles: Record<string, string> = {
@@ -41,11 +41,11 @@ const titles: Record<string, string> = {
   "/faq": "워크룸에서 자주 묻는 질문",
   "/verification": "설정과 기록을 확인하는 기준",
   "/rules": "회차와 체험 포인트 안내",
-  "/trial": "무료 체험 포인트 안내",
+  "/trial": "워크룸 모니터링 안내",
   "/status": "이용 상태 확인 안내",
   "/putduk-facts": "WORKROOM 서비스 정보",
   "/mining-rules": "모의 회차의 진행과 결과 확인",
-  "/economy": "체험 포인트와 실제 잔액은 따로 관리해요",
+  "/economy": "모니터링 기록과 실제 잔액은 따로 관리해요",
   "/deposit": "실제 입금은 별도 잔액으로 확인해요",
   "/withdrawal": "실제 잔액의 출금 신청과 확인",
   "/changelog": "WORKROOM 안내 변경",
@@ -56,9 +56,9 @@ const titles: Record<string, string> = {
 };
 const sections: TrustDocument["sections"] = [
   {
-    heading: "추천인 코드로 가입하고 무료로 시작해요",
+    heading: "추천인 코드로 워크룸을 시작해요",
     body: [
-      "담당자가 전달한 유효한 추천인 코드로 새로 가입합니다. 가입 시 계정에 체험 포인트 100,000 P를 한 번 지급합니다.",
+      "담당자가 전달한 유효한 추천인 코드로 새로 가입합니다.",
     ],
   },
   {
@@ -69,9 +69,9 @@ const sections: TrustDocument["sections"] = [
     ],
   },
   {
-    heading: "체험 포인트는 현금으로 바꿀 수 없어요",
+    heading: "모니터링 기록과 실제 잔액은 분리해요",
     body: [
-      "체험 포인트와 모의 손익은 실제 현금 잔액에 반영되지 않으며 입금·출금·환전 대상이 아닙니다. 워크룸은 무료로 이용합니다.",
+      "모니터링 업무와 실제 입출금 잔액은 서로 다른 기록으로 관리됩니다.",
       "실제 입금·출금은 별도 잔액 메뉴에서 신청합니다. 원화 입금 방법은 담당자에게 문의하고 운영자가 실제 수령한 금액을 확인하면 잔액에 반영됩니다. 출금도 운영자가 수동으로 처리합니다. 모의거래 결과는 실제 잔액에 반영되지 않습니다.",
     ],
   },
@@ -93,26 +93,27 @@ function currentConsentDisplay(document: TrustDocument): TrustDocument {
       if (document.path === "/terms" && section.heading === "WORKROOM 체험")
         return {
           ...section,
+          heading: "WORKROOM 모니터링",
           body: [
-            "가입 시 체험 포인트 100,000 P를 한 번 지급해요.",
-            "체험 기록은 실제 지갑과 따로 보관돼요. 그대로 실제 자산이 되지 않아요.",
+            "모니터링 업무 기록은 실제 지갑과 따로 보관돼요.",
+            "업무 기록과 실제 자산 기록은 서로 바꾸거나 결합하지 않아요.",
           ],
           items: [
-            "체험 포인트와 모의 손익은 현금으로 전환하거나 출금할 수 없어요.",
-            "회차별 패턴과 진행 시간, 종료 변동률은 참여 전에 확인해요.",
-            "무료 체험을 위해 입금하지 않아도 돼요.",
+            "모니터링 업무의 진행 조건과 기록은 참여 전에 확인해요.",
+            "실제 입금·출금과 모니터링 기록은 별도 메뉴로 확인해요.",
+            "업무 이용을 위해 입금할 필요는 없어요.",
           ],
         };
       if (document.path === "/terms" && section.heading === "모니터링과 결과")
         return {
           ...section,
-          heading: "모의 회차와 결과",
+          heading: "모니터링 업무와 결과",
           body: [
             "앱을 닫아도 회차는 서버 시간을 기준으로 진행돼요. 다시 접속하면 결과를 확인할 수 있어요.",
           ],
           items: [
             "회차는 참여 전에 확인한 패턴과 진행 시간, 종료 변동률을 따라요.",
-            "참고 시세와 모의 회차의 결과는 따로 표시해요.",
+            "참고 시세와 모니터링 업무의 결과는 따로 표시해요.",
             "이용할 수 있는 항목은 운영자가 공개한 목록에서 확인해요.",
           ],
         };
@@ -146,7 +147,7 @@ export const TRUST_DOCUMENTS: readonly TrustDocument[] = archivedDocuments.map(
           eyebrow: "WORKROOM GUIDE",
           title: titles[document.path] ?? "워크룸 이용 안내",
           summary:
-            "실제 현금과 분리된 무료 시뮬레이션입니다. 회차 조건과 기록을 확인하고 이용하세요.",
+            "모니터링 업무와 실제 잔액 기록을 확인하고 이용하세요.",
           factKeys: ["PRODUCT_NAME", "PRODUCT_TYPE", "TRIAL_LEDGER"],
           sections,
         },

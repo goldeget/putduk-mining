@@ -11,7 +11,7 @@ const pageTitles: readonly (readonly [string, string])[] = [
   ["/workroom/records", "입출금 기록"],
   ["/workroom/support", "1:1 문의"],
   ["/workroom/history", "참여 내역"],
-  ["/workroom/points", "체험 포인트"],
+  ["/workroom/points", "모니터링 기록"],
   ["/workroom/guide", "이용 안내"],
   ["/workroom", "내 워크룸"],
   ["/notifications", "알림함"],
@@ -35,7 +35,7 @@ export function workroomPageTitle(pathname: string) {
 const recordItems: readonly NavigationItem[] = [
   { href: "/workroom/records", label: "입출금 기록" },
   { href: "/workroom/history", label: "참여 내역" },
-  { href: "/workroom/points", label: "체험 포인트" },
+  { href: "/workroom/points", label: "모니터링 기록" },
 ];
 const accountItems: readonly NavigationItem[] = [
   { href: "/menu/account", label: "내 정보" },

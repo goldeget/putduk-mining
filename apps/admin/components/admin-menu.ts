@@ -2,13 +2,13 @@ export const ADMIN_MENU_ITEMS = [
   { href: "/members", label: "회원 목록", group: "워크룸 운영" },
   {
     href: "/workroom?tab=config",
-    label: "워크룸 · 모의 조건",
+    label: "워크룸 · 운영 조건",
     group: "워크룸 운영",
   },
   { href: "/workroom?tab=invites", label: "추천인 코드", group: "워크룸 운영" },
   {
     href: "/workroom?tab=users",
-    label: "회원·체험 포인트",
+    label: "회원·모니터링 기록",
     group: "워크룸 운영",
   },
   {

@@ -658,8 +658,7 @@ export function SignupForm() {
           <details id="signup-service-terms">
             <summary>자세히 보기</summary>
             <p>
-              무료 시뮬레이션 체험 포인트는 실제 자산이 아니며, 현금으로
-              전환하거나 출금할 수 없습니다.
+              워크룸 모니터링과 실제 자산 기록은 서로 분리되어 관리됩니다.
             </p>
             <Link
               className={styles.policyDocumentLink}

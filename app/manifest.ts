@@ -6,7 +6,7 @@ export default function manifest(): MetadataRoute.Manifest {
     id: "/",
     name: "WORKROOM",
     short_name: "WORKROOM",
-    description: "무료 시뮬레이션 · 체험 포인트 현금 전환 불가",
+    description: "모니터링 기록과 실제 잔액을 관리하는 WORKROOM",
     start_url: "/workroom",
     display: "standalone",
     background_color: WORKROOM_MARK.background,

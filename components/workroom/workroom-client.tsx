@@ -332,10 +332,9 @@ export function WorkroomClient({
       <div className={styles.loading}>
         <span className={styles.eyebrow}>WELCOME TO WORKROOM</span>
         <h1>나만의 워크룸을 개설하세요.</h1>
-        <p>무료 체험 포인트 100,000 P는 계정당 한 번 지급됩니다.</p>
+        <p>모니터링 계정을 개설하고 워크룸 기록을 시작하세요.</p>
         <p className={styles.disclosure}>
-          실제 거래와 분리된 무료 시뮬레이션입니다. 연습 포인트는 현금으로
-          전환되지 않습니다.
+          모니터링 기록과 실제 자산 기록을 분리해 확인합니다.
         </p>
         {error || hasPending ? recovery : null}
         <button
@@ -393,11 +392,11 @@ export function WorkroomClient({
               <h1>흐름을 보고, 순간을 선택하세요.</h1>
               <span className={styles.roomId}>{member.room}</span>
             </div>
-            <span className={styles.badge}>무료 시뮬레이션</span>
+            <span className={styles.badge}>WORKROOM 모니터링</span>
           </section>
           <section className={`${styles.balance} ${experience.balanceHero}`}>
             <div className={styles.balanceAvailable}>
-              <span>사용 가능 체험 포인트</span>
+              <span>사용 가능 모니터링 잔액</span>
               <strong>{money(member.balance)} <small>P</small></strong>
             </div>
             <div className={styles.balanceActive}>
@@ -527,7 +526,7 @@ export function WorkroomClient({
                 className={`${styles.panel} ${styles.session} ${experience.session}`}
               >
                 <span className={experience.sessionEyebrow}>
-                  {active ? "참여 진행 중" : "무료 모의 체험"}
+                  {active ? "참여 진행 중" : "모니터링 업무"}
                 </span>
                 <h2>{active ? "이번 모의 참여" : "모니터링 시작하기"}</h2>
                 <p className={experience.sessionIntro}>
@@ -554,9 +553,9 @@ export function WorkroomClient({
                 </div>
                 {!active && (
                   <label className={styles.stake}>
-                    참여할 체험 포인트
+                    참여 금액
                     <input
-                      aria-label="참여할 체험 포인트"
+                      aria-label="참여 금액"
                       type="number"
                       min="1000"
                       step="1"
@@ -617,7 +616,7 @@ export function WorkroomClient({
                   </button>
                 )}
                 <p className={`${styles.helper} ${styles.risk}`}>
-                  체험 포인트 · 현금 전환 불가
+                  모니터링 업무 · 기록 기준
                 </p>
               </section>
             </div>
@@ -728,17 +727,16 @@ export function WorkroomClient({
         <>
           <Heading
             eyebrow="YOUR POINTS"
-            title="체험 포인트"
-            description="현금 가치가 없는 무료 모의 체험용 포인트입니다."
+            title="모니터링 기록"
+            description="모니터링 참여와 계정 잔액 변동을 확인합니다."
           />
           <div className={styles.summary}>
             <Summary label="사용 가능" value={`${money(member.balance)} P`} />
             <Summary label="참여 중" value={`${money(active?.stake ?? 0)} P`} />
-            <Summary label="가입 지급 · 계정당 1회" value="100,000 P" />
+            <Summary label="기록 기준" value="계정 단위" />
           </div>
           <p className={styles.disclosure}>
-            연습 포인트는 현금으로 전환하거나 출금할 수 없습니다. 실제
-            입금·출금은 별도 잔액 메뉴에서 확인하세요.
+            모니터링 기록과 실제 입금·출금 잔액은 별도 메뉴에서 확인하세요.
           </p>
           <ParticipationPointsLedger rows={state.ledger} />
         </>
@@ -749,14 +747,14 @@ export function WorkroomClient({
           <Heading
             eyebrow="WORKROOM GUIDE"
             title="알고 시작하면, 더 간단하게."
-            description="실제 가격 참고와 무료 모의 체험을 구분해 이용하세요."
+            description="모니터링 업무와 실제 입출금 기록을 구분해 이용하세요."
           />
           <div className={styles.guide}>
             {[
               [
                 "01",
                 "기존 계정으로 간편하게",
-                "기존 아이디와 비밀번호를 그대로 사용하세요. 신규 가입은 유효한 추천인 코드가 필요합니다. 체험 포인트 100,000 P는 계정당 한 번 지급됩니다.",
+                "기존 아이디와 비밀번호를 그대로 사용하세요. 신규 가입은 유효한 추천인 코드가 필요합니다.",
               ],
               [
                 "02",
@@ -789,7 +787,7 @@ export function WorkroomClient({
       )}
       <footer className={styles.footer}>
         <span>© 2026 WORKROOM</span>
-        <span>무료 시뮬레이션 · 체험 포인트 현금 전환 불가</span>
+        <span>모니터링 기록 · 실제 잔액 분리 관리</span>
         {page !== "guide" && <Link href="/workroom/guide">이용 안내 →</Link>}
       </footer>
     </div>

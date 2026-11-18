@@ -52,9 +52,9 @@ export function ProductShell({
             </Link>
           ))}
           <small>
-            무료 시뮬레이션
+            모니터링 기록과 실제 잔액을
             <br />
-            포인트는 출금할 수 없으며 실제 자산과 분리됩니다.
+            하나의 워크룸에서 확인합니다.
           </small>
         </div>
       </aside>
