@@ -46,13 +46,16 @@ export function AuthSubmitButton({
   label,
   pendingLabel,
   disabled = false,
+  pending: pendingOverride,
 }: {
   label: string;
   pendingLabel: string;
   disabled?: boolean;
+  pending?: boolean;
 }) {
-  const { pending } = useFormStatus();
+  const { pending: formPending } = useFormStatus();
   const online = useAuthOnline();
+  const pending = pendingOverride ?? formPending;
   return (
     <>
       <button

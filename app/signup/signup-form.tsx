@@ -2,13 +2,10 @@
 import { FeedbackMessage } from "@/components/ui/feedback-message";
 
 import Link from "next/link";
-import { useActionState, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 
-import {
-  checkSignupPhoneAvailability,
-  signupAction,
-  type SignupActionState,
-} from "@/app/signup/actions";
+import { type SignupActionState } from "@/app/signup/actions";
 import {
   AuthConnectionNotice,
   AuthSubmitButton,
@@ -33,7 +30,9 @@ type AvailabilityState =
 
 export function SignupForm() {
   const online = useAuthOnline();
-  const [state, action] = useActionState(signupAction, INITIAL_STATE);
+  const router = useRouter();
+  const [state, setState] = useState<SignupActionState>(INITIAL_STATE);
+  const [isPending, setIsPending] = useState(false);
   const [loginId, setLoginId] = useState("");
   const [phone, setPhone] = useState("");
   const [birthFront, setBirthFront] = useState("");
@@ -70,6 +69,75 @@ export function SignupForm() {
       phoneRead.current?.abort();
     };
   }, []);
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    preventOfflineAuthSubmission(event);
+    if (navigator.onLine === false) return;
+
+    const formData = new FormData(event.currentTarget);
+    const payload = {
+      dateOfBirth: String(formData.get("dateOfBirth") ?? ""),
+      birthSexDigit: String(formData.get("birthSexDigit") ?? ""),
+      legalName: String(formData.get("legalName") ?? ""),
+      loginId: String(formData.get("loginId") ?? ""),
+      marketingConsent: formData.get("marketingConsent") === "on",
+      referralCode: String(formData.get("referralCode") ?? ""),
+      workroomAcknowledged: formData.get("workroomAcknowledged") === "on",
+      password: String(formData.get("password") ?? ""),
+      passwordConfirmation: String(formData.get("passwordConfirmation") ?? ""),
+      phone: String(formData.get("phone") ?? ""),
+      privacyConsent: formData.get("privacyConsent") === "on",
+      recoveryEmail: String(formData.get("recoveryEmail") ?? ""),
+      serviceTermsConsent: formData.get("serviceTermsConsent") === "on",
+    };
+
+    setIsPending(true);
+    setState({ fieldErrors: {}, message: "", status: "idle" });
+
+    try {
+      const response = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = (await response.json()) as {
+        status: "ok" | "error" | "confirmation";
+        message: string;
+        fieldErrors?: Record<string, string>;
+        redirectUrl?: string;
+      };
+
+      if (response.ok && data.status === "ok" && data.redirectUrl) {
+        router.push(data.redirectUrl);
+        return;
+      }
+
+      if (data.status === "confirmation") {
+        setState({
+          fieldErrors: data.fieldErrors ?? {},
+          message: data.message,
+          status: "confirmation",
+        });
+        return;
+      }
+
+      setState({
+        fieldErrors: data.fieldErrors ?? {},
+        message: data.message || "입력한 정보를 다시 확인해 주세요.",
+        status: "error",
+      });
+    } catch {
+      setState({
+        fieldErrors: {},
+        message: "네트워크 연결을 확인해 주세요.",
+        status: "error",
+      });
+    } finally {
+      setIsPending(false);
+    }
+  }
 
   async function checkLoginId() {
     if (!navigator.onLine) return;
@@ -131,12 +199,33 @@ export function SignupForm() {
     phoneRead.current = controller;
     setPhoneAvailability("checking");
     try {
-      // Server-action transport cannot be cancelled; late read-only replies are ignored.
-      const result = await withSignupReadDeadline(
-        () => checkSignupPhoneAvailability(phone),
+      const { response, payload } = await withSignupReadDeadline(
+        async (signal) => {
+          const response = await waitForSignupRead(
+            fetch("/api/auth/signup/phone-availability", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ phone }),
+              signal,
+            }),
+            signal,
+          );
+          const payload = (await waitForSignupRead(
+            response.json(),
+            signal,
+          )) as {
+            data?: { result?: string };
+          };
+          return { response, payload };
+        },
         controller,
       );
       if (!alive.current || phoneRequest.current !== requestId) return;
+      const result = payload.data?.result;
+      if (!response.ok || !result) {
+        setPhoneAvailability("error");
+        return;
+      }
       if (result === "AVAILABLE") setPhoneAvailability("available");
       else if (result === "UNAVAILABLE") setPhoneAvailability("unavailable");
       else if (result === "INVALID") setPhoneAvailability("invalid");
@@ -158,9 +247,8 @@ export function SignupForm() {
     <form
       className={styles.form}
       data-signup-form="reference-bands"
-      action={action}
       aria-label="회원가입"
-      onSubmit={preventOfflineAuthSubmission}
+      onSubmit={handleSubmit}
       data-ui-state={
         state.status === "error" || passwordMismatch ? "error" : "loaded"
       }
@@ -670,7 +758,8 @@ export function SignupForm() {
       <AuthSubmitButton
         label="가입하고 시작하기"
         pendingLabel="계정을 만들고 있어요"
-        disabled={passwordMismatch}
+        disabled={isPending || passwordMismatch}
+        pending={isPending}
       />
     </form>
   );
