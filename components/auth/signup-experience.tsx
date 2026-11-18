@@ -34,7 +34,7 @@ export function SignupExperience({ children }: { children?: ReactNode }) {
         </Link>
         <nav className={styles.publicNavigation} aria-label="서비스 메뉴">
           <Link href="/">홈</Link>
-          <Link href="/mining">채굴</Link>
+          <Link href="/workroom">모니터링</Link>
           <Link href="/products">상품</Link>
           <Link href="/wallet">지갑</Link>
           <Link href="/support">고객센터</Link>
@@ -66,7 +66,7 @@ export function SignupExperience({ children }: { children?: ReactNode }) {
           <h2>
             <span>지금 시작하고</span>
             <br />
-            나만의 채굴 여정을
+            나만의 모니터링 여정을
             <br />
             함께하세요.
           </h2>
@@ -82,7 +82,7 @@ export function SignupExperience({ children }: { children?: ReactNode }) {
             <Link href="/how-it-works">
               <PutdukHomeIcon name="coins" size={30} />
               <span>
-                <small>첫 채굴 안내</small>
+                <small>첫 모니터링 안내</small>
                 <strong>이용 방법 보기</strong>
               </span>
             </Link>

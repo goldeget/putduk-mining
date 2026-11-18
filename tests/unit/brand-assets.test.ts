@@ -150,7 +150,7 @@ const miningProfiles = [
     reviewScope:
       "User-delegated 2026-10-06 exact Mining a02-m00004 (duplicate a02-m00011) reconstruction: portrait navy semiconductor factory, memory tower, circular wafer, two robot arms and gold beam; complete 941x1671 composition, responsive encoding only, no crop, recoloring or upscale; Mining artwork only, no raster UI or copy, product mapping, actual holdings, mining yield, catalog publication or economic approval.",
     theme: "dark",
-    alt: "짙은 푸른 반도체 공장 안에서 메모리 타워와 원형 웨이퍼, 두 로봇 팔이 빛나는 세로 채굴 장면",
+    alt: "짙은 푸른 반도체 공장 안에서 메모리 타워와 원형 웨이퍼, 두 로봇 팔이 빛나는 세로 모니터링 장면",
   },
   {
     family: "mining-semiconductor-desktop-dark",
@@ -165,7 +165,7 @@ const miningProfiles = [
     reviewScope:
       "User-delegated 2026-10-06 exact Mining a02-m00018 reconstruction: wide navy semiconductor factory, memory tower, circular wafer and two robot arms at the left, clear right space; complete 1983x793 composition, responsive encoding only, no crop, recoloring or upscale; Mining artwork only, no raster UI or copy, product mapping, actual holdings, mining yield, catalog publication or economic approval.",
     theme: "dark",
-    alt: "짙은 푸른 반도체 공장 안에서 메모리 타워와 원형 웨이퍼, 두 로봇 팔이 빛나고 오른쪽이 비워진 넓은 채굴 장면",
+    alt: "짙은 푸른 반도체 공장 안에서 메모리 타워와 원형 웨이퍼, 두 로봇 팔이 빛나고 오른쪽이 비워진 넓은 모니터링 장면",
   },
   {
     family: "mining-semiconductor-desktop-light",
@@ -180,7 +180,7 @@ const miningProfiles = [
     reviewScope:
       "User-delegated 2026-10-06 exact Mining a02-m00032 reconstruction: wide white semiconductor factory, memory tower, circular wafer and two robot arms at the left, clear right space; complete 1983x793 composition, responsive encoding only, no crop, recoloring or upscale; Mining artwork only, no raster UI or copy, product mapping, actual holdings, mining yield, catalog publication or economic approval. Mobile Light reuse is responsive adaptation; no supplied Mobile Light reference acceptance.",
     theme: "light",
-    alt: "밝은 유리 반도체 공장 안에서 메모리 타워와 원형 웨이퍼, 두 로봇 팔이 빛나고 오른쪽이 비워진 넓은 채굴 장면",
+    alt: "밝은 유리 반도체 공장 안에서 메모리 타워와 원형 웨이퍼, 두 로봇 팔이 빛나고 오른쪽이 비워진 넓은 모니터링 장면",
   },
 ] as const;
 const miningPaths = new Set<string>(

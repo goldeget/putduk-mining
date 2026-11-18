@@ -8,16 +8,10 @@ const USER_ORIGIN = "http://127.0.0.1:3000";
 registerProtectedTypographyMatrix([
   { name: "user-home", origin: USER_ORIGIN, pathname: "/home", url: "/home" },
   {
-    name: "user-start",
+    name: "user-workroom",
     origin: USER_ORIGIN,
-    pathname: "/start",
-    url: "/start",
-  },
-  {
-    name: "user-mining",
-    origin: USER_ORIGIN,
-    pathname: "/mining",
-    url: "/mining",
+    pathname: "/workroom",
+    url: "/workroom",
   },
   {
     name: "user-events",

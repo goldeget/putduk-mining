@@ -11,7 +11,7 @@ import "./admin-workspace.css";
 
 export const metadata: Metadata = {
   title: { default: "WORKROOM | 운영자", template: "%s | WORKROOM ADMIN" },
-  description: "WORKROOM 무료 모의 체험 운영 콘솔",
+  description: "WORKROOM 모니터링 운영 콘솔",
   robots: { index: false, follow: false, nocache: true },
   icons: WORKROOM_METADATA_ICONS,
   manifest: "/manifest.webmanifest",

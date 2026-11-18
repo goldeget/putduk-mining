@@ -145,8 +145,8 @@ describe("회원 AI 본문 가림", () => {
   });
 
   it("일반 질문과 비밀번호라는 단어만 있는 문장은 그대로 둔다", () => {
-    expect(redactMemberTranscript("오늘 채굴은 어떻게 보나요?")).toBe(
-      "오늘 채굴은 어떻게 보나요?",
+    expect(redactMemberTranscript("오늘 모니터링은 어떻게 보나요?")).toBe(
+      "오늘 모니터링은 어떻게 보나요?",
     );
     expect(redactMemberTranscript("비밀번호는 무엇인가요")).toBe(
       "비밀번호는 무엇인가요",
@@ -216,7 +216,7 @@ describe("회원 본인 대화 저장", () => {
 
   it("비밀값 원문과 도구 결과 본문을 도구 행에 남기지 않고 같은 질문 id는 한 번만 남긴다", async () => {
     const memory = createMemoryPort();
-    const question = "비밀번호는 hunter2 입니다. 채굴은 어떻게 보나요";
+    const question = "비밀번호는 hunter2 입니다. 모니터링은 어떻게 보나요";
     const answer = "확정 잔액은 98000원입니다.";
     const input = {
       answer,
@@ -443,7 +443,7 @@ describe("회원 AI 요청 경계", () => {
       instructions: "한국어로 답하세요.",
       maxOutputTokens: 100,
       model: "low-cost",
-      question: "채굴은 앱을 닫아도 이어지나요",
+      question: "모니터링은 앱을 닫아도 이어지나요",
     });
     expect(buildMemberProviderRequestBody).toHaveLength(1);
     expect(body.input).toHaveLength(1);
@@ -453,7 +453,7 @@ describe("회원 AI 요청 경계", () => {
       JSON.stringify([
         {
           content: [
-            { text: "채굴은 앱을 닫아도 이어지나요", type: "input_text" },
+            { text: "모니터링은 앱을 닫아도 이어지나요", type: "input_text" },
           ],
           role: "user",
         },

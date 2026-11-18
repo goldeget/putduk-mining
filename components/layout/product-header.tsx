@@ -1,7 +1,6 @@
 import Link from "next/link";
 
 import { BrandMark } from "@/components/brand/brand-mark";
-import { MiningBrandSymbol } from "@/components/product/mining-brand-symbol";
 import { PutdukIcon } from "@/components/icons/putduk-icon";
 import { PutdukHomeIcon } from "@/components/icons/putduk-home-icon";
 import { ThemeControl } from "@/components/system/theme-control";
@@ -10,10 +9,10 @@ import { WalletDesktopHeader, WalletMobileTools } from "./wallet-chrome";
 
 import styles from "./product-shell.module.css";
 
-/** SIMPLIFIED_TRACK: 홈 · 채굴 · 지갑 · 더보기 — 상품/이벤트/AI는 peer CTA 아님. */
+/** SIMPLIFIED_TRACK: 홈 · 모니터링 · 지갑 · 더보기 */
 const homeTopLinks = [
   { href: "/home", label: "홈", icon: "home" },
-  { href: "/mining", label: "채굴", icon: "coins" },
+  { href: "/workroom", label: "모니터링", icon: "chart" },
   { href: "/wallet", label: "지갑", icon: "wallet" },
   { href: "/menu", label: "더보기", icon: "more" },
 ] as const;
@@ -81,10 +80,10 @@ export function ProductHeader({
       >
         {home ? (
           <>
-            <MiningBrandSymbol />
+            <BrandMark title="" />
             <span className={styles.homeWordmark}>
               <strong>WORKROOM</strong>
-              <small>프리미엄 채굴 플랫폼</small>
+              <small>모니터링 플랫폼</small>
             </span>
           </>
         ) : (

@@ -3,12 +3,12 @@ export function legacyWorkroomDestination(pathname: string): string | null {
   if (pathname === "/wallet/withdraw") return "/workroom/cash/withdraw";
   if (pathname === "/wallet/deposit") return "/workroom/cash/deposit";
   if (pathname === "/wallet") return "/workroom/cash";
+  if (pathname === "/workroom" || pathname.startsWith("/workroom/")) {
+    return null;
+  }
   if (
     [
       "/home",
-      "/start",
-      "/mining",
-      "/products",
       "/ai",
       "/menu/ai",
       "/events",

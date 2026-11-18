@@ -147,7 +147,7 @@ test("menu hub, account, and settings cover states and navigation", async ({
   await expect(primaryNavigation).toHaveCount(1);
   await expect(primaryNavigation.getByRole("link")).toHaveText([
     "홈",
-    "채굴",
+    "모니터링",
     "상품",
     "지갑",
     "더보기",

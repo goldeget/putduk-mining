@@ -25,6 +25,7 @@ import { requirePageUser } from "@/lib/auth/session";
 
 export default async function EventsPage() {
   const identity = await requirePageUser("/events");
+  if (!identity) return null;
   const nowIso = new Date().toISOString();
   const [
     { data: eventsData, error: eventsError },

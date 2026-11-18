@@ -304,8 +304,6 @@ describe("Wallet native onError recovery", () => {
           ledgerState: "ready",
           receiptState: "empty",
           receipts: [],
-          trialRewardAtomic: "0",
-          trialState: "empty",
         }),
       ),
     );

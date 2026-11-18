@@ -71,7 +71,7 @@ test("real admin policy lifecycle preserves exact values, source boundaries and 
   });
   await page.goto(`${ADMIN_ORIGIN}/economy`);
   await expect(
-    page.getByRole("heading", { level: 1, name: "채굴 정책" }),
+    page.getByRole("heading", { level: 1, name: "모니터링 정책" }),
   ).toBeVisible();
   await expect(
     page.getByText("정책 발행과 실제 정산은 별개입니다"),

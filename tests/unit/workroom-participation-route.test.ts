@@ -45,8 +45,8 @@ describe("completed result route retains original owner/read boundary", () => {
       p_request_key: null,
       p_input: { roundId: round },
     });
-    expect(element.type).toBe(ParticipationResult);
-    expect(element.props.result).toEqual(result);
+    expect(element!.type).toBe(ParticipationResult);
+    expect(element!.props.result).toEqual(result);
   });
   it.each(["bad-id", [round, round]])(
     "rejects an invalid or ambiguous deep link before reading private state",
@@ -75,8 +75,8 @@ describe("completed result route retains original owner/read boundary", () => {
     async (response) => {
       state.rpc.mockResolvedValue(response);
       const element = await Page({ searchParams: Promise.resolve({ round }) });
-      expect(element.type).toBe(ParticipationResultError);
-      expect(element.props.retryHref).toBe(`/workroom/history?round=${round}`);
+      expect(element!.type).toBe(ParticipationResultError);
+      expect(element!.props.retryHref).toBe(`/workroom/history?round=${round}`);
     },
   );
 });

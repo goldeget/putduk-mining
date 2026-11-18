@@ -145,7 +145,7 @@ export async function readRenderedPresentationHealth(page: Page) {
     }));
     const visibleBrandPlacementsMissingCanonical = Array.from(
       document.querySelectorAll(
-        'header a[aria-label="퍼뜩 채굴 홈"], header .brand-lockup, .control-rail .brand-lockup',
+        'header a[aria-label="퍼뜩 모니터링 홈"], header .brand-lockup, .control-rail .brand-lockup',
       ),
     )
       .filter(rendered)

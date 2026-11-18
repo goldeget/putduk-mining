@@ -23,7 +23,7 @@ const PROMPT_INJECTION_PATTERN =
   /(이전|위의?|앞선)\s*(지시|명령|규칙).*(무시|잊어|폐기)|ignore\s+(all\s+)?(previous|prior|above)\s+(instructions|rules)|developer\s*message|system\s*message|jailbreak|탈옥|숨겨진\s*(지시|추론)|정책을?\s*(우회|무시)|프롬프트\s*인젝션/i;
 
 const CROSS_USER_PATTERN =
-  /(다른\s*(사람|회원|사용자)|타인|남의|전체\s*회원|모든\s*(회원|사용자)).*(계정|개인정보|정보|잔액|지갑|원장|입금|출금|kyc|인증|대화|채굴|보상|이벤트|알림)|((계정|개인정보|잔액|지갑|원장|입금|출금|kyc|대화).*(다른\s*(사람|회원|사용자)|타인|남의))|(?:other|all|every)\s+(?:member|user|customer|people)s?.{0,80}(?:data|account|balance|wallet|ledger|withdrawal|deposit|kyc|conversation|chat|message|reward)|(?:data|account|balance|wallet|ledger|conversation|chat|message).{0,80}(?:other|all|every)\s+(?:member|user|customer|people)s?/i;
+  /(다른\s*(사람|회원|사용자)|타인|남의|전체\s*회원|모든\s*(회원|사용자)).*(계정|개인정보|정보|잔액|지갑|원장|입금|출금|kyc|인증|대화|모니터링|보상|이벤트|알림)|((계정|개인정보|잔액|지갑|원장|입금|출금|kyc|대화).*(다른\s*(사람|회원|사용자)|타인|남의))|(?:other|all|every)\s+(?:member|user|customer|people)s?.{0,80}(?:data|account|balance|wallet|ledger|withdrawal|deposit|kyc|conversation|chat|message|reward)|(?:data|account|balance|wallet|ledger|conversation|chat|message).{0,80}(?:other|all|every)\s+(?:member|user|customer|people)s?/i;
 
 const PRIVILEGE_PATTERN =
   /(관리자|어드민|admin|운영자).*(권한|역할|role|승격|부여|접근|로그인|세션).*(줘|해|만들|우회|탈취|가져|얻|획득)|권한\s*(상승|에스컬레이션)|관리자\s*사칭/i;
@@ -35,7 +35,7 @@ const ABUSE_ACTION_PATTERN =
   /(우회|회피|피해|뚫|속이|조작|파밍|무한\s*반복|중복\s*(수령|지급)|탐지를?\s*숨기|기기\s*초기화|차단.{0,16}해제|안\s*걸리)/i;
 
 const ACTION_TARGET_PATTERN =
-  /(잔액|원장|입금|출금|채굴\s*결과|보상|경제\s*규칙|관리자|권한|kyc|본인\s*인증|추천\s*보상|이벤트\s*보상|차단)/i;
+  /(잔액|원장|입금|출금|모니터링\s*결과|보상|경제\s*규칙|관리자|권한|kyc|본인\s*인증|추천\s*보상|이벤트\s*보상|차단)/i;
 const ACTION_REQUEST_PATTERN =
   /(승인해|변경해|추가해|지급해|생성해|만들어\s*줘|올려\s*줘|취소해|삭제해|조작(해|하는\s*(법|방법))|변조|위조|우회|풀어\s*줘|통과시켜)/i;
 

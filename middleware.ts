@@ -1,0 +1,53 @@
+import { NextResponse, type NextRequest } from "next/server";
+
+import { updateSupabaseSession } from "@/lib/supabase/proxy";
+import {
+  canonicalWorkroomRedirect,
+  isMemberSessionPath,
+} from "@/lib/workroom/domains";
+import {
+  legacyWorkroomDestination,
+  isRetiredWorkroomMutation,
+} from "@/lib/workroom/retirement";
+
+export async function middleware(request: NextRequest) {
+  const canonical = canonicalWorkroomRedirect(
+    request.url,
+    request.method,
+    "member",
+  );
+  if (canonical)
+    return NextResponse.redirect(canonical, {
+      status: 308,
+      headers: { "Cache-Control": "no-store" },
+    });
+  if (isRetiredWorkroomMutation(request.nextUrl.pathname, request.method)) {
+    return NextResponse.json(
+      {
+        error: {
+          code: "LEGACY_PRODUCT_RETIRED",
+          message:
+            "이전 서비스의 신규 체험과 모니터링은 종료되었습니다. 워크룸을 이용해 주세요.",
+        },
+      },
+      { status: 410, headers: { "Cache-Control": "no-store" } },
+    );
+  }
+  const destination = legacyWorkroomDestination(request.nextUrl.pathname);
+  if (destination && ["GET", "HEAD"].includes(request.method)) {
+    const url = request.nextUrl.clone();
+    url.pathname = destination;
+    url.search = "";
+    return NextResponse.redirect(url);
+  }
+  const isSessionPath = isMemberSessionPath(request.nextUrl.pathname);
+  const result = isSessionPath
+    ? await updateSupabaseSession(request)
+    : NextResponse.next();
+  result.headers.set("X-Proxy-Run", isSessionPath ? "session" : "passthrough");
+  return result;
+}
+
+export const config = {
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+};

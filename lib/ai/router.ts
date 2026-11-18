@@ -65,9 +65,9 @@ const TOOL_RULES: readonly ToolRule[] = [
   },
   {
     pattern:
-      /((오늘|금일).*(채굴|마이닝).*(얼마|보상|수익|결과)|(오늘|금일).*(얼마|보상|수익|받은).*(채굴|마이닝)|(채굴|마이닝).*(오늘|금일).*(얼마|보상|수익|결과)|오늘\s*얼마\s*캐)/i,
-    routeKey: "account_today_mining_reward",
-    tool: "mining.today_reward",
+      /((오늘|금일).*(모니터링).*(얼마|보상|수익|결과)|(오늘|금일).*(얼마|보상|수익|받은).*(모니터링)|오늘\s*(모니터링|수익).*(얼마|결과))/i,
+    routeKey: "account_today_monitoring_reward",
+    tool: "wallet.summary",
   },
   {
     pattern:
@@ -101,15 +101,9 @@ const TOOL_RULES: readonly ToolRule[] = [
   },
   {
     pattern:
-      /((내\s*)?(채굴|마이닝).*(중|상태|돌아|작동|진행)|(채굴|마이닝)\s*(중이야|되고\s*있어)|(?:내|나의|제\s).*(?:채굴\s*상품|상품\s*이용\s*자격|등급).*(?:목록|확인|알려|자격))/i,
-    routeKey: "account_mining_status",
-    tool: "mining.status",
-  },
-  {
-    pattern:
-      /((내\s*)?(putduk\s*start|퍼뜩\s*start|퍼뜩\s*스타트|체험).*(상태|진행|완료|얼마|남|어디)|(스타트|체험)\s*(어디까지|끝났어))/i,
-    routeKey: "account_trial_status",
-    tool: "trial.status",
+      /((내\s*)?(모니터링).*(중|상태|진행|활성)|모니터링\s*(중이야|되고\s*있어)|(?:내|나의|제\s).*(?:모니터링).*(?:목록|확인|알려|상태))/i,
+    routeKey: "account_monitoring_status",
+    tool: "wallet.summary",
   },
   {
     pattern:
@@ -153,7 +147,7 @@ const STATIC_RULES: readonly StaticRule[] = [
   },
   {
     routeKey: "settlement_authority",
-    pattern: /(채굴|정산).*(시간|계산|규칙|기준|서버)/i,
+    pattern: /(모니터링|채굴|정산).*(시간|계산|규칙|기준|서버)/i,
     factKeys: ["SETTLEMENT_AUTHORITY"],
   },
   {
@@ -171,7 +165,7 @@ const STATIC_RULES: readonly StaticRule[] = [
 const COMPLEX_ANALYSIS_PATTERN =
   /(비교|분석|장단점|관점|근거별|단계별|종합|요약.*여러|왜.*어떻게)/i;
 const PUTDUK_TOPIC_PATTERN =
-  /(putduk|퍼뜩|채굴|마이닝|월드|지갑|입금|출금|정산|체험|이벤트|추천|kyc|본인\s*인증)/i;
+  /(putduk|퍼뜩|모니터링|채굴|마이닝|월드|지갑|입금|출금|정산|체험|이벤트|추천|kyc|본인\s*인증)/i;
 const UI_HELP_PATTERN =
   /(이\s*화면|여기서|현재\s*화면).*(어떻게|뭐|무엇|어디|할\s*수)/i;
 const AMBIGUOUS_FOLLOW_UP_PATTERN =
@@ -207,7 +201,7 @@ export function routeAiQuestion(
   if (AMBIGUOUS_ACCOUNT_REWARD_PATTERN.test(normalized)) {
     return {
       answer:
-        "어떤 보상을 확인할지 선택해 주세요. 오늘의 채굴 보상, WORKROOM 체험, 친구 초대 또는 이벤트 보상 중 하나를 함께 적어 주세요.",
+        "어떤 수익을 확인할지 선택해 주세요. 오늘의 모니터링 수익, WORKROOM 체험, 친구 초대 또는 이벤트 보상 중 하나를 함께 적어 주세요.",
       classification: "CLARIFICATION",
       kind: "static",
       routeKey: "clarify_account_reward_source",
@@ -244,7 +238,7 @@ export function routeAiQuestion(
   if (AMBIGUOUS_FOLLOW_UP_PATTERN.test(normalized)) {
     return {
       answer:
-        "어떤 항목을 말씀하시는지 확인이 필요합니다. 입금, 출금, 채굴, 이벤트 또는 본인 인증 중 하나를 함께 적어 주세요.",
+        "어떤 항목을 말씀하시는지 확인이 필요합니다. 입금, 출금, 모니터링, 이벤트 또는 본인 인증 중 하나를 함께 적어 주세요.",
       classification: "CLARIFICATION",
       kind: "static",
       routeKey: "clarify_ambiguous_follow_up",

@@ -1,7 +1,7 @@
-import {
-  formatMiningMicroKrw,
-  type MiningServerDisplay,
-} from "@/lib/product/mining-server-display";
+/**
+ * Wallet funding display for the monitoring platform.
+ * Shows the monitoring balance breakdown from workroom_accounts.
+ */
 
 export type WalletFundingRow = {
   label: string;
@@ -10,37 +10,37 @@ export type WalletFundingRow = {
 };
 
 export type WalletFundingView =
-  { state: "empty" } | { state: "ready"; rows: WalletFundingRow[] };
+  | { state: "empty" }
+  | { state: "ready"; rows: WalletFundingRow[] };
 
 /**
- * 서버가 이미 나눠 준 표시값만 지갑 문구로 바꾼다.
- * 인정 원금, 정산 전 대기 수익, 미확정 금액은 더하지 않는다.
+ * Present the monitoring balance as wallet funding rows.
+ * The balance comes from workroom_accounts (signup bonus + deposits + profits).
  */
-export function presentWalletServerDisplay(
-  input: MiningServerDisplay,
+export function presentWalletFundingView(
+  balanceKrw: string | null,
+  signupBonusKrw: string | null,
+  bonusRecovered: boolean,
 ): WalletFundingView {
-  if (!input.available) {
+  if (balanceKrw === null) {
     return { state: "empty" };
   }
 
-  return {
-    state: "ready",
-    rows: [
-      {
-        label: "인정 원금",
-        tone: "separate",
-        value: formatMiningMicroKrw(input.eligible_principal_micro_krw),
-      },
-      {
-        label: "정산 전 대기 수익",
-        tone: "separate",
-        value: formatMiningMicroKrw(input.pending_micro_krw),
-      },
-      {
-        label: "아직 확정 전",
-        tone: "unconfirmed",
-        value: formatMiningMicroKrw(input.retention_unconfirmed_micro_krw),
-      },
-    ],
-  };
+  const rows: WalletFundingRow[] = [
+    {
+      label: "모니터링 잔액",
+      tone: "separate" as const,
+      value: `${Number(balanceKrw).toLocaleString("ko-KR")}원`,
+    },
+  ];
+
+  if (signupBonusKrw && !bonusRecovered) {
+    rows.push({
+      label: "가입 충전금",
+      tone: "separate" as const,
+      value: `${Number(signupBonusKrw).toLocaleString("ko-KR")}원`,
+    });
+  }
+
+  return { state: "ready", rows };
 }

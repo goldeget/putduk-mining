@@ -649,8 +649,8 @@
   position: absolute;
   top: -5px;
   right: -6px;
-  background: #73efc3;
-  color: #0a3327;
+  background: var(--wr-accent, #73efc3);
+  color: var(--wr-action-text, #0a3327);
   min-width: 19px;
   height: 19px;
   display: grid;
@@ -665,8 +665,8 @@
   top: -3px;
   right: -3px;
   border-radius: 50%;
-  background: #ffdcac;
-  color: #5d3714;
+  background: var(--wr-warning, #ffdcac);
+  color: var(--wr-warning-bg, #5d3714);
   width: 16px;
   height: 16px;
   text-align: center;

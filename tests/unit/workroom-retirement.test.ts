@@ -38,14 +38,9 @@ describe("WORKROOM replacement boundaries", () => {
     expect(retiredAdminWorkroomDestination("/withdrawals/krw-bank")).toBeNull();
   });
   it("replaces old mining entry links without matching unrelated paths", () => {
-    for (const p of [
-      "/home",
-      "/start",
-      "/mining",
-      "/products",
-      "/products/allocation",
-    ])
+    for (const p of ["/home", "/ai", "/menu/ai", "/events"])
       expect(legacyWorkroomDestination(p)).toBe("/workroom");
+    expect(legacyWorkroomDestination("/workroom")).toBeNull();
     expect(legacyWorkroomDestination("/wallet/deposit")).toBe(
       "/workroom/cash/deposit",
     );

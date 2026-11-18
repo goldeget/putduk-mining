@@ -120,14 +120,14 @@ export function CashSeparation({
     <aside className={styles.separation}>
       <PutdukIcon name="shield" size={20} />
       <p>
-        <strong>실제 잔액과 체험 포인트는 별도로 관리됩니다.</strong>
+        <strong>모니터링 기록과 실제 잔액은 별도로 관리됩니다.</strong>
         <span>
-          모의거래 결과와 체험 포인트는 입출금 잔액에 포함되지 않습니다.
+          모니터링 업무 기록과 입출금 잔액은 서로 분리해 확인합니다.
         </span>
       </p>
       {showPointsLink && (
         <Link href="/workroom/points">
-          체험 포인트 <span aria-hidden="true">↗</span>
+          모니터링 기록 <span aria-hidden="true">↗</span>
         </Link>
       )}
     </aside>

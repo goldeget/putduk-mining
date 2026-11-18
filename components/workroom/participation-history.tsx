@@ -17,7 +17,7 @@ type CompletedParticipation = Pick<
   closedAt: number;
   status: "completed";
 };
-const points = (value: number) => `${value.toLocaleString("ko-KR")} P`;
+const points = (value: number) => `${value.toLocaleString("ko-KR")}원`;
 const signedPoints = (value: number) =>
   `${value > 0 ? "+" : ""}${points(value === 0 ? 0 : value)}`;
 const outcome = (value: number) =>
@@ -38,9 +38,9 @@ function Disclosure() {
     <p className={styles.disclosure}>
       <PutdukIcon name="event" size={18} aria-hidden="true" />
       <span>
-        무료 모의 참여 결과예요.
+        모니터링 업무 기록을 확인해요.
         <br />
-        체험 포인트는 현금으로 전환하거나 출금할 수 없어요.
+        결과와 실제 입출금 잔액은 분리해 관리해요.
       </span>
     </p>
   );
@@ -62,7 +62,7 @@ export function ParticipationResult({
         <div>
           <span className={styles.eyebrow}>WORKROOM · 참여 기록</span>
           <h1 id="round-result-title">참여 결과</h1>
-          <p>서버에서 확정한 모의 참여 결과를 확인하세요.</p>
+          <p>서버에서 확정한 모니터링 업무 결과를 확인하세요.</p>
         </div>
         <span className={styles.complete}>참여 완료</span>
       </header>
@@ -73,7 +73,7 @@ export function ParticipationResult({
               {item?.symbol.slice(0, 1) ?? "W"}
             </span>
             <div>
-              <span>{item?.categoryName ?? "모의 참여"}</span>
+              <span>{item?.categoryName ?? "모니터링 업무"}</span>
               <h2>{item?.name ?? result.instrument}</h2>
               <small>{item?.symbol ?? result.instrument}</small>
             </div>
@@ -83,10 +83,10 @@ export function ParticipationResult({
           </time>
         </div>
         <div className={styles.hero}>
-          <span>확정 종료 포인트</span>
+          <span>확정 종료 금액</span>
           <strong>
             {result.returned.toLocaleString("ko-KR")}
-            <small>P</small>
+            <small>원</small>
           </strong>
           <span className={styles.outcome} data-tone={tone(result.profit)}>
             {outcome(result.profit)} <b>{signedPoints(result.profit)}</b>
@@ -94,17 +94,17 @@ export function ParticipationResult({
         </div>
         <dl className={styles.metrics}>
           <div data-result-field="stake">
-            <dt>참여 포인트</dt>
+            <dt>참여 금액</dt>
             <dd>{points(result.stake)}</dd>
-            <dd className={styles.metricHelp}>시작할 때 사용한 포인트</dd>
+            <dd className={styles.metricHelp}>시작할 때 사용한 금액</dd>
           </div>
           <div data-result-field="returned">
-            <dt>종료 포인트</dt>
+            <dt>종료 금액</dt>
             <dd>{points(result.returned)}</dd>
-            <dd className={styles.metricHelp}>참여 종료 후 돌아온 포인트</dd>
+            <dd className={styles.metricHelp}>참여 종료 후 돌아온 금액</dd>
           </div>
           <div data-result-field="profit" data-tone={tone(result.profit)}>
-            <dt>포인트 변동</dt>
+            <dt>금액 변동</dt>
             <dd>{signedPoints(result.profit)}</dd>
             <dd className={styles.metricHelp}>{outcome(result.profit)}</dd>
           </div>
@@ -204,7 +204,7 @@ export function ParticipationHistory({
         <div>
           <span className={styles.eyebrow}>WORKROOM · 참여 기록</span>
           <h1 id="participation-history-title">참여 내역</h1>
-          <p>완료된 모의 참여와 서버에서 확정한 결과입니다.</p>
+          <p>완료된 모니터링 업무와 서버에서 확정한 결과입니다.</p>
         </div>
         <Link className={styles.secondary} href="/workroom">
           내 워크룸{" "}
@@ -220,7 +220,7 @@ export function ParticipationHistory({
           </dd>
         </div>
         <div data-tone={tone(change)}>
-          <dt>표시된 기록 포인트 변동</dt>
+          <dt>표시된 기록 금액 변동</dt>
           <dd>{signedPoints(change)}</dd>
         </div>
         <div>
@@ -258,9 +258,9 @@ export function ParticipationHistory({
               <thead role="rowgroup">
                 <tr role="row">
                   <th scope="col">참여 항목 · 종료 일시</th>
-                  <th scope="col">참여 포인트</th>
-                  <th scope="col">종료 포인트</th>
-                  <th scope="col">포인트 변동</th>
+                  <th scope="col">참여 금액</th>
+                  <th scope="col">종료 금액</th>
+                  <th scope="col">금액 변동</th>
                   <th scope="col">
                     <span className={styles.srOnly}>결과 확인</span>
                   </th>
@@ -278,7 +278,7 @@ export function ParticipationHistory({
                     <tr key={row.id} role="row">
                       <td className={styles.rowIdentity} role="cell">
                         <span className={styles.rowCategory}>
-                          {item?.categoryName ?? "모의 참여"}
+                          {item?.categoryName ?? "모니터링 업무"}
                         </span>
                         <strong>{item?.name ?? row.instrument}</strong>
                         <span className={styles.rowStatus}>
@@ -296,14 +296,14 @@ export function ParticipationHistory({
                           <span className={styles.rowTime}>종료 전</span>
                         )}
                       </td>
-                      <td data-label="참여 포인트" role="cell">
+                      <td data-label="참여 금액" role="cell">
                         {points(row.stake)}
                       </td>
-                      <td data-label="종료 포인트" role="cell">
+                      <td data-label="종료 금액" role="cell">
                         {confirmed ? points(row.returned!) : "확인 중"}
                       </td>
                       <td
-                        data-label="포인트 변동"
+                        data-label="금액 변동"
                         role="cell"
                         data-tone={confirmed ? tone(row.profit!) : "neutral"}
                       >
@@ -346,7 +346,7 @@ export function ParticipationHistory({
             </span>
             <h3>아직 완료된 참여가 없어요</h3>
             <p>
-              첫 번째 모의 참여를 마치면
+              첫 번째 모니터링 업무를 마치면
               <br />
               확정된 결과를 이곳에서 확인할 수 있어요.
             </p>
@@ -372,7 +372,7 @@ export function ParticipationPointsLedger({
       aria-labelledby="points-history-title"
     >
       <div className={styles.sectionHeading}>
-        <h2 id="points-history-title">최근 포인트 내역</h2>
+        <h2 id="points-history-title">최근 모니터링 잔액 내역</h2>
         <span>{rows.length.toLocaleString("ko-KR")}건</span>
       </div>
       {rows.length ? (
@@ -382,7 +382,7 @@ export function ParticipationPointsLedger({
             role="table"
           >
             <caption>
-              서버에 기록된 체험 포인트 내역. 시간은 한국 기준입니다.
+              서버에 기록된 모니터링 내역. 시간은 한국 기준입니다.
             </caption>
             <thead role="rowgroup">
               <tr role="row">
@@ -431,9 +431,9 @@ export function ParticipationPointsLedger({
           <span className={styles.emptyIcon} aria-hidden="true">
             ≡
           </span>
-          <h3>포인트 내역이 없습니다.</h3>
+          <h3>모니터링 잔액 내역이 없습니다.</h3>
           <p>
-            체험 포인트가 변동되면
+            모니터링 잔액이 변동되면
             <br />
             서버에 기록된 내역을 이곳에서 확인할 수 있어요.
           </p>

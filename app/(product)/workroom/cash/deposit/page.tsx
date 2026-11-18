@@ -18,6 +18,7 @@ import {
 export const dynamic = "force-dynamic";
 export default async function CashDepositPage() {
   const identity = await requirePageUser("/workroom/cash/deposit");
+  if (!identity) return null;
   const krw = await readKrwDepositSettings(identity.supabase);
   const [history, instructionRead] = await Promise.all([
     identity.supabase

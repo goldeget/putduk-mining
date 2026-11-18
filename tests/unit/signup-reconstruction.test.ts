@@ -107,7 +107,7 @@ describe("WORKROOM signup hierarchy and protected form behavior", () => {
     );
     expect(host.querySelector('button[aria-label="Google 로그인"]')).toBeNull();
     expect(host.textContent).not.toMatch(
-      /채굴|MINING|PUTDUK START|ChatGPT|₩|54,281|5,000,000,000|VIP|휴대폰 인증|SMS/,
+      /모니터링|MINING|PUTDUK START|ChatGPT|₩|54,281|5,000,000,000|VIP|휴대폰 인증|SMS/,
     );
   });
   it("keeps native account field constraints, help associations, code and required consents", async () => {
@@ -287,7 +287,7 @@ describe("Image-independent WORKROOM identity and responsive form preservation",
       expect(input("signup-referral-code").value).toBe("RETAIN-CODE");
       expect(acknowledgement().checked).toBe(true);
       expect(host.querySelectorAll("h1")).toHaveLength(1);
-      expect(host.textContent).not.toMatch(/채굴|PUTDUK START|MINING|ChatGPT/);
+      expect(host.textContent).not.toMatch(/모니터링|PUTDUK START|MINING|ChatGPT/);
     },
   );
 });

@@ -1,7 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { describe, expect, it, vi } from "vitest";
 import { executeAiTool } from "@/lib/ai/tool-executor";
-import { ownedPrincipalCancellationFacts } from "@/lib/ai/owned-state-tools";
 import { routeAiQuestion } from "@/lib/ai/router";
 const owner = "00000000-0000-4000-8000-000000000001";
 const other = "00000000-0000-4000-8000-000000000002";
@@ -225,100 +224,6 @@ describe("verified own AI tools safe facts", () => {
     expect(result.ok).toBe(true);
     expect(result.answer).toContain("1개");
     expect(member.traces.map((t) => t.table)).toEqual(["ai_requests"]);
-  });
-  it("uses approved tier/principal and clearly refuses to convert allocation to entitlement", async () => {
-    const member = client({});
-    harness.display = {
-      available: true,
-      eligible_principal_micro_krw: "100000000",
-      tier_code: "TIER_1",
-      tier_activated: false,
-      cycle_started_at: null,
-      cycle_end: null,
-      effective_capacity_micro_krw: null,
-      remaining_capacity_micro_krw: null,
-      used_capacity_micro_krw: null,
-      speed_multiplier_bps: null,
-      pending_micro_krw: null,
-      retention_unconfirmed_micro_krw: null,
-    };
-    harness.binding = {
-      state: "ready",
-      products: [{ nameKo: "공식 선택 상품" }],
-    };
-    const result = await executeAiTool(member.port, "mining.status", {
-      verifiedIdentity: { supabase: member.port, userId: owner },
-    });
-    expect(result.ok).toBe(true);
-    expect(result.answer).toContain("100원");
-    expect(result.answer).toContain("TIER_1");
-    expect(result.answer).toContain("적용 전");
-    expect(result.answer).toContain(
-      "이용 자격이나 현재 채굴 실행을 확정할 수는 없어요",
-    );
-    expect(result.answer).not.toMatch(
-      /allocation_bps|speed_multiplier|reward_carry|product_multiplier/,
-    );
-  });
-  it("proves principal cancelled status only with matching immutable allocation and release", async () => {
-    const hold = "00000000-0000-4000-8000-000000000003",
-      release = "00000000-0000-4000-8000-000000000004";
-    const member = client({
-      withdrawal_requests: [
-        {
-          user_id: owner,
-          status: "CANCELLED",
-          hold_ledger_transaction_id: hold,
-          release_ledger_transaction_id: release,
-          hold_released_at: timestamp,
-        },
-      ],
-    });
-    const admin = client({
-      funding_principal_recovery_allocations: [
-        {
-          user_id: owner,
-          hold_ledger_transaction_id: hold,
-          effective_at: timestamp,
-        },
-      ],
-      funding_principal_recovery_releases: [
-        {
-          user_id: owner,
-          hold_ledger_transaction_id: hold,
-          release_ledger_transaction_id: release,
-          effective_at: timestamp,
-        },
-      ],
-    });
-    harness.admin = admin.port;
-    const answer = await ownedPrincipalCancellationFacts({
-      supabase: member.port,
-      userId: owner,
-    });
-    expect(answer).toContain("일치하는 요청은 1개");
-    expect(answer).not.toContain(hold);
-    expect(answer).not.toContain(release);
-    expect(
-      admin.traces.every((t) =>
-        t.filters.some(([k, v]) => k === "user_id" && v === owner),
-      ),
-    ).toBe(true);
-    harness.admin = client({
-      funding_principal_recovery_allocations: [
-        {
-          user_id: other,
-          hold_ledger_transaction_id: hold,
-          effective_at: timestamp,
-        },
-      ],
-    }).port;
-    expect(
-      await ownedPrincipalCancellationFacts({
-        supabase: member.port,
-        userId: owner,
-      }),
-    ).toContain("일치하는 요청은 0개");
   });
   it.each([
     "내 AI 이용 횟수와 다음 이용 가능 시간을 확인해 주세요.",

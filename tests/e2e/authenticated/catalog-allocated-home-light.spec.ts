@@ -33,7 +33,7 @@ test("fresh allocated home light retains all seven widths and four text scales w
         "simplified-track",
       );
       await expect(
-        homeStatus.getByRole("link", { name: "채굴 중", exact: true }),
+        homeStatus.getByRole("link", { name: "모니터링 중", exact: true }),
       ).toHaveAttribute("href", "/mining");
       await expect(
         homeStatus.getByLabel("사용 가능 원화", { exact: true }),

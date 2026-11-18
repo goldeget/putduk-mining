@@ -38,12 +38,14 @@ export const channelTalkMediaSources = ["https://*.channel.io"] as const;
 export const channelTalkScriptSources = [
   "https://*.channel.io",
   "https://*.sentry-cdn.com",
+  "https://static.cloudflareinsights.com",
 ] as const;
 
 const allowedWildcardHosts = new Set([
   "cdninstagram.com",
   "channel.app",
   "channel.io",
+  "cloudflareinsights.com",
   "desk-ws.channel.io",
   "front-ws.channel.io",
   "sentry-cdn.com",

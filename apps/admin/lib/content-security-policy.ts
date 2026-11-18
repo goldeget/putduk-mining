@@ -30,8 +30,8 @@ export function buildAdminContentSecurityPolicy(input: AdminCspInput) {
     supabaseUrl.startsWith("http://localhost");
   const scriptSource =
     input.nodeEnv === "development"
-      ? "script-src 'self' 'unsafe-inline' 'unsafe-eval'"
-      : "script-src 'self' 'unsafe-inline'";
+      ? "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com"
+      : "script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com";
   const connectSrc = isLocalRuntime
     ? `connect-src 'self' ${localConnectOrigins(input.supabaseUrl)} https://*.supabase.co wss://*.supabase.co`
     : "connect-src 'self' https://*.supabase.co wss://*.supabase.co";

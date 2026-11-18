@@ -8,17 +8,17 @@ import { ThemeControl } from "@/components/system/theme-control";
 
 import styles from "./wallet-chrome.module.css";
 
-/** SIMPLIFIED_TRACK: 홈 · 채굴 · 지갑 · 더보기 — 상품은 peer CTA 아님. */
+/** SIMPLIFIED_TRACK: 홈 · 모니터링 · 지갑 · 더보기 — 상품은 peer CTA 아님. */
 const topLinks = [
   { href: "/home", label: "홈" },
-  { href: "/mining", label: "채굴" },
+  { href: "/workroom", label: "모니터링" },
   { href: "/wallet", label: "지갑" },
   { href: "/menu", label: "더보기" },
 ] as const;
 
 const sidebarLinks = [
   { href: "/home", label: "대시보드", icon: "home" },
-  { href: "/mining", label: "채굴", icon: "coins" },
+  { href: "/workroom", label: "모니터링", icon: "chart" },
   { href: "/wallet", label: "지갑", icon: "wallet" },
   { href: "/menu/account", label: "계정 설정", icon: "account" },
 ] as const;

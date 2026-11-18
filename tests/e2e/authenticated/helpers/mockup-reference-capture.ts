@@ -954,7 +954,7 @@ export async function captureRoutes(
             }
             if (route === "/mining") {
               const hero = ready.getByRole("region", {
-                name: "현재 채굴 현황",
+                name: "현재 모니터링 현황",
                 exact: true,
               });
               await expectPaintedCopyFits(hero, "header > p", "header");
@@ -1000,13 +1000,13 @@ export async function captureRoutes(
                 ),
               ).toBe(true);
               const facts = ready
-                .locator('section[aria-label="채굴 현황"] > dl')
+                .locator('section[aria-label="모니터링 현황"] > dl')
                 .first();
               await expect(facts.locator(":scope > div")).toHaveCount(2);
               // Full Korean labels and exact server amounts must stay inside
               // their own cards when text grows; scrollWidth misses painted text.
               await expectPaintedCopyFits(facts, "dt > span, dd", "dl > div");
-              const tierCopy = ready.getByText("확인된 채굴 원금 기준", {
+              const tierCopy = ready.getByText("확인된 모니터링 원금 기준", {
                 exact: true,
               });
               const tier = tierCopy.locator("..").locator("..");
@@ -1065,11 +1065,11 @@ export async function captureRoutes(
                 exact: true,
               });
               await expect(startAction).toHaveCount(1);
-              await expect(startAction).toHaveAttribute("href", "/start");
+              await expect(startAction).toHaveAttribute("href", "/workroom");
               await expectPaintedCopyFits(
                 hero,
-                'a[href="/start"]',
-                'a[href="/start"]',
+                'a[href="/workroom"]',
+                'a[href="/workroom"]',
               );
               const retryLines = await startAction.evaluate((button) => {
                 const walker = document.createTreeWalker(
@@ -1098,7 +1098,7 @@ export async function captureRoutes(
                 (await startAction.boundingBox())?.height,
               ).toBeGreaterThanOrEqual(44);
               const guide = ready.getByRole("link", {
-                name: /채굴과 지갑 안내/,
+                name: /모니터링과 지갑 안내/,
               });
               await expect(guide).toHaveAttribute("href", "/how-it-works");
               await expectPaintedCopyFits(guide, "strong, small", "a");
@@ -1130,7 +1130,7 @@ export async function captureRoutes(
               expect(guideLines[0]).toBeLessThanOrEqual(2);
               expect(guideLines[1]).toBeGreaterThan(0);
               expect(guideLines[1]).toBeLessThanOrEqual(3);
-              const detailFacts = ready.locator('dl[aria-label="채굴 기간"]');
+              const detailFacts = ready.locator('dl[aria-label="모니터링 기간"]');
               await expectPaintedCopyFits(detailFacts, "dt, dd", "div");
               const detailLines = await paintedTextLineCounts(
                 detailFacts,
@@ -1147,7 +1147,7 @@ export async function captureRoutes(
                 expect(lines).toBeLessThanOrEqual(2);
               }
               const tierLink = tier.getByRole("link", {
-                name: "채굴 상품 보기",
+                name: "모니터링 상품 보기",
               });
               await expect(tierLink).toHaveAttribute("href", "/products");
               expect(
@@ -1201,7 +1201,7 @@ export async function captureRoutes(
               }
               const title = ready.getByRole("heading", {
                 level: 1,
-                name: "퍼뜩 채굴",
+                name: "퍼뜩 모니터링",
               });
               await expect(title).toHaveCount(1);
               const titleBox = await title.boundingBox();
@@ -1526,7 +1526,7 @@ export async function captureRoutes(
                   }),
                 ).toBeVisible();
                 const action = ready.getByRole("link", {
-                  name: "채굴 보기",
+                  name: "모니터링 보기",
                   exact: true,
                 });
                 await expect(action).toHaveCount(1);
@@ -1704,7 +1704,7 @@ export async function captureRoutes(
               ).toBeGreaterThanOrEqual(inputReadability.lineHeight);
               expect(inputReadability.noticeOffset).toBeGreaterThanOrEqual(-1);
               for (const [label, question] of [
-                ["내 채굴 상태", "내 채굴 상태 알려줘"],
+                ["내 모니터링 상태", "내 모니터링 상태 알려줘"],
                 ["출금 준비", "첫 출금은 어떻게 준비하나요?"],
                 ["이벤트 안내", "이벤트 참여 방법 알려줘"],
                 providerConfigured === "true"

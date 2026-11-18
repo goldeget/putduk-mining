@@ -13,6 +13,7 @@ export default async function SupportPage({
       ? `/workroom/support?thread=${thread.data}`
       : "/workroom/support",
   );
+  if (!identity) return null;
   return (
     <SupportInbox
       key={identity.userId}

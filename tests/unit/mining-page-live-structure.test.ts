@@ -11,7 +11,7 @@ const summaryCss = readFileSync(
 describe("mining page composition after the live upgrade", () => {
   it("drives both scene paths from the server-confirmed running state", () => {
     const stageStart = page.indexOf("{selectedArt ? (");
-    const stageEnd = page.indexOf('aria-label="채굴 현황"');
+    const stageEnd = page.indexOf('aria-label="모니터링 현황"');
     const stage = page.slice(stageStart, stageEnd);
     expect(stageStart).toBeGreaterThan(-1);
     expect(stageEnd).toBeGreaterThan(stageStart);
@@ -21,11 +21,11 @@ describe("mining page composition after the live upgrade", () => {
     expect(page).toContain("resolveMiningPresentation({");
   });
   it("keeps the scene, then the caption, principal, capacity and period in order", () => {
-    const stageEnd = page.indexOf('aria-label="채굴 현황"');
+    const stageEnd = page.indexOf('aria-label="모니터링 현황"');
     const caption = page.indexOf("className={styles.sceneCaption}");
     const principal = page.indexOf("value={facts.principal}");
     const capacity = page.indexOf('id="mining-capacity-title"');
-    const period = page.indexOf('aria-label="채굴 기간"');
+    const period = page.indexOf('aria-label="모니터링 기간"');
     expect(caption).toBeGreaterThan(stageEnd);
     expect(principal).toBeGreaterThan(caption);
     expect(capacity).toBeGreaterThan(principal);

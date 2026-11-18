@@ -23,7 +23,7 @@ const EXPECTED_OPERATOR_DESTINATIONS = [
   ["/kyc", "본인 확인"],
   ["/", "오늘의 퍼뜩"],
   ["/restrictions", "제한·안전"],
-  ["/economy", "채굴 정책"],
+  ["/economy", "모니터링 정책"],
   ["/catalog", "상품 검토"],
   ["/content", "이벤트·공지"],
   ["/ai-conversations", "회원 AI 기록"],

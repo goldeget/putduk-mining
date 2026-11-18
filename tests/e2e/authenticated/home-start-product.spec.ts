@@ -201,24 +201,24 @@ test("홈과 START READY 상태를 도메인 스냅샷으로 보여 준다", asy
   await expect(
     page.getByRole("heading", {
       level: 1,
-      name: /채굴 버튼만 누르면/,
+      name: /모니터링 버튼만 누르면/,
     }),
   ).toBeVisible();
   await expect(
-    home.getByRole("link", { name: /채굴 시작/, exact: true }),
+    home.getByRole("link", { name: /모니터링 시작/, exact: true }),
   ).toBeVisible();
   await expect(
     home.getByLabel("사용 가능 원화", { exact: true }),
   ).toBeVisible();
 
-  await home.getByRole("link", { name: /채굴 시작/, exact: true }).click();
+  await home.getByRole("link", { name: /모니터링 시작/, exact: true }).click();
   await expect(page).toHaveURL(/\/start$/);
   await dismissGuidedQuestIfPresent(page);
   await expect(
-    page.getByRole("heading", { name: "채굴을 시작해 보세요." }),
+    page.getByRole("heading", { name: "모니터링을 시작해 보세요." }),
   ).toBeVisible();
   await expect(page.getByText("체험과 실제 잔액")).toBeVisible();
-  await expect(page.getByRole("button", { name: "채굴 시작" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "모니터링 시작" })).toBeVisible();
   await expect(
     page.getByText("환영 보상 첫 출금에 입금은 필요 없어요"),
   ).toBeVisible();
@@ -239,13 +239,13 @@ test("START ACTIVE 상태는 서버 동기화 안내와 진행 문구를 유지�
   await expect(
     page.getByRole("heading", {
       level: 2,
-      name: "채굴 중",
+      name: "모니터링 중",
       exact: true,
     }),
   ).toBeVisible();
   await expect(
     page.getByText(
-      "앱을 닫아도 채굴은 계속돼요. 다시 접속하면 결과를 확인할 수 있어요.",
+      "앱을 닫아도 모니터링은 계속돼요. 다시 접속하면 결과를 확인할 수 있어요.",
     ),
   ).toBeVisible();
   await expect(page.getByText("진행 중").first()).toBeVisible();
@@ -253,7 +253,7 @@ test("START ACTIVE 상태는 서버 동기화 안내와 진행 문구를 유지�
   await page.goto("/home");
   const home = await expectSettledRoute(page, "/home");
   await expect(home).toHaveAttribute("data-launch-surface", "simplified-track");
-  const activeCta = home.getByRole("link", { name: "채굴 중", exact: true });
+  const activeCta = home.getByRole("link", { name: "모니터링 중", exact: true });
   await expect(activeCta).toHaveCount(1);
   await expect(activeCta).toBeVisible();
   await activeCta.click();
@@ -261,7 +261,7 @@ test("START ACTIVE 상태는 서버 동기화 안내와 진행 문구를 유지�
   await expect(
     page.getByRole("heading", {
       level: 2,
-      name: "채굴 중",
+      name: "모니터링 중",
       exact: true,
     }),
   ).toBeVisible();
@@ -297,7 +297,7 @@ test("홈·START 오류 복구와 키보드·축소 모션을 확인한다", asy
     page.getByRole("button", { name: /다시 확인|상태 다시 확인/ }).first(),
   ).toBeVisible();
   await expect(
-    page.getByRole("link", { name: /채굴 시작/, exact: true }),
+    page.getByRole("link", { name: /모니터링 시작/, exact: true }),
   ).toHaveCount(0);
 
   // 인증 세션은 유지하고 SSR 고장 쿠키만 제거한 뒤 복구 버튼을 검증한다.
@@ -312,11 +312,11 @@ test("홈·START 오류 복구와 키보드·축소 모션을 확인한다", asy
   await expect(
     recovered.getByRole("heading", {
       level: 1,
-      name: /채굴 버튼만 누르면/,
+      name: /모니터링 버튼만 누르면/,
     }),
   ).toBeVisible({ timeout: 30_000 });
   await expect(
-    recovered.getByRole("link", { name: /채굴 시작/, exact: true }),
+    recovered.getByRole("link", { name: /모니터링 시작/, exact: true }),
   ).toBeVisible();
 
   await applyTheme(page, "dark");

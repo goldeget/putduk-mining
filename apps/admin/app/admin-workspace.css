@@ -531,7 +531,7 @@ body {
     border: 1px solid var(--admin-line);
     border-radius: 9px;
     color: var(--admin-text);
-    min-height: 42px;
+    min-height: 44px;
     font-size: 12px;
   }
   .control-rail__menu {

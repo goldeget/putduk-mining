@@ -34,8 +34,7 @@ const operations: Record<ContentCommand["operation"], string> = {
 };
 const ctaNames: Record<string, string> = {
   "/home": "홈",
-  "/start": "채굴 시작",
-  "/mining": "채굴",
+  "/workroom": "모니터링",
   "/wallet": "지갑",
   "/wallet/deposit": "입금",
   "/wallet/withdraw": "출금",

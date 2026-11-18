@@ -215,6 +215,6 @@ test.describe("admin browser USDT withdrawal", () => {
     await expect(completed).toHaveCount(1);
     await expect(completed).toBeVisible();
     await expect(page.getByText(/USDT 잔액|내 USDT/)).toHaveCount(0);
-    await expect(page.getByText(/가상 채굴/)).toHaveCount(0);
+    await expect(page.getByText(/가상 모니터링/)).toHaveCount(0);
   });
 });

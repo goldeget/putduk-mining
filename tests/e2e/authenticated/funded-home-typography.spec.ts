@@ -159,7 +159,7 @@ test("approved deposit Home retains real principal and readable shortcuts across
         await assertViewportFits(page, info, label);
         await assertTypographyClean(page, label, info);
         const summaryRows = await page
-          .getByRole("region", { name: "내 채굴 정보", exact: true })
+          .getByRole("region", { name: "내 모니터링 정보", exact: true })
           .evaluate((section) => {
             const grid = section.querySelector(":scope > div")!;
             const rows = new Map<number, number>();

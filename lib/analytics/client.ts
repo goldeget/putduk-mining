@@ -77,6 +77,6 @@ export async function trackAnalyticsEvent(
 
     if (!response.ok) return;
   } catch {
-    // 분석 실패가 인증, 채굴, 지갑, 정산을 막으면 안 된다.
+    // 분석 실패가 인증, 모니터링, 지갑, 정산을 막으면 안 된다.
   }
 }

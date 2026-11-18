@@ -186,13 +186,13 @@ describe("PUTDUK AI request boundary", () => {
   });
 
   it("requires owned domain tools for account and money questions", () => {
-    expect(routeAiQuestion("오늘 채굴 보상 얼마야?")).toMatchObject({
+    expect(routeAiQuestion("오늘 모니터링 수익 얼마야?")).toMatchObject({
       kind: "tool",
-      tool: "mining.today_reward",
+      tool: "wallet.summary",
     });
-    expect(routeAiQuestion("오늘 얼마 채굴했어?")).toMatchObject({
+    expect(routeAiQuestion("오늘 얼마 모니터링했어?")).toMatchObject({
       kind: "tool",
-      tool: "mining.today_reward",
+      tool: "wallet.summary",
     });
     expect(routeAiQuestion("내 지갑 잔액 얼마야?")).toMatchObject({
       kind: "tool",
@@ -225,7 +225,7 @@ describe("PUTDUK AI request boundary", () => {
 
   it.each([
     "제 입금 계좌번호 110-123-456789를 설명해 줘",
-    "채굴 문의 연락처 member@example.com, 010-1234-5678를 포함해서 답해 줘",
+    "모니터링 문의 연락처 member@example.com, 010-1234-5678를 포함해서 답해 줘",
     "퍼뜩 이용 안내를 설명해 줘",
     "퍼뜩 이용 안내를 여러 관점에서 비교 분석해 줘",
   ])(
@@ -264,36 +264,6 @@ describe("PUTDUK AI request boundary", () => {
     expect(result.answer).not.toMatch(/\d/);
   });
 
-  it("describes pre-conversion trial output as a non-monetary unit", async () => {
-    const trialSupabase = {
-      from: () => ({
-        select: () => ({
-          order: () => ({
-            limit: () => ({
-              maybeSingle: async () => ({
-                data: {
-                  completed_at: null,
-                  quota_consumed_bps: 2_500,
-                  reward_atomic: "5000",
-                  status: "ACTIVE",
-                  world_name_ko: "KOREA",
-                },
-                error: null,
-              }),
-            }),
-          }),
-        }),
-      }),
-    } as unknown as SupabaseClient;
-
-    const result = await executeAiTool(trialSupabase, "trial.status", {
-      now: new Date("2026-09-27T00:00:00.000Z"),
-    });
-
-    expect(result.ok).toBe(true);
-    expect(result.answer).toContain("5,000 체험 단위");
-    expect(result.answer).not.toMatch(/KRW|원(?:입니다|으로|\s|$)/);
-  });
 
   it("uses an unverified screen selection only to choose a public guide", () => {
     const selectedTransaction = "9c833f95-77bf-45c7-8e9e-1bf06e9fb487";
@@ -390,7 +360,7 @@ describe("PUTDUK AI Korean policy evaluations", () => {
     });
   }
 
-  it("locks every mining-language fixture answer to plain 채굴 wording", () => {
+  it("locks every mining-language fixture answer to plain 모니터링 wording", () => {
     const miningFixtures = (koreanEvals as KoreanEvalCase[]).filter(
       (evaluation) =>
         evaluation.expectedUserAnswer &&

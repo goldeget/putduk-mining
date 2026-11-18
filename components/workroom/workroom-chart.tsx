@@ -77,7 +77,7 @@ export function WorkroomChart({
     >
       <div className={styles.heading}>
         <div className={styles.readout}>
-          <span className={styles.eyebrow}>모의 지수</span>
+          <span className={styles.eyebrow}>모니터링 지수</span>
           <strong>{formatIndex(current)}</strong>
           <span className={styles.change}>
             {current >= 100 ? "+" : ""}
@@ -88,7 +88,7 @@ export function WorkroomChart({
           <i aria-hidden="true" />
           {active
             ? elapsed < 1
-              ? "연습 진행 중"
+              ? "업무 진행 중"
               : "결과 확인 중"
             : "시작 대기"}
         </span>
@@ -109,16 +109,16 @@ export function WorkroomChart({
             viewBox="0 0 800 260"
             preserveAspectRatio="none"
             role="img"
-            aria-label={`사전 설정된 ${patterns[config.pattern]} 모의 지수 차트. 비현금 연습이며 실제 시세와 다릅니다.`}
+            aria-label={`사전 설정된 ${patterns[config.pattern]} 모니터링 지수 차트. 실제 시세와 다릅니다.`}
             aria-describedby={`${id}-description`}
           >
             <title
               id={`${id}-title`}
-            >{`${patterns[config.pattern]} 모의 지수 차트`}</title>
+            >{`${patterns[config.pattern]} 모니터링 지수 차트`}</title>
             <desc id={`${id}-description`}>
-              사전 설정된 비현금 연습입니다. 실제 시세와 다릅니다. 시작 지수
+              사전 설정된 모니터링 경로입니다. 실제 시세와 다릅니다. 시작 지수
               100, 현재 {formatIndex(current)}, 진행률{" "}
-              {Math.round(elapsed * 100)}%. 연습 결과는 출금할 수 없습니다.
+              {Math.round(elapsed * 100)}%. 업무 결과는 입출금 잔액과 분리됩니다.
             </desc>
             <defs>
               <linearGradient id={`${id}-fill`} x1="0" x2="0" y1="0" y2="1">
@@ -216,7 +216,7 @@ export function WorkroomChart({
       <figcaption className={styles.caption}>
         <span>
           <i aria-hidden="true" />
-          사전 설정된 모의 지수 · 실제 시세와 다릅니다
+          사전 설정된 모니터링 지수 · 실제 시세와 다릅니다
         </span>
       </figcaption>
     </figure>

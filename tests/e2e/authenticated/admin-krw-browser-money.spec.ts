@@ -156,6 +156,6 @@ test.describe("admin browser KRW withdrawal", () => {
       .filter({ visible: true });
     await expect(completed).toHaveCount(1);
     await expect(completed).toBeVisible();
-    await expect(page.getByText(/가상 채굴/)).toHaveCount(0);
+    await expect(page.getByText(/가상 모니터링/)).toHaveCount(0);
   });
 });

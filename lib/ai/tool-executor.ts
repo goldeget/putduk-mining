@@ -3,7 +3,6 @@ import { z } from "zod";
 
 import type { AiScreenContext } from "@/domain/ai/chat";
 import { activeMemberNotificationExpiryOr } from "@/domain/notifications/member-inbox";
-import { formatTrialValue } from "@/domain/trial/format-trial-value";
 import {
   formatAtomicAmount,
   type DisplayCurrency,
@@ -12,9 +11,6 @@ import { formatProductDateTime } from "@/lib/i18n/date-time";
 import type { VerifiedIdentity } from "@/lib/auth/session";
 import {
   assertOwnedToolIdentity,
-  ownedMiningFacts,
-  ownedPrincipalFacts,
-  ownedPrincipalCancellationFacts,
   ownedAiQuotaFacts,
   ownedCancelledAiFacts,
 } from "./owned-state-tools";
@@ -88,22 +84,6 @@ function asAtomicDisplay(value: unknown, currency: DisplayCurrency) {
   return formatAtomicAmount(atomicSchema.parse(value), currency);
 }
 
-function kstDayWindow(now: Date) {
-  if (!Number.isFinite(now.getTime())) {
-    throw new RangeError("INVALID_TOOL_CLOCK");
-  }
-  const kstOffsetMs = 9 * 60 * 60 * 1_000;
-  const kstTime = now.getTime() + kstOffsetMs;
-  const dayStartKst = Math.floor(kstTime / 86_400_000) * 86_400_000;
-  const start = new Date(dayStartKst - kstOffsetMs);
-  const end = new Date(dayStartKst + 86_400_000 - kstOffsetMs);
-  return {
-    date: start.toLocaleDateString("sv-SE", { timeZone: "Asia/Seoul" }),
-    end: end.toISOString(),
-    start: start.toISOString(),
-  };
-}
-
 async function walletSummary(
   supabase: SupabaseClient,
   now: Date,
@@ -145,52 +125,6 @@ async function walletSummary(
   ]);
 }
 
-async function todayMiningReward(supabase: SupabaseClient, now: Date) {
-  const walletSchema = z.object({ id: z.uuid() });
-  const rowSchema = z.object({
-    amount_atomic: atomicSchema,
-    direction: z.enum(["CREDIT", "DEBIT"]),
-  });
-  const window = kstDayWindow(now);
-  const { data: walletData, error: walletError } = await supabase
-    .from("wallet_accounts")
-    .select("id")
-    .eq("currency", "KRW")
-    .maybeSingle();
-  if (walletError) throw new Error("MINING_REWARD_WALLET_QUERY_FAILED");
-  if (!walletData) {
-    return success(
-      "mining.today_reward",
-      `${window.date} KST 기준 본인 KRW 지갑에 확정 기록된 채굴 보상은 0 KRW입니다. 화면의 애니메이션 값이 아니라 확정된 기록만 합산했습니다.`,
-      now,
-      ["amount", "currency", "kst_date"],
-    );
-  }
-  const wallet = walletSchema.parse(walletData);
-  const { data, error } = await supabase
-    .from("wallet_ledger")
-    .select("amount_atomic, direction")
-    .eq("wallet_account_id", wallet.id)
-    .eq("entry_type", "MINING_REWARD")
-    .gte("created_at", window.start)
-    .lt("created_at", window.end);
-  if (error) throw new Error("MINING_REWARD_QUERY_FAILED");
-  const rows = rowSchema.array().parse(data ?? []);
-  const total = rows.reduce(
-    (sum, row) =>
-      sum +
-      (row.direction === "CREDIT"
-        ? BigInt(row.amount_atomic)
-        : -BigInt(row.amount_atomic)),
-    0n,
-  );
-  const answer = `${window.date} KST 기준 본인 KRW 지갑에 확정 기록된 채굴 보상은 ${formatAtomicAmount(total.toString(), "KRW")}입니다. 화면의 애니메이션 값이 아니라 확정된 기록만 합산했습니다.`;
-  return success("mining.today_reward", answer, now, [
-    "amount",
-    "currency",
-    "kst_date",
-  ]);
-}
 
 async function latestDeposit(
   supabase: SupabaseClient,
@@ -272,64 +206,6 @@ async function latestWithdrawal(
   );
 }
 
-async function trialStatus(supabase: SupabaseClient, now: Date) {
-  const rowSchema = z.object({
-    completed_at: nullableTimestampSchema,
-    quota_consumed_bps: z.number().int().min(0).max(10_000),
-    reward_atomic: atomicSchema,
-    status: z.string().min(1).max(40),
-    world_name_ko: z.string().min(1).max(80),
-  });
-  const { data, error } = await supabase
-    .from("trial_account_snapshots")
-    .select(
-      "status, world_name_ko, quota_consumed_bps, reward_atomic, completed_at",
-    )
-    .order("started_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-  if (error) throw new Error("TRIAL_QUERY_FAILED");
-  if (!data) {
-    return success(
-      "trial.status",
-      "아직 본인 계정에서 시작된 WORKROOM 체험 기록이 없습니다.",
-      now,
-      ["status"],
-    );
-  }
-  const row = rowSchema.parse(data);
-  const completed = row.completed_at
-    ? ` 완료 시각은 ${formatProductDateTime(row.completed_at)}입니다.`
-    : "";
-  return success(
-    "trial.status",
-    `WORKROOM 체험는 ${row.world_name_ko} 월드에서 ${statusLabel(row.status)} 상태이며 진행률은 ${(row.quota_consumed_bps / 100).toFixed(0)}%입니다. 체험 결과는 ${formatTrialValue(row.reward_atomic)}이며 실제 지갑과 분리되어 있습니다.${completed}`,
-    now,
-    ["completed_at", "quota", "reward", "status", "world"],
-  );
-}
-
-async function miningStatus(supabase: SupabaseClient, now: Date) {
-  const rowSchema = z.object({
-    started_at: timestampSchema,
-    status: z.string().min(1).max(40),
-    world_name_ko: z.string().min(1).max(80),
-  });
-  const { data, error } = await supabase
-    .from("mining_active_session_snapshots")
-    .select("world_name_ko, status, started_at")
-    .order("started_at", { ascending: false });
-  if (error) throw new Error("MINING_QUERY_FAILED");
-  const rows = rowSchema.array().parse(data ?? []);
-  const answer = rows.length
-    ? `현재 본인 계정에는 ${rows.length.toLocaleString("ko-KR")}개의 활성 채굴 세션이 있습니다. 가장 최근 세션은 ${rows[0]?.world_name_ko ?? "확인된"} 월드에서 ${statusLabel(rows[0]?.status ?? "ACTIVE")} 상태이며 ${formatProductDateTime(rows[0]?.started_at ?? now)}에 시작했습니다.`
-    : "현재 본인 계정에서 활성 상태인 채굴 세션은 없습니다.";
-  return success("mining.status", answer, now, [
-    "started_at",
-    "status",
-    "world",
-  ]);
-}
 
 async function referralStatus(supabase: SupabaseClient, now: Date) {
   const rowSchema = z.object({
@@ -573,46 +449,12 @@ export async function executeAiTool(
         return await eventProgress(supabase, now, options.screenContext);
       case "kyc.status":
         return await kycStatus(supabase, now);
-      case "mining.status":
-        if (identity) {
-          const answer = await ownedMiningFacts(identity);
-          await assertOwnedToolIdentity(identity);
-          return success(tool, answer, now, [
-            "eligible_principal",
-            "tier",
-            "committed_reward",
-            "confirmed_allocation_selection",
-          ]);
-        }
-        return await miningStatus(supabase, now);
-      case "mining.today_reward":
-        return await todayMiningReward(supabase, now);
       case "notification.recent":
         return await recentNotification(supabase, now);
       case "referral.status":
         return await referralStatus(supabase, now);
-      case "trial.status":
-        return await trialStatus(supabase, now);
       case "wallet.summary":
-        if (identity) {
-          const base = await walletSummary(supabase, now, identity.userId);
-          if (!base.ok) return base;
-          const [principal, cancelled] = await Promise.all([
-            ownedPrincipalFacts(identity),
-            ownedPrincipalCancellationFacts(identity),
-          ]);
-          await assertOwnedToolIdentity(identity);
-          return {
-            ...base,
-            answer: `${base.answer}\n${principal}\n${cancelled}`,
-            fields: [
-              ...base.fields,
-              "principal_source_coverage",
-              "verified_principal_cancellation_count",
-            ],
-          };
-        }
-        return await walletSummary(supabase, now);
+        return await walletSummary(supabase, now, identity?.userId);
       case "withdrawal.latest_status":
         return await latestWithdrawal(supabase, now, options.screenContext);
     }

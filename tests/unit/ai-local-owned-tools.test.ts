@@ -131,14 +131,11 @@ it.skipIf(process.env.PUTDUK_LOCAL_OWNED_TOOL_SMOKE !== "1")(
     });
     expect(wallet.ok).toBe(true);
     expect(wallet.answer).not.toContain("USDT");
-    const mining = await executeAiTool(member, "mining.status", {
+    const monitoring = await executeAiTool(member, "wallet.summary", {
       verifiedIdentity: identity,
     });
-    expect(mining.ok).toBe(true);
-    expect(mining.answer).toContain("확인");
-    expect(mining.answer).not.toMatch(
-      /speed_multiplier|allocation_bps|reward_carry/,
-    );
+    expect(monitoring.ok).toBe(true);
+    expect(monitoring.answer).toContain("확인");
     const spoofed = await executeAiTool(member, "ai.usage", {
       verifiedIdentity: { supabase: member, userId: randomUUID() },
     });
@@ -161,7 +158,7 @@ it.skipIf(process.env.PUTDUK_LOCAL_OWNED_TOOL_SMOKE !== "1")(
           aiCancelledAfter: after,
           quota,
           wallet,
-          mining,
+          monitoring,
           spoofedOwnerRejected: !spoofed.ok,
           actualEntitlement: "UNPROVEN",
         },

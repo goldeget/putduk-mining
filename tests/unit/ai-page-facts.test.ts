@@ -3,6 +3,7 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import PutdukAiPage from "@/app/(product)/menu/ai/page";
 import { requirePageUser } from "@/lib/auth/session";
+import type { VerifiedIdentity } from "@/lib/auth/session";
 import { readMemberScreenFacts } from "@/lib/product/member-screen-facts";
 import type { PutdukAiChatProps } from "@/components/product/putduk-ai-chat";
 
@@ -56,7 +57,7 @@ describe("owner-bound AI page facts", () => {
     const base = await vi
       .mocked(readMemberScreenFacts)
       .getMockImplementation()!(
-      identity as Awaited<ReturnType<typeof requirePageUser>>,
+      identity as VerifiedIdentity,
     );
     vi.mocked(readMemberScreenFacts).mockResolvedValue({
       ...base,

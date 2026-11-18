@@ -18,6 +18,7 @@ import styles from "@/components/workroom/cash.module.css";
 export const dynamic = "force-dynamic";
 export default async function CashWithdrawalPage() {
   const identity = await requirePageUser("/workroom/cash/withdraw");
+  if (!identity) return null;
   const at = new Date().toISOString();
   const admin = createSupabaseAdminClient();
   const [cash, wallet, policyRows, destinationRows] = await Promise.all([

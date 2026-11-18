@@ -333,16 +333,8 @@ export default async function MembersPage({
   const lifecycleDisplay = presentMemberLifecycle(lifecycle);
   const profileDisplay = presentMemberProfile(profile);
   const moneyDisplay = presentMemberMoneySources(moneySources, userId);
-  const principalLots =
-    miningFunding.error || miningFunding.data == null
-      ? await db
-          .from("funding_principal_lots")
-          .select("id")
-          .eq("user_id", userId)
-          .limit(1)
-      : null;
   const fundingDisplay = presentAdminMiningFunding(
-    resolveMiningServerDisplayRead(miningFunding, principalLots),
+    resolveMiningServerDisplayRead(miningFunding),
   );
 
   return (
@@ -436,14 +428,14 @@ export default async function MembersPage({
             id="evidence-workroom"
           >
             <header>
-              <p className="eyebrow">무료 모의 체험</p>
+              <p className="eyebrow">모니터링 업무</p>
               <h2>워크룸 이용</h2>
             </header>
             <p className="panel-note">
-              체험 포인트와 모의 손익은 실제 원화 잔액과 별도로 관리합니다.
+              모니터링 잔액과 실제 원화 잔액은 별도로 관리합니다.
             </p>
             <Link className="text-link" href={"/workroom?tab=users" as Route}>
-              회원·체험 포인트 관리 →
+              회원·모니터링 잔액 관리 →
             </Link>
           </article>
         ) : (
@@ -503,11 +495,11 @@ export default async function MembersPage({
               대기 수익과 아직 확정 전 금액은 원금에 포함하지 않아요.
             </p>
             <h3>등급 · 용량 · 속도</h3>
-            {fundingDisplay.miningRows.length === 0 ? (
+            {fundingDisplay.monitoringRows.length === 0 ? (
               <p className="panel-note">등급과 용량, 속도는 아직 없어요.</p>
             ) : (
               <dl className={styles.sourceStats}>
-                {fundingDisplay.miningRows.map((row) => (
+                {fundingDisplay.monitoringRows.map((row) => (
                   <div key={row.label}>
                     <dt>{row.label}</dt>
                     <dd>{row.value}</dd>

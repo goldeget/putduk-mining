@@ -1,7 +1,6 @@
 export const PROTECTED_PAGE_PATHS = [
   "/home",
-  "/start",
-  "/mining",
+  "/workroom",
   "/notifications",
   "/ai",
 ] as const;

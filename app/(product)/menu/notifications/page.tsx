@@ -16,6 +16,7 @@ import deviceStyles from "@/components/workroom-app/device-settings.module.css";
  */
 export default async function NotificationSettingsPage() {
   const identity = await requirePageUser("/menu/notifications");
+  if (!identity) return null;
   const { data: preferences, error } = await identity.supabase
     .from("notification_preferences")
     .select(

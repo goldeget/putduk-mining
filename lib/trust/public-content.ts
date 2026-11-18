@@ -21,13 +21,13 @@ export const PUBLIC_FACTS: readonly PublicFact[] = [
   {
     key: "PRODUCT_NAME",
     value: "WORKROOM",
-    description: "PUTDUK의 채굴 서비스입니다.",
+    description: "PUTDUK의 모니터링 서비스입니다.",
   },
   {
     key: "PRODUCT_TYPE",
     value: "Mining service",
     description:
-      "다섯 개의 월드에서 채굴 흐름을 제공하며 외부 증권·거래소 시세를 채굴 계산에 사용하지 않습니다.",
+      "다섯 개의 월드에서 모니터링 흐름을 제공하며 외부 증권·거래소 시세를 모니터링 계산에 사용하지 않습니다.",
   },
   {
     key: "OFFICIAL_DOMAIN",
@@ -44,7 +44,7 @@ export const PUBLIC_FACTS: readonly PublicFact[] = [
     key: "SUPPORTED_WORLDS",
     value: "운영자 승인·게시된 카탈로그 기준",
     description:
-      "이용 가능한 상품은 운영자가 승인·게시한 카탈로그에서 확인할 수 있어요. 외부 시세는 채굴 계산에 사용하지 않습니다.",
+      "이용 가능한 상품은 운영자가 승인·게시한 카탈로그에서 확인할 수 있어요. 외부 시세는 모니터링 계산에 사용하지 않습니다.",
   },
   {
     key: "TRIAL_DURATION",
@@ -72,13 +72,13 @@ export const PUBLIC_FACTS: readonly PublicFact[] = [
     key: "SETTLEMENT_AUTHORITY",
     value: "Confirmed time and versioned rules",
     description:
-      "채굴·정산은 확인된 시간과 적용 시점이 명시된 규칙 버전을 사용합니다.",
+      "모니터링·정산은 확인된 시간과 적용 시점이 명시된 규칙 버전을 사용합니다.",
   },
   {
     key: "AI_BOUNDARY",
     value: "Explain and analyze only",
     description:
-      "WORKROOM AI는 잔액, 승인, 채굴 결과를 직접 변경하지 않습니다.",
+      "WORKROOM AI는 잔액, 승인, 모니터링 결과를 직접 변경하지 않습니다.",
   },
 ] as const;
 
@@ -103,15 +103,15 @@ export const TRUST_DOCUMENTS: readonly TrustDocument[] = [
   {
     path: "/about",
     eyebrow: "ABOUT PUTDUK",
-    title: "채굴의 시간을, 검증 가능한 기록으로.",
+    title: "모니터링의 시간을, 검증 가능한 기록으로.",
     summary:
-      "WORKROOM은 복잡한 경제 시스템을 사용자에게는 명확한 경험으로, 운영에는 추적 가능한 기록으로 제공하도록 설계된 채굴 서비스입니다.",
+      "WORKROOM은 복잡한 경제 시스템을 사용자에게는 명확한 경험으로, 운영에는 추적 가능한 기록으로 제공하도록 설계된 모니터링 서비스입니다.",
     factKeys: ["PRODUCT_NAME", "PRODUCT_TYPE", "SUPPORTED_WORLDS"],
     sections: [
       {
         heading: "무엇을 만드는가",
         body: [
-          "사용자는 KOREA, USA, GOLD, SILVER, CRYPTO 월드에서 채굴을 진행합니다. 월드 보상은 외부 증권이나 거래소의 실시간 시세에 의존하지 않습니다.",
+          "사용자는 KOREA, USA, GOLD, SILVER, CRYPTO 월드에서 모니터링을 진행합니다. 월드 보상은 외부 증권이나 거래소의 실시간 시세에 의존하지 않습니다.",
           "제품의 핵심은 화려한 숫자가 아니라 그 숫자가 언제, 어떤 기준으로, 왜 생겼는지 설명할 수 있는 구조입니다.",
         ],
       },
@@ -119,7 +119,7 @@ export const TRUST_DOCUMENTS: readonly TrustDocument[] = [
         heading: "설계 원칙",
         body: [],
         items: [
-          "모든 채굴과 정산은 확인된 시간으로 계산합니다.",
+          "모든 모니터링과 정산은 확인된 시간으로 계산합니다.",
           "자산 변화는 덮어쓰지 않고 거래 기록으로 남깁니다.",
           "체험 자산과 실제 자산은 섞이지 않습니다.",
           "운영 변경은 적용 시점과 감사 기록을 가집니다.",
@@ -132,27 +132,27 @@ export const TRUST_DOCUMENTS: readonly TrustDocument[] = [
     eyebrow: "PRODUCT FLOW",
     title: "사용은 단순하게, 결과는 확인된 값으로.",
     summary:
-      "가입부터 체험, 입금, 채굴과 정산까지 각 단계의 책임과 데이터 경계를 분리합니다.",
+      "가입부터 체험, 입금, 모니터링과 정산까지 각 단계의 책임과 데이터 경계를 분리합니다.",
     factKeys: ["TRIAL_DURATION", "SETTLEMENT_AUTHORITY", "TRIAL_LEDGER"],
     sections: [
       {
         heading: "핵심 흐름",
         body: [
-          "가입 후 WORKROOM 체험에서 첫 채굴 결과를 확인하고, 체험을 마친 뒤 사용자가 원할 때 입금과 채굴로 이어집니다.",
+          "가입 후 WORKROOM 체험에서 첫 모니터링 결과를 확인하고, 체험을 마친 뒤 사용자가 원할 때 입금과 모니터링로 이어집니다.",
         ],
         items: [
           "가입 및 계정 검증",
           "WORKROOM 체험 시작",
           "체험 정산",
           "입금 요청과 운영 확인",
-          "채굴과 자동 정산",
+          "모니터링과 자동 정산",
           "거래 기록과 알림을 통한 결과 확인",
         ],
       },
       {
         heading: "화면을 닫아도 이어지는 이유",
         body: [
-          "앱을 닫아도 채굴은 계속돼요. 다시 접속하면 마지막 확인 이후의 결과를 확인할 수 있어요.",
+          "앱을 닫아도 모니터링은 계속돼요. 다시 접속하면 마지막 확인 이후의 결과를 확인할 수 있어요.",
         ],
       },
     ],
@@ -162,7 +162,7 @@ export const TRUST_DOCUMENTS: readonly TrustDocument[] = [
     eyebrow: "공식 사실",
     title: "워크룸이 공개하는 기본 사실이에요.",
     summary:
-      "채굴·잔액·출금에 대해 같은 설명을 지켜요. 화면마다 다른 말을 만들지 않아요.",
+      "모니터링·잔액·출금에 대해 같은 설명을 지켜요. 화면마다 다른 말을 만들지 않아요.",
     factKeys: PUBLIC_FACTS.map((fact) => fact.key),
     sections: [
       {
@@ -178,13 +178,13 @@ export const TRUST_DOCUMENTS: readonly TrustDocument[] = [
     eyebrow: "VERIFICATION",
     title: "결과만이 아니라 근거를 확인합니다.",
     summary:
-      "채굴, 정산, 입출금과 운영 변경이 각각 어떤 검증 경계를 통과하는지 공개합니다.",
+      "모니터링, 정산, 입출금과 운영 변경이 각각 어떤 검증 경계를 통과하는지 공개합니다.",
     factKeys: ["SETTLEMENT_AUTHORITY", "TRIAL_LEDGER", "AI_BOUNDARY"],
     sections: [
       {
         heading: "확인된 결과",
         body: [
-          "화면의 효과만으로 잔액이나 채굴 보상이 결정되지 않습니다. 권한, 중복 요청, 적용 기준과 시간을 확인한 뒤 결과를 기록합니다.",
+          "화면의 효과만으로 잔액이나 모니터링 보상이 결정되지 않습니다. 권한, 중복 요청, 적용 기준과 시간을 확인한 뒤 결과를 기록합니다.",
         ],
       },
       {
@@ -204,7 +204,7 @@ export const TRUST_DOCUMENTS: readonly TrustDocument[] = [
     eyebrow: "MINING RULES",
     title: "정산 규칙은 시간 구간과 버전으로 고정됩니다.",
     summary:
-      "경과 시간, 기본 채굴률, 장비 효율, 월드·이벤트·상태 배율을 확인해 계산합니다.",
+      "경과 시간, 기본 모니터링률, 장비 효율, 월드·이벤트·상태 배율을 확인해 계산합니다.",
     factKeys: ["SETTLEMENT_AUTHORITY", "SUPPORTED_WORLDS"],
     sections: [
       {
@@ -233,7 +233,7 @@ export const TRUST_DOCUMENTS: readonly TrustDocument[] = [
     eyebrow: "WORKROOM 체험",
     title: "최대 24시간, 실제 자산과 분리된 첫 경험.",
     summary:
-      "처음 가입한 사용자가 KOREA 월드에서 핵심 채굴 흐름을 이해하도록 설계한 사용량 기반 체험입니다.",
+      "처음 가입한 사용자가 KOREA 월드에서 핵심 모니터링 흐름을 이해하도록 설계한 사용량 기반 체험입니다.",
     factKeys: [
       "TRIAL_DURATION",
       "TRIAL_LEDGER",
@@ -244,7 +244,7 @@ export const TRUST_DOCUMENTS: readonly TrustDocument[] = [
       {
         heading: "종료 조건",
         body: [
-          "체험은 사용량 100% 또는 시작 후 24시간 중 먼저 도달한 시점에 종료됩니다. 앱을 닫아도 채굴은 계속돼요.",
+          "체험은 사용량 100% 또는 시작 후 24시간 중 먼저 도달한 시점에 종료됩니다. 앱을 닫아도 모니터링은 계속돼요.",
         ],
       },
       {
@@ -267,7 +267,7 @@ export const TRUST_DOCUMENTS: readonly TrustDocument[] = [
       {
         heading: "외부 시세와의 경계",
         body: [
-          "월드 이름은 제품 안의 분류입니다. 채굴 보상은 외부 증권, 거래소 또는 실시간 시장 데이터에 연동되지 않습니다.",
+          "월드 이름은 제품 안의 분류입니다. 모니터링 보상은 외부 증권, 거래소 또는 실시간 시장 데이터에 연동되지 않습니다.",
         ],
       },
       {
@@ -346,9 +346,9 @@ export const TRUST_DOCUMENTS: readonly TrustDocument[] = [
     ],
     sections: [
       {
-        heading: "실제 컴퓨터로 코인을 채굴하나요?",
+        heading: "실제 컴퓨터로 코인을 모니터링하나요?",
         body: [
-          "아닙니다. 워크룸의 채굴은 앱에서 진행돼요. 기기로 암호화폐를 채굴하지 않아요.",
+          "아닙니다. 워크룸의 모니터링은 앱에서 진행돼요. 기기로 암호화폐를 모니터링하지 않아요.",
         ],
       },
       {
@@ -359,15 +359,15 @@ export const TRUST_DOCUMENTS: readonly TrustDocument[] = [
         ],
       },
       {
-        heading: "화면을 닫으면 채굴이 멈추나요?",
+        heading: "화면을 닫으면 모니터링이 멈추나요?",
         body: [
-          "앱을 닫아도 채굴은 계속돼요. 다시 접속하면 결과를 확인할 수 있어요.",
+          "앱을 닫아도 모니터링은 계속돼요. 다시 접속하면 결과를 확인할 수 있어요.",
         ],
       },
       {
         heading: "AI가 자산을 대신 움직일 수 있나요?",
         body: [
-          "아닙니다. WORKROOM AI는 설명과 분석만 제공하며 잔액, 승인 또는 채굴 결과를 직접 변경할 권한이 없습니다.",
+          "아닙니다. WORKROOM AI는 설명과 분석만 제공하며 잔액, 승인 또는 모니터링 결과를 직접 변경할 권한이 없습니다.",
         ],
       },
     ],
@@ -382,7 +382,7 @@ export const TRUST_DOCUMENTS: readonly TrustDocument[] = [
       {
         heading: "현재 상태",
         body: [
-          "가입, 채굴, 지갑, 입출금, 알림과 운영 안전 절차를 차례로 확인하고 있습니다. 실제 이용 가능 상태는 보안·복구·성능·운영 검증과 최종 출시 승인을 모두 통과한 뒤에만 안내합니다.",
+          "가입, 모니터링, 지갑, 입출금, 알림과 운영 안전 절차를 차례로 확인하고 있습니다. 실제 이용 가능 상태는 보안·복구·성능·운영 검증과 최종 출시 승인을 모두 통과한 뒤에만 안내합니다.",
         ],
       },
       {
@@ -403,7 +403,7 @@ export const TRUST_DOCUMENTS: readonly TrustDocument[] = [
       {
         heading: "2026.09 — 서비스 준비",
         body: [
-          "WORKROOM의 가입, 채굴, 지갑, 운영 안전 절차와 사용자 경험을 준비하고 있습니다. 아직 정식 서비스 오픈을 의미하지 않습니다.",
+          "WORKROOM의 가입, 모니터링, 지갑, 운영 안전 절차와 사용자 경험을 준비하고 있습니다. 아직 정식 서비스 오픈을 의미하지 않습니다.",
         ],
       },
       {
@@ -428,7 +428,7 @@ export const TRUST_DOCUMENTS: readonly TrustDocument[] = [
         items: [
           "공식 규칙과 상태 설명",
           "허용된 사용자 정보 요약",
-          "채굴·거래 기록 이해 지원",
+          "모니터링·거래 기록 이해 지원",
           "다음 행동 선택지 제안",
         ],
       },
@@ -438,7 +438,7 @@ export const TRUST_DOCUMENTS: readonly TrustDocument[] = [
         items: [
           "잔액 변경 또는 거래 생성",
           "입금·출금 승인",
-          "채굴 결과 결정",
+          "모니터링 결과 결정",
           "경제 규칙 또는 관리자 권한 변경",
         ],
       },
@@ -455,7 +455,7 @@ export const TRUST_DOCUMENTS: readonly TrustDocument[] = [
       {
         heading: "범위",
         body: [
-          "공개 사실 데이터는 제품 정체성, 체험, 채굴 원칙, 지원 방식과 AI 권한 경계만 포함합니다. 개인 지갑, 내부 API, 관리자 화면, 비밀 값과 데이터베이스 구조는 공개 대상이 아닙니다.",
+          "공개 사실 데이터는 제품 정체성, 체험, 모니터링 원칙, 지원 방식과 AI 권한 경계만 포함합니다. 개인 지갑, 내부 API, 관리자 화면, 비밀 값과 데이터베이스 구조는 공개 대상이 아닙니다.",
         ],
       },
     ],

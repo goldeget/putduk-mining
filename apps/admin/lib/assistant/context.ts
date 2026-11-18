@@ -6,7 +6,7 @@ export const ASSISTANT_CONTEXT_TOPICS = [
   { value: "deposits", label: "입금 확인" },
   { value: "withdrawals", label: "출금 확인" },
   { value: "wallet-ledger", label: "회원 지갑과 원금 기록" },
-  { value: "mining", label: "회원 채굴 상태" },
+  { value: "mining", label: "회원 모니터링 상태" },
   { value: "jobs", label: "실패한 자동 작업" },
   { value: "security", label: "제한과 위험 신호" },
   { value: "audit", label: "최근 운영 기록" },

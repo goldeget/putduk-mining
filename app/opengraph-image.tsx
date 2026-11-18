@@ -40,7 +40,7 @@ export default function OpenGraphImage() {
         <span>순간을 선택하세요.</span>
       </div>
       <div style={{ display: "flex", fontSize: 23, color: "#a6b7ce" }}>
-        무료 시뮬레이션 · 현금 전환 불가 연습 포인트
+        모니터링 기록 · 실제 잔액 분리 관리
       </div>
     </div>,
     size,

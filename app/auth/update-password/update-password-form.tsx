@@ -1,12 +1,10 @@
 "use client";
 import { FeedbackMessage } from "@/components/ui/feedback-message";
 
-import { useActionState, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
-import {
-  updatePasswordAction,
-  type UpdatePasswordActionState,
-} from "@/app/auth/update-password/actions";
+import type { UpdatePasswordActionState } from "@/app/auth/update-password/actions";
 import {
   AuthConnectionNotice,
   AuthSubmitButton,
@@ -19,18 +17,67 @@ const INITIAL_STATE: UpdatePasswordActionState = {
 };
 
 export function UpdatePasswordForm() {
-  const [state, action] = useActionState(updatePasswordAction, INITIAL_STATE);
+  const router = useRouter();
+  const [state, setState] = useState<UpdatePasswordActionState>(INITIAL_STATE);
+  const [isPending, setIsPending] = useState(false);
   const [password, setPassword] = useState("");
   const [confirmation, setConfirmation] = useState("");
   const [show, setShow] = useState(false);
   const mismatch = confirmation.length > 0 && password !== confirmation;
 
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    preventOfflineAuthSubmission(event);
+    if (navigator.onLine === false) return;
+
+    const formData = new FormData(event.currentTarget);
+    const passwordValue = String(formData.get("password") ?? "");
+    const passwordConfirmation = String(
+      formData.get("passwordConfirmation") ?? "",
+    );
+
+    setIsPending(true);
+    setState({ message: "", status: "idle" });
+
+    try {
+      const response = await fetch("/api/auth/update-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          password: passwordValue,
+          passwordConfirmation,
+        }),
+      });
+
+      const data = (await response.json()) as UpdatePasswordActionState & {
+        redirectUrl?: string;
+      };
+
+      if (response.ok && data.redirectUrl) {
+        router.push(data.redirectUrl);
+        return;
+      }
+
+      setState({
+        message:
+          data.message || "비밀번호를 변경하지 못했어요. 다시 시도해 주세요.",
+        status: "error",
+      });
+    } catch {
+      setState({
+        message: "네트워크 연결을 확인해 주세요.",
+        status: "error",
+      });
+    } finally {
+      setIsPending(false);
+    }
+  }
+
   return (
     <form
       className="auth-form"
-      action={action}
       aria-label="새 비밀번호 설정"
-      onSubmit={preventOfflineAuthSubmission}
+      onSubmit={handleSubmit}
       data-ui-state={state.status === "error" || mismatch ? "error" : "loaded"}
     >
       <AuthConnectionNotice />
@@ -102,7 +149,8 @@ export function UpdatePasswordForm() {
         <AuthSubmitButton
           label="새 비밀번호 저장"
           pendingLabel="변경하고 있어요"
-          disabled={mismatch}
+          disabled={isPending || mismatch}
+          pending={isPending}
         />
       </div>
     </form>

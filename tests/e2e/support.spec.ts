@@ -124,7 +124,7 @@ test("anonymous support center stays usable without Channel Talk", async ({
   await expect(
     page.getByRole("heading", { name: "필요한 도움을 바로 확인해요." }),
   ).toBeVisible();
-  await expect(page.getByText("앱을 닫아도 채굴은 계속돼요.")).toBeVisible();
+  await expect(page.getByText("앱을 닫아도 모니터링은 계속돼요.")).toBeVisible();
   await expect(
     page.getByText(
       "상담원은 비밀번호, 인증 코드, 개인키, 시드 문구를 요구하지 않아요.",

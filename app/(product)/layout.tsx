@@ -1,17 +1,24 @@
 import type { ReactNode } from "react";
 
 import { ProductShell } from "@/components/layout/product-shell";
-import { requirePageUser } from "@/lib/auth/session";
+import { requirePageUserOrRedirect } from "@/lib/auth/session";
 import { MemberSessionRuntime } from "@/components/auth/member-session-runtime";
 import { getSupabaseBrowserAuthConfig } from "@/lib/env/supabase-browser.server";
 import Link from "next/link";
+import { ClientRedirect } from "@/components/auth/client-redirect";
 
 export const dynamic = "force-dynamic";
 
 export default async function ProductLayout({
   children,
 }: Readonly<{ children: ReactNode }>) {
-  const identity = await requirePageUser();
+  const gate = await requirePageUserOrRedirect();
+
+  if (gate.status === "redirect") {
+    return <ClientRedirect to={gate.redirectUrl} />;
+  }
+
+  const identity = gate.identity;
   const { data: profile } = await identity.supabase
     .from("user_profiles")
     .select("display_name")

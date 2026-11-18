@@ -77,20 +77,20 @@ test("renders the productized PUTDUK landing with accessible primary navigation"
 
   await expect(
     page.getByRole("heading", {
-      name: /일상에 더하는 부수입,.*퍼뜩 채굴로 시작하세요\./,
+      name: /일상에 더하는 부수입,.*퍼뜩 모니터링로 시작하세요\./,
     }),
   ).toBeVisible();
   await expect(
     page
       .locator(".landing-hero")
-      .getByRole("link", { name: /무료로 채굴 체험하기/ }),
+      .getByRole("link", { name: /무료로 모니터링 체험하기/ }),
   ).toBeVisible();
   const publicNavigation = page.locator('nav[aria-label="공개 메뉴"]');
   await expect(publicNavigation).toHaveCount(1);
   if ((page.viewportSize()?.width ?? 1440) < 980) {
     await expect(publicNavigation).toBeHidden();
     await expect(
-      page.getByRole("link", { name: "내 채굴로 돌아가기" }),
+      page.getByRole("link", { name: "내 모니터링로 돌아가기" }),
     ).toBeVisible();
   } else {
     await expect(publicNavigation).toBeVisible();
@@ -108,7 +108,7 @@ test("exposes install and discovery metadata", async ({ page }) => {
         src: "/brand/identity/20261014/pwa/putduk-pwa-maskable-512.png",
       }),
     ]),
-    name: "퍼뜩 채굴",
+    name: "퍼뜩 모니터링",
   });
 
   const robotsResponse = await page.request.get("/robots.txt");
@@ -140,7 +140,7 @@ test("renders canonical real copy and persists an explicit theme", async ({
   await expect(page.getByText("지금, 퍼뜩.")).toBeVisible();
   await expect(
     page.getByRole("img", {
-      name: "금빛 새싹과 광물 섬으로 표현한 퍼뜩의 첫 채굴 월드",
+      name: "금빛 새싹과 광물 섬으로 표현한 퍼뜩의 첫 모니터링 월드",
     }),
   ).toBeVisible();
 
@@ -277,7 +277,7 @@ test.describe("Landing journey CTA geometry", () => {
         await expect(action).toHaveCount(1);
         await expect(steps).toHaveCount(1);
         const button = action.getByRole("link", {
-          name: "내 첫 채굴 시작하기",
+          name: "내 첫 모니터링 시작하기",
         });
         await expect(button).toHaveAttribute("href", "/signup");
         await button.scrollIntoViewIfNeeded();

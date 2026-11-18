@@ -8,25 +8,25 @@ export const RECOVERY_EVENT_POLICY_REFERENCE =
   "docs/product/EVENT-REWARD-ARCHITECTURE.md";
 /** Canonical business milestones, separate from guide-reading participation. */
 export const localNonmoneyMissionTemplates = [
-  ["MINING_STARTED.v1", "참여한 뒤 채굴을 시작하면 달성합니다."],
+  ["MINING_STARTED.v1", "참여한 뒤 모니터링을 시작하면 달성합니다."],
   [
     "MINING_SETTLEMENT_COMPLETED.v1",
-    "참여한 뒤 채굴 정산이 완료되면 달성합니다.",
+    "참여한 뒤 모니터링 정산이 완료되면 달성합니다.",
   ],
-  ["MINING_STARTED.v1", "참여한 뒤 채굴을 시작하면 달성합니다."],
+  ["MINING_STARTED.v1", "참여한 뒤 모니터링을 시작하면 달성합니다."],
   [
     "MINING_SETTLEMENT_COMPLETED.v1",
-    "참여한 뒤 채굴 정산이 완료되면 달성합니다.",
+    "참여한 뒤 모니터링 정산이 완료되면 달성합니다.",
   ],
-  ["MINING_STARTED.v1", "참여한 뒤 채굴을 시작하면 달성합니다."],
-  ["MINING_STARTED.v1", "참여한 뒤 채굴을 시작하면 달성합니다."],
+  ["MINING_STARTED.v1", "참여한 뒤 모니터링을 시작하면 달성합니다."],
+  ["MINING_STARTED.v1", "참여한 뒤 모니터링을 시작하면 달성합니다."],
   [
     "MINING_SETTLEMENT_COMPLETED.v1",
-    "참여한 뒤 채굴 정산이 완료되면 달성합니다.",
+    "참여한 뒤 모니터링 정산이 완료되면 달성합니다.",
   ],
   [
     "MINING_SETTLEMENT_COMPLETED.v1",
-    "참여한 뒤 채굴 정산이 완료되면 달성합니다.",
+    "참여한 뒤 모니터링 정산이 완료되면 달성합니다.",
   ],
   ["DEPOSIT_CONFIRMED.v1", "참여한 뒤 입금 처리가 완료되면 달성합니다."],
   ["WITHDRAWAL_COMPLETED.v1", "참여한 뒤 출금 처리가 완료되면 달성합니다."],
@@ -35,12 +35,12 @@ export const localNonmoneyMissionTemplates = [
     "TRIAL_REWARD_CONVERTED.v1",
     "참여한 뒤 START 보상 전환이 완료되면 달성합니다.",
   ],
-  ["MINING_STARTED.v1", "참여한 뒤 채굴을 시작하면 달성합니다."],
+  ["MINING_STARTED.v1", "참여한 뒤 모니터링을 시작하면 달성합니다."],
   [
     "MINING_SETTLEMENT_COMPLETED.v1",
-    "참여한 뒤 채굴 정산이 완료되면 달성합니다.",
+    "참여한 뒤 모니터링 정산이 완료되면 달성합니다.",
   ],
-  ["MINING_STARTED.v1", "참여한 뒤 채굴을 시작하면 달성합니다."],
+  ["MINING_STARTED.v1", "참여한 뒤 모니터링을 시작하면 달성합니다."],
   ["TRIAL_COMPLETED.v1", "참여한 뒤 퍼뜩 START를 완료하면 달성합니다."],
   [
     "REFERRAL_REWARD_PAID.v1",
@@ -52,7 +52,7 @@ export const localNonmoneyMissionTemplates = [
   ],
   [
     "MINING_SETTLEMENT_COMPLETED.v1",
-    "참여한 뒤 채굴 정산이 완료되면 달성합니다.",
+    "참여한 뒤 모니터링 정산이 완료되면 달성합니다.",
   ],
   [
     "TRIAL_REWARD_CONVERTED.v1",
@@ -62,23 +62,23 @@ export const localNonmoneyMissionTemplates = [
 export const recoveryEventDrafts = [
   [
     "first-mining-guide",
-    "첫 채굴 둘러보기",
-    "첫 채굴",
-    "채굴 화면에서 현재 진행 상태와 결과를 확인하세요.",
+    "첫 모니터링 둘러보기",
+    "첫 모니터링",
+    "모니터링 화면에서 현재 진행 상태와 결과를 확인하세요.",
     "/mining",
   ],
   [
     "mining-result-guide",
-    "채굴 결과 읽기",
-    "첫 채굴",
-    "채굴한 결과와 정산 상태를 구분해서 확인하세요.",
+    "모니터링 결과 읽기",
+    "첫 모니터링",
+    "모니터링한 결과와 정산 상태를 구분해서 확인하세요.",
     "/mining",
   ],
   [
     "activity-return",
     "다시 만나는 퍼뜩",
     "연속 활동",
-    "앱을 다시 열고 지난 채굴 결과를 확인하세요.",
+    "앱을 다시 열고 지난 모니터링 결과를 확인하세요.",
     "/home",
   ],
   [
@@ -90,9 +90,9 @@ export const recoveryEventDrafts = [
   ],
   [
     "world-materials",
-    "채굴 세계 둘러보기",
+    "모니터링 세계 둘러보기",
     "세계 탐험",
-    "상품 화면에서 서로 다른 채굴 세계를 둘러보세요.",
+    "상품 화면에서 서로 다른 모니터링 세계를 둘러보세요.",
     "/products",
   ],
   [
@@ -104,9 +104,9 @@ export const recoveryEventDrafts = [
   ],
   [
     "world-capacity",
-    "내 채굴 현황 확인",
+    "내 모니터링 현황 확인",
     "세계 탐험",
-    "홈에서 내 채굴 현황과 진행 상태를 확인하세요.",
+    "홈에서 내 모니터링 현황과 진행 상태를 확인하세요.",
     "/home",
   ],
   [
@@ -141,7 +141,7 @@ export const recoveryEventDrafts = [
     "rank-mining",
     "다음 여정 확인",
     "성장 축하",
-    "채굴 화면에서 현재 위치와 다음 여정 안내를 확인하세요.",
+    "모니터링 화면에서 현재 위치와 다음 여정 안내를 확인하세요.",
     "/mining",
   ],
   [
@@ -162,7 +162,7 @@ export const recoveryEventDrafts = [
     "season-start",
     "새 계절의 시작",
     "계절",
-    "홈에서 새로운 안내와 현재 채굴 상태를 확인하세요.",
+    "홈에서 새로운 안내와 현재 모니터링 상태를 확인하세요.",
     "/home",
   ],
   [

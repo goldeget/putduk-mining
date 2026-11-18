@@ -21,6 +21,7 @@ export default async function AccountPage({
 }) {
   const logoutFailed = (await searchParams).logout === "failed";
   const identity = await requirePageUser("/menu/account");
+  if (!identity) return null;
   const { data: account, error } = await identity.supabase
     .from("user_identity_profiles")
     .select(

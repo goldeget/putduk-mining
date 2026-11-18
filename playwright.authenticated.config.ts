@@ -102,7 +102,7 @@ export default defineConfig({
     },
     {
       name: "mobile-chrome",
-      // 채굴 스펙이 390/834/1440을 직접 연다. Pixel 7에서 같은 매트릭스를 한 번 더 돌리지 않는다.
+      // 모니터링 스펙이 390/834/1440을 직접 연다. Pixel 7에서 같은 매트릭스를 한 번 더 돌리지 않는다.
       testIgnore: [
         "**/success-visual-evidence.spec.ts",
         "**/mining-product.spec.ts",

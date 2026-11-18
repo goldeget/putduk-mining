@@ -58,7 +58,7 @@ describe("home-start-display", () => {
         trialStatus: "READY",
         trialUnavailable: false,
       }),
-    ).toEqual({ href: "/mining", label: "채굴 월드 보기" });
+    ).toEqual({ href: "/mining", label: "모니터링 월드 보기" });
 
     expect(
       resolveHomePrimaryAction({

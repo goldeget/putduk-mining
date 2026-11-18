@@ -24,7 +24,7 @@ const OUTPUT_DIR = path.join("test-results", "mining-product");
 
 function miningNotStarted(page: Page) {
   return page
-    .getByRole("region", { name: "현재 채굴 현황" })
+    .getByRole("region", { name: "현재 모니터링 현황" })
     .getByText("시작 전", { exact: true });
 }
 
@@ -116,7 +116,7 @@ async function openMiningDetails(page: Page) {
   await expectSettledRoute(page, "/mining");
   const details = page.locator("#putduk-mining-details");
   await expect(details).toHaveCount(1);
-  const summary = page.getByText("채굴 상세", { exact: true });
+  const summary = page.getByText("모니터링 상세", { exact: true });
   await expect(summary).toHaveCount(1);
   if (
     !(await details.evaluate(
@@ -133,7 +133,7 @@ test("unsigned visitors keep the mining return path", async ({ page }) => {
   await page.goto("/mining");
   await expect(page).toHaveURL(/\/login\?next=%2Fmining$/);
   await expect(page.locator('input[name="next"]')).toHaveValue("/mining");
-  await expect(page.getByRole("heading", { name: "퍼뜩 채굴" })).toHaveCount(0);
+  await expect(page.getByRole("heading", { name: "퍼뜩 모니터링" })).toHaveCount(0);
   expect(hydration).toEqual([]);
 });
 
@@ -145,13 +145,13 @@ test("shows the empty session, world directory, themes, and keyboard path", asyn
   const member = await createConfirmedMember("mining-empty");
   await loginAsMember(page, member, "/mining");
   await expect(
-    page.getByRole("heading", { name: "퍼뜩 채굴", level: 1 }),
+    page.getByRole("heading", { name: "퍼뜩 모니터링", level: 1 }),
   ).toBeVisible();
   await expect(miningNotStarted(page)).toBeVisible();
   await expect(
-    page.getByRole("heading", { name: "첫 월드에서 채굴을 시작해 보세요" }),
+    page.getByRole("heading", { name: "첫 월드에서 모니터링을 시작해 보세요" }),
   ).toBeVisible();
-  await expect(page.getByText("채굴 중")).toHaveCount(0);
+  await expect(page.getByText("모니터링 중")).toHaveCount(0);
   await expectSettledRoute(page, "/mining");
   const closedDetails = page.locator("#putduk-mining-details");
   await expect(closedDetails).toHaveCount(1);
@@ -161,22 +161,22 @@ test("shows the empty session, world directory, themes, and keyboard path", asyn
 
   const mainText = await page.locator("main").innerText();
   expect(mainText).toContain(
-    "월드별 이용 조건과 적용 중인 채굴 규칙을 확인해 주세요.",
+    "월드별 이용 조건과 적용 중인 모니터링 규칙을 확인해 주세요.",
   );
   expect(mainText).toContain(
-    "월드는 채굴 테마예요. 시세나 투자 수익을 따르지 않습니다.",
+    "월드는 모니터링 테마예요. 시세나 투자 수익을 따르지 않습니다.",
   );
-  expect(mainText).not.toContain("가상 채굴");
+  expect(mainText).not.toContain("가상 모니터링");
   expect(mainText).not.toMatch(/수익 보장|확정 수익|무조건 지급|무위험/);
 
   for (const name of ["코리아", "미국", "골드", "실버", "크립토"]) {
     await expect(page.getByRole("heading", { name, level: 3 })).toBeVisible();
   }
   await expect(
-    page.getByText("퍼뜩의 첫 여정이 시작되는 기본 채굴 월드"),
+    page.getByText("퍼뜩의 첫 여정이 시작되는 기본 모니터링 월드"),
   ).toBeVisible();
 
-  const startLink = page.getByRole("link", { name: "채굴 시작" });
+  const startLink = page.getByRole("link", { name: "모니터링 시작" });
   await expect(startLink).toHaveAttribute("href", "/start");
   for (let step = 0; step < 40; step += 1) {
     if (await startLink.evaluate((node) => node === document.activeElement)) {
@@ -193,7 +193,7 @@ test("shows the empty session, world directory, themes, and keyboard path", asyn
   await page.waitForURL(/\/start$/);
   await dismissGuidedQuestIfPresent(page);
   const startHeading = page.getByRole("heading", {
-    name: "채굴을 시작해 보세요.",
+    name: "모니터링을 시작해 보세요.",
   });
   if (!(await startHeading.isVisible())) {
     await page.reload({ waitUntil: "domcontentloaded" });
@@ -220,7 +220,7 @@ test("shows the empty session, world directory, themes, and keyboard path", asyn
         );
         await expect(navigation).toBeVisible();
         await expect(
-          navigation.getByRole("link", { name: "채굴" }),
+          navigation.getByRole("link", { name: "모니터링" }),
         ).toHaveAttribute("aria-current", "page");
         await expect(page.locator("#putduk-support-launcher")).toHaveCount(0);
         const launcher = page.getByRole("button", {
@@ -359,19 +359,19 @@ test("renders recorded sessions while unverified funded mining stays unknown", a
   const ready = page.locator('[data-ui-ready="/mining"]');
   await expect(ready).toHaveAttribute("data-ui-state", "unknown");
   const overview = page.getByRole("region", {
-    name: "현재 채굴 현황",
+    name: "현재 모니터링 현황",
     exact: true,
   });
   await expect(
-    overview.getByRole("heading", { name: "채굴 상태를 다시 확인해 주세요" }),
+    overview.getByRole("heading", { name: "모니터링 상태를 다시 확인해 주세요" }),
   ).toBeVisible();
-  await expect(overview.getByText("채굴 중", { exact: true })).toHaveCount(0);
+  await expect(overview.getByText("모니터링 중", { exact: true })).toHaveCount(0);
   await expect(page.locator("[data-mining-running]")).toHaveAttribute(
     "data-mining-running",
     "false",
   );
   const sessions = page.getByRole("region", {
-    name: "현재 채굴 세션",
+    name: "현재 모니터링 세션",
     exact: true,
   });
   await expect(sessions.getByRole("article")).toHaveCount(2);
@@ -381,7 +381,7 @@ test("renders recorded sessions while unverified funded mining stays unknown", a
   const usa = sessions.getByRole("article").filter({
     has: page.getByRole("heading", { name: "미국", exact: true, level: 3 }),
   });
-  await expect(korea.getByText("채굴 중", { exact: true })).toBeVisible();
+  await expect(korea.getByText("모니터링 중", { exact: true })).toBeVisible();
   await expect(usa.getByText("점검 중", { exact: true })).toBeVisible();
   await expect(korea.getByText("1분 미만", { exact: true })).toBeVisible();
   await expect(usa.getByText("1분 미만", { exact: true })).toBeVisible();
@@ -390,8 +390,8 @@ test("renders recorded sessions while unverified funded mining stays unknown", a
   await expect(
     page.getByText("현재 활성 세션이 이어지고 있어요.").first(),
   ).toBeVisible();
-  await expect(page.getByRole("link", { name: "채굴 시작" })).toHaveCount(0);
-  await expect(page.getByText("가상 채굴")).toHaveCount(0);
+  await expect(page.getByRole("link", { name: "모니터링 시작" })).toHaveCount(0);
+  await expect(page.getByText("가상 모니터링")).toHaveCount(0);
 
   const seoulClock = new Intl.DateTimeFormat("ko-KR", {
     hour: "2-digit",
@@ -408,7 +408,7 @@ test("renders recorded sessions while unverified funded mining stays unknown", a
   ).toBeVisible();
 
   const homeLink = page.getByRole("link", {
-    name: "퍼뜩 채굴 홈",
+    name: "퍼뜩 모니터링 홈",
     exact: true,
   });
   await homeLink.focus();
@@ -429,10 +429,10 @@ test("renders recorded sessions while unverified funded mining stays unknown", a
       });
       await applyTheme(page, theme);
       await expect(ready).toHaveAttribute("data-ui-state", "unknown");
-      await expect(overview.getByText("채굴 중", { exact: true })).toHaveCount(
+      await expect(overview.getByText("모니터링 중", { exact: true })).toHaveCount(
         0,
       );
-      await expect(korea.getByText("채굴 중", { exact: true })).toBeVisible();
+      await expect(korea.getByText("모니터링 중", { exact: true })).toBeVisible();
       await expect(usa.getByText("점검 중", { exact: true })).toBeVisible();
       await expectNoHorizontalOverflow(page);
       await shoot(page, `recorded-sessions-${viewport.name}-${theme}.png`);

@@ -21,7 +21,7 @@ const payload = {
     {
       stableEntryId: "mining-progress",
       question: "앱을 닫아도 계속되나요?",
-      answer: "앱을 닫아도 채굴은 계속돼요.",
+      answer: "앱을 닫아도 모니터링은 계속돼요.",
     },
   ],
   sourceDigest: ORIGINAL_FAQ_SOURCE_DIGEST,

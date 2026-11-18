@@ -28,6 +28,7 @@ export default async function NoticeDetailPage({
   if (slug.length > 100 || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) notFound();
   const path = `/events/notices/${slug}`;
   const identity = await requirePageUser(path);
+  if (!identity) return null;
   const now = new Date().toISOString();
   const { data, error } = await identity.supabase
     .from("notices")

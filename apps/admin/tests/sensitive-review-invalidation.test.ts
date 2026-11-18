@@ -20,9 +20,6 @@ import {
 } from "@/app/(control)/withdrawals/usdt/forms";
 import { ExceptionAckForm } from "@/app/(control)/exceptions/ack-form";
 import { KrwDepositApproveForm } from "@/app/(control)/deposits/krw/[id]/approve-form";
-import { EconomyConsole } from "@/app/(control)/economy/economy-console";
-import type { EconomyConsoleView, EconomySettings } from "@/lib/economy/types";
-import approvedFixture from "../../../docs/product/economy-v1-approved-2026-10-03.json";
 
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
 vi.mock("@/lib/supabase/browser", () => ({
@@ -121,42 +118,6 @@ async function edit(
     );
   });
 }
-const settings = approvedFixture as EconomySettings;
-const economy: EconomyConsoleView = {
-  schemaVersion: 1,
-  serverNow: "2026-10-06T00:00:00Z",
-  selectedVersion: {
-    policyId: "policy-fixture",
-    policyVersion: "REVIEW-FIXTURE",
-    configDigest: "a".repeat(64),
-    manifestDigest: "b".repeat(64),
-    approvalEvidence: "fixture",
-    approvalEvidenceDigest: "c".repeat(64),
-    createdAt: "2026-10-06T00:00:00Z",
-    settings,
-    latestRevision: {
-      revisionId: "revision-fixture",
-      revision: 1,
-      state: "DRAFT",
-      effectiveFrom: null,
-      predecessorPublicationId: null,
-      publishedAt: null,
-    },
-    history: [],
-  },
-  referenceSettings: settings,
-  versions: [],
-  latestPublishedStart: null,
-  runtimeStatus: "POLICY_CONSUMER_NOT_ENABLED",
-};
-const economyElement = () =>
-  createElement(EconomyConsole, {
-    initial: economy,
-    publicConfig: {
-      url: "http://127.0.0.1:58421",
-      publishableKey: "sb_publishable_review_fixture",
-    },
-  });
 const checks: {
   name: string;
   element: () => ReactNode;
@@ -228,20 +189,6 @@ const checks: {
       }),
     field: "receivedAmountAtomic",
     value: "2000",
-  },
-  {
-    name: "economy effective time",
-    element: economyElement,
-    field: "effectiveFrom",
-    value: "2026-10-08T10:00",
-  },
-  {
-    name: "new economy principal",
-    element: economyElement,
-    field: "minimumPrincipalKrw",
-    value: "200000",
-    open: "새 버전 작성",
-    formLabel: "새 정책 저장",
   },
 ];
 describe("high-impact input changes require a fresh human review", () => {

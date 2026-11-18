@@ -43,7 +43,7 @@ test.describe("first KRW_BANK welcome withdrawal", () => {
     await requestWelcomeWithdrawalFromUi(page, "KRW_BANK");
 
     await expect(page.getByText("보류").first()).toBeVisible();
-    await expect(page.getByText(/가상 채굴/)).toHaveCount(0);
+    await expect(page.getByText(/가상 모니터링/)).toHaveCount(0);
 
     const held = await readLatestWithdrawal(member.userId);
     expect(held?.status).toBe("HELD");
@@ -87,14 +87,14 @@ test.describe("first KRW_BANK welcome withdrawal", () => {
     await expect(
       page.getByText(/환영 보상 첫 출금|출금/).first(),
     ).toBeVisible();
-    // 로딩 카피·브랜드 잠금과 구분 — 내비 '채굴' 링크가 보여야 한다.
+    // 로딩 카피·브랜드 잠금과 구분 — 내비 '모니터링' 링크가 보여야 한다.
     const miningLink = page
       .getByRole("navigation", { name: /^(지갑 전체 메뉴|주요 메뉴)$/ })
-      .getByRole("link", { name: "채굴", exact: true });
+      .getByRole("link", { name: "모니터링", exact: true });
     await expect(miningLink).toHaveCount(1);
     await expect(miningLink).toBeVisible();
     await expect(miningLink).toHaveAttribute("href", "/mining");
-    await expect(page.getByText(/가상 채굴/)).toHaveCount(0);
+    await expect(page.getByText(/가상 모니터링/)).toHaveCount(0);
 
     const after = await readWalletAvailableKrw(member.userId);
     expect(Number(after?.available_balance_atomic)).toBe(0);

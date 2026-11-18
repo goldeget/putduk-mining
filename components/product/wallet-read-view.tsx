@@ -6,7 +6,7 @@ import { WalletScene } from "@/components/product/wallet-scene";
 import { WalletReadRecovery } from "@/components/product/wallet-read-recovery";
 import { StatePanel } from "@/components/ui/states";
 import { Surface } from "@/components/ui/surface";
-import { formatTrialValue } from "@/domain/trial/format-trial-value";
+// trial import removed — monitoring platform uses real KRW
 import { formatAtomicAmount } from "@/domain/wallet/format-amount";
 import {
   type KrwWalletProjection,
@@ -121,8 +121,7 @@ export type WalletReadViewProps = {
   ledgerState: WalletReadState;
   receiptState: WalletReadState;
   receipts: WalletReceiptEvidence[];
-  trialRewardAtomic: string | null;
-  trialState: WalletReadState;
+
 };
 
 export function WalletReadView({
@@ -134,8 +133,7 @@ export function WalletReadView({
   ledgerState,
   receiptState,
   receipts,
-  trialRewardAtomic,
-  trialState,
+
 }: WalletReadViewProps) {
   return (
     <div
@@ -349,34 +347,8 @@ export function WalletReadView({
         </div>
 
         <div className={styles.tabPanel} data-panel="profit">
-          <Surface as="article" className={styles.trialCard}>
-            <div className={styles.heroKicker}>
-              <span>체험 보상</span>
-              <small>분리 보관</small>
-            </div>
-            <small className={styles.heroLabel}>WORKROOM 체험</small>
-            <strong>
-              <WalletAmountText
-                value={
-                  trialState === "error"
-                    ? "확인할 수 없음"
-                    : formatTrialValue(String(trialRewardAtomic ?? "0"))
-                }
-              />
-            </strong>
-            <p className={styles.note}>
-              체험 값은 원화가 아니에요. 전환된 금액만 실제 지갑에 반영됩니다.
-            </p>
-            {trialState === "error" ? (
-              <WalletReadRecovery label="체험 값 다시 확인" />
-            ) : (
-              <Link className={styles.trialLink} href="/start">
-                전환 자격 안내
-              </Link>
-            )}
-          </Surface>
           <p className={styles.fundingLead}>
-            대기 수익과 확정 전 금액은 서로 다른 값이에요.
+            모니터링 업무로 얻은 수익은 출금 가능 잔액에 바로 반영돼요.
           </p>
         </div>
 
@@ -425,7 +397,7 @@ export function WalletReadView({
                 </div>
               ) : (
                 <p>
-                  아직 거래 내역이 없어요. 채굴 보상이나 입출금이 생기면 이곳에
+                  아직 거래 내역이 없어요. 모니터링 정산이나 입출금이 생기면 이곳에
                   표시됩니다.
                 </p>
               )}

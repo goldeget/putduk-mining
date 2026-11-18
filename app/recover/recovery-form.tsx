@@ -1,12 +1,9 @@
 "use client";
 import { FeedbackMessage } from "@/components/ui/feedback-message";
 
-import { useActionState } from "react";
+import { useState } from "react";
 
-import {
-  requestPasswordRecovery,
-  type RecoveryActionState,
-} from "@/app/recover/actions";
+import type { RecoveryActionState } from "@/app/recover/actions";
 import {
   AuthConnectionNotice,
   AuthSubmitButton,
@@ -16,16 +13,47 @@ import {
 const INITIAL_STATE: RecoveryActionState = { message: "", status: "idle" };
 
 export function RecoveryForm() {
-  const [state, action] = useActionState(
-    requestPasswordRecovery,
-    INITIAL_STATE,
-  );
+  const [state, setState] = useState<RecoveryActionState>(INITIAL_STATE);
+  const [isPending, setIsPending] = useState(false);
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    preventOfflineAuthSubmission(event);
+    if (navigator.onLine === false) return;
+
+    const formData = new FormData(event.currentTarget);
+    const email = String(formData.get("email") ?? "").trim();
+
+    setIsPending(true);
+    setState({ message: "", status: "idle" });
+
+    try {
+      const response = await fetch("/api/auth/recover", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = (await response.json()) as RecoveryActionState;
+      setState({
+        message: data.message,
+        status: data.status,
+      });
+    } catch {
+      setState({
+        message: "네트워크 연결을 확인해 주세요.",
+        status: "confirmation" as RecoveryActionState["status"],
+      });
+    } finally {
+      setIsPending(false);
+    }
+  }
+
   return (
     <form
       className="auth-form"
-      action={action}
+      onSubmit={handleSubmit}
       aria-label="비밀번호 재설정 요청"
-      onSubmit={preventOfflineAuthSubmission}
     >
       <AuthConnectionNotice />
       <label>
@@ -59,6 +87,8 @@ export function RecoveryForm() {
         <AuthSubmitButton
           label="재설정 안내 받기"
           pendingLabel="안내를 준비하고 있어요"
+          disabled={isPending}
+          pending={isPending}
         />
       </div>
     </form>

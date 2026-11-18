@@ -2,9 +2,10 @@
 import { FeedbackMessage } from "@/components/ui/feedback-message";
 
 import Link from "next/link";
-import { useActionState, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
-import { authenticateAction, type AuthActionState } from "@/app/login/actions";
+import type { AuthActionState } from "@/app/login/actions";
 import {
   AuthConnectionNotice,
   AuthSubmitButton,
@@ -16,19 +17,59 @@ import styles from "@/components/auth/login-experience.module.css";
 const INITIAL_AUTH_STATE: AuthActionState = { message: "", status: "idle" };
 
 export function AuthForm({ nextPath }: { nextPath: string }) {
-  const [state, action] = useActionState(
-    authenticateAction,
-    INITIAL_AUTH_STATE,
-  );
+  const router = useRouter();
+  const [state, setState] = useState<AuthActionState>(INITIAL_AUTH_STATE);
   const [showPassword, setShowPassword] = useState(false);
+  const [isPending, setIsPending] = useState(false);
   const hasError = state.status === "error";
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    preventOfflineAuthSubmission(event);
+    if (navigator.onLine === false) return;
+
+    const formData = new FormData(event.currentTarget);
+    const identifier = String(formData.get("identifier") ?? "").trim();
+    const password = String(formData.get("password") ?? "");
+
+    setIsPending(true);
+    setState({ message: "", status: "idle" });
+
+    try {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ identifier, password, next: nextPath }),
+      });
+
+      const data = (await response.json()) as AuthActionState & {
+        redirectUrl?: string;
+      };
+
+      if (response.ok && data.redirectUrl) {
+        window.location.replace(data.redirectUrl);
+        return;
+      }
+
+      setState({
+        message: data.message || "로그인 정보를 확인해 주세요.",
+        status: "error",
+      });
+    } catch {
+      setState({
+        message: "네트워크 연결을 확인해 주세요.",
+        status: "error",
+      });
+    } finally {
+      setIsPending(false);
+    }
+  }
 
   return (
     <form
       className={`auth-form ${styles.form}`}
-      action={action}
       aria-label="계정 로그인"
-      onSubmit={preventOfflineAuthSubmission}
+      onSubmit={handleSubmit}
       data-ui-state={hasError ? "error" : "loaded"}
     >
       <input type="hidden" name="next" value={nextPath} />
@@ -113,7 +154,12 @@ export function AuthForm({ nextPath }: { nextPath: string }) {
         <Link href="/recover">비밀번호 재설정</Link>
       </nav>
       <div className={`auth-form__actions ${styles.submitActions}`}>
-        <AuthSubmitButton label="로그인" pendingLabel="로그인하고 있어요" />
+        <AuthSubmitButton
+          label="로그인"
+          pendingLabel="로그인하고 있어요"
+          disabled={isPending}
+          pending={isPending}
+        />
         <Link
           className={`button button--secondary ${styles.signup}`}
           href="/signup"

@@ -16,7 +16,7 @@ function LoginBrand({ panel = false }: { panel?: boolean }) {
           <span className={styles.brandKorean}>WORKROOM</span>
           <span className={styles.brandEnglish}>WORKROOM</span>
         </strong>
-        <small>프리미엄 채굴 플랫폼</small>
+        <small>모니터링 플랫폼</small>
       </span>
     </span>
   );
@@ -61,7 +61,7 @@ export function LoginExperience({ children }: { children?: ReactNode }) {
               <br />더 가치 있는 내일
             </p>
             <p className={styles.storyDescription}>
-              채굴 상태와 지갑을 확인하고,
+              모니터링 상태와 지갑을 확인하고,
               <br />
               오늘의 여정을 이어가세요.
             </p>
@@ -91,7 +91,7 @@ export function LoginExperience({ children }: { children?: ReactNode }) {
         </Link>
         <Link href="/verification">
           <PutdukIcon name="wallet" size={22} />
-          <span>확인된 채굴과 지갑</span>
+          <span>확인된 모니터링과 지갑</span>
         </Link>
       </footer>
     </main>

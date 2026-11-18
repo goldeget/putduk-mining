@@ -38,7 +38,7 @@ const platformStructuredData = {
       alternateName: "워크룸",
       applicationCategory: "EducationalApplication",
       description:
-        "실제 거래와 분리된 무료 시뮬레이션입니다. 체험 포인트는 현금 전환이나 출금이 불가능합니다.",
+        "환율과 주식의 흐름을 확인하고 모니터링 업무와 자산 기록을 관리하는 WORKROOM입니다.",
       inLanguage: "ko-KR",
       name: "WORKROOM",
       operatingSystem: "Web, PWA",
@@ -54,7 +54,7 @@ export const metadata: Metadata = {
     template: "%s | 워크룸",
   },
   description:
-    "환율과 주식의 흐름을 체험하는 무료 WORKROOM 시뮬레이션. 체험 포인트는 현금으로 전환되지 않습니다.",
+    "환율과 주식의 흐름을 확인하고 모니터링 기록과 실제 잔액을 관리하는 WORKROOM 플랫폼입니다.",
   applicationName: "WORKROOM",
   icons: WORKROOM_METADATA_ICONS,
   alternates: { canonical: "/" },

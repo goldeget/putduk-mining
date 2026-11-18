@@ -14,8 +14,6 @@ import {
   sameWithdrawalLogicalOriginal,
   type WithdrawalLogicalRecord,
 } from "@/lib/wallet/withdrawal-logical-record";
-import { readPrincipalCryptoWithdrawal } from "@/lib/wallet/read-principal-crypto-withdrawal.server";
-import { readPrincipalWithdrawal } from "@/lib/wallet/read-principal-withdrawal.server";
 import { withdrawalLogicalApiError } from "@/lib/wallet/withdrawal-logical-errors.server";
 
 const prepareSchema = z
@@ -125,19 +123,10 @@ export async function GET(request: Request) {
       Date.parse(destination.data.protection_until) > Date.now();
   }
   // Presentation metadata only; the DB command still owns monetary eligibility.
-  const principalRead = new URL(request.url).searchParams.get("principal");
-  const wantsPrincipal = principalRead === "1";
-  const wantsCryptoPrincipal = principalRead === "usdt";
   return apiSuccess({
-    record,
-    protectionActive,
-    ...(wantsPrincipal
-      ? { principal: await readPrincipalWithdrawal(identity) }
-      : {}),
-    ...(wantsCryptoPrincipal
-      ? { principalCrypto: await readPrincipalCryptoWithdrawal(identity) }
-      : {}),
-  });
+  record,
+  protectionActive,
+});
 }
 
 export async function POST(request: Request) {

@@ -80,7 +80,7 @@ export function presentMemberMoneySources(
     ["누적 원금 회수", known(data?.recovered_principal_atomic)],
     ["출금 대기 원금", known(data?.held_principal_atomic)],
     ["이전 서비스 인정 원금", known(data?.eligible_principal_atomic)],
-    // 등급·용량·속도는 이 자금 구분에 없다. 채굴 조회 결과만 따로 보여 준다.
+    // 등급·용량·속도는 이 자금 구분에 없다. 모니터링 조회 결과만 따로 보여 준다.
     // 원장 출처가 맞아도 누적·이전 서비스 확정 수익 금액은 이 조회에 없다.
     ["이전 서비스 누적 수익", "확인 필요"],
     ["이전 서비스 확정 수익", "확인 필요"],

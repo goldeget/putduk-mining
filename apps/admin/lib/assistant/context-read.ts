@@ -579,21 +579,54 @@ async function wallet(db: SupabaseClient, builder: Builder, userId: string) {
 
 async function mining(db: SupabaseClient, builder: Builder, userId: string) {
   const href = `/members?id=${userId}`;
-  // The only RPC allowed here is the existing read-only server display, never settlement.
-  const result = await read(
-    db.rpc("read_own_mining_server_display", { p_user_id: userId }),
+  // Read monitoring rounds + settlements directly (replaces old mining RPC).
+  const { data: roundRows, error: roundError } = await db
+    .from("workroom_rounds")
+    .select("id, instrument, stake, started_at, closed_at, snapshot")
+    .eq("user_id", userId)
+    .order("started_at", { ascending: false })
+    .limit(50);
+
+  const activeRounds = (roundRows ?? []).filter((r) => r.closed_at == null);
+  const completedRounds = (roundRows ?? []).filter((r) => r.closed_at != null);
+  const totalStake = activeRounds.reduce(
+    (sum, r) => sum + BigInt(r.stake ?? "0"),
+    0n,
   );
+
+  const { data: settlementRows } = await db
+    .from("workroom_settlements")
+    .select("amount_atomic, status")
+    .eq("user_id", userId)
+    .order("settled_at", { ascending: false })
+    .limit(50);
+
+  const totalSettlement = (settlementRows ?? [])
+    .filter((s) => s.status === "CONFIRMED")
+    .reduce((sum, s) => sum + BigInt(s.amount_atomic ?? "0"), 0n);
+  const pendingSettlement = (settlementRows ?? [])
+    .filter((s) => s.status === "PENDING")
+    .reduce((sum, s) => sum + BigInt(s.amount_atomic ?? "0"), 0n);
+
+  const summary = roundError
+    ? null
+    : {
+        active_rounds: activeRounds.length,
+        completed_rounds: completedRounds.length,
+        total_stake: totalStake.toString(),
+        total_settlement: totalSettlement.toString(),
+        pending_settlement: pendingSettlement.toString(),
+        cycle_started_at: roundRows?.[0]?.started_at ?? null,
+        cycle_end: roundRows?.[0]?.closed_at ?? null,
+      };
+
   const display = presentAdminMiningFunding(
-    resolveMiningServerDisplayRead(
-      { data: result.data, error: result.error },
-      null,
-    ),
+    resolveMiningServerDisplayRead({ data: summary, error: roundError }),
   );
   if (display.state === "ready") {
     for (const row of [
       ...display.rows,
-      ...display.miningRows,
-      ...display.cycleRows,
+      ...display.monitoringRows,
     ]) {
       const value =
         row.label === "등급" &&
