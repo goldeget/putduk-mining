@@ -11,6 +11,7 @@ import styles from "./home.module.css";
 
 export default async function HomePage() {
   const identity = await requirePageUser();
+  if (!identity) return null;
   const facts = await readMemberScreenFacts(identity);
 
   const { data: accounts, error: walletError } = await identity.supabase

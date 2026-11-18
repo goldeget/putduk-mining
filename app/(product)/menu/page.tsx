@@ -4,6 +4,7 @@ import { readMemberScreenFacts } from "@/lib/product/member-screen-facts";
 
 export default async function MenuPage() {
   const identity = await requirePageUser("/menu");
+  if (!identity) return null;
   const facts = await readMemberScreenFacts(identity);
   return <MemberMenuView facts={facts} />;
 }

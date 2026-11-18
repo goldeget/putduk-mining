@@ -14,6 +14,7 @@ function krw(value: unknown) {
 /** Existing money is read from its original KRW projection, never converted to practice points. */
 export default async function HistoricalRecordsPage() {
   const identity = await requirePageUser("/workroom/records/legacy");
+  if (!identity) return null;
   const accounts = await identity.supabase
     .from("wallet_balance_snapshots")
     .select("wallet_account_id,balance_atomic,available_balance_atomic")

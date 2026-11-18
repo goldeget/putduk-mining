@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useState } from "react";
 
 import type { CommandActionResult } from "@/app/(control)/_lib/command-gate";
 import {
@@ -18,6 +18,7 @@ import {
 import { QueueFlash } from "@/components/queue-shell";
 import { StepUpTokenField } from "@/components/step-up-token-field";
 import {
+  useAdminCommandAction,
   useReviewConfirmation,
   useReviewedAction,
 } from "@/components/review-confirmation";
@@ -96,9 +97,8 @@ export function KrwBankSendForm({
 export function FinalizeLedgerForm({ withdrawalId }: { withdrawalId: string }) {
   const operationKey = useLogicalOperationKey("krw_fin");
   const [offlineNote, setOfflineNote] = useState<string | null>(null);
-  const [result, action] = useActionState<CommandActionResult | null, FormData>(
-    finalizeWithdrawalLedgerAction,
-    null,
+  const { result, action } = useAdminCommandAction(
+    "finalizeWithdrawalLedgerAction",
   );
   return (
     <form

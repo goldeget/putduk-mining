@@ -47,7 +47,7 @@ export function AuthForm({ nextPath }: { nextPath: string }) {
       };
 
       if (response.ok && data.redirectUrl) {
-        router.push(data.redirectUrl);
+        window.location.replace(data.redirectUrl);
         return;
       }
 

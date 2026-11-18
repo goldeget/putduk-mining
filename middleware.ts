@@ -10,7 +10,7 @@ import {
   isRetiredWorkroomMutation,
 } from "@/lib/workroom/retirement";
 
-export async function proxy(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const canonical = canonicalWorkroomRedirect(
     request.url,
     request.method,
@@ -40,9 +40,12 @@ export async function proxy(request: NextRequest) {
     url.search = "";
     return NextResponse.redirect(url);
   }
-  return isMemberSessionPath(request.nextUrl.pathname)
-    ? updateSupabaseSession(request)
+  const isSessionPath = isMemberSessionPath(request.nextUrl.pathname);
+  const result = isSessionPath
+    ? await updateSupabaseSession(request)
     : NextResponse.next();
+  result.headers.set("X-Proxy-Run", isSessionPath ? "session" : "passthrough");
+  return result;
 }
 
 export const config = {

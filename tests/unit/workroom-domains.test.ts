@@ -12,7 +12,7 @@ import {
 } from "@/lib/workroom/domains";
 const { refresh } = vi.hoisted(() => ({ refresh: vi.fn() }));
 vi.mock("@/lib/supabase/proxy", () => ({ updateSupabaseSession: refresh }));
-import { proxy } from "@/proxy";
+import { middleware as proxy } from "@/middleware";
 beforeEach(() => {
   refresh.mockReset();
   refresh.mockReturnValue(NextResponse.next());

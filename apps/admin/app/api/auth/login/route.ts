@@ -269,6 +269,9 @@ export async function POST(request: Request): Promise<Response> {
 
   return Response.json(
     { redirectUrl: returnTo } satisfies LoginResponse,
-    { status: 200 },
+    {
+      status: 200,
+      headers: { "Cache-Control": "no-store" },
+    },
   );
 }

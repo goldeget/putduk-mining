@@ -1,7 +1,7 @@
 "use client";
 import { FeedbackMessage } from "../../../../../components/ui/feedback-message";
 
-import { useActionState, useId, useState } from "react";
+import { useId, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import type { CommandActionResult } from "@/app/(control)/_lib/command-gate";
@@ -18,9 +18,9 @@ import {
 } from "@/components/operator-fields";
 import { QueueFlash } from "@/components/queue-shell";
 import { StepUpTokenField } from "@/components/step-up-token-field";
+import { useAdminCommandAction } from "@/components/review-confirmation";
 import { ADMIN_COMMAND_FAMILIES } from "@/lib/auth/command-families";
 
-import { setSafeModeAction } from "./actions";
 import { COMPONENT_LABEL, type SafeModeComponent } from "./safe-mode-policy";
 
 export function SafeModeForm({
@@ -39,10 +39,7 @@ export function SafeModeForm({
   const [reviewRevision, setReviewRevision] = useState(0);
   const [offlineNote, setOfflineNote] = useState<string | null>(null);
   const operationKey = useLogicalOperationKey("safe_mode");
-  const [result, action] = useActionState<CommandActionResult | null, FormData>(
-    setSafeModeAction,
-    null,
-  );
+  const { result, action } = useAdminCommandAction("setSafeModeAction");
   const nextPause = currentlyPaused ? "false" : "true";
 
   if (!canMutate) {

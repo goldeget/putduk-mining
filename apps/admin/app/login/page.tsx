@@ -1,9 +1,8 @@
 import { FeedbackMessage } from "../../../../components/ui/feedback-message";
 import type { Metadata, Route } from "next";
 import Link from "next/link";
-import { redirect } from "next/navigation";
-
 import { AdminAuthEntry } from "@/components/auth/admin-auth-entry";
+import { ClientRedirect } from "../../../../components/auth/client-redirect";
 import { LoginForm } from "@/components/login-form";
 import { getAdminIdentityForLoginPage } from "@/lib/auth/principal";
 import { safeAdminReturnPath } from "@/lib/auth/return-path";
@@ -24,7 +23,7 @@ export default async function LoginPage({
       identity.aal === "aal2"
         ? safeReturn
         : `/mfa?returnTo=${encodeURIComponent(safeReturn)}`;
-    redirect(destination as Route);
+    return <ClientRedirect to={destination} />;
   }
   return (
     <AdminAuthEntry

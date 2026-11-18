@@ -35,7 +35,7 @@ export function LoginForm({ returnTo }: { returnTo: string }) {
       };
 
       if (response.ok && data.redirectUrl) {
-        router.push(data.redirectUrl);
+        window.location.replace(data.redirectUrl);
         return;
       }
 

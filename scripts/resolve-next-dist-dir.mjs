@@ -14,7 +14,7 @@ export function resolveNextDistDir(projectDirectory = process.cwd()) {
   if (!allowedProjects.has(projectRoot))
     throw new Error("NEXT_BUILD_PROJECT_SCOPE_INVALID");
   const name = process.env.PUTDUK_NEXT_DIST_DIR ?? ".next";
-  if (!/^\.next(?:-qa-[a-z0-9-]{1,64})?$/.test(name))
+  if (!/^\.(next|vinext-output)(?:-qa-[a-z0-9-]{1,64})?$/.test(name))
     throw new Error("NEXT_BUILD_DIRECTORY_INVALID");
   try {
     if (lstatSync(join(projectRoot, name)).isSymbolicLink())

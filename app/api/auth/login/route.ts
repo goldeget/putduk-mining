@@ -196,6 +196,9 @@ export async function POST(request: Request): Promise<Response> {
       message: "",
       redirectUrl: nextPath,
     } satisfies LoginResponse,
-    { status: 200 },
+    {
+      status: 200,
+      headers: { "Cache-Control": "no-store" },
+    },
   );
 }

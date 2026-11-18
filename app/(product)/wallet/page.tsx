@@ -15,6 +15,7 @@ export default async function WalletPage({
   searchParams: Promise<{ view?: string | string[] }>;
 }) {
   const identity = await requirePageUser();
+  if (!identity) return null;
   const { view } = await searchParams;
 
   const initialView =

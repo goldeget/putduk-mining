@@ -83,6 +83,7 @@ function reopenWithdrawal() {
 
 export default async function WithdrawalPage() {
   const identity = await requirePageUser();
+  if (!identity) return null;
   const now = new Date();
   const nowIso = now.toISOString();
   const admin = createSupabaseAdminClient();

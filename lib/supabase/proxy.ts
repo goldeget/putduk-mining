@@ -72,8 +72,11 @@ export async function updateSupabaseSession(request: NextRequest) {
     for (const cookie of response.cookies.getAll()) {
       redirectResponse.cookies.set(cookie);
     }
+    redirectResponse.headers.set("X-Auth-Redirect", loginUrl.toString());
     return redirectResponse;
   }
 
+  response.headers.set("X-Auth-Status", subject ? "authenticated" : "anonymous");
+  response.headers.set("X-Auth-Protected", isProtectedPage ? "yes" : "no");
   return response;
 }

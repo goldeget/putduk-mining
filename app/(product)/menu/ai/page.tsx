@@ -6,6 +6,7 @@ import styles from "./page.module.css";
 
 export default async function PutdukAiPage() {
   const identity = await requirePageUser("/menu/ai");
+  if (!identity) return null;
   const facts = await readMemberScreenFacts(identity);
   return (
     <section className={styles.page} data-ai-page>

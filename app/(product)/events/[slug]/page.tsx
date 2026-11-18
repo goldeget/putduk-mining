@@ -38,6 +38,7 @@ export default async function EventsDetailPage({
 
   const returnPath = `/events/${slug}`;
   const identity = await requirePageUser(returnPath);
+  if (!identity) return null;
   const nowIso = new Date().toISOString();
 
   const { data: eventData, error: eventError } = await identity.supabase

@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useState } from "react";
 
 import type { CommandActionResult } from "@/app/(control)/_lib/command-gate";
 import {
@@ -18,6 +18,7 @@ import {
 import { QueueFlash } from "@/components/queue-shell";
 import { StepUpTokenField } from "@/components/step-up-token-field";
 import {
+  useAdminCommandAction,
   useReviewConfirmation,
   useReviewedAction,
 } from "@/components/review-confirmation";
@@ -114,9 +115,8 @@ export function UsdtSendForm({
 export function UsdtFinalizeForm({ withdrawalId }: { withdrawalId: string }) {
   const operationKey = useLogicalOperationKey("usdt_fin");
   const [offlineNote, setOfflineNote] = useState<string | null>(null);
-  const [result, action] = useActionState<CommandActionResult | null, FormData>(
-    finalizeUsdtWithdrawalLedgerAction,
-    null,
+  const { result, action } = useAdminCommandAction(
+    "finalizeUsdtWithdrawalLedgerAction",
   );
   return (
     <form

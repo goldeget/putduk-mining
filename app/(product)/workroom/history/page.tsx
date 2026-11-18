@@ -28,6 +28,7 @@ export default async function Page({
   if (round === undefined) return <WorkroomPage page="history" />;
   if (!z.uuid().safeParse(round).success) notFound();
   const identity = await requirePageUser(`/workroom/history?round=${round}`);
+  if (!identity) return null;
   const response = await identity.supabase.rpc("workroom_app_member", {
     p_operation: "ROUND_READ",
     p_request_key: null,

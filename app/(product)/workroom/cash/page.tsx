@@ -11,6 +11,7 @@ import styles from "@/components/workroom/cash.module.css";
 export const dynamic = "force-dynamic";
 export default async function CashPage() {
   const identity = await requirePageUser("/workroom/cash");
+  if (!identity) return null;
   const [cash, history] = await Promise.all([
     readWorkroomCash(identity),
     readWorkroomCashActivity(identity, 6),

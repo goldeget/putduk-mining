@@ -1,6 +1,9 @@
 "use client";
 
-import { useActionState } from "react";
+import {
+  useAdminCommandAction,
+  useReviewConfirmation,
+} from "@/components/review-confirmation";
 
 import type { CommandActionResult } from "@/app/(control)/_lib/command-gate";
 import {
@@ -10,16 +13,12 @@ import {
 } from "@/components/operator-fields";
 import { QueueFlash } from "@/components/queue-shell";
 import { StepUpTokenField } from "@/components/step-up-token-field";
-import { useReviewConfirmation } from "@/components/review-confirmation";
 import { ADMIN_COMMAND_FAMILIES } from "@/lib/auth/command-families";
-
-import { acknowledgeReconciliationExceptionAction } from "./actions";
 
 export function ExceptionAckForm({ mismatchId }: { mismatchId: string }) {
   const review = useReviewConfirmation(["result", "reason"]);
-  const [result, action] = useActionState<CommandActionResult | null, FormData>(
-    acknowledgeReconciliationExceptionAction,
-    null,
+  const { result, action } = useAdminCommandAction(
+    "acknowledgeReconciliationExceptionAction",
   );
 
   return (

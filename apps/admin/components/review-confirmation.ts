@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState, type ChangeEvent } from "react";
+import { useState, type ChangeEvent } from "react";
 
 import type { CommandActionResult } from "@/app/(control)/_lib/command-gate";
 
@@ -16,18 +16,29 @@ export function useReviewedAction(
 ) {
   const currentRevision = String(revision);
   const fieldName = "clientReviewRevision";
-  const [state, action] = useActionState<ReviewedResult | null, FormData>(
-    async (previous, data) => {
-      const submittedRevision = String(data.get(fieldName) ?? "");
-      // This field controls display only. Keep it out of the domain command payload.
-      data.delete(fieldName);
-      return {
+  const [state, setState] = useState<ReviewedResult | null>(null);
+  const action = async (data: FormData) => {
+    const submittedRevision = String(data.get(fieldName) ?? "");
+    data.delete(fieldName);
+    data.set("__adminAction", command.name);
+    try {
+      const response = await fetch("/api/v1/admin/commands", {
+        method: "POST",
+        body: data,
+      });
+      const result = (await response.json()) as CommandActionResult;
+      setState({ revision: submittedRevision, result });
+    } catch {
+      setState({
         revision: submittedRevision,
-        result: await command(previous?.result ?? null, data),
-      };
-    },
-    null,
-  );
+        result: {
+          ok: false,
+          code: "NETWORK_ERROR",
+          message: "네트워크 연결을 확인한 뒤 다시 시도해 주세요.",
+        },
+      });
+    }
+  };
   const stale = state !== null && state.revision !== currentRevision;
   return {
     action,
@@ -38,6 +49,27 @@ export function useReviewedAction(
 }
 
 /** Editing the proposed effect discards the old checkbox and one-time token. */
+export function useAdminCommandAction(actionName: string) {
+  const [result, setResult] = useState<CommandActionResult | null>(null);
+  const action = async (data: FormData) => {
+    data.set("__adminAction", actionName);
+    try {
+      const response = await fetch("/api/v1/admin/commands", {
+        method: "POST",
+        body: data,
+      });
+      setResult((await response.json()) as CommandActionResult);
+    } catch {
+      setResult({
+        ok: false,
+        code: "NETWORK_ERROR",
+        message: "네트워크 연결을 확인한 뒤 다시 시도해 주세요.",
+      });
+    }
+  };
+  return { result, action };
+}
+
 export function useReviewConfirmation(fields?: readonly string[]) {
   const [revision, setRevision] = useState(0);
   function onChange(event: ChangeEvent<HTMLFormElement>) {

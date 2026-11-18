@@ -143,6 +143,7 @@ function maskTx(value: string) {
 
 export default async function DepositPage() {
   const identity = await requirePageUser("/wallet/deposit");
+  if (!identity) return null;
   const krw = await readKrwDepositSettings(identity.supabase);
 
   const { data: requests, error } = await identity.supabase
